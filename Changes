@@ -1,3 +1,14 @@
+2017-11-26  Bob Weiner  <rsw@gnu.org>
+
+* hmouse-drv.el (hkey-ace-window-setup): Added deletion of i and t command bindings before
+    adding them to aw-dispatch-alist.
+                (hkey-throw): Fixed split line code typo here.
+  hycontrol.el (hycontrol-frame-offset): Fixed typo.
+
+==============================================================================
+V7.0.3 changes ^^^^:
+==============================================================================
+
 2017-11-23  Bob Weiner  <rsw@gnu.org>
 
 * hversion.el: Released 7.0.2.

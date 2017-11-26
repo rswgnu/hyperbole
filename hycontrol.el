@@ -151,7 +151,7 @@ major-mode 'c-mode).")
   :group 'hyperbole-screen)
 
 (defcustom hycontrol-invert-mode-line-flag t
-  "When t (default) and in a HyControl mode, invert mode-line to emphasize the special key bindings in effect."
+  "*When t (default) and in a HyControl mode, invert mode-line to emphasize the special key bindings in effect."
   :type 'boolean
   :group 'hyperbole-screen)
 
@@ -170,7 +170,7 @@ The unit counter resets to the last digit entered whenever this value is exceede
 
 (defcustom hycontrol-frame-offset '(13 . 23)
   "*Increase in pixel offset for new hycontrol frames relative to the selected frame.
-It's value is an (x-offset . y-offset) pair in pixels."
+Its value is an (x-offset . y-offset) pair in pixels."
   :type '(cons integer integer)
   :group 'hyperbole-screen)
 

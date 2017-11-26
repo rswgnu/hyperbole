@@ -383,8 +383,7 @@ Only works when running under a window system, not from a dumb terminal."
 	;; release-win are the same.
 	(hkey-drag release-window)
       (error (when (eq start-win release-window)
-	       (hmouse-drag-item-to-displ
-		ay))))
+	       (hmouse-drag-item-to-display))))
     (when (window-live-p start-win) (select-window start-win))))
 
 (defun hkey-ace-window-setup (&optional key)
@@ -413,6 +412,8 @@ window, use {M-o i <id-of-window-to-display-item-in>} and watch the
 magic happen."
   (require 'ace-window)
   (when key (global-set-key key 'ace-window))
+  (setq aw-dispatch-alist (delq (assq ?t aw-dispatch-alist)
+				(delq (assq ?i aw-dispatch-alist) aw-dispatch-alist)))
   (push '(?i hkey-drag-to "Hyperbole Drag To") aw-dispatch-alist)
   (push '(?t hkey-throw   "Hyperbole Throw") aw-dispatch-alist)
   (setq aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l)
