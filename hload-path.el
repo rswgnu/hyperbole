@@ -4,7 +4,7 @@
 ;;
 ;; Orig-Date:    29-Jun-16 at 14:39:33
 ;;
-;; Copyright (C) 1992-2016  Free Software Foundation, Inc.
+;; Copyright (C) 1992-2017  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
 ;;
 ;; This file is part of GNU Hyperbole.
@@ -12,31 +12,6 @@
 ;;; Commentary:
 
 ;;; Code:
-;;; ************************************************************************
-;;; Public variables
-;;; ************************************************************************
-
-;;; Support mouse handling and Koutlines under GNU Emacs V19 or higher.
-;;;
-;;;###autoload
-(defconst hyperb:emacs-p
-  (and (not (featurep 'xemacs))
-       ;; Version 19 and above, the only ones supported.
-       (string-lessp "19" emacs-version)
-       emacs-version)
-  "Version string under GNU Emacs 19 or higher, or nil")
-
-;;; Koutlines work only with specific versions of Emacs and XEmacs.
-;;;###autoload
-(defconst hyperb:kotl-p
-  (if (featurep 'xemacs)
-      ;; Only works for XEmacs 19.9 and above.
-      (or (string-match "^19\\.9 \\|^19\\.[1-9][0-9]" emacs-version)
-	  ;; Version 20 and above.
-	  (string-lessp "20" emacs-version))
-    hyperb:emacs-p)
-  "Non-nil iff this Emacs version supports the Hyperbole Koutliner.")
-
 ;;; ************************************************************************
 ;;; Hyperbole Directory Setting (dynamically computed)
 ;;; ************************************************************************
@@ -69,12 +44,10 @@ It must end with a directory separator character.")
 ;; If the Koutliner is supported by this emacs version, perform
 ;; initializations.
 
-(if hyperb:kotl-p
-    (progn (add-to-list 'load-path (expand-file-name "kotl/" hyperb:dir))
-	   ;; Invoke kotl-mode for files ending in ".kotl".  Also
-	   ;; allow ".kot" for DOS and Windows users.
-	   (setq auto-mode-alist (cons '("\\.kotl$\\|\\.kot$" . kotl-mode)
-				       auto-mode-alist))))
+(add-to-list 'load-path (expand-file-name "kotl/" hyperb:dir))
+;; Invoke kotl-mode for files ending in ".kotl".  Also
+;; allow ".kot" for DOS and Windows users.
+(add-to-list 'auto-mode-alist '("\\.kotl?\\'" . kotl-mode))
 
 (provide 'hload-path)
 

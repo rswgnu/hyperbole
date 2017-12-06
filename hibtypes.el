@@ -4,7 +4,7 @@
 ;;
 ;; Orig-Date:    19-Sep-91 at 20:45:31
 ;;
-;; Copyright (C) 1991-2016  Free Software Foundation, Inc.
+;; Copyright (C) 1991-2017  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
 ;;
 ;; This file is part of GNU Hyperbole.
@@ -604,7 +604,10 @@ Requires the Emacs builtin Tramp library for ftp file retrievals."
 ;;; Follows links to Hyperbole Koutliner cells.
 ;;; ========================================================================
 
-(if hyperb:kotl-p (require 'klink))
+;; FIXME: Not sure if it's important to avoid loading `klink' during
+;; bytecompilation, but that was the behavior when the condition was more
+;; complex, so I kept the `if' even though it's now trivial.
+(if t (require 'klink))
 
 ;;; ========================================================================
 ;;; Jumps to source line associated with grep or compilation error messages.

@@ -4,7 +4,7 @@
 ;;
 ;; Orig-Date:    15-Apr-91 at 00:48:49
 ;;
-;; Copyright (C) 1991-2016  Free Software Foundation, Inc.
+;; Copyright (C) 1991-2017  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
 ;;
 ;; This file is part of GNU Hyperbole.
@@ -191,7 +191,7 @@ obtained search string."
 ;; No-op unless set by one of the conditionals below.
 (defun hui:but-flash ())
 
-(cond ((and hyperb:emacs-p (not noninteractive))
+(cond ((and (not (featurep 'xemacs)) (not noninteractive))
        (require 'hui-em-but)
        ;; Highlight explicit buttons whenever a file is read in.
        (add-hook 'find-file-hook #'hproperty:but-create t)
@@ -216,11 +216,8 @@ obtained search string."
       ((and (featurep 'xemacs) (not noninteractive))
        (require 'hui-xe-but)
        ;;
-       ;; If running XEmacs 19.8 or below, don't highlight explicit buttons
-       ;; whenever a file is read in since this can cause a sporadic crash
-       ;; when find-files are done.
-       (if hyperb:kotl-p (add-hook 'find-file-hook #'hproperty:but-create t))
-       (defalias 'hui:but-flash 'hproperty:but-flash)
+       (add-hook 'find-file-hook #'hproperty:but-create t)
+       (defalias 'hui:but-flash #'hproperty:but-flash)
        ;;
        ;; Substitute for the nil argument below a valid X color name with
        ;; which to highlight buttons if the default highlighting does not

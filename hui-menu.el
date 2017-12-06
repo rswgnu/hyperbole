@@ -4,7 +4,7 @@
 ;;
 ;; Orig-Date:    28-Oct-94 at 10:59:44
 ;;
-;; Copyright (C) 1994-2016  Free Software Foundation, Inc.
+;; Copyright (C) 1994-2017  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
 ;;
 ;; This file is part of GNU Hyperbole.
@@ -186,7 +186,7 @@ Return t if cutoff, else nil."
 		    ;; setting.  Invoking this item should then make it
 		    ;; visible.
 		    (hyperb:init-menubar))
-		   ((cond (hyperb:emacs-p
+		   ((cond ((not (featurep 'xemacs))
 			   (global-key-binding [menu-bar Hyperbole]))
 			  ((boundp 'current-menubar)
 			   (car (find-menu-item current-menubar '("Hyperbole")))))
@@ -198,7 +198,7 @@ Return t if cutoff, else nil."
 	     :selected
 	      (cond ((boundp 'menubar-configuration)
 		     (memq 'Hyperbole menubar-configuration))
-		    (hyperb:emacs-p
+		    ((not (featurep 'xemacs))
 		     (and (global-key-binding [menu-bar Hyperbole]) t))
 		    ((boundp 'current-menubar)
 		     (car (find-menu-item current-menubar '("Hyperbole")))))]
@@ -415,29 +415,28 @@ REBUILD-FLAG is non-nil, in which case the menu is rebuilt."
 		   ["Help"   hui:hbut-help t]
 		   ["Types"  (hui:htype-help 'ibtypes 'no-sort) t]
 		   )
-		 (if hyperb:kotl-p
-		     '("Koutliner"
-		       ["Manual" (id-info "(hyperbole)Koutliner") t]
-		       ["Example"   kotl-mode:example                 t]
-		       "----"
-		       ["Create-File"    kfile:find t]
-		       ["View-File"      kfile:view t]
-		       "----"
-		       ["Collapse-Tree" (progn (kotl-mode:is-p)
-					       (kotl-mode:hide-tree
-						(kcell-view:label)))
-			(eq major-mode 'kotl-mode)]
-		       ["Create-Link" klink:create
-			(eq major-mode 'kotl-mode)]
-		       ["Expand-All-Trees" kotl-mode:show-all
-			(eq major-mode 'kotl-mode)]
-		       ["Expand-Tree" (progn (kotl-mode:is-p)
-					     (kotl-mode:show-tree
-					      (kcell-view:label)))
-			(eq major-mode 'kotl-mode)]
-		       ["Show-Top-Level-Only" kotl-mode:hide-body
-			(eq major-mode 'kotl-mode)]
-		       ))
+		 '("Koutliner"
+		   ["Manual" (id-info "(hyperbole)Koutliner") t]
+		   ["Example"   kotl-mode:example                 t]
+		   "----"
+		   ["Create-File"    kfile:find t]
+		   ["View-File"      kfile:view t]
+		   "----"
+		   ["Collapse-Tree" (progn (kotl-mode:is-p)
+					   (kotl-mode:hide-tree
+					    (kcell-view:label)))
+		    (eq major-mode 'kotl-mode)]
+		   ["Create-Link" klink:create
+		    (eq major-mode 'kotl-mode)]
+		   ["Expand-All-Trees" kotl-mode:show-all
+		    (eq major-mode 'kotl-mode)]
+		   ["Expand-Tree" (progn (kotl-mode:is-p)
+					 (kotl-mode:show-tree
+					  (kcell-view:label)))
+		    (eq major-mode 'kotl-mode)]
+		   ["Show-Top-Level-Only" kotl-mode:hide-body
+		    (eq major-mode 'kotl-mode)]
+		   )
 		 '("Mail-Lists"
 		   ["Manual" (id-info "(hyperbole)Suggestion or Bug Reporting")
 		    t]

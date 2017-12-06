@@ -4,7 +4,7 @@
 ;;
 ;; Orig-Date:     4-Nov-91 at 00:26:06
 ;;
-;; Copyright (C) 1995-2016  Free Software Foundation, Inc.
+;; Copyright (C) 1995-2017  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
 ;;
 ;; This file is part of GNU Hyperbole.
@@ -30,6 +30,8 @@
 ;;; ************************************************************************
 
 (defun hack-local-variables (&optional force)
+  ;; FIXME: *Major* compatibility problem!  Have you submitted a feature
+  ;; request via `report-emacs-bug'?  --Stef
   "Parse, and bind or evaluate as appropriate, any local variables
 for current buffer."
   (if (fboundp 'hack-local-variables-prop-line)
@@ -39,28 +41,20 @@ for current buffer."
     (goto-char (point-max))
     (search-backward "\n\^L" (max (- (point-max) 3000) (point-min)) 'move)
     (let (local-start)
-      (if (let ((case-fold-search t)
-		(ignore nil))
+      (if (let ((case-fold-search t))
 	    (and (search-forward "Local Variables:" nil t)
 		 (setq local-start (match-beginning 0))
-		 (or (and (not (string-match "^19\\." emacs-version))
-			  (not (inhibit-local-variables-p)))
+		 (or (not (inhibit-local-variables-p))
 		     force
-		     (if (string-match "^19\\." emacs-version)
-			 (cond ((eq enable-local-variables t) t)
-			       ((eq enable-local-variables nil)
-				(setq ignore t))))
-		     (if ignore
-			 nil
-		       (save-window-excursion
-			 (switch-to-buffer (current-buffer))
-			 (save-excursion
-			   (beginning-of-line)
-			   (set-window-start (selected-window) (point)))
-			 (y-or-n-p
-			  (format "Set local variables as specified at end of %s? "
-				  (file-name-nondirectory
-				   buffer-file-name))))))))
+		     (save-window-excursion
+		       (switch-to-buffer (current-buffer))
+		       (save-excursion
+			 (beginning-of-line)
+			 (set-window-start (selected-window) (point)))
+		       (y-or-n-p
+			(format "Set local variables as specified at end of %s? "
+				(file-name-nondirectory
+				 buffer-file-name)))))))
 	  (let ((continue t)
 		prefix prefixlen suffix beg
 		(enable-local-eval

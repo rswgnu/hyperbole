@@ -4,7 +4,7 @@
 ;;
 ;; Orig-Date:     6-Oct-91 at 03:42:38
 ;;
-;; Copyright (C) 1991-2016  Free Software Foundation, Inc.
+;; Copyright (C) 1991-2017  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
 ;;
 ;; This file is part of GNU Hyperbole.
@@ -453,15 +453,7 @@ then `locate-post-command-hook'."
 		     current-prefix-arg))
   (locate search-string filter arg))
 
-(if (or (featurep 'xemacs) hyperb:emacs-p)
-    (defalias 'hypb:mark 'mark)
-  (defun hypb:mark (inactive-p)
-    "Return this buffer's mark value as integer, or nil if no mark.
-INACTIVE-P non-nil means return value of mark even if region is not active
-under Emacs version 19.
-If you are using this in an editing command, you are most likely making
-a mistake; see the documentation of `set-mark'."
-    (mark)))
+(defalias 'hypb:mark #'mark)
 
 (if (featurep 'xemacs)
     (defalias 'hypb:mark-marker 'mark-marker)
@@ -678,7 +670,7 @@ nor nil it means to not count the minibuffer window even if it is active."
 
 (defvar hypb:hyperbole-banner-keymap
   (let ((map (make-sparse-keymap)))
-    (cond (hyperb:emacs-p
+    (cond ((not (featurep 'xemacs))
 	   (define-key map [mouse-1]  'hypb:browse-home-page)
 	   (define-key map [mouse-2]  'hypb:browse-home-page)
 	   (define-key map "\C-m"     'hypb:browse-home-page))
@@ -696,7 +688,7 @@ Without file, the banner is prepended to the current buffer."
   (if file
       ;; A stub for this function is defined in hversion.el when not running in InfoDock.
       (id-browse-file file))
-  (if hyperb:emacs-p
+  (if (not (featurep 'xemacs))
       (hypb:display-file-with-logo-emacs file)
     (hypb:display-file-with-logo-xemacs file))
   (goto-char (point-min))
@@ -814,7 +806,7 @@ Without file, the banner is prepended to the current buffer."
 ;;; Private variables
 ;;; ************************************************************************
 
-(if hyperb:emacs-p (define-button-type 'hyperbole-banner))
+(if (not (featurep 'xemacs)) (define-button-type 'hyperbole-banner))
 
 (provide 'hypb)
 

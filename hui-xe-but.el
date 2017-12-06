@@ -4,7 +4,7 @@
 ;;
 ;; Orig-Date:    21-Aug-92
 ;;
-;; Copyright (C) 1992-2016  Free Software Foundation, Inc.
+;; Copyright (C) 1992-2017  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
 ;;
 ;; This file is part of GNU Hyperbole.
@@ -26,11 +26,6 @@
 
 (require 'custom) ;; For defface.
 (require 'hbut)
-
-;;; XEmacs 19.12 renamed x-color-display-p to x-display-color-p.
-(if (and (fboundp 'x-color-display-p)
-	 (not (fboundp 'x-display-color-p)))
-    (defalias 'x-display-color-p 'x-color-display-p))
 
 (defun hproperty:background ()
   "Returns default background color for selected frame."
