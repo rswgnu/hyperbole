@@ -214,12 +214,13 @@ Hyperbole minibuffer menu item, Screen/WindowsControl {C-h h s w}, will do
 the same thing.
 
 Once in HyControl, your minibuffer window at the bottom of the selected frame
+
 will display a summary of keys you may use to adjust your windows until you
-press {q} to quit from HyControl.  If you don't see it, press {?}, to turn on
-this help display.  The key, {t}, will always switch you between controlling
-frames and windows, the minor modes of HyControl, with a modeline indicator
-of either "HyFrm" or HyWin" depending on which type of control is active.
-See "(hyperbole)HyControl" for full usage information.
+press {q} or {Q} to quit from HyControl.  If you don't see it, press {?}, to
+turn on this help display.  The key, {t}, will always switch you between
+controlling frames and windows, the minor modes of HyControl, with a modeline
+indicator of either "HyFrm" or HyWin" depending on which type of control is
+active.  See "(hyperbole)HyControl" for full usage information.
 
 ** Frame Commands
 

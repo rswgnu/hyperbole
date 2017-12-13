@@ -51,7 +51,7 @@
       presses.  These selectable things include: delimited pairs of
       (), @{@}, <>, [] and quote marks, source code functions, source
       code comments and matching tag pairs in HTML and SGML modes.
-      See "DEMO#Thing Selection".     
+      See "DEMO#Thing Selection".    
 
   10. Use the fantastic, auto-numbered Koutliner with per-item links
       and rapidly changeable views.  See "DEMO#Koutliner".
@@ -115,7 +115,7 @@ alpha ;; label-type
 
 ;; depth-first kcell attributes
 [[0
-  (creator "rsw@gnu.org" create-time "20171122:02:34:20" id-counter 37 file "/Users/bk/Dropbox/emacs/hyperbole/HY-WHY.kotl")]
+  (creator "rsw@gnu.org" create-time "20171212:19:44:57" id-counter 37 file "/Users/bk/Dropbox/emacs/hyperbole/HY-WHY.kotl")]
  [1
   (creator "rsw@gnu.org" create-time "20160524:15:04:17" no-fill t)]
  [17

@@ -4,7 +4,7 @@
 ;;
 ;; Orig-Date:    15-Mar-89
 ;;
-;; Copyright (C) 1989-2016  Free Software Foundation, Inc.
+;; Copyright (C) 1989-2017  Free Software Foundation, Inc.
 ;; See the "../HY-COPY" file for license information.
 ;;
 ;; This file is part of GNU Hyperbole.
@@ -132,10 +132,10 @@ Then deletes this new configuration from the ring."
   (let ((ring (hywconfig-get-ring)))
     (if (ring-empty-p ring)
 	(error "(hywconfig-delete-pop): Window configuration save ring is empty.")
-      (ring-remove ring 0)
       (if (ring-empty-p ring)
 	  (message "Window configuration save ring is now empty.")
-	(hywconfig-set-window-configuration (ring-ref ring 0))))))
+	(hywconfig-set-window-configuration (ring-ref ring 0))
+	(ring-remove ring 0)))))
 
 ;;;###autoload
 (defun hywconfig-ring-empty-p ()

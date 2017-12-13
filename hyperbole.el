@@ -6,7 +6,7 @@
 ;; Maintainer:       Bob Weiner <rsw@gnu.org> and Mats Lidell <matsl@gnu.org>
 ;; Created:          06-Oct-92 at 11:52:51
 ;; Released:         23-Nov-17
-;; Version:          7.0.2
+;; Version:          7.0.2a
 ;; Keywords:         comm, convenience, files, frames, hypermedia, languages, mail, matching, mouse, multimedia, outlines, tools, wp
 ;; Package:          hyperbole
 ;; Package-Requires: ((emacs "24.4"))
@@ -109,7 +109,7 @@
 	  features (delq 'hversion features)))
 
   ;; Defines hyperb:path-being-loaded, hyperb:stack-frame,
-  ;; (hyperb:window-system), hyperb:dir and hyperb:kotl-p, which are used later in
+  ;; (hyperb:window-system) and hyperb:dir, which are used later in
   ;; this file.  Also adds Hyperbole to the load-path if need be.
   ;;
   ;; This handles the case when the Hyperbole package directory is not yet in load-path.
@@ -147,11 +147,9 @@ disables/inhibits support."
       (message "Hyperbole messaging button support is %s"
 	       (if inhibit-hyperbole-messaging "disabled" "enabled"))))
 
-;; This must come after "hversion" is loaded for hyperb:kotl-p definition.
-(if hyperb:kotl-p
-    (defgroup hyperbole-koutliner nil
-      "Hyperbole multi-level autonumbered outliner customizations."
-      :group 'hyperbole))
+(defgroup hyperbole-koutliner nil
+  "Hyperbole multi-level autonumbered outliner customizations."
+  :group 'hyperbole)
 
 ;;; ************************************************************************
 ;;; Other required Elisp libraries
@@ -473,8 +471,8 @@ With optional ARG, override them iff ARG is positive."
 ;; help buffer.  (Help buffer names end with "Help*".)  Only one of
 ;; these two settings is used, dependent on emacs version.
 ;;
-(setq temp-buffer-show-hook #'hkey-help-show
-      temp-buffer-show-function temp-buffer-show-hook)
+(add-hook 'temp-buffer-show-hook #'hkey-help-show)
+(setq temp-buffer-show-function #'hkey-help-show)
 
 ;;; ************************************************************************
 ;;; Autoloads

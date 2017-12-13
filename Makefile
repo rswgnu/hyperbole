@@ -54,7 +54,7 @@
 
 # This ver setup won't work under any make except GNU make, so set it manually.
 #HYPB_VERSION = "`head -3 hversion.el | tail -1 | sed -e 's/.*|\(.*\)|.*/\1/'`"
-HYPB_VERSION = 7.0.2
+HYPB_VERSION = 7.0.2a
 
 # Emacs executable used to byte-compile .el files into .elc's.
 # Possibilities include: emacs, infodock, xemacs, etc.
@@ -146,7 +146,7 @@ EL_SRC = hui-em-but.el hui-xe-but.el
 EL_COMPILE = hact.el hactypes.el hargs.el hbdata.el hbmap.el hbut.el \
 	     hgnus.el hhist.el hib-debbugs.el hib-doc-id.el hib-kbd.el \
 	     hib-social.el hibtypes.el \
-	     hinit.el hload-path.el hlvar.el hmail.el hmh.el hmoccur.el hmouse-info.el \
+	     hinit.el hload-path.el hmail.el hmh.el hmoccur.el hmouse-info.el \
 	     hmouse-drv.el hmouse-key.el hmouse-mod.el hmouse-sh.el hmouse-tag.el \
 	     hpath.el hrmail.el hsettings.el hsmail.el hsys-org.el hsys-www.el htz.el \
 	     hycontrol.el hui-jmenu.el hui-menu.el hui-mini.el hui-mouse.el hui-select.el \
@@ -161,7 +161,7 @@ EL_KOTL = kotl/kexport.el kotl/kfile.el kotl/kfill.el kotl/kimport.el kotl/klabe
 ELC_COMPILE =  hactypes.elc hibtypes.elc hib-debbugs.elc hib-doc-id.elc hib-kbd.elc \
 	     hib-social.elc hact.elc \
 	     hargs.elc hbdata.elc hbmap.elc hbut.elc hgnus.elc hhist.elc \
-	     hinit.elc hload-path.elc hlvar.elc hmail.elc hmh.elc hmoccur.elc hmouse-info.elc \
+	     hinit.elc hload-path.elc hmail.elc hmh.elc hmoccur.elc hmouse-info.elc \
 	     hmouse-drv.elc hmouse-key.elc hmouse-mod.elc hmouse-sh.elc hmouse-tag.elc \
 	     hpath.elc hrmail.elc hsettings.elc hsmail.elc hsys-org.elc hsys-www.elc htz.elc \
 	     hycontrol.elc hui-jmenu.elc hui-menu.elc hui-mini.elc hui-mouse.elc hui-select.elc \

@@ -196,8 +196,8 @@
 	((featurep 'xemacs)
 	 (define-key kotl-mode-map 'button3 'kotl-popup-menu))
 	(t ;; hyperb:emacs-p
-	 (define-key kotl-mode-map [down-mouse-3] 'kotl-popup-menu)
-	 (define-key kotl-mode-map [mouse-3] nil)))
+	 (define-key kotl-mode-map [C-down-mouse-3] 'kotl-popup-menu)
+	 (define-key kotl-mode-map [C-mouse-3] nil)))
   (unless (cond (hyperb:emacs-p
 		 (global-key-binding [menu-bar Koutline]))
 		((boundp 'current-menubar)

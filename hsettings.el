@@ -4,7 +4,7 @@
 ;;
 ;; Orig-Date:    15-Apr-91 at 00:48:49
 ;;
-;; Copyright (C) 1991-2016  Free Software Foundation, Inc.
+;; Copyright (C) 1991-2017  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
 ;;
 ;; This file is part of GNU Hyperbole.
@@ -216,10 +216,8 @@ obtained search string."
       ((and (featurep 'xemacs) (not noninteractive))
        (require 'hui-xe-but)
        ;;
-       ;; If running XEmacs 19.8 or below, don't highlight explicit buttons
-       ;; whenever a file is read in since this can cause a sporadic crash
-       ;; when find-files are done.
-       (if hyperb:kotl-p (add-hook 'find-file-hook #'hproperty:but-create t))
+       ;; Highlight explicit buttons when files are read in.
+       (add-hook 'find-file-hook #'hproperty:but-create t)
        (defalias 'hui:but-flash 'hproperty:but-flash)
        ;;
        ;; Substitute for the nil argument below a valid X color name with
@@ -247,16 +245,6 @@ obtained search string."
 ;;; section in "hib-doc-id.el" for complete installation and use information.
 ;;;
 (add-hook 'hibtypes-end-load-hook (lambda () (require 'hib-doc-id)))
-
-;;; ************************************************************************
-;;; HYPERBOLE LOCAL VARIABLE SUPPORT
-;;; ************************************************************************
-
-;;; Uncomment this if you really need to be able to use Hyperbole variables
-;;; (and others with colons in their names) within file local variable lists.
-;;; See the source file for more details.
-;;;
-;;  (require 'hlvar)
 
 ;;; ************************************************************************
 ;;; SITE-SPECIFIC ADDITIONS - Add your Hyperbole configuration additions here.

@@ -5,7 +5,7 @@
 ;;
 ;; Orig-Date:     1-Jan-94
 ;;
-;; Copyright (C) 1994-2016  Free Software Foundation, Inc.
+;; Copyright (C) 1994-2017  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
 ;;
 ;; This file is part of GNU Hyperbole.
@@ -23,7 +23,7 @@
 ;;; Public variables
 ;;; ************************************************************************
 
-(defconst hyperb:version "7.0.2" "GNU Hyperbole revision number.")
+(defconst hyperb:version "7.0.2a" "GNU Hyperbole revision number.")
 
 ;;;###autoload
 (defvar hyperb:microcruft-os-p

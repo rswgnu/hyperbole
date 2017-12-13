@@ -120,8 +120,8 @@
 	((featurep 'xemacs)
 	 (define-key hyrolo-mode-map 'button3 'hyrolo-popup-menu))
 	(t ;; hyperb:emacs-p
-	 (define-key hyrolo-mode-map [down-mouse-3] 'hyrolo-popup-menu)
-	 (define-key hyrolo-mode-map [mouse-3] nil)))
+	 (define-key hyrolo-mode-map [C-down-mouse-3] 'hyrolo-popup-menu)
+	 (define-key hyrolo-mode-map [C-mouse-3] nil)))
   (unless (cond (hyperb:emacs-p
 		 (global-key-binding [menu-bar Rolo]))
 		((boundp 'current-menubar)
