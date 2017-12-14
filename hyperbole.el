@@ -382,7 +382,8 @@ frame, those functions by default still return the prior frame."
 	    (if (consp frame-x-dot-y) (setcar frame-x-dot-y (selected-frame)))
 	    frame-x-dot-y)))
 
-(require 'hmouse-key)
+;; hmouse-drv will load hui-mouse and hmouse-key
+(mapc #'require '(hsettings hmouse-drv hmouse-sh))
 
 ;;; ************************************************************************
 ;;; You shouldn't need to modify anything below here.
@@ -680,8 +681,6 @@ If FLAG is nil then text is shown, while if FLAG is t the text is hidden."
 ;;; ************************************************************************
 ;;; Load Site-specific Configurations and Initialize Hyperbole Package
 ;;; ************************************************************************
-
-(require 'hsettings)
 
 (defun hyperb:init ()
   "Standard configuration routine for Hyperbole."

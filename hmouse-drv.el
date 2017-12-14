@@ -469,23 +469,25 @@ The selected window does not change."
 	      (action-key-depress-args))
 	  (hypb:save-selected-window-and-input-focus
 	   (hmouse-item-to-window)
+	   (sit-for 0) ;; Force display of release-window
 	   (unless (eq depress-frame (window-frame release-window))
-	     (message "Buffer or item thrown to frame under this one")
 	     ;; Show the frame thrown to before it is covered when
 	     ;; input-focus is returned to the depress-frame.
-	     ;;   (raise-frame (window-frame release-window))
-	     ;;   (sit-for 1)
+	     (raise-frame (window-frame release-window))
+	     (switch-to-buffer (current-buffer) t t)
+	     ;; Don't use sit-for here because it can be interrupted early.
+	     (sleep-for 0.5)
 	     )))
       ;; Throw the current buffer
       (set-window-buffer release-window (current-buffer))
+      (sit-for 0) ;; Force display of release-window
       (unless (eq depress-frame (window-frame release-window))
-	(message "Buffer or item thrown to frame under this one")
 	;; Show the frame thrown to before it is covered when
 	;; input-focus is returned to the depress-frame.
-	;;   (raise-frame (window-frame release-window))
-	;;   (sit-for 1)
-	;;   (select-frame-set-input-focus depress-frame)
-	))))
+	(raise-frame (window-frame release-window))
+	;; Don't use sit-for here because it can be interrupted early.
+	(sleep-for 0.5)
+	(select-frame-set-input-focus depress-frame)))))
 
 ;;;###autoload
 (defun hkey-buffer-to (from-window to-window)
