@@ -1,15 +1,24 @@
+2017-12-15  Bob Weiner  <rsw@gnu.org>
+
+* hmouse-drv.el (hkey-throw): Fully resolved temporary display of newly created frames
+    with a (redisplay t) to force display of any window updates during the temporary
+    display.
+
 2017-12-13  Bob Weiner  <rsw@gnu.org>
 
-* hmouse-drv.el (hkey-throw): Partially solved temporary display of newly created frames (when not given focus
-    initially with a '(no-focus-on-map . t) property), so hkey-throw to a new target frame now temporarily displays
-    the target frame and then makes the start frame the uppermost frame.  When on an item though, the item is
-    not visible during the temporary display yet.
+* hmouse-drv.el (hkey-throw): Partially solved temporary display of newly created frames
+    (when not given focus initially with a '(no-focus-on-map . t) property), so hkey-throw
+    to a new target frame now temporarily displays the target frame and then makes the start
+    frame the uppermost frame.  When on an item though, the item is not visible during the
+    temporary display yet.
 
-* Makefile (texinfo): Added texinfo dependency target and added additional image dependencies in man/im.
+* Makefile (texinfo): Added texinfo dependency target and added additional image dependencies
+    in man/im.
 
-* hyperbole.el (require 'hmouse-drv): Changed from hmouse-key to prevent a require cycle during macro expansion.
-    hmouse-key.el: Changed requires to just be during compile since hyperbole.el now includes these requires and
-      will load hmouse-key.
+* hyperbole.el (require 'hmouse-drv): Changed from hmouse-key to prevent a require cycle
+    during macro expansion.
+  hmouse-key.el: Changed requires to just be during compile since hyperbole.el now includes
+    these requires and will load hmouse-key.
 
 2017-12-12  Bob Weiner  <rsw@gnu.org>
 

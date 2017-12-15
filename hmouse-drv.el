@@ -456,32 +456,33 @@ Leave TO-WINDOW as the selected window."
 
 ;;;###autoload
 (defun hkey-throw (release-window)
-  "Throw either a displayable item at point or the current buffer to RELEASE-WINDOW.
+  "Throw either a displayable item at point or the current buffer for display in RELEASE-WINDOW.
 The selected window does not change."
   (interactive
    (list (let ((mode-line-text (concat " Ace - " (nth 2 (assq ?t aw-dispatch-alist)))))
 	   (aw-select mode-line-text))))
   (let ((depress-frame (selected-frame)))
     (if (cadr (assq major-mode hmouse-drag-item-mode-forms))
-	;; On an item to throw
+	;; Throw the item at point
 	(let ((action-key-depress-window (selected-window))
 	      (action-key-release-window release-window)
 	      (action-key-depress-args))
 	  (hypb:save-selected-window-and-input-focus
 	   (hmouse-item-to-window)
-	   (sit-for 0) ;; Force display of release-window
 	   (unless (eq depress-frame (window-frame release-window))
+	     ;; Force redisplay or item buffer won't be displayed here.
+	     (redisplay t)
 	     ;; Show the frame thrown to before it is covered when
 	     ;; input-focus is returned to the depress-frame.
 	     (raise-frame (window-frame release-window))
-	     (switch-to-buffer (current-buffer) t t)
 	     ;; Don't use sit-for here because it can be interrupted early.
 	     (sleep-for 0.5)
 	     )))
       ;; Throw the current buffer
       (set-window-buffer release-window (current-buffer))
-      (sit-for 0) ;; Force display of release-window
       (unless (eq depress-frame (window-frame release-window))
+	;; Force redisplay or item buffer won't be displayed here.
+	(redisplay t)
 	;; Show the frame thrown to before it is covered when
 	;; input-focus is returned to the depress-frame.
 	(raise-frame (window-frame release-window))
