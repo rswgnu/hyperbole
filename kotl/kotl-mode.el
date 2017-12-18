@@ -1967,7 +1967,7 @@ If key is pressed:
      otherwise hide it;
  (3) between cells or within the read-only indentation region to the left of
      a cell, then move point to prior location and begin creation of a
-     klink to some other outline cell; hit the Action Key twice to select the
+     klink to some other outline cell; press the Action Key twice to select the
      link referent cell;
  (4) anywhere else, invoke `action-key-eol-function', typically to scroll up
      a windowful."
@@ -2002,7 +2002,7 @@ If assist-key is pressed:
      each cell in tree beginning at point;
  (3) between cells or within the read-only indentation region to the left of
      a cell, then move point to prior location and prompt to move one tree to
-     a new location in the outline; hit the Action Key twice to select the
+     a new location in the outline; press the Action Key twice to select the
      tree to move and where to move it;
  (4) anywhere else, invoke `assist-key-eol-function', typically to scroll down
      a windowful."

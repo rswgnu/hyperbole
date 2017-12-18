@@ -249,7 +249,7 @@ drag release window.")
 (defun hmouse-at-item-p ()
   "Return t if point is on an item draggable by Hyperbole, otherwise nil."
   (let* ((buf (and (window-live-p action-key-depress-window) (window-buffer action-key-depress-window)))
-	 (mode (and buf (cdr (assq 'major-mode (buffer-local-variables buf))))))
+	 (mode (and buf (buffer-local-value 'major-mode buf))))
     (and buf (with-current-buffer buf
 	       ;; Point must be on an item, not after one
 	       (not (looking-at "\\s-*$")))

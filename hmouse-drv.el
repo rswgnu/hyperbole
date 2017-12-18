@@ -454,6 +454,25 @@ Leave TO-WINDOW as the selected window."
 	   (aw-select mode-line-text))))
   (hkey-swap-buffers (selected-window) to-window))
 
+;; Once the "display-until.el" library is added to Emacs, hkey-throw can be simplified to the following:
+;;
+;; (defun hkey-throw (release-window)
+;;   "Throw either a displayable item at point or the current buffer for display in RELEASE-WINDOW.
+;; The selected window does not change."
+;;   (interactive
+;;    (list (let ((mode-line-text (concat " Ace - " (nth 2 (assq ?t aw-dispatch-alist)))))
+;;            (aw-select mode-line-text))))
+;;   (if (cadr (assq major-mode hmouse-drag-item-mode-forms))
+;;       ;; Throw the item at point
+;;       (let ((action-key-depress-window (selected-window))
+;;             (action-key-release-window release-window)
+;;             (action-key-depress-args))
+;;         (hmouse-item-to-window)
+;;         (select-window action-key-depress-window)
+;;         (display-window-until release-window))
+;;     ;; Throw the current buffer
+;;     (display-window-until release-window (current-buffer))))
+
 ;;;###autoload
 (defun hkey-throw (release-window)
   "Throw either a displayable item at point or the current buffer for display in RELEASE-WINDOW.
@@ -461,7 +480,10 @@ The selected window does not change."
   (interactive
    (list (let ((mode-line-text (concat " Ace - " (nth 2 (assq ?t aw-dispatch-alist)))))
 	   (aw-select mode-line-text))))
-  (let ((depress-frame (selected-frame)))
+  (let ((depress-frame (selected-frame))
+	(display-delay (if (boundp 'temp-display-delay)
+			   temp-display-delay
+			 0.5)))
     (if (cadr (assq major-mode hmouse-drag-item-mode-forms))
 	;; Throw the item at point
 	(let ((action-key-depress-window (selected-window))
@@ -476,7 +498,7 @@ The selected window does not change."
 	     ;; input-focus is returned to the depress-frame.
 	     (raise-frame (window-frame release-window))
 	     ;; Don't use sit-for here because it can be interrupted early.
-	     (sleep-for 0.5)
+	     (sleep-for display-delay)
 	     )))
       ;; Throw the current buffer
       (set-window-buffer release-window (current-buffer))
@@ -487,7 +509,7 @@ The selected window does not change."
 	;; input-focus is returned to the depress-frame.
 	(raise-frame (window-frame release-window))
 	;; Don't use sit-for here because it can be interrupted early.
-	(sleep-for 0.5)
+	(sleep-for display-delay)
 	(select-frame-set-input-focus depress-frame)))))
 
 ;;;###autoload
@@ -896,7 +918,7 @@ Only works when running under a window system, not from a dumb terminal."
 	(assist-key-depress)
 	(when (called-interactively-p 'interactive)
 	  (message
-	   "Assist Key depressed; go to release point and hit {%s %s}."
+	   "Assist Key depressed; go to release point and press {%s %s}."
 	   (substitute-command-keys "\\[universal-argument]")
 	   (substitute-command-keys "\\[hkey-operate]"))))
     (if action-key-depressed-flag
@@ -905,7 +927,7 @@ Only works when running under a window system, not from a dumb terminal."
 		 (message "Action Key released.")))
       (action-key-depress)
       (when (called-interactively-p 'interactive)
-	(message "Action Key depressed; go to release point and hit {%s}."
+	(message "Action Key depressed; go to release point and press {%s}."
 		 (substitute-command-keys "\\[hkey-operate]"))))))
 
 (defun hkey-summarize (&optional current-window)

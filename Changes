@@ -1,3 +1,15 @@
+2017-12-17  Bob Weiner  <rsw@gnu.org>
+
+* kotl/kfill.el: Eliminated use of filladapt.el since it causes kotl-mode filling errors.
+
+* kotl/kfill.el (kfill:forward-line): Removed improperly used [] in skip-chars-forward.
+
+2017-12-16  Bob Weiner  <rsw@gnu.org>
+
+* hui.el (hui:key-dir):
+  hui-window.el (hmouse-at-item-p):
+  hui-jmenu.el (hui-menu-buffer-mode-name): Simplified using buffer-local-value.
+
 2017-12-15  Bob Weiner  <rsw@gnu.org>
 
 * hmouse-drv.el (hkey-throw): Fully resolved temporary display of newly created frames
