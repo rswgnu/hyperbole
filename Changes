@@ -1,3 +1,13 @@
+2017-12-19  Bob Weiner  <rsw@gnu.org>
+
+* hib-social.el (github-reference): Added =item-id syntax.
+                (gitlab-reference): Added to support Gitlab references.
+
+2017-12-18  Bob Weiner  <rsw@gnu.org>
+
+* hib-social.el (github-reference): Fixed resolution of these formats of issue reference:
+    gh#gh-34 and gh#issue/34 (needed to be plural).
+
 2017-12-17  Bob Weiner  <rsw@gnu.org>
 
 * kotl/kfill.el: Eliminated use of filladapt.el since it causes kotl-mode filling errors.
