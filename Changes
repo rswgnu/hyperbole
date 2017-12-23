@@ -1,3 +1,19 @@
+2017-12-20  Bob Weiner  <rsw@gnu.org>
+
+* kotl/kexport.el (kexport:html-file-klink)
+                  (kexport:html): 
+                  (kexport:html-replacement-alist): Added 'k' to precede klink HTML HREF
+    references since these must start with a letter.
+
+* hui-select.el (hui-select-get-region): Added this to be used in other libraries.
+                (hui-select-get-region-boundaries): Added and used in hui-select-thing.
+
+2017-12-19  Bob Weiner  <rsw@gnu.org>
+
+* hib-social.el (github-reference, gitlab-reference): Added "people" reference support
+    to list people who are part of a formal organization as well as a "staff" alias.
+    Added "contributors" reference support to list project contributors as well.
+
 2017-12-19  Bob Weiner  <rsw@gnu.org>
 
 * hib-social.el (github-reference): Added =item-id syntax.

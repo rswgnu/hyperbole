@@ -1517,7 +1517,7 @@ windows, instead use the @bkbd{M-o t <id-of-window-to-display-item-in>} key sequ
 @c normally under Hyperbole.
 
 @c The code for Smart Key modifiers can be found in
-@c @file{@code{$@{hyperb:dir@}}/hmouse-mod.el}.
+@c @file{$@{hyperb:dir@}/hmouse-mod.el}.
 
 
 @node Buttons, Menus, Smart Keys, Top

@@ -91,45 +91,6 @@
 ;;
 
 
-;;   Gitlab (remote) reference links
-;;
-;;     gl@rswgnu                                 Display user's home page & projects
-;;
-;;     gitlab#rswgnu/hyperbole                   Display user's project
-;;     gl#rswgnu/helm/global_mouse               Display user project's branch
-;;     gl#rswgnu/hyperbole/55a1f0                Display user project's commit diff
-;;
-;;     gl#orgs/gitlab/people                     List the org, gitlab's staff
-;;
-;;     (setq hibtypes-gitlab-default-user "rswgnu")
-;;     gitlab#/hyperbole                         Display default user's project
-;;
-;;
-;;     Once you set the default user and project variables, you can leave
-;;     them off any reference links:
-;;
-;;       (setq hibtypes-gitlab-default-user "emacs-helm")
-;;       (setq hibtypes-gitlab-default-project "helm")
-;;
-;;     like so:
-;;
-;;       gl#issues                               List emacs-helm/helm's open issues
-;;       gl#1878                                 Display a specific project issue
-;;
-;;       gl#pulls                                List project's open pull requests
-;;       gl#pull/1871                            Display a specific project pull request
-;;
-;;       gl#branches                             List project's branches
-;;       gl#branch/global_mouse                  List files in a specific branch
-;;       gl#global_mouse                         You can even leave off the `branch' keyword
-;;
-;;       gl#tags                                 List project's tagged commits, typically releases
-;;       gl#tag/v2.8.4 or gl#v2.8.4              List files in a specific tagged commit
-;;
-;;       gl#commits                              List project's commits
-;;       gl#898e55c                              Display default user and default
-;;                                               project commit diff
-
 ;;   Github (remote) reference links
 ;;
 ;;     gh@rswgnu                                 Display user's home page & projects
@@ -138,7 +99,8 @@
 ;;     gh#rswgnu/helm/global_mouse               Display user project's branch
 ;;     gh#rswgnu/hyperbole/55a1f0                Display user project's commit diff
 ;;
-;;     gh#orgs/github/people                     List the org, github's staff
+;;     gh#orgs/github/people (or staff)          List the org, github's staff
+;;     gh#/github/fetch/contributors             List contributors to github's fetch project
 ;;
 ;;     (setq hibtypes-github-default-user "rswgnu")
 ;;     github#/hyperbole                         Display default user's project
@@ -168,6 +130,40 @@
 ;;       gh#commits                              List project's commits
 ;;       gh#898e55c                              Display default user and default
 ;;                                               project commit diff
+
+;;   Gitlab (remote) reference links support the same reference types as Github (but
+;;   substitute the gl# prefix) plus these additional reference types:
+;;
+;;     gl#/libertybsd/libertybsd-status          Group and project
+;;
+;;     gl#gitlab-org/gitlab-ce/activity          Summarize user's project activity
+;;     gl#gitlab-org/gitlab-ce/analytics         Display user project's cycle_analytics
+;;     gl#gitlab-org/gitlab-ce/boards            Display user project's kanban-type issue boards
+;;
+;;     Once you set the default user and project variables, you can leave
+;;     them off any reference links:
+;;
+;;       (setq hibtypes-gitlab-default-user "gitlab-org")
+;;       (setq hibtypes-gitlab-default-project "gitlab-ce")
+;;
+;;     gl#issues or gl#list                      Display default project's issue list
+;;     gl#jobs                                   Display default project's computing jobs
+;;     gl#labels                                 Display default project's issue categories
+;;     gl#members                                Display default project's staff list
+;;     gl#contributors                           Show contributor push frequency charts
+;;     gl#merge_requests or gl#pulls             Display default project's pull requests
+;;     gl#milestones                             Display default project's milestones status
+;;     gl#pages                                  Display default project's web pages
+;;     gl#pipelines                              List build and test sequences
+;;     gl#pipeline_charts                        Graphical view of pipeline run results across time
+;;     gl#schedules                              Display schedules for project pipelines
+;;     gl#snippets                               Project snippets, diffs and text with discussion
+;;
+;;     gl#groups                                 List all available groups of projects
+;;     gl#projects                               List all available projects
+;;
+;;     gl#milestone=38                           Show a specific project milestone
+;;     gl#snippet/1689487                        Show a specific project snippet
 
 ;;; Code:
 ;;; ************************************************************************
@@ -344,7 +340,8 @@ REFERENCE is a string of one of the following forms:
 or  /<project>.
 
 <ref-item> is one of these:
-  one of the words: branches, commits, issues, pulls, status or tags; the associated items are listed;
+  one of the words: branches, commits, contributors, issues, people or staff,
+  pulls, status or tags; the associated items are listed;
 
   one of the words: branch, commit, issue, pull or tag followed by a '/' or '=' and 
   an item-id; the item is shown;
@@ -386,15 +383,22 @@ PROJECT value is provided, it defaults to the value of
 		      ;; /project
 		      (setq project (or project (match-string-no-properties 1 reference))
 			    reference nil)))
+	       (when (or (and project (string-match "\\`\\(members\\|people\\|staff\\)\\'" project))
+			 ;; Change <org-name>/[members|people|staff] to /orgs/<org-name>/people.
+			 (and reference (string-match "\\`\\(members\\|people\\|staff\\)\\'" reference)))
+		 ;; Change <org-name>/project/[people|staff] to /orgs/<org-name>/people.
+		 (setq project user
+		       user "orgs"
+		       reference "people"))
+	       (when (equal reference "contributors")
+		 ;; Change /user/project/contributors to /user/project/graphs/contributors.
+		 (setq ref-type "graphs/"
+		       reference "contributors"))
 	       (unless (stringp user) (setq user hibtypes-github-default-user))
 	       (unless (stringp project) (setq project hibtypes-github-default-project))
 	       (when reference
-		 (cond ((equal user "orgs")
-			;; A specific organization reference
-			(setq ref-type reference
-			      reference ""))
-		       ((member reference '("branches" "commits" "issues" "pulls" "tags"))
-			;; All branches, commits, open issues, pull requests or commit tags reference
+		 (cond ((member reference '("branches" "commits" "contributors" "issues" "people" "pulls" "tags"))
+			;; All branches, commits, contributors, open issues, people, pull requests or commit tags reference
 			(setq ref-type reference
 			      reference ""))
 		       ((and (< (length reference) 8) (string-match "\\`\\([gG][hH]-\\)?[0-9]+\\'" reference))
@@ -420,7 +424,8 @@ PROJECT value is provided, it defaults to the value of
 		   (funcall hibtypes-social-display-function
 			    (if reference
 				(format url-to-format user project ref-type reference)
-			      (format url-to-format user project "" "")))
+			      ;; Remove trailing /
+			      (substring (format url-to-format user project "" "") 0 -1)))
 		 (cond ((and (null user) (null project))
 			(error "(github-reference): Set `hibtypes-github-default-user' and `hibtypes-github-default-project'"))
 		       ((null user)
@@ -439,12 +444,14 @@ REFERENCE is a string of one of the following forms:
     <ref-item>
     <user>/<project>/<ref-item>
     <project>/<ref-item>
-or  /<project>.
+    /<group>/<project>
+or  /<project-or-group> (where a group is a collection of projects).
 
 <ref-item> is one of these:
-  one of the words: activity, analytics, boards or kanban, branches, commits, issues or
-  list, jobs, labels, members, merge_requests, milestones, pages, pipelines, pipeline_charts,
-  pulls, schedules, snippets, status or tags; the associated items are listed;
+  one of the words: activity, analytics, boards or kanban, branches, commits, contributors,
+  groups, issues or list, jobs, labels, merge_requests, milestones, pages, pipelines,
+  pipeline_charts, members or people or staff, projects, pulls, schedules, snippets,
+  status or tags; the associated items are listed;
 
   one of the words: branch, commit(s), issue(s), milestone(s), pull(s), snippet(s) or
   tag(s) followed by a '/' or '=' and an item-id; the item is shown;
@@ -486,6 +493,12 @@ PROJECT value is provided, it defaults to the value of
 		      ;; /project
 		      (setq project (or project (match-string-no-properties 1 reference))
 			    reference nil)))
+	       (when (and (null (and user project)) (string-match "\\`\\(groups\\|projects\\)\\'" reference))
+		 ;; List all available groups of projects or projects.
+		 (setq user "explore"
+		       project (match-string-no-properties 1 reference)
+		       ref-type nil
+		       reference nil))
 	       (unless (stringp user) (setq user hibtypes-gitlab-default-user))
 	       (unless (stringp project) (setq project hibtypes-gitlab-default-project))
 	       (when (equal project "pages")
@@ -511,13 +524,19 @@ PROJECT value is provided, it defaults to the value of
 			;; List all issues
 			(setq ref-type "issues"
 			      reference ""))
- 		       ((equal reference "members")
-			;; Members of the project
+	               ((equal reference "contributors")
+			(setq ref-type "graphs/master"
+			      reference ""))
+		       ((string-match "\\`\\(members\\|people\\|staff\\)\\'" reference)
 			(setq ref-type "project_members"
 			      reference ""))
 		       ((equal reference "pipeline_charts")
 			;; Continuous Integration Pipeline Charts
 			(setq ref-type "pipelines/charts"
+			      reference ""))
+ 		       ((equal reference "pulls")
+			;; Merge requests for the project
+			(setq ref-type "merge_requests"
 			      reference ""))
 		       ((equal reference "schedules")
 			;; Schedules for CI Pipelines
@@ -529,9 +548,9 @@ PROJECT value is provided, it defaults to the value of
 			      reference ""))
 		       ((member reference '("activity" "branches" "commits" "issues" "labels"
 					    "merge_requests" "milestones" "pages" "pipelines"
-					    "pulls" "snippets" "tags"))
+					    "snippets" "tags"))
 			;; All activity, branches, commits, cycle analytics, open issues, issue labels,
-			;; merge requests, milestones, web pages, pull requests, code snippets
+			;; members, merge requests, milestones, web pages, pull requests, code snippets
 			;; or commit tags reference
 			(setq ref-type reference
 			      reference ""))
