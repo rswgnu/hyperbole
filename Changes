@@ -1,3 +1,8 @@
+2017-12-29  Bob Weiner  <rsw@gnu.org>
+
+* hsettings.el (inhibit-hyperbole-messaging): Moved this from hyperbole.el to here to prevent
+    it being reset when hyperbole-toggle-messaging reloads the hyperbole library.
+
 2017-12-20  Bob Weiner  <rsw@gnu.org>
 
 * kotl/kexport.el (kexport:html-file-klink)

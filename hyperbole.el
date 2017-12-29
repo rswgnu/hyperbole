@@ -177,24 +177,6 @@ context (wherever point is).  {C-u \\[hkey-help]} shows what the Assist Key will
   :type 'boolean
   :group 'hyperbole-keys)
 
-(defcustom inhibit-hyperbole-messaging t
-  "*Determines whether Hyperbole supports explicit buttons in mail and news buffers.
-The default of t means disable such support (work remains to
-modernize these features).  When t, Hyperbole will not alter
-messaging mode hooks nor overload functions from these packages,
-preventing potential incompatibilities.
-
-If you want to use Hyperbole buttons in mail and news buffers, set
-this variable to nil by adding (hyperbole-toggle-messaging t)
-to your personal Emacs initialization file, prior to loading
-Hyperbole, and then restart Emacs."
-  :type 'boolean
-  :initialize (lambda (symbol value) (set symbol value))
-  :set (lambda (symbol value) 
-	 (set symbol (not value))
-	 (hyperbole-toggle-messaging nil))
-  :group 'hyperbole-buttons)
-
 ;;; ************************************************************************
 ;;; Public key bindings
 ;;; ************************************************************************

@@ -149,6 +149,24 @@ package to display search results."
 			      search-term)))
       (user-error "(Hyperbole): Invalid web search service `%s'" service-name))))
 
+(defcustom inhibit-hyperbole-messaging t
+  "*Determines whether Hyperbole supports explicit buttons in mail and news buffers.
+The default of t means disable such support (work remains to
+modernize these features).  When t, Hyperbole will not alter
+messaging mode hooks nor overload functions from these packages,
+preventing potential incompatibilities.
+
+If you want to use Hyperbole buttons in mail and news buffers, set
+this variable to nil by adding (hyperbole-toggle-messaging 1)
+to your personal Emacs initialization file, prior to loading
+Hyperbole, and then restart Emacs."
+  :type 'boolean
+  :initialize 'custom-initialize-set
+  :set (lambda (symbol value) 
+	 ;; Invert value to produce ARG for hyperbole-toggle-messaging.
+	 (hyperbole-toggle-messaging (if value 0 1)))
+  :group 'hyperbole-buttons)
+
 (defcustom hyperbole-web-search-browser-function browse-url-browser-function
   "*Function of one url argument called by any Hyperbole Find/Web search."
   :type 'boolean
