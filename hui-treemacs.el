@@ -4,7 +4,7 @@
 ;;
 ;; Orig-Date:    19-Nov-17
 ;;
-;; Copyright (C) 2017  Free Software Foundation, Inc.
+;; Copyright (C) 2017-2018  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
 ;;
 ;; This file is part of GNU Hyperbole.
@@ -18,9 +18,9 @@
 
 (eval-and-compile (require 'treemacs nil t))
 
-(eval-when (load)
-  (unless (>= (string-to-number treemacs-version) 1.14)
-    (error "(hui-treemacs): Hyperbole requires Treemacs package version 1.14 or greater")))
+(progn ()
+  (unless (>= (string-to-number treemacs-version) 1.18)
+    (error "(hui-treemacs): Hyperbole requires Treemacs package version 1.18 or greater")))
 
 ;;; ************************************************************************
 ;;; smart-treemacs functions
@@ -65,7 +65,7 @@ If key is pressed:
 		     (hact 'link-to-buffer-tmp (seq-elt result 0) (seq-elt result 1))
 		   ;; (bufferp result)
 		   (hact 'link-to-buffer-tmp result))
-	       (treemacs-push-button current-prefix-arg))))))
+	       (treemacs-toggle-node current-prefix-arg))))))
 
 ;;;###autoload
 (defun smart-treemacs-modeline ()
