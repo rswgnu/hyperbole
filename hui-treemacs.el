@@ -19,8 +19,8 @@
 (eval-and-compile (require 'treemacs nil t))
 
 (progn ()
-  (unless (>= (string-to-number treemacs-version) 1.18)
-    (error "(hui-treemacs): Hyperbole requires Treemacs package version 1.18 or greater")))
+  (unless (>= (string-to-number treemacs-version) 2.0)
+    (error "(hui-treemacs): Hyperbole requires Treemacs package version 2.0 or greater")))
 
 ;;; ************************************************************************
 ;;; smart-treemacs functions
@@ -51,10 +51,10 @@ If key is pressed:
   (interactive)
   (cond ((first-line-p)
 	 (if (eolp)
-	     (treemacs-toggle)
+	     (bury-buffer)
 	   (hact 'link-to-directory default-directory)))
 	((and (last-line-p) (eolp))
-	 (treemacs-toggle))
+	 (bury-buffer))
 	((eolp)
 	 (funcall (if assist-flag assist-key-eol-function action-key-eol-function)))
 	(t (let ((over-icon (and (treemacs-current-button)
@@ -86,7 +86,7 @@ Suitable for use as a value of `action-key-modeline-buffer-id-function'."
 	      (treemacs-is-treemacs-window? action-key-depress-window)
 	    (string-match " Treemacs " (format-mode-line mode-line-format)))
 	  ;; Quit/hide treemacs.
-	  (treemacs-toggle))
+	  (bury-buffer))
 	 ;;
 	 ;; Treemacs is visible and displaying the same dir as
 	 ;; the default dir of the clicked on modeline.
@@ -95,7 +95,7 @@ Suitable for use as a value of `action-key-modeline-buffer-id-function'."
 			     (with-current-buffer (treemacs-buffer-exists?)
 			       default-directory)))
 	  ;; Quit/hide treemacs.
-	  (treemacs-toggle))
+	  (bury-buffer))
 	 ;;
 	 ;; Otherwise, invoke treemacs on the default dir of the clicked on modeline.
 	 (t (treemacs))))
