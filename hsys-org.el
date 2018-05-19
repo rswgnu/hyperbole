@@ -4,16 +4,16 @@
 ;;
 ;; Orig-Date:     2-Jul-16 at 14:54:14
 ;;
-;; Copyright (C) 2016  Free Software Foundation, Inc.
+;; Copyright (C) 2016,2018  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
 ;;
 ;; This file is part of GNU Hyperbole.
 
 ;;; Commentary:
 ;;
-;;   This defines a context-sensitive implicit button type, org-mode, triggered
-;;   when the major mode is org-mode and point is anywhere other than
-;;   the end of a line.
+;;   This defines a context-sensitive implicit button type, org-mode,
+;;   triggered when the major mode is org-mode or is derived from org
+;;   mode and point is anywhere other than at the end of a line.
 ;;   When:
 ;;     on an Org mode link - displays the link referent
 ;;     on an Org mode heading - cycles through the available display
@@ -28,6 +28,20 @@
 (require 'hbut)
 (require 'org)
 
+(defun hsys-org-cycle ()
+  "Call org-cycle faking this- and last-command in order to cycle
+through all states"
+  (setq last-command 'org-cycle
+	this-command 'org-cycle)
+  (org-cycle))
+
+(defun hsys-org-global-cycle ()
+  "Call org-global-cycle faking this- and last-command in order
+to cycle through all states"
+  (setq last-command 'org-cycle
+	this-command 'org-cycle)
+  (org-global-cycle nil))
+
 ;;; ************************************************************************
 ;;; Public Button Types
 ;;; ************************************************************************
@@ -37,22 +51,22 @@
 The variable, `browse-url-browser-function', customizes the url browser that
 is used for urls.  Valid values of this variable include `browse-url-default-browser'
 and `browse-url-generic'."
-  (when (eq major-mode 'org-mode)
+  (when (derived-mode-p 'org-mode)
     (cond ((org-link-at-p)
 	   (hact 'org-link nil))
 	  ((org-at-heading-p)
-	   (hact 'org-cycle nil))
+	   (hact 'hsys-org-cycle))
 	  (t (hact 'org-meta-return)))))
 
 (defun org-mode:help (&optional _but)
   "If on an Org mode heading, cycles through views of the whole buffer outline.
 If on an Org mode link, displays standard Hyperbole help."
-  (when (eq major-mode 'org-mode)
+  (when (derived-mode-p 'org-mode)
     (cond ((org-link-at-p)
 	   (hkey-help current-prefix-arg)
 	   t)
 	  ((org-at-heading-p)
-	   (org-global-cycle nil)
+	   (hact 'hsys-org-global-cycle)
 	   t))))
 
 (defact org-link (link)
