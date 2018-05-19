@@ -4,7 +4,7 @@
 ;;
 ;; Orig-Date:    04-Feb-90
 ;;
-;; Copyright (C) 1989-2017  Free Software Foundation, Inc.
+;; Copyright (C) 1989-2018  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
 ;;
 ;; This file is part of GNU Hyperbole.
@@ -16,24 +16,12 @@
 ;;; Other required Elisp libraries
 ;;; ************************************************************************
 
-;; Keep this here at the top to prevent recursive reloads from
-;; Hyperbole autoload commands.
-(provide 'hmouse-drv)
-
-(if (and (boundp 'hmouse-alist) hmouse-alist)
-    (require 'hui-window)
-  ;; Force re-definition of hmouse-alist.
-  (makunbound 'hmouse-alist)
-  ;; Define hmouse-alist.
-  (load "hui-mouse")
-  ;; Add drag actions to hmouse-alist.
-  (load "hui-window"))
+(require 'hui-window)
 (require 'hypb)
 
 ;; Quiet byte compiler warnings for these free variables.
-(eval-when-compile
-  (defvar hkey-action nil)
-  (defvar pred-value nil))
+(defvar hkey-action)
+(defvar pred-value)
 
 ;;; ************************************************************************
 ;;; Public variables
@@ -1357,4 +1345,5 @@ not."
     (or rtn (progn (beep) (message "End of buffer")))
     rtn))
 
+(provide 'hmouse-drv)
 ;;; hmouse-drv.el ends here
