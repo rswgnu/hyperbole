@@ -4,7 +4,7 @@
 ;;
 ;; Orig-Date:    21-Sep-92
 ;;
-;; Copyright (C) 1992-2017  Free Software Foundation, Inc.
+;; Copyright (C) 1992-2018  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
 ;;
 ;; This file is part of GNU Hyperbole.
@@ -171,9 +171,9 @@ drag release window.")
 
 ;;;
 ;;; Add window handling to hmouse-alist dispatch table.
-;;;
-(if (not (boundp 'hmouse-alist))
-    (error "\"hui-window.el\": `hmouse-alist' must be defined before loading this.")
+
+(defvar hmouse-alist)
+(defun hui-window--register ()
   (unless (assoc #'(hmouse-inactive-minibuffer-p) hmouse-alist)
     (setq hmouse-alist
 	  (append
@@ -241,6 +241,7 @@ drag release window.")
 	     ;;
 	     )
 	   hmouse-alist))))
+(with-eval-after-load 'hui-mouse (hui-window--register))
 
 ;;; ************************************************************************
 ;;; Public functions

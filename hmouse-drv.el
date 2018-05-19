@@ -4,7 +4,7 @@
 ;;
 ;; Orig-Date:    04-Feb-90
 ;;
-;; Copyright (C) 1989-2017  Free Software Foundation, Inc.
+;; Copyright (C) 1989-2018  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
 ;;
 ;; This file is part of GNU Hyperbole.
@@ -16,16 +16,12 @@
 ;;; Other required Elisp libraries
 ;;; ************************************************************************
 
-(eval-when-compile 
-  (defvar hmouse-alist nil)
-  (require 'hui-window)
-  (makunbound 'hmouse-alist)) ;; for `hmouse-drag-item-to-display'
+(require 'hui-window)
 (require 'hypb)
 
 ;; Quiet byte compiler warnings for these free variables.
-(eval-when-compile
-  (defvar hkey-action nil)
-  (defvar pred-value nil))
+(defvar hkey-action)
+(defvar pred-value)
 
 ;;; ************************************************************************
 ;;; Public variables
