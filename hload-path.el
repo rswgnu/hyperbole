@@ -13,17 +13,6 @@
 
 ;;; Code:
 ;;; ************************************************************************
-;;; Public variables
-;;; ************************************************************************
-
-;;; Support mouse handling and Koutlines under GNU Emacs V19 or higher.
-;;;
-;;;###autoload
-(defconst hyperb:emacs-p
-  (and (not (featurep 'xemacs)) emacs-version)
-  "Version string if running under GNU Emacs, else nil")
-
-;;; ************************************************************************
 ;;; Hyperbole Directory Setting (dynamically computed)
 ;;; ************************************************************************
 
@@ -55,10 +44,9 @@ It must end with a directory separator character.")
 ;; Perform Koutliner initializations.
 
 (add-to-list 'load-path (expand-file-name "kotl/" hyperb:dir))
-;; Invoke kotl-mode for files ending in ".kotl".
-;; Also allow ".kot" for DOS and Windows users.
-(setq auto-mode-alist (cons '("\\.kotl$\\|\\.kot$" . kotl-mode)
-			    auto-mode-alist))
+;; Invoke kotl-mode for files ending in ".kotl".  Also
+;; allow ".kot" for DOS and Windows users.
+(add-to-list 'auto-mode-alist '("\\.kotl?\\'" . kotl-mode))
 
 (provide 'hload-path)
 

@@ -4,7 +4,7 @@
 ;;
 ;; Orig-Date:     7-Jun-89 at 22:08:29
 ;;
-;; Copyright (C) 1991-2016  Free Software Foundation, Inc.
+;; Copyright (C) 1991-2017  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
 ;;
 ;; This file is part of GNU Hyperbole.
@@ -112,7 +112,7 @@ A hyrolo-file consists of:
   :group 'hyperbole-rolo)
 (unless hyrolo-highlight-face
   (setq hyrolo-highlight-face
-	(cond (hyperb:emacs-p
+	(cond ((not (featurep 'xemacs))
 	       (if (fboundp 'defface)
 		   (defface hyrolo-highlight-face nil
 			    "*Face used to highlight rolo search matches."

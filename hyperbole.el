@@ -109,7 +109,7 @@
 	  features (delq 'hversion features)))
 
   ;; Defines hyperb:path-being-loaded, hyperb:stack-frame,
-  ;; (hyperb:window-system) and hyperb:dir, which are used later in
+  ;; (hyperb:window-system), and hyperb:dir, which are used later in
   ;; this file.  Also adds Hyperbole to the load-path if need be.
   ;;
   ;; This handles the case when the Hyperbole package directory is not yet in load-path.
@@ -303,32 +303,12 @@ which prevents automatic removal of any local bindings to the same key."
       (hkey-global-set-key key command)))
 
 (defun hkey-set-bindings (key-binding-list)
-  "Sets keys bound by Hyperbole to those in KEY-BINDING-LIST.
+  "Set keys bound by Hyperbole to those in KEY-BINDING-LIST.
 KEY-BINDING-LIST is the value of either `hkey-previous-bindings'
 \(key bindings prior to Hyperbole load) or `hkey-bindings' (Hyperbole
 bindings after load)."
-  (cond
-    ;;
-    ;; GNU Emacs, XEmacs or InfoDock
-    ((or (featurep 'xemacs) hyperb:emacs-p)
-     (mapcar
-       (lambda (key-and-binding)
-	 (global-set-key (cadr key-and-binding) (car (cddr key-and-binding))))
-       key-binding-list))
-    ;;
-    ;; X
-    ((equal (hyperb:window-system) "xterm")
-     (mapcar
-       (lambda (key-and-binding)
-	 (define-key mouse-map (cadr key-and-binding) (car (cddr key-and-binding))))
-       key-binding-list))
-    ;;
-    ;; NeXT
-    ((equal (hyperb:window-system) "next")
-     (mapcar
-       (lambda (key-and-binding)
-	 (global-set-mouse (cadr key-and-binding) (car (cddr key-and-binding))))
-       key-binding-list))))
+  (dolist (key-and-binding key-binding-list)
+     (global-set-key (cadr key-and-binding) (car (cddr key-and-binding)))))
 
 (defun hyperbole-toggle-bindings ()
   "Toggles between Hyperbole mouse and keyboard keys and their prior bindings."

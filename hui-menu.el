@@ -186,7 +186,7 @@ Return t if cutoff, else nil."
 		    ;; setting.  Invoking this item should then make it
 		    ;; visible.
 		    (hyperb:init-menubar))
-		   ((cond (hyperb:emacs-p
+		   ((cond ((not (featurep 'xemacs))
 			   (global-key-binding [menu-bar Hyperbole]))
 			  ((boundp 'current-menubar)
 			   (car (find-menu-item current-menubar '("Hyperbole")))))
@@ -198,7 +198,7 @@ Return t if cutoff, else nil."
 	     :selected
 	      (cond ((boundp 'menubar-configuration)
 		     (memq 'Hyperbole menubar-configuration))
-		    (hyperb:emacs-p
+		    ((not (featurep 'xemacs))
 		     (and (global-key-binding [menu-bar Hyperbole]) t))
 		    ((boundp 'current-menubar)
 		     (car (find-menu-item current-menubar '("Hyperbole")))))]
