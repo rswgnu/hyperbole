@@ -419,7 +419,8 @@ Signals an error if either depress or release buffer is read-only."
       ;; the kill; also, before the kill, restore the point to where it
       ;; was when the region was set.
       (hmouse-goto-release-point)
-      (let ((release-point (point-marker)))
+      (let ((release-point (point-marker))
+	    (release-window (if assist-flag assist-key-release-window action-key-release-window)))
 	(if buffer-read-only
 	    ;; In this case, we want an error that will terminate execution so that
 	    ;; hkey-region is not reset to nil.  This allows the user to fix the
@@ -431,7 +432,8 @@ Signals an error if either depress or release buffer is read-only."
 	  ;; Now kill and yank the region into the Smart Key release buffer.
 	  (kill-region (or hkey-value (point)) (mark))
 	  ;; Permanently return to release point
-	  (select-window (if assist-flag assist-key-release-window action-key-release-window))
+	  (select-frame-set-input-focus (window-frame release-window))
+	  (select-window release-window)
 	  (goto-char release-point)
 	  ;; Protect from indentation errors
 	  (condition-case ()
@@ -454,7 +456,9 @@ Signals an error if the buffer is read-only."
 	(error "(hmouse-yank-region): Use {%s} to enable yanking into this buffer."
 	       (hmouse-read-only-toggle-key))
       ;; Permanently return to release point
-      (select-window (if assist-flag assist-key-release-window action-key-release-window))
+      (let ((release-window (if assist-flag assist-key-release-window action-key-release-window)))
+	(select-frame-set-input-focus (window-frame release-window))
+	(select-window release-window))
       ;; Protect from indentation errors
       (condition-case ()
 	  (hmouse-insert-region)
@@ -853,7 +857,7 @@ item, this moves the menu buffer itself to the release location."
 		   ;; Otherwise, move the current menu item to the release window.
 		   (setq w1-ref (eval (cadr (assq major-mode hmouse-drag-item-mode-forms))))
 		   (when w1-ref (hmouse-pulse-line) (sit-for 0.05))))
-	(select-window w2)
+	(hypb:select-window-frame w2)
 	(when (and new-window action-key-release-window)
 	  (hmouse-split-window))))
     (unwind-protect

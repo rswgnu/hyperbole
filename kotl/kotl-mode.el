@@ -99,9 +99,9 @@ It provides the following keys:
 				       minor-mode-alist)
 	  minor-mode-alist (set:remove '(selective-display " Otl")
 				       minor-mode-alist)
-	;; Remove indication that buffer is narrowed.
-	mode-line-format (copy-sequence mode-line-format)
-	mode-line-format (set:remove "%n" mode-line-format)))
+	  ;; Remove indication that buffer is narrowed.
+	  mode-line-format (copy-sequence mode-line-format)
+	  mode-line-format (set:remove "%n" mode-line-format)))
   ;;
   (if (fboundp 'add-to-invisibility-spec)
       (add-to-invisibility-spec '(outline . t)))
@@ -113,11 +113,11 @@ It provides the following keys:
 	;; These par* settings must be anchored to the bol since
 	;; kfill.el and `kotl-mode:fill-paragraph' use them in regexp
 	;; searches.
-	paragraph-separate "^[ \t]*$\\|^\^L")
+	paragraph-separate "^[ \t]*$\\|^\^L"
 	paragraph-start "^[ \t]*$\\|^\^L"
 	selective-display nil
 	selective-display-ellipses t
-	track-eol t
+	track-eol t)
   ;;
   ;; This major-mode setting must come after the local variable settings but
   ;; before the koutline is formatted.

@@ -468,7 +468,12 @@ point determined by `mouse-select-region-move-to-beginning'."
 	    (hmouse-bind-shifted-key-emacs 2 #'assist-key-depress-emacs #'assist-mouse-key-emacs))
 	;; X, macOS or MS Windows
 	(hmouse-bind-shifted-key-emacs 2 #'action-key-depress-emacs #'action-mouse-key-emacs)
-	(hmouse-bind-shifted-key-emacs 3 #'assist-key-depress-emacs #'assist-mouse-key-emacs)))
+	(hmouse-bind-shifted-key-emacs 3 #'assist-key-depress-emacs #'assist-mouse-key-emacs)
+	(with-eval-after-load "company"
+	  (define-key company-active-map [S-down-mouse-2] 'ignore)
+	  (define-key company-active-map [S-mouse-2] 'smart-company-to-definition)
+	  (define-key company-active-map [S-down-mouse-3] 'ignore)
+	  (define-key company-active-map [S-mouse-3] 'smart-company-help))))
      ;;
      ;; XEmacs
      ((featurep 'xemacs)
@@ -522,7 +527,13 @@ With optional MIDDLE-KEY-ONLY-FLAG non-nil, binds only the middle mouse key."
 	;; X, macOS or MS Windows
       (hmouse-bind-key-emacs 2 #'action-key-depress-emacs #'action-mouse-key-emacs)
       (unless middle-key-only-flag
-	(hmouse-bind-key-emacs 3 #'assist-key-depress-emacs #'assist-mouse-key-emacs))))
+	(hmouse-bind-key-emacs 3 #'assist-key-depress-emacs #'assist-mouse-key-emacs))
+      `(with-eval-after-load "company"
+	 (define-key company-active-map [down-mouse-2] 'ignore)
+	 (define-key company-active-map [mouse-2] 'smart-company-to-definition)
+	 (unless ,middle-key-only-flag
+	   (define-key company-active-map [down-mouse-3] 'ignore)
+	   (define-key company-active-map [mouse-3] 'smart-company-help)))))
    ;;
    ;; XEmacs
    ((featurep 'xemacs)

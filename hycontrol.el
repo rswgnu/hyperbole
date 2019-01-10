@@ -151,7 +151,7 @@ major-mode 'c-mode).")
   :group 'hyperbole-screen)
 
 (defcustom hycontrol-invert-mode-line-flag t
-  "When t (default) and in a HyControl mode, invert mode-line to emphasize the special key bindings in effect."
+  "*When t (default) and in a HyControl mode, invert mode-line to emphasize the special key bindings in effect."
   :type 'boolean
   :group 'hyperbole-screen)
 
@@ -170,7 +170,7 @@ The unit counter resets to the last digit entered whenever this value is exceede
 
 (defcustom hycontrol-frame-offset '(13 . 23)
   "*Increase in pixel offset for new hycontrol frames relative to the selected frame.
-It's value is an (x-offset . y-offset) pair in pixels."
+Its value is an (x-offset . y-offset) pair in pixels."
   :type '(cons integer integer)
   :group 'hyperbole-screen)
 
@@ -278,6 +278,7 @@ The final predicate should always be t, for default values, typically of zero.")
     ;; Numeric keypad emulation for keyboards that lack one.
     (define-key map "p"     (lambda () (interactive) (hycontrol-virtual-numeric-keypad hycontrol-arg)))
     (define-key map "q"     'hycontrol-quit-frames-mode)
+    (define-key map "Q"     'hycontrol-quit-frames-mode)
     (define-key map "r"     'raise-frame)
     (define-key map "s"     (lambda () (interactive) (hycontrol-set-frame-height nil (- (frame-height) hycontrol-arg))))
     (define-key map "t"     'hycontrol-enable-windows-mode)
@@ -378,6 +379,7 @@ The final predicate should always be t, for default values, typically of zero.")
     ;; Numeric keypad emulation for keyboards that lack one.
     (define-key map "p"     (lambda () (interactive) (hycontrol-virtual-numeric-keypad hycontrol-arg)))
     (define-key map "q"     'hycontrol-quit-windows-mode)
+    (define-key map "Q"     'hycontrol-quit-windows-mode)
     (define-key map "s"     (lambda () (interactive) (shrink-window hycontrol-arg)))
     (define-key map "t"     'hycontrol-enable-frames-mode)
     (define-key map "u"     'unbury-buffer)
@@ -859,16 +861,28 @@ is set to 1.  If it is > `hycontrol-maximum-units', it is set to
   (keyboard-quit))
 
 (defun hycontrol-quit-frames-mode ()
-  "Globally quit HyControl Frames mode, typically on a press of {q}."
+  "Globally quit HyControl Frames mode, typically on a press of {q}.
+If in a help buffer where {q} is bound to quit-window, run that
+instead of quitting HyControl.  Use {Q} to always quit from HyControl."
   (interactive)
-  (hycontrol-disable-modes)
-  (message "Finished controlling frames"))
+  ;; Allow for quitting from help windows displayed when HyControl is active.
+  (if (and (eq last-command-event ?q)
+	   (eq (local-key-binding "q") #'quit-window))
+      (call-interactively #'quit-window)
+    (hycontrol-disable-modes)
+    (message "Finished controlling frames")))
 
 (defun hycontrol-quit-windows-mode ()
-  "Globally quit HyControl Windows mode, typically on a press of {q}."
+  "Globally quit HyControl Windows mode, typically on a press of {q}.
+If in a help buffer where {q} is bound to quit-window, run that
+instead of quitting HyControl.  Use {Q} to always quit from HyControl."
   (interactive)
-  (hycontrol-disable-modes)
-  (message "Finished controlling windows"))
+  ;; Allow for quitting from help windows displayed when HyControl is active.
+  (if (and (eq last-command-event ?q)
+	   (eq (local-key-binding "q") #'quit-window))
+      (call-interactively #'quit-window)
+    (hycontrol-disable-modes)
+    (message "Finished controlling windows")))
 
 ;;;###autoload
 (define-global-minor-mode hycontrol-frames-mode hycontrol-local-frames-mode

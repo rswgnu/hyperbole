@@ -4,7 +4,7 @@
 ;;
 ;; Orig-Date:    28-Oct-94 at 10:59:44
 ;;
-;; Copyright (C) 1994-2017  Free Software Foundation, Inc.
+;; Copyright (C) 1994-2019  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
 ;;
 ;; This file is part of GNU Hyperbole.
@@ -417,7 +417,7 @@ REBUILD-FLAG is non-nil, in which case the menu is rebuilt."
 		   )
 		 '("Koutliner"
 		   ["Manual" (id-info "(hyperbole)Koutliner") t]
-		   ["Example"   kotl-mode:example                 t]
+		   ["Example"   kotl-mode:example t]
 		   "----"
 		   ["Create-File"    kfile:find t]
 		   ["View-File"      kfile:view t]

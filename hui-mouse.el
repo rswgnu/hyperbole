@@ -95,6 +95,12 @@ Its default value is #'smart-scroll-down."
 
 (defvar hkey-alist
   '(
+    ;; Company completion mode
+    ((and (boundp 'company-active-map)
+	  (memq company-active-map (current-minor-mode-maps))) .
+	  ((smart-company-to-definition) . (smart-company-help)))
+    ;;
+    ;; Treemacs hierarchical file manager
     ((eq major-mode 'treemacs-mode) . 
      ((smart-treemacs) . (smart-treemacs)))
     ;;
@@ -235,6 +241,13 @@ Its default value is #'smart-scroll-down."
     ((eq major-mode 'pages-directory-mode) .
      ((pages-directory-goto) . (pages-directory-goto)))
     ;;
+    ;; Python files - ensure this comes before Imenu for more advanced
+    ;; definition lookups
+    ((and (or (and (eq major-mode 'python-mode) buffer-file-name)
+	      (string-match "^Pydoc:\\|\\*?Python" (buffer-name)))
+	  (smart-python-at-tag-p)) .
+	  ((smart-python) . (smart-python nil 'next-tag)))
+    ;;
     ;; Imenu listing in GNU Emacs
     ((smart-imenu-item-at-p)
      . ((smart-imenu-display-item-where (car hkey-value) (cdr hkey-value)) .
@@ -274,11 +287,6 @@ Its default value is #'smart-scroll-down."
 	  buffer-file-name
 	  (smart-javascript-at-tag-p)) .
 	  ((smart-javascript) . (smart-javascript nil 'next-tag)))
-    ;;
-    ((and (or (and (eq major-mode 'python-mode) buffer-file-name)
-	      (string-match "^Pydoc:\\|\\*?Python" (buffer-name)))
-	  (smart-python-at-tag-p)) .
-	  ((smart-python) . (smart-python nil 'next-tag)))
     ;;
     ((and (eq major-mode 'objc-mode) buffer-file-name
 	  (smart-objc-at-tag-p)) .
@@ -384,9 +392,10 @@ evaluated.
 The `hkey-alist' variable is the subset of this alist used by the
 smart keyboard keys.")
 
-;; This must be required after hmouse-alist is defined since this will
-;; recursively require hmouse-drv which requires hui-window when being
-;; compiled and that library requires that hmouse-alist be defined.
+;; This must be required after hmouse-alist is defined in this file
+;; since this will recursively require hmouse-drv which requires
+;; hui-window when being compiled and that library requires that
+;; hmouse-alist be defined.
 (require 'hmouse-key)
 
 ;; This next library adds drag actions to `hmouse-alist'.
@@ -613,6 +622,30 @@ If assist-key is pressed:
 	 (scroll-calendar-left-three-months 1))
 	(t (mark-diary-entries))))
 
+;;; ************************************************************************
+;;; smart-company mode functions
+;;; ************************************************************************
+
+;; These functions are called from hkey-alist when keyboard Smart Keys
+;; are used but for mouse keys, they are bound to local keys in
+;; company-mode's minor mode map.
+
+(defun smart-company-to-definition (event)
+  "Action Key binding for company-mode completions popup to show item definition.
+Use left mouse key or RET key to select a completion and exit."
+  (interactive "e")
+  (when (mouse-event-p last-command-event)
+    (company-select-mouse event))
+  (company-show-location))
+
+(defun smart-company-help (event)
+  "Assist Key binding for company-mode completions popup to show item doc."
+  (interactive "e")
+  (when (mouse-event-p last-command-event)
+    (company-select-mouse event))
+  (if (featurep 'company-quickhelp)
+      (company-quickhelp-manual-begin)
+    (company-show-doc-buffer)))
 
 ;;; ************************************************************************
 ;;; smart-dired functions

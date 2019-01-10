@@ -4,7 +4,7 @@
 ;;
 ;; Orig-Date:    29-Jun-16 at 14:39:33
 ;;
-;; Copyright (C) 1992-2017  Free Software Foundation, Inc.
+;; Copyright (C) 1992-2019  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
 ;;
 ;; This file is part of GNU Hyperbole.
@@ -41,12 +41,11 @@ It must end with a directory separator character.")
 ;;; Koutliner mode and file suffix importation settings
 ;;; ************************************************************************
 
-;; If the Koutliner is supported by this emacs version, perform
-;; initializations.
+;; Perform Koutliner initializations.
 
 (add-to-list 'load-path (expand-file-name "kotl/" hyperb:dir))
-;; Invoke kotl-mode for files ending in ".kotl".  Also
-;; allow ".kot" for DOS and Windows users.
+;; Invoke kotl-mode for files ending in ".kotl".
+;; Also allow ".kot" for DOS and Windows users.
 (add-to-list 'auto-mode-alist '("\\.kotl?\\'" . kotl-mode))
 
 (provide 'hload-path)

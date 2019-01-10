@@ -4,7 +4,7 @@
 ;;
 ;; Orig-Date:    23-Jan-94
 ;;
-;; Copyright (C) 1994-2016  Free Software Foundation, Inc.
+;; Copyright (C) 1994-2019  Free Software Foundation, Inc.
 ;; See the "../HY-COPY" file for license information.
 ;;
 ;; This file is part of GNU Hyperbole.
@@ -14,17 +14,12 @@
 
 ;;; Code:
 
-;; Quiet byte compiler warnings for this free variable.
-(eval-when-compile
-  (unless (require 'filladapt nil t)
-    (defvar filladapt-function-table nil)))
-
 ;;; ************************************************************************
 ;;; Public variables
 ;;; ************************************************************************
 
 (defvar kfill:function-table
-  (if (featurep 'filladapt)
+  (if (boundp 'filladapt-function-table)
       filladapt-function-table
     (list (cons 'fill-paragraph (symbol-function 'fill-paragraph))))
   "Table containing the old function definitions that kfill overrides.")

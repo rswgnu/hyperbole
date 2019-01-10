@@ -1,7 +1,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <!-- This manual is for GNU Hyperbole
-(Edition 7.0.2, Published November 23, 2017).
+(Edition 7.0.2a, Published December 12, 2017).
 
 Copyright (C) 1989-2017  Free Software Foundation, Inc.
 
@@ -275,14 +275,14 @@ ul.no-bullet {list-style: none}
     <li><a name="toc-Smart-Key-_002d-RDB-Mode-1" href="#Smart-Key-_002d-RDB-Mode">E.2.13 Smart Key - RDB Mode</a></li>
     <li><a name="toc-Smart-Key-_002d-Help-Buffers-1" href="#Smart-Key-_002d-Help-Buffers">E.2.14 Smart Key - Help Buffers</a></li>
     <li><a name="toc-Smart-Key-_002d-Pages-Directory-Mode-1" href="#Smart-Key-_002d-Pages-Directory-Mode">E.2.15 Smart Key - Pages Directory Mode</a></li>
-    <li><a name="toc-Smart-Key-_002d-Identifier-Menu-Mode-1" href="#Smart-Key-_002d-Identifier-Menu-Mode">E.2.16 Smart Key - Identifier Menu Mode</a></li>
-    <li><a name="toc-Smart-Key-_002d-C-Source-Code-1" href="#Smart-Key-_002d-C-Source-Code">E.2.17 Smart Key - C Source Code</a></li>
-    <li><a name="toc-Smart-Key-_002d-C_002b_002b-Source-Code-1" href="#Smart-Key-_002d-C_002b_002b-Source-Code">E.2.18 Smart Key - C++ Source Code</a></li>
-    <li><a name="toc-Smart-Key-_002d-Assembly-Source-Code-1" href="#Smart-Key-_002d-Assembly-Source-Code">E.2.19 Smart Key - Assembly Source Code</a></li>
-    <li><a name="toc-Smart-Key-_002d-Lisp-Source-Code-1" href="#Smart-Key-_002d-Lisp-Source-Code">E.2.20 Smart Key - Lisp Source Code</a></li>
-    <li><a name="toc-Smart-Key-_002d-Java-Source-Code-1" href="#Smart-Key-_002d-Java-Source-Code">E.2.21 Smart Key - Java Source Code</a></li>
-    <li><a name="toc-Smart-Key-_002d-JavaScript-Source-Code-1" href="#Smart-Key-_002d-JavaScript-Source-Code">E.2.22 Smart Key - JavaScript Source Code</a></li>
-    <li><a name="toc-Smart-Key-_002d-Python-Source-Code-1" href="#Smart-Key-_002d-Python-Source-Code">E.2.23 Smart Key - Python Source Code</a></li>
+    <li><a name="toc-Smart-Key-_002d-Python-Source-Code-1" href="#Smart-Key-_002d-Python-Source-Code">E.2.16 Smart Key - Python Source Code</a></li>
+    <li><a name="toc-Smart-Key-_002d-Identifier-Menu-Mode-1" href="#Smart-Key-_002d-Identifier-Menu-Mode">E.2.17 Smart Key - Identifier Menu Mode</a></li>
+    <li><a name="toc-Smart-Key-_002d-C-Source-Code-1" href="#Smart-Key-_002d-C-Source-Code">E.2.18 Smart Key - C Source Code</a></li>
+    <li><a name="toc-Smart-Key-_002d-C_002b_002b-Source-Code-1" href="#Smart-Key-_002d-C_002b_002b-Source-Code">E.2.19 Smart Key - C++ Source Code</a></li>
+    <li><a name="toc-Smart-Key-_002d-Assembly-Source-Code-1" href="#Smart-Key-_002d-Assembly-Source-Code">E.2.20 Smart Key - Assembly Source Code</a></li>
+    <li><a name="toc-Smart-Key-_002d-Lisp-Source-Code-1" href="#Smart-Key-_002d-Lisp-Source-Code">E.2.21 Smart Key - Lisp Source Code</a></li>
+    <li><a name="toc-Smart-Key-_002d-Java-Source-Code-1" href="#Smart-Key-_002d-Java-Source-Code">E.2.22 Smart Key - Java Source Code</a></li>
+    <li><a name="toc-Smart-Key-_002d-JavaScript-Source-Code-1" href="#Smart-Key-_002d-JavaScript-Source-Code">E.2.23 Smart Key - JavaScript Source Code</a></li>
     <li><a name="toc-Smart-Key-_002d-Objective_002dC-Source-Code-1" href="#Smart-Key-_002d-Objective_002dC-Source-Code">E.2.24 Smart Key - Objective-C Source Code</a></li>
     <li><a name="toc-Smart-Key-_002d-Fortran-Source-Code-1" href="#Smart-Key-_002d-Fortran-Source-Code">E.2.25 Smart Key - Fortran Source Code</a></li>
     <li><a name="toc-Smart-Key-_002d-Occurrence-Matches-1" href="#Smart-Key-_002d-Occurrence-Matches">E.2.26 Smart Key - Occurrence Matches</a></li>
@@ -340,8 +340,8 @@ WITHOUT ANY WARRANTY, without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</P>
 
 <PRE>
-Edition 7.0.2
-Printed November 23, 2017.
+Edition 7.0.2a
+Printed December 12, 2017.
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -788,7 +788,7 @@ Next: <a href="#Smart-Keys" accesskey="n" rel="next">Smart Keys</a>, Previous: <
 <h2 class="chapter">1 Introduction</h2>
 
 <p>This edition of the GNU Hyperbole Manual is for use with any version
-7.0.2 or greater of GNU Hyperbole.  Hyperbole runs atop GNU Emacs 24.3
+7.0.2a or greater of GNU Hyperbole.  Hyperbole runs atop GNU Emacs 24.3
 or higher.  It will trigger an error if your Emacs is older.
 </p>
 <p>This chapter summarizes the structure of the rest of the manual,
@@ -3951,12 +3951,15 @@ with the frames menu instead, use Screen/FramesControl, <kbd>{C-h h s
 f}</kbd>.
 </p>
 <a name="index-submodes"></a>
+<a name="index-screen_002c-t"></a>
+<a name="index-screen_002c-q"></a>
+<a name="index-screen_002c-Q"></a>
 <p>Once in HyControl, your minibuffer window at the bottom of the
 selected frame will display a summary of keys you may use to adjust
-your windows until you press <kbd>{q}</kbd> to quit from HyControl.  The
-key, <kbd>{t}</kbd>, will always toggle between controlling frames and
-windows, the <em>submodes</em> of HyControl, with the upper left of the
-minibuffer prompt showing which type of control is active.
+your windows until you press <kbd>{q}</kbd> or <kbd>{Q}</kbd> to quit from
+HyControl.  The key, <kbd>{t}</kbd>, will always toggle between controlling
+frames and windows, the <em>submodes</em> of HyControl, with the upper
+left of the minibuffer prompt showing which type of control is active.
 </p>
 <a name="index-numeric-argument"></a>
 <a name="index-multiplier"></a>
@@ -4367,7 +4370,7 @@ sizes by which to zoom.
 <a name="index-HyControl-switch-modes"></a>
 <a name="index-HyControl-toggle-modes"></a>
 <a name="index-toggle-HyControl-mode"></a>
-<a name="index-screen_002c-t"></a>
+<a name="index-screen_002c-t-1"></a>
 <a name="index-t"></a>
 </dd>
 <dt><kbd>{t}</kbd></dt>
@@ -4377,7 +4380,7 @@ sizes by which to zoom.
 <a name="index-HyControl-exit"></a>
 <a name="index-quit-HyControl"></a>
 <a name="index-exit-HyControl"></a>
-<a name="index-screen_002c-q"></a>
+<a name="index-screen_002c-q-1"></a>
 <a name="index-q-1"></a>
 </dd>
 <dt><kbd>{q}</kbd></dt>
@@ -4511,10 +4514,12 @@ Next: <a href="#Creating-Outlines" accesskey="n" rel="next">Creating Outlines</a
 <h3 class="section">6.1 Menu Commands</h3>
 
 <p>The Kotl/ menu entry on the Hyperbole minibuffer menu provides access to
-a number of major outliner commands:
+a number of major Koutliner commands:
 </p>
 <a name="index-outliner-commands"></a>
 <a name="index-Koutliner-commands"></a>
+<a name="index-Koutliner-menu"></a>
+<a name="index-menu_002c-Koutliner"></a>
 <a name="index-kotl_002dmode_003ashow_002dall"></a>
 <a name="index-kvspec_003atoggle_002dblank_002dlines"></a>
 <a name="index-kfile_003afind"></a>
@@ -4526,7 +4531,6 @@ a number of major outliner commands:
 <a name="index-kotl_002dmode_003ashow_002dtree"></a>
 <a name="index-kotl_002dmode_003atop_002dcells"></a>
 <a name="index-kvspec_003aactivate"></a>
-<a name="index-menu_002c-Outline"></a>
 <div class="example">
 <pre class="example">Menu Item    Command                    Description
 ====================================================================
@@ -4546,8 +4550,12 @@ Vspec        kvspec:activate            Set a view specification
 ====================================================================
 </pre></div>
 
+<a name="index-C_002dmouse_002d3"></a>
+<a name="index-popup-menu_002c-Koutliner"></a>
+<a name="index-menubar-menu_002c-Koutliner"></a>
 <p>The popup and menubar Koutline menu, as displayed here, offers a more
-complete set of the Koutliner commands.  Experiment with the menu or
+complete set of the Koutliner commands.  <kbd>{C-mouse-3}</kbd> pops up the
+mode-specific menu in Emacs.  Experiment with the menu or
 read the following sections explaining commands.
 </p>
 <div class="float"><a name="image_003aKoutline-Menu"></a>
@@ -5776,14 +5784,24 @@ so.
 
 <img src="im/menu-rolo.png" alt="HyRolo Menu">
 <div class="float-caption"><p><strong>Image 7.1: </strong>HyRolo Menu</p></div></div>
-<a name="index-rolo-menu"></a>
+<a name="index-Rolo-menu"></a>
 <a name="index-HyRolo-menu"></a>
+<a name="index-menu_002c-HyRolo"></a>
+<a name="index-menu_002c-Rolo-1"></a>
+<a name="index-C_002dmouse_002d3-1"></a>
+<a name="index-popup-menu_002c-HyRolo"></a>
+<a name="index-popup-menu_002c-Rolo"></a>
+<a name="index-menubar-menu_002c-HyRolo"></a>
+<a name="index-menubar-menu_002c-Rolo"></a>
 <p>The Rolo/ menu entry on the Hyperbole minibuffer menu provides the same
-set of commands as the menubar menu, with more concise labels.
-The Rolo/ menu offers the following commands:
+set of commands as the menubar and popup menus, with more concise labels.
+<kbd>{C-mouse-3}</kbd> pops up the mode-specific menu in Emacs.  Experiment with
+the menu or read the following sections explaining commands.
 </p>
-<a name="index-rolo-commands"></a>
-<a name="index-hyrolo-commands"></a>
+<p>The minibuffer Rolo/ menu offers the following commands:
+</p>
+<a name="index-Rolo-commands"></a>
+<a name="index-HyRolo-commands"></a>
 <a name="index-hyrolo_002dadd"></a>
 <a name="index-hyrolo_002ddisplay_002dmatches"></a>
 <a name="index-hyrolo_002dedit"></a>
@@ -7256,6 +7274,12 @@ the current buffer.  This number makes the label unique and so allows
 any number of buttons with the same base label within a single buffer.
 </p>
 </dd>
+<dt><b>Jedi</b></dt>
+<dd><p>See also <a href="https://tkf.github.io/emacs-jedi/latest/">https://tkf.github.io/emacs-jedi/latest/</a>.
+</p>
+<p>Jedi is a Emacs package for Python completion, definition and documentation lookup.
+</p>
+</dd>
 <dt><b>Koutline</b></dt>
 <dd><p>A hierarchically ordered grouping of cells which may be stored as a file
 and viewed and edited as an outline.
@@ -7311,7 +7335,9 @@ menus end with a forward slash, &lsquo;<samp>/</samp>&rsquo;.
 </p>
 </dd>
 <dt><b>The OO-Browser</b></dt>
-<dd><p>The GNU OO-Browser is a multi-windowed, interactive object-oriented class
+<dd><p>See also <a href="https://www.gnu.org/software/oo-browser">https://www.gnu.org/software/oo-browser</a>.
+</p>
+<p>The GNU OO-Browser is a multi-windowed, interactive object-oriented class
 browser similar in use to the well-known Smalltalk browsers.  It runs
 inside Emacs.  It is unique in a number of respects foremost of which is
 that it works well with most major object-oriented languages in use today.
@@ -9421,9 +9447,13 @@ See <a href="#Displaying-File-and-Buffer-Items">Displaying File and Buffer Items
          collapse the entry;
      (2) elsewhere within an entry line, the item is displayed for editing,
          normally in another window;
-     (3) on the first line of the buffer (other than the end of line),
+     (3) at the end of an entry line: invoke <code>action-key-eol-function</code>,
+         typically to scroll up proportionally, if an Action Key press; invoke
+         <code>assist-key-eol-function</code>, typically to scroll down proportionally,
+         if an Asisst Key press;
+     (4) on the first line of the buffer (other than the end of line),
          dired is run on the current directory of this Treemacs;
-     (4) at the end of the first or last line of the buffer,
+     (5) at the end of the first or last line of the buffer,
          this Treemacs invocation is quit.
 </pre></div>
 
@@ -9805,13 +9835,44 @@ When pressed on a pages-directory-mode entry line:
 </pre></div>
 
 <hr>
+<a name="Smart-Key-_002d-Python-Source-Code"></a>
+<div class="header">
+<p>
+Next: <a href="#Smart-Key-_002d-Objective_002dC-Source-Code" accesskey="n" rel="next">Smart Key - Objective-C Source Code</a>, Previous: <a href="#Smart-Key-_002d-JavaScript-Source-Code" accesskey="p" rel="prev">Smart Key - JavaScript Source Code</a>, Up: <a href="#Smart-Keyboard-Keys" accesskey="u" rel="up">Smart Keyboard Keys</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Key-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<a name="Smart-Key-_002d-Python-Source-Code-1"></a>
+<h4 class="subsection">E.2.16 Smart Key - Python Source Code</h4>
+<div class="format">
+<pre class="format">When the Jedi identifier server or the OO-Browser has been loaded and the press is
+within a Python buffer:
+  ACTION KEY or ASSIST KEY
+     Jumps to the definition of the selected Python construct:
+     (1) on an &lsquo;import&rsquo; line, the referent is displayed;
+     (2) within a method declaration, its definition is displayed;
+     (3) on a class name, the class definition is shown;
+     (4) on a unique identifier reference, its definition is shown (when
+         possible).
+</pre></div>
+
+<div class="format">
+<pre class="format">When pressed within a Python source code file (without the OO-Browser):
+  ACTION KEY
+     Jumps to the definition of the selected Python identifier,
+     assuming the identifier is found within an &quot;etags&quot; generated
+     tags file within the current directory or any of its ancestor
+     directories.
+  ASSIST KEY
+     Jumps to the next tag matching an identifier at point.
+</pre></div>
+
+<hr>
 <a name="Smart-Key-_002d-Identifier-Menu-Mode"></a>
 <div class="header">
 <p>
 Next: <a href="#Smart-Key-_002d-C-Source-Code" accesskey="n" rel="next">Smart Key - C Source Code</a>, Previous: <a href="#Smart-Key-_002d-Pages-Directory-Mode" accesskey="p" rel="prev">Smart Key - Pages Directory Mode</a>, Up: <a href="#Smart-Keyboard-Keys" accesskey="u" rel="up">Smart Keyboard Keys</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Key-Index" title="Index" rel="index">Index</a>]</p>
 </div>
 <a name="Smart-Key-_002d-Identifier-Menu-Mode-1"></a>
-<h4 class="subsection">E.2.16 Smart Key - Identifier Menu Mode</h4>
+<h4 class="subsection">E.2.17 Smart Key - Identifier Menu Mode</h4>
 
 <div class="format">
 <pre class="format">This works only for identifiers defined within the same source file in which they are referenced.
@@ -9834,7 +9895,7 @@ When pressed on an identifier name after an identifier index has been generated:
 Next: <a href="#Smart-Key-_002d-C_002b_002b-Source-Code" accesskey="n" rel="next">Smart Key - C++ Source Code</a>, Previous: <a href="#Smart-Key-_002d-Identifier-Menu-Mode" accesskey="p" rel="prev">Smart Key - Identifier Menu Mode</a>, Up: <a href="#Smart-Keyboard-Keys" accesskey="u" rel="up">Smart Keyboard Keys</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Key-Index" title="Index" rel="index">Index</a>]</p>
 </div>
 <a name="Smart-Key-_002d-C-Source-Code-1"></a>
-<h4 class="subsection">E.2.17 Smart Key - C Source Code</h4>
+<h4 class="subsection">E.2.18 Smart Key - C Source Code</h4>
 
 <a name="index-smart_002dc_002dcpp_002dinclude_002dpath"></a>
 <a name="index-smart_002dc_002dinclude_002dpath"></a>
@@ -9866,7 +9927,7 @@ Next: <a href="#Smart-Key-_002d-C_002b_002b-Source-Code" accesskey="n" rel="next
 Next: <a href="#Smart-Key-_002d-Assembly-Source-Code" accesskey="n" rel="next">Smart Key - Assembly Source Code</a>, Previous: <a href="#Smart-Key-_002d-C-Source-Code" accesskey="p" rel="prev">Smart Key - C Source Code</a>, Up: <a href="#Smart-Keyboard-Keys" accesskey="u" rel="up">Smart Keyboard Keys</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Key-Index" title="Index" rel="index">Index</a>]</p>
 </div>
 <a name="Smart-Key-_002d-C_002b_002b-Source-Code-1"></a>
-<h4 class="subsection">E.2.18 Smart Key - C++ Source Code</h4>
+<h4 class="subsection">E.2.19 Smart Key - C++ Source Code</h4>
 
 <a name="index-c_002b_002b_002dcpp_002dinclude_002dpath"></a>
 <a name="index-c_002b_002b_002dinclude_002dpath"></a>
@@ -9919,7 +9980,7 @@ buffer:
 Next: <a href="#Smart-Key-_002d-Lisp-Source-Code" accesskey="n" rel="next">Smart Key - Lisp Source Code</a>, Previous: <a href="#Smart-Key-_002d-C_002b_002b-Source-Code" accesskey="p" rel="prev">Smart Key - C++ Source Code</a>, Up: <a href="#Smart-Keyboard-Keys" accesskey="u" rel="up">Smart Keyboard Keys</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Key-Index" title="Index" rel="index">Index</a>]</p>
 </div>
 <a name="Smart-Key-_002d-Assembly-Source-Code-1"></a>
-<h4 class="subsection">E.2.19 Smart Key - Assembly Source Code</h4>
+<h4 class="subsection">E.2.20 Smart Key - Assembly Source Code</h4>
 
 <a name="index-smart_002dasm_002dinclude_002dpath"></a>
 <div class="format">
@@ -9944,7 +10005,7 @@ Next: <a href="#Smart-Key-_002d-Lisp-Source-Code" accesskey="n" rel="next">Smart
 Next: <a href="#Smart-Key-_002d-Java-Source-Code" accesskey="n" rel="next">Smart Key - Java Source Code</a>, Previous: <a href="#Smart-Key-_002d-Assembly-Source-Code" accesskey="p" rel="prev">Smart Key - Assembly Source Code</a>, Up: <a href="#Smart-Keyboard-Keys" accesskey="u" rel="up">Smart Keyboard Keys</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Key-Index" title="Index" rel="index">Index</a>]</p>
 </div>
 <a name="Smart-Key-_002d-Lisp-Source-Code-1"></a>
-<h4 class="subsection">E.2.20 Smart Key - Lisp Source Code</h4>
+<h4 class="subsection">E.2.21 Smart Key - Lisp Source Code</h4>
 
 <div class="format">
 <pre class="format">When pressed on a Lisp symbol within any of these types of buffers
@@ -9966,7 +10027,7 @@ Next: <a href="#Smart-Key-_002d-Java-Source-Code" accesskey="n" rel="next">Smart
 Next: <a href="#Smart-Key-_002d-JavaScript-Source-Code" accesskey="n" rel="next">Smart Key - JavaScript Source Code</a>, Previous: <a href="#Smart-Key-_002d-Lisp-Source-Code" accesskey="p" rel="prev">Smart Key - Lisp Source Code</a>, Up: <a href="#Smart-Keyboard-Keys" accesskey="u" rel="up">Smart Keyboard Keys</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Key-Index" title="Index" rel="index">Index</a>]</p>
 </div>
 <a name="Smart-Key-_002d-Java-Source-Code-1"></a>
-<h4 class="subsection">E.2.21 Smart Key - Java Source Code</h4>
+<h4 class="subsection">E.2.22 Smart Key - Java Source Code</h4>
 
 <a name="index-smart_002djava_002dpackage_002dpath"></a>
 <div class="format">
@@ -10009,7 +10070,7 @@ buffer:
 Next: <a href="#Smart-Key-_002d-Python-Source-Code" accesskey="n" rel="next">Smart Key - Python Source Code</a>, Previous: <a href="#Smart-Key-_002d-Java-Source-Code" accesskey="p" rel="prev">Smart Key - Java Source Code</a>, Up: <a href="#Smart-Keyboard-Keys" accesskey="u" rel="up">Smart Keyboard Keys</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Key-Index" title="Index" rel="index">Index</a>]</p>
 </div>
 <a name="Smart-Key-_002d-JavaScript-Source-Code-1"></a>
-<h4 class="subsection">E.2.22 Smart Key - JavaScript Source Code</h4>
+<h4 class="subsection">E.2.23 Smart Key - JavaScript Source Code</h4>
 
 <div class="format">
 <pre class="format">When pressed within a JavaScript source code file:
@@ -10022,37 +10083,6 @@ Next: <a href="#Smart-Key-_002d-Python-Source-Code" accesskey="n" rel="next">Sma
      Jumps to the next tag matching an identifier at point.
 </pre></div>
 
-
-<hr>
-<a name="Smart-Key-_002d-Python-Source-Code"></a>
-<div class="header">
-<p>
-Next: <a href="#Smart-Key-_002d-Objective_002dC-Source-Code" accesskey="n" rel="next">Smart Key - Objective-C Source Code</a>, Previous: <a href="#Smart-Key-_002d-JavaScript-Source-Code" accesskey="p" rel="prev">Smart Key - JavaScript Source Code</a>, Up: <a href="#Smart-Keyboard-Keys" accesskey="u" rel="up">Smart Keyboard Keys</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Key-Index" title="Index" rel="index">Index</a>]</p>
-</div>
-<a name="Smart-Key-_002d-Python-Source-Code-1"></a>
-<h4 class="subsection">E.2.23 Smart Key - Python Source Code</h4>
-<div class="format">
-<pre class="format">When the OO-Browser has been loaded and the press is within a Python
-buffer:
-  ACTION KEY or ASSIST KEY
-     Jumps to the definition of the selected Python construct:
-     (1) on an &lsquo;import&rsquo; line, the referent is displayed;
-     (2) within a method declaration, its definition is displayed;
-     (3) on a class name, the class definition is shown;
-     (4) on a unique identifier reference, its definition is shown (when
-         possible).
-</pre></div>
-
-<div class="format">
-<pre class="format">When pressed within a Python source code file (without the OO-Browser):
-  ACTION KEY
-     Jumps to the definition of the selected Python identifier,
-     assuming the identifier is found within an &quot;etags&quot; generated
-     tags file within the current directory or any of its ancestor
-     directories.
-  ASSIST KEY
-     Jumps to the next tag matching an identifier at point.
-</pre></div>
 
 <hr>
 <a name="Smart-Key-_002d-Objective_002dC-Source-Code"></a>
@@ -11323,6 +11353,8 @@ Next: <a href="#Function" accesskey="n" rel="next">Function</a>, Previous: <a hr
 <tr><td></td><td valign="top"><a href="#index-C_002dh-t"><code>C-h t</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Hyperbole-Overview">Hyperbole Overview</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-C_002dM_002dh"><code>C-M-h</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Hiding-and-Showing">Hiding and Showing</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-C_002dM_002dx"><code>C-M-x</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Creating-Types">Creating Types</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-C_002dmouse_002d3"><code>C-mouse-3</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Menu-Commands">Menu Commands</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-C_002dmouse_002d3-1"><code>C-mouse-3</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyRolo-Menu">HyRolo Menu</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-C_002dt"><code>C-t</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Menus">Menus</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-C_002du-C_002dc-c"><code>C-u C-c c</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Relocating-and-Copying">Relocating and Copying</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-C_002du-C_002dc-C_002dc"><code>C-u C-c C-c</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Relocating-and-Copying">Relocating and Copying</a></td></tr>
@@ -11508,10 +11540,13 @@ Next: <a href="#Function" accesskey="n" rel="next">Function</a>, Previous: <a hr
 <tr><td></td><td valign="top"><a href="#index-screen_002c-O"><code>screen, O</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyControl">HyControl</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-screen_002c-p"><code>screen, p</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyControl">HyControl</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-screen_002c-q"><code>screen, q</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyControl">HyControl</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-screen_002c-Q"><code>screen, Q</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyControl">HyControl</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-screen_002c-q-1"><code>screen, q</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyControl">HyControl</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-screen_002c-r"><code>screen, r</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyControl">HyControl</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-screen_002c-right"><code>screen, right</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyControl">HyControl</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-screen_002c-s"><code>screen, s</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyControl">HyControl</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-screen_002c-t"><code>screen, t</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyControl">HyControl</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-screen_002c-t-1"><code>screen, t</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyControl">HyControl</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-screen_002c-u"><code>screen, u</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyControl">HyControl</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-screen_002c-up"><code>screen, up</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyControl">HyControl</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-screen_002c-w"><code>screen, w</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyControl">HyControl</a></td></tr>
@@ -12703,7 +12738,7 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function</a>, Up: <a href
 <tr><td></td><td valign="top"><a href="#index-hypertext-1">hypertext</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Glossary">Glossary</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-hypertext-2">hypertext</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Glossary">Glossary</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-HyRolo">HyRolo</a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyRolo">HyRolo</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-hyrolo-commands">hyrolo commands</a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyRolo-Menu">HyRolo Menu</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-HyRolo-commands">HyRolo commands</a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyRolo-Menu">HyRolo Menu</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-hyrolo-matches">hyrolo matches</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Key-_002d-HyRolo-Match-Buffers">Smart Key - HyRolo Match Buffers</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-HyRolo-menu">HyRolo menu</a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyRolo-Menu">HyRolo Menu</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-hyrolo-menu">hyrolo menu</a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyRolo-Keys">HyRolo Keys</a></td></tr>
@@ -12806,6 +12841,7 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function</a>, Up: <a href
 <tr><td></td><td valign="top"><a href="#index-koutline-link">koutline link</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-koutline-mode">koutline mode</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Inserting-and-Importing">Inserting and Importing</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-Koutliner-commands">Koutliner commands</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Menu-Commands">Menu Commands</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-Koutliner-menu">Koutliner menu</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Menu-Commands">Menu Commands</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-Koutliner_002c-toggle-tab-behavior">Koutliner, toggle tab behavior</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Relocating-and-Copying">Relocating and Copying</a></td></tr>
 <tr><td colspan="4"> <hr></td></tr>
 <tr><th><a name="Concept-Index_cp_letter-L">L</a></th><td></td><td></td></tr>
@@ -12919,17 +12955,19 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function</a>, Up: <a href
 <tr><td></td><td valign="top"><a href="#index-menu_002c-Gbut-1">menu, Gbut</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Menus">Menus</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-menu_002c-Global_002dButton">menu, Global-Button</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Global-Buttons">Global Buttons</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-menu_002c-Global_002dButton-1">menu, Global-Button</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Menus">Menus</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-menu_002c-HyRolo">menu, HyRolo</a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyRolo-Menu">HyRolo Menu</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-menu_002c-Ibut">menu, Ibut</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Menus">Menus</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-menu_002c-Implicit_002dButton">menu, Implicit-Button</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Menus">Menus</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-menu_002c-KeyBindings">menu, KeyBindings</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Menus">Menus</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-menu_002c-Kotl">menu, Kotl</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Menus">Menus</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-menu_002c-Koutline">menu, Koutline</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Menus">Menus</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-menu_002c-Koutliner">menu, Koutliner</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Menu-Commands">Menu Commands</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-menu_002c-Mail_002dLists">menu, Mail-Lists</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Menus">Menus</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-menu_002c-Msg">menu, Msg</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Menus">Menus</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-menu_002c-Outline">menu, Outline</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Menu-Commands">Menu Commands</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-menu_002c-Outline_002fExample">menu, Outline/Example</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Koutliner">Koutliner</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-menu_002c-Outliner">menu, Outliner</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Menus">Menus</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-menu_002c-Rolo">menu, Rolo</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Menus">Menus</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-menu_002c-Rolo-1">menu, Rolo</a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyRolo-Menu">HyRolo Menu</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-menu_002c-Screen">menu, Screen</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Menus">Menus</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-menu_002c-Toggle_002dRolo_002dDates">menu, Toggle-Rolo-Dates</a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyRolo-Keys">HyRolo Keys</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-menu_002c-top_002dlevel">menu, top-level</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Menus">Menus</a></td></tr>
@@ -12940,6 +12978,9 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function</a>, Up: <a href
 <tr><td></td><td valign="top"><a href="#index-menu_002c-Web-2">menu, Web</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Global-Key-Bindings">Global Key Bindings</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-menu_002c-WinConfig">menu, WinConfig</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Menus">Menus</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-menu_002c-Window_002dConfigurations">menu, Window-Configurations</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Menus">Menus</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-menubar-menu_002c-HyRolo">menubar menu, HyRolo</a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyRolo-Menu">HyRolo Menu</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-menubar-menu_002c-Koutliner">menubar menu, Koutliner</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Menu-Commands">Menu Commands</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-menubar-menu_002c-Rolo">menubar menu, Rolo</a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyRolo-Menu">HyRolo Menu</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-menubar_002c-Hyperbole-menu">menubar, Hyperbole menu</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Menus">Menus</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-Messages-buffer">Messages buffer</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Key-Debugging">Smart Key Debugging</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-MH_002de">MH-e</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Buttons-in-Mail">Buttons in Mail</a></td></tr>
@@ -13049,6 +13090,9 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function</a>, Up: <a href
 <tr><td></td><td valign="top"><a href="#index-permanent-identifier-1">permanent identifier</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Idstamps">Idstamps</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-pipe-character">pipe character</a>:</td><td>&nbsp;</td><td valign="top"><a href="#View-Specs">View Specs</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-popup-menu">popup menu</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Menus">Menus</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-popup-menu_002c-HyRolo">popup menu, HyRolo</a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyRolo-Menu">HyRolo Menu</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-popup-menu_002c-Koutliner">popup menu, Koutliner</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Menu-Commands">Menu Commands</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-popup-menu_002c-Rolo">popup menu, Rolo</a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyRolo-Menu">HyRolo Menu</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-posting-buttons">posting buttons</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Buttons-in-Mail">Buttons in Mail</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-posting-news">posting news</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Buttons-in-News">Buttons in News</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-precedence_002c-buttons">precedence, buttons</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Button-Type-Precedence">Button Type Precedence</a></td></tr>
@@ -13088,11 +13132,11 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function</a>, Up: <a href
 <tr><td></td><td valign="top"><a href="#index-Rmail">Rmail</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Buttons-in-Mail">Buttons in Mail</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-Rolo">Rolo</a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyRolo">HyRolo</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-rolo-address">rolo address</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-rolo-commands">rolo commands</a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyRolo-Menu">HyRolo Menu</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-Rolo-commands">Rolo commands</a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyRolo-Menu">HyRolo Menu</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-rolo-entry">rolo entry</a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyRolo-Concepts">HyRolo Concepts</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-rolo-file">rolo file</a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyRolo-Concepts">HyRolo Concepts</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-rolo-keys">rolo keys</a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyRolo-Keys">HyRolo Keys</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-rolo-menu">rolo menu</a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyRolo-Menu">HyRolo Menu</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-Rolo-menu">Rolo menu</a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyRolo-Menu">HyRolo Menu</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-rolo-searching">rolo searching</a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyRolo-Searching">HyRolo Searching</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-rolo_002c-buttons-in">rolo, buttons in</a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyRolo">HyRolo</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-rolo_002c-datestamps">rolo, datestamps</a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyRolo-Keys">HyRolo Keys</a></td></tr>

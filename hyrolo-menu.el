@@ -4,7 +4,7 @@
 ;;
 ;; Orig-Date:    28-Oct-94 at 10:59:44
 ;;
-;; Copyright (C) 1994-2017  Free Software Foundation, Inc.
+;; Copyright (C) 1994-2019  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
 ;;
 ;; This file is part of GNU Hyperbole.
@@ -120,8 +120,8 @@
 	((featurep 'xemacs)
 	 (define-key hyrolo-mode-map 'button3 'hyrolo-popup-menu))
 	(t ;; (not (featurep 'xemacs))
-	 (define-key hyrolo-mode-map [down-mouse-3] 'hyrolo-popup-menu)
-	 (define-key hyrolo-mode-map [mouse-3] nil)))
+	 (define-key hyrolo-mode-map [C-down-mouse-3] 'hyrolo-popup-menu)
+	 (define-key hyrolo-mode-map [C-mouse-3] nil)))
   (unless (cond ((not (featurep 'xemacs))
 		 (global-key-binding [menu-bar Rolo]))
 		((boundp 'current-menubar)

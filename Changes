@@ -1,3 +1,141 @@
+2017-12-12  Bob Weiner  <rsw@gnu.org>
+
+* hversion.el: Pushed 7.0.2a test update.
+
+* hmouse-drv.el (hkey-throw): Modified to show a message if the frame of release is
+    different than the frame of depress, since this frame is typically hidden by
+    the depress frame.
+
+* hmouse-tag.el (smart-lisp-mode-p): Added change-log-mode since such files often contain
+    Lisp references.
+
+* hypb.el (hypb:select-window-frame): Added and used in hmouse-item-to-window.
+          (hypb:save-selected-window-and-input-focus): Added and used in hkey-throw.
+
+* kotl/kotl-mode.el (kotl-mode): Fixed setq close paren error that skipped 4 settings of
+    paragraph-start, selective-display, selective-display-ellipses and track-eol.
+
+2017-12-10  Bob Weiner  <rsw@gnu.org>
+
+* man/hyperbole.texi (Menu Commands, HyRolo Menu): Documented how to invoke the Koutliner and
+    HyRolo popup menus in Emacs.
+
+* hyrolo-menu.el (hyrolo-menubar-menu):
+  kotl/kmenu.el (kotl-menubar-menu): For GNU Emacs, use standard binding of C-mouse-3 to popup
+    mode-specific menu instead of mouse-3.
+
+2017-12-08  Bob Weiner  <rsw@gnu.org>
+
+* hmouse-drv.el (hkey-ace-window-setup): Autoloaded since might be added to an init file
+    before Hyperbole is loaded.
+
+* hycontrol.el (hycontrol-quit-frames-mode, hycontrol-quit-windows-mode): Added conditionals
+    to allow for quitting from help buffers with {q} while remaining in HyControl, e.g. if
+    display a key binding help window.  Added {Q} binding to unconditionally quit from HyControl.
+
+* hmouse-drv.el (hkey-buffer-move): Added directional movement commands that call this function.
+    hkey-buffer-move-left, hkey-buffer-move-right, hkey-buffer-move-down and hkey-buffer-move-up.
+
+2017-12-07  Bob Weiner  <rsw@gnu.org>
+
+* hload-path.el (hyperb:emacs-p): Removed Emacs19 test.
+                (hyperb:kotl-p): Removed since all versions of Emacs in use now support the Koutliner.
+
+* hlvar.el - Removed this since colons are now handled by Emacs 26 in local variable names.
+
+* hypb.el (hypb:rgrep): Added support for ripgrep.
+  hibtypes.el (ripgrep-msg): Added implicit button support for ripgrep (rg) messages where
+    the associated pathname is output once before all mataching lines.
+    See "https://github.com/BurntSushi/ripgrep".
+
+2017-12-04  Bob Weiner  <rsw@gnu.org>
+
+* hmouse-drv.el (hmouse-alist): Reload the def of this variable if its value is null.
+    (hkey-mouse-click-to-replace): Added to allow moving buffers with the mouse by clicking
+       on the from and to windows.
+    (hmouse-click-to-drag, hmouse-click-to-drag-to, hmouse-click-to-replace, hmouse-click-to-throw,
+     hmouse-choose-windows): Added to perform cross-window drags, replacements and throws with 3 mouse
+       clicks.
+
+2017-12-03  Bob Weiner  <rsw@gnu.org>
+
+* hui-treemacs.el: Removed replacements for treemacs functions; as of Treemacs 1.14, all needed changes are
+    included.
+
+2017-12-01  Bob Weiner  <rsw@gnu.org>
+
+* hmouse-drv.el (hkey-drag-stay, hkey-replace): Added for use as ace-window commands.
+                (hkey-throw): Rewrote so if not on an item, then throws the current buffer.
+    hkey-replace is the inverse, it grabs the specified buffer and places it into the selected
+    window ({p} command key for ace-window).  hkey-drag-stay does a drag but leaves point
+    in the originally selected window.
+                (hmouse-click-to-drag, hmouse-click-to-drag-stay, hmouse-click-to-drag-to)
+                 hmouse-click-to-replace, hmouse-click-to-swap, hmouse-click-to-throw): Added to click
+    with the mouse twice on two different windows to select the windows using hmouse-choose-windows.
+                (hkey-drag, hkey-drag-stay, hkey-drag-to, hkey-replace, hkey-swap, hkey-throw): Added and
+    made interactive with ace-window window parameter selection.
+                (hkey-buffer-to): Added to copy a buffer from-window to-window, using ace-window
+    to select the windows.
+                (hkey-swap-buffers): Added to swap buffers between from-window and to-window, using ace-window
+    to select the windows.
+
+* hui-treemacs.el (smart-treemacs): Added standard Hyperbole end-of-line scrolling support.
+
+* hui-mouse.el (smart-company-to-definition, smart-company-help): Added to support company completion mode.
+  hmouse-sh.el (hmouse-shifted-setup, hmouse-unshifted-setup): Added Action and Assist Key local bindings
+    for company-mode for GNU Emacs.
+
+2017-11-30  Bob Weiner  <rsw@gnu.org>
+
+* man/hyperbole.texi (Glossary): Added Jedi item with link to its home page.  Added link to the OO-Browser
+    home page in its item.
+
+* hmouse-tag.el (smart-python-jedi-to-definition-p): Added and called in smart-python to use the Jedi
+    package when its server is running.  It jumps to the proper definition of multi-level module
+    references definitions, e.g. a.b.c.  Also fixed error where the default action was not jumping to
+    a tag definition at point because it was testing that the identifier parameter was non-nil (no
+    identifier is sent in such usage).
+
+* hui-mouse.el (hkey-alist): Moved smart-python prior to Imenu for more advanced definition lookups
+
+* hyperbole.el (temp-buffer-show-hook, temp-buffer-show-function): Added Hyperbole hkey-help-show
+    function rather than replacing any existing hook values.
+
+2017-11-29  Bob Weiner  <rsw@gnu.org>
+
+* hibtypes.el (markdown-internal-link): Rewrote (and added support functions) to handle markdown
+    infile links properly.  Previous use of markdown-do was removed because that now does things
+    other than following links.
+
+2017-11-28  Bob Weiner  <rsw@gnu.org>
+
+* hmouse-drv.el (hkey-help-show): Added conditionals to support org-mode org-goto *Org Help* buffer
+    properly.
+
+2017-11-27  Bob Weiner  <rsw@gnu.org>
+
+* hmouse-drv.el (hkey-ace-window-setup): Made new ace-window frames (window id = z) inherit the size
+    of the prior selected frame; same as HyWindow.
+
+* hui-window.el (hmouse-kill-and-yank-region, hmouse-yank-region): Added select-frame-set-input-focus
+    in case released in a different frame.
+
+2017-11-26  Bob Weiner  <rsw@gnu.org>
+
+* hmouse-drv.el (hkey-throw): Restored input focus to start-win rather than just making it
+    the selected window.
+                (hkey-drag-to): Fixed predicate test to call hmouse-at-item-p instead of
+    hmouse-drag-item-to-display and set input focus to release-window if dragging an item.
+
+* hmouse-drv.el (hkey-ace-window-setup): Added deletion of i and t command bindings before
+    adding them to aw-dispatch-alist.
+                (hkey-throw): Fixed split line code typo here.
+  hycontrol.el (hycontrol-frame-offset): Fixed typo.
+
+==============================================================================
+V7.0.3 changes ^^^^:
+==============================================================================
+
 2017-11-23  Bob Weiner  <rsw@gnu.org>
 
 * hversion.el: Released 7.0.2.

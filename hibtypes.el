@@ -4,7 +4,7 @@
 ;;
 ;; Orig-Date:    19-Sep-91 at 20:45:31
 ;;
-;; Copyright (C) 1991-2017  Free Software Foundation, Inc.
+;; Copyright (C) 1991-2019  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
 ;;
 ;; This file is part of GNU Hyperbole.
@@ -302,6 +302,45 @@ must have an attached file."
 ;;; Displays in-file Markdown link referents.
 ;;; ========================================================================
 
+(defun markdown-follow-link-p ()
+    "Jumps between reference links and definitions; between footnote markers and footnote text.
+Returns t if jumps and nil otherwise."
+    (cond
+     ;; Footnote definition
+     ((markdown-footnote-text-positions)
+      (markdown-footnote-return)
+      t)
+     ;; Footnote marker
+     ((markdown-footnote-marker-positions)
+      (markdown-footnote-goto-text)
+      t)
+     ;; Reference link
+     ((thing-at-point-looking-at markdown-regex-link-reference)
+      (markdown-reference-goto-definition)
+      t)
+     ;; Reference definition
+     ((thing-at-point-looking-at markdown-regex-reference-definition)
+      (markdown-reference-goto-link (match-string-no-properties 2))
+      t)))
+
+(defun markdown-follow-inline-link-p (opoint)
+  "Test to see if on an inline link, jump to its referent if it is absolute (not relative within the file), otherwise return to OPOINT."
+  (skip-chars-forward "^\]\[()")
+  (if (looking-at "\][\[()]")
+      (progn (if (looking-at "\(")
+		 (skip-chars-backward "^\]\[()")
+	       (skip-chars-forward "\]\[\("))
+	     ;; Leave point on the link even if not activated
+	     ;; here, so that code elsewhere activates it.
+	     (if (and (markdown-link-p)
+		      (not (or (hpath:www-at-p) (hpath:at-p))))
+		 ;; In-file referents will be handled later by the
+		 ;; pathname implicit type, not here.
+		 (progn (hpath:display-buffer (current-buffer))
+			(hact 'markdown-follow-link-at-point))))
+    (goto-char opoint)
+    nil))
+
 (defib markdown-internal-link ()
   "Displays any in-file Markdown link referent.  Pathnames and urls are handled elsewhere."
   (when (and (eq major-mode 'markdown-mode)
@@ -310,26 +349,17 @@ must have an attached file."
 	  npoint)
       (cond ((markdown-link-p) 
 	     (condition-case ()
-		 ;; Follows a reference link to its referent.
-		 (progn (markdown-do)
-			(when (/= opoint (point))
-			  (setq npoint (point))
-			  (goto-char opoint)
-			  (hact 'link-to-file buffer-file-name npoint)))
+		 ;; Follows a reference link or footnote to its referent.
+		 (if (markdown-follow-link-p)
+		     (when (/= opoint (point))
+		       (setq npoint (point))
+		       (goto-char opoint)
+		       (hact 'link-to-file buffer-file-name npoint))
+		   ;; Follows an infile link.
+	           (markdown-follow-inline-link-p opoint))
 	       ;; May be on the name of an inline link, so move to the
 	       ;; link itself and follow that.
-	       (error 
-		(skip-chars-forward "^\]\[()")
-		(if (looking-at "\][\[\(]")
-		    (progn (skip-chars-forward "\]\[\(")
-			   ;; Leave point on the link even if not activated
-			   ;; here, so that code elsewhere activates it.
-			   (if (and (markdown-link-p)
-				    (not (or (hpath:www-at-p) (hpath:at-p))))
-			       (progn (hpath:display-buffer (current-buffer))
-				      (hact 'markdown-follow-link-at-point))))
-		  (goto-char opoint)
-		  nil))))
+	       (error (markdown-follow-inline-link-p opoint))))
 	    ((markdown-wiki-link-p)
 	     (hpath:display-buffer (current-buffer))
 	     (hact 'markdown-follow-wiki-link-at-point))))))
@@ -604,19 +634,60 @@ Requires the Emacs builtin Tramp library for ftp file retrievals."
 ;;; Follows links to Hyperbole Koutliner cells.
 ;;; ========================================================================
 
-;; FIXME: Not sure if it's important to avoid loading `klink' during
-;; bytecompilation, but that was the behavior when the condition was more
-;; complex, so I kept the `if' even though it's now trivial.
-(if t (require 'klink))
+(require 'klink)
 
 ;;; ========================================================================
 ;;; Jumps to source line associated with grep or compilation error messages.
+;;; Also supports ripgrep (rg command).
 ;;; With credit to Michael Lipp and Mike Williams for the idea.
 ;;; ========================================================================
 
+(defib ripgrep-msg ()
+  "Jumps to line associated with a ripgrep (rg) line numbered msg.
+Ripgrep outputs each pathname once followed by all matching lines in that pathname.
+Messages are recognized in any buffer (other than a helm completion
+buffer)."
+  ;; Locate and parse ripgrep messages found in any buffer other than a
+  ;; helm completion buffer.
+  ;;
+  ;; Sample ripgrep command output:
+  ;;
+  ;; bash-3.2$ rg -nA2 hkey-throw *.el
+  ;; hmouse-drv.el
+  ;; 405:(defun hkey-throw (release-window)
+  ;; 406-  "Throw either a displayable item at point or the current buffer to RELEASE-WINDOW.
+  ;; 407-The selected window does not change."
+  ;; --
+  ;; 428:    (hkey-throw to-window)))
+  ;; 429-
+  ;; 430-(defun hmouse-click-to-drag ()
+  ;;
+  ;; Use `rg -n --no-heading' for pathname on each line.
+  (unless (eq major-mode 'helm-major-mode)
+    (save-excursion
+      (beginning-of-line)
+      (when (looking-at "\\([1-9][0-9]*\\)[-:]")
+	;; Ripgrep matches and context lines (-A<num> option)
+	(let ((line-num (match-string-no-properties 1)))
+	  (while (and (= (forward-line -1) 0)
+		      (looking-at "[1-9][0-9]*[-:]\\|--$")))
+	  (unless (looking-at "[1-9][0-9]*[-:]\\|--$")
+	    (let* ((file (buffer-substring-no-properties (point-at-bol) (point-at-eol)))
+		   (but-label (concat file ":" line-num))
+		   (source-loc (if (file-name-absolute-p file) nil
+				 (hbut:key-src t))))
+	      (if (stringp source-loc)
+		  (setq file (expand-file-name file (file-name-directory source-loc))))
+	      (when (file-readable-p file)
+		(setq line-num (string-to-number line-num))
+		(ibut:label-set but-label)
+		(hact 'link-to-file-line file line-num)))))))))
+
 (defib grep-msg ()
-  "Jumps to line associated with grep or compilation error msgs.
-Messages are recognized in any buffer."
+  "Jumps to line associated with line numbered grep or compilation error msgs.
+Messages are recognized in any buffer (other than a helm completion
+buffer) except for grep -A<num> context lines which are matched only
+in grep and shell buffers."
   ;; Locate and parse grep messages found in any buffer other than a
   ;; helm completion buffer.
   (unless (eq major-mode 'helm-major-mode)
@@ -653,8 +724,7 @@ Messages are recognized in any buffer."
 		 (source-loc (if (file-name-absolute-p file) nil
 			       (hbut:key-src t))))
 	    (if (stringp source-loc)
-		(setq file (expand-file-name
-			    file (file-name-directory source-loc))))
+		(setq file (expand-file-name file (file-name-directory source-loc))))
 	    (setq line-num (string-to-number line-num))
 	    (ibut:label-set but-label)
 	    (hact 'link-to-file-line file line-num))))))

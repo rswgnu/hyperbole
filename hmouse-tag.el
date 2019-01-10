@@ -664,7 +664,7 @@ Returns nil when point is on the first line of a non-alias Lisp definition."
 (defun smart-lisp-mode-p ()
   "Return t if in a mode which uses Lisp symbols."
   (or (smart-emacs-lisp-mode-p)
-      (memq major-mode '(lisp-mode scheme-mode))))
+      (memq major-mode '(lisp-mode scheme-mode change-log-mode))))
 
 ;;;###autoload
 (defun smart-objc (&optional identifier next)
@@ -761,6 +761,24 @@ If key is pressed:
 	     (buffer-substring-no-properties (match-beginning 2) (match-end 2))
 	     (match-beginning 2) (match-end 2)))))))
 
+
+(defun smart-python-jedi-to-definition-p ()
+  "If the Jedi Python identifier server is running, test and use it to jump to the definition.
+See https://tkf.github.io/emacs-jedi/latest/."
+  ;; Use functions from jedi-core.el only, not from jedi.el, since
+  ;; company-jedi.el users will have loaded only jedi-core.el.
+  (when (featurep 'jedi-core)
+    (let* ((servers (jedi:-get-servers-in-use))
+	   (proc (epc:manager-server-process (car servers))))
+      (and servers (processp proc)
+	   (eq 'run (process-status (process-buffer proc)))
+	   ;; The goto is performed asynchronously.
+	   ;; It reports in the minibuffer when a definition is not found.
+	   (progn (jedi:goto-definition t)
+		  ;; For use as a predicate, always return t if the Jedi server
+		  ;; is running  so other lookup techniques are not tried.
+		  t)))))
+
 ;;;###autoload
 (defun smart-python (&optional identifier next)
   "Jumps to the definition of optional Python IDENTIFIER or the one at point.
@@ -769,6 +787,9 @@ Optional second arg NEXT means jump to next matching Python tag.
 It assumes that its caller has already checked that the key was pressed in an
 appropriate buffer and has moved the cursor to the selected buffer.
 
+See the documentation for `smart-python-jedi-to-definition-p' for the
+behavior when the Jedi python identifier server is in use.
+
 See the documentation for `smart-python-oo-browser' for the behavior of this
 function when the OO-Browser has been loaded.
 
@@ -776,10 +797,11 @@ Otherwise, on a Python identifier, the identifier definition is displayed,
 assuming the identifier is found within an `etags' generated tag file
 in the current directory or any of its ancestor directories."
   (interactive)
-  (cond ((fboundp 'python-to-definition)
+  (cond ((smart-python-jedi-to-definition-p))
+	((fboundp 'python-to-definition)
 	 ;; Only fboundp if the OO-Browser has been loaded.
 	 (smart-python-oo-browser))
-	(identifier
+	(t
 	 (smart-python-tag identifier next))))
 
 ;;;###autoload

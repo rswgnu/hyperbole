@@ -27,7 +27,7 @@
 This should end with a space.")
 
 (defcustom hypb:rgrep-command
-  (format "%sgrep -insIHr " (if (executable-find "zgrep") "z" ""))
+  (format "%sgrep -insIHr" (if (executable-find "zgrep") "z" ""))
   "*Grep command string and initial arguments to send to `hypb:rgrep' command.
 It must end with a space."
   :type 'string
@@ -599,12 +599,16 @@ If in an Emacs Lisp mode buffer and no PREFIX-ARG is given, limit search to only
 	 (grep-cmd
 	  (if (and (not current-prefix-arg) (equal (buffer-name) "*Locate*"))
 	      (format "%s -e \%c%s\%c %s" hypb:rgrep-command delim pattern delim (hypb:locate-pathnames))
-	    (format "%s%s -e \%c%s\%c ."
+	    (format "%s %s -e \%c%s\%c ."
 		    hypb:rgrep-command
 		    (if (and (memq major-mode '(emacs-lisp-mode lisp-interaction-mode))
 			     (not prefix-arg))
-			"--include=\"*.el\" --include=\"*.el.gz\""
-		      "--exclude=\"*~\" --exclude=\"#*\" --exclude=\"TAGS\"")
+			(if (string-match "\\`rg " hypb:rgrep-command)
+			    "-g \"*.el\" -g \"*.el.gz\""
+			  "--include=\"*.el\" --include=\"*.el.gz\"")
+		      (if (string-match "\\`rg " hypb:rgrep-command)
+			  "-g \"!*~\" -g \"!#*\" -g \"!TAGS\""
+			"--exclude=\"*~\" --exclude=\"#*\" --exclude=\"TAGS\""))
 		    delim pattern delim))))
     (setq this-command `(grep ,grep-cmd))
     (push this-command command-history)
@@ -614,6 +618,20 @@ If in an Emacs Lisp mode buffer and no PREFIX-ARG is given, limit search to only
  "Save only lines containing matches for REGEXP within the active region or to the end of buffer."
     (interactive "sSave lines with match for regexp: ")
     (keep-lines regexp nil nil t))
+
+(defmacro hypb:save-selected-window-and-input-focus (&rest body)
+  "Execute BODY, then restore the selected window in each frame and the previously selected frame with input focus.
+The value returned is the value of the last form in BODY."
+  `(let ((frame (selected-frame)))
+     (prog1 (save-selected-window ,@body)
+       (select-frame-set-input-focus frame))))
+
+(defun hypb:select-window-frame (window)
+  "Select WINDOW and its frame (set input focus there)."
+  (if (window-live-p window)
+      (progn (select-window window)
+	     (select-frame-set-input-focus (window-frame window)))
+    (error "(hypb:select-window-frame): Argument must be a live window, not '%s'" window)))
 
 (defun hypb:supercite-p ()
   "Returns non-nil iff the Emacs add-on supercite package is in use."

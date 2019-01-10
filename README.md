@@ -1,11 +1,11 @@
-# GNU Hyperbole 7.0.2 - The Everyday Hypertextual Information Manager
+# GNU Hyperbole 7.0.2a - The Everyday Hypertextual Information Manager
 
 <!-- START doctoc generated TOC -->
 **Table of Contents**
 
 - [Summary](#summary)
 - [Mailing Lists](#mailing-lists)
-- [Ftp and Git Repository Downloads](#ftp-and-git)
+- [Ftp and Git Repository Downloads](#ftp-and-git-repository-downloads)
 - [Installation](#installation)
 - [Invocation](#invocation)
 - [Hyperbole Components](#hyperbole-components)

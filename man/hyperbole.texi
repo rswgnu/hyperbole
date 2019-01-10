@@ -151,8 +151,8 @@ WITHOUT ANY WARRANTY, without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</P>
 
 <PRE>
-Edition 7.0.2
-Printed November 23, 2017.
+Edition 7.0.2a
+Printed December 12, 2017.
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -176,7 +176,7 @@ Printed November 23, 2017.
 
 @center The Everyday Hypertextual Information Manager
 
-@center Edition 7.0.2, November 23, 2017.
+@center Edition 7.0.2a, December 12, 2017.
 
 @sp 2
 @noindent
@@ -462,7 +462,7 @@ Smart Keyboard Keys
 @chapter Introduction
 
 This edition of the GNU Hyperbole Manual is for use with any version
-7.0.2 or greater of GNU Hyperbole.  Hyperbole runs atop GNU Emacs 24.3
+7.0.2a or greater of GNU Hyperbole.  Hyperbole runs atop GNU Emacs 24.3
 or higher.  It will trigger an error if your Emacs is older.
 
 This chapter summarizes the structure of the rest of the manual,
@@ -3229,12 +3229,15 @@ with the frames menu instead, use Screen/FramesControl, @bkbd{C-h h s
 f}.
 
 @cindex submodes
+@kindex screen, t
+@kindex screen, q
+@kindex screen, Q
 Once in HyControl, your minibuffer window at the bottom of the
 selected frame will display a summary of keys you may use to adjust
-your windows until you press @bkbd{q} to quit from HyControl.  The
-key, @bkbd{t}, will always toggle between controlling frames and
-windows, the @dfn{submodes} of HyControl, with the upper left of the
-minibuffer prompt showing which type of control is active.
+your windows until you press @bkbd{q} or @bkbd{Q} to quit from
+HyControl.  The key, @bkbd{t}, will always toggle between controlling
+frames and windows, the @dfn{submodes} of HyControl, with the upper
+left of the minibuffer prompt showing which type of control is active.
 
 @cindex numeric argument
 @cindex multiplier
@@ -3680,10 +3683,12 @@ commands available in the Koutliner.
 @section   Menu Commands
 
 The Kotl/ menu entry on the Hyperbole minibuffer menu provides access to
-a number of major outliner commands:
+a number of major Koutliner commands:
 
 @cindex outliner commands
 @cindex Koutliner commands
+@cindex Koutliner menu
+@cindex menu, Koutliner
 @findex kotl-mode:show-all
 @findex kvspec:toggle-blank-lines
 @findex kfile:find
@@ -3695,7 +3700,6 @@ a number of major outliner commands:
 @findex kotl-mode:show-tree
 @findex kotl-mode:top-cells
 @findex kvspec:activate
-@cindex menu, Outline
 @example
 Menu Item    Command                    Description
 ====================================================================
@@ -3716,8 +3720,12 @@ Vspec        kvspec:activate            Set a view specification
 @end example
 
 @page
+@kindex C-mouse-3
+@cindex popup menu, Koutliner
+@cindex menubar menu, Koutliner
 The popup and menubar Koutline menu, as displayed here, offers a more
-complete set of the Koutliner commands.  Experiment with the menu or
+complete set of the Koutliner commands.  @bkbd{C-mouse-3} pops up the
+mode-specific menu in Emacs.  Experiment with the menu or
 read the following sections explaining commands.
 
 @float Image,image:Koutline Menu
@@ -4750,14 +4758,24 @@ so.
 @end float
 @page
 
-@cindex rolo menu
+@cindex Rolo menu
 @cindex HyRolo menu
+@cindex menu, HyRolo
+@cindex menu, Rolo
+@kindex C-mouse-3
+@cindex popup menu, HyRolo
+@cindex popup menu, Rolo
+@cindex menubar menu, HyRolo
+@cindex menubar menu, Rolo
 The Rolo/ menu entry on the Hyperbole minibuffer menu provides the same
-set of commands as the menubar menu, with more concise labels.
-The Rolo/ menu offers the following commands:
+set of commands as the menubar and popup menus, with more concise labels.
+@bkbd{C-mouse-3} pops up the mode-specific menu in Emacs.  Experiment with
+the menu or read the following sections explaining commands.
 
-@cindex rolo commands
-@cindex hyrolo commands
+The minibuffer Rolo/ menu offers the following commands:
+
+@cindex Rolo commands
+@cindex HyRolo commands
 @findex hyrolo-add
 @findex hyrolo-display-matches
 @findex hyrolo-edit
@@ -6015,6 +6033,11 @@ when the button's label duplicates the label of an existing button in
 the current buffer.  This number makes the label unique and so allows
 any number of buttons with the same base label within a single buffer.
 
+@item Jedi
+See also @url{https://tkf.github.io/emacs-jedi/latest/}.
+
+Jedi is a Emacs package for Python completion, definition and documentation lookup.
+
 @item Koutline
 A hierarchically ordered grouping of cells which may be stored as a file
 and viewed and edited as an outline.
@@ -6060,6 +6083,8 @@ See @b{Augment}.
 See @b{Link} or @b{Cell}.
 
 @item The OO-Browser
+See also @url{https://www.gnu.org/software/oo-browser}.
+
 The GNU OO-Browser is a multi-windowed, interactive object-oriented class
 browser similar in use to the well-known Smalltalk browsers.  It runs
 inside Emacs.  It is unique in a number of respects foremost of which is
@@ -7854,9 +7879,13 @@ When in a Treemacs file browser buffer:
          collapse the entry;
      (2) elsewhere within an entry line, the item is displayed for editing,
          normally in another window;
-     (3) on the first line of the buffer (other than the end of line),
+     (3) at the end of an entry line: invoke @code{action-key-eol-function},
+         typically to scroll up proportionally, if an Action Key press; invoke
+         @code{assist-key-eol-function}, typically to scroll down proportionally,
+         if an Asisst Key press;
+     (4) on the first line of the buffer (other than the end of line),
          dired is run on the current directory of this Treemacs;
-     (4) at the end of the first or last line of the buffer,
+     (5) at the end of the first or last line of the buffer,
          this Treemacs invocation is quit.
 @end group
 @end format
@@ -8205,6 +8234,35 @@ When pressed on a pages-directory-mode entry line:
 @end group
 @end format
 
+@node Smart Key - Python Source Code, Smart Key - Objective-C Source Code, Smart Key - JavaScript Source Code, Smart Keyboard Keys
+@subsection Smart Key - Python Source Code
+@format
+@group
+When the Jedi identifier server or the OO-Browser has been loaded and the press is
+within a Python buffer:
+  ACTION KEY or ASSIST KEY
+     Jumps to the definition of the selected Python construct:
+     (1) on an `import' line, the referent is displayed;
+     (2) within a method declaration, its definition is displayed;
+     (3) on a class name, the class definition is shown;
+     (4) on a unique identifier reference, its definition is shown (when
+         possible).
+@end group
+@end format
+
+@format
+@group
+When pressed within a Python source code file (without the OO-Browser):
+  ACTION KEY
+     Jumps to the definition of the selected Python identifier,
+     assuming the identifier is found within an "etags" generated
+     tags file within the current directory or any of its ancestor
+     directories.
+  ASSIST KEY
+     Jumps to the next tag matching an identifier at point.
+@end group
+@end format
+
 @page
 @node Smart Key - Identifier Menu Mode , Smart Key - C Source Code, Smart Key - Pages Directory Mode, Smart Keyboard Keys
 @subsection Smart Key - Identifier Menu Mode 
@@ -8403,35 +8461,6 @@ When pressed within a JavaScript source code file:
 @end group
 @end format
 
-
-@node Smart Key - Python Source Code, Smart Key - Objective-C Source Code, Smart Key - JavaScript Source Code, Smart Keyboard Keys
-@subsection Smart Key - Python Source Code
-@format
-@group
-When the OO-Browser has been loaded and the press is within a Python
-buffer:
-  ACTION KEY or ASSIST KEY
-     Jumps to the definition of the selected Python construct:
-     (1) on an `import' line, the referent is displayed;
-     (2) within a method declaration, its definition is displayed;
-     (3) on a class name, the class definition is shown;
-     (4) on a unique identifier reference, its definition is shown (when
-         possible).
-@end group
-@end format
-
-@format
-@group
-When pressed within a Python source code file (without the OO-Browser):
-  ACTION KEY
-     Jumps to the definition of the selected Python identifier,
-     assuming the identifier is found within an "etags" generated
-     tags file within the current directory or any of its ancestor
-     directories.
-  ASSIST KEY
-     Jumps to the next tag matching an identifier at point.
-@end group
-@end format
 
 @node Smart Key - Objective-C Source Code, Smart Key - Fortran Source Code, Smart Key - Python Source Code, Smart Keyboard Keys
 @subsection Smart Key - Objective-C Source Code
