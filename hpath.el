@@ -4,7 +4,7 @@
 ;;
 ;; Orig-Date:     1-Nov-91 at 00:44:23
 ;;
-;; Copyright (C) 1991-2016  Free Software Foundation, Inc.
+;; Copyright (C) 1991-2019  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
 ;;
 ;; This file is part of GNU Hyperbole.
@@ -372,6 +372,15 @@ directories.  The first one in which PATH is found is used."
 	  (or (file-exists-p rtn) (setq rtn nil)))
 	(or rtn path)))))
 
+(defun hpath:tramp-file-name-regexp ()
+  "Returns a modified tramp-file-name-regexp used for checking if
+point is at the beginning of a remote file name.  Removes match
+to bol and remove match to empty string if present."
+  (let ((tramp-regexp (car (if (fboundp 'tramp-file-name-structure)
+			       (tramp-file-name-structure)
+			     tramp-file-name-structure))))
+    (substring-no-properties (replace-regexp-in-string "\\\\'" "" tramp-regexp) 1)))
+
 (defun hpath:remote-at-p ()
   "Returns a remote pathname that point is within or nil.
 See the `(emacs)Remote Files' info documentation for pathname format details.
@@ -385,10 +394,7 @@ Always returns nil if (hpath:remote-available-p) returns nil."
 	      (skip-chars-backward "^[ \t\n\r\f\"`'|\(\{<")
 	      (cond
 	       ((and (eq remote-package 'tramp)
-		     ;; Remove match to bol in this regexp before testing.
-		     (looking-at (substring-no-properties (car (if (fboundp 'tramp-file-name-structure)
-								   (tramp-file-name-structure)
-								 tramp-file-name-structure)) 1)))
+		     (looking-at (hpath:tramp-file-name-regexp)))
 		(match-string-no-properties 0))
 	       ((looking-at hpath:url-regexp)
 		(if (string-equal (match-string-no-properties hpath:protocol-grpn) "ftp")
@@ -660,7 +666,7 @@ program)."
 			    (hpath:command-string display-executables
 						  filename))
 		      nil)
-		     ((hypb:functionp display-executables)
+		     ((functionp display-executables)
 		      (funcall display-executables filename)
 		      t)
 		     ((and (listp display-executables) display-executables)

@@ -823,7 +823,7 @@ Optional NO-SORT means display in decreasing priority order (natural order)."
       (let ((file (buffer-file-name but-buf)))
 	(if file
 	    (file-name-directory (hpath:symlink-referent file))
-	  (cdr (assq 'default-directory (buffer-local-variables but-buf)))))
+	  (buffer-local-value 'default-directory but-buf)))
     (hypb:error "(hui:key-dir): '%s' is not a valid buffer.")))
 
 (defun hui:key-src (but-buf)

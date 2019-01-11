@@ -1517,7 +1517,7 @@ windows, instead use the @bkbd{M-o t <id-of-window-to-display-item-in>} key sequ
 @c normally under Hyperbole.
 
 @c The code for Smart Key modifiers can be found in
-@c @file{@code{$@{hyperb:dir@}}/hmouse-mod.el}.
+@c @file{$@{hyperb:dir@}/hmouse-mod.el}.
 
 
 @node Buttons, Menus, Smart Keys, Top
@@ -7882,7 +7882,7 @@ When in a Treemacs file browser buffer:
      (3) at the end of an entry line: invoke @code{action-key-eol-function},
          typically to scroll up proportionally, if an Action Key press; invoke
          @code{assist-key-eol-function}, typically to scroll down proportionally,
-         if an Asisst Key press;
+         if an Assist Key press;
      (4) on the first line of the buffer (other than the end of line),
          dired is run on the current directory of this Treemacs;
      (5) at the end of the first or last line of the buffer,

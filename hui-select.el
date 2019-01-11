@@ -310,6 +310,19 @@ Also, add language-specific syntax setups to aid in thing selection."
 			  (setq sentence-end "\\([^ \t\n\r>]<\\|>\\(<[^>]*>\\)*\\|[.?!][]\"')}]*\\($\\| $\\|\t\\|  \\)\\)[ \t\n]*")
 			  (define-key web-mode-map "\C-c." 'hui-select-goto-matching-tag))))
 
+(defun hui-select-get-region-boundaries ()
+  "Return the (START . END) boundaries of region for `hui-select-thing'."
+  (or (hui-select-boundaries (point))
+      (when (eq hui-select-previous 'punctuation)
+	(hui-select-word (point)))))
+
+;;;###autoload
+(defun hui-select-get-region ()
+  "Return the region that `hui-select-thing' would select."
+  (let ((region-bounds (hui-select-get-region-boundaries)))
+    (when region-bounds
+      (buffer-substring-no-properties (car region-bounds) (cdr region-bounds)))))
+
 ;;;###autoload
 (defun hui-select-thing ()
   "Select a region based on the syntax of the thing at point.
@@ -325,7 +338,7 @@ interactively, the type of selection is displayed in the minibuffer."
 	  ;; Reset selection based on the syntax of character at point.
 	  (hui-select-reset)
 	  nil)))
-  (let ((region (hui-select-boundaries (point))))
+  (let ((region (hui-select-get-region-boundaries)))
     (unless region
       (when (eq hui-select-previous 'punctuation)
 	(setq region (hui-select-word (point)))))

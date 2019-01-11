@@ -16,11 +16,11 @@
 ;;   When the referent is a web page, this calls the function given by
 ;;   `hibtypes-social-display-function' to display it, initially set to `browse-url'.
 ;;
-;;   A hashtag reference is either: [facebook|github|git|instagram|twitter]#<hashtag>
-;;   or using 2-letter service abbreviations: [fb|gh|gt|in|tw]#<hashtag>.
+;;   A hashtag reference is either: [facebook|github|gitlab|git|instagram|twitter]#<hashtag>
+;;   or using 2-letter service abbreviations: [fb|gh|gl|gt|in|tw]#<hashtag>.
 ;;
-;;   A username reference is either: [facebook|github|instagram|twitter]@<username>
-;;   or [fb|gh|in|tw]@<username>.
+;;   A username reference is either: [facebook|github|gitlab|instagram|twitter]@<username>
+;;   or [fb|gh|gl|in|tw]@<username>.
 ;;
 ;;   If the social media service is not given, it defaults to the value of
 ;;   `hibtypes-social-default-service', initially set to \"twitter\".
@@ -32,6 +32,7 @@
 
 ;;     facebook@zuck                             Display user's home page
 ;;     github@rswgnu
+;;     gitlab@seriyalexandrov
 ;;     instagram@lostart
 ;;     twitter@nytimestravel
 
@@ -98,7 +99,8 @@
 ;;     gh#rswgnu/helm/global_mouse               Display user project's branch
 ;;     gh#rswgnu/hyperbole/55a1f0                Display user project's commit diff
 ;;
-;;     gh#orgs/github/people                     List the org, github's staff
+;;     gh#orgs/github/people (or staff)          List the org, github's staff
+;;     gh#/github/fetch/contributors             List contributors to github's fetch project
 ;;
 ;;     (setq hibtypes-github-default-user "rswgnu")
 ;;     github#/hyperbole                         Display default user's project
@@ -112,11 +114,11 @@
 ;;
 ;;     like so:
 ;;
-;;       gh#issues                               List emacs-helm/helm's open issues
-;;       gh#1878                                 Display a specific project issue
-;;
-;;       gh#pulls                                List project's open pull requests
+;;       gh#pulls                                List project's open pull requests (PRs)
 ;;       gh#pull/1871                            Display a specific project pull request
+;;
+;;       gh#issues                               List emacs-helm/helm's open issues
+;;       gh#1878                                 Display a specific project issue (or PR)
 ;;
 ;;       gh#branches                             List project's branches
 ;;       gh#branch/global_mouse                  List files in a specific branch
@@ -128,6 +130,40 @@
 ;;       gh#commits                              List project's commits
 ;;       gh#898e55c                              Display default user and default
 ;;                                               project commit diff
+
+;;   Gitlab (remote) reference links support the same reference types as Github (but
+;;   substitute the gl# prefix) plus these additional reference types:
+;;
+;;     gl#/libertybsd/libertybsd-status          Group and project
+;;
+;;     gl#gitlab-org/gitlab-ce/activity          Summarize user's project activity
+;;     gl#gitlab-org/gitlab-ce/analytics         Display user project's cycle_analytics
+;;     gl#gitlab-org/gitlab-ce/boards            Display user project's kanban-type issue boards
+;;
+;;     Once you set the default user and project variables, you can leave
+;;     them off any reference links:
+;;
+;;       (setq hibtypes-gitlab-default-user "gitlab-org")
+;;       (setq hibtypes-gitlab-default-project "gitlab-ce")
+;;
+;;     gl#issues or gl#list                      Display default project's issue list
+;;     gl#jobs                                   Display default project's computing jobs
+;;     gl#labels                                 Display default project's issue categories
+;;     gl#members                                Display default project's staff list
+;;     gl#contributors                           Show contributor push frequency charts
+;;     gl#merge_requests or gl#pulls             Display default project's pull requests
+;;     gl#milestones                             Display default project's milestones status
+;;     gl#pages                                  Display default project's web pages
+;;     gl#pipelines                              List build and test sequences
+;;     gl#pipeline_charts                        Graphical view of pipeline run results across time
+;;     gl#schedules                              Display schedules for project pipelines
+;;     gl#snippets                               Project snippets, diffs and text with discussion
+;;
+;;     gl#groups                                 List all available groups of projects
+;;     gl#projects                               List all available projects
+;;
+;;     gl#milestone=38                           Show a specific project milestone
+;;     gl#snippet/1689487                        Show a specific project snippet
 
 ;;; Code:
 ;;; ************************************************************************
@@ -147,6 +183,7 @@
   :type '(radio (const "facebook")
 		(const "git")
 		(const "github")
+		(const "gitlab")
 		(const "instagram")
 		(const "twitter"))
   :group 'hyperbole-button)
@@ -171,6 +208,16 @@
   :type 'string
   :group 'hyperbole-button)
 
+(defcustom hibtypes-gitlab-default-project nil
+  "Default project name to associate with any Github commit link."
+  :type 'string
+  :group 'hyperbole-button)
+
+(defcustom hibtypes-gitlab-default-user nil
+  "Default user name to associate with any Github commit link."
+  :type 'string
+  :group 'hyperbole-button)
+
 ;;; ************************************************************************
 ;;; Private variables
 ;;; ************************************************************************
@@ -178,6 +225,7 @@
 (defconst hibtypes-social-hashtag-alist
   '(("\\`\\(fb\\|facebook\\)\\'"  . "https://www.facebook.com/hashtag/%s")
     ("\\`\\(gh\\|github\\)\\'"    . "https://github.com/%s/%s/%s%s")
+    ("\\`\\(gl\\|gitlab\\)\\'"    . "https://www.gitlab.com/%s/%s/%s%s")
     ("\\`\\(gt\\|git\\)\\'"       . "(cd %s; git %s %s)")
     ("\\`\\(in\\|instagram\\)\\'" . "https://www.instagram.com/explore/tags/%s/")
     ("\\`\\(tw\\|twitter\\)\\'"   . "https://twitter.com/search?q=%%23%s&src=hashtag")
@@ -187,6 +235,7 @@
 (defconst hibtypes-social-username-alist
   '(("\\`\\(fb\\|facebook\\)\\'"  . "https://www.facebook.com/%s")
     ("\\`\\(gh\\|github\\)\\'"    . "https://github.com/%s/")
+    ("\\`\\(gl\\|gitlab\\)\\'"    . "https://www.gitlab.com/%s/")
     ("\\`\\(in\\|instagram\\)\\'" . "https://www.instagram.com/%s/")
     ("\\`\\(tw\\|twitter\\)\\'"   . "https://twitter.com/search?q=@%s")
     )
@@ -212,8 +261,8 @@ See `ibtypes::social-reference' for format details.")
 (defib social-reference ()
   "Display the web page associated with a social hashtag or username reference at point.
 Reference format is:
-  [facebook|git|github|instagram|twitter]?[#@]<reference> or
-  [fb|gt|gh|in|tw]?[#@]<reference>.
+  [facebook|git|github|gitlab|instagram|twitter]?[#@]<reference> or
+  [fb|gt|gh|gl|in|tw]?[#@]<reference>.
 
 The first part of the label for a button of this type is the social
 service name.  The service name defaults to the value of
@@ -257,6 +306,8 @@ listed in `hibtypes-social-inhibit-modes'."
 	     (hact 'git-reference after-hash-str))
 	    ((string-match "\\`\\(gh\\|github\\)#" ref)
 	     (hact 'github-reference after-hash-str))
+	    ((string-match "\\`\\(gl\\|gitlab\\)#" ref)
+	     (hact 'gitlab-reference after-hash-str))
 	    (t (hact 'social-reference service ref-kind-str after-hash-str))))))
 
 ;; Don't make this a defact or its arguments may be improperly expanded as pathnames.
@@ -289,10 +340,11 @@ REFERENCE is a string of one of the following forms:
 or  /<project>.
 
 <ref-item> is one of these:
-  one of the words: branches, commits, issues, pulls, or tags; the associated items are listed;
+  one of the words: branches, commits, contributors, issues, people or staff,
+  pulls, status or tags; the associated items are listed;
 
-  one of the words: branch, commit, issue, pull or tag followed by a '/' and
-  item id; the item is shown;
+  one of the words: branch, commit, issue, pull or tag followed by a '/' or '=' and 
+  an item-id; the item is shown;
 
   an issue reference given by a positive integer, e.g. 92 or prefaced with GH-, e.g. GH-92;
   the issue is displayed;
@@ -314,7 +366,7 @@ PROJECT value is provided, it defaults to the value of
 		 (url-to-format (assoc-default "github" hibtypes-social-hashtag-alist #'string-match))
 		 (ref-type))
 	     (when url-to-format
-	       (cond ((string-match "\\`\\(branch\\|commit\\|issue\\|pull\\|tag\\)/" reference)
+	       (cond ((string-match "\\`\\(branch\\|commit\\|issue\\|pull\\|tag\\)[/=]" reference)
 		      ;; [branch | commit | issue | pull | tag]/ref-item
 		      nil)
 		     ((string-match "\\`/?\\(\\([^/#@]+\\)/\\)\\([^/#@]+\\)\\'" reference)
@@ -331,25 +383,34 @@ PROJECT value is provided, it defaults to the value of
 		      ;; /project
 		      (setq project (or project (match-string-no-properties 1 reference))
 			    reference nil)))
+	       (when (or (and project (string-match "\\`\\(members\\|people\\|staff\\)\\'" project))
+			 ;; Change <org-name>/[members|people|staff] to /orgs/<org-name>/people.
+			 (and reference (string-match "\\`\\(members\\|people\\|staff\\)\\'" reference)))
+		 ;; Change <org-name>/project/[people|staff] to /orgs/<org-name>/people.
+		 (setq project user
+		       user "orgs"
+		       reference "people"))
+	       (when (equal reference "contributors")
+		 ;; Change /user/project/contributors to /user/project/graphs/contributors.
+		 (setq ref-type "graphs/"
+		       reference "contributors"))
 	       (unless (stringp user) (setq user hibtypes-github-default-user))
 	       (unless (stringp project) (setq project hibtypes-github-default-project))
 	       (when reference
-		 (cond ((equal user "orgs")
-			;; A specific organization reference
+		 (cond ((member reference '("branches" "commits" "contributors" "issues" "people" "pulls" "tags"))
+			;; All branches, commits, contributors, open issues, people, pull requests or commit tags reference
 			(setq ref-type reference
 			      reference ""))
-		       ((member reference '("branches" "commits" "issues" "pulls" "tags"))
-			;; All branches, commits, open issues, pull requests or commit tags reference
-			(setq ref-type reference
-			      reference ""))
-		       ((and (< (length reference) 7) (string-match "\\`\\([gG][hH]-\\)?[0-9]+\\'" reference))
-			;; Specific issue reference
-			(setq ref-type "issues/"))
-		       ((string-match "\\`\\(commit\\|issue\\|pull\\)/" reference)
+		       ((and (< (length reference) 8) (string-match "\\`\\([gG][hH]-\\)?[0-9]+\\'" reference))
+			;; Issue ref-id reference
+			(setq ref-type "issues/"
+			      reference (substring reference (match-end 1) (match-end 0))))
+		       ((string-match "\\`\\(commit\\|issue\\|pull\\)[/=]" reference)
 			;; Specific reference preceded by keyword branch, commit,
 			;; issue, or pull
-			(setq ref-type (substring reference 0 (match-end 0))
-			      reference (substring reference (match-end 0))))
+			(setq ref-type (substring reference 0 (match-end 1))
+			      reference (substring reference (match-end 0))
+			      ref-type (concat ref-type (if (string-equal ref-type "issue") "s/" "/"))))
 		       ((string-match "\\`[0-9a-f]+\\'" reference)
 			;; Commit reference
 			(setq ref-type "commit/"))
@@ -363,7 +424,8 @@ PROJECT value is provided, it defaults to the value of
 		   (funcall hibtypes-social-display-function
 			    (if reference
 				(format url-to-format user project ref-type reference)
-			      (format url-to-format user project "" "")))
+			      ;; Remove trailing /
+			      (substring (format url-to-format user project "" "") 0 -1)))
 		 (cond ((and (null user) (null project))
 			(error "(github-reference): Set `hibtypes-github-default-user' and `hibtypes-github-default-project'"))
 		       ((null user)
@@ -372,6 +434,169 @@ PROJECT value is provided, it defaults to the value of
 			(error "(github-reference): Set `hibtypes-github-default-project'")))))
 	     (unless url-to-format
 	       (error "(github-reference): Add an entry for github to `hibtypes-social-hashtag-alist'"))))))
+
+;;; Remote Gitlab commit references
+
+;; Don't make this a defact or its arguments may be improperly expanded as pathnames.
+(defun gitlab-reference (reference &optional user project)
+  "Display the Gitlab entity associated with REFERENCE and optional USER and PROJECT.
+REFERENCE is a string of one of the following forms:
+    <ref-item>
+    <user>/<project>/<ref-item>
+    <project>/<ref-item>
+    /<group>/<project>
+or  /<project-or-group> (where a group is a collection of projects).
+
+<ref-item> is one of these:
+  one of the words: activity, analytics, boards or kanban, branches, commits, contributors,
+  groups, issues or list, jobs, labels, merge_requests, milestones, pages, pipelines,
+  pipeline_charts, members or people or staff, projects, pulls, schedules, snippets,
+  status or tags; the associated items are listed;
+
+  one of the words: branch, commit(s), issue(s), milestone(s), pull(s), snippet(s) or
+  tag(s) followed by a '/' or '=' and an item-id; the item is shown;
+
+  an issue reference given by a positive integer, e.g. 92 or prefaced with GL-, e.g. GL-92;
+  the issue is displayed;
+
+  a commit reference given by a hex number, 55a1f0; the commit diff is displayed;
+
+  a branch or tag reference given by an alphanumeric name, e.g. hyper20; the
+  files in the branch are listed.
+
+USER defaults to the value of `hibtypes-gitlab-default-user'.
+If given, PROJECT overrides any project value in REFERENCE.  If no
+PROJECT value is provided, it defaults to the value of
+`hibtypes-gitlab-default-project'."
+  (cond ((or (null reference) (equal reference ""))
+	 (error "(gitlab-reference): Gitlab reference must not be empty"))
+	((equal reference "status")
+	 (funcall hibtypes-social-display-function "https://status.gitlab.com"))
+	(t (let ((case-fold-search t)
+		 (url-to-format (assoc-default "gitlab" hibtypes-social-hashtag-alist #'string-match))
+		 (ref-type))
+	     (when url-to-format
+	       (cond ((string-match "\\`\\(branch\\|commits?\\|issues?\\milestones?\\|pulls?\\|snippets?\\|tags?\\)[/=]" reference)
+		      ;; Reference to a specific ref-item
+		      nil)
+		     ((string-match "\\`/?\\(\\([^/#@]+\\)/\\)\\([^/#@]+\\)\\'" reference)
+		      ;; /?user/project
+		      (setq user (or user (match-string-no-properties 2 reference))
+			    project (or project (match-string-no-properties 3 reference))
+			    reference nil))
+		     ((string-match "\\`/?\\(\\([^/#@]+\\)/\\)?\\([^/#@]+\\)/\\([^#@]+\\)\\'" reference)
+		      ;; /?[user/]project/ref-item
+		      (setq user (or user (match-string-no-properties 2 reference))
+			    project (or project (match-string-no-properties 3 reference))
+			    reference (match-string-no-properties 4 reference)))
+		     ((string-match "\\`/\\([^/#@]+\\)\\'" reference)
+		      ;; /project
+		      (setq project (or project (match-string-no-properties 1 reference))
+			    reference nil)))
+	       (when (and (null (and user project)) (string-match "\\`\\(groups\\|projects\\)\\'" reference))
+		 ;; List all available groups of projects or projects.
+		 (setq user "explore"
+		       project (match-string-no-properties 1 reference)
+		       ref-type nil
+		       reference nil))
+	       (unless (stringp user) (setq user hibtypes-gitlab-default-user))
+	       (unless (stringp project) (setq project hibtypes-gitlab-default-project))
+	       (when (equal project "pages")
+		 ;; Project web pages use a reverse pages/<project> URL format
+		 (setq project user
+		       user "pages"
+		       ref-type nil
+		       reference nil))
+	       (when reference
+		 (cond  ((string-match "\\`\\(analytics\\|cycle_analytics\\)\\'" reference)
+			;; Project analytics
+			(setq ref-type "cycle_analytics"
+			      reference ""))
+			((string-match "\\`\\(boards\\|kanban\\)\\'" reference)
+			;; Kanban-type Issue Stage Boards
+			(setq ref-type "boards"
+			      reference ""))
+		       ((equal reference "jobs")
+			;; Manual/automated project-related jobs that run
+			(setq ref-type "-/jobs"
+			      reference ""))
+ 		       ((equal reference "list")
+			;; List all issues
+			(setq ref-type "issues"
+			      reference ""))
+	               ((equal reference "contributors")
+			(setq ref-type "graphs/master"
+			      reference ""))
+		       ((string-match "\\`\\(members\\|people\\|staff\\)\\'" reference)
+			(setq ref-type "project_members"
+			      reference ""))
+		       ((equal reference "pipeline_charts")
+			;; Continuous Integration Pipeline Charts
+			(setq ref-type "pipelines/charts"
+			      reference ""))
+ 		       ((equal reference "pulls")
+			;; Merge requests for the project
+			(setq ref-type "merge_requests"
+			      reference ""))
+		       ((equal reference "schedules")
+			;; Schedules for CI Pipelines
+			(setq ref-type "pipeline_schedules"
+			      reference ""))
+		       ((string-match "\\`\\(service\\|service_desk\\)\\'" reference)
+			;; Project help desk 
+			(setq ref-type "issues/service_desk"
+			      reference ""))
+		       ((member reference '("activity" "branches" "commits" "issues" "labels"
+					    "merge_requests" "milestones" "pages" "pipelines"
+					    "snippets" "tags"))
+			;; All activity, branches, commits, cycle analytics, open issues, issue labels,
+			;; members, merge requests, milestones, web pages, pull requests, code snippets
+			;; or commit tags reference
+			(setq ref-type reference
+			      reference ""))
+		       ((and (< (length reference) 8) (string-match "\\`\\([gG][lL]-\\)?[0-9]+\\'" reference))
+			;; Issue ref-id reference
+			(setq ref-type "issues/"
+			      reference (substring reference (match-end 1) (match-end 0))))
+		       ((string-match "\\`label[/=]" reference)
+			;; Labeled category of issues
+			(setq ref-type "issues?label_name%5B%5D="
+			      reference (substring reference (match-end 0))))
+		       ((string-match "\\`\\(commit\\|issues\\|milestones\\|pull\\|snippets\\|tags\\)[/=]" reference)
+			;; Ref-id preceded by a keyword
+			(setq ref-type (concat (substring reference 0 (match-end 1)) "/")
+			      reference (substring reference (match-end 0))))
+		       ((string-match "\\`\\(issue\\|milestone\\|snippet\\|tag\\)[/=]" reference)
+			;; Ref-id preceded by a singular keyword that must be converted to plural
+			(setq ref-type (concat (substring reference 0 (match-end 1)) "s/")
+			      reference (substring reference (match-end 0))))
+		       ((string-match "\\`\\(commit\\|pull\\)s[/=]" reference)
+			;; Ref-id preceded by a plural keyword that must be converted to singular
+			(setq ref-type (concat (substring reference 0 (match-end 1)) "/")
+			      reference (substring reference (1+ (match-end 0)))))
+		       ((string-match "\\`[0-9a-f]+\\'" reference)
+			;; Commit reference
+			(setq ref-type "commit/"))
+		       (t
+			;; Specific branch or commit tag reference
+			(setq ref-type "tree/")
+			(when (string-match "\\`\\(branch\\|tag\\)[/=]" reference)
+			  ;; If preceded by optional keyword, remove that from the reference.
+			  (setq reference (substring reference (match-end 0)))))))
+	       (if (and (stringp user) (stringp project))
+		   (funcall hibtypes-social-display-function
+			    (setq a (if reference
+				(format url-to-format user project ref-type reference)
+				;; Remove trailing /
+				(substring (format url-to-format user project "" "") 0 -1))))
+		 (cond ((and (null user) (null project))
+			(error "(gitlab-reference): Set `hibtypes-gitlab-default-user' and `hibtypes-gitlab-default-project'"))
+		       ((null user)
+			(error "(gitlab-reference): Set `hibtypes-gitlab-default-user'"))
+		       (t
+			(error "(gitlab-reference): Set `hibtypes-gitlab-default-project'")))))
+	     (unless url-to-format
+	       (error "(gitlab-reference): Add an entry for gitlab to `hibtypes-social-hashtag-alist'"))))))
 
 ;;; Local git repository commit references
 

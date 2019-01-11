@@ -26,7 +26,7 @@
 ;;; Other required Elisp libraries
 ;;; ************************************************************************
 
-(eval-and-compile (mapc #'require '(hsettings hmouse-drv hmouse-sh)))
+(eval-when-compile (mapc #'require '(hsettings hmouse-drv hmouse-sh)))
 
 ;;; ************************************************************************
 ;;; Public functions

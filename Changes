@@ -1,3 +1,68 @@
+2017-12-29  Bob Weiner  <rsw@gnu.org>
+
+* hsettings.el (inhibit-hyperbole-messaging): Moved this from hyperbole.el to here to prevent
+    it being reset when hyperbole-toggle-messaging reloads the hyperbole library.
+
+2017-12-20  Bob Weiner  <rsw@gnu.org>
+
+* kotl/kexport.el (kexport:html-file-klink)
+                  (kexport:html): 
+                  (kexport:html-replacement-alist): Added 'k' to precede klink HTML HREF
+    references since these must start with a letter.
+
+* hui-select.el (hui-select-get-region): Added this to be used in other libraries.
+                (hui-select-get-region-boundaries): Added and used in hui-select-thing.
+
+2017-12-19  Bob Weiner  <rsw@gnu.org>
+
+* hib-social.el (github-reference, gitlab-reference): Added "people" reference support
+    to list people who are part of a formal organization as well as a "staff" alias.
+    Added "contributors" reference support to list project contributors as well.
+
+2017-12-19  Bob Weiner  <rsw@gnu.org>
+
+* hib-social.el (github-reference): Added =item-id syntax.
+                (gitlab-reference): Added to support Gitlab references.
+
+2017-12-18  Bob Weiner  <rsw@gnu.org>
+
+* hib-social.el (github-reference): Fixed resolution of these formats of issue reference:
+    gh#gh-34 and gh#issue/34 (needed to be plural).
+
+2017-12-17  Bob Weiner  <rsw@gnu.org>
+
+* kotl/kfill.el: Eliminated use of filladapt.el since it causes kotl-mode filling errors.
+
+* kotl/kfill.el (kfill:forward-line): Removed improperly used [] in skip-chars-forward.
+
+2017-12-16  Bob Weiner  <rsw@gnu.org>
+
+* hui.el (hui:key-dir):
+  hui-window.el (hmouse-at-item-p):
+  hui-jmenu.el (hui-menu-buffer-mode-name): Simplified using buffer-local-value.
+
+2017-12-15  Bob Weiner  <rsw@gnu.org>
+
+* hmouse-drv.el (hkey-throw): Fully resolved temporary display of newly created frames
+    with a (redisplay t) to force display of any window updates during the temporary
+    display.
+
+2017-12-13  Bob Weiner  <rsw@gnu.org>
+
+* hmouse-drv.el (hkey-throw): Partially solved temporary display of newly created frames
+    (when not given focus initially with a '(no-focus-on-map . t) property), so hkey-throw
+    to a new target frame now temporarily displays the target frame and then makes the start
+    frame the uppermost frame.  When on an item though, the item is not visible during the
+    temporary display yet.
+
+* Makefile (texinfo): Added texinfo dependency target and added additional image dependencies
+    in man/im.
+
+* hyperbole.el (require 'hmouse-drv): Changed from hmouse-key to prevent a require cycle
+    during macro expansion.
+  hmouse-key.el: Changed requires to just be during compile since hyperbole.el now includes
+    these requires and will load hmouse-key.
+
 2017-12-12  Bob Weiner  <rsw@gnu.org>
 
 * hversion.el: Pushed 7.0.2a test update.

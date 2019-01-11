@@ -4,7 +4,7 @@
 ;;
 ;; Orig-Date:     6-Oct-91 at 03:42:38
 ;;
-;; Copyright (C) 1991-2017  Free Software Foundation, Inc.
+;; Copyright (C) 1991-2019  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
 ;;
 ;; This file is part of GNU Hyperbole.
@@ -241,17 +241,6 @@ FILE is temporarily read into a buffer to determine the major mode if necessary.
 		   "%" "%%" (replace-regexp-in-string "%%" "@@@" string nil t)
 		   nil t)
        nil t)))
-
-;;;###autoload
-(defun hypb:functionp (obj)
-"Returns t if OBJ is a function, nil otherwise."
-  (cond
-    ((symbolp obj) (fboundp obj))
-    ((subrp obj))
-    ((hypb:emacs-byte-code-p obj))
-    ((consp obj)
-     (if (eq (car obj) 'lambda) (listp (car (cdr obj)))))
-    (t nil)))
 
 (defun hypb:function-copy (func-symbol)
   "Copies FUNC-SYMBOL's body for overloading.  Returns copy of body."
@@ -512,7 +501,7 @@ NEWTEXT may instead be a function of one argument (the string to replace in)
 that returns a replacement string."
   (unless (stringp str)
     (error "(hypb:replace-match-string): 2nd arg must be a string: %s" str))
-  (unless (or (stringp newtext) (hypb:functionp newtext))
+  (unless (or (stringp newtext) (functionp newtext))
     (error "(hypb:replace-match-string): 3rd arg must be a string or function: %s"
 	   newtext))
   (let ((rtn-str "")
@@ -526,7 +515,7 @@ that returns a replacement string."
 	    (concat
 	      rtn-str
 	      (substring str prev-start match)
-	      (cond ((hypb:functionp newtext)
+	      (cond ((functionp newtext)
 		     (hypb:replace-match-string
 		      regexp (substring str match start)
 		      (funcall newtext str) literal))

@@ -95,7 +95,7 @@ number of lines that could not be moved, otherwise 0."
     (forward-visible-line n)
     (if (< n 0)
 	nil
-      (skip-chars-forward "[\n\r]"))
+      (skip-chars-forward "\n\r"))
 ;    (- (abs n) (count-matches "\n" opoint (point)))
     0))
 
@@ -227,6 +227,7 @@ fill prefix at the beginning of each line."
 	  (fill-region-as-paragraph from (point) justify-flag)))))
 
 (defun kfill:funcall (function &rest args)
+  "Call the original FUNCTION with rest of ARGS that kfill overloaded."
   (apply (cdr (assq function kfill:function-table)) args))
 
 (defun kfill:hanging-list (paragraph)

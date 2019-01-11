@@ -256,16 +256,18 @@ version: doc
 # Build the Info, HTML and Postscript versions of the user manual and README.md.html.
 doc: info html pdf README.md.html
 
+TEXINFO_SRC = $(man_dir)/hyperbole.texi $(man_dir)/version.texi $(man_dir)/hkey-help.txt $(man_dir)/im/*.png
+
 info: $(man_dir)/hyperbole.info
-$(man_dir)/hyperbole.info: $(man_dir)/hyperbole.texi $(man_dir)/version.texi $(man_dir)/hkey-help.txt
+$(man_dir)/hyperbole.info: $(TEXINFO_SRC)
 	cd $(man_dir) && $(TEXI2INFO) hyperbole.texi
 
 html: $(man_dir)/hyperbole.html
-$(man_dir)/hyperbole.html: $(man_dir)/hyperbole.texi $(man_dir)/version.texi $(man_dir)/hkey-help.txt $(man_dir)/hyperbole.css
+$(man_dir)/hyperbole.html: $(TEXINFO_SRC) $(man_dir)/hyperbole.css
 	cd ${man_dir} && $(TEXI2HTML) hyperbole.texi
 
 pdf: $(man_dir)/hyperbole.pdf
-$(man_dir)/hyperbole.pdf: $(man_dir)/hyperbole.texi $(man_dir)/version.texi $(man_dir)/hkey-help.txt
+$(man_dir)/hyperbole.pdf: $(TEXINFO_SRC)
 	cd $(man_dir) && $(TEXI2PDF) hyperbole.texi
 
 # github-markdown is an npm, installed with: npm install markdown-to-html -g

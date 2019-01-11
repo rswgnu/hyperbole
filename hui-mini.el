@@ -17,6 +17,7 @@
 ;;; ************************************************************************
 
 (require 'hypb)
+(require 'hsettings)                    ;For hyperbole-web-search-alist
 (require 'browse-url)
 
 ;;; ************************************************************************
@@ -366,7 +367,7 @@ constructs.  If not given, the top-level Hyperbole menu is used."
 ;;; ************************************************************************
 
 ;; Hyperbole menu mode is suitable only for specially formatted data.
-(put 'hui:menu-mode 'mode-class 'special)
+(put 'hui:menu-mode 'mode-class 'special) ;FIXME: Never used as a major mode!?
 
 (defvar hui:menu-mode-map nil
   "Keymap containing Hyperbole minibuffer menu commands.")

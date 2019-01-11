@@ -88,10 +88,10 @@
    ;; make klinks into hyperlinks
    (cons (concat "&lt;\\s-*@\\s-*" kexport:kcell-reference-regexp
 		 "[^&>]*&gt;")
-	 "<A HREF=\"#\\1\">\\0</A>")
+	 "<A HREF=\"#k\\1\">\\0</A>")
    (cons (format "&lt;\\s-*@\\s-*\\(%s\\)[^=&>]*&gt;"
 		 kexport:kcell-partial-reference-regexp)
-	 "<A HREF=\"#\\1\">\\0</A>")
+	 "<A HREF=\"#k\\1\">\\0</A>")
    (cons (format "&lt;\\s-*\\([^ \t\n\r,<>]+\\)\\s-*,\\s-*%s[^=&>]*&gt;"
 		 kexport:kcell-reference-regexp)
 	 'kexport:html-file-klink)
@@ -170,7 +170,7 @@ STILL TODO:
 				 title)))
 
     (princ "<HTML><HEAD>\n\n")
-    (princ "<A ID=\"top\"></A><A ID=\"0\"></A>\n")
+    (princ "<A ID=\"top\"></A><A ID=\"k0\"></A>\n")
     (princ (format "<TITLE>%s</TITLE>\n" title))
     (if kexport:html-description
 	(princ (format "<META ID=\"description\" CONTENT=\"%s\">\n"
@@ -196,8 +196,8 @@ STILL TODO:
 	   (setq i (1- i)))
 	 (princ "<TABLE><TR>\n")
 	 (setq label (kcell-view:label))
-	 (princ (format "<A ID=\"%s\"></A>" label))
-	 (princ (format "<A ID=\"%s\"></A>\n" (kcell-view:idstamp)))
+	 (princ (format "<A ID=\"k%s\"></A>" label))
+	 (princ (format "<A ID=\"k%s\"></A>\n" (kcell-view:idstamp)))
 	 (princ "<TD WIDTH=2% VALIGN=top><PRE>\n")
 	 (princ (format
 		 "<FONT %s>%s%s</FONT></PRE></TD>\n"
@@ -236,8 +236,8 @@ Works exclusively within a call to `hypb:replace-match-string'."
 			     (match-end 1))))
     (if (equal filename (file-name-nondirectory
 			 kexport:input-filename))
-	"<A HREF=\"#\\2\">\\0</A>"
-      (format "<A HREF=\"file://%s#\\2\">\\0</A>"
+	"<A HREF=\"#k\\2\">\\0</A>"
+      (format "<A HREF=\"file://%s#k\\2\">\\0</A>"
 	      (expand-file-name filename
 				(if kexport:input-filename
 				    (file-name-directory
