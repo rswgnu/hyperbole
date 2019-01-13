@@ -177,6 +177,12 @@ See `hpath:find' function documentation for special file display options."
 ;;; Displays files at specific lines and optional column number locations.
 ;;; ========================================================================
 
+(defconst hibtypes-path-line-and-col-regexp
+  (if (eq system-type 'windows-nt)
+      ;; Allow for 'c:' single letter drive prefixes on Windows
+      "\\([^ \t\n\r:][^ \t\n\r]+\\):\\([0-9]+\\)\\(:\\([0-9]+\\)\\)?"
+    "\\([^ \t\n\r:]+\\):\\([0-9]+\\)\\(:\\([0-9]+\\)\\)?"))
+
 (defib pathname-line-and-column ()
   "Makes a valid pathname:line-num[:column-num] pattern display the path at line-num and optional column-num.
 Also works for remote pathnames.
@@ -187,8 +193,7 @@ removed from pathname when searching for a valid match.
 See `hpath:find' function documentation for special file display options."
   (let ((path-line-and-col (hpath:delimited-possible-path)))
     (if (and (stringp path-line-and-col)
-	     (string-match "\\([^ \t\n\r:]+\\):\\([0-9]+\\)\\(:\\([0-9]+\\)\\)?"
-			   path-line-and-col))
+	     (string-match hibtypes-path-line-and-col-regexp path-line-and-col))
 	(let ((file (expand-file-name (match-string-no-properties 1 path-line-and-col)))
 	      (line-num (string-to-number (match-string-no-properties 2 path-line-and-col)))
 	      (col-num (if (match-end 3) (string-to-number (match-string-no-properties
@@ -740,7 +745,7 @@ This works with JavaScript and Python tracebacks, gdb, dbx, and xdb.  Such lines
   (save-excursion
     (beginning-of-line)
     (cond
-     ;; Python pdb
+     ;; Python pdb or traceback
      ((looking-at ".+ File \"\\([^\"\n\r]+\\)\", line \\([0-9]+\\)")
       (let* ((file (match-string-no-properties 1))
 	     (line-num (match-string-no-properties 2))

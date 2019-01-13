@@ -40,6 +40,35 @@ Default is `nil' since this can slow down normal file finding."
   :group 'hyperbole-buttons)
 
 ;;; ************************************************************************
+;;; MS WINDOWS PATH CONVERSIONS
+;;; ************************************************************************
+
+(defvar hpath:windows-mount-prefix "/mnt"
+  "Unix-style path prefix to add when converting MS Windows drive paths.")
+
+(defvar hpath:windows-system-type-list '(cygwin windows-nt ms-dos)
+  "List of 'system-type' values for which Windows paths are not converted to UNIX-style.")
+
+(defun hpath:windows-to-unix-path(path)
+  "Convert a recognizable Windows path to a UNIX-style path.
+If path begins with a Windows drive letter, prefix the converted path with the value of 'windows-mount-prefix'."
+  (if (not (memq system-type hpath:windows-system-type-list))
+      ;; Convert Windows disk drive paths to UNIX-style with a mount prefix.
+      (cond ((and (stringp path) (string-match "\\`\\([a-zA-Z]\\):" path))
+	     (expand-file-name
+	      (concat (match-string 1 path) "/" (substring path (match-end 0)))
+	      hpath:windows-mount-prefix))
+	    ;; !! Finish handling Windows network paths with forward
+	    ;; or backward slashes
+	    ((and (stringp path) (string-match "\\`\\(//\\|\\\\\\\\\\)[^/\\]" path))
+	     path)
+	    (t path))))
+
+;; Replace all backslashes with forward slashes in path
+;;(defun a (path)
+;;  (regexp-re
+
+;;; ************************************************************************
 ;;; FILE VIEWER COMMAND SETTINGS
 ;;; ************************************************************************
 
@@ -854,7 +883,7 @@ nonexistent local paths are allowed."
 	 (not (string-match "[\t\n\r\"`'|{}\\]" path))
 	 (or (not (hpath:www-p path))
 	     (string-match "\\`ftp[:.]" path))
-	 (let ((remote-path (string-match "@.+:\\|^/.+:\\|.+:/" path)))
+	 (let ((remote-path (string-match "@.+:\\|^/.+:\\|..+:/" path)))
 	   (if (cond (remote-path
 		      (cond ((eq type 'file)
 			     (not (string-equal "/" (substring path -1))))
@@ -1271,7 +1300,7 @@ Returns \"anonymous\" if no default user is set."
       string)))
 
 (defun hpath:exists-p (path &optional suffix-flag)
-  "Return PATH if it exists.  (This does not mean you can read it.)
+  "Return PATH if it exists.  (This does not mean you can read it).
 If PATH exists with or without a suffix from hpath:suffixes, then that
 pathname is returned.
 
