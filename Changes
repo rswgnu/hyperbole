@@ -1,3 +1,13 @@
+2019-01-21  Bob Weiner  <rsw@gnu.org>
+
+* hpath.el (hpath:mswindows-mount-prefix, hpath:mswindows-drive-regexp)
+    (hpath:mswindows-to-posix-path, hpath:mswindows-to-posix-separators):
+      Added to handle MSWindows path under POSIX OSes, e.g. Windows Subsystem for Linux.
+    (hpath:find-program): Commented out call to hpath:find-file-mailcap to prevent use of
+      MIME external viewers on text files.
+  hargs.el (hargs:delimited): Added call to hpath:mswindows-to-posix-path.
+  hyperbole.el (hyperb:init): Abbreviated MSWindows mount point paths.
+
 2017-12-29  Bob Weiner  <rsw@gnu.org>
 
 * hsettings.el (inhibit-hyperbole-messaging): Moved this from hyperbole.el to here to prevent

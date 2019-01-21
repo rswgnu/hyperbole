@@ -149,7 +149,7 @@
       explicit buttons are highlighted with a special colored face or not.  By
       default, they are.
 
-    - Python PDB Backtraces: Action Key presses jump to the associated source
+    - Python Backtraces: Action Key presses jump to the associated source
       line.
 
     - Python Symbols: Action Key presses now look these up in any buffer whose
@@ -164,7 +164,7 @@
       source of any such lines.
 
     - Dired Quit: An Action Key press at the end of the first line in a Dired
-      buffer nows quit and execute requested actions, just as presses at the
+      buffer now quits and executes requested actions, just as presses at the
       end of the buffer do.
 
     - Image Thumbnail Browsing: See the Info manual section,
@@ -355,9 +355,6 @@
       "hactypes.el" and re-byte-compile those files, then you may reload your
       new settings with {M-x hmouse-update-smart-keys RET}.  No need to reload
       or restart Hyperbole.
-
-    - Find Web: Added Find Web key binding entry to Hyperbole menus.  This key
-      displays the Hyperbole Web search menu.
 
     - Jump Thing: Added Jump Thing key binding entry to Hyperbole menus.  This
       key jumps between the start and end of a matching delimiter or tag pair.

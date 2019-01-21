@@ -4,7 +4,7 @@
 ;;
 ;; Orig-Date:    31-Oct-91 at 23:17:35
 ;;
-;; Copyright (C) 1991-2016  Free Software Foundation, Inc.
+;; Copyright (C) 1991-2019  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
 ;;
 ;; This file is part of GNU Hyperbole.
@@ -128,9 +128,10 @@ With optional LIST-POSITIONS-FLAG, return list of (string-matched start-pos end 
 		 (setq end (1- end))
 	       t)
 	     (< start end)
-	     (let ((string (substring-no-properties
-			    (hypb:replace-match-string
-			     "[\n\r]\\s-*" (buffer-substring start end) " " t))))
+	     (let ((string (buffer-substring-no-properties start end)))
+	       (setq string (hypb:replace-match-string "[\n\r]\\s-*" string " " t))
+	       (unless hyperb:microcruft-os-p
+		 (setq string (hpath:mswindows-to-posix-path string)))
 	       (if list-positions-flag
 		   (list string start end)
 		 string)))))))

@@ -1,10 +1,10 @@
-;;; hpath.el --- GNU Hyperbole support routines for handling UNIX paths
+;;; hpath.el --- GNU Hyperbole support routines for handling POSIX and MSWindows paths
 ;;
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     1-Nov-91 at 00:44:23
 ;;
-;; Copyright (C) 1991-2016  Free Software Foundation, Inc.
+;; Copyright (C) 1991-2019  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
 ;;
 ;; This file is part of GNU Hyperbole.
@@ -43,30 +43,55 @@ Default is `nil' since this can slow down normal file finding."
 ;;; MS WINDOWS PATH CONVERSIONS
 ;;; ************************************************************************
 
-(defvar hpath:windows-mount-prefix "/mnt"
-  "Unix-style path prefix to add when converting MS Windows drive paths.")
+;; This section adds automatic recognition of MSWindows implicit path
+;; links and converts disk drive and path separators to whatever
+;; format is needed by the underlying OS upon which Emacs is one,
+;; notably either for POSIX or MSWindows (with no POSIC layer).
 
-(defvar hpath:windows-system-type-list '(cygwin windows-nt ms-dos)
-  "List of 'system-type' values for which Windows paths are not converted to UNIX-style.")
+;; Especially useful when running Emacs under Windows Subsystem for
+;; Linux (WSL) where the system-type variable is gnu/linux but
+;; MSWindows is underneath so the user likely has many Windows
+;; formatted links.
 
-(defun hpath:windows-to-unix-path(path)
-  "Convert a recognizable Windows path to a UNIX-style path.
-If path begins with a Windows drive letter, prefix the converted path with the value of 'windows-mount-prefix'."
-  (if (not (memq system-type hpath:windows-system-type-list))
-      ;; Convert Windows disk drive paths to UNIX-style with a mount prefix.
-      (cond ((and (stringp path) (string-match "\\`\\([a-zA-Z]\\):" path))
-	     (expand-file-name
-	      (concat (match-string 1 path) "/" (substring path (match-end 0)))
-	      hpath:windows-mount-prefix))
-	    ;; !! Finish handling Windows network paths with forward
-	    ;; or backward slashes
-	    ((and (stringp path) (string-match "\\`\\(//\\|\\\\\\\\\\)[^/\\]" path))
-	     path)
-	    (t path))))
+;; See "https://docs.microsoft.com/en-us/dotnet/standard/io/file-path-formats"
+;; and "https://docs.microsoft.com/en-us/windows/wsl/interop" for
+;; Windows path specifications and use under WSL.
 
-;; Replace all backslashes with forward slashes in path
-;;(defun a (path)
-;;  (regexp-re
+(defvar hpath:mswindows-mount-prefix
+  (cond ((eq system-type 'cygwin)
+	 "/cygdrive/")
+	(hyperb:microcruft-os-p
+	 "")
+	(t ;; POSIX
+	"/mnt/"))
+  "Path prefix to add when converting MSWindows drive paths to POSIX-style.
+Must include a trailing directory separator or be nil.")
+
+(defconst hpath:mswindows-drive-regexp "\\`[\\/]?\\([a-zA-Z]\\)[:/]"
+  "Regular expression matching an MSWindows drive letter at the beginning of a path string.")
+
+(defconst hpath:mswindows-path-regexp "\\`.*\\.*[a-zA-Z0-9_.]"
+  "Regular expression matching the start of an MSWindows path that does not start with a drive letter but contains directory separators.")
+
+(defun hpath:mswindows-to-posix-path (path)
+  "Convert a recognizable MSWindows PATH to a POSIX-style path or return the path unchanged.
+If path begins with an MSWindows drive letter, prefix the converted path with the value of 'hpath:mswindows-mount-prefix'."
+  (when (stringp path)
+    (cond ((string-match hpath:mswindows-drive-regexp path)
+	   ;; Convert Windows disk drive paths to POSIX-style with a mount prefix.
+	   (setq path (concat hpath:mswindows-mount-prefix (downcase (match-string 1 path))
+			      (if hyperb:microcruft-os-p ":" "/")
+			      (substring path (match-end 0)))
+		 path (hpath:mswindows-to-posix-separators path)))
+	  ((string-match hpath:mswindows-path-regexp path)
+	   (setq path (hpath:mswindows-to-posix-separators path)))))
+  path)
+
+(defun hpath:mswindows-to-posix-separators (path)
+  "Replace all backslashes with forward slashes in PATH and abbreviate the path if possible.
+Path must be a string or an error will be triggered.  See
+'abbreviate-file-name' for how path abbreviation is handled."
+  (abbreviate-file-name (replace-regexp-in-string "\\\\" "/" path)))
 
 ;;; ************************************************************************
 ;;; FILE VIEWER COMMAND SETTINGS
@@ -831,7 +856,7 @@ See also `hpath:internal-display-alist' for internal, window-system independent 
 			     (cons "next" hpath:external-display-alist-macos)))))))
 
 (defun hpath:is-p (path &optional type non-exist)
-  "Returns PATH if PATH is a Unix path, else nil.
+  "Returns PATH if PATH is a Posix path, else nil.
 If optional TYPE is the symbol 'file or 'directory, then only that path type
 is accepted as a match.  The existence of the path is checked only for
 locally reachable paths (Info paths are not checked).  Single spaces are
@@ -1021,7 +1046,7 @@ After any match, the resulting path will contain a varible reference like ${vari
       )))
 
 ;;
-;; The following function recursively resolves all UNIX links to their
+;; The following function recursively resolves all POSIX links to their
 ;; final referents.
 ;; Works with variable-based and other strange links like:
 ;; /usr/local -> $(SERVER_LOCAL)/usr/local, /usr/bin ->
@@ -1359,7 +1384,11 @@ See also documentation for the function (hpath:get-external-display-alist) and t
 	((and (fboundp 'image-mode)
 	      (string-match hpath:native-image-suffixes filename))
 	 nil)
-	(t (hpath:find-file-mailcap filename))))
+	;; 01/21/2019 - RSW commented this next line out since it can
+	;; trigger external viewers on many file types that Emacs
+	;; displays natively.
+	;; (t (hpath:find-file-mailcap filename))
+	))
 
 (defun hpath:match (filename regexp-alist)
   "If FILENAME matches the car of any element in REGEXP-ALIST, return its cdr.
