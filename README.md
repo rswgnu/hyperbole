@@ -400,7 +400,7 @@ Typical Hyperbole applications include:
 
 See the [HY-ABOUT](HY-ABOUT) file for a description and overview of Hyperbole.
 
-See the [HY-NEWS](HY-ABOUT) file for a summary of new features in this release.
+See the [HY-NEWS](HY-NEWS) file for a summary of new features in this release.
 
 See the [INSTALL](INSTALL) file for installation and invocation instructions.
 
