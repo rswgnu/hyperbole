@@ -34,7 +34,7 @@
 ;; The following section applies only to MS-DOS and MS-Windows OSs.
 ;; Users of other OSs may simply ignore this section.
 
-;; Some versions of Microcruft OSs don't automatically set the
+;; Some versions of Microsoft OSs don't automatically set the
 ;; timezone so that Hyperbole can read it.  Nor do they include a
 ;; UNIX-style date program.  So follow the commented instructions in
 ;; the code below here.
@@ -43,7 +43,7 @@
 ;; timezone properly and you need not do anything.  If you receive a
 ;; timezone error, simply follow the instructions below to set the
 ;; timezone manually and then reload Hyperbole.
-(if (and hyperb:microcruft-os-p
+(if (and hyperb:microsoft-os-p
 	 (require 'htz)
 	 (not (stringp htz:local)))
     (progn

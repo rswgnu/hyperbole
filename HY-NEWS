@@ -2,14 +2,136 @@
 				 by Bob Weiner
 
 ===========================================================================
+*                                   V7.0.3
+===========================================================================
+
+  ACE WINDOW PACKAGE INTEGRATION - fast window and buffer switching
+
+    - Selected Window Buffer Replace: Added the ability to 'replace' the
+      selected window's buffer with the buffer of another window.  Use
+      {M-o r <window-id>}.  To swap the buffers between the same two windows,
+      use {M-o m <window-id>.  See "(hyperbole)Keyboard Drags" for setup and
+      use instructions.
+
+    - New Frame Commands: Any of these M-o commands that involve two windows
+      can use a new frame as the target window by using a <window-id> of 'z'.
+      So, {M-o t z} throws the current buffer to a new frame with a single
+      window displaying that buffer.  The new frame will be the same size as
+      the prior frame to match the behavior of HyControl.
+
+    - Integrated Ace Window commands with Smart Key Drags and added commands
+      for use with the mouse that select Ace Window source and target windows
+      by clicking with the mouse: hmouse-click-to-drag,
+      hmouse-click-to-drag-stay, hmouse-click-to-drag-to,
+      hmouse-click-to-replace, hmouse-click-to-swap, hmouse-click-to-throw.
+
+  SMART (ACTION AND ASSIST) KEYS
+
+    - MSWindows Paths: Hyperbole now recognizes typical MSWindows paths (both
+      local and remote).  They may be used within links and implicit path buttons
+      just like POSIX paths, whether running Emacs under a POSIX system or
+      MSWindows.  If under POSIX, a remote MSWindows path must be accessed through
+      a mount point to the network share.  Hyperbole caches such mount points when
+      it is loaded.  Use {M-x hpath:cache-mswindows-mount-points RET} to update them
+      if more mounts are made later.  See also the NEW COMMANDS section herein for
+      how to convert a path between POSIX and MSWINDOWS/DOS formats.
+
+    - GitLab and Github Links: Added Gitlab implicit links with equivalent
+      functionality to those of Github.  Added "people" reference support
+      to list people who are part of a formal organization as well as a
+      "staff" alias.  Added "contributors" reference support to list project
+      contributors as well.  Improved Github implicit issue links: gh#gh-34
+      and gh#issue/34 now properly reference an issue in the current project.
+
+    - Ripgrep: Added new ripgrep-msg implicit button type which jumps to
+      the source referenced by ripgrep (rg) output.  Ripgrep by
+      default outputs pathnames only once beforeall matching lines
+      within that path.  Ripgrep may also be used with the Hyperbole
+      `hypb:rgrep' command by setting 'hypb:rgrep-command'.  See
+      "https://github.com/BurntSushi/ripgrep".
+
+    - Markdown Mode: Smart Keys now support Markdown internal file link
+      references and navigation.
+
+    - Org Mode: When in an *Org Help* buffer, the Smart Keys now defer to
+      org-mode to handle jumps to its own locations for compatibility.
+
+    - Drag-based Kill, Copy and Yank: Added support for dragging across frames.
+
+    - Python Identifiers: If a Jedi server is running and the Action Key is
+      pressed on a Python identifier, Hyperbole will use Jedi to find the
+      definition even within nested module references, e.g. a.b.c.  Also improved
+      basic identifier definition finding.
+
+    - Company Mode Completion: Support for the Emacs company-mode completion
+      package.  After a user loads company-mode, the Action Key when pressed on
+      a source code identifier will run 'smart-company-to-definition' and the
+      Assist Key will run 'smart-company-help'.
+
+    - Treemacs Mode: Now supports standard Hyperbole end-of-line proportional
+      scrolling.
+
+    - ChangeLog Mode: Smart Keys now work on Emacs Lisp references in changelogs.
+
+  HYCONTROL
+
+    - Help Buffer Quitting: If HyControl is active, normally {q} quits
+      it but now if point is in an Emacs help buffer, {q} will quit
+      from the help buffer instead.  Use {Q} to quit from HyControl
+      unconditionally.
+
+  NEW COMMANDS
+
+    - Buffer Sliding:  Four new commands are available that can be
+      bound to things like control arrow keys: hkey-buffer-move-left,
+      hkey-buffer-move-right, hkey-buffer-move-down and
+      hkey-buffer-move-up.  Each one slides the current buffer one
+      window in the direction specified and all other buffers slide
+      around to match.
+
+    - MSWindows and POSIX Path Toggling: In "hpath.el", added
+      (hpath:substitute-posix-or-mswindows-at-point) and
+      (hpath:substitute-posix-or-mswindows) commands to toggle the
+      format of a path at point or in a string between POSIX and MSWindows
+      styles.
+
+  PROGRAMMING
+
+    - Added hpath:map-plist, equivalent to mapcar but maps over
+      key-value pairs in property lists (where the key and value are
+      individual elements in the list).
+
+    - In "hui-select.el", added functions to return info. on the
+      context-sensitive region that this library selects.
+      (hui-select-get-region) returns the region that would be
+      selected at point and (hui-select-get-region-boundaries)
+      returns a cons of the start and end position of the same region.
+
+    - In "hpath.el (hpath:delimited-possible-path), added optional
+      include-positions parameter which if non-nil, adds start and end
+      positions to returned value.
+
+    - In "hversion.el", added (hyperb:wsl-os-p) flag to test whether
+      Emacs is running under Microsoft Windows Subsystem for Linux (WSL)
+      since the system-type variable does not reflect this.
+
+  DOCUMENTATION
+
+    - Popup Menus: Documented how to invoke the Koutliner and
+      HyRolo popup menus in Emacs.  See "(hyperbole)Menu Commands".
+
+===========================================================================
 *                                   V7.0.2
 ===========================================================================
 
-    - Ace Window: Added the ability to 'throw' an item to a window while
-      leaving the selected window the same.  Use {M-o t <window-id>}.  This
-      works in Dired, Buffer Menu, iBuffer Menu and Treemacs modes and lets
-      you throw multiple items to multiple windows quickly.  See
-      "(hyperbole)Keyboard Drags" for setup and use instructions.
+  ACE WINDOW PACKAGE INTEGRATION
+
+    - Item Throws: Added the ability to 'throw' an item or a buffer to
+      a window while leaving the selected window the same.  Use {M-o t
+      <window-id>}.  This works in Dired, Buffer Menu, iBuffer Menu and
+      Treemacs modes and lets you throw multiple items to multiple windows
+      quickly.  See "(hyperbole)Keyboard Drags" for setup and use
+      instructions.
 
 ===========================================================================
 *                                   V7.0.1

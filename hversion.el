@@ -5,7 +5,7 @@
 ;;
 ;; Orig-Date:     1-Jan-94
 ;;
-;; Copyright (C) 1994-2017  Free Software Foundation, Inc.
+;; Copyright (C) 1994-2019  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
 ;;
 ;; This file is part of GNU Hyperbole.
@@ -23,16 +23,22 @@
 ;;; Public variables
 ;;; ************************************************************************
 
-(defconst hyperb:version "7.0.2a" "GNU Hyperbole revision number.")
+(defconst hyperb:version "7.0.2b" "GNU Hyperbole revision number.")
 
 ;;;###autoload
-(defvar hyperb:microcruft-os-p
+(defvar hyperb:microsoft-os-p
   (memq system-type '(ms-windows windows-nt ms-dos win32))
-  "T iff Hyperbole is running under a Microcruft OS.")
+  "T iff Hyperbole is running under a Microsoft OS.")
+
+;;;###autoload
+(defvar hyperb:wsl-os-p
+  (and (memq system-type '(gnu/linux))
+       (executable-find "wsl.exe"))
+  "T iff Hyperbole is running under Microsoft Windows Subsystem for Linux (WSL).")
 
 ;;;###autoload
 (defvar hyperb:mouse-buttons
-  (if (or (and hyperb:microcruft-os-p (not (memq window-system '(w32 w64 x))))
+  (if (or (and hyperb:microsoft-os-p (not (memq window-system '(w32 w64 x))))
 	  (and hyperb:emacs-p (memq window-system '(ns dps))))
       2 3)
   "Number of live buttons available on the mouse.

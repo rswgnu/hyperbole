@@ -90,13 +90,21 @@ interactive form or takes no arguments."
 	     (action:path-args-rel
 	      (hargs:iform-read interactive-form modifying))))))
 
+(defun hargs:buffer-substring (start end)
+  (let ((string (buffer-substring-no-properties start end)))
+    ;; This may trigger on a colored grep-like output line which has
+    ;; an embedded null character with a display text property that
+    ;; displays it as a colon.  Since the display property is stripped
+    ;; here, convert the null character to a colon.
+    (subst-char-in-string ?\^@ ?: string t)))
+
 (defun hargs:delimited (start-delim end-delim
 			&optional start-regexp-flag end-regexp-flag list-positions-flag)
   "Returns a normalized, single line, delimited string that point is within, or nil.
 START-DELIM and END-DELIM are strings that specify the argument
 delimiters.  With optional START-REGEXP-FLAG non-nil, START-DELIM is
 treated as a regular expression.  END-REGEXP-FLAG is similar.
-With optional LIST-POSITIONS-FLAG, return list of (string-matched start-pos end pos)."
+With optional LIST-POSITIONS-FLAG, return list of (string-matched start-pos end-pos)."
   (let* ((opoint (point))
 	 (limit (if start-regexp-flag opoint
 		  (+ opoint (1- (length start-delim)))))
@@ -121,17 +129,23 @@ With optional LIST-POSITIONS-FLAG, return list of (string-matched start-pos end 
 	(goto-char opoint)
 	(and (funcall end-search-func end-delim limit t)
 	     (setq end (match-beginning 0))
-	     ;; Ignore any preceding backquote, e.g. when a double-quoted
-	     ;; string is embedded within a doc string.
+	     ;; Ignore any preceding backslash, e.g. when a double-quoted
+	     ;; string is embedded within a doc string, except when
+	     ;; the string starts with 2 backslashes or an MSWindows
+	     ;; disk drive prefix, in which case the backslash is
+	     ;; considered part of a pathname.
 	     (if (and (> end (point-min))
-		      (= (char-before end) ?\\))
+		      (= (char-before end) ?\\)
+		      (not (string-match (concat "\\(\\`[\\][\\]\\)\\|"
+						 hpath:mswindows-mount-prefix)
+					 (hargs:buffer-substring start end))))
 		 (setq end (1- end))
 	       t)
 	     (< start end)
-	     (let ((string (buffer-substring-no-properties start end)))
-	       (setq string (hypb:replace-match-string "[\n\r]\\s-*" string " " t))
-	       (unless hyperb:microcruft-os-p
-		 (setq string (hpath:mswindows-to-posix-path string)))
+	     (let ((string (hargs:buffer-substring start end)))
+	       (setq string (hypb:replace-match-string "[\n\r\f]\\s-*" string " " t))
+	       (unless hyperb:microsoft-os-p
+		 (setq string (hpath:mswindows-to-posix string)))
 	       (if list-positions-flag
 		   (list string start end)
 		 string)))))))

@@ -37,7 +37,7 @@
 The variable, `browse-url-browser-function', customizes the url browser that
 is used for urls.  Valid values of this variable include `browse-url-default-browser'
 and `browse-url-generic'."
-  (when (eq major-mode 'org-mode)
+  (when (derived-mode-p 'org-mode)
     (cond ((org-link-at-p)
 	   (hact 'org-link nil))
 	  ((org-at-heading-p)
@@ -47,7 +47,7 @@ and `browse-url-generic'."
 (defun org-mode:help (&optional _but)
   "If on an Org mode heading, cycles through views of the whole buffer outline.
 If on an Org mode link, displays standard Hyperbole help."
-  (when (eq major-mode 'org-mode)
+  (when (derived-mode-p 'org-mode)
     (cond ((org-link-at-p)
 	   (hkey-help current-prefix-arg)
 	   t)

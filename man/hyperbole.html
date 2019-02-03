@@ -1,9 +1,9 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <!-- This manual is for GNU Hyperbole
-(Edition 7.0.2a, Published December 12, 2017).
+(Edition 7.0.2b, Published February 2, 2019).
 
-Copyright (C) 1989-2017  Free Software Foundation, Inc.
+Copyright (C) 1989-2019  Free Software Foundation, Inc.
 
 Permission is granted to copy, distribute and/or modify this document
 under the terms of the GNU Free Documentation License, Version 1.3 or
@@ -328,7 +328,7 @@ Next: <a href="#Introduction" accesskey="n" rel="next">Introduction</a>, Previou
 
 <CENTER><H2>The Everyday Hypertextual Information Manager</H2></CENTER>
 
-<P>Copyright &copy; 1989-2017  Free Software Foundation, Inc.</P>
+<P>Copyright &copy; 1989-2019  Free Software Foundation, Inc.</P>
 
 <P>GNU Hyperbole is available for use, modification, and distribution under
 the terms of the GNU General Public License (GPL) Version 3 or later,
@@ -340,8 +340,8 @@ WITHOUT ANY WARRANTY, without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</P>
 
 <PRE>
-Edition 7.0.2a
-Printed December 12, 2017.
+Edition 7.0.2b
+Printed February 2, 2019.
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -788,7 +788,7 @@ Next: <a href="#Smart-Keys" accesskey="n" rel="next">Smart Keys</a>, Previous: <
 <h2 class="chapter">1 Introduction</h2>
 
 <p>This edition of the GNU Hyperbole Manual is for use with any version
-7.0.2a or greater of GNU Hyperbole.  Hyperbole runs atop GNU Emacs 24.3
+7.0.2b or greater of GNU Hyperbole.  Hyperbole runs atop GNU Emacs 24.3
 or higher.  It will trigger an error if your Emacs is older.
 </p>
 <p>This chapter summarizes the structure of the rest of the manual,
@@ -2028,9 +2028,15 @@ a key: <code>(hkey-ace-window-setup)</code>.
 <a name="index-link-creation-from-keyboard"></a>
 <a name="index-keyboard-link-creation"></a>
 <a name="index-M_002do-i-_003cwindow_002did_003e"></a>
+<a name="index-M_002do-r-_003cwindow_002did_003e"></a>
+<a name="index-M_002do-m-_003cwindow_002did_003e"></a>
 <a name="index-M_002do-t-_003cwindow_002did_003e"></a>
 <a name="index-drag-item"></a>
+<a name="index-replace-window-buffer"></a>
+<a name="index-swap-window-buffers"></a>
 <a name="index-throw-item"></a>
+<a name="index-buffer-replace"></a>
+<a name="index-buffers-swap"></a>
 <a name="index-item-drag"></a>
 <a name="index-item-throw"></a>
 <p>After setup, the leftmost character or two of each window&rsquo;s modeline will show
@@ -2040,7 +2046,11 @@ is on an item you want displayed in another window, use <kbd>{M-o i
 this command to create explicit button links to other window buffers when in an editable
 buffer rather than on an item.  If you want to display multiple items in different
 windows, instead use the <kbd>{M-o t &lt;id-of-window-to-display-item-in&gt;}</kbd> key sequence to
-<em>throw</em> the item to the window.
+<em>throw</em> the item to the window.  To <em>replace</em>
+the selected window&rsquo;s buffer with that of another window, use
+<kbd>{M-o r &lt;id-of-window-displaying-desired-buffer&gt;}</kbd>.  To instead
+<em>swap</em> the selected window&rsquo;s buffer with that of another window,
+use <kbd>{M-o m &lt;id-of-window-to-swap-with&gt;}</kbd>.
 </p>
 
 
@@ -5595,7 +5605,7 @@ that reference the cell.
 <dt><em>create-time</em></dt>
 <dd><p>The time at which the cell was created.  This is stored in a form that
 allows for easy data comparisons but is displayed in a human readable
-format, such as &lsquo;<samp>Jan 28 18:27:59 CST 2017</samp>&rsquo;.
+format, such as &lsquo;<samp>Jan 28 18:27:59 CST 2019</samp>&rsquo;.
 </p></dd>
 </dl>
 
@@ -5727,7 +5737,7 @@ automatically added by HyRolo whenever a new record is added.
 ==================================================================
 *   Smith, John       &lt;js@hiho.com&gt; W708-555-2001  F708-321-1492
         Chief Ether Maintainer, HiHo Industries
-        05/24/2017
+        05/24/2019
 </pre></div>
 
 <p>We call rolo records, <em>entries</em>.  Entries begin with a delimiter
@@ -9450,7 +9460,7 @@ See <a href="#Displaying-File-and-Buffer-Items">Displaying File and Buffer Items
      (3) at the end of an entry line: invoke <code>action-key-eol-function</code>,
          typically to scroll up proportionally, if an Action Key press; invoke
          <code>assist-key-eol-function</code>, typically to scroll down proportionally,
-         if an Asisst Key press;
+         if an Assist Key press;
      (4) on the first line of the buffer (other than the end of line),
          dired is run on the current directory of this Treemacs;
      (5) at the end of the first or last line of the buffer,
@@ -11450,6 +11460,8 @@ Next: <a href="#Function" accesskey="n" rel="next">Function</a>, Previous: <a hr
 <tr><td></td><td valign="top"><a href="#index-M_002do"><code>M-o</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Keyboard-Drags">Keyboard Drags</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-M_002do-1"><code>M-o</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Global-Key-Bindings">Global Key Bindings</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-M_002do-i-_003cwindow_002did_003e"><code>M-o i &lt;window-id&gt;</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Keyboard-Drags">Keyboard Drags</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-M_002do-m-_003cwindow_002did_003e"><code>M-o m &lt;window-id&gt;</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Keyboard-Drags">Keyboard Drags</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-M_002do-r-_003cwindow_002did_003e"><code>M-o r &lt;window-id&gt;</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Keyboard-Drags">Keyboard Drags</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-M_002do-t-_003cwindow_002did_003e"><code>M-o t &lt;window-id&gt;</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Keyboard-Drags">Keyboard Drags</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-M_002dRET"><code>M-<span class="key">RET</span></code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Key-Bindings">Smart Key Bindings</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-M_002dRET-1"><code>M-<span class="key">RET</span></code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Global-Key-Bindings">Global Key Bindings</a></td></tr>
@@ -12368,11 +12380,13 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function</a>, Up: <a href
 <tr><td></td><td valign="top"><a href="#index-buffer-menu-1">buffer menu</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Minibuffer-Menu-Activation">Minibuffer Menu Activation</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-buffer-menu-2">buffer menu</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Key-_002d-Buffer-Menus">Smart Key - Buffer Menus</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-buffer-menu-item-drag">buffer menu item drag</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Displaying-File-and-Buffer-Items">Displaying File and Buffer Items</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-buffer-replace">buffer replace</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Keyboard-Drags">Keyboard Drags</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-buffer_002c-bury">buffer, bury</a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyControl">HyControl</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-buffer_002c-copy">buffer, copy</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Displaying-Buffers">Displaying Buffers</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-buffer_002c-swap">buffer, swap</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Swapping-Buffers">Swapping Buffers</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-buffer_002c-swap-1">buffer, swap</a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyControl">HyControl</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-buffer_002c-unbury">buffer, unbury</a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyControl">HyControl</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-buffers-swap">buffers swap</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Keyboard-Drags">Keyboard Drags</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-bug-tracking">bug tracking</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-bury-buffer">bury buffer</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Mouse-Key-Modeline-Clicks">Smart Mouse Key Modeline Clicks</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-burying">burying</a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyControl">HyControl</a></td></tr>
@@ -13122,6 +13136,7 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function</a>, Up: <a href
 <tr><td></td><td valign="top"><a href="#index-remote-pathnames">remote pathnames</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Using-URLs-with-Find_002dFile">Using URLs with Find-File</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-remove-lines">remove lines</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Menus">Menus</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-removing-Hyperbole-menu">removing Hyperbole menu</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Menus">Menus</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-replace-window-buffer">replace window buffer</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Keyboard-Drags">Keyboard Drags</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-Request-For-Comment">Request For Comment</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-Request-For-Comment-1">Request For Comment</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-resize-frame-percentage">resize frame percentage</a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyControl">HyControl</a></td></tr>
@@ -13221,6 +13236,7 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function</a>, Up: <a href
 <tr><td></td><td valign="top"><a href="#index-subtree_002c-hide">subtree, hide</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Hiding-and-Showing">Hiding and Showing</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-subtree_002c-show">subtree, show</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Hiding-and-Showing">Hiding and Showing</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-swap-buffers">swap buffers</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Swapping-Buffers">Swapping Buffers</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-swap-window-buffers">swap window buffers</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Keyboard-Drags">Keyboard Drags</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-swapping">swapping</a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyControl">HyControl</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-system-encapsulation">system encapsulation</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Encapsulating-Systems">Encapsulating Systems</a></td></tr>
 <tr><td colspan="4"> <hr></td></tr>

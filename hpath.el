@@ -57,34 +57,48 @@ Default is `nil' since this can slow down normal file finding."
 ;; and "https://docs.microsoft.com/en-us/windows/wsl/interop" for
 ;; Windows path specifications and use under WSL.
 
+(defvar hpath:posix-mount-points-regexp
+  "^\\(Filesystem\\|rootfs\\|none\\) "
+  "Regexp of 'mount' command output lines that are not mount points of MSWindows paths.")
+
 (defvar hpath:mswindows-mount-prefix
   (cond ((eq system-type 'cygwin)
 	 "/cygdrive/")
-	(hyperb:microcruft-os-p
+	(hyperb:microsoft-os-p
 	 "")
 	(t ;; POSIX
 	"/mnt/"))
   "Path prefix to add when converting MSWindows drive paths to POSIX-style.
 Must include a trailing directory separator or be nil.")
 
-(defconst hpath:mswindows-drive-regexp "\\`[\\/]?\\([a-zA-Z]\\)[:/]"
-  "Regular expression matching an MSWindows drive letter at the beginning of a path string.")
+(defconst hpath:mswindows-drive-regexp (format "\\`\\(%s\\)?[\\/]?\\([a-zA-Z]\\)[:\\/]"
+					       hpath:mswindows-mount-prefix)
+  "Regular expression matching an MSWindows drive letter at the beginning of a path string.
+Grouping 2 is the actual letter of the drive.
+If the value of 'hpath:mswindows-mount-prefix' changes, then re-initialize this constant.")
 
 (defconst hpath:mswindows-path-regexp "\\`.*\\.*[a-zA-Z0-9_.]"
   "Regular expression matching the start of an MSWindows path that does not start with a drive letter but contains directory separators.")
 
-(defun hpath:mswindows-to-posix-path (path)
-  "Convert a recognizable MSWindows PATH to a POSIX-style path or return the path unchanged.
+;;;###autoload
+(defun hpath:mswindows-to-posix (path)
+  "Convert a recognizable MSWindows PATH to a Posix-style path or return the path unchanged.
 If path begins with an MSWindows drive letter, prefix the converted path with the value of 'hpath:mswindows-mount-prefix'."
+  (interactive "sMSWindows path to convert to POSIX: ")
   (when (stringp path)
-    (cond ((string-match hpath:mswindows-drive-regexp path)
-	   ;; Convert Windows disk drive paths to POSIX-style with a mount prefix.
-	   (setq path (concat hpath:mswindows-mount-prefix (downcase (match-string 1 path))
-			      (if hyperb:microcruft-os-p ":" "/")
-			      (substring path (match-end 0)))
-		 path (hpath:mswindows-to-posix-separators path)))
-	  ((string-match hpath:mswindows-path-regexp path)
-	   (setq path (hpath:mswindows-to-posix-separators path)))))
+    (setq path (hpath:mswindows-to-posix-separators path))
+    (when (string-match hpath:mswindows-drive-regexp path)
+      (when (string-match hpath:mswindows-drive-regexp path)
+	(let* ((drive-prefix (downcase (match-string 2 path)))
+	       (rest-of-path (substring path (match-end 0)))
+	       (absolute-p (and (not (string-empty-p rest-of-path))
+				(= (aref rest-of-path 0) ?/))))
+	  ;; Convert MSWindows disk drive paths to POSIX-style with a mount prefix.
+	  (setq path (concat hpath:mswindows-mount-prefix drive-prefix
+			     (cond (hyperb:microsoft-os-p ":")
+				   (absolute-p "")
+				   (t "/"))
+			     rest-of-path))))))
   path)
 
 (defun hpath:mswindows-to-posix-separators (path)
@@ -92,6 +106,101 @@ If path begins with an MSWindows drive letter, prefix the converted path with th
 Path must be a string or an error will be triggered.  See
 'abbreviate-file-name' for how path abbreviation is handled."
   (abbreviate-file-name (replace-regexp-in-string "\\\\" "/" path)))
+
+;;;###autoload
+(defun hpath:posix-to-mswindows (path)
+  "Convert and return a Posix-style PATH to an MSWindows path or return the path unchanged.
+If path begins with an optional mount prefix, 'hpath:mswindows-mount-prefix', followed by an MSWindows drive letter, remove the mount prefix."
+  (interactive "sPOSIX path to convert to MSWindows: ")
+  (when (stringp path)
+    (setq path (hpath:posix-to-mswindows-separators path))
+    ;; Remove any POSIX mount prefix preceding an MSWindows path.
+    (if (eq 0 (string-match hpath:mswindows-mount-prefix path))
+	(setq path (substring path (match-end 0))))
+    (when (string-match hpath:mswindows-drive-regexp path)
+      (when (string-match hpath:mswindows-drive-regexp path)
+	(let* ((drive-prefix (downcase (match-string 2 path)))
+	       (rest-of-path (substring path (match-end 0)))
+	       (absolute-p (= (aref path (1- (match-end 0))) ?\\)))
+	  ;; Convert formerly Posix-style Windows disk drive paths to MSWindows-style.
+	  (setq path (concat drive-prefix ":"
+			     (if (or (not absolute-p)
+				     (string-match "\\`[~/]" rest-of-path))
+				 ""
+			       "\\")
+			     rest-of-path))))))
+  path)
+
+
+(defun hpath:posix-to-mswindows-separators (path)
+  "Replace all forward slashes with backslashes in PATH and abbreviate the path if possible.
+Path must be a string or an error will be triggered.  See
+'abbreviate-file-name' for how path abbreviation is handled."
+  (replace-regexp-in-string "/" "\\\\" (abbreviate-file-name path)))
+
+(defun hpath:posix-path-p (path)
+  "Return non-nil if PATH looks like a Posix path."
+  (and (stringp path) (string-match  "/" path)))
+
+;;;###autoload
+(defun hpath:substitute-posix-or-mswindows-at-point ()
+  "If point is within a recognizable Posix or MSWindows path, change the path to the other type of path."
+  (interactive "*")
+  (barf-if-buffer-read-only)
+  (let* ((opoint (point))
+	 (str-and-positions (hpath:delimited-possible-path t t))
+	 (path (car str-and-positions))
+	 (start (nth 1 str-and-positions))
+	 (end (nth 2 str-and-positions)))
+      (when path
+	(if (hpath:posix-path-p path)
+	    (setq path (hpath:posix-to-mswindows path))
+	  (setq path (hpath:mswindows-to-posix path)))
+	(delete-region start end)
+	(insert path)
+	(goto-char (min opoint (point-max))))))
+
+;;;###autoload
+(defun hpath:substitute-posix-or-mswindows (path)
+  "Change a recognizable Posix or MSWindows PATH to the other type of path."
+  (when (stringp path)
+    (if (hpath:posix-path-p path)
+	(hpath:posix-to-mswindows path)
+      (hpath:mswindows-to-posix path))))
+
+;;;###autoload
+(defun hpath:map-plist (func plist)
+  "Returns result of applying FUNC of two args, key and value, to key-value pairs in PLIST, a property list."
+  (cl-loop for (k v) on plist by #'cddr
+	   collect (funcall func k v) into result
+	   return result))
+
+;;;###autoload
+(defun hpath:cache-mswindows-mount-points ()
+  "Cache valid MSWindows mount points in 'directory-abbrev-alist' when under a non-MSWindows operating system, e.g. WSL.
+Call this function manually if mount points change after Hyperbole is loaded."
+  (interactive)
+  (when (not hyperb:microsoft-os-p)
+    (let (path mount-point)
+      (mapcar (lambda (path-and-mount-point)
+		(setq path (car path-and-mount-point)
+		      mount-point (cdr path-and-mount-point))
+		(add-to-list 'directory-abbrev-alist (cons (format "\\`%s" (regexp-quote path))
+							   mount-point)))
+	      ;; Sort alist of (path-mounted . mount-point) elements from shortest
+	      ;; to longest path so that the longest path is selected first within
+	      ;; 'directory-abbrev-alist' (elements are added in reverse order).
+	      (sort
+	       ;; Convert plist to alist for sorting.
+	       (hpath:map-plist (lambda (path mount-point)
+				 (if (string-match "\\`\\([a-zA-Z]\\):\\'" path)
+				     (setq path (concat "/" (downcase (match-string 1 path)))))
+				 (cons path mount-point))
+			       ;; Return a plist of MSWindows path-mounted mount-point pairs.
+			       (split-string (shell-command-to-string
+					      (format "df 2> /dev/null | grep -v '%s' | sed -e 's/ .*%%//g'" hpath:posix-mount-points-regexp))))
+	       (lambda (cons1 cons2) (<= (length (car cons1)) (length (car cons2)))))))))
+
 
 ;;; ************************************************************************
 ;;; FILE VIEWER COMMAND SETTINGS
@@ -112,7 +221,8 @@ See the function `hpath:get-external-display-alist' for detailed format document
   :type 'regexp
   :group 'hyperbole-commands)
 
-(defvar hpath:external-display-alist-mswindows (list (cons (format "\\.\\(%s\\)$" hpath:external-open-office-suffixes)
+(defvar hpath:external-display-alist-mswindows (list '("\\.vba$" . "/c/Windows/System32/cmd.exe //c start \"${@//&/^&}\"")
+						     (cons (format "\\.\\(%s\\)$" hpath:external-open-office-suffixes)
 							   "openoffice.exe"))
     "*An alist of (FILENAME-REGEXP . DISPLAY-PROGRAM-STRING-OR-LIST) elements for MS Windows.
 See the function `hpath:get-external-display-alist' for detailed format documentation.")
@@ -578,28 +688,37 @@ paths are allowed.  Absolute pathnames must begin with a `/' or `~'."
    ((hpath:www-at-p) nil)
    ((hpath:is-p (hpath:delimited-possible-path non-exist) type non-exist))))
 
-(defun hpath:delimited-possible-path (&optional non-exist)
+(defun hpath:delimited-possible-path (&optional non-exist include-positions)
   "Returns delimited possible path or non-delimited remote path at point, if any.
 No validity checking is done on the possible path.  Delimiters may be:
 double quotes, open and close single quote, whitespace, or Texinfo file references.
+
 With optional NON-EXIST, nonexistent local paths are allowed.  Absolute pathnames
-must begin with a `/' or `~'."
-  (or (hargs:delimited "\"" "\"") 
-      ;; Filenames in Info docs or Python files
-      (hargs:delimited "[`'‘]" "[`'’]" t t)
-      ;; Filenames in TexInfo docs
-      (hargs:delimited "@file{" "}")
-      ;; Any existing whitespace delimited filename at point.
-      ;; If match consists of only punctuation, like
-      ;; . or .., don't treat it as a pathname.  Only look for
-      ;; whitespace delimited filenames if non-exist is nil.
-      (unless non-exist
-	(let ((p (hargs:delimited "^\\|\\(\\s \\|[\]\[(){}<>\;&,@]\\)*"
-				  "\\([\]\[(){}<>\;&,@]\\|:*\\s \\)+\\|$"
-				  t t))
-	      (punc (char-syntax ?.)))
-	  (if (delq nil (mapcar (lambda (c) (/= punc (char-syntax c))) p))
-	      p)))))
+must begin with a `/' or `~'.
+
+With optional INCLUDE-POSITIONS, returns a triplet list of (path start-pos
+end-pos) or nil."
+  ;; Prevents MSWindows to Posix path substitution
+  (let ((hyperb:microsoft-os-p t))
+    (or (hargs:delimited "\"" "\"" nil nil include-positions)
+	;; Filenames in Info docs or Python files
+	(hargs:delimited "[`'‘]" "[`'’]" t t include-positions)
+	;; Filenames in TexInfo docs
+	(hargs:delimited "@file{" "}" nil nil include-positions)
+	;; Any existing whitespace delimited filename at point.
+	;; If match consists of only punctuation, like
+	;; . or .., don't treat it as a pathname.  Only look for
+	;; whitespace delimited filenames if non-exist is nil.
+	(unless non-exist
+	  (let* ((triplet (hargs:delimited "^\\|\\(\\s-\\|[\]\[(){}<>\;&,@]\\)*"
+					   "\\([\]\[(){}<>\;&,@]\\|:*\\s-\\)+\\|$"
+					   t t t))
+		 (p (car triplet))
+		 (punc (char-syntax ?.)))
+	    (if (delq nil (mapcar (lambda (c) (/= punc (char-syntax c))) p))
+		(if include-positions
+		    triplet
+		  p)))))))
 
 ;;;###autoload
 (defun hpath:display-buffer (buffer &optional display-where)
@@ -773,7 +892,7 @@ program)."
 	(hash (goto-char (point-min)))))
 
 (defun hpath:find-executable (executable-list)
-  "Return the first executable string from EXECUTABLE-LIST found within `exec-path'."
+  "Return the first executable string from EXECUTABLE-LIST found within `exec-path' or nil."
   (catch 'found
     (mapc
      (lambda (executable)
@@ -847,7 +966,7 @@ programs, such as a pdf reader.  The cdr of each element may be:
 See also `hpath:internal-display-alist' for internal, window-system independent display settings."
   (cond ((memq window-system '(dps ns))
 	 hpath:external-display-alist-macos)
-	(hyperb:microcruft-os-p
+	(hyperb:microsoft-os-p
 	 hpath:external-display-alist-mswindows)
 	(t (cdr (assoc (hyperb:window-system)
 		       (list (cons "emacs" hpath:external-display-alist-x) ; GNU Emacs under X
@@ -864,93 +983,94 @@ permitted in the middle of existing pathnames, but not at the start or end.
 Tabs and newlines are converted to space before the pathname is checked, this
 normalized path form is what is returned for PATH.  With optional NON-EXIST,
 nonexistent local paths are allowed."
-  (let ((rtn-path path)
-	(suffix))
-    (and (stringp path)
-	 ;; Path may be a link reference with components other than a
-	 ;; pathname.  These components always follow a comma or # symbol, so
-	 ;; strip them, if any, before checking path.
-	 (if (string-match "\\`[^#][^#,]*\\([ \t\n\r]*[#,]\\)" path)
-	     (setq rtn-path (concat (substring path 0 (match-beginning 1))
-				    "%s" (substring path (match-beginning 1)))
-		   path (substring path 0 (match-beginning 1)))
-	   (setq rtn-path (concat rtn-path "%s")))
-	 ;; If path is just a local reference that begins with #,
-	 ;; prepend the file name to it.
-	 (cond ((and buffer-file-name
-		     ;; ignore HTML color strings
-		     (not (string-match "\\`#[0-9A-Fa-f][0-9A-Fa-f][0-9A-Fa-f][0-9A-Fa-f][0-9A-Fa-f][0-9A-Fa-f]\\'" path))
-		     ;; match to in-file HTML references
-		     (string-match "\\`#[^\'\"<>#]+\\'" path))
-		(setq rtn-path (concat "file://" buffer-file-name rtn-path)
-		      path buffer-file-name))
-	       ((string-match "\\`[^#]+\\(#[^#]*\\)\\'" path)
-		;; file and # reference
-		(setq path (substring path 0 (match-beginning 1)))
-		(if (memq (aref path 0) '(?/ ?~))
-		    ;; absolute
-		    (setq rtn-path (concat "file://" rtn-path))
-		  (setq path (concat default-directory path)
-			rtn-path (concat "file://" default-directory rtn-path))))
-	       (t))
-	 (if (string-match hpath:prefix-regexp path)
-	     (setq path (substring path (match-end 0)))
-	   t)
-	 (not (or (string-equal path "")
-		  (string-match "\\`\\s \\|\\s \\'" path)))
-	 ;; Convert tabs and newlines to space.
-	 (setq path (hbut:key-to-label (hbut:label-to-key path)))
-	 (or (not (string-match "[()]" path))
-	     (string-match "\\`([^ \t\n\r\)]+)[ *A-Za-z0-9]" path))
-	 (if (string-match "\\$\{[^\}]+}" path)
-	     (setq path (hpath:substitute-value path))
-	   t)
-	 (not (string-match "[\t\n\r\"`'|{}\\]" path))
-	 (or (not (hpath:www-p path))
-	     (string-match "\\`ftp[:.]" path))
-	 (let ((remote-path (string-match "@.+:\\|^/.+:\\|..+:/" path)))
-	   (if (cond (remote-path
-		      (cond ((eq type 'file)
-			     (not (string-equal "/" (substring path -1))))
-			    ((eq type 'directory)
-			     (string-equal "/" (substring path -1)))
-			    (t)))
-		     ((or (and non-exist
-			       (or
-				;; Info or remote path, so don't check for.
-				(string-match "[()]" path)
-				(hpath:remote-p path)
-				(setq suffix (hpath:exists-p path t))
-				;; Don't allow spaces in non-existent
-				;; pathnames.
-				(not (string-match " " path))))
-			  (setq suffix (hpath:exists-p path t)))
-		      (cond ((eq type 'file)
-			     (not (file-directory-p path)))
-			    ((eq type 'directory)
-			     (file-directory-p path))
-			    (t))))
-	       (progn
-		 ;; Might be an encoded URL with % characters, so
-		 ;; decode it before calling format below.
-		 (when (string-match "%" rtn-path)
-		   (let (decoded-path)
-		     (while (not (equal rtn-path (setq decoded-path (hypb:decode-url rtn-path))))
-		       (setq rtn-path decoded-path))))
-		 ;; Quote any % except for one %s at the end of the
-		 ;; path part of rtn-path (immediately preceding a #
-		 ;; or , character or the end of string).
-		 (setq rtn-path (hypb:replace-match-string "%" rtn-path "%%")
-		       rtn-path (hypb:replace-match-string "%%s\\([#,]\\|\\'\\)" rtn-path "%s\\1"))
-		 ;; Return path if non-nil return value.
-		 (if (stringp suffix) ;; suffix could = t, which we ignore
-		     (if (string-match (concat (regexp-quote suffix) "%s") rtn-path)
-			 ;; remove suffix
-			 (concat (substring rtn-path 0 (match-beginning 0))
-				 (substring rtn-path (match-end 0)))
-		       ;; add suffix
-		       (format rtn-path suffix))
-		   (format rtn-path ""))))))))
+  (when (stringp path)
+    (setq path (hpath:mswindows-to-posix path))
+    (let ((rtn-path path)
+	  (suffix))
+      ;; Path may be a link reference with components other than a
+      ;; pathname.  These components always follow a comma or # symbol, so
+      ;; strip them, if any, before checking path.
+      (and (if (string-match "\\`[^#][^#,]*\\([ \t\n\r]*[#,]\\)" path)
+	       (setq rtn-path (concat (substring path 0 (match-beginning 1))
+				      "%s" (substring path (match-beginning 1)))
+		     path (substring path 0 (match-beginning 1)))
+	     (setq rtn-path (concat rtn-path "%s")))
+	   ;; If path is just a local reference that begins with #,
+	   ;; prepend the file name to it.
+	   (cond ((and buffer-file-name
+		       ;; ignore HTML color strings
+		       (not (string-match "\\`#[0-9A-Fa-f][0-9A-Fa-f][0-9A-Fa-f][0-9A-Fa-f][0-9A-Fa-f][0-9A-Fa-f]\\'" path))
+		       ;; match to in-file HTML references
+		       (string-match "\\`#[^\'\"<>#]+\\'" path))
+		  (setq rtn-path (concat "file://" buffer-file-name rtn-path)
+			path buffer-file-name))
+		 ((string-match "\\`[^#]+\\(#[^#]*\\)\\'" path)
+		  ;; file and # reference
+		  (setq path (substring path 0 (match-beginning 1)))
+		  (if (memq (aref path 0) '(?/ ?~))
+		      ;; absolute
+		      (setq rtn-path (concat "file://" rtn-path))
+		    (setq path (concat default-directory path)
+			  rtn-path (concat "file://" default-directory rtn-path))))
+		 (t))
+	   (if (string-match hpath:prefix-regexp path)
+	       (setq path (substring path (match-end 0)))
+	     t)
+	   (not (or (string-equal path "")
+		    (string-match "\\`\\s \\|\\s \\'" path)))
+	   ;; Convert tabs and newlines to space.
+	   (setq path (hbut:key-to-label (hbut:label-to-key path)))
+	   (or (not (string-match "[()]" path))
+	       (string-match "\\`([^ \t\n\r\)]+)[ *A-Za-z0-9]" path))
+	   (if (string-match "\\$\{[^\}]+}" path)
+	       (setq path (hpath:substitute-value path))
+	     t)
+	   (not (string-match "[\t\n\r\"`'|{}\\]" path))
+	   (or (not (hpath:www-p path))
+	       (string-match "\\`ftp[:.]" path))
+	   (let ((remote-path (string-match "@.+:\\|^/.+:\\|..+:/" path)))
+	     (if (cond (remote-path
+			(cond ((eq type 'file)
+			       (not (string-equal "/" (substring path -1))))
+			      ((eq type 'directory)
+			       (string-equal "/" (substring path -1)))
+			      (t)))
+		       ((or (and non-exist
+				 (or
+				  ;; Info or remote path, so don't check for.
+				  (string-match "[()]" path)
+				  (hpath:remote-p path)
+				  (setq suffix (hpath:exists-p path t))
+				  ;; Don't allow spaces in non-existent
+				  ;; pathnames.
+				  (not (string-match " " path))))
+			    (setq suffix (hpath:exists-p path t)))
+			(cond ((eq type 'file)
+			       (not (file-directory-p path)))
+			      ((eq type 'directory)
+			       (file-directory-p path))
+			      (t))))
+		 (progn
+		   ;; Might be an encoded URL with % characters, so
+		   ;; decode it before calling format below.
+		   (when (string-match "%" rtn-path)
+		     (let (decoded-path)
+		       (while (not (equal rtn-path (setq decoded-path (hypb:decode-url rtn-path))))
+			 (setq rtn-path decoded-path))))
+		   ;; Quote any % except for one %s at the end of the
+		   ;; path part of rtn-path (immediately preceding a #
+		   ;; or , character or the end of string).
+		   (setq rtn-path (hypb:replace-match-string "%" rtn-path "%%")
+			 rtn-path (hypb:replace-match-string "%%s\\([#,]\\|\\'\\)" rtn-path "%s\\1"))
+		   ;; Return path if non-nil return value.
+		   (if (stringp suffix) ;; suffix could = t, which we ignore
+		       (if (string-match (concat (regexp-quote suffix) "%s") rtn-path)
+			   ;; remove suffix
+			   (concat (substring rtn-path 0 (match-beginning 0))
+				   (substring rtn-path (match-end 0)))
+			 ;; add suffix
+			 (format rtn-path suffix))
+		     (format rtn-path "")))))))))
 
 (defun hpath:push-tag-mark ()
   "Add a tag return marker at point if within a programming language file buffer.
@@ -1105,9 +1225,10 @@ validation checks.
 Default-directory should be equal to the current Hyperbole button
 source directory when called, so that PATH is expanded relative
 to it."
-  (cond ((not (stringp path))
-	 (error "(hpath:validate): \"%s\" is not a pathname." path))
-	((or (string-match "[()]" path) (hpath:remote-p path))
+  (unless (stringp path)
+    (error "(hpath:validate): \"%s\" is not a pathname." path))
+  (setq path (hpath:mswindows-to-posix path))
+  (cond ((or (string-match "[()]" path) (hpath:remote-p path))
 	 ;; info or remote path, so don't validate
 	 path)
 	((if (not (hpath:www-p path))

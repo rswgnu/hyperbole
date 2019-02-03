@@ -210,7 +210,7 @@ MENU defaults to 'hyperbole and MENU-LIST to `hui:menus'.  See `hui:menus'
 definition for the format of the menu list structure."
   (mapcar
    (lambda (entry)
-     (or (consp entry) 
+     (or (consp entry)
 	 (error "(hui:menu-xemacs): Invalid menu entry: %s" entry))
      (let ((label (car entry))
 	   (content (car (cdr entry))))
@@ -446,7 +446,7 @@ constructs.  If not given, the top-level Hyperbole menu is used."
 	   "Edits directory-specific button file.")
 	  ("Info"
 	   (id-info "(hyperbole)Button Files")
-	   "Displays manual section on button files.") 
+	   "Displays manual section on button files.")
 	  ("PersonalFile" (find-file
 			    (expand-file-name hbmap:filename hbmap:dir-user))
 	   "Edits user-specific button file.")
@@ -490,7 +490,7 @@ constructs.  If not given, the top-level Hyperbole menu is used."
 	  ("MarkThing"     (hui:bind-key #'hui-select-thing))                   ;; {C-c RET}
 	  ("SmartHelp"     (hui:bind-key #'hkey-help))                          ;; {C-h A}
 	  ("WinControl"    (hui:bind-key #'hycontrol-enable-windows-mode))      ;; {C-c \}
-	  )) 
+	  ))
        '(cust-referents .
          (("Ref Display>")
 	  ("Any-Frame" (setq hpath:display-where 'other-frame))
@@ -589,17 +589,17 @@ constructs.  If not given, the top-level Hyperbole menu is used."
 	  ))
        '(gbut .
 	 (("GButton>")
-	  ("Act"    gbut:act        "Activates global button by name.") 
+	  ("Act"    gbut:act        "Activates global button by name.")
 	  ("Create" hui:gbut-create "Adds a global button to gbut:file.")
 	  ("Edit"   hui:gbut-modify "Modifies global button attributes.")
-	  ("Help"   gbut:help       "Reports on a global button by name.") 
+	  ("Help"   gbut:help       "Reports on a global button by name.")
 	  ("Info"   (id-info "(hyperbole)Global Buttons")
 	   "Displays manual section on global buttons.")
 	  ("Modify" hui:gbut-modify "Modifies global button attributes.")
 	  ))
        '(ibut .
 	 (("IButton>")
-	  ("Act"    hui:hbut-current-act  "Activates implicit button at point.") 
+	  ("Act"    hui:hbut-current-act  "Activates implicit button at point.")
 	  ("DeleteIButType"   (hui:htype-delete 'ibtypes)
 	   "Deletes specified button type.")
 	  ("Help"   hui:hbut-help   "Reports on button's attributes.")
@@ -635,7 +635,7 @@ constructs.  If not given, the top-level Hyperbole menu is used."
 	  ))
        '(otl
 	 . (("Kotl>")
-	    ("All"       kotl-mode:show-all "Expand all collapsed cells.") 
+	    ("All"       kotl-mode:show-all "Expand all collapsed cells.")
 	    ("Blanks"    kvspec:toggle-blank-lines
 	     "Toggle blank lines between cells on or off.")
 	    ("Create"    kfile:find   "Create or edit an outline file.")
@@ -659,7 +659,7 @@ constructs.  If not given, the top-level Hyperbole menu is used."
 				(kotl-mode:show-tree (kcell-view:label)))
 	     "Expand tree rooted at point.")
 	    ("Top"       kotl-mode:top-cells
-	     "Hide all but top-level cells.") 
+	     "Hide all but top-level cells.")
 	    ("Vspec"     kvspec:activate
 	     "Prompt for and activate a view specifiction.")
 	    ))
@@ -713,7 +713,7 @@ constructs.  If not given, the top-level Hyperbole menu is used."
        (hui:menu-web-search)
        ))))
 
-;; Always rebuild the Hyperbole minibuffer menu when this file is loaded. 
+;; Always rebuild the Hyperbole minibuffer menu when this file is loaded.
 (hyperbole-minibuffer-menu)
 
 (provide 'hui-mini)

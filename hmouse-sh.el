@@ -574,7 +574,7 @@ With optional MIDDLE-KEY-ONLY-FLAG non-nil, binds only the middle mouse key."
     ;;
     ;; In Info-mode, Emacs uses key-translation-map to link mouse-1 to
     ;; do whatever mouse-2 does but because Hyperbole uses both down
-    ;; and up bindings on mouse2, this does work.  So we rebind
+    ;; and up bindings on mouse2, this does not work.  So we rebind
     ;; mouse-1 in Info mode to be an actual Action Mouse Key (which
     ;; makes it follow Info links/cross-references properly, doing a
     ;; superset of what it did before).

@@ -685,6 +685,9 @@ If FLAG is nil then text is shown, while if FLAG is t the text is hidden."
   (when (or (file-exists-p "/mnt/c")
 	    (file-exists-p "/cygdrive"))
     (add-to-list 'directory-abbrev-alist '("\\`\\(/mnt\\|/cygdrive\\)/" . "/")))
+  ;; When running under a POSIX system with possible access to MSWindows servers,
+  ;; cache valid MSWindows mount points.
+  (hpath:cache-mswindows-mount-points)
   ;;
   ;; Save button attribute file whenever same dir file is saved and
   ;; `ebut:hattr-save' is non-nil.

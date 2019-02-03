@@ -1199,7 +1199,7 @@ Look for packages in `smart-java-package-path'."
 		    dir-list (if (setq found (file-exists-p path))
 				 nil
 			       (cdr dir-list))))
-	    (when (and (not found) subpath hyperb:microcruft-os-p)
+	    (when (and (not found) subpath hyperb:microsoft-os-p)
 		;; Try .jav suffix.
 	      (setq subfile (concat subpath ".jav")
 		    dir-list smart-java-package-path)
