@@ -2,6 +2,17 @@
 
 * hversion.el: Pushed BW changes for 7.0.2b test update.
 
+* hui-treemacs.el (treemacs-quit): Defined if treemacs doesn't and used.
+
+2019-02-03  Mats Lidell  <matsl@gnu.org>
+
+* hui-treemacs.el (treemacs-version): Require v2 or higher.
+
+* hsettings.el (hyperbole-default-web-search-term-max-lines): 
+               (hyperbole-default-web-search-term): Added.
+
+* hpath.el (hpath:tramp-file-name-regexp): Added and used in hpath:remote-at-p.
+
 2019-02-02  Bob Weiner  <rsw@gnu.org>
 
 * hsys-org.el (org-mode): Support derived modes too.

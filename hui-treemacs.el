@@ -4,7 +4,7 @@
 ;;
 ;; Orig-Date:    19-Nov-17
 ;;
-;; Copyright (C) 2017  Free Software Foundation, Inc.
+;; Copyright (C) 2017-2019  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
 ;;
 ;; This file is part of GNU Hyperbole.
@@ -18,13 +18,15 @@
 
 (eval-and-compile (require 'treemacs nil t))
 
-(eval-when (load)
-  (unless (>= (string-to-number treemacs-version) 1.14)
-    (error "(hui-treemacs): Hyperbole requires Treemacs package version 1.14 or greater")))
+(unless (string-greaterp treemacs-version "v2")
+  (error "(hui-treemacs): Hyperbole requires Treemacs package version 2.0 or greater"))
 
 ;;; ************************************************************************
 ;;; smart-treemacs functions
 ;;; ************************************************************************
+
+(unless (fboundp 'treemacs-quit)
+  (fset 'treemacs-quit #'bury-buffer))
 
 ;;;###autoload
 (defun smart-treemacs ()
@@ -51,10 +53,10 @@ If key is pressed:
   (interactive)
   (cond ((first-line-p)
 	 (if (eolp)
-	     (treemacs-toggle)
+	     (treemacs-quit)
 	   (hact 'link-to-directory default-directory)))
 	((and (last-line-p) (eolp))
-	 (treemacs-toggle))
+	 (treemacs-quit))
 	((eolp)
 	 (funcall (if assist-flag assist-key-eol-function action-key-eol-function)))
 	(t (let ((over-icon (and (treemacs-current-button)
@@ -65,7 +67,7 @@ If key is pressed:
 		     (hact 'link-to-buffer-tmp (seq-elt result 0) (seq-elt result 1))
 		   ;; (bufferp result)
 		   (hact 'link-to-buffer-tmp result))
-	       (treemacs-push-button current-prefix-arg))))))
+	       (treemacs-toggle-node current-prefix-arg))))))
 
 ;;;###autoload
 (defun smart-treemacs-modeline ()
@@ -86,7 +88,7 @@ Suitable for use as a value of `action-key-modeline-buffer-id-function'."
 	      (treemacs-is-treemacs-window? action-key-depress-window)
 	    (string-match " Treemacs " (format-mode-line mode-line-format)))
 	  ;; Quit/hide treemacs.
-	  (treemacs-toggle))
+	  (treemacs-quit))
 	 ;;
 	 ;; Treemacs is visible and displaying the same dir as
 	 ;; the default dir of the clicked on modeline.
@@ -95,7 +97,7 @@ Suitable for use as a value of `action-key-modeline-buffer-id-function'."
 			     (with-current-buffer (treemacs-buffer-exists?)
 			       default-directory)))
 	  ;; Quit/hide treemacs.
-	  (treemacs-toggle))
+	  (treemacs-quit))
 	 ;;
 	 ;; Otherwise, invoke treemacs on the default dir of the clicked on modeline.
 	 (t (treemacs))))

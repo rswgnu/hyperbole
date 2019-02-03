@@ -4,7 +4,7 @@
 ;;
 ;; Orig-Date:    15-Apr-91 at 00:48:49
 ;;
-;; Copyright (C) 1991-2017  Free Software Foundation, Inc.
+;; Copyright (C) 1991-2019  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
 ;;
 ;; This file is part of GNU Hyperbole.
@@ -123,6 +123,19 @@ down a windowful."
   (hyperbole-menubar-menu)
   (hyperbole-minibuffer-menu))
 
+(defcustom hyperbole-default-web-search-term-max-lines 2
+  "Provide a default search term using the selected text if the
+active region contains less than or equal to this number of
+lines"
+  :type 'integer
+  :group 'hyperbole-commands)
+
+(defun hyperbole-default-web-search-term ()
+  "Return a default search term if region is active and not too large."
+  (and (region-active-p)
+       (<= (count-lines (region-beginning) (region-end)) hyperbole-default-web-search-term-max-lines)
+       (buffer-substring-no-properties (region-beginning) (region-end))))
+
 (defun hyperbole-read-web-search-arguments (&optional service-name search-term)
   "Read from the keyboard a list of (web-search-service-string search-term-string) if not given as arguments."
   (let ((completion-ignore-case t))
@@ -130,7 +143,8 @@ down a windowful."
       (setq service-name (completing-read "Search service: " hyperbole-web-search-alist
 					  nil t)))
     (while (or (not (stringp search-term)) (equal search-term ""))
-     (setq search-term (read-string (format "Search %s for: " service-name))))
+      (setq search-term (read-string (format "Search %s for: " service-name)
+				     (hyperbole-default-web-search-term))))
     (list service-name search-term)))
 
 (defun hyperbole-web-search (&optional service-name search-term)
