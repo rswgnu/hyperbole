@@ -8401,8 +8401,12 @@ When pressed within an assembly source code file:
 
 @format
 @group
+@cindex change-log-mode
+@cindex lisp identifier
+@cindex elisp identifier
 When pressed on a Lisp symbol within any of these types of buffers
-(Lisp code, debugger, compilation, or help):
+(Lisp code, debugger, compilation, or help) or in change-log-mode
+on an Emacs Lisp bound identifier:
   ACTION KEY
      Jumps to the definition of any selected Lisp construct.  If on an
      Emacs Lisp require, load, or autoload clause and the (find-library)

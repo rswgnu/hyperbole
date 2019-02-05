@@ -636,6 +636,15 @@ buffer."
       (beginning-of-line)
       (looking-at "\\(;*[ \t]*\\)?(\\(autoload\\|load\\|require\\)")))
 
+(defun smart-lisp-at-change-log-tag-p ()
+  "When in a change-log mode, match to only bound Elisp identifiers and those with a '-' somewhere in the middle.
+These tight tests help eliminate undesired matches.
+Returns matching ELisp tag name that point is within, else nil."
+  (when (derived-mode-p 'change-log-mode)
+    (let ((identifier (smart-lisp-at-tag-p)))
+      (and identifier (intern-soft identifier)
+	   (string-match "[^-]-[^-]" identifier)))))
+
 (defun smart-lisp-at-tag-p (&optional no-flash)
   "Returns Lisp tag name that point is within, else nil.
 Returns nil when point is on the first line of a non-alias Lisp definition."
@@ -645,7 +654,7 @@ Returns nil when point is on the first line of a non-alias Lisp definition."
       (save-excursion
 	(skip-chars-backward identifier-chars)
 	(if (and (looking-at identifier)
-		 ;; Ignore any all punctuation matches.
+		 ;; Ignore any punctuation matches.
 		 (not (string-match "\\`[-<>*]+\\'" (match-string 0)))
 		 ;; Needed to set match string.
 		 (looking-at identifier))
@@ -665,7 +674,7 @@ Returns nil when point is on the first line of a non-alias Lisp definition."
 (defun smart-lisp-mode-p ()
   "Return t if in a mode which uses Lisp symbols."
   (or (smart-emacs-lisp-mode-p)
-      (memq major-mode '(lisp-mode scheme-mode change-log-mode))))
+      (memq major-mode '(lisp-mode scheme-mode))))
 
 ;;;###autoload
 (defun smart-objc (&optional identifier next)

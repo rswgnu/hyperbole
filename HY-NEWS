@@ -73,6 +73,11 @@
 
     - ChangeLog Mode: Smart Keys now work on Emacs Lisp references in changelogs.
 
+    - Improved String Matching: For lines that begin with part of a string that
+      started on another line, Hyperbole now presumes that point is within a string
+      rather than between two strings, even though the delimiters on the line
+      make this ambiguous.  This provides more accurate string recognition.
+
   HYCONTROL
 
     - Help Buffer Quitting: If HyControl is active, normally {q} quits

@@ -18,12 +18,17 @@
 
 (eval-and-compile (require 'treemacs nil t))
 
-(unless (string-greaterp treemacs-version "v2")
+(unless (and (featurep 'treemacs) (string-greaterp treemacs-version "v2"))
   (error "(hui-treemacs): Hyperbole requires Treemacs package version 2.0 or greater"))
 
 ;;; ************************************************************************
 ;;; smart-treemacs functions
 ;;; ************************************************************************
+
+;; Want to be able to select Treemacs window with ace-window.
+;; This also averts window labeling problems with ace-window.
+(eval-after-load "ace-window"
+  '(setq aw-ignored-buffers (delq 'treemacs-mode aw-ignored-buffers)))
 
 (unless (fboundp 'treemacs-quit)
   (fset 'treemacs-quit #'bury-buffer))

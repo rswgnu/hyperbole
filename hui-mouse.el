@@ -272,8 +272,11 @@ Its default value is #'smart-scroll-down."
 	  buffer-file-name (smart-asm-at-tag-p)) .
 	  ((smart-asm) . (smart-asm nil 'next-tag)))
     ;;
-    ((and (smart-lisp-mode-p) (smart-lisp-at-tag-p)) .
-     ((smart-lisp) . (smart-lisp 'show-doc)))
+    ((or (and (smart-lisp-mode-p) (smart-lisp-at-tag-p))
+	 ;; Tightly limit Lisp matches in change-log-mode.
+	 (smart-lisp-at-change-log-tag-p)) .
+	 ((smart-lisp) . (smart-lisp 'show-doc)))
+    ;;
     ;;
     ((and (eq major-mode 'java-mode) buffer-file-name
 	  (or (smart-java-at-tag-p)
@@ -736,9 +739,13 @@ If assist-key is pressed:
 	 (goto-char (point-max)))
 	((looking-at "~") (dired-flag-backup-files))
 	((looking-at "#") (dired-flag-auto-save-files))
-	(t (if (fboundp 'dired-flag-file-deletion)
-	       (dired-flag-file-deletion 1)
-	     (dired-flag-file-deleted 1)))))
+	(t 
+	 ;; Prevent any region selection from causing multiple files
+	 ;; to be marked for deletion; we want to mark only one.
+	 (deactivate-mark t)
+	 (if (fboundp 'dired-flag-file-deletion)
+	     (dired-flag-file-deletion 1)
+	   (dired-flag-file-deleted 1)))))
 
 ;;; ************************************************************************
 ;;; smart-gnus functions

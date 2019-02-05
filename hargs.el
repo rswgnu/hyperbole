@@ -100,7 +100,7 @@ interactive form or takes no arguments."
 
 (defun hargs:delimited (start-delim end-delim
 			&optional start-regexp-flag end-regexp-flag list-positions-flag)
-  "Returns a normalized, single line, delimited string that point is within, or nil.
+  "Returns a normalized, single line, delimited string that point is within the first line of, or nil.
 START-DELIM and END-DELIM are strings that specify the argument
 delimiters.  With optional START-REGEXP-FLAG non-nil, START-DELIM is
 treated as a regular expression.  END-REGEXP-FLAG is similar.
@@ -112,17 +112,29 @@ With optional LIST-POSITIONS-FLAG, return list of (string-matched start-pos end-
 			      'search-forward))
 	 (end-search-func (if end-regexp-flag 're-search-forward
 			    'search-forward))
+	 (count 0)
 	 start end)
     (save-excursion
       (beginning-of-line)
       (while (and (setq start (funcall start-search-func start-delim limit t))
+		  (setq count (1+ count))
 		  (< (point) opoint)
 		  ;; This is not to find the real end delimiter but to find
 		  ;; end delimiters that precede the current argument and are
 		  ;; therefore false matches, hence the search is limited to
 		  ;; prior to the original point.
-		  (funcall end-search-func end-delim opoint t))
+		  (funcall end-search-func end-delim opoint t)
+		  (setq count (1+ count)))
 	(setq start nil))
+      (when (and (not start) (> count 0) (evenp count) (string-equal start-delim end-delim))
+	;; Since strings can span lines but this function matches only
+	;; strings that start on the current line, when start-delim and
+	;; end-delim are the same and there are an even number of
+	;; delimiters in the search range, causing the end-delim
+	;; search to match to what should probably be the start-delim,
+	;; assume point is within a string and not between two other strings.
+	;; RSW - 02/05/2019
+	(setq start (point)))
       (when start
 	(forward-line 2)
 	(setq limit (point))
@@ -142,6 +154,7 @@ With optional LIST-POSITIONS-FLAG, return list of (string-matched start-pos end-
 		 (setq end (1- end))
 	       t)
 	     (< start end)
+	     (>= end opoint)
 	     (let ((string (hargs:buffer-substring start end)))
 	       (setq string (hypb:replace-match-string "[\n\r\f]\\s-*" string " " t))
 	       (unless hyperb:microsoft-os-p

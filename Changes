@@ -1,3 +1,36 @@
+2019-02-05  Bob Weiner  <rsw@gnu.org>
+
+* hmouse-tag.el (smart-lisp-mode-p): Removed change-log-mode.
+    (smart-lisp-at-change-log-tag-p): Added so can match
+      only to bound Elisp entities in change-log-mode with '-' in
+      the middle of their names to prevent false positives.
+  hui-mouse.el (hkey-alist): Added tightened change-log-mode handling.
+   man/hyperbole.texi (Smart Key - Lisp Source Code): Documented change.
+
+* hargs.el (hargs:delimited): Fixed that strings on lines with an odd number
+    of delimiters might fail to match.  Since strings can span lines but this
+    function matches only strings that start on the current line, when
+    start-delim and end-delim are the same and there are an odd number of
+    delimiters in the search range, assume point is within a
+    string and not between two other strings.
+    For example, with the following text and point within "DEMO", its path
+    previously was not found:
+      For each site, the links are properly maintained.  See "DEMO#Path
+      suffixes and Variables" and "DEMO#Path Prefixes".  "DEMO"
+
+* hui-treemacs.el: Deleted treemacs-mode from aw-ignored-buffers so can select
+    a Treemacs window via ace-window.
+
+2019-02-04  Bob Weiner  <rsw@gnu.org>
+
+* hui-mouse.el (smart-dired-assist): Prevented any region selection from
+    causing multiple files to be marked for deletion; we want to mark
+    only one.
+
+* hibtypes.el (annot-bib): Stopped this from activating when in org-mode to avert false positives.
+              (markdown-follow-inline-link-p, markdown-internal-link): Added ibut:label-set
+    to show a decent approximation of the button label when displaying help.
+
 2019-02-03  Bob Weiner  <rsw@gnu.org>
 
 * hversion.el: Pushed BW changes for 7.0.2b test update.
