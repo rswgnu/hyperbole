@@ -106,7 +106,7 @@ the error.  Optional NO-SAVE disables saving of the map after operation."
 ;;; ************************************************************************
 
 (defvar hbmap:dir-user
-  (if (and hyperb:microcruft-os-p
+  (if (and hyperb:microsoft-os-p
 	   (or (not (fboundp 'getenv))
 	       (not (getenv "HOME"))))
       "c:/_hyperb/" "~/.hyperb/")

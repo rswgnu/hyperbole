@@ -1,18 +1,18 @@
 ;;; hibtypes.el --- GNU Hyperbole default implicit button types
 ;;
-;; Author:       Bob Weiner
+;; Author: Bob Weiner
 ;;
-;; Orig-Date:    19-Sep-91 at 20:45:31
+;; Orig-Date: 19-Sep-91 at 20:45:31
 ;;
 ;; Copyright (C) 1991-2019  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
 ;;
 ;; This file is part of GNU Hyperbole.
-;;
 ;;; Commentary:
 ;;
-;;   Implicit button types in this file are defined in increasing order
-;;   of priority within this file (last one is highest priority).
+;;   Implicit button types in this file are defined in increasing
+;;   order of priority within this file (last one is highest
+;;   priority).
 
 ;;; Code:
 ;;; ************************************************************************
@@ -60,7 +60,7 @@
 ;;; ************************************************************************
 ;;; Public implicit button types
 ;;; ************************************************************************
-  
+
 (run-hooks 'hibtypes-begin-load-hook)
 
 ;;; ========================================================================
@@ -74,9 +74,10 @@
 ;;; ========================================================================
 
 (defvar mail-address-mode-list
-  '(emacs-lisp-mode lisp-interaction-mode lisp-mode scheme-mode c-mode
-    c++-mode html-mode java-mode js2-mode objc-mode python-mode
-    smalltalk-mode fundamental-mode text-mode indented-text-mode web-mode) 
+  '(emacs-lisp-mode lisp-interaction-mode lisp-mode scheme-mode
+    c-mode c++-mode html-mode java-mode js2-mode objc-mode
+    python-mode smalltalk-mode fundamental-mode text-mode
+    indented-text-mode web-mode)
   "List of major modes in which mail address implicit buttons are active.")
 
 (defun mail-address-at-p ()
@@ -125,20 +126,22 @@ any buffer attached to a file in `hyrolo-file-list', or any buffer with
 
 (defib pathname ()
   "Makes a valid pathname display the path entry.
-Also works for delimited and non-delimited remote pathnames, Texinfo @file{}
-entries, and hash-style link references to HTML, Markdown or Emacs outline
-headings.  Emacs Lisp library files (filenames without any directory component
-that end in .el and .elc) are looked up using the `load-path' directory list.
+Also works for delimited and non-delimited remote pathnames,
+Texinfo @file{} entries, and hash-style link references to HTML,
+Markdown or Emacs outline headings.  Emacs Lisp library
+files (filenames without any directory component that end in .el
+and .elc) are looked up using the `load-path' directory list.
 
 See `hpath:at-p' function documentation for possible delimiters.
-See `hpath:suffixes' variable documentation for suffixes that are added to or
-removed from pathname when searching for a valid match.
-See `hpath:find' function documentation for special file display options."
+See `hpath:suffixes' variable documentation for suffixes that are
+added to or removed from pathname when searching for a valid
+match.  See `hpath:find' function documentation for special file
+display options."
   ;;
   ;; Ignore paths in Buffer menu, dired and helm modes.
   (unless (or (eq major-mode 'helm-major-mode)
-	      (delq nil (mapcar (lambda (substring) (string-match
-						     substring (format-mode-line mode-name)))
+	      (delq nil (mapcar (lambda (substring)
+				  (string-match substring (format-mode-line mode-name)))
 				'("Buffer Menu" "IBuffer" "Dired"))))
     (let ((path (hpath:at-p))
 	  full-path)
@@ -174,8 +177,15 @@ See `hpath:find' function documentation for special file display options."
 		  ))))))
 
 ;;; ========================================================================
-;;; Displays files at specific lines and optional column number locations.
+;;; Displays files at specific lines and optional column number
+;;; locations.
 ;;; ========================================================================
+
+(defconst hibtypes-path-line-and-col-regexp
+  (if hyperb:microsoft-os-p
+      ;; Allow for 'c:' single letter drive prefixes on MSWindows
+      "\\([^ \t\n\r:][^ \t\n\r]+\\):\\([0-9]+\\)\\(:\\([0-9]+\\)\\)?"
+    "\\([^ \t\n\r:]+\\):\\([0-9]+\\)\\(:\\([0-9]+\\)\\)?"))
 
 (defib pathname-line-and-column ()
   "Makes a valid pathname:line-num[:column-num] pattern display the path at line-num and optional column-num.
@@ -187,8 +197,7 @@ removed from pathname when searching for a valid match.
 See `hpath:find' function documentation for special file display options."
   (let ((path-line-and-col (hpath:delimited-possible-path)))
     (if (and (stringp path-line-and-col)
-	     (string-match "\\([^ \t\n\r:]+\\):\\([0-9]+\\)\\(:\\([0-9]+\\)\\)?"
-			   path-line-and-col))
+	     (string-match hibtypes-path-line-and-col-regexp path-line-and-col))
 	(let ((file (expand-file-name (match-string-no-properties 1 path-line-and-col)))
 	      (line-num (string-to-number (match-string-no-properties 2 path-line-and-col)))
 	      (col-num (if (match-end 3) (string-to-number (match-string-no-properties
@@ -740,7 +749,7 @@ This works with JavaScript and Python tracebacks, gdb, dbx, and xdb.  Such lines
   (save-excursion
     (beginning-of-line)
     (cond
-     ;; Python pdb
+     ;; Python pdb or traceback
      ((looking-at ".+ File \"\\([^\"\n\r]+\\)\", line \\([0-9]+\\)")
       (let* ((file (match-string-no-properties 1))
 	     (line-num (match-string-no-properties 2))

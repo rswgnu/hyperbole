@@ -52,7 +52,7 @@
 This manual is for GNU Hyperbole
 (Edition @value{EDITION}, Published @value{UPDATED}).
 
-Copyright @copyright{} 1989-2017  Free Software Foundation, Inc.
+Copyright @copyright{} 1989-2019  Free Software Foundation, Inc.
 
 @quotation
 Permission is granted to copy, distribute and/or modify this document
@@ -139,7 +139,7 @@ Texinfo markup language.
 
 <CENTER><H2>The Everyday Hypertextual Information Manager</H2></CENTER>
 
-<P>Copyright &copy; 1989-2017  Free Software Foundation, Inc.</P>
+<P>Copyright &copy; 1989-2019  Free Software Foundation, Inc.</P>
 
 <P>GNU Hyperbole is available for use, modification, and distribution under
 the terms of the GNU General Public License (GPL) Version 3 or later,
@@ -151,8 +151,8 @@ WITHOUT ANY WARRANTY, without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</P>
 
 <PRE>
-Edition 7.0.2a
-Printed December 12, 2017.
+Edition 7.0.2b
+Printed February 2, 2019.
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -176,11 +176,11 @@ Printed December 12, 2017.
 
 @center The Everyday Hypertextual Information Manager
 
-@center Edition 7.0.2a, December 12, 2017.
+@center Edition 7.0.2b, February 2, 2019.
 
 @sp 2
 @noindent
-Copyright @copyright{} 1989-2017  Free Software Foundation, Inc.
+Copyright @copyright{} 1989-2019  Free Software Foundation, Inc.
 
 GNU Hyperbole is available for use, modification, and distribution
 under the terms of the GNU General Public License (GPL) Version 3 or
@@ -462,7 +462,7 @@ Smart Keyboard Keys
 @chapter Introduction
 
 This edition of the GNU Hyperbole Manual is for use with any version
-7.0.2a or greater of GNU Hyperbole.  Hyperbole runs atop GNU Emacs 24.3
+7.0.2b or greater of GNU Hyperbole.  Hyperbole runs atop GNU Emacs 24.3
 or higher.  It will trigger an error if your Emacs is older.
 
 This chapter summarizes the structure of the rest of the manual,
@@ -1468,9 +1468,15 @@ a key: @code{(hkey-ace-window-setup)}.
 @cindex link creation from keyboard
 @cindex keyboard link creation
 @kindex M-o i <window-id>
+@kindex M-o r <window-id>
+@kindex M-o m <window-id>
 @kindex M-o t <window-id>
 @cindex drag item
+@cindex replace window buffer
+@cindex swap window buffers
 @cindex throw item
+@cindex buffer replace
+@cindex buffers swap
 @cindex item drag
 @cindex item throw
 After setup, the leftmost character or two of each window's modeline will show
@@ -1480,7 +1486,11 @@ is on an item you want displayed in another window, use @bkbd{M-o i
 this command to create explicit button links to other window buffers when in an editable
 buffer rather than on an item.  If you want to display multiple items in different
 windows, instead use the @bkbd{M-o t <id-of-window-to-display-item-in>} key sequence to
-@emph{throw} the item to the window.
+@emph{throw} the item to the window.  To @emph{replace}
+the selected window's buffer with that of another window, use
+@bkbd{M-o r <id-of-window-displaying-desired-buffer>}.  To instead
+@emph{swap} the selected window's buffer with that of another window,
+use @bkbd{M-o m <id-of-window-to-swap-with>}.
 
 @c -------
 
@@ -4588,7 +4598,7 @@ The e-mail address of the person who created this cell.
 @item create-time
 The time at which the cell was created.  This is stored in a form that
 allows for easy data comparisons but is displayed in a human readable
-format, such as @samp{Jan 28 18:27:59 CST 2017}.
+format, such as @samp{Jan 28 18:27:59 CST 2019}.
 @end table
 
 @kindex koutliner, C-c C-i
@@ -4699,7 +4709,7 @@ automatically added by HyRolo whenever a new record is added.
 ==================================================================
 *   Smith, John       <js@@hiho.com> W708-555-2001  F708-321-1492
         Chief Ether Maintainer, HiHo Industries
-        05/24/2017
+        05/24/2019
 @end group
 @end example
 

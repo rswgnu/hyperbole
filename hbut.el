@@ -810,7 +810,7 @@ Suitable for use as part of `write-file-functions'."
 (defalias    'hattr:summarize 'hattr:report)
 
 (defvar   hattr:filename
-  (if hyperb:microcruft-os-p "_hypb" ".hypb")
+  (if hyperb:microsoft-os-p "_hypb" ".hypb")
   "Per directory file name in which explicit button attributes are stored.
 If you change its value, you will be unable to use buttons created by
 others who use a different value!")

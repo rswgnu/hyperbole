@@ -85,10 +85,10 @@ executable must be found as well (for Oauth security)."
 	 (ms "c:/_rolo.otl")
 	 (unix "~/.rolo.otl")
 	 (list (delq nil (if (and (boundp 'bbdb-file) (stringp bbdb-file))
-			     (if hyperb:microcruft-os-p
+			     (if hyperb:microsoft-os-p
 				 (list ms bbdb-file gcontacts)
 			       (list  "~/.rolo.otl" bbdb-file gcontacts))
-			   (if hyperb:microcruft-os-p (list ms gcontacts) (list unix gcontacts))))))
+			   (if hyperb:microsoft-os-p (list ms gcontacts) (list unix gcontacts))))))
     (setq hyrolo-file-list list)
     (when (called-interactively-p 'interactive)
       (message "HyRolo Search List: %S" list))
@@ -606,7 +606,7 @@ XEmacs only."
 
 (defun hyrolo-rename (old-file new-file)
   "Prompt user to rename OLD-FILE to NEW-FILE."
-  (interactive (if hyperb:microcruft-os-p
+  (interactive (if hyperb:microsoft-os-p
 		   '("c:/_rolodex.otl" "c:/_rolo.otl")
 		 '("~/.rolodex.otl" "~/.rolo.otl")))
   (if (and (equal (car hyrolo-file-list) new-file)

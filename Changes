@@ -1,3 +1,73 @@
+2019-02-03  Bob Weiner  <rsw@gnu.org>
+
+* hversion.el: Pushed BW changes for 7.0.2b test update.
+
+* hui-treemacs.el (treemacs-quit): Defined if treemacs doesn't and used.
+
+2019-02-03  Mats Lidell  <matsl@gnu.org>
+
+* hui-treemacs.el (treemacs-version): Require v2 or higher.
+
+* hsettings.el (hyperbole-default-web-search-term-max-lines): 
+               (hyperbole-default-web-search-term): Added.
+
+* hpath.el (hpath:tramp-file-name-regexp): Added and used in hpath:remote-at-p.
+
+2019-02-02  Bob Weiner  <rsw@gnu.org>
+
+* hsys-org.el (org-mode): Support derived modes too.
+
+2019-01-31  Bob Weiner  <rsw@gnu.org>
+
+* man/hyperbole.texi (Keyboard Drags): Added doc of {M-o r <window-id>},
+    replace selected window's buffer with that of another window.
+
+* man/hyperbole.texi (Keyboard Drags): 
+  DEMO (Displaying File and Buffer Items and Moving Buffers):
+    Added doc of {M-o m <window-id>}, swap selected window's buffer with
+    that of <window-id>'s.
+
+2019-01-30  Bob Weiner  <rsw@gnu.org>
+
+* hmouse-drv.el (hkey-drag-to): Fixed to handle the case where it is
+    called but no drag has taken place, i.e. when invoked from the keyboard
+    via Ace Window.
+
+2019-01-29  Bob Weiner  <rsw@gnu.org>
+
+* hargs.el (hargs:buffer-substring): Added and used in hargs:delimited to
+    replace null char in colored grep output lines with a colon, so they are
+    handled properly by the implicit buttons.
+
+2019-01-27  Bob Weiner  <rsw@gnu.org>
+
+* hversion.el (hyperb:microsoft-os-p): Renamed to this.
+
+* hpath.el (hpath:cache-mswindows-mount-points):
+    Added and called when Hyperbole is initialized, mainly to allow access to
+    MSWindows network shares which would otherwise not be accessible as links
+    under POSIX systems.
+           (hpath:map-plist): Added to map over property lists.
+    Called in hpath:cache-mswindows-mount-points.
+
+2019-01-26  Bob Weiner  <rsw@gnu.org>
+
+* hversion.el (hyperb:wsl-os-p): Added to test for use of Microsoft WSL.
+
+* hpath.el (hpath:delimited-possible-path): Added optional include-positions parameter.
+
+2019-01-21  Bob Weiner  <rsw@gnu.org>
+
+* hpath.el (hpath:mswindows-mount-prefix, hpath:mswindows-drive-regexp, hpath:mswindows-path-regexp,
+    hpath:mswindows-to-posix, hpath:mswindows-to-posix-separators, hpath:posix-to-mswindows)
+    hpath:posix-to-mswindows-separators, hpath:posix-path-p,
+    hpath:substitute-posix-or-mswindows-at-point, hpath:substitute-posix-or-mswindows):
+      Added to handle MSWindows paths under POSIX OSes, e.g. Windows Subsystem for Linux.
+    (hpath:find-program): Commented out call to hpath:find-file-mailcap to prevent use of
+      MIME external viewers on text files.
+  hargs.el (hargs:delimited): Added call to hpath:mswindows-to-posix-path.
+  hyperbole.el (hyperb:init): Abbreviated MSWindows mount point paths.
+
 2017-12-29  Bob Weiner  <rsw@gnu.org>
 
 * hsettings.el (inhibit-hyperbole-messaging): Moved this from hyperbole.el to here to prevent
@@ -6,7 +76,7 @@
 2017-12-20  Bob Weiner  <rsw@gnu.org>
 
 * kotl/kexport.el (kexport:html-file-klink)
-                  (kexport:html): 
+                  (kexport:html):
                   (kexport:html-replacement-alist): Added 'k' to precede klink HTML HREF
     references since these must start with a letter.
 
@@ -110,16 +180,13 @@
 
 * hypb.el (hypb:rgrep): Added support for ripgrep.
   hibtypes.el (ripgrep-msg): Added implicit button support for ripgrep (rg) messages where
-    the associated pathname is output once before all mataching lines.
+    the associated pathname is output once before all matching lines.
     See "https://github.com/BurntSushi/ripgrep".
 
 2017-12-04  Bob Weiner  <rsw@gnu.org>
 
 * hmouse-drv.el (hmouse-alist): Reload the def of this variable if its value is null.
-    (hkey-mouse-click-to-replace): Added to allow moving buffers with the mouse by clicking
-       on the from and to windows.
-    (hmouse-click-to-drag, hmouse-click-to-drag-to, hmouse-click-to-replace, hmouse-click-to-throw,
-     hmouse-choose-windows): Added to perform cross-window drags, replacements and throws with 3 mouse
+    (hmouse-choose-windows): Added to perform cross-window drags, replacements and throws with 3 mouse
        clicks.
 
 2017-12-03  Bob Weiner  <rsw@gnu.org>
@@ -132,7 +199,7 @@
 * hmouse-drv.el (hkey-drag-stay, hkey-replace): Added for use as ace-window commands.
                 (hkey-throw): Rewrote so if not on an item, then throws the current buffer.
     hkey-replace is the inverse, it grabs the specified buffer and places it into the selected
-    window ({p} command key for ace-window).  hkey-drag-stay does a drag but leaves point
+    window ({r} command key for ace-window).  hkey-drag-stay does a drag but leaves point
     in the originally selected window.
                 (hmouse-click-to-drag, hmouse-click-to-drag-stay, hmouse-click-to-drag-to)
                  hmouse-click-to-replace, hmouse-click-to-swap, hmouse-click-to-throw): Added to click
@@ -180,7 +247,7 @@
 2017-11-27  Bob Weiner  <rsw@gnu.org>
 
 * hmouse-drv.el (hkey-ace-window-setup): Made new ace-window frames (window id = z) inherit the size
-    of the prior selected frame; same as HyWindow.
+    of the prior selected frame; same as HyControl.
 
 * hui-window.el (hmouse-kill-and-yank-region, hmouse-yank-region): Added select-frame-set-input-focus
     in case released in a different frame.
@@ -365,7 +432,7 @@ V7.0.1 changes ^^^^:
     location.  Also fixed edge cases where want to copy or move thing to the beginning or end of the thing region.
                 (hmouse-goto-region-point): Renamed to hmouse-goto-region-prev-point, for clarity.
                 (hmouse-kill-and-yank-region, hmouse-kill-region): Used value of point saved in hkey-value to determine
-    the region if non-nil. 
+    the region if non-nil.
 
 * hui-select.el (hui-select-delimited-thing, hui-select-thing): Changed to use use-region-p.
   hmouse-drv.el (hmouse-use-region-p): Added and used to improve hmouse-drag-thing.
@@ -2076,7 +2143,7 @@ V6.0.0 changes ^^^^:
 
 * hmouse-drv.el (hkey-help-hide): Changed to utilize quit-window function if *hkey-wconfig* is
     not set and made it interactive and an autoload so can replace quit-window in help buffers.
-                (quit-window): Overloaded this function form "window.el" to utilize *hkey-wconfig*
+                (quit-window): Overloaded this function from "window.el" to utilize *hkey-wconfig*
     when set.
   hui-mini.el (hui:menu-help): This fixed an issue where Hyperbole minibuffer menu item help window
     quit did not properly restore prior window configuration.

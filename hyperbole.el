@@ -5,8 +5,8 @@
 ;; Author:           Bob Weiner
 ;; Maintainer:       Bob Weiner <rsw@gnu.org> and Mats Lidell <matsl@gnu.org>
 ;; Created:          06-Oct-92 at 11:52:51
-;; Released:         23-Nov-17
-;; Version:          7.0.2a
+;; Released:         21-Jan-19
+;; Version:          7.0.3
 ;; Keywords:         comm, convenience, files, frames, hypermedia, languages, mail, matching, mouse, multimedia, outlines, tools, wp
 ;; Package:          hyperbole
 ;; Package-Requires: ((emacs "24.4"))
@@ -660,6 +660,14 @@ If FLAG is nil then text is shown, while if FLAG is t the text is hidden."
   ;;
   ;; Conditionally initialize Hyperbole key bindings (when hkey-init is t)
   (hkey-initialize)
+  ;;
+  ;; Abbreviate MSWindows mount point paths.
+  (when (or (file-exists-p "/mnt/c")
+	    (file-exists-p "/cygdrive"))
+    (add-to-list 'directory-abbrev-alist '("\\`\\(/mnt\\|/cygdrive\\)/" . "/")))
+  ;; When running under a POSIX system with possible access to MSWindows servers,
+  ;; cache valid MSWindows mount points.
+  (hpath:cache-mswindows-mount-points)
   ;;
   ;; Save button attribute file whenever same dir file is saved and
   ;; `ebut:hattr-save' is non-nil.

@@ -636,7 +636,7 @@ constructs.  If not given, the top-level Hyperbole menu is used."
 	  ))
        '(otl
 	 . (("Kotl>")
-	    ("All"       kotl-mode:show-all "Expand all collapsed cells.") 
+	    ("All"       kotl-mode:show-all "Expand all collapsed cells.")
 	    ("Blanks"    kvspec:toggle-blank-lines
 	     "Toggle blank lines between cells on or off.")
 	    ("Create"    kfile:find   "Create or edit an outline file.")
@@ -660,7 +660,7 @@ constructs.  If not given, the top-level Hyperbole menu is used."
 				(kotl-mode:show-tree (kcell-view:label)))
 	     "Expand tree rooted at point.")
 	    ("Top"       kotl-mode:top-cells
-	     "Hide all but top-level cells.") 
+	     "Hide all but top-level cells.")
 	    ("Vspec"     kvspec:activate
 	     "Prompt for and activate a view specifiction.")
 	    ))
