@@ -1,3 +1,8 @@
+2019-02-06  Bob Weiner  <rsw@gnu.org>
+
+* hibtypes.el (ripgrep-msg): Tighted match to ignore empty potential filenames
+    that matched when they expanded to the current directory.
+
 2019-02-05  Bob Weiner  <rsw@gnu.org>
 
 * hmouse-tag.el (smart-lisp-mode-p): Removed change-log-mode.
@@ -41,7 +46,7 @@
 
 * hui-treemacs.el (treemacs-version): Require v2 or higher.
 
-* hsettings.el (hyperbole-default-web-search-term-max-lines): 
+* hsettings.el (hyperbole-default-web-search-term-max-lines):
                (hyperbole-default-web-search-term): Added.
 
 * hpath.el (hpath:tramp-file-name-regexp): Added and used in hpath:remote-at-p.
