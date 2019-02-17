@@ -23,7 +23,7 @@ if len(argv) < 3:
 
 x = int(argv[1]); y = int(argv[2])
 
-# Return the first window only that x,y falls within since the windows are listed in z-order (top of stack to bottom)
+# Return the first window that x,y falls within since the windows are listed in z-order (top of stack to bottom)
 def filter_and_print_top_window(x, y):
     win_x = win_y = win_width = win_height = 0
 

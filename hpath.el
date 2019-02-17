@@ -173,7 +173,7 @@ Path must be a string or an error will be triggered.  See
   "Returns result of applying FUNC of two args, key and value, to key-value pairs in PLIST, a property list."
   (cl-loop for (k v) on plist by #'cddr
 	   collect (funcall func k v) into result
-	   return result))
+	   finally return result))
 
 ;;;###autoload
 (defun hpath:cache-mswindows-mount-points ()
@@ -197,8 +197,7 @@ Call this function manually if mount points change after Hyperbole is loaded."
 				     (setq path (concat "/" (downcase (match-string 1 path)))))
 				 (cons path mount-point))
 			       ;; Return a plist of MSWindows path-mounted mount-point pairs.
-			       (split-string (shell-command-to-string
-					      (format "df 2> /dev/null | grep -v '%s' | sed -e 's/ .*%%//g'" hpath:posix-mount-points-regexp))))
+			       (split-string (shell-command-to-string (format "df -a -t drvfs 2> /dev/null | sort | uniq | grep -v '%s' | sed -e 's+ .*[-%%] /+ /+g'" hpath:posix-mount-points-regexp))))
 	       (lambda (cons1 cons2) (<= (length (car cons1)) (length (car cons2)))))))))
 
 
@@ -980,7 +979,7 @@ See also `hpath:internal-display-alist' for internal, window-system independent 
 			     (cons "next" hpath:external-display-alist-macos)))))))
 
 (defun hpath:is-p (path &optional type non-exist)
-  "Returns PATH if PATH is a Posix path, else nil.
+  "Returns PATH if PATH is a Posix or MSWindows path, else nil.
 If optional TYPE is the symbol 'file or 'directory, then only that path type
 is accepted as a match.  The existence of the path is checked only for
 locally reachable paths (Info paths are not checked).  Single spaces are

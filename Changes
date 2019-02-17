@@ -1,7 +1,21 @@
+2019-02-16  Bob Weiner  <rsw@gnu.org>
+
+* hui-window.el (smart-window-of-coords): Handled null coords parameter.
+
+2019-02-10  Bob Weiner  <rsw@gnu.org>
+
+* hmouse-drv.el (hkey-drag-to): Fixed to match documentation that says will
+    create an explicit file link button if called anywhere other than on
+    a listing item.
+
+* hui-treemacs.el (smart-treemacs-modeline): Replaced old call of
+    treemacs-buffer-exists? with new calls to treemacs-current-visibility
+    and treemacs-get-local-buffer for Treemacs V2.
+
 2019-02-06  Bob Weiner  <rsw@gnu.org>
 
-* hibtypes.el (ripgrep-msg): Tighted match to ignore empty potential filenames
-    that matched when they expanded to the current directory.
+* hibtypes.el (ripgrep-msg): Tightened match to ignore empty potential filenames
+    that matched when they were expanded to the current directory.
 
 2019-02-05  Bob Weiner  <rsw@gnu.org>
 

@@ -636,7 +636,7 @@ If assist-key is pressed:
 
 (defun smart-company-to-definition (event)
   "Action Key binding for company-mode completions popup to show item definition.
-Use left mouse key or RET key to select a completion and exit."
+Use left mouse key, RET or TAB key to select a completion and exit."
   (interactive "e")
   (when (mouse-event-p last-command-event)
     (company-select-mouse event))

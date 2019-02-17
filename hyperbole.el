@@ -355,6 +355,16 @@ bindings after load)."
 ;;; Load Hyperbole mouse bindings
 ;;; ************************************************************************
 
+;; From mouse-position.c in Emacs:
+;;    f = SELECTED_FRAME ();
+;;    XSETFRAME (lispy_dummy, f);
+;;
+;;  It seems like the XSETFRAME macro is not properly copying the value of f on initial frame selection under the macOS window system.
+;;  The problem occurs on other systems as well, e.g. Emacs 25.2 under Windows 7.
+;;
+;;  Hyperbole resolves this problem by setting the
+;;  `mouse-position-function' variable below to properly set the
+;;  newly selected frame.
 (if (boundp 'mouse-position-function)
     (setq mouse-position-function
 	  (lambda (frame-x-dot-y)

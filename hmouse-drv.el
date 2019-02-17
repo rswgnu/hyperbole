@@ -337,7 +337,7 @@ bound to a valid function."
 
 The ace-window package, (see \"https://elpa.gnu.org/packages/ace-window.html\"),
 assigns short ids to each Emacs window and lets you jump to or
-operate upon a specific window by giving its letter.  Hyperbole
+operate upqon a specific window by giving its letter.  Hyperbole
 can insert an operation into ace-window that allows you to
 display items such as dired or buffer menu items in a specific
 window.
@@ -447,14 +447,17 @@ Works only when running under a window system, not from a dumb terminal."
 	       ;; Leave release-window selected
 	       (when (window-live-p release-window)
 		 (hypb:select-window-frame release-window)))
-      (if (eq start-window release-window)
-	  ;; Leave hkey-drag to choose final selected window
-	  (hkey-drag release-window)
-	;; Replace release window's buffer with selected
-	;; window's buffer.
-	(hkey-buffer-to start-window release-window)
-	(when (window-live-p release-window)
-	  (hypb:select-window-frame release-window))))))
+      ;; Leave hkey-drag to choose final selected window
+      (hkey-drag release-window)
+      ;; (if (eq start-window release-window)
+      ;; 	  ;; Leave hkey-drag to choose final selected window
+      ;; 	  (hkey-drag release-window)
+      ;; 	;; Replace release window's buffer with selected
+      ;; 	;; window's buffer.
+      ;; 	(hkey-buffer-to start-window release-window)
+      ;; 	(when (window-live-p release-window)
+      ;; 	  (hypb:select-window-frame release-window)))
+      )))
 
 ;;;###autoload
 (defun hkey-replace (release-window)

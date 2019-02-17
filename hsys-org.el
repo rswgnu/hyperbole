@@ -46,10 +46,7 @@
 ;;; ************************************************************************
 
 (defib org-mode ()
-  "Follows any Org mode link at point or cycles through views of the outline subtree at point.
-The variable, `browse-url-browser-function', customizes the url browser that
-is used for urls.  Valid values of this variable include `browse-url-default-browser'
-and `browse-url-generic'."
+  "Follows any Org mode link at point or cycles through views of the outline subtree at point."
   (when (derived-mode-p 'org-mode)
     (cond ((org-link-at-p)
 	   (hact 'org-link nil))
