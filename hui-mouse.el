@@ -4,7 +4,7 @@
 ;;
 ;; Orig-Date:    04-Feb-89
 ;;
-;; Copyright (C) 1991-2017  Free Software Foundation, Inc.
+;; Copyright (C) 1991-2018  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
 ;;
 ;; This file is part of GNU Hyperbole.
@@ -403,7 +403,7 @@ smart keyboard keys.")
 (require 'hmouse-key)
 
 ;; This next library adds drag actions to `hmouse-alist'.
-(load "hui-window")
+(require 'hui-window)
 
 ;;; ************************************************************************
 ;;; support code
