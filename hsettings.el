@@ -223,7 +223,7 @@ obtained search string."
 ;; No-op unless set by one of the conditionals below.
 (defun hui:but-flash ())
 
-(cond ((and hyperb:emacs-p (not noninteractive))
+(cond ((and (not (featurep 'xemacs)) (not noninteractive))
        (require 'hui-em-but)
        ;; Highlight explicit buttons whenever a file is read in.
        (add-hook 'find-file-hook #'hproperty:but-create t)
@@ -250,7 +250,7 @@ obtained search string."
        ;;
        ;; Highlight explicit buttons when files are read in.
        (add-hook 'find-file-hook #'hproperty:but-create t)
-       (defalias 'hui:but-flash 'hproperty:but-flash)
+       (defalias 'hui:but-flash #'hproperty:but-flash)
        ;;
        ;; Substitute for the nil argument below a valid X color name with
        ;; which to highlight buttons if the default highlighting does not

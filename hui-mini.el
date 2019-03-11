@@ -4,7 +4,7 @@
 ;;
 ;; Orig-Date:    15-Oct-91 at 20:13:17
 ;;
-;; Copyright (C) 1991-2017  Free Software Foundation, Inc.
+;; Copyright (C) 1991-2019  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
 ;;
 ;; This file is part of GNU Hyperbole.
@@ -17,6 +17,7 @@
 ;;; ************************************************************************
 
 (require 'hypb)
+(require 'hsettings)                    ;For hyperbole-web-search-alist
 (require 'browse-url)
 
 ;;; ************************************************************************
@@ -149,7 +150,7 @@ With optional HELP-STRING-FLAG, instead returns the one line help string for the
   "Uses CHAR-STR or last input character as minibuffer argument."
   (interactive)
   (let ((input (or char-str (aref (recent-keys) (1- (length (recent-keys)))))))
-    (cond (hyperb:emacs-p
+    (cond ((not (featurep 'xemacs))
 	   (and (not (integerp input))
 		(eventp input)
 		(setq input (event-basic-type input))))
@@ -366,7 +367,7 @@ constructs.  If not given, the top-level Hyperbole menu is used."
 ;;; ************************************************************************
 
 ;; Hyperbole menu mode is suitable only for specially formatted data.
-(put 'hui:menu-mode 'mode-class 'special)
+(put 'hui:menu-mode 'mode-class 'special) ;FIXME: Never used as a major mode!?
 
 (defvar hui:menu-mode-map nil
   "Keymap containing Hyperbole minibuffer menu commands.")

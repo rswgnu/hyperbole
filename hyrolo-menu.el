@@ -4,7 +4,7 @@
 ;;
 ;; Orig-Date:    28-Oct-94 at 10:59:44
 ;;
-;; Copyright (C) 1994-2016  Free Software Foundation, Inc.
+;; Copyright (C) 1994-2019  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
 ;;
 ;; This file is part of GNU Hyperbole.
@@ -119,10 +119,10 @@
 	 (setq mode-popup-menu id-popup-hyrolo-menu))
 	((featurep 'xemacs)
 	 (define-key hyrolo-mode-map 'button3 'hyrolo-popup-menu))
-	(t ;; hyperb:emacs-p
+	(t ;; (not (featurep 'xemacs))
 	 (define-key hyrolo-mode-map [C-down-mouse-3] 'hyrolo-popup-menu)
 	 (define-key hyrolo-mode-map [C-mouse-3] nil)))
-  (unless (cond (hyperb:emacs-p
+  (unless (cond ((not (featurep 'xemacs))
 		 (global-key-binding [menu-bar Rolo]))
 		((boundp 'current-menubar)
 		 (car (find-menu-item current-menubar '("Rolo")))))
@@ -142,7 +142,7 @@
        ;; InfoDock under a window system
        (require 'id-menubars)
        (id-menubar-set 'hyrolo-mode 'id-menubar-hyrolo))
-      ((or hyperb:emacs-p (featurep 'xemacs))
+      (t
        ;; Emacs or XEmacs under a window system
        (add-hook 'hyrolo-mode-hook #'hyrolo-menubar-menu)))
 

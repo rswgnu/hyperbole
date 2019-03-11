@@ -145,10 +145,10 @@ drag release window.")
   :group 'hyperbole-keys)
 
  ;; Mats Lidell says this should be 10 characters for GNU Emacs.
-(defvar hmouse-edge-sensitivity (if hyperb:emacs-p 10 3)
+(defvar hmouse-edge-sensitivity (if (featurep 'xemacs) 3 10)
   "*Number of characters from window edges within which a click is considered at an edge.")
 
-(defvar hmouse-side-sensitivity (if hyperb:emacs-p 5 1)
+(defvar hmouse-side-sensitivity (if (featurep 'xemacs) 1 5)
   "*Characters in either direction from window side within which a click is considered on the side.")
 
 (defvar hmouse-x-drag-sensitivity 5
@@ -264,8 +264,7 @@ appropriate Smart Menu for the context at point.  (Smart Menus are a
 part of InfoDock and not a part of Hyperbole)."
   (interactive)
   (if (and (fboundp 'smart-menu)
-	   (or (null window-system)
-	       (not (or hyperb:emacs-p (featurep 'xemacs)))))
+	   (null window-system))
       (smart-menu)
     (let ((wind (get-buffer-window "*Buffer List*"))
 	  owind)
@@ -284,8 +283,7 @@ appropriate Smart Menu for the context at point.  (Smart Menus are a
 part of InfoDock and not a part of Hyperbole)."
   (interactive)
   (if (and (fboundp 'smart-menu)
-	   (or (null window-system)
-	       (not (or hyperb:emacs-p (featurep 'xemacs)))))
+           (null window-system))
       (smart-menu)
     (let ((wind (get-buffer-window "*Ibuffer*"))
 	  owind)
@@ -693,7 +691,7 @@ Beeps and prints message if the window cannot be split further."
 (defun smart-coords-in-window-p (coords window)
   "Tests if COORDS are in WINDOW.  Returns WINDOW if they are, nil otherwise."
   (cond ((null coords) nil)
-	((and hyperb:emacs-p (eventp coords))
+	((and (not (featurep 'xemacs)) (eventp coords))
 	 (let ((w-or-f (posn-window (event-start coords))))
 	   (if (framep w-or-f) (setq w-or-f (frame-selected-window w-or-f)))
 	   (eq w-or-f window)))
@@ -718,7 +716,7 @@ Beeps and prints message if the window cannot be split further."
 Ignores minibuffer window."
   (cond ((markerp coords)
 	 (marker-position coords))
-	((and hyperb:emacs-p (eventp coords))
+	((and (not (featurep 'xemacs)) (eventp coords))
 	 (posn-point (event-start coords)))
 	((and (featurep 'xemacs) (eventp coords))
 	 (event-point coords))))
@@ -726,25 +724,24 @@ Ignores minibuffer window."
 (defun smart-window-of-coords (coords)
   "Returns window in which COORDS fall or nil if none.
 Ignores minibuffer window."
-  (when coords
-    (cond ((markerp coords)
-	   (get-buffer-window (marker-buffer coords)))
-	  ((and hyperb:emacs-p (eventp coords))
-	   (let ((w-or-f (posn-window (event-start coords))))
-	     (if (framep w-or-f) (setq w-or-f (frame-selected-window w-or-f)))
-	     w-or-f))
-	  ((if (featurep 'xemacs)
-	       (if (eventp coords)
-		   (event-window coords)
-		 (car coords))))
-	  (t (let ((window-list (hypb:window-list 'no-minibuf))
-		   (window)
-		   (w))
-	       (while (and (not window) window-list)
-		 (setq w (car window-list)
-		       window-list (cdr window-list)
-		       window (smart-coords-in-window-p coords w)))
-	       window)))))
+  (cond ((markerp coords)
+	 (get-buffer-window (marker-buffer coords)))
+	((and (not (featurep 'xemacs)) (eventp coords))
+	 (let ((w-or-f (posn-window (event-start coords))))
+	   (if (framep w-or-f) (setq w-or-f (frame-selected-window w-or-f)))
+	   w-or-f))
+	((if (featurep 'xemacs)
+	     (if (eventp coords)
+		 (event-window coords)
+	       (car coords))))
+	(t (let ((window-list (hypb:window-list 'no-minibuf))
+		 (window)
+		 (w))
+	     (while (and (not window) window-list)
+	       (setq w (car window-list)
+		     window-list (cdr window-list)
+		     window (smart-coords-in-window-p coords w)))
+	     window))))
 
 ;;; ************************************************************************
 ;;; Private functions
@@ -1009,7 +1006,7 @@ If free variable `assist-flag' is non-nil, uses Assist Key."
 
 (defun hmouse-emacs-at-modeline-buffer-id-p ()
   "GNU Emacs: Return t if mouse position is within the buffer name field of the current window's mode-line, else nil."
-  (when hyperb:emacs-p
+  (unless (featurep 'xemacs)
     (let* ((coords (hmouse-window-coordinates)) ;; in characters
 	   (x-coord (caadr coords))
 	   (mode-line-string (and (integerp x-coord) (>= x-coord 0) (format-mode-line mode-line-format)))

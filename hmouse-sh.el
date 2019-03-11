@@ -257,164 +257,124 @@ Use nil as CMD value to unbind the key.  Works under GNU Emacs only."
 	  ))))
 	   
 (defun hmouse-get-bindings (hmouse-middle-flag)
-  "Returns the list of current bindings of mouse keys used by Hyperbole.
+  "Return the list of current bindings of mouse keys used by Hyperbole.
 If HMOUSE-MIDDLE-FLAG is non-nil, includes the middle mouse key binding as well.
 These may be the bindings prior to initializing Hyperbole or the Hyperbole bindings."
   ;; Do nothing when running in batch mode.
   (unless noninteractive
     (nconc
      (if hmouse-middle-flag (hmouse-get-unshifted-bindings))
-     (eval
-      (cdr (assoc
-	    ;; Get mouse bindings under Emacs or XEmacs, even if not under a
-	    ;; window system since they can have frames on ttys and windowed
-	    ;; displays at the same time.
-	    (or (and (featurep 'xemacs) "xemacs")
-		(and hyperb:emacs-p "emacs")
-		(hyperb:window-system))
-	    '(("emacs" .
-	       (mapcar (lambda (key) (cons key (global-key-binding key)))
-		       (if (eq window-system 'dps)
-			   ;; NEXTSTEP offers only 2 shift-mouse buttons which we use
-			   ;; as the Smart Keys.
-			   '([S-down-mouse-1] [S-drag-mouse-1] [S-mouse-1]
-			     [S-down-mouse-2] [S-drag-mouse-2] [S-mouse-2]
-			     [S-double-mouse-1] [S-triple-mouse-1]
-			     [S-double-mouse-2] [S-triple-mouse-2]
-			     [header-line S-down-mouse-1] [header-line S-drag-mouse-1]
-			     [header-line S-mouse-1]
-			     [header-line S-down-mouse-2] [header-line S-drag-mouse-2]
-			     [header-line S-mouse-2]
-			     [left-fringe S-down-mouse-1] [left-fringe S-drag-mouse-1]
-			     [left-fringe S-mouse-1]
-			     [left-fringe S-down-mouse-2] [left-fringe S-drag-mouse-2]
-			     [left-fringe S-mouse-2]
-			     [right-fringe S-down-mouse-1] [right-fringe S-drag-mouse-1]
-			     [right-fringe S-mouse-1]
-			     [right-fringe S-down-mouse-2] [right-fringe S-drag-mouse-2]
-			     [right-fringe S-mouse-2]
-			     [vertical-line S-down-mouse-1] [vertical-line S-drag-mouse-1]
-			     [vertical-line S-mouse-1]
-			     [vertical-line S-down-mouse-2] [vertical-line S-drag-mouse-2]
-			     [vertical-line S-mouse-2]
-			     [mode-line S-down-mouse-1] [mode-line S-drag-mouse-1]
-			     [mode-line S-mouse-1]
-			     [mode-line S-down-mouse-2] [mode-line S-drag-mouse-2]
-			     [mode-line S-mouse-2]
-			     )
-			 ;; X, macOS or MS Windows
-			 '([S-down-mouse-2] [S-drag-mouse-2] [S-mouse-2]
-			   [S-down-mouse-3] [S-drag-mouse-3] [S-mouse-3]
-			   [S-double-mouse-2] [S-triple-mouse-2]
-			   [S-double-mouse-3] [S-triple-mouse-3]
-			   [header-line S-down-mouse-2] [header-line S-drag-mouse-2]
-			   [header-line S-mouse-2]
-			   [header-line S-down-mouse-3] [header-line S-drag-mouse-3]
-			   [header-line S-mouse-3]
-			   [left-fringe S-down-mouse-2] [left-fringe S-drag-mouse-2]
-			   [left-fringe S-mouse-2]
-			   [left-fringe S-down-mouse-3] [left-fringe S-drag-mouse-3]
-			   [left-fringe S-mouse-3]
-			   [right-fringe S-down-mouse-2] [right-fringe S-drag-mouse-2]
-			   [right-fringe S-mouse-2]
-			   [right-fringe S-down-mouse-3] [right-fringe S-drag-mouse-3]
-			   [right-fringe S-mouse-3]
-			   [vertical-line S-down-mouse-2] [vertical-line S-drag-mouse-2]
-			   [vertical-line S-mouse-2]
-			   [vertical-line S-down-mouse-3] [vertical-line S-drag-mouse-3]
-			   [vertical-line S-mouse-3]
-			   [mode-line S-down-mouse-2] [mode-line S-drag-mouse-2]
-			   [mode-line S-mouse-2]
-			   [mode-line S-down-mouse-3] [mode-line S-drag-mouse-3]
-			   [mode-line S-mouse-3]
-			   ))))
-	      ("xemacs" .
-	       (nconc
-		(mapcar (lambda (key)
-			  (cons key (global-key-binding key)))
-			'([(shift button2)] [(shift button2up)]
-			  [(shift button3)] [(shift button3up)]))
-		(if (boundp 'mode-line-map)
-		    (mapcar (lambda (key)
-			      (cons key (lookup-key mode-line-map key)))
-			    '([(shift button3)] [(shift button3up)])))))
-	      ("xterm" .
-	       (mapcar (lambda (key) (cons key (lookup-key mouse-map key)))
-		       (list x-button-s-middle x-button-s-middle-up
-			     x-button-s-right  x-button-s-right-up)))
-	      ("next" .
-	       (mapcar (lambda (key)
-			 (cons key (mousemap-get
-				    (mouse-list-to-mouse-code key)
-				    current-global-mousemap)))
-		       (apply 'nconc
-			      (mapcar (lambda (region)
-					(mapcar (function
-						 (lambda (key)
-						   (cons region key)))
-						'((shift left)  (shift up left)
-						  (shift right) (shift up right)
-						  )))
-				      '(text scrollbar modeline minibuffer)))
-		       )))))))))
+     ;; Get mouse bindings under Emacs or XEmacs, even if not under a
+     ;; window system since they can have frames on ttys and windowed
+     ;; displays at the same time.
+     (if (not (featurep 'xemacs))
+	 (mapcar (lambda (key) (cons key (global-key-binding key)))
+		 (if (eq window-system 'dps)
+		     ;; NEXTSTEP offers only 2 shift-mouse buttons which we use
+		     ;; as the Smart Keys.
+		     '([S-down-mouse-1] [S-drag-mouse-1] [S-mouse-1]
+		       [S-down-mouse-2] [S-drag-mouse-2] [S-mouse-2]
+		       [S-double-mouse-1] [S-triple-mouse-1]
+		       [S-double-mouse-2] [S-triple-mouse-2]
+		       [header-line S-down-mouse-1] [header-line S-drag-mouse-1]
+		       [header-line S-mouse-1]
+		       [header-line S-down-mouse-2] [header-line S-drag-mouse-2]
+		       [header-line S-mouse-2]
+		       [left-fringe S-down-mouse-1] [left-fringe S-drag-mouse-1]
+		       [left-fringe S-mouse-1]
+		       [left-fringe S-down-mouse-2] [left-fringe S-drag-mouse-2]
+		       [left-fringe S-mouse-2]
+		       [right-fringe S-down-mouse-1] [right-fringe S-drag-mouse-1]
+		       [right-fringe S-mouse-1]
+		       [right-fringe S-down-mouse-2] [right-fringe S-drag-mouse-2]
+		       [right-fringe S-mouse-2]
+		       [vertical-line S-down-mouse-1] [vertical-line S-drag-mouse-1]
+		       [vertical-line S-mouse-1]
+		       [vertical-line S-down-mouse-2] [vertical-line S-drag-mouse-2]
+		       [vertical-line S-mouse-2]
+		       [mode-line S-down-mouse-1] [mode-line S-drag-mouse-1]
+		       [mode-line S-mouse-1]
+		       [mode-line S-down-mouse-2] [mode-line S-drag-mouse-2]
+		       [mode-line S-mouse-2]
+		       )
+		   ;; X, macOS or MS Windows
+		   '([S-down-mouse-2] [S-drag-mouse-2] [S-mouse-2]
+		     [S-down-mouse-3] [S-drag-mouse-3] [S-mouse-3]
+		     [S-double-mouse-2] [S-triple-mouse-2]
+		     [S-double-mouse-3] [S-triple-mouse-3]
+		     [header-line S-down-mouse-2] [header-line S-drag-mouse-2]
+		     [header-line S-mouse-2]
+		     [header-line S-down-mouse-3] [header-line S-drag-mouse-3]
+		     [header-line S-mouse-3]
+		     [left-fringe S-down-mouse-2] [left-fringe S-drag-mouse-2]
+		     [left-fringe S-mouse-2]
+		     [left-fringe S-down-mouse-3] [left-fringe S-drag-mouse-3]
+		     [left-fringe S-mouse-3]
+		     [right-fringe S-down-mouse-2] [right-fringe S-drag-mouse-2]
+		     [right-fringe S-mouse-2]
+		     [right-fringe S-down-mouse-3] [right-fringe S-drag-mouse-3]
+		     [right-fringe S-mouse-3]
+		     [vertical-line S-down-mouse-2] [vertical-line S-drag-mouse-2]
+		     [vertical-line S-mouse-2]
+		     [vertical-line S-down-mouse-3] [vertical-line S-drag-mouse-3]
+		     [vertical-line S-mouse-3]
+		     [mode-line S-down-mouse-2] [mode-line S-drag-mouse-2]
+		     [mode-line S-mouse-2]
+		     [mode-line S-down-mouse-3] [mode-line S-drag-mouse-3]
+		     [mode-line S-mouse-3]
+		     )))
+       (nconc
+	(mapcar (lambda (key)
+		  (cons key (global-key-binding key)))
+		'([(shift button2)] [(shift button2up)]
+		  [(shift button3)] [(shift button3up)]))
+	(if (boundp 'mode-line-map)
+	    (mapcar (lambda (key)
+		      (cons key (lookup-key mode-line-map key)))
+		    '([(shift button3)] [(shift button3up)]))))))))
 
 (defun hmouse-get-unshifted-bindings ()
-  "Returns the list of middle mouse key bindings prior to their use as Smart Keys."
+  "Return the list of middle mouse key bindings prior to their use as Smart Keys."
   ;; Do nothing when running in batch mode.
-  (eval
-   (cdr (assoc
-	 ;; Get mouse bindings under Emacs or XEmacs, even if not under a
-	 ;; window system since they can have frames on ttys and windowed
-	 ;; displays at the same time.
-	 (or (and (featurep 'xemacs) "xemacs")
-	     (and hyperb:emacs-p "emacs")
-	     (hyperb:window-system))
-	 '(("emacs" .
-	    (mapcar (lambda (key) (cons key (global-key-binding key)))
-		    (if (not (eq window-system 'dps))
-			;; X, macOS or MS Windows
-			'([down-mouse-2] [drag-mouse-2] [mouse-2]
-			  [down-mouse-3] [drag-mouse-3] [mouse-3]
-			  [double-mouse-2] [triple-mouse-2]
-			  [double-mouse-3] [triple-mouse-3]
-			  [header-line down-mouse-2] [header-line drag-mouse-2]
-			  [header-line mouse-2]
-			  [left-fringe down-mouse-2] [left-fringe drag-mouse-2]
-			  [left-fringe mouse-2]
-			  [right-fringe down-mouse-2] [right-fringe drag-mouse-2]
-			  [right-fringe mouse-2]
-			  [vertical-line down-mouse-2] [vertical-line drag-mouse-2]
-			  [vertical-line mouse-2]
-			  [left-fringe down-mouse-3] [left-fringe drag-mouse-3]
-			  [left-fringe mouse-3]
-			  [right-fringe down-mouse-3] [right-fringe drag-mouse-3]
-			  [right-fringe mouse-3]
-			  [vertical-line down-mouse-3] [vertical-line drag-mouse-3]
-			  [vertical-line mouse-3]
-			  [mode-line down-mouse-2] [mode-line drag-mouse-2]
-			  [mode-line mouse-2]
-			  [mode-line down-mouse-3] [mode-line drag-mouse-3]
-			  [mode-line mouse-3]
-			  ))))
-	   ("xemacs" .
-	    (nconc
-	     (mapcar (lambda (key)
-		       (cons key (global-key-binding key)))
-		     '([button2] [button2up]
-		       [button3] [button3up]
-		       ))
-	     (if (boundp 'mode-line-map)
-		 (mapcar (function
-			  (lambda (key)
-			    (cons key (lookup-key mode-line-map key))))
-			 '([button3] [button3up])))
-	     ))
-	   ("xterm" .
-	    (mapcar (lambda (key) (cons key (lookup-key mouse-map key)))
-		    (list x-button-middle x-button-middle-up
-			  x-button-right  x-button-right-up
-			  )))
-	   )))))
+  (if (not (featurep 'xemacs))
+      (mapcar (lambda (key) (cons key (global-key-binding key)))
+	      (if (not (eq window-system 'dps))
+		  ;; X, macOS or MS Windows
+		  '([down-mouse-2] [drag-mouse-2] [mouse-2]
+		    [down-mouse-3] [drag-mouse-3] [mouse-3]
+		    [double-mouse-2] [triple-mouse-2]
+		    [double-mouse-3] [triple-mouse-3]
+		    [header-line down-mouse-2] [header-line drag-mouse-2]
+		    [header-line mouse-2]
+		    [left-fringe down-mouse-2] [left-fringe drag-mouse-2]
+		    [left-fringe mouse-2]
+		    [right-fringe down-mouse-2] [right-fringe drag-mouse-2]
+		    [right-fringe mouse-2]
+		    [vertical-line down-mouse-2] [vertical-line drag-mouse-2]
+		    [vertical-line mouse-2]
+		    [left-fringe down-mouse-3] [left-fringe drag-mouse-3]
+		    [left-fringe mouse-3]
+		    [right-fringe down-mouse-3] [right-fringe drag-mouse-3]
+		    [right-fringe mouse-3]
+		    [vertical-line down-mouse-3] [vertical-line drag-mouse-3]
+		    [vertical-line mouse-3]
+		    [mode-line down-mouse-2] [mode-line drag-mouse-2]
+		    [mode-line mouse-2]
+		    [mode-line down-mouse-3] [mode-line drag-mouse-3]
+		    [mode-line mouse-3]
+		    )))
+    (nconc
+     (mapcar (lambda (key)
+	       (cons key (global-key-binding key)))
+	     '([button2] [button2up]
+	       [button3] [button3up]
+	       ))
+     (if (boundp 'mode-line-map)
+	 (mapcar (function
+		  (lambda (key)
+		    (cons key (lookup-key mode-line-map key))))
+		 '([button3] [button3up])))
+     )))
 
 ;; Based on a function from Emacs mouse.el.
 (defun hmouse-posn-set-point (position)
@@ -499,7 +459,7 @@ point determined by `mouse-select-region-move-to-beginning'."
     ;;
     (cond
      ;; GNU Emacs
-     (hyperb:emacs-p
+     ((not (featurep 'xemacs))
       (setq hmouse-set-point-command 'hmouse-move-point-emacs)
       (if (eq window-system 'dps)
 	  ;; NEXTSTEP offers only 2 shift-mouse buttons which we use as the Smart Keys.
@@ -532,30 +492,7 @@ point determined by `mouse-select-region-move-to-beginning'."
 		     'assist-mouse-key)
 		   ))
 	(global-set-key '(shift button3)     'assist-key-depress)
-	(global-set-key '(shift button3up)   'assist-mouse-key)))
-     ;;
-     ;; X
-     ((equal (hyperb:window-system) "xterm")
-      (setq hmouse-set-point-command 'x-mouse-set-point)
-      (define-key mouse-map x-button-s-middle 'action-key-depress)
-      (define-key mouse-map x-button-s-middle-up 'action-mouse-key)
-      (define-key mouse-map x-button-s-right 'assist-key-depress)
-      (define-key mouse-map x-button-s-right-up 'assist-mouse-key)
-      )
-     ;;
-     ;; NeXT
-     ((equal (hyperb:window-system) "next")
-      (setq hmouse-set-point-command 'hmouse-move-point-eterm)
-      ;; NEXTSTEP offers only 2 shift-mouse buttons which we use as the Smart Keys.
-      (mapc
-       (lambda (region)
-	 (global-set-mouse (cons region '(shift left))     'action-key-depress)
-	 (global-set-mouse (cons region '(shift up left))  'action-mouse-key)
-	 (global-set-mouse (cons region '(shift right))    'assist-key-depress)
-	 (global-set-mouse (cons region '(shift up right)) 'assist-mouse-key)
-	 )
-       '(text scrollbar modeline minibuffer))
-      ))
+	(global-set-key '(shift button3up)   'assist-mouse-key))))
     (setq hmouse-bindings (hmouse-get-bindings hmouse-middle-flag)
 	  hmouse-bindings-flag t)))
 
@@ -564,7 +501,7 @@ point determined by `mouse-select-region-move-to-beginning'."
 With optional MIDDLE-KEY-ONLY-FLAG non-nil, binds only the middle mouse key."
   (interactive)
   (cond	;; GNU Emacs
-   (hyperb:emacs-p
+   ((not (featurep 'xemacs))
     ;; Unbind Emacs push-button mouse keys since Hyperbole handles them.
     (define-key button-map [mouse-2] nil)
     (define-key button-map [mode-line mouse-2] nil)
@@ -619,15 +556,7 @@ With optional MIDDLE-KEY-ONLY-FLAG non-nil, binds only the middle mouse key."
         (define-key mode-line-map 'button3   'assist-key-depress)
     	(define-key mode-line-map 'button3up 'assist-mouse-key))
       (global-set-key 'button3     'assist-key-depress)
-      (global-set-key 'button3up   'assist-mouse-key)))
-   ;;
-   ;; X
-   ((equal (hyperb:window-system) "xterm")
-    (define-key mouse-map x-button-middle 'action-key-depress)
-    (define-key mouse-map x-button-middle-up 'action-mouse-key)
-    (unless middle-key-only-flag
-      (define-key mouse-map x-button-right 'assist-key-depress)
-      (define-key mouse-map x-button-right-up 'assist-mouse-key)))))
+      (global-set-key 'button3up   'assist-mouse-key)))))
 
 (provide 'hmouse-sh)
 
