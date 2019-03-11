@@ -195,10 +195,10 @@
 	 (setq mode-popup-menu id-popup-kotl-menu))
 	((featurep 'xemacs)
 	 (define-key kotl-mode-map 'button3 'kotl-popup-menu))
-	(t ;; (not (featurep 'xemacs))
+	(t
 	 (define-key kotl-mode-map [C-down-mouse-3] 'kotl-popup-menu)
 	 (define-key kotl-mode-map [C-mouse-3] nil)))
-  (unless (cond ((not (featurep 'xemacs))
+  (unless (cond ((featurep 'emacs)
 		 (global-key-binding [menu-bar Koutline]))
 		((boundp 'current-menubar)
 		 (car (find-menu-item current-menubar '("Koutline")))))

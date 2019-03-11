@@ -21,7 +21,7 @@
 
 ;; FIXME: Loading an Elisp file should always be harmless, so Emacs should be
 ;; able to load *both* files and still work right!
-(load (if (not (featurep 'xemacs)) "kprop-em" "kprop-xe"))
+(load (if (featurep 'emacs) "kprop-em" "kprop-xe"))
 
 (provide 'kproperty)
 

@@ -219,7 +219,7 @@ Direction is determined from the value of `delete-key-deletes-forward' or
 whether the Backspace key exists on the keyboard.  If there is no Backspace
 key, the delete key should always delete backward one character."
   (interactive "*p")
-  (if (not (featurep 'xemacs))
+  (if (featurep 'emacs)
       (kotl-mode:delete-char (if normal-erase-is-backspace arg (- arg)) nil)
     ;; XEmacs
     (kotl-mode:delete-char (if (delete-forward-p) arg (- arg)) nil)))

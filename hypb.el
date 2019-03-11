@@ -677,7 +677,7 @@ nor nil it means to not count the minibuffer window even if it is active."
 
 (defvar hypb:hyperbole-banner-keymap
   (let ((map (make-sparse-keymap)))
-    (cond ((not (featurep 'xemacs))
+    (cond ((featurep 'emacs)
 	   (define-key map [mouse-1]  'hypb:browse-home-page)
 	   (define-key map [mouse-2]  'hypb:browse-home-page)
 	   (define-key map "\C-m"     'hypb:browse-home-page))
@@ -695,7 +695,7 @@ Without file, the banner is prepended to the current buffer."
   (if file
       ;; A stub for this function is defined in hversion.el when not running in InfoDock.
       (id-browse-file file))
-  (if (not (featurep 'xemacs))
+  (if (featurep 'emacs)
       (hypb:display-file-with-logo-emacs file)
     (hypb:display-file-with-logo-xemacs file))
   (goto-char (point-min))
@@ -813,7 +813,7 @@ Without file, the banner is prepended to the current buffer."
 ;;; Private variables
 ;;; ************************************************************************
 
-(if (not (featurep 'xemacs)) (define-button-type 'hyperbole-banner))
+(if (featurep 'emacs) (define-button-type 'hyperbole-banner))
 
 (provide 'hypb)
 

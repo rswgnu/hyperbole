@@ -150,7 +150,7 @@ With optional HELP-STRING-FLAG, instead returns the one line help string for the
   "Uses CHAR-STR or last input character as minibuffer argument."
   (interactive)
   (let ((input (or char-str (aref (recent-keys) (1- (length (recent-keys)))))))
-    (cond ((not (featurep 'xemacs))
+    (cond ((featurep 'emacs)
 	   (and (not (integerp input))
 		(eventp input)
 		(setq input (event-basic-type input))))

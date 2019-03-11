@@ -119,10 +119,10 @@
 	 (setq mode-popup-menu id-popup-hyrolo-menu))
 	((featurep 'xemacs)
 	 (define-key hyrolo-mode-map 'button3 'hyrolo-popup-menu))
-	(t ;; (not (featurep 'xemacs))
+	(t
 	 (define-key hyrolo-mode-map [C-down-mouse-3] 'hyrolo-popup-menu)
 	 (define-key hyrolo-mode-map [C-mouse-3] nil)))
-  (unless (cond ((not (featurep 'xemacs))
+  (unless (cond ((featurep 'emacs)
 		 (global-key-binding [menu-bar Rolo]))
 		((boundp 'current-menubar)
 		 (car (find-menu-item current-menubar '("Rolo")))))

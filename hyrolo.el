@@ -112,7 +112,7 @@ A hyrolo-file consists of:
   :group 'hyperbole-rolo)
 (unless hyrolo-highlight-face
   (setq hyrolo-highlight-face
-	(cond ((not (featurep 'xemacs))
+	(cond ((featurep 'emacs)
 	       (if (fboundp 'defface)
 		   (defface hyrolo-highlight-face nil
 			    "*Face used to highlight rolo search matches."

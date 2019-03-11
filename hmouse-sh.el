@@ -267,7 +267,7 @@ These may be the bindings prior to initializing Hyperbole or the Hyperbole bindi
      ;; Get mouse bindings under Emacs or XEmacs, even if not under a
      ;; window system since they can have frames on ttys and windowed
      ;; displays at the same time.
-     (if (not (featurep 'xemacs))
+     (if (featurep 'emacs)
 	 (mapcar (lambda (key) (cons key (global-key-binding key)))
 		 (if (eq window-system 'dps)
 		     ;; NEXTSTEP offers only 2 shift-mouse buttons which we use
@@ -336,7 +336,7 @@ These may be the bindings prior to initializing Hyperbole or the Hyperbole bindi
 (defun hmouse-get-unshifted-bindings ()
   "Return the list of middle mouse key bindings prior to their use as Smart Keys."
   ;; Do nothing when running in batch mode.
-  (if (not (featurep 'xemacs))
+  (if (featurep 'emacs)
       (mapcar (lambda (key) (cons key (global-key-binding key)))
 	      (if (not (eq window-system 'dps))
 		  ;; X, macOS or MS Windows
@@ -459,7 +459,7 @@ point determined by `mouse-select-region-move-to-beginning'."
     ;;
     (cond
      ;; GNU Emacs
-     ((not (featurep 'xemacs))
+     ((featurep 'emacs)
       (setq hmouse-set-point-command 'hmouse-move-point-emacs)
       (if (eq window-system 'dps)
 	  ;; NEXTSTEP offers only 2 shift-mouse buttons which we use as the Smart Keys.
@@ -501,7 +501,7 @@ point determined by `mouse-select-region-move-to-beginning'."
 With optional MIDDLE-KEY-ONLY-FLAG non-nil, binds only the middle mouse key."
   (interactive)
   (cond	;; GNU Emacs
-   ((not (featurep 'xemacs))
+   ((featurep 'emacs)
     ;; Unbind Emacs push-button mouse keys since Hyperbole handles them.
     (define-key button-map [mouse-2] nil)
     (define-key button-map [mode-line mouse-2] nil)

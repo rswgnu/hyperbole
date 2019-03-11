@@ -691,7 +691,7 @@ Beeps and prints message if the window cannot be split further."
 (defun smart-coords-in-window-p (coords window)
   "Tests if COORDS are in WINDOW.  Returns WINDOW if they are, nil otherwise."
   (cond ((null coords) nil)
-	((and (not (featurep 'xemacs)) (eventp coords))
+	((and (featurep 'emacs) (eventp coords))
 	 (let ((w-or-f (posn-window (event-start coords))))
 	   (if (framep w-or-f) (setq w-or-f (frame-selected-window w-or-f)))
 	   (eq w-or-f window)))
@@ -716,7 +716,7 @@ Beeps and prints message if the window cannot be split further."
 Ignores minibuffer window."
   (cond ((markerp coords)
 	 (marker-position coords))
-	((and (not (featurep 'xemacs)) (eventp coords))
+	((and (featurep 'emacs) (eventp coords))
 	 (posn-point (event-start coords)))
 	((and (featurep 'xemacs) (eventp coords))
 	 (event-point coords))))
@@ -726,7 +726,7 @@ Ignores minibuffer window."
 Ignores minibuffer window."
   (cond ((markerp coords)
 	 (get-buffer-window (marker-buffer coords)))
-	((and (not (featurep 'xemacs)) (eventp coords))
+	((and (featurep 'emacs) (eventp coords))
 	 (let ((w-or-f (posn-window (event-start coords))))
 	   (if (framep w-or-f) (setq w-or-f (frame-selected-window w-or-f)))
 	   w-or-f))

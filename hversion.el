@@ -39,7 +39,7 @@
 ;;;###autoload
 (defvar hyperb:mouse-buttons
   (if (or (and hyperb:microsoft-os-p (not (memq window-system '(w32 w64 x))))
-	  (and (not (featurep 'xemacs)) (memq window-system '(ns dps))))
+	  (and (featurep 'emacs) (memq window-system '(ns dps))))
       2 3)
   "Number of live buttons available on the mouse.
 Override this if the system-computed default is incorrect for your specific mouse.")

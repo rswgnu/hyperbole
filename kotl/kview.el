@@ -673,7 +673,7 @@ the lines displayed, since it has hidden branches."
   (save-excursion (and (kcell-view:next nil label-sep-len)
 		       (kcell-view:invisible-p (point) label-sep-len))))
 
-(cond ((not (featurep 'xemacs))
+(cond ((featurep 'emacs)
        (defun kview:goto-cell-id (id-string)
 	 "Move point to start of cell with idstamp ID-STRING and return t, else nil."
 	 (let ((cell-id (string-to-number id-string))

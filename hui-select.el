@@ -247,7 +247,7 @@ Also, add language-specific syntax setups to aid in thing selection."
   (unless (boundp 'hyperbole-loading)
     (require 'hyperbole))
   (if hkey-init
-      (cond ((not (featurep 'xemacs))
+      (cond ((featurep 'emacs)
 	     (transient-mark-mode 1)
 	     (hkey-global-set-key [double-down-mouse-1] nil)
 	     (hkey-global-set-key [double-mouse-1] 'hui-select-thing-with-mouse)

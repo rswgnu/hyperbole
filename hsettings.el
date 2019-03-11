@@ -223,7 +223,7 @@ obtained search string."
 ;; No-op unless set by one of the conditionals below.
 (defun hui:but-flash ())
 
-(cond ((and (not (featurep 'xemacs)) (not noninteractive))
+(cond ((and (featurep 'emacs) (not noninteractive))
        (require 'hui-em-but)
        ;; Highlight explicit buttons whenever a file is read in.
        (add-hook 'find-file-hook #'hproperty:but-create t)
