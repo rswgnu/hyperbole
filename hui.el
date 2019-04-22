@@ -1,4 +1,4 @@
-;;; hui.el ---  GNU Hyperbole button and hyperlink user interface
+;;; hui.el --- GNU Hyperbole button and hyperlink user interface
 ;;
 ;; Author:       Bob Weiner
 ;;

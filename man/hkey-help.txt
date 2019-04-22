@@ -73,6 +73,8 @@ Mouse-only Control
 
 Hyperbole Key Press/Click in Special Modes
   Region Active                 Yanks region at release    Kills and yanks at release
+  Company Mode Completion       Displays definition        Displays documentation
+  Treemacs                      Displays item              Display item
   Emacs Push Button             Activates button           Button help
   Thing Begin or End            Mark thing region          Mark & kill thing region
   Page Directory Listing        Jumps to page              <- same

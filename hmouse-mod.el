@@ -1,4 +1,4 @@
-;;; hmouse-mod.el ---  Action Key acts as CONTROL modifier and Assist Key as META modifier.
+;;; hmouse-mod.el --- Action Key acts as CONTROL modifier and Assist Key as META modifier.
 ;;
 ;; Author:       Bob Weiner
 ;;

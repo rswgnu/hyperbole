@@ -1,4 +1,4 @@
-# GNU Hyperbole 7.0.2b - The Everyday Hypertextual Information Manager
+# GNU Hyperbole 7.0.2c - The Everyday Hypertextual Information Manager
 
 <!-- START doctoc generated TOC -->
 **Table of Contents**
@@ -497,8 +497,16 @@ Keys).
   products I have ever come across.  It is certainly the one which has made
   the biggest improvement in my personal productivity.
 
+  My Hyperbole button file is my start page in Emacs.  It's a quickly
+  searchable index with links to countless resources.  We also have a
+  library of implicit buttons that enable rapid navigation from references
+  in our code to our issue tracking system, so clicking a reference like
+  Client6502 opens the relevant conversation.  Hyperbole provides a really
+  useful set of power tools.  If Emacs is your preferred productivity
+  environment, it's definitely worth getting familiar with it.
+
                         -- Chris Nuzum  
-                           Co-founder, Traction Software, Inc.
+                           Co-founder, Traction Softwarea, Inc.
 
 -------
 

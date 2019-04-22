@@ -151,8 +151,8 @@ WITHOUT ANY WARRANTY, without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</P>
 
 <PRE>
-Edition 7.0.2b
-Printed February 2, 2019.
+Edition 7.0.2c
+Printed April 21, 2019.
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -176,7 +176,7 @@ Printed February 2, 2019.
 
 @center The Everyday Hypertextual Information Manager
 
-@center Edition 7.0.2b, February 2, 2019.
+@center Edition 7.0.2c, April 21, 2019.
 
 @sp 2
 @noindent
@@ -413,6 +413,7 @@ Smart Mouse Keys
 
 Smart Keyboard Keys
 
+* Smart Key - Company Mode::
 * Smart Key - Treemacs::
 * Smart Key - Emacs Pushbuttons::
 * Smart Key - Argument Completion::
@@ -428,6 +429,7 @@ Smart Keyboard Keys
 * Smart Key - RDB Mode::
 * Smart Key - Help Buffers::
 * Smart Key - Pages Directory Mode::
+* Smart Key - Python Source Code::
 * Smart Key - Identifier Menu Mode ::
 * Smart Key - C Source Code::
 * Smart Key - C++ Source Code::
@@ -435,7 +437,6 @@ Smart Keyboard Keys
 * Smart Key - Lisp Source Code::
 * Smart Key - Java Source Code::
 * Smart Key - JavaScript Source Code::
-* Smart Key - Python Source Code::
 * Smart Key - Objective-C Source Code::
 * Smart Key - Fortran Source Code::
 * Smart Key - Occurrence Matches::
@@ -462,7 +463,7 @@ Smart Keyboard Keys
 @chapter Introduction
 
 This edition of the GNU Hyperbole Manual is for use with any version
-7.0.2b or greater of GNU Hyperbole.  Hyperbole runs atop GNU Emacs 24.3
+7.0.2c or greater of GNU Hyperbole.  Hyperbole runs atop GNU Emacs 24.3
 or higher.  It will trigger an error if your Emacs is older.
 
 This chapter summarizes the structure of the rest of the manual,
@@ -1498,7 +1499,7 @@ the selected window's buffer with that of another window, use
 use @bkbd{M-o m <id-of-window-to-swap-with>}.
 
 In summary:
-@table @bkbd
+@table @asis
 @item M-o i <window>
 insert listing item at point into <window>; if not on a listing item,
 prompt for a name to give to a new explicit button at point that will
@@ -2094,6 +2095,45 @@ USER defaults to the value of @code{hibtypes-github-default-user}.
 If given, PROJECT overrides any project value in REFERENCE.  If no
 PROJECT value is provided, it defaults to the value of
 @code{hibtypes-github-default-project}.
+
+@findex ibtypes gitlab-reference
+@cindex gitlab reference
+@cindex version control
+@vindex hibtypes-gitlab-default-project
+@vindex hibtypes-gitlab-default-user
+@item gitlab-reference
+Displays the Gitlab entity associated with REFERENCE and optional USER and PROJECT.
+See @file{../DEMO#Gitlab (Remote) References} for examples.
+
+REFERENCE is a string of one of the following forms:
+@itemize @bullet
+@item <ref-item>
+@item <user>/<project>/<ref-item>
+@item <project>/<ref-item>
+@item /<group>/<project>.
+or
+@item /<project-or-group> (where a group is a colection of projects)
+@end itemize
+
+<ref-item> is one of these:
+@table @asis
+@item @bullet{} one of the words: activity, analytics, boards or kanban, branches, commits, contributors, groups, issues or list, jobs, labels, merge_requests, milestones, pages, pipelines, pipeline_charts, members or people or staff, projects, pulls, schedules, snippets, status or tags
+the associated items are listed
+@item @bullet{} one of the words: branch, commit(s), issue(s), milestone(s), pull(s), snippet(s) or tag(s) followed by a '/' or '=' and an item-id
+the item is shown
+@item @bullet{} an issue reference given by a positive integer, e.g. @emph{92} or prefaced with @emph{GL-}, like GL-92
+the issue is displayed
+@item @bullet{} a commit reference given by a hex number, 55a1f0
+the commit diff is displayed
+@item @bullet{} a branch or tag reference given by an alphanumeric name, e.g. hyper20
+the files in the branch are listed.
+@end table
+
+@vindex hibtypes-gitlab-default-user
+USER defaults to the value of @code{hibtypes-gitlab-default-user}.
+If given, PROJECT overrides any project value in REFERENCE.  If no
+PROJECT value is provided, it defaults to the value of
+@code{hibtypes-gitlab-default-project}.
 
 @findex ibtypes social-reference
 @cindex hashtag
@@ -7847,6 +7887,7 @@ If dragged from an Emacs window to outside of Emacs:
 @section   Smart Keyboard Keys
 
 @menu
+* Smart Key - Company Mode::
 * Smart Key - Treemacs::
 * Smart Key - Emacs Pushbuttons::
 * Smart Key - Argument Completion::
@@ -7862,6 +7903,7 @@ If dragged from an Emacs window to outside of Emacs:
 * Smart Key - RDB Mode::
 * Smart Key - Help Buffers::
 * Smart Key - Pages Directory Mode::
+* Smart Key - Python Source Code::
 * Smart Key - Identifier Menu Mode ::
 * Smart Key - C Source Code::
 * Smart Key - C++ Source Code::
@@ -7869,7 +7911,6 @@ If dragged from an Emacs window to outside of Emacs:
 * Smart Key - Lisp Source Code::
 * Smart Key - Java Source Code::
 * Smart Key - JavaScript Source Code::
-* Smart Key - Python Source Code::
 * Smart Key - Objective-C Source Code::
 * Smart Key - Fortran Source Code::
 * Smart Key - Occurrence Matches::
@@ -7890,7 +7931,26 @@ If dragged from an Emacs window to outside of Emacs:
 * Smart Key - Default Context::
 @end menu
 
-@node Smart Key - Treemacs, Smart Key - Emacs Pushbuttons, Smart Keyboard Keys, Smart Keyboard Keys
+
+@node Smart Key - Company Mode, Smart Key - Treemacs, Smart Keyboard Keys, Smart Keyboard Keys
+@subsection Smart Key - Company Mode
+
+@cindex company-mode
+@cindex completion
+Company mode is an extensive in-buffer completion framework, often used to complete programming identifiers.
+
+@format
+@group
+When company-mode is active:
+  ACTION KEY
+     Displays selected item's definition.
+  ASSIST KEY
+     Displays the documentation, if any, for the selected item.
+@end group
+@end format
+
+
+@node Smart Key - Treemacs, Smart Key - Emacs Pushbuttons, Smart Key - Company Mode, Smart Keyboard Keys
 @subsection Smart Key - Treemacs
 
 @cindex Treemacs
@@ -8250,7 +8310,7 @@ When pressed at the end of a Help buffer:
 @end group
 @end format
 
-@node Smart Key - Pages Directory Mode, Smart Key - Identifier Menu Mode , Smart Key - Help Buffers, Smart Keyboard Keys
+@node Smart Key - Pages Directory Mode, Smart Key - Python Source Code, Smart Key - Help Buffers, Smart Keyboard Keys
 @subsection Smart Key - Pages Directory Mode
 
 @format
@@ -8266,7 +8326,7 @@ When pressed on a pages-directory-mode entry line:
 @end group
 @end format
 
-@node Smart Key - Python Source Code, Smart Key - Objective-C Source Code, Smart Key - JavaScript Source Code, Smart Keyboard Keys
+@node Smart Key - Python Source Code, Smart Key - Identifier Menu Mode , Smart Key - Pages Directory Mode, Smart Keyboard Keys
 @subsection Smart Key - Python Source Code
 @format
 @group
@@ -8296,7 +8356,7 @@ When pressed within a Python source code file (without the OO-Browser):
 @end format
 
 @page
-@node Smart Key - Identifier Menu Mode , Smart Key - C Source Code, Smart Key - Pages Directory Mode, Smart Keyboard Keys
+@node Smart Key - Identifier Menu Mode , Smart Key - C Source Code, Smart Key - Python Source Code, Smart Keyboard Keys
 @subsection Smart Key - Identifier Menu Mode 
 
 @format
@@ -8481,7 +8541,7 @@ When pressed within a Java source code file (without the OO-Browser):
 @end group
 @end format
 
-@node Smart Key - JavaScript Source Code, Smart Key - Python Source Code, Smart Key - Java Source Code, Smart Keyboard Keys
+@node Smart Key - JavaScript Source Code, Smart Key - Objective-C Source Code, Smart Key - Java Source Code, Smart Keyboard Keys
 @subsection Smart Key - JavaScript Source Code
 
 @format
@@ -8498,7 +8558,7 @@ When pressed within a JavaScript source code file:
 @end format
 
 
-@node Smart Key - Objective-C Source Code, Smart Key - Fortran Source Code, Smart Key - Python Source Code, Smart Keyboard Keys
+@node Smart Key - Objective-C Source Code, Smart Key - Fortran Source Code, Smart Key - JavaScript Source Code, Smart Keyboard Keys
 @subsection Smart Key - Objective-C Source Code
 
 @vindex objc-cpp-include-path

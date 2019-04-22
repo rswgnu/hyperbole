@@ -1,4 +1,4 @@
-;;; hmh.el ---  GNU Hyperbole buttons in mail reader: Mh
+;;; hmh.el --- GNU Hyperbole buttons in mail reader: Mh
 ;;
 ;; Author:       Bob Weiner
 ;;

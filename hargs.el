@@ -99,12 +99,14 @@ interactive form or takes no arguments."
     (subst-char-in-string ?\^@ ?: string t)))
 
 (defun hargs:delimited (start-delim end-delim
-			&optional start-regexp-flag end-regexp-flag list-positions-flag)
+			&optional start-regexp-flag end-regexp-flag
+			list-positions-flag exclude-regexp)
   "Returns a normalized, single line, delimited string that point is within the first line of, or nil.
 START-DELIM and END-DELIM are strings that specify the argument
 delimiters.  With optional START-REGEXP-FLAG non-nil, START-DELIM is
 treated as a regular expression.  END-REGEXP-FLAG is similar.
-With optional LIST-POSITIONS-FLAG, return list of (string-matched start-pos end-pos)."
+With optional LIST-POSITIONS-FLAG, return list of (string-matched start-pos end-pos).
+With optional EXCLUDE-REGEXP, any matched string is ignored if it this regexp."
   (let* ((opoint (point))
 	 (limit (if start-regexp-flag opoint
 		  (+ opoint (1- (length start-delim)))))
@@ -156,12 +158,13 @@ With optional LIST-POSITIONS-FLAG, return list of (string-matched start-pos end-
 	     (< start end)
 	     (>= end opoint)
 	     (let ((string (hargs:buffer-substring start end)))
-	       (setq string (hypb:replace-match-string "[\n\r\f]\\s-*" string " " t))
-	       (unless hyperb:microsoft-os-p
-		 (setq string (hpath:mswindows-to-posix string)))
-	       (if list-positions-flag
-		   (list string start end)
-		 string)))))))
+	       (unless (and (stringp exclude-regexp) (string-match exclude-regexp string) )
+		 (setq string (hypb:replace-match-string "[\n\r\f]\\s-*" string " " t))
+		 (unless hyperb:microsoft-os-p
+		   (setq string (hpath:mswindows-to-posix string)))
+		 (if list-positions-flag
+		     (list string start end)
+		   string))))))))
 
 (defun hargs:get (interactive-entry &optional default prior-arg)
   "Prompts for an argument, if need be, from INTERACTIVE-ENTRY, a string.

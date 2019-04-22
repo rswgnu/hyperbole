@@ -1,3 +1,24 @@
+2019-04-22  Bob Weiner  <rsw@gnu.org>
+
+* hversion.el: Pushed BW changes for 7.0.2c test update.
+
+* hargs.el (hargs:delimited): Added exclude-regexp argument.
+* hpath.el (hpath:delimited-possible-path): Used above new argument
+   to prevent matching to strings that include string quotes.
+
+2019-04-21  Bob Weiner  <rsw@gnu.org>
+
+* man/hkey-help.txt: Added Company-mode and Treemacs entries.
+
+* hui-window.el (hmouse-alist-add-window-handlers): Renamed from hui-window--register.
+
+* man/hyperbole.texi (Smart Key - Company Mode): Added.
+
+2019-03-11  Bob Weiner  <rsw@gnu.org>
+
+* man/hyperbole.texi (Implicit Buttons, gitlab-reference):
+  DEMO (Gitlab (Remote) References): Added these sections.
+
 2019-02-16  Bob Weiner  <rsw@gnu.org>
 
 * hui-window.el (smart-window-of-coords): Handled null coords parameter.

@@ -65,7 +65,7 @@ and returns here.
 
 See also the later section, <(Smart Mouse Keys)>.
 
-Now let's look at many of the things you can do with the Smart Keys.
+Now let's look at some of the things you can do with the Smart Keys.
 
 ** Table of Contents Browsing
 
@@ -139,7 +139,6 @@ You can change which browser is used with {C-h h c w}, the Cust/Web-Search
 menu.  Advanced users can change the search engines listed by editing the
 option, <(hyperbole-web-search-alist)>.
 
-
 ** Help Buffers
 
 Since the Smart Keys do so many things, it is helpful to see what they will
@@ -175,17 +174,17 @@ A unique feature of Hyperbole is the Koutliner; it is for outlining thoughts,
 developing requirements or listing tasks and hyperlinking them to other
 documents.
 
-The Hyperbole Koutliner produces structured, autonumbered documents composed
-of hierarchies of cells.  Each cell has two identifiers, a relative
-autonumber indicating its present position within the outline and a permanent
-identifier suitable for use within hyperlink references to the cell.
+The Hyperbole Koutliner produces multi-level, autonumbered hierarchies of
+cells.  Each cell has two identifiers, a relative autonumber indicating its
+present position within the outline and a permanent identifier suitable for
+use within hyperlink references to the cell.
 
 A demonstration of the Koutliner is found on the Hyperbole Kotl/Example menu
 entry.  {C-h h k e}, gives you an editable copy of Hyperbole's example
 Koutliner file.  This explains the Koutliner commands and lets you try them
 out as you learn.  Additional documentation can be found in
-"(hyperbole)Koutliner".  "(hyperbole)Koutliner Keys" summarizes in
-alphabetical order the Koutliner commands which are bound to keys.
+"(hyperbole)Koutliner".  "(hyperbole)Koutliner Keys" summarizes, in
+alphabetical order, the Koutliner commands which are bound to keys.
 
 
 * HyControl
@@ -258,10 +257,11 @@ action key here: {.1 % .23 @}.
 
 You can even write something like this to do the whole thing in one sequence.
 First, let's quit out of HyControl Frames mode with {q}.  Then go back to one
-window with {C-x 1}.  Now we can execute a single sequence from any buffer that
-creates our 2x3 window grid:  {C-h h s f  .1 %  .23 @  q}.  Pretty amazing,
-right?  You can separate each command by any number of spaces or even jam them
-all together: {C-hhsf.1%.23@q}.
+window with {C-x 1}.  Now we can execute a single sequence from any buffer
+that creates our 2x3 window grid: {C-h h s f .1 % .23 @ q}.  Pretty amazing,
+right?  You can separate each command by any number of spaces or even jam
+them all together: {C-hhsf.1%.23@q}.  Use SPC (separated by spaces) to
+include a space as part of the key sequence.
 
 A zero argument to the {@} command is special.  It means you want to display
 buffers with a particular major mode first, e.g. c-mode.  You will be
@@ -417,12 +417,13 @@ them.
 
 ** Key Sequence Buttons
 
-Any Emacs key sequence delimited with curly braces is an implicit button.
-Press the Action Key with {C-u C-p} for example and the point should move
-four lines upward.  An Assist Key press on the key sequence displays the
-documentation for its command binding, i.e. what it does.  Key sequences
-together with the arguments their commands prompt for also may be given,
-e.g. {M-x apropos RET hyperbole RET}.  Click in the braces to try it out.
+Any Emacs key sequence (or multiple sequences) delimited by curly braces is
+an implicit button.  Press the Action Key with {C-u C-p} for example and the
+point should move four lines upward.  An Assist Key press on the key sequence
+displays the documentation for its command binding, i.e. what it does.  Key
+sequences together with the arguments their commands prompt for also may be
+given, e.g. {M-x apropos RET hyperbole RET}.  Click in the braces to try it
+out.
 
 Hyperbole minibuffer menu items may also be activated as key sequences.  For
 example, {C-h h d i} displays the online browsable Info version of the
@@ -683,6 +684,46 @@ An Action Key press on the first commit reference above works because
 user, project and commit hash code are all included.  The second and
 third versions require the setup of default values, as explained in
 the commentary near the top of "hib-social.el".
+
+Similarly, the same file above explains how to link to pull requests,
+issues, branches and tags.
+
+** Gitlab (Remote) References
+
+For software developers who use Gitlab for publishing and version control,
+Gitlab links are similar to social media links but reference specific Gitlab
+web pages.  See "#Github (Remote) References" for the basic syntax of such
+links but substitute 'gl' instead of 'gh'.
+
+Gitlab offers many more types of reference links than Github, here they are:
+
+  gl#gitlab-org/gitlab-ce/activity          Summarize user's project activity
+  gl#gitlab-org/gitlab-ce/analytics         Display user project's cycle_analytics
+  gl#gitlab-org/gitlab-ce/boards            Display user project's kanban-type issue boards
+
+  Once you set the default user and project variables, you can leave
+  them off any reference links:
+
+    (setq hibtypes-gitlab-default-user "gitlab-org")
+    (setq hibtypes-gitlab-default-project "gitlab-ce")
+
+  gl#jobs                                   Display default project's computing jobs
+  gl#labels                                 Display default project's issue categories
+  gl#members                                Display default project's staff list
+  gl#contributors                           Show contributor push frequency charts
+  gl#merge_requests or gl#pulls             Display default project's pull requests
+  gl#milestones                             Display default project's milestones status
+  gl#pages                                  Display default project's web pages
+  gl#pipelines                              List build and test sequences
+  gl#pipeline_charts                        Graphical view of pipeline run results across time
+  gl#schedules                              Display schedules for project pipelines
+  gl#snippets                               Project snippets, diffs and text with discussion
+
+  gl#groups                                 List all available groups of projects
+  gl#projects                               List all available projects
+
+  gl#milestone=38                           Show a specific project milestone
+  gl#snippet/1689487                        Show a specific project snippet
 
 ** Git (Local) References
 

@@ -238,13 +238,8 @@ Any ARGS will be passed to `hmouse-function'."
 	    hkey-value nil))))
 
 ;;; Smart Key Commands
-(defun action-key ()
-  "Use one key to perform functions that vary by context.
-If no matching context is found, the default function set with
-the `action-key-default-function' variable is run.  Return t
-unless the `action-key-default-function' variable is not bound to
-a valid function."
-  (interactive)
+(defun action-key-clear-variables ()
+  "Clear all Action Key variables."
   ;; Clear all these variables so there can be no confusion between
   ;; mouse presses and keyboard presses.
   (setq action-key-depress-prev-point nil
@@ -254,7 +249,29 @@ a valid function."
 	action-key-release-position nil
 	action-key-release-args nil
 	action-key-release-window nil
-	action-key-release-prev-point nil)
+	action-key-release-prev-point nil))
+
+(defun assist-key-clear-variables ()
+  "Clear all Assist Key variables."
+  ;; Clear all these variables so there can be no confusion between
+  ;; mouse presses and keyboard presses.
+  (setq assist-key-depress-prev-point nil
+	assist-key-depress-position nil
+	assist-key-depress-args nil
+	assist-key-depress-window nil
+	assist-key-release-position nil
+	assist-key-release-args nil
+	assist-key-release-window nil
+	assist-key-release-prev-point nil))
+
+(defun action-key ()
+  "Use one key to perform functions that vary by context.
+If no matching context is found, the default function set with
+the `action-key-default-function' variable is run.  Return t
+unless the `action-key-default-function' variable is not bound to
+a valid function."
+  (interactive)
+  (action-key-clear-variables)
   (prog1 (action-key-internal)
     (run-hooks 'action-key-depress-hook 'action-key-release-hook)))
 
@@ -275,16 +292,7 @@ the `assist-key-default-function' variable is run.  Return
 non-nil unless `assist-key-default-function' variable is not
 bound to a valid function."
   (interactive)
-  ;; Clear all these variables so there can be no confusion between
-  ;; mouse presses and keyboard presses.
-  (setq assist-key-depress-prev-point nil
-	assist-key-depress-position nil
-	assist-key-depress-args nil
-	assist-key-depress-window nil
-	assist-key-release-position nil
-	assist-key-release-args nil
-	assist-key-release-window nil
-	assist-key-release-prev-point nil)
+  (assist-key-clear-variables)
   (prog1 (assist-key-internal)
     (run-hooks 'assist-key-depress-hook 'assist-key-release-hook)))
 
@@ -719,6 +727,10 @@ Return non-nil iff a non-nil predicate is found."
 With optional ASSIST-FLAG non-nil, display help for the Assist Key command.
 Return non-nil iff associated help documentation is found."
   (interactive "P")
+  (unless (or action-key-depressed-flag action-key-help-flag)
+    (action-key-clear-variables))
+  (unless (or assist-key-depressed-flag assist-key-help-flag)
+    (assist-key-clear-variables))
   (let ((hkey-forms hmouse-alist)
 	hkey-form pred-value call calls cmd-sym doc)
     (while (and (null pred-value) (setq hkey-form (car hkey-forms)))

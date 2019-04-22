@@ -631,7 +631,7 @@ If assist-key is pressed:
 ;;; ************************************************************************
 
 ;; These functions are called from hkey-alist when keyboard Smart Keys
-;; are used but for mouse keys, they are bound to local keys in
+;; are used.  For mouse keys, they are bound to local keys in
 ;; company-mode's minor mode map.
 
 (defun smart-company-to-definition (event)

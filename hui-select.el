@@ -1,4 +1,4 @@
-;;; hui-select.el ---  Select larger and larger syntax-driven regions in a buffer.
+;;; hui-select.el --- Select larger and larger syntax-driven regions in a buffer.
 ;;
 ;; Author:       Bob Weiner
 ;;

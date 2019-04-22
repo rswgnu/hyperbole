@@ -1,4 +1,4 @@
-;;; hsys-www.el ---  GNU Hyperbole support for Emacs World-Wide Web (WWW) browsing
+;;; hsys-www.el --- GNU Hyperbole support for Emacs World-Wide Web (WWW) browsing
 ;;
 ;; Author:       Bob Weiner
 ;;

@@ -173,7 +173,7 @@ drag release window.")
 ;;; Add window handling to hmouse-alist dispatch table.
 
 (defvar hmouse-alist)
-(defun hui-window--register ()
+(defun hmouse-alist-add-window-handlers ()
   (unless (assoc #'(hmouse-inactive-minibuffer-p) hmouse-alist)
     (setq hmouse-alist
 	  (append
@@ -241,7 +241,7 @@ drag release window.")
 	     ;;
 	     )
 	   hmouse-alist))))
-(with-eval-after-load 'hui-mouse (hui-window--register))
+(with-eval-after-load 'hui-mouse (hmouse-alist-add-window-handlers))
 
 ;;; ************************************************************************
 ;;; Public functions
