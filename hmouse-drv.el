@@ -363,7 +363,7 @@ magic happen."
 	aw-dispatch-alist (delq (assq ?t aw-dispatch-alist)
 				(delq (assq ?r aw-dispatch-alist)
 				      (delq (assq ?i aw-dispatch-alist) aw-dispatch-alist))))
-  (push '(?i hkey-drag-to "Hyperbole: Drag To") aw-dispatch-alist)
+  (push '(?i hkey-drag-item "Hyperbole: Drag Item") aw-dispatch-alist)
   ;; Ace-window includes ?m as the swap windows key, so it is not added here.
   (push '(?r hkey-replace "Hyperbole: Replace Here") aw-dispatch-alist)
   (push '(?t hkey-throw   "Hyperbole: Throw To") aw-dispatch-alist)
@@ -415,6 +415,38 @@ Works only when running under a window system, not from a dumb terminal."
       ;; Leave start-window selected
       (when (window-live-p start-window)
 	(hypb:select-window-frame start-window)))))
+
+;;;###autoload
+(defun hkey-drag-item (release-window)
+  "Emulate Smart Mouse Key drag from an item in a selected window to RELEASE-WINDOW, interactively chosen via ace-window.
+RELEASE-WINDOW is left selected unless point is not on an item, in
+which case, an error is signalled.
+
+Optional prefix arg non-nil means emulate Assist Key rather than the
+Action Key.
+
+Works only when running under a window system, not from a dumb terminal."
+  (interactive
+   (list (let ((mode-line-text (concat " Ace - " (nth 2 (assq ?i aw-dispatch-alist)))))
+	   (aw-select mode-line-text))))
+  (let ((start-window (if (and (boundp 'start-window) (window-live-p start-window))
+			  start-window
+			(if current-prefix-arg
+			    assist-key-depress-window
+			  action-key-depress-window)))
+	at-item-flag)
+    (unless (window-live-p start-window)
+      (setq start-window (selected-window)))
+    (cond ((and (setq at-item-flag (hmouse-at-item-p))
+		(window-live-p release-window))
+	   (hkey-drag release-window)
+	   ;; Leave release-window selected
+	   (when (window-live-p release-window)
+	     (hypb:select-window-frame release-window)))
+	  (at-item-flag
+	   (error "(hkey-drag-item): No listing item at point"))
+	  (t ;; No item at point or selected release is invalid
+	   (error "(hkey-drag-item): Invalid final window, %s" release-window)))))
 
 ;;;###autoload
 (defun hkey-drag-to (release-window)
@@ -573,6 +605,14 @@ Emulate Smart Mouse Key drag from start window to end window.
 The selected window does not change."
   (interactive)
   (hmouse-choose-windows #'hkey-drag-stay))
+
+;;;###autoload
+(defun hmouse-click-to-drag-item ()
+  "Mouse click on start and end windows for use with `hkey-drag-item'.
+Emulate {M-o i} from start window to end window.
+After the drag, the end window is the selected window."
+  (interactive)
+  (hmouse-choose-windows #'hkey-drag-item))
 
 ;;;###autoload
 (defun hmouse-click-to-drag-to ()

@@ -246,8 +246,8 @@ Its default value is #'smart-scroll-down."
     ((and (or (and (eq major-mode 'python-mode) buffer-file-name)
 	      (let ((case-fold-search))
 		(string-match "\\`\\(Pydoc:\\|\\*?Python\\)" (buffer-name))))
-	  (smart-python-at-tag-p)) .
-	  ((smart-python) . (smart-python nil 'next-tag)))
+	  (setq hkey-value (smart-python-at-tag-p))) .
+	  ((smart-python hkey-value) . (smart-python hkey-value 'next-tag)))
     ;;
     ;; Imenu listing in GNU Emacs
     ((smart-imenu-item-at-p)

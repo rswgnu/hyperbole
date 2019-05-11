@@ -771,23 +771,35 @@ If key is pressed:
 	     (buffer-substring-no-properties (match-beginning 2) (match-end 2))
 	     (match-beginning 2) (match-end 2)))))))
 
+(defun smart-jedi-find-file (file line column other-window)
+  "Function that reads a source file for jedi navigation.
+It takes these arguments: (file-to-read other-window-flag line_number column_number)."
+  (hpath:display-buffer (find-file file) other-window)
+  (jedi:goto--line-column line column))
 
 (defun smart-python-jedi-to-definition-p ()
   "If the Jedi Python identifier server is running, test and use it to jump to the definition.
 See https://tkf.github.io/emacs-jedi/latest/."
   ;; Use functions from jedi-core.el only, not from jedi.el, since
   ;; company-jedi.el users will have loaded only jedi-core.el.
-  (when (featurep 'jedi-core)
+  (when (and (featurep 'jedi-core) jedi-mode)
     (let* ((servers (jedi:-get-servers-in-use))
 	   (proc (epc:manager-server-process (car servers))))
       (and servers (processp proc)
 	   (eq 'run (process-status (process-buffer proc)))
 	   ;; The goto is performed asynchronously.
 	   ;; It reports in the minibuffer when a definition is not found.
-	   (progn (jedi:goto-definition t)
-		  ;; For use as a predicate, always return t if the Jedi server
-		  ;; is running  so other lookup techniques are not tried.
-		  t)))))
+	   ;; !! Only works on tag at point, not the tagname passed in as jedi
+	   ;; does not accept a tag parameter.
+	   ;;
+	   ;; jedi:find-file-function is an RSW custom
+	   ;; modification that allows display-where to work;
+	   ;; otherwise, will just display in another window.
+	   (let ((jedi:find-file-function #'smart-jedi-find-file))
+	     (jedi:goto-definition hpath:display-where)
+	     ;; For use as a predicate, always return t if the Jedi server
+	     ;; is running  so other lookup techniques are not tried.
+	     t)))))
 
 ;;;###autoload
 (defun smart-python (&optional identifier next)
@@ -1289,7 +1301,7 @@ See the \"${hyperb:dir}/smart-clib-sym\" script for more information."
 	       (with-no-warnings (find-tag tag))))
       ;; Signals an error if tag is not found which is caught by
       ;; many callers of this function.
-      (with-no-warnings	(find-tag tag)))))
+      (with-no-warnings (find-tag tag)))))
 
 ;;;###autoload
 (defun smart-tags-file-path (file)

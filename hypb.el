@@ -471,6 +471,13 @@ INACTIVE-P is unused, it is for compatibility with XEmacs' version of
 mark-marker."
     (mark-marker)))
 
+;;;###autoload
+(defun hypb:map-plist (func plist)
+  "Returns result of applying FUNC of two args, key and value, to key-value pairs in PLIST, a property list."
+  (cl-loop for (k v) on plist by #'cddr
+	   collect (funcall func k v) into result
+	   finally return result))
+
 (defun hypb:map-sublists (func list)
   "Applies FUNC to every atom found at any level of LIST.
 FUNC must take two arguments, an atom and a list in which the atom is found.

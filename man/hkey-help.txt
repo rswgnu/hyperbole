@@ -9,7 +9,7 @@ Hyperbole
     1st press at an arg value   Value copied to minibuffer <- same
     2nd press at an arg value   Value used as argument     <- same
     In minibuffer               Accepts minibuffer arg     Completion help
-  On an implicit button         Activates button           Button help
+  On an implicit button/path    Activates button           Button help
   Within a koutline cell        Collapses and expands      Shows tree props
   Left of a koutline cell       Creates a klink            Moves a tree
   HyRolo Match Buffer           Edits entries and mails to e-mail addresses

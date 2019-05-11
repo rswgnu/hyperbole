@@ -139,6 +139,9 @@ Texinfo markup language.
 
 <CENTER><H2>The Everyday Hypertextual Information Manager</H2></CENTER>
 
+<CENTER><H3><A HREF="https://saythanks.io/to/rswgnu">Say thanks if you like Hyperbole.</A></H3></CENTER>
+
+
 <P>Copyright &copy; 1989-2019  Free Software Foundation, Inc.</P>
 
 <P>GNU Hyperbole is available for use, modification, and distribution under
@@ -151,8 +154,8 @@ WITHOUT ANY WARRANTY, without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</P>
 
 <PRE>
-Edition 7.0.2c
-Printed April 21, 2019.
+Edition 7.0.3
+Printed May 11, 2019.
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -176,7 +179,7 @@ Printed April 21, 2019.
 
 @center The Everyday Hypertextual Information Manager
 
-@center Edition 7.0.2c, April 21, 2019.
+@center Say thanks: https://saythanks.io/to/rswgnu
 
 @sp 2
 @noindent
@@ -193,6 +196,9 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 @sp 2
 
 @example
+Edition 7.0.3
+May 11, 2019
+
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
   E-mail:    <hyperbole-users@@gnu.org>  (This is a mail list).
@@ -463,7 +469,7 @@ Smart Keyboard Keys
 @chapter Introduction
 
 This edition of the GNU Hyperbole Manual is for use with any version
-7.0.2c or greater of GNU Hyperbole.  Hyperbole runs atop GNU Emacs 24.3
+7.0.3 or greater of GNU Hyperbole.  Hyperbole runs atop GNU Emacs 24.3
 or higher.  It will trigger an error if your Emacs is older.
 
 This chapter summarizes the structure of the rest of the manual,
@@ -1488,10 +1494,9 @@ for @code{ace-window}, then just ensure it is initialized by calling
 After setup, the leftmost character or two of each window's modeline will show
 the ID to type to use that window as the drag destination.  Then whenever point
 is on an item you want displayed in another window, use @bkbd{M-o i
-<id-of-window-to-display-item-in>} and watch the magic happen.  You can also use
-this command to create explicit button links to other window buffers when in an editable
-buffer rather than on an item.  If you want to display multiple items in different
-windows, instead use the @bkbd{M-o t <id-of-window-to-display-item-in>} key sequence to
+<id-of-window-to-display-item-in>} and watch the magic happen.  If you
+want to display multiple items in different windows, instead use
+the @bkbd{M-o t <id-of-window-to-display-item-in>} key sequence to
 @emph{throw} the item to the window.  To @emph{replace}
 the selected window's buffer with that of another window, use
 @bkbd{M-o r <id-of-window-displaying-desired-buffer>}.  To instead
@@ -1502,8 +1507,7 @@ In summary:
 @table @asis
 @item M-o i <window>
 insert listing item at point into <window>; if not on a listing item,
-prompt for a name to give to a new explicit button at point that will
-link to the current position in <window>
+trigger an error
 
 @item M-o m <window>
 swap the buffers in the selected window and <window>
@@ -1752,10 +1756,10 @@ type} identifies a pattern or state that when matched triggers
 an @emph{action} associated with the implicit button type.  The action
 is specified by either a Hyperbole action type (@pxref{Action Types})
 or an Emacs Lisp function.  Implicit button types may use the same
-action types that explicit buttons use.  As an example, a pathname
-implicit button type would match to any existing local filename or
-directory name and its action would be to display the associated file
-or directory, typically in another window.
+action types that explicit buttons use.  As an example, the pathname
+implicit button type matches to any existing local filename or
+directory name and its action displays the associated file or
+directory, typically in another window.
 
 @vindex file, hibtypes.el
 @cindex context
@@ -2242,11 +2246,12 @@ at line-num and optional column-num.  Also works for remote pathnames.
 @cindex link, pathname
 @item pathname
 Makes a valid pathname display the path entry.  Also works for
-delimited and non-delimited remote pathnames, Texinfo @file{} entries,
-and hash-style link references to HTML, Markdown or Emacs outline
-headings.  Emacs Lisp library files (filenames without any directory
-component that end in .el and .elc) are looked up using
-the @code{load-path} directory list.
+delimited and non-delimited remote pathnames, Texinfo @@file@{@}
+entries, and hash-style link references to HTML, Markdown or Emacs
+outline headings, and MSWindows paths (see @file{$@{hyperb:dir@}/DEMO#POSIX
+and MSWindows Paths} for details).  Emacs Lisp library files
+(filenames without any directory component that end in .el and .elc)
+are looked up using the @code{load-path} directory list.
 
 @noindent
 See the function documentation for @code{hpath:at-p} for possible
@@ -6611,13 +6616,13 @@ for each available window system: @code{hpath:external-display-alist-macos},
 @code{hpath:external-display-alist-x}.  Examine and modify these
 values to suit your needs.
 
-@cindex MIME
-@cindex mailcap
-@cindex external viewer
-On systems that have a MIME mailcap file (see
-@file{www.wikiwand.com/en/Mailcap}), this is used as a fallback
-set of external viewer associations when none are found
-within @code{hpath:get-external-display-alist}.
+@c @cindex MIME
+@c @cindex mailcap
+@c @cindex external viewer
+@c On systems that have a MIME mailcap file (see
+@c @file{www.wikiwand.com/en/Mailcap}), this is used as a fallback
+@c set of external viewer associations when none are found
+@c within @code{hpath:get-external-display-alist}.
 
 @node Link Variable Substitution, Web Search Engines, External Viewers, Customization
 @subsection  Link Variable Substitution
@@ -8326,6 +8331,7 @@ When pressed on a pages-directory-mode entry line:
 @end group
 @end format
 
+@page
 @node Smart Key - Python Source Code, Smart Key - Identifier Menu Mode , Smart Key - Pages Directory Mode, Smart Keyboard Keys
 @subsection Smart Key - Python Source Code
 @format
@@ -8355,16 +8361,16 @@ When pressed within a Python source code file (without the OO-Browser):
 @end group
 @end format
 
-@page
 @node Smart Key - Identifier Menu Mode , Smart Key - C Source Code, Smart Key - Python Source Code, Smart Keyboard Keys
 @subsection Smart Key - Identifier Menu Mode 
 
 @format
 @group
-This works only for identifiers defined within the same source file in which they are referenced.
-It requires either Emacs' imenu or XEmacs' func-menu library and it requires that an index of
-identifiers has been built for the current buffer.  Other handlers handle identifier references
-and definitions across multiple files.
+This works only for identifiers defined within the same source file in
+which they are referenced.  It requires either Emacs' imenu or XEmacs'
+func-menu library and it requires that an index of identifiers has
+been built for the current buffer.  Other handlers handle identifier
+references and definitions across multiple files.
 
 @noindent
 When pressed on an identifier name after an identifier index has been generated:
@@ -8376,6 +8382,7 @@ When pressed on an identifier name after an identifier index has been generated:
 @end group
 @end format
 
+@page
 @node Smart Key - C Source Code, Smart Key - C++ Source Code, Smart Key - Identifier Menu Mode , Smart Keyboard Keys
 @subsection Smart Key - C Source Code
 
@@ -8404,7 +8411,6 @@ When pressed within a C source code file:
 @end group
 @end format
 
-@page
 @node Smart Key - C++ Source Code, Smart Key - Assembly Source Code, Smart Key - C Source Code, Smart Keyboard Keys
 @subsection Smart Key - C++ Source Code
 
@@ -8434,6 +8440,7 @@ buffer:
 @end group
 @end format
 
+@page
 @format
 @group
 When pressed within a C++ source code file (without the OO-Browser):
@@ -8456,7 +8463,6 @@ When pressed within a C++ source code file (without the OO-Browser):
 @end group
 @end format
 
-@page
 @node Smart Key - Assembly Source Code, Smart Key - Lisp Source Code, Smart Key - C++ Source Code, Smart Keyboard Keys
 @subsection Smart Key - Assembly Source Code
 
@@ -9346,10 +9352,8 @@ to direct further development effort towards known needs;
 and to acknowledge known weaknesses in the current system.
 @end itemize
 
-If you would like to see some of this work done, consider funding
-its development.  Without any serious interest from users, progress
-on these fronts will be slow.  Here are some new features we have
-in mind, however.
+Without any serious interest from users, progress on these fronts will
+be slow.  Here are some new features we have in mind, however.
 
 @table @asis
 

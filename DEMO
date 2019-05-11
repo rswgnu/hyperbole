@@ -1,5 +1,7 @@
 * GNU Hyperbole Demonstration by Bob Weiner
 
+  Say thanks if you like Hyperbole: https://saythanks.io/to/rswgnu
+
     Table of Contents
     -----------------
     * Introduction
@@ -586,6 +588,37 @@ you can also use paths of the form:
 
 	ftp://ftp.gnu.org/pub/
 
+*** POSIX and MSWindows Paths
+
+Hyperbole recognizes standard POSIX paths as well as typical MSWindows
+paths (both local and network shares) and can convert an in-buffer
+path between POSIX and MSWindows formats multiple times, even paths
+involving mount points.  Hyperbole even recognizes the different ways
+paths are accessed when using Windows for GNU/Linux (WSL) atop
+MSWindows, where all of these reference the same directory:
+"c:/Users", "c:\Users", "/C/Users", "/c/Users", and "/mnt/c/Users".
+
+MSWindows paths may be used within links and implicit path buttons
+just like POSIX paths, whether running Emacs under a POSIX system or
+MSWindows.  If under POSIX, a remote MSWindows path must be accessed
+through a mount point to the network share.  Hyperbole caches such
+mount points when it is first loaded.  Use {M-x
+hpath:cache-mswindows-mount-points RET} to update them if more mounts
+are made later.
+
+{M-x hpath:substitute-posix-or-mswindows-at-point RET} toggles any
+path at point between POSIX and MSWindows styles.  Bind it to a key
+for rapid path transformations.
+
+The function, `hpath:substitute-posix-or-mswindows', does the same thing
+for properly quoted path strings, for example:
+  (hpath:substitute-posix-or-mswindows "C:\\Users") yields "/mnt/c/Users"
+and
+  (hpath:substitute-posix-or-mswindows "/c/Users") yields "c:\\Users".
+
+To convert pathnames in one direction only, use the
+`hpath:mswindows-to-posix' or `hpath:posix-to-mswindows' functions.
+
 ** Internet Request For Comments (RFC) Document Browsing
 
 With Tramp, you can also retrieve and browse RFC documents used in Internet
@@ -768,7 +801,7 @@ e.g. filter a file to just lines that don't match a pattern (RemoveLines).
 
 ** Annotated Bibliography Buttons
 
-Annotated Bibliography references such as [FSF 16] may be embedded in any file
+Annotated Bibliography references such as [FSF 19] may be embedded in any file
 and activated with the Action Key to find the reference at the end of the file.
 Try that one by pressing between the square brackets.
 
@@ -784,7 +817,7 @@ displayed.  Test this technique with a {C-x C-f} (find-file) and then a {?}.
 ** Hyperbole Source Buttons
 
 If you ask for help with the Assist Key or {C-u C-h A} from within the
-[FSF 16] button, the first line of the help buffer will look like this:
+[FSF 19] button, the first line of the help buffer will look like this:
 
 @loc> "DEMO"
 
@@ -1200,13 +1233,12 @@ configured and the suggested M-o key binding is made, the leftmost character or
 two of each window's modeline will show the <window-id> to type to use that
 window as the drag destination. Then whenever point is on an item you want
 displayed in another window, use M-o i <window-id> and watch the magic happen.
-You can also use this to create explicit button links to other window buffers
-when in an editable buffer.  If you want to display multiple items in different
-windows, instead use the M-o t <window-id> key sequence to @emph{throw} each
-item to a different window, while leaving the same selected window.  To replace
-the selected window's buffer with that of another window, use M-o r <window-id>.
-To instead swap the selected window's buffer with that of another window,
-use M-o m <window-id>.  Try these commands out and they will speed your work.
+If you want to display multiple items in different windows, instead use the
+M-o t <window-id> key sequence to @emph{throw} each item to a different window,
+while leaving the same selected window.  To replace the selected window's
+buffer with that of another window, use M-o r <window-id>.  To instead swap the
+selected window's buffer with that of another window, use M-o m <window-id>.
+Try these commands out and they will speed your work.
 
 *** Cloning Windows
 
@@ -1318,7 +1350,7 @@ to dive deeper.  Read it online with the GNU Info reader at "(hyperbole)Top".
 
 * References
 
-[FSF 16] Free Software Foundation, Inc.  GNU Emacs Manual.  Free Software
-Foundation, Cambridge: MA, 2016.  "(emacs)Top"
+[FSF 19] Free Software Foundation, Inc.  GNU Emacs Manual.  Free Software
+Foundation, Cambridge: MA, 2019.  "(emacs)Top"
 
 * THE END

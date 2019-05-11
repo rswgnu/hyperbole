@@ -23,22 +23,27 @@
       each site, the links are properly maintained.  See "DEMO#Path
       Suffixes and Variables" and "DEMO#Path Prefixes".
 
-   5. Quickly search the web for targeted types of information such as
+   5. Automatically translate POSIX and MSWindows paths within buffers
+      or links to the right format for the current operating system,
+      eliminating the drudgery of converting backslashes to forward
+      slashes.  See "DEMO#POSIX and MSWindows Paths".
+
+   6. Quickly search the web for targeted types of information such as
       programming questions, code libraries, images, videos,
       locations, word definitions, wikipedia entries or even tweets.
       See "DEMO#Hyperbole Menus".
 
-   6. Embed social media hashtags and user names in any text files.
+   7. Embed social media hashtags and user names in any text files.
       Then jump to the associated web page in your favorite web
       browser with an Action Key press.  See "DEMO#Social Media
       Hashtags and Usernames".
 
-   7. Similarly, you can embed github and git object links in any
+   8. Similarly, you can embed github and git object links in any
       files with a simple syntax and Hyperbole will display the
       associated objects with an Action Key press.  See "DEMO#Github
       (Remote) References" and "DEMO#Git (Local) References".
 
-   8. Full-text search for any contact-related information across
+   9. Full-text search for any contact-related information across
       thousands of contacts in under a second.  The fastest contact
       manager you have ever used, with hierarchical entries so you can
       easily find everyone on a particular team or within an
@@ -46,33 +51,33 @@
       while still seeing name, phone number and email information.
       Edit entries with a single key press.  See "DEMO#HyRolo".
 
-   9. Select regions of structured text or source code and to copy or
+  10. Select regions of structured text or source code to copy or
       move them between buffers with a single mouse drag or two key
       presses.  These selectable things include: delimited pairs of
       (), @{@}, <>, [] and quote marks, source code functions, source
       code comments and matching tag pairs in HTML and SGML modes.
-      See "DEMO#Thing Selection".    
+      See "DEMO#Thing Selection".
 
-  10. Use the fantastic, auto-numbered Koutliner with per-item links
+  11. Use the fantastic, auto-numbered Koutliner with per-item links
       and rapidly changeable views.  See "DEMO#Koutliner".
 
-  11. Rapid control over what is displayed where in multiple windows
-      and frames with mouse drags and the Hyperbole HyControl system.
-      See "DEMO#HyControl".
+  12. Rapid control over what is displayed in each window and frame
+      with mouse drags and the Hyperbole HyControl system.  See
+      "DEMO#HyControl".
 
-    11a. Drag Buffer Menu, Dired or Treemacs items to other windows to
+    12a. Drag Buffer Menu, Dired or Treemacs items to other windows to
          display them wherever you want.  Integrate with the Ace
          Window package to `throw' items to specific windows with
          quick key sequences.  See "DEMO#Displaying File and Buffer
-         Items".
+         Items and Moving Buffers".
 
-    11b. Drag-and-drop text regions across Emacs frames.  See
-         "DEMO#Things".
+    12b. Drag-and-drop text regions across Emacs frames.  See
+         "DEMO#Thing Selection".
 
-    11c. Swap buffers in windows across frames with a mouse drag.
+    12c. Swap buffers in windows across frames with a mouse drag.
          See "DEMO#Swapping Buffers".
 
-    11d. With one command, rapidly create a grid of tiled windows
+    12d. With one command, rapidly create a grid of tiled windows
          displaying either selected buffers, buffers with a specific
          major mode or the most recently used buffer list, e.g.
          {63 C-c @} creates 6 rows, each with 3 columns of windows (18
@@ -82,22 +87,22 @@
          same above command to display them in a grid of windows.  See
          "DEMO#Windows Grid".
 
-    11e. Use a quick mouse key press to scroll any window line to the
+    12e. Use a quick mouse key press to scroll any window line to the
          top or bottom of a window, to see exactly what you want on
          screen.  See "DEMO#Smart Scrolling".
 
-    11f. Clone or tear off a window into its own frame with a quick
+    12f. Clone or tear off a window into its own frame with a quick
          mouse drag.  See "DEMO#Cloning Windows".
 
-    11g. Each frame can store a series of window configurations
+    12g. Each frame can store a series of window configurations
          (layouts) which support working with sets of buffers and
          rapidly moving among them.  See "DEMO#Window Configuration
          Drags".
 
-    11h. Easily adjust the height and width of windows and frames as
+    12h. Easily adjust the height and width of windows and frames as
          needed.  See "DEMO#Frame Commands".
 
-    11i. Quick clicks on different areas of a buffer's modeline will
+    12i. Quick clicks on different areas of a buffer's modeline will
          rotate through your working list of buffers, changing what
          each window displays.  A popup menu gives you quick access to
          Hyperbole commands plus frame, window and buffer selection
@@ -107,7 +112,7 @@
 
 
 "ben" ;; kvspec:current
-37 ;; id-counter
+38 ;; id-counter
 alpha ;; label-type
 4 ;; label-min-width
 ". " ;; label-separator
@@ -115,7 +120,7 @@ alpha ;; label-type
 
 ;; depth-first kcell attributes
 [[0
-  (creator "rsw@gnu.org" create-time "20190203:156:52:59" id-counter 37 file "/c/Users/bob.weiner/Dropbox/emacs/hyperbole/HY-WHY.kotl")]
+  (creator "rsw@gnu.org" create-time "20190512:130:33:52" id-counter 38 file "/home/bob.weiner/Dropbox/emacs/hyperbole/HY-WHY.kotl")]
  [1
   (creator "rsw@gnu.org" create-time "20160524:15:04:17" no-fill t)]
  [17
@@ -124,6 +129,8 @@ alpha ;; label-type
   (creator "rsw@gnu.org" create-time "20171114:23:37:20" no-fill t)]
  [2
   (creator "rsw@gnu.org" create-time "20160524:15:04:24" no-fill t)]
+ [38
+  (creator "rsw@gnu.org" create-time "20190512:131:21:14" no-fill t)]
  [31
   (creator "rsw@gnu.org" create-time "20171114:23:18:01" no-fill t)]
  [33

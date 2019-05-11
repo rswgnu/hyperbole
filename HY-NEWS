@@ -25,17 +25,25 @@
       hmouse-click-to-drag-stay, hmouse-click-to-drag-to,
       hmouse-click-to-replace, hmouse-click-to-swap, hmouse-click-to-throw.
 
+    - {M-o i <window-id>} is now for use only when on a listing item such as
+      in Dired or Buffer Menu.  It no longer creates Hyperbole buttons in
+      non-item areas to avoid confusion.  Now it will just trigger an error
+      if not on a listing item.
+
   SMART (ACTION AND ASSIST) KEYS
 
     - MSWindows Paths: Hyperbole now recognizes typical MSWindows paths (both
-      local and remote).  They may be used within links and implicit path
+      local and remote shares) and can convert an in-buffer path between POSIX
+      and MSWindows formats multiple times, even paths involving mount points.
+
+      MSWindows paths may be used within links and implicit path
       buttons just like POSIX paths, whether running Emacs under a POSIX
       system or MSWindows.  If under POSIX, a remote MSWindows path must be
       accessed through a mount point to the network share.  Hyperbole caches
       such mount points when it is loaded.  Use {M-x
       hpath:cache-mswindows-mount-points RET} to update them if more mounts
       are made later.  See also the NEW COMMANDS section herein for how to
-      convert a path between POSIX and MSWINDOWS/DOS formats.
+      convert a path between POSIX and MSWindows formats.
 
     - GitLab and Github Links: Added Gitlab implicit links with equivalent
       functionality to those of Github.  Added "people" reference support to
@@ -57,7 +65,8 @@
     - Org Mode: When in an *Org Help* buffer, the Smart Keys now defer to
       org-mode to handle jumps to its own locations for compatibility.
       Similarly, in org-mode buffers when not on an org link or heading,
-      Hyperbole defers to org-meta-return.
+      and the {M-RET} Action Key is pressed, Hyperbole defers to Org's
+      org-meta-return command.
 
     - Drag-based Kill, Copy and Yank: Added support for dragging across
       frames.
@@ -91,7 +100,7 @@
   HYCONTROL
 
     - Help Buffer Quitting: If HyControl is active, normally {q} quits
-      it but now if point is in an Emacs help buffer, {q} will quit
+      it, but now if point is in an Emacs help buffer, {q} will quit
       from the help buffer instead.  Use {Q} to quit from HyControl
       unconditionally.
 
@@ -112,7 +121,7 @@
 
   PROGRAMMING
 
-    - Added hpath:map-plist, equivalent to mapcar but maps over
+    - Added hypb:map-plist, equivalent to mapcar but maps over
       key-value pairs in property lists (where the key and value are
       individual elements in the list).
 
@@ -137,7 +146,7 @@
 
     - DEMO: Added section on "DEMO#Gitlab (Remote) References".
 
-    - Update Hyperbole Manual with new features.
+    - Updated Hyperbole Manual with new features.
 
 
 ===========================================================================

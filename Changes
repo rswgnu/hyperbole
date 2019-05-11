@@ -1,3 +1,39 @@
+2019-05-11  Bob Weiner  <rsw@gnu.org>
+
+* man/hyperbole.texi (External Viewers): Commented out reference to mailcap use since it is
+    presently not used (commented out in the code).
+
+* hpath.el (hpath:find): Fixed filename and path ordering error when
+    path contains a variable and a hash anchor.
+
+* DEMO (POSIX and MSWindows Paths): Added this section.
+* HY-WHY.kotl: Added a reference to that section.
+
+2019-05-09  Bob Weiner  <rsw@gnu.org>
+
+* hmouse-drv.el (hkey-drag-item):
+                (hmouse-click-to-drag-item): Added and thereby changed
+    {M-o i} to trigger an error if not on an item to drag.  This also prevent
+    Hyperbole explicit button creation from being invoked which can be
+    confusing to users.
+* DEMO (Displaying File and Buffer Items and Moving Buffers): Updated with
+    {M-o i} change.
+
+2019-05-07  Bob Weiner  <rsw@gnu.org>
+
+* hpath.el (hpath:directory-expand-alist: Added to store the reverse of
+    each WSL mount-point for when converting from mswindows-to-posix.  Set
+    in hpath:cache-mswindows-mount-points.
+           (hpath:cache-mswindows-mount-points): Downcase all mounted Windows paths.
+           (hpath:mswindows-path-posix-mount-alist): Added.
+
+2019-05-05  Bob Weiner  <rsw@gnu.org>
+
+* hmouse-tag.el (smart-jedi-find-file): Added.
+		(smart-python-jedi-to-definition-p): Improved to use
+    hpath:display-where to display target when possible, i.e. when the
+    emacs-jedi project accepts our pull-request that adds this feature.
+
 2019-04-22  Bob Weiner  <rsw@gnu.org>
 
 * hversion.el: Pushed BW changes for 7.0.2c test update.
@@ -120,7 +156,7 @@
     Added and called when Hyperbole is initialized, mainly to allow access to
     MSWindows network shares which would otherwise not be accessible as links
     under POSIX systems.
-           (hpath:map-plist): Added to map over property lists.
+           (hypb:map-plist): Added to map over property lists.
     Called in hpath:cache-mswindows-mount-points.
 
 2019-01-26  Bob Weiner  <rsw@gnu.org>

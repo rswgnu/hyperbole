@@ -1,7 +1,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <!-- This manual is for GNU Hyperbole
-(Edition 7.0.2c, Published April 21, 2019).
+(Edition 7.0.3, Published May 11, 2019).
 
 Copyright (C) 1989-2019  Free Software Foundation, Inc.
 
@@ -329,6 +329,9 @@ Next: <a href="#Introduction" accesskey="n" rel="next">Introduction</a>, Previou
 
 <CENTER><H2>The Everyday Hypertextual Information Manager</H2></CENTER>
 
+<CENTER><H3><A HREF="https://saythanks.io/to/rswgnu">Say thanks if you like Hyperbole.</A></H3></CENTER>
+
+
 <P>Copyright &copy; 1989-2019  Free Software Foundation, Inc.</P>
 
 <P>GNU Hyperbole is available for use, modification, and distribution under
@@ -341,8 +344,8 @@ WITHOUT ANY WARRANTY, without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</P>
 
 <PRE>
-Edition 7.0.2c
-Printed April 21, 2019.
+Edition 7.0.3
+Printed May 11, 2019.
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -791,7 +794,7 @@ Next: <a href="#Smart-Keys" accesskey="n" rel="next">Smart Keys</a>, Previous: <
 <h2 class="chapter">1 Introduction</h2>
 
 <p>This edition of the GNU Hyperbole Manual is for use with any version
-7.0.2c or greater of GNU Hyperbole.  Hyperbole runs atop GNU Emacs 24.3
+7.0.3 or greater of GNU Hyperbole.  Hyperbole runs atop GNU Emacs 24.3
 or higher.  It will trigger an error if your Emacs is older.
 </p>
 <p>This chapter summarizes the structure of the rest of the manual,
@@ -1295,7 +1298,7 @@ Hyperbole
     1st press at an arg value   Value copied to minibuffer &lt;- same
     2nd press at an arg value   Value used as argument     &lt;- same
     In minibuffer               Accepts minibuffer arg     Completion help
-  On an implicit button         Activates button           Button help
+  On an implicit button/path    Activates button           Button help
   Within a koutline cell        Collapses and expands      Shows tree props
   Left of a koutline cell       Creates a klink            Moves a tree
   HyRolo Match Buffer           Edits entries and mails to e-mail addresses
@@ -2053,10 +2056,9 @@ for <code>ace-window</code>, then just ensure it is initialized by calling
 <p>After setup, the leftmost character or two of each window&rsquo;s modeline will show
 the ID to type to use that window as the drag destination.  Then whenever point
 is on an item you want displayed in another window, use <kbd>{M-o i
-&lt;id-of-window-to-display-item-in&gt;}</kbd> and watch the magic happen.  You can also use
-this command to create explicit button links to other window buffers when in an editable
-buffer rather than on an item.  If you want to display multiple items in different
-windows, instead use the <kbd>{M-o t &lt;id-of-window-to-display-item-in&gt;}</kbd> key sequence to
+&lt;id-of-window-to-display-item-in&gt;}</kbd> and watch the magic happen.  If you
+want to display multiple items in different windows, instead use
+the <kbd>{M-o t &lt;id-of-window-to-display-item-in&gt;}</kbd> key sequence to
 <em>throw</em> the item to the window.  To <em>replace</em>
 the selected window&rsquo;s buffer with that of another window, use
 <kbd>{M-o r &lt;id-of-window-displaying-desired-buffer&gt;}</kbd>.  To instead
@@ -2067,8 +2069,7 @@ use <kbd>{M-o m &lt;id-of-window-to-swap-with&gt;}</kbd>.
 </p><dl compact="compact">
 <dt>M-o i &lt;window&gt;</dt>
 <dd><p>insert listing item at point into &lt;window&gt;; if not on a listing item,
-prompt for a name to give to a new explicit button at point that will
-link to the current position in &lt;window&gt;
+trigger an error
 </p>
 </dd>
 <dt>M-o m &lt;window&gt;</dt>
@@ -2322,10 +2323,10 @@ type</em> identifies a pattern or state that when matched triggers
 an <em>action</em> associated with the implicit button type.  The action
 is specified by either a Hyperbole action type (see <a href="#Action-Types">Action Types</a>)
 or an Emacs Lisp function.  Implicit button types may use the same
-action types that explicit buttons use.  As an example, a pathname
-implicit button type would match to any existing local filename or
-directory name and its action would be to display the associated file
-or directory, typically in another window.
+action types that explicit buttons use.  As an example, the pathname
+implicit button type matches to any existing local filename or
+directory name and its action displays the associated file or
+directory, typically in another window.
 </p>
 <a name="index-file_002c-hibtypes_002eel"></a>
 <a name="index-context"></a>
@@ -2850,11 +2851,12 @@ at line-num and optional column-num.  Also works for remote pathnames.
 </dd>
 <dt><code>pathname</code></dt>
 <dd><p>Makes a valid pathname display the path entry.  Also works for
-delimited and non-delimited remote pathnames, Texinfo <samp></samp> entries,
-and hash-style link references to HTML, Markdown or Emacs outline
-headings.  Emacs Lisp library files (filenames without any directory
-component that end in .el and .elc) are looked up using
-the <code>load-path</code> directory list.
+delimited and non-delimited remote pathnames, Texinfo @file{}
+entries, and hash-style link references to HTML, Markdown or Emacs
+outline headings, and MSWindows paths (see <samp>${hyperb:dir}/DEMO#POSIX
+and MSWindows Paths</samp> for details).  Emacs Lisp library files
+(filenames without any directory component that end in .el and .elc)
+are looked up using the <code>load-path</code> directory list.
 </p>
 <p>See the function documentation for <code>hpath:at-p</code> for possible
 delimiters.  See the variable documentation for <code>hpath:suffixes</code> for
@@ -7949,14 +7951,7 @@ for each available window system: <code>hpath:external-display-alist-macos</code
 <code>hpath:external-display-alist-x</code>.  Examine and modify these
 values to suit your needs.
 </p>
-<a name="index-MIME"></a>
-<a name="index-mailcap"></a>
-<a name="index-external-viewer-1"></a>
-<p>On systems that have a MIME mailcap file (see
-<samp>www.wikiwand.com/en/Mailcap</samp>), this is used as a fallback
-set of external viewer associations when none are found
-within <code>hpath:get-external-display-alist</code>.
-</p>
+
 <hr>
 <a name="Link-Variable-Substitution"></a>
 <div class="header">
@@ -9987,10 +9982,11 @@ Next: <a href="#Smart-Key-_002d-C-Source-Code" accesskey="n" rel="next">Smart Ke
 <h4 class="subsection">E.2.18 Smart Key - Identifier Menu Mode</h4>
 
 <div class="format">
-<pre class="format">This works only for identifiers defined within the same source file in which they are referenced.
-It requires either Emacs&rsquo; imenu or XEmacs&rsquo; func-menu library and it requires that an index of
-identifiers has been built for the current buffer.  Other handlers handle identifier references
-and definitions across multiple files.
+<pre class="format">This works only for identifiers defined within the same source file in
+which they are referenced.  It requires either Emacs&rsquo; imenu or XEmacs&rsquo;
+func-menu library and it requires that an index of identifiers has
+been built for the current buffer.  Other handlers handle identifier
+references and definitions across multiple files.
 
 When pressed on an identifier name after an identifier index has been generated:
   ACTION KEY
@@ -11019,10 +11015,8 @@ providing sketches of possible additions;
 </li><li> and to acknowledge known weaknesses in the current system.
 </li></ul>
 
-<p>If you would like to see some of this work done, consider funding
-its development.  Without any serious interest from users, progress
-on these fronts will be slow.  Here are some new features we have
-in mind, however.
+<p>Without any serious interest from users, progress on these fronts will
+be slow.  Here are some new features we have in mind, however.
 </p>
 <dl compact="compact">
 <dt>Button Copying, Killing, and Yanking</dt>
@@ -12742,7 +12736,6 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function</a>, Up: <a href
 <tr><td></td><td valign="top"><a href="#index-external-klink">external klink</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Links">Links</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-external-program">external program</a>:</td><td>&nbsp;</td><td valign="top"><a href="#External-Viewers">External Viewers</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-external-viewer">external viewer</a>:</td><td>&nbsp;</td><td valign="top"><a href="#External-Viewers">External Viewers</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-external-viewer-1">external viewer</a>:</td><td>&nbsp;</td><td valign="top"><a href="#External-Viewers">External Viewers</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-extracting-from-tar-files">extracting from tar files</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Key-_002d-Tar-File-Mode">Smart Key - Tar File Mode</a></td></tr>
 <tr><td colspan="4"> <hr></td></tr>
 <tr><th><a name="Concept-Index_cp_letter-F">F</a></th><td></td><td></td></tr>
@@ -13015,7 +13008,6 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function</a>, Up: <a href
 <tr><td></td><td valign="top"><a href="#index-mail-hooks">mail hooks</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Hook-Variables">Hook Variables</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-mail-inclusion">mail inclusion</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Buttons-in-Mail">Buttons in Mail</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-mail-reader">mail reader</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Buttons-in-Mail">Buttons in Mail</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-mailcap">mailcap</a>:</td><td>&nbsp;</td><td valign="top"><a href="#External-Viewers">External Viewers</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-mailer-initialization">mailer initialization</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Buttons-in-Mail">Buttons in Mail</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-mailing-an-outline">mailing an outline</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Relocating-and-Copying">Relocating and Copying</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-mailing-buttons">mailing buttons</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Buttons-in-Mail">Buttons in Mail</a></td></tr>
@@ -13112,7 +13104,6 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function</a>, Up: <a href
 <tr><td></td><td valign="top"><a href="#index-Messages-buffer">Messages buffer</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Key-Debugging">Smart Key Debugging</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-MH_002de">MH-e</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Buttons-in-Mail">Buttons in Mail</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-middle-mouse-key">middle mouse key</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Keys">Smart Keys</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-MIME">MIME</a>:</td><td>&nbsp;</td><td valign="top"><a href="#External-Viewers">External Viewers</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-minibuffer-menu">minibuffer menu</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Menus">Menus</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-minibuffer-menu-1">minibuffer menu</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Minibuffer-Menu-Activation">Minibuffer Menu Activation</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-minibuffer-menus">minibuffer menus</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Menus">Menus</a></td></tr>
