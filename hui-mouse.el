@@ -603,7 +603,7 @@ If key is pressed:
 	((< (current-column) 5) (calendar-cursor-to-nearest-date)
 	 (scroll-calendar-right-three-months 1))
 	(t (calendar-cursor-to-nearest-date)
-	   (view-diary-entries 1))))
+	   (diary-view-entries 1))))
 
 (defun smart-calendar-assist ()
   "Uses a single assist-key or mouse assist-key to manipulate the scrolling calendar.

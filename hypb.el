@@ -782,6 +782,7 @@ Without file, the banner is prepended to the current buffer."
 	(setq button (make-button (- (point) 3) (- (point) 2) :type 'hyperbole-banner))
 	(button-put button 'help-echo (concat "Click to visit " hypb:home-page))
 	(button-put button 'action #'hypb:browse-home-page)
+	(button-put button 'face 'default)
 	(button-put button 'keymap hypb:hyperbole-banner-keymap)))))
 
 (defun hypb:display-file-with-logo-xemacs (&optional file)
