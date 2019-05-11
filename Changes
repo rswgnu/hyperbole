@@ -1,7 +1,7 @@
 2019-05-11  Bob Weiner  <rsw@gnu.org>
 
-* man/hyperbole.texi (External Viewers): Commented out reference to mailcap use since it is
-    presently not used (commented out in the code).
+* man/hyperbole.texi (External Viewers): Commented out reference to mailcap use
+    since it is presently not used (commented out in the code).
 
 * hpath.el (hpath:find): Fixed filename and path ordering error when
     path contains a variable and a hash anchor.
