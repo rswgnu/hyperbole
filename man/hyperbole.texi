@@ -139,6 +139,9 @@ Texinfo markup language.
 
 <CENTER><H2>The Everyday Hypertextual Information Manager</H2></CENTER>
 
+<CENTER><H3><A HREF="https://saythanks.io/to/rswgnu">Say thanks if you like Hyperbole.</A></H3></CENTER>
+
+
 <P>Copyright &copy; 1989-2019  Free Software Foundation, Inc.</P>
 
 <P>GNU Hyperbole is available for use, modification, and distribution under
@@ -151,8 +154,8 @@ WITHOUT ANY WARRANTY, without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</P>
 
 <PRE>
-Edition 7.0.2b
-Printed February 2, 2019.
+Edition 7.0.3
+Printed May 11, 2019.
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -176,7 +179,7 @@ Printed February 2, 2019.
 
 @center The Everyday Hypertextual Information Manager
 
-@center Edition 7.0.2b, February 2, 2019.
+@center Say thanks: https://saythanks.io/to/rswgnu
 
 @sp 2
 @noindent
@@ -193,6 +196,9 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 @sp 2
 
 @example
+Edition 7.0.3
+May 11, 2019
+
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
   E-mail:    <hyperbole-users@@gnu.org>  (This is a mail list).
@@ -413,6 +419,7 @@ Smart Mouse Keys
 
 Smart Keyboard Keys
 
+* Smart Key - Company Mode::
 * Smart Key - Treemacs::
 * Smart Key - Emacs Pushbuttons::
 * Smart Key - Argument Completion::
@@ -428,6 +435,7 @@ Smart Keyboard Keys
 * Smart Key - RDB Mode::
 * Smart Key - Help Buffers::
 * Smart Key - Pages Directory Mode::
+* Smart Key - Python Source Code::
 * Smart Key - Identifier Menu Mode ::
 * Smart Key - C Source Code::
 * Smart Key - C++ Source Code::
@@ -435,7 +443,6 @@ Smart Keyboard Keys
 * Smart Key - Lisp Source Code::
 * Smart Key - Java Source Code::
 * Smart Key - JavaScript Source Code::
-* Smart Key - Python Source Code::
 * Smart Key - Objective-C Source Code::
 * Smart Key - Fortran Source Code::
 * Smart Key - Occurrence Matches::
@@ -462,7 +469,7 @@ Smart Keyboard Keys
 @chapter Introduction
 
 This edition of the GNU Hyperbole Manual is for use with any version
-7.0.2b or greater of GNU Hyperbole.  Hyperbole runs atop GNU Emacs 24.3
+7.0.3 or greater of GNU Hyperbole.  Hyperbole runs atop GNU Emacs 24.3
 or higher.  It will trigger an error if your Emacs is older.
 
 This chapter summarizes the structure of the rest of the manual,
@@ -1179,7 +1186,7 @@ on the last line to end the dired session (bury its buffer).
 If you use the Treemacs file viewer Emacs package, you can configure Hyperbole
 to use this instead of Dired when you click on a modeline buffer id.
 
-Since this is a customization option, it may be change permanently like so.
+Since this is a customization option, it may be changed permanently like so.
 Use @bkbd{M-x customize-set-variable @key{RET} action-key-modeline-buffer-id-function @key{RET}}.
 Change the value to @code{smart-treemacs-modeline}.  Then press @key{RET}.  To change it back
 to Hyperbole's default, use the value, @code{dired-jump}.
@@ -1409,14 +1416,15 @@ unless it is the only window in that frame.
 @cindex drag, dired item
 @cindex drag, buffer menu item
 @cindex drag, Treemacs item
-You can do the same thing with items in dired, buffer menu and ibuffer menu
-listing buffers rather than buffers themselves.  Drag with the Action Mouse Key
-and the selected item will be displayed in any Emacs window in which you
-release.  Drag outside Emacs and it will be displayed in a new frame.  To
-display the last item you want, press the Action Key on it and it will display
-within the listing window itself.  (If you use the Treemacs file viewer package,
-item dragging works there as well).  Remember that you can emulate these drags
-from the keyboard when needed, @pxref{Keyboard Drags}.
+You can also drag items to other windows with the Action Key in Dired,
+Buffer Menu, Ibuffer and Treemacs listing buffers, rather than the
+buffers themselves.  Drag with the Action Mouse Key and the selected
+item will be displayed in any Emacs window in which you release.  Drag
+outside Emacs and it will be displayed in a new frame.  To display the
+last item you want within the listing window itself, press and release
+the Action Key on that item after dragging your other items to their
+respective windows.  Remember that you can emulate these drags from
+the keyboard when needed, @pxref{Keyboard Drags}.
 
 So now you can put a bunch of buffers and files on your screen wherever
 you like.  Typically, a brief visual pulse is shown first at the source item and
@@ -1450,26 +1458,30 @@ session since drag actions are not supported without a window system.
 @cindex window by letter
 @cindex jump to window by letter
 @cindex keyboard, jump to window
-For even faster keyboard-based display of items, use the Emacs
-package @code{ace-window} (see @url{https://elpa.gnu.org/packages/ace-window.html}).
+For even faster keyboard-based display of items and drag emulations,
+use the Emacs package @code{ace-window}
+(see @url{https://elpa.gnu.org/packages/ace-window.html}).
 
 The ace-window package assigns short letter IDs to each Emacs window and lets
 you jump to or operate upon a specific window by giving its ID.  Hyperbole can
 add commands to ace-window that replace the two-step drag emulation key
-described above with a single key sequence that displays dired or
-buffer menu @emph{items}.
+described above with a single key sequence that does not require moving to
+the drag target window since it is specified by ID as part of the command.
 
 To enable this feature, in your Emacs initialization file after
 Hyperbole is initialized, if you do not have a key bound for
 @code{ace-window}, then call: @code{(hkey-ace-window-setup \"\M-o\")}
-to bind it to @bkbd{M-o}.  Otherwise, call the setup function without
-a key: @code{(hkey-ace-window-setup)}.
+to bind it to @bkbd{M-o}, replacing Hyperbole's
+default @code{hkey-operate} command there (because ace-window can emulate
+the drags performed by @code{hkey-operate}).  If you already have a key bound
+for @code{ace-window}, then just ensure it is initialized by calling
+@code{(hkey-ace-window-setup)} without a key argument.
 
 @cindex link creation from keyboard
 @cindex keyboard link creation
 @kindex M-o i <window-id>
-@kindex M-o r <window-id>
 @kindex M-o m <window-id>
+@kindex M-o r <window-id>
 @kindex M-o t <window-id>
 @cindex drag item
 @cindex replace window buffer
@@ -1482,15 +1494,30 @@ a key: @code{(hkey-ace-window-setup)}.
 After setup, the leftmost character or two of each window's modeline will show
 the ID to type to use that window as the drag destination.  Then whenever point
 is on an item you want displayed in another window, use @bkbd{M-o i
-<id-of-window-to-display-item-in>} and watch the magic happen.  You can also use
-this command to create explicit button links to other window buffers when in an editable
-buffer rather than on an item.  If you want to display multiple items in different
-windows, instead use the @bkbd{M-o t <id-of-window-to-display-item-in>} key sequence to
+<id-of-window-to-display-item-in>} and watch the magic happen.  If you
+want to display multiple items in different windows, instead use
+the @bkbd{M-o t <id-of-window-to-display-item-in>} key sequence to
 @emph{throw} the item to the window.  To @emph{replace}
 the selected window's buffer with that of another window, use
 @bkbd{M-o r <id-of-window-displaying-desired-buffer>}.  To instead
 @emph{swap} the selected window's buffer with that of another window,
 use @bkbd{M-o m <id-of-window-to-swap-with>}.
+
+In summary:
+@table @asis
+@item M-o i <window>
+insert listing item at point into <window>; if not on a listing item,
+trigger an error
+
+@item M-o m <window>
+swap the buffers in the selected window and <window>
+
+@item M-o r <window>
+replace the selected (current) window's buffer with that of <window>
+
+@item M-o t <window>
+throw listing item at point or current buffer to <window>
+@end table
 
 @c -------
 
@@ -1729,10 +1756,10 @@ type} identifies a pattern or state that when matched triggers
 an @emph{action} associated with the implicit button type.  The action
 is specified by either a Hyperbole action type (@pxref{Action Types})
 or an Emacs Lisp function.  Implicit button types may use the same
-action types that explicit buttons use.  As an example, a pathname
-implicit button type would match to any existing local filename or
-directory name and its action would be to display the associated file
-or directory, typically in another window.
+action types that explicit buttons use.  As an example, the pathname
+implicit button type matches to any existing local filename or
+directory name and its action displays the associated file or
+directory, typically in another window.
 
 @vindex file, hibtypes.el
 @cindex context
@@ -2043,7 +2070,7 @@ produced by git log.
 @vindex hibtypes-github-default-user
 @item github-reference
 Displays the Github entity associated with REFERENCE and optional USER and PROJECT.
-See @file{DEMO#Github (Remote) References} for examples.
+See @file{../DEMO#Github (Remote) References} for examples.
 
 REFERENCE is a string of one of the following forms:
 @itemize @bullet
@@ -2072,6 +2099,45 @@ USER defaults to the value of @code{hibtypes-github-default-user}.
 If given, PROJECT overrides any project value in REFERENCE.  If no
 PROJECT value is provided, it defaults to the value of
 @code{hibtypes-github-default-project}.
+
+@findex ibtypes gitlab-reference
+@cindex gitlab reference
+@cindex version control
+@vindex hibtypes-gitlab-default-project
+@vindex hibtypes-gitlab-default-user
+@item gitlab-reference
+Displays the Gitlab entity associated with REFERENCE and optional USER and PROJECT.
+See @file{../DEMO#Gitlab (Remote) References} for examples.
+
+REFERENCE is a string of one of the following forms:
+@itemize @bullet
+@item <ref-item>
+@item <user>/<project>/<ref-item>
+@item <project>/<ref-item>
+@item /<group>/<project>.
+or
+@item /<project-or-group> (where a group is a colection of projects)
+@end itemize
+
+<ref-item> is one of these:
+@table @asis
+@item @bullet{} one of the words: activity, analytics, boards or kanban, branches, commits, contributors, groups, issues or list, jobs, labels, merge_requests, milestones, pages, pipelines, pipeline_charts, members or people or staff, projects, pulls, schedules, snippets, status or tags
+the associated items are listed
+@item @bullet{} one of the words: branch, commit(s), issue(s), milestone(s), pull(s), snippet(s) or tag(s) followed by a '/' or '=' and an item-id
+the item is shown
+@item @bullet{} an issue reference given by a positive integer, e.g. @emph{92} or prefaced with @emph{GL-}, like GL-92
+the issue is displayed
+@item @bullet{} a commit reference given by a hex number, 55a1f0
+the commit diff is displayed
+@item @bullet{} a branch or tag reference given by an alphanumeric name, e.g. hyper20
+the files in the branch are listed.
+@end table
+
+@vindex hibtypes-gitlab-default-user
+USER defaults to the value of @code{hibtypes-gitlab-default-user}.
+If given, PROJECT overrides any project value in REFERENCE.  If no
+PROJECT value is provided, it defaults to the value of
+@code{hibtypes-gitlab-default-project}.
 
 @findex ibtypes social-reference
 @cindex hashtag
@@ -2180,11 +2246,12 @@ at line-num and optional column-num.  Also works for remote pathnames.
 @cindex link, pathname
 @item pathname
 Makes a valid pathname display the path entry.  Also works for
-delimited and non-delimited remote pathnames, Texinfo @file{} entries,
-and hash-style link references to HTML, Markdown or Emacs outline
-headings.  Emacs Lisp library files (filenames without any directory
-component that end in .el and .elc) are looked up using
-the @code{load-path} directory list.
+delimited and non-delimited remote pathnames, Texinfo @@file@{@}
+entries, and hash-style link references to HTML, Markdown or Emacs
+outline headings, and MSWindows paths (see @file{$@{hyperb:dir@}/DEMO#POSIX
+and MSWindows Paths} for details).  Emacs Lisp library files
+(filenames without any directory component that end in .el and .elc)
+are looked up using the @code{load-path} directory list.
 
 @noindent
 See the function documentation for @code{hpath:at-p} for possible
@@ -6549,13 +6616,13 @@ for each available window system: @code{hpath:external-display-alist-macos},
 @code{hpath:external-display-alist-x}.  Examine and modify these
 values to suit your needs.
 
-@cindex MIME
-@cindex mailcap
-@cindex external viewer
-On systems that have a MIME mailcap file (see
-@file{www.wikiwand.com/en/Mailcap}), this is used as a fallback
-set of external viewer associations when none are found
-within @code{hpath:get-external-display-alist}.
+@c @cindex MIME
+@c @cindex mailcap
+@c @cindex external viewer
+@c On systems that have a MIME mailcap file (see
+@c @file{www.wikiwand.com/en/Mailcap}), this is used as a fallback
+@c set of external viewer associations when none are found
+@c within @code{hpath:get-external-display-alist}.
 
 @node Link Variable Substitution, Web Search Engines, External Viewers, Customization
 @subsection  Link Variable Substitution
@@ -7825,6 +7892,7 @@ If dragged from an Emacs window to outside of Emacs:
 @section   Smart Keyboard Keys
 
 @menu
+* Smart Key - Company Mode::
 * Smart Key - Treemacs::
 * Smart Key - Emacs Pushbuttons::
 * Smart Key - Argument Completion::
@@ -7840,6 +7908,7 @@ If dragged from an Emacs window to outside of Emacs:
 * Smart Key - RDB Mode::
 * Smart Key - Help Buffers::
 * Smart Key - Pages Directory Mode::
+* Smart Key - Python Source Code::
 * Smart Key - Identifier Menu Mode ::
 * Smart Key - C Source Code::
 * Smart Key - C++ Source Code::
@@ -7847,7 +7916,6 @@ If dragged from an Emacs window to outside of Emacs:
 * Smart Key - Lisp Source Code::
 * Smart Key - Java Source Code::
 * Smart Key - JavaScript Source Code::
-* Smart Key - Python Source Code::
 * Smart Key - Objective-C Source Code::
 * Smart Key - Fortran Source Code::
 * Smart Key - Occurrence Matches::
@@ -7868,7 +7936,26 @@ If dragged from an Emacs window to outside of Emacs:
 * Smart Key - Default Context::
 @end menu
 
-@node Smart Key - Treemacs, Smart Key - Emacs Pushbuttons, Smart Keyboard Keys, Smart Keyboard Keys
+
+@node Smart Key - Company Mode, Smart Key - Treemacs, Smart Keyboard Keys, Smart Keyboard Keys
+@subsection Smart Key - Company Mode
+
+@cindex company-mode
+@cindex completion
+Company mode is an extensive in-buffer completion framework, often used to complete programming identifiers.
+
+@format
+@group
+When company-mode is active:
+  ACTION KEY
+     Displays selected item's definition.
+  ASSIST KEY
+     Displays the documentation, if any, for the selected item.
+@end group
+@end format
+
+
+@node Smart Key - Treemacs, Smart Key - Emacs Pushbuttons, Smart Key - Company Mode, Smart Keyboard Keys
 @subsection Smart Key - Treemacs
 
 @cindex Treemacs
@@ -7889,10 +7976,10 @@ When in a Treemacs file browser buffer:
          collapse the entry;
      (2) elsewhere within an entry line, the item is displayed for editing,
          normally in another window;
-     (3) at the end of an entry line: invoke @code{action-key-eol-function},
-         typically to scroll up proportionally, if an Action Key press; invoke
-         @code{assist-key-eol-function}, typically to scroll down proportionally,
-         if an Assist Key press;
+     (3) at the end of an entry line: if an Action Key press, invokes
+         @code{action-key-eol-function}, typically to scroll up proportionally;
+         if an Assist Key press, invokes @code{assist-key-eol-function}, typically
+         to scroll down proportionally;
      (4) on the first line of the buffer (other than the end of line),
          dired is run on the current directory of this Treemacs;
      (5) at the end of the first or last line of the buffer,
@@ -8228,7 +8315,7 @@ When pressed at the end of a Help buffer:
 @end group
 @end format
 
-@node Smart Key - Pages Directory Mode, Smart Key - Identifier Menu Mode , Smart Key - Help Buffers, Smart Keyboard Keys
+@node Smart Key - Pages Directory Mode, Smart Key - Python Source Code, Smart Key - Help Buffers, Smart Keyboard Keys
 @subsection Smart Key - Pages Directory Mode
 
 @format
@@ -8244,7 +8331,8 @@ When pressed on a pages-directory-mode entry line:
 @end group
 @end format
 
-@node Smart Key - Python Source Code, Smart Key - Objective-C Source Code, Smart Key - JavaScript Source Code, Smart Keyboard Keys
+@page
+@node Smart Key - Python Source Code, Smart Key - Identifier Menu Mode , Smart Key - Pages Directory Mode, Smart Keyboard Keys
 @subsection Smart Key - Python Source Code
 @format
 @group
@@ -8273,16 +8361,16 @@ When pressed within a Python source code file (without the OO-Browser):
 @end group
 @end format
 
-@page
-@node Smart Key - Identifier Menu Mode , Smart Key - C Source Code, Smart Key - Pages Directory Mode, Smart Keyboard Keys
+@node Smart Key - Identifier Menu Mode , Smart Key - C Source Code, Smart Key - Python Source Code, Smart Keyboard Keys
 @subsection Smart Key - Identifier Menu Mode 
 
 @format
 @group
-This works only for identifiers defined within the same source file in which they are referenced.
-It requires either Emacs' imenu or XEmacs' func-menu library and it requires that an index of
-identifiers has been built for the current buffer.  Other handlers handle identifier references
-and definitions across multiple files.
+This works only for identifiers defined within the same source file in
+which they are referenced.  It requires either Emacs' imenu or XEmacs'
+func-menu library and it requires that an index of identifiers has
+been built for the current buffer.  Other handlers handle identifier
+references and definitions across multiple files.
 
 @noindent
 When pressed on an identifier name after an identifier index has been generated:
@@ -8294,6 +8382,7 @@ When pressed on an identifier name after an identifier index has been generated:
 @end group
 @end format
 
+@page
 @node Smart Key - C Source Code, Smart Key - C++ Source Code, Smart Key - Identifier Menu Mode , Smart Keyboard Keys
 @subsection Smart Key - C Source Code
 
@@ -8322,7 +8411,6 @@ When pressed within a C source code file:
 @end group
 @end format
 
-@page
 @node Smart Key - C++ Source Code, Smart Key - Assembly Source Code, Smart Key - C Source Code, Smart Keyboard Keys
 @subsection Smart Key - C++ Source Code
 
@@ -8352,6 +8440,7 @@ buffer:
 @end group
 @end format
 
+@page
 @format
 @group
 When pressed within a C++ source code file (without the OO-Browser):
@@ -8374,7 +8463,6 @@ When pressed within a C++ source code file (without the OO-Browser):
 @end group
 @end format
 
-@page
 @node Smart Key - Assembly Source Code, Smart Key - Lisp Source Code, Smart Key - C++ Source Code, Smart Keyboard Keys
 @subsection Smart Key - Assembly Source Code
 
@@ -8401,8 +8489,12 @@ When pressed within an assembly source code file:
 
 @format
 @group
+@cindex change-log-mode
+@cindex lisp identifier
+@cindex elisp identifier
 When pressed on a Lisp symbol within any of these types of buffers
-(Lisp code, debugger, compilation, or help):
+(Lisp code, debugger, compilation, or help) or in change-log-mode
+on an Emacs Lisp bound identifier:
   ACTION KEY
      Jumps to the definition of any selected Lisp construct.  If on an
      Emacs Lisp require, load, or autoload clause and the (find-library)
@@ -8455,7 +8547,7 @@ When pressed within a Java source code file (without the OO-Browser):
 @end group
 @end format
 
-@node Smart Key - JavaScript Source Code, Smart Key - Python Source Code, Smart Key - Java Source Code, Smart Keyboard Keys
+@node Smart Key - JavaScript Source Code, Smart Key - Objective-C Source Code, Smart Key - Java Source Code, Smart Keyboard Keys
 @subsection Smart Key - JavaScript Source Code
 
 @format
@@ -8472,7 +8564,7 @@ When pressed within a JavaScript source code file:
 @end format
 
 
-@node Smart Key - Objective-C Source Code, Smart Key - Fortran Source Code, Smart Key - Python Source Code, Smart Keyboard Keys
+@node Smart Key - Objective-C Source Code, Smart Key - Fortran Source Code, Smart Key - JavaScript Source Code, Smart Keyboard Keys
 @subsection Smart Key - Objective-C Source Code
 
 @vindex objc-cpp-include-path
@@ -9260,10 +9352,8 @@ to direct further development effort towards known needs;
 and to acknowledge known weaknesses in the current system.
 @end itemize
 
-If you would like to see some of this work done, consider funding
-its development.  Without any serious interest from users, progress
-on these fronts will be slow.  Here are some new features we have
-in mind, however.
+Without any serious interest from users, progress on these fronts will
+be slow.  Here are some new features we have in mind, however.
 
 @table @asis
 

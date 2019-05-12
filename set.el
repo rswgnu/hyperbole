@@ -1,4 +1,4 @@
-;;; set.el ---  General mathematical operators for unordered sets
+;;; set.el --- General mathematical operators for unordered sets
 ;;
 ;; Author:       Bob Weiner
 ;;

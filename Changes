@@ -1,3 +1,112 @@
+2019-05-11  Bob Weiner  <rsw@gnu.org>
+
+* man/hyperbole.texi (External Viewers): Commented out reference to mailcap use
+    since it is presently not used (commented out in the code).
+
+* hpath.el (hpath:find): Fixed filename and path ordering error when
+    path contains a variable and a hash anchor.
+
+* DEMO (POSIX and MSWindows Paths): Added this section.
+* HY-WHY.kotl: Added a reference to that section.
+
+2019-05-09  Bob Weiner  <rsw@gnu.org>
+
+* hmouse-drv.el (hkey-drag-item):
+                (hmouse-click-to-drag-item): Added and thereby changed
+    {M-o i} to trigger an error if not on an item to drag.  This also prevent
+    Hyperbole explicit button creation from being invoked which can be
+    confusing to users.
+* DEMO (Displaying File and Buffer Items and Moving Buffers): Updated with
+    {M-o i} change.
+
+2019-05-07  Bob Weiner  <rsw@gnu.org>
+
+* hpath.el (hpath:directory-expand-alist: Added to store the reverse of
+    each WSL mount-point for when converting from mswindows-to-posix.  Set
+    in hpath:cache-mswindows-mount-points.
+           (hpath:cache-mswindows-mount-points): Downcase all mounted Windows paths.
+           (hpath:mswindows-path-posix-mount-alist): Added.
+
+2019-05-05  Bob Weiner  <rsw@gnu.org>
+
+* hmouse-tag.el (smart-jedi-find-file): Added.
+		(smart-python-jedi-to-definition-p): Improved to use
+    hpath:display-where to display target when possible, i.e. when the
+    emacs-jedi project accepts our pull-request that adds this feature.
+
+2019-04-22  Bob Weiner  <rsw@gnu.org>
+
+* hversion.el: Pushed BW changes for 7.0.2c test update.
+
+* hargs.el (hargs:delimited): Added exclude-regexp argument.
+* hpath.el (hpath:delimited-possible-path): Used above new argument
+   to prevent matching to strings that include string quotes.
+
+2019-04-21  Bob Weiner  <rsw@gnu.org>
+
+* man/hkey-help.txt: Added Company-mode and Treemacs entries.
+
+* hui-window.el (hmouse-alist-add-window-handlers): Renamed from hui-window--register.
+
+* man/hyperbole.texi (Smart Key - Company Mode): Added.
+
+2019-03-11  Bob Weiner  <rsw@gnu.org>
+
+* man/hyperbole.texi (Implicit Buttons, gitlab-reference):
+  DEMO (Gitlab (Remote) References): Added these sections.
+
+2019-02-16  Bob Weiner  <rsw@gnu.org>
+
+* hui-window.el (smart-window-of-coords): Handled null coords parameter.
+
+2019-02-10  Bob Weiner  <rsw@gnu.org>
+
+* hmouse-drv.el (hkey-drag-to): Fixed to match documentation that says will
+    create an explicit file link button if called anywhere other than on
+    a listing item.
+
+* hui-treemacs.el (smart-treemacs-modeline): Replaced old call of
+    treemacs-buffer-exists? with new calls to treemacs-current-visibility
+    and treemacs-get-local-buffer for Treemacs V2.
+
+2019-02-06  Bob Weiner  <rsw@gnu.org>
+
+* hibtypes.el (ripgrep-msg): Tightened match to ignore empty potential filenames
+    that matched when they were expanded to the current directory.
+
+2019-02-05  Bob Weiner  <rsw@gnu.org>
+
+* hmouse-tag.el (smart-lisp-mode-p): Removed change-log-mode.
+    (smart-lisp-at-change-log-tag-p): Added so can match
+      only to bound Elisp entities in change-log-mode with '-' in
+      the middle of their names to prevent false positives.
+  hui-mouse.el (hkey-alist): Added tightened change-log-mode handling.
+   man/hyperbole.texi (Smart Key - Lisp Source Code): Documented change.
+
+* hargs.el (hargs:delimited): Fixed that strings on lines with an odd number
+    of delimiters might fail to match.  Since strings can span lines but this
+    function matches only strings that start on the current line, when
+    start-delim and end-delim are the same and there are an odd number of
+    delimiters in the search range, assume point is within a
+    string and not between two other strings.
+    For example, with the following text and point within "DEMO", its path
+    previously was not found:
+      For each site, the links are properly maintained.  See "DEMO#Path
+      suffixes and Variables" and "DEMO#Path Prefixes".  "DEMO"
+
+* hui-treemacs.el: Deleted treemacs-mode from aw-ignored-buffers so can select
+    a Treemacs window via ace-window.
+
+2019-02-04  Bob Weiner  <rsw@gnu.org>
+
+* hui-mouse.el (smart-dired-assist): Prevented any region selection from
+    causing multiple files to be marked for deletion; we want to mark
+    only one.
+
+* hibtypes.el (annot-bib): Stopped this from activating when in org-mode to avert false positives.
+              (markdown-follow-inline-link-p, markdown-internal-link): Added ibut:label-set
+    to show a decent approximation of the button label when displaying help.
+
 2019-02-03  Bob Weiner  <rsw@gnu.org>
 
 * hversion.el: Pushed BW changes for 7.0.2b test update.
@@ -8,7 +117,7 @@
 
 * hui-treemacs.el (treemacs-version): Require v2 or higher.
 
-* hsettings.el (hyperbole-default-web-search-term-max-lines): 
+* hsettings.el (hyperbole-default-web-search-term-max-lines):
                (hyperbole-default-web-search-term): Added.
 
 * hpath.el (hpath:tramp-file-name-regexp): Added and used in hpath:remote-at-p.
@@ -47,7 +156,7 @@
     Added and called when Hyperbole is initialized, mainly to allow access to
     MSWindows network shares which would otherwise not be accessible as links
     under POSIX systems.
-           (hpath:map-plist): Added to map over property lists.
+           (hypb:map-plist): Added to map over property lists.
     Called in hpath:cache-mswindows-mount-points.
 
 2019-01-26  Bob Weiner  <rsw@gnu.org>

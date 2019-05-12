@@ -25,27 +25,37 @@
       hmouse-click-to-drag-stay, hmouse-click-to-drag-to,
       hmouse-click-to-replace, hmouse-click-to-swap, hmouse-click-to-throw.
 
+    - {M-o i <window-id>} is now for use only when on a listing item such as
+      in Dired or Buffer Menu.  It no longer creates Hyperbole buttons in
+      non-item areas to avoid confusion.  Now it will just trigger an error
+      if not on a listing item.
+
   SMART (ACTION AND ASSIST) KEYS
 
     - MSWindows Paths: Hyperbole now recognizes typical MSWindows paths (both
-      local and remote).  They may be used within links and implicit path buttons
-      just like POSIX paths, whether running Emacs under a POSIX system or
-      MSWindows.  If under POSIX, a remote MSWindows path must be accessed through
-      a mount point to the network share.  Hyperbole caches such mount points when
-      it is loaded.  Use {M-x hpath:cache-mswindows-mount-points RET} to update them
-      if more mounts are made later.  See also the NEW COMMANDS section herein for
-      how to convert a path between POSIX and MSWINDOWS/DOS formats.
+      local and remote shares) and can convert an in-buffer path between POSIX
+      and MSWindows formats multiple times, even paths involving mount points.
+      See "DEMO#POSIX and MSWindows Paths".
+
+      MSWindows paths may be used within links and implicit path
+      buttons just like POSIX paths, whether running Emacs under a POSIX
+      system or MSWindows.  If under POSIX, a remote MSWindows path must be
+      accessed through a mount point to the network share.  Hyperbole caches
+      such mount points when it is loaded.  Use {M-x
+      hpath:cache-mswindows-mount-points RET} to update them if more mounts
+      are made later.  See also the NEW COMMANDS section herein for how to
+      convert a path between POSIX and MSWindows formats.
 
     - GitLab and Github Links: Added Gitlab implicit links with equivalent
-      functionality to those of Github.  Added "people" reference support
-      to list people who are part of a formal organization as well as a
-      "staff" alias.  Added "contributors" reference support to list project
+      functionality to those of Github.  Added "people" reference support to
+      list people who are part of a formal organization as well as a "staff"
+      alias.  Added "contributors" reference support to list project
       contributors as well.  Improved Github implicit issue links: gh#gh-34
       and gh#issue/34 now properly reference an issue in the current project.
 
-    - Ripgrep: Added new ripgrep-msg implicit button type which jumps to
-      the source referenced by ripgrep (rg) output.  Ripgrep by
-      default outputs pathnames only once beforeall matching lines
+    - Ripgrep: Added new ripgrep-msg implicit button type which jumps
+      to the source referenced by ripgrep (rg) output.  By default,
+      ripgrep outputs pathnames only once before all matching lines
       within that path.  Ripgrep may also be used with the Hyperbole
       `hypb:rgrep' command by setting 'hypb:rgrep-command'.  See
       "https://github.com/BurntSushi/ripgrep".
@@ -55,28 +65,43 @@
 
     - Org Mode: When in an *Org Help* buffer, the Smart Keys now defer to
       org-mode to handle jumps to its own locations for compatibility.
+      Similarly, in org-mode buffers when not on an org link or heading,
+      and the {M-RET} Action Key is pressed, Hyperbole defers to Org's
+      org-meta-return command.
 
-    - Drag-based Kill, Copy and Yank: Added support for dragging across frames.
+    - Drag-based Kill, Copy and Yank: Added support for dragging across
+      frames.
 
     - Python Identifiers: If a Jedi server is running and the Action Key is
       pressed on a Python identifier, Hyperbole will use Jedi to find the
-      definition even within nested module references, e.g. a.b.c.  Also improved
-      basic identifier definition finding.
+      definition even within nested module references, e.g. a.b.c.  Also
+      improved basic identifier definition finding.
 
     - Company Mode Completion: Support for the Emacs company-mode completion
-      package.  After a user loads company-mode, the Action Key when pressed on
-      a source code identifier will run 'smart-company-to-definition' and the
-      Assist Key will run 'smart-company-help'.
+      package.  An Action Key press on a company-mode completion item will
+      display the definition of that item and an Assist Key press will
+      display its documentation, if any.
 
     - Treemacs Mode: Now supports standard Hyperbole end-of-line proportional
       scrolling.
 
-    - ChangeLog Mode: Smart Keys now work on Emacs Lisp references in changelogs.
+    - ChangeLog Mode: Smart Keys now work on Emacs Lisp references in
+      changelogs.
+
+    - Improved String Matching: For lines that begin with part of a string
+      that started on another line, Hyperbole now presumes that point is
+      within a string rather than between two strings, even though the
+      delimiters on the line make this ambiguous.  This provides more
+      accurate string recognition.
+
+    - Improved Path Matching: For quote delimited paths, other quote marks
+      are excluded from matches, so if checking for a doubly quoted path,
+      single quotes are not allowed in the string.
 
   HYCONTROL
 
     - Help Buffer Quitting: If HyControl is active, normally {q} quits
-      it but now if point is in an Emacs help buffer, {q} will quit
+      it, but now if point is in an Emacs help buffer, {q} will quit
       from the help buffer instead.  Use {Q} to quit from HyControl
       unconditionally.
 
@@ -92,12 +117,12 @@
     - MSWindows and POSIX Path Toggling: In "hpath.el", added
       (hpath:substitute-posix-or-mswindows-at-point) and
       (hpath:substitute-posix-or-mswindows) commands to toggle the
-      format of a path at point or in a string between POSIX and MSWindows
-      styles.
+      format of a path at point or in a string between POSIX and
+      MSWindows styles.
 
   PROGRAMMING
 
-    - Added hpath:map-plist, equivalent to mapcar but maps over
+    - Added hypb:map-plist, equivalent to mapcar but maps over
       key-value pairs in property lists (where the key and value are
       individual elements in the list).
 
@@ -119,6 +144,13 @@
 
     - Popup Menus: Documented how to invoke the Koutliner and
       HyRolo popup menus in Emacs.  See "(hyperbole)Menu Commands".
+
+    - DEMO: Added sections:
+        "DEMO#Gitlab (Remote) References"
+        "DEMO#POSIX and MSWindows Paths"
+
+    - Updated Hyperbole Manual with new features.
+
 
 ===========================================================================
 *                                   V7.0.2

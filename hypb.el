@@ -452,6 +452,13 @@ INACTIVE-P is unused, it is for compatibility with XEmacs' version of
 mark-marker."
     (mark-marker)))
 
+;;;###autoload
+(defun hypb:map-plist (func plist)
+  "Returns result of applying FUNC of two args, key and value, to key-value pairs in PLIST, a property list."
+  (cl-loop for (k v) on plist by #'cddr
+	   collect (funcall func k v) into result
+	   finally return result))
+
 (defun hypb:map-sublists (func list)
   "Applies FUNC to every atom found at any level of LIST.
 FUNC must take two arguments, an atom and a list in which the atom is found.
@@ -756,6 +763,7 @@ Without file, the banner is prepended to the current buffer."
 	(setq button (make-button (- (point) 3) (- (point) 2) :type 'hyperbole-banner))
 	(button-put button 'help-echo (concat "Click to visit " hypb:home-page))
 	(button-put button 'action #'hypb:browse-home-page)
+	(button-put button 'face 'default)
 	(button-put button 'keymap hypb:hyperbole-banner-keymap)))))
 
 (defun hypb:display-file-with-logo-xemacs (&optional file)

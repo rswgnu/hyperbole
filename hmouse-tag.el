@@ -635,6 +635,15 @@ buffer."
       (beginning-of-line)
       (looking-at "\\(;*[ \t]*\\)?(\\(autoload\\|load\\|require\\)")))
 
+(defun smart-lisp-at-change-log-tag-p ()
+  "When in a change-log mode, match to only bound Elisp identifiers and those with a '-' somewhere in the middle.
+These tight tests help eliminate undesired matches.
+Returns matching ELisp tag name that point is within, else nil."
+  (when (derived-mode-p 'change-log-mode)
+    (let ((identifier (smart-lisp-at-tag-p)))
+      (and identifier (intern-soft identifier)
+	   (string-match "[^-]-[^-]" identifier)))))
+
 (defun smart-lisp-at-tag-p (&optional no-flash)
   "Returns Lisp tag name that point is within, else nil.
 Returns nil when point is on the first line of a non-alias Lisp definition."
@@ -644,7 +653,7 @@ Returns nil when point is on the first line of a non-alias Lisp definition."
       (save-excursion
 	(skip-chars-backward identifier-chars)
 	(if (and (looking-at identifier)
-		 ;; Ignore any all punctuation matches.
+		 ;; Ignore any punctuation matches.
 		 (not (string-match "\\`[-<>*]+\\'" (match-string 0)))
 		 ;; Needed to set match string.
 		 (looking-at identifier))
@@ -664,7 +673,7 @@ Returns nil when point is on the first line of a non-alias Lisp definition."
 (defun smart-lisp-mode-p ()
   "Return t if in a mode which uses Lisp symbols."
   (or (smart-emacs-lisp-mode-p)
-      (memq major-mode '(lisp-mode scheme-mode change-log-mode))))
+      (memq major-mode '(lisp-mode scheme-mode))))
 
 ;;;###autoload
 (defun smart-objc (&optional identifier next)
@@ -761,23 +770,35 @@ If key is pressed:
 	     (buffer-substring-no-properties (match-beginning 2) (match-end 2))
 	     (match-beginning 2) (match-end 2)))))))
 
+(defun smart-jedi-find-file (file line column other-window)
+  "Function that reads a source file for jedi navigation.
+It takes these arguments: (file-to-read other-window-flag line_number column_number)."
+  (hpath:display-buffer (find-file file) other-window)
+  (jedi:goto--line-column line column))
 
 (defun smart-python-jedi-to-definition-p ()
   "If the Jedi Python identifier server is running, test and use it to jump to the definition.
 See https://tkf.github.io/emacs-jedi/latest/."
   ;; Use functions from jedi-core.el only, not from jedi.el, since
   ;; company-jedi.el users will have loaded only jedi-core.el.
-  (when (featurep 'jedi-core)
+  (when (and (featurep 'jedi-core) jedi-mode)
     (let* ((servers (jedi:-get-servers-in-use))
 	   (proc (epc:manager-server-process (car servers))))
       (and servers (processp proc)
 	   (eq 'run (process-status (process-buffer proc)))
 	   ;; The goto is performed asynchronously.
 	   ;; It reports in the minibuffer when a definition is not found.
-	   (progn (jedi:goto-definition t)
-		  ;; For use as a predicate, always return t if the Jedi server
-		  ;; is running  so other lookup techniques are not tried.
-		  t)))))
+	   ;; !! Only works on tag at point, not the tagname passed in as jedi
+	   ;; does not accept a tag parameter.
+	   ;;
+	   ;; jedi:find-file-function is an RSW custom
+	   ;; modification that allows display-where to work;
+	   ;; otherwise, will just display in another window.
+	   (let ((jedi:find-file-function #'smart-jedi-find-file))
+	     (jedi:goto-definition hpath:display-where)
+	     ;; For use as a predicate, always return t if the Jedi server
+	     ;; is running  so other lookup techniques are not tried.
+	     t)))))
 
 ;;;###autoload
 (defun smart-python (&optional identifier next)
@@ -1279,7 +1300,7 @@ See the \"${hyperb:dir}/smart-clib-sym\" script for more information."
 	       (with-no-warnings (find-tag tag))))
       ;; Signals an error if tag is not found which is caught by
       ;; many callers of this function.
-      (with-no-warnings	(find-tag tag)))))
+      (with-no-warnings (find-tag tag)))))
 
 ;;;###autoload
 (defun smart-tags-file-path (file)

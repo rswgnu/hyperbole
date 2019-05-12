@@ -1,4 +1,4 @@
-;;; htz.el ---  Timezone-based time and date support for GNU Hyperbole
+;;; htz.el --- Timezone-based time and date support for GNU Hyperbole
 ;;
 ;; Author:       Masanobu Umeda             / Bob Weiner
 ;;

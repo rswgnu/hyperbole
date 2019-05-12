@@ -4,7 +4,7 @@
 ;;
 ;; Orig-Date:    21-Sep-92
 ;;
-;; Copyright (C) 1992-2018  Free Software Foundation, Inc.
+;; Copyright (C) 1992-2019  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
 ;;
 ;; This file is part of GNU Hyperbole.
@@ -173,7 +173,7 @@ drag release window.")
 ;;; Add window handling to hmouse-alist dispatch table.
 
 (defvar hmouse-alist)
-(defun hui-window--register ()
+(defun hmouse-alist-add-window-handlers ()
   (unless (assoc #'(hmouse-inactive-minibuffer-p) hmouse-alist)
     (setq hmouse-alist
 	  (append
@@ -241,7 +241,7 @@ drag release window.")
 	     ;;
 	     )
 	   hmouse-alist))))
-(with-eval-after-load 'hui-mouse (hui-window--register))
+(with-eval-after-load 'hui-mouse (hmouse-alist-add-window-handlers))
 
 ;;; ************************************************************************
 ;;; Public functions
@@ -724,7 +724,8 @@ Ignores minibuffer window."
 (defun smart-window-of-coords (coords)
   "Returns window in which COORDS fall or nil if none.
 Ignores minibuffer window."
-  (cond ((markerp coords)
+  (cond ((null coords) nil)
+        ((markerp coords)
 	 (get-buffer-window (marker-buffer coords)))
 	((and (not (featurep 'xemacs)) (eventp coords))
 	 (let ((w-or-f (posn-window (event-start coords))))

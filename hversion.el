@@ -23,17 +23,17 @@
 ;;; Public variables
 ;;; ************************************************************************
 
-(defconst hyperb:version "7.0.2b" "GNU Hyperbole revision number.")
+(defconst hyperb:version "7.0.3" "GNU Hyperbole revision number.")
 
 ;;;###autoload
 (defvar hyperb:microsoft-os-p
   (memq system-type '(ms-windows windows-nt ms-dos win32))
-  "T iff Hyperbole is running under a Microsoft OS.")
+  "Non-nil iff Hyperbole is running under a Microsoft OS but not under Windows Subsystem for Linux (WSL).
+Use `hyperb:wsl-os-p' to test if running under WSL.")
 
 ;;;###autoload
 (defvar hyperb:wsl-os-p
-  (and (memq system-type '(gnu/linux))
-       (executable-find "wsl.exe"))
+  (and (eq system-type 'gnu/linux) (executable-find "wsl.exe") t)
   "T iff Hyperbole is running under Microsoft Windows Subsystem for Linux (WSL).")
 
 ;;;###autoload

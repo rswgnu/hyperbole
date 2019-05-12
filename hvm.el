@@ -1,4 +1,4 @@
-;;; hvm.el ---  GNU Hyperbole buttons in mail reader: Vm
+;;; hvm.el --- GNU Hyperbole buttons in mail reader: Vm
 ;;
 ;; Author:       Bob Weiner
 ;;

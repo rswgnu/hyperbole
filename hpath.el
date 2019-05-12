@@ -80,6 +80,13 @@ If the value of 'hpath:mswindows-mount-prefix' changes, then re-initialize this 
 (defconst hpath:mswindows-path-regexp "\\`.*\\.*[a-zA-Z0-9_.]"
   "Regular expression matching the start of an MSWindows path that does not start with a drive letter but contains directory separators.")
 
+(defvar hpath:mswindows-path-posix-mount-alist nil
+  "Automatically set alist of (window-path-prefix . posix-mount-point) elements.")
+
+(defvar hpath:directory-expand-alist nil
+  "Automatically set alist of (posix-mount-point . window-path-prefix) elements.
+   Used to expand windows prefixes to posix mount points during mswindows-to-posix.")
+
 ;;;###autoload
 (defun hpath:mswindows-to-posix (path)
   "Convert a recognizable MSWindows PATH to a Posix-style path or return the path unchanged.
@@ -102,10 +109,10 @@ If path begins with an MSWindows drive letter, prefix the converted path with th
   path)
 
 (defun hpath:mswindows-to-posix-separators (path)
-  "Replace all backslashes with forward slashes in PATH and abbreviate the path if possible.
-Path must be a string or an error will be triggered.  See
-'abbreviate-file-name' for how path abbreviation is handled."
-  (abbreviate-file-name (replace-regexp-in-string "\\\\" "/" path)))
+  "Replace all backslashes with forward slashes in PATH and expand the path against `directory-abbrev-alist', if possible.
+Path must be a string or an error will be triggered."
+  (let ((directory-abbrev-alist hpath:directory-expand-alist))
+    (replace-regexp-in-string "\\\\" "/" (abbreviate-file-name path))))
 
 ;;;###autoload
 (defun hpath:posix-to-mswindows (path)
@@ -130,7 +137,6 @@ If path begins with an optional mount prefix, 'hpath:mswindows-mount-prefix', fo
 			       "\\")
 			     rest-of-path))))))
   path)
-
 
 (defun hpath:posix-to-mswindows-separators (path)
   "Replace all forward slashes with backslashes in PATH and abbreviate the path if possible.
@@ -169,37 +175,40 @@ Path must be a string or an error will be triggered.  See
       (hpath:mswindows-to-posix path))))
 
 ;;;###autoload
-(defun hpath:map-plist (func plist)
-  "Returns result of applying FUNC of two args, key and value, to key-value pairs in PLIST, a property list."
-  (cl-loop for (k v) on plist by #'cddr
-	   collect (funcall func k v) into result
-	   return result))
-
-;;;###autoload
 (defun hpath:cache-mswindows-mount-points ()
   "Cache valid MSWindows mount points in 'directory-abbrev-alist' when under a non-MSWindows operating system, e.g. WSL.
 Call this function manually if mount points change after Hyperbole is loaded."
   (interactive)
   (when (not hyperb:microsoft-os-p)
-    (let (path mount-point)
+    (let ((mount-points-to-add
+	   ;; Sort alist of (path-mounted . mount-point) elements from shortest
+	   ;; to longest path so that the longest path is selected first within
+	   ;; 'directory-abbrev-alist' (elements are added in reverse order).
+	   (sort
+	    ;; Convert plist to alist for sorting.
+	    (hypb:map-plist (lambda (path mount-point)
+			       (if (string-match "\\`\\([a-zA-Z]\\):\\'" path)
+				   ;; Drive letter must be downcased
+				   ;; in order to work when converted back to Posix.
+				   (setq path (concat "/" (downcase (match-string 1 path)))))
+			       ;; Assume all mounted Windows paths are
+			       ;; lowercase for now.
+			       (cons (downcase path) mount-point))
+			     ;; Return a plist of MSWindows path-mounted mount-point pairs.
+			     (split-string (shell-command-to-string (format "df -a -t drvfs 2> /dev/null | sort | uniq | grep -v '%s' | sed -e 's+ .*[-%%] /+ /+g'" hpath:posix-mount-points-regexp))))
+	    (lambda (cons1 cons2) (<= (length (car cons1)) (length (car cons2))))))
+	  path mount-point)
       (mapcar (lambda (path-and-mount-point)
 		(setq path (car path-and-mount-point)
 		      mount-point (cdr path-and-mount-point))
 		(add-to-list 'directory-abbrev-alist (cons (format "\\`%s" (regexp-quote path))
 							   mount-point)))
-	      ;; Sort alist of (path-mounted . mount-point) elements from shortest
-	      ;; to longest path so that the longest path is selected first within
-	      ;; 'directory-abbrev-alist' (elements are added in reverse order).
-	      (sort
-	       ;; Convert plist to alist for sorting.
-	       (hpath:map-plist (lambda (path mount-point)
-				 (if (string-match "\\`\\([a-zA-Z]\\):\\'" path)
-				     (setq path (concat "/" (downcase (match-string 1 path)))))
-				 (cons path mount-point))
-			       ;; Return a plist of MSWindows path-mounted mount-point pairs.
-			       (split-string (shell-command-to-string
-					      (format "df 2> /dev/null | grep -v '%s' | sed -e 's/ .*%%//g'" hpath:posix-mount-points-regexp))))
-	       (lambda (cons1 cons2) (<= (length (car cons1)) (length (car cons2)))))))))
+	      mount-points-to-add)
+      (setq hpath:directory-expand-alist
+	    ;; Save the reverse of each mount-points-to-add so
+	    ;; can expand paths when going from posix-to-mswindows.
+	    (mapcar (lambda (elt) (cons (cdr elt) (car elt))) mount-points-to-add))
+      mount-points-to-add)))
 
 
 ;;; ************************************************************************
@@ -705,9 +714,9 @@ With optional INCLUDE-POSITIONS, returns a triplet list of (path start-pos
 end-pos) or nil."
   ;; Prevents MSWindows to Posix path substitution
   (let ((hyperb:microsoft-os-p t))
-    (or (hargs:delimited "\"" "\"" nil nil include-positions)
+    (or (hargs:delimited "\"" "\"" nil nil include-positions "[`'’]")
 	;; Filenames in Info docs or Python files
-	(hargs:delimited "[`'‘]" "[`'’]" t t include-positions)
+	(hargs:delimited "[`'‘]" "[`'’]" t t include-positions "\"")
 	;; Filenames in TexInfo docs
 	(hargs:delimited "@file{" "}" nil nil include-positions)
 	;; Any existing whitespace delimited filename at point.
@@ -794,17 +803,17 @@ program)."
     (if (string-match hpath:prefix-regexp filename)
 	(setq modifier (aref filename 0)
 	      filename (substring filename (match-end 0))))
-    (setq filename (hpath:substitute-value filename)
+    (setq path (hpath:substitute-value
+		(if (string-match hpath:markup-link-anchor-regexp filename)
+		    (progn (setq hash t
+				 anchor (match-string 3 filename))
+			   (substring filename 0 (match-end 1)))
+		  filename))
 	  loc (hattr:get 'hbut:current 'loc)
 	  dir (file-name-directory
 	       ;; Loc may be a buffer without a file
 	       (if (stringp loc) loc default-directory))
-	  filename (hpath:absolute-to filename dir)
-	  path (if (string-match hpath:markup-link-anchor-regexp filename)
-		   (progn (setq hash t
-				anchor (match-string 3 filename))
-			  (substring filename 0 (match-end 1)))
-		 filename))
+	  filename (hpath:absolute-to path dir))
     (let ((remote-filename (hpath:remote-p path)))
       (or modifier remote-filename
 	  (file-exists-p path)
@@ -980,7 +989,7 @@ See also `hpath:internal-display-alist' for internal, window-system independent 
 			     (cons "next" hpath:external-display-alist-macos)))))))
 
 (defun hpath:is-p (path &optional type non-exist)
-  "Returns PATH if PATH is a Posix path, else nil.
+  "Returns PATH if PATH is a Posix or MSWindows path, else nil.
 If optional TYPE is the symbol 'file or 'directory, then only that path type
 is accepted as a match.  The existence of the path is checked only for
 locally reachable paths (Info paths are not checked).  Single spaces are

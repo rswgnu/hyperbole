@@ -18,12 +18,17 @@
 
 (eval-and-compile (require 'treemacs nil t))
 
-(unless (string-greaterp treemacs-version "v2")
+(unless (and (featurep 'treemacs) (string-greaterp treemacs-version "v2"))
   (error "(hui-treemacs): Hyperbole requires Treemacs package version 2.0 or greater"))
 
 ;;; ************************************************************************
 ;;; smart-treemacs functions
 ;;; ************************************************************************
+
+;; Want to be able to select Treemacs window with ace-window.
+;; This also averts window labeling problems with ace-window.
+(eval-after-load "ace-window"
+  '(setq aw-ignored-buffers (delq 'treemacs-mode aw-ignored-buffers)))
 
 (unless (fboundp 'treemacs-quit)
   (fset 'treemacs-quit #'bury-buffer))
@@ -79,28 +84,24 @@ quit/hide the Treemacs window.  Otherwise, display the Treemacs window
 with the default directory of the buffer modeline clicked upon.
 
 Suitable for use as a value of `action-key-modeline-buffer-id-function'."
-  (if (fboundp 'treemacs)
-      (progn
-	(require 'treemacs)
-	(cond
-	 ;; Clicked on Treemacs buffer id
-	 ((if action-key-depress-window
-	      (treemacs-is-treemacs-window? action-key-depress-window)
-	    (string-match " Treemacs " (format-mode-line mode-line-format)))
-	  ;; Quit/hide treemacs.
-	  (treemacs-quit))
-	 ;;
-	 ;; Treemacs is visible and displaying the same dir as
-	 ;; the default dir of the clicked on modeline.
-	 ((and (treemacs-buffer-exists?)
-	       (string-equal (expand-file-name default-directory)
-			     (with-current-buffer (treemacs-buffer-exists?)
-			       default-directory)))
-	  ;; Quit/hide treemacs.
-	  (treemacs-quit))
-	 ;;
-	 ;; Otherwise, invoke treemacs on the default dir of the clicked on modeline.
-	 (t (treemacs))))
-    (error "(smart-treemacs-modeline): Treemacs package is not installed")))
+  (cond
+   ;; Clicked on Treemacs buffer id
+   ((if action-key-depress-window
+	(treemacs-is-treemacs-window? action-key-depress-window)
+      (string-match " Treemacs " (format-mode-line mode-line-format)))
+    ;; Quit/hide treemacs.
+    (treemacs-quit))
+   ;;
+   ;; Treemacs is visible and displaying the same dir as
+   ;; the default dir of the clicked on modeline.
+   ((and (eq (treemacs-current-visibility) 'visible)
+	 (string-equal (expand-file-name default-directory)
+		       (with-current-buffer (treemacs-get-local-buffer)
+			 default-directory)))
+    ;; Quit/hide treemacs.
+    (treemacs-quit))
+   ;;
+   ;; Otherwise, invoke treemacs on the default dir of the clicked on modeline.
+   (t (treemacs))))
 
 (provide 'hui-treemacs)

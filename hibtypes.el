@@ -128,9 +128,11 @@ any buffer attached to a file in `hyrolo-file-list', or any buffer with
   "Makes a valid pathname display the path entry.
 Also works for delimited and non-delimited remote pathnames,
 Texinfo @file{} entries, and hash-style link references to HTML,
-Markdown or Emacs outline headings.  Emacs Lisp library
-files (filenames without any directory component that end in .el
-and .elc) are looked up using the `load-path' directory list.
+Markdown or Emacs outline headings, and MSWindows paths (see
+\"${hyperb:dir}/DEMO#POSIX and MSWindows Paths\" for details).
+Emacs Lisp library files (filenames without any directory
+component that end in .el and .elc) are looked up using the
+`load-path' directory list.
 
 See `hpath:at-p' function documentation for possible delimiters.
 See `hpath:suffixes' variable documentation for suffixes that are
@@ -250,29 +252,6 @@ current major mode is one handled by func-menu."
 		(hact 'function-in-buffer function-name function-pos)))))))
 
 ;;; ========================================================================
-;;; Use the Emacs imenu library to jump to definition of an identifier
-;;; defined in the same file in which it is referenced.  Identifier
-;;; references across files are handled separately by clauses within
-;;; the `hkey-alist' variable.
-;;; ========================================================================
-
-;;; This implicit button type is not needed because hkey-alist handles imenu items.
-;; (defib imenu-item ()
-;;   "Displays the in-buffer definition of an identifier that point is within or after, else nil.
-;; This triggers only when imenu has already been used to generate an in-buffer item index."
-;;   (when (and (featurep 'imenu) imenu--index-alist)
-;;     (save-excursion
-;;       (skip-syntax-backward "w_")
-;;       (if (looking-at "\\(\\sw\\|\\s_\\)+")
-;; 	  (let* ((item-name (buffer-substring-no-properties (point) (match-end 0)))
-;; 		 (start (point))
-;; 		 (end (match-end 0))
-;; 		 (item-pos (imenu-item-p item-name)))
-;; 	    (when item-pos
-;; 	      (ibut:label-set item-name start end)
-;; 	      (hact 'imenu-display-item-where item-name item-pos)))))))
-
-;;; ========================================================================
 ;;; Handles internal references within an annotated bibliography, delimiters=[]
 ;;; ========================================================================
 
@@ -287,7 +266,7 @@ must have an attached file."
        (let ((chr (aref (buffer-name) 0)))
 	 (not (or (eq chr ?\ ) (eq chr ?*))))
        (not (or (derived-mode-p 'prog-mode)
-		(memq major-mode '(c-mode objc-mode c++-mode java-mode markdown-mode))))
+		(apply #'derived-mode-p '(c-mode objc-mode c++-mode java-mode markdown-mode org-mode))))
        (let* ((ref-and-pos (hbut:label-p t "[" "]" t))
 	      (ref (car ref-and-pos)))
 	 (and ref (eq ?w (char-syntax (aref ref 0)))
@@ -342,10 +321,11 @@ Returns t if jumps and nil otherwise."
 	     ;; Leave point on the link even if not activated
 	     ;; here, so that code elsewhere activates it.
 	     (if (and (markdown-link-p)
-		      (not (or (hpath:www-at-p) (hpath:at-p))))
-		 ;; In-file referents will be handled later by the
-		 ;; pathname implicit type, not here.
-		 (progn (hpath:display-buffer (current-buffer))
+		      (save-match-data (not (or (hpath:www-at-p) (hpath:at-p)))))
+		 ;; In-file referents are handled by the 'markdown-internal-link'
+		 ;; implicit button type, not here.
+		 (progn (ibut:label-set (match-string-no-properties 0) (match-beginning 0) (match-end 0))
+			(hpath:display-buffer (current-buffer))
 			(hact 'markdown-follow-link-at-point))))
     (goto-char opoint)
     nil))
@@ -361,6 +341,7 @@ Returns t if jumps and nil otherwise."
 		 ;; Follows a reference link or footnote to its referent.
 		 (if (markdown-follow-link-p)
 		     (when (/= opoint (point))
+		       (ibut:label-set (match-string-no-properties 0) (match-beginning 0) (match-end 0))
 		       (setq npoint (point))
 		       (goto-char opoint)
 		       (hact 'link-to-file buffer-file-name npoint))
@@ -370,6 +351,7 @@ Returns t if jumps and nil otherwise."
 	       ;; link itself and follow that.
 	       (error (markdown-follow-inline-link-p opoint))))
 	    ((markdown-wiki-link-p)
+	     (ibut:label-set (match-string-no-properties 0) (match-beginning 0) (match-end 0))
 	     (hpath:display-buffer (current-buffer))
 	     (hact 'markdown-follow-wiki-link-at-point))))))
 	     
@@ -677,12 +659,14 @@ buffer)."
       (beginning-of-line)
       (when (looking-at "\\([1-9][0-9]*\\)[-:]")
 	;; Ripgrep matches and context lines (-A<num> option)
-	(let ((line-num (match-string-no-properties 1)))
+	(let ((line-num (match-string-no-properties 1))
+	      file)
 	  (while (and (= (forward-line -1) 0)
 		      (looking-at "[1-9][0-9]*[-:]\\|--$")))
-	  (unless (looking-at "[1-9][0-9]*[-:]\\|--$")
-	    (let* ((file (buffer-substring-no-properties (point-at-bol) (point-at-eol)))
-		   (but-label (concat file ":" line-num))
+	  (unless (or (looking-at "[1-9][0-9]*[-:]\\|--$")
+		      (and (setq file (buffer-substring-no-properties (point-at-bol) (point-at-eol)))
+			   (string-empty-p (string-trim file))))
+	    (let* ((but-label (concat file ":" line-num))
 		   (source-loc (if (file-name-absolute-p file) nil
 				 (hbut:key-src t))))
 	      (if (stringp source-loc)

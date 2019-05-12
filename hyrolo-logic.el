@@ -1,4 +1,4 @@
-;;; hyrolo-logic.el ---  Logic functions for GNU Hyperbole Rolo files
+;;; hyrolo-logic.el --- Logic functions for GNU Hyperbole Rolo files
 ;;
 ;; Author:       Bob Weiner
 ;;

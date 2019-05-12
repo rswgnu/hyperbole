@@ -259,9 +259,10 @@ Other paths are simply expanded.  Non-path arguments are returned unchanged."
 ;;; ========================================================================
 
 (defmacro hact (&rest args)
-  "Performs action formed from rest of ARGS.
+  "Performs action formed from rest of ARGS and returns the result or acts as a no-op when testing implicit button type contexts.
 First arg may be a symbol or symbol name for either an action type or a
-function.  Runs `action-act-hook' before performing action."
+function.  Runs `action-act-hook' before performing action.
+The value of `hrule:action' determines what effect this has."
   (eval `(cons 'funcall (cons 'hrule:action ',args))))
 
 (defun    actype:act (actype &rest args)

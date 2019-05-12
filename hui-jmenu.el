@@ -1,4 +1,4 @@
-;;; hui-jmenu.el ---  Popup menus for jumping to and managing buffers, frames, and windows
+;;; hui-jmenu.el --- Popup menus for jumping to and managing buffers, frames, and windows
 ;;
 ;; Author:       Bob Weiner
 ;;

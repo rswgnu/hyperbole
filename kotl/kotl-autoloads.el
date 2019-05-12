@@ -3,7 +3,7 @@
 ;;; Code:
 
 
-;;;### (autoloads nil "kexport" "kexport.el" (23052 38385 0 0))
+;;;### (autoloads nil "kexport" "kexport.el" (0 0 0 0))
 ;;; Generated autoloads from kexport.el
 
 (autoload 'kexport:html "kexport" "\
@@ -15,6 +15,8 @@ STILL TODO:
   Copy attributes stored in cell 0 and attributes from each cell.
 
 \(fn EXPORT-FROM OUTPUT-TO &optional SOFT-NEWLINES-FLAG)" t nil)
+
+(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "kexport" '("kexport:")))
 
 ;;;***
 
@@ -39,7 +41,14 @@ View an existing kotl version-2 file FILE-NAME in a read-only mode.
 
 ;;;***
 
-;;;### (autoloads nil "kimport" "kimport.el" (23052 38368 0 0))
+;;;### (autoloads nil "kfill" "kfill.el" (0 0 0 0))
+;;; Generated autoloads from kfill.el
+
+(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "kfill" '("fill-paragraph" "kfill:" "prior-fill-prefix" "set-fill-prefix")))
+
+;;;***
+
+;;;### (autoloads nil "kimport" "kimport.el" (0 0 0 0))
 ;;; Generated autoloads from kimport.el
 
 (defvar kimport:mode-alist '((t . kimport:text) (outline-mode . kimport:star-outline)) "\
@@ -124,6 +133,8 @@ The variable, `paragraph-start,' is used to determine paragraphs.
 
 \(fn IMPORT-FROM OUTPUT-TO &optional CHILDREN-P)" t nil)
 
+(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "kimport" '("kimport:")))
+
 ;;;***
 
 ;;;### (autoloads nil "klink" "klink.el" (22481 28335 0 0))
@@ -138,7 +149,14 @@ See documentation for `kcell:ref-to-id' for valid cell-ref formats.
 
 ;;;***
 
-;;;### (autoloads nil "kotl-mode" "kotl-mode.el" (23052 38304 0 0))
+;;;### (autoloads nil "kmenu" "kmenu.el" (0 0 0 0))
+;;; Generated autoloads from kmenu.el
+
+(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "kmenu" '("id-" "kotl-")))
+
+;;;***
+
+;;;### (autoloads nil "kotl-mode" "kotl-mode.el" (0 0 0 0))
 ;;; Generated autoloads from kotl-mode.el
 
 (autoload 'kotl-mode "kotl-mode" "\
@@ -187,11 +205,26 @@ Signal an error if current buffer is not a Hyperbole outline, else return t.
 
 \(fn)" nil nil)
 
+(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "kotl-mode" '("delete-selection-pre-hook" "kotl-mode" "yank-")))
+
 ;;;***
 
-;;;### (autoloads nil nil ("kcell.el" "kfill.el" "klabel.el" "kmenu.el"
-;;;;;;  "knode.el" "kprop-em.el" "kprop-xe.el" "kproperty.el" "kview.el"
-;;;;;;  "kvspec.el") (23052 38356 0 0))
+;;;### (autoloads nil "kview" "kview.el" (0 0 0 0))
+;;; Generated autoloads from kview.el
+
+(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "kview" '("kcell-view:" "kview:")))
+
+;;;***
+
+;;;### (autoloads nil "kvspec" "kvspec.el" (0 0 0 0))
+;;; Generated autoloads from kvspec.el
+
+(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "kvspec" '("kvspec:")))
+
+;;;***
+
+;;;### (autoloads nil nil ("kcell.el" "klabel.el" "knode.el" "kprop-em.el"
+;;;;;;  "kprop-xe.el" "kproperty.el") (0 0 0 0))
 
 ;;;***
 

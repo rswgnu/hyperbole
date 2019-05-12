@@ -1,4 +1,4 @@
-;;; hui-xe-but.el ---  XEmacs button highlighting and flashing support
+;;; hui-xe-but.el --- XEmacs button highlighting and flashing support
 ;;
 ;; Author:       Bob Weiner
 ;;
