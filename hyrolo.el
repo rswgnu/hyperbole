@@ -189,10 +189,8 @@ entry which begins with the parent string."
 	    parent (substring name 0 end)
 	    name (substring name (min (1+ end) (length name))))
       (if (re-search-forward
-	   (concat "\\(" hyrolo-entry-regexp "\\)[ \t]*" 
-		   (regexp-quote parent)) nil t)
-	  (setq level (buffer-substring-no-properties (match-beginning 1)
-						      (match-end 1)))
+	   (concat hyrolo-entry-regexp (regexp-quote parent)) nil t)
+	  (setq level (match-string-no-properties 1))
 	(error "(hyrolo-add): `%s' category not found in \"%s\"."
 	       parent file)))
     (narrow-to-region (point)
@@ -210,10 +208,10 @@ entry which begins with the parent string."
       ;; entry by moving to an entry with the same (or nearest) first character
       ;; to that of `name'.
       (if (and (= level-len 1)
-	       (equal hyrolo-entry-regexp "^\\*+"))
+	       (equal hyrolo-entry-regexp "^\\(\\*+\\)\\([ \t]+\\)"))
 	  (progn (goto-char (point-min))
-		 (if (re-search-forward (concat "^\\*[ \t]*"
-						(char-to-string first-char))
+		 (if (re-search-forward (concat hyrolo-entry-regexp
+						(regexp-quote (char-to-string first-char)))
 					nil t)
 		     (goto-char (match-beginning 0))
 		   (goto-char (point-max))
@@ -235,17 +233,12 @@ entry which begins with the parent string."
 			      (setq again nil)))))
 	(goto-char (point-min)))
 
-      (while (and again
-		  (re-search-forward
-		   (concat "\\(" hyrolo-entry-regexp "\\)\\([ \t]*\\)")
-		   nil 'end))
-	(setq entry-level (buffer-substring-no-properties (match-beginning 1)
-							  (match-end 1)))
+      (while (and again (re-search-forward hyrolo-entry-regexp nil 'end))
+	(setq entry-level (match-string-no-properties 1))
 	(if (/= (length entry-level) level-len)
 	    (hyrolo-to-entry-end t entry-level)
 	  (setq entry (buffer-substring-no-properties (point) (+ (point) len))
-		entry-spc (buffer-substring-no-properties (match-beginning 2)
-							  (match-end 2)))
+		entry-spc (match-string-no-properties hyrolo-entry-regexp-))
 	  (cond ((string< entry name)
 		 (hyrolo-to-entry-end t entry-level))
 		((string< name entry)
@@ -534,7 +527,7 @@ Returns t if entry is killed, nil otherwise."
 (defun hyrolo-locate ()
   "Interactively search for an entry beginning with a set of search characters."
   (interactive)
-  (hyrolo-isearch-for-regexp (concat hyrolo-entry-regexp "[ \t]*")))
+  (hyrolo-isearch-for-regexp hyrolo-entry-regexp))
 
 (defun hyrolo-mail-to ()
   "Start composing mail addressed to the first e-mail address at or after point."
@@ -1301,8 +1294,7 @@ Name is returned as `last, first-and-middle'."
 		   (skip-chars-forward " \t")
 		   (if (or (looking-at "[^ \t\n\r]+ ?, ?[^ \t\n\r]+")
 			   (looking-at "\\( ?[^ \t\n\r]+\\)+"))
-		       (buffer-substring-no-properties (match-beginning 0)
-						       (match-end 0))))))))
+		       (match-string-no-properties 0)))))))
 
 (defun hyrolo-narrowed-p ()
   (or (/= (point-min) 1) (/= (1+ (buffer-size)) (point-max))))
@@ -1393,11 +1385,8 @@ Returns point where matching entry begins or nil if not found."
 		   (while (and (not level) (search-forward parent nil t))
 		     (save-excursion
 		       (beginning-of-line)
-		       (if (looking-at
-			    (concat "\\(" hyrolo-entry-regexp "\\)[ \t]*" 
-				    (regexp-quote parent)))
-			   (setq level (buffer-substring-no-properties (match-beginning 1)
-								       (match-end 1))))))
+		       (if (looking-at (concat hyrolo-entry-regexp (regexp-quote parent)))
+			   (setq level (match-string-no-properties 1)))))
 		   level))
 		((equal name real-name)) ;; Try next file.
 		(t ;; Found parent but not child
@@ -1415,9 +1404,7 @@ Returns point where matching entry begins or nil if not found."
 			   (beginning-of-line)
 			   (setq found
 				 (if (looking-at
-				      (concat "\\(" hyrolo-entry-regexp
-					      "\\)[ \t]*"
-					      (regexp-quote name)))
+				      (concat hyrolo-entry-regexp (regexp-quote name)))
 				     (point))))))))
       (or found (hyrolo-kill-buffer))) ;; conditionally kill
     (widen)
@@ -1472,10 +1459,18 @@ Calls the functions given by `hyrolo-mode-hook'.
   "Buffer used to display set of last matching rolo entries.")
 (define-obsolete-variable-alias 'rolo-display-buffer 'hyrolo-display-buffer "06.00")
 
-(defvar hyrolo-entry-regexp "^\\*+"
+(defvar hyrolo-entry-group-number 1
+  "Group number within `hyrolo-entry-regexp' whose length represents the level of any entry matched.")
+
+(defvar hyrolo-entry-trailing-space-group-number 2
+  "Group number within `hyrolo-entry-regexp; containing trailing space.")
+
+(defvar hyrolo-entry-regexp "^\\(\\*+\\)\\([ \t]+\\)"
   "Regular expression to match the beginning of a rolo entry.
-This pattern must match the beginning of the line.  Entries may be nested
-through the use of increasingly longer beginning patterns.")
+This pattern must match the beginning of the line.  Use
+`hyrolo-entry-group-number' to compute the entry's level in the
+hierarchy.  Use `hyrolo-entry-trailing-space-group-number' to capture
+the whitespace following the entry hierarchy level.")
 (define-obsolete-variable-alias 'rolo-entry-regexp 'hyrolo-entry-regexp "06.00")
 
 (defconst hyrolo-hdr-format

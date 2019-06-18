@@ -66,7 +66,7 @@
       (message "{%s} now runs `%s'" new-key-text cmd))))
 
 (defun hui:ebut-create (&optional start end)
-  "Creates an explicit but starting from label between optional START and END.
+  "Creates an explicit Hyperbole button starting from label between optional START and END.
 Indicates by delimiting and adding any necessary instance number of the button
 label."
   (interactive (list (and (marker-position (hypb:mark-marker t))
@@ -862,7 +862,9 @@ possible types.
 
 Referent Context         Possible Link Type Returned
 ----------------------------------------------------
+Global Button            link-to-gbut
 Explicit Button          link-to-ebut
+Implicit Button          link-to-ibut
 Info Index Item          link-to-Info-index-item
 Info Node                link-to-Info-node
 Mail Reader Message      link-to-mail
@@ -877,8 +879,12 @@ Buffer without File      link-to-buffer-tmp"
 
   (let (val)
     (delq nil
-	  (list (if (ebut:at-p)
-		    (list 'link-to-ebut buffer-file-name (ebut:label-p)))
+	  (list (cond ((eq (current-buffer) (get-file-buffer gbut:file))
+		       (list 'link-to-gbut buffer-file-name (ebut:label-p)))
+		      ((ebut:at-p)
+		       (list 'link-to-ebut buffer-file-name (ebut:label-p)))
+		      ((ibut:at-p)
+		       (list 'link-to-ibut buffer-file-name (ibut:label-p))))
 		(cond ((eq major-mode 'Info-mode)
 		       (if (and Info-current-node
 				(member Info-current-node

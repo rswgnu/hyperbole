@@ -314,7 +314,7 @@ With TWO-LINES-FLAG non-nil, constrains label search to two lines."
 		   (t (if as-label (ebut:key-to-label lbl-key) lbl-key))))))))
 
 (defun    ebut:label-regexp (lbl-key &optional no-delim)
-  "Unnormalizes LBL-KEY.  Returns regular expr matching delimited but label.
+  "Unnormalizes LBL-KEY.  Returns regular expr matching delimited button label.
 Optional NO-DELIM leaves off delimiters and leading and trailing space."
   (if lbl-key
       (let* ((pos 0)
@@ -1061,6 +1061,20 @@ With optional KEY-ONLY, returns only the label key for button."
 			     ))
 		(hattr:set 'hbut:current 'args (cdr args))))
 	  'hbut:current))))
+
+(defun    ibut:at-type-p (ibut-type-symbol)
+  "Returns non-nil if point is on a button of type `ibut-type-symbol`.
+The return value is a list of the type's action type symbol and
+associated arguments from the button."
+  (if (and ibut-type-symbol (symbolp ibut-type-symbol))
+      (let ((type-name (symbol-name ibut-type-symbol)))
+	(unless (string-match "::" type-name)
+	  (setq ibut-type-symbol (intern-soft (concat "ibtypes::" type-name))))
+	(if ibut-type-symbol
+	    (let ((types (htype:category 'ibtypes))
+		  ;; Global var used in (hact) function, don't delete.
+		  (hrule:action 'actype:identity))
+	      (funcall ibut-type-symbol))))))
 
 (defun    ibut:is-p (object)
   "Returns non-nil if object denotes an implicit Hyperbole button."

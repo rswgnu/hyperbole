@@ -70,7 +70,7 @@ Any key sequence must be a string of one of the following:
 	   binding)
       ;; Match only when start delimiter is preceded by whitespace or
       ;; is the 1st buffer character, so do not match to things like ${variable}.
-      (when (= (char-syntax (or (char-before start) ?\t)) ?\ )
+      (when (memq (char-before start) '(nil ?\ ?\t ?\n ?\j ?\f))
 	(when (and (stringp key-sequence)
 		   (not (eq key-sequence "")))
 	  (setq key-sequence (kbd-key:normalize key-sequence)
@@ -171,17 +171,7 @@ With optional prefix arg FULL, displays full documentation for command."
 		(string-to-number (substring norm-key-seq (match-beginning 2)
 					     (match-end 2)))
 		norm-key-seq (substring norm-key-seq (match-end 0))))
-	(let (arg-val)
-	  (while (string-match "\\`C-u" norm-key-seq)
-	    (if (or (not (listp arg))
-		    (not (integerp (setq arg-val (car arg)))))
-		(setq arg '(1)
-		      arg-val 1))
-	    (setq arg-val (* arg-val 4)
-		  arg (cons arg-val nil)
-		  norm-key-seq (substring norm-key-seq (match-end 0)))))
-	(if arg (setq norm-key-seq (concat (format "\025%s" arg) norm-key-seq)))
-	;;
+
 	;; Quote Control and Meta key names
 	(setq norm-key-seq (hypb:replace-match-string
 			    "C-\\(.\\)" norm-key-seq
@@ -208,7 +198,7 @@ With optional prefix arg FULL, displays full documentation for command."
   (and (stringp key-sequence) (string-match kbd-key:extended-command-prefix key-sequence)))
   
 (defun kbd-key:hyperbole-hycontrol-key-p (key-sequence)
-  "Returns t if normalized KEY-SEQUENCE is given when in a HyControl mode, else nil.
+  "Returns t if normalized, non-nil KEY-SEQUENCE is given when in a HyControl mode, else nil.
 Allows for multiple key sequences strung together."
   (and key-sequence
        (featurep 'hycontrol)

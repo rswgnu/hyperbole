@@ -2554,7 +2554,8 @@ With optional prefix ARG, toggle display of blank lines between cells."
 	     (kview:set-attr kview 'lines-to-show 0)
 	     (outline-flag-region (point-min) (point-max) nil)
 	     (if arg (kvspec:toggle-blank-lines))
-	     (kvspec:update t))))
+	     (if (called-interactively-p 'interactive)
+		 (kvspec:update t)))))
 
 ;;;###autoload
 (defun kotl-mode:top-cells (&optional arg)

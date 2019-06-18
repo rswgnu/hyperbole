@@ -29,8 +29,8 @@
 	(key-regexp (concat "^[*]*[ \t]*\\\[" (ebut:key-to-label key) "\\\]"))
 	citation)
     (if (save-excursion
-	  (goto-char (point-min))
-	  (setq citation (re-search-forward key-regexp nil t)))
+	  (goto-char (point-max))
+	  (setq citation (re-search-backward key-regexp nil t)))
 	(progn (hpath:display-buffer (current-buffer))
 	       (goto-char citation)
 	       (beginning-of-line))
@@ -272,11 +272,12 @@ Use `link-to-file' instead for a permanent link."
 					    nil nil nil 'ebut)))
 	       (beep))
 	     (ebut:label-to-key but-lbl)))))
-  (or (called-interactively-p 'interactive)
-      (setq key-file (hpath:validate (hpath:substitute-value key-file))))
+  (unless (called-interactively-p 'interactive)
+    (setq key-file (hpath:validate (hpath:substitute-value key-file))))
   (let ((but (ebut:get key (find-file-noselect key-file))))
     (if but (hbut:act but)
-      (hypb:error "(link-to-ebut): No button `%s' in `%s'." (ebut:key-to-label key)
+      (hypb:error "(link-to-ebut): No button `%s' in `%s'."
+		  (ebut:key-to-label key)
 		  key-file))))
 
 (defact link-to-elisp-doc (symbol)
@@ -351,6 +352,29 @@ the window."
       (hpath:find-line path line-num))
     (move-to-column column-num)))
 
+(defact link-to-gbut (key)
+  "Performs action given by an existing global button, specified by KEY."
+  (interactive
+   (let ((gbut-file (hpath:validate (hpath:substitute-value gbut:file)))
+	 but-lbl)
+     (if (not (file-readable-p gbut-file))
+	 (hypb:error "(link-to-gbut): You cannot read `%s'." gbut-file)
+       (list (progn
+	       (find-file-noselect gbut-file)
+	       (while (string-equal "" (setq but-lbl
+					     (hargs:read-match
+					      "Global button to link to: "
+					      (ebut:alist gbut-file)
+					      nil nil nil 'ebut)))
+		 (beep))
+	       (ebut:label-to-key but-lbl))))))
+  (let ((gbut-file (hpath:validate (hpath:substitute-value gbut:file)))
+	(but (ebut:get key (find-file-noselect (expand-file-name gbut:file)))))
+    (if but (hbut:act but)
+      (hypb:error "(link-to-gbut): No button `%s' in `%s'."
+		  (ebut:key-to-label key)
+		  gbut-file))))
+
 (defact link-to-Info-index-item (index-item)
   "Displays an Info index INDEX-ITEM cross-reference.
 INDEX-ITEM must be a string of the form \"(filename)item-name\".  During
@@ -372,6 +396,30 @@ available.  Filename may be given without the .info suffix."
   (if (and (stringp string) (string-match "^(\\([^\)]+\\))\\(.*\\)" string))
       (id-info string)
     (hypb:error "(link-to-Info-node): Invalid Info node: `%s'" string)))
+
+(defact link-to-ibut (key-file key point)
+  "Performs action given by an implicit button, specified by KEY-FILE, KEY and POINT.
+When creating the button, point must be on the implicit button to which to link
+and its buffer must have a file attached."
+  (interactive
+   (let ((ibut-key (ibut:at-p t)))
+     (if (and ibut-key buffer-file-name)
+	 (list buffer-file-name ibut-key (point))
+       (list nil nil nil))))
+  (or (called-interactively-p 'interactive)
+      (setq key-file (hpath:validate (hpath:substitute-value key-file))))
+  (let (but)
+    (if (and key-file
+	     (save-excursion
+	       (save-restriction
+		 (find-file-noselect key-file)
+		 (widen)
+		 (goto-char point)
+		 (setq but (ibut:at-p)))))
+	(hbut:act but)
+      (hypb:error "(link-to-ibut): No button `%s' in `%s'."
+		  (ebut:key-to-label key)
+		  key-file))))
 
 (defact link-to-kcell (file cell-ref)
   "Displays FILE with kcell given by CELL-REF at window top.

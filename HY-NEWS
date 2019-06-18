@@ -887,7 +887,7 @@ are new in 2016 and you should look through them all.
       Implicit-Button menu.
 
     - On the Hyperbole Customize/Change-Key-Bindings menubar menu, renamed
-      these entries and added Mark-Think-Key.  Similar updates done to the
+      these entries and added Mark-Thing-Key.  Similar updates done to the
       minibuffer menu.
 
   MOUSE AND SMART KEY SUPPORT
@@ -906,7 +906,7 @@ are new in 2016 and you should look through them all.
       help mode so you can page through it with SPC and DEL keys and then quit
       from it with {q}.
 
-    - A click of the Action Mouse Key within an inactive minibuffer menu
+    - A click of the Action Mouse Key within an inactive minibuffer window
       displays the Hyperbole minibuffer menu, allowing you to invoke menu
       entries with the mouse.  A click of the Assist Key in the same place
       displays the buffer, window and frame jump menu just as does a click
@@ -1008,13 +1008,13 @@ are new in 2016 and you should look through them all.
     - Added missing {C-c C-i}/{C-c TAB} binding mentioned in the EXAMPLE.kotl
       file; sets cell attributes.
 
-    - {C=t} Transpose characters - Added error checks at the beginning of cells
+    - {C-t} Transpose characters - Added error checks at the beginning of cells
       and end of lines for times when there are not 2 chars to transpose.
 
   ROLO
   
     - Improved {M-s} interactive string searching for rolo match buffer strings.
-      Made {C-u M-s} to a regexp search for rolo match buffer strings.
+      Made {C-u M-s} do a regexp search for rolo match buffer strings.
 
     - Documented the {l} hyrolo-locate command in the Hyperbole manual.
 
@@ -1211,8 +1211,8 @@ are new in 2016 and you should look through them all.
 
   INSTALLATION
 
-    - Installation is greatly simplified.  A single emacs initialization line
-      of the form:  
+    - Hyperbole initialization is greatly simplified.  A single "~/.emacs"
+      line of the form:
 
         (require 'hyperbole (expand-file-name "hyperbole" "<HYPERBOLE-DIR>/")
 
@@ -1266,7 +1266,7 @@ are new in 2016 and you should look through them all.
       now begin with 'K'.  Some used to start with 'O'.  To edit the example
       Koutline, use {C-h h k e}.
 
-    - {C-c C-a}  - Show-all, expand all cells nihe current view.
+    - {C-c C-a}  - Show-all, expand all cells in the current view.
       {C-c C-o}  - Overview, show only first line of outline cells.
       {C-c C-t}  - Top-level, hide all cells below level 1 and show
                    only the first line of each level 1 cell.

@@ -799,7 +799,7 @@ Returns non-nil iff file is displayed within a buffer (not with an external
 program)."
   (interactive "FFind file: ")
   (let ((case-fold-search t)
-	modifier loc dir anchor hash path)
+	modifier loc default-directory anchor hash path)
     (if (string-match hpath:prefix-regexp filename)
 	(setq modifier (aref filename 0)
 	      filename (substring filename (match-end 0))))
@@ -810,19 +810,17 @@ program)."
 			   (substring filename 0 (match-end 1)))
 		  filename))
 	  loc (hattr:get 'hbut:current 'loc)
-	  dir (file-name-directory
-	       ;; Loc may be a buffer without a file
-	       (if (stringp loc) loc default-directory))
-	  filename (hpath:absolute-to path dir))
+	  default-directory (file-name-directory
+			     ;; Loc may be a buffer without a file
+			     (if (stringp loc) loc default-directory))
+	  filename (hpath:absolute-to path default-directory))
     (let ((remote-filename (hpath:remote-p path)))
       (or modifier remote-filename
-	  (file-exists-p path)
-	  (error "(hpath:find): \"%s\" does not exist"
-		 (file-relative-name filename)))
+	  (file-exists-p filename)
+	  (error "(hpath:find): \"%s\" does not exist" filename))
       (or modifier remote-filename
-	  (file-readable-p path)
-	  (error "(hpath:find): \"%s\" is not readable"
-		 (file-relative-name filename)))
+	  (file-readable-p filename)
+	  (error "(hpath:find): \"%s\" is not readable" filename))
       ;; If filename is a remote file (not a directory, we have to copy it to
       ;; a temporary local file and then display that.
       (when (and remote-filename (not (file-directory-p remote-filename)))
@@ -1042,7 +1040,7 @@ nonexistent local paths are allowed."
 	   (not (string-match "[\t\n\r\"`'|{}\\]" path))
 	   (or (not (hpath:www-p path))
 	       (string-match "\\`ftp[:.]" path))
-	   (let ((remote-path (string-match "@.+:\\|^/.+:\\|..+:/" path)))
+	   (let ((remote-path (string-match "\\(@.+:\\|^/.+:\\|..+:/\\).*[^:0-9/]" path)))
 	     (if (cond (remote-path
 			(cond ((eq type 'file)
 			       (not (string-equal "/" (substring path -1))))
