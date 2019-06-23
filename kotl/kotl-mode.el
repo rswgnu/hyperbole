@@ -79,6 +79,7 @@ It provides the following keys:
       ;; Some package such as filladapt has overwritten the primitives
       ;; defined in kfill.el, so reload it.
       (load "kfill"))
+  (setq fill-paragraph-function #'kfill:fill-paragraph)
   ;; Ensure that outline structure data is saved when save-buffer is called
   ;; from save-some-buffers, {C-x s}.
   (add-hook 'local-write-file-hooks #'kotl-mode:update-buffer)
@@ -153,7 +154,7 @@ It provides the following keys:
       (kvspec:activate))))
   ;; We have been converting a buffer from a foreign format to a koutline.
   ;; Now that it is converted, ensure that `kotl-previous-mode' is set to
-  ;; koutline now.
+  ;; koutline.
   (setq kotl-previous-mode 'kotl-mode)
   (run-hooks 'kotl-mode-hook)
   (add-hook 'change-major-mode-hook #'kotl-mode:show-all nil t))
@@ -675,15 +676,17 @@ too long."
 With arg N, insert N newlines."
   (interactive "*p")
   (let* ((bolp (and (kotl-mode:bolp) (not (kotl-mode:bocp))))
-	 (indent (kcell-view:indent)))
+	 (indent (kcell-view:indent))
+	 (add-prefix (and (stringp fill-prefix)
+			  (not (string-empty-p fill-prefix)))))
     (while (> arg 0)
       (save-excursion
         (insert ?\n)
-	(if (and (not bolp) fill-prefix)
+	(if (and (not bolp) add-prefix)
 	    (insert fill-prefix)
 	  (insert-char ?\  indent)))
       (setq arg (1- arg)))
-    (if (and bolp fill-prefix)
+    (if (and bolp add-prefix)
 	(progn (delete-horizontal-space)
 	       (insert fill-prefix)))))
 
