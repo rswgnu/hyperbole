@@ -48,11 +48,16 @@
 (defib org-mode ()
   "Follows any Org mode link at point or cycles through views of the outline subtree at point."
   (when (derived-mode-p 'org-mode)
-    (cond ((org-link-at-p)
-	   (hact 'org-link nil))
+    (cond ((org-internal-link-target-at-p)
+	   (hact 'org-internal-link-target))
+	  ((org-radio-target-def-at-p)
+	   (hact 'org-radio-target))
+	  ((org-link-at-p)
+	   (hact 'org-link))
 	  ((org-at-heading-p)
 	   (hact 'hsys-org-cycle))
-	  (t (hact 'org-meta-return)))))
+	  (t
+	   (hact 'org-meta-return)))))
 
 (defun org-mode:help (&optional _but)
   "If on an Org mode heading, cycles through views of the whole buffer outline.
@@ -65,22 +70,170 @@ If on an Org mode link, displays standard Hyperbole help."
 	   (hact 'hsys-org-global-cycle)
 	   t))))
 
-(defact org-link (link)
-  "Follows an Org mode LINK.  If LINK is nil, follows the link at point."
+(defact org-link (&optional link)
+  "Follows an optional Org mode LINK to its target.
+If LINK is nil, follows any link at point.  Otherwise, triggers an error."
   (if (stringp link)
       (org-open-link-from-string link) ;; autoloaded
-    (org-open-at-point-global))) ;; autoloaded
+    (org-open-at-point))) ;; autoloaded
+
+(defact org-internal-link-target (&optional link-target)
+  "Follows an optional Org mode LINK-TARGET back to its link definition.
+If LINK-TARGET is nil, follows any link target at point.  Otherwise, triggers an error."
+  (let (start-end)
+    (cond ((stringp link-target)
+	   (setq start-end t)
+	   (org-search-internal-link-p link-target))
+	  ((null link-target)
+	   (when (setq start-end (org-internal-link-target-at-p))
+	     (org-search-internal-link-p (buffer-substring-no-properties
+					  (car start-end) (cdr start-end))))))
+    (unless start-end
+      (error "(org-internal-link-target): Point must be on a link target (not the link itself)"))))
+
+
+(defact org-radio-target (&optional target)
+  "Jumps to the next occurrence of an optional Org mode radio TARGET link.
+If TARGET is nil and point is on a radio target definition or link, it
+uses that one.  Otherwise, triggers an error."
+  (let (start-end)
+    (cond ((stringp target)
+	   (setq start-end t)
+	   (org-to-next-radio-target-link target))
+	  ((null target)
+	   (when (setq start-end (org-radio-target-at-p))
+	     (org-to-next-radio-target-link (buffer-substring-no-properties
+					     (car start-end) (cdr start-end))))))
+    (unless start-end
+      (error "(org-radio-target): Point must be on a radio target definition or link"))))
 
 ;;; ************************************************************************
 ;;; Public functions
 ;;; ************************************************************************
 
+(defun org-region-with-text-property-value (pos property)
+  "Returns (start . end) buffer positions of the region around POS that shares its non-nil text PROPERTY value, else nil."
+  (if (null pos) (setq pos (point)))
+  (let ((property-value (get-text-property pos property))
+	(start-point pos))
+    (when property-value
+	;; Can't use previous-single-property-change here because it
+	;; ignores characters that lack the property, i.e. have nil values.
+	(if (bobp)
+	    (setq start-point (point-min))
+	  (while (equal (get-text-property (1- start-point) property) property-value)
+	    (setq start-point (1- start-point))))
+	(cons start-point (next-single-property-change start-point property)))))
+
+(defsubst org-link-at-p ()
+  "Returns non-nil iff point is on an Org mode link.
+Assumes caller has already checked that the current buffer is in org-mode."
+  (org-face-at-p 'org-link))
+
 ;; Assumes caller has already checked that the current buffer is in org-mode.
-(defun org-link-at-p ()
-  "Returns non-nil iff point is on an Org mode link."
+(defsubst org-target-at-p ()
+  "Returns non-nil iff point is on an Org mode radio target (definition) or link target (referent).
+Assumes caller has already checked that the current buffer is in org-mode."
+  (org-face-at-p 'org-target))
+
+(defun org-radio-target-link-at-p ()
+  "Returns (target-start . target-end) positions iff point is on an Org mode radio target link (referent), else nil."
+  (and (get-text-property (point) 'org-linked-text)
+       (org-link-at-p)
+       (org-region-with-text-property-value (point) 'org-linked-text)))
+
+(defun org-radio-target-def-at-p ()
+  "Returns (target-start . target-end) positions iff point is on an Org mode radio target (definition), including any delimiter characters, else nil."
+  (when (org-target-at-p)
+    (save-excursion
+      (if (not (looking-at "<<<"))
+	  (goto-char (or (previous-single-property-change (point) 'face) (point-min))))
+      (if (looking-at "<<<")
+	  (goto-char (match-end 0)))
+      (and (get-text-property (point) 'org-linked-text)
+	   (org-region-with-text-property-value (point) 'face)))))
+
+(defun org-radio-target-at-p ()
+  "Returns (target-start . target-end) positions iff point is on an Org mode <<<radio target definition>>> or radio target link (referent), including any delimiter characters, else nil."
+  (or (org-radio-target-def-at-p)
+      (org-radio-target-link-at-p)))
+
+(defun org-internal-link-target-at-p ()
+  "Returns (target-start . target-end) positions iff point is on an Org mode <<link target>>, including any delimiter characters, else nil."
+  (when (org-target-at-p)
+    (save-excursion
+      (if (not (looking-at "<<"))
+	  (goto-char (or (previous-single-property-change (point) 'face) (point-min))))
+      (if (looking-at "<<<?")
+	  (goto-char (match-end 0)))
+      (and (not (get-text-property (point) 'org-linked-text))
+	   (org-region-with-text-property-value (point) 'face)))))
+
+(defun org-face-at-p (org-face-type)
+  "Returns `org-face-type` iff point is on a character with face `org-face-type', a symbol, else nil."
   (let ((face-prop (get-text-property (point) 'face)))
-    (or (eq face-prop 'org-link)
-	(and (listp face-prop) (memq 'org-link face-prop)))))
+    (when (or (eq face-prop org-face-type)
+	      (and (listp face-prop) (memq org-face-type face-prop)))
+      org-face-type)))
+
+(defun org-search-internal-link-p (target)
+  "Searches from buffer start for an Org internal link definition matching TARGET.
+White spaces are insignificant.  Returns t if a link is found, else nil."
+  (if (string-match "<<.+>>" target)
+      (setq target (substring target 2 -2)))
+  (let ((re (format "%s"
+		    (mapconcat #'regexp-quote
+			       (split-string target)
+			       "[ \t]+\\(?:\n[ \t]*\\)?")))
+	(origin (point)))
+    (goto-char (point-min))
+    (catch :link-match
+      (while (re-search-forward re nil t)
+	(backward-char)
+	(let ((object (org-element-context)))
+	  (when (eq (org-element-type object) 'link)
+	    (org-show-context 'link-search)
+	    (throw :link-match t))))
+      (goto-char origin)
+      nil)))
+
+(defun org-search-radio-target-link-p (target)
+  "Searches from point for a radio target link matching TARGET.
+White spaces are insignificant.  Returns t if a target link is found, else nil."
+  (if (string-match "<<<.+>>>" target)
+      (setq target (substring target 3 -3)))
+  (let ((re (format "%s"
+		    (mapconcat #'regexp-quote
+			       (split-string target)
+			       "[ \t]+\\(?:\n[ \t]*\\)?")))
+	(origin (point)))
+    (catch :radio-match
+      (while (re-search-forward re nil t)
+	(backward-char)
+	(let ((object (org-element-context)))
+	  (when (eq (org-element-type object) 'link)
+	    (org-show-context 'link-search)
+	    (throw :radio-match t))))
+      (goto-char origin)
+      nil)))
+
+(defun org-to-next-radio-target-link (target)
+  "Moves to the start of the next radio TARGET link if found.  TARGET must be a string."
+  (if (string-match "<<<.+>>>" target)
+      (setq target (substring target 3 -3)))
+  (let ((opoint (point))
+	(start-end (org-radio-target-at-p))
+	found)
+    (if start-end
+	;; Move past any current target link
+	(goto-char (cdr start-end)))
+    (while (and (org-search-radio-target-link-p target)
+		(setq found t)
+		(not (org-radio-target-link-at-p))))
+    (when found
+      (if (org-radio-target-link-at-p)
+	  (goto-char (or (previous-single-property-change (point) 'face) (point-min)))
+	(goto-char opoint)))))
 
 ;;; ************************************************************************
 ;;; Private functions
