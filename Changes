@@ -1,8 +1,52 @@
+2019-06-23  Bob Weiner  <rsw@gnu.org>
+
+* hsys-org.el: Added many new predicates and code to handle navigation between Org
+    mode internal links and their targets, as well as radio target definitions and their links.
+
+* hypb.el (hypb:region-with-text-property-value): Added and used in hysy-org.el.
+
+* kotl/kfill.el (set-fill-prefix): Updated to better match standard Emacs functiion.
+
+2019-06-22  Bob Weiner  <rsw@gnu.org>
+
+* hyrolo.el (hyrolo-add): Fixed bug in call to match-string-no-properties.
+
+2019-06-21  Bob Weiner  <rsw@gnu.org>
+
+* kotl/kotl-mode.el (kotl-mode): Set fill-paragraph-function rather than overloading
+    fill-paragraph.
+  kotl/kfill.el (kfill:fill-paragraph): Renamed and used only in kotl-mode.  Also
+    temporarily set fill-paragraph-handle-comment to t and made prefix arg optional.
+                (kfill:funcall): Removed.
+                (kfill:function-table): Removed.
+                (kfill:do-auto-fill): Temporarily set fill-paragraph-handle-comment to t.
+
+2019-06-20  Bob Weiner  <rsw@gnu.org>
+
+* hsys-org.el (org-link): Changed to call org-open-at-point which handles internal
+    org links, fixing following links such as radio targets.
+    (org-thing-at-p, org-target-at-p): Added.
+
+* hpath.el (hpath:texinfo-section-pattern): Added and used in hpath:to-markup-anchor to
+    jump to specific Texinfo sections.
+
+2019-06-19  Bob Weiner  <rsw@gnu.org>
+
+* man/hyperbole.texi (Referent Display): Added doc of hpath:native-image-suffixes.
+
+* hpath.el (hpath:find-program): Changed to prioritize hpath:native-image-suffixes over
+    hpath:internal-display-alist over hpath:external-display-alist-macos instead of the
+    reverse.  This prevents external viewers from being used when internal viewers are
+    also in effect.
+
+2019-06-18  Bob Weiner  <rsw@gnu.org>
+
+* hibtypes.el (grep-msg): Allowed for null char in place of first colon in colored grep output lines.
+
 2019-06-17  Bob Weiner  <rsw@gnu.org>
 
 * hactypes.el (link-to-gbut): Added.
   hui.el (hui:link-possible-types): Added link-to-gbut.
-
 
 2019-06-16  Bob Weiner  <rsw@gnu.org>
 

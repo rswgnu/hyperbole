@@ -1,4 +1,211 @@
 ----------------------------------------------------------------------
+7.0.3 Announcement
+----------------------------------------------------------------------
+From: Bob Weiner <rsw@gnu.org>
+To: emacs-devel@gnu.org, gnu-emacs-sources@gnu.org, emacs-tangents@gnu.org, hyperbole-users@gnu.org, hyperbole-announce@gnu.org
+Subject: GNU Hyperbole 7.0.3: link your world quickly and easily
+--text follows this line--
+========================================================================
+* Introduction
+========================================================================
+
+GNU Hyperbole 7.0.3 is released and ready for action.
+
+Hyperbole is an amazing hypertextual information management system
+that installs quickly and easily as an Emacs package.  It is part of
+GNU Elpa, the Emacs Lisp Package Archive.
+
+Hyperbole interlinks all your working information within Emacs for
+fast access and editing, not just within special modes.  An hour
+invested exploring Hyperbole's built-in interactive DEMO file will
+save you hundreds of hours in your future work.
+
+7.0.3 is a significant release with a number of interesting
+improvements.  What's new in this release is described here:
+
+   www.gnu.org/s/hyperbole/HY-NEWS.html
+
+Hyperbole is described here:
+
+   www.gnu.org/s/hyperbole
+
+For use cases, see:
+
+   www.gnu.org/s/hyperbole/HY-WHY.html
+
+For what users think about Hyperbole, see:
+
+  https://www.gnu.org/s/hyperbole/hyperbole.html#user-quotes
+
+Hyperbole can supplement and extend Org-mode's capabilities.  It adds
+many features not found elsewhere in Emacs, including Org mode, see:
+
+   www.emacswiki.org/emacs/Hyperbole
+
+Hyperbole includes its own easy-to-use hypertextual buttons and links
+that can be created without the need for any markup language.
+
+Hyperbole has an interactive demo to introduce you to its features as
+well as a detailed reference manual, as explained here:
+
+  https://www.gnu.org/s/hyperbole/hyperbole.html#invocation-and-doc
+
+========================================================================
+* Quick Reasons to Try Hyperbole
+========================================================================
+
+It contains:
+
+- the most flexible and easy-to-use hyperbuttons available, including
+  implicit buttons automatically recognized by context, e.g. stack
+  trace source line references.
+
+- the only Emacs outliner with full legal item numbering,
+  e.g. 1.4.2.6, and automatic permanent hyperlink anchors for every
+  item
+
+- the only free-form contact manager with full-text search for Emacs
+
+- rapid and precise window, frame and buffer placement on screen
+
+- an extensive menu of typed web searches, e.g. dictionary, wikipedia
+  and stackoverflow, plus convenient, fast file and line finding
+  functions
+
+- immediate execution of a series of key presses just by typing them
+  out.  For example, a M-RETURN press on: {C-x C-b C-s scratch RET
+  C-a} will find the first buffer menu item that contains 'scratch';
+  then leave point at the beginning of its line.  Build interactive
+  tutorials with this.
+
+
+========================================================================
+* The Magic of Implicit Buttons and the Action Key
+========================================================================
+
+For near instant gratification, try Hyperbole's 'implicit button'
+capabilities (hyper-buttons that Hyperbole gives you for free by
+recognizing all types of references embedded within text such as
+pathnames or error message lines).  Below are more complex examples to
+show the power; simpler ones can be found within the Hyperbole DEMO
+file.
+
+Implicit buttons are activated by pressing the Action Key, M-RETURN.
+Once Hyperbole is loaded in your Emacs, pressing M-RETURN on any of
+these examples *in virtually any buffer* will display the associated
+referent in a chosen window or frame, handling all variable
+substitution and full path resolution:
+
+    "find-func.el"                            Find this file whether gzipped or not
+                                              in the Emacs Lisp load-path
+
+    "${hyperb:dir}/HY-NEWS"                   Resolve variable, show Hyperbole news
+
+    "${PATH}/umask"                           Display a script somewhere in multi-dir PATH
+
+    "${hyperb:dir}/DEMO#Hyperbole Menus"      Org mode outline, Markdown, and HTML # refs
+
+    "(hyperbole)Menus"                        Texinfo and Info node links
+
+    "c:/Users", "c:\Users", "/C/Users", "/c/Users", and "/mnt/c/Users"
+                                            On Windows and Windows Subsystem for Linux,
+                                            Hyperbole recognizes all of these as the
+                                            same path and can translate between Windows
+                                            and POSIX path formats in both directions
+
+Git Links:
+    git#branches                              List branches in current repo/project
+    git#commits                               List and browse commits for current project
+    git#tags                                  List tags in current project
+
+    git#/hyperbole                            From any buffer, dired on the top
+                                              directory of the local hyperbole
+                                              project
+
+    git#/hyperbole/55a1f0 or                  From any buffer, display hyperbole
+    git#hyperbole/55a1f0                      local git commit diff
+
+
+Github Links:
+    gh@rswgnu                                 Display user's home page & projects
+
+    github#rswgnu/hyperbole                   Display user's project
+    gh#rswgnu/helm/global_mouse               Display user project's branch
+    gh#rswgnu/hyperbole/55a1f0                Display user project's commit diff
+
+Gitlab Links:
+    gitlab@seriyalexandrov                    Display user's home page
+    gl#gitlab-org/gitlab-ce/activity          Summarize user's project activity
+    gl#gitlab-org/gitlab-ce/analytics         Display user project's cycle_analytics
+    gl#gitlab-org/gitlab-ce/boards            Display user project's kanban-type issue boards
+
+Once you set the default user and project variables, you can leave them off any reference links:
+
+    (setq hibtypes-gitlab-default-user "gitlab-org")
+    (setq hibtypes-gitlab-default-project "gitlab-ce")
+
+    gl#issues or gl#list                      Display default project's issue list
+    gl#labels                                 Display default project's issue categories
+    gl#members                                Display default project's staff list
+    gl#contributors                           Show contributor push frequency charts
+    gl#merge_requests or gl#pulls             Display default project's pull requests
+    gl#milestones                             Display default project's milestones status
+    gl#pages                                  Display default project's web pages
+    gl#snippets                               Project snippets, diffs and text with discussion
+    gl#groups                                 List all available groups of projects
+    gl#projects                               List all available projects
+
+    gl#milestone=38                           Show a specific project milestone
+    gl#snippet/1689487                        Show a specific project snippet
+
+Even useful social media links:
+    tw#travel or twitter#travel               Display twitter hashtag matches
+    fb#technology                             Display facebook hashtag matches
+
+Hyperbole uses simple prefix characters with paths to make them executable:
+    "!/bin/date"                              Execute as a non-windowed program within a shell
+    "&/opt/X11/bin/xeyes"                     Execute as a windowed program;
+    "-find-func.el"                           Load/execute this Emacs Lisp library
+
+    File "/usr/lib/python3.7/ast.py", line 37, in parse
+                                              Jump to error/stack trace source
+
+    "/ftp:anonymous@ftp.gnu.org:"             Tramp remote paths
+
+
+========================================================================
+* Try It - Installs or Uninstalls in a Minute
+========================================================================
+
+Hyperbole lets you concentrate more on your work.  Then as you grow
+with it across time, it helps speed your work across weeks and months.
+It installs in about a minute and can be uninstalled even faster if
+ever need be.  Give it a try.
+
+Hyperbole can boost your day-to-day productivity with Emacs and
+your ability to manage information stored across many different
+machines on the internet.
+
+Hyperbole can be installed like any other package with the Emacs
+package manager:
+
+   {M-x list-packages RET C-s hyperbole RET i x y}
+
+Then to invoke its menu:
+
+   {C-h h} or {M-x hyperbole RET}
+
+The best way to get a feel for many of its capabilities is to
+invoke the interactive DEMO and explore sections of interest:
+
+   {C-h h d d}
+
+Enjoy,
+
+The Hyperbole Team
+
+
+----------------------------------------------------------------------
 7.0.2 Announcement
 ----------------------------------------------------------------------
 From: Bob Weiner <rsw@gnu.org>
