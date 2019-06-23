@@ -730,7 +730,7 @@ in grep and shell buffers."
       (beginning-of-line)
       (if (or
 	   ;; Grep matches, UNIX C compiler and Introl 68HC11 C compiler errors
-	   (looking-at "\\([^ \t\n\r:]+\\): ?\\([1-9][0-9]*\\)[ :]")
+	   (looking-at "\\([^ \t\n\r:]+\\)[:\^@] ?\\([1-9][0-9]*\\)[ :]")
 	   ;; HP C compiler errors
 	   (looking-at "[a-zA-Z0-9]+: \"\\([^\t\n\r\",]+\\)\", line \\([0-9]+\\):")
 	   ;; BSO/Tasking 68HC08 C compiler errors

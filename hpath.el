@@ -502,7 +502,7 @@ use with string-match.")
 
 (defconst hpath:markup-link-anchor-regexp
   (concat "\\`\\(#?[^#]+\\)\\(#\\)\\([^\]\[#^{}<>\"`'\\\n\t\f\r]*\\)")
-  "Regexp that matches an markup filename followed by a hash (#) and an optional in-file anchor name.")
+  "Regexp that matches a markup filename followed by a hash (#) and an optional in-file anchor name.")
 
 (defconst hpath:outline-section-pattern "^\*+[ \t]+%s\\([ \t[:punct:]]*\\)$"
   "Regexp matching an Emacs outline section header and containing a %s for replacement of a specific section name.")
@@ -517,6 +517,9 @@ These are used to indicate how to display or execute the pathname.
 (defvar hpath:remote-regexp
   "\\`/[^/:]+:\\|\\`ftp[:.]\\|\\`www\\.\\|\\`https?:"
   "Regexp matching remote pathnames and urls which invoke remote file handlers.")
+
+(defconst hpath:texinfo-section-pattern "^@node+[ \t]+%s[ \t]*\\(,\\|$\\)"
+  "Regexp matching a Texinfo section header and containing a %s for replacement of a specific section name.")
 
 ;;; ************************************************************************
 ;;; Public functions
@@ -799,7 +802,8 @@ Returns non-nil iff file is displayed within a buffer (not with an external
 program)."
   (interactive "FFind file: ")
   (let ((case-fold-search t)
-	modifier loc default-directory anchor hash path)
+	(default-directory default-directory)
+	modifier loc anchor hash path)
     (if (string-match hpath:prefix-regexp filename)
 	(setq modifier (aref filename 0)
 	      filename (substring filename (match-end 0))))
@@ -892,9 +896,11 @@ program)."
 		      (anchor-name (subst-char-in-string ?- ?\  anchor)))
 		  (goto-char (point-min))
 		  (if (re-search-forward (format 
-					  (if (string-match hpath:markdown-suffix-regexp buffer-file-name)
-					      hpath:markdown-section-pattern
-					    hpath:outline-section-pattern)
+					  (cond ((string-match hpath:markdown-suffix-regexp buffer-file-name)
+						 hpath:markdown-section-pattern)
+						((eq major-mode 'texinfo-mode)
+						 hpath:texinfo-section-pattern)
+						(t hpath:outline-section-pattern))
 					  (regexp-quote anchor-name)) nil t)
 		      (progn (forward-line 0)
 			     (recenter 0))
@@ -1508,14 +1514,14 @@ from path or t."
 Return nil if FILENAME is a directory name or an image file that emacs can display.
 See also documentation for the function (hpath:get-external-display-alist) and the variable
 `hpath:internal-display-alist'."
-  (cond ((let ((case-fold-search t))
-	   (hpath:match filename (hpath:get-external-display-alist))))
+  (cond ((and (fboundp 'image-mode)
+	      (string-match hpath:native-image-suffixes filename))
+	 nil)
 	((let ((case-fold-search nil))
 	   (hpath:match filename hpath:internal-display-alist)))
+	((let ((case-fold-search t))
+	   (hpath:match filename (hpath:get-external-display-alist))))
 	((and (stringp filename) (file-directory-p filename))
-	 nil)
-	((and (fboundp 'image-mode)
-	      (string-match hpath:native-image-suffixes filename))
 	 nil)
 	;; 01/21/2019 - RSW commented this next line out since it can
 	;; trigger external viewers on many file types that Emacs
