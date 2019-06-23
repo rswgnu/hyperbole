@@ -190,7 +190,7 @@ entry which begins with the parent string."
 	    name (substring name (min (1+ end) (length name))))
       (if (re-search-forward
 	   (concat hyrolo-entry-regexp (regexp-quote parent)) nil t)
-	  (setq level (match-string-no-properties 1))
+	  (setq level (match-string-no-properties hyrolo-entry-group-number))
 	(error "(hyrolo-add): `%s' category not found in \"%s\"."
 	       parent file)))
     (narrow-to-region (point)
@@ -234,11 +234,11 @@ entry which begins with the parent string."
 	(goto-char (point-min)))
 
       (while (and again (re-search-forward hyrolo-entry-regexp nil 'end))
-	(setq entry-level (match-string-no-properties 1))
+	(setq entry-level (match-string-no-properties hyrolo-entry-group-number))
 	(if (/= (length entry-level) level-len)
 	    (hyrolo-to-entry-end t entry-level)
 	  (setq entry (buffer-substring-no-properties (point) (+ (point) len))
-		entry-spc (match-string-no-properties hyrolo-entry-regexp-))
+		entry-spc (match-string-no-properties hyrolo-entry-trailing-space-group-number))
 	  (cond ((string< entry name)
 		 (hyrolo-to-entry-end t entry-level))
 		((string< name entry)
@@ -1269,8 +1269,7 @@ Name is returned as `last, first-and-middle'."
 		   "\\([^\" \t()]+\\)[ \t]*[)\"]\\)?[ \t]*$")
 	   from)
 	  (setq name (hyrolo-format-name from 3 4))
-	  (or email (setq email (substring from (match-beginning 1)
-					   (match-end 1)))))
+	  (or email (setq email (match-string 1 from))))
 	 ;; Match: <email>, name <email>, "name" <email>
 	 ((string-match
 	   (concat "^\\(\"?\\([^\"<>()\n]+\\)[ \t]+"
@@ -1278,8 +1277,7 @@ Name is returned as `last, first-and-middle'."
 		   "<\\([^\"<>() \t\n\r\f]+\\)>[ \t]*$")
 	   from)
 	  (setq name (hyrolo-format-name from 2 3))
-	  (or email (setq email (substring from (match-beginning 4)
-					   (match-end 4)))))))
+	  (or email (setq email (match-string 4 from))))))
     (if (or name email)
 	(list name email))))
 
@@ -1386,7 +1384,7 @@ Returns point where matching entry begins or nil if not found."
 		     (save-excursion
 		       (beginning-of-line)
 		       (if (looking-at (concat hyrolo-entry-regexp (regexp-quote parent)))
-			   (setq level (match-string-no-properties 1)))))
+			   (setq level (match-string-no-properties hyrolo-entry-group-number)))))
 		   level))
 		((equal name real-name)) ;; Try next file.
 		(t ;; Found parent but not child
