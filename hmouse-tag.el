@@ -4,7 +4,7 @@
 ;;
 ;; Orig-Date:    24-Aug-91
 ;;
-;; Copyright (C) 1991-2016  Free Software Foundation, Inc.
+;; Copyright (C) 1991-2019  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
 ;;
 ;; This file is part of GNU Hyperbole.
@@ -20,13 +20,12 @@
   (mapc #'require '(find-func hpath hui-select))
   (cond ((or (featurep 'etags) (featurep 'tags))
 	 nil)
-	((or (featurep 'xemacs) hyperb:emacs-p)
+	(t
 	 ;; Force use of .elc file here since otherwise the bin/etags
 	 ;; executable might be found in a user's load-path by the load
 	 ;; command.
 	 (or (load "etags.elc" t nil t)
-	     (load "tags-fix" t)))
-	((load "tags" t))))
+	     (load "tags-fix" t)))))
 
 ;; If etags utilizes the new xref.el library, define some helper
 ;; functions to simplify programming.
@@ -1061,7 +1060,7 @@ Returns TAG."
 	 (tags-add-tables nil))
     ;; For InfoDock (XEmacs may also take this branch), force exact match
     ;; (otherwise tag might = nil and the following stringp test could fail).
-    (if (or (featurep 'infodock) (featurep 'xemacs))
+    (if (featurep 'infodock)
 	(if (stringp tag) (setq tag (list tag))))
     (condition-case ()
 	(and func (funcall func tag) t)
@@ -1279,7 +1278,7 @@ See the \"${hyperb:dir}/smart-clib-sym\" script for more information."
     ;; For InfoDock (XEmacs may also take this branch), force exact match
     ;; when `next' is false (otherwise tag would = nil and the following
     ;; stringp test would fail).
-    (if (or (featurep 'infodock) (featurep 'xemacs))
+    (if (featurep 'infodock)
 	(if (stringp tag) 
 	    (setq tag (list tag))))
     (if (and func (setq find-tag-result (funcall func tag)))

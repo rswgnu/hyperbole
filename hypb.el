@@ -4,7 +4,7 @@
 ;;
 ;; Orig-Date:     6-Oct-91 at 03:42:38
 ;;
-;; Copyright (C) 1991-2016  Free Software Foundation, Inc.
+;; Copyright (C) 1991-2019  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
 ;;
 ;; This file is part of GNU Hyperbole.
@@ -242,17 +242,6 @@ FILE is temporarily read into a buffer to determine the major mode if necessary.
 		   nil t)
        nil t)))
 
-;;;###autoload
-(defun hypb:functionp (obj)
-"Returns t if OBJ is a function, nil otherwise."
-  (cond
-    ((symbolp obj) (fboundp obj))
-    ((subrp obj))
-    ((hypb:emacs-byte-code-p obj))
-    ((consp obj)
-     (if (eq (car obj) 'lambda) (listp (car (cdr obj)))))
-    (t nil)))
-
 (defun hypb:function-copy (func-symbol)
   "Copies FUNC-SYMBOL's body for overloading.  Returns copy of body."
   (if (fboundp func-symbol)
@@ -453,23 +442,13 @@ then `locate-post-command-hook'."
 		     current-prefix-arg))
   (locate search-string filter arg))
 
-(if (or (featurep 'xemacs) hyperb:emacs-p)
-    (defalias 'hypb:mark 'mark)
-  (defun hypb:mark (inactive-p)
-    "Return this buffer's mark value as integer, or nil if no mark.
-INACTIVE-P non-nil means return value of mark even if region is not active
-under Emacs version 19.
-If you are using this in an editing command, you are most likely making
-a mistake; see the documentation of `set-mark'."
-    (mark)))
+(defalias 'hypb:mark #'mark)
 
-(if (featurep 'xemacs)
-    (defalias 'hypb:mark-marker 'mark-marker)
-  (defun hypb:mark-marker (inactive-p)
-    "Return this buffer's mark as a marker object, or nil if no mark.
+(defun hypb:mark-marker (inactive-p)
+  "Return this buffer's mark as a marker object, or nil if no mark.
 INACTIVE-P is unused, it is for compatibility with XEmacs' version of
 mark-marker."
-    (mark-marker)))
+  (mark-marker))
 
 ;;;###autoload
 (defun hypb:map-plist (func plist)
@@ -527,7 +506,7 @@ NEWTEXT may instead be a function of one argument (the string to replace in)
 that returns a replacement string."
   (unless (stringp str)
     (error "(hypb:replace-match-string): 2nd arg must be a string: %s" str))
-  (unless (or (stringp newtext) (hypb:functionp newtext))
+  (unless (or (stringp newtext) (functionp newtext))
     (error "(hypb:replace-match-string): 3rd arg must be a string or function: %s"
 	   newtext))
   (let ((rtn-str "")
@@ -541,7 +520,7 @@ that returns a replacement string."
 	    (concat
 	      rtn-str
 	      (substring str prev-start match)
-	      (cond ((hypb:functionp newtext)
+	      (cond ((functionp newtext)
 		     (hypb:replace-match-string
 		      regexp (substring str match start)
 		      (funcall newtext str) literal))
@@ -703,14 +682,9 @@ nor nil it means to not count the minibuffer window even if it is active."
 
 (defvar hypb:hyperbole-banner-keymap
   (let ((map (make-sparse-keymap)))
-    (cond (hyperb:emacs-p
-	   (define-key map [mouse-1]  'hypb:browse-home-page)
-	   (define-key map [mouse-2]  'hypb:browse-home-page)
-	   (define-key map "\C-m"     'hypb:browse-home-page))
-	  ((featurep 'xemacs)
-	   (define-key map 'button1  'hypb:browse-home-page)
-	   (define-key map 'button2  'hypb:browse-home-page)
-	   (define-key map '(return) 'hypb:browse-home-page)))
+    (define-key map [mouse-1]  'hypb:browse-home-page)
+    (define-key map [mouse-2]  'hypb:browse-home-page)
+    (define-key map "\C-m"     'hypb:browse-home-page)
     map)
   "Keymap used when on the Hyperbole banner glyph.")
 
@@ -721,9 +695,7 @@ Without file, the banner is prepended to the current buffer."
   (if file
       ;; A stub for this function is defined in hversion.el when not running in InfoDock.
       (id-browse-file file))
-  (if hyperb:emacs-p
-      (hypb:display-file-with-logo-emacs file)
-    (hypb:display-file-with-logo-xemacs file))
+  (hypb:display-file-with-logo-emacs file)
   (goto-char (point-min))
   (skip-syntax-forward "-")
   (set-window-start (selected-window) 1)
@@ -840,7 +812,7 @@ Without file, the banner is prepended to the current buffer."
 ;;; Private variables
 ;;; ************************************************************************
 
-(if hyperb:emacs-p (define-button-type 'hyperbole-banner))
+(define-button-type 'hyperbole-banner)
 
 (provide 'hypb)
 

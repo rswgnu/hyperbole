@@ -4,7 +4,7 @@
 ;;
 ;; Orig-Date:    21-Oct-95 at 15:17:07
 ;;
-;; Copyright (C) 1995-2017  Free Software Foundation, Inc.
+;; Copyright (C) 1995-2019  Free Software Foundation, Inc.
 ;; See the "../HY-COPY" file for license information.
 ;;
 ;; This file is part of GNU Hyperbole.
@@ -287,19 +287,7 @@ If NUM is greater than the number of lines available, the cell remains fully exp
 		   (memq 'modeline-buffer-identification
 			 mode-line-format))))
       (if elt
-	  (setcdr elt (cons 'kvspec:string (cdr elt)))
-	;;
-	;; XEmacs 19.14 introduced extents into the modeline that we
-	;; must work around.  Assume any XEmacs is at least that new.
-	(if (featurep 'xemacs)
-	    (let ((mf modeline-format)
-		  elt)
-	      (while mf
-		(setq elt (car mf))
-		(if (and (consp elt) (eq (cdr elt) 'modeline-buffer-identification))
-		    (progn (setcdr mf (cons 'kvspec:string (cdr mf)))
-			   (setq mf nil)))
-		(setq mf (cdr mf)))))))))
+	  (setcdr elt (cons 'kvspec:string (cdr elt)))))))
 
 (defun kvspec:update-view ()
   "Update view according to current setting of local `kvspec:current' variable."

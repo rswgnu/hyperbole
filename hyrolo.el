@@ -4,7 +4,7 @@
 ;;
 ;; Orig-Date:     7-Jun-89 at 22:08:29
 ;;
-;; Copyright (C) 1991-2016  Free Software Foundation, Inc.
+;; Copyright (C) 1991-2019  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
 ;;
 ;; This file is part of GNU Hyperbole.
@@ -112,16 +112,10 @@ A hyrolo-file consists of:
   :group 'hyperbole-rolo)
 (unless hyrolo-highlight-face
   (setq hyrolo-highlight-face
-	(cond (hyperb:emacs-p
-	       (if (fboundp 'defface)
-		   (defface hyrolo-highlight-face nil
-			    "*Face used to highlight rolo search matches."
-			    :group 'hyperbole-rolo)))
-	      (t (if (fboundp 'defface)
-		     (face-name
-		      (defface hyrolo-highlight-face nil
-			"*Face used to highlight rolo search matches."
-			:group 'hyperbole-rolo))))))
+	(if (fboundp 'defface)
+	    (defface hyrolo-highlight-face nil
+	      "*Face used to highlight rolo search matches."
+	      :group 'hyperbole-rolo)))
   (if (fboundp 'hproperty:set-item-highlight)
       (hproperty:set-item-highlight)))
 
@@ -1425,11 +1419,7 @@ Returns point where matching entry begins or nil if not found."
 
 (defun hyrolo-to-buffer (buffer &optional other-window-flag frame)
   "Pop to BUFFER."
-  (cond ((featurep 'xemacs)
-	 (pop-to-buffer buffer other-window-flag
-			;; default is to use selected frame
-			(or frame (selected-frame))))
-	(t (pop-to-buffer buffer other-window-flag))))
+  (pop-to-buffer buffer other-window-flag))
 
 (defun hyrolo-to-entry-end (&optional include-sub-entries curr-entry-level)
   "Moves point to the end of the whole entry that point is within if optional INCLUDE-SUB-ENTRIES is non-nil.

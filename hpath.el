@@ -847,7 +847,7 @@ program)."
 			    (hpath:command-string display-executables
 						  filename))
 		      nil)
-		     ((hypb:functionp display-executables)
+		     ((functionp display-executables)
 		      (funcall display-executables filename)
 		      t)
 		     ((and (listp display-executables) display-executables)

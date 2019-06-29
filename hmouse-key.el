@@ -4,7 +4,7 @@
 ;;
 ;; Orig-Date:    30-May-94 at 00:11:57
 ;;
-;; Copyright (C) 1994-2016  Free Software Foundation, Inc.
+;; Copyright (C) 1994-2019  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
 ;;
 ;; This file is part of GNU Hyperbole.
@@ -27,18 +27,6 @@
 ;;; ************************************************************************
 
 (eval-when-compile (mapc #'require '(hsettings hmouse-drv hmouse-sh)))
-
-;;; ************************************************************************
-;;; Public variables
-;;; ************************************************************************
-
-(unless (or (featurep 'xemacs) hyperb:emacs-p)
-  ;; XEmacs and Emacs pre-load their mouse libraries, so
-  ;; we shouldn't have to require them here.
-  (eval (cdr (assoc (hyperb:window-system)
-		    '(("xterm"   . (require 'x-mouse))	 ; X
-		      ("next"    . (load "eterm-fns" t)) ; NEXTSTEP
-		      )))))
 
 ;;; ************************************************************************
 ;;; Public functions
@@ -70,24 +58,10 @@ bindings after Smart Key setup."
     (noninteractive)
     ;;
     ;; GNU Emacs, XEmacs or InfoDock
-    ((or (featurep 'xemacs) hyperb:emacs-p)
+    (t
      (mapcar
        (lambda (key-and-binding)
 	 (global-set-key (car key-and-binding) (cdr key-and-binding)))
-       key-binding-list))
-    ;;
-    ;; X
-    ((equal (hyperb:window-system) "xterm")
-     (mapcar
-       (lambda (key-and-binding)
-	 (define-key mouse-map (car key-and-binding) (cdr key-and-binding)))
-       key-binding-list))
-    ;;
-    ;; NeXT
-    ((equal (hyperb:window-system) "next")
-     (mapcar
-       (lambda (key-and-binding)
-	 (global-set-mouse (car key-and-binding) (cdr key-and-binding)))
        key-binding-list))))
 
 (defun hmouse-install (&optional arg)

@@ -4,7 +4,7 @@
 ;;
 ;; Orig-Date:    7/27/93
 ;;
-;; Copyright (C) 1993-2016  Free Software Foundation, Inc.
+;; Copyright (C) 1993-2019  Free Software Foundation, Inc.
 ;; See the "../HY-COPY" file for license information.
 ;;
 ;; This file is part of GNU Hyperbole.
@@ -19,7 +19,7 @@
 ;; Ensures kotl/ is in load-path.
 (require 'hyperbole)
 
-(load (if hyperb:emacs-p "kprop-em" "kprop-xe"))
+(load "kprop-em")
 
 (provide 'kproperty)
 

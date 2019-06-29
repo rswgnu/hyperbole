@@ -39,7 +39,7 @@ Use `hyperb:wsl-os-p' to test if running under WSL.")
 ;;;###autoload
 (defvar hyperb:mouse-buttons
   (if (or (and hyperb:microsoft-os-p (not (memq window-system '(w32 w64 x))))
-	  (and hyperb:emacs-p (memq window-system '(ns dps))))
+	  (memq window-system '(ns dps)))
       2 3)
   "Number of live buttons available on the mouse.
 Override this if the system-computed default is incorrect for your specific mouse.")
@@ -133,9 +133,7 @@ Where a part in the term-type is delimited by a `-' or  an `_'."
 			  ;; then there is a window system to support.
 			  (display-mouse-p))
 		      ;; X11, macOS, NEXTSTEP (DPS), or OS/2 Presentation Manager (PM)
-		      (cond (hyperb:emacs-p "emacs")
-			    ((featurep 'xemacs)  "xemacs")
-			    (t                "xterm")))
+		      "emacs")
 		     ((or (featurep 'eterm-fns)
 			  (equal (getenv "TERM") "NeXT")
 			  (equal (getenv "TERM") "eterm"))
