@@ -51,12 +51,6 @@
 (require 'ring)
 (require 'set)
 
-;; XEmacs compatibility
-(or (fboundp 'frame-parameter)
-    (fset 'frame-parameter 'frame-property))
-(or (fboundp 'set-frame-parameter)
-    (fset 'set-frame-parameter 'set-frame-property))
-
 ;;; ************************************************************************
 ;;; Public variables
 ;;; ************************************************************************

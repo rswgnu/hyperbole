@@ -223,7 +223,7 @@ obtained search string."
 ;; No-op unless set by one of the conditionals below.
 (defun hui:but-flash ())
 
-(cond ((and (not (featurep 'xemacs)) (not noninteractive))
+(cond ((not noninteractive)
        (require 'hui-em-but)
        ;; Highlight explicit buttons whenever a file is read in.
        (add-hook 'find-file-hook #'hproperty:but-create t)
@@ -240,29 +240,6 @@ obtained search string."
        ;; Non-nil means visually emphasize that button under mouse cursor is
        ;; selectable.
        (setq hproperty:but-emphasize-flag nil)
-       ;;
-       ;; If you find that the Hyperbole button flash time is too slow
-       ;; or too fast, adjust it here.
-       (setq hproperty:but-flash-time 1000))
-
-      ((and (featurep 'xemacs) (not noninteractive))
-       (require 'hui-xe-but)
-       ;;
-       ;; Highlight explicit buttons when files are read in.
-       (add-hook 'find-file-hook #'hproperty:but-create t)
-       (defalias 'hui:but-flash #'hproperty:but-flash)
-       ;;
-       ;; Substitute for the nil argument below a valid X color name with
-       ;; which to highlight buttons if the default highlighting does not
-       ;; appeal to you. See "hui-xe-but.el" for how this works.
-       (hproperty:cycle-but-color nil)
-       ;;
-       ;; Non-nil means highlight all explict buttons with `hproperty:but-face'.
-       (setq hproperty:but-highlight-flag t)
-       ;;
-       ;; Non-nil means visually emphasize that button under mouse cursor is
-       ;; selectable.
-       (setq hproperty:but-emphasize-p nil)
        ;;
        ;; If you find that the Hyperbole button flash time is too slow
        ;; or too fast, adjust it here.

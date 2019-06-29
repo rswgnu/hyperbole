@@ -4,7 +4,7 @@
 ;;
 ;; Orig-Date:    24-Aug-91
 ;;
-;; Copyright (C) 1991-2017  Free Software Foundation, Inc.
+;; Copyright (C) 1991-2019  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
 ;;
 ;; This file is part of GNU Hyperbole.
@@ -1060,7 +1060,7 @@ Returns TAG."
 	 (tags-add-tables nil))
     ;; For InfoDock (XEmacs may also take this branch), force exact match
     ;; (otherwise tag might = nil and the following stringp test could fail).
-    (if (or (featurep 'infodock) (featurep 'xemacs))
+    (if (featurep 'infodock)
 	(if (stringp tag) (setq tag (list tag))))
     (condition-case ()
 	(and func (funcall func tag) t)
@@ -1278,7 +1278,7 @@ See the \"${hyperb:dir}/smart-clib-sym\" script for more information."
     ;; For InfoDock (XEmacs may also take this branch), force exact match
     ;; when `next' is false (otherwise tag would = nil and the following
     ;; stringp test would fail).
-    (if (or (featurep 'infodock) (featurep 'xemacs))
+    (if (featurep 'infodock)
 	(if (stringp tag) 
 	    (setq tag (list tag))))
     (if (and func (setq find-tag-result (funcall func tag)))

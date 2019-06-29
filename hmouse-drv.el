@@ -1259,10 +1259,7 @@ Under InfoDock and XEmacs, `zmacs-region' must be t; under GNU Emacs,
 
 
 ;; Save any active region to `hkey-region' when the mouse is moved between frames or buffers.
-(if (featurep 'xemacs)
-    (add-hook 'mouse-leave-frame-hook #'hmouse-save-region)
-  ;; GNU Emacs
-  (add-hook 'mouse-leave-buffer-hook #'hmouse-save-region))
+(add-hook 'mouse-leave-buffer-hook #'hmouse-save-region)
 
 ;; BW - Last confirmed in 1999, for some reason, using this next
 ;; function in byte-compiled form caused the first character 
@@ -1277,16 +1274,7 @@ lines or if ARGS is null and there is no graphical window system,
 return current point as a marker."
   (and (car args) (listp (car args)) (setq args (car args)))
   (if (and args (hyperb:window-system))
-      (progn (hmouse-set-point-at args)
-	     (cond ((featurep 'xemacs)
-		    (if (eventp current-mouse-event)
-			(copy-event current-mouse-event)))
-		   ((equal (hyperb:window-system) "next")
-		    (let ((win (car args)))
-		      (list win
-			    (+ (nth 1 args) (nth 0 (window-edges win)))
-			    (+ (nth 2 args) (nth 1 (window-edges win))))))
-		   (t args)))
+      (progn (hmouse-set-point-at args) args)
     (list 'keyboard-drag (posn-at-point))))
 
 (defun hmouse-set-point-at (set-point-arg-list)

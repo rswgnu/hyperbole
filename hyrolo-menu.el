@@ -112,21 +112,15 @@
 ;;; Public functions
 ;;; ************************************************************************
 
-;;; This definition is used only by XEmacs and Emacs.
+;;; This definition is used only by Emacs.
 (defun hyrolo-menubar-menu ()
   "Add a HyRolo menu to the rolo match buffer menubar."
   (cond ((fboundp 'popup-mode-menu)
 	 (setq mode-popup-menu id-popup-hyrolo-menu))
-	((featurep 'xemacs)
-	 (define-key hyrolo-mode-map 'button3 'hyrolo-popup-menu))
-	(t ;; (not (featurep 'xemacs))
+	(t
 	 (define-key hyrolo-mode-map [C-down-mouse-3] 'hyrolo-popup-menu)
 	 (define-key hyrolo-mode-map [C-mouse-3] nil)))
-  (unless (cond ((not (featurep 'xemacs))
-		 (global-key-binding [menu-bar Rolo]))
-		((boundp 'current-menubar)
-		 (car (find-menu-item current-menubar '("Rolo")))))
-    (if (featurep 'xemacs) (set-buffer-menubar (copy-sequence current-menubar)))
+  (unless (global-key-binding [menu-bar Rolo])
     (easy-menu-define nil hyrolo-mode-map "Rolo Menubar Menu" id-popup-hyrolo-menu)
     ;; Force a menu-bar update.
     (force-mode-line-update)))

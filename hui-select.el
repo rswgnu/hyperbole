@@ -4,7 +4,7 @@
 ;;
 ;; Orig-Date:    19-Oct-96 at 02:25:27
 ;;
-;; Copyright (C) 1996-2017  Free Software Foundation, Inc.
+;; Copyright (C) 1996-2019  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
 ;;
 ;; This file is part of GNU Hyperbole.
@@ -247,14 +247,12 @@ Also, add language-specific syntax setups to aid in thing selection."
   (unless (boundp 'hyperbole-loading)
     (require 'hyperbole))
   (if hkey-init
-      (cond ((not (featurep 'xemacs))
-	     (transient-mark-mode 1)
-	     (hkey-global-set-key [double-down-mouse-1] nil)
-	     (hkey-global-set-key [double-mouse-1] 'hui-select-thing-with-mouse)
-	     (hkey-global-set-key [triple-down-mouse-1] nil)
-	     (hkey-global-set-key [triple-mouse-1] 'hui-select-thing-with-mouse))
-	    ((featurep 'xemacs)
-	     (add-hook 'mouse-track-click-hook #'hui-select-double-click-hook))))
+      (progn
+	(transient-mark-mode 1)
+	(hkey-global-set-key [double-down-mouse-1] nil)
+	(hkey-global-set-key [double-mouse-1] 'hui-select-thing-with-mouse)
+	(hkey-global-set-key [triple-down-mouse-1] nil)
+	(hkey-global-set-key [triple-mouse-1] 'hui-select-thing-with-mouse)))
   ;;
   ;; These hooks let you select C++ and Java methods and classes by
   ;; double-clicking on the first character of a definition or on its

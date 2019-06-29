@@ -4,7 +4,7 @@
 ;;
 ;; Orig-Date:    6/30/93
 ;;
-;; Copyright (C) 1993-2017  Free Software Foundation, Inc.
+;; Copyright (C) 1993-2019  Free Software Foundation, Inc.
 ;; See the "../HY-COPY" file for license information.
 ;;
 ;; This file is part of GNU Hyperbole.
@@ -673,43 +673,25 @@ the lines displayed, since it has hidden branches."
   (save-excursion (and (kcell-view:next nil label-sep-len)
 		       (kcell-view:invisible-p (point) label-sep-len))))
 
-(cond ((not (featurep 'xemacs))
-       (defun kview:goto-cell-id (id-string)
-	 "Move point to start of cell with idstamp ID-STRING and return t, else nil."
-	 (let ((cell-id (string-to-number id-string))
-	       (opoint (point))
-	       pos kcell)
-	   (goto-char (point-min))
-	   (while (and (setq pos (kproperty:next-single-change (point) 'kcell))
-		       (goto-char pos)
-		       (or (null (setq kcell (kproperty:get pos 'kcell)))
-			   (/= (kcell:idstamp kcell) cell-id))
-		       ;; Skip to the end of this kcell property
-		       (setq pos (kproperty:next-single-change (point) 'kcell))
-		       (goto-char pos)))
-	   (if pos
-	       (progn
-		 (forward-char (kview:label-separator-length kview))
-		 t)
-	     (goto-char opoint)
-	     nil))))
-      ;;
-      ;; XEmacs
-      (t (defun kview:goto-cell-id (id-string)
-	   "Move point to start of cell with idstamp ID-STRING and return t, else nil."
-	   (let ((cell-id (string-to-number id-string))
-		 label-end kcell)
-	     (setq label-end
-		   (map-extents
-		    (lambda (extent unused)
-		      (setq kcell (extent-property extent 'kcell))
-		      (and kcell (= (kcell:idstamp kcell) cell-id)
-			   (extent-end-position extent)))
-		    nil nil nil nil nil 'kcell))
-	     (if (null label-end)
-		 nil
-	       (goto-char label-end)
-	       t)))))
+(defun kview:goto-cell-id (id-string)
+  "Move point to start of cell with idstamp ID-STRING and return t, else nil."
+  (let ((cell-id (string-to-number id-string))
+	(opoint (point))
+	pos kcell)
+    (goto-char (point-min))
+    (while (and (setq pos (kproperty:next-single-change (point) 'kcell))
+		(goto-char pos)
+		(or (null (setq kcell (kproperty:get pos 'kcell)))
+		    (/= (kcell:idstamp kcell) cell-id))
+		;; Skip to the end of this kcell property
+		(setq pos (kproperty:next-single-change (point) 'kcell))
+		(goto-char pos)))
+    (if pos
+	(progn
+	  (forward-char (kview:label-separator-length kview))
+	  t)
+      (goto-char opoint)
+      nil)))
 
 (defun kview:id-counter (kview)
   "Return the highest current idstamp (an integer) used by KVIEW."

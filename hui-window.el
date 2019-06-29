@@ -145,10 +145,10 @@ drag release window.")
   :group 'hyperbole-keys)
 
  ;; Mats Lidell says this should be 10 characters for GNU Emacs.
-(defvar hmouse-edge-sensitivity (if (featurep 'xemacs) 3 10)
+(defvar hmouse-edge-sensitivity 10
   "*Number of characters from window edges within which a click is considered at an edge.")
 
-(defvar hmouse-side-sensitivity (if (featurep 'xemacs) 1 5)
+(defvar hmouse-side-sensitivity 5
   "*Characters in either direction from window side within which a click is considered on the side.")
 
 (defvar hmouse-x-drag-sensitivity 5
@@ -625,12 +625,7 @@ Value returned is nil if not a vertical line drag, 'up if drag moved up or
 (defun hmouse-drag-window-side ()
   "Returns non-nil if Action Key was dragged from a window side divider and released in the same window.
 If free variable `assist-flag' is non-nil, uses Assist Key."
-  (cond ((featurep 'xemacs)
-	 ;; Depress events in scrollbars or in non-text area of buffer are
-	 ;; not visible or identifiable at the Lisp-level, so always return
-	 ;; nil.
-	 nil)
-	((hyperb:window-system)
+  (cond ((hyperb:window-system)
 	 (let* ((depress-args (if assist-flag assist-key-depress-args
 				action-key-depress-args))
 		(release-args (if assist-flag assist-key-release-args
@@ -691,14 +686,10 @@ Beeps and prints message if the window cannot be split further."
 (defun smart-coords-in-window-p (coords window)
   "Tests if COORDS are in WINDOW.  Returns WINDOW if they are, nil otherwise."
   (cond ((null coords) nil)
-	((and (not (featurep 'xemacs)) (eventp coords))
+	((eventp coords)
 	 (let ((w-or-f (posn-window (event-start coords))))
 	   (if (framep w-or-f) (setq w-or-f (frame-selected-window w-or-f)))
 	   (eq w-or-f window)))
-	((if (featurep 'xemacs)
-	     (if (eventp coords)
-		 (eq (event-window coords) window)
-	       (eq (car coords) window))))
 	((fboundp 'window-edges)
 	 (let* ((edges (window-edges window))
 		  (w-xmin (nth 0 edges))
@@ -716,10 +707,8 @@ Beeps and prints message if the window cannot be split further."
 Ignores minibuffer window."
   (cond ((markerp coords)
 	 (marker-position coords))
-	((and (not (featurep 'xemacs)) (eventp coords))
-	 (posn-point (event-start coords)))
-	((and (featurep 'xemacs) (eventp coords))
-	 (event-point coords))))
+	((eventp coords)
+	 (posn-point (event-start coords)))))
 
 (defun smart-window-of-coords (coords)
   "Returns window in which COORDS fall or nil if none.
@@ -727,14 +716,10 @@ Ignores minibuffer window."
   (cond ((null coords) nil)
         ((markerp coords)
 	 (get-buffer-window (marker-buffer coords)))
-	((and (not (featurep 'xemacs)) (eventp coords))
+	((eventp coords)
 	 (let ((w-or-f (posn-window (event-start coords))))
 	   (if (framep w-or-f) (setq w-or-f (frame-selected-window w-or-f)))
 	   w-or-f))
-	((if (featurep 'xemacs)
-	     (if (eventp coords)
-		 (event-window coords)
-	       (car coords))))
 	(t (let ((window-list (hypb:window-list 'no-minibuf))
 		 (window)
 		 (w))
@@ -1007,23 +992,20 @@ If free variable `assist-flag' is non-nil, uses Assist Key."
 
 (defun hmouse-emacs-at-modeline-buffer-id-p ()
   "GNU Emacs: Return t if mouse position is within the buffer name field of the current window's mode-line, else nil."
-  (unless (featurep 'xemacs)
-    (let* ((coords (hmouse-window-coordinates)) ;; in characters
-	   (x-coord (caadr coords))
-	   (mode-line-string (and (integerp x-coord) (>= x-coord 0) (format-mode-line mode-line-format)))
-	   (keymap (and mode-line-string
-			(<= x-coord (1- (length mode-line-string)))
-			(plist-get (text-properties-at x-coord mode-line-string) 'local-map))))
-      (when keymap
-	(eq (lookup-key keymap [mode-line mouse-1]) 'mode-line-previous-buffer)))))
+  (let* ((coords (hmouse-window-coordinates)) ;; in characters
+	 (x-coord (caadr coords))
+	 (mode-line-string (and (integerp x-coord) (>= x-coord 0) (format-mode-line mode-line-format)))
+	 (keymap (and mode-line-string
+		      (<= x-coord (1- (length mode-line-string)))
+		      (plist-get (text-properties-at x-coord mode-line-string) 'local-map))))
+    (when keymap
+      (eq (lookup-key keymap [mode-line mouse-1]) 'mode-line-previous-buffer))))
 
 (defun hmouse-modeline-resize-window ()
   "Resizes window whose mode line was depressed on by the last Smart Key.
 Resize amount depends upon the vertical difference between press and release
 of the Smart Key."
   (cond ((not (hyperb:window-system)) nil)
-	((and (featurep 'xemacs) (not (fboundp 'window-edges)))
-	 (error "Drag from a mode-line with button1 to resize windows."))
 	(t (let* ((owind (selected-window))
 		  (window (smart-window-of-coords
 			   (if assist-flag assist-key-depress-args
@@ -1145,12 +1127,7 @@ release must be."
   "Resizes window whose side was depressed on by the last Smart Key.
 Resize amount depends upon the horizontal difference between press and release
 of the Smart Key."
-  (cond ((featurep 'xemacs)
-	 ;; Depress events in scrollbars or in non-text area of buffer are
-	 ;; not visible or identifiable at the Lisp-level, so always return
-	 ;; nil.
-	 nil)
-	((hyperb:window-system)
+  (cond ((hyperb:window-system)
 	 (let* ((owind (selected-window))
 		(window (smart-window-of-coords
 			 (if assist-flag assist-key-depress-args

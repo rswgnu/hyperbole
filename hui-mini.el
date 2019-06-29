@@ -150,13 +150,9 @@ With optional HELP-STRING-FLAG, instead returns the one line help string for the
   "Uses CHAR-STR or last input character as minibuffer argument."
   (interactive)
   (let ((input (or char-str (aref (recent-keys) (1- (length (recent-keys)))))))
-    (cond ((not (featurep 'xemacs))
-	   (and (not (integerp input))
-		(eventp input)
-		(setq input (event-basic-type input))))
-	  ((featurep 'xemacs)
-	   (if (eventp input)
-	       (setq input (event-to-character input)))))
+    (and (not (integerp input))
+	 (eventp input)
+	 (setq input (event-basic-type input)))
     (if (or (symbolp input)
 	    (and (integerp input) (= input ?\r)))
 	(setq input (hargs:at-p)))
@@ -202,24 +198,6 @@ With optional HELP-STRING-FLAG, instead returns the one line help string for the
 		(shrink-window (+ (window-height) neg-shrink-amount)))))
       (if (eq owind (minibuffer-window))
 	  (select-window owind)))))
-
-(defun hui:menu-xemacs (&optional menu menu-list)
-  "Returns an XEmacs menu built from a Hyperbole minibuffer menu.
-Optional MENU (a symbol) specifies a specific submenu of optional MENU-LIST.
-a Hyperbole menu list structure.  Otherwise, all menus are used.
-MENU defaults to 'hyperbole and MENU-LIST to `hui:menus'.  See `hui:menus'
-definition for the format of the menu list structure."
-  (mapcar
-   (lambda (entry)
-     (or (consp entry)
-	 (error "(hui:menu-xemacs): Invalid menu entry: %s" entry))
-     (let ((label (car entry))
-	   (content (car (cdr entry))))
-       (cond ((null content) (hypb:replace-match-string ">$" label "" t))
-	     ((and (consp content) (eq (car content) 'menu))
-	      (hui:menu-xemacs (cdr content)))
-	     (t (vector label content 't)))))
-   (cdr (assq (or menu 'hyperbole) (or menu-list hui:menus)))))
 
 (defun hui:menu-select (menu-alist &optional doc-flag help-string-flag)
   "Prompts user to choose the first character of any item from MENU-ALIST.
@@ -385,10 +363,6 @@ constructs.  If not given, the top-level Hyperbole menu is used."
   (define-key hui:menu-mode-map [backtab]       #'hui:menu-backward-item) ;; Shift-TAB
   (define-key hui:menu-mode-map "\M-\C-i"       #'hui:menu-backward-item) ;; M-TAB
   ;;
-  ;; This next binding is necessary since the default button1 binding under
-  ;; XEmacs, mouse-track, is broken under XEmacs V19.8.
-  (and (featurep 'xemacs) window-system
-       (define-key hui:menu-mode-map 'button1 'mouse-set-point))
   (let ((i 32))
     (while (<= i 126)
       (define-key hui:menu-mode-map (char-to-string i) 'hui:menu-enter)
