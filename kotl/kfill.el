@@ -4,7 +4,7 @@
 ;;
 ;; Orig-Date:    23-Jan-94
 ;;
-;; Copyright (C) 1994-2016  Free Software Foundation, Inc.
+;; Copyright (C) 1994-2019  Free Software Foundation, Inc.
 ;; See the "../HY-COPY" file for license information.
 ;;
 ;; This file is part of GNU Hyperbole.
@@ -13,17 +13,6 @@
 ;;; Commentary:
 
 ;;; Code:
-
-;; Quiet byte compiler warnings for this free variable.
-(eval-when-compile
-  (defvar filladapt-function-table nil))
-
-;; The above formerly looked like this, but the filladapt package is old
-;; and unmaintained and causes improper paragraph filling for
-;; kotl-mode under modern GNU Emacs versions.   -- RSW 12/17/2017
-;; (eval-when-compile
-;;  (unless (require 'filladapt nil t)
-;;    (defvar filladapt-function-table nil)))
 
 ;;; ************************************************************************
 ;;; Public variables

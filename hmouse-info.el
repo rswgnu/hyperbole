@@ -4,7 +4,7 @@
 ;;
 ;; Orig-Date:    04-Apr-89
 ;;
-;; Copyright (C) 1989-2016  Free Software Foundation, Inc.
+;; Copyright (C) 1989-2019  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
 ;;
 ;; This file is part of GNU Hyperbole.
@@ -170,9 +170,7 @@ Otherwise, return nil."
 		  (filep (concat "(" nodename ")" "Top"))
 		  (buffer-file-name (concat "(" buffer-file-name ")" nodename))
 		  (t nodename)))
-      (if (featurep 'xemacs)
-	  (Info-goto-node nodename nil t)
-	(Info-goto-node nodename))
+      (Info-goto-node nodename)
       t)))
 
 (defun Info-handle-in-node-hdr-assist ()
@@ -223,9 +221,7 @@ entry and returns t; otherwise returns nil."
 	  (forward-char 2)
 	  (setq node (Info-extract-menu-node-name nil (Info-index-node)))))
       (when node
-	(if (featurep 'xemacs)
-	    (Info-goto-node node nil t)
-	  (Info-goto-node node))
+	(Info-goto-node node)
 	t))))
 
 ;;; ************************************************************************

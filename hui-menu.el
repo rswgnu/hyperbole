@@ -4,7 +4,7 @@
 ;;
 ;; Orig-Date:    28-Oct-94 at 10:59:44
 ;;
-;; Copyright (C) 1994-2017  Free Software Foundation, Inc.
+;; Copyright (C) 1994-2019  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
 ;;
 ;; This file is part of GNU Hyperbole.
@@ -186,10 +186,7 @@ Return t if cutoff, else nil."
 		    ;; setting.  Invoking this item should then make it
 		    ;; visible.
 		    (hyperb:init-menubar))
-		   ((cond (hyperb:emacs-p
-			   (global-key-binding [menu-bar Hyperbole]))
-			  ((boundp 'current-menubar)
-			   (car (find-menu-item current-menubar '("Hyperbole")))))
+		   ((global-key-binding [menu-bar Hyperbole])
 		    ;; Already on the menubar, remove it.
 		    (hui-menu-remove Hyperbole))
 		   (t;; Add it.
@@ -198,10 +195,8 @@ Return t if cutoff, else nil."
 	     :selected
 	      (cond ((boundp 'menubar-configuration)
 		     (memq 'Hyperbole menubar-configuration))
-		    (hyperb:emacs-p
-		     (and (global-key-binding [menu-bar Hyperbole]) t))
-		    ((boundp 'current-menubar)
-		     (car (find-menu-item current-menubar '("Hyperbole")))))]
+		    (t
+		     (and (global-key-binding [menu-bar Hyperbole]) t)))]
 	    "----"
 	    ["Find-File-Accepts-URLs"
 	     hpath:find-file-urls-mode
@@ -302,7 +297,7 @@ REBUILD-FLAG is non-nil, in which case the menu is rebuilt."
     (setq infodock-hyperbole-menu
 	  (delq nil
 		(list
-		 (if (featurep 'xemacs) "%_Hyperbole" "Hyperbole")
+		 "Hyperbole"
 		 :config 'Hyperbole
 		 hui-menu-about
 		 ["Demonstration"  (hypb:display-file-with-logo

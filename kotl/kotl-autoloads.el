@@ -1,7 +1,5 @@
 ;;; kotl-autoloads.el --- automatically extracted autoloads
 ;;
-;; Copyright (C) 2017  Free Software Foundation, Inc.
-;;
 ;;; Code:
 
 
@@ -22,7 +20,7 @@ STILL TODO:
 
 ;;;***
 
-;;;### (autoloads nil "kfile" "kfile.el" (22415 50714 78447 943000))
+;;;### (autoloads nil "kfile" "kfile.el" (22412 20800 0 0))
 ;;; Generated autoloads from kfile.el
 
 (autoload 'kfile:find "kfile" "\

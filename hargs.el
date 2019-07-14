@@ -228,17 +228,13 @@ Optional DEFAULT-PROMPT is used to describe default value."
 
 (defun hargs:select-event-window ()
   "Select window, if any, that mouse was over during last event."
-  (if (featurep 'xemacs)
-      (if current-mouse-event
-	  (select-window
-	   (or (event-window current-mouse-event) (selected-window))))
-    (let ((window (posn-window (event-start last-command-event))))
-      (if (framep window)
-	  (setq window (frame-selected-window window)))
-      (if (and (window-minibuffer-p window)
-	       (not (minibuffer-window-active-p window)))
-	  (error "Attempt to select inactive minibuffer window")
-	(select-window (or window (selected-window)))))))
+  (let ((window (posn-window (event-start last-command-event))))
+    (if (framep window)
+	(setq window (frame-selected-window window)))
+    (if (and (window-minibuffer-p window)
+	     (not (minibuffer-window-active-p window)))
+	(error "Attempt to select inactive minibuffer window")
+      (select-window (or window (selected-window))))))
 
 (defun hargs:set-string-to-complete ()
   "Store the current minibuffer contents into `hargs:string-to-complete'."
