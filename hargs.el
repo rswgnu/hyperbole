@@ -324,7 +324,10 @@ Handles all of the interactive argument types that `hargs:iform-read' does."
 		    (t 0)))))
 	((hargs:completion t))
 	((eq hargs:reading-p 'ebut) (ebut:label-p 'as-label))
-	((ebut:label-p) nil)
+	((eq hargs:reading-p 'gbut)
+	 (when (eq (current-buffer) (get-file-buffer gbut:file))
+	   (hbut:label-p 'as-label)))
+	((hbut:label-p) nil)
 	((eq hargs:reading-p 'file)
 	 (cond ((derived-mode-p 'dired-mode)
 		(let ((file (dired-get-filename nil t)))
@@ -521,7 +524,7 @@ See also documentation for `interactive'."
 		  ;;   `@' means select window of last mouse event.
 		  ;;
 		  ;;   `^' means activate/deactivate mark depending on invocation thru shift translation
-		  ;;   See `this-command-keys-shift-translated' for somewhat of an explanation.
+		  ;;   See `this-command-keys-shift-translated' for an explanation.
 		  ;;
 		  ;;   `_' means keep region in same state (active or inactive)
 		  ;;   after this command.  (XEmacs only.)

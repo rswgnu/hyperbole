@@ -364,16 +364,11 @@ the window."
 	       (while (string-equal "" (setq but-lbl
 					     (hargs:read-match
 					      "Global button to link to: "
-					      (ebut:alist gbut-file)
-					      nil nil nil 'ebut)))
+					      (mapcar 'list (gbut:label-list))
+					      nil t nil 'gbut)))
 		 (beep))
-	       (ebut:label-to-key but-lbl))))))
-  (let ((gbut-file (hpath:validate (hpath:substitute-value gbut:file)))
-	(but (ebut:get key (find-file-noselect (expand-file-name gbut:file)))))
-    (if but (hbut:act but)
-      (hypb:error "(link-to-gbut): No button `%s' in `%s'."
-		  (ebut:key-to-label key)
-		  gbut-file))))
+	       (hbut:label-to-key but-lbl))))))
+  (gbut:act (hbut:key-to-label key)))
 
 (defact link-to-Info-index-item (index-item)
   "Displays an Info index INDEX-ITEM cross-reference.
@@ -397,8 +392,8 @@ available.  Filename may be given without the .info suffix."
       (id-info string)
     (hypb:error "(link-to-Info-node): Invalid Info node: `%s'" string)))
 
-(defact link-to-ibut (key-file key point)
-  "Performs action given by an implicit button, specified by KEY-FILE, KEY and POINT.
+(defact link-to-ibut (key-file key &optional point)
+  "Performs action given by an implicit button, specified by KEY-FILE, KEY and optional POINT.
 When creating the button, point must be on the implicit button to which to link
 and its buffer must have a file attached."
   (interactive
@@ -414,11 +409,11 @@ and its buffer must have a file attached."
 	       (save-restriction
 		 (find-file-noselect key-file)
 		 (widen)
-		 (goto-char point)
-		 (setq but (ibut:at-p)))))
+		 (if (integerp point) (goto-char (min point (point-max))))
+		 (setq but (ibut:to key)))))
 	(hbut:act but)
       (hypb:error "(link-to-ibut): No button `%s' in `%s'."
-		  (ebut:key-to-label key)
+		  (ibut:key-to-label key)
 		  key-file))))
 
 (defact link-to-kcell (file cell-ref)

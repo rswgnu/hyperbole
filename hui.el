@@ -722,8 +722,8 @@ All args are optional, the current button and buffer file are the defaults."
 
 (defun hui:hbut-term-highlight (start end)
   "For terminals only: Emphasize a button spanning from START to END."
-  (save-restriction
-    (save-excursion
+  (save-excursion
+    (save-restriction
       (goto-char start)
       (narrow-to-region (point-min) start)
       (sit-for 0)
@@ -737,8 +737,8 @@ All args are optional, the current button and buffer file are the defaults."
 
 (defun hui:hbut-term-unhighlight (start end)
   "For terminals only: Remove any emphasis from hyper-button at START to END."
-  (save-restriction
-    (save-excursion
+  (save-excursion
+    (save-restriction
       (goto-char start)
       (narrow-to-region (point-min) start)
       (sit-for 0)
@@ -834,7 +834,7 @@ button's source file name when the button data is stored externally."
 	  (t but-buf))))
 
 (defun hui:link-create (modify but-window lbl-key but-loc but-dir type-and-args)
-  "Creates or modifies a new Hyperbole link button.
+  "Creates or modifies a new Hyperbole explicit link button.
 If MODIFY is non-nil, modifies button at point in BUT-WINDOW,
 otherwise, prompts for button label and creates a button.
 LBL-KEY is internal form of button label.  BUT-LOC is file or buffer
@@ -880,11 +880,11 @@ Buffer without File      link-to-buffer-tmp"
   (let (val)
     (delq nil
 	  (list (cond ((eq (current-buffer) (get-file-buffer gbut:file))
-		       (list 'link-to-gbut buffer-file-name (ebut:label-p)))
+		       (list 'link-to-gbut buffer-file-name (hbut:label-p)))
 		      ((ebut:at-p)
 		       (list 'link-to-ebut buffer-file-name (ebut:label-p)))
-		      ((ibut:at-p)
-		       (list 'link-to-ibut buffer-file-name (ibut:label-p))))
+		      ((setq val (ibut:at-p t))
+		       (list 'link-to-ibut buffer-file-name val)))
 		(cond ((eq major-mode 'Info-mode)
 		       (if (and Info-current-node
 				(member Info-current-node

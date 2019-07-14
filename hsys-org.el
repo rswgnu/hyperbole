@@ -29,6 +29,16 @@
 (require 'hbut)
 (require 'org)
 
+(defvar hsys-org-mode-function #'hsys-org-mode-p
+  "*Boolean function of no arguments that determines whether hsys-org actions are triggered or not.")
+
+(defun hsys-org-mode-p ()
+  "Returns non-nil if an Org-related major or minor mode is active in the current buffer."
+  (or (derived-mode-p 'org-mode)
+      (and (boundp 'outshine-mode) outshine-mode)
+      (and (boundp 'poporg-mode) poporg-mode)))
+
+
 (defun hsys-org-cycle ()
   "Calls org-cycle and forces it to be set as this-command to cycle through all states."
   (setq last-command 'org-cycle
@@ -47,17 +57,22 @@
 
 (defib org-mode ()
   "Follows any Org mode link at point or cycles through views of the outline subtree at point."
-  (when (derived-mode-p 'org-mode)
-    (cond ((org-internal-link-target-at-p)
-	   (hact 'org-internal-link-target))
-	  ((org-radio-target-def-at-p)
-	   (hact 'org-radio-target))
-	  ((org-link-at-p)
-	   (hact 'org-link))
-	  ((org-at-heading-p)
-	   (hact 'hsys-org-cycle))
-	  (t
-	   (hact 'org-meta-return)))))
+  (when (funcall hsys-org-mode-function)
+    (let (start-end)
+      (cond ((setq start-end (org-internal-link-target-at-p))
+	     (org-set-ibut-label start-end)
+	     (hact 'org-internal-link-target))
+	    ((org-radio-target-def-at-p)
+	     (hact 'org-radio-target))
+	    ((setq start-end (org-link-at-p))
+	     (org-set-ibut-label start-end)
+	     (hact 'org-link))
+	    ((org-at-heading-p)
+	     (hact 'hsys-org-cycle))
+	    ((org-at-block-start-p)
+	     (org-ctrl-c-ctrl-c))
+	    (t
+	     (hact 'org-meta-return))))))
 
 (defun org-mode:help (&optional _but)
   "If on an Org mode heading, cycles through views of the whole buffer outline.
@@ -125,13 +140,21 @@ uses that one.  Otherwise, triggers an error."
 	    (setq start-point (1- start-point))))
 	(cons start-point (next-single-property-change start-point property)))))
 
-(defsubst org-link-at-p ()
+(defun org-at-block-start-p ()
+  "Returns non-nil if point is on the first line of an Org block definition, else nil."
+  (save-excursion
+    (forward-line 0)
+    (or (looking-at org-block-regexp)
+	(looking-at org-dblock-start-re))))
+
+(defun org-link-at-p ()
   "Returns non-nil iff point is on an Org mode link.
 Assumes caller has already checked that the current buffer is in org-mode."
-  (org-face-at-p 'org-link))
+  (or (org-in-regexp org-any-link-re)
+      (org-face-at-p 'org-link)))
 
 ;; Assumes caller has already checked that the current buffer is in org-mode.
-(defsubst org-target-at-p ()
+(defun org-target-at-p ()
   "Returns non-nil iff point is on an Org mode radio target (definition) or link target (referent).
 Assumes caller has already checked that the current buffer is in org-mode."
   (org-face-at-p 'org-target))
@@ -216,6 +239,15 @@ White spaces are insignificant.  Returns t if a target link is found, else nil."
 	    (throw :radio-match t))))
       (goto-char origin)
       nil)))
+
+(defun org-set-ibut-label (start-end)
+  "Record the label and START-END positions of any implicit button at point."
+  (when (consp start-end)
+    (ibut:label-set (ibut:key-to-label
+		     (ibut:label-to-key
+		      (buffer-substring-no-properties (car start-end) (cdr start-end))))
+		    (car start-end) (cdr start-end))))
+
 
 (defun org-to-next-radio-target-link (target)
   "Moves to the start of the next radio TARGET link if found.  TARGET must be a string."

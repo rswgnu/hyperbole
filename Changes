@@ -1,7 +1,73 @@
+2019-07-13  Bob Weiner  <rsw@gnu.org>
+
+* hsys-org.el (org-set-ibut-label): Added and used in org-mode ibtype.
+              (org-mode, org-at-block-start-p): Added Action Key activation of Org blocks when
+    on 1st line of def.
+
+* hibtypes.el (link-to-gbut, glink:start, glink:end): Added for in-buffer links to global buttons.
+              (link-to-ebut, elink:start, elink:end): Added for in-buffer links to explicit buttons.
+              (link-to-ibut, ilink:start, ilink:end): Added for in-buffer links to implicit buttons.
+
+* hbut.el (ebut:label-p): Updated to better handle whether point is
+    between specified delimiters.
+
+2019-07-12  Bob Weiner  <rsw@gnu.org>
+
+* hbut.el (ebut:key-src-set-buffer, hbut:key-src-set-buffer, hbut:key-list,
+           hbut:ebut-key-list, hbut:ibut-key-list, hbut:label-list): Added
+    to allow selection of labeled Hyperbole buttons in currrent buffer by name.
+          (ibut:to): Added to move to an implicit button in the current buffer
+    matching a label key.
+
+2019-07-11  Bob Weiner  <rsw@gnu.org>
+
+* hargs.el (hargs:at-p): Added support for reading global button arguments.
+
+* hactypes.el (link-to-gbut): Updated to handle global labeled implicit buttons.
+
+* hbut.el (gbut:get): Added.
+
+2019-07-10  Bob Weiner  <rsw@gnu.org>
+
+* man/hyperbole.texi (Invisible Text Searches): Added missing {M-s i} key sequence.
+
+* hibtypes.el (Info-node): Modified to skip costly hpath:is-p if ref
+    string is not of the right format.
+              (hibtypes-path-line-and-col-regexp, pathname-line-and-column): Updated
+    to handle Elisp variables with colons.
+
+2019-07-09  Bob Weiner  <rsw@gnu.org>
+
+* hbut.el (ibut:at-p): Conditionalized on (not (hbut:outside-comment-p)).
+          (hbut:map, ibut:label-map): Added.
+	  (ibut:key-src, ibut:key-to-label, ibut:label-to-key, ibut:summarize): Added.
+   Global, labeled implicit buttons now exist!
+
+2019-07-08  Bob Weiner  <rsw@gnu.org>
+
+* hbut.el (ibut:label-separator, hbut:outside-comment-p): Added.
+
+2019-07-01  Bob Weiner  <rsw@gnu.org>
+
+* hbut.el (gbut:ibut-key-list): Added.
+
+* hui.el (hui:hbut-term-highlight, hui:hbut-term-unhighlight): Fixed so save-excursion is outermost.
+
+2019-06-29  Bob Weiner  <rsw@gnu.org>
+
+* hbut.el (ebut:get, ebut:at-p, ebut:label-to-key, ibut:at-type-p): Simplified conditionals using 'when'.
+          (ibut:label-start, ibut:label-end, ibut:label-p, ibut:get,
+           ibut:next-occurrence, ibut:label-regexp): Added.
+	   (hbut:label-regexp): Added to support labeled implicit buttons too.
+           (ebut:label-regexp): Aliased to hbut:label-regexp.
+	   (hbut:label-p): Updated to handle implicit button labels.
+
 2019-06-23  Bob Weiner  <rsw@gnu.org>
 
 * hsys-org.el: Added many new predicates and code to handle navigation between Org
     mode internal links and their targets, as well as radio target definitions and their links.
+    (hsys-org-mode-function, hsys-org-mode-p): Added to determine when hsys-org actions
+       are activated.
 
 * hypb.el (hypb:region-with-text-property-value): Added and used in hysy-org.el.
 

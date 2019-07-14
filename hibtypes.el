@@ -64,7 +64,7 @@
 (run-hooks 'hibtypes-begin-load-hook)
 
 ;;; ========================================================================
-;;; Follows Org mode links by invoking a web browser.
+;;; Follows Org mode links and radio targets and cycles Org heading views
 ;;; ========================================================================
 
 (require 'hsys-org)
@@ -184,10 +184,9 @@ display options."
 ;;; ========================================================================
 
 (defconst hibtypes-path-line-and-col-regexp
-  (if hyperb:microsoft-os-p
-      ;; Allow for 'c:' single letter drive prefixes on MSWindows
-      "\\([^ \t\n\r:][^ \t\n\r]+\\):\\([0-9]+\\)\\(:\\([0-9]+\\)\\)?"
-    "\\([^ \t\n\r:]+\\):\\([0-9]+\\)\\(:\\([0-9]+\\)\\)?"))
+  ;; Allow for 'c:' single letter drive prefixes on MSWindows and
+  ;; Elisp vars with colons in them.
+  "\\([^ \t\n\r\f:][^\t\n\r\f:]+\\(:[^0-9\t\n\r\f]*\\)*\\):\\([0-9]+\\)\\(:\\([0-9]+\\)\\)?$")
 
 (defib pathname-line-and-column ()
   "Makes a valid pathname:line-num[:column-num] pattern display the path at line-num and optional column-num.
@@ -200,10 +199,10 @@ See `hpath:find' function documentation for special file display options."
   (let ((path-line-and-col (hpath:delimited-possible-path)))
     (if (and (stringp path-line-and-col)
 	     (string-match hibtypes-path-line-and-col-regexp path-line-and-col))
-	(let ((file (expand-file-name (match-string-no-properties 1 path-line-and-col)))
-	      (line-num (string-to-number (match-string-no-properties 2 path-line-and-col)))
-	      (col-num (if (match-end 3) (string-to-number (match-string-no-properties
-							    4 path-line-and-col)))))
+	(let ((file (save-match-data (expand-file-name (hpath:substitute-value (match-string-no-properties 1 path-line-and-col)))))
+	      (line-num (string-to-number (match-string-no-properties 3 path-line-and-col)))
+	      (col-num (if (match-end 4) (string-to-number (match-string-no-properties
+							    5 path-line-and-col)))))
 	  (when (save-match-data (setq file (hpath:is-p file)))
 	    (ibut:label-set file (match-beginning 1) (match-end 1))
 	    (if col-num
@@ -626,6 +625,65 @@ Requires the Emacs builtin Tramp library for ftp file retrievals."
 ;;; ========================================================================
 
 (require 'klink)
+
+;;; ========================================================================
+;;; Links to Hyperbole button types 
+;;; ========================================================================
+
+
+(defconst elink:start "<elink:"
+  "String matching the start of a link to a Hyperbole explicit button.")
+(defconst elink:end   ">"
+  "String matching the end of a link to a Hyperbole explicit button.")
+
+(defib link-to-ebut ()
+  "At point, activates a link to an explicit button.
+The explicit button's action is executed in the context of the current buffer.
+
+Recognizes the format '<elink:' <button label> '>', e.g. <elink: project-list>."
+  (let* ((label-key-start-end (hbut:label-p nil elink:start elink:end t t))
+	 (lbl-key (nth 0 label-key-start-end))
+	 (start-pos (nth 1 label-key-start-end))
+	 (end-pos (nth 2 label-key-start-end)))
+    (when lbl-key
+      (ibut:label-set (ebut:key-to-label lbl-key) start-pos end-pos)
+      (hact 'link-to-ebut lbl-key))))
+
+(defconst glink:start "<glink:"
+  "String matching the start of a link to a Hyperbole global button.")
+(defconst glink:end   ">"
+  "String matching the end of a link to a Hyperbole global button.")
+
+(defib link-to-gbut ()
+  "At point, activates a link to a global button.
+The global button's action is executed in the context of the current buffer.
+
+Recognizes the format '<glink:' <button label> '>', e.g. <glink: open todos>."
+  (let* ((label-key-start-end (hbut:label-p nil glink:start glink:end t t))
+	 (lbl-key (nth 0 label-key-start-end))
+	 (start-pos (nth 1 label-key-start-end))
+	 (end-pos (nth 2 label-key-start-end)))
+    (when lbl-key
+      (ibut:label-set (ebut:key-to-label lbl-key) start-pos end-pos)
+      (hact 'link-to-gbut lbl-key))))
+
+(defconst ilink:start "<ilink:"
+  "String matching the start of a link to a Hyperbole implicit button.")
+(defconst ilink:end   ">"
+  "String matching the end of a link to a Hyperbole implicit button.")
+
+(defib link-to-ibut ()
+  "At point, activates a link to an implicit button.
+The implicit button's action is executed in the context of the current buffer.
+
+Recognizes the format '<ilink:' <button label> '>', e.g. <ilink: my sequence of keys>."
+  (let* ((label-key-start-end (ibut:label-p nil ilink:start ilink:end t t))
+	 (lbl-key (nth 0 label-key-start-end))
+	 (start-pos (nth 1 label-key-start-end))
+	 (end-pos (nth 2 label-key-start-end)))
+    (when lbl-key
+      (ibut:label-set (ibut:key-to-label lbl-key) start-pos end-pos)
+      (hact 'link-to-ibut lbl-key))))
 
 ;;; ========================================================================
 ;;; Jumps to source line associated with ipython, ripgreb, grep or
@@ -1052,8 +1110,11 @@ Activates only if point is within the first line of the Info-node name."
 			       (hbut:label-p t "``" "''" t t)
 			       ;; Regular open and close quotes
 			       (hbut:label-p t "`" "'" t t)))
-	 (node-ref (hpath:is-p (car node-ref-and-pos) nil t)))
-    (and node-ref (string-match "\\`([^\):]+)" node-ref)
+	 (ref (car node-ref-and-pos))
+	 (node-ref (and (stringp ref)
+			(string-match "\\`([^\):]+)" ref)
+			(hpath:is-p (car node-ref-and-pos) nil t))))
+    (and node-ref
 	 (ibut:label-set node-ref-and-pos)
 	 (hact 'link-to-Info-node node-ref))))
 

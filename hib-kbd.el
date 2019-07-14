@@ -65,6 +65,7 @@ Any key sequence must be a string of one of the following:
 			    ;; these are special quote marks, not the
 			    ;; standard ASCII characters.
 			    (hbut:label-p t "‘" "’" t)))
+	   ;; This excludes delimiters
 	   (key-sequence (car seq-and-pos))
 	   (start (cadr seq-and-pos))
 	   binding)
