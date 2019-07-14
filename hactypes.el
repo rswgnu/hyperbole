@@ -392,29 +392,33 @@ available.  Filename may be given without the .info suffix."
       (id-info string)
     (hypb:error "(link-to-Info-node): Invalid Info node: `%s'" string)))
 
-(defact link-to-ibut (key-file key &optional point)
+(defact link-to-ibut (key &optional key-file point)
   "Performs action given by an implicit button, specified by KEY-FILE, KEY and optional POINT.
 When creating the button, point must be on the implicit button to which to link
 and its buffer must have a file attached."
   (interactive
    (let ((ibut-key (ibut:at-p t)))
      (if (and ibut-key buffer-file-name)
-	 (list buffer-file-name ibut-key (point))
+	 (list ibut-key buffer-file-name (point))
        (list nil nil nil))))
-  (or (called-interactively-p 'interactive)
-      (setq key-file (hpath:validate (hpath:substitute-value key-file))))
-  (let (but)
-    (if (and key-file
-	     (save-excursion
-	       (save-restriction
-		 (find-file-noselect key-file)
-		 (widen)
-		 (if (integerp point) (goto-char (min point (point-max))))
-		 (setq but (ibut:to key)))))
-	(hbut:act but)
-      (hypb:error "(link-to-ibut): No button `%s' in `%s'."
-		  (ibut:key-to-label key)
-		  key-file))))
+  (if key-file
+      (or (called-interactively-p 'interactive)
+	  (null key-file)
+	  (setq key-file (hpath:validate (hpath:substitute-value key-file))))
+    (setq key-file buffer-file-name))
+  (save-excursion
+    (save-restriction
+      (let (but)
+	(when key-file
+	  (find-file-noselect key-file))
+	(widen)
+	(if (integerp point) (goto-char (min point (point-max))))
+	(setq but (ibut:to key)))))
+  (if but
+      (hbut:act but)
+    (hypb:error "(link-to-ibut): No button `%s' in `%s'."
+		(ibut:key-to-label key)
+		(or key-file (buffer-name)))))
 
 (defact link-to-kcell (file cell-ref)
   "Displays FILE with kcell given by CELL-REF at window top.

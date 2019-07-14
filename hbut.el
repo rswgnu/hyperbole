@@ -1309,11 +1309,11 @@ move to the first occurrence of the button."
       (forward-line 0)
       ;; re-search forward
       (while (and (not found) (re-search-forward regexp nil t))
-	(setq pos (goto-char (match-beginning 0))
+	(setq pos (match-beginning 0)
 	      found (equal (ibut:at-p t) lbl-key)))
       ;; re-search backward
       (while (and (not found) (re-search-backward regexp nil t))
-	(setq pos (goto-char (match-beginning 0))
+	(setq pos (match-beginning 0)
 	      found (equal (ibut:at-p t) lbl-key))))
     (when found
       (goto-char pos)

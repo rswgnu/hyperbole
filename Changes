@@ -1,3 +1,9 @@
+2019-07-14  Bob Weiner  <rsw@gnu.org>
+
+* hibtypes.el (link-to-ebut, link-to-gbut, link-to-ibut):
+  hactypes.el (link-to-ibut):
+  hbut.el (ibut:to): Fixed small logic errors with lbl-keys and save-excursion in these functions.
+
 2019-07-13  Bob Weiner  <rsw@gnu.org>
 
 * hsys-org.el (org-set-ibut-label): Added and used in org-mode ibtype.

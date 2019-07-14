@@ -642,12 +642,13 @@ The explicit button's action is executed in the context of the current buffer.
 
 Recognizes the format '<elink:' <button label> '>', e.g. <elink: project-list>."
   (let* ((label-key-start-end (hbut:label-p nil elink:start elink:end t t))
-	 (lbl-key (nth 0 label-key-start-end))
+	 (ebut-key (nth 0 label-key-start-end))
+	 (lbl-key (and ebut-key (concat "elink_" (nth 0 label-key-start-end))))
 	 (start-pos (nth 1 label-key-start-end))
 	 (end-pos (nth 2 label-key-start-end)))
     (when lbl-key
       (ibut:label-set (ebut:key-to-label lbl-key) start-pos end-pos)
-      (hact 'link-to-ebut lbl-key))))
+      (hact 'link-to-ebut ebut-key))))
 
 (defconst glink:start "<glink:"
   "String matching the start of a link to a Hyperbole global button.")
@@ -660,12 +661,13 @@ The global button's action is executed in the context of the current buffer.
 
 Recognizes the format '<glink:' <button label> '>', e.g. <glink: open todos>."
   (let* ((label-key-start-end (hbut:label-p nil glink:start glink:end t t))
-	 (lbl-key (nth 0 label-key-start-end))
+	 (gbut-key (nth 0 label-key-start-end))
+	 (lbl-key (and gbut-key (concat "glink_" (nth 0 label-key-start-end))))
 	 (start-pos (nth 1 label-key-start-end))
 	 (end-pos (nth 2 label-key-start-end)))
     (when lbl-key
       (ibut:label-set (ebut:key-to-label lbl-key) start-pos end-pos)
-      (hact 'link-to-gbut lbl-key))))
+      (hact 'link-to-gbut gbut-key))))
 
 (defconst ilink:start "<ilink:"
   "String matching the start of a link to a Hyperbole implicit button.")
@@ -678,12 +680,13 @@ The implicit button's action is executed in the context of the current buffer.
 
 Recognizes the format '<ilink:' <button label> '>', e.g. <ilink: my sequence of keys>."
   (let* ((label-key-start-end (ibut:label-p nil ilink:start ilink:end t t))
-	 (lbl-key (nth 0 label-key-start-end))
+	 (ibut-key (nth 0 label-key-start-end))
+	 (lbl-key (and ibut-key (concat "ilink_" (nth 0 label-key-start-end))))
 	 (start-pos (nth 1 label-key-start-end))
 	 (end-pos (nth 2 label-key-start-end)))
     (when lbl-key
       (ibut:label-set (ibut:key-to-label lbl-key) start-pos end-pos)
-      (hact 'link-to-ibut lbl-key))))
+      (hact 'link-to-ibut ibut-key))))
 
 ;;; ========================================================================
 ;;; Jumps to source line associated with ipython, ripgreb, grep or
