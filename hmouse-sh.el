@@ -427,12 +427,6 @@ point determined by `mouse-select-region-move-to-beginning'."
 (defun hmouse-move-point-eterm (arg-list)
   (apply 'mouse-move-point arg-list))
 
-(defun hmouse-move-point-xemacs ()
-  (condition-case ()
-      (mouse-set-point current-mouse-event)
-    ;; Catch "not in a window" errors, e.g. on modeline
-    (error nil)))
-
 (defun hmouse-set-key-list (binding key-list)
   (mapc (lambda (key) (hkey-global-set-key key binding)) key-list)
   nil)

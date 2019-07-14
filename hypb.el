@@ -762,37 +762,6 @@ Without file, the banner is prepended to the current buffer."
 	(button-put button 'face 'default)
 	(button-put button 'keymap hypb:hyperbole-banner-keymap)))))
 
-(defun hypb:display-file-with-logo-xemacs (&optional file)
-  "Display an optional text FILE with the Hyperbole banner prepended.
-Without file, the banner is prepended to the current buffer."
-  (let ((hyperbole-banner-path (expand-file-name "hyperbole-banner.png" hyperb:dir)))
-    (if (not (file-readable-p hyperbole-banner-path))
-	(setq hyperbole-banner-path (if (fboundp 'locate-data-file)
-					(locate-data-file "hyperbole-banner.png")
-				      (expand-file-name "hyperbole-banner.png"
-							data-directory))))
-    (if (or (not (fboundp 'make-glyph))
-	    (let ((extent (next-extent (current-buffer))))
-	      (and extent (extent-property extent 'hyperbole-banner)))
-	    (not hyperbole-banner-path)
-	    (not (file-readable-p hyperbole-banner-path)))
-	;; Either image support is unavailable, the file cannot be read
-	;; or the image has already been inserted, so don't reinsert it.
-	nil
-      (let ((hyperbole-banner (make-glyph hyperbole-banner-path))
-	     (buffer-read-only)
-	     extent)
-	(goto-char (point-min))
-	(insert "\n")
-	(indent-to (startup-center-spaces hyperbole-banner))
-	(insert "\n\n")
-	(setq extent (make-extent (- (point) 3) (- (point) 2)))
-	(set-extent-end-glyph extent hyperbole-banner)
-	(set-extent-property extent 'hyperbole-banner t)
-	(set-extent-property extent 'help-echo
-			     (concat "Click to visit " hypb:home-page))
-	(set-extent-property extent 'keymap hypb:hyperbole-banner-keymap)))))
-
 (defun hypb:locate-pathnames ()
   (save-excursion
     (goto-char (point-min))

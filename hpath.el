@@ -988,8 +988,6 @@ See also `hpath:internal-display-alist' for internal, window-system independent 
 	 hpath:external-display-alist-mswindows)
 	(t (cdr (assoc (hyperb:window-system)
 		       (list (cons "emacs" hpath:external-display-alist-x) ; GNU Emacs under X
-			     (cons "xemacs" hpath:external-display-alist-x) ; XEmacs under X
-			     (cons "xterm"  hpath:external-display-alist-x) ; GNU Emacs V18 under X
 			     (cons "next" hpath:external-display-alist-macos)))))))
 
 (defun hpath:is-p (path &optional type non-exist)
