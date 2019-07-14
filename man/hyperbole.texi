@@ -2679,7 +2679,9 @@ upon the referent context in which the Action Key is released.
 @example
 Referent Context         Link Type
 ----------------------------------------------------
+Global Button            link-to-gbut
 Explicit Button          link-to-ebut
+Implicit Button          link-to-ibut
 Info Index Item          link-to-Info-index-item
 Info Node                link-to-Info-node
 Mail Reader Message      link-to-mail
@@ -6494,24 +6496,74 @@ be of interest to users.
 @cindex referent display
 @cindex link display
 @cindex display where
+@cindex display outside Emacs
 @cindex where to display
+@cindex image display
+@cindex internal display
+@cindex external display
 Hyperbole lets you control where link referents are displayed and even
 what Emacs function or external program is used to display them.
-There are three categories of referents, each with its own display
-setting:
+There are four categories of referents, each with its own display
+setting, listed in decreasing order of priority.
+
 @example
 Referent Category             Variable Setting
 ========================================================================
-Internal Standard Display     hpath:display-where
+Internal Image Display        hpath:native-image-suffixes
 Internal Custom Display       hpath:internal-display-alist
 External Display              hpath:external-display-alist
+Internal Standard Display     hpath:display-where
 
 @end example
 
+@noindent
+Continue reading the next sections for information on how referents
+are displayed internally and externally.
+
+@node Internal Viewers, External Viewers, Referent Display, Customization
+@subsection  Internal Viewers
+@vindex hpath:internal-display-alist
+@cindex file display function
+@cindex display function
+@cindex internal viewer
+@cindex link, display function
+
+@cindex internal image display
+@vindex hpath:native-image-suffixes
+@cindex internal custom display
+@vindex hpath:internal-display-alist
+@cindex internal standard display
+@vindex hpath:display-where
+When given a file name, Hyperbole will by default display the file for
+editing within an Emacs buffer.  The @code{hpath:internal-display-alist}
+variable can be used to specify file name patterns, such as matching
+suffixes, which will invoke a special Emacs Lisp function to display
+any matching files within Emacs.  This can be used to format raw data
+files for convenient display.
+
+For those who want to change this variable, @code{hpath:internal-display-alist}
+is defined in @file{hpath.el}.  Its value is an association list whose
+elements are (<file-name-regular-expression> . <function-of-one-arg>)
+pairs.  Any path whose name matches a <file-name-regular-expression>
+will be displayed by calling the associated <function-of-one-arg> with
+the file name as the argument.
+
+By default, this variable handles the following types of files:
+@table @emph
+@item Audio Files
+Major audio format files are played with the @code{play-sound-file} command.
+@item Info Manuals
+Files with a @file{.info} suffix (may also be compressed) are displayed in the Info browser.
+@item RDB Files
+Files with an @file{.rdb} suffix are displayed as relational databases using the RDB package
+available with InfoDock.
+@end table
+
 @cindex menu, Cust/Referents
 @kindex C-h h c r
-Regular file links are displayed in an Emacs window specified by the
-@code{hpath:display-where} setting which may be changed with the Cust/Referents
+Links to standard files, those which don't match any special referent
+category, are displayed in an Emacs window specified by the
+@code{hpath:display-where} setting.  It may be changed with the Cust/Referents
 @bkbd{C-h h c r} menu.
 
 @noindent
@@ -6543,42 +6595,6 @@ Alternatively, you can use the Hyperbole menubar menu as shown here:
 @end float
 @sp 1
 
-@noindent
-Continue reading the next sections for information on custom Internal
-and External Viewers for link referencts.
-
-@node Internal Viewers, External Viewers, Referent Display, Customization
-@subsection  Internal Viewers
-@vindex hpath:internal-display-alist
-@cindex file display function
-@cindex display function
-@cindex internal viewer
-@cindex link, display function
-When given a file name, Hyperbole will by default display the file for
-editing within an Emacs buffer.  The @code{hpath:internal-display-alist}
-variable can be used to specify file name patterns, such as matching
-suffixes, which will invoke a special Emacs Lisp function to display
-any matching files within Emacs.  This can be used to format raw data
-files for convenient display.
-
-For those who want to change this variable, @code{hpath:internal-display-alist}
-is defined in @file{hpath.el}.  Its value is an association list whose
-elements are (<file-name-regular-expression> . <function-of-one-arg>)
-pairs.  Any path whose name matches a <file-name-regular-expression>
-will be displayed by calling the associated <function-of-one-arg> with
-the file name as the argument.
-
-By default, this variable handles the following types of files:
-@table @emph
-@item Audio Files
-Major audio format files are played with the @code{play-sound-file} command.
-@item Info Manuals
-Files with a @file{.info} suffix (may also be compressed) are displayed in the Info browser.
-@item RDB Files
-Files with an @file{.rdb} suffix are displayed as relational databases using the RDB package
-available with InfoDock.
-@end table
-
 @xref{External Viewers}, for instructions on associating file names with
 external, window-system specific viewers.
 
@@ -6592,6 +6608,9 @@ external, window-system specific viewers.
 @cindex external program
 @cindex external viewer
 @cindex link, viewer program
+
+@cindex external display
+@vindex hpath:external-display-alist
 If you will be using Hyperbole under a window system,
 the @code{hpath:get-external-display-alist} function
 in @file{hpath.el} supports hyperlinks that open files using external, non-Emacs
@@ -6750,9 +6769,11 @@ through invisible/hidden text, making the text temporarily visible
 until point moves past that hidden part.  When a search match is
 selected, the surrounding text remains visible.
 
-This command toggles that setting (turns it off if a prefix
-argument less than or equal to 0 is given) and makes searches look at
-only visible text.
+You can temporarily disable searching of hidden text by typing {M-s i}
+while in an incremental search.  This key sequence toggles that
+setting and makes searches look at only visible text (or the reverse
+when invoked again).  The setting lasts only through the current
+interactive search.
 
 @node Button Colors,  , Invisible Text Searches, Customization
 @subsection  Configuring Button Colors

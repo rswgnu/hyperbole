@@ -300,7 +300,7 @@ With third argument NO-ADD non-nil, skip storage of prior KEY binding
 which prevents automatic removal of any local bindings to the same key."
   (or (global-key-binding key)
       (where-is-internal command)
-      (hkey-global-set-key key command)))
+      (hkey-global-set-key key command no-add)))
 
 (defun hkey-set-bindings (key-binding-list)
   "Set keys bound by Hyperbole to those in KEY-BINDING-LIST.

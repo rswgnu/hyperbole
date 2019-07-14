@@ -243,9 +243,9 @@ Its default value is #'smart-scroll-down."
     ;;
     ;; Python files - ensure this comes before Imenu for more advanced
     ;; definition lookups
-    ((and (or (and (eq major-mode 'python-mode) buffer-file-name)
+    ((and (or (and (derived-mode-p 'python-mode) buffer-file-name)
 	      (let ((case-fold-search))
-		(string-match "\\`\\(Pydoc:\\|\\*?Python\\)" (buffer-name))))
+		(string-match "\\`\\([ *]?Pydoc[: ]\\|\\*?Python\\)" (buffer-name))))
 	  (setq hkey-value (smart-python-at-tag-p))) .
 	  ((smart-python hkey-value) . (smart-python hkey-value 'next-tag)))
     ;;

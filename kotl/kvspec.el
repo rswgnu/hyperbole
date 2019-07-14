@@ -114,15 +114,14 @@ display all levels of cells."
   (kview:set-attr kview 'levels-to-show levels-to-keep))
 
 (defun kvspec:show-lines-per-cell (num)
-  "Show NUM lines per cell."
+  "Show NUM lines per visible cell; 0 means show all lines in each visible cell."
   (if (or (not (integerp num)) (< num 0))
       (error "(kvspec:show-lines-per-cell): Invalid lines per cell, `%d'" num))
   (kview:set-attr kview 'lines-to-show num)
-  (if (not (zerop num))
-      ;; Now show NUM lines in cells.
-      (kview:map-tree (lambda (kview)
-			(kcell-view:expand (point))
-			(kvspec:show-lines-this-cell num)) kview t t)))
+  ;; Now show NUM lines in cells.
+  (kview:map-tree (lambda (kview)
+		    (kcell-view:expand (point))
+		    (kvspec:show-lines-this-cell num)) kview t t))
 
 (defun kvspec:toggle-blank-lines ()
   "Toggle blank lines between cells on or off."
@@ -224,32 +223,25 @@ view specs."
   ;; "l" means use value of kview:default-levels-to-show.
   ;; "l0" means show all levels.
   (let (levels)
-    (if (not (string-match "l\\([0-9]+\\)?" kvspec:current))
-	;; Don't change the view if no view spec is given but note that
-	;; all levels should be shown in the future.
-	(kview:set-attr kview 'levels-to-show 0)
-      (if (match-beginning 1)
-	  (setq levels (string-to-number (match-string 1 kvspec:current)))
-	(setq levels kview:default-levels-to-show))
-      (kvspec:levels-to-show levels))))
+    (if (and (string-match "l\\([0-9]+\\)?" kvspec:current)
+	     (match-beginning 1))
+	(setq levels (string-to-number (match-string 1 kvspec:current)))
+      (setq levels kview:default-levels-to-show))
+    (kvspec:levels-to-show levels)))
 
 (defun kvspec:lines-to-show ()
   "Show a set number of lines per cell according to `kvspec:current'."
-  ;; "c" means use value of kview:default-lines-to-show.
+  ;; "c" or no "c" means use value of kview:default-lines-to-show.
   ;; "c0" means show all lines.
-  (cond ((not (string-match "c\\([0-9]+\\)?" kvspec:current))
-	 ;; Don't change the view if no view spec is given but note that all
-	 ;; lines should be shown in the future.
-	 (kview:set-attr kview 'lines-to-show 0))
-	((match-beginning 1)
-	 (kvspec:show-lines-per-cell 
-	  (string-to-number (match-string 1 kvspec:current))))
-	(t (kvspec:show-lines-per-cell kview:default-lines-to-show))))
+  (if (and (string-match "c\\([0-9]+\\)?" kvspec:current)
+	   (match-beginning 1))
+      (kvspec:show-lines-per-cell
+       (string-to-number (match-string 1 kvspec:current)))
+    (kvspec:show-lines-per-cell kview:default-lines-to-show)))
 
 (defun kvspec:numbering ()
   "Set the type of numbering (label) display according to `kvspec:current'."
-  (if (not (string-match "n\\([.*~0-2]\\)?" kvspec:current))
-      nil
+  (when (string-match "n\\([.*~0-2]\\)?" kvspec:current)
     ;; "n"  means use value of kview:default-label-type.
     ;; "n0" means display idstamps.
     ;; "n1" means display alpha labels.
@@ -259,22 +251,21 @@ view specs."
     ;; "n~" means no labels.
     (let (spec type)
       (if (match-beginning 1)
-	  (setq spec (string-to-char
-		      (substring kvspec:current
-				 (match-beginning 1) (match-end 1)))
+	  (setq spec (string-to-char (match-string 1 kvspec:current))
 		type (cdr (assq spec kvspec:label-type-alist)))
 	(setq type kview:default-label-type))
       (kview:set-label-type kview type))))
 
 (defun kvspec:show-lines-this-cell (num)
   "Assume the current cell is fully expanded and collapse to show NUM lines within it.
-If NUM is greater than the number of lines available, the cell remains fully expanded."
+If NUM is less than 1 or greater than the number of lines available, the cell remains fully expanded."
   ;; Use free variable label-sep-len bound in kview:map-* for speed.
-  (let ((start (goto-char (kcell-view:start (point) label-sep-len)))
-	(end (kcell-view:end-contents)))
-    ;; Hide all but num lines of the cell.
-    (and (> num 0) (search-forward "\n" end t num)
-	 (outline-flag-region (1- (point)) end t))))
+  (unless (< num 1)
+    (let ((start (goto-char (kcell-view:start (point) label-sep-len)))
+	  (end (kcell-view:end-contents)))
+      ;; Hide all but num lines of the cell.
+      (and (search-forward "\n" end t num)
+	   (outline-flag-region (1- (point)) end t)))))
 
 (defun kvspec:update-modeline ()
   "Setup or update display of the current kview spec in the modeline."

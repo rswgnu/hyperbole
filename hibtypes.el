@@ -64,7 +64,7 @@
 (run-hooks 'hibtypes-begin-load-hook)
 
 ;;; ========================================================================
-;;; Follows Org mode links by invoking a web browser.
+;;; Follows Org mode links and radio targets and cycles Org heading views
 ;;; ========================================================================
 
 (require 'hsys-org)
@@ -184,10 +184,9 @@ display options."
 ;;; ========================================================================
 
 (defconst hibtypes-path-line-and-col-regexp
-  (if hyperb:microsoft-os-p
-      ;; Allow for 'c:' single letter drive prefixes on MSWindows
-      "\\([^ \t\n\r:][^ \t\n\r]+\\):\\([0-9]+\\)\\(:\\([0-9]+\\)\\)?"
-    "\\([^ \t\n\r:]+\\):\\([0-9]+\\)\\(:\\([0-9]+\\)\\)?"))
+  ;; Allow for 'c:' single letter drive prefixes on MSWindows and
+  ;; Elisp vars with colons in them.
+  "\\([^ \t\n\r\f:][^\t\n\r\f:]+\\(:[^0-9\t\n\r\f]*\\)*\\):\\([0-9]+\\)\\(:\\([0-9]+\\)\\)?$")
 
 (defib pathname-line-and-column ()
   "Makes a valid pathname:line-num[:column-num] pattern display the path at line-num and optional column-num.
@@ -200,10 +199,10 @@ See `hpath:find' function documentation for special file display options."
   (let ((path-line-and-col (hpath:delimited-possible-path)))
     (if (and (stringp path-line-and-col)
 	     (string-match hibtypes-path-line-and-col-regexp path-line-and-col))
-	(let ((file (expand-file-name (match-string-no-properties 1 path-line-and-col)))
-	      (line-num (string-to-number (match-string-no-properties 2 path-line-and-col)))
-	      (col-num (if (match-end 3) (string-to-number (match-string-no-properties
-							    4 path-line-and-col)))))
+	(let ((file (save-match-data (expand-file-name (hpath:substitute-value (match-string-no-properties 1 path-line-and-col)))))
+	      (line-num (string-to-number (match-string-no-properties 3 path-line-and-col)))
+	      (col-num (if (match-end 4) (string-to-number (match-string-no-properties
+							    5 path-line-and-col)))))
 	  (when (save-match-data (setq file (hpath:is-p file)))
 	    (ibut:label-set file (match-beginning 1) (match-end 1))
 	    (if col-num
@@ -628,10 +627,111 @@ Requires the Emacs builtin Tramp library for ftp file retrievals."
 (require 'klink)
 
 ;;; ========================================================================
-;;; Jumps to source line associated with grep or compilation error messages.
-;;; Also supports ripgrep (rg command).
+;;; Links to Hyperbole button types 
+;;; ========================================================================
+
+
+(defconst elink:start "<elink:"
+  "String matching the start of a link to a Hyperbole explicit button.")
+(defconst elink:end   ">"
+  "String matching the end of a link to a Hyperbole explicit button.")
+
+(defib link-to-ebut ()
+  "At point, activates a link to an explicit button.
+The explicit button's action is executed in the context of the current buffer.
+
+Recognizes the format '<elink:' <button label> '>', e.g. <elink: project-list>."
+  (let* ((label-key-start-end (hbut:label-p nil elink:start elink:end t t))
+	 (lbl-key (nth 0 label-key-start-end))
+	 (start-pos (nth 1 label-key-start-end))
+	 (end-pos (nth 2 label-key-start-end)))
+    (when lbl-key
+      (ibut:label-set (ebut:key-to-label lbl-key) start-pos end-pos)
+      (hact 'link-to-ebut lbl-key))))
+
+(defconst glink:start "<glink:"
+  "String matching the start of a link to a Hyperbole global button.")
+(defconst glink:end   ">"
+  "String matching the end of a link to a Hyperbole global button.")
+
+(defib link-to-gbut ()
+  "At point, activates a link to a global button.
+The global button's action is executed in the context of the current buffer.
+
+Recognizes the format '<glink:' <button label> '>', e.g. <glink: open todos>."
+  (let* ((label-key-start-end (hbut:label-p nil glink:start glink:end t t))
+	 (lbl-key (nth 0 label-key-start-end))
+	 (start-pos (nth 1 label-key-start-end))
+	 (end-pos (nth 2 label-key-start-end)))
+    (when lbl-key
+      (ibut:label-set (ebut:key-to-label lbl-key) start-pos end-pos)
+      (hact 'link-to-gbut lbl-key))))
+
+(defconst ilink:start "<ilink:"
+  "String matching the start of a link to a Hyperbole implicit button.")
+(defconst ilink:end   ">"
+  "String matching the end of a link to a Hyperbole implicit button.")
+
+(defib link-to-ibut ()
+  "At point, activates a link to an implicit button.
+The implicit button's action is executed in the context of the current buffer.
+
+Recognizes the format '<ilink:' <button label> '>', e.g. <ilink: my sequence of keys>."
+  (let* ((label-key-start-end (ibut:label-p nil ilink:start ilink:end t t))
+	 (lbl-key (nth 0 label-key-start-end))
+	 (start-pos (nth 1 label-key-start-end))
+	 (end-pos (nth 2 label-key-start-end)))
+    (when lbl-key
+      (ibut:label-set (ibut:key-to-label lbl-key) start-pos end-pos)
+      (hact 'link-to-ibut lbl-key))))
+
+;;; ========================================================================
+;;; Jumps to source line associated with ipython, ripgreb, grep or
 ;;; With credit to Michael Lipp and Mike Williams for the idea.
 ;;; ========================================================================
+
+(defib ipython-stack-frame ()
+  "Jumps to line associated with an ipython stack frame line numbered msg.
+ipython outputs each pathname once followed by all matching lines in that pathname.
+Messages are recognized in any buffer (other than a helm completion
+buffer)."
+  ;; Locate and parse ipython stack trace messages found in any buffer other than a
+  ;; helm completion buffer.
+  ;;
+  ;; Sample ipython stack trace command output:
+  ;;
+  ;; ~/Dropbox/py/inview/inview_pr.py in ap(name_filter, value_filter, print_func)
+  ;; 1389     apc(name_filter, value_filter, print_func, defined_only=True)
+  ;; 1390     print('\n**** Modules/Packages ****')
+  ;; -> 1391     apm(name_filter, value_filter, print_func, defined_only=True)
+  ;; 1392
+  ;; 1393 def apa(name_filter=None, value_filter=None, print_func=pd1, defined_only=False):
+  (unless (eq major-mode 'helm-major-mode)
+    (save-excursion
+      (beginning-of-line)
+      (let ((line-num-regexp "\\( *\\|-+> \\)?\\([1-9][0-9]*\\) ")
+	    line-num
+	    file)
+	(when (looking-at line-num-regexp)
+	  ;; ipython stack trace matches and context lines (-A<num> option)
+	  (setq line-num (match-string-no-properties 2)
+		file nil)
+	  (while (and (= (forward-line -1) 0)
+		      (looking-at line-num-regexp)))
+	  (unless (or (looking-at line-num-regexp)
+		      (not (re-search-forward " in " nil (point-at-eol)))
+		      (and (setq file (buffer-substring-no-properties (point-at-bol) (match-beginning 0)))
+			   (string-empty-p (string-trim file))))
+	    (let* ((but-label (concat file ":" line-num))
+		   (source-loc (if (file-name-absolute-p file)
+				   nil
+				 (hbut:key-src t))))
+	      (if (stringp source-loc)
+		  (setq file (expand-file-name file (file-name-directory source-loc))))
+	      (when (file-readable-p file)
+		(setq line-num (string-to-number line-num))
+		(ibut:label-set but-label)
+		(hact 'link-to-file-line file line-num)))))))))
 
 (defib ripgrep-msg ()
   "Jumps to line associated with a ripgrep (rg) line numbered msg.
@@ -688,7 +788,7 @@ in grep and shell buffers."
       (beginning-of-line)
       (if (or
 	   ;; Grep matches, UNIX C compiler and Introl 68HC11 C compiler errors
-	   (looking-at "\\([^ \t\n\r:]+\\): ?\\([1-9][0-9]*\\)[ :]")
+	   (looking-at "\\([^ \t\n\r:]+\\)[:\^@] ?\\([1-9][0-9]*\\)[ :]")
 	   ;; HP C compiler errors
 	   (looking-at "[a-zA-Z0-9]+: \"\\([^\t\n\r\",]+\\)\", line \\([0-9]+\\):")
 	   ;; BSO/Tasking 68HC08 C compiler errors
@@ -733,13 +833,13 @@ This works with JavaScript and Python tracebacks, gdb, dbx, and xdb.  Such lines
   (save-excursion
     (beginning-of-line)
     (cond
-     ;; Python pdb or traceback
-     ((looking-at ".+ File \"\\([^\"\n\r]+\\)\", line \\([0-9]+\\)")
-      (let* ((file (match-string-no-properties 1))
-	     (line-num (match-string-no-properties 2))
+     ;; Python pdb or traceback, pytype error
+     ((looking-at "\\(^\\|.+ \\)File \"\\([^\"\n\r]+\\)\", line \\([0-9]+\\)")
+      (let* ((file (match-string-no-properties 2))
+	     (line-num (match-string-no-properties 3))
 	     (but-label (concat file ":" line-num)))
 	(setq line-num (string-to-number line-num))
-	(ibut:label-set but-label (match-beginning 1) (match-end 1))
+	(ibut:label-set but-label (match-beginning 2) (match-end 2))
 	(hact 'link-to-file-line file line-num)))
 
      ;; JavaScript traceback
@@ -1010,8 +1110,11 @@ Activates only if point is within the first line of the Info-node name."
 			       (hbut:label-p t "``" "''" t t)
 			       ;; Regular open and close quotes
 			       (hbut:label-p t "`" "'" t t)))
-	 (node-ref (hpath:is-p (car node-ref-and-pos) nil t)))
-    (and node-ref (string-match "\\`([^\):]+)" node-ref)
+	 (ref (car node-ref-and-pos))
+	 (node-ref (and (stringp ref)
+			(string-match "\\`([^\):]+)" ref)
+			(hpath:is-p (car node-ref-and-pos) nil t))))
+    (and node-ref
 	 (ibut:label-set node-ref-and-pos)
 	 (hact 'link-to-Info-node node-ref))))
 

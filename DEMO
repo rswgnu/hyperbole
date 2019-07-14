@@ -816,8 +816,9 @@ displayed.  Test this technique with a {C-x C-f} (find-file) and then a {?}.
 
 ** Hyperbole Source Buttons
 
-If you ask for help with the Assist Key or {C-u C-h A} from within the
-[FSF 19] button, the first line of the help buffer will look like this:
+If you ask for help with the Assist Key or {C-h A} from within this button,
+{M-x dired-other-window RET ~ RET}, the first line of the help buffer will
+look like this:
 
 @loc> "DEMO"
 

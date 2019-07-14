@@ -18,12 +18,6 @@
 ;;; Public variables
 ;;; ************************************************************************
 
-(defvar kfill:function-table
-  (if (boundp 'filladapt-function-table)
-      filladapt-function-table
-    (list (cons 'fill-paragraph (symbol-function 'fill-paragraph))))
-  "Table containing the old function definitions that kfill overrides.")
-
 (defvar kfill:prefix-table
   '(
     ;; Lists with hanging indents, e.g.
@@ -106,44 +100,44 @@ number of lines that could not be moved, otherwise 0."
 	      ;; Need this or Emacs ignores fill-prefix when inside a
 	      ;; comment.
 	      (comment-multi-line t)
+	      (fill-paragraph-handle-comment t)
 	      fill-prefix)
 	  (kfill:adapt nil)
 	  (do-auto-fill))
       (do-auto-fill))))
 
-;;; Redefine this built-in function.
-
-(defun fill-paragraph (arg &optional skip-prefix-remove)
-  "Fill paragraph at or after point.  Prefix ARG means justify as well."
-  (interactive "*P")
-  (if (not (eq major-mode 'kotl-mode))
-      (kfill:funcall 'fill-paragraph arg)
-    ;; This may be called from `fill-region-as-paragraph' in "filladapt.el"
-    ;; which narrows the region to the current paragraph.  A side-effect is
-    ;; that the cell identifier and indent information needed by this function
-    ;; when in kotl-mode is no longer visible.  So we temporarily rewiden the
-    ;; buffer here.  Don't rewiden past the paragraph of interest or any
-    ;; following blank line may be removed by the filling routines.
-    (save-restriction
-      (if (eq major-mode 'kotl-mode)
-	  (narrow-to-region 1 (point-max)))
-      ;; Emacs expects a specific symbol here.
-      (if (and arg (not (symbolp arg))) (setq arg 'full))
-      (or skip-prefix-remove (kfill:remove-paragraph-prefix))
-      (catch 'done
-	(if (null fill-prefix)
-	    (let ((paragraph-ignore-fill-prefix nil)
-		  ;; Need this or Emacs ignores fill-prefix when
-		  ;; inside a comment.
-		  (comment-multi-line t)
-		  (paragraph-start paragraph-start)
-		  (paragraph-separate paragraph-separate)
-		  fill-prefix)
-	      (if (kfill:adapt t)
-		  (throw 'done (kfill:funcall 'fill-paragraph arg)))))
-	;; Kfill:adapt failed or fill-prefix is set, so do a basic
-	;; paragraph fill as adapted from par-align.el.
-	(kfill:fallback-fill-paragraph arg skip-prefix-remove)))))
+(defun kfill:fill-paragraph (&optional arg skip-prefix-remove)
+  "Fill paragraph at or after point when in kotl-mode.  Prefix ARG means justify as well."
+  (interactive (progn
+		 (barf-if-buffer-read-only)
+		 (list (if current-prefix-arg 'full) nil)))
+  ;; This may be called from `fill-region-as-paragraph' in "filladapt.el"
+  ;; which narrows the region to the current paragraph.  A side-effect is
+  ;; that the cell identifier and indent information needed by this function
+  ;; when in kotl-mode is no longer visible.  So we temporarily rewiden the
+  ;; buffer here.  Don't rewiden past the paragraph of interest or any
+  ;; following blank line may be removed by the filling routines.
+  (save-restriction
+    (if (eq major-mode 'kotl-mode)
+	(narrow-to-region 1 (point-max)))
+    ;; Emacs expects a specific symbol here.
+    (if (and arg (not (symbolp arg))) (setq arg 'full))
+    (or skip-prefix-remove (kfill:remove-paragraph-prefix))
+    (catch 'done
+      (if (null fill-prefix)
+	  (let ((paragraph-ignore-fill-prefix nil)
+		;; Need this or Emacs ignores fill-prefix when
+		;; inside a comment.
+		(comment-multi-line t)
+		(fill-paragraph-handle-comment t)
+		(paragraph-start paragraph-start)
+		(paragraph-separate paragraph-separate)
+		fill-prefix)
+	    (if (kfill:adapt t)
+		(throw 'done (fill-paragraph arg)))))
+      ;; Kfill:adapt failed or fill-prefix is set, so do a basic
+      ;; paragraph fill as adapted from par-align.el.
+      (kfill:fallback-fill-paragraph arg skip-prefix-remove))))
 
 ;;;
 ;;; Redefine this built-in function so that it sets `prior-fill-prefix' also.
@@ -154,16 +148,17 @@ Also sets `prior-fill-prefix' to the previous value of `fill-prefix'.
 Filling removes any prior fill prefix, adjusts line lengths and then adds the
 fill prefix at the beginning of each line."
   (interactive)
-  (setq prior-fill-prefix fill-prefix
-	fill-prefix (if turn-off
-			nil
-		      (buffer-substring
-		       (save-excursion (beginning-of-line) (point))
-		       (point))))
-  (if (equal prior-fill-prefix "")
-      (setq prior-fill-prefix nil))
-  (if (equal fill-prefix "")
-      (setq fill-prefix nil))
+  (setq prior-fill-prefix fill-prefix)
+  (let ((left-margin-pos (save-excursion (move-to-left-margin) (point))))
+    (if (> (point) left-margin-pos)
+	(setq fill-prefix (if turn-off
+			      nil
+			    (buffer-substring left-margin-pos (point))))
+      (setq fill-prefix nil)))
+  (when (equal prior-fill-prefix "")
+    (setq prior-fill-prefix nil))
+  (when (equal fill-prefix "")
+    (setq fill-prefix nil))
   (cond (fill-prefix
 	 (message "fill-prefix: \"%s\"; prior-fill-prefix: \"%s\""
 		  fill-prefix (or prior-fill-prefix "")))
@@ -225,10 +220,6 @@ fill prefix at the beginning of each line."
 		 (goto-char region-start)
 		 (funcall function justify-flag)))
 	  (fill-region-as-paragraph from (point) justify-flag)))))
-
-(defun kfill:funcall (function &rest args)
-  "Call the original FUNCTION with rest of ARGS that kfill overloaded."
-  (apply (cdr (assq function kfill:function-table)) args))
 
 (defun kfill:hanging-list (paragraph)
   (let (prefix match beg end)

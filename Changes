@@ -1,3 +1,204 @@
+2019-07-13  Bob Weiner  <rsw@gnu.org>
+
+* hsys-org.el (org-set-ibut-label): Added and used in org-mode ibtype.
+              (org-mode, org-at-block-start-p): Added Action Key activation of Org blocks when
+    on 1st line of def.
+
+* hibtypes.el (link-to-gbut, glink:start, glink:end): Added for in-buffer links to global buttons.
+              (link-to-ebut, elink:start, elink:end): Added for in-buffer links to explicit buttons.
+              (link-to-ibut, ilink:start, ilink:end): Added for in-buffer links to implicit buttons.
+
+* hbut.el (ebut:label-p): Updated to better handle whether point is
+    between specified delimiters.
+
+2019-07-12  Bob Weiner  <rsw@gnu.org>
+
+* hbut.el (ebut:key-src-set-buffer, hbut:key-src-set-buffer, hbut:key-list,
+           hbut:ebut-key-list, hbut:ibut-key-list, hbut:label-list): Added
+    to allow selection of labeled Hyperbole buttons in currrent buffer by name.
+          (ibut:to): Added to move to an implicit button in the current buffer
+    matching a label key.
+
+2019-07-11  Bob Weiner  <rsw@gnu.org>
+
+* hargs.el (hargs:at-p): Added support for reading global button arguments.
+
+* hactypes.el (link-to-gbut): Updated to handle global labeled implicit buttons.
+
+* hbut.el (gbut:get): Added.
+
+2019-07-10  Bob Weiner  <rsw@gnu.org>
+
+* man/hyperbole.texi (Invisible Text Searches): Added missing {M-s i} key sequence.
+
+* hibtypes.el (Info-node): Modified to skip costly hpath:is-p if ref
+    string is not of the right format.
+              (hibtypes-path-line-and-col-regexp, pathname-line-and-column): Updated
+    to handle Elisp variables with colons.
+
+2019-07-09  Bob Weiner  <rsw@gnu.org>
+
+* hbut.el (ibut:at-p): Conditionalized on (not (hbut:outside-comment-p)).
+          (hbut:map, ibut:label-map): Added.
+	  (ibut:key-src, ibut:key-to-label, ibut:label-to-key, ibut:summarize): Added.
+   Global, labeled implicit buttons now exist!
+
+2019-07-08  Bob Weiner  <rsw@gnu.org>
+
+* hbut.el (ibut:label-separator, hbut:outside-comment-p): Added.
+
+2019-07-01  Bob Weiner  <rsw@gnu.org>
+
+* hbut.el (gbut:ibut-key-list): Added.
+
+* hui.el (hui:hbut-term-highlight, hui:hbut-term-unhighlight): Fixed so save-excursion is outermost.
+
+2019-06-29  Bob Weiner  <rsw@gnu.org>
+
+* hbut.el (ebut:get, ebut:at-p, ebut:label-to-key, ibut:at-type-p): Simplified conditionals using 'when'.
+          (ibut:label-start, ibut:label-end, ibut:label-p, ibut:get,
+           ibut:next-occurrence, ibut:label-regexp): Added.
+	   (hbut:label-regexp): Added to support labeled implicit buttons too.
+           (ebut:label-regexp): Aliased to hbut:label-regexp.
+	   (hbut:label-p): Updated to handle implicit button labels.
+
+2019-06-23  Bob Weiner  <rsw@gnu.org>
+
+* hsys-org.el: Added many new predicates and code to handle navigation between Org
+    mode internal links and their targets, as well as radio target definitions and their links.
+    (hsys-org-mode-function, hsys-org-mode-p): Added to determine when hsys-org actions
+       are activated.
+
+* hypb.el (hypb:region-with-text-property-value): Added and used in hysy-org.el.
+
+* kotl/kfill.el (set-fill-prefix): Updated to better match standard Emacs functiion.
+
+2019-06-22  Bob Weiner  <rsw@gnu.org>
+
+* hyrolo.el (hyrolo-add): Fixed bug in call to match-string-no-properties.
+
+2019-06-21  Bob Weiner  <rsw@gnu.org>
+
+* kotl/kotl-mode.el (kotl-mode): Set fill-paragraph-function rather than overloading
+    fill-paragraph.
+  kotl/kfill.el (kfill:fill-paragraph): Renamed and used only in kotl-mode.  Also
+    temporarily set fill-paragraph-handle-comment to t and made prefix arg optional.
+                (kfill:funcall): Removed.
+                (kfill:function-table): Removed.
+                (kfill:do-auto-fill): Temporarily set fill-paragraph-handle-comment to t.
+
+2019-06-20  Bob Weiner  <rsw@gnu.org>
+
+* hsys-org.el (org-link): Changed to call org-open-at-point which handles internal
+    org links, fixing following links such as radio targets.
+    (org-thing-at-p, org-target-at-p): Added.
+
+* hpath.el (hpath:texinfo-section-pattern): Added and used in hpath:to-markup-anchor to
+    jump to specific Texinfo sections.
+
+2019-06-19  Bob Weiner  <rsw@gnu.org>
+
+* man/hyperbole.texi (Referent Display): Added doc of hpath:native-image-suffixes.
+
+* hpath.el (hpath:find-program): Changed to prioritize hpath:native-image-suffixes over
+    hpath:internal-display-alist over hpath:external-display-alist-macos instead of the
+    reverse.  This prevents external viewers from being used when internal viewers are
+    also in effect.
+
+2019-06-18  Bob Weiner  <rsw@gnu.org>
+
+* hibtypes.el (grep-msg): Allowed for null char in place of first colon in colored grep output lines.
+
+2019-06-17  Bob Weiner  <rsw@gnu.org>
+
+* hactypes.el (link-to-gbut): Added.
+  hui.el (hui:link-possible-types): Added link-to-gbut.
+
+2019-06-16  Bob Weiner  <rsw@gnu.org>
+
+* hyrolo.el: Replaced buffer-substring-no-properties with match-string-no-properties where possible.
+             (hyrolo-entry-regexp): Changed to require whitespace following the entry prefix.
+             (hyrolo-entry-group-number): Added.
+
+2019-06-12  Bob Weiner  <rsw@gnu.org>
+
+* hib-kbd.el (kbd-key): Fixed preceding character test to not depend on the buffer's syntax table,
+    potentially missing kbd-key ibuts, notably ones using the universal argument.
+
+* hbut.el (ibut:at-type-p): Added to test if point is on a specific type of implicit button.
+
+* hib-kbd.el (kbd-key:normalize): Removed aggregation of C-u arguments into something like: C-u(16)
+    as this no longer works in current Emacs and causes an error.  Now this just stays as "C-u C-u".
+
+2019-06-11  Bob Weiner  <rsw@gnu.org>
+
+* hypb.el (hypb:format-quote): Modified to return non-string args as is rather than ignoring them so
+    this can be used across any argument set.  Used in hypb:error.
+
+2019-06-10  Bob Weiner  <rsw@gnu.org>
+
+* htz.el (htz:date-parse): Fixed bug, missing seconds in format 4 leading to invalid time strings saved
+    on MSWindows machines (and maybe more).  Allow for this in style 5 which is how Hyperbole stores dates.
+         (htz:time-make-string): Chop off any spurious digits at the right.
+
+* hactypes.el (link-to-ibut): Added.
+  hui.el (hui:link-possible-types): Added ibut:at-p call for link-to-ibut.
+
+2019-06-07  Bob Weiner  <rsw@gnu.org>
+
+* hibtypes.el (debugger-source): Added support for pytype package errors (close to Python pdb ones)
+
+2019-06-06  Bob Weiner  <rsw@gnu.org>
+
+* hpath.el (hpath:find): Removed file-relative-name from error calls
+    because does not work when current-directory and filename are on different
+    drives under Windows at least through Emacs 26.
+           (hpath:find): Fixed that default-directory was not set to current
+       button's location, so path was expanded relative to another
+       directory, notably in hpath:validate call.
+
+2019-06-05  Bob Weiner  <rsw@gnu.org>
+
+* hpath.el (hpath:is-p): Tightened remote-path check to prevent matches that end with :line-num or :col-num.
+
+2019-06-04  Bob Weiner  <rsw@gnu.org>
+
+* hactypes.el (annot-bib): Changed to find referent from the end of the buffer rather than beginning,
+    to avoid multiple earlier annot-bib buttons
+* DEMO (Hyperbole Source Buttons): Changed example button from annot-bib to kbd-key.
+
+* kotl/kvspec.el (kvspec:hide-levels): Changed behavior so view updates to default level clipping when
+    'l' is excluded from the viewspec.
+
+2019-06-02  Bob Weiner  <rsw@gnu.org>
+
+* kotl/kvspec.el (kvspec:lines-to-show): Changed behavior so view updates to default cell clipping when 
+    'c' is excluded from the viewspec.
+
+* kotl/kotl-mode.el (kotl-mode:show-all): Limited (kvspec:update t) call to interactive usage only.
+    When kotl-mode:show-all is called in kvspec:update-view, it doesn't overwrite the to be set viewspec.
+
+* kotl/kvspec.el (kvspec:show-lines-per-cell)
+                 (kvspec:show-lines-this-cell): Fixed viewspec 'c0' to expand visible cells properly.
+
+2019-06-01  Bob Weiner  <rsw@gnu.org>
+
+* hibtypes.el (ipython_stack_frame): Added to handle ipython stack traces and exceptions.
+
+2019-05-30  Bob Weiner  <rsw@gnu.org>
+
+* hyperbole.el (hkey-maybe-global-set-key): Fix missing no-add argument
+    to hkey-global-set-key call.
+
+2019-05-26  Bob Weiner  <rsw@gnu.org>
+
+* hui-mouse.el (hkey-alist): For Python files, use derived-mode-p and add
+    support for helm-pydoc buffers.
+
+==============================================================================
+V7.0.3a changes ^^^^:
+==============================================================================
+
 2019-05-11  Bob Weiner  <rsw@gnu.org>
 
 * man/hyperbole.texi (External Viewers): Commented out reference to mailcap use

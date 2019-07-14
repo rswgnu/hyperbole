@@ -61,8 +61,8 @@ Optional 2nd argument TIMEZONE specifies a timezone to be represented in."
 
 (defun htz:date-parse (date &optional parsed-current-date)
   "Parse DATE string and return a vector [year month day time timezone].
-19 is prepended to year if necessary.  Timezone in DATE is optional, it
-defaults to the value of `htz:local'.
+If a two-digit year, the first two digits of the current year are prepended.
+Timezone in DATE is optional, it defaults to the value of `htz:local'.
 
 Recognizes the following styles:
  (1) \"(1 30 1999)\" or \"(1 30 1999)\"  `calendar-julian-date'  requires `parsed-current-date' arg
@@ -73,11 +73,8 @@ Recognizes the following styles:
  (6) \"Mar 29 14:00\"    `ls -l date'  requires `parsed-current-date' arg
  (7) \"Mar  7  1994\"    `ls -l date'  requires `parsed-current-date' arg"
   (let ((date (or date ""))
-	(year nil)
-	(month nil)
-	(day nil)
-	(time nil)
-	(zone nil))			; This may be nil.
+	year month day time
+	zone)			; This may be nil.
     (if (listp date)
 	(setq month (nth 0 date)
 	      day   (nth 1 date)
@@ -87,31 +84,34 @@ Recognizes the following styles:
 	     ;; Style (1)
 	     (setq year 3 month 1 day 2 time nil zone nil))
 	    ((string-match
-	      "\\([0-9][0-9][0-9][0-9]\\)\\([0-1][0-9]\\)\\([0-3][0-9]\\):?\\([0-2][0-9]:[0-5][0-9:]+\\)[ ]*\\'" date)
-	     ;; Style (4)
+	      ;; Allow for 3 digits in hour to handle prior error in
+	      ;; generating hours fixed on 2019-06-10; 3rd digit
+	      ;; removed in htz:time-make-string and htz:time-parse.
+	      "\\([0-9][0-9][0-9][0-9]\\)\\([0-1][0-9]\\)\\([0-3][0-9]\\):?\\([0-9][0-9][0-9]?:[0-5][0-9:]+\\)[ ]*\\'" date)
+	     ;; Style (5)
 	     (setq year 1 month 2 day 3 time 4 zone nil))
 	    ((string-match
 	      "\\([0-9]+\\) \\([^ ,]+\\) \\([0-9]+\\) \\([0-9]+:[0-9:]+\\)[ ]*\\'" date)
-	     ;; Styles: (1) and (2) without timezone
+	     ;; Styles: (2) and (3) without timezone
 	     (setq year 3 month 2 day 1 time 4 zone nil))
 	    ((string-match
 	      "\\([0-9]+\\) \\([^ ,]+\\) \\([0-9]+\\) \\([0-9]+:[0-9:]+\\)[ ]*\\([-+a-zA-Z0-9]+\\)" date)
-	     ;; Styles: (1) and (2) with timezone and buggy timezone
+	     ;; Styles: (2) and (3) with timezone and buggy timezone
 	     (setq year 3 month 2 day 1 time 4 zone 5))
 	    ((string-match
-	      "\\([^ ,]+\\) +\\([0-9]+\\) \\([0-9]+:[0-9:]+\\) \\([0-9]+\\)" date)
-	     ;; Styles: (3) without timezone
-	     (setq year 4 month 1 day 2 time 3 zone nil))
+	      "\\([^ ,]+\\) +\\([0-9]+\\) \\([0-9]+:[0-9:]+\\(:[0-9]+\\)?\\) \\([0-9]+\\)" date)
+	     ;; Styles: (4) without timezone
+	     (setq year 5 month 1 day 2 time 3 zone nil))
 	    ((string-match
-	      "\\([^ ,]+\\) +\\([0-9]+\\) \\([0-9]+:[0-9:]+\\) \\([-+a-zA-Z0-9]+\\) \\([0-9]+\\)" date)
-	     ;; Styles: (3) with timezone
-	     (setq year 5 month 1 day 2 time 3 zone 4))
+	      "\\([^ ,]+\\) +\\([0-9]+\\) \\([0-9]+:[0-9:]+\\(:[0-9]+\\)?\\) \\([-+a-zA-Z0-9]+\\) \\([0-9]+\\)" date)
+	     ;; Styles: (4) with timezone
+	     (setq year 6 month 1 day 2 time 3 zone 5))
 	    ((string-match "^\\([^ ,]+\\) +\\([0-9]+\\) +\\([0-9]+:[0-9:]+\\)$" date)
-	     ;; Style: (5)
+	     ;; Style: (6)
 	     (setq year nil month 1 day 2 time 3 zone nil))
 	    ((string-match
 	      "^\\([^ ,]+\\) +\\([0-9]+\\) +\\([0-9][0-9][0-9][0-9]\\)$" date)
-	     ;; Style: (6)
+	     ;; Style: (7)
 	     (setq year 3 month 1 day 2 time nil zone nil))
 	    (t (error "(htz:date-parse): Invalid date format: `%s'" date)))
       (if year
@@ -249,7 +249,10 @@ See `htz:date-parse' for a list of acceptable date formats."
     ;; Return [hour minute second]
     (vector
      (if hour
-	 (substring time (match-beginning hour) (match-end hour)) "0")
+	 ;; Remove possible 3rd digit in hour to handle prior error in
+	 ;; generating hours fixed on 2019-06-10; 3rd digit
+	 ;; removed in htz:time-make-string and here.
+	 (format "%02.2s" (substring time (match-beginning hour) (match-end hour))) "0")
      (if minute
 	 (substring time (match-beginning minute) (match-end minute)) "0")
      (if second
@@ -322,7 +325,7 @@ Optional argument TIMEZONE specifies a time zone."
 ;; Partly copied from Calendar program by Edward M. Reingold.
 (defun htz:time-make-string (hour minute second)
   "Make time string from HOUR, MINUTE, and SECOND."
-  (format "%02d:%02d:%02d" hour minute second))
+  (format "%02.2d:%02.2d:%02.2d" hour minute second))
 
 (defun htz:zone-to-hour (timezone)
   "Translate TIMEZONE (in zone name or integer) to integer hour."

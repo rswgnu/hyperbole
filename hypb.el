@@ -220,7 +220,10 @@ Global keymap is used unless optional KEYMAP is given."
 
 (defun hypb:error (&rest args)
   "Signals an error typically to be caught by `hyperbole'."
-  (let ((msg (if (< (length args) 2) (car args) (apply 'format args))))
+  (let ((msg (if (< (length args) 2)
+		 (car args)
+	       (apply 'format (cons (car args)
+				    (mapcar #'hypb:format-quote (cdr args)))))))
     (put 'error 'error-message msg)
     (error msg)))
 
@@ -233,14 +236,16 @@ FILE is temporarily read into a buffer to determine the major mode if necessary.
       (unless (or existing-flag (null buf))
 	(kill-buffer buf)))))
 
-(defun hypb:format-quote (string)
-  "Replace all single % with %% in STRING so a call to `format' or `message' ignores them."
-  (if (stringp string)
+(defun hypb:format-quote (arg)
+  "Replace all single % with %% in any string ARG so that a call to `format' or `message' ignores them.
+Return either the modified string or the original ARG."
+  (if (stringp arg)
       (replace-regexp-in-string
        "@@@" "%%" (replace-regexp-in-string
-		   "%" "%%" (replace-regexp-in-string "%%" "@@@" string nil t)
+		   "%" "%%" (replace-regexp-in-string "%%" "@@@" arg nil t)
 		   nil t)
-       nil t)))
+       nil t)
+    arg))
 
 (defun hypb:function-copy (func-symbol)
   "Copies FUNC-SYMBOL's body for overloading.  Returns copy of body."
