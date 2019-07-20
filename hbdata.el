@@ -115,8 +115,7 @@ Nil is returned when button has not beened modified."
   (let ((case-fold-search t) (src-matches) (src) (matches) (end))
     (goto-char (point-min))
     (while (re-search-forward "^\^L\n\"\\([^\"]+\\)\"" nil t)
-      (setq src (buffer-substring (match-beginning 1)
-				  (match-end 1))
+      (setq src (match-string 1)
 	    matches nil)
       (save-excursion
 	(setq end (if (re-search-forward "^\^L" nil t)
@@ -125,10 +124,7 @@ Nil is returned when button has not beened modified."
 	      (concat "^(\"\\(" (if partial "[^\"]*")
 		      (regexp-quote (ebut:label-to-key label))
 		      (if partial "[^\"]*") "\\)\"") nil t)
-	(setq matches (cons
-		       (buffer-substring (match-beginning 1)
-					 (match-end 1))
-		       matches)))
+	(setq matches (cons (match-string 1) matches)))
       (if matches
 	  (setq src-matches (cons (cons src matches) src-matches)))
       (goto-char end))
@@ -220,7 +216,7 @@ class 'hbdata' to operate on the entry."
 
 (defun hbdata:instance-next (lbl-key)
   "Returns string for button instance number following LBL-KEY's.
-nil if LBL-KEY is nil."
+Nil if LBL-KEY is nil."
   (and lbl-key
        (if (string-match
 	    (concat (regexp-quote ebut:instance-sep) "[0-9]+$") lbl-key)
@@ -237,8 +233,7 @@ Takes arguments LBL-KEY, KEY-SRC and optional DIRECTORY."
   (hbdata:apply-entry
    (lambda () 
      (if (looking-at "[0-9]+")
-	 (string-to-number (buffer-substring (match-beginning 0)
-					     (match-end 0)))
+	 (string-to-number (match-string 0))
        1))
    lbl-key key-src directory nil 'instance))
 

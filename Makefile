@@ -57,7 +57,7 @@
 HYPB_VERSION = 7.0.3
 
 # Emacs executable used to byte-compile .el files into .elc's.
-# Possibilities include: emacs, infodock, xemacs, etc.
+# Possibilities include: emacs, infodock, etc.
 EMACS = \emacs
 
 # Site-specific Emacs Lisp libraries to load before byte-compiling any files
@@ -132,8 +132,7 @@ ELISP_TO_COMPILE = $(pkg_dir)/elc-${USER}
 # Libraries that must be pre-loaded before trying to byte-compile anything.
 PRELOADS = $(SITE_PRELOADS) -l ./hload-path.el -l ./hversion.el -l ./hyperbole.el 
 
-# Compile in batch mode. Under Emacs and XEmacs, load
-# site-lisp/site-start.el, which may set load-path.
+# Compile in batch mode.  Load site-lisp/site-start.el, which may set load-path.
 BATCHFLAGS = -batch -Q
 
 # Directories other than the current directory in which to find files.
@@ -141,7 +140,7 @@ BATCHFLAGS = -batch -Q
 # explicitly to those files which need it.
 VPATH = kotl man
 
-EL_SRC = hui-em-but.el hui-xe-but.el
+EL_SRC = hui-em-but.el
 
 EL_COMPILE = hact.el hactypes.el hargs.el hbdata.el hbmap.el hbut.el \
 	     hgnus.el hhist.el hib-debbugs.el hib-doc-id.el hib-kbd.el \
@@ -156,7 +155,7 @@ EL_COMPILE = hact.el hactypes.el hargs.el hbdata.el hbmap.el hbut.el \
 EL_KOTL = kotl/kexport.el kotl/kfile.el kotl/kfill.el kotl/kimport.el kotl/klabel.el \
 	  kotl/klink.el kotl/kmenu.el kotl/knode.el kotl/kotl-mode.el \
           kotl/kcell.el kotl/kproperty.el kotl/kprop-em.el \
-	  kotl/kprop-xe.el kotl/kview.el kotl/kvspec.el
+	  kotl/kview.el kotl/kvspec.el
 
 ELC_COMPILE =  hactypes.elc hibtypes.elc hib-debbugs.elc hib-doc-id.elc hib-kbd.elc \
 	     hib-social.elc hact.elc \
@@ -171,7 +170,7 @@ ELC_COMPILE =  hactypes.elc hibtypes.elc hib-debbugs.elc hib-doc-id.elc hib-kbd.
 ELC_KOTL = kotl/kexport.elc kotl/kfile.elc kotl/kfill.elc kotl/kimport.elc kotl/klabel.elc \
 	   kotl/klink.elc kotl/kmenu.elc kotl/knode.elc kotl/kotl-mode.elc \
            kotl/kcell.elc kotl/kproperty.elc \
-	   kotl/kprop-xe.elc kotl/kview.el kotl/kvspec.elc
+	    kotl/kview.el kotl/kvspec.elc
 
 HYPERBOLE_FILES = dir hyperbole-pkg.el info html $(EL_SRC) $(EL_COMPILE) $(EL_KOTL) \
 	$(ELC_COMPILE) Changes COPYING Makefile HY-ABOUT HY-ANNOUNCE HY-NEWS \

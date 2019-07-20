@@ -1,3 +1,23 @@
+2019-07-18  Bob Weiner  <rsw@gnu.org>
+
+* hbut.el (ibut:label-separator): Added.
+
+2019-07-17  Bob Weiner  <rsw@gnu.org>
+
+* hbut.el (ibut:alist, ibut:list, ibut:map): Added.
+          (ebut:map): Moved body to hbut:map and called from ebut:map and ibut:map.
+    Removed start-delim and end-delim arguments in ebut:map.
+
+* hargs.el (hargs:at-p): Added support for reading ibutton labels.
+
+2019-07-16  Bob Weiner  <rsw@gnu.org>
+
+* hui.el (hui:ibut-label-create, hui:ibut-label-modify, hui:ibut-message): Added.
+
+2019-07-15  Bob Weiner  <rsw@gnu.org>
+
+* hibtypes.el (debugger-source): Handled Python tracebacks properly.
+
 2019-07-14  Bob Weiner  <rsw@gnu.org>
 
 * hibtypes.el (link-to-ebut, link-to-gbut, link-to-ibut):
@@ -51,7 +71,7 @@
 
 2019-07-08  Bob Weiner  <rsw@gnu.org>
 
-* hbut.el (ibut:label-separator, hbut:outside-comment-p): Added.
+* hbut.el (ibut:label-separator-regexp, hbut:outside-comment-p): Added.
 
 2019-07-01  Bob Weiner  <rsw@gnu.org>
 

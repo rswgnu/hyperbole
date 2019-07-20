@@ -125,7 +125,7 @@ expression which matches an entire button string.
 If REGEXP-MATCH is non-nil, only buttons matching this argument are
 highlighted."
   (when hproperty:but-highlight-flag
-    (ebut:map (lambda (lbl start end)
+    (hbut:map (lambda (lbl start end)
 		(hproperty:but-add start end hproperty:but-face))
 	      start-delim end-delim regexp-match 'include-delims)))
 

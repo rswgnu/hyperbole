@@ -45,9 +45,9 @@ Nil disables saving.")
       (error "(ebut:act): No explicit button labeled: %s" label))))
 
 (defun    ebut:alist (&optional file)
-  "Returns alist with each element a list containing an explicit button label.
-For use as a completion table.  Gets labels from optional FILE or current
-buffer."
+  "Returns alist of ebuts in FILE or the current buffer.
+Each element is a list of just an explicit button label.  For use
+as a completion table."
   (mapcar 'list (ebut:list file)))
 
 (defun    ebut:at-p (&optional start-delim end-delim)
@@ -325,7 +325,7 @@ whitespace sequence with `_'."
     (hypb:replace-match-string "[ \t\n\r]+" label "_" t)))
 
 (defun    ebut:list (&optional file loc-p)
-  "Returns list of button labels from given FILE or current buffer.
+  "Returns list of button labels from in FILE or the current buffer.
 Removes duplicate labels if optional LOC-P is omitted.  With LOC-P, returns
 list of elements (label start end) where start and end are the buffer
 positions at which the button delimiter begins and ends."
@@ -342,53 +342,18 @@ positions at which the button delimiter begins and ends."
 			    (lambda (lbl start end)
 			      ;; Normalize label spacing
 			      (ebut:key-to-label (ebut:label-to-key lbl)))))))
-      (if loc-p buts (if buts (apply #'set:create buts))))))
+      (if loc-p buts (when buts (apply #'set:create buts))))))
 
 (defalias 'map-ebut 'ebut:map)
-(defun    ebut:map (but-func &optional start-delim end-delim
-			     regexp-match include-delims)
-  "Applies BUT-FUNC to buttons delimited by optional START-DELIM and END-DELIM.
-START-DELIM defaults to ebut:start; END-DELIM defaults to ebut:end.
+(defun    ebut:map (but-func &optional regexp-match include-delims)
+  "Applies BUT-FUNC to the explicit buttons in the visible part of the current buffer.
 If REGEXP-MATCH is non-nil, only buttons which match this argument are
 considered.
 
-Maps over portion of buffer visible under any current restriction.
 BUT-FUNC must take precisely three arguments: the button label, the
 start position of the delimited button label and its end position (positions
-include delimiters when INCLUDE-DELIMS is non-nil).
-If END-DELIM is a symbol, e.g. t, then START-DELIM is taken as a regular
-expression which matches an entire button string."
-  (or start-delim (setq start-delim ebut:start))
-  (or end-delim (setq end-delim ebut:end))
-  (let* ((regexp (symbolp end-delim))
-	 (end-sym (or regexp (substring end-delim -1)))
-	 (rtn)
-	 (ignore)
-	 start end but lbl)
-    (save-excursion
-      (goto-char (point-min))
-      (setq include-delims (if include-delims 0 1))
-      (while (re-search-forward
-	      (if regexp start-delim
-		(concat (regexp-quote start-delim)
-			"\\([^" end-sym "\"][^" end-sym "]*\\)"
-			(regexp-quote end-delim)))
-	      nil t)
-	(setq start (match-beginning include-delims)
-	      end (match-end include-delims)
-	      but (match-string 0)
-	      lbl (match-string 1)
-	      ;; If within a programming language buffer, ignore matches outside comments.
-	      ignore (hbut:outside-comment-p))
-	(save-excursion
-	  (goto-char start)
-	  ;; Ignore matches with quoted delimiters.
-	  (or ignore (setq ignore (memq (preceding-char) '(?\\ ?\{)))))
-	(cond (ignore (setq ignore nil))
-	      ((or (not regexp-match)
-		   (string-match regexp-match but))
-	       (setq rtn (cons (funcall but-func lbl start end) rtn))))))
-    (nreverse rtn)))
+include delimiters when INCLUDE-DELIMS is non-nil)."
+  (hbut:map but-func ebut:start ebut:end regexp-match include-delims))
 
 (defun    ebut:modify (&optional lbl-key but-sym)
   "Modifies existing Hyperbole button from optional LBL-KEY and BUT-SYM.
@@ -423,9 +388,9 @@ move to the first occurrence of the button."
   "Operates on and modifies properties of a new or existing Hyperbole button given by CURR-LABEL.
 When NEW-LABEL is non-nil, this is substituted for CURR-LABEL and the
 associated button is modified.  Otherwise, a new button is created.
-Returns instance string appended to label to form unique label, nil if
-label is already unique.  Signals an error when no such button is found
-in the current buffer."
+Returns instance string appended to label to form a per-buffer unique
+label; nil if label is already unique.  Signals an error when no such
+button is found in the current buffer."
   (let* ((lbl-key (ebut:label-to-key curr-label))
 	 (lbl-regexp (ebut:label-regexp lbl-key))
 	 (modify new-label)
@@ -443,10 +408,10 @@ in the current buffer."
 	      (let* ((but-key-and-pos (ebut:label-p nil nil nil 'pos))
 		     (at-but (equal (car but-key-and-pos)
 				    (ebut:label-to-key new-label))))
-		(if at-but
-		    (ebut:delimit (nth 1 but-key-and-pos)
-				  (nth 2 but-key-and-pos)
-				  instance-flag))
+		(when at-but
+		  (ebut:delimit (nth 1 but-key-and-pos)
+				(nth 2 but-key-and-pos)
+				instance-flag))
 		(cond ((ebut:map
 		        (lambda (lbl start end)
 			  (delete-region start end)
@@ -454,7 +419,7 @@ in the current buffer."
 			   (point)
 			   (progn (insert new-label) (point))
 			   instance-flag))
-			nil nil lbl-regexp 'include-delims))
+			lbl-regexp 'include-delims))
 		      (at-but)
 		      ((hypb:error "(ebut:operate): No button matching: %s" curr-label))))
 	    ;; Add a new button.
@@ -465,7 +430,7 @@ in the current buffer."
 				buf-lbl (buffer-substring start end))
 			  (equal buf-lbl curr-label))
 		     nil)
-		    ((progn (if start (goto-char start))
+		    ((progn (when start (goto-char start))
 			    (looking-at (regexp-quote curr-label)))
 		     (setq start (point)
 			   end (match-end 0)))
@@ -485,15 +450,15 @@ in the current buffer."
 			 (re-search-backward regexp nil t)))
 		   (goto-char (+ (match-beginning 0) (length ebut:start))))))
 	  ;; instance-flag might be 't which we don't want to return.
-	  (if (stringp instance-flag) instance-flag))
+	  (when (stringp instance-flag) instance-flag))
       (hypb:error
        "(ebut:operate): Operation failed.  Check button attribute permissions: %s"
        hattr:filename))))
 
 (defun    ebut:search (string out-buf &optional match-part)
   "Writes explicit button lines matching STRING to OUT-BUF.
-Uses Hyperbole space into which user has written buttons for the search.
-By default, only matches for whole button labels are found, optional MATCH-PART
+Searches across all files into which the user has previously saved explicit buttons.
+By default, only matches for whole button labels are found; optional MATCH-PART
 enables partial matches."
   (let*  ((buffers (mapcar (lambda (dir)
 			     (expand-file-name hattr:filename dir))
@@ -585,7 +550,7 @@ Inserts INSTANCE-STR after END, before ending delimiter."
     (insert ebut:start)
     (goto-char end)
     (insert instance-str ebut:end)
-    ;; Insert any comment before the start marker.
+    ;; Insert any comment delimiter before the start marker.
     (set-marker-insertion-type start t)
     (hbut:comment start end)
     (if (fboundp 'hproperty:but-add)
@@ -968,7 +933,50 @@ label; these default to `ebut:start' and `ebut:end'."
 
 (defalias 'hbut:label-to-key 'ebut:label-to-key)
 
-(defalias 'hbut:map 'ebut:map)
+(defun    hbut:map (but-func &optional start-delim end-delim
+			     regexp-match include-delims)
+  "Applies BUT-FUNC to a set of Hyperbole buttons in the visible part of the current buffer.
+The set of buttons are those whose labels are delimited by optional START-DELIM and
+END-DELIM and that match any optional REGEXP-MATCH.
+
+START-DELIM defaults to ebut:start; END-DELIM defaults to ebut:end.
+If END-DELIM is a symbol, e.g. t, then START-DELIM is taken as a regular
+expression which matches an entire button string.
+
+BUT-FUNC must take precisely three arguments: the button label, the
+start position of the delimited button label and its end position (positions
+include delimiters when INCLUDE-DELIMS is non-nil)."
+  (or start-delim (setq start-delim ebut:start))
+  (or end-delim (setq end-delim ebut:end))
+  (let* ((regexp (symbolp end-delim))
+	 (end-sym (or regexp (substring end-delim -1)))
+	 (rtn)
+	 (ignore)
+	 start end but lbl)
+    (save-excursion
+      (goto-char (point-min))
+      (setq include-delims (if include-delims 0 1))
+      (while (re-search-forward
+	      (if regexp start-delim
+		(concat (regexp-quote start-delim)
+			"\\([^" end-sym "\"][^" end-sym "]*\\)"
+			(regexp-quote end-delim)))
+	      nil t)
+	(setq start (match-beginning include-delims)
+	      end (match-end include-delims)
+	      but (match-string 0)
+	      lbl (match-string 1)
+	      ;; If within a programming language buffer, ignore matches outside comments.
+	      ignore (hbut:outside-comment-p))
+	(save-excursion
+	  (goto-char start)
+	  ;; Ignore matches with quoted delimiters.
+	  (or ignore (setq ignore (memq (preceding-char) '(?\\ ?\{)))))
+	(cond (ignore (setq ignore nil))
+	      ((or (not regexp-match)
+		   (string-match regexp-match but))
+	       (setq rtn (cons (funcall but-func lbl start end) rtn))))))
+    (nreverse rtn)))
 
 (defun    hbut:outside-comment-p ()
   "Returns t if within a programming language buffer and prior regexp match is outside a comment, else nil."
@@ -1105,6 +1113,12 @@ source file for the buttons in the menu, if any.")
 ;;; ibut class - Implicit Hyperbole Buttons
 ;;; ========================================================================
 
+(defun    ibut:alist (&optional file)
+  "Returns alist of labeled ibuts in FILE or the current buffer.
+Each element is a list of just an implicit button label.  For use
+as a completion table."
+  (mapcar 'list (ibut:list file)))
+
 (defun    ibut:at-p (&optional key-only)
   "Returns symbol for implicit button at point, else nil.
 Point may be on the implicit button or its optional preceding label.
@@ -1120,7 +1134,7 @@ excluding delimiters, not just one."
 	  ;; Skip past any optional label and separators
 	  (when label-key-start-end
 	    (goto-char (nth 2 label-key-start-end)) 
-	    (when (looking-at ibut:label-separator)
+	    (when (looking-at ibut:label-separator-regexp)
 	      ;; Move past up to 2 possible characters of ibut
 	      ;; delimiters; this prevents recognizing labeled,
 	      ;; delimited ibuts of a single character but no one
@@ -1184,8 +1198,7 @@ associated arguments from the button."
   "Returns implicit Hyperbole button symbol given by LBL-KEY and BUFFER.
 KEY-SRC is given when retrieving global buttons and is the full source pathname.
 
-Retrieves button data, converts into a button object and returns a symbol
-which references the button.
+Returns a symbol which references the button.
 
 All arguments are optional.  When none are given, returns a
 symbol for the button or button label that point is within or
@@ -1276,9 +1289,41 @@ is assumed to contain all arguments."
 	(t (error "(ibut:label-set): Invalid label arg: `%s'" label)))
   label)
 
+(defun    ibut:list (&optional file loc-p)
+  "Returns list of labels of labeled ibuts in FILE or the current buffer.
+Removes duplicate labels if optional LOC-P is omitted.  With LOC-P, returns
+list of elements (label start end) where start and end are the buffer
+positions at which the button label delimiter begins and ends."
+  (interactive)
+  (setq file (if file (and (file-exists-p file) (find-file-noselect file))
+	       (current-buffer)))
+  (when file
+    (set-buffer file)
+    (let ((buts (ibut:map (if loc-p
+			      (lambda (lbl start end)
+				;; Normalize label spacing
+				(list (ibut:key-to-label (ibut:label-to-key lbl))
+				      start end))
+			    (lambda (lbl start end)
+			      ;; Normalize label spacing
+			      (ibut:key-to-label (ibut:label-to-key lbl)))))))
+      (if loc-p buts (when buts (apply #'set:create buts))))))
+
 (defalias 'ibut:key-src      'hbut:key-src)
 (defalias 'ibut:key-to-label 'hbut:key-to-label)
 (defalias 'ibut:label-to-key 'hbut:label-to-key)
+(defalias 'map-ibut 'ibut:map)
+(defun    ibut:map (but-func &optional start-delim end-delim
+			     regexp-match include-delims)
+  "Applies BUT-FUNC to the labeled implicit buttons in the visible part of the current buffer.
+If REGEXP-MATCH is non-nil, only buttons which match this argument are
+considered.
+
+BUT-FUNC must take precisely three arguments: the button label, the
+start position of the delimited button label and its end position (positions
+include delimiters when INCLUDE-DELIMS is non-nil)."
+  (hbut:map but-func ibut:label-start ibut:label-end regexp-match include-delims))
+
 (defun    ibut:next-occurrence (lbl-key &optional buffer)
   "Moves point to next occurrence of a labeled implicit button with LBL-KEY in optional BUFFER.
 BUFFER defaults to current buffer.  It may be a buffer name.
@@ -1297,7 +1342,9 @@ move to the first occurrence of the button."
 (defalias 'ibut:summarize 'hbut:report)
 
 (defun ibut:to (lbl-key)
-  "Find an implicit button in the current buffer with LBL-KEY (a label or lable key), leave point inside it or its label and return the button symbol for it, else nil."
+  "Finds an implicit button with LBL-KEY (a label or label key) within the visible portion of the current buffer.
+Leaves point inside the button text or its optional label, if it has one.
+Returns the button symbol for it, else nil."
   ;; Handle a label given rather than a label key
   (if (string-match-p "\\s-" lbl-key)
       (setq lbl-key (ibut:label-to-key lbl-key)))
@@ -1324,7 +1371,10 @@ move to the first occurrence of the button."
   "String matching the start of a Hyperbole implicit button label.")
 (defconst ibut:label-end   "]>"
   "String matching the end of a Hyperbole implicit button label.")
-(defvar   ibut:label-separator "\\s-*[-:=]*\\s-+"
+(defvar   ibut:label-separator " "
+  "Regular expression that separates an implicit button label from its implicit button text.")
+
+(defvar   ibut:label-separator-regexp "\\s-*[-:=]*\\s-+"
   "Regular expression that separates an implicit button label from its implicit button text.")
 
 ;;; ========================================================================

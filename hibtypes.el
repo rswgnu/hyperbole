@@ -837,7 +837,8 @@ This works with JavaScript and Python tracebacks, gdb, dbx, and xdb.  Such lines
     (beginning-of-line)
     (cond
      ;; Python pdb or traceback, pytype error
-     ((looking-at "\\(^\\|.+ \\)File \"\\([^\"\n\r]+\\)\", line \\([0-9]+\\)")
+     ((or (looking-at "\\(^\\|.+ \\)File \"\\([^\"\n\r]+\\)\", line \\([0-9]+\\)")
+	  (looking-at ">?\\(\\s-+\\)\\([^\"()\n\r]+\\)(\\([0-9]+\\))\\S-"))
       (let* ((file (match-string-no-properties 2))
 	     (line-num (match-string-no-properties 3))
 	     (but-label (concat file ":" line-num)))

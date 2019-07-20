@@ -6501,10 +6501,10 @@ be of interest to users.
 @cindex image display
 @cindex internal display
 @cindex external display
-Hyperbole lets you control where link referents are displayed and even
-what Emacs function or external program is used to display them.
-There are four categories of referents, each with its own display
-setting, listed in decreasing order of priority.
+Hyperbole lets you control where link referents are displayed.  It also
+permits setting a specific Emacs function or external program
+to display them.  There are four categories of referents, each with
+its own display setting, listed in decreasing order of priority.
 
 @example
 Referent Category             Variable Setting
@@ -6541,12 +6541,12 @@ suffixes, which will invoke a special Emacs Lisp function to display
 any matching files within Emacs.  This can be used to format raw data
 files for convenient display.
 
-For those who want to change this variable, @code{hpath:internal-display-alist}
-is defined in @file{hpath.el}.  Its value is an association list whose
-elements are (<file-name-regular-expression> . <function-of-one-arg>)
-pairs.  Any path whose name matches a <file-name-regular-expression>
-will be displayed by calling the associated <function-of-one-arg> with
-the file name as the argument.
+This variable, @code{hpath:internal-display-alist} is defined in
+@file{hpath.el}.  Its value is an association list whose elements are
+(<file-name-regular-expression> . <function-of-one-arg>) pairs.  Any
+path whose name matches a <file-name-regular-expression> will be
+displayed by calling the associated <function-of-one-arg> with the
+file name as the argument.
 
 By default, this variable handles the following types of files:
 @table @emph
@@ -6769,7 +6769,7 @@ through invisible/hidden text, making the text temporarily visible
 until point moves past that hidden part.  When a search match is
 selected, the surrounding text remains visible.
 
-You can temporarily disable searching of hidden text by typing {M-s i}
+You can temporarily disable searching of hidden text by typing @bkbd{M-s i}
 while in an incremental search.  This key sequence toggles that
 setting and makes searches look at only visible text (or the reverse
 when invoked again).  The setting lasts only through the current

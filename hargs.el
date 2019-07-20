@@ -320,6 +320,7 @@ Handles all of the interactive argument types that `hargs:iform-read' does."
 		    (t 0)))))
 	((hargs:completion t))
 	((eq hargs:reading-p 'ebut) (ebut:label-p 'as-label))
+	((eq hargs:reading-p 'ibut) (ibut:label-p 'as-label))
 	((eq hargs:reading-p 'gbut)
 	 (when (eq (current-buffer) (get-file-buffer gbut:file))
 	   (hbut:label-p 'as-label)))

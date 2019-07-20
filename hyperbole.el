@@ -6,7 +6,7 @@
 ;; Maintainer:       Bob Weiner <rsw@gnu.org> and Mats Lidell <matsl@gnu.org>
 ;; Created:          06-Oct-92 at 11:52:51
 ;; Released:         21-Jan-19
-;; Version:          7.0.3
+;; Version:          7.0.3a
 ;; Keywords:         comm, convenience, files, frames, hypermedia, languages, mail, matching, mouse, multimedia, outlines, tools, wp
 ;; Package:          hyperbole
 ;; Package-Requires: ((emacs "24.4"))
@@ -516,7 +516,7 @@ With optional ARG, override them iff ARG is positive."
 ;;   "Creates implicit button TYPE (unquoted sym) with PARAMS, described by DOC."
 ;;   nil 'macro)
 
-;; (autoload 'ebut:map          "hyperbole"      "Map over Hyperbole buffer buttons." nil)
+;; (autoload 'ebut:map          "hyperbole"      "Map over the Hyperbole explicit buttons in a buffer." nil)
 ;; (autoload 'hbut:key-src      "hyperbole"      "Called by {e} command in rolo match buffer.")
 ;; (autoload 'hui:ebut-rename   "hyperbole"      "Rename a Hyperbole button."     t)
 ;; (autoload 'hyperbole         "hyperbole"      "Hyperbole info manager menus."  t)

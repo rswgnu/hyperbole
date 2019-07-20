@@ -3361,7 +3361,9 @@ upon the referent context in which the Action Key is released.
 <div class="example">
 <pre class="example">Referent Context         Link Type
 ----------------------------------------------------
+Global Button            link-to-gbut
 Explicit Button          link-to-ebut
+Implicit Button          link-to-ibut
 Info Index Item          link-to-Info-index-item
 Info Node                link-to-Info-node
 Mail Reader Message      link-to-mail
@@ -7813,24 +7815,82 @@ Next: <a href="#Internal-Viewers" accesskey="n" rel="next">Internal Viewers</a>,
 <a name="index-referent-display"></a>
 <a name="index-link-display"></a>
 <a name="index-display-where"></a>
+<a name="index-display-outside-Emacs"></a>
 <a name="index-where-to-display"></a>
+<a name="index-image-display"></a>
+<a name="index-internal-display"></a>
+<a name="index-external-display"></a>
 <p>Hyperbole lets you control where link referents are displayed and even
 what Emacs function or external program is used to display them.
-There are three categories of referents, each with its own display
-setting:
-</p><div class="example">
+There are four categories of referents, each with its own display
+setting, listed in decreasing order of priority.
+</p>
+<div class="example">
 <pre class="example">Referent Category             Variable Setting
 ========================================================================
-Internal Standard Display     hpath:display-where
+Internal Image Display        hpath:native-image-suffixes
 Internal Custom Display       hpath:internal-display-alist
 External Display              hpath:external-display-alist
+Internal Standard Display     hpath:display-where
 
 </pre></div>
 
+<p>Continue reading the next sections for information on how referents
+are displayed internally and externally.
+</p>
+<hr>
+<a name="Internal-Viewers"></a>
+<div class="header">
+<p>
+Next: <a href="#External-Viewers" accesskey="n" rel="next">External Viewers</a>, Previous: <a href="#Referent-Display" accesskey="p" rel="prev">Referent Display</a>, Up: <a href="#Customization" accesskey="u" rel="up">Customization</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Key-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<a name="Internal-Viewers-1"></a>
+<h4 class="subsection">B.3.2 Internal Viewers</h4>
+<a name="index-hpath_003ainternal_002ddisplay_002dalist"></a>
+<a name="index-file-display-function"></a>
+<a name="index-display-function"></a>
+<a name="index-internal-viewer"></a>
+<a name="index-link_002c-display-function"></a>
+
+<a name="index-internal-image-display"></a>
+<a name="index-hpath_003anative_002dimage_002dsuffixes"></a>
+<a name="index-internal-custom-display"></a>
+<a name="index-hpath_003ainternal_002ddisplay_002dalist-1"></a>
+<a name="index-internal-standard-display"></a>
+<a name="index-hpath_003adisplay_002dwhere-1"></a>
+<p>When given a file name, Hyperbole will by default display the file for
+editing within an Emacs buffer.  The <code>hpath:internal-display-alist</code>
+variable can be used to specify file name patterns, such as matching
+suffixes, which will invoke a special Emacs Lisp function to display
+any matching files within Emacs.  This can be used to format raw data
+files for convenient display.
+</p>
+<p>For those who want to change this variable, <code>hpath:internal-display-alist</code>
+is defined in <samp>hpath.el</samp>.  Its value is an association list whose
+elements are (&lt;file-name-regular-expression&gt; . &lt;function-of-one-arg&gt;)
+pairs.  Any path whose name matches a &lt;file-name-regular-expression&gt;
+will be displayed by calling the associated &lt;function-of-one-arg&gt; with
+the file name as the argument.
+</p>
+<p>By default, this variable handles the following types of files:
+</p><dl compact="compact">
+<dt><em>Audio Files</em></dt>
+<dd><p>Major audio format files are played with the <code>play-sound-file</code> command.
+</p></dd>
+<dt><em>Info Manuals</em></dt>
+<dd><p>Files with a <samp>.info</samp> suffix (may also be compressed) are displayed in the Info browser.
+</p></dd>
+<dt><em>RDB Files</em></dt>
+<dd><p>Files with an <samp>.rdb</samp> suffix are displayed as relational databases using the RDB package
+available with InfoDock.
+</p></dd>
+</dl>
+
 <a name="index-menu_002c-Cust_002fReferents"></a>
 <a name="index-C_002dh-h-c-r"></a>
-<p>Regular file links are displayed in an Emacs window specified by the
-<code>hpath:display-where</code> setting which may be changed with the Cust/Referents
+<p>Links to standard files, those which don&rsquo;t match any special referent
+category, are displayed in an Emacs window specified by the
+<code>hpath:display-where</code> setting.  It may be changed with the Cust/Referents
 <kbd>{C-h h c r}</kbd> menu.
 </p>
 <p>Available options are:
@@ -7864,50 +7924,6 @@ the default)
 <img src="im/menu-display-referents.png" alt="Display Referents Menu">
 <div class="float-caption"><p><strong>Image B.2: </strong>Display Referents Menu</p></div></div><br>
 
-<p>Continue reading the next sections for information on custom Internal
-and External Viewers for link referencts.
-</p>
-<hr>
-<a name="Internal-Viewers"></a>
-<div class="header">
-<p>
-Next: <a href="#External-Viewers" accesskey="n" rel="next">External Viewers</a>, Previous: <a href="#Referent-Display" accesskey="p" rel="prev">Referent Display</a>, Up: <a href="#Customization" accesskey="u" rel="up">Customization</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Key-Index" title="Index" rel="index">Index</a>]</p>
-</div>
-<a name="Internal-Viewers-1"></a>
-<h4 class="subsection">B.3.2 Internal Viewers</h4>
-<a name="index-hpath_003ainternal_002ddisplay_002dalist"></a>
-<a name="index-file-display-function"></a>
-<a name="index-display-function"></a>
-<a name="index-internal-viewer"></a>
-<a name="index-link_002c-display-function"></a>
-<p>When given a file name, Hyperbole will by default display the file for
-editing within an Emacs buffer.  The <code>hpath:internal-display-alist</code>
-variable can be used to specify file name patterns, such as matching
-suffixes, which will invoke a special Emacs Lisp function to display
-any matching files within Emacs.  This can be used to format raw data
-files for convenient display.
-</p>
-<p>For those who want to change this variable, <code>hpath:internal-display-alist</code>
-is defined in <samp>hpath.el</samp>.  Its value is an association list whose
-elements are (&lt;file-name-regular-expression&gt; . &lt;function-of-one-arg&gt;)
-pairs.  Any path whose name matches a &lt;file-name-regular-expression&gt;
-will be displayed by calling the associated &lt;function-of-one-arg&gt; with
-the file name as the argument.
-</p>
-<p>By default, this variable handles the following types of files:
-</p><dl compact="compact">
-<dt><em>Audio Files</em></dt>
-<dd><p>Major audio format files are played with the <code>play-sound-file</code> command.
-</p></dd>
-<dt><em>Info Manuals</em></dt>
-<dd><p>Files with a <samp>.info</samp> suffix (may also be compressed) are displayed in the Info browser.
-</p></dd>
-<dt><em>RDB Files</em></dt>
-<dd><p>Files with an <samp>.rdb</samp> suffix are displayed as relational databases using the RDB package
-available with InfoDock.
-</p></dd>
-</dl>
-
 <p>See <a href="#External-Viewers">External Viewers</a>, for instructions on associating file names with
 external, window-system specific viewers.
 </p>
@@ -7927,6 +7943,9 @@ Next: <a href="#Link-Variable-Substitution" accesskey="n" rel="next">Link Variab
 <a name="index-external-program"></a>
 <a name="index-external-viewer"></a>
 <a name="index-link_002c-viewer-program"></a>
+
+<a name="index-external-display-1"></a>
+<a name="index-hpath_003aexternal_002ddisplay_002dalist"></a>
 <p>If you will be using Hyperbole under a window system,
 the <code>hpath:get-external-display-alist</code> function
 in <samp>hpath.el</samp> supports hyperlinks that open files using external, non-Emacs
@@ -8099,9 +8118,11 @@ through invisible/hidden text, making the text temporarily visible
 until point moves past that hidden part.  When a search match is
 selected, the surrounding text remains visible.
 </p>
-<p>This command toggles that setting (turns it off if a prefix
-argument less than or equal to 0 is given) and makes searches look at
-only visible text.
+<p>You can temporarily disable searching of hidden text by typing <kbd>{M-s i}</kbd>
+while in an incremental search.  This key sequence toggles that
+setting and makes searches look at only visible text (or the reverse
+when invoked again).  The setting lasts only through the current
+interactive search.
 </p>
 <hr>
 <a name="Button-Colors"></a>
@@ -11442,7 +11463,7 @@ Next: <a href="#Function" accesskey="n" rel="next">Function</a>, Previous: <a hr
 <tr><td></td><td valign="top"><a href="#index-C_002dh-h-1"><code>C-h h</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Global-Key-Bindings">Global Key Bindings</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-C_002dh-h-c-a"><code>C-h h c a</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Customization">Customization</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-C_002dh-h-c-d"><code>C-h h c d</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Key-Debugging">Smart Key Debugging</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-C_002dh-h-c-r"><code>C-h h c r</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Referent-Display">Referent Display</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-C_002dh-h-c-r"><code>C-h h c r</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Internal-Viewers">Internal Viewers</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-C_002dh-h-c-u"><code>C-h h c u</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Using-URLs-with-Find_002dFile">Using URLs with Find-File</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-C_002dh-h-c-u-1"><code>C-h h c u</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Key-_002d-WWW-URLs">Smart Key - WWW URLs</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-C_002dh-h-c-w"><code>C-h h c w</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Web-Search-Engines">Web Search Engines</a></td></tr>
@@ -12000,6 +12021,8 @@ Next: <a href="#Concept-Index" accesskey="n" rel="next">Concept Index</a>, Previ
 <tr><td></td><td valign="top"><a href="#index-hmouse_002dy_002ddrag_002dsensitivity">hmouse-y-drag-sensitivity</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Mouse-Drags-within-a-Window">Smart Mouse Drags within a Window</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-hpath_003aat_002dp"><code>hpath:at-p</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-hpath_003adisplay_002dwhere">hpath:display-where</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Referent-Display">Referent Display</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-hpath_003adisplay_002dwhere-1">hpath:display-where</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Internal-Viewers">Internal Viewers</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-hpath_003aexternal_002ddisplay_002dalist">hpath:external-display-alist</a>:</td><td>&nbsp;</td><td valign="top"><a href="#External-Viewers">External Viewers</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-hpath_003aexternal_002ddisplay_002dalist_002dmacos">hpath:external-display-alist-macos</a>:</td><td>&nbsp;</td><td valign="top"><a href="#External-Viewers">External Viewers</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-hpath_003aexternal_002ddisplay_002dalist_002dmswindows">hpath:external-display-alist-mswindows</a>:</td><td>&nbsp;</td><td valign="top"><a href="#External-Viewers">External Viewers</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-hpath_003aexternal_002ddisplay_002dalist_002dx">hpath:external-display-alist-x</a>:</td><td>&nbsp;</td><td valign="top"><a href="#External-Viewers">External Viewers</a></td></tr>
@@ -12007,6 +12030,8 @@ Next: <a href="#Concept-Index" accesskey="n" rel="next">Concept Index</a>, Previ
 <tr><td></td><td valign="top"><a href="#index-hpath_003afind_002dfile_002durls_002dmode"><code>hpath:find-file-urls-mode</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Using-URLs-with-Find_002dFile">Using URLs with Find-File</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-hpath_003aget_002dexternal_002ddisplay_002dalist"><code>hpath:get-external-display-alist</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#External-Viewers">External Viewers</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-hpath_003ainternal_002ddisplay_002dalist">hpath:internal-display-alist</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Internal-Viewers">Internal Viewers</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-hpath_003ainternal_002ddisplay_002dalist-1">hpath:internal-display-alist</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Internal-Viewers">Internal Viewers</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-hpath_003anative_002dimage_002dsuffixes">hpath:native-image-suffixes</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Internal-Viewers">Internal Viewers</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-hpath_003asuffixes">hpath:suffixes</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-hpath_003avariables">hpath:variables</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Link-Variable-Substitution">Link Variable Substitution</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-hproperty_003abut_002dcreate"><code>hproperty:but-create</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Button-Colors">Button Colors</a></td></tr>
@@ -12663,6 +12688,7 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function</a>, Up: <a href
 <tr><td></td><td valign="top"><a href="#index-disable-local-key-override">disable local key override</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Global-Key-Bindings">Global Key Bindings</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-display">display</a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyControl">HyControl</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-display-function">display function</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Internal-Viewers">Internal Viewers</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-display-outside-Emacs">display outside Emacs</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Referent-Display">Referent Display</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-display-where">display where</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Referent-Display">Referent Display</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-DisplayHere-mode">DisplayHere mode</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Key-_002d-Dired-Mode">Smart Key - Dired Mode</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-distributed-collaboration">distributed collaboration</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Koutliner-History">Koutliner History</a></td></tr>
@@ -12733,6 +12759,8 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function</a>, Up: <a href
 <tr><td></td><td valign="top"><a href="#index-explicit-button_002c-creation">explicit button, creation</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Programmatic-Button-Creation">Programmatic Button Creation</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-exporting">exporting</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Exporting">Exporting</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-exporting-an-outline">exporting an outline</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Relocating-and-Copying">Relocating and Copying</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-external-display">external display</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Referent-Display">Referent Display</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-external-display-1">external display</a>:</td><td>&nbsp;</td><td valign="top"><a href="#External-Viewers">External Viewers</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-external-klink">external klink</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Links">Links</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-external-program">external program</a>:</td><td>&nbsp;</td><td valign="top"><a href="#External-Viewers">External Viewers</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-external-viewer">external viewer</a>:</td><td>&nbsp;</td><td valign="top"><a href="#External-Viewers">External Viewers</a></td></tr>
@@ -12880,6 +12908,7 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function</a>, Up: <a href
 <tr><td></td><td valign="top"><a href="#index-idstamp-0">idstamp 0</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Idstamps">Idstamps</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-idstamp-attribute">idstamp attribute</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Cell-Attributes">Cell Attributes</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-idstamp-counter">idstamp counter</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Idstamps">Idstamps</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-image-display">image display</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Referent-Display">Referent Display</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-images">images</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Key-_002d-Image-Thumbnails">Smart Key - Image Thumbnails</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-implicit-button">implicit button</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Buttons">Buttons</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-implicit-button-1">implicit button</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
@@ -12905,7 +12934,11 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function</a>, Up: <a href
 <tr><td></td><td valign="top"><a href="#index-interactive-cmd-char_002c-_002bX">interactive cmd char, +X</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Action-Type-Creation">Action Type Creation</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-interactive-computing">interactive computing</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Glossary">Glossary</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-interactive-form">interactive form</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Action-Type-Creation">Action Type Creation</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-internal-custom-display">internal custom display</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Internal-Viewers">Internal Viewers</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-internal-display">internal display</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Referent-Display">Referent Display</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-internal-image-display">internal image display</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Internal-Viewers">Internal Viewers</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-internal-klink">internal klink</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Links">Links</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-internal-standard-display">internal standard display</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Internal-Viewers">Internal Viewers</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-internal-viewer">internal viewer</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Internal-Viewers">Internal Viewers</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-Internet-RFC">Internet RFC</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-Internet-RFC-1">Internet RFC</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
@@ -13057,7 +13090,7 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function</a>, Up: <a href
 <tr><td></td><td valign="top"><a href="#index-menu_002c-Button_002dFile">menu, Button-File</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Menus">Menus</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-menu_002c-Cust">menu, Cust</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Menus">Menus</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-menu_002c-Cust-1">menu, Cust</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Customization">Customization</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-menu_002c-Cust_002fReferents">menu, Cust/Referents</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Referent-Display">Referent Display</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-menu_002c-Cust_002fReferents">menu, Cust/Referents</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Internal-Viewers">Internal Viewers</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-menu_002c-Cust_002fURL_002dDisplay">menu, Cust/URL-Display</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Using-URLs-with-Find_002dFile">Using URLs with Find-File</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-menu_002c-Cust_002fURL_002dDisplay-1">menu, Cust/URL-Display</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Key-_002d-WWW-URLs">Smart Key - WWW URLs</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-menu_002c-Cust_002fWeb_002dSearch">menu, Cust/Web-Search</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Web-Search-Engines">Web Search Engines</a></td></tr>
