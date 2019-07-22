@@ -580,6 +580,10 @@ constructs.  If not given, the top-level Hyperbole menu is used."
 	  ("Help"   hui:hbut-help   "Reports on button's attributes.")
 	  ("Info"   (id-info "(hyperbole)Implicit Buttons")
 	   "Displays manual section on implicit buttons.")
+	  ("Label"  hui:ibut-label-create
+	   "Creates an implicit button label preceding an existing implicit button at point, if any.")
+	  ("Rename" hui:ibut-rename
+	   "Modifies a label preceding an implicit button in the current buffer.")
 	  ("Types"  (hui:htype-help 'ibtypes 'no-sort)
 	   "Displays documentation for one or all implicit button types.")
 	  ))

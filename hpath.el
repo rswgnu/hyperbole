@@ -112,7 +112,7 @@ If path begins with an MSWindows drive letter, prefix the converted path with th
   "Replace all backslashes with forward slashes in PATH and expand the path against `directory-abbrev-alist', if possible.
 Path must be a string or an error will be triggered."
   (let ((directory-abbrev-alist hpath:directory-expand-alist))
-    (replace-regexp-in-string "\\\\" "/" (abbreviate-file-name path))))
+    (replace-regexp-in-string "\\\\" "/" (abbreviate-file-name path) nil t)))
 
 ;;;###autoload
 (defun hpath:posix-to-mswindows (path)

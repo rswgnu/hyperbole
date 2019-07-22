@@ -278,8 +278,12 @@ a menu to find any of the occurrences."
   (hypb:error "(hui:error): Obsolete, use hypb:error instead."))
 
 (defun hui:gbut-create (lbl)
-  "Creates Hyperbole global button with LBL."
-  (interactive "sCreate global button labeled: ")
+  "Creates Hyperbole explicit global button with LBL.
+
+To create an implicit global button, add the text for an implicit
+button to `gbut:file` and then with point on the implicit button,
+invoke: {C-h h i l}, to label/name it."
+  (interactive "sCreate explicit global button labeled: ")
   (let (but-buf actype)
     (save-excursion
       (setq actype (hui:actype))
@@ -304,6 +308,7 @@ a menu to find any of the occurrences."
 
 (defun hui:gbut-modify (lbl-key)
   "Modifies a global Hyperbole button given by LBL-KEY.
+The button may be explicit or a labeled implicit button.
 Signals an error when no such button is found."
   (interactive (list (save-excursion
 		       (hui:buf-writable-err
@@ -316,13 +321,12 @@ Signals an error when no such button is found."
 	(but-buf (find-file-noselect gbut:file))
 	actype but new-lbl)
     (save-excursion
-      (or (called-interactively-p 'interactive)
-	  (hui:buf-writable-err but-buf "gbut-modify"))
+      (unless (called-interactively-p 'interactive)
+	(hui:buf-writable-err but-buf "gbut-modify"))
 
-      (or (setq but (ebut:get lbl-key but-buf))
-	  (progn (pop-to-buffer but-buf)
-		 (hypb:error
-		  "(gbut-modify): Invalid button, no data for '%s'." lbl)))
+      (unless (setq but (gbut:get lbl-key))
+	(pop-to-buffer but-buf)
+	(hypb:error "(gbut-modify): Invalid button, no data for '%s'." lbl))
 
       (setq new-lbl
 	    (hargs:read
@@ -334,15 +338,25 @@ Signals an error when no such button is found."
 		     ebut:max-len)
 	     'string))
 
-      (hattr:set 'hbut:current 'loc (hui:key-src but-buf))
-      (hattr:set 'hbut:current 'dir (hui:key-dir but-buf))
-      (setq actype (hui:actype (hattr:get but 'actype)))
-      (hattr:set 'hbut:current 'actype actype)
-      (hattr:set 'hbut:current 'args (hargs:actype-get actype 'modifying))
-      (hattr:set 'hbut:current 'action
-		 (and hui:ebut-prompt-for-action (hui:action actype)))
-      (set-buffer but-buf)
-      (ebut:operate lbl new-lbl))))
+      (if (eq (hattr:get but 'categ) 'explicit)
+	  (progn
+	    ;; Explicit buttons
+	    (hattr:set 'hbut:current 'loc (hui:key-src but-buf))
+	    (hattr:set 'hbut:current 'dir (hui:key-dir but-buf))
+	    (setq actype (hui:actype (hattr:get but 'actype)))
+	    (hattr:set 'hbut:current 'actype actype)
+	    (hattr:set 'hbut:current 'args (hargs:actype-get actype 'modifying))
+	    (hattr:set 'hbut:current 'action
+		       (and hui:ebut-prompt-for-action (hui:action actype)))
+	    (set-buffer but-buf)
+	    (ebut:operate lbl new-lbl))
+	;; Ixplicit buttons
+	(save-excursion
+	  (set-buffer but-buf)
+	  (ibut:rename lbl new-lbl)
+	  (when (and (called-interactively-p 'interactive)
+		     (ibut:at-p))
+	    (hui:ibut-message t)))))))
 
 (defun hui:hbut-act (&optional but)
   "Executes action for optional Hyperbole button symbol BUT in current buffer.
@@ -443,8 +457,12 @@ See 'hbut:report'."
 (defalias 'hui:hbut-summarize 'hui:hbut-report)
 
 (defun hui:ibut-label-create ()
-  "Creates an implicit button label preceding the implicit button at point, if any.
-Adds the label and delimiters around it plus any necessary label instance number."
+  "Creates an implicit button label preceding an existing implicit button at point, if any.
+Adds the label and delimiters around it plus any necessary label instance number.
+Signals an error if point is not on an implicit button or if the button already has a label.
+
+If the implicit button type does not specify the starting locations of
+its buttons, the the label is simply inserted at point."
   (interactive)
   (hui:buf-writable-err (current-buffer) "ibut-label-create")
   (let* ((ibut (ibut:at-p))
@@ -453,47 +471,41 @@ Adds the label and delimiters around it plus any necessary label instance number
 	 (label-key-start-end (when ibut (ibut:label-p nil nil nil t t)))
 	 lbl actype)
     (cond (label-key-start-end
-	   (error "(hui:ibut-label-create): ibutton at point already has a label; try hui:ibut-label-modify"))
-	  ;; !! Still need to handle when button has a label but point but is not on it.
+	   (error "(hui:ibut-label-create): ibutton at point already has a label; try hui:ibut-rename"))
 	  (ibut
 	   (save-excursion
-	     (if ibut-start
-		 (goto-char ibut-start)
-	       ;; !! search backward somehow since within ibut text to find ibut text and delim start
-	       )
-	     (skip-chars-backward "][:=<>a-zA-Z0-9#@!$%^&* -")
-	     (skip-chars-forward " ")
-	     (when (looking-at (concat (regexp-quote ibut:label-start) "\\s-*[:=a-zA-Z0-9#@!$%^&* -]+" (regexp-quote ibut:label-end)))
-	       (error "(hui:ibut-label-create): ibutton at point already has a label; try hui:ibut-label-modify")))
-	   (save-excursion
-	     (if ibut-start
-		 (goto-char ibut-start)
-	       ;; !! search backward somehow since within ibut text
-	       )
+	     (when ibut-start
+	       (goto-char ibut-start))
+	     (save-excursion
+	       ;; Check if ibut has an existing preceding label
+	       (skip-chars-backward "][:=<>a-zA-Z0-9#@!$%^&* -")
+	       (skip-chars-forward " ")
+	       (when (looking-at (concat (regexp-quote ibut:label-start) "\\s-*[:=a-zA-Z0-9#@!$%^&* -]+" (regexp-quote ibut:label-end)))
+		 (error "(hui:ibut-label-create): ibutton at point already has a label; try hui:ibut-rename")))
 	     (setq lbl (hui:hbut-label nil "ibut-label-create")) ; prompts for label
 	     ;; !! Handle adding instance to label
 	     (insert ibut:label-start lbl ibut:label-end ibut:label-separator))
 	   (when (called-interactively-p 'interactive)
 	     (hui:ibut-message nil)))
-	  (t (error "(hui:ibut-label-create): Move point within the text of an implicit button to add a label")))))
+	  (t (error "(hui:ibut-label-create): To add a label, point must be within the text of an implicit button")))))
 
-(defun hui:ibut-label-modify (lbl-key)
-  "Modifies a label preceding a Hyperbole implicit button given by LBL-KEY.
+(defun hui:ibut-rename (lbl-key)
+  "Renames a label preceding a Hyperbole implicit button in the current buffer given by LBL-KEY.
 Signals an error when no such button is found in the current buffer."
   (interactive (list (save-excursion
-		       (hui:buf-writable-err (current-buffer) "ibut-label-modify")
+		       (hui:buf-writable-err (current-buffer) "ibut-rename")
 		       (or (ibut:label-p)
 			   (ibut:label-to-key
-			    (hargs:read-match "Labeled implicit button to modify: "
+			    (hargs:read-match "Labeled implicit button to rename: "
 					      (ibut:alist) nil t nil 'ibut))))))
   (let ((lbl (ibut:key-to-label lbl-key))
 	(but-buf (current-buffer))
 	actype but new-lbl)
     (unless (called-interactively-p 'interactive)
-      (hui:buf-writable-err but-buf "ibut-label-modify"))
+      (hui:buf-writable-err but-buf "ibut-rename"))
 
     (unless (setq but (ibut:get lbl-key but-buf))
-      (hypb:error "(ibut-label-modify): Invalid button: '%s'." lbl))
+      (hypb:error "(ibut-rename): Invalid button: '%s'." lbl))
 
     (setq new-lbl
 	  (hargs:read
@@ -501,23 +513,15 @@ Signals an error when no such button is found in the current buffer."
 	   (lambda (lbl)
 	     (and (not (string= lbl "")) (<= (length lbl) ebut:max-len)))
 	   lbl
-	   (format "(ibut-modify): Enter a string of at most %s chars."
+	   (format "(ibut-rename): Enter a string of at most %s chars."
 		   ebut:max-len)
 	   'string))
 
-    ;; !! Handle adding instance to label
-    ;; !! Add in equivalent of ebut:operate since ibut selected may be
-    ;; !! different than the one at point.
     (save-excursion
-      (
-      (ibut:to lbl)
-      (zap-to-char
-      (insert new-lbl))))
-    (goto-char (+ (point) (length ibut:label-start)))
-
-    (when (and (called-interactively-p 'interactive)
-	       (hbut:at-p))
-      (hui:ibut-message t))))
+      (ibut:rename lbl new-lbl)
+      (when (and (called-interactively-p 'interactive)
+		 (ibut:at-p))
+	(hui:ibut-message t)))))
 
 (defun hui:link-directly ()
   "Creates a Hyperbole link button at depress point, linked to release point.

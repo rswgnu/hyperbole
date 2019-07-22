@@ -1,7 +1,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <!-- This manual is for GNU Hyperbole
-(Edition 7.0.3, Published May 11, 2019).
+(Edition 7.0.3a, Published July 21, 2019).
 
 Copyright (C) 1989-2019  Free Software Foundation, Inc.
 
@@ -154,7 +154,10 @@ ul.no-bullet {list-style: none}
 <ul class="no-bullet">
   <li><a name="toc-Explicit-Buttons-1" href="#Explicit-Buttons">3.1 Explicit Buttons</a></li>
   <li><a name="toc-Global-Buttons-1" href="#Global-Buttons">3.2 Global Buttons</a></li>
-  <li><a name="toc-Implicit-Buttons-1" href="#Implicit-Buttons">3.3 Implicit Buttons</a></li>
+  <li><a name="toc-Implicit-Buttons-1" href="#Implicit-Buttons">3.3 Implicit Buttons</a>
+  <ul class="no-bullet">
+    <li><a name="toc-Implicit-Button-Type-Summaries-1" href="#Implicit-Button-Type-Summaries">3.3.1 Implicit Button Type Summaries</a></li>
+  </ul></li>
   <li><a name="toc-Button-Files-1" href="#Button-Files">3.4 Button Files</a></li>
   <li><a name="toc-Action-Types-1" href="#Action-Types">3.5 Action Types</a></li>
   <li><a name="toc-Button-Type-Precedence-1" href="#Button-Type-Precedence">3.6 Button Type Precedence</a></li>
@@ -344,8 +347,8 @@ WITHOUT ANY WARRANTY, without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</P>
 
 <PRE>
-Edition 7.0.3
-Printed May 11, 2019.
+Edition 7.0.3a
+Printed July 21, 2019.
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -513,6 +516,12 @@ Buttons
 <tr><td align="left" valign="top">&bull; <a href="#Button-Type-Precedence">Button Type Precedence</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
 </td></tr>
 <tr><td align="left" valign="top">&bull; <a href="#Utilizing-Explicit-Buttons">Utilizing Explicit Buttons</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><th colspan="3" align="left" valign="top"><pre class="menu-comment">
+
+Implicit Buttons
+
+</pre></th></tr><tr><td align="left" valign="top">&bull; <a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
 </td></tr>
 <tr><th colspan="3" align="left" valign="top"><pre class="menu-comment">
 
@@ -794,7 +803,7 @@ Next: <a href="#Smart-Keys" accesskey="n" rel="next">Smart Keys</a>, Previous: <
 <h2 class="chapter">1 Introduction</h2>
 
 <p>This edition of the GNU Hyperbole Manual is for use with any version
-7.0.3 or greater of GNU Hyperbole.  Hyperbole runs atop GNU Emacs 24.3
+7.0.3a or greater of GNU Hyperbole.  Hyperbole runs atop GNU Emacs 24.3
 or higher.  It will trigger an error if your Emacs is older.
 </p>
 <p>This chapter summarizes the structure of the rest of the manual,
@@ -2334,28 +2343,60 @@ directory, typically in another window.
 <a name="index-activating-implicit-button"></a>
 <a name="index-menu-item_002c-Ibut_002fAct"></a>
 <a name="index-C_002dh-h-i-a"></a>
-<p>Unlike explicit buttons, implicit buttons have no individual button data
-other than their textual labels.  You use implicit button types which
-include boolean expressions (predicates) that match to both the label
-and the context required of any button of the type.  Each time a Smart
-Key is pressed at a location, Hyperbole evaluates the predicates from
-the list of implicit button types and the first one that evaluates true
-is selected and its associated action is triggered.  The Ibut/Act menu
-item, <kbd>{C-h h i a}</kbd>, also activates any implicit button found at the
+<p>Unlike explicit buttons, implicit buttons have no individual button
+data other than their text and optional labels.  You use implicit
+button types which include boolean expressions (predicates) that match
+to both the label and the context required of any button of the type.
+Each time a Smart Key is pressed at a location, Hyperbole evaluates
+the predicates from the list of implicit button types and the first
+one that evaluates true is selected and its associated action is
+triggered.  Alternatively, you can use the Ibut/Act menu
+item, <kbd>{C-h h i a}</kbd>, to activate any implicit button found at the
 current point.
 </p>
 <p>All of this happens transparently and is easy to use once you try it.
 The Hyperbole Smart Keys offer additional extensive context-sensitive
 point-and-click type behavior beyond implicit button types.  See <a href="#Smart-Key-Operations">Smart Key Operations</a>.
 </p>
+<a name="index-implicit-button-labels"></a>
+<a name="index-labeling-implicit-buttons"></a>
+<a name="index-naming-implicit-buttons"></a>
+<p>Individual implicit buttons may be labeled, allowing activation by
+name or use as a link target by other buttons.  Here is a pathname
+button with a label of &rsquo;My Emacs Files&rsquo;:
+</p>
+<div class="example">
+<pre class="example">&lt;[My Emacs Files]&gt;: &quot;~/.emacs.d&quot;
+</pre></div>
+
+<p>The label is delimited by &lsquo;<samp>&lt;[</samp>&rsquo; and &lsquo;<samp>]&gt;</samp>&rsquo; and can be followed
+by any number of :, - or = separator characters, including none.  You
+can activate the button either from its label or its text.  With point
+on an implicit button, <kbd>{C-h h i l}</kbd> will label it or you
+may simply type the label and delimiters manually.
+</p>
+<table class="menu" border="0" cellspacing="0">
+<tr><td align="left" valign="top">&bull; <a href="#Implicit-Button-Type-Summaries" accesskey="1">Implicit Button Type Summaries</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+</table>
+
+<hr>
+<a name="Implicit-Button-Type-Summaries"></a>
+<div class="header">
+<p>
+Previous: <a href="#Implicit-Buttons" accesskey="p" rel="prev">Implicit Buttons</a>, Up: <a href="#Implicit-Buttons" accesskey="u" rel="up">Implicit Buttons</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Key-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<a name="Implicit-Button-Type-Summaries-1"></a>
+<h4 class="subsection">3.3.1 Implicit Button Type Summaries</h4>
+
 <a name="index-ibtypes_002c-list-of"></a>
 <a name="index-implicit-button-types"></a>
 <p>Below, standard implicit button types are listed in the order in which
 Hyperbole tries to match to the types when looking for an implicit
 button; <kbd>{C-h h i t <span class="key">RET</span>}</kbd> provides similar information.  See
 the Hyperbole file, <samp>hibtypes.el</samp>, for complete examples of
-implicit button types (where they are listed in reverse in increasing
-order of priority).
+implicit button types (they are listed in increasing order of
+priority).
 </p>
 <dl compact="compact">
 <dd>
@@ -2477,13 +2518,64 @@ within an error line.
 breakpoint line.  This works with gdb, dbx, and xdb.  Such lines are
 recognized in any buffer.
 </p>
-<a name="index-ibtypes-grep_002dmsg"></a>
+<a name="index-ibtypes-ripgrep_002dmsg"></a>
 <a name="index-grep"></a>
+<a name="index-ripgrep"></a>
+<a name="index-match-lines"></a>
+</dd>
+<dt><code>ripgrep-msg</code></dt>
+<dd><p>Jumps to line associated with a ripgrep (rg) line numbered msg.
+Ripgrep outputs each pathname once followed by all matching lines in
+that pathname.  Messages are recognized in any buffer (other than a
+helm completion buffer).
+</p>
+<a name="index-ibtypes-ipython_002dstack_002dframe"></a>
+<a name="index-ipython"></a>
+<a name="index-stack-frame-1"></a>
+</dd>
+<dt><code>ipython-stack-frame</code></dt>
+<dd><p>Jumps to line associated with an ipython stack frame line numbered msg.
+ipython outputs each pathname once followed by all matching lines in that pathname.
+Messages are recognized in any buffer (other than a helm completion buffer).
+</p>
+<a name="index-ibtypes-grep_002dmsg"></a>
+<a name="index-grep-1"></a>
 <a name="index-compiler-error-1"></a>
+<a name="index-match-lines-1"></a>
 </dd>
 <dt><code>grep-msg</code></dt>
 <dd><p>Jumps to a line associated with grep or compilation error messages.
 Messages are recognized in any buffer.
+</p>
+<a name="index-ibtypes-link_002dto_002dibut"></a>
+<a name="index-implicit-button-link"></a>
+<a name="index-link-to-implicit-button"></a>
+<a name="index-ilink"></a>
+</dd>
+<dt><code>link-to-ibut &lt;ilink&gt;</code></dt>
+<dd><p>At point, activates a link to an implicit button.
+The implicit buttonâs action is executed in the context of the current buffer.
+Recognizes the format â&lt;ilink:â &lt;button label&gt; â&gt;â, e.g. &lt;ilink: my sequence of keys&gt;.
+</p>
+<a name="index-ibtypes-link_002dto_002dgbut"></a>
+<a name="index-global-button-link"></a>
+<a name="index-link-to-global-button"></a>
+<a name="index-glink"></a>
+</dd>
+<dt><code>link-to-gbut &lt;glink&gt;</code></dt>
+<dd><p>At point, activates a link to a global button.
+The global buttonâs action is executed in the context of the current buffer.
+Recognizes the format â&lt;glink:â &lt;button label&gt; â&gt;â, e.g. &lt;glink: open todos&gt;.
+</p>
+<a name="index-ibtypes-link_002dto_002debut"></a>
+<a name="index-explicit-button-link"></a>
+<a name="index-link-to-explicit-button"></a>
+<a name="index-elink"></a>
+</dd>
+<dt><code>link-to-ebut &lt;elink&gt;</code></dt>
+<dd><p>At point, activates a link to an explicit button.
+The explicit buttonâs action is executed in the context of the current buffer.
+Recognizes the format â&lt;elink:â &lt;button label&gt; â&gt;â, e.g. &lt;elink: project-list&gt;.
 </p>
 <a name="index-ibtypes-klink"></a>
 <a name="index-klink"></a>
@@ -3067,7 +3159,7 @@ signalled.
 <a name="index-actypes-link_002dto_002debut"></a>
 </dd>
 <dt><code>link-to-ebut</code></dt>
-<dd><p>Performs an action given by another explicit button, specified by KEY and KEY-FILE.
+<dd><p>Performs an action given by an explicit button, specified by KEY and KEY-FILE.
 </p>
 <a name="index-actypes-link_002dto_002delisp_002ddoc"></a>
 </dd>
@@ -3085,6 +3177,11 @@ the buffer is displayed with POINT at the top of the window.
 <dt><code>link-to-file-line</code></dt>
 <dd><p>Displays a file given by PATH scrolled to LINE-NUM.
 </p>
+<a name="index-actypes-link_002dto_002dgbut"></a>
+</dd>
+<dt><code>link-to-gbut</code></dt>
+<dd><p>Performs an action given by an existing global button, specified by KEY.
+</p>
 <a name="index-actypes-link_002dto_002dInfo_002dindex_002ditem"></a>
 </dd>
 <dt><code>link-to-Info-index-item</code></dt>
@@ -3100,6 +3197,11 @@ available.  Filename may be given without the .info suffix.&quot;
 (filename)nodename.  During button creation, completion for both
 filename and nodename is available.  Filename may be given without the
 .info suffix.
+</p>
+<a name="index-actypes-link_002dto_002dibut"></a>
+</dd>
+<dt><code>link-to-ibut</code></dt>
+<dd><p>Performs an action given by an implicit button, specified by KEY-FILE, KEY and optional POINT.
 </p>
 <a name="index-actypes-link_002dto_002dkcell"></a>
 <a name="index-kcell_003aref_002dto_002did"></a>
@@ -3883,7 +3985,7 @@ access to popular web search engines.
 </p>
 <p>Below are each of the commands on the Find menu.
 </p>
-<a name="index-match-lines"></a>
+<a name="index-match-lines-2"></a>
 <a name="index-remove-lines"></a>
 <a name="index-save-lines"></a>
 <a name="index-locate-files"></a>
@@ -7285,13 +7387,13 @@ windows exist within a frame.
 <a name="index-gbut_003afile"></a>
 </dd>
 <dt><b>Global Button</b></dt>
-<dd><p>A form of explicit button which is accessed by name rather than direct
+<dd><p>A Hyperbole button which is accessed by name rather than direct
 selection.  Global buttons are useful when one wants quick access to
 actions such as jumping to common file locations or for performing
-sequences of operations.  One need not locate them since they are always
-available by name, with full completion offered.  All global buttons are
-stored in the file given by the variable <code>gbut:file</code> and may be
-activated as regular explicit buttons by visiting this file.  By
+sequences of operations.  One need not locate them since they are
+always available by name, with full completion offered.  All global
+buttons are stored in the file given by the variable <code>gbut:file</code>
+and may be activated with the Action Key when editing this file.  By
 default, this is the same as the user&rsquo;s personal button file.
 </p>
 </dd>
@@ -7346,7 +7448,8 @@ DataBase (BBDB) package.
 </dd>
 <dt><b>Implicit Button</b></dt>
 <dd><p>A button recognized contextually by Hyperbole.  Such buttons contain no
-button data.  See also <b>implicit button type</b>.
+button data but may have an optional preceding label that looks like this:
+&lsquo;<samp>&lt;[label]&gt;</samp>&rsquo;.  See also <b>implicit button type</b>.
 </p>
 </dd>
 <dt><b>Implicit Button Type</b></dt>
@@ -7820,10 +7923,10 @@ Next: <a href="#Internal-Viewers" accesskey="n" rel="next">Internal Viewers</a>,
 <a name="index-image-display"></a>
 <a name="index-internal-display"></a>
 <a name="index-external-display"></a>
-<p>Hyperbole lets you control where link referents are displayed and even
-what Emacs function or external program is used to display them.
-There are four categories of referents, each with its own display
-setting, listed in decreasing order of priority.
+<p>Hyperbole lets you control where link referents are displayed.  It also
+permits setting a specific Emacs function or external program
+to display them.  There are four categories of referents, each with
+its own display setting, listed in decreasing order of priority.
 </p>
 <div class="example">
 <pre class="example">Referent Category             Variable Setting
@@ -7865,12 +7968,12 @@ suffixes, which will invoke a special Emacs Lisp function to display
 any matching files within Emacs.  This can be used to format raw data
 files for convenient display.
 </p>
-<p>For those who want to change this variable, <code>hpath:internal-display-alist</code>
-is defined in <samp>hpath.el</samp>.  Its value is an association list whose
-elements are (&lt;file-name-regular-expression&gt; . &lt;function-of-one-arg&gt;)
-pairs.  Any path whose name matches a &lt;file-name-regular-expression&gt;
-will be displayed by calling the associated &lt;function-of-one-arg&gt; with
-the file name as the argument.
+<p>This variable, <code>hpath:internal-display-alist</code> is defined in
+<samp>hpath.el</samp>.  Its value is an association list whose elements are
+(&lt;file-name-regular-expression&gt; . &lt;function-of-one-arg&gt;) pairs.  Any
+path whose name matches a &lt;file-name-regular-expression&gt; will be
+displayed by calling the associated &lt;function-of-one-arg&gt; with the
+file name as the argument.
 </p>
 <p>By default, this variable handles the following types of files:
 </p><dl compact="compact">
@@ -11407,7 +11510,7 @@ Next: <a href="#Function" accesskey="n" rel="next">Function</a>, Previous: <a hr
 <tr><td></td><td valign="top"><a href="#index-a"><code>a</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyControl">HyControl</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-A"><code>A</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyControl">HyControl</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-Action-Key-1"><code>Action Key</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Keys">Smart Keys</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-Action-Key_002c-web-browsing-1"><code>Action Key, web browsing</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-Action-Key_002c-web-browsing-1"><code>Action Key, web browsing</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-Assist-Key-1"><code>Assist Key</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Keys">Smart Keys</a></td></tr>
 <tr><td colspan="4"> <hr></td></tr>
 <tr><th><a name="Key-Index_ky_letter-B">B</a></th><td></td><td></td></tr>
@@ -11865,6 +11968,8 @@ Next: <a href="#Concept-Index" accesskey="n" rel="next">Concept Index</a>, Previ
 <tr><td></td><td valign="top"><a href="#index-actypes-link_002dto_002delisp_002ddoc"><code>actypes link-to-elisp-doc</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Action-Types">Action Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-actypes-link_002dto_002dfile"><code>actypes link-to-file</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Action-Types">Action Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-actypes-link_002dto_002dfile_002dline"><code>actypes link-to-file-line</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Action-Types">Action Types</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-actypes-link_002dto_002dgbut"><code>actypes link-to-gbut</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Action-Types">Action Types</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-actypes-link_002dto_002dibut"><code>actypes link-to-ibut</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Action-Types">Action Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-actypes-link_002dto_002dInfo_002dindex_002ditem"><code>actypes link-to-Info-index-item</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Action-Types">Action Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-actypes-link_002dto_002dInfo_002dnode"><code>actypes link-to-Info-node</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Action-Types">Action Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-actypes-link_002dto_002dkcell"><code>actypes link-to-kcell</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Action-Types">Action Types</a></td></tr>
@@ -11893,8 +11998,8 @@ Next: <a href="#Concept-Index" accesskey="n" rel="next">Concept Index</a>, Previ
 <tr><td></td><td valign="top"><a href="#index-assist_002dmouse_002dkey"><code>assist-mouse-key</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Key-Bindings">Smart Key Bindings</a></td></tr>
 <tr><td colspan="4"> <hr></td></tr>
 <tr><th><a name="Function_fn_letter-B">B</a></th><td></td><td></td></tr>
-<tr><td></td><td valign="top"><a href="#index-browse_002durl_002dbrowser_002dfunction">browse-url-browser-function</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-browse_002durl_002dbrowser_002dfunction-1">browse-url-browser-function</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-browse_002durl_002dbrowser_002dfunction">browse-url-browser-function</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-browse_002durl_002dbrowser_002dfunction-1">browse-url-browser-function</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-browse_002durl_002dbrowser_002dfunction-2">browse-url-browser-function</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Action-Types">Action Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-browse_002durl_002dbrowser_002dfunction-3">browse-url-browser-function</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Key-_002d-WWW-URLs">Smart Key - WWW URLs</a></td></tr>
 <tr><td colspan="4"> <hr></td></tr>
@@ -11939,14 +12044,14 @@ Next: <a href="#Concept-Index" accesskey="n" rel="next">Concept Index</a>, Previ
 <tr><td></td><td valign="top"><a href="#index-file_002c-_002ehypb">file, .hypb</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Explicit-Buttons">Explicit Buttons</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-file_002c-_002ekotl-suffix">file, .kotl suffix</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Creating-Outlines">Creating Outlines</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-file_002c-DEMO-1">file, DEMO</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Hyperbole-Overview">Hyperbole Overview</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-file_002c-DIR">file, DIR</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-file_002c-DIR">file, DIR</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-file_002c-EXAMPLE_002ekotl">file, EXAMPLE.kotl</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Koutliner">Koutliner</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-file_002c-func_002dmenu_002eel">file, func-menu.el</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-file_002c-func_002dmenu_002eel">file, func-menu.el</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-file_002c-hactypes_002eel">file, hactypes.el</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Creating-Types">Creating Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-file_002c-hactypes_002eel-1">file, hactypes.el</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Action-Type-Creation">Action Type Creation</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-file_002c-hbut_002eel">file, hbut.el</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Action-Type-Creation">Action Type Creation</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-file_002c-hbut_002eel-1">file, hbut.el</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Programmatic-Button-Creation">Programmatic Button Creation</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-file_002c-hib_002ddebbugs_002eel">file, hib-debbugs.el</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-file_002c-hib_002ddebbugs_002eel">file, hib-debbugs.el</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-file_002c-hib_002dkbd_002eel">file, hib-kbd.el</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-file_002c-hibtypes_002eel">file, hibtypes.el</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-file_002c-hibtypes_002eel-1">file, hibtypes.el</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Creating-Types">Creating Types</a></td></tr>
@@ -11966,7 +12071,7 @@ Next: <a href="#Concept-Index" accesskey="n" rel="next">Concept Index</a>, Previ
 <tr><td></td><td valign="top"><a href="#index-file_002c-man_002fhyperbole_002einfo">file, man/hyperbole.info</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Invocation">Invocation</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-file_002c-man_002fhyperbole_002epdf">file, man/hyperbole.pdf</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Invocation">Invocation</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-file_002c-man_002fhyperbole_002etexi">file, man/hyperbole.texi</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Invocation">Invocation</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-file_002c-MANIFEST">file, MANIFEST</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-file_002c-MANIFEST">file, MANIFEST</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-fill_002dcolumn">fill-column</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Koutliner-Keys">Koutliner Keys</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-fill_002dprefix">fill-prefix</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Button-Label-Normalization">Button Label Normalization</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-find_002dfile"><code>find-file</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Using-URLs-with-Find_002dFile">Using URLs with Find-File</a></td></tr>
@@ -11984,15 +12089,15 @@ Next: <a href="#Concept-Index" accesskey="n" rel="next">Concept Index</a>, Previ
 <tr><td></td><td valign="top"><a href="#index-hbut_003alabel_002dto_002dkey">hbut:label-to-key</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Button-Label-Normalization">Button Label Normalization</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-hibtypes_002dbegin_002dload_002dhook">hibtypes-begin-load-hook</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Hook-Variables">Hook Variables</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-hibtypes_002dend_002dload_002dhook">hibtypes-end-load-hook</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Hook-Variables">Hook Variables</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-hibtypes_002dgit_002ddefault_002dproject">hibtypes-git-default-project</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-hibtypes_002dgit_002ddefault_002dproject-1">hibtypes-git-default-project</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-hibtypes_002dgithub_002ddefault_002dproject">hibtypes-github-default-project</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-hibtypes_002dgithub_002ddefault_002duser">hibtypes-github-default-user</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-hibtypes_002dgithub_002ddefault_002duser-1">hibtypes-github-default-user</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-hibtypes_002dgitlab_002ddefault_002dproject">hibtypes-gitlab-default-project</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-hibtypes_002dgitlab_002ddefault_002duser">hibtypes-gitlab-default-user</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-hibtypes_002dgitlab_002ddefault_002duser-1">hibtypes-gitlab-default-user</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-hibtypes_002dsocial_002ddefault_002dservice">hibtypes-social-default-service</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-hibtypes_002dgit_002ddefault_002dproject">hibtypes-git-default-project</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-hibtypes_002dgit_002ddefault_002dproject-1">hibtypes-git-default-project</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-hibtypes_002dgithub_002ddefault_002dproject">hibtypes-github-default-project</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-hibtypes_002dgithub_002ddefault_002duser">hibtypes-github-default-user</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-hibtypes_002dgithub_002ddefault_002duser-1">hibtypes-github-default-user</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-hibtypes_002dgitlab_002ddefault_002dproject">hibtypes-gitlab-default-project</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-hibtypes_002dgitlab_002ddefault_002duser">hibtypes-gitlab-default-user</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-hibtypes_002dgitlab_002ddefault_002duser-1">hibtypes-gitlab-default-user</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-hibtypes_002dsocial_002ddefault_002dservice">hibtypes-social-default-service</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-hkey_002dace_002dwindow_002dsetup"><code>hkey-ace-window-setup</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Keyboard-Drags">Keyboard Drags</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-hkey_002dalist">hkey-alist</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Questions-and-Answers">Questions and Answers</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-hkey_002dalways_002ddisplay_002dmenu">hkey-always-display-menu</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Key-_002d-Smart-Menus">Smart Key - Smart Menus</a></td></tr>
@@ -12019,20 +12124,20 @@ Next: <a href="#Concept-Index" accesskey="n" rel="next">Concept Index</a>, Previ
 <tr><td></td><td valign="top"><a href="#index-hmouse_002dx_002ddrag_002dsensitivity">hmouse-x-drag-sensitivity</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Mouse-Drags-within-a-Window">Smart Mouse Drags within a Window</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-hmouse_002dy_002ddiagonal_002dsensitivity">hmouse-y-diagonal-sensitivity</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Mouse-Drags-within-a-Window">Smart Mouse Drags within a Window</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-hmouse_002dy_002ddrag_002dsensitivity">hmouse-y-drag-sensitivity</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Mouse-Drags-within-a-Window">Smart Mouse Drags within a Window</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-hpath_003aat_002dp"><code>hpath:at-p</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-hpath_003aat_002dp"><code>hpath:at-p</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-hpath_003adisplay_002dwhere">hpath:display-where</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Referent-Display">Referent Display</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-hpath_003adisplay_002dwhere-1">hpath:display-where</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Internal-Viewers">Internal Viewers</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-hpath_003aexternal_002ddisplay_002dalist">hpath:external-display-alist</a>:</td><td>&nbsp;</td><td valign="top"><a href="#External-Viewers">External Viewers</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-hpath_003aexternal_002ddisplay_002dalist_002dmacos">hpath:external-display-alist-macos</a>:</td><td>&nbsp;</td><td valign="top"><a href="#External-Viewers">External Viewers</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-hpath_003aexternal_002ddisplay_002dalist_002dmswindows">hpath:external-display-alist-mswindows</a>:</td><td>&nbsp;</td><td valign="top"><a href="#External-Viewers">External Viewers</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-hpath_003aexternal_002ddisplay_002dalist_002dx">hpath:external-display-alist-x</a>:</td><td>&nbsp;</td><td valign="top"><a href="#External-Viewers">External Viewers</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-hpath_003afind"><code>hpath:find</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-hpath_003afind"><code>hpath:find</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-hpath_003afind_002dfile_002durls_002dmode"><code>hpath:find-file-urls-mode</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Using-URLs-with-Find_002dFile">Using URLs with Find-File</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-hpath_003aget_002dexternal_002ddisplay_002dalist"><code>hpath:get-external-display-alist</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#External-Viewers">External Viewers</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-hpath_003ainternal_002ddisplay_002dalist">hpath:internal-display-alist</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Internal-Viewers">Internal Viewers</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-hpath_003ainternal_002ddisplay_002dalist-1">hpath:internal-display-alist</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Internal-Viewers">Internal Viewers</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-hpath_003anative_002dimage_002dsuffixes">hpath:native-image-suffixes</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Internal-Viewers">Internal Viewers</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-hpath_003asuffixes">hpath:suffixes</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-hpath_003asuffixes">hpath:suffixes</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-hpath_003avariables">hpath:variables</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Link-Variable-Substitution">Link Variable Substitution</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-hproperty_003abut_002dcreate"><code>hproperty:but-create</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Button-Colors">Button Colors</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-hproperty_003abut_002demphasize_002dflag">hproperty:but-emphasize-flag</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Button-Colors">Button Colors</a></td></tr>
@@ -12112,43 +12217,48 @@ Next: <a href="#Concept-Index" accesskey="n" rel="next">Concept Index</a>, Previ
 <tr><th><a name="Function_fn_letter-I">I</a></th><td></td><td></td></tr>
 <tr><td></td><td valign="top"><a href="#index-ibtype_003acreate"><code>ibtype:create</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-ibtype_003adelete"><code>ibtype:delete</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-ibtypes-annot_002dbib"><code>ibtypes annot-bib</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-ibtypes-completion"><code>ibtypes completion</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-ibtypes-cscope"><code>ibtypes cscope</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-ibtypes-ctags"><code>ibtypes ctags</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-ibtypes-debbugs_002dgnu_002dmode"><code>ibtypes debbugs-gnu-mode</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-ibtypes-debbugs_002dgnu_002dquery"><code>ibtypes debbugs-gnu-query</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-ibtypes-debugger_002dsource"><code>ibtypes debugger-source</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-ibtypes-dir_002dsummary"><code>ibtypes dir-summary</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-ibtypes-doc_002did"><code>ibtypes doc-id</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-ibtypes-elisp_002dcompiler_002dmsg"><code>ibtypes elisp-compiler-msg</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-ibtypes-etags"><code>ibtypes etags</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-ibtypes-function_002din_002dbuffer"><code>ibtypes function-in-buffer</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-ibtypes-git_002dcommit_002dreference"><code>ibtypes git-commit-reference</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-ibtypes-git_002dreference"><code>ibtypes git-reference</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-ibtypes-github_002dreference"><code>ibtypes github-reference</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-ibtypes-gitlab_002dreference"><code>ibtypes gitlab-reference</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-ibtypes-gnus_002dpush_002dbutton"><code>ibtypes gnus-push-button</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-ibtypes-grep_002dmsg"><code>ibtypes grep-msg</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-ibtypes-hyp_002daddress"><code>ibtypes hyp-address</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-ibtypes-hyp_002dsource"><code>ibtypes hyp-source</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-ibtypes-id_002dcflow"><code>ibtypes id-cflow</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-ibtypes-Info_002dnode"><code>ibtypes Info-node</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-ibtypes-kbd_002dkey"><code>ibtypes kbd-key</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-ibtypes-klink"><code>ibtypes klink</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-ibtypes-mail_002daddress"><code>ibtypes mail-address</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-ibtypes-man_002dapropos"><code>ibtypes man-apropos</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-ibtypes-markdown_002dinternal_002dlink"><code>ibtypes markdown-internal-link</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-ibtypes-org_002dmode"><code>ibtypes org-mode</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-ibtypes-patch_002dmsg"><code>ibtypes patch-msg</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-ibtypes-pathname"><code>ibtypes pathname</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-ibtypes-pathname_002dline_002dand_002dcolumn"><code>ibtypes pathname-line-and-column</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-ibtypes-rfc"><code>ibtypes rfc</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-ibtypes-rfc_002dtoc"><code>ibtypes rfc-toc</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-ibtypes-social_002dreference"><code>ibtypes social-reference</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-ibtypes-texinfo_002dref"><code>ibtypes texinfo-ref</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-ibtypes-text_002dtoc"><code>ibtypes text-toc</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-ibtypes-www_002durl"><code>ibtypes www-url</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-ibtypes-annot_002dbib"><code>ibtypes annot-bib</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-ibtypes-completion"><code>ibtypes completion</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-ibtypes-cscope"><code>ibtypes cscope</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-ibtypes-ctags"><code>ibtypes ctags</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-ibtypes-debbugs_002dgnu_002dmode"><code>ibtypes debbugs-gnu-mode</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-ibtypes-debbugs_002dgnu_002dquery"><code>ibtypes debbugs-gnu-query</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-ibtypes-debugger_002dsource"><code>ibtypes debugger-source</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-ibtypes-dir_002dsummary"><code>ibtypes dir-summary</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-ibtypes-doc_002did"><code>ibtypes doc-id</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-ibtypes-elisp_002dcompiler_002dmsg"><code>ibtypes elisp-compiler-msg</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-ibtypes-etags"><code>ibtypes etags</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-ibtypes-function_002din_002dbuffer"><code>ibtypes function-in-buffer</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-ibtypes-git_002dcommit_002dreference"><code>ibtypes git-commit-reference</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-ibtypes-git_002dreference"><code>ibtypes git-reference</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-ibtypes-github_002dreference"><code>ibtypes github-reference</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-ibtypes-gitlab_002dreference"><code>ibtypes gitlab-reference</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-ibtypes-gnus_002dpush_002dbutton"><code>ibtypes gnus-push-button</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-ibtypes-grep_002dmsg"><code>ibtypes grep-msg</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-ibtypes-hyp_002daddress"><code>ibtypes hyp-address</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-ibtypes-hyp_002dsource"><code>ibtypes hyp-source</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-ibtypes-id_002dcflow"><code>ibtypes id-cflow</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-ibtypes-Info_002dnode"><code>ibtypes Info-node</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-ibtypes-ipython_002dstack_002dframe"><code>ibtypes ipython-stack-frame</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-ibtypes-kbd_002dkey"><code>ibtypes kbd-key</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-ibtypes-klink"><code>ibtypes klink</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-ibtypes-link_002dto_002debut"><code>ibtypes link-to-ebut</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-ibtypes-link_002dto_002dgbut"><code>ibtypes link-to-gbut</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-ibtypes-link_002dto_002dibut"><code>ibtypes link-to-ibut</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-ibtypes-mail_002daddress"><code>ibtypes mail-address</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-ibtypes-man_002dapropos"><code>ibtypes man-apropos</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-ibtypes-markdown_002dinternal_002dlink"><code>ibtypes markdown-internal-link</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-ibtypes-org_002dmode"><code>ibtypes org-mode</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-ibtypes-patch_002dmsg"><code>ibtypes patch-msg</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-ibtypes-pathname"><code>ibtypes pathname</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-ibtypes-pathname_002dline_002dand_002dcolumn"><code>ibtypes pathname-line-and-column</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-ibtypes-rfc"><code>ibtypes rfc</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-ibtypes-rfc_002dtoc"><code>ibtypes rfc-toc</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-ibtypes-ripgrep_002dmsg"><code>ibtypes ripgrep-msg</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-ibtypes-social_002dreference"><code>ibtypes social-reference</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-ibtypes-texinfo_002dref"><code>ibtypes texinfo-ref</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-ibtypes-text_002dtoc"><code>ibtypes text-toc</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-ibtypes-www_002durl"><code>ibtypes www-url</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-ibut_003aat_002dp"><code>ibut:at-p</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-image_002ddired_002dexternal_002dviewer">image-dired-external-viewer</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Key-_002d-Image-Thumbnails">Smart Key - Image Thumbnails</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-Info_002ddirectory_002dlist">Info-directory-list</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Invocation">Invocation</a></td></tr>
@@ -12443,7 +12553,7 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function</a>, Up: <a href
 <tr><td></td><td valign="top"><a href="#index-Action-Key_002c-cell-argument">Action Key, cell argument</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Relocating-and-Copying">Relocating and Copying</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-Action-Key_002c-hide-or-show-cell">Action Key, hide or show cell</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Hiding-and-Showing">Hiding and Showing</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-Action-Key_002c-klink">Action Key, klink</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Links">Links</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-Action-Key_002c-web-browsing">Action Key, web browsing</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-Action-Key_002c-web-browsing">Action Key, web browsing</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-Action-Mouse-Key">Action Mouse Key</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Thing-Selection">Thing Selection</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-Action-Mouse-Key-1">Action Mouse Key</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Key-_002d-Delimited-Things">Smart Key - Delimited Things</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-Action-Mouse-Key-drag">Action Mouse Key drag</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Mouse-Key-Drags">Smart Mouse Key Drags</a></td></tr>
@@ -12455,7 +12565,7 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function</a>, Up: <a href
 <tr><td></td><td valign="top"><a href="#index-active-region-1">active region</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Mouse-Drags-within-a-Window">Smart Mouse Drags within a Window</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-actype_002c-link_002dto_002dmail">actype, link-to-mail</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Buttons-in-Mail">Buttons in Mail</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-actypes_002c-list-of">actypes, list of</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Action-Types">Action Types</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-address">address</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-address">address</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-alpha-labels">alpha labels</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Autonumbering">Autonumbering</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-anonymous-ftp">anonymous ftp</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Top">Top</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-API">API</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Embedding-Hyperbole">Embedding Hyperbole</a></td></tr>
@@ -12493,12 +12603,12 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function</a>, Up: <a href
 <tr><th><a name="Concept-Index_cp_letter-B">B</a></th><td></td><td></td></tr>
 <tr><td></td><td valign="top"><a href="#index-balance-windows">balance windows</a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyControl">HyControl</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-BBDB">BBDB</a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyRolo-Settings">HyRolo Settings</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-bibliography">bibliography</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-bibliography">bibliography</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-Big-Brother-DataBase">Big Brother DataBase</a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyRolo-Settings">HyRolo Settings</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-blank-lines_002c-toggle">blank lines, toggle</a>:</td><td>&nbsp;</td><td valign="top"><a href="#View-Specs">View Specs</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-bookmarks">bookmarks</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Global-Buttons">Global Buttons</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-boolean-expressions">boolean expressions</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-breakpoint">breakpoint</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-breakpoint">breakpoint</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-browsing-URLs">browsing URLs</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Using-URLs-with-Find_002dFile">Using URLs with Find-File</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-browsing-URLs-in-find_002dfile">browsing URLs in find-file</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Using-URLs-with-Find_002dFile">Using URLs with Find-File</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-buffer-id">buffer id</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Mouse-Key-Modeline-Clicks">Smart Mouse Key Modeline Clicks</a></td></tr>
@@ -12513,7 +12623,7 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function</a>, Up: <a href
 <tr><td></td><td valign="top"><a href="#index-buffer_002c-swap-1">buffer, swap</a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyControl">HyControl</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-buffer_002c-unbury">buffer, unbury</a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyControl">HyControl</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-buffers-swap">buffers swap</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Keyboard-Drags">Keyboard Drags</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-bug-tracking">bug tracking</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-bug-tracking">bug tracking</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-bury-buffer">bury buffer</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Mouse-Key-Modeline-Clicks">Smart Mouse Key Modeline Clicks</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-burying">burying</a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyControl">HyControl</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-button">button</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Buttons">Buttons</a></td></tr>
@@ -12563,14 +12673,14 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function</a>, Up: <a href
 <tr><td></td><td valign="top"><a href="#index-button_002c-moving">button, moving</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Explicit-Buttons">Explicit Buttons</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-button_002c-multiple-lines">button, multiple lines</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Button-Label-Normalization">Button Label Normalization</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-button_002c-split-across-lines">button, split across lines</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Button-Label-Normalization">Button Label Normalization</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-byte-compiler-error">byte compiler error</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-byte-compiler-error">byte compiler error</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
 <tr><td colspan="4"> <hr></td></tr>
 <tr><th><a name="Concept-Index_cp_letter-C">C</a></th><td></td><td></td></tr>
-<tr><td></td><td valign="top"><a href="#index-C-call-tree">C call tree</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-C-flow-graph">C flow graph</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-C_002fC_002b_002b-call-trees">C/C++ call trees</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-C_002fC_002b_002b-cross_002dreference">C/C++ cross-reference</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-call-tree_002c-C">call tree, C</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-C-call-tree">C call tree</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-C-flow-graph">C flow graph</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-C_002fC_002b_002b-call-trees">C/C++ call trees</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-C_002fC_002b_002b-cross_002dreference">C/C++ cross-reference</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-call-tree_002c-C">call tree, C</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-cell_002c-adding">cell, adding</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Adding-and-Killing">Adding and Killing</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-cell_002c-appending">cell, appending</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Splitting-and-Appending">Splitting and Appending</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-cell_002c-attribute">cell, attribute</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Cell-Attributes">Cell Attributes</a></td></tr>
@@ -12623,10 +12733,10 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function</a>, Up: <a href
 <tr><td></td><td valign="top"><a href="#index-comment">comment</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Thing-Selection">Thing Selection</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-comment-1">comment</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Key-_002d-Delimited-Things">Smart Key - Delimited Things</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-company_002dmode">company-mode</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Key-_002d-Company-Mode">Smart Key - Company Mode</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-compiler-error">compiler error</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-compiler-error-1">compiler error</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-compiler-error">compiler error</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-compiler-error-1">compiler error</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-completion">completion</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Key-Argument-Selection">Smart Key Argument Selection</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-completion-1">completion</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-completion-1">completion</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-completion-2">completion</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Key-_002d-Company-Mode">Smart Key - Company Mode</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-completion-3">completion</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Key-_002d-Argument-Completion">Smart Key - Argument Completion</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-configuration">configuration</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Customization">Customization</a></td></tr>
@@ -12645,9 +12755,9 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function</a>, Up: <a href
 <tr><td></td><td valign="top"><a href="#index-creator-attribute">creator attribute</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Cell-Attributes">Cell Attributes</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-credits">credits</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Top">Top</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-cross-referencing">cross referencing</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Koutliner-History">Koutliner History</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-cross_002dreference_002c-Texinfo">cross-reference, Texinfo</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-Cscope">Cscope</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-ctags-entry">ctags entry</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-cross_002dreference_002c-Texinfo">cross-reference, Texinfo</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-Cscope">Cscope</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-ctags-entry">ctags entry</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-customization">customization</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Customization">Customization</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-customization-1">customization</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Customization">Customization</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-customize">customize</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Menus">Menus</a></td></tr>
@@ -12661,7 +12771,7 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function</a>, Up: <a href
 <tr><th><a name="Concept-Index_cp_letter-D">D</a></th><td></td><td></td></tr>
 <tr><td></td><td valign="top"><a href="#index-database">database</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Key-_002d-RDB-Mode">Smart Key - RDB Mode</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-datestamps">datestamps</a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyRolo-Keys">HyRolo Keys</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-dbx">dbx</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-dbx">dbx</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-debugging-Smart-Keys">debugging Smart Keys</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Key-Debugging">Smart Key Debugging</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-default-label-type">default label type</a>:</td><td>&nbsp;</td><td valign="top"><a href="#View-Specs">View Specs</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-default-Smart-Key-context">default Smart Key context</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Key-Operations">Smart Key Operations</a></td></tr>
@@ -12692,7 +12802,7 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function</a>, Up: <a href
 <tr><td></td><td valign="top"><a href="#index-display-where">display where</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Referent-Display">Referent Display</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-DisplayHere-mode">DisplayHere mode</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Key-_002d-Dired-Mode">Smart Key - Dired Mode</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-distributed-collaboration">distributed collaboration</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Koutliner-History">Koutliner History</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-document-identifier">document identifier</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-document-identifier">document identifier</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-double-click">double click</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Key-Argument-Selection">Smart Key Argument Selection</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-drag">drag</a>:</td><td>&nbsp;</td><td valign="top"><a href="#By-Dragging">By Dragging</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-drag-1">drag</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Thing-Selection">Thing Selection</a></td></tr>
@@ -12724,14 +12834,15 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function</a>, Up: <a href
 <tr><td></td><td valign="top"><a href="#index-dragging-outside-Emacs">dragging outside Emacs</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Mouse-Drags-outside-a-Window">Smart Mouse Drags outside a Window</a></td></tr>
 <tr><td colspan="4"> <hr></td></tr>
 <tr><th><a name="Concept-Index_cp_letter-E">E</a></th><td></td><td></td></tr>
-<tr><td></td><td valign="top"><a href="#index-e_002dmail-address">e-mail address</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-e_002dmail-address">e-mail address</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-e_002dmail-address-1">e-mail address</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Cell-Attributes">Cell Attributes</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-elink">elink</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-elisp-identifier">elisp identifier</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Key-_002d-Lisp-Source-Code">Smart Key - Lisp Source Code</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-ellipses">ellipses</a>:</td><td>&nbsp;</td><td valign="top"><a href="#View-Specs">View Specs</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-Emacs">Emacs</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Hyperbole-Overview">Hyperbole Overview</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-Emacs-1">Emacs</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Menus">Menus</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-Emacs-Lisp">Emacs Lisp</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Hyperbole-Overview">Hyperbole Overview</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-Emacs-Lisp-compiler-error">Emacs Lisp compiler error</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-Emacs-Lisp-compiler-error">Emacs Lisp compiler error</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-Emacs-Lisp-variables">Emacs Lisp variables</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Link-Variable-Substitution">Link Variable Substitution</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-emacs-outline">emacs outline</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Inserting-and-Importing">Inserting and Importing</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-Emacs-support">Emacs support</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Button-Colors">Button Colors</a></td></tr>
@@ -12742,7 +12853,7 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function</a>, Up: <a href
 <tr><td></td><td valign="top"><a href="#index-Engelbart-1">Engelbart</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Glossary">Glossary</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-environment-variables">environment variables</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Link-Variable-Substitution">Link Variable Substitution</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-equalize-windows">equalize windows</a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyControl">HyControl</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-etags-entry">etags entry</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-etags-entry">etags entry</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-exchanging-cells">exchanging cells</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Transposing">Transposing</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-exit-HyControl">exit HyControl</a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyControl">HyControl</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-expanding">expanding</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Hiding-and-Showing">Hiding and Showing</a></td></tr>
@@ -12751,6 +12862,7 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function</a>, Up: <a href
 <tr><td></td><td valign="top"><a href="#index-explicit-button-creation">explicit button creation</a>:</td><td>&nbsp;</td><td valign="top"><a href="#By-Dragging">By Dragging</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-explicit-button-deletion">explicit button deletion</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Deletion">Deletion</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-explicit-button-formats">explicit button formats</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Operational-and-Storage-Formats">Operational and Storage Formats</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-explicit-button-link">explicit button link</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-explicit-button-modification">explicit button modification</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Modification">Modification</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-explicit-button-renaming">explicit button renaming</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Renaming">Renaming</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-explicit-button-searching">explicit button searching</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Searching-and-Summarizing">Searching and Summarizing</a></td></tr>
@@ -12772,7 +12884,7 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function</a>, Up: <a href
 <tr><td></td><td valign="top"><a href="#index-file_002c-DEMO">file, DEMO</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Manual-Overview">Manual Overview</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-file_002c-hycontrol_002eel">file, hycontrol.el</a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyControl">HyControl</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-file_002c-importing">file, importing</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Inserting-and-Importing">Inserting and Importing</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-filename">filename</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-filename">filename</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-fill-prefix">fill prefix</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Button-Label-Normalization">Button Label Normalization</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-filling">filling</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Filling">Filling</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-filling-1">filling</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Filling">Filling</a></td></tr>
@@ -12793,23 +12905,25 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function</a>, Up: <a href
 <tr><td></td><td valign="top"><a href="#index-frame_002c-to-edge">frame, to edge</a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyControl">HyControl</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-frame_002c-zoom">frame, zoom</a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyControl">HyControl</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-frames-control">frames control</a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyControl">HyControl</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-ftp">ftp</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-ftp-1">ftp</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-func_002dmenu">func-menu</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-ftp">ftp</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-ftp-1">ftp</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-func_002dmenu">func-menu</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-function">function</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Thing-Selection">Thing Selection</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-function-1">function</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Key-_002d-Delimited-Things">Smart Key - Delimited Things</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-function-menu">function menu</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-function-menu">function menu</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
 <tr><td colspan="4"> <hr></td></tr>
 <tr><th><a name="Concept-Index_cp_letter-G">G</a></th><td></td><td></td></tr>
 <tr><td></td><td valign="top"><a href="#index-game_002c-gomoku">game, gomoku</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Key-_002d-Gomoku-Game">Smart Key - Gomoku Game</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-gdb">gdb</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-git-commit-reference">git commit reference</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-git-reference">git reference</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-github-reference">github reference</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-gitlab-reference">gitlab reference</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-gdb">gdb</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-git-commit-reference">git commit reference</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-git-reference">git reference</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-github-reference">github reference</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-gitlab-reference">gitlab reference</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-glink">glink</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-global-button">global button</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Buttons">Buttons</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-global-button-1">global button</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Global-Buttons">Global Buttons</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-global-button-2">global button</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Button-Files">Button Files</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-global-button-link">global button link</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-global-button_002c-modify">global button, modify</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Questions-and-Answers">Questions and Answers</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-glossary">glossary</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Glossary">Glossary</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-Gmail-Contacts">Gmail Contacts</a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyRolo-Settings">HyRolo Settings</a></td></tr>
@@ -12818,10 +12932,11 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function</a>, Up: <a href
 <tr><td></td><td valign="top"><a href="#index-Gnus">Gnus</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Buttons-in-Mail">Buttons in Mail</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-Gnus-1">Gnus</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Buttons-in-News">Buttons in News</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-Gnus-browsing">Gnus browsing</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Key-_002d-GNUS-Newsreader">Smart Key - GNUS Newsreader</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-GNUS-push_002dbuttons">GNUS push-buttons</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-GNUS-push_002dbuttons">GNUS push-buttons</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-gomoku">gomoku</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Key-_002d-Gomoku-Game">Smart Key - Gomoku Game</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-Google-Contacts">Google Contacts</a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyRolo-Settings">HyRolo Settings</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-grep">grep</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-grep">grep</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-grep-1">grep</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-Grep">Grep</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Menus">Menus</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-grep-files">grep files</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Menus">Menus</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-grid-of-windows">grid of windows</a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyControl">HyControl</a></td></tr>
@@ -12829,7 +12944,7 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function</a>, Up: <a href
 <tr><td></td><td valign="top"><a href="#index-groupware">groupware</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Glossary">Glossary</a></td></tr>
 <tr><td colspan="4"> <hr></td></tr>
 <tr><th><a name="Concept-Index_cp_letter-H">H</a></th><td></td><td></td></tr>
-<tr><td></td><td valign="top"><a href="#index-hashtag">hashtag</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-hashtag">hashtag</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-help-buffer">help buffer</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Key-_002d-Help-Buffers">Smart Key - Help Buffers</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-help_002c-button">help, button</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Key-Operations">Smart Key Operations</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-help_002c-menu-items">help, menu items</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Menus">Menus</a></td></tr>
@@ -12839,7 +12954,7 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function</a>, Up: <a href
 <tr><td></td><td valign="top"><a href="#index-hide-subtree">hide subtree</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Hiding-and-Showing">Hiding and Showing</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-hide-tree">hide tree</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Hiding-and-Showing">Hiding and Showing</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-hiding">hiding</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Hiding-and-Showing">Hiding and Showing</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-hiding-signatures">hiding signatures</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-hiding-signatures">hiding signatures</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-highlighting-buttons">highlighting buttons</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Button-Colors">Button Colors</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-history">history</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Menus">Menus</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-hook-variables">hook variables</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Hook-Variables">Hook Variables</a></td></tr>
@@ -12865,13 +12980,13 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function</a>, Up: <a href
 <tr><td></td><td valign="top"><a href="#index-Hyperbole-features">Hyperbole features</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Hyperbole-Overview">Hyperbole Overview</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-Hyperbole-help">Hyperbole help</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Key-Argument-Selection">Smart Key Argument Selection</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-Hyperbole-mail-comment">Hyperbole mail comment</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Buttons-in-Mail">Buttons in Mail</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-Hyperbole-mail-list">Hyperbole mail list</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-Hyperbole-mail-list">Hyperbole mail list</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-Hyperbole-main-menu">Hyperbole main menu</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Menus">Menus</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-Hyperbole-manual">Hyperbole manual</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Invocation">Invocation</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-Hyperbole-menubar-menu">Hyperbole menubar menu</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Menus">Menus</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-hyperbole-popup-menu">hyperbole popup menu</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Menus">Menus</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-Hyperbole-pulldown-menu">Hyperbole pulldown menu</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Menus">Menus</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-Hyperbole-report">Hyperbole report</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-Hyperbole-report">Hyperbole report</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-Hyperbole-types">Hyperbole types</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Creating-Types">Creating Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-Hyperbole-version">Hyperbole version</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Suggestion-or-Bug-Reporting">Suggestion or Bug Reporting</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-Hyperbole_002c-embedding">Hyperbole, embedding</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Embedding-Hyperbole">Embedding Hyperbole</a></td></tr>
@@ -12899,7 +13014,7 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function</a>, Up: <a href
 <tr><td></td><td valign="top"><a href="#index-ibtype_002c-help">ibtype, help</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-ibtype_002c-predicate">ibtype, predicate</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-ibtype_002c-return-val">ibtype, return val</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-ibtypes_002c-list-of">ibtypes, list of</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-ibtypes_002c-list-of">ibtypes, list of</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-ibuffer-menu">ibuffer menu</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Mouse-Key-Modeline-Clicks">Smart Mouse Key Modeline Clicks</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-ibuffer-menu-1">ibuffer menu</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Key-_002d-Buffer-Menus">Smart Key - Buffer Menus</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-idea-structuring">idea structuring</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Koutliner-History">Koutliner History</a></td></tr>
@@ -12908,19 +13023,22 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function</a>, Up: <a href
 <tr><td></td><td valign="top"><a href="#index-idstamp-0">idstamp 0</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Idstamps">Idstamps</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-idstamp-attribute">idstamp attribute</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Cell-Attributes">Cell Attributes</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-idstamp-counter">idstamp counter</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Idstamps">Idstamps</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-ilink">ilink</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-image-display">image display</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Referent-Display">Referent Display</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-images">images</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Key-_002d-Image-Thumbnails">Smart Key - Image Thumbnails</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-implicit-button">implicit button</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Buttons">Buttons</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-implicit-button-1">implicit button</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-implicit-button-labels">implicit button labels</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-implicit-button-link">implicit button link</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-implicit-button-type">implicit button type</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-implicit-button-types">implicit button types</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-implicit-button-types">implicit button types</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-importing">importing</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Inserting-and-Importing">Inserting and Importing</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-importing-a-file">importing a file</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Inserting-and-Importing">Inserting and Importing</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-inactive-minibuffer">inactive minibuffer</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Minibuffer-Menu-Activation">Minibuffer Menu Activation</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-Info-browser">Info browser</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Mouse-Key-Modeline-Clicks">Smart Mouse Key Modeline Clicks</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-Info-browsing">Info browsing</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Key-_002d-Info-Manuals">Smart Key - Info Manuals</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-Info-manual">Info manual</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Invocation">Invocation</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-Info-node">Info node</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-Info-node">Info node</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-initialization-file">initialization file</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Autonumbering">Autonumbering</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-inserting-tabs">inserting tabs</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Relocating-and-Copying">Relocating and Copying</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-insertion">insertion</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Inserting-and-Importing">Inserting and Importing</a></td></tr>
@@ -12940,12 +13058,13 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function</a>, Up: <a href
 <tr><td></td><td valign="top"><a href="#index-internal-klink">internal klink</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Links">Links</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-internal-standard-display">internal standard display</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Internal-Viewers">Internal Viewers</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-internal-viewer">internal viewer</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Internal-Viewers">Internal Viewers</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-Internet-RFC">Internet RFC</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-Internet-RFC-1">Internet RFC</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-Internet-RFC">Internet RFC</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-Internet-RFC-1">Internet RFC</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-invoking-HyControl">invoking HyControl</a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyControl">HyControl</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-invoking-Hyperbole">invoking Hyperbole</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Menus">Menus</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-ipython">ipython</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-isearch">isearch</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Invisible-Text-Searches">Invisible Text Searches</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-issue-tracking">issue tracking</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-issue-tracking">issue tracking</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-item-drag">item drag</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Keyboard-Drags">Keyboard Drags</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-item-throw">item throw</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Keyboard-Drags">Keyboard Drags</a></td></tr>
 <tr><td colspan="4"> <hr></td></tr>
@@ -12955,7 +13074,7 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function</a>, Up: <a href
 <tr><td></td><td valign="top"><a href="#index-jump-to-window-by-letter">jump to window by letter</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Keyboard-Drags">Keyboard Drags</a></td></tr>
 <tr><td colspan="4"> <hr></td></tr>
 <tr><th><a name="Concept-Index_cp_letter-K">K</a></th><td></td><td></td></tr>
-<tr><td></td><td valign="top"><a href="#index-kcell-link">kcell link</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-kcell-link">kcell link</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-key-binding-list">key binding list</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Global-Key-Bindings">Global Key Bindings</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-key-binding_002c-C_002dc-_002e">key binding, C-c .</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Global-Key-Bindings">Global Key Bindings</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-key-binding_002c-C_002dc-_0040">key binding, C-c @</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Global-Key-Bindings">Global Key Bindings</a></td></tr>
@@ -12971,7 +13090,7 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function</a>, Up: <a href
 <tr><td></td><td valign="top"><a href="#index-key-binding_002c-smart-keys">key binding, smart keys</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Key-Bindings">Smart Key Bindings</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-key-bindings_002c-toggle">key bindings, toggle</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Key-Bindings">Smart Key Bindings</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-key-bindings_002c-toggle-1">key bindings, toggle</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Global-Key-Bindings">Global Key Bindings</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-key-sequence">key sequence</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-key-sequence">key sequence</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-keyboard-drags">keyboard drags</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Keyboard-Drags">Keyboard Drags</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-keyboard-link-creation">keyboard link creation</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Keyboard-Drags">Keyboard Drags</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-keyboard_002c-jump-to-window">keyboard, jump to window</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Keyboard-Drags">Keyboard Drags</a></td></tr>
@@ -12980,7 +13099,7 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function</a>, Up: <a href
 <tr><td></td><td valign="top"><a href="#index-kill-and-yank-1">kill and yank</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Mouse-Drags-between-Windows">Smart Mouse Drags between Windows</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-kill-and-yank-2">kill and yank</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Key-_002d-Delimited-Things">Smart Key - Delimited Things</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-kill-region">kill region</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Key-Thing-Selection">Smart Key Thing Selection</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-klink">klink</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-klink">klink</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-klink-1">klink</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Links">Links</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-klink-referent">klink referent</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Links">Links</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-klink_002c-activating">klink, activating</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Links">Links</a></td></tr>
@@ -12990,7 +13109,7 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function</a>, Up: <a href
 <tr><td></td><td valign="top"><a href="#index-klink_002c-internal">klink, internal</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Links">Links</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-klink_002c-view-spec">klink, view spec</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Links">Links</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-knowledge-transfer">knowledge transfer</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Koutliner-History">Koutliner History</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-koutline-link">koutline link</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-koutline-link">koutline link</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-koutline-mode">koutline mode</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Inserting-and-Importing">Inserting and Importing</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-Koutliner-commands">Koutliner commands</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Menu-Commands">Menu Commands</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-Koutliner-menu">Koutliner menu</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Menu-Commands">Menu Commands</a></td></tr>
@@ -13008,20 +13127,24 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function</a>, Up: <a href
 <tr><td></td><td valign="top"><a href="#index-label-type_002c-legal-1">label type, legal</a>:</td><td>&nbsp;</td><td valign="top"><a href="#View-Specs">View Specs</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-label_002c-button">label, button</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Explicit-Buttons">Explicit Buttons</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-label_002c-button-1">label, button</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Global-Buttons">Global Buttons</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-labeling-implicit-buttons">labeling implicit buttons</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-legal-labels">legal labels</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Autonumbering">Autonumbering</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-level">level</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Hiding-and-Showing">Hiding and Showing</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-level-1">level</a>:</td><td>&nbsp;</td><td valign="top"><a href="#View-Specs">View Specs</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-line-and-column">line and column</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-line-and-column">line and column</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-link">link</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Links">Links</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-link-action-types">link action types</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Action-Types">Action Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-link-button">link button</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Explicit-Buttons">Explicit Buttons</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-link-creation">link creation</a>:</td><td>&nbsp;</td><td valign="top"><a href="#By-Dragging">By Dragging</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-link-creation-from-keyboard">link creation from keyboard</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Keyboard-Drags">Keyboard Drags</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-link-display">link display</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Referent-Display">Referent Display</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-link-to-explicit-button">link to explicit button</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-link-to-global-button">link to global button</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-link-to-implicit-button">link to implicit button</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-link_002c-creation">link, creation</a>:</td><td>&nbsp;</td><td valign="top"><a href="#By-Menu">By Menu</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-link_002c-display-function">link, display function</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Internal-Viewers">Internal Viewers</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-link_002c-pathname">link, pathname</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-link_002c-pathname-line-and-column">link, pathname line and column</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-link_002c-pathname">link, pathname</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-link_002c-pathname-line-and-column">link, pathname line and column</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-link_002c-viewer-program">link, viewer program</a>:</td><td>&nbsp;</td><td valign="top"><a href="#External-Viewers">External Viewers</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-link_002c-web-search">link, web search</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Action-Types">Action Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-linking_002c-in_002dplace">linking, in-place</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Explicit-Buttons">Explicit Buttons</a></td></tr>
@@ -13046,14 +13169,16 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function</a>, Up: <a href
 <tr><td></td><td valign="top"><a href="#index-mailing-buttons">mailing buttons</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Buttons-in-Mail">Buttons in Mail</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-make-frame">make frame</a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyControl">HyControl</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-make-window">make window</a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyControl">HyControl</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-man-apropos">man apropos</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-man-apropos">man apropos</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-man-page-references">man page references</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Key-_002d-Man-Pages">Smart Key - Man Pages</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-man-pages">man pages</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-man-pages">man pages</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-margin">margin</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Filling">Filling</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-markdown-link">markdown link</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-markdown-link">markdown link</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-markup-pair">markup pair</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Thing-Selection">Thing Selection</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-markup-pair-1">markup pair</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Key-_002d-Delimited-Things">Smart Key - Delimited Things</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-match-lines">match lines</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Menus">Menus</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-match-lines">match lines</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-match-lines-1">match lines</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-match-lines-2">match lines</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Menus">Menus</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-maximize-frame">maximize frame</a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyControl">HyControl</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-maximize-window">maximize window</a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyControl">HyControl</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-menu-help">menu help</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Menus">Menus</a></td></tr>
@@ -13173,6 +13298,7 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function</a>, Up: <a href
 <tr><th><a name="Concept-Index_cp_letter-N">N</a></th><td></td><td></td></tr>
 <tr><td></td><td valign="top"><a href="#index-name_002c-button">name, button</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Explicit-Buttons">Explicit Buttons</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-named-window-configuration">named window configuration</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Window-Configurations">Window Configurations</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-naming-implicit-buttons">naming implicit buttons</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-news">news</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Buttons-in-Mail">Buttons in Mail</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-news-comment">news comment</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Buttons-in-News">Buttons in News</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-news-hooks">news hooks</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Hook-Variables">Hook Variables</a></td></tr>
@@ -13186,13 +13312,13 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function</a>, Up: <a href
 <tr><th><a name="Concept-Index_cp_letter-O">O</a></th><td></td><td></td></tr>
 <tr><td></td><td valign="top"><a href="#index-object_002doriented-code-browsing">object-oriented code browsing</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Key-_002d-The-OO_002dBrowser">Smart Key - The OO-Browser</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-obtaining-Hyperbole">obtaining Hyperbole</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Installation">Installation</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-online-library">online library</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-online-library">online library</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-OO_002dBrowser">OO-Browser</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Key-_002d-The-OO_002dBrowser">Smart Key - The OO-Browser</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-option-setting">option setting</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Customization">Customization</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-option-settings">option settings</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Menus">Menus</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-Org-mode">Org mode</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-Org-mode">Org mode</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-Org-mode-1">Org mode</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Questions-and-Answers">Questions and Answers</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-org_002dmode">org-mode</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-org_002dmode">org-mode</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-other-frame">other frame</a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyControl">HyControl</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-other-window">other window</a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyControl">HyControl</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-outline-file-suffix">outline file suffix</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Creating-Outlines">Creating Outlines</a></td></tr>
@@ -13234,9 +13360,9 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function</a>, Up: <a href
 <tr><td></td><td valign="top"><a href="#index-pasting-a-region">pasting a region</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Thing-Selection">Thing Selection</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-pasting-a-region-1">pasting a region</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Mouse-Drags-between-Windows">Smart Mouse Drags between Windows</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-pasting-a-region-2">pasting a region</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Key-_002d-Delimited-Things">Smart Key - Delimited Things</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-patch-output">patch output</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-pathname">pathname</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-pathname_002c-line-and-column">pathname, line and column</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-patch-output">patch output</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-pathname">pathname</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-pathname_002c-line-and-column">pathname, line and column</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-permanent-identifier">permanent identifier</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Koutliner">Koutliner</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-permanent-identifier-1">permanent identifier</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Idstamps">Idstamps</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-pipe-character">pipe character</a>:</td><td>&nbsp;</td><td valign="top"><a href="#View-Specs">View Specs</a></td></tr>
@@ -13260,7 +13386,7 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function</a>, Up: <a href
 <tr><td></td><td valign="top"><a href="#index-raise-frame">raise frame</a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyControl">HyControl</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-rdb_002dmode">rdb-mode</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Key-_002d-RDB-Mode">Smart Key - RDB Mode</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-rebalance-windows">rebalance windows</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Creating-and-Deleting-Windows">Creating and Deleting Windows</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-reference">reference</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-reference">reference</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-referent">referent</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Explicit-Buttons">Explicit Buttons</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-referent-display">referent display</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Referent-Display">Referent Display</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-refilling">refilling</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Filling">Filling</a></td></tr>
@@ -13268,22 +13394,23 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function</a>, Up: <a href
 <tr><td></td><td valign="top"><a href="#index-region_002c-active">region, active</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Mouse-Drags-within-a-Window">Smart Mouse Drags within a Window</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-relative-autonumber">relative autonumber</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Koutliner">Koutliner</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-relative-identifier">relative identifier</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Autonumbering">Autonumbering</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-remote-file">remote file</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-remote-path">remote path</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-remote-file">remote file</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-remote-path">remote path</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-remote-pathnames">remote pathnames</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Using-URLs-with-Find_002dFile">Using URLs with Find-File</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-remove-lines">remove lines</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Menus">Menus</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-removing-Hyperbole-menu">removing Hyperbole menu</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Menus">Menus</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-replace-window-buffer">replace window buffer</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Keyboard-Drags">Keyboard Drags</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-Request-For-Comment">Request For Comment</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-Request-For-Comment-1">Request For Comment</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-Request-For-Comment">Request For Comment</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-Request-For-Comment-1">Request For Comment</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-resize-frame-percentage">resize frame percentage</a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyControl">HyControl</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-resizing-windows">resizing windows</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Resizing-Windows">Resizing Windows</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-restoring-windows">restoring windows</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Window-Configurations">Window Configurations</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-RFC">RFC</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-RFC-1">RFC</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-RFC">RFC</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-RFC-1">RFC</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-ripgrep">ripgrep</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-Rmail">Rmail</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Buttons-in-Mail">Buttons in Mail</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-Rolo">Rolo</a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyRolo">HyRolo</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-rolo-address">rolo address</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-rolo-address">rolo address</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-Rolo-commands">Rolo commands</a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyRolo-Menu">HyRolo Menu</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-rolo-entry">rolo entry</a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyRolo-Concepts">HyRolo Concepts</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-rolo-file">rolo file</a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyRolo-Concepts">HyRolo Concepts</a></td></tr>
@@ -13334,7 +13461,7 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function</a>, Up: <a href
 <tr><td></td><td valign="top"><a href="#index-shrink-frame">shrink frame</a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyControl">HyControl</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-shrink-window">shrink window</a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyControl">HyControl</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-side-drag">side drag</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Side_002dby_002dSide-Window-Resizing">Side-by-Side Window Resizing</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-signatures_002c-hiding">signatures, hiding</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-signatures_002c-hiding">signatures, hiding</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-Smart-Key">Smart Key</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Keys">Smart Keys</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-Smart-Key-1">Smart Key</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Glossary">Glossary</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-Smart-Key-2">Smart Key</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Questions-and-Answers">Questions and Answers</a></td></tr>
@@ -13357,11 +13484,12 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function</a>, Up: <a href
 <tr><td></td><td valign="top"><a href="#index-Smart-Mouse-Key-toggle">Smart Mouse Key toggle</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Global-Key-Bindings">Global Key Bindings</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-Smart-Mouse-Keys">Smart Mouse Keys</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Mouse-Keys">Smart Mouse Keys</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-smart-selection">smart selection</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Key-Thing-Selection">Smart Key Thing Selection</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-social-media">social media</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-social-reference">social reference</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-source-line">source line</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-social-media">social media</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-social-reference">social reference</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-source-line">source line</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-splitting-a-cell">splitting a cell</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Splitting-and-Appending">Splitting and Appending</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-stack-frame">stack frame</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-stack-frame">stack frame</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-stack-frame-1">stack frame</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-star-outline">star outline</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Inserting-and-Importing">Inserting and Importing</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-starting-HyControl">starting HyControl</a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyControl">HyControl</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-starting-Hyperbole">starting Hyperbole</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Menus">Menus</a></td></tr>
@@ -13378,16 +13506,16 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function</a>, Up: <a href
 <tr><td></td><td valign="top"><a href="#index-system-encapsulation">system encapsulation</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Encapsulating-Systems">Encapsulating Systems</a></td></tr>
 <tr><td colspan="4"> <hr></td></tr>
 <tr><th><a name="Concept-Index_cp_letter-T">T</a></th><td></td><td></td></tr>
-<tr><td></td><td valign="top"><a href="#index-table-of-contents">table of contents</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-table-of-contents-1">table of contents</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-table-of-contents">table of contents</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-table-of-contents-1">table of contents</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-table-of-contents-2">table of contents</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Action-Types">Action Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-tabs_002c-inserting">tabs, inserting</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Relocating-and-Copying">Relocating and Copying</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-tag">tag</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-TAGS-file">TAGS file</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-tags-file">tags file</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-tag">tag</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-TAGS-file">TAGS file</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-tags-file">tags file</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-tar-archive-browsing">tar archive browsing</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Key-_002d-Tar-File-Mode">Smart Key - Tar File Mode</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-terminal-use">terminal use</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Buttons">Buttons</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-Texinfo-cross_002dreference">Texinfo cross-reference</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-Texinfo-cross_002dreference">Texinfo cross-reference</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-Texinfo-manual">Texinfo manual</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Invocation">Invocation</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-text-file">text file</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Inserting-and-Importing">Inserting and Importing</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-thing">thing</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Thing-Selection">Thing Selection</a></td></tr>
@@ -13396,7 +13524,7 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function</a>, Up: <a href
 <tr><td></td><td valign="top"><a href="#index-throw-item">throw item</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Keyboard-Drags">Keyboard Drags</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-thumbnails">thumbnails</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Key-_002d-Image-Thumbnails">Smart Key - Image Thumbnails</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-toc-action-type">toc action type</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Action-Types">Action Types</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-toc-implicit-button-type">toc implicit button type</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-toc-implicit-button-type">toc implicit button type</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-toggle-HyControl-mode">toggle HyControl mode</a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyControl">HyControl</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-toggle-key-bindings">toggle key bindings</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Key-Bindings">Smart Key Bindings</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-toggle-key-bindings-1">toggle key bindings</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Global-Key-Bindings">Global Key Bindings</a></td></tr>
@@ -13405,7 +13533,7 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function</a>, Up: <a href
 <tr><td></td><td valign="top"><a href="#index-top_002dlevel-cell-1">top-level cell</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Idstamps">Idstamps</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-top_002dlevel-menu">top-level menu</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Menus">Menus</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-top_002dlevel-view">top-level view</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Hiding-and-Showing">Hiding and Showing</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-Tramp">Tramp</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-Tramp">Tramp</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-Tramp-1">Tramp</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Using-URLs-with-Find_002dFile">Using URLs with Find-File</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-transposing-cells">transposing cells</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Transposing">Transposing</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-tree_002c-copying">tree, copying</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Relocating-and-Copying">Relocating and Copying</a></td></tr>
@@ -13432,27 +13560,27 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function</a>, Up: <a href
 <tr><th><a name="Concept-Index_cp_letter-U">U</a></th><td></td><td></td></tr>
 <tr><td></td><td valign="top"><a href="#index-unbury-buffer">unbury buffer</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Mouse-Key-Modeline-Clicks">Smart Mouse Key Modeline Clicks</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-unburying">unburying</a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyControl">HyControl</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-UNIX-manual">UNIX manual</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-UNIX-manual">UNIX manual</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-unshifted-mouse-bindings">unshifted mouse bindings</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Key-Bindings">Smart Key Bindings</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-unshifted-mouse-keys">unshifted mouse keys</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Key-Bindings">Smart Key Bindings</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-URL">URL</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-URL">URL</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-URL-1">URL</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Action-Types">Action Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-URL-2">URL</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Key-_002d-WWW-URLs">Smart Key - WWW URLs</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-URLs_002c-abbreviated">URLs, abbreviated</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Using-URLs-with-Find_002dFile">Using URLs with Find-File</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-URLs_002c-using-with-find_002dfile">URLs, using with find-file</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Using-URLs-with-Find_002dFile">Using URLs with Find-File</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-USENET">USENET</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Buttons-in-Mail">Buttons in Mail</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-USENET-1">USENET</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Buttons-in-News">Buttons in News</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-username">username</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-username">username</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
 <tr><td colspan="4"> <hr></td></tr>
 <tr><th><a name="Concept-Index_cp_letter-V">V</a></th><td></td><td></td></tr>
 <tr><td></td><td valign="top"><a href="#index-variable-setting">variable setting</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Customization">Customization</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-variables">variables</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Hook-Variables">Hook Variables</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-vector">vector</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Thing-Selection">Thing Selection</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-vector-1">vector</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Key-_002d-Delimited-Things">Smart Key - Delimited Things</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-version-control">version control</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-version-control-1">version control</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-version-control-2">version control</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-version-control-3">version control</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-version-control">version control</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-version-control-1">version control</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-version-control-2">version control</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-version-control-3">version control</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-version-description">version description</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Suggestion-or-Bug-Reporting">Suggestion or Bug Reporting</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-vertical-drag">vertical drag</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Creating-and-Deleting-Windows">Creating and Deleting Windows</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-vertical-drag-1">vertical drag</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Mouse-Drags-within-a-Window">Smart Mouse Drags within a Window</a></td></tr>
@@ -13507,15 +13635,15 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function</a>, Up: <a href
 <tr><td></td><td valign="top"><a href="#index-windows_002c-equalize">windows, equalize</a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyControl">HyControl</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-windows_002c-rebalance">windows, rebalance</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Creating-and-Deleting-Windows">Creating and Deleting Windows</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-word-wrap">word wrap</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Filling">Filling</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-World_002dwide-Web">World-wide Web</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-World_002dwide-Web">World-wide Web</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-World_002dwide-Web-1">World-wide Web</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Action-Types">Action Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-World_002dwide-Web-2">World-wide Web</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Key-_002d-WWW-URLs">Smart Key - WWW URLs</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-WWW">WWW</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-WWW">WWW</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-WWW-1">WWW</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Action-Types">Action Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-WWW-2">WWW</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Key-_002d-WWW-URLs">Smart Key - WWW URLs</a></td></tr>
 <tr><td colspan="4"> <hr></td></tr>
 <tr><th><a name="Concept-Index_cp_letter-X">X</a></th><td></td><td></td></tr>
-<tr><td></td><td valign="top"><a href="#index-xdb">xdb</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-xdb">xdb</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
 <tr><td colspan="4"> <hr></td></tr>
 <tr><th><a name="Concept-Index_cp_letter-Y">Y</a></th><td></td><td></td></tr>
 <tr><td></td><td valign="top"><a href="#index-yank-region">yank region</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Key-Thing-Selection">Smart Key Thing Selection</a></td></tr>

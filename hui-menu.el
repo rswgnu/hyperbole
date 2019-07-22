@@ -408,6 +408,8 @@ REBUILD-FLAG is non-nil, in which case the menu is rebuilt."
 		   ["Activate-at-Point"    hui:hbut-current-act t]
 		   ["Delete-Type"         (hui:htype-delete 'ibtypes) t]
 		   ["Help"   hui:hbut-help t]
+		   ["Label"  hui:ibut-label-create t]
+		   ["Rename" hui:ibut-rename t]
 		   ["Types"  (hui:htype-help 'ibtypes 'no-sort) t]
 		   )
 		 '("Koutliner"

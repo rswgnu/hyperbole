@@ -401,21 +401,38 @@ command to return to this DEMO later.
 
 * Implicit Buttons
 
-An incredibly powerful feature of Hyperbole is known as implicit buttons,
-i.e. a specific format of text within a buffer that Hyperbole recognizes as a
-button and lets you activate.  Hyperbole recognizes these by context and does
-not require any specialized markup.
+Hyperbole can automatically turn your existing, unchanged text files into
+hypertexts via its incredibly powerful feature: implicit buttons.  An
+implicit button is a span of text within a buffer that Hyperbole recognizes
+as a button and lets you activate.  Hyperbole recognizes these buttons using
+its predefined implicit button types that specify how to recognize a
+particular type of button and what action such buttons perform.  For example,
+double-quoted pathnames have a type of 'pathname' and an action of: display
+the path in Emacs. (Hyperbole lets you configure where to display it).
+
+Hyperbole has many built-in implicit button types, a number of which you will
+see here.  You may also create your own types.  Once a type is known, you can
+embed an infinite number of buttons of that type within your text documents
+simply by typing them.  Let's look at some of these button types and how you
+can use them.
 
 Note that you must press a Smart Key on the first line of an implicit button
 to utilize it if it spans multiple lines and always press on a regular
 character, not a delimiter like ( or ) since these are treated specially and
 used to select groups of text.
 
-Hyperbole has many built-in implicit button types, a number of which you will
-see here, and allows you to create your own.  Once a type is known, you can
-embed an infinite number of buttons of that type within your text simply by
-typing them.  Let's look at some of these button types and how you can use
-them.
+Individual implicit buttons may be labeled so that they may be activated
+by name or linked to by other buttons.  Here is a pathname button with a label
+of 'My Emacs Files':
+
+<[My Emacs Files]>: "~/.emacs.d"
+
+You see that the label is delimited by <[ and ]> and can be followed by any
+number of :, - or = characters, including none.  You can activate the button
+either from its label or its text.  With point on an implicit button, you can
+label it by using {C-h h i l}.
+
+Now let's explore some implicit button types.
 
 ** Key Sequence Buttons
 
@@ -423,9 +440,9 @@ Any Emacs key sequence (or multiple sequences) delimited by curly braces is
 an implicit button.  Press the Action Key with {C-u C-p} for example and the
 point should move four lines upward.  An Assist Key press on the key sequence
 displays the documentation for its command binding, i.e. what it does.  Key
-sequences together with the arguments their commands prompt for also may be
-given, e.g. {M-x apropos RET hyperbole RET}.  Click in the braces to try it
-out.
+sequences together with the arguments their commands prompt for, may also be
+given, e.g. {M-x apropos RET hyperbole RET}.  Click with the Action Mouse Key
+in the braces to try it out.
 
 Hyperbole minibuffer menu items may also be activated as key sequences.  For
 example, {C-h h d i} displays the online browsable Info version of the

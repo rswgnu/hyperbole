@@ -154,8 +154,8 @@ WITHOUT ANY WARRANTY, without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</P>
 
 <PRE>
-Edition 7.0.3
-Printed May 11, 2019.
+Edition 7.0.3a
+Printed July 21, 2019.
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -196,8 +196,8 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 @sp 2
 
 @example
-Edition 7.0.3
-May 11, 2019
+Edition 7.0.3a
+July 21, 2019
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -314,6 +314,10 @@ Buttons
 * Action Types::
 * Button Type Precedence::
 * Utilizing Explicit Buttons::
+
+Implicit Buttons
+
+* Implicit Button Type Summaries::
 
 Utilizing Explicit Buttons
 
@@ -469,7 +473,7 @@ Smart Keyboard Keys
 @chapter Introduction
 
 This edition of the GNU Hyperbole Manual is for use with any version
-7.0.3 or greater of GNU Hyperbole.  Hyperbole runs atop GNU Emacs 24.3
+7.0.3a or greater of GNU Hyperbole.  Hyperbole runs atop GNU Emacs 24.3
 or higher.  It will trigger an error if your Emacs is older.
 
 This chapter summarizes the structure of the rest of the manual,
@@ -1767,14 +1771,15 @@ directory, typically in another window.
 @cindex activating implicit button
 @cindex menu item, Ibut/Act
 @kindex C-h h i a
-Unlike explicit buttons, implicit buttons have no individual button data
-other than their textual labels.  You use implicit button types which
-include boolean expressions (predicates) that match to both the label
-and the context required of any button of the type.  Each time a Smart
-Key is pressed at a location, Hyperbole evaluates the predicates from
-the list of implicit button types and the first one that evaluates true
-is selected and its associated action is triggered.  The Ibut/Act menu
-item, @bkbd{C-h h i a}, also activates any implicit button found at the
+Unlike explicit buttons, implicit buttons have no individual button
+data other than their text and optional labels.  You use implicit
+button types which include boolean expressions (predicates) that match
+to both the label and the context required of any button of the type.
+Each time a Smart Key is pressed at a location, Hyperbole evaluates
+the predicates from the list of implicit button types and the first
+one that evaluates true is selected and its associated action is
+triggered.  Alternatively, you can use the Ibut/Act menu
+item, @bkbd{C-h h i a}, to activate any implicit button found at the
 current point.
 
 All of this happens transparently and is easy to use once you try it.
@@ -1782,14 +1787,38 @@ The Hyperbole Smart Keys offer additional extensive context-sensitive
 point-and-click type behavior beyond implicit button types.  @xref{Smart
 Key Operations}.
 
+@cindex implicit button labels
+@cindex labeling implicit buttons
+@cindex naming implicit buttons
+Individual implicit buttons may be labeled, allowing activation by
+name or use as a link target by other buttons.  Here is a pathname
+button with a label of 'My Emacs Files':
+
+@example
+<[My Emacs Files]>: "~/.emacs.d"
+@end example
+
+The label is delimited by @samp{<[} and @samp{]>} and can be followed
+by any number of :, - or = separator characters, including none.  You
+can activate the button either from its label or its text.  With point
+on an implicit button, @bkbd{C-h h i l} will label it or you
+may simply type the label and delimiters manually.
+
+@menu
+* Implicit Button Type Summaries::
+@end menu
+
+@node Implicit Button Type Summaries,  , Implicit Buttons, Implicit Buttons
+@subsection  Implicit Button Type Summaries
+
 @cindex ibtypes, list of
 @cindex implicit button types
 Below, standard implicit button types are listed in the order in which
 Hyperbole tries to match to the types when looking for an implicit
 button; @bkbd{C-h h i t @key{RET}} provides similar information.  See
 the Hyperbole file, @file{hibtypes.el}, for complete examples of
-implicit button types (where they are listed in reverse in increasing
-order of priority).
+implicit button types (they are listed in increasing order of
+priority).
 
 @table @code
 
@@ -1900,12 +1929,58 @@ Jumps to the source line associated with a debugger stack frame or
 breakpoint line.  This works with gdb, dbx, and xdb.  Such lines are
 recognized in any buffer.
 
+@findex ibtypes ripgrep-msg
+@cindex grep
+@cindex ripgrep
+@cindex match lines
+@item ripgrep-msg
+Jumps to line associated with a ripgrep (rg) line numbered msg.
+Ripgrep outputs each pathname once followed by all matching lines in
+that pathname.  Messages are recognized in any buffer (other than a
+helm completion buffer).
+
+@findex ibtypes ipython-stack-frame
+@cindex ipython
+@cindex stack frame
+@item ipython-stack-frame
+Jumps to line associated with an ipython stack frame line numbered msg.
+ipython outputs each pathname once followed by all matching lines in that pathname.
+Messages are recognized in any buffer (other than a helm completion buffer).
+
 @findex ibtypes grep-msg
 @cindex grep
 @cindex compiler error
+@cindex match lines
 @item grep-msg
 Jumps to a line associated with grep or compilation error messages.
 Messages are recognized in any buffer.
+
+@findex ibtypes link-to-ibut
+@cindex implicit button link
+@cindex link to implicit button
+@cindex ilink
+@item link-to-ibut <ilink>
+At point, activates a link to an implicit button.
+The implicit button’s action is executed in the context of the current buffer.
+Recognizes the format ’<ilink:’ <button label> ’>’, e.g. <ilink: my sequence of keys>.
+
+@findex ibtypes link-to-gbut
+@cindex global button link
+@cindex link to global button
+@cindex glink
+@item link-to-gbut <glink>
+At point, activates a link to a global button.
+The global button’s action is executed in the context of the current buffer.
+Recognizes the format ’<glink:’ <button label> ’>’, e.g. <glink: open todos>.
+
+@findex ibtypes link-to-ebut
+@cindex explicit button link
+@cindex link to explicit button
+@cindex elink
+@item link-to-ebut <elink>
+At point, activates a link to an explicit button.
+The explicit button’s action is executed in the context of the current buffer.
+Recognizes the format ’<elink:’ <button label> ’>’, e.g. <elink: project-list>.
 
 @findex ibtypes klink
 @cindex klink
@@ -2434,7 +2509,7 @@ signalled.
 
 @findex actypes link-to-ebut
 @item link-to-ebut
-Performs an action given by another explicit button, specified by KEY and KEY-FILE.
+Performs an action given by an explicit button, specified by KEY and KEY-FILE.
 
 @findex actypes link-to-elisp-doc
 @item link-to-elisp-doc
@@ -2449,6 +2524,10 @@ the buffer is displayed with POINT at the top of the window.
 @item link-to-file-line
 Displays a file given by PATH scrolled to LINE-NUM.
 
+@findex actypes link-to-gbut
+@item link-to-gbut
+Performs an action given by an existing global button, specified by KEY.
+
 @findex actypes link-to-Info-index-item
 @item link-to-Info-index-item
 Displays an Info index ITEM cross-reference.
@@ -2462,6 +2541,10 @@ Displays an Info NODE.  NODE must be a string of the form
 (filename)nodename.  During button creation, completion for both
 filename and nodename is available.  Filename may be given without the
 .info suffix.
+
+@findex actypes link-to-ibut
+@item link-to-ibut
+Performs an action given by an implicit button, specified by KEY-FILE, KEY and optional POINT.
 
 @findex actypes link-to-kcell
 @findex kcell:ref-to-id
@@ -6034,13 +6117,13 @@ windows exist within a frame.
 
 @vindex gbut:file
 @item Global Button
-A form of explicit button which is accessed by name rather than direct
+A Hyperbole button which is accessed by name rather than direct
 selection.  Global buttons are useful when one wants quick access to
 actions such as jumping to common file locations or for performing
-sequences of operations.  One need not locate them since they are always
-available by name, with full completion offered.  All global buttons are
-stored in the file given by the variable @code{gbut:file} and may be
-activated as regular explicit buttons by visiting this file.  By
+sequences of operations.  One need not locate them since they are
+always available by name, with full completion offered.  All global
+buttons are stored in the file given by the variable @code{gbut:file}
+and may be activated with the Action Key when editing this file.  By
 default, this is the same as the user's personal button file.
 
 @item Global Button File
@@ -6086,7 +6169,8 @@ DataBase (BBDB) package.
 
 @item Implicit Button
 A button recognized contextually by Hyperbole.  Such buttons contain no
-button data.  See also @b{implicit button type}.
+button data but may have an optional preceding label that looks like this:
+@samp{<[label]>}.  See also @b{implicit button type}.
 
 @item Implicit Button Type
 A specification of how to recognize and activate implicit buttons of a

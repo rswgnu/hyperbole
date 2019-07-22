@@ -1,3 +1,25 @@
+2019-07-21  Bob Weiner  <rsw@gnu.org>
+
+* man/hyperbole.texi (Implicit Button Types): Split off type descriptions to this new
+    subsection and added these types: ripgrep-msg, ipython-stack-frame, link-to-ibut,
+    link-to-gbut, link-to-ebut.
+                     (Implicit Buttons): Added description and example of implicit button labels.
+                     (Glossary): Updated Implicit Button and Global Button entries with changes.
+  DEMO (Implicit Buttons): Added description and example of implicit button labels.
+                     (Action Types): link-to-gbut, link-to-ibut - Added.
+
+* hbut.el (gbut:act): Improved error message for implicit global buttons.
+
+* hui-menu.el (infodock-hyperbole-menu): Implicit-Button/Label - Added to add a label.
+    Implicit-Button/Rename - Added to rename the label of an implicit button.
+  hui-mini.el (hui:menus): Added Ibut/Label and Ibut/Rename.
+
+* hbut.el (hbut:key-to-label): Moved ebut:key-to-label body here and aliased that
+    function to this hbut one since is now used by ibut:key-to-label as well.
+          (hbut:label-to-key, hbut:key-src-set-buffer, hbut:key-src,
+           hbut:key-src-fmt, hbut:key-src): Same change.
+	   (ibut:rename): Added and used in hui:ibut-rename.
+
 2019-07-18  Bob Weiner  <rsw@gnu.org>
 
 * hbut.el (ibut:label-separator): Added.
@@ -12,7 +34,7 @@
 
 2019-07-16  Bob Weiner  <rsw@gnu.org>
 
-* hui.el (hui:ibut-label-create, hui:ibut-label-modify, hui:ibut-message): Added.
+* hui.el (hui:ibut-label-create, hui:ibut-rename, hui:ibut-message): Added.
 
 2019-07-15  Bob Weiner  <rsw@gnu.org>
 
@@ -26,8 +48,8 @@
 
 2019-07-13  Bob Weiner  <rsw@gnu.org>
 
-* hsys-org.el (org-set-ibut-label): Added and used in org-mode ibtype.
-              (org-mode, org-at-block-start-p): Added Action Key activation of Org blocks when
+* hsys-org.el (hsys-org-set-ibut-label): Added and used in org-mode ibtype.
+              (org-mode, hsys-org-at-block-start-p): Added Action Key activation of Org blocks when
     on 1st line of def.
 
 * hibtypes.el (link-to-gbut, glink:start, glink:end): Added for in-buffer links to global buttons.
@@ -117,7 +139,7 @@
 
 * hsys-org.el (org-link): Changed to call org-open-at-point which handles internal
     org links, fixing following links such as radio targets.
-    (org-thing-at-p, org-target-at-p): Added.
+    (hsys-org-thing-at-p, hsys-org-target-at-p): Added.
 
 * hpath.el (hpath:texinfo-section-pattern): Added and used in hpath:to-markup-anchor to
     jump to specific Texinfo sections.
@@ -190,7 +212,7 @@
 2019-06-04  Bob Weiner  <rsw@gnu.org>
 
 * hactypes.el (annot-bib): Changed to find referent from the end of the buffer rather than beginning,
-    to avoid multiple earlier annot-bib buttons
+    to avoid multiple earlier annot-bib buttons.
 * DEMO (Hyperbole Source Buttons): Changed example button from annot-bib to kbd-key.
 
 * kotl/kvspec.el (kvspec:hide-levels): Changed behavior so view updates to default level clipping when
@@ -198,7 +220,7 @@
 
 2019-06-02  Bob Weiner  <rsw@gnu.org>
 
-* kotl/kvspec.el (kvspec:lines-to-show): Changed behavior so view updates to default cell clipping when 
+* kotl/kvspec.el (kvspec:lines-to-show): Changed behavior so view updates to default cell clipping when
     'c' is excluded from the viewspec.
 
 * kotl/kotl-mode.el (kotl-mode:show-all): Limited (kvspec:update t) call to interactive usage only.
@@ -209,7 +231,7 @@
 
 2019-06-01  Bob Weiner  <rsw@gnu.org>
 
-* hibtypes.el (ipython_stack_frame): Added to handle ipython stack traces and exceptions.
+* hibtypes.el (ipython-stack-frame): Added to handle ipython stack traces and exceptions.
 
 2019-05-30  Bob Weiner  <rsw@gnu.org>
 

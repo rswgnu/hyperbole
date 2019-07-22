@@ -250,7 +250,7 @@ Use `link-to-file' instead for a permanent link."
   (hpath:find directory))
 
 (defact link-to-ebut (key-file key)
-  "Performs action given by another explicit button, specified by KEY-FILE and KEY."
+  "Performs action given by an explicit button, specified by KEY-FILE and KEY."
   (interactive
    (let (but-file but-lbl)
      (while (cond ((setq but-file
@@ -353,7 +353,7 @@ the window."
     (move-to-column column-num)))
 
 (defact link-to-gbut (key)
-  "Performs action given by an existing global button, specified by KEY."
+  "Performs an action given by an existing global button, specified by KEY."
   (interactive
    (let ((gbut-file (hpath:validate (hpath:substitute-value gbut:file)))
 	 but-lbl)
@@ -393,32 +393,35 @@ available.  Filename may be given without the .info suffix."
     (hypb:error "(link-to-Info-node): Invalid Info node: `%s'" string)))
 
 (defact link-to-ibut (key &optional key-file point)
-  "Performs action given by an implicit button, specified by KEY-FILE, KEY and optional POINT.
+  "Performs an action given by an implicit button, specified by KEY-FILE, KEY and optional POINT.
 When creating the button, point must be on the implicit button to which to link
 and its buffer must have a file attached."
   (interactive
    (let ((ibut-key (ibut:at-p t)))
      (if (and ibut-key buffer-file-name)
 	 (list ibut-key buffer-file-name (point))
-       (list nil nil nil))))
+       ;; When not on an ibut and moddifying the link, use existing arguments
+       (if (and (boundp 'defaults) (listp defaults))
+	   defaults
+	 (list nil nil nil)))))
   (if key-file
       (or (called-interactively-p 'interactive)
 	  (null key-file)
 	  (setq key-file (hpath:validate (hpath:substitute-value key-file))))
     (setq key-file buffer-file-name))
-  (save-excursion
-    (save-restriction
-      (let (but)
+  (let (but)
+    (save-excursion
+      (save-restriction
 	(when key-file
-	  (find-file-noselect key-file))
+	  (set-buffer (find-file-noselect key-file)))
 	(widen)
 	(if (integerp point) (goto-char (min point (point-max))))
-	(setq but (ibut:to key)))))
-  (if but
-      (hbut:act but)
-    (hypb:error "(link-to-ibut): No button `%s' in `%s'."
-		(ibut:key-to-label key)
-		(or key-file (buffer-name)))))
+	(setq but (ibut:to key))))
+    (if but
+	(hbut:act but)
+      (hypb:error "(link-to-ibut): No button `%s' in `%s'."
+		  (ibut:key-to-label key)
+		  (or key-file (buffer-name))))))
 
 (defact link-to-kcell (file cell-ref)
   "Displays FILE with kcell given by CELL-REF at window top.

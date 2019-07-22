@@ -2,6 +2,105 @@
 				 by Bob Weiner
 
 ===========================================================================
+*                                   V7.0.3a
+===========================================================================
+
+  BUTTONS
+
+    - Labeled Implicit Buttons: Optional <[labels]> that precede
+      implicit buttons.  This enables implicit buttons to be activated
+      by name when in the current buffer or anywhere when added to the
+      global buttons file (personal button file).
+
+    - Link to Buttons: New implicit button types that link to button categories:
+        In Buffer Syntax                                 Implicit Button Type
+        ===========================================================================
+        <elink: explicit button label to link to>        link-to-ebut
+        <glink: global button label to link to>          link-to-gbut
+        <ilink: implicit button label to link to>        link-to-iut
+
+    - Other new implicit button types:
+        debugger-source: Jump to the source of errors from the Python pytype package
+        ipython-stack-frame: Jump to the source of ipython stack traces and exceptions
+
+
+  DOCUMENTATION
+
+    - Action Types: link-to-gbut, link-to-ibut - Added.
+
+    - hpath:native-image-suffixes: documented this setting for
+      controlling image types that Hyperbole displays within Emacs.
+
+    - Implicit Button Types: Split off type descriptions to this new
+      subsection and added these types: ripgrep-msg, ipython-stack-frame, link-to-ibut,
+      link-to-gbut, link-to-ebut.
+
+    - Implicit Buttons: Added description and example of implicit button labels.
+      DEMO (Implicit Buttons): Added description and example of implicit button labels.
+
+    - Glossary: Updated Implicit Button and Global Button entries with changes.
+
+
+  KOUTLINER
+
+    - When 'c' (clip to lines per cell) is omitted from a viewspec, clipping now changes to
+      whatever the default number of lines per cell is (typically, unlimited).  The same goes
+      for the 'l' spec (limit display to a certain level of cells).
+
+  MENUS
+
+    - Pulldown Menus:   Implicit-Button/Label: Added to add a label.
+                        Implicit-Button/Rename - Added to rename the label of an implicit button.
+
+    - Minibuffer Menus: hui-mini.el (hui:menus): Added Ibut/Label and Ibut/Rename.
+
+
+  ORG MOde
+
+    - Radio Targets and Links: Smart Keys now handle these.
+
+    - Links: Smart Keys handle both internal and external Org mode links.
+
+  PROGRAMMING
+
+    - ibut:at-type-p: Added to test if point is on a specific type of implicit button.
+
+    - hypb:region-with-text-property-value: Added and used in hysy-org.el.
+
+    - hsys-org-mode-function, hsys-org-mode-p: Added to determine when hsys-org actions
+      are activated.
+
+    - ebut:key-src-set-buffer, hbut:key-src-set-buffer, hbut:key-list,
+      hbut:ebut-key-list, hbut:ibut-key-list, hbut:label-list): Added
+      to allow selection of labeled Hyperbole buttons in currrent buffer by name.
+
+    - gbut:get, hbut:map, ibut:label-map, ibut:key-src, ibut:key-to-label, ibut:label-to-key,
+      ibut:summarize, ibut:label-start, ibut:label-end, ibut:label-p, ibut:get,
+      hui:ibut-label-create, hui:ibut-rename, hui:ibut-message, ibut:alist, ibut:list, ibut:map,
+      ibut:next-occurrence, ibut:label-regexp, gbut:ibut-key-list, ibut:to: Added to support
+      ibut:label-separator, hbut:label-regexp, ibut:rename: Added to support labeled implicit
+      buttons too.
+      hbut:label-p: Updated to handle implicit button labels.
+      ibut:label-separator-regexp, hbut:outside-comment-p: Added.
+
+    - link-to-gbut, glink:start, glink:end: Added for in-buffer links to global buttons.
+      link-to-ebut, elink:start, elink:end: Added for in-buffer links to explicit buttons.
+      link-to-ibut, ilink:start, ilink:end: Added for in-buffer links to implicit buttons.
+
+    - hsys-org-set-ibut-label: Added and used in org-mode ibtype.
+      org-mode, hsys-org-at-block-start-p: Added Action Key activation of Org blocks when
+      on 1st line of def.
+
+
+  SMART (ACTION AND ASSIST) KEYS
+
+    - hpath:find-program: Changed to prioritize hpath:native-image-suffixes over
+      hpath:internal-display-alist over hpath:external-display-alist-macos instead of the
+      reverse.  This prevents external viewers from being used when internal viewers are
+      also in effect.
+
+
+===========================================================================
 *                                   V7.0.3
 ===========================================================================
 

@@ -158,100 +158,10 @@ buffer."
   (and (stringp key) (stringp label)
        (equal key (downcase (ebut:label-to-key label)))))
 
-(defun    ebut:key-src (&optional full)
-  "Returns key source (usually unqualified) for current Hyperbole button.
-Also sets current buffer to key source.
-With optional FULL when source is a pathname, the full pathname is returned."
-  (let ((src (cond ((hmail:mode-is-p) (current-buffer))
-		   ;; If buffer represents the output of a document
-		   ;; formatter, e.g. an Info document produced from a
-		   ;; Texinfo source, then return the Texinfo source
-		   ;; file, for example.
-		   ((ebut:key-src-fmt))
-		   ;; Handle directory movement within `make' output.
-		   ((save-excursion
-		      (and (re-search-backward
-			    "^[a-z]*make[^a-z]+\\(Entering\\|Leaving\\) directory `\\([^']+\\)'" nil t)
-			   (string-equal "Entering" (match-string 1))))
-		    (let ((limit (match-end 2))
-			  ;; Latest working directory that `make' reported
-			  (wd (match-string 2))
-			  cd)
-		      ;; But another cd or pushd command may have been issued.
-		      ;; Return the closest directory from the make output.
-		      (if (re-search-backward
-			   "\\<\\(cd\\|pushd\\)\\s +[\"\']?\\([^;\"\'\n\r\^L\\]+\\)"
-			   limit t)
-			  (progn (setq cd (match-string 2))
-				 ;; Eliminate any trailing whitespace.
-				 (setq cd (substring
-					   cd 0 (string-match "\\s +\\'" cd)))
-				 (expand-file-name cd wd))
-			wd)))
-		   (buffer-file-name
-		    (if full
-			buffer-file-name
-		      (file-name-nondirectory buffer-file-name)))
-		   ;; Handle any preceding @loc hyp-source implicit button location references.
-		   ;; This is used in report buffers of explicit buttons, i.e. hui:hbut-report.
-		   ((save-excursion
-		      (save-restriction
-			(widen)
-			(end-of-visible-line)
-			(if (and (search-backward hbut:source-prefix nil t)
-				 (or (memq (preceding-char) '(?\n ?\r))
-				     (= (point) (point-min))))
-			    (hbut:source full)))))
-		   (t (current-buffer)))))
-    (ebut:key-src-set-buffer src)))
-
-(defun ebut:key-src-set-buffer (src)
-  "Set buffer to SRC, a buffer, file, directory or symlink and return SRC or nil if invalid."
-  (cond ((null src) nil)
-	((bufferp src)
-	 (set-buffer src)
-	 src)
-	((file-directory-p src)
-	 (file-name-as-directory src))
-	((file-readable-p src)
-	 (set-buffer (find-file-noselect src))
-	 src)
-	((file-readable-p (setq src (hpath:symlink-referent src)))
-	 (set-buffer (find-file-noselect src))
-	 src)))
-
-(defun    ebut:key-src-fmt ()
-  "Returns unformatted filename associated with formatted current buffer.
-This is used to obtain the source of explicit buttons for buffers that
-represent the output of particular document formatters."
-  (and (or (eq major-mode 'Info-mode)
-	   (string-match "\\.info\\(-[0-9]+\\)?$" (buffer-name)))
-       (let ((src (and buffer-file-name
-		       (substring
-			buffer-file-name
-			0 (string-match "\\.[^.]+$" buffer-file-name)))))
-	 (cond ((file-exists-p (concat src ".texi"))
-		(concat src ".texi"))
-	       ((file-exists-p (concat src ".texinfo"))
-		(concat src ".texinfo"))
-	       ((current-buffer))))))
-
-(defun    ebut:key-to-label (lbl-key)
-  "Unnormalizes LBL-KEY and returns a label string approximating actual label."
-  (if lbl-key
-      (let* ((pos 0) (len (length lbl-key)) (lbl) c)
-	(while (< pos len)
-	  (setq c (aref lbl-key pos)
-		lbl (concat lbl 
-			    (if (eq c ?_)
-				(if (or (= (1+ pos) len)
-					(not (eq (aref lbl-key (1+ pos)) ?_)))
-				    " "
-				  (setq pos (1+ pos))
-				  "_")
-			      (char-to-string c)))
-		pos (1+ pos)))
-	lbl)))
+(defalias 'ebut:key-src            'hbut:key-src)
+(defalias 'ebut:key-src-set-buffer 'hbut:key-src-set-buffer)
+(defalias 'ebut:key-src-fmt        'hbut:key-src-fmt)
+(defalias 'ebut:key-to-label       'hbut:key-to-label)
 
 (defun    ebut:label-p (&optional as-label start-delim end-delim pos-flag two-lines-flag)
   "Returns key for the Hyperbole explicit button label that point is within, else nil.
@@ -311,18 +221,7 @@ label search to two lines."
 
 (defalias 'ebut:label-regexp 'hbut:label-regexp)
 
-(defun    ebut:label-to-key (label)
-  "Normalizes LABEL for use as a Hyperbole button key and returns key.
-Eliminates any fill prefix in the middle of the label, replaces `_' with
-`__', removes leading and trailing whitespace and replaces each other
-whitespace sequence with `_'."
-  (when label
-    (setq label (hbut:fill-prefix-remove label)
-	  ;; Remove leading and trailing space.
-	  label (hypb:replace-match-string "\\`[ \t\n\r]+\\|[ \t\n\r]+\\'"
-					   label "" t)
-	  label (hypb:replace-match-string "_" label "__" t))
-    (hypb:replace-match-string "[ \t\n\r]+" label "_" t)))
+(defalias 'ebut:label-to-key 'hbut:label-to-key)
 
 (defun    ebut:list (&optional file loc-p)
   "Returns list of button labels from in FILE or the current buffer.
@@ -345,6 +244,7 @@ positions at which the button delimiter begins and ends."
       (if loc-p buts (when buts (apply #'set:create buts))))))
 
 (defalias 'map-ebut 'ebut:map)
+
 (defun    ebut:map (but-func &optional regexp-match include-delims)
   "Applies BUT-FUNC to the explicit buttons in the visible part of the current buffer.
 If REGEXP-MATCH is non-nil, only buttons which match this argument are
@@ -385,7 +285,7 @@ move to the first occurrence of the button."
       (goto-char (+ (match-beginning 0) (length ebut:start)))))
 
 (defun    ebut:operate (curr-label new-label)
-  "Operates on and modifies properties of a new or existing Hyperbole button given by CURR-LABEL.
+  "Operates on and modifies properties of a new or existing explicit button given by CURR-LABEL.
 When NEW-LABEL is non-nil, this is substituted for CURR-LABEL and the
 associated button is modified.  Otherwise, a new button is created.
 Returns instance string appended to label to form a per-buffer unique
@@ -598,7 +498,7 @@ Inserts INSTANCE-STR after END, before ending delimiter."
 		  (but (gbut:get lbl-key)))
 	     (if but
 		 (hbut:act but)
-	       (error "(gbut:act): No global button labeled: %s" label))))))
+	       (error "(gbut:act): No global button found for label: %s" label))))))
 
 (defun    gbut:get (&optional lbl-key)
   "Returns global Hyperbole button symbol given by optional LBL-KEY if found in gbut:file.
@@ -876,9 +776,100 @@ Ignores email-related buffers."
   "Returns non-nil if object denotes a Hyperbole button."
   (and (symbolp object) (hattr:get object 'categ)))
 
-(defalias 'hbut:key-src      'ebut:key-src)
-(defalias 'hbut:key-src-set-buffer 'ebut:key-src-set-buffer)
-(defalias 'hbut:key-to-label 'ebut:key-to-label)
+(defun    hbut:key-src (&optional full)
+  "Returns key source (usually unqualified) for current Hyperbole button.
+Also sets current buffer to key source.
+With optional FULL when source is a pathname, the full pathname is returned."
+  (let ((src (cond ((hmail:mode-is-p) (current-buffer))
+		   ;; If buffer represents the output of a document
+		   ;; formatter, e.g. an Info document produced from a
+		   ;; Texinfo source, then return the Texinfo source
+		   ;; file, for example.
+		   ((hbut:key-src-fmt))
+		   ;; Handle directory movement within `make' output.
+		   ((save-excursion
+		      (and (re-search-backward
+			    "^[a-z]*make[^a-z]+\\(Entering\\|Leaving\\) directory `\\([^']+\\)'" nil t)
+			   (string-equal "Entering" (match-string 1))))
+		    (let ((limit (match-end 2))
+			  ;; Latest working directory that `make' reported
+			  (wd (match-string 2))
+			  cd)
+		      ;; But another cd or pushd command may have been issued.
+		      ;; Return the closest directory from the make output.
+		      (if (re-search-backward
+			   "\\<\\(cd\\|pushd\\)\\s +[\"\']?\\([^;\"\'\n\r\^L\\]+\\)"
+			   limit t)
+			  (progn (setq cd (match-string 2))
+				 ;; Eliminate any trailing whitespace.
+				 (setq cd (substring
+					   cd 0 (string-match "\\s +\\'" cd)))
+				 (expand-file-name cd wd))
+			wd)))
+		   (buffer-file-name
+		    (if full
+			buffer-file-name
+		      (file-name-nondirectory buffer-file-name)))
+		   ;; Handle any preceding @loc hyp-source implicit button location references.
+		   ;; This is used in report buffers of explicit buttons, i.e. hui:hbut-report.
+		   ((save-excursion
+		      (save-restriction
+			(widen)
+			(end-of-visible-line)
+			(if (and (search-backward hbut:source-prefix nil t)
+				 (or (memq (preceding-char) '(?\n ?\r))
+				     (= (point) (point-min))))
+			    (hbut:source full)))))
+		   (t (current-buffer)))))
+    (hbut:key-src-set-buffer src)))
+
+(defun    hbut:key-src-fmt ()
+  "Returns unformatted filename associated with formatted current buffer.
+This is used to obtain the source of Hyperbole buttons for buffers that
+represent the output of particular document formatters."
+  (and (or (eq major-mode 'Info-mode)
+	   (string-match "\\.info\\(-[0-9]+\\)?$" (buffer-name)))
+       (let ((src (and buffer-file-name
+		       (substring
+			buffer-file-name
+			0 (string-match "\\.[^.]+$" buffer-file-name)))))
+	 (cond ((file-exists-p (concat src ".texi"))
+		(concat src ".texi"))
+	       ((file-exists-p (concat src ".texinfo"))
+		(concat src ".texinfo"))
+	       ((current-buffer))))))
+
+(defun hbut:key-src-set-buffer (src)
+  "Set buffer to SRC, a buffer, file, directory or symlink and return SRC or nil if invalid."
+  (cond ((null src) nil)
+	((bufferp src)
+	 (set-buffer src)
+	 src)
+	((file-directory-p src)
+	 (file-name-as-directory src))
+	((file-readable-p src)
+	 (set-buffer (find-file-noselect src))
+	 src)
+	((file-readable-p (setq src (hpath:symlink-referent src)))
+	 (set-buffer (find-file-noselect src))
+	 src)))
+
+(defun    hbut:key-to-label (lbl-key)
+  "Unnormalizes LBL-KEY and returns a label string for display."
+  (if lbl-key
+      (let* ((pos 0) (len (length lbl-key)) (lbl) c)
+	(while (< pos len)
+	  (setq c (aref lbl-key pos)
+		lbl (concat lbl 
+			    (if (eq c ?_)
+				(if (or (= (1+ pos) len)
+					(not (eq (aref lbl-key (1+ pos)) ?_)))
+				    " "
+				  (setq pos (1+ pos))
+				  "_")
+			      (char-to-string c)))
+		pos (1+ pos)))
+	lbl)))
 
 (defun    hbut:label (hbut)
   "Returns the label for Hyperbole button symbol HBUT."
@@ -930,8 +921,18 @@ label; these default to `ebut:start' and `ebut:end'."
 	  regexp
 	(setq regexp (concat regexp sep0 (regexp-quote (or end-delim ebut:end))))))))
 
-
-(defalias 'hbut:label-to-key 'ebut:label-to-key)
+(defun    hbut:label-to-key (label)
+  "Normalizes LABEL for use as a Hyperbole button key and returns key.
+Eliminates any fill prefix in the middle of the label, replaces `_' with
+`__', removes leading and trailing whitespace and replaces each other
+whitespace sequence with `_'."
+  (when label
+    (setq label (hbut:fill-prefix-remove label)
+	  ;; Remove leading and trailing space.
+	  label (hypb:replace-match-string "\\`[ \t\n\r]+\\|[ \t\n\r]+\\'"
+					   label "" t)
+	  label (hypb:replace-match-string "_" label "__" t))
+    (hypb:replace-match-string "[ \t\n\r]+" label "_" t)))
 
 (defun    hbut:map (but-func &optional start-delim end-delim
 			     regexp-match include-delims)
@@ -1250,6 +1251,23 @@ If END-DELIM is a symbol, e.g. t, then START-DELIM is taken as a regular
 expression which matches an entire button string."
   (hbut:map but-func ibut:label-start ibut:label-end))
 
+(defun    ibut:rename (old-lbl new-lbl)
+  "Modifies a label preceding a Hyperbole implicit button in the current buffer given by LBL-KEY.
+Signals an error when no such button is found in the current buffer.
+
+Leaves point at the start of the button label which may be elsewhere
+than the current point; callers should use `save-excursion` to retain
+current."
+  ;; !! Need to handle adding instances to labels, similar to ebut:operate.
+  (cond ((or (not (stringp new-lbl)) (< (length new-lbl) 1))
+	 (error "(ibut:rename): Invalid 'new-lbl' argument: \"%s\"" new-lbl))
+	((or (not (stringp old-lbl)) (< (length old-lbl) 1))
+	 (error "(ibut:rename): Invalid 'old-lbl' argument: \"%s\"" old-lbl))
+	((ibut:to old-lbl)
+	 (delete-region (point) (search-forward ibut:label-end nil t))
+	 (save-excursion (insert new-lbl ibut:label-end)))
+	(t (error "(ibut:rename): Button '%s' not found in visible portion of buffer." old-lbl))))
+
 (defun    ibut:label-p (&optional as-label start-delim end-delim pos-flag two-lines-flag)
   "Returns key for the Hyperbole implicit button label that point is within, else nil.
 This is an optional label that may precede an implicit button.
@@ -1312,7 +1330,8 @@ positions at which the button label delimiter begins and ends."
 (defalias 'ibut:key-src      'hbut:key-src)
 (defalias 'ibut:key-to-label 'hbut:key-to-label)
 (defalias 'ibut:label-to-key 'hbut:label-to-key)
-(defalias 'map-ibut 'ibut:map)
+(defalias 'map-ibut          'ibut:map)
+
 (defun    ibut:map (but-func &optional start-delim end-delim
 			     regexp-match include-delims)
   "Applies BUT-FUNC to the labeled implicit buttons in the visible part of the current buffer.
@@ -1341,8 +1360,8 @@ move to the first occurrence of the button."
 
 (defalias 'ibut:summarize 'hbut:report)
 
-(defun ibut:to (lbl-key)
-  "Finds an implicit button with LBL-KEY (a label or label key) within the visible portion of the current buffer.
+(defun    ibut:to (lbl-key)
+  "Finds the nearest implicit button with LBL-KEY (a label or label key) within the visible portion of the current buffer.
 Leaves point inside the button text or its optional label, if it has one.
 Returns the button symbol for it, else nil."
   ;; Handle a label given rather than a label key
@@ -1353,6 +1372,9 @@ Returns the button symbol for it, else nil."
 	found
 	reverse)
     (save-excursion
+      ;; Since point might be in the middle of the matching button,
+      ;; move to the start of line to ensure don't miss it when
+      ;; searching forward.
       (forward-line 0)
       ;; re-search forward
       (while (and (not found) (re-search-forward regexp nil t))
