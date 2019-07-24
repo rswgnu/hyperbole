@@ -527,8 +527,8 @@ constructs.  If not given, the top-level Hyperbole menu is used."
 	 ))
        '(ebut .
 	 (("EButton>")
-	  ("Act"    hui:hbut-act
-	    "Activates button at point or prompts for explicit button.")
+	  ("Act"    hui:ebut-act
+	    "Activates explicit button at point or prompts for explicit button to activate.")
 	  ("Create" hui:ebut-create)
 	  ("Delete" hui:ebut-delete)
 	  ("Edit"   hui:ebut-modify "Modifies any desired button attributes.")

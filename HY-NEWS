@@ -75,11 +75,11 @@
       to allow selection of labeled Hyperbole buttons in currrent buffer by name.
 
     - gbut:get, hbut:map, ibut:label-map, ibut:key-src, ibut:key-to-label, ibut:label-to-key,
-      ibut:summarize, ibut:label-start, ibut:label-end, ibut:label-p, ibut:get,
+      hui:ebut-act, ibut:summarize, ibut:label-start, ibut:label-end, ibut:label-p, ibut:get,
       hui:ibut-label-create, hui:ibut-rename, hui:ibut-message, ibut:alist, ibut:list, ibut:map,
-      ibut:next-occurrence, ibut:label-regexp, gbut:ibut-key-list, ibut:to: Added to support
-      ibut:label-separator, hbut:label-regexp, ibut:rename: Added to support labeled implicit
-      buttons too.
+      ibut:next-occurrence, ibut:label-regexp, gbut:ibut-key-list, ebut:to, gbut:to, ibut:to,
+      ibut:label-separator, hbut:label-regexp, ibut:rename, hbut:get: Added to support labeled
+      implicit buttons and links to buttons.
       hbut:label-p: Updated to handle implicit button labels.
       ibut:label-separator-regexp, hbut:outside-comment-p: Added.
 

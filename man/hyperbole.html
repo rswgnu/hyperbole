@@ -841,16 +841,17 @@ Next: <a href="#Motivation" accesskey="n" rel="next">Motivation</a>, Previous: <
 you prefer a simpler, more interactive introduction to Hyperbole,
 the <samp>DEMO</samp> file included in the Hyperbole distribution demonstrates
 many of Hyperbole&rsquo;s standard facilities without the need to read through
-this reference manual.  It is a good way to rapidly understand some of what
-Hyperbole can do for you.  Once Hyperbole is installed, (see <a href="#Setup">Setup</a>),
-you can access the DEMO with the key sequence <kbd>{C-h h d d}</kbd>.
+this reference manual.  The DEMO is a good way to rapidly understand some
+of what Hyperbole can do for you.  Once Hyperbole is installed,
+(see <a href="#Setup">Setup</a>), you can access the DEMO with the key sequence <kbd>{C-h h
+d d}</kbd>.
 </p>
 <p>See <a href="#Glossary">Glossary</a>, for definitions of Hyperbole terms.  In some cases,
-terms are not precisely defined within the body of this manual since
-they are defined within the glossary.  Be sure to reference the
-glossary if a term is unclear to you.  Although you need not have a keen
-understanding of all of these terms, a quick scan of the glossary should
-help throughout Hyperbole use.
+terms are not precisely defined within the body of this manual since they
+are defined within the glossary.  Be sure to reference the glossary if a
+term is unclear to you.  Although you need not have a keen understanding of
+all of these terms, a quick scan of the glossary helps throughout Hyperbole
+use.
 </p>
 <p>See <a href="#Setup">Setup</a>, for explanations of how to obtain, install, configure
 and load Hyperbole for use.  This appendix includes information on
@@ -926,19 +927,19 @@ its use as the prime means of organizing and interlinking the constant
 flows of daily information.
 </p>
 <p>GNU Hyperbole takes a distinctly different approach.  It has its own
-hypertext technology that can interface perfectly with web links but
-which are much easier to create (simply drag from the source to the
-destination of a link to create a new hyperlink).  Hyperbole
-hyperbuttons can link not only to static information but can perform
-arbitrary actions through the use of button types written in a single,
-highly interactive language, Emacs Lisp.  Hyperbole adds all of this
-power to your written documents, e-mail, news articles, contact
-management, outlines, directory listings, and much more.  Hyperbole
-works well with the very latest versions of GNU Emacs.
+hypertext technology that can interface perfectly with web links but which
+are much easier to create (simply drag from the source to the destination
+of a link to create a new hyperlink).  Hyperbole hyperbuttons can link not
+only to static information but can perform arbitrary actions (through the
+use of button types written in a single, highly interactive language, Emacs
+Lisp).  Hyperbole adds all of this power to your written documents, e-mail,
+news articles, contact management, outlines, directory listings, and much
+more.  Hyperbole works well with the very latest versions of GNU Emacs
+across every editing and viewing mode in Emacs.
 </p>
-<p>Unlock the power of GNU Hyperbole to make your information work for
-you.  One system. One language.  One manual.  One solution.  Learn GNU
-Hyperbole and start moving further, faster.
+<p>Unlock the power of GNU Hyperbole to make your information work for you.
+One system. One language.  One manual.  One solution.  Learn Hyperbole and
+start moving further, faster.
 </p>
 <hr>
 <a name="Hyperbole-Overview"></a>
@@ -955,7 +956,7 @@ Next: <a href="#Mail-Lists" accesskey="n" rel="next">Mail Lists</a>, Previous: <
 <a name="index-Emacs-Lisp"></a>
 <a name="index-Emacs"></a>
 <p>GNU Hyperbole (pronounced Ga-new Hi-per-bo-lee), or just Hyperbole, is
-an efficient and programmable hypertextual information management
+an efficient, programmable hypertextual information management
 system.  It is intended for everyday work on any GNU Emacs platform.
 Hyperbole allows hypertext buttons to be embedded within unstructured
 and structured files, mail messages and news articles.  It offers
@@ -969,9 +970,12 @@ archives, and the World-Wide Web (WWW).
 <dt><em>Buttons and Smart Keys</em></dt>
 <dd><p>Hyperbole hyperlink and other kinds of buttons (explicit buttons) may be
 added to documents with a simple drag between windows, no markup language
-needed.  Implicit buttons are patterns automatically recognized within text
-that perform actions, e.g. bug#24568 displays the bug status information
-for that bug number.  See <a href="#Buttons">Buttons</a>.
+needed.  Implicit buttons are patterns automatically recognized within
+existing text that perform actions, e.g. bug#24568 displays the bug status
+information for that bug number, without the need for any additional
+markup.  Global buttons are buttons that are activated by name from
+anywhere within Emacs.
+See <a href="#Buttons">Buttons</a>.
 </p>
 <p>Buttons are accessed by clicking on them or referenced by name (global
 buttons), so they can be activated regardless of what is on screen.
@@ -2632,7 +2636,7 @@ as {^x^b} will not be recognized.
 </dd>
 <dt><code>dir-summary</code></dt>
 <dd><p>Detects filename buttons in files named &quot;MANIFEST&quot; or &quot;DIR&quot;.
-Displays selected files.  Each file name must be at the beginning of the
+Displays selected files.  Each filename must be at the beginning of the
 line and must be followed by one or more spaces and then another
 non-space, non-parenthesis, non-brace character.
 </p>
@@ -2642,7 +2646,7 @@ non-space, non-parenthesis, non-brace character.
 </dd>
 <dt><code>text-toc</code></dt>
 <dd><p>Jumps to the text file section referenced by a table of contents entry
-at point.  The file name of the current buffer must contain
+at point.  The filename of the current buffer must contain
 <samp>README</samp> and there must be a &lsquo;Table of Contents&rsquo; or &lsquo;Contents&rsquo;
 label on a line by itself (it may begin with an asterisk), preceding the
 table of contents.  Each toc entry must begin with some whitespace
@@ -3470,7 +3474,7 @@ Info Index Item          link-to-Info-index-item
 Info Node                link-to-Info-node
 Mail Reader Message      link-to-mail
 Directory Name           link-to-directory
-File Name                link-to-file
+Filename                 link-to-file
 Koutline Cell            link-to-kcell
 Outline Heading          link-to-string-match
 Buffer attached to File  link-to-file
@@ -5332,8 +5336,8 @@ Next: <a href="#Exporting" accesskey="n" rel="next">Exporting</a>, Previous: <a 
 <a name="index-outline_002c-foreign-file"></a>
 <p>The paragraphs of another buffer or file may be inserted into a koutline
 as a set of cells by using the <kbd>{C-x i}</kbd> command.  When prompted,
-you may use a buffer name or file name from which to insert;
-completion is provided for file names only.
+you may use a buffer name or filename from which to insert;
+completion is provided for filenames only.
 </p>
 <a name="index-koutliner_002c-C_002du-C_002dx-i"></a>
 <p>The elements from the original buffer are converted into kcells and
@@ -5365,7 +5369,7 @@ entire file into the current cell following point.
 files.  You can import a file into an existing koutline,
 following the tree at point, or can create a new koutline from the
 imported file contents.  <kbd>{M-x kimport:file <span class="key">RET</span>}</kbd> selects the
-importation type based on the buffer or file name suffix of the file to
+importation type based on the buffer or filename suffix of the file to
 import.
 </p>
 <a name="index-kotl_002dmode-1"></a>
@@ -5426,7 +5430,7 @@ World-Wide Web.
 </p>
 <p><kbd>{M-x kexport:html <span class="key">RET</span>}</kbd> prompts for the koutline buffer or
 file to export, the HTML file or buffer to which to output, and the
-title to use for the HTML file.  Completion of file names is provided.
+title to use for the HTML file.  Completion of filenames is provided.
 The conversion will then be done and the output file or buffer will be
 written; the output file will not be displayed.
 </p>
@@ -6292,7 +6296,7 @@ list.  In general, you should leave your personal rolo file as the
 first entry in the list, since this is the only file to which the Add
 command on the rolo menu adds entries.
 </p>
-<p>Hyperbole releases earlier than 4.17 used a different file name for the
+<p>Hyperbole releases earlier than 4.17 used a different filename for the
 personal rolo.  If such a file exists, you will be prompted to rename
 it whenever the HyRolo system is loaded.
 </p>
@@ -6861,7 +6865,7 @@ identifier or a permanent idstamp.
 <a name="index-argument_002c-mail-message"></a>
 </dd>
 <dt><code>+M</code></dt>
-<dd><p>Prompts for a mail message date and the file name in which it resides.
+<dd><p>Prompts for a mail message date and the filename in which it resides.
 The mail parameters prompted for by this character code may change in
 the future.
 </p>
@@ -7459,7 +7463,20 @@ to documents created and managed by tools other than Hyperbole, for
 example, programming documentation.  <b>Ibtype</b> is a synonym for
 implicit button type.  See also <b>system encapsulation</b>.
 </p>
-
+<a name="index-InfoDock"></a>
+</dd>
+<dt><b>InfoDock</b></dt>
+<dd><p>InfoDock was an integrated productivity toolset for software engineers
+and knowledge workers built atop XEmacs; it is no longer maintained or
+updated.  An older version from 1999 may be found at
+infodock.sf.net.
+</p>
+<p>InfoDock has much of the power of GNU Emacs, but with an
+easier to use and more comprehensive menu-based user interface.  Most
+objections people raise to using emacs have already been addressed in
+InfoDock.  InfoDock was meant for people who wanted a complete,
+pre-customized environment in one package.
+</p>
 </dd>
 <dt><b>Instance Number</b></dt>
 <dd><p>A colon prefaced number appended to the label of a newly created button
@@ -7724,12 +7741,11 @@ Next: <a href="#Invocation" accesskey="n" rel="next">Invocation</a>, Previous: <
 installed by using the Emacs Package Manager.  If you are not familiar
 with it, see <a href="http://www.gnu.org/software/emacs/manual/html_mono/emacs.html#Packages">Packages</a> in <cite>the GNU Emacs Manual</cite>.
 </p>
-<p>If you have Hyperbole 5.10 or higher installed and simply want to
-upgrade it, invoke the Emacs Package Manager with <kbd>{M-x
-list-packages <span class="key">RET</span>}</kbd>, then use the <kbd>{U}</kbd> key followed by
-the <kbd>{x}</kbd> key to upgrade all out-of-date packages, Hyperbole among
-them.  Then skip the text below and move on to the next
-section, see <a href="#Invocation">Invocation</a>.
+<p>If you have Hyperbole installed and simply want to upgrade it, invoke
+the Emacs Package Manager with <kbd>{M-x list-packages <span class="key">RET</span>}</kbd>,
+then use the <kbd>{U}</kbd> key followed by the <kbd>{x}</kbd> key to upgrade all
+out-of-date packages, Hyperbole among them.  Then skip the text below
+and move on to the next section, see <a href="#Invocation">Invocation</a>.
 </p>
 <p>Otherwise, to download and install the Hyperbole package, you should add
 several lines to your personal Emacs initialization file, <samp>~/.emacs</samp>.
@@ -7926,7 +7942,8 @@ Next: <a href="#Internal-Viewers" accesskey="n" rel="next">Internal Viewers</a>,
 <p>Hyperbole lets you control where link referents are displayed.  It also
 permits setting a specific Emacs function or external program
 to display them.  There are four categories of referents, each with
-its own display setting, listed in decreasing order of priority.
+its own display setting, listed in decreasing order of priority.  All
+of these variables are defined within <samp>hpath.el</samp>.
 </p>
 <div class="example">
 <pre class="example">Referent Category             Variable Setting
@@ -7961,21 +7978,23 @@ Next: <a href="#External-Viewers" accesskey="n" rel="next">External Viewers</a>,
 <a name="index-hpath_003ainternal_002ddisplay_002dalist-1"></a>
 <a name="index-internal-standard-display"></a>
 <a name="index-hpath_003adisplay_002dwhere-1"></a>
-<p>When given a file name, Hyperbole will by default display the file for
-editing within an Emacs buffer.  The <code>hpath:internal-display-alist</code>
-variable can be used to specify file name patterns, such as matching
-suffixes, which will invoke a special Emacs Lisp function to display
-any matching files within Emacs.  This can be used to format raw data
-files for convenient display.
+<p>When given a filename to display, Hyperbole first checks if its suffix
+is matched by <code>hpath:native-image-suffixes</code>.  If so and if the
+function <code>image-mode</code> is defined, it uses that mode together with
+the value of <code>hpath:display-where</code> to display the image within an
+Emacs buffer.
 </p>
-<p>This variable, <code>hpath:internal-display-alist</code> is defined in
-<samp>hpath.el</samp>.  Its value is an association list whose elements are
-(&lt;file-name-regular-expression&gt; . &lt;function-of-one-arg&gt;) pairs.  Any
-path whose name matches a &lt;file-name-regular-expression&gt; will be
-displayed by calling the associated &lt;function-of-one-arg&gt; with the
-file name as the argument.
+<p>If no match is found, the <code>hpath:internal-display-alist</code> variable
+is checked for a filename match.  Its value is an association list
+whose elements are (&lt;file-name-regular-expression&gt;
+. &lt;function-of-one-arg&gt;) pairs.  Any path whose name matches
+a &lt;file-name-regular-expression&gt; will be displayed by calling the
+associated &lt;function-of-one-arg&gt; with the filename as the argument.
+The first regular expression that matches each filename is the one
+used.  This can be used to format raw data files for convenient
+display.
 </p>
-<p>By default, this variable handles the following types of files:
+<p>By default, this setting handles the following types of files:
 </p><dl compact="compact">
 <dt><em>Audio Files</em></dt>
 <dd><p>Major audio format files are played with the <code>play-sound-file</code> command.
@@ -7992,9 +8011,9 @@ available with InfoDock.
 <a name="index-menu_002c-Cust_002fReferents"></a>
 <a name="index-C_002dh-h-c-r"></a>
 <p>Links to standard files, those which don&rsquo;t match any special referent
-category, are displayed in an Emacs window specified by the
-<code>hpath:display-where</code> setting.  It may be changed with the Cust/Referents
-<kbd>{C-h h c r}</kbd> menu.
+category handled by any described earlier, are displayed in an Emacs
+window specified by the <code>hpath:display-where</code> setting.  It may be changed with the
+Cust/Referents <kbd>{C-h h c r}</kbd> menu.
 </p>
 <p>Available options are:
 </p>
@@ -8016,7 +8035,7 @@ category, are displayed in an Emacs window specified by the
 the default)
 </p></dd>
 <dt><em>&bull; Single-Win</em></dt>
-<dd><p>Display in  a window of the selected frame and delete its other windows
+<dd><p>Display in a window of the selected frame and delete its other windows
 </p></dd>
 </dl>
 
@@ -8027,7 +8046,7 @@ the default)
 <img src="im/menu-display-referents.png" alt="Display Referents Menu">
 <div class="float-caption"><p><strong>Image B.2: </strong>Display Referents Menu</p></div></div><br>
 
-<p>See <a href="#External-Viewers">External Viewers</a>, for instructions on associating file names with
+<p>See <a href="#External-Viewers">External Viewers</a>, for instructions on associating filenames with
 external, window-system specific viewers.
 </p>
 <hr>
@@ -8049,10 +8068,10 @@ Next: <a href="#Link-Variable-Substitution" accesskey="n" rel="next">Link Variab
 
 <a name="index-external-display-1"></a>
 <a name="index-hpath_003aexternal_002ddisplay_002dalist"></a>
-<p>If you will be using Hyperbole under a window system,
-the <code>hpath:get-external-display-alist</code> function
-in <samp>hpath.el</samp> supports hyperlinks that open files using external, non-Emacs
-tools, e.g. a pdf reader or a vector graphic viewer.
+<p>If you use Hyperbole under a window system,
+the <code>hpath:get-external-display-alist</code> function in <samp>hpath.el</samp>
+supports hyperlinks that open files using external, non-Emacs tools, e.g.
+a pdf reader or a vector graphics viewer.
 </p>
 <p>The value returned by <code>hpath:get-external-display-alist</code> is determined
 based on the window system supported by the current frame and the version
@@ -8062,13 +8081,13 @@ path whose name matches a &lt;file-name-regular-expression&gt; will be
 displayed using the corresponding viewer-program or the first
 viewer-program found on the system from a list of programs.  If a
 &lt;viewer-program&gt; entry contains a &lsquo;<samp>%s</samp>&rsquo; string, the filename to
-display will be substituted at that point within the string.
-Otherwise, the filename will be appended to the &lt;viewer-program&gt;
+display is substituted at that point within the string.
+Otherwise, the filename is appended to the &lt;viewer-program&gt;
 entry.  Alternatively, the viewer-program may be a Lisp function that
 takes a single filename argument.
 </p>
 <p>The association lists used by this function are stored in variables
-for each available window system: <code>hpath:external-display-alist-macos</code>,
+vfor each available window system: <code>hpath:external-display-alist-macos</code>,
 <code>hpath:external-display-alist-mswindows</code>, and
 <code>hpath:external-display-alist-x</code>.  Examine and modify these
 values to suit your needs.
@@ -8185,7 +8204,7 @@ Hyperbole: <code>(hpath:find-file-urls-mode 1)</code>.
 <a name="index-URLs_002c-abbreviated"></a>
 <a name="index-Tramp-1"></a>
 <p>Both full URLs and abbreviated ones, like <samp>www.gnu.org</samp>, are
-recognized.  File name completion does not work with URLs; you
+recognized.  filename completion does not work with URLs; you
 have to type or paste in the entire URL.  This feature will work only
 if you have the builtin Tramp Emacs Lisp package; if you don&rsquo;t have
 Tramp, an error message will be displayed when you try to enable
@@ -8841,7 +8860,7 @@ Called from a program, takes three args: START, END and COLUMN.
 <dt><code>kimport:insert-file  <kbd>{C-x i}</kbd></code></dt>
 <dd><p>Insert each paragraph in IMPORT-FROM as a separate cell in the current view.
 Insert as sibling cells following the current cell.  IMPORT-FROM may be a
-buffer name or file name (file name completion is provided).
+buffer name or filename (filename completion is provided).
 </p>
 <a name="index-kimport_003ainsert_002dregister"></a>
 </dd>
@@ -13039,6 +13058,7 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function</a>, Up: <a href
 <tr><td></td><td valign="top"><a href="#index-Info-browsing">Info browsing</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Key-_002d-Info-Manuals">Smart Key - Info Manuals</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-Info-manual">Info manual</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Invocation">Invocation</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-Info-node">Info node</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-InfoDock">InfoDock</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Glossary">Glossary</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-initialization-file">initialization file</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Autonumbering">Autonumbering</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-inserting-tabs">inserting tabs</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Relocating-and-Copying">Relocating and Copying</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-insertion">insertion</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Inserting-and-Importing">Inserting and Importing</a></td></tr>

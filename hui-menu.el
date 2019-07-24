@@ -358,7 +358,7 @@ REBUILD-FLAG is non-nil, in which case the menu is rebuilt."
 		    ))
 		 '("Explicit-Button"
 		   :filter hui-menu-explicit-buttons
-		   ["Activate" hui:hbut-act t]
+		   ["Activate" hui:ebut-act t]
 		   ["Create" hui:ebut-create t]
 		   ["Delete" hui:ebut-delete t]
 		   ["Edit"   hui:ebut-modify t]

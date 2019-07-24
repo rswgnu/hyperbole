@@ -324,6 +324,8 @@ Handles all of the interactive argument types that `hargs:iform-read' does."
 	((eq hargs:reading-p 'gbut)
 	 (when (eq (current-buffer) (get-file-buffer gbut:file))
 	   (hbut:label-p 'as-label)))
+	((eq hargs:reading-p 'hbut) (or (ebut:label-p 'as-label)
+					(ibut:label-p 'as-label)))
 	((hbut:label-p) nil)
 	((eq hargs:reading-p 'file)
 	 (cond ((derived-mode-p 'dired-mode)

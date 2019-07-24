@@ -501,16 +501,17 @@ This is a reference manual with extensive details about Hyperbole use.  If
 you prefer a simpler, more interactive introduction to Hyperbole,
 the @file{DEMO} file included in the Hyperbole distribution demonstrates
 many of Hyperbole's standard facilities without the need to read through
-this reference manual.  It is a good way to rapidly understand some of what
-Hyperbole can do for you.  Once Hyperbole is installed, (@pxref{Setup}),
-you can access the DEMO with the key sequence @bkbd{C-h h d d}.
+this reference manual.  The DEMO is a good way to rapidly understand some
+of what Hyperbole can do for you.  Once Hyperbole is installed,
+(@pxref{Setup}), you can access the DEMO with the key sequence @bkbd{C-h h
+d d}.
 
 @xref{Glossary}, for definitions of Hyperbole terms.  In some cases,
-terms are not precisely defined within the body of this manual since
-they are defined within the glossary.  Be sure to reference the
-glossary if a term is unclear to you.  Although you need not have a keen
-understanding of all of these terms, a quick scan of the glossary should
-help throughout Hyperbole use.
+terms are not precisely defined within the body of this manual since they
+are defined within the glossary.  Be sure to reference the glossary if a
+term is unclear to you.  Although you need not have a keen understanding of
+all of these terms, a quick scan of the glossary helps throughout Hyperbole
+use.
 
 @xref{Setup}, for explanations of how to obtain, install, configure
 and load Hyperbole for use.  This appendix includes information on
@@ -581,19 +582,19 @@ its use as the prime means of organizing and interlinking the constant
 flows of daily information.
 
 GNU Hyperbole takes a distinctly different approach.  It has its own
-hypertext technology that can interface perfectly with web links but
-which are much easier to create (simply drag from the source to the
-destination of a link to create a new hyperlink).  Hyperbole
-hyperbuttons can link not only to static information but can perform
-arbitrary actions through the use of button types written in a single,
-highly interactive language, Emacs Lisp.  Hyperbole adds all of this
-power to your written documents, e-mail, news articles, contact
-management, outlines, directory listings, and much more.  Hyperbole
-works well with the very latest versions of GNU Emacs.
+hypertext technology that can interface perfectly with web links but which
+are much easier to create (simply drag from the source to the destination
+of a link to create a new hyperlink).  Hyperbole hyperbuttons can link not
+only to static information but can perform arbitrary actions (through the
+use of button types written in a single, highly interactive language, Emacs
+Lisp).  Hyperbole adds all of this power to your written documents, e-mail,
+news articles, contact management, outlines, directory listings, and much
+more.  Hyperbole works well with the very latest versions of GNU Emacs
+across every editing and viewing mode in Emacs.
 
-Unlock the power of GNU Hyperbole to make your information work for
-you.  One system. One language.  One manual.  One solution.  Learn GNU
-Hyperbole and start moving further, faster.
+Unlock the power of GNU Hyperbole to make your information work for you.
+One system. One language.  One manual.  One solution.  Learn Hyperbole and
+start moving further, faster.
 
 @node Hyperbole Overview, Mail Lists, Motivation, Introduction
 @section   Hyperbole Overview
@@ -604,7 +605,7 @@ Hyperbole and start moving further, faster.
 @cindex Emacs Lisp
 @cindex Emacs
 GNU Hyperbole (pronounced Ga-new Hi-per-bo-lee), or just Hyperbole, is
-an efficient and programmable hypertextual information management
+an efficient, programmable hypertextual information management
 system.  It is intended for everyday work on any GNU Emacs platform.
 Hyperbole allows hypertext buttons to be embedded within unstructured
 and structured files, mail messages and news articles.  It offers
@@ -620,9 +621,12 @@ Hyperbole consists of five parts:
 @item Buttons and Smart Keys
 Hyperbole hyperlink and other kinds of buttons (explicit buttons) may be
 added to documents with a simple drag between windows, no markup language
-needed.  Implicit buttons are patterns automatically recognized within text
-that perform actions, e.g. bug#24568 displays the bug status information
-for that bug number.  @xref{Buttons}.
+needed.  Implicit buttons are patterns automatically recognized within
+existing text that perform actions, e.g. bug#24568 displays the bug status
+information for that bug number, without the need for any additional
+markup.  Global buttons are buttons that are activated by name from
+anywhere within Emacs.
+@xref{Buttons}.
 
 Buttons are accessed by clicking on them or referenced by name (global
 buttons), so they can be activated regardless of what is on screen.
@@ -2032,7 +2036,7 @@ Any key sequence must be a string of one of the following:
 @vindex file, DIR
 @item dir-summary
 Detects filename buttons in files named "MANIFEST" or "DIR".
-Displays selected files.  Each file name must be at the beginning of the
+Displays selected files.  Each filename must be at the beginning of the
 line and must be followed by one or more spaces and then another
 non-space, non-parenthesis, non-brace character.
 
@@ -2041,7 +2045,7 @@ non-space, non-parenthesis, non-brace character.
 @cindex toc implicit button type
 @item text-toc
 Jumps to the text file section referenced by a table of contents entry
-at point.  The file name of the current buffer must contain
+at point.  The filename of the current buffer must contain
 @file{README} and there must be a `Table of Contents' or `Contents'
 label on a line by itself (it may begin with an asterisk), preceding the
 table of contents.  Each toc entry must begin with some whitespace
@@ -2769,7 +2773,7 @@ Info Index Item          link-to-Info-index-item
 Info Node                link-to-Info-node
 Mail Reader Message      link-to-mail
 Directory Name           link-to-directory
-File Name                link-to-file
+Filename                 link-to-file
 Koutline Cell            link-to-kcell
 Outline Heading          link-to-string-match
 Buffer attached to File  link-to-file
@@ -4351,8 +4355,8 @@ This helps maintain any special formatting the appended text may have.
 @cindex outline, foreign file
 The paragraphs of another buffer or file may be inserted into a koutline
 as a set of cells by using the @bkbd{C-x i} command.  When prompted,
-you may use a buffer name or file name from which to insert;
-completion is provided for file names only.
+you may use a buffer name or filename from which to insert;
+completion is provided for filenames only.
 
 @kindex koutliner, C-u C-x i
 The elements from the original buffer are converted into kcells and
@@ -4384,7 +4388,7 @@ The outliner supports conversion of three types of files into koutline
 files.  You can import a file into an existing koutline,
 following the tree at point, or can create a new koutline from the
 imported file contents.  @bkbd{M-x kimport:file @key{RET}} selects the
-importation type based on the buffer or file name suffix of the file to
+importation type based on the buffer or filename suffix of the file to
 import.
 
 @findex kotl-mode
@@ -4439,7 +4443,7 @@ World-Wide Web.
 
 @bkbd{M-x kexport:html @key{RET}} prompts for the koutline buffer or
 file to export, the HTML file or buffer to which to output, and the
-title to use for the HTML file.  Completion of file names is provided.
+title to use for the HTML file.  Completion of filenames is provided.
 The conversion will then be done and the output file or buffer will be
 written; the output file will not be displayed.
 
@@ -5208,7 +5212,7 @@ list.  In general, you should leave your personal rolo file as the
 first entry in the list, since this is the only file to which the Add
 command on the rolo menu adds entries.
 
-Hyperbole releases earlier than 4.17 used a different file name for the
+Hyperbole releases earlier than 4.17 used a different filename for the
 personal rolo.  If such a file exists, you will be prompted to rename
 it whenever the HyRolo system is loaded.
 
@@ -5665,7 +5669,7 @@ Prompts for a klink specification.  See the documentation for the function
 @cindex interactive cmd char, +M
 @cindex argument, mail message
 @item +M
-Prompts for a mail message date and the file name in which it resides.
+Prompts for a mail message date and the filename in which it resides.
 The mail parameters prompted for by this character code may change in
 the future.
 
@@ -6179,16 +6183,18 @@ to documents created and managed by tools other than Hyperbole, for
 example, programming documentation.  @b{Ibtype} is a synonym for
 implicit button type.  See also @b{system encapsulation}.
 
-@c @cindex InfoDock
-@c @item InfoDock
-@c InfoDock is an integrated productivity toolset for software engineers
-@c and knowledge workers.  It is presently built atop XEmacs and is no
-@c longer maintained.  An older version from 1999 may be found at
-@c infodock.sf.net.  InfoDock has all the power of emacs, but with an
-@c easier to use and more comprehensive menu-based user interface.  Most
-@c objections people raise to using emacs have already been addressed in
-@c InfoDock.  InfoDock was meant for people who wanted a complete,
-@c pre-customized environment in one package.
+@cindex InfoDock
+@item InfoDock
+InfoDock was an integrated productivity toolset for software engineers
+and knowledge workers built atop XEmacs; it is no longer maintained or
+updated.  An older version from 1999 may be found at
+infodock.sf.net.
+
+InfoDock has much of the power of GNU Emacs, but with an
+easier to use and more comprehensive menu-based user interface.  Most
+objections people raise to using emacs have already been addressed in
+InfoDock.  InfoDock was meant for people who wanted a complete,
+pre-customized environment in one package.
 
 @item Instance Number
 A colon prefaced number appended to the label of a newly created button
@@ -6403,12 +6409,11 @@ Once you have Emacs set up at your site, GNU Hyperbole may be
 installed by using the Emacs Package Manager.  If you are not familiar
 with it, @pxref{Packages,,,emacs,the GNU Emacs Manual}.
 
-If you have Hyperbole 5.10 or higher installed and simply want to
-upgrade it, invoke the Emacs Package Manager with @bkbd{M-x
-list-packages @key{RET}}, then use the @bkbd{U} key followed by
-the @bkbd{x} key to upgrade all out-of-date packages, Hyperbole among
-them.  Then skip the text below and move on to the next
-section, @pxref{Invocation}.
+If you have Hyperbole installed and simply want to upgrade it, invoke
+the Emacs Package Manager with @bkbd{M-x list-packages @key{RET}},
+then use the @bkbd{U} key followed by the @bkbd{x} key to upgrade all
+out-of-date packages, Hyperbole among them.  Then skip the text below
+and move on to the next section, @pxref{Invocation}.
 
 Otherwise, to download and install the Hyperbole package, you should add
 several lines to your personal Emacs initialization file, @file{~/.emacs}.
@@ -6588,7 +6593,8 @@ be of interest to users.
 Hyperbole lets you control where link referents are displayed.  It also
 permits setting a specific Emacs function or external program
 to display them.  There are four categories of referents, each with
-its own display setting, listed in decreasing order of priority.
+its own display setting, listed in decreasing order of priority.  All
+of these variables are defined within @file{hpath.el}.
 
 @example
 Referent Category             Variable Setting
@@ -6618,21 +6624,23 @@ are displayed internally and externally.
 @vindex hpath:internal-display-alist
 @cindex internal standard display
 @vindex hpath:display-where
-When given a file name, Hyperbole will by default display the file for
-editing within an Emacs buffer.  The @code{hpath:internal-display-alist}
-variable can be used to specify file name patterns, such as matching
-suffixes, which will invoke a special Emacs Lisp function to display
-any matching files within Emacs.  This can be used to format raw data
-files for convenient display.
+When given a filename to display, Hyperbole first checks if its suffix
+is matched by @code{hpath:native-image-suffixes}.  If so and if the
+function @code{image-mode} is defined, it uses that mode together with
+the value of @code{hpath:display-where} to display the image within an
+Emacs buffer.
 
-This variable, @code{hpath:internal-display-alist} is defined in
-@file{hpath.el}.  Its value is an association list whose elements are
-(<file-name-regular-expression> . <function-of-one-arg>) pairs.  Any
-path whose name matches a <file-name-regular-expression> will be
-displayed by calling the associated <function-of-one-arg> with the
-file name as the argument.
+If no match is found, the @code{hpath:internal-display-alist} variable
+is checked for a filename match.  Its value is an association list
+whose elements are (<file-name-regular-expression>
+. <function-of-one-arg>) pairs.  Any path whose name matches
+a <file-name-regular-expression> will be displayed by calling the
+associated <function-of-one-arg> with the filename as the argument.
+The first regular expression that matches each filename is the one
+used.  This can be used to format raw data files for convenient
+display.
 
-By default, this variable handles the following types of files:
+By default, this setting handles the following types of files:
 @table @emph
 @item Audio Files
 Major audio format files are played with the @code{play-sound-file} command.
@@ -6646,9 +6654,9 @@ available with InfoDock.
 @cindex menu, Cust/Referents
 @kindex C-h h c r
 Links to standard files, those which don't match any special referent
-category, are displayed in an Emacs window specified by the
-@code{hpath:display-where} setting.  It may be changed with the Cust/Referents
-@bkbd{C-h h c r} menu.
+category handled by any described earlier, are displayed in an Emacs
+window specified by the @code{hpath:display-where} setting.  It may be changed with the
+Cust/Referents @bkbd{C-h h c r} menu.
 
 @noindent
 Available options are:
@@ -6666,7 +6674,7 @@ Display in a new single window frame
 Display in another, possibly new window of the selected frame (this is
 the default)
 @item @bullet{} Single-Win
-Display in  a window of the selected frame and delete its other windows
+Display in a window of the selected frame and delete its other windows
 @end table
 
 @page
@@ -6679,7 +6687,7 @@ Alternatively, you can use the Hyperbole menubar menu as shown here:
 @end float
 @sp 1
 
-@xref{External Viewers}, for instructions on associating file names with
+@xref{External Viewers}, for instructions on associating filenames with
 external, window-system specific viewers.
 
 @node External Viewers, Link Variable Substitution, Internal Viewers, Customization
@@ -6695,10 +6703,10 @@ external, window-system specific viewers.
 
 @cindex external display
 @vindex hpath:external-display-alist
-If you will be using Hyperbole under a window system,
-the @code{hpath:get-external-display-alist} function
-in @file{hpath.el} supports hyperlinks that open files using external, non-Emacs
-tools, e.g.@: a pdf reader or a vector graphic viewer.
+If you use Hyperbole under a window system,
+the @code{hpath:get-external-display-alist} function in @file{hpath.el}
+supports hyperlinks that open files using external, non-Emacs tools, e.g.@:
+a pdf reader or a vector graphics viewer.
 
 The value returned by @code{hpath:get-external-display-alist} is determined
 based on the window system supported by the current frame and the version
@@ -6708,13 +6716,13 @@ path whose name matches a <file-name-regular-expression> will be
 displayed using the corresponding viewer-program or the first
 viewer-program found on the system from a list of programs.  If a
 <viewer-program> entry contains a @samp{%s} string, the filename to
-display will be substituted at that point within the string.
-Otherwise, the filename will be appended to the <viewer-program>
+display is substituted at that point within the string.
+Otherwise, the filename is appended to the <viewer-program>
 entry.  Alternatively, the viewer-program may be a Lisp function that
 takes a single filename argument.
 
 The association lists used by this function are stored in variables
-for each available window system: @code{hpath:external-display-alist-macos},
+vfor each available window system: @code{hpath:external-display-alist-macos},
 @code{hpath:external-display-alist-mswindows}, and
 @code{hpath:external-display-alist-x}.  Examine and modify these
 values to suit your needs.
@@ -6822,7 +6830,7 @@ Hyperbole: @code{(hpath:find-file-urls-mode 1)}.
 @cindex URLs, abbreviated
 @cindex Tramp
 Both full URLs and abbreviated ones, like @file{www.gnu.org}, are
-recognized.  File name completion does not work with URLs; you
+recognized.  filename completion does not work with URLs; you
 have to type or paste in the entire URL.  This feature will work only
 if you have the builtin Tramp Emacs Lisp package; if you don't have
 Tramp, an error message will be displayed when you try to enable
@@ -7379,7 +7387,7 @@ Called from a program, takes three args: START, END and COLUMN.
 @item kimport:insert-file  @bkbd{C-x i}
 Insert each paragraph in IMPORT-FROM as a separate cell in the current view.
 Insert as sibling cells following the current cell.  IMPORT-FROM may be a
-buffer name or file name (file name completion is provided).
+buffer name or filename (filename completion is provided).
 
 @findex kimport:insert-register
 @item kimport:insert-register  @bkbd{C-x r i}

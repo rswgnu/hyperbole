@@ -1,3 +1,17 @@
+2019-07-23  Bob Weiner  <rsw@gnu.org>
+
+* man/hyperbole.texi (Referent Display): Rewrote and added details on how the 4 types
+    of referents are processed.
+
+2019-07-22  Bob Weiner  <rsw@gnu.org>
+
+* hargs.el (hargs:at-p): Added hbut support (ebut or ibut).
+
+* hui.el (hui:hbut-act): Generalized to handle both explicit and labeled implicit buttons.
+         (hui:ebut-act): Added and replaced use of hui:hbut-act in menus.
+
+* hbut.el (ebut:to, gbut:to, hbut:get): Added.
+
 2019-07-21  Bob Weiner  <rsw@gnu.org>
 
 * man/hyperbole.texi (Implicit Button Types): Split off type descriptions to this new
@@ -380,7 +394,7 @@ V7.0.3a changes ^^^^:
 * man/hyperbole.texi (Keyboard Drags): Added doc of {M-o r <window-id>},
     replace selected window's buffer with that of another window.
 
-* man/hyperbole.texi (Keyboard Drags): 
+* man/hyperbole.texi (Keyboard Drags):
   DEMO (Displaying File and Buffer Items and Moving Buffers):
     Added doc of {M-o m <window-id>}, swap selected window's buffer with
     that of <window-id>'s.

@@ -65,6 +65,25 @@
 	       (message "{%s} now runs `%s'; prior {%s} binding removed" new-key-text cmd old-key-text))
       (message "{%s} now runs `%s'" new-key-text cmd))))
 
+(defun hui:ebut-act (&optional but)
+  "Executes action for optional explicit button symbol BUT in current buffer.
+Default is the current button."
+  (interactive
+   (let ((but (ebut:at-p)) (lst))
+     (list
+      (cond (but)
+	    ((setq lst (ebut:alist))
+	     (ebut:get (ebut:label-to-key
+			(hargs:read-match "Button to execute: " lst nil t
+					  (ebut:label-p 'as-label) 'ebut))))
+	    (t (hypb:error "(ebut-act): No explicit buttons in buffer."))))))
+  (cond ((and (called-interactively-p 'interactive) (null but))
+	 (hypb:error "(ebut-act): No current explicit button to activate."))
+	((not (hbut:is-p but))
+	 (hypb:error "(ebut-act): Explicit button is invalid; it has no attributes."))
+	(t (or but (setq but 'hbut:current))
+	   (hui:but-flash) (hbut:act but))))
+
 (defun hui:ebut-create (&optional start end)
   "Creates an explicit Hyperbole button starting from label between optional START and END.
 Indicates by delimiting and adding any necessary instance number of the button
@@ -365,11 +384,11 @@ Default is the current button."
    (let ((but (hbut:at-p)) (lst))
      (list
       (cond (but)
-	    ((setq lst (ebut:alist))
-	     (ebut:get (ebut:label-to-key
+	    ((setq lst (nconc (ebut:alist) (ibut:alist)))
+	     (hbut:get (hbut:label-to-key
 			(hargs:read-match "Button to execute: " lst nil t
-					  (ebut:label-p 'as-label) 'ebut))))
-	    (t (hypb:error "(hbut-act): No explicit buttons in buffer."))))))
+					  (hbut:label-p 'as-label) 'hbut))))
+	    (t (hypb:error "(hbut-act): No labeled buttons in buffer."))))))
   (cond ((and (called-interactively-p 'interactive) (null but))
 	 (hypb:error "(hbut-act): No current button to activate."))
 	((not (hbut:is-p but))
