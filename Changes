@@ -1,3 +1,15 @@
+2019-07-28  Bob Weiner  <rsw@gnu.org>
+
+* DEMO, man/hyperbole.texi (Implicit Button Type Summaries): Updated to expanded
+    Org mode support.
+
+* hib-kbd.el:
+  man/hyperbole.texi (Implicit Button Type Summaries, Glossary): Changed hib-kbd
+    key-sequence to key-series to indicate can be multiple key sequences.  Added
+    def. to Glossary.
+                     (kbd-key:doc): Changed to call hkey-help rather than trigger
+    an error when key-series is not a single bound key sequence.
+
 2019-07-23  Bob Weiner  <rsw@gnu.org>
 
 * man/hyperbole.texi (Referent Display): Rewrote and added details on how the 4 types
@@ -107,7 +119,8 @@
 
 2019-07-08  Bob Weiner  <rsw@gnu.org>
 
-* hbut.el (ibut:label-separator-regexp, hbut:outside-comment-p): Added.
+* hbut.el (ibut:label-separator-regexp, hbut:outside-comment-p): Added doc
+for expanded Org mode reference handling.
 
 2019-07-01  Bob Weiner  <rsw@gnu.org>
 

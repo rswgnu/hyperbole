@@ -155,7 +155,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</P>
 
 <PRE>
 Edition 7.0.3a
-Printed July 21, 2019.
+Printed July 28, 2019.
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -197,7 +197,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 @example
 Edition 7.0.3a
-July 21, 2019
+July 28, 2019
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -623,7 +623,7 @@ Hyperbole hyperlink and other kinds of buttons (explicit buttons) may be
 added to documents with a simple drag between windows, no markup language
 needed.  Implicit buttons are patterns automatically recognized within
 existing text that perform actions, e.g. bug#24568 displays the bug status
-information for that bug number, without the need for any additional
+information for that Emacs bug number, without the need for any additional
 markup.  Global buttons are buttons that are activated by name from
 anywhere within Emacs.
 @xref{Buttons}.
@@ -647,7 +647,8 @@ fast, flexible file and text finding commands.  A powerful, hierarchical
 contact manager, @pxref{HyRolo}, which anyone can use, is also included.
 It is easy to learn since it introduces only a few new mechanisms
 and has a menu interface, which may be operated from the keyboard or the
-mouse;
+mouse; it may also be used to look up any record-based information and
+Hyperbole buttons may be embedded in any records;
 
 @item Screen Control
 the fastest, easiest-to-use window and frame control available for GNU
@@ -655,13 +656,14 @@ Emacs, @pxref{HyControl}.  With just a few keystrokes, you can shift from
 increasing a window's height by 5 lines to moving a frame by 220 pixels
 or immediately moving it to a screen corner.  Text in each window or
 frame may be enlarged or shrunk (zoomed) for easy viewing, plus many
-other features;
+other features; this allows Hyperbole to quickly control the way
+information is presented on-screen;
 
 @item Hypertextual Outliner
 an advanced outliner, @pxref{Koutliner}, with multi-level
 autonumbering and permanent identifiers attached to each outline node
 for use as hypertext link anchors, per node properties and flexible
-view specifications that can be embedded within links or used
+view specifications that can be included in links or used
 interactively;
 
 @item Programming Library
@@ -716,7 +718,7 @@ Some of Hyperbole's most significant features are:
 
 @itemize @bullet
 @item
-Buttons may link to information or may execute procedures, such as
+Buttons may link to information or may execute functions, such as
 starting or communicating with external programs;
 
 @item
@@ -1964,8 +1966,7 @@ Messages are recognized in any buffer.
 @cindex link to implicit button
 @cindex ilink
 @item link-to-ibut <ilink>
-At point, activates a link to an implicit button.
-The implicit button’s action is executed in the context of the current buffer.
+At point, activates a link to an implicit button within the current buffer.
 Recognizes the format ’<ilink:’ <button label> ’>’, e.g. <ilink: my sequence of keys>.
 
 @findex ibtypes link-to-gbut
@@ -1982,8 +1983,7 @@ Recognizes the format ’<glink:’ <button label> ’>’, e.g. <glink: open to
 @cindex link to explicit button
 @cindex elink
 @item link-to-ebut <elink>
-At point, activates a link to an explicit button.
-The explicit button’s action is executed in the context of the current buffer.
+At point, activates a link to an explicit button within the current buffer.
 Recognizes the format ’<elink:’ <button label> ’>’, e.g. <elink: project-list>.
 
 @findex ibtypes klink
@@ -2018,10 +2018,12 @@ retrievals.
 
 @findex ibtypes kbd-key
 @cindex key sequence
+@cindex sequence of keys
 @item kbd-key
-Executes a key sequence found around point, delimited by curly braces, @{@}, if any.
-Key sequences should be in human readable form, e.g.@: @bkbd{C-x C-b}.  Formats such
-as @{^x^b@} will not be recognized.
+Executes a key series (series of key sequences) found around point,
+delimited by curly braces, @{@}, if any.  Key series should be in
+human readable form, e.g.@: @bkbd{C-x C-b}.  Formats such as @{^x^b@}
+will not be recognized.
 
 Any key sequence must be a string of one of the following:
 @itemize @bullet
@@ -2340,20 +2342,37 @@ for a valid match.  See the function documentation for @code{hpath:find}
 for special file display options.
 
 @findex ibtypes org-mode
-@vindex browse-url-browser-function
 @cindex org-mode
 @cindex Org mode
+@cindex radio target
+@cindex code block
+@kindex C-c C-c
+@kindex M-RET
+@findex org-ctrl-c-ctrl-c
+@findex org-meta-return
 @item org-mode
-The Action Key follows any Org mode link at point or cycles through
-views of the outline subtree at point.  In any other context besides
-the end of a line, the Action Key will invoke the Org mode standard
-binding of @bkbd{M-@key{RET}}, (org-meta-return).  The Assist Key on
-an Org mode heading cycles through views of the whole buffer outline
-and on an Org mode link, displays standard Hyperbole help.
+For users of Emacs Org mode, Hyperbole does quite a few things.
 
-The variable, @code{browse-url-browser-function}, customizes the url
-browser that is used for urls.  Valid values of this variable
-include @code{browse-url-default-browser} and @code{browse-url-generic}.
+First, the Action Key follows internal links in Org mode files.  When
+pressed on a link referent/target, the link definition is displayed,
+allowing two-way navigation between definitions and targets.
+
+Second, the Action Key follows Org mode external links.  The Assist
+Key displays help when pressed on an Org mode link.
+
+Third, within a radio target definition, the Action Key jumps to the
+first occurrence of an associated radio target.
+
+Fourth, when point is on an outline heading in Org mode, the Action Key
+cycles the view of the subtree at point and the Assist Key cycles the
+view of all headings in the buffer.
+
+Fifth, with point on the first line of a code block definition, the
+Action Key executes the code block via the Org mode standard binding
+of @bkbd{C-c C-c}, @code{org-ctrl-c-ctrl-c}.
+
+In any other context besides the end of a line, the Action Key invokes
+the Org mode standard binding of @bkbd{M-RET}, @code{org-meta-return}.
 
 @findex ibtypes doc-id
 @cindex online library
@@ -2641,8 +2660,11 @@ at point.
 @item www-url
 Follows a link given by a URL.  The variable,
 @code{browse-url-browser-function}, customizes the url browser
-that is used.  See its documentation string for details.
+that is used.  Valid values of this variable include
+@code{browse-url-default-browser} and @code{browse-url-generic}.
+See its documentation string for details.
 @end table
+
 
 @cindex action
 @vindex hui:ebut-prompt-for-action
@@ -6207,6 +6229,14 @@ See also @url{https://tkf.github.io/emacs-jedi/latest/}.
 
 Jedi is a Emacs package for Python completion, definition and documentation lookup.
 
+@item Key Sequence
+A single sequence of keys that can invoke an Emacs command.
+
+@item Key Series
+A series of one or more Emacs key sequences delimited by braces that
+Hyperbole processes when activated as an implicit button, as if the
+keys were typed in by the user.
+
 @item Koutline
 A hierarchically ordered grouping of cells which may be stored as a file
 and viewed and edited as an outline.
@@ -6654,8 +6684,8 @@ available with InfoDock.
 @cindex menu, Cust/Referents
 @kindex C-h h c r
 Links to standard files, those which don't match any special referent
-category handled by any described earlier, are displayed in an Emacs
-window specified by the @code{hpath:display-where} setting.  It may be changed with the
+category described earlier, are displayed in an Emacs window specified
+by the @code{hpath:display-where} setting.  It may be changed with the
 Cust/Referents @bkbd{C-h h c r} menu.
 
 @noindent
@@ -6722,7 +6752,7 @@ entry.  Alternatively, the viewer-program may be a Lisp function that
 takes a single filename argument.
 
 The association lists used by this function are stored in variables
-vfor each available window system: @code{hpath:external-display-alist-macos},
+for each available window system: @code{hpath:external-display-alist-macos},
 @code{hpath:external-display-alist-mswindows}, and
 @code{hpath:external-display-alist-x}.  Examine and modify these
 values to suit your needs.
@@ -6749,16 +6779,15 @@ compared against the values in @code{hpath:variables}.  The first
 match found, if any, is selected and its associated variable name is
 substituted into the link pathname, in place of its literal value.
 When a link button is activated, potentially at a different site,
-Hyperbole replaces each variable within the link pathname with the
-first matching value from this list to recreate the literal pathname.
+Hyperbole replaces each variable in the link pathname with the first
+matching value from this list to recreate the literal pathname.
 Environment variables are also replaced whenever link paths are
 resolved.
 
 This permits sharing of links over wide areas, where the variable values
 differ between link creator and link activator.  The entire process
 is wholly transparent to the user; it is explained here simply to help
-you in deciding whether or not to modify the value of
-@code{hpath:variables}.
+you in deciding whether or not to modify the value of @code{hpath:variables}.
 
 @node Web Search Engines, Using URLs with Find-File, Link Variable Substitution, Customization
 @subsection Web Search Engines
@@ -8480,10 +8509,10 @@ When pressed within a Python source code file (without the OO-Browser):
 @format
 @group
 This works only for identifiers defined within the same source file in
-which they are referenced.  It requires either Emacs' imenu or XEmacs'
-func-menu library and it requires that an index of identifiers has
-been built for the current buffer.  Other handlers handle identifier
-references and definitions across multiple files.
+which they are referenced.  It requires either Emacs' imenu library
+and it requires that an index of identifiers has been built for the
+current buffer.  Other handlers handle identifier references and
+definitions across multiple files.
 
 @noindent
 When pressed on an identifier name after an identifier index has been generated:

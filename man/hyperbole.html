@@ -348,7 +348,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</P>
 
 <PRE>
 Edition 7.0.3a
-Printed July 21, 2019.
+Printed July 28, 2019.
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -972,7 +972,7 @@ archives, and the World-Wide Web (WWW).
 added to documents with a simple drag between windows, no markup language
 needed.  Implicit buttons are patterns automatically recognized within
 existing text that perform actions, e.g. bug#24568 displays the bug status
-information for that bug number, without the need for any additional
+information for that Emacs bug number, without the need for any additional
 markup.  Global buttons are buttons that are activated by name from
 anywhere within Emacs.
 See <a href="#Buttons">Buttons</a>.
@@ -997,7 +997,8 @@ fast, flexible file and text finding commands.  A powerful, hierarchical
 contact manager, see <a href="#HyRolo">HyRolo</a>, which anyone can use, is also included.
 It is easy to learn since it introduces only a few new mechanisms
 and has a menu interface, which may be operated from the keyboard or the
-mouse;
+mouse; it may also be used to look up any record-based information and
+Hyperbole buttons may be embedded in any records;
 </p>
 </dd>
 <dt><em>Screen Control</em></dt>
@@ -1006,14 +1007,15 @@ Emacs, see <a href="#HyControl">HyControl</a>.  With just a few keystrokes, you 
 increasing a window&rsquo;s height by 5 lines to moving a frame by 220 pixels
 or immediately moving it to a screen corner.  Text in each window or
 frame may be enlarged or shrunk (zoomed) for easy viewing, plus many
-other features;
+other features; this allows Hyperbole to quickly control the way
+information is presented on-screen;
 </p>
 </dd>
 <dt><em>Hypertextual Outliner</em></dt>
 <dd><p>an advanced outliner, see <a href="#Koutliner">Koutliner</a>, with multi-level
 autonumbering and permanent identifiers attached to each outline node
 for use as hypertext link anchors, per node properties and flexible
-view specifications that can be embedded within links or used
+view specifications that can be included in links or used
 interactively;
 </p>
 </dd>
@@ -1067,7 +1069,7 @@ links to external information sources.  See <a href="#Koutliner">Koutliner</a>.
 <p>Some of Hyperbole&rsquo;s most significant features are:
 </p>
 <ul>
-<li> Buttons may link to information or may execute procedures, such as
+<li> Buttons may link to information or may execute functions, such as
 starting or communicating with external programs;
 
 </li><li> A simple mouse drag from a button source location to its link
@@ -2557,8 +2559,7 @@ Messages are recognized in any buffer.
 <a name="index-ilink"></a>
 </dd>
 <dt><code>link-to-ibut &lt;ilink&gt;</code></dt>
-<dd><p>At point, activates a link to an implicit button.
-The implicit buttonâs action is executed in the context of the current buffer.
+<dd><p>At point, activates a link to an implicit button within the current buffer.
 Recognizes the format â&lt;ilink:â &lt;button label&gt; â&gt;â, e.g. &lt;ilink: my sequence of keys&gt;.
 </p>
 <a name="index-ibtypes-link_002dto_002dgbut"></a>
@@ -2577,8 +2578,7 @@ Recognizes the format â&lt;glink:â &lt;button label&gt; â&gt;â
 <a name="index-elink"></a>
 </dd>
 <dt><code>link-to-ebut &lt;elink&gt;</code></dt>
-<dd><p>At point, activates a link to an explicit button.
-The explicit buttonâs action is executed in the context of the current buffer.
+<dd><p>At point, activates a link to an explicit button within the current buffer.
 Recognizes the format â&lt;elink:â &lt;button label&gt; â&gt;â, e.g. &lt;elink: project-list&gt;.
 </p>
 <a name="index-ibtypes-klink"></a>
@@ -2616,11 +2616,13 @@ retrievals.
 </p>
 <a name="index-ibtypes-kbd_002dkey"></a>
 <a name="index-key-sequence"></a>
+<a name="index-sequence-of-keys"></a>
 </dd>
 <dt><code>kbd-key</code></dt>
-<dd><p>Executes a key sequence found around point, delimited by curly braces, {}, if any.
-Key sequences should be in human readable form, e.g. <kbd>{C-x C-b}</kbd>.  Formats such
-as {^x^b} will not be recognized.
+<dd><p>Executes a key series (series of key sequences) found around point,
+delimited by curly braces, {}, if any.  Key series should be in
+human readable form, e.g. <kbd>{C-x C-b}</kbd>.  Formats such as {^x^b}
+will not be recognized.
 </p>
 <p>Any key sequence must be a string of one of the following:
 </p><ul>
@@ -2961,21 +2963,38 @@ for a valid match.  See the function documentation for <code>hpath:find</code>
 for special file display options.
 </p>
 <a name="index-ibtypes-org_002dmode"></a>
-<a name="index-browse_002durl_002dbrowser_002dfunction-1"></a>
 <a name="index-org_002dmode"></a>
 <a name="index-Org-mode"></a>
+<a name="index-radio-target"></a>
+<a name="index-code-block"></a>
+<a name="index-C_002dc-C_002dc"></a>
+<a name="index-M_002dRET-1"></a>
+<a name="index-org_002dctrl_002dc_002dctrl_002dc"></a>
+<a name="index-org_002dmeta_002dreturn"></a>
 </dd>
 <dt><code>org-mode</code></dt>
-<dd><p>The Action Key follows any Org mode link at point or cycles through
-views of the outline subtree at point.  In any other context besides
-the end of a line, the Action Key will invoke the Org mode standard
-binding of <kbd>{M-<span class="key">RET</span>}</kbd>, (org-meta-return).  The Assist Key on
-an Org mode heading cycles through views of the whole buffer outline
-and on an Org mode link, displays standard Hyperbole help.
+<dd><p>For users of Emacs Org mode, Hyperbole does quite a few things.
 </p>
-<p>The variable, <code>browse-url-browser-function</code>, customizes the url
-browser that is used for urls.  Valid values of this variable
-include <code>browse-url-default-browser</code> and <code>browse-url-generic</code>.
+<p>First, the Action Key follows internal links in Org mode files.  When
+pressed on a link referent/target, the link definition is displayed,
+allowing two-way navigation between definitions and targets.
+</p>
+<p>Second, the Action Key follows Org mode external links.  The Assist
+Key displays help when pressed on an Org mode link.
+</p>
+<p>Third, within a radio target definition, the Action Key jumps to the
+first occurrence of an associated radio target.
+</p>
+<p>Fourth, when point is on an outline heading in Org mode, the Action Key
+cycles the view of the subtree at point and the Assist Key cycles the
+view of all headings in the buffer.
+</p>
+<p>Fifth, with point on the first line of a code block definition, the
+Action Key executes the code block via the Org mode standard binding
+of <kbd>{C-c C-c}</kbd>, <code>org-ctrl-c-ctrl-c</code>.
+</p>
+<p>In any other context besides the end of a line, the Action Key invokes
+the Org mode standard binding of <kbd>{M-RET}</kbd>, <code>org-meta-return</code>.
 </p>
 <a name="index-ibtypes-doc_002did"></a>
 <a name="index-online-library"></a>
@@ -3303,14 +3322,17 @@ at point.
 <a name="index-URL-1"></a>
 <a name="index-World_002dwide-Web-1"></a>
 <a name="index-WWW-1"></a>
-<a name="index-browse_002durl_002dbrowser_002dfunction-2"></a>
+<a name="index-browse_002durl_002dbrowser_002dfunction-1"></a>
 </dd>
 <dt><code>www-url</code></dt>
 <dd><p>Follows a link given by a URL.  The variable,
 <code>browse-url-browser-function</code>, customizes the url browser
-that is used.  See its documentation string for details.
+that is used.  Valid values of this variable include
+<code>browse-url-default-browser</code> and <code>browse-url-generic</code>.
+See its documentation string for details.
 </p></dd>
 </dl>
+
 
 <a name="index-action-1"></a>
 <a name="index-hui_003aebut_002dprompt_002dfor_002daction"></a>
@@ -5067,7 +5089,7 @@ level to insertion at the child level.
 <dt><kbd>{C-u C-c c}</kbd></dt>
 <dd><p>Copy &lt;tree&gt; to follow as the first child of &lt;cell&gt;.
 </p>
-<a name="index-C_002dc-C_002dc"></a>
+<a name="index-C_002dc-C_002dc-1"></a>
 </dd>
 <dt><kbd>{C-c C-c}</kbd></dt>
 <dd><p>Copy &lt;tree&gt; to be the predecessor of &lt;cell&gt;.
@@ -7491,6 +7513,16 @@ any number of buttons with the same base label within a single buffer.
 <p>Jedi is a Emacs package for Python completion, definition and documentation lookup.
 </p>
 </dd>
+<dt><b>Key Sequence</b></dt>
+<dd><p>A single sequence of keys that can invoke an Emacs command.
+</p>
+</dd>
+<dt><b>Key Series</b></dt>
+<dd><p>A series of one or more Emacs key sequences delimited by braces that
+Hyperbole processes when activated as an implicit button, as if the
+keys were typed in by the user.
+</p>
+</dd>
 <dt><b>Koutline</b></dt>
 <dd><p>A hierarchically ordered grouping of cells which may be stored as a file
 and viewed and edited as an outline.
@@ -8011,8 +8043,8 @@ available with InfoDock.
 <a name="index-menu_002c-Cust_002fReferents"></a>
 <a name="index-C_002dh-h-c-r"></a>
 <p>Links to standard files, those which don&rsquo;t match any special referent
-category handled by any described earlier, are displayed in an Emacs
-window specified by the <code>hpath:display-where</code> setting.  It may be changed with the
+category described earlier, are displayed in an Emacs window specified
+by the <code>hpath:display-where</code> setting.  It may be changed with the
 Cust/Referents <kbd>{C-h h c r}</kbd> menu.
 </p>
 <p>Available options are:
@@ -8087,7 +8119,7 @@ entry.  Alternatively, the viewer-program may be a Lisp function that
 takes a single filename argument.
 </p>
 <p>The association lists used by this function are stored in variables
-vfor each available window system: <code>hpath:external-display-alist-macos</code>,
+for each available window system: <code>hpath:external-display-alist-macos</code>,
 <code>hpath:external-display-alist-mswindows</code>, and
 <code>hpath:external-display-alist-x</code>.  Examine and modify these
 values to suit your needs.
@@ -8113,16 +8145,15 @@ compared against the values in <code>hpath:variables</code>.  The first
 match found, if any, is selected and its associated variable name is
 substituted into the link pathname, in place of its literal value.
 When a link button is activated, potentially at a different site,
-Hyperbole replaces each variable within the link pathname with the
-first matching value from this list to recreate the literal pathname.
+Hyperbole replaces each variable in the link pathname with the first
+matching value from this list to recreate the literal pathname.
 Environment variables are also replaced whenever link paths are
 resolved.
 </p>
 <p>This permits sharing of links over wide areas, where the variable values
 differ between link creator and link activator.  The entire process
 is wholly transparent to the user; it is explained here simply to help
-you in deciding whether or not to modify the value of
-<code>hpath:variables</code>.
+you in deciding whether or not to modify the value of <code>hpath:variables</code>.
 </p>
 <hr>
 <a name="Web-Search-Engines"></a>
@@ -8321,7 +8352,7 @@ shown here:
 </p>
 <dl compact="compact">
 <dd><a name="index-key-binding_002c-M_002dRET"></a>
-<a name="index-M_002dRET-1"></a>
+<a name="index-M_002dRET-2"></a>
 </dd>
 <dt><kbd>{M-<span class="key">RET</span>}</kbd></dt>
 <dd><p>Action Key: Invoke the Action Key in the present context.
@@ -10126,10 +10157,10 @@ Next: <a href="#Smart-Key-_002d-C-Source-Code" accesskey="n" rel="next">Smart Ke
 
 <div class="format">
 <pre class="format">This works only for identifiers defined within the same source file in
-which they are referenced.  It requires either Emacs&rsquo; imenu or XEmacs&rsquo;
-func-menu library and it requires that an index of identifiers has
-been built for the current buffer.  Other handlers handle identifier
-references and definitions across multiple files.
+which they are referenced.  It requires either Emacs&rsquo; imenu library
+and it requires that an index of identifiers has been built for the
+current buffer.  Other handlers handle identifier references and
+definitions across multiple files.
 
 When pressed on an identifier name after an identifier index has been generated:
   ACTION KEY
@@ -10768,7 +10799,7 @@ Next: <a href="#Smart-Key-_002d-HyRolo-Match-Buffers" accesskey="n" rel="next">S
 <a name="index-click_002c-world_002dwide-web"></a>
 <a name="index-W3"></a>
 <a name="index-URL-2"></a>
-<a name="index-browse_002durl_002dbrowser_002dfunction-3"></a>
+<a name="index-browse_002durl_002dbrowser_002dfunction-2"></a>
 <a name="index-World_002dwide-Web-2"></a>
 <a name="index-WWW-2"></a>
 <a name="index-C_002dh-h-c-u-1"></a>
@@ -11554,7 +11585,8 @@ Next: <a href="#Function" accesskey="n" rel="next">Function</a>, Previous: <a hr
 <tr><td></td><td valign="top"><a href="#index-C_002dc-c"><code>C-c c</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Relocating-and-Copying">Relocating and Copying</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-C_002dc-C_002da"><code>C-c C-a</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Hiding-and-Showing">Hiding and Showing</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-C_002dc-C_002db"><code>C-c C-b</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Moving-Around">Moving Around</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-C_002dc-C_002dc"><code>C-c C-c</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Relocating-and-Copying">Relocating and Copying</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-C_002dc-C_002dc"><code>C-c C-c</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-C_002dc-C_002dc-1"><code>C-c C-c</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Relocating-and-Copying">Relocating and Copying</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-C_002dc-C_002dd"><code>C-c C-d</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Moving-Around">Moving Around</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-C_002dc-C_002df"><code>C-c C-f</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Moving-Around">Moving Around</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-C_002dc-C_002dh"><code>C-c C-h</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Hiding-and-Showing">Hiding and Showing</a></td></tr>
@@ -11704,7 +11736,8 @@ Next: <a href="#Function" accesskey="n" rel="next">Function</a>, Previous: <a hr
 <tr><td></td><td valign="top"><a href="#index-M_002do-r-_003cwindow_002did_003e"><code>M-o r &lt;window-id&gt;</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Keyboard-Drags">Keyboard Drags</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-M_002do-t-_003cwindow_002did_003e"><code>M-o t &lt;window-id&gt;</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Keyboard-Drags">Keyboard Drags</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-M_002dRET"><code>M-<span class="key">RET</span></code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Key-Bindings">Smart Key Bindings</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-M_002dRET-1"><code>M-<span class="key">RET</span></code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Global-Key-Bindings">Global Key Bindings</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-M_002dRET-1"><code>M-RET</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-M_002dRET-2"><code>M-<span class="key">RET</span></code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Global-Key-Bindings">Global Key Bindings</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-M_002dx-kotl_002dmode_003ashow_002dsubtree"><code>M-x kotl-mode:show-subtree</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Hiding-and-Showing">Hiding and Showing</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-middle-mouse-key-1"><code>middle mouse key</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Key-Bindings">Smart Key Bindings</a></td></tr>
 <tr><td colspan="4"> <hr></td></tr>
@@ -12018,9 +12051,8 @@ Next: <a href="#Concept-Index" accesskey="n" rel="next">Concept Index</a>, Previ
 <tr><td colspan="4"> <hr></td></tr>
 <tr><th><a name="Function_fn_letter-B">B</a></th><td></td><td></td></tr>
 <tr><td></td><td valign="top"><a href="#index-browse_002durl_002dbrowser_002dfunction">browse-url-browser-function</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-browse_002durl_002dbrowser_002dfunction-1">browse-url-browser-function</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-browse_002durl_002dbrowser_002dfunction-2">browse-url-browser-function</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Action-Types">Action Types</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-browse_002durl_002dbrowser_002dfunction-3">browse-url-browser-function</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Key-_002d-WWW-URLs">Smart Key - WWW URLs</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-browse_002durl_002dbrowser_002dfunction-1">browse-url-browser-function</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Action-Types">Action Types</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-browse_002durl_002dbrowser_002dfunction-2">browse-url-browser-function</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Key-_002d-WWW-URLs">Smart Key - WWW URLs</a></td></tr>
 <tr><td colspan="4"> <hr></td></tr>
 <tr><th><a name="Function_fn_letter-C">C</a></th><td></td><td></td></tr>
 <tr><td></td><td valign="top"><a href="#index-c_002b_002b_002dcpp_002dinclude_002dpath">c++-cpp-include-path</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Key-_002d-C_002b_002b-Source-Code">Smart Key - C++ Source Code</a></td></tr>
@@ -12425,6 +12457,8 @@ Next: <a href="#Concept-Index" accesskey="n" rel="next">Concept Index</a>, Previ
 <tr><th><a name="Function_fn_letter-O">O</a></th><td></td><td></td></tr>
 <tr><td></td><td valign="top"><a href="#index-objc_002dcpp_002dinclude_002dpath">objc-cpp-include-path</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Key-_002d-Objective_002dC-Source-Code">Smart Key - Objective-C Source Code</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-objc_002dinclude_002dpath">objc-include-path</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Key-_002d-Objective_002dC-Source-Code">Smart Key - Objective-C Source Code</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-org_002dctrl_002dc_002dctrl_002dc"><code>org-ctrl-c-ctrl-c</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-org_002dmeta_002dreturn"><code>org-meta-return</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
 <tr><td colspan="4"> <hr></td></tr>
 <tr><th><a name="Function_fn_letter-R">R</a></th><td></td><td></td></tr>
 <tr><td></td><td valign="top"><a href="#index-run_002dhooks"><code>run-hooks</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Glossary">Glossary</a></td></tr>
@@ -12745,6 +12779,7 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function</a>, Up: <a href
 <tr><td></td><td valign="top"><a href="#index-clone-window">clone window</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Cloning-Windows">Cloning Windows</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-clone-window-1">clone window</a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyControl">HyControl</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-clone-window-2">clone window</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Mouse-Drags-outside-a-Window">Smart Mouse Drags outside a Window</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-code-block">code block</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-code-block-selection">code block selection</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Key-Thing-Selection">Smart Key Thing Selection</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-collaboration">collaboration</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Koutliner-History">Koutliner History</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-collapse-lines">collapse lines</a>:</td><td>&nbsp;</td><td valign="top"><a href="#View-Specs">View Specs</a></td></tr>
@@ -13403,6 +13438,7 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function</a>, Up: <a href
 <tr><td></td><td valign="top"><a href="#index-quit-HyControl">quit HyControl</a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyControl">HyControl</a></td></tr>
 <tr><td colspan="4"> <hr></td></tr>
 <tr><th><a name="Concept-Index_cp_letter-R">R</a></th><td></td><td></td></tr>
+<tr><td></td><td valign="top"><a href="#index-radio-target">radio target</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-raise-frame">raise frame</a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyControl">HyControl</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-rdb_002dmode">rdb-mode</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Key-_002d-RDB-Mode">Smart Key - RDB Mode</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-rebalance-windows">rebalance windows</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Creating-and-Deleting-Windows">Creating and Deleting Windows</a></td></tr>
@@ -13470,6 +13506,7 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function</a>, Up: <a href
 <tr><td></td><td valign="top"><a href="#index-searching_002c-rolo">searching, rolo</a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyRolo-Searching">HyRolo Searching</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-selection">selection</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Key-Thing-Selection">Smart Key Thing Selection</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-selection_002c-menu-items">selection, menu items</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Menus">Menus</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-sequence-of-keys">sequence of keys</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-set">set</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Thing-Selection">Thing Selection</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-set-1">set</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Key-_002d-Delimited-Things">Smart Key - Delimited Things</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-setting-the-view-spec">setting the view spec</a>:</td><td>&nbsp;</td><td valign="top"><a href="#View-Specs">View Specs</a></td></tr>

@@ -254,7 +254,7 @@ the argument is used to adjust one dimension of the frame.
 The {@} command splits a frame into a grid of up to 9 rows by 9 columns of
 windows, showing a different buffer in each window, if available.  First
 let's expand our frame to full screen with the {.1 %} command and then show
-a 2 x 3 grid.  We can do multiple commands in one key sequence.  Press the
+a 2 x 3 grid.  We can do multiple commands in one 'key series'.  Press the
 action key here: {.1 % .23 @}.
 
 You can even write something like this to do the whole thing in one sequence.
@@ -263,7 +263,7 @@ window with {C-x 1}.  Now we can execute a single sequence from any buffer
 that creates our 2x3 window grid: {C-h h s f .1 % .23 @ q}.  Pretty amazing,
 right?  You can separate each command by any number of spaces or even jam
 them all together: {C-hhsf.1%.23@q}.  Use SPC (separated by spaces) to
-include a space as part of the key sequence.
+include a space as part of the key series.
 
 A zero argument to the {@} command is special.  It means you want to display
 buffers with a particular major mode first, e.g. c-mode.  You will be
@@ -350,7 +350,7 @@ Action Key click on {C-x4r work RET} to search for all entries from Work
 Industries; then type {q} to quit from the HyRolo search results buffer.
 {C-x4r manager RET} finds all managers plus their staff across companies.
 {C-x4r Dunn,\ J RET} finds just that staffer.  Notice that you must quote the
-space with a backslash when including it in a key sequence search string or
+space with a backslash when including it in a key series search string or
 else the space will be removed; when just typing the same string
 interactively, don't add the backslash.
 
@@ -374,9 +374,9 @@ not             one                    Match entries without the arg
 =====================================================================
 
 So for example, {C-x4r (or smith dunn) RET} finds both the Smith and Dunn
-entries.  (Note that you do not need to backslash quote spaces within
+entries.  (Note that you do not need to quote spaces with backslashes within
 parentheses, square brackets, angle brackets or double quotes when used in
-key sequences).  To find any Managers and their staffers at HiHo Industries,
+key series).  To find any Managers and their staffers at HiHo Industries,
 use: {C-x4r (and manager hiho) RET}.  To find managers anywhere but at HiHo:
 {C-x4r (and manager (not hiho)) RET}.  Finally, this will find all people who
 are not managers at HiHo: {C-x4r (not (and manager hiho)) RET}.
@@ -434,17 +434,19 @@ label it by using {C-h h i l}.
 
 Now let's explore some implicit button types.
 
-** Key Sequence Buttons
+** Key Series Buttons
 
-Any Emacs key sequence (or multiple sequences) delimited by curly braces is
-an implicit button.  Press the Action Key with {C-u C-p} for example and the
-point should move four lines upward.  An Assist Key press on the key sequence
-displays the documentation for its command binding, i.e. what it does.  Key
-sequences together with the arguments their commands prompt for, may also be
-given, e.g. {M-x apropos RET hyperbole RET}.  Click with the Action Mouse Key
-in the braces to try it out.
+Any series of Emacs key sequences (or 'key series') delimited by curly
+braces is an implicit button.  Press the Action Key within {C-u C-p C-n C-e}
+for example and the point should move three lines upward and to the end of
+line.  An Assist Key press on the key series either displays the documentation
+for its command binding (if a single key sequence) or displays help for the
+implicit button, i.e. what it does.  Key series together with the
+arguments their commands prompt for, may also be given, e.g. {M-x apropos
+RET hyperbole RET}.  Click with the Action Mouse Key within the first line
+of this button to try it out.
 
-Hyperbole minibuffer menu items may also be activated as key sequences.  For
+Hyperbole minibuffer menu items may also be activated as key series.  For
 example, {C-h h d i} displays the online browsable Info version of the
 Hyperbole Manual.  Press your Action Key between the braces to see it.  Once
 in the Info browser, use {s} to search for any topic throughout the manual.
@@ -456,14 +458,27 @@ demonstrations and tours with this and other implicit button types.
 
 ** Org Mode
 
-For users of Emacs Org mode, Hyperbole does a few things.  First, the
-Action Key will follow and execute links in Org mode files.  Second, when
-point is on an outline heading in Org mode, the Action Key cycles the view
-of the subtree at point and the Assist Key cycles the view of all headings
-in the buffer.  The Assist Key will also display help when pressed on an Org
-mode link.
+For users of Emacs Org mode, Hyperbole does quite a few things.
 
-In any other context besides the end of a line, the Action Key will invoke
+First, the Action Key follows internal links in Org mode files.  When
+pressed on a link referent/target, the link definition is displayed,
+allowing two-way navigation between definitions and targets.
+
+Second, the Action Key follows Org mode external links.  The Assist Key
+displays help when pressed on an Org mode link.
+
+Third, within a radio target definition, the Action Key jumps to the first
+occurrence of an associated radio target.
+
+Fourth, when point is on an outline heading in Org mode, the Action Key
+cycles the view of the subtree at point and the Assist Key cycles the view
+of all headings in the buffer.
+
+Fifth, with point on the first line of a code block definition, the Action
+Key executes the code block via the Org mode standard binding of {C-c C-c},
+(org-ctrl-c-ctrl-c).
+
+In any other context besides the end of a line, the Action Key invokes
 the Org mode standard binding of {M-RET}, (org-meta-return).
 
 ** Implicit Path Links

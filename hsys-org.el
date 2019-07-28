@@ -56,7 +56,26 @@
 ;;; ************************************************************************
 
 (defib org-mode ()
-  "Follows any Org mode link at point or cycles through views of the outline subtree at point."
+  "Follows Org mode references, cycles outline visibility and executes code blocks.
+
+First, this follows internal links in Org mode files.  When pressed on a
+link referent/target, the link definition is displayed, allowing two-way
+navigation between definitions and targets.
+
+Second, this follows Org mode external links.
+
+Third, within a radio target definition, this jumps to the first
+occurrence of an associated radio target.
+
+Fourth, when point is on an outline heading in Org mode, this
+cycles the view of the subtree at point.
+
+Fifth, with point on the first line of a code block definition, this
+executes the code block via the Org mode standard binding of {C-c C-c},
+(org-ctrl-c-ctrl-c).
+
+In any other context besides the end of a line, the Action Key invokes the
+Org mode standard binding of {M-RET}, (org-meta-return)."
   (when (funcall hsys-org-mode-function)
     (let (start-end)
       (cond ((setq start-end (hsys-org-internal-link-target-at-p))
