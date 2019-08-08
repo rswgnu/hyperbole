@@ -35,9 +35,10 @@
     ["Display-Prior-Matches" (id-tool-invoke 'hyrolo-display-matches) t]
     ["Edit-Entry"        (id-tool-invoke 'hyrolo-edit) t]
     ["Edit-Rolo"         (id-tool-invoke
-			  '(progn (require 'hyrolo)
-				  (find-file (car hyrolo-file-list))
-				  (setq buffer-read-only nil)))
+			  '(lambda ()
+			     (require 'hyrolo)
+			     (find-file (car hyrolo-file-list))
+			     (setq buffer-read-only nil)))
      t]
     ["Insert-Entry-at-Point" (id-tool-invoke 'hyrolo-yank) t]
     ["Mail-to-Address"   (id-tool-invoke 'hyrolo-mail-to) t]

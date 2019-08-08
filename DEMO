@@ -427,9 +427,10 @@ of 'My Emacs Files':
 
 <[My Emacs Files]>: "~/.emacs.d"
 
-You see that the label is delimited by <[ and ]> and can be followed by any
-number of :, - or = characters, including none.  You can activate the button
-either from its label or its text.  With point on an implicit button, you can
+You see that the label is delimited by <[ and ]> and can be followed
+by any number of :, - or = characters, including none, and then a
+whitespace character.  You can activate the button either from its
+label or its pattern text.  With point on an implicit button, you can
 label it by using {C-h h i l}.
 
 Now let's explore some implicit button types.
@@ -521,7 +522,7 @@ headings preceded by asterisks rather than hash marks.  So to jump back to
 the Org Mode section in this file, press the Action Key on "#Org-Mode".
 
 HTML hash-links are case-sensitive; other hash-links are not.  Hash links
-typically use dashes in place of the spaces that referents may contain but if
+typically use dashes in place of the spaces that referents may contain, but if
 the link is enclosed in quotes, Hyperbole allows spaces to be used as well.
 In fact, it is best practice to always enclose hash-style links in quotes so
 Hyperbole can distinguish them from other similar looking constructs, such as
@@ -550,7 +551,7 @@ Thus an Action Key press on "simple.el", "hyperbole.info" or even
 
 Some file types require external programs to view them, such as pdf files.
 The function (hpath:get-external-display-alist) determines the file
-suffixes which should be viewed externally together with their associated
+suffixes which should be viewed externally, together with their associated
 viewer programs, on a per-frame, per window-system basis.  See its
 documentation for more details.  The association lists used by this
 function are stored in variables for each available window system:

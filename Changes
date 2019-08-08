@@ -1,3 +1,12 @@
+2019-08-06  Bob Weiner  <rsw@gnu.org>
+
+* hyrolo-menu.el (infodock-hyrolo-menu): Fixed Edit-Rolo to call a function rather than an sexp.
+
+2019-08-05  Bob Weiner  <rsw@gnu.org>
+
+* hypb.el (hypb:rgrep-command): Changed to use zgrep only when it is the BSD version,
+    since only that one supports the options needed by Hyperbole.
+
 2019-07-28  Bob Weiner  <rsw@gnu.org>
 
 * DEMO, man/hyperbole.texi (Implicit Button Type Summaries): Updated to expanded

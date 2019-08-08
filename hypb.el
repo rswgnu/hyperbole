@@ -27,7 +27,11 @@
 This should end with a space.")
 
 (defcustom hypb:rgrep-command
-  (format "%sgrep -insIHr" (if (executable-find "zgrep") "z" ""))
+  ;; Only the FreeBSD version of zgrep supports all of the grep
+  ;; options that Hyperbole needs: -r, --include, and --exclude
+  (format "%sgrep -insIHr" (if (and (executable-find "zgrep")
+                                    (string-match-p "bsd" (shell-command-to-string "zgrep --version | head -1")))
+                               "z" ""))
   "*Grep command string and initial arguments to send to `hypb:rgrep' command.
 It must end with a space."
   :type 'string
