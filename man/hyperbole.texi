@@ -154,8 +154,8 @@ WITHOUT ANY WARRANTY, without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</P>
 
 <PRE>
-Edition 7.0.3a
-Printed July 28, 2019.
+Edition 7.0.3b
+Printed August 11, 2019.
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -196,8 +196,8 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 @sp 2
 
 @example
-Edition 7.0.3a
-July 28, 2019
+Edition 7.0.3b
+Augut 11, 2019
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -473,7 +473,7 @@ Smart Keyboard Keys
 @chapter Introduction
 
 This edition of the GNU Hyperbole Manual is for use with any version
-7.0.3a or greater of GNU Hyperbole.  Hyperbole runs atop GNU Emacs 24.3
+7.0.3b or greater of GNU Hyperbole.  Hyperbole runs atop GNU Emacs 24.3
 or higher.  It will trigger an error if your Emacs is older.
 
 This chapter summarizes the structure of the rest of the manual,

@@ -45,7 +45,7 @@ terms used here are unfamiliar to you.
 * Smart Keys 
 
 Hyperbole provides two context-sensitive keys, the Action Key and the Assist
-Key, jointly referred to as Smart Keys that each do dozens of things,
+Key, jointly referred to as Smart Keys.  Each do dozens of things,
 essentially whatever is most helpful in any given textual context where they
 are pressed.  The Action Key is {M-RET} (ESC RETURN if you are unsure) on the
 keyboard and the shift-middle mouse button on a 3-button mouse or the
@@ -55,7 +55,7 @@ To distinguish the mouse buttons from the keyboard keys, we will often refer
 to the Action Mouse Key or Assist Mouse Key.  (It is possible to rebind these
 keys to the unshifted middle and right mouse buttons, if desired.  See the
 Smart Key Bindings section of the Hyperbole Manual, "(hyperbole)Smart Key
-Bindings").
+Bindings") simply by pressing the Action Key on that reference.
 
 The Action Key selects entities, creates links and activates buttons.  The
 Assist Key provides help, such as reporting on a button's attributes, or
@@ -96,9 +96,10 @@ following button and then practice scrolling: <(toggle-scroll-proportional)>.
 If you prefer the default proportional scrolling, click on the previous
 button again to restore it.
 
-If you always want windowful (non-proportional) scrolling, you'll have to
-add a setting of smart-scroll-proportional to your "~/.emacs" file after the
-point at which you load Hyperbole or else set it as part of
+If you always want windowful (non-proportional) scrolling, use the Emacs
+customize system to set it permanently.  Otherwise, you can set it manually
+by adding a setting of smart-scroll-proportional to your "~/.emacs" file
+after the point at which you load Hyperbole or else set it as part of
 hyperbole-init-hook, which executes whenever Hyperbole is loaded, e.g.:
 
    (add-to-list 'hyperbole-init-hook
