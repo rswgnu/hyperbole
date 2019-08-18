@@ -54,7 +54,7 @@
 
 # This ver setup won't work under any make except GNU make, so set it manually.
 #HYPB_VERSION = "`head -3 hversion.el | tail -1 | sed -e 's/.*|\(.*\)|.*/\1/'`"
-HYPB_VERSION = 7.0.3b
+HYPB_VERSION = 7.0.3.3
 
 # Emacs executable used to byte-compile .el files into .elc's.
 # Possibilities include: emacs, infodock, etc.
@@ -305,7 +305,7 @@ ftp: package
 	cd $(pkg_dir) && $(GNUFTP) hyperbole-$(HYPB_VERSION).tar.gz
 
 kotl/kotl-autoloads.el: $(EL_KOTL)
-	$(EMACS) $(BATCHFLAGS) -eval '(progn (let ((generated-autoload-file (expand-file-name "kotl/kotl-autoloads.el"))) (update-directory-autoloads (expand-file-name "kotl/"))))' && $(RM) kotl/kotl-autoloads.el~
+	$(EMACS) $(BATCHFLAGS) -eval '(progn (setq generated-autoload-file (expand-file-name "kotl/kotl-autoloads.el")) (update-directory-autoloads (expand-file-name "kotl/")))' && $(RM) kotl/kotl-autoloads.el~
 #	$(EMACS) $(BATCHFLAGS) -eval '(progn (let ((generated-autoload-file (expand-file-name "kotl/kotl-autoloads.el"))) (update-directory-autoloads (expand-file-name "kotl/"))))' && sed -i '3 i ;; Copyright (C) 2017  Free Software Foundation, Inc.\n;;' $@ && $(RM) kotl/kotl-autoloads.el~
 
 # Used for ftp.gnu.org tarball distributions.

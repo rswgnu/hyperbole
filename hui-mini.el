@@ -309,7 +309,7 @@ constructs.  If not given, the top-level Hyperbole menu is used."
 		    help-str
 		  (concat (car label-act-help-list) "\n  "
 			  help-str "\n    Action: "
-			  (prin1-to-string act-form))))
+			  (prin1-to-string act-form t))))
 	    act-form)))))
 
 (defun hui:menu-line (menu-alist)

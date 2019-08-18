@@ -2,7 +2,7 @@
 				 by Bob Weiner
 
 ===========================================================================
-*                                   V7.0.3b
+*                                   V7.0.3.3
 ===========================================================================
 
   BUTTONS
@@ -23,6 +23,8 @@
         debugger-source: Jump to the source of errors from the Python pytype package
         ipython-stack-frame: Jump to the source of ipython stack traces and exceptions
 
+    - Pathname implicit buttons now flash when activated.
+
 
   DOCUMENTATION
 
@@ -32,8 +34,9 @@
       controlling image types that Hyperbole displays within Emacs.
 
     - Implicit Button Types: Split off type descriptions to this new
-      subsection and added these types: ripgrep-msg, ipython-stack-frame, link-to-ibut,
-      link-to-gbut, link-to-ebut.
+      subsection and added these types: ripgrep-msg, ipython-stack-frame,
+      ilink (link to implicit button), glink (link to global button), and
+      elink (link to explicit button).
 
     - Implicit Buttons: Added description and example of implicit button labels.
       DEMO (Implicit Buttons): Added description and example of implicit button labels.
@@ -83,9 +86,9 @@
       hbut:label-p: Updated to handle implicit button labels.
       ibut:label-separator-regexp, hbut:outside-comment-p: Added.
 
-    - link-to-gbut, glink:start, glink:end: Added for in-buffer links to global buttons.
-      link-to-ebut, elink:start, elink:end: Added for in-buffer links to explicit buttons.
-      link-to-ibut, ilink:start, ilink:end: Added for in-buffer links to implicit buttons.
+    - elink, elink:start, elink:end: Added for in-buffer links to explicit buttons.
+      glink, glink:start, glink:end: Added for in-buffer links to global buttons.
+      ilink, ilink:start, ilink:end: Added for in-buffer links to implicit buttons.
 
     - hsys-org-set-ibut-label: Added and used in org-mode ibtype.
       org-mode, hsys-org-at-block-start-p: Added Action Key activation of Org blocks when

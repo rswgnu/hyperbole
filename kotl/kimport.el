@@ -474,6 +474,7 @@ in IMPORT-FROM, used to show a running tally of the imported statements."
     (goto-char start))
   count)
 
+;;;###autoload
 (defun kimport:copy-and-set-buffer (source)
   "Copy and untabify SOURCE, set copy buffer as current buffer for this command and return the copy buffer.
 SOURCE may be a buffer name, a buffer or a file name.

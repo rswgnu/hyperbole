@@ -1,6 +1,40 @@
+2019-08-18  Bob Weiner  <rsw@gnu.org>
+
+* hyperbole: Added second arg of t to most calls to prin1-to-string so properties are not utilizied,
+    notably when displaying @loc> locations.
+
+* hversion.el: Change to using numeric test release codes instead of letters to ease version parsing.
+
+2019-08-16  Bob Weiner  <rsw@gnu.org>
+
+* hpath.el (hpath:start-end): Added so implicit pathname buttons can flash when activated.
+
+2019-08-14  Bob Weiner  <rsw@gnu.org>
+
+* hibtypes.el (elink, glink, ilink): Renamed from link-to-e/g/ibut.
+
+2019-08-13  Bob Weiner  <rsw@gnu.org>
+
+* hactypes.el (man-show): Eliminated infinite recursion and made work with latest
+    Emacs man.el library.
+              (link-to-ebut): Reversed order of args to match link-to-ibut.
+
+2019-08-12  Bob Weiner  <rsw@gnu.org>
+
+* kotl/kimport.el (kimport:copy-and-set-buffer): Made an autoload since M-x kotl-mode
+    may call kfile;create which then calls this function.
+
+==============================================================================
+V7.0.3.3 changes ^^^^:
+==============================================================================
+
 2019-08-06  Bob Weiner  <rsw@gnu.org>
 
 * hyrolo-menu.el (infodock-hyrolo-menu): Fixed Edit-Rolo to call a function rather than an sexp.
+
+==============================================================================
+V7.0.3b changes ^^^^:
+==============================================================================
 
 2019-08-05  Bob Weiner  <rsw@gnu.org>
 

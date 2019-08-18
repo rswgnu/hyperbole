@@ -154,8 +154,8 @@ WITHOUT ANY WARRANTY, without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</P>
 
 <PRE>
-Edition 7.0.3b
-Printed August 11, 2019.
+Edition 7.0.3.3
+Printed August 18, 2019.
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -196,8 +196,8 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 @sp 2
 
 @example
-Edition 7.0.3b
-Augut 11, 2019
+Edition 7.0.3.3
+Augut 18, 2019
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -473,7 +473,7 @@ Smart Keyboard Keys
 @chapter Introduction
 
 This edition of the GNU Hyperbole Manual is for use with any version
-7.0.3b or greater of GNU Hyperbole.  Hyperbole runs atop GNU Emacs 24.3
+7.0.3.3 or greater of GNU Hyperbole.  Hyperbole runs atop GNU Emacs 24.3
 or higher.  It will trigger an error if your Emacs is older.
 
 This chapter summarizes the structure of the rest of the manual,
@@ -1961,15 +1961,15 @@ Messages are recognized in any buffer (other than a helm completion buffer).
 Jumps to a line associated with grep or compilation error messages.
 Messages are recognized in any buffer.
 
-@findex ibtypes link-to-ibut
+@findex ibtypes ilink
 @cindex implicit button link
 @cindex link to implicit button
 @cindex ilink
 @item link-to-ibut <ilink>
 At point, activates a link to an implicit button within the current buffer.
-Recognizes the format ’<ilink:’ <button label> ’>’, e.g. <ilink: my sequence of keys>.
+Recognizes the format ’<ilink:’ <button label> ’>’, e.g. <ilink: my key sequence>.
 
-@findex ibtypes link-to-gbut
+@findex ibtypes glink
 @cindex global button link
 @cindex link to global button
 @cindex glink
@@ -1978,7 +1978,7 @@ At point, activates a link to a global button.
 The global button’s action is executed in the context of the current buffer.
 Recognizes the format ’<glink:’ <button label> ’>’, e.g. <glink: open todos>.
 
-@findex ibtypes link-to-ebut
+@findex ibtypes elink
 @cindex explicit button link
 @cindex link to explicit button
 @cindex elink
@@ -2567,7 +2567,7 @@ filename and nodename is available.  Filename may be given without the
 
 @findex actypes link-to-ibut
 @item link-to-ibut
-Performs an action given by an implicit button, specified by KEY-FILE, KEY and optional POINT.
+Performs an action given by an implicit button, specified by KEY, optional KEY-FILE and POINT.
 
 @findex actypes link-to-kcell
 @findex kcell:ref-to-id
@@ -2632,11 +2632,11 @@ to match each service to its search url.  Uses @code{hyperbole-web-search-browse
 and the @code{browse-url} package to display search results.
 
 @findex actypes man-show
-@vindex sm-notify
+@vindex hpath:display-where
+@cindex man page
 @item man-show
 Displays a man page on TOPIC, which may be of the form @samp{<command>(<section>}).
-If using the Superman manual entry package, see the documentation for @code{sm-notify}
-to control where the man page is displayed.
+Uses @code{hpath:display-where} setting to control where the man page is displayed.
 
 @findex actypes rfc-toc
 @item rfc-toc

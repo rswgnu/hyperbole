@@ -41,6 +41,11 @@ and shows how Hyperbole can support a style of self-documenting, interactive
 files.  See the glossary in the Hyperbole Manual, "(hyperbole)Glossary", if
 terms used here are unfamiliar to you.
 
+Once you read the next section on "#Smart Keys", you can then browse any
+other sections individually as you like.  Many people initially use Hyperbole
+for its "#Implicit Buttons" capabilities, so you may want to jump to that
+section.
+
 
 * Smart Keys 
 
@@ -216,7 +221,6 @@ Hyperbole minibuffer menu item, Screen/WindowsControl {C-h h s w}, will do
 the same thing.
 
 Once in HyControl, your minibuffer window at the bottom of the selected frame
-
 will display a summary of keys you may use to adjust your windows until you
 press {q} or {Q} to quit from HyControl.  If you don't see it, press {?}, to
 turn on this help display.  The key, {t}, will always switch you between

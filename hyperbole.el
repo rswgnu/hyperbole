@@ -5,8 +5,8 @@
 ;; Author:           Bob Weiner
 ;; Maintainer:       Bob Weiner <rsw@gnu.org> and Mats Lidell <matsl@gnu.org>
 ;; Created:          06-Oct-92 at 11:52:51
-;; Released:         21-Jan-19
-;; Version:          7.0.3b
+;; Released:         18-Aug-19
+;; Version:          7.0.3.3
 ;; Keywords:         comm, convenience, files, frames, hypermedia, languages, mail, matching, mouse, multimedia, outlines, tools, wp
 ;; Package:          hyperbole
 ;; Package-Requires: ((emacs "24.4"))
@@ -472,7 +472,7 @@ With optional ARG, override them iff ARG is positive."
 ;;       ;; nothing more need be done.
 ;;       (if (byte-code-function-p func)
 ;; 	  (delq nil (mapcar (lambda (item) (eq item 'apply)) (aref func 2)))
-;; 	(string-match "(apply " (prin1-to-string func)))))
+;; 	(string-match "(apply " (prin1-to-string func t)))))
 
 ;;   (unless (hyperb:package-autoloads-subdirectories-p)
 ;;     ;; Function is not patched, so define it here, call it, and then load

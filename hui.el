@@ -613,7 +613,7 @@ See also documentation for `hui:link-possible-types'."
        (let* ((act) (act-str)
 	      (params (actype:params actype))
 	      (params-no-keywords (actype:param-list actype))
-	      (params-str (and params (concat " " (prin1-to-string params))))
+	      (params-str (and params (concat " " (prin1-to-string params t))))
 	      )
 	 (while (progn
 		 (while (and (setq act-str
@@ -965,7 +965,7 @@ arguments it requires.  Any text properties are removed from string arguments."
     (ebut:operate label (if modify label))))
 
 (defun hui:link-possible-types ()
-  "Returns list of possible link types for a Hyperbole button link to point.
+  "Returns list of possible link action types during editing of a Hyperbole button.
 Each list element is a list of the link type and any arguments it requires.
 
 The link types considered are fixed; this function must be changed to alter
@@ -992,11 +992,11 @@ Buffer without File      link-to-buffer-tmp"
   (let (val)
     (delq nil
 	  (list (cond ((eq (current-buffer) (get-file-buffer gbut:file))
-		       (list 'link-to-gbut buffer-file-name (hbut:label-p)))
+		       (list 'link-to-gbut (hbut:label-p)))
 		      ((ebut:at-p)
-		       (list 'link-to-ebut buffer-file-name (ebut:label-p)))
+		       (list 'link-to-ebut (ebut:label-p)))
 		      ((setq val (ibut:at-p t))
-		       (list 'link-to-ibut buffer-file-name val)))
+		       (list 'link-to-ibut val)))
 		(cond ((eq major-mode 'Info-mode)
 		       (if (and Info-current-node
 				(member Info-current-node

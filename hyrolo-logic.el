@@ -197,7 +197,7 @@ of applications of SEXP that matched entries."
 						  hbut:source-prefix
 						"@loc> ")
 					      "%s")
-				      (prin1-to-string src))))
+				      (prin1-to-string src t))))
 			       (set-buffer display-buf)
 			       (goto-char (point-max))
 			       (if hdr-pos

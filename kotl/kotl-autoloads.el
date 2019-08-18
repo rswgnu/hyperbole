@@ -133,7 +133,16 @@ The variable, `paragraph-start,' is used to determine paragraphs.
 
 \(fn IMPORT-FROM OUTPUT-TO &optional CHILDREN-P)" t nil)
 
-(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "kimport" '("kimport:")))
+(autoload 'kimport:copy-and-set-buffer "kimport" "\
+Copy and untabify SOURCE, set copy buffer as current buffer for this command and return the copy buffer.
+SOURCE may be a buffer name, a buffer or a file name.
+If SOURCE buffer name begins with a space, it is not copied under the
+assumption that it already has been.  If SOURCE is a koutline, it is not
+copied since there is no need to copy it to import it.
+
+\(fn SOURCE)" nil nil)
+
+(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "kimport" '(#("kimport:" 0 8 (fontified nil)))))
 
 ;;;***
 

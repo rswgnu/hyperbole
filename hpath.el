@@ -1133,6 +1133,34 @@ Returns PATH unchanged when it is not a valid path."
 See the documentation of the `hpath:rfc' variable."
   (format hpath:rfc rfc-num))
 
+(defun hpath:start-end (path)
+  "If point is within the first line of PATH, return a list of its start and end positions (sans delimiters), else nil.
+NOTE: This will return nil if the path has been normalized in any way
+\(adjusted for mount points or variables replaced) since the
+in-buffer path will not match."
+  ;; Create a regexp from path by regexp-quoting it and then matching spaces
+  ;; to any whitespace.
+  (when (stringp path)
+    (let ((path-regexp (replace-regexp-in-string "[ \t\n\r]+" "[ \t\n\r]" (regexp-quote path) t t))
+	  (opoint (point))
+	  found
+	  search-end-point
+	  start
+	  end)
+      ;; Save point, move to bol and search for regexp match to a max of 5 lines
+      ;; just to limit searches in large buffers.
+      (save-excursion
+	(forward-line 0)
+	(setq search-end-point (save-excursion (forward-line 5) (point)))
+	(while (and (not found)
+		    (re-search-forward path-regexp search-end-point t))
+		 ;; If match found, ensure that start pos is <= orig point and end pos >
+		 ;; orig point and return (start . end).
+		 (setq start (match-beginning 0) end (match-end 0)
+		       found (and (<= start opoint) (>= end opoint)))))
+      (if found
+	  (list start end)))))
+
 (defun hpath:substitute-value (path)
   "Substitutes matching value for Emacs Lisp variables and environment variables in PATH and returns PATH."
   ;; Uses free variables `match' and `start' from `hypb:replace-match-string'.

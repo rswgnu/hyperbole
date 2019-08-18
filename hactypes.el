@@ -221,7 +221,8 @@ For example:  To: hyperbole-users-join@gnu.org\n")))
   "Displays a buffer or file from a line beginning with `hbut:source-prefix'."
   (interactive
    (list (prin1-to-string (get-buffer-create
-			   (read-buffer "Buffer to link to: ")))))
+			   (read-buffer "Buffer to link to: "))
+			  t)))
   (if (stringp buf-str-or-file)
       (cond ((string-match "\\`#<buffer \"?\\([^ \n\"]+\\)\"?>" buf-str-or-file)
 	     (hpath:display-buffer
@@ -249,8 +250,9 @@ Use `link-to-file' instead for a permanent link."
   (interactive "DDirectory to link to: ")
   (hpath:find directory))
 
-(defact link-to-ebut (key-file key)
-  "Performs action given by an explicit button, specified by KEY-FILE and KEY."
+(defact link-to-ebut (key &optional key-file)
+  "Performs action given by an explicit button, specified by KEY and optional KEY-FILE.
+KEY-FILE defaults to the current buffer's file name."
   (interactive
    (let (but-file but-lbl)
      (while (cond ((setq but-file
@@ -262,8 +264,7 @@ Use `link-to-file' instead for a permanent link."
 		   (message "(link-to-ebut): You cannot read `%s'."
 			    but-file)
 		   (beep) (sit-for 3))))
-     (list but-file
-	   (progn
+     (list (progn
 	     (find-file-noselect but-file)
 	     (while (string-equal "" (setq but-lbl
 					   (hargs:read-match
@@ -271,11 +272,15 @@ Use `link-to-file' instead for a permanent link."
 					    (ebut:alist but-file)
 					    nil nil nil 'ebut)))
 	       (beep))
-	     (ebut:label-to-key but-lbl)))))
-  (unless (called-interactively-p 'interactive)
-    (setq key-file (hpath:validate (hpath:substitute-value key-file))))
-  (let ((but (ebut:get key (find-file-noselect key-file))))
-    (if but (hbut:act but)
+	     (ebut:label-to-key but-lbl))
+	   but-file)))
+  (if key-file
+      (unless (called-interactively-p 'interactive)
+	(setq key-file (hpath:validate (hpath:substitute-value key-file))))
+    (setq key-file buffer-file-name))
+  (let ((but (and key-file (ebut:get key (find-file-noselect key-file)))))
+    (if but
+	(hbut:act but)
       (hypb:error "(link-to-ebut): No button `%s' in `%s'."
 		  (ebut:key-to-label key)
 		  key-file))))
@@ -393,7 +398,9 @@ available.  Filename may be given without the .info suffix."
     (hypb:error "(link-to-Info-node): Invalid Info node: `%s'" string)))
 
 (defact link-to-ibut (key &optional key-file point)
-  "Performs an action given by an implicit button, specified by KEY-FILE, KEY and optional POINT.
+  "Performs an action given by an implicit button, specified by KEY, optional KEY-FILE and POINT.
+KEY-FILE defaults to the current buffer's file and POINT to the current point.
+
 When creating the button, point must be on the implicit button to which to link
 and its buffer must have a file attached."
   (interactive
@@ -405,9 +412,8 @@ and its buffer must have a file attached."
 	   defaults
 	 (list nil nil nil)))))
   (if key-file
-      (or (called-interactively-p 'interactive)
-	  (null key-file)
-	  (setq key-file (hpath:validate (hpath:substitute-value key-file))))
+      (unless (called-interactively-p 'interactive)
+	(setq key-file (hpath:validate (hpath:substitute-value key-file))))
     (setq key-file buffer-file-name))
   (let (but)
     (save-excursion
@@ -532,12 +538,11 @@ package to display search results."
 
 (defact man-show (topic)
   "Displays man page on TOPIC, which may be of the form <command>(<section>).
-If using the Superman manual entry package, see the documentation for
-`sm-notify' to control where the man page is displayed."
+Uses `hpath:display-where' setting to control where the man page is displayed."
   (interactive "sManual topic: ")
-  (let ((display-buffer-function
-	 (lambda (buffer &rest unused) (hpath:display-buffer buffer))))
-    (manual-entry topic)))
+  (require 'man)
+  (let ((Man-notify-method 'meek))
+    (hpath:display-buffer (man topic))))
 
 (defact rfc-toc (&optional buf-name opoint)
   "Computes and displays summary of an Internet rfc in BUF-NAME.

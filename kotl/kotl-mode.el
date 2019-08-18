@@ -2398,7 +2398,7 @@ confirmation."
      (if value
 	 (setq value (read-minibuffer
 		      (format "Change the value of `%s' to: " attribute)
-		      (prin1-to-string value)))
+		      (prin1-to-string value t)))
        (setq value (read-minibuffer
 		    (format "Set property `%s' to (use double quotes around a string): " attribute))))
      (list attribute value nil)))

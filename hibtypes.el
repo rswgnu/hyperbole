@@ -148,13 +148,13 @@ display options."
     (let ((path (hpath:at-p))
 	  full-path)
       (if path
-	  (progn (ibut:label-set path)
+	  (progn (apply #'ibut:label-set path (hpath:start-end path))
 		 (hact 'link-to-file path))
 	;;
 	;; Match to Emacs Lisp and Info files without any directory component.
 	(if (setq path (hpath:delimited-possible-path))
 	    (cond ((string-match "\\`[^\\\\/~]+\\.elc?\\(\\.gz\\)?\\'" path)
-		   (ibut:label-set path)
+		   (apply #'ibut:label-set path (hpath:start-end path))
 		   (if (string-match hpath:prefix-regexp path)
 		       (hact 'hpath:find path)
 		     (setq full-path (locate-library path))
@@ -169,10 +169,10 @@ display options."
 			(string-match "\\`(\\([^ \t\n\r\f]+\\))\\'" path)
 			(save-match-data (require 'info))
 			(Info-find-file (match-string 1 path) t))
-		   (ibut:label-set path)
+		   (apply #'ibut:label-set path (hpath:start-end path))
 		   (hact 'link-to-Info-node (format "%sTop" path)))
 		  ((string-match hpath:info-suffix path)
-		   (ibut:label-set path)
+		   (apply #'ibut:label-set path (hpath:start-end path))
 		   (hact 'link-to-Info-node (format "(%s)Top" path)))
 		  ;; Otherwise, fall through and allow other implicit
 		  ;; button types to handle this context.
@@ -636,7 +636,7 @@ Requires the Emacs builtin Tramp library for ftp file retrievals."
 (defconst elink:end   ">"
   "String matching the end of a link to a Hyperbole explicit button.")
 
-(defib link-to-ebut ()
+(defib elink ()
   "At point, activates a link to an explicit button.
 The explicit button's action is executed in the context of the current buffer.
 
@@ -655,7 +655,7 @@ Recognizes the format '<elink:' <button label> '>', e.g. <elink: project-list>."
 (defconst glink:end   ">"
   "String matching the end of a link to a Hyperbole global button.")
 
-(defib link-to-gbut ()
+(defib glink ()
   "At point, activates a link to a global button.
 The global button's action is executed in the context of the current buffer.
 
@@ -674,8 +674,8 @@ Recognizes the format '<glink:' <button label> '>', e.g. <glink: open todos>."
 (defconst ilink:end   ">"
   "String matching the end of a link to a Hyperbole implicit button.")
 
-(defib link-to-ibut ()
-  "At point, activates a link to an implicit button.
+(defib ilink ()
+  "At point, activates a link to a labeled implicit button.
 The implicit button's action is executed in the context of the current buffer.
 
 Recognizes the format '<ilink:' <button label> '>', e.g. <ilink: my sequence of keys>."
@@ -1156,7 +1156,7 @@ original DEMO file."
     (if (looking-at hbut:source-prefix)
 	(let ((src (hbut:source)))
 	  (if src
-	      (progn (if (not (stringp src)) (setq src (prin1-to-string src)))
+	      (progn (if (not (stringp src)) (setq src (prin1-to-string src t)))
 		     (ibut:label-set src (point) (progn (end-of-line) (point)))
 		     (hact 'hyp-source src)))))))
 
