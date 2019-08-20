@@ -3,7 +3,7 @@
 ;; Copyright (C) 1992-2019  Free Software Foundation, Inc.
 
 ;; Author:           Bob Weiner
-;; Maintainer:       Bob Weiner <rsw@gnu.org> and Mats Lidell <matsl@gnu.org>
+;; Maintainer:       Bob Weiner <rsw@gnu.org>, Mats Lidell <matsl@gnu.org>
 ;; Created:          06-Oct-92 at 11:52:51
 ;; Released:         18-Aug-19
 ;; Version:          7.0.3.3
