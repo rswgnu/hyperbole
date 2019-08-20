@@ -59,58 +59,58 @@
 ;;; Button data accessor functions
 ;;; ------------------------------------------------------------------------
 (defun hbdata:action (hbdata)
-  "[Hyp V2] Returns action overriding button's action type or nil."
+  "[Hyp V2] Return action overriding button's action type or nil."
   (nth 1 hbdata))
 
 (defun hbdata:actype (hbdata)
-  "Returns the action type in HBDATA as a string."
+  "Return the action type in HBDATA as a string."
   (let ((nm (symbol-name (nth 3 hbdata))))
     (and nm (if (or (= (length nm) 2) (string-match "::" nm))
 		nm (concat "actypes::" nm)))))
 
 (defun hbdata:args (hbdata)
-  "Returns the list of any arguments given in HBDATA."
+  "Return the list of any arguments given in HBDATA."
   (nth 4 hbdata))
 
 (defun hbdata:categ (hbdata)
-  "Returns the category of HBDATA's button."
+  "Return the category of HBDATA's button."
   'explicit)
 
 (defun hbdata:creator (hbdata)
-  "Returns the user-id of the original creator of HBDATA's button."
+  "Return the user-id of the original creator of HBDATA's button."
   (nth 5 hbdata))
 
 (defun hbdata:create-time (hbdata)
-  "Returns the original creation time given for HBDATA's button."
+  "Return the original creation time given for HBDATA's button."
   (nth 6 hbdata))
 
 (defun hbdata:key (hbdata)
-  "Returns the indexing key in HBDATA as a string."
+  "Return the indexing key in HBDATA as a string."
   (car hbdata))
 
 (defun hbdata:loc-p (hbdata)
-  "[Hyp V1] Returns 'L iff HBDATA referent is within a local file system.
+  "[Hyp V1] Return 'L iff HBDATA referent is within a local file system.
 Returns 'R if remote and nil if irrelevant for button action type."
   (nth 1 hbdata))
 
 (defun hbdata:modifier (hbdata)
-  "Returns the user-id of the most recent modifier of HBDATA's button.
+  "Return the user-id of the most recent modifier of HBDATA's button.
 Nil is returned when button has not been modified."
   (nth 7 hbdata))
 
 (defun hbdata:mod-time (hbdata)
-  "Returns the time of the most recent change to HBDATA's button.
+  "Return the time of the most recent change to HBDATA's button.
 Nil is returned when button has not beened modified."
   (nth 8 hbdata))
 
 (defun hbdata:referent (hbdata)
-  "Returns the referent name in HBDATA."
+  "Return the referent name in HBDATA."
   (nth 2 hbdata))
 
 (defun hbdata:search (buf label partial)
-  "Go to Hyperbole hbdata BUF and find LABEL whole or PARTIAL matches.
- Search is case-insensitive.  Returns list with elements:
- (<button-src> <label-key1> ... <label-keyN>)."
+  "Go to Hyperbole hbdata BUF and find LABEL whole or PARTIAL match.
+Search is case-insensitive.  Return list with elements:
+\(<button-src> <label-key1> ... <label-keyN>)."
   (set-buffer buf)
   (let ((case-fold-search t) (src-matches) (src) (matches) (end))
     (goto-char (point-min))
@@ -135,11 +135,11 @@ Nil is returned when button has not beened modified."
 ;;; ------------------------------------------------------------------------
 
 (defun hbdata:build (&optional mod-lbl-key but-sym)
-  "Constructs button data from optional MOD-LBL-KEY and BUT-SYM; modifies BUT-SYM attributes.
+  "Construct button data from optional MOD-LBL-KEY and BUT-SYM; modifies BUT-SYM attributes.
 MOD-LBL-KEY nil means create a new entry, otherwise modify existing one.
 Nil BUT-SYM means use 'hbut:current'.  If successful, returns a cons of
  (button-data . button-instance-str), else nil."
-  (let* ((but) 
+  (let* ((but)
 	 (b (hattr:copy (or but-sym 'hbut:current) 'but))
 	 (l (hattr:get b 'loc))
 	 (key (or mod-lbl-key (hattr:get b 'lbl-key)))
@@ -169,7 +169,7 @@ Nil BUT-SYM means use 'hbut:current'.  If successful, returns a cons of
 		(if (hbdata:to-entry-buf loc dir) (forward-line 1))))
 	  (let ((inst-num (hbdata:instance-last new-key loc dir)))
 	    (setq lbl-instance (if inst-num
-				   (hbdata:instance-next 
+				   (hbdata:instance-next
 				    (concat new-key ebut:instance-sep
 					    (int-to-string inst-num))))))))
       (when (or entry (not mod-lbl-key))
@@ -206,7 +206,7 @@ Nil BUT-SYM means use 'hbut:current'.  If successful, returns a cons of
 	  (cons hbdata lbl-instance))))))
 
 (defun hbdata:get-entry (lbl-key key-src &optional directory)
-  "Returns button data entry given by LBL-KEY, KEY-SRC and optional DIRECTORY.
+  "Return button data entry given by LBL-KEY, KEY-SRC and optional DIRECTORY.
 Returns nil if no matching entry is found.
 A button data entry is a list of attribute values.  Use methods from
 class 'hbdata' to operate on the entry."
@@ -215,7 +215,7 @@ class 'hbdata' to operate on the entry."
    lbl-key key-src directory))
 
 (defun hbdata:instance-next (lbl-key)
-  "Returns string for button instance number following LBL-KEY's.
+  "Return string for button instance number following LBL-KEY's.
 Nil if LBL-KEY is nil."
   (and lbl-key
        (if (string-match
@@ -227,11 +227,11 @@ Nil if LBL-KEY is nil."
 	 ":2")))
 
 (defun hbdata:instance-last (lbl-key key-src &optional directory)
-  "Returns highest instance number for repeated button label.
+  "Return highest instance number for repeated button label.
 1 if not repeated, nil if no instance.
 Takes arguments LBL-KEY, KEY-SRC and optional DIRECTORY."
   (hbdata:apply-entry
-   (lambda () 
+   (lambda ()
      (if (looking-at "[0-9]+")
 	 (string-to-number (match-string 0))
        1))
@@ -270,7 +270,7 @@ Use methods from class 'hbdata' to operate on the entry."
   (delete-region (point) (progn (forward-line 1) (point))))
 
 (defun hbdata:to-entry (but-key key-src &optional directory instance)
-  "Returns button data entry indexed by BUT-KEY, KEY-SRC, optional DIRECTORY.
+  "Return button data entry indexed by BUT-KEY, KEY-SRC, optional DIRECTORY.
 Returns nil if entry is not found.  Leaves point at start of entry when
 successful or where entry should be inserted if unsuccessful.
 A button entry is a list.  Use methods from class 'hbdata' to operate on the
@@ -295,7 +295,7 @@ but-key."
 
 (defun hbdata:apply-entry (function lbl-key key-src &optional directory
 			   create instance)
-  "Invokes FUNCTION with point at hbdata entry given by LBL-KEY, KEY-SRC, optional DIRECTORY.
+  "Invoke FUNCTION with point at hbdata entry given by LBL-KEY, KEY-SRC, optional DIRECTORY.
 With optional CREATE, if no such line exists, inserts a new file entry at the
 beginning of the hbdata file (which is created if necessary).
 INSTANCE non-nil means search for any button instance matching LBL-KEY and
@@ -349,7 +349,7 @@ Returns value of evaluation when a matching entry is found or nil."
     rtn))
 
 (defun hbdata:to-hbdata-buffer (dir &optional create)
-  "Reads in the file containing DIR's button data, if any, and returns buffer.
+  "Read in the file containing DIR's button data, if any, and return buffer.
 If it does not exist and optional CREATE is non-nil, creates a new
 one and returns buffer, otherwise returns nil."
   (let* ((file (expand-file-name hattr:filename (or dir default-directory)))
@@ -361,11 +361,11 @@ one and returns buffer, otherwise returns nil."
 	(progn (set-buffer buf)
 	       (or (verify-visited-file-modtime (get-file-buffer file))
 		   (cond ((yes-or-no-p
-			   "Hyperbole button data file has changed, read new contents? ") 
+			   "Hyperbole button data file has changed, read new contents? ")
 			  (revert-buffer t t)
 			  )))
 	       (or (= (point-max) 1) (eq (char-after 1) ?\^L)
-		   (error "File %s is not a valid Hyperbole button data table." file))
+		   (error "File %s is not a valid Hyperbole button data table" file))
 	       (or (equal (buffer-name) file) (rename-buffer file))
 	       (setq buffer-read-only nil)
 	       (or existing-file (hbmap:dir-add (file-name-directory file)))
@@ -373,9 +373,9 @@ one and returns buffer, otherwise returns nil."
 
 
 (defun hbdata:to-entry-buf (key-src &optional directory create)
-  "Moves point to end of line in but data buffer matching KEY-SRC.
+  "Move point to end of line in but data buffer matching KEY-SRC.
 Uses hbdata file in KEY-SRC's directory, or optional DIRECTORY or if nil, uses
-default-directory.
+`default-directory'.
 With optional CREATE, if no such line exists, inserts a new file entry at the
 beginning of the hbdata file (which is created if necessary).
 Returns non-nil if KEY-SRC is found or created, else nil."
@@ -411,11 +411,11 @@ Returns non-nil if KEY-SRC is found or created, else nil."
     rtn))
 
 (defun hbdata:write (&optional orig-lbl-key but-sym)
-  "Tries to write Hyperbole button data from optional ORIG-LBL-KEY and BUT-SYM.
+  "Try to write Hyperbole button data from optional ORIG-LBL-KEY and BUT-SYM.
 ORIG-LBL-KEY nil means create a new entry, otherwise modify existing one.
-BUT-SYM nil means use 'hbut:current'.  If successful, returns 
+BUT-SYM nil means use 'hbut:current'.  If successful, return
 a button instance string to append to button label or t when first instance.
-On failure, returns nil."
+On failure, return nil."
   (let ((cons (hbdata:build orig-lbl-key but-sym))
 	entry lbl-instance)
     (if (or (and buffer-file-name

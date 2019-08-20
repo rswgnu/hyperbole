@@ -70,7 +70,7 @@
 
 (defvar hmouse-mod--global-map nil
   "Global key map installed by `hmouse-mod-enable' function.
-Translates self-insert-command characters into control and meta characters if
+Translates `self-insert-command' characters into control and meta characters if
 the Action or Assist Keys are depressed at the time of key press.")
 
 (defvar hmouse-mod--prior-global-map nil
@@ -114,16 +114,16 @@ mode, if no other key is pressed while a Smart Key is depressed."
 ;;; ************************************************************************
 
 (defun hmouse-mod-disable ()
-  "Restores the global keymap to its state prior to enabling of `hmouse-mod-mode'.
+  "Restore the global keymap to its state prior to enabling of `hmouse-mod-mode'.
 This stops the Smart Keys from acting as modifier keys."
   (use-global-map (if (keymapp hmouse-mod--prior-global-map)
 		      hmouse-mod--prior-global-map
 		    global-map)))
 
 (defun hmouse-mod-enable ()
-  "Creates `hmouse-mod--global-map' and installs it as the current global map.
+  "Create `hmouse-mod--global-map' and install it as the current global map.
 It accounts for modifier Smart Keys."
-  (error "(hmouse-mod-mode): Don't use this; it conflicts with Emacs mouse bindings.")
+  (error "(hmouse-mod-mode): Don't use this; it conflicts with Emacs mouse bindings")
 
   (setq hmouse-mod--global-map (copy-keymap global-map))
   (substitute-key-definition
@@ -135,7 +135,7 @@ It accounts for modifier Smart Keys."
   (use-global-map hmouse-mod--global-map))
 
 (defun hmouse-mod-execute-command (key count)
-  "Executes the command associated with keyboard KEY or if KEY is a prefix, records it.
+  "Execute the command associated with keyboard KEY or if KEY is a prefix, records it.
 Second argument COUNT is used as a prefix argument to the command."
   (if (stringp key) (setq key (concat hmouse-mod--prefix key)))
   (let ((binding (key-binding key))
@@ -151,11 +151,11 @@ Second argument COUNT is used as a prefix argument to the command."
 	      binding)))
 	  ((symbolp binding)
 	   (setq hmouse-mod--prefix nil)
-	   (error "(hmouse-mod-execute-command): {%s} not bound to a command."
+	   (error "(hmouse-mod-execute-command): {%s} not bound to a command"
 		  key))
 	  ((integerp binding)
 	   (setq hmouse-mod--prefix nil)
-	   (error "(hmouse-mod-execute-command): {%s} invalid key sequence."
+	   (error "(hmouse-mod-execute-command): {%s} invalid key sequence"
 		  (key-description (vector key))))
 	  ((stringp key)
 	   (or noninteractive (message (key-description key)))

@@ -30,7 +30,7 @@
 ;;       words as a single argument.
 ;;
 ;;   2.  Logical `hyrolo-and', `hyrolo-or', `hyrolo-not', and `hyrolo-xor' rolo
-;;       entry string filter functions. They take any number of string or
+;;       entry string filter functions.  They take any number of string or
 ;;       boolean arguments and may be nested.  NOTE THAT THESE FUNCTIONS
 ;;       SHOULD NEVER BE CALLED DIRECTLY UNLESS THE FREE VARIABLES `start'
 ;;       and `end' ARE BOUND BEFOREHAND.
@@ -187,7 +187,7 @@ of applications of SEXP that matched entries."
 			curr-entry-level (buffer-substring start end-entry-hdr)
 			end (hyrolo-to-entry-end include-sub-entries curr-entry-level))
 		  (let ((result (eval sexp)))
-		    (or count-only 
+		    (or count-only
 			(and result (= num-found 0) hdr-pos
 			     (let* ((src (or (buffer-file-name hyrolo-buf)
 					     hyrolo-buf))

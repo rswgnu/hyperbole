@@ -48,7 +48,7 @@
 	 (not (stringp htz:local)))
     (progn
       ;; Comment out the following `error' line...
-      (error "(hsettings.el): Configure the TIMEZONE SETTING section in this file.")
+      (error "(hsettings.el): Configure the TIMEZONE SETTING section in this file")
       ;; ... and uncomment the following line, substituting an appropriate
       ;;     timezone from the list in the variable, `htz:world-timezones'
       ;;     in the file, "htz.el".
@@ -164,7 +164,7 @@ package to display search results."
       (user-error "(Hyperbole): Invalid web search service `%s'" service-name))))
 
 (defcustom inhibit-hyperbole-messaging t
-  "*Determines whether Hyperbole supports explicit buttons in mail and news buffers.
+  "*Determine whether Hyperbole supports explicit buttons in mail and news buffers.
 The default of t means disable such support (work remains to
 modernize these features).  When t, Hyperbole will not alter
 messaging mode hooks nor overload functions from these packages,
@@ -176,7 +176,7 @@ to your personal Emacs initialization file, prior to loading
 Hyperbole, and then restart Emacs."
   :type 'boolean
   :initialize 'custom-initialize-set
-  :set (lambda (symbol value) 
+  :set (lambda (symbol value)
 	 ;; Invert value to produce ARG for hyperbole-toggle-messaging.
 	 (hyperbole-toggle-messaging (if value 0 1)))
   :group 'hyperbole-buttons)

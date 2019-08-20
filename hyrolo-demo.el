@@ -9,6 +9,8 @@
 ;;
 ;; This file is part of GNU Hyperbole.
 
+;;; Commentary:
+
 ;;; Code:
 
 ;;; ************************************************************************
@@ -87,3 +89,4 @@ single argument."
 (global-set-key "\C-x4r" 'hyrolo-demo-fgrep)
 
 (provide 'hyrolo-demo)
+;;; hyrolo-demo.el ends here

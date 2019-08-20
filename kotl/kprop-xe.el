@@ -74,7 +74,7 @@ properties."
   ;; of XEmacs.
   (let ((extent (make-extent start end object)))
     (if (null extent)
-	(error "(kproperty:put): No extent at %d-%d to add properties %s" 
+	(error "(kproperty:put): No extent at %d-%d to add properties %s"
 	       start end property-list))
     (if (/= (mod (length property-list) 2) 0)
 	(error "(kproperty:put): Property-list has odd number of elements, %s"

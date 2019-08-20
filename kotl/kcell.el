@@ -46,7 +46,7 @@ Add to this list but don't remove any of the default elements.")
   (knode:copy kcell))
 
 (defun kcell:create (contents idstamp &optional plist)
-  "Return a new kcell which stores CONTENTS (a string or nil), has permanent IDSTAMP (an integer), and optional additional property list, PLIST.
+  "Return a new kcell which store CONTENTS (a string or nil), has permanent IDSTAMP (an integer), and optional additional property list, PLIST.
 User id of `creator' of cell and `create-time' are added to cell's PLIST if
 not already there."
   (and contents (not (stringp contents))
@@ -81,7 +81,7 @@ not already there."
   (knode:get-attr kcell 'plist))
 
 (defun kcell:ref-to-id (cell-ref)
-  "Returns a CELL-REF string converted to a cell identifier string.
+  "Return a CELL-REF string converted to a cell identifier string.
 If CELL-REF contains both a relative and a permanent id, the permanent id is
 returned.  If CELL-REF is invalid, nil is returned.
 

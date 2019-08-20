@@ -66,9 +66,9 @@ Valid values are: nil, Mh-init, Rmail-init or Vm-init."
 ;;; ========================================================================
 
 (defun hmail:hbdata-start (&optional msg-start msg-end)
-  "Returns point immediately before any Hyperbole button data in current msg.
-Returns message end point when no button data is found.
-Has side-effect of widening buffer. 
+  "Return point immediately before any Hyperbole button data in current msg.
+Return message end point when no button data is found.
+Has side-effect of widening buffer.
 Message's displayable part begins at optional MSG-START and ends at or before
 MSG-END."
   (widen)
@@ -78,8 +78,8 @@ MSG-END."
     (if (search-backward hmail:hbdata-sep msg-start t) (1- (point)) msg-end)))
 
 (defun hmail:hbdata-to-p ()
-  "Moves point to Hyperbole but data start in an e-mail msg.
-Returns t if button data is found."
+  "Move point to Hyperbole but data start in an e-mail msg.
+Return t if button data is found."
   (and (cond ((memq major-mode (list hmail:reader hmail:modifier))
 	      (hmail:msg-narrow) t)
 	     ((or (hmail:lister-p) (hnews:lister-p)) t)
@@ -92,7 +92,7 @@ Returns t if button data is found."
 	     (progn (forward-line 1) t)))))
 
 (defun hmail:browser-p ()
-  "Returns t iff current major mode helps browse received e-mail messages."
+  "Return t iff current major mode helps browse received e-mail messages."
   (memq major-mode (list hmail:reader hmail:lister)))
 
 (defun hmail:buffer (&optional buf invisible-flag)
@@ -123,7 +123,7 @@ Optional SUBJECT and HELP message may also be given."
 	     "Replace subject, compose message, and then mail.")))
 
 (defun hmail:composing-dir (key-src)
-  "If button KEY-SRC is a mail/news composure buffer, returns composure directory, else nil."
+  "If button KEY-SRC is a mail/news composure buffer, return composure directory, else nil."
   (save-excursion
     (and (bufferp key-src)
 	 (progn (set-buffer key-src)
@@ -132,11 +132,11 @@ Optional SUBJECT and HELP message may also be given."
 	 default-directory)))
 
 (defun hmail:editor-p ()
-  "Returns t iff current major mode edits Hyperbole e-mail/news messages."
+  "Return t iff current major mode edits Hyperbole e-mail/news messages."
   (memq major-mode (list hmail:composer hnews:composer hmail:modifier)))
 
 (defun hmail:init (class-prefix func-suffix-list)
-  "Sets up CLASS-PREFIX functions with aliases for FUNC-SUFFIX-LIST.
+  "Set up CLASS-PREFIX functions with aliases for FUNC-SUFFIX-LIST.
 `hmail:reader' should be set appropriately before this is called."
   (when hmail:reader
     (let* ((reader-name (symbol-name hmail:reader))
@@ -163,15 +163,15 @@ Optional arguments are ADDRESS, CC list and SUBJECT of mail."
 
 
 (defun hmail:lister-p ()
-  "Returns t iff current major mode is a Hyperbole e-mail lister mode."
+  "Return t iff current major mode is a Hyperbole e-mail lister mode."
   (eq major-mode hmail:lister))
 
 (defun hnews:lister-p ()
-  "Returns t iff current major mode is a Hyperbole news summary lister mode."
+  "Return t iff current major mode is a Hyperbole news summary lister mode."
   (eq major-mode hnews:lister))
 
 (defun hmail:mode-is-p ()
-  "Returns current major mode if a Hyperbole e-mail or news mode, else nil."
+  "Return current major mode if a Hyperbole e-mail or news mode, else nil."
   (car (memq major-mode
 	     (list hmail:reader hmail:composer hmail:lister hmail:modifier
 		   hnews:reader hnews:composer hnews:lister))))
@@ -187,7 +187,7 @@ MSG-END."
   (narrow-to-region msg-start (hmail:hbdata-start msg-start msg-end)))
 
 (defun hmail:reader-p ()
-  "Returns t iff current major mode shows received Hyperbole e-mail messages."
+  "Return t iff current major mode show received Hyperbole e-mail messages."
   (memq major-mode (list hmail:reader hmail:modifier)))
 
 (defun hmail:region (start end &optional buf invisible-flag)
@@ -214,7 +214,7 @@ buffer.  It may be a buffer or buffer name."
 ;;; ========================================================================
 
 (defun rmail:init ()
-  "Initializes Hyperbole abstract mail interface for a particular mail reader.
+  "Initialize Hyperbole abstract mail interface for a particular mail reader.
 `hmail:reader' should be set appropriately before this is called."
   (hmail:init "rmail:" '("msg-hdrs-full" "msg-narrow" "msg-num"
 			 "msg-prev" "msg-next"
@@ -227,7 +227,7 @@ buffer.  It may be a buffer or buffer name."
   "String header preceding an e-mail received message-id.")
 
 (defun rmail:msg-id-get ()
-  "Returns current msg id for an `hmail:reader' buffer as a string, else nil.
+  "Return current msg id for an `hmail:reader' buffer as a string, else nil.
 Signals error when current mail reader is not supported."
   (let* ((reader (symbol-name hmail:reader))
 	 ;; (toggled)

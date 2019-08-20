@@ -415,7 +415,7 @@ If between kcells, move to the previous one.  The current cell may be hidden."
   (if pos (goto-char pos))
   (kview:end-of-actual-line)
   (cond ((null kview)
-	 (error "(kcell-view:to-label-end): Invalid kview; try {M-x kotl-mode RET} to fix it."))
+	 (error "(kcell-view:to-label-end): Invalid kview; try {M-x kotl-mode RET} to fix it"))
 	(t
 	 (let ((found))
 	   (if (not (setq found (kproperty:get (1- (point)) 'kcell)))
@@ -518,7 +518,7 @@ level."
       (forward-char 1)))
 
 (defun kview:buffer (kview)
-  "Return kview's buffer or nil if argument is not a kview."
+  "Return KVIEW's buffer or nil if argument is not a kview."
   (if (kview:is-p kview)
       (kview:get-attr kview 'view-buffer)))
 
@@ -557,11 +557,11 @@ BLANK-LINES, LEVELS-TO-SHOW, and LINES-TO-SHOW may also be given, otherwise defa
 
   (let ((buf (get-buffer buffer-name)))
     (cond ((null buf)
-	   (error "(kview:create): No such buffer, `%s'." buffer-name))
+	   (error "(kview:create): No such buffer, `%s'" buffer-name))
 	  ((or (null id-counter) (= id-counter 0))
 	   (setq id-counter 0))
 	  ((not (integerp id-counter))
-	   (error "(kview:create): 2nd arg, `%s', must be an integer." id-counter)))
+	   (error "(kview:create): 2nd arg, `%s', must be an integer" id-counter)))
     (set-buffer buf)
     ;; Don't recreate view if it exists.
     (unless (and (boundp 'kview) (kview:is-p kview) (eq (kview:buffer kview) buf))
@@ -760,7 +760,7 @@ value may differ from the value passed in.)"
   (if (listp object) (eq (car object) 'kview)))
 
 (defun kview:kotl (kview)
-  "Return kview's kotl object or nil if argument is not a kview."
+  "Return KVIEW's kotl object or nil if argument is not a kview."
   (if (kview:is-p kview)
       (kview:get-attr kview 'kotl)))
 
@@ -776,36 +776,36 @@ non-nil if cell is to be the child of the preceding cell."
   (kview:get-attr kview 'label-function))
 
 (defun kview:label-min-width (kview)
-  "Return kview's label-min-width setting or nil if argument is not a kview.
+  "Return KVIEW's label-min-width setting or nil if argument is not a kview.
 See documentation for kview:default-label-min-width."
   (if (kview:is-p kview)
       (kview:get-attr kview 'label-min-width)))
 
 (defun kview:label-separator (kview)
-  "Return kview's label-separator setting or nil if argument is not a kview.
+  "Return KVIEW's label-separator setting or nil if argument is not a kview.
 See documentation for kview:default-label-separator."
   (if (kview:is-p kview)
       (kview:get-attr kview 'label-separator)))
 
 (defun kview:label-separator-length (kview)
-  "Return kview's label-separator length or nil if argument is not a kview.
+  "Return KVIEW's label-separator length or nil if argument is not a kview.
 See documentation for kview:default-label-separator."
   (kview:get-attr kview 'label-separator-length))
 
 (defun kview:label-type (kview)
-  "Return kview's label-type setting or nil if argument is not a kview.
+  "Return KVIEW's label-type setting or nil if argument is not a kview.
 See documentation for kview:default-label-type."
   (if (kview:is-p kview)
       (kview:get-attr kview 'label-type)))
 
 (defun kview:level-indent (kview)
-  "Return kview's level-indent setting or nil if argument is not a kview.
+  "Return KVIEW's level-indent setting or nil if argument is not a kview.
 See documentation for kview:default-level-indent."
   (if (kview:is-p kview)
       (kview:get-attr kview 'level-indent)))
 
 (defun kview:map-branch (func kview &optional first-p visible-p)
-  "Applies FUNC to the sibling trees from point forward within KVIEW and returns results as a list.
+  "Apply FUNC to the sibling trees from point forward within KVIEW and return results as a list.
 With optional FIRST-P non-nil, begins with first sibling in current branch.
 With optional VISIBLE-P, considers only those sibling cells that are visible
 in the view.
@@ -835,7 +835,7 @@ See also `kview:map-region', `kview:map-siblings' and `kview:map-tree'."
 	  (nreverse results)))))
 
 (defun kview:map-region (func kview &optional visible-p start end)
-  "Applies FUNC to each cell in the region within KVIEW and returns results as a list.
+  "Apply FUNC to each cell in the region within KVIEW and return results as a list.
 With optional VISIBLE-P, considers only those cells that are visible
 in the view.  With optional START and END positions, uses these rather
 than the bounds of the active region.
@@ -875,7 +875,7 @@ See also `kview:map-tree', `kview:map-branch’, and ‘kview:map-siblings’."
 	      (t (error "(kview:map-region): No region or invalid start and end positions")))))))
 
 (defun kview:map-siblings (func kview &optional first-p visible-p)
-  "Applies FUNC to the sibling cells from point forward within KVIEW and returns results as a list.
+  "Apply FUNC to the sibling cells from point forward within KVIEW and return results as a list.
 With optional FIRST-P non-nil, begins with first sibling in current branch.
 With optional VISIBLE-P, considers only those sibling cells that are visible
 in the view.
@@ -906,11 +906,11 @@ See also `kview:map-branch' and `kview:map-tree'."
 	  (nreverse results)))))
 
 (defun kview:map-expanded-tree (func kview &optional top-p)
-  "Temporarily expands the tree at point, applies FUNC to the tree in the KVIEW and returns results as a list.
+  "Temporarily expand the tree at point, apply FUNC to the tree in the KVIEW and return results as a list.
 This is for a FUNC that requires all cells in the tree be fully visible and
 expanded before operating upon it.  If this is not the case, use
 `kview:map-tree' instead.  FUNC may not change the number of or the order of
-the cells. 
+the cells.
 
 With optional TOP-P non-nil, maps over all of kview's cells.
 
@@ -961,7 +961,7 @@ See also `kview:map-region', `kview:map-branch' and `kview:map-siblings'."
 	  (nreverse results)))))
 
 (defun kview:map-tree (func kview &optional top-p visible-p)
-  "Applies FUNC to the tree starting at point within KVIEW and returns results as a list.
+  "Apply FUNC to the tree starting at point within KVIEW and return results as a list.
 With optional TOP-P non-nil, maps over all of kview's cells.
 With optional VISIBLE-P, considers only those cells that are visible in the
 view.
@@ -1118,7 +1118,7 @@ displayed, since it has hidden branches."
      kview t start end)))
 
 (defun kview:set-label-type (kview new-type)
-  "Change kview's label display type to NEW-TYPE, updating all displayed labels.
+  "Change KVIEW's label display type to NEW-TYPE, updating all displayed labels.
 See documentation for variable, kview:default-label-type, for
 valid values of NEW-TYPE."
   (interactive (list kview
@@ -1139,7 +1139,7 @@ valid values of NEW-TYPE."
 			 (intern new-type-str)))))
   (if (not (memq new-type '(alpha legal id ;; no partial-alpha star
 			    )))
-      (error "(kview:set-label-type): Invalid label type, `%s'." new-type))
+      (error "(kview:set-label-type): Invalid label type, `%s'" new-type))
   (let ((old-label-type (kview:label-type kview)))
     (if (eq old-label-type new-type)
 	;; Per kview function definitions might have changed, so reset them.
@@ -1150,7 +1150,7 @@ valid values of NEW-TYPE."
       (kvspec:update t))))
 
 (defun kview:top-cell (kview)
-  "Return kview's invisible top cell with idstamp 0 or nil if argument is not a kview."
+  "Return KVIEW's invisible top cell with idstamp 0 or nil if argument is not a kview."
   (if (kview:is-p kview)
       (kview:get-attr kview 'top-cell)))
 
@@ -1174,7 +1174,7 @@ or marker, `%s'" pos))
 ;;; ************************************************************************
 
 (defun kview:get-attr (obj attribute)
-  "Return the value of OBJECT's ATTRIBUTE."
+  "Return the value of OBJ's ATTRIBUTE."
   (car (cdr (memq attribute (car (cdr (memq 'plist obj)))))))
 
 (defun kcell-view:next-kcell (&optional visible-p label-sep-len)
@@ -1207,7 +1207,7 @@ unless no previous cell."
 	(progn (goto-char pos) t))))
 
 (defun kview:set-attr (obj attribute value)
-  "Set OBJECT's ATTRIBUTE to VALUE and return VALUE."
+  "Set OBJ's ATTRIBUTE to VALUE and return VALUE."
   (let* ((plist-ptr (cdr (memq 'plist obj)))
 	 (plist (car plist-ptr))
 	 (attr (memq attribute plist)))

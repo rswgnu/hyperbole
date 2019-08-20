@@ -28,7 +28,7 @@
 (require 'hbut)
 
 (defun hproperty:background ()
-  "Returns default background color for current frame."
+  "Return default background color for current frame."
   (or (face-background (defface default nil
 			 "Standard text face."
 			 :group 'hyperbole-buttons))
@@ -36,7 +36,7 @@
       "White"))
 
 (defun hproperty:foreground ()
-  "Returns default foreground color for current frame."
+  "Return default foreground color for current frame."
   (or (face-foreground (defface default nil
 			 "Standard text face."
 			 :group 'hyperbole-buttons))
@@ -309,7 +309,7 @@ highlighted."
 ;;; ************************************************************************
 
 (defun hproperty:cycle-but-color (&optional color)
-  "Switches button color to optional COLOR name or next item referenced by hproperty:color-ptr."
+  "Switch button color to optional COLOR name or next item referenced by hproperty:color-ptr."
   (interactive "sHyperbole button color: ")
   (if (not (display-color-p))
       nil
@@ -365,7 +365,7 @@ highlighted."
   (make-local-variable 'hproperty:item-face)
   (if (stringp background) (setq hproperty:item-highlight-color background))
   (if (not hproperty:highlight-face)
-      (progn 
+      (progn
 	(setq hproperty:highlight-face
 	      (defface hproperty:highlight-face nil
   "Item highlighting face.  Use (hproperty:set-item-highlight) to set."

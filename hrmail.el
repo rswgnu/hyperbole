@@ -37,7 +37,7 @@
 
 ;;;###autoload
 (defun Rmail-init ()
-  "Initializes Hyperbole support for Rmail mail reading."
+  "Initialize Hyperbole support for Rmail mail reading."
   (interactive)
   (setq hmail:composer  'mail-mode
 	hmail:lister    'rmail-summary-mode
@@ -93,7 +93,7 @@ This includes Hyperbole button data."
 (defun Rmail-msg-next ()        (rmail-next-undeleted-message 1))
 
 (defun Rmail-msg-num ()
-  "Returns number of Rmail message that point is within."
+  "Return number of Rmail message that point is within."
   (interactive)
   (let ((count 0) opoint)
     (save-excursion
@@ -108,8 +108,8 @@ This includes Hyperbole button data."
 (defun Rmail-msg-prev ()        (rmail-previous-undeleted-message 1))
 
 (defun Rmail-msg-to-p (mail-msg-id mail-file)
-  "Sets current buffer to start of msg with MAIL-MSG-ID in MAIL-FILE.
-Returns t if successful, else nil."
+  "Set current buffer to start of msg with MAIL-MSG-ID in MAIL-FILE.
+Return t if successful, else nil."
   (if (not (file-readable-p mail-file))
       nil
     (let ((buf (get-file-buffer mail-file)))
@@ -142,7 +142,7 @@ Returns t if successful, else nil."
       (narrow-to-region start end))))
 
 (defun Rmail-to ()
-  "Sets current buffer to a mail reader buffer."
+  "Set current buffer to a mail reader buffer."
   (and (eq major-mode 'rmail-summary-mode) (set-buffer rmail-buffer)))
 
 (defalias 'Rmail-Summ-delete        'rmail-summary-delete-forward)
@@ -152,7 +152,7 @@ Returns t if successful, else nil."
 (defalias 'Rmail-Summ-goto          'rmail-summary-goto-msg)
 
 (defun Rmail-Summ-to ()
-  "Sets current buffer to a mail listing buffer."
+  "Set current buffer to a mail listing buffer."
   (and (eq major-mode 'rmail-mode) (set-buffer rmail-summary-buffer)))
 
 (defalias 'Rmail-Summ-undelete-all  'rmail-summary-undelete-many)
@@ -210,7 +210,7 @@ Returns t if successful, else nil."
 		 (let ((subject
 			(save-excursion
 			  (if (re-search-forward "^Subject:" nil t)
-			      (progn 
+			      (progn
 				;; Try to find subject in msg header.
 				(re-search-forward "^Subject:" nil t)
 				(skip-chars-forward " \t")

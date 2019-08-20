@@ -87,7 +87,7 @@
 If the query includes a single id number, displays the original message
 submission for that id and allows browsing of the followup discussion.
 The following buffer text formats are accepted (with point prior to any
-attribute): 
+attribute):
 
    bug#id-number or bug# id-number or bug #id-number
    bug?attr1=val1&attr2=val2&attr3=val3
@@ -110,7 +110,7 @@ Note that `issue' or `debbugs' may be used as well in place of `bug'."
     (debbugs-gnu-show-discussion)))
 
 (defun debbugs-gnu-query:help (but)
-  "Makes a Gnu debbugs id number at point (optionally prefixed with a # sign) display the pretty pretted status of the bug id.
+  "Make a Gnu debbugs id number at point (optionally prefixed with a # sign) display the pretty pretted status of the bug id.
 Ignores other types of Gnu debbugs query strings."
   (if (and (debbugs-version-sufficient-p)
 	   (debbugs-query:at-p)
@@ -125,7 +125,7 @@ Ignores other types of Gnu debbugs query strings."
       (hact 'smart-debbugs-gnu)))
 
 (defun debbugs-gnu-mode:help (&optional _but)
-  "Makes a Gnu debbugs listing entry at point pretty print the status of the issue to a window below."
+  "Make a Gnu debbugs listing entry at point pretty print the status of the issue to a window below."
   (condition-case ()
       (let ((display-buffer-overriding-action
 	     '(display-buffer-below-selected . nil)))
@@ -146,7 +146,7 @@ Ignores other types of Gnu debbugs query strings."
     (call-interactively (key-binding "\C-m")))
 
 (defun debbugs-gnu-query:string (url-query-string)
-  "Parses and applies attributes from URL-QUERY-STRING to display the results of a Gnu debbugs query.
+  "Parse and apply attributes from URL-QUERY-STRING to display the results of a Gnu debbugs query.
 URL-QUERY-STRING must be a valid URL query string (part after the question
 mark) of debbugs attributes and values, i.e. \"attr1=val1&attr2=val2&attr3=val3\"
 URL encoded characters are decoded.  An optional prefix of \"bug#<id-number>?\"
@@ -166,10 +166,10 @@ issue number.  Note that `issue' or `debbugs' may be used as well in place of `b
     (debbugs-gnu-query:list attr-pair-list)))
 
 (defun debbugs-gnu-query:list (query-attribute-list)
-  "Applies attributes from QUERY-ATTRIBUTE-LIST to display the results of a Gnu debbugs query.
+  "Apply attributes from QUERY-ATTRIBUTE-LIST to display the results of a Gnu debbugs query.
 Each element of the list should be of the form (attribute . attribute-value).
 Attribute may be a symbol or a string.  Common attributes include: status,
-severity, and package." 
+severity, and package."
   (require 'debbugs-gnu)
   (setq debbugs-gnu-current-query nil)
   (dolist (attr query-attribute-list)
@@ -194,7 +194,7 @@ severity, and package."
 ;;; ************************************************************************
 
 (defun debbugs-query:at-p ()
-  "Returns t if point appears to be within a debbugs id.  Id number is (match-string 2).
+  "Return t if point appear to be within a debbugs id.  Id number is (match-string 2).
 If this is a query with attributes, then (match-string 3) = \"?\" and (match-string 4) is the query attributes."
   ;; Point must be before one of the bug#222 characters to match.
   (let ((case-fold-search t))
@@ -212,7 +212,7 @@ If this is a query with attributes, then (match-string 3) = \"?\" and (match-str
 	      )))))
 
 (defun debbugs-query:status (id)
-  "Pretty prints to standard-output the status attributes of debbugs ID (a positive integer).
+  "Pretty print to `standard-output' the status attributes of debbugs ID (a positive integer).
 Ignores nil valued attributes.  Returns t unless no attributes are printed."
   (require 'debbugs-gnu)
   ;; The (car (debbugs-get-status id)) is a list of (attribute . value) pairs which we sort below.

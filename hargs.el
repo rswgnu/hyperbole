@@ -34,7 +34,7 @@
 ;;; ************************************************************************
 
 (defvar hargs:reading-p nil
-  "t only when Hyperbole is prompting user for input, else nil.")
+  "Is t only when Hyperbole is prompting user for input, else nil.")
 
 (add-hook 'completion-setup-hook #'hargs:set-string-to-complete)
 (add-hook 'minibuffer-exit-hook  #'hargs:unset-string-to-complete)
@@ -80,9 +80,9 @@
 
 
 (defun hargs:action-get (action modifying)
-  "Interactively gets list of arguments for ACTION's parameters.
+  "Interactively get list of arguments for ACTION's parameters.
 Current button is being modified when MODIFYING is non-nil.
-Returns nil if ACTION is not a list or byte-code object, has no
+Return nil if ACTION is not a list or `byte-code' object, has no
 interactive form or takes no arguments."
   (and (or (hypb:emacs-byte-code-p action) (listp action))
        (let ((interactive-form (action:commandp action)))
@@ -101,7 +101,7 @@ interactive form or takes no arguments."
 (defun hargs:delimited (start-delim end-delim
 			&optional start-regexp-flag end-regexp-flag
 			list-positions-flag exclude-regexp)
-  "Returns a normalized, single line, delimited string that point is within the first line of, or nil.
+  "Return a normalized, single line, delimited string that point is within the first line of, or nil.
 START-DELIM and END-DELIM are strings that specify the argument
 delimiters.  With optional START-REGEXP-FLAG non-nil, START-DELIM is
 treated as a regular expression.  END-REGEXP-FLAG is similar.
@@ -167,7 +167,7 @@ With optional EXCLUDE-REGEXP, any matched string is ignored if it this regexp."
 		   string))))))))
 
 (defun hargs:get (interactive-entry &optional default prior-arg)
-  "Prompts for an argument, if need be, from INTERACTIVE-ENTRY, a string.
+  "Prompt for an argument, if need be, from INTERACTIVE-ENTRY, a string.
 Optional DEFAULT is inserted after prompt.
 First character of INTERACTIVE-ENTRY must be a command character from
 the list in the documentation for `interactive' or a `+' which
@@ -178,7 +178,7 @@ May return a single value or a list of values, in which case the first
 element of the list is always the symbol 'args."
   (let (func cmd prompt)
     (cond ((or (null interactive-entry) (equal interactive-entry ""))
-	   (error "(hargs:get): Empty interactive-entry arg."))
+	   (error "(hargs:get): Empty interactive-entry arg"))
 	  ;; Hyperbole / user extension command character.  The next
 	  ;; character is the actual command character.
 	  ((eq (aref interactive-entry 0) ?+)
@@ -189,7 +189,7 @@ element of the list is always the symbol 'args."
 	   (if func
 	       (funcall func prompt default)
 	     (error
-	      "(hargs:get): Bad interactive-entry extension character: `%c'."
+	      "(hargs:get): Bad interactive-entry extension character: `%c'"
 	      cmd)))
 	  ;; Normal interactive command character
 	  (t (setq cmd (aref interactive-entry 0)
@@ -200,11 +200,11 @@ element of the list is always the symbol 'args."
 	     (if func
 		 (funcall func prompt default)
 	       (error
-		"(hargs:get): Bad interactive-entry command character: `%c'."
+		"(hargs:get): Bad interactive-entry command character: `%c'"
 		cmd))))))
 
 (defun hargs:make-iform-vector (iform-alist)
-  "Returns a vector built from IFORM-ALIST used for looking up interactive command code characters."
+  "Return a vector built from IFORM-ALIST used for looking up interactive command code characters."
   ;; Vector needs to have 1 more elts than the highest char code for
   ;; interactive commands.
   (let* ((size (1+ (car (sort (mapcar 'car iform-alist) '>))))
@@ -218,7 +218,7 @@ element of the list is always the symbol 'args."
     vec))
 
 (defun hargs:prompt (prompt default &optional default-prompt)
-  "Returns string of PROMPT including DEFAULT.
+  "Return string of PROMPT including DEFAULT.
 Optional DEFAULT-PROMPT is used to describe default value."
   (if default
       (format "%s(%s%s%s) " prompt (or default-prompt "default")
@@ -249,7 +249,7 @@ Optional DEFAULT-PROMPT is used to describe default value."
   (setq hargs:string-to-complete nil))
 
 (defun hargs:sexpression-p (&optional no-recurse)
-  "Returns an sexpression at point as a string.
+  "Return an sexpression at point as a string.
 If point follows an sexpression end character, the preceding sexpression
 is returned.  If point precedes an sexpression start character, the
 following sexpression is returned.  Otherwise, the innermost sexpression
@@ -278,12 +278,12 @@ that point is within is returned or nil if none."
 ;;; ************************************************************************
 
 (defun hargs:actype-get (actype &optional modifying)
-  "Interactively gets and returns list of arguments for ACTYPE's parameters.
+  "Interactively gets and return list of arguments for ACTYPE's parameters.
 Current button is being modified when MODIFYING is non-nil."
   (hargs:action-get (actype:action actype) modifying))
 
 (defun hargs:at-p (&optional no-default)
-  "Returns thing at point, if of hargs:reading-p type, or default.
+  "Return thing at point, if of hargs:reading-p type, or default.
 If optional argument NO-DEFAULT is non-nil, nil is returned instead of any
 default values.
 
@@ -386,7 +386,7 @@ Handles all of the interactive argument types that `hargs:iform-read' does."
 			       (t Info-current-node))))
 	       (cond ((and (stringp node) (string-match "\\`\(" node))
 		      node)
-		     (file 
+		     (file
 		      (concat "(" file ")" node))
 		     (t node)))))
 	((eq hargs:reading-p 'mail)
@@ -409,7 +409,8 @@ Handles all of the interactive argument types that `hargs:iform-read' does."
 			     (read (current-buffer)))))))
 
 (defun hargs:completion (&optional no-insert)
-  "If in the completions buffer, return completion at point.  Also insert unless optional NO-INSERT is non-nil.
+  "If in the completions buffer, return completion at point.
+Also insert unless optional NO-INSERT is non-nil.
 Insert in minibuffer if active or in other window if minibuffer is inactive."
   (interactive '(nil))
   (if (or (string-match "[* ]Completions\\*\\'" (buffer-name))
@@ -476,7 +477,7 @@ Insert in minibuffer if active or in other window if minibuffer is inactive."
 	      entry)))))
 
 (defun hargs:iform-read (iform &optional modifying)
-  "Reads action arguments according to IFORM, a list with car = 'interactive.
+  "Read action arguments according to IFORM, a list with car = 'interactive.
 Optional MODIFYING non-nil indicates current button is being modified, so
 button's current values should be presented as defaults.  Otherwise, uses
 hargs:defaults as list of defaults, if any.
@@ -487,7 +488,7 @@ See also documentation for `interactive'."
   (setq prefix-arg current-prefix-arg)
   (if (not (and (listp iform) (eq (car iform) 'interactive)))
       (error
-       "(hargs:iform-read): arg must be a list whose car = 'interactive.")
+       "(hargs:iform-read): arg must be a list whose car = 'interactive")
     (setq iform (car (cdr iform)))
     (if (or (null iform) (and (stringp iform) (equal iform "")))
 	nil
@@ -528,7 +529,7 @@ See also documentation for `interactive'."
 		  ;;   `_' means keep region in same state (active or inactive)
 		  ;;   after this command.  (XEmacs only.)
 		  ;;
-		  (while (cond 
+		  (while (cond
 			  ((eq (aref iform i) ?*))
 			  ((eq (aref iform i) ?@)
 			   (hargs:select-event-window)
@@ -561,7 +562,7 @@ See also documentation for `interactive'."
 	  (setq hargs:reading-p prev-reading-p))))))
 
 (defun hargs:read (prompt &optional predicate default err val-type)
-  "PROMPTs without completion for a value matching PREDICATE and returns it.
+  "PROMPT without completion for a value matching PREDICATE and return it.
 PREDICATE is an optional boolean function of one argument.  Optional DEFAULT
 is a string to insert after PROMPT as the default return value.  Optional
 ERR is a string to display temporarily when an invalid value is given.
@@ -588,7 +589,7 @@ string read or nil."
 			    t
 			  (and stringify
 			       ;; Remove any double quoting of strings.
-			       (string-match "\\`\"\\([^\"]*\\)\"\\'" val) 
+			       (string-match "\\`\"\\([^\"]*\\)\"\\'" val)
 			       (setq val (match-string 1 val)))
 			  (and predicate (not (funcall predicate val)))))
 	    (if bad-val (setq bad-val nil) (setq default val))
@@ -602,9 +603,9 @@ string read or nil."
 
 (defun hargs:read-match (prompt collection
 			 &optional predicate must-match initial-input val-type)
-  "PROMPTs with completion for a value in COLLECTION and returns it.
+  "PROMPT with completion for a value in COLLECTION and return it.
 COLLECTION may be a list of strings, an alist, an obarray (for
-symbol-name completion) or a hash collection.  COLLECTION may also be
+`symbol-name' completion) or a hash collection.  COLLECTION may also be
 a function to do the completion itself.  Optional PREDICATE
 limits completion to a subset of COLLECTION.  Optional MUST-MATCH
 means value returned must be from COLLECTION.  Optional INITIAL-INPUT
@@ -628,7 +629,7 @@ VAL-TYPE is a symbol indicating the type of value to be read."
 	(switch-to-buffer obuf)))))
 
 (defun hargs:select-p (&optional value assist-flag)
-  "Returns optional VALUE or value selected at point if any, else nil.
+  "Return optional VALUE or value selected at point if any, else nil.
 If value is the same as the contents of the minibuffer, it is used as
 the current minibuffer argument, otherwise, the minibuffer is erased
 and value is inserted there.
@@ -732,7 +733,7 @@ help when appropriate."
 		 (if prefix-arg
 		     (prefix-numeric-value prefix-arg)
 		   (let ((arg))
-		     (while (not (integerp 
+		     (while (not (integerp
 				  (setq arg (read-minibuffer prompt default))))
 		       (beep))
 		     arg))))
@@ -780,7 +781,7 @@ help when appropriate."
 (setq   hargs:iforms-extensions
 	'(
 	  ;; Get existing Info node name, possibly prefixed with its (filename).
-	  (?I . (Info-node . 
+	  (?I . (Info-node .
 	         (let ((prev-reading-p hargs:reading-p))
 		   (unwind-protect
 		       (progn (require 'info)
@@ -820,7 +821,7 @@ help when appropriate."
 	  ;; Get a Koutline viewspec.
 	  (?V . (kvspec . (hargs:read prompt nil nil nil 'kvspec)))
 	  ;; Get existing Info index item name, possibly prefixed with its (filename).
-	  (?X . (Info-index-item . 
+	  (?X . (Info-index-item .
 	         (let ((prev-reading-p hargs:reading-p))
 		   (unwind-protect
 		       (let (file item)

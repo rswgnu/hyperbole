@@ -77,7 +77,7 @@ documentation, not the full text."
       (setq hui:menu-p nil))))
 
 (defun hui:menu-act (menu &optional menu-list doc-flag help-string-flag)
-  "Prompts user with Hyperbole MENU (a symbol) and performs selected item.
+  "Prompt user with Hyperbole MENU (a symbol) and perform selected item.
 Optional second argument MENU-LIST is a Hyperbole menu list structure from
 which to extract MENU.  It defaults to `hui:menus'.  See its definition for
 the menu list structure.
@@ -132,7 +132,7 @@ documentation, not the full text."
     (hui:menu-backward-item)))
 
 (defun hui:menu-doc (key-sequence &optional help-string-flag)
-  "Returns formatted documentation for a normalized Hyperbole minibuffer menu KEY-SEQUENCE.
+  "Return formatted documentation for a normalized Hyperbole minibuffer menu KEY-SEQUENCE.
 With optional HELP-STRING-FLAG, instead returns the one line help string for the key sequence."
   (when (and (stringp key-sequence)
 	     (not (eq key-sequence ""))
@@ -147,7 +147,7 @@ With optional HELP-STRING-FLAG, instead returns the one line help string for the
 	(discard-input)))))
 
 (defun hui:menu-enter (&optional char-str)
-  "Uses CHAR-STR or last input character as minibuffer argument."
+  "Use CHAR-STR or last input character as minibuffer argument."
   (interactive)
   (let ((input (or char-str (aref (recent-keys) (1- (length (recent-keys)))))))
     (and (not (integerp input))
@@ -273,7 +273,7 @@ documentation, not the full text."
       (nth (- (length winds) (length (memq bot bot-list))) winds))))
 
 (defun hui:menu-item (key doc-flag help-string-flag &optional menu menu-alist)
-"Returns either the action or the documentation for a Hyperbole minibuffer menu item KEY.
+"Return either the action or the documentation for a Hyperbole minibuffer menu item KEY.
 If DOC-FLAG is non-nil, returns the fully formatted documentation unless
 HELP-STRING-FLAG is non-nil, in which case only the first line of
 documentation is returned.  If both are nil, the action form for the
@@ -281,7 +281,7 @@ item is returned.
 
 Two additional optional arguments determine the items from which key
 selects, MENU and MENU-ALIST are Hyperbole minibuffer menu internal
-constructs.  If not given, the top-level Hyperbole menu is used."
+constructs.  If not given, the top level Hyperbole menu is used."
   (unless menu-alist
     (setq menu-alist (or (cdr (assq (or (and (symbolp menu) menu) 'hyperbole)
 				    hui:menus))
@@ -313,7 +313,7 @@ constructs.  If not given, the top-level Hyperbole menu is used."
 	    act-form)))))
 
 (defun hui:menu-line (menu-alist)
-  "Returns a menu line string built from MENU-ALIST."
+  "Return a menu line string built from MENU-ALIST."
   (let ((menu-prompt (concat (car (car menu-alist)) "  "))
 	(menu-items (mapconcat 'car (cdr menu-alist) "  "))
 	menu-line)
@@ -373,7 +373,7 @@ constructs.  If not given, the top-level Hyperbole menu is used."
 ;;; ************************************************************************
 
 (defun hyperbole-minibuffer-menu ()
-  "Rebuilds and returns the entire Hyperbole minibuffer menu structure."
+  "Rebuild and return the entire Hyperbole minibuffer menu structure."
 (setq
  hui:menus
  (delq nil

@@ -49,16 +49,16 @@
 
 ;;;###autoload
 (defun Gnus-init ()
-  "Initializes Hyperbole support for Gnus Usenet news reading."
+  "Initialize Hyperbole support for Gnus Usenet news reading."
   (interactive)
   nil)
 
 (defun lnews:to ()
-  "Sets current buffer to the Usenet news article summary listing buffer."
+  "Set current buffer to the Usenet news article summary listing buffer."
   (and (eq major-mode hnews:reader) (set-buffer gnus-summary-buffer)))
 
 (defun rnews:to ()
-  "Sets current buffer to the Usenet news article reader buffer."
+  "Set current buffer to the Usenet news article reader buffer."
   (and (eq major-mode hnews:lister) (set-buffer gnus-article-buffer)))
 
 (defun rnews:summ-msg-to ()
@@ -85,7 +85,7 @@
 Insert the message being replied to in the reply buffer. Puts point
 before the mail headers and mark after body of the text.  Calls
 mail-yank-original to actually yank the message into the buffer and
-cite text.  
+cite text.
 
 If mail-yank-original is not overloaded by supercite, each nonblank
 line is indented ARG spaces (default 3).  Just \\[universal-argument]

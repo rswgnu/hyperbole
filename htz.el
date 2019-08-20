@@ -65,13 +65,13 @@ If a two-digit year, the first two digits of the current year are prepended.
 Timezone in DATE is optional, it defaults to the value of `htz:local'.
 
 Recognizes the following styles:
- (1) \"(1 30 1999)\" or \"(1 30 1999)\"  `calendar-julian-date'  requires `parsed-current-date' arg
+ (1) \"(1 30 1999)\" or \"(1 30 1999)\"  `calendar-julian-date'  requires PARSED-CURRENT-DATE arg
  (2) \"14 Apr 89 03:20[:12] [GMT]\"
  (3) \"Fri, 17 Mar [19]89 4:01[:33] [GMT]\"
  (4) \"Mon Jan 16 16:12[:37] [GMT] 1989\"
  (5) \"19911014:07:51:08 or 1991101407:51:08\"  `sortable date'
- (6) \"Mar 29 14:00\"    `ls -l date'  requires `parsed-current-date' arg
- (7) \"Mar  7  1994\"    `ls -l date'  requires `parsed-current-date' arg"
+ (6) \"Mar 29 14:00\"    `ls -l date'  requires PARSED-CURRENT-DATE arg
+ (7) \"Mar  7  1994\"    `ls -l date'  requires PARSED-CURRENT-DATE arg"
   (let ((date (or date ""))
 	year month day time
 	zone)			; This may be nil.
@@ -291,7 +291,7 @@ Optional argument TIMEZONE specifies a time zone."
     (aref [31 28 31 30 31 30 31 31 30 31 30 31] (1- month))))
 
 (defun htz:leap-year-p (year)
-  "Returns t if YEAR is a Gregorian leap year."
+  "Return t if YEAR is a Gregorian leap year."
   (or (and (zerop  (% year 4))
 	   (not (zerop (% year 100))))
       (zerop (% year 400))))
@@ -353,7 +353,7 @@ Optional argument TIMEZONE specifies a time zone."
   (let ((local-tz (or (getenv "TZ") (getenv "TIMEZONE")
 		      (if (fboundp 'current-time-zone)
 			  (car (cdr (current-time-zone))))
-		      (progn 
+		      (progn
 			(require 'hypb)
 			(hypb:call-process-p
 			 "date" nil '(if (re-search-backward

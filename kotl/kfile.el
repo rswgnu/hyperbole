@@ -32,8 +32,8 @@
 ;;; Private variables
 ;;; ************************************************************************
 
-(defvar kfile:escape-newlines t 
-  "Value of print-escape-newlines used by `kfile:print-to-string' function.")
+(defvar kfile:escape-newlines t
+  "Value of `print-escape-newlines' used by `kfile:print-to-string' function.")
 
 ;;; ************************************************************************
 ;;; Entry Points
@@ -51,7 +51,7 @@ Return the new kview."
     (and existing-file
 	 (not (file-readable-p file-name))
 	 (error
-	  "(kfile:find): \"%s\" is not readable.  Check permissions."
+	  "(kfile:find): \"%s\" is not readable.  Check permissions"
 	  file-name))
     (setq buffer (find-file file-name))
     ;; Finding the file may have already done a kfile:read as invoked through
@@ -86,9 +86,9 @@ Return the new kview."
   (let ((existing-file (file-exists-p file-name)))
     (if existing-file
 	(if (not (file-readable-p file-name))
-	    (error "(kfile:view): \"%s\" is not readable.  Check permissions."
+	    (error "(kfile:view): \"%s\" is not readable.  Check permissions"
 		   file-name))
-      (error "(kfile:view): \"%s\" does not exist." file-name))
+      (error "(kfile:view): \"%s\" does not exist" file-name))
     (view-file file-name))
     (kfile:narrow-to-kcells)
     (goto-char (point-min)))
@@ -143,7 +143,7 @@ Return file's kview."
 	       (goto-char (point-min))
 	       (goto-char (kcell-view:start)))
       ;; Import buffer.  Next line is necessary or the importation will fail.
-      (delete-region (point-min) (point-max)) 
+      (delete-region (point-min) (point-max))
       ;; Import foreign buffer as koutline cells.
       (kimport:file import-from (current-buffer))
       ;; If import buffer name starts with a space, kill it, as it is no
@@ -160,13 +160,13 @@ was previously read by calling `kfile:is-p'.
 
 Return the new view."
   (cond ((not (bufferp buffer))
-	 (error "(kfile:read): Argument must be a buffer, `%s'." buffer))
+	 (error "(kfile:read): Argument must be a buffer, `%s'" buffer))
 	((and (zerop (buffer-size)) (not existing-file-p))
 	 (kfile:create buffer))
 	((progn
 	   (set-buffer buffer)
 	   (not (or (stringp ver-string) (setq ver-string (kfile:is-p)))))
-	 (error "(kfile:read): `%s' is not a koutline file." buffer))
+	 (error "(kfile:read): `%s' is not a koutline file" buffer))
 	((equal ver-string "Kotl-4.0")
 	 (kfile:read-v4-or-v3 buffer nil))
 	((equal ver-string "Kotl-3.0")
@@ -175,7 +175,7 @@ Return the new view."
 	 (kfile:read-v2 buffer))
 	((equal ver-string "Kotl-1.0")
 	 (error "(kfile:read): V1 koutlines are no longer supported"))
-	(t (error "(kfile:read): `%s' has unknown kotl version, %s."
+	(t (error "(kfile:read): `%s' has unknown kotl version, %s"
 		  buffer ver-string))))
 
 (defun kfile:read-v2 (buffer)
@@ -264,9 +264,9 @@ VISIBLE-ONLY-P is non-nil.  Signal an error if kotl is not attached to a file."
 	 ;; a file, so ensure it is nil.
 	 (debug-on-error))
     (cond ((null file)
-	   (error "(kfile:update): Current outline is not attached to a file."))
+	   (error "(kfile:update): Current outline is not attached to a file"))
 	  ((not (file-writable-p file))
-	   (error "(kfile:update): File \"%s\" is not writable." file)))
+	   (error "(kfile:update): File \"%s\" is not writable" file)))
     (let* ((buffer-read-only)
 	   (id-counter (kcell:get-attr top 'id-counter))
 	   (kcell-data (make-vector (1+ id-counter) nil))
@@ -287,7 +287,7 @@ VISIBLE-ONLY-P is non-nil.  Signal an error if kotl is not attached to a file."
 	kview t)
       ;; Save top cell, 0, last since above loop may increment the total
       ;; number of cells counter stored in it, if any invalid cells are
-      ;; encountered. 
+      ;; encountered.
       (aset kcell-data 0 (kcell-data:create top))
       (setq id-counter (kcell:get-attr top 'id-counter))
       ;;
@@ -370,7 +370,7 @@ included in the list."
 				     (lambda ()
 				       (setq stack (cons sibling-p stack)
 					     sibling-p nil)))
-			       (cons "\)" 
+			       (cons "\)"
 				     (lambda ()
 				       (setq sibling-p (car stack)
 					     stack (cdr stack))))))))
@@ -385,7 +385,7 @@ included in the list."
     (nreverse cell-list)))
 
 (defun kfile:insert-attributes-v2 (kview kcell-list)
-  "Set cell attributes within kview for each element in KCELL-LIST.
+  "Set cell attributes within KVIEW for each element in KCELL-LIST.
 Assumes all cell contents are already in kview and that no cells are
 hidden."
   (let (buffer-read-only)
@@ -403,7 +403,7 @@ hidden."
 	  (search-forward "\n\n" nil t)))))
 
 (defun kfile:insert-attributes-v3 (kview kcell-vector)
-  "Set cell attributes within kview for each element in KCELL-VECTOR.
+  "Set cell attributes within KVIEW for each element in KCELL-VECTOR.
 Assumes all cell contents are already in kview and that no cells are
 hidden."
   (let ((kcell-num 1)
@@ -481,7 +481,7 @@ handle, whenever this is possible."
 		(if (looking-at "[ \t]*\)")
 		    (delete-region (match-beginning 0) (match-end 0))
 		  (error "Malformed quote"))
-		(backward-sexp 1))	      
+		(backward-sexp 1))
 	       ((condition-case ()
 		    (prog1 t (down-list 1))
 		  (error nil))

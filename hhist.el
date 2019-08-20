@@ -24,7 +24,7 @@
 ;;; ************************************************************************
 
 (defun hhist:add (elt)
-  "Adds ELT to hyper-history list if not the same as current or previous loc.
+  "Add ELT to hyper-history list if not the same as current or previous loc.
 ELT must have been created via a call to 'hhist:element'."
   ;; Even though this next line looks useless, it cures a problem with
   ;; window buffer correspondences on startup, so don't remove it.
@@ -36,11 +36,11 @@ ELT must have been created via a call to 'hhist:element'."
       (setq *hhist* (cons elt *hhist*)))))
 
 (defun hhist:element ()
-  "Returns a history element for current point location."
+  "Return a history element for current point location."
   (current-frame-configuration))
 
 (defun hhist:remove (&optional arg)
-  "Removes optional prefix ARG entries from history, returns to ARGth location.
+  "Remove optional prefix ARG entries from history, return to ARGth location.
 The command is ignored with ARG < 1."
   (interactive "p")
   (setq arg (cond ((or (null arg)
@@ -65,7 +65,7 @@ The command is ignored with ARG < 1."
 	  (set-frame-configuration prev-config t)))))
 
 (defun hhist:init ()
-  "Resets history list."
+  "Reset history list."
   (interactive)
   (setq *hhist* nil))
 

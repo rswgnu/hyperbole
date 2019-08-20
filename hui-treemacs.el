@@ -35,7 +35,7 @@
 
 ;;;###autoload
 (defun smart-treemacs ()
-  "Uses a single key or mouse key to manipulate directory entries.
+  "Use a single key or mouse key to manipulate directory entries.
 
 Invoked via a key press when in treemacs-mode.  It assumes that its
 caller has already checked that the key was pressed in an appropriate buffer
@@ -105,3 +105,4 @@ Suitable for use as a value of `action-key-modeline-buffer-id-function'."
    (t (treemacs))))
 
 (provide 'hui-treemacs)
+;;; hui-treemacs.el ends here

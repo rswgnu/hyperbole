@@ -117,11 +117,11 @@ signalled."
   (let ((hyrolo-display-buffer (hypb:help-buf-name "Doc ID"))
 	(delim-doc-id (concat doc-id-start doc-id doc-id-end)))
     (cond ((null doc-id-indices)
-	   (error "(doc-id-index-entry): You must set the `doc-id-indices' variable first."))
+	   (error "(doc-id-index-entry): You must set the `doc-id-indices' variable first"))
 	  ((let ((hyrolo-entry-regexp doc-id-index-entry-regexp))
 	     (zerop (hyrolo-grep (funcall doc-id-match doc-id)
 			       1 doc-id-indices nil 'no-display)))
-	   (error "(doc-id-index-entry): %s not found in document index."
+	   (error "(doc-id-index-entry): %s not found in document index"
 		  delim-doc-id))
 	  ;; Matching index entry has been put into `hyrolo-display-buffer'.
 	  (t (with-current-buffer hyrolo-display-buffer
@@ -139,7 +139,7 @@ signalled."
 			 (error
 			  "(link-to-doc): %s online location is invalid: \"%s\""
 			  delim-doc-id doc-path))))
-		 (error "(link-to-doc): %s is unavailable in online form."
+		 (error "(link-to-doc): %s is unavailable in online form"
 			delim-doc-id)))))))
 
 (defib doc-id ()
@@ -167,16 +167,16 @@ delimited by `doc-id-index-entry-regexp'.")
 ;;; ************************************************************************
 
 (defun doc-id:help (but)
-  "Displays site-specific document index entry given by doc-id BUT, in other window.
+  "Display site-specific document index entry given by doc-id BUT, in other window.
 Also displays standard Hyperbole help for implicit button BUT."
   (let ((hyrolo-entry-regexp doc-id-index-entry-regexp)
 	(hyrolo-display-buffer (hypb:help-buf-name "Doc ID"))
 	(doc-id (hbut:key-to-label (hattr:get but 'lbl-key))))
     (cond ((null doc-id-indices)
-	   (error "(doc-id-index-entry): You must set the `doc-id-indices' variable first."))
+	   (error "(doc-id-index-entry): You must set the `doc-id-indices' variable first"))
 	  ((zerop (hyrolo-grep (funcall doc-id-match doc-id) 1 doc-id-indices))
 	   (error
-	     "(doc-id-index-entry): No document index entry found for %s%s%s."
+	     "(doc-id-index-entry): No document index entry found for %s%s%s"
 		  doc-id-start doc-id doc-id-end)))
     (let* ((report-buf (hypb:help-buf-name))
 	   (temp-buffer-show-hook

@@ -131,7 +131,7 @@ is used.  Valid values of this variable include `browse-url-default-browser' and
   (let* ((remote-sym (hpath:remote-available-p))
 	 (inhibit-file-name-handlers
 	  (if remote-sym
-	      (append (list 'dired-handler-fn 
+	      (append (list 'dired-handler-fn
 		       (intern-soft (concat (symbol-name remote-sym)
 					    "-file-handler-function")))
 		      (and (eq inhibit-file-name-operation 'find-file-noselect)

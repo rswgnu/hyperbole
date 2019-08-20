@@ -60,7 +60,7 @@
 
 (defun vm-edit-mode ()
   "Major mode for editing vm mail messages.
-  Special commands:\\{vm-edit-message-map}
+Special commands:\\{vm-edit-message-map}
 Turning on vm-edit-mode calls the value of the variable vm-edit-message-hook,
 if that value is non-nil."
   (interactive)
@@ -75,7 +75,7 @@ if that value is non-nil."
 
 ;;;###autoload
 (defun Vm-init ()
-  "Initializes Hyperbole support for Vm mail reading."
+  "Initialize Hyperbole support for Vm mail reading."
   (interactive)
   (setq hmail:composer  'mail-mode
 	hmail:lister    'vm-summary-mode
@@ -119,7 +119,7 @@ This includes Hyperbole button data."
 (defun Vm-msg-next ()           (vm-next-message 1))
 
 (defun Vm-msg-num ()
-  "Returns number of vm mail message that point is within, in physical message order."
+  "Return number of vm mail message that point is within, in physical message order."
   (interactive)
   (let ((count 1)
 	(case-fold-search))
@@ -133,8 +133,8 @@ This includes Hyperbole button data."
 (defun Vm-msg-prev ()           (vm-previous-message 1))
 
 (defun Vm-msg-to-p (mail-msg-id mail-file)
-  "Sets current buffer to start of msg with MAIL-MSG-ID in MAIL-FILE.
-Returns t if successful, else nil or signals error."
+  "Set current buffer to start of msg with MAIL-MSG-ID in MAIL-FILE.
+Return t if successful, else nil or signal error."
   (if (not (file-readable-p mail-file))
       nil
     (vm-visit-folder mail-file)
@@ -156,7 +156,7 @@ Returns t if successful, else nil or signals error."
     (narrow-to-region (point-min) (Vm-msg-end))))
 
 (defun Vm-to ()
-  "Sets current buffer to a mail reader buffer."
+  "Set current buffer to a mail reader buffer."
   (and (eq major-mode 'vm-summary-mode) (set-buffer vm-mail-buffer)))
 
 (defun Vm-Summ-delete ()
@@ -168,7 +168,7 @@ Returns t if successful, else nil or signals error."
 (defalias 'Vm-Summ-goto             'vm-follow-summary-cursor)
 
 (defun Vm-Summ-to ()
-  "Sets current buffer to a mail listing buffer."
+  "Set current buffer to a mail listing buffer."
   (and (eq major-mode 'vm-mode) (set-buffer vm-summary-buffer)))
 
 (defun Vm-Summ-undelete-all ()
@@ -180,7 +180,7 @@ Returns t if successful, else nil or signals error."
 ;;; ************************************************************************
 
 (defun Vm-msg-end ()
-  "Returns end point for current Vm message, including Hyperbole button data.
+  "Return end point for current Vm message, including Hyperbole button data.
 Has side-effect of widening buffer."
   (save-excursion
     (goto-char (point-min))
@@ -279,9 +279,9 @@ Has side-effect of widening buffer."
   "End the edit of a message and copy the result to its folder."
   (interactive)
   (if (null vm-message-pointer)
-      (error "This is not a VM message edit buffer."))
+      (error "This is not a VM message edit buffer"))
   (if (null (buffer-name (vm-buffer-of (car vm-message-pointer))))
-      (error "The folder buffer for this message has been killed."))
+      (error "The folder buffer for this message has been killed"))
   (let ((pos-offset (- (point) (point-min))))
     ;; make sure the message ends with a newline
     (goto-char (point-max))
@@ -316,7 +316,7 @@ Has side-effect of widening buffer."
 	    (widen)
 	    (with-current-buffer (vm-buffer-of (vm-real-message-of (car mp)))
 	      (if (not (memq (vm-real-message-of (car mp)) vm-message-list))
-		  (error "The original copy of this message has been expunged."))
+		  (error "The original copy of this message has been expunged"))
 	      (vm-save-restriction
 	       (widen)
 	       (goto-char (vm-headers-of (vm-real-message-of (car mp))))
@@ -372,7 +372,7 @@ Has side-effect of widening buffer."
 ;;; Define this function if the VM version in use doesn't have it.
 (or (fboundp 'vm-goto-message-at-point)
 (defun vm-goto-message-at-point ()
-  "In a VM folder buffer, select the message that contains point."
+  "In a VM folder buffer, select the message that contain point."
   (cond ((fboundp 'vm-update-search-position)
 	 (vm-update-search-position t)
 	 ;; vm-show-current-message only adjusts (point-max),

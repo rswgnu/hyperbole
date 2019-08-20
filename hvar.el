@@ -24,7 +24,7 @@
 
 ;;;###autoload
 (defun var:add-and-run-hook (hook hook-function)
-  "Adds to HOOK (a symbol ending with -hook) HOOK-FUNCTION and then calls HOOK-FUNCTION in every buffer with the matching major mode based on HOOK's name."
+  "Add to HOOK (a symbol ending with -hook) HOOK-FUNCTION and then call HOOK-FUNCTION in every buffer with the matching major mode based on HOOK's name."
   (add-hook hook hook-function)
   (let* ((hook-name (symbol-name hook))
 	 (mode (if (string-match "-hooks?\\'" hook-name)
@@ -40,14 +40,14 @@ The ones that were removed by var:remove-all at some point."
 
 ;;;###autoload
 (defun var:append (var-symbol list-to-add)
-  "Appends to value held by VAR-SYMBOL, LIST-TO-ADD.  Returns new value.
+  "Append to value held by VAR-SYMBOL, LIST-TO-ADD.  Return new value.
 If VAR-SYMBOL is unbound, it is set to LIST-TO-ADD.
-Used to append to hook variables.  Stores all values for later removal.
-Does nothing when `inhibit-hyperbole-messaging' is non-nil."
+Use to append to hook variables.  Store all values for later removal.
+Do nothing when `inhibit-hyperbole-messaging' is non-nil."
   (if (not (symbolp var-symbol))
-      (error "(var:append): First argument, `%s', must be a symbol (not a string)." var-symbol))
+      (error "(var:append): First argument, `%s', must be a symbol (not a string)" var-symbol))
   (if (or (null list-to-add) (not (listp list-to-add)))
-      (error "(var:append): Second argument, `%s', must be a non-empty list." list-to-add))
+      (error "(var:append): Second argument, `%s', must be a non-empty list" list-to-add))
   (unless inhibit-hyperbole-messaging
     (let ((val) result)
       (setq result
@@ -64,12 +64,12 @@ Does nothing when `inhibit-hyperbole-messaging' is non-nil."
       (symbol-value var-symbol))))
 
 (defun var:remove (var-symbol list-to-remove)
-  "Removes from VAR-SYMBOL the functions in LIST-TO-REMOVE.
-Used to remove from hook variables."
+  "Remove from VAR-SYMBOL the functions in LIST-TO-REMOVE.
+Use to remove from hook variables."
   (if (not (symbolp var-symbol))
-      (error "(var:remove): First argument, `%s', must be a symbol (not a string)." var-symbol))
+      (error "(var:remove): First argument, `%s', must be a symbol (not a string)" var-symbol))
   (if (or (null list-to-remove) (not (listp list-to-remove)))
-      (error "(var:remove): Second argument, `%s', must be a non-empty list." list-to-remove))
+      (error "(var:remove): Second argument, `%s', must be a non-empty list" list-to-remove))
   (if (eq (car list-to-remove) 'lambda)
       (setq list-to-remove (list list-to-remove)))
   (mapc (lambda (func) (remove-hook var-symbol func))

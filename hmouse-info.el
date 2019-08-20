@@ -56,7 +56,7 @@ If key is pressed within:
        is found;
  (2) the Up, Next, or Previous entries of a Node Header (first line),
        the desired node is found;
- (3) the File entry of a Node Header (first line),       
+ (3) the File entry of a Node Header (first line),
        the `Top' node within that file is found;
  (4) at the end of the current node, the Next node is found (this will
        descend subtrees if the function `Info-global-next' is bound);
@@ -67,7 +67,7 @@ Returns t if key is pressed within an Info Node Header, Cross Reference,
 or a Menu; otherwise returns nil."
 
   (interactive)
-  (cond 
+  (cond
     ;;
     ;; If at end of node, go to next node
     ;;
@@ -95,14 +95,14 @@ or a Menu; otherwise returns nil."
 
 ;;;###autoload
 (defun smart-info-assist ()
-  "Walks through Info documentation networks using one assist-key or mouse assist-key.
+  "Walk through Info documentation networks using one assist-key or mouse assist-key.
 
 If assist-key is pressed within:
  (1) the first line of an Info Menu Entry or Cross Reference, the desired node
        is found;
  (2) the Up, Next, or Previous entries of a Node Header (first line),
        the last node in the history list is found;
- (3) the File entry of a Node Header (first line),       
+ (3) the File entry of a Node Header (first line),
        the `DIR' root-level node is found;
  (4) at the end of the current node, the Previous node is found (this will
        return from subtrees if the function 'Info-global-prev is bound);
@@ -164,7 +164,7 @@ Otherwise, return nil."
 						  (if filep " ")
 						  "]*\\)") nil t)
 		       (setq nodename (match-string-no-properties 1))))
-	  (error "Node header not found.")))
+	  (error "Node header not found")))
       (setq nodename
 	    (cond ((eq (aref nodename 0) ?\() nodename)
 		  (filep (concat "(" nodename ")" "Top"))
@@ -175,7 +175,7 @@ Otherwise, return nil."
 
 (defun Info-handle-in-node-hdr-assist ()
   "If within an Info node header when the `smart-info-assist' command is
-executed, when within the <FILE> header go to the DIR top-level node.  When
+executed, when within the <FILE> header go to the DIR `top-level node'.  When
 within any other header (<Up>, <Previous>, or <Next>) go to last node from
 history list.  Return t if in Info node header.  Otherwise return nil."
   ;;
@@ -183,7 +183,7 @@ history list.  Return t if in Info node header.  Otherwise return nil."
   ;;
   (when (first-line-p)
     (save-excursion
-      (if (and 
+      (if (and
 	   (re-search-forward "[:, \t\n\r]" nil t)
 	   (re-search-backward
 	    "\\(File\\|Node\\|Up\\|Prev\\|Previous\\|Next\\):[ \t]" nil t) )
@@ -194,7 +194,7 @@ history list.  Return t if in Info node header.  Otherwise return nil."
 		     (Info-directory)
 		   (Info-last))
 		 t)
-	(error "Node header not found.")
+	(error "Node header not found")
 	nil))))
 
 ;;;###autoload
@@ -353,7 +353,7 @@ This works regardless of the current buffer."
 				     " " t)))))
 
 (defun Info-read-index-item-name-1 (string predicate code)
-  "Internal function used by `Info-read-index-item-name'to generate completions.
+  "Internal function used by `Info-read-index-item-name' to generate completions.
 See `completing-read' for a description of arguments and usage."
   (cond
    ;; First complete embedded file names.

@@ -16,7 +16,7 @@
 ;;   Simply load this library and you are ready to try it out by
 ;;   double-clicking on various kinds of characters in different buffer major
 ;;   modes.  You'll quickly get the hang of it.  (It also provides a command
-;;   to jump between beginning and end tags within HTML and SGML buffers.) 
+;;   to jump between beginning and end tags within HTML and SGML buffers.)
 ;;   
 ;;   A great deal of smarts are built-in so that it does the right thing
 ;;   almost all of the time; many other attempts at similar behavior such as
@@ -61,7 +61,7 @@
 ;;
 ;;   Four other commands are also provided:
 ;;    `hui-select-and-copy-thing' - mark and copy the syntactical unit to the
-;;      kill ring 
+;;      kill ring
 ;;    `hui-select-and-kill-thing' - kill the syntactical unit at point
 ;;    `hui-select-goto-matching-tag' - In HTML and SGML modes (actually any
 ;;      listed in the variable, `hui-select-markup-modes'), move point to the
@@ -211,7 +211,7 @@
 
 ;;;###autoload
 (defun hui-select-at-p (&optional pos)
-  "Return non-nil if the character after optional POS (or point) matches a syntax entry in `hui-select-syntax-alist'.
+  "Return non-nil if the character after optional POS (or point) match a syntax entry in `hui-select-syntax-alist'.
 The non-nil value returned is the function to call to select that syntactic unit."
   (interactive "d")
   (unless (and (bobp) (eobp))
@@ -377,7 +377,7 @@ displayed in the minibuffer."
 
 ;;;###autoload
 (defun hui-select-goto-matching-tag ()
-  "If in a major mode listed in `hui-select-markup-modes,' moves point to the start of the tag paired with the closest tag that point is within or precedes.
+  "If in a major mode listed in `hui-select-markup-modes,' move point to the start of the tag paired with the closest tag that point is within or precedes.
 Returns t if point is moved, else nil.
 Signals an error if no tag is found following point or if the closing tag
 does not have a `>' terminator character."
@@ -405,7 +405,7 @@ does not have a `>' terminator character."
 	     (progn (backward-char 1)
 		    (looking-at "<[^<> \t\n\r]"))))
        ;; No tag follows point.
-       (t (error "(hui-select-goto-matching-tag): No tag found after point.")))
+       (t (error "(hui-select-goto-matching-tag): No tag found after point")))
 
       (if (catch 'done
 	    (cond
@@ -535,7 +535,7 @@ The character at POS is selected if no other thing is matched."
 			    (- (cdr region) (car region)))
 		      (< region-size min-region))
 		 (setq min-region region-size
-		       result 
+		       result
 		       (list
 			;; The actual selection type is
 			;; sometimes different than the one we
@@ -602,7 +602,7 @@ If an error occurs during syntax scanning, it returns nil."
 	     (hui-select-set-region pos (1+ pos)))))))
 
 (defun hui-select-at-delimited-thing-p ()
-  "Returns non-nil if point is at a markup pair, list, array/vector, set, comment or string, else nil.
+  "Return non-nil if point is at a markup pair, list, array/vector, set, comment or string, else nil.
 The non-nil value returned is the function to call to select that syntactic unit.
 
 Ignores any match if on an Emacs button and instead returns nil."
@@ -619,7 +619,7 @@ Ignores any match if on an Emacs button and instead returns nil."
 	  (t hkey-value))))
 
 (defun hui-select-delimited-thing ()
-  "Selects a markup pair, list, array/vector, set, comment or string at point and returns t, else nil."
+  "Select a markup pair, list, array/vector, set, comment or string at point and return t, else nil."
   (interactive)
   (prog1 (and (hui-select-delimited-thing-call #'hui-select-thing) t)
     ;; If selected region is followed by only whitespace and then a
@@ -710,7 +710,7 @@ mail and news reply modes."
     (setq this-command 'select-thing)))
 
 (defun hui-select-delimited-thing-call (func)
-  "Selects a markup pair, list, vector/array, set, comment or string at point and returns non-nil, else nil.
+  "Select a markup pair, list, vector/array, set, comment or string at point and return non-nil, else nil.
 The non-nil value returned is the function to call to select that syntactic unit."
   (unless (and (memq major-mode hui-select-ignore-quoted-sexp-modes)
 	       ;; Ignore quoted identifier sexpressions, like #'function
@@ -768,7 +768,7 @@ Return the updated cons cell."
     hui-select-region))
 
 (defun hui-select-string-p (&optional start-delim end-delim)
-  "Returns (start . end) of string whose first line point is within or immediately before.
+  "Return (start . end) of string whose first line point is within or immediately before.
 Positions include delimiters.  String is delimited by double quotes unless
 optional START-DELIM and END-DELIM (strings) are given.
 Returns nil if not within a string."
@@ -849,7 +849,7 @@ list, hui-select-brace-modes."
 		;; Must be at the first non-whitespace character in the line.
 		(and (= (point) (save-excursion (hui-select-back-to-indentation)))
 		     ;; Must be on an alpha or symbol-constituent character.
-		     ;; Also allow ~ for C++ destructors. 
+		     ;; Also allow ~ for C++ destructors.
 		     (looking-at "[a-zA-z~]\\|\\s_")
 		     ;; Previous line, if any,  must be blank or a comment
 		     ;; start or end or we must be looking at
@@ -924,7 +924,7 @@ list, hui-select-indent-modes."
   (when (memq major-mode hui-select-indent-modes)
     (save-excursion
       (goto-char pos)
-      (if (and 
+      (if (and
 	   ;; Use this function only if point is on the first non-blank
 	   ;; character of a block, whatever a block is for the current
 	   ;; mode.
@@ -933,7 +933,7 @@ list, hui-select-indent-modes."
 		 ((or (eq major-mode 'outline-mode) selective-display)
 		  (save-excursion (beginning-of-line)
 				  (looking-at outline-regexp)))
-		 ;; After indent in any other mode, must be on an alpha 
+		 ;; After indent in any other mode, must be on an alpha
 		 ;; or symbol-constituent character.
 		 (t (looking-at "[a-zA-z]\\|\\s_")))
 	   ;; Must be at the first non-whitespace character in the line.
@@ -1008,7 +1008,7 @@ list, hui-select-indent-modes."
 (defun hui-select-sexp (pos)
   "Return (start . end) of the sexp that POS is within."
   (setq hui-select-previous 'sexp)
-  (save-excursion 
+  (save-excursion
     (goto-char pos)
     (condition-case ()
 	(hui-select-set-region (progn (backward-up-list 1) (point))
@@ -1021,7 +1021,7 @@ list, hui-select-indent-modes."
   ;; Keep going up and backward in sexps.  This means that hui-select-sexp-up
   ;; can only be called after hui-select-sexp or after itself.
   (setq pos (or (car hui-select-region) pos))
-  (save-excursion 
+  (save-excursion
     (goto-char pos)
     (condition-case ()
 	(hui-select-set-region (progn (backward-up-list 1) (point))
@@ -1161,7 +1161,7 @@ included in the list, hui-select-brace-modes."
 		 (hui-select-set-region (point) end))))))
 
 (defun hui-select-string (pos)
-  "Returns (start . end) of string at POS or nil.  Pos include delimiters.
+  "Return (start . end) of string at POS or nil.  Pos include delimiters.
 Delimiters may be single, double or open and close quotes."
   (setq hui-select-previous 'string)
   (save-excursion
@@ -1184,7 +1184,7 @@ Delimiters may be single, double or open and close quotes."
 (defun hui-select-sentence (pos)
   "Return (start . end) of the sentence at POS."
   (setq hui-select-previous 'sentence)
-  (save-excursion 
+  (save-excursion
     (goto-char pos)
     (condition-case ()
 	(hui-select-set-region (progn (backward-sentence) (point))
@@ -1192,7 +1192,7 @@ Delimiters may be single, double or open and close quotes."
       (error nil))))
 
 (defun hui-select-whitespace (pos)
-  "Return (start . end) of all but one char of whitespace POS, unless 
+  "Return (start . end) of all but one char of whitespace POS, unless
 there is only one character of whitespace or this is leading whitespace on
 the line.  Then return all of it."
   (setq hui-select-previous 'whitespace)
@@ -1292,7 +1292,7 @@ list, hui-select-markup-modes."
 		      (progn
 			(if pos-with-space
 			    ;; Newline found after original end tag.
-			    (progn 
+			    (progn
 			      (skip-chars-backward " \t")
 			      (if (bolp)
 				  ;; Don't include final newline unless the
@@ -1324,7 +1324,7 @@ list, hui-select-markup-modes."
 (defun hui-select-paragraph (pos)
   "Return (start . end) of the paragraph at POS."
   (setq hui-select-previous 'paragraph)
-  (save-excursion 
+  (save-excursion
     (goto-char pos)
     (if (looking-at paragraph-start) (forward-paragraph))
     (hui-select-set-region (progn (backward-paragraph) (point))
@@ -1333,7 +1333,7 @@ list, hui-select-markup-modes."
 (defun hui-select-page (pos)
   "Return (start . end) of the page preceding POS."
   (setq hui-select-previous 'page)
-  (save-excursion 
+  (save-excursion
     (goto-char pos)
     (hui-select-set-region (progn (backward-page) (point))
 			  (progn (forward-page) (point)))))

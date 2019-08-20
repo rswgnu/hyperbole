@@ -263,7 +263,7 @@ Otherwise:
 	  identifier)))))
 
 (defun smart-c (&optional identifier next list-of-tags-tables)
-  "Jumps to the definition of optional C IDENTIFIER or the one at point.
+  "Jump to the definition of optional C IDENTIFIER or the one at point.
 Optional second arg NEXT means jump to next matching C tag.
 
 It assumes that its caller has already checked that the key was pressed in an
@@ -347,7 +347,7 @@ If:
   nil)
 
 (defun smart-emacs-lisp-mode-p ()
-  "Return t if in a mode which uses Emacs Lisp symbols."
+  "Return t if in a mode which use Emacs Lisp symbols."
   ;; Beyond Lisp files, Emacs Lisp symbols appear frequently in Byte-Compiled
   ;; buffers, debugger buffers, and Help buffers.
   (or (memq major-mode #'(emacs-lisp-mode lisp-interaction-mode debugger-mode))
@@ -495,7 +495,7 @@ If key is pressed:
 
 ;;;###autoload
 (defun smart-javascript (&optional identifier next)
-  "Jumps to the definition of optional JavaScript IDENTIFIER or the one at point.
+  "Jump to the definition of optional JavaScript IDENTIFIER or the one at point.
 Optional second arg NEXT means jump to next matching JavaScript tag.
 
 It assumes that its caller has already checked that the key was pressed in an
@@ -545,7 +545,7 @@ in the current directory or any of its ancestor directories."
 	     (point) (match-end 0))))))))
 
 (defun smart-lisp (&optional show-doc)
-  "Jumps to the definition of any selected Lisp identifier or optionally SHOW-DOC.
+  "Jump to the definition of any selected Lisp identifier or optionally SHOW-DOC.
 If on an Emacs Lisp require, load, or autoload clause and the
 `find-library' function from the \"load-library\" package has
 been loaded, this jumps to the library source whenever possible.
@@ -618,7 +618,7 @@ buffer."
 			  (error "(smart-lisp): `%s' definition not found in any tag table" tag)))))))))
 
 (defun smart-lisp-at-definition-p ()
-    "Returns t when point is in a non-help buffer on the first line of a non-alias Lisp definition, else nil."
+    "Return t when point is in a non-help buffer on the first line of a non-alias Lisp definition, else nil."
     (unless (derived-mode-p 'help-mode)
       (save-excursion
 	(beginning-of-line)
@@ -630,7 +630,7 @@ buffer."
 	     (not (looking-at "\\(;*[ \t]*\\)?(default"))))))
 
 (defun smart-lisp-at-load-expression-p ()
-    "Returns t when point is on the first line of a Lisp library load expression, else nil."
+    "Return t when point is on the first line of a Lisp library load expression, else nil."
     (save-excursion
       (beginning-of-line)
       (looking-at "\\(;*[ \t]*\\)?(\\(autoload\\|load\\|require\\)")))
@@ -645,7 +645,7 @@ Returns matching ELisp tag name that point is within, else nil."
 	   (string-match "[^-]-[^-]" identifier)))))
 
 (defun smart-lisp-at-tag-p (&optional no-flash)
-  "Returns Lisp tag name that point is within, else nil.
+  "Return Lisp tag name that point is within, else nil.
 Returns nil when point is on the first line of a non-alias Lisp definition."
   (unless (smart-lisp-at-definition-p)
     (let* ((identifier-chars "-_:/*+=%$&?!<>a-zA-Z0-9~^")
@@ -671,13 +671,13 @@ Returns nil when point is on the first line of a non-alias Lisp definition."
 
 ;;;###autoload
 (defun smart-lisp-mode-p ()
-  "Return t if in a mode which uses Lisp symbols."
+  "Return t if in a mode which use Lisp symbols."
   (or (smart-emacs-lisp-mode-p)
       (memq major-mode '(lisp-mode scheme-mode))))
 
 ;;;###autoload
 (defun smart-objc (&optional identifier next)
-  "Jumps to the definition of optional Objective-C IDENTIFIER or the one at point.
+  "Jump to the definition of optional Objective-C IDENTIFIER or the one at point.
 Optional second arg NEXT means jump to next matching Objective-C tag.
 
 It assumes that its caller has already checked that the key was pressed in an
@@ -730,7 +730,7 @@ Otherwise:
 
 ;;; The following should be called only if the OO-Browser is available.
 (defun smart-objc-oo-browser (&optional junk)
-  "Jumps to the definition of selected Objective-C construct via OO-Browser support.
+  "Jump to the definition of selected Objective-C construct via OO-Browser support.
 Optional JUNK is ignored.  Does nothing if the OO-Browser is not available.
 
 It assumes that its caller has already checked that the key was pressed in an
@@ -771,7 +771,7 @@ If key is pressed:
 	     (match-beginning 2) (match-end 2)))))))
 
 (defun smart-jedi-find-file (file line column other-window)
-  "Function that reads a source file for jedi navigation.
+  "Function that read a source FILE for jedi navigation.
 It takes these arguments: (file-to-read other-window-flag line_number column_number)."
   (hpath:display-buffer (find-file file) other-window)
   (jedi:goto--line-column line column))
@@ -893,7 +893,7 @@ If key is pressed:
 ;;; ************************************************************************
 
 (defun smart-ancestor-tag-files (&optional path name-of-tags-file)
-  "Walk up path tree looking for tags files and return list from furthest to deepest (nearest)."
+  "Walk up PATH tree looking for NAME-OF-TAGS-FILE and return list from furthest to deepest (nearest)."
   (or path (setq path default-directory))
   (let ((tags-table-list)
 	tags-file)
@@ -911,10 +911,10 @@ If key is pressed:
     tags-table-list))
 
 (defun smart-asm-include-file ()
-  "If point is on an include file line, tries to display file.
+  "If point is on an include file line, try to display file.
 Returns non-nil iff on an include file line, even if file is not found.
 Look for include file in `smart-asm-include-path' and add suffix \".ins\" or
-\".inc\" to filename if it lacks a suffix." 
+\".inc\" to filename if it lacks a suffix."
   (let ((opoint (point)))
     ;; Some assemblers utilize the C preprocessor, so try that first.
     (cond ((smart-c-include-file))
@@ -955,7 +955,7 @@ Look for include file in `smart-asm-include-path' and add suffix \".ins\" or
 	     nil))))
 
 (defun smart-c-include-file ()
-  "If point is on an include file line, tries to display file.
+  "If point is on an include file line, try to display file.
 Returns non-nil iff on an include file line, even if file is not found.
 Look for include file in `smart-c-cpp-include-path' and in directory list
 `smart-c-include-path'."
@@ -1000,7 +1000,7 @@ Look for include file in `smart-c-cpp-include-path' and in directory list
       nil)))
 
 (defun smart-flash-tag (tag start end)
-  "Tries to flash TAG at START to END in buffer, to indicate that it is serving as a hyperlink button.
+  "Try to flash TAG at START to END in buffer, to indicate that it is serving as a hyperlink button.
 Returns TAG."
   ;; Button flashing code might not yet have been loaded if the whole
   ;; Hyperbole system has not been started.
@@ -1011,7 +1011,7 @@ Returns TAG."
   tag)
 
 (defun smart-lisp-at-known-identifier-p ()
-  "Returns non-nil if point is within a Lisp identifier listed in a tags table or is a known Emacs Lisp identifier, else nil."
+  "Return non-nil if point is within a Lisp identifier listed in a tags table or is a known Emacs Lisp identifier, else nil."
   (interactive)
   (unless (and (fboundp 'find-library)
 	       ;; Handle Emacs Lisp `require', `load', and `autoload' clauses.
@@ -1043,7 +1043,7 @@ Returns TAG."
 	(condition-case () (find-definition-noselect tag-sym 'defface) (error nil)))))
 
 (defun smart-tags-find-p (tag)
-  "Returns non-nil if TAG is found within a tags table, else nil."
+  "Return non-nil if TAG is found within a tags table, else nil."
   (let* ((tags-table-list (or (and (boundp 'tags-table-list) tags-table-list)
 			      (smart-tags-file-list)))
 	 (func (smart-tags-noselect-function))
@@ -1067,7 +1067,7 @@ Returns TAG."
       (error nil))))
 
 (defun smart-java-cross-reference ()
-  "If within a Java @see comment, displays the associated definition for editing and returns non-nil, else nil.
+  "If within a Java @see comment, displays the associated definition for editing and return non-nil, else nil.
 Non-nil is returned even if the @see referent cannot be found.
 
 Does nothing if the `oo-browser' command is undefined, since it requires that
@@ -1147,9 +1147,9 @@ package for class and feature lookups."
 				 (setq class (buffer-substring-no-properties
 					      (match-beginning java-class-def-name-grpn)
 					      (match-end java-class-def-name-grpn)))
-			       (error "(smart-java-cross-reference): This @see must be in a class definition.")))
+			       (error "(smart-java-cross-reference): This @see must be in a class definition")))
 			 (br-edit-feature class feature t)))
-		(error "(smart-java-cross-reference): The OO-Browser failed to load a Java environment.")))))
+		(error "(smart-java-cross-reference): The OO-Browser failed to load a Java environment")))))
       ;; Return to original point.
       (goto-char opoint)
       nil)))
@@ -1172,7 +1172,7 @@ package for class and feature lookups."
     library-path))
 
 (defun smart-java-packages ()
-  "If point is on a `package' or `import' line, this tries to display the associated referent.
+  "If point is on a `package' or `import' line, this try to display the associated referent.
 Returns non-nil iff on such a line, even if the referent is not found.
 Look for packages in `smart-java-package-path'."
   (let ((opoint (point)))
@@ -1188,7 +1188,7 @@ Look for packages in `smart-java-package-path'."
 	  (if (string-equal keyword-type "package")
 	      (let ((library-path (smart-java-library-path referent)))
 		(if library-path
-		    (hpath:find (expand-file-name 
+		    (hpath:find (expand-file-name
 				 (hypb:replace-match-string
 				  "\\." referent (file-name-as-directory "") t)
 				 library-path))
@@ -1279,7 +1279,7 @@ See the \"${hyperb:dir}/smart-clib-sym\" script for more information."
     ;; when `next' is false (otherwise tag would = nil and the following
     ;; stringp test would fail).
     (if (featurep 'infodock)
-	(if (stringp tag) 
+	(if (stringp tag)
 	    (setq tag (list tag))))
     (if (and func (setq find-tag-result (funcall func tag)))
 	(cond ((eq func 'find-tag-internal)
@@ -1362,7 +1362,7 @@ to look.  If no tags file is found, an error is signaled."
 	   (list buffer-tag-table))
 	  ((and (boundp 'tags-file-name) tags-file-name)
 	   (list tags-file-name))
-	  (t (error "Needed tags file not found; see `man etags' for how to build one.")))))
+	  (t (error "Needed tags file not found; see `man etags' for how to build one")))))
 
 ;;; ************************************************************************
 ;;; Private functions

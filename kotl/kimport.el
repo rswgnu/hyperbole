@@ -39,12 +39,12 @@ and a buffer/file into which to insert the imported elements and a third
 optional argument, CHILDREN-P, which when non-nil means insert imported cells
 as the initial set of children of the current cell, if any.
 
-   outline-mode  - imported as an Emacs outline whose entries begin with
-                   asterisks; 
+   `outline-mode'  - imported as an Emacs outline whose entries begin with
+                     asterisks; 
    .kot
-   .kotl         - imported as a structured koutline
+   .kotl           - imported as a structured koutline
 
-   all others    - imported as text.")
+   all others      - imported as text.")
 
 ;;;###autoload
 (defvar kimport:suffix-alist
@@ -147,7 +147,7 @@ Set mark after the inserted text."
 REGISTER is a character naming the register to insert.
 Normally puts point before and mark after the inserted text.
 If optional second arg is non-nil, puts mark before and point after.
-Interactively, second arg is non-nil if prefix arg is supplied."
+Interactively, second arg is non-nil if prefix ARG is supplied."
   (interactive "*cInsert register: \nP")
   (push-mark)
   (let ((val (get-register register)))
@@ -245,7 +245,7 @@ an explanation of where imported cells are placed.
 \"* \" = level 1, \"** \" = level 2 in outline and so on."
   (interactive "FImport from star delimited cells buffer/file: \nFBuffer/file to insert cells into: \nP")
   (let ((output-level 1) (klabel "1")
-	initially-empty-output no-renumber orig-point count total) 
+	initially-empty-output no-renumber orig-point count total)
     ;; Don't change the order of import-from and output-to inits here.
     (setq import-from (kimport:copy-and-set-buffer import-from)
 	  output-to (kimport:initialize output-to)
@@ -422,7 +422,7 @@ The variable, `paragraph-start,' is used to determine paragraphs."
 
 (defun kimport:aug-post-statements (import-from output-to klabel output-level
  			            import-level count total)
-  "Insert post-numbered Augment statements (contents only) from IMPORT-FROM into existing OUTPUT-TO. 
+  "Insert post-numbered Augment statements (contents only) from IMPORT-FROM into existing OUTPUT-TO.
 
 KLABEL is the label to use for the first imported statement.
 OUTPUT-LEVEL is the level at which to insert the first statement.
@@ -518,7 +518,7 @@ copied since there is no need to copy it to import it."
 Return OUTPUT-TO buffer and set current buffer for the current command
 to OUTPUT-TO.
 
-OUTPUT-TO may be a buffer, buffer-name or file name.  If OUTPUT-TO exists
+OUTPUT-TO may be a buffer, `buffer-name' or file name.  If OUTPUT-TO exists
 already, it must be a koutline or an error will be signaled.  For an existing
 OUTPUT-TO, the text cells are inserted after the cell at point or after the
 first cell for a newly loaded koutline.  If OUTPUT-TO is nil, the current
@@ -567,7 +567,7 @@ will be added as children of the cell where this function leaves point
 
 (defun kimport:kcells (import-from output-to klabel output-level
 		       import-level count total)
-  "Insert visible koutline cells (contents and attributes) from IMPORT-FROM into existing OUTPUT-TO. 
+  "Insert visible koutline cells (contents and attributes) from IMPORT-FROM into existing OUTPUT-TO.
 
 KLABEL is the label to use for the first imported cell.
 OUTPUT-LEVEL is the level at which to insert the first cell.
@@ -605,7 +605,7 @@ in IMPORT-FROM, used to show a running tally of the imported cells."
 
 (defun kimport:star-entries (import-from output-to klabel output-level
                              import-level count total)
-  "Insert visible star outline entries from IMPORT-FROM into existing OUTPUT-TO. 
+  "Insert visible star outline entries from IMPORT-FROM into existing OUTPUT-TO.
 
 KLABEL is the label to use for the first imported entry.
 OUTPUT-LEVEL is the level at which to insert the first entry.

@@ -196,7 +196,7 @@
     (error "(Hyperbole): `%s' window no longer exists" (buffer-name (window-buffer window)))))
 
 (defun hui-menu-sort-buffers (buffer-and-mode-name-list)
-  "Reverse sort and return list of (buffer-name . mode-name) elements by mode-name and then by buffer-name."
+  "Reverse sort and return list of (`buffer-name' . `mode-name') elements by `mode-name' and then by `buffer-name'."
   (let ((buf (get-buffer-create " tmp-sort")))
     (with-current-buffer buf
       (setq buffer-read-only nil)
@@ -264,7 +264,7 @@ With optional prefix arg INSERT-FLAG, inserts the pathname at point."
     nil))
 
 (defun hui-menu-window-list-all-frames (&optional mini)
-  "Returns a list of Lisp window objects for all Emacs windows in all frames.
+  "Return a list of Lisp window objects for all Emacs windows in all frames.
 Optional first arg MINI t means include the minibuffer window in the list,
 even if it is not active.  If MINI is neither t nor nil it means to not count
 the minibuffer window even if it is active."
@@ -331,7 +331,7 @@ frame.  The current buffer is buried in the old frame's buffer list."
   "Last set of buffer and mode names used in hui-menu-of-buffers or nil.")
 
 (defvar hui-menu-of-buffers-cache nil
-  "Last menu of mode-name ordered buffers from hui-menu-of-buffers or nil.")
+  "Last menu of `mode-name' ordered buffers from hui-menu-of-buffers or nil.")
 
 ;;; ************************************************************************
 ;;; Public variables

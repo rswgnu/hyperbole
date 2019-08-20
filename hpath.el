@@ -32,8 +32,8 @@
 ;;; ************************************************************************
 
 (defcustom hpath:find-file-urls-mode nil
-  "This is `t' when a remote file access library is available and use of ftp and http urls in file finding commands has been enabled.
-Default is `nil' since this can slow down normal file finding."
+  "This is t when a remote file access library is available and use of ftp and http urls in file finding commands has been enabled.
+Default is nil since this can slow down normal file finding."
   :type 'boolean
   :initialize #'custom-initialize-default
   :set (lambda (_symbol _value) (call-interactively #'hpath:find-file-urls-mode))
@@ -85,7 +85,7 @@ If the value of 'hpath:mswindows-mount-prefix' changes, then re-initialize this 
 
 (defvar hpath:directory-expand-alist nil
   "Automatically set alist of (posix-mount-point . window-path-prefix) elements.
-   Used to expand windows prefixes to posix mount points during mswindows-to-posix.")
+Used to expand windows prefixes to posix mount points during mswindows-to-posix.")
 
 ;;;###autoload
 (defun hpath:mswindows-to-posix (path)
@@ -441,7 +441,7 @@ Its match groupings and their names are:
    "\\([a-zA-Z0-9][^/:@ \t\n\r\"`'|]*\\.[^/:@ \t\n\r\"`'|]+\\)"
    ":?\\([0-9]+\\)?\\([/~]\\([^\]\[@ \t\n\r\"`'|(){}<>]+[^\]\[@ \t\n\r\"`'|(){}<>.,?#!*]\\)*\\)?\\)>?")
   "Regular expression which matches a Url in a string or buffer.
-  Its match groupings and their names are:
+Its match groupings and their names are:
   1 = hpath:url-keyword-grpn = required `URL:' or `URL=' literal
   2 = hpath:url-grpn         = the whole URL
   3 = unused                 = for compatibility with hpath:url-regexp
@@ -472,17 +472,17 @@ See doc for `hpath:url-regexp' and `hpath:url-regexp[2,3]'.")
 (defvar hpath:string-url-regexp (concat "\\`" hpath:url-regexp "\\'")
   "Regular expression that matches to a string that contains a possibly delimited Url and nothing else.
 See the documentation for `hpath:url-regexp' for match groupings to
-use with string-match.")
+use with `string-match'.")
 
 (defvar hpath:string-url-regexp2 (concat "\\`" hpath:url-regexp2 "\\'")
   "Regular expression that matches to a string that contains a possibly delimited terse Url and nothing else.
 See the documentation for `hpath:url-regexp' for match groupings to
-use with string-match.")
+use with `string-match'.")
 
 (defvar hpath:string-url-regexp3 (concat "\\`" hpath:url-regexp3 "\\'")
   "Regular expression that matches to a string that contains a possibly delimited terse Url and nothing else.
 See the documentation for `hpath:url-regexp' for match groupings to
-use with string-match.")
+use with `string-match'.")
 
 ;;; ************************************************************************
 ;;; Private variables
@@ -526,7 +526,7 @@ These are used to indicate how to display or execute the pathname.
 ;;; ************************************************************************
 
 (defun hpath:absolute-to (path &optional default-dirs)
-  "Returns PATH as an absolute path relative to one directory from optional DEFAULT-DIRS or `default-directory'.
+  "Return PATH as an absolute path relative to one directory from optional DEFAULT-DIRS or `default-directory'.
 Returns PATH unchanged when it is not a valid path or when DEFAULT-DIRS
 is invalid.  DEFAULT-DIRS when non-nil may be a single directory or a list of
 directories.  The first one in which PATH is found is used."
@@ -549,7 +549,7 @@ directories.  The first one in which PATH is found is used."
 	(or rtn path)))))
 
 (defun hpath:tramp-file-name-regexp ()
-  "Returns a modified tramp-file-name-regexp for matching to the beginning of a remote file name.
+  "Return a modified `tramp-file-name-regexp' for matching to the beginning of a remote file name.
 Removes bol anchor and removes match to empty string if present."
   (let ((tramp-regexp (car (if (fboundp 'tramp-file-name-structure)
 			       (tramp-file-name-structure)
@@ -557,7 +557,7 @@ Removes bol anchor and removes match to empty string if present."
     (substring-no-properties (replace-regexp-in-string "\\\\'" "" tramp-regexp) 1)))
 
 (defun hpath:remote-at-p ()
-  "Returns a remote pathname that point is within or nil.
+  "Return a remote pathname that point is within or nil.
 See the `(emacs)Remote Files' info documentation for pathname format details.
 Always returns nil if (hpath:remote-available-p) returns nil."
   (let ((remote-package (hpath:remote-available-p))
@@ -622,8 +622,8 @@ Always returns nil if (hpath:remote-available-p) returns nil."
       (hpath:delete-trailer path))))
 
 (defun hpath:remote-p (path)
-  "Returns a normalized form of PATH if it is a remote, non-local, pathname, else nil.
-See the `(Tramp)Top' Emacs lisp package manual for remote pathname format details.
+  "Return a normalized form of PATH if it is a remote, non-local, pathname, else nil.
+See the `(Tramp)Top' Emacs Lisp package manual for remote pathname format details.
 Always returns nil if (hpath:remote-available-p) returns nil."
   (and (stringp path)
        (let ((remote-package (hpath:remote-available-p))
@@ -691,7 +691,7 @@ Always returns nil if (hpath:remote-available-p) returns nil."
 	 (hpath:delete-trailer result))))
 
 (defun hpath:at-p (&optional type non-exist)
-  "Returns delimited path or non-delimited remote path at point, if any.
+  "Return delimited path or non-delimited remote path at point, if any.
 World-Wide Web urls are ignored and therefore dealt with by other code.
 Delimiters may be: double quotes, open and close single quote, whitespace, or
 Texinfo file references.  If optional TYPE is the symbol 'file or 'directory,
@@ -706,7 +706,7 @@ paths are allowed.  Absolute pathnames must begin with a `/' or `~'."
    ((hpath:is-p (hpath:delimited-possible-path non-exist) type non-exist))))
 
 (defun hpath:delimited-possible-path (&optional non-exist include-positions)
-  "Returns delimited possible path or non-delimited remote path at point, if any.
+  "Return delimited possible path or non-delimited remote path at point, if any.
 No validity checking is done on the possible path.  Delimiters may be:
 double quotes, open and close single quote, whitespace, or Texinfo file references.
 
@@ -739,7 +739,7 @@ end-pos) or nil."
 
 ;;;###autoload
 (defun hpath:display-buffer (buffer &optional display-where)
-  "Displays and selects BUFFER at optional DISPLAY-WHERE location or at `hpath:display-where'.
+  "Display and select BUFFER at optional DISPLAY-WHERE location or at `hpath:display-where'.
 BUFFER must be a buffer or a buffer name.
 
 See the documentation of `hpath:display-buffer-alist' for valid
@@ -760,7 +760,7 @@ is displayed or nil if not displayed because BUFFER is invalid."
     (selected-window)))
 
 (defun hpath:display-buffer-other-frame (buffer)
-  "Displays and selects BUFFER, in another frame.
+  "Display and select BUFFER, in another frame.
 BUFFER must be a buffer or a buffer name.
 
 May create a new frame, or reuse an existing one.  See
@@ -779,7 +779,7 @@ window in which the buffer is displayed."
   (selected-window))
 
 (defun hpath:find (filename &optional display-where)
-  "Edits file FILENAME using user customizable settings of display program and location.
+  "Edit file FILENAME using user customizable settings of display program and location.
 
 FILENAME may start with a special prefix character which is
 handled as follows:
@@ -887,7 +887,7 @@ program)."
 		    (goto-char opoint)
 		    (error "(hpath:to-markup-anchor): Anchor `%s' not found in the visible buffer portion"
 			   anchor))))
-	       (t 
+	       (t
 		(let ((opoint (point))
 		      ;; Markdown or outline link ids are case
 		      ;; insensitive and - characters are converted to
@@ -895,7 +895,7 @@ program)."
 		      (case-fold-search t)
 		      (anchor-name (subst-char-in-string ?- ?\  anchor)))
 		  (goto-char (point-min))
-		  (if (re-search-forward (format 
+		  (if (re-search-forward (format
 					  (cond ((string-match hpath:markdown-suffix-regexp buffer-file-name)
 						 hpath:markdown-section-pattern)
 						((eq major-mode 'texinfo-mode)
@@ -964,8 +964,8 @@ Returns the buffer of displayed file."
   (find-file filename))
 
 (defun hpath:find-other-window (filename)
-  "Edits file FILENAME, in another window or using an external program.
-May create a new window, or reuse an existing one; see the function display-buffer.
+  "Edit file FILENAME, in another window or using an external program.
+May create a new window, or reuse an existing one; see the function `display-buffer'.
 See documentation of `hpath:find' for details.
 Returns non-nil iff file is displayed within a buffer."
   (interactive "FFind file in other window: ")
@@ -974,14 +974,14 @@ Returns non-nil iff file is displayed within a buffer."
 ;; (hyperb:window-system) function from "hversion.el" must be defined
 ;; prior to use of this function.
 (defun hpath:get-external-display-alist ()
-  "Returns an alist of (FILENAME-REGEXP . DISPLAY-PROGRAM-STRING-OR-LIST) elements for the current window system.
+  "Return an alist of (FILENAME-REGEXP . DISPLAY-PROGRAM-STRING-OR-LIST) elements for the current window system.
 These are used to display matching filenames with external window system
 programs, such as a pdf reader.  The cdr of each element may be:
   a string which must represent either an executable name or a shell command
   with an embedded %s for substitution of the current context filename;
   a list of executable names \(the first valid one is used);
   or a function of one filename argument.
-See also `hpath:internal-display-alist' for internal, window-system independent display settings."
+See also `hpath:internal-display-alist' for internal, `window-system' independent display settings."
   (cond ((memq window-system '(dps ns))
 	 hpath:external-display-alist-macos)
 	(hyperb:microsoft-os-p
@@ -991,7 +991,7 @@ See also `hpath:internal-display-alist' for internal, window-system independent 
 			     (cons "next" hpath:external-display-alist-macos)))))))
 
 (defun hpath:is-p (path &optional type non-exist)
-  "Returns PATH if PATH is a Posix or MSWindows path, else nil.
+  "Return PATH if PATH is a Posix or MSWindows path, else nil.
 If optional TYPE is the symbol 'file or 'directory, then only that path type
 is accepted as a match.  The existence of the path is checked only for
 locally reachable paths (Info paths are not checked).  Single spaces are
@@ -1103,7 +1103,7 @@ Is a no-op if the function `push-tag-mark' is not available."
 		(push-tag-mark)))))
 
 (defun hpath:relative-to (path &optional default-dir)
-  "Returns PATH relative to optional DEFAULT-DIR or `default-directory'.
+  "Return PATH relative to optional DEFAULT-DIR or `default-directory'.
 Returns PATH unchanged when it is not a valid path."
   (if (not (and (stringp path) (hpath:is-p path)))
       path
@@ -1162,7 +1162,7 @@ in-buffer path will not match."
 	  (list start end)))))
 
 (defun hpath:substitute-value (path)
-  "Substitutes matching value for Emacs Lisp variables and environment variables in PATH and returns PATH."
+  "Substitute matching value for Emacs Lisp variables and environment variables in PATH and return PATH."
   ;; Uses free variables `match' and `start' from `hypb:replace-match-string'.
   (substitute-in-file-name
     (hypb:replace-match-string
@@ -1182,13 +1182,13 @@ in-buffer path will not match."
       t)))
 
 (defun hpath:substitute-var (path)
-  "Replaces up to one match in PATH with the first variable from `hpath:variables' whose value contains a string match to PATH.
+  "Replace up to one match in PATH with the first variable from `hpath:variables' whose value contain a string match to PATH.
 After any match, the resulting path will contain a varible reference like ${variable}."
   (if (not (and (stringp path) (string-match "/" path) (hpath:is-p path)))
       path
     (setq path (hpath:symlink-referent path))
     (let ((new-path)
-	  (vars hpath:variables)	  
+	  (vars hpath:variables)
 	  result var val)
       (while (and vars (null new-path))
 	(setq var (car vars) vars (cdr vars))
@@ -1219,7 +1219,7 @@ After any match, the resulting path will contain a varible reference like ${vari
 ;; be resolved relative to the `/usr/local' directory.
 ;;
 (defun hpath:symlink-referent (linkname)
-  "Returns expanded file or directory referent of LINKNAME.
+  "Return expanded file or directory referent of LINKNAME.
 LINKNAME should not end with a directory delimiter.
 Returns nil if LINKNAME is not a string.
 Returns LINKNAME unchanged if it is not a symbolic link but is a pathname."
@@ -1227,7 +1227,7 @@ Returns LINKNAME unchanged if it is not a symbolic link but is a pathname."
       (or (file-symlink-p linkname) linkname)))
 
 (defun hpath:symlink-expand (referent dirname)
-  "Returns expanded file or directory REFERENT relative to DIRNAME."
+  "Return expanded file or directory REFERENT relative to DIRNAME."
   (let ((var-link)
 	(dir dirname))
     (while (string-match "\\$(\\([^\)]*\\))" referent)
@@ -1262,7 +1262,7 @@ Returns LINKNAME unchanged if it is not a symbolic link but is a pathname."
   referent)
 
 (defun hpath:validate (path)
-  "Returns PATH if PATH is a valid, readable path, else signals error.
+  "Return PATH if PATH is a valid, readable path, else signal error.
 Info and remote pathnames are considered readable without any
 validation checks.
 
@@ -1303,7 +1303,7 @@ to it."
     (unless (fboundp 'hyperb:substitute-in-file-name)
       (progn
 
-;; Overload `substitute-in-file-name' to eliminate truncation of URL prefixes 
+;; Overload `substitute-in-file-name' to eliminate truncation of URL prefixes
 ;; such as http://.
 (unless (fboundp 'hyperb:substitute-in-file-name)
 (defalias 'hyperb:substitute-in-file-name
@@ -1397,7 +1397,7 @@ off otherwise."
 
 (defun hpath:url-at-p ()
   "Return world-wide-web universal resource locator (url) that point immediately precedes or nil.
-See the documentation for `hpath:url-regexp' for match-string groupings."
+See the documentation for `hpath:url-regexp' for `match-string' groupings."
   (if (or (looking-at hpath:url-regexp) (looking-at hpath:url-regexp2)
 	  (looking-at hpath:url-regexp3))
       (save-excursion
@@ -1408,7 +1408,7 @@ See the documentation for `hpath:url-regexp' for match-string groupings."
 (defun hpath:url-p (obj)
   "Return t if OBJ is a world-wide-web universal resource locator (url) string, else nil.
 See the documentation for `hpath:url-regexp' for match groupings to
-use with string-match."
+use with `string-match'."
   (and (stringp obj)
        (or (string-match hpath:string-url-regexp obj)
 	   (string-match hpath:string-url-regexp2 obj)
@@ -1416,7 +1416,7 @@ use with string-match."
        t))
 
 (defun hpath:www-at-p (&optional include-start-and-end-p)
-  "Returns a world-wide-web link reference that point is within or nil.
+  "Return a world-wide-web link reference that point is within or nil.
 With optional INCLUDE-START-AND-END-P non-nil, returns list of:
   (link-string begin-position end-position)."
   (save-excursion
@@ -1432,7 +1432,7 @@ With optional INCLUDE-START-AND-END-P non-nil, returns list of:
 		 (point))))))
 
 (defun hpath:www-p (path)
-  "Returns PATH iff PATH is a world-wide-web link reference, else nil."
+  "Return PATH iff PATH is a world-wide-web link reference, else nil."
   (and (stringp path) (hpath:url-p path) path))
 
 ;;; ************************************************************************
@@ -1482,7 +1482,7 @@ Returns \"anonymous\" if no default user is set."
 	(t "anonymous")))
 
 (defun hpath:delete-trailer (string)
-  "Return string minus any trailing .?#!*() or quoting characters."
+  "Return STRING minus any trailing .?#!*() or quoting characters."
   (save-match-data
     (if (and (stringp string) (> (length string) 0)
 	     (string-match "[.?#!*()`'\"]+\\'" string))
@@ -1537,7 +1537,7 @@ from path or t."
 
 (defun hpath:find-program (filename)
   "Return one or a list of shell or Lisp commands to execute to display FILENAME or nil.
-Return nil if FILENAME is a directory name or an image file that emacs can display.
+Return nil if FILENAME is a directory name or an image file that Emacs can display.
 See also documentation for the function (hpath:get-external-display-alist) and the variable
 `hpath:internal-display-alist'."
   (cond ((and (fboundp 'image-mode)
@@ -1556,10 +1556,10 @@ See also documentation for the function (hpath:get-external-display-alist) and t
 	))
 
 (defun hpath:match (filename regexp-alist)
-  "If FILENAME matches the car of any element in REGEXP-ALIST, return its cdr.
+  "If FILENAME match the car of any element in REGEXP-ALIST, return its cdr.
 REGEXP-ALIST elements must be of the form (<filename-regexp>
 . <command-to-display-file>).  <command-to-display-file> may be a string
-representing an external window-system command to run or it may be a Lisp
+representing an external `window-system' command to run or it may be a Lisp
 function to call with FILENAME as its single argument."
   (let ((cmd)
 	elt)
@@ -1570,7 +1570,7 @@ function to call with FILENAME as its single argument."
     cmd))
 
 (defun hpath:substitute-dir (var-name rest-of-path)
-  "Returns a dir for VAR-NAME using REST-OF-PATH to find match or triggers an error when no match.
+  "Return a dir for VAR-NAME using REST-OF-PATH to find match or triggers an error when no match.
 VAR-NAME's value may be a directory or a list of directories.  If it is a
 list, the first directory prepended to REST-OF-PATH which produces a valid
 local pathname is returned."
@@ -1614,7 +1614,7 @@ local pathname is returned."
 	  (t (error "(hpath:substitute-dir): Value of VAR-NAME, \"%s\", must be a string or list" var-name)))))
 
 (defun hpath:substitute-var-name (var-symbol var-dir-val path)
-  "Replaces with VAR-SYMBOL any occurrences of VAR-DIR-VAL in PATH.
+  "Replace with VAR-SYMBOL any occurrences of VAR-DIR-VAL in PATH.
 Replacement is done iff VAR-DIR-VAL is an absolute path.
 If PATH is modified, returns PATH, otherwise returns nil."
   (if (and (stringp var-dir-val) (file-name-absolute-p var-dir-val))

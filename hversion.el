@@ -122,7 +122,7 @@ the pathname."
 		     file)))))
 
 (defun hyperb:window-sys-term (&optional frame)
-  "Returns the first part of the term-type if running under a window system, else nil.
+  "Return the first part of the term-type if running under a window system, else nil.
 Where a part in the term-type is delimited by a `-' or  an `_'."
   (unless frame (setq frame (selected-frame)))
   (let* ((display-type (if (fboundp 'device-type) (device-type) window-system))
@@ -145,7 +145,7 @@ Where a part in the term-type is delimited by a `-' or  an `_'."
     term))
 
 (defun hyperb:window-system (&optional frame)
-  "Returns the string name for window system or term type under which the selected frame is running.
+  "Return the string name for window system or term type under which the selected FRAME is running.
 If nil after system initialization, no window system or mouse support is available."
   (unless frame (setq frame (selected-frame)))
   (frame-parameter frame 'hyperb:window-system))
@@ -155,7 +155,7 @@ If nil after system initialization, no window system or mouse support is availab
 ;; each frame.
 (mapc #'hyperb:window-sys-term (frame-list))
 ;; Ensure this next hook is appended so that if follows the hook that
-;; selects the new frame. 
+;; selects the new frame.
 (add-hook 'after-make-frame-functions #'hyperb:window-sys-term t)
 
 ;;; ************************************************************************

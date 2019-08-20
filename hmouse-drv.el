@@ -785,7 +785,7 @@ Return non-nil iff associated help documentation is found."
     (if (and (consp call) (eq (car call) 'call-interactively))
 	(if (consp (cadr call))
 	    (setq cmd-sym (if (memq (caadr call) '(function quote))
-			      (cadadr call) 
+			      (cadadr call)
 			    (caadr call)))))
     (setq calls (if (and (consp call) (eq (car call) 'or))
 		    (mapcar 'identity (cdr call))
@@ -958,7 +958,7 @@ Return t if help is displayed, nil otherwise."
 		     (hmouse-function #'hkey-assist-help assist-flag args)
 		     t)))
       (when help-shown
-	;; Then both Smart Keys have been released. 
+	;; Then both Smart Keys have been released.
 	(setq action-key-cancelled nil
 	      assist-key-cancelled nil)
 	t))))
@@ -1162,7 +1162,7 @@ the position (not below another application's window)."
 (defun hmouse-window-coordinates (&optional event)
   "Return a list (window (x-chars . y-chars)) for optional EVENT.
 Always ignores EVENT coordinates and uses current mouse position.
-The area of the EVENT is utilized. If EVENT is not given and the
+The area of the EVENT is utilized.  If EVENT is not given and the
 free variable `assist-flag' is non-nil, EVENT is set to
 `assist-key-release-args', otherwise, `action-key-release-args'.
 
@@ -1262,7 +1262,7 @@ Under InfoDock and XEmacs, `zmacs-region' must be t; under GNU Emacs,
 (add-hook 'mouse-leave-buffer-hook #'hmouse-save-region)
 
 ;; BW - Last confirmed in 1999, for some reason, using this next
-;; function in byte-compiled form caused the first character 
+;; function in byte-compiled form caused the first character
 ;; after a mouse key depress to be dropped from the input queue when running
 ;; Emacs under X.  The non-byte-compiled form always worked fine.  We
 ;; assume this is no longer a problem in 2016 but have this note here
@@ -1278,7 +1278,7 @@ return current point as a marker."
     (list 'keyboard-drag (posn-at-point))))
 
 (defun hmouse-set-point-at (set-point-arg-list)
-  "Set point to cursor position using SET-POINT-ARG-LIST and returns t.
+  "Set point to cursor position using SET-POINT-ARG-LIST and return t.
 If 'hmouse-set-point-command' is not bound to a function, this does nothing
 and returns nil."
   (if (fboundp hmouse-set-point-command)
@@ -1318,7 +1318,7 @@ is not bound to a valid function."
       (setq action-key-release-window (hmouse-key-release-window)
 	    action-key-release-prev-point (point-marker)))
     (and (eq major-mode 'br-mode)
-	 (setq action-mouse-key-prev-window 
+	 (setq action-mouse-key-prev-window
 	       (if (br-in-view-window-p)
 		   (save-window-excursion
 		     (br-next-listing-window)

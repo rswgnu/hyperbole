@@ -39,7 +39,7 @@
 
 ;;;###autoload
 (defun Mh-init ()
-  "Initializes Hyperbole support for Mh mail reading."
+  "Initialize Hyperbole support for Mh mail reading."
   (interactive)
   (setq hmail:composer  'mh-letter-mode
 	hmail:lister    'mh-folder-mode
@@ -74,21 +74,21 @@ For now, a no-op."
   )
 
 (defun Mh-msg-narrow ()
-  "Narrows mail reader buffer to current message.
+  "Narrow mail reader buffer to current message.
 This includes Hyperbole button data."
   (Mh-msg-widen))
 
 (defun Mh-msg-next ()           (mh-next-undeleted-msg 1))
 
 (defun Mh-msg-num ()
-  "Returns number of mail message that point is within."
+  "Return number of mail message that point is within."
   (interactive)
   (mh-get-msg-num nil))
 
 (defun Mh-msg-prev ()           (mh-previous-undeleted-msg 1))
 
 (defun Mh-msg-to-p (mail-msg-id mail-file)
-  "Sets current buffer to start of msg with MAIL-MSG-ID in MAIL-FILE.
+  "Set current buffer to start of msg with MAIL-MSG-ID in MAIL-FILE.
 Returns t if successful, else nil."
   (if (not (file-readable-p mail-file))
       nil
@@ -102,7 +102,7 @@ Returns t if successful, else nil."
   (Mh-to) (widen))
 
 (defun Mh-to ()
-  "Sets current buffer to a mail reader buffer."
+  "Set current buffer to a mail reader buffer."
   (and (eq major-mode 'Mh-folder-mode)
        (set-buffer mh-show-buffer)))
 
@@ -116,7 +116,7 @@ Returns t if successful, else nil."
     (mh-show msg-num)))
 
 (defun Mh-Summ-to ()
-  "Sets current buffer to a mail listing buffer."
+  "Set current buffer to a mail listing buffer."
   (let ((summ-buf))
     (save-excursion
       (mapc (lambda (window)

@@ -51,13 +51,13 @@
 
    ((REGXP . FUNCTION) ...)
 
-When fill-paragraph is called, the REGEXP of each alist element is compared
+When `fill-paragraph' is called, the REGEXP of each alist element is compared
 with the beginning of the current line.  If a match is found the corresponding
 FUNCTION is called.  FUNCTION is called with one argument, which is non-nil
-when invoked on the behalf of fill-paragraph.  It is the job of FUNCTION to
+when invoked on the behalf of `fill-paragraph'.  It is the job of FUNCTION to
 set the values of the paragraph-* variables (or set a clipping region, if
 paragraph-start and paragraph-separate cannot be made discerning enough) so
-that fill-paragraph works correctly in various contexts.")
+that `fill-paragraph' works correctly in various contexts.")
 
 ;;; ************************************************************************
 ;;; Private variables
@@ -77,7 +77,7 @@ Setting this variable automatically makes it local to the current buffer.")
 (make-variable-buffer-local 'prior-fill-prefix)
 
 ;;; ************************************************************************
-;;; Public functions 
+;;; Public functions
 ;;; ************************************************************************
 
 (defun kfill:forward-line (&optional n)
@@ -196,7 +196,7 @@ fill prefix at the beginning of each line."
     (re-search-backward (concat "\\`\\|" paragraph-separate))
     (kfill:forward-line 1)
     (let* ((region-start (point))
-	   (filladapt-mode 
+	   (filladapt-mode
 	    (if prior-fill-prefix
 		;; filladapt-mode must be disabled for this command or it
 		;; will override the removal of prior-fill-prefix.

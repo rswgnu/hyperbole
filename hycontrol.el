@@ -25,7 +25,7 @@
 ;;
 ;;   HyControl is invoked via either of two global minor modes under
 ;;   the Hyperbole screen menu, both of which can toggle to the other
-;;   by pressing {t}. `hycontrol-enable-frames-mode' bound to {C-h h s
+;;   by pressing {t}.  `hycontrol-enable-frames-mode' bound to {C-h h s
 ;;   f} manages visible frame creation, deletion, sizing, position and
 ;;   face zooming (enlarging and shrinking); if called interactively,
 ;;   it stores the current frame configuration for restoration via a
@@ -225,7 +225,7 @@ The final predicate should always be t, for default values, typically of zero.")
 0.75 and 75 are treated as the same percentage.")
 
 (defvar hycontrol-arg nil
-  "HyControl copy of prefix-arg that it changes within key bindings.
+  "HyControl copy of `prefix-arg' that it changes within key bindings.
 `pre-command-hook' synchronizes this value to `prefix-arg'.")
 
 ;;; Frame Keys
@@ -436,8 +436,8 @@ The final predicate should always be t, for default values, typically of zero.")
 	 "@=grid of wins, f/F=clone/move win to new frame, -/+=minimize/maximize frame, ==frames same size, u/b/~=un/bury/swap bufs\n"
 	 "Frame to edges: c=cycle, i/j/k/m=expand/contract, p/num-keypad=move; z/Z=zoom out/in, t=to WINDOWS mode, q=quit")
  "HyControl frames-mode minibuffer prompt string to pass to format.
-Format it with 2 arguments: prefix-arg and a plural string indicating if
-prefix-arg is not equal to 1.")
+Format it with 2 arguments: `prefix-arg' and a plural string indicating if
+`prefix-arg' is not equal to 1.")
 
 (defvar hycontrol--windows-prompt-format
   (concat
@@ -446,8 +446,8 @@ prefix-arg is not equal to 1.")
    "@=grid of wins, f/F=clone/move win to new frame, -/+=minimize/maximize win, ==wins same size, u/b/~=un/bury/swap bufs\n"
    "Frame to edges: c=cycle, i/j/k/m=expand/contract, p/num-keypad=move; z/Z=zoom out/in, t=to FRAMES mode, q=quit")
   "HyControl windows-mode minibuffer prompt string to pass to format.
-Format it with 2 arguments: prefix-arg and a plural string indicating if
-prefix-arg is not equal to 1.")
+Format it with 2 arguments: `prefix-arg' and a plural string indicating if
+`prefix-arg' is not equal to 1.")
 
 (defvar hycontrol--prompt-format nil
   "The current HyControl mode help format string or nil if not active.")
@@ -459,10 +459,10 @@ associated key: quit {q}, abort {C-g}, or toggle {t}.")
 
 
 (defvar hycontrol--fconfig nil
-  "Used to store a frame configuration while in hycontrol")
+  "Used to store a frame configuration while in hycontrol.")
 
 (defvar hycontrol--wconfig nil
-  "Used to store a window configuration while in hycontrol")
+  "Used to store a window configuration while in hycontrol.")
 
 
 (defvar hycontrol--invert-display-buffer-predicates nil)
@@ -862,7 +862,7 @@ is set to 1.  If it is > `hycontrol-maximum-units', it is set to
 
 (defun hycontrol-quit-frames-mode ()
   "Globally quit HyControl Frames mode, typically on a press of {q}.
-If in a help buffer where {q} is bound to quit-window, run that
+If in a help buffer where {q} is bound to `quit-window', run that
 instead of quitting HyControl.  Use {Q} to always quit from HyControl."
   (interactive)
   ;; Allow for quitting from help windows displayed when HyControl is active.
@@ -874,7 +874,7 @@ instead of quitting HyControl.  Use {Q} to always quit from HyControl."
 
 (defun hycontrol-quit-windows-mode ()
   "Globally quit HyControl Windows mode, typically on a press of {q}.
-If in a help buffer where {q} is bound to quit-window, run that
+If in a help buffer where {q} is bound to `quit-window', run that
 instead of quitting HyControl.  Use {Q} to always quit from HyControl."
   (interactive)
   ;; Allow for quitting from help windows displayed when HyControl is active.
@@ -973,7 +973,7 @@ nothing and return nil."
 
 (defun hycontrol-frame-to-screen-edges (&optional arg)
   "Cycle the selected frame's position clockwise through the middle of edges and corners of the screen; once per call.
-With an optional arg of 0, just reset the cycle position to 0."
+With an optional ARG of 0, just reset the cycle position to 0."
   (interactive)
   (if (and arg (zerop arg))
       (setq hycontrol--screen-edge-position 0)
@@ -1029,7 +1029,7 @@ Accepts optional arguments FRAME, X-ORIGIN, and Y-ORIGIN (in pixels) to use when
     ;; Ensure entire frame is positioned onscreen, keeping the
     ;; original frame origin coordinates if possible.
     (set-frame-position frame
-			(min (max 0 x-origin) 
+			(min (max 0 x-origin)
 			     (- (display-pixel-width) (hycontrol-frame-width frame) hycontrol-screen-right-offset))
 			(min (max 0 y-origin)
 			     (- (display-pixel-height) (hycontrol-frame-height frame) hycontrol-screen-bottom-offset)))

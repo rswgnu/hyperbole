@@ -32,9 +32,9 @@ for a comment.")
     (or (if (listp send-mail-function)
 	    (unless (equal (nth 2 send-mail-function) '(smail:widen))
 	      (error
-	       "(hsmail): Set 'send-mail-function' to a symbol-name, not a list, before load.")))
+	       "(hsmail): Set 'send-mail-function' to a symbol-name, not a list, before load")))
 	(setq send-mail-function `(lambda () (smail:widen) (,send-mail-function))))
-  (error "(hsmail): Install an Emacs \"sendmail.el\" which includes 'send-mail-function'."))
+  (error "(hsmail): Install an Emacs \"sendmail.el\" which includes 'send-mail-function'"))
 
 (if (fboundp 'mail-prefix-region)
     ;;
@@ -76,7 +76,7 @@ Used by `mail-yank-original' via `mail-indent-citation'.")
 ;;; ************************************************************************
 
 (defun smail:comment-add (&optional comment-form)
-  "Adds a comment to the current outgoing message if Hyperbole has been loaded and `inhibit-hyperbole-messaging' is nil.
+  "Add a comment to the current outgoing message if Hyperbole has been loaded and `inhibit-hyperbole-messaging' is nil.
 Optional COMMENT-FORM is evaluated to obtain the string to add to the
 message.  If not given, 'smail:comment' is evaluated by default."
   (if (and (featurep 'hyperbole) (not inhibit-hyperbole-messaging))
