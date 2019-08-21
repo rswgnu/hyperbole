@@ -4,7 +4,7 @@
 #
 # Orig-Date:    15-Jun-94 at 03:42:38
 #
-# Copyright (C) 1994-2017  Free Software Foundation, Inc.
+# Copyright (C) 1994-2019  Free Software Foundation, Inc.
 # See the file HY-COPY for license information.
 #
 # This file is part of GNU Hyperbole.
@@ -40,6 +40,9 @@
 #
 #               To release a Hyperbole Emacs package to ELPA and ftp.gnu.org:
 #		     make release
+#
+#               To set up Hyperbole for use from the source folder:
+#		     make dev-install
 #
 #               The Hyperbole Manual is included in the package in four forms:
 #                  "man/hyperbole.info"   - GNU browsable version
@@ -170,7 +173,7 @@ ELC_COMPILE =  hactypes.elc hibtypes.elc hib-debbugs.elc hib-doc-id.elc hib-kbd.
 ELC_KOTL = kotl/kexport.elc kotl/kfile.elc kotl/kfill.elc kotl/kimport.elc kotl/klabel.elc \
 	   kotl/klink.elc kotl/kmenu.elc kotl/knode.elc kotl/kotl-mode.elc \
            kotl/kcell.elc kotl/kproperty.elc \
-	    kotl/kview.el kotl/kvspec.elc
+           kotl/kview.elc kotl/kvspec.elc
 
 HYPERBOLE_FILES = dir hyperbole-pkg.el info html $(EL_SRC) $(EL_COMPILE) $(EL_KOTL) \
 	$(ELC_COMPILE) Changes COPYING Makefile HY-ABOUT HY-ANNOUNCE HY-NEWS \
@@ -194,6 +197,8 @@ help:
 	@ echo "     make doc"
 	@ echo "  To release a Hyperbole Emacs package to ELPA and ftp.gnu.org:"
 	@ echo "     make release"
+	@ echo "  To set up Hyperbole for use from the source folder:"
+	@ echo "     make dev-install"
 	@ echo ""
 	@ echo "The Hyperbole Manual is included in the package in four forms:"
 	@ echo "    man/hyperbole.info    - GNU browsable version"
@@ -238,13 +243,18 @@ elc-init:
 
 # Remove and then rebuild all byte-compiled .elc files, even those .elc files
 # which do not yet exist.
-all-elc:
+all-elc: autoloads
 	$(RM) *.elc kotl/*.elc
 	$(EMACS) $(BATCHFLAGS) $(PRELOADS) -f batch-byte-compile $(EL_KOTL) $(EL_COMPILE)
 
 tags: TAGS
 TAGS: $(EL_TAGS)
 	$(ETAGS) $(EL_TAGS)
+
+dev-install: all-elc tags
+
+clean:
+	$(RM) hyperbole-autoloads.el $(ELC_COMPILE) $(ELC_KOTL) TAGS
 
 version: doc
 	@ echo ""
@@ -276,7 +286,7 @@ README.md.html: README.md
 
 # Generate a Hyperbole package suitable for distribution via the Emacs package manager.
 pkg: package
-package: git-pull doc kotl/kotl-autoloads.el $(pkg_dir)/hyperbole-$(HYPB_VERSION).tar.sig
+package: git-pull doc autoloads $(pkg_dir)/hyperbole-$(HYPB_VERSION).tar.sig
 
 # Generate and distribute a Hyperbole release to GNU ELPA and ftp.gnu.org.
 # One step in this is to generate an autoloads file for the Koutliner, kotl/kotl-autoloads.el.
@@ -304,9 +314,14 @@ elpa-test: package
 ftp: package
 	cd $(pkg_dir) && $(GNUFTP) hyperbole-$(HYPB_VERSION).tar.gz
 
+# Autoloads
+autoloads: hyperbole-autoloads.el kotl/kotl-autoloads.el
+
+hyperbole-autoloads.el: $(EL_COMPILE)
+	$(EMACS) $(BATCHFLAGS) -eval '(progn (setq generated-autoload-file (expand-file-name "hyperbole-autoloads.el") backup-inhibited t) (update-directory-autoloads "."))'
+
 kotl/kotl-autoloads.el: $(EL_KOTL)
-	$(EMACS) $(BATCHFLAGS) -eval '(progn (setq generated-autoload-file (expand-file-name "kotl/kotl-autoloads.el")) (update-directory-autoloads (expand-file-name "kotl/")))' && $(RM) kotl/kotl-autoloads.el~
-#	$(EMACS) $(BATCHFLAGS) -eval '(progn (let ((generated-autoload-file (expand-file-name "kotl/kotl-autoloads.el"))) (update-directory-autoloads (expand-file-name "kotl/"))))' && sed -i '3 i ;; Copyright (C) 2017  Free Software Foundation, Inc.\n;;' $@ && $(RM) kotl/kotl-autoloads.el~
+	$(EMACS) $(BATCHFLAGS) -eval '(progn (setq generated-autoload-file (expand-file-name "kotl/kotl-autoloads.el") backup-inhibited t) (update-directory-autoloads "kotl/"))'
 
 # Used for ftp.gnu.org tarball distributions.
 $(pkg_dir)/hyperbole-$(HYPB_VERSION).tar.gz:
@@ -322,7 +337,7 @@ $(pkg_dir)/hyperbole-$(HYPB_VERSION).tar: $(HYPERBOLE_FILES)
 	cd $(pkg_dir) && $(RM) -fr $(pkg_hyperbole) $(pkg_hyperbole)-$(HYPB_VERSION)
 	cd .. && COPYFILE_DISABLE=1 $(TAR) -clf $(pkg_dir)/h.tar hyperbole
 	cd $(pkg_dir) && COPYFILE_DISABLE=1 $(TAR) xf h.tar && cd $(pkg_hyperbole) && $(MAKE) packageclean
-	cd $(pkg_hyperbole) && make kotl/kotl-autoloads.el && chmod 755 topwin.py && \
+	cd $(pkg_hyperbole) && make autoloads && chmod 755 topwin.py && \
 	cd $(pkg_dir) && $(RM) h.tar; \
 	  mv $(pkg_hyperbole) $(pkg_hyperbole)-$(HYPB_VERSION) && \
 	  COPYFILE_DISABLE=1 $(TAR) -clf $(pkg_dir)/hyperbole-$(HYPB_VERSION).tar hyperbole-$(HYPB_VERSION)
