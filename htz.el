@@ -336,7 +336,7 @@ Optional argument TIMEZONE specifies a time zone."
 			      htz:world-timezones))
 		  (and (fboundp 'current-time-zone)
 		       (if (listp (current-time-zone))
-			   (car (current-time-zone))
+			   (/ (car (current-time-zone)) 36)
 			 (current-time-zone)))
 		  timezone))
 	(if (stringp timezone)
