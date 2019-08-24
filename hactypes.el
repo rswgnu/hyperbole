@@ -128,7 +128,7 @@ kill the last output to the shell buffer before executing SHELL-CMD."
 		(hpath:display-buffer (current-buffer))
 		(if (eq (minibuffer-window) (selected-window))
 		    (other-window 1))
-		(shell) (rename-buffer buf-name)
+		(shell buf-name)
 		(setq comint-last-input-start (point-marker)
 		      comint-last-input-end (point-marker))))
 	  (hpath:display-buffer buf-name)
@@ -163,13 +163,11 @@ kill the last output to the shell buffer before executing SHELL-CMD."
 	  (save-excursion
 	    (save-window-excursion
 	      (cond ((fboundp 'new-shell) (new-shell))
-		    (t (shell)))
-	      (setq shell-buf (current-buffer))))
+		    (t (shell buf-name)))))
 	  (message msg)
 	  ;; Wait for shell to startup before sending it input.
 	  (sit-for 1)
-	  (set-buffer shell-buf)
-	  (rename-buffer buf-name)
+	  (set-buffer buf-name)
 	  (setq comint-last-input-start (point-marker)
 		comint-last-input-end (point-marker)))
 	(or (equal (buffer-name (current-buffer)) buf-name)
