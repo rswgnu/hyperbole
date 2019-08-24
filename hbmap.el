@@ -24,7 +24,7 @@
 ;;; ************************************************************************
 
 (defun hbmap:dir-add (dir-name &optional no-save)
-  "Adds DIR-NAME to map of all directories in which user has written buttons.
+  "Add DIR-NAME to map of all directories in which user has written buttons.
 Returns t iff DIR-NAME is not already in map, nil if it is, and some
 other value when cannot read or write map.
 Optional NO-SAVE disables saving of the map after an add."
@@ -34,7 +34,7 @@ Optional NO-SAVE disables saving of the map after an add."
 		     no-save))
 
 (defun hbmap:dir-list ()
-  "Returns list of all directories in which user has written buttons."
+  "Return list of all directories in which user has written buttons."
   (save-excursion
     (let ((buf (if (and (file-exists-p hbmap:dir-filename)
 			(not (file-readable-p hbmap:dir-filename)))
@@ -51,7 +51,7 @@ Optional NO-SAVE disables saving of the map after an add."
 		 dirs)))))
 
 (defun hbmap:dir-remove (dir-name &optional no-save)
-  "Removes DIR-NAME from map of all dirs in which user has written buttons.
+  "Remove DIR-NAME from map of all dirs in which user has written buttons.
 Returns t iff DIR-NAME is in the map and is successfully removed, nil if it
 is not, and some other value when the map is not readable or writable.
 Optional NO-SAVE disables saving of the map after a removal."
@@ -60,7 +60,7 @@ Optional NO-SAVE disables saving of the map after a removal."
 		   no-save))
 
 (defun hbmap:dir-member (dir-name)
-  "Returns t iff DIR-NAME is a member of user's Hyperbole map, else nil.
+  "Return t iff DIR-NAME is a member of user's Hyperbole map, else nil.
 If t, point is left at the start of the matching map entry.  If nil,
 point is left in a position appropriate for insertion of a new entry."
   (let ((obuf (current-buffer))
@@ -80,9 +80,9 @@ point is left in a position appropriate for insertion of a new entry."
 ;;; ************************************************************************
 
 (defun hbmap:dir-operate (pred dir-name form &optional no-save)
-  "If PRED called on DIR-NAME is non-nil, evaluates FORM.
-Returns t if PRED evaluation is successful and nil when not, except when
-hbmap is not readable or writable, in which case returns a symbol indicating
+  "If PRED called on DIR-NAME is non-nil, evaluate FORM.
+Return t if PRED evaluation is successful and nil when not, except when
+hbmap is not readable or writable, in which case return a symbol indicating
 the error.  Optional NO-SAVE disables saving of the map after operation."
   (save-excursion
     (let ((buf (if (and (file-exists-p hbmap:dir-filename)

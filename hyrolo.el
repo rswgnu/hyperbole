@@ -73,13 +73,13 @@ executable must be found as well (for Oauth security)."
 (defun hyrolo-google-contacts-p ()
   "Return non-nil if `hyrolo-google-contacts-flag' is non-nil and google-contacts package and gpg executables are available for use."
   (and hyrolo-google-contacts-flag
-       (featurep 'google-contacts) 
+       (featurep 'google-contacts)
        ;; If no gpg encryption executable, Oauth login to Google will fail.
        (or (executable-find "gpg2") (executable-find "gpg"))))
 
 ;;;###autoload
 (defun hyrolo-initialize-file-list ()
-  "Initialize the list of files used for HyRolo searches."
+  "Initialize the list of files used for HyRolo search."
   (interactive)
   (let* ((gcontacts (if (hyrolo-google-contacts-p) google-contacts-buffer-name))
 	 (ms "c:/_rolo.otl")
@@ -145,7 +145,7 @@ Default value is nil, meaning no reformmating is done.")
 
 ;;;###autoload
 (defun hyrolo-add (name &optional file)
-  "Adds a new entry in personal rolo for NAME.
+  "Add a new entry in personal rolo for NAME.
 Last name first is best, e.g. \"Smith, John\".
 With prefix argument, prompts for optional FILE to add entry within.
 NAME may be of the form: parent/child to insert child below a parent
@@ -185,7 +185,7 @@ entry which begins with the parent string."
       (if (re-search-forward
 	   (concat hyrolo-entry-regexp (regexp-quote parent)) nil t)
 	  (setq level (match-string-no-properties hyrolo-entry-group-number))
-	(error "(hyrolo-add): `%s' category not found in \"%s\"."
+	(error "(hyrolo-add): `%s' category not found in \"%s\""
 	       parent file)))
     (narrow-to-region (point)
 		      (progn (hyrolo-to-entry-end t level) (point)))
@@ -264,7 +264,7 @@ Second arg RETURN-TO-BUFFER is the buffer to leave point within after the displa
   (interactive)
   (or display-buf (setq display-buf (get-buffer hyrolo-display-buffer)))
   (if display-buf nil
-    (error "(hyrolo-display-matches): Search the rolo first."))
+    (error "(hyrolo-display-matches): Search the rolo first"))
   ;; Save current window configuration if rolo match buffer is not
   ;; displayed in one of the windows already.
   (or
@@ -338,13 +338,13 @@ Returns entry name if found, else nil."
 	(progn (setq src (hbut:key-src))
 	       (cond ((and (boundp 'bbdb-file) (stringp bbdb-file) (equal src (expand-file-name bbdb-file)))
 		      ;; For now, can't edit an entry from the bbdb database, signal an error.
-		      (error "(hyrolo-edit-entry): BBDB entries are not editable."))
+		      (error "(hyrolo-edit-entry): BBDB entries are not editable"))
 		     ((and (featurep 'google-contacts) (equal src (get-buffer google-contacts-buffer-name)))
 		      ;; For now, can't edit an entry from Google Contacts, signal an error.
-		      (error "(hyrolo-edit-entry): Google Contacts entries are not editable."))
+		      (error "(hyrolo-edit-entry): Google Contacts entries are not editable"))
 		     (t (hyrolo-edit name src)
 			name)))
-      (error "(hyrolo-edit-entry): Move to an entry to edit it."))))
+      (error "(hyrolo-edit-entry): Move to an entry to edit it"))))
 
 ;;;###autoload
 (defun hyrolo-fgrep (string &optional max-matches hyrolo-file count-only no-display)
@@ -466,7 +466,7 @@ search for the current match string rather than regular expression."
 
 ;;;###autoload
 (defun hyrolo-kill (name &optional file)
-  "Kills a rolo entry given by NAME within `hyrolo-file-list'.
+  "Kill a rolo entry given by NAME within `hyrolo-file-list'.
 With prefix argument, prompts for optional FILE to locate entry within.
 NAME may be of the form: parent/child to kill child below a parent entry
 which begins with the parent string.
@@ -505,7 +505,7 @@ Returns t if entry is killed, nil otherwise."
 				       (point)
 				       (min (+ (point) 60)
 					    (progn (end-of-line) (point))))))
-		      (if (y-or-n-p (format "Kill `%s...' " entry-line))
+		      (if (y-or-n-p (format "Kill `%s...'? " entry-line))
 			  (progn
 			    (funcall kill-op start level)
 			    (message "Killed"))
@@ -620,9 +620,9 @@ XEmacs only."
 
 ;;;###autoload
 (defun hyrolo-sort (&optional hyrolo-file)
-  "Sorts up to 14 levels of entries in HYROLO-FILE (default is personal rolo).
+  "Sort up to 14 levels of entries in HYROLO-FILE (default is personal rolo).
 Assumes entries are delimited by one or more `*'characters.
-Returns list of number of groupings at each entry level." 
+Returns list of number of groupings at each entry level."
   (interactive
    (list (let ((default "")
 	       (file))
@@ -658,7 +658,7 @@ Returns list of number of groupings at each entry level."
     entries-per-level-list))
 
 (defun hyrolo-sort-level (hyrolo-file level-regexp &optional max-groupings)
-  "Sorts groupings of entries in HYROLO-FILE at hierarchy level LEVEL-REGEXP.
+  "Sort groupings of entries in HYROLO-FILE at hierarchy level LEVEL-REGEXP.
 To a maximum of optional MAX-GROUPINGS.  Nil value of MAX-GROUPINGS means all
 groupings at the given level.  LEVEL-REGEXP should simply match the text of
 any rolo entry of the given level, not the beginning of a line (^); an
@@ -729,14 +729,14 @@ Useful when bound to a mouse key."
   (goto-char (point-min)))
 
 (defun hyrolo-top-level ()
-  "Show only the first line of all top-level rolo matches."
+  "Show only the first line of all `top-level' rolo matches."
   (interactive)
   (hyrolo-verify)
   (hyrolo-show-levels 1))
 
 ;;;###autoload
 (defun hyrolo-word (string &optional max-matches hyrolo-file count-only no-display)
-  "Display rolo entries with whole word matches for STRING.
+  "Display rolo entries with whole word match for STRING.
 To a maximum of optional prefix arg MAX-MATCHES, in file(s) from optional
 HYROLO-FILE or hyrolo-file-list.  Default is to find all matching entries.  Each
 entry is displayed with all of its sub-entries.  Optional COUNT-ONLY non-nil
@@ -761,7 +761,7 @@ hyrolo-file-list."
 
 ;;;###autoload
 (defun hyrolo-yank (name &optional regexp-p)
-  "Inserts at point the first rolo entry matching NAME.
+  "Insert at point the first rolo entry matching NAME.
 With optional prefix arg, REGEXP-P, treats NAME as a regular expression instead
 of a string."
   (interactive "sInsert rolo entry named: \nP")
@@ -1186,8 +1186,8 @@ level two.  Returns number of groupings matched."
     (set-buffer hyrolo-buf)))
 
 (defun hyrolo-buffer-exists-p (hyrolo-buf)
-  "Returns buffer given by HYROLO-BUF or nil.
-HYROLO-BUF may be a file-name, buffer-name, or buffer."
+  "Return buffer given by HYROLO-BUF or nil.
+HYROLO-BUF may be a file-name, `buffer-name', or buffer."
   (car (memq (get-buffer (or (and (stringp hyrolo-buf)
 				  (get-file-buffer hyrolo-buf))
 			     hyrolo-buf))
@@ -1224,7 +1224,7 @@ HYROLO-BUF may be a file-name, buffer-name, or buffer."
 				   hproperty:highlight-face)))))))
 
 (defun hyrolo-isearch-for-regexp (regexp)
-  "Interactively search forward for the next occurrence of current match regexp.
+  "Interactively search forward for the next occurrence of current match REGEXP.
 Then add characters to further narrow the search."
   (hyrolo-verify)
   (if (stringp regexp)
@@ -1234,14 +1234,14 @@ Then add characters to further narrow the search."
     (isearch-forward-regexp)))
 
 (defun hyrolo-kill-buffer (&optional hyrolo-buf)
-  "Kills optional HYROLO-BUF if unchanged and `hyrolo-kill-buffers-after-use' is t.
+  "Kill optional HYROLO-BUF if unchanged and `hyrolo-kill-buffers-after-use' is t.
 Default is current buffer."
   (or hyrolo-buf (setq hyrolo-buf (current-buffer)))
   (and hyrolo-kill-buffers-after-use (not (buffer-modified-p hyrolo-buf))
        (kill-buffer hyrolo-buf)))
 
 (defun hyrolo-name-and-email ()
-  "If point is in a mail message, returns list of (name email-addr) of sender.
+  "If point is in a mail message, return list of (name email-addr) of sender.
 Name is returned as `last, first-and-middle'."
   (let ((email) (name) (from))
     (save-window-excursion
@@ -1276,7 +1276,7 @@ Name is returned as `last, first-and-middle'."
 	(list name email))))
 
 (defun hyrolo-name-at ()
-  "If point is within an entry in `hyrolo-display-buffer', returns the entry name, else nil."
+  "If point is within an entry in `hyrolo-display-buffer', return the entry name, else nil."
   (if (string-equal (buffer-name) hyrolo-display-buffer)
       (save-excursion
 	(if (or (looking-at hyrolo-entry-regexp)
@@ -1292,7 +1292,7 @@ Name is returned as `last, first-and-middle'."
   (or (/= (point-min) 1) (/= (1+ (buffer-size)) (point-max))))
 
 (defun hyrolo-save-buffer (&optional hyrolo-buf)
-  "Saves optional HYROLO-BUF if changed and `hyrolo-save-buffers-after-use' is t.
+  "Save optional HYROLO-BUF if changed and `hyrolo-save-buffers-after-use' is t.
 Default is current buffer.  Used, for example, after a rolo entry is killed."
   (or hyrolo-buf (setq hyrolo-buf (current-buffer)))
   (and hyrolo-save-buffers-after-use (buffer-modified-p hyrolo-buf)
@@ -1345,13 +1345,13 @@ a default of MM/DD/YYYY."
     (and (>= lines 0)
 	 (/= desired-shrinkage 0)
 	 (> (frame-height) (1+ height))
-	 (shrink-window 
+	 (shrink-window
 	  (if (< desired-shrinkage 0)
 	      (max desired-shrinkage (- height (/ (frame-height) 2)))
 	    (min desired-shrinkage (- height window-min-height)))))))
 
 (defun hyrolo-to (name &optional file-list)
-  "Moves point to entry for NAME within optional FILE-LIST.
+  "Move point to entry for NAME within optional FILE-LIST.
 `hyrolo-file-list' is used as default when FILE-LIST is nil.
 Leaves point immediately after match for NAME within entry.
 Switches internal current buffer but does not alter the frame.
@@ -1384,7 +1384,7 @@ Returns point where matching entry begins or nil if not found."
 		(t ;; Found parent but not child
 		 (setq buffer-read-only nil)
 		 (hyrolo-to-buffer (current-buffer))
-		 (error "(hyrolo-to): `%s' part of name not found in \"%s\"."
+		 (error "(hyrolo-to): `%s' part of name not found in \"%s\""
 			parent file)))
 	  (if level
 	      (narrow-to-region (point)
@@ -1407,7 +1407,7 @@ Returns point where matching entry begins or nil if not found."
   (pop-to-buffer buffer other-window-flag))
 
 (defun hyrolo-to-entry-end (&optional include-sub-entries curr-entry-level)
-  "Moves point to the end of the whole entry that point is within if optional INCLUDE-SUB-ENTRIES is non-nil.
+  "Move point to the end of the whole entry that point is within if optional INCLUDE-SUB-ENTRIES is non-nil.
 CURR-ENTRY-LEVEL is a string whose length is the same as the last found entry
 header.  If INCLUDE-SUB-ENTRIES is nil, CURR-ENTRY-LEVEL is not needed.
 Returns current point."

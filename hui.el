@@ -85,7 +85,7 @@ Default is the current button."
 	   (hui:but-flash) (hbut:act but))))
 
 (defun hui:ebut-create (&optional start end)
-  "Creates an explicit Hyperbole button starting from label between optional START and END.
+  "Create an explicit Hyperbole button starting from label between optional START and END.
 Indicates by delimiting and adding any necessary instance number of the button
 label."
   (interactive (list (and (marker-position (hypb:mark-marker t))
@@ -125,10 +125,10 @@ Signals an error if point is not within a button."
 		       nil)))
   (cond ((null but-key)
 	 (hypb:error
-	  "(ebut-delete): Point is not over the label of an existing button."))
+	  "(ebut-delete): Point is not over the label of an existing button"))
 	((not (stringp but-key))
 	 (hypb:error
-	  "(ebut-delete): Invalid label key argument: '%s'." but-key)))
+	  "(ebut-delete): Invalid label key argument: '%s'" but-key)))
   (let ((interactive (called-interactively-p 'interactive)))
     (if (and hui:ebut-delete-confirm-p interactive)
 	(if (y-or-n-p (format "Delete button %s%s%s? "
@@ -139,7 +139,7 @@ Signals an error if point is not within a button."
       (hui:ebut-delete-op interactive but-key key-src))))
 
 (defun hui:ebut-edit ()
-  "Creates or modifies an explicit Hyperbole button when conditions are met.
+  "Create or modifies an explicit Hyperbole button when conditions are met.
 A region must have been delimited with the action-key and point must now be
 within it before this function is called or it will do nothing.  The region
 must be no larger than the size given by 'ebut:max-len'.  It must be entirely
@@ -177,7 +177,7 @@ Signals an error when no such button is found in the current buffer."
 
       (unless (setq but (ebut:get lbl-key but-buf))
 	(pop-to-buffer but-buf)
-	(hypb:error "(ebut-modify): Invalid button, no data for '%s'." lbl))
+	(hypb:error "(ebut-modify): Invalid button, no data for '%s'" lbl))
 
       (setq new-lbl
 	    (hargs:read
@@ -217,11 +217,11 @@ Signals an error if any problem occurs."
 	   (setq curr-label hui:ebut-label-prev
 		 new-label (ebut:label-p 'as-label))
 	 (setq new-label nil
-	       curr-label 
+	       curr-label
 	       (or (ebut:label-p 'as-label)
 		   (let ((buts (ebut:alist)))
 		     (if (null buts)
-			 (hypb:error "(ebut-rename): No explicit buttons in buffer.")
+			 (hypb:error "(ebut-rename): No explicit buttons in buffer")
 		       (prog1 (hargs:read-match
 			       "Button label to rename: "
 			       buts nil t nil 'ebut)
@@ -248,7 +248,7 @@ Signals an error if any problem occurs."
 	   (hypb:error "(ebut-rename): 'new-label' must be a non-empty string: %s"
 		       new-label)))
     (or (ebut:get (ebut:label-to-key curr-label))
-	(hypb:error "(ebut-rename): Can't rename %s since no button data."
+	(hypb:error "(ebut-rename): Can't rename %s since no button data"
 	       curr-label)))
   (cond (new-label
 	 (ebut:operate curr-label new-label)
@@ -257,10 +257,10 @@ Signals an error if any problem occurs."
 	(curr-label
 	 (setq hui:ebut-label-prev curr-label)
 	 (message "Edit button label and use same command to finish rename."))
-	(t (hypb:error "(ebut-rename): Move point to within a button label."))))
+	(t (hypb:error "(ebut-rename): Move point to within a button label"))))
 
 (defun hui:ebut-search (string &optional match-part)
-  "Shows lines of files/buffers containing an explicit but match for STRING.
+  "Show lines of files/buffers containing an explicit but match for STRING.
 Returns number of buttons matched and displayed.
 By default, only matches for whole button labels are found, optional MATCH-PART
 enables partial matches.  The match lines are shown in a buffer which serves as
@@ -268,7 +268,7 @@ a menu to find any of the occurrences."
   (interactive (list (read-string "Search for button string: ")
 		     (y-or-n-p "Enable partial matches? ")))
   (if (not (stringp string))
-      (hypb:error "(ebut-search): String to search for is required."))
+      (hypb:error "(ebut-search): String to search for is required"))
   (let*  ((prefix (if (> (length string) 14)
 		      (substring string 0 13) string))
 	  (out-buf (get-buffer-create (concat "*" prefix " Hypb Search*")))
@@ -294,10 +294,10 @@ a menu to find any of the occurrences."
 	total))))
 
 (defun hui:error (&rest args)
-  (hypb:error "(hui:error): Obsolete, use hypb:error instead."))
+  (hypb:error "(hui:error): Obsolete, use hypb:error instead"))
 
 (defun hui:gbut-create (lbl)
-  "Creates Hyperbole explicit global button with LBL.
+  "Create Hyperbole explicit global button with LBL.
 
 To create an implicit global button, add the text for an implicit
 button to `gbut:file` and then with point on the implicit button,
@@ -345,7 +345,7 @@ Signals an error when no such button is found."
 
       (unless (setq but (gbut:get lbl-key))
 	(pop-to-buffer but-buf)
-	(hypb:error "(gbut-modify): Invalid button, no data for '%s'." lbl))
+	(hypb:error "(gbut-modify): Invalid button, no data for '%s'" lbl))
 
       (setq new-lbl
 	    (hargs:read
@@ -378,7 +378,7 @@ Signals an error when no such button is found."
 	    (hui:ibut-message t)))))))
 
 (defun hui:hbut-act (&optional but)
-  "Executes action for optional Hyperbole button symbol BUT in current buffer.
+  "Execute action for optional Hyperbole button symbol BUT in current buffer.
 Default is the current button."
   (interactive
    (let ((but (hbut:at-p)) (lst))
@@ -388,11 +388,11 @@ Default is the current button."
 	     (hbut:get (hbut:label-to-key
 			(hargs:read-match "Button to execute: " lst nil t
 					  (hbut:label-p 'as-label) 'hbut))))
-	    (t (hypb:error "(hbut-act): No labeled buttons in buffer."))))))
+	    (t (hypb:error "(hbut-act): No labeled buttons in buffer"))))))
   (cond ((and (called-interactively-p 'interactive) (null but))
-	 (hypb:error "(hbut-act): No current button to activate."))
+	 (hypb:error "(hbut-act): No current button to activate"))
 	((not (hbut:is-p but))
-	 (hypb:error "(hbut-act): Button is invalid; it has no attributes."))
+	 (hypb:error "(hbut-act): Button is invalid; it has no attributes"))
 	(t (or but (setq but 'hbut:current))
 	   (hui:but-flash) (hbut:act but))))
 
@@ -401,13 +401,13 @@ Default is the current button."
   (interactive)
   (let ((but (hbut:at-p)))
     (cond ((null but)
-	   (hypb:error "(hbut-act): No current button to activate."))
+	   (hypb:error "(hbut-act): No current button to activate"))
 	  ((not (hbut:is-p but))
-	   (hypb:error "(hbut-act): Button is invalid; it has no attributes."))
+	   (hypb:error "(hbut-act): Button is invalid; it has no attributes"))
 	  (t (hui:but-flash) (hbut:act but)))))
 
 (defun hui:hbut-help (&optional but)
-  "Checks for and explains an optional button given by symbol, BUT.
+  "Check for and explain an optional button given by symbol, BUT.
 BUT defaults to the button whose label point is within."
   (interactive)
   (setq but (or but (hbut:at-p)
@@ -415,13 +415,13 @@ BUT defaults to the button whose label point is within."
 			   (hargs:read-match "Help for button: "
 					     (ebut:alist) nil t nil 'ebut)))))
   (unless but
-    (hypb:error "(hbut-help):  Move point to a valid Hyperbole button."))
+    (hypb:error "(hbut-help):  Move point to a valid Hyperbole button"))
   (unless (hbut:is-p but)
-    (cond (but (hypb:error "(hbut-help): Invalid button."))
+    (cond (but (hypb:error "(hbut-help): Invalid button"))
 	  (t   (hypb:error
-		"(hbut-help): Not on an implicit button and no buffer explicit buttons."))))
+		"(hbut-help): Not on an implicit button and no buffer explicit buttons"))))
   (let ((type-help-func (intern-soft
-			 (concat 
+			 (concat
 			  (htype:names 'ibtypes (hattr:get but 'categ))
 			  ":help"))))
     (unless (equal (hypb:indirect-function 'hui:but-flash)
@@ -438,7 +438,7 @@ BUT defaults to the button whose label point is within."
 	(when total (hui:help-ebut-highlight))))))
 
 (defun hui:hbut-label (default-label func-name)
-  "Reads button label from user using DEFAULT-LABEL and caller's FUNC-NAME."
+  "Read button label from user using DEFAULT-LABEL and caller's FUNC-NAME."
   (hargs:read "Button label: "
 	      (lambda (lbl)
 		(and (not (string= lbl "")) (<= (length lbl) ebut:max-len)))
@@ -448,15 +448,15 @@ BUT defaults to the button whose label point is within."
 	      'string))
 
 (defun hui:hbut-label-default (start end &optional skip-len-test)
-  "Returns default label based on START and END region markers or points.
+  "Return default label based on START and END region markers or points.
 Optional SKIP-LEN-TEST means don't limit label to `ebut:max-len' length.
-Returns nil if START or END are invalid or if region fails length test. 
+Returns nil if START or END are invalid or if region fails length test.
 
 Also has side effect of moving point to start of default label, if any."
   (if (markerp start) (setq start (marker-position start)))
   (if (markerp end) (setq end (marker-position end)))
   ;; Test whether to use region as default button label.
-  (if (and (integerp start) (integerp end) 
+  (if (and (integerp start) (integerp end)
 	   (or skip-len-test
 	       (<= (max (- end start) (- start end)) ebut:max-len)))
       (progn (goto-char start)
@@ -543,7 +543,7 @@ Signals an error when no such button is found in the current buffer."
 	(hui:ibut-message t)))))
 
 (defun hui:link-directly ()
-  "Creates a Hyperbole link button at depress point, linked to release point.
+  "Create a Hyperbole link button at depress point, linked to release point.
 See also documentation for `hui:link-possible-types'."
   (let* ((link-types (hui:link-possible-types))
 	 (but-window action-key-depress-window)
@@ -571,7 +571,7 @@ See also documentation for `hui:link-possible-types'."
     (select-window release-window)
 
     (cond ((= num-types 0)
-	   (error "(link-directly): No possible link type to create."))
+	   (error "(link-directly): No possible link type to create"))
 	  ((= num-types 1)
 	   (setq type-and-args (hui:list-remove-text-properties (car link-types)))
 	   (hui:link-create but-modify but-window lbl-key but-loc but-dir type-and-args))
@@ -584,7 +584,7 @@ See also documentation for `hui:link-possible-types'."
 			   (mapcar
 			    (lambda (type-and-args)
 			      (setq type (car type-and-args))
-			      (list 
+			      (list
 			       (capitalize
 				(if (string-match
 				     "^\\(link-to\\|eval\\)-"
@@ -608,7 +608,7 @@ See also documentation for `hui:link-possible-types'."
 ;;; ************************************************************************
 
 (defun hui:action (actype &optional prompt)
-  "Prompts for and returns an action to override action from ACTYPE."
+  "Prompt for and return an action to override action from ACTYPE."
   (and actype
        (let* ((act) (act-str)
 	      (params (actype:params actype))
@@ -665,7 +665,7 @@ See also documentation for `hui:link-possible-types'."
 
 (defun hui:actype (&optional default-actype prompt)
   "Using optional DEFAULT-ACTYPE, PROMPTs for a button action type.
-DEFAULT-ACTYPE may be a valid symbol or symbol-name."
+DEFAULT-ACTYPE may be a valid symbol or `symbol-name'."
   (and default-actype (symbolp default-actype)
        (progn
 	 (setq default-actype (symbol-name default-actype))
@@ -677,7 +677,7 @@ DEFAULT-ACTYPE may be a valid symbol or symbol-name."
 	       (hargs:read-match (or prompt "Button's action type: ")
 				(mapcar 'list (htype:names 'actypes))
 				nil t default-actype 'actype)))
-    (hypb:error "(actype): Invalid default action type received.")))
+    (hypb:error "(actype): Invalid default action type received")))
 
 (defun hui:buf-writable-err (but-buf func-name)
   "If BUT-BUF is read-only, signal an error from FUNC-NAME."
@@ -688,7 +688,7 @@ DEFAULT-ACTYPE may be a valid symbol or symbol-name."
     ;; (if unwritable
     ;;     Commented error out since some people want to be able to create
     ;;     buttons within files which they have purposely marked read-only.
-    ;;     (setq err 
+    ;;     (setq err
     ;;	     (format "(ebut-modify): Hyperbole lacks permission to write to '%s'."
     ;;		     (file-name-nondirectory buffer-file-name))))
     (if buffer-read-only
@@ -713,7 +713,7 @@ DEFAULT-ACTYPE may be a valid symbol or symbol-name."
 			    (if (and (not (string-match "mail\\*" b))
 				     (not (string-match "\\*post-news\\*" b))
 				     (string-match "\\`[* ]" b))
-				nil 
+				nil
 			      (cons b nil))))
 			(buffer-list)))
 		 nil t (buffer-name) 'buffer))
@@ -735,10 +735,10 @@ within."
 		((and (stringp key-src)
 		      (setq buf (find-file-noselect key-src)))
 		 (setq ebut (ebut:get but-key buf)))
-		(t (hypb:error "(ebut-delete): Invalid key-src: '%s'." key-src)))
+		(t (hypb:error "(ebut-delete): Invalid key-src: '%s'" key-src)))
 	  (if ebut
 	      (ebut:delete ebut)
-	    (hypb:error "(ebut-delete): No valid %s button in %s."
+	    (hypb:error "(ebut-delete): No valid %s button in %s"
 		   (ebut:key-to-label but-key) buf))
 	  )
 	(progn (set-buffer buf)
@@ -749,10 +749,10 @@ within."
 		 (hui:ebut-unmark but-key key-src))
 	       (if (hmail:reader-p) (hmail:msg-narrow))
 	       )
-      (hypb:error "(ebut-delete): You may not delete buttons from this buffer."))))
+      (hypb:error "(ebut-delete): You may not delete buttons from this buffer"))))
 
 (defun hui:ebut-delimit (start end instance-str)
-  (hypb:error "(hui:ebut-delimit): Obsolete, use ebut:delimit instead."))
+  (hypb:error "(hui:ebut-delimit): Obsolete, use ebut:delimit instead"))
 
 (defun hui:ebut-message (but-modify-flag)
   (let ((actype (symbol-name (hattr:get 'hbut:current 'actype)))
@@ -814,10 +814,10 @@ All args are optional, the current button and buffer file are the defaults."
 		     (or cur-p (save-buffer)))))))))
 
 (defun hui:file-find (file-name)
-  "If FILE-NAME is readable, finds it, else signals an error."
+  "If FILE-NAME is readable, find it, else signal an error."
   (if (and (stringp file-name) (file-readable-p file-name))
       (find-file file-name)
-    (hypb:error "(file-find): \"%s\" does not exist or is not readable."
+    (hypb:error "(file-find): \"%s\" does not exist or is not readable"
 	   file-name)))
 
 (defun hui:hbut-term-highlight (start end)
@@ -909,7 +909,7 @@ Optional NO-SORT means display in decreasing priority order (natural order)."
 		   doc-list)))))
 
 (defun hui:htype-help-current-window (htype-sym &optional no-sort)
-  "Displays in the current window, documentation for types from HTYPE-SYM which match to a regexp.
+  "Display in the current window, documentation for types from HTYPE-SYM which match to a regexp.
 Optional NO-SORT means display in decreasing priority order (natural order)."
   (let ((display-buffer-alist
 	 '(("\\`*Help" . ((lambda (buf _alist) (switch-to-buffer buf)))))))
@@ -928,16 +928,16 @@ Optional NO-SORT means display in decreasing priority order (natural order)."
 	     (cons actype args))))
 
 (defun hui:key-dir (but-buf)
-  "Returns button key src directory based on BUT-BUF, a buffer."
+  "Return button key src directory based on BUT-BUF, a buffer."
   (if (bufferp but-buf)
       (let ((file (buffer-file-name but-buf)))
 	(if file
 	    (file-name-directory (hpath:symlink-referent file))
 	  (buffer-local-value 'default-directory but-buf)))
-    (hypb:error "(hui:key-dir): '%s' is not a valid buffer.")))
+    (hypb:error "(hui:key-dir): '%s' is not a valid buffer")))
 
 (defun hui:key-src (but-buf)
-  "Returns button key src location based on BUT-BUF, a buffer.
+  "Return button key src location based on BUT-BUF, a buffer.
 This is BUT-BUF when button data is stored in the buffer and the
 button's source file name when the button data is stored externally."
   (with-current-buffer but-buf
@@ -946,13 +946,13 @@ button's source file name when the button data is stored externally."
 	  (t but-buf))))
 
 (defun hui:link-create (modify but-window lbl-key but-loc but-dir type-and-args)
-  "Creates or modifies a new Hyperbole explicit link button.
+  "Create or modify a new Hyperbole explicit link button.
 If MODIFY is non-nil, modifies button at point in BUT-WINDOW,
 otherwise, prompts for button label and creates a button.
 LBL-KEY is internal form of button label.  BUT-LOC is file or buffer
 in which to create button.  BUT-DIR is directory of BUT-LOC.
 TYPE-AND-ARGS is the action type for the button followed by any
-arguments it requires.  Any text properties are removed from string arguments." 
+arguments it requires.  Any text properties are removed from string arguments."
   (hattr:set 'hbut:current 'loc but-loc)
   (hattr:set 'hbut:current 'dir but-dir)
   (hattr:set 'hbut:current 'actype (intern-soft
@@ -965,7 +965,7 @@ arguments it requires.  Any text properties are removed from string arguments."
     (ebut:operate label (if modify label))))
 
 (defun hui:link-possible-types ()
-  "Returns list of possible link action types during editing of a Hyperbole button.
+  "Return list of possible link action types during editing of a Hyperbole button.
 Each list element is a list of the link type and any arguments it requires.
 
 The link types considered are fixed; this function must be changed to alter
@@ -1056,7 +1056,7 @@ Buffer without File      link-to-buffer-tmp"
 		))))
 
 (defun hui:list-remove-text-properties (lst)
-  "Returns LST, a list, with text properties removed from any string elements."
+  "Return LST, a list, with text properties removed from any string elements."
   (mapcar (lambda (elt) (if (stringp elt) (substring-no-properties elt) elt))
 	  lst))
 

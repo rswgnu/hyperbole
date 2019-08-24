@@ -22,7 +22,7 @@
 ;;          cNUM - set cutoff lines to NUM
 ;;        descend: Only entries below this entry
 ;; +      elide:   Ellipses are on (now always true)
-;;          e - ellipses on 
+;;          e - ellipses on
 ;;        filter:  Regexp or filter program to select entries for view,
 ;;                 off=select non-matching entries
 ;;        glue:    Freeze any group of entries selected to stay at top of
@@ -43,7 +43,7 @@
 ;;          n~ - turn off labels
 ;;        rest:    Only following cells.
 ;;        synthesize: Use a named generator function to generate entries for
-;;                    view. 
+;;                    view.
 ;;        view:    Turn koutliner view mode on.  Standard insertion keys then
 ;;                 can be used for browsing and view setting.
 
@@ -99,9 +99,9 @@ display all levels of cells."
 				  nil nil t)))
   (setq levels-to-keep (prefix-numeric-value levels-to-keep))
   (if (< levels-to-keep 0)
-      (error "(kvspec:levels-to-show): Must display at least one level."))
+      (error "(kvspec:levels-to-show): Must display at least one level"))
   (kview:map-tree
-   (lambda (kview) 
+   (lambda (kview)
      (if (/= (kcell-view:level) levels-to-keep)
 	 (kotl-mode:show-tree)
        (kotl-mode:hide-subtree)
@@ -139,7 +139,7 @@ VIEW-SPEC is a string or t, which means recompute the current view
 spec.  A nil value of VIEW-SPEC updates the modeline viewspec display
 to be current but does not recompute the viewspec itself.  See
 <${hyperb:dir}/kotl/EXAMPLE.kotl, 3b18=048> for details on valid
-view specs." 
+view specs."
   (cond ((stringp view-spec)
 	 ;; Use given view-spec after removing extraneous characters.
 	 (setq view-spec

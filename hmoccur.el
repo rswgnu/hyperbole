@@ -20,21 +20,21 @@
 ;; Subject: moccur - multibuffer occurences
 ;;
 ;; While editing some dozen or so files, i had the dire need for
-;; something like 'occur' that can cope with multiple buffers. This has
-;; probably been done before; but still, here is my try at it. It seems
+;; something like 'occur' that can cope with multiple buffers.  This has
+;; probably been done before; but still, here is my try at it.  It seems
 ;; to be very useful.
 ;; 
-;; How to use it: simple say 
-;; 	M-x moccur <regexp> 
+;; How to use it: simple say
+;; 	M-x moccur <regexp>
 ;; moccur then searches through *all buffers* currently existing that are
 ;; bound to files and displays the occurences in a buffer that runs in
-;; Moccur-mode. Change to that buffer, scroll around, and say C-c C-c
-;; to jump to the occurrence. Quite simple.
+;; Moccur-mode.  Change to that buffer, scroll around, and say C-c C-c
+;; to jump to the occurrence.  Quite simple.
 ;; 
-;; Incompatibilites to Occur mode: 
+;; Incompatibilites to Occur mode:
 ;; a) it browses through *all* buffers that have a file name
 ;; associated with them; those may or may not include the current
-;; buffer. Especially, while standard occur works 
+;; buffer.  Especially, while standard occur works
 ;; on 'all lines following point', Moccur does not.
 ;; b) there is no support for the 'NLINE' argument.
 ;;
@@ -184,7 +184,7 @@ serves as a menu to find any of the occurrences in this buffer.
   "Return (destination-buffer line-number occur-match-text) for the current moccur buffer line.
 Signal an error if not on a valid occurrence line."
   (if (not (eq major-mode 'moccur-mode))
-      (error "'moccur-to' must be called within a moccur buffer.")
+      (error "'moccur-to' must be called within a moccur buffer")
     (let (beg file-path lineno dstbuf occur-match)
       (save-excursion
 	(beginning-of-line)

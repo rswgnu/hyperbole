@@ -115,7 +115,7 @@ pattern may be:
 ;;;###autoload
 (defun kexport:html (export-from output-to &optional soft-newlines-flag)
   "Export a koutline buffer or file in EXPORT-FROM to html format in OUTPUT-TO.
-By default, this retains newlines within cells as they are.  With optional prefix arg, SOFT-NEWLINES-FLAG, 
+By default, this retains newlines within cells as they are.  With optional prefix arg, SOFT-NEWLINES-FLAG,
 hard newlines are not used.  Also converts Urls and Klinks into Html hyperlinks.
 STILL TODO:
   Make delimited pathnames into file links (but not if within klinks).

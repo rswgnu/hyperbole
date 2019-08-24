@@ -49,7 +49,7 @@ Returns t iff the key is properly bound, else nil."
        (where-is-internal 'assist-mouse-key-emacs (current-global-map) t)))
 
 (defun hmouse-set-bindings (key-binding-list)
-  "Sets mouse keys used as Smart Keys to bindings in KEY-BINDING-LIST.
+  "Set mouse keys used as Smart Keys to bindings in KEY-BINDING-LIST.
 KEY-BINDING-LIST is the value of either `hmouse-previous-bindings'
 \(mouse bindings prior to Smart Key setup) or `hmouse-bindings' (mouse
 bindings after Smart Key setup."
@@ -65,7 +65,7 @@ bindings after Smart Key setup."
        key-binding-list))))
 
 (defun hmouse-install (&optional arg)
-  "Binds the two rightmost shifted mouse keys to the Action and Assist Keys, initializing Hyperbole mouse buttons.
+  "Bind the two rightmost shifted mouse keys to the Action and Assist Keys, initializing Hyperbole mouse buttons.
 With optional prefix ARG or under InfoDock, also binds the unshifted middle mouse key to the Action Key.
 
 The standard Hyperbole configuration is Action Key = shift-middle mouse key;
@@ -89,13 +89,13 @@ Assist Key = shift-right mouse key."
 		 "{Shift-Mouse-2} invokes"))))
 
 (defun hmouse-add-unshifted-smart-keys ()
-  "Binds mouse-2 to the Action Key and mouse-3 to the Assist Key."
+  "Bind mouse-2 to the Action Key and mouse-3 to the Assist Key."
   (interactive)
   (require 'hyperbole)
   (hmouse-unshifted-setup))
   
 (defun hmouse-toggle-bindings ()
-  "Toggles between Smart Mouse Key settings and their prior bindings.
+  "Toggle between Smart Mouse Key settings and their prior bindings.
 Under InfoDock, the first invocation of this command will make the middle
 mouse key the Paste Key instead of the Action Key."
   (interactive)
@@ -113,12 +113,12 @@ mouse key the Paste Key instead of the Action Key."
 	  (if (called-interactively-p 'interactive)
 	      (message "%s mouse bindings are now in use."
 		       (if hmouse-bindings-flag "Hyperbole" "Non-Hyperbole"))))
-      (error "(hmouse-toggle-bindings): `%s' is empty."
+      (error "(hmouse-toggle-bindings): `%s' is empty"
 	     (if hmouse-bindings-flag 'hmouse-previous-bindings 'hmouse-bindings)))))
 
 ;; Define function to reload Smart Key bindings and actions after a source code change.
 (defun hmouse-update-smart-keys ()
-  "Reloads the contexts and actions associated with the Smart Keys after any programmatic changes are made."
+  "Reload the contexts and actions associated with the Smart Keys after any programmatic change is made."
   (interactive)
   (hkey-initialize)
   (makunbound 'hkey-alist)

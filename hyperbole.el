@@ -39,11 +39,11 @@
 ;; 
 ;; 3. Build outlines with multi-level numbered outline nodes, e.g. 1.4.8.6,
 ;; that all renumber automatically as any node or tree is moved in the
-;; outline. Each node also has a permanent hyperlink anchor that you can
+;; outline.  Each node also has a permanent hyperlink anchor that you can
 ;; reference from any other node;
 ;; 
 ;; 4. Manage all your contacts quickly with hierarchical categories and embed
-;; hyperlinks within each entry. Or create an archive of documents with
+;; hyperlinks within each entry.  Or create an archive of documents with
 ;; hierarchical entries and use the same search mechanism to quickly find any
 ;; matching entry;
 ;; 
@@ -54,7 +54,7 @@
 ;; major web search engines with the touch of a few keys.
 ;; 
 ;; The common thread in all these features is making retrieval, management and
-;; display of information fast and easy. That is Hyperbole's purpose.
+;; display of information fast and easy.  That is Hyperbole's purpose.
 ;; 
 ;; ----
 ;;
@@ -74,7 +74,7 @@
 ;;; ************************************************************************
 
 (defconst hyperbole-loading t
-  "Temporary constant available for testing while Hyperbole is loading.") 
+  "Temporary constant available for testing while Hyperbole is loading.")
 
 ;; Ensure defgroup and defcustom are defined for use throughout Hyperbole.
 (require 'custom)
@@ -119,7 +119,7 @@
 				       "hversion"
 				       (file-name-directory load-file-name))
 			    t)))
-    (error "(Hyperbole): Startup failure: `hyperb:dir' must be manually added to `load-path' to fix.")))
+    (error "(Hyperbole): Startup failure: `hyperb:dir' must be manually added to `load-path' to fix")))
 
 ;; This must be defined before the defcustom `inhbit-hyperbole-messaging'.
 ;;;###autoload
@@ -199,7 +199,7 @@ See `hkey-binding-entry' for format.")
 See `hkey-binding-entry' for format.")
 
 (defun hkey-binding-entry (key)
-  "Given an Emacs KEY that may be bound, returns an entry to save the associated binding.
+  "Given an Emacs KEY that may be bound, return an entry to save the associated binding.
 Entry format is: (key-description key-sequence key-binding)."
   (list (key-description key) key (key-binding key)))
 
@@ -207,7 +207,7 @@ Entry format is: (key-description key-sequence key-binding)."
   (mapcar #'cadr entries))
 
 (defun hkey-get-bindings ()
-  "Returns a list of entries for storage of Hyperbole key bindings.
+  "Return a list of entries for storage of Hyperbole key bindings.
 `hkey-initialize' must have already been called or the list will be empty."
   (mapcar (lambda (key) (hkey-binding-entry key))
 	  (hkey-bindings-keys hkey-previous-bindings)))
@@ -311,7 +311,7 @@ bindings after load)."
      (global-set-key (cadr key-and-binding) (car (cddr key-and-binding)))))
 
 (defun hyperbole-toggle-bindings ()
-  "Toggles between Hyperbole mouse and keyboard keys and their prior bindings."
+  "Toggle between Hyperbole mouse and keyboard keys and their prior bindings."
   (interactive)
   (let ((key-binding-list (if hkey-bindings-flag
 			      hkey-previous-bindings
@@ -328,7 +328,7 @@ bindings after load)."
 	  (if (called-interactively-p 'interactive)
 	      (message "%s mouse and keyboard bindings are now in use."
 		       (if hkey-bindings-flag "Hyperbole" "Non-Hyperbole"))))
-      (error "(hyperbole-toggle-bindings): `%s' is empty."
+      (error "(hyperbole-toggle-bindings): `%s' is empty"
 	     (if hkey-bindings-flag 'hkey-previous-bindings 'hkey-bindings)))))
 
 ;;; ************************************************************************
@@ -456,7 +456,7 @@ With optional ARG, override them iff ARG is positive."
 ;; the Hyperbole package is activated in an Emacs session.
 ;;;###autoload (load "kotl/kotl-autoloads" nil 'nowarn)
 
-;; Before the 6.0.1 release, Hyperbole used to patch the package-generate-autoloads 
+;; Before the 6.0.1 release, Hyperbole used to patch the package-generate-autoloads
 ;; function to ensure that kotl/ subdirectories were autoloaded.  This
 ;; is no longer used but is left here temporarily for reference.
 ;;
@@ -698,7 +698,7 @@ If FLAG is nil then text is shown, while if FLAG is t the text is hidden."
       (hkey-install-override-local-bindings)
     (add-hook 'after-load-alist '(hyperbole hkey-install-override-local-bindings)))
   ;;
-  ;; Hyperbole initialization is complete. 
+  ;; Hyperbole initialization is complete.
   (message "Initializing Hyperbole...done")
   (message "Hyperbole %s is ready for action." hyperb:version))
 

@@ -83,7 +83,7 @@
 		       (append
 			'("----"
 			  ["Alphabetize-List"
-			   (setq hui-menu-order-explicit-buttons 
+			   (setq hui-menu-order-explicit-buttons
 				 (not hui-menu-order-explicit-buttons))
 			   :style toggle :selected hui-menu-order-explicit-buttons]
 			  "Activate:")
@@ -362,7 +362,7 @@ REBUILD-FLAG is non-nil, in which case the menu is rebuilt."
 		   ["Create" hui:ebut-create t]
 		   ["Delete" hui:ebut-delete t]
 		   ["Edit"   hui:ebut-modify t]
-		   ("Help"  
+		   ("Help"
 		    ["Manual"   (id-info "(hyperbole)Location") t]
 		    "----"
 		    ["Buffer-Buttons"   (hui:hbut-report -1) t]

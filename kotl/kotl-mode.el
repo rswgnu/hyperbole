@@ -605,7 +605,7 @@ but it will be copied to the kill ring and then an error will be signaled."
 	      (if read-only (barf-if-buffer-read-only))
 	      )))
       (error
-       "(kotl-mode:kill-region): Bad region or not within a single Koutline cell."))))
+       "(kotl-mode:kill-region): Bad region or not within a single Koutline cell"))))
 
 ;; Bound to {C-w} when completion.el library is loaded.
 (defalias 'kotl-mode:completion-kill-region 'kotl-mode:kill-region)
@@ -670,7 +670,7 @@ too long."
 
 (defun kotl-mode:open-line (arg)
   "Insert a newline and leave point before it.
-With arg N, insert N newlines."
+With ARG N, insert N newlines."
   (interactive "*p")
   (let* ((bolp (and (kotl-mode:bolp) (not (kotl-mode:bocp))))
 	 (indent (kcell-view:indent))
@@ -727,7 +727,7 @@ useful for editing binary files."
       (setq arg (1- arg)))))
 
 (defun kotl-mode:set-fill-prefix (turn-off)
-  "Sets fill prefix to line up to point.
+  "Set fill prefix to line up to point.
 With prefix arg TURN-OFF or at begin of line, turns fill prefix off."
   (interactive "P")
   (set-fill-prefix (or turn-off (kotl-mode:bolp))))
@@ -868,7 +868,7 @@ See also the documentation strings for `kotl-mode:delete-backward-char' and
   "Kill up to and including prefix ARG'th occurrence of CHAR.
 Goes backward if ARG is negative; error if CHAR not found."
   (interactive "*p\ncZap to char within current cell: ")
-  (kcell-view:operate 
+  (kcell-view:operate
    (lambda () (zap-to-char arg char))))
 
 ;;; ------------------------------------------------------------------------
@@ -1306,7 +1306,7 @@ Return number of cells left to move."
 
 (defun kotl-mode:backward-paragraph (&optional arg)
   "Move backward to start of paragraph.
-With arg N, do it N times; negative arg -N means move forward N paragraphs.
+With ARG N, do it N times; negative ARG -N means move forward N paragraphs.
 Return point.
 
 A paragraph start is the beginning of a line which is a
@@ -1552,7 +1552,7 @@ Return number of cells left to move."
 
 (defun kotl-mode:forward-paragraph (&optional arg)
   "Move point forward until after the last character of the current paragraph.
-With arg N, do it N times; negative arg -N means move backward N paragraphs.
+With ARG N, do it N times; negative ARG -N means move backward N paragraphs.
 Return point.
 
 A line which `paragraph-start' matches either separates paragraphs
@@ -1568,7 +1568,7 @@ part of the paragraph, or the end of the buffer."
 	(while (< arg 0)
 	  (start-of-paragraph-text)
 	  (setq arg (1+ arg))))
-    (while (> arg 0) 
+    (while (> arg 0)
       (end-of-paragraph-text)
       (setq arg (1- arg))))
   (kotl-mode:to-valid-position)
@@ -1915,7 +1915,7 @@ If at tail cell already, do nothing and return nil."
 (defun kotl-mode:eolp ()
   "Return t if point is at the end of a visible line or the end of the buffer."
   (or (eobp)
-      (and (eolp) 
+      (and (eolp)
 	   (or (not (kview:char-invisible-p))
 	       (not (kview:char-invisible-p (1- (point)))))
 	   t)))
@@ -2027,7 +2027,7 @@ If assist-key is pressed:
   (kotl-mode:add-cell -1))
 
 (defun kotl-mode:add-cell (&optional relative-level contents plist no-fill)
-  "Add a cell following current cell at optional RELATIVE-LEVEL with CONTENTS string, attributes in PLIST, a property list, and NO-FILL flag to prevent any filling of CONTENTS. 
+  "Add a cell following current cell at optional RELATIVE-LEVEL with CONTENTS string, attributes in PLIST, a property list, and NO-FILL flag to prevent any filling of CONTENTS.
 
 Optional prefix arg RELATIVE-LEVEL means add as sibling if nil or >= 0, as
 child if equal to universal argument, {C-u}, and as sibling of current cell's
@@ -2060,7 +2060,7 @@ Return last newly added cell."
 	    (progn
 	      (goto-char start)
 	      (error
-	       "(kotl-mode:add-cell): No higher level at which to add cell.")
+	       "(kotl-mode:add-cell): No higher level at which to add cell")
 	      )))
       ;; Skip from point past any children to next cell.
       (if (kotl-mode:next-tree)
@@ -2272,7 +2272,7 @@ non-nil."
    (let ((label-default (kcell-view:label)))
      (hargs:iform-read
       '(interactive
-	(list 
+	(list
 	 (hargs:read "Mail tree: (0 for whole outline) "
 		     nil label-default nil 'kcell)
 	 (y-or-n-p "Include invisible text? "))))))
@@ -2413,7 +2413,7 @@ confirmation."
 (defun kotl-mode:set-or-remove-cell-attribute (arg)
   "With prefix ARG, interactively run kotl-mode:remove-cell-attribute; otherwise, run kotl-mode:set-cell-attribute."
   (interactive "P")
-  (call-interactively 
+  (call-interactively
    (if arg #'kotl-mode:remove-cell-attribute #'kotl-mode:set-cell-attribute)))
 
 (defun kotl-mode:split-cell (&optional arg)
@@ -2725,7 +2725,7 @@ Does not delete newline at end of line."
 
 (defun kotl-mode:exchange-point-and-mark ()
   "Put the mark where point is now, and point where the mark is now.
-This is like exchange-point-and-mark, but doesn't activate the mark."
+This is like `exchange-point-and-mark', but doesn't activate the mark."
   (goto-char (prog1 (hypb:mark t)
 	       (set-marker (hypb:mark-marker t) (point) (current-buffer)))))
 
@@ -2753,7 +2753,7 @@ on when tabs are used for indenting."
   (if (kview:is-p kview)
       t
     (hypb:error
-     "(kotl-mode:is-p): Command requires a valid Hyperbole koutline.")))
+     "(kotl-mode:is-p): Command requires a valid Hyperbole koutline")))
 
 (defun kotl-mode:shrink-region ()
   "If a region is active and outside the visible bounds of a single cell, shrink it to within those bounds.
@@ -2846,7 +2846,7 @@ newlines at end of tree."
     (move-to-column (if (numberp col) (round col) 0) nil)))
 
 (defun kotl-mode:print-attributes (kview)
-  "Print to the `standard-output' stream the attributes of the current visible kcell. 
+  "Print to the `standard-output' stream the attributes of the current visible kcell.
 Takes argument KVIEW (so it can be used with `kview:map-tree' and so that
 KVIEW is bound correctly) but always operates upon the current view."
   ;; Move to start of visible cell to avoid printing attributes for an
@@ -3013,7 +3013,7 @@ Leave point at end of line now residing at START."
 	   (progn
 	     ;; Make local-cmd have the same property list as cmd,
 	     ;; e.g. so pending-delete property is the same.
-	     (setplist local-cmd (symbol-plist cmd)) 
+	     (setplist local-cmd (symbol-plist cmd))
 	     (substitute-key-definition
 	      cmd local-cmd kotl-mode-map global-map))))
 

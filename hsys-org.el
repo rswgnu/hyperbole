@@ -33,20 +33,20 @@
   "*Boolean function of no arguments that determines whether hsys-org actions are triggered or not.")
 
 (defun hsys-org-mode-p ()
-  "Returns non-nil if an Org-related major or minor mode is active in the current buffer."
+  "Return non-nil if an Org-related major or minor mode is active in the current buffer."
   (or (derived-mode-p 'org-mode)
       (and (boundp 'outshine-mode) outshine-mode)
       (and (boundp 'poporg-mode) poporg-mode)))
 
 
 (defun hsys-org-cycle ()
-  "Calls org-cycle and forces it to be set as this-command to cycle through all states."
+  "Call `org-cycle' and force it to be set as `this-command' to cycle through all states."
   (setq last-command 'org-cycle
 	this-command 'org-cycle)
   (org-cycle))
 
 (defun hsys-org-global-cycle ()
-  "Calls org-global-cycle and forces it to be set as this-command to cycle through all states."
+  "Call `org-global-cycle' and force it to be set as `this-command' to cycle through all states."
   (setq last-command 'org-cycle
 	this-command 'org-cycle)
   (org-global-cycle nil))
@@ -127,7 +127,7 @@ If LINK-TARGET is nil, follows any link target at point.  Otherwise, triggers an
 
 
 (defact org-radio-target (&optional target)
-  "Jumps to the next occurrence of an optional Org mode radio TARGET link.
+  "Jump to the next occurrence of an optional Org mode radio TARGET link.
 If TARGET is nil and point is on a radio target definition or link, it
 uses that one.  Otherwise, triggers an error."
   (let (start-end)
@@ -146,7 +146,7 @@ uses that one.  Otherwise, triggers an error."
 ;;; ************************************************************************
 
 (defun hsys-org-region-with-text-property-value (pos property)
-  "Returns (start . end) buffer positions of the region around POS that shares its non-nil text PROPERTY value, else nil."
+  "Return (start . end) buffer positions of the region around POS that shares its non-nil text PROPERTY value, else nil."
   (if (null pos) (setq pos (point)))
   (let ((property-value (get-text-property pos property))
 	(start-point pos))
@@ -160,32 +160,32 @@ uses that one.  Otherwise, triggers an error."
 	(cons start-point (next-single-property-change start-point property)))))
 
 (defun hsys-org-at-block-start-p ()
-  "Returns non-nil if point is on the first line of an Org block definition, else nil."
+  "Return non-nil if point is on the first line of an Org block definition, else nil."
   (save-excursion
     (forward-line 0)
     (or (looking-at org-block-regexp)
 	(looking-at org-dblock-start-re))))
 
 (defun hsys-org-link-at-p ()
-  "Returns non-nil iff point is on an Org mode link.
-Assumes caller has already checked that the current buffer is in org-mode."
+  "Return non-nil iff point is on an Org mode link.
+Assumes caller has already checked that the current buffer is in `org-mode'."
   (or (org-in-regexp org-any-link-re)
       (hsys-org-face-at-p 'org-link)))
 
 ;; Assumes caller has already checked that the current buffer is in org-mode.
 (defun hsys-org-target-at-p ()
-  "Returns non-nil iff point is on an Org mode radio target (definition) or link target (referent).
-Assumes caller has already checked that the current buffer is in org-mode."
+  "Return non-nil iff point is on an Org mode radio target (definition) or link target (referent).
+Assumes caller has already checked that the current buffer is in `org-mode'."
   (hsys-org-face-at-p 'org-target))
 
 (defun hsys-org-radio-target-link-at-p ()
-  "Returns (target-start . target-end) positions iff point is on an Org mode radio target link (referent), else nil."
+  "Return (target-start . target-end) positions iff point is on an Org mode radio target link (referent), else nil."
   (and (get-text-property (point) 'org-linked-text)
        (hsys-org-link-at-p)
        (hsys-org-region-with-text-property-value (point) 'org-linked-text)))
 
 (defun hsys-org-radio-target-def-at-p ()
-  "Returns (target-start . target-end) positions iff point is on an Org mode radio target (definition), including any delimiter characters, else nil."
+  "Return (target-start . target-end) positions iff point is on an Org mode radio target (definition), including any delimiter characters, else nil."
   (when (hsys-org-target-at-p)
     (save-excursion
       (if (not (looking-at "<<<"))
@@ -196,12 +196,12 @@ Assumes caller has already checked that the current buffer is in org-mode."
 	   (hsys-org-region-with-text-property-value (point) 'face)))))
 
 (defun hsys-org-radio-target-at-p ()
-  "Returns (target-start . target-end) positions iff point is on an Org mode <<<radio target definition>>> or radio target link (referent), including any delimiter characters, else nil."
+  "Return (target-start . target-end) positions iff point is on an Org mode <<<radio target definition>>> or radio target link (referent), including any delimiter characters, else nil."
   (or (hsys-org-radio-target-def-at-p)
       (hsys-org-radio-target-link-at-p)))
 
 (defun hsys-org-internal-link-target-at-p ()
-  "Returns (target-start . target-end) positions iff point is on an Org mode <<link target>>, including any delimiter characters, else nil."
+  "Return (target-start . target-end) positions iff point is on an Org mode <<link target>>, including any delimiter characters, else nil."
   (when (hsys-org-target-at-p)
     (save-excursion
       (if (not (looking-at "<<"))
@@ -212,14 +212,14 @@ Assumes caller has already checked that the current buffer is in org-mode."
 	   (hsys-org-region-with-text-property-value (point) 'face)))))
 
 (defun hsys-org-face-at-p (org-face-type)
-  "Returns `org-face-type` iff point is on a character with face `org-face-type', a symbol, else nil."
+  "Return ORG-FACE-TYPE iff point is on a character with face ORG-FACE-TYPE, a symbol, else nil."
   (let ((face-prop (get-text-property (point) 'face)))
     (when (or (eq face-prop org-face-type)
 	      (and (listp face-prop) (memq org-face-type face-prop)))
       org-face-type)))
 
 (defun hsys-org-search-internal-link-p (target)
-  "Searches from buffer start for an Org internal link definition matching TARGET.
+  "Search from buffer start for an Org internal link definition matching TARGET.
 White spaces are insignificant.  Returns t if a link is found, else nil."
   (if (string-match "<<.+>>" target)
       (setq target (substring target 2 -2)))
@@ -240,7 +240,7 @@ White spaces are insignificant.  Returns t if a link is found, else nil."
       nil)))
 
 (defun hsys-org-search-radio-target-link-p (target)
-  "Searches from point for a radio target link matching TARGET.
+  "Search from point for a radio target link matching TARGET.
 White spaces are insignificant.  Returns t if a target link is found, else nil."
   (if (string-match "<<<.+>>>" target)
       (setq target (substring target 3 -3)))
@@ -269,7 +269,7 @@ White spaces are insignificant.  Returns t if a target link is found, else nil."
 
 
 (defun hsys-org-to-next-radio-target-link (target)
-  "Moves to the start of the next radio TARGET link if found.  TARGET must be a string."
+  "Move to the start of the next radio TARGET link if found.  TARGET must be a string."
   (if (string-match "<<<.+>>>" target)
       (setq target (substring target 3 -3)))
   (let ((opoint (point))

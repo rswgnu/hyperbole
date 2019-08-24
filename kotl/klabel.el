@@ -331,7 +331,7 @@ With optional CHILD-P, return label for first child cell of PREV-LABEL cell."
   "Set the labels of current cell, its following siblings and their subtrees.
 CURRENT-CELL-LABEL is the label to display for the current cell.
 LABEL-SEP-LEN is the length of the separation between a cell's label
-and the start of its contents." 
+and the start of its contents."
   (let (label-prefix label-suffix suffix-val suffix-function opoint)
     (if current-cell-label
 	(setq label-suffix (klabel:to-kotl-label current-cell-label)
@@ -381,7 +381,7 @@ CURRENT-CELL-LABEL is the label to display for the current cell."
   "Set the labels of current cell, its following siblings and their subtrees.
 CURRENT-CELL-LABEL is the label to display for the current cell.
 LABEL-SEP-LEN is the length of the separation between a cell's label
-and the start of its contents." 
+and the start of its contents."
   (let (label-prefix label-suffix suffix-val opoint)
     (if current-cell-label
 	(setq label-suffix (klabel:to-kotl-label current-cell-label)
@@ -463,7 +463,7 @@ and the start of its contents."
   "Set the labels of current cell, its following siblings and their subtrees.
 CURRENT-CELL-LABEL is the label to display for the current cell.
 LABEL-SEP-LEN is the length of the separation between a cell's label
-and the start of its contents." 
+and the start of its contents."
   ;; Only need to do this when switching from one label type to another,
   ;; i.e. when every cell label will be updated.  So if not starting with the
   ;; first cell, do nothing.
@@ -489,7 +489,7 @@ If, however, it is \"0\", then all cell labels are updated."
 (defun klabel-type:update-tree-labels (current-cell-label first-label)
   "Update the labels of current cell and its subtree.
 CURRENT-CELL-LABEL is the label to display for the current cell.
-Use `(klabel-type:update-labels "0")' to update all cells in an outline."
+Use `(klabel-type:update-labels \"0\")' to update all cells in an outline."
   (let ((label-type (kview:label-type kview))
 	(label-sep-len (kview:label-separator-length kview)))
     (save-excursion
@@ -506,8 +506,8 @@ Use `(klabel-type:update-labels "0")' to update all cells in an outline."
 ;;;             e.g. the full label "1a2" has kotl-label "2".
 ;;;
 (defun kotl-label:alpha-to-int (alpha-label)
-  "Return integer value of ALPHA-LABEL, e.g. `b' returns 2.
-Assumes ALPHA-LABEL is alphabetic and lowercase."
+  "Return integer value of ALPHA-LABEL, e.g. `b' return 2.
+Assume ALPHA-LABEL is alphabetic and lowercase."
   (let ((power (length alpha-label))
 	(digit 0)
 	(min (1- ?a)))
@@ -543,7 +543,7 @@ LABEL must be >= 1 or >= a.  If LABEL is decremented below 1 or a, an error
 is signaled."
   (if (not (kotl-label:is-p label))
       (error
-       "(kotl-label:increment): First arg, `%s', must be a kotl-label."
+       "(kotl-label:increment): First arg, `%s', must be a kotl-label"
        label))
   (let ((int-p) (val 0))
     (if (or (setq int-p (kotl-label:integer-p label))
@@ -553,16 +553,16 @@ is signaled."
 	    (progn (setq int-p (string-to-number label))
 		   (if (> (setq val (+ int-p n)) 0)
 		       (kotl-label:create val)
-		     (error "(kotl-label:increment): Decrement of `%s' by `%d' is less than 1." label n)))
+		     (error "(kotl-label:increment): Decrement of `%s' by `%d' is less than 1" label n)))
 	  ;; alpha-p
 	  (if (<= 0 (setq val (+ n (kotl-label:alpha-to-int label))))
 	      (kotl-label:create (kotl-label:int-to-alpha val))
-	    (error "(kotl-label:increment): Decrement of `%s' by `%d' is illegal." label n)))
+	    (error "(kotl-label:increment): Decrement of `%s' by `%d' is illegal" label n)))
       (error "(kotl-label:increment): label, `%s', must be all digits or alpha characters" label))))
 
 (defun kotl-label:increment-alpha (label)
   "Return alphabetic LABEL incremented by 1.
-For example, z would become aa, and aa would become bb.  LABEL must be >= a." 
+For example, z would become aa, and aa would become bb.  LABEL must be >= a."
   (kotl-label:int-to-alpha (1+ (kotl-label:alpha-to-int label))))
 
 (defun kotl-label:increment-int (int-string)

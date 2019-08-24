@@ -51,7 +51,7 @@
 	     "uy" "uz" "va" "vc" "ve" "vg" "vi" "vn" "vu" "wf" "ws" "ye" "yt" "yu"
 	     "za" "zm" "zw")
 	   t))
-  "Regular expression of most common Internet top-level domain names.")
+  "Regular expression of most common Internet top level domain names.")
 
 (defconst mail-address-regexp
   "\\([_a-zA-Z][-_a-zA-Z0-9.!@+%]*@[-_a-zA-Z0-9.!@+%]+\\.[a-zA-Z0-9][-_a-zA-Z0-9]+\\)\\($\\|[^a-zA-Z0-9@%]\\)"
@@ -290,8 +290,8 @@ must have an attached file."
 ;;; ========================================================================
 
 (defun markdown-follow-link-p ()
-    "Jumps between reference links and definitions; between footnote markers and footnote text.
-Returns t if jumps and nil otherwise."
+    "Jump between reference links and definitions; between footnote markers and footnote text.
+Return t if jump and nil otherwise."
     (cond
      ;; Footnote definition
      ((markdown-footnote-text-positions)
@@ -335,7 +335,7 @@ Returns t if jumps and nil otherwise."
 	     (not (hpath:www-at-p)))
     (let ((opoint (point))
 	  npoint)
-      (cond ((markdown-link-p) 
+      (cond ((markdown-link-p)
 	     (condition-case ()
 		 ;; Follows a reference link or footnote to its referent.
 		 (if (markdown-follow-link-p)
@@ -627,7 +627,7 @@ Requires the Emacs builtin Tramp library for ftp file retrievals."
 (require 'klink)
 
 ;;; ========================================================================
-;;; Links to Hyperbole button types 
+;;; Links to Hyperbole button types
 ;;; ========================================================================
 
 

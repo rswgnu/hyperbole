@@ -149,7 +149,7 @@ Use nil as cmd values to unbind a key.  Works under GNU Emacs only."
 	  ))))
 
 (defun hmouse-bind-shifted-key-emacs (shifted-mouse-key-number depress-cmd release-cmd)
-  "Ensure shifted MOUSE-KEY-NUMBER (1-5), e.g. 1 for [Smouse-1], is globally bound to DEPRESS-CMD and RELEASE-CMD (includes depresses and drags).
+  "Ensure SHIFTED-MOUSE-KEY-NUMBER (1-5), e.g. 1 for [Smouse-1], is globally bound to DEPRESS-CMD and RELEASE-CMD (includes depresses and drags).
 Use nil as CMD value to unbind the key.  Works under GNU Emacs only."
   (hmouse-set-key-list
    depress-cmd
@@ -392,7 +392,7 @@ Select the corresponding window as well."
 (defun hmouse-move-point-emacs (event &optional promote-to-region)
   "Move point to the position clicked on with the mouse.
 This should be bound to a mouse click event type.
-If PROMOTE-TO-REGION is non-nil and event is a multiple-click,
+If PROMOTE-TO-REGION is non-nil and EVENT is a multiple-click,
 select the corresponding element around point, with the resulting position of
 point determined by `mouse-select-region-move-to-beginning'."
   (interactive "e\np")
@@ -467,8 +467,8 @@ point determined by `mouse-select-region-move-to-beginning'."
 	  hmouse-bindings-flag t)))
 
 (defun hmouse-unshifted-setup (&optional middle-key-only-flag)
-  "Binds the middle mouse key as the Action Key and the right mouse key as the Assist Key.
-With optional MIDDLE-KEY-ONLY-FLAG non-nil, binds only the middle mouse key."
+  "Bind the middle mouse key as the Action Key and the right mouse key as the Assist Key.
+With optional MIDDLE-KEY-ONLY-FLAG non-nil, bind only the middle mouse key."
   (interactive)
   ;; Unbind Emacs push-button mouse keys since Hyperbole handles them.
   (define-key button-map [mouse-2] nil)

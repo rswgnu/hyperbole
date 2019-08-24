@@ -42,7 +42,7 @@ It must end with a space."
 ;;; ************************************************************************
 
 (defun hypb:call-process-p (program &optional infile predicate &rest args)
-  "Calls an external PROGRAM with INFILE for input.
+  "Call an external PROGRAM with INFILE for input.
 If PREDICATE is given, it is evaluated in a buffer with the PROGRAM's
 output and the result returned.  If PREDICATE is nil, returns t iff
 program has no output or just a 0-valued output.
@@ -53,7 +53,7 @@ Rest of ARGS are passed as arguments to PROGRAM."
       (setq buffer-read-only nil)
       (erase-buffer)
       (apply 'call-process program infile buf nil args)
-      (setq found 
+      (setq found
 	    (if predicate
 		(eval predicate)
 	      (or (= (point-max) 1) ;; No output, consider cmd a success.
@@ -73,7 +73,7 @@ Rest of ARGS are passed as arguments to PROGRAM."
     c))
 
 (defun hypb:chmod (op octal-permissions file)
-  "Uses OP and OCTAL-PERMISSIONS integer to set FILE permissions.
+  "Use OP and OCTAL-PERMISSIONS integer to set FILE permissions.
 OP may be +, -, xor, or default =."
   (let ((func (cond ((eq op '+)   #'logior)
 		    ((eq op '-)   (lambda (p1 p2) (logand (lognot p1) p2)))
@@ -83,7 +83,7 @@ OP may be +, -, xor, or default =."
 				  (file-modes file)))))
 
 (defun hypb:cmd-key-string (cmd-sym &optional keymap)
-  "Returns a single pretty printed key sequence string bound to CMD-SYM.
+  "Return a single pretty printed key sequence string bound to CMD-SYM.
 Global keymap is used unless optional KEYMAP is given."
   (if (and cmd-sym (symbolp cmd-sym) (fboundp cmd-sym))
   (let* ((get-keys (lambda (cmd-sym keymap)
@@ -96,7 +96,7 @@ Global keymap is used unless optional KEYMAP is given."
 			" " (symbol-name cmd-sym) " RET")
 	      keys)
 	    "}"))
-  (error "(hypb:cmd-key-string): Invalid cmd-sym arg: %s." cmd-sym)))
+  (error "(hypb:cmd-key-string): Invalid cmd-sym arg: %s" cmd-sym)))
 
 ;;;###autoload
 (defun hypb:configuration (&optional out-buf)
@@ -148,7 +148,7 @@ Global keymap is used unless optional KEYMAP is given."
       (untabify start (point)))))
 
 (defun hypb:debug ()
-  "Loads Hyperbole hbut.el source file and sets debugging traceback flag."
+  "Load Hyperbole hbut.el source file and set debugging traceback flag."
   (interactive)
   (or (featurep 'hinit) (load "hyperbole"))
   (or (and (featurep 'hbut)
@@ -186,7 +186,7 @@ Global keymap is used unless optional KEYMAP is given."
       string)))
 
 (defun hypb:domain-name ()
-  "Returns current Internet domain name with '@' prepended or nil if none."
+  "Return current Internet domain name with '@' prepended or nil if none."
   (let* ((dname-cmd (or (file-exists-p "/usr/bin/domainname")
 			(file-exists-p "/bin/domainname")))
 	 (dname (or (and (boundp 'message-user-fqdn) (stringp message-user-fqdn)
@@ -195,7 +195,7 @@ Global keymap is used unless optional KEYMAP is given."
 		    (getenv "DOMAINNAME")
 		    (if dname-cmd
 			(hypb:call-process-p
-			 "domainname" nil 
+			 "domainname" nil
 			 '(substring (buffer-string) 0 -1)))))
 	 host-and-domain)
     (if (or (and dname (string-match "\\." dname))
@@ -241,7 +241,7 @@ FILE is temporarily read into a buffer to determine the major mode if necessary.
 	(kill-buffer buf)))))
 
 (defun hypb:format-quote (arg)
-  "Replace all single % with %% in any string ARG so that a call to `format' or `message' ignores them.
+  "Replace all single % with %% in any string ARG so that a call to `format' or `message' ignore them.
 Return either the modified string or the original ARG."
   (if (stringp arg)
       (replace-regexp-in-string
@@ -252,11 +252,11 @@ Return either the modified string or the original ARG."
     arg))
 
 (defun hypb:function-copy (func-symbol)
-  "Copies FUNC-SYMBOL's body for overloading.  Returns copy of body."
+  "Copy FUNC-SYMBOL's body for overloading.  Return copy of body."
   (if (fboundp func-symbol)
       (let ((func (hypb:indirect-function func-symbol)))
 	(cond ((listp func) (copy-sequence func))
-	      ((subrp func) (error "(hypb:function-copy): `%s' is a primitive; can't copy body."
+	      ((subrp func) (error "(hypb:function-copy): `%s' is a primitive; can't copy body"
 				   func-symbol))
 	      ((and (hypb:emacs-byte-code-p func) (fboundp 'make-byte-code))
 	       (if (not (fboundp 'compiled-function-arglist))
@@ -275,7 +275,7 @@ Return either the modified string or the original ARG."
 		       (setq new-code (nconc new-code (list (nth 1 spec)))))
 		   (apply 'make-byte-code new-code))))
 	      (t (error "(hypb:function-copy): Can't copy function body: %s" func))))
-    (error "(hypb:function-copy): `%s' symbol is not bound to a function."
+    (error "(hypb:function-copy): `%s' symbol is not bound to a function"
 	   func-symbol)))
 
 (defun hypb:function-overload (func-sym prepend &rest new-forms)
@@ -305,7 +305,7 @@ Return either the modified string or the original ARG."
 		(append old-func-call new-forms)))))))
 
 (defun hypb:function-symbol-replace (func-sym sym-to-replace replace-with-sym)
-  "Replaces in body of FUNC-SYM SYM-TO-REPLACE with REPLACE-WITH-SYM.
+  "Replace in body of FUNC-SYM SYM-TO-REPLACE with REPLACE-WITH-SYM.
 FUNC-SYM may be a function symbol or its body.  All occurrences within lists
 are replaced.  Returns body of modified FUNC-SYM."
   (let ((body (hypb:indirect-function func-sym))
@@ -364,7 +364,7 @@ If MARKER is invalid signal an error."
 	     (switch-to-buffer buffer)))))
 
 (defun hypb:help-buf-name (&optional suffix)
-  "Returns a Hyperbole help buffer name for current buffer.
+  "Return a Hyperbole help buffer name for current buffer.
 With optional SUFFIX string, uses it rather than buffer name."
   (let ((bn (or suffix (buffer-name))))
     (if (string-match (regexp-quote hypb:help-buf-prefix) bn)
@@ -421,7 +421,7 @@ copied, otherwise, it is omitted."
 	
 ;;;###autoload
 (defun hypb:locate (search-string &optional filter arg)
-  "Find file name matches anywhere, calling the value of `locate-command', and putting results in the `*Locate*' buffer.
+  "Find file name match anywhere, calling the value of `locate-command', and putting results in the `*Locate*' buffer.
 Pass it SEARCH-STRING as argument.  Interactively, prompt for SEARCH-STRING.
 With prefix arg ARG, prompt for the exact shell command to run instead.
 
@@ -456,18 +456,18 @@ then `locate-post-command-hook'."
 (defun hypb:mark-marker (inactive-p)
   "Return this buffer's mark as a marker object, or nil if no mark.
 INACTIVE-P is unused, it is for compatibility with XEmacs' version of
-mark-marker."
+`mark-marker'."
   (mark-marker))
 
 ;;;###autoload
 (defun hypb:map-plist (func plist)
-  "Returns result of applying FUNC of two args, key and value, to key-value pairs in PLIST, a property list."
+  "Return result of applying FUNC of two args, key and value, to key-value pairs in PLIST, a property list."
   (cl-loop for (k v) on plist by #'cddr
 	   collect (funcall func k v) into result
 	   finally return result))
 
 (defun hypb:map-sublists (func list)
-  "Applies FUNC to every atom found at any level of LIST.
+  "Apply FUNC to every atom found at any level of LIST.
 FUNC must take two arguments, an atom and a list in which the atom is found.
 Returns values from applications of FUNC as a list with the same
 structure as LIST.  FUNC is therefore normally used just for its side-effects."
@@ -478,10 +478,10 @@ structure as LIST.  FUNC is therefore normally used just for its side-effects."
 	  list))
 
 (defun hypb:map-vector (func object)
-  "Returns list of results of application of FUNC to each element of OBJECT.
-OBJECT should be a vector or byte-code object."
+  "Return list of results of application of FUNC to each element of OBJECT.
+OBJECT should be a vector or `byte-code' object."
   (if (not (or (vectorp object) (hypb:emacs-byte-code-p object)))
-      (error "(hypb:map-vector): Second argument must be a vector or byte-code object."))
+      (error "(hypb:map-vector): Second argument must be a vector or byte-code object"))
   (let ((end (length object))
 	(i 0)
 	(result))
@@ -505,7 +505,7 @@ WINDOW pixelwise."
    nil nil window-resize-pixelwise))
 
 (defun hypb:replace-match-string (regexp str newtext &optional literal)
-  "Replaces all matches for REGEXP in STR with NEWTEXT string and returns the result.
+  "Replace all matches for REGEXP in STR with NEWTEXT string and return the result.
 Optional LITERAL non-nil means do a literal replacement.
 Otherwise treat \\ in NEWTEXT string as special:
   \\& means substitute original matched text,
@@ -560,7 +560,7 @@ that returns a replacement string."
     (concat rtn-str (substring str start))))
 
 (defun hypb:return-process-output (program &optional infile &rest args)
-  "Returns as a string the output from external PROGRAM with INFILE for input.
+  "Return as a string the output from external PROGRAM with INFILE for input.
 Rest of ARGS are passed as arguments to PROGRAM.
 Removes any trailing newline at the end of the output."
   (let ((buf (get-buffer-create "*test-output*"))
@@ -577,7 +577,7 @@ Removes any trailing newline at the end of the output."
     output))
 
 (defun hypb:remove-lines (regexp)
- "Remove lines containing matches for REGEXP within the active region or to the end of buffer."
+ "Remove lines containing match for REGEXP within the active region or to the end of buffer."
     (interactive "sRemove lines with match for regexp: ")
     (flush-lines regexp nil nil t))
 
@@ -618,7 +618,7 @@ If in an Emacs Lisp mode buffer and no PREFIX-ARG is given, limit search to only
     (grep grep-cmd)))
 
 (defun hypb:save-lines (regexp)
- "Save only lines containing matches for REGEXP within the active region or to the end of buffer."
+ "Save only lines containing match for REGEXP within the active region or to the end of buffer."
     (interactive "sSave lines with match for regexp: ")
     (keep-lines regexp nil nil t))
 
@@ -637,7 +637,7 @@ The value returned is the value of the last form in BODY."
     (error "(hypb:select-window-frame): Argument must be a live window, not '%s'" window)))
 
 (defun hypb:supercite-p ()
-  "Returns non-nil iff the Emacs add-on supercite package is in use."
+  "Return non-nil iff the Emacs add-on supercite package is in use."
   (let (hook-val)
     (if (memq t (mapcar
 		 (lambda (hook-var)
@@ -655,7 +655,7 @@ The value returned is the value of the last form in BODY."
 This determines whether to search inside invisible text or not.
 Toggles the variable ‘isearch-invisible’ between values
 nil and a non-nil value of the option ‘search-invisible’
-(or ‘open’ if ‘search-invisible’ is nil).
+\(or ‘open’ if ‘search-invisible’ is nil).
 
 With optional prefix ARG > 0, turn on searching invisible text.
 If ARG <= 0, turn search only visible text."
@@ -676,7 +676,7 @@ If ARG <= 0, turn search only visible text."
     (user-login-name)))
 
 (defun hypb:window-list (&optional minibuffer-flag)
-  "Returns a list of Lisp window objects for all Emacs windows in selected frame.
+  "Return a list of Lisp window objects for all Emacs windows in selected frame.
 Optional first arg MINIBUFFER-FLAG t means include the minibuffer window
 in the list, even if it is not active.  If MINIBUFFER-FLAG is neither t
 nor nil it means to not count the minibuffer window even if it is active."
@@ -687,7 +687,7 @@ nor nil it means to not count the minibuffer window even if it is active."
 ;;; ************************************************************************
 
 (defvar hypb:home-page "https://www.gnu.org/software/hyperbole/"
-  "The web home page for Hyperbole")
+  "The web home page for Hyperbole.")
 
 (defvar hypb:hyperbole-banner-keymap
   (let ((map (make-sparse-keymap)))
@@ -774,7 +774,7 @@ Without file, the banner is prepended to the current buffer."
 			      (buffer-substring-no-properties (point) (point-max)))))
 
 (defun hypb:oct-to-int (oct-num)
-  "Returns octal integer OCTAL-NUM converted to a decimal integer."
+  "Return octal integer OCT-NUM converted to a decimal integer."
   (let ((oct-str (int-to-string oct-num))
 	(dec-num 0))
     (and (string-match "[^0-7]" oct-str)

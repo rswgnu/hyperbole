@@ -21,7 +21,7 @@
 ;;;
 
 (defun knode:create (contents &optional prop-list)
-  "Return a new knode which stores CONTENTS and optional PROP-LIST."
+  "Return a new knode which store CONTENTS and optional PROP-LIST."
   (list   'knode
 	  'contents contents
 	  'plist prop-list))
@@ -30,7 +30,7 @@
    "Return KNODE's contents."
    (if (knode:is-p knode)
        (car (cdr (memq 'contents knode)))
-     (error "(knode:contents): Argument must be a knode.")))
+     (error "(knode:contents): Argument must be a knode")))
 
 (defalias 'knode:copy 'copy-tree)
 
@@ -42,19 +42,19 @@
   "Set KNODE's CONTENTS."
   (if (knode:is-p knode)
       (setcar (cdr (memq 'contents knode)) contents)
-    (error "(knode:set-contents): First arg must be a knode.")))
+    (error "(knode:set-contents): First arg must be a knode")))
 
 ;;; ************************************************************************
 ;;; Private functions
 ;;; ************************************************************************
 
 (defun knode:get-attr (obj attribute)
-  "Return the value of OBJECT's ATTRIBUTE."
+  "Return the value of OBJ's ATTRIBUTE."
   (car (cdr (memq attribute obj))))
 
 (defun knode:remove-attr (obj attribute)
-  "Remove OBJECT's ATTRIBUTE, if any, and return modified OBJECT.
-Use (setq object (knode:remove-attr object attribute)) to ensure that OBJECT
+  "Remove OBJ's ATTRIBUTE, if any, and return modified OBJ.
+Use (setq object (knode:remove-attr object attribute)) to ensure that OBJ
 is updated."
   (let ((tail obj)
 	sym
@@ -75,7 +75,7 @@ is updated."
     obj))
 
 (defun knode:set-attr (obj attribute value)
-  "Set OBJECT's ATTRIBUTE to VALUE and return OBJECT."
+  "Set OBJ's ATTRIBUTE to VALUE and return OBJ."
   (let ((attr (memq attribute obj)))
     (if attr
 	(setcar (cdr attr) value)

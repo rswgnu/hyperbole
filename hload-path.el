@@ -22,7 +22,7 @@
 			      (locate-file "hmouse-tag.el" load-path)
 			      ""))
 			 (error
-			  "(Hyperbole): Failed to set hyperb:dir.  Try setting it manually."))
+			  "(Hyperbole): Failed to set hyperb:dir.  Try setting it manually"))
   "Directory where the Hyperbole executable code is kept.
 It must end with a directory separator character.")
 

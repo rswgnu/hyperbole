@@ -69,7 +69,7 @@ error."
      (cond ((fboundp macro))
 	   ((null last-kbd-macro)
 	    (hypb:error
-	     "(exec-kbd-macro): Define a keyboard macro first."))
+	     "(exec-kbd-macro): Define a keyboard macro first"))
 	   (t (defalias '$%macro last-kbd-macro)
 	      (setq macro '$%macro)))
      (save-excursion
@@ -111,9 +111,9 @@ kill the last output to the shell buffer before executing SHELL-CMD."
      (list (hargs:read "Shell cmd: "
 		       (lambda (cmd) (not (string-equal cmd "")))
 		       default "Enter a shell command." 'string)
-	   (y-or-n-p (format "Omit cmd from output (default = %s): "
+	   (y-or-n-p (format "Omit cmd from output (default = %s)? "
 			     default1))
-	   (y-or-n-p (format "Kill prior cmd's output (default = %s): "
+	   (y-or-n-p (format "Kill prior cmd's output (default = %s)? "
 			     default2)))))
   (require 'comint)
   (let ((buf-name "*Hyperbole Shell*")
@@ -180,7 +180,7 @@ kill the last output to the shell buffer before executing SHELL-CMD."
     (message msg)))
 
 (defact function-in-buffer (name pos)
-  "Displays the definition of function NAME found at POS in the current buffer."
+  "Display the definition of function NAME found at POS in the current buffer."
   (save-excursion
     (goto-char pos)
     (unless (looking-at (regexp-quote name))
@@ -194,11 +194,11 @@ kill the last output to the shell buffer before executing SHELL-CMD."
     (beginning-of-line)))
 
 (defact hyp-config (&optional out-buf)
-  "Inserts Hyperbole configuration information at the end of the current buffer or within optional OUT-BUF."
+  "Insert Hyperbole configuration information at the end of the current buffer or within optional OUT-BUF."
   (hypb:configuration out-buf))
 
 (defact hyp-request (&optional out-buf)
-  "Inserts into optional OUT-BUF a description of how to subscribe or unsubscribe from a Hyperbole mail list via email."
+  "Insert into optional OUT-BUF a description of how to subscribe or unsubscribe from a Hyperbole mail list via email."
   (save-excursion
     (and out-buf (set-buffer out-buf))
     ;; Allows for insertion prior to user's email signature
@@ -218,7 +218,7 @@ where possible <list-names> are:
 For example:  To: hyperbole-users-join@gnu.org\n")))
 
 (defact hyp-source (buf-str-or-file)
-  "Displays a buffer or file from a line beginning with `hbut:source-prefix'."
+  "Display a buffer or file from a line beginning with `hbut:source-prefix'."
   (interactive
    (list (prin1-to-string (get-buffer-create
 			   (read-buffer "Buffer to link to: "))
@@ -231,7 +231,7 @@ For example:  To: hyperbole-users-join@gnu.org\n")))
     (hypb:error "(hyp-source): Non-string argument: %s" buf-str-or-file)))
 
 (defact link-to-buffer-tmp (buffer &optional point)
-  "Displays a BUFFER scrolled to optional POINT.
+  "Display a BUFFER scrolled to optional POINT.
 If POINT is given, the buffer is displayed with POINT at the top of
 the window.
 
@@ -246,12 +246,12 @@ Use `link-to-file' instead for a permanent link."
     (hypb:error "(link-to-buffer-tmp): Not a current buffer: %s" buffer)))
 
 (defact link-to-directory (directory)
-  "Displays a DIRECTORY in Dired mode."
+  "Display a DIRECTORY in Dired mode."
   (interactive "DDirectory to link to: ")
   (hpath:find directory))
 
 (defact link-to-ebut (key &optional key-file)
-  "Performs action given by an explicit button, specified by KEY and optional KEY-FILE.
+  "Perform action given by an explicit button, specified by KEY and optional KEY-FILE.
 KEY-FILE defaults to the current buffer's file name."
   (interactive
    (let (but-file but-lbl)
@@ -281,23 +281,23 @@ KEY-FILE defaults to the current buffer's file name."
   (let ((but (and key-file (ebut:get key (find-file-noselect key-file)))))
     (if but
 	(hbut:act but)
-      (hypb:error "(link-to-ebut): No button `%s' in `%s'."
+      (hypb:error "(link-to-ebut): No button `%s' in `%s'"
 		  (ebut:key-to-label key)
 		  key-file))))
 
 (defact link-to-elisp-doc (symbol)
-  "Displays documentation for SYMBOL."
+  "Display documentation for SYMBOL."
   (interactive "SSymbol to display documentation for: ")
   (cond ((not (symbolp symbol))
-	 (hypb:error "(link-to-elisp-doc): `%s' not a symbol." symbol))
+	 (hypb:error "(link-to-elisp-doc): `%s' not a symbol" symbol))
 	((not (or (boundp symbol) (fboundp symbol)))
-	 (hypb:error "(link-to-elisp-doc): `%s' not defined." symbol))
+	 (hypb:error "(link-to-elisp-doc): `%s' not defined" symbol))
 	(t (let ((temp-buffer-show-function 'switch-to-buffer))
 	     (hpath:display-buffer (current-buffer))
 	     (describe-symbol symbol)))))
 
 (defact link-to-file (path &optional point)
-  "Displays a file given by PATH scrolled to optional POINT.
+  "Display a file given by PATH scrolled to optional POINT.
 If POINT is given, the buffer is displayed with POINT at the top of
 the window."
   (interactive
@@ -321,7 +321,7 @@ the window."
 	       (with-current-buffer path-buf
 		 (setq hargs:reading-p 'character)
 		 (if (y-or-n-p
-		      (format "y = Display at present position (line %d); n = no position: "
+		      (format "y = Display at present position (line %d); n = no position? "
 			      (count-lines 1 (point))))
 		     (list path (point))
 		   (list path)))
@@ -335,7 +335,7 @@ the window."
 	      (recenter 0))))
 
 (defact link-to-file-line (path line-num)
-  "Displays a file given by PATH scrolled to LINE-NUM."
+  "Display a file given by PATH scrolled to LINE-NUM."
   (interactive "fPath to link to: \nnDisplay at line number: ")
   (if (condition-case ()
 	  (setq path (smart-tags-file-path path))
@@ -346,7 +346,7 @@ the window."
 	(hpath:find-line path line-num))))
 
 (defact link-to-file-line-and-column (path line-num column-num)
-  "Displays a file given by PATH scrolled to LINE-NUM with point at COLUMN-NUM."
+  "Display a file given by PATH scrolled to LINE-NUM with point at COLUMN-NUM."
   (interactive "fPath to link to: \nnDisplay at line number: \nnand column number: ")
   (when (condition-case ()
 	    (setq path (smart-tags-file-path path))
@@ -358,12 +358,12 @@ the window."
     (move-to-column column-num)))
 
 (defact link-to-gbut (key)
-  "Performs an action given by an existing global button, specified by KEY."
+  "Perform an action given by an existing global button, specified by KEY."
   (interactive
    (let ((gbut-file (hpath:validate (hpath:substitute-value gbut:file)))
 	 but-lbl)
      (if (not (file-readable-p gbut-file))
-	 (hypb:error "(link-to-gbut): You cannot read `%s'." gbut-file)
+	 (hypb:error "(link-to-gbut): You cannot read `%s'" gbut-file)
        (list (progn
 	       (find-file-noselect gbut-file)
 	       (while (string-equal "" (setq but-lbl
@@ -376,7 +376,7 @@ the window."
   (gbut:act (hbut:key-to-label key)))
 
 (defact link-to-Info-index-item (index-item)
-  "Displays an Info index INDEX-ITEM cross-reference.
+  "Display an Info index INDEX-ITEM cross-reference.
 INDEX-ITEM must be a string of the form \"(filename)item-name\".  During
 button creation, completion for both filename and item-name is
 available.  Filename may be given without the .info suffix."
@@ -387,7 +387,7 @@ available.  Filename may be given without the .info suffix."
     (hypb:error "(link-to-Info-index-entry): Invalid Info index item: `%s'" index-item)))
 
 (defact link-to-Info-node (string)
-  "Displays an Info node given by STRING or if not found, trys to display it as an Info index item.
+  "Display an Info node given by STRING or if not found, try to display it as an Info index item.
 STRING must be a string of the form \"(filename)name\".  During
 button creation, completion for both filename and node names is
 available.  Filename may be given without the .info suffix."
@@ -398,7 +398,7 @@ available.  Filename may be given without the .info suffix."
     (hypb:error "(link-to-Info-node): Invalid Info node: `%s'" string)))
 
 (defact link-to-ibut (key &optional key-file point)
-  "Performs an action given by an implicit button, specified by KEY, optional KEY-FILE and POINT.
+  "Perform an action given by an implicit button, specified by KEY, optional KEY-FILE and POINT.
 KEY-FILE defaults to the current buffer's file and POINT to the current point.
 
 When creating the button, point must be on the implicit button to which to link
@@ -425,12 +425,12 @@ and its buffer must have a file attached."
 	(setq but (ibut:to key))))
     (if but
 	(hbut:act but)
-      (hypb:error "(link-to-ibut): No button `%s' in `%s'."
+      (hypb:error "(link-to-ibut): No button `%s' in `%s'"
 		  (ibut:key-to-label key)
 		  (or key-file (buffer-name))))))
 
 (defact link-to-kcell (file cell-ref)
-  "Displays FILE with kcell given by CELL-REF at window top.
+  "Display FILE with kcell given by CELL-REF at window top.
 See documentation for `kcell:ref-to-id' for valid cell-ref formats.
 
 If FILE is nil, the current buffer is used.
@@ -450,12 +450,12 @@ If CELL-REF is nil, the first cell in the view is shown."
 	 (recenter 0))))
 
 (defact link-to-mail (mail-msg-id &optional mail-file)
-  "Displays mail msg with MAIL-MSG-ID from optional MAIL-FILE.
+  "Display mail msg with MAIL-MSG-ID from optional MAIL-FILE.
 See documentation for the variable `hmail:init-function' for information on
 how to specify a mail reader to use."
   (interactive "+MMail Msg: ")
   (if (not (fboundp 'rmail:msg-to-p))
-      (hypb:error "(link-to-mail): Invoke mail reader before trying to follow a mail link.")
+      (hypb:error "(link-to-mail): Invoke mail reader before trying to follow a mail link")
     (if (and (listp mail-msg-id) (null mail-file))
 	(setq mail-file (car (cdr mail-msg-id))
 	      mail-msg-id (car mail-msg-id)))
@@ -470,14 +470,14 @@ how to specify a mail reader to use."
       (unless (rmail:msg-to-p mail-msg-id mail-file)
 	;; Couldn't find message, restore old window config, report error
 	(set-window-configuration wconfig)
-	(hypb:error "(link-to-mail): No msg `%s' in file \"%s\"."
+	(hypb:error "(link-to-mail): No msg `%s' in file \"%s\""
 		    mail-msg-id mail-file)))))
 
 (defact link-to-regexp-match (regexp n source &optional buffer-p)
-  "Finds REGEXP's Nth occurrence in SOURCE and displays location at window top.
+  "Find REGEXP's Nth occurrence in SOURCE and display location at window top.
 SOURCE is a pathname unless optional BUFFER-P is non-nil, then SOURCE must be
 a buffer name or buffer.
-Returns t if found, signals an error if not."
+Return t if found, signal an error if not."
   (interactive "sRegexp to match: \nnOccurrence number: \nfFile to search: ")
   (let ((orig-src source))
     (if buffer-p
@@ -501,23 +501,23 @@ Returns t if found, signals an error if not."
 	 "(link-to-regexp-match): Pattern not found: `%s'" regexp)))))
 
 (defact link-to-rfc (rfc-num)
-  "Retrieves and displays an Internet rfc given by RFC-NUM.
+  "Retrieve and display an Internet rfc given by RFC-NUM.
 RFC-NUM may be a string or an integer."
   (interactive "nRFC number to retrieve: ")
   (if (or (stringp rfc-num) (integerp rfc-num))
       (hpath:find (hpath:rfc rfc-num))))
 
 (defact link-to-string-match (string n source &optional buffer-p)
-  "Finds STRING's Nth occurrence in SOURCE and displays location at window top.
+  "Find STRING's Nth occurrence in SOURCE and display location at window top.
 SOURCE is a pathname unless optional BUFFER-P is non-nil, then SOURCE must be
 a buffer name or buffer.
-Returns t if found, nil if not."
+Return t if found, nil if not."
   (interactive "sString to match: \nnOccurrence number: \nfFile to search: ")
   (funcall (actype:action 'link-to-regexp-match)
 	   (regexp-quote string) n source buffer-p))
 
 (defact link-to-texinfo-node (nodename)
-  "Displays the Texinfo node with NODENAME (a string) from the current buffer."
+  "Display the Texinfo node with NODENAME (a string) from the current buffer."
   (interactive "sTexinfo nodename to link to: ")
   (let (node-point)
     (save-excursion
@@ -529,7 +529,7 @@ Returns t if found, nil if not."
     (hact 'link-to-file buffer-file-name node-point)))
 
 (defact link-to-web-search (service-name search-term)
-  "Searches web SERVICE-NAME for SEARCH-TERM.
+  "Search web SERVICE-NAME for SEARCH-TERM.
 Uses `hyperbole-web-search-alist' to match each service to its search url.
 Uses `hyperbole-web-search-browser-function' and the `browse-url'
 package to display search results."
@@ -537,7 +537,7 @@ package to display search results."
   (hyperbole-web-search service-name search-term))
 
 (defact man-show (topic)
-  "Displays man page on TOPIC, which may be of the form <command>(<section>).
+  "Display man page on TOPIC, which may be of the form <command>(<section>).
 Uses `hpath:display-where' setting to control where the man page is displayed."
   (interactive "sManual topic: ")
   (require 'man)
@@ -545,7 +545,7 @@ Uses `hpath:display-where' setting to control where the man page is displayed."
     (hpath:display-buffer (man topic))))
 
 (defact rfc-toc (&optional buf-name opoint)
-  "Computes and displays summary of an Internet rfc in BUF-NAME.
+  "Compute and display summary of an Internet rfc in BUF-NAME.
 Assumes point has already been moved to start of region to summarize.
 Optional OPOINT is point to return to in BUF-NAME after displaying summary."
   (interactive)
@@ -574,7 +574,7 @@ Optional OPOINT is point to return to in BUF-NAME after displaying summary."
     (if opoint (goto-char opoint))))
 
 (defact text-toc (section)
-  "Jumps to the text file SECTION referenced by a table of contents entry at point."
+  "Jump to the text file SECTION referenced by a table of contents entry at point."
   (interactive "sGo to section named: ")
   (if (stringp section)
       (progn

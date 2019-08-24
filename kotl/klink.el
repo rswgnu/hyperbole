@@ -116,7 +116,7 @@ link-end-position, (including delimiters)."
     (if (and
 	 ;; Avoid false matches in certain modes.
 	 (not (memq major-mode '(occur-mode moccur-mode amoccur-mode
-			         shell-mode telnet-mode ssh-mode term-mode))) 
+			         shell-mode telnet-mode ssh-mode term-mode)))
  	 ;; If this is an OO-Browser listing buffer, ignore anything that
 	 ;; looks like a klink, e.g. a C++ <template> class.
 	 (if (fboundp 'br-browser-buffer-p)
@@ -225,7 +225,7 @@ See documentation for `kcell:ref-to-id' for valid cell-ref formats."
     (klink:update-label link start-pos obuf)))
 
 (defun klink:parse (reference)
-  "Returns (file-ref cell-ref) list parsed from REFERENCE string.
+  "Return (file-ref cell-ref) list parsed from REFERENCE string.
 Either element of the list may be nil if REFERENCE does not contain that
 element.  REFERENCE should be one of the following forms (and may include an
 optional pair of <> delimiters:

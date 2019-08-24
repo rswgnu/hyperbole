@@ -104,7 +104,7 @@ of screen control commands."
   :group 'hyperbole-keys)
 
 (defun hmouse-map-modes-to-form (mode-forms)
-  "Maps over a sequence of (major-mode(s) form-to-eval) lists; returns items with a single major-mode in the car, (major-mode form-to-eval)."
+  "Map over a sequence of (major-mode(s) form-to-eval) lists; return items with a single `major-mode' in the car, (major-mode form-to-eval)."
   (apply 'nconc
 	 (mapcar (lambda (modes-form)
 		   (if (sequencep (car modes-form))
@@ -133,7 +133,7 @@ of screen control commands."
 		    (error "(hmouse-item-to-window): %s the treemacs package for item dragging support"
 			   (if (fboundp 'treemacs) "Update" "Install")))))
   "List of (major-mode lisp-form) lists.
-The car of an item must be a major-mode symbol.  The cadr of an item
+The car of an item must be a `major-mode' symbol.  The cadr of an item
 is a Lisp form to evaluate to get the item name at point (typically a
 buffer, file or directory name whose contents will be displayed in the
 drag release window.")
@@ -181,7 +181,7 @@ drag release window.")
 	     ;; If click in the minibuffer when it is not active (blank),
 	     ;; display the Hyperbole minibuffer menu or popup the jump menu.
 	     ((hmouse-inactive-minibuffer-p) .
-	      ((funcall action-key-minibuffer-function) . 
+	      ((funcall action-key-minibuffer-function) .
 	       (funcall assist-key-minibuffer-function)))
 	     ((hmouse-drag-thing) .
 	      ((hmouse-yank-region) . (hmouse-kill-and-yank-region)))
@@ -356,7 +356,7 @@ Delimited constructs include lists, comments, strings,
       (if (and (not (hmouse-use-region-p)) (hui-select-at-delimited-thing-p)
 	       (or (markerp depress-args) (markerp release-args)
 		   (and (not (or (hmouse-drag-window-side) (hmouse-modeline-depress)))
-			(or (hmouse-drag-between-windows) (hmouse-drag-vertically) 
+			(or (hmouse-drag-between-windows) (hmouse-drag-vertically)
 			    (hmouse-drag-horizontally) (hmouse-drag-diagonally))))
 	       (let ((start-buf (window-buffer (smart-window-of-coords depress-args)))
 		     (end-buf (window-buffer (smart-window-of-coords release-args)))
@@ -398,7 +398,7 @@ Signals an error if the depress buffer is read-only."
       ;; In this case, we want an error that will terminate execution so that
       ;; hkey-region is not reset to nil.  This allows the user to fix the
       ;; problem and then to try killing again.
-      (error "(hmouse-kill-region): Use {%s} to enable killing from this buffer."
+      (error "(hmouse-kill-region): Use {%s} to enable killing from this buffer"
 	     (hmouse-read-only-toggle-key))
     (kill-region (or hkey-value (point)) (mark))))
 
@@ -412,9 +412,9 @@ Signals an error if either depress or release buffer is read-only."
 	;; In this case, we want an error that will terminate execution so that
 	;; hkey-region is not reset to nil.  This allows the user to fix the
 	;; problem and then to try killing again.
-	(error "(hmouse-kill-and-yank-region): Use {%s} to enable killing from this buffer."
+	(error "(hmouse-kill-and-yank-region): Use {%s} to enable killing from this buffer"
 	       (hmouse-read-only-toggle-key))
-      ;; Depress and release may be in the same buffer, in which case, 
+      ;; Depress and release may be in the same buffer, in which case,
       ;; save the release point that may change as a result of
       ;; the kill; also, before the kill, restore the point to where it
       ;; was when the region was set.
@@ -425,7 +425,7 @@ Signals an error if either depress or release buffer is read-only."
 	    ;; In this case, we want an error that will terminate execution so that
 	    ;; hkey-region is not reset to nil.  This allows the user to fix the
 	    ;; problem and then to try yanking again.
-	    (error "(hmouse-kill-and-yank-region): Use {%s} to enable yanking into this buffer."
+	    (error "(hmouse-kill-and-yank-region): Use {%s} to enable yanking into this buffer"
 		   (hmouse-read-only-toggle-key))
 	  ;; Region may be in another buffer, so move there if so.
 	  (hmouse-goto-region-prev-point)
@@ -453,7 +453,7 @@ Signals an error if the buffer is read-only."
 	;; In this case, we want an error that will terminate execution so that
 	;; hkey-region is not reset to nil.  This allows the user to fix the
 	;; problem and then to try yanking again.
-	(error "(hmouse-yank-region): Use {%s} to enable yanking into this buffer."
+	(error "(hmouse-yank-region): Use {%s} to enable yanking into this buffer"
 	       (hmouse-read-only-toggle-key))
       ;; Permanently return to release point
       (let ((release-window (if assist-flag assist-key-release-window action-key-release-window)))
@@ -465,7 +465,7 @@ Signals an error if the buffer is read-only."
 	(error nil)))))
 
 (defun hmouse-drag-between-frames ()
-  "Returns non-nil if last Action Key depress and release were in different frames.
+  "Return non-nil if last Action Key depress and release were in different frames.
 If free variable `assist-flag' is non-nil, uses Assist Key."
   (if assist-flag
       (and (window-live-p assist-key-depress-window)
@@ -478,7 +478,7 @@ If free variable `assist-flag' is non-nil, uses Assist Key."
 		  (window-frame action-key-release-window))))))
 
 (defun hmouse-drag-between-windows ()
-  "Returns non-nil if last Action Key depress and release were in different windows.
+  "Return non-nil if last Action Key depress and release were in different windows.
 If free variable `assist-flag' is non-nil, uses Assist Key."
   (if assist-flag
       (and (window-live-p assist-key-depress-window)
@@ -490,7 +490,7 @@ If free variable `assist-flag' is non-nil, uses Assist Key."
 	 (not (eq action-key-depress-window action-key-release-window)))))
 
 (defun hmouse-drag-same-window ()
-  "Returns non-nil if last Action Key depress and release were in the same window.
+  "Return non-nil if last Action Key depress and release were in the same window.
 If free variable `assist-flag' is non-nil, uses Assist Key."
   (if assist-flag
       (and (window-live-p assist-key-depress-window)
@@ -501,7 +501,7 @@ If free variable `assist-flag' is non-nil, uses Assist Key."
 	 (eq action-key-depress-window action-key-release-window))))
 
 (defun hmouse-drag-outside-all-windows ()
-  "Returns non-nil if last Action Key release was outside of an Emacs window.
+  "Return non-nil if last Action Key release was outside of an Emacs window.
 If free variable `assist-flag' is non-nil, uses Assist Key."
   (if assist-flag
       (and (window-live-p assist-key-depress-window) (not assist-key-release-window))
@@ -527,7 +527,7 @@ items in other modes."
     t))
 
 (defun hmouse-drag-diagonally ()
-  "Returns non-nil iff last Action Key use was a diagonal drag within a single window.
+  "Return non-nil iff last Action Key use was a diagonal drag within a single window.
 If free variable `assist-flag' is non-nil, uses Assist Key.
 Value returned is nil if not a diagonal drag, or one of the following symbols
 depending on the direction of the drag: southeast, southwest, northwest, northeast."
@@ -558,7 +558,7 @@ depending on the direction of the drag: southeast, southwest, northwest, northea
 		   'southwest 'northwest)))))))
 
 (defun hmouse-drag-horizontally ()
-  "Returns non-nil iff last Action Key use was a horizontal drag within a single window.
+  "Return non-nil iff last Action Key use was a horizontal drag within a single window.
 If free variable `assist-flag' is non-nil, uses Assist Key.
 Value returned is nil if not a horizontal drag, 'left if drag moved left or
 'right otherwise."
@@ -586,7 +586,7 @@ Value returned is nil if not a horizontal drag, 'left if drag moved left or
 	   (if (< last-depress-x last-release-x) 'right 'left)))))
 
 (defun hmouse-drag-vertically-within-emacs ()
-  "Returns non-nil iff last Action Key use was a vertical drag that started and ended within the same Emacs frame.
+  "Return non-nil iff last Action Key use was a vertical drag that started and ended within the same Emacs frame.
 If free variable `assist-flag' is non-nil, uses Assist Key.
 Value returned is nil if not a vertical line drag, 'up if drag moved up or
 'down otherwise."
@@ -615,7 +615,7 @@ Value returned is nil if not a vertical line drag, 'up if drag moved up or
 	   (if (< last-depress-y last-release-y) 'down 'up)))))
 
 (defun hmouse-drag-vertically ()
-  "Returns non-nil iff last Action Key use was a vertical drag within a single window.
+  "Return non-nil iff last Action Key use was a vertical drag within a single window.
 If free variable `assist-flag' is non-nil, uses Assist Key.
 Value returned is nil if not a vertical line drag, 'up if drag moved up or
 'down otherwise."
@@ -623,7 +623,7 @@ Value returned is nil if not a vertical line drag, 'up if drag moved up or
     (hmouse-drag-vertically-within-emacs)))
 
 (defun hmouse-drag-window-side ()
-  "Returns non-nil if Action Key was dragged from a window side divider and released in the same window.
+  "Return non-nil if Action Key was dragged from a window side divider and released in the same window.
 If free variable `assist-flag' is non-nil, uses Assist Key."
   (cond ((hyperb:window-system)
 	 (let* ((depress-args (if assist-flag assist-key-depress-args
@@ -642,14 +642,14 @@ If free variable `assist-flag' is non-nil, uses Assist Key."
 		    hmouse-side-sensitivity))))))
 
 (defun hmouse-read-only-toggle-key ()
-  "Return the first key binding that toggles read-only mode, or nil if none."
+  "Return the first key binding that toggle read-only mode, or nil if none."
   (key-description (or (where-is-internal #'read-only-mode nil t)
 		       (where-is-internal #'vc-toggle-read-only nil t)
 		       (where-is-internal #'toggle-read-only nil t))))
 
 (defun hmouse-vertical-action-drag ()
-  "Handles an Action Key vertical drag within a window: adds a window to the right of this one.
-Beeps and prints message if the window cannot be split further."
+  "Handle an Action Key vertical drag within a window: add a window to the right of this one.
+Beep and print message if the window cannot be split further."
   (interactive)
   (condition-case ()
       (split-window-horizontally nil)
@@ -657,16 +657,16 @@ Beeps and prints message if the window cannot be split further."
 	   (message "(hmouse-vertical-action-drag): Can't split the window further."))))
 
 (defun hmouse-vertical-assist-drag ()
-  "Handles an Assist Key vertical drag within a window: deletes the current window.
-Beeps and prints message if the window cannot be split further."
+  "Handle an Assist Key vertical drag within a window: deletes the current window.
+Beep and print message if the window cannot be split further."
   (condition-case ()
       (delete-window)
     (error (beep)
 	   (message "(hmouse-vertical-assist-drag): A single window cannot be deleted."))))
 
 (defun hmouse-horizontal-action-drag ()
-  "Handles an Action Key horizontal drag within a window: adds a window below this one.
-Beeps and prints message if the window cannot be split further."
+  "Handle an Action Key horizontal drag within a window: add a window below this one.
+Beep and print message if the window cannot be split further."
   (interactive)
   (condition-case ()
       (if (fboundp 'split-window-quietly)
@@ -676,15 +676,15 @@ Beeps and prints message if the window cannot be split further."
 	   (message "(hmouse-horizontal-action-drag): Can't split the window further."))))
 
 (defun hmouse-horizontal-assist-drag ()
-  "Handles an Assist Key horizontal drag within a window: deletes the current window.
-Beeps and prints message if the window cannot be split further."
+  "Handle an Assist Key horizontal drag within a window: delete the current window.
+Beep and print message if the window cannot be split further."
   (condition-case ()
       (delete-window)
     (error (beep)
 	   (message "(hmouse-horizontal-assist-drag): A single window cannot be deleted."))))
 
 (defun smart-coords-in-window-p (coords window)
-  "Tests if COORDS are in WINDOW.  Returns WINDOW if they are, nil otherwise."
+  "Test if COORDS are in WINDOW.  Return WINDOW if they are, nil otherwise."
   (cond ((null coords) nil)
 	((eventp coords)
 	 (let ((w-or-f (posn-window (event-start coords))))
@@ -703,7 +703,7 @@ Beeps and prints message if the window cannot be split further."
 		  window)))))
 
 (defun smart-point-of-coords (coords)
-  "Returns point within window in which COORDS fall or nil if none.
+  "Return point within window in which COORDS fall or nil if none.
 Ignores minibuffer window."
   (cond ((markerp coords)
 	 (marker-position coords))
@@ -711,7 +711,7 @@ Ignores minibuffer window."
 	 (posn-point (event-start coords)))))
 
 (defun smart-window-of-coords (coords)
-  "Returns window in which COORDS fall or nil if none.
+  "Return window in which COORDS fall or nil if none.
 Ignores minibuffer window."
   (cond ((null coords) nil)
         ((markerp coords)
@@ -753,7 +753,7 @@ With optional boolean NEW-WINDOW non-nil, sensibly split the release window befo
   "Display an error when a region is active and in-window drags are not allowed."
   ;; Return point to where it was prior to depress so the region does not permanently change.
   (goto-char hkey-value)
-  (error "(hmouse-drag-region-active): Region is active; use a Smart Key press/click within a window, not a drag."))
+  (error "(hmouse-drag-region-active): Region is active; use a Smart Key press/click within a window, not a drag"))
 
 (defun hmouse-set-buffer-and-point (buffer point)
   (when buffer
@@ -935,12 +935,12 @@ If the Assist Key is:
 	  (t (hmouse-modeline-resize-window)))))
 
 (defun hmouse-modeline-click ()
-  "Returns non-nil if last Smart Key depress and release were at a single point (less than drag tolerance apart) in a modeline."
+  "Return non-nil if last Smart Key depress and release were at a single point (less than drag tolerance apart) in a modeline."
   (and (hmouse-modeline-release) (hmouse-modeline-depress)
        (not (or (hmouse-drag-horizontally) (hmouse-drag-vertically) (hmouse-drag-diagonally)))))
 
 (defun hmouse-emacs-modeline-event-p (event)
-  "GNU Emacs: Returns non-nil if EVENT happened on a window mode line."
+  "GNU Emacs: Return non-nil if EVENT happened on a window mode line."
   (or (and (eventp event) (eq (posn-area (event-start event)) 'mode-line))
       ;; If drag release was to an unselected frame mode-line, on
       ;; click-to-focus systems, the release event will not include
@@ -954,7 +954,7 @@ If the Assist Key is:
 	     last-press-y mode-ln (< (- mode-ln last-press-y) line-height)))))
 
 (defun hmouse-modeline-event-p (event)
-  "Returns non-nil if start of EVENT happened on a window mode line."
+  "Return non-nil if start of EVENT happened on a window mode line."
     (when (and (hyperb:window-system) event
 	       (not (posnp event))
 	       (not (markerp event)))
@@ -976,7 +976,7 @@ If the Assist Key is:
 	  (and last-press-y mode-ln (= last-press-y mode-ln)))))))
 
 (defun hmouse-modeline-depress ()
-  "Returns non-nil if Action Key was depressed on a window mode line.
+  "Return non-nil if Action Key was depressed on a window mode line.
 If free variable `assist-flag' is non-nil, uses Assist Key."
   (let ((args (if assist-flag
 		  assist-key-depress-args
@@ -984,7 +984,7 @@ If free variable `assist-flag' is non-nil, uses Assist Key."
     (hmouse-modeline-event-p args)))
 
 (defun hmouse-modeline-release ()
-  "Returns non-nil if Smart Key was released on a window mode line."
+  "Return non-nil if Smart Key was released on a window mode line."
   (let ((args (if assist-flag
 		  assist-key-release-args
 		action-key-release-args)))
@@ -1029,10 +1029,10 @@ of the Smart Key."
 	     (cond
 	      ((>= (+ mode-ln 2) (frame-height))
 	       (error
-		"(hmouse-modeline-resize-window): Can't move bottom window in frame."))
+		"(hmouse-modeline-resize-window): Can't move bottom window in frame"))
 	      ((< (length (hypb:window-list 'no-minibuf)) 2)
 	       (error
-		"(hmouse-modeline-resize-window): Can't resize sole window in frame."))
+		"(hmouse-modeline-resize-window): Can't resize sole window in frame"))
 	      (t (unwind-protect
 		     (progn
 		       (select-window window)
@@ -1083,7 +1083,7 @@ is non-nil, leave the original window and just clone it into the new frame."
 	       (delete-window depress-window)))))))
 
 (defun hmouse-release-left-edge ()
-  "Returns non-nil if last Smart Key release was at left window edge.
+  "Return non-nil if last Smart Key release was at left window edge.
 `hmouse-edge-sensitivity' value determines how near to actual edge the
 release must be.
 
@@ -1094,7 +1094,7 @@ mode-line regardless of the setting of `hmouse-edge-sensitivity'."
   (let ((args (if assist-flag assist-key-release-args
 		 action-key-release-args))
 	window-left last-release-x)
-    (if (fboundp 'window-lowest-p) ;; XEmacs >= 19.12 
+    (if (fboundp 'window-lowest-p) ;; XEmacs >= 19.12
 	(setq last-release-x (and args (eq (event-window args)
 					   (selected-window))
 				  (hmouse-x-coord args))
@@ -1106,13 +1106,13 @@ mode-line regardless of the setting of `hmouse-edge-sensitivity'."
 	 (>= (- last-release-x window-left) 0))))
 
 (defun hmouse-release-right-edge ()
-  "Returns non-nil if the last Smart Key release was at right window edge.
+  "Return non-nil if the last Smart Key release was at right window edge.
 `hmouse-edge-sensitivity' value determines how near to actual edge the
 release must be."
   (let ((args (if assist-flag assist-key-release-args
 		 action-key-release-args))
 	window-right last-release-x)
-    (if (fboundp 'window-lowest-p) ;; XEmacs >= 19.12 
+    (if (fboundp 'window-lowest-p) ;; XEmacs >= 19.12
 	(setq last-release-x (and args (eq (event-window args)
 					   (selected-window))
 				  (hmouse-x-coord args))
@@ -1150,10 +1150,10 @@ of the Smart Key."
 	   (cond
 	    ((>= (+ right-side-ln 2) (frame-width))
 	     (error
-	      "(hmouse-resize-window-side): Can't change width of full frame width window."))
+	      "(hmouse-resize-window-side): Can't change width of full frame width window"))
 	    ((< (length (hypb:window-list 'no-minibuf)) 2)
 	     (error
-	      "(hmouse-resize-window-side): Can't resize sole window in frame."))
+	      "(hmouse-resize-window-side): Can't resize sole window in frame"))
 	    (t (unwind-protect
 		   (progn
 		     (select-window window)
@@ -1170,7 +1170,7 @@ of the Smart Key."
 	 (w2-buf (and w2 (window-buffer w2)))
 	 )
     (cond ((not (and w1 w2))
-	   (error "(hmouse-swap-buffers): Last depress or release was not within a window."))
+	   (error "(hmouse-swap-buffers): Last depress or release was not within a window"))
 	  ((eq w1 w2)
 	   ;; Do nothing silently.
 	   )
@@ -1190,7 +1190,7 @@ of the Smart Key."
 	 (w2-height (and w2 (window-height w2)))
 	 )
     (or (and w1 w2)
-	(error "(hmouse-swap-windows): Last depress or release was not within a window."))
+	(error "(hmouse-swap-windows): Last depress or release was not within a window"))
     (unwind-protect
 	(progn
 	  (select-window w1)
@@ -1210,7 +1210,7 @@ of the Smart Key."
       )))
 
 (defun hmouse-x-coord (args)
-  "Returns x coordinate in characters from window system dependent ARGS or nil."
+  "Return x coordinate in characters from window system dependent ARGS or nil."
   (let ((x (if (markerp args)
 	       (save-excursion
 		 (hypb:goto-marker args)
@@ -1230,7 +1230,7 @@ of the Smart Key."
     (if (integerp x) x)))
 
 (defun hmouse-y-coord (args)
-  "Returns y coordinate in frame lines from window system dependent ARGS or nil."
+  "Return y coordinate in frame lines from window system dependent ARGS or nil."
   (let ((y (eval (cdr (assoc (hyperb:window-system)
 			     '(("emacs" . (progn (if (eventp args) (setq args (event-start args)))
 						 (cond ((posnp args)

@@ -11,7 +11,7 @@
 
 ;;; Commentary:
 ;;
-;;   This defines an implicit button type, social-reference, that displays 
+;;   This defines an implicit button type, social-reference, that displays
 ;;   information (often a web page) associated with the given hashtag or username.
 ;;   When the referent is a web page, this calls the function given by
 ;;   `hibtypes-social-display-function' to display it, initially set to `browse-url'.
@@ -343,7 +343,7 @@ or  /<project>.
   one of the words: branches, commits, contributors, issues, people or staff,
   pulls, status or tags; the associated items are listed;
 
-  one of the words: branch, commit, issue, pull or tag followed by a '/' or '=' and 
+  one of the words: branch, commit, issue, pull or tag followed by a '/' or '=' and
   an item-id; the item is shown;
 
   an issue reference given by a positive integer, e.g. 92 or prefaced with GH-, e.g. GH-92;
@@ -543,7 +543,7 @@ PROJECT value is provided, it defaults to the value of
 			(setq ref-type "pipeline_schedules"
 			      reference ""))
 		       ((string-match "\\`\\(service\\|service_desk\\)\\'" reference)
-			;; Project help desk 
+			;; Project help desk
 			(setq ref-type "issues/service_desk"
 			      reference ""))
 		       ((member reference '("activity" "branches" "commits" "issues" "labels"
@@ -607,7 +607,7 @@ PROJECT value is provided, it defaults to the value of
 	(looking-at "\\s-*commit \\([0-9a-f]+\\)$"))
       (hact #'git-reference (match-string-no-properties 1))))
 
-(defvar hibtypes-git-repos-cache 
+(defvar hibtypes-git-repos-cache
   (expand-file-name "Local-Git-Repos" hbmap:dir-user)
   "Filename of cache of local git repository directories found by `locate-command'.")
 
@@ -620,10 +620,10 @@ PROJECT value is provided, it defaults to the value of
 
 (defun hibtypes-git-build-repos-cache (&optional prompt-flag)
   "Store cache of local git repo directories in `hibtypes-git-repos-cache'.
-With optional prompt-flag non-nil, prompt user whether to build the cache before building.
+With optional PROMPT-FLAG non-nil, prompt user whether to build the cache before building.
 Return t if built, nil otherwise."
   (when (or (not prompt-flag)
-	    (y-or-n-p "Find all local git repositories (will take some time)?"))
+	    (y-or-n-p "Find all local git repositories (will take some time)? "))
     (message "Please wait while all local git repositories are found...")
     (unless (zerop (shell-command (format "%s -r '/\.git$' | sed -e 's+/.git$++' > %s"
 					  (hibtypes-git-get-locate-command)
@@ -651,7 +651,7 @@ Return the project directory found or nil if none."
 
 (defun hibtypes-git-build-or-add-to-repos-cache (project &optional prompt-flag)
   "Store cache of local git repo directories in `hibtypes-git-repos-cache'.
-With optional prompt-flag non-nil, prompt user whether to build the cache before building.
+With optional PROMPT-FLAG non-nil, prompt user whether to build the cache before building.
 Return t if built, nil otherwise."
   (if (and (file-readable-p hibtypes-git-repos-cache)
 	   ;; Non-zero file size
@@ -867,3 +867,5 @@ is found."
 
 
 (provide 'hib-social)
+;;; hib-social.el ends here
+
