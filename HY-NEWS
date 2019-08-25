@@ -2,10 +2,40 @@
 				 by Bob Weiner
 
 ===========================================================================
-*                                   V7.0.3.3
+*                                   V7.0.4
 ===========================================================================
 
   BUTTONS
+
+    - Action Buttons: A new, universal syntax for creating implicit buttons
+      that execute any existing action types or Elisp functions.  Such buttons
+      are delimited by angle brackets, < >, and come in three types:
+
+         1. action type invocations - these begin with an action type
+            name (from the list displayed by {C-h h d t a RET}) and
+            are followed by any needed arguments to form the action,
+            e.g.
+
+              <link-to-file-line "${hyperb:dir}/hact.el" 40>
+
+         2. function calls - these are similar to action type
+            invocations but begin with an Elisp function name rather
+            than an action type name, e.g.
+
+              <find-file-other-window "/tmp">
+
+         3. variable displays - these consist of just an Elisp
+            variable name and display a message with the variable name
+            and value, e.g.
+
+              <fill-column>
+
+            If there is a function binding with the same name as the
+            variable you wish to display, to prevent interpretation as
+            a function call action button, precede the name with a
+            '$', e.g.
+
+               <$fill-column>
 
     - Labeled Implicit Buttons: Optional <[labels]> that precede
       implicit buttons.  This enables implicit buttons to be activated
@@ -38,8 +68,10 @@
       ilink (link to implicit button), glink (link to global button), and
       elink (link to explicit button).
 
-    - Implicit Buttons: Added description and example of implicit button labels.
-      DEMO (Implicit Buttons): Added description and example of implicit button labels.
+    - DEMO (Action Buttons): Added description and examples.
+
+    - Hyperbole Manual, DEMO (Implicit Buttons): Added description and
+      example of implicit button labels.
 
     - Glossary: Updated Implicit Button and Global Button entries with changes.
 

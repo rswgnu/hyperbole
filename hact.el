@@ -282,22 +282,39 @@ performing ACTION."
       ;; string arguments like "tags" as a pathname, when it is not
       ;; being used as a path.  So do this only if actype is a defact
       ;; and not a defun to limit any potential impact. RSW - 9/22/2017
-      (if (symbolp action) (string-match "\\`actypes::" (symbol-name action))
-	(setq args (action:path-args-abs args)))
+      (and (symbolp action) (string-match "\\`actypes::" (symbol-name action))
+	   (setq args (action:path-args-abs args)))
       (let ((hist-elt (hhist:element)))
 	(run-hooks 'action-act-hook)
-	(prog1 (or (cond ((or (symbolp action) (listp action)
-			      (hypb:emacs-byte-code-p action))
-			  (eval act))
-			 ((and (stringp action)
-			       (let ((func (key-binding action)))
-				 (if (not (integerp action))
-				     (setq action func))))
-			  (eval act))
-			 (t (eval action)))
+	(prog1 (or (if (or (symbolp action) (listp action)
+			   (hypb:emacs-byte-code-p action)
+			   (and (stringp action) (not (integerp action))
+				(setq action (key-binding action))))
+		       (eval act)
+		     (eval action))
 		   t)
-	  (hhist:add hist-elt))
-	))))
+	  (hhist:add hist-elt))))))
+
+(defun    actype:eval (actype &rest args)
+  "Performs action formed from ACTYPE and rest of ARGS and returns value.
+ACTYPE may be a string containing a Lisp expression from which ACTYPE
+and ARGS are extracted   ACTYPE may be a symbol or symbol name for
+either an action type or a function.  Runs `action-act-hook' before
+performing ACTION."
+  (let ((prefix-arg current-prefix-arg)
+	(action (actype:action actype))
+	(act '(apply action args)))
+    (if (null action)
+	(error "(actype:act): Null action for: `%s'" actype)
+      (let ((hist-elt (hhist:element)))
+	(run-hooks 'action-act-hook)
+	(prog1 (if (or (symbolp action) (listp action)
+		       (hypb:emacs-byte-code-p action)
+		       (and (stringp action) (not (integerp action))
+			    (setq action (key-binding action))))
+		   (eval act)
+		 (eval action))
+	  (hhist:add hist-elt))))))
 
 (defun    actype:action (actype)
   "Return action part of ACTYPE (a symbol or symbol name).
@@ -310,8 +327,7 @@ ACTYPE may be a Hyperbole actype or Emacs Lisp function."
     (cond ((htype:body (if (string-match "\\`actypes::" actname)
 			   actype
 			 (intern-soft (concat "actypes::" actname)))))
-	  ((fboundp actype) actype)
-	  )))
+	  ((fboundp actype) actype))))
 
 (defmacro actype:create (type params doc &rest default-action)
   "Create an action TYPE (an unquoted symbol) with PARAMS, described by DOC.

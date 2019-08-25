@@ -23,7 +23,7 @@
 ;;; ************************************************************************
 
 (defact annot-bib (key)
-  "Follows internal ref KEY within an annotated bibliography, delimiters=[]."
+  "Follow internal ref KEY within an annotated bibliography, delimiters=[]."
   (interactive "sReference key (no []): ")
   (let ((opoint (point))
 	(key-regexp (concat "^[*]*[ \t]*\\\[" (ebut:key-to-label key) "\\\]"))
@@ -37,22 +37,27 @@
       (beep))))
 
 (defact completion ()
-  "Inserts completion at point into the minibuffer or a buffer.
+  "Insert completion at point into the minibuffer or a buffer.
 Unless point is at the end of the buffer or if a completion has already been
-inserted, the completions window is deleted."
+inserted, delete the completions window."
   (interactive)
   (if (eobp)
       (progn (bury-buffer nil)
 	     (delete-window))
     (hargs:completion)))
 
+(defact display-variable (var)
+  "Display a message showing `var` (a symbol) and its value."
+  (message "%s = %s" var (symbol-value var))
+  (or (symbol-value var) t))
+
 (defact eval-elisp (lisp-expr)
-  "Evaluates a Lisp expression LISP-EXPR."
+  "Evaluate a Lisp expression LISP-EXPR for its side-effects and return any non-nil value."
   (interactive "xLisp to eval: ")
   (eval lisp-expr))
 
 (defact exec-kbd-macro (kbd-macro &optional repeat-count)
-  "Executes KBD-MACRO REPEAT-COUNT times.
+  "Execute KBD-MACRO REPEAT-COUNT times.
 KBD-MACRO may be a string of editor command characters, a function symbol or
 nil to use the last defined keyboard macro.
 Optional REPEAT-COUNT nil means execute once, zero means repeat until
@@ -100,7 +105,7 @@ error."
 
 ;;; Support next two actypes on systems which use the `comint' shell package.
 (defact exec-shell-cmd (shell-cmd &optional internal-cmd kill-prev)
-  "Executes a SHELL-CMD string asynchronously.
+  "Execute a SHELL-CMD string asynchronously.
 Optional non-nil second argument INTERNAL-CMD inhibits display of the shell
 command line executed.  Optional non-nil third argument KILL-PREV means
 kill the last output to the shell buffer before executing SHELL-CMD."
@@ -123,14 +128,17 @@ kill the last output to the shell buffer before executing SHELL-CMD."
 	  (if (not (hpath:remote-p default-directory))
 	      (setq shell-cmd
 		    (concat "cd " default-directory "; " shell-cmd)))
-	  (if (not (get-buffer buf-name))
-	      (save-excursion
-		(hpath:display-buffer (current-buffer))
-		(if (eq (minibuffer-window) (selected-window))
-		    (other-window 1))
-		(shell buf-name)
-		(setq comint-last-input-start (point-marker)
-		      comint-last-input-end (point-marker))))
+	  (unless (and (get-buffer buf-name)
+		       (get-buffer-process (get-buffer buf-name)))
+	    (save-excursion
+	      (hpath:display-buffer (current-buffer))
+	      (if (eq (minibuffer-window) (selected-window))
+		  (other-window 1))
+	      (setq buf-name (buffer-name (shell buf-name)))
+	      ;; Wait for shell to startup before sending it input.
+	      (sit-for 1)
+	      (setq comint-last-input-start (point-marker)
+		    comint-last-input-end (point-marker))))
 	  (hpath:display-buffer buf-name)
 	  (goto-char (point-max))
 	  (and kill-prev comint-last-input-end
@@ -143,7 +151,7 @@ kill the last output to the shell buffer before executing SHELL-CMD."
       (select-window owind))))
 
 (defact exec-window-cmd (shell-cmd)
-  "Asynchronously executes an external window-based SHELL-CMD string."
+  "Asynchronously execute an external window-based SHELL-CMD string."
   (interactive
    (let ((default  (car defaults)))
      (list (hargs:read "Shell cmd: "
@@ -159,19 +167,19 @@ kill the last output to the shell buffer before executing SHELL-CMD."
     (message msg)
     (save-excursion
       (save-window-excursion
-	(unless (get-buffer buf-name)
+	(unless (and (get-buffer buf-name)
+		     (get-buffer-process (get-buffer buf-name)))
 	  (save-excursion
 	    (save-window-excursion
-	      (cond ((fboundp 'new-shell) (new-shell))
-		    (t (shell buf-name)))))
+	      (setq buf-name (buffer-name (shell buf-name)))))
 	  (message msg)
 	  ;; Wait for shell to startup before sending it input.
 	  (sit-for 1)
 	  (set-buffer buf-name)
 	  (setq comint-last-input-start (point-marker)
 		comint-last-input-end (point-marker)))
-	(or (equal (buffer-name (current-buffer)) buf-name)
-	    (set-buffer buf-name))
+	(unless (equal (buffer-name (current-buffer)) buf-name)
+	  (set-buffer buf-name))
 	(goto-char (point-max))
 	(insert cmd)
 	(comint-send-input)))
@@ -233,8 +241,8 @@ For example:  To: hyperbole-users-join@gnu.org\n")))
 If POINT is given, the buffer is displayed with POINT at the top of
 the window.
 
-This type of link generally can only be used within a single editor session.
-Use `link-to-file' instead for a permanent link."
+This type of link is for use within a single editor session.  Use
+`link-to-file' instead for a permanent link."
   (interactive "bBuffer to link to: ")
   (if (or (stringp buffer) (bufferp buffer))
       (and (hpath:display-buffer buffer)
@@ -296,7 +304,7 @@ KEY-FILE defaults to the current buffer's file name."
 
 (defact link-to-file (path &optional point)
   "Display a file given by PATH scrolled to optional POINT.
-If POINT is given, the buffer is displayed with POINT at the top of
+If POINT is given, display the buffer with POINT at the top of
 the window."
   (interactive
    (let ((prev-reading-p hargs:reading-p)
@@ -431,8 +439,8 @@ and its buffer must have a file attached."
   "Display FILE with kcell given by CELL-REF at window top.
 See documentation for `kcell:ref-to-id' for valid cell-ref formats.
 
-If FILE is nil, the current buffer is used.
-If CELL-REF is nil, the first cell in the view is shown."
+If FILE is nil, use the current buffer.
+If CELL-REF is nil, show the first cell in the view."
   (interactive "fKotl file to link to: \n+KKcell to link to: ")
   (require 'kfile)
   (cond ((and (stringp cell-ref) (> (length cell-ref) 0)
@@ -449,8 +457,8 @@ If CELL-REF is nil, the first cell in the view is shown."
 
 (defact link-to-mail (mail-msg-id &optional mail-file)
   "Display mail msg with MAIL-MSG-ID from optional MAIL-FILE.
-See documentation for the variable `hmail:init-function' for information on
-how to specify a mail reader to use."
+See documentation for the variable `hmail:init-function' for
+information on how to specify a mail reader to use."
   (interactive "+MMail Msg: ")
   (if (not (fboundp 'rmail:msg-to-p))
       (hypb:error "(link-to-mail): Invoke mail reader before trying to follow a mail link")

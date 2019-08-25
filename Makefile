@@ -57,7 +57,7 @@
 
 # This ver setup won't work under any make except GNU make, so set it manually.
 #HYPB_VERSION = "`head -3 hversion.el | tail -1 | sed -e 's/.*|\(.*\)|.*/\1/'`"
-HYPB_VERSION = 7.0.3.3
+HYPB_VERSION = 7.0.4
 
 # Emacs executable used to byte-compile .el files into .elc's.
 # Possibilities include: emacs, infodock, etc.
@@ -175,7 +175,7 @@ ELC_KOTL = kotl/kexport.elc kotl/kfile.elc kotl/kfill.elc kotl/kimport.elc kotl/
            kotl/kcell.elc kotl/kproperty.elc \
            kotl/kview.elc kotl/kvspec.elc
 
-HYPERBOLE_FILES = dir hyperbole-pkg.el info html $(EL_SRC) $(EL_COMPILE) $(EL_KOTL) \
+HYPERBOLE_FILES = dir info html $(EL_SRC) $(EL_COMPILE) $(EL_KOTL) \
 	$(ELC_COMPILE) Changes COPYING Makefile HY-ABOUT HY-ANNOUNCE HY-NEWS \
 	HY-WHY.kotl INSTALL DEMO DEMO-ROLO.otl MANIFEST README _hypb .hypb smart-clib-sym \
 	topwin.py hyperbole-banner.png $(man_dir)/hkey-help.txt \
@@ -259,7 +259,7 @@ clean:
 version: doc
 	@ echo ""
 	@ echo "Any fgrep output means the version number has not been updated in that file."
-	fgrep -L $(HYPB_VERSION) Makefile HY-ABOUT HY-NEWS README.md hversion.el hyperbole.el hyperbole-pkg.el man/hyperbole.texi man/version.texi
+	fgrep -L $(HYPB_VERSION) Makefile HY-ABOUT HY-NEWS README.md hversion.el hyperbole.el man/hyperbole.texi man/version.texi
 	@ echo ""
 
 # Build the Info, HTML and Postscript versions of the user manual and README.md.html.

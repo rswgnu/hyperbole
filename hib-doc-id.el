@@ -110,9 +110,9 @@
 ;;; ========================================================================
 
 (defact link-to-doc (doc-id)
-  "Displays online version of a document given by DOC-ID (no delimiters), in other window.
-If online version of document is not found in `doc-id-indices', an error is
-signalled."
+  "Display an online version of a document given by DOC-ID (no delimiters).
+If online version of document is not found in `doc-id-indices', signal
+an error."
   (interactive "sID for document to link to (omit delimiters): ")
   (let ((hyrolo-display-buffer (hypb:help-buf-name "Doc ID"))
 	(delim-doc-id (concat doc-id-start doc-id doc-id-end)))
@@ -143,7 +143,7 @@ signalled."
 			delim-doc-id)))))))
 
 (defib doc-id ()
-  "Displays a document from a local document library given its id.
+  "Display a document from a local document library given its id.
 Ids must be delimited by `doc-id-start' and `doc-id-end' and must
 match the function stored in `doc-id-p'."
   (and (not (bolp))
@@ -167,8 +167,8 @@ delimited by `doc-id-index-entry-regexp'.")
 ;;; ************************************************************************
 
 (defun doc-id:help (but)
-  "Display site-specific document index entry given by doc-id BUT, in other window.
-Also displays standard Hyperbole help for implicit button BUT."
+  "Display site-specific document index entry given by doc-id BUT.
+Also display standard Hyperbole help for implicit button BUT."
   (let ((hyrolo-entry-regexp doc-id-index-entry-regexp)
 	(hyrolo-display-buffer (hypb:help-buf-name "Doc ID"))
 	(doc-id (hbut:key-to-label (hattr:get but 'lbl-key))))

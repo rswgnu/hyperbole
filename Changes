@@ -1,6 +1,53 @@
+2019-08-25  Bob Weiner  <rsw@gnu.org>
+
+* Makefile (HYPERBOLE_FILES): Removed hyperbole-pkg.el and deleted that file
+    which is now auto-generated.
+
+* hactypes.el (exec-window-cmd): Removed use of InfoDock 'new-shell' function
+    which did not support provision of a buffer name for shell creation.
+    Also, called 'shell' command if existing shell buffer does not have a
+    process and updated buf-name with the buffer returned by the 'shell'
+    command.
+              (exec-shell-cmd): Applied similar changes. 
+
+* hpath.el (hpath:find): Changed modifier comparisons to use = and wrapped 
+    (load filename) in a 'hact' macro.
+    (hpath:is-p): Only temporarily strip any initial execution modifier
+      character from the path so can be handled later by action types.
+
+2019-08-24  Bob Weiner  <rsw@gnu.org>
+
+* DEMO (Action Buttons): Added this new section to explain implicit action buttons.
+
+* Merged in doc string change from active to imperative tense and updated
+    the same in hibtypes.el and hactypes.el.
+
+2019-08-23  Bob Weiner  <rsw@gnu.org>
+
+* hactypes.el (display-variable): Added to display Elisp variable values.
+  hibtypes.el (action:start, action:end, action): Added to allow in-buffer angle bracket
+    delimited action/function calls/variable displays.
+  hact.el (actype:act): Simplified logic and added support for printing variable values as an action.
+          (actype:eval): Added to support action ibuts.
+
+* hbut.el (hbut:act): Changed to use hrule:action setting.
+
+* hbut.el (defact): Updated doc to reflect that action type functions may not return nil.
+    Temporarily set hrule:action to #'actype:eval if you need a potential nil return.
+  hactypes.el (eval-elisp): Updated doc-string to reflect it is for its side-effects and cannot
+    return a nil value.
+
+2019-08-22  Bob Weiner  <rsw@gnu.org>
+
+* hmouse-tag.el (smart-lisp-identifier-first-char-regexp, smart-lisp-identifier-chars,
+    smart-lisp-identifier): Added and used in smart-lisp-at-tag-p.
+
+* hpath.el (hpath:is-p): BUG FIX: Move space normalization and variable substitution to beginning of
+    function to apply to all paths given as inputs.  Expanded doc to explain this normalization.
+
 2019-08-18  Bob Weiner  <rsw@gnu.org>
 
-* hyperbole: Added second arg of t to most calls to prin1-to-string so properties are not utilizied,
+* hyperbole: Added second arg of t to most calls to prin1-to-string so properties are not utilized,
     notably when displaying @loc> locations.
 
 * hversion.el: Change to using numeric test release codes instead of letters to ease version parsing.
@@ -24,8 +71,11 @@
 * kotl/kimport.el (kimport:copy-and-set-buffer): Made an autoload since M-x kotl-mode
     may call kfile;create which then calls this function.
 
+* Change to use only 3 section version numbers for elpa compatibility.  Test releases
+    change the 3rd section and production releases change the second.
+
 ==============================================================================
-V7.0.3.3 changes ^^^^:
+V7.0.4 changes ^^^^:
 ==============================================================================
 
 2019-08-06  Bob Weiner  <rsw@gnu.org>

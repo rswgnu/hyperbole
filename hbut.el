@@ -179,9 +179,9 @@ label search to two lines."
 	npoint start lbl-key end but-start but-end start-regexp end-regexp)
     (unless start-delim (setq start-delim ebut:start))
     (unless end-delim (setq end-delim ebut:end))
-    (setq start-regexp (regexp-quote start-delim)
-	  end-regexp (regexp-quote end-delim)
-	  npoint (+ opoint (length start-delim)))
+    (setq npoint (+ opoint (length start-delim))
+	  start-regexp (regexp-quote start-delim)
+	  end-regexp (regexp-quote end-delim))
     ;; Ensure label is not blank and point is within matching delimiters
     (save-excursion
       (forward-line 0)
@@ -722,7 +722,8 @@ others who use a different value!")
 
 (defun    hbut:act (hbut)
   "Perform action for explicit or implicit Hyperbole button symbol HBUT."
-  (if hbut (apply 'actype:act (hattr:get hbut 'actype)
+  (if hbut (apply hrule:action
+		  (hattr:get hbut 'actype)
 		  (hattr:get hbut 'args))))
 
 (defun    hbut:action (hbut)
@@ -1460,16 +1461,20 @@ Returns the symbol for the button, else nil."
   "Create Hyperbole implicit button TYPE (unquoted sym) with PARAMS, described by DOC.
 PARAMS are presently ignored.
 
-  AT-P is a boolean form of no arguments which determines whether or not point
+AT-P is a boolean form of no arguments which determines whether or not point
 is within a button of this type and if it is, calls `hact' with an
 action to be performed whenever a button of this type is activated.
-The action may be a regular Emacs Lisp function or a Hyperbole action
-type created with `defact'.
 
-  Optional TO-P is a boolean form which moves point immediately after the next
+The action may be a regular Emacs Lisp function or a Hyperbole action
+type created with `defact' but may not return nil since any nil value
+returned is converted to t to ensure the implicit button checker
+recognizes that the action has been executed.
+
+Optional TO-P is a boolean form which moves point immediately after the next
 button of this type within the current buffer and returns a list of (button-
 label start-pos end-pos), or nil when none is found.
-  Optional STYLE is a display style specification to use when highlighting
+
+Optional STYLE is a display style specification to use when highlighting
 buttons of this type; most useful when TO-P is also given.
 
 Returns symbol created when successful, else nil.  Nil indicates that action

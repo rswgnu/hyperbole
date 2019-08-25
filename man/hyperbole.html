@@ -1,7 +1,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <!-- This manual is for GNU Hyperbole
-(Edition 7.0.3b, Published August 11, 2019).
+(Edition 7.0.4, Published August 26, 2019).
 
 Copyright (C) 1989-2019  Free Software Foundation, Inc.
 
@@ -347,8 +347,8 @@ WITHOUT ANY WARRANTY, without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</P>
 
 <PRE>
-Edition 7.0.3b
-Printed August 11, 2019.
+Edition 7.0.4
+Printed August 26, 2019.
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -803,7 +803,7 @@ Next: <a href="#Smart-Keys" accesskey="n" rel="next">Smart Keys</a>, Previous: <
 <h2 class="chapter">1 Introduction</h2>
 
 <p>This edition of the GNU Hyperbole Manual is for use with any version
-7.0.3b or greater of GNU Hyperbole.  Hyperbole runs atop GNU Emacs 24.3
+7.0.4 or greater of GNU Hyperbole.  Hyperbole runs atop GNU Emacs 24.3
 or higher.  It will trigger an error if your Emacs is older.
 </p>
 <p>This chapter summarizes the structure of the rest of the manual,
@@ -2410,14 +2410,14 @@ priority).
 <a name="index-completion-1"></a>
 </dd>
 <dt><code>completion</code></dt>
-<dd><p>Inserts the completion at point (from a completions buffer) into the
+<dd><p>Insert the completion at point (from a completions buffer) into the
 minibuffer or the other window.
 </p>
 <a name="index-ibtypes-hyp_002dsource"></a>
 <a name="index-Hyperbole-report"></a>
 </dd>
 <dt><code>hyp-source</code></dt>
-<dd><p>Turns source location entries following an &lsquo;@loc&gt;&rsquo; line in Hyperbole
+<dd><p>Turn source location entries following an &lsquo;@loc&gt;&rsquo; line in Hyperbole
 reports into buttons that jump to the associated location.  For
 example, <kbd>{C-h h d d C-h h e h o}</kbd> summarizes the properties of the
 explicit buttons in the <samp>DEMO</samp> file and each button in that report
@@ -2428,7 +2428,7 @@ buffer behaves the same as the corresponding button in the original
 <a name="index-Hyperbole-mail-list"></a>
 </dd>
 <dt><code>hyp-address</code></dt>
-<dd><p>Within a mail or Usenet news composer window, makes a Hyperbole
+<dd><p>Within a mail or Usenet news composer window, make a Hyperbole
 support/discussion e-mail address insert Hyperbole environment and
 version information.  This is useful when sending mail to a Hyperbole
 discussion mail list.  See also the documentation
@@ -2440,8 +2440,8 @@ activate this implicit button type.
 <a name="index-Info-node"></a>
 </dd>
 <dt><code>Info-node</code></dt>
-<dd><p>Makes a &quot;(filename)nodename&quot; button display the associated Info node.
-Also makes a &quot;(filename)itemname&quot; button display the associated Info
+<dd><p>Make a &quot;(filename)nodename&quot; button display the associated Info node.
+Also make a &quot;(filename)itemname&quot; button display the associated Info
 index item.  Examples are &quot;(hyperbole)Implicit Buttons&quot; and
 &ldquo;(hyperbole)C-c /&rdquo;.
 </p>
@@ -2454,7 +2454,7 @@ index item.  Examples are &quot;(hyperbole)Implicit Buttons&quot; and
 <a name="index-browse_002durl_002dbrowser_002dfunction"></a>
 </dd>
 <dt><code>www-url</code></dt>
-<dd><p>When not in an Emacs web browser buffer, follows any non-ftp URL (link) at point.
+<dd><p>When not in an Emacs web browser buffer, follow any non-ftp URL (link) at point.
 The variable, <code>browse-url-browser-function</code>, may be used to customize
 which URL browser is called.  Terse URLs which lack a protocol prefix,
 like www.gnu.org, are also recognized.
@@ -2465,23 +2465,23 @@ like www.gnu.org, are also recognized.
 <a name="index-signatures_002c-hiding"></a>
 </dd>
 <dt><code>gnus-push-button</code></dt>
-<dd><p>Activates GNUS-specific article push-buttons, e.g. for hiding
-signatures.  GNUS is a news and mail reader.
+<dd><p>Activate GNUS-specific article push-buttons, e.g. for hiding signatures.  GNUS
+is a news and mail reader.
 </p>
 <a name="index-ibtypes-texinfo_002dref"></a>
 <a name="index-Texinfo-cross_002dreference"></a>
 <a name="index-cross_002dreference_002c-Texinfo"></a>
 </dd>
 <dt><code>texinfo-ref</code></dt>
-<dd><p>Displays Texinfo, Info node or help associated with Texinfo node, menu
-item, @xref, @pxref, @ref, @code, @findex, @var or @vindex at point.
-If point is within the braces of a cross-reference, the associated Info node is
-shown.  If point is to the left of the braces but after the @ symbol and
-the reference is to a node within the current Texinfo file, then the
-Texinfo node is shown.
+<dd><p>Display Texinfo, Info node or help associated with Texinfo node, menu item,
+@xref, @pxref, @ref, @code, @findex, @var or @vindex at point.  If
+point is within the braces of a cross-reference, the associated Info node is
+shown.  If point is to the left of the braces but after the @ symbol and the
+reference is to a node within the current Texinfo file, then the Texinfo node
+is shown.
 </p>
-<p>For @code, @findex, @var and @vindex references, the associated documentation
-string is displayed.
+<p>For @code, @findex, @var and @vindex references, the associated
+documentation string is displayed.
 </p>
 <a name="index-ibtypes-mail_002daddress"></a>
 <a name="index-e_002dmail-address"></a>
@@ -2498,7 +2498,7 @@ with <samp>mail</samp> or <samp>rolo</samp> (case-insensitive) within its name.
 <a name="index-patch-output"></a>
 </dd>
 <dt><code>patch-msg</code></dt>
-<dd><p>Jumps to the source code associated with output from the &lsquo;<samp>patch</samp>&rsquo;
+<dd><p>Jump to the source code associated with output from the &lsquo;<samp>patch</samp>&rsquo;
 program.  Patch applies diffs to source code.
 </p>
 <a name="index-ibtypes-elisp_002dcompiler_002dmsg"></a>
@@ -2507,7 +2507,7 @@ program.  Patch applies diffs to source code.
 <a name="index-compiler-error"></a>
 </dd>
 <dt><code>elisp-compiler-msg</code></dt>
-<dd><p>Jumps to the source code for a definition associated with an Emacs
+<dd><p>Jump to the source code for a definition associated with an Emacs
 Lisp byte-compiler error message.  Works when activated anywhere
 within an error line.
 </p>
@@ -2520,7 +2520,7 @@ within an error line.
 <a name="index-source-line"></a>
 </dd>
 <dt><code>debugger-source</code></dt>
-<dd><p>Jumps to the source line associated with a debugger stack frame or
+<dd><p>Jump to the source line associated with a debugger stack frame or
 breakpoint line.  This works with gdb, dbx, and xdb.  Such lines are
 recognized in any buffer.
 </p>
@@ -2530,7 +2530,7 @@ recognized in any buffer.
 <a name="index-match-lines"></a>
 </dd>
 <dt><code>ripgrep-msg</code></dt>
-<dd><p>Jumps to line associated with a ripgrep (rg) line numbered msg.
+<dd><p>Jump to line associated with a ripgrep (rg) line numbered msg.
 Ripgrep outputs each pathname once followed by all matching lines in
 that pathname.  Messages are recognized in any buffer (other than a
 helm completion buffer).
@@ -2540,9 +2540,10 @@ helm completion buffer).
 <a name="index-stack-frame-1"></a>
 </dd>
 <dt><code>ipython-stack-frame</code></dt>
-<dd><p>Jumps to line associated with an ipython stack frame line numbered msg.
-ipython outputs each pathname once followed by all matching lines in that pathname.
-Messages are recognized in any buffer (other than a helm completion buffer).
+<dd><p>Jump to line associated with an ipython stack frame line numbered msg.
+ipython outputs each pathname once followed by all matching lines in that
+pathname.  Messages are recognized in any buffer (other than a helm completion
+buffer).
 </p>
 <a name="index-ibtypes-grep_002dmsg"></a>
 <a name="index-grep-1"></a>
@@ -2550,35 +2551,35 @@ Messages are recognized in any buffer (other than a helm completion buffer).
 <a name="index-match-lines-1"></a>
 </dd>
 <dt><code>grep-msg</code></dt>
-<dd><p>Jumps to a line associated with grep or compilation error messages.
+<dd><p>Jump to a line associated with a grep or compilation error message.
 Messages are recognized in any buffer.
 </p>
-<a name="index-ibtypes-link_002dto_002dibut"></a>
+<a name="index-ibtypes-ilink"></a>
 <a name="index-implicit-button-link"></a>
 <a name="index-link-to-implicit-button"></a>
 <a name="index-ilink"></a>
 </dd>
 <dt><code>link-to-ibut &lt;ilink&gt;</code></dt>
-<dd><p>At point, activates a link to an implicit button within the current buffer.
-Recognizes the format â&lt;ilink:â &lt;button label&gt; â&gt;â, e.g. &lt;ilink: my sequence of keys&gt;.
+<dd><p>At point, activate a link to an implicit button within the current buffer.
+Recognizes the format â&lt;ilink:â &lt;button label&gt; â&gt;â, e.g. &lt;ilink: my key sequence&gt;.
 </p>
-<a name="index-ibtypes-link_002dto_002dgbut"></a>
+<a name="index-ibtypes-glink"></a>
 <a name="index-global-button-link"></a>
 <a name="index-link-to-global-button"></a>
 <a name="index-glink"></a>
 </dd>
 <dt><code>link-to-gbut &lt;glink&gt;</code></dt>
-<dd><p>At point, activates a link to a global button.
+<dd><p>At point, activate a link to a global button.
 The global buttonâs action is executed in the context of the current buffer.
 Recognizes the format â&lt;glink:â &lt;button label&gt; â&gt;â, e.g. &lt;glink: open todos&gt;.
 </p>
-<a name="index-ibtypes-link_002dto_002debut"></a>
+<a name="index-ibtypes-elink"></a>
 <a name="index-explicit-button-link"></a>
 <a name="index-link-to-explicit-button"></a>
 <a name="index-elink"></a>
 </dd>
 <dt><code>link-to-ebut &lt;elink&gt;</code></dt>
-<dd><p>At point, activates a link to an explicit button within the current buffer.
+<dd><p>At point, activate a link to an explicit button within the current buffer.
 Recognizes the format â&lt;elink:â &lt;button label&gt; â&gt;â, e.g. &lt;elink: project-list&gt;.
 </p>
 <a name="index-ibtypes-klink"></a>
@@ -2587,7 +2588,7 @@ Recognizes the format â&lt;elink:â &lt;button label&gt; â&gt;â
 <a name="index-kcell-link"></a>
 </dd>
 <dt><code>klink</code></dt>
-<dd><p>Follows a link delimited by &lt;&gt; to a koutline cell.
+<dd><p>Follow a link delimited by &lt;&gt; to a koutline cell.
 See the documentation for <code>actypes::link-to-kotl</code> for valid link
 specifiers.
 </p>
@@ -2597,8 +2598,8 @@ specifiers.
 <a name="index-man-apropos"></a>
 </dd>
 <dt><code>man-apropos</code></dt>
-<dd><p>Makes man apropos entries (from &lsquo;<samp>man -k</samp>&rsquo;) display associated man
-pages when selected.
+<dd><p>Make man apropos entries (from &lsquo;<samp>man -k</samp>&rsquo;) display associated man pages
+when selected.
 </p>
 <a name="index-ibtypes-rfc"></a>
 <a name="index-Internet-RFC"></a>
@@ -2608,7 +2609,7 @@ pages when selected.
 <a name="index-ftp"></a>
 </dd>
 <dt><code>rfc</code></dt>
-<dd><p>Retrieves and displays an Internet rfc referenced at point.  The
+<dd><p>Retrieve and display an Internet rfc referenced at point.  The
 following formats are recognized: RFC822, rfc-822, and RFC 822.  The
 <code>hpath:rfc</code> variable specifies the location from which to
 retrieve RFCs.  Requires the Emacs builtin Tramp library for ftp file
@@ -2619,7 +2620,7 @@ retrievals.
 <a name="index-sequence-of-keys"></a>
 </dd>
 <dt><code>kbd-key</code></dt>
-<dd><p>Executes a key series (series of key sequences) found around point,
+<dd><p>Execute a key series (series of key sequences) found around point,
 delimited by curly braces, {}, if any.  Key series should be in
 human readable form, e.g. <kbd>{C-x C-b}</kbd>.  Formats such as {^x^b}
 will not be recognized.
@@ -2637,17 +2638,17 @@ will not be recognized.
 <a name="index-file_002c-DIR"></a>
 </dd>
 <dt><code>dir-summary</code></dt>
-<dd><p>Detects filename buttons in files named &quot;MANIFEST&quot; or &quot;DIR&quot;.
-Displays selected files.  Each filename must be at the beginning of the
-line and must be followed by one or more spaces and then another
-non-space, non-parenthesis, non-brace character.
+<dd><p>Detect filename buttons in files named &quot;MANIFEST&quot; or &quot;DIR&quot;.  Display selected
+files.  Each filename must be at the beginning of the line and must be
+followed by one or more spaces and then another non-space, non-parenthesis,
+non-brace character.
 </p>
 <a name="index-ibtypes-text_002dtoc"></a>
 <a name="index-table-of-contents"></a>
 <a name="index-toc-implicit-button-type"></a>
 </dd>
 <dt><code>text-toc</code></dt>
-<dd><p>Jumps to the text file section referenced by a table of contents entry
+<dd><p>Jump to the text file section referenced by a table of contents entry
 at point.  The filename of the current buffer must contain
 <samp>README</samp> and there must be a &lsquo;Table of Contents&rsquo; or &lsquo;Contents&rsquo;
 label on a line by itself (it may begin with an asterisk), preceding the
@@ -2662,7 +2663,7 @@ very beginning of the line.
 <a name="index-Cscope"></a>
 </dd>
 <dt><code>cscope</code></dt>
-<dd><p>Jumps to a C/C++ source line associated with a Cscope C analyzer output line.
+<dd><p>Jump to a C/C++ source line associated with a Cscope C analyzer output line.
 Requires pre-loading of the cscope.el Lisp library available from the Emacs
 Lisp archives and the open source cscope program available from
 http://cscope.sf.net.  Otherwise, does nothing.
@@ -2673,16 +2674,16 @@ http://cscope.sf.net.  Otherwise, does nothing.
 <a name="index-tag"></a>
 </dd>
 <dt><code>etags</code></dt>
-<dd><p>Jumps to the source line associated with an etags file entry in a TAGS buffer.
-If on a tag entry line, jumps to the source line for the tag.  If on a
-pathname line or line preceding it, jumps to the associated file.
+<dd><p>Jump to the source line associated with an etags file entry in a TAGS buffer.
+If on a tag entry line, jump to the source line for the tag.  If on a
+pathname line or line preceding it, jump to the associated file.
 </p>
 <a name="index-ibtypes-ctags"></a>
 <a name="index-ctags-entry"></a>
 <a name="index-tags-file"></a>
 </dd>
 <dt><code>ctags</code></dt>
-<dd><p>Jumps to the source line associated with a ctags file entry in any buffer.
+<dd><p>Jump to the source line associated with a ctags file entry in any buffer.
 Ctags files are used by old editors like vi to lookup identifiers.
 Emacs uses the newer, more flexible Etags format.
 </p>
@@ -2692,7 +2693,7 @@ Emacs uses the newer, more flexible Etags format.
 <a name="index-C-flow-graph"></a>
 </dd>
 <dt><code>id-cflow</code></dt>
-<dd><p>Expands or collapses C call trees and jumps to code definitions.
+<dd><p>Expand or collapse C call trees and jump to code definitions.
 Requires cross-reference tables built by the external <code>cxref</code>
 program.
 </p>
@@ -2703,14 +2704,23 @@ program.
 <a name="index-table-of-contents-1"></a>
 </dd>
 <dt><code>rfc-toc</code></dt>
-<dd><p>Summarizes contents of an Internet rfc from anywhere within an rfc buffer.
+<dd><p>Summarize contents of an Internet rfc from anywhere within an rfc buffer.
 Each line of the summary may be selected to jump to the associated section.
+</p>
+<a name="index-ibtypes-actions"></a>
+<a name="index-action-implicit-button"></a>
+<a name="index-functon-call-implicit-button"></a>
+<a name="index-variable-display-implicit-button"></a>
+</dd>
+<dt><code>action</code></dt>
+<dd><p>Execute an angle bracket delimited Hyperbole action, Elisp function call or
+display of an Elisp variable and its value.
 </p>
 <a name="index-ibtypes-markdown_002dinternal_002dlink"></a>
 <a name="index-markdown-link"></a>
 </dd>
 <dt><code>markdown-internal-link</code></dt>
-<dd><p>Displays any in-file Markdown link referent.  Pathnames and urls are
+<dd><p>Display any in-file Markdown link referent.  Pathnames and urls are
 handled elsewhere.
 </p>
 <a name="index-ibtypes-git_002dreference"></a>
@@ -2719,7 +2729,7 @@ handled elsewhere.
 <a name="index-hibtypes_002dgit_002ddefault_002dproject"></a>
 </dd>
 <dt><code>git-reference</code></dt>
-<dd><p>Displays the git entity associated with REFERENCE and optional PROJECT.
+<dd><p>Display the git entity associated with REFERENCE and optional PROJECT.
 See <samp>DEMO#Git (Local) References</samp> for examples.
 </p>
 <p>REFERENCE is a string of one of the following forms:
@@ -2754,7 +2764,7 @@ value is provided, it defaults to the value of <code>hibtypes-git-default-projec
 <a name="index-version-control-1"></a>
 </dd>
 <dt><code>git-commit-reference</code></dt>
-<dd><p>Displays the diff for a git commit reference, e.g. commit a55e21, typically
+<dd><p>Display the diff for a git commit reference, e.g. commit a55e21, typically
 produced by git log.
 </p>
 <a name="index-ibtypes-github_002dreference"></a>
@@ -2764,7 +2774,7 @@ produced by git log.
 <a name="index-hibtypes_002dgithub_002ddefault_002duser"></a>
 </dd>
 <dt><code>github-reference</code></dt>
-<dd><p>Displays the Github entity associated with REFERENCE and optional USER and PROJECT.
+<dd><p>Display the Github entity associated with REFERENCE and optional USER and PROJECT.
 See <samp>../DEMO#Github (Remote) References</samp> for examples.
 </p>
 <p>REFERENCE is a string of one of the following forms:
@@ -2807,7 +2817,7 @@ PROJECT value is provided, it defaults to the value of
 <a name="index-hibtypes_002dgitlab_002ddefault_002duser"></a>
 </dd>
 <dt><code>gitlab-reference</code></dt>
-<dd><p>Displays the Gitlab entity associated with REFERENCE and optional USER and PROJECT.
+<dd><p>Display the Gitlab entity associated with REFERENCE and optional USER and PROJECT.
 See <samp>../DEMO#Gitlab (Remote) References</samp> for examples.
 </p>
 <p>REFERENCE is a string of one of the following forms:
@@ -2853,7 +2863,7 @@ PROJECT value is provided, it defaults to the value of
 <a name="index-hibtypes_002dsocial_002ddefault_002dservice"></a>
 </dd>
 <dt><code>social-reference</code></dt>
-<dd><p>Displays the web page associated with a social media hashtag or
+<dd><p>Display the web page associated with a social media hashtag or
 username reference at point.
 </p>
 <p>Reference format is:
@@ -2877,7 +2887,7 @@ twitter#hashtag.
 <dt><code>debbugs-gnu-mode</code></dt>
 <dd><p>Debbugs is a client-server issue tracker used by GNU free software
 projects, including Hyperbole, to manage issues and maintain threads
-of discussion around them.  You issues queries to a Debbugs server and
+of discussion around them.  You issue queries to a Debbugs server and
 it returns a listing entry for each matching issue.  When on a GNU
 Debbugs listing entry in <code>debbugs-gnu-mode</code>, an Action Key press
 displays the discussion of the selected issue; an Assist Key press
@@ -2901,7 +2911,7 @@ bug#id-number?attr1=val1&amp;attr2=val2&amp;attr3=val3
 </pre></div>
 
 <a name="index-file_002c-hib_002ddebbugs_002eel"></a>
-<p>Note that <em>issue</em> or <em>debbugs</em> may be used as well in place
+<p>Note that <em>issue</em> or <em>debbugs</em> may also be used in place
 of <em>bug</em>.  See the documentation at the top of
 the <samp>hib-debbugs.el</samp> file for detailed query format information.
 </p>
@@ -2910,7 +2920,7 @@ the <samp>hib-debbugs.el</samp> file for detailed query format information.
 <a name="index-reference"></a>
 </dd>
 <dt><code>annot-bib</code></dt>
-<dd><p>Displays annotated bibliography entries defined within the same buffer
+<dd><p>Display annotated bibliography entries defined within the same buffer
 as the reference.  References must be delimited by square brackets, must
 begin with a word constituent character, and must not be in buffers
 whose names begin with a &lsquo; &rsquo; or &lsquo;*&rsquo; character.
@@ -2922,7 +2932,7 @@ whose names begin with a &lsquo; &rsquo; or &lsquo;*&rsquo; character.
 <a name="index-func_002dmenu"></a>
 </dd>
 <dt><code>function-in-buffer</code></dt>
-<dd><p>Returns the function name defined within this buffer that point is
+<dd><p>Return the function name defined within this buffer that point is
 within or after, else &lsquo;<samp>nil</samp>&rsquo;.  This triggers only when the
 func-menu library has been loaded and the current major mode is one
 handled by func-menu.
@@ -2933,7 +2943,7 @@ handled by func-menu.
 <a name="index-ibtypes-pathname_002dline_002dand_002dcolumn"></a>
 </dd>
 <dt><code>pathname-line-and-column</code></dt>
-<dd><p>Makes a valid pathname:line-num[:column-num] pattern display the path
+<dd><p>Make a valid pathname:line-num[:column-num] pattern display the path
 at line-num and optional column-num.  Also works for remote pathnames.
 </p>
 <a name="index-ibtypes-pathname"></a>
@@ -2948,7 +2958,7 @@ at line-num and optional column-num.  Also works for remote pathnames.
 <a name="index-link_002c-pathname"></a>
 </dd>
 <dt><code>pathname</code></dt>
-<dd><p>Makes a valid pathname display the path entry.  Also works for
+<dd><p>Make a valid pathname display the path entry.  Also works for
 delimited and non-delimited remote pathnames, Texinfo @file{}
 entries, and hash-style link references to HTML, Markdown or Emacs
 outline headings, and MSWindows paths (see <samp>${hyperb:dir}/DEMO#POSIX
@@ -3001,7 +3011,7 @@ the Org mode standard binding of <kbd>{M-RET}</kbd>, <code>org-meta-return</code
 <a name="index-document-identifier"></a>
 </dd>
 <dt><code>doc-id</code></dt>
-<dd><p>Displays a document from a local document library given its id.  Ids must be
+<dd><p>Display a document from a local document library given its id.  Ids must be
 delimited by <code>doc-id-start</code> and <code>doc-id-end</code> and must match the
 function given by <code>doc-id-p</code>.  (Note that this implicit button type is
 not installed by default.  You must manually configure it and load it from
@@ -3094,25 +3104,30 @@ are:
 <dd><a name="index-actypes-annot_002dbib"></a>
 </dd>
 <dt><code>annot-bib</code></dt>
-<dd><p>Follows an internal reference KEY within an annotated bibliography,
+<dd><p>Follow an internal reference KEY within an annotated bibliography,
 delimiters = [ ].
 </p>
 <a name="index-actypes-completion"></a>
 </dd>
 <dt><code>completion</code></dt>
-<dd><p>Inserts a completion at point into the minibuffer or a buffer.
+<dd><p>Insert a completion at point into the minibuffer or a buffer.
 Unless point is at the end of buffer or if a completion has already been 
-inserted, in which case the completions window is deleted.
+inserted, in which case, delete the completions window.
+</p>
+<a name="index-actypes-display_002dvariable"></a>
+</dd>
+<dt><code>display-variable-value</code></dt>
+<dd><p>Display a message showing the given variable name and its value.
 </p>
 <a name="index-actypes-eval_002delisp"></a>
 </dd>
 <dt><code>eval-elisp</code></dt>
-<dd><p>Evaluates a Lisp expression LISP-EXPR.
+<dd><p>Evaluate a Lisp expression LISP-EXPR for its side-effects and return any non-nil value.
 </p>
 <a name="index-actypes-exec_002dkbd_002dmacro"></a>
 </dd>
 <dt><code>exec-kbd-macro</code></dt>
-<dd><p>Executes a KBD-MACRO REPEAT-COUNT times.  KBD-MACRO may be a string of
+<dd><p>Execute a KBD-MACRO REPEAT-COUNT times.  KBD-MACRO may be a string of
 editor command characters, a function symbol or nil to use the last
 defined keyboard macro.  Optional REPEAT-COUNT nil means execute once,
 zero means repeat until error.
@@ -3120,7 +3135,7 @@ zero means repeat until error.
 <a name="index-actypes-exec_002dshell_002dcmd"></a>
 </dd>
 <dt><code>exec-shell-cmd</code></dt>
-<dd><p>Executes a SHELL-CMD string asynchronously.  Optional non-nil second
+<dd><p>Execute a SHELL-CMD string asynchronously.  Optional non-nil second
 argument INTERNAL-CMD inhibits display of the shell command line
 executed.  Optional non-nil third argument KILL-PREV means kill the last
 output to the shell buffer before executing SHELL-CMD.
@@ -3128,87 +3143,84 @@ output to the shell buffer before executing SHELL-CMD.
 <a name="index-actypes-exec_002dwindow_002dcmd"></a>
 </dd>
 <dt><code>exec-window-cmd</code></dt>
-<dd><p>Asynchronously executes an external window-based SHELL-CMD string.
+<dd><p>Asynchronously execute an external window-based SHELL-CMD string.
 </p>
 <a name="index-actypes-function_002din_002dbuffer"></a>
 </dd>
 <dt><code>function-in-buffer</code></dt>
-<dd><p>Displays the definition of function NAME found at POS in the current buffer.
+<dd><p>Display the definition of function NAME found at POS in the current buffer.
 </p>
 <a name="index-actypes-hyp_002dconfig"></a>
 </dd>
 <dt><code>hyp-config</code></dt>
-<dd><p>Inserts Hyperbole configuration and debugging information at the end
+<dd><p>Insert Hyperbole configuration and debugging information at the end
 of the current buffer or within optional OUT-BUF.
 </p>
 <a name="index-actypes-hyp_002drequest"></a>
 </dd>
 <dt><code>hyp-request</code></dt>
-<dd><p>Inserts help for composing a Hyperbole support/discussion message into
+<dd><p>Insert help for composing a Hyperbole support/discussion message into
 the current buffer or the optional OUT-BUF.
 </p>
 <a name="index-actypes-hyp_002dsource"></a>
 </dd>
 <dt><code>hyp-source</code></dt>
-<dd><p>Displays a buffer or file from a line beginning with
-<code>hbut:source-prefix</code>.
+<dd><p>Display a buffer or file from a line beginning with <code>hbut:source-prefix</code>.
 </p>
 <a name="index-actypes-kbd_002dkey"></a>
 </dd>
 <dt><code>kbd-key</code></dt>
-<dd><p>Executes the function binding for KEY-SEQUENCE, delimited by {}.
-Returns &lsquo;<samp>t</samp>&rsquo; if a KEY-SEQUENCE has a binding, else &lsquo;<samp>nil</samp>&rsquo;.
+<dd><p>Execute the function binding for KEY-SEQUENCE, delimited by {}.
+Return &lsquo;<samp>t</samp>&rsquo; if a KEY-SEQUENCE has a binding, else &lsquo;<samp>nil</samp>&rsquo;.
 </p>
 <a name="index-link-action-types"></a>
 <a name="index-actypes-link_002dto_002dbuffer_002dtmp"></a>
 </dd>
 <dt><code>link-to-buffer-tmp</code></dt>
-<dd><p>Displays a BUFFER.  This type of link generally can
-only be used within a single editor session.  Use <code>link-to-file</code>
-instead for a permanent link.
+<dd><p>Display a BUFFER.  This type of link is for use in  a single editor session.
+Use <code>link-to-file</code> instead for a permanent link.
 </p>
 <a name="index-actypes-link_002dto_002ddirectory"></a>
 </dd>
 <dt><code>link-to-directory</code></dt>
-<dd><p>Displays a DIRECTORY in Dired mode.
+<dd><p>Display a DIRECTORY in Dired mode.
 </p>
 <a name="index-actypes-link_002dto_002ddoc"></a>
 </dd>
 <dt><code>link-to-doc</code></dt>
-<dd><p>Displays an online version of a document given by DOC-ID.  If the online
-version of a document is not found in <code>doc-id-indices</code>, an error is
-signalled.
+<dd><p>Display an online version of a document given by DOC-ID.  If the online
+version of a document is not found in <code>doc-id-indices</code>, signal an error.
 </p>
 <a name="index-actypes-link_002dto_002debut"></a>
 </dd>
 <dt><code>link-to-ebut</code></dt>
-<dd><p>Performs an action given by an explicit button, specified by KEY and KEY-FILE.
+<dd><p>Perform an action given by an explicit button, specified by KEY and KEY-FILE.
 </p>
 <a name="index-actypes-link_002dto_002delisp_002ddoc"></a>
 </dd>
 <dt><code>link-to-elisp-doc</code></dt>
-<dd><p>Displays the documentation for FUNC-SYMBOL.
+<dd><p>Display the documentation for FUNC-SYMBOL.
 </p>
 <a name="index-actypes-link_002dto_002dfile"></a>
 </dd>
 <dt><code>link-to-file</code></dt>
-<dd><p>Displays a file given by PATH scrolled to optional POINT.  If POINT is given,
-the buffer is displayed with POINT at the top of the window.
+<dd><p>Display a file given by PATH scrolled to optional POINT.  If POINT is given,
+display the buffer with POINT at the top of the window.
 </p>
 <a name="index-actypes-link_002dto_002dfile_002dline"></a>
 </dd>
 <dt><code>link-to-file-line</code></dt>
-<dd><p>Displays a file given by PATH scrolled to LINE-NUM.
+<dd><p>Display a file given by PATH scrolled to LINE-NUM.
 </p>
 <a name="index-actypes-link_002dto_002dgbut"></a>
 </dd>
 <dt><code>link-to-gbut</code></dt>
-<dd><p>Performs an action given by an existing global button, specified by KEY.
+<dd><p>Perform an action given by an existing global button, specified by KEY.
 </p>
 <a name="index-actypes-link_002dto_002dInfo_002dindex_002ditem"></a>
 </dd>
 <dt><code>link-to-Info-index-item</code></dt>
-<dd><p>Displays an Info index ITEM cross-reference.
+<dd><p>Display an Info index ITEM cross-reference.
 ITEM must be a string of the form (filename)item-name.  During
 button creation, completion for both filename and item-name is
 available.  Filename may be given without the .info suffix.&quot;
@@ -3216,7 +3228,7 @@ available.  Filename may be given without the .info suffix.&quot;
 <a name="index-actypes-link_002dto_002dInfo_002dnode"></a>
 </dd>
 <dt><code>link-to-Info-node</code></dt>
-<dd><p>Displays an Info NODE.  NODE must be a string of the form
+<dd><p>Display an Info NODE.  NODE must be a string of the form
 (filename)nodename.  During button creation, completion for both
 filename and nodename is available.  Filename may be given without the
 .info suffix.
@@ -3224,23 +3236,23 @@ filename and nodename is available.  Filename may be given without the
 <a name="index-actypes-link_002dto_002dibut"></a>
 </dd>
 <dt><code>link-to-ibut</code></dt>
-<dd><p>Performs an action given by an implicit button, specified by KEY-FILE, KEY and optional POINT.
+<dd><p>Perform an action given by an implicit button, specified by KEY, optional KEY-FILE and POINT.
 </p>
 <a name="index-actypes-link_002dto_002dkcell"></a>
 <a name="index-kcell_003aref_002dto_002did"></a>
 </dd>
 <dt><code>link-to-kcell</code></dt>
-<dd><p>Displays a Hyperbole outline cell, given by FILE and CELL-REF, at the
+<dd><p>Display a Hyperbole outline cell, given by FILE and CELL-REF, at the
 top of a window.  See the documentation for <code>(kcell:ref-to-id)</code> for
 valid CELL-REF formats.
 </p>
-<p>If FILE is &lsquo;<samp>nil</samp>&rsquo;, the current buffer is used.  If CELL-REF is
-&lsquo;<samp>nil</samp>&rsquo;, the first cell in the view is shown.
+<p>If FILE is &lsquo;<samp>nil</samp>&rsquo;, use the current buffer.  If CELL-REF is
+&lsquo;<samp>nil</samp>&rsquo;, show the first cell in the view.
 </p>
 <a name="index-actypes-link_002dto_002dkotl"></a>
 </dd>
 <dt><code>link-to-kotl</code></dt>
-<dd><p>Displays at the top of a window the referent pointed to by LINK.
+<dd><p>Display at the top of a window the referent pointed to by LINK.
 LINK may be of any of the following forms, with or without delimiters:
 </p><div class="example">
 <pre class="example">  &lt; pathname [, cell-ref] &gt;
@@ -3254,58 +3266,58 @@ formats.
 <a name="index-actypes-link_002dto_002dmail"></a>
 </dd>
 <dt><code>link-to-mail</code></dt>
-<dd><p>Displays a mail message with MAIL-MSG-ID from optional MAIL-FILE.  See
+<dd><p>Display a mail message with MAIL-MSG-ID from optional MAIL-FILE.  See
 the documentation for the variable <code>hmail:init-function</code> for
 information on how to specify the mail reader to use.
 </p>
 <a name="index-actypes-link_002dto_002dregexp_002dmatch"></a>
 </dd>
 <dt><code>link-to-regexp-match</code></dt>
-<dd><p>Finds REGEXP&rsquo;s Nth occurrence in SOURCE and displays the location at the
+<dd><p>Find REGEXP&rsquo;s Nth occurrence in SOURCE and display the location at the
 top of the selected window.  SOURCE is a pathname unless optional
 BUFFER-P is non-nil, then SOURCE must be a buffer name or buffer.
-Returns &lsquo;<samp>t</samp>&rsquo; if found, signals an error if not.
+Return &lsquo;<samp>t</samp>&rsquo; if found, signal an error if not.
 </p>
 <a name="index-actypes-link_002dto_002drfc"></a>
 </dd>
 <dt><code>link-to-rfc</code></dt>
-<dd><p>Retrieves and displays an Internet rfc given by RFC-NUM.  RFC-NUM may be
+<dd><p>Retrieve and display an Internet rfc given by RFC-NUM.  RFC-NUM may be
 a string or an integer.
 </p>
 <a name="index-actypes-link_002dto_002dstring_002dmatch"></a>
 </dd>
 <dt><code>link-to-string-match</code></dt>
-<dd><p>Finds STRING&rsquo;s Nth occurrence in SOURCE and displays the location at the
+<dd><p>Find STRING&rsquo;s Nth occurrence in SOURCE and display the location at the
 top of the selected window.  SOURCE is a pathname unless optional
 BUFFER-P is non-nil, then SOURCE must be a buffer name or buffer.
-Returns &lsquo;<samp>t</samp>&rsquo; if found, &lsquo;<samp>nil</samp>&rsquo; if not.
+Return &lsquo;<samp>t</samp>&rsquo; if found, &lsquo;<samp>nil</samp>&rsquo; if not.
 </p>
 <a name="index-actypes-link_002dto_002dtexinfo_002dnode"></a>
 </dd>
 <dt><code>link-to-texinfo-node</code></dt>
-<dd><p>Displays the Texinfo node with NODENAME (a string) from the current buffer.
+<dd><p>Display the Texinfo node with NODENAME (a string) from the current buffer.
 </p>
 <a name="index-actypes-link_002dto_002dweb_002dsearch"></a>
 <a name="index-link_002c-web-search"></a>
 <a name="index-web-search-link"></a>
 </dd>
 <dt><code>link-to-web-search</code></dt>
-<dd><p>Searches web SERVICE-NAME for SEARCH-TERM.  Uses <code>hyperbole-web-search-alist</code>
+<dd><p>Search web SERVICE-NAME for SEARCH-TERM.  Uses <code>hyperbole-web-search-alist</code>
 to match each service to its search url.  Uses <code>hyperbole-web-search-browser-function</code>
 and the <code>browse-url</code> package to display search results.
 </p>
 <a name="index-actypes-man_002dshow"></a>
-<a name="index-sm_002dnotify"></a>
+<a name="index-hpath_003adisplay_002dwhere"></a>
+<a name="index-man-page"></a>
 </dd>
 <dt><code>man-show</code></dt>
-<dd><p>Displays a man page on TOPIC, which may be of the form &lsquo;<samp>&lt;command&gt;(&lt;section&gt;</samp>&rsquo;).
-If using the Superman manual entry package, see the documentation for <code>sm-notify</code>
-to control where the man page is displayed.
+<dd><p>Display a man page on TOPIC, which may be of the form &lsquo;<samp>&lt;command&gt;(&lt;section&gt;</samp>&rsquo;).
+Use <code>hpath:display-where</code> setting to control where the man page is displayed.
 </p>
 <a name="index-actypes-rfc_002dtoc"></a>
 </dd>
 <dt><code>rfc-toc</code></dt>
-<dd><p>Computes and displays a summary of an Internet rfc in BUF-NAME.  Assumes
+<dd><p>Compute and display a summary of an Internet rfc in BUF-NAME.  Assume
 point has already been moved to the start of the region to summarize.
 Optional OPOINT is the point to return to in BUF-NAME after displaying
 the summary.
@@ -3315,8 +3327,7 @@ the summary.
 <a name="index-toc-action-type"></a>
 </dd>
 <dt><code>text-toc</code></dt>
-<dd><p>Jumps to the text file SECTION referenced by a table of contents entry
-at point.
+<dd><p>Jump to the text file SECTION referenced by a table of contents entry at point.
 </p>
 <a name="index-actypes-www_002durl"></a>
 <a name="index-URL-1"></a>
@@ -3325,7 +3336,7 @@ at point.
 <a name="index-browse_002durl_002dbrowser_002dfunction-1"></a>
 </dd>
 <dt><code>www-url</code></dt>
-<dd><p>Follows a link given by a URL.  The variable,
+<dd><p>Follow a link given by a URL.  The variable,
 <code>browse-url-browser-function</code>, customizes the url browser
 that is used.  Valid values of this variable include
 <code>browse-url-default-browser</code> and <code>browse-url-generic</code>.
@@ -7962,7 +7973,7 @@ Next: <a href="#Internal-Viewers" accesskey="n" rel="next">Internal Viewers</a>,
 </div>
 <a name="Referent-Display-1"></a>
 <h4 class="subsection">B.3.1 Referent Display</h4>
-<a name="index-hpath_003adisplay_002dwhere"></a>
+<a name="index-hpath_003adisplay_002dwhere-1"></a>
 <a name="index-referent-display"></a>
 <a name="index-link-display"></a>
 <a name="index-display-where"></a>
@@ -8009,7 +8020,7 @@ Next: <a href="#External-Viewers" accesskey="n" rel="next">External Viewers</a>,
 <a name="index-internal-custom-display"></a>
 <a name="index-hpath_003ainternal_002ddisplay_002dalist-1"></a>
 <a name="index-internal-standard-display"></a>
-<a name="index-hpath_003adisplay_002dwhere-1"></a>
+<a name="index-hpath_003adisplay_002dwhere-2"></a>
 <p>When given a filename to display, Hyperbole first checks if its suffix
 is matched by <code>hpath:native-image-suffixes</code>.  If so and if the
 function <code>image-mode</code> is defined, it uses that mode together with
@@ -12004,6 +12015,7 @@ Next: <a href="#Concept-Index" accesskey="n" rel="next">Concept Index</a>, Previ
 <tr><td></td><td valign="top"><a href="#index-actype_003adelete"><code>actype:delete</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Action-Type-Creation">Action Type Creation</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-actypes-annot_002dbib"><code>actypes annot-bib</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Action-Types">Action Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-actypes-completion"><code>actypes completion</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Action-Types">Action Types</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-actypes-display_002dvariable"><code>actypes display-variable</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Action-Types">Action Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-actypes-eval_002delisp"><code>actypes eval-elisp</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Action-Types">Action Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-actypes-exec_002dkbd_002dmacro"><code>actypes exec-kbd-macro</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Action-Types">Action Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-actypes-exec_002dshell_002dcmd"><code>actypes exec-shell-cmd</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Action-Types">Action Types</a></td></tr>
@@ -12176,8 +12188,9 @@ Next: <a href="#Concept-Index" accesskey="n" rel="next">Concept Index</a>, Previ
 <tr><td></td><td valign="top"><a href="#index-hmouse_002dy_002ddiagonal_002dsensitivity">hmouse-y-diagonal-sensitivity</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Mouse-Drags-within-a-Window">Smart Mouse Drags within a Window</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-hmouse_002dy_002ddrag_002dsensitivity">hmouse-y-drag-sensitivity</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Mouse-Drags-within-a-Window">Smart Mouse Drags within a Window</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-hpath_003aat_002dp"><code>hpath:at-p</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-hpath_003adisplay_002dwhere">hpath:display-where</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Referent-Display">Referent Display</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-hpath_003adisplay_002dwhere-1">hpath:display-where</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Internal-Viewers">Internal Viewers</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-hpath_003adisplay_002dwhere">hpath:display-where</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Action-Types">Action Types</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-hpath_003adisplay_002dwhere-1">hpath:display-where</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Referent-Display">Referent Display</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-hpath_003adisplay_002dwhere-2">hpath:display-where</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Internal-Viewers">Internal Viewers</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-hpath_003aexternal_002ddisplay_002dalist">hpath:external-display-alist</a>:</td><td>&nbsp;</td><td valign="top"><a href="#External-Viewers">External Viewers</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-hpath_003aexternal_002ddisplay_002dalist_002dmacos">hpath:external-display-alist-macos</a>:</td><td>&nbsp;</td><td valign="top"><a href="#External-Viewers">External Viewers</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-hpath_003aexternal_002ddisplay_002dalist_002dmswindows">hpath:external-display-alist-mswindows</a>:</td><td>&nbsp;</td><td valign="top"><a href="#External-Viewers">External Viewers</a></td></tr>
@@ -12268,6 +12281,7 @@ Next: <a href="#Concept-Index" accesskey="n" rel="next">Concept Index</a>, Previ
 <tr><th><a name="Function_fn_letter-I">I</a></th><td></td><td></td></tr>
 <tr><td></td><td valign="top"><a href="#index-ibtype_003acreate"><code>ibtype:create</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-ibtype_003adelete"><code>ibtype:delete</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-ibtypes-actions"><code>ibtypes actions</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-ibtypes-annot_002dbib"><code>ibtypes annot-bib</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-ibtypes-completion"><code>ibtypes completion</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-ibtypes-cscope"><code>ibtypes cscope</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
@@ -12277,6 +12291,7 @@ Next: <a href="#Concept-Index" accesskey="n" rel="next">Concept Index</a>, Previ
 <tr><td></td><td valign="top"><a href="#index-ibtypes-debugger_002dsource"><code>ibtypes debugger-source</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-ibtypes-dir_002dsummary"><code>ibtypes dir-summary</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-ibtypes-doc_002did"><code>ibtypes doc-id</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-ibtypes-elink"><code>ibtypes elink</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-ibtypes-elisp_002dcompiler_002dmsg"><code>ibtypes elisp-compiler-msg</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-ibtypes-etags"><code>ibtypes etags</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-ibtypes-function_002din_002dbuffer"><code>ibtypes function-in-buffer</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
@@ -12284,18 +12299,17 @@ Next: <a href="#Concept-Index" accesskey="n" rel="next">Concept Index</a>, Previ
 <tr><td></td><td valign="top"><a href="#index-ibtypes-git_002dreference"><code>ibtypes git-reference</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-ibtypes-github_002dreference"><code>ibtypes github-reference</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-ibtypes-gitlab_002dreference"><code>ibtypes gitlab-reference</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-ibtypes-glink"><code>ibtypes glink</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-ibtypes-gnus_002dpush_002dbutton"><code>ibtypes gnus-push-button</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-ibtypes-grep_002dmsg"><code>ibtypes grep-msg</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-ibtypes-hyp_002daddress"><code>ibtypes hyp-address</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-ibtypes-hyp_002dsource"><code>ibtypes hyp-source</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-ibtypes-id_002dcflow"><code>ibtypes id-cflow</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-ibtypes-ilink"><code>ibtypes ilink</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-ibtypes-Info_002dnode"><code>ibtypes Info-node</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-ibtypes-ipython_002dstack_002dframe"><code>ibtypes ipython-stack-frame</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-ibtypes-kbd_002dkey"><code>ibtypes kbd-key</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-ibtypes-klink"><code>ibtypes klink</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-ibtypes-link_002dto_002debut"><code>ibtypes link-to-ebut</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-ibtypes-link_002dto_002dgbut"><code>ibtypes link-to-gbut</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-ibtypes-link_002dto_002dibut"><code>ibtypes link-to-ibut</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-ibtypes-mail_002daddress"><code>ibtypes mail-address</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-ibtypes-man_002dapropos"><code>ibtypes man-apropos</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-ibtypes-markdown_002dinternal_002dlink"><code>ibtypes markdown-internal-link</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
@@ -12465,7 +12479,6 @@ Next: <a href="#Concept-Index" accesskey="n" rel="next">Concept Index</a>, Previ
 <tr><td colspan="4"> <hr></td></tr>
 <tr><th><a name="Function_fn_letter-S">S</a></th><td></td><td></td></tr>
 <tr><td></td><td valign="top"><a href="#index-selective_002ddisplay">selective-display</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Key-_002d-Emacs-Outline-Mode">Smart Key - Emacs Outline Mode</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-sm_002dnotify">sm-notify</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Action-Types">Action Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-smail_003acomment">smail:comment</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Buttons-in-Mail">Buttons in Mail</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-smart_002dasm_002dinclude_002dpath">smart-asm-include-path</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Key-_002d-Assembly-Source-Code">Smart Key - Assembly Source Code</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-smart_002dc_002dcpp_002dinclude_002dpath">smart-c-cpp-include-path</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Key-_002d-C-Source-Code">Smart Key - C Source Code</a></td></tr>
@@ -12601,6 +12614,7 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function</a>, Up: <a href
 <tr><td></td><td valign="top"><a href="#index-ace_002dwindow">ace-window</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Keyboard-Drags">Keyboard Drags</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-action">action</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Action-Types">Action Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-action-1">action</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Action-Types">Action Types</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-action-implicit-button">action implicit button</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-Action-Key">Action Key</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Keys">Smart Keys</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-Action-Key-drag">Action Key drag</a>:</td><td>&nbsp;</td><td valign="top"><a href="#By-Dragging">By Dragging</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-Action-Key_002c-cell-argument">Action Key, cell argument</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Relocating-and-Copying">Relocating and Copying</a></td></tr>
@@ -12965,6 +12979,7 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function</a>, Up: <a href
 <tr><td></td><td valign="top"><a href="#index-function">function</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Thing-Selection">Thing Selection</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-function-1">function</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Key-_002d-Delimited-Things">Smart Key - Delimited Things</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-function-menu">function menu</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-functon-call-implicit-button">functon call implicit button</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
 <tr><td colspan="4"> <hr></td></tr>
 <tr><th><a name="Concept-Index_cp_letter-G">G</a></th><td></td><td></td></tr>
 <tr><td></td><td valign="top"><a href="#index-game_002c-gomoku">game, gomoku</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Key-_002d-Gomoku-Game">Smart Key - Gomoku Game</a></td></tr>
@@ -13225,6 +13240,7 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function</a>, Up: <a href
 <tr><td></td><td valign="top"><a href="#index-make-frame">make frame</a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyControl">HyControl</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-make-window">make window</a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyControl">HyControl</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-man-apropos">man apropos</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-man-page">man page</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Action-Types">Action Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-man-page-references">man page references</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Key-_002d-Man-Pages">Smart Key - Man Pages</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-man-pages">man pages</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-margin">margin</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Filling">Filling</a></td></tr>
@@ -13630,6 +13646,7 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function</a>, Up: <a href
 <tr><td></td><td valign="top"><a href="#index-username">username</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
 <tr><td colspan="4"> <hr></td></tr>
 <tr><th><a name="Concept-Index_cp_letter-V">V</a></th><td></td><td></td></tr>
+<tr><td></td><td valign="top"><a href="#index-variable-display-implicit-button">variable display implicit button</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Summaries">Implicit Button Type Summaries</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-variable-setting">variable setting</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Customization">Customization</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-variables">variables</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Hook-Variables">Hook Variables</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-vector">vector</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Thing-Selection">Thing Selection</a></td></tr>

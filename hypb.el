@@ -219,8 +219,8 @@ Global keymap is used unless optional KEYMAP is given."
 
 (defun hypb:emacs-byte-code-p (obj)
   "Return non-nil iff OBJ is an Emacs byte compiled object."
-  (or (and (fboundp 'compiled-function-p) (compiled-function-p obj))
-      (and (fboundp 'byte-code-function-p) (byte-code-function-p obj))))
+  (or (and (fboundp 'byte-code-function-p) (byte-code-function-p obj))
+      (and (fboundp 'compiled-function-p) (compiled-function-p obj))))
 
 (defun hypb:error (&rest args)
   "Signals an error typically to be caught by `hyperbole'."

@@ -411,9 +411,11 @@ hypertexts via its incredibly powerful feature: implicit buttons.  An
 implicit button is a span of text within a buffer that Hyperbole recognizes
 as a button and lets you activate.  Hyperbole recognizes these buttons using
 its predefined implicit button types that specify how to recognize a
-particular type of button and what action such buttons perform.  For example,
-double-quoted pathnames have a type of 'pathname' and an action of: display
-the path in Emacs. (Hyperbole lets you configure where to display it).
+particular type of button and what action it performs.  For example,
+an Action Key press on a double-quoted pathname displays it.  (This is because
+an implicit button type of 'pathname' is recognized and it has an associated
+action type of 'hpath:find' which displays the path in a window specified by
+the setting of 'hpath:display-where').
 
 Hyperbole has many built-in implicit button types, a number of which you will
 see here.  You may also create your own types.  Once a type is known, you can
@@ -426,17 +428,17 @@ to utilize it if it spans multiple lines and always press on a regular
 character, not a delimiter like ( or ) since these are treated specially and
 used to select groups of text.
 
-Individual implicit buttons may be labeled so that they may be activated
+Individual implicit buttons may be labeled so that they can be activated
 by name or linked to by other buttons.  Here is a pathname button with a label
 of 'My Emacs Files':
 
 <[My Emacs Files]>: "~/.emacs.d"
 
-You see that the label is delimited by <[ and ]> and can be followed
-by any number of :, - or = characters, including none, and then a
-whitespace character.  You can activate the button either from its
-label or its pattern text.  With point on an implicit button, you can
-label it by using {C-h h i l}.
+You see that the label is delimited by <[ and ]>.  It must be at least 2
+characters in length and can be followed by any number of :, - or = characters,
+including none, and then a whitespace character.  You can activate the button
+either from its label or its pattern text.  With point on an implicit button,
+you can label it by using {C-h h i l}.
 
 Now let's explore some implicit button types.
 
@@ -486,6 +488,48 @@ Key executes the code block via the Org mode standard binding of {C-c C-c},
 
 In any other context besides the end of a line, the Action Key invokes
 the Org mode standard binding of {M-RET}, (org-meta-return).
+
+** Action Buttons
+
+A new feature of Hyperbole is a universal syntax for creating implicit
+buttons known as Action Buttons that execute any existing action types or
+Emacs Lisp functions.  Such buttons are delimited by angle brackets, < >, and
+come in three types:
+
+  1. action type invocations - these begin with an action type name (from the
+     list displayed by {C-h h d t a RET}) and are followed by any needed
+     arguments to form the action, e.g.
+
+          <link-to-file-line "${hyperb:dir}/hact.el" 40>
+
+  2. function calls - these are similar to action type invocations but begin
+     with an Elisp function name rather than an action type name, e.g.
+
+          <find-file-other-window "/tmp">
+
+  3. variable displays - these consist of just an Elisp variable name and
+     display a message with the variable name and value, e.g.
+
+          <fill-column>
+
+     If there is a function binding with the same name as the variable you
+     wish to display, to prevent interpretation as a function call action
+     button, precede the name with a '$', e.g.
+
+          <$fill-column>
+
+Since implicit buttons can be labeled with a name and placed in the global
+button file for invocation by name, you can give short names to any such
+buttons you want to invoke frequently.
+
+An Action Button is recognized only if the first name within the angle
+brackets is an existing action type or Elisp symbol.  Otherwise, other
+implicit button types will be tested and may activate instead.
+
+With Action Buttons you need not remember any special syntax for each type of
+implicit button.  You can freely embed them in any type of text and use the
+Action and Assist keys on them as you do with any other type of implicit
+button.
 
 ** Implicit Path Links
 
@@ -574,12 +618,12 @@ and jpeg.  Under X or Mac OS, try a press of the Action Key on
 Several prefix characters may be attached to pathnames to indicate that a
 different action should be taken when the button is activated.  An
 exclamation point prefix indicates that the full pathname should be run as a
-non-windowed shell program.  For example, try "!/bin/date" on UNIX.  This
-will run the program in a subshell within Emacs.  An ampersand prefix means
-run the full pathname as a windowed program, outside of Emacs.  Under the X
-window system, try "&/usr/X11/bin/xeyes".  Finally, a hyphen indicates that
-the filename should be executed as an Emacs Lisp library, e.g. "-subr.elc",
-rather than displayed.
+non-windowed shell program.  For example, try "!${PATH}/date" on a POSIX
+system.  This will run the program in a subshell within Emacs.  An ampersand
+prefix means run the full pathname as a windowed program, outside of Emacs.
+Under the X window system, try "&${PATH}/xeyes".  Finally, a hyphen indicates
+that the filename should be executed as an Emacs Lisp library,
+e.g. "-subr.elc", rather than displayed.
 
 *** Info Paths
 
@@ -686,7 +730,7 @@ just like any others.
 In README files, such as Hyperbole's "README", table of contents entries
 act similarly.  Click on "README" to view that file and then click on a
 table of contents entry to jump to the associated section in the "README"
-file.
+file.  Or "README#User Quotes" goes directly to that section.
 
 ** World Wide Web URL Buttons
 

@@ -835,12 +835,12 @@ program)."
 	(setq filename (cond (anchor (concat remote-filename "#" anchor))
 			     (hash   (concat remote-filename "#"))
 			     (t path)))))
-    (cond (modifier (cond ((eq modifier ?!)
+    (cond (modifier (cond ((= modifier ?!)
 			   (hact 'exec-shell-cmd filename))
-			  ((eq modifier ?&)
+			  ((= modifier ?&)
 			   (hact 'exec-window-cmd filename))
-			  ((eq modifier ?-)
-			   (load filename)))
+			  ((= modifier ?-)
+			   (hact 'load filename)))
 		    nil)
 	  (t (let ((display-executables (hpath:find-program path))
 		   executable)
@@ -991,49 +991,27 @@ See also `hpath:internal-display-alist' for internal, `window-system' independen
 			     (cons "next" hpath:external-display-alist-macos)))))))
 
 (defun hpath:is-p (path &optional type non-exist)
-  "Return PATH if PATH is a Posix or MSWindows path, else nil.
+  "Return normalized PATH if PATH is a Posix or MSWindows path, else nil.
 If optional TYPE is the symbol 'file or 'directory, then only that path type
 is accepted as a match.  The existence of the path is checked only for
-locally reachable paths (Info paths are not checked).  Single spaces are
-permitted in the middle of existing pathnames, but not at the start or end.
-Tabs and newlines are converted to space before the pathname is checked, this
-normalized path form is what is returned for PATH.  With optional NON-EXIST,
-nonexistent local paths are allowed."
+locally reachable paths (Info paths are not checked).  With optional NON-EXIST,
+nonexistent local paths are allowed.  Single spaces are permitted in the middle
+of existing pathnames, but not at the start or end.
+
+Before the pathname is checked for existence, tabs and newlines
+are converted to a single space, `hpath:prefix-regexp' matches at
+the start are temporarily stripped, link anchors at the end
+following a # or , character are stripped, and path variables are
+expanded with `hpath:substitute-value'.  This normalized path
+form is what is returned for PATH."
   (when (stringp path)
-    (setq path (hpath:mswindows-to-posix path))
-    (let ((rtn-path path)
-	  (suffix))
-      ;; Path may be a link reference with components other than a
-      ;; pathname.  These components always follow a comma or # symbol, so
-      ;; strip them, if any, before checking path.
-      (and (if (string-match "\\`[^#][^#,]*\\([ \t\n\r]*[#,]\\)" path)
-	       (setq rtn-path (concat (substring path 0 (match-beginning 1))
-				      "%s" (substring path (match-beginning 1)))
-		     path (substring path 0 (match-beginning 1)))
-	     (setq rtn-path (concat rtn-path "%s")))
-	   ;; If path is just a local reference that begins with #,
-	   ;; prepend the file name to it.
-	   (cond ((and buffer-file-name
-		       ;; ignore HTML color strings
-		       (not (string-match "\\`#[0-9A-Fa-f][0-9A-Fa-f][0-9A-Fa-f][0-9A-Fa-f][0-9A-Fa-f][0-9A-Fa-f]\\'" path))
-		       ;; match to in-file HTML references
-		       (string-match "\\`#[^\'\"<>#]+\\'" path))
-		  (setq rtn-path (concat "file://" buffer-file-name rtn-path)
-			path buffer-file-name))
-		 ((string-match "\\`[^#]+\\(#[^#]*\\)\\'" path)
-		  ;; file and # reference
-		  (setq path (substring path 0 (match-beginning 1)))
-		  (if (memq (aref path 0) '(?/ ?~))
-		      ;; absolute
-		      (setq rtn-path (concat "file://" rtn-path))
-		    (setq path (concat default-directory path)
-			  rtn-path (concat "file://" default-directory rtn-path))))
-		 (t))
-	   (if (string-match hpath:prefix-regexp path)
-	       (setq path (substring path (match-end 0)))
-	     t)
-	   (not (or (string-equal path "")
-		    (string-match "\\`\\s \\|\\s \\'" path)))
+    (let (modifier)
+      (when (string-match hpath:prefix-regexp path)
+	(setq modifier (substring path 0 1)
+	      path (substring path (match-end 0))))
+      (setq path (hpath:mswindows-to-posix path))
+      (and (not (or (string-equal path "")
+		    (string-match "\\`\\s-\\|\\s-\\'" path)))
 	   ;; Convert tabs and newlines to space.
 	   (setq path (hbut:key-to-label (hbut:label-to-key path)))
 	   (or (not (string-match "[()]" path))
@@ -1042,51 +1020,78 @@ nonexistent local paths are allowed."
 	       (setq path (hpath:substitute-value path))
 	     t)
 	   (not (string-match "[\t\n\r\"`'|{}\\]" path))
-	   (or (not (hpath:www-p path))
-	       (string-match "\\`ftp[:.]" path))
-	   (let ((remote-path (string-match "\\(@.+:\\|^/.+:\\|..+:/\\).*[^:0-9/]" path)))
-	     (if (cond (remote-path
-			(cond ((eq type 'file)
-			       (not (string-equal "/" (substring path -1))))
-			      ((eq type 'directory)
-			       (string-equal "/" (substring path -1)))
-			      (t)))
-		       ((or (and non-exist
-				 (or
-				  ;; Info or remote path, so don't check for.
-				  (string-match "[()]" path)
-				  (hpath:remote-p path)
-				  (setq suffix (hpath:exists-p path t))
-				  ;; Don't allow spaces in non-existent
-				  ;; pathnames.
-				  (not (string-match " " path))))
-			    (setq suffix (hpath:exists-p path t)))
-			(cond ((eq type 'file)
-			       (not (file-directory-p path)))
-			      ((eq type 'directory)
-			       (file-directory-p path))
-			      (t))))
-		 (progn
-		   ;; Might be an encoded URL with % characters, so
-		   ;; decode it before calling format below.
-		   (when (string-match "%" rtn-path)
-		     (let (decoded-path)
-		       (while (not (equal rtn-path (setq decoded-path (hypb:decode-url rtn-path))))
-			 (setq rtn-path decoded-path))))
-		   ;; Quote any % except for one %s at the end of the
-		   ;; path part of rtn-path (immediately preceding a #
-		   ;; or , character or the end of string).
-		   (setq rtn-path (hypb:replace-match-string "%" rtn-path "%%")
-			 rtn-path (hypb:replace-match-string "%%s\\([#,]\\|\\'\\)" rtn-path "%s\\1"))
-		   ;; Return path if non-nil return value.
-		   (if (stringp suffix) ;; suffix could = t, which we ignore
-		       (if (string-match (concat (regexp-quote suffix) "%s") rtn-path)
-			   ;; remove suffix
-			   (concat (substring rtn-path 0 (match-beginning 0))
-				   (substring rtn-path (match-end 0)))
-			 ;; add suffix
-			 (format rtn-path suffix))
-		     (format rtn-path "")))))))))
+	   (let ((rtn-path path)
+		 (suffix))
+	     ;; Path may be a link reference with components other than a
+	     ;; pathname.  These components always follow a comma or # symbol, so
+	     ;; strip them, if any, before checking path.
+	     (and (if (string-match "\\`[^#][^#,]*\\([ \t\n\r]*[#,]\\)" path)
+		      (setq rtn-path (concat (substring path 0 (match-beginning 1))
+					     "%s" (substring path (match-beginning 1)))
+			    path (substring path 0 (match-beginning 1)))
+		    (setq rtn-path (concat rtn-path "%s")))
+		  ;; If path is just a local reference that begins with #,
+		  ;; prepend the file name to it.
+		  (cond ((and buffer-file-name
+			      ;; ignore HTML color strings
+			      (not (string-match "\\`#[0-9A-Fa-f][0-9A-Fa-f][0-9A-Fa-f][0-9A-Fa-f][0-9A-Fa-f][0-9A-Fa-f]\\'" path))
+			      ;; match to in-file HTML references
+			      (string-match "\\`#[^\'\"<>#]+\\'" path))
+			 (setq rtn-path (concat "file://" buffer-file-name rtn-path)
+			       path buffer-file-name))
+			((string-match "\\`[^#]+\\(#[^#]*\\)\\'" path)
+			 ;; file and # reference
+			 (setq path (substring path 0 (match-beginning 1)))
+			 (if (memq (aref path 0) '(?/ ?~))
+			     ;; absolute
+			     (setq rtn-path (concat "file://" rtn-path))
+			   (setq path (concat default-directory path)
+				 rtn-path (concat "file://" default-directory rtn-path))))
+			(t))
+		  (or (not (hpath:www-p path))
+		      (string-match "\\`ftp[:.]" path))
+		  (let ((remote-path (string-match "\\(@.+:\\|^/.+:\\|..+:/\\).*[^:0-9/]" path)))
+		    (when (cond (remote-path
+				 (cond ((eq type 'file)
+					(not (string-equal "/" (substring path -1))))
+				       ((eq type 'directory)
+					(string-equal "/" (substring path -1)))
+				       (t)))
+				((or (and non-exist
+					  (or
+					   ;; Info or remote path, so don't check for.
+					   (string-match "[()]" path)
+					   (hpath:remote-p path)
+					   (setq suffix (hpath:exists-p path t))
+					   ;; Don't allow spaces in non-existent
+					   ;; pathnames.
+					   (not (string-match " " path))))
+				     (setq suffix (hpath:exists-p path t)))
+				 (cond ((eq type 'file)
+					(not (file-directory-p path)))
+				       ((eq type 'directory)
+					(file-directory-p path))
+				       (t))))
+		      ;; Might be an encoded URL with % characters, so
+		      ;; decode it before calling format below.
+		      (when (string-match "%" rtn-path)
+			(let (decoded-path)
+			  (while (not (equal rtn-path (setq decoded-path (hypb:decode-url rtn-path))))
+			    (setq rtn-path decoded-path))))
+		      ;; Quote any % except for one %s at the end of the
+		      ;; path part of rtn-path (immediately preceding a #
+		      ;; or , character or the end of string).
+		      (setq rtn-path (hypb:replace-match-string "%" rtn-path "%%")
+			    rtn-path (hypb:replace-match-string "%%s\\([#,]\\|\\'\\)" rtn-path "%s\\1"))
+		      ;; Return path if non-nil return value.
+		      (if (stringp suffix) ;; suffix could = t, which we ignore
+			  (if (string-match (concat (regexp-quote suffix) "%s") rtn-path)
+			      ;; remove suffix
+			      (concat (substring rtn-path 0 (match-beginning 0))
+				      (substring rtn-path (match-end 0)))
+			    ;; add suffix
+			    (concat modifier (format rtn-path suffix)))
+			(concat modifier (format rtn-path "")))))))))))
 
 (defun hpath:push-tag-mark ()
   "Add a tag return marker at point if within a programming language file buffer.
@@ -1177,7 +1182,14 @@ in-buffer path will not match."
 	    (setq rest-of-path (substring rest-of-path 1)))
 	  (if (or (and sym (boundp sym)) (getenv var-name))
 	      (directory-file-name
-	       (hpath:substitute-dir var-name rest-of-path))
+	       ;; hpath:substitute-dir triggers an error when given an
+	       ;; invalid local path but this may be called when
+	       ;; testing for implicit button matches where no error
+	       ;; should occur, so catch the error and ignore variable
+	       ;; expansion in such a case.  -- RSW, 8/26/2019
+	       (condition-case nil
+		   (hpath:substitute-dir var-name rest-of-path)
+		 (error rest-of-path)))
 	    var-group)))
       t)))
 
@@ -1572,8 +1584,8 @@ function to call with FILENAME as its single argument."
 (defun hpath:substitute-dir (var-name rest-of-path)
   "Return a dir for VAR-NAME using REST-OF-PATH to find match or triggers an error when no match.
 VAR-NAME's value may be a directory or a list of directories.  If it is a
-list, the first directory prepended to REST-OF-PATH which produces a valid
-local pathname is returned."
+list, return the first directory prepended to REST-OF-PATH which produces a valid
+local pathname."
   (let (sym val)
     (cond ((not (stringp var-name))
 	   (error "(hpath:substitute-dir): VAR-NAME, `%s', must be a string" var-name))

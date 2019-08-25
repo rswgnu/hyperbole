@@ -356,6 +356,75 @@ Return t if jump and nil otherwise."
 	     
 
 ;;; ========================================================================
+;;; Executes an angle bracket delimited Hyperbole action, Elisp
+;;; function call or display of an Elisp variable and its value.
+;;; ========================================================================
+
+;; Allow for parameterized action-types surrounded by angle brackets.
+;; For example, <man-show "grep"> should display grep's man page
+;; (since man-show is an action type).
+
+(defconst action:start "<"
+  "Regexp matching the start of a Hyperbole Emacs Lisp expression to evaluate.")
+
+(defconst action:end ">"
+  "Regexp matching the end of a Hyperbole Emacs Lisp expression to evaluate.")
+
+(defib action ()
+  "At point, activate any of: an Elisp variable, a Hyperbole action-type, or an Elisp function call surrounded by <> rather than ().
+If an Elisp variable, display a message showing its value.
+
+There may not be any <> characters within the expression.  The
+first identifier in the expression must be an Elisp variable,
+action type or a function symbol to call, i.e. '<'actype-or-elisp-symbol
+arg1 ... argN '>'.  For example, <mail user@mybiz.com>."
+  (let* ((label-key-start-end (ibut:label-p nil action:start action:end t t))
+	 (ibut-key (nth 0 label-key-start-end))
+	 (start-pos (nth 1 label-key-start-end))
+	 (end-pos (nth 2 label-key-start-end))
+	 actype action args lbl var-flag)
+    ;; Continue only if start-delim is either:
+    ;;     at the beginning of the buffer
+    ;;     or preceded by a space character or a grouping character
+    ;;   and that character after start-delim is:
+    ;;     not a whitespace character
+    ;;   and end-delim is either:
+    ;;     at the end of the buffer
+    ;;     or is followed by a space, punctuation or grouping character.
+    (when (and ibut-key (or (null (char-before start-pos))
+			    (memq (char-syntax (char-before start-pos)) '(?\  ?\> ?\( ?\))))
+	       (not (memq (char-syntax (char-after (1+ start-pos))) '(?\  ?\>)))
+	       (or (null (char-after end-pos))
+		   (memq (char-syntax (char-after end-pos)) '(?\  ?\> ?. ?\( ?\)))
+		   ;; Some of these characters may have symbol-constituent syntax
+		   ;; rather than punctuation, so check them individually.
+		   (memq (char-after end-pos) '(?. ?, ?\; ?: ?! ?\' ?\"))))
+      (setq lbl (ibut:key-to-label ibut-key))
+      ;; Handle $ preceding var name in cases where same name is
+      ;; bound as a function symbol
+      (when (string-match "\\`\\$" lbl)
+	(setq var-flag t
+	      lbl (substring lbl 1)))
+      (setq actype (if (find ?\  lbl) (car (split-string lbl)) lbl)
+	    actype (or (intern-soft (concat "actype::" actype))
+		       (intern-soft actype)))
+      (when actype
+	(ibut:label-set lbl start-pos end-pos)
+	(setq action (read (concat "(" lbl ")"))
+	      args (cdr action))
+	(when (and (null args) (symbolp actype) (boundp actype)
+		   (or var-flag (not (fboundp actype))))
+	  ;; Is a variable, display its value as the action
+	  (setq args `(',actype)
+		action `(display-variable ',actype)
+		actype 'display-variable))
+	;; Necessary so can return a null value, which actype:act cannot.
+	(let ((hrule:action (if (eq hrule:action #'actype:identity)
+				hrule:action
+			      'actype:eval)))
+	  (apply hrule:action actype (mapcar #'eval args)))))))
+
+;;; ========================================================================
 ;;; Summarizes an Internet rfc for random access browsing by section.
 ;;; ========================================================================
 
@@ -643,7 +712,7 @@ The explicit button's action is executed in the context of the current buffer.
 Recognizes the format '<elink:' <button label> '>', e.g. <elink: project-list>."
   (let* ((label-key-start-end (hbut:label-p nil elink:start elink:end t t))
 	 (ebut-key (nth 0 label-key-start-end))
-	 (lbl-key (and ebut-key (concat "elink_" (nth 0 label-key-start-end))))
+	 (lbl-key (and ebut-key (concat "elink_" ebut-key)))
 	 (start-pos (nth 1 label-key-start-end))
 	 (end-pos (nth 2 label-key-start-end)))
     (when lbl-key
@@ -662,7 +731,7 @@ The global button's action is executed in the context of the current buffer.
 Recognizes the format '<glink:' <button label> '>', e.g. <glink: open todos>."
   (let* ((label-key-start-end (hbut:label-p nil glink:start glink:end t t))
 	 (gbut-key (nth 0 label-key-start-end))
-	 (lbl-key (and gbut-key (concat "glink_" (nth 0 label-key-start-end))))
+	 (lbl-key (and gbut-key (concat "glink_" gbut-key)))
 	 (start-pos (nth 1 label-key-start-end))
 	 (end-pos (nth 2 label-key-start-end)))
     (when lbl-key
@@ -681,7 +750,7 @@ The implicit button's action is executed in the context of the current buffer.
 Recognizes the format '<ilink:' <button label> '>', e.g. <ilink: my sequence of keys>."
   (let* ((label-key-start-end (ibut:label-p nil ilink:start ilink:end t t))
 	 (ibut-key (nth 0 label-key-start-end))
-	 (lbl-key (and ibut-key (concat "ilink_" (nth 0 label-key-start-end))))
+	 (lbl-key (and ibut-key (concat "ilink_" ibut-key)))
 	 (start-pos (nth 1 label-key-start-end))
 	 (end-pos (nth 2 label-key-start-end)))
     (when lbl-key
@@ -689,8 +758,8 @@ Recognizes the format '<ilink:' <button label> '>', e.g. <ilink: my sequence of 
       (hact 'link-to-ibut ibut-key))))
 
 ;;; ========================================================================
-;;; Jumps to source line associated with ipython, ripgreb, grep or
-;;; With credit to Michael Lipp and Mike Williams for the idea.
+;;; Jumps to source line associated with ipython, ripgrep, grep or
+;;; compilation errors.
 ;;; ========================================================================
 
 (defib ipython-stack-frame ()

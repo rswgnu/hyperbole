@@ -544,6 +544,20 @@ in the current directory or any of its ancestor directories."
 	     (buffer-substring-no-properties (point) (match-end 0))
 	     (point) (match-end 0))))))))
 
+;;;###autoload
+(defconst smart-lisp-identifier-first-char-regexp "[-<>*a-zA-Z]"
+  "Regexp matching the first character of a Lisp identifier, including the square brackets.")
+
+;;;###autoload
+(defconst smart-lisp-identifier-chars "-_:/*+=%$&?!<>a-zA-Z0-9~^"
+  "Regexp matching a valid character in any part of a Lisp identifier other than the first character.
+Excludes character matching square brackets, so may be used with skip-characters-forward/backward.")
+
+;;;###autoload
+(defconst smart-lisp-identifier (concat smart-lisp-identifier-first-char-regexp
+					"[" smart-lisp-identifier-chars "]*")
+  "Regexp matching a Lisp identifier.")
+
 (defun smart-lisp (&optional show-doc)
   "Jump to the definition of any selected Lisp identifier or optionally SHOW-DOC.
 If on an Emacs Lisp require, load, or autoload clause and the
@@ -648,26 +662,24 @@ Returns matching ELisp tag name that point is within, else nil."
   "Return Lisp tag name that point is within, else nil.
 Returns nil when point is on the first line of a non-alias Lisp definition."
   (unless (smart-lisp-at-definition-p)
-    (let* ((identifier-chars "-_:/*+=%$&?!<>a-zA-Z0-9~^")
-	   (identifier (concat "[-<>*a-zA-Z][" identifier-chars "]*")))
-      (save-excursion
-	(skip-chars-backward identifier-chars)
-	(if (and (looking-at identifier)
-		 ;; Ignore any punctuation matches.
-		 (not (string-match "\\`[-<>*]+\\'" (match-string 0)))
-		 ;; Needed to set match string.
-		 (looking-at identifier))
-	    (if no-flash
-		(if (eq (char-after (1- (match-end 0))) ?:)
-		    (buffer-substring-no-properties (point) (1- (match-end 0)))
-		  (buffer-substring-no-properties (point) (match-end 0)))
+    (save-excursion
+      (skip-chars-backward smart-lisp-identifier-chars)
+      (if (and (looking-at smart-lisp-identifier)
+	       ;; Ignore any punctuation matches.
+	       (not (string-match "\\`[-<>*]+\\'" (match-string 0)))
+	       ;; Needed to set match string.
+	       (looking-at smart-lisp-identifier))
+	  (if no-flash
 	      (if (eq (char-after (1- (match-end 0))) ?:)
-		  (smart-flash-tag
-		   (buffer-substring-no-properties (point) (1- (match-end 0)))
-		   (point) (1- (match-end 0)))
+		  (buffer-substring-no-properties (point) (1- (match-end 0)))
+		(buffer-substring-no-properties (point) (match-end 0)))
+	    (if (eq (char-after (1- (match-end 0))) ?:)
 		(smart-flash-tag
-		 (buffer-substring-no-properties (point) (match-end 0))
-		 (point) (match-end 0)))))))))
+		 (buffer-substring-no-properties (point) (1- (match-end 0)))
+		 (point) (1- (match-end 0)))
+	      (smart-flash-tag
+	       (buffer-substring-no-properties (point) (match-end 0))
+	       (point) (match-end 0))))))))
 
 ;;;###autoload
 (defun smart-lisp-mode-p ()
