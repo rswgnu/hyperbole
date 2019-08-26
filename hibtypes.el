@@ -405,7 +405,7 @@ arg1 ... argN '>'.  For example, <mail user@mybiz.com>."
       (when (string-match "\\`\\$" lbl)
 	(setq var-flag t
 	      lbl (substring lbl 1)))
-      (setq actype (if (find ?\  lbl) (car (split-string lbl)) lbl)
+      (setq actype (if (string-match-p " " lbl) (car (split-string lbl)) lbl)
 	    actype (or (intern-soft (concat "actype::" actype))
 		       (intern-soft actype)))
       (when actype
