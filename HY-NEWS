@@ -43,11 +43,11 @@
       global buttons file (personal button file).
 
     - Link to Buttons: New implicit button types that link to button categories:
-        In Buffer Syntax                                 Implicit Button Type
+        In Buffer Syntax                                       Implicit Button Type
         ===========================================================================
-        <elink: explicit button label to link to>        link-to-ebut
-        <glink: global button label to link to>          link-to-gbut
-        <ilink: implicit button label to link to>        link-to-iut
+        <elink: explicit button label to link to: optional ebut file>  link-to-ebut
+        <glink: global button label to link to>                        link-to-gbut
+        <ilink: implicit button label to link to: optional ibut file>  link-to-ibut
 
     - Other new implicit button types:
         debugger-source: Jump to the source of errors from the Python pytype package

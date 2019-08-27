@@ -363,8 +363,10 @@ the window."
       (hpath:find-line path line-num))
     (move-to-column column-num)))
 
-(defact link-to-gbut (key)
-  "Perform an action given by an existing global button, specified by KEY."
+(defact link-to-gbut (key &optional key-file)
+  "Perform an action given by an existing global button, specified by KEY.
+Optional second arg, KEY-FILE, is not used but is for calling
+compatibility from the `hlink' function."
   (interactive
    (let ((gbut-file (hpath:validate (hpath:substitute-value gbut:file)))
 	 but-lbl)
@@ -383,9 +385,10 @@ the window."
 
 (defact link-to-Info-index-item (index-item)
   "Display an Info index INDEX-ITEM cross-reference.
-INDEX-ITEM must be a string of the form \"(filename)item-name\".  During
-button creation, completion for both filename and item-name is
-available.  Filename may be given without the .info suffix."
+INDEX-ITEM must be a string of the form \"(filename)item-name\".
+During button creation, completion for both filename and
+item-name is available.  Filename may be given without the .info
+suffix."
   (interactive "+XInfo (file)index-item-name to link to: ")
   (require 'info)
   (if (and (stringp index-item) (string-match "^(\\([^\)]+\\))\\(.*\\)" index-item))

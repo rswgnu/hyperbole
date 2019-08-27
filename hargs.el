@@ -128,7 +128,8 @@ With optional EXCLUDE-REGEXP, any matched string is ignored if it this regexp."
 		  (funcall end-search-func end-delim opoint t)
 		  (setq count (1+ count)))
 	(setq start nil))
-      (when (and (not start) (> count 0) (evenp count) (string-equal start-delim end-delim))
+      (when (and (not start) (> count 0) (zerop (% count 2))
+		 (string-equal start-delim end-delim))
 	;; Since strings can span lines but this function matches only
 	;; strings that start on the current line, when start-delim and
 	;; end-delim are the same and there are an even number of

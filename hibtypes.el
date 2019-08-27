@@ -405,7 +405,7 @@ arg1 ... argN '>'.  For example, <mail user@mybiz.com>."
       (when (string-match "\\`\\$" lbl)
 	(setq var-flag t
 	      lbl (substring lbl 1)))
-      (setq actype (if (find ?\  lbl) (car (split-string lbl)) lbl)
+      (setq actype (if (string-match-p " "  lbl) (car (split-string lbl)) lbl)
 	    actype (or (intern-soft (concat "actype::" actype))
 		       (intern-soft actype)))
       (when actype
@@ -699,6 +699,44 @@ Requires the Emacs builtin Tramp library for ftp file retrievals."
 ;;; Links to Hyperbole button types
 ;;; ========================================================================
 
+(defun hlink (link-actype label-prefix start-delim end-delim)
+  "Call LINK-ACTYPE as the action type and prefix button with LABEL-PREFIX if point is within an implicit button delimited by START-DELIM and END-DELIM."
+  ;; Used by e/g/ilink implicit buttons."
+  (let* ((label-start-end (hbut:label-p t start-delim end-delim t t))
+	 (label-and-file (nth 0 label-start-end))
+	 (start-pos (nth 1 label-start-end))
+	 (end-pos (nth 2 label-start-end))
+	 lbl but-key lbl-key key-file)
+    (when label-and-file
+      (setq label-and-file (parse-label-and-file label-and-file)
+	    lbl (nth 0 label-and-file)
+	    but-key (hbut:label-to-key lbl) 
+	    key-file (nth 1 label-and-file)
+	    lbl-key (when but-key (concat label-prefix but-key)))
+      (ibut:label-set lbl start-pos end-pos)
+      (hact link-actype but-key key-file))))
+
+(defun  parse-label-and-file (label-and-file)
+  "Parse a colon-separated string of button label and source file path into a list of label and file."
+  ;; Can't use split-string here because file path may contain colons;
+  ;; we want to split only on the first colon.
+  (let ((i 0)
+	(len (length label-and-file))
+	label
+	file)
+    (while (< i len)
+      (when (= ?: (aref label-and-file i))
+	(when (zerop i)
+	  (error "(parse-label-and-file): Missing label: '%s'" label-and-file))
+	(setq label (string-trim (substring label-and-file 0 i))
+	      file (string-trim (substring label-and-file (1+ i))))
+	(when (string-empty-p label) (setq label nil))
+	(when (string-empty-p file) (setq file nil))
+	(setq i len))
+      (setq i (1+ i)))
+    (unless (or label (string-empty-p label-and-file))
+      (setq label label-and-file))
+    (delq nil (list label file))))
 
 (defconst elink:start "<elink:"
   "String matching the start of a link to a Hyperbole explicit button.")
@@ -709,15 +747,10 @@ Requires the Emacs builtin Tramp library for ftp file retrievals."
   "At point, activates a link to an explicit button.
 The explicit button's action is executed in the context of the current buffer.
 
-Recognizes the format '<elink:' <button label> '>', e.g. <elink: project-list>."
-  (let* ((label-key-start-end (hbut:label-p nil elink:start elink:end t t))
-	 (ebut-key (nth 0 label-key-start-end))
-	 (lbl-key (and ebut-key (concat "elink_" ebut-key)))
-	 (start-pos (nth 1 label-key-start-end))
-	 (end-pos (nth 2 label-key-start-end)))
-    (when lbl-key
-      (ibut:label-set (ebut:key-to-label lbl-key) start-pos end-pos)
-      (hact 'link-to-ebut ebut-key))))
+Recognizes the format '<elink:' button_label [':' button_file_path] '>',
+where : button_file_path is given only when the link is to another file,
+e.g. <elink: project-list: ~/projs>."
+  (hlink 'link-to-ebut "elink_" elink:start elink:end))
 
 (defconst glink:start "<glink:"
   "String matching the start of a link to a Hyperbole global button.")
@@ -728,15 +761,9 @@ Recognizes the format '<elink:' <button label> '>', e.g. <elink: project-list>."
   "At point, activates a link to a global button.
 The global button's action is executed in the context of the current buffer.
 
-Recognizes the format '<glink:' <button label> '>', e.g. <glink: open todos>."
-  (let* ((label-key-start-end (hbut:label-p nil glink:start glink:end t t))
-	 (gbut-key (nth 0 label-key-start-end))
-	 (lbl-key (and gbut-key (concat "glink_" gbut-key)))
-	 (start-pos (nth 1 label-key-start-end))
-	 (end-pos (nth 2 label-key-start-end)))
-    (when lbl-key
-      (ibut:label-set (ebut:key-to-label lbl-key) start-pos end-pos)
-      (hact 'link-to-gbut gbut-key))))
+Recognizes the format '<glink:' button_label '>',
+e.g. <glink: open todos>."
+  (hlink 'link-to-gbut "glink_" glink:start glink:end))
 
 (defconst ilink:start "<ilink:"
   "String matching the start of a link to a Hyperbole implicit button.")
@@ -747,15 +774,10 @@ Recognizes the format '<glink:' <button label> '>', e.g. <glink: open todos>."
   "At point, activates a link to a labeled implicit button.
 The implicit button's action is executed in the context of the current buffer.
 
-Recognizes the format '<ilink:' <button label> '>', e.g. <ilink: my sequence of keys>."
-  (let* ((label-key-start-end (ibut:label-p nil ilink:start ilink:end t t))
-	 (ibut-key (nth 0 label-key-start-end))
-	 (lbl-key (and ibut-key (concat "ilink_" ibut-key)))
-	 (start-pos (nth 1 label-key-start-end))
-	 (end-pos (nth 2 label-key-start-end)))
-    (when lbl-key
-      (ibut:label-set (ibut:key-to-label lbl-key) start-pos end-pos)
-      (hact 'link-to-ibut ibut-key))))
+Recognizes the format '<ilink:' button_label [':' button_file_path] '>',
+where button_file_path is given only when the link is to another file,
+e.g. <ilink: my series of keys: ${hyperb:dir}/HYPB>."
+  (hlink 'link-to-ibut "ilink_" ilink:start ilink:end))
 
 ;;; ========================================================================
 ;;; Jumps to source line associated with ipython, ripgrep, grep or

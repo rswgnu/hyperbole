@@ -1,3 +1,19 @@
+2019-08-26  Bob Weiner  <rsw@gnu.org>
+
+* hibtypes.el (hlink, parse-label-and-file): Added to allow for linking
+    to Hyperbole butttons in other files and used in e/g/ilinks.
+
+* hargs.el (hargs:delimited): Replaced cl evenp call with zerop and modulo.
+  hibtypes.el (action): Replaced cl 'find' call with 'string-match-p'.
+
+* Makefile (dev-install): Removed this target and replaced with 'bin'.  Added
+   'src' target to setup to run from .el files only.  Updated help to explain
+   how to run test code either from .el or .elc files.
+
+==============================================================================
+V7.0.5 changes ^^^^:
+==============================================================================
+
 2019-08-25  Bob Weiner  <rsw@gnu.org>
 
 * Makefile (HYPERBOLE_FILES): Removed hyperbole-pkg.el and deleted that file
@@ -8,9 +24,9 @@
     Also, called 'shell' command if existing shell buffer does not have a
     process and updated buf-name with the buffer returned by the 'shell'
     command.
-              (exec-shell-cmd): Applied similar changes. 
+              (exec-shell-cmd): Applied similar changes.
 
-* hpath.el (hpath:find): Changed modifier comparisons to use = and wrapped 
+* hpath.el (hpath:find): Changed modifier comparisons to use = and wrapped
     (load filename) in a 'hact' macro.
     (hpath:is-p): Only temporarily strip any initial execution modifier
       character from the path so can be handled later by action types.
