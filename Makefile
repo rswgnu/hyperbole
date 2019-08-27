@@ -15,13 +15,13 @@
 #   READ THIS:
 #   **********
 #
-#   Only Hyperbole developers (those who develop the source code) need
-#   to use this file for building Hyperbole package distributions.  Others
-#   may ignore it.
-#
-#   GNU Hyperbole is now installed for use via the Emacs package system; see
-#   the "INSTALL" file for installation instructions and the Info node,
+#   GNU Hyperbole should be installed for use via the Emacs package system;
+#   see the "INSTALL" file for installation instructions and the Info node,
 #   "(emacs)Packages", if you are unfamiliar with the Emacs package system.
+#
+#   Only Hyperbole developers (those who develop the source code) and testers
+#   need to use this file for building Hyperbole distributions.  Others
+#   may ignore it.
 #
 #   **********
 #
@@ -29,10 +29,10 @@
 #   Make any needed changes now and save the file.  Then select from the
 #   USAGE lines immediately following.
 #
-#   USAGE:	For those installing GNU Hyperbole, use:
+#   USAGE:	For those installing GNU Hyperbole, display your options with:
 #   	             make help
 #
-#               To build only the output formats of the Hyperbole MANUAL:
+#               To build only the output formats of the Hyperbole Manual:
 #		     make doc
 #
 #               To assemble a Hyperbole Emacs package for testing:
@@ -41,8 +41,14 @@
 #               To release a Hyperbole Emacs package to ELPA and ftp.gnu.org:
 #		     make release
 #
-#               To set up Hyperbole for use from the source folder:
-#		     make dev-install
+#               To setup Hyperbole to run directly from the latest test source
+#               code, use:
+#                    git clone http://git.savannah.gnu.org/r/hyperbole.git
+#                    cd hyperbole
+#                 Then use either:
+#                    make src     - setup to run directly from .el files
+#                  or
+#                    make bin     - setup to build and run from .elc files
 #
 #               The Hyperbole Manual is included in the package in four forms:
 #                  "man/hyperbole.info"   - GNU browsable version
@@ -187,18 +193,26 @@ EL_TAGS = $(EL_SRC) $(EL_COMPILE) $(EL_KOTL)
 .SUFFIXES: .el .elc   # Define the list of file suffixes to match to rules
 
 help: 
-	@ echo "Use the Emacs Package Manager to build and install GNU Hyperbole."
+	@ echo "Use the Emacs Package Manager to build and install the latest release"
+	@ echo "of GNU Hyperbole."
 	@ echo "See \"$(shell pwd)/INSTALL\" for installation instructions."
-	@ echo "For help with Emacs packages, see the GNU Emacs Info Manual section, \"(emacs)Packages\"."
+	@ echo "For help with Emacs packages, see the GNU Emacs Info Manual section,"
+	@ echo "\"(emacs)Packages\"."
 	@ echo ""
-	@ echo "For Hyperbole maintainers, the Hyperbole distribution package is built with:"
+	@ echo "To setup Hyperbole to run directly from the latest test source code, use:"
+        @ echo "     git clone http://git.savannah.gnu.org/r/hyperbole.git"
+	@ echo "     cd hyperbole"
+	@ echo "  Then use either:"
+        @ echo "     make src     - setup to run directly from .el files"
+	@ echo "   or"
+	@ echo "     make bin     - setup to build and run from .elc files"
+	@ echo ""
+	@ echo "For Hyperbole maintainers, build the Hyperbole distribution package with:"
 	@ echo "     make pkg"
 	@ echo "  To build documentation formats only, use:"
 	@ echo "     make doc"
 	@ echo "  To release a Hyperbole Emacs package to ELPA and ftp.gnu.org:"
 	@ echo "     make release"
-	@ echo "  To set up Hyperbole for use from the source folder:"
-	@ echo "     make dev-install"
 	@ echo ""
 	@ echo "The Hyperbole Manual is included in the package in four forms:"
 	@ echo "    man/hyperbole.info    - GNU browsable version"
@@ -241,9 +255,12 @@ elc: elc-init $(ELC_KOTL) $(ELC_COMPILE)
 elc-init:
 	@ $(RM) $(ELISP_TO_COMPILE)
 
+# Setup to run Hyperbole from .el source files
+src: autoloads tags
+
 # Remove and then rebuild all byte-compiled .elc files, even those .elc files
-# which do not yet exist.
-all-elc: autoloads
+# which do not yet exist, plus built TAGS file.
+bin: src
 	$(RM) *.elc kotl/*.elc
 	$(EMACS) $(BATCHFLAGS) $(PRELOADS) -f batch-byte-compile $(EL_KOTL) $(EL_COMPILE)
 
@@ -251,10 +268,8 @@ tags: TAGS
 TAGS: $(EL_TAGS)
 	$(ETAGS) $(EL_TAGS)
 
-dev-install: all-elc tags
-
 clean:
-	$(RM) hyperbole-autoloads.el $(ELC_COMPILE) $(ELC_KOTL) TAGS
+	$(RM) hyperbole-autoloads.el kotl/kotl-autoloads.el $(ELC_COMPILE) $(ELC_KOTL) TAGS
 
 version: doc
 	@ echo ""
