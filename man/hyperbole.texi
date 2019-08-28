@@ -154,8 +154,8 @@ WITHOUT ANY WARRANTY, without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</P>
 
 <PRE>
-Edition 7.0.4
-Printed August 26, 2019.
+Edition 7.0.5
+Printed August 27, 2019.
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -196,8 +196,8 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 @sp 2
 
 @example
-Edition 7.0.4
-Augut 26, 2019
+Edition 7.0.7
+Augut 27, 2019
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -317,7 +317,8 @@ Buttons
 
 Implicit Buttons
 
-* Implicit Button Type Summaries::
+* Implicit Button Types::
+* Action Buttons::
 
 Utilizing Explicit Buttons
 
@@ -381,7 +382,7 @@ Developing with Hyperbole
 Creating Types
 
 * Action Type Creation::
-* Implicit Button Types::
+* Implicit Button Type Creation::
 
 Explicit Button Technicalities
 
@@ -473,7 +474,7 @@ Smart Keyboard Keys
 @chapter Introduction
 
 This edition of the GNU Hyperbole Manual is for use with any version
-7.0.4 or greater of GNU Hyperbole.  Hyperbole runs atop GNU Emacs 24.3
+7.0.5 or greater of GNU Hyperbole.  Hyperbole runs atop GNU Emacs 24.3
 or higher.  It will trigger an error if your Emacs is older.
 
 This chapter summarizes the structure of the rest of the manual,
@@ -1757,19 +1758,24 @@ Manual}, for details on bookmarks.
 
 @cindex button, implicit
 @cindex implicit button
+@findex link-to-file
 @dfn{Implicit buttons} are virtual buttons recognized within the
 natural structure of a document.  For example, a web URL button that
 displays its link or an email address button that starts a mail
 message to the associated address.  Implicit buttons are identified by
-contextual patterns found within documents.  An @dfn{Implicit button
-type} identifies a pattern or state that when matched triggers
-an @emph{action} associated with the implicit button type.  The action
-is specified by either a Hyperbole action type (@pxref{Action Types})
-or an Emacs Lisp function.  Implicit button types may use the same
-action types that explicit buttons use.  As an example, the pathname
-implicit button type matches to any existing local filename or
-directory name and its action displays the associated file or
-directory, typically in another window.
+contextual patterns found within documents.
+
+An @dfn{implicit button type} identifies a pattern or state that when
+matched triggers an @emph{action} associated with the implicit button
+type.  The action is specified by either a Hyperbole action type
+(@pxref{Action Types}) or an Emacs Lisp function.  Implicit button
+types may use the same action types that explicit buttons use.  As an
+example, the pathname implicit button type matches to any existing
+local filename or directory name and its action
+type, @code{link-to-file}, displays the associated file or directory,
+typically in another window.  An explicit button could do the same
+thing but has to be created manually, rather than recognized as part
+of the buffer text.
 
 @vindex file, hibtypes.el
 @cindex context
@@ -1796,8 +1802,8 @@ Key Operations}.
 @cindex implicit button labels
 @cindex labeling implicit buttons
 @cindex naming implicit buttons
-Individual implicit buttons may be labeled, allowing activation by
-name or use as a link target by other buttons.  Here is a pathname
+Individual implicit buttons may be labeled/named, allowing activation
+by name or use as a link target by other buttons.  Here is a pathname
 button with a label of 'My Emacs Files':
 
 @example
@@ -1807,15 +1813,16 @@ button with a label of 'My Emacs Files':
 The label is delimited by @samp{<[} and @samp{]>} and can be followed
 by any number of :, - or = separator characters, including none.  You
 can activate the button either from its label or its text.  With point
-on an implicit button, @bkbd{C-h h i l} will label it or you
-may simply type the label and delimiters manually.
+on the text of an implicit button, @bkbd{C-h h i l} will label it.  Or
+you may simply type the label and delimiters manually.
 
 @menu
-* Implicit Button Type Summaries::
+* Implicit Button Types::
+* Action Buttons::
 @end menu
 
-@node Implicit Button Type Summaries,  , Implicit Buttons, Implicit Buttons
-@subsection  Implicit Button Type Summaries
+@node Implicit Button Types, Action Buttons, Implicit Buttons, Implicit Buttons
+@subsection  Implicit Button Types
 
 @cindex ibtypes, list of
 @cindex implicit button types
@@ -2356,7 +2363,7 @@ for special file display options.
 @cindex radio target
 @cindex code block
 @kindex C-c C-c
-@kindex M-RET
+@kindex M-@key{RET}
 @findex org-ctrl-c-ctrl-c
 @findex org-meta-return
 @item org-mode
@@ -2381,7 +2388,7 @@ Action Key executes the code block via the Org mode standard binding
 of @bkbd{C-c C-c}, @code{org-ctrl-c-ctrl-c}.
 
 In any other context besides the end of a line, the Action Key invokes
-the Org mode standard binding of @bkbd{M-RET}, @code{org-meta-return}.
+the Org mode standard binding of @bkbd{M-@key{RET}}, @code{org-meta-return}.
 
 @findex ibtypes doc-id
 @cindex online library
@@ -2394,6 +2401,74 @@ not installed by default.  You must manually configure it and load it from
 the file, @file{@code{$@{hyperb:dir@}}/hib-doc-id.el}).  See the commentary
 at the top of that file for more information.
 @end table
+
+@node Action Buttons,  , Implicit Button Types, Implicit Buttons
+@subsection Action Buttons
+
+@cindex action button
+@cindex implicit action button
+Explicit buttons all use the same syntax and store their action data
+in a file separate from the button source file.  Implicit buttons have
+no external data but use a unique syntax per implicit button type to
+recognize the action to run.
+
+For times when you need a cross between the two, with a universal
+button syntax and all button data stored in the button source file,
+there are @emph{action buttons}.
+
+@dfn{Action Buttons} are a form of implicit buttons that can execute
+any existing action types or Emacs Lisp functions.  Such buttons are
+delimited by angle brackets, < >, and come in three types:
+
+@table @dfn
+@item action type invocations
+These begin with an action type name (from the list displayed by
+@bkbd{C-h h d t a @key{RET}}) and are followed by any needed arguments
+to form the action, e.g.
+@example
+<link-to-file-line "$@{hyperb:dir@}/hact.el" 40>
+@end example
+
+@item function calls
+These are similar to action type invocations but begin with an Emacs
+Lisp function name rather than an action type name, e.g.
+
+@example
+<find-file-other-window "/tmp">
+@end example
+
+@item variable displays
+These consist of only an Emacs Lisp variable name and display a
+message with the variable name and value, e.g.
+
+@example
+<fill-column>
+@end example
+
+If there is a function binding with the same name as the variable you
+wish to display, to prevent interpretation as a function call
+action button, precede the name with a @code{$}, e.g.
+
+@example
+<$fill-column>
+@end example
+
+@end table
+
+With action buttons you need not remember any special syntax for each
+type of implicit button.  You can freely embed them in any type of
+text and use the Action and Assist keys on them as you do with any
+other type of implicit button.
+
+An action button is recognized only if the first name within the angle
+brackets is an existing action type or Emacs Lisp symbol.  Otherwise,
+other implicit button types will be tested and may activate instead.
+
+To activate a frequently used action button by name independent of
+your current buffer, simply add it to your global button file and
+precede it with a label @bkbd{C-h h i l}.  Then invoke it by label
+name with: @bkbd{C-h h g a}.
+
 
 @node Button Files, Action Types, Implicit Buttons, Buttons
 @section   Button Files
@@ -5623,10 +5698,10 @@ and @file{hibtypes.el} for examples.
 
 @menu
 * Action Type Creation::
-* Implicit Button Types::
+* Implicit Button Type Creation::
 @end menu
 
-@node Action Type Creation, Implicit Button Types, Creating Types, Creating Types
+@node Action Type Creation, Implicit Button Type Creation, Creating Types, Creating Types
 @subsection  Action Type Creation
 
 @findex actype:create
@@ -5738,8 +5813,8 @@ environment.  It takes a single parameter which should be the same type
 symbol used in the type definition call (not the Hyperbole symbol
 returned by the call).
 
-@node Implicit Button Types,  , Action Type Creation, Creating Types
-@subsection  Implicit Button Types
+@node Implicit Button Type Creation,  , Action Type Creation, Creating Types
+@subsection  Implicit Button Type Creation
 
 @cindex implicit button type
 @cindex ibtype

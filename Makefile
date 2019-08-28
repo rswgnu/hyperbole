@@ -63,7 +63,7 @@
 
 # This ver setup won't work under any make except GNU make, so set it manually.
 #HYPB_VERSION = "`head -3 hversion.el | tail -1 | sed -e 's/.*|\(.*\)|.*/\1/'`"
-HYPB_VERSION = 7.0.4
+HYPB_VERSION = 7.0.5
 
 # Emacs executable used to byte-compile .el files into .elc's.
 # Possibilities include: emacs, infodock, etc.
@@ -200,10 +200,10 @@ help:
 	@ echo "\"(emacs)Packages\"."
 	@ echo ""
 	@ echo "To setup Hyperbole to run directly from the latest test source code, use:"
-        @ echo "     git clone http://git.savannah.gnu.org/r/hyperbole.git"
+	@ echo "     git clone http://git.savannah.gnu.org/r/hyperbole.git"
 	@ echo "     cd hyperbole"
 	@ echo "  Then use either:"
-        @ echo "     make src     - setup to run directly from .el files"
+	@ echo "     make src     - setup to run directly from .el files"
 	@ echo "   or"
 	@ echo "     make bin     - setup to build and run from .elc files"
 	@ echo ""

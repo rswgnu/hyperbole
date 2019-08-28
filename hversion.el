@@ -1,7 +1,7 @@
 ;;; hversion.el --- GNU Hyperbole version and system information setup
 ;;
 ;; Author:       Bob Weiner
-;; Maintainer:   Bob Weiner and Mats Lidell
+;; Maintainer:   Bob Weiner, Mats Lidell
 ;;
 ;; Orig-Date:     1-Jan-94
 ;;
@@ -23,7 +23,7 @@
 ;;; Public variables
 ;;; ************************************************************************
 
-(defconst hyperb:version "7.0.4" "GNU Hyperbole revision number.")
+(defconst hyperb:version "7.0.5" "GNU Hyperbole revision number.")
 
 ;;;###autoload
 (defvar hyperb:microsoft-os-p

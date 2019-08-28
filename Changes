@@ -1,3 +1,10 @@
+2019-08-27  Bob Weiner  <rsw@gnu.org>
+
+* man/hyperbole.texi (Implicit Button Type Summaries): Changed to Implicit
+    Button Types.
+                     (Implicit Button Type): Changed to Implicit Button
+    Type Creation.
+
 2019-08-26  Bob Weiner  <rsw@gnu.org>
 
 * hibtypes.el (hlink, parse-label-and-file): Added to allow for linking
@@ -19,16 +26,16 @@ V7.0.5 changes ^^^^:
 * Makefile (HYPERBOLE_FILES): Removed hyperbole-pkg.el and deleted that file
     which is now auto-generated.
 
-* hactypes.el (exec-window-cmd): Removed use of InfoDock 'new-shell' function
-    which did not support provision of a buffer name for shell creation.
-    Also, called 'shell' command if existing shell buffer does not have a
-    process and updated buf-name with the buffer returned by the 'shell'
-    command.
+* hactypes.el (exec-window-cmd): BUG FIX: Removed use of InfoDock 'new-shell'
+    function which did not support provision of a buffer name for shell
+    creation.  Also, called 'shell' command if existing shell buffer does not
+    have a process and updated buf-name with the buffer returned by the
+    'shell' command.
               (exec-shell-cmd): Applied similar changes.
 
 * hpath.el (hpath:find): Changed modifier comparisons to use = and wrapped
     (load filename) in a 'hact' macro.
-    (hpath:is-p): Only temporarily strip any initial execution modifier
+    (hpath:is-p): BUG FIX: Only temporarily strip any initial execution modifier
       character from the path so can be handled later by action types.
 
 2019-08-24  Bob Weiner  <rsw@gnu.org>
@@ -109,11 +116,10 @@ V7.0.3b changes ^^^^:
 
 2019-07-28  Bob Weiner  <rsw@gnu.org>
 
-* DEMO, man/hyperbole.texi (Implicit Button Type Summaries): Updated to expanded
-    Org mode support.
+* DEMO, man/hyperbole.texi (Implicit Button Types): Updated to expanded Org mode support.
 
 * hib-kbd.el:
-  man/hyperbole.texi (Implicit Button Type Summaries, Glossary): Changed hib-kbd
+  man/hyperbole.texi (Implicit Button Types, Glossary): Changed hib-kbd
     key-sequence to key-series to indicate can be multiple key sequences.  Added
     def. to Glossary.
                      (kbd-key:doc): Changed to call hkey-help rather than trigger
