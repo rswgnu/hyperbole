@@ -83,10 +83,10 @@
 ;;; ************************************************************************
 
 (defib debbugs-gnu-query ()
-  "Displays the results of a Gnu debbugs query based on the string at point.
-If the query includes a single id number, displays the original message
-submission for that id and allows browsing of the followup discussion.
-The following buffer text formats are accepted (with point prior to any
+  "Display the results of a Gnu debbugs query based on the string at point.
+If the query includes a single id number, display the original message
+submission for that id and allow browsing of the followup discussion.
+Accept the following buffer text formats (with point prior to any
 attribute):
 
    bug#id-number or bug# id-number or bug #id-number
@@ -111,7 +111,7 @@ Note that `issue' or `debbugs' may be used as well in place of `bug'."
 
 (defun debbugs-gnu-query:help (but)
   "Make a Gnu debbugs id number at point (optionally prefixed with a # sign) display the pretty pretted status of the bug id.
-Ignores other types of Gnu debbugs query strings."
+Ignore other types of Gnu debbugs query strings."
   (if (and (debbugs-version-sufficient-p)
 	   (debbugs-query:at-p)
 	   (match-beginning 2))
@@ -120,7 +120,7 @@ Ignores other types of Gnu debbugs query strings."
     (hkey-help t)))
 
 (defib debbugs-gnu-mode ()
-  "Makes a Gnu Debbugs listing entry at point display the discussion on the issue."
+  "Make a Gnu Debbugs listing entry at point display the discussion on the issue."
   (if (eq major-mode 'debbugs-gnu-mode)
       (hact 'smart-debbugs-gnu)))
 
@@ -179,7 +179,7 @@ severity, and package."
   (debbugs-gnu-show-reports))
 
 (defun smart-debbugs-gnu ()
-  "An Action Key press on a Gnu Debbugs listing entry, displays the discussion on the issue."
+  "Display the discussion on the issue at point when the Action Key is pressed on a Gnu Debbugs listing entry ."
   (debbugs-gnu-show-discussion))
 
 ;; (let ((entries (cdar tabulated-list-entries)))
@@ -194,8 +194,10 @@ severity, and package."
 ;;; ************************************************************************
 
 (defun debbugs-query:at-p ()
-  "Return t if point appear to be within a debbugs id.  Id number is (match-string 2).
-If this is a query with attributes, then (match-string 3) = \"?\" and (match-string 4) is the query attributes."
+  "Return t if point appear to be within a debbugs id.
+Id number is (match-string 2).  If this is a query with attributes,
+then (match-string 3) = \"?\" and (match-string 4) is the query
+attributes." 
   ;; Point must be before one of the bug#222 characters to match.
   (let ((case-fold-search t))
     (if (string-match "[bugise#0-9]" (char-to-string (following-char)))
@@ -213,7 +215,7 @@ If this is a query with attributes, then (match-string 3) = \"?\" and (match-str
 
 (defun debbugs-query:status (id)
   "Pretty print to `standard-output' the status attributes of debbugs ID (a positive integer).
-Ignores nil valued attributes.  Returns t unless no attributes are printed."
+Ignore nil valued attributes.  Return t unless no attributes are printed."
   (require 'debbugs-gnu)
   ;; The (car (debbugs-get-status id)) is a list of (attribute . value) pairs which we sort below.
   (let ((attrib-list

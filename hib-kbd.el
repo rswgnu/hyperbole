@@ -35,19 +35,19 @@
 ;;; ************************************************************************
 
 (defact kbd-key (key-series)
-  "Executes a normalized key sequence without curly braces, {}.
+  "Execute a normalized key sequence without curly braces, {}.
 KEY-SERIES must be a string of one of the following:
   a Hyperbole minibuffer menu item key sequence,
   a HyControl key sequence,
   a M-x extended command,
   or a valid key sequence together with its interactive arguments.
 
-Returns t if the sequence appears to be valid, else nil."
+Return t if the sequence appears to be valid, else nil."
   (interactive "kKey sequence to execute (no {}): ")
   (kbd-key:act key-series))
 
 (defib kbd-key ()
-  "Executes a key sequence found around point, delimited by curly braces, {}, if any.
+  "Execute a key sequence found around point, delimited by curly braces, {}, if any.
 Key sequences should be in human readable form, e.g. {C-x C-b}, or what `key-description' returns.
 Forms such as {\C-b}, {\^b}, and {^b} will not be recognized.
 
@@ -58,7 +58,9 @@ Any key sequence must be a string of one of the following:
   or a valid key sequence together with its interactive arguments."
   (unless (or (br-in-browser)
 	      (and (looking-at "[{}]") (/= ?\\ (preceding-char))))
-    (let* ((seq-and-pos (or (hbut:label-p t "{`" "'}" t)
+    ;; handle long series, e.g. eval-elisp actions
+    (let* ((ebut:max-len (max 3000 ebut:max-len))
+	   (seq-and-pos (or (hbut:label-p t "{`" "'}" t)
 			    (hbut:label-p t "{" "}" t)
 			    ;; Regular dual single quotes (Texinfo smart quotes)
 			    (hbut:label-p t "``" "''" t)

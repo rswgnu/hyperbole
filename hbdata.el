@@ -162,7 +162,8 @@ Nil BUT-SYM means use 'hbut:current'.  If successful, returns a cons of
 		    entry       (cons new-key (cdr entry)))
 	      (hbdata:delete-entry-at-point)
 	      (when (setq lbl-instance (hbdata:instance-last new-key loc dir))
-		(setq lbl-instance (concat ebut:instance-sep (1+ lbl-instance)))
+		(setq lbl-instance (concat ebut:instance-sep
+					   (int-to-string (1+ lbl-instance))))
 		;; This line is needed to ensure that the highest
 		;; numbered instance of a label appears before
 		;; other instances, so 'hbdata:instance-last' will work.

@@ -303,16 +303,19 @@ To create an implicit global button, add the text for an implicit
 button to `gbut:file` and then with point on the implicit button,
 invoke: {C-h h i l}, to label/name it."
   (interactive "sCreate explicit global button labeled: ")
-  (let (but-buf actype)
+  (let (but-buf actype src-dir)
     (save-excursion
-      (setq actype (hui:actype))
-      (setq but-buf (set-buffer (find-file-noselect gbut:file)))
+      (setq src-dir default-directory
+	    actype (hui:actype)
+	    but-buf (set-buffer (find-file-noselect gbut:file)))
       (hui:buf-writable-err but-buf "ebut-create")
       ;; This prevents movement of point which might be useful to user.
       (save-excursion
 	(goto-char (point-max))
+	;; loc = Directory of the global button file
 	(hattr:set 'hbut:current 'loc (hui:key-src but-buf))
-	(hattr:set 'hbut:current 'dir (hui:key-dir but-buf))
+	;; dir = default-directory of current buffer when button is created
+	(hattr:set 'hbut:current 'dir src-dir)
 	(hattr:set 'hbut:current 'actype actype)
 	(hattr:set 'hbut:current 'args (hargs:actype-get actype))
 	(hattr:set 'hbut:current 'action
@@ -337,6 +340,7 @@ Signals an error when no such button is found."
 					  (mapcar 'list (gbut:label-list))
 					  nil t nil 'ebut)))))
   (let ((lbl (hbut:key-to-label lbl-key))
+	(src-dir default-directory)
 	(but-buf (find-file-noselect gbut:file))
 	actype but new-lbl)
     (save-excursion
@@ -361,7 +365,7 @@ Signals an error when no such button is found."
 	  (progn
 	    ;; Explicit buttons
 	    (hattr:set 'hbut:current 'loc (hui:key-src but-buf))
-	    (hattr:set 'hbut:current 'dir (hui:key-dir but-buf))
+	    (hattr:set 'hbut:current 'dir src-dir)
 	    (setq actype (hui:actype (hattr:get but 'actype)))
 	    (hattr:set 'hbut:current 'actype actype)
 	    (hattr:set 'hbut:current 'args (hargs:actype-get actype 'modifying))
@@ -369,7 +373,7 @@ Signals an error when no such button is found."
 		       (and hui:ebut-prompt-for-action (hui:action actype)))
 	    (set-buffer but-buf)
 	    (ebut:operate lbl new-lbl))
-	;; Ixplicit buttons
+	;; Implicit buttons
 	(save-excursion
 	  (set-buffer but-buf)
 	  (ibut:rename lbl new-lbl)
@@ -593,9 +597,7 @@ See also documentation for `hui:link-possible-types'."
 						item (match-end 0)))
 				  item))
 			       type-and-args
-			       (documentation
-				(intern (concat "actypes::"
-						(symbol-name type))))))
+			       (documentation (htype:actype-p type))))
 			    link-types)))
 		    type-and-args (hui:list-remove-text-properties type-and-args))
 	      (hui:link-create
@@ -666,17 +668,15 @@ See also documentation for `hui:link-possible-types'."
 (defun hui:actype (&optional default-actype prompt)
   "Using optional DEFAULT-ACTYPE, PROMPTs for a button action type.
 DEFAULT-ACTYPE may be a valid symbol or `symbol-name'."
-  (and default-actype (symbolp default-actype)
-       (progn
-	 (setq default-actype (symbol-name default-actype))
-	 (if (string-match "actypes::" default-actype)
-	     (setq default-actype (substring default-actype (match-end 0))))))
+  (when (and default-actype (symbolp default-actype))
+    (setq default-actype (symbol-name default-actype)
+	  default-actype (actype:def-symbol default-actype)
+	  default-actype (when default-actype (symbol-name default-actype))))
   (if (or (null default-actype) (stringp default-actype))
-      (intern-soft
-       (concat "actypes::"
-	       (hargs:read-match (or prompt "Button's action type: ")
-				(mapcar 'list (htype:names 'actypes))
-				nil t default-actype 'actype)))
+      (actype:elisp-symbol
+       (hargs:read-match (or prompt "Button's action type: ")
+			 (mapcar 'list (htype:names 'actypes))
+			 nil t default-actype 'actype))
     (hypb:error "(actype): Invalid default action type received")))
 
 (defun hui:buf-writable-err (but-buf func-name)
@@ -757,8 +757,7 @@ within."
 (defun hui:ebut-message (but-modify-flag)
   (let ((actype (symbol-name (hattr:get 'hbut:current 'actype)))
 	(args (hattr:get 'hbut:current 'args)))
-    (if (string-match "\\`actypes::" actype)
-	(setq actype (intern (substring actype (match-end 0)))))
+    (setq actype (actype:def-symbol actype))
     (message "%s%s%s %s %S"
 	     ebut:start
 	     (hbut:key-to-label (hattr:get 'hbut:current 'lbl-key))
@@ -918,8 +917,7 @@ Optional NO-SORT means display in decreasing priority order (natural order)."
 (defun hui:ibut-message (but-modify-flag)
   (let ((actype (symbol-name (hattr:get 'hbut:current 'actype)))
 	(args (hattr:get 'hbut:current 'args)))
-    (if (string-match "\\`actypes::" actype)
-	(setq actype (intern (substring actype (match-end 0)))))
+    (setq actype (actype:def-symbol actype))
     (message "%s%s%s %s %S"
 	     ibut:label-start
 	     (hbut:key-to-label (hattr:get 'hbut:current 'lbl-key))
@@ -955,10 +953,7 @@ TYPE-AND-ARGS is the action type for the button followed by any
 arguments it requires.  Any text properties are removed from string arguments."
   (hattr:set 'hbut:current 'loc but-loc)
   (hattr:set 'hbut:current 'dir but-dir)
-  (hattr:set 'hbut:current 'actype (intern-soft
-				     (concat "actypes::"
-					     (symbol-name
-					       (car type-and-args)))))
+  (hattr:set 'hbut:current 'actype (actype:elisp-symbol (car type-and-args)))
   (hattr:set 'hbut:current 'args (cdr type-and-args))
   (select-window but-window)
   (let ((label (ebut:key-to-label lbl-key)))

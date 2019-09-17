@@ -1826,14 +1826,24 @@ you may simply type the label and delimiters manually.
 
 @cindex ibtypes, list of
 @cindex implicit button types
-Below, standard implicit button types are listed in the order in which
+Below is a list of standard implicit button types in the order in which
 Hyperbole tries to match to the types when looking for an implicit
 button; @bkbd{C-h h i t @key{RET}} provides similar information.  See
-the Hyperbole file, @file{hibtypes.el}, for complete examples of
-implicit button types (they are listed in increasing order of
-priority).
+the Hyperbole file, @file{hibtypes.el}, for examples of how to define
+implicit button types (they are listed in increasing order of priority).
 
 @table @code
+
+@findex ibtypes doc-id
+@cindex online library
+@cindex document identifier
+@item doc-id
+Display a document from a local document library given its id.  Ids must be
+delimited by @code{doc-id-start} and @code{doc-id-end} and must match the
+function given by @code{doc-id-p}.  (Note that this implicit button type is
+not installed by default.  You must manually configure it and load it from
+the file, @file{@code{$@{hyperb:dir@}}/hib-doc-id.el}).  See the commentary
+at the top of that file for more information.
 
 @findex ibtypes completion
 @cindex completion
@@ -1975,7 +1985,12 @@ Messages are recognized in any buffer.
 @cindex ilink
 @item link-to-ibut <ilink>
 At point, activate a link to an implicit button within the current buffer.
-Recognizes the format ’<ilink:’ <button label> ’>’, e.g. <ilink: my key sequence>.
+Execute the implicit button's action in the context of the current buffer.
+
+Recognizes the format '<ilink:' button_label [':' button_file_path] '>',
+where button_file_path is given only when the link is to another file,
+e.g. <ilink: my series of keys: ${hyperb:dir}/HYPB>.
+
 
 @findex ibtypes glink
 @cindex global button link
@@ -1983,8 +1998,9 @@ Recognizes the format ’<ilink:’ <button label> ’>’, e.g. <ilink: my key 
 @cindex glink
 @item link-to-gbut <glink>
 At point, activate a link to a global button.
-The global button’s action is executed in the context of the current buffer.
-Recognizes the format ’<glink:’ <button label> ’>’, e.g. <glink: open todos>.
+Execulte the global button's action in the context of the current buffer.
+
+Recognizes the format '<glink:' button_label '>', e.g. <glink: open todos>.
 
 @findex ibtypes elink
 @cindex explicit button link
@@ -1992,7 +2008,11 @@ Recognizes the format ’<glink:’ <button label> ’>’, e.g. <glink: open to
 @cindex elink
 @item link-to-ebut <elink>
 At point, activate a link to an explicit button within the current buffer.
-Recognizes the format ’<elink:’ <button label> ’>’, e.g. <elink: project-list>.
+Execute The explicit button's action in the context of the current buffer.
+
+Recognizes the format '<elink:' button_label [':' button_file_path] '>',
+where : button_file_path is given only when the link is to another file,
+e.g. <elink: project-list: ~/projs>."
 
 @findex ibtypes klink
 @cindex klink
@@ -2069,9 +2089,10 @@ very beginning of the line.
 @cindex Cscope
 @item cscope
 Jump to a C/C++ source line associated with a Cscope C analyzer output line.
-Requires pre-loading of the cscope.el Lisp library available from the Emacs
-Lisp archives and the open source cscope program available from
-http://cscope.sf.net.  Otherwise, does nothing.
+The cscope.el Lisp library available from the Emacs package manager
+must be loaded and the open source cscope program available from
+http://cscope.sf.net must be installed for this button type to do
+anything.
 
 @findex ibtypes etags
 @cindex etags entry
@@ -2362,6 +2383,7 @@ for special file display options.
 @cindex Org mode
 @cindex radio target
 @cindex code block
+@cindex links
 @kindex C-c C-c
 @kindex M-@key{RET}
 @findex org-ctrl-c-ctrl-c
@@ -2389,17 +2411,6 @@ of @bkbd{C-c C-c}, @code{org-ctrl-c-ctrl-c}.
 
 In any other context besides the end of a line, the Action Key invokes
 the Org mode standard binding of @bkbd{M-@key{RET}}, @code{org-meta-return}.
-
-@findex ibtypes doc-id
-@cindex online library
-@cindex document identifier
-@item doc-id
-Display a document from a local document library given its id.  Ids must be
-delimited by @code{doc-id-start} and @code{doc-id-end} and must match the
-function given by @code{doc-id-p}.  (Note that this implicit button type is
-not installed by default.  You must manually configure it and load it from
-the file, @file{@code{$@{hyperb:dir@}}/hib-doc-id.el}).  See the commentary
-at the top of that file for more information.
 @end table
 
 @node Action Buttons,  , Implicit Button Types, Implicit Buttons

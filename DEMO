@@ -12,6 +12,8 @@
     * History
     * Implicit Buttons
     * Explicit Buttons
+    * Button Files
+    * Global Buttons
     * Smart Mouse Keys
     * Epilog
     * References
@@ -260,7 +262,7 @@ The {@} command splits a frame into a grid of up to 9 rows by 9 columns of
 windows, showing a different buffer in each window, if available.  First
 let's expand our frame to full screen with the {.1 %} command and then show
 a 2 x 3 grid.  We can do multiple commands in one 'key series'.  Press the
-action key here: {.1 % .23 @}.
+action key within the braces: {.1 % .23 @}.
 
 You can even write something like this to do the whole thing in one sequence.
 First, let's quit out of HyControl Frames mode with {q}.  Then go back to one
@@ -1120,12 +1122,78 @@ so these features are disabled by default.  If you want to try them knowing
 this, {C-h h c m} will toggle this feature on and off.
 
 
+* Button Files
+
+It is often convenient to create files filled with buttons as a means
+of navigating distributed information pools or for other purposes.
+These files can also serve as useful roadmaps that guide you through
+both unfamiliar and highly familiar information spaces.  Files that are
+created specifically for this purpose are called "Hyperbole button
+files".
+
+Hyperbole's ButFile menu provides quick access to two types of these
+button files.  Your personal button file is stored in
+"${hbmap:dir-user}/HYPB" and accessed with {C-h h b p}.  Per-directory
+button files are stored in the respective directories and are also
+named "HYPB".  Access the current one with {C-h h b d}.
+
+If you want group and site-specific button files, simply place links
+to such files at the top of your personal button file and do so for your
+colleagues.  This provides a flexible means of connecting to such
+resources.
+
+
+* Global Buttons
+
+Global buttons are labeled Hyperbole buttons in your personal button
+file, as explained above.  All global buttons are activated by name
+with completion provided, independent of which buffers are displayed.
+Global buttons may be explicit buttons or labeled/named implicit
+buttons.
+
+The Hyperbole Gbut menu creates, modifies and activates global buttons
+by name.  Each button created by this menu is stored as an explicit
+button near the end of your personal button file.  But any buttons you
+create in other ways within this file also become global buttons.
+
+A good strategy for frequently used global buttons is to use short
+names that you can remember.  Then they can be activated quickly.
+
+Let's create a global button that counts the lines in the current
+buffer and displays the count in the minibuffer.  Press the Action Key
+on the first line of this key series to create the global button:
+
+     {C-h h g c line-count RET eval-elisp RET
+      (message "Lines in %s = %s"
+               (buffer-name) (count-lines (point-min) (point-max))) RET}
+
+Then activate it with {C-h h g a}, type its name and try it out in
+different buffers.
+
+To avoid embedding such code in the button itself, just define a
+function in your Emacs initialization file and then activate that:
+
+(defun line-count ()
+  (interactive)
+  (message "Lines in %s = %s"
+           (buffer-name) (count-lines (point-min) (point-max))))
+
+Then button creation would be:
+
+     {C-h h g c line-count RET eval-elisp RET (line-count) RET}
+
+Defining a link to a file section is even easier, say to the section
+below here:
+
+     {C-h h g c smk RET link-to-file RET "DEMO#Smart Mouse Keys" RET}
+
+
 * Smart Mouse Keys
 
-If you use Emacs with mouse support under the macOS window system, the X
-Window System or MS Windows, Hyperbole automatically configures your mouse
-keys for use as Smart Keys and provides additional display-oriented
-operations as demonstrated here.
+If you use Emacs with mouse support under the macOS window system, the
+X Window System or MS Windows, Hyperbole automatically configures your
+mouse keys for use as Smart Keys and provides additional
+display-oriented operations as demonstrated here.
 
 See the Hyperbole menu item, Doc/SmartKeys {C-h h d s}, for a summary of
 all Smart Key operations.  For extensive details on Smart Key operation,

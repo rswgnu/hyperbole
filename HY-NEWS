@@ -8,18 +8,20 @@
   BUTTONS
 
     - Action Buttons: A new, universal syntax for creating implicit buttons
-      that execute any existing action types or Elisp functions.  Such buttons
-      are delimited by angle brackets, < >, and come in three types:
+      that execute any existing action types or Elisp functions.  Such
+      buttons are delimited by angle brackets, < >, and come in three types:
       action type invocations, function calls and variable displays.  See
       "(hyperbole)Action Buttons" for examples and details on this exciting
       new capability.
 
-    - Labeled Implicit Buttons: Optional <[labels]> that precede
-      implicit buttons.  This enables implicit buttons to be activated
-      by name when in the current buffer or anywhere when added to the
-      global buttons file (personal button file).
+    - Labeled Implicit Buttons: Optional <[labels]> that precede implicit
+      buttons.  This enables implicit buttons to be activated by name when
+      in the current buffer or anywhere when added to the global buttons
+      file (personal button file).
 
-    - Link to Buttons: New implicit button types that link to button categories:
+    - Link to Buttons: New implicit button types that link to buttons based
+       on their categories and labels:
+
         In Buffer Syntax                                       Implicit Button Type
         ===========================================================================
         <elink: explicit button label to link to: optional ebut file>  link-to-ebut
@@ -30,68 +32,92 @@
         debugger-source: Jump to the source of errors from the Python pytype package
         ipython-stack-frame: Jump to the source of ipython stack traces and exceptions
 
+    - Must Faster Implicit Buttons: Major speedup in implicit button identification
+      and activation even with the new generalized Action Button syntax thanks to
+      internal optimizations.
+
     - Pathname implicit buttons now flash when activated.
+
+    - Pathname implicit buttons may contain both link anchors and line and column
+      numbers.  Link anchors now work for shell script editing modes as well
+      using comment lines as anchors.
+
+    - Variables in paths no longer require a trailing directory separator.
+        Both of these are live Hyperbole paths:
+	  "${hyperb:dir}DEMO#Smart Mouse Keys"
+	  "${hyperb:dir}/DEMO#Smart Mouse Keys"
 
 
   DOCUMENTATION
 
+    - DEMO: New sections on Button Files and Global Buttons.
+
     - Action Types: link-to-gbut, link-to-ibut - Added.
 
-    - hpath:native-image-suffixes: documented this setting for
-      controlling image types that Hyperbole displays within Emacs.
+    - hpath:native-image-suffixes: documented this setting for controlling
+      image types that Hyperbole displays within Emacs.
 
     - Implicit Button Types: Split off type descriptions to this new
       subsection and added these types: ripgrep-msg, ipython-stack-frame,
       ilink (link to implicit button), glink (link to global button), and
-      elink (link to explicit button).
+ib      elink (link to explicit button).
 
     - DEMO (Action Buttons): Added description and examples.
 
     - Hyperbole Manual, DEMO (Implicit Buttons): Added description and
       example of implicit button labels.
 
-    - Glossary: Updated Implicit Button and Global Button entries with changes.
+    - Glossary: Updated Implicit Button and Global Button entries with
+      changes.
 
 
   KOUTLINER
 
-    - When 'c' (clip to lines per cell) is omitted from a viewspec, clipping now changes to
-      whatever the default number of lines per cell is (typically, unlimited).  The same goes
-      for the 'l' spec (limit display to a certain level of cells).
+    - When 'c' (clip to lines per cell) is omitted from a viewspec, clipping
+      now changes to whatever the default number of lines per cell is
+      (typically, unlimited).  The same goes for the 'l' spec (limit display
+      to a certain level of cells).
 
   MENUS
 
     - Pulldown Menus:   Implicit-Button/Label: Added to add a label.
-                        Implicit-Button/Rename - Added to rename the label of an implicit button.
+                        Implicit-Button/Rename - Added to rename the label
+                        of an implicit button.
 
-    - Minibuffer Menus: hui-mini.el (hui:menus): Added Ibut/Label and Ibut/Rename.
+    - Minibuffer Menus: hui-mini.el (hui:menus): Added Ibut/Label and
+      Ibut/Rename.
 
 
-  ORG MOde
+  ORG MODE
 
     - Radio Targets and Links: Smart Keys now handle these.
 
     - Links: Smart Keys handle both internal and external Org mode links.
 
+
   PROGRAMMING
 
-    - ibut:at-type-p: Added to test if point is on a specific type of implicit button.
+    - ibut:at-type-p: Added to test if point is on a specific type of
+      implicit button.
 
     - hypb:region-with-text-property-value: Added and used in hysy-org.el.
 
-    - hsys-org-mode-function, hsys-org-mode-p: Added to determine when hsys-org actions
-      are activated.
+    - hsys-org-mode-function, hsys-org-mode-p: Added to determine when
+      hsys-org actions are activated.
 
     - ebut:key-src-set-buffer, hbut:key-src-set-buffer, hbut:key-list,
       hbut:ebut-key-list, hbut:ibut-key-list, hbut:label-list): Added
-      to allow selection of labeled Hyperbole buttons in currrent buffer by name.
+      to allow selection of labeled Hyperbole buttons in currrent buffer by
+      name.
 
-    - gbut:get, hbut:map, ibut:label-map, ibut:key-src, ibut:key-to-label, ibut:label-to-key,
-      hui:ebut-act, ibut:summarize, ibut:label-start, ibut:label-end, ibut:label-p, ibut:get,
-      hui:ibut-label-create, hui:ibut-rename, hui:ibut-message, ibut:alist, ibut:list, ibut:map,
-      ibut:next-occurrence, ibut:label-regexp, gbut:ibut-key-list, ebut:to, gbut:to, ibut:to,
-      ibut:label-separator, hbut:label-regexp, ibut:rename, hbut:get: Added to support labeled
-      implicit buttons and links to buttons.
+    - gbut:get, hbut:map, ibut:label-map, ibut:key-src, ibut:key-to-label,
+      ibut:label-to-key, hui:ebut-act, ibut:summarize, ibut:label-start,
+      ibut:label-end, ibut:label-p, ibut:get, hui:ibut-label-create,
+      hui:ibut-rename, hui:ibut-message, ibut:alist, ibut:list, ibut:map,
+      ibut:next-occurrence, ibut:label-regexp, gbut:ibut-key-list, ebut:to,
+      gbut:to, ibut:to, ibut:label-separator, hbut:label-regexp,
+      ibut:rename, hbut:get: Added to support implicit button labels and
+      links to buttons.
       hbut:label-p: Updated to handle implicit button labels.
       ibut:label-separator-regexp, hbut:outside-comment-p: Added.
 
@@ -100,16 +126,16 @@
       ilink, ilink:start, ilink:end: Added for in-buffer links to implicit buttons.
 
     - hsys-org-set-ibut-label: Added and used in org-mode ibtype.
-      org-mode, hsys-org-at-block-start-p: Added Action Key activation of Org blocks when
-      on 1st line of def.
+      org-mode, hsys-org-at-block-start-p: Added Action Key activation of
+      Org blocks when on 1st line of def.
 
 
   SMART (ACTION AND ASSIST) KEYS
 
-    - hpath:find-program: Changed to prioritize hpath:native-image-suffixes over
-      hpath:internal-display-alist over hpath:external-display-alist-macos instead of the
-      reverse.  This prevents external viewers from being used when internal viewers are
-      also in effect.
+    - hpath:find-program: Changed to prioritize hpath:native-image-suffixes
+      over hpath:internal-display-alist over hpath:external-display-alist-macos
+      instead of the reverse.  This prevents external viewers from being
+      used when internal viewers are also in effect.
 
 
 ===========================================================================

@@ -122,33 +122,36 @@ kill the last output to the shell buffer before executing SHELL-CMD."
 			     default2)))))
   (require 'comint)
   (let ((buf-name "*Hyperbole Shell*")
-	(owind (selected-window)))
+	(obuf (current-buffer)))
     (unwind-protect
 	(progn
 	  (if (not (hpath:remote-p default-directory))
 	      (setq shell-cmd
 		    (concat "cd " default-directory "; " shell-cmd)))
-	  (unless (and (get-buffer buf-name)
-		       (get-buffer-process (get-buffer buf-name)))
-	    (save-excursion
-	      (hpath:display-buffer (current-buffer))
-	      (if (eq (minibuffer-window) (selected-window))
-		  (other-window 1))
-	      (setq buf-name (buffer-name (shell buf-name)))
-	      ;; Wait for shell to startup before sending it input.
-	      (sit-for 1)
-	      (setq comint-last-input-start (point-marker)
-		    comint-last-input-end (point-marker))))
-	  (hpath:display-buffer buf-name)
-	  (goto-char (point-max))
-	  (and kill-prev comint-last-input-end
-	       (not (equal comint-last-input-start comint-last-input-end))
-	       (comint-delete-output))
-	  (insert shell-cmd)
-	  (comint-send-input)
-	  (comint-show-output)
-	  (or internal-cmd (scroll-down 1)))
-      (select-window owind))))
+	  (if (and (get-buffer buf-name)
+		   (get-buffer-process (get-buffer buf-name)))
+	      (hpath:display-buffer buf-name)
+	    ;; (hpath:display-buffer (current-buffer))
+	    (if (eq (minibuffer-window) (selected-window))
+		(other-window 1))
+	    ;; 'shell' calls pop-to-buffer which normally displays in
+	    ;; another window
+	    (setq buf-name (buffer-name (shell buf-name))))
+	  (while (not (and (buffer-live-p (get-buffer buf-name))
+			   (buffer-modified-p (get-buffer buf-name))))
+	    ;; Wait for shell to startup before sending it input.
+	    (sit-for 1))
+	  (setq comint-last-input-start (point-marker)
+		comint-last-input-end (point-marker)))
+      (goto-char (point-max))
+      (and kill-prev comint-last-input-end
+	   (not (equal comint-last-input-start comint-last-input-end))
+	   (comint-delete-output))
+      (insert shell-cmd)
+      (comint-send-input)
+      (comint-show-output)
+      (or internal-cmd (scroll-down 1)))
+    (select-window (or (get-buffer-window obuf t) (selected-window)))))
 
 (defact exec-window-cmd (shell-cmd)
   "Asynchronously execute an external window-based SHELL-CMD string."
@@ -280,12 +283,14 @@ KEY-FILE defaults to the current buffer's file name."
 	       (beep))
 	     (ebut:label-to-key but-lbl))
 	   but-file)))
+  (let (but
+	normalized-file)
   (if key-file
       (unless (called-interactively-p 'interactive)
-	(setq key-file (hpath:validate (hpath:substitute-value key-file))))
-    (setq key-file buffer-file-name))
-  (let ((but (and key-file (ebut:get key (find-file-noselect key-file)))))
-    (if but
+	(setq normalized-file (hpath:normalize key-file)))
+    (setq normalized-file buffer-file-name))
+
+    (if (setq but (and key-file (ebut:get key normalized-file)))
 	(hbut:act but)
       (hypb:error "(link-to-ebut): No button `%s' in `%s'"
 		  (ebut:key-to-label key)
@@ -311,16 +316,31 @@ the window."
 	 (existing-buf t)
 	 path-buf)
      (unwind-protect
-	 (let* ((file-path (car defaults))
+	 (let* ((default-directory (or (hattr:get 'hbut:current 'dir) default-directory))
+		(file-path (or (car defaults) default-directory))
 		(file-point (cadr defaults))
 		(hargs:reading-p 'file)
-		(path (read-file-name "Path to link to: " file-path file-path))
-		;; Ensure any variable is removed before doing path matching.
-		(expanded-path (hpath:substitute-value path)))
-	   (setq existing-buf (get-file-buffer expanded-path)
+		;; If reading interactive inputs from a key series
+		;; (puts key events into the unread queue), then don't
+		;; insert default-directory into the minibuffer
+		;; prompt, allowing time to remove any extra pathname
+		;; quotes added in the key series.
+		(insert-default-directory (not unread-command-events))
+		;; Remove any double quotes and whitespace at the
+		;; start and end of the path that interactive use may
+		;; have introduced.
+		(path (hpath:trim (read-file-name "Path to link to: "
+						  file-path file-path)))
+		;; Ensure any variables and heading suffixes following
+		;; [#,] are removed before doing path matching.
+		(normalized-path (hpath:is-p path)))
+	   (when (not (or (file-name-absolute-p path)
+			  (string-match "\\`\\$\{" path)))
+	     (setq path (concat default-directory path)))
+	   (setq existing-buf (get-file-buffer normalized-path)
 		 path-buf (or existing-buf
-			      (and (file-readable-p expanded-path)
-				   (prog1 (set-buffer (find-file-noselect expanded-path t))
+			      (and (file-readable-p normalized-path)
+				   (prog1 (set-buffer (find-file-noselect normalized-path t))
 				     (when (integerp file-point)
 				       (goto-char (min (point-max) file-point)))))))
 	   (if path-buf
@@ -335,6 +355,9 @@ the window."
        (setq hargs:reading-p prev-reading-p)
        (when (and path-buf (not existing-buf))
 	 (kill-buffer path-buf)))))
+  ;; Remove any double quotes and whitespace at the start and end of
+  ;; the path that use within a key series may have introduced.
+  (setq path (hpath:trim path))
   (and (hpath:find path)
        (integerp point)
        (progn (goto-char (min (point-max) point))
@@ -343,6 +366,9 @@ the window."
 (defact link-to-file-line (path line-num)
   "Display a file given by PATH scrolled to LINE-NUM."
   (interactive "fPath to link to: \nnDisplay at line number: ")
+  ;; Remove any double quotes and whitespace at the start and end of
+  ;; the path that interactive use may have introduced.
+  (setq path (hpath:trim path))
   (if (condition-case ()
 	  (setq path (smart-tags-file-path path))
 	(error t))
@@ -354,6 +380,9 @@ the window."
 (defact link-to-file-line-and-column (path line-num column-num)
   "Display a file given by PATH scrolled to LINE-NUM with point at COLUMN-NUM."
   (interactive "fPath to link to: \nnDisplay at line number: \nnand column number: ")
+  ;; Remove any double quotes and whitespace at the start and end of
+  ;; the path that interactive use may have introduced.
+  (setq path (hpath:trim path))
   (when (condition-case ()
 	    (setq path (smart-tags-file-path path))
 	  (error t))
@@ -366,7 +395,7 @@ the window."
 (defact link-to-gbut (key &optional key-file)
   "Perform an action given by an existing global button, specified by KEY.
 Optional second arg, KEY-FILE, is not used but is for calling
-compatibility from the `hlink' function."
+compatibility with the `hlink' function."
   (interactive
    (let ((gbut-file (hpath:validate (hpath:substitute-value gbut:file)))
 	 but-lbl)
@@ -420,15 +449,16 @@ and its buffer must have a file attached."
        (if (and (boundp 'defaults) (listp defaults))
 	   defaults
 	 (list nil nil nil)))))
-  (if key-file
-      (unless (called-interactively-p 'interactive)
-	(setq key-file (hpath:validate (hpath:substitute-value key-file))))
-    (setq key-file buffer-file-name))
-  (let (but)
+  (let (but
+	normalized-file)
+    (if key-file
+	(unless (called-interactively-p 'interactive)
+	  (setq normalized-file (hpath:normalize key-file)))
+      (setq normalized-file buffer-file-name))
     (save-excursion
       (save-restriction
 	(when key-file
-	  (set-buffer (find-file-noselect key-file)))
+	  (set-buffer (get-file-buffer normalized-file)))
 	(widen)
 	(if (integerp point) (goto-char (min point (point-max))))
 	(setq but (ibut:to key))))
@@ -598,3 +628,4 @@ Optional OPOINT is point to return to in BUF-NAME after displaying summary."
 (provide 'hactypes)
 
 ;;; hactypes.el ends here
+

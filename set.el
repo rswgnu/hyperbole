@@ -16,6 +16,9 @@
 ;;   but this may be overidden by changing the function bound to
 ;;   the `set:equal-op' variable.  The empty set is equivalent to nil.
 
+;;   (set:create) creates an empty set and (set:add 'element nil) creates
+;;   a new set with the single member, 'element.
+
 ;;; Code:
 ;; ************************************************************************
 ;; Public variables
@@ -31,7 +34,7 @@ the arguments are equivalent.")
 ;; ************************************************************************
 
 (defun set:member (elt set)
-  "Returns non-nil if ELT is an element of SET.
+  "Return non-nil if ELT is an element of SET.
 The value is actually the tail of SET whose car is ELT.
 Uses `set:equal-op' for comparison."
   (while (and set (not (funcall set:equal-op elt (car set))))
@@ -39,7 +42,7 @@ Uses `set:equal-op' for comparison."
   set)
 
 (defmacro set:add (elt set)
-  "Adds element ELT to SET and then returns SET.
+  "Add element ELT to SET and then return SET, even if SET is nil.
 Uses `set:equal-op' for comparison.
 Use (setq set (set:add elt set)) to assure set is always properly modified."
   `(cond ((set:member ,elt ,set) ,set)
@@ -47,8 +50,8 @@ Use (setq set (set:add elt set)) to assure set is always properly modified."
 	 (t (list ,elt))))
 
 (defmacro set:remove (elt set)
-  "Removes element ELT from SET and returns new set.
-Assumes SET is a valid set.  Uses `set:equal-op' for comparison.
+  "Remove element ELT from SET and return new set.
+Assume SET is a valid set.  Uses `set:equal-op' for comparison.
 Use (setq set (set:remove elt set)) to assure set is always properly modified."
   `(let ((rest (set:member ,elt ,set))
 	 (rtn ,set))
@@ -65,8 +68,8 @@ Use (setq set (set:remove elt set)) to assure set is always properly modified."
 ;; ************************************************************************
 
 (defun set:combinations (set &optional arity)
-  "Returns all possible combinations (subsets) of SET including the empty set and the SET itself.
-Assumes SET is a valid set.  With optional ARITY, returns only subsets with
+  "Return all possible combinations (subsets) of SET including the empty set and the SET itself.
+Assumes SET is a valid set.  With optional ARITY, return only subsets with
 ARITY members."
   (cond ((null arity) 
 	 (setq arity 0)
@@ -88,8 +91,9 @@ ARITY members."
 
 ;;;###autoload
 (defun set:create (&rest elements)
-  "Returns a new set created from any number of ELEMENTS.
-If no ELEMENTS are given, returns the empty set.  Uses `set:equal-op' for comparison."
+  "Return a new set created from any number of ELEMENTS.
+If no ELEMENTS are given, return the empty set.  Uses `set:equal-op'
+for comparison."
   (let ((set))
     (mapc (lambda (elt) (or (set:member elt set) (setq set (cons elt set))))
 	  elements)
@@ -97,7 +101,7 @@ If no ELEMENTS are given, returns the empty set.  Uses `set:equal-op' for compar
 
 (defalias 'set:delete 'set:remove)
 (defun set:difference (&rest sets)
-  "Returns difference of any number of SETS.
+  "Return difference of any number of SETS.
 Difference is the set of elements in the first set that are not in any of the
 other sets.  Uses `set:equal-op' for comparison."
   (let ((rtn-set (set:members (car sets))))
@@ -109,21 +113,25 @@ other sets.  Uses `set:equal-op' for comparison."
 
 (defalias 'set:size 'length)
 
+(defun set:empty (set)
+  "Return t if SET is empty."
+  (null set))
+
 (defun set:equal (set1 set2)
-  "Returns t iff SET1 contains the same members as SET2.  Both must be sets.
+  "Return t iff SET1 contains the same members as SET2.  Both must be sets.
 Uses `set:equal-op' for comparison."
   (and (listp set1) (listp set2)
        (= (set:size set1) (set:size set2))
        (set:subset set1 set2)))
 
 (defun set:get (key set)
-  "Returns the value associated with KEY in SET or nil.
+  "Return the value associated with KEY in SET or nil.
 Assumes elements of SET are of the form (key . value)."
   (cdr (car (let ((set:equal-op (lambda (key elt) (equal key (car elt)))))
 	      (set:member key set)))))
 
 (defun set:intersection (&rest sets)
-  "Returns intersection of all SETS given as arguments.
+  "Return intersection of all SETS given as arguments.
 Uses `set:equal-op' for comparison."
   (let (rtn-set)
     (mapc (lambda (elt) (or (memq nil (mapcar (lambda (set) (set:member elt set))
@@ -133,7 +141,7 @@ Uses `set:equal-op' for comparison."
     (nreverse rtn-set)))
 
 (defun set:is (obj)
-  "Returns t if OBJ is a set (a list with no repeated elements).
+  "Return t if OBJ is a set (a list with no repeated elements).
 Uses `set:equal-op' for comparison."
   (and (listp obj)
        (let ((lst obj))
@@ -144,7 +152,7 @@ Uses `set:equal-op' for comparison."
 (defalias 'set:map 'mapcar)
 
 (defun set:members (list)
-  "Returns set of unique elements of LIST.
+  "Return set of unique elements of LIST.
 Uses `set:equal-op' for comparison.  See also `set:create'."
   (let ((set))
     (mapc (lambda (elt) (or (set:member elt set) (setq set (cons elt set))))
@@ -152,8 +160,8 @@ Uses `set:equal-op' for comparison.  See also `set:create'."
     set))
 
 (defun set:replace (key value set)
-  "Replaces or adds element whose car matches KEY with element (KEY . VALUE) in SET.
-Returns set if modified, else nil.
+  "Replace or add element whose car matches KEY with element (KEY . VALUE) in SET.
+Return set if modified, else nil.
 Use (setq set (set:replace elt set)) to assure set is always properly modified.
 
 Uses `set:equal-op' to match against KEY.  Assumes each element in the set
@@ -167,7 +175,7 @@ has a car and a cdr."
       (cons (cons key value) set))))
 
 (defun set:subset (sub set)
-  "Returns t iff set SUB is a subset of SET.
+  "Return t iff set SUB is a subset of SET.
 Uses `set:equal-op' for comparison."
   ;; The empty set, nil, is a subset of every set, including
   ;; itself. Each set includes it once as a subset.
@@ -177,7 +185,7 @@ Uses `set:equal-op' for comparison."
     (and is t)))
 
 (defun set:union (&rest sets)
-  "Returns union of all SETS given as arguments.
+  "Return union of all SETS given as arguments.
 Uses `set:equal-op' for comparison."
   (let (rtn-set)
     (mapc (lambda (set) (mapc (lambda (elt) (setq rtn-set (set:add elt rtn-set)))

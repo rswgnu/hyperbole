@@ -34,7 +34,7 @@
 ;;; ************************************************************************
 
 (defvar hargs:reading-p nil
-  "Is t only when Hyperbole is prompting user for input, else nil.")
+  "Is either a symbol representing the type of object Hyperbole is prompting the user to input or nil.")
 
 (add-hook 'completion-setup-hook #'hargs:set-string-to-complete)
 (add-hook 'minibuffer-exit-hook  #'hargs:unset-string-to-complete)
@@ -281,7 +281,7 @@ that point is within is returned or nil if none."
 (defun hargs:actype-get (actype &optional modifying)
   "Interactively gets and return list of arguments for ACTYPE's parameters.
 Current button is being modified when MODIFYING is non-nil."
-  (hargs:action-get (actype:action actype) modifying))
+  (hargs:action-get (actype:action-body actype) modifying))
 
 (defun hargs:at-p (&optional no-default)
   "Return thing at point, if of hargs:reading-p type, or default.

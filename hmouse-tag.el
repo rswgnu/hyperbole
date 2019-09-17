@@ -352,7 +352,7 @@ If:
   ;; buffers, debugger buffers, and Help buffers.
   (or (memq major-mode #'(emacs-lisp-mode lisp-interaction-mode debugger-mode))
       (string-match "\\`\\*Compile-Log\\(-Show\\)?\\*" (buffer-name))
-      (and (or (eq major-mode #'help-mode)
+      (and (or (memq major-mode #'(help-mode change-log-mode))
 	       (string-match "\\`\\*Help\\|Help\\*\\'" (buffer-name)))
 	   (smart-lisp-at-known-identifier-p))))
 
@@ -637,7 +637,7 @@ buffer."
       (save-excursion
 	(beginning-of-line)
 	;; Exclude any define- lines.
-	(and (looking-at "\\(;*[ \t]*\\)?(def[[:alnum:]]*[[:space:]]")
+	(and (looking-at "\\(;*[ \t]*\\)?(def[[:alnum:]]+[[:space:]]")
 	     ;; Ignore alias definitions since those typically have symbol tags to lookup.
 	     (not (looking-at "\\(;*[ \t]*\\)?(def[^ \t\n\r]*alias"))
 	     ;; Ignore lines that start with (default
@@ -660,26 +660,29 @@ Returns matching ELisp tag name that point is within, else nil."
 
 (defun smart-lisp-at-tag-p (&optional no-flash)
   "Return Lisp tag name that point is within, else nil.
-Returns nil when point is on the first line of a non-alias Lisp definition."
+Return nil when point is on the first line of a non-alias Lisp definition."
   (unless (smart-lisp-at-definition-p)
     (save-excursion
       (skip-chars-backward smart-lisp-identifier-chars)
-      (if (and (looking-at smart-lisp-identifier)
-	       ;; Ignore any punctuation matches.
-	       (not (string-match "\\`[-<>*]+\\'" (match-string 0)))
-	       ;; Needed to set match string.
-	       (looking-at smart-lisp-identifier))
-	  (if no-flash
-	      (if (eq (char-after (1- (match-end 0))) ?:)
-		  (buffer-substring-no-properties (point) (1- (match-end 0)))
-		(buffer-substring-no-properties (point) (match-end 0)))
+      (when (and (looking-at smart-lisp-identifier)
+		 ;; Ignore any punctuation matches.
+		 (save-match-data
+		   (not (string-match "\\`[-<>*]+\\'" (match-string 0)))))
+	;; Ignore any leading '<' character from action buttons or
+	;; other links, i.e. only when followed by an alphabetic character.
+	(when (and (eq (following-char) ?\<) (eq ?w (char-syntax (1+ (point)))))
+	  (goto-char (1+ (point))))
+	(if no-flash
 	    (if (eq (char-after (1- (match-end 0))) ?:)
-		(smart-flash-tag
-		 (buffer-substring-no-properties (point) (1- (match-end 0)))
-		 (point) (1- (match-end 0)))
+		(buffer-substring-no-properties (point) (1- (match-end 0)))
+	      (buffer-substring-no-properties (point) (match-end 0)))
+	  (if (eq (char-after (1- (match-end 0))) ?:)
 	      (smart-flash-tag
-	       (buffer-substring-no-properties (point) (match-end 0))
-	       (point) (match-end 0))))))))
+	       (buffer-substring-no-properties (point) (1- (match-end 0)))
+	       (point) (1- (match-end 0)))
+	    (smart-flash-tag
+	     (buffer-substring-no-properties (point) (match-end 0))
+	     (point) (match-end 0))))))))
 
 ;;;###autoload
 (defun smart-lisp-mode-p ()

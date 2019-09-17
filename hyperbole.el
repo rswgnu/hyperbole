@@ -253,13 +253,13 @@ Entry format is: (key-description key-sequence key-binding)."
     ;; Binds {C-c @} to created a user-specified sized grid of windows
     ;; displaying different buffers.
     ;;
-    ;; Don't override local bindings of this key.
+    ;; Don't override prior global bindings of this key.
     (hkey-maybe-global-set-key "\C-c@" 'hycontrol-windows-grid t)
     ;;
     ;; Binds {C-c C-r} as a site standard way of performing explicit
     ;; button renames without invoking the Hyperbole menu.
     ;;
-    ;; Don't override local bindings of this key.
+    ;; Don't override prior global bindings of this key.
     (hkey-maybe-global-set-key "\C-c\C-r" 'hui:ebut-rename t)
     ;;
     ;; Binds {C-c RET} to select larger and larger synctactical units in a
@@ -274,7 +274,7 @@ Entry format is: (key-description key-sequence key-binding)."
     (hkey-maybe-global-set-key "\C-c/" 'hui-search-web)
     ;;
     ;; Binds {C-c .} to jump between the start and end of an delimited thing.
-    ;; Don't override local bindings of this key.
+    ;; Don't override prior global bindings of this key.
     (hkey-maybe-global-set-key "\C-c." 'hui-select-goto-matching-delimiter t)
     ;;
     ;; This initializes the Smart Mouse Key bindings.  Shifted mouse buttons
