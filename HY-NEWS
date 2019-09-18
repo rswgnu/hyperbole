@@ -2,7 +2,7 @@
 				 by Bob Weiner
 
 ===========================================================================
-*                                   V7.0.5
+*                                   V7.0.6
 ===========================================================================
 
   BUTTONS
@@ -32,15 +32,16 @@
         debugger-source: Jump to the source of errors from the Python pytype package
         ipython-stack-frame: Jump to the source of ipython stack traces and exceptions
 
-    - Must Faster Implicit Buttons: Major speedup in implicit button identification
-      and activation even with the new generalized Action Button syntax thanks to
-      internal optimizations.
+    - Much Faster Implicit Buttons: Major speedup in implicit button identification
+      and activation even with the new generalized Action implicit button type
+      syntax, due to internal optimizations.
 
     - Pathname implicit buttons now flash when activated.
 
     - Pathname implicit buttons may contain both link anchors and line and column
       numbers.  Link anchors now work for shell script editing modes as well
-      using comment lines as anchors.
+      using comment lines as anchors.  Format is:
+      "<path>[#<link-anchor>]:<line-num>[:<col-num>]"
 
     - Variables in paths no longer require a trailing directory separator.
         Both of these are live Hyperbole paths:

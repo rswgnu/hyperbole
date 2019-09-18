@@ -3,12 +3,19 @@
 ;;; Code:
 
 
+;;;### (autoloads nil "kcell" "kcell.el" (0 0 0 0))
+;;; Generated autoloads from kcell.el
+
+(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "kcell" '("kcell")))
+
+;;;***
+
 ;;;### (autoloads nil "kexport" "kexport.el" (0 0 0 0))
 ;;; Generated autoloads from kexport.el
 
 (autoload 'kexport:html "kexport" "\
 Export a koutline buffer or file in EXPORT-FROM to html format in OUTPUT-TO.
-By default, this retains newlines within cells as they are.  With optional prefix arg, SOFT-NEWLINES-FLAG, 
+By default, this retains newlines within cells as they are.  With optional prefix arg, SOFT-NEWLINES-FLAG,
 hard newlines are not used.  Also converts Urls and Klinks into Html hyperlinks.
 STILL TODO:
   Make delimited pathnames into file links (but not if within klinks).
@@ -20,7 +27,7 @@ STILL TODO:
 
 ;;;***
 
-;;;### (autoloads nil "kfile" "kfile.el" (22412 20800 0 0))
+;;;### (autoloads nil "kfile" "kfile.el" (0 0 0 0))
 ;;; Generated autoloads from kfile.el
 
 (autoload 'kfile:find "kfile" "\
@@ -39,12 +46,14 @@ View an existing kotl version-2 file FILE-NAME in a read-only mode.
 
 \(fn FILE-NAME)" t nil)
 
+(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "kfile" '("kfile:")))
+
 ;;;***
 
 ;;;### (autoloads nil "kfill" "kfill.el" (0 0 0 0))
 ;;; Generated autoloads from kfill.el
 
-(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "kfill" '("fill-paragraph" "kfill:" "prior-fill-prefix" "set-fill-prefix")))
+(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "kfill" '("kfill:" "set-fill-prefix" "prior-fill-prefix")))
 
 ;;;***
 
@@ -64,12 +73,12 @@ and a buffer/file into which to insert the imported elements and a third
 optional argument, CHILDREN-P, which when non-nil means insert imported cells
 as the initial set of children of the current cell, if any.
 
-   outline-mode  - imported as an Emacs outline whose entries begin with
-                   asterisks; 
+   `outline-mode'  - imported as an Emacs outline whose entries begin with
+                     asterisks; 
    .kot
-   .kotl         - imported as a structured koutline
+   .kotl           - imported as a structured koutline
 
-   all others    - imported as text.")
+   all others      - imported as text.")
 
 (defvar kimport:suffix-alist '(("\\.otl$" . kimport:star-outline) ("\\.aug$" . kimport:aug-post-outline)) "\
 Alist of (buffer-name-suffix-regexp . importation-function) elements.
@@ -142,11 +151,18 @@ copied since there is no need to copy it to import it.
 
 \(fn SOURCE)" nil nil)
 
-(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "kimport" '(#("kimport:" 0 8 (fontified nil)))))
+(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "kimport" '("kimport:")))
 
 ;;;***
 
-;;;### (autoloads nil "klink" "klink.el" (22481 28335 0 0))
+;;;### (autoloads nil "klabel" "klabel.el" (0 0 0 0))
+;;; Generated autoloads from klabel.el
+
+(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "klabel" '("kotl-label:" "klabel")))
+
+;;;***
+
+;;;### (autoloads nil "klink" "klink.el" (0 0 0 0))
 ;;; Generated autoloads from klink.el
 
 (autoload 'klink:create "klink" "\
@@ -156,12 +172,21 @@ See documentation for `kcell:ref-to-id' for valid cell-ref formats.
 
 \(fn REFERENCE)" t nil)
 
+(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "klink" '("klink" "link-to-kotl")))
+
 ;;;***
 
 ;;;### (autoloads nil "kmenu" "kmenu.el" (0 0 0 0))
 ;;; Generated autoloads from kmenu.el
 
 (if (fboundp 'register-definition-prefixes) (register-definition-prefixes "kmenu" '("id-" "kotl-")))
+
+;;;***
+
+;;;### (autoloads nil "knode" "knode.el" (0 0 0 0))
+;;; Generated autoloads from knode.el
+
+(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "knode" '("knode:")))
 
 ;;;***
 
@@ -218,6 +243,13 @@ Signal an error if current buffer is not a Hyperbole outline, else return t.
 
 ;;;***
 
+;;;### (autoloads nil "kprop-xe" "kprop-xe.el" (0 0 0 0))
+;;; Generated autoloads from kprop-xe.el
+
+(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "kprop-xe" '("kproperty:")))
+
+;;;***
+
 ;;;### (autoloads nil "kview" "kview.el" (0 0 0 0))
 ;;; Generated autoloads from kview.el
 
@@ -232,8 +264,7 @@ Signal an error if current buffer is not a Hyperbole outline, else return t.
 
 ;;;***
 
-;;;### (autoloads nil nil ("kcell.el" "klabel.el" "knode.el" "kprop-em.el"
-;;;;;;  "kprop-xe.el" "kproperty.el") (0 0 0 0))
+;;;### (autoloads nil nil ("kprop-em.el" "kproperty.el") (0 0 0 0))
 
 ;;;***
 

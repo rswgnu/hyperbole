@@ -1,7 +1,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <!-- This manual is for GNU Hyperbole
-(Edition 7.0.5, Published August 27, 2019).
+(Edition 7.0.6, Published September 17, 2019).
 
 Copyright (C) 1989-2019  Free Software Foundation, Inc.
 
@@ -348,8 +348,8 @@ WITHOUT ANY WARRANTY, without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</P>
 
 <PRE>
-Edition 7.0.5
-Printed August 27, 2019.
+Edition 7.0.6
+Printed September 17, 2019.
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -806,7 +806,7 @@ Next: <a href="#Smart-Keys" accesskey="n" rel="next">Smart Keys</a>, Previous: <
 <h2 class="chapter">1 Introduction</h2>
 
 <p>This edition of the GNU Hyperbole Manual is for use with any version
-7.0.5 or greater of GNU Hyperbole.  Hyperbole runs atop GNU Emacs 24.3
+7.0.6 or greater of GNU Hyperbole.  Hyperbole runs atop GNU Emacs 24.3
 or higher.  It will trigger an error if your Emacs is older.
 </p>
 <p>This chapter summarizes the structure of the rest of the manual,
@@ -2407,15 +2407,26 @@ Next: <a href="#Action-Buttons" accesskey="n" rel="next">Action Buttons</a>, Pre
 
 <a name="index-ibtypes_002c-list-of"></a>
 <a name="index-implicit-button-types"></a>
-<p>Below, standard implicit button types are listed in the order in which
+<p>Below is a list of standard implicit button types in the order in which
 Hyperbole tries to match to the types when looking for an implicit
 button; <kbd>{C-h h i t <span class="key">RET</span>}</kbd> provides similar information.  See
-the Hyperbole file, <samp>hibtypes.el</samp>, for complete examples of
-implicit button types (they are listed in increasing order of
-priority).
+the Hyperbole file, <samp>hibtypes.el</samp>, for examples of how to define
+implicit button types (they are listed in increasing order of priority).
 </p>
 <dl compact="compact">
 <dd>
+<a name="index-ibtypes-doc_002did"></a>
+<a name="index-online-library"></a>
+<a name="index-document-identifier"></a>
+</dd>
+<dt><code>doc-id</code></dt>
+<dd><p>Display a document from a local document library given its id.  Ids must be
+delimited by <code>doc-id-start</code> and <code>doc-id-end</code> and must match the
+function given by <code>doc-id-p</code>.  (Note that this implicit button type is
+not installed by default.  You must manually configure it and load it from
+the file, <samp><code>${hyperb:dir}</code>/hib-doc-id.el</samp>).  See the commentary
+at the top of that file for more information.
+</p>
 <a name="index-ibtypes-completion"></a>
 <a name="index-completion-1"></a>
 </dd>
@@ -2571,8 +2582,13 @@ Messages are recognized in any buffer.
 </dd>
 <dt><code>link-to-ibut &lt;ilink&gt;</code></dt>
 <dd><p>At point, activate a link to an implicit button within the current buffer.
-Recognizes the format â&lt;ilink:â &lt;button label&gt; â&gt;â, e.g. &lt;ilink: my key sequence&gt;.
+Execute the implicit button&rsquo;s action in the context of the current buffer.
 </p>
+<p>Recognizes the format &rsquo;&lt;ilink:&rsquo; button_label [&rsquo;:&rsquo; button_file_path] &rsquo;&gt;&rsquo;,
+where button_file_path is given only when the link is to another file,
+e.g. &lt;ilink: my series of keys: ${hyperb:dir}/HYPB&gt;.
+</p>
+
 <a name="index-ibtypes-glink"></a>
 <a name="index-global-button-link"></a>
 <a name="index-link-to-global-button"></a>
@@ -2580,8 +2596,9 @@ Recognizes the format â&lt;ilink:â &lt;button label&gt; â&gt;â
 </dd>
 <dt><code>link-to-gbut &lt;glink&gt;</code></dt>
 <dd><p>At point, activate a link to a global button.
-The global buttonâs action is executed in the context of the current buffer.
-Recognizes the format â&lt;glink:â &lt;button label&gt; â&gt;â, e.g. &lt;glink: open todos&gt;.
+Execulte the global button&rsquo;s action in the context of the current buffer.
+</p>
+<p>Recognizes the format &rsquo;&lt;glink:&rsquo; button_label &rsquo;&gt;&rsquo;, e.g. &lt;glink: open todos&gt;.
 </p>
 <a name="index-ibtypes-elink"></a>
 <a name="index-explicit-button-link"></a>
@@ -2590,7 +2607,11 @@ Recognizes the format â&lt;glink:â &lt;button label&gt; â&gt;â
 </dd>
 <dt><code>link-to-ebut &lt;elink&gt;</code></dt>
 <dd><p>At point, activate a link to an explicit button within the current buffer.
-Recognizes the format â&lt;elink:â &lt;button label&gt; â&gt;â, e.g. &lt;elink: project-list&gt;.
+Execute The explicit button&rsquo;s action in the context of the current buffer.
+</p>
+<p>Recognizes the format &rsquo;&lt;elink:&rsquo; button_label [&rsquo;:&rsquo; button_file_path] &rsquo;&gt;&rsquo;,
+where : button_file_path is given only when the link is to another file,
+e.g. &lt;elink: project-list: ~/projs&gt;.&quot;
 </p>
 <a name="index-ibtypes-klink"></a>
 <a name="index-klink"></a>
@@ -2674,9 +2695,10 @@ very beginning of the line.
 </dd>
 <dt><code>cscope</code></dt>
 <dd><p>Jump to a C/C++ source line associated with a Cscope C analyzer output line.
-Requires pre-loading of the cscope.el Lisp library available from the Emacs
-Lisp archives and the open source cscope program available from
-http://cscope.sf.net.  Otherwise, does nothing.
+The cscope.el Lisp library available from the Emacs package manager
+must be loaded and the open source cscope program available from
+http://cscope.sf.net must be installed for this button type to do
+anything.
 </p>
 <a name="index-ibtypes-etags"></a>
 <a name="index-etags-entry"></a>
@@ -2987,6 +3009,7 @@ for special file display options.
 <a name="index-Org-mode"></a>
 <a name="index-radio-target"></a>
 <a name="index-code-block"></a>
+<a name="index-links"></a>
 <a name="index-C_002dc-C_002dc"></a>
 <a name="index-M_002dRET-1"></a>
 <a name="index-org_002dctrl_002dc_002dctrl_002dc"></a>
@@ -3015,18 +3038,6 @@ of <kbd>{C-c C-c}</kbd>, <code>org-ctrl-c-ctrl-c</code>.
 </p>
 <p>In any other context besides the end of a line, the Action Key invokes
 the Org mode standard binding of <kbd>{M-<span class="key">RET</span>}</kbd>, <code>org-meta-return</code>.
-</p>
-<a name="index-ibtypes-doc_002did"></a>
-<a name="index-online-library"></a>
-<a name="index-document-identifier"></a>
-</dd>
-<dt><code>doc-id</code></dt>
-<dd><p>Display a document from a local document library given its id.  Ids must be
-delimited by <code>doc-id-start</code> and <code>doc-id-end</code> and must match the
-function given by <code>doc-id-p</code>.  (Note that this implicit button type is
-not installed by default.  You must manually configure it and load it from
-the file, <samp><code>${hyperb:dir}</code>/hib-doc-id.el</samp>).  See the commentary
-at the top of that file for more information.
 </p></dd>
 </dl>
 
@@ -13308,6 +13319,7 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function</a>, Up: <a href
 <tr><td></td><td valign="top"><a href="#index-link_002c-viewer-program">link, viewer program</a>:</td><td>&nbsp;</td><td valign="top"><a href="#External-Viewers">External Viewers</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-link_002c-web-search">link, web search</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Action-Types">Action Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-linking_002c-in_002dplace">linking, in-place</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Explicit-Buttons">Explicit Buttons</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-links">links</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-lisp-identifier">lisp identifier</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Key-_002d-Lisp-Source-Code">Smart Key - Lisp Source Code</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-Lisp-variables">Lisp variables</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Link-Variable-Substitution">Link Variable Substitution</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-list">list</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Thing-Selection">Thing Selection</a></td></tr>

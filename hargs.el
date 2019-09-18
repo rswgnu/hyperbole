@@ -392,7 +392,7 @@ Handles all of the interactive argument types that `hargs:iform-read' does."
 		     (t node)))))
 	((eq hargs:reading-p 'mail)
 	 (and (hmail:reader-p) buffer-file-name
-	      (prin1-to-string (list (rmail:msg-id-get) buffer-file-name) t)))
+	      (prin1-to-string (list (rmail:msg-id-get) buffer-file-name))))
 	((eq hargs:reading-p 'symbol)
 	 (let ((sym (hargs:find-tag-default)))
 	   (if (or (fboundp sym) (boundp sym)) sym)))

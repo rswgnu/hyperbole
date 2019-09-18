@@ -1078,7 +1078,7 @@ Returns number of matching entries found."
 					     hbut:source-prefix
 					   "@loc> ")
 					 "%s")
-				 (prin1-to-string src t))))
+				 (prin1-to-string src))))
 			  (set-buffer hyrolo-display-buffer)
 			  (goto-char (point-max))
 			  (if hdr-pos

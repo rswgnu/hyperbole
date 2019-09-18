@@ -615,7 +615,7 @@ See also documentation for `hui:link-possible-types'."
        (let* ((act) (act-str)
 	      (params (actype:params actype))
 	      (params-no-keywords (actype:param-list actype))
-	      (params-str (and params (concat " " (prin1-to-string params t))))
+	      (params-str (and params (concat " " (prin1-to-string params))))
 	      )
 	 (while (progn
 		 (while (and (setq act-str

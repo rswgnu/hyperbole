@@ -1,5 +1,15 @@
 2019-09-17  Bob Weiner  <rsw@gnu.org>
 
+* hui.el (hui:action):
+  hui-mini.el (hui:menu-item):
+  hibtypes.el (hyp-source):
+  hargs.el (hargs:at-p):
+  hyrolo-logic.el (hyrolo-map-logic):
+  hyrolo.el (hyrolo-grep-file): Undo adding second arg t to prin1-to-string
+    call (meant to prevent string properties output) since has side effect
+    of removing needed quote marks and changes the way buffers print which
+    causes (hyp-source) matches to fail.
+
 * hpath.el (hpath:to-line): Added and used in hpath:find and hpath:find-line.
            (hpath:find-line): Changed to save-restriction when move.
 	   (hpath:shell-modes): Added and used in hpath:to-markup-anchor.

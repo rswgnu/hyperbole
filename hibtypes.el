@@ -1177,12 +1177,13 @@ report buffer behaves the same as the corresponding button in the
 original DEMO file."
   (save-excursion
     (beginning-of-line)
-    (if (looking-at hbut:source-prefix)
-	(let ((src (hbut:source)))
-	  (if src
-	      (progn (if (not (stringp src)) (setq src (prin1-to-string src t)))
-		     (ibut:label-set src (point) (progn (end-of-line) (point)))
-		     (hact 'hyp-source src)))))))
+    (when (looking-at hbut:source-prefix)
+      (let ((src (hbut:source)))
+	(when src
+	  (unless (stringp src)
+	    (setq src (prin1-to-string src)))
+	  (ibut:label-set src (point) (progn (end-of-line) (point)))
+	  (hact 'hyp-source src))))))
 
 ;;; ========================================================================
 ;;; Executes an angle bracket delimited Hyperbole action, Elisp

@@ -154,8 +154,8 @@ WITHOUT ANY WARRANTY, without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</P>
 
 <PRE>
-Edition 7.0.5
-Printed August 27, 2019.
+Edition 7.0.6
+Printed September 17, 2019.
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -196,8 +196,8 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 @sp 2
 
 @example
-Edition 7.0.7
-Augut 27, 2019
+Edition 7.0.6
+September 17, 2019
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -474,7 +474,7 @@ Smart Keyboard Keys
 @chapter Introduction
 
 This edition of the GNU Hyperbole Manual is for use with any version
-7.0.5 or greater of GNU Hyperbole.  Hyperbole runs atop GNU Emacs 24.3
+7.0.6 or greater of GNU Hyperbole.  Hyperbole runs atop GNU Emacs 24.3
 or higher.  It will trigger an error if your Emacs is older.
 
 This chapter summarizes the structure of the rest of the manual,
@@ -1989,7 +1989,7 @@ Execute the implicit button's action in the context of the current buffer.
 
 Recognizes the format '<ilink:' button_label [':' button_file_path] '>',
 where button_file_path is given only when the link is to another file,
-e.g. <ilink: my series of keys: ${hyperb:dir}/HYPB>.
+e.g. <ilink: my series of keys: $@{hyperb:dir@}/HYPB>.
 
 
 @findex ibtypes glink

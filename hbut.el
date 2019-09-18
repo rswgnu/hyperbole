@@ -872,15 +872,16 @@ With optional FULL when source is a pathname, the full pathname is returned."
 			buffer-file-name
 		      (file-name-nondirectory buffer-file-name)))
 		   ;; Handle any preceding @loc hyp-source implicit button location references.
-		   ;; This is used in report buffers of explicit buttons, i.e. hui:hbut-report.
+		   ;; This is used in report buffers of explicit buttons, i.e. hui:hbut-report
+		   ;; and the *Rolo* output buffer.
 		   ((save-excursion
 		      (save-restriction
 			(widen)
 			(end-of-visible-line)
-			(if (and (search-backward hbut:source-prefix nil t)
-				 (or (memq (preceding-char) '(?\n ?\r))
-				     (= (point) (point-min))))
-			    (hbut:source full)))))
+			(when (and (search-backward hbut:source-prefix nil t)
+				   (or (memq (preceding-char) '(?\n ?\r))
+				       (= (point) (point-min))))
+			  (hbut:source full)))))
 		   (t (current-buffer)))))
     (hbut:key-src-set-buffer src)))
 
