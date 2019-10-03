@@ -1,3 +1,51 @@
+2019-10-01  Bob Weiner  <rsw@gnu.org>
+
+* hact.el (htype:delete): Removed improper quote in (fboundp 'sym) call.
+          (htype:symbol): Reverted to prior version which properly creates
+    previously undefined Elisp symbols, thereby fixing htype:create.
+          (actype:create): Made symtable:add call part of compile-time macro value.
+
+2019-09-24  Mats Lidell  <matsl@gnu.org>
+
+* Makefile (ELC_COMPILE): Added missing kprop-em.elc.
+
+2019-09-23  Bob Weiner  <rsw@gnu.org>
+
+* hui.el (hui:link-directly): Called symtable:actype-p replacing invalid
+    htype:actype-p call.
+
+* hmouse-drv.el (hkey-buffer-move): Wrapped (require 'windmove) in eval-and-compile
+    to remove a byte-compiler warning.
+
+2019-09-22  Bob Weiner  <rsw@gnu.org>
+
+* hact.el (action:path-args-rel): Added file-name-directory call so always
+    sends a directory as the second argument, preventing off-by-one level
+    of relative directory generation.
+
+2019-09-19  Bob Weiner  <rsw@gnu.org>
+
+* hmouse-drv.el (hkey-help): Added display of ibtype, if any.
+
+* hbut.el (ibtype:def-symbol): Added.
+
+* hact.el (actype:def-symbol): Change mislabeled 'sym-name' to 'name'.
+
+2019-09-18  Bob Weiner  <rsw@gnu.org>
+
+* kotl/kotl-mode.el (kotl-mode:top-cells): Removed (kvspec:activate)
+    which was using the unchanged viewspec that improperly set the view.
+
+* hibtypes.el (action): Updated to handle boolean function results.
+  hactypes.el (display-boolean): Added to display the result of Action ibtypes
+    boolean function calls.
+  man/hyperbole.texi (Action Buttons): Added paragraph on boolean
+    predicate result display.
+
+==============================================================================
+V7.0.7 changes ^^^^:
+==============================================================================
+
 2019-09-17  Bob Weiner  <rsw@gnu.org>
 
 * hui.el (hui:action):
@@ -180,6 +228,10 @@
 2019-08-27  Bob Weiner  <rsw@gnu.org>
 
 * DEMO: Changed most 'click' uses in DEMO to 'press'.
+
+==============================================================================
+V7.0.6 changes ^^^^:
+==============================================================================
 
 * man/hyperbole.texi (Implicit Button Type Summaries): Changed to Implicit
     Button Types.

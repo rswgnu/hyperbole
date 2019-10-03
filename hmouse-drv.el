@@ -723,7 +723,8 @@ the given direction."
 	   (_ (error "(hkey-buffer-move): Invalid movement direction, '%s'" direction))))
 	(hkey-swap-buffers w1 (selected-window)))
     ;; ... but if not available, use the Emacs builtin windmove package.
-    (require 'windmove)
+    (eval-and-compile
+      (require 'windmove))
     (windmove-do-window-select direction arg)))
 
 ;;; ************************************************************************
@@ -841,7 +842,9 @@ Return non-nil iff associated help documentation is found."
 			  calls)
 
 		    (when (memq cmd-sym '(hui:hbut-act hui:hbut-help))
-		      (princ (format "BUTTON SPECIFICS:\n\n%s\n"
+		      (princ (format "%s BUTTON SPECIFICS:\n\n%s\n"
+				     (ibtype:def-symbol
+				      (hattr:get 'hbut:current 'categ))
 				     (actype:doc 'hbut:current t)))
 		      (hattr:report
 		       (nthcdr 2 (hattr:list 'hbut:current))))

@@ -1242,12 +1242,17 @@ arg1 ... argN '>'.  For example, <mail user@mybiz.com>."
 	(ibut:label-set lbl start-pos end-pos)
 	(setq action (read (concat "(" lbl ")"))
 	      args (cdr action))
-	(when (and (null args) (symbolp actype) (boundp actype)
-		   (or var-flag (not (fboundp actype))))
-	  ;; Is a variable, display its value as the action
-	  (setq args `(',actype)
-		action `(display-variable ',actype)
-		actype 'display-variable))
+	(cond ((and (symbolp actype) (fboundp actype)
+		    (string-match "-p\\'" (symbol-name actype)))
+	       ;; Is a function with a boolean result
+	       (setq action `(display-boolean ',action)
+		     actype 'display-boolean))
+	      ((and (null args) (symbolp actype) (boundp actype)
+		    (or var-flag (not (fboundp actype))))
+	       ;; Is a variable, display its value as the action
+	       (setq args `(',actype)
+		     action `(display-variable ',actype)
+		     actype 'display-variable)))
 	;; Necessary so can return a null value, which actype:act cannot.
 	(let ((hrule:action (if (eq hrule:action #'actype:identity)
 				hrule:action

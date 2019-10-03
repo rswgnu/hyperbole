@@ -47,13 +47,13 @@
 ;;; Public variables
 ;;; ************************************************************************
 
+(define-obsolete-variable-alias 'smart-asm-include-dirs
+  'smart-asm-include-path "06.00")
 (defcustom smart-asm-include-path nil
   "*Ordered list of directories to search for assembly language include files.
 Each directory must end with a directory separator."
   :type '(repeat directory)
   :group 'hyperbole-commands)
-(define-obsolete-variable-alias 'smart-asm-include-dirs
-  'smart-asm-include-path "06.00")
 
 (defconst smart-asm-include-regexp
   "[ \t*#|;]*\\(include\\|lib\\)[ \t]+\\([^ \t\n\r]+\\)"
@@ -66,15 +66,17 @@ Examples include:
        lib conditionals_equ.inc
          should include \"conditionals_equ.inc\"")
 
+(define-obsolete-variable-alias 'smart-c-cpp-include-dirs
+  'smart-c-cpp-include-path "06.00")
 (defcustom smart-c-cpp-include-path '("/usr/include/")
   "*Ordered list of include directories by default searched by C/C++ preprocessor.
 Each directory must end with a directory separator.  See also
 'smart-c-include-path'."
   :type '(repeat directory)
   :group 'hyperbole-commands)
-(define-obsolete-variable-alias 'smart-c-cpp-include-dirs
-  'smart-c-cpp-include-path "06.00")
 
+(define-obsolete-variable-alias 'smart-c-include-dirs
+  'smart-c-include-path "06.00")
 (defcustom smart-c-include-path nil
   "*Ordered list of directories to search for C/C++ include files.
 Each directory must end with a directory separator.  Directories normally
@@ -82,8 +84,6 @@ searched by the C/C++ pre-processor should be set instead in
 `smart-c-cpp-include-path'."
   :type '(repeat directory)
   :group 'hyperbole-commands)
-(define-obsolete-variable-alias 'smart-c-include-dirs
-  'smart-c-include-path "06.00")
 
 (defcustom smart-c-use-lib-man nil
   "When non-nil makes `smart-c' and `smart-c++' display man pages for recognized library symbols.

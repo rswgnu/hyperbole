@@ -2,7 +2,7 @@
 				 by Bob Weiner
 
 ===========================================================================
-*                                   V7.0.6
+*                                   V7.0.7
 ===========================================================================
 
   BUTTONS
@@ -28,7 +28,7 @@
         <glink: global button label to link to>                        link-to-gbut
         <ilink: implicit button label to link to: optional ibut file>  link-to-ibut
 
-    - Other new implicit button types:
+    - Other New Implicit Button Types:
         debugger-source: Jump to the source of errors from the Python pytype package
         ipython-stack-frame: Jump to the source of ipython stack traces and exceptions
 
@@ -36,15 +36,17 @@
       and activation even with the new generalized Action implicit button type
       syntax, due to internal optimizations.
 
-    - Pathname implicit buttons now flash when activated.
+    - Pathname Flashing: Pathname implicit buttons now flash when activated.
 
-    - Pathname implicit buttons may contain both link anchors and line and column
-      numbers.  Link anchors now work for shell script editing modes as well
-      using comment lines as anchors.  Format is:
-      "<path>[#<link-anchor>]:<line-num>[:<col-num>]"
+    - Pathname References: Pathname implicit buttons may contain both link anchors
+      and line and column numbers.  Format is:
+        "<path>[#<link-anchor>]:<line-num>[:<col-num>]"
 
-    - Variables in paths no longer require a trailing directory separator.
-        Both of these are live Hyperbole paths:
+    - Shell Script Link Anchors: Link anchors now work for shell script editing modes
+      as well using comment lines as the anchors, e.g. "myscript.sh#Env Variables".
+
+    - Dir Variable Separators: Variables in paths no longer require a trailing directory
+      separator.  Both of these are live Hyperbole paths:
 	  "${hyperb:dir}DEMO#Smart Mouse Keys"
 	  "${hyperb:dir}/DEMO#Smart Mouse Keys"
 
@@ -61,7 +63,7 @@
     - Implicit Button Types: Split off type descriptions to this new
       subsection and added these types: ripgrep-msg, ipython-stack-frame,
       ilink (link to implicit button), glink (link to global button), and
-ib      elink (link to explicit button).
+      elink (link to explicit button).
 
     - DEMO (Action Buttons): Added description and examples.
 

@@ -1,7 +1,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <!-- This manual is for GNU Hyperbole
-(Edition 7.0.6, Published September 17, 2019).
+(Edition 7.0.7, Published October 2, 2019).
 
 Copyright (C) 1989-2019  Free Software Foundation, Inc.
 
@@ -348,8 +348,8 @@ WITHOUT ANY WARRANTY, without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</P>
 
 <PRE>
-Edition 7.0.6
-Printed September 17, 2019.
+Edition 7.0.7
+Printed October 2, 2019.
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -806,7 +806,7 @@ Next: <a href="#Smart-Keys" accesskey="n" rel="next">Smart Keys</a>, Previous: <
 <h2 class="chapter">1 Introduction</h2>
 
 <p>This edition of the GNU Hyperbole Manual is for use with any version
-7.0.6 or greater of GNU Hyperbole.  Hyperbole runs atop GNU Emacs 24.3
+7.0.7 or greater of GNU Hyperbole.  Hyperbole runs atop GNU Emacs 24.3
 or higher.  It will trigger an error if your Emacs is older.
 </p>
 <p>This chapter summarizes the structure of the rest of the manual,
@@ -3083,10 +3083,15 @@ Lisp function name rather than an action type name, e.g.
 <pre class="example">&lt;find-file-other-window &quot;/tmp&quot;&gt;
 </pre></div>
 
+<p>Generally, such functions are invoked for their side-effects and their
+return value is silently ignored.  But if a function is a boolean
+predicate whose name ends in &lsquo;<samp>-p</samp>&rsquo;, then the result is displayed
+in the minibuffer.
+</p>
 </dd>
 <dt><em>variable displays</em></dt>
-<dd><p>These consist of only an Emacs Lisp variable name and display a
-message with the variable name and value, e.g.
+<dd><p>These consist of an Emacs Lisp variable name only.  They display
+messages with their variable name and value, e.g.
 </p>
 <div class="example">
 <pre class="example">&lt;fill-column&gt;

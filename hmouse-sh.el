@@ -263,7 +263,7 @@ These may be the bindings prior to initializing Hyperbole or the Hyperbole bindi
   ;; Do nothing when running in batch mode.
   (unless noninteractive
     (nconc
-     (if hmouse-middle-flag (hmouse-get-unshifted-bindings))
+     (when hmouse-middle-flag (hmouse-get-unshifted-bindings))
      ;; Get mouse bindings under Emacs or XEmacs, even if not under a
      ;; window system since they can have frames on ttys and windowed
      ;; displays at the same time.
@@ -327,51 +327,51 @@ These may be the bindings prior to initializing Hyperbole or the Hyperbole bindi
 		(cons key (global-key-binding key)))
 	      '([(shift button2)] [(shift button2up)]
 		[(shift button3)] [(shift button3up)]))
-      (if (boundp 'mode-line-map)
-	  (mapcar (lambda (key)
-		    (cons key (lookup-key mode-line-map key)))
-		  '([(shift button3)] [(shift button3up)])))))))
+      (when (boundp 'mode-line-map)
+	(mapcar (lambda (key)
+		  (cons key (lookup-key mode-line-map key)))
+		'([(shift button3)] [(shift button3up)])))))))
 
 (defun hmouse-get-unshifted-bindings ()
   "Return the list of middle mouse key bindings prior to their use as Smart Keys."
   ;; Do nothing when running in batch mode.
-  (mapcar (lambda (key) (cons key (global-key-binding key)))
-	  (if (not (eq window-system 'dps))
-	      ;; X, macOS or MS Windows
-	      '([down-mouse-2] [drag-mouse-2] [mouse-2]
-		[down-mouse-3] [drag-mouse-3] [mouse-3]
-		[double-mouse-2] [triple-mouse-2]
-		[double-mouse-3] [triple-mouse-3]
-		[header-line down-mouse-2] [header-line drag-mouse-2]
-		[header-line mouse-2]
-		[left-fringe down-mouse-2] [left-fringe drag-mouse-2]
-		[left-fringe mouse-2]
-		[right-fringe down-mouse-2] [right-fringe drag-mouse-2]
-		[right-fringe mouse-2]
-		[vertical-line down-mouse-2] [vertical-line drag-mouse-2]
-		[vertical-line mouse-2]
-		[left-fringe down-mouse-3] [left-fringe drag-mouse-3]
-		[left-fringe mouse-3]
-		[right-fringe down-mouse-3] [right-fringe drag-mouse-3]
-		[right-fringe mouse-3]
-		[vertical-line down-mouse-3] [vertical-line drag-mouse-3]
-		[vertical-line mouse-3]
-		[mode-line down-mouse-2] [mode-line drag-mouse-2]
-		[mode-line mouse-2]
-		[mode-line down-mouse-3] [mode-line drag-mouse-3]
-		[mode-line mouse-3]
-		)))
+  (mapc (lambda (key) (cons key (global-key-binding key)))
+	(unless (eq window-system 'dps)
+	  ;; X, macOS or MS Windows
+	  '([down-mouse-2] [drag-mouse-2] [mouse-2]
+	    [down-mouse-3] [drag-mouse-3] [mouse-3]
+	    [double-mouse-2] [triple-mouse-2]
+	    [double-mouse-3] [triple-mouse-3]
+	    [header-line down-mouse-2] [header-line drag-mouse-2]
+	    [header-line mouse-2]
+	    [left-fringe down-mouse-2] [left-fringe drag-mouse-2]
+	    [left-fringe mouse-2]
+	    [right-fringe down-mouse-2] [right-fringe drag-mouse-2]
+	    [right-fringe mouse-2]
+	    [vertical-line down-mouse-2] [vertical-line drag-mouse-2]
+	    [vertical-line mouse-2]
+	    [left-fringe down-mouse-3] [left-fringe drag-mouse-3]
+	    [left-fringe mouse-3]
+	    [right-fringe down-mouse-3] [right-fringe drag-mouse-3]
+	    [right-fringe mouse-3]
+	    [vertical-line down-mouse-3] [vertical-line drag-mouse-3]
+	    [vertical-line mouse-3]
+	    [mode-line down-mouse-2] [mode-line drag-mouse-2]
+	    [mode-line mouse-2]
+	    [mode-line down-mouse-3] [mode-line drag-mouse-3]
+	    [mode-line mouse-3]
+	    )))
   (nconc
    (mapcar (lambda (key)
 	     (cons key (global-key-binding key)))
 	   '([button2] [button2up]
 	     [button3] [button3up]
 	     ))
-   (if (boundp 'mode-line-map)
-       (mapcar (function
-		(lambda (key)
-		  (cons key (lookup-key mode-line-map key))))
-	       '([button3] [button3up])))
+   (when (boundp 'mode-line-map)
+     (mapcar (function
+	      (lambda (key)
+		(cons key (lookup-key mode-line-map key))))
+	     '([button3] [button3up])))
    ))
 
 ;; Based on a function from Emacs mouse.el.
@@ -382,11 +382,11 @@ Select the corresponding window as well."
       (progn (if (not (windowp (frame-selected-window (posn-window position))))
 		 (error "Position not in text area of window"))
 	     (select-window (frame-selected-window (posn-window position))))
-    (if (not (windowp (posn-window position)))
-	(error "Position not in text area of window"))
+    (unless (windowp (posn-window position))
+      (error "Position not in text area of window"))
     (select-window (posn-window position)))
-  (if (numberp (posn-point position))
-      (goto-char (posn-point position))))
+  (when (numberp (posn-point position))
+    (goto-char (posn-point position))))
 
 ;; Based on a function from Emacs mouse.el.
 (defun hmouse-move-point-emacs (event &optional promote-to-region)
@@ -398,10 +398,10 @@ point determined by `mouse-select-region-move-to-beginning'."
   (interactive "e\np")
   (let ((start-w-or-f (posn-window (event-start event)))
 	(end-w-or-f   (posn-window (event-end event))))
-    (if (framep start-w-or-f)
-	(with-selected-frame start-w-or-f (setq start-w-or-f (selected-window))))
-    (if (framep end-w-or-f)
-	(with-selected-frame end-w-or-f (setq end-w-or-f (selected-window))))
+    (when (framep start-w-or-f)
+      (with-selected-frame start-w-or-f (setq start-w-or-f (selected-window))))
+    (when (framep end-w-or-f)
+      (with-selected-frame end-w-or-f (setq end-w-or-f (selected-window))))
     (if (and (window-minibuffer-p start-w-or-f)
 	     (not (minibuffer-window-active-p start-w-or-f)))
 	;; Select the ending frame only, not the window pressed within.
@@ -438,10 +438,10 @@ point determined by `mouse-select-region-move-to-beginning'."
   (unless noninteractive
     (or hmouse-bindings-flag hmouse-previous-bindings
 	(setq hmouse-previous-bindings (hmouse-get-bindings hmouse-middle-flag)))
-    (if hmouse-middle-flag (hmouse-unshifted-setup hmouse-middle-flag))
+    (when hmouse-middle-flag (hmouse-unshifted-setup hmouse-middle-flag))
     ;; Ensure Gillespie's Info mouse support is off since
     ;; Hyperbole handles that.
-    (if (boundp 'Info-mouse-support) (setq Info-mouse-support nil))
+    (when (boundp 'Info-mouse-support) (setq Info-mouse-support nil))
     ;;
     ;; This event setting from the "kmacro.el" library can
     ;; trigger an autoload that binds [S-mouse-3] to 'kmacro-end-call-mouse,

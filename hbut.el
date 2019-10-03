@@ -1490,11 +1490,19 @@ buttons of this type; most useful when TO-P is also given.
 Return symbol created when successful, else nil.  Nil indicates that action
 type for ibtype is presently undefined."
   (when type
-    (symtable:add type symtable:ibtypes)
     (let ((to-func (when to-p (action:create nil (list to-p))))
 	  (at-func (list at-p)))
-      `(htype:create ,type ibtypes ,doc nil ,at-func
-		     (list 'to-p ,to-func 'style ,style)))))
+      `(progn (symtable:add ',type symtable:ibtypes)
+	      (htype:create ,type ibtypes ,doc nil ,at-func
+			    '(to-p ,to-func style ,style))))))
+
+(defun    ibtype:def-symbol (ibtype)
+  "Return the abbreviated symbol for IBTYPE used in its `defib'; IBTYPE may be a string or symbol."
+  (let ((name (if (stringp ibtype)
+		  ibtype
+		(symbol-name ibtype))))
+    (when (string-match "\\`ibtypes::" name)
+      (make-symbol (substring name (match-end 0))))))
 
 (defun    ibtype:delete (type)
   "Delete an implicit button TYPE (a symbol).

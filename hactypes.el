@@ -46,8 +46,16 @@ inserted, delete the completions window."
 	     (delete-window))
     (hargs:completion)))
 
+(defact display-boolean (bool-expr)
+  "Display a message showing the result value of a BOOL-EXPR.
+Return any non-nil value or t."
+  (let ((result (eval bool-expr)))
+    (message "Boolean result (%s) = %s" (if result "True" "False") (prin1-to-string result))
+    (or result t)))
+
 (defact display-variable (var)
-  "Display a message showing `var` (a symbol) and its value."
+  "Display a message showing `var` (a symbol) and its value.
+Return any non-nil value or t."
   (message "%s = %s" var (symbol-value var))
   (or (symbol-value var) t))
 

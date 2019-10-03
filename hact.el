@@ -59,7 +59,7 @@ symbol or if SYMTABLE is invalid."
       (setq def-name name
 	    elisp-name (concat (symtable:name symtable) "::" name)
 	    elisp-symbol (funcall intern-op elisp-name)))
-    ;; Comment this out so can look for and try to remove symbols yet not defined.
+    ;; Comment this out so can look for and try to remove symbols not yet defined.
     ;; (unless elisp-symbol
     ;;   (error "(symtable:operate): Use `%s' to create a new type named `%s' before using `%s' on it"
     ;; 	     (if (equal (plist-get symtable 'name) "actypes") "defact" "defib")
@@ -216,7 +216,7 @@ Return the new function symbol derived from TYPE."
   "Delete a Hyperbole TYPE derived from TYPE-CATEGORY (both symbols).
 Return the Hyperbole symbol for the TYPE if it existed, else nil."
   (let* ((sym (htype:symbol type type-category))
-	 (exists (fboundp 'sym)))
+	 (exists (fboundp sym)))
     (setplist sym nil)
     (symtable:delete type (symtable:select type-category))
     (symset:delete type type-category 'symbols)
@@ -246,8 +246,8 @@ When optional SYM is given, returns the name for that symbol only, if any."
 ;;; ------------------------------------------------------------------------
 
 (defun   htype:symbol (type type-category)
-  "Return Hyperbole type symbol composed from TYPE and TYPE-CATEGORY (both symbols)."
-  (symtable:get type (symtable:select type-category)))
+  "Return possibly new Hyperbole type symbol composed from TYPE and TYPE-CATEGORY (both symbols)."
+  (intern (concat (symbol-name type-category) "::" (symbol-name type))))
 
 ;;; ========================================================================
 ;;; action class
@@ -373,9 +373,10 @@ Other paths are simply expanded.  Non-path arguments are returned unchanged."
   (let ((loc (hattr:get 'hbut:current 'loc)))
     (mapcar (lambda (arg)
 	      (hpath:relative-to arg
-				 (if (stringp loc)
-				     loc
-				   (buffer-local-value 'default-directory loc))))
+				 (file-name-directory
+				  (if (stringp loc)
+				      loc
+				    (buffer-local-value 'default-directory loc)))))
 	    args-list)))
 
 
@@ -429,7 +430,7 @@ performing ACTION."
 		  actype
 		(symbol-name actype))))
     (when (string-match "\\`actypes::" name)
-      (make-symbol (substring sym-name (match-end 0))))))
+      (make-symbol (substring name (match-end 0))))))
 
 (defun    actype:eval (actype &rest args)
   "Performs action formed from ACTYPE and rest of ARGS and returns value.
@@ -485,8 +486,9 @@ The type uses PARAMS to perform DEFAULT-ACTION (list of the rest of the
 arguments).  A call to this function is syntactically the same as for
 `defun',  but a doc string is required.
 Return symbol created when successful, else nil."
-  (symtable:add type symtable:actypes)
-  (list 'htype:create type 'actypes doc params default-action `'(definition-name ,type)))
+  `(progn
+     (symtable:add ',type symtable:actypes)
+     (htype:create ,type actypes ,doc ,params ,default-action '(definition-name ,type))))
 
 (defalias 'defact 'actype:create)
 (put      'actype:create 'lisp-indent-function 'defun)

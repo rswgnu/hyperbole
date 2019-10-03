@@ -154,8 +154,8 @@ WITHOUT ANY WARRANTY, without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</P>
 
 <PRE>
-Edition 7.0.6
-Printed September 17, 2019.
+Edition 7.0.7
+Printed October 2, 2019.
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -196,8 +196,8 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 @sp 2
 
 @example
-Edition 7.0.6
-September 17, 2019
+Edition 7.0.7
+October 2, 2019
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -474,7 +474,7 @@ Smart Keyboard Keys
 @chapter Introduction
 
 This edition of the GNU Hyperbole Manual is for use with any version
-7.0.6 or greater of GNU Hyperbole.  Hyperbole runs atop GNU Emacs 24.3
+7.0.7 or greater of GNU Hyperbole.  Hyperbole runs atop GNU Emacs 24.3
 or higher.  It will trigger an error if your Emacs is older.
 
 This chapter summarizes the structure of the rest of the manual,
@@ -2448,9 +2448,14 @@ Lisp function name rather than an action type name, e.g.
 <find-file-other-window "/tmp">
 @end example
 
+Generally, such functions are invoked for their side-effects and their
+return value is silently ignored.  But if a function is a boolean
+predicate whose name ends in @samp{-p}, then the result is displayed
+in the minibuffer.
+
 @item variable displays
-These consist of only an Emacs Lisp variable name and display a
-message with the variable name and value, e.g.
+These consist of an Emacs Lisp variable name only.  They display
+messages with their variable name and value, e.g.
 
 @example
 <fill-column>

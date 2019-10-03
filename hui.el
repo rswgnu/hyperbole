@@ -597,7 +597,7 @@ See also documentation for `hui:link-possible-types'."
 						item (match-end 0)))
 				  item))
 			       type-and-args
-			       (documentation (htype:actype-p type))))
+			       (documentation (symtable:actype-p type))))
 			    link-types)))
 		    type-and-args (hui:list-remove-text-properties type-and-args))
 	      (hui:link-create

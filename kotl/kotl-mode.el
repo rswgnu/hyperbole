@@ -2554,7 +2554,6 @@ With optional prefix ARG, toggle display of blank lines between cells."
     (kvspec:levels-to-show 1)
     (kvspec:show-lines-per-cell 1)
     (if arg (kvspec:toggle-blank-lines))
-    (kvspec:activate)
     ;; Restore buffer modification status
     (set-buffer-modified-p modified-p)))
 

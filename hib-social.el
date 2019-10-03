@@ -585,10 +585,10 @@ PROJECT value is provided, it defaults to the value of
 			  (setq reference (substring reference (match-end 0)))))))
 	       (if (and (stringp user) (stringp project))
 		   (funcall hibtypes-social-display-function
-			    (setq a (if reference
+			    (if reference
 				(format url-to-format user project ref-type reference)
-				;; Remove trailing /
-				(substring (format url-to-format user project "" "") 0 -1))))
+			      ;; Remove trailing /
+			      (substring (format url-to-format user project "" "") 0 -1)))
 		 (cond ((and (null user) (null project))
 			(error "(gitlab-reference): Set `hibtypes-gitlab-default-user' and `hibtypes-gitlab-default-project'"))
 		       ((null user)
