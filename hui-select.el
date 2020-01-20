@@ -107,7 +107,6 @@
 
 (require 'hvar)
 (eval-when-compile
-  (require 'kotl-mode)
   (require 'sgml-mode) ;; for HTML mode
   (require 'nxml-mode) ;; for XML mode
   (require 'web-mode nil t))
