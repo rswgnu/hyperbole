@@ -1,3 +1,7 @@
+2020-01-20  Bob Weiner  <rsw@gnu.org>
+
+* Published 7.0.8 test release.
+
 2020-01-07  Bob Weiner  <rsw@gnu.org>
 
 * hui-mini.el (hui:menus): Added Gbut/Rename.
