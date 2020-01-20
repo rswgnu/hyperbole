@@ -571,6 +571,7 @@ constructs.  If not given, the top level Hyperbole menu is used."
 	  ("Info"   (id-info "(hyperbole)Global Buttons")
 	   "Displays manual section on global buttons.")
 	  ("Modify" hui:gbut-modify "Modifies global button attributes.")
+	  ("Rename" hui:gbut-rename "Renames a global button.")
 	  ))
        '(ibut .
 	 (("IButton>")

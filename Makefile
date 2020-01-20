@@ -63,7 +63,7 @@
 
 # This ver setup won't work under any make except GNU make, so set it manually.
 #HYPB_VERSION = "`head -3 hversion.el | tail -1 | sed -e 's/.*|\(.*\)|.*/\1/'`"
-HYPB_VERSION = 7.0.7
+HYPB_VERSION = 7.0.8
 
 # Emacs executable used to byte-compile .el files into .elc's.
 # Possibilities include: emacs, infodock, etc.
@@ -260,7 +260,7 @@ elc-init:
 src: autoloads tags
 
 # Remove and then rebuild all byte-compiled .elc files, even those .elc files
-# which do not yet exist, plus built TAGS file.
+# which do not yet exist, plus build TAGS file.
 bin: src
 	$(RM) *.elc kotl/*.elc
 	$(EMACS) $(BATCHFLAGS) $(PRELOADS) -f batch-byte-compile $(EL_KOTL) $(EL_COMPILE)

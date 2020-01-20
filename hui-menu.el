@@ -401,6 +401,7 @@ REBUILD-FLAG is non-nil, in which case the menu is rebuilt."
 		   ["Edit"   hui:gbut-modify t]
 		   ["Help"   gbut:help t]
 		   ["Modify" hui:gbut-modify t]
+                   ["Rename" hui:gbut-rename t]
 		   )
 		 '("Implicit-Button"
 		   ["Manual"   (id-info "(hyperbole)Implicit Buttons") t]

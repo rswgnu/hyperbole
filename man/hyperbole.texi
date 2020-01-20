@@ -154,8 +154,8 @@ WITHOUT ANY WARRANTY, without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</P>
 
 <PRE>
-Edition 7.0.7
-Printed October 2, 2019.
+Edition 7.0.8
+Printed January 19, 2020.
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -196,8 +196,8 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 @sp 2
 
 @example
-Edition 7.0.7
-October 2, 2019
+Edition 7.0.8
+January 19, 2020
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -474,7 +474,7 @@ Smart Keyboard Keys
 @chapter Introduction
 
 This edition of the GNU Hyperbole Manual is for use with any version
-7.0.7 or greater of GNU Hyperbole.  Hyperbole runs atop GNU Emacs 24.3
+7.0.8 or greater of GNU Hyperbole.  Hyperbole runs atop GNU Emacs 24.3
 or higher.  It will trigger an error if your Emacs is older.
 
 This chapter summarizes the structure of the rest of the manual,
@@ -1087,14 +1087,15 @@ parenthesis.
 
 @cindex HTML tag pair
 @cindex SGML tag pair
+@cindex XML tag pair
 The best way to mark a delimited thing is to move your cursor to the
-starting delimiter of the thing and then press the Action Key.  Typically,
-you will see the thing highlight.  You can then operate upon it as you
-would any Emacs region.  In many cases, you can do the same thing upon
-the closing delimiter, but this is not as reliable.  An Action Key
-press on the start of an HTML or SGML tag pair marks the entire region
-span of the pair.  If you use the Assist Key instead, it will mark and
-kill (delete) the thing.
+starting delimiter of the thing and then press the Action Key.
+Typically, you will see the thing highlight.  You can then operate
+upon it as you would any Emacs region.  In many cases, you can do the
+same thing upon the closing delimiter, but this is not as reliable.
+An Action Key press on the start of an HTML, XML, or SGML tag pair
+marks the entire region span of the pair.  If you use the Assist Key
+instead, it will mark and kill (delete) the thing.
 
 @cindex drag, with region
 @cindex kill region
@@ -1135,12 +1136,13 @@ a different mouse key to use single clicks instead of double clicks.
 
 @kindex C-c .
 @findex hui-select-goto-matching-tag
-The second convenience key is bound only in HTML/web mode.  @bkbd{C-c
-.} @code{hui-select-goto-matching-tag} jumps between the opening and
-closing tag of a pair.  It moves point to the start of the tag paired
-with the closest tag that point is within or which it precedes.  A
-second press moves point to the matching tag of the pair, allowing you
-to quickly jump back and forth between opening and closing tags.
+The second convenience key is bound in HTML/XML/SGML/web
+modes.  @bkbd{C-c .} @code{hui-select-goto-matching-tag} jumps between
+the opening and closing tag of a pair.  It moves point to the start of
+the tag paired with the closest tag that point is within or which it
+precedes.  A second press moves point to the matching tag of the pair,
+allowing you to quickly jump back and forth between opening and
+closing tags.
 
 @node Smart Mouse Key Modeline Clicks, Smart Mouse Key Drags, Smart Key Thing Selection, Smart Keys
 @section   Smart Mouse Key Modeline Clicks
@@ -2351,6 +2353,9 @@ handled by func-menu.
 @item pathname-line-and-column
 Make a valid pathname:line-num[:column-num] pattern display the path
 at line-num and optional column-num.  Also works for remote pathnames.
+May also contain hash-style link references with the following format:
+@file{<path>[#<link-anchor>]:<line-num>[:<column-num>]}.
+
 
 @findex ibtypes pathname
 @findex hpath:at-p
@@ -2362,14 +2367,23 @@ at line-num and optional column-num.  Also works for remote pathnames.
 @cindex remote path
 @cindex filename
 @cindex link, pathname
+@cindex environment variables
+@cindex Emacs Lisp variables
+@cindex Lisp variables
 @item pathname
 Make a valid pathname display the path entry.  Also works for
 delimited and non-delimited remote pathnames, Texinfo @@file@{@}
-entries, and hash-style link references to HTML, Markdown or Emacs
-outline headings, and MSWindows paths (see @file{$@{hyperb:dir@}/DEMO#POSIX
-and MSWindows Paths} for details).  Emacs Lisp library files
-(filenames without any directory component that end in .el and .elc)
-are looked up using the @code{load-path} directory list.
+entries, and hash-style link references to HTML, XML, SGML, Markdown
+or Emacs outline headings, shell script comments, and MSWindows paths
+(see @file{$@{hyperb:dir@}/DEMO#POSIX and MSWindows Paths} for
+details).  Emacs Lisp library files (filenames without any directory
+component that end in .el and .elc) are located using
+the @code{load-path} directory list.
+
+@noindent
+The pathname may contain references to Emacs Lisp variables or shell
+environment variables using the syntax, \"$@{variable-name@}\".
+@xref{Link Variable Substitution}, for how this handled.
 
 @noindent
 See the function documentation for @code{hpath:at-p} for possible
@@ -2617,6 +2631,14 @@ Execute the function binding for KEY-SEQUENCE, delimited by @{@}.
 Return @samp{t} if a KEY-SEQUENCE has a binding, else @samp{nil}.
 
 @cindex link action types
+@findex actypes link-to-bookmark
+@item link-to-bookmark
+Display an Emacs BOOKMARK.
+When creating the button, if in Bookmark Menu mode, use the bookmark
+nearest point as the default.  Otherwise, utilize the most recently used
+bookmark in the current file (bookmark-current-bookmark) as the default,
+if any.
+
 @findex actypes link-to-buffer-tmp
 @item link-to-buffer-tmp
 Display a BUFFER.  This type of link is for use in  a single editor session.
@@ -6881,7 +6903,8 @@ substituted into the link pathname, in place of its literal value.
 When a link button is activated, potentially at a different site,
 Hyperbole replaces each variable in the link pathname with the first
 matching value from this list to recreate the literal pathname.
-Environment variables are also replaced whenever link paths are
+Environment variables and Emacs Lisp variables delimited
+by \"$@{variable-name@}\" are also replaced whenever link paths are
 resolved.
 
 This permits sharing of links over wide areas, where the variable values

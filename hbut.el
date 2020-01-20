@@ -153,6 +153,13 @@ buffer."
   (and (symbolp object)
        (eq (hattr:get object 'categ) 'explicit)))
 
+(defun    ebut:key (ebut)
+  "Return the key for Hyperbole explicit button symbol EBUT."
+  (if (ebut:is-p ebut)
+      (hattr:get ebut 'lbl-key)
+    (error "(ebut:key): Argument is not a Hyperbole explicit button symbol, `%s'"
+	   ebut)))
+
 (defun    ebut:key-of-label-p (key label)
   "Return t iff KEY matches to LABEL in a case insensitive manner."
   (and (stringp key) (stringp label)
@@ -165,6 +172,8 @@ buffer."
 
 (defun    ebut:label-p (&optional as-label start-delim end-delim pos-flag two-lines-flag)
   "Return key for the Hyperbole explicit button label that point is within, else nil.
+This is the normalized key form of the explicit button's label.
+
 Assumes point is within the first line of any button label.  All
 following arguments are optional.  If AS-LABEL is non-nil, label
 is returned rather than the key derived from the label.
@@ -837,6 +846,13 @@ nil.  BUFFER defaults to the current buffer."
   "Return non-nil if OBJECT denotes a Hyperbole button."
  (and (symbolp object) (hattr:get object 'categ)))
 
+(defun    hbut:key (hbut)
+  "Return the key for Hyperbole button symbol HBUT."
+  (if (hbut:is-p hbut)
+      (hattr:get hbut 'lbl-key)
+    (error "(hbut:key): Argument is not a Hyperbole button symbol, `%s'"
+	   hbut)))
+
 (defun    hbut:key-src (&optional full)
   "Return key source (usually unqualified) for current Hyperbole button.
 Also sets current buffer to key source.
@@ -901,7 +917,7 @@ represent the output of particular document formatters."
 		(concat src ".texinfo"))
 	       ((current-buffer))))))
 
-(defun hbut:key-src-set-buffer (src)
+(defun    hbut:key-src-set-buffer (src)
   "Set buffer to SRC, a buffer, file, directory or symlink and return SRC or nil if invalid."
   (cond ((null src) nil)
 	((bufferp src)
@@ -1045,6 +1061,17 @@ include delimiters when INCLUDE-DELIMS is non-nil)."
 	     (not (eq major-mode 'lisp-interaction-mode)))
     ;; Match is outside of a programming language comment
     (not (nth 4 (syntax-ppss)))))
+
+(defun hbut:rename (but)
+  "Interactively rename the Hyperbole button BUT from the current buffer."
+  (cond ((ebut:is-p but)
+         (ebut:to (ebut:key but))
+         (call-interactively #'hui:ebut-rename))
+        ((ibut:is-p but)
+         (ibut:to (ibut:key but))
+         (call-interactively #'hui:ibut-rename))
+        (t
+	     (hypb:error "(hbut:rename): Button is invalid; it has no attributes"))))
 
 (defun    hbut:report (&optional arg)
   "Pretty print the attributes of a button or buttons.
@@ -1329,7 +1356,7 @@ current."
 
 (defun    ibut:label-p (&optional as-label start-delim end-delim pos-flag two-lines-flag)
   "Return key for the Hyperbole implicit button label that point is within, else nil.
-This is an optional label that may precede an implicit button.
+This is the normalized key form of an optional label that may precede an implicit button.
 Use `ibut:at-p' instead to test if point is on either the
 implicit button itself or the label.  Assumes point is within the
 first line of any button label.
@@ -1385,6 +1412,13 @@ positions at which the button label delimiter begins and ends."
 			      ;; Normalize label spacing
 			      (ibut:key-to-label (ibut:label-to-key lbl)))))))
       (if loc-p buts (when buts (apply #'set:create buts))))))
+
+(defun    ibut:key (ibut)
+  "Return the key for Hyperbole implicit button symbol IBUT."
+  (if (ibut:is-p ibut)
+      (hattr:get ibut 'lbl-key)
+    (error "(ibut:key): Argument is not a Hyperbole implicit button symbol, `%s'"
+	   ibut)))
 
 (defalias 'ibut:key-src      'hbut:key-src)
 (defalias 'ibut:key-to-label 'hbut:key-to-label)
@@ -1497,7 +1531,9 @@ type for ibtype is presently undefined."
 			    '(to-p ,to-func style ,style))))))
 
 (defun    ibtype:def-symbol (ibtype)
-  "Return the abbreviated symbol for IBTYPE used in its `defib'; IBTYPE may be a string or symbol."
+  "Return the abbreviated symbol for IBTYPE used in its `defib'.
+IBTYPE must be a symbol or string that begins with 'ibtype::' or nil
+is returned."
   (let ((name (if (stringp ibtype)
 		  ibtype
 		(symbol-name ibtype))))

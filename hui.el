@@ -337,8 +337,8 @@ Signals an error when no such button is found."
 			(find-file-noselect gbut:file) "gbut-modify")
 		       (hbut:label-to-key
 			(hargs:read-match "Global button to modify: "
-					  (mapcar 'list (gbut:label-list))
-					  nil t nil 'ebut)))))
+					  (mapcar #'list (gbut:label-list))
+					  nil t nil 'gbut)))))
   (let ((lbl (hbut:key-to-label lbl-key))
 	(src-dir default-directory)
 	(but-buf (find-file-noselect gbut:file))
@@ -381,24 +381,22 @@ Signals an error when no such button is found."
 		     (ibut:at-p))
 	    (hui:ibut-message t)))))))
 
+(defun hui:gbut-rename (label)
+  "Interactively rename a Hyperbole global button with LABEL.
+When in the global button buffer, the default is the button at point."
+  (interactive (list (save-excursion
+		       (hui:buf-writable-err
+			(find-file-noselect gbut:file) "gbut-rename")
+		       (hbut:label-to-key
+			(hargs:read-match "Global button to rename: "
+					  (mapcar #'list (gbut:label-list))
+					  nil t nil 'gbut)))))
+  (hbut:rename (gbut:to label)))
+
 (defun hui:hbut-act (&optional but)
   "Execute action for optional Hyperbole button symbol BUT in current buffer.
-Default is the current button."
-  (interactive
-   (let ((but (hbut:at-p)) (lst))
-     (list
-      (cond (but)
-	    ((setq lst (nconc (ebut:alist) (ibut:alist)))
-	     (hbut:get (hbut:label-to-key
-			(hargs:read-match "Button to execute: " lst nil t
-					  (hbut:label-p 'as-label) 'hbut))))
-	    (t (hypb:error "(hbut-act): No labeled buttons in buffer"))))))
-  (cond ((and (called-interactively-p 'interactive) (null but))
-	 (hypb:error "(hbut-act): No current button to activate"))
-	((not (hbut:is-p but))
-	 (hypb:error "(hbut-act): Button is invalid; it has no attributes"))
-	(t (or but (setq but 'hbut:current))
-	   (hui:but-flash) (hbut:act but))))
+The default is the current button."
+  (hui:hbut-operate #'hbut:act "execute" but))
 
 (defun hui:hbut-current-act ()
   "Activate Hyperbole button at point or signal an error if there is no such button."
@@ -465,6 +463,35 @@ Also has side effect of moving point to start of default label, if any."
 	       (<= (max (- end start) (- start end)) ebut:max-len)))
       (progn (goto-char start)
 	     (buffer-substring start end))))
+
+(defun hui:hbut-operate (operation operation-str &optional but)
+  "Execute OPERATION (a function) described by OPERATION-STR action on a Hyperbole button.
+Either the button at point is used or if none, then one is prompted
+for with completion of all labeled buttons within the current buffer."
+  (unless (or but (setq but (hbut:at-p)))
+    (let (lst)
+      (cond ((setq lst (nconc (ebut:alist) (ibut:alist)))
+	         (setq but (hbut:get (hbut:label-to-key
+			                      (hargs:read-match (format "Button to %s: " operation-str)
+                                                    lst nil t
+					                                (hbut:label-p 'as-label) 'hbut)))))
+	        (t (hypb:error "(hbut-operate): No labeled buttons in buffer")))))
+  (cond ((and (called-interactively-p 'interactive) (null but))
+	     (hypb:error "(hbut-operate): No current button to operate upon"))
+	    ((not (hbut:is-p but))
+	     (hypb:error "(hbut-operate): Button is invalid; it has no attributes"))
+	    (t (or but (setq but 'hbut:current))
+	       (hui:but-flash) (funcall operation but))))
+
+(defun hui:hbut-rename ()
+  "Interactively rename a Hyperbole button from the current buffer.
+The default is the button at point."
+  (cond ((ebut:at-p)
+         (call-interactively #'hui:ebut-rename))
+        ((ibut:at-p)
+         (call-interactively #'hui:ibut-rename))
+        (t
+         (hui:hbut-operate #'hbut:rename "rename"))))
 
 (defun hui:hbut-report (&optional arg)
   "Pretty prints attributes of current button, using optional prefix ARG.

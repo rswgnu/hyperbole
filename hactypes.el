@@ -247,6 +247,19 @@ For example:  To: hyperbole-users-join@gnu.org\n")))
 	    (t (hpath:find buf-str-or-file)))
     (hypb:error "(hyp-source): Non-string argument: %s" buf-str-or-file)))
 
+(defact link-to-bookmark (bookmark)
+  "Display an Emacs BOOKMARK.
+When creating the button, if in Bookmark Menu mode, use the bookmark
+nearest point as the default.  Otherwise, utilize the most recently used
+bookmark in the current file (bookmark-current-bookmark) as the default,
+if any."
+  (interactive
+   (list (bookmark-completing-read "Bookmark to link to"
+				   (if (eq major-mode 'bookmark-bmenu-mode)
+				       (bookmark-bmenu-bookmark)
+				     bookmark-current-bookmark))))
+  (bookmark-jump bookmark (hpath:display-buffer-function)))
+
 (defact link-to-buffer-tmp (buffer &optional point)
   "Display a BUFFER scrolled to optional POINT.
 If POINT is given, the buffer is displayed with POINT at the top of

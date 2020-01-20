@@ -69,7 +69,7 @@ Assist Key provides help, such as reporting on a button's attributes, or
 serves a complementary function to whatever the Action Key does within a
 context.  Press the Action Key within this <(button)> to see all of the
 contexts and operations of the Smart Keys.  SPACE scrolls forward and
-backwards DELETE scrolls backward within the Smart Key summary; {q} quits
+BACKWARDS DELETE scrolls backward within the Smart Key summary; {q} quits
 and returns here.
 
 See also the later section, <(Smart Mouse Keys)>.
@@ -224,10 +224,10 @@ the same thing.
 
 Once in HyControl, your minibuffer window at the bottom of the selected frame
 will display a summary of keys you may use to adjust your windows until you
-press {q} or {Q} to quit from HyControl.  If you don't see it, press {?}, to
-turn on this help display.  The key, {t}, will always switch you between
+press {q} or {Q} to quit from HyControl.  If you don't see it, press {?} to
+turn on this help display.  The key {t} will always switch you between
 controlling frames and windows, the minor modes of HyControl, with a modeline
-indicator of either "HyFrm" or HyWin" depending on which type of control is
+indicator of either "HyFrm" or "HyWin" depending on which type of control is
 active.  See "(hyperbole)HyControl" for full usage information.
 
 ** Frame Commands

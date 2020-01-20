@@ -49,7 +49,7 @@ Return t if the sequence appears to be valid, else nil."
 (defib kbd-key ()
   "Execute a key sequence found around point, delimited by curly braces, {}, if any.
 Key sequences should be in human readable form, e.g. {C-x C-b}, or what `key-description' returns.
-Forms such as {\C-b}, {\^b}, and {^b} will not be recognized.
+Forms such as {\C-b}, {\^b}, and {^M} will not be recognized.
 
 Any key sequence must be a string of one of the following:
   a Hyperbole minibuffer menu item key sequence,

@@ -1,3 +1,87 @@
+2020-01-07  Bob Weiner  <rsw@gnu.org>
+
+* hui-mini.el (hui:menus): Added Gbut/Rename.
+  hui-menu.el (infodock-hyperbole-menu): Added Global-Button/Rename.
+
+2020-01-06  Bob Weiner  <rsw@gnu.org>
+
+* hui.el (hui:gbut-modify): Changed hargs:read-match to use 'gbut' type
+    rather than 'ebut'.
+         (hui:gbut-rename): Added.
+
+2020-01-05  Bob Weiner  <rsw@gnu.org>
+
+* hbut.el (hbut:key, ebut:key, ibut:key, hbut:rename): Added.
+
+* hui.el (hui:hbut-rename, hui:hbut-operate): Added.
+         (hui:hbut-act): Rewrote to use hui:hbut-operate.
+
+2020-01-04  Bob Weiner  <rsw@gnu.org>
+
+* hibtypes.el (pathname):
+  man/hyperbole.texi (Implicit Button Types):
+  hpath.el (hpath:find): Documented allowable Emacs Lisp and env. variable syntax.
+
+2019-12-29  Bob Weiner  <rsw@gnu.org>
+
+* hpath.el (hpath:posix-to-mswindows-separators):
+           (hpath:mswindows-to-posix-separators):
+           (hpath:directory-expand-alist): Corrected use of this variable by switching
+    it to hpath:posix-to-mswindows-separators.
+
+2019-12-28  Bob Weiner  <rsw@gnu.org>
+
+* hui-select.el (hui-select-set-region): Resolved markup-pair selection when selecting
+    the whole buffer.
+
+* hibtypes.el (action): Ignore / don't match to unbound symbols.
+
+2019-12-18  Bob Weiner  <rsw@gnu.org>
+
+* hui-select.el (hui-select-markup-modes):
+  man/hyperbole.texi (Smart Key Thing Selection): Added XML mode support.
+
+2019-10-13  Bob Weiner  <rsw@gnu.org>
+
+* hact.el (action:path-args-rel): Limited to file-name-directory call to 'loc' value.
+  hpath.el (hpath:find): Added file-name-directory call wrapped around 'loc' value;
+    otherwise, default-directory could be set to a filename.
+
+* hpath.el (hpath:absolute-to): Resolved bug that trimmed whitespace off non-path args,
+    e.g. key series, thereby removing trailing C-m keys.
+
+2019-10-06  Bob Weiner  <rsw@gnu.org>
+
+* hui-mouse.el (hkey-alist): Added support for selection of bookmarks from bookmark menu list.
+
+2019-10-05  Bob Weiner  <rsw@gnu.org>
+
+* hactypes.el (link-to-bookmark): Added to link to an Emacs bookmark, similar to a
+    global button with a link action type.
+  man/hyperbole.texi (Action Types): Added link-to-bookmark.
+
+* hpath.el (hpath:cache-mswindows-mount-points): Changed mapcar to mapc since
+    not using return value.
+    (hpath:display-buffer-function, hpath:display-path-function,
+     hpath:display-where-function): Added.
+    (hpath:display-buffer): Added call to hpath:display-buffer-function.
+    (hpath:find): Added call to hpath:display-path-function.
+
+2019-10-04  Bob Weiner  <rsw@gnu.org>
+
+* hpath.el (hpath:to-markup-anchor): If anchor contains both a dash and a space, then
+    don't convert dashes to spaces.
+
+* hmouse-drv.el (hkey-help): Added display of ibtype or actype (for explicit buttons).
+
+* hact.el (actype:def-symbol):
+* hbut.el (ibtype:def-symbol): Improved doc strings.
+          (htype:def-symbol): Added.
+
+==============================================================================
+V7.0.8 changes ^^^^:
+==============================================================================
+
 2019-10-01  Bob Weiner  <rsw@gnu.org>
 
 * hact.el (htype:delete): Removed improper quote in (fboundp 'sym) call.
@@ -24,8 +108,6 @@
     of relative directory generation.
 
 2019-09-19  Bob Weiner  <rsw@gnu.org>
-
-* hmouse-drv.el (hkey-help): Added display of ibtype, if any.
 
 * hbut.el (ibtype:def-symbol): Added.
 

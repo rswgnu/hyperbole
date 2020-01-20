@@ -2,7 +2,7 @@
 				 by Bob Weiner
 
 ===========================================================================
-*                                   V7.0.7
+*                                   V7.0.8
 ===========================================================================
 
   BUTTONS
@@ -32,6 +32,9 @@
         debugger-source: Jump to the source of errors from the Python pytype package
         ipython-stack-frame: Jump to the source of ipython stack traces and exceptions
 
+    - Other New Action Types:
+        link-to-bookmark: Display an Emacs bookmark
+
     - Much Faster Implicit Buttons: Major speedup in implicit button identification
       and activation even with the new generalized Action implicit button type
       syntax, due to internal optimizations.
@@ -50,6 +53,10 @@
 	  "${hyperb:dir}DEMO#Smart Mouse Keys"
 	  "${hyperb:dir}/DEMO#Smart Mouse Keys"
 
+    - Jump Thing: Added xml-mode support for pressing the Action Key when on a start or
+      end tag pair to select the whole region between them.  {C-c .} also moves between
+      the start and matching end tag.  See "(hyperbole)Smart Key Thing Selection".
+
 
   DOCUMENTATION
 
@@ -66,6 +73,8 @@
       elink (link to explicit button).
 
     - DEMO (Action Buttons): Added description and examples.
+
+    - Path Variables: Better documented how these are handled.
 
     - Hyperbole Manual, DEMO (Implicit Buttons): Added description and
       example of implicit button labels.
@@ -103,6 +112,10 @@
     - ibut:at-type-p: Added to test if point is on a specific type of
       implicit button.
 
+    - hbut:key, ebut:key, ibut:key, hbut:rename, hui:hbut-rename,
+      hui:hbut-operate: Added to allow renaming of any type of labeled
+      Hyperbole button.
+
     - hypb:region-with-text-property-value: Added and used in hysy-org.el.
 
     - hsys-org-mode-function, hsys-org-mode-p: Added to determine when
@@ -134,6 +147,8 @@
 
 
   SMART (ACTION AND ASSIST) KEYS
+
+    - Emacs Bookmark Menu Mode: Jump to the bookmark at point.
 
     - hpath:find-program: Changed to prioritize hpath:native-image-suffixes
       over hpath:internal-display-alist over hpath:external-display-alist-macos

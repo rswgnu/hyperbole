@@ -237,6 +237,11 @@ Its default value is #'smart-scroll-down."
 	 (string-match "^\\*Help\\|Help\\*$" (buffer-name))) .
 	 ((hkey-help-hide) . (hkey-help-hide)))
     ;;
+    ;; Emacs bookmarks menu (bookmark.el)
+    ((eq major-mode 'bookmark-bmenu-mode) .
+     ((bookmark-jump (bookmark-bmenu-bookmark) (hpath:display-buffer-function)) .
+      (hkey-help t)))
+    ;;
     ;; Pages directory listing mode (page-ext.el)
     ((eq major-mode 'pages-directory-mode) .
      ((pages-directory-goto) . (pages-directory-goto)))

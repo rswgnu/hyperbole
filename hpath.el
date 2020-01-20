@@ -86,7 +86,7 @@ If the value of 'hpath:mswindows-mount-prefix' changes, then re-initialize this 
 
 (defvar hpath:directory-expand-alist nil
   "Automatically set alist of (posix-mount-point . window-path-prefix) elements.
-Used to expand windows prefixes to posix mount points during mswindows-to-posix.")
+Used to expand posix mount points to Windows UNC paths during posix-to-mswindows conversion.")
 
 ;;;###autoload
 (defun hpath:mswindows-to-posix (path)
@@ -112,8 +112,7 @@ If path begins with an MSWindows drive letter, prefix the converted path with th
 (defun hpath:mswindows-to-posix-separators (path)
   "Replace all backslashes with forward slashes in PATH and expand the path against `directory-abbrev-alist', if possible.
 Path must be a string or an error will be triggered."
-  (let ((directory-abbrev-alist hpath:directory-expand-alist))
-    (replace-regexp-in-string "\\\\" "/" (abbreviate-file-name path) nil t)))
+  (replace-regexp-in-string "\\\\" "/" (abbreviate-file-name path) nil t))
 
 ;;;###autoload
 (defun hpath:posix-to-mswindows (path)
@@ -143,7 +142,8 @@ If path begins with an optional mount prefix, 'hpath:mswindows-mount-prefix', fo
   "Replace all forward slashes with backslashes in PATH and abbreviate the path if possible.
 Path must be a string or an error will be triggered.  See
 'abbreviate-file-name' for how path abbreviation is handled."
-  (replace-regexp-in-string "/" "\\\\" (abbreviate-file-name path)))
+  (let ((directory-abbrev-alist hpath:directory-expand-alist))
+    (replace-regexp-in-string "/" "\\\\" (abbreviate-file-name path))))
 
 (defun hpath:posix-path-p (path)
   "Return non-nil if PATH looks like a Posix path."
@@ -183,7 +183,7 @@ Call this function manually if mount points change after Hyperbole is loaded."
   (when (not hyperb:microsoft-os-p)
     (let ((mount-points-to-add
 	   ;; Sort alist of (path-mounted . mount-point) elements from shortest
-	   ;; to longest path so that the longest path is selected first within
+	   ;; to longest path so thDat the longest path is selected first within
 	   ;; 'directory-abbrev-alist' (elements are added in reverse order).
 	   (sort
 	    ;; Convert plist to alist for sorting.
@@ -199,16 +199,17 @@ Call this function manually if mount points change after Hyperbole is loaded."
 			     (split-string (shell-command-to-string (format "df -a -t drvfs 2> /dev/null | sort | uniq | grep -v '%s' | sed -e 's+ .*[-%%] /+ /+g'" hpath:posix-mount-points-regexp))))
 	    (lambda (cons1 cons2) (<= (length (car cons1)) (length (car cons2))))))
 	  path mount-point)
-      (mapcar (lambda (path-and-mount-point)
+      (mapc (lambda (path-and-mount-point)
 		(setq path (car path-and-mount-point)
 		      mount-point (cdr path-and-mount-point))
-		(add-to-list 'directory-abbrev-alist (cons (format "\\`%s" (regexp-quote path))
+		(add-to-list 'directory-abbrev-alist (cons (format "\\`%s\\>" (regexp-quote path))
 							   mount-point)))
 	      mount-points-to-add)
+      ;; Save the reverse of each mount-points-to-add so
+      ;; can expand paths when going from posix-to-mswindows.
       (setq hpath:directory-expand-alist
-	    ;; Save the reverse of each mount-points-to-add so
-	    ;; can expand paths when going from posix-to-mswindows.
-	    (mapcar (lambda (elt) (cons (cdr elt) (car elt))) mount-points-to-add))
+	    (mapcar (lambda (elt) (cons (concat "\\`" (cdr elt) "\\>")
+                                        (car elt))) mount-points-to-add))
       mount-points-to-add)))
 
 
@@ -540,27 +541,26 @@ These are used to indicate how to display or execute the pathname.
 Return PATH unchanged when it is not a valid path or when DEFAULT-DIRS
 is invalid.  DEFAULT-DIRS when non-nil may be a single directory or a list of
 directories.  The first one in which PATH is found is used."
-  (cond ((not (stringp path))
-	 path)
-	((and (setq path (hpath:trim path))
-	      (not (hpath:is-p path nil t)))
-	 path)
-	((not (cond ((null default-dirs)
-		     (setq default-dirs (cons default-directory nil)))
-		    ((stringp default-dirs)
-		     (setq default-dirs (cons default-dirs nil)))
-		    ((listp default-dirs))
-		    (t nil)))
-	 path)
-	(t
-	 (let ((rtn) dir)
-	   (while (and default-dirs (null rtn))
-	     (setq dir (expand-file-name
-			(file-name-as-directory (car default-dirs)))
-		   rtn (expand-file-name path dir)
-		   default-dirs (cdr default-dirs))
-	     (or (file-exists-p rtn) (setq rtn nil)))
-	   (or rtn path)))))
+  (cond ((not (and (stringp path)
+                   (hpath:is-p (hpath:trim path) nil t)))
+         path)
+        ((progn (setq path (hpath:trim path))
+                (not (cond ((null default-dirs)
+                            (setq default-dirs (cons default-directory nil)))
+                           ((stringp default-dirs)
+                            (setq default-dirs (cons default-dirs nil)))
+                           ((listp default-dirs))
+                           (t nil))))
+         path)
+        (t
+         (let ((rtn) dir)
+           (while (and default-dirs (null rtn))
+             (setq dir (expand-file-name
+                        (file-name-as-directory (car default-dirs)))
+                   rtn (expand-file-name path dir)
+                   default-dirs (cdr default-dirs))
+             (or (file-exists-p rtn) (setq rtn nil)))
+           (or rtn path)))))
 
 (defun hpath:tramp-file-name-regexp ()
   "Return a modified `tramp-file-name-regexp' for matching to the beginning of a remote file name.
@@ -765,12 +765,7 @@ is displayed or nil if not displayed because BUFFER is invalid."
     ;; BW 4/30/2016 - Commented out in case interferes with Smart Key
     ;; selection and yanking of the region via drags.
     ;; (hpath:push-tag-mark)
-    (unless display-where (setq display-where hpath:display-where))
-    (funcall (car (cdr (or (assq display-where
-				 hpath:display-buffer-alist)
-			   (assq 'other-window
-				 hpath:display-buffer-alist))))
-	     buffer)
+    (funcall (hpath:display-buffer-function display-where) buffer)
     (selected-window)))
 
 (defun hpath:display-buffer-other-frame (buffer)
@@ -792,28 +787,29 @@ window in which the buffer is displayed."
   (switch-to-buffer buffer)
   (selected-window))
 
-(defun hpath:to-line (line-num)
-  "Move point to the start of an absolute LINE-NUM or the last line of the current buffer."
-  (save-restriction
-    (widen)
-    (goto-char (point-min))
-    (if (eq selective-display t)
-	(re-search-forward "[\n\r]" nil 'end (1- line-num))
-      (forward-line (1- line-num)))))
+(defun hpath:display-buffer-function (&optional display-where)
+   "Return the function to display a Hyperbole buffer using optional symbol DISPLAY-WHERE or `hpath:display-where'."
+  (hpath:display-where-function display-where hpath:display-buffer-alist))
+
+(defun hpath:display-path-function (&optional display-where)
+  "Return the function to display a Hyperbole path using optional symbol DISPLAY-WHERE or `hpath:display-where'."
+  (hpath:display-where-function display-where hpath:display-where-alist))
 
 (defun hpath:find-noselect (filename)
-  "Find but don't display file FILENAME using user customizable settings of display program and location.
-Return the current buffer iff file is displayed within a buffer (not with an external
+  "Find but don't display FILENAME using user customizable settings of display program and location.
+Return the current buffer iff FILENAME is displayed within a buffer (not with an external
 program), else nil.
 
-FILENAME may end with hash-style link references to HTML, Markdown or Emacs
-outline headings of the form, <file>#<anchor-name>."
+See `hpath:find' documentation for acceptable formats of FILENAME."
   (hpath:find filename nil t))
 
 (defun hpath:find (filename &optional display-where noselect)
-  "Edit file FILENAME using user customizable settings of display program and location.
+  "Edit FILENAME using user customizable settings of display program and location.
 Return the current buffer iff file is displayed within a buffer (not with an external
 program), else nil.
+
+FILENAME may contain references to Emacs Lisp variables or shell
+environment variables using the syntax, \"${variable-name}\".
 
 FILENAME may start with a special prefix character that is handled as follows:
   !filename  - execute as a non-windowed program within a shell;
@@ -822,9 +818,10 @@ FILENAME may start with a special prefix character that is handled as follows:
 
 If FILENAME does not start with a prefix character:
 
-  it may be followed by a hash-style link reference to HTML, Markdown
-  or Emacs outline headings of the form, <file>#<anchor-name>,
-  e.g. \"~/.bashrc#Alias Section\";
+  it may be followed by a hash-style link reference to HTML, XML,
+  SGML, shell script comment, Markdown or Emacs outline headings
+  of the form, <file>#<anchor-name>, e.g. \"~/.bashrc#Alias
+  Section\";
 
   it may end with a line number and optional column number to which to go,
   of the form, :<line-number>[:<column-number>], e.g. \"~/.bashrc:20:5\";
@@ -855,7 +852,7 @@ buffer but don't display it."
 	  default-directory (or (hattr:get 'hbut:current 'dir)
 				;; Loc may be a buffer without a file
 				(if (stringp loc)
-				    loc
+				    (file-name-directory loc)
 				  default-directory)))
     (when (string-match hpath:prefix-regexp filename)
       (setq modifier (aref filename 0)
@@ -919,14 +916,7 @@ buffer but don't display it."
 			  (error "(hpath:find): No available executable from: %s"
 				 display-executables)))
 		       (t (setq path (hpath:validate path))
-			  (when (null display-where)
-			    (setq display-where hpath:display-where))
-			  (funcall
-			   (car (cdr (or (assq display-where
-					       hpath:display-where-alist)
-					 (assq 'other-window
-					       hpath:display-where-alist))))
-			   path)
+			  (funcall (hpath:display-path-function display-where) path)
 			  (when (or hash anchor) (hpath:to-markup-anchor hash anchor))
 			  (when line-num
 			    ;; With an anchor, goto line relative to
@@ -958,9 +948,13 @@ buffer but don't display it."
 		(let ((opoint (point))
 		      ;; Markdown or outline link ids are case
 		      ;; insensitive and - characters are converted to
-		      ;; spaces at the point of definition.
+		      ;; spaces at the point of definition unless
+		      ;; anchor contains both - and space characters,
+		      ;; then no conversion occurs.
 		      (case-fold-search t)
-		      (anchor-name (subst-char-in-string ?- ?\  anchor)))
+		      (anchor-name (if (string-match "-.* \\| .*-" anchor)
+				       anchor
+				     (subst-char-in-string ?- ?\  anchor))))
 		  (goto-char (point-min))
 		  (if (re-search-forward (format
 					  (cond ((or (string-match hpath:markdown-suffix-regexp buffer-file-name)
@@ -1353,6 +1347,15 @@ Returns LINKNAME unchanged if it is not a symbolic link but is a pathname."
 	 (setq referent (expand-file-name referent dirname))))
   referent)
 
+(defun hpath:to-line (line-num)
+  "Move point to the start of an absolute LINE-NUM or the last line of the current buffer."
+  (save-restriction
+    (widen)
+    (goto-char (point-min))
+    (if (eq selective-display t)
+	(re-search-forward "[\n\r]" nil 'end (1- line-num))
+      (forward-line (1- line-num)))))
+
 (defun hpath:trim (path)
   "Return PATH with any [\" \t\n\r] characters trimmed from its start and end."
   (string-trim path "[\" \t\n\r]+" "[\" \t\n\r]+"))
@@ -1406,9 +1409,10 @@ to it."
 
 ;; Overload `substitute-in-file-name' to eliminate truncation of URL prefixes
 ;; such as http://.
+(eval-and-compile
 (unless (fboundp 'hyperb:substitute-in-file-name)
 (defalias 'hyperb:substitute-in-file-name
-  (symbol-function 'substitute-in-file-name)))
+  (symbol-function 'substitute-in-file-name))))
 
 (defun substitute-in-file-name (filename)
   "Substitute environment variables referred to in FILENAME (skip Urls).
@@ -1548,6 +1552,13 @@ be integrated, otherwise the filename is appended as an argument."
   (if (string-match "[^%]%s" cmd)
       (format cmd filename)
     (format "%s \"%s\"" cmd filename)))
+
+(defun hpath:display-where-function (display-where display-where-alist)
+  "Return the function to display a Hyperbole buffer or path using symbol DISPLAY-WHERE or if null, `hpath:display-where'.
+DISPLAY-WHERE-ALIST is a lookup table mapping from DISPLAY-WHERE values to associated functions."
+  (unless display-where (setq display-where hpath:display-where))
+  (car (cdr (or (assq display-where display-where-alist)
+		(assq 'other-window display-where-alist)))))
 
 (defun hpath:remote-available-p ()
   "Return non-nil if a remote file access package is available, nil otherwise.

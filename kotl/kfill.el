@@ -66,8 +66,8 @@ that `fill-paragraph' works correctly in various contexts.")
 (defconst kfill:hanging-expression
   (cons 'or
 	(delq nil (mapcar (lambda (pattern-type)
-			    (if (eq (cdr pattern-type) 'kfill:hanging-list)
-				(list 'looking-at (car pattern-type))))
+			    (when (eq (cdr pattern-type) 'kfill:hanging-list)
+			      (list 'looking-at (car pattern-type))))
 			  kfill:prefix-table)))
   "Conditional expression used to test for hanging indented lists.")
 
@@ -110,7 +110,7 @@ number of lines that could not be moved, otherwise 0."
   "Fill paragraph at or after point when in kotl-mode.  Prefix ARG means justify as well."
   (interactive (progn
 		 (barf-if-buffer-read-only)
-		 (list (if current-prefix-arg 'full) nil)))
+		 (list (when current-prefix-arg 'full) nil)))
   ;; This may be called from `fill-region-as-paragraph' in "filladapt.el"
   ;; which narrows the region to the current paragraph.  A side-effect is
   ;; that the cell identifier and indent information needed by this function
@@ -118,23 +118,23 @@ number of lines that could not be moved, otherwise 0."
   ;; buffer here.  Don't rewiden past the paragraph of interest or any
   ;; following blank line may be removed by the filling routines.
   (save-restriction
-    (if (eq major-mode 'kotl-mode)
-	(narrow-to-region 1 (point-max)))
+    (when (eq major-mode 'kotl-mode)
+      (narrow-to-region 1 (point-max)))
     ;; Emacs expects a specific symbol here.
-    (if (and arg (not (symbolp arg))) (setq arg 'full))
+    (when (and arg (not (symbolp arg))) (setq arg 'full))
     (or skip-prefix-remove (kfill:remove-paragraph-prefix))
     (catch 'done
-      (if (null fill-prefix)
-	  (let ((paragraph-ignore-fill-prefix nil)
-		;; Need this or Emacs ignores fill-prefix when
-		;; inside a comment.
-		(comment-multi-line t)
-		(fill-paragraph-handle-comment t)
-		(paragraph-start paragraph-start)
-		(paragraph-separate paragraph-separate)
-		fill-prefix)
-	    (if (kfill:adapt t)
-		(throw 'done (fill-paragraph arg)))))
+      (unless fill-prefix
+	(let ((paragraph-ignore-fill-prefix nil)
+	      ;; Need this or Emacs ignores fill-prefix when
+	      ;; inside a comment.
+	      (comment-multi-line t)
+	      (fill-paragraph-handle-comment t)
+	      (paragraph-start paragraph-start)
+	      (paragraph-separate paragraph-separate)
+	      fill-prefix)
+	  (when (kfill:adapt t)
+	    (throw 'done (fill-paragraph arg)))))
       ;; Kfill:adapt failed or fill-prefix is set, so do a basic
       ;; paragraph fill as adapted from par-align.el.
       (kfill:fallback-fill-paragraph arg skip-prefix-remove))))
@@ -150,11 +150,10 @@ fill prefix at the beginning of each line."
   (interactive)
   (setq prior-fill-prefix fill-prefix)
   (let ((left-margin-pos (save-excursion (move-to-left-margin) (point))))
-    (if (> (point) left-margin-pos)
-	(setq fill-prefix (if turn-off
-			      nil
-			    (buffer-substring left-margin-pos (point))))
-      (setq fill-prefix nil)))
+    (setq fill-prefix
+          (when (> (point) left-margin-pos)
+            (unless turn-off
+	      (buffer-substring left-margin-pos (point))))))
   (when (equal prior-fill-prefix "")
     (setq prior-fill-prefix nil))
   (when (equal fill-prefix "")
@@ -186,8 +185,8 @@ fill prefix at the beginning of each line."
 
 (defun kfill:c++-comment (paragraph)
   (setq fill-prefix (buffer-substring (match-beginning 0) (match-end 0)))
-  (if paragraph
-      (setq paragraph-separate "^[^ \t/]")))
+  (when paragraph
+    (setq paragraph-separate "^[^ \t/]")))
 
 (defun kfill:fallback-fill-paragraph (justify-flag &optional leave-prefix)
   (save-excursion
@@ -224,34 +223,33 @@ fill prefix at the beginning of each line."
 (defun kfill:hanging-list (paragraph)
   (let (prefix match beg end)
     (setq prefix (make-string (- (match-end 0) (match-beginning 0)) ?\ ))
-    (if paragraph
-	(progn
-	  (setq match (buffer-substring (match-beginning 0) (match-end 0)))
-	  (if (string-match "^ +$" match)
-	      (save-excursion
-		(while (and (not (bobp)) (looking-at prefix))
-		  (kfill:forward-line -1))
-
-		(cond ((eval kfill:hanging-expression)
-		       ;; Point is in front of a hanging list.
-		       (setq beg (point)))
-		      (t (setq beg (progn (kfill:forward-line 1) (point))))))
-	    (setq beg (point)))
+    (when paragraph
+      (setq match (buffer-substring (match-beginning 0) (match-end 0)))
+      (if (string-match "^ +$" match)
 	  (save-excursion
-	    (kfill:forward-line)
-	    (while (and (looking-at prefix)
-			(not (equal (char-after (match-end 0)) ?\ )))
-	      (kfill:forward-line))
-	    (setq end (point)))
-	  (narrow-to-region beg end)))
+	    (while (and (not (bobp)) (looking-at prefix))
+	      (kfill:forward-line -1))
+
+	    (cond ((eval kfill:hanging-expression)
+		   ;; Point is in front of a hanging list.
+		   (setq beg (point)))
+		  (t (setq beg (progn (kfill:forward-line 1) (point))))))
+	(setq beg (point)))
+      (save-excursion
+	(kfill:forward-line)
+	(while (and (looking-at prefix)
+		    (not (equal (char-after (match-end 0)) ?\ )))
+	  (kfill:forward-line))
+	(setq end (point)))
+      (narrow-to-region beg end))
     (setq fill-prefix prefix)))
 
 (defun kfill:lisp-comment (paragraph)
   (setq fill-prefix (buffer-substring (match-beginning 0) (match-end 0)))
-  (if paragraph
-      (setq paragraph-separate
-	    (concat "^" fill-prefix " *;\\|^"
-		    (kfill:negate-string fill-prefix)))))
+  (when paragraph
+    (setq paragraph-separate
+	  (concat "^" fill-prefix " *;\\|^"
+		  (kfill:negate-string fill-prefix)))))
 
 (defun kfill:negate-string (string)
   (let ((len (length string))
@@ -270,23 +268,23 @@ fill prefix at the beginning of each line."
     (apply 'concat (nreverse string-list))))
 
 (defun kfill:normal (paragraph)
-  (if paragraph
-      (setq paragraph-separate
-	    (concat paragraph-separate "\\|^[ \t/#%?!~*+-]"))))
+  (when paragraph
+    (setq paragraph-separate
+	  (concat paragraph-separate "\\|^[ \t/#%?!~*+-]"))))
 
 (defun kfill:normal-included-text (paragraph)
   (setq fill-prefix (buffer-substring (match-beginning 0) (match-end 0)))
-  (if paragraph
-      (setq paragraph-separate
-	    (concat "^" fill-prefix " *>\\|^"
-		    (kfill:negate-string fill-prefix)))))
+  (when paragraph
+    (setq paragraph-separate
+	  (concat "^" fill-prefix " *>\\|^"
+		  (kfill:negate-string fill-prefix)))))
 
 (defun kfill:postscript-comment (paragraph)
   (setq fill-prefix (buffer-substring (match-beginning 0) (match-end 0)))
-  (if paragraph
-      (setq paragraph-separate
-	    (concat "^" fill-prefix " *%\\|^"
-		    (kfill:negate-string fill-prefix)))))
+  (when paragraph
+    (setq paragraph-separate
+	  (concat "^" fill-prefix " *%\\|^"
+		  (kfill:negate-string fill-prefix)))))
 
 (defun kfill:remove-paragraph-prefix (&optional indent-str)
   "Remove fill prefix from current paragraph."
@@ -313,46 +311,46 @@ fill prefix at the beginning of each line."
 Optional SUFFIX non-nil means replace at ends of lines, default is beginnings.
 Optional arguments START and END specify the replace region, default is the
 current region."
-  (if fill-str-prev
-      (progn (if start
-		 (let ((s (min start end)))
-		   (setq end (max start end)
-			 start s))
-	       (setq start (region-beginning)
-		     end (region-end)))
-	     (if (not fill-str) (setq fill-str ""))
-	     (save-excursion
-	       (save-restriction
-		 (narrow-to-region start end)
-		 (goto-char (point-min))
-		 (let ((prefix
-			(concat
-			 (if suffix nil "^")
-			 "[ \t]*"
-			 (regexp-quote
-			  ;; Get non-whitespace separated fill-str-prev
-			  (substring
-			   fill-str-prev
-			   (or (string-match "[^ \t]" fill-str-prev) 0)
-			   (if (string-match
-				"[ \t]*\\(.*[^ \t]\\)[ \t]*$"
-				fill-str-prev)
-			       (match-end 1))))
-			 "[ \t]*"
-			 (if suffix "$"))))
-		   (while (re-search-forward prefix nil t)
-		     (replace-match fill-str nil t))))))))
+  (when fill-str-prev
+    (if start
+	(let ((s (min start end)))
+	  (setq end (max start end)
+		start s))
+      (setq start (region-beginning)
+	    end (region-end)))
+    (unless fill-str (setq fill-str ""))
+    (save-excursion
+      (save-restriction
+	(narrow-to-region start end)
+	(goto-char (point-min))
+	(let ((prefix
+	       (concat
+		(unless suffix "^")
+		"[ \t]*"
+		(regexp-quote
+		 ;; Get non-whitespace separated fill-str-prev
+		 (substring
+		  fill-str-prev
+		  (or (string-match "[^ \t]" fill-str-prev) 0)
+		  (when (string-match
+		         "[ \t]*\\(.*[^ \t]\\)[ \t]*$"
+		         fill-str-prev)
+		    (match-end 1))))
+		"[ \t]*"
+		(when suffix "$"))))
+	  (while (re-search-forward prefix nil t)
+	    (replace-match fill-str nil t)))))))
 
 (defun kfill:sh-comment (paragraph)
   (setq fill-prefix (buffer-substring (match-beginning 0) (match-end 0)))
-  (if paragraph
+  (when paragraph
       (setq paragraph-separate
 	    (concat "^" fill-prefix " *#\\|^"
 		    (kfill:negate-string fill-prefix)))))
 
 (defun kfill:supercite-included-text (paragraph)
   (setq fill-prefix (buffer-substring (match-beginning 0) (match-end 0)))
-  (if paragraph
+  (when paragraph
       (setq paragraph-separate
 	    (concat "^" (kfill:negate-string fill-prefix)))))
 

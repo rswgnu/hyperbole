@@ -212,6 +212,16 @@ Return the new function symbol derived from TYPE."
        (run-hooks 'htype-create-hook)
        ',sym)))
 
+(defun    htype:def-symbol (type)
+  "Return the abbreviated symbol used in the definition of a Hyperbole TYPE.
+TYPE may be either an implicit button type or action type.  It may be
+given as a string or a symbol."
+  (let ((name (if (stringp type)
+		  type
+		(symbol-name type))))
+    (when (string-match "\\`\\(ib\\|ac\\)types::" name)
+      (make-symbol (substring name (match-end 0))))))
+
 (defun    htype:delete (type type-category)
   "Delete a Hyperbole TYPE derived from TYPE-CATEGORY (both symbols).
 Return the Hyperbole symbol for the TYPE if it existed, else nil."
@@ -372,11 +382,9 @@ Other arguments are returned unchanged."
 Other paths are simply expanded.  Non-path arguments are returned unchanged."
   (let ((loc (hattr:get 'hbut:current 'loc)))
     (mapcar (lambda (arg)
-	      (hpath:relative-to arg
-				 (file-name-directory
-				  (if (stringp loc)
-				      loc
-				    (buffer-local-value 'default-directory loc)))))
+	      (hpath:relative-to arg (if (stringp loc)
+					 (file-name-directory loc)
+				       (buffer-local-value 'default-directory loc))))
 	    args-list)))
 
 
@@ -425,7 +433,9 @@ performing ACTION."
 (defalias   'actype:elisp-symbol 'symtable:actype-p)
 
 (defun    actype:def-symbol (actype)
-  "Return the abbreviated symbol for ACTYPE used in its `defact'; ACTYPE may be a string or symbol."
+  "Return the abbreviated symbol for ACTYPE used in its `defact'.
+ACTYPE must be a symbol or string that begins with 'actype::' or nil
+is returned."
   (let ((name (if (stringp actype)
 		  actype
 		(symbol-name actype))))

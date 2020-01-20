@@ -843,8 +843,11 @@ Return non-nil iff associated help documentation is found."
 
 		    (when (memq cmd-sym '(hui:hbut-act hui:hbut-help))
 		      (princ (format "%s BUTTON SPECIFICS:\n\n%s\n"
-				     (ibtype:def-symbol
-				      (hattr:get 'hbut:current 'categ))
+				     (htype:def-symbol
+				      (if (eq (hattr:get 'hbut:current 'categ)
+					      'explicit)
+					  (hattr:get 'hbut:current 'actype)
+					(hattr:get 'hbut:current 'categ)))
 				     (actype:doc 'hbut:current t)))
 		      (hattr:report
 		       (nthcdr 2 (hattr:list 'hbut:current))))
