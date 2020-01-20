@@ -275,7 +275,7 @@ clean:
 version: doc
 	@ echo ""
 	@ echo "Any fgrep output means the version number has not been updated in that file."
-	fgrep -L $(HYPB_VERSION) Makefile HY-ABOUT HY-NEWS README.md hversion.el hyperbole.el man/hyperbole.texi man/version.texi; [ $$? -ne 0 ] || exit 1
+	fgrep -L $(HYPB_VERSION) Makefile HY-ABOUT HY-NEWS README.md hversion.el hyperbole.el man/hyperbole.texi man/version.texi; [ $$? -eq 0 ] || exit 1
 	@ echo ""
 
 # Build the Info, HTML and Postscript versions of the user manual and README.md.html.
@@ -327,7 +327,7 @@ elpa-test: package
 
 # Send compressed tarball for uploading to GNU ftp site; this must be done from the directory
 # containing the tarball to upload.
-ftp: package
+ftp: package $(pkg_dir)/hyperbole-$(HYPB_VERSION).tar.gz
 	cd $(pkg_dir) && $(GNUFTP) hyperbole-$(HYPB_VERSION).tar.gz
 
 # Autoloads

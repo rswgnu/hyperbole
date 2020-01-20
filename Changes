@@ -2,6 +2,9 @@
 
 * Published 7.0.8 test release.
 
+* Makefile (ftp): Added missing gzipped tar file dependency
+  hui-select.el: Removed kotl-mode require as it caused an infinite loading cycle
+
 2020-01-07  Bob Weiner  <rsw@gnu.org>
 
 * hui-mini.el (hui:menus): Added Gbut/Rename.
