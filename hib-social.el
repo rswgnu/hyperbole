@@ -281,14 +281,15 @@ listed in `hibtypes-social-inhibit-modes'."
 		      (and (eq major-mode 'markdown-mode)
 			   (hargs:delimited "(" ")"))))
 	     (save-excursion
-	       (if (looking-at "[-#@=/.:_[:alnum:]]")
-		   (skip-chars-backward "-#@=/.:_[:alnum:]"))
+	       (when (looking-at "[-#@=/.:_[:alnum:]]")
+		 (skip-chars-backward "-#@=/.:_[:alnum:]"))
 	       (and (looking-at hibtypes-social-regexp)
-		    ;; Ensure prefix matches to a social web service
+		    ;; Ensure prefix if any matches to a social web service
 		    (save-match-data
 		      (let ((ref (match-string-no-properties 1)))
-			(delq nil (mapcar (lambda (regexp) (string-match regexp ref))
-					  (mapcar #'car hibtypes-social-hashtag-alist)))))
+			(or (string-empty-p ref)
+			    (delq nil (mapcar (lambda (regexp) (string-match regexp ref))
+					      (mapcar #'car hibtypes-social-hashtag-alist))))))
 		    ;; Heuristic to ensure this is not an email address
 		    (save-match-data
 		      (not (and (looking-at mail-address-regexp)

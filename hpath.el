@@ -503,7 +503,7 @@ use with `string-match'.")
   "Regexp that matches to a Markdown file suffix.")
 
 (defconst hpath:markup-link-anchor-regexp
-  "\\`\\(#?[^#]+\\)\\(#\\)\\([^\]\[#^{}<>\"`'\\\n\t\f\r]*\\)"
+  "\\`\\(#?[^#]+\\)?\\(#\\)\\([^\]\[#^{}<>\"`'\\\n\t\f\r]*\\)"
   "Regexp that matches a markup filename followed by a hash (#) and an optional in-file anchor name.
 Group 3 is the anchor name.")
 
@@ -866,7 +866,9 @@ buffer but don't display it."
     (when (string-match hpath:markup-link-anchor-regexp path)
       (setq hash t
 	    anchor (match-string 3 path)
-	    path (substring path 0 (match-end 1))))
+	    path (if (match-end 1)
+		     (substring path 0 (match-end 1))
+		   buffer-file-name)))
     (setq path (hpath:substitute-value path)
 	  filename (hpath:absolute-to path default-directory))
     (if noselect
@@ -957,7 +959,8 @@ buffer but don't display it."
 				     (subst-char-in-string ?- ?\  anchor))))
 		  (goto-char (point-min))
 		  (if (re-search-forward (format
-					  (cond ((or (string-match hpath:markdown-suffix-regexp buffer-file-name)
+					  (cond ((or (and buffer-file-name
+							  (string-match hpath:markdown-suffix-regexp buffer-file-name))
 						     (memq major-mode hpath:shell-modes))
 						 hpath:markdown-section-pattern)
 						((eq major-mode 'texinfo-mode)
@@ -1049,7 +1052,7 @@ See also `hpath:internal-display-alist' for internal, `window-system' independen
 			     (cons "next" hpath:external-display-alist-macos)))))))
 
 (defun hpath:is-p (path &optional type non-exist)
-  "Return normalized PATH if PATH is a Posix or MSWindows path, else nil.
+  "Return normalized PATH as a URL if PATH is a Posix or MSWindows path, else nil.
 If optional TYPE is the symbol 'file or 'directory, then only that path type
 is accepted as a match.  The existence of the path is checked only for
 locally reachable paths (Info paths are not checked).  With optional NON-EXIST,
@@ -1065,6 +1068,11 @@ path form is what is returned for PATH."
   (when (stringp path)
     (let (modifier
 	  suffix)
+      (when (string-match hpath:prefix-regexp path)
+	(setq modifier (substring path 0 1)
+	      path (substring path (match-end 0))))
+      (when (string-match "\\`file://" path)
+	(setq path (substring path (match-end 0))))
       (when (string-match hpath:prefix-regexp path)
 	(setq modifier (substring path 0 1)
 	      path (substring path (match-end 0))))

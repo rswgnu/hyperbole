@@ -1058,7 +1058,8 @@ include delimiters when INCLUDE-DELIMS is non-nil)."
 (defun    hbut:outside-comment-p ()
   "Return t if within a programming language buffer and prior regexp match is outside a comment, else nil."
   (when (and (derived-mode-p 'prog-mode)
-	     (not (eq major-mode 'lisp-interaction-mode)))
+	     (not (eq major-mode 'lisp-interaction-mode))
+	     (not (memq major-mode hui-select-markup-modes)))
     ;; Match is outside of a programming language comment
     (not (nth 4 (syntax-ppss)))))
 

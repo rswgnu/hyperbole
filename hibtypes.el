@@ -151,7 +151,9 @@ display options."
     (let ((path (hpath:at-p))
 	      full-path)
       (if path
-	      (progn (apply #'ibut:label-set path (hpath:start-end path))
+	      (progn (when (string-match "\\`file://" path)
+				   (setq path (substring path (match-end 0))))
+				 (apply #'ibut:label-set path (hpath:start-end path))
 		         (hact 'link-to-file path))
 	    ;;
 	    ;; Match to Emacs Lisp and Info files without any directory component.
@@ -1237,7 +1239,7 @@ arg1 ... argN '>'.  For example, <mail nil \"user@somewhere.org\">."
 	    (setq var-flag t
 	          lbl (substring lbl 1)))
       (setq actype (if (string-match-p " "  lbl) (car (split-string lbl)) lbl)
-	        actype (or (intern-soft (concat "actype::" actype))
+	        actype (or (intern-soft (concat "actypes::" actype))
 		               (intern-soft actype)))
       ;; Ignore unbound symbols
       (unless (and actype (or (fboundp actype) (boundp actype)))
@@ -1254,7 +1256,7 @@ arg1 ... argN '>'.  For example, <mail nil \"user@somewhere.org\">."
 	          ((and (null args) (symbolp actype) (boundp actype)
 		            (or var-flag (not (fboundp actype))))
 	           ;; Is a variable, display its value as the action
-	           (setq args `(',actype)
+	           (setq args `(,actype)
 		             action `(display-variable ',actype)
 		             actype 'display-variable)))
 	    ;; Necessary so can return a null value, which actype:act cannot.

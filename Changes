@@ -2,6 +2,21 @@
 
 * Published 7.0.8 test release.
 
+* hib-social.el (social-reference): Fixed handling of social refs without any service name,
+    e.g. #gnu.
+
+* hibtypes.el (action): 'actype::' should be 'actypes::; action variable args were quoted
+    twice so did not work.
+
+* hpath.el: Fixed to handle in-file HTML-like link references.
+     (hpath:is-p): Allowed for URL "file://" prefix.
+     (hpath:markup-link-anchor-regexp): Allowed for anchor only paths, no pathname.
+     (hpath:find): Use buffer-file-name if pathname is empty.
+     (hpath:to-markup-anchor): Prevent string-match error if buffer-file-name is null.
+  hbut.el (hbut:outside-comment-p): Ignore comment status for html-like markup
+    modes that register as programming modes.  This fixes ibuttons not being
+    recognized, notably in-file anchor links.
+
 * Makefile (ftp): Added missing gzipped tar file dependency
   hui-select.el: Removed kotl-mode require as it caused an infinite loading cycle
 
