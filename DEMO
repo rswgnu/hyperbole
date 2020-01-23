@@ -645,8 +645,8 @@ bindings.  Press the Action Key on the Info reference and try it.  Press the
 Action Key on the key binding of your personal button file and then store the
 implicit link there if you like.
 
-Since Emacs and most GNU programs include Info manuals, you now a simple way to
-link to and jump to any named item within a manual.
+Since Emacs and most GNU programs include Info manuals, you now have a simple
+way to link to and jump to any named item within a manual.
 
 *** Remote Paths
 

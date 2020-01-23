@@ -1219,16 +1219,17 @@ excluding delimiters, not just one."
 	 (label-key-start-end (ibut:label-p nil nil nil t t))
 	 (lbl-key (car label-key-start-end)))
     (unwind-protect
-	(when (not (hbut:outside-comment-p))
-	  ;; Skip past any optional label and separators
-	  (when label-key-start-end
-	    (goto-char (nth 2 label-key-start-end)) 
-	    (when (looking-at ibut:label-separator-regexp)
-	      ;; Move past up to 2 possible characters of ibut
-	      ;; delimiters; this prevents recognizing labeled,
-	      ;; delimited ibuts of a single character but no one
-	      ;; should need that.
-	      (goto-char (min (+ 2 (match-end 0)) (point-max)))))
+	(progn
+	  (when (not (hbut:outside-comment-p))
+	    ;; Skip past any optional label and separators
+	    (when label-key-start-end
+	      (goto-char (nth 2 label-key-start-end)) 
+	      (when (looking-at ibut:label-separator-regexp)
+		;; Move past up to 2 possible characters of ibut
+		;; delimiters; this prevents recognizing labeled,
+		;; delimited ibuts of a single character but no one
+		;; should need that.
+		(goto-char (min (+ 2 (match-end 0)) (point-max))))))
 
 	  ;; Check for an implicit button at current point, record its
 	  ;; attributes and return a button symbol for it.

@@ -6097,9 +6097,15 @@ if any emacs-related terms are unfamiliar to you.
 @table @b
 
 @item Action
+@itemx Button Action
 An executable behavior associated with a Hyperbole button.  @dfn{Links}
 are a specific class of actions which display existing entities, such as
 files. See also @b{Action Type}.
+
+@item Action Button
+An implicit button that uses a universal button syntax delimited by <angle brackets>
+to invoke any available Hyperbole action type or Emacs Lisp function.  Alternatively,
+if it is an Emacs Lisp variable name, its action is to display the variable value.
 
 @item Action Key
 See @b{Smart Key}.
@@ -6246,6 +6252,12 @@ its predicate is true.
 A mouse button press in one location and following release in another
 location.
 
+@item Elink
+@itemx link-to-ebut
+An Action Button that links to an explicit button.  It begins with <elink:
+followed by an explicit button label, an optional ebut file and ends with a
+closing >.
+
 @item Environment
 See @b{Hyperbole Environment}.
 
@@ -6273,6 +6285,11 @@ always available by name, with full completion offered.  All global
 buttons are stored in the file given by the variable @code{gbut:file}
 and may be activated with the Action Key when editing this file.  By
 default, this is the same as the user's personal button file.
+
+@item Glink
+@itemx link-to-gbut
+An Action Button that links to a global button.  It begins with <glink:
+followed by a global button label and then a closing >.
 
 @item Global Button File
 See @b{Button File, personal} and @b{Global Button}.
@@ -6314,6 +6331,12 @@ HyRolo, the Hyperbole record/contact manager, provides rapid lookup of
 multi-line, hierarchically ordered free form text records.  It can
 also lookup records from Google/GMail Contacts and the Big Brother
 DataBase (BBDB) package.
+
+@item Ilink
+@itemx link-to-ibut
+An Action Button that links to another implicit button.  It begins with <ilink:
+followed by an implicit button label, an optional ibut file and ends with a
+closing >.
 
 @item Implicit Button
 A button recognized contextually by Hyperbole.  Such buttons contain no

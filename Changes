@@ -1,3 +1,17 @@
+2020-01-21  Bob Weiner  <rsw@gnu.org>
+
+* hbut.el (ibut:at-p): Fixed to recognize non-labeled ibuttons in programming modes.
+
+* man/hyperbole.texi (Glossary): Added Action Button, Elink, Ilink, Glink
+    definitions to the glossary.
+
+* Makefile (GNUFTP): Added --replace option in case need to quickly replace a
+    release when first uploading it.
+
+==============================================================================
+V7.0.8 post-release changes ^^^^:
+==============================================================================
+
 2020-01-20  Bob Weiner  <rsw@gnu.org>
 
 * Published 7.0.8 test release.
@@ -101,7 +115,7 @@
           (htype:def-symbol): Added.
 
 ==============================================================================
-V7.0.8 changes ^^^^:
+V7.0.8 test release changes ^^^^:
 ==============================================================================
 
 2019-10-01  Bob Weiner  <rsw@gnu.org>
@@ -147,7 +161,7 @@ V7.0.8 changes ^^^^:
     predicate result display.
 
 ==============================================================================
-V7.0.7 changes ^^^^:
+V7.0.7 test release changes ^^^^:
 ==============================================================================
 
 2019-09-17  Bob Weiner  <rsw@gnu.org>
@@ -334,7 +348,7 @@ V7.0.7 changes ^^^^:
 * DEMO: Changed most 'click' uses in DEMO to 'press'.
 
 ==============================================================================
-V7.0.6 changes ^^^^:
+V7.0.6 test release changes ^^^^:
 ==============================================================================
 
 * man/hyperbole.texi (Implicit Button Type Summaries): Changed to Implicit
@@ -355,7 +369,7 @@ V7.0.6 changes ^^^^:
    how to run test code either from .el or .elc files.
 
 ==============================================================================
-V7.0.5 changes ^^^^:
+V7.0.5 test release changes ^^^^:
 ==============================================================================
 
 2019-08-25  Bob Weiner  <rsw@gnu.org>
@@ -435,7 +449,7 @@ V7.0.5 changes ^^^^:
     change the 3rd section and production releases change the second.
 
 ==============================================================================
-V7.0.4 changes ^^^^:
+V7.0.4 test release changes ^^^^:
 ==============================================================================
 
 2019-08-06  Bob Weiner  <rsw@gnu.org>
@@ -443,7 +457,7 @@ V7.0.4 changes ^^^^:
 * hyrolo-menu.el (infodock-hyrolo-menu): Fixed Edit-Rolo to call a function rather than an sexp.
 
 ==============================================================================
-V7.0.3b changes ^^^^:
+V7.0.3b test release changes ^^^^:
 ==============================================================================
 
 2019-08-05  Bob Weiner  <rsw@gnu.org>
@@ -723,7 +737,7 @@ for expanded Org mode reference handling.
     support for helm-pydoc buffers.
 
 ==============================================================================
-V7.0.3a changes ^^^^:
+V7.0.3a test release changes ^^^^:
 ==============================================================================
 
 2019-05-11  Bob Weiner  <rsw@gnu.org>

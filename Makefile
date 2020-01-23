@@ -116,7 +116,7 @@ SHELL = /bin/sh
 # Shell commands you may want to change for your particular system.
 CP = \cp -p
 ETAGS = \etags
-GNUFTP = \gnupload --to ftp.gnu.org:hyperbole
+GNUFTP = \gnupload --to ftp.gnu.org:hyperbole --replace
 GPG = \gpg
 GZIP = \gzip -c
 INSTALL = \install -m 644 -c

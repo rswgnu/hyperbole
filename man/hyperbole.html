@@ -7184,9 +7184,16 @@ if any emacs-related terms are unfamiliar to you.
 </p>
 <dl compact="compact">
 <dt><b>Action</b></dt>
+<dt><b>Button Action</b></dt>
 <dd><p>An executable behavior associated with a Hyperbole button.  <em>Links</em>
 are a specific class of actions which display existing entities, such as
 files. See also <b>Action Type</b>.
+</p>
+</dd>
+<dt><b>Action Button</b></dt>
+<dd><p>An implicit button that uses a universal button syntax delimited by &lt;angle brackets&gt;
+to invoke any available Hyperbole action type or Emacs Lisp function.  Alternatively,
+if it is an Emacs Lisp variable name, its action is to display the variable value.
 </p>
 </dd>
 <dt><b>Action Key</b></dt>
@@ -7352,6 +7359,13 @@ its predicate is true.
 location.
 </p>
 </dd>
+<dt><b>Elink</b></dt>
+<dt><b>link-to-ebut</b></dt>
+<dd><p>An Action Button that links to an explicit button.  It begins with &lt;elink:
+followed by an explicit button label, an optional ebut file and ends with a
+closing &gt;.
+</p>
+</dd>
 <dt><b>Environment</b></dt>
 <dd><p>See <b>Hyperbole Environment</b>.
 </p>
@@ -7382,6 +7396,12 @@ always available by name, with full completion offered.  All global
 buttons are stored in the file given by the variable <code>gbut:file</code>
 and may be activated with the Action Key when editing this file.  By
 default, this is the same as the user&rsquo;s personal button file.
+</p>
+</dd>
+<dt><b>Glink</b></dt>
+<dt><b>link-to-gbut</b></dt>
+<dd><p>An Action Button that links to a global button.  It begins with &lt;glink:
+followed by a global button label and then a closing &gt;.
 </p>
 </dd>
 <dt><b>Global Button File</b></dt>
@@ -7431,6 +7451,13 @@ followed actually take you to the works themselves.
 multi-line, hierarchically ordered free form text records.  It can
 also lookup records from Google/GMail Contacts and the Big Brother
 DataBase (BBDB) package.
+</p>
+</dd>
+<dt><b>Ilink</b></dt>
+<dt><b>link-to-ibut</b></dt>
+<dd><p>An Action Button that links to another implicit button.  It begins with &lt;ilink:
+followed by an implicit button label, an optional ibut file and ends with a
+closing &gt;.
 </p>
 </dd>
 <dt><b>Implicit Button</b></dt>
