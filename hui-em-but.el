@@ -57,9 +57,9 @@
   :type 'boolean
   :group 'hyperbole-buttons)
 
-(defcustom hproperty:but-flash-time 1000
-  "*Machine specific value for empty loop counter, Emacs button flash delay."
-  :type '(integer :match (lambda (_widget value) (and (integerp value) (> value 0))))
+(defcustom hproperty:but-flash-time 0.05
+  "*Emacs button flash delay."
+  :type 'float
   :group 'hyperbole-buttons)
 
 (defcustom hproperty:item-highlight-color (hproperty:foreground)
@@ -353,9 +353,7 @@ highlighted."
 	(unwind-protect
 	    (progn
 	      (hproperty:set-but-face start hproperty:flash-face)
-	      (sit-for 0) ;; Force display update
-	      ;; Delay before redraw button
-	      (let ((i 0)) (while (< i hproperty:but-flash-time) (setq i (1+ i)))))
+	      (sit-for hproperty:but-flash-time)) ;; Force display update
 	  (hproperty:set-but-face start a)
 	  (sit-for 0))) ;; Force display update
     (if (and ibut (not prev)) (hproperty:but-delete start))))
