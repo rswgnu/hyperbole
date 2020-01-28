@@ -1720,19 +1720,20 @@ asking for help on a button.
 @cindex button, global
 @cindex button label
 @cindex label, button
-Access to explicit buttons depends upon the information on your screen
-since they are embedded within particular buffers.  Sometimes it is
+Sometimes it is
 useful to activate buttons without regard to the information with which
 you are working.  In such instances, you use @dfn{global buttons}, which
 are buttons that may be activated or otherwise operated upon by typing
 their labels/names when they are prompted for, rather than selecting the
-buttons within a buffer.
+buttons within a buffer.  In contrast, activation of explicit buttons
+depends upon the information on your screen since they are accessible
+only from within their particular buffers.
 
 If you want a permanent link to a file section that you can follow at
 any time, you can use a global button.  Or what about an Emacs keyboard
-macro that you use frequently?  Create an @code{exec-kbd-macro} button
-with an easy to type name and then you can activate it whenever the need
-arises.
+macro that you use frequently?  Create a global button with an action type
+of @code{exec-kbd-macro} button and an easy to type name.  Then you can
+activate it whenever the need arises.
 
 @kindex C-h h g
 @cindex menu, Gbut

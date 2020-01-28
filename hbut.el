@@ -1459,32 +1459,33 @@ move to the first occurrence of the button."
   "Find the nearest implicit button with LBL-KEY (a label or label key) within the visible portion of the current buffer.
 Leave point inside the button text or its optional label, if it has one.
 Return the symbol for the button, else nil."
-  ;; Handle a label given rather than a label key
-  (if (string-match-p "\\s-" lbl-key)
-      (setq lbl-key (ibut:label-to-key lbl-key)))
-  (let ((regexp (hbut:label-regexp lbl-key t))
-	pos
-	found)
-    (save-excursion
-      ;; Since point might be in the middle of the matching button,
-      ;; move to the start of line to ensure don't miss it when
-      ;; searching forward.
-      (forward-line 0)
-      ;; re-search forward
-      (while (and (not found) (re-search-forward regexp nil t))
-	(setq pos (match-beginning 0)
-	      ;; Point might be on closing delimiter of ibut in which
-	      ;; case ibut:label-p returns nil; move back one
-	      ;; character to prevent this.
-	      found (progn (goto-char (1- (point)))
-			   (equal (ibut:at-p t) lbl-key))))
-      ;; re-search backward
-      (while (and (not found) (re-search-backward regexp nil t))
-	(setq pos (match-beginning 0)
-	      found (equal (ibut:label-p nil nil nil nil t) lbl-key))))
-    (when found
-      (goto-char pos)
-      (ibut:at-p))))
+  (when lbl-key
+    ;; Handle a label given rather than a label key
+    (if (string-match-p "\\s-" lbl-key)
+	(setq lbl-key (ibut:label-to-key lbl-key)))
+    (let ((regexp (hbut:label-regexp lbl-key t))
+	  pos
+	  found)
+      (save-excursion
+	;; Since point might be in the middle of the matching button,
+	;; move to the start of line to ensure don't miss it when
+	;; searching forward.
+	(forward-line 0)
+	;; re-search forward
+	(while (and (not found) (re-search-forward regexp nil t))
+	  (setq pos (match-beginning 0)
+		;; Point might be on closing delimiter of ibut in which
+		;; case ibut:label-p returns nil; move back one
+		;; character to prevent this.
+		found (progn (goto-char (1- (point)))
+			     (equal (ibut:at-p t) lbl-key))))
+	;; re-search backward
+	(while (and (not found) (re-search-backward regexp nil t))
+	  (setq pos (match-beginning 0)
+		found (equal (ibut:label-p nil nil nil nil t) lbl-key))))
+      (when found
+	(goto-char pos)
+	(ibut:at-p)))))
 
 ;;; ------------------------------------------------------------------------
 (defconst ibut:label-start "<["

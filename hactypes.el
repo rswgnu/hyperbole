@@ -466,8 +466,13 @@ and its buffer must have a file attached."
    (let ((ibut-key (ibut:at-p t)))
      (if (and ibut-key buffer-file-name)
 	 (list ibut-key buffer-file-name (point))
+       ;; TODO: If default is null below and are creating, rather than modifying,
+       ;; the link, it would be better to throw an error than create
+       ;; an invalid link, but it is difficult to tell which operation
+       ;; is in progress, so ignore this for now.  -- RSW, 01-25-20020
+
        ;; When not on an ibut and moddifying the link, use existing arguments
-       (if (and (boundp 'defaults) (listp defaults))
+       (if (and (boundp 'defaults) defaults (listp defaults))
 	   defaults
 	 (list nil nil nil)))))
   (let (but
@@ -483,11 +488,14 @@ and its buffer must have a file attached."
 	(widen)
 	(if (integerp point) (goto-char (min point (point-max))))
 	(setq but (ibut:to key))))
-    (if but
-	(hbut:act but)
-      (hypb:error "(link-to-ibut): No button `%s' in `%s'"
-		  (ibut:key-to-label key)
-		  (or key-file (buffer-name))))))
+    (cond (but
+	   (hbut:act but))
+	  (key
+	   (hypb:error "(link-to-ibut): No implicit button `%s' found in `%s'"
+		       (ibut:key-to-label key)
+		       (or key-file (buffer-name))))
+	  (t
+	   (hypb:error "(link-to-ibut): Link reference is null/empty")))))
 
 (defact link-to-kcell (file cell-ref)
   "Display FILE with kcell given by CELL-REF at window top.

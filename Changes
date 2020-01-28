@@ -1,3 +1,10 @@
+2020-01-25  Bob Weiner  <rsw@gnu.org>
+
+* hactypes.el (link-to-ibut): Handled null 'defaults' when called interactively; needed when
+    interactively creating a link-to-ibut and there is no ibut at point.  Also improved
+    error message when a link-to-ibut is invalid, i.e. has a null button reference.
+  hbut.el (ibut:to): Handled null lbl-key arg.
+
 2020-01-21  Bob Weiner  <rsw@gnu.org>
 
 * hbut.el (ibut:at-p): Fixed to recognize non-labeled ibuttons in programming modes.
