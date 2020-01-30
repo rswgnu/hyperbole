@@ -57,9 +57,9 @@
   :type 'boolean
   :group 'hyperbole-buttons)
 
-(defcustom hproperty:but-flash-time 0.05
+(defcustom hproperty:but-flash-time 1000
   "*Emacs button flash delay."
-  :type 'float
+  :type '(integer :match (lambda (_widget value) (and (integerp value) (> value 0))))
   :group 'hyperbole-buttons)
 
 (defcustom hproperty:item-highlight-color (hproperty:foreground)
@@ -353,7 +353,7 @@ highlighted."
 	(unwind-protect
 	    (progn
 	      (hproperty:set-but-face start hproperty:flash-face)
-	      (sit-for hproperty:but-flash-time)) ;; Force display update
+	      (sit-for (/ hproperty:but-flash-time 10000.0))) ;; Force display update
 	  (hproperty:set-but-face start a)
 	  (sit-for 0))) ;; Force display update
     (if (and ibut (not prev)) (hproperty:but-delete start))))

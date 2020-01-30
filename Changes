@@ -1,3 +1,13 @@
+2020-01-29  Bob Weiner  <rsw@gnu.org>
+
+* hpath.el (hpath:markup-link-anchor-regexp): Prevent matches to files like: ".#a.org"
+
+* hui-em-but.el (hproperty:but-flash, hproperty:but-flash-time): Revert this value back to 1000
+    since users may have previously customized values that loading Hyperbole does not override.
+    Revert logic to using this to compute number of fractional seconds to flash a button.  Prior
+    change caused a mistaken wait of 1000 seconds since user customization value was not replaced
+    by loading Hyperbole
+
 2020-01-25  Bob Weiner  <rsw@gnu.org>
 
 * hactypes.el (link-to-ibut): Handled null 'defaults' when called interactively; needed when

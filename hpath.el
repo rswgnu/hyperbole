@@ -503,7 +503,7 @@ use with `string-match'.")
   "Regexp that matches to a Markdown file suffix.")
 
 (defconst hpath:markup-link-anchor-regexp
-  "\\`\\(#?[^#]+\\)?\\(#\\)\\([^\]\[#^{}<>\"`'\\\n\t\f\r]*\\)"
+  "\\`\\(#?[^#]*[^#.]\\)?\\(#\\)\\([^\]\[#^{}<>\"`'\\\n\t\f\r]*\\)"
   "Regexp that matches a markup filename followed by a hash (#) and an optional in-file anchor name.
 Group 3 is the anchor name.")
 
