@@ -1,3 +1,10 @@
+2020-01-31  Bob Weiner  <rsw@gnu.org>
+
+* hui-em-but.el (hproperty:set-flash-color): 
+                (hproperty:set-face-after-init): Resolved issue that explicit buttons were not
+    being highlighted upon load and that explicit and named implicit buttons were not flashing
+    properly when activated due to improper face settings.
+
 2020-01-29  Bob Weiner  <rsw@gnu.org>
 
 * hpath.el (hpath:markup-link-anchor-regexp): Prevent matches to files like: ".#a.org"

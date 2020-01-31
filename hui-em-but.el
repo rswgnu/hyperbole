@@ -1,4 +1,4 @@
-;;; hui-em-but.el --- GNU Emacs button highlighting and flashing support
+;; hui-em-but.el --- GNU Emacs button highlighting and flashing support
 ;;
 ;; Author:       Bob Weiner
 ;;
@@ -16,9 +16,7 @@
 
 ;;; Code:
 
-(when noninteractive
-  ;; FIXME: Loading a file should always be harmless!
-  (error "(hui-em-but.el): Load only when running GNU Emacs interactively"))
+(unless noninteractive
 
 ;;; ************************************************************************
 ;;; Other required Elisp libraries
@@ -138,7 +136,7 @@ highlighted."
 
 (defun hproperty:but-delete (&optional pos)
   (let ((but (hproperty:but-get pos)))
-    (if but (delete-overlay but))))
+    (when but (delete-overlay but))))
 
 ;;; ************************************************************************
 ;;; Private functions
@@ -311,21 +309,23 @@ highlighted."
 (defun hproperty:cycle-but-color (&optional color)
   "Switch button color to optional COLOR name or next item referenced by hproperty:color-ptr."
   (interactive "sHyperbole button color: ")
-  (if (not (display-color-p))
-      nil
-    (if color (setq hproperty:color-ptr nil))
+  (when (display-color-p)
+    (when color (setq hproperty:color-ptr nil))
     (set-face-foreground
      hproperty:but-face (or color (car (hproperty:list-cycle hproperty:color-ptr hproperty:good-colors))))
     (hproperty:set-flash-color)
-    (sit-for 0)  ;; Force display update
+    (sit-for 0)	;; Force display update
     t))
 
 (defun hproperty:set-flash-color ()
   "Set button flashing colors based upon current color set."
-  (if (not (display-color-p))
-      nil
-    (set-face-background hproperty:flash-face (hproperty:but-color))
-    (set-face-foreground hproperty:flash-face (hproperty:background))))
+  (when (display-color-p)
+    (set-face-foreground hproperty:flash-face (if hproperty:but-face
+						  (face-background hproperty:but-face)
+						(hproperty:background)))
+    (set-face-background hproperty:flash-face (if hproperty:but-face
+						  (face-foreground hproperty:but-face)
+						(hproperty:but-color)))))
 
 (defun hproperty:but-p (&optional pos)
   "Return non-nil at point or optional POS iff face is eq to hproperty:but-face."
@@ -353,7 +353,7 @@ highlighted."
 	(unwind-protect
 	    (progn
 	      (hproperty:set-but-face start hproperty:flash-face)
-	      (sit-for (/ hproperty:but-flash-time 10000.0))) ;; Force display update
+	      (sit-for (/ hproperty:but-flash-time 5000.0))) ;; Force display update
 	  (hproperty:set-but-face start a)
 	  (sit-for 0))) ;; Force display update
     (if (and ibut (not prev)) (hproperty:but-delete start))))
@@ -402,8 +402,7 @@ highlighted."
       (skip-chars-forward "^ \t\n\r")
       (hproperty:but-add start (point) hproperty:item-face)
       ))
-  (sit-for 0)  ;; Force display update
-  )
+  (sit-for 0))  ;; Force display update
 
 (defun hproperty:select-line (&optional pnt)
   "Select line in current buffer at optional position PNT using hproperty:item-face."
@@ -411,8 +410,7 @@ highlighted."
   (save-excursion
     (beginning-of-line)
     (hproperty:but-add (point) (progn (end-of-line) (point)) hproperty:item-face))
-  (sit-for 0)  ;; Force display update
-  )
+  (sit-for 0))  ;; Force display update
 
 ;;; ************************************************************************
 ;;; Private variables
@@ -427,17 +425,19 @@ highlighted."
 
 (defun hproperty:set-face-after-init ()
   (set-face-foreground hproperty:but-face (hproperty:but-color))
-  (set-face-background hproperty:but-face (hproperty:background)))
-(if after-init-time
-    (hproperty:set-face-after-init)
-  (add-hook 'after-init-hook #'hproperty:set-face-after-init))
+  (set-face-background hproperty:but-face (hproperty:background))
+  (when (or (not hproperty:highlight-face)
+	    (equal (face-background hproperty:highlight-face) (hproperty:background))
+	    (equal (face-foreground hproperty:highlight-face) (hproperty:foreground)))
+    ;; Reverse foreground and background colors for default block-style highlighting.
+    (hproperty:set-item-highlight (hproperty:foreground) (hproperty:background)))
+  (hproperty:set-flash-color))
 
 (defvar hproperty:flash-face
   (progn (defface hbut-flash nil "Hyperbole face for flashing hyper-buttons."
 	   :group 'hyperbole-buttons)
 	 'hbut-flash)
   "Hyperbole face for flashing hyper-buttons.")
-(hproperty:set-flash-color)
 
 (defvar hproperty:item-button nil
   "Button used to highlight an item in a listing buffer.")
@@ -445,11 +445,13 @@ highlighted."
 (defvar hproperty:item-face nil "Item marking face.")
 (defvar hproperty:highlight-face nil
   "Item highlighting face.  Use (hproperty:set-item-highlight) to set.")
-(if hproperty:highlight-face
-    nil
-  ;; Reverse foreground and background colors for default block-style highlighting.
-  (hproperty:set-item-highlight (hproperty:foreground) (hproperty:background)))
 
 (provide 'hui-em-but)
+
+(if after-init-time
+    (hproperty:set-face-after-init)
+  (add-hook 'after-init-hook #'hproperty:set-face-after-init))
+
+)
 
 ;;; hui-em-but.el ends here
