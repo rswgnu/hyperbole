@@ -1,6 +1,13 @@
+2020-02-01  Bob Weiner  <rsw@gnu.org>
+
+* hui-mouse.el (smart-imenu-item-p): Fixed to handle invalid marker positions after buffer changes
+    when imenu-auto-rescan is false.
+
+* hmouse-drv.el (hkey-execute, hkey-help): Simplified with cddr and cadr calls.
+
 2020-01-31  Bob Weiner  <rsw@gnu.org>
 
-* hui-em-but.el (hproperty:set-flash-color): 
+* hui-em-but.el (hproperty:set-flash-color):
                 (hproperty:set-face-after-init): Resolved issue that explicit buttons were not
     being highlighted upon load and that explicit and named implicit buttons were not flashing
     properly when activated due to improper face settings.

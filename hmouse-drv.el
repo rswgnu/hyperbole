@@ -378,8 +378,8 @@ Optional prefix arg non-nil means emulate Assist Key rather than the
 Action Key.
 
 Works only when running under a window system, not from a dumb terminal."
-  ;; Note: Cannot add start-window as first parameter to this function
-  ;; because it is called like many other functions herein with a
+  ;; Note: Cannot add free variable start-window as first parameter to this
+  ;; function because it is called like many other functions herein with a
   ;; single release-window argument by 'hmouse-choose-windows'.
 
   ;; Cancel any partial drag that may have been recorded.
@@ -753,12 +753,12 @@ Return non-nil iff a non-nil predicate is found."
   (let ((hkey-forms hkey-alist)
 	(pred-value) (hkey-action) hkey-form pred)
     (while (and (null pred-value) (setq hkey-form (car hkey-forms)))
-      (if (setq hkey-action (if assist-flag (cdr (cdr hkey-form)) (car (cdr hkey-form)))
+      (if (setq hkey-action (if assist-flag (cddr hkey-form) (cadr hkey-form))
 		pred (car hkey-form)
 		pred-value (eval pred))
 	  ;; Conditionally debug after Smart Key release and evaluation
 	  ;; of matching predicate but before hkey-action is executed.
-	  (progn (if hkey-debug (hkey-debug))
+	  (progn (when hkey-debug (hkey-debug))
 		 (eval hkey-action))
 	(setq hkey-forms (cdr hkey-forms))))
     pred-value))
@@ -779,7 +779,7 @@ Return non-nil iff associated help documentation is found."
 	  (setq hkey-forms (cdr hkey-forms))))
     (if pred-value
 	(setq call (if assist-flag (cdr (cdr hkey-form))
-		     (car (cdr hkey-form)))
+		     (cadr hkey-form))
 	      cmd-sym (car call))
       (setq cmd-sym (if assist-flag assist-key-default-function action-key-default-function)
 	    call cmd-sym))

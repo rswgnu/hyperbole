@@ -72,7 +72,7 @@
 
 (eval-when-compile (defvar assist-flag nil)) ;; Silences free variable compiler warnings
 (require 'hycontrol)
-;; For momentary highlighting of buffer/file item lines.
+;; If installed, use pulse library for momentary highlighting of buffer/file item lines.
 (require 'pulse nil t)
 
 ;;; ************************************************************************

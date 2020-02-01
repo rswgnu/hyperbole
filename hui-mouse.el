@@ -1205,26 +1205,39 @@ sets `hkey-value' to (identifier . identifier-definition-buffer-position)."
        (cdr hkey-value)))
 
 ;; Derived from `imenu' function in the imenu library.
-(defun smart-imenu-item-p (index-item &optional variable-flag)
-  "If INDEX-ITEM is in the current buffer's imenu, return its definition marker position, else nil.
-If INDEX-ITEM is both a function and a variable, the function
+(defun smart-imenu-item-p (index-key &optional variable-flag no-recurse-flag)
+  "If INDEX-KEY is in the current buffer's imenu, return its definition marker position, else nil.
+If INDEX-KEY is both a function and a variable, the function
 definition is used by default; in such a case, when optional
-VARIABLE-FLAG is non-nil, the variable definition is used instead."
-  (when (stringp index-item)
-    ;; Convert a string to an alist element.
-    (if variable-flag
-	;; Match to variable definitions only.
-	(setq index-item (assoc index-item
-				(cdr (assoc "Variables" (imenu--make-index-alist)))))
-      ;; First try to match a function definition and if that fails,
-      ;; then allow variable definitions and other types of matches as well.
-      (let ((alist (imenu--make-index-alist)))
-	(setq index-item (or (assoc index-item alist)
-			     ;; Does nothing unless the dash Emacs Lisp
-			     ;; library is available for the -flatten function.
-			     (and (require 'dash nil t)
-				  (assoc index-item (-flatten alist)))))))
-    (if index-item (cdr index-item))))
+VARIABLE-FLAG is non-nil, the variable definition is used instead.
+NO-RECURSE-FLAG non-nil prevents infinite recursions."
+  (when (stringp index-key)
+    (let (index-item
+	  index-position)
+      ;; Convert a string to an alist element.
+      (if variable-flag
+	  ;; Match to variable definitions only.
+	  (setq index-item (assoc index-key
+				  (cdr (assoc "Variables" (imenu--make-index-alist)))))
+	;; First try to match a function definition and if that fails,
+	;; then allow variable definitions and other types of matches as well.
+	(let ((alist (imenu--make-index-alist)))
+	  (setq index-item (or (assoc index-key alist)
+			       ;; Does nothing unless the dash Emacs Lisp
+			       ;; library is available for the -flatten function.
+			       (and (require 'dash nil t)
+				    (assoc index-key (-flatten alist)))))))
+      (when index-item
+	(setq index-position (when (markerp (cdr index-item))
+			       (marker-position (cdr index-item))))
+	(if (and (eq index-position 1) (not no-recurse-flag))
+	    ;; If index position is 1, this means the index markers have
+	    ;; become out of date after buffer edits (likely imenu-auto-rescan
+	    ;; is nil), so do a single rescan to try to fix this.
+	    (progn (setq imenu--index-alist nil)
+		   (imenu--make-index-alist t)
+		   (smart-imenu-item-p index-key variable-flag t))
+	  index-position)))))
 
 ;;; ************************************************************************
 ;;; smart-info functions
