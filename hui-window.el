@@ -247,10 +247,12 @@ drag release window.")
 ;;; Public functions
 ;;; ************************************************************************
 
-(defun hmouse-at-item-p ()
+(defun hmouse-at-item-p (start-window)
   "Return t if point is on an item draggable by Hyperbole, otherwise nil."
-  (let* ((buf (and (window-live-p action-key-depress-window) (window-buffer action-key-depress-window)))
-	 (mode (and buf (buffer-local-value 'major-mode buf))))
+  (let* ((buf (when (window-live-p start-window)
+		(window-buffer start-window)))
+	 (mode (when buf
+		 (buffer-local-value 'major-mode buf))))
     (and buf (with-current-buffer buf
 	       ;; Point must be on an item, not after one
 	       (not (looking-at "\\s-*$")))
@@ -522,7 +524,7 @@ not on an item, then nil.
 
 See `hmouse-drag-item-mode-forms' for how to allow for draggable
 items in other modes."
-  (when (hmouse-at-item-p)
+  (when (hmouse-at-item-p action-key-depress-window)
     (hmouse-item-to-window new-window)
     t))
 
@@ -810,6 +812,10 @@ With optional boolean NEW-WINDOW non-nil, sensibly split the release window befo
   (when (and hmouse-pulse-flag (featurep 'pulse) (pulse-available-p))
     (recenter)
     (pulse-momentary-highlight-one-line (point) 'next-error)))
+
+(defun hmouse-pulse-region (start end)
+  (when (and hmouse-pulse-flag (featurep 'pulse) (pulse-available-p))
+    (pulse-momentary-highlight-region start end 'next-error)))
 
 (defun hmouse-item-to-window (&optional new-window)
   "Display buffer or file menu item of Action Key depress at the location of Action Key release.

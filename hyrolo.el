@@ -1531,7 +1531,8 @@ String search expressions are converted to regular expressions.")
   )
 
 ;; Prompt user to rename old personal rolo file to new name, if necessary.
-(or noninteractive (call-interactively 'hyrolo-rename))
+(unless noninteractive
+  (call-interactively 'hyrolo-rename))
 
 (provide 'hyrolo)
 

@@ -366,7 +366,7 @@ magic happen."
   (push '(?i hkey-drag-item "Hyperbole: Drag Item") aw-dispatch-alist)
   ;; Ace-window includes ?m as the swap windows key, so it is not added here.
   (push '(?r hkey-replace "Hyperbole: Replace Here") aw-dispatch-alist)
-  (push '(?t hkey-throw   "Hyperbole: Throw To") aw-dispatch-alist)
+  (push '(?t hkey-throw   "Hyperbole: Throw") aw-dispatch-alist)
   (ace-window-display-mode 1))
 
 ;;;###autoload
@@ -437,7 +437,7 @@ Works only when running under a window system, not from a dumb terminal."
 	at-item-flag)
     (unless (window-live-p start-window)
       (setq start-window (selected-window)))
-    (cond ((and (setq at-item-flag (hmouse-at-item-p))
+    (cond ((and (setq at-item-flag (hmouse-at-item-p start-window))
 		(window-live-p release-window))
 	   (hkey-drag release-window)
 	   ;; Leave release-window selected
@@ -446,7 +446,7 @@ Works only when running under a window system, not from a dumb terminal."
 	  (at-item-flag
 	   (error "(hkey-drag-item): No listing item at point"))
 	  (t ;; No item at point or selected release is invalid
-	   (error "(hkey-drag-item): Invalid final window, %s" release-window)))))
+	   (error "(hkey-drag-item): No item at point or invalid final window, %s" release-window)))))
 
 ;;;###autoload
 (defun hkey-drag-to (release-window)
@@ -470,7 +470,7 @@ Works only when running under a window system, not from a dumb terminal."
 			  action-key-depress-window))))
     (unless (window-live-p start-window)
       (setq start-window (selected-window)))
-    (if (and (hmouse-at-item-p) (window-live-p release-window))
+    (if (and (hmouse-at-item-p start-window) (window-live-p release-window))
 	(progn (hkey-drag release-window)
 	       ;; Leave release-window selected
 	       (when (window-live-p release-window)
@@ -525,23 +525,25 @@ Leave TO-WINDOW as the selected window."
 ;;     (display-window-until release-window (current-buffer))))
 
 ;;;###autoload
-(defun hkey-throw (release-window)
-  "Throw either a displayable item at point or the current buffer for display in RELEASE-WINDOW.
+(defun hkey-throw (release-window &optional throw-region-flag)
+  "Throw one of: the active (highlighted) region, a displayable item at point or the current buffer for display in RELEASE-WINDOW.
+With optional prefix arg THROW-REGION-FLAG, throw the current region
+even if not active.
 The selected window does not change."
-  (interactive
-   (list (let ((mode-line-text (concat " Ace - " (nth 2 (assq ?t aw-dispatch-alist)))))
-	   (aw-select mode-line-text))))
+  (interactive (list (ace-window nil) current-prefix-arg))
   (let ((depress-frame (selected-frame))
 	(display-delay (if (boundp 'temp-display-delay)
 			   temp-display-delay
 			 0.5)))
-    (if (cadr (assq major-mode hmouse-drag-item-mode-forms))
-	;; Throw the item at point
+	;; Throw either the region or the item at point and keep selected-window
 	(let ((action-key-depress-window (selected-window))
 	      (action-key-release-window release-window)
 	      (action-key-depress-args))
 	  (hypb:save-selected-window-and-input-focus
-	   (hmouse-item-to-window)
+	   (unless (hkey-insert-region action-key-depress-window release-window throw-region-flag display-delay)
+	     (if (cadr (assq major-mode hmouse-drag-item-mode-forms))
+		 (hmouse-item-to-window)
+	       (set-window-buffer release-window (current-buffer))))
 	   (unless (eq depress-frame (window-frame release-window))
 	     ;; Force redisplay or item buffer won't be displayed here.
 	     (redisplay t)
@@ -549,19 +551,35 @@ The selected window does not change."
 	     ;; input-focus is returned to the depress-frame.
 	     (raise-frame (window-frame release-window))
 	     ;; Don't use sit-for here because it can be interrupted early.
-	     (sleep-for display-delay)
-	     )))
-      ;; Throw the current buffer
-      (set-window-buffer release-window (current-buffer))
-      (unless (eq depress-frame (window-frame release-window))
-	;; Force redisplay or item buffer won't be displayed here.
-	(redisplay t)
-	;; Show the frame thrown to before it is covered when
-	;; input-focus is returned to the depress-frame.
-	(raise-frame (window-frame release-window))
-	;; Don't use sit-for here because it can be interrupted early.
-	(sleep-for display-delay)
-	(select-frame-set-input-focus depress-frame)))))
+	     (sleep-for display-delay))))))
+
+(defun hkey-insert-region (depress-window release-window throw-region-flag display-delay)
+  "Throw any active (highlighted) region from DEPRESS-WINDOW to RELEASE-WINDOW.
+If THROW-REGION-FLAG is non-nil, the region is thrown even if not
+active, unless the buffers in DEPRESS-WINDOW and RELEASE-WINDOW are
+the same, then the region is not thrown.
+Highlight the thrown region for DISPLAY-DELAY seconds.
+
+Return t if thrown, else nil."
+  (when (or (use-region-p) throw-region-flag)
+    (if (> (region-end) (region-beginning))
+	;; Non-empty region
+	(if (eq (window-buffer depress-window) (window-buffer release-window))
+	    (user-error "(hkey-insert-region): Can't throw region from and to the same buffer")
+	  (let* ((orig-buf (current-buffer))
+		 (orig-start (region-beginning))
+		 (orig-end (region-end))
+		 (len (- orig-end orig-start))
+		 insert-start
+		 insert-end)
+	    (select-window release-window 'mark-for-redisplay)
+	    (setq insert-start (point)
+		  insert-end (+ insert-start len))
+	    (insert-buffer-substring orig-buf orig-start orig-end)
+	    (hmouse-pulse-region insert-start insert-end)
+	    (sit-for display-delay)
+	    t))
+      (user-error "(hkey-insert-region): Can't throw an empty region"))))
 
 ;;;###autoload
 (defun hkey-buffer-to (from-window to-window)

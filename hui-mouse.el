@@ -1230,13 +1230,14 @@ NO-RECURSE-FLAG non-nil prevents infinite recursions."
       (when index-item
 	(setq index-position (when (markerp (cdr index-item))
 			       (marker-position (cdr index-item))))
-	(if (and (eq index-position 1) (not no-recurse-flag))
+	(if (eq index-position 1)
 	    ;; If index position is 1, this means the index markers have
 	    ;; become out of date after buffer edits (likely imenu-auto-rescan
 	    ;; is nil), so do a single rescan to try to fix this.
-	    (progn (setq imenu--index-alist nil)
-		   (imenu--make-index-alist t)
-		   (smart-imenu-item-p index-key variable-flag t))
+	    (unless no-recurse-flag
+	      (setq imenu--index-alist nil)
+	      (imenu--make-index-alist t)
+	      (smart-imenu-item-p index-key variable-flag t))
 	  index-position)))))
 
 ;;; ************************************************************************

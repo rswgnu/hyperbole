@@ -2004,12 +2004,11 @@ the drags performed by <code>hkey-operate</code>).  If you already have a key bo
 for <code>ace-window</code>, then just ensure it is initialized by calling
 <code>(hkey-ace-window-setup)</code> without a key argument.
 </p>
-<span id="index-link-creation-from-keyboard"></span>
-<span id="index-keyboard-link-creation"></span>
 <span id="index-M_002do-i-_003cwindow_002did_003e"></span>
 <span id="index-M_002do-m-_003cwindow_002did_003e"></span>
 <span id="index-M_002do-r-_003cwindow_002did_003e"></span>
 <span id="index-M_002do-t-_003cwindow_002did_003e"></span>
+<span id="index-insert-item"></span>
 <span id="index-drag-item"></span>
 <span id="index-replace-window-buffer"></span>
 <span id="index-swap-window-buffers"></span>
@@ -2017,6 +2016,7 @@ for <code>ace-window</code>, then just ensure it is initialized by calling
 <span id="index-buffer-replace"></span>
 <span id="index-buffers-swap"></span>
 <span id="index-item-drag"></span>
+<span id="index-item-insert"></span>
 <span id="index-item-throw"></span>
 <p>After setup, the leftmost character or two of each window&rsquo;s modeline will show
 the ID to type to use that window as the drag destination.  Then whenever point
@@ -2029,6 +2029,16 @@ the selected window&rsquo;s buffer with that of another window, use
 <kbd>{M-o r &lt;id-of-window-displaying-desired-buffer&gt;}</kbd>.  To instead
 <em>swap</em> the selected window&rsquo;s buffer with that of another window,
 use <kbd>{M-o m &lt;id-of-window-to-swap-with&gt;}</kbd>.
+</p>
+<span id="index-throw-region"></span>
+<span id="index-region-throw"></span>
+<p>You can also throw the active (highlighted) region of text to another
+window.  Simply activate a region and then use <kbd>{M-o
+t &lt;window-id&gt;}</kbd>.  If you don&rsquo;t use region highlighting,
+i.e. <code>transient-mark-mode</code>, then use <kbd>{C-u M-o
+t &lt;window-id&gt;}</kbd> for the same effect.  The buffer in the target window
+must differ from the one in the source window.  With no region active,
+this command throws the source buffer to the target window.
 </p>
 <p>In summary:
 </p><dl compact="compact">
@@ -2046,7 +2056,7 @@ trigger an error
 </p>
 </dd>
 <dt>M-o t &lt;window&gt;</dt>
-<dd><p>throw listing item at point or current buffer to &lt;window&gt;
+<dd><p>throw region, listing item at point, or current buffer to &lt;window&gt;
 </p></dd>
 </dl>
 
@@ -12949,6 +12959,7 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function</a>, Up: <a href
 <tr><td></td><td valign="top"><a href="#index-Info-node">Info node</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-InfoDock">InfoDock</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Glossary">Glossary</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-initialization-file">initialization file</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Autonumbering">Autonumbering</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-insert-item">insert item</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Keyboard-Drags">Keyboard Drags</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-inserting-tabs">inserting tabs</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Relocating-and-Copying">Relocating and Copying</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-insertion">insertion</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Inserting-and-Importing">Inserting and Importing</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-installation">installation</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Installation">Installation</a></td></tr>
@@ -12975,6 +12986,7 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function</a>, Up: <a href
 <tr><td></td><td valign="top"><a href="#index-isearch">isearch</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Invisible-Text-Searches">Invisible Text Searches</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-issue-tracking">issue tracking</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-item-drag">item drag</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Keyboard-Drags">Keyboard Drags</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-item-insert">item insert</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Keyboard-Drags">Keyboard Drags</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-item-throw">item throw</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Keyboard-Drags">Keyboard Drags</a></td></tr>
 <tr><td colspan="4"> <hr></td></tr>
 <tr><th id="Concept-Index_cp_letter-J">J</th><td></td><td></td></tr>
@@ -13001,7 +13013,6 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function</a>, Up: <a href
 <tr><td></td><td valign="top"><a href="#index-key-bindings_002c-toggle-1">key bindings, toggle</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Global-Key-Bindings">Global Key Bindings</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-key-sequence">key sequence</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-keyboard-drags">keyboard drags</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Keyboard-Drags">Keyboard Drags</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-keyboard-link-creation">keyboard link creation</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Keyboard-Drags">Keyboard Drags</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-keyboard_002c-jump-to-window">keyboard, jump to window</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Keyboard-Drags">Keyboard Drags</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-keypad">keypad</a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyControl">HyControl</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-kill-and-yank">kill and yank</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Thing-Selection">Thing Selection</a></td></tr>
@@ -13045,7 +13056,6 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function</a>, Up: <a href
 <tr><td></td><td valign="top"><a href="#index-link-action-types">link action types</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Action-Types">Action Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-link-button">link button</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Explicit-Buttons">Explicit Buttons</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-link-creation">link creation</a>:</td><td>&nbsp;</td><td valign="top"><a href="#By-Dragging">By Dragging</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-link-creation-from-keyboard">link creation from keyboard</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Keyboard-Drags">Keyboard Drags</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-link-display">link display</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Referent-Display">Referent Display</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-link-to-explicit-button">link to explicit button</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-link-to-global-button">link to global button</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
@@ -13304,6 +13314,7 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function</a>, Up: <a href
 <tr><td></td><td valign="top"><a href="#index-referent-display">referent display</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Referent-Display">Referent Display</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-refilling">refilling</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Filling">Filling</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-region-selection">region selection</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Key-Thing-Selection">Smart Key Thing Selection</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-region-throw">region throw</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Keyboard-Drags">Keyboard Drags</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-region_002c-active">region, active</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Mouse-Drags-within-a-Window">Smart Mouse Drags within a Window</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-relative-autonumber">relative autonumber</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Koutliner">Koutliner</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-relative-identifier">relative identifier</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Autonumbering">Autonumbering</a></td></tr>
@@ -13436,6 +13447,7 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function</a>, Up: <a href
 <tr><td></td><td valign="top"><a href="#index-thing-1">thing</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Key-_002d-Delimited-Things">Smart Key - Delimited Things</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-things">things</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Key-Thing-Selection">Smart Key Thing Selection</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-throw-item">throw item</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Keyboard-Drags">Keyboard Drags</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-throw-region">throw region</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Keyboard-Drags">Keyboard Drags</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-thumbnails">thumbnails</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Key-_002d-Image-Thumbnails">Smart Key - Image Thumbnails</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-toc-action-type">toc action type</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Action-Types">Action Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-toc-implicit-button-type">toc implicit button type</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>

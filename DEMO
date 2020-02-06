@@ -1383,13 +1383,23 @@ For even faster keyboard-based drag emulation, use the Emacs package
 configured and the suggested M-o key binding is made, the leftmost character or
 two of each window's modeline will show the <window-id> to type to use that
 window as the drag destination. Then whenever point is on an item you want
-displayed in another window, use M-o i <window-id> and watch the magic happen.
+displayed in another window, use M-o i <window-id> to display it there and select
+the window.
+
 If you want to display multiple items in different windows, instead use the
 M-o t <window-id> key sequence to @emph{throw} each item to a different window,
-while leaving the same selected window.  To replace the selected window's
+without changing the selected window.  To replace the selected window's
 buffer with that of another window, use M-o r <window-id>.  To instead swap the
 selected window's buffer with that of another window, use M-o m <window-id>.
 Try these commands out and they will speed your work.
+
+You can also throw the active (highlighted) region of text to another
+window.  Simply activate a region and then use M-o t <window-id> just
+like before.  If you don't use region highlighting,
+i.e. transient-mark-mode, then use C-u M-o t <window-id> for the same
+effect.  The buffer in the target window must differ from the one in
+the source window.  With no region active, this command throws
+the source buffer to the target window.
 
 *** Cloning Windows
 

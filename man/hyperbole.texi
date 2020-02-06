@@ -1490,12 +1490,11 @@ the drags performed by @code{hkey-operate}).  If you already have a key bound
 for @code{ace-window}, then just ensure it is initialized by calling
 @code{(hkey-ace-window-setup)} without a key argument.
 
-@cindex link creation from keyboard
-@cindex keyboard link creation
 @kindex M-o i <window-id>
 @kindex M-o m <window-id>
 @kindex M-o r <window-id>
 @kindex M-o t <window-id>
+@cindex insert item
 @cindex drag item
 @cindex replace window buffer
 @cindex swap window buffers
@@ -1503,6 +1502,7 @@ for @code{ace-window}, then just ensure it is initialized by calling
 @cindex buffer replace
 @cindex buffers swap
 @cindex item drag
+@cindex item insert
 @cindex item throw
 After setup, the leftmost character or two of each window's modeline will show
 the ID to type to use that window as the drag destination.  Then whenever point
@@ -1515,6 +1515,16 @@ the selected window's buffer with that of another window, use
 @bkbd{M-o r <id-of-window-displaying-desired-buffer>}.  To instead
 @emph{swap} the selected window's buffer with that of another window,
 use @bkbd{M-o m <id-of-window-to-swap-with>}.
+
+@cindex throw region
+@cindex region throw
+You can also throw the active (highlighted) region of text to another
+window.  Simply activate a region and then use @bkbd{M-o
+t <window-id>}.  If you don't use region highlighting,
+i@.e@. @code{transient-mark-mode}, then use @bkbd{C-u M-o
+t <window-id>} for the same effect.  The buffer in the target window
+must differ from the one in the source window.  With no region active,
+this command throws the source buffer to the target window.
 
 In summary:
 @table @asis
@@ -1529,7 +1539,7 @@ swap the buffers in the selected window and <window>
 replace the selected (current) window's buffer with that of <window>
 
 @item M-o t <window>
-throw listing item at point or current buffer to <window>
+throw region, listing item at point, or current buffer to <window>
 @end table
 
 @c -------

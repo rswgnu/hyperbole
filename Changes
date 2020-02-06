@@ -1,3 +1,20 @@
+2020-02-06  Bob Weiner  <rsw@gnu.org>
+
+* hui-em-but.el (hproperty:set-face-after-init): Conditionalized settings to avoid overriding customizations.
+(hproperty:item-highlight-color): Fixed initialization error.
+(hproperty:set-flash-color): Ensured not setting to nil values.
+(hproperty:flash-face, hproperty:highlight-face): Converted to defcustom variables.
+
+2020-02-02  Bob Weiner  <rsw@gnu.org>
+
+* hmouse-drv.el (hkey-drag-to, hkey-drag-item):
+  hui-window.el (hmouse-drag-item-to-display):
+                (hmouse-at-item-p): Fixed to work with ace-window when Action Key is not used.
+
+* hmouse-drv.el (hkey-throw): Rewrote to throw active (highlighted) region if any.
+                (hkey-insert-region): Added.
+  hui-window.el (hmouse-pulse-region): Added.
+
 2020-02-01  Bob Weiner  <rsw@gnu.org>
 
 * hui-mouse.el (smart-imenu-item-p): Fixed to handle invalid marker positions after buffer changes
@@ -40,7 +57,7 @@
     release when first uploading it.
 
 ==============================================================================
-V7.0.8 post-release changes ^^^^:
+V7.0.9 changes ^^^^:
 ==============================================================================
 
 2020-01-20  Bob Weiner  <rsw@gnu.org>

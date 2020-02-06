@@ -2,6 +2,35 @@
 				 by Bob Weiner
 
 ===========================================================================
+*                                   V7.0.9
+===========================================================================
+
+  ACE WINDOW PACKAGE INTEGRATION - fast window and buffer switching
+
+    - After installing the ace-window package and loading Hyperbole, execute
+      (hkey-ace-window-setup "\M-o") to enable the following capabilities:
+
+    - The hkey-throw command bound to {M-o t} now throws the active (highlighted)
+      region, if any, into the target window's buffer, rather than replacing its
+      buffer with the source window buffer.  If you don't use region highlighting,
+      i.e. transient-mark-mode, then use {C-u M-o t} for the same effect.  The
+      buffer in the target window must differ from the one in the source window.
+      With no region active, this command stillthrows the source buffer to the
+      target window.
+
+  GLOSSARY
+
+    - Added Action Button, Elink, Ilink, Glink definitions.
+
+  PROGRAMMING
+
+    - If using Emacs imenu package, the Action Key will look up in-buffer
+      identifier references with imenu.  If imenu's index is rendered invalid
+      due to large changes in a buffer, Hyperbole will now automatically rebuild
+      the index to have correct pointers.  (Does not require use of the
+      imenu-auto-rescan setting.
+
+===========================================================================
 *                                   V7.0.8
 ===========================================================================
 
@@ -80,7 +109,7 @@
       example of implicit button labels.
 
     - Glossary: Updated Implicit Button and Global Button entries with
-      changes.  Added Action Button, Elink, Ilink, Glink definitions.
+      changes.
 
 
   KOUTLINER
@@ -161,6 +190,9 @@
 ===========================================================================
 
   ACE WINDOW PACKAGE INTEGRATION - fast window and buffer switching
+
+    - After installing the ace-window package and loading Hyperbole, execute
+      (hkey-ace-window-setup "\M-o") to enable the following capabilities:
 
     - Selected Window Buffer Replace: Added the ability to 'replace' the
       selected window's buffer with the buffer of another window.  Use

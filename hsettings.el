@@ -175,7 +175,7 @@ this variable to nil by adding (hyperbole-toggle-messaging 1)
 to your personal Emacs initialization file, prior to loading
 Hyperbole, and then restart Emacs."
   :type 'boolean
-  :initialize 'custom-initialize-set
+  :initialize #'custom-initialize-set
   :set (lambda (symbol value)
 	 ;; Invert value to produce ARG for hyperbole-toggle-messaging.
 	 (hyperbole-toggle-messaging (if value 0 1)))
@@ -209,7 +209,7 @@ The first character of each web-service-name must be unique.
 This custom option is used in the Hyperbole Find/Web menu where
 the %s in the url-with-%s-parameter is replaced with an interactively
 obtained search string."
-  :initialize 'custom-initialize-default
+  :initialize #'custom-initialize-default
   :set (lambda (_option value)
 	 (setq hyperbole-web-search-alist value)
 	 (hyperbole-update-menus))
