@@ -1,9 +1,36 @@
+2020-02-09  Bob Weiner  <rsw@gnu.org>
+
+* DEMO (Windows Grid): Use {Q} to ensure quit from HyControl and not from the DEMO (which is in Help mode).
+
+* hypb.el (hypb:mark-object, hypb:object-p): Added these to give strings and symbols a hyperbole property.
+  hpath.el (hpath:relative-to, hpath:absolute-to): Ignore any string with a hyperbole property.
+    Prevents removal of trailing whitespace from normalized key series, for example.
+
+* hib-kbd.el (kbd-key:hyperbole-mini-menu-key-p): Optimized to compute kbd-key:mini-menu-key only once.
+             (kbd-key): Allow for double-quoted key series, i.e. "{C-x o}".
+
+2020-02-08  Bob Weiner  <rsw@gnu.org>
+
+* hib-kbd.el (kbd-key:normalize): Prevent multiple normalizations which can strip desired RET and SPC characters.
+
+* hyrolo-logic.el (hyrolo-map-logic):
+                  (hyrolo-kill):
+  hyrolo.el (hyrolo-add):
+	    (hyrolo-grep-file):
+            (hyrolo-to):
+            (hyrolo-to-entry-end): Fixed bug that caused addition of new entries at the end of the hyrolo file,
+    rather than in sorted order.  Also caused hyrolo-logic functions to fail.
+    The issue was that 'hyrolo-entry-regexp' had been updated to include the whitespace following the entry prefix
+    and this whitespace was improperly included when computing the hierarchy level of the entry.  Also, changed
+    'curr-entry-level' parameter from a string to an integer to reduce length comparisons.
+            (hyrolo-r-not): Fixed typo 'path' should be 'pat'.
+
 2020-02-06  Bob Weiner  <rsw@gnu.org>
 
 * hui-em-but.el (hproperty:set-face-after-init): Conditionalized settings to avoid overriding customizations.
-(hproperty:item-highlight-color): Fixed initialization error.
-(hproperty:set-flash-color): Ensured not setting to nil values.
-(hproperty:flash-face, hproperty:highlight-face): Converted to defcustom variables.
+                (hproperty:item-highlight-color): Fixed initialization error.
+                (hproperty:set-flash-color): Ensured not setting to nil values.
+                (hproperty:flash-face, hproperty:highlight-face): Converted to defcustom variables.
 
 2020-02-02  Bob Weiner  <rsw@gnu.org>
 

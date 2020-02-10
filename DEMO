@@ -265,11 +265,11 @@ a 2 x 3 grid.  We can do multiple commands in one 'key series'.  Press the
 action key within the braces: {.1 % .23 @}.
 
 You can even write something like this to do the whole thing in one sequence.
-First, let's quit out of HyControl Frames mode with {q}.  Then go back to one
+First, let's quit out of HyControl Frames mode with {Q}.  Then go back to one
 window with {C-x 1}.  Now we can execute a single sequence from any buffer
-that creates our 2x3 window grid: {C-h h s f .1 % .23 @ q}.  Pretty amazing,
+that creates our 2x3 window grid: {C-h h s f .1 % .23 @ Q}.  Pretty amazing,
 right?  You can separate each command by any number of spaces or even jam
-them all together: {C-hhsf.1%.23@q}.  Use SPC (separated by spaces) to
+them all together: {C-hhsf.1%.23@Q}.  Use SPC (separated by spaces) to
 include a space as part of the key series.
 
 A zero argument to the {@} command is special.  It means you want to display
@@ -1348,7 +1348,7 @@ Boom, the buffers are swapped.  This works across frames as well.
 
 If you have just two windows in an Emacs frame, you can swap their buffers
 from the keyboard.  Use this Hyperbole minibuffer menu key sequence to swap
-the buffers and quit from the Hyperbole minibuffer menu: {C-h h s w ~ q}.
+the buffers and quit from the Hyperbole minibuffer menu: {C-h h s w ~ Q}.
 
 *** Displaying Buffers
 

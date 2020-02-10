@@ -223,7 +223,7 @@ Global keymap is used unless optional KEYMAP is given."
       (and (fboundp 'compiled-function-p) (compiled-function-p obj))))
 
 (defun hypb:error (&rest args)
-  "Signals an error typically to be caught by `hyperbole'."
+  "Signal an error typically to be caught by `hyperbole'."
   (let ((msg (if (< (length args) 2)
 		 (car args)
 	       (apply 'format (cons (car args)
@@ -490,6 +490,14 @@ OBJECT should be a vector or `byte-code' object."
 	    i (1+ i)))
     (nreverse result)))
 
+(defun hypb:mark-object (object)
+  "Mark OBJECT as a Hyperbole object if possible to prevent generic functions from changing it.
+OBJECT must be a non-empty string or a symbol or this has no effect."
+  (cond ((and (stringp object) (not (string-empty-p object)))
+	 (put-text-property 0 1 'hyperbole t object))
+	((symbolp object)
+	 (put object 'hyperbole t))))
+
 ;; Derived from "window.el".
 (defun hypb:maximize-window-height (&optional window)
   "Maximize WINDOW.
@@ -503,6 +511,13 @@ WINDOW pixelwise."
   (window-resize
    window (window-max-delta window nil nil nil nil nil window-resize-pixelwise)
    nil nil window-resize-pixelwise))
+
+(defun hypb:object-p (object)
+  "Return t if OBJECT is marked as a Hyperbole object, else nil."
+  (cond ((and (stringp object) (not (string-empty-p object)))
+	 (get-text-property 0 'hyperbole object))
+	((symbolp object)
+	 (get object 'hyperbole))))
 
 (defun hypb:replace-match-string (regexp str newtext &optional literal)
   "Replace all matches for REGEXP in STR with NEWTEXT string and return the result.

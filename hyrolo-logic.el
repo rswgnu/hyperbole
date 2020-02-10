@@ -179,13 +179,13 @@ of applications of SEXP that matched entries."
 	      (let* ((start)
 		     (end)
 		     (end-entry-hdr)
-		     (curr-entry-level))
+		     (curr-entry-level-len))
 		(while (re-search-forward hyrolo-entry-regexp nil t)
-		  (setq end-entry-hdr (point)
-			start (save-excursion (beginning-of-line) (point))
+		  (setq end-entry-hdr (match-end hyrolo-entry-group-number)
+			start (match-beginning hyrolo-entry-group-number)
 			next-entry-exists nil
-			curr-entry-level (buffer-substring start end-entry-hdr)
-			end (hyrolo-to-entry-end include-sub-entries curr-entry-level))
+			curr-entry-level-len (length (match-string-no-properties hyrolo-entry-regexp))
+			end (hyrolo-to-entry-end include-sub-entries curr-entry-level-len))
 		  (let ((result (eval sexp)))
 		    (or count-only
 			(and result (= num-found 0) hdr-pos
@@ -214,7 +214,7 @@ of applications of SEXP that matched entries."
 						 no-sub-entries-out)
 					     end
 					   (goto-char (hyrolo-to-entry-end
-						       t curr-entry-level))))
+						       t curr-entry-level-len))))
 			       (or count-only
 				   (append-to-buffer display-buf start end)))
 		      (goto-char end-entry-hdr)))))))
@@ -292,7 +292,7 @@ Each element may be t, nil, or a string."
   (let ((pat))
     (while (and pat-list
 		(or (null (setq pat (car pat-list)))
-		    (and (stringp path)
+		    (and (stringp pat)
 			 (goto-char start)
 			 (not (re-search-forward pat end t)))))
       (setq pat-list (cdr pat-list)))

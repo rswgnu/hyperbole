@@ -542,6 +542,7 @@ Return PATH unchanged when it is not a valid path or when DEFAULT-DIRS
 is invalid.  DEFAULT-DIRS when non-nil may be a single directory or a list of
 directories.  The first one in which PATH is found is used."
   (cond ((not (and (stringp path)
+		   (not (hypb:object-p path))
                    (hpath:is-p (hpath:trim path) nil t)))
          path)
         ((progn (setq path (hpath:trim path))
@@ -1186,7 +1187,8 @@ Is a no-op if the function `push-tag-mark' is not available."
   "Return PATH relative to optional DEFAULT-DIR or `default-directory'.
 Expand any other valid path.  Return PATH unchanged when it is not a
 valid path."
-  (cond ((not (stringp path))
+  (cond ((not (and (stringp path)
+		   (not (hypb:object-p path))))
 	 path)
 	((and (setq path (hpath:trim path))
 	      (not (hpath:is-p path)))

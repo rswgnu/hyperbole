@@ -18,9 +18,22 @@
       With no region active, this command stillthrows the source buffer to the
       target window.
 
+  DEMO
+
+    - Fixed many smaller issues that caused example implicit buttons to fail.
+
   GLOSSARY
 
     - Added Action Button, Elink, Ilink, Glink definitions.
+
+  HYROLO
+
+    - Fixed new entry addition to add in sorted order and logic operators to
+      perform properly, after a bug in level calculation had been introduced.
+
+  IMPLICIT BUTTONS
+
+    - Key series delimited by {} may not also be in double quotes, e.g. "{C-x o}".
 
   PROGRAMMING
 
