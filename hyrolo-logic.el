@@ -184,7 +184,7 @@ of applications of SEXP that matched entries."
 		  (setq end-entry-hdr (match-end hyrolo-entry-group-number)
 			start (match-beginning hyrolo-entry-group-number)
 			next-entry-exists nil
-			curr-entry-level-len (length (match-string-no-properties hyrolo-entry-regexp))
+			curr-entry-level-len (length (match-string-no-properties hyrolo-entry-group-number))
 			end (hyrolo-to-entry-end include-sub-entries curr-entry-level-len))
 		  (let ((result (eval sexp)))
 		    (or count-only

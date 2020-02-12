@@ -460,12 +460,10 @@ search for the current match string rather than regular expression."
     (hyrolo-isearch-for-regexp hyrolo-match-regexp)))
 
 (defun hyrolo-verify ()
-  "Verify point is in a rolo match buffer and a match query has been performed, then execute rest of forms, BODY."
-  (cond ((not (stringp hyrolo-match-regexp))
-	 (error "(HyRolo): Invoke a rolo search expression first"))
-	((not (equal (buffer-name) hyrolo-display-buffer))
-	 (error "(HyRolo): Use this command in the %s match buffer"
-		hyrolo-display-buffer))))
+  "Verify point is in a rolo match buffer."
+  (when (not (equal (buffer-name) hyrolo-display-buffer))
+    (error "(HyRolo): Use this command in the %s match buffer"
+	   hyrolo-display-buffer)))
 
 ;;;###autoload
 (defun hyrolo-kill (name &optional file)
@@ -1485,7 +1483,7 @@ file are added.")
 
 (defconst hyrolo-match-regexp nil
   "Last regular expression used to search the rolo.
-Nil before a search is done.
+Nil before a search is done, including after a logical search is done.
 String search expressions are converted to regular expressions.")
 
 (defvar hyrolo--wconfig nil

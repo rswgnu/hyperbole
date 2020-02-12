@@ -1,5 +1,13 @@
 2020-02-12  Bob Weiner  <rsw@gnu.org>
 
+* hyrolo.el (hyrolo-verify): Removed check of (stringp hyrolo-match-regexp) since may have
+    done a logical search which does not set that regexp.  This resolved an error when
+    using {q} to quit from the hyrolo match buffer.
+
+* hyrolo-logic.el (hyrolo-map-logic): Fixed function call.
+    Changed: (match-string-no-properties hyrolo-entry-regexp
+         To: (match-string-no-properties hyrolo-entry-group-number)
+
 * hsys-org.el (hsys-org-hbut-activate-p): Defined and added to org-metareturn-hook so local binding
     of M-RET in org-mode activates Hyperbole buttons (doesn't run full set of Action Key actions).
     (org-link): Updated to utilize newer org-link-open-from-string function when available.
