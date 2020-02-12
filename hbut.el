@@ -737,9 +737,10 @@ others who use a different value!")
 
 (defun    hbut:act (hbut)
   "Perform action for explicit or implicit Hyperbole button symbol HBUT."
-  (if hbut (apply hrule:action
-		  (hattr:get hbut 'actype)
-		  (hattr:get hbut 'args))))
+  (when hbut
+    (apply hrule:action
+	   (hattr:get hbut 'actype)
+	   (hattr:get hbut 'args))))
 
 (defun    hbut:action (hbut)
   "Return appropriate action for Hyperbole button symbol HBUT."
@@ -751,7 +752,7 @@ others who use a different value!")
 		   atype
 		 (or action (actype:action atype))))
       ;; Must be an implicit button.
-      (if (fboundp atype) atype))))
+      (when (fboundp atype) atype))))
 
 (defun    hbut:at-p ()
   "Return symbol for explicit or implicit Hyperbole button at point or nil."

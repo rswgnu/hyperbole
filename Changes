@@ -1,6 +1,13 @@
+2020-02-12  Bob Weiner  <rsw@gnu.org>
+
+* hsys-org.el (hsys-org-hbut-activate-p): Defined and added to org-metareturn-hook so local binding
+    of M-RET in org-mode activates Hyperbole buttons (doesn't run full set of Action Key actions).
+    (org-link): Updated to utilize newer org-link-open-from-string function when available.
+    (hsys-org-link-at-p): Updated to utilize newer org-link-any-re variable when available.
+
 2020-02-09  Bob Weiner  <rsw@gnu.org>
 
-* DEMO (Windows Grid): Use {Q} to ensure quit from HyControl and not from the DEMO (which is in Help mode).
+* DEMO (Windows Grid): Used {Q} to ensure quit from HyControl and not from the DEMO (which is in Help mode).
 
 * hypb.el (hypb:mark-object, hypb:object-p): Added these to give strings and symbols a hyperbole property.
   hpath.el (hpath:relative-to, hpath:absolute-to): Ignore any string with a hyperbole property.
@@ -340,8 +347,6 @@ V7.0.7 test release changes ^^^^:
     calls that look like actypes::<action-type> and
     ibtypes::<implicit-button-type> jump to the associated defact and
     defib definitions.
-
-    actypes::link-to-file
 
 * hmouse-tag.el (smart-lisp-at-definition-p): Don't match to 'def' alone.
 

@@ -32,12 +32,14 @@
 (defvar hsys-org-mode-function #'hsys-org-mode-p
   "*Boolean function of no arguments that determines whether hsys-org actions are triggered or not.")
 
+;; Make Org-mode's M-RET binding activate implicit buttons
+(add-hook 'org-metareturn-hook #'hsys-org-hbut-activate-p)
+
 (defun hsys-org-mode-p ()
-  "Return non-nil if an Org-related major or minor mode is active in the current buffer."
+  "Return non-nil if point is not on a Hyperbole button but is within an Org major or minor-mode buffer."
   (or (derived-mode-p 'org-mode)
       (and (boundp 'outshine-mode) outshine-mode)
       (and (boundp 'poporg-mode) poporg-mode)))
-
 
 (defun hsys-org-cycle ()
   "Call `org-cycle' and force it to be set as `this-command' to cycle through all states."
@@ -50,6 +52,12 @@
   (setq last-command 'org-cycle
 	this-command 'org-cycle)
   (org-global-cycle nil))
+
+(defun hsys-org-hbut-activate-p ()
+  "Activate any Hyperbole button at point and return t, else return nil."
+  (when (and (funcall hsys-org-mode-function) (hbut:at-p))
+    (hbut:act 'hbut:current)
+    t))
 
 ;;; ************************************************************************
 ;;; Public Button Types
@@ -72,11 +80,14 @@ cycles the view of the subtree at point.
 
 Fifth, with point on the first line of a code block definition, this
 executes the code block via the Org mode standard binding of {C-c C-c},
-(org-ctrl-c-ctrl-c).
+\(org-ctrl-c-ctrl-c).
 
 In any other context besides the end of a line, the Action Key invokes the
 Org mode standard binding of {M-RET}, (org-meta-return)."
-  (when (funcall hsys-org-mode-function)
+  (when (and (funcall hsys-org-mode-function)
+	     ;; Prevent infinite recursion when called via org-metareturn-hook
+	     ;; from org-meta-return invocation.
+	     (not (hyperb:stack-frame '(org-meta-return))))
     (let (start-end)
       (cond ((setq start-end (hsys-org-internal-link-target-at-p))
 	     (hsys-org-set-ibut-label start-end)
@@ -108,7 +119,10 @@ If on an Org mode link, displays standard Hyperbole help."
   "Follows an optional Org mode LINK to its target.
 If LINK is nil, follows any link at point.  Otherwise, triggers an error."
   (if (stringp link)
-      (org-open-link-from-string link) ;; autoloaded
+      (cond ((fboundp #'org-link-open-from-string)
+	     (org-link-open-from-string link))
+            ((fboundp #'org-open-link-from-string)
+	     (org-open-link-from-string link))) ;; autoloaded
     (org-open-at-point))) ;; autoloaded
 
 (defact org-internal-link-target (&optional link-target)
@@ -169,7 +183,9 @@ uses that one.  Otherwise, triggers an error."
 (defun hsys-org-link-at-p ()
   "Return non-nil iff point is on an Org mode link.
 Assumes caller has already checked that the current buffer is in `org-mode'."
-  (or (org-in-regexp org-any-link-re)
+  (or (if (boundp 'org-link-any-re)
+	  (org-in-regexp org-link-any-re)
+	(org-in-regexp org-any-link-re))
       (hsys-org-face-at-p 'org-link)))
 
 ;; Assumes caller has already checked that the current buffer is in org-mode.

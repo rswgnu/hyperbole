@@ -29,7 +29,8 @@ It must end with a directory separator character.")
 ;; Ensure final name (after resolving all links) of hyperb:dir is
 ;; used; otherwise, Hyperbole may fail to substitute this as a
 ;; variable into link path buttons.
-(if (stringp hyperb:dir) (setq hyperb:dir (file-truename hyperb:dir)))
+(when (stringp hyperb:dir)
+  (setq hyperb:dir (file-truename hyperb:dir)))
 
 ;; Add hyperb:dir to load-path so other Hyperbole libraries can be
 ;; found unless it is already there since the Emacs Package Manager

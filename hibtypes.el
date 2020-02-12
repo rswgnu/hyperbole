@@ -1261,7 +1261,7 @@ arg1 ... argN '>'.  For example, <mail nil \"user@somewhere.org\">."
 		             actype 'display-variable)))
 	    ;; Necessary so can return a null value, which actype:act cannot.
 	    (let ((hrule:action
-               (if (eq hrule:action #'actype:identity)
+			   (if (eq hrule:action #'actype:identity)
                    #'actype:identity
                  #'actype:eval)))
           (if (eq hrule:action #'actype:identity)
