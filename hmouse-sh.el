@@ -470,6 +470,18 @@ point determined by `mouse-select-region-move-to-beginning'."
   "Bind the middle mouse key as the Action Key and the right mouse key as the Assist Key.
 With optional MIDDLE-KEY-ONLY-FLAG non-nil, bind only the middle mouse key."
   (interactive)
+  ;; Globally Emacs uses key-translation-map to link mouse-1 to
+  ;; do whatever mouse-2 does but because Hyperbole uses both down
+  ;; and up bindings on mouse2, this does not work to follow links.
+  ;; Disable use of mouse following on button1 and use button2 only
+  ;; for that.  Use mouse1 only for setting point and drag selecting
+  ;; regions.
+  ;;
+  ;; Don't bind mouse1 to action-key-depress-emacs to allow it to
+  ;; follow links because that will disable the region highlighting
+  ;; that we would rather allow.`
+  (customize-set-variable 'mouse-1-click-follows-link nil)
+  ;;
   ;; Unbind Emacs push-button mouse keys since Hyperbole handles them.
   (define-key button-map [mouse-2] nil)
   (define-key button-map [mode-line mouse-2] nil)

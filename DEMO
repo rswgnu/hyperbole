@@ -1,6 +1,6 @@
 * GNU Hyperbole Demonstration by Bob Weiner
 
-  Say thanks if you like Hyperbole: https://saythanks.io/to/rswgnu
+  Send an email or a testimonial if you like Hyperbole to <rsw@gnu.org>.
 
     Table of Contents
     -----------------
@@ -32,9 +32,9 @@ you know how to use Emacs.  Otherwise, run the Emacs tutorial by pressing
 {C-h t} first.
 
 You should be looking at this file within Emacs and Hyperbole should already
-be installed within your copy of Emacs.  To be sure, press {C-h h} and you
+be installed within your copy of Emacs.  To be sure, press 'C-h h' and you
 should see the Hyperbole menu in your minibuffer window at the bottom of
-your current Emacs frame.  Press {q} to quit out of this menu and we can
+your current Emacs frame.  Press 'q' to quit out of this menu and we can
 begin.  If Hyperbole is not installed, see the "INSTALL" file, in the
 same directory as this file, for instructions on installing it.
 
@@ -120,32 +120,35 @@ minibuffer menu you saw at the beginning; one is for use from the keyboard
 (the minibuffer menu) and one is for use with the mouse (the menubar menu).
 
 In this demo, we will use the minibuffer menu.  To display the top-level
-Hyperbole menu again use {C-h h} or click the Action Mouse Key within the
+Hyperbole menu again use 'C-h h' or click the Action Mouse Key within the
 blank/inactive minibuffer window.  You will see a single line (possibly
 wrapped around) with submenus that end with a forward slash (/) and non-menu
 items.  Type the first letter of any menu item (upper or lower case does not
 matter) or click on it with the Action Mouse Key to select and activate it.
-You may also move forward an item with {TAB} or {M-f} or backward an item
-with {Shift-TAB} or {M-b} and then use {RET} to select the item.
+You may also move forward an item with 'TAB' or 'M-f' or backward an item
+with 'Shift-TAB' or 'M-b' and then use 'RET' to select the item.  Also, notice
+at the left of this menu is your Hyperbole release version number for easy
+reference.
 
-A press of {q} or {C-g} will quit from the current menu without invoking any
-commands.  A press/click of the Assist Key on a menu item pops up a window
-displaying help for it while keeping the current menu on screen.  {C-t} or
+A press/click of the Assist Key on a menu item pops up a window
+displaying help for it while keeping the current menu on screen.  'C-t' or
 an Action Key press/click on the menu prefix (before the '>' character)
-returns you to the top Hyperbole menu if you are in a submenu.
+returns you to the top Hyperbole menu if you are in a submenu.  A press of
+'q' or 'C-g' will quit from the current menu without invoking any further
+commands.
 
 Let's try a menu item that displays the Hyperbole Glossary of terms.  Use
-{q} in the glossary to return here.  Use {C-h h d g} to display the
-glossary.  {C-h h d RET} would simply exit the menu and {C-h h d C-t} would
-redisplay the top Hyperbole menu.
+{C-h h d g} to display the glossary.  Use {q} in the glossary to return here.
+{C-h h d RET} would simply exit the menu and {C-h h d C-t q} would redisplay
+the top Hyperbole menu and then quit it.
 
 What if we want to do a web search for GNU Hyperbole?  Then we use the
-Find/Web menu, typically bound to {C-c /} or if not, then use {C-h h f w}.
-Then type {g} for Google and enter "GNU Hyperbole", including the quote marks
+Find/Web menu, typically bound to 'C-c /' or if not, then use {C-h h f w
+g "GNU Hyperbole" RET} to search Google, including the quote marks
 so that it is searched for as a phrase.  Your standard web browser will be
 used to return the search results.
 
-You can change which browser is used with {C-h h c w}, the Cust/Web-Search
+You can change which browser is used with 'C-h h c w', the Cust/Web-Search
 menu.  Advanced users can change the search engines listed by editing the
 option, <(hyperbole-web-search-alist)>.
 
@@ -258,7 +261,7 @@ the argument is used to adjust one dimension of the frame.
 
 ** Windows Grid
 
-The {@} command splits a frame into a grid of up to 9 rows by 9 columns of
+The @ command splits a frame into a grid of up to 9 rows by 9 columns of
 windows, showing a different buffer in each window, if available.  First
 let's expand our frame to full screen with the {.1 %} command and then show
 a 2 x 3 grid.  We can do multiple commands in one 'key series'.  Press the
@@ -272,18 +275,25 @@ right?  You can separate each command by any number of spaces or even jam
 them all together: {C-hhsf.1%.23@Q}.  Use SPC (separated by spaces) to
 include a space as part of the key series.
 
-A zero argument to the {@} command is special.  It means you want to display
-buffers with a particular major mode first, e.g. c-mode.  You will be
-prompted for the major mode and then the size of the grid.
+A zero argument to the @ command is special.  It means you want to display
+buffers with a particular major mode first, e.g. emacs-lisp-mode.  You will
+be prompted for the major mode and then the size of the grid.
 
-To try it, activate: {C-hhsf .0 @}.
+First let's add a few Emacs Lisp files to the bottom of our buffer list.
+Press the Action Key anywhere within the following action button:
 
-If you ever need to experiment with different sized window grids, use {M-x
-hycontrol-window-grid-repeatedly RET}.  It will repeatedly prompt you for a
-grid size and then display it.  When you are done, simply press {RET} to
+   <mapc (lambda (f) (find-file-noselect (expand-file-name f hyperb:dir)))
+         ("hibtypes.el" "hactypes.el" "hsettings.el")>
+
+Now let's display a 2x2 grid of windows preferring Emacs Lisp buffers:
+To try it, activate: {C-hhsf .0 @ emacs-lisp-mode RET 22 RET}.
+
+If you ever need to experiment with different sized window grids, use M-x
+hycontrol-window-grid-repeatedly RET.  It will repeatedly prompt you for a
+grid size and then display it.  When you are done, simply press RET to
 exit.
 
-Outside of HyControl, you can invoke the grid of windows command with {C-c @}
+Outside of HyControl, you can invoke the grid of windows command with C-c @
 in most buffers.
 
 There is lots more to discover in HyControl as you explore.
@@ -352,14 +362,14 @@ textual highlighting, each search match is highlighted for quick, visual
 location.
 
 Let's try the HyRolo.  First load the HyRolo demo commands with an Action Key
-press on "-hyrolo-demo.el".  Now {C-x 4 r} will search the DEMO ROLO file.
+press on "-hyrolo-demo.el".  Now C-x 4 r will search the DEMO ROLO file.
 Action Key press on {C-x4r work RET} to search for all entries from Work
 Industries; then type {q} to quit from the HyRolo search results buffer.
 {C-x4r manager RET} finds all managers plus their staff across companies.
 {C-x4r Dunn,\ J RET} finds just that staffer.  Notice that you must quote the
 space with a backslash when including it in a key series search string or
-else the space will be removed; when just typing the same string
-interactively, don't add the backslash.
+else the space will be removed (or you could type SPC); when just typing the
+same string interactively, don't add the backslash.
 
 A prefix argument used with any of the find commands listed above limits the
 search to a maximum number of matches given by the argument.  For example
@@ -402,7 +412,7 @@ Hyperbole provides a history command that returns you to previous button
 locations in the reverse order of the way you traverse them.  It actually
 restores your complete frame and window configuration at the time of the
 button press.  You access it by selecting the Hist command from the top-level
-Hyperbole menu, {C-h h h}.  Remember this because you will want to use that
+Hyperbole menu, C-h h h.  Remember this because you will want to use that
 command to return to this DEMO later.
 
 
@@ -436,11 +446,11 @@ of 'My Emacs Files':
 
 <[My Emacs Files]>: "~/.emacs.d"
 
-You see that the label is delimited by <[ and ]>.  It must be at least 2
+You see that the label is delimited by '<[' and ']>'.  It must be at least 2
 characters in length and can be followed by any number of :, - or = characters,
 including none, and then a whitespace character.  You can activate the button
 either from its label or its pattern text.  With point on an implicit button,
-you can label it by using {C-h h i l}.
+you can label it by using C-h h i l.
 
 Now let's explore some implicit button types.
 
@@ -458,8 +468,9 @@ line of this button to try it out.
 
 Hyperbole minibuffer menu items may also be activated as key series.  For
 example, {C-h h d i} displays the online browsable Info version of the
-Hyperbole Manual.  Press your Action Key between the braces to see it.  Once
-in the Info browser, use {s} to search for any topic throughout the manual.
+Hyperbole Manual.  Press your Action Key between the braces to see it.
+Another press here: {C-x o m implicit\ buttons RET} should jump to the
+Implicit Buttons section of the manual.
 
 Now when you write notes about particular global key sequences you want to
 remember, just surround them with curly braces and you'll always be able to
@@ -488,8 +499,15 @@ Fifth, with point on the first line of a code block definition, the Action
 Key executes the code block via the Org mode standard binding of {C-c C-c},
 (org-ctrl-c-ctrl-c).
 
+Sixth, the Action and Assist keys work on Hyperbole explicit and implicit
+buttons.
+
 In any other context besides the end of a line, the Action Key invokes
 the Org mode standard binding of {M-RET}, (org-meta-return).
+
+To disable ALL Hyperbole support within Org major and minor modes, set the
+custom option `inhibit-hsys-org' to t.  Then the Action Key will simply
+invoke the Org mode standard binding of {M-RET}, (org-meta-return).
 
 ** Action Buttons
 

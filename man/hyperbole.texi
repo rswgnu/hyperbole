@@ -139,7 +139,7 @@ Texinfo markup language.
 
 <CENTER><H2>The Everyday Hypertextual Information Manager</H2></CENTER>
 
-<CENTER><H3><A HREF="https://saythanks.io/to/rswgnu">Say thanks if you like Hyperbole.</A></H3></CENTER>
+<CENTER><H3><A HREF="mailto:rsw@@gnu.org">Say thanks or send a testimonial if you like Hyperbole.</A></H3></CENTER>
 
 
 <P>Copyright &copy; 1989-2019  Free Software Foundation, Inc.</P>
@@ -179,7 +179,7 @@ Printed January 19, 2020.
 
 @center The Everyday Hypertextual Information Manager
 
-@center Say thanks: https://saythanks.io/to/rswgnu
+@center Send any thanks in email to: <rsw@@gnu.org>.
 
 @sp 2
 @noindent
@@ -2413,6 +2413,9 @@ for special file display options.
 @kindex M-@key{RET}
 @findex org-ctrl-c-ctrl-c
 @findex org-meta-return
+@vindex inhibit-hsys-org
+@cindex disable org-mode support
+@cindex inhibit org-mode support
 @item org-mode
 For users of Emacs Org mode, Hyperbole does quite a few things.
 
@@ -2436,6 +2439,10 @@ of @bkbd{C-c C-c}, @code{org-ctrl-c-ctrl-c}.
 
 In any other context besides the end of a line, the Action Key invokes
 the Org mode standard binding of @bkbd{M-@key{RET}}, @code{org-meta-return}.
+
+To disable ALL Hyperbole support within Org major and minor modes, set
+the custom option @code{inhibit-hsys-org} to @code{t}.  Then in Org modes,
+the Action Key will simply invoke @code{org-meta-return}.
 @end table
 
 @node Action Buttons,  , Implicit Button Types, Implicit Buttons

@@ -68,6 +68,8 @@
 ;;; Follows Org mode links and radio targets and cycles Org heading views
 ;;; ========================================================================
 
+;; Set the custom option `inhibit-hsys-org' non-nil to disable ALL Hyperbole
+;; support within Org major and minor modes.
 (require 'hsys-org)
 
 ;;; ========================================================================
@@ -504,8 +506,8 @@ the very beginning of the line."
 	           (save-excursion
 	             (beginning-of-line)
 	             ;; Entry line within a TOC
-	             (if (looking-at "[ \t]+\\*+[ \t]+\\(.*[^ \t]\\)[ \t]*$")
-		             (setq section (match-string-no-properties 1))))
+	             (when (looking-at "[ \t]+\\*+[ \t]+\\(.*[^ \t]\\)[ \t]*$")
+		           (setq section (match-string-no-properties 1))))
 	           (progn (ibut:label-set section (match-beginning 1) (match-end 1))
 		              t)
 	           (save-excursion (re-search-backward
@@ -621,7 +623,7 @@ Requires the Emacs builtin Tramp library for ftp file retrievals."
       (ibut:label-set (hbut:key-to-label lbl-key) start-pos end-pos)
       (hact link-actype but-key key-file))))
 
-(defun  parse-label-and-file (label-and-file)
+(defun parse-label-and-file (label-and-file)
   "Parse a colon-separated string of button label and source file path into a list of label and file."
   ;; Can't use split-string here because file path may contain colons;
   ;; we want to split only on the first colon.

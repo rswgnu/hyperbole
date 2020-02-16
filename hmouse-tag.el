@@ -1051,6 +1051,8 @@ Returns TAG."
 	    (tag (smart-tags-find-p tag))))))
 
 (defun smart-lisp-bound-symbol-def (tag-sym)
+  "Return the file where TAG-SYM is defined which may be a .elc file.
+TAG-SYM may be a function, variable or face."
   (save-excursion
     ;; Bound Emacs Lisp function, variable and face definition display.
     (or (condition-case () (find-function-noselect tag-sym) (error nil))

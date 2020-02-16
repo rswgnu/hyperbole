@@ -38,13 +38,16 @@
     - Double Quoting Key Series: Key series delimited by {} may now be in double
       quotes, e.g. "{C-x o}".
 
+    - Much improved conversion of MSWindows UNC paths to existing Posix mount
+      points when running Emacs under Windows Subsystem for Linux.
+
   ORG MODE
 
     - Implicit Button Support: Org-mode's local binding of {M-RET} by default
       now activates Hyperbole implicit buttons when within them.
-In org-mode buffers when not on a Hyperbole
-      button, org link or heading, and the {M-RET} Action Key is pressed,
-      Hyperbole defers to Org's org-meta-return command.
+
+    - inhibit-hsys-org: New customization that when set non-nil disables
+      all Smart Key support in any Org major or minor mode.
 
   PROGRAMMING
 

@@ -1,6 +1,6 @@
 # GNU Hyperbole 7.0.8 - The Everyday Hypertextual Information Manager
 
-[Say thanks if you like Hyperbole.(https://saythanks.io/to/rswgnu)]
+[Say thanks or send a testimonial if you like Hyperbole.(mailto:rsw@gnu.org)]
 
 <!-- START doctoc generated TOC -->
 **Table of Contents**

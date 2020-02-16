@@ -81,10 +81,7 @@ If the value of 'hpath:mswindows-mount-prefix' changes, then re-initialize this 
 (defconst hpath:mswindows-path-regexp "\\`.*\\.*[a-zA-Z0-9_.]"
   "Regular expression matching the start of an MSWindows path that does not start with a drive letter but contains directory separators.")
 
-(defvar hpath:mswindows-path-posix-mount-alist nil
-  "Automatically set alist of (window-path-prefix . posix-mount-point) elements.")
-
-(defvar hpath:directory-expand-alist nil
+(defvar hpath:posix-mount-point-to-mswindows-alist nil
   "Automatically set alist of (posix-mount-point . window-path-prefix) elements.
 Used to expand posix mount points to Windows UNC paths during posix-to-mswindows conversion.")
 
@@ -110,9 +107,18 @@ If path begins with an MSWindows drive letter, prefix the converted path with th
   path)
 
 (defun hpath:mswindows-to-posix-separators (path)
-  "Replace all backslashes with forward slashes in PATH and expand the path against `directory-abbrev-alist', if possible.
-Path must be a string or an error will be triggered."
-  (replace-regexp-in-string "\\\\" "/" (abbreviate-file-name path) nil t))
+  "Replace all backslashes with forward slashes in PATH and abbreviate the path if possible.
+Path must be a string or an error will be triggered.  See
+'abbreviate-file-name' for how path abbreviation is handled."
+    (setq path (replace-regexp-in-string "\\\\" "/" path)
+          ;; Downcase any host and domain for mount-point matching
+          path (if (string-match "\\`//[^/:]+" path)
+                   (concat (downcase (match-string 0 path))
+                           (substring path (match-end 0)))
+                 path)
+          path (hpath:abbreviate-file-name path)
+          path (replace-regexp-in-string (regexp-quote "\\`") "" path)
+          path (replace-regexp-in-string (regexp-quote "\\>") "" path)))
 
 ;;;###autoload
 (defun hpath:posix-to-mswindows (path)
@@ -142,8 +148,8 @@ If path begins with an optional mount prefix, 'hpath:mswindows-mount-prefix', fo
   "Replace all forward slashes with backslashes in PATH and abbreviate the path if possible.
 Path must be a string or an error will be triggered.  See
 'abbreviate-file-name' for how path abbreviation is handled."
-  (let ((directory-abbrev-alist hpath:directory-expand-alist))
-    (replace-regexp-in-string "/" "\\\\" (abbreviate-file-name path))))
+  (let ((directory-abbrev-alist hpath:posix-mount-point-to-mswindows-alist))
+    (replace-regexp-in-string "/" "\\\\" (hpath:abbreviate-file-name path))))
 
 (defun hpath:posix-path-p (path)
   "Return non-nil if PATH looks like a Posix path."
@@ -181,33 +187,50 @@ Path must be a string or an error will be triggered.  See
 Call this function manually if mount points change after Hyperbole is loaded."
   (interactive)
   (when (not hyperb:microsoft-os-p)
-    (let ((mount-points-to-add
-	   ;; Sort alist of (path-mounted . mount-point) elements from shortest
-	   ;; to longest path so thDat the longest path is selected first within
-	   ;; 'directory-abbrev-alist' (elements are added in reverse order).
-	   (sort
-	    ;; Convert plist to alist for sorting.
-	    (hypb:map-plist (lambda (path mount-point)
-			       (if (string-match "\\`\\([a-zA-Z]\\):\\'" path)
-				   ;; Drive letter must be downcased
-				   ;; in order to work when converted back to Posix.
-				   (setq path (concat "/" (downcase (match-string 1 path)))))
-			       ;; Assume all mounted Windows paths are
-			       ;; lowercase for now.
-			       (cons (downcase path) mount-point))
-			     ;; Return a plist of MSWindows path-mounted mount-point pairs.
-			     (split-string (shell-command-to-string (format "df -a -t drvfs 2> /dev/null | sort | uniq | grep -v '%s' | sed -e 's+ .*[-%%] /+ /+g'" hpath:posix-mount-points-regexp))))
-	    (lambda (cons1 cons2) (<= (length (car cons1)) (length (car cons2))))))
-	  path mount-point)
-      (mapc (lambda (path-and-mount-point)
+    (let (mount-points-alist
+          mount-points-to-add)
+      ;; Convert plist to alist for sorting.
+      (hypb:map-plist (lambda (path mount-point)
+			(when (string-match "\\`\\([a-zA-Z]\\):\\'" path)
+			  (setq path (concat "/" (match-string 1 path))))
+			;; Drive letter must be downcased
+			;; in order to work when converted back to Posix.
+			;; Assume all mounted Windows paths are
+			;; lowercase for now.
+                        (setq path (downcase path))
+                        (push (cons (downcase path) mount-point)
+                              mount-points-to-add)
+                        ;; If a network share with a domain
+                        ;; name, also add an entry WITHOUT the
+                        ;; domain name to the mount points
+                        ;; table since Windows paths often omit
+                        ;; the domain.
+                        (when (string-match "\\`\\([\\/][\\/][^.\\/]+\\)\\([^\\/]+\\)" path)
+                          (push (cons (concat (match-string 1 path)
+                                              (substring path (match-end 0)))
+                                      mount-point)
+                                mount-points-to-add)))
+		      ;; Return a plist of MSWindows path-mounted mount-point pairs.
+		      (split-string (shell-command-to-string (format "df -a -t drvfs 2> /dev/null | sort | uniq | grep -v '%s' | sed -e 's+ .*[-%%] /+ /+g'" hpath:posix-mount-points-regexp))))
+      ;; Sort alist of (path-mounted . mount-point) elements from shortest
+      ;; to longest path so that the longest path is selected first within
+      ;; 'directory-abbrev-alist' (elements are added in reverse order).
+      (setq mount-points-to-add
+            (sort mount-points-to-add
+                  (lambda (cons1 cons2) (<= (length (car cons1)) (length (car cons2))))))
+      (let (path
+            mount-point)
+        (mapc (lambda (path-and-mount-point)
 		(setq path (car path-and-mount-point)
 		      mount-point (cdr path-and-mount-point))
-		(add-to-list 'directory-abbrev-alist (cons (format "\\`%s\\>" (regexp-quote path))
-							   mount-point)))
-	      mount-points-to-add)
+                ;; Don't abbreviate /mnt or /cygdrive to /, skip this entry.
+                (unless (equal mount-point "/")
+		  (add-to-list 'directory-abbrev-alist (cons (format "\\`%s\\>" (regexp-quote path))
+							     mount-point))))
+	      mount-points-to-add))
       ;; Save the reverse of each mount-points-to-add so
       ;; can expand paths when going from posix-to-mswindows.
-      (setq hpath:directory-expand-alist
+      (setq hpath:posix-mount-point-to-mswindows-alist
 	    (mapcar (lambda (elt) (cons (concat "\\`" (cdr elt) "\\>")
                                         (car elt))) mount-points-to-add))
       mount-points-to-add)))
@@ -535,6 +558,12 @@ These are used to indicate how to display or execute the pathname.
 ;;; ************************************************************************
 ;;; Public functions
 ;;; ************************************************************************
+
+(defun hpath:abbreviate-file-name (path)
+  "Same as `abbreviate-file-name' but disables tramp-mode.
+This prevents improper processing of hargs with colons in them, e.g. `actypes::link-to-file'."
+  (let (tramp-mode)
+    (abbreviate-file-name path)))
 
 (defun hpath:absolute-to (path &optional default-dirs)
   "Return PATH as an absolute path relative to one directory from optional DEFAULT-DIRS or `default-directory'.
@@ -1270,7 +1299,7 @@ in-buffer path will not match."
 		       ;; invalid local path but this may be called when
 		       ;; testing for implicit button matches where no error
 		       ;; should occur, so catch the error and ignore variable
-		       ;; expansion in such a case.  -- RSW, 8/26/2019
+		       ;; expansion in such a case.  -- RSW, 08-26-2019
 		       (condition-case nil
 			   (hpath:substitute-dir var-name rest-of-path)
 			 (error rest-of-path)))

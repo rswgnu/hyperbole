@@ -322,7 +322,7 @@ Next: <a href="#Introduction" accesskey="n" rel="next">Introduction</a>, Previou
 
 <CENTER><H2>The Everyday Hypertextual Information Manager</H2></CENTER>
 
-<CENTER><H3><A HREF="https://saythanks.io/to/rswgnu">Say thanks if you like Hyperbole.</A></H3></CENTER>
+<CENTER><H3><A HREF="mailto:rsw@gnu.org">Say thanks or send a testimonial if you like Hyperbole.</A></H3></CENTER>
 
 
 <P>Copyright &copy; 1989-2019  Free Software Foundation, Inc.</P>
@@ -2973,6 +2973,9 @@ for special file display options.
 <span id="index-M_002dRET-1"></span>
 <span id="index-org_002dctrl_002dc_002dctrl_002dc"></span>
 <span id="index-org_002dmeta_002dreturn"></span>
+<span id="index-inhibit_002dhsys_002dorg"></span>
+<span id="index-disable-org_002dmode-support"></span>
+<span id="index-inhibit-org_002dmode-support"></span>
 </dd>
 <dt><code>org-mode</code></dt>
 <dd><p>For users of Emacs Org mode, Hyperbole does quite a few things.
@@ -2997,6 +3000,10 @@ of <kbd>{C-c C-c}</kbd>, <code>org-ctrl-c-ctrl-c</code>.
 </p>
 <p>In any other context besides the end of a line, the Action Key invokes
 the Org mode standard binding of <kbd>{M-<span class="key">RET</span>}</kbd>, <code>org-meta-return</code>.
+</p>
+<p>To disable ALL Hyperbole support within Org major and minor modes, set
+the custom option <code>inhibit-hsys-org</code> to <code>t</code>.  Then in Org modes,
+the Action Key will simply invoke <code>org-meta-return</code>.
 </p></dd>
 </dl>
 
@@ -12175,6 +12182,7 @@ Next: <a href="#Concept-Index" accesskey="n" rel="next">Concept Index</a>, Previ
 <tr><td></td><td valign="top"><a href="#index-Info_002ddirectory_002dlist">Info-directory-list</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Invocation">Invocation</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-Info_002dglobal_002dnext"><code>Info-global-next</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Key-_002d-Info-Manuals">Smart Key - Info Manuals</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-Info_002dglobal_002dprev"><code>Info-global-prev</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Key-_002d-Info-Manuals">Smart Key - Info Manuals</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-inhibit_002dhsys_002dorg">inhibit-hsys-org</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-interactive"><code>interactive</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Action-Type-Creation">Action Type Creation</a></td></tr>
 <tr><td colspan="4"> <hr></td></tr>
 <tr><th id="Function_fn_letter-K">K</th><td></td><td></td></tr>
@@ -12710,6 +12718,7 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function</a>, Up: <a href
 <tr><td></td><td valign="top"><a href="#index-disable-Hyperbole">disable Hyperbole</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Key-Bindings">Smart Key Bindings</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-disable-Hyperbole-1">disable Hyperbole</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Global-Key-Bindings">Global Key Bindings</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-disable-local-key-override">disable local key override</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Global-Key-Bindings">Global Key Bindings</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-disable-org_002dmode-support">disable org-mode support</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-display">display</a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyControl">HyControl</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-display-function">display function</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Internal-Viewers">Internal Viewers</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-display-outside-Emacs">display outside Emacs</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Referent-Display">Referent Display</a></td></tr>
@@ -12958,6 +12967,7 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function</a>, Up: <a href
 <tr><td></td><td valign="top"><a href="#index-Info-manual">Info manual</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Invocation">Invocation</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-Info-node">Info node</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-InfoDock">InfoDock</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Glossary">Glossary</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-inhibit-org_002dmode-support">inhibit org-mode support</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-initialization-file">initialization file</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Autonumbering">Autonumbering</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-insert-item">insert item</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Keyboard-Drags">Keyboard Drags</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-inserting-tabs">inserting tabs</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Relocating-and-Copying">Relocating and Copying</a></td></tr>

@@ -109,15 +109,22 @@ A hyrolo-file consists of:
 (defcustom hyrolo-highlight-face nil
   "*Face used to highlight rolo search matches."
   :type 'face
+  :initialize #'custom-initialize-default
   :group 'hyperbole-rolo)
+
+(defun hyrolo-initialize-highlight-face ()
+  "Define the face stored in `hyrolo-highlight-face'."
+  (unless (and (boundp 'hyrolo-highlight-face) hyrolo-highlight-face)
+    (setq hyrolo-highlight-face
+	  (when (fboundp 'defface)
+	    (defface hyrolo-highlight-face nil
+	      "*Face used to highlight rolo search matches."
+	      :group 'hyperbole-rolo)))
+    (when (fboundp 'hproperty:set-item-highlight)
+      (hproperty:set-item-highlight))))
+
 (unless hyrolo-highlight-face
-  (setq hyrolo-highlight-face
-	(when (fboundp 'defface)
-	  (defface hyrolo-highlight-face nil
-	    "*Face used to highlight rolo search matches."
-	    :group 'hyperbole-rolo)))
-  (when (fboundp 'hproperty:set-item-highlight)
-    (hproperty:set-item-highlight)))
+  (hyrolo-initialize-highlight-face))
 
 (defcustom hyrolo-kill-buffers-after-use nil
   "*Non-nil means kill rolo file buffers after searching them for entries.

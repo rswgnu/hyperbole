@@ -29,6 +29,12 @@
 (require 'hbut)
 (require 'org)
 
+(defcustom inhibit-hsys-org nil
+  "*Non-nil means disable Action Key support in Org major and minor modes."
+  :type 'boolean
+  :initialize #'custom-initialize-default
+  :group 'hyperbole-buttons)
+
 (defvar hsys-org-mode-function #'hsys-org-mode-p
   "*Boolean function of no arguments that determines whether hsys-org actions are triggered or not.")
 
@@ -36,7 +42,7 @@
 (add-hook 'org-metareturn-hook #'hsys-org-hbut-activate-p)
 
 (defun hsys-org-mode-p ()
-  "Return non-nil if point is not on a Hyperbole button but is within an Org major or minor-mode buffer."
+  "Return non-nil if point is within an Org major or minor-mode buffer."
   (or (derived-mode-p 'org-mode)
       (and (boundp 'outshine-mode) outshine-mode)
       (and (boundp 'poporg-mode) poporg-mode)))
@@ -54,9 +60,9 @@
   (org-global-cycle nil))
 
 (defun hsys-org-hbut-activate-p ()
-  "Activate any Hyperbole button at point and return t, else return nil."
-  (when (and (funcall hsys-org-mode-function) (hbut:at-p))
-    (hbut:act 'hbut:current)
+  "When within an Org major or minor-mode buffer and `inhibit-hsys-org' is nil (the default), activate any Hyperbole button at point and return t, else return nil."
+  (when (and (not inhibit-hsys-org) (funcall hsys-org-mode-function) (hbut:at-p))
+    (hbut:act)
     t))
 
 ;;; ************************************************************************
@@ -64,7 +70,7 @@
 ;;; ************************************************************************
 
 (defib org-mode ()
-  "Follows Org mode references, cycles outline visibility and executes code blocks.
+  "Follow Org mode references, cycles outline visibility and executes code blocks.
 
 First, this follows internal links in Org mode files.  When pressed on a
 link referent/target, the link definition is displayed, allowing two-way
@@ -83,26 +89,32 @@ executes the code block via the Org mode standard binding of {C-c C-c},
 \(org-ctrl-c-ctrl-c).
 
 In any other context besides the end of a line, the Action Key invokes the
-Org mode standard binding of {M-RET}, (org-meta-return)."
+Org mode standard binding of {M-RET}, (org-meta-return).
+
+To disable ALL Hyperbole support within Org major and minor modes, set the
+custom option `inhibit-hsys-org' to t.  Then in Org modes, this will
+simply invoke `org-meta-return'."
   (when (and (funcall hsys-org-mode-function)
 	     ;; Prevent infinite recursion when called via org-metareturn-hook
 	     ;; from org-meta-return invocation.
 	     (not (hyperb:stack-frame '(org-meta-return))))
-    (let (start-end)
-      (cond ((setq start-end (hsys-org-internal-link-target-at-p))
-	     (hsys-org-set-ibut-label start-end)
-	     (hact 'org-internal-link-target))
-	    ((hsys-org-radio-target-def-at-p)
-	     (hact 'org-radio-target))
-	    ((setq start-end (hsys-org-link-at-p))
-	     (hsys-org-set-ibut-label start-end)
-	     (hact 'org-link))
-	    ((org-at-heading-p)
-	     (hact 'hsys-org-cycle))
-	    ((hsys-org-at-block-start-p)
-	     (org-ctrl-c-ctrl-c))
-	    (t
-	     (hact 'org-meta-return))))))
+    (if inhibit-hsys-org
+	(hact 'org-meta-return)
+      (let (start-end)
+	(cond ((setq start-end (hsys-org-internal-link-target-at-p))
+	       (hsys-org-set-ibut-label start-end)
+	       (hact 'org-internal-link-target))
+	      ((hsys-org-radio-target-def-at-p)
+	       (hact 'org-radio-target))
+	      ((setq start-end (hsys-org-link-at-p))
+	       (hsys-org-set-ibut-label start-end)
+	       (hact 'org-link))
+	      ((org-at-heading-p)
+	       (hact 'hsys-org-cycle))
+	      ((hsys-org-at-block-start-p)
+	       (org-ctrl-c-ctrl-c))
+	      (t
+	       (hact 'org-meta-return)))))))
 
 (defun org-mode:help (&optional _but)
   "If on an Org mode heading, cycles through views of the whole buffer outline.

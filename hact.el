@@ -207,7 +207,7 @@ Return the new function symbol derived from TYPE."
 	 (action (nconc (list 'defun sym params doc) body)))
     `(progn
        ,action
-       (setplist ',sym ,property-list)
+       (setplist ',sym '(definition-name ,type @,property-list))
        (symset:add ',type ',type-category 'symbols)
        (run-hooks 'htype-create-hook)
        ',sym)))
@@ -498,7 +498,7 @@ arguments).  A call to this function is syntactically the same as for
 Return symbol created when successful, else nil."
   `(progn
      (symtable:add ',type symtable:actypes)
-     (htype:create ,type actypes ,doc ,params ,default-action '(definition-name ,type))))
+     (htype:create ,type actypes ,doc ,params ,default-action nil)))
 
 (defalias 'defact 'actype:create)
 (put      'actype:create 'lisp-indent-function 'defun)

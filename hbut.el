@@ -735,8 +735,11 @@ others who use a different value!")
 ;;; hbut class - abstract
 ;;; ========================================================================
 
-(defun    hbut:act (hbut)
-  "Perform action for explicit or implicit Hyperbole button symbol HBUT."
+(defun    hbut:act (&optional hbut)
+  "Perform action for optional explicit or implicit Hyperbole button symbol HBUT.
+Default is 'hbut:current."
+  (unless hbut
+    (setq hbut 'hbut:current))
   (when hbut
     (apply hrule:action
 	   (hattr:get hbut 'actype)
@@ -755,7 +758,8 @@ others who use a different value!")
       (when (fboundp atype) atype))))
 
 (defun    hbut:at-p ()
-  "Return symbol for explicit or implicit Hyperbole button at point or nil."
+  "Return symbol for explicit or implicit Hyperbole button at point or nil.
+Then use (hbut:act) to activate the button."
   (or (ebut:at-p) (ibut:at-p)))
 
 
@@ -1073,7 +1077,7 @@ include delimiters when INCLUDE-DELIMS is non-nil)."
          (ibut:to (ibut:key but))
          (call-interactively #'hui:ibut-rename))
         (t
-	     (hypb:error "(hbut:rename): Button is invalid; it has no attributes"))))
+	 (hypb:error "(hbut:rename): Button is invalid; it has no attributes"))))
 
 (defun    hbut:report (&optional arg)
   "Pretty print the attributes of a button or buttons.
@@ -1081,8 +1085,8 @@ include delimiters when INCLUDE-DELIMS is non-nil)."
 Takes an optional ARG interpreted as follows:
   a button symbol - report on that button;
   nil             - report on button at point, if any;
-  integer > 0     - report on all explicit buttons in buffer, alphabetize;
-  integer < 1     - report on all explicit buttons in occurrence order.
+  integer > 0     - report on all explicit buttons in buffer, in lexicographical order;
+  integer < 1     - report on all explicit buttons in buffer, in occurrence order.
 
 Return number of buttons reported on or nil if none."
   (setq arg (cond ((or (integerp arg) (symbolp arg)) arg)
@@ -1106,8 +1110,7 @@ Return number of buttons reported on or nil if none."
 	 (attribs)
 	 ;; Ensure these do not invoke with-output-to-temp-buffer a second time.
 	 (temp-buffer-show-hook)
-	 (temp-buffer-show-function)
-	 )
+	 (temp-buffer-show-function))
     (if lbl-lst
 	(progn
 	  (with-help-window buf-name
@@ -1137,8 +1140,7 @@ Return number of buttons reported on or nil if none."
 		      ;;			   (memq 'action attribs)
 		      ;;			 (memq 'categ attribs))
 		      attribs)
-		     (terpri))
-		 ))
+		     (terpri))))
 	     lbl-lst))
 	  (length lbl-lst)))))
 
@@ -1216,57 +1218,61 @@ With optional KEY-ONLY, returns only the label key for button.
 
 Any labeled implicit button must contain at least two characters,
 excluding delimiters, not just one."
-  (let* ((opoint (point))
-	 (label-key-start-end (ibut:label-p nil nil nil t t))
-	 (lbl-key (car label-key-start-end)))
-    (unwind-protect
-	(progn
-	  (when (not (hbut:outside-comment-p))
-	    ;; Skip past any optional label and separators
-	    (when label-key-start-end
-	      (goto-char (nth 2 label-key-start-end)) 
-	      (when (looking-at ibut:label-separator-regexp)
-		;; Move past up to 2 possible characters of ibut
-		;; delimiters; this prevents recognizing labeled,
-		;; delimited ibuts of a single character but no one
-		;; should need that.
-		(goto-char (min (+ 2 (match-end 0)) (point-max))))))
+  ;; Since the Smart Keys handle end-of-line separately from whether
+  ;; point is within an implicit button, always report not within one
+  ;; when point is at the end of a line.  -- RSW, 02-16-2020
+  (unless (eolp)
+    (let* ((opoint (point))
+	   (label-key-start-end (ibut:label-p nil nil nil t t))
+	   (lbl-key (car label-key-start-end)))
+      (unwind-protect
+	  (progn
+	    (when (not (hbut:outside-comment-p))
+	      ;; Skip past any optional label and separators
+	      (when label-key-start-end
+		(goto-char (nth 2 label-key-start-end))
+		(when (looking-at ibut:label-separator-regexp)
+		  ;; Move past up to 2 possible characters of ibut
+		  ;; delimiters; this prevents recognizing labeled,
+		  ;; delimited ibuts of a single character but no one
+		  ;; should need that.
+		  (goto-char (min (+ 2 (match-end 0)) (point-max))))))
 
-	  ;; Check for an implicit button at current point, record its
-	  ;; attributes and return a button symbol for it.
-	  (let ((types (htype:category 'ibtypes))
-		;; Global var used in (hact) function, don't delete.
-		(hrule:action 'actype:identity)
-		(itype)
-		(args)
-		(is-type))
-	    (unless key-only
-	      (hattr:clear 'hbut:current))
-	    (while (and (not is-type) types)
-	      (setq itype (car types))
-	      (if (and itype (setq args (funcall itype)))
-		  (setq is-type itype)
-		(setq types (cdr types))))
-	    (when is-type
-	      (when lbl-key
-		(hattr:set 'hbut:current 'lbl-key lbl-key))
-	      (if key-only
-		  (hattr:get 'hbut:current 'lbl-key)
-		(hattr:set 'hbut:current 'loc (save-excursion
-						(hbut:key-src 'full)))
+	    ;; Check for an implicit button at current point, record its
+	    ;; attributes and return a button symbol for it.
+	    (let ((types (htype:category 'ibtypes))
+		  ;; Global var used in (hact) function, don't delete.
+		  (hrule:action 'actype:identity)
+		  (itype)
+		  (args)
+		  (is-type))
+	      (unless key-only
+		(hattr:clear 'hbut:current))
+	      (while (and (not is-type) types)
+		(setq itype (car types))
+		(if (and itype (setq args (funcall itype)))
+		    (setq is-type itype)
+		  (setq types (cdr types))))
+	      (when is-type
 		(hattr:set 'hbut:current 'categ is-type)
-		(or (hattr:get 'hbut:current 'args)
-		    (not (listp args))
-		    (progn
-		      (hattr:set 'hbut:current 'actype
-				 (or
-				  ;; Hyperbole action type
-				  (symtable:actype-p (car args))
-				  ;; Regular Emacs Lisp function symbol
-				  (car args)))
-		      (hattr:set 'hbut:current 'args (cdr args))))
-		'hbut:current))))
-      (goto-char opoint))))
+		(when lbl-key
+		  (hattr:set 'hbut:current 'lbl-key lbl-key))
+		(if key-only
+		    (hattr:get 'hbut:current 'lbl-key)
+		  (hattr:set 'hbut:current 'loc (save-excursion
+						  (hbut:key-src 'full)))
+		  (or (hattr:get 'hbut:current 'args)
+		      (not (listp args))
+		      (progn
+			(hattr:set 'hbut:current 'actype
+				   (or
+				    ;; Hyperbole action type
+				    (symtable:actype-p (car args))
+				    ;; Regular Emacs Lisp function symbol
+				    (car args)))
+			(hattr:set 'hbut:current 'args (cdr args))))
+		  'hbut:current))))
+	(goto-char opoint)))))
 
 (defun    ibut:at-type-p (ibut-type-symbol)
   "Return non-nil if point is on a button of type IBUT-TYPE-SYMBOL.

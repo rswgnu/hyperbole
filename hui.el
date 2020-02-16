@@ -76,13 +76,15 @@ Default is the current button."
 	     (ebut:get (ebut:label-to-key
 			(hargs:read-match "Button to execute: " lst nil t
 					  (ebut:label-p 'as-label) 'ebut))))
-	    (t (hypb:error "(ebut-act): No explicit buttons in buffer."))))))
+	    (t
+	     (hypb:error "(ebut-act): No explicit buttons in buffer."))))))
   (cond ((and (called-interactively-p 'interactive) (null but))
 	 (hypb:error "(ebut-act): No current explicit button to activate."))
 	((not (hbut:is-p but))
 	 (hypb:error "(ebut-act): Explicit button is invalid; it has no attributes."))
-	(t (or but (setq but 'hbut:current))
-	   (hui:but-flash) (hbut:act but))))
+	(t
+	 (hui:but-flash)
+	 (hbut:act but))))
 
 (defun hui:ebut-create (&optional start end)
   "Create an explicit Hyperbole button starting from label between optional START and END.

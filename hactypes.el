@@ -469,7 +469,7 @@ and its buffer must have a file attached."
        ;; TODO: If default is null below and are creating, rather than modifying,
        ;; the link, it would be better to throw an error than create
        ;; an invalid link, but it is difficult to tell which operation
-       ;; is in progress, so ignore this for now.  -- RSW, 01-25-20020
+       ;; is in progress, so ignore this for now.  -- RSW, 01-25-2020
 
        ;; When not on an ibut and moddifying the link, use existing arguments
        (if (and (boundp 'defaults) defaults (listp defaults))

@@ -1459,7 +1459,7 @@ See documentation of `hycontrol-windows-grid' for further details."
 		(mode-strings (mapcar 'symbol-name (apply #'set:create (mapcar (lambda (buf) (buffer-local-value 'major-mode buf))
 									       (hycontrol-windows-grid-buffer-list))))))
 	   (intern-soft (completing-read "(HyControl Grid Windows): Major mode of buffers to display: "
-					 mode-strings nil t (symbol-name major-mode))))))
+					 mode-strings nil t nil nil (symbol-name major-mode))))))
   (let ((hycontrol-display-buffer-predicate-list `((eq major-mode ',mode))))
     (hycontrol-make-windows-grid arg)))
 

@@ -149,6 +149,9 @@ This permits the Smart Keys to behave as paste keys.")
 	action-key-release-args nil
 	action-key-release-window nil
 	action-key-release-prev-point nil)
+  (when (and (not assist-key-depressed-flag)
+	     (hmouse-modeline-event-p action-key-depress-args))
+    (mouse-drag-mode-line action-key-depress-args))
   (run-hooks 'action-key-depress-hook))
 
 (defun assist-key-depress (&rest args)
@@ -166,6 +169,9 @@ This permits the Smart Keys to behave as paste keys.")
 	assist-key-release-args nil
 	assist-key-release-window nil
 	assist-key-release-prev-point nil)
+  (when (and (not action-key-depressed-flag)
+	     (hmouse-modeline-event-p assist-key-depress-args))
+    (mouse-drag-mode-line assist-key-depress-args))
   (run-hooks 'assist-key-depress-hook))
 
 (defun action-key-depress-emacs (event)
@@ -798,7 +804,9 @@ Return non-nil iff associated help documentation is found."
     (if pred-value
 	(setq call (if assist-flag (cdr (cdr hkey-form))
 		     (cadr hkey-form))
-	      cmd-sym (car call))
+	      cmd-sym (if (eq (car call) #'funcall)
+			  (cadr call)
+			(car call)))
       (setq cmd-sym (if assist-flag assist-key-default-function action-key-default-function)
 	    call cmd-sym))
     (if (and (consp call) (eq (car call) 'call-interactively))

@@ -1,3 +1,67 @@
+2020-02-16  Bob Weiner  <rsw@gnu.org>
+
+* hui-window.el (hmouse-alist-add-window-handlers): Added not a modeline depress test for clause that
+    handles drags from a window to a modeline, since otherwise will catch drags from a modeline that
+    may move a frame.
+                (hmouse-drag-p): Added to test whether absolute depress and release positions differ.
+		(hmouse-release-left-edge, hmouse-release-right-edge): Removed XEmacs code.
+
+* hmouse-drv.el (action-key-depress, assist-key-depress):
+  hui-window.el (action-key-modeline, assist-key-modeline):
+     Modeline window resizing is now handled in action/assist-key-depress
+     via a call to mouse-drag-mode-line, providing live visual feedback.
+
+2020-02-15  Bob Weiner  <rsw@gnu.org>
+
+* hmouse-sh.el (hmouse-unshifted-setup): Disabled `mouse-1-click-follows-link' since it doesn't work
+    with Hyperbole's down and up bindings.
+
+* hui-window.el (hmouse-drag-outside-all-windows): Removed errant backquote typo that was causing
+    any Action Mouse Key click to create a new frame.
+
+* hargs.el (hargs:iform-read): Removed XEmacs setting and replaced with one-time transient-mark-mode
+    setting to keep region enabled when '_' is included in interactive specs.
+
+* DEMO: Removed {} from partial key series that we don't want new automated button tester to activate.
+
+* hycontrol.el (hycontrol-windows-grid-by-major-mode): Changed initial-input to default value.
+
+* hmouse-tag.el (smart-lisp-bound-symbol-def): Documented.
+
+* hact.el (htype:create): Added definition-name property used by
+    find-function-search-for-symbol so now Elisp stack frame and other function
+    calls that look like actypes::<action-type> and ibtypes::<implicit-button-type> jump to
+    the associated defact and defib definitions.
+
+* hbut.el (ibtype:create): Added definition-name property to a tag lookup on ibtypes::grep-msg looks up
+    the name used in the defib call, grep-msg.  This had previously been done for actypes.
+
+* hpath.el (hpath:posix-to-mswindows-separators):
+           (hpath:mswindows-to-posix-separators)
+	   (hpath:abbreviate-file-name): Added and called from the above functions.  Same as
+    `abbreviate-file-name' but disables tramp-mode.  This prevents improper processing of hargs
+     with colons in them, e.g. `actypes::link-to-file'."
+
+* hbut.el (ibut:at-p): Fixed that button category/type was not set if KEY-ONLY flag was given.
+
+* hmouse-drv.el (hkey-help): Fixed listing of command executed when prefixed with a funcall.
+
+* hbut.el (hbut:report): Improved doc string.
+
+* hui.el (hui:ebut-act):
+  hsys-org.el (hsys-org-hbut-activate-p):
+  hbut.el (hbut:act): Simplified most common call and made hbut optional, defaulting to 'hbut:current.
+
+2020-02-13  Bob Weiner  <rsw@gnu.org>
+
+* hpath.el (hpath:cache-mswindows-mount-points): If a network share with a domain
+    name, also add an entry WITHOUT the  domain name to the mount points table
+    since Windows paths often omit the domain.
+           (hpath:mswindows-to-posix-separators): Rewrote to better handle
+    converting Windows UNC paths to Posix mount points.
+           (hpath:directory-expand-alist): Renamed to hpath:posix-mount-point-to-mswindows-alist
+           (hpath:mswindows-path-posix-mount-alist): Removed, unused.
+
 2020-02-12  Bob Weiner  <rsw@gnu.org>
 
 * hyrolo.el (hyrolo-verify): Removed check of (stringp hyrolo-match-regexp) since may have
@@ -8,7 +72,9 @@
     Changed: (match-string-no-properties hyrolo-entry-regexp
          To: (match-string-no-properties hyrolo-entry-group-number)
 
-* hsys-org.el (hsys-org-hbut-activate-p): Defined and added to org-metareturn-hook so local binding
+* hsys-org.el (inhibit-hsys-org): Added customization to allow disabling all Smart Key support when in an
+    Org mode and documented everywhere.
+              (hsys-org-hbut-activate-p): Defined and added to org-metareturn-hook so local binding
     of M-RET in org-mode activates Hyperbole buttons (doesn't run full set of Action Key actions).
     (org-link): Updated to utilize newer org-link-open-from-string function when available.
     (hsys-org-link-at-p): Updated to utilize newer org-link-any-re variable when available.
@@ -349,12 +415,6 @@ V7.0.7 test release changes ^^^^:
 
 * hmouse-tag.el (smart-emacs-lisp-mode-p): Added change-log-mode so
     Elisp symbols there are matched.
-
-* hact.el (actype:create): Added definition-name property used by
-    find-function-search-for-symbol so now Elisp stack frame function
-    calls that look like actypes::<action-type> and
-    ibtypes::<implicit-button-type> jump to the associated defact and
-    defib definitions.
 
 * hmouse-tag.el (smart-lisp-at-definition-p): Don't match to 'def' alone.
 

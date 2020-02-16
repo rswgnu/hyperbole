@@ -134,7 +134,7 @@ With optional EXCLUDE-REGEXP, any matched string is ignored if it this regexp."
 	;; delimiters in the search range, causing the end-delim
 	;; search to match to what should probably be the start-delim,
 	;; assume point is within a string and not between two other strings.
-	;; RSW - 02/05/2019
+	;; -- RSW, 02-05-2019
 	(setq start (point)))
       (when start
 	(forward-line 2)
@@ -526,7 +526,7 @@ See also documentation for `interactive'."
 		  ;;   See `this-command-keys-shift-translated' for an explanation.
 		  ;;
 		  ;;   `_' means keep region in same state (active or inactive)
-		  ;;   after this command.  (XEmacs only.)
+		  ;;   after this command.
 		  ;;
 		  (while (cond
 			  ((eq (aref iform i) ?*))
@@ -536,7 +536,7 @@ See also documentation for `interactive'."
 			  ((eq (aref iform i) ?^)
 			   (handle-shift-selection))
 			  ((eq (aref iform i) ?_)
-			   (setq zmacs-region-stays t)))
+			   (push 'only transient-mark-mode)))
 		    (setq i (1+ i) start i))
 		  ;;
 		  (while (and (< start end)
