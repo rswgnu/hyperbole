@@ -131,7 +131,7 @@ Return t if cutoff, else nil."
   (nconc
    (list
     (vector (hui-menu-key-binding-item "Action-Key          \t\t\t" 'hkey-either)                        '(hui:bind-key #'hkey-either) t)                    ;; {M-RET}
-    (vector (hui-menu-key-binding-item "Button-Rename-Key   \t"     'hui:ebut-rename)                    '(hui:bind-key #'hui:ebut-rename) t)                ;; {C-c C-r}
+    (vector (hui-menu-key-binding-item "Button-Rename-Key   \t"     'hui:ebut-rename)                    '(hui:bind-key #'hui:ebut-rename) t)                ;; None
     (vector (hui-menu-key-binding-item "Drag-Emulation-Key  \t\t"   'hkey-operate)                       '(hui:bind-key #'hkey-operate) t)                   ;; {M-o}
     (vector (hui-menu-key-binding-item "Find-Web-Key        \t\t"   'hui-search-web)                     '(hui:bind-key #'hui-search-web) t)                 ;; {C-c /}
     (vector (hui-menu-key-binding-item "Grid-of-Windows-Key \t"     'hycontrol-windows-grid)             '(hui:bind-key #'hycontrol-windows-grid) t)         ;; {C-c @}

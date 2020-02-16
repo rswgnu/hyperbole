@@ -456,7 +456,7 @@ constructs.  If not given, the top level Hyperbole menu is used."
        '(cust-keys .
          (("Change Keys>")
 	  ("ActionKey"     (hui:bind-key #'hkey-either))                        ;; {M-RET}
-	  ("ButRename"     (hui:bind-key #'hui:ebut-rename))                    ;; {C-c C-r}
+	  ("ButRename"     (hui:bind-key #'hui:ebut-rename))                    ;; None
 	  ("DragKey"       (hui:bind-key #'hkey-operate))                       ;; {M-o}
 	  ("FindWeb"       (hui:bind-key #'hui-search-web)) 	                ;; {C-c /}
 	  ("GridOfWindows" (hui:bind-key #'hycontrol-windows-grid))             ;; {C-c @}

@@ -1,5 +1,11 @@
 2020-02-16  Bob Weiner  <rsw@gnu.org>
 
+* man/hyperbole.texi (Renaming, Global Key Bindings):
+  hyperbole.el (hkey-initialize):
+  hui-mini.el (hui:menus):
+  hui-menu.el (hui-menu-key-bindings): Removed {C-c C-r} ebut rename binding since conflicts with bindings
+    commonly made in some modes.  Use menu instead or choose a personal binding.
+
 * hui.el (hui:hbut-help): Improved to flash unnamed implicit buttons with lbl-start and lbl-end properties.
 
 * hyperbole.el (hyperb:autoloads-exist-p, hyperb:maybe-generate-autoloads, hyperb:generate-autoloads):

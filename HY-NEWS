@@ -41,6 +41,11 @@
     - Much improved conversion of MSWindows UNC paths to existing Posix mount
       points when running Emacs under Windows Subsystem for Linux.
 
+  KEYS
+
+    - Removed {C-c C-r} key binding for explicit button renaming due to
+      conflicts with some major modes
+
   ORG MODE
 
     - Implicit Button Support: Org-mode's local binding of {M-RET} by default

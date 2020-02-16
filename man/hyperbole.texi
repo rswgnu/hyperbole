@@ -3029,15 +3029,12 @@ button in the buffer will be renamed.
 
 @vindex file, .emacs
 @vindex file, hyperbole.el
-@kindex C-c C-r
 @findex hui:ebut-rename
 The rename command may be invoked from the Hyperbole menu via
-Ebut/Rename.  A faster method is to use a key bound to the
-@code{hui:ebut-rename} command.  Hyperbole typically binds this to
-@bkbd{C-c C-r}.  @bkbd{C-h w hui:ebut-rename @key{RET}} will show
-what if any key runs it.  If no key binding has been established or if
-you prefer one of your own, simply bind it within your @file{~/.emacs}
-file: @code{(global-set-key "\C-c\C-r" 'hui:ebut-rename)}.
+Ebut/Rename.  Hyperbole does not bind this command to a key by default.
+@bkbd{C-h w hui:ebut-rename @key{RET}} will show what if any key is bound
+within your Emacs.  Bind it within your @file{~/.emacs} file with:
+@code{(global-set-key "\C-cr" 'hui:ebut-rename)}, for example.
 
 
 @node Deletion, Modification, Renaming, Utilizing Explicit Buttons
@@ -7188,11 +7185,6 @@ bound prior to loading Hyperbole.
 
 For further details, see the @bkbd{@@} key binding description
 in @ref{HyControl}.
-
-@cindex key binding, C-c C-r
-@kitem C-c C-r
-Button Rename: Rename an explicit button. This binding is made only if
-the key is not bound prior to loading Hyperbole.
 
 @cindex key binding, M-o
 @kitem M-o

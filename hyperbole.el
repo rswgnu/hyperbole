@@ -256,11 +256,10 @@ Entry format is: (key-description key-sequence key-binding)."
     ;; Don't override prior global bindings of this key.
     (hkey-maybe-global-set-key "\C-c@" 'hycontrol-windows-grid t)
     ;;
-    ;; Binds {C-c C-r} as a site standard way of performing explicit
-    ;; button renames without invoking the Hyperbole menu.
-    ;;
+    ;; Explicit button renames without invoking the Hyperbole menu.
+    ;; No binding by default.
     ;; Don't override prior global bindings of this key.
-    (hkey-maybe-global-set-key "\C-c\C-r" 'hui:ebut-rename t)
+    ;; (hkey-maybe-global-set-key "\C-cr" 'hui:ebut-rename t)
     ;;
     ;; Binds {C-c RET} to select larger and larger synctactical units in a
     ;; buffer when invoked repeatedly, showing in the minibuffer the type
