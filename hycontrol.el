@@ -294,8 +294,8 @@ The final predicate should always be t, for default values, typically of zero.")
     ;; frame iconification under macOS 100-fold, so don't enable it until this issue is resolved.
     ;; (define-key map "^"    'iconify-frame)
     (define-key map "~"     (lambda () (interactive)
-			      (or (hycontrol-frame-swap-buffers) (hycontrol-window-swap-buffers)
-				  (hycontrol-user-error hycontrol-debug "(HyControl): There must be only two windows on screen to swap buffers."))))
+			      (unless (hycontrol-frame-swap-buffers)
+				(hycontrol-user-error hycontrol-debug "(HyControl): There must be at least two frames and the frame to swap to must have only a single window."))))
     (define-key map "-"     'hycontrol-frame-minimize-lines)
     (define-key map "+"     'toggle-frame-maximized)
     (define-key map "="     (lambda () (interactive)
@@ -400,8 +400,8 @@ The final predicate should always be t, for default values, typically of zero.")
     (define-key map "\)"    'hycontrol-restore-frame-configuration)
 
     (define-key map "~"     (lambda () (interactive)
-			      (or (hycontrol-window-swap-buffers) (hycontrol-frame-swap-buffers)
-				  (hycontrol-user-error hycontrol-debug "(HyControl): There must be only two windows on screen to swap buffers."))))
+			      (unless (hycontrol-window-swap-buffers)
+				(hycontrol-user-error hycontrol-debug "(HyControl): There must be precisely two windows within the selected frame to swap buffers."))))
     (define-key map "-"     'hycontrol-window-minimize-lines)
     (define-key map "+"     'hycontrol-window-maximize-lines)
     (define-key map "="     (lambda () (interactive) (and (> (length (window-list)) 1)
@@ -924,26 +924,25 @@ instead of quitting HyControl."
       (delete-other-frames)))
 
 (defun hycontrol-frame-swap-buffers ()
-  "Swap the buffers displayed by each of two frames and return t.
-The selected frame may have multiple windows; the selected window is
-used.  The second frame must have a single window only; otherwise, do
-nothing and return nil."
+  "Swap the buffers displayed by each of two visible, most recently used frames and return t.
+The selected window in each frame is used.  If there are not at least
+two visible frames, do nothing and return nil."
   (interactive)
-  (let ((frames (frame-list))
+  (let ((frames (filtered-frame-list #'frame-visible-p))
 	frame2
 	windows2
 	buf1 buf2)
-    (when (= 2 (length frames))
+    (when (>= (length frames) 2)
       (setq frame2 (if (eq (car frames) (selected-frame))
 		       (cadr frames)
 		     (car frames))
 	    windows2 (window-list frame2 'no-mini))
-      (when (= 1 (length windows2))
-	(setq buf1 (window-buffer (selected-window))
-	      buf2 (window-buffer (car windows2)))
-	(set-window-buffer (selected-window) buf2)
-	(set-window-buffer (car windows2) buf1)
-	t))))
+      (setq buf1 (window-buffer (selected-window))
+	    buf2 (window-buffer (car windows2)))
+      (set-window-buffer (selected-window) buf2)
+      (set-window-buffer (car windows2) buf1)
+      (other-frame 1)
+      t)))
 
 ;;; Frame Relocation Commands
 
@@ -1584,6 +1583,7 @@ if possible."
 
 (defun hycontrol-window-swap-buffers ()
   "Swap the buffers displayed by each of two windows within the selected frame and return t.
+Swap which window is selected so that the current buffer remains the same.
 Do nothing and return nil if there are not precisely two windows."
   (interactive)
   (let ((windows (window-list nil 'no-mini))
@@ -1593,6 +1593,7 @@ Do nothing and return nil if there are not precisely two windows."
 	    buf2 (window-buffer (cadr windows)))
       (set-window-buffer (car windows) buf2)
       (set-window-buffer (cadr windows) buf1)
+      (other-window 1)
       t)))
 
 ;; Derived from Emacs mouse.el.

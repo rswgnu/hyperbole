@@ -154,8 +154,8 @@ WITHOUT ANY WARRANTY, without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</P>
 
 <PRE>
-Edition 7.0.8
-Printed January 19, 2020.
+Edition 7.0.9
+Printed February 16, 2020.
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -196,8 +196,8 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 @sp 2
 
 @example
-Edition 7.0.8
-January 19, 2020
+Edition 7.0.9
+February 16, 2020
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -475,7 +475,7 @@ Smart Keyboard Keys
 @chapter Introduction
 
 This edition of the GNU Hyperbole Manual is for use with any version
-7.0.8 or greater of GNU Hyperbole.  Hyperbole runs atop GNU Emacs 24.3
+7.0.9 or greater of GNU Hyperbole.  Hyperbole runs atop GNU Emacs 24.3
 or higher.  It will trigger an error if your Emacs is older.
 
 This chapter summarizes the structure of the rest of the manual,
@@ -1409,10 +1409,12 @@ Swapping buffer locations is quick and easy with Hyperbole.  Simply drag
 from one window to another with the Assist Key (not the Action Key).  This
 works across frames as well.
 
-If you have just two windows in an Emacs frame, you can swap their buffers
-from the keyboard.  Use this Hyperbole minibuffer menu key sequence
-involving the tilde key to swap the buffers and quit from the Hyperbole
-minibuffer menu: @bkbd{C-h h s w ~ q}.
+If you have just two windows in an Emacs frame, you can swap their
+buffers from the keyboard.  Use this Hyperbole minibuffer menu key
+sequence involving the tilde key to swap the buffers and quit from the
+Hyperbole minibuffer menu: @bkbd{C-h h s w ~ Q}.  Similarly, if you
+have two single window frames, you can swap buffers between them with
+@bkbd{C-h h s f ~ Q}.
 
 @node Displaying Buffers, Cloning Windows, Swapping Buffers, Dragging Buffers
 @subsubsection Displaying Buffers

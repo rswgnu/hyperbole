@@ -1,5 +1,22 @@
 2020-02-16  Bob Weiner  <rsw@gnu.org>
 
+* Published 7.0.9 test release.
+
+* hibtypes.el (grep-msg): Fixed handling files names with spaces followed by a null character rather than a
+    colon as a separator.  Note that the null is set to visibly display as a colon in Emacs.
+  hpath.el (hpath:tramp-file-name-regexp): Don't match if a control char is found, notably a null (ASCII 0).
+    These can appear in grep expressions where filenames followed by colons may be confused as remote paths.
+
+* man/hyperbole.texi (Swapping Buffers):
+  DEMO (Swapping Buffers): Added swapping buffers between frames.
+
+* hycontrol.el (hycontrol-window-swap-buffers): Fixed so current buffer remains the same but selected window
+    changes.
+               (hycontrol-frame-swap-buffers): Fixed so current buffer remains the same but selected frame
+    changes.  Also made this work anytime there are two or more frames regardless of how many windows in each.
+               (hycontrol-frames-mode-map):  {~} removed secondary call of hycontrol-window-swap-buffers.
+               (hycontrol-windows-mode-map): {~} removed secondary call of hycontrol-frame-swap-buffers.
+
 * man/hyperbole.texi (Renaming, Global Key Bindings):
   hyperbole.el (hkey-initialize):
   hui-mini.el (hui:menus):
@@ -23,7 +40,9 @@
     handles drags from a window to a modeline, since otherwise will catch drags from a modeline that
     may move a frame.
                 (hmouse-drag-p): Added to test whether absolute depress and release positions differ.
-		(hmouse-release-left-edge, hmouse-release-right-edge): Removed XEmacs code.
+
+* hui-menu.el (hyperbole-menubar-menu): Removed set-menubar-dirty-flag call.
+              (hmouse-release-left-edge, hmouse-release-right-edge): Removed XEmacs code.
 
 * hkey-help.txt:
   hmouse-drv.el (action-key-depress, assist-key-depress):
@@ -190,7 +209,7 @@
     release when first uploading it.
 
 ==============================================================================
-V7.0.9 changes ^^^^:
+V7.0.9 test release changes ^^^^:
 ==============================================================================
 
 2020-01-20  Bob Weiner  <rsw@gnu.org>

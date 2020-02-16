@@ -269,8 +269,7 @@ Return t if cutoff, else nil."
 	       (customize-set-variable 'menubar-configuration
 				       (cons 'Hyperbole menubar-configuration))
 	     (setq menubar-configuration
-		   (cons 'Hyperbole menubar-configuration))))
-	 (set-menubar-dirty-flag))
+		   (cons 'Hyperbole menubar-configuration)))))
 	(t (let ((add-before (cond ((and (boundp 'infodock-menubar-type)
 					 (eq infodock-menubar-type 'menubar-infodock))
 				    "Key")

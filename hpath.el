@@ -595,9 +595,10 @@ directories.  The first one in which PATH is found is used."
 (defun hpath:tramp-file-name-regexp ()
   "Return a modified `tramp-file-name-regexp' for matching to the beginning of a remote file name.
 Removes bol anchor and removes match to empty string if present."
-  (let ((tramp-regexp (car (if (fboundp 'tramp-file-name-structure)
-			       (tramp-file-name-structure)
-			     tramp-file-name-structure))))
+  (let* ((tramp-localname-regexp "[^[:cntrl:]]*\\'")
+	 (tramp-regexp (car (if (fboundp 'tramp-file-name-structure)
+				(tramp-file-name-structure)
+			      tramp-file-name-structure))))
     (substring-no-properties (replace-regexp-in-string "\\\\'" "" tramp-regexp) 1)))
 
 (defun hpath:remote-at-p ()

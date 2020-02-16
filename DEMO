@@ -1374,6 +1374,8 @@ Boom, the buffers are swapped.  This works across frames as well.
 If you have just two windows in an Emacs frame, you can swap their buffers
 from the keyboard.  Use this Hyperbole minibuffer menu key sequence to swap
 the buffers and quit from the Hyperbole minibuffer menu: {C-h h s w ~ Q}.
+Similarly, if you have two single window frames, you can swap buffers between
+them with {C-h h s f ~ Q}.
 
 *** Displaying Buffers
 
@@ -1391,10 +1393,11 @@ split before the buffer is displayed.
 You can do the same thing with items in dired, buffer menu and ibuffer menu
 listing buffers rather than buffers themselves.  Drag with the Action Mouse Key
 and the selected item will be displayed in any Emacs window in which you
-release.  Drag outside Emacs and it will be displayed in a new frame.  To
-display the last item you want, press the Action Key on it and it will display
-within the listing window itself.  (If you use the Treemacs file viewer package,
-item dragging works there as well).
+release.  To display the last item you want, press the Action Key on it and it
+will display within the listing window itself.  (If you use the Treemacs file
+viewer package, item dragging works there as well).  Under the MacOS window
+manager, you can also drag outside of an Emacs frame and the item will be
+displayed in a newly created and selected frame.
 
 So now you can rapidly put a bunch of buffers and files on your screen wherever
 you like.  Typically, a brief visual pulse is shown first at the source item and
@@ -1418,12 +1421,11 @@ buffer with that of another window, use M-o r <window-id>.  To instead swap the
 selected window's buffer with that of another window, use M-o m <window-id>.
 Try these commands out and they will speed your work.
 
-You can also throw the active (highlighted) region of text to another
-window.  Simply activate a region and then use M-o t <window-id> just
-like before.  If you don't use region highlighting,
-i.e. transient-mark-mode, then use C-u M-o t <window-id> for the same
-effect.  The buffer in the target window must differ from the one in
-the source window.  With no region active, this command throws
+You can also throw the active (highlighted) region of text to another window.
+Simply activate a region and then use M-o t <window-id> just like before.  If
+you don't use region highlighting, i.e. transient-mark-mode, then use C-u M-o t
+<window-id> for the same effect.  The buffer in the target window must differ
+from the one in the source window.  With no region active, this command throws
 the source buffer to the target window.
 
 *** Cloning Windows

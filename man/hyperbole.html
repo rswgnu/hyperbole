@@ -1,7 +1,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <!-- This manual is for GNU Hyperbole
-(Edition 7.0.8, Published January 19, 2020).
+(Edition 7.0.9, Published February 16, 2020).
 
 Copyright (C) 1989-2019  Free Software Foundation, Inc.
 
@@ -338,8 +338,8 @@ WITHOUT ANY WARRANTY, without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</P>
 
 <PRE>
-Edition 7.0.8
-Printed January 19, 2020.
+Edition 7.0.9
+Printed February 16, 2020.
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -796,7 +796,7 @@ Next: <a href="#Smart-Keys" accesskey="n" rel="next">Smart Keys</a>, Previous: <
 <span id="Introduction-1"></span><h2 class="chapter">1 Introduction</h2>
 
 <p>This edition of the GNU Hyperbole Manual is for use with any version
-7.0.8 or greater of GNU Hyperbole.  Hyperbole runs atop GNU Emacs 24.3
+7.0.9 or greater of GNU Hyperbole.  Hyperbole runs atop GNU Emacs 24.3
 or higher.  It will trigger an error if your Emacs is older.
 </p>
 <p>This chapter summarizes the structure of the rest of the manual,
@@ -1912,10 +1912,12 @@ Next: <a href="#Displaying-Buffers" accesskey="n" rel="next">Displaying Buffers<
 from one window to another with the Assist Key (not the Action Key).  This
 works across frames as well.
 </p>
-<p>If you have just two windows in an Emacs frame, you can swap their buffers
-from the keyboard.  Use this Hyperbole minibuffer menu key sequence
-involving the tilde key to swap the buffers and quit from the Hyperbole
-minibuffer menu: <kbd>{C-h h s w ~ q}</kbd>.
+<p>If you have just two windows in an Emacs frame, you can swap their
+buffers from the keyboard.  Use this Hyperbole minibuffer menu key
+sequence involving the tilde key to swap the buffers and quit from the
+Hyperbole minibuffer menu: <kbd>{C-h h s w ~ Q}</kbd>.  Similarly, if you
+have two single window frames, you can swap buffers between them with
+<kbd>{C-h h s f ~ Q}</kbd>.
 </p>
 <hr>
 <span id="Displaying-Buffers"></span><div class="header">
@@ -3677,15 +3679,12 @@ button in the buffer will be renamed.
 </p>
 <span id="index-file_002c-_002eemacs-1"></span>
 <span id="index-file_002c-hyperbole_002eel"></span>
-<span id="index-C_002dc-C_002dr"></span>
 <span id="index-hui_003aebut_002drename"></span>
 <p>The rename command may be invoked from the Hyperbole menu via
-Ebut/Rename.  A faster method is to use a key bound to the
-<code>hui:ebut-rename</code> command.  Hyperbole typically binds this to
-<kbd>{C-c C-r}</kbd>.  <kbd>{C-h w hui:ebut-rename <span class="key">RET</span>}</kbd> will show
-what if any key runs it.  If no key binding has been established or if
-you prefer one of your own, simply bind it within your <samp>~/.emacs</samp>
-file: <code>(global-set-key &quot;\C-c\C-r&quot; 'hui:ebut-rename)</code>.
+Ebut/Rename.  Hyperbole does not bind this command to a key by default.
+<kbd>{C-h w hui:ebut-rename <span class="key">RET</span>}</kbd> will show what if any key is bound
+within your Emacs.  Bind it within your <samp>~/.emacs</samp> file with:
+<code>(global-set-key &quot;\C-cr&quot; 'hui:ebut-rename)</code>, for example.
 </p>
 
 <hr>
@@ -8413,13 +8412,6 @@ bound prior to loading Hyperbole.
 <p>For further details, see the <kbd>{@}</kbd> key binding description
 in <a href="#HyControl">HyControl</a>.
 </p>
-<span id="index-key-binding_002c-C_002dc-C_002dr"></span>
-<span id="index-C_002dc-C_002dr-1"></span>
-</dd>
-<dt><kbd>{C-c C-r}</kbd></dt>
-<dd><p>Button Rename: Rename an explicit button. This binding is made only if
-the key is not bound prior to loading Hyperbole.
-</p>
 <span id="index-key-binding_002c-M_002do"></span>
 <span id="index-M_002do-1"></span>
 </dd>
@@ -11492,8 +11484,6 @@ Next: <a href="#Function" accesskey="n" rel="next">Function</a>, Previous: <a hr
 <tr><td></td><td valign="top"><a href="#index-C_002dc-C_002dn"><code>C-c C-n</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Moving-Around">Moving Around</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-C_002dc-C_002do"><code>C-c C-o</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Hiding-and-Showing">Hiding and Showing</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-C_002dc-C_002dp"><code>C-c C-p</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Moving-Around">Moving Around</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-C_002dc-C_002dr"><code>C-c C-r</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Renaming">Renaming</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-C_002dc-C_002dr-1"><code>C-c C-r</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Global-Key-Bindings">Global Key Bindings</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-C_002dc-C_002ds"><code>C-c C-s</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Hiding-and-Showing">Hiding and Showing</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-C_002dc-C_002dt"><code>C-c C-t</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Hiding-and-Showing">Hiding and Showing</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-C_002dc-C_002du"><code>C-c C-u</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Moving-Around">Moving Around</a></td></tr>
@@ -13046,7 +13036,6 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function</a>, Up: <a href
 <tr><td></td><td valign="top"><a href="#index-key-binding-list">key binding list</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Global-Key-Bindings">Global Key Bindings</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-key-binding_002c-C_002dc-_002e">key binding, C-c .</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Global-Key-Bindings">Global Key Bindings</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-key-binding_002c-C_002dc-_0040">key binding, C-c @</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Global-Key-Bindings">Global Key Bindings</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-key-binding_002c-C_002dc-C_002dr">key binding, C-c C-r</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Global-Key-Bindings">Global Key Bindings</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-key-binding_002c-C_002dc-RET">key binding, C-c <tt class="key">RET</tt></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Global-Key-Bindings">Global Key Bindings</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-key-binding_002c-C_002dc-_005c">key binding, C-c \</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Global-Key-Bindings">Global Key Bindings</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-key-binding_002c-C_002dh-A">key binding, C-h A</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Global-Key-Bindings">Global Key Bindings</a></td></tr>
