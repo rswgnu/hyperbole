@@ -225,13 +225,14 @@ Hyperbole binds {C-c \} to invoke HyControl windows control; otherwise, the
 Hyperbole minibuffer menu item, Screen/WindowsControl {C-h h s w}, will do
 the same thing.
 
-Once in HyControl, your minibuffer window at the bottom of the selected frame
-will display a summary of keys you may use to adjust your windows until you
-press {q} or {Q} to quit from HyControl.  If you don't see it, press {?} to
-turn on this help display.  The key {t} will always switch you between
-controlling frames and windows, the minor modes of HyControl, with a modeline
-indicator of either "HyFrm" or "HyWin" depending on which type of control is
-active.  See "(hyperbole)HyControl" for full usage information.
+Once in HyControl, your minibuffer window at the bottom of the selected
+frame will display a summary of keys you may use to adjust your windows
+until you press {Q} (or {q} once or twice) to quit from HyControl.  If you
+don't see it, press {?} to turn on this help display.  The key {t} will
+always switch you between controlling frames and windows, the minor modes of
+HyControl, with a modeline indicator of either "HyFrm" or "HyWin" depending
+on which type of control is active.  See "(hyperbole)HyControl" for full
+usage information.
 
 ** Frame Commands
 
@@ -918,13 +919,13 @@ displayed.  Test this technique with a {C-x C-f} (find-file) and then a {?}.
 
 ** Hyperbole Source Buttons
 
-If you ask for help with the Assist Key or {C-h A} from within this button,
-{M-x dired-other-window RET ~ RET}, the first line of the help buffer will
+If you ask for a report on all the explicit buttons in this buffer
+with {C-h h e h b}, the first line of the resulting help buffer will
 look like this:
 
 @loc> "DEMO"
 
-except it will contain the full pathname of the file.  If the button were
+except it will contain the full pathname of the file.  If the buttons were
 embedded within a buffer without an attached file, the first line of the help
 buffer might look like:
 
@@ -1335,11 +1336,11 @@ side-by-side windows to delete it.
 You can easily resize Emacs windows by dragging their window separators
 (modelines or vertical side lines) within a frame.  Simply depress either
 Smart Key on a modeline or near a window side, hold it down while you drag
-to a new location and then release.  The window separator will then jump to
+to a new location and then release.  The window separator will move to
 the location of release.  Basically, just drag the window separator to where
 you want it.  Nowadays a better version of Emacs window resizing exists on
-the left mouse key.  A drag with this key from a blank area of a modeline or
-a window side divider shows visible feedback as the window is resized.
+the left mouse key.  Drags from a blank area of a modeline show visible
+feedback as the window is resized.
 
 Did you follow all that?  Let's try it to be sure.  First, you need at least
 two windows, so create a new one with the drag techniques you just learned.
@@ -1350,6 +1351,12 @@ window.
 
 Try to drag the bottom modeline.  You see that you can't; you would have to
 resize the frame to move the bottom up.
+
+** Moving Frames
+
+Drags of either Smart Key from a bottommost modeline can be configured
+to drag Emacs frames to new locations on screen.  See "(hyperbole)Moving Frames"
+for how to configure this behavior.
 
 ** Dragging Buffers, Windows and Items
 

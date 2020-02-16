@@ -131,13 +131,14 @@ ul.no-bullet {list-style: none}
     <li><a id="toc-Creating-and-Deleting-Windows-1" href="#Creating-and-Deleting-Windows">2.7.1 Creating and Deleting Windows</a></li>
     <li><a id="toc-Saving-and-Restoring-Window-Configurations-1" href="#Saving-and-Restoring-Window-Configurations">2.7.2 Saving and Restoring Window Configurations</a></li>
     <li><a id="toc-Resizing-Windows-1" href="#Resizing-Windows">2.7.3 Resizing Windows</a></li>
-    <li><a id="toc-Dragging-Buffers_002c-Windows-and-Items" href="#Dragging-Buffers">2.7.4 Dragging Buffers, Windows and Items</a>
+    <li><a id="toc-Moving-Frames-1" href="#Moving-Frames">2.7.4 Moving Frames</a></li>
+    <li><a id="toc-Dragging-Buffers_002c-Windows-and-Items" href="#Dragging-Buffers">2.7.5 Dragging Buffers, Windows and Items</a>
     <ul class="no-bullet">
-      <li><a id="toc-Swapping-Buffers-1" href="#Swapping-Buffers">2.7.4.1 Swapping Buffers</a></li>
-      <li><a id="toc-Displaying-Buffers-1" href="#Displaying-Buffers">2.7.4.2 Displaying Buffers</a></li>
-      <li><a id="toc-Cloning-Windows-1" href="#Cloning-Windows">2.7.4.3 Cloning Windows</a></li>
-      <li><a id="toc-Displaying-File-and-Buffer-Items-1" href="#Displaying-File-and-Buffer-Items">2.7.4.4 Displaying File and Buffer Items</a></li>
-      <li><a id="toc-Keyboard-Drags-1" href="#Keyboard-Drags">2.7.4.5 Keyboard Drags</a></li>
+      <li><a id="toc-Swapping-Buffers-1" href="#Swapping-Buffers">2.7.5.1 Swapping Buffers</a></li>
+      <li><a id="toc-Displaying-Buffers-1" href="#Displaying-Buffers">2.7.5.2 Displaying Buffers</a></li>
+      <li><a id="toc-Cloning-Windows-1" href="#Cloning-Windows">2.7.5.3 Cloning Windows</a></li>
+      <li><a id="toc-Displaying-File-and-Buffer-Items-1" href="#Displaying-File-and-Buffer-Items">2.7.5.4 Displaying File and Buffer Items</a></li>
+      <li><a id="toc-Keyboard-Drags-1" href="#Keyboard-Drags">2.7.5.5 Keyboard Drags</a></li>
     </ul></li>
   </ul></li>
 </ul></li>
@@ -472,6 +473,8 @@ Smart Mouse Key Drags
 <tr><td align="left" valign="top">&bull; <a href="#Saving-and-Restoring-Window-Configurations">Saving and Restoring Window Configurations</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
 </td></tr>
 <tr><td align="left" valign="top">&bull; <a href="#Resizing-Windows">Resizing Windows</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="#Moving-Frames">Moving Frames</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
 </td></tr>
 <tr><td align="left" valign="top">&bull; <a href="#Dragging-Buffers">Dragging Buffers</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
 </td></tr>
@@ -1767,7 +1770,9 @@ contexts and actions; for complete documentation, see <a href="#Smart-Mouse-Keys
 </td></tr>
 <tr><td align="left" valign="top">&bull; <a href="#Resizing-Windows" accesskey="3">Resizing Windows</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
 </td></tr>
-<tr><td align="left" valign="top">&bull; <a href="#Dragging-Buffers" accesskey="4">Dragging Buffers</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+<tr><td align="left" valign="top">&bull; <a href="#Moving-Frames" accesskey="4">Moving Frames</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="#Dragging-Buffers" accesskey="5">Dragging Buffers</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
 </td></tr>
 </table>
 
@@ -1827,32 +1832,53 @@ restored, the newest element will again be restored and so on.
 <hr>
 <span id="Resizing-Windows"></span><div class="header">
 <p>
-Next: <a href="#Dragging-Buffers" accesskey="n" rel="next">Dragging Buffers</a>, Previous: <a href="#Saving-and-Restoring-Window-Configurations" accesskey="p" rel="prev">Saving and Restoring Window Configurations</a>, Up: <a href="#Smart-Mouse-Key-Drags" accesskey="u" rel="up">Smart Mouse Key Drags</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Key-Index" title="Index" rel="index">Index</a>]</p>
+Next: <a href="#Moving-Frames" accesskey="n" rel="next">Moving Frames</a>, Previous: <a href="#Saving-and-Restoring-Window-Configurations" accesskey="p" rel="prev">Saving and Restoring Window Configurations</a>, Up: <a href="#Smart-Mouse-Key-Drags" accesskey="u" rel="up">Smart Mouse Key Drags</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Key-Index" title="Index" rel="index">Index</a>]</p>
 </div>
 <span id="Resizing-Windows-1"></span><h4 class="subsection">2.7.3 Resizing Windows</h4>
 
 <span id="index-resizing-windows"></span>
 <span id="index-drag_002c-resize-window"></span>
-<p>Emacs windows may be resized by dragging their window separators (modelines
-or vertical side lines) within a frame.  Simply depress either Smart Mouse
-Key on a modeline or near a window side, hold it down while you drag to a
-new location and then release.  The window separator will then jump to the
-location of release.  Basically, just drag the window separator to where
-you want it.  Nowadays a better version of Emacs window resizing exists on
-the left mouse key.  A drag with this key from a blank area of a modeline
-or a window side divider shows visible feedback as the window is resized.
-But if you are always using the Smart Mouse Keys, you may prefer to use
-them for resizing windows as well.
+<p>Emacs windows may be resized by dragging their window separators
+(modelines or vertical side lines) within a frame.  Simply depress either
+Smart Mouse Key on a non-bottommost modeline or near a window side, hold
+it down while you drag to a new location and then release.  The window
+separator will move to the location of release.  Basically, just drag the
+window separator to where you want it.  Drags from a blank area of a
+modeline show visible feedback as the window is resized.
 </p>
-<p>Note that you cannot drag the bottom-most modeline; you would have to
-resize the frame to move the bottom of that window up.
+<hr>
+<span id="Moving-Frames"></span><div class="header">
+<p>
+Next: <a href="#Dragging-Buffers" accesskey="n" rel="next">Dragging Buffers</a>, Previous: <a href="#Resizing-Windows" accesskey="p" rel="prev">Resizing Windows</a>, Up: <a href="#Smart-Mouse-Key-Drags" accesskey="u" rel="up">Smart Mouse Key Drags</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Key-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<span id="Moving-Frames-1"></span><h4 class="subsection">2.7.4 Moving Frames</h4>
+
+<span id="index-dragging-frames"></span>
+<p>cindex moving frames
+<span id="index-drag_002c-move-frame"></span>
+Drags of either Smart Key from a bottommost modeline can be configured to
+drag Emacs frames to new locations on screen.  To configure all existing
+and future frames for such dragging, use:
+</p>
+<p><code>(modify-all-frames-parameters '((drag-with-mode-line . t)))</code>.
+</p>
+<p>To configure just the selected frame for such dragging, use:
+</p>
+<p><code>(set-frame-parameter nil 'drag-with-mode-line t)</code>.
+</p>
+<p>on each frame you would like to drag.
+</p>
+<p>Then drag with either Smart Key from a bottommost modeline within a frame
+to move the frame on screen with live feedback, as if you were dragging
+from the titlebar.  If you use a click-to-focus window manager, click on
+the desired frame first and then depress to drag.
 </p>
 <hr>
 <span id="Dragging-Buffers"></span><div class="header">
 <p>
-Previous: <a href="#Resizing-Windows" accesskey="p" rel="prev">Resizing Windows</a>, Up: <a href="#Smart-Mouse-Key-Drags" accesskey="u" rel="up">Smart Mouse Key Drags</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Key-Index" title="Index" rel="index">Index</a>]</p>
+Previous: <a href="#Moving-Frames" accesskey="p" rel="prev">Moving Frames</a>, Up: <a href="#Smart-Mouse-Key-Drags" accesskey="u" rel="up">Smart Mouse Key Drags</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Key-Index" title="Index" rel="index">Index</a>]</p>
 </div>
-<span id="Dragging-Buffers_002c-Windows-and-Items"></span><h4 class="subsection">2.7.4 Dragging Buffers, Windows and Items</h4>
+<span id="Dragging-Buffers_002c-Windows-and-Items"></span><h4 class="subsection">2.7.5 Dragging Buffers, Windows and Items</h4>
 
 <p>Smart Mouse Key drags let you display buffers and windows however you want
 them.  Dired and buffer-menu items may also be displayed in specific
@@ -1876,7 +1902,7 @@ locations with drags.  Below we explore these drag actions.
 <p>
 Next: <a href="#Displaying-Buffers" accesskey="n" rel="next">Displaying Buffers</a>, Previous: <a href="#Dragging-Buffers" accesskey="p" rel="prev">Dragging Buffers</a>, Up: <a href="#Dragging-Buffers" accesskey="u" rel="up">Dragging Buffers</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Key-Index" title="Index" rel="index">Index</a>]</p>
 </div>
-<span id="Swapping-Buffers-1"></span><h4 class="subsubsection">2.7.4.1 Swapping Buffers</h4>
+<span id="Swapping-Buffers-1"></span><h4 class="subsubsection">2.7.5.1 Swapping Buffers</h4>
 
 <span id="index-swap-buffers"></span>
 <span id="index-window_002c-swap-buffer"></span>
@@ -1896,7 +1922,7 @@ minibuffer menu: <kbd>{C-h h s w ~ q}</kbd>.
 <p>
 Next: <a href="#Cloning-Windows" accesskey="n" rel="next">Cloning Windows</a>, Previous: <a href="#Swapping-Buffers" accesskey="p" rel="prev">Swapping Buffers</a>, Up: <a href="#Dragging-Buffers" accesskey="u" rel="up">Dragging Buffers</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Key-Index" title="Index" rel="index">Index</a>]</p>
 </div>
-<span id="Displaying-Buffers-1"></span><h4 class="subsubsection">2.7.4.2 Displaying Buffers</h4>
+<span id="Displaying-Buffers-1"></span><h4 class="subsubsection">2.7.5.2 Displaying Buffers</h4>
 
 <span id="index-buffer_002c-copy"></span>
 <span id="index-copy-buffer"></span>
@@ -1906,16 +1932,16 @@ buffers?  Depress the Action Mouse Key in the open area of the modeline of
 the source window and drag to the text area of the destination window.
 Voila, the buffer appears in the new location as well as the old one.
 </p>
-<p>If you want a new window where you release (so the original destination window&rsquo;s
-buffer stays onscreen), just drag to a window&rsquo;s modeline; that window will be
-split before the buffer is displayed.
+<p>If you want a new window where you release (so the original destination
+window&rsquo;s buffer stays onscreen), just drag to a window&rsquo;s modeline; that
+window will be split before the buffer is displayed.
 </p>
 <hr>
 <span id="Cloning-Windows"></span><div class="header">
 <p>
 Next: <a href="#Displaying-File-and-Buffer-Items" accesskey="n" rel="next">Displaying File and Buffer Items</a>, Previous: <a href="#Displaying-Buffers" accesskey="p" rel="prev">Displaying Buffers</a>, Up: <a href="#Dragging-Buffers" accesskey="u" rel="up">Dragging Buffers</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Key-Index" title="Index" rel="index">Index</a>]</p>
 </div>
-<span id="Cloning-Windows-1"></span><h4 class="subsubsection">2.7.4.3 Cloning Windows</h4>
+<span id="Cloning-Windows-1"></span><h4 class="subsubsection">2.7.5.3 Cloning Windows</h4>
 
 <span id="index-clone-window"></span>
 <span id="index-window_002c-clone"></span>
@@ -1931,7 +1957,7 @@ unless it is the only window in that frame.
 <p>
 Next: <a href="#Keyboard-Drags" accesskey="n" rel="next">Keyboard Drags</a>, Previous: <a href="#Cloning-Windows" accesskey="p" rel="prev">Cloning Windows</a>, Up: <a href="#Dragging-Buffers" accesskey="u" rel="up">Dragging Buffers</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Key-Index" title="Index" rel="index">Index</a>]</p>
 </div>
-<span id="Displaying-File-and-Buffer-Items-1"></span><h4 class="subsubsection">2.7.4.4 Displaying File and Buffer Items</h4>
+<span id="Displaying-File-and-Buffer-Items-1"></span><h4 class="subsubsection">2.7.5.4 Displaying File and Buffer Items</h4>
 
 <span id="index-dired-item-drag"></span>
 <span id="index-buffer-menu-item-drag"></span>
@@ -1960,7 +1986,7 @@ destination (swapping buffers), just as it does with other buffers.
 <p>
 Previous: <a href="#Displaying-File-and-Buffer-Items" accesskey="p" rel="prev">Displaying File and Buffer Items</a>, Up: <a href="#Dragging-Buffers" accesskey="u" rel="up">Dragging Buffers</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Key-Index" title="Index" rel="index">Index</a>]</p>
 </div>
-<span id="Keyboard-Drags-1"></span><h4 class="subsubsection">2.7.4.5 Keyboard Drags</h4>
+<span id="Keyboard-Drags-1"></span><h4 class="subsubsection">2.7.5.5 Keyboard Drags</h4>
 
 <span id="index-M_002do"></span>
 <span id="index-C_002du-M_002do"></span>
@@ -4656,11 +4682,18 @@ sizes by which to zoom.
 <span id="index-HyControl-exit"></span>
 <span id="index-quit-HyControl"></span>
 <span id="index-exit-HyControl"></span>
+<span id="index-screen_002c-Q-1"></span>
 <span id="index-screen_002c-q-1"></span>
-<span id="index-q-1"></span>
+<span id="index-Q"></span>
+</dd>
+<dt><kbd>{Q}</kbd></dt>
+<dd><span id="index-q-1"></span>
 </dd>
 <dt><kbd>{q}</kbd></dt>
-<dd><p>Quit from HyControl mode and restore normal key bindings.
+<dd><p>Press <kbd>{Q}</kbd> to globally quit HyControl mode and restore normal key bindings.
+Typically <kbd>{q}</kbd> works as well, unless in a help buffer where
+<kbd>{q}</kbd> is bound to <code>quit-window</code>, then that is run instead of quitting
+HyControl.  A second press of <kbd>{q}</kbd> will then quit HyControl.
 </p></dd>
 </dl>
 
@@ -11620,6 +11653,7 @@ Next: <a href="#Function" accesskey="n" rel="next">Function</a>, Previous: <a hr
 <tr><td colspan="4"> <hr></td></tr>
 <tr><th id="Key-Index_ky_letter-Q">Q</th><td></td><td></td></tr>
 <tr><td></td><td valign="top"><a href="#index-q"><code>q</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Menus">Menus</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-Q"><code>Q</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyControl">HyControl</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-q-1"><code>q</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyControl">HyControl</a></td></tr>
 <tr><td colspan="4"> <hr></td></tr>
 <tr><th id="Key-Index_ky_letter-R">R</th><td></td><td></td></tr>
@@ -11691,6 +11725,7 @@ Next: <a href="#Function" accesskey="n" rel="next">Function</a>, Previous: <a hr
 <tr><td></td><td valign="top"><a href="#index-screen_002c-p"><code>screen, p</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyControl">HyControl</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-screen_002c-q"><code>screen, q</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyControl">HyControl</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-screen_002c-Q"><code>screen, Q</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyControl">HyControl</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-screen_002c-Q-1"><code>screen, Q</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyControl">HyControl</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-screen_002c-q-1"><code>screen, q</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyControl">HyControl</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-screen_002c-r"><code>screen, r</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyControl">HyControl</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-screen_002c-right"><code>screen, right</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyControl">HyControl</a></td></tr>
@@ -12742,6 +12777,7 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function</a>, Up: <a href
 <tr><td></td><td valign="top"><a href="#index-drag_002c-dired-item">drag, dired item</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Displaying-File-and-Buffer-Items">Displaying File and Buffer Items</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-drag_002c-horizontal">drag, horizontal</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Creating-and-Deleting-Windows">Creating and Deleting Windows</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-drag_002c-horizontal-1">drag, horizontal</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Mouse-Drags-within-a-Window">Smart Mouse Drags within a Window</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-drag_002c-move-frame">drag, move frame</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Moving-Frames">Moving Frames</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-drag_002c-resize-window">drag, resize window</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Resizing-Windows">Resizing Windows</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-drag_002c-side-edge">drag, side edge</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Side_002dby_002dSide-Window-Resizing">Side-by-Side Window Resizing</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-drag_002c-Smart-Mouse-Key">drag, Smart Mouse Key</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Mouse-Key-Drags">Smart Mouse Key Drags</a></td></tr>
@@ -12751,6 +12787,7 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function</a>, Up: <a href
 <tr><td></td><td valign="top"><a href="#index-drag_002c-window-configuration">drag, window configuration</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Saving-and-Restoring-Window-Configurations">Saving and Restoring Window Configurations</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-drag_002c-with-region">drag, with region</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Key-Thing-Selection">Smart Key Thing Selection</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-drag_002c-with-region-1">drag, with region</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Mouse-Drags-within-a-Window">Smart Mouse Drags within a Window</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-dragging-frames">dragging frames</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Moving-Frames">Moving Frames</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-dragging-items">dragging items</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Mouse-Drags-outside-a-Window">Smart Mouse Drags outside a Window</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-dragging-items_002c-buffer-menu">dragging items, buffer menu</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Mouse-Key-Modeline-Clicks">Smart Mouse Key Modeline Clicks</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-dragging-items_002c-dired">dragging items, dired</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Mouse-Key-Modeline-Clicks">Smart Mouse Key Modeline Clicks</a></td></tr>

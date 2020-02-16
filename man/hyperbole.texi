@@ -295,6 +295,7 @@ Smart Mouse Key Drags
 * Creating and Deleting Windows::
 * Saving and Restoring Window Configurations::
 * Resizing Windows::
+* Moving Frames::
 * Dragging Buffers::
 
 Dragging Buffers, Windows and Items
@@ -1295,6 +1296,7 @@ Mouse Keys}.
 * Creating and Deleting Windows::
 * Saving and Restoring Window Configurations::
 * Resizing Windows::
+* Moving Frames::
 * Dragging Buffers::
 @end menu
 
@@ -1343,26 +1345,45 @@ from the ring.  Window configurations are restored in reverse order of the
 way they were saved.  Since a ring is circular, after the oldest element is
 restored, the newest element will again be restored and so on.
 
-@node Resizing Windows, Dragging Buffers, Saving and Restoring Window Configurations, Smart Mouse Key Drags
+@node Resizing Windows, Moving Frames, Saving and Restoring Window Configurations, Smart Mouse Key Drags
 @subsection Resizing Windows
 
 @cindex resizing windows
 @cindex drag, resize window
-Emacs windows may be resized by dragging their window separators (modelines
-or vertical side lines) within a frame.  Simply depress either Smart Mouse
-Key on a modeline or near a window side, hold it down while you drag to a
-new location and then release.  The window separator will then jump to the
-location of release.  Basically, just drag the window separator to where
-you want it.  Nowadays a better version of Emacs window resizing exists on
-the left mouse key.  A drag with this key from a blank area of a modeline
-or a window side divider shows visible feedback as the window is resized.
-But if you are always using the Smart Mouse Keys, you may prefer to use
-them for resizing windows as well.
+Emacs windows may be resized by dragging their window separators
+(modelines or vertical side lines) within a frame.  Simply depress either
+Smart Mouse Key on a non-bottommost modeline or near a window side, hold
+it down while you drag to a new location and then release.  The window
+separator will move to the location of release.  Basically, just drag the
+window separator to where you want it.  Drags from a blank area of a
+modeline show visible feedback as the window is resized.
 
-Note that you cannot drag the bottom-most modeline; you would have to
-resize the frame to move the bottom of that window up.
+@node Moving Frames, Dragging Buffers, Resizing Windows, Smart Mouse Key Drags
+@subsection Moving Frames
 
-@node Dragging Buffers,  , Resizing Windows, Smart Mouse Key Drags
+@cindex dragging frames
+cindex moving frames
+@cindex drag, move frame
+Drags of either Smart Key from a bottommost modeline can be configured to
+drag Emacs frames to new locations on screen.  To configure all existing
+and future frames for such dragging, use:
+
+  @code{(modify-all-frames-parameters '((drag-with-mode-line . t)))}.
+
+@noindent
+To configure just the selected frame for such dragging, use:
+
+  @code{(set-frame-parameter nil 'drag-with-mode-line t)}.
+
+@noindent
+on each frame you would like to drag.
+
+Then drag with either Smart Key from a bottommost modeline within a frame
+to move the frame on screen with live feedback, as if you were dragging
+from the titlebar.  If you use a click-to-focus window manager, click on
+the desired frame first and then depress to drag.
+
+@node Dragging Buffers,  , Moving Frames, Smart Mouse Key Drags
 @subsection Dragging Buffers, Windows and Items
 
 Smart Mouse Key drags let you display buffers and windows however you want
@@ -1404,9 +1425,9 @@ buffers?  Depress the Action Mouse Key in the open area of the modeline of
 the source window and drag to the text area of the destination window.
 Voila, the buffer appears in the new location as well as the old one.
 
-If you want a new window where you release (so the original destination window's
-buffer stays onscreen), just drag to a window's modeline; that window will be
-split before the buffer is displayed.
+If you want a new window where you release (so the original destination
+window's buffer stays onscreen), just drag to a window's modeline; that
+window will be split before the buffer is displayed.
 
 @node Cloning Windows, Displaying File and Buffer Items, Displaying Buffers, Dragging Buffers
 @subsubsection Cloning Windows
@@ -3898,9 +3919,14 @@ Toggle between WINDOWS and FRAMES submodes.
 @cindex HyControl exit
 @cindex quit HyControl
 @cindex exit HyControl
+@kindex screen, Q
 @kindex screen, q
+@kitem Q
 @kitem q
-Quit from HyControl mode and restore normal key bindings.
+Press @bkbd{Q} to globally quit HyControl mode and restore normal key bindings.
+Typically @bkbd{q} works as well, unless in a help buffer where
+@bkbd{q} is bound to @code{quit-window}, then that is run instead of quitting
+HyControl.  A second press of @bkbd{q} will then quit HyControl.
 @end table
 
 @sp 1

@@ -1068,7 +1068,7 @@ include delimiters when INCLUDE-DELIMS is non-nil)."
     ;; Match is outside of a programming language comment
     (not (nth 4 (syntax-ppss)))))
 
-(defun hbut:rename (but)
+(defun    hbut:rename (but)
   "Interactively rename the Hyperbole button BUT from the current buffer."
   (cond ((ebut:is-p but)
          (ebut:to (ebut:key but))
@@ -1365,10 +1365,10 @@ current."
 
 (defun    ibut:label-p (&optional as-label start-delim end-delim pos-flag two-lines-flag)
   "Return key for the Hyperbole implicit button label that point is within, else nil.
-This is the normalized key form of an optional label that may precede an implicit button.
-Use `ibut:at-p' instead to test if point is on either the
-implicit button itself or the label.  Assumes point is within the
-first line of any button label.
+This is the normalized key form of an optional label that may
+precede an implicit button.  Use `ibut:at-p' instead to test if
+point is on either the implicit button text itself or the label.
+Assumes point is within the first line of any button label.
 
 All following arguments are optional.  If AS-LABEL is non-nil,
 label is returned rather than the key derived from the label.

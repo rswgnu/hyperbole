@@ -23,6 +23,10 @@
 ;; ======================================================================================================
 ;; Drag from thing start or end    Yank thing at release       Kill thing and yank at release
 ;;
+;; Drag from bottom Modeline       Reposition frame as         <- same
+;; in frame with non-nil           drag happens
+;; drag-with-mode-line param
+
 ;; Drag from shared window side
 ;;   or from left of scroll bar    Resize window width         <- same
 ;; Modeline vertical drag          Resize window height        <- same
@@ -891,9 +895,12 @@ If the Action Key is:
      successive clicks walk up the directory tree
  (4) clicked anywhere in the middle of a window's modeline,
      the function given by `action-key-modeline-function' is called;
- (5) dragged vertically from modeline to within a window,
+ (5) dragged vertically from non-bottommost modeline to within a window,
      the modeline is moved to point of key release, thereby resizing
-     its window and potentially its vertical neighbors."
+     its window and potentially its vertical neighbors.
+ (6) dragged from a bottommost modeline in a frame with a non-nil
+     `drag-with-mode-line' parameter (use `frame-set-parameter'),
+     moves the frame as the drag occurs."
   ;; Modeline window resizing is now handled in action-key-depress
   ;; via a call to mouse-drag-mode-line, providing live visual
   ;; feedback.
@@ -922,9 +929,12 @@ If the Assist Key is:
      the next buffer in sequence is displayed in the window
  (4) clicked anywhere in the middle of a window's modeline,
      the function given by `assist-key-modeline-function' is called;
- (5) dragged vertically from modeline to within a window,
+ (5) dragged vertically from non-bottommost modeline to within a window,
      the modeline is moved to point of key release, thereby resizing
-     its window and potentially its vertical neighbors."
+     its window and potentially its vertical neighbors.
+ (6) dragged from a bottommost modeline in a frame with a non-nil
+     `drag-with-mode-line' parameter (use `frame-set-parameter'),
+     moves the frame as the drag occurs."
   ;; Modeline window resizing is now handled in assist-key-depress
   ;; via a call to mouse-drag-mode-line, providing live visual
   ;; feedback.
@@ -1055,24 +1065,7 @@ of the Smart Key."
 			  (marker-buffer action-key-release-prev-point))
 			 (goto-char
 			  (marker-position action-key-release-prev-point)))
-		     (set-buffer obuf))))
-	     (cond
-	      ((>= (+ mode-ln 2) (frame-height))
-	       (error
-		"(hmouse-modeline-resize-window): Can't move bottom window in frame"))
-	      ((< (length (hypb:window-list 'no-minibuf)) 2)
-	       (error
-		"(hmouse-modeline-resize-window): Can't resize sole window in frame"))
-	      (t (unwind-protect
-		     (progn
-		       (select-window window)
-		       (shrink-window shrink-amount)
-		       ;; Keep redisplay from scrolling other window.
-		       (select-window (next-window nil 'no-mini))
-		       (condition-case ()
-			   (scroll-down shrink-amount)
-			 (error nil)))
-		   (select-window owind))))))))
+		     (set-buffer obuf))))))))
 
 (defun hmouse-clone-window-to-frame (&optional always-delete-flag)
   (let ((hycontrol-keep-window-flag t))

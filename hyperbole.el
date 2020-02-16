@@ -668,6 +668,11 @@ If FLAG is nil then text is shown, while if FLAG is t the text is hidden."
 		     user-mail-address)
 		(concat (user-login-name) (hypb:domain-name)))))
   ;;
+  ;; When running from git source and not a release package, ensure
+  ;; auto-autoload.el files are already generated or generate them.
+  (unless noninteractive
+    (hyperb:maybe-generate-autoloads))
+  ;;
   ;; Conditionally initialize Hyperbole key bindings (when hkey-init is t)
   (hkey-initialize)
   ;;
@@ -701,6 +706,29 @@ If FLAG is nil then text is shown, while if FLAG is t the text is hidden."
   ;; Hyperbole initialization is complete.
   (message "Initializing Hyperbole...done")
   (message "Hyperbole %s is ready for action." hyperb:version))
+
+(defun hyperb:autoloads-exist-p ()
+  "Return t if all Hyperbole autoload files exist or nil otherwise."
+  (and (file-readable-p (expand-file-name "hyperbole-autoloads.el" hyperb:dir))
+       (file-readable-p (expand-file-name "kotl-autoloads.el"
+					  (expand-file-name "kotl" hyperb:dir)))))
+
+(defun hyperb:maybe-generate-autoloads ()
+  "Ensure Hyperbole *-autoload.el files are already generated or generate them.
+This is used only when running from git source and not a package release."
+  (unless (hyperb:autoloads-exist-p)
+    (hyperb:generate-autoloads)))
+
+(defun hyperb:generate-autoloads ()
+  "Renerate Hyperbole *-autoload.el files whether they already exist or not."
+  (let* ((default-directory hyperb:dir)
+	 (generated-autoload-file (expand-file-name "hyperbole-autoloads.el"))
+	 (backup-inhibited t))
+    (update-directory-autoloads ".")
+    (setq generated-autoload-file (expand-file-name "kotl/kotl-autoloads.el"))
+    (update-directory-autoloads "kotl/"))
+  (unless (hyperb:autoloads-exist-p)
+    (error (format "Hyperbole failed to generate autoload files; try running 'make src' in a shell in %s" hyperb:dir))))
 
 ;; This call loads the rest of the Hyperbole system.
 (require 'hinit)

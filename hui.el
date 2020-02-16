@@ -431,10 +431,20 @@ BUT defaults to the button whose label point is within."
     (unless (equal (hypb:indirect-function 'hui:but-flash)
 		   (lambda nil))
       ;; Only flash button if point is on it.
-      (let ((lbl-key (hattr:get but 'lbl-key)))
+      (let ((lbl-key (hattr:get but 'lbl-key))
+	    lbl-start
+	    lbl-end)
 	(and lbl-key
 	     (or (equal lbl-key (ebut:label-p))
-		 (equal lbl-key (ibut:label-p)))
+		 ;; Matches only ibuts with named labels
+		 (equal lbl-key (ibut:label-p))
+		 ;; If ibut text region specified, check that.
+		 (progn
+		   (setq lbl-start (hattr:get but 'lbl-start)
+			 lbl-end   (hattr:get but 'lbl-end))
+		   (when (and lbl-start lbl-end)
+		     (equal lbl-key
+			    (buffer-substring-no-properties lbl-start lbl-end)))))
 	     (hui:but-flash))))
     (if (functionp type-help-func)
 	(funcall type-help-func but)

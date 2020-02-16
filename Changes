@@ -1,15 +1,34 @@
 2020-02-16  Bob Weiner  <rsw@gnu.org>
 
+* hui.el (hui:hbut-help): Improved to flash unnamed implicit buttons with lbl-start and lbl-end properties.
+
+* hyperbole.el (hyperb:autoloads-exist-p, hyperb:maybe-generate-autoloads, hyperb:generate-autoloads):
+    Added and called from hyperb:init when initializing Hyperbole to generate auto-autoload files when
+    running froma non-packaged non-release source download of Hyperbole.
+
+* hycontrol.el (hycontrol-quit-frames-mode):
+               (hycontrol-quit-frames-mode):
+  man/hyperbole.texi (HyControl): Added doc of {q} vs. {Q}.
+               (hycontrol-quit-windows-mode): Deleted, created one unified quit command.
+	       (hycontrol-quit): Renamed from hycontrol-quit-frames-mode.
+	       (hycontrol-abort): Renamed from hycontrol-abort-mode.
+
 * hui-window.el (hmouse-alist-add-window-handlers): Added not a modeline depress test for clause that
     handles drags from a window to a modeline, since otherwise will catch drags from a modeline that
     may move a frame.
                 (hmouse-drag-p): Added to test whether absolute depress and release positions differ.
 		(hmouse-release-left-edge, hmouse-release-right-edge): Removed XEmacs code.
 
-* hmouse-drv.el (action-key-depress, assist-key-depress):
+* hkey-help.txt:
+  hmouse-drv.el (action-key-depress, assist-key-depress):
   hui-window.el (action-key-modeline, assist-key-modeline):
      Modeline window resizing is now handled in action/assist-key-depress
      via a call to mouse-drag-mode-line, providing live visual feedback.
+     The same function is also overloaded in hmouse-drv.el to allow
+     repositioning frames that have minibuffer windows by dragging
+     from a bottommost modeline if the frame has a non-nil
+     'drag-with-mode-line' parameter.
+  man/hyperbole.texi, DEMO (Moving Frames): Added this new section.
 
 2020-02-15  Bob Weiner  <rsw@gnu.org>
 

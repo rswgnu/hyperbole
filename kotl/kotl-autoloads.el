@@ -37,9 +37,7 @@ Return the new kview.
 \(fn FILE-NAME)" t nil)
 
 (autoload 'kfile:is-p "kfile" "\
-Iff current buffer contains an unformatted or formatted koutline, return file format version string, else nil.
-
-\(fn)" nil nil)
+Iff current buffer contains an unformatted or formatted koutline, return file format version string, else nil." nil nil)
 
 (autoload 'kfile:view "kfile" "\
 View an existing kotl version-2 file FILE-NAME in a read-only mode.
@@ -53,7 +51,7 @@ View an existing kotl version-2 file FILE-NAME in a read-only mode.
 ;;;### (autoloads nil "kfill" "kfill.el" (0 0 0 0))
 ;;; Generated autoloads from kfill.el
 
-(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "kfill" '("kfill:" "set-fill-prefix" "prior-fill-prefix")))
+(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "kfill" '("kfill:" "prior-fill-prefix" "set-fill-prefix")))
 
 ;;;***
 
@@ -158,7 +156,7 @@ copied since there is no need to copy it to import it.
 ;;;### (autoloads nil "klabel" "klabel.el" (0 0 0 0))
 ;;; Generated autoloads from klabel.el
 
-(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "klabel" '("kotl-label:" "klabel")))
+(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "klabel" '("klabel" "kotl-label:")))
 
 ;;;***
 
@@ -196,14 +194,10 @@ See documentation for `kcell:ref-to-id' for valid cell-ref formats.
 (autoload 'kotl-mode "kotl-mode" "\
 The major mode used to edit and view koutlines.
 It provides the following keys:
-\\{kotl-mode-map}
-
-\(fn)" t nil)
+\\{kotl-mode-map}" t nil)
 
 (autoload 'kotl-mode:example "kotl-mode" "\
-Display the Koutliner example file for demonstration use by a user.
-
-\(fn)" t nil)
+Display the Koutliner example file for demonstration use by a user." t nil)
 
 (autoload 'kotl-mode:overview "kotl-mode" "\
 Show the first line of each cell.
@@ -235,11 +229,16 @@ Display fully expanded tree rooted at CELL-REF.
 \(fn &optional CELL-REF)" t nil)
 
 (autoload 'kotl-mode:is-p "kotl-mode" "\
-Signal an error if current buffer is not a Hyperbole outline, else return t.
-
-\(fn)" nil nil)
+Signal an error if current buffer is not a Hyperbole outline, else return t." nil nil)
 
 (if (fboundp 'register-definition-prefixes) (register-definition-prefixes "kotl-mode" '("delete-selection-pre-hook" "kotl-mode" "yank-")))
+
+;;;***
+
+;;;### (autoloads nil "kprop-em" "kprop-em.el" (0 0 0 0))
+;;; Generated autoloads from kprop-em.el
+
+(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "kprop-em" '("kproperty:")))
 
 ;;;***
 
@@ -264,7 +263,7 @@ Signal an error if current buffer is not a Hyperbole outline, else return t.
 
 ;;;***
 
-;;;### (autoloads nil nil ("kprop-em.el" "kproperty.el") (0 0 0 0))
+;;;### (autoloads nil nil ("kproperty.el") (0 0 0 0))
 
 ;;;***
 

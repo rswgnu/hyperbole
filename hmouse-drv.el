@@ -755,6 +755,47 @@ the given direction."
 ;;; Public support functions
 ;;; ************************************************************************
 
+;; Next function is redefined from Emacs mouse.el.  The standard
+;; version allows moving frames by dragging a bottommost modeline with
+;; mouse button1 but only if there is no minibuffer window (a rare
+;; configuration) This limitation is so that the minibuffer window 
+;; can be manually resized.
+;;
+;; Hyperbole's mouse buttons do not support resizing the minibuffer
+;; window so instead this function is modified to allow moving frames
+;; that have a minibuffer window.
+;;
+;; The way this function was written does not allow hooking into it,
+;; forcing inclusion of a modified version here.
+(defun mouse-drag-mode-line (start-event)
+  "Change the height of a window by dragging on its mode line.
+START-EVENT is the starting mouse event of the drag action.
+
+If the drag happens in a mode line on the bottom of a frame and
+that frame's `drag-with-mode-line' parameter is non-nil, drag the
+frame instead."
+  (interactive "e")
+  (let* ((start (event-start start-event))
+	 (window (posn-window start))
+         (frame (window-frame window)))
+    (cond
+     ((not (window-live-p window)))
+     ((or (not (window-at-side-p window 'bottom))
+          ;; Allow resizing the minibuffer window if it's on the
+          ;; same frame as and immediately below `window', and it's
+          ;; either active or `resize-mini-windows' is nil.
+          (let ((minibuffer-window (minibuffer-window frame)))
+            (and (eq (window-frame minibuffer-window) frame)
+                 (or (not resize-mini-windows)
+                     (eq minibuffer-window
+                         (active-minibuffer-window))))))
+      (mouse-drag-line start-event 'mode))
+     ((and (frame-parameter frame 'drag-with-mode-line)
+           (window-at-side-p window 'bottom))
+      ;; Drag frame when the window is on the bottom of its frame and
+      ;; there is no minibuffer window below.
+      (mouse-drag-frame start-event 'move)))))
+
 (defun hkey-debug ()
   (message (format "(HyDebug) %sContext: %s; %s: %s; Buf: %s; Mode: %s; MinibufDepth: %s"
 		   (cond ((eq pred-value 'hbut:current)
