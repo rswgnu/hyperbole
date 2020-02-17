@@ -1114,7 +1114,8 @@ path form is what is returned for PATH."
 	   (setq path (hbut:key-to-label (hbut:label-to-key path)))
 	   (or (not (string-match "[()]" path))
 	       (string-match "\\`([^ \t\n\r\)]+)[ *A-Za-z0-9]" path))
-	   (if (string-match "\\$\{[^\}]+}" path)
+	   ;; Allow for @{ and @} in texinfo-mode
+	   (if (string-match "\\$@?\{[^\}]+@?\}" path)
 	       ;; Path may be a link reference with a suffix component
 	       ;; following a comma or # symbol, so temporarily strip
 	       ;; these, if any, before expanding any embedded variables.
@@ -1283,12 +1284,15 @@ in-buffer path will not match."
   ;; Uses free variables `match' and `start' from `hypb:replace-match-string'.
   (substitute-in-file-name
     (hypb:replace-match-string
-      "\\$\{[^\}]+}"
+      "\\$@?\{\\([^\}]+\\)@?\}"
       path
       (lambda (str)
 	(let* ((var-group (substring path match start))
-	       (var-name (substring path (+ match 2) (1- start)))
 	       (rest-of-path (substring path start))
+	       (var-ext (substring path (match-beginning 1) (match-end 1)))
+	       (var-name (if (= ?@ (aref var-ext (1- (length var-ext))))
+			     (substring var-ext 0 -1)
+			   var-ext))
 	       (trailing-dir-sep-flag (and (not (string-empty-p rest-of-path))
 					   (memq (aref rest-of-path 0) '(?/ ?\\))))
 	       (sym (intern-soft var-name)))

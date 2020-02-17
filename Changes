@@ -1,6 +1,12 @@
-2020-02-16  Bob Weiner  <rsw@gnu.org>
+2020-02-17  Bob Weiner  <rsw@gnu.org>
 
 * Published 7.0.9 test release.
+
+* hpath.el (hpath:substitute-value): Updated to handle Texinfo @-quoted $@{hyperb:dir@} variable substitution.
+
+* hypb.el (hypb:replace-match-string): Minor code updates.
+
+2020-02-16  Bob Weiner  <rsw@gnu.org>
 
 * hibtypes.el (grep-msg): Fixed handling files names with spaces followed by a null character rather than a
     colon as a separator.  Note that the null is set to visibly display as a colon in Emacs.
@@ -9,8 +15,7 @@
 
 * man/hyperbole.texi (Swapping Buffers):
   DEMO (Swapping Buffers): Added swapping buffers between frames.
-
-* hycontrol.el (hycontrol-window-swap-buffers): Fixed so current buffer remains the same but selected window
+  hycontrol.el (hycontrol-window-swap-buffers): Fixed so current buffer remains the same but selected window
     changes.
                (hycontrol-frame-swap-buffers): Fixed so current buffer remains the same but selected frame
     changes.  Also made this work anytime there are two or more frames regardless of how many windows in each.
@@ -27,18 +32,17 @@
 
 * hyperbole.el (hyperb:autoloads-exist-p, hyperb:maybe-generate-autoloads, hyperb:generate-autoloads):
     Added and called from hyperb:init when initializing Hyperbole to generate auto-autoload files when
-    running froma non-packaged non-release source download of Hyperbole.
+    running from a non-packaged source download of Hyperbole.
 
 * hycontrol.el (hycontrol-quit-frames-mode):
-               (hycontrol-quit-frames-mode):
   man/hyperbole.texi (HyControl): Added doc of {q} vs. {Q}.
-               (hycontrol-quit-windows-mode): Deleted, created one unified quit command.
 	       (hycontrol-quit): Renamed from hycontrol-quit-frames-mode.
+               (hycontrol-quit-windows-mode): Deleted, created one unified quit command.
 	       (hycontrol-abort): Renamed from hycontrol-abort-mode.
 
-* hui-window.el (hmouse-alist-add-window-handlers): Added not a modeline depress test for clause that
-    handles drags from a window to a modeline, since otherwise will catch drags from a modeline that
-    may move a frame.
+* hui-window.el (hmouse-alist-add-window-handlers): Added 'not a modeline depress' test for the
+    clause that handles drags from a window to a modeline, since otherwise it will catch drags from a
+    modeline that may move a frame.
                 (hmouse-drag-p): Added to test whether absolute depress and release positions differ.
 
 * hui-menu.el (hyperbole-menubar-menu): Removed set-menubar-dirty-flag call.
@@ -47,12 +51,11 @@
 * hkey-help.txt:
   hmouse-drv.el (action-key-depress, assist-key-depress):
   hui-window.el (action-key-modeline, assist-key-modeline):
-     Modeline window resizing is now handled in action/assist-key-depress
-     via a call to mouse-drag-mode-line, providing live visual feedback.
-     The same function is also overloaded in hmouse-drv.el to allow
-     repositioning frames that have minibuffer windows by dragging
-     from a bottommost modeline if the frame has a non-nil
-     'drag-with-mode-line' parameter.
+     Modeline window resizing is now handled in action/assist-key-depress via a call to
+     mouse-drag-mode-line, providing live visual feedback.  The same function is also overloaded in
+     hmouse-drv.el to allow repositioning frames that have minibuffer windows by dragging from a
+     bottommost modeline if the frame has a non-nil 'drag-with-mode-line' parameter.
+
   man/hyperbole.texi, DEMO (Moving Frames): Added this new section.
 
 2020-02-15  Bob Weiner  <rsw@gnu.org>
@@ -77,8 +80,9 @@
     calls that look like actypes::<action-type> and ibtypes::<implicit-button-type> jump to
     the associated defact and defib definitions.
 
-* hbut.el (ibtype:create): Added definition-name property to a tag lookup on ibtypes::grep-msg looks up
-    the name used in the defib call, grep-msg.  This had previously been done for actypes.
+* hbut.el (htype:create): Generalized definition-name property used for tag lookup on names like,
+    ibtypes::grep-msg, which looks for the name used in the defib call, grep-msg.  This had
+    previously been done for actypes.
 
 * hpath.el (hpath:posix-to-mswindows-separators):
            (hpath:mswindows-to-posix-separators)

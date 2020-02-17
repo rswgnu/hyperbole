@@ -5,6 +5,9 @@
 *                                   V7.0.9
 ===========================================================================
 
+  Many issues were resolved in this test version as documented in "Changes".
+  Only new features are documented here.
+
   ACE WINDOW PACKAGE INTEGRATION - fast window and buffer switching
 
     - After installing the ace-window package and loading Hyperbole, execute
@@ -16,21 +19,43 @@
       you don't use region highlighting, i.e. transient-mark-mode, then use
       {C-u M-o t} for the same effect.  The buffer in the target window
       must differ from the one in the source window.  With no region
-      active, this command stillthrows the source buffer to the target
-      window.
+      active, this command still throws the source buffer to the target
+      window.  See "DEMO#Displaying File and Buffer Items and Moving Buffers".
 
-  DEMO
+  SMART (ACTION AND ASSIST) KEYS
 
-    - Fixed many smaller issues that caused example implicit buttons to fail.
+    - Modeline Drag Window Resizing: Smart Key window resizing now provides
+      live feedback during the drag.
+
+    - Bottommost Modeline Frame Moving: After adding a 'drag-with-mode-line'
+      frame parameter with a value of t, a drag of any of its bottommost
+      modelines with either Smart Mouse Key repositions the frame on screen.
+      See "(hyperbole)Moving Frames" for information on how to configure this
+      feature.
+
+  CUSTOMIZATON
+
+    - hproperty:flash-face: Face used when flashing a button; now customizable.
+
+    - hproperty:highlight-face: Face used to highlight a line; now customizable.
+
+    - inhibit-hsys-org: See ORG MODE section below.
 
   GLOSSARY
 
     - Hlink Definitions: Added Action Button, Elink, Ilink, Glink definitions.
 
+  HYCONTROL
+
+    - Buffer/Window Swapping: Improved {~} so current buffer remains the same but
+      the selected window changes.  Also made frame buffer swapping work anytime
+      there are two or more frames regardless of how many windows in each.  See
+      "DEMO#Swapping Buffers".
+
   HYROLO
 
-    - Hyrolo Add: Fixed new entry addition to add in sorted order and logic
-      operators to perform properly, after a bug in level calculation had been
+    - Hyrolo Add: Fixed new entry addition to add in sorted order and make logic
+      operators perform properly, after a bug in level calculation had been
       introduced.
 
   IMPLICIT BUTTONS
@@ -38,13 +63,25 @@
     - Double Quoting Key Series: Key series delimited by {} may now be in double
       quotes, e.g. "{C-x o}".
 
-    - Much improved conversion of MSWindows UNC paths to existing Posix mount
-      points when running Emacs under Windows Subsystem for Linux.
+    - Windows to Posix Paths: Much improved conversion of MSWindows UNC paths to
+      existing Posix mount points when running Emacs under Windows Subsystem for
+      Linux.  See
+
+    - Flashing Implicit Buttons: More types of implicit buttons now flash when
+      activated.
+
+    - Improved Grep Output Parsing: Recognizes file names with spaces followed by
+      the null (^@, ASCII 0) character.
+
+    - Texinfo @-Quoted Path Variables: Hyperbole now can resolve paths as
+      complicated as this: @file{$@{hyperb:dir@}/DEMO#POSIX and MSWindows Paths}
+      in Texinfo files if the Action Key is pressed on the / or after, i.e. after
+      the variable name.
 
   KEYS
 
-    - Removed {C-c C-r} key binding for explicit button renaming due to
-      conflicts with some major modes
+    - Deleted C-c C-r Global Binding: Removed {C-c C-r} key binding for explicit
+      button renaming due to conflicts with some major modes
 
   ORG MODE
 
@@ -54,6 +91,11 @@
     - inhibit-hsys-org: New customization that when set non-nil disables
       all Smart Key support in any Org major or minor mode.
 
+    - hsys-org-hbut-activate-p: Added to org-metareturn-hook so local binding
+      of {M-RET} in org-mode activates Hyperbole buttons when point is over
+      them. (It doesn't run the full set of Action Key actions).
+
+
   PROGRAMMING
 
     - Auto Imenu Reindexing: If using Emacs imenu package, the Action Key
@@ -61,6 +103,34 @@
       index is rendered invalid due to large changes in a buffer, Hyperbole
       will now automatically rebuild the index to have correct pointers.
       (Does not require use of the imenu-auto-rescan setting.
+
+    - hypb:mark-object: Gives Hyperbole-specific strings and symbols
+      a hyperbole property that distinguishes them from other objects.
+
+    - hypb:object-p: Tests whether has the hyperbole property.  This is useful
+      in hpath:relative-to and hpath:absolute-to where any string with a
+      hyperbole property is ignored as a potential path.  For example, this
+      prevents removal of trailing whitespace from normalized key series.
+
+    - hbut:act: Hyperbole button parameter is now optional and defaults to
+      the located button, the symbol, 'hbut:current.
+
+    - ibtypes tag lookup: Implicit button type names such as ibtypes::grep-msg
+      are now properly found in tags tables using their defib names
+      (e.g. grep-msg).
+
+    - hmouse-drag-p: tests whether absolute Smart Mouse Key depress and
+      release positions differ (relative to display/screen coordinates).
+
+    - hycontrol-quit: Unified the two Hycontrol mode quit commands into this one.
+      hycontrol-abort: Renamed from hycontrol-abort-mode.
+
+    - hyperb:autoloads-exist-p
+      hyperb:maybe-generate-autoloads
+      hyperb:generate-autoloads: Added and called from hyperb:init when
+      initializing Hyperbole to generate auto-autoload files when
+      running from a non-packaged source download of Hyperbole.
+
 
 ===========================================================================
 *                                   V7.0.8

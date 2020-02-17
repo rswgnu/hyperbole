@@ -551,26 +551,23 @@ that returns a replacement string."
 		    (literal newtext)
 		    (t (mapconcat
 			 (lambda (c)
-			   (if special
-			       (progn
-				 (setq special nil)
-				 (cond ((eq c ?\\) "\\")
-				       ((eq c ?&)
-					(substring str
-						   (match-beginning 0)
-						   (match-end 0)))
-				       ((and (>= c ?0) (<= c ?9))
-					(if (> c (+ ?0 (length
-							(match-data))))
-					    ;; Invalid match num
-					    (error "(hypb:replace-match-string) Invalid match num: %c" c)
-					  (setq c (- c ?0))
-					  (substring str
-						     (match-beginning c)
-						     (match-end c))))
-				       (t (char-to-string c))))
-			     (if (eq c ?\\) (progn (setq special t) nil)
-			       (char-to-string c))))
+			   (cond (special
+				  (setq special nil)
+				  (cond ((eq c ?\\) "\\")
+					((eq c ?&)
+					 (match-string 0 str))
+					((and (>= c ?0) (<= c ?9))
+					 (if (> c (+ ?0 (length
+							 (match-data))))
+					     ;; Invalid match num
+					     (error "(hypb:replace-match-string) Invalid match num: %c" c)
+					   (setq c (- c ?0))
+					   (match-string c str)))
+					(t (char-to-string c))))
+			     ((eq c ?\\)
+			      (setq special t)
+			      nil)
+			     (t (char-to-string c))))
 			 newtext ""))))))
     (concat rtn-str (substring str start))))
 

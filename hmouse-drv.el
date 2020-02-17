@@ -792,8 +792,7 @@ frame instead."
       (mouse-drag-line start-event 'mode))
      ((and (frame-parameter frame 'drag-with-mode-line)
            (window-at-side-p window 'bottom))
-      ;; Drag frame when the window is on the bottom of its frame and
-      ;; there is no minibuffer window below.
+      ;; Drag frame when the window is on the bottom of its frame.
       (mouse-drag-frame start-event 'move)))))
 
 (defun hkey-debug ()

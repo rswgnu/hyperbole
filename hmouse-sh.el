@@ -477,7 +477,7 @@ With optional MIDDLE-KEY-ONLY-FLAG non-nil, bind only the middle mouse key."
   ;; for that.  Use mouse1 only for setting point and drag selecting
   ;; regions.
   ;;
-  ;; Don't bind mouse1 to action-key-depress-emacs to allow it to
+  ;; Don't bind mouse-1 to action-key-depress-emacs to allow it to
   ;; follow links because that will disable the region highlighting
   ;; that we would rather allow.`
   (customize-set-variable 'mouse-1-click-follows-link nil)

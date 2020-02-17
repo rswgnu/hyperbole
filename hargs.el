@@ -113,7 +113,9 @@ With optional EXCLUDE-REGEXP, any matched string is ignored if it this regexp."
 	 (end-search-func (if end-regexp-flag 're-search-forward
 			    'search-forward))
 	 (count 0)
-	 start end)
+	 first
+	 start
+	 end)
     (save-excursion
       (beginning-of-line)
       (while (and (setq start (funcall start-search-func start-delim limit t))
@@ -125,9 +127,9 @@ With optional EXCLUDE-REGEXP, any matched string is ignored if it this regexp."
 		  ;; prior to the original point.
 		  (funcall end-search-func end-delim opoint t)
 		  (setq count (1+ count)))
-	(setq start nil))
-      (when (and (not start) (> count 0) (zerop (% count 2))
-		 (string-equal start-delim end-delim))
+	(setq first (or first start)
+	      start nil))
+      (when (and (not start) (> count 0) (zerop (% count 2)))
 	;; Since strings can span lines but this function matches only
 	;; strings that start on the current line, when start-delim and
 	;; end-delim are the same and there are an even number of
@@ -135,7 +137,9 @@ With optional EXCLUDE-REGEXP, any matched string is ignored if it this regexp."
 	;; search to match to what should probably be the start-delim,
 	;; assume point is within a string and not between two other strings.
 	;; -- RSW, 02-05-2019
-	(setq start (point)))
+	(setq start (if (string-equal start-delim end-delim)
+			(point)
+		      first)))
       (when start
 	(forward-line 2)
 	(setq limit (point))
