@@ -1226,6 +1226,18 @@ source file for the buttons in the menu, if any.")
 ;;; ibut class - Implicit Hyperbole Buttons
 ;;; ========================================================================
 
+
+(defun    ibut:act (label)
+  "Activates Hyperbole implicit button with <[LABEL]> from the current buffer."
+  (interactive (list (hargs:read-match "Activate implicit button labeled: "
+				       (ibut:alist)
+				       nil t nil 'ibut)))
+  (let* ((lbl-key (hbut:label-to-key label))
+	 (but (ibut:get lbl-key)))
+    (if but
+	(hbut:act but)
+      (error "(ibut:act): No implicit button labeled: %s" label))))
+
 (defun    ibut:alist (&optional file)
   "Return alist of labeled ibuts in FILE or the current buffer.
 Each element is a list of just an implicit button label.  For use

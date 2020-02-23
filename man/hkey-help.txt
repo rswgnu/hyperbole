@@ -29,6 +29,10 @@ Mouse-only Control
     string, list or markup
     language tag pair
 
+  Drag from bottom Modeline     Reposition frame as        <- same
+  in frame with non-nil         drag happens
+  drag-with-mode-line param
+
   Drag from shared window side
     or from left of scroll bar  Resizes window width       <- same
   Modeline vertical drag        Resizes window height      <- same

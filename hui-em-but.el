@@ -101,7 +101,7 @@ If `hproperty:but-emphasize-flag' is non-nil when this is called, emphasize
 that button is selectable whenever the mouse cursor moves over it."
   (let ((but (make-overlay start end)))
     (overlay-put but 'face face)
-    (if hproperty:but-emphasize-flag (overlay-put but 'mouse-face 'highlight))))
+    (when hproperty:but-emphasize-flag (overlay-put but 'mouse-face 'highlight))))
 
 (defun hproperty:but-color ()
   "Return current color of buffer's buttons."
@@ -115,8 +115,8 @@ that button is selectable whenever the mouse cursor moves over it."
   (let ((start (point-min)))
     (while (< start (point-max))
       (mapc (lambda (props)
-	      (if (eq (overlay-get props 'face) hproperty:but-face)
-		  (delete-overlay props)))
+	      (when (eq (overlay-get props 'face) hproperty:but-face)
+		(delete-overlay props)))
 	    (overlays-at start))
       (setq start (next-overlay-change start)))))
 
@@ -468,7 +468,10 @@ highlighted."
 (provide 'hui-em-but)
 
 (if after-init-time
-    (hproperty:set-face-after-init)
+    (progn
+      ;; Reverse foreground and background colors for default block-style highlighting.
+      (hproperty:set-item-highlight (hproperty:foreground) (hproperty:background))
+      (hproperty:set-face-after-init))
   (add-hook 'after-init-hook #'hproperty:set-face-after-init))
 
 ;;; hui-em-but.el ends here

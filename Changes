@@ -1,4 +1,13 @@
+2020-02-23  Bob Weiner  <rsw@gnu.org>
+
+* hbut.el (ibut:act): Added to interactively prompt for and activate named implicit buttons,
+    <[name]>.
+
 2020-02-22  Bob Weiner  <rsw@gnu.org>
+
+* hui-em-but.el (after-init-time): Added setting of hyrolo-highlight-face used in HyRolo matches
+   so text is highlighted and readable by default (foreground and background colors of matched
+   text has been the same for some unknown reason.  This may affect user customizations however.
 
 * man/hyperbole.texi (Smart Key - Bookmark Mode): Added.
 
@@ -75,7 +84,7 @@ V7.1.0 test release changes ^^^^:
 * hui-menu.el (hyperbole-menubar-menu): Removed set-menubar-dirty-flag call.
               (hmouse-release-left-edge, hmouse-release-right-edge): Removed XEmacs code.
 
-* hkey-help.txt:
+* man/hkey-help.txt:
   hmouse-drv.el (action-key-depress, assist-key-depress):
   hui-window.el (action-key-modeline, assist-key-modeline):
      Modeline window resizing is now handled in action/assist-key-depress via a call to
