@@ -250,7 +250,7 @@ Entry format is: (key-description key-sequence key-binding)."
 	  (hkey-global-set-key "\M-o" 'hkey-operate)
 	(hkey-maybe-global-set-key "\M-o" 'hkey-operate)))
     ;;
-    ;; Binds {C-c @} to created a user-specified sized grid of windows
+    ;; Binds {C-c @} to create a user-specified sized grid of windows
     ;; displaying different buffers.
     ;;
     ;; Don't override prior global bindings of this key.

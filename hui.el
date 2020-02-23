@@ -96,8 +96,7 @@ label."
 			  (region-end))))
   (let ((default-lbl) lbl but-buf actype)
     (save-excursion
-      (setq default-lbl
-	    (hui:hbut-label-default start end (not (called-interactively-p 'interactive)))
+      (setq default-lbl (hui:hbut-label-default start end (not (called-interactively-p 'interactive)))
 	    lbl (hui:hbut-label default-lbl "ebut-create"))
       (if (not (equal lbl default-lbl)) (setq default-lbl nil))
 
@@ -325,10 +324,8 @@ invoke: {C-h h i l}, to label/name it."
 	(setq lbl (concat lbl (ebut:operate lbl nil)))
 	(goto-char (point-max))
 	(insert "\n")
-	(save-buffer)
-	)
-      (message "%s created." lbl)
-      )))
+	(save-buffer))
+      (message "%s created." lbl))))
 
 (defun hui:gbut-modify (lbl-key)
   "Modifies a global Hyperbole button given by LBL-KEY.
@@ -467,14 +464,14 @@ Optional SKIP-LEN-TEST means don't limit label to `ebut:max-len' length.
 Returns nil if START or END are invalid or if region fails length test.
 
 Also has side effect of moving point to start of default label, if any."
-  (if (markerp start) (setq start (marker-position start)))
-  (if (markerp end) (setq end (marker-position end)))
+  (when (markerp start) (setq start (marker-position start)))
+  (when (markerp end) (setq end (marker-position end)))
   ;; Test whether to use region as default button label.
-  (if (and (integerp start) (integerp end)
+  (when (and (integerp start) (integerp end)
 	   (or skip-len-test
 	       (<= (max (- end start) (- start end)) ebut:max-len)))
-      (progn (goto-char start)
-	     (buffer-substring start end))))
+    (goto-char start)
+    (buffer-substring-no-properties start end)))
 
 (defun hui:hbut-operate (operation operation-str &optional but)
   "Execute OPERATION (a function) described by OPERATION-STR action on a Hyperbole button.

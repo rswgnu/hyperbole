@@ -440,6 +440,7 @@ Smart Keyboard Keys
 * Smart Key - The Koutliner::
 * Smart Key - RDB Mode::
 * Smart Key - Help Buffers::
+* Smart Key - Bookmark Mode::
 * Smart Key - Pages Directory Mode::
 * Smart Key - Python Source Code::
 * Smart Key - Identifier Menu Mode ::
@@ -1362,7 +1363,7 @@ modeline show visible feedback as the window is resized.
 @subsection Moving Frames
 
 @cindex dragging frames
-cindex moving frames
+@cindex moving frames
 @cindex drag, move frame
 Drags of either Smart Key from a bottommost modeline can be configured to
 drag Emacs frames to new locations on screen.  To configure all existing
@@ -1783,10 +1784,12 @@ personal button file, @pxref{Button Files}.  You can always go into that
 file and activate, edit or annotate these buttons with comments.
 
 @cindex bookmarks
-Emacs has a built-in feature similar to Global Buttons called Bookmarks.
-Bookmarks store places in files or link to URLs, so they are more limited
-than Hyperbole's global buttons and cannot utilize all of Hyperbole's
-capabilities for performing actions.  @xref{Bookmarks,,,emacs, the Emacs
+Emacs has a built-in feature similar to Global Buttons called
+Bookmarks.  Bookmarks store places in files or link to URLs, so they
+are more limited than Hyperbole's global buttons and cannot utilize
+all of Hyperbole's capabilities for performing actions.  Hyperbole has
+an action type, @code{link-to-bookmark}, for using an Emacs bookmark
+as a Hyperbole button referent.  @xref{Bookmarks,,,emacs, the Emacs
 Manual}, for details on bookmarks.
 
 @node Implicit Buttons, Button Files, Global Buttons, Buttons
@@ -8233,6 +8236,7 @@ If dragged from an Emacs window to outside of Emacs:
 * Smart Key - The Koutliner::
 * Smart Key - RDB Mode::
 * Smart Key - Help Buffers::
+* Smart Key - Bookmark Mode::
 * Smart Key - Pages Directory Mode::
 * Smart Key - Python Source Code::
 * Smart Key - Identifier Menu Mode ::
@@ -8629,7 +8633,7 @@ relational databases (part of InfoDock):
 @end group
 @end format
 
-@node Smart Key - Help Buffers, Smart Key - Pages Directory Mode, Smart Key - RDB Mode, Smart Keyboard Keys
+@node Smart Key - Help Buffers, Smart Key - Bookmark Mode, Smart Key - RDB Mode, Smart Keyboard Keys
 @subsection Smart Key - Help Buffers
 @cindex help buffer
 @format
@@ -8641,7 +8645,24 @@ When pressed at the end of a Help buffer:
 @end group
 @end format
 
-@node Smart Key - Pages Directory Mode, Smart Key - Python Source Code, Smart Key - Help Buffers, Smart Keyboard Keys
+@node Smart Key - Bookmark Mode, Smart Key - Pages Directory Mode, Smart Key - Help Buffers, Smart Keyboard Keys
+@subsection Smart Key - Bookmark Mode
+
+@format
+@group
+Bookmark-bmenu-mode lists existing per-user Emacs bookmarks, which each link to a particular file location.
+
+@noindent
+When pressed on a bookmark-bmenu-mode entry line:
+  ACTION KEY
+     Jumps to the file point linked to by the bookmark.
+  ASSIST KEY
+     Shows what the Action Key does in this context.
+@end group
+@end format
+
+@page
+@node Smart Key - Pages Directory Mode, Smart Key - Python Source Code, Smart Key - Bookmark Mode, Smart Keyboard Keys
 @subsection Smart Key - Pages Directory Mode
 
 @format
@@ -8657,7 +8678,6 @@ When pressed on a pages-directory-mode entry line:
 @end group
 @end format
 
-@page
 @node Smart Key - Python Source Code, Smart Key - Identifier Menu Mode , Smart Key - Pages Directory Mode, Smart Keyboard Keys
 @subsection Smart Key - Python Source Code
 @format

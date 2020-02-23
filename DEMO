@@ -110,7 +110,7 @@ after the point at which you load Hyperbole or else set it as part of
 hyperbole-init-hook, which executes whenever Hyperbole is loaded, e.g.:
 
    (add-to-list 'hyperbole-init-hook
-     		(lambda () (setq smart-scroll-proportional nil)))
+                (lambda () (setq smart-scroll-proportional nil)))
 
 ** Hyperbole Menus
 
@@ -221,7 +221,7 @@ There are two submodes of HyControl: one for controlling windows and one for
 controlling frames, although a number of commands are available in both modes
 where they are useful.
 
-Hyperbole binds {C-c \} to invoke HyControl windows control; otherwise, the
+Hyperbole binds {C-c \\} to invoke HyControl windows control; otherwise, the
 Hyperbole minibuffer menu item, Screen/WindowsControl {C-h h s w}, will do
 the same thing.
 
@@ -258,7 +258,7 @@ the argument is used to adjust one dimension of the frame.
 
    { f }        - clone the selected window to a new frame
    { F }        - tear off the selected window (if more than one window)
-		  into a new frame
+          into a new frame
 
 ** Windows Grid
 
@@ -335,22 +335,22 @@ this DEMO.  The date at the end of each record is automatically added by
 HyRolo whenever a new record is added.
 
    ==================================================================
-			  DEMO ROLO
+              DEMO ROLO
    ==================================================================
    *    HiHo Industries
    **     Strong, Hugo            <hs@hiho.com>  W708-555-9821
-		Manager
-		04/12/2017
+        Manager
+        04/12/2017
    ***      Smith, John           <js@hiho.com>  W708-555-2001
-		Chief Ether Maintainer
-		05/24/2017
+        Chief Ether Maintainer
+        05/24/2017
    *    Work Industries
    **     Hansen, Dan             <dh@work.com>  W218-555-2311
-		Manager
-		02/18/2017
+        Manager
+        02/18/2017
    ***      Dunn, John            <md@work.com>  W218-555-3233
-		Media Maker
-		11/2/2017
+        Media Maker
+        11/2/2017
 
 ** String Searches
 
@@ -672,7 +672,7 @@ way to link to and jump to any named item within a manual.
 If you use the standard Emacs library "tramp.el" for working with remote
 files and directories, then remote pathnames of the form:
 
-	/protocol:user@host.domain:/path
+    /protocol:user@host.domain:/path
 
 will be recognized by Hyperbole.
 
@@ -689,7 +689,7 @@ If you enable the Hyperbole option to use URLs when finding files with
 the {C-x C-f} (find-file) command via the {C-h h c f} key sequence, then
 you can also use paths of the form:
 
-	ftp://ftp.gnu.org/pub/
+    ftp://ftp.gnu.org/pub/
 
 *** POSIX and MSWindows Paths
 
@@ -1180,13 +1180,14 @@ names that you can remember.  Then they can be activated quickly.
 
 Let's create a global button that counts the lines in the current
 buffer and displays the count in the minibuffer.  Press the Action Key
-on the first line of this key series to create the global button:
+on the first line of this key series to create the global button named
+"line-count":
 
      {C-h h g c line-count RET eval-elisp RET
       (message "Lines in %s = %s"
                (buffer-name) (count-lines (point-min) (point-max))) RET}
 
-Then activate it with {C-h h g a}, type its name and try it out in
+Then activate it with {C-h h g a line-count RET}. Try it out in
 different buffers.
 
 To avoid embedding such code in the button itself, just define a
@@ -1201,11 +1202,18 @@ Then button creation would be:
 
      {C-h h g c line-count RET eval-elisp RET (line-count) RET}
 
+and activation would be the same as above.
+
 Defining a link to a file section is even easier, say to the section
 below here:
 
      {C-h h g c smk RET link-to-file RET "DEMO#Smart Mouse Keys" RET}
 
+Then
+
+     {C-h h g a smk RET}
+
+to activate it.
 
 * Smart Mouse Keys
 
@@ -1294,15 +1302,16 @@ which you want help, performing any action necessary to register a context,
 such as a drag motion, and then pressing the other Smart Key and releasing
 both.
 
-Here is an example.  Depress the Action Key somewhere within this paragraph
-and while holding it down, depress the Assist Key.  Then release the keys in
-any order and the help display will pop up.  It explains the context in
-which the Action Key was pressed and what it does in that context.  Try it.
-Basically, you just depress the Smart Mouse Key you want help for and while
-holding it down, depress the other Smart Mouse Key to get help.  If you use
-the mouse a lot, this is a great key combination to master as it will let
-you explore the many different contextual actions that Hyperbole offers
-without having to trigger any of them.
+Here is an example.  Depress the Action Mouse Key somewhere within this
+paragraph and while holding it down, depress the Assist Mouse Key.  Then
+release the keys in any order and the help display will pop up.  It
+explains the context in which the Action Mouse Key was pressed and what it
+does in that context.  Try it.  Basically, you just depress the Smart
+Mouse Key you want help for and while holding it down, depress the other
+Smart Mouse Key to get help.  If you use the mouse a lot, this is a great
+key combination to master as it will let you explore the many different
+contextual actions that Hyperbole offers without having to trigger any of
+them.
 
 ** Creating and Deleting Windows
 

@@ -90,7 +90,7 @@ Used to expand posix mount points to Windows UNC paths during posix-to-mswindows
   "Convert a recognizable MSWindows PATH to a Posix-style path or return the path unchanged.
 If path begins with an MSWindows drive letter, prefix the converted path with the value of 'hpath:mswindows-mount-prefix'."
   (interactive "sMSWindows path to convert to POSIX: ")
-  (when (stringp path)
+  (when (and (stringp path) (not (equal path "\\\\")))
     (setq path (hpath:mswindows-to-posix-separators path))
     (when (string-match hpath:mswindows-drive-regexp path)
       (when (string-match hpath:mswindows-drive-regexp path)
@@ -825,6 +825,23 @@ window in which the buffer is displayed."
 (defun hpath:display-path-function (&optional display-where)
   "Return the function to display a Hyperbole path using optional symbol DISPLAY-WHERE or `hpath:display-where'."
   (hpath:display-where-function display-where hpath:display-where-alist))
+
+(defun hpath:file-line-and-column (path-line-and-col)
+  "Given a `path-line-and-col' string of format: path:line:col, return a list with the parts parsed out, else nil."
+  (when (and (stringp path-line-and-col)
+	     (string-match hibtypes-path-line-and-col-regexp path-line-and-col))
+    ;; Ensure any variables and heading suffixes following [#,] are removed before returning file.
+    (let ((file (save-match-data (expand-file-name (hpath:substitute-value (match-string-no-properties 1 path-line-and-col)))))
+	  (line-num (string-to-number (match-string-no-properties 3 path-line-and-col)))
+	  (col-num (when (match-end 4)
+		     (string-to-number (match-string-no-properties 5 path-line-and-col)))))
+      (when (and (save-match-data (setq file (hpath:is-p file)))
+		 file)
+	(if line-num
+	    (if col-num
+		(list file line-num col-num)
+	      (list file line-num))
+	  (list file))))))
 
 (defun hpath:find-noselect (filename)
   "Find but don't display FILENAME using user customizable settings of display program and location.

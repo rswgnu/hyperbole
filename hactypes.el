@@ -352,9 +352,20 @@ the window."
 		;; have introduced.
 		(path (hpath:trim (read-file-name "Path to link to: "
 						  file-path file-path)))
-		;; Ensure any variables and heading suffixes following
-		;; [#,] are removed before doing path matching.
-		(normalized-path (hpath:is-p path)))
+		(orig-path path)
+		path-line-and-col
+		line-num
+		column-num
+		normalized-path)
+	   ;; Handle if :line:column are included in path.
+	   (setq path-line-and-col (hpath:file-line-and-column path))
+	   (when path-line-and-col
+	     (setq path (nth 0 path-line-and-col)
+		   line-num (nth 1 path-line-and-col)
+		   column-num (nth 2 path-line-and-col)))
+	   ;; Ensure any variables and heading suffixes following
+	   ;; [#,] are removed before doing path matching.
+	   (setq normalized-path (hpath:is-p path))
 	   (when (not (or (file-name-absolute-p path)
 			  (string-match "\\`\\$\{" path)))
 	     (setq path (concat default-directory path)))
@@ -364,7 +375,7 @@ the window."
 				   (prog1 (set-buffer (find-file-noselect normalized-path t))
 				     (when (integerp file-point)
 				       (goto-char (min (point-max) file-point)))))))
-	   (if path-buf
+	   (if (and path-buf (not line-num))
 	       (with-current-buffer path-buf
 		 (setq hargs:reading-p 'character)
 		 (if (y-or-n-p
@@ -372,17 +383,26 @@ the window."
 			      (count-lines 1 (point))))
 		     (list path (point))
 		   (list path)))
-	     (list path)))
+	     (if path-buf
+		 (delq nil (list path (save-excursion
+					(goto-char (point-min))
+					(forward-line (1- line-num))
+					(when column-num (move-to-column column-num))
+					(point))))
+	       (list (or path orig-path)))))
        (setq hargs:reading-p prev-reading-p)
        (when (and path-buf (not existing-buf))
 	 (kill-buffer path-buf)))))
-  ;; Remove any double quotes and whitespace at the start and end of
-  ;; the path that use within a key series may have introduced.
-  (setq path (hpath:trim path))
-  (and (hpath:find path)
-       (integerp point)
-       (progn (goto-char (min (point-max) point))
-	      (recenter 0))))
+  (if path
+      (progn
+	;; Remove any double quotes and whitespace at the start and end of
+	;; the path that use within a key series may have introduced.
+	(setq path (hpath:trim path))
+	(and (hpath:find path)
+	     (integerp point)
+	     (progn (goto-char (min (point-max) point))
+		    (recenter 0))))
+    (hypb:error "(link-to-file): Invalid file name: \"%s\"" path)))
 
 (defact link-to-file-line (path line-num)
   "Display a file given by PATH scrolled to LINE-NUM."

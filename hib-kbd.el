@@ -100,13 +100,18 @@ Returns t if KEY-SERIES has a binding, else nil."
 	   ;; If this is a special key seqence, execute it by adding
 	   ;; its keys to the stream of unread command events.
 	   (when (kbd-key:special-sequence-p key-series)
-	     (setq unread-command-events (nconc unread-command-events (mapcar 'identity key-series)))
+             (kbd-key:key-series-to-events key-series)
 	     t))
 	  ((memq binding '(action-key action-mouse-key hkey-either))
 	   (beep)
 	   (message "(kbd-key:act): This key does what the Action Key does.")
 	   t)
 	  (t (call-interactively binding) t))))
+
+(defun kbd-key:key-series-to-events (key-series)
+  "Insert the key-series as a series of keyboard events into Emacs' unread input stream."
+  ;; Could use listify-key-sequence in next line but seems slower.
+  (setq unread-command-events (nconc unread-command-events (mapcar 'identity key-series))))
 
 (defun kbd-key:doc (key-series &optional full)
   "Show first line of doc for binding of keyboard KEY-SERIES in minibuffer.

@@ -311,13 +311,14 @@ button is found in the current buffer."
     (or new-label (setq new-label curr-label))
     (hattr:set 'hbut:current 'lbl-key (ebut:label-to-key new-label))
     (save-excursion
-      (if (setq instance-flag
-		(if modify (ebut:modify lbl-key) (ebut:create)))
-	  (if (hmail:editor-p) (hmail:msg-narrow))))
+      (when (setq instance-flag
+		  (if modify (ebut:modify lbl-key) (ebut:create)))
+	(when (hmail:editor-p)
+	  (hmail:msg-narrow))))
     (if instance-flag
 	(progn
-	  ;; Rename all occurrences of button - those with same label
 	  (if modify
+	      ;; Rename all occurrences of button - those with same label
 	      (let* ((but-key-and-pos (ebut:label-p nil nil nil 'pos))
 		     (at-but (equal (car but-key-and-pos)
 				    (ebut:label-to-key new-label))))
@@ -335,13 +336,23 @@ button is found in the current buffer."
 			lbl-regexp 'include-delims))
 		      (at-but)
 		      ((hypb:error "(ebut:operate): No button matching: %s" curr-label))))
+
 	    ;; Add a new button recording its start and end positions
-	    (let (start end buf-lbl)
-	      (cond ((and (not curr-label)
-			  (hmouse-use-region-p)
-			  (marker-position (hypb:mark-marker t))
-			  (setq start (region-beginning)
-				end (region-end)
+	    (let (start end mark prev-point buf-lbl)
+	      (cond ((not curr-label)
+		     (setq start (point))
+		     (insert new-label)
+		     (setq end (point)))
+		    ((and (hmouse-use-region-p)
+			  (setq mark (marker-position (hypb:mark-marker t)))
+			  (setq prev-point (and action-key-depress-prev-point
+						(marker-position action-key-depress-prev-point)))
+			  (setq start (if (and prev-point mark (<= prev-point mark))
+					  prev-point
+					(region-beginning))
+				end (if (and prev-point mark (> prev-point mark))
+					prev-point
+				      (region-end))
 				buf-lbl (buffer-substring start end))
 			  (equal buf-lbl curr-label))
 		     nil)
@@ -352,7 +363,14 @@ button is found in the current buffer."
 		    (t (setq start (point))
 		       (insert curr-label)
 		       (setq end (point))))
-	      (ebut:delimit start end instance-flag)))
+	      (ebut:delimit start end instance-flag)
+	      (goto-char start)))
+
+	  ;; Append any instance-flag string to the button label
+	  (when (stringp instance-flag)
+	    (setq new-label (concat new-label instance-flag))
+	    (hattr:set 'hbut:current 'lbl-key (ebut:label-to-key new-label)))
+
 	  ;; Position point
 	  (let ((new-key (ebut:label-to-key new-label)))
 	    (cond ((equal (ebut:label-p) new-key)
@@ -364,15 +382,17 @@ button is found in the current buffer."
 		     (or (re-search-forward  regexp nil t)
 			 (re-search-backward regexp nil t)))
 		   (goto-char (+ (match-beginning 0) (length ebut:start))))))
+
 	  ;; instance-flag might be 't which we don't want to return.
 	  (when (stringp instance-flag) instance-flag))
+
       (hypb:error
        "(ebut:operate): Operation failed.  Check button attribute permissions: %s"
        hattr:filename))))
 
 (defun    ebut:search (string out-buf &optional match-part)
-  "Writes explicit button lines matching STRING to OUT-BUF.
-Searches across all files into which the user has previously saved explicit buttons.
+  "Write explicit button lines matching STRING to OUT-BUF.
+Searche across all files into which the user has previously saved explicit buttons.
 By default, only matches for whole button labels are found; optional MATCH-PART
 enables partial matches."
   (let*  ((buffers (mapcar (lambda (dir)
@@ -476,26 +496,28 @@ Leave point inside the button label.  Return the symbol for the button, else nil
       (ebut:at-p))))
 
 ;;; ------------------------------------------------------------------------
-(defun    ebut:delimit (start end instance-str)
-  "Delimits button label spanning region START to END in current buffer.
-If button is already delimited or delimit fails, returns nil, else t.
-Inserts INSTANCE-STR after END, before ending delimiter."
+(defun    ebut:delimit (start end instance-flag)
+  "Delimit button label spanning region START to END in current buffer.
+If button is already delimited or delimit fails, return nil, else t.
+Insert INSTANCE-FLAG after END, before ending delimiter."
   (goto-char start)
-  (if (looking-at (regexp-quote ebut:start))
-      (forward-char (length ebut:start)))
+  (when (looking-at (regexp-quote ebut:start))
+    (forward-char (length ebut:start)))
   (unless (ebut:label-p)
     (setq start (move-marker (make-marker) start)
 	  end (move-marker (make-marker) end))
     (set-marker-insertion-type end t)
-    (if (not (stringp instance-str)) (setq instance-str ""))
+    ;; instance-flag may be 't to indicate don't add an instance number
+    (unless (stringp instance-flag)
+      (setq instance-flag ""))
     (insert ebut:start)
     (goto-char end)
-    (insert instance-str ebut:end)
+    (insert instance-flag ebut:end)
     ;; Insert any comment delimiter before the start marker.
     (set-marker-insertion-type start t)
     (hbut:comment start end)
-    (if (fboundp 'hproperty:but-add)
-	(hproperty:but-add start end hproperty:but))
+    (when (fboundp 'hproperty:but-add)
+      (hproperty:but-add start end hproperty:but))
     (goto-char end)
     (move-marker start nil)
     (move-marker end nil)
@@ -635,8 +657,7 @@ Return the symbol for the button, else nil."
 	(progn
 	  (setcdr (cdr sublist) nil)
 	  (setplist hbut sublist))
-      (setplist hbut nil)
-      )))
+      (setplist hbut nil))))
 
 (defun    hattr:copy (from-hbut to-hbut)
   "Copy attributes FROM-HBUT TO-HBUT, overwriting TO-HBUT attribute values.

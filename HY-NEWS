@@ -2,6 +2,27 @@
 				 by Bob Weiner
 
 ===========================================================================
+*                                   V7.1.0
+===========================================================================
+
+  BUTTON TYPES
+
+    - In-buffer Labels: Fixed a number of in-buffer text handling issues
+      with the creation of explicit buttons, maximizing reuse of existing
+      text in labels.
+
+    - link-to-file Action Type: Extended to allow file path to include 
+      either :line-num:column-num or just :line-num at the end (translated
+      to character location within the button).
+
+  DOCUMENTATION
+
+    - Bookmark Mode: Added Hyperbole Manual section, "Smart Key - Bookmark Mode"
+      that allows linking to Emacs Bookmarks.  See "(hyperbole)Smart Key -
+      Bookmark Mode".
+
+
+===========================================================================
 *                                   V7.0.9
 ===========================================================================
 

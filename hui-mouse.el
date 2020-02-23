@@ -240,7 +240,8 @@ Its default value is #'smart-scroll-down."
     ;; Emacs bookmarks menu (bookmark.el)
     ((eq major-mode 'bookmark-bmenu-mode) .
      ((bookmark-jump (bookmark-bmenu-bookmark) (hpath:display-buffer-function)) .
-      (hkey-help t)))
+      ;; Below we want the Assist Key to show what the Action Key does.
+      (hkey-help)))
     ;;
     ;; Pages directory listing mode (page-ext.el)
     ((eq major-mode 'pages-directory-mode) .

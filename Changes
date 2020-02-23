@@ -1,3 +1,30 @@
+2020-02-22  Bob Weiner  <rsw@gnu.org>
+
+* man/hyperbole.texi (Smart Key - Bookmark Mode): Added.
+
+* hpath.el (hpath:file-line-and-column): Added.
+  hactypes.el (link-to-file): Rewrote to use above function, allow for :line:column suffixes and
+    trigger error if path argument is invalid.
+
+* hui-mouse.el (hkey-alist): Fixed bookmark-bmenu-mode so Assist Key shows what Action Key does
+    rather than generic help.
+
+* hbut.el (ebut:operate): Appended any instance-flag string to the button label; this fixed
+    error where point moved to the wrong location when creating a new numbered instance of
+    a particular button label.  Also, fixed so any existing text following point or
+    highlighted as region is used in button labels, rather than new text being inserted.
+          (ebut:delimit): Changed instance-str to instance-flag since not always a string.
+
+2020-02-17  Bob Weiner  <rsw@gnu.org>
+
+* hpath.el (hpath:mswindows-to-posix): Made '\\' by itself in Windows an invalid path.
+
+* hib-kbd.el (kbd-key:key-series-to-events): Added for use in testing and called from kbd-key:act.
+
+==============================================================================
+V7.1.0 test release changes ^^^^:
+==============================================================================
+
 2020-02-17  Bob Weiner  <rsw@gnu.org>
 
 * Published 7.0.9 test release.
