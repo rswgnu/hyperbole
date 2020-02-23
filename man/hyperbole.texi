@@ -155,7 +155,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</P>
 
 <PRE>
 Edition 7.0.9
-Printed February 16, 2020.
+Printed February 23, 2020.
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -197,7 +197,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 @example
 Edition 7.0.9
-February 16, 2020
+February 23, 2020
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
