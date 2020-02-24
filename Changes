@@ -1,5 +1,7 @@
 2020-02-23  Bob Weiner  <rsw@gnu.org>
 
+* Published 7.1.0 test release.
+
 * hui-menu.el (infodock-hyperbole-menu): Changed 'Activate-Button-at-Point' to 'Activate-Button-in-Buffer'
     and made prompt for button if not on one.  This synchronizes it with the top-level 'Act' command in
     the Hyperbole minibuffer menu.
