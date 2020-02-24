@@ -317,13 +317,11 @@ REBUILD-FLAG is non-nil, in which case the menu is rebuilt."
 		    ;; Delete Hyperbole menu from all menubars.
 		    (hui-menu-remove Hyperbole)
 		    ;;
-		    ;; Remove Hyperbole button comment from future
-		    ;; outgoing mail.
+		    ;; Remove Hyperbole button comment from future outgoing mail.
 		    (if (boundp 'smail:comment) (setq smail:comment nil)))
 		  t]
 		 "----"
-		 ["Activate-Button-at-Point" hui:hbut-current-act
-		  (hbut:is-p (hbut:at-p))]
+		 ["Activate-Button-in-Buffer" hui:hbut-act t]
 		 ["Back-to-Prior-Location" (hhist:remove current-prefix-arg)
 		  (and (boundp '*hhist*) *hhist*)]
 		 '("Button-File"
@@ -405,8 +403,8 @@ REBUILD-FLAG is non-nil, in which case the menu is rebuilt."
 		 '("Implicit-Button"
 		   ["Manual"   (id-info "(hyperbole)Implicit Buttons") t]
 		   "----"
-		   ["Activate-at-Point"    hui:hbut-current-act t]
-		   ["Delete-Type"         (hui:htype-delete 'ibtypes) t]
+		   ["Activate" hui:ibut-act t]
+		   ["Delete-Type" (hui:htype-delete 'ibtypes) t]
 		   ["Help"   hui:hbut-help t]
 		   ["Label"  hui:ibut-label-create t]
 		   ["Rename" hui:ibut-rename t]

@@ -7,13 +7,13 @@
 
   BUTTON TYPES
 
-    - In-buffer Labels: Fixed a number of in-buffer text handling issues
-      with the creation of explicit buttons, maximizing reuse of existing
-      text in labels.
+    - In-buffer Labels: Fixed a number of in-buffer text handling issues with
+      the creation of explicit buttons, maximizing reuse of existing text in
+      labels.
 
-    - link-to-file Action Type: Extended to allow file path to include 
-      either :line-num:column-num or just :line-num at the end (translated
-      to character location within the button).
+    - link-to-file Action Type: Extended to allow file path to include either
+      :line-num:column-num or just :line-num at the end (translated to character
+      location within the button).
 
   DOCUMENTATION
 
@@ -21,6 +21,15 @@
       that allows linking to Emacs Bookmarks.  See "(hyperbole)Smart Key -
       Bookmark Mode".
 
+  MENUS
+
+    - Activate Any Labeled Buffer Button: Hyperbole's top-level menu 'Act'
+      command either activates any button at point or prompts for the choice of
+      any labeled explicit or implicit button within the buffer to activate.
+      The pulldown menu item, Activate-Button-in-Buffer, behaves the same.
+
+    - Org-mode in Q&A Appendix: Rewrote this section to account for improved
+      integration.
 
 ===========================================================================
 *                                   V7.0.9

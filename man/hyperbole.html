@@ -1863,6 +1863,8 @@ Next: <a href="#Dragging-Buffers" accesskey="n" rel="next">Dragging Buffers</a>,
 <span id="index-dragging-frames"></span>
 <span id="index-moving-frames"></span>
 <span id="index-drag_002c-move-frame"></span>
+<span id="index-modeline-drag_002c-move-frame"></span>
+<span id="index-drag_002dwith_002dmode_002dline"></span>
 <p>Drags of either Smart Key from a bottommost modeline can be configured to
 drag Emacs frames to new locations on screen.  To configure all existing
 and future frames for such dragging, use:
@@ -3001,8 +3003,7 @@ for a valid match.  See the function documentation for <code>hpath:find</code>
 for special file display options.
 </p>
 <span id="index-ibtypes-org_002dmode"></span>
-<span id="index-org_002dmode"></span>
-<span id="index-Org-mode"></span>
+<span id="index-Org_002dmode"></span>
 <span id="index-radio-target"></span>
 <span id="index-code-block"></span>
 <span id="index-links"></span>
@@ -3015,28 +3016,28 @@ for special file display options.
 <span id="index-inhibit-org_002dmode-support"></span>
 </dd>
 <dt><code>org-mode</code></dt>
-<dd><p>For users of Emacs Org mode, Hyperbole does quite a few things.
+<dd><p>For users of Emacs Org-mode, Hyperbole does quite a few things.
 </p>
-<p>First, the Action Key follows internal links in Org mode files.  When
+<p>First, the Action Key follows internal links in Org-mode files.  When
 pressed on a link referent/target, the link definition is displayed,
 allowing two-way navigation between definitions and targets.
 </p>
-<p>Second, the Action Key follows Org mode external links.  The Assist
-Key displays help when pressed on an Org mode link.
+<p>Second, the Action Key follows Org-mode external links.  The Assist
+Key displays help when pressed on an Org-mode link.
 </p>
 <p>Third, within a radio target definition, the Action Key jumps to the
 first occurrence of an associated radio target.
 </p>
-<p>Fourth, when point is on an outline heading in Org mode, the Action Key
+<p>Fourth, when point is on an outline heading in Org-mode, the Action Key
 cycles the view of the subtree at point and the Assist Key cycles the
 view of all headings in the buffer.
 </p>
 <p>Fifth, with point on the first line of a code block definition, the
-Action Key executes the code block via the Org mode standard binding
+Action Key executes the code block via the Org-mode standard binding
 of <kbd>{C-c C-c}</kbd>, <code>org-ctrl-c-ctrl-c</code>.
 </p>
 <p>In any other context besides the end of a line, the Action Key invokes
-the Org mode standard binding of <kbd>{M-<span class="key">RET</span>}</kbd>, <code>org-meta-return</code>.
+the Org-mode standard binding of <kbd>{M-<span class="key">RET</span>}</kbd>, <code>org-meta-return</code>.
 </p>
 <p>To disable ALL Hyperbole support within Org major and minor modes, set
 the custom option <code>inhibit-hsys-org</code> to <code>t</code>.  Then in Org modes,
@@ -4027,12 +4028,11 @@ are at a menu prompt or any other Hyperbole prompt.
 </p>
 <dl compact="compact">
 <dd><span id="index-menu-item_002c-Act"></span>
-<span id="index-menu-item_002c-Activate_002dButton_002dat_002dPoint"></span>
+<span id="index-menu-item_002c-Activate_002dButton_002din_002dBuffer"></span>
 </dd>
 <dt><strong>Act</strong></dt>
-<dd><p>Activation of any button at point.  If there is no button at
-point, it prompts for the label of an explicit button within the
-current buffer to activate.
+<dd><p>Activate button at point or if there is no button at point, prompt for
+a labeled explicit or implicit button from the current buffer to activate.
 </p>
 <span id="index-menu_002c-Button_002dFile"></span>
 <span id="index-menu_002c-Butfile"></span>
@@ -9381,13 +9381,14 @@ Next: <a href="#Smart-Mouse-Drags-between-Windows" accesskey="n" rel="next">Smar
 </div>
 <span id="Modeline-Clicks-and-Drags-1"></span><h4 class="subsection">E.1.4 Modeline Clicks and Drags</h4>
 
-<span id="index-depress_002c-modeline"></span>
-<span id="index-modeline-depress"></span>
+<span id="index-click_002c-modeline"></span>
+<span id="index-modeline-click"></span>
+<span id="index-modeline-drag"></span>
 <span id="index-action_002dkey_002dmodeline_002dfunction-1"></span>
 <span id="index-assist_002dkey_002dmodeline_002dfunction-1"></span>
 <div class="format">
 <pre class="format">If depressed within a window modeline:
-  ACTION KEY
+  ACTION MOUSE KEY
      (1) clicked on the first blank character of a window&rsquo;s modeline,
          the window&rsquo;s buffer is buried (placed at the bottom of the
          buffer list);
@@ -9404,15 +9405,19 @@ Next: <a href="#Smart-Mouse-Drags-between-Windows" accesskey="n" rel="next">Smar
      (5) dragged vertically from a modeline to within a window, the
          modeline is moved to the point of the drag release, thereby
          resizing its window and potentially its vertically neighboring
-         windows.
+         windows;
      (6) dragged other than straight vertically from a modeline to another
          window, duplicate the modeline&rsquo;s window buffer to the window of
-         release.
-     (7) dragged from a modeline to outside of Emacs, create a new frame
-         sized to match the selected window with the same buffer.
+         release;
+     (7) dragged from a bottommost modeline when the frame has a non-nil
+         <code>drag-with-mode-line</code> property, then move the frame until
+         release of the Action Mouse Key;
+     (8) otherwide, dragged from a another modeline to outside of
+         Emacs (MacOS only), create a new frame sized to match the
+         selected window with the same buffer.
 </pre></div>
 <div class="format">
-<pre class="format">  ASSIST KEY
+<pre class="format">  ASSIST MOUSE KEY
      (1) clicked on the first blank character of a window&rsquo;s modeline,
          the bottom buffer in the buffer list is unburied and placed in
          the window;
@@ -9421,21 +9426,25 @@ Next: <a href="#Smart-Mouse-Drags-between-Windows" accesskey="n" rel="next">Smar
          displayed and the modeline clicked upon belongs to a window
          displaying the summary, the summary buffer is hidden;
      (3) clicked on the buffer id of a window&rsquo;s modeline, the next
-         buffer in sequence is displayed in the window
+         buffer in sequence is displayed in the window;
      (4) clicked anywhere within the middle of a window&rsquo;s modeline,
          the function given by <code>assist-key-modeline-function</code> is
          called;
      (5) dragged vertically from a modeline to within a window, the
          modeline is moved to the point of the drag release, thereby
          resizing its window and potentially its vertically neighboring
-         windows.
+         windows;
      (6) dragged other than straight vertically from a modeline to another
-         window, swap buffers in the two windows.
-     (7) dragged from a modeline to outside of Emacs, create a new frame
-         sized to match the selected window with the same buffer.  If there
-         is only one window in the source frame or if <code>hycontrol-keep-window-flag</code>
-         is non-nil, leave the original window and just clone it into the
-         new frame;otherwise, delete the original window.
+         window, swap buffers in the two windows;
+     (7) dragged from a bottommost modeline when the frame has a non-nil
+         <code>drag-with-mode-line</code> property, then move the frame until
+         release of the Action Mouse Key;
+     (8) dragged from a modeline to outside of Emacs (MacOS only),
+         create a new frame sized to match the selected window with
+         the same buffer.  If there is only one window in the source
+         frame or if <code>hycontrol-keep-window-flag</code> is non-nil,
+         leave the original window and just clone it into the new
+         frame; otherwise, delete the original window.
 </pre></div>
 
 <div class="format">
@@ -10994,25 +11003,24 @@ let it flow through you.
 <p>Ok, joking aside, now that we have your attention, here are some
 serious questions and answers.
 </p>
-</li><li> <span id="index-Org-mode-1"></span>
-Isn&rsquo;t Org mode the same as Hyperbole?
+</li><li> <span id="index-Org_002dmode-1"></span>
+Isn&rsquo;t Org-mode the same as Hyperbole?
 
 <p>No, they offer very different capabilities when you compare them a bit
 more deeply.  In fact, it makes sense to use them together and they
-are highly compatible.  The only overlap we see is that Org mode has a
+are highly compatible.  The only overlap we see is that Org-mode has a
 more limited kind of hyperlinks and offers some BBDB integration as
-Hyperbole does.
-</p>
-<p>Initial Smart Key support for Org mode is already in Hyperbole and
-more will come.  For a list of some differences, see:
+Hyperbole does.  For a list of some differences, see:
 <a href="https://www.emacswiki.org/emacs/Hyperbole">https://www.emacswiki.org/emacs/Hyperbole</a>.
+</p>
+<span id="index-inhibit_002dhsys_002dorg-1"></span>
+<p>Smart Key support for Org-mode is already in Hyperbole with compatibility
+with Org&rsquo;s <kbd>{M-RET}</kbd> binding.  With the flag, <code>inhibit-hsys-org</code>
+set to <code>t</code>, Hyperbole gives Org complete control over that key as well.
 </p>
 <p>Org-mode offers traditional Emacs outlining, todo list management,
 agenda and diary management, so it is very complementary to Hyperbole.
-It did not exist when Hyperbole was first developed.  Today it is just
-a matter of having time and resources to devote to finding ways to
-integrate the two.  We would like to see this happen.  If you would
-like to see it, offer time or money to help make it happen.
+It did not exist when Hyperbole was first developed.
 </p>
 </li><li> <span id="index-Smart-Key-2"></span>
 <span id="index-mouse-key-bindings"></span>
@@ -11991,6 +11999,7 @@ Next: <a href="#Concept-Index" accesskey="n" rel="next">Concept Index</a>, Previ
 <tr><td></td><td valign="top"><a href="#index-defib"><code>defib</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Type-Creation">Implicit Button Type Creation</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-dir_002c-_007e_002f_002ehyperb">dir, ~/.hyperb</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Button-Files">Button Files</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-dired_002djump"><code>dired-jump</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Mouse-Key-Modeline-Clicks">Smart Mouse Key Modeline Clicks</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-drag_002dwith_002dmode_002dline">drag-with-mode-line</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Moving-Frames">Moving Frames</a></td></tr>
 <tr><td colspan="4"> <hr></td></tr>
 <tr><th id="Function_fn_letter-E">E</th><td></td><td></td></tr>
 <tr><td></td><td valign="top"><a href="#index-ebut_002dcreate_002dhook">ebut-create-hook</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Hook-Variables">Hook Variables</a></td></tr>
@@ -12236,6 +12245,7 @@ Next: <a href="#Concept-Index" accesskey="n" rel="next">Concept Index</a>, Previ
 <tr><td></td><td valign="top"><a href="#index-Info_002dglobal_002dnext"><code>Info-global-next</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Key-_002d-Info-Manuals">Smart Key - Info Manuals</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-Info_002dglobal_002dprev"><code>Info-global-prev</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Key-_002d-Info-Manuals">Smart Key - Info Manuals</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-inhibit_002dhsys_002dorg">inhibit-hsys-org</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-inhibit_002dhsys_002dorg-1">inhibit-hsys-org</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Questions-and-Answers">Questions and Answers</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-interactive"><code>interactive</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Action-Type-Creation">Action Type Creation</a></td></tr>
 <tr><td colspan="4"> <hr></td></tr>
 <tr><th id="Function_fn_letter-K">K</th><td></td><td></td></tr>
@@ -12695,6 +12705,7 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function</a>, Up: <a href
 <tr><td></td><td valign="top"><a href="#index-click_002c-hyrolo-matches">click, hyrolo matches</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Key-_002d-HyRolo-Match-Buffers">Smart Key - HyRolo Match Buffers</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-click_002c-ibuffer-menu">click, ibuffer menu</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Key-_002d-Buffer-Menus">Smart Key - Buffer Menus</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-click_002c-Info">click, Info</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Key-_002d-Info-Manuals">Smart Key - Info Manuals</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-click_002c-modeline">click, modeline</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Modeline-Clicks-and-Drags">Modeline Clicks and Drags</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-click_002c-tar">click, tar</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Key-_002d-Tar-File-Mode">Smart Key - Tar File Mode</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-click_002c-world_002dwide-web">click, world-wide web</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Key-_002d-WWW-URLs">Smart Key - WWW URLs</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-clone-window">clone window</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Cloning-Windows">Cloning Windows</a></td></tr>
@@ -12756,7 +12767,6 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function</a>, Up: <a href
 <tr><td></td><td valign="top"><a href="#index-demo-file">demo file</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Manual-Overview">Manual Overview</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-demonstration">demonstration</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Hyperbole-Overview">Hyperbole Overview</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-demotion">demotion</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Relocating-and-Copying">Relocating and Copying</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-depress_002c-modeline">depress, modeline</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Modeline-Clicks-and-Drags">Modeline Clicks and Drags</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-diagonal-drag">diagonal drag</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Saving-and-Restoring-Window-Configurations">Saving and Restoring Window Configurations</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-diagonal-drag-1">diagonal drag</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Mouse-Drags-within-a-Window">Smart Mouse Drags within a Window</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-digital-signature">digital signature</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Glossary">Glossary</a></td></tr>
@@ -13170,7 +13180,7 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function</a>, Up: <a href
 <tr><td></td><td valign="top"><a href="#index-menu-help">menu help</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Menus">Menus</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-menu-item-selection">menu item selection</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Menus">Menus</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-menu-item_002c-Act">menu item, Act</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Menus">Menus</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-menu-item_002c-Activate_002dButton_002dat_002dPoint">menu item, Activate-Button-at-Point</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Menus">Menus</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-menu-item_002c-Activate_002dButton_002din_002dBuffer">menu item, Activate-Button-in-Buffer</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Menus">Menus</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-menu-item_002c-Back_002dto_002dPrior_002dLocation">menu item, Back-to-Prior-Location</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Menus">Menus</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-menu-item_002c-Cust_002fAll_002dOptions">menu item, Cust/All-Options</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Customization">Customization</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-menu-item_002c-Cust_002fDebug_002dToggle">menu item, Cust/Debug-Toggle</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Key-Debugging">Smart Key Debugging</a></td></tr>
@@ -13254,8 +13264,10 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function</a>, Up: <a href
 <tr><td></td><td valign="top"><a href="#index-minibuffer_002c-buffer-menu">minibuffer, buffer menu</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Minibuffer-Menu-Activation">Minibuffer Menu Activation</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-minibuffer_002c-default-actions">minibuffer, default actions</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Minibuffer-Menu-Activation">Minibuffer Menu Activation</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-minibuffer_002c-jump-menu">minibuffer, jump menu</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Minibuffer-Menu-Activation">Minibuffer Menu Activation</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-modeline-click">modeline click</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Modeline-Clicks-and-Drags">Modeline Clicks and Drags</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-modeline-click-and-drag">modeline click and drag</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Mouse-Key-Modeline-Clicks">Smart Mouse Key Modeline Clicks</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-modeline-depress">modeline depress</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Modeline-Clicks-and-Drags">Modeline Clicks and Drags</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-modeline-drag">modeline drag</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Modeline-Clicks-and-Drags">Modeline Clicks and Drags</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-modeline-drag_002c-move-frame">modeline drag, move frame</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Moving-Frames">Moving Frames</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-modeline_002c-buffer-id">modeline, buffer id</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Mouse-Key-Modeline-Clicks">Smart Mouse Key Modeline Clicks</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-modeline_002c-buffer-menu">modeline, buffer menu</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Mouse-Key-Modeline-Clicks">Smart Mouse Key Modeline Clicks</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-modeline_002c-bury-buffer">modeline, bury buffer</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Mouse-Key-Modeline-Clicks">Smart Mouse Key Modeline Clicks</a></td></tr>
@@ -13303,9 +13315,8 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function</a>, Up: <a href
 <tr><td></td><td valign="top"><a href="#index-OO_002dBrowser">OO-Browser</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Key-_002d-The-OO_002dBrowser">Smart Key - The OO-Browser</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-option-setting">option setting</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Customization">Customization</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-option-settings">option settings</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Menus">Menus</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-Org-mode">Org mode</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-Org-mode-1">Org mode</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Questions-and-Answers">Questions and Answers</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-org_002dmode">org-mode</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-Org_002dmode">Org-mode</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-Org_002dmode-1">Org-mode</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Questions-and-Answers">Questions and Answers</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-other-frame">other frame</a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyControl">HyControl</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-other-window">other window</a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyControl">HyControl</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-outline-file-suffix">outline file suffix</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Creating-Outlines">Creating Outlines</a></td></tr>

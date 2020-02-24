@@ -445,7 +445,7 @@ is returned."
 (defun    actype:eval (actype &rest args)
   "Performs action formed from ACTYPE and rest of ARGS and returns value.
 ACTYPE may be a string containing a Lisp expression from which ACTYPE
-and ARGS are extracted   ACTYPE may be a symbol or symbol name for
+and ARGS are extracted.  ACTYPE may be a symbol or symbol name for
 either an action type or a function.  Runs `action-act-hook' before
 performing ACTION."
   (let ((prefix-arg current-prefix-arg)

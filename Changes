@@ -1,7 +1,30 @@
 2020-02-23  Bob Weiner  <rsw@gnu.org>
 
-* hbut.el (ibut:act): Added to interactively prompt for and activate named implicit buttons,
-    <[name]>.
+* hui-menu.el (infodock-hyperbole-menu): Changed 'Activate-Button-at-Point' to 'Activate-Button-in-Buffer'
+    and made prompt for button if not on one.  This synchronizes it with the top-level 'Act' command in
+    the Hyperbole minibuffer menu.
+* man/hyperbole.texi (Menus): Updated to reflect the above change.
+                     (Modeline Clicks and Drags): Added moving frames with bottommost modeline drags.
+
+* hui.el: (hui:ebut-act, hui:ibut-act): Changed body to a call of hui:hbut-operate.
+          (hui:hbut-operate): Changed to call actype:act to perform operation.  Also changed to a private
+    function.
+  hbut.el (hbut:act): Activated only when a valid Hyperbole button symbol is given; improved error checking.
+
+* hbut.el:
+  hui.el: Changed doc strings to imperative form.
+
+* hui-menu.el (infodock-hyperbole-menu): Updated Implicit-Button/Activate (renamed from Activate-at-Point).
+  hui-mini.el (hui:menus): Updated Ibut/Act.
+  hui.el (hui:ibut-act): Added to better mirror hui:ebut-act and replaced Ibut/Act menu items with this.
+
+* hui.el (hui:hbut-act):
+  hbut.el (hbut:act): Added interactive completion of in-buffer ebuts and ibuts.
+
+* man/hyperbole.texi (Questions and Answers): Rewrote Org-mode question a bit to account for
+    improved integration.
+
+* hbut.el (ibut:act): Added to interactively prompt for and activate labeled implicit buttons.
 
 2020-02-22  Bob Weiner  <rsw@gnu.org>
 

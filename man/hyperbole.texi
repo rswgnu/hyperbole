@@ -1365,6 +1365,8 @@ modeline show visible feedback as the window is resized.
 @cindex dragging frames
 @cindex moving frames
 @cindex drag, move frame
+@cindex modeline drag, move frame
+@vindex drag-with-mode-line
 Drags of either Smart Key from a bottommost modeline can be configured to
 drag Emacs frames to new locations on screen.  To configure all existing
 and future frames for such dragging, use:
@@ -2430,8 +2432,7 @@ for a valid match.  See the function documentation for @code{hpath:find}
 for special file display options.
 
 @findex ibtypes org-mode
-@cindex org-mode
-@cindex Org mode
+@cindex Org-mode
 @cindex radio target
 @cindex code block
 @cindex links
@@ -2443,28 +2444,28 @@ for special file display options.
 @cindex disable org-mode support
 @cindex inhibit org-mode support
 @item org-mode
-For users of Emacs Org mode, Hyperbole does quite a few things.
+For users of Emacs Org-mode, Hyperbole does quite a few things.
 
-First, the Action Key follows internal links in Org mode files.  When
+First, the Action Key follows internal links in Org-mode files.  When
 pressed on a link referent/target, the link definition is displayed,
 allowing two-way navigation between definitions and targets.
 
-Second, the Action Key follows Org mode external links.  The Assist
-Key displays help when pressed on an Org mode link.
+Second, the Action Key follows Org-mode external links.  The Assist
+Key displays help when pressed on an Org-mode link.
 
 Third, within a radio target definition, the Action Key jumps to the
 first occurrence of an associated radio target.
 
-Fourth, when point is on an outline heading in Org mode, the Action Key
+Fourth, when point is on an outline heading in Org-mode, the Action Key
 cycles the view of the subtree at point and the Assist Key cycles the
 view of all headings in the buffer.
 
 Fifth, with point on the first line of a code block definition, the
-Action Key executes the code block via the Org mode standard binding
+Action Key executes the code block via the Org-mode standard binding
 of @bkbd{C-c C-c}, @code{org-ctrl-c-ctrl-c}.
 
 In any other context besides the end of a line, the Action Key invokes
-the Org mode standard binding of @bkbd{M-@key{RET}}, @code{org-meta-return}.
+the Org-mode standard binding of @bkbd{M-@key{RET}}, @code{org-meta-return}.
 
 To disable ALL Hyperbole support within Org major and minor modes, set
 the custom option @code{inhibit-hsys-org} to @code{t}.  Then in Org modes,
@@ -3357,11 +3358,10 @@ The top-level Hyperbole minibuffer menu items serve the following purposes:
 
 @table @strong
 @cindex menu item, Act
-@cindex menu item, Activate-Button-at-Point
+@cindex menu item, Activate-Button-in-Buffer
 @item Act
-Activation of any button at point.  If there is no button at
-point, it prompts for the label of an explicit button within the
-current buffer to activate.
+Activate button at point or if there is no button at point, prompt for
+a labeled explicit or implicit button from the current buffer to activate.
 
 @cindex menu, Button-File
 @cindex menu, Butfile
@@ -8011,14 +8011,15 @@ a vertical scroll bar:
 @node Modeline Clicks and Drags, Smart Mouse Drags between Windows, Side-by-Side Window Resizing, Smart Mouse Keys
 @subsection Modeline Clicks and Drags
 
-@cindex depress, modeline
-@cindex modeline depress
+@cindex click, modeline
+@cindex modeline click
+@cindex modeline drag
 @vindex action-key-modeline-function
 @vindex assist-key-modeline-function
 @format
 @group
 If depressed within a window modeline:
-  ACTION KEY
+  ACTION MOUSE KEY
      (1) clicked on the first blank character of a window's modeline,
          the window's buffer is buried (placed at the bottom of the
          buffer list);
@@ -8035,17 +8036,21 @@ If depressed within a window modeline:
      (5) dragged vertically from a modeline to within a window, the
          modeline is moved to the point of the drag release, thereby
          resizing its window and potentially its vertically neighboring
-         windows.
+         windows;
      (6) dragged other than straight vertically from a modeline to another
          window, duplicate the modeline's window buffer to the window of
-         release.
-     (7) dragged from a modeline to outside of Emacs, create a new frame
-         sized to match the selected window with the same buffer.
+         release;
+     (7) dragged from a bottommost modeline when the frame has a non-nil
+         @code{drag-with-mode-line} property, then move the frame until
+         release of the Action Mouse Key;
+     (8) otherwide, dragged from a another modeline to outside of
+         Emacs (MacOS only), create a new frame sized to match the
+         selected window with the same buffer.
 @end group
 @end format
 @format
 @group
-  ASSIST KEY
+  ASSIST MOUSE KEY
      (1) clicked on the first blank character of a window's modeline,
          the bottom buffer in the buffer list is unburied and placed in
          the window;
@@ -8054,21 +8059,25 @@ If depressed within a window modeline:
          displayed and the modeline clicked upon belongs to a window
          displaying the summary, the summary buffer is hidden;
      (3) clicked on the buffer id of a window's modeline, the next
-         buffer in sequence is displayed in the window
+         buffer in sequence is displayed in the window;
      (4) clicked anywhere within the middle of a window's modeline,
          the function given by @code{assist-key-modeline-function} is
          called;
      (5) dragged vertically from a modeline to within a window, the
          modeline is moved to the point of the drag release, thereby
          resizing its window and potentially its vertically neighboring
-         windows.
+         windows;
      (6) dragged other than straight vertically from a modeline to another
-         window, swap buffers in the two windows.
-     (7) dragged from a modeline to outside of Emacs, create a new frame
-         sized to match the selected window with the same buffer.  If there
-         is only one window in the source frame or if @code{hycontrol-keep-window-flag}
-         is non-nil, leave the original window and just clone it into the
-         new frame;otherwise, delete the original window.
+         window, swap buffers in the two windows;
+     (7) dragged from a bottommost modeline when the frame has a non-nil
+         @code{drag-with-mode-line} property, then move the frame until
+         release of the Action Mouse Key;
+     (8) dragged from a modeline to outside of Emacs (MacOS only),
+         create a new frame sized to match the selected window with
+         the same buffer.  If there is only one window in the source
+         frame or if @code{hycontrol-keep-window-flag} is non-nil,
+         leave the original window and just clone it into the new
+         frame; otherwise, delete the original window.
 @end group
 @end format
 
@@ -9581,25 +9590,24 @@ let it flow through you.
 Ok, joking aside, now that we have your attention, here are some
 serious questions and answers.
 
-@cindex Org mode
-@item Isn't Org mode the same as Hyperbole?
+@cindex Org-mode
+@item Isn't Org-mode the same as Hyperbole?
 
 No, they offer very different capabilities when you compare them a bit
 more deeply.  In fact, it makes sense to use them together and they
-are highly compatible.  The only overlap we see is that Org mode has a
+are highly compatible.  The only overlap we see is that Org-mode has a
 more limited kind of hyperlinks and offers some BBDB integration as
-Hyperbole does.
-
-Initial Smart Key support for Org mode is already in Hyperbole and
-more will come.  For a list of some differences, see:
+Hyperbole does.  For a list of some differences, see:
 @url{https://www.emacswiki.org/emacs/Hyperbole}.
+
+@vindex inhibit-hsys-org
+Smart Key support for Org-mode is already in Hyperbole with compatibility
+with Org's @bkbd{M-RET} binding.  With the flag, @code{inhibit-hsys-org}
+set to @code{t}, Hyperbole gives Org complete control over that key as well.
 
 Org-mode offers traditional Emacs outlining, todo list management,
 agenda and diary management, so it is very complementary to Hyperbole.
-It did not exist when Hyperbole was first developed.  Today it is just
-a matter of having time and resources to devote to finding ways to
-integrate the two.  We would like to see this happen.  If you would
-like to see it, offer time or money to help make it happen.
+It did not exist when Hyperbole was first developed.
 
 @cindex Smart Key
 @cindex mouse key bindings

@@ -387,7 +387,7 @@ constructs.  If not given, the top level Hyperbole menu is used."
 	 (delq nil
 	       (list
 		'("Act"         hui:hbut-act
-		  "Activates button at point or prompts for explicit button.")
+		  "Activate button at point or prompt for a labeled button in buffer.")
 		'("Butfile/"    (menu . butfile)
 		  "Quick access button files menus.")
 		'("Cust/"       (menu . cust)
@@ -575,7 +575,8 @@ constructs.  If not given, the top level Hyperbole menu is used."
 	  ))
        '(ibut .
 	 (("IButton>")
-	  ("Act"    hui:hbut-current-act  "Activates implicit button at point.")
+	  ("Act"    hui:ibut-act
+	    "Activates implicit button at point or prompts for labeled implicit button to activate.")
 	  ("DeleteIButType"   (hui:htype-delete 'ibtypes)
 	   "Deletes specified button type.")
 	  ("Help"   hui:hbut-help   "Reports on button's attributes.")
