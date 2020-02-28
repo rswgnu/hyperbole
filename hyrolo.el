@@ -94,6 +94,7 @@ executable must be found as well (for Oauth security)."
       (message "HyRolo Search List: %S" list))
     list))
 
+(define-obsolete-variable-alias 'rolo-file-list 'hyrolo-file-list "06.00")
 (defvar hyrolo-file-list (hyrolo-initialize-file-list)
   "*List of files containing rolo entries.
 The first file should be a user-specific rolo file, typically in the home
@@ -104,7 +105,6 @@ A hyrolo-file consists of:
        hyrolo-hdr-regexp;
    (2) one or more rolo entries which each begin with
        hyrolo-entry-regexp and may be nested.")
-(define-obsolete-variable-alias 'rolo-file-list 'hyrolo-file-list "06.00")
 
 (defcustom hyrolo-highlight-face nil
   "*Face used to highlight rolo search matches."
@@ -243,16 +243,15 @@ entry which begins with the parent string."
 	    (hyrolo-to-entry-end t entry-level-len)
 	  (setq entry (buffer-substring-no-properties (point) (+ (point) len))
 		entry-spc (match-string-no-properties hyrolo-entry-trailing-space-group-number))
-	  (cond ((string< entry name)
+	  (cond ((string-lessp entry name)
 		 (hyrolo-to-entry-end t entry-level-len))
-		((string< name entry)
+		((string-lessp name entry)
 		 (setq again nil) (beginning-of-line))
 		(t ;; found existing entry matching name
 		 (setq again nil match t)))))
       (setq buffer-read-only nil)
       (unless match
-	(insert (unless entry-level-len
-		  (concat level "*"))
+	(insert (concat level "*")
 		(if (string-equal entry-spc "") "   " entry-spc)
 		name "\n")
 	(backward-char 1))
@@ -1447,8 +1446,7 @@ Calls the functions given by `hyrolo-mode-hook'.
   ;;
   (set-syntax-table hyrolo-mode-syntax-table)
   ;;
-  (if (not (fboundp 'outline-minor-mode))
-      nil
+  (when (fboundp 'outline-minor-mode)
     (outline-minor-mode 1))
   (run-hooks 'hyrolo-mode-hook))
 
@@ -1456,9 +1454,9 @@ Calls the functions given by `hyrolo-mode-hook'.
 ;;; Private variables
 ;;; ************************************************************************
 
+(define-obsolete-variable-alias 'rolo-display-buffer 'hyrolo-display-buffer "06.00")
 (defvar hyrolo-display-buffer "*Hyperbole Rolo*"
   "Buffer used to display set of last matching rolo entries.")
-(define-obsolete-variable-alias 'rolo-display-buffer 'hyrolo-display-buffer "06.00")
 
 (defvar hyrolo-entry-group-number 1
   "Group number within `hyrolo-entry-regexp' whose length represents the level of any entry matched.")
@@ -1466,13 +1464,13 @@ Calls the functions given by `hyrolo-mode-hook'.
 (defvar hyrolo-entry-trailing-space-group-number 2
   "Group number within `hyrolo-entry-regexp; containing trailing space.")
 
+(define-obsolete-variable-alias 'rolo-entry-regexp 'hyrolo-entry-regexp "06.00")
 (defvar hyrolo-entry-regexp "^\\(\\*+\\)\\([ \t]+\\)"
   "Regular expression to match the beginning of a rolo entry.
 This pattern must match the beginning of a line.
 `hyrolo-entry-group-number' must capture the entry's level in the
 hierarchy.  `hyrolo-entry-trailing-space-group-number' must capture
 the whitespace following the entry hierarchy level.")
-(define-obsolete-variable-alias 'rolo-entry-regexp 'hyrolo-entry-regexp "06.00")
 
 (defconst hyrolo-hdr-format
   (concat
