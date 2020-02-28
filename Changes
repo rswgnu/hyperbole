@@ -1,3 +1,17 @@
+2020-02-27  Bob Weiner  <rsw@gnu.org>
+
+* hui.el (hui:ebut-delete-op):
+hactypes.el (link-to-ebut): Fixed ebut:get call to send file as 3rd arg, not 2nd; now link-to-ebuts work.
+
+2020-02-26  Bob Weiner  <rsw@gnu.org>
+
+* hyrolo.el (hyrolo-add): Removed conditional on entry-level-len when nil that was causing an error during
+    adding of a record.
+
+==============================================================================
+V7.1.1 test release changes ^^^^:
+==============================================================================
+
 2020-02-23  Bob Weiner  <rsw@gnu.org>
 
 * Published 7.1.0 test release.

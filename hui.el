@@ -19,6 +19,7 @@
 (require 'hargs)
 (require 'set)
 (require 'hmail)
+(require 'hbut)
 
 ;;; ************************************************************************
 ;;; Public variables
@@ -197,12 +198,12 @@ Signal an error when no such button is found in the current buffer."
 
 (defun hui:ebut-rename (curr-label new-label)
   "Rename explicit Hyperbole button given by CURR-LABEL to NEW-LABEL.
-If called interactively when point is not within an explicit button:
-   prompt for old and new button label values and performs rename.
 If called interactively when point is within an explicit button:
-   save button label and tell user to edit label, then call again.
-   second call changes the button's name from the stored value to the
-   edited value.
+   save button label and tell user to: 1. edit label and 2. invoke this
+   same command again.  The second invocation changes the button's name
+   from the stored value to the new value.
+If called interactively when point is not within an explicit button:
+   prompt for old and new button label values and perform rename.
 Signal an error if any problem occurs."
   (interactive
    (save-excursion
@@ -760,7 +761,7 @@ within."
     (if (if interactive
 	    (ebut:delete)
 	  (cond ((or (null key-src) (and (bufferp key-src) (setq buf key-src)))
-		 (setq ebut (ebut:get but-key key-src)))
+		 (setq ebut (ebut:get but-key nil key-src)))
 		((and (stringp key-src)
 		      (setq buf (find-file-noselect key-src)))
 		 (setq ebut (ebut:get but-key buf)))

@@ -284,7 +284,8 @@ This type of link is for use within a single editor session.  Use
   "Perform action given by an explicit button, specified by KEY and optional KEY-FILE.
 KEY-FILE defaults to the current buffer's file name."
   (interactive
-   (let (but-file but-lbl)
+   (let (but-lbl
+         but-file)
      (while (cond ((setq but-file
 			 (read-file-name
 			  "File of button to link to: " nil nil t))
@@ -311,7 +312,7 @@ KEY-FILE defaults to the current buffer's file name."
 	(setq normalized-file (hpath:normalize key-file)))
     (setq normalized-file buffer-file-name))
 
-    (if (setq but (and key-file (ebut:get key normalized-file)))
+    (if (setq but (and key-file (ebut:get key nil normalized-file)))
 	(hbut:act but)
       (hypb:error "(link-to-ebut): No button `%s' in `%s'"
 		  (ebut:key-to-label key)
