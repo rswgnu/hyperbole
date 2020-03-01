@@ -920,8 +920,10 @@ buffer but don't display it."
     (setq path (hpath:substitute-value path)
 	  filename (hpath:absolute-to path default-directory))
     (if noselect
-	(prog1 (find-file-noselect filename)
-	  (if (or hash anchor) (hpath:to-markup-anchor hash anchor)))
+	(let ((buf (find-file-noselect filename)))
+	  (with-current-buffer buf
+	    (when (or hash anchor) (hpath:to-markup-anchor hash anchor))
+	    buf))
       (let ((remote-filename (hpath:remote-p path)))
 	(or modifier remote-filename
 	    (file-exists-p filename)
@@ -989,7 +991,8 @@ buffer but don't display it."
 		  (goto-char (point-min))
 		  (if (re-search-forward (format hpath:html-anchor-id-pattern (regexp-quote anchor)) nil t)
 		      (progn (forward-line 0)
-			     (recenter 0))
+			     (when (eq (current-buffer) (window-buffer))
+			       (recenter 0)))
 		    (goto-char opoint)
 		    (error "(hpath:to-markup-anchor): %s - Anchor `%s' not found in the visible buffer portion"
 			   (buffer-name)
@@ -1016,7 +1019,8 @@ buffer but don't display it."
 						(t hpath:outline-section-pattern))
 					  (regexp-quote anchor-name)) nil t)
 		      (progn (forward-line 0)
-			     (recenter 0))
+			     (when (eq (current-buffer) (window-buffer))
+			       (recenter 0)))
 		    (goto-char opoint)
 		    (error "(hpath:to-markup-anchor): %s - Section `%s' not found in the visible buffer portion"
 			   (buffer-name)
