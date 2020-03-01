@@ -533,43 +533,7 @@ that returns a replacement string."
   (unless (or (stringp newtext) (functionp newtext))
     (error "(hypb:replace-match-string): 3rd arg must be a string or function: %s"
 	   newtext))
-  (let ((rtn-str "")
-	(start 0)
-	(special)
-	match prev-start)
-    (while (setq match (string-match regexp str start))
-      (setq prev-start start
-	    start (match-end 0)
-	    rtn-str
-	    (concat
-	      rtn-str
-	      (substring str prev-start match)
-	      (cond ((functionp newtext)
-		     (hypb:replace-match-string
-		      regexp (substring str match start)
-		      (funcall newtext str) literal))
-		    (literal newtext)
-		    (t (mapconcat
-			 (lambda (c)
-			   (cond (special
-				  (setq special nil)
-				  (cond ((eq c ?\\) "\\")
-					((eq c ?&)
-					 (match-string 0 str))
-					((and (>= c ?0) (<= c ?9))
-					 (if (> c (+ ?0 (length
-							 (match-data))))
-					     ;; Invalid match num
-					     (error "(hypb:replace-match-string) Invalid match num: %c" c)
-					   (setq c (- c ?0))
-					   (match-string c str)))
-					(t (char-to-string c))))
-			     ((eq c ?\\)
-			      (setq special t)
-			      nil)
-			     (t (char-to-string c))))
-			 newtext ""))))))
-    (concat rtn-str (substring str start))))
+  (replace-regexp-in-string regexp newtext str nil literal))
 
 (defun hypb:return-process-output (program &optional infile &rest args)
   "Return as a string the output from external PROGRAM with INFILE for input.
