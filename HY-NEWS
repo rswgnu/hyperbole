@@ -2,6 +2,18 @@
 				 by Bob Weiner
 
 ===========================================================================
+*                                   V7.1.1
+===========================================================================
+
+  BUTTON TYPES
+
+    - {kbd-key} Key Series: Greatly expanded the keys handled by
+      brace- delimited implicit key series buttons.  Added support for
+      <TAB>, <BS>, C-M-, non-ASCII CONTROL and META key codes, keypad
+      keys, function keys, and these modifier keys: CONTROL, ALT,
+      HYPER, META, SUPER and SHIFT (when whitespace separated).
+
+===========================================================================
 *                                   V7.1.0
 ===========================================================================
 

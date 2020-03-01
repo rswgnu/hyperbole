@@ -490,11 +490,9 @@ See also documentation for `interactive'."
   ;; Save this now, since use of minibuffer will clobber it.
   (setq prefix-arg current-prefix-arg)
   (if (not (and (listp iform) (eq (car iform) 'interactive)))
-      (error
-       "(hargs:iform-read): arg must be a list whose car = 'interactive")
+      (error "(hargs:iform-read): arg must be a list whose car = 'interactive")
     (setq iform (car (cdr iform)))
-    (if (or (null iform) (and (stringp iform) (equal iform "")))
-	nil
+    (unless (or (null iform) (and (stringp iform) (equal iform "")))
       (let ((prev-reading-p hargs:reading-p))
 	(unwind-protect
 	    (progn
@@ -504,8 +502,7 @@ See also documentation for `interactive'."
 				      (hattr:get 'hbut:current 'args)
 				    (and (boundp 'hargs:defaults)
 					 (listp hargs:defaults)
-					 hargs:defaults)
-				    )))
+					 hargs:defaults))))
 		    (eval iform))
 		(let ((i 0) (start 0) (end (length iform))
 		      (ientry) (results) (val) (default)
@@ -513,8 +510,7 @@ See also documentation for `interactive'."
 				    (hattr:get 'hbut:current 'args)
 				  (and (boundp 'hargs:defaults)
 				       (listp hargs:defaults)
-				       hargs:defaults)
-				  )))
+				       hargs:defaults))))
 		  ;;
 		  ;; Handle special initial interactive string chars.
 		  ;;

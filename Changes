@@ -1,7 +1,24 @@
+2020-02-29  Bob Weiner  <rsw@gnu.org>
+
+* hpath.el (hpath:find): Fixed bug where hpath:to-markup-buffer with point in the source link buffer
+    rather than the referent.
+
+* hib-kbd.el (kbd-key:key-series-to-events):
+             (kbd-key:normalize): Rewrote and added support for <TAB>, <BS>, C-M-, non-ASCII CONTROL and
+    META key codes, keypad keys, function keys, and these modifier keys: CONTROL, ALT, HYPER, META, SUPER
+    and SHIFT (when whitespace separated).
+             (kbd-key:named-key-list, kbd-key:named-key-regexp, kbd-key:modified-key-regexp): Added and
+    used in kbd-key:normalize.
+             (kbd-key:key-and-arguments): Updated to handle that key-series now have multi-character modifier
+    keys by adding a seq-position call.
+
+* hypb.el (hypb:replace-match-string): Replace all logic other than error generation with Emacs function,
+    replace-regexp-in-string.
+
 2020-02-27  Bob Weiner  <rsw@gnu.org>
 
 * hui.el (hui:ebut-delete-op):
-hactypes.el (link-to-ebut): Fixed ebut:get call to send file as 3rd arg, not 2nd; now link-to-ebuts work.
+  hactypes.el (link-to-ebut): Fixed ebut:get call to send file as 3rd arg, not 2nd; now link-to-ebuts work.
 
 2020-02-26  Bob Weiner  <rsw@gnu.org>
 

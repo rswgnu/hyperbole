@@ -30,6 +30,26 @@
 
 (require 'hactypes)
 
+(defvar kbd-key:named-key-list
+  '("add" "backspace" "begin" "bs" "clear" "decimal" "delete" "del"
+    "divide" "down" "end" "enter" "esc" "home" "left" "insert"
+    "multiply" "newline" "next" "prior" "return" "ret" "right" "rtn"
+    "subtract" "tab" "up")
+  "List of dedicated keyboard key names which may be used with modifier keys.  Function keys are handled elsewhere.")
+
+(defvar kbd-key:named-key-regexp
+  (concat
+   (mapconcat 'downcase kbd-key:named-key-list "\\|")
+   "\\|"
+   (mapconcat 'upcase kbd-key:named-key-list "\\|"))
+  "Regexp that matches to any of the dedicated keyboard key names in lower or uppercase.")
+
+(defvar kbd-key:modified-key-regexp
+  (concat "\\(\\([ACHMS]-\\|kp-\\)+\\)\\s-*\\(<?\\<" kbd-key:named-key-regexp "\\>>?"
+	  "\\|<?[fF][0-9][0-9]?>?\\|<[a-zA-Z0-9]+>\\|.\\)")
+  "Regexp matching to a single modified keyboard key within a human-readable string.
+Group 1 matches to the set of modifier keys.  Group 3 matches to the unmodified key.")
+
 ;;; ************************************************************************
 ;;; Public implicit button types
 ;;; ************************************************************************
@@ -79,7 +99,7 @@ Any key sequence must be a string of one of the following:
 	(when (and (stringp key-series)
 		   (not (eq key-series "")))
 	  (setq key-series (kbd-key:normalize key-series)
-		binding (key-binding key-series)))
+		binding (key-binding (kbd key-series))))
 	(and (stringp key-series)
 	     (or (and binding (not (integerp binding)))
 		 (kbd-key:special-sequence-p key-series))
@@ -95,7 +115,7 @@ Any key sequence must be a string of one of the following:
 Returns t if KEY-SERIES has a binding, else nil."
   (interactive "kKeyboard key to execute (no {}): ")
   (setq current-prefix-arg nil) ;; Execution of the key-series may set it.
-  (let ((binding (key-binding key-series)))
+  (let ((binding (key-binding (kbd key-series))))
     (cond ((null binding)
 	   ;; If this is a special key seqence, execute it by adding
 	   ;; its keys to the stream of unread command events.
@@ -110,15 +130,14 @@ Returns t if KEY-SERIES has a binding, else nil."
 
 (defun kbd-key:key-series-to-events (key-series)
   "Insert the key-series as a series of keyboard events into Emacs' unread input stream."
-  ;; Could use listify-key-sequence in next line but seems slower.
-  (setq unread-command-events (nconc unread-command-events (mapcar 'identity key-series))))
+  (setq unread-command-events (nconc unread-command-events (listify-key-sequence (kbd key-series)))))
 
 (defun kbd-key:doc (key-series &optional full)
   "Show first line of doc for binding of keyboard KEY-SERIES in minibuffer.
 With optional prefix arg FULL, display full documentation for command."
   (interactive "kKey sequence: \nP")
   (let* ((keys (kbd-key:normalize key-series))
-	 (cmd  (let ((cmd (key-binding keys)))
+	 (cmd  (let ((cmd (key-binding (kbd keys))))
 		 (unless (integerp cmd) cmd)))
 	 (doc (and cmd (documentation cmd)))
 	 (end-line))
@@ -146,67 +165,66 @@ With optional prefix arg FULL, display full documentation for command."
       (kbd-key:doc kbd-key t))))
 
 (defun kbd-key:normalize (key-series)
-  "Return KEY-SERIES string (without surrounding {}) normalized into a form that can be parsed by commands."
+  "Normalize a human-readable string of keyboard keys, KEY-SERIES (without any surrounding {}).
+Return the normalized but still human-readable format.
+Use `kbd-key:key-series-to-events' to add the key series to Emacs'
+keyboad input queue, as if they had been typed by the user."
   (interactive "kKeyboard key sequence to normalize (no {}): ")
-  (if (stringp key-series)
-      (if (hypb:object-p key-series)
-	  ;; Prevent multiple normalizations which can strip desired
-	  ;; RET and SPC characters.
-	  key-series
-	(let ((norm-key-series (copy-sequence key-series))
-	      (case-fold-search nil)
-	      (case-replace t)
-	      (substring)
-	      (arg))
-	  (setq norm-key-series (hypb:replace-match-string
-			      "@key{DEL}\\|<DEL>\\|\\<DEL\\>" norm-key-series "\177" t)
-		norm-key-series (hypb:replace-match-string
-			      "@key{RET}\\|<RET>\\|@key{RTN}\\|\\<RETURN\\>\\|\\<RET\\>\\|\\<RTN\\>"
-			      norm-key-series "$#@!" t)
-		norm-key-series (hypb:replace-match-string
-			      "\\<ESC\s-*ESC\\>" norm-key-series "\233" t)
-		norm-key-series (hypb:replace-match-string
-			      "@key{ESC}\\|<ESC>\\|\\<ESC\\(APE\\)?\\>" norm-key-series "M-" t)
-		norm-key-series (hypb:replace-match-string
-			      "C-M-" norm-key-series "M-C-" t)
-		norm-key-series (kbd-key:mark-spaces-to-keep norm-key-series "(" ")")
-		norm-key-series (kbd-key:mark-spaces-to-keep norm-key-series "\\[" "\\]")
-		norm-key-series (kbd-key:mark-spaces-to-keep norm-key-series "<" ">")
-		norm-key-series (kbd-key:mark-spaces-to-keep norm-key-series "\"" "\"")
-		norm-key-series (hypb:replace-match-string "\\\\ " norm-key-series "\0\0\0" t)
-		norm-key-series (hypb:replace-match-string
-			      "[ \t\n\r]+" norm-key-series "" t)
-		norm-key-series (hypb:replace-match-string
-			      "\0\0\0\\|@key{SPC}\\|<SPC>\\|\\<SPC\\>" norm-key-series " " t)
-		norm-key-series (hypb:replace-match-string "$#@!" norm-key-series "\C-m" t)
-		;; Unqote special {} chars.
-		norm-key-series (hypb:replace-match-string "\\\\\\([{}]\\)"
-							norm-key-series "\\1"))
-	  (while (string-match "\\`\\(C-u\\|M-\\)\\(-?[0-9]+\\)" norm-key-series)
-	    (setq arg
-		  (string-to-number (substring norm-key-series (match-beginning 2)
-					       (match-end 2)))
-		  norm-key-series (substring norm-key-series (match-end 0))))
+  ;;
+  ;; Hyperbole developers: see  `edmacro-parse-keys' in "edmacro.el"
+  ;; for further details on key formats.
+  ;;
+  (cond	((stringp key-series)
+	 (if (hypb:object-p key-series)
+	     ;; Prevent multiple normalizations which can strip desired
+	     ;; RET and SPC characters.
+	     key-series
+	   (let ((norm-key-series (copy-sequence key-series))
+		 (case-fold-search nil)
+		 (case-replace t)
+		 (substring)
+		 (arg))
+	     (setq norm-key-series (kbd-key:mark-spaces-to-keep norm-key-series "(" ")")
+		   norm-key-series (kbd-key:mark-spaces-to-keep norm-key-series "\\[" "\\]")
+		   norm-key-series (kbd-key:mark-spaces-to-keep norm-key-series "<" ">")
+		   norm-key-series (kbd-key:mark-spaces-to-keep norm-key-series "\"" "\"")
+		   norm-key-series (hypb:replace-match-string
+				    "<DEL>\\|<DELETE>\\|@key{DEL}\\|\\<DEL\\>" norm-key-series " DEL " t)
+		   norm-key-series (hypb:replace-match-string
+				    "<BS>\\|<BACKSPACE>\\|@key{BS}\\|\\<BS\\>" norm-key-series " BS " t)
+		   norm-key-series (hypb:replace-match-string
+				    "<RET>\\|<RTN>\\|<RETURN>\\|@key{RET}\\|@key{RTN}\\|\\<RETURN\\>\\|\\<RET\\>\\|\\<RTN\\>"
+				    norm-key-series " RET " t)
+		   norm-key-series (hypb:replace-match-string
+				    "<TAB>\\|@key{TAB}\\|\\<TAB\\>" norm-key-series " TAB " t)
+		   ;; Includes conversion of spaces-to-keep markup to
+		   ;; SPC; otherwise, later calls to `kbd' will remove
+		   ;; these spaces.
+		   norm-key-series (hypb:replace-match-string
+				    "\\\\ \\|\0\0\0\\|<SPC>\\|@key{SPC}\\|\\<SPC\\>" norm-key-series " SPC " t)
+		   norm-key-series (hypb:replace-match-string
+				    "<ESC>\\|<ESCAPE>\\|@key{ESC}\\|\\<ESC\\(APE\\)?\\>" norm-key-series " M-" t)
+		   ;; ESC ESC
+		   norm-key-series (hypb:replace-match-string
+				    "M-\\s-*M-" norm-key-series " ESC M-" t)
+		   ;; Separate with a space any keys with a modifier
+		   norm-key-series (hypb:replace-match-string kbd-key:modified-key-regexp
+							      norm-key-series " \\1\\3 ")
+		   ;; Normalize regular whitespace to single spaces
+		   norm-key-series (hypb:replace-match-string "[ \t\n\r\f]+" norm-key-series " " t)
 
-	  ;; Quote Control and Meta key names
-	  (setq norm-key-series (hypb:replace-match-string
-			      "C-\\(.\\)" norm-key-series
-			      (lambda (str)
-				(char-to-string
-				 (1+ (- (downcase
-					 (string-to-char
-					  (substring str (match-beginning 1)
-						     (1+ (match-beginning 1)))))
-					?a)))))
-		norm-key-series (hypb:replace-match-string
-			      "M-\\(.\\)" norm-key-series
-			      (lambda (str)
-				(concat "" (substring str (match-beginning 1)
-							(1+ (match-beginning 1)))))))
-	  (unless (string-empty-p norm-key-series)
-	    (hypb:mark-object norm-key-series))
-	  norm-key-series))
-    (error "(kbd-key:normalize): requires a string argument, not `%s'" key-series)))
+		   ;; Unqote special {} chars.
+		   norm-key-series (hypb:replace-match-string "\\\\\\([{}]\\)"
+							      norm-key-series "\\1")
+		   norm-key-series (hpath:trim norm-key-series))
+	     ;; (while (string-match "\\`\\(C-u\\|M-\\)\\(-?[0-9]+\\)" norm-key-series)
+	     ;;   (setq arg (string-to-number (match-string 2 norm-key-series))
+	     ;; 	     norm-key-series (substring norm-key-series (match-end 0))))
+
+	     (unless (string-empty-p norm-key-series)
+	       (hypb:mark-object norm-key-series))
+	     norm-key-series)))
+	(t (error "(kbd-key:normalize): requires a string argument, not `%s'" key-series))))
 
 ;;; ************************************************************************
 ;;; Private functions
@@ -214,8 +232,9 @@ With optional prefix arg FULL, display full documentation for command."
 
 (defun kbd-key:extended-command-p (key-series)
   "Return non-nil if the string KEY-SERIES is a normalized extended command invocation, i.e. M-x command."
-  (and (stringp key-series) (string-match kbd-key:extended-command-prefix key-series)))
-  
+  (when (stringp key-series)
+    (string-match kbd-key:extended-command-prefix key-series)))
+
 (defun kbd-key:hyperbole-hycontrol-key-p (key-series)
   "Return t if normalized, non-nil KEY-SERIES is given when in a HyControl mode, else nil.
 Allows for multiple key sequences strung together."
@@ -224,7 +243,7 @@ Allows for multiple key sequences strung together."
        (or hycontrol-windows-mode hycontrol-frames-mode)
        ;; If wanted to limit to single key bindings and provide tighter checking:
        ;;   (string-match "[-.0-9]*\\(.*\\)" key-series)
-       ;;   (key-binding (match-string 1 key-series))
+       ;;   (key-binding (kbd (match-string 1 key-series)))
        t))
 
 (defun kbd-key:hyperbole-mini-menu-key-p (key-series)
@@ -233,13 +252,14 @@ Also, initialize `kbd-key:mini-menu-key' to the key sequence that invokes the Hy
   (when key-series
     (unless kbd-key:mini-menu-key
       (setq kbd-key:mini-menu-key (regexp-quote (kbd-key:normalize (key-description (car (where-is-internal 'hyperbole)))))))
-    (when (string-match kbd-key:mini-menu-key key-series) t)))
+    (when (string-match kbd-key:mini-menu-key key-series)
+      t)))
 
 (defun kbd-key:key-and-arguments (key-series)
   "Return t if normalized KEY-SERIES appears to be a bound key sequence possibly with following interactive arguments, else nil."
-  (let ((prefix-binding (and (stringp key-series) (key-binding (substring key-series 0 1)))))
-       ;; Just ensure that 1st character is bound to something that is
-       ;; not a self-insert-command or a number.
+  (let ((prefix-binding (and (stringp key-series) (key-binding (kbd (substring key-series 0 (seq-position key-series ?\ )))))))
+    ;; Just ensure that 1st character is bound to something that is
+    ;; not a self-insert-command or a number.
     (and prefix-binding
 	 (not (or (integerp prefix-binding)
 		  (eq prefix-binding 'self-insert-command)))
