@@ -1,3 +1,40 @@
+2020-03-01  Bob Weiner  <rsw@gnu.org>
+
+* hypb.el (hypb:display-file-with-logo): Modified to not move point or do anything other than use view-mode
+    to display the file buffer if it exists prior to this call.  This allows using {C-h h d d} to jump back
+    to the same point in the DEMO.  The FILE argument is now required.
+
+* hbut (hbut:syntax-table, hbut:modify-syntax): Added to modify <> and {} syntactic character pairs for use
+    with implicit button activations, notably Action and Key Series.
+       (ibut:label-p): Used hbut:syntax-table.
+       (require): Added elisp-mode for syntax table support.
+  hyperbole.el (hyperb:init): Added hbut:modify-syntax call.
+
+* DEMO (Sample Explicit Buttons and Types): Removed email example since it wasn't very good and that
+    code has not been  updated in a long time.
+
+* hsettings.el (hyperbole-web-search): Fixed to encode URL special characters including spaces.
+    This fixed the 'electric car' explicit button example in the DEMO.
+
+* hib-kbd.el (kbd-key:binding, kbd-key:kbd, kbd-key:parse): Added and used to prevent (kbd) calls from
+    improperly parsing "<[td]>" as an Emacs event and as a result removing the angle brackets.
+
+* DEMO (Global Buttons): Added a new example of a labeled global implicit button displaying a todo file.
+
+* hpath.el (hpath:substitute-match-value): Added and called in hpath:substitute-value.  This function
+    was hypb:replace-match-string in previous Hyperbole releases but now is only used by this one function.
+
+* man/hyperbole.texi (Glossary):
+  hibtypes.el (action):
+  hib-kbd.el (kbd-key):
+  hbut.el (hbut:max-len): Renamed variable from ebut:max-len since applies to all Hyperbole button types now.
+    Increased to 200; allowed for 0 value which means no limit.  Locally set to 0 in Action implicit
+    button type.
+          (hbut:max-len): Added this inline function to retrieve the proper value.
+
+* hibtypes.el (action):
+  hact.el (actype:act): Added support for special forms like: 'progn', 'and', etc.
+
 2020-02-29  Bob Weiner  <rsw@gnu.org>
 
 * hpath.el (hpath:find): Fixed bug where hpath:to-markup-buffer with point in the source link buffer
@@ -12,7 +49,7 @@
              (kbd-key:key-and-arguments): Updated to handle that key-series now have multi-character modifier
     keys by adding a seq-position call.
 
-* hypb.el (hypb:replace-match-string): Replace all logic other than error generation with Emacs function,
+* hypb.el (hypb:replace-match-string): Replaced all logic other than error generation with Emacs function,
     replace-regexp-in-string.
 
 2020-02-27  Bob Weiner  <rsw@gnu.org>

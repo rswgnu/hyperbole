@@ -657,6 +657,7 @@ If FLAG is nil then text is shown, while if FLAG is t the text is hidden."
   "Standard configuration routine for Hyperbole."
   (interactive)
   (message "Initializing Hyperbole...")
+  ;;
   (run-hooks 'hyperbole-init-hook)
   (hyperb:check-dir-user)
   (or (stringp hyperb:user-email)
@@ -672,7 +673,10 @@ If FLAG is nil then text is shown, while if FLAG is t the text is hidden."
   (unless noninteractive
     (hyperb:maybe-generate-autoloads))
   ;;
-  ;; Conditionally initialize Hyperbole key bindings (when hkey-init is t)
+  ;; Modify syntactic character pairs for use with implicit button activations.
+  (hbut:modify-syntax)
+  ;;
+  ;; Conditionally initialize Hyperbole key bindings (when hkey-init is t).
   (hkey-initialize)
   ;;
   ;; Abbreviate MSWindows mount point paths.

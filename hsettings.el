@@ -159,8 +159,10 @@ package to display search results."
     (if (assoc service-name hyperbole-web-search-alist)
 	(let ((browse-url-browser-function
 	       hyperbole-web-search-browser-function))
-	  (browse-url (format (cdr (assoc service-name hyperbole-web-search-alist))
-			      search-term)))
+	  (browse-url (browse-url-url-encode-chars
+		       (format (cdr (assoc service-name hyperbole-web-search-alist))
+			       search-term)
+		       "[*\"()',=;?% ]")))
       (user-error "(Hyperbole): Invalid web search service `%s'" service-name))))
 
 (defcustom inhibit-hyperbole-messaging t

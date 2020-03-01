@@ -16,7 +16,8 @@
 ;;; Other required Elisp libraries
 ;;; ************************************************************************
 
-(eval-and-compile (mapc #'require '(hversion hmoccur hbmap htz hbdata hact)))
+(eval-and-compile (mapc #'require '(elisp-mode help hversion hmoccur hbmap
+				    htz hbdata hact view)))
 
 ;;; ************************************************************************
 ;;; Public definitions
@@ -29,9 +30,6 @@
 (defvar   ebut:hattr-save t
   "*Non-nil value saves button data when button source is saved.
 Nil disables saving.")
-
-(defconst ebut:max-len 100
-  "Maximum length of a hyper-button label.")
 
 (defun    ebut:act (label)
   "Activate Hyperbole explicit button with LABEL from the current buffer."
@@ -184,7 +182,7 @@ include delimiters.  With TWO-LINES-FLAG non-nil, constrains
 label search to two lines."
   (let ((opoint (point))
 	(quoted "\\(^\\|[^\\{]\\)")
-	(ebut:max-len ebut:max-len)
+	(hbut:max-len hbut:max-len)
 	npoint start lbl-key end but-start but-end start-regexp end-regexp)
     (unless start-delim (setq start-delim ebut:start))
     (unless end-delim (setq end-delim ebut:end))
@@ -216,9 +214,9 @@ label search to two lines."
 	(when two-lines-flag
 	  (save-excursion
 	    (forward-line 2)
-	    (setq ebut:max-len (- (point) start))))
-	(and (< (point) (+ start ebut:max-len))
-	     (re-search-forward (concat quoted end-regexp) (+ start ebut:max-len) t)
+	    (setq hbut:max-len (- (point) start))))
+	(and (< (point) (+ start (hbut:max-len)))
+	     (re-search-forward (concat quoted end-regexp) (+ start (hbut:max-len)) t)
 	     (setq but-end (point)
 		   end (- (point) (length end-delim))
 		   lbl-key (ebut:label-to-key (buffer-substring-no-properties start end)))
@@ -756,6 +754,17 @@ others who use a different value!")
 ;;; hbut class - abstract
 ;;; ========================================================================
 
+(defconst hbut:max-len 200
+  "Maximum length of a Hyperbole button label.
+If 0, there is no limit and searches for button end delimiters can go
+as far as the end of the buffer.
+
+Use the function, (hbut:max-len), to read the proper value.")
+
+(defsubst hbut:max-len ()
+  "Return the value of `hbut:max-len' if non-zero else (point-max)."
+  (if (zerop hbut:max-len) (point-max) hbut:max-len))
+
 (defun    hbut:act (&optional hbut)
   "Perform action for optional explicit or implicit Hyperbole button symbol HBUT.
 Default is 'hbut:current."
@@ -1088,6 +1097,24 @@ include delimiters when INCLUDE-DELIMS is non-nil)."
 	       (setq rtn (cons (funcall but-func lbl start end) rtn))))))
     (nreverse rtn)))
 
+(defvar   hbut:syntax-table (copy-syntax-table emacs-lisp-mode-syntax-table)
+  "Modified Elisp syntax table for use with Action and Key Series buttons.
+Makes < > and { } into syntactically matching pairs.")
+
+;;;###autoload
+(defun    hbut:modify-syntax ()
+  "Modify syntactic character pairs in hbut:syntax-table and help-mode-syntax-table for use with implicit button activations."
+  ;; Treat angle brackets as opening and closing delimiters for ease
+  ;; of matching.
+  (mapc (lambda (syntax-table)
+	  (modify-syntax-entry ?\< "(>" syntax-table)
+	  (modify-syntax-entry ?\> ")<" syntax-table)
+	  ;; Treat braces as opening and closing delimiters for ease of matching.
+	  (modify-syntax-entry ?\{ "(}" syntax-table)
+	  (modify-syntax-entry ?\} "){" syntax-table))
+	(list hbut:syntax-table help-mode-syntax-table))
+  nil)
+
 (defun    hbut:outside-comment-p ()
   "Return t if within a programming language buffer and prior regexp match is outside a comment, else nil."
   (when (and (derived-mode-p 'prog-mode)
@@ -1417,8 +1444,9 @@ button delimiters.  With POS-FLAG non-nil, returns list of
 label-or-key, but-label-start-position, but-label-end-position.
 Positions include delimiters.  With TWO-LINES-FLAG non-nil,
 constrains label search to two lines."
-  (ebut:label-p as-label (or start-delim ibut:label-start)
-		(or end-delim ibut:label-end) pos-flag two-lines-flag))
+  (with-syntax-table hbut:syntax-table
+    (ebut:label-p as-label (or start-delim ibut:label-start)
+		  (or end-delim ibut:label-end) pos-flag two-lines-flag)))
 
 (defun    ibut:label-regexp (lbl-key &optional no-delim)
   "Unnormalize ibutton LBL-KEY.  Return regular expr matching delimited button label.

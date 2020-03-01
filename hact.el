@@ -407,8 +407,7 @@ types register the performance of the action.  ACTYPE may be a symbol or symbol
 name for either an action type or a function.  Runs `action-act-hook' before
 performing ACTION."
   (let ((prefix-arg current-prefix-arg)
-	(action (actype:action actype))
-	(act '(apply action args)))
+	(action (actype:action actype)))
     (if (null action)
 	(error "(actype:act): Null action for: `%s'" actype)
       ;; Next 2 lines are needed so that relative paths are expanded
@@ -424,12 +423,14 @@ performing ACTION."
 			   (hypb:emacs-byte-code-p action)
 			   (and (stringp action) (not (integerp action))
 				(setq action (key-binding action))))
-		       (eval act)
+		       (if (special-form-p action)
+			   (eval (cons action args))
+			 (apply action args))
 		     (eval action))
 		   t)
 	  (hhist:add hist-elt))))))
 
-;; Return the full Elisp symbol for ACTYPE, which may be a string or symbol."
+;; Return the full Elisp symbol for ACTYPE, which may be a string or symbol.
 (defalias   'actype:elisp-symbol 'symtable:actype-p)
 
 (defun    actype:def-symbol (actype)

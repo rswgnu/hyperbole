@@ -18,6 +18,7 @@
     * Epilog
     * References
 
+
 * Introduction
 
 Welcome to GNU Hyperbole.  Hyperbole will super-charge your GNU Emacs
@@ -281,18 +282,23 @@ buffers with a particular major mode first, e.g. emacs-lisp-mode.  You will
 be prompted for the major mode and then the size of the grid.
 
 First let's add a few Emacs Lisp files to the bottom of our buffer list.
-Press the Action Key anywhere within the following action button:
+Press the Action Key anywhere within the first line of this action button:
 
-   <mapc (lambda (f) (find-file-noselect (expand-file-name f hyperb:dir)))
-         ("hibtypes.el" "hactypes.el" "hsettings.el")>
+   <progn (mapc (lambda (f) (bury-buffer (find-file-noselect (expand-file-name f hyperb:dir))))
+                '("hibtypes.el" "hactypes.el" "hsettings.el"))
+          (message "Last 3 buffers are: %S"
+                   (mapcar #'buffer-name
+                           (nthcdr (- (length (buffer-list)) 3) (buffer-list))))>
 
 Now let's display a 2x2 grid of windows preferring Emacs Lisp buffers:
-To try it, activate: {C-hhsf .0 @ emacs-lisp-mode RET 22 RET}.
+To try it, activate this key series button:
 
-If you ever need to experiment with different sized window grids, use M-x
-hycontrol-window-grid-repeatedly RET.  It will repeatedly prompt you for a
-grid size and then display it.  When you are done, simply press RET to
-exit.
+   {C-hhsf .0 @ emacs-lisp-mode RET 22 RET}
+
+If you ever need to experiment with different sized window grids, use
+{M-x hycontrol-window-grid-repeatedly RET}.  It will repeatedly prompt you
+for a grid size and then display it.  When you are done, simply press RET
+to exit.
 
 Outside of HyControl, you can invoke the grid of windows command with C-c @
 in most buffers.
@@ -521,12 +527,12 @@ come in three types:
      list displayed by {C-h h d t a RET}) and are followed by any needed
      arguments to form the action, e.g.
 
-          <link-to-file-line "${hyperb:dir}/hact.el" 40>
+          <link-to-file-line "${hyperb:dir}/hact.el" 41>
 
   2. function calls - these are similar to action type invocations but begin
      with an Elisp function name rather than an action type name, e.g.
 
-          <find-file-other-window "/tmp">
+          <find-file-other-window "/">
 
   3. variable displays - these consist of just an Elisp variable name and
      display a message with the variable name and value, e.g.
@@ -537,11 +543,7 @@ come in three types:
      wish to display, to prevent interpretation as a function call action
      button, precede the name with a '$', e.g.
 
-          <$fill-column>
-
-Since implicit buttons can be labeled with a name and placed in the global
-button file for invocation by name, you can give short names to any such
-buttons you want to invoke frequently.
+          <$hbut:max-len>
 
 An Action Button is recognized only if the first name within the angle
 brackets is an existing action type or Emacs Lisp symbol.  Otherwise, other
@@ -1122,24 +1124,6 @@ You can make a button an alias for another by using the `link-to-ebut'
 action type.  This <(factorial alias)> button does whatever the earlier
 <(factorial)> button does.
 
-The `link-to-mail' action type allows you to reference mail messages that
-you have stored away.  We can't demonstrate it here since we don't have the
-mail messages that you do.
-
-Hyperbole buttons may also be embedded within mail messages.  Even buttons
-copied into mail replies can work:
-
-    Emile said:
-    >
-    > Hyperbole is better than home baked bread but not as filling.
-    > The following sample button displays a message, <(as long as 
-    > you press within its first line)>.
-
-Please note that support for explicit Hyperbole buttons within mail and
-USENET news messages has not yet been updated for use with Emacs 24 and 25,
-so these features are disabled by default.  If you want to try them knowing
-this, {C-h h c m} will toggle this feature on and off.
-
 
 * Button Files
 
@@ -1165,18 +1149,31 @@ resources.
 * Global Buttons
 
 Global buttons are labeled Hyperbole buttons in your personal button
-file, as explained above.  All global buttons are activated by name
-with completion provided, independent of which buffers are displayed.
-Global buttons may be explicit buttons or labeled/named implicit
-buttons.
+file.  All global buttons are activated by name with completion
+provided, independent of which buffers are on-screen.  Global buttons
+may be explicit buttons or labeled/named implicit buttons.
 
-The Hyperbole Gbut menu creates, modifies and activates global buttons
-by name.  Each button created by this menu is stored as an explicit
-button near the end of your personal button file.  But any buttons you
-create in other ways within this file also become global buttons.
+The Hyperbole Gbut menu, C-h h g, creates, modifies and activates
+global buttons by name.  Each button created by this menu is stored as
+an explicit button near the end of your personal button file.  But any
+buttons you create in other ways within this file also become global
+buttons, for example labeled/named implicit buttons.
 
-A good strategy for frequently used global buttons is to use short
-names that you can remember.  Then they can be activated quickly.
+Since implicit buttons can be labeled with a name and placed in the
+global button file for invocation by name, you can give short names to
+any such buttons you want to invoke frequently.  For example, to
+create a labeled implicit global button that displays a personal todo
+file maintained with the Koutliner, activate the following key series
+by pressing M-RET within the first few characters:
+
+          {C-h h b p M-> <[td]>: <find-file "~/Todos.kotl"> RET}
+
+From then on, you can jump to your todos with:
+
+          {C-h h g a td RET}
+
+Or bind the global button activation command, hui:gbut-act, to a key
+of your choice for even faster access to all of your global buttons.
 
 Let's create a global button that counts the lines in the current
 buffer and displays the count in the minibuffer.  Press the Action Key
@@ -1209,11 +1206,12 @@ below here:
 
      {C-h h g c smk RET link-to-file RET "DEMO#Smart Mouse Keys" RET}
 
-Then
+Then from anywhere:
 
      {C-h h g a smk RET}
 
-to activate it.
+will activate it.
+
 
 * Smart Mouse Keys
 

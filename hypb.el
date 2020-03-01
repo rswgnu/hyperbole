@@ -674,18 +674,18 @@ nor nil it means to not count the minibuffer window even if it is active."
   "Keymap used when on the Hyperbole banner glyph.")
 
 ;;;###autoload
-(defun hypb:display-file-with-logo (&optional file)
-  "Display an optional text FILE in help mode with the Hyperbole banner prepended.
-Without file, the banner is prepended to the current buffer."
-  (if file
-      ;; A stub for this function is defined in hversion.el when not running in InfoDock.
-      (id-browse-file file))
-  (hypb:display-file-with-logo-emacs file)
-  (goto-char (point-min))
-  (skip-syntax-forward "-")
-  (set-window-start (selected-window) 1)
-  (set-buffer-modified-p nil)
-  (help-mode))
+(defun hypb:display-file-with-logo (file)
+  "Display a text FILE in help mode with the Hyperbole banner prepended."
+  (let ((existing-buf (when (stringp file) (get-file-buffer file))))
+    ;; A stub for this function is defined in hversion.el when not running in InfoDock.
+    (id-browse-file file)
+    (unless existing-buf
+      (hypb:display-file-with-logo-emacs file)
+      (goto-char (point-min))
+      (skip-syntax-forward "-")
+      (set-window-start (selected-window) 1)
+      (set-buffer-modified-p nil)
+      (help-mode))))
 
 (defun hypb:browse-home-page ()
   "Visit the web home page for Hyperbole."

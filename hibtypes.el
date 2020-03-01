@@ -1217,7 +1217,8 @@ There may not be any <> characters within the expression.  The
 first identifier in the expression must be an Elisp variable,
 action type or a function symbol to call, i.e. '<'actype-or-elisp-symbol
 arg1 ... argN '>'.  For example, <mail nil \"user@somewhere.org\">."
-  (let* ((label-key-start-end (ibut:label-p nil action:start action:end t t))
+  (let* ((hbut:max-len 0)
+		 (label-key-start-end (ibut:label-p nil action:start action:end t))
 	     (ibut-key (nth 0 label-key-start-end))
 	     (start-pos (nth 1 label-key-start-end))
 	     (end-pos (nth 2 label-key-start-end))
@@ -1248,7 +1249,7 @@ arg1 ... argN '>'.  For example, <mail nil \"user@somewhere.org\">."
 	        actype (or (intern-soft (concat "actypes::" actype))
 		               (intern-soft actype)))
       ;; Ignore unbound symbols
-      (unless (and actype (or (fboundp actype) (boundp actype)))
+      (unless (and actype (or (fboundp actype) (boundp actype) (special-form-p actype)))
         (setq actype nil))
       (when actype
 	    (ibut:label-set lbl start-pos end-pos)

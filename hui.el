@@ -138,15 +138,15 @@ Signal an error if point is not within a button."
   "Create or modifies an explicit Hyperbole button when conditions are met.
 A region must have been delimited with the action-key and point must now be
 within it before this function is called or it will do nothing.  The region
-must be no larger than the size given by 'ebut:max-len'.  It must be entirely
-within or entirely outside of an existing explicit button.  When region is
-within the button, the button is interactively modified.  Otherwise, a new
-button is created interactively with the region as the default label."
+must be no larger than the size given by a call to (hbut:max-len).  It must
+be entirely within or entirely outside of an existing explicit button.  When
+region is within the button, the button is interactively modified.  Otherwise,
+a new button is created interactively with the region as the default label."
   (interactive)
   (let ((m (marker-position (hypb:mark-marker t)))
 	(op action-key-depress-prev-point) (p (point)) (lbl-key))
     (if (and m (eq (marker-buffer m) (marker-buffer op))
-	     (< op m) (<= (- m op) ebut:max-len)
+	     (< op m) (<= (- m op) (hbut:max-len))
 	     (<= p m) (<= op p))
 	(progn
 	  (if (setq lbl-key (ebut:label-p))
@@ -179,10 +179,10 @@ Signal an error when no such button is found in the current buffer."
 	    (hargs:read
 	     "Change button label to: "
 	     (lambda (lbl)
-	       (and (not (string= lbl "")) (<= (length lbl) ebut:max-len)))
+	       (and (not (string= lbl "")) (<= (length lbl) (hbut:max-len))))
 	     lbl
 	     (format "(ebut-modify): Enter a string of at most %s chars."
-		     ebut:max-len)
+		     (hbut:max-len))
 	     'string))
 
       (hattr:set 'hbut:current 'loc (hui:key-src but-buf))
@@ -226,11 +226,11 @@ Signal an error if any problem occurs."
 				"Rename button label to: "
 			        (lambda (lbl)
 				  (and (not (string= lbl ""))
-				       (<= (length lbl) ebut:max-len)))
+				       (<= (length lbl) (hbut:max-len))))
 				curr-label
 				(format
 				 "(ebut-rename): Use a quoted string of at most %s chars."
-				 ebut:max-len)
+				 (hbut:max-len))
 				'string))))))))
        (list curr-label new-label))))
 
@@ -349,10 +349,10 @@ Signal an error when no such button is found."
 	    (hargs:read
 	     "Change global button label to: "
 	     (lambda (lbl)
-	       (and (not (string= lbl "")) (<= (length lbl) ebut:max-len)))
+	       (and (not (string= lbl "")) (<= (length lbl) (hbut:max-len))))
 	     lbl
 	     (format "(gbut-modify): Enter a string of at most %s chars."
-		     ebut:max-len)
+		     (hbut:max-len))
 	     'string))
 
       (if (eq (hattr:get but 'categ) 'explicit)
@@ -450,15 +450,15 @@ BUT defaults to the button whose label point is within."
   "Read button label from user using DEFAULT-LABEL and caller's FUNC-NAME."
   (hargs:read "Button label: "
 	      (lambda (lbl)
-		(and (not (string= lbl "")) (<= (length lbl) ebut:max-len)))
+		(and (not (string= lbl "")) (<= (length lbl) (hbut:max-len))))
 	      default-label
 	      (format "(%s): Enter a string of at most %s chars."
-		      func-name ebut:max-len)
+		      func-name (hbut:max-len))
 	      'string))
 
 (defun hui:hbut-label-default (start end &optional skip-len-test)
   "Return default label based on START and END region markers or points.
-Optional SKIP-LEN-TEST means don't limit label to `ebut:max-len' length.
+Optional SKIP-LEN-TEST means don't limit label to (hbut:max-len) length.
 Return nil if START or END are invalid or if region fails length test.
 
 Also has side effect of moving point to start of default label, if any."
@@ -467,7 +467,7 @@ Also has side effect of moving point to start of default label, if any."
   ;; Test whether to use region as default button label.
   (when (and (integerp start) (integerp end)
 	   (or skip-len-test
-	       (<= (max (- end start) (- start end)) ebut:max-len)))
+	       (<= (max (- end start) (- start end)) (hbut:max-len))))
     (goto-char start)
     (buffer-substring-no-properties start end)))
 
@@ -564,10 +564,10 @@ Signal an error when no such button is found in the current buffer."
 	  (hargs:read
 	   "Change implicit button label to: "
 	   (lambda (lbl)
-	     (and (not (string= lbl "")) (<= (length lbl) ebut:max-len)))
+	     (and (not (string= lbl "")) (<= (length lbl) (hbut:max-len))))
 	   lbl
 	   (format "(ibut-rename): Enter a string of at most %s chars."
-		   ebut:max-len)
+		   (hbut:max-len))
 	   'string))
 
     (save-excursion
@@ -809,7 +809,7 @@ All args are optional, the current button and buffer file are the defaults."
 		  (skip-chars-backward "0-9")
 		  (if (eq (preceding-char) (string-to-char ebut:instance-sep))
 		      (setq start (1- (point))))
-		  (if (search-backward ebut:start (- (point) ebut:max-len) t)
+		  (if (search-backward ebut:start (- (point) (hbut:max-len)) t)
 		      (if current-prefix-arg
 			  ;; Remove button label, delimiters and preceding
 			  ;; space, if any.

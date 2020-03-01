@@ -1304,10 +1304,10 @@ in-buffer path will not match."
   "Substitute matching value for Emacs Lisp variables and environment variables in PATH and return PATH."
   ;; Uses free variables `match' and `start' from `hypb:replace-match-string'.
   (substitute-in-file-name
-    (hypb:replace-match-string
+    (hpath:substitute-match-value
       "\\$@?\{\\([^\}]+\\)@?\}"
       path
-      (lambda (str)
+      (lambda (matched-str)
 	(let* ((var-group (substring path match start))
 	       (rest-of-path (substring path start))
 	       (var-ext (substring path (match-beginning 1) (match-end 1)))
@@ -1775,6 +1775,58 @@ local pathname."
 	       (error "(hpath:substitute-dir): Can't find match for \"%s\""
 		      (concat "$\{" var-name "\}/" rest-of-path)))))
 	  (t (error "(hpath:substitute-dir): Value of VAR-NAME, \"%s\", must be a string or list" var-name)))))
+
+(defun hpath:substitute-match-value (regexp str newtext &optional literal)
+  "Replace all matches for REGEXP in STR with NEWTEXT string and return the result.
+Optional LITERAL non-nil means do a literal replacement.
+Otherwise treat \\ in NEWTEXT string as special:
+  \\& means substitute original matched text,
+  \\N means substitute match for \(...\) number N,
+  \\\\ means insert one \\.
+NEWTEXT may instead be a function of one argument (the string to replace in)
+that returns a replacement string."
+  (unless (stringp str)
+    (error "(hypb:replace-match-string): 2nd arg must be a string: %s" str))
+  (unless (or (stringp newtext) (functionp newtext))
+    (error "(hypb:replace-match-string): 3rd arg must be a string or function: %s"
+	   newtext))
+  (let ((rtn-str "")
+	(start 0)
+	(special)
+	match prev-start)
+    (while (setq match (string-match regexp str start))
+      (setq prev-start start
+	    start (match-end 0)
+	    rtn-str
+	    (concat
+	      rtn-str
+	      (substring str prev-start match)
+	      (cond ((functionp newtext)
+		     (hypb:replace-match-string
+		      regexp (substring str match start)
+		      (funcall newtext str) literal))
+		    (literal newtext)
+		    (t (mapconcat
+			 (lambda (c)
+			   (cond (special
+				  (setq special nil)
+				  (cond ((eq c ?\\) "\\")
+					((eq c ?&)
+					 (match-string 0 str))
+					((and (>= c ?0) (<= c ?9))
+					 (if (> c (+ ?0 (length
+							 (match-data))))
+					     ;; Invalid match num
+					     (error "(hypb:replace-match-string) Invalid match num: %c" c)
+					   (setq c (- c ?0))
+					   (match-string c str)))
+					(t (char-to-string c))))
+			     ((eq c ?\\)
+			      (setq special t)
+			      nil)
+			     (t (char-to-string c))))
+			 newtext ""))))))
+    (concat rtn-str (substring str start))))
 
 (defun hpath:substitute-var-name (var-symbol var-dir-val path)
   "Replace with VAR-SYMBOL any occurrences of VAR-DIR-VAL in PATH.

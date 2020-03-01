@@ -5,13 +5,35 @@
 *                                   V7.1.1
 ===========================================================================
 
+  DEMO
+
+    - Global Buttons: Added a new example of a labeled global implicit button
+      displaying a todo file maintained in Koutliner format.  See
+      "DEMO#Global Buttons".
+
+    - Within one Emacs session, invoking the DEMO with {C-h h d d} now leaves
+      point where it was so you can continue working your way through it.
+
+    - You can now move between matching < and > as well as { and } delimiter
+      pairs with {C-M-n} and {C-M-p}.
+
   BUTTON TYPES
 
     - {kbd-key} Key Series: Greatly expanded the keys handled by
-      brace- delimited implicit key series buttons.  Added support for
+      brace-delimited implicit key series buttons.  Added support for
       <TAB>, <BS>, C-M-, non-ASCII CONTROL and META key codes, keypad
       keys, function keys, and these modifier keys: CONTROL, ALT,
       HYPER, META, SUPER and SHIFT (when whitespace separated).
+
+    - Action Implicit Buttons: May now start with Lisp special forms like
+      'progn' and 'or'.
+
+    - Longer Button Labels: The default max length of a Hyperbole button
+      label has been increased from 100 to 200 characters.  The variable
+      hbut:max-len controls this.  If you locally set this to 0 in any
+      new button type definition, then for that type of button, there
+      will be no maximumm limit.  Since Action Implicit Buttons can be
+      a series of Lisp calls, they are now unlimited in length.
 
 ===========================================================================
 *                                   V7.1.0

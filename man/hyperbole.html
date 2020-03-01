@@ -1,7 +1,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <!-- This manual is for GNU Hyperbole
-(Edition 7.1.0, Published February 23, 2020).
+(Edition 7.1.1, Published March 1, 2020).
 
 Copyright (C) 1989-2019  Free Software Foundation, Inc.
 
@@ -339,8 +339,8 @@ WITHOUT ANY WARRANTY, without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</P>
 
 <PRE>
-Edition 7.1.0
-Printed February 23, 2020.
+Edition 7.1.1
+Printed March 1, 2020.
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -799,7 +799,7 @@ Next: <a href="#Smart-Keys" accesskey="n" rel="next">Smart Keys</a>, Previous: <
 <span id="Introduction-1"></span><h2 class="chapter">1 Introduction</h2>
 
 <p>This edition of the GNU Hyperbole Manual is for use with any version
-7.1.0 or greater of GNU Hyperbole.  Hyperbole runs atop GNU Emacs 24.3
+7.1.1 or greater of GNU Hyperbole.  Hyperbole runs atop GNU Emacs 24.3
 or higher.  It will trigger an error if your Emacs is older.
 </p>
 <p>This chapter summarizes the structure of the rest of the manual,
@@ -7367,10 +7367,6 @@ so behave exactly alike.  Since button labels are simply text strings,
 they may be embedded within any text to provide non-linear information
 or operational access points.
 </p>
-<span id="index-ebut_003amax_002dlen"></span>
-<p>The maximum length of a button label is limited by the variable
-<code>ebut:max-len</code>.
-</p>
 </dd>
 <dt><b>Button Selection</b></dt>
 <dd><p>The act of designating a Hyperbole button upon which to operate.
@@ -7469,6 +7465,13 @@ followed by a global button label and then a closing &gt;.
 </dd>
 <dt><b>Grid</b></dt>
 <dd><p>See <b>Windows Grid</b>.
+</p>
+<span id="index-hbut_003amax_002dlen-1"></span>
+<span id="index-hbut_003amax_002dlen"></span>
+<p>The maximum length of a button label is limited by the variable
+<code>hbut:max-len</code>.  If 0, there is no limit and searches for button
+end delimiters can go as far as the end of the buffer.  Use the
+function, <code>(hbut:max-len)</code>, to read the proper value.
 </p>
 <span id="index-run_002dhooks"></span>
 </dd>
@@ -12007,7 +12010,6 @@ Next: <a href="#Concept-Index" accesskey="n" rel="next">Concept Index</a>, Previ
 <tr><td></td><td valign="top"><a href="#index-ebut_002dmodify_002dhook">ebut-modify-hook</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Hook-Variables">Hook Variables</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-ebut_003acreate"><code>ebut:create</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Programmatic-Button-Creation">Programmatic Button Creation</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-ebut_003amap"><code>ebut:map</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Programmatic-Button-Creation">Programmatic Button Creation</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-ebut_003amax_002dlen">ebut:max-len</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Glossary">Glossary</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-emacs_002dversion">emacs-version</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Suggestion-or-Bug-Reporting">Suggestion or Bug Reporting</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-eval_002ddefun"><code>eval-defun</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Creating-Types">Creating Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-eval_002dlast_002dsexp"><code>eval-last-sexp</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Creating-Types">Creating Types</a></td></tr>
@@ -12065,6 +12067,8 @@ Next: <a href="#Concept-Index" accesskey="n" rel="next">Concept Index</a>, Previ
 <tr><td></td><td valign="top"><a href="#index-hbut_003acurrent-1">hbut:current</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Operational-and-Storage-Formats">Operational and Storage Formats</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-hbut_003afill_002dprefix_002dregexps">hbut:fill-prefix-regexps</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Button-Label-Normalization">Button Label Normalization</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-hbut_003alabel_002dto_002dkey">hbut:label-to-key</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Button-Label-Normalization">Button Label Normalization</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-hbut_003amax_002dlen-1">hbut:max-len</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Glossary">Glossary</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-hbut_003amax_002dlen"><code>hbut:max-len</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Glossary">Glossary</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-hibtypes_002dbegin_002dload_002dhook">hibtypes-begin-load-hook</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Hook-Variables">Hook Variables</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-hibtypes_002dend_002dload_002dhook">hibtypes-end-load-hook</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Hook-Variables">Hook Variables</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-hibtypes_002dgit_002ddefault_002dproject">hibtypes-git-default-project</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>

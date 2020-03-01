@@ -154,8 +154,8 @@ WITHOUT ANY WARRANTY, without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</P>
 
 <PRE>
-Edition 7.1.0
-Printed February 23, 2020.
+Edition 7.1.1
+Printed March 1, 2020.
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -196,8 +196,8 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 @sp 2
 
 @example
-Edition 7.1.0
-February 23, 2020
+Edition 7.1.1
+March 1, 2020
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -476,7 +476,7 @@ Smart Keyboard Keys
 @chapter Introduction
 
 This edition of the GNU Hyperbole Manual is for use with any version
-7.1.0 or greater of GNU Hyperbole.  Hyperbole runs atop GNU Emacs 24.3
+7.1.1 or greater of GNU Hyperbole.  Hyperbole runs atop GNU Emacs 24.3
 or higher.  It will trigger an error if your Emacs is older.
 
 This chapter summarizes the structure of the rest of the manual,
@@ -6250,10 +6250,6 @@ so behave exactly alike.  Since button labels are simply text strings,
 they may be embedded within any text to provide non-linear information
 or operational access points.
 
-@vindex ebut:max-len
-The maximum length of a button label is limited by the variable
-@code{ebut:max-len}.
-
 @item Button Selection
 The act of designating a Hyperbole button upon which to operate.
 Use the Action Key to select a button.
@@ -6342,6 +6338,13 @@ See @b{Button File, personal} and @b{Global Button}.
 
 @item Grid
 See @b{Windows Grid}.
+
+@vindex hbut:max-len
+@findex hbut:max-len
+The maximum length of a button label is limited by the variable
+@code{hbut:max-len}.  If 0, there is no limit and searches for button
+end delimiters can go as far as the end of the buffer.  Use the
+function, @code{(hbut:max-len)}, to read the proper value.
 
 @findex run-hooks
 @item Hook Variable
