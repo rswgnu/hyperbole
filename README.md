@@ -1,4 +1,4 @@
-# GNU Hyperbole 7.1.0 - The Everyday Hypertextual Information Manager
+# GNU Hyperbole 7.1.1 - The Everyday Hypertextual Information Manager
 
 [Say thanks or send a testimonial if you like Hyperbole.(mailto:rsw@gnu.org)]
 

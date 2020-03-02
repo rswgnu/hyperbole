@@ -1,5 +1,7 @@
 2020-03-01  Bob Weiner  <rsw@gnu.org>
 
+* Published 7.1.1 test release.
+
 * hypb.el (hypb:display-file-with-logo): Modified to not move point or do anything other than use view-mode
     to display the file buffer if it exists prior to this call.  This allows using {C-h h d d} to jump back
     to the same point in the DEMO.  The FILE argument is now required.
