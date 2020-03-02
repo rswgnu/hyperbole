@@ -1,5 +1,7 @@
 2020-03-01  Bob Weiner  <rsw@gnu.org>
 
+* hbut.el (require): Fixed require of 'help-mode' instead of 'help'.  This fixed 'make bin' compilation.
+
 * Published 7.1.1 test release.
 
 * hypb.el (hypb:display-file-with-logo): Modified to not move point or do anything other than use view-mode
