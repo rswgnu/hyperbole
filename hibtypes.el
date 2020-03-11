@@ -1051,6 +1051,7 @@ For @code, @findex, @var and @vindex references, the associated documentation st
 		       ;; If a menu item, display the node for the item.
 		       (looking-at "*\\s-+\\([^:\t\n\r]+\\)::"))
 	         (hact 'link-to-texinfo-node
+                   nil
 		           (ibut:label-set (match-string 1) (match-beginning 1) (match-end 1))))
 	        ;; Show doc for any Emacs Lisp identifier references,
 	        ;; marked with @code{} or @var{}.
@@ -1072,6 +1073,7 @@ For @code, @findex, @var and @vindex references, the associated documentation st
 		            (search-backward "," bol t)
 		            (looking-at ",\\s-*\\([^,\n\r]*[^, \t\n\r]\\)[,\n\r]")))
 	         (hact 'link-to-texinfo-node
+                   nil
 		           (ibut:label-set (match-string 1) (match-beginning 1) (match-end 1))))
 	        ((save-excursion
 		       (and (search-backward "@" bol t)
@@ -1107,7 +1109,7 @@ For @code, @findex, @var and @vindex references, the associated documentation st
 				                     nodename)))))))
 		       (ibut:label-set (match-string 0) (match-beginning 0) (match-end 0))
 		       (if show-texinfo-node
-		           (hact 'link-to-texinfo-node node)
+		           (hact 'link-to-texinfo-node nil node)
 		         (hact 'link-to-Info-node node))))))))
 
 ;;; ========================================================================
@@ -1259,13 +1261,13 @@ arg1 ... argN '>'.  For example, <mail nil \"user@somewhere.org\">."
 		            (string-match "-p\\'" (symbol-name actype)))
 	           ;; Is a function with a boolean result
 	           (setq action `(display-boolean ',action)
-		             actype 'display-boolean))
+		             actype #'display-boolean))
 	          ((and (null args) (symbolp actype) (boundp actype)
 		            (or var-flag (not (fboundp actype))))
 	           ;; Is a variable, display its value as the action
-	           (setq args `(,actype)
+	           (setq args `(',actype)
 		             action `(display-variable ',actype)
-		             actype 'display-variable)))
+		             actype #'display-variable)))
 	    ;; Necessary so can return a null value, which actype:act cannot.
 	    (let ((hrule:action
 			   (if (eq hrule:action #'actype:identity)

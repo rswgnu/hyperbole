@@ -1,6 +1,37 @@
+2020-03-10  Bob Weiner  <rsw@gnu.org>
+
+* hbut.el (ibut:label-set): Updated doc to explain that this sets the text of the implicit button
+    (which is only its label if there is no optional preceding delimited name).
+          (ibut:rename): Changed to only move point to the button but not to edit the buffer when
+    old and new labels are the same.
+
+* hui.el (hui:gibut-create): Added to create global implicit buttons.
+         (hui:gbut-create): Small improvements; with prefix arg, interactively call hui:gibut-create.
+         (hui:gbut-modify): Updated to modify the text of an implicit button and to save the global
+    button file after modification if called interactively.
+
+2020-03-09  Bob Weiner  <rsw@gnu.org>
+
+* hactypes.el (link-to-texinfo-node): Added first param, file, rather than just using the current
+    buffer filename.
+  hibtypes.el (texinfo-ref): Modified to send nil as first arg to link-to-texinfo-node.
+
+2020-03-08  Bob Weiner  <rsw@gnu.org>
+
+* hui.el (hui:link-possible-types): Added link-to-bookmark, link-to-texinfo-node as possible types.
+
+* hbut.el (ibut:previous-occurrence): Added.
+
+* hibtypes.el (action): Added missing quote in front of variable name arg that caused an error
+    on variable name action buttons.
+
 2020-03-01  Bob Weiner  <rsw@gnu.org>
 
 * hbut.el (require): Fixed require of 'help-mode' instead of 'help'.  This fixed 'make bin' compilation.
+
+==============================================================================
+V7.1.2 changes ^^^^:
+==============================================================================
 
 * Published 7.1.1 test release.
 

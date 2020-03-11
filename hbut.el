@@ -132,10 +132,9 @@ buffer."
 	  (hattr:set 'hbut:current 'actype
 		     (intern (setq actype (hbdata:actype but-data))))
 	  ;; Hyperbole V1 referent compatibility
-	  (if (= (length actype) 2)
-
-	      (hattr:set 'hbut:current 'referent
-			 (hbdata:referent but-data)))
+	  (when (= (length actype) 2)
+	    (hattr:set 'hbut:current 'referent
+		       (hbdata:referent but-data)))
 	  (hattr:set 'hbut:current 'args (hbdata:args but-data))
 	  (hattr:set 'hbut:current 'creator (hbdata:creator but-data))
 	  (hattr:set 'hbut:current
@@ -1281,7 +1280,7 @@ as a completion table."
 (defun    ibut:at-p (&optional key-only)
   "Return symbol for implicit button at point, else nil.
 Point may be on the implicit button or its optional preceding label.
-With optional KEY-ONLY, returns only the label key for button.
+With optional KEY-ONLY, return the label key for button only.
 
 Any labeled implicit button must contain at least two characters,
 excluding delimiters, not just one."
@@ -1414,7 +1413,9 @@ expression which matches an entire button string."
   (hbut:map but-func ibut:label-start ibut:label-end))
 
 (defun    ibut:rename (old-lbl new-lbl)
-  "Modify a label preceding a Hyperbole implicit button in the current buffer given by LBL-KEY.
+  "Modify a label preceding the text of a Hyperbole implicit button in the current buffer from OLD-LBL to NEW-LBL.
+Return t if the label is changed, else nil.
+
 Signal an error when no such button is found in the current buffer.
 
 Leave point at the start of the button label which may be elsewhere
@@ -1426,8 +1427,10 @@ current."
 	((or (not (stringp old-lbl)) (< (length old-lbl) 1))
 	 (error "(ibut:rename): Invalid 'old-lbl' argument: \"%s\"" old-lbl))
 	((ibut:to old-lbl)
-	 (delete-region (point) (search-forward ibut:label-end nil t))
-	 (save-excursion (insert new-lbl ibut:label-end)))
+         (unless (string-equal old-lbl new-lbl)
+	   (delete-region (point) (search-forward ibut:label-end nil t))
+	   (save-excursion (insert new-lbl ibut:label-end))
+           t))
 	(t (error "(ibut:rename): Button '%s' not found in visible portion of buffer." old-lbl))))
 
 (defun    ibut:label-p (&optional as-label start-delim end-delim pos-flag two-lines-flag)
@@ -1440,17 +1443,17 @@ Assume point is within the first line of any button label.
 All following arguments are optional.  If AS-LABEL is non-nil,
 label is returned rather than the key derived from the label.
 START-DELIM and END-DELIM are strings that override default
-button delimiters.  With POS-FLAG non-nil, returns list of
+button label delimiters.  With POS-FLAG non-nil, return list of
 label-or-key, but-label-start-position, but-label-end-position.
 Positions include delimiters.  With TWO-LINES-FLAG non-nil,
-constrains label search to two lines."
+constrain label search to two lines."
   (with-syntax-table hbut:syntax-table
     (ebut:label-p as-label (or start-delim ibut:label-start)
 		  (or end-delim ibut:label-end) pos-flag two-lines-flag)))
 
 (defun    ibut:label-regexp (lbl-key &optional no-delim)
-  "Unnormalize ibutton LBL-KEY.  Return regular expr matching delimited button label.
-Optional NO-DELIM leaves off delimiters and leading and trailing space."
+  "Unnormalize ibutton LBL-KEY.  Return regular expression matching delimited button label.
+Optional NO-DELIM leaves off delimiters, leading and trailing space."
   (hbut:label-regexp lbl-key no-delim ibut:label-start ibut:label-end))
 
 (defun    ibut:label-set (label &optional start end)
@@ -1458,11 +1461,15 @@ Optional NO-DELIM leaves off delimiters and leading and trailing space."
 Return label.  When START and END are given, they specify the
 region in the buffer to flash when this implicit button is
 activated or queried for its attributes.  If LABEL is a list, it
-is assumed to contain all arguments."
+is assumed to contain all arguments.
+
+For legacy reasons, the label here is actually the text of the
+implicit button matched contextually and never the optional delimited
+name/label preceding the text."
   (cond ((stringp label)
 	 (hattr:set 'hbut:current 'lbl-key (hbut:label-to-key label))
-	 (and start (hattr:set    'hbut:current 'lbl-start start))
-	 (and end   (hattr:set    'hbut:current 'lbl-end   end)))
+	 (when start (hattr:set    'hbut:current 'lbl-start start))
+	 (when end   (hattr:set    'hbut:current 'lbl-end   end)))
 	((and label (listp label))
 	 (hattr:set 'hbut:current 'lbl-key (hbut:label-to-key (car label)))
 	 (hattr:set 'hbut:current 'lbl-start (nth 1 label))
@@ -1520,12 +1527,25 @@ Return non-nil iff occurrence is found.
 
 Remember to use (goto-char (point-min)) before calling this in order to
 move to the first occurrence of the button."
-  (if buffer
-      (if (not (or (bufferp buffer)
-		   (and (stringp buffer) (get-buffer buffer))))
-	  (error "(ibut:next-occurrence): Invalid buffer arg: %s" buffer)
-	(switch-to-buffer buffer)))
+  (when buffer
+    (if (not (or (bufferp buffer) (and (stringp buffer) (get-buffer buffer))))
+	(error "(ibut:next-occurrence): Invalid buffer arg: %s" buffer)
+      (switch-to-buffer buffer)))
   (when (re-search-forward (ibut:label-regexp lbl-key) nil t)
+    (goto-char (+ (match-beginning 0) (length ibut:label-start)))))
+
+(defun    ibut:previous-occurrence (lbl-key &optional buffer)
+  "Move point to previous occurrence of a labeled implicit button with LBL-KEY in optional BUFFER.
+BUFFER defaults to current buffer.  It may be a buffer name.
+Return non-nil iff occurrence is found.
+
+Remember to use (goto-char (point-max)) before calling this to search
+the whole buffer."
+  (when buffer
+    (if (not (or (bufferp buffer) (and (stringp buffer) (get-buffer buffer))))
+	(error "(ibut:previous-occurrence): Invalid buffer arg: %s" buffer)
+      (switch-to-buffer buffer)))
+  (when (re-search-backward (ibut:label-regexp lbl-key) nil t)
     (goto-char (+ (match-beginning 0) (length ibut:label-start)))))
 
 (defalias 'ibut:summarize 'hbut:report)

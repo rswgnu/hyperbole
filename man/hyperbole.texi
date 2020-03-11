@@ -2958,8 +2958,10 @@ Referent Context         Link Type
 Global Button            link-to-gbut
 Explicit Button          link-to-ebut
 Implicit Button          link-to-ibut
+Bookmarks List           link-to-bookmark
 Info Index Item          link-to-Info-index-item
 Info Node                link-to-Info-node
+Texinfo Node             link-to-texinfo-node
 Mail Reader Message      link-to-mail
 Directory Name           link-to-directory
 Filename                 link-to-file
@@ -9661,13 +9663,14 @@ request it.
 @item How can I modify a number of global buttons in succession?
 
 Rather than typing the name for each, it is quicker to jump to the
-global button file and edit the buttons there as you would any explicit
-buttons.  By default, the ButFile/PersonalFile menu item takes you to
-the file where global buttons are saved at the end of the file.
+global button file and edit the buttons there as you would any
+explicit or implicit buttons.  By default, the ButFile/PersonalFile
+menu item takes you to the file where global buttons are saved.
+Global buttons are saved near the end of this file.
 
 @item Why are button attributes scattered across directories?
 
-When you think of a hyper-space that you depend on every day, you
+When you think of a hyperspace that you depend on every day, you
 don't want to have a single point of failure that can make you
 incapable of doing work.  With Hyperbole, if some directories become
 unavailable for a particular time (e.g.@: the filesystems on which

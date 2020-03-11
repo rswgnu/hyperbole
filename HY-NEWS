@@ -2,6 +2,30 @@
 				 by Bob Weiner
 
 ===========================================================================
+*                                   V7.1.2
+===========================================================================
+
+  BUTTON TYPES
+
+    - Link Creation via Drag: Automatic link referent detection has been
+      expanded.  You can now drag the Smart Mouse Key or use
+      'hkey-operate' to create an explicit link button to an Emacs
+      Bookmark or to a Texinfo Node.
+
+    - link-to-texinfo-node Action Type: Now takes a first file parameter,
+      rather than only working on the current buffer.
+
+  MENUS
+
+    - Gbut/Create: When invoked with a prefix argument, will create a
+      global implicit button rather than an explicit button.  Simple provide
+      a name/label and the text of the implicit button including delimiters.
+
+    - Gbut/Modify: The name/label and the text (and thus the action) of global
+      implicit buttons may now be modified.  Hyperbole automatically determines
+      whether a button is explicit or implicit from the button name selected.
+
+===========================================================================
 *                                   V7.1.1
 ===========================================================================
 
@@ -18,6 +42,9 @@
       pairs with {C-M-n} and {C-M-p}.
 
   BUTTON TYPES
+
+    - Gbut/Rename: Added renaming of global explicit and named labeled
+      buttons.
 
     - {kbd-key} Key Series: Greatly expanded the keys handled by
       brace-delimited implicit key series buttons.  Added support for

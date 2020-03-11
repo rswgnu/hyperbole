@@ -248,14 +248,14 @@ For example:  To: hyperbole-users-join@gnu.org\n")))
     (hypb:error "(hyp-source): Non-string argument: %s" buf-str-or-file)))
 
 (defact link-to-bookmark (bookmark)
-  "Display an Emacs BOOKMARK.
+  "Display an Emacs BOOKMARK (a name).
 When creating the button, if in Bookmark Menu mode, use the bookmark
 nearest point as the default.  Otherwise, utilize the most recently used
 bookmark in the current file (bookmark-current-bookmark) as the default,
 if any."
   (interactive
    (list (bookmark-completing-read "Bookmark to link to"
-				   (if (eq major-mode 'bookmark-bmenu-mode)
+				   (if (derived-mode-p 'bookmark-bmenu-mode)
 				       (bookmark-bmenu-bookmark)
 				     bookmark-current-bookmark))))
   (bookmark-jump bookmark (hpath:display-buffer-function)))
@@ -605,17 +605,27 @@ Return t if found, nil if not."
   (funcall (actype:action 'link-to-regexp-match)
 	   (regexp-quote string) n source buffer-p))
 
-(defact link-to-texinfo-node (nodename)
-  "Display the Texinfo node with NODENAME (a string) from the current buffer."
-  (interactive "sTexinfo nodename to link to: ")
+(defact link-to-texinfo-node (file node)
+  "Display the Texinfo FILE and NODE (a string).
+FILE may be a string or nil, in which case the current buffer is used."
+  (interactive "fTexinfo file to link to: \nsNode within file to link to: ")
   (let (node-point)
+    (if file
+        (set-buffer (find-file-noselect file))
+      (setq file buffer-file-name))
     (save-excursion
       (goto-char (point-min))
-      (if (re-search-forward (format "^@node[ \t]+%s *[,\n\r]" nodename) nil t)
+      (if (re-search-forward (format "^@node[ \t]+%s *[,\n\r]" node) nil t)
 	  (setq node-point (match-beginning 0))
-	(hypb:error "(link-to-texinfo-node): Non-existent node: `%s'"
-		    nodename)))
-    (hact 'link-to-file buffer-file-name node-point)))
+	(hypb:error "(link-to-texinfo-node): Non-existent node: \"%s%s\""
+                    (if file
+                        (format "(%s)" (file-name-nondirectory file))
+                      "")
+		    node)))
+    (if file
+        (hact 'link-to-file file node-point)
+      (hypb:error "(link-to-texinfo-node): Non-existent node: \"%s\""
+		  node))))
 
 (defact link-to-web-search (service-name search-term)
   "Search web SERVICE-NAME for SEARCH-TERM.

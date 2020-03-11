@@ -207,7 +207,7 @@ Return the new function symbol derived from TYPE."
 	 (action (nconc (list 'defun sym params doc) body)))
     `(progn
        ,action
-       (setplist ',sym '(definition-name ,type @,property-list))
+       (setplist ',sym '(definition-name ,type ,@property-list))
        (symset:add ',type ',type-category 'symbols)
        (run-hooks 'htype-create-hook)
        ',sym)))
@@ -423,9 +423,7 @@ performing ACTION."
 			   (hypb:emacs-byte-code-p action)
 			   (and (stringp action) (not (integerp action))
 				(setq action (key-binding action))))
-		       (if (special-form-p action)
-			   (eval (cons action args))
-			 (apply action args))
+		       (eval (cons action args))
 		     (eval action))
 		   t)
 	  (hhist:add hist-elt))))))
@@ -444,10 +442,10 @@ is returned."
       (make-symbol (substring name (match-end 0))))))
 
 (defun    actype:eval (actype &rest args)
-  "Performs action formed from ACTYPE and rest of ARGS and returns value.
+  "Perform action formed from ACTYPE and rest of ARGS and return value.
 ACTYPE may be a string containing a Lisp expression from which ACTYPE
 and ARGS are extracted.  ACTYPE may be a symbol or symbol name for
-either an action type or a function.  Runs `action-act-hook' before
+either an action type or a function.  Run `action-act-hook' before
 performing ACTION."
   (let ((prefix-arg current-prefix-arg)
 	(action (actype:action actype))
