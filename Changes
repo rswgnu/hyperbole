@@ -1,3 +1,7 @@
+2020-03-11  Bob Weiner  <rsw@gnu.org>
+
+* kotl/klink.el (require 'kcell): Removed, caused recursive require loop.
+
 2020-03-10  Bob Weiner  <rsw@gnu.org>
 
 * hbut.el (ibut:label-set): Updated doc to explain that this sets the text of the implicit button
