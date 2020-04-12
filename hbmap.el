@@ -25,7 +25,7 @@
 
 (defun hbmap:dir-add (dir-name &optional no-save)
   "Add DIR-NAME to map of all directories in which user has written buttons.
-Returns t iff DIR-NAME is not already in map, nil if it is, and some
+Returns t if DIR-NAME is not already in map, nil if it is, and some
 other value when cannot read or write map.
 Optional NO-SAVE disables saving of the map after an add."
   (hbmap:dir-operate (lambda (dir) (not (hbmap:dir-member dir)))
@@ -52,7 +52,7 @@ Optional NO-SAVE disables saving of the map after an add."
 
 (defun hbmap:dir-remove (dir-name &optional no-save)
   "Remove DIR-NAME from map of all dirs in which user has written buttons.
-Returns t iff DIR-NAME is in the map and is successfully removed, nil if it
+Returns t if DIR-NAME is in the map and is successfully removed, nil if it
 is not, and some other value when the map is not readable or writable.
 Optional NO-SAVE disables saving of the map after a removal."
 (hbmap:dir-operate 'hbmap:dir-member dir-name
@@ -60,7 +60,7 @@ Optional NO-SAVE disables saving of the map after a removal."
 		   no-save))
 
 (defun hbmap:dir-member (dir-name)
-  "Return t iff DIR-NAME is a member of user's Hyperbole map, else nil.
+  "Return t if DIR-NAME is a member of user's Hyperbole map, else nil.
 If t, point is left at the start of the matching map entry.  If nil,
 point is left in a position appropriate for insertion of a new entry."
   (let ((obuf (current-buffer))
