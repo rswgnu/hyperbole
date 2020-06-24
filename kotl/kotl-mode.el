@@ -560,6 +560,8 @@ With optional prefix argument TOP-P non-nil, refill all cells in the outline."
 	  (kotl-mode:kill-region start end))))))
   (setq last-command 'kill-region))
 
+(defalias 'kotl-mode:kill-visual-line 'kotl-mode:kill-line)
+
 (defun kotl-mode:kill-region (start end &optional copy-p)
   "Kill region between START and END within a single kcell.
 With optional COPY-P equal to 't, copy region to kill ring but does not
@@ -1208,7 +1210,7 @@ See also the command `yank-pop' (\\[yank-pop])."
     ;; Convert all occurrences of newline to newline + cell indent.
     ;; Then insert into buffer.
     (insert (hypb:replace-match-string
-	     "[\n\r]" yank-text (concat "\\0" indent-str))))
+	     "[\n\r]" yank-text (lambda (match) (concat match indent-str)))))
   (if (consp arg) (kotl-mode:exchange-point-and-mark))
   ;; If we do get all the way thru, make this-command indicate that.
   (if (eq this-command t) (setq this-command 'kotl-mode:yank))
@@ -1405,6 +1407,7 @@ See `forward-paragraph' for more information."
 
 ;;; This ensures that the key bound to `beginning-of-line' is replaced in kotl-mode.
 (defalias 'kotl-mode:beginning-of-line 'kotl-mode:to-start-of-line)
+(defalias 'kotl-mode:beginning-of-visual-line 'kotl-mode:to-start-of-line)
 (defalias 'kotl-mode:move-beginning-of-line 'kotl-mode:beginning-of-line)
 
 (defun kotl-mode:beginning-of-tree ()
@@ -1479,6 +1482,7 @@ With optional ARG < 0, move to the ARGth previous visible cell."
 
 ;;; This ensures that the key bound to `end-of-line' is replaced in kotl-mode.
 (defalias 'kotl-mode:end-of-line 'kotl-mode:to-end-of-line)
+(defalias 'kotl-mode:end-of-visual-line 'kotl-mode:to-end-of-line)
 (defalias 'kotl-mode:move-end-of-line 'kotl-mode:to-end-of-line)
 
 (defun kotl-mode:end-of-tree ()
@@ -2996,10 +3000,10 @@ Leave point at end of line now residing at START."
 		 (copy-keymap text-mode-map)))
 	      (t (make-keymap))))
   ;; Ensure mouse wheel scrolling leaves point in a valid Koutline position
-  (if (and (boundp 'mwheel-scroll-up-function)
-	   (eq (symbol-value 'mwheel-scroll-up-function) 'scroll-up))
-      (setq mwheel-scroll-up-function 'kotl-mode:scroll-up
-	    mwheel-scroll-down-function 'kotl-mode:scroll-down))
+  (when (and (boundp 'mwheel-scroll-up-function)
+	     (eq (symbol-value 'mwheel-scroll-up-function) 'scroll-up))
+    (setq mwheel-scroll-up-function 'kotl-mode:scroll-up
+	  mwheel-scroll-down-function 'kotl-mode:scroll-down))
   ;; Overload edit keys to deal with structure and labels.
   (let (local-cmd)
     (mapc
@@ -3008,13 +3012,12 @@ Leave point at end of line now residing at START."
 			(concat "kotl-mode:" (symbol-name cmd))))
        ;; Only bind key locally if kotl-mode local-cmd has already
        ;; been defined and cmd is a valid function.
-       (if (and local-cmd (fboundp cmd))
-	   (progn
-	     ;; Make local-cmd have the same property list as cmd,
-	     ;; e.g. so pending-delete property is the same.
-	     (setplist local-cmd (symbol-plist cmd))
-	     (substitute-key-definition
-	      cmd local-cmd kotl-mode-map global-map))))
+       (when (and local-cmd (fboundp cmd))
+	 ;; Make local-cmd have the same property list as cmd,
+	 ;; e.g. so pending-delete property is the same.
+	 (setplist local-cmd (symbol-plist cmd))
+	 (substitute-key-definition
+	  cmd local-cmd kotl-mode-map global-map)))
 
      '(
        back-to-indentation
@@ -3029,6 +3032,7 @@ Leave point at end of line now residing at START."
        backward-word
        beginning-of-buffer
        beginning-of-line
+       beginning-of-visual-line
        completion-kill-region
        copy-region-as-kill
        copy-to-register
@@ -3040,6 +3044,7 @@ Leave point at end of line now residing at START."
        delete-indentation
        end-of-buffer
        end-of-line
+       end-of-visual-line
        fill-paragraph
        fill-paragraph-or-region
        ;; cursor keys
@@ -3058,6 +3063,7 @@ Leave point at end of line now residing at START."
        just-one-space
        kill-word
        kill-line
+       kill-visual-line
        kill-region
        kill-ring-save
        kill-sentence

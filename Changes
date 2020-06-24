@@ -1,3 +1,9 @@
+2020-05-09  Bob Weiner  <rsw@gnu.org>
+
+* kotl/kotl-mode.el (beginning-of-visual-line,
+                     end-of-visual-line,
+                     kill-visual-line): Override in kotl-mode-map.
+
 2020-03-11  Bob Weiner  <rsw@gnu.org>
 
 * kotl/klink.el (require 'kcell): Removed, caused recursive require loop.
