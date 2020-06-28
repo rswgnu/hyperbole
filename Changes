@@ -1,5 +1,7 @@
 2020-06-28  Bob Weiner  <rsw@gnu.org>
 
+* hmouse-drv.el (quit-window): Handle primitive functions when replacing this command.
+
 * hypb.el (hypb:function-symbol-replace): Make a no-op if symbol-function is a non-Lisp primitive.
     Also, replace single clause 'if' calls with 'when' or 'unless'.
 

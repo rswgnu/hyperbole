@@ -933,7 +933,7 @@ Return non-nil iff associated documentation is found."
 ;; Overload help-mode quit-window function to support Hyperbole
 ;; hkey--wconfig window configurations.
 (unless (eq (symbol-function #'quit-window) #'hkey-help-hide)
-  (defalias 'hkey-quit-window (hypb:function-copy #'quit-window)))
+  (defalias 'hkey-quit-window (symbol-function #'quit-window)))
 
 ;;;###autoload
 (defun hkey-help-hide (&optional kill window)
