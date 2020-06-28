@@ -736,11 +736,13 @@ This is used only when running from git source and not a package release."
 ;; This call loads the rest of the Hyperbole system.
 (require 'hinit)
 
-(if after-init-time
-    ;; This call initializes Hyperbole key bindings and hooks.
-    (hyperb:init)
-  ;; Initialize after other key bindings are loaded at startup.
-  (add-hook 'after-init-hook #'hyperb:init t))
+;; Prevent multiple initializations of Hyperbole
+(unless (featurep 'hyperbole)
+  (if after-init-time
+      ;; This call initializes Hyperbole key bindings and hooks.
+      (hyperb:init)
+    ;; Initialize after other key bindings are loaded at startup.
+    (add-hook 'after-init-hook #'hyperb:init t)))
 
 (makunbound 'hyperbole-loading)
 

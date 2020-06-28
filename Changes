@@ -1,5 +1,10 @@
 2020-06-28  Bob Weiner  <rsw@gnu.org>
 
+* hload-path.el: Use (setq hyperb:dir (file-truename hyperb:dir)) only after Hyperbole paths
+    have been added to load-path, so that if they are symlinks, the symlink name rather than
+    the truename is used there since the package manage usses the symlink name and may have
+    added such a path already.
+
 * hmouse-drv.el (quit-window): Handle primitive functions when replacing this command.
 
 * hypb.el (hypb:function-symbol-replace): Make a no-op if symbol-function is a non-Lisp primitive.
