@@ -519,9 +519,9 @@ invoke the Org mode standard binding of {M-RET}, (org-meta-return).
 ** Action Buttons
 
 A new feature of Hyperbole is a universal syntax for creating implicit
-buttons known as Action Buttons that execute any existing action types or
-Emacs Lisp functions.  Such buttons are delimited by angle brackets, < >, and
-come in three types:
+buttons known as Action Buttons.  These buttons bexecute any existing
+action types or Emacs Lisp functions.  They are delimited by angle
+brackets, < >, and come in three types:
 
   1. action type invocations - these begin with an action type name (from the
      list displayed by {C-h h d t a RET}) and are followed by any needed
@@ -530,9 +530,10 @@ come in three types:
           <link-to-file-line "${hyperb:dir}/hact.el" 41>
 
   2. function calls - these are similar to action type invocations but begin
-     with an Elisp function name rather than an action type name, e.g.
+     with an Elisp function name rather than an action type name.  They can
+     contain any number of levels of embedded Lisp s-expressions, e.g.
 
-          <find-file-other-window "/">
+          <find-file-other-window (expand-file-name "EXAMPLE.kotl" hyperb:dir)>
 
   3. variable displays - these consist of just an Elisp variable name and
      display a message with the variable name and value, e.g.

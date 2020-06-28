@@ -147,7 +147,7 @@ If LINK-TARGET is nil, follows any link target at point.  Otherwise, triggers an
 	  ((null link-target)
 	   (when (setq start-end (hsys-org-internal-link-target-at-p))
 	     (hsys-org-search-internal-link-p (buffer-substring-no-properties
-					  (car start-end) (cdr start-end))))))
+					       (car start-end) (cdr start-end))))))
     (unless start-end
       (error "(org-internal-link-target): Point must be on a link target (not the link itself)"))))
 
@@ -163,7 +163,7 @@ uses that one.  Otherwise, triggers an error."
 	  ((null target)
 	   (when (setq start-end (hsys-org-radio-target-at-p))
 	     (hsys-org-to-next-radio-target-link (buffer-substring-no-properties
-					     (car start-end) (cdr start-end))))))
+					          (car start-end) (cdr start-end))))))
     (unless start-end
       (error "(org-radio-target): Point must be on a radio target definition or link"))))
 
@@ -173,17 +173,17 @@ uses that one.  Otherwise, triggers an error."
 
 (defun hsys-org-region-with-text-property-value (pos property)
   "Return (start . end) buffer positions of the region around POS that shares its non-nil text PROPERTY value, else nil."
-  (if (null pos) (setq pos (point)))
+  (when (null pos) (setq pos (point)))
   (let ((property-value (get-text-property pos property))
 	(start-point pos))
     (when property-value
-	;; Can't use previous-single-property-change here because it
-	;; ignores characters that lack the property, i.e. have nil values.
-	(if (bobp)
-	    (setq start-point (point-min))
-	  (while (equal (get-text-property (1- start-point) property) property-value)
-	    (setq start-point (1- start-point))))
-	(cons start-point (next-single-property-change start-point property)))))
+      ;; Can't use previous-single-property-change here because it
+      ;; ignores characters that lack the property, i.e. have nil values.
+      (if (bobp)
+	  (setq start-point (point-min))
+	(while (equal (get-text-property (1- start-point) property) property-value)
+	  (setq start-point (1- start-point))))
+      (cons start-point (next-single-property-change start-point property)))))
 
 (defun hsys-org-at-block-start-p ()
   "Return non-nil if point is on the first line of an Org block definition, else nil."
@@ -216,10 +216,10 @@ Assumes caller has already checked that the current buffer is in `org-mode'."
   "Return (target-start . target-end) positions iff point is on an Org mode radio target (definition), including any delimiter characters, else nil."
   (when (hsys-org-target-at-p)
     (save-excursion
-      (if (not (looking-at "<<<"))
-	  (goto-char (or (previous-single-property-change (point) 'face) (point-min))))
-      (if (looking-at "<<<")
-	  (goto-char (match-end 0)))
+      (unless (looking-at "<<<")
+	(goto-char (or (previous-single-property-change (point) 'face) (point-min))))
+      (when (looking-at "<<<")
+	(goto-char (match-end 0)))
       (and (get-text-property (point) 'org-linked-text)
 	   (hsys-org-region-with-text-property-value (point) 'face)))))
 
@@ -232,10 +232,10 @@ Assumes caller has already checked that the current buffer is in `org-mode'."
   "Return (target-start . target-end) positions iff point is on an Org mode <<link target>>, including any delimiter characters, else nil."
   (when (hsys-org-target-at-p)
     (save-excursion
-      (if (not (looking-at "<<"))
-	  (goto-char (or (previous-single-property-change (point) 'face) (point-min))))
-      (if (looking-at "<<<?")
-	  (goto-char (match-end 0)))
+      (unless (looking-at "<<")
+	(goto-char (or (previous-single-property-change (point) 'face) (point-min))))
+      (when (looking-at "<<<?")
+	(goto-char (match-end 0)))
       (and (not (get-text-property (point) 'org-linked-text))
 	   (hsys-org-region-with-text-property-value (point) 'face)))))
 
@@ -249,12 +249,11 @@ Assumes caller has already checked that the current buffer is in `org-mode'."
 (defun hsys-org-search-internal-link-p (target)
   "Search from buffer start for an Org internal link definition matching TARGET.
 White spaces are insignificant.  Returns t if a link is found, else nil."
-  (if (string-match "<<.+>>" target)
-      (setq target (substring target 2 -2)))
-  (let ((re (format "%s"
-		    (mapconcat #'regexp-quote
-			       (split-string target)
-			       "[ \t]+\\(?:\n[ \t]*\\)?")))
+  (when (string-match "<<.+>>" target)
+    (setq target (substring target 2 -2)))
+  (let ((re (format "%s" (mapconcat #'regexp-quote
+			            (split-string target)
+			            "[ \t]+\\(?:\n[ \t]*\\)?")))
 	(origin (point)))
     (goto-char (point-min))
     (catch :link-match
@@ -270,12 +269,11 @@ White spaces are insignificant.  Returns t if a link is found, else nil."
 (defun hsys-org-search-radio-target-link-p (target)
   "Search from point for a radio target link matching TARGET.
 White spaces are insignificant.  Returns t if a target link is found, else nil."
-  (if (string-match "<<<.+>>>" target)
-      (setq target (substring target 3 -3)))
-  (let ((re (format "%s"
-		    (mapconcat #'regexp-quote
-			       (split-string target)
-			       "[ \t]+\\(?:\n[ \t]*\\)?")))
+  (when (string-match "<<<.+>>>" target)
+    (setq target (substring target 3 -3)))
+  (let ((re (format "%s" (mapconcat #'regexp-quote
+			            (split-string target)
+			            "[ \t]+\\(?:\n[ \t]*\\)?")))
 	(origin (point)))
     (catch :radio-match
       (while (re-search-forward re nil t)
@@ -298,14 +296,14 @@ White spaces are insignificant.  Returns t if a target link is found, else nil."
 
 (defun hsys-org-to-next-radio-target-link (target)
   "Move to the start of the next radio TARGET link if found.  TARGET must be a string."
-  (if (string-match "<<<.+>>>" target)
-      (setq target (substring target 3 -3)))
+  (when (string-match "<<<.+>>>" target)
+    (setq target (substring target 3 -3)))
   (let ((opoint (point))
 	(start-end (hsys-org-radio-target-at-p))
 	found)
-    (if start-end
-	;; Move past any current target link
-	(goto-char (cdr start-end)))
+    (when start-end
+      ;; Move past any current target link
+      (goto-char (cdr start-end)))
     (while (and (hsys-org-search-radio-target-link-p target)
 		(setq found t)
 		(not (hsys-org-radio-target-link-at-p))))

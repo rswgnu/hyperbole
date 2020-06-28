@@ -68,7 +68,7 @@ Rest of ARGS are passed as arguments to PROGRAM."
   "Return count of occurrences of CHAR in ARRAY."
   (let ((i 0) (c 0) (l (length array)))
     (while (< i l)
-      (if (= char (aref array i)) (setq c (1+ c)))
+      (when (= char (aref array i)) (setq c (1+ c)))
       (setq i (1+ i)))
     c))
 
@@ -86,17 +86,17 @@ OP may be +, -, xor, or default =."
   "Return a single pretty printed key sequence string bound to CMD-SYM.
 Global keymap is used unless optional KEYMAP is given."
   (if (and cmd-sym (symbolp cmd-sym) (fboundp cmd-sym))
-  (let* ((get-keys (lambda (cmd-sym keymap)
-		     (key-description (where-is-internal
-				       cmd-sym keymap 'first))))
-	 (keys (funcall get-keys cmd-sym keymap)))
-    (concat "{"
-	    (if (string= keys "")
-		(concat (funcall get-keys 'execute-extended-command nil)
-			" " (symbol-name cmd-sym) " RET")
-	      keys)
-	    "}"))
-  (error "(hypb:cmd-key-string): Invalid cmd-sym arg: %s" cmd-sym)))
+      (let* ((get-keys (lambda (cmd-sym keymap)
+		         (key-description (where-is-internal
+				           cmd-sym keymap 'first))))
+	     (keys (funcall get-keys cmd-sym keymap)))
+        (concat "{"
+	        (if (string= keys "")
+		    (concat (funcall get-keys 'execute-extended-command nil)
+			    " " (symbol-name cmd-sym) " RET")
+	          keys)
+	        "}"))
+    (error "(hypb:cmd-key-string): Invalid cmd-sym arg: %s" cmd-sym)))
 
 ;;;###autoload
 (defun hypb:configuration (&optional out-buf)
@@ -115,36 +115,35 @@ Global keymap is used unless optional KEYMAP is given."
 			    (t (hypb:replace-match-string
 				" of .+" (emacs-version) "" t)))
                       hyperb:version))
-      (if (and (boundp 'br-version) (stringp br-version))
-	  (insert (format "\tOO-Browser:  %s\n" br-version)))
-      (if (and (boundp 'system-configuration) (stringp system-configuration))
-	  (insert (format "\tSys Type:    %s\n" system-configuration)))
+      (when (and (boundp 'br-version) (stringp br-version))
+	(insert (format "\tOO-Browser:  %s\n" br-version)))
+      (when (and (boundp 'system-configuration) (stringp system-configuration))
+	(insert (format "\tSys Type:    %s\n" system-configuration)))
       (insert (format "\tOS Type:     %s\n\tWindow Sys:  %s\n"
                       system-type (or window-system (hyperb:window-system)
 				      "None")))
-      (if (and (boundp 'hmail:reader) hmail:reader)
-          (insert (format "\tMail Reader: %s\n"
-                          (cond ((eq hmail:reader 'rmail-mode) "RMAIL")
-                                ((eq hmail:reader 'vm-mode)
-                                 (concat "VM " vm-version))
-                                ((and (eq hmail:reader 'mh-show-mode)
-                                      (string-match "v ?\\([0-9]+.[0-9]+\\)"
-                                          mh-e-RCS-id))
-                                 (concat "MH-e "
-                                         (substring mh-e-RCS-id
-                                                    (match-beginning 1)
-                                                    (match-end 1))))
-                                ((eq hmail:reader 'pm-fdr-mode)
-                                 (concat "PIEmail " pm-version))
-                                ))))
-      (if (and (boundp 'hnews:reader) (boundp 'gnus-version) hnews:reader)
-          (insert (format "\tNews Reader: %s\n" gnus-version)))
+      (when (and (boundp 'hmail:reader) hmail:reader)
+        (insert (format "\tMail Reader: %s\n"
+                        (cond ((eq hmail:reader 'rmail-mode) "RMAIL")
+                              ((eq hmail:reader 'vm-mode)
+                               (concat "VM " vm-version))
+                              ((and (eq hmail:reader 'mh-show-mode)
+                                    (string-match "v ?\\([0-9]+.[0-9]+\\)"
+                                                  mh-e-RCS-id))
+                               (concat "MH-e "
+                                       (substring mh-e-RCS-id
+                                                  (match-beginning 1)
+                                                  (match-end 1))))
+                              ((eq hmail:reader 'pm-fdr-mode)
+                               (concat "PIEmail " pm-version))))))
+      (when (and (boundp 'hnews:reader) (boundp 'gnus-version) hnews:reader)
+        (insert (format "\tNews Reader: %s\n" gnus-version)))
       (insert "\n")
       ;; Insert recent Hyperbole debugging messages if any.
-      (if (get-buffer "*Messages*")
-	  (let ((opoint (point)))
-	    (insert-buffer-substring "*Messages*")
-	    (keep-lines "^(HyDebug)" opoint (point))))
+      (when (get-buffer "*Messages*")
+	(let ((opoint (point)))
+	  (insert-buffer-substring "*Messages*")
+	  (keep-lines "^(HyDebug)" opoint (point))))
       (untabify start (point)))))
 
 (defun hypb:debug ()
@@ -193,29 +192,27 @@ Global keymap is used unless optional KEYMAP is given."
 			 (string-match "\\." message-user-fqdn)
 			 message-user-fqdn)
 		    (getenv "DOMAINNAME")
-		    (if dname-cmd
-			(hypb:call-process-p
-			 "domainname" nil
-			 '(substring (buffer-string) 0 -1)))))
+		    (when dname-cmd
+		      (hypb:call-process-p
+		       "domainname" nil
+		       '(substring (buffer-string) 0 -1)))))
 	 host-and-domain)
-    (if (or (and dname (string-match "\\." dname))
-	    (and (setq host-and-domain (hypb:call-process-p
-					"hostname" nil '(substring (buffer-string) 0 -1) "-f"))
-		 (setq dname (if (string-match "\\`[^.]+\\." host-and-domain)
+    (when (or (and dname (string-match "\\." dname))
+	      (and (setq host-and-domain (hypb:call-process-p
+					  "hostname" nil '(substring (buffer-string) 0 -1) "-f"))
+		   (setq dname (when (string-match "\\`[^.]+\\." host-and-domain)
 				 (substring host-and-domain (match-end 0)))))
-	    (let* ((src "/etc/resolv.conf")
-		   (src-buf-exists-p (get-file-buffer src)))
-	      (and (file-exists-p src) (file-readable-p src)
-		   (with-temp-buffer
-		     (insert-file-contents-literally src)
-		     (goto-char (point-min))
-		     (if (re-search-forward  "^domain[ \t]+\\([^ \t\n\r]+\\)"
-					     nil t)
-			 (setq dname (buffer-substring (match-beginning 1)
-						       (match-end 1))))
-		     (or src-buf-exists-p (kill-buffer nil))
-		     dname))))
-	(concat "@" dname))))
+	      (let* ((src "/etc/resolv.conf")
+		     (src-buf-exists-p (get-file-buffer src)))
+	        (and (file-exists-p src) (file-readable-p src)
+		     (with-temp-buffer
+		       (insert-file-contents-literally src)
+		       (goto-char (point-min))
+		       (when (re-search-forward  "^domain[ \t]+\\([^ \t\n\r]+\\)" nil t)
+			 (setq dname (match-string 1)))
+		       (or src-buf-exists-p (kill-buffer nil))
+		       dname))))
+      (concat "@" dname))))
 
 (defun hypb:emacs-byte-code-p (obj)
   "Return non-nil iff OBJ is an Emacs byte compiled object."
@@ -271,8 +268,8 @@ Return either the modified string or the original ARG."
 					(compiled-function-stack-depth func)
 					(compiled-function-doc-string func))))
 		       spec)
-		   (if (setq spec (compiled-function-interactive func))
-		       (setq new-code (nconc new-code (list (nth 1 spec)))))
+		   (when (setq spec (compiled-function-interactive func))
+		     (setq new-code (nconc new-code (list (nth 1 spec)))))
 		   (apply 'make-byte-code new-code))))
 	      (t (error "(hypb:function-copy): Can't copy function body: %s" func))))
     (error "(hypb:function-copy): `%s' symbol is not bound to a function"
@@ -310,39 +307,42 @@ FUNC-SYM may be a function symbol or its body.  All occurrences within lists
 are replaced.  Returns body of modified FUNC-SYM."
   (let ((body (hypb:indirect-function func-sym))
 	(constant-vector) (constant))
-    (if (listp body)
-	;; assume V18 byte compiler
-	(setq constant-vector
-	      (car (delq nil (mapcar
-			      (lambda (elt)
-				(and (listp elt)
-				     (vectorp (setq constant-vector (nth 2 elt)))
-				     constant-vector))
-			      body))))
-      ;; assume EMACS byte compiler   (eq (compiled-function-p body) t)
-      (setq constant (if (fboundp 'compiled-function-constants)
-			 (compiled-function-constants body)
-		       (aref body 2))
-	    constant-vector (if (vectorp constant) constant)))
-    (if constant-vector
-	;; Code is byte-compiled.
-	(hypb:constant-vector-symbol-replace
-	 constant-vector sym-to-replace replace-with-sym)
-      ;;
-      ;; Code is not byte-compiled.
-      ;; Replaces occurrence of symbol within lists only.
-      (hypb:map-sublists
-       (lambda (atom list)
-	 ;; The ' in the next line *is* required for proper substitution.
-	 (if (eq atom 'sym-to-replace)
+    (if (subrp body)
+        ;; Non-Lisp code, can't do any replacement
+        body
+      (if (listp body)
+	  ;; assume V18 byte compiler
+	  (setq constant-vector
+	        (car (delq nil (mapcar
+			        (lambda (elt)
+				  (and (listp elt)
+				       (vectorp (setq constant-vector (nth 2 elt)))
+				       constant-vector))
+			        body))))
+        ;; assume EMACS byte compiler   (eq (compiled-function-p body) t)
+        (setq constant (if (fboundp 'compiled-function-constants)
+			   (compiled-function-constants body)
+		         (aref body 2))
+	      constant-vector (when (vectorp constant) constant)))
+      (if constant-vector
+	  ;; Code is byte-compiled.
+	  (hypb:constant-vector-symbol-replace
+	   constant-vector sym-to-replace replace-with-sym)
+        ;;
+        ;; Code is not byte-compiled.
+        ;; Replaces occurrence of symbol within lists only.
+        (hypb:map-sublists
+         (lambda (atom list)
+	   ;; The ' in the next line *is* required for proper substitution.
+	   (when (eq atom 'sym-to-replace)
 	     (let ((again t))
 	       (while (and again list)
-		 (if (eq (car list) atom)
+	         (if (eq (car list) atom)
 		     (progn (setcar list replace-with-sym)
 			    (setq again nil))
 		   (setq list (cdr list)))))))
-       body))
-    body))
+         body))
+      body)))
 
 ;; Derived from pop-global-mark of "simple.el" in GNU Emacs.
 (defun hypb:goto-marker (marker)
@@ -480,8 +480,8 @@ structure as LIST.  FUNC is therefore normally used just for its side-effects."
 (defun hypb:map-vector (func object)
   "Return list of results of application of FUNC to each element of OBJECT.
 OBJECT should be a vector or `byte-code' object."
-  (if (not (or (vectorp object) (hypb:emacs-byte-code-p object)))
-      (error "(hypb:map-vector): Second argument must be a vector or byte-code object"))
+  (unless (or (vectorp object) (hypb:emacs-byte-code-p object))
+    (error "(hypb:map-vector): Second argument must be a vector or byte-code object"))
   (let ((end (length object))
 	(i 0)
 	(result))
@@ -547,7 +547,8 @@ Removes any trailing newline at the end of the output."
       (apply 'call-process program infile buf nil args)
       (setq output (buffer-string))
       ;; Remove trailing newline from output.
-      (if (> (length output) 0) (setq output (substring output 0 -1)))
+      (when (> (length output) 0)
+        (setq output (substring output 0 -1)))
       (set-buffer-modified-p nil)
       (kill-buffer buf))
     output))
@@ -564,7 +565,7 @@ If in an Emacs Lisp mode buffer and no PREFIX-ARG is given, limit search to only
   (interactive (list (if (and (not current-prefix-arg) (equal (buffer-name) "*Locate*"))
 			 (read-string "Grep files listed here for: ")
 		       (let ((default (symbol-at-point)))
-			 (if default (setq default (symbol-name default)))
+			 (when default (setq default (symbol-name default)))
 			 (read-string (format "Rgrep below current dir for%s: "
 					      (if default
 						  (format " (default %s)" default)
@@ -615,16 +616,16 @@ The value returned is the value of the last form in BODY."
 (defun hypb:supercite-p ()
   "Return non-nil iff the Emacs add-on supercite package is in use."
   (let (hook-val)
-    (if (memq t (mapcar
-		 (lambda (hook-var)
-		   (and (boundp hook-var)
-			(progn (setq hook-val (symbol-value hook-var))
-			       (cond ((listp hook-val)
-				      (if (memq 'sc-cite-original hook-val)
+    (when (memq t (mapcar
+		   (lambda (hook-var)
+		     (and (boundp hook-var)
+			  (progn (setq hook-val (symbol-value hook-var))
+			         (cond ((listp hook-val)
+				        (when (memq 'sc-cite-original hook-val)
 					  t))
-				     ((eq hook-val 'sc-cite-original))))))
-		 '(mail-citation-hook mail-yank-hooks)))
-	t)))
+				       ((eq hook-val 'sc-cite-original))))))
+		   '(mail-citation-hook mail-yank-hooks)))
+      t)))
 
 (defun hypb:toggle-isearch-invisible (&optional arg)
   "Toggle interactive invisible searching on or off.
@@ -699,7 +700,7 @@ nor nil it means to not count the minibuffer window even if it is active."
 
 (defun hypb:constant-vector-symbol-replace
   (constant-vector sym-to-replace replace-with-sym)
-  ;; Replace symbols within a byte-compiled constant vector.
+  "Replace symbols within a byte-compiled constant vector."
   (let ((i (length constant-vector))
 	constant)
     (while (>= (setq i (1- i)) 0)
@@ -715,11 +716,11 @@ nor nil it means to not count the minibuffer window even if it is active."
   "Display an optional text FILE with the Hyperbole banner prepended.
 Without file, the banner is prepended to the current buffer."
   (let ((hyperbole-banner-path (expand-file-name "hyperbole-banner.png" hyperb:dir)))
-    (if (not (file-readable-p hyperbole-banner-path))
-	(setq hyperbole-banner-path (if (fboundp 'locate-data-file)
-					(locate-data-file "hyperbole-banner.png")
-				      (expand-file-name "hyperbole-banner.png"
-							data-directory))))
+    (unless (file-readable-p hyperbole-banner-path)
+      (setq hyperbole-banner-path (if (fboundp 'locate-data-file)
+				      (locate-data-file "hyperbole-banner.png")
+				    (expand-file-name "hyperbole-banner.png"
+						      data-directory))))
     (if (or (not (fboundp 'create-image))
 	    (not (display-graphic-p))
 	    (let ((button (next-button (point-min))))
@@ -757,8 +758,8 @@ Without file, the banner is prepended to the current buffer."
 	 (error "(hypb:oct-to-int): Bad octal number: %s" oct-str))
     (mapconcat (lambda (o)
 		 (setq dec-num (+ (* dec-num 8)
-				  (if (and (>= o ?0) (<= o ?7))
-				      (- o ?0)))))
+				  (when (and (>= o ?0) (<= o ?7))
+				    (- o ?0)))))
 	       oct-str "")
     dec-num))
 
