@@ -145,7 +145,7 @@
     (if mname
 	;; Next line needed to ensure mode name is always formatted as
 	;; a string.
-	(format-mode-line mname)
+	(format-mode-line (or (car-safe mname) mname))
       (capitalize (symbol-name (buffer-local-value 'major-mode buffer))))))
 
 (defun hui-menu-frame-name (frame)
