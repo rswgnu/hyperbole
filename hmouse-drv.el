@@ -1353,11 +1353,11 @@ return current point as a marker."
   "Set point to cursor position using SET-POINT-ARG-LIST and return t.
 If 'hmouse-set-point-command' is not bound to a function, this does nothing
 and returns nil."
-  (if (fboundp hmouse-set-point-command)
-      (or (if set-point-arg-list
-	      (funcall hmouse-set-point-command set-point-arg-list)
-	    (funcall hmouse-set-point-command))
-	  t)))
+  (when (fboundp hmouse-set-point-command)
+    (or (if set-point-arg-list
+	    (funcall hmouse-set-point-command set-point-arg-list)
+	  (funcall hmouse-set-point-command))
+	t)))
 
 ;; "hsettings.el" contains documentation for this variable.
 (or (boundp 'smart-scroll-proportional)

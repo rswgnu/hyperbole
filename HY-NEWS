@@ -17,18 +17,40 @@
 
   KOUTLINER
 
-    - Support use of these additional Emacs commands: beginning-of-visual-line,
-      end-of-visual-line,  and kill-visual-line.
+    - Visual Command Support: Use of these additional Emacs commands:
+      beginning-of-visual-line, end-of-visual-line,  and kill-visual-line.
 
   MENUS
+
+    - Global Key Bindings for Hyperbole Menu Items: Use
+      {M-x hyperbole-set-key RET} to create a shorter global key binding
+      to any Hyperbole minibuffer item.
 
     - Gbut/Create: When invoked with a prefix argument, will create a
       global implicit button rather than an explicit button.  Simple provide
       a name/label and the text of the implicit button including delimiters.
 
+    - Gbut/Delete: Added to delete explicit or implicit global buttons.
+
     - Gbut/Modify: The name/label and the text (and thus the action) of global
       implicit buttons may now be modified.  Hyperbole automatically determines
       whether a button is explicit or implicit from the button name selected.
+
+   MOUSE
+
+    - Click Emacs Buttons with Left Mouse Button: When using mouse-1
+      to follow Emacs buttons/links, Emacs actually uses the binding
+      of mouse-2.  With unshifted Hyperbole mouse keys, this mouse-2
+      binding is incompatible as it is the Action Key.  This release
+      resolves this problem and allows either mouse-1 or mouse-2 to be
+      used to click on native Emacs buttons.
+
+    - Drag and Drop Region with Left Mouse Button: When
+      'mouse-drag-and-drop-region' is non-nil and a region is active,
+      Hyperbole now properly supports using mouse-1 to visually drag from
+      within the region and drop the text somewhere else.  Then click the
+      left mouse button again to de-activate the dropped region before
+      typing.
 
 ===========================================================================
 *                                   V7.1.1

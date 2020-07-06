@@ -388,6 +388,28 @@ Select the corresponding window as well."
   (when (numberp (posn-point position))
     (goto-char (posn-point position))))
 
+;; Based on mouse-drag-region from Emacs mouse.el.
+(defun hmouse-drag-region (start-event)
+  "Set the region to the text that the mouse is dragged over.
+If not the start of a region drag-and-drop, then depress the Action Key.
+Highlight the drag area as you move the mouse.
+This must be bound to a button-down mouse event.
+In Transient Mark mode, the highlighting remains as long as the mark
+remains active.  Otherwise, it remains until the next input event.
+
+When the region already exists and `mouse-drag-and-drop-region'
+is non-nil, this moves the entire region of text to where mouse
+is dragged over to."
+  (interactive "e")
+  (if (and mouse-drag-and-drop-region
+           (not (member 'triple (event-modifiers start-event)))
+           (equal (mouse-posn-property (event-start start-event) 'face) 'region))
+      (mouse-drag-and-drop-region start-event)
+    ;; Give temporary modes such as isearch a chance to turn off.
+    (run-hooks 'mouse-leave-buffer-hook)
+    (action-key-depress start-event)
+    (mouse-drag-track start-event)))
+
 ;; Based on a function from Emacs mouse.el.
 (defun hmouse-move-point-emacs (event &optional promote-to-region)
   "Move point to the position clicked on with the mouse.
@@ -471,16 +493,15 @@ point determined by `mouse-select-region-move-to-beginning'."
 With optional MIDDLE-KEY-ONLY-FLAG non-nil, bind only the middle mouse key."
   (interactive)
   ;; Globally Emacs uses key-translation-map to link mouse-1 to
-  ;; do whatever mouse-2 does but because Hyperbole uses both down
-  ;; and up bindings on mouse2, this does not work to follow links.
-  ;; Disable use of mouse following on button1 and use button2 only
-  ;; for that.  Use mouse-1 only for setting point and drag selecting
-  ;; regions.
-  ;;
-  ;; Don't bind mouse-1 to `action-key-depress-emacs' to allow it to
-  ;; follow links because that will disable the region highlighting
-  ;; that we would rather allow.`
-  (customize-set-variable 'mouse-1-click-follows-link nil)
+  ;; do whatever mouse-2 does when 'mouse-1-click-follows-link' is
+  ;; non-nil (the default) and point is on an Emacs button.
+  ;; Since Hyperbole rebinds mouse-2 here, this does not work by
+  ;; default.  We fix that here by overriding the setting of
+  ;; down-mouse-1 to include the down Action Key command plus the
+  ;; original mouse-1 command.  Then when mouse-1 is released on an
+  ;; Emacs button, the Action Key command is run which handles
+  ;; activating the button/following a link.
+  (global-set-key [down-mouse-1] 'hmouse-drag-region)
   ;;
   ;; Unbind Emacs push-button mouse keys since Hyperbole handles them.
   (define-key button-map [mouse-2] nil)
@@ -489,19 +510,8 @@ With optional MIDDLE-KEY-ONLY-FLAG non-nil, bind only the middle mouse key."
   ;; Remove push-button help echo string for mouse-2 key.
   (put 'default-button 'help-echo nil)
   ;;
-  ;; In Info-mode, Emacs uses key-translation-map to link mouse-1 to
-  ;; do whatever mouse-2 does but because Hyperbole uses both down
-  ;; and up bindings on mouse2, this does not work.  So we rebind
-  ;; mouse-1 in Info mode to be an actual Action Mouse Key (which
-  ;; makes it follow Info links/cross-references properly, doing a
-  ;; superset of what it did before).
-  (var:add-and-run-hook 'Info-mode-hook
- 			(lambda ()
-			  (define-key Info-mode-map [down-mouse-1] 'action-key-depress-emacs)
-			  (define-key Info-mode-map [mouse-1] 'action-mouse-key-emacs)
-			  (define-key Info-mode-map [double-down-mouse-1] 'action-key-depress-emacs)
-			  (define-key Info-mode-map [double-mouse-1] 'action-mouse-key-emacs)
-			  (define-key Info-mode-map [mouse-2] nil)))
+  ;; Remove mouse-2 binding In Info-mode since Hyperbole handles it.
+  (var:add-and-run-hook 'Info-mode-hook (lambda () (define-key Info-mode-map [mouse-2] nil)))
   ;;
   (unless (eq window-system 'dps)
     ;; X, macOS or MS Windows

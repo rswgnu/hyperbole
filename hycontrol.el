@@ -849,8 +849,8 @@ is set to 1.  If it is > `hycontrol-maximum-units', it is set to
 (defun hycontrol-disable-modes ()
   "Disable HyControl Frames and Windows modes when active."
   (interactive)
-  (if (or hycontrol-frames-mode hycontrol-windows-mode)
-      (hycontrol-invert-mode-line))
+  (when (or hycontrol-frames-mode hycontrol-windows-mode)
+    (hycontrol-invert-mode-line))
   (hycontrol-frames-mode -1)
   (hycontrol-windows-mode -1))
 

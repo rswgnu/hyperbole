@@ -154,8 +154,8 @@ WITHOUT ANY WARRANTY, without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</P>
 
 <PRE>
-Edition 7.1.1
-Printed March 1, 2020.
+Edition 7.1.2
+Printed July 5, 2020.
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -196,8 +196,8 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 @sp 2
 
 @example
-Edition 7.1.1
-March 1, 2020
+Edition 7.1.2
+July 5, 2020
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -408,6 +408,11 @@ Customization
 * Invisible Text Searches::
 * Button Colors::
 
+Global Key Bindings
+
+* Binding Minibuffer Menu Items::
+* Default Global Bindings::
+
 Smart Key Reference
 
 * Smart Mouse Keys::
@@ -476,7 +481,7 @@ Smart Keyboard Keys
 @chapter Introduction
 
 This edition of the GNU Hyperbole Manual is for use with any version
-7.1.1 or greater of GNU Hyperbole.  Hyperbole runs atop GNU Emacs 24.3
+7.1.2 or greater of GNU Hyperbole.  Hyperbole runs atop GNU Emacs 24.3
 or higher.  It will trigger an error if your Emacs is older.
 
 This chapter summarizes the structure of the rest of the manual,
@@ -1779,7 +1784,8 @@ Global buttons are managed with the Hyperbole Gbut/ menu accessed with
 global button name, an action type, and the action's associated
 arguments, such as a file to link to.  It then creates the button.  To
 activate the button, use the Act menu item, @bkbd{C-h h g a}.  Type
-the button's name and its action will be executed.
+the button's name and its action will be  To remove the
+button, use the Delete menu item, @bkbd{C-h h g d}; @pxref{Deletion}.
 
 Global buttons are actually explicit buttons stored at the end of your
 personal button file, @pxref{Button Files}.  You can always go into that
@@ -3055,9 +3061,9 @@ selected button.  The button's delimiters are removed to confirm the
 deletion.  If the delete command is invoked with a prefix argument, then
 both the button label and the delimiters are removed as confirmation.
 
-@vindex hui:ebut-delete-confirm-p
+@vindex hui:hbut-delete-confirm-flag
 Presently there is no way to recover a deleted button; it must
-be recreated.  Therefore, the @code{hui:ebut-delete-confirm-p} variable
+be recreated.  Therefore, the @code{hui:hbut-delete-confirm-flag} variable
 is true by default, causing Hyperbole to require confirmation before
 interactively deleting explicit buttons.  Set it to @samp{nil} if you
 prefer no confirmation.
@@ -3299,13 +3305,15 @@ Action or Assist Key action to use when no matching context is found.
 @xref{Smart Key - Default Context}, for details.
 
 @cindex minibuffer menus
+@cindex menu item key bindings
 The rest of this section discusses only the
 specialized @dfn{minibuffer menus} which appear in the minibuffer
-window and work with all emacs versions on all display devices.
-They provide similar capabilities to those of the Hyperbole menubar
-but additionally allow for fast menu item selection via the keyboard
-or mouse.  When used with the keyboard, they provide command access
-similar to key bindings.
+window and work with all emacs versions on all display devices.  They
+provide similar capabilities to those of the Hyperbole menubar but
+additionally allow for fast menu item selection via the keyboard or
+mouse.  When used with the keyboard, they provide command access
+similar to key bindings.  In fact, any menu item can be bound to a
+global key sequence.  @xref{Binding Minibuffer Menu Items}.
 
 @kindex C-h h
 @cindex minibuffer menu
@@ -7136,17 +7144,37 @@ addition to any non-mouse-sensitive button highlighting.
 @node Global Key Bindings, Koutliner Keys, Setup, Top
 @appendix Global Key Bindings
 
-@noindent
 @cindex key binding list
-This appendix summarizes all of Hyperbole's global key bindings and
-whether each overrides any existing binding or not.  It also describes
-how to temporarily disable these bindings and how to manage whether
-Hyperbole overrides local, mode-specific key bindings that hide
-global Hyperbole keys.
+This appendix covers two topics: 1. how to bind Hyperbole minibuffer
+menu items to global keys and 2. summaries of all of Hyperbole's
+global key bindings and whether each overrides any existing binding or
+not.  It also describes how to temporarily disable these bindings and
+how to manage whether Hyperbole overrides local, mode-specific key
+bindings that hide global Hyperbole keys.
 
-These bindings can be viewed and edited from either the
-Cust/KeyBindings minibuffer menu or from the Hyperbole menubar menu as
-shown here:
+@menu
+* Binding Minibuffer Menu Items::
+* Default Global Bindings::
+@end menu
+
+@node Binding Minibuffer Menu Items, Default Global Bindings, Global Key Bindings, Global Key Bindings
+@section Binding Minibuffer Menu Items
+
+@cindex binding keys
+@cindex minibuffer menu bindings
+@findex hyperbole-set-key
+Use @bkbd{M-x hyperbole-set-key @key{RET}} to bind any global key to
+any Hyperbole minibuffer item.  This command will first prompt for the
+key sequence you want to use to activate the menu item.  Immediately
+after it will display the Hyperbole top-level minibuffer menu.  Simply
+select the item you want to bind to your key.
+
+@node Default Global Bindings,  , Binding Minibuffer Menu Items, Global Key Bindings
+@section Default Global Bindings
+
+Hyperbole's default global key bindings can be viewed and edited from
+either the Cust/KeyBindings minibuffer menu or from the Hyperbole
+menubar menu as shown here:
 
 @float Image,image:Change-Key-Bindings
 @caption{Global Key Bindings Menu}

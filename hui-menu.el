@@ -395,6 +395,7 @@ REBUILD-FLAG is non-nil, in which case the menu is rebuilt."
 		 '("Global-Button"
 		   :filter hui-menu-global-buttons
 		   ["Create" hui:gbut-create t]
+		   ["Delete" hui:gbut-delete t]
 		   ["Edit"   hui:gbut-modify t]
 		   ["Help"   gbut:help t]
 		   ["Modify" hui:gbut-modify t]

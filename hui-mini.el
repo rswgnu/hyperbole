@@ -33,6 +33,9 @@
 (defvar hui:menu-top             "\C-t"
   "*Character string which returns to top Hyperbole menu.")
 
+(defvar hui:menu-keys            ""
+  "String of keys pressed for current or last Hyperbole command not including the prefix used to invoke the Hyperbole menu.")
+
 (defvar hui:menu-p nil
   "Non-nil iff the Hyperbole minibuffer menu is active.")
 
@@ -45,11 +48,11 @@
 
 ;;; Used as the autoloaded main entry point to Hyperbole.  The "hyperbole"
 ;;; file is loaded when this is invoked.
-;;; This command brings up a series of menus of Hyperbole commands.
+;;; This command brings up a series of minibuffer menus of Hyperbole commands.
 ;;;###autoload
 (defun hyperbole (&optional menu menu-list doc-flag help-string-flag)
-  "Invokes the Hyperbole minibuffer menu when not already active.
-\\[hyperbole] runs this.  Non-interactively, returns t if a menu is
+  "Invoke the Hyperbole minibuffer menu when not already active.
+\\[hyperbole] runs this.  Non-interactively, return t if a menu is
 displayed by this call, else nil (e.g. when already in a Hyperbole
 mini-menu).
 
@@ -76,6 +79,36 @@ documentation, not the full text."
 	  t)
       (setq hui:menu-p nil))))
 
+;;;###autoload
+(defun hyperbole-set-key (key command)
+  "Give KEY a global binding of Hyperbole minibuffer COMMAND keys.
+KEY is a key sequence; noninteractively, it is a string or vector
+of characters or event types, and non-ASCII characters with codes
+above 127 (such as ISO Latin-1) can be included if you use a vector.
+
+COMMAND is a string of the ASCII key presses used to invoke a
+Hyperbole minibuffer command.
+
+Note that if KEY has a local binding in the current buffer,
+that local binding will continue to shadow any global binding
+that you make with this function."
+  (interactive
+   (let* ((menu-prompting nil)
+          (key (read-key-sequence "Set Hyperbole key globally: ")))
+     (setq hui:menu-keys "")
+     (list key
+	   (concat
+	    ;; Normalize the key prefix that invokes the Hyperbole minibuffer menu
+	    (kbd (key-description (car (where-is-internal 'hyperbole))))
+            (hui:get-keys)))))
+  (or (vectorp key) (stringp key)
+      (signal 'wrong-type-argument (list 'arrayp key)))
+  (if (or (not (stringp command)) (string-empty-p command))
+      (user-error "(hyperbole-set-key): No Hyperbole menu item selected")
+    (define-key (current-global-map) key `(lambda () (interactive) (kbd-key:act ,command)))
+    (when (called-interactively-p 'interactive)
+      (message "{%s} set to invoke {%s}" (key-description key) (key-description command)))))
+
 (defun hui:menu-act (menu &optional menu-list doc-flag help-string-flag)
   "Prompt user with Hyperbole MENU (a symbol) and perform selected item.
 Optional second argument MENU-LIST is a Hyperbole menu list structure from
@@ -88,6 +121,7 @@ non-nil means show documentation for any item that is selected by the
 user.  HELP-STRING-FLAG non-nil means show only the first line of the
 documentation, not the full text."
 
+  (setq hui:menu-keys "")
   (let ((set-menu '(or (and menu (symbolp menu)
 			    (setq menu-alist
 				  (cdr (assq menu (or menu-list hui:menus)))))
@@ -119,6 +153,46 @@ documentation, not the full text."
 			      rtn (eval act-form))))))
 	    (t (setq show-menu nil))))
     rtn))
+
+(defun hui:get-keys ()
+  "Invoke the Hyperbole minibuffer menu when not already active and return menu keys pressed.
+Return nil when already in a Hyperbole mini-menu."
+  (if (and hui:menu-p (> (minibuffer-depth) 0))
+      (progn (beep) nil)
+    (unwind-protect
+	(progn
+	  (hyperb:init-menubar)
+	  (setq hui:menu-p t)
+	  (hui:menu-get-keys 'hyperbole))
+      (setq hui:menu-p nil))))
+
+(defun hui:menu-get-keys (menu &optional menu-list)
+  "Prompt user with Hyperbole MENU (a symbol), select an item and return the keys pressed for the item.
+Optional second argument MENU-LIST is a Hyperbole menu list structure from
+which to extract MENU.  It defaults to `hui:menus'.  See its definition for
+the menu list structure."
+  (let ((set-menu '(or (and menu (symbolp menu)
+			    (setq menu-alist
+				  (cdr (assq menu (or menu-list hui:menus)))))
+		       (hypb:error "(hui:menu-act): Invalid menu symbol arg: `%s'"
+			      menu)))
+	(show-menu t)
+	menu-alist act-form)
+    (while (and show-menu (eval set-menu))
+      (cond ((and (consp (setq act-form (hui:menu-select menu-alist)))
+		  (cdr act-form)
+		  (symbolp (cdr act-form)))
+	     ;; Display another menu
+	     (setq menu (cdr act-form)))
+	    (act-form
+	     (let ((prefix-arg current-prefix-arg))
+	       (cond ((or (symbolp act-form)
+			  (stringp act-form))
+		      (unless (eq act-form t)
+			(setq show-menu nil)))
+		     (t (setq show-menu nil)))))
+	    (t (setq show-menu nil))))
+    hui:menu-keys))
 
 (defun hui:menu-backward-item ()
   "Move point back to the previous start of a selectable minibuffer menu item.  If on the first item, move to the last."
@@ -290,27 +364,28 @@ constructs.  If not given, the top level Hyperbole menu is used."
   (let ((item-keys (mapcar (lambda (item) (aref item 0))
 			    (mapcar 'car (cdr menu-alist))))
 	 sublist)
-    (if (setq sublist (memq key item-keys))
-	(let* ((label-act-help-list
-		(nth (- (1+ (length item-keys)) (length sublist))
-		     menu-alist))
-	       (act-form (car (cdr label-act-help-list))))
-	  (if (or (eq hargs:reading-p 'hmenu-help)
-		  (and doc-flag
-		       ;; Not another menu to display
-		       (not (and (listp act-form) (atom (car act-form)) (atom (cdr act-form))))))
-	      (let* ((help-str (car (cdr (cdr label-act-help-list))))
-		     (cmd (if help-str nil (car (cdr label-act-help-list))))
-		     (doc-str (if help-str nil (and (functionp cmd) (documentation cmd)))))
-		(and doc-str (string-match "\n" doc-str)
-		     (setq doc-str (substring doc-str 0 (match-beginning 0))))
-		(setq help-str (or help-str doc-str "No help documentation for this item."))
-		(if help-string-flag
-		    help-str
-		  (concat (car label-act-help-list) "\n  "
-			  help-str "\n    Action: "
-			  (prin1-to-string act-form))))
-	    act-form)))))
+    (when (setq sublist (memq key item-keys))
+      (setq hui:menu-keys (concat hui:menu-keys (downcase (char-to-string key))))
+      (let* ((label-act-help-list
+	      (nth (- (1+ (length item-keys)) (length sublist))
+		   menu-alist))
+	     (act-form (car (cdr label-act-help-list))))
+	(if (or (eq hargs:reading-p 'hmenu-help)
+		(and doc-flag
+		     ;; Not another menu to display
+		     (not (and (listp act-form) (atom (car act-form)) (atom (cdr act-form))))))
+	    (let* ((help-str (car (cdr (cdr label-act-help-list))))
+		   (cmd (if help-str nil (car (cdr label-act-help-list))))
+		   (doc-str (if help-str nil (and (functionp cmd) (documentation cmd)))))
+	      (and doc-str (string-match "\n" doc-str)
+		   (setq doc-str (substring doc-str 0 (match-beginning 0))))
+	      (setq help-str (or help-str doc-str "No help documentation for this item."))
+	      (if help-string-flag
+		  help-str
+		(concat (car label-act-help-list) "\n  "
+			help-str "\n    Action: "
+			(prin1-to-string act-form))))
+	  act-form)))))
 
 (defun hui:menu-line (menu-alist)
   "Return a menu line string built from MENU-ALIST."
@@ -529,8 +604,8 @@ constructs.  If not given, the top level Hyperbole menu is used."
 	 (("EButton>")
 	  ("Act"    hui:ebut-act
 	    "Activates explicit button at point or prompts for explicit button to activate.")
-	  ("Create" hui:ebut-create)
-	  ("Delete" hui:ebut-delete)
+	  ("Create" hui:ebut-create "Adds an explicit button to the current buffer.")
+	  ("Delete" hui:ebut-delete "Removes an explicit button from the current buffer.")
 	  ("Edit"   hui:ebut-modify "Modifies any desired button attributes.")
 	  ("Help/"  (menu . ebut-help) "Summarizes button attributes.")
 	  ("Info"
@@ -566,6 +641,7 @@ constructs.  If not given, the top level Hyperbole menu is used."
 	 (("GButton>")
 	  ("Act"    gbut:act        "Activates global button by name.")
 	  ("Create" hui:gbut-create "Adds a global button to gbut:file.")
+	  ("Delete" hui:gbut-delete "Removes a global button from gbut:file.")
 	  ("Edit"   hui:gbut-modify "Modifies global button attributes.")
 	  ("Help"   gbut:help       "Reports on a global button by name.")
 	  ("Info"   (id-info "(hyperbole)Global Buttons")

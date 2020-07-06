@@ -4,7 +4,7 @@
 ;;
 ;; Orig-Date:    22-Nov-91 at 01:37:57
 ;;
-;; Copyright (C) 1991-2016  Free Software Foundation, Inc.
+;; Copyright (C) 1991-2020  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
 ;;
 ;; This file is part of GNU Hyperbole.
@@ -358,8 +358,8 @@ Allows for multiple key sequences strung together."
 (defun kbd-key:hyperbole-mini-menu-key-p (key-series)
   "Return t if normalized KEY-SERIES appears to invoke a Hyperbole menu item or sequence of keys, else nil.
 Also, initialize `kbd-key:mini-menu-key' to the key sequence that invokes the Hyperbole minibuffer menu."
-  (when key-series
-    (unless kbd-key:mini-menu-key
+  (when (stringp key-series)
+    (unless (and (stringp kbd-key:mini-menu-key) (not (string-empty-p kbd-key:mini-menu-key)))
       (setq kbd-key:mini-menu-key (regexp-quote (kbd-key:normalize (key-description (car (where-is-internal 'hyperbole)))))))
     (when (string-match kbd-key:mini-menu-key key-series)
       t)))

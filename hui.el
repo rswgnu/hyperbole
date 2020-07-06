@@ -26,13 +26,13 @@
 ;;; Public variables
 ;;; ************************************************************************
 
-(defcustom hui:ebut-delete-confirm-p t
+(defcustom hui:hbut-delete-confirm-flag t
   "*Non-nil means prompt before interactively deleting explicit buttons."
   :type 'boolean
   :group 'hyperbole-buttons)
 
 (defcustom hui:ebut-prompt-for-action nil
-  "*Non-nil means prompt for a button-specific action when creating buttons."
+  "*Non-nil means prompt for a button-specific action when creating explicit buttons."
   :type 'boolean
   :group 'hyperbole-buttons)
 
@@ -117,9 +117,8 @@ Return t if button is deleted, nil if user chooses not to delete or signal
 an error otherwise.  If called interactively, prompt user whether to delete
 and derive BUT-KEY from the button that point is within.
 Signal an error if point is not within a button."
-  (interactive (list (if (ebut:at-p)
-			 (hattr:get 'hbut:current 'lbl-key)
-		       nil)))
+  (interactive (list (when (ebut:at-p)
+		       (hattr:get 'hbut:current 'lbl-key))))
   (cond ((null but-key)
 	 (hypb:error
 	  "(ebut-delete): Point is not over the label of an existing button"))
@@ -127,12 +126,13 @@ Signal an error if point is not within a button."
 	 (hypb:error
 	  "(ebut-delete): Invalid label key argument: '%s'" but-key)))
   (let ((interactive (called-interactively-p 'interactive)))
-    (if (and hui:ebut-delete-confirm-p interactive)
+    (if (and hui:hbut-delete-confirm-flag interactive)
 	(if (y-or-n-p (format "Delete button %s%s%s? "
 			      ebut:start
 			      (hbut:key-to-label but-key) ebut:end))
 	    (hui:ebut-delete-op interactive but-key key-src)
-	  (message ""))
+	  (message "")
+	  nil)
       (hui:ebut-delete-op interactive but-key key-src))))
 
 (defun hui:ebut-edit ()
@@ -330,6 +330,21 @@ See `hui:gibut-create' for details."
 	  (save-buffer))
         (message "`%s' global explicit button created." lbl)))))
 
+(defun hui:gbut-delete (but-key)
+  "Delete global Hyperbole button given by BUT-KEY.
+Return t if button is deleted, nil if user chooses not to delete or signal
+an error otherwise.  If called interactively, prompt user whether to delete
+and derive BUT-KEY from the button that point is within.
+Signal an error if point is not within a button."
+  (interactive (list (save-excursion
+		       (hui:buf-writable-err
+			(find-file-noselect gbut:file) "gbut-delete")
+		       (hbut:label-to-key
+			(hargs:read-match "Global button to delete: "
+					  (mapcar #'list (gbut:label-list))
+					  nil t nil 'gbut)))))
+  (hui:hbut-delete but-key gbut:file))
+
 (defun hui:gbut-modify (lbl-key)
   "Modify a global Hyperbole button given by LBL-KEY.
 The button may be explicit or a labeled implicit button.
@@ -459,6 +474,42 @@ The default is the current button."
 	  ((not (hbut:is-p but))
 	   (hypb:error "(hbut-act): Button is invalid; it has no attributes"))
 	  (t (hui:but-flash) (hbut:act but)))))
+
+(defun hui:hbut-delete (but-key &optional key-src)
+  "Delete a Hyperbole button given by BUT-KEY in optional KEY-SRC (default is current buffer).
+Return t if button is deleted, nil if user chooses not to delete or signal
+an error otherwise.  If called interactively, prompt user whether to delete
+and derive BUT-KEY from the button that point is within.
+Signal an error if point is not within a button."
+  (interactive (list (when (hbut:at-p)
+		       (hattr:get 'hbut:current 'lbl-key))))
+  (cond ((null but-key)
+	 (hypb:error
+	  "(hbut-delete): Point is not over the label of an existing button"))
+	((not (stringp but-key))
+	 (hypb:error
+	  "(hbut-delete): Invalid label key argument: '%s'" but-key)))
+  (save-excursion
+    (set-buffer (if (bufferp key-src) key-src (find-file-noselect key-src)))
+    (let ((interactive (called-interactively-p 'interactive))
+	  (label (hbut:key-to-label but-key)))
+      (cond ((ebut:to but-key)
+	     (if (and hui:hbut-delete-confirm-flag interactive)
+		 (if (y-or-n-p (format "Delete button %s%s%s? "
+				       ebut:start label ebut:end))
+		     (hui:ebut-delete-op interactive but-key key-src)
+		   (message "")
+		   nil)
+	       (hui:ebut-delete-op interactive but-key key-src)))
+	    ((ibut:to but-key)
+	     (if (and hui:hbut-delete-confirm-flag interactive)
+		 (if (y-or-n-p (format "Delete button %s%s%s? "
+				       ibut:label-start label ibut:label-end))
+		     (hui:ibut-delete-op interactive but-key key-src)
+		   (message "")
+		   nil)
+	       (hui:ibut-delete-op interactive but-key key-src)))
+	    (t (hypb:error "(hbut-delete): Invalid button '%s'" label))))))
 
 (defun hui:hbut-help (&optional but)
   "Check for and explain an optional button given by symbol, BUT.
@@ -824,16 +875,14 @@ within."
 	  (if ebut
 	      (ebut:delete ebut)
 	    (hypb:error "(ebut-delete): No valid %s button in %s"
-		   (ebut:key-to-label but-key) buf))
-	  )
+		   (ebut:key-to-label but-key) buf)))
 	(progn (set-buffer buf)
 	       (if interactive
 		   (progn
 		     (call-interactively 'hui:ebut-unmark)
 		     (message "Button deleted."))
 		 (hui:ebut-unmark but-key key-src))
-	       (if (hmail:reader-p) (hmail:msg-narrow))
-	       )
+	       (when (hmail:reader-p) (hmail:msg-narrow)))
       (hypb:error "(ebut-delete): You may not delete buttons from this buffer"))))
 
 (defun hui:ebut-delimit (start end instance-str)
@@ -858,44 +907,42 @@ All args are optional, the current button and buffer file are the defaults."
 		(let ((buffer-read-only) start end)
 		  (setq start (match-beginning 0)
 			end (match-end 0))
-		  (and (fboundp 'hproperty:but-delete)
-		       (hproperty:but-delete start))
+		  (when (fboundp 'hproperty:but-delete)
+		    (hproperty:but-delete start))
 		  (skip-chars-backward " \t\n\r")
 		  (skip-chars-backward "0-9")
-		  (if (eq (preceding-char) (string-to-char ebut:instance-sep))
-		      (setq start (1- (point))))
-		  (if (search-backward ebut:start (- (point) (hbut:max-len)) t)
-		      (if current-prefix-arg
-			  ;; Remove button label, delimiters and preceding
-			  ;; space, if any.
-			  (delete-region (max (point-min)
-					      (1- (match-beginning 0)))
-					 end)
-			;;
-			;; Remove button delimiters only.
-			;;
-			;; Remove button ending delimiter
-			(delete-region start end)
-			;; Remove button starting delimiter
-			(delete-region (match-beginning 0)
-				       (match-end 0))))))))
+		  (when (eq (preceding-char) (string-to-char ebut:instance-sep))
+		    (setq start (1- (point))))
+		  (when (search-backward ebut:start (- (point) (hbut:max-len)) t)
+		    (if current-prefix-arg
+			;; Remove button label, delimiters and preceding
+			;; space, if any.
+			(delete-region (max (point-min)
+					    (1- (match-beginning 0)))
+				       end)
+		      ;;
+		      ;; Remove button delimiters only.
+		      ;;
+		      ;; Remove button ending delimiter
+		      (delete-region start end)
+		      ;; Remove button starting delimiter
+		      (delete-region (match-beginning 0) (match-end 0))))))))
     (if (called-interactively-p 'interactive)
 	(save-excursion
-	  (if (search-forward ebut:end nil t) (funcall form)))
+	  (when (search-forward ebut:end nil t) (funcall form)))
       ;; Non-interactive invocation.
       (let ((cur-p))
 	(if (and (or (null key-src) (eq key-src buffer-file-name))
 		 (or (null directory) (eq directory default-directory)))
 	    (setq cur-p t)
-	  (set-buffer (find-file-noselect
-			(expand-file-name key-src directory))))
+	  (set-buffer (find-file-noselect (expand-file-name key-src directory))))
 	(save-excursion
 	  (goto-char (point-min))
-	  (if (re-search-forward (ebut:label-regexp but-key) nil t)
-	      (progn (funcall form)
-		     ;; If modified a buffer other than the current one,
-		     ;; save it.
-		     (or cur-p (save-buffer)))))))))
+	  (when (re-search-forward (ebut:label-regexp but-key) nil t)
+	    (funcall form)
+	    ;; If modified a buffer other than the current one,
+	    ;; save it.
+	    (or cur-p (save-buffer))))))))
 
 (defun hui:file-find (file-name)
   "If FILE-NAME is readable, find it, else signal an error."
@@ -1023,6 +1070,31 @@ Optional NO-SORT means display in decreasing priority order (natural order)."
   (let ((display-buffer-alist
 	 '(("\\`*Help" . ((lambda (buf _alist) (switch-to-buffer buf)))))))
     (hui:htype-help htype-sym no-sort)))
+
+(defun hui:ibut-delete-op (interactive but-key key-src)
+  "INTERACTIVEly or not delete explicit Hyperbole button given by BUT-KEY in KEY-SRC.
+KEY-SRC may be a buffer or a pathname; when nil the current buffer is used.
+Return t if button is deleted, signal error otherwise.  If called
+with INTERACTIVE non-nil, derive BUT-KEY from the button that point is
+within."
+  (let ((buf (current-buffer)) (ibut))
+    (if (if interactive
+	    (ibut:delete)
+	  (cond ((or (null key-src) (and (bufferp key-src) (setq buf key-src)))
+		 (setq ibut (ibut:get but-key nil key-src)))
+		((and (stringp key-src)
+		      (setq buf (find-file-noselect key-src)))
+		 (setq ibut (ibut:get but-key buf)))
+		(t (hypb:error "(ibut-delete): Invalid key-src: '%s'" key-src)))
+	  (if ibut
+	      (ibut:delete ibut)
+	    (hypb:error "(ibut-delete): No valid %s button in %s"
+		   (ibut:key-to-label but-key) buf)))
+	(progn (set-buffer buf)
+	       (when interactive
+		 (message "Button deleted."))
+	       (when (hmail:reader-p) (hmail:msg-narrow)))
+      (hypb:error "(ibut-delete): You may not delete buttons from this buffer"))))
 
 (defun hui:ibut-message (but-modify-flag)
   (let ((actype (symbol-name (hattr:get 'hbut:current 'actype)))
