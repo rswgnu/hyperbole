@@ -1400,14 +1400,14 @@ Return symbol for button deleted or nil."
       (when (and start end)
 	(save-excursion
 	  (set-buffer (if (bufferp loc) loc (find-file-noselect loc)))
-	  (when (ibut:to but-key)
+	  (when (ibut:to but-sym)
 	    (let (buffer-read-only)
 	      (if (< (point) start)
 		  ;; Find beginning of button named label delimiter and delete
 		  ;; from there.
 		  (progn (goto-char (- (point) (length ibut:label-start)))
 			 (delete-region (point) end))
-		  ;; No label, just delete delimited ibutton text.
+		;; No label, just delete delimited ibutton text.
 		(delete-region start end))
 	      (when (looking-at "[ \t]*\r?\n")
 		(delete-region (point) (match-end 0)))

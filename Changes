@@ -1,5 +1,17 @@
 2020-07-08  Bob Weiner  <rsw@gnu.org>
 
+* hbut.el (hbut:delete, ibut:delete): Added.
+
+2020-07-08  Bob Weiner  <rsw@gnu.org>
+
+* hbut.el (gbut:to): Added to move to a global button file button.
+
+==============================================================================
+V7.1.3 changes ^^^^:
+==============================================================================
+
+2020-07-08  Bob Weiner  <rsw@gnu.org>
+
 * hversion.el: Released 7.1.2.
 
 * hmouse-sh.el (hmouse-drag-region): Added.
@@ -5103,7 +5115,7 @@ V5.10 changes ^^^^:
     and used in horizontal drag action; removed window-min-height setting.
                 (hmouse-vertical-assist-drag):
                 (hmouse-horizontal-assist): Renamed to hmouse-horizontal-assist-drag.
-		(hmouse-horizontal): Delted.
+		(hmouse-horizontal): Deleted.
 
 ==============================================================================
 V5.09 changes ^^^^:

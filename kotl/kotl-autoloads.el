@@ -194,10 +194,14 @@ See documentation for `kcell:ref-to-id' for valid cell-ref formats.
 (autoload 'kotl-mode "kotl-mode" "\
 The major mode used to edit and view koutlines.
 It provides the following keys:
-\\{kotl-mode-map}" t nil)
+\\{kotl-mode-map}
+
+\(fn)" t nil)
 
 (autoload 'kotl-mode:example "kotl-mode" "\
-Display the Koutliner example file for demonstration use by a user." t nil)
+Display the Koutliner example file for demonstration use by a user.
+
+\(fn)" t nil)
 
 (autoload 'kotl-mode:overview "kotl-mode" "\
 Show the first line of each cell.
@@ -229,7 +233,9 @@ Display fully expanded tree rooted at CELL-REF.
 \(fn &optional CELL-REF)" t nil)
 
 (autoload 'kotl-mode:is-p "kotl-mode" "\
-Signal an error if current buffer is not a Hyperbole outline, else return t." nil nil)
+Signal an error if current buffer is not a Hyperbole outline, else return t.
+
+\(fn)" nil nil)
 
 (if (fboundp 'register-definition-prefixes) (register-definition-prefixes "kotl-mode" '("delete-selection-pre-hook" "kotl-mode" "yank-")))
 
