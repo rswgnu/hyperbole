@@ -804,7 +804,8 @@ PROJECT value is provided, it defaults to the value of
 				  (princ (shell-command-to-string cmd)))))
 			  ;; Project-only reference, run dired on the project home directory
 			  (hpath:display-buffer (dired-noselect
-						 (file-name-as-directory project-dir)))))
+						 (file-name-as-directory project-dir)))
+			  (if (functionp 'magit-status-setup-buffer) (magit-status-setup-buffer))))
 		       (t (if project-dir
 			      (error "(git-reference): git project `%s' directory is unreadable or invalid: \"%s\""
 				     project project-dir)
