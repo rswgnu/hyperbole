@@ -419,7 +419,7 @@ Hyperbole provides a history command that returns you to previous button
 locations in the reverse order of the way you traverse them.  It actually
 restores your complete frame and window configuration at the time of the
 button press.  You access it by selecting the Hist command from the top-level
-Hyperbole menu, C-h h h.  Remember this because you will want to use that
+Hyperbole menu, {C-h h h}.  Remember this because you will want to use that
 command to return to this DEMO later.
 
 

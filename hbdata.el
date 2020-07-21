@@ -358,19 +358,20 @@ one and returns buffer, otherwise returns nil."
 	 (buf (or (get-file-buffer file)
 		  (and (or create existing-file)
 		       (find-file-noselect file)))))
-    (if buf
-	(progn (set-buffer buf)
-	       (or (verify-visited-file-modtime (get-file-buffer file))
-		   (cond ((yes-or-no-p
-			   "Hyperbole button data file has changed, read new contents? ")
-			  (revert-buffer t t)
-			  )))
-	       (or (= (point-max) 1) (eq (char-after 1) ?\^L)
-		   (error "File %s is not a valid Hyperbole button data table" file))
-	       (or (equal (buffer-name) file) (rename-buffer file))
-	       (setq buffer-read-only nil)
-	       (or existing-file (hbmap:dir-add (file-name-directory file)))
-	       buf))))
+    (when buf
+      (set-buffer buf)
+      (unless (verify-visited-file-modtime (get-file-buffer file))
+	(cond ((yes-or-no-p
+		"Hyperbole button data file has changed, read new contents? ")
+	       (revert-buffer t t))))
+      (or (= (point-max) 1) (eq (char-after 1) ?\^L)
+	  (error "File %s is not a valid Hyperbole button data table" file))
+      (unless (equal (buffer-name) file)
+	(rename-buffer file))
+      (setq buffer-read-only nil)
+      (unless existing-file
+	(hbmap:dir-add (file-name-directory file)))
+      buf)))
 
 
 (defun hbdata:to-entry-buf (key-src &optional directory create)
@@ -419,15 +420,18 @@ a button instance string to append to button label or t when first instance.
 On failure, return nil."
   (let ((cons (hbdata:build orig-lbl-key but-sym))
 	entry lbl-instance)
-    (if (or (and buffer-file-name
-		 (not (file-writable-p buffer-file-name)))
-	    (null cons))
-	nil
+    (unless (or (and buffer-file-name (not (file-writable-p buffer-file-name)))
+		(null cons))
       (setq entry (car cons) lbl-instance (cdr cons))
       (prin1 entry (current-buffer))
       (terpri (current-buffer))
-      (or lbl-instance t)
-      )))
+      (when buffer-file-name (not (file-exists-p buffer-file-name))
+	;; This is the first explicit button created in this
+	;; directory, so .hypb does not yet exist and unless it is saved
+	;; here, the first explicit button won't work until its source
+	;; buffer is saved.
+	(save-buffer))
+      (or lbl-instance t))))
 
 
 ;;; ************************************************************************
