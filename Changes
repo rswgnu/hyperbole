@@ -1,3 +1,12 @@
+2020-07-22  Bob Weiner  <rsw@gnu.org>
+
+* hsys-org.el (org-mode): Added support for global Org link activation
+    (Org links outside of Org buffers) and for Org Agenda item activation.
+
+2020-07-21  Bob Weiner  <rsw@gnu.org>
+
+* hyperbole.el (hkey-global-set-key): Documented.
+
 2020-07-20  Bob Weiner  <rsw@gnu.org>
 
 * hbdata.el (hbdata:write): Fixed so first explicit button created in a directory

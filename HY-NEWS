@@ -2,6 +2,20 @@
 				 by Bob Weiner
 
 ===========================================================================
+*                                   V7.1.3
+===========================================================================
+
+  SMART (ACTION AND ASSIST) KEYS
+
+    - Global Org Link Activation: The Action Key now activates Org links in
+      non-Org buffers if 'inhibit-hsys-org' is nil (the default).  The Assist
+      Key shows help.
+
+    - Org Agenda Item Display: The Action Key displays the Org node
+      associated with Agenda items such as TODOs in another window.  The
+      Assist Key shows help.
+
+===========================================================================
 *                                   V7.1.2
 ===========================================================================
 

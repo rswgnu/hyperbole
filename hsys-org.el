@@ -36,7 +36,7 @@
   :group 'hyperbole-buttons)
 
 (defvar hsys-org-mode-function #'hsys-org-mode-p
-  "*Boolean function of no arguments that determines whether hsys-org actions are triggered or not.")
+  "*Boolean function of no arguments that determines whether point is in an Org mode-related buffer or not.")
 
 ;; Make Org-mode's M-RET binding activate implicit buttons
 (add-hook 'org-metareturn-hook #'hsys-org-hbut-activate-p)
@@ -93,39 +93,47 @@ Org mode standard binding of {M-RET}, (org-meta-return).
 
 To disable ALL Hyperbole support within Org major and minor modes, set the
 custom option `inhibit-hsys-org' to t.  Then in Org modes, this will
-simply invoke `org-meta-return'."
-  (when (and (funcall hsys-org-mode-function)
-	     ;; Prevent infinite recursion when called via org-metareturn-hook
-	     ;; from org-meta-return invocation.
-	     (not (hyperb:stack-frame '(org-meta-return))))
-    (if inhibit-hsys-org
-	(hact 'org-meta-return)
-      (let (start-end)
-	(cond ((setq start-end (hsys-org-internal-link-target-at-p))
-	       (hsys-org-set-ibut-label start-end)
-	       (hact 'org-internal-link-target))
-	      ((hsys-org-radio-target-def-at-p)
-	       (hact 'org-radio-target))
-	      ((setq start-end (hsys-org-link-at-p))
-	       (hsys-org-set-ibut-label start-end)
-	       (hact 'org-link))
-	      ((org-at-heading-p)
-	       (hact 'hsys-org-cycle))
-	      ((hsys-org-at-block-start-p)
-	       (org-ctrl-c-ctrl-c))
-	      (t
-	       (hact 'org-meta-return)))))))
+simply invoke `org-meta-return'.  Org links in non-"
+  (let (start-end)
+    (cond ((and (funcall hsys-org-mode-function)
+		;; Prevent infinite recursion when called via org-metareturn-hook
+		;; from org-meta-return invocation.
+		(not (hyperb:stack-frame '(org-meta-return))))
+	   (if inhibit-hsys-org
+	       (hact 'org-meta-return)
+	     (cond ((setq start-end (hsys-org-internal-link-target-at-p))
+		    (hsys-org-set-ibut-label start-end)
+		    (hact 'org-internal-link-target))
+		   ((hsys-org-radio-target-def-at-p)
+		    (hact 'org-radio-target))
+		   ((setq start-end (hsys-org-link-at-p))
+		    (hsys-org-set-ibut-label start-end)
+		    (hact 'org-link))
+		   ((org-at-heading-p)
+		    (hact 'hsys-org-cycle))
+		   ((hsys-org-block-start-at-p)
+		    (org-ctrl-c-ctrl-c))
+		   (t
+		    (hact 'org-meta-return)))))
+	  ;; Org links may be used outside of Org mode
+	  ((unless inhibit-hsys-org
+	     (setq start-end (hsys-org-link-at-p)))
+	   (hsys-org-set-ibut-label start-end)
+	   (hact 'org-open-at-point-global))
+	  ((hsys-org-agenda-item-at-p)
+	   (hsys-org-set-ibut-label (cons (line-beginning-position) (line-end-position)))
+	   (hact 'org-agenda-show-and-scroll-up current-prefix-arg)))))
 
 (defun org-mode:help (&optional _but)
   "If on an Org mode heading, cycles through views of the whole buffer outline.
 If on an Org mode link, displays standard Hyperbole help."
-  (when (derived-mode-p 'org-mode)
-    (cond ((hsys-org-link-at-p)
-	   (hkey-help current-prefix-arg)
-	   t)
-	  ((org-at-heading-p)
-	   (hact 'hsys-org-global-cycle)
-	   t))))
+  (cond ((or (hsys-org-link-at-p) (hsys-org-agenda-item-at-p))
+	 (hkey-help current-prefix-arg)
+	 t)
+	((and (funcall hsys-org-mode-function)
+	      (org-at-heading-p))
+	 (hact 'hsys-org-global-cycle)
+	 t)))
 
 (defact org-link (&optional link)
   "Follows an optional Org mode LINK to its target.
@@ -185,7 +193,12 @@ uses that one.  Otherwise, triggers an error."
 	  (setq start-point (1- start-point))))
       (cons start-point (next-single-property-change start-point property)))))
 
-(defun hsys-org-at-block-start-p ()
+(defun hsys-org-agenda-item-at-p ()
+  "Return non-nil if point is on an Org Agenda item line, else nil."
+  (and (derived-mode-p 'org-agenda-mode)
+       (org-get-at-bol 'org-marker)))
+
+(defun hsys-org-block-start-at-p ()
   "Return non-nil if point is on the first line of an Org block definition, else nil."
   (save-excursion
     (forward-line 0)
