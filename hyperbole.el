@@ -213,7 +213,9 @@ Entry format is: (key-description key-sequence key-binding)."
 	  (hkey-bindings-keys hkey-previous-bindings)))
 
 (defun hkey-global-set-key (key command &optional no-add)
-  (or no-add (add-to-list 'hkey-previous-bindings (hkey-binding-entry key)))
+  "Same as `global-set-key' except saves prior binding for later restoration unless optional 3rd argument NO-ADD is given as a non-nil value."
+  (unless no-add
+    (add-to-list 'hkey-previous-bindings (hkey-binding-entry key)))
   (global-set-key key command))
 
 (defun hkey-initialize ()
