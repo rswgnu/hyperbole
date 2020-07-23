@@ -29,6 +29,7 @@
 ;;; ************************************************************************
 
 (require 'hactypes)
+(require 'seq)
 
 (defvar kbd-key:named-key-list
   '("add" "backspace" "begin" "bs" "clear" "decimal" "delete" "del"
@@ -117,10 +118,8 @@ Returns t if KEY-SERIES has a binding, else nil."
   (setq current-prefix-arg nil) ;; Execution of the key-series may set it.
   (let ((binding (kbd-key:binding key-series)))
     (cond ((null binding)
-	   ;; If this is a special key seqence, execute it by adding
-	   ;; its keys to the stream of unread command events.
 	   (when (kbd-key:special-sequence-p key-series)
-             (kbd-key:key-series-to-events key-series)
+	     (kbd-key:execute-special-series key-series)
 	     t))
 	  ((memq binding '(action-key action-mouse-key hkey-either))
 	   (beep)
@@ -128,9 +127,32 @@ Returns t if KEY-SERIES has a binding, else nil."
 	   t)
 	  (t (call-interactively binding) t))))
 
+(defun kbd-key:execute-special-series (key-series)
+  "Execute key series."
+  (if (eq (key-binding [?\M-x]) #'execute-extended-command)
+      (kbd-key:key-series-to-events key-series)
+    ;; Disable helm or counsel while processing M-x commands; helm at
+    ;; least gobbles final RET key,
+    (let ((orig-binding (global-key-binding [?\M-x]))
+	  (counsel-flag (and (boundp 'counsel-mode) counsel-mode))
+	  (helm-flag (and (boundp 'helm-mode) helm-mode)))
+      (unwind-protect
+	  (progn
+	    (when counsel-flag (counsel-mode -1))
+	    (when helm-flag    (helm-mode -1))
+	    (global-set-key [?\M-x] 'execute-extended-command)
+	    (kbd-key:key-series-to-events key-series)
+	    (sit-for 0.001))
+	(when counsel-flag (counsel-mode 1))
+	(when helm-flag (helm-mode 1))
+	(global-set-key [?\M-x] orig-binding)))))
+
 (defun kbd-key:key-series-to-events (key-series)
   "Insert the key-series as a series of keyboard events into Emacs' unread input stream."
-  (setq unread-command-events (nconc unread-command-events (listify-key-sequence (kbd-key:kbd key-series)))))
+  (setq unread-command-events (nconc unread-command-events
+				     (listify-key-sequence
+				      (kbd-key:kbd
+				       key-series)))))
 
 (defun kbd-key:doc (key-series &optional full)
   "Show first line of doc for binding of keyboard KEY-SERIES in minibuffer.
@@ -263,12 +285,13 @@ For an approximate inverse of this, see `key-description'."
 	  (setq times (string-to-number (substring word 0 (match-end 1))))
 	  (setq word (substring word (1+ (match-end 1)))))
 	(cond ((string-match "^<<.+>>$" word)
-	       (setq key (vconcat (if (eq (key-binding [?\M-x])
-					  'execute-extended-command)
-				      [?\M-x]
-				    (or (car (where-is-internal
-					      'execute-extended-command))
-					[?\M-x]))
+	       (setq key (vconcat (cond ((memq (key-binding [?\M-x])
+					       kbd-key:extended-command-binding-list)
+					 [?\M-x])
+					((seq-filter
+					  (lambda (elt) (car (where-is-internal elt)))
+					  kbd-key:extended-command-binding-list)
+					 [?\M-x]))
 				  (substring word 2 -2) "\r")))
 	      ((and (string-match "^\\(\\([ACHMsS]-\\)*\\)<\\(.+\\)>$" word)
 		    (progn
@@ -409,8 +432,11 @@ a M-x extended command,
 ;;; ************************************************************************
 
 (defconst kbd-key:extended-command-prefix
-  (kbd-key:normalize (key-description (where-is-internal 'execute-extended-command (current-global-map) t)))
-  "Normalized prefix string that invokes an extended command; typically ESC x.")
+  (format "\\_<%s\\_>" (kbd-key:normalize "M-x"))
+  "Normalized prefix regular expression that invokes an extended command; by default, M-x.")
+
+(defconst kbd-key:extended-command-binding-list '(execute-extended-command helm-M-x counsel-M-x)
+  "List of commands that may be bound to M-x to invoke extended/named commands.")
 
 (defvar kbd-key:mini-menu-key nil
   "The key sequence that invokes the Hyperbole minibuffer menu.")

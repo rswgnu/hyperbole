@@ -15,6 +15,13 @@
       associated with Agenda items such as TODOs in another window.  The
       Assist Key shows help.
 
+  BUTTON TYPES
+
+    - {Key Series} Button Support for Helm and Counsel: Key series buttons
+      with M-x commands now work properly when counsel-mode or helm-mode are
+      enabled and M-x is rebound.
+
+
 ===========================================================================
 *                                   V7.1.2
 ===========================================================================
