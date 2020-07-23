@@ -634,7 +634,10 @@ its buttons, the label is simply inserted at point."
 	  (ibut
 	   (save-excursion
 	     (when ibut-start
-	       (goto-char ibut-start))
+	       (goto-char ibut-start)
+	       ;; Skip over any non-whitespace or symbol chars to move
+	       ;; back past any opening delimiter
+	       (skip-syntax-backward "^-_"))
 	     (save-excursion
 	       ;; Check if ibut has an existing preceding label
 	       (skip-chars-backward "][:=<>a-zA-Z0-9#@!$%^&* -")
