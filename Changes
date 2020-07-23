@@ -12,6 +12,10 @@
 * hbdata.el (hbdata:write): Fixed so first explicit button created in a directory
     works before saving its source buffer (by saving the directory .hypb file).
 
+2020-07-19  Bob Weiner  <rsw@gnu.org>
+
+* hyperbole.el (hyperb:init): Remove WSL abbrev of /mnt/c as /c since may not exist.
+
 2020-07-08  Bob Weiner  <rsw@gnu.org>
 
 * hbut.el (hbut:delete, ibut:delete): Added.
@@ -76,6 +80,12 @@ V7.1.3 changes ^^^^:
 * kotl/kotl-mode.el (beginning-of-visual-line,
                      end-of-visual-line,
                      kill-visual-line): Overrode in kotl-mode-map.
+
+2020-03-25  Bob Weiner  <rsw@gnu.org>
+
+* kotl/kotl-mode.el (kotl-mode:yank): Fix hypb:replace-match-string call to use
+    a replacement function rather than a string containing "\\0" which doesn't
+    work.
 
 2020-03-11  Bob Weiner  <rsw@gnu.org>
 

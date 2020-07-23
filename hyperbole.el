@@ -681,10 +681,9 @@ If FLAG is nil then text is shown, while if FLAG is t the text is hidden."
   ;; Conditionally initialize Hyperbole key bindings (when hkey-init is t).
   (hkey-initialize)
   ;;
-  ;; Abbreviate MSWindows mount point paths.
-  (when (or (file-exists-p "/mnt/c")
-	    (file-exists-p "/cygdrive"))
-    (add-to-list 'directory-abbrev-alist '("\\`\\(/mnt\\|/cygdrive\\)/" . "/")))
+  ;; Abbreviate MSWindows /cygdrive mount point paths.
+  (when (file-exists-p "/cygdrive")
+    (add-to-list 'directory-abbrev-alist '("\\`/cygdrive/" . "/")))
   ;; When running under a POSIX system with possible access to MSWindows servers,
   ;; cache valid MSWindows mount points.
   (hpath:cache-mswindows-mount-points)
