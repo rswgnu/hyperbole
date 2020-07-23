@@ -29,6 +29,7 @@
 ;;; ************************************************************************
 
 (require 'hactypes)
+(require 'seq)
 
 (defvar kbd-key:named-key-list
   '("add" "backspace" "begin" "bs" "clear" "decimal" "delete" "del"
@@ -263,12 +264,13 @@ For an approximate inverse of this, see `key-description'."
 	  (setq times (string-to-number (substring word 0 (match-end 1))))
 	  (setq word (substring word (1+ (match-end 1)))))
 	(cond ((string-match "^<<.+>>$" word)
-	       (setq key (vconcat (if (eq (key-binding [?\M-x])
-					  'execute-extended-command)
-				      [?\M-x]
-				    (or (car (where-is-internal
-					      'execute-extended-command))
-					[?\M-x]))
+	       (setq key (vconcat (cond ((memq (key-binding [?\M-x])
+					       kbd-key:extended-command-binding-list)
+					 [?\M-x])
+					((seq-filter
+					  (lambda (elt) (car (where-is-internal elt)))
+					  kbd-key:extended-command-binding-list)
+					 [?\M-x]))
 				  (substring word 2 -2) "\r")))
 	      ((and (string-match "^\\(\\([ACHMsS]-\\)*\\)<\\(.+\\)>$" word)
 		    (progn
@@ -409,8 +411,11 @@ a M-x extended command,
 ;;; ************************************************************************
 
 (defconst kbd-key:extended-command-prefix
-  (kbd-key:normalize (key-description (where-is-internal 'execute-extended-command (current-global-map) t)))
-  "Normalized prefix string that invokes an extended command; typically ESC x.")
+  (format "\\_<%s\\_>" (kbd-key:normalize "M-x"))
+  "Normalized prefix regular expression that invokes an extended command; by default, M-x.")
+
+(defconst kbd-key:extended-command-binding-list '(execute-extended-command helm-M-x counsel-M-x)
+  "List of commands that may be bound to M-x to invoke extended/named commands.")
 
 (defvar kbd-key:mini-menu-key nil
   "The key sequence that invokes the Hyperbole minibuffer menu.")
