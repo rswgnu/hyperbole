@@ -4,7 +4,7 @@
 ;;
 ;; Orig-Date:     2-Jul-16 at 14:54:14
 ;;
-;; Copyright (C) 2016-2019  Free Software Foundation, Inc.
+;; Copyright (C) 2016-2020  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
 ;;
 ;; This file is part of GNU Hyperbole.
@@ -15,11 +15,11 @@
 ;;   triggered when the major mode is org-mode or is derived from
 ;;   org-mode and point is anywhere other than at the end of a line.
 ;;
-;;   When:
-;;     on an Org mode link - displays the link referent
-;;     on an Org mode heading - cycles through the available display
-;;       views for that heading
-;;     anywhere else - executes `org-meta-return'.
+;;   See the doc for ibtypes::org-mode for details of what it does and
+;;   its compatibility with org-mode.
+;;
+;;   For a good tutorial on basic use of Org-mode, see:
+;;     https://orgmode.org/worg/org-tutorials/orgtutorial_dto.html
 
 ;;; Code:
 ;;; ************************************************************************

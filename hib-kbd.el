@@ -129,30 +129,32 @@ Returns t if KEY-SERIES has a binding, else nil."
 
 (defun kbd-key:execute-special-series (key-series)
   "Execute key series."
-  (if (eq (key-binding [?\M-x]) #'execute-extended-command)
+  (if (memq (key-binding [?\M-x]) #'(execute-extended-command counsel-M-x))
       (kbd-key:key-series-to-events key-series)
-    ;; Disable helm or counsel while processing M-x commands; helm at
-    ;; least gobbles final RET key,
+    ;; Disable helm while processing M-x commands; helm
+    ;; gobbles final RET key.  Counsel works without modification.
     (let ((orig-binding (global-key-binding [?\M-x]))
-	  (counsel-flag (and (boundp 'counsel-mode) counsel-mode))
 	  (helm-flag (and (boundp 'helm-mode) helm-mode)))
       (unwind-protect
 	  (progn
-	    (when counsel-flag (counsel-mode -1))
-	    (when helm-flag    (helm-mode -1))
+	    (when helm-flag (helm-mode -1))
 	    (global-set-key [?\M-x] 'execute-extended-command)
-	    (kbd-key:key-series-to-events key-series)
-	    (sit-for 0.001))
-	(when counsel-flag (counsel-mode 1))
-	(when helm-flag (helm-mode 1))
-	(global-set-key [?\M-x] orig-binding)))))
+	    (kbd-key:key-series-to-events key-series))
+	(kbd-key:key-series-to-events
+	 (format "M-: SPC (kbd-key:maybe-enable-helm SPC %s SPC #'%S) RET"
+		 helm-flag orig-binding))))))
+
+(defun kbd-key:maybe-enable-helm (helm-flag orig-M-x-binding)
+  "Enable helm-mode if HELM-FLAG is non-nil.  Restore M-x binding to ORIG-M-X-BINDING."
+  (when helm-flag (helm-mode 1))
+  (global-set-key [?\M-x] orig-M-x-binding))
 
 (defun kbd-key:key-series-to-events (key-series)
-  "Insert the key-series as a series of keyboard events into Emacs' unread input stream."
+  "Insert the key-series as a series of keyboard events into Emacs' unread input stream.
+Emacs then executes them when its command-loop regains control."
   (setq unread-command-events (nconc unread-command-events
 				     (listify-key-sequence
-				      (kbd-key:kbd
-				       key-series)))))
+				      (kbd-key:kbd key-series)))))
 
 (defun kbd-key:doc (key-series &optional full)
   "Show first line of doc for binding of keyboard KEY-SERIES in minibuffer.

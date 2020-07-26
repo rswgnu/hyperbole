@@ -1,7 +1,8 @@
 2020-07-25  Bob Weiner  <rsw@gnu.org>
 
 * hib-kbd.el (kbd-key:execute-special-series): Added and used in kbd-key:act
-    to make key series work properly when helm-mode or counsel-mode are enabled.
+    to make key series work properly when helm-mode is enabled.  Counsel-mode
+    works without any change.
 
 2020-07-23  Bob Weiner  <rsw@gnu.org>
 
