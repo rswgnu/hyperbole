@@ -65,14 +65,6 @@
 (run-hooks 'hibtypes-begin-load-hook)
 
 ;;; ========================================================================
-;;; Follows Org mode links and radio targets and cycles Org heading views
-;;; ========================================================================
-
-;; Set the custom option `inhibit-hsys-org' non-nil to disable ALL Hyperbole
-;; support within Org major and minor modes.
-(require 'hsys-org)
-
-;;; ========================================================================
 ;;; Composes mail, in another window, to the e-mail address at point.
 ;;; ========================================================================
 
@@ -146,7 +138,7 @@ match.  See `hpath:find' function documentation for special file
 display options."
   ;;
   ;; Ignore paths in Buffer menu, dired and helm modes.
-  (unless (or (eq major-mode 'helm-major-mode)
+  (unless (or (derived-mode-p 'helm-major-mode)
 	          (delq nil (mapcar (lambda (substring)
 				                  (string-match substring (format-mode-line mode-name)))
 				                '("Buffer Menu" "IBuffer" "Dired"))))
@@ -287,49 +279,56 @@ Return t if jump and nil otherwise."
     t)))
 
 (defun markdown-follow-inline-link-p (opoint)
-  "Test to see if on an inline link, jump to its referent if it is absolute (not relative within the file), otherwise return to OPOINT."
-  (skip-chars-forward "^\]\[()")
-  (if (looking-at "\][\[()]")
-      (progn (if (looking-at "\(")
-		         (skip-chars-backward "^\]\[()")
-	           (skip-chars-forward "\]\[\("))
-	         ;; Leave point on the link even if not activated
-	         ;; here, so that code elsewhere activates it.
-	         (when (and (markdown-link-p)
-		                (save-match-data (not (or (hpath:www-at-p) (hpath:at-p)))))
-		       ;; In-file referents are handled by the 'markdown-internal-link'
-		       ;; implicit button type, not here.
-		       (ibut:label-set (match-string-no-properties 0) (match-beginning 0) (match-end 0))
-			   (hpath:display-buffer (current-buffer))
-			   (hact 'markdown-follow-link-at-point)))
-    (goto-char opoint)
-    nil))
+  "Test to see if on an inline link, jump to its referent if it is absolute (not relative within the file) and return non-nil.
+Otherwise, if an internal link, move back to OPOINT and return nil."
+  (let (handle-link-flag
+	result)
+    (skip-chars-forward "^\]\[()")
+    (when (looking-at "\][\[()]")
+      (if (looking-at "\(")
+	  (skip-chars-backward "^\]\[()")
+	(skip-chars-forward "\]\[\("))
+      ;; Leave point on the link even if not activated
+      ;; here, so that other ibtypes activate it.  If point is after
+      ;; the # character of an in-file link, then the following predicate
+      ;; fails and the `pathname' ibtype will handle it.  If point is before
+      ;; the # character, the link is handled here.
+      (setq handle-link-flag (not (or (hpath:www-at-p) (hpath:at-p))))
+      (when (setq result (and (markdown-link-p) handle-link-flag))
+	;; In-file referents are handled by the `pathname' implicit
+	;; button type, not here.
+	(ibut:label-set (match-string-no-properties 0) (match-beginning 0) (match-end 0))
+	(hpath:display-buffer (current-buffer))
+	(hact 'markdown-follow-link-at-point)))
+    (when handle-link-flag
+      (goto-char opoint))
+    result))
 
 (defib markdown-internal-link ()
   "Display any in-file Markdown link referent at point.
 Pathnames and urls are handled elsewhere."
-  (when (and (eq major-mode 'markdown-mode)
-	         (not (hpath:www-at-p)))
+  (when (and (derived-mode-p 'markdown-mode)
+	     (not (hpath:www-at-p)))
     (let ((opoint (point))
-	      npoint)
+	  npoint)
       (cond ((markdown-link-p)
-	         (condition-case ()
-		         ;; Follows a reference link or footnote to its referent.
-		         (if (markdown-follow-link-p)
-		             (when (/= opoint (point))
-		               (ibut:label-set (match-string-no-properties 0) (match-beginning 0) (match-end 0))
-		               (setq npoint (point))
-		               (goto-char opoint)
-		               (hact 'link-to-file buffer-file-name npoint))
-		           ;; Follows an infile link.
-	               (markdown-follow-inline-link-p opoint))
-	           ;; May be on the name of an inline link, so move to the
-	           ;; link itself and follow that.
-	           (error (markdown-follow-inline-link-p opoint))))
-	        ((markdown-wiki-link-p)
-	         (ibut:label-set (match-string-no-properties 0) (match-beginning 0) (match-end 0))
-	         (hpath:display-buffer (current-buffer))
-	         (hact 'markdown-follow-wiki-link-at-point))))))
+	     (condition-case ()
+		 ;; Follows a reference link or footnote to its referent.
+		 (if (markdown-follow-link-p)
+		     (when (/= opoint (point))
+		       (ibut:label-set (match-string-no-properties 0) (match-beginning 0) (match-end 0))
+		       (setq npoint (point))
+		       (goto-char opoint)
+		       (hact 'link-to-file buffer-file-name npoint))
+		   ;; Follows an absolute file link.
+	           (markdown-follow-inline-link-p opoint))
+	       ;; May be on the name of an infile link, so move to the
+	       ;; link itself and then let the `pathname' ibtype handle it.
+	       (error (markdown-follow-inline-link-p opoint))))
+	    ((markdown-wiki-link-p)
+	     (ibut:label-set (match-string-no-properties 0) (match-beginning 0) (match-end 0))
+	     (hpath:display-buffer (current-buffer))
+	     (hact 'markdown-follow-wiki-link-at-point))))))
 
 ;;; ========================================================================
 ;;; Summarizes an Internet rfc for random access browsing by section.
@@ -359,7 +358,7 @@ Each line in the summary may be selected to jump to a section."
 (defib id-cflow ()
   "Expand or collapse C call trees and jump to code definitions.
 Require cross-reference tables built by the external `cxref' program of Cflow."
-  (when (and (eq major-mode 'id-cflow-mode)
+  (when (and (derived-mode-p 'id-cflow-mode)
 	         (not (eolp)))
     (let ((pnt (point)))
 	  (save-excursion
@@ -707,7 +706,7 @@ buffer)."
   ;; -> 1391     apm(name_filter, value_filter, print_func, defined_only=True)
   ;; 1392
   ;; 1393 def apa(name_filter=None, value_filter=None, print_func=pd1, defined_only=False):
-  (unless (eq major-mode 'helm-major-mode)
+  (unless (derived-mode-p 'helm-major-mode)
     (save-excursion
       (beginning-of-line)
       (let ((line-num-regexp "\\( *\\|-+> \\)?\\([1-9][0-9]*\\) ")
@@ -754,7 +753,7 @@ buffer)."
   ;; 430-(defun hmouse-click-to-drag ()
   ;;
   ;; Use `rg -n --no-heading' for pathname on each line.
-  (unless (eq major-mode 'helm-major-mode)
+  (unless (derived-mode-p 'helm-major-mode)
     (save-excursion
       (beginning-of-line)
       (when (looking-at "\\([1-9][0-9]*\\)[-:]")
@@ -783,7 +782,7 @@ buffer) except for grep -A<num> context lines which are matched only
 in grep and shell buffers."
   ;; Locate and parse grep messages found in any buffer other than a
   ;; helm completion buffer.
-  (unless (eq major-mode 'helm-major-mode)
+  (unless (derived-mode-p 'helm-major-mode)
     (save-excursion
       (beginning-of-line)
       (when (or
@@ -1276,6 +1275,14 @@ arg1 ... argN '>'.  For example, <mail nil \"user@somewhere.org\">."
           (if (eq hrule:action #'actype:identity)
 	          (apply hrule:action actype args)
 	        (apply hrule:action actype (mapcar #'eval args))))))))
+
+;;; ========================================================================
+;;; Follows Org mode links and radio targets and cycles Org heading views
+;;; ========================================================================
+
+;; Set the custom option `inhibit-hsys-org' non-nil to disable ALL Hyperbole
+;; support within Org major and minor modes.
+(require 'hsys-org)
 
 ;;; ========================================================================
 ;;; Inserts completion into minibuffer or other window.

@@ -1,3 +1,11 @@
+2020-07-26  Bob Weiner  <rsw@gnu.org>
+
+* hibtypes.el (hsys-org): Move org links/refs to near top of priority list so things
+    like URLs embeded within Org links are handled by Org, not Hyperbole.
+              (markdown-follow-inline-link-p): Fixed to defer in-file links with
+    point on the link title to the `pathname' ibtype since
+    markdown-follow-link-at-point does not handle them properly.
+
 2020-07-25  Bob Weiner  <rsw@gnu.org>
 
 * hib-kbd.el (kbd-key:execute-special-series): Added and used in kbd-key:act

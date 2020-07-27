@@ -15,11 +15,18 @@
       associated with Agenda items such as TODOs in another window.  The
       Assist Key shows help.
 
+    - Org-mode: Raised to near top priority in implicit button types so that
+      pathnames, URLs, etc. within Org links are handled by Org rather than
+      Hyperbole.
+
   BUTTON TYPES
 
     - {Key Series} Button Support for Helm and Counsel: Key series buttons
       with M-x commands now work properly when counsel-mode or helm-mode are
       enabled and M-x is rebound.
+
+    - Markdown In-file Links: With point on the link title, in-file links are
+      now activated properly (previously point had to be on the link itself).
 
 
 ===========================================================================
