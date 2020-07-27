@@ -15,6 +15,10 @@
       associated with Agenda items such as TODOs in another window.  The
       Assist Key shows help.
 
+    - Smart Dired Sidebar: Smart Key support for the dired-sidebar
+      package.  See "(hyperbole)Smart Key - Dired Sidebar Mode".
+
+
   BUTTON TYPES
 
     - {Key Series} Button Support for Helm and Counsel: Key series buttons
