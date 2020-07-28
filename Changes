@@ -1,10 +1,17 @@
+2020-07-28  Bob Weiner  <rsw@gnu.org>
+
+* kotl/kotl-mode.el (kotl-mode): Set outline-regexp so outline-on-heading-p and
+    smart-outline-subtree-hidden-p use it and the Action Key expands cells properly.
+
+* hyperbole.el (outline-invisible-in-p): Fixed to detect if tree is collapsed anywhere.
+
 2020-07-27  Mats Lidell  <matsl@gnu.org>
 
-* hui-dired-sidebar.el: Support for dired-sidebar added.
+* hui-dired-sidebar.el: Added support for dired-sidebar.
 
 2020-07-26  Bob Weiner  <rsw@gnu.org>
 
-* hibtypes.el (hsys-org): Move org links/refs to near top of priority list so things
+* hibtypes.el (hsys-org): Moved org links/refs to near top of priority list so things
     like URLs embeded within Org links are handled by Org, not Hyperbole.
               (markdown-follow-inline-link-p): Fixed to defer in-file links with
     point on the link title to the `pathname' ibtype since

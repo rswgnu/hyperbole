@@ -594,10 +594,12 @@ If FLAG is nil then text is shown, while if FLAG is t the text is hidden."
   (defun outline-invisible-in-p (beg end)
     "Return t if there is an invisible character between BEG and END, else nil."
     (catch 'result
-      (delq nil (mapcar (lambda (o)
-			  (if (eq 'outline (overlay-get o 'invisible))
-			      (throw 'result t)))
-			(overlays-in beg end))))))
+      (let ((p beg))
+	(while (< p end) 
+	  (when (eq (get-char-property p 'invisible) 'outline)
+	    (throw 'result t))
+	  (setq p (1+ p))))
+      nil)))
 
 ;;; ************************************************************************
 ;;; Message System Support Configuration

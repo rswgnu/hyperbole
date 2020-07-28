@@ -16,7 +16,7 @@
 ;;; Other required Lisp Libraries
 ;;; ************************************************************************
 
-(eval-and-compile (mapc #'require '(delsel hsettings hmail kfile kvspec kcell)))
+(eval-and-compile (mapc #'require '(delsel hsettings hmail kfile kvspec kcell outline)))
 
 ;;; ************************************************************************
 ;;; Public variables
@@ -86,6 +86,7 @@ It provides the following keys:
   (mapc #'make-local-variable
 	'(kotl-previous-mode indent-line-function indent-region-function
 			     outline-isearch-open-invisible-function
+			     outline-regexp
 			     line-move-ignore-invisible minor-mode-alist
 			     selective-display-ellipses
 			     paragraph-separate paragraph-start))
@@ -102,7 +103,8 @@ It provides the following keys:
 				       minor-mode-alist)
 	  ;; Remove indication that buffer is narrowed.
 	  mode-line-format (copy-sequence mode-line-format)
-	  mode-line-format (set:remove "%n" mode-line-format)))
+	  mode-line-format (set:remove "%n" mode-line-format)
+	  outline-regexp (concat " *[0-9][0-9a-z.]*" kview:default-label-separator)))
   ;;
   (if (fboundp 'add-to-invisibility-spec)
       (add-to-invisibility-spec '(outline . t)))
