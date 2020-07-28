@@ -1,3 +1,7 @@
+2020-07-27  Mats Lidell  <matsl@gnu.org>
+
+* hui-dired-sidebar.el: Support for dired-sidebar added.
+
 2020-07-25  Bob Weiner  <rsw@gnu.org>
 
 * hib-kbd.el (kbd-key:execute-special-series): Added and used in kbd-key:act

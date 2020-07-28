@@ -100,6 +100,10 @@ Its default value is #'smart-scroll-down."
 	  (memq company-active-map (current-minor-mode-maps))) .
 	  ((smart-company-to-definition) . (smart-company-help)))
     ;;
+    ;; dired-sidebar-mode
+    ((eq major-mode 'dired-sidebar-mode) .
+     ((smart-dired-sidebar) . (smart-dired-sidebar)))
+    ;;
     ;; Treemacs hierarchical file manager
     ((eq major-mode 'treemacs-mode) .
      ((smart-treemacs) . (smart-treemacs)))
