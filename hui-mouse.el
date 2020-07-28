@@ -104,6 +104,10 @@ Its default value is #'smart-scroll-down."
     ((eq major-mode 'treemacs-mode) .
      ((smart-treemacs) . (smart-treemacs)))
     ;;
+    ;; dired-sidebar-mode
+    ((eq major-mode 'dired-sidebar-mode) .
+     ((smart-dired-sidebar) . (smart-dired-sidebar)))
+    ;;
     ;; Handle Emacs push buttons in buffers
     ((and (fboundp 'button-at) (button-at (point))) .
      ((push-button nil (mouse-event-p last-command-event))

@@ -432,6 +432,7 @@ Smart Keyboard Keys
 
 * Smart Key - Company Mode::
 * Smart Key - Treemacs::
+* Smart Key - Dired Sidebar Mode::
 * Smart Key - Emacs Pushbuttons::
 * Smart Key - Argument Completion::
 * Smart Key - ID Edit Mode::
@@ -8265,6 +8266,7 @@ If dragged from an Emacs window to outside of Emacs:
 @menu
 * Smart Key - Company Mode::
 * Smart Key - Treemacs::
+* Smart Key - Dired Sidebar Mode::
 * Smart Key - Emacs Pushbuttons::
 * Smart Key - Argument Completion::
 * Smart Key - ID Edit Mode::
@@ -8308,7 +8310,6 @@ If dragged from an Emacs window to outside of Emacs:
 * Smart Key - Default Context::
 @end menu
 
-
 @node Smart Key - Company Mode, Smart Key - Treemacs, Smart Keyboard Keys, Smart Keyboard Keys
 @subsection Smart Key - Company Mode
 
@@ -8327,7 +8328,7 @@ When company-mode is active:
 @end format
 
 
-@node Smart Key - Treemacs, Smart Key - Emacs Pushbuttons, Smart Key - Company Mode, Smart Keyboard Keys
+@node Smart Key - Treemacs, Smart Key - Dired Sidebar Mode, Smart Key - Company Mode, Smart Keyboard Keys
 @subsection Smart Key - Treemacs
 
 @cindex Treemacs
@@ -8359,6 +8360,33 @@ When in a Treemacs file browser buffer:
 @end group
 @end format
 
+@node Smart Key - Dired Sidebar Mode, Smart Key - Emacs Pushbuttons, Smart Keyboard Keys, Smart Keyboard Keys
+@subsection Smart Key - Dired Sidebar Mode
+
+@cindex dired-sidebar-mode
+Dired-sidebar is an add-on Emacs package that puts dired in a sidebar
+and optionally integrates with vareous other packages.  Use the Emacs
+package manager to install it and then invoke it with
+@bkbd{M-x dired-sidebar-toggle-sidebar @key{RET}} and quit with @bkbd{q}.
+
+@format
+@group
+When in a dired-sidebar buffer:
+  ACTION KEY or ASSIST KEY
+     (1) within an entry line, the item is displayed for editing,
+         normally in another window, or if it is a directory and
+         `dired-sidebar-cycle-subtree-on-click' is t it will expand
+         and collapse the entry
+     (2) at the end of an entry line: invoke `action-key-eol-function',
+         typically to scroll up proportionally, if an Action Key press; invoke
+         `assist-key-eol-function', typically to scroll down proportionally,
+         if an Asisst Key press;
+     (3) on the first line of the buffer (other than the end of line),
+         dired is run on the current directory of this dired-sidebar;
+     (4) at the end of the first or last line of the buffer,
+         this dired-sidebar invocation is hidden.
+@end group
+@end format
 
 @node Smart Key - Emacs Pushbuttons, Smart Key - Argument Completion, Smart Key - Treemacs, Smart Keyboard Keys
 @subsection Smart Key - Emacs Pushbuttons
