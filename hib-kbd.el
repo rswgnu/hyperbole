@@ -134,7 +134,8 @@ Returns t if KEY-SERIES has a binding, else nil."
     ;; Disable helm while processing M-x commands; helm
     ;; gobbles final RET key.  Counsel works without modification.
     (let ((orig-binding (global-key-binding [?\M-x]))
-	  (helm-flag (and (boundp 'helm-mode) helm-mode)))
+	  (helm-flag (and (boundp 'helm-mode) helm-mode))
+	  (minibuffer-completion-confirm))
       (unwind-protect
 	  (progn
 	    (when helm-flag (helm-mode -1))
