@@ -149,7 +149,7 @@ Its default value is #'smart-scroll-down."
     ;;
     ;; If at the end of a line (eol), invoke the associated Smart Key handler EOL handler.
     ((if (eq major-mode 'kotl-mode)
-	 (and (not (kotl-mode:eobp)) (kotl-mode:eolp))
+	 (and (not (kotl-mode:eobp)) (kotl-mode:eolp t))
        (smart-eolp)) .
        ((funcall action-key-eol-function) . (funcall assist-key-eol-function)))
     ;;

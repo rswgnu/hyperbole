@@ -1918,12 +1918,15 @@ If at tail cell already, do nothing and return nil."
 		  (kotl-mode:bocp))))
        (point)))
 
-(defun kotl-mode:eolp ()
-  "Return t if point is at the end of a visible line or the end of the buffer."
+(defun kotl-mode:eolp (&optional next-char-visible)
+  "Return t if point is at the end of a visible line or the end of the buffer.
+With optional NEXT-CHAR-VISIBLE, return t only if the following char is visible."
   (or (eobp)
       (and (eolp)
-	   (or (not (kview:char-invisible-p))
-	       (not (kview:char-invisible-p (1- (point)))))
+	   (if next-char-visible
+	       (not (kview:char-invisible-p))
+	     (or (not (kview:char-invisible-p))
+		 (not (kview:char-invisible-p (1- (point))))))
 	   t)))
 
 (defun kotl-mode:first-cell-p ()
@@ -1965,7 +1968,7 @@ If key is pressed:
      a windowful."
   (interactive)
   (cond	((kotl-mode:eobp) (kotl-mode:show-all))
-	((kotl-mode:eolp) (funcall action-key-eol-function))
+	((kotl-mode:eolp t) (funcall action-key-eol-function))
 	((not (kview:valid-position-p))
 	 (if (markerp action-key-depress-prev-point)
 	     (progn (select-window
@@ -2000,7 +2003,7 @@ If assist-key is pressed:
      a windowful."
   (interactive)
   (cond ((kotl-mode:eobp) (kotl-mode:overview))
-	((kotl-mode:eolp) (funcall assist-key-eol-function))
+	((kotl-mode:eolp t) (funcall assist-key-eol-function))
 	((not (kview:valid-position-p))
 	 (if (markerp assist-key-depress-prev-point)
 	     (progn (select-window
