@@ -1,5 +1,9 @@
 2020-07-29  Bob Weiner  <rsw@gnu.org>
 
+* man/hkey-help.txt: Added magit modes.
+  hui-mouse.el (smart-magit, smart-magit-assist): Added.
+               (hkey-alist): Added support for magit modes.
+
 * kotl/kotl-mode.el (kotl-mode:eolp): Added optional 'next-char-visible' arg.
                     (kotl-mode:action-key, kotl-mode:assist-key):
   hui-mouse.el (hkey-alist): In kotl-mode, matched to eol only if following

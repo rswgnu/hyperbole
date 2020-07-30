@@ -103,6 +103,7 @@ Hyperbole Key Press/Click in Special Modes
     Include file                Jumps to Texinfo referent  Button help
     code/var reference          Displays doc for referent  Button help
   Org Mode                      Follows links and cycles outline views
+  Magit Modes                   Collapses and expands things
   Outline Major/Minor Modes     Collapses, expands, and moves outline entries
   Man Apropos                   Displays man page entry    <- same
   Man Pages                     Follows cross refs, file refs and C code refs

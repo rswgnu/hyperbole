@@ -370,6 +370,9 @@ Its default value is #'smart-scroll-down."
     ((eq major-mode 'gomoku-mode) .
      ((gomoku-human-plays) . (gomoku-human-takes-back)))
     ;;
+    ((string-prefix-p "magit-" (symbol-name major-mode)) .
+     ((smart-magit) . (smart-magit-assist)))
+    ;;
     ;; Support the OO-Browser when available.  It is a separate Emacs
     ;; package not included with Hyperbole.  Hyperbole supplies a stub
     ;; `br-in-browser' test for use here.
@@ -1188,7 +1191,7 @@ buffer and has moved the cursor to the selected buffer."
 ;;; ************************************************************************
 
 (defun smart-imenu-display-item-where (item-name item-pos)
-  "Displays an ITEM-NAME defined at ITEM-POS within the current buffer.
+  "Display an ITEM-NAME defined at ITEM-POS within the current buffer.
 Uses the imenu library and the value of `hpath:display-where' to display."
   (hpath:display-buffer (current-buffer))
   (funcall imenu-default-goto-function item-name item-pos))
@@ -1249,6 +1252,53 @@ NO-RECURSE-FLAG non-nil prevents infinite recursions."
 ;;; smart-info functions
 ;;; ************************************************************************
 ;;; In "hmouse-info.el".
+
+
+;;; ************************************************************************
+;;; smart-magit functions
+;;; ************************************************************************
+
+(defun smart-magit ()
+  "Use a key or mouse key to jump to source and to hide/show changes.
+
+Invoked via a key press when in a magit mode and not on a button.
+It assumes that its caller has already checked that the key was
+pressed in an appropriate buffer and has moved the cursor to the
+selected buffer.
+
+If key is pressed:
+ (1) on the last line, quit from the magit mode (\"q\" key binding);
+ (2) at the end of a line, scroll up a windowful;
+ (3) anywhere else, hide/show the thing at point (\"TAB\" key binding)."
+  (interactive)
+  (cond ((last-line-p)
+	 (call-interactively (key-binding "q")))
+	((eolp)
+	 (smart-scroll-up))
+	(t
+	 (call-interactively (key-binding "\t")))))
+
+(defun smart-magit-assist ()
+  "Use an assist key or mouse key to jump to source and to hide/show changes.
+
+Invoked via an assist key press when in a magit mode and not on a
+button.  It assumes that its caller has already checked that the
+assist-key was pressed in an appropriate buffer and has moved the
+cursor to the selected buffer.
+
+If assist-key is pressed:
+ (1) on the last line, quit from the magit mode (\"q\" key binding);
+ (2) at the end of a line, scroll down a windowful;
+ (3) anywhere else, jump to the thing at point (\"RET\" key binding)."
+  (interactive)
+  (cond ((last-line-p)
+	 (call-interactively (key-binding "q")))
+	((eolp)
+	 (smart-scroll-down))
+	(t
+	 (setq current-prefix-arg 1)
+	 (let ((magit-display-file-buffer-function #'hpath:display-buffer))
+	   (call-interactively (key-binding "\r"))))))
 
 ;;; ************************************************************************
 ;;; smart-man functions
