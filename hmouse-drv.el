@@ -190,7 +190,7 @@ EVENT will be passed to 'hmouse-function'."
   (apply #'action-mouse-key (hmouse-key-release-args-emacs event)))
 
 (defun assist-mouse-key-emacs (event)
-  "Set point to the current mouse cursor position and execute 'action-key'.
+  "Set point to the current mouse cursor position and execute 'assist-key'.
 EVENT will be passed to 'hmouse-function'."
   (interactive "e")
   (apply #'assist-mouse-key (hmouse-key-release-args-emacs event)))
@@ -829,15 +829,16 @@ Return non-nil iff a non-nil predicate is found."
 
 (defun hkey-help (&optional assist-flag)
   "Display help for the Action Key command in current context.
-With optional ASSIST-FLAG non-nil, display help for the Assist Key command.
+With optional ASSIST-FLAG prefix arg non-nil, display help for the Assist Key command.
 Return non-nil iff associated help documentation is found."
   (interactive "P")
-  (unless (or action-key-depressed-flag action-key-help-flag)
-    (action-key-clear-variables))
-  (unless (or assist-key-depressed-flag assist-key-help-flag)
-    (assist-key-clear-variables))
-  (let ((hkey-forms hmouse-alist)
-	hkey-form pred-value call calls cmd-sym doc)
+  (let* ((mouse-flag (or action-key-depress-position assist-key-depress-position))
+	 (hkey-forms (if mouse-flag hmouse-alist hkey-alist))
+	 hkey-form pred-value call calls cmd-sym doc)
+    (unless (or action-key-depressed-flag action-key-help-flag)
+      (action-key-clear-variables))
+    (unless (or assist-key-depressed-flag assist-key-help-flag)
+      (assist-key-clear-variables))
     (while (and (null pred-value) (setq hkey-form (car hkey-forms)))
       (or (setq pred-value (eval (car hkey-form)))
 	  (setq hkey-forms (cdr hkey-forms))))
@@ -863,39 +864,44 @@ Return non-nil iff associated help documentation is found."
 	      (progn
 		(let* ((condition (car hkey-form))
 		       (temp-buffer-show-hook
-			 (lambda (buf)
-			   (set-buffer buf)
-			   (help-mode)
-			   (let ((owind (selected-window)))
-			     (if (br-in-browser)
-				 (save-excursion
-				   (br-to-view-window)
-				   (select-window (previous-window))
-				   (display-buffer buf 'other-win))
-			       (display-buffer buf 'other-win))
-			     (if (or (and (boundp 'help-window-select)
-					  help-window-select)
-				     (and (boundp 'help-selects-help-window)
-					  help-selects-help-window))
-				 (select-window (get-buffer-window buf))
-			       (select-window owind)))))
+			(lambda (buf)
+			  (set-buffer buf)
+			  (help-mode)
+			  (let ((owind (selected-window)))
+			    (if (br-in-browser)
+				(save-excursion
+				  (br-to-view-window)
+				  (select-window (previous-window))
+				  (display-buffer buf 'other-win))
+			      (display-buffer buf 'other-win))
+			    (if (or (and (boundp 'help-window-select)
+					 help-window-select)
+				    (and (boundp 'help-selects-help-window)
+					 help-selects-help-window))
+				(select-window (get-buffer-window buf))
+			      (select-window owind)))))
 		       (temp-buffer-show-function temp-buffer-show-hook))
 		  (with-output-to-temp-buffer
 		      (hypb:help-buf-name
-		       (format "%s Key" (if assist-flag "Assist" "Action")))
-		    (princ (format "A click of the %s Key"
-				   (if assist-flag "Assist" "Action")))
+		       (format "%s %s"
+			       (if assist-flag "Assist" "Action")
+			       (if mouse-flag "Mouse Button" "Key")))
+		    (princ (format "A %s of the %s %s"
+				   (if mouse-flag "click" "press")
+				   (if assist-flag "Assist" "Action")
+				   (if mouse-flag "Mouse Button" "Key")))
 		    (terpri)
 		    (princ "WHEN  ")
 		    (princ
-		      (or condition
-			  "there is no matching context"))
+		     (or condition
+			 "there is no matching context"))
 		    (terpri)
 
 		    (mapc (lambda (c)
-			    (if (> (length calls) 1)
+			    (when (and (> (length calls) 1)
+				       (not (eq (car calls) c)))
 				;; Is an 'or' set of calls
-				(princ "'OR' "))
+				(princ "OR "))
 			    (princ "CALLS ") (princ (if (consp c) c (list c)))
 			    (when (and (fboundp (setq call (if (consp c) (car c) c)))
 				       (setq doc (documentation call)))
@@ -1273,9 +1279,9 @@ window, return nil.  Considers all windows on the selected frame's display."
 	       pos-x pos-y))
     (when edges (list window (cons pos-x pos-y)))))
 
-(defun hmouse-key-release-window ()
-  "Return the window of the current mouse position if any, else nil."
-  (ignore-errors (hmouse-window-at-absolute-pixel-position nil t)))
+(defun hmouse-key-release-window (release-position)
+  "Return the Emacs window of last Action/Assist Mouse Key RELEASE-POSITION if any, else nil."
+  (ignore-errors (hmouse-window-at-absolute-pixel-position release-position t)))
 
 (defun hmouse-key-release-args-emacs (event)
   "For GNU Emacs, return a possibly modified version of EVENT as a list.
@@ -1385,9 +1391,9 @@ SET-POINT-ARG-LIST is passed to the call of the command bound to
 is not bound to a valid function."
   (when (fboundp hmouse-set-point-command)
     (if assist-flag
-	(setq assist-key-release-window (hmouse-key-release-window)
+	(setq assist-key-release-window (hmouse-key-release-window assist-key-release-position)
 	      assist-key-release-prev-point (point-marker))
-      (setq action-key-release-window (hmouse-key-release-window)
+      (setq action-key-release-window (hmouse-key-release-window action-key-release-position)
 	    action-key-release-prev-point (point-marker)))
     (and (eq major-mode 'br-mode)
 	 (setq action-mouse-key-prev-window

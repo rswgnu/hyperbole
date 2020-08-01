@@ -256,7 +256,7 @@ keyboad input queue, as if they had been typed by the user."
 ;;; ************************************************************************
 
 (defun kbd-key:binding (key-series)
-  "Return any existing key binding for KEY-SERIES or nil."
+  "Return key binding for KEY-SERIES if it is a single key sequence or nil."
   ;; This custom function is used to prevent the (kbd) call from
   ;; mistakenly removing angle brackets from Hyperbole implicit button
   ;; names, like: <[td]>.

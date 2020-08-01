@@ -1,3 +1,17 @@
+2020-08-01  Bob Weiner  <rsw@gnu.org>
+
+* hmouse-drv.el (hkey-help): Fixed to not show 'OR' before first 'CALL' listing
+    and to only display Action/Assist Mouse Button contexts when last use was
+    ia mouse button and not keyboard.  Also, displayed whether showing mouse or
+    keyboard help.
+
+* hmouse-drv.el (hmouse-key-release-window): Required position of last action/assist
+     mouse key release event.  This fixed the problem of improperly registering a
+     drag to outside of an emacs frame because action/assist-key-release-window was not
+     set properly.
+                (hmouse-function): Sent action/assist-key-release-position as argument
+    to hmouse-key-release-window call.
+
 2020-07-29  Bob Weiner  <rsw@gnu.org>
 
 * man/hkey-help.txt: Added magit modes.
