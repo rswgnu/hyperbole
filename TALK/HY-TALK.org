@@ -1,4 +1,6 @@
-* [[file:hyperbole-banner.png]]
+* [[file:../hyperbole-banner.png]]
+
+  			     GNU Hyperbole
 
 		        Make Your Text Come Alive
 

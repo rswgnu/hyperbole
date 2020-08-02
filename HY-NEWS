@@ -37,6 +37,14 @@
     - Markdown In-file Links: With point on the link title, in-file links are
       now activated properly (previously point had to be on the link itself).
 
+    - Git#directory Buttons: New flag, hibtypes-git-use-magit-flag, which if
+      set to t and Magit is available, then when activating a git directory
+      button, such as git#/hyperbole, use Magit rather than Dired.
+
+    - Explicit Buttons Work Immdiately: Previously you had to save the buffer
+      in which you created an explicit button before it would work.  Now they
+      work immediately after creation.
+
   DOCUMENTATION
 
     - Helm Mode: Added Hyperbole Manual section, "Smart Key - Helm Mode"

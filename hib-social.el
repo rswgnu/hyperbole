@@ -198,8 +198,8 @@
   :type 'string
   :group 'hyperbole-button)
 
-(defcustom hibtypes-git-use-magit-status nil
-  "If magit is available then use git social button to display magit status buffer."
+(defcustom hibtypes-git-use-magit-flag nil
+  "If magit is available, when activating a git directory button, use Magit rather than Dired."
   :type 'boolean
   :group 'hyperbole-button)
 
@@ -808,7 +808,7 @@ PROJECT value is provided, it defaults to the value of
 				  (princ (format "Command: %s\n\n" cmd))
 				  (princ (shell-command-to-string cmd)))))
 			  ;; Project-only reference, run dired on the project home directory
-			  (if (and hibtypes-git-use-magit-status (featurep 'magit))
+			  (if (and hibtypes-git-use-magit-flag (fboundp #'magit-status-setup-buffer))
 			      (hpath:display-buffer (save-window-excursion
 						      (magit-status-setup-buffer
 						       (file-name-as-directory project-dir))))

@@ -995,6 +995,11 @@ represent the output of particular document formatters."
 	 src)
 	((file-readable-p (setq src (hpath:symlink-referent src)))
 	 (set-buffer (find-file-noselect src))
+	 src)
+	;; Buffer may be newly created with an attached file that has
+	;; not yet been saved, so it can't be read.
+	((get-file-buffer src)
+	 (set-buffer (get-file-buffer src))
 	 src)))
 
 (defun    hbut:key-to-label (lbl-key)

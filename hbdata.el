@@ -425,14 +425,7 @@ On failure, return nil."
       (setq entry (car cons) lbl-instance (cdr cons))
       (prin1 entry (current-buffer))
       (terpri (current-buffer))
-      (when buffer-file-name (not (file-exists-p buffer-file-name))
-	;; This is the first explicit button created in this
-	;; directory, so .hypb does not yet exist and unless it is saved
-	;; here, the first explicit button won't work until its source
-	;; buffer is saved.
-	(save-buffer))
       (or lbl-instance t))))
-
 
 ;;; ************************************************************************
 ;;; Private variables

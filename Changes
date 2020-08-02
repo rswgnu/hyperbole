@@ -1,3 +1,12 @@
+2020-08-02  Bob Weiner  <rsw@gnu.org>
+
+* hbut.el (hbut:key-src-set-buffer): Fixed explicit button creation in a new
+    file that has not yet been saved.
+
+* hib-social.el (git-reference, hibtypes-git-use-magit-flag): Added this flag.
+    If Magit is available, when activating a git directory button, use Magit
+    rather than Dired.
+
 2020-08-01  Bob Weiner  <rsw@gnu.org>
 
 * hui-mini.el (hui:menu-get-keys): Cleared hui:menu-keys to prevent multiple
@@ -74,11 +83,6 @@
 2020-07-21  Bob Weiner  <rsw@gnu.org>
 
 * hyperbole.el (hkey-global-set-key): Documented.
-
-2020-07-20  Bob Weiner  <rsw@gnu.org>
-
-* hbdata.el (hbdata:write): Fixed so first explicit button created in a directory
-    works before saving its source buffer (by saving the directory .hypb file).
 
 2020-07-19  Bob Weiner  <rsw@gnu.org>
 
