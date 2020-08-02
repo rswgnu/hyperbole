@@ -4,7 +4,7 @@
 ;;
 ;; Orig-Date:    20-Jul-16 at 22:41:34
 ;;
-;; Copyright (C) 2016-2017  Free Software Foundation, Inc.
+;; Copyright (C) 2016-2020  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
 ;;
 ;; This file is part of GNU Hyperbole.
@@ -196,6 +196,11 @@
 (defcustom hibtypes-git-default-project nil
   "Default project name to associate with any local git commit link."
   :type 'string
+  :group 'hyperbole-button)
+
+(defcustom hibtypes-git-use-magit-status nil
+  "If magit is available then use git social button to display magit status buffer."
+  :type 'boolean
   :group 'hyperbole-button)
 
 (defcustom hibtypes-github-default-project nil
@@ -803,8 +808,12 @@ PROJECT value is provided, it defaults to the value of
 				  (princ (format "Command: %s\n\n" cmd))
 				  (princ (shell-command-to-string cmd)))))
 			  ;; Project-only reference, run dired on the project home directory
-			  (hpath:display-buffer (dired-noselect
-						 (file-name-as-directory project-dir)))))
+			  (if (and hibtypes-git-use-magit-status (featurep 'magit))
+			      (hpath:display-buffer (save-window-excursion
+						      (magit-status-setup-buffer
+						       (file-name-as-directory project-dir))))
+			    (hpath:display-buffer (dired-noselect
+						   (file-name-as-directory project-dir))))))
 		       (t (if project-dir
 			      (error "(git-reference): git project `%s' directory is unreadable or invalid: \"%s\""
 				     project project-dir)
