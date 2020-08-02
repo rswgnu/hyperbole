@@ -120,7 +120,6 @@ a menu item should be shown rather than display of a menu.  DOC-FLAG
 non-nil means show documentation for any item that is selected by the
 user.  HELP-STRING-FLAG non-nil means show only the first line of the
 documentation, not the full text."
-
   (setq hui:menu-keys "")
   (let ((set-menu '(or (and menu (symbolp menu)
 			    (setq menu-alist
@@ -171,10 +170,11 @@ Return nil when already in a Hyperbole mini-menu."
 Optional second argument MENU-LIST is a Hyperbole menu list structure from
 which to extract MENU.  It defaults to `hui:menus'.  See its definition for
 the menu list structure."
+  (setq hui:menu-keys "")
   (let ((set-menu '(or (and menu (symbolp menu)
 			    (setq menu-alist
 				  (cdr (assq menu (or menu-list hui:menus)))))
-		       (hypb:error "(hui:menu-act): Invalid menu symbol arg: `%s'"
+		       (hypb:error "(hui:menu-get-keys): Invalid menu symbol arg: `%s'"
 			      menu)))
 	(show-menu t)
 	menu-alist act-form)

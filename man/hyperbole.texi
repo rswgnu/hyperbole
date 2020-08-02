@@ -154,8 +154,8 @@ WITHOUT ANY WARRANTY, without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</P>
 
 <PRE>
-Edition 7.1.2
-Printed July 5, 2020.
+Edition 7.1.3
+Printed August 1, 2020.
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -196,8 +196,8 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 @sp 2
 
 @example
-Edition 7.1.2
-July 5, 2020
+Edition 7.1.3
+August 1, 2020
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -442,6 +442,7 @@ Smart Keyboard Keys
 * Smart Key - Dired Mode::
 * Smart Key - Hyperbole Buttons::
 * Smart Key - View Mode::
+* Smart Key - Helm Mode::
 * Smart Key - Delimited Things::
 * Smart Key - The Koutliner::
 * Smart Key - RDB Mode::
@@ -463,7 +464,7 @@ Smart Keyboard Keys
 * Smart Key - Man Page Apropos::
 * Smart Key - Emacs Outline Mode::
 * Smart Key - Info Manuals::
-* Smart Key - Email Composers::
+* Smart Key - Email Readers::
 * Smart Key - GNUS Newsreader::
 * Smart Key - Buffer Menus::
 * Smart Key - Tar File Mode::
@@ -472,6 +473,7 @@ Smart Keyboard Keys
 * Smart Key - HyRolo Match Buffers::
 * Smart Key - Image Thumbnails::
 * Smart Key - Gomoku Game::
+* Smart Key - Magit Mode::
 * Smart Key - The OO-Browser::
 * Smart Key - Default Context::
 
@@ -482,7 +484,7 @@ Smart Keyboard Keys
 @chapter Introduction
 
 This edition of the GNU Hyperbole Manual is for use with any version
-7.1.2 or greater of GNU Hyperbole.  Hyperbole runs atop GNU Emacs 24.3
+7.1.3 or greater of GNU Hyperbole.  Hyperbole runs atop GNU Emacs 24.3
 or higher.  It will trigger an error if your Emacs is older.
 
 This chapter summarizes the structure of the rest of the manual,
@@ -8042,6 +8044,7 @@ a vertical scroll bar:
 @end group
 @end format
 
+@page
 @node Modeline Clicks and Drags, Smart Mouse Drags between Windows, Side-by-Side Window Resizing, Smart Mouse Keys
 @subsection Modeline Clicks and Drags
 
@@ -8276,6 +8279,7 @@ If dragged from an Emacs window to outside of Emacs:
 * Smart Key - Dired Mode::
 * Smart Key - Hyperbole Buttons::
 * Smart Key - View Mode::
+* Smart Key - Helm Mode::
 * Smart Key - Delimited Things::
 * Smart Key - The Koutliner::
 * Smart Key - RDB Mode::
@@ -8297,7 +8301,7 @@ If dragged from an Emacs window to outside of Emacs:
 * Smart Key - Man Page Apropos::
 * Smart Key - Emacs Outline Mode::
 * Smart Key - Info Manuals::
-* Smart Key - Email Composers::
+* Smart Key - Email Readers::
 * Smart Key - GNUS Newsreader::
 * Smart Key - Buffer Menus::
 * Smart Key - Tar File Mode::
@@ -8306,6 +8310,7 @@ If dragged from an Emacs window to outside of Emacs:
 * Smart Key - HyRolo Match Buffers::
 * Smart Key - Image Thumbnails::
 * Smart Key - Gomoku Game::
+* Smart Key - Magit Mode::
 * Smart Key - The OO-Browser::
 * Smart Key - Default Context::
 @end menu
@@ -8360,7 +8365,7 @@ When in a Treemacs file browser buffer:
 @end group
 @end format
 
-@node Smart Key - Dired Sidebar Mode, Smart Key - Emacs Pushbuttons, Smart Keyboard Keys, Smart Keyboard Keys
+@node Smart Key - Dired Sidebar Mode, Smart Key - Emacs Pushbuttons, Smart Key - Treemacs, Smart Keyboard Keys
 @subsection Smart Key - Dired Sidebar Mode
 
 @cindex dired-sidebar-mode
@@ -8388,7 +8393,7 @@ When in a dired-sidebar buffer:
 @end group
 @end format
 
-@node Smart Key - Emacs Pushbuttons, Smart Key - Argument Completion, Smart Key - Treemacs, Smart Keyboard Keys
+@node Smart Key - Emacs Pushbuttons, Smart Key - Argument Completion, Smart Key - Dired Sidebar Mode, Smart Keyboard Keys
 @subsection Smart Key - Emacs Pushbuttons
 
 @format
@@ -8580,7 +8585,7 @@ When pressed on a Hyperbole button:
 @end group
 @end format
 
-@node Smart Key - View Mode, Smart Key - Delimited Things, Smart Key - Hyperbole Buttons, Smart Keyboard Keys
+@node Smart Key - View Mode, Smart Key - Helm Mode, Smart Key - Hyperbole Buttons, Smart Keyboard Keys
 @subsection Smart Key - View Mode
 
 @cindex view mode
@@ -8596,7 +8601,50 @@ If pressed within a buffer in View major or minor mode:
 @end format
 
 @page
-@node Smart Key - Delimited Things, Smart Key - The Koutliner, Smart Key - View Mode, Smart Keyboard Keys
+@node Smart Key - Helm Mode, Smart Key - Delimited Things, Smart Key - View Mode, Smart Keyboard Keys
+@subsection Smart Key - Helm Mode
+
+Because of the way helm is written, you may need a modified version of
+helm for these Smart Key actions to work.  Try them in your own
+version and if there are any issues, install helm from
+@file{github.com/rswgnu/helm}. 
+
+@cindex helm mode
+@cindex completion
+@format
+@group
+If pressed within a buffer in helm major mode:
+  ACTION KEY
+     (1) at the end of the buffer, quits from helm and exits the minibuffer;
+     (2) on a candidate line, performs the candidate's first action and
+         remains in the minibuffer;
+     (3) on the top, fixed header line, toggles display of the selected
+         candidate's possible actions;
+     (4) on an action list line, performs the action after exiting the
+         minibuffer;
+     (5) on a source section header, moves to the next source section or
+         first if on last;
+     (6) on a candidate separator line, does nothing;
+     (7) in the minibuffer window, ends the helm session and performs the
+         selected item's action.
+  ASSIST KEY
+     (1) at the end of the buffer, quits from helm and exits the minibuffer;
+     (2) on a candidate line, display's the candidate's first action
+         and remains in the minibuffer;
+     (3) on the top, fixed header line, toggles display of the
+         selected candidate's possible actions;
+     (4) on an action list line, performs the action after exiting the
+         minibuffer;
+     (5) on a source section header, moves to the previous source
+         section or last if on first;
+     (6) on a candidate separator line, does nothing;
+     (7) in the minibuffer window, ends the helm session and performs
+         the selected item's action.
+@end group
+@end format
+
+@page
+@node Smart Key - Delimited Things, Smart Key - The Koutliner, Smart Key - Helm Mode, Smart Keyboard Keys
 @subsection Smart Key - Delimited Things
 
 @cindex thing
@@ -9099,6 +9147,10 @@ When pressed within a man page apropos buffer or listing:
 @node Smart Key - Emacs Outline Mode, Smart Key - Info Manuals, Smart Key - Man Page Apropos, Smart Keyboard Keys
 @subsection Smart Key - Emacs Outline Mode
 @vindex selective-display
+@cindex outline-mode
+@cindex outline-minor-mode
+@findex outline-mode
+@findex outline-minor-mode
 @format
 @group
 If pressed within an outline-mode buffer or when no other context is matched
@@ -9129,7 +9181,7 @@ and outline-minor-mode is enabled:
 @end group
 @end format
 
-@node Smart Key - Info Manuals, Smart Key - Email Composers, Smart Key - Emacs Outline Mode, Smart Keyboard Keys
+@node Smart Key - Info Manuals, Smart Key - Email Readers, Smart Key - Emacs Outline Mode, Smart Keyboard Keys
 @subsection Smart Key - Info Manuals
 
 @format
@@ -9173,8 +9225,8 @@ Use @bkbd{s} within an Info manual to search for any concept that interests you.
 @end group
 @end format
 
-@node Smart Key - Email Composers, Smart Key - GNUS Newsreader, Smart Key - Info Manuals, Smart Keyboard Keys
-@subsection Smart Key - Email Composers
+@node Smart Key - Email Readers, Smart Key - GNUS Newsreader, Smart Key - Info Manuals, Smart Keyboard Keys
+@subsection Smart Key - Email Readers
 @vindex hmail:reader
 @vindex hmail:lister
 @format
@@ -9210,7 +9262,7 @@ If pressed within a Hyperbole-supported mail reader (defined by
 @end group
 @end format
 
-@node Smart Key - GNUS Newsreader, Smart Key - Buffer Menus, Smart Key - Email Composers, Smart Keyboard Keys
+@node Smart Key - GNUS Newsreader, Smart Key - Buffer Menus, Smart Key - Email Readers, Smart Keyboard Keys
 @subsection Smart Key - GNUS Newsreader
 @cindex click, Gnus
 @cindex Gnus browsing
@@ -9434,7 +9486,7 @@ If pressed within a Dired Image Thumbnail buffer:
 @end group
 @end format
 
-@node Smart Key - Gomoku Game, Smart Key - The OO-Browser, Smart Key - Image Thumbnails, Smart Keyboard Keys
+@node Smart Key - Gomoku Game, Smart Key - Magit Mode, Smart Key - Image Thumbnails, Smart Keyboard Keys
 @subsection Smart Key - Gomoku Game
 @cindex game, gomoku
 @cindex gomoku
@@ -9448,7 +9500,25 @@ If pressed within a Gomoku game buffer:
 @end group
 @end format
 
-@node Smart Key - The OO-Browser, Smart Key - Default Context, Smart Key - Gomoku Game, Smart Keyboard Keys
+@node Smart Key - Magit Mode, Smart Key - The OO-Browser, Smart Key - Gomoku Game, Smart Keyboard Keys
+@subsection Smart Key - Magit Mode
+@cindex git
+@cindex magit
+@format
+@group
+If pressed within a Magit buffer and not on a button:
+  ACTION KEY
+     (1) on the last line, quit from the magit mode (@bkbd{q} key binding);
+     (2) at the end of a line, scroll up a windowful;
+     (3) anywhere else, hide/show the thing at point (@bkbd{@key{TAB}} key binding).
+  ASSIST KEY
+     (1) on the last line, quit from the magit mode (@bkbd{q} key binding);
+     (2) at the end of a line, scroll down a windowful;
+     (3) anywhere else, jump to the thing at point (@bkbd{@key{RET}} key binding)."
+@end group
+@end format
+
+@node Smart Key - The OO-Browser, Smart Key - Default Context, Smart Key - Magit Mode, Smart Keyboard Keys
 @subsection Smart Key - The OO-Browser
 
 @cindex OO-Browser
@@ -9484,6 +9554,7 @@ When pressed within an OO-Browser listing window:
 @end group
 @end format
 
+@page
 @format
 @group
   ASSIST KEY

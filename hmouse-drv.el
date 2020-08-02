@@ -135,6 +135,7 @@ This permits the Smart Keys to behave as paste keys.")
 
 ;;; Smart Key Depress Functions
 (defun action-key-depress (&rest args)
+  "Register depress of the Hyperbole Action Mouse Key."
   (interactive)
   (cond (assist-key-depressed-flag
 	 (or action-key-help-flag
@@ -155,6 +156,7 @@ This permits the Smart Keys to behave as paste keys.")
   (run-hooks 'action-key-depress-hook))
 
 (defun assist-key-depress (&rest args)
+  "Register depress of the Hyperbole Assist Mouse Key."
   (interactive)
   (cond (action-key-depressed-flag
 	 (or assist-key-help-flag
@@ -175,10 +177,12 @@ This permits the Smart Keys to behave as paste keys.")
   (run-hooks 'assist-key-depress-hook))
 
 (defun action-key-depress-emacs (event)
+  "Handle depress event of the Hyperbole Action Mouse Key."
   (interactive "e")
   (action-key-depress event))
 
 (defun assist-key-depress-emacs (event)
+  "Handle depress event of the Hyperbole Assist Mouse Key."
   (interactive "e")
   (assist-key-depress event))
 
@@ -883,13 +887,13 @@ Return non-nil iff associated help documentation is found."
 		       (temp-buffer-show-function temp-buffer-show-hook))
 		  (with-output-to-temp-buffer
 		      (hypb:help-buf-name
-		       (format "%s %s"
+		       (format "%s %sKey"
 			       (if assist-flag "Assist" "Action")
-			       (if mouse-flag "Mouse Button" "Key")))
-		    (princ (format "A %s of the %s %s"
+			       (if mouse-flag "Mouse " "")))
+		    (princ (format "A %s of the %s %sKey"
 				   (if mouse-flag "click" "press")
 				   (if assist-flag "Assist" "Action")
-				   (if mouse-flag "Mouse Button" "Key")))
+				   (if mouse-flag "Mouse " "")))
 		    (terpri)
 		    (princ "WHEN  ")
 		    (princ

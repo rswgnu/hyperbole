@@ -79,7 +79,7 @@ It provides the following keys:
       ;; Some package such as filladapt has overwritten the primitives
       ;; defined in kfill.el, so reload it.
       (load "kfill"))
-  (setq fill-paragraph-function #'kfill:fill-paragraph)
+  (setq-local fill-paragraph-function #'kfill:fill-paragraph)
   ;; Ensure that outline structure data is saved when save-buffer is called
   ;; from save-some-buffers, {C-x s}.
   (add-hook 'local-write-file-hooks #'kotl-mode:update-buffer)

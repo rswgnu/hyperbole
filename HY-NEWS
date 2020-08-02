@@ -15,12 +15,18 @@
       associated with Agenda items such as TODOs in another window.  The
       Assist Key shows help.
 
-    - Org-mode: Raised to near top priority in implicit button types so that
+    - Org Mode: Raised to near top priority in implicit button types so that
       pathnames, URLs, etc. within Org links are handled by Org rather than
       Hyperbole.
 
     - Smart Dired Sidebar: Smart Key support for the dired-sidebar
       package.  See "(hyperbole)Smart Key - Dired Sidebar Mode".
+
+    - Helm Mode:  The Smart Keys do all sorts of things in helm completion buffers
+      and the associated minibuffer.  See "(hyperbole)Smart Key - Helm Mode".
+
+    - Magit Mode: Action Key expands/collapses like {TAB} and Assist Key
+      jumps to items like {RET}.  See "(hyperbole)Smart Key - Magit Mode".
 
   BUTTON TYPES
 
@@ -31,6 +37,15 @@
     - Markdown In-file Links: With point on the link title, in-file links are
       now activated properly (previously point had to be on the link itself).
 
+  DOCUMENTATION
+
+    - Helm Mode: Added Hyperbole Manual section, "Smart Key - Helm Mode"
+      that works on helm completions.  See "(hyperbole)Smart Key -
+      Helm Mode".
+
+    - Magit Mode: Added Hyperbole Manual section, "Smart Key - Magit Mode"
+      that expands/collapses/jumps to Magit items.  See "(hyperbole)Smart Key -
+      Magit Mode".
 
 ===========================================================================
 *                                   V7.1.2

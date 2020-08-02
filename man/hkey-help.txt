@@ -78,6 +78,7 @@ Mouse-only Control
 Hyperbole Key Press/Click in Special Modes
   Region Active                 Yanks region at release    Kills and yanks at release
   Company Mode Completion       Displays definition        Displays documentation
+  Helm Completion               Displays item              Displays item
   Treemacs                      Displays item              Displays item
   Dired Sidebar                 Displays item              Displays item
   Emacs Push Button             Activates button           Button help
@@ -103,7 +104,7 @@ Hyperbole Key Press/Click in Special Modes
     Include file                Jumps to Texinfo referent  Button help
     code/var reference          Displays doc for referent  Button help
   Org Mode                      Follows links and cycles outline views
-  Magit Modes                   Collapses and expands things
+  Magit Modes                   Collapses, expands and jumps to things
   Outline Major/Minor Modes     Collapses, expands, and moves outline entries
   Man Apropos                   Displays man page entry    <- same
   Man Pages                     Follows cross refs, file refs and C code refs

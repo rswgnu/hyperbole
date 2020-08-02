@@ -1042,7 +1042,10 @@ Optional NO-SORT means display in decreasing priority order (natural order)."
 	      (names (htype:names htype-sym))
 	      (term (hargs:read-match
 		     (concat (capitalize tstr)
-			     " to describe (RET for all): ")
+			     (format " to describe (RET for all%s): "
+				     (if (eq htype-sym 'ibtypes)
+					 " in priority order"
+				       "")))
 		     (mapcar 'list (cons "" names))
 		     nil t nil htype-sym))
 	      nm-list

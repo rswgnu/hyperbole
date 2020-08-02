@@ -1,5 +1,17 @@
 2020-08-01  Bob Weiner  <rsw@gnu.org>
 
+* hui-mini.el (hui:menu-get-keys): Cleared hui:menu-keys to prevent multiple
+    calls from concatenating results.
+
+* hmouse-drv.el (hkey-help): Added note that implicit button types are displayed
+    in highest priority first order when listing all of them.
+
+* man/hyperbole.texi (Smart Key - Helm Mode):
+                     (Smart Key - Magit Mode): Added new nodes to document these.
+
+* kotl/kotl-mode.el (kotl-mode): Used setq-local to ensure fill-paragraph-function
+    is set only for kotl-mode.
+
 * hmouse-drv.el (hkey-help): Fixed to not show 'OR' before first 'CALL' listing
     and to only display Action/Assist Mouse Button contexts when last use was
     ia mouse button and not keyboard.  Also, displayed whether showing mouse or
