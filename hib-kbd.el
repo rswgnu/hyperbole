@@ -79,33 +79,42 @@ Any key sequence must be a string of one of the following:
   or a valid key sequence together with its interactive arguments."
   (unless (or (br-in-browser)
 	      (and (looking-at "[{}]") (/= ?\\ (preceding-char))))
-    ;; handle long series, e.g. eval-elisp actions
-    (let* ((hbut:max-len (max 3000 (hbut:max-len)))
-	   (seq-and-pos (or (hbut:label-p t "{`" "'}" t)
-			    (hbut:label-p t "{" "}" t)
-			    ;; Regular dual single quotes (Texinfo smart quotes)
-			    (hbut:label-p t "``" "''" t)
-			    ;; Typical GNU manual key sequences; note
-			    ;; these are special quote marks, not the
-			    ;; standard ASCII characters.
-			    (hbut:label-p t "‘" "’" t)))
-	   ;; This excludes delimiters
-	   (key-series (car seq-and-pos))
-	   (start (cadr seq-and-pos))
-	   binding)
-      ;; Match only when start delimiter is preceded by whitespace,
-      ;; double quotes or is the 1st buffer character, so do not
-      ;; match to things like ${variable}.
-      (when (memq (char-before start) '(nil ?\ ?\t ?\n ?\j ?\f ?\"))
-	(when (and (stringp key-series)
-		   (not (eq key-series "")))
-	  (setq key-series (kbd-key:normalize key-series)
-		binding (kbd-key:binding key-series)))
-	(and (stringp key-series)
-	     (or (and binding (not (integerp binding)))
-		 (kbd-key:special-sequence-p key-series))
-	     (ibut:label-set seq-and-pos)
-	     (hact 'kbd-key key-series))))))
+    ;; Temporarily make open and close braces have list syntax for
+    ;; matching purposes.
+    (let ((open-brace-syntax (hypb:get-raw-syntax-descriptor ?\{))
+	  (close-brace-syntax (hypb:get-raw-syntax-descriptor ?\})))
+      (unwind-protect
+	  (progn (modify-syntax-entry ?\{ "(\}" (syntax-table))
+		 (modify-syntax-entry ?\} ")\}" (syntax-table))
+		 ;; Handle long series, e.g. eval-elisp actions
+		 (let* ((hbut:max-len (max 3000 (hbut:max-len)))
+			(seq-and-pos (or (hbut:label-p t "{`" "'}" t)
+					 (hbut:label-p t "{" "}" t)
+					 ;; Regular dual single quotes (Texinfo smart quotes)
+					 (hbut:label-p t "``" "''" t)
+					 ;; Typical GNU manual key sequences; note
+					 ;; these are special quote marks, not the
+					 ;; standard ASCII characters.
+					 (hbut:label-p t "‘" "’" t)))
+			;; This excludes delimiters
+			(key-series (car seq-and-pos))
+			(start (cadr seq-and-pos))
+			binding)
+		   ;; Match only when start delimiter is preceded by whitespace,
+		   ;; double quotes or is the 1st buffer character, so do not
+		   ;; match to things like ${variable}.
+		   (when (memq (char-before start) '(nil ?\ ?\t ?\n ?\j ?\f ?\"))
+		     (when (and (stringp key-series)
+				(not (eq key-series "")))
+		       (setq key-series (kbd-key:normalize key-series)
+			     binding (kbd-key:binding key-series)))
+		     (and (stringp key-series)
+			  (or (and binding (not (integerp binding)))
+			      (kbd-key:special-sequence-p key-series))
+			  (ibut:label-set seq-and-pos)
+			  (hact 'kbd-key key-series)))))
+	(hypb:set-raw-syntax-descriptor ?\{ open-brace-syntax)
+	(hypb:set-raw-syntax-descriptor ?\} close-brace-syntax)))))
 
 ;;; ************************************************************************
 ;;; Public functions

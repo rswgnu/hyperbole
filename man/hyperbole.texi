@@ -52,7 +52,7 @@
 This manual is for GNU Hyperbole
 (Edition @value{EDITION}, Published @value{UPDATED}).
 
-Copyright @copyright{} 1989-2019  Free Software Foundation, Inc.
+Copyright @copyright{} 1989-2020  Free Software Foundation, Inc.
 
 @quotation
 Permission is granted to copy, distribute and/or modify this document
@@ -142,7 +142,7 @@ Texinfo markup language.
 <CENTER><H3><A HREF="mailto:rsw@@gnu.org">Say thanks or send a testimonial if you like Hyperbole.</A></H3></CENTER>
 
 
-<P>Copyright &copy; 1989-2019  Free Software Foundation, Inc.</P>
+<P>Copyright &copy; 1989-2020  Free Software Foundation, Inc.</P>
 
 <P>GNU Hyperbole is available for use, modification, and distribution under
 the terms of the GNU General Public License (GPL) Version 3 or later,
@@ -183,7 +183,7 @@ Printed August 1, 2020.
 
 @sp 2
 @noindent
-Copyright @copyright{} 1989-2019  Free Software Foundation, Inc.
+Copyright @copyright{} 1989-2020  Free Software Foundation, Inc.
 
 GNU Hyperbole is available for use, modification, and distribution
 under the terms of the GNU General Public License (GPL) Version 3 or
@@ -4957,7 +4957,7 @@ The e-mail address of the person who created this cell.
 @item create-time
 The time at which the cell was created.  This is stored in a form that
 allows for easy data comparisons but is displayed in a human readable
-format, such as @samp{Jan 28 18:27:59 CST 2019}.
+format, such as @samp{Jan 28 18:27:59 CST 2020}.
 @end table
 
 @kindex koutliner, C-c C-i
@@ -5068,7 +5068,7 @@ automatically added by HyRolo whenever a new record is added.
 ==================================================================
 *   Smith, John       <js@@hiho.com> W708-555-2001  F708-321-1492
         Chief Ether Maintainer, HiHo Industries
-        05/24/2019
+        05/24/2020
 @end group
 @end example
 

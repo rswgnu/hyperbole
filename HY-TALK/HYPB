@@ -1,0 +1,44 @@
+* Keystroke Display
+
+** Keypression - overlaying parts of buffer (shows trail of keys)
+
+  <keypression-mode 1>
+  <keypression-mode 0>
+
+<setq keypression-use-child-frame nil
+      keypression-fade-out-delay 3.0
+      keypression-frame-justify 'keypression-left-justified
+      keypression-cast-command-name t
+      keypression-cast-command-name-format "%s  %s"
+      keypression-combine-same-keystrokes t
+      keypression-font-face-attribute '(:width normal :height 200 :weight bold)>
+
+
+* Pathname Prefixes
+
+    "!${PATH)/date"                  - execute 'date' shell command
+
+    "&Preview.app ${hyperb:dir}/man/hyperbole.pdf"
+
+    "-subr.elc"                      - load an Elisp library
+
+
+* Global Buttons
+
+<[Test ibut label]> {C-u C-n}
+
+<[Bufs]> {C-x C-b}
+
+<[iPython src]>: "/usr/local/Cellar/ipython/7.16.1/libexec/lib/python3.8/site-packages/IPython/"
+
+{C-x 4 t} - Goto <(Hyperbole Todos)>
+
+<[ib]>   "(hyperbole)Implicit Buttons"
+<[frm]>  "(hyperbole)C-h h s f"
+
+"${hyperb:dir}/DEMO"
+
+"${hyperb:dir}/README.md#Programmer Quick Reference"
+"${hyperb:dir}/README.md#programmer-quick-reference:4:2"
+
+<hpath:find "${hyperb:dir}">

@@ -7,6 +7,7 @@ HY-ABOUT             - Introductory description of GNU Hyperbole
 HY-ANNOUNCE          - GNU Hyperbole release announcement
 HY-COPY              - GNU Hyperbole Copyright
 HY-NEWS              - What's new in each release of GNU Hyperbole
+HY-TALK.org          - Source slides and video link from the author's 2020 talk on Hyperbole
 HY-WHY.kotl          - Quick list of great reasons to use Hyperbole
 INSTALL              - GNU Hyperbole installation and invocation instructions
 Makefile             - Build GNU Hyperbole directories and distributions

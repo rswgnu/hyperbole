@@ -344,6 +344,10 @@ are replaced.  Returns body of modified FUNC-SYM."
          body))
       body)))
 
+(defun hypb:get-raw-syntax-descriptor (char &optional syntax-table)
+  "Return the raw syntax descriptor for CHAR using the current syntax table or optional SYNTAX-TABLE."
+  (aref (or syntax-table (syntax-table)) char))
+
 ;; Derived from pop-global-mark of "simple.el" in GNU Emacs.
 (defun hypb:goto-marker (marker)
   "Make MARKER's buffer and position current.
@@ -612,6 +616,19 @@ The value returned is the value of the last form in BODY."
       (progn (select-window window)
 	     (select-frame-set-input-focus (window-frame window)))
     (error "(hypb:select-window-frame): Argument must be a live window, not '%s'" window)))
+
+(defun hypb:set-raw-syntax-descriptor (char raw-descriptor &optional syntax-table)
+  "Set the syntax of CHAR to RAW-DESCRIPTOR (syntax table value) in the current syntax table or optional SYNTAX-TABLE.
+Return the RAW-DESCRIPTOR.  Use the `syntax-after' function to
+retrieve the raw descriptor for a buffer position.
+
+Similar to modify-syntax-entry but uses a raw descriptor
+previously extracted from a syntax table to set the value rather
+than a string.
+
+Syntax tables are char-tables whose values are encoded as raw
+descriptors."
+  (aset (or syntax-table (syntax-table)) char raw-descriptor))
 
 (defun hypb:supercite-p ()
   "Return non-nil iff the Emacs add-on supercite package is in use."

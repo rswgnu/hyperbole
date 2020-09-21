@@ -1405,7 +1405,7 @@ Return symbol for button deleted or nil."
       (when (and start end)
 	(save-excursion
 	  (set-buffer (if (bufferp loc) loc (find-file-noselect loc)))
-	  (when (ibut:to but-sym)
+	  (when (ibut:to (ibut:key but-sym))
 	    (let (buffer-read-only)
 	      (if (< (point) start)
 		  ;; Find beginning of button named label delimiter and delete

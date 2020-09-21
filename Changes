@@ -1,3 +1,38 @@
+2020-09-21  Bob Weiner  <rsw@gnu.org>
+
+* hversion.el: Released 7.1.3.
+
+2020-09-06  Bob Weiner  <rsw@gnu.org>
+
+* hyperbole.el (hkey-define-key): Added to support help-map being
+    somewhere other than C-h.
+               (hkey-initialize): Updated to support the above.
+  hui-mini.el (hui:menu-doc): Updated to support the above.  Trigger an
+    error if the 'hyperbole' command is not bound to a key.
+
+* hmouse-drv.el (hkey-help): Fix to properly reflect and describe mouse
+    drags and only reflect mouse usage if last-command-event was a
+    mouse event.  Move clearing of action/assist key variables until
+    after the last specified action is recorded.
+
+* hib-kbd.el (kbd-key): Improve brace matching by temporarily tagging
+    braces with list delimiter syntax.
+
+* hypb.el (hypb:set-raw-syntax-descriptor): Add so can restore saved
+    syntax table entries.
+          (hypb:get-raw-syntax-descriptor): Add to get raw syntax
+    descriptors.  Emacs does not provide these functions.
+
+* hui-window.el (smart-coords-in-window-p): Ensure any window returned is
+    still valid and fix eventp condition to return window rather than t.
+
+2020-08-03  Bob Weiner  <rsw@gnu.org>
+
+* hui.el (hui:ebut-delete-op, hui:ibut-delete-op): Display deletion msg
+    when used in a key series or kbd macro.
+
+* hbut.el (ibut:delete): Fix to pass key instead of but symbol to ibut:to.
+
 2020-08-02  Bob Weiner  <rsw@gnu.org>
 
 * hbut.el (hbut:key-src-set-buffer): Fixed explicit button creation in a new

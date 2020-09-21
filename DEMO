@@ -222,7 +222,7 @@ There are two submodes of HyControl: one for controlling windows and one for
 controlling frames, although a number of commands are available in both modes
 where they are useful.
 
-Hyperbole binds {C-c \\} to invoke HyControl windows control; otherwise, the
+Hyperbole binds {C-c \ } to invoke HyControl windows control; otherwise, the
 Hyperbole minibuffer menu item, Screen/WindowsControl {C-h h s w}, will do
 the same thing.
 

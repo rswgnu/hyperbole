@@ -34,7 +34,7 @@
 ;;   zooming; if called interactively, it stores the current window
 ;;   configuration for restoration via a press of the `)' key.
 ;;   `hycontrol-enable-windows-mode' is typically bound by Hyperbole
-;;   to {C-c \} or just use {C-h h s w}.  Then press {t} if you want
+;;   to {C-c \ } or just use {C-h h s w}.  Then press {t} if you want
 ;;   to switch to frame control.
 ;;
 ;;   With a HyControl minor mode active, a multi-line help summary of

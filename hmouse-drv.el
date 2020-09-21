@@ -836,13 +836,11 @@ Return non-nil iff a non-nil predicate is found."
 With optional ASSIST-FLAG prefix arg non-nil, display help for the Assist Key command.
 Return non-nil iff associated help documentation is found."
   (interactive "P")
-  (let* ((mouse-flag (or action-key-depress-position assist-key-depress-position))
+  (let* ((mouse-flag (when (mouse-event-p last-command-event)
+		       (or action-key-depress-position assist-key-depress-position)))
+	 (mouse-drag-flag (hmouse-drag-p))
 	 (hkey-forms (if mouse-flag hmouse-alist hkey-alist))
 	 hkey-form pred-value call calls cmd-sym doc)
-    (unless (or action-key-depressed-flag action-key-help-flag)
-      (action-key-clear-variables))
-    (unless (or assist-key-depressed-flag assist-key-help-flag)
-      (assist-key-clear-variables))
     (while (and (null pred-value) (setq hkey-form (car hkey-forms)))
       (or (setq pred-value (eval (car hkey-form)))
 	  (setq hkey-forms (cdr hkey-forms))))
@@ -862,6 +860,11 @@ Return non-nil iff associated help documentation is found."
     (setq calls (if (and (consp call) (eq (car call) 'or))
 		    (mapcar 'identity (cdr call))
 		  (list cmd-sym)))
+
+    (unless (or action-key-depressed-flag action-key-help-flag)
+      (action-key-clear-variables))
+    (unless (or assist-key-depressed-flag assist-key-help-flag)
+      (assist-key-clear-variables))
 
     (setq hkey-help-msg
 	  (if (and cmd-sym (symbolp cmd-sym))
@@ -891,7 +894,9 @@ Return non-nil iff associated help documentation is found."
 			       (if assist-flag "Assist" "Action")
 			       (if mouse-flag "Mouse " "")))
 		    (princ (format "A %s of the %s %sKey"
-				   (if mouse-flag "click" "press")
+				   (if mouse-flag
+				       (if mouse-drag-flag "drag" "click")
+				     "press")
 				   (if assist-flag "Assist" "Action")
 				   (if mouse-flag "Mouse " "")))
 		    (terpri)

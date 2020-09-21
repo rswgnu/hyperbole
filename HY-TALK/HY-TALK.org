@@ -1,0 +1,456 @@
+* <(Make Your Text Come Alive)>
+
+
+                           <(GNU Hyperbole)>
+
+                               Bob Weiner
+                             <rsw@gnu.org>
+
+                  NYC Emacs Meetup  --  August 3, 2020
+
+                      See the presentation at:
+
+  	       https://www.youtube.com/watch?v=nC1eTgZE1oA
+
+
+* Hyperbole - the Word
+
+  Pronounciation: hī-pûr′b-lē
+
+  Definition:     An extravagant statement or assertion
+                  not intended to be understood literally.
+
+  --
+
+    "Seek not what is, but what can be."
+
+
+* Hyperbole - the Mission
+
+  - Provide productive, interactive and programmatic tools for
+    interlinking and and controlling the view of all kinds of Emacs
+    texts
+
+  - Let the computer figure out what to do in many contexts, reducing
+    the number of key bindings to remember and enhancing flow time
+
+  --
+
+   "Hyperbole lets me interact with information (as well as frames
+    and windows) in a consistent and predictable way, on any Emacs
+    install and it does this without my needing to think much about
+    it, because Hyperbole more or less knows what to do out of the
+    box."
+
+
+* Hyperbole - the History
+
+  - Designed and initially implemented in 1991, right before the start
+    of the web but actively developed now as well
+
+  - Leverages Doug Engelbart's early work on knowledge management tools
+
+  - Conceived as a hypertext toolbox as part of a larger vision of
+    Personalized Information Environments to deal with an anticipated
+    explosion of personally managed information
+
+  - Became a GNU Project
+
+  - Updated for Emacs 26 and 27 across the last 3 years
+
+
+* Hyperbole - Why Use It
+
+  Clean, flexible hyperbuttons everywhere with **very little markup**
+
+  Simple, context-sensitive key bindings or mouse clicks and drags
+  reduce the cognitive load of Emacs, enhancing work focus
+
+  Fast, key-driven minibuffer menu exposes you to the whole system
+  one piece at a time
+
+  Now compatible with Org mode and highly complementary
+
+  --
+
+   "We have too much information in our lives, and it's coming in
+    faster than we can organize it.  Rather than manually specifying
+    relationships between bits of information, we need a system that
+    can see these connections simply by taking context and content
+    into account." -- John Wiegley, former Emacs Maintainer
+
+
+* Hyperbole - What Is It
+
+  | Hyperbole Component | Description                                              |
+  |---------------------+----------------------------------------------------------|
+  | Action/Assist Keys  | 2 global keys for hypertext everywhere in Emacs          |
+  |                     |                                                          |
+  | Implicit Buttons    | Text patterns automatically become hyperbuttons          |
+  |                     |                                                          |
+  | Button Action Types | Buttons can execute arbitrary Lisp (do anything)         |
+  |                     |                                                          |
+  | Button Files        | Global and dir-specific quick access files of buttons    |
+  |                     |                                                          |
+  | Minibuffer Menu     | Keyboard-driven Hyperbole user interface                 |
+  |                     |                                                          |
+  | Koutliner           | Live legal-type multi-level autonumbered outlining       |
+  |                     | with hyper-anchors per node and multiple views           |
+  |                     |                                                          |
+  | HyControl           | Fast control of your windows and frames                  |
+  |                     |                                                          |
+  | HyRolo              | Fast retrieval of hyperlinked records in * outline files |
+
+
+
+* Setup and Use
+
+   - Install:        {M-x install-package RET hyperbole RET}
+
+   - Keyboard Menus: {C-h h}
+
+   - Activate Text via Keyboard
+       Action Key: {M-RET}
+       Assist Key: {C-u M-RET}
+
+
+* Mouse Buttons
+
+   - Activate Text via Mouse
+       Action Mouse Key: {Shift-Button2}
+       Assist Mouse Key: {Shift-Button3}
+
+   - To use Button2 and Button3 (unshifted instead),
+     add this to your Emacs init file:
+
+       (eval-after-load "hyperbole" '(hmouse-add-unshifted-smart-keys))
+
+     or interactively after loading Hyperbole, press the Action Key
+     on this next button:
+
+       <hmouse-add-unshifted-smart-keys>
+
+   - To toggle between Hyperbole Mouse buttons and their prior bindings,
+     press the Action Key on this next button:
+
+       {M-x hmouse-toggle-bindings RET}
+
+
+* Alright Already, Let's See Some Action
+
+    "This isn't Mission Difficult Mr Hunt, it's Mission Impossible...
+     Difficult should be a walk in the park for you."
+
+
+* Buttons
+
+  Hyperbole offers 3 categories of buttons:
+
+    - {Implicit Buttons}:   automatically defined buttons, recognized by boolean type
+                            predicates that match to text in a buffer and then
+                            perform actions in response
+
+    - <(Explicit Buttons)>: created one at a time and embedded within specific files
+
+    - <(Global Buttons)>:   stored in a personal button file, activated by name
+
+
+   All button categories can invoke arbitrary actions, not just link to resources.
+
+   --
+
+    "It's cool to be able to turn arbitrary text into hyperlinks in
+     arbitrary modes, and have one keypress that does what I want on
+     all of them."
+
+
+* Button Files
+
+  Buttons can be stored in any kind of text file but for convenient access to
+  groups of often used buttons, Hyperbole provides two kinds of button files:
+
+    - A single personal button file, "~/.hyperb/HYPB".  Put all your bookmark-like
+      buttons in there, accessed via {C-h h b p}.
+
+    - The same kind of file for each directory, also named HYPB, and accessed from
+      the directory with {C-h h b d}.
+
+  More about these later.
+
+
+* Implicit Buttons
+
+A Few Common Examples:
+
+** - Pathnames
+
+    "DEMO#Global Buttons:2"          - outline section anchor & relative line number
+
+    "README.md#Hyperbole Components" - Markdown anchor with spaces intact
+
+    "${hyperb:dir}/HY-NEWS"          - Elisp or environment variable
+
+    "subr.el"                        - edit any Elisp library in load-path
+
+** - Key Series
+
+    {C-x 4 b *scratch* RET M-< "Insert any text.  That's cool!" RET RET M-<}
+
+** - Shell Grep Messages, Stack Traces, Man Page Apropos
+
+    {M-x shell RET grep SPC -n SPC gbut:label-list SPC *.el RET}
+
+    {M-x shell RET python SPC /tmp/stack.py RET}
+
+    {M-x shell RET apropos SPC windows RET}
+
+
+* Action Buttons (generalized form of implicit buttons)
+
+    <shell>
+
+    <fill-column>
+       - Display variable values in the minibuffer
+
+    <find-file-other-window (expand-file-name "DEMO" hyperb:dir)>
+       - execute Lisp expressions
+
+      or the simpler:
+
+    <hpath:find "${hyperb:dir}/HY-ABOUT")>
+
+
+* Many More to Learn Across Time
+
+                       Implicit Button Types
+
+| action            | annot-bib              | completion               |
+| cscope            | ctags                  | debbugs-gnu-mode         |
+| debbugs-gnu-query | debugger-source        | dir-summary              |
+| doc-id            | elink                  | elisp-compiler-msg       |
+| etags             | function-in-buffer     | git-commit-reference     |
+| glink             | gnus-push-button       | grep-msg                 |
+| hyp-address       | hyp-source             | id-cflow                 |
+| ilink             | Info-node              | ipython-stack-frame      |
+| kbd-key           | klink                  | mail-address             |
+| man-apropos       | markdown-internal-link | org-mode                 |
+| patch-msg         | pathname               | pathname-line-and-column |
+| rfc               | rfc-toc                | ripgrep-msg              |
+| social-reference  | texinfo-ref            | text-toc                 |
+| www-url           |                        |                          |
+
+Stored in their own namespace, 'ibtypes::', so to see the doc on the
+'pathname' ibtype, use {C-h f ibtypes::pathname RET}.
+
+
+* Explicit Buttons
+
+  All <(explicit buttons)> look the same.  They are created individually with
+  {C-h h e c}.  This prompts for a button name, action type and associated
+  arguments.
+
+  Explicit link buttons can be created by dragging the Action Mouse Key from
+  a source buffer to a referent window.  Hyperbole determines the link type
+  to use or prompts you to choose when there are multiple possibilities.
+
+
+*                            Action Types
+
+| annot-bib               | completion                   | www-url            |
+| debbugs-gnu-query       | display-boolean              | display-variable   |
+| eval-elisp              | exec-kbd-macro               | exec-shell-cmd     |
+| exec-window-cmd         | function-in-buffer           | hyp-config         |
+| hyp-request             | hyp-source                   | kbd-key            |
+| link-to-Info-index-item | link-to-Info-node            | link-to-bookmark   |
+| link-to-buffer-tmp      | link-to-directory            | link-to-doc        |
+| link-to-ebut            | link-to-elisp-doc            | link-to-file       |
+| link-to-file-line       | link-to-file-line-and-column | link-to-gbut       |
+| link-to-ibut            | link-to-kcell                | link-to-kotl       |
+| link-to-mail            | link-to-regexp-match         | link-to-rfc        |
+| link-to-string-match    | link-to-texinfo-node         | link-to-web-search |
+| man-show                | org-internal-link-target     | org-link           |
+| org-radio-target        | rfc-toc                      | text-toc           |
+
+Stored in their own namespace, 'actypes::', so to see the doc on the
+'org-link' actype, use {C-h f actypes::org-link RET}.
+
+
+* Global Buttons
+
+  All explicit or named implicit buttons in your personal button file are
+  global buttons that are activated by name with {C-h h g a}.
+
+    {C-u C-h h g c about-test RET <hpath:find "${hyperb:dir}/HY-ABOUT")> RET}
+
+    {C-h h g a about-test RET}
+
+    {C-h h g d about-test RET}
+
+
+* Local Find and Web Search Menu
+
+   - Specialized web search is too hard to do manually, so people end up
+     just doing generalized searches that don't work as well.
+
+   - Hyperbole's Find and Web Search features are meant to more easily
+     connect you to the information you desire.
+
+   - Isn't that why we build hypertexts in the first place?
+
+
+* Koutliner
+
+The Koutliner is the only Emacs outliner that has dynamic multi-level
+node numbering, e.g. 1.4.3.2 and a permanent hyperlink anchor for each
+node as well as view specifications that affect the outline view when
+included in hyperlinks. It is great for todo lists, brainstorming,
+requirement documents or anything that needs detailed structure.
+
+    {C-x 0 C-x 2 C-x o C-h h k e}
+
+    <EXAMPLE.kotl, 4=012 |bc1e>
+
+  --
+
+    "Maybe think of Hyperbole as a bunch of primitives that help you
+     organize and display text the way you want to, like Emacs
+     outlining.  Use that to structure sections within your personal
+     button file and then add appropriate explicit and implicit
+     buttons in each section.  Or use the Koutliner so you can link
+     directly to autonumbered nodes. Or embed links within the
+     comments of your code so people can reference related material
+     quickly."
+
+
+* HyRolo Matches
+
+HyRolo is an easy-to-use but advanced contact manager and record
+lookup tool (now with BBDB and Google Contacts support). Contacts can
+be spread across multiple files and use different formats if
+desired.  Hyperbole buttons can be embedded in entries and activated
+from the buffer of search matches.  HyRolo files are Emacs outlines, so
+they can be quickly collapsed and re-organized in standard ways.
+
+    {C-x 4 r}
+
+
+* HyControl
+
+    - Rapidly control windows and frames
+
+    - Window Grids - fast, multi-window layout
+       {C-u 0 M-x hycontrol-windows-grid RET python-mode RET 23 RET}
+
+    - Scriptable via Key Series implicit buttons
+
+    - Fastest way to change face sizes for individual windows or frames
+
+    "Because I’m trying to prevent my poor hands from turning into
+     gnarled, useless claws, I extensively use speech recognition
+     software. Hyperbole’s frame and window controls let me set up
+     workspaces and move stuff with a few vocal commands, without
+     having to type or use a mouse.
+
+     In practice, fiddling with the frame sizes sounds like:
+     'Hyperbole Frame Control. Press Period. Numeral 20. Go left
+     ten. Press H. Press W. Press Q.' It’s just… great.  I can’t say
+     enough nice things about it. I always know I’ve found a killer
+     piece of functionality when I find myself desperately wishing I
+     had it everywhere."
+
+
+* Other Package Integrations
+
+    - Treemacs - control Treemacs with the Action and Assist Keys
+
+    - Ace Window - additional throw and replace buffer commands
+
+    - Org Mode - follow Org links with a single key
+
+
+* Notes on Using with Org Mode
+
+    - Updated to be compatible with Org
+
+    - Action Key activates all kinds of Org links
+
+    - {M-RET} behaves normally in Org mode in all other contexts
+
+    - Org and Hyperbole are complementary not mutually exclusive
+
+
+* Acknowledgements
+
+  Mats Lidell - long-time co-maintainer of Hyperbole
+    https://tinyurl.com/y2g5fvdu
+
+  John Wiegley - Using Hyperbole: A Motivation
+    https://tinyurl.com/y3vnsuef
+
+  Adrien Brochard - Quick Hyperbole blog posting with animated gifs
+    https://blog.abrochard.com/hyperbole-intro.html
+
+  The FSF and GNU Project - providing a home for Hyperbole in GNU Elpa
+
+
+* Resources
+
+  Potential Workflows
+    https://tinyurl.com/y57efmmr
+
+  Summary of Hyperbole Uses
+    https://tinyurl.com/yxp3kv5s
+
+    Or after installing Hyperbole, try:
+      {C-h h d w}
+
+  Hyperbole Vision Quest Usage Articles
+    https://tinyurl.com/y5db5bpa
+
+  The author's Youtube with 2 Hyperbole Videos
+    https://tinyurl.com/y453keke
+
+
+* A Final Perspective on Hyperbole
+
+     - Reduce Cognitive Burden
+
+     - Network Effects
+
+     - Globally Accessible
+
+
+* Reduce Cognitive Burden
+
+  From John Wiegley:
+
+    "Hyperbole lifts some of the cognitive burden from Emacs users by
+     defining an extensible, large set of "recognizers" for various
+     types of informational references, and "actions" for doing things
+     with that information, such as visiting referenced documents, or
+     web pages, or dictionary definitions. It's quite easy to add new,
+     contextually-sensitive recognizers, and actions, so that you can
+     teach Emacs to become more aware of how you use it to manage
+     information.
+
+
+* Network Effects
+
+    "But what's more, with every new recognizer and action you add,
+     the more interactive all your information becomes. It's a
+     multiplying effect, turning inert, standalone documents into more
+     interactive, virtual semi-networks. And very few of these links
+     do you need to update and maintain, because most of the
+     information is inferred based on where you are when you hit the
+     'action key'."
+
+
+* Globally Accessible
+
+    "Since this functionality is transparently added everywhere, not
+     just special buffer types specific to Hyperbole, it's able to
+     make Org-mode outlines richer, Gnus article reading more
+     interactive, and source code more accessible to new readers --
+     provided they're using Emacs too."
+
+  -- The End --

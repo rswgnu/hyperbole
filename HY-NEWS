@@ -41,7 +41,7 @@
       set to t and Magit is available, then when activating a git directory
       button, such as git#/hyperbole, use Magit rather than Dired.
 
-    - Explicit Buttons Work Immdiately: Previously you had to save the buffer
+    - Explicit Buttons Work Immediately: Previously you had to save the buffer
       in which you created an explicit button before it would work.  Now they
       work immediately after creation.
 
@@ -50,6 +50,9 @@
     - Helm Mode: Added Hyperbole Manual section, "Smart Key - Helm Mode"
       that works on helm completions.  See "(hyperbole)Smart Key -
       Helm Mode".
+
+    - Hyperbole Slides: Slides used in a talk by the author on the history
+      and capabilities of Hyperbole, see "HY-TALK/HY-TALK.org".
 
     - Magit Mode: Added Hyperbole Manual section, "Smart Key - Magit Mode"
       that expands/collapses/jumps to Magit items.  See "(hyperbole)Smart Key -

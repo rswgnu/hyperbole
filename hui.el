@@ -885,7 +885,8 @@ within."
 		     (call-interactively 'hui:ebut-unmark)
 		     (message "Button deleted."))
 		 (hui:ebut-unmark but-key key-src))
-	       (when (hmail:reader-p) (hmail:msg-narrow)))
+	       (when (hmail:reader-p) (hmail:msg-narrow))
+	       (message "Button '%s' deleted." (ebut:key-to-label but-key)))
       (hypb:error "(ebut-delete): You may not delete buttons from this buffer"))))
 
 (defun hui:ebut-delimit (start end instance-str)
@@ -1097,9 +1098,8 @@ within."
 	    (hypb:error "(ibut-delete): No valid %s button in %s"
 		   (ibut:key-to-label but-key) buf)))
 	(progn (set-buffer buf)
-	       (when interactive
-		 (message "Button deleted."))
-	       (when (hmail:reader-p) (hmail:msg-narrow)))
+	       (when (hmail:reader-p) (hmail:msg-narrow))
+	       (message "Button '%s' deleted." (ibut:key-to-label but-key)))
       (hypb:error "(ibut-delete): You may not delete buttons from this buffer"))))
 
 (defun hui:ibut-message (but-modify-flag)

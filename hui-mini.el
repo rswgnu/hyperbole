@@ -211,11 +211,13 @@ With optional HELP-STRING-FLAG, instead returns the one line help string for the
   (when (and (stringp key-sequence)
 	     (not (eq key-sequence ""))
 	     (kbd-key:hyperbole-mini-menu-key-p key-sequence))
-    (let ((hargs:reading-p 'hmenu-help))
+    (let ((hargs:reading-p 'hmenu-help)
+	  (hmenu-key-seq (car (where-is-internal #'hyperbole))))
+      (unless hmenu-key-seq
+	(hypb:error "(hui:menu-doc): The 'hyperbole' command must be bound to a key"))
       (setq unread-command-events
 	    (nconc unread-command-events
-		   (mapcar 'identity (substring key-sequence
-						(length (or (car (where-is-internal #'hyperbole)) "\C-hh"))))))
+		   (mapcar 'identity (substring key-sequence (length hmenu-key-seq)))))
       (prog1 (hui:menu-act 'hyperbole nil t help-string-flag)
 	;; Ignore any keys past the first menu item activation.
 	(discard-input)))))
