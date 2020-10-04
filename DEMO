@@ -683,7 +683,7 @@ Once you have Tramp configured for loading and are on the Internet, you can
 press on any of the following to jump to the ftp site of Hyperbole tarball
 distributions:
 
-        /ftp:anonymous@ftp.gnu.org:/pub/gnu/hyperbole/
+    /ftp:anonymous@ftp.gnu.org:/pub/gnu/hyperbole/
 
 For Tramp pathnames, Hyperbole recognizes them with or without double quote
 delimiters.

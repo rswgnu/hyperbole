@@ -1,4 +1,4 @@
-;;; hsys-org.el --- GNU Hyperbole support for Emacs Org mode links
+;;; hsys-org.el --- GNU Hyperbole support functions for Support for hib-org.el
 ;;
 ;; Author:       Bob Weiner
 ;;
@@ -11,15 +11,7 @@
 
 ;;; Commentary:
 ;;
-;;   This defines a context-sensitive implicit button type, org-mode,
-;;   triggered when the major mode is org-mode or is derived from
-;;   org-mode and point is anywhere other than at the end of a line.
-;;
-;;   See the doc for ibtypes::org-mode for details of what it does and
-;;   its compatibility with org-mode.
-;;
-;;   For a good tutorial on basic use of Org-mode, see:
-;;     https://orgmode.org/worg/org-tutorials/orgtutorial_dto.html
+;;   Support functions for hib-org.el
 
 ;;; Code:
 ;;; ************************************************************************
@@ -44,6 +36,7 @@
 (defun hsys-org-mode-p ()
   "Return non-nil if point is within an Org major or minor-mode buffer."
   (or (derived-mode-p 'org-mode)
+      (derived-mode-p 'org-agenda-mode)
       (and (boundp 'outshine-mode) outshine-mode)
       (and (boundp 'poporg-mode) poporg-mode)))
 
@@ -64,116 +57,6 @@
   (when (and (not inhibit-hsys-org) (funcall hsys-org-mode-function) (hbut:at-p))
     (hbut:act)
     t))
-
-;;; ************************************************************************
-;;; Public Button Types
-;;; ************************************************************************
-
-(defib org-mode ()
-  "Follow Org mode references, cycles outline visibility and executes code blocks.
-
-First, this follows internal links in Org mode files.  When pressed on a
-link referent/target, the link definition is displayed, allowing two-way
-navigation between definitions and targets.
-
-Second, this follows Org mode external links.
-
-Third, within a radio target definition, this jumps to the first
-occurrence of an associated radio target.
-
-Fourth, when point is on an outline heading in Org mode, this
-cycles the view of the subtree at point.
-
-Fifth, with point on the first line of a code block definition, this
-executes the code block via the Org mode standard binding of {C-c C-c},
-\(org-ctrl-c-ctrl-c).
-
-In any other context besides the end of a line, the Action Key invokes the
-Org mode standard binding of {M-RET}, (org-meta-return).
-
-To disable ALL Hyperbole support within Org major and minor modes, set the
-custom option `inhibit-hsys-org' to t.  Then in Org modes, this will
-simply invoke `org-meta-return'.  Org links in non-"
-  (let (start-end)
-    (cond ((and (funcall hsys-org-mode-function)
-		;; Prevent infinite recursion when called via org-metareturn-hook
-		;; from org-meta-return invocation.
-		(not (hyperb:stack-frame '(org-meta-return))))
-	   (if inhibit-hsys-org
-	       (hact 'org-meta-return)
-	     (cond ((setq start-end (hsys-org-internal-link-target-at-p))
-		    (hsys-org-set-ibut-label start-end)
-		    (hact 'org-internal-link-target))
-		   ((hsys-org-radio-target-def-at-p)
-		    (hact 'org-radio-target))
-		   ((setq start-end (hsys-org-link-at-p))
-		    (hsys-org-set-ibut-label start-end)
-		    (hact 'org-link))
-		   ((org-at-heading-p)
-		    (hact 'hsys-org-cycle))
-		   ((hsys-org-block-start-at-p)
-		    (org-ctrl-c-ctrl-c))
-		   (t
-		    (hact 'org-meta-return)))))
-	  ;; Org links may be used outside of Org mode
-	  ((unless inhibit-hsys-org
-	     (setq start-end (hsys-org-link-at-p)))
-	   (hsys-org-set-ibut-label start-end)
-	   (hact 'org-open-at-point-global))
-	  ((hsys-org-agenda-item-at-p)
-	   (hsys-org-set-ibut-label (cons (line-beginning-position) (line-end-position)))
-	   (hact 'org-agenda-show-and-scroll-up current-prefix-arg)))))
-
-(defun org-mode:help (&optional _but)
-  "If on an Org mode heading, cycles through views of the whole buffer outline.
-If on an Org mode link, displays standard Hyperbole help."
-  (cond ((or (hsys-org-link-at-p) (hsys-org-agenda-item-at-p))
-	 (hkey-help current-prefix-arg)
-	 t)
-	((and (funcall hsys-org-mode-function)
-	      (org-at-heading-p))
-	 (hact 'hsys-org-global-cycle)
-	 t)))
-
-(defact org-link (&optional link)
-  "Follows an optional Org mode LINK to its target.
-If LINK is nil, follows any link at point.  Otherwise, triggers an error."
-  (if (stringp link)
-      (cond ((fboundp #'org-link-open-from-string)
-	     (org-link-open-from-string link))
-            ((fboundp #'org-open-link-from-string)
-	     (org-open-link-from-string link))) ;; autoloaded
-    (org-open-at-point))) ;; autoloaded
-
-(defact org-internal-link-target (&optional link-target)
-  "Follows an optional Org mode LINK-TARGET back to its link definition.
-If LINK-TARGET is nil, follows any link target at point.  Otherwise, triggers an error."
-  (let (start-end)
-    (cond ((stringp link-target)
-	   (setq start-end t)
-	   (hsys-org-search-internal-link-p link-target))
-	  ((null link-target)
-	   (when (setq start-end (hsys-org-internal-link-target-at-p))
-	     (hsys-org-search-internal-link-p (buffer-substring-no-properties
-					       (car start-end) (cdr start-end))))))
-    (unless start-end
-      (error "(org-internal-link-target): Point must be on a link target (not the link itself)"))))
-
-
-(defact org-radio-target (&optional target)
-  "Jump to the next occurrence of an optional Org mode radio TARGET link.
-If TARGET is nil and point is on a radio target definition or link, it
-uses that one.  Otherwise, triggers an error."
-  (let (start-end)
-    (cond ((stringp target)
-	   (setq start-end t)
-	   (hsys-org-to-next-radio-target-link target))
-	  ((null target)
-	   (when (setq start-end (hsys-org-radio-target-at-p))
-	     (hsys-org-to-next-radio-target-link (buffer-substring-no-properties
-					          (car start-end) (cdr start-end))))))
-    (unless start-end
-      (error "(org-radio-target): Point must be on a radio target definition or link"))))
 
 ;;; ************************************************************************
 ;;; Public functions

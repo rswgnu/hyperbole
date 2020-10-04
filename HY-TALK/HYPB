@@ -1,3 +1,13 @@
+* How to setup button2 and button3 as Action and Assist Mouse Keys
+
+Add to your Emacs init file:
+
+   (eval-after-load "hyperbole" '(hmouse-add-unshifted-smart-keys))
+
+or interactively after loading Hyperbole:
+
+   <hmouse-add-unshifted-smart-keys>
+
 * Keystroke Display
 
 ** Keypression - overlaying parts of buffer (shows trail of keys)
@@ -16,12 +26,15 @@
 
 * Pathname Prefixes
 
-    "!${PATH)/date"                  - execute 'date' shell command
+    "!${PATH}/date"                  - execute 'date' shell command
 
     "&Preview.app ${hyperb:dir}/man/hyperbole.pdf"
 
     "-subr.elc"                      - load an Elisp library
 
+* Programming Buttons
+
+Emacs Yank Bug: bug#5320
 
 * Global Buttons
 
@@ -42,3 +55,5 @@
 "${hyperb:dir}/README.md#programmer-quick-reference:4:2"
 
 <hpath:find "${hyperb:dir}">
+
+<[PDF Viewer]> == "${hyperb:dir}/man/hyperbole.pdf"

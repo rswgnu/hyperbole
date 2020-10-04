@@ -65,6 +65,28 @@
 (run-hooks 'hibtypes-begin-load-hook)
 
 ;;; ========================================================================
+;;; Follows URLs by invoking a web browser.
+;;; ========================================================================
+
+(require 'hsys-www)
+
+;;; ========================================================================
+;;; Follows Org links that are in non-Org mode buffers
+;;; ========================================================================
+
+(defib org-link-outside-org-mode ()
+  "Follow an Org link in a non-Org mode buffer.
+This should be a very low priority so other Hyperbole types
+handle any links they recognize first."
+  (unless inhibit-hsys-org
+    (require 'hsys-org)
+    (let ((start-end (hsys-org-link-at-p)))
+      (hsys-org-set-ibut-label start-end)
+      (hact 'org-open-at-point-global))))
+
+;; Org links in Org mode are handled at a higher priority in "hib-org.el"
+
+;;; ========================================================================
 ;;; Composes mail, in another window, to the e-mail address at point.
 ;;; ========================================================================
 
@@ -240,12 +262,6 @@ must have an attached file."
 	          (not (string-match "[#@]" ref))
 	          (progn (ibut:label-set ref-and-pos)
 		             (hact 'annot-bib ref))))))
-
-;;; ========================================================================
-;;; Handles Gnu debbugs issue ids, e.g. bug#45678 or just 45678.
-;;; ========================================================================
-
-(require 'hib-debbugs)
 
 ;;; ========================================================================
 ;;; Handles social media hashtag and username references, e.g. twitter#myhashtag
@@ -537,6 +553,12 @@ spaces and then another non-space, non-parenthesis, non-brace character."
 		    (when (file-exists-p entry)
 			  (ibut:label-set entry start end)
 			  (hact 'link-to-file entry))))))))
+
+;;; ========================================================================
+;;; Handles Gnu debbugs issue ids, e.g. bug#45678 or just 45678.
+;;; ========================================================================
+
+(require 'hib-debbugs)
 
 ;;; ========================================================================
 ;;; Executes or documents command bindings of brace delimited key sequences.
@@ -1124,12 +1146,6 @@ GNUS is a news and mail reader."
        (hact 'gnus-article-press-button)))
 
 ;;; ========================================================================
-;;; Follows URLs by invoking a web browser.
-;;; ========================================================================
-
-(require 'hsys-www)
-
-;;; ========================================================================
 ;;; Displays Info nodes when double quoted "(file)node" button is activated.
 ;;; ========================================================================
 
@@ -1280,9 +1296,10 @@ arg1 ... argN '>'.  For example, <mail nil \"user@somewhere.org\">."
 ;;; Follows Org mode links and radio targets and cycles Org heading views
 ;;; ========================================================================
 
-;; Set the custom option `inhibit-hsys-org' non-nil to disable ALL Hyperbole
-;; support within Org major and minor modes.
-(require 'hsys-org)
+(require 'hib-org)
+
+;; If you want to to disable ALL Hyperbole support within Org major
+;; and minor modes, set the custom option `inhibit-hsys-org' non-nil.
 
 ;;; ========================================================================
 ;;; Inserts completion into minibuffer or other window.

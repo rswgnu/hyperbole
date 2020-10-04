@@ -82,6 +82,7 @@ hibtypes.el          - GNU Hyperbole default implicit button types
 hib-debbugs.el       - Implicit button type for browsing GNU debbugs issues
 hib-doc-id.el        - Implicit button type for document id index entries
 hib-kbd.el           - Implicit button type for key sequences delimited with {}
+hib-org.el           - Implicit button type for Org mode
 hib-social.el        - Implicit button type for social media/git hashtag and username references
 hinit.el             - Standard initializations for GNU Hyperbole
 hload-path.el        - GNU Hyperbole load-path setup
@@ -93,6 +94,6 @@ topwin.py            - Python script to find the topmost macOS app window at a s
 .hypb & _hypb        - Button data files used by the Hyperbole DEMO file
 
 --- EXTERNAL SYSTEM ENCAPSULATIONS ---
-hsys-org.el          - GNU Hyperbole support for Emacs Org mode links
+hsys-org.el          - GNU Hyperbole support functions for Support for hib-org.el
 hsys-www.el          - GNU Hyperbole support for Emacs W3 World-Wide Web (WWW) browsing
 

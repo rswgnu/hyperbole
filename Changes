@@ -1,3 +1,27 @@
+2020-10-04  Bob Weiner  <rsw@gnu.org>
+
+* kotl/kexport.el (kexport:html-replacement-alist): Correct \\0 with \0 so html
+    export works properly.
+
+* hibtypes.el (hsys-www): Move to lower priority than pathname implicit buttons
+    so they can handle file:// links, especially with :line-number suffixes.
+    Fixes bug#43794.
+
+* hsys-org.el (hsys-org-mode-p): Added org-agenda-mode check.
+  hib-org.el (org-mode): Changed to apply inhibit-hsys-org to org-agenda-mode as well.
+
+* hibtypes.el (hib-debbugs): Raise priority above social and markdown links.
+              (org-link-outside-org-mode): Added to lower priority below
+    other Hyperbole link types and removed from hsys-org.el.
+
+* hib-org.el: Moved Org mode implicit button and action types to this new
+    file to allow for separate handling of Org links outside of Org mode.
+  Makefile (EL_COMPILE, ELC_COMPILE): Added hib-org.el{c}.
+
+==============================================================================
+V7.1.4 changes ^^^^:
+==============================================================================
+
 2020-09-21  Bob Weiner  <rsw@gnu.org>
 
 * hversion.el: Released 7.1.3.
