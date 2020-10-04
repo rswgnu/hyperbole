@@ -70,7 +70,7 @@
    '(">" . "&gt;")
    ;;
    ;; italicize keybindings
-   '("{[^}]+}" . "<I>\\0</I>")
+   '("{[^}]+}" . "<I>\0</I>")
    ;;
    ;; make URLs into hyperlinks
    (cons hpath:url-regexp  'kexport:html-url)
@@ -88,10 +88,10 @@
    ;; make klinks into hyperlinks
    (cons (concat "&lt;\\s-*@\\s-*" kexport:kcell-reference-regexp
 		 "[^&>]*&gt;")
-	 "<A HREF=\"#k\\1\">\\0</A>")
+	 "<A HREF=\"#k\\1\">\0</A>")
    (cons (format "&lt;\\s-*@\\s-*\\(%s\\)[^=&>]*&gt;"
 		 kexport:kcell-partial-reference-regexp)
-	 "<A HREF=\"#k\\1\">\\0</A>")
+	 "<A HREF=\"#k\\1\">\0</A>")
    (cons (format "&lt;\\s-*\\([^ \t\n\r,<>]+\\)\\s-*,\\s-*%s[^=&>]*&gt;"
 		 kexport:kcell-reference-regexp)
 	 'kexport:html-file-klink)
@@ -236,8 +236,8 @@ Works exclusively within a call to `hypb:replace-match-string'."
 			     (match-end 1))))
     (if (equal filename (file-name-nondirectory
 			 kexport:input-filename))
-	"<A HREF=\"#k\\2\">\\0</A>"
-      (format "<A HREF=\"file://%s#k\\2\">\\0</A>"
+	"<A HREF=\"#k\\2\">\0</A>"
+      (format "<A HREF=\"file://%s#k\\2\">\0</A>"
 	      (expand-file-name filename
 				(if kexport:input-filename
 				    (file-name-directory
