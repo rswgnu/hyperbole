@@ -86,7 +86,6 @@ web:
 		-eval '(load-library "kotl-mode")' \
 		-eval '(load-library "kimport")' -eval '(load-library "kexport")' \
 		-eval "(kimport:star-outline \"DEMO\" \"EXPORT-BUFFER\")" \
-		-eval '(save-buffer)' \
 		-eval "(kexport:html \"EXPORT-BUFFER\" \"$(HYPB_WEB)/DEMO.html\" nil)"	
 
 # man/..
