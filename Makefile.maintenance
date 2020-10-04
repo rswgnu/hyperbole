@@ -1,0 +1,94 @@
+# Maintenance of Hyperbole distribution -*- makefile -*-
+#
+# Copyright (C) 2020 Free Software Foundation, Inc.  See the file
+# HY-COPY for license information.
+#
+# This file is part of GNU Hyperbole.
+#
+# Usage:
+#	make -f Makefile.maintenance target
+#
+
+# Configuration
+HYPB_WEB = ../hyperbole-web
+
+# Shell commands you may want to change for your particular system.
+EMACS = \emacs -batch -Q
+CP = \cp -p
+RM = \rm -f
+CAT = \cat
+SED = \sed
+
+help:
+	@echo
+	@echo "Targets:"
+	@echo "    web: Update hyperbole GNU website workspace located at ${HYPB_WEB}"
+
+all: help
+
+# Libraries that must be pre-loaded before trying to byte-compile anything.
+PRELOADS = -l ./hload-path.el -l ./hversion.el -l ./hyperbole.el
+
+
+###################################
+# Update website repository - web #
+###################################
+
+define HY_NEWS_HEADER
+<HTML><HEAD>
+  <A ID="top"></A><A ID="k0"></A>
+  <LINK REL="stylesheet" TYPE="text/css" HREF="man/hyperbole.css">
+</HEAD>
+
+<BODY BGCOLOR="#FFFFFF">
+
+  <CENTER><H1>What's New in GNU Hyperbole</H1></CENTER>
+  <PRE>
+endef
+
+define HY_NEWS_FOOTER
+      </PRE>
+
+</BODY></HTML>
+endef
+
+web:
+# HY_NEWS
+	$(file >$(HYPB_WEB)/HY-NEWS.h, $(HY_NEWS_HEADER))
+	$(file >$(HYPB_WEB)/HY-NEWS.f, $(HY_NEWS_FOOTER))
+	$(SED) -n '/====/,/NO-MATCH/p' < HY-NEWS | $(SED) -e 's/^.*$$/  \0/' > $(HYPB_WEB)/HY-NEWS.b
+	$(CAT) $(HYPB_WEB)/HY-NEWS.h $(HYPB_WEB)/HY-NEWS.b $(HYPB_WEB)/HY-NEWS.f > $(HYPB_WEB)/HY-NEWS.html
+	$(RM) $(HYPB_WEB)/HY-NEWS.h $(HYPB_WEB)/HY-NEWS.f $(HYPB_WEB)/HY-NEWS.b
+
+# hyperbole.html
+	$(CP) README.md.html $(HYPB_WEB)/hyperbole.html
+
+# koutline-example.html
+	$(EMACS) $(PRELOADS) \
+		-eval "(add-to-list 'load-path \"kotl\")" \
+		-eval '(load-library "kotl-mode")' \
+		-eval '(load-library "kexport")' \
+		-eval "(kexport:html \"kotl/EXAMPLE.kotl\" \"$(HYPB_WEB)/koutline-example.html\" nil)"
+
+# HY-WHY.html
+	$(EMACS) $(PRELOADS) \
+		-eval "(add-to-list 'load-path \"kotl\")" \
+		-eval '(load-library "kotl-mode")' \
+		-eval '(load-library "kexport")' \
+		-eval "(kexport:html \"HY-WHY.kotl\" \"$(HYPB_WEB)/HY-WHY.html\" nil)"
+
+# DEMO DEMO-ROLO.otl
+	$(CP) DEMO DEMO-ROLO.otl $(HYPB_WEB)/
+
+# DEMO.html
+	$(EMACS) $(PRELOADS) \
+		-eval "(add-to-list 'load-path \"kotl\")" \
+		-eval '(load-library "kotl-mode")' \
+		-eval '(load-library "kimport")' -eval '(load-library "kexport")' \
+		-eval "(kimport:star-outline \"DEMO\" \"EXPORT-BUFFER\")" \
+		-eval '(save-buffer)' \
+		-eval "(kexport:html \"EXPORT-BUFFER\" \"$(HYPB_WEB)/DEMO.html\" nil)"	
+
+# man/..
+	$(CP) -r man $(HYPB_WEB)/
+	$(RM) $(HYPB_WEB)/man/im/*.eps
