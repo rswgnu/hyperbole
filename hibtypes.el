@@ -81,8 +81,9 @@ handle any links they recognize first."
   (unless inhibit-hsys-org
     (require 'hsys-org)
     (let ((start-end (hsys-org-link-at-p)))
-      (hsys-org-set-ibut-label start-end)
-      (hact 'org-open-at-point-global))))
+      (when start-end
+	(hsys-org-set-ibut-label start-end)
+	(hact 'org-open-at-point-global)))))
 
 ;; Org links in Org mode are handled at a higher priority in "hib-org.el"
 
@@ -960,16 +961,16 @@ removed from pathname when searching for a valid match.
 See `hpath:find' function documentation for special file display options."
   (let ((path-line-and-col (hpath:delimited-possible-path)))
     (when (and (stringp path-line-and-col)
-	           (string-match hibtypes-path-line-and-col-regexp path-line-and-col))
-	  (let ((file (save-match-data (expand-file-name (hpath:substitute-value (match-string-no-properties 1 path-line-and-col)))))
-	        (line-num (string-to-number (match-string-no-properties 3 path-line-and-col)))
-	        (col-num (when (match-end 4)
-			           (string-to-number (match-string-no-properties 5 path-line-and-col)))))
-	    (when (save-match-data (setq file (hpath:is-p file)))
-	      (ibut:label-set file (match-beginning 1) (match-end 1))
-	      (if col-num
-		      (hact 'link-to-file-line-and-column file line-num col-num)
-	        (hact 'link-to-file-line file line-num)))))))
+			   (string-match hibtypes-path-line-and-col-regexp path-line-and-col))
+      (let ((file (save-match-data (expand-file-name (hpath:substitute-value (match-string-no-properties 1 path-line-and-col)))))
+			(line-num (string-to-number (match-string-no-properties 3 path-line-and-col)))
+			(col-num (when (match-end 4)
+					   (string-to-number (match-string-no-properties 5 path-line-and-col)))))
+		(when (save-match-data (setq file (hpath:is-p file)))
+		  (ibut:label-set file (match-beginning 1) (match-end 1))
+		  (if col-num
+			  (hact 'link-to-file-line-and-column file line-num col-num)
+			(hact 'link-to-file-line file line-num)))))))
 
 ;;; ========================================================================
 ;;; Jumps to source of Emacs Lisp byte-compiler error messages.

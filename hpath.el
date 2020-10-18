@@ -1297,8 +1297,8 @@ in-buffer path will not match."
 		 ;; orig point and return (start . end).
 		 (setq start (match-beginning 0) end (match-end 0)
 		       found (and (<= start opoint) (>= end opoint)))))
-      (if found
-	  (list start end)))))
+      (when found
+	(list start end)))))
 
 (defun hpath:substitute-value (path)
   "Substitute matching value for Emacs Lisp variables and environment variables in PATH and return PATH."
@@ -1343,22 +1343,21 @@ After any match, the resulting path will contain a varible reference like ${vari
 	  result var val)
       (while (and vars (null new-path))
 	(setq var (car vars) vars (cdr vars))
-	(if (boundp var)
-	    (progn (setq val (symbol-value var))
-		   (cond ((stringp val)
-			  (if (setq result
-				    (hpath:substitute-var-name var val path))
-			      (setq new-path result)))
-			 ((null val))
-			 ((listp val)
-			  (while (and val (null new-path))
-			    (if (setq result
-				    (hpath:substitute-var-name var (car val) path))
-				(setq new-path result))
-			    (setq val (cdr val))))
-			 (t (error "(hpath:substitute-var): `%s' has invalid value for hpath:variables" var))))))
-      (or new-path path)
-      )))
+	(when (boundp var)
+	  (setq val (symbol-value var))
+	  (cond ((stringp val)
+		 (if (setq result
+			   (hpath:substitute-var-name var val path))
+		     (setq new-path result)))
+		((null val))
+		((listp val)
+		 (while (and val (null new-path))
+		   (when (setq result
+			       (hpath:substitute-var-name var (car val) path))
+		     (setq new-path result))
+		   (setq val (cdr val))))
+		(t (error "(hpath:substitute-var): `%s' has invalid value for hpath:variables" var)))))
+      (or new-path path))))
 
 ;;
 ;; The following function recursively resolves all POSIX links to their

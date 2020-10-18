@@ -1,16 +1,31 @@
+2020-10-11  Bob Weiner  <rsw@gnu.org>
+
+* Makefile (EL_KOTL, ELC_COMPILE): Added kotl/kotl-orgtbl.{el,elc}.
+  kotl/kotl-orgtbl.el (orgtbl-tab): Added to support Org Table minor-mode use
+    in Koutlines.
+  kotl/kotl-mode.el (hsys-orgtbl): Require this new library.
+                    (kotl-mode-map): Bind M- arrow keys to closely match those
+    in Org mode for tree promotion/demotion and moving text lines up and down.
+
+2020-10-10  Bob Weiner  <rsw@gnu.org>
+
+* kotl/kotl-mode.el (orgtbl-tab): Updated Org minor-mode table use of {TAB} key to
+    allow promotion and demotion of koutline trees when given an explicit prefix
+    argument.  Otherwise, tabs through and justifies table fields normally.
+
 2020-10-04  Bob Weiner  <rsw@gnu.org>
 
-* kotl/kexport.el (kexport:html-replacement-alist): Correct \\0 with \0 so html
+* kotl/kexport.el (kexport:html-replacement-alist): Corrected \\0 with \0 so html
     export works properly.
 
-* hibtypes.el (hsys-www): Move to lower priority than pathname implicit buttons
+* hibtypes.el (hsys-www): Moved to lower priority than pathname implicit buttons
     so they can handle file:// links, especially with :line-number suffixes.
     Fixes bug#43794.
 
 * hsys-org.el (hsys-org-mode-p): Added org-agenda-mode check.
   hib-org.el (org-mode): Changed to apply inhibit-hsys-org to org-agenda-mode as well.
 
-* hibtypes.el (hib-debbugs): Raise priority above social and markdown links.
+* hibtypes.el (hib-debbugs): Raised priority above social and markdown links.
               (org-link-outside-org-mode): Added to lower priority below
     other Hyperbole link types and removed from hsys-org.el.
 

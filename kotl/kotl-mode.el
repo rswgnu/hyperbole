@@ -18,6 +18,10 @@
 
 (eval-and-compile (mapc #'require '(delsel hsettings hmail kfile kvspec kcell outline)))
 
+(eval-after-load  "org-table"
+  '(require 'kotl-orgtbl))
+
+
 ;;; ************************************************************************
 ;;; Public variables
 ;;; ************************************************************************
@@ -1867,6 +1871,7 @@ If at tail cell already, do nothing and return nil."
 	    (error "(kotl-mode:up-level): No parent level to which to move")
 	    )))))
 
+
 ;;; ------------------------------------------------------------------------
 ;;; Predicates
 ;;; ------------------------------------------------------------------------
@@ -3173,7 +3178,15 @@ Leave point at end of line now residing at START."
   (define-key kotl-mode-map "\C-cu"     'kotl-mode:up-level)
   (define-key kotl-mode-map "\C-c\C-u"  'kotl-mode:up-level)
   (define-key kotl-mode-map "\C-c\C-v"  'kvspec:activate)
-  (define-key kotl-mode-map "\C-x\C-w"  'kfile:write))
+  (define-key kotl-mode-map "\C-x\C-w"  'kfile:write)
+  (define-key kotl-mode-map [M-up]              'kotl-mode:transpose-lines-up)
+  (define-key kotl-mode-map (kbd "ESC <up>")    'kotl-mode:transpose-lines-up)
+  (define-key kotl-mode-map [M-down]            'kotl-mode:transpose-line-down)
+  (define-key kotl-mode-map (kbd "ESC <down>")  'kotl-mode:line-down)
+  (define-key kotl-mode-map [M-left]            'kotl-mode:promote-tree)
+  (define-key kotl-mode-map (kbd "ESC <left>")  'kotl-mode:promote-tree)
+  (define-key kotl-mode-map [M-right]           'kotl-mode:demote-tree)
+  (define-key kotl-mode-map (kbd "ESC <right>") 'kotl-mode:demote-tree))
 
 ;; When delete-selection-mode (pending-delete-mode) is enabled, make
 ;; these commands delete the region.
