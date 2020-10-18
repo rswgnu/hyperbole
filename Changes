@@ -1,3 +1,24 @@
+2020-10-18  Bob Weiner  <rsw@gnu.org>
+
+* kotl/kotl-mode.el (kotl-mode:action-key): Add Org table support.
+                    (kotl-mode): Automatically enable orgtbl-mode
+    minor mode.  Force load of org-table and kotl-orgtbl for this.
+                    (kotl-mode-map): Bound demotion and promotion of trees
+    to all of the following (inside Org Table is when orgtbl-mode minor
+    mode is active and point is in a table):
+
+    | Demotion Inside Org Table | Promotion Inside Org Table |
+    |---------------------------+----------------------------|
+    | C-c C-,                   | C-c C-.                    |
+    | C-c C-<                   | C-c C->                    |
+
+    | Demotion Outside Org Table | Promotion Outside Org Table |
+    |----------------------------+-----------------------------|
+    | TAB                        | Shift-TAB or M-TAB          |
+    | M-left-arrow               | M-right-arrow               |
+    | C-c C-,                    | C-c C-.                     |
+    | C-c C-<                    | C-c C->                     |
+
 2020-10-11  Bob Weiner  <rsw@gnu.org>
 
 * Makefile (EL_KOTL, ELC_COMPILE): Added kotl/kotl-orgtbl.{el,elc}.

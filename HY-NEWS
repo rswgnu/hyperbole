@@ -2,6 +2,33 @@
 				 by Bob Weiner
 
 ===========================================================================
+*                                   V7.1.4
+===========================================================================
+
+  KOUTLINER
+
+   * Org Table Support: Org table editing now automatically works in the
+     Koutliner via Org table minor mode.  Use {M-x orgtbl-mode RET} to
+     toggle this on and off.  See "(Org)Tables" for details.
+
+   * New Tree Demotion/Promotion Keys: Tree promotion and demotion keys now
+     match the defaults in Org mode and Outline mode, plus some easier to
+     type ones.  The tables below summarize which keys work whether inside
+     an Org table or outside.
+
+     | Demotion Inside Org Table | Promotion Inside Org Table |
+     |---------------------------+----------------------------|
+     | C-c C-,                   | C-c C-.                    |
+     | C-c C-<                   | C-c C->                    |
+
+     | Demotion Outside Org Table | Promotion Outside Org Table |
+     |----------------------------+-----------------------------|
+     | TAB                        | Shift-TAB or M-TAB          |
+     | M-left-arrow               | M-right-arrow               |
+     | C-c C-,                    | C-c C-.                     |
+     | C-c C-<                    | C-c C->                     |
+
+===========================================================================
 *                                   V7.1.3
 ===========================================================================
 

@@ -31,4 +31,12 @@ If no previous line, exchange current with next line."
   ;; !! TODO: Write
   )
 
+(defun orgtbl-meta-return (arg)
+  "Let Action Key handle tables in kotl-mode, otherwise, use standard
+Org table command."
+  (interactive "P")
+  (if (derived-mode-p #'kotl-mode)
+      (hkey-either arg)
+    (org-table-wrap-region arg)))
+
 (provide 'kotl-orgtbl)

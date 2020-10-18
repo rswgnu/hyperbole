@@ -16,11 +16,7 @@
 ;;; Other required Lisp Libraries
 ;;; ************************************************************************
 
-(eval-and-compile (mapc #'require '(delsel hsettings hmail kfile kvspec kcell outline)))
-
-(eval-after-load  "org-table"
-  '(require 'kotl-orgtbl))
-
+(eval-and-compile (mapc #'require '(delsel hsettings hmail kfile kvspec kcell outline org-table kotl-orgtbl)))
 
 ;;; ************************************************************************
 ;;; Public variables
@@ -162,6 +158,18 @@ It provides the following keys:
   ;; Now that it is converted, ensure that `kotl-previous-mode' is set to
   ;; koutline.
   (setq kotl-previous-mode 'kotl-mode)
+  ;; Enable Org Table editing minor mode (user can disable via kotl-mode-hook
+  ;; if desired).
+  (orgtbl-mode 1)
+  ;; Override org-tbl {M-RET} binding since Action Key provides the
+  ;; same funcitonality when in a table, but may also be invoked from
+  ;; a mouse button.
+  (org-defkey orgtbl-mode-map "\M-\C-m"
+	      (orgtbl-make-binding 'orgtbl-meta-return 105
+				   "\M-\C-m" [(meta return)]))
+  (org-defkey orgtbl-mode-map [(meta return)]
+	      (orgtbl-make-binding 'orgtbl-meta-return 106
+				   [(meta return)] "\M-\C-m"))
   (run-hooks 'kotl-mode-hook)
   (add-hook 'change-major-mode-hook #'kotl-mode:show-all nil t))
 
@@ -1983,6 +1991,14 @@ If key is pressed:
 		    (call-interactively 'klink:create))
 	   (kotl-mode:to-valid-position)
 	   (error "(kotl-mode:action-key): Action Key released at invalid position")))
+	((and (/= (point) (point-max)) (= (following-char) ?|)
+	      (or (org-at-table-p t) (looking-at "[| \t]+$")))
+	 ;; On a | separator in a table, toggle Org table minor mode
+	 (orgtbl-mode 'toggle)
+	 (message "Org table minor mode %s" (if orgtbl-mode "enabled" "disabled")))
+	((org-at-table-p t)
+	 ;; Wrap the table cell or region
+	 (org-table-wrap-region current-prefix-arg))
 	(t ;; On a cell line (not at the end of line).
 	 (if (smart-outline-subtree-hidden-p)
 	     (kotl-mode:show-tree)
@@ -3028,7 +3044,6 @@ Leave point at end of line now residing at START."
 	 (setplist local-cmd (symbol-plist cmd))
 	 (substitute-key-definition
 	  cmd local-cmd kotl-mode-map global-map)))
-
      '(
        back-to-indentation
        backward-char
@@ -3181,12 +3196,14 @@ Leave point at end of line now residing at START."
   (define-key kotl-mode-map "\C-x\C-w"  'kfile:write)
   (define-key kotl-mode-map [M-up]              'kotl-mode:transpose-lines-up)
   (define-key kotl-mode-map (kbd "ESC <up>")    'kotl-mode:transpose-lines-up)
-  (define-key kotl-mode-map [M-down]            'kotl-mode:transpose-line-down)
-  (define-key kotl-mode-map (kbd "ESC <down>")  'kotl-mode:line-down)
-  (define-key kotl-mode-map [M-left]            'kotl-mode:promote-tree)
-  (define-key kotl-mode-map (kbd "ESC <left>")  'kotl-mode:promote-tree)
-  (define-key kotl-mode-map [M-right]           'kotl-mode:demote-tree)
-  (define-key kotl-mode-map (kbd "ESC <right>") 'kotl-mode:demote-tree))
+  (define-key kotl-mode-map [M-down]            'kotl-mode:transpose-lines-down)
+  (define-key kotl-mode-map (kbd "ESC <down>")  'kotl-mode:transpose-lines-down)
+  (mapc (lambda (key)
+	  (define-key kotl-mode-map key         'kotl-mode:promote-tree))
+	(list (kbd "M-<left>") (kbd "ESC <left>") (kbd "C-c C-<") (kbd "C-c C-,")))
+  (mapc (lambda (key)
+	  (define-key kotl-mode-map key         'kotl-mode:demote-tree))
+	(list (kbd "M-<right>") (kbd "ESC <right>") (kbd "C-c C->") (kbd "C-c C-."))))
 
 ;; When delete-selection-mode (pending-delete-mode) is enabled, make
 ;; these commands delete the region.
