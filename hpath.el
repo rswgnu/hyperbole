@@ -1147,7 +1147,9 @@ path form is what is returned for PATH."
 					     suffix)
 				suffix nil)
 			  t)
-		 (setq path (hpath:substitute-value path)))
+		 (setq path (hpath:substitute-value path))
+		 (unless (string-empty-p path)
+		   path))
 	     t)
 	   (not (string-match "[\t\n\r\"`'|{}\\]" path))
 	   (let ((rtn-path path))
@@ -1209,8 +1211,8 @@ path form is what is returned for PATH."
 		      ;; Quote any % except for one %s at the end of the
 		      ;; path part of rtn-path (immediately preceding a #
 		      ;; or , character or the end of string).
-		      (setq rtn-path (hypb:replace-match-string "%" rtn-path "%%")
-			    rtn-path (hypb:replace-match-string "%%s\\([#,]\\|\\'\\)" rtn-path "%s\\1"))
+		      (setq rtn-path (hypb:replace-match-string "%" rtn-path "%%" nil t)
+			    rtn-path (hypb:replace-match-string "%%s\\([#,]\\|\\'\\)" rtn-path "%s\\1" nil t))
 		      ;; Return path if non-nil return value.
 		      (if (stringp suffix) ;; suffix could = t, which we ignore
 			  (if (string-match (concat (regexp-quote suffix) "%s") rtn-path)
@@ -1330,7 +1332,7 @@ in-buffer path will not match."
 			   (hpath:substitute-dir var-name rest-of-path)
 			 (error rest-of-path)))
 	    var-group)))
-      t)))
+      t t)))
 
 (defun hpath:substitute-var (path)
   "Replace up to one match in PATH with the first variable from `hpath:variables' whose value contain a string match to PATH.
@@ -1775,13 +1777,22 @@ local pathname."
 		      (concat "$\{" var-name "\}/" rest-of-path)))))
 	  (t (error "(hpath:substitute-dir): Value of VAR-NAME, \"%s\", must be a string or list" var-name)))))
 
-(defun hpath:substitute-match-value (regexp str newtext &optional literal)
+(defun hpath:substitute-match-value (regexp str newtext &optional literal fixedcase)
   "Replace all matches for REGEXP in STR with NEWTEXT string and return the result.
+
 Optional LITERAL non-nil means do a literal replacement.
 Otherwise treat \\ in NEWTEXT string as special:
   \\& means substitute original matched text,
   \\N means substitute match for \(...\) number N,
   \\\\ means insert one \\.
+
+If optional fifth arg FIXEDCASE is non-nil, do not alter the case of
+the replacement text.  Otherwise, maybe capitalize the whole text, or
+maybe just word initials, based on the replaced text.  If the replaced
+text has only capital letters and has at least one multiletter word,
+convert NEWTEXT to all caps.  Otherwise if all words are capitalized
+in the replaced text, capitalize each word in NEWTEXT.
+
 NEWTEXT may instead be a function of one argument (the string to replace in)
 that returns a replacement string."
   (unless (stringp str)
@@ -1803,7 +1814,7 @@ that returns a replacement string."
 	      (cond ((functionp newtext)
 		     (hypb:replace-match-string
 		      regexp (substring str match start)
-		      (funcall newtext str) literal))
+		      (funcall newtext str) literal fixedcase))
 		    (literal newtext)
 		    (t (mapconcat
 			 (lambda (c)
@@ -1813,8 +1824,7 @@ that returns a replacement string."
 					((eq c ?&)
 					 (match-string 0 str))
 					((and (>= c ?0) (<= c ?9))
-					 (if (> c (+ ?0 (length
-							 (match-data))))
+					 (if (> c (+ ?0 (length (match-data))))
 					     ;; Invalid match num
 					     (error "(hypb:replace-match-string) Invalid match num: %c" c)
 					   (setq c (- c ?0))
@@ -1830,13 +1840,13 @@ that returns a replacement string."
 (defun hpath:substitute-var-name (var-symbol var-dir-val path)
   "Replace with VAR-SYMBOL any occurrences of VAR-DIR-VAL in PATH.
 Replacement is done iff VAR-DIR-VAL is an absolute path.
-If PATH is modified, returns PATH, otherwise returns nil."
+If PATH is modified, return PATH, otherwise return nil."
   (when (and (stringp var-dir-val) (file-name-absolute-p var-dir-val))
     (let ((new-path (hypb:replace-match-string
 		     (regexp-quote (file-name-as-directory
 				    (or var-dir-val default-directory)))
 		     path (concat "$\{" (symbol-name var-symbol) "\}/")
-		     t)))
+		     t t)))
       (if (equal new-path path) nil new-path))))
 
 

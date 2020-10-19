@@ -1,8 +1,22 @@
 2020-10-18  Bob Weiner  <rsw@gnu.org>
 
-* kotl/kotl-mode.el (kotl-mode:action-key): Add Org table support.
-                    (kotl-mode): Automatically enable orgtbl-mode
-    minor mode.  Force load of org-table and kotl-orgtbl for this.
+* hypb.el  (hypb:replace-match-string):
+  hpath.el (hpath:substitute-match-value):
+    Added optional 5th arg, fixedcase, which can be used to prevent
+    case changes in replaced strings.
+           (hpath:substitute-var-name, hpath:is-p,
+            hpath:substitute-match-value): Used fixedcase arg in
+    hypb:replace-match-string calls.
+           (hpath:substitute-value): Used fixedcase arg in
+    hpath:substitute-match-value call.
+           (hpath:is-p): Handle empty string return value from
+    hpath:substitute-value call.
+    These changes fixed improper path variable subst where the path
+    contains mixed case characters.
+
+* kotl/kotl-mode.el (kotl-mode:action-key): Added Org table support.
+                    (kotl-mode): Automatically enabled orgtbl-mode
+    minor mode.  Forced load of org-table and kotl-orgtbl for this.
                     (kotl-mode-map): Bound demotion and promotion of trees
     to all of the following (inside Org Table is when orgtbl-mode minor
     mode is active and point is in a table):
@@ -24,8 +38,8 @@
 * Makefile (EL_KOTL, ELC_COMPILE): Added kotl/kotl-orgtbl.{el,elc}.
   kotl/kotl-orgtbl.el (orgtbl-tab): Added to support Org Table minor-mode use
     in Koutlines.
-  kotl/kotl-mode.el (hsys-orgtbl): Require this new library.
-                    (kotl-mode-map): Bind M- arrow keys to closely match those
+  kotl/kotl-mode.el (hsys-orgtbl): Required this new library.
+                    (kotl-mode-map): Bound M- arrow keys to closely match those
     in Org mode for tree promotion/demotion and moving text lines up and down.
 
 2020-10-10  Bob Weiner  <rsw@gnu.org>

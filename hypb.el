@@ -523,13 +523,21 @@ WINDOW pixelwise."
 	((symbolp object)
 	 (get object 'hyperbole))))
 
-(defun hypb:replace-match-string (regexp str newtext &optional literal)
+(defun hypb:replace-match-string (regexp str newtext &optional literal fixedcase)
   "Replace all matches for REGEXP in STR with NEWTEXT string and return the result.
 Optional LITERAL non-nil means do a literal replacement.
 Otherwise treat \\ in NEWTEXT string as special:
   \\& means substitute original matched text,
   \\N means substitute match for \(...\) number N,
   \\\\ means insert one \\.
+
+If optional fifth arg FIXEDCASE is non-nil, do not alter the case of
+the replacement text.  Otherwise, maybe capitalize the whole text, or
+maybe just word initials, based on the replaced text.  If the replaced
+text has only capital letters and has at least one multiletter word,
+convert NEWTEXT to all caps.  Otherwise if all words are capitalized
+in the replaced text, capitalize each word in NEWTEXT.
+
 NEWTEXT may instead be a function of one argument (the string to replace in)
 that returns a replacement string."
   (unless (stringp str)
@@ -537,7 +545,7 @@ that returns a replacement string."
   (unless (or (stringp newtext) (functionp newtext))
     (error "(hypb:replace-match-string): 3rd arg must be a string or function: %s"
 	   newtext))
-  (replace-regexp-in-string regexp newtext str nil literal))
+  (replace-regexp-in-string regexp newtext str fixedcase literal))
 
 (defun hypb:return-process-output (program &optional infile &rest args)
   "Return as a string the output from external PROGRAM with INFILE for input.
