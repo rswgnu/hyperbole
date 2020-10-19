@@ -261,15 +261,15 @@ See the function `hpath:get-external-display-alist' for detailed format document
     "*An alist of (FILENAME-REGEXP . DISPLAY-PROGRAM-STRING-OR-LIST) elements for MS Windows.
 See the function `hpath:get-external-display-alist' for detailed format documentation.")
 
-(defvar hpath:external-display-alist-x (list '("\\.e?ps$" . "ghostview")
-					     '("\\.dvi$"  . "xdvi")
-					     (cons (format "\\.\\(%s\\)$" hpath:external-open-office-suffixes) "openoffice")
-					     '("\\.pdf$"  . ("xpdf" "acroread"))
-					     '("\\.ps\\.g?[zZ]$" . "zcat %s | ghostview -")
-					     '("\\.\\(gif\\|tiff?\\|xpm\\|xbm\\|xwd\\|pm\\|pbm\\|jpe?g\\)"  . "xv")
-					     '("\\.ra?s$" . "snapshot -l"))
+
+(defcustom hpath:external-display-alist-x (list (cons (format "\\.\\(xcf\\|%s\\)$"
+							      hpath:external-open-office-suffixes)
+						      "setsid -w xdg-open"))
   "*An alist of (FILENAME-REGEXP . DISPLAY-PROGRAM-STRING-OR-LIST) elements for the X Window System.
-See the function `hpath:get-external-display-alist' for detailed format documentation.")
+See the function `hpath:get-external-display-alist' for detailed format documentation."
+  :type '(alist :key-type regexp :value-type string)
+  :group 'hyperbole-commands
+  )
 
 (defvar hpath:info-suffix "\\.info\\(-[0-9]+\\)?\\(\\.gz\\|\\.Z\\|-z\\)?\\'"
   "Regexp matching to the end of Info manual file names.")
