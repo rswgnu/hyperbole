@@ -4,7 +4,7 @@
 ;;
 ;; Orig-Date:     1-Nov-91 at 00:44:23
 ;;
-;; Copyright (C) 1991-2019  Free Software Foundation, Inc.
+;; Copyright (C) 1991-2020  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
 ;;
 ;; This file is part of GNU Hyperbole.
@@ -252,15 +252,16 @@ possible suffixes."
 							  "open"))
   "*An alist of (FILENAME-REGEXP . DISPLAY-PROGRAM-STRING-OR-LIST) elements for the macOS window system.
 See the function `hpath:get-external-display-alist' for detailed format documentation."
-  :type 'regexp
+  :type '(alist :key-type regexp :value-type string)
   :group 'hyperbole-commands)
 
-(defvar hpath:external-display-alist-mswindows (list '("\\.vba$" . "/c/Windows/System32/cmd.exe //c start \"${@//&/^&}\"")
-						     (cons (format "\\.\\(%s\\)$" hpath:external-open-office-suffixes)
-							   "openoffice.exe"))
-    "*An alist of (FILENAME-REGEXP . DISPLAY-PROGRAM-STRING-OR-LIST) elements for MS Windows.
-See the function `hpath:get-external-display-alist' for detailed format documentation.")
-
+(defcustom hpath:external-display-alist-mswindows (list '("\\.vba$" . "/c/Windows/System32/cmd.exe //c start \"${@//&/^&}\"")
+							(cons (format "\\.\\(%s\\)$" hpath:external-open-office-suffixes)
+							      "openoffice.exe"))
+  "*An alist of (FILENAME-REGEXP . DISPLAY-PROGRAM-STRING-OR-LIST) elements for MS Windows.
+See the function `hpath:get-external-display-alist' for detailed format documentation."
+  :type '(alist :key-type regexp :value-type string)
+  :group 'hyperbole-commands)
 
 (defcustom hpath:external-display-alist-x (list (cons (format "\\.\\(xcf\\|%s\\)$"
 							      hpath:external-open-office-suffixes)
@@ -268,13 +269,12 @@ See the function `hpath:get-external-display-alist' for detailed format document
   "*An alist of (FILENAME-REGEXP . DISPLAY-PROGRAM-STRING-OR-LIST) elements for the X Window System.
 See the function `hpath:get-external-display-alist' for detailed format documentation."
   :type '(alist :key-type regexp :value-type string)
-  :group 'hyperbole-commands
-  )
+  :group 'hyperbole-commands)
 
 (defvar hpath:info-suffix "\\.info\\(-[0-9]+\\)?\\(\\.gz\\|\\.Z\\|-z\\)?\\'"
   "Regexp matching to the end of Info manual file names.")
 
-(defvar hpath:internal-display-alist
+(defcustom hpath:internal-display-alist
   (let ((info-suffix "\\.info\\(-[0-9]+\\)?\\(\\.gz\\|\\.Z\\|-z\\)?\\'"))
     (delq
      nil
@@ -313,7 +313,9 @@ See the function `hpath:get-external-display-alist' for detailed format document
       )))
   "*Alist of (FILENAME-REGEXP . EDIT-FUNCTION) elements for calling special
 functions to display particular file types within Emacs.  See also
-the function (hpath:get-external-display-alist) for external display program settings.")
+the function (hpath:get-external-display-alist) for external display program settings."
+  :type '(alist :key-type regexp :value-type sexp)
+  :group 'hyperbole-commands)
 
 (defvar hpath:display-buffer-alist
   (list
