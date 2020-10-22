@@ -628,10 +628,11 @@ PROJECT value is provided, it defaults to the value of
   "Store cache of local git repo directories in `hibtypes-git-repos-cache'.
 With optional PROMPT-FLAG non-nil, prompt user whether to build the cache before building.
 Return t if built, nil otherwise."
+  (interactive)
   (when (or (not prompt-flag)
 	    (y-or-n-p "Find all local git repositories (will take some time)? "))
     (message "Please wait while all local git repositories are found...")
-    (unless (zerop (shell-command (format "%s -r '/\.git$' | sed -e 's+/.git$++' > %s"
+    (unless (zerop (shell-command (format "%s -r '/\\.git$' | sed -e 's+/.git$++' > %s"
 					  (hibtypes-git-get-locate-command)
 					  hibtypes-git-repos-cache)))
       (error "(hibtypes-git-build-repos-cache): Cache build failed; `locate-command' must accept `-r' argument for regexp matching"))
@@ -641,6 +642,7 @@ Return t if built, nil otherwise."
 (defun hibtypes-git-add-project-to-repos-cache (project)
   "Locate PROJECT directory and add to the cache of local git repo directories in `hibtypes-git-repos-cache'.
 Return the project directory found or nil if none."
+  (interactive "sProject: ")
   (message "Please wait while %s's local git repository is found..." project)
   (let ((project-dir (shell-command-to-string
 		      (format "%s -l1 /%s/.git | sed -e 's+/.git++' | tr -d '\n'"
@@ -649,9 +651,10 @@ Return the project directory found or nil if none."
     (message "")
     (when (and (> (length project-dir) 0) (= ?/ (aref project-dir 0)))
       ;; project-dir a directory, prepend it to the cache file...
-      (shell-command-to-string (format "echo -e \"%s\n$(cat %s)\" > %s"
-				       project-dir hibtypes-git-repos-cache
-				       hibtypes-git-repos-cache))
+      (with-current-buffer (find-file-noselect hibtypes-git-repos-cache)
+        (goto-char (point-min))
+        (insert (concat project-dir "\n"))
+        (save-buffer))
       ;; ...and return it.
       project-dir)))
 
