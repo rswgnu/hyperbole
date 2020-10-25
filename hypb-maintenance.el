@@ -76,7 +76,7 @@ Point `hypb:web-repo-location' to where the web repo is located."
 
   ;; koutline-example.html
   (kexport:html "kotl/EXAMPLE.kotl" (concat hypb:web-repo-location "koutline-example.html") nil)
-  
+ 
   ;; HY-WHY.html
   (kexport:html "HY-WHY.kotl" (concat hypb:web-repo-location "HY-WHY.html") nil)
   )
