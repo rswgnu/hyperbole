@@ -1,7 +1,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <!-- This manual is for GNU Hyperbole
-(Edition 7.1.3, Published August, 2020).
+(Edition 7.1.4, Published October, 2020).
 
 Copyright (C) 1989-2020  Free Software Foundation, Inc.
 
@@ -346,8 +346,8 @@ WITHOUT ANY WARRANTY, without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</P>
 
 <PRE>
-Edition 7.1.3
-Printed August 1, 2020.
+Edition 7.1.4
+Printed October 25, 2020.
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -820,7 +820,7 @@ Next: <a href="#Smart-Keys" accesskey="n" rel="next">Smart Keys</a>, Previous: <
 <span id="Introduction-1"></span><h2 class="chapter">1 Introduction</h2>
 
 <p>This edition of the GNU Hyperbole Manual is for use with any version
-7.1.3 or greater of GNU Hyperbole.  Hyperbole runs atop GNU Emacs 24.3
+7.1.4 or greater of GNU Hyperbole.  Hyperbole runs atop GNU Emacs 24.3
 or higher.  It will trigger an error if your Emacs is older.
 </p>
 <p>This chapter summarizes the structure of the rest of the manual,
@@ -2464,10 +2464,10 @@ buffer behaves the same as the corresponding button in the original
 <dd><p>Within a mail or Usenet news composer window, make a Hyperbole
 support/discussion e-mail address insert Hyperbole environment and
 version information.  This is useful when sending mail to a Hyperbole
-discussion mail list.  See also the documentation
-for <code>actypes::hyp-config</code>.  For example, an Action Mouse Key
-click on &lt;hyperbole-users@gnu.org&gt; in a mail composer window would
-activate this implicit button type.
+discussion mail list.  See also the documentation for
+<code>actypes::hyp-config</code>.  For example, a click of an Action Mouse
+Key on &lt;hyperbole-users@gnu.org&gt; in a mail composer window
+would activate this implicit button type.
 </p>
 <span id="index-ibtypes-Info_002dnode"></span>
 <span id="index-Info-node"></span>
@@ -2477,20 +2477,6 @@ activate this implicit button type.
 Also make a &quot;(filename)itemname&quot; button display the associated Info
 index item.  Examples are &quot;(hyperbole)Implicit Buttons&quot; and
 &ldquo;(hyperbole)C-c /&rdquo;.
-</p>
-<span id="index-ibtypes-www_002durl"></span>
-<span id="index-URL"></span>
-<span id="index-World_002dwide-Web"></span>
-<span id="index-WWW"></span>
-<span id="index-Action-Key_002c-web-browsing"></span>
-<span id="index-Action-Key_002c-web-browsing-1"></span>
-<span id="index-browse_002durl_002dbrowser_002dfunction"></span>
-</dd>
-<dt><code>www-url</code></dt>
-<dd><p>When not in an Emacs web browser buffer, follow any non-ftp URL (link) at point.
-The variable, <code>browse-url-browser-function</code>, may be used to customize
-which URL browser is called.  Terse URLs which lack a protocol prefix,
-like www.gnu.org, are also recognized.
 </p>
 <span id="index-ibtypes-gnus_002dpush_002dbutton"></span>
 <span id="index-GNUS-push_002dbuttons"></span>
@@ -2540,9 +2526,8 @@ program.  Patch applies diffs to source code.
 <span id="index-compiler-error"></span>
 </dd>
 <dt><code>elisp-compiler-msg</code></dt>
-<dd><p>Jump to the source code for a definition associated with an Emacs
-Lisp byte-compiler error message.  Works when activated anywhere
-within an error line.
+<dd><p>Jump to the source code for a definition associated with an Emacs Lisp
+byte-compiler error message.  This works anywhere within an error line.
 </p>
 <span id="index-ibtypes-debugger_002dsource"></span>
 <span id="index-gdb"></span>
@@ -2563,8 +2548,8 @@ recognized in any buffer.
 <span id="index-match-lines"></span>
 </dd>
 <dt><code>ripgrep-msg</code></dt>
-<dd><p>Jump to line associated with a ripgrep (rg) line numbered msg.
-Ripgrep outputs each pathname once followed by all matching lines in
+<dd><p>Jump to a line associated with a ripgrep (rg) line numbered msg.
+Ripgrep outputs each pathname once, followed by all matching lines in
 that pathname.  Messages are recognized in any buffer (other than a
 helm completion buffer).
 </p>
@@ -2573,10 +2558,10 @@ helm completion buffer).
 <span id="index-stack-frame-1"></span>
 </dd>
 <dt><code>ipython-stack-frame</code></dt>
-<dd><p>Jump to line associated with an ipython stack frame line numbered msg.
-ipython outputs each pathname once followed by all matching lines in that
-pathname.  Messages are recognized in any buffer (other than a helm completion
-buffer).
+<dd><p>Jump to the line associated with an ipython stack frame line numbered
+msg.  ipython outputs each pathname once followed by all matching
+lines in that pathname.  Messages are recognized in any buffer (other
+than a helm completion buffer).
 </p>
 <span id="index-ibtypes-grep_002dmsg"></span>
 <span id="index-grep-1"></span>
@@ -2584,7 +2569,7 @@ buffer).
 <span id="index-match-lines-1"></span>
 </dd>
 <dt><code>grep-msg</code></dt>
-<dd><p>Jump to a line associated with a grep or compilation error message.
+<dd><p>Jump to the line associated with a grep or compilation error message.
 Messages are recognized in any buffer.
 </p>
 <span id="index-ibtypes-ilink"></span>
@@ -2593,22 +2578,22 @@ Messages are recognized in any buffer.
 <span id="index-ilink"></span>
 </dd>
 <dt><code>link-to-ibut &lt;ilink&gt;</code></dt>
-<dd><p>At point, activate a link to an implicit button within the current buffer.
-Execute the implicit button&rsquo;s action in the context of the current buffer.
+<dd><p>At point, activate a link to an implicit button within the current
+buffer.  This executes the linked to implicit button&rsquo;s action in the
+context of the current buffer.
 </p>
 <p>Recognizes the format &rsquo;&lt;ilink:&rsquo; button_label [&rsquo;:&rsquo; button_file_path] &rsquo;&gt;&rsquo;,
 where button_file_path is given only when the link is to another file,
 e.g. &lt;ilink: my series of keys: ${hyperb:dir}/HYPB&gt;.
 </p>
-
 <span id="index-ibtypes-glink"></span>
 <span id="index-global-button-link"></span>
 <span id="index-link-to-global-button"></span>
 <span id="index-glink"></span>
 </dd>
 <dt><code>link-to-gbut &lt;glink&gt;</code></dt>
-<dd><p>At point, activate a link to a global button.
-Execulte the global button&rsquo;s action in the context of the current buffer.
+<dd><p>At point, activate a link to a global button.  This executes the
+linked to global button&rsquo;s action in the context of the current buffer.
 </p>
 <p>Recognizes the format &rsquo;&lt;glink:&rsquo; button_label &rsquo;&gt;&rsquo;, e.g. &lt;glink: open todos&gt;.
 </p>
@@ -2618,8 +2603,9 @@ Execulte the global button&rsquo;s action in the context of the current buffer.
 <span id="index-elink"></span>
 </dd>
 <dt><code>link-to-ebut &lt;elink&gt;</code></dt>
-<dd><p>At point, activate a link to an explicit button within the current buffer.
-Execute The explicit button&rsquo;s action in the context of the current buffer.
+<dd><p>At point, activate a link to an explicit button within the current
+buffer.  This executes the linked to explicit button&rsquo;s action in the
+context of the current buffer.
 </p>
 <p>Recognizes the format &rsquo;&lt;elink:&rsquo; button_label [&rsquo;:&rsquo; button_file_path] &rsquo;&gt;&rsquo;,
 where : button_file_path is given only when the link is to another file,
@@ -2652,19 +2638,19 @@ when selected.
 <span id="index-ftp"></span>
 </dd>
 <dt><code>rfc</code></dt>
-<dd><p>Retrieve and display an Internet rfc referenced at point.  The
-following formats are recognized: RFC822, rfc-822, and RFC 822.  The
-<code>hpath:rfc</code> variable specifies the location from which to
-retrieve RFCs.  Requires the Emacs builtin Tramp library for ftp file
-retrievals.
+<dd><p>Retrieve and display an Internet Request for Comments (RFC) standards
+document referenced at point.  The following formats are recognized:
+RFC822, rfc-822, and RFC 822.  The <code>hpath:rfc</code> variable specifies
+the location from which to retrieve RFCs.  Requires the Emacs builtin
+Tramp library for ftp file retrievals.
 </p>
 <span id="index-ibtypes-kbd_002dkey"></span>
 <span id="index-key-sequence"></span>
 <span id="index-sequence-of-keys"></span>
 </dd>
 <dt><code>kbd-key</code></dt>
-<dd><p>Execute a key series (series of key sequences) found around point,
-delimited by curly braces, {}, if any.  Key series should be in
+<dd><p>Execute a key series (series of key sequences) around point,
+delimited by curly braces, {}.  Key series should be in
 human readable form, e.g. <kbd>{C-x C-b}</kbd>.  Formats such as {^x^b}
 will not be recognized.
 </p>
@@ -2691,14 +2677,14 @@ non-brace character.
 <span id="index-toc-implicit-button-type"></span>
 </dd>
 <dt><code>text-toc</code></dt>
-<dd><p>Jump to the text file section referenced by a table of contents entry
-at point.  The filename of the current buffer must contain
+<dd><p>Jump to the text file section referenced by a table of contents (toc)
+entry at point.  The filename of the current buffer must contain
 <samp>README</samp> and there must be a &lsquo;Table of Contents&rsquo; or &lsquo;Contents&rsquo;
-label on a line by itself (it may begin with an asterisk), preceding the
-table of contents.  Each toc entry must begin with some whitespace
-followed by one or more asterisk characters.  Each line which begins a
-new file section must start with one or more asterisk characters at the
-very beginning of the line.
+label on a line by itself (it may begin with an asterisk), preceding
+the table of contents.  Each toc entry must begin with some whitespace
+followed by one or more asterisk characters.  Each section header
+linked to by the toc must start with one or more asterisk characters
+at the very beginning of the line.
 </p>
 <span id="index-ibtypes-cscope"></span>
 <span id="index-C_002fC_002b_002b-call-trees"></span>
@@ -2941,12 +2927,12 @@ window.
 <span id="index-ibtypes-debbugs_002dgnu_002dquery"></span>
 </dd>
 <dt><code>debbugs-gnu-query</code></dt>
-<dd><p>Debbugs queries may be issued by activating this implicit button type.
-It displays the results of a Gnu debbugs query based on the string at
-point and works in most kinds of buffers.  If the query includes a
-single id number, it displays the original message submission for that
-id and allows browsing of the followup discussion.  The following
-buffer text formats are accepted (with point prior to any attribute):
+<dd><p>Display the results of a Debbugs query based on a bug reference string
+around point.  This works in most types of buffers.  If the query
+includes a single id number, it displays the original message
+submission for that id and allows browsing of the followup discussion.
+The following buffer text formats are accepted (with point prior to
+any attribute):
 </p>
 <div class="example">
 <pre class="example">bug#id-number, bug# id-number, bug #id-number or bug id-number
@@ -2977,7 +2963,7 @@ whose names begin with a &lsquo; &rsquo; or &lsquo;*&rsquo; character.
 </dd>
 <dt><code>function-in-buffer</code></dt>
 <dd><p>Return the function name defined within this buffer that point is
-within or after, else &lsquo;<samp>nil</samp>&rsquo;.  This triggers only when the
+within or after, else <code>nil</code>.  This triggers only when the
 func-menu library has been loaded and the current major mode is one
 handled by func-menu.
 </p>
@@ -2987,12 +2973,11 @@ handled by func-menu.
 <span id="index-ibtypes-pathname_002dline_002dand_002dcolumn"></span>
 </dd>
 <dt><code>pathname-line-and-column</code></dt>
-<dd><p>Make a valid pathname:line-num[:column-num] pattern display the path
-at line-num and optional column-num.  Also works for remote pathnames.
-May also contain hash-style link references with the following format:
-<samp>&lt;path&gt;[#&lt;link-anchor&gt;]:&lt;line-num&gt;[:&lt;column-num&gt;]</samp>.
+<dd><p>Make a valid <samp>pathname:line-num[:column-num]</samp> pattern display the
+path at <em>line-num</em> and optional <em>column-num</em>.  Also works
+for remote pathnames.  May also contain hash-style link references
+with the following format: <samp>&lt;path&gt;[#&lt;link-anchor&gt;]:&lt;line-num&gt;[:&lt;column-num&gt;]</samp>.
 </p>
-
 <span id="index-ibtypes-pathname"></span>
 <span id="index-hpath_003aat_002dp"></span>
 <span id="index-hpath_003afind"></span>
@@ -3026,6 +3011,20 @@ delimiters.  See the variable documentation for <code>hpath:suffixes</code> for
 suffixes that are added to or removed from the pathname when searching
 for a valid match.  See the function documentation for <code>hpath:find</code>
 for special file display options.
+</p>
+<span id="index-ibtypes-www_002durl"></span>
+<span id="index-URL"></span>
+<span id="index-World_002dwide-Web"></span>
+<span id="index-WWW"></span>
+<span id="index-Action-Key_002c-web-browsing"></span>
+<span id="index-Action-Key_002c-web-browsing-1"></span>
+<span id="index-browse_002durl_002dbrowser_002dfunction"></span>
+</dd>
+<dt><code>www-url</code></dt>
+<dd><p>When not in an Emacs web browser buffer, follow any non-ftp URL (link) at point.
+The variable, <code>browse-url-browser-function</code>, may be used to customize
+which URL browser is called.  Terse URLs which lack a protocol prefix,
+like www.gnu.org, are also recognized.
 </p>
 <span id="index-ibtypes-org_002dmode"></span>
 <span id="index-Org_002dmode"></span>
@@ -3067,8 +3066,10 @@ the Org-mode standard binding of <kbd>{M-<span class="key">RET</span>}</kbd>, <c
 <p>To disable ALL Hyperbole support within Org major and minor modes, set
 the custom option <code>inhibit-hsys-org</code> to <code>t</code>.  Then in Org modes,
 the Action Key will simply invoke <code>org-meta-return</code>.
-</p></dd>
+</p>
+</dd>
 </dl>
+
 
 <hr>
 <span id="Action-Buttons"></span><div class="header">

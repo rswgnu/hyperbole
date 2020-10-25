@@ -83,10 +83,11 @@
 ;;; ************************************************************************
 
 (defib debbugs-gnu-query ()
-  "Display the results of a Gnu debbugs query based on the string at point.
-If the query includes a single id number, display the original message
-submission for that id and allow browsing of the followup discussion.
-Accept the following buffer text formats (with point prior to any
+  "Display the results of a Debbugs query based on a bug reference string around point.
+This works in most types of buffers.  If the query includes a
+single id number, display the original message submission for
+that id and allow browsing of the followup discussion.  Accepts
+the following buffer text formats (with point prior to any
 attribute):
 
    bug#id-number or bug# id-number or bug #id-number

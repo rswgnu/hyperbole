@@ -10,9 +10,23 @@
 ;; This file is part of GNU Hyperbole.
 ;;; Commentary:
 ;;
-;;   Implicit button types in this file are defined in increasing
-;;   order of priority within this file (last one is highest
-;;   priority).
+;;   Implicit button types (ibtypes) in this file are defined in increasing
+;;   order of priority within this file (last one is highest priority).
+;;
+;;   To return a list of the implicit button types in priority order (highest
+;;   to lowest), evaluate:
+;;
+;;      (symset:get 'ibtypes 'symbols)
+;;
+;;   If you need to reset the priorities of all ibtypes, evaluate:
+;;
+;;      (symset:clear 'ibtypes)
+;;
+;;   and then reload this file.
+;;
+;;   To get a list of all loaded action types, evaluate:
+;;
+;;      (symset:get 'actypes 'symbols)
 
 ;;; Code:
 ;;; ************************************************************************
@@ -64,11 +78,24 @@
 
 (run-hooks 'hibtypes-begin-load-hook)
 
+;; Don't use require below here for any libraries with ibtypes in
+;; them.  Use load instead to ensure are reloaded when resetting
+;; ibtype priorities.
+
+;;; ========================================================================
+;;; Follows Org mode links and radio targets and cycles Org heading views
+;;; ========================================================================
+
+(load "hib-org")
+
+;; If you want to to disable ALL Hyperbole support within Org major
+;; and minor modes, set the custom option `inhibit-hsys-org' non-nil.
+
 ;;; ========================================================================
 ;;; Follows URLs by invoking a web browser.
 ;;; ========================================================================
 
-(require 'hsys-www)
+(load "hsys-www")
 
 ;;; ========================================================================
 ;;; Follows Org links that are in non-Org mode buffers
@@ -85,7 +112,7 @@ handle any links they recognize first."
 	(hsys-org-set-ibut-label start-end)
 	(hact 'org-open-at-point-global)))))
 
-;; Org links in Org mode are handled at a higher priority in "hib-org.el"
+;; Org links in Org mode are handled at a lower priority in "hib-org.el"
 
 ;;; ========================================================================
 ;;; Composes mail, in another window, to the e-mail address at point.
@@ -268,7 +295,7 @@ must have an attached file."
 ;;; Handles social media hashtag and username references, e.g. twitter#myhashtag
 ;;; ========================================================================
 
-(require 'hib-social)
+(load "hib-social")
 
 ;;; ========================================================================
 ;;; Displays in-file Markdown link referents.
@@ -514,9 +541,9 @@ anything."
 File name must contain DEMO, README or TUTORIAL and there must be a `Table
 of Contents' or `Contents' label on a line by itself (it may begin with
 an asterisk), preceding the table of contents.  Each toc entry must begin
-with some whitespace followed by one or more asterisk characters.  Each
-file section name line must start with one or more asterisk characters at
-the very beginning of the line."
+with some whitespace followed by one or more asterisk characters.
+Each section header linked to by the toc must start with one or more
+asterisk characters at the very beginning of the line."
   (let (section)
     (when (and (string-match "DEMO\\|README\\|TUTORIAL" (buffer-name))
 	           (save-excursion
@@ -559,20 +586,20 @@ spaces and then another non-space, non-parenthesis, non-brace character."
 ;;; Handles Gnu debbugs issue ids, e.g. bug#45678 or just 45678.
 ;;; ========================================================================
 
-(require 'hib-debbugs)
+(load "hib-debbugs")
 
 ;;; ========================================================================
 ;;; Executes or documents command bindings of brace delimited key sequences.
 ;;; ========================================================================
 
-(require 'hib-kbd)
+(load "hib-kbd")
 
 ;;; ========================================================================
 ;;; Makes Internet RFC references retrieve the RFC.
 ;;; ========================================================================
 
 (defib rfc ()
-  "Retrieve and display an Internet rfc referenced at point.
+  "Retrieve and display an Internet Request for Comments (RFC) at point.
 The following formats are recognized: RFC822, rfc-822, and RFC 822.  The
 `hpath:rfc' variable specifies the location from which to retrieve RFCs.
 Requires the Emacs builtin Tramp library for ftp file retrievals."
@@ -622,7 +649,7 @@ Requires the Emacs builtin Tramp library for ftp file retrievals."
 ;;; Follows links to Hyperbole Koutliner cells.
 ;;; ========================================================================
 
-(require 'klink)
+(load "klink")
 
 ;;; ========================================================================
 ;;; Links to Hyperbole button types
@@ -674,7 +701,8 @@ Requires the Emacs builtin Tramp library for ftp file retrievals."
 
 (defib elink ()
   "At point, activate a link to an explicit button.
-Execute The explicit button's action in the context of the current buffer.
+This executes the linked to explicit button's action in the
+context of the current buffer.
 
 Recognizes the format '<elink:' button_label [':' button_file_path] '>',
 where : button_file_path is given only when the link is to another file,
@@ -688,7 +716,8 @@ e.g. <elink: project-list: ~/projs>."
 
 (defib glink ()
   "At point, activates a link to a global button.
-Execulte the global button's action in the context of the current buffer.
+This executes the linked to global button's action in the context
+of the current buffer.
 
 Recognizes the format '<glink:' button_label '>',
 e.g. <glink: open todos>."
@@ -700,8 +729,9 @@ e.g. <glink: open todos>."
   "String matching the end of a link to a Hyperbole implicit button.")
 
 (defib ilink ()
-  "At point, activates a link to a labeled implicit button.
-Execute the implicit button's action in the context of the current buffer.
+  "At point, activate a link to a labeled implicit button.
+This executes the linked to implicit button's action in the context of the
+current buffer.
 
 Recognizes the format '<ilink:' button_label [':' button_file_path] '>',
 where button_file_path is given only when the link is to another file,
@@ -714,7 +744,7 @@ e.g. <ilink: my series of keys: ${hyperb:dir}/HYPB>."
 ;;; ========================================================================
 
 (defib ipython-stack-frame ()
-  "Jump to line associated with an ipython stack frame line numbered msg.
+  "Jump to the line associated with an ipython stack frame line numbered msg.
 ipython outputs each pathname once followed by all matching lines in that pathname.
 Messages are recognized in any buffer (other than a helm completion
 buffer)."
@@ -756,7 +786,7 @@ buffer)."
 		        (hact 'link-to-file-line file line-num)))))))))
 
 (defib ripgrep-msg ()
-  "Jump to line associated with a ripgrep (rg) line numbered msg.
+  "Jump to the line associated with a ripgrep (rg) line numbered msg.
 Ripgrep outputs each pathname once followed by all matching lines in that pathname.
 Messages are recognized in any buffer (other than a helm completion
 buffer)."
@@ -799,7 +829,7 @@ buffer)."
 		        (hact 'link-to-file-line file line-num)))))))))
 
 (defib grep-msg ()
-  "Jump to line associated with line numbered grep or compilation error msgs.
+  "Jump to the line associated with line numbered grep or compilation error msgs.
 Messages are recognized in any buffer (other than a helm completion
 buffer) except for grep -A<num> context lines which are matched only
 in grep and shell buffers."
@@ -1292,15 +1322,6 @@ arg1 ... argN '>'.  For example, <mail nil \"user@somewhere.org\">."
           (if (eq hrule:action #'actype:identity)
 	          (apply hrule:action actype args)
 	        (apply hrule:action actype (mapcar #'eval args))))))))
-
-;;; ========================================================================
-;;; Follows Org mode links and radio targets and cycles Org heading views
-;;; ========================================================================
-
-(require 'hib-org)
-
-;; If you want to to disable ALL Hyperbole support within Org major
-;; and minor modes, set the custom option `inhibit-hsys-org' non-nil.
 
 ;;; ========================================================================
 ;;; Inserts completion into minibuffer or other window.

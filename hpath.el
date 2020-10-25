@@ -1104,7 +1104,7 @@ See also `hpath:internal-display-alist' for internal, `window-system' independen
 			     (cons "next" hpath:external-display-alist-macos)))))))
 
 (defun hpath:is-p (path &optional type non-exist)
-  "Return normalized PATH as a URL if PATH is a Posix or MSWindows path, else nil.
+  "Return normalized PATH if PATH is a Posix or MSWindows path, else nil.
 If optional TYPE is the symbol 'file or 'directory, then only that path type
 is accepted as a match.  The existence of the path is checked only for
 locally reachable paths (Info paths are not checked).  With optional NON-EXIST,

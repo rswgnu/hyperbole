@@ -154,8 +154,8 @@ WITHOUT ANY WARRANTY, without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</P>
 
 <PRE>
-Edition 7.1.3
-Printed August 1, 2020.
+Edition 7.1.4
+Printed October 25, 2020.
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -196,8 +196,8 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 @sp 2
 
 @example
-Edition 7.1.3
-August 1, 2020
+Edition 7.1.4
+October 25, 2020
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -484,7 +484,7 @@ Smart Keyboard Keys
 @chapter Introduction
 
 This edition of the GNU Hyperbole Manual is for use with any version
-7.1.3 or greater of GNU Hyperbole.  Hyperbole runs atop GNU Emacs 24.3
+7.1.4 or greater of GNU Hyperbole.  Hyperbole runs atop GNU Emacs 24.3
 or higher.  It will trigger an error if your Emacs is older.
 
 This chapter summarizes the structure of the rest of the manual,
@@ -1917,10 +1917,10 @@ buffer behaves the same as the corresponding button in the original
 Within a mail or Usenet news composer window, make a Hyperbole
 support/discussion e-mail address insert Hyperbole environment and
 version information.  This is useful when sending mail to a Hyperbole
-discussion mail list.  See also the documentation
-for @code{actypes::hyp-config}.  For example, an Action Mouse Key
-click on <hyperbole-users@@gnu.org> in a mail composer window would
-activate this implicit button type.
+discussion mail list.  See also the documentation for
+@code{actypes::hyp-config}.  For example, a click of an Action Mouse
+Key on <hyperbole-users@@gnu.org> in a mail composer window
+would activate this implicit button type.
 
 @findex ibtypes Info-node
 @cindex Info node
@@ -1929,19 +1929,6 @@ Make a "(filename)nodename" button display the associated Info node.
 Also make a "(filename)itemname" button display the associated Info
 index item.  Examples are "(hyperbole)Implicit Buttons" and
 ``(hyperbole)C-c /''.
-
-@findex ibtypes www-url
-@cindex URL
-@cindex World-wide Web
-@cindex WWW
-@cindex Action Key, web browsing
-@kindex Action Key, web browsing
-@vindex browse-url-browser-function
-@item www-url
-When not in an Emacs web browser buffer, follow any non-ftp URL (link) at point.
-The variable, @code{browse-url-browser-function}, may be used to customize
-which URL browser is called.  Terse URLs which lack a protocol prefix,
-like www.gnu.org, are also recognized.
 
 @findex ibtypes gnus-push-button
 @cindex GNUS push-buttons
@@ -1986,9 +1973,8 @@ program.  Patch applies diffs to source code.
 @cindex Emacs Lisp compiler error
 @cindex compiler error
 @item elisp-compiler-msg
-Jump to the source code for a definition associated with an Emacs
-Lisp byte-compiler error message.  Works when activated anywhere
-within an error line.
+Jump to the source code for a definition associated with an Emacs Lisp
+byte-compiler error message.  This works anywhere within an error line.
 
 @findex ibtypes debugger-source
 @cindex gdb
@@ -2007,8 +1993,8 @@ recognized in any buffer.
 @cindex ripgrep
 @cindex match lines
 @item ripgrep-msg
-Jump to line associated with a ripgrep (rg) line numbered msg.
-Ripgrep outputs each pathname once followed by all matching lines in
+Jump to a line associated with a ripgrep (rg) line numbered msg.
+Ripgrep outputs each pathname once, followed by all matching lines in
 that pathname.  Messages are recognized in any buffer (other than a
 helm completion buffer).
 
@@ -2016,17 +2002,17 @@ helm completion buffer).
 @cindex ipython
 @cindex stack frame
 @item ipython-stack-frame
-Jump to line associated with an ipython stack frame line numbered msg.
-ipython outputs each pathname once followed by all matching lines in that
-pathname.  Messages are recognized in any buffer (other than a helm completion
-buffer).
+Jump to the line associated with an ipython stack frame line numbered
+msg.  ipython outputs each pathname once followed by all matching
+lines in that pathname.  Messages are recognized in any buffer (other
+than a helm completion buffer).
 
 @findex ibtypes grep-msg
 @cindex grep
 @cindex compiler error
 @cindex match lines
 @item grep-msg
-Jump to a line associated with a grep or compilation error message.
+Jump to the line associated with a grep or compilation error message.
 Messages are recognized in any buffer.
 
 @findex ibtypes ilink
@@ -2034,21 +2020,21 @@ Messages are recognized in any buffer.
 @cindex link to implicit button
 @cindex ilink
 @item link-to-ibut <ilink>
-At point, activate a link to an implicit button within the current buffer.
-Execute the implicit button's action in the context of the current buffer.
+At point, activate a link to an implicit button within the current
+buffer.  This executes the linked to implicit button's action in the
+context of the current buffer.
 
 Recognizes the format '<ilink:' button_label [':' button_file_path] '>',
 where button_file_path is given only when the link is to another file,
 e.g. <ilink: my series of keys: $@{hyperb:dir@}/HYPB>.
-
 
 @findex ibtypes glink
 @cindex global button link
 @cindex link to global button
 @cindex glink
 @item link-to-gbut <glink>
-At point, activate a link to a global button.
-Execulte the global button's action in the context of the current buffer.
+At point, activate a link to a global button.  This executes the
+linked to global button's action in the context of the current buffer.
 
 Recognizes the format '<glink:' button_label '>', e.g. <glink: open todos>.
 
@@ -2057,8 +2043,9 @@ Recognizes the format '<glink:' button_label '>', e.g. <glink: open todos>.
 @cindex link to explicit button
 @cindex elink
 @item link-to-ebut <elink>
-At point, activate a link to an explicit button within the current buffer.
-Execute The explicit button's action in the context of the current buffer.
+At point, activate a link to an explicit button within the current
+buffer.  This executes the linked to explicit button's action in the
+context of the current buffer.
 
 Recognizes the format '<elink:' button_label [':' button_file_path] '>',
 where : button_file_path is given only when the link is to another file,
@@ -2088,18 +2075,18 @@ when selected.
 @cindex remote file
 @cindex ftp
 @item rfc
-Retrieve and display an Internet rfc referenced at point.  The
-following formats are recognized: RFC822, rfc-822, and RFC 822.  The
-@code{hpath:rfc} variable specifies the location from which to
-retrieve RFCs.  Requires the Emacs builtin Tramp library for ftp file
-retrievals.
+Retrieve and display an Internet Request for Comments (RFC) standards
+document referenced at point.  The following formats are recognized:
+RFC822, rfc-822, and RFC 822.  The @code{hpath:rfc} variable specifies
+the location from which to retrieve RFCs.  Requires the Emacs builtin
+Tramp library for ftp file retrievals.
 
 @findex ibtypes kbd-key
 @cindex key sequence
 @cindex sequence of keys
 @item kbd-key
-Execute a key series (series of key sequences) found around point,
-delimited by curly braces, @{@}, if any.  Key series should be in
+Execute a key series (series of key sequences) around point,
+delimited by curly braces, @{@}.  Key series should be in
 human readable form, e.g.@: @bkbd{C-x C-b}.  Formats such as @{^x^b@}
 will not be recognized.
 
@@ -2124,14 +2111,14 @@ non-brace character.
 @cindex table of contents
 @cindex toc implicit button type
 @item text-toc
-Jump to the text file section referenced by a table of contents entry
-at point.  The filename of the current buffer must contain
+Jump to the text file section referenced by a table of contents (toc)
+entry at point.  The filename of the current buffer must contain
 @file{README} and there must be a `Table of Contents' or `Contents'
-label on a line by itself (it may begin with an asterisk), preceding the
-table of contents.  Each toc entry must begin with some whitespace
-followed by one or more asterisk characters.  Each line which begins a
-new file section must start with one or more asterisk characters at the
-very beginning of the line.
+label on a line by itself (it may begin with an asterisk), preceding
+the table of contents.  Each toc entry must begin with some whitespace
+followed by one or more asterisk characters.  Each section header
+linked to by the toc must start with one or more asterisk characters
+at the very beginning of the line.
 
 @findex ibtypes cscope
 @cindex C/C++ call trees
@@ -2347,12 +2334,12 @@ window.
 
 @findex ibtypes debbugs-gnu-query
 @item debbugs-gnu-query
-Debbugs queries may be issued by activating this implicit button type.
-It displays the results of a Gnu debbugs query based on the string at
-point and works in most kinds of buffers.  If the query includes a
-single id number, it displays the original message submission for that
-id and allows browsing of the followup discussion.  The following
-buffer text formats are accepted (with point prior to any attribute):
+Display the results of a Debbugs query based on a bug reference string
+around point.  This works in most types of buffers.  If the query
+includes a single id number, it displays the original message
+submission for that id and allows browsing of the followup discussion.
+The following buffer text formats are accepted (with point prior to
+any attribute):
 
 @smallexample
 bug#id-number, bug# id-number, bug #id-number or bug id-number
@@ -2390,7 +2377,7 @@ whose names begin with a ` ' or `*' character.
 @cindex func-menu
 @item function-in-buffer
 Return the function name defined within this buffer that point is
-within or after, else @samp{nil}.  This triggers only when the
+within or after, else @code{nil}.  This triggers only when the
 func-menu library has been loaded and the current major mode is one
 handled by func-menu.
 
@@ -2399,11 +2386,10 @@ handled by func-menu.
 @cindex pathname, line and column
 @findex ibtypes pathname-line-and-column
 @item pathname-line-and-column
-Make a valid pathname:line-num[:column-num] pattern display the path
-at line-num and optional column-num.  Also works for remote pathnames.
-May also contain hash-style link references with the following format:
-@file{<path>[#<link-anchor>]:<line-num>[:<column-num>]}.
-
+Make a valid @file{pathname:line-num[:column-num]} pattern display the
+path at @emph{line-num} and optional @emph{column-num}.  Also works
+for remote pathnames.  May also contain hash-style link references
+with the following format: @file{<path>[#<link-anchor>]:<line-num>[:<column-num>]}.
 
 @findex ibtypes pathname
 @findex hpath:at-p
@@ -2439,6 +2425,19 @@ delimiters.  See the variable documentation for @code{hpath:suffixes} for
 suffixes that are added to or removed from the pathname when searching
 for a valid match.  See the function documentation for @code{hpath:find}
 for special file display options.
+
+@findex ibtypes www-url
+@cindex URL
+@cindex World-wide Web
+@cindex WWW
+@cindex Action Key, web browsing
+@kindex Action Key, web browsing
+@vindex browse-url-browser-function
+@item www-url
+When not in an Emacs web browser buffer, follow any non-ftp URL (link) at point.
+The variable, @code{browse-url-browser-function}, may be used to customize
+which URL browser is called.  Terse URLs which lack a protocol prefix,
+like www.gnu.org, are also recognized.
 
 @findex ibtypes org-mode
 @cindex Org-mode
@@ -2479,7 +2478,9 @@ the Org-mode standard binding of @bkbd{M-@key{RET}}, @code{org-meta-return}.
 To disable ALL Hyperbole support within Org major and minor modes, set
 the custom option @code{inhibit-hsys-org} to @code{t}.  Then in Org modes,
 the Action Key will simply invoke @code{org-meta-return}.
+
 @end table
+
 
 @node Action Buttons,  , Implicit Button Types, Implicit Buttons
 @subsection Action Buttons

@@ -7,11 +7,11 @@
 
   KOUTLINER
 
-   * Org Table Support: Org table editing now automatically works in the
+   - Org Table Support: Org table editing now automatically works in the
      Koutliner via Org table minor mode.  Use {M-x orgtbl-mode RET} to
      toggle this on and off.  See "(Org)Tables" for details.
 
-   * New Tree Demotion/Promotion Keys: Tree promotion and demotion keys now
+   - New Tree Demotion/Promotion Keys: Tree promotion and demotion keys now
      match the defaults in Org mode and Outline mode, plus some easier to
      type ones.  The tables below summarize which keys work whether inside
      an Org table or outside.
@@ -27,6 +27,19 @@
      | M-left-arrow               | M-right-arrow               |
      | C-c C-,                    | C-c C-.                     |
      | C-c C-<                    | C-c C->                     |
+
+  SMART (ACTION AND ASSIST) KEYS
+
+    - Implicit Button Types Reprioritization: Modified hibtypes.el so if
+      evaluate: (symset:clear 'ibtypes) and then reload hibtypes.{el,elc},
+      the priority order of all implicit button types is reset.
+
+    - Org Mode: Lowered to near bottom implicit button priority so that all
+      implicit button types will work in Org mode.
+
+    - Pathname Implicit Buttons: Variable substitutions are now made with
+      fixed case, so that the case of a value with both upper and lower
+      case characters is never changed, for example a value of ${HOME}.
 
 ===========================================================================
 *                                   V7.1.3

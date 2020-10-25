@@ -56,8 +56,8 @@ Group 1 matches to the set of modifier keys.  Group 3 matches to the unmodified 
 ;;; ************************************************************************
 
 (defact kbd-key (key-series)
-  "Execute a normalized key sequence without curly braces, {}.
-KEY-SERIES must be a string of one of the following:
+  "Execute a normalized KEY-SERIES (series of key sequences) without curly braces, {}.
+Each key sequence within KEY-SERIES must be a string of one of the following:
   a Hyperbole minibuffer menu item key sequence,
   a HyControl key sequence,
   a M-x extended command,
@@ -68,7 +68,7 @@ Return t if the sequence appears to be valid, else nil."
   (kbd-key:act key-series))
 
 (defib kbd-key ()
-  "Execute a key sequence found around point, delimited by curly braces, {}, if any.
+  "Execute a key series (series of key sequences) around point, delimited by curly braces, {}.
 Key sequences should be in human readable form, e.g. {C-x C-b}, or what `key-description' returns.
 Forms such as {\C-b}, {\^b}, and {^M} will not be recognized.
 

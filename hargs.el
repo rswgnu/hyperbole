@@ -104,7 +104,7 @@ START-DELIM and END-DELIM are strings that specify the argument
 delimiters.  With optional START-REGEXP-FLAG non-nil, START-DELIM is
 treated as a regular expression.  END-REGEXP-FLAG is similar.
 With optional LIST-POSITIONS-FLAG, return list of (string-matched start-pos end-pos).
-With optional EXCLUDE-REGEXP, any matched string is ignored if it this regexp."
+With optional EXCLUDE-REGEXP, any matched string is ignored if it matches this regexp."
   (let* ((opoint (point))
 	 (limit (if start-regexp-flag opoint
 		  (+ opoint (1- (length start-delim)))))

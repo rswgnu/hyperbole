@@ -1,3 +1,18 @@
+2020-10-25  Bob Weiner  <rsw@gnu.org>
+
+* hibtypes.el:
+  man/hyperbole.texi (Implicit Button Types): Updated doc.
+
+2020-10-22  Bob Weiner  <rsw@gnu.org>
+
+* hact.el (symset:clear): Added to empty a symset like ibtypes to reset
+    ibtype priorities.
+  hibtypes.el: Changed require to load for all hibtype files so are always
+    added when the ibtype priority list is reset.
+
+* hibtypes.el (hib-org): Moved Org links to lowest priority so
+    all implicit button types can be used in Org mode.
+
 2020-10-18  Bob Weiner  <rsw@gnu.org>
 
 * hypb.el  (hypb:replace-match-string):

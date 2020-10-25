@@ -160,6 +160,10 @@ Use `eq' for comparison."
 	 (new-set (set:add elt set)))
     (and new-set (put symbol property new-set))))
 
+(defun    symset:clear (symbol)
+  "Set SYMBOL's symset to nil."
+  (setf (symbol-plist symbol) nil))
+
 (defalias 'symset:delete 'symset:remove)
 
 (defun    symset:get (symbol property)
