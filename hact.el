@@ -38,6 +38,18 @@ e.g. to inhibit actions.")
 (defvar symtable:category-plist nil
   "Holds a property list of Hyperbole type category symbols ('actypes or 'ibtypes) and their associated symtables.")
 
+(defsubst symtable:hash-table (symtable)
+  "Return the hash-table containing symbol names and values from SYMTABLE."
+  (plist-get symtable 'hash-table))
+
+(defsubst symtable:name (symtable)
+  "Return the name of SYMTABLE as a string."
+  (plist-get symtable 'name))
+
+(defsubst symtable:select (type-category)
+  "Inline the return of the symtable for TYPE-CATEGORY, one of 'actypes or 'ibtypes."
+  (plist-get symtable:category-plist type-category))
+
 (defun  symtable:operate (operation symbol-or-name symtable)
   "Call hash-table function OPERATION with Hyperbole SYMBOL-OR-NAME as key upon SYMTABLE.
 Trigger an error if SYMBOL-OR-NAME cannot be mapped to an existing Elisp
@@ -77,10 +89,6 @@ symbol or if SYMTABLE is invalid."
        (gethash def-name  hash-table))
       (_ (error "(symtable:operate): Invalid operation request: %s" operation)))))
 
-(defsubst symtable:select (type-category)
-  "Inline the return of the symtable for TYPE-CATEGORY, one of 'actypes or 'ibtypes."
-  (plist-get symtable:category-plist type-category))
-
 (defun    symtable:create (name size)
   "Create and return a new Hyperbole type symbol table with NAME and SIZE.
 Also add it under the symbol for its NAME in `symtable:category-plist'."
@@ -88,14 +96,6 @@ Also add it under the symbol for its NAME in `symtable:category-plist'."
 			'hash-table (make-hash-table :test #'equal :size size))))
     (setq symtable:category-plist (plist-put symtable:category-plist (intern name) symtable))
     symtable))
-
-(defsubst symtable:hash-table (symtable)
-  "Return the hash-table containing symbol names and values from SYMTABLE."
-  (plist-get symtable 'hash-table))
-
-(defsubst symtable:name (symtable)
-  "Return the name of SYMTABLE as a string."
-  (plist-get symtable 'name))
 
 (defvar   symtable:actypes (symtable:create "actypes" 97)
   "Symbol table (hash table) of Hyperbole action type symbols.

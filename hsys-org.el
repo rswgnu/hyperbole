@@ -20,6 +20,7 @@
 
 (require 'hbut)
 (require 'org)
+(require 'org-element)
 
 (defcustom inhibit-hsys-org nil
   "*Non-nil means disable Action Key support in Org major and minor modes."

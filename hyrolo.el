@@ -452,7 +452,7 @@ search for the current match regular expression rather than string."
       (hyrolo-isearch-regexp)
     (hyrolo-verify)
     (setq unread-command-events
-	  (append unread-command-events (map #'list #'identity (regexp-quote hyrolo-match-regexp))))
+	  (append unread-command-events (string-to-list (regexp-quote hyrolo-match-regexp))))
     (let ((case-fold-search t))
       (isearch-forward))))
 
@@ -1237,7 +1237,7 @@ Then add characters to further narrow the search."
   (hyrolo-verify)
   (if (stringp regexp)
       (setq unread-command-events
-	    (append unread-command-events (map #'list #'identity regexp))))
+	    (append unread-command-events (string-to-list regexp))))
   (let ((case-fold-search t))
     (isearch-forward-regexp)))
 
