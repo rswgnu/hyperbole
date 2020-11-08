@@ -164,6 +164,32 @@ package to display search results."
 		   (browse-url-url-encode-chars search-term "[*\"()',=;?% ]"))))
       (user-error "(Hyperbole): Invalid web search service `%s'" service-name))))
 
+;; This must be defined before the defcustom `inhbit-hyperbole-messaging'.
+;;;###autoload
+(defun hyperbole-toggle-messaging (&optional arg)
+  "Toggle Hyperbole support for explicit buttons in mail and news buffers.
+Toggles the boolean variable `inhibit-hyperbole-messaging’ and either
+adds hooks (nil value) or removes them (t value).
+
+With optional prefix ARG > 0, enables support.  If ARG <= 0,
+disables/inhibits support."
+  (interactive "P")
+  (setq inhibit-hyperbole-messaging (if (null arg)
+					(not inhibit-hyperbole-messaging)
+				      (<= (prefix-numeric-value arg) 0)))
+  (if inhibit-hyperbole-messaging
+      (var:remove-all)
+    (var:append-all)
+    ;; Add any hooks that were skipped when inhibit-hyperbole-messaging
+    ;; was nil.
+    (cond ((boundp 'hyperbole-loading))
+	  ((not after-init-time)
+	   (add-hook 'after-init-hook (lambda () (load "hyperbole"))))
+	  (t (load "hyperbole"))))
+  (if (called-interactively-p 'interactive)
+      (message "Hyperbole messaging button support is %s"
+	       (if inhibit-hyperbole-messaging "disabled" "enabled"))))
+
 (defcustom inhibit-hyperbole-messaging t
   "*Determine whether Hyperbole supports explicit buttons in mail and news buffers.
 The default of t means disable such support (work remains to

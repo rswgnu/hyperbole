@@ -634,7 +634,7 @@ Requires the Emacs builtin Tramp library for ftp file retrievals."
   "Make man apropos entries display associated man pages when selected."
   (save-excursion
     (beginning-of-line)
-    (let ((nm "[^ \t\n\r!@,][^ \t\n\r,]*")
+    (let ((nm "[^ \t\n\r!@,:;(){}][^ \t\n\r,(){}]*[^ \t\n\r@.,:;(){}]")
           topic)
       (and (looking-at
             (concat

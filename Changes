@@ -1,3 +1,12 @@
+2020-11-08  Bob Weiner  <rsw@gnu.org>
+
+* hsettings.el (hyperbole-toggle-messaging): Moved from hyperbole.el
+    to here to prevent unknown function error during package byte
+    compilation.
+
+* hibtypes.el (man-apropos): Prevented matches to log lines like:
+    WARNING: (func-name) - warning description
+
 <<<<<<< Updated upstream
 2020-11-02  Mats Lidell  <matsl@gnu.org>
 
