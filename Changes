@@ -1,3 +1,10 @@
+2020-11-02  Mats Lidell  <matsl@gnu.org>
+
+* hpath.el (hpath:external-display-alist-mswindows):
+           (hpath:internal-display-alist): Add customization.
+           (hpath:external-display-alist-x): Add customization. Use
+    xdg-open to use users preferred app in window system.
+
 2020-10-25  Bob Weiner  <rsw@gnu.org>
 
 * hibtypes.el:
