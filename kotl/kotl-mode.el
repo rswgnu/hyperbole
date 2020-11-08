@@ -282,6 +282,26 @@ See `center-line' for more info."
     ;; Move to editable point if need be.
     (kotl-mode:to-valid-position)))
 
+(defun kotl-mode:copy-absolute-klink-to-kill-ring (&optional pos)
+  "Add an absolute kcell reference (from optional POS or point) for use outside the outline as a new kill ring entry."
+  (interactive "d")
+  (kill-new (kcell-view:absolute-reference pos)))
+
+(defun kotl-mode:copy-relative-klink-to-kill-ring (&optional pos)
+  "Add a relative kcell reference (from optional POS or point) as a new kill ring entry."
+  (interactive "d")
+  (kill-new (kcell-view:reference pos)))
+
+(defun kotl-mode:copy-absolute-klink-to-register (register pos)
+  "Copy into REGISTER an absolute kcell reference (from optional POS or point)."
+  (interactive "cCopy to register: \nd")
+  (set-register register (kcell-view:absolute-reference pos)))
+
+(defun kotl-mode:copy-relative-klink-to-register (register pos)
+  "Copy into REGISTER a relative kcell reference (from optional POS or point)."
+  (interactive "cCopy to register: \nd")
+  (set-register register (kcell-view:reference pos)))
+
 (defun kotl-mode:copy-region-as-kill (start end)
   "Copy region between START and END within a single kcell to kill ring."
   (interactive "r")

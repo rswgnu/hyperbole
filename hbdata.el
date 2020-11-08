@@ -64,9 +64,17 @@
 
 (defun hbdata:actype (hbdata)
   "Return the action type in HBDATA as a string."
-  (let ((nm (symbol-name (nth 3 hbdata))))
+  (let ((nm (symbol-name (nth 3 hbdata)))
+	actype-sym)
     (and nm (if (or (= (length nm) 2) (string-match "::" nm))
-		nm (concat "actypes::" nm)))))
+		nm
+	      ;; RSW 2020-11-01 - Updated to handle programmatically created
+	      ;; explicit buttions whose action types may be non-actypes,
+	      ;; regular Elisp functions.
+	      (setq actype-sym (intern-soft (concat "actypes::" nm)))
+              (if (and actype-sym (fboundp actype-sym))
+		  (symbol-name actype-sym)
+		nm)))))
 
 (defun hbdata:args (hbdata)
   "Return the list of any arguments given in HBDATA."

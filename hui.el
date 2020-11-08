@@ -83,9 +83,10 @@ Default is the current button."
   (hui:hbut-operate #'ebut:act "Activate explicit button: " but))
 
 (defun hui:ebut-create (&optional start end)
-  "Create an explicit Hyperbole button starting from label between optional START and END.
-Indicates by delimiting and adding any necessary instance number of the button
-label."
+  "Interactively create an explicit Hyperbole button starting from label between optional START and END region points.
+Indicate button creation by delimiting and adding any necessary instance number to the button label.
+
+For programmatic creation, use `ebut:program' instead."
   (interactive (list (and (marker-position (hypb:mark-marker t))
 			  (region-beginning))
 		     (and (marker-position (hypb:mark-marker t))

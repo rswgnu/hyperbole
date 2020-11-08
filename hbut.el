@@ -69,11 +69,12 @@ Button should hold the following attributes (see `hattr:set'):
    args    (list of arguments for action, if action takes a single
             argument of the button lbl-key, args may be nil).
 
-If successful returns any instance number to append to button label
-except when instance number would be 1, then returns t.  On failure,
-returns nil.
 
-If successful, leaves point in button data buffer, so caller should use
+If successful, return any instance number to append to button label
+except when instance number would be 1, then return t.  On failure,
+return nil.
+
+If successful, leave point in button data buffer, so caller should use
 `save-excursion'.  Does not save button data buffer."
   (let ((lbl-instance (hbdata:write nil but-sym)))
     (run-hooks 'ebut-create-hook)
@@ -389,6 +390,35 @@ button is found in the current buffer."
       (hypb:error
        "(ebut:operate): Operation failed.  Check button attribute permissions: %s"
        hattr:filename))))
+
+(defmacro ebut:program (label actype &rest args)
+  "Programmatically create an explicit Hyperbole button at point from LABEL, ACTYPE (action type), and optional actype ARGS.
+Insert LABEL text at point surrounded by <( )> delimiters, adding any
+necessary instance number of the button after the LABEL.  ACTYPE may
+be a Hyperbole action type name (from defact) or an Emacs Lisp
+function, followed by a list of arguments for the actype, aside from
+the button LABEL which is automatically provided as the first argument.
+
+For interactive creation, use `hui:ebut-create' instead."
+  `(save-excursion
+     (let ((but-buf (current-buffer))
+	   (actype-sym (intern-soft (concat "actypes::" (symbol-name ,actype)))))
+      (hui:buf-writable-err but-buf "ebut-create")
+      (condition-case err
+	  (progn
+	    (hattr:clear 'hbut:current)
+	    (hattr:set 'hbut:current 'loc (hui:key-src but-buf))
+	    (hattr:set 'hbut:current 'dir (hui:key-dir but-buf))
+            (if (or (and actype-sym (fboundp actype-sym))
+		    (fboundp ,actype))
+		(hattr:set 'hbut:current 'actype ,actype)
+	      (error "(,actype)"))
+	    (hattr:set 'hbut:current 'args ',args)
+	    (ebut:operate ,label nil))
+	(error (hattr:clear 'hbut:current)
+	       (if (and (listp (cdr err)) (= (length (cdr err)) 1))
+		   (error (format "(ebut:program): actype arg must be a bound symbol (not a string): %s" ,actype))
+		 (error "(ebut:program): %s" err)))))))
 
 (defun    ebut:search (string out-buf &optional match-part)
   "Write explicit button lines matching STRING to OUT-BUF.
@@ -1692,6 +1722,39 @@ type for ibtype is presently undefined."
       `(progn (symtable:add ',type symtable:ibtypes)
 	      (htype:create ,type ibtypes ,doc nil ,at-func
 			    '(to-p ,to-func style ,style))))))
+
+(defalias 'defiblink 'ibtype:create-link-type)
+
+(defmacro ibtype:create-link-type (link-type-symbol link-regexp)
+  "Create a new Hyperbole link type whose buttons look like:  <LINK-TYPE-SYMBOL text>
+where text is regexp grouping 1 (\\1) that may be substituted into
+LINK-REGEXP.  Activation of such buttons either executes a
+  brace-delimited key series, displays a URL or displays a path."
+  `(ibtype:create-from-regexp ,link-type-symbol "<" ">" (format "%s \"?\\([^\t\n\r\f'`\"]+\\)\"?" ',link-type-symbol)
+			      ,link-regexp))
+
+(defmacro ibtype:create-from-regexp (ibtype-symbol start-delim end-delim text-regexp link-regexp &optional start-regexp-flag end-regexp-flag)
+  "Create a new Hyperbole implicit button type from: IBTYPE-SYMBOL, START-DELIM and END-DELIM (strings), TEXT-REGEXP and LINK-REGEXP.
+With optional START-REGEXP-FLAG non-nil, START-DELIM is treated as a
+regular expression.  END-REGEXP-FLAG is similar. "
+  `(prog1
+     (defib ,ibtype-symbol ()
+       (interactive)
+       (let* ((button-text (hargs:delimited ,start-delim ,end-delim ,start-regexp-flag ,end-regexp-flag))
+	      (path-to-display (when (and button-text (string-match ,text-regexp button-text))
+				 (replace-match ,link-regexp nil nil button-text)))
+	      (encoded-path-to-display (url-encode-url path-to-display)))
+	 (when path-to-display
+	   (cond ((setq key-series (kbd-key:is-p path-to-display))
+		  (hact #'kbd-key:act key-series))
+		 ((hpath:www-p encoded-path-to-display)
+		  (hact #'www-url encoded-path-to-display))
+		 (t (hact #'hpath:find path-to-display))))))
+     (put (intern (format "ibtypes::%s" ',ibtype-symbol))
+	  'function-documentation
+	  (format "%s - %s\n\n%s %s%s%s\n%s %s" ',ibtype-symbol "Hyperbole implicit button type"
+		  "  Recognizes buttons of the form:\n    " ,start-delim ,text-regexp ,end-delim
+		  "  which display links of the form:\n    " ,link-regexp))))
 
 (defun    ibtype:def-symbol (ibtype)
   "Return the abbreviated symbol for IBTYPE used in its `defib'.

@@ -28,6 +28,14 @@
      | C-c C-,                    | C-c C-.                     |
      | C-c C-<                    | C-c C->                     |
 
+   - Klink Copy: New commands that copy a relative or absolute reference
+     to a kcell (a klink) to the kill ring or to an Emacs singe-letter
+     named register:
+       kotl-mode:copy-absolute-klink-to-kill-ring
+       kotl-mode:copy-relative-klink-to-kill-ring
+       kotl-mode:copy-absolute-klink-to-register
+       kotl-mode:copy-relative-klink-to-register
+
   SMART (ACTION AND ASSIST) KEYS
 
     - Implicit Button Types Reprioritization: Modified hibtypes.el so if
@@ -40,6 +48,23 @@
     - Pathname Implicit Buttons: Variable substitutions are now made with
       fixed case, so that the case of a value with both upper and lower
       case characters is never changed, for example a value of ${HOME}.
+
+  PROGRAMMING
+
+   - kbd-key:is-p: Added this new predicate to test whether point is within
+     a brace-delimited key series.
+
+
+  - ebut:programm, defiblink, ibtype:create-link-type,
+    ibtype:create-from-regexp: Added to allow non-programmers who
+    understand regular expressions to creation their own implicit
+    button types.
+
+      ebut:program - Programmatically create an explicit Hyperbole button at
+        point from LABEL, ACTYPE (action type), and optional actype ARGS.
+      defiblink is an alias for ibtype:create-link-type - Create new link
+        types with just the name for the type and a regular expression that
+        resolves into a key series, URL or path to display.
 
 ===========================================================================
 *                                   V7.1.3

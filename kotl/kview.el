@@ -428,11 +428,22 @@ If between kcells, move to the previous one.  The current cell may be hidden."
 	       (point)
 	     (error "(kcell-view:to-label-end): Can't find end of current cell's label"))))))
 
+(defun kcell-view:absolute-reference (&optional pos)
+  "Return a reference to the kcell at optional POS or point for use in a link.
+The reference is a string of the form, \"<kcell-file, cell-ref>\"
+where cell-ref is as described in the documentation for
+`kcell:ref-to-id'.  Kcell-file is an absolute path to the current
+Koutline file."
+  (format "<%s, %s=%s>" buffer-file-name
+	  (kcell-view:label pos) (kcell-view:idstamp pos)))
+
 (defun kcell-view:reference (&optional pos relative-dir)
   "Return a reference to the kcell at optional POS or point for use in a link.
-The reference is a string of the form, \"<kcell-file, cell-ref>\" where
-cell-ref is as described in the documentation for `kcell:ref-to-id'.
-Kcell-file is made relative to optional RELATIVE-DIR before it is returned."
+The reference is a string of the form, \"<kcell-file, cell-ref>\"
+where cell-ref is as described in the documentation for
+`kcell:ref-to-id'.  Kcell-file is made relative to optional
+RELATIVE-DIR (or `default-directory' if RELATIVE-DIR is not given
+or is nil), before it is returned."
   (format "<%s, %s=%s>" (hpath:relative-to buffer-file-name relative-dir)
 	  (kcell-view:label pos) (kcell-view:idstamp pos)))
 
