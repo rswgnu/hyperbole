@@ -24,6 +24,7 @@
 ;;; ************************************************************************
 
 (require 'hversion)
+(require 'hvar)
 
 ;;; Read the comments and modify as desired.
 
