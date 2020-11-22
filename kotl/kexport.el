@@ -70,7 +70,7 @@
    '(">" . "&gt;")
    ;;
    ;; italicize keybindings
-   '("{[^}]+}" . "<I>\0</I>")
+   '("{[^}]+}" . "<i>\0</i>")
    ;;
    ;; make URLs into hyperlinks
    (cons hpath:url-regexp  'kexport:html-url)
@@ -83,15 +83,15 @@
     'kexport:html-url)
    ;;
    ;; make mail addresses into hyperbuttons
-   (cons mail-address-regexp "<A HREF=\"mailto:\\1\"><I>\\1</I></A>\\2")
+   (cons mail-address-regexp "<a href=\"mailto:\\1\"><i>\\1</i></a>\\2")
    ;;
    ;; make klinks into hyperlinks
    (cons (concat "&lt;\\s-*@\\s-*" kexport:kcell-reference-regexp
 		 "[^&>]*&gt;")
-	 "<A HREF=\"#k\\1\">\0</A>")
+	 "<a href=\"#k\\1\">\0</a>")
    (cons (format "&lt;\\s-*@\\s-*\\(%s\\)[^=&>]*&gt;"
 		 kexport:kcell-partial-reference-regexp)
-	 "<A HREF=\"#k\\1\">\0</A>")
+	 "<a href=\"#k\\1\">\0</a>")
    (cons (format "&lt;\\s-*\\([^ \t\n\r,<>]+\\)\\s-*,\\s-*%s[^=&>]*&gt;"
 		 kexport:kcell-reference-regexp)
 	 'kexport:html-file-klink)
@@ -169,18 +169,18 @@ STILL TODO:
 	(setq title (read-string (format "Title for %s: " output-to-buf-name)
 				 title)))
 
-    (princ "<HTML><HEAD>\n\n")
-    (princ "<A ID=\"top\"></A><A ID=\"k0\"></A>\n")
-    (princ (format "<TITLE>%s</TITLE>\n" title))
+    (princ "<html><head>\n\n")
+    (princ "<a id=\"top\"></a><a id=\"k0\"></a>\n")
+    (princ (format "<title>%s</title>\n" title))
     (if kexport:html-description
-	(princ (format "<META ID=\"description\" CONTENT=\"%s\">\n"
+	(princ (format "<meta id=\"description\" content=\"%s\">\n"
 		       kexport:html-description)))
     (if kexport:html-keywords
-	(princ (format "<META ID=\"keywords\" CONTENT=\"%s\">\n"
+	(princ (format "<meta id=\"keywords\" content=\"%s\">\n"
 		       kexport:html-keywords)))
-    (princ "</HEAD>\n\n")
-    (princ (format "<BODY %s>\n\n" kexport:html-body-attributes))
-    (princ (format "<CENTER><H1>%s</H1></CENTER>\n\n" title))
+    (princ "</head>\n\n")
+    (princ (format "<body %s>\n\n" kexport:html-body-attributes))
+    (princ (format "<center><h1>%s</h1></center>\n\n" title))
     (let* ((separator
 	    (hypb:replace-match-string
 	     ">" (hypb:replace-match-string
@@ -192,36 +192,36 @@ STILL TODO:
 	 (setq level (kcell-view:level)
 	       i level)
 	 (while (> i 1)
-	   (princ "<UL>")
+	   (princ "<ul>")
 	   (setq i (1- i)))
-	 (princ "<TABLE><TR>\n")
+	 (princ "<table><tr>\n")
 	 (setq label (kcell-view:label))
-	 (princ (format "<A ID=\"k%s\"></A>" label))
-	 (princ (format "<A ID=\"k%s\"></A>\n" (kcell-view:idstamp)))
-	 (princ "<TD WIDTH=2% VALIGN=top><PRE>\n")
+	 (princ (format "<a id=\"k%s\"></a>" label))
+	 (princ (format "<a id=\"k%s\"></a>\n" (kcell-view:idstamp)))
+	 (princ "<td width=2% valign=top><pre>\n")
 	 (princ (format
-		 "<FONT %s>%s%s</FONT></PRE></TD>\n"
+		 "<font %s>%s%s</font></pre></td>\n"
 		 kexport:label-html-font-attributes
 		 label separator))
-	 (princ "<TD>")
+	 (princ "<td>")
 	 (setq contents (kcell-view:contents))
 	 (if (string-match "\\`\\([-_$%#@~^&*=+|/A-Za-z0-9 ]+\\):.*\\S-"
 			   contents)
-	     (princ (format "<A ID=\"%s\"></A>"
+	     (princ (format "<a id=\"%s\"></a>"
 			    (substring contents 0 (match-end 1)))))
 	 (setq contents (kexport:html-markup contents))
 	 (if soft-newlines-flag
 	     (princ contents)
-	   (princ "<PRE>") (princ contents) (princ "</PRE>"))
-	 (princ "</TD>\n")
-	 (princ "</TR></TABLE>")
+	   (princ "<pre>") (princ contents) (princ "</pre>"))
+	 (princ "</td>\n")
+	 (princ "</tr></table>")
 	 (setq i level)
 	 (while (> i 1)
-	   (princ "</UL>")
+	   (princ "</ul>")
 	   (setq i (1- i)))
 	 (terpri) (terpri))
        kview t t))
-    (princ "</BODY></HTML>\n")
+    (princ "</body></html>\n")
     (set-buffer standard-output)
     (save-buffer)))
 
@@ -236,8 +236,8 @@ Works exclusively within a call to `hypb:replace-match-string'."
 			     (match-end 1))))
     (if (equal filename (file-name-nondirectory
 			 kexport:input-filename))
-	"<A HREF=\"#k\\2\">\0</A>"
-      (format "<A HREF=\"file://%s#k\\2\">\0</A>"
+	"<a href=\"#k\\2\">\0</a>"
+      (format "<a href=\"file://%s#k\\2\">\0</a>"
 	      (expand-file-name filename
 				(if kexport:input-filename
 				    (file-name-directory
@@ -264,7 +264,7 @@ Works exclusively within a call to `hypb:replace-match-string'."
     (while (memq (aref string (1- last-str-char))
 		 '(?. ?, ?? ?# ?! ?* ?\( ?\)))
       (setq last-str-char (1- last-str-char)))
-    (format "<A HREF=\"%s\">%s</A>%s"
+    (format "<a href=\"%s\">%s</a>%s"
 	    (substring url 0 last-url-char)
 	    (substring string (match-beginning 0) last-str-char)
 	    (substring string last-str-char))))

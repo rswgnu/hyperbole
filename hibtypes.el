@@ -143,7 +143,8 @@ any buffer attached to a file in `hyrolo-file-list', or any buffer with
 \"mail\" or \"rolo\" (case-insensitive) within its name."
   (when (let ((case-fold-search t))
           (or
-           (and (memq major-mode mail-address-mode-list)
+           (and (or (null mail-address-mode-list)
+		    (memq major-mode mail-address-mode-list))
                 (not (string-match "-Elements\\'" (buffer-name)))
                 ;; Don't want this to trigger within an OOBR-FTR buffer.
                 (not (string-match "\\`\\(OOBR.*-FTR\\|oobr.*-ftr\\)"
