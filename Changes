@@ -1,5 +1,8 @@
 2020-11-22  Bob Weiner  <rsw@gnu.org>
 
+* hpath.el (hpath:trim): Fix to not trim trailing quoted double quote,
+    resolving bug#43644.
+
 * hibtypes.el (mail-address): If mail-address-mode-list is set to nil,
     activate this ibtype in any major mode.
 

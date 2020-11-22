@@ -1439,7 +1439,12 @@ Returns LINKNAME unchanged if it is not a symbolic link but is a pathname."
 
 (defun hpath:trim (path)
   "Return PATH with any [\" \t\n\r] characters trimmed from its start and end."
-  (string-trim path "[\" \t\n\r]+" "[\" \t\n\r]+"))
+  ;; Trim only matching starting and ending quoted double quotes (must
+  ;; be a single line string).
+  (setq path (string-trim path))
+  (when (string-match "\\`\".*\"\\'" path)
+    (setq path (string-trim path "\"" "\"")))
+  path)
 
 (defun hpath:normalize (filename)
   "Normalize and return PATH if PATH is a valid, readable path, else signal error."
