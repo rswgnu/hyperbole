@@ -31,14 +31,17 @@
 (defvar kexport:output-filename nil
   "This is automatically set to the full pathname of the file presently being exported.")
 
+;; CSS notes
+;; <body>  "BGCOLOR=\"#FFFFFF\"" ;; white background TODO - remove should be in css
+
 (defcustom kexport:html-body-attributes
-  "BGCOLOR=\"#FFFFFF\"" ;; white background
+  "BGCOLOR=\"#FFFFFF\"" ;; white background TODO - remove should be in css
   "*String of HTML attributes attached to the <BODY> tag of an HTML exported koutline file."
   :type 'string
   :group 'hyperbole-koutliner)
 
 (defcustom kexport:html-description
-  "Created by Hyperbole's outliner.\nSee \"(hyperbole)Koutliner\" for more information."
+  "Created by Hyperbole's outliner. See (hyperbole)Koutliner for more information." ; TODO - proper hypb link type in html?
   "*String to insert as the HTML-exported document's description, or nil for none."
   :type '(choice (const nil)
 		 (string))
@@ -169,18 +172,21 @@ STILL TODO:
 	(setq title (read-string (format "Title for %s: " output-to-buf-name)
 				 title)))
 
-    (princ "<html><head>\n\n")
-    (princ "<a id=\"top\"></a><a id=\"k0\"></a>\n")
+    (princ "<!doctype html>\n\n")
+    (princ "<html lang=\"en\">\n")
+    (princ "<head>\n")
+    (princ "<meta charset=\"utf-8\">\n")
+    ;; (princ "<A ID=\"top\"></A><A ID=\"k0\"></A>\n")
     (princ (format "<title>%s</title>\n" title))
     (if kexport:html-description
-	(princ (format "<meta id=\"description\" content=\"%s\">\n"
+	(princ (format "<meta name=\"generator\" content=\"%s\">\n"
 		       kexport:html-description)))
     (if kexport:html-keywords
-	(princ (format "<meta id=\"keywords\" content=\"%s\">\n"
+	(princ (format "<meta id=\"keywords\" CONTENT=\"%s\">\n"
 		       kexport:html-keywords)))
     (princ "</head>\n\n")
-    (princ (format "<body %s>\n\n" kexport:html-body-attributes))
-    (princ (format "<center><h1>%s</h1></center>\n\n" title))
+    (princ "<body>\n\n") ;; TODO - use css instead of body attributes
+    (princ (format "<h1>%s</h1>\n\n" title))  ;; TODO - don't use center, use css instead
     (let* ((separator
 	    (hypb:replace-match-string
 	     ">" (hypb:replace-match-string
@@ -196,12 +202,11 @@ STILL TODO:
 	   (setq i (1- i)))
 	 (princ "<table><tr>\n")
 	 (setq label (kcell-view:label))
-	 (princ (format "<a id=\"k%s\"></a>" label))
-	 (princ (format "<a id=\"k%s\"></a>\n" (kcell-view:idstamp)))
-	 (princ "<td width=2% valign=top><pre>\n")
+	 ; (princ (format "<a id=\"k%s\"></a>" label))
+	 ; (princ (format "<a id=\"k%s\"></a>\n" (kcell-view:idstamp)))
+	 (princ (format "<td id=\"k%s\" id=\"k%s\" width=2%% valign=top><pre>\n" label (kcell-view:idstamp)))
 	 (princ (format
-		 "<font %s>%s%s</font></pre></td>\n"
-		 kexport:label-html-font-attributes
+		 "<font>%s%s</font></pre></td>\n" ; TODO - use css instead of font attributes
 		 label separator))
 	 (princ "<td>")
 	 (setq contents (kcell-view:contents))
@@ -221,7 +226,7 @@ STILL TODO:
 	   (setq i (1- i)))
 	 (terpri) (terpri))
        kview t t))
-    (princ "</body></html>\n")
+    (princ "</body>\n</html>\n")
     (set-buffer standard-output)
     (save-buffer)))
 
