@@ -4,7 +4,7 @@
 ;;
 ;; Orig-Date:    26-Feb-98
 ;;
-;; Copyright (C) 1998-2017  Free Software Foundation, Inc.
+;; Copyright (C) 1998-2020  Free Software Foundation, Inc.
 ;; See the "../HY-COPY" file for license information.
 ;;
 ;; This file is part of GNU Hyperbole.
@@ -31,15 +31,6 @@
 (defvar kexport:output-filename nil
   "This is automatically set to the full pathname of the file presently being exported.")
 
-;; CSS notes
-;; <body>  "BGCOLOR=\"#FFFFFF\"" ;; white background TODO - remove should be in css
-
-(defcustom kexport:html-body-attributes
-  "BGCOLOR=\"#FFFFFF\"" ;; white background TODO - remove should be in css
-  "*String of HTML attributes attached to the <BODY> tag of an HTML exported koutline file."
-  :type 'string
-  :group 'hyperbole-koutliner)
-
 (defcustom kexport:html-description
   "Created by Hyperbole's outliner. See (hyperbole)Koutliner for more information." ; TODO - proper hypb link type in html?
   "*String to insert as the HTML-exported document's description, or nil for none."
@@ -52,13 +43,6 @@
   :type '(choice (const nil)
 		 (string))
   :group 'hyperbole-koutliner)
-
-(defcustom kexport:label-html-font-attributes
-  "COLOR=\"#C100C1\" SIZE=\"-1\""
-  "*String of HTML font attributes attached to kcell labels when exported."
-  :type 'string
-  :group 'hyperbole-koutliner)
-
 
 (defvar kexport:kcell-reference-regexp
   "[0-9a-zA-Z][.0-9a-zA-Z]*=\\([.0-9a-zA-Z]+\\)")
@@ -73,7 +57,7 @@
    '(">" . "&gt;")
    ;;
    ;; italicize keybindings
-   '("{[^}]+}" . "<i>\0</i>")
+   '("{[^}]+}" . "<i>\\&</i>")
    ;;
    ;; make URLs into hyperlinks
    (cons hpath:url-regexp  'kexport:html-url)
@@ -91,10 +75,10 @@
    ;; make klinks into hyperlinks
    (cons (concat "&lt;\\s-*@\\s-*" kexport:kcell-reference-regexp
 		 "[^&>]*&gt;")
-	 "<a href=\"#k\\1\">\0</a>")
+	 "<a href=\"#k\\1\">\\&</a>")
    (cons (format "&lt;\\s-*@\\s-*\\(%s\\)[^=&>]*&gt;"
 		 kexport:kcell-partial-reference-regexp)
-	 "<a href=\"#k\\1\">\0</a>")
+	 "<a href=\"#k\\1\">\\&</a>")
    (cons (format "&lt;\\s-*\\([^ \t\n\r,<>]+\\)\\s-*,\\s-*%s[^=&>]*&gt;"
 		 kexport:kcell-reference-regexp)
 	 'kexport:html-file-klink)
@@ -174,9 +158,10 @@ STILL TODO:
 
     (princ "<!doctype html>\n\n")
     (princ "<html lang=\"en\">\n")
+
     (princ "<head>\n")
     (princ "<meta charset=\"utf-8\">\n")
-    ;; (princ "<A ID=\"top\"></A><A ID=\"k0\"></A>\n")
+    (princ "<span ID=\"top\"></span><span id=\"k0\"></span>\n")
     (princ (format "<title>%s</title>\n" title))
     (if kexport:html-description
 	(princ (format "<meta name=\"generator\" content=\"%s\">\n"
@@ -184,9 +169,11 @@ STILL TODO:
     (if kexport:html-keywords
 	(princ (format "<meta id=\"keywords\" CONTENT=\"%s\">\n"
 		       kexport:html-keywords)))
+    (princ "<link rel=\"stylesheet\" href=\"https://www.gnu.org/software/hyperbole/man/hyperbole.css\">")
     (princ "</head>\n\n")
-    (princ "<body>\n\n") ;; TODO - use css instead of body attributes
-    (princ (format "<h1>%s</h1>\n\n" title))  ;; TODO - don't use center, use css instead
+    
+    (princ "<body>\n\n")
+    (princ (format "<h1>%s</h1>\n\n" title))
     (let* ((separator
 	    (hypb:replace-match-string
 	     ">" (hypb:replace-match-string
@@ -202,11 +189,10 @@ STILL TODO:
 	   (setq i (1- i)))
 	 (princ "<table><tr>\n")
 	 (setq label (kcell-view:label))
-	 ; (princ (format "<a id=\"k%s\"></a>" label))
-	 ; (princ (format "<a id=\"k%s\"></a>\n" (kcell-view:idstamp)))
-	 (princ (format "<td id=\"k%s\" id=\"k%s\" width=2%% valign=top><pre>\n" label (kcell-view:idstamp)))
+	 (princ (format "<span id=\"k%s\"></span>" label))
+	 (princ (format "<span id=\"k%s\"></span>" (kcell-view:idstamp)))
 	 (princ (format
-		 "<font>%s%s</font></pre></td>\n" ; TODO - use css instead of font attributes
+		 "<font>%s%s</font></pre></td>\n"
 		 label separator))
 	 (princ "<td>")
 	 (setq contents (kcell-view:contents))
@@ -241,8 +227,8 @@ Works exclusively within a call to `hypb:replace-match-string'."
 			     (match-end 1))))
     (if (equal filename (file-name-nondirectory
 			 kexport:input-filename))
-	"<a href=\"#k\\2\">\0</a>"
-      (format "<a href=\"file://%s#k\\2\">\0</a>"
+	"<a href=\"#k\\2\">\\&</a>"
+      (format "<a href=\"file://%s#k\\2\">\\&</a>"
 	      (expand-file-name filename
 				(if kexport:input-filename
 				    (file-name-directory
