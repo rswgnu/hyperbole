@@ -32,7 +32,7 @@
   "This is automatically set to the full pathname of the file presently being exported.")
 
 (defcustom kexport:html-description
-  "Created by Hyperbole's outliner. See (hyperbole)Koutliner for more information." ; TODO - proper hypb link type in html?
+  "Created by Koutliner. See https://www.gnu.org/software/hyperbole/ for more information."
   "*String to insert as the HTML-exported document's description, or nil for none."
   :type '(choice (const nil)
 		 (string))
@@ -165,10 +165,10 @@ STILL TODO:
       (princ "<meta charset=\"utf-8\">\n")
       (princ (format "<title>%s</title>\n" title))
       (if kexport:html-description
-	  (princ (format "<meta name=\"generator\" content=\"%s\">\n"
-		         kexport:html-description)))
+	  (princ (format "<meta name=\"generator\" content=\"Hyperbole %s - %s\">\n"
+		         hyperb:version kexport:html-description)))
       (if kexport:html-keywords
-	  (princ (format "<meta id=\"keywords\" CONTENT=\"%s\">\n"
+	  (princ (format "<meta id=\"keywords\" content=\"%s\">\n"
 		         kexport:html-keywords)))
       (princ "<link rel=\"stylesheet\" href=\"https://www.gnu.org/software/hyperbole/man/hyperbole.css\">")
       (princ "</head>\n\n"))
