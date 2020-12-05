@@ -161,7 +161,6 @@ STILL TODO:
 
     (princ "<head>\n")
     (princ "<meta charset=\"utf-8\">\n")
-    (princ "<span ID=\"top\"></span><span id=\"k0\"></span>\n")
     (princ (format "<title>%s</title>\n" title))
     (if kexport:html-description
 	(princ (format "<meta name=\"generator\" content=\"%s\">\n"
@@ -180,26 +179,26 @@ STILL TODO:
 		  "<" (kview:label-separator kview) "&lt;")
 	     "&gt;"))
 	   i level label contents)
+      (princ "<ul>")
       (kview:map-tree
        (lambda (kview)
 	 (setq level (kcell-view:level)
 	       i level)
 	 (while (> i 1)
-	   (princ "<ul>")
+	   ;;(princ "<li>")
 	   (setq i (1- i)))
+         (princ "<li>")
 	 (princ "<table><tr>\n")
+	 (princ "<td>")
 	 (setq label (kcell-view:label))
-	 (princ (format "<span id=\"k%s\"></span>" label))
 	 (princ (format "<span id=\"k%s\"></span>" (kcell-view:idstamp)))
-	 (princ (format
-		 "<font>%s%s</font></pre></td>\n"
-		 label separator))
+	 (princ (format "<span id=\"k%s\">%s%s</span></td>\n" label label separator))
 	 (princ "<td>")
 	 (setq contents (kcell-view:contents))
 	 (if (string-match "\\`\\([-_$%#@~^&*=+|/A-Za-z0-9 ]+\\):.*\\S-"
 			   contents)
 	     (princ (format "<a id=\"%s\"></a>"
-			    (substring contents 0 (match-end 1)))))
+			    (replace-regexp-in-string " " "-" (substring contents 0 (match-end 1))))))
 	 (setq contents (kexport:html-markup contents))
 	 (if soft-newlines-flag
 	     (princ contents)
@@ -208,10 +207,12 @@ STILL TODO:
 	 (princ "</tr></table>")
 	 (setq i level)
 	 (while (> i 1)
-	   (princ "</ul>")
+	   ;; (princ "</li>")
 	   (setq i (1- i)))
+         (princ "</li>")
 	 (terpri) (terpri))
        kview t t))
+    (princ "</ul>")
     (princ "</body>\n</html>\n")
     (set-buffer standard-output)
     (save-buffer)))
