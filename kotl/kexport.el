@@ -100,10 +100,11 @@ pattern may be:
 ;;; ************************************************************************
 
 ;;;###autoload
-(defun kexport:html (export-from output-to &optional soft-newlines-flag)
+(defun kexport:html (export-from output-to &optional soft-newlines-flag no-header)
   "Export a koutline buffer or file in EXPORT-FROM to html format in OUTPUT-TO.
 By default, this retains newlines within cells as they are.  With optional prefix arg, SOFT-NEWLINES-FLAG,
 hard newlines are not used.  Also converts Urls and Klinks into Html hyperlinks.
+Fourth arg NO-HEADER, if non-nil, export only the html body.
 STILL TODO:
   Make delimited pathnames into file links (but not if within klinks).
   Copy attributes stored in cell 0 and attributes from each cell."
@@ -156,20 +157,21 @@ STILL TODO:
 	(setq title (read-string (format "Title for %s: " output-to-buf-name)
 				 title)))
 
-    (princ "<!doctype html>\n\n")
-    (princ "<html lang=\"en\">\n")
+    (when (not no-header)
+      (princ "<!doctype html>\n\n")
+      (princ "<html lang=\"en\">\n")
 
-    (princ "<head>\n")
-    (princ "<meta charset=\"utf-8\">\n")
-    (princ (format "<title>%s</title>\n" title))
-    (if kexport:html-description
-	(princ (format "<meta name=\"generator\" content=\"%s\">\n"
-		       kexport:html-description)))
-    (if kexport:html-keywords
-	(princ (format "<meta id=\"keywords\" CONTENT=\"%s\">\n"
-		       kexport:html-keywords)))
-    (princ "<link rel=\"stylesheet\" href=\"https://www.gnu.org/software/hyperbole/man/hyperbole.css\">")
-    (princ "</head>\n\n")
+      (princ "<head>\n")
+      (princ "<meta charset=\"utf-8\">\n")
+      (princ (format "<title>%s</title>\n" title))
+      (if kexport:html-description
+	  (princ (format "<meta name=\"generator\" content=\"%s\">\n"
+		         kexport:html-description)))
+      (if kexport:html-keywords
+	  (princ (format "<meta id=\"keywords\" CONTENT=\"%s\">\n"
+		         kexport:html-keywords)))
+      (princ "<link rel=\"stylesheet\" href=\"https://www.gnu.org/software/hyperbole/man/hyperbole.css\">")
+      (princ "</head>\n\n"))
     
     (princ "<body>\n\n")
     (princ (format "<h1>%s</h1>\n\n" title))
@@ -178,22 +180,15 @@ STILL TODO:
 	     ">" (hypb:replace-match-string
 		  "<" (kview:label-separator kview) "&lt;")
 	     "&gt;"))
-	   i level label contents)
+	   label contents)
       (princ "<ul>")
       (kview:map-tree
        (lambda (kview)
-	 (setq level (kcell-view:level)
-	       i level)
-	 (while (> i 1)
-	   ;;(princ "<li>")
-	   (setq i (1- i)))
-         (princ "<li>")
-	 (princ "<table><tr>\n")
-	 (princ "<td>")
+         (princ "<li><table><tr>\n<td>\n")
 	 (setq label (kcell-view:label))
 	 (princ (format "<span id=\"k%s\"></span>" (kcell-view:idstamp)))
-	 (princ (format "<span id=\"k%s\">%s%s</span></td>\n" label label separator))
-	 (princ "<td>")
+	 (princ (format "<span id=\"k%s\">%s%s</span>\n" label label separator))
+	 (princ "</td><td>\n")
 	 (setq contents (kcell-view:contents))
 	 (if (string-match "\\`\\([-_$%#@~^&*=+|/A-Za-z0-9 ]+\\):.*\\S-"
 			   contents)
@@ -203,16 +198,11 @@ STILL TODO:
 	 (if soft-newlines-flag
 	     (princ contents)
 	   (princ "<pre>") (princ contents) (princ "</pre>"))
-	 (princ "</td>\n")
-	 (princ "</tr></table>")
-	 (setq i level)
-	 (while (> i 1)
-	   ;; (princ "</li>")
-	   (setq i (1- i)))
-         (princ "</li>")
+	 (princ "\n</td>\n")
+	 (princ "</tr></table></li>")
 	 (terpri) (terpri))
        kview t t))
-    (princ "</ul>")
+    (princ "</ul>\n")
     (princ "</body>\n</html>\n")
     (set-buffer standard-output)
     (save-buffer)))
