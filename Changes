@@ -69,6 +69,35 @@
 2020-12-03  Bob Weiner  <rsw@gnu.org>
 
 * hibtypes.el (Info-node): Allowed for backslash double-quotes around node name, e.g. when in a doc string.
+2021-01-30  Mats Lidell  <matsl@gnu.org>
+
+* Makefile (test-ert, test-all): Add ert test targets
+
+* test/hib-kbd-tests.el (kbd-key-hy-about-test)
+    (kbd-key-hy-demo-factorial-test): Added.
+* test/hactypes-tests.el (display-boolean-true-test)
+    (display-boolean-false-test): Added.
+* test/hy-test-helpers.el (hy-test-helpers:consume-input-events)
+    (hy-test-helpers:should-last-message): Added helper functions.
+* test/demo-tests.el (demo-smart-mouse-keys-ref-test)
+    (demo-smart-mouse-keys-ebut-test, demo-table-of-contents-test)
+    (demo-smart-scrolling-proportional-test)
+    (demo-smart-scrolling-non-proportional-test, demo-action-key-help)
+    (demo-assist-key-help, demo-window-grid-22-test)
+    (demo-window-grid-33-test, demo-hy-rolo-test, demo-hy-info-test)
+    (demo-hy-history-test, demo-implicit-button-test)
+    (demo-implicit-button-action-button-action-type-invocation-test)
+    (demo-implicit-button-action-button-function-calls-test)
+    (demo-implicit-button-action-button-variable-display-test)
+    (demo-implicit-button-hash-link-test)
+    (demo-implicit-button-line-and-column-test)
+    (demo-org-hide-header-test, demo-manifest-test)
+    (demo-mail-compose-test, demo-social-twitter-test, demo-www-test)
+    (demo-github-user-default-test, demo-github-ignore-default-test)
+    (demo-occur-test, demo-annotated-reference-test)
+    (demo-man-appropos-test, demo-factorial-test)
+    (demo-factorial-ebutton-test): Test cases
+    (demo-should-browse-url): Test helper
 
 2020-11-22  Bob Weiner  <rsw@gnu.org>
 
