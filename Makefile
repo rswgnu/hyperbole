@@ -374,3 +374,21 @@ packageclean:
 	if [ -d $(pkg_hyperbole)/man/im ]; then \
 	  cd $(pkg_hyperbole)/man/im && $(RM) -r .DS_Store core .place* ._* .*~ *~ \
 	    *.ps *\# *- *.orig *.rej .nfs* CVS .cvsignore; fi
+
+# Ert test
+.PHONY: test test-ert test-all
+test: test-ert
+
+BATCH=$(EMACS) $(BATCHFLAGS) $(PRELOADS)
+INTERACTIVE=$(EMACS) --quick $(PRELOADS)
+
+TEST_ERT_FILES=$(wildcard test/*tests.el)
+LOAD_TEST_ERT_FILES=$(patsubst %,(load-file \"%\"),${TEST_ERT_FILES})
+
+test-ert:
+	@echo "# Tests: $(TEST_ERT_FILES)"
+	$(BATCH) --eval "(progn $(LOAD_TEST_ERT_FILES) (ert-run-tests-batch-and-exit))"
+
+test-all:
+	@echo "# Tests: $(TEST_ERT_FILES)"
+	$(INTERACTIVE) --eval "(progn $(LOAD_TEST_ERT_FILES) (ert-run-tests-interactively t))"
