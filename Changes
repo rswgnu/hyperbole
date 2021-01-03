@@ -19,14 +19,13 @@
 * hibtypes.el (man-apropos): Prevented matches to log lines like:
     WARNING: (func-name) - warning description
 
-<<<<<<< Updated upstream
 2020-11-02  Mats Lidell  <matsl@gnu.org>
 
 * hpath.el (hpath:external-display-alist-mswindows):
            (hpath:internal-display-alist): Add customization.
            (hpath:external-display-alist-x): Add customization. Use
     xdg-open to use users preferred app in window system.
-=======
+
 2020-11-07  Bob Weiner  <rsw@gnu.org>
 
 * kotl/kotl-mode.el (kotl-mode:copy-absolute-klink-to-kill-ring):
@@ -57,7 +56,6 @@ absolute paths.
     expression that resolves into a key series, URL or path to display.
 
 * hib-kbd.el (kbd-key:is-p): Added to test if a string is a delimited key series.
->>>>>>> Stashed changes
 
 2020-10-25  Bob Weiner  <rsw@gnu.org>
 
