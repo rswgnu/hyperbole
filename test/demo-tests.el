@@ -272,19 +272,22 @@
         (should (string= "*mail*" (buffer-name))))
     (kill-buffer "*mail*")))
 
+
+(defun demo-should-browse-twitter-url (url &optional new-window)
+  "Verify call with proper URL and optional NEW-WINDOW."
+  (should (equal url "https://twitter.com/search?q=@fsf"))
+  (should (equal new-window nil)))
+
 ;; Social
 (ert-deftest demo-social-twitter-test ()
-  (unwind-protect
-      (with-temp-buffer
-        (insert "tw@fsf")
-        (goto-char 2)
-        (let ((browse-url-browser-function 'eww-browse-url))
-          (action-key)
-          (should (string= "*eww*" (buffer-name)))))
-    (kill-buffer "*eww*")))
+  (with-temp-buffer
+    (insert "tw@fsf")
+    (goto-char 2)
+    (let ((browse-url-browser-function 'demo-should-browse-twitter-url))
+      (action-key))))
 
 
-(defun demo-should-browse-url (url &optional new-window)
+(defun demo-should-browse-github-url (url &optional new-window)
   "Verify call with proper URL and optional NEW-WINDOW."
   (should (equal url "https://github.com/rswgnu/hyperbole"))
   (should (equal new-window nil)))
@@ -294,7 +297,7 @@
   (with-temp-buffer
     (insert "https://github.com/rswgnu/hyperbole")
     (goto-char 4)
-    (let ((browse-url-browser-function 'demo-should-browse-url)
+    (let ((browse-url-browser-function 'demo-should-browse-github-url)
           (hibtypes-github-default-user "rswgnu"))
       (action-key))))
 
@@ -303,7 +306,7 @@
   (with-temp-buffer
     (insert "gh#/hyperbole")
     (goto-char 4)
-    (let ((browse-url-browser-function 'demo-should-browse-url)
+    (let ((browse-url-browser-function 'demo-should-browse-github-url)
           (hibtypes-github-default-user "rswgnu"))
       (action-key))))
 
@@ -311,7 +314,7 @@
   (with-temp-buffer
     (insert "gh#/rswgnu/hyperbole")
     (goto-char 4)
-    (let ((browse-url-browser-function 'demo-should-browse-url)
+    (let ((browse-url-browser-function 'demo-should-browse-github-url)
           (hibtypes-github-default-user "whatever"))
       (action-key))))
 
