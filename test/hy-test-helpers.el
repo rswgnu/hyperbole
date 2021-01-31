@@ -25,12 +25,9 @@
 (defun hy-test-helpers:should-last-message (msg)
   "Verify last message is MSG."
   (with-current-buffer "*Messages*"
-    (should (string=
-             (save-excursion
-               (goto-char (point-max))
-               (skip-chars-backward "\n")
-               (buffer-substring (line-beginning-position) (point)))
-             msg))))
+    (should (save-excursion
+              (goto-char (point-max))
+              (search-backward msg (- (point-max) 350))))))
 
 (provide 'hy-test-helpers)
 ;;; hy-test-helpers.el ends here
