@@ -26,6 +26,9 @@
 ;;       might be:
 ;;        (and (or (not time card) (xor "french balloons" spanish)) teacher pet)
 ;;
+;;       By default, only sub-entries with matches are shown, not entire
+;;       hierarchies of entries, for more intuitive results.  Use a prefix argument
+;;
 ;;       Either double quotes or parentheses may be used to group multiple
 ;;       words as a single argument.
 ;;
@@ -67,8 +70,16 @@
 ;;; ************************************************************************
 
 ;;;###autoload
-(defun hyrolo-fgrep-logical (expr)
-  "Display rolo entries matching EXPR which may contain prefix logical operators.
+(defun hyrolo-fgrep-logical (expr &optional count-only include-sub-entries no-sub-entries-out)
+  "Display rolo entries matching EXPR, a string, which may contain prefix logical operators.
+If optional COUNT-ONLY is non-nil, don't display entries, return
+count of matching entries only.  If optional INCLUDE-SUB-ENTRIES
+flag is non-nil, SEXP will be applied across all sub-entries at
+once.  Default is to apply SEXP to each entry and sub-entry
+separately.  Entries are displayed with all of their sub-entries
+unless INCLUDE-SUB-ENTRIES is nil and optional NO-SUB-ENTRIES-OUT
+flag is non-nil.
+
 A complex example of EXPR might be:
   (and (or (not time card) (xor (and french balloons) spanish)) teacher pet)
 which means:
@@ -80,7 +91,9 @@ which means:
 
 Either double quotes or parentheses may be used to group multiple words as a
 single argument."
-  (interactive "sLogical rolo search: ")
+  (interactive "sLogical rolo search: \nP\nP")
+  (when (called-interactively-p 'any)
+    (setq no-sub-entries-out (not no-sub-entries-out)))
   (let* ((case-fold-search t)
 	 (total-matches))
     (if (not (string-match "\(\\(and\\|or\\|xor\\|not\\)\\>" expr))
@@ -109,7 +122,8 @@ single argument."
       (setq expr (hypb:replace-match-string "\(@ " expr "\(hyrolo-xor " t))
       (setq expr (hypb:replace-match-string "\(! " expr "\(hyrolo-not " t))
       (setq expr (hypb:replace-match-string "\(& " expr "\(hyrolo-and " t))
-      (setq expr (format "(hyrolo-logic (quote %s) nil nil t)" expr))
+      (setq expr (format "(hyrolo-logic (quote %s) nil count-only %s %s)"
+			 expr include-sub-entries no-sub-entries-out))
       (setq total-matches (eval (read expr))))
     (if (called-interactively-p 'interactive)
 	(message "%s matching entr%s found in rolo."
@@ -149,7 +163,7 @@ SEXP that matched entries."
 	total-matches))))
 
 (defun hyrolo-map-logic (sexp hyrolo-buf &optional count-only
-			    include-sub-entries no-sub-entries-out)
+			 include-sub-entries no-sub-entries-out)
   "Apply logical SEXP to each entry in HYROLO-BUF and write out matching entries to `hyrolo-display-buffer'.
 If optional COUNT-ONLY is non-nil, don't display entries, return count of
 matching entries only.  If optional INCLUDE-SUB-ENTRIES flag is non-nil, SEXP
@@ -210,11 +224,12 @@ of applications of SEXP that matched entries."
 		    (if result
 			(progn (goto-char end)
 			       (setq num-found (1+ num-found)
-				     end (if (or include-sub-entries
-						 no-sub-entries-out)
-					     end
-					   (goto-char (hyrolo-to-entry-end
-						       t curr-entry-level-len))))
+				     )
+				     ;; end (if (or include-sub-entries
+				     ;; 		 no-sub-entries-out)
+				     ;; 	     end
+				     ;; 	   (goto-char (hyrolo-to-entry-end
+				     ;; 		       t curr-entry-level-len))))
 			       (or count-only
 				   (append-to-buffer display-buf start end)))
 		      (goto-char end-entry-hdr)))))))

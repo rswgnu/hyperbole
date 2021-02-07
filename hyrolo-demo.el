@@ -47,8 +47,16 @@ logical expression matching."
     (hyrolo-fgrep string max-matches)))
 
 ;;;###autoload
-(defun hyrolo-demo-fgrep-logical (expr)
+(defun hyrolo-demo-fgrep-logical (expr &optional count-only include-sub-entries no-sub-entries-out)
   "Display rolo entries in \"DEMO-ROLO.otl\" matching EXPR which may contain prefix logical operators.
+If optional COUNT-ONLY is non-nil, don't display entries, return
+count of matching entries only.  If optional INCLUDE-SUB-ENTRIES
+flag is non-nil, SEXP will be applied across all sub-entries at
+once.  Default is to apply SEXP to each entry and sub-entry
+separately.  Entries are displayed with all of their sub-entries
+unless INCLUDE-SUB-ENTRIES is nil and optional NO-SUB-ENTRIES-OUT
+flag is non-nil.
+
 A complex example of EXPR might be:
   (and (or (not time card) (xor (french balloons) spanish)) teacher pet)
 which means:
@@ -60,9 +68,11 @@ which means:
 
 Either double quotes or parentheses may be used to group multiple words as a
 single argument."
-  (interactive "sLogical rolo search: ")
+  (interactive "sLogical rolo search: \nP\nP")
+  (when (called-interactively-p 'any)
+    (setq no-sub-entries-out (not no-sub-entries-out)))
   (let ((hyrolo-file-list (list (expand-file-name "DEMO-ROLO.otl" hyperb:dir))))
-    (hyrolo-fgrep-logical expr)))
+    (hyrolo-fgrep-logical expr count-only include-sub-entries no-sub-entries-out)))
 
 (defun hyrolo-demo-quit ()
   "Remove the code in this file."

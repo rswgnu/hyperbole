@@ -1729,14 +1729,15 @@ type for ibtype is presently undefined."
   "Create a new Hyperbole link type whose buttons look like:  <LINK-TYPE-SYMBOL text>
 where text is regexp grouping 1 (\\1) that may be substituted into
 LINK-REGEXP.  Activation of such buttons either executes a
-  brace-delimited key series, displays a URL or displays a path."
+brace-delimited key series, displays a URL or displays a path."
   `(ibtype:create-from-regexp ,link-type-symbol "<" ">" (format "%s \"?\\([^\t\n\r\f'`\"]+\\)\"?" ',link-type-symbol)
 			      ,link-regexp))
 
 (defmacro ibtype:create-from-regexp (ibtype-symbol start-delim end-delim text-regexp link-regexp &optional start-regexp-flag end-regexp-flag)
   "Create a new Hyperbole implicit button type from: IBTYPE-SYMBOL, START-DELIM and END-DELIM (strings), TEXT-REGEXP and LINK-REGEXP.
-With optional START-REGEXP-FLAG non-nil, START-DELIM is treated as a
-regular expression.  END-REGEXP-FLAG is similar. "
+With optional START-REGEXP-FLAG non-nil, START-DELIM is treated
+as a regular expression.  END-REGEXP-FLAG treats END-DELIM as a
+regular expression. "
   `(prog1
      (defib ,ibtype-symbol ()
        (interactive)

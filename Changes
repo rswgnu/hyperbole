@@ -1,14 +1,32 @@
+2021-02-07  Bob Weiner  <rsw@gnu.org>
+
+* hibtypes.el (dir-summary): Fixed so point is left in file displayed by action key press, not the MANIFEST.
+
+* hpath.el (hpath:delimited-possible-path): Added support for file:// URLs.
+
+2021-01-31  Bob Weiner  <rsw@gnu.org>
+
+* hyrolo.el (hyrolo-display-format-function): Separated records by 1 newline, not 2; unsure how 2 were ever added.
+            (hyrolo-fgrep):
+  hyrolo-logic.el (hyrolo-fgrep-logical, hyrolo-map-logic):
+  hyrolo-demo.el (hyrolo-demo-fgrep-logical): Changed default to not show full hierarchy of records but just
+    matching sub-levels, for more intuitive logical expression matching.  Made rolo-logical searches in DEMO work.
+
+2020-12-03  Bob Weiner  <rsw@gnu.org>
+
+* hibtypes.el (Info-node): Allowed for backslash double-quotes around node name, e.g. when in a doc string.
+
 2020-11-22  Bob Weiner  <rsw@gnu.org>
 
-* hpath.el (hpath:trim): Fix to not trim trailing quoted double quote,
+* hpath.el (hpath:trim): Fixed to not trim trailing quoted double quote,
     resolving bug#43644.
 
-* hibtypes.el (mail-address): If mail-address-mode-list is set to nil,
-    activate this ibtype in any major mode.
+* hibtypes.el (mail-address): When mail-address-mode-list is set to nil,
+    activated this ibtype in any major mode.
 
 2020-11-16  Bob Weiner  <rsw@gnu.org>
 
-* kotl/kexport.el (kexport:html): Lowercase HTML tags for HTML5.
+* kotl/kexport.el (kexport:html): Lowercased HTML tags for HTML5.
 
 2020-11-08  Bob Weiner  <rsw@gnu.org>
 
@@ -19,14 +37,6 @@
 * hibtypes.el (man-apropos): Prevented matches to log lines like:
     WARNING: (func-name) - warning description
 
-<<<<<<< Updated upstream
-2020-11-02  Mats Lidell  <matsl@gnu.org>
-
-* hpath.el (hpath:external-display-alist-mswindows):
-           (hpath:internal-display-alist): Add customization.
-           (hpath:external-display-alist-x): Add customization. Use
-    xdg-open to use users preferred app in window system.
-=======
 2020-11-07  Bob Weiner  <rsw@gnu.org>
 
 * kotl/kotl-mode.el (kotl-mode:copy-absolute-klink-to-kill-ring):
@@ -40,6 +50,13 @@
     relative-dir = nil.
     (kcell-view:absolute-reference): Added for kcell references with
 absolute paths.
+
+2020-11-02  Mats Lidell  <matsl@gnu.org>
+
+* hpath.el (hpath:external-display-alist-mswindows):
+           (hpath:internal-display-alist): Add customization.
+           (hpath:external-display-alist-x): Add customization. Use
+    xdg-open to use users preferred app in window system.
 
 2020-11-01  Bob Weiner  <rsw@gnu.org>
 

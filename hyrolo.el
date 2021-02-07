@@ -51,9 +51,8 @@ See documentation of the function `format-time-string' for format options."
   :group 'hyperbole-rolo)
 
 (defvar hyrolo-display-format-function
-  ;; Set trailing newlines to exactly two.
   (lambda (entry)
-    (concat (replace-regexp-in-string "[ \t\n\r]+\\'" "" entry nil t) "\n\n"))
+    (concat (replace-regexp-in-string "[ \t\n\r]+\\'" "" entry nil t) "\n"))
   "*Function of one argument, a rolo entry string, which modifies the string for display.")
 
 (defcustom hyrolo-email-format "%s\t\t<%s>"
@@ -375,9 +374,9 @@ the logical expression matching."
   (let ((total-matches
 	 (if (string-match "\(\\(and\\|or\\|xor\\|not\\)\\>" string)
 	     ;; Search string contains embedded logic operators.
-	     (hyrolo-fgrep-logical string)
+	     (hyrolo-fgrep-logical string count-only nil t)
 	   (hyrolo-grep (regexp-quote string) max-matches
-		      hyrolo-file count-only no-display))))
+			hyrolo-file count-only no-display))))
     (if (called-interactively-p 'interactive)
 	(message "%s matching entr%s found in rolo."
 		 (if (= total-matches 0) "No" total-matches)
@@ -502,8 +501,7 @@ Return t if entry is killed, nil otherwise."
 		(setq buffer-read-only nil)
 		(re-search-backward hyrolo-entry-regexp nil t)
 		(setq end (match-end 0))
-		(beginning-of-line)
-		(setq start (point)
+		(setq start (line-beginning-position)
 		      level-len (length (buffer-substring-no-properties start end)))
 		(goto-char end)
 		(skip-chars-forward " \t")
@@ -1403,9 +1401,8 @@ Return point where matching entry begins or nil if not found."
 		    (not (save-excursion
 			   (beginning-of-line)
 			   (setq found
-				 (if (looking-at
-				      (concat hyrolo-entry-regexp (regexp-quote name)))
-				     (point))))))))
+				 (when (looking-at (concat hyrolo-entry-regexp (regexp-quote name)))
+				   (point))))))))
       (unless found
 	(hyrolo-kill-buffer))) ;; conditionally kill
     (widen)
@@ -1417,8 +1414,8 @@ Return point where matching entry begins or nil if not found."
 
 (defun hyrolo-to-entry-end (&optional include-sub-entries curr-entry-level-len)
   "Move point to the end of the whole entry that point is within if optional INCLUDE-SUB-ENTRIES is non-nil.
-CURR-ENTRY-LEVEL-LEN is a the integer length of the last found entry
-header.  If INCLUDE-SUB-ENTRIES is nil, CURR-ENTRY-LEVEL-LEN is not needed.
+CURR-ENTRY-LEVEL-LEN is the integer length of the last entry
+header found.  If INCLUDE-SUB-ENTRIES is nil, CURR-ENTRY-LEVEL-LEN is not needed.
 Return current point."
   ;; Sets free variable, next-entry-exists, for speed.
   (while (and (setq next-entry-exists
@@ -1427,9 +1424,7 @@ Return current point."
 	      ;; Prevents including trailing whitespace in entry level
 	      ;; length which in turn causes moving to (point-max).
 	      (goto-char (match-end hyrolo-entry-group-number))
-	      (> (- (point) (save-excursion
-			      (beginning-of-line)
-			      (point)))
+	      (> (- (point) (line-beginning-position))
 		 curr-entry-level-len)))
   (if next-entry-exists
       (progn (beginning-of-line) (point))

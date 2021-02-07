@@ -571,17 +571,17 @@ spaces and then another non-space, non-parenthesis, non-brace character."
   (when buffer-file-name
     (let ((file (file-name-nondirectory buffer-file-name))
           entry start end)
-      (when (or (string-equal file "DIR")
-                (string-match "\\`MANIFEST\\(\\..+\\)?\\'" file))
-        (save-excursion
-          (beginning-of-line)
-          (when (looking-at "\\(;+[ \t]*\\)?\\([^(){}* \t\n\r]+\\)")
-            (setq entry (match-string-no-properties 2)
-                  start (match-beginning 2)
-                  end (match-end 2))
-            (when (file-exists-p entry)
-              (ibut:label-set entry start end)
-              (hact 'link-to-file entry))))))))
+      (when (and (or (string-equal file "DIR")
+                     (string-match "\\`MANIFEST\\(\\..+\\)?\\'" file))
+		 (save-excursion
+		   (beginning-of-line)
+		   (when (looking-at "\\(;+[ \t]*\\)?\\([^(){}* \t\n\r]+\\)")
+		     (setq entry (match-string-no-properties 2)
+			   start (match-beginning 2)
+			   end (match-end 2))
+		     (file-exists-p entry))))
+        (ibut:label-set entry start end)
+        (hact 'link-to-file entry)))))
 
 ;;; ========================================================================
 ;;; Handles Gnu debbugs issue ids, e.g. bug#45678 or just 45678.
@@ -1188,6 +1188,7 @@ Examples are \"(hyperbole)Implicit Buttons\" and ``(hyperbole)C-c /''.
 
 Activates only if point is within the first line of the Info-node name."
   (let* ((node-ref-and-pos (or (hbut:label-p t "\"" "\"" t t)
+			       (hbut:label-p t "\\\"" "\\\"" t t)
                                ;; Typical GNU Info references; note
                                ;; these are special quote marks, not the
                                ;; standard ASCII characters.

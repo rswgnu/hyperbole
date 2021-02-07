@@ -777,7 +777,8 @@ With optional INCLUDE-POSITIONS, returns a triplet list of (path start-pos
 end-pos) or nil."
   ;; Prevents MSWindows to Posix path substitution
   (let ((hyperb:microsoft-os-p t))
-    (or (hargs:delimited "\"" "\"" nil nil include-positions "[`'’]")
+    (or (hargs:delimited "file://" "\\s-" nil t include-positions)
+	(hargs:delimited "\"" "\"" nil nil include-positions "[`'’]")
 	;; Filenames in Info docs or Python files
 	(hargs:delimited "[`'‘]" "[`'’]" t t include-positions "\"")
 	;; Filenames in TexInfo docs
