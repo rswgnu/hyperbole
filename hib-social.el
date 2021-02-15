@@ -610,7 +610,7 @@ PROJECT value is provided, it defaults to the value of
   "Display the diff for a git commit reference, e.g. \"commit a55e21\", typically produced by git log."
   (if (save-excursion
 	(beginning-of-line)
-	(looking-at "\\s-*commit \\([0-9a-f]+\\)$"))
+	(looking-at "\\s-*commit \\([0-9a-f][0-9a-f][0-9a-f][0-9a-f]+\\)\\s-"))
       (hact #'git-reference (match-string-no-properties 1))))
 
 (defvar hibtypes-git-repos-cache

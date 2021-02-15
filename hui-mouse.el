@@ -55,6 +55,11 @@
 (defun assist-key-error ()
   (hypb:error "(Hyperbole Assist Key): No action defined for this context; try another location"))
 
+(defcustom smart-magit-listing-modes '(magit-blame-mode magit-log-mode)
+  "*List of major modes for which the Action Key should run RET instead of TAB."
+  :type '(group 'function)
+  :group 'hyperbole)
+
 (defcustom action-key-default-function #'action-key-error
   "*Function run by the Action Key in an unspecified context.
 Set it to #'hyperbole if you want it to display the Hyperbole minibuffer menu."
@@ -1269,12 +1274,18 @@ selected buffer.
 If key is pressed:
  (1) on the last line, quit from the magit mode (\"q\" key binding);
  (2) at the end of a line, scroll up a windowful;
- (3) anywhere else, hide/show the thing at point (\"TAB\" key binding)."
+ (3) on a line within a `smart-magit-listing-modes' buffer, jump to
+     the thing at point (\"RET\" key binding).
+ (4) anywhere else, hide/show the thing at point (\"TAB\" key binding)."
   (interactive)
   (cond ((last-line-p)
 	 (call-interactively (key-binding "q")))
 	((eolp)
 	 (smart-scroll-up))
+	((memq major-mode smart-magit-listing-modes)
+	 (setq current-prefix-arg 1)
+	 (let ((magit-display-file-buffer-function #'hpath:display-buffer))
+	   (call-interactively (key-binding "\r"))))
 	(t
 	 (call-interactively (key-binding "\t")))))
 

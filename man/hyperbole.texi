@@ -52,7 +52,7 @@
 This manual is for GNU Hyperbole
 (Edition @value{EDITION}, Published @value{UPDATED}).
 
-Copyright @copyright{} 1989-2020  Free Software Foundation, Inc.
+Copyright @copyright{} 1989-2021  Free Software Foundation, Inc.
 
 @quotation
 Permission is granted to copy, distribute and/or modify this document
@@ -142,7 +142,7 @@ Texinfo markup language.
 <CENTER><H3><A HREF="mailto:rsw@@gnu.org">Say thanks or send a testimonial if you like Hyperbole.</A></H3></CENTER>
 
 
-<P>Copyright &copy; 1989-2020  Free Software Foundation, Inc.</P>
+<P>Copyright &copy; 1989-2021  Free Software Foundation, Inc.</P>
 
 <P>GNU Hyperbole is available for use, modification, and distribution under
 the terms of the GNU General Public License (GPL) Version 3 or later,
@@ -155,7 +155,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</P>
 
 <PRE>
 Edition 7.1.4
-Printed October 25, 2020.
+Printed February 15, 2021.
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -183,7 +183,7 @@ Printed October 25, 2020.
 
 @sp 2
 @noindent
-Copyright @copyright{} 1989-2020  Free Software Foundation, Inc.
+Copyright @copyright{} 1989-2021  Free Software Foundation, Inc.
 
 GNU Hyperbole is available for use, modification, and distribution
 under the terms of the GNU General Public License (GPL) Version 3 or
@@ -197,7 +197,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 @example
 Edition 7.1.4
-October 25, 2020
+February 15, 2021
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -382,8 +382,14 @@ Developing with Hyperbole
 
 Creating Types
 
-* Action Type Creation::
-* Implicit Button Type Creation::
+* Creating Action Types::
+* Creating Implicit Button Types::
+
+Creating Implicit Button Types
+
+* Action Button Link Types::
+* Implicit Button Link Types::
+* Programmatic Implicit Button Types::
 
 Explicit Button Technicalities
 
@@ -2362,7 +2368,7 @@ as the reference.  References must be delimited by square brackets, must
 begin with a word constituent character, and must not be in buffers
 whose names begin with a ` ' or `*' character.
 
-@c Handled instead by @xref{Smart Key - Identifier Menu Mode}.
+@c Handled instead by @pxref{Smart Key - Identifier Menu Mode}.
 @c @findex ibtypes imenu-item
 @c @vindex file, imenu.el
 @c @cindex identifier menu
@@ -4958,7 +4964,7 @@ The e-mail address of the person who created this cell.
 @item create-time
 The time at which the cell was created.  This is stored in a form that
 allows for easy data comparisons but is displayed in a human readable
-format, such as @samp{Jan 28 18:27:59 CST 2020}.
+format, such as @samp{Jan 28 18:27:59 CST 2021}.
 @end table
 
 @kindex koutliner, C-c C-i
@@ -5630,9 +5636,12 @@ is added.
 @node Developing with Hyperbole, Glossary, Window Configurations, Top
 @chapter Developing with Hyperbole
 
-This chapter is for people who are familiar with Emacs Lisp and
-wish to customize Hyperbole, to extend it, or to develop other systems
-using Hyperbole as a base.
+This chapter is for people who wish to customize Hyperbole, to extend
+it, or to develop other systems using Hyperbole as a base.  Most of it
+requires a basic level of familiarity with Emacs Lisp, though new
+implicit button types may be created with knowledge of only Emacs
+regular expressions.
+
 
 @menu
 * Hook Variables::
@@ -5795,12 +5804,12 @@ See the definitions of the standard types in @file{hactypes.el}
 and @file{hibtypes.el} for examples.
 
 @menu
-* Action Type Creation::
-* Implicit Button Type Creation::
+* Creating Action Types::
+* Creating Implicit Button Types::
 @end menu
 
-@node Action Type Creation, Implicit Button Type Creation, Creating Types, Creating Types
-@subsection  Action Type Creation
+@node Creating Action Types, Creating Implicit Button Types, Creating Types, Creating Types
+@subsection  Creating Action Types
 
 @findex actype:create
 @vindex file, hactypes.el
@@ -5911,8 +5920,182 @@ environment.  It takes a single parameter which should be the same type
 symbol used in the type definition call (not the Hyperbole symbol
 returned by the call).
 
-@node Implicit Button Type Creation,  , Action Type Creation, Creating Types
-@subsection  Implicit Button Type Creation
+@node Creating Implicit Button Types,  , Creating Action Types, Creating Types
+@subsection  Creating Implicit Button Types
+
+Implicit buttons leverage the same action types used by explicit and
+global buttons but each carries an additional implicit button type
+that defines the contexts in which it is active, e.g. major modes or
+surrounding text.  Once an implicit button type definition is loaded
+into Hyperbole, the Action and Assist Keys automatically recognize all
+buttons of that type.  The Action Key activates the buttons and the
+Assist Key summarizes their behavior and attributes.  With a single
+definition, you can bring your text to life, activating implicit
+hyperbuttons in thousands of documents with no other effort.
+
+There are three ways to create new implicit button types; the first
+two are meant to allow non-programmers to extend Hyperbole with
+simplified types.
+
+@table @b
+@item Action Button Link Types
+The first is very simple but can create only link buttons with a
+specific textual form, i.e. <action-type button-text>.
+
+@item Implicit Button Link Types
+The second is also limited to link buttons and requires regular expression
+knowledge; it allows for any string or regular expression button
+delimiters and regular expression or function link specifications.
+
+@item Programmatic Implicit Button Types
+The third requires ELisp programming knowledge but can create any implicit
+button type.
+@end table
+
+@noindent
+The sections below examine these three implicit button type creation
+techniques.
+
+@menu
+* Action Button Link Types::
+* Implicit Button Link Types::
+* Programmatic Implicit Button Types::
+@end menu
+
+@node Action Button Link Types, Implicit Button Link Types, Creating Implicit Button Types, Creating Implicit Button Types
+@subsubsection Action Button Link Types
+
+The simplest way to create a new implicit link type (from which any
+number of buttons can be recognized within text) is to create an
+@emph{action button link type}.
+
+@noindent
+A call to the @code{defal} macro of the form:
+
+@code{(defal TYPE LINK-EXPR &optional DOC)}
+
+@noindent
+will create a Hyperbole action button link TYPE (an unquoted symbol)
+whose buttons always take the form of: @code{<TYPE link-text>} where
+@code{link-text} is substituted into LINK-EXPR as grouping 1 (\\1)
+to form the link referent that is displayed for each button.
+Hyperbole automatically creates a doc string for the type but you can
+override this by providing an optional DOC string.
+
+When the Action Key is pressed in a buffer between the start and end
+delimiters and the text in-between matches to TEXT-REGEXP, then the
+button is activated and does one of four things with LINK-EXPR:
+
+@enumerate
+@item executes it as a brace-delimited key series;
+@item displays it in a web browser as a URL;
+@item displays it as a path (possibly with trailing colon-separated line and column numbers);
+@item invokes a function of one argument, the button text, to display it.
+@end enumerate
+
+For example, if you use Python and have a @samp{PYTHONPATH} environment
+variable, then pressing @bkbd{C-x C-e} @code{eval-last-sexp} after
+this expression:
+
+@code{(defal pylib "$@{PYTHONPATH@}/\\1")}
+
+@noindent
+defines a new action button link type called ’pylib’ whose buttons
+take the form of:
+
+@code{<pylib PYTHON-LIBRARY-NAME>}
+
+@noindent
+and display the associated Python libraries (typically Python source
+files).  Optional colon separated line and column numbers may be given
+as well.
+
+@noindent
+Therefore an Action Key press on:
+
+@code{<pylib string.py:5:7>}
+
+@noindent
+would display the source for @file{string.py} (wherever it is
+installed on your system) from the Python standard library with point
+on the fifth line at the seventh character.
+
+@xref{Implicit Button Link Types}, for more flexible regular
+expression-based link type creation.  @xref{Programmatic Implicit
+Button Types}, for the most general implicit button type creation.
+
+@node  Implicit Button Link Types, Programmatic Implicit Button Types, Action Button Link Types, Creating Implicit Button Types
+@subsubsection Implicit Button Link Types
+
+If you understand Emacs regular expressions (@pxref{Regexps,,Syntax of
+Regular Expressions,emacs,the GNU Emacs Manual}), you can create new
+implicit button types without understanding how to program in Emacs
+Lisp, aside from the instructions provided here.
+
+@noindent
+A call to the @code{defil} macro of the form:
+
+@code{(defil TYPE START-DELIM END-DELIM TEXT-REGEXP LINK-EXPR
+             &optional START-REGEXP-FLAG END-REGEXP-FLAG DOC)}
+
+@noindent
+will create a new Hyperbole implicit button link TYPE (an uquoted
+symbol), recognized in a buffer via START-DELIM and END-DELIM
+(strings) and the TEXT-REGEXP pattern between the delimiters.  With
+optional START-REGEXP-FLAG true, START-DELIM is treated as a regular
+expression.  Similarly, a true value of END-REGEXP-FLAG treats
+END-DELIM as a regular expression.  Hyperbole automatically creates a
+doc string for the type but you can override this by providing an
+optional DOC string.
+
+When the Action Key is pressed in a buffer between the start and end
+delimiters and the text in-between matches to TEXT-REGEXP, then the
+button is activated and does one of four things with LINK-EXPR:
+
+@enumerate
+@item executes it as a brace-delimited key series;
+@item displays it in a web browser as a URL;
+@item displays it as a path (possibly with trailing colon-separated line and column numbers);
+@item invokes a function of one argument, the button text, to display it.
+@end enumerate
+
+Prior to activation, for the first three kinds of LINK-EXPR, a
+@code{replace-match} is done on the expression to generate the
+button-specific referent to display.  Thus, either the whole button
+text (@samp{\\&}) or any numbered grouping from TEXT-REGEXP,
+e.g. @samp{\\1}, may be referenced in the LINK-EXPR to form the
+link referent.
+
+Here is a sample use case.  Let's create a button type whose whose
+buttons perform a grep-like function over a current repo's git log
+entries.  The buttons use this format: [<text to match>].
+
+The following defines the button type called @code{search-git-log} with a 
+a key series action surrounded by braces:
+
+@code{(defil search-git-log "[<" ">]" ".*" "@{M-: (hypb:fgrep-git-log \"\\&\") RET@}")}
+
+@noindent
+or this simpler version skips the explicit text substitution (\\\\&)
+and instead uses the function that takes the button text as an argument:
+
+@code{(defil search-git-log "[<" ">]" ".*" #’hypb:fgrep-git-log)}
+
+Place point after one of the above expressions and evaluate it with
+@bkbd{C-x C-e} @code{eval-last-sexp} to define the implicit button
+type.  Then if you have cloned the Hyperbole repo and are in a
+Hyperbole source buffer, an Action Key press on a button of the form:
+
+@code{;; [<test release>]}
+
+@noindent
+will display one line per commit whose change set matches 'test
+release'.  An Action Key press on any such line will then display the
+commit changes.
+
+
+@node  Programmatic Implicit Button Types,  , Implicit Button Link Types, Creating Implicit Button Types
+@subsubsection Programmatic Implicit Button Types
 
 @cindex implicit button type
 @cindex ibtype
@@ -5937,15 +6120,20 @@ flash the button and then to perform one or more actions.  A call of the
 form: @code{(ibut:label-set label start-pos end-pos)} is used to setup
 the button flashing, if desired.  This is then typically immediately
 followed by an action invocation of the form:
-@code{(hact 'actype &rest actype-arguments)}.  It is imperative that all
-actions (non-predicate code) be invoked through the @code{(hact)}
-function or your ibtypes will not work properly.  (Hyperbole first tests
-to see if any ibtype matches the current context before activating any
-type, so it ensures that @code{(hact)} calls are disabled during this
-testing.)  Any action types used in the definition of an implicit button
-type may be created before or after the definition, but obviously, must
-be defined before any implicit buttons of the given type are activated;
-an error will result, otherwise.
+@code{(hact 'actype &rest actype-arguments)} where @code{actype} is a
+Hyperbole action type symbol or an Emacs Lisp function name or lambda;
+@code{actype-arguments} are the arguments fed to the action invocation
+when an implicit button of the type is activated.
+
+It is imperative that all actions (non-predicate code) be invoked
+through the @code{(hact)} function or your ibtypes will not work
+properly.  (Hyperbole first tests to see if any ibtype matches the
+current context before activating any type, so it ensures that
+@code{(hact)} calls are disabled during this testing.)  Any action
+types used in the definition of an implicit button type may be created
+before or after the definition, but obviously, must be defined before
+any implicit buttons of the given type are activated; an error will
+result, otherwise.
 
 If an implicit button type create is successful, the symbol that
 Hyperbole uses internally to reference the type is returned.  On
@@ -6062,7 +6250,7 @@ any Hyperbole client programming.
 @node Programmatic Button Creation,  , Operational and Storage Formats, Explicit Button Technicalities
 @subsection  Programmatic Button Creation
 
-@cindex explicit button, creation
+@cindex explicit button, programmatic creation
 A common need when developing with Hyperbole is to create or to modify
 explicit buttons without user interaction.  For example, an application
 might require the addition of an explicit summary button to a file for
@@ -6076,6 +6264,19 @@ quickly.
 @findex ebut:map
 The Hyperbole class @samp{ebut} supports programmatic access to explicit
 buttons.  Examine it within the @file{hbut.el} file for full details.
+
+@findex ebut:program
+The simplest way to create explicit buttons programmatically is to
+call @code{ebut:program}.  This generates an explicit button at point
+from LABEL, ACTYPE (action type) and any optional ACTYYPE ARGS.
+It inserts the LABEL text at point surrounded by <( )> delimiters, adding any
+necessary instance number of the button after the LABEL.  ACTYPE may
+be a Hyperbole action type name (from defact) or an Emacs Lisp
+function, followed by a list of arguments for the actype, aside from
+the button LABEL which is automatically provided as the first argument.
+
+For interactive explicit creation, use @code{hui:ebut-create} instead.
+
 The documentation for @code{(ebut:create)} explains the set of
 attributes necessary to create an explicit button.  For operations over
 the whole set of buttons within the visible (non-narrowed) portion of a
@@ -9505,13 +9706,16 @@ If pressed within a Gomoku game buffer:
 @subsection Smart Key - Magit Mode
 @cindex git
 @cindex magit
+@vindex smart-magit-listing-modes
 @format
 @group
 If pressed within a Magit buffer and not on a button:
   ACTION KEY
      (1) on the last line, quit from the magit mode (@bkbd{q} key binding);
      (2) at the end of a line, scroll up a windowful;
-     (3) anywhere else, hide/show the thing at point (@bkbd{@key{TAB}} key binding).
+     (3) on a line within a @code{smart-magit-listing-modes} buffer, jump
+         to the thing at point (@bkbd{@key{RET}} key binding); 
+     (4) anywhere else, hide/show the thing at point (@bkbd{@key{TAB}} key binding).
   ASSIST KEY
      (1) on the last line, quit from the magit mode (@bkbd{q} key binding);
      (2) at the end of a line, scroll down a windowful;

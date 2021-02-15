@@ -493,7 +493,7 @@ If no action body and actype is a bound function symbol, return that."
     (cond ((htype:body (or (symtable:actype-p actname) actype)))
 	  ((fboundp actype) actype))))
 
-(defmacro actype:create (type params doc &rest default-action)
+(defmacro defact (type params doc &rest default-action)
   "Create an action TYPE (an unquoted symbol) with PARAMS, described by DOC.
 The type uses PARAMS to perform DEFAULT-ACTION (list of the rest of the
 arguments).  A call to this function is syntactically the same as for
@@ -503,8 +503,19 @@ Return symbol created when successful, else nil."
      (symtable:add ',type symtable:actypes)
      (htype:create ,type actypes ,doc ,params ,default-action nil)))
 
-(defalias 'defact 'actype:create)
-(put      'actype:create 'lisp-indent-function 'defun)
+(defalias 'actype:create 'defact)
+(put      'defact 'lisp-indent-function 'defun)
+
+;; Support edebug-defun for interactive debugging of actypes
+(def-edebug-spec defact
+  (&define name lambda-list
+           [&optional stringp]   ; Match the doc string, if present.
+           def-body))
+
+(def-edebug-spec lambda-list
+  (([&rest arg]
+    [&optional ["&optional" arg &rest arg]]
+    &optional ["&rest" arg])))
 
 (defun    actype:delete (type)
   "Delete an action TYPE (a symbol).  Return TYPE's symbol if it existed."

@@ -1,16 +1,48 @@
+2021-02-14  Bob Weiner  <rsw@gnu.org>
+
+* man/hyperbole.texi (Programmatic Button Creation): Documented ebut:program.
+
+* hib-social.el (git-commit-reference): Loosened to match to single line commit log
+    entries with text following the commit number.
+
+* hypb.el (hypb:fgrep-git-log, hypb:grep-git-log): Added to allow f/grepping over
+    repo changesets and listing associated commit log messages.
+
+2021-02-11  Bob Weiner  <rsw@gnu.org>
+
+* hbut.el (def-edebug-spec defib):
+  hact.el (def-edebug-spec defact): Added edebug-defun support for ibtypes and actypes
+    courtesy of Mats.
+
+2021-02-08  Bob Weiner  <rsw@gnu.org>
+
+* man/hyperbole.texi (Creating Implicit Button Types): Renamed from Implicit
+    Button Types Creation and added 2 new subsections on simplified link
+    type creation.
+
 2021-02-07  Bob Weiner  <rsw@gnu.org>
 
-* hibtypes.el (dir-summary): Fixed so point is left in file displayed by action key press, not the MANIFEST.
+* hui-mouse.el (smart-magit-listing-modes): Added list of major modes for
+    which the Action Key should run RET instead of TAB.
+               (smart-magit): Applied this new custom variable.
+
+* hbut.el (defal): Greatly clarified use in doc string.
+
+* hibtypes.el (dir-summary): Fixed so point is left in file displayed by
+    action key press, not the MANIFEST.
 
 * hpath.el (hpath:delimited-possible-path): Added support for file:// URLs.
 
 2021-01-31  Bob Weiner  <rsw@gnu.org>
 
-* hyrolo.el (hyrolo-display-format-function): Separated records by 1 newline, not 2; unsure how 2 were ever added.
+* hyrolo.el (hyrolo-display-format-function): Separated records by 1
+    newline, not 2; unsure how 2 were ever added.
             (hyrolo-fgrep):
   hyrolo-logic.el (hyrolo-fgrep-logical, hyrolo-map-logic):
-  hyrolo-demo.el (hyrolo-demo-fgrep-logical): Changed default to not show full hierarchy of records but just
-    matching sub-levels, for more intuitive logical expression matching.  Made rolo-logical searches in DEMO work.
+  hyrolo-demo.el (hyrolo-demo-fgrep-logical): Changed default to not show
+    full hierarchy of records but just matching sub-levels, for more
+    intuitive logical expression matching.  Made rolo-logical searches in DEMO
+    work.
 
 2020-12-03  Bob Weiner  <rsw@gnu.org>
 
@@ -67,14 +99,20 @@ absolute paths.
 
 2020-10-27  Bob Weiner  <rsw@gnu.org>
 
-* hbut.el (ibtype:create-link-type, ibtype:create-from-regexp): Added to allow
-    non-programmers who understand regular expressions to creation their own
-    implicit button types.  deflink is an alias for ibtype:create-link-type
-    which creates new link types with just the name for the type and a regular
+* hbut.el (defal, defil): Added to allow non-programmers who understand
+    simple regular expressions to create their own implicit button types.
+
+    ibtype:create-action-link-type is an alias for defal which creates
+    a new action button link type given a type symbol/name and a regular
     expression that resolves into a key series, URL or path to display.
 
+    ibtype:create-regexp-link-type is an alias for defil; it behaves just
+    like defal but requires starting and ending delimiters as well as a
+    button text matching regexp and a link substitution regexp, allowing
+    for more complex regexp substitution, not just the simpler action
+    button formats.
+
 * hib-kbd.el (kbd-key:is-p): Added to test if a string is a delimited key series.
->>>>>>> Stashed changes
 
 2020-10-25  Bob Weiner  <rsw@gnu.org>
 

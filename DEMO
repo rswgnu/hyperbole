@@ -425,22 +425,24 @@ command to return to this DEMO later.
 
 * Implicit Buttons
 
-Hyperbole can automatically turn your existing, unchanged text files into
-hypertexts via its incredibly powerful feature: implicit buttons.  An
-implicit button is a span of text within a buffer that Hyperbole recognizes
-as a button and lets you activate.  Hyperbole recognizes these buttons using
-its predefined implicit button types that specify how to recognize a
+Hyperbole can recognize a wide variety of links embedded within Emacs
+buffers, turning your unmodified text files into hypertexts via its
+incredibly powerful feature: implicit buttons.  An implicit button is
+a span of text within a buffer that Hyperbole recognizes as a button
+and lets you activate.  Hyperbole recognizes these buttons using its
+predefined implicit button types that specify how to recognize a
 particular type of button and what action it performs.  For example,
-an Action Key press on a double-quoted pathname displays it.  (This is because
-an implicit button type of 'pathname' is recognized and it has an associated
-action type of 'hpath:find' which displays the path in a window specified by
-the setting of 'hpath:display-where').
+an Action Key press on a double-quoted pathname displays it.  (This is
+because an implicit button type of 'pathname' is recognized and it has
+an associated action type of 'hpath:find' which displays the path in a
+window specified by the setting of 'hpath:display-where').
 
-Hyperbole has many built-in implicit button types, a number of which you will
-see here.  You may also create your own types.  Once a type is known, you can
-embed an infinite number of buttons of that type within your text documents
-simply by typing them.  Let's look at some of these button types and how you
-can use them.
+Hyperbole has many built-in implicit button types, a number of which you
+will see here.  You may also create your own types through the use of
+regular expressions or via Emacs Lisp, see "(hyperbole)Creating Implicit
+Button Types".  Once a type is known, you can embed an infinite number of
+buttons of that type within your text documents simply by typing them.
+Let's look at some of these button types and how you can use them.
 
 Note that you must press a Smart Key on the first line of an implicit button
 to utilize it if it spans multiple lines and always press on a regular

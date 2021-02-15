@@ -650,16 +650,16 @@ Return the symbol for the button when found, else nil."
 (defun    gbut:ebut-key-list ()
   "Return a list of explicit button label keys from the global button file."
   (save-excursion
-    (if (hbdata:to-entry-buf gbut:file)
-	(let (gbuts)
-	  (save-restriction
-	    (narrow-to-region (point) (if (search-forward "\f" nil t)
-					  (point) (point-max)))
-	    (goto-char (point-min))
-	    (condition-case ()
-		(while (setq gbuts (cons (car (read (current-buffer))) gbuts)))
-	      (error nil))
-	    gbuts)))))
+    (when (hbdata:to-entry-buf gbut:file)
+      (let (gbuts)
+	(save-restriction
+	  (narrow-to-region (point) (if (search-forward "\f" nil t)
+					(point) (point-max)))
+	  (goto-char (point-min))
+	  (condition-case ()
+	      (while (setq gbuts (cons (car (read (current-buffer))) gbuts)))
+	    (error nil))
+	  gbuts)))))
 
 (defun    gbut:ibut-key-list ()
   "Return a list of implicit button label keys from the global button file."
@@ -676,13 +676,13 @@ Return the symbol for the button when found, else nil."
 
 (defun    hattr:attributes (obj-symbol)
   "Return a list of OBJ-SYMBOL's attributes as symbols."
-  (if (symbolp obj-symbol)
-      (let* ((attr-val-list (symbol-plist obj-symbol))
-	     (i -1))
-	(delq nil (mapcar (lambda (elt)
-			    (setq i (1+ i))
-			    (and (zerop (% i 2)) elt))
-			  attr-val-list)))))
+  (when (symbolp obj-symbol)
+    (let* ((attr-val-list (symbol-plist obj-symbol))
+	   (i -1))
+      (delq nil (mapcar (lambda (elt)
+			  (setq i (1+ i))
+			  (and (zerop (% i 2)) elt))
+			attr-val-list)))))
 
 (defun    hattr:clear (hbut)
   "Remove all of HBUT's attributes except `variable-documentation'."
@@ -727,7 +727,7 @@ Each pair of elements is: <attrib-name> <attrib-value>."
 					(setq i (1+ i))
 					(and (zerop (% i 2)) elt))
 				      attr-val-list)))))
-	 (if (memq attr-symbol attr-list) t))))
+	 (when (memq attr-symbol attr-list) t))))
 
 (defun    hattr:report (attrib-list)
   "Pretty print to `standard-output' attribute-value pairs from ATTRIB-LIST.
@@ -1692,10 +1692,8 @@ Return the symbol for the button, else nil."
 ;;; ibtype class - Implicit button types
 ;;; ========================================================================
 
-(defalias 'defib 'ibtype:create)
-(put      'ibtype:create 'lisp-indent-function 'defun)
-(defmacro ibtype:create (type params doc at-p &optional to-p style)
-  "Create Hyperbole implicit button TYPE (unquoted sym) with PARAMS, described by DOC.
+(defmacro defib (type params doc at-p &optional to-p style)
+  "Create Hyperbole implicit button TYPE (unquoted symbol) with PARAMS, described by DOC.
 PARAMS are presently ignored.
 
 AT-P is a boolean form of no arguments which determines whether or not point
@@ -1723,39 +1721,148 @@ type for ibtype is presently undefined."
 	      (htype:create ,type ibtypes ,doc nil ,at-func
 			    '(to-p ,to-func style ,style))))))
 
-(defalias 'defiblink 'ibtype:create-link-type)
+(defalias 'ibtype:create 'defib)
+(put      'defib 'lisp-indent-function 'defun)
 
-(defmacro ibtype:create-link-type (link-type-symbol link-regexp)
-  "Create a new Hyperbole link type whose buttons look like:  <LINK-TYPE-SYMBOL text>
-where text is regexp grouping 1 (\\1) that may be substituted into
-LINK-REGEXP.  Activation of such buttons either executes a
-brace-delimited key series, displays a URL or displays a path."
-  `(ibtype:create-from-regexp ,link-type-symbol "<" ">" (format "%s \"?\\([^\t\n\r\f'`\"]+\\)\"?" ',link-type-symbol)
-			      ,link-regexp))
+;; Support edebug-defun for interactive debugging of ibtypes
+(def-edebug-spec defib
+  (&define name lambda-list
+           [&optional stringp]   ; Match the doc string, if present.
+           def-body))
 
-(defmacro ibtype:create-from-regexp (ibtype-symbol start-delim end-delim text-regexp link-regexp &optional start-regexp-flag end-regexp-flag)
-  "Create a new Hyperbole implicit button type from: IBTYPE-SYMBOL, START-DELIM and END-DELIM (strings), TEXT-REGEXP and LINK-REGEXP.
+(defun ibtype:activate-link-path (referent)
+  "Activate a Hyperbole implicit link `referent', either a key series, a URL or a path."
+  (when referent
+    (let ((key-series (kbd-key:is-p referent)))
+      (if key-series
+	  (hact #'kbd-key:act key-series)
+	(let ((encoded-path-to-display (when referent (url-encode-url referent))))
+	  (if (hpath:www-p encoded-path-to-display)
+	      (hact #'www-url encoded-path-to-display)
+	    (hact #'hpath:find referent)))))))
+
+
+(defmacro defil (type start-delim end-delim text-regexp link-expr
+		 &optional start-regexp-flag end-regexp-flag doc)
+  "Create Hyperbole implicit button link type from: TYPE (an uquoted symbol), START-DELIM and END-DELIM (strings), TEXT-REGEXP and LINK-EXPR.
 With optional START-REGEXP-FLAG non-nil, START-DELIM is treated
 as a regular expression.  END-REGEXP-FLAG treats END-DELIM as a
-regular expression. "
-  `(prog1
-     (defib ,ibtype-symbol ()
-       (interactive)
-       (let* ((button-text (hargs:delimited ,start-delim ,end-delim ,start-regexp-flag ,end-regexp-flag))
-	      (path-to-display (when (and button-text (string-match ,text-regexp button-text))
-				 (replace-match ,link-regexp nil nil button-text)))
-	      (encoded-path-to-display (url-encode-url path-to-display)))
-	 (when path-to-display
-	   (cond ((setq key-series (kbd-key:is-p path-to-display))
-		  (hact #'kbd-key:act key-series))
-		 ((hpath:www-p encoded-path-to-display)
-		  (hact #'www-url encoded-path-to-display))
-		 (t (hact #'hpath:find path-to-display))))))
-     (put (intern (format "ibtypes::%s" ',ibtype-symbol))
-	  'function-documentation
-	  (format "%s - %s\n\n%s %s%s%s\n%s %s" ',ibtype-symbol "Hyperbole implicit button type"
-		  "  Recognizes buttons of the form:\n    " ,start-delim ,text-regexp ,end-delim
-		  "  which display links of the form:\n    " ,link-regexp))))
+regular expression.  Hyperbole automatically creates a doc string
+for the type but you can override this by providing an optional
+DOC string.
+
+TEXT-REGEXP must match to the text found between a button's delimiters
+in order for this type to activate.  The matched text is then applied
+to LINK-EXPR to produce the link's referent, which is then displayed.
+
+LINK-EXPR may be:
+  (1) a brace-delimited key series;
+  (2) a URL;
+  (3) a path (possibly with trailing colon-separated line and column numbers);
+  (4) or a function of one argument, the button text.
+
+Prior to button activation, for the first three kinds of
+LINK-EXPR, a `replace-match' is done on the expression to
+generate the button-specific referent to display.  Thus, either
+the whole button text (\\\\&) or any numbered grouping from
+TEXT-REGEXP, e.g. \\\\1, may be referenced in the LINK-EXPR to
+form the link referent.
+
+Here is a sample use case.  Let's create a button type whose
+buttons perform a grep-like function over a current repo's git
+log entries.  The buttons use this format: [<text to match>].
+
+The following defines the button type called search-git-log with a
+a key series action surrounded by braces:
+
+  (defil search-git-log \"[<\" \">]\" \".*\" \"{M-: (hypb:fgrep-git-log \\\"\\\\&\\\") RET}\")
+
+or this simpler version skips the explicit text substitution (\\\\&)
+and instead uses the function that takes the button text as an argument:
+
+  (defil search-git-log \"[<\" \">]\" \".*\" #'hypb:fgrep-git-log)
+
+Place point after one of the above expressions and evaluate it with
+\\[eval-last-sexp] to define the implicit button type.  Then if you
+have cloned the Hyperbole repo and are in a Hyperbole source buffer,
+an Action Key press on a button of the form:
+
+  ;; [<test release>]
+
+will display one line per commit whose change set matches 'test
+release'.  An Action Key press on any such line will then display the
+commit changes."
+  (when type
+    `(prog1
+	 (defib ,type ()
+	   (interactive)
+	   (let ((button-text (hargs:delimited ,start-delim ,end-delim ,start-regexp-flag ,end-regexp-flag)))
+	     (when button-text
+	       (if (or (functionp ,link-expr) (subrp ,link-expr))
+		   (hact ,link-expr button-text)
+		 (let ((path-to-display (when (and button-text (string-match ,text-regexp button-text))
+					  (replace-match ,link-expr nil nil button-text))))
+		   (ibtype:activate-link-path path-to-display))))))
+       (put (intern (format "ibtypes::%s" ',type))
+	    'function-documentation
+	    (or ,doc
+		(format "%s - %s\n\n%s %s%s%s\n%s %s" ',type "Hyperbole implicit button type"
+			"  Recognizes buttons of the form:\n    "
+			(if ,start-regexp-flag (regexp-quote ,start-delim) ,start-delim)
+			(regexp-quote ,text-regexp)
+			(if ,end-regexp-flag (regexp-quote ,end-delim) ,end-delim)
+			"  which display links of the form:\n    " (regexp-quote ,link-expr)))))))
+
+(defmacro defal (type link-expr &optional doc)
+  "Create Hyperbole action button link TYPE (an unquoted symbol) whose buttons look like: <TYPE link-text> where link-text is substituted into LINK-EXPR as grouping 1 (\\\\1).
+Hyperbole automatically creates a doc string for the type but you can
+override this by providing an optional DOC string.
+
+LINK-EXPR may be:
+  (1) a brace-delimited key series;
+  (2) a URL;
+  (3) a path (possibly with trailing colon-separated line and column numbers);
+  (4) or a function of one argument, the button text.
+
+Prior to button activation, for the first three kinds of
+LINK-EXPR, a `replace-match' is done on the expression to
+generate the button-specific referent to display.  Thus, either
+the whole button text (\\\\&) or any numbered grouping from
+TEXT-REGEXP, e.g. \\\\1, may be referenced in the LINK-EXPR to
+form the link referent.
+
+Here is a sample use case.  If you use Python and have a
+PYTHONPATH environment variable, then pressing \\[eval-last-sexp]
+after this expression:
+
+   (defal pylib \"${PYTHONPATH}/\\\\1\")
+
+defines a new action button link type called 'pylib' whose buttons
+take the form of:
+
+   <pylib PYTHON-LIBRARY-NAME>
+
+and display the associated Python libraries (typically Python source
+files).  Optional colon separated line and column numbers may be given
+as well.
+
+Therefore an Action Key press on:
+
+   <pylib string.py:5:7>
+
+would display the source for \"string.py\" (wherever it is installed
+on your system) from the Python standard library with point on the
+fifth line at the seventh character.
+
+For more flexible regular expression-based link type creation, see
+`defil'.  For the most general implicit button type creation,
+use `defib'."
+  (when type
+    `(defil ,type "<" ">" (format "%s\\s-+\"?\\([^\t\n\r\f'`\"]+\\)\"?" ',type)
+       ,link-expr nil nil ,doc)))
+
+(defalias 'ibtype:create-action-link-type 'defal)
+(defalias 'ibtype:create-regexp-link-type 'defil)
 
 (defun    ibtype:def-symbol (ibtype)
   "Return the abbreviated symbol for IBTYPE used in its `defib'.

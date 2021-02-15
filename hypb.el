@@ -228,6 +228,10 @@ Global keymap is used unless optional KEYMAP is given."
     (put 'error 'error-message msg)
     (error msg)))
 
+(defun hypb:fgrep-git-log (string)
+  "Asynchronously list git log entries whose changesets include `string'."
+  (compile (format "git log -S'%s' --line-prefix='commit ' --oneline" string)))
+
 (defun hypb:file-major-mode (file)
   "Return the major mode used by FILE.
 FILE is temporarily read into a buffer to determine the major mode if necessary."
@@ -366,6 +370,10 @@ If MARKER is invalid signal an error."
 		 (error "Marker position is outside accessible part of buffer: %s" marker)))
 	     (goto-char position)
 	     (switch-to-buffer buffer)))))
+
+(defun hypb:grep-git-log (regexp)
+  "Asynchronously list git log entries whose changesets include `regexp'."
+  (compile (format "git log -G'%s' --line-prefix='commit ' --oneline" regexp)))
 
 (defun hypb:help-buf-name (&optional suffix)
   "Return a Hyperbole help buffer name for current buffer.
