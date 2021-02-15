@@ -1730,7 +1730,7 @@ type for ibtype is presently undefined."
            [&optional stringp]   ; Match the doc string, if present.
            def-body))
 
-(defun ibtype:activate-link-path (referent)
+(defun ibtype:activate-link (referent)
   "Activate a Hyperbole implicit link `referent', either a key series, a URL or a path."
   (when referent
     (let ((key-series (kbd-key:is-p referent)))
@@ -1800,18 +1800,20 @@ commit changes."
 	     (when button-text
 	       (if (or (functionp ,link-expr) (subrp ,link-expr))
 		   (hact ,link-expr button-text)
-		 (let ((path-to-display (when (and button-text (string-match ,text-regexp button-text))
-					  (replace-match ,link-expr nil nil button-text))))
-		   (ibtype:activate-link-path path-to-display))))))
+		 (let ((referent (when (and button-text (stringp ,link-expr)
+					    (string-match ,text-regexp button-text))
+				   (replace-match ,link-expr nil nil button-text))))
+		   (ibtype:activate-link referent))))))
        (put (intern (format "ibtypes::%s" ',type))
 	    'function-documentation
 	    (or ,doc
 		(format "%s - %s\n\n%s %s%s%s\n%s %s" ',type "Hyperbole implicit button type"
 			"  Recognizes buttons of the form:\n    "
 			(if ,start-regexp-flag (regexp-quote ,start-delim) ,start-delim)
-			(regexp-quote ,text-regexp)
+			,text-regexp
 			(if ,end-regexp-flag (regexp-quote ,end-delim) ,end-delim)
-			"  which display links of the form:\n    " (regexp-quote ,link-expr)))))))
+			"  which display links with:\n    "
+			(if (stringp ,link-expr) (regexp-quote ,link-expr) ,link-expr)))))))
 
 (defmacro defal (type link-expr &optional doc)
   "Create Hyperbole action button link TYPE (an unquoted symbol) whose buttons look like: <TYPE link-text> where link-text is substituted into LINK-EXPR as grouping 1 (\\\\1).

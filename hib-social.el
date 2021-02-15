@@ -608,10 +608,12 @@ PROJECT value is provided, it defaults to the value of
 
 (defib git-commit-reference ()
   "Display the diff for a git commit reference, e.g. \"commit a55e21\", typically produced by git log."
-  (if (save-excursion
-	(beginning-of-line)
-	(looking-at "\\s-*commit \\([0-9a-f][0-9a-f][0-9a-f][0-9a-f]+\\)\\s-"))
-      (hact #'git-reference (match-string-no-properties 1))))
+  (when (save-excursion
+	  (beginning-of-line)
+	  (looking-at "\\s-*\\(commit \\([0-9a-f][0-9a-f][0-9a-f][0-9a-f]+\\)\\)\\s-"))
+    (save-match-data
+      (ibut:label-set (match-string-no-properties 1) (match-beginning 1) (match-end 1)))
+    (hact #'git-reference (match-string-no-properties 2))))
 
 (defvar hibtypes-git-repos-cache
   (expand-file-name "Local-Git-Repos" hbmap:dir-user)

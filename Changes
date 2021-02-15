@@ -1,3 +1,9 @@
+2021-02-15  Bob Weiner  <rsw@gnu.org>
+
+* hbut.el (defil): Fixed improper call of regexp-quote when link-expr was not a string.
+
+* hib-social.el (git-commit-reference): Added flash of button label
+
 2021-02-14  Bob Weiner  <rsw@gnu.org>
 
 * man/hyperbole.texi (Programmatic Button Creation): Documented ebut:program.
