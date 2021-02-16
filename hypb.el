@@ -184,6 +184,22 @@ Global keymap is used unless optional KEYMAP is given."
       ;; string.
       string)))
 
+;; Similar keyboard macro to next function, but less flexible: {C-x 1 M-o F M-o a C-x b *scratch* RET M-< M-o s C-@ C-M-h M-o t a C-u C-@ C-u C-@ M-o a C-M-p}
+
+;;;###autoload
+(defun hypb:def-to-buffer (&optional arg buffer)
+  "Copy next optional ARG (default = 1) code definitions to the start of BUFFER (default = *scratch*) and leave point at the start of the inserted text."
+  (interactive "p\nbDef insertion buffer (default *scratch*): ")
+  (let ((def (save-excursion
+	       (mark-defun arg)
+	       (deactivate-mark)
+	       (buffer-substring (region-beginning) (region-end)))))
+    (pop-to-buffer (or buffer "*scratch*"))
+    (goto-char (point-min))
+    (insert def)
+    (goto-char (point-min))
+    (forward-line 1)))
+
 (defun hypb:domain-name ()
   "Return current Internet domain name with '@' prepended or nil if none."
   (let* ((dname-cmd (or (file-exists-p "/usr/bin/domainname")
