@@ -370,13 +370,15 @@ magic happen."
   ;; New ace-window frames (window id = z) inherit the size of the
   ;; prior selected frame; same as HyWindow.
   (setq aw-frame-size '(0 . 0)
-	aw-dispatch-alist (delq (assq ?t aw-dispatch-alist)
+	aw-dispatch-alist (delq (assq ?i aw-dispatch-alist)
 				(delq (assq ?r aw-dispatch-alist)
-				      (delq (assq ?i aw-dispatch-alist) aw-dispatch-alist))))
-  (push '(?i hkey-drag-item "Hyperbole: Drag Item") aw-dispatch-alist)
-  ;; Ace-window includes ?m as the swap windows key, so it is not added here.
-  (push '(?r hkey-replace "Hyperbole: Replace Here") aw-dispatch-alist)
+				      (delq (assq ?t aw-dispatch-alist)
+					    (delq (assq ?w aw-dispatch-alist) aw-dispatch-alist)))))
+  (push '(?w hkey-window-link "Hyperbole: Window Link") aw-dispatch-alist)
   (push '(?t hkey-throw   "Hyperbole: Throw") aw-dispatch-alist)
+  (push '(?r hkey-replace "Hyperbole: Replace Here") aw-dispatch-alist)
+  ;; Ace-window includes ?m as the swap windows key, so it is not added here.
+  (push '(?i hkey-drag-item "Hyperbole: Drag Item") aw-dispatch-alist)
   (ace-window-display-mode 1))
 
 ;;;###autoload
@@ -414,9 +416,6 @@ Works only when running under a window system, not from a dumb terminal."
   "Emulate Smart Mouse Key drag from selected window to RELEASE-WINDOW, interactively chosen via ace-window.
 After the drag, the selected window remains the same as it was before
 the drag.
-
-Optional prefix arg non-nil means emulate Assist Key rather than the
-Action Key.
 
 Works only when running under a window system, not from a dumb terminal."
   (let ((start-window (selected-window)))
@@ -563,6 +562,20 @@ The selected window does not change."
 	     ;; Don't use sit-for here because it can be interrupted early.
 	     (sleep-for display-delay))))))
 
+;;;###autoload
+(defun hkey-window-link (release-window)
+  "Create a new Hyperbole explicit link button in the selected window, linked to point in RELEASE-WINDOW, interactively chosen via ace-window.
+The selected window does not change."
+  (interactive
+   (list (let ((mode-line-text (concat " Ace - Hyperbole: " (nth 2 (assq ?w aw-dispatch-alist)))))
+	   (aw-select mode-line-text))))
+  (let ((start-window (selected-window)))
+    (unwind-protect
+	(hui:link-directly start-window release-window)
+      ;; Leave start-window selected
+      (when (window-live-p start-window)
+	(hypb:select-window-frame start-window)))))
+
 (defun hkey-insert-region (depress-window release-window throw-region-flag display-delay)
   "Throw any active (highlighted) region from DEPRESS-WINDOW to RELEASE-WINDOW.
 If THROW-REGION-FLAG is non-nil, the region is thrown even if not
@@ -694,13 +707,13 @@ hkey-swap and hkey-throw."
 		   until (and (mouse-event-p start-event)
 			      (not (string-match "\\`down-" (symbol-name (car start-event)))))
 		   finally return (posn-window (event-start start-event))))
-    (message "Click on the %s start window...Now on the end window..." func)
+    (message "Now click on the %s end window..." func)
     (setq end-window
 	  (cl-loop do (setq end-event (read-event))
 		   until (and (mouse-event-p end-event)
 			      (not (string-match "\\`down-" (symbol-name (car end-event)))))
 		   finally return (posn-window (event-start end-event))))
-    (message "Click on the %s start window...Now on the end window...Done" func)
+    (message "Done" func)
     (with-selected-window start-window
       (funcall func end-window))))
 

@@ -2141,6 +2141,7 @@ for <code>ace-window</code>, then just ensure it is initialized by calling
 <a name="index-M_002do-m-_003cwindow_002did_003e"></a>
 <a name="index-M_002do-r-_003cwindow_002did_003e"></a>
 <a name="index-M_002do-t-_003cwindow_002did_003e"></a>
+<a name="index-M_002do-w-_003cwindow_002did_003e"></a>
 <a name="index-insert-item"></a>
 <a name="index-drag-item"></a>
 <a name="index-replace-window-buffer"></a>
@@ -2148,20 +2149,26 @@ for <code>ace-window</code>, then just ensure it is initialized by calling
 <a name="index-throw-item"></a>
 <a name="index-buffer-replace"></a>
 <a name="index-buffers-swap"></a>
+<a name="index-create-link-button"></a>
+<a name="index-window-link-button"></a>
+<a name="index-link-button"></a>
 <a name="index-item-drag"></a>
 <a name="index-item-insert"></a>
 <a name="index-item-throw"></a>
-<p>After setup, the leftmost character or two of each window&rsquo;s modeline will show
-the ID to type to use that window as the drag destination.  Then whenever point
-is on an item you want displayed in another window, use <kbd>{M-o i
-&lt;id-of-window-to-display-item-in&gt;}</kbd> and watch the magic happen.  If you
-want to display multiple items in different windows, instead use
-the <kbd>{M-o t &lt;id-of-window-to-display-item-in&gt;}</kbd> key sequence to
-<em>throw</em> the item to the window.  To <em>replace</em>
-the selected window&rsquo;s buffer with that of another window, use
-<kbd>{M-o r &lt;id-of-window-displaying-desired-buffer&gt;}</kbd>.  To instead
-<em>swap</em> the selected window&rsquo;s buffer with that of another window,
-use <kbd>{M-o m &lt;id-of-window-to-swap-with&gt;}</kbd>.
+<p>After setup, the leftmost character or two of each window&rsquo;s modeline
+will show the ID to type to use that window as the drag destination.
+Then whenever point is on an item you want displayed in another
+window, use <kbd>{M-o i &lt;id-of-window-to-display-item-in&gt;}</kbd> and watch
+the magic happen.  If you want to display multiple items in different
+windows, instead use the <kbd>{M-o t
+&lt;id-of-window-to-display-item-in&gt;}</kbd> key sequence to <em>throw</em> the
+item to the window.  To <em>replace</em> the selected window&rsquo;s buffer
+with that of another window, use <kbd>{M-o r
+&lt;id-of-window-displaying-desired-buffer&gt;}</kbd>.  To instead <em>swap</em> the
+selected window&rsquo;s buffer with that of another window, use <kbd>{M-o m
+&lt;id-of-window-to-swap-with&gt;}</kbd>.  And finally, to quickly create a link
+between the selected window and another window, use <kbd>{M-o w
+&lt;id-of-referent-window&gt;}</kbd>.
 </p>
 <a name="index-throw-region"></a>
 <a name="index-region-throw"></a>
@@ -2174,7 +2181,8 @@ must differ from the one in the source window.  With no region active,
 this command throws the source buffer to the target window.
 </p>
 <p>In summary:
-</p><dl compact="compact">
+</p>
+<dl compact="compact">
 <dt>M-o i &lt;window&gt;</dt>
 <dd><p>insert listing item at point into &lt;window&gt;; if not on a listing item,
 trigger an error
@@ -2190,6 +2198,12 @@ trigger an error
 </dd>
 <dt>M-o t &lt;window&gt;</dt>
 <dd><p>throw region, listing item at point, or current buffer to &lt;window&gt;
+</p>
+</dd>
+<dt>M-o w &lt;window&gt;</dt>
+<dd><p>window link, create a new explicit button in the selected (current)
+window, linking to point in the referent &lt;window&gt;, with the link type
+determined by the referent context via <code>hui:link-directly</code>.
 </p></dd>
 </dl>
 
@@ -2334,7 +2348,7 @@ to a new location if you need another copy of it.
 <p>For details on how to create, activate, delete or modify explicit
 buttons, see <a href="#Utilizing-Explicit-Buttons">Utilizing Explicit Buttons</a>.
 </p>
-<a name="index-link-button"></a>
+<a name="index-link-button-1"></a>
 <a name="index-referent"></a>
 <p>Each explicit button is assigned an action type that determines the actions
 it performs.  <em>Link action types</em> connect buttons to particular types
@@ -8921,7 +8935,10 @@ in <a href="#HyControl">HyControl</a>.
 <dd><p>Drag Operation: Keyboard emulation of the start and stop of mouse
 drags to invoke Smart Key actions.  This binding is made only if the
 key is not bound prior to loading Hyperbole and if Emacs is run under
-a window system.
+a window system.  If the Ace Window package is loaded, then Ace Window
+commands are typically bound to <kbd>{M-o}</kbd> instead.  Then <kbd>{M-o w}</kbd>
+may be used to quickly create an explicit link button in the selected window that
+links to any other window chosen via the Ace Window prompt.
 </p>
 <a name="index-key-binding_002c-C_002dh-h"></a>
 <a name="index-C_002dh-h-1"></a>
@@ -12382,6 +12399,7 @@ Next: <a href="#Function" accesskey="n" rel="next">Function</a>, Previous: <a hr
 <tr><td></td><td valign="top"><a href="#index-M_002do-m-_003cwindow_002did_003e"><code>M-o m &lt;window-id&gt;</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Keyboard-Drags">Keyboard Drags</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-M_002do-r-_003cwindow_002did_003e"><code>M-o r &lt;window-id&gt;</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Keyboard-Drags">Keyboard Drags</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-M_002do-t-_003cwindow_002did_003e"><code>M-o t &lt;window-id&gt;</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Keyboard-Drags">Keyboard Drags</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-M_002do-w-_003cwindow_002did_003e"><code>M-o w &lt;window-id&gt;</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Keyboard-Drags">Keyboard Drags</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-M_002dRET"><code>M-<span class="key">RET</span></code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Key-Bindings">Smart Key Bindings</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-M_002dRET-1"><code>M-<span class="key">RET</span></code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-M_002dRET-2"><code>M-<span class="key">RET</span></code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Default-Global-Bindings">Default Global Bindings</a></td></tr>
@@ -13470,6 +13488,7 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function</a>, Up: <a href
 <tr><td></td><td valign="top"><a href="#index-copy-buffer">copy buffer</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Displaying-Buffers">Displaying Buffers</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-copy-region">copy region</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Key-Thing-Selection">Smart Key Thing Selection</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-copying">copying</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Relocating-and-Copying">Relocating and Copying</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-create-link-button">create link button</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Keyboard-Drags">Keyboard Drags</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-create_002dtime-attribute">create-time attribute</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Cell-Attributes">Cell Attributes</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-creating-buttons">creating buttons</a>:</td><td>&nbsp;</td><td valign="top"><a href="#By-Dragging">By Dragging</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-creating-links">creating links</a>:</td><td>&nbsp;</td><td valign="top"><a href="#By-Dragging">By Dragging</a></td></tr>
@@ -13866,7 +13885,8 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function</a>, Up: <a href
 <tr><td></td><td valign="top"><a href="#index-line-and-column">line and column</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-link">link</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Links">Links</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-link-action-types">link action types</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Action-Types">Action Types</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-link-button">link button</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Explicit-Buttons">Explicit Buttons</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-link-button">link button</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Keyboard-Drags">Keyboard Drags</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-link-button-1">link button</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Explicit-Buttons">Explicit Buttons</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-link-creation">link creation</a>:</td><td>&nbsp;</td><td valign="top"><a href="#By-Dragging">By Dragging</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-link-display">link display</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Referent-Display">Referent Display</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-link-to-explicit-button">link to explicit button</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
@@ -14362,6 +14382,7 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function</a>, Up: <a href
 <tr><td></td><td valign="top"><a href="#index-window-configuration-drag">window configuration drag</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Saving-and-Restoring-Window-Configurations">Saving and Restoring Window Configurations</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-window-configuration-ring">window configuration ring</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Window-Configurations">Window Configurations</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-window-configurations">window configurations</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Window-Configurations">Window Configurations</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-window-link-button">window link button</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Keyboard-Drags">Keyboard Drags</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-window-system">window system</a>:</td><td>&nbsp;</td><td valign="top"><a href="#External-Viewers">External Viewers</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-window_002c-clone">window, clone</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Cloning-Windows">Cloning Windows</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-window_002c-clone-1">window, clone</a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyControl">HyControl</a></td></tr>

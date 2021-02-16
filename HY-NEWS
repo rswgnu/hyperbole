@@ -7,26 +7,29 @@
 
   PROGRAMMING
 
-   - defal: Easy-to-use macro that generates new action button types
-     from a type name and a single simple regular expression, allowing
+   - Easy Action Link Button Type Creation: `defal' is a new,
+     easy-to-use macro that generates new action button types from a
+     type name and a single simple regular expression, allowing
      non-programmers to create their own implicit action button types
-     that execute key series, display URLs or display the contents
-     of pathnames.  See "(hyperbole)Action Button Link Types".
+     that execute key series, display URLs or display the contents of
+     pathnames.  See "(hyperbole)Action Button Link Types".
 
-   - defil: For those familiar with regular expressions but not much
-     Emacs Lisp, this macro creates more flexible implicit button
-     types where the delimiters and text substitution can be specified
-     with regular expressions.  Actions are limited to executing key
-     series, displaying URLs or displaying the contents of a pathname.
-     See "(hyperbole)Implicit Button Link Types".
+   - Easy Implicit Link Button Type Creation: `defil' is a new,
+     easy-to-use macro for those familiar with regular expressions but
+     not much Emacs Lisp.  This macro creates more flexible implicit
+     button types than `defal' where the delimiters and text
+     substitution can be specified with regular expressions.  Actions
+     are limited to executing key series, displaying URLs or
+     displaying the contents of a pathname.  See "(hyperbole)Implicit
+     Button Link Types".
 
      Elisp programmers should use the existing `defib' macro for full
      flexibility in implicit button type creation.  See "hibytpes.el"
      for examples and "(hyperbole)Programmatic Implicit Button Types"
      for documentation.
 
-   - defib and defact type definitions are now interactively debuggable
-     via edebug-defun {C-M-x}.
+   - Edebuggable Hyperbole Types: `defib' and `defact' type definitions
+     are now interactively debuggable via edebug-defun {C-M-x}.
 
    - kbd-key:is-p: Added this new predicate to test whether point is within
      a brace-delimited key series.
@@ -83,6 +86,16 @@
     - Pathname Implicit Buttons: Variable substitutions are now made with
       fixed case, so that the case of a value with both upper and lower
       case characters is never changed, for example a value of ${HOME}.
+
+  ACE WINDOW PACKAGE INTEGRATION - fast window and buffer switching
+
+    - After installing the ace-window package and loading Hyperbole, execute
+      (hkey-ace-window-setup "\M-o") to enable the following capabilities:
+
+    - Fast Window Links: The hkey-window-link command bound to {M-o w}
+      rapidly creates a link button at point in the selected window,
+      linking to point in the window chosen when prompted.
+      See "DEMO#Displaying File and Buffer Items and Moving Buffers".
 
 
 ===========================================================================

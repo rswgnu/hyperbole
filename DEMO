@@ -1027,15 +1027,16 @@ with the Action Mouse Key or by using the Hyperbole menus.
 
 *** Creation via Dragging
 
-The most efficient way to create an explicit button interactively is to use
-the Action Mouse Key to drag from a button source window to a window showing
-its link referent.  More specifically, you should split your current Emacs
-frame into two windows: one which contains the point at which you want a
-button to be inserted and another which shows the point to which you want to
-link.  Depress the Action Mouse Key at the source point for the button
-(anywhere but on a paired delimiter such as double quotes or parentheses).
-Then drag to the other window and release the Action Mouse Key at the start
-point of the link referent.  The process becomes quite simple with a little
+An efficient way to create an explicit button interactively is
+to use the Action Mouse Key to drag from a button source window to a
+window showing its link referent.  More specifically, you should split
+your current Emacs frame into two windows: one which contains the
+point at which you want a button to be inserted and another which
+shows the point to which you want to link, the referent.  Depress the
+Action Mouse Key at the source point for the button (anywhere but on a
+paired delimiter such as double quotes or parentheses).  Then drag to
+the other window and release the Action Mouse Key at the start point
+of the link referent.  The process becomes quite simple with a little
 practice.
 
 Hyperbole uses the link referent context to determine the type of link
@@ -1044,7 +1045,7 @@ applicable from the context, you will be prompted with a list of the
 types.  Simply use the Action Key or the first letter of the link
 type to select one of the type names and to finish the link creation.
 Hyperbole will then insert explicit button delimiters around the button
-label and will display a message in the minibuffer indicating both the
+label and display a message in the minibuffer indicating both the
 button name and its action/link type.
 
 When a link is created, if its path contains a match for any of the variable
@@ -1053,6 +1054,14 @@ values listed in hpath:variables, then the variable's name surrounded by ${
 the variable with a matching value when the link is later resolved.  This
 allows the sharing of links over wide areas, where links contain variables
 whose values differ between link creator and link activator.
+
+*** Creation via Ace Window
+
+For the fastest link button creation, use the Emacs package
+'ace-window' (see "(hyperbole)Keyboard Drags" for setup).  Once this
+is configured, then {M-o w <window id>} may be used to quickly create
+an explicit link button in the selected window that links to any other
+window chosen via the Ace Window.
 
 *** Creation via Menu
 

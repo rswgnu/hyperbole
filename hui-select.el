@@ -481,7 +481,7 @@ does not have a `>' terminator character."
 
 ;;;###autoload
 (defun hui-select-and-copy-thing ()
-  "Copy the region surrounding the syntactical unit at point."
+  "Copy the region surrounding the syntactical unit at point to the kill ring."
   (interactive)
   (let ((bounds (hui-select-boundaries (point))))
     (when bounds

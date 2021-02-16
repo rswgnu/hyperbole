@@ -1,5 +1,21 @@
 2021-02-15  Bob Weiner  <rsw@gnu.org>
 
+* hmouse-drv.el (hkey-window-link, hkey-ace-window-setup): Added Ace Window 'w' command to
+    use hui:link-directly to instantly create a link between the selected window and one
+    chosen via Ace Window.
+  hui.el (hui:hbut-label): Added optional label PROMPT override.
+         (hui:link-directly): Used PROMPT parameter here.
+  hmouse-drv.el (hmouse-choose-windows): Simplified prompts.
+  hui.el (hui:link-directly): Added optional depress-window and release-window params so
+    can be called with non-Action Key window pairs.  Also, made interactive with mouse
+    key selection of button and referent windows.
+  man/hyperbole.texi (Keyboard Drags):
+  DEMO (Creation via Ace Window):
+  HY-NEWS: Added {M-o w} command.
+
+* hypb.el (hypb:def-to-buffer): Added for quick def copying and insertion in another buffer.
+    Can be bound and used in key series.
+
 * hbut.el (defil): Fixed improper call of regexp-quote when link-expr was not a string.
 
 * hib-social.el (git-commit-reference): Added flash of button label

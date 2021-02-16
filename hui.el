@@ -553,9 +553,10 @@ BUT defaults to the button whose label point is within."
       (let ((total (hbut:report but)))
 	(when total (hui:help-ebut-highlight))))))
 
-(defun hui:hbut-label (default-label func-name)
-  "Read button label from user using DEFAULT-LABEL and caller's FUNC-NAME."
-  (hargs:read "Button label: "
+(defun hui:hbut-label (default-label func-name &optional prompt)
+  "Read button label from user using DEFAULT-LABEL and caller's FUNC-NAME.
+Optional PROMPT string replaces the standard prompt of 'Button label: '."
+  (hargs:read (if (stringp prompt) prompt "Button label: ")
 	      (lambda (lbl)
 		(and (not (string-equal lbl "")) (<= (length lbl) (hbut:max-len))))
 	      default-label
@@ -686,16 +687,23 @@ Signal an error when no such button is found in the current buffer."
 		 (ibut:at-p))
 	(hui:ibut-message t)))))
 
-(defun hui:link-directly ()
-  "Create a Hyperbole link button at depress point, linked to release point.
+(defun hui:link (release-window)
+  "Given RELEASE-WINDOW, return a list of the selected window (where depressed) and the RELEASE-WINDOW."
+  (list (selected-window) release-window))
+
+(defun hui:link-directly (&optional depress-window release-window)
+  "Create a Hyperbole link button at Action Key depress point, linked to release point.
+With optional DEPRESS-WINDOW and RELEASE-WINDOW, use the points from those instead.
 See also documentation for `hui:link-possible-types'."
-  (let* ((link-types (hui:link-possible-types))
-	 (but-window action-key-depress-window)
-	 (num-types (length link-types))
-	 (release-window (selected-window))
-	 (but-modify nil)
-	 type-and-args lbl-key but-loc but-dir)
-    (select-window action-key-depress-window)
+  (interactive (hmouse-choose-windows #'hui:link))
+  (let ((but-window (or depress-window action-key-depress-window))
+	(referent-window (or release-window action-key-release-window (selected-window)))
+	(but-modify nil)
+	link-types num-types type-and-args lbl-key but-loc but-dir)
+    (select-window referent-window)
+    (setq link-types (hui:link-possible-types)
+	  num-types (length link-types))
+    (select-window but-window)
     (hui:buf-writable-err (current-buffer) "link-directly")
     (if (ebut:at-p)
 	(setq but-modify t
@@ -711,9 +719,11 @@ See also documentation for `hui:link-possible-types'."
 			    ((marker-position (hypb:mark-marker t))
 			     (hui:hbut-label-default
 			      (region-beginning) (region-end))))
-		      "link-directly"))))
-    (select-window release-window)
+		      "link-directly"
+		      "Create button named: "))))
+    (select-window referent-window)
 
+    ;; num-types is the number of possible link types to choose among
     (cond ((= num-types 0)
 	   (error "(link-directly): No possible link type to create"))
 	  ((= num-types 1)
@@ -1135,9 +1145,9 @@ button's source file name when the button data is stored externally."
 (defun hui:link-create (modify but-window lbl-key but-loc but-dir type-and-args)
   "Create or modify a new Hyperbole explicit link button.
 If MODIFY is non-nil, modify button at point in BUT-WINDOW,
-otherwise, prompt for button label and creates a button.
-LBL-KEY is internal form of button label.  BUT-LOC is file or buffer
-in which to create button.  BUT-DIR is directory of BUT-LOC.
+otherwise, prompt for button label and create a button.
+LBL-KEY is internal form of button label.  BUT-LOC is the file or buffer
+in which to create button.  BUT-DIR is the directory of BUT-LOC.
 TYPE-AND-ARGS is the action type for the button followed by any
 arguments it requires.  Any text properties are removed from string
 arguments."
@@ -1151,6 +1161,7 @@ arguments."
 
 (defun hui:link-possible-types ()
   "Return list of possible link action types during editing of a Hyperbole button.
+Point must be on the link referent, i.e. in the Action Key release buffer.
 Each list element is a list of the link type and any arguments it requires.
 
 The link types considered are fixed; this function must be changed to alter
