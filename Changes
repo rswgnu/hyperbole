@@ -1,3 +1,21 @@
+2021-02-20  Mats Lidell  <matsl@gnu.org>
+
+* test/hibtypes-tests.el (mail-address-at-p-test)
+  (mail-address-at-p-no-mail-should-fail-test, ibtypes::mail-address-test)
+  (ibtypes::pathname-test, ibtypes::pathname-lisp-variable-test)
+  (ibtypes::pathname-env-variable-test)
+  (ibtypes::pathname-emacs-lisp-file-test, ibtypes::annot-bib-test)
+  (ibtypes::ctags-vgrind-test, ibtypes::etags-test)
+  (ibtypes::text-toc-test, ibtypes::dir-summary-test, ibtypes::rfc-test)
+  (ibtypes::man-apropos-test, ibtypes::info-node-test): Tests for hibtypes.
+
+* test/hib-social-tests.el (hib-social-should-browse-twitter-url)
+  (hib-social-twitter-test, hib-social-should-browse-github-url)
+  (hib-github-user-default-test, hib-github-ignore-default-test): Test for
+    hib-social.
+
+* test/hy-test-dependencies.el: Load prerequisites for tests
+
 2021-02-15  Bob Weiner  <rsw@gnu.org>
 
 * hmouse-drv.el (hkey-window-link, hkey-ace-window-setup): Added Ace Window 'w' command to
