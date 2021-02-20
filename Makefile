@@ -387,8 +387,8 @@ LOAD_TEST_ERT_FILES=$(patsubst %,(load-file \"%\"),${TEST_ERT_FILES})
 
 test-ert:
 	@echo "# Tests: $(TEST_ERT_FILES)"
-	$(BATCH) --eval "(progn $(LOAD_TEST_ERT_FILES) (ert-run-tests-batch-and-exit))"
+	$(BATCH) --eval "(load-file \"test/hy-test-dependencies.el\")" --eval "(progn $(LOAD_TEST_ERT_FILES) (ert-run-tests-batch-and-exit))"
 
 test-all:
 	@echo "# Tests: $(TEST_ERT_FILES)"
-	$(INTERACTIVE) --eval "(progn $(LOAD_TEST_ERT_FILES) (ert-run-tests-interactively t))"
+	$(INTERACTIVE) --eval "(load-file \"test/hy-test-dependencies.el\")" --eval "(progn $(LOAD_TEST_ERT_FILES) (ert-run-tests-interactively t))"
