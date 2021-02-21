@@ -1,0 +1,27 @@
+;;; hy-test-dependencies.el --- Dependencies for running the tests  -*- lexical-binding: t; -*-
+
+;; Copyright (C) 2021  Mats Lidell
+
+;; Author: Mats Lidell <matsl@gnu.org>
+;;
+;; Orig-Date: 20-Feb-21 at 23:16:00
+;;
+;; Copyright (C) 2021  Free Software Foundation, Inc.
+;; See the "HY-COPY" file for license information.
+;;
+;; This file is part of GNU Hyperbole.
+
+;;; Commentary:
+;;
+;; Load prerequisites for running the tests.
+
+;;; Code:
+
+(package-initialize)
+(add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/"))
+(unless (package-installed-p 'el-mock)
+  (package-refresh-contents)
+  (package-install 'el-mock))
+
+(provide 'hy-test-dependencies)
+;;; hy-test-dependencies.el ends here

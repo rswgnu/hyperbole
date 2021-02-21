@@ -1,3 +1,21 @@
+2021-02-20  Mats Lidell  <matsl@gnu.org>
+
+* test/hibtypes-tests.el (mail-address-at-p-test)
+  (mail-address-at-p-no-mail-should-fail-test, ibtypes::mail-address-test)
+  (ibtypes::pathname-test, ibtypes::pathname-lisp-variable-test)
+  (ibtypes::pathname-env-variable-test)
+  (ibtypes::pathname-emacs-lisp-file-test, ibtypes::annot-bib-test)
+  (ibtypes::ctags-vgrind-test, ibtypes::etags-test)
+  (ibtypes::text-toc-test, ibtypes::dir-summary-test, ibtypes::rfc-test)
+  (ibtypes::man-apropos-test, ibtypes::info-node-test): Tests for hibtypes.
+
+* test/hib-social-tests.el (hib-social-should-browse-twitter-url)
+  (hib-social-twitter-test, hib-social-should-browse-github-url)
+  (hib-github-user-default-test, hib-github-ignore-default-test): Test for
+    hib-social.
+
+* test/hy-test-dependencies.el: Load prerequisites for tests
+
 2021-02-15  Bob Weiner  <rsw@gnu.org>
 
 * hmouse-drv.el (hkey-window-link, hkey-ace-window-setup): Added Ace Window 'w' command to
@@ -69,6 +87,35 @@
 2020-12-03  Bob Weiner  <rsw@gnu.org>
 
 * hibtypes.el (Info-node): Allowed for backslash double-quotes around node name, e.g. when in a doc string.
+2021-01-30  Mats Lidell  <matsl@gnu.org>
+
+* Makefile (test-ert, test-all): Add ert test targets
+
+* test/hib-kbd-tests.el (kbd-key-hy-about-test)
+    (kbd-key-hy-demo-factorial-test): Added.
+* test/hactypes-tests.el (display-boolean-true-test)
+    (display-boolean-false-test): Added.
+* test/hy-test-helpers.el (hy-test-helpers:consume-input-events)
+    (hy-test-helpers:should-last-message): Added helper functions.
+* test/demo-tests.el (demo-smart-mouse-keys-ref-test)
+    (demo-smart-mouse-keys-ebut-test, demo-table-of-contents-test)
+    (demo-smart-scrolling-proportional-test)
+    (demo-smart-scrolling-non-proportional-test, demo-action-key-help)
+    (demo-assist-key-help, demo-window-grid-22-test)
+    (demo-window-grid-33-test, demo-hy-rolo-test, demo-hy-info-test)
+    (demo-hy-history-test, demo-implicit-button-test)
+    (demo-implicit-button-action-button-action-type-invocation-test)
+    (demo-implicit-button-action-button-function-calls-test)
+    (demo-implicit-button-action-button-variable-display-test)
+    (demo-implicit-button-hash-link-test)
+    (demo-implicit-button-line-and-column-test)
+    (demo-org-hide-header-test, demo-manifest-test)
+    (demo-mail-compose-test, demo-social-twitter-test, demo-www-test)
+    (demo-github-user-default-test, demo-github-ignore-default-test)
+    (demo-occur-test, demo-annotated-reference-test)
+    (demo-man-appropos-test, demo-factorial-test)
+    (demo-factorial-ebutton-test): Test cases
+    (demo-should-browse-url): Test helper
 
 2020-11-22  Bob Weiner  <rsw@gnu.org>
 

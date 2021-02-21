@@ -1,0 +1,383 @@
+;;; demo-tests.el --- unit tests from examples in the DEMO         -*- lexical-binding: t; -*-
+
+;; Author: Mats Lidell <matsl@gnu.org>
+;;
+;; Orig-Date: 30-Jan-21 at 12:00:00
+;;
+;; Copyright (C) 2021  Free Software Foundation, Inc.
+;; See the "HY-COPY" file for license information.
+;;
+;; This file is part of GNU Hyperbole.
+
+;;; Commentary:
+
+;; Runs unit tests on some of the examples given in the DEMO file.
+
+;;; Code:
+
+(require 'ert)
+(require 'hib-kbd)
+(require 'hmouse-drv)
+(require 'hhist)
+(require 'hload-path)
+(require 'hypb)
+(require 'hib-social)
+(require 'eww)
+(require 'compile)
+
+(load (expand-file-name "hy-test-helpers"
+                        (file-name-directory (or load-file-name
+                                                 default-directory))))
+(declare-function hy-test-helpers:consume-input-events "hy-test-helpers")
+(declare-function hy-test-helpers:should-last-message "hy-test-helpers")
+(declare-function hyrolo-demo-quit "hyrolo-demo.el")
+(declare-function org-check-for-hidden "org-el")
+
+(ert-deftest demo-smart-mouse-keys-ref-test ()
+  (unwind-protect
+      (progn
+        (hypb:display-file-with-logo (expand-file-name "DEMO" hyperb:dir))
+        (goto-char (point-min))
+        (re-search-forward "#Smart Keys")
+        (action-key)
+        (should (bolp))
+        (should (looking-at "^\\* Smart")))
+    (kill-buffer "DEMO")))
+
+(ert-deftest demo-smart-mouse-keys-ebut-test ()
+  (unwind-protect
+      (progn
+        (hypb:display-file-with-logo (expand-file-name "DEMO" hyperb:dir))
+        (goto-char (point-min))
+        (re-search-forward "<(Smart")
+        (action-key)
+        (should (bolp))
+        (should (looking-at "^ +\\* Smart")))
+    (kill-buffer "DEMO")))
+
+(ert-deftest demo-table-of-contents-test ()
+  (unwind-protect
+      (progn
+        (hypb:display-file-with-logo (expand-file-name "DEMO" hyperb:dir))
+        (goto-char (point-min))
+        (re-search-forward " \* Koutl")
+        (action-key)
+        (should (bolp))
+        (should (looking-at "^* Koutliner")))
+    (kill-buffer "DEMO")))
+
+;; Smart scrolling
+(ert-deftest demo-smart-scrolling-proportional-test ()
+  (unwind-protect
+      (progn
+        (hypb:display-file-with-logo (expand-file-name "DEMO" hyperb:dir))
+        (goto-char (point-min))
+        (re-search-forward "Table of Contents")
+        (beginning-of-line)
+        (let ((smart-scroll-proportional t)
+              (pos (point)))
+          (end-of-line)
+          (action-key)
+          (beginning-of-line)
+          (should (= pos (window-start)))))
+    (kill-buffer "DEMO")))
+
+(ert-deftest demo-smart-scrolling-non-proportional-test ()
+  (unwind-protect
+      (progn
+        (hypb:display-file-with-logo (expand-file-name "DEMO" hyperb:dir))
+        (goto-char (point-min))
+        (re-search-forward "Table of Contents")
+        (let ((smart-scroll-proportional nil)
+              (pos (point)))
+          (action-key)
+          (should (< pos (point)))))
+    (kill-buffer "DEMO")))
+
+;; Hyperbole menus
+
+;; Help Buffer
+(ert-deftest demo-action-key-help ()
+  (let ((help-buffer "*Help: Hyperbole Action Key*"))
+    (if (get-buffer help-buffer)
+        (kill-buffer help-buffer))
+    (unwind-protect
+        (with-temp-buffer
+          (insert "Text")
+          (hkey-help)
+          (should (get-buffer help-buffer))
+      (kill-buffer help-buffer)))))
+
+(ert-deftest demo-assist-key-help ()
+  (let ((help-buffer "*Help: Hyperbole Assist Key*"))
+    (if (get-buffer help-buffer)
+        (kill-buffer help-buffer))
+    (unwind-protect
+        (with-temp-buffer
+          (insert "Text")
+          (hkey-help t)
+          (should (get-buffer help-buffer))
+      (kill-buffer help-buffer)))))
+
+;; Hy-control
+(ert-deftest demo-window-grid-22-test ()
+  (skip-unless (not noninteractive))
+  (unwind-protect
+      (progn
+        (hypb:display-file-with-logo (expand-file-name "DEMO" hyperb:dir))
+        (should (hact 'kbd-key "C-h h s f @ 22 RET Q"))
+        (hy-test-helpers:consume-input-events)
+        (should (eq 4 (length (window-list)))))
+    (kill-buffer "DEMO")))
+
+(ert-deftest demo-window-grid-33-test ()
+  (skip-unless (not noninteractive))
+  (unwind-protect
+      (progn
+        (hypb:display-file-with-logo (expand-file-name "DEMO" hyperb:dir))
+        (should (hact 'kbd-key "C-h h s f @ 33 RET Q"))
+        (hy-test-helpers:consume-input-events)
+        (should (eq 9 (length (window-list)))))
+    (kill-buffer "DEMO")))
+
+;; Hy-rolo
+(ert-deftest demo-hy-rolo-test ()
+  (skip-unless (not noninteractive))
+  (unwind-protect
+      (with-temp-buffer
+        (load (expand-file-name "hyrolo-demo.el" hyperb:dir))
+        (should (hact 'kbd-key "C-x 4 r work RET"))
+        (hy-test-helpers:consume-input-events)
+        (should (string= "*Hyperbole Rolo*" (buffer-name)))
+        (should (search-forward "Dunn, John")))
+    (hyrolo-demo-quit)))
+
+;; Info
+(ert-deftest demo-hy-info-test ()
+  (unwind-protect
+      (with-temp-buffer
+        (insert "\"(hyperbole)HyRolo Keys\"")
+        (goto-char 5)
+        (action-key)
+        (should (string= "*info*" (buffer-name))))
+    (kill-buffer "*info*")))
+
+;; History
+(ert-deftest demo-hy-history-test ()
+  (unwind-protect
+      (with-temp-buffer
+        (let ((tmp-buf-name (buffer-name))
+              (pm))
+          (hhist:init)
+          (insert "\"(hyperbole)HyRolo Keys\"")
+          (goto-char 5)
+          (setq pm (point-marker))
+          (action-key)
+          (should (string= "*info*" (buffer-name)))
+          (hhist:remove)
+          (should (string= tmp-buf-name (buffer-name)))
+          (should (equal pm (point-marker)))
+          ))
+    (kill-buffer "*info*")))
+
+;; Implicit Buttons
+(ert-deftest demo-implicit-button-test ()
+  (unwind-protect
+      (with-temp-buffer
+        (insert (format "\"%s\"" (expand-file-name "DEMO" hyperb:dir)))
+        (goto-char 2)
+        (action-key)
+        (should (string= "DEMO" (buffer-name))))
+    (kill-buffer "DEMO")))
+
+(ert-deftest demo-implicit-button-action-button-action-type-invocation-test ()
+  (unwind-protect
+      (with-temp-buffer
+        (insert "<link-to-file-line \"${hyperb:dir}/DEMO\" 5>")
+        (goto-char 5)
+        (action-key)
+        (should (string= "DEMO" (buffer-name)))
+        (should (looking-at "\s*Table of Contents")))
+    (kill-buffer "DEMO")))
+
+(ert-deftest demo-implicit-button-action-button-function-calls-test ()
+  (with-temp-buffer
+    (insert "<message \"%d\" (eval (+ 2 2))>")
+    (goto-char 2)
+    (action-key)
+    (hy-test-helpers:should-last-message "4")))
+
+(ert-deftest demo-implicit-button-action-button-variable-display-test ()
+  (with-temp-buffer
+    (insert "<fill-column>")
+    (goto-char 2)
+    (action-key)
+    (hy-test-helpers:should-last-message (format "fill-column = %d" (current-fill-column)))))
+
+(ert-deftest demo-implicit-button-hash-link-test ()
+  (unwind-protect
+      (with-temp-buffer
+        (insert (format "\"%s%s\"" (expand-file-name "README.md" hyperb:dir) "#why-was-hyperbole-developed"))
+        (goto-char 5)
+        (action-key)
+        (should (string= "README.md" (buffer-name)))
+        (should (looking-at "## Why was Hyperbole developed\\?")))
+    (kill-buffer "README.md")))
+
+(ert-deftest demo-implicit-button-line-and-column-test ()
+  (unwind-protect
+      (with-temp-buffer
+        (insert (format "\"%s%s\"" (expand-file-name "HY-ABOUT" hyperb:dir) ":5:46"))
+        (goto-char 5)
+        (action-key)
+        (should (string= "HY-ABOUT" (buffer-name)))
+        (should (looking-at "hyperbole/")))
+    (kill-buffer "HY-ABOUT")))
+
+;; org
+(ert-deftest demo-org-hide-header-test ()
+  "Should work with action-key but does not. Works with org modes hide function."
+  :expected-result :failed
+  (with-temp-buffer
+    (org-mode)
+    (insert "* 1\n** 2\n*** 3\n")
+    (goto-char 1)
+    (should (not (org-check-for-hidden 'headlines)))
+    (action-key)
+    ;;; (org-hide-entry)
+    (should (org-check-for-hidden 'headlines))
+    ))
+
+;; Manifest
+(ert-deftest demo-manifest-test ()
+  (unwind-protect
+      (progn
+        (find-file (expand-file-name "MANIFEST" hyperb:dir))
+        (forward-line 1)
+        (should (looking-at "COPYING"))
+        (action-key)
+        (should (string= "COPYING" (buffer-name)))
+        (should (looking-at ".*GNU GENERAL PUBLIC LICENSE")))
+    (progn
+      (kill-buffer "MANIFEST")
+      (kill-buffer "COPYING"))))
+
+;; Email compose
+(ert-deftest demo-mail-compose-test ()
+  (unwind-protect
+      (with-temp-buffer
+        (insert "receiver@mail.org")
+        (goto-char 2)
+        (action-key)
+        (should (string= "*mail*" (buffer-name))))
+    (kill-buffer "*mail*")))
+
+
+(defun demo-should-browse-twitter-url (url &optional new-window)
+  "Verify call with proper URL and optional NEW-WINDOW."
+  (should (equal url "https://twitter.com/search?q=@fsf"))
+  (should (equal new-window nil)))
+
+;; Social
+(ert-deftest demo-social-twitter-test ()
+  (with-temp-buffer
+    (insert "tw@fsf")
+    (goto-char 2)
+    (let ((browse-url-browser-function 'demo-should-browse-twitter-url))
+      (action-key))))
+
+
+(defun demo-should-browse-github-url (url &optional new-window)
+  "Verify call with proper URL and optional NEW-WINDOW."
+  (should (equal url "https://github.com/rswgnu/hyperbole"))
+  (should (equal new-window nil)))
+
+;; WWW
+(ert-deftest demo-www-test ()
+  (with-temp-buffer
+    (insert "https://github.com/rswgnu/hyperbole")
+    (goto-char 4)
+    (let ((browse-url-browser-function 'demo-should-browse-github-url)
+          (hibtypes-github-default-user "rswgnu"))
+      (action-key))))
+
+;; Github
+(ert-deftest demo-github-user-default-test ()
+  (with-temp-buffer
+    (insert "gh#/hyperbole")
+    (goto-char 4)
+    (let ((browse-url-browser-function 'demo-should-browse-github-url)
+          (hibtypes-github-default-user "rswgnu"))
+      (action-key))))
+
+(ert-deftest demo-github-ignore-default-test ()
+  (with-temp-buffer
+    (insert "gh#/rswgnu/hyperbole")
+    (goto-char 4)
+    (let ((browse-url-browser-function 'demo-should-browse-github-url)
+          (hibtypes-github-default-user "whatever"))
+      (action-key))))
+
+;; Occur
+(ert-deftest demo-occur-test ()
+  (skip-unless (not noninteractive))
+  (unwind-protect
+      (progn
+        (hypb:display-file-with-logo (expand-file-name "DEMO" hyperb:dir))
+        (should (hact 'kbd-key "C-h h f o Hyperbole RET"))
+        (hy-test-helpers:consume-input-events)
+        (set-buffer "*Occur*")
+        (should (looking-at "[0-9]+ matches in [0-9]+ lines for \"Hyperbole\" in buffer: DEMO")))
+    (progn
+      (kill-buffer "DEMO")
+      (kill-buffer "*Occur*"))))
+
+;; Annotated references
+(ert-deftest demo-annotated-reference-test ()
+  (unwind-protect
+      (progn
+        (hypb:display-file-with-logo (expand-file-name "DEMO" hyperb:dir))
+        (re-search-forward "\\[FSF 19\\]")
+        (backward-char 1)
+        (action-key)
+        (should (looking-at "\\[FSF 19\\] Free Software Foundation"))
+        (forward-line -2)
+        (should (looking-at "\\* References")))
+    (kill-buffer "DEMO")))
+
+;; Man appropos
+(ert-deftest demo-man-appropos-test ()
+  (unwind-protect
+      (with-temp-buffer
+        (insert "rm (1)   - remove")
+        (goto-char 4)
+        (action-key)
+        (sit-for 0.2)
+        (set-buffer "*Man 1 rm*")
+        (should (looking-at "RM\(1\)")))
+    (kill-buffer "*Man 1 rm*")))
+
+;; Explicit buttons
+(ert-deftest demo-factorial-test ()
+  (skip-unless (not noninteractive))
+  (unwind-protect
+      (progn
+        (hypb:display-file-with-logo (expand-file-name "DEMO" hyperb:dir))
+        (should (hact 'kbd-key "C-h h a factorial RET"))
+        (hy-test-helpers:consume-input-events)
+        (hy-test-helpers:should-last-message "Factorial of 5 = 120"))
+    (kill-buffer "DEMO")))
+
+(ert-deftest demo-factorial-ebutton-test ()
+  (skip-unless (not noninteractive))
+  (unwind-protect
+      (progn
+        (hypb:display-file-with-logo (expand-file-name "DEMO" hyperb:dir))
+        (re-search-forward "<(factorial)>")
+        (forward-char -5)
+        (action-key)
+        (hy-test-helpers:should-last-message "Factorial of 5 = 120"))
+    (kill-buffer "DEMO")))
+
+(provide 'demo-tests)
+;;; demo-tests.el ends here
