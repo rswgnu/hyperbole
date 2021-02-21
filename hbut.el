@@ -1828,10 +1828,8 @@ LINK-EXPR may be:
 
 Prior to button activation, for the first three kinds of
 LINK-EXPR, a `replace-match' is done on the expression to
-generate the button-specific referent to display.  Thus, either
-the whole button text (\\\\&) or any numbered grouping from
-TEXT-REGEXP, e.g. \\\\1, may be referenced in the LINK-EXPR to
-form the link referent.
+generate the button-specific referent to display, substituting
+\\\\1 in the LINK-EXPR for the text/label from the button.
 
 Here is a sample use case.  If you use Python and have a
 PYTHONPATH environment variable, then pressing \\[eval-last-sexp]

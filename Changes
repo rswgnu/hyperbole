@@ -1,3 +1,7 @@
+2021-02-18  Bob Weiner  <rsw@gnu.org>
+
+* hibtypes.el (grep-msg): Added UNIX shell error support.
+
 2021-02-15  Bob Weiner  <rsw@gnu.org>
 
 * hmouse-drv.el (hkey-window-link, hkey-ace-window-setup): Added Ace Window 'w' command to

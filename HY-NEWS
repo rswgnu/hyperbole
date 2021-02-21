@@ -61,7 +61,7 @@
      | C-c C-<                    | C-c C->                     |
 
    - Klink Copy: New commands that copy a relative or absolute reference
-     to a kcell (a klink) to the kill ring or to an Emacs singe-letter
+     to a kcell (a klink) to the kill ring or to an Emacs single-letter
      named register:
        kotl-mode:copy-absolute-klink-to-kill-ring
        kotl-mode:copy-relative-klink-to-kill-ring
@@ -124,6 +124,9 @@
 
     - Magit Mode: Action Key expands/collapses like {TAB} and Assist Key
       jumps to items like {RET}.  See "(hyperbole)Smart Key - Magit Mode".
+
+    - UNIX Shell Errors: Jump to associated source line from a shell error of the
+      form:  "<pathname>: line <num>: ".
 
   BUTTON TYPES
 
