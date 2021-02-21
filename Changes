@@ -1,3 +1,9 @@
+2021-02-21  Bob Weiner  <rsw@gnu.org>
+
+* hyperbole.el (hkey-define-key): Removed, had bug that did not use prefix
+    keymap properly; use hkey-global-set-key with a full key sequence instead.
+               (hkey-initialize): Replaced calls to above function.
+
 2021-02-20  Mats Lidell  <matsl@gnu.org>
 
 * test/hibtypes-tests.el (mail-address-at-p-test)

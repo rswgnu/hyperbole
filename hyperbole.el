@@ -5,7 +5,7 @@
 ;; Author:           Bob Weiner
 ;; Maintainer:       Bob Weiner <rsw@gnu.org>, Mats Lidell <matsl@gnu.org>
 ;; Created:          06-Oct-92 at 11:52:51
-;; Released:         15-Feb-21
+;; Released:         21-Feb-21
 ;; Version:          7.1.4 (pre-release)
 ;; Keywords:         comm, convenience, files, frames, hypermedia, languages, mail, matching, mouse, multimedia, outlines, tools, wp
 ;; Package:          hyperbole
@@ -186,12 +186,6 @@ Entry format is: (key-description key-sequence key-binding)."
   (mapcar (lambda (key) (hkey-binding-entry key))
 	  (hkey-bindings-keys hkey-previous-bindings)))
 
-(defun hkey-define-key (keymap key command &optional no-add)
-  "Same as `define-key' except saves prior binding for later restoration unless optional 4rd argument NO-ADD is given as a non-nil value."
-  (unless no-add
-    (add-to-list 'hkey-previous-bindings (hkey-binding-entry key)))
-  (define-key keymap key command))
-
 (defun hkey-global-set-key (key command &optional no-add)
   "Same as `global-set-key' except saves prior binding for later restoration unless optional 3rd argument NO-ADD is given as a non-nil value."
   (unless no-add
@@ -210,7 +204,7 @@ Entry format is: (key-description key-sequence key-binding)."
     ;; Typically bind the key, {C-h A}, for Action Key help and {C-u C-h A} for Assist key
     ;; help.
     (or (where-is-internal 'hkey-help)
-	(hkey-define-key help-map "A" 'hkey-help))
+	(hkey-global-set-key [help ?A] 'hkey-help))
     ;;
     ;; Setup so Hyperbole menus can be accessed from a key.  If not
     ;; already bound to a key, this typically binds the command `hyperbole' to {C-h h}.
@@ -218,7 +212,7 @@ Entry format is: (key-description key-sequence key-binding)."
 	;; In GNU Emacs, this binding replaces a command that shows
 	;; the word hello in foreign languages; this binding makes this
 	;; key much more useful.
-	(hkey-define-key help-map "h" 'hyperbole))
+	(hkey-global-set-key [help ?h] 'hyperbole))
     ;;
     ;; Provides a site standard way of emulating most Hyperbole mouse drag
     ;; commands from the keyboard.  This is most useful for rapidly creating
@@ -272,8 +266,7 @@ Entry format is: (key-description key-sequence key-binding)."
     ;;
     ;; Store Hyperbole key bindings so can turn them on and off.
     (setq hkey-bindings (hkey-get-bindings)
-	  hkey-bindings-flag t)
-    ))
+	  hkey-bindings-flag t)))
 
 (defun hkey-maybe-global-set-key (key command &optional no-add)
   "Globally set KEY to COMMAND if KEY is unbound and COMMAND is not on any global key.
