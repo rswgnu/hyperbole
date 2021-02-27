@@ -1,3 +1,7 @@
+2021-02-28  Mats Lidell  <mats.lidell@lidells.se>
+
+* (demo-man-appropos-test, ibtypes::man-apropos-test): Mock call to man.
+
 2021-02-21  Bob Weiner  <rsw@gnu.org>
 
 * hyperbole.el (hkey-define-key): Removed, had bug that did not use prefix

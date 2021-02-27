@@ -189,16 +189,12 @@
 
 ;; man-apropos
 (ert-deftest ibtypes::man-apropos-test ()
-  (unwind-protect
-      (with-temp-buffer
-        (insert "rm (1)   - remove")
-        (goto-char 4)
-        (ibtypes::man-apropos)
-        (sit-for 0.2)
-        (set-buffer "*Man 1 rm*")
-        (should (looking-at "RM\(1\)")))
-    (kill-buffer "*Man 1 rm*")))
-
+  (with-temp-buffer
+    (insert "rm (1)   - remove")
+    (goto-char 4)
+    (with-mock
+     (mock (man "rm(1)") => t)
+     (ibtypes::man-apropos))))
 
 ;; klink
 
