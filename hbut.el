@@ -1802,7 +1802,7 @@ commit changes."
 		   (hact ,link-expr button-text)
 		 (let ((referent (when (and button-text (stringp ,link-expr)
 					    (string-match ,text-regexp button-text))
-				   (replace-match ,link-expr nil nil button-text))))
+				   (replace-match ,link-expr t nil button-text))))
 		   (ibtype:activate-link referent))))))
        (put (intern (format "ibtypes::%s" ',type))
 	    'function-documentation
