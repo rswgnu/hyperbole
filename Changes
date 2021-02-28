@@ -1,3 +1,10 @@
+2021-02-28  Mats Lidell  <matsl@gnu.org>
+
+* hbut.el (defil): Let replace-match respect case
+
+* test/hbut-tests.el (hbut-defal, hbut-defil): Test for defal and defil
+    implicit button macros.
+
 2021-02-21  Bob Weiner  <rsw@gnu.org>
 
 * hyperbole.el (hkey-define-key): Removed, had bug that did not use prefix
