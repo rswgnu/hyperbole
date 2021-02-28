@@ -1,5 +1,8 @@
 2021-02-28  Mats Lidell  <mats.lidell@lidells.se>
 
+* test/hbut-tests.el (hbut-defal, hbut-defal-fails-on-file-missing)
+    (hbut-defil): Test for defal and defil implicit button macros.
+
 * (demo-man-appropos-test, ibtypes::man-apropos-test): Mock call to man.
 
 2021-02-21  Bob Weiner  <rsw@gnu.org>
