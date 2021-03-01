@@ -1,5 +1,9 @@
 2021-02-28  Mats Lidell  <matsl@gnu.org>
 
+* test/hpath-tests.el
+    (hpath:find-report-lisp-variable-path-name-when-not-exists): Verify
+    not found file name error message contains the expanded lisp variable. 
+
 * hbut.el (defil): Use FIXEDCASE is non-nil to not alter the case of the
     replacement text.
  
