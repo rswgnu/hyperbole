@@ -16,6 +16,7 @@
 ;;; Code:
 
 (require 'ert)
+(require 'cl-macs)
 
 (defun hy-test-helpers:consume-input-events ()
   "Use recusive-edit to consume the events kbd-key generate."
@@ -28,6 +29,15 @@
     (should (save-excursion
               (goto-char (point-max))
               (search-backward msg (- (point-max) 350))))))
+
+(defun hy-test-helpers:action-key-should-call-hpath:find (str)
+  "Call action-key and check that hpath:find was called with STR."
+  (let ((was-called nil))
+    (cl-letf (((symbol-function 'hpath:find)
+               (lambda (filename)
+                 (setq was-called (should (string= str filename))))))
+      (action-key)
+      (should was-called))))
 
 (provide 'hy-test-helpers)
 ;;; hy-test-helpers.el ends here
