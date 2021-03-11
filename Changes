@@ -10,11 +10,38 @@
    just below the source reference line so if not on a Hyperbole button,
    move back a line and check for a source line again.
 
+2021-03-06  Mats Lidell  <matsl@gnu.org>
+
+* test/hibtypes-tests.el (ibtypes::ctags-vgrind-test):
+    (ibtypes::etags-test): Updated since tags info changed
+
+* test/hbut-tests.el (hbut-defal-url, hbut-defal-key-sequence)
+    (hbut-defil-it, hbut-defil, hbut-defil-url, hbut-defil-key-sequence):
+    Added more tests for defal and defil.
+
+* test/hy-test-helpers.el
+    (hy-test-helpers:action-key-should-call-hpath:find): Add helper for
+    verifying hpath:find is called
+
 2021-02-28  Bob Weiner  <rsw@gnu.org>
 
 *  (hyrolo-grep-file): Disable magit-auto-revert-mode-enable-in-buffers
       for hyrolo buffers; not needed and can slow/hang file loading. Fixes
       issue reported by Gravitypost.
+
+2021-02-28  Mats Lidell  <matsl@gnu.org>
+
+* test/hpath-tests.el
+    (hpath:find-report-lisp-variable-path-name-when-not-exists): Verify
+    not found file name error message contains the expanded lisp variable.
+
+* hbut.el (defil): Use FIXEDCASE is non-nil to not alter the case of the
+    replacement text.
+
+* test/hbut-tests.el (hbut-defal, hbut-defal-fails-on-file-missing)
+    (hbut-defil): Test for defal and defil implicit button macros.
+
+* (demo-man-appropos-test, ibtypes::man-apropos-test): Mock call to man.
 
 2021-02-21  Bob Weiner  <rsw@gnu.org>
 

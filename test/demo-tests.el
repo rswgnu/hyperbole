@@ -24,6 +24,7 @@
 (require 'hib-social)
 (require 'eww)
 (require 'compile)
+(require 'el-mock)
 
 (load (expand-file-name "hy-test-helpers"
                         (file-name-directory (or load-file-name
@@ -347,15 +348,12 @@
 
 ;; Man appropos
 (ert-deftest demo-man-appropos-test ()
-  (unwind-protect
-      (with-temp-buffer
-        (insert "rm (1)   - remove")
-        (goto-char 4)
-        (action-key)
-        (sit-for 0.2)
-        (set-buffer "*Man 1 rm*")
-        (should (looking-at "RM\(1\)")))
-    (kill-buffer "*Man 1 rm*")))
+  (with-temp-buffer
+    (insert "rm (1)   - remove")
+    (goto-char 4)
+    (with-mock
+      (mock (man "rm(1)") => t)
+      (action-key))))
 
 ;; Explicit buttons
 (ert-deftest demo-factorial-test ()

@@ -118,7 +118,7 @@
 (ert-deftest ibtypes::ctags-vgrind-test ()
   (unwind-protect
       (with-temp-buffer
-        (insert "hy-test-helpers:consume-input-events hy-test-helpers.el 20\n")
+        (insert "hy-test-helpers:consume-input-events hy-test-helpers.el 21\n")
         (goto-char (point-min))
         (forward-char 4)
         (let ((default-directory (concat default-directory "test")))
@@ -133,7 +133,7 @@
       (with-temp-buffer
         (insert "\n")
         (insert "hy-test-helpers.el,103\n")
-        (insert "(defun hy-test-helpers:consume-input-events 20,359\n")
+        (insert "(defun hy-test-helpers:consume-input-events 21,359\n")
         (rename-buffer (concat "TAGS" (buffer-name)))
         (goto-char (point-min))
         (forward-line 2)
@@ -189,16 +189,12 @@
 
 ;; man-apropos
 (ert-deftest ibtypes::man-apropos-test ()
-  (unwind-protect
-      (with-temp-buffer
-        (insert "rm (1)   - remove")
-        (goto-char 4)
-        (ibtypes::man-apropos)
-        (sit-for 0.2)
-        (set-buffer "*Man 1 rm*")
-        (should (looking-at "RM\(1\)")))
-    (kill-buffer "*Man 1 rm*")))
-
+  (with-temp-buffer
+    (insert "rm (1)   - remove")
+    (goto-char 4)
+    (with-mock
+     (mock (man "rm(1)") => t)
+     (ibtypes::man-apropos))))
 
 ;; klink
 
