@@ -1039,7 +1039,11 @@ Return number of matching entries found."
   ;; Save regexp as last rolo search expression.
   (setq hyrolo-match-regexp regexp)
   ;;
-  (let ((new-buf-p) (actual-buf))
+  (let ((new-buf-p) (actual-buf)
+	;; Disable magit-auto-revert-mode-enable-in-buffers for hyrolo
+	;; buffers; not needed and can slow/hang file loading
+	(after-change-major-mode-hook
+	 (delq 'magit-auto-revert-mode-enable-in-buffers after-change-major-mode-hook)))
     (if (and (or (null max-matches) (eq max-matches t) (integerp max-matches))
 	     (or (setq actual-buf (hyrolo-buffer-exists-p hyrolo-file-or-buf))
 		 (if (file-exists-p hyrolo-file-or-buf)
