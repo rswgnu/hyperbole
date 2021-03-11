@@ -16,7 +16,7 @@
 ;;; Other required Elisp libraries
 ;;; ************************************************************************
 
-(eval-and-compile (mapc #'require '(hversion hact locate)))
+(eval-and-compile (mapc #'require '(compile hversion hact locate)))
 
 ;;; ************************************************************************
 ;;; Public variables
@@ -245,8 +245,21 @@ Global keymap is used unless optional KEYMAP is given."
     (error msg)))
 
 (defun hypb:fgrep-git-log (string)
-  "Asynchronously list git log entries whose changesets include `string'."
-  (compile (format "git log -S'%s' --line-prefix='commit ' --oneline" string)))
+  "Asynchronously list git log entries whose changesets include `string' for selection and display.
+The current commit entry may be displayed with a press of RET, the Action Key or the Assist Key."
+  (compile (format "git log -S'%s' --line-prefix='commit ' --oneline" string)
+	   #'hypb:fgrep-git-log-mode))
+
+(defun hypb:fgrep-git-log-activate (ignore1 &optional ignore2)
+  "Display git commit for the current line when `compile-goto-error' {RET} is used.
+Does not support use of next and previous error; simply displays the current one."
+  (interactive '(nil))
+  (hkey-either nil))
+
+(define-derived-mode hypb:fgrep-git-log-mode compilation-mode "Fgrep-Git-Log"
+  "Major mode (derived from `compilation-mode' for listing a matching set of git commits for selection and display.
+Turning on Fgrep-Git-Log mode runs the normal hook `compilation-mode-hook'."
+  (setq-local next-error-function #'hypb:fgrep-git-log-activate))
 
 (defun hypb:file-major-mode (file)
   "Return the major mode used by FILE.

@@ -55,11 +55,6 @@
 (defun assist-key-error ()
   (hypb:error "(Hyperbole Assist Key): No action defined for this context; try another location"))
 
-(defcustom smart-magit-listing-modes '(magit-blame-mode magit-log-mode)
-  "*List of major modes for which the Action Key should run RET instead of TAB."
-  :type '(group 'function)
-  :group 'hyperbole)
-
 (defcustom action-key-default-function #'action-key-error
   "*Function run by the Action Key in an unspecified context.
 Set it to #'hyperbole if you want it to display the Hyperbole minibuffer menu."
@@ -1274,20 +1269,17 @@ selected buffer.
 If key is pressed:
  (1) on the last line, quit from the magit mode (\"q\" key binding);
  (2) at the end of a line, scroll up a windowful;
- (3) on a line within a `smart-magit-listing-modes' buffer, jump to
-     the thing at point (\"RET\" key binding).
- (4) anywhere else, hide/show the thing at point (\"TAB\" key binding)."
+ (3) anywhere else, hide/show the thing at point (\"TAB\" key binding)
+     unless that does nothing in the mode, then jump to the thing at
+     point (\"RET\" key binding)."
   (interactive)
   (cond ((last-line-p)
 	 (call-interactively (key-binding "q")))
 	((eolp)
 	 (smart-scroll-up))
-	((memq major-mode smart-magit-listing-modes)
-	 (setq current-prefix-arg 1)
-	 (let ((magit-display-file-buffer-function #'hpath:display-buffer))
-	   (call-interactively (key-binding "\r"))))
 	(t
-	 (call-interactively (key-binding "\t")))))
+	 (let ((magit-display-file-buffer-function #'hpath:display-buffer))
+	   (call-interactively #'smart-magit-tab)))))
 
 (defun smart-magit-assist ()
   "Use an assist key or mouse key to jump to source and to hide/show changes.
@@ -1307,9 +1299,29 @@ If assist-key is pressed:
 	((eolp)
 	 (smart-scroll-down))
 	(t
-	 (setq current-prefix-arg 1)
-	 (let ((magit-display-file-buffer-function #'hpath:display-buffer))
+	 (let ((magit-display-file-buffer-function #'hpath:display-buffer)
+	       (current-prefix-arg))
 	   (call-interactively (key-binding "\r"))))))
+
+;; Thanks to Jonas Bernoulli <tarsius>, magit author, for this code.
+(defun smart-magit-tab (section)
+  ;; Usage: (define-key magit-section-mode-map "TAB" 'smart-magit-tab
+  "Toggle visibility of the body of the current section."
+  (interactive (list (magit-current-section)))
+  (cond ((eq section magit-root-section)
+         (user-error "Cannot hide root section"))
+        ((or (oref section content)
+             (oref section washer))
+         (goto-char (oref section start))
+         (if (oref section hidden)
+             (magit-section-show section)
+           (magit-section-hide section)))
+        (t
+	 (if-let ((command (key-binding (kbd "RET"))))
+             (progn (setq last-command-event ?\()
+                    (setq this-command command)
+                    (call-interactively command))
+           (user-error "Nothing to visit either")))))
 
 ;;; ************************************************************************
 ;;; smart-man functions
