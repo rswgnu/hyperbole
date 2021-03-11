@@ -518,45 +518,6 @@ To disable ALL Hyperbole support within Org major and minor modes, set the
 custom option `inhibit-hsys-org' to t.  Then the Action Key will simply
 invoke the Org mode standard binding of {M-RET}, (org-meta-return).
 
-** Action Buttons
-
-A new feature of Hyperbole is a universal syntax for creating implicit
-buttons known as Action Buttons.  These buttons bexecute any existing
-action types or Emacs Lisp functions.  They are delimited by angle
-brackets, < >, and come in three types:
-
-  1. action type invocations - these begin with an action type name (from the
-     list displayed by {C-h h d t a RET}) and are followed by any needed
-     arguments to form the action, e.g.
-
-          <link-to-file-line "${hyperb:dir}/hact.el" 41>
-
-  2. function calls - these are similar to action type invocations but begin
-     with an Elisp function name rather than an action type name.  They can
-     contain any number of levels of embedded Lisp s-expressions, e.g.
-
-          <find-file-other-window (expand-file-name "EXAMPLE.kotl" hyperb:dir)>
-
-  3. variable displays - these consist of just an Elisp variable name and
-     display a message with the variable name and value, e.g.
-
-          <fill-column>
-
-     If there is a function binding with the same name as the variable you
-     wish to display, to prevent interpretation as a function call action
-     button, precede the name with a '$', e.g.
-
-          <$hbut:max-len>
-
-An Action Button is recognized only if the first name within the angle
-brackets is an existing action type or Emacs Lisp symbol.  Otherwise, other
-implicit button types will be tested and may activate instead.
-
-With Action Buttons you need not remember any special syntax for each type of
-implicit button.  You can freely embed them in any type of text and use the
-Action and Assist keys on them as you do with any other type of implicit
-button.
-
 ** Implicit Path Links
 
 Any existing absolute or relative pathname (whether doubly quoted or not)
@@ -778,6 +739,106 @@ major modes listed in the variable, mail-address-mode-list.  Try composing a
 message to <hyperbole-users@gnu.org> and tell us what you think of Hyperbole.
 Even better, a press of or on {C-h h m c} composes mail to the list that
 includes your system information.
+
+** Action Buttons
+
+*** Using Action Buttons
+
+A new feature of Hyperbole is a universal syntax for creating implicit
+buttons known as Action Buttons.  These buttons execute any existing
+action types or Emacs Lisp functions.  They are delimited by angle
+brackets, < >, and come in three types:
+
+  1. action type invocations - these begin with an action type name (from the
+     list displayed by {C-h h d t a RET}) and are followed by any needed
+     arguments to form the action, e.g.
+
+          <link-to-file-line "${hyperb:dir}/hact.el" 41>
+
+  2. function calls - these are similar to action type invocations but begin
+     with an Elisp function name rather than an action type name.  They may
+     contain any number of levels of embedded Lisp s-expressions, e.g.
+
+          <find-file-other-window (expand-file-name "EXAMPLE.kotl" hyperb:dir)>
+
+  3. variable displays - these consist of an Elisp variable name only and
+     display a message with the variable name and value, e.g.
+
+          <fill-column>
+
+     If there is a function binding with the same name as the variable you
+     wish to display, to prevent interpretation as a function call action
+     button, precede the name with a '$', e.g.
+
+          <$hbut:max-len>
+
+An Action Button is recognized only if the first name within the angle
+brackets is an existing action type or Emacs Lisp symbol.  Otherwise, other
+implicit button types will be tested and may activate instead.
+
+With Action Buttons you need not remember any special syntax for each type of
+implicit button.  You can freely embed them in any type of text and use the
+Action and Assist keys on them as you do with any other type of implicit
+button.
+
+*** Defining New Action Button Types
+
+You can do a huge number of things with existing Action Button types
+but sometimes you may want to define your own types for more advanced
+usage.  Hyperbole let's you easily create your own Action Button link
+types without knowing Elisp, if you understand Emacs regular
+expressions (see "(elisp)Regular Expressions").
+
+In your Emacs initialization file, e.g. ~/.emacs, you will add a line of
+the form:
+
+    (defal TYPE LINK-EXPR &optional DOC)
+
+where:
+
+    TYPE is the name of the new type you want to create;
+    LINK-EXPR is a regular expression containing a \\1 grouping
+      replacement string into which Hyperbole will substitute
+      the button text following the TYPE from each button activated of
+      this type; alternatively, LINK-EXPR may be the name of a function
+      of one argument, the button text sans the function name;
+    Hyperbole automatically creates a doc string for the type but you can
+    override this by providing an optional DOC string.
+
+When a button of this new type is activated, the button text following
+the type is substituted into LINK-EXPR.  After which, the button is
+activated as one of these 4 kinds:
+    (1) a brace-delimited key series;
+    (2) a URL/web link;
+    (3) a path (possibly with trailing colon-separated line and column numbers);
+    (4) or a function of one argument, the button text sans the function name.
+
+Let's try an example.  If you use Python and have a PYTHONPATH
+environment variable, then pressing {C-x C-e} after this expression:
+
+   (defal pylib "${PYTHONPATH}/\\1")
+
+defines a new action button link type called 'pylib’ whose buttons
+take the form of:
+
+   <pylib PYTHON-LIBRARY-NAME>
+
+and display the associated Python libraries (typically Python source
+files).  Optional colon separated line and column numbers may be given
+as well.
+
+Now press the Action Key press within:
+
+   <pylib string.py:5:7>
+
+This will display the source for "string.py" (wherever it is installed
+on your system) from the Python standard library with point on the
+fifth line at the seventh character.
+
+For more advanced and flexible regular expression-based link type
+creation, see the 'defil' expression in "(hyperbole)Implicit Button
+Link Types".  For any type of implicit button type creation using
+ELisp, see 'defib' in "(hyperbole)Programmatic Implicit Button Types".
 
 ** Social Media Hashtags and Usernames
 

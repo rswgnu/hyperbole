@@ -69,7 +69,6 @@ Button should hold the following attributes (see `hattr:set'):
    args    (list of arguments for action, if action takes a single
             argument of the button lbl-key, args may be nil).
 
-
 If successful, return any instance number to append to button label
 except when instance number would be 1, then return t.  On failure,
 return nil.
@@ -1752,14 +1751,15 @@ for the type but you can override this by providing an optional
 DOC string.
 
 TEXT-REGEXP must match to the text found between a button's delimiters
-in order for this type to activate.  The matched text is then applied
+in order for this type to activate.  The matched text is applied
 to LINK-EXPR to produce the link's referent, which is then displayed.
 
 LINK-EXPR may be:
   (1) a brace-delimited key series;
   (2) a URL;
   (3) a path (possibly with trailing colon-separated line and column numbers);
-  (4) or a function of one argument, the button text.
+  (4) or a function of one argument, the button text (sans the function name if
+      an Action Button), to display it.
 
 Prior to button activation, for the first three kinds of
 LINK-EXPR, a `replace-match' is done on the expression to
@@ -1798,8 +1798,15 @@ commit changes."
 	   (interactive)
 	   (let ((button-text (hargs:delimited ,start-delim ,end-delim ,start-regexp-flag ,end-regexp-flag)))
 	     (when button-text
-	       (if (or (functionp ,link-expr) (subrp ,link-expr))
-		   (hact ,link-expr button-text)
+	       (if (or (functionp ,link-expr) (subrp ,link-expr)
+		       (and (stringp ,link-expr)
+			    (intern-soft (concat "actypes::" ,link-expr))))
+		   (if (and (equal ,start-delim "<") (equal ,end-delim ">"))
+		       ;; Is an Action Button; send only the non-space
+		       ;; text after the action to link-expr.
+		       (hact ,link-expr (progn (string-match "\\s-+" button-text)
+					       (substring button-text (match-end 0))))
+		     (hact ,link-expr button-text))
 		 (let ((referent (when (and button-text (stringp ,link-expr)
 					    (string-match ,text-regexp button-text))
 				   (replace-match ,link-expr nil nil button-text))))
@@ -1815,6 +1822,12 @@ commit changes."
 			"  which display links with:\n    "
 			(if (stringp ,link-expr) (regexp-quote ,link-expr) ,link-expr)))))))
 
+;; Support edebug-defun for interactive debugging of ibtypes
+(def-edebug-spec defil
+  (&define name stringp stringp stringp [&or stringp lambda-list]
+           [&optional arg arg stringp]   ; Match the doc string, if present.
+           def-body))
+
 (defmacro defal (type link-expr &optional doc)
   "Create Hyperbole action button link TYPE (an unquoted symbol) whose buttons look like: <TYPE link-text> where link-text is substituted into LINK-EXPR as grouping 1 (\\\\1).
 Hyperbole automatically creates a doc string for the type but you can
@@ -1824,16 +1837,20 @@ LINK-EXPR may be:
   (1) a brace-delimited key series;
   (2) a URL;
   (3) a path (possibly with trailing colon-separated line and column numbers);
-  (4) or a function of one argument, the button text.
+  (4) or a function of one argument, the button text sans the function name.
 
 Prior to button activation, for the first three kinds of
 LINK-EXPR, a `replace-match' is done on the expression to
 generate the button-specific referent to display, substituting
 \\\\1 in the LINK-EXPR for the text/label from the button.
 
+For the fourth kind, LINK-EXPR is a function of one argument which is
+either the full button text or in the case of an Action Button, the
+text following the function name at the start of the button.
+
 Here is a sample use case.  If you use Python and have a
-PYTHONPATH environment variable, then pressing \\[eval-last-sexp]
-after this expression:
+PYTHONPATH environment variable setup, then pressing
+\\[eval-last-sexp] after this expression:
 
    (defal pylib \"${PYTHONPATH}/\\\\1\")
 
@@ -1860,6 +1877,11 @@ use `defib'."
   (when type
     `(defil ,type "<" ">" (format "%s\\s-+\"?\\([^\t\n\r\f'`\"]+\\)\"?" ',type)
        ,link-expr nil nil ,doc)))
+
+;; Support edebug-defun for interactive debugging of defal
+(def-edebug-spec defal
+  (&define name [&or stringp lambda-list]
+           [&optional stringp]))   ; Match the doc string, if present.
 
 (defalias 'ibtype:create-action-link-type 'defal)
 (defalias 'ibtype:create-regexp-link-type 'defil)

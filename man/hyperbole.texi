@@ -155,7 +155,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</P>
 
 <PRE>
 Edition 7.1.4
-Printed February 15, 2021.
+Printed March 11, 2021.
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -197,7 +197,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 @example
 Edition 7.1.4
-February 15, 2021
+March 11, 2021
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -6004,7 +6004,7 @@ button is activated and does one of four things with LINK-EXPR:
 @item executes it as a brace-delimited key series;
 @item displays it in a web browser as a URL;
 @item displays it as a path (possibly with trailing colon-separated line and column numbers);
-@item invokes a function of one argument, the button text, to display it.
+@item invokes a function of one argument, the button text sans the function name, to display it.
 @end enumerate
 
 For example, if you use Python and have a @samp{PYTHONPATH} environment
@@ -6070,7 +6070,7 @@ button is activated and does one of four things with LINK-EXPR:
 @item executes it as a brace-delimited key series;
 @item displays it in a web browser as a URL;
 @item displays it as a path (possibly with trailing colon-separated line and column numbers);
-@item invokes a function of one argument, the button text, to display it.
+@item invokes a function of one argument, the button text (sans the function name if an Action Button), to display it.
 @end enumerate
 
 Prior to activation, for the first three kinds of LINK-EXPR, a
@@ -9723,16 +9723,15 @@ If pressed within a Gomoku game buffer:
 @subsection Smart Key - Magit Mode
 @cindex git
 @cindex magit
-@vindex smart-magit-listing-modes
 @format
 @group
 If pressed within a Magit buffer and not on a button:
   ACTION KEY
      (1) on the last line, quit from the magit mode (@bkbd{q} key binding);
      (2) at the end of a line, scroll up a windowful;
-     (3) on a line within a @code{smart-magit-listing-modes} buffer, jump
-         to the thing at point (@bkbd{@key{RET}} key binding); 
-     (4) anywhere else, hide/show the thing at point (@bkbd{@key{TAB}} key binding).
+     (3) anywhere else, hide/show the thing at point (@bkbd{@key{TAB}} key binding)
+         unless that does nothing in the mode, then jump to the thing at point
+         (@bkbd{@key{RET}} key binding).
   ASSIST KEY
      (1) on the last line, quit from the magit mode (@bkbd{q} key binding);
      (2) at the end of a line, scroll down a windowful;

@@ -851,6 +851,8 @@ in grep and shell buffers."
              ;; BSO/Tasking 68HC08 C compiler errors
              (looking-at
               "[a-zA-Z 0-9]+: \\([^ \t\n\r\",]+\\) line \\([0-9]+\\)[ \t]*:")
+             ;; UNIX Shell errors
+             (looking-at "\\([^:]+\\): line \\([0-9]+\\): ")
              ;; UNIX Lint errors
              (looking-at "[^:]+: \\([^ \t\n\r:]+\\): line \\([0-9]+\\):")
              ;; SparcWorks C compiler errors (ends with :)
@@ -968,7 +970,15 @@ This works with JavaScript and Python tracebacks, gdb, dbx, and xdb.  Such lines
              (but-label (concat file ":" line-num)))
         (setq line-num (string-to-number line-num))
         (ibut:label-set but-label)
-        (hact 'link-to-file-line file line-num))))))
+        (hact 'link-to-file-line file line-num)))
+
+     ((not (boundp 'debugger-source-prior-line))
+      ;; In Python tracebacks, may be on a line just below the source
+      ;; reference line so if not on a Hyperbole button, move back a
+      ;; line and check for a source line again.
+      (let ((debugger-source-prior-line t))
+	(unless (or (hbut:at-p)	(/= (forward-line -1) 0))
+	  (ibtypes::debugger-source)))))))
 
 ;;; ========================================================================
 ;;; Displays files at specific lines and optional column number
@@ -1193,6 +1203,7 @@ Activates only if point is within the first line of the Info-node name."
                                ;; these are special quote marks, not the
                                ;; standard ASCII characters.
                                (hbut:label-p t "‘" "’" t t)
+                               (hbut:label-p t "‘" "’" t t)
                                ;; Regular dual single quotes (Texinfo smart quotes)
                                (hbut:label-p t "``" "''" t t)
                                ;; Regular open and close quotes
@@ -1260,7 +1271,7 @@ original DEMO file."
   "Regexp matching the end of a Hyperbole Emacs Lisp expression to evaluate.")
 
 (defib action ()
-  "At point, activate any of: an Elisp variable, a Hyperbole action-type, or an Elisp function call surrounded by <> rather than ().
+  "The Action Button type: At point, activate any of: an Elisp variable, a Hyperbole action-type, or an Elisp function call surrounded by <> rather than ().
 If an Elisp variable, display a message showing its value.
 
 There may not be any <> characters within the expression.  The

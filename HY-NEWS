@@ -12,7 +12,8 @@
      type name and a single simple regular expression, allowing
      non-programmers to create their own implicit action button types
      that execute key series, display URLs or display the contents of
-     pathnames.  See "(hyperbole)Action Button Link Types".
+     pathnames.  See "(hyperbole)Action Button Link Types" or the
+     "DEMO#Defining New Action Button Types" section.
 
    - Easy Implicit Link Button Type Creation: `defil' is a new,
      easy-to-use macro for those familiar with regular expressions but
@@ -82,6 +83,10 @@
 
     - Org Mode: Lowered to near bottom implicit button priority so that all
       implicit button types will work in Org mode.
+
+    - Debugger Source: In Python tracebacks, may be on a line just below the
+      source reference line so if not on a Hyperbole button, move back a line
+      before checking.
 
     - Pathname Implicit Buttons: Variable substitutions are now made with
       fixed case, so that the case of a value with both upper and lower

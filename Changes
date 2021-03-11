@@ -1,4 +1,37 @@
+2021-03-11  Bob Weiner  <rsw@gnu.org>
+
+* hbut.el (defil, defal): If LINK-EXPR is a function and the button is
+    an Action Button, then the function receives just the text following
+    the action function name.
+
+2021-03-07  Bob Weiner  <rsw@gnu.org>
+
+* hibtypes.el (debugger-source): In Python tracebacks, may be on a line
+   just below the source reference line so if not on a Hyperbole button,
+   move back a line and check for a source line again.
+
+2021-02-28  Bob Weiner  <rsw@gnu.org>
+
+*  (hyrolo-grep-file): Disable magit-auto-revert-mode-enable-in-buffers
+      for hyrolo buffers; not needed and can slow/hang file loading. Fixes
+      issue reported by Gravitypost.
+
 2021-02-21  Bob Weiner  <rsw@gnu.org>
+
+* hui-mouse.el (smart-magit-tab): Do what TAB does unless TAB does nothing
+    in the current mode, then do what RET does.
+               (smart-magit-listing-modes): Removed, no longer needed.
+	       (smart-magit-assist): Fixed RET invocation to not prompt.
+
+* hib-social.el (git-commit-reference): Relaxed matching to match to
+    commit <commit-number> wherever surrounded by whitespace.
+
+* hypb.el (hypb:fgrep-git-log-activate, hypb:fgrep-git-log-mode):
+          (hypb:fgrep-git-log): Improved to use its own major mode, allowing
+    for RET to use the Action Key (previously RET did not work).
+
+* DEMO (Action Buttons): Moved to after pathname implicit buttons and added
+    Defining New Action Button Types subsection.
 
 * hyperbole.el (hkey-define-key): Removed, had bug that did not use prefix
     keymap properly; use hkey-global-set-key with a full key sequence instead.
