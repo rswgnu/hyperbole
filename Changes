@@ -1,3 +1,10 @@
+2021-03-12  Mats Lidell  <matsl@gnu.org>
+
+* test/hbut-tests.el (hbut-verify-defal, hbut-defal-function): Test defal
+    with function.
+    (hbut-ib-link-to-file-with-label, hbut-ib-url-with-label): Test for
+    implicit buttons with labels.
+
 2021-03-11  Bob Weiner  <rsw@gnu.org>
 
 * hbut.el (defil, defal): If LINK-EXPR is a function and the button is
