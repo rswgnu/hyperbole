@@ -63,27 +63,21 @@
         (should (looking-at "emacs-version")))
     (ibtype:delete 'ibtypes::defal-key)))
 
+(defun hbut-verify-defal (x)
+  "Verify function i called with X set to the string `test'."
+  (should (string= x "test")))
 
-;; This test seems to break the ert tests when rerun in the same emacs
-;; process so commenting out for now. As defined now it is an expected
-;; failure anyway.
-;;
-;; (defun hbut-verify-defal (x)
-;;   "Verify function i called with X set to the string `test'."
-;;   (should (string= x "test")))
-;;
-;; (ert-deftest hbut-defal-function ()
-;;   "defal call function should only supply the argument portion of
-;; the button text?"
-;;   :expected-result :failed
-;;   (defal defal-func 'hbut-verify-defal)
-;;   (unwind-protect
-;;       (with-temp-buffer
-;;         (insert "<defal-func test>")
-;;         (goto-char 4)
-;;         (action-key)))
-;;     (progn
-;;       (ibtype:delete 'ibtypes::defal-func)))
+(ert-deftest hbut-defal-function ()
+  "defal call function should only supply the argument portion of
+the button text"
+  (defal defal-func 'hbut-verify-defal)
+  (unwind-protect
+      (with-temp-buffer
+        (insert "<defal-func test>")
+        (goto-char 4)
+        (action-key)))
+    (progn
+      (ibtype:delete 'ibtypes::defal-func)))
   
 (ert-deftest hbut-defal-fails-on-file-missing ()
   (defal defal-path-missing "${hyperb:dir}/\\1")
