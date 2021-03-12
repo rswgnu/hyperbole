@@ -138,5 +138,21 @@ the button text"
         (should (looking-at "emacs-version")))
     (ibtype:delete 'ibtypes::defil-key)))
 
+;; Labels
+(ert-deftest hbut-ib-link-to-file-with-label ()
+  (with-temp-buffer
+    (insert "<[emacs]>: \"${hyperb:dir}/DEMO\"")
+    (goto-char 4)
+    (hy-test-helpers:action-key-should-call-hpath:find (concat hyperb:dir "DEMO"))))
+
+(ert-deftest hbut-ib-url-with-label ()
+  "Should find link but failes with (user-error \"No link found\")"
+  :expected-result :failed
+  (with-temp-buffer
+    (insert "<[PR34]>: \"https://github.com/rswgnu/hyperbole/pull/34\"")
+    (goto-char 4)
+    (let ((browse-url-browser-function 'hbut-defal-url))
+      (action-key))))
+
 (provide 'hbut-tests)
 ;;; hbut-tests.el ends here
