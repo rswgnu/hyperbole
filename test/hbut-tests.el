@@ -145,6 +145,14 @@ the button text"
     (goto-char 4)
     (hy-test-helpers:action-key-should-call-hpath:find (concat hyperb:dir "DEMO"))))
 
+(ert-deftest hbut-ib-link-to-file-with-label-variants ()
+  (cl-loop for ch in '(?: ?- ?=) do
+           (cl-loop for n from 0 to 3 do
+                    (with-temp-buffer
+                      (insert "<[demo]>" (make-string n ch) " \"${hyperb:dir}/DEMO\"")
+                      (goto-char 4)
+                      (hy-test-helpers:action-key-should-call-hpath:find (concat hyperb:dir "DEMO"))))))
+
 (ert-deftest hbut-ib-url-with-label ()
   "Should find link but fails with (user-error \"No link found\")"
   :expected-result :failed

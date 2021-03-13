@@ -1,5 +1,8 @@
 2021-03-14  Mats Lidell  <matsl@gnu.org>
 
+* test/hbut-tests.el (hbut-ib-link-to-file-with-label-variants): Test
+    variants of label separation chars and lengths
+
 * test/hy-test-dependencies.el (package-installed-p): Add
     with-simulated-input
 
