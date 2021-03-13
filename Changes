@@ -2,6 +2,9 @@
 
 * test/hbut-tests.el (hbut-ib-link-to-file-with-label-variants): Test
     variants of label separation chars and lengths
+    (hbut-ib-create-label): Test creation of label
+    (hbut-ib-create-label-fails-if-label-exists): Check creation fails
+    when label exists
 
 * test/hy-test-dependencies.el (package-installed-p): Add
     with-simulated-input
