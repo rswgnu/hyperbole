@@ -1,3 +1,8 @@
+2021-03-14  Mats Lidell  <matsl@gnu.org>
+
+* test/hy-test-dependencies.el (package-installed-p): Add
+    with-simulated-input
+
 2021-03-12  Mats Lidell  <matsl@gnu.org>
 
 * test/hbut-tests.el (hbut-verify-defal, hbut-defal-function): Test defal
