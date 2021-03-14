@@ -145,6 +145,14 @@ the button text"
     (goto-char 4)
     (hy-test-helpers:action-key-should-call-hpath:find (concat hyperb:dir "DEMO"))))
 
+(ert-deftest hbut-ib-link-to-file-with-label-variants ()
+  (cl-loop for ch in '(?: ?- ?=) do
+           (cl-loop for n from 0 to 3 do
+                    (with-temp-buffer
+                      (insert "<[demo]>" (make-string n ch) " \"${hyperb:dir}/DEMO\"")
+                      (goto-char 4)
+                      (hy-test-helpers:action-key-should-call-hpath:find (concat hyperb:dir "DEMO"))))))
+
 (ert-deftest hbut-ib-url-with-label ()
   "Should find link but fails with (user-error \"No link found\")"
   :expected-result :failed
@@ -153,6 +161,28 @@ the button text"
     (goto-char 4)
     (let ((browse-url-browser-function 'hbut-defal-url))
       (action-key))))
+
+(ert-deftest hbut-ib-create-label ()
+  "Create a label for an implicit button"
+  (with-temp-buffer
+    (insert "\"/tmp\"\n")
+    (goto-char 3)
+    (with-simulated-input "TMP RET"
+      (hui:ibut-label-create)
+      (should (string= "<[TMP]> \"/tmp\"\n" (buffer-string))))))
+
+(ert-deftest hbut-ib-create-label-fails-if-label-exists ()
+  "Creation of a label for an implicit button fails if a label exists."
+  (with-temp-buffer
+    (insert "<[LBL]>: \"/tmp\"\n")
+    (goto-char 14)
+    (with-simulated-input "TMP RET"
+      (condition-case err
+          (hui:ibut-label-create)
+        (error
+         (progn
+           (should (equal (car err) 'error))
+           (should (string-search "ibutton at point already has a label" (cadr err)))))))))
 
 (provide 'hbut-tests)
 ;;; hbut-tests.el ends here
