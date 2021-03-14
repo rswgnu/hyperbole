@@ -1,3 +1,10 @@
+2021-03-14  Bob Weiner  <rsw@gnu.org>
+
+* man/hyperbole.texi (Smart Key - Magit Mode):
+  hui-mouse.el (smart-magit, smart-magit-assist): With Action/Assist Mouse
+    Key press on a read-only header line, cycle visibility of diff/all
+    sections in the buffer.
+
 2021-03-14  Mats Lidell  <matsl@gnu.org>
 
 * test/hbut-tests.el (hbut-ib-link-to-file-with-label-variants): Test
