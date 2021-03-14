@@ -19,9 +19,13 @@
 
 (package-initialize)
 (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/"))
+
 (unless (package-installed-p 'el-mock)
   (package-refresh-contents)
-  (package-install 'el-mock)
+  (package-install 'el-mock))
+
+(unless (package-installed-p 'with-simulated-input)
+  (package-refresh-contents)
   (package-install 'with-simulated-input))
 
 (provide 'hy-test-dependencies)
