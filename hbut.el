@@ -1758,8 +1758,8 @@ LINK-EXPR may be:
   (1) a brace-delimited key series;
   (2) a URL;
   (3) a path (possibly with trailing colon-separated line and column numbers);
-  (4) or a function of one argument, the button text (sans the function name if
-      an Action Button), to display it.
+  (4) or a function or action type of one argument, the button text (sans the
+      function name if an Action Button), to display it.
 
 Prior to button activation, for the first three kinds of
 LINK-EXPR, a `replace-match' is done on the expression to
@@ -1796,17 +1796,21 @@ commit changes."
     `(prog1
 	 (defib ,type ()
 	   (interactive)
-	   (let ((button-text (hargs:delimited ,start-delim ,end-delim ,start-regexp-flag ,end-regexp-flag)))
-	     (when button-text
-	       (if (or (functionp ,link-expr) (subrp ,link-expr)
-		       (and (stringp ,link-expr)
-			    (intern-soft (concat "actypes::" ,link-expr))))
+	   (let ((button-text (hargs:delimited ,start-delim ,end-delim
+					       ,start-regexp-flag
+					       ,end-regexp-flag))
+		 actype)
+	     (when (and button-text (string-match ,text-regexp button-text))
+	       (setq actype (cond ((or (functionp ,link-expr) (subrp ,link-expr))
+				   ,link-expr)
+				  (t (actype:action ,link-expr))))
+	       (if actype
 		   (if (and (equal ,start-delim "<") (equal ,end-delim ">"))
 		       ;; Is an Action Button; send only the non-space
 		       ;; text after the action to link-expr.
-		       (hact ,link-expr (progn (string-match "\\s-+" button-text)
-					       (substring button-text (match-end 0))))
-		     (hact ,link-expr button-text))
+		       (hact actype (progn (string-match "\\s-+" button-text)
+					   (substring button-text (match-end 0))))
+		     (hact actype button-text))
 		 (let ((referent (when (and button-text (stringp ,link-expr)
 					    (string-match ,text-regexp button-text))
 				   (replace-match ,link-expr t nil button-text))))
@@ -1837,7 +1841,8 @@ LINK-EXPR may be:
   (1) a brace-delimited key series;
   (2) a URL;
   (3) a path (possibly with trailing colon-separated line and column numbers);
-  (4) or a function of one argument, the button text sans the function name.
+  (4) or a function or action type of one argument, the button text sans the
+      function name.
 
 Prior to button activation, for the first three kinds of
 LINK-EXPR, a `replace-match' is done on the expression to

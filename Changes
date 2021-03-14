@@ -1,3 +1,8 @@
+2021-03-13  Bob Weiner  <rsw@gnu.org>
+
+* hbut.el (defil): Improved to handle both symbol and string representations
+    of Hyperbole action types.
+
 2021-03-11  Bob Weiner  <rsw@gnu.org>
 
 * hbut.el (defil, defal): If LINK-EXPR is a function and the button is

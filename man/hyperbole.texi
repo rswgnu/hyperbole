@@ -3363,7 +3363,7 @@ Hy>  Act Butfile/ Cust/ Doc/ Ebut/ Find/ Gbut/ Hist Ibut/ Kotl/ Msg/ Rolo/ Scree
 @cindex selection, menu items
 @kindex @key{TAB}
 @kindex M-f
-@kindex Shift-
+@kindex Shift-@key{TAB}
 @kindex M-b
 All menu items are selected via the first character of their names (letter
 case does not matter), with presses of the Action Key or by using
@@ -6004,7 +6004,7 @@ button is activated and does one of four things with LINK-EXPR:
 @item executes it as a brace-delimited key series;
 @item displays it in a web browser as a URL;
 @item displays it as a path (possibly with trailing colon-separated line and column numbers);
-@item invokes a function of one argument, the button text sans the function name, to display it.
+@item invokes a function or action type of one argument, the button text sans the function name, to display it.
 @end enumerate
 
 For example, if you use Python and have a @samp{PYTHONPATH} environment
@@ -6070,7 +6070,7 @@ button is activated and does one of four things with LINK-EXPR:
 @item executes it as a brace-delimited key series;
 @item displays it in a web browser as a URL;
 @item displays it as a path (possibly with trailing colon-separated line and column numbers);
-@item invokes a function of one argument, the button text (sans the function name if an Action Button), to display it.
+@item invokes a function or action type of one argument, the button text (sans the function name if an Action Button), to display it.
 @end enumerate
 
 Prior to activation, for the first three kinds of LINK-EXPR, a
