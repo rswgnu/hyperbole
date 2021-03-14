@@ -63,27 +63,21 @@
         (should (looking-at "emacs-version")))
     (ibtype:delete 'ibtypes::defal-key)))
 
+(defun hbut-verify-defal (x)
+  "Verify function i called with X set to the string `test'."
+  (should (string= x "test")))
 
-;; This test seems to break the ert tests when rerun in the same emacs
-;; process so commenting out for now. As defined now it is an expected
-;; failure anyway.
-;;
-;; (defun hbut-verify-defal (x)
-;;   "Verify function i called with X set to the string `test'."
-;;   (should (string= x "test")))
-;;
-;; (ert-deftest hbut-defal-function ()
-;;   "defal call function should only supply the argument portion of
-;; the button text?"
-;;   :expected-result :failed
-;;   (defal defal-func 'hbut-verify-defal)
-;;   (unwind-protect
-;;       (with-temp-buffer
-;;         (insert "<defal-func test>")
-;;         (goto-char 4)
-;;         (action-key)))
-;;     (progn
-;;       (ibtype:delete 'ibtypes::defal-func)))
+(ert-deftest hbut-defal-function ()
+  "defal call function should only supply the argument portion of
+the button text"
+  (defal defal-func 'hbut-verify-defal)
+  (unwind-protect
+      (with-temp-buffer
+        (insert "<defal-func test>")
+        (goto-char 4)
+        (action-key)))
+    (progn
+      (ibtype:delete 'ibtypes::defal-func)))
   
 (ert-deftest hbut-defal-fails-on-file-missing ()
   (defal defal-path-missing "${hyperb:dir}/\\1")
@@ -143,6 +137,52 @@
         (set-buffer "*Help*")
         (should (looking-at "emacs-version")))
     (ibtype:delete 'ibtypes::defil-key)))
+
+;; Labels
+(ert-deftest hbut-ib-link-to-file-with-label ()
+  (with-temp-buffer
+    (insert "<[emacs]>: \"${hyperb:dir}/DEMO\"")
+    (goto-char 4)
+    (hy-test-helpers:action-key-should-call-hpath:find (concat hyperb:dir "DEMO"))))
+
+(ert-deftest hbut-ib-link-to-file-with-label-variants ()
+  (cl-loop for ch in '(?: ?- ?=) do
+           (cl-loop for n from 0 to 3 do
+                    (with-temp-buffer
+                      (insert "<[demo]>" (make-string n ch) " \"${hyperb:dir}/DEMO\"")
+                      (goto-char 4)
+                      (hy-test-helpers:action-key-should-call-hpath:find (concat hyperb:dir "DEMO"))))))
+
+(ert-deftest hbut-ib-url-with-label ()
+  "Should find link but fails with (user-error \"No link found\")"
+  :expected-result :failed
+  (with-temp-buffer
+    (insert "<[PR34]>: \"https://github.com/rswgnu/hyperbole/pull/34\"")
+    (goto-char 4)
+    (let ((browse-url-browser-function 'hbut-defal-url))
+      (action-key))))
+
+(ert-deftest hbut-ib-create-label ()
+  "Create a label for an implicit button"
+  (with-temp-buffer
+    (insert "\"/tmp\"\n")
+    (goto-char 3)
+    (with-simulated-input "TMP RET"
+      (hui:ibut-label-create)
+      (should (string= "<[TMP]> \"/tmp\"\n" (buffer-string))))))
+
+(ert-deftest hbut-ib-create-label-fails-if-label-exists ()
+  "Creation of a label for an implicit button fails if a label exists."
+  (with-temp-buffer
+    (insert "<[LBL]>: \"/tmp\"\n")
+    (goto-char 14)
+    (with-simulated-input "TMP RET"
+      (condition-case err
+          (hui:ibut-label-create)
+        (error
+         (progn
+           (should (equal (car err) 'error))
+           (should (string-search "ibutton at point already has a label" (cadr err)))))))))
 
 (provide 'hbut-tests)
 ;;; hbut-tests.el ends here

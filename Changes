@@ -1,7 +1,25 @@
+2021-03-14  Mats Lidell  <matsl@gnu.org>
+
+* test/hbut-tests.el (hbut-ib-link-to-file-with-label-variants): Test
+    variants of label separation chars and lengths
+    (hbut-ib-create-label): Test creation of label
+    (hbut-ib-create-label-fails-if-label-exists): Check creation fails
+    when label exists
+
+* test/hy-test-dependencies.el (package-installed-p): Add
+    with-simulated-input
+
 2021-03-13  Bob Weiner  <rsw@gnu.org>
 
 * hbut.el (defil): Improved to handle both symbol and string representations
     of Hyperbole action types.
+
+2021-03-12  Mats Lidell  <matsl@gnu.org>
+
+* test/hbut-tests.el (hbut-verify-defal, hbut-defal-function): Test defal
+    with function.
+    (hbut-ib-link-to-file-with-label, hbut-ib-url-with-label): Test for
+    implicit buttons with labels.
 
 2021-03-11  Bob Weiner  <rsw@gnu.org>
 
