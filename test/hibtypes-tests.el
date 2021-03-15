@@ -76,7 +76,7 @@
         (goto-char 2)
         (ibtypes::pathname)
         (should (equal major-mode 'dired-mode))
-        (should (= 0 (string-match "/home/.*" (file-truename default-directory)))))
+        (should (= 0 (string-match (getenv "HOME") (file-truename default-directory)))))
     nil))
 
 (ert-deftest ibtypes::pathname-emacs-lisp-file-test ()

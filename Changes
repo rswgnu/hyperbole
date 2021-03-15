@@ -1,3 +1,11 @@
+2021-03-14  Mats Lidell  <matsl@gnu.org>
+
+* test/demo-tests.el (demo-smart-scrolling-non-proportional-test): Make
+    test more robust
+
+* test/hibtypes-tests.el (ibtypes::pathname-env-variable-test): Use env
+    for HOME to not depend on machine or OS specifics
+
 2021-03-14  Bob Weiner  <rsw@gnu.org>
 
 * man/hyperbole.texi (Smart Key - Magit Mode):

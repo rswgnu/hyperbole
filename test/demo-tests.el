@@ -79,7 +79,6 @@
               (pos (point)))
           (end-of-line)
           (action-key)
-          (beginning-of-line)
           (should (= pos (window-start)))))
     (kill-buffer "DEMO")))
 
@@ -89,10 +88,12 @@
         (hypb:display-file-with-logo (expand-file-name "DEMO" hyperb:dir))
         (goto-char (point-min))
         (re-search-forward "Table of Contents")
+        (beginning-of-line)
         (let ((smart-scroll-proportional nil)
               (pos (point)))
+          (end-of-line)
           (action-key)
-          (should (< pos (point)))))
+          (should (< pos (window-start)))))
     (kill-buffer "DEMO")))
 
 ;; Hyperbole menus
