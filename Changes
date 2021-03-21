@@ -1,3 +1,7 @@
+2021-03-21  Mats Lidell  <matsl@gnu.org>
+
+* test/hbut-tests.el (hbut-defal-url-%s): Add test for %s format-style.
+
 2021-03-21  Bob Weiner  <rsw@gnu.org>
 
 * hbut.el (defal): Added support for use of %s format-style grouping 1 arg

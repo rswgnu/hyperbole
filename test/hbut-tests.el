@@ -50,6 +50,17 @@
           (action-key)))
     (ibtype:delete 'ibtypes::defal-url)))
 
+(ert-deftest hbut-defal-url-%s ()
+  "defal supports %s in LINK-EXPR."
+  (defal defal-url "https://github.com/rswgnu/hyperbole/pull/%s")
+  (unwind-protect
+      (with-temp-buffer
+        (insert "<defal-url 34>")
+        (goto-char 4)
+        (let ((browse-url-browser-function 'hbut-defal-url))
+          (action-key)))
+    (ibtype:delete 'ibtypes::defal-url)))
+
 (ert-deftest hbut-defal-key-sequence ()
   (skip-unless (not noninteractive))
   (defal defal-key "{C-h v \\1 RET}")
