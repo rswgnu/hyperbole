@@ -351,7 +351,7 @@ $(pkg_dir)/hyperbole-$(HYPB_VERSION).tar.sig: $(pkg_dir)/hyperbole-$(HYPB_VERSIO
 $(pkg_dir)/hyperbole-$(HYPB_VERSION).tar: $(HYPERBOLE_FILES)
 	make version
 	cd $(pkg_dir) && $(RM) -fr $(pkg_hyperbole) $(pkg_hyperbole)-$(HYPB_VERSION)
-	cd .. && COPYFILE_DISABLE=1 $(TAR) -clf $(pkg_dir)/h.tar hyperbole
+	cd .. && COPYFILE_DISABLE=1 $(TAR) --exclude="test/*" -clf $(pkg_dir)/h.tar hyperbole
 	cd $(pkg_dir) && COPYFILE_DISABLE=1 $(TAR) xf h.tar && cd $(pkg_hyperbole) && $(MAKE) packageclean
 	cd $(pkg_hyperbole) && make autoloads && chmod 755 topwin.py && \
 	cd $(pkg_dir) && $(RM) h.tar; \
