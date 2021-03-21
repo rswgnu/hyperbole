@@ -14,6 +14,15 @@
 
 2021-03-14  Mats Lidell  <matsl@gnu.org>
 
+* test/hy-test-dependencies.el (package-installed-p): Check if
+    with-simulated-input is installed.
+
+* test/demo-tests.el (demo-smart-scrolling-non-proportional-test): Make
+    test more robust
+
+* test/hibtypes-tests.el (ibtypes::pathname-env-variable-test): Use env
+    for HOME to not depend on machine or OS specifics
+
 * test/hbut-tests.el (hbut-ib-link-to-file-with-label-variants): Test
     variants of label separation chars and lengths
     (hbut-ib-create-label): Test creation of label
