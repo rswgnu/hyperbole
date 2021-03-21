@@ -786,8 +786,8 @@ button.
 You can do a huge number of things with existing Action Button types
 but sometimes you may want to define your own types for more advanced
 usage.  Hyperbole let's you easily create your own Action Button link
-types without knowing Elisp, if you understand Emacs regular
-expressions (see "(elisp)Regular Expressions").
+types without knowing Elisp, if you understand basic pattern
+replacement.
 
 In your Emacs initialization file, e.g. ~/.emacs, you will add a line of
 the form:
@@ -797,7 +797,7 @@ the form:
 where:
 
     TYPE is the name of the new type you want to create;
-    LINK-EXPR is a regular expression containing a \\1 grouping
+    LINK-EXPR is a regular expression containing a %s
       replacement string into which Hyperbole will substitute
       the button text following the TYPE from each button activated of
       this type; alternatively, LINK-EXPR may be the name of a function
@@ -811,17 +811,18 @@ activated as one of these 4 kinds:
     (1) a brace-delimited key series;
     (2) a URL/web link;
     (3) a path (possibly with trailing colon-separated line and column numbers);
-    (4) or a function of one argument, the button text sans the function name.
+    (4) or a function or action type of one argument, the button text sans the
+        function name.
 
 Let's try an example.  If you use Python and have a PYTHONPATH
 environment variable, then pressing {C-x C-e} after this expression:
 
-   (defal pylib "${PYTHONPATH}/\\1")
+   (defal pylib "${PYTHONPATH}/%s")
 
 defines a new action button link type called 'pylib’ whose buttons
 take the form of:
 
-   <pylib PYTHON-LIBRARY-NAME>
+   <pylib PYTHON-LIBRARY-FILENAME>
 
 and display the associated Python libraries (typically Python source
 files).  Optional colon separated line and column numbers may be given
@@ -834,6 +835,31 @@ Now press the Action Key press within:
 This will display the source for "string.py" (wherever it is installed
 on your system) from the Python standard library with point on the
 fifth line at the seventh character.
+
+----
+
+As another example, suppose you want to do a web search for Emacs Lisp libraries whose names may be very generic, like hyperbole.  For this, you can use a Google filetype-specific search.
+
+Define an action link type with:
+
+    (defal elsearch "https://www.google.com/search?q=%s+filetype:el" "Find Elisp libraries via a Google file type search")
+
+Then, an Action Key press on:
+
+    <elsearch burly>
+
+will find major links to that library which makes window
+configurations and framesets persistent across Emacs sessions.
+
+This search is actually built in to the Hyperbole menus, so you could
+have defined it more simply (and sans docstring) with a key series
+definition:
+
+    (defal elsearch "{C-h h f w e %s RET}")
+
+as well.
+
+----
 
 For more advanced and flexible regular expression-based link type
 creation, see the 'defil' expression in "(hyperbole)Implicit Button

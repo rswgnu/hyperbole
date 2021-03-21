@@ -363,7 +363,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</P>
 
 <PRE>
 Edition 7.1.4
-Printed March 14, 2021.
+Printed March 21, 2021.
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -7259,10 +7259,10 @@ number of buttons can be recognized within text) is to create an
 </p>
 <p>will create a Hyperbole action button link TYPE (an unquoted symbol)
 whose buttons always take the form of: <code>&lt;TYPE link-text&gt;</code> where
-<code>link-text</code> is substituted into LINK-EXPR as grouping 1 (\\1)
-to form the link referent that is displayed for each button.
-Hyperbole automatically creates a doc string for the type but you can
-override this by providing an optional DOC string.
+<code>link-text</code> is substituted into LINK-EXPR as grouping 1 (wherever
+%s or \\1 is found) to form the link referent that is displayed for
+each button.  Hyperbole automatically creates a doc string for the
+type but you can override this by providing an optional DOC string.
 </p>
 <p>When the Action Key is pressed in a buffer between the start and end
 delimiters and the text in-between matches to TEXT-REGEXP, then the
@@ -7279,12 +7279,12 @@ button is activated and does one of four things with LINK-EXPR:
 variable, then pressing <kbd>{C-x C-e}</kbd> <code>eval-last-sexp</code> after
 this expression:
 </p>
-<p><code>(defal pylib &quot;${PYTHONPATH}/\\1&quot;)</code>
+<p><code>(defal pylib &quot;${PYTHONPATH}/%s&quot;)</code>
 </p>
 <p>defines a new action button link type called âpylibâ whose buttons
 take the form of:
 </p>
-<p><code>&lt;pylib PYTHON-LIBRARY-NAME&gt;</code>
+<p><code>&lt;pylib PYTHON-LIBRARY-FILENAME&gt;</code>
 </p>
 <p>and display the associated Python libraries (typically Python source
 files).  Optional colon separated line and column numbers may be given

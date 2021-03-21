@@ -7,22 +7,23 @@
 
   PROGRAMMING
 
-   - Easy Action Link Button Type Creation: `defal' is a new,
-     easy-to-use macro that generates new action button types from a
-     type name and a single simple regular expression, allowing
-     non-programmers to create their own implicit action button types
-     that execute key series, display URLs or display the contents of
-     pathnames.  See "(hyperbole)Action Button Link Types" or the
-     "DEMO#Defining New Action Button Types" section.
+   - Simple Action Link Button Type Creation: `defal' is a new,
+     easy-to-use construct that generates new action button types from
+     a type name and a single simple format expression, allowing
+     non-programmers to create their own implicit action button link
+     types that execute key series, display URLs, display the contents
+     of pathnames or invoke functions.  See "(hyperbole)Action Button
+     Link Types" or the "DEMO#Defining New Action Button Types"
+     section.
 
    - Easy Implicit Link Button Type Creation: `defil' is a new,
-     easy-to-use macro for those familiar with regular expressions but
-     not much Emacs Lisp.  This macro creates more flexible implicit
+     construct for those familiar with regular expressions but not
+     much Emacs Lisp.  This macro creates more flexible implicit
      button types than `defal' where the delimiters and text
      substitution can be specified with regular expressions.  Actions
-     are limited to executing key series, displaying URLs or
-     displaying the contents of a pathname.  See "(hyperbole)Implicit
-     Button Link Types".
+     are limited to executing key series, displaying URLs, displaying
+     the contents of pathnames or invoking functions.  See
+     "(hyperbole)Implicit Button Link Types".
 
      Elisp programmers should use the existing `defib' macro for full
      flexibility in implicit button type creation.  See "hibytpes.el"
@@ -75,11 +76,15 @@
       evaluate: (symset:clear 'ibtypes) and then reload hibtypes.{el,elc},
       the priority order of all implicit button types is reset.
 
-    - Git Support: In Magit Log and Blame listing modes, the Action
-      Key displays the associated commit or file line.  The Action Key
-      also handles single line log entries that begin with the word
-      'commit' , displaying their commits even from shell and
-      compilation buffers.
+    - Magit Mode Support: Just click or press the Action Key somewhere and it
+      will typically display what you want.  Extensive Action Key support in
+      Magit modes for cycling through display views and displaying items.
+
+      Action Mouse clicks on the modeline cycles display of commits/diffs in
+      a buffer.  In Magit Log and Blame listing modes, the Action Key
+      displays the associated commit or file line.  The Action Key also
+      handles single line log entries that begin with the word 'commit' ,
+      displaying their commits even from shell and compilation buffers.
 
     - Org Mode: Lowered to near bottom implicit button priority so that all
       implicit button types will work in Org mode.
@@ -102,6 +107,15 @@
       linking to point in the window chosen when prompted.
       See "DEMO#Displaying File and Buffer Items and Moving Buffers".
 
+
+  TEST CASES
+
+    - Hyperbole Automated Testing: Git-based distributions of Hyperbole now
+      include a test subdirectory with many tests of hyperbole's button
+      types.  Simply run 'make test' or 'make test-all' from the command-line
+      when in the Hyperbole source directory and you should see all tests
+      pass.  If any fail, you can press the Action Key to see the source of
+      the failure.
 
 ===========================================================================
 *                                   V7.1.3

@@ -1,3 +1,10 @@
+2021-03-21  Bob Weiner  <rsw@gnu.org>
+
+* hbut.el (defal): Added support for use of %s format-style grouping 1 arg
+    substitution.
+  man/hyperbole.texi (Action Button Link Types): Documented.
+  DEMO (defal): Added new example of Google file type search button.
+
 2021-03-14  Bob Weiner  <rsw@gnu.org>
 
 * man/hyperbole.texi (Smart Key - Magit Mode):
@@ -13,7 +20,7 @@
     (hbut-ib-create-label-fails-if-label-exists): Check creation fails
     when label exists
 
-* test/hy-test-dependencies.el (package-installed-p): Add
+* test/hy-test-dependencies.el (package-installed-p): Added
     with-simulated-input
 
 2021-03-13  Bob Weiner  <rsw@gnu.org>

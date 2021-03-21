@@ -155,7 +155,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</P>
 
 <PRE>
 Edition 7.1.4
-Printed March 14, 2021.
+Printed March 21, 2021.
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -197,7 +197,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 @example
 Edition 7.1.4
-March 14, 2021
+March 21, 2021
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -5991,10 +5991,10 @@ A call to the @code{defal} macro of the form:
 @noindent
 will create a Hyperbole action button link TYPE (an unquoted symbol)
 whose buttons always take the form of: @code{<TYPE link-text>} where
-@code{link-text} is substituted into LINK-EXPR as grouping 1 (\\1)
-to form the link referent that is displayed for each button.
-Hyperbole automatically creates a doc string for the type but you can
-override this by providing an optional DOC string.
+@code{link-text} is substituted into LINK-EXPR as grouping 1 (wherever
+%s or \\1 is found) to form the link referent that is displayed for
+each button.  Hyperbole automatically creates a doc string for the
+type but you can override this by providing an optional DOC string.
 
 When the Action Key is pressed in a buffer between the start and end
 delimiters and the text in-between matches to TEXT-REGEXP, then the
@@ -6011,13 +6011,13 @@ For example, if you use Python and have a @samp{PYTHONPATH} environment
 variable, then pressing @bkbd{C-x C-e} @code{eval-last-sexp} after
 this expression:
 
-@code{(defal pylib "$@{PYTHONPATH@}/\\1")}
+@code{(defal pylib "$@{PYTHONPATH@}/%s")}
 
 @noindent
 defines a new action button link type called ’pylib’ whose buttons
 take the form of:
 
-@code{<pylib PYTHON-LIBRARY-NAME>}
+@code{<pylib PYTHON-LIBRARY-FILENAME>}
 
 @noindent
 and display the associated Python libraries (typically Python source

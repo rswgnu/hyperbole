@@ -1223,38 +1223,30 @@ Return number of buttons reported on or nil if none."
 	 ;; Ensure these do not invoke with-output-to-temp-buffer a second time.
 	 (temp-buffer-show-hook)
 	 (temp-buffer-show-function))
-    (if lbl-lst
-	(progn
-	  (with-help-window buf-name
-	    (princ hbut:source-prefix)
-	    (prin1 key-src)
-	    (terpri)
-	    (terpri)
-	    (mapcar
-	     (lambda (lbl)
-	       (if (setq but
-			 (cond ((or (null arg) (symbolp arg)) but)
-			       (t (ebut:get (ebut:label-to-key lbl) key-buf)))
-			 attribs (hattr:list but))
-		   (progn
-		     (princ (if (ibut:is-p but)
-				lbl
-			      (concat ebut:start lbl ebut:end)))
-		     (terpri)
-		     (let ((doc (actype:doc but (= 1 (length lbl-lst)))))
-		       (if doc
-			   (progn
-			     (princ "  ")
-			     (princ doc)
-			     (terpri))))
-		     (hattr:report
-		      ;;		       (if (eq (car (cdr (memq 'categ attribs))) 'explicit)
-		      ;;			   (memq 'action attribs)
-		      ;;			 (memq 'categ attribs))
-		      attribs)
-		     (terpri))))
-	     lbl-lst))
-	  (length lbl-lst)))))
+    (when lbl-lst
+      (with-help-window buf-name
+	(princ hbut:source-prefix)
+	(prin1 key-src)
+	(terpri)
+	(terpri)
+	(mapcar
+	 (lambda (lbl)
+	   (when (setq but (cond ((or (null arg) (symbolp arg)) but)
+				 (t (ebut:get (ebut:label-to-key lbl) key-buf)))
+		       attribs (hattr:list but))
+	     (princ (if (ibut:is-p but)
+			lbl
+		      (concat ebut:start lbl ebut:end)))
+	     (terpri)
+	     (let ((doc (actype:doc but (= 1 (length lbl-lst)))))
+	       (when doc
+		 (princ "  ")
+		 (princ doc)
+		 (terpri)))
+	     (hattr:report attribs)
+	     (terpri)))
+	 lbl-lst))
+      (length lbl-lst))))
 
 (defun    hbut:source (&optional full)
   "Return Hyperbole source buffer or file given at point.
@@ -1801,20 +1793,27 @@ commit changes."
 					       ,end-regexp-flag))
 		 actype)
 	     (when (and button-text (string-match ,text-regexp button-text))
+	       ;; Get the action type when link-expr is a function
+	       ;; symbol, symbol name or function body
 	       (setq actype (cond ((or (functionp ,link-expr) (subrp ,link-expr))
 				   ,link-expr)
 				  (t (actype:action ,link-expr))))
 	       (if actype
 		   (if (and (equal ,start-delim "<") (equal ,end-delim ">"))
 		       ;; Is an Action Button; send only the non-space
-		       ;; text after the action to link-expr.
+		       ;; text after the action to link-expr
 		       (hact actype (progn (string-match "\\s-+" button-text)
 					   (substring button-text (match-end 0))))
 		     (hact actype button-text))
-		 (let ((referent (when (and button-text (stringp ,link-expr)
-					    (string-match ,text-regexp button-text))
-				   (replace-match ,link-expr t nil button-text))))
-		   (ibtype:activate-link referent))))))
+		 (when (and (stringp ,link-expr) (string-match ,text-regexp button-text))
+		   ;; Change %s format syntax in link-expr to \\1 regexp replacement syntax
+		   (let ((referent (replace-match (save-match-data
+						    (if (string-match "\\(\\`\\|[^%]\\)\\(%s\\)" ,link-expr)
+							(replace-match "\\1\\\\1" t nil ,link-expr)
+						      ,link-expr))
+						  t nil button-text)))
+		     ;; link-expr is a string
+		     (ibtype:activate-link referent)))))))
        (put (intern (format "ibtypes::%s" ',type))
 	    'function-documentation
 	    (or ,doc
@@ -1833,7 +1832,7 @@ commit changes."
            def-body))
 
 (defmacro defal (type link-expr &optional doc)
-  "Create Hyperbole action button link TYPE (an unquoted symbol) whose buttons look like: <TYPE link-text> where link-text is substituted into LINK-EXPR as grouping 1 (\\\\1).
+  "Create Hyperbole action button link TYPE (an unquoted symbol) whose buttons look like: <TYPE link-text> where link-text is substituted into LINK-EXPR as grouping 1 (specified either as %s or \\\\1).
 Hyperbole automatically creates a doc string for the type but you can
 override this by providing an optional DOC string.
 
@@ -1847,7 +1846,7 @@ LINK-EXPR may be:
 Prior to button activation, for the first three kinds of
 LINK-EXPR, a `replace-match' is done on the expression to
 generate the button-specific referent to display, substituting
-\\\\1 in the LINK-EXPR for the text/label from the button.
+%s or \\\\1 in the LINK-EXPR for the text/label from the button.
 
 For the fourth kind, LINK-EXPR is a function of one argument which is
 either the full button text or in the case of an Action Button, the
@@ -1857,12 +1856,12 @@ Here is a sample use case.  If you use Python and have a
 PYTHONPATH environment variable setup, then pressing
 \\[eval-last-sexp] after this expression:
 
-   (defal pylib \"${PYTHONPATH}/\\\\1\")
+   (defal pylib \"${PYTHONPATH}/%s\")
 
 defines a new action button link type called 'pylib' whose buttons
 take the form of:
 
-   <pylib PYTHON-LIBRARY-NAME>
+   <pylib PYTHON-LIBRARY-FILENAME>
 
 and display the associated Python libraries (typically Python source
 files).  Optional colon separated line and column numbers may be given
