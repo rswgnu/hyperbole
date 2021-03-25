@@ -855,7 +855,7 @@ This search is actually built in to the Hyperbole menus, so you could
 have defined it more simply (and sans docstring) with a key series
 definition:
 
-    (defal elsearch "{C-h h f w e %s RET}")
+    (defal elsearch "{C-hhfwe %s RET}")
 
 as well.
 
