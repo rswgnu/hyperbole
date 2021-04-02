@@ -382,6 +382,10 @@ Its default value is #'smart-scroll-down."
     ;; Outline minor mode is on and usable.
     ((and (boundp 'outline-minor-mode) outline-minor-mode) .
      ((smart-outline) . (smart-outline-assist)))
+    ;;
+    ;; Todotxt
+    ((eq major-mode 'todotxt-mode) .
+     ((smart-todotxt) . (smart-todotxt-assist)))
     )
   "Alist of predicates and form-conses for the Action and Assist Keyboard Keys.
 Each element is: (predicate-form . (action-key-form . assist-key-form)).
@@ -1600,6 +1604,31 @@ CURR-ENTRY-LEVEL is not needed."
 	 ;; Old-style Emacs outlines using \r (^M) characters to hide lines
 	 (and selective-display (eq (following-char) ?\r)))
     t))
+
+;;; ************************************************************************
+;;; smart-todotxt functions
+;;; ************************************************************************
+
+(defun smart-todotxt ()
+  "Use a single key or mouse key to manipulate `todotxt' items.
+
+If key is pressed:
+ (1) at the end of buffer, bury buffer
+ (2) on a todo item, toggle the completion"
+  (interactive)
+  (cond ((eobp) (todotxt-bury))
+	(t (todotxt-complete-toggle))))
+
+(defun smart-todotxt-assist ()
+  "Use a single assist-key or mouse assist-key to manipulate `todotxt' items.
+
+If key is pressed:
+ (1) at the end of buffer, archive completed items
+ (2) on a todo item, edit it"
+
+  (interactive)
+  (cond ((eobp) (todotxt-archive))
+	(t (todotxt-edit-item))))
 
 (defun smart-eolp ()
   "Return t if point is at the end of a visible line but not the end of the buffer."
