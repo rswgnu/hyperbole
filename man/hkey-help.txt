@@ -109,6 +109,7 @@ Hyperbole Key Press/Click in Special Modes
   Man Apropos                   Displays man page entry    <- same
   Man Pages                     Follows cross refs, file refs and C code refs
   I/Buffer Menu                 Saves, deletes and displays buffers
+  Todotxt Mode                  Toggle item completion     Edit and archive items
 
 Emacs Info Reader
   Menu Entry or Cross Ref       To referent                <- same

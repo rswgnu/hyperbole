@@ -1,3 +1,10 @@
+2021-04-03  Mats Lidell  <matsl@gnu.org>
+
+* man/hyperbole.texi (Smart Key - Todotxt Mode): Add node to document
+    Todotxt support
+* HY-NEWS: Add section for Todotxt mode
+* man/hkey-help.txt: Add section about Todotxt mode
+
 2021-04-02  Mats Lidell  <matsl@gnu.org>
 
 * hui-mouse.el (hkey-alist, smart-todotxt, smart-todotxt-assist): Add
