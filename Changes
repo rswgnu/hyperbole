@@ -1,3 +1,11 @@
+2021-04-04  Mats Lidell  <matsl@gnu.org>
+
+* HY-NEWS: Section about hypb-ert
+  Makefile (EL_COMPILE, ELC_COMPILE): Add hypb-ert
+  hypb-ert.el (hypb-run-ert-test-symbol, hypb-run-ert-test-selector)
+    (hypb-ert-sym, hypb-ert-sel): Add implicit buttons for running ert
+    tests.
+
 2021-04-03  Mats Lidell  <matsl@gnu.org>
 
 * man/hyperbole.texi (Smart Key - Todotxt Mode): Add node to document

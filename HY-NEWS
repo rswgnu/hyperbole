@@ -120,6 +120,9 @@
       pass.  If any fail, you can press the Action Key to see the source of
       the failure.
 
+    - Defal implicit buttons hypb-ert-sym and hypb-ert-sel: For running
+      hyperbole ert test from hyperbole source files.
+
 ===========================================================================
 *                                   V7.1.3
 ===========================================================================
