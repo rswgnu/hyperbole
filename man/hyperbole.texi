@@ -481,6 +481,7 @@ Smart Keyboard Keys
 * Smart Key - Gomoku Game::
 * Smart Key - Magit Mode::
 * Smart Key - The OO-Browser::
+* Smart Key - Todotxt Mode::
 * Smart Key - Default Context::
 
 @end detailmenu
@@ -8531,6 +8532,7 @@ If dragged from an Emacs window to outside of Emacs:
 * Smart Key - Gomoku Game::
 * Smart Key - Magit Mode::
 * Smart Key - The OO-Browser::
+* Smart Key - Todotxt Mode::
 * Smart Key - Default Context::
 @end menu
 
@@ -9820,7 +9822,28 @@ When pressed on an identifier within an OO-Browser source file:
 @end group
 @end format
 
-@node Smart Key - Default Context,  , Smart Key - The OO-Browser, Smart Keyboard Keys
+
+@node Smart Key - Todotxt Mode,  Smart Key - Default Context,  Smart Key - The OO-Browser,  Smart  Keyboard Keys
+@subsection Smart Key - Todotext Mode
+
+@cindex todotxt-mode
+todotxt-mode is an add-on package for editing todo.txt files using
+the todotxt-format. For the file format see http://todotxt.org/.
+
+@format
+@group
+If pressed within a Todotext mode buffer:
+  ACTION KEY
+    (1) at the end of buffer, bury the buffer.
+    (2) on a todo item, toggle the completion status of the todo item
+  ASSIST KEY
+    (1) at the end of buffer, archive all completed todo items
+    (2) on a todo item, edit the item
+@end group
+@end format
+
+
+@node Smart Key - Default Context,  , Smart Key - Todotxt Mode, Smart Keyboard Keys
 @subsection Smart Key - Default Context
 @vindex action-key-default-function
 @vindex assist-key-default-function

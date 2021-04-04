@@ -97,6 +97,9 @@
       fixed case, so that the case of a value with both upper and lower
       case characters is never changed, for example a value of ${HOME}.
 
+    - Todotxt Mode Support: Smart key support for the todotxt mode
+      https://github.com/rpdillon/todotxt.el.
+
   ACE WINDOW PACKAGE INTEGRATION - fast window and buffer switching
 
     - After installing the ace-window package and loading Hyperbole, execute
@@ -116,6 +119,9 @@
       when in the Hyperbole source directory and you should see all tests
       pass.  If any fail, you can press the Action Key to see the source of
       the failure.
+
+    - Defal implicit buttons hypb-ert-sym and hypb-ert-sel: For running
+      hyperbole ert test from hyperbole source files.
 
 ===========================================================================
 *                                   V7.1.3
