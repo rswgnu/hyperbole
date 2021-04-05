@@ -1,3 +1,7 @@
+2021-04-05  Mats Lidell  <matsl@gnu.org>
+
+* Makefile (ELC_COMPILE): Fix hypb-org extension
+
 2021-04-04  Mats Lidell  <matsl@gnu.org>
 
 * HY-NEWS: Section about hypb-ert
