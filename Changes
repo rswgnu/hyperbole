@@ -1,3 +1,8 @@
+2021-04-05  Mats Lidell  <matsl@gnu.org>
+
+* test/hypb-test.el (hypb:replace-match-string-test): ert test for
+    hypb:replace-match-string
+
 2021-04-05  Bob Weiner  <rsw@gnu.org>
 
 * Makefile (ELC_COMPILE): Fix hib-org.elc (was .el).
