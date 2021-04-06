@@ -12,16 +12,18 @@ or interactively after loading Hyperbole:
 
 ** Keypression - overlaying parts of buffer (shows trail of keys)
 
-  <keypression-mode 1>
-  <keypression-mode 0>
+  Install:    <package-install 'keypression>
+  Activate:   <keypression-mode 1>
+  Deactivate: <keypression-mode 0>
 
-<setq keypression-use-child-frame nil
-      keypression-fade-out-delay 3.0
-      keypression-frame-justify 'keypression-left-justified
-      keypression-cast-command-name t
-      keypression-cast-command-name-format "%s  %s"
-      keypression-combine-same-keystrokes t
-      keypression-font-face-attribute '(:width normal :height 200 :weight bold)>
+  Configure:
+    <setq keypression-use-child-frame nil
+	  keypression-fade-out-delay 3.0
+	  keypression-frame-justify 'keypression-left-justified
+	  keypression-cast-command-name t
+	  keypression-cast-command-name-format "%s  %s"
+	  keypression-combine-same-keystrokes t
+	  keypression-font-face-attribute '(:width normal :height 200 :weight bold)>
 
 
 * Pathname Prefixes

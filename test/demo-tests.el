@@ -378,5 +378,11 @@
         (hy-test-helpers:should-last-message "Factorial of 5 = 120"))
     (kill-buffer "DEMO")))
 
+;; This file can't be byte-compiled without the `el-mock' package (because of
+;; the use of the `with-mock' macro), which is not a dependency of Hyperbole.
+;;  Local Variables:
+;;  no-byte-compile: t
+;;  End:
+
 (provide 'demo-tests)
 ;;; demo-tests.el ends here

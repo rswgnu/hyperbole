@@ -8,8 +8,8 @@
 ;;; Commentary:
 
 ;;; Code:
-(require 'kexport)
-(require 'kimport)
+(require 'kexport "kotl/kexport")
+(require 'kimport "kotl/kimport")
 
 (defvar hypb:web-repo-location "../hyperbole-web/"
   "The location of hyperbole repo for the web pages.")

@@ -1,12 +1,12 @@
 ;;; hyperbole.el --- GNU Hyperbole: The Everyday Hypertextual Information Manager
 
-;; Copyright (C) 1992-2019  Free Software Foundation, Inc.
+;; Copyright (C) 1992-2021  Free Software Foundation, Inc.
 
 ;; Author:           Bob Weiner
 ;; Maintainer:       Bob Weiner <rsw@gnu.org>, Mats Lidell <matsl@gnu.org>
 ;; Created:          06-Oct-92 at 11:52:51
 ;; Released:         21-Mar-21
-;; Version:          7.1.4 (pre-release)
+;; Version:          7.1.4pre
 ;; Keywords:         comm, convenience, files, frames, hypermedia, languages, mail, matching, mouse, multimedia, outlines, tools, wp
 ;; Package:          hyperbole
 ;; Package-Requires: ((emacs "24.4"))
@@ -637,13 +637,13 @@ If FLAG is nil then text is shown, while if FLAG is t the text is hidden."
   ;;
   (run-hooks 'hyperbole-init-hook)
   (hyperb:check-dir-user)
-  (or (stringp hyperb:user-email)
-      (setq hyperb:user-email
-	    (or (and (boundp 'user-mail-address)
-		     (stringp user-mail-address)
-		     (string-match "@" user-mail-address)
-		     user-mail-address)
-		(concat (user-login-name) (hypb:domain-name)))))
+  (unless (stringp hyperb:user-email)
+    (setq hyperb:user-email
+	  (or (and (boundp 'user-mail-address)
+		   (stringp user-mail-address)
+		   (string-match "@" user-mail-address)
+		   user-mail-address)
+	      (concat (user-login-name) (hypb:domain-name)))))
   ;;
   ;; When running from git source and not a release package, ensure
   ;; auto-autoload.el files are already generated or generate them.
@@ -680,7 +680,8 @@ If FLAG is nil then text is shown, while if FLAG is t the text is hidden."
   ;; removal of further local bindings.
   (if (featurep 'hyperbole)
       (hkey-install-override-local-bindings)
-    (add-hook 'after-load-alist '(hyperbole hkey-install-override-local-bindings)))
+    (eval-after-load 'hyperbole
+      '(hkey-install-override-local-bindings)))
   ;;
   ;; Hyperbole initialization is complete.
   (message "Initializing Hyperbole...done")

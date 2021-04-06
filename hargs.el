@@ -416,7 +416,10 @@ Also insert unless optional NO-INSERT is non-nil.
 Insert in minibuffer if active or in other window if minibuffer is inactive."
   (interactive '(nil))
   (when (or (string-match "[* ]Completions\\*\\'" (buffer-name))
-	    (eq major-mode 'completion-mode))
+	    (eq major-mode 'completion-mode)
+	    (and (boundp 'which-key--buffer)
+		 (eq (window-buffer action-key-depress-window) which-key--buffer)
+		 (eq (window-buffer action-key-release-window) which-key--buffer)))
     (let ((opoint (point))
 	  (owind (selected-window)))
       (when (re-search-backward "^\\|\t\\| [ \t]" nil t)
@@ -462,8 +465,9 @@ Insert in minibuffer if active or in other window if minibuffer is inactive."
 			       (1+ (match-beginning 0)))
 			      entry))))
 		(or no-insert
-		    (if entry (progn (erase-buffer)
-				     (insert entry)))))
+		    (when entry
+		      (erase-buffer)
+		      (insert entry))))
 	       ;; In buffer, non-minibuffer completion.
 	       ;; Only insert entry if last buffer line does
 	       ;; not end in entry.

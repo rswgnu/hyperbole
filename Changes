@@ -1,3 +1,9 @@
+2021-04-05  Bob Weiner  <rsw@gnu.org>
+
+* Makefile (ELC_COMPILE): Fix hib-org.elc (was .el).
+
+* hibtypes.el (hypb-ert): Load Hyperbole test runner ibtypes.
+
 2021-04-04  Mats Lidell  <matsl@gnu.org>
 
 * HY-NEWS: Section about hypb-ert
@@ -18,13 +24,25 @@
 * hui-mouse.el (hkey-alist, smart-todotxt, smart-todotxt-assist): Add
     support for todotxt-mode
 
+2021-03-26  Bob Weiner  <rsw@gnu.org>
+
+* hypb.el (hypb:get-completion): Extract from part of `choose-completion' from "simple.el".
+  hargs.el (hargs:completion): Utilize hypb:get-completion to match with current Emacs.
+
+* hui-window.el (hmouse-emacs-modeline-event-p):
+                (hmouse-inactive-minibuffer-p):
+                (hmouse-x-coord):
+                (hmouse-y-coord):
+  hmouse-sh.el (hmouse-move-point-emacs): Add window-valid-p check ahead of window-minibuffer-p
+    to prevent errors if clicked within a transient window like which-key.
+
 2021-03-21  Mats Lidell  <matsl@gnu.org>
 
 * test/hbut-tests.el (hbut-defal-url-%s): Add test for %s format-style.
 
 2021-03-21  Bob Weiner  <rsw@gnu.org>
 
-* hbut.el (defal): Added support for use of %s format-style grouping 1 arg
+* hbut.el (defal): Add support for use of %s format-style grouping 1 arg
     substitution.
   man/hyperbole.texi (Action Button Link Types): Documented.
   DEMO (defal): Added new example of Google file type search button.

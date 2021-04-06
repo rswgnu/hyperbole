@@ -63,7 +63,6 @@ Rest of ARGS are passed as arguments to PROGRAM."
       (kill-buffer buf))
     found))
 
-
 (defun hypb:char-count (char array)
   "Return count of occurrences of CHAR in ARRAY."
   (let ((i 0) (c 0) (l (length array)))
@@ -376,6 +375,30 @@ are replaced.  Returns body of modified FUNC-SYM."
 		   (setq list (cdr list)))))))
          body))
       body)))
+
+;; Extracted from part of `choose-completion' in "simple.el"
+(defun hypb:get-completion (&optional event)
+  "Return the completion at point.
+If EVENT, use EVENT's position to determine the starting position."
+  (interactive (list last-nonmenu-event))
+  ;; In case this is run via the mouse, give temporary modes such as
+  ;; isearch a chance to turn off.
+  (run-hooks 'mouse-leave-buffer-hook)
+  (with-current-buffer (window-buffer (posn-window (event-start event)))
+    (save-excursion
+      (goto-char (posn-point (event-start event)))
+      (let (beg end)
+        (cond
+         ((and (not (eobp)) (get-text-property (point) 'mouse-face))
+          (setq end (point) beg (1+ (point))))
+         ((and (not (bobp))
+               (get-text-property (1- (point)) 'mouse-face))
+          (setq end (1- (point)) beg (point)))
+         (t (error "No completion here")))
+        (setq beg (previous-single-property-change beg 'mouse-face))
+        (setq end (or (next-single-property-change end 'mouse-face)
+                      (point-max)))
+        (buffer-substring-no-properties beg end)))))
 
 (defun hypb:get-raw-syntax-descriptor (char &optional syntax-table)
   "Return the raw syntax descriptor for CHAR using the current syntax table or optional SYNTAX-TABLE."

@@ -82,6 +82,7 @@
 
 * Hyperbole - What Is It
 
+  |---------------------+----------------------------------------------------------|
   | Hyperbole Component | Description                                              |
   |---------------------+----------------------------------------------------------|
   | Action/Assist Keys  | 2 global keys for hypertext everywhere in Emacs          |
@@ -100,7 +101,7 @@
   | HyControl           | Fast control of your windows and frames                  |
   |                     |                                                          |
   | HyRolo              | Fast retrieval of hyperlinked records in * outline files |
-
+  |---------------------+----------------------------------------------------------|
 
 
 * Setup and Use
@@ -222,22 +223,25 @@ A Few Common Examples:
 
 * Many More to Learn Across Time
 
-                       Implicit Button Types
+|-----------------------+------------------------+--------------------------|
+|                          Implicit Button Types                            |
+|-----------------------+------------------------+--------------------------|
+| action                | annot-bib              | completion               |
+| cscope                | ctags                  | debbugs-gnu-mode         |
+| debbugs-gnu-query     | debugger-source        | dir-summary              |
+| doc-id                | elink                  | elisp-compiler-msg       |
+| etags                 | function-in-buffer     | git-commit-reference     |
+| glink                 | gnus-push-button       | grep-msg                 |
+| hyp-address           | hyp-source             | id-cflow                 |
+| ilink                 | Info-node              | ipython-stack-frame      |
+| kbd-key               | klink                  | mail-address             |
+| man-apropos           | markdown-internal-link | org-mode                 |
+| patch-msg             | pathname               | pathname-line-and-column |
+| rfc                   | rfc-toc                | ripgrep-msg              |
+| social-reference      | texinfo-ref            | text-toc                 |
+| www-url               |                        |                          |
+|---------------------------------------------------------------------------|
 
-| action            | annot-bib              | completion               |
-| cscope            | ctags                  | debbugs-gnu-mode         |
-| debbugs-gnu-query | debugger-source        | dir-summary              |
-| doc-id            | elink                  | elisp-compiler-msg       |
-| etags             | function-in-buffer     | git-commit-reference     |
-| glink             | gnus-push-button       | grep-msg                 |
-| hyp-address       | hyp-source             | id-cflow                 |
-| ilink             | Info-node              | ipython-stack-frame      |
-| kbd-key           | klink                  | mail-address             |
-| man-apropos       | markdown-internal-link | org-mode                 |
-| patch-msg         | pathname               | pathname-line-and-column |
-| rfc               | rfc-toc                | ripgrep-msg              |
-| social-reference  | texinfo-ref            | text-toc                 |
-| www-url           |                        |                          |
 
 Stored in their own namespace, 'ibtypes::', so to see the doc on the
 'pathname' ibtype, use {C-h f ibtypes::pathname RET}.
@@ -256,6 +260,9 @@ Stored in their own namespace, 'ibtypes::', so to see the doc on the
 
 *                            Action Types
 
+|-----------------------------------------------------------------------------|
+|                            Action Types                                     |
+|-----------------------------------------------------------------------------|
 | annot-bib               | completion                   | www-url            |
 | debbugs-gnu-query       | display-boolean              | display-variable   |
 | eval-elisp              | exec-kbd-macro               | exec-shell-cmd     |
@@ -270,6 +277,7 @@ Stored in their own namespace, 'ibtypes::', so to see the doc on the
 | link-to-string-match    | link-to-texinfo-node         | link-to-web-search |
 | man-show                | org-internal-link-target     | org-link           |
 | org-radio-target        | rfc-toc                      | text-toc           |
+|-----------------------------------------------------------------------------|
 
 Stored in their own namespace, 'actypes::', so to see the doc on the
 'org-link' actype, use {C-h f actypes::org-link RET}.

@@ -424,7 +424,8 @@ point determined by `mouse-select-region-move-to-beginning'."
       (with-selected-frame start-w-or-f (setq start-w-or-f (selected-window))))
     (when (framep end-w-or-f)
       (with-selected-frame end-w-or-f (setq end-w-or-f (selected-window))))
-    (if (and (window-minibuffer-p start-w-or-f)
+    (if (and (window-valid-p start-w-or-f)
+	     (window-minibuffer-p start-w-or-f)
 	     (not (minibuffer-window-active-p start-w-or-f)))
 	;; Select the ending frame only, not the window pressed within.
 	(select-frame (window-frame end-w-or-f))
@@ -438,13 +439,15 @@ point determined by `mouse-select-region-move-to-beginning'."
 		     (exchange-point-and-mark))))
 	;; Use event-end in case called from mouse-drag-region.
 	;; If EVENT is a click, event-end and event-start give same value.
-	(if (and (window-minibuffer-p end-w-or-f)
+	(if (and (window-valid-p end-w-or-f)
+		 (window-minibuffer-p end-w-or-f)
 		 (not (minibuffer-window-active-p end-w-or-f)))
 	    ;; Select the ending frame only, not the window pressed within.
 	    (select-frame (window-frame end-w-or-f))
 	  (condition-case ()
 	      (hmouse-posn-set-point (event-end event))
-	    (error (select-frame (window-frame end-w-or-f)))))))))
+	    (error (when (window-valid-p end-w-or-f)
+		     (select-frame (window-frame end-w-or-f))))))))))
 
 (defun hmouse-move-point-eterm (arg-list)
   (apply 'mouse-move-point arg-list))

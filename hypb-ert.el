@@ -25,6 +25,7 @@
 
 ;;; Code:
 
+(eval-when-compile (require 'ert))
 (require 'hbut)
 (require 'hargs)
 

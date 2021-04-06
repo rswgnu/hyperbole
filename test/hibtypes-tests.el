@@ -241,5 +241,11 @@
 
 ;; completion
 
+;; This file can't be byte-compiled without the `el-mock' package (because of
+;; the use of the `with-mock' macro), which is not a dependency of Hyperbole.
+;;  Local Variables:
+;;  no-byte-compile: t
+;;  End:
+
 (provide 'hibtypes-tests)
 ;;; hibtypes-tests.el ends here
