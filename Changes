@@ -1,3 +1,7 @@
+2021-04-07  Mats Lidell  <matsl@gnu.org>
+
+* test/hypb-tests.el: Rename test file
+
 2021-04-05  Mats Lidell  <matsl@gnu.org>
 
 * test/hypb-test.el (hypb:replace-match-string-test): ert test for

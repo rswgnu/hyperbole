@@ -1,4 +1,4 @@
-;;; hypb-test.el --- test for hypb.el         -*- lexical-binding: t; -*-
+;;; hypb-tests.el --- test for hypb.el         -*- lexical-binding: t; -*-
 
 ;; Author: Mats Lidell <matsl@gnu.org>
 ;;
@@ -86,5 +86,5 @@
   (should (equal (hypb:replace-match-string "\\`\\|x" "--xx--" "z")
                  "z--zz--")))
 
-(provide 'hypb-test)
-;;; hypb-test.el ends here
+(provide 'hypb-tests)
+;;; hypb-tests.el ends here
