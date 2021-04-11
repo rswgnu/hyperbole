@@ -1,3 +1,12 @@
+2021-04-11  Mats Lidell  <matsl@gnu.org>
+
+* test/hibtypes-tests.el (ibtypes::ctags-vgrind-test)
+    (ibtypes::etags-test): Make tests independent of default directory.
+
+* test/demo-tests.el (demo-manifest-test): Make test more robust.
+
+* hypb-ert.el (hypb-run-all-tests): Run all hyperbole tests.
+
 2021-04-07  Mats Lidell  <matsl@gnu.org>
 
 * test/hypb-tests.el: Rename test file
