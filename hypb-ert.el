@@ -42,5 +42,11 @@
 (defal hypb-ert-sym 'hypb-run-ert-test-symbol)
 (defal hypb-ert-sel 'hypb-run-ert-test-selector)
 
+(defun hypb-run-all-tests ()
+  "Run every ert test."
+  (interactive)
+  (mapc 'load-file (directory-files (expand-file-name "test" hyperb:dir) t "\\.el$"))
+  (ert t))
+
 (provide 'hypb-ert)
 ;;; hypb-ert.el ends here
