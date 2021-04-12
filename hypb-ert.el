@@ -45,7 +45,7 @@
 (defun hypb-run-all-tests ()
   "Run every ert test."
   (interactive)
-  (mapc 'load-file (directory-files (concat hyperb:dir "test") t "\\.el$"))
+  (mapc 'load-file (directory-files (expand-file-name "test" hyperb:dir) t "\\.el$"))
   (ert t))
 
 (provide 'hypb-ert)

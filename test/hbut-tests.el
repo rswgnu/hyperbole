@@ -30,7 +30,7 @@
         (insert "<defal-path DEMO>")
         (goto-char 4)
         (action-key)
-        (should (string= (concat hyperb:dir "DEMO") buffer-file-name))))
+        (should (string= (expand-file-name "DEMO" hyperb:dir) buffer-file-name))))
     (progn
       (kill-buffer "DEMO")
       (ibtype:delete 'ibtypes::defal-path)))
@@ -111,7 +111,7 @@ the button text"
         (insert "<<<DEMO>>>")
         (goto-char 4)
         (action-key)
-        (should (string= (concat hyperb:dir "DEMO") buffer-file-name)))
+        (should (string= (expand-file-name "DEMO" hyperb:dir) buffer-file-name)))
     (progn
       (kill-buffer "DEMO")
       (ibtype:delete 'ibtypes::defil-path-it))))
@@ -154,7 +154,7 @@ the button text"
   (with-temp-buffer
     (insert "<[emacs]>: \"${hyperb:dir}/DEMO\"")
     (goto-char 4)
-    (hy-test-helpers:action-key-should-call-hpath:find (concat hyperb:dir "DEMO"))))
+    (hy-test-helpers:action-key-should-call-hpath:find (expand-file-name "DEMO" hyperb:dir))))
 
 (ert-deftest hbut-ib-link-to-file-with-label-variants ()
   (cl-loop for ch in '(?: ?- ?=) do
@@ -162,7 +162,7 @@ the button text"
                     (with-temp-buffer
                       (insert "<[demo]>" (make-string n ch) " \"${hyperb:dir}/DEMO\"")
                       (goto-char 4)
-                      (hy-test-helpers:action-key-should-call-hpath:find (concat hyperb:dir "DEMO"))))))
+                      (hy-test-helpers:action-key-should-call-hpath:find (expand-file-name "DEMO" hyperb:dir))))))
 
 (ert-deftest hbut-ib-url-with-label ()
   "Should find link but fails with (user-error \"No link found\")"
