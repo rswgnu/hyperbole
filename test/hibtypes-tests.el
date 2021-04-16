@@ -89,6 +89,95 @@
         (should (string= "hyperbole.el" (buffer-name)))))
   (kill-buffer "hyperbole.el"))
 
+(ert-deftest ibtypes::pathname-anchor-test ()
+  "Pathname with anchor."
+  (unwind-protect
+      (with-temp-buffer
+        (insert "\"${hyperb:dir}/DEMO#Smart Keys\"")
+        (goto-char 2)
+        (ibtypes::pathname)
+        (should (string= "DEMO" (buffer-name)))
+        (should (looking-at "\* Smart Keys")))
+    (kill-buffer "DEMO")))
+
+(ert-deftest ibtypes::pathname-anchor-line-test ()
+  "Pathname with anchor and line specification."
+  (unwind-protect
+      (with-temp-buffer
+        (insert "\"${hyperb:dir}/DEMO#Smart Keys:2\"")
+        (goto-char 2)
+        (ibtypes::pathname)
+        (should (string= "DEMO" (buffer-name)))
+        (forward-line -2)
+        (should (looking-at "\* Smart Keys")))
+    (kill-buffer "DEMO")))
+
+(ert-deftest ibtypes::pathname-line-column-test ()
+  "Pathname with line and position specification."
+  (unwind-protect
+      (with-temp-buffer
+        (insert "\"${hyperb:dir}/DEMO:3:45\"")
+        (goto-char 2)
+        (ibtypes::pathname-line-and-column)
+        (should (string= "DEMO" (buffer-name)))
+        (should (= (line-number-at-pos) 3))
+        (should (= (current-column) 45)))
+    (kill-buffer "DEMO")))
+
+(ert-deftest ibtypes::pathname-load-path-line-column-test ()
+  "Pathname with line and position specification."
+  (unwind-protect
+      (with-temp-buffer
+        (insert "\"${load-path}/hypb.el:10:5\"")
+        (goto-char 2)
+        (ibtypes::pathname-line-and-column)
+        (should (string= "hypb.el" (buffer-name)))
+        (should (= (line-number-at-pos) 10))
+        (should (= (current-column) 5)))
+    (kill-buffer "hypb.el")))
+
+(ert-deftest ibtypes::pathname-with-dash-loads-file-test ()
+  "Pathname with dash loads file.
+Bug: Fails with 'Invalid function: hact'."
+  :expected-result :failed
+  (with-temp-buffer
+    (insert "\"-${hyperb:dir}/test/hy-test-dependencies.el\"")
+    (goto-char 2)
+    (ibtypes::pathname)))
+
+(ert-deftest ibtypes::pathname-directory-test ()
+  "Pathname with directory opens dired."
+  (unwind-protect
+      (with-temp-buffer
+        (insert "\"/tmp\"")
+        (goto-char 2)
+        (ibtypes::pathname)
+        (should (string= "tmp" (buffer-name)))
+        (should (eq major-mode 'dired-mode)))
+    (kill-buffer "tmp")))
+
+(ert-deftest ibtypes::pathname-dot-slash-in-other-folder-test ()
+  "Pathname that starts with ./ only works if in same folder."
+  (with-temp-buffer
+    (insert "\"./hypb.el\"")
+    (goto-char 2)
+    (let ((help-buffer "*Help: Hyperbole Action Key*")
+          (default-directory (expand-file-name "test" hyperb:dir)))
+      (hkey-help)
+      (set-buffer help-buffer)
+      (should (string-match "no matching context" (buffer-string))))))
+
+(ert-deftest ibtypes::pathname-dot-slash-in-same-folder-test ()
+  "Pathname that starts with ./ only works if in same folder."
+  (with-temp-buffer
+    (insert "\"./hypb.el\"")
+    (goto-char 2)
+    (let ((help-buffer "*Help: Hyperbole Action Key*")
+          (default-directory hyperb:dir))
+      (hkey-help)
+      (set-buffer help-buffer)
+      (should (string-match "actype:.*link-to-file" (buffer-string))))))
+
 ;; Function in buffer XEmac functionality. Is there somethign similar in Emacs?
 
 ;; ibtypes::annot-bib

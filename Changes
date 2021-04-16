@@ -1,3 +1,13 @@
+2021-04-15  Mats Lidell  <matsl@gnu.org>
+
+* test/hibtypes-tests.el (ibtypes::pathname-anchor-test)
+    (ibtypes::pathname-anchor-line-test, ibtypes::pathname-line-column-test)
+    (ibtypes::pathname-load-path-line-column-test)
+    (ibtypes::pathname-with-dash-loads-file-test)
+    (ibtypes::pathname-directory-test)
+    (ibtypes::pathname-dot-slash-in-other-folder-test)
+    (ibtypes::pathname-dot-slash-in-same-folder-test): Pathname test cases.
+
 2021-04-11  Mats Lidell  <matsl@gnu.org>
 
 * test/hibtypes-tests.el (ibtypes::ctags-vgrind-test)
