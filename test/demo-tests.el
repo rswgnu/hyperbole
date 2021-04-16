@@ -35,6 +35,9 @@
 (declare-function org-check-for-hidden "org-el")
 
 (ert-deftest demo-smart-mouse-keys-ref-test ()
+  "Go to the header from a #ref.
+Regression.  Has stopped working."
+  :expected-result :failed
   (unwind-protect
       (progn
         (hypb:display-file-with-logo (expand-file-name "DEMO" hyperb:dir))

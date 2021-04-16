@@ -1,3 +1,11 @@
+2021-04-17  Mats Lidell  <matsl@gnu.org>
+
+* test/demo-tests.el (demo-smart-mouse-keys-ref-test): Regression
+    introduced - marked as expected failure.
+
+* test/hbut-tests.el (hbut-ib-url-with-label): Bug solved - removed
+    expected failed.
+
 2021-04-16  Bob Weiner  <rsw@gnu.org>
 
 * hpath.el (hpath:at-p): Fix to allow non-existent paths (or those
