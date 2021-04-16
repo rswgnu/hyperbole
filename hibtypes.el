@@ -182,8 +182,8 @@ Texinfo @file{} entries, and hash-style link references to HTML,
 XML, SGML, Markdown or Emacs outline headings, shell script
 comments, and MSWindows paths (see \"${hyperb:dir}/DEMO#POSIX and
 MSWindows Paths\" for details).  Emacs Lisp library
-files (filenames without any directory component that end in .el
-and .elc) are looked up using the `load-path' directory list.
+files (filenames without any directory component that end in .el,
+.elc or .eln) are looked up using the `load-path' directory list.
 
 The pathname may contain references to Emacs Lisp variables or
 shell environment variables using the syntax, \"${variable-name}\".
@@ -209,7 +209,7 @@ display options."
         ;;
         ;; Match to Emacs Lisp and Info files without any directory component.
         (when (setq path (hpath:delimited-possible-path))
-          (cond ((string-match "\\`[^\\\\/~]+\\.elc?\\(\\.gz\\)?\\'" path)
+          (cond ((string-match "\\`[^\\\\/~]+\\.el[cn]?\\(\\.gz\\)?\\'" path)
                  (apply #'ibut:label-set path (hpath:start-end path))
                  (if (string-match hpath:prefix-regexp path)
                      (hact 'hpath:find path)
@@ -991,11 +991,6 @@ This works with JavaScript and Python tracebacks, gdb, dbx, and xdb.  Such lines
 ;;; locations.
 ;;; ========================================================================
 
-(defconst hibtypes-path-line-and-col-regexp
-  ;; Allow for 'c:' single letter drive prefixes on MSWindows and
-  ;; Elisp vars with colons in them.
-  "\\([^ \t\n\r\f:][^\t\n\r\f:]+\\(:[^0-9\t\n\r\f]*\\)*\\):\\([0-9]+\\)\\(:\\([0-9]+\\)\\)?$")
-
 (defib pathname-line-and-column ()
   "Make a valid pathname:line-num[:column-num] pattern display the path at line-num and optional column-num.
 Also works for remote pathnames.
@@ -1008,8 +1003,8 @@ removed from pathname when searching for a valid match.
 See `hpath:find' function documentation for special file display options."
   (let ((path-line-and-col (hpath:delimited-possible-path)))
     (when (and (stringp path-line-and-col)
-               (string-match hibtypes-path-line-and-col-regexp path-line-and-col))
-      (let ((file (save-match-data (expand-file-name (hpath:substitute-value (match-string-no-properties 1 path-line-and-col)))))
+               (string-match hpath:section-line-and-column-regexp path-line-and-col))
+      (let ((file (save-match-data (hpath:expand (match-string-no-properties 1 path-line-and-col))))
             (line-num (string-to-number (match-string-no-properties 3 path-line-and-col)))
             (col-num (when (match-end 4)
                        (string-to-number (match-string-no-properties 5 path-line-and-col)))))

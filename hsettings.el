@@ -157,13 +157,15 @@ package to display search results."
   (interactive)
   (cl-multiple-value-bind (service-name search-term)
       (hyperbole-read-web-search-arguments service-name search-term)
-    (if (assoc service-name hyperbole-web-search-alist)
-	(let ((browse-url-browser-function
-	       hyperbole-web-search-browser-function))
-	  (browse-url
-	   (format (cdr (assoc service-name hyperbole-web-search-alist))
-		   (browse-url-url-encode-chars search-term "[*\"()',=;?% ]"))))
-      (user-error "(Hyperbole): Invalid web search service `%s'" service-name))))
+    (let ((search-pat (cdr (assoc service-name hyperbole-web-search-alist
+				  (lambda (service1 service2)
+				    (equal (downcase service1) (downcase service2)))))))
+      (if search-pat
+	  (let ((browse-url-browser-function
+		 hyperbole-web-search-browser-function))
+	    (browse-url
+	     (format search-pat (browse-url-url-encode-chars search-term "[*\"()',=;?% ]"))))
+	(user-error "(Hyperbole): Invalid web search service `%s'" service-name)))))
 
 ;; This must be defined before the defcustom `inhbit-hyperbole-messaging'.
 ;;;###autoload

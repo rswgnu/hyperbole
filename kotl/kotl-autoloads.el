@@ -23,7 +23,60 @@ STILL TODO:
 
 \(fn EXPORT-FROM OUTPUT-TO &optional SOFT-NEWLINES-FLAG)" t nil)
 
-(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "kexport" '("kexport:")))
+(register-definition-prefixes "kexport" '("kexport:"))
+
+;;;***
+
+;;;### (autoloads nil "kexport-collapse" "kexport-collapse.el" (0
+;;;;;;  0 0 0))
+;;; Generated autoloads from kexport-collapse.el
+
+(autoload 'kexport:html "kexport-collapse" "\
+Export a koutline buffer or file in EXPORT-FROM to html format in OUTPUT-TO.
+By default, this retains newlines within cells as they are.  With optional prefix arg, SOFT-NEWLINES-FLAG,
+hard newlines are not used.  Also converts Urls and Klinks into Html hyperlinks.
+STILL TODO:
+  Make delimited pathnames into file links (but not if within klinks).
+  Copy attributes stored in cell 0 and attributes from each cell.
+
+\(fn EXPORT-FROM OUTPUT-TO &optional SOFT-NEWLINES-FLAG)" t nil)
+
+(register-definition-prefixes "kexport-collapse" '("kexport:"))
+
+;;;***
+
+;;;### (autoloads nil "kexport-collapse-try" "kexport-collapse-try.el"
+;;;;;;  (0 0 0 0))
+;;; Generated autoloads from kexport-collapse-try.el
+
+(autoload 'kexport:html "kexport-collapse-try" "\
+Export a koutline buffer or file in EXPORT-FROM to html format in OUTPUT-TO.
+By default, this retains newlines within cells as they are.  With optional prefix arg, SOFT-NEWLINES-FLAG,
+hard newlines are not used.  Also converts Urls and Klinks into Html hyperlinks.
+STILL TODO:
+  Make delimited pathnames into file links (but not if within klinks).
+  Copy attributes stored in cell 0 and attributes from each cell.
+
+\(fn EXPORT-FROM OUTPUT-TO &optional SOFT-NEWLINES-FLAG)" t nil)
+
+(register-definition-prefixes "kexport-collapse-try" '("kexport:"))
+
+;;;***
+
+;;;### (autoloads nil "kexport-menu" "kexport-menu.el" (0 0 0 0))
+;;; Generated autoloads from kexport-menu.el
+
+(autoload 'kexport:html "kexport-menu" "\
+Export a koutline buffer or file in EXPORT-FROM to html format in OUTPUT-TO.
+By default, this retains newlines within cells as they are.  With optional prefix arg, SOFT-NEWLINES-FLAG,
+hard newlines are not used.  Also converts Urls and Klinks into Html hyperlinks.
+STILL TODO:
+  Make delimited pathnames into file links (but not if within klinks).
+  Copy attributes stored in cell 0 and attributes from each cell.
+
+\(fn EXPORT-FROM OUTPUT-TO &optional SOFT-NEWLINES-FLAG)" t nil)
+
+(register-definition-prefixes "kexport-menu" '("kexport:"))
 
 ;;;***
 
@@ -194,14 +247,10 @@ See documentation for `kcell:ref-to-id' for valid cell-ref formats.
 (autoload 'kotl-mode "kotl-mode" "\
 The major mode used to edit and view koutlines.
 It provides the following keys:
-\\{kotl-mode-map}
-
-\(fn)" t nil)
+\\{kotl-mode-map}" t nil)
 
 (autoload 'kotl-mode:example "kotl-mode" "\
-Display the Koutliner example file for demonstration use by a user.
-
-\(fn)" t nil)
+Display the Koutliner example file for demonstration use by a user." t nil)
 
 (autoload 'kotl-mode:overview "kotl-mode" "\
 Show the first line of each cell.
@@ -233,11 +282,16 @@ Display fully expanded tree rooted at CELL-REF.
 \(fn &optional CELL-REF)" t nil)
 
 (autoload 'kotl-mode:is-p "kotl-mode" "\
-Signal an error if current buffer is not a Hyperbole outline, else return t.
+Signal an error if current buffer is not a Hyperbole outline, else return t." nil nil)
 
-\(fn)" nil nil)
+(register-definition-prefixes "kotl-mode" '("delete-selection-pre-hook" "kotl-mode" "yank-"))
 
-(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "kotl-mode" '("delete-selection-pre-hook" "kotl-mode" "yank-")))
+;;;***
+
+;;;### (autoloads nil "kotl-orgtbl" "kotl-orgtbl.el" (0 0 0 0))
+;;; Generated autoloads from kotl-orgtbl.el
+
+(register-definition-prefixes "kotl-orgtbl" '("kotl-mode:transpose-lines-" "orgtbl-"))
 
 ;;;***
 
@@ -258,7 +312,7 @@ Signal an error if current buffer is not a Hyperbole outline, else return t.
 ;;;### (autoloads nil "kview" "kview.el" (0 0 0 0))
 ;;; Generated autoloads from kview.el
 
-(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "kview" '("kcell-view:" "kview:")))
+(register-definition-prefixes "kview" '("kcell-view:" "kview:"))
 
 ;;;***
 

@@ -95,6 +95,6 @@ topwin.py            - Python script to find the topmost macOS app window at a s
 .hypb & _hypb        - Button data files used by the Hyperbole DEMO file
 
 --- EXTERNAL SYSTEM ENCAPSULATIONS ---
-hsys-org.el          - GNU Hyperbole support functions for Support for hib-org.el
+hsys-org.el          - GNU Hyperbole support functions for hib-org.el
 hsys-www.el          - GNU Hyperbole support for Emacs W3 World-Wide Web (WWW) browsing
 

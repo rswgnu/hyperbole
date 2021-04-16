@@ -32,6 +32,13 @@
 ;;; Public Variables
 ;;; ************************************************************************
 
+(defvar hpath:auto-variable-alist
+  '(("\\.el[cn]?\\'" . load-path)
+    ("\\.org\\'" . org-directory)
+    ("\\.py\\'" . "PYTHONPATH"))
+  "Alist of filename patterns and corresponding variables to prepend to resolve them.
+Each element looks like FILENAME-REGEXP . LISP-VARIABLE-OR-ENV-VARIABLE-STR.")
+
 (defcustom hpath:find-file-urls-mode nil
   "This is t when a remote file access library is available and use of ftp and http urls in file finding commands has been enabled.
 Default is nil since this can slow down normal file finding."
@@ -40,6 +47,23 @@ Default is nil since this can slow down normal file finding."
   :set (lambda (_symbol _value) (call-interactively #'hpath:find-file-urls-mode))
   :group 'hyperbole-buttons)
 
+(defconst hpath:markup-link-anchor-regexp
+  "\\`\\(#?[^#]*[^#.]\\)?\\(#\\)\\([^\]\[#^{}<>\"`'\\\n\t\f\r]*\\)"
+  "Regexp that matches a markup filename followed by a hash (#) and an optional in-file anchor name.
+# is group 2.  Group 3 is the anchor name.")
+
+(defconst hpath:line-and-column-regexp
+  ":\\([-+]?[0-9]+\\)\\(:\\([-+]?[0-9]+\\)\\)?\\s-*\\'"
+  "Regexp that matches a trailing colon separated line number folowed by an optional column number.
+Group 1 is the line number.  Group 3 is the column number.")
+
+(defconst hpath:section-line-and-column-regexp
+  "\\([^ \t\n\r\f:][^\t\n\r\f:]+\\(:[^0-9\t\n\r\f]*\\)*\\):\\([0-9]+\\)\\(:\\([0-9]+\\)\\)?$"
+  "Regexp that matches to a path with optional #section and :line-num:col-num.
+Grouping 1 is path, grouping 3 is line number, grouping 4 is
+column number.  Allow for 'c:' single letter drive prefixes on
+MSWindows and Elisp vars with colons in them.")
+
 ;;; ************************************************************************
 ;;; MS WINDOWS PATH CONVERSIONS
 ;;; ************************************************************************
@@ -47,7 +71,7 @@ Default is nil since this can slow down normal file finding."
 ;; This section adds automatic recognition of MSWindows implicit path
 ;; links and converts disk drive and path separators to whatever
 ;; format is needed by the underlying OS upon which Emacs is one,
-;; notably either for POSIX or MSWindows (with no POSIC layer).
+;; notably either for POSIX or MSWindows (with no POSIX layer).
 
 ;; Especially useful when running Emacs under Windows Subsystem for
 ;; Linux (WSL) where the system-type variable is gnu/linux but
@@ -444,7 +468,7 @@ to create a path to the RFC document for `rfc-num'.")
 ;;             or   URL[:=][<user>@]<domain>[:<port>][<path>]  (no protocol specified)
 ;; Avoid [a-z]:/path patterns since these may be disk paths on OS/2, DOS or
 ;; Windows.
-(defvar hpath:url-regexp "<?\\(URL[:=]\\)?\\(\\([a-zA-Z][a-zA-Z]+\\)://?/?\\([^/:@ \t\n\r\"`'|]+@\\)?\\([^/:@ \t\n\r\"`'|]+\\)\\(\\)\\(:[0-9]+\\)?\\([/~]\\([^\]\[@ \t\n\r\"`'|(){}<>]+[^\]\[@ \t\n\r\"`'|(){}<>.,?#!*]\\)*\\)?\\)>?"
+(defvar hpath:url-regexp "<?\\(URL[:=]\\)?\\(\\([a-zA-Z][a-zA-Z]+\\)://?/?\\([^/:@ \t\n\r\"`'|]+@\\)?\\([^/:@ \t\n\r\"`'|]+\\)\\(\\)\\(:[0-9]+\\)?\\([/~]\\([^\]\[ \t\n\r\"`'|(){}<>]+[^\]\[ \t\n\r\"`'|(){}<>.,?#!*]\\)*\\)?\\)>?"
   "Regular expression which matches a Url in a string or buffer.
 Its match groupings and their names are:
   1 = hpath:url-keyword-grpn = optional `URL:' or `URL=' literal
@@ -463,7 +487,7 @@ Its match groupings and their names are:
   (concat
    "<?\\(URL[:=]\\|[^/@]\\|\\)\\(\\(\\)\\(\\)\\("
    hpath:url-hostnames-regexp
-   "\\.[^/:@ \t\n\r\"`'|]+\\):?\\([0-9]+\\)?\\([/~]\\([^\]\[@ \t\n\r\"`'|(){}<>]+[^\]\[@ \t\n\r\"`'|(){}<>.,?#!*]\\)*\\)?\\)>?")
+   "\\.[^/:@ \t\n\r\"`'|]+\\):?\\([0-9]+\\)?\\([/~]\\([^\]\[ \t\n\r\"`'|(){}<>]+[^\]\[ \t\n\r\"`'|(){}<>.,?#!*]\\)*\\)?\\)>?")
   "Regular expression which matches a Url in a string or buffer.
 Its match groupings and their names are:
   1 = hpath:url-keyword-grpn = optional `URL:' or `URL=' literal
@@ -479,7 +503,7 @@ Its match groupings and their names are:
   (concat
    "<?\\(URL[:=]\\)\\(\\(\\)\\(\\)"
    "\\([a-zA-Z0-9][^/:@ \t\n\r\"`'|]*\\.[^/:@ \t\n\r\"`'|]+\\)"
-   ":?\\([0-9]+\\)?\\([/~]\\([^\]\[@ \t\n\r\"`'|(){}<>]+[^\]\[@ \t\n\r\"`'|(){}<>.,?#!*]\\)*\\)?\\)>?")
+   ":?\\([0-9]+\\)?\\([/~]\\([^\]\[ \t\n\r\"`'|(){}<>]+[^\]\[ \t\n\r\"`'|(){}<>.,?#!*]\\)*\\)?\\)>?")
   "Regular expression which matches a Url in a string or buffer.
 Its match groupings and their names are:
   1 = hpath:url-keyword-grpn = required `URL:' or `URL=' literal
@@ -540,16 +564,6 @@ use with `string-match'.")
 (defconst hpath:markdown-suffix-regexp "\\.[mM][dD]"
   "Regexp that matches to a Markdown file suffix.")
 
-(defconst hpath:markup-link-anchor-regexp
-  "\\`\\(#?[^#]*[^#.]\\)?\\(#\\)\\([^\]\[#^{}<>\"`'\\\n\t\f\r]*\\)"
-  "Regexp that matches a markup filename followed by a hash (#) and an optional in-file anchor name.
-Group 3 is the anchor name.")
-
-(defconst hpath:line-and-column-regexp
-  ":\\([-+]?[0-9]+\\)\\(:\\([-+]?[0-9]+\\)\\)?\\s-*\\'"
-  "Regexp that matches a trailing colon separated line number folowed by an optional column number.
-Group 1 is the line number.  Group 3 is the column number.")
-
 (defconst hpath:outline-section-pattern "^\*+[ \t]+%s\\([ \t[:punct:]]*\\)$"
   "Regexp matching an Emacs outline section header and containing a %s for replacement of a specific section name.")
 
@@ -579,6 +593,13 @@ These are used to indicate how to display or execute the pathname.
 This prevents improper processing of hargs with colons in them, e.g. `actypes::link-to-file'."
   (let (tramp-mode)
     (abbreviate-file-name path)))
+
+(defun hpath:absolute-arguments (args-list &optional default-dirs)
+  "Return any paths in ARGS-LIST made absolute.
+Uses optional DEFAULT-DIRS or `default-directory'.
+Other arguments are returned unchanged."
+  (mapcar (lambda (arg) (hpath:absolute-to arg default-dirs))
+	  args-list))
 
 (defun hpath:absolute-to (path &optional default-dirs)
   "Return PATH as an absolute path relative to one directory from optional DEFAULT-DIRS or `default-directory'.
@@ -622,7 +643,8 @@ See the `(emacs)Remote Files' info documentation for pathname format details.
 Always returns nil if (hpath:remote-available-p) returns nil."
   (let ((remote-package (hpath:remote-available-p))
 	(user (hpath:remote-default-user))
-	(path))
+	path
+	path-no-site)
     (when remote-package
       (setq path
 	    (save-excursion
@@ -670,9 +692,11 @@ Always returns nil if (hpath:remote-available-p) returns nil."
 		(concat "/" user (match-string-no-properties 0)))
 	       ;; site and path
 	       ((and (looking-at
-		      "/?\\(\\([^/:@ \t\n\r\"`'|]+\\):[^]@:, \t\n\r\"`'|\)\}]+\\)[] \t\n\r,.\"`'|\)\}]")
-		     (setq path (match-string-no-properties 1))
-		     (string-match "[^.]\\.[^.]" (match-string-no-properties 2)))
+		      "/?\\(\\([^/:@ \t\n\r\"`'|]+\\):\\([^]@:, \t\n\r\"`'|\)\}]+\\)\\)[] \t\n\r,.\"`'|\)\}]")
+		     (setq path (match-string-no-properties 1) ;; includes site
+			   path-no-site (match-string-no-properties 3))
+		     (string-match "[^.]\\.[^.]" (match-string-no-properties 2))
+		     (not (string-match "\\(\\`\\|:\\)[:0-9]+\\'" path-no-site))) ;; prevent matching to line:col suffixes
 		(concat "/" user "@" path))
 	       ;; host and path
 	       ((and (looking-at "/\\([^/:@ \t\n\r\"`'|]+:[^]@:, \t\n\r\"`'|\)\}]+\\)")
@@ -763,7 +787,66 @@ paths are allowed.  Absolute pathnames must begin with a `/' or `~'."
    ;; ((hpath:is-p (hargs:delimited "file://" "[ \t\n\r\"\'\}]" nil t)))
    ((hpath:remote-at-p))
    ((hpath:www-at-p) nil)
-   ((hpath:is-p (hpath:delimited-possible-path non-exist) type non-exist))))
+   ((let ((path (hpath:delimited-possible-path non-exist)))
+     (when (and path (not non-exist) (string-match hpath:prefix-regexp path))
+       (setq non-exist t))
+     (hpath:is-p path type non-exist)))))
+
+(defun hpath:call (func path)
+  "Call FUNC with one argument, a PATH, stripped of any prefix operator and suffix location.
+Return the result of calling FUNC, which must be either nil or the
+possibly modified path, but with the prefix and suffix reattached.
+Make any path within a file buffer absolute before returning. "
+  (unless (or (functionp func) (subrp func))
+    (error "(hpath:call): Invalid function: %s" func))
+  (unless (stringp path)
+    (error "(%s): '%s' must be a string" func path))
+  ;; Convert tabs and newlines to space.
+  (setq path (hbut:key-to-label (hbut:label-to-key path)))
+  (let* ((orig-path path)
+	 (prefix (car (delq nil (list (when (string-match hpath:prefix-regexp path)
+					(prog1 (match-string 0 path)
+					  (setq path (substring path (match-end 0)))))
+				      (when (string-match "\\`file://" path)
+					(setq path (substring path (match-end 0)))
+					nil)
+				      (when (string-match hpath:prefix-regexp path)
+					(prog1 (match-string 0 path)
+					  (setq path (substring path (match-end 0)))))))))
+	 (suffix (apply #'concat (nreverse (list (when (string-match hpath:line-and-column-regexp path)
+						   (prog1 (match-string 0 path)
+						     (setq path (substring path 0 (match-beginning 0)))))
+						 (if (string-match "\\$@?\{[^\}]+@?\}" path)
+						     ;; Path may be a link reference with a suffix component
+						     ;; following a comma or # symbol, so temporarily strip
+						     ;; these, if any, before expanding any embedded variables.
+						     (when (string-match "[ \t\n\r]*[#,]" path)
+						       (prog1 (substring path (1- (match-end 0)))
+							 (setq path (substring path 0 (match-beginning 0)))))
+						   (when (string-match hpath:markup-link-anchor-regexp path)
+						     (prog1 (concat "#" (match-string 3 path))
+						       (setq path (substring path 0 (match-beginning 2))))))))))
+	 (func-result (funcall func path)))
+    (when (stringp func-result)
+      (setq path (concat prefix func-result suffix))
+      ;; If path is just a local reference that begins with #,
+      ;; in a file buffer, prepend the file name to it.  If an HTML
+      ;; file, prepend file:// to it.
+      (let ((mode-prefix (if (memq major-mode '(js2-mode js-mode js3-mode javascript-mode html-mode web-mode))
+			     "file://" "")))
+	(cond ((and buffer-file-name
+		    ;; ignore HTML color strings
+		    (not (string-match "\\`#[0-9A-Fa-f][0-9A-Fa-f][0-9A-Fa-f][0-9A-Fa-f][0-9A-Fa-f][0-9A-Fa-f]\\'" path))
+		    ;; match to in-file HTML references
+		    (string-match "\\`#[^\'\"<>#]+\\'" path))
+	       (setq path (concat mode-prefix buffer-file-name path)))
+	      ((string-match "\\`[^#]+\\(#[^#]*\\)\\'" path)
+	       ;; file and # reference
+	       (if (memq (aref path 0) '(?/ ?~))
+		   ;; absolute
+		   (setq path (concat mode-prefix path))
+		 (setq path (concat mode-prefix default-directory path))))
+	      (t path))))))
 
 (defun hpath:delimited-possible-path (&optional non-exist include-positions)
   "Return delimited possible path or non-delimited remote path at point, if any.
@@ -842,12 +925,43 @@ window in which the buffer is displayed."
   "Return the function to display a Hyperbole path using optional symbol DISPLAY-WHERE or `hpath:display-where'."
   (hpath:display-where-function display-where hpath:display-where-alist))
 
+(defun hpath:expand (path)
+  "Expand relative PATH using the load variable from the first file matching regexp in `hpath:auto-variable-alist'."
+  (setq path (hpath:substitute-value
+	      (if (string-match "\\`[\\/~.]" path)
+		  (expand-file-name path)
+		(hpath:expand-with-variable path))))
+  ;; For compressed Elisp libraries, add any found compressed suffix to the path.
+  (or (locate-library path) path))
+
+(defvar hpath:compressed-suffix-regexp (concat (regexp-opt '(".gz" ".Z" ".zip" ".bz2" ".xz" ".zst")) "\\'")
+   "Regexp of compressed file name suffixes.")
+
+(defun hpath:expand-with-variable (path)
+  "Assume PATH is relative and prepend to it the ${load variable name} from the first file matching regexp in `hpath:auto-variable-alist' sans any compression suffix in `hpath:compressed-suffix-regexp'."
+  (let ((auto-variable-alist hpath:auto-variable-alist)
+	(compression-suffix (when (string-match hpath:compressed-suffix-regexp path)
+			      (prog1 (match-string 0 path)
+				(setq path (substring path 0 (match-beginning 0))))))
+	regexp
+	variable)
+    (while auto-variable-alist
+      (setq regexp (caar auto-variable-alist)
+	    variable (cdar auto-variable-alist)
+	    auto-variable-alist (cdr auto-variable-alist))
+      (when (string-match regexp path)
+	(when (or (and (stringp variable) (getenv variable))
+		  (and (symbolp variable) (boundp variable)))
+	  (setq path (format "${%s}/%s" variable path)))
+	(setq auto-variable-alist nil)))
+    (concat path compression-suffix)))
+
 (defun hpath:file-line-and-column (path-line-and-col)
   "Given a `path-line-and-col' string of format: path:line:col, return a list with the parts parsed out, else nil."
   (when (and (stringp path-line-and-col)
-	     (string-match hibtypes-path-line-and-col-regexp path-line-and-col))
+	     (string-match hpath:section-line-and-column-regexp path-line-and-col))
     ;; Ensure any variables and heading suffixes following [#,] are removed before returning file.
-    (let ((file (save-match-data (expand-file-name (hpath:substitute-value (match-string-no-properties 1 path-line-and-col)))))
+    (let ((file (save-match-data (hpath:expand (match-string-no-properties 1 path-line-and-col))))
 	  (line-num (string-to-number (match-string-no-properties 3 path-line-and-col)))
 	  (col-num (when (match-end 4)
 		     (string-to-number (match-string-no-properties 5 path-line-and-col)))))
@@ -933,7 +1047,7 @@ buffer but don't display it."
 	    path (if (match-end 1)
 		     (substring path 0 (match-end 1))
 		   buffer-file-name)))
-    (setq path (hpath:substitute-value path)
+    (setq path (hpath:expand path)
 	  filename (hpath:absolute-to path default-directory))
     (if noselect
 	(let ((buf (find-file-noselect filename)))
@@ -1129,115 +1243,74 @@ of existing pathnames, but not at the start or end.
 
 Before the pathname is checked for existence, tabs and newlines
 are converted to a single space, `hpath:prefix-regexp' matches at
-the start are temporarily stripped, link anchors at the end
-following a # or , character are temporarily stripped, and path
-variables are expanded with `hpath:substitute-value'.  This normalized
-path form is what is returned for PATH."
+the start are temporarily stripped, \"file://\" prefixes are
+stripped, link anchors at the end following a # or , character
+are temporarily stripped, and path variables are expanded with
+`hpath:substitute-value'.  This normalized path form is what is
+returned for PATH."
   (when (stringp path)
-    (let (modifier
-	  suffix)
-      (when (string-match hpath:prefix-regexp path)
-	(setq modifier (substring path 0 1)
-	      path (substring path (match-end 0))))
-      (when (string-match "\\`file://" path)
-	(setq path (substring path (match-end 0))))
-      (when (string-match hpath:prefix-regexp path)
-	(setq modifier (substring path 0 1)
-	      path (substring path (match-end 0))))
-      (setq path (hpath:mswindows-to-posix path))
-      (and (not (or (string-equal path "")
-		    (string-match "\\`\\s-\\|\\s-\\'" path)))
-	   ;; Convert tabs and newlines to space.
-	   (setq path (hbut:key-to-label (hbut:label-to-key path)))
-	   (or (not (string-match "[()]" path))
-	       (string-match "\\`([^ \t\n\r\)]+)[ *A-Za-z0-9]" path))
-	   ;; Allow for @{ and @} in texinfo-mode
-	   (if (string-match "\\$@?\{[^\}]+@?\}" path)
-	       ;; Path may be a link reference with a suffix component
-	       ;; following a comma or # symbol, so temporarily strip
-	       ;; these, if any, before expanding any embedded variables.
-	       (if (string-match "[ \t\n\r]*[#,]" path)
-		   (progn (setq suffix (substring path (match-beginning 0))
-				path (substring path 0 (match-beginning 0))
-				path (concat (hpath:substitute-value path)
-					     suffix)
-				suffix nil)
-			  t)
-		 (setq path (hpath:substitute-value path))
-		 (unless (string-empty-p path)
-		   path))
-	     t)
-	   (not (string-match "[\t\n\r\"`'|{}\\]" path))
-	   (let ((rtn-path path))
-	     ;; Strip any path suffix component before checking path.
-	     (and (if (string-match "\\`[^#][^#,]*\\([ \t\n\r]*[#,]\\)" path)
-		      (setq rtn-path (concat (substring path 0 (match-beginning 1))
-					     "%s" (substring path (match-beginning 1)))
-			    path (substring path 0 (match-beginning 1)))
-		    (setq rtn-path (concat rtn-path "%s")))
-		  ;; If path is just a local reference that begins with #,
-		  ;; prepend the file name to it.  Remove # and
-		  ;; everything after for path checking.
-		  (cond ((and buffer-file-name
-			      ;; ignore HTML color strings
-			      (not (string-match "\\`#[0-9A-Fa-f][0-9A-Fa-f][0-9A-Fa-f][0-9A-Fa-f][0-9A-Fa-f][0-9A-Fa-f]\\'" path))
-			      ;; match to in-file HTML references
-			      (string-match "\\`#[^\'\"<>#]+\\'" path))
-			 (setq rtn-path (concat "file://" buffer-file-name rtn-path)
-			       path buffer-file-name))
-			((string-match "\\`[^#]+\\(#[^#]*\\)\\'" path)
-			 ;; file and # reference
-			 (setq path (substring path 0 (match-beginning 1)))
-			 (if (memq (aref path 0) '(?/ ?~))
-			     ;; absolute
-			     (setq rtn-path (concat "file://" rtn-path))
-			   (setq path (concat default-directory path)
-				 rtn-path (concat "file://" default-directory rtn-path))))
-			(t))
-		  (or (not (hpath:www-p path))
-		      (string-match "\\`ftp[:.]" path))
-		  (let ((remote-path (string-match "\\(@.+:\\|^/.+:\\|..+:/\\).*[^:0-9/]" path)))
-		    (when (cond (remote-path
-				 (cond ((eq type 'file)
-					(not (string-equal "/" (substring path -1))))
-				       ((eq type 'directory)
-					(string-equal "/" (substring path -1)))
-				       (t)))
-				((or (and non-exist
-					  (or
-					   ;; Info or remote path, so don't check for.
-					   (string-match "[()]" path)
-					   (hpath:remote-p path)
-					   (setq suffix (hpath:exists-p path t))
-					   ;; Don't allow spaces in non-existent
-					   ;; pathnames.
-					   (not (string-match " " path))))
-				     (setq suffix (hpath:exists-p path t)))
-				 (cond ((eq type 'file)
-					(not (file-directory-p path)))
-				       ((eq type 'directory)
-					(file-directory-p path))
-				       (t))))
-		      ;; Might be an encoded URL with % characters, so
-		      ;; decode it before calling format below.
-		      (when (string-match "%" rtn-path)
-			(let (decoded-path)
-			  (while (not (equal rtn-path (setq decoded-path (hypb:decode-url rtn-path))))
-			    (setq rtn-path decoded-path))))
-		      ;; Quote any % except for one %s at the end of the
-		      ;; path part of rtn-path (immediately preceding a #
-		      ;; or , character or the end of string).
-		      (setq rtn-path (hypb:replace-match-string "%" rtn-path "%%" nil t)
-			    rtn-path (hypb:replace-match-string "%%s\\([#,]\\|\\'\\)" rtn-path "%s\\1" nil t))
-		      ;; Return path if non-nil return value.
-		      (if (stringp suffix) ;; suffix could = t, which we ignore
-			  (if (string-match (concat (regexp-quote suffix) "%s") rtn-path)
-			      ;; remove suffix
-			      (concat (substring rtn-path 0 (match-beginning 0))
-				      (substring rtn-path (match-end 0)))
-			    ;; add suffix
-			    (concat modifier (format rtn-path suffix)))
-			(concat modifier (format rtn-path "")))))))))))
+    (hpath:call
+     (lambda (path)
+       (let (modifier
+	     suffix)
+	 (setq path (hpath:mswindows-to-posix path))
+	 (and (not (or (string-equal path "")
+		       (string-match "\\`\\s-\\|\\s-\\'" path)))
+	      (or (not (string-match "[()]" path))
+		  (string-match "\\`([^ \t\n\r\)]+)[ *A-Za-z0-9]" path))
+	      ;; Allow for @{ and @} in texinfo-mode
+	      (or (when (string-match "\\$@?\{[^\}]+@?\}" path)
+		    ;; Path may be a link reference with embedded
+		    ;; variables that must be expanded.
+		    (setq path (hpath:substitute-value path)))
+		  t)
+	      (not (string-match "[\t\n\r\"`'|{}\\]" path))
+	      (let ((rtn-path (concat path "%s")))
+		(and (or (not (hpath:www-p path))
+			 (string-match "\\`ftp[:.]" path))
+		     (let ((remote-path (string-match "\\(@.+:\\|^/.+:\\|..+:/\\).*[^:0-9/]" path)))
+		       (when (cond (remote-path
+				    (cond ((eq type 'file)
+					   (not (string-equal "/" (substring path -1))))
+					  ((eq type 'directory)
+					   (string-equal "/" (substring path -1)))
+					  (t)))
+				   ((or (and non-exist
+					     (or
+					      ;; Info or remote path, so don't check for.
+					      (string-match "[()]" path)
+					      (hpath:remote-p path)
+					      (setq suffix (hpath:exists-p path t))
+					      ;; Don't allow spaces in non-existent
+					      ;; pathnames.
+					      (not (string-match " " path))))
+					(setq suffix (hpath:exists-p path t)))
+				    (cond ((eq type 'file)
+					   (not (file-directory-p path)))
+					  ((eq type 'directory)
+					   (file-directory-p path))
+					  (t))))
+			 ;; Might be an encoded URL with % characters, so
+			 ;; decode it before calling format below.
+			 (when (string-match "%" rtn-path)
+			   (let (decoded-path)
+			     (while (not (equal rtn-path (setq decoded-path (hypb:decode-url rtn-path))))
+			       (setq rtn-path decoded-path))))
+			 ;; Quote any % except for one %s at the end of the
+			 ;; path part of rtn-path (immediately preceding a #
+			 ;; or , character or the end of string).
+			 (setq rtn-path (hypb:replace-match-string "%" rtn-path "%%" nil t)
+			       rtn-path (hypb:replace-match-string "%%s\\([#,]\\|\\'\\)" rtn-path "%s\\1" nil t))
+			 ;; Return path if non-nil return value.
+			 (if (stringp suffix) ;; suffix could = t, which we ignore
+			     (if (string-match (concat (regexp-quote suffix) "%s") rtn-path)
+				 ;; remove suffix
+				 (concat (substring rtn-path 0 (match-beginning 0))
+					 (substring rtn-path (match-end 0)))
+			       ;; add suffix
+			       (concat modifier (format rtn-path suffix)))
+			   (concat modifier (format rtn-path ""))))))))))
+     path)))
 
 (defun hpath:push-tag-mark ()
   "Add a tag return marker at point if within a programming language file buffer.
@@ -1252,6 +1325,16 @@ Is a no-op if the function `push-tag-mark' is not available."
 	   (and (fboundp 'push-tag-mark)
 		;; push old position
 		(push-tag-mark)))))
+
+(defun hpath:relative-arguments (args-list)
+  "Return any paths in ARGS-LIST below button source loc directory made relative.
+Other paths are simply expanded.  Non-path arguments are returned unchanged."
+  (let ((loc (hattr:get 'hbut:current 'loc)))
+    (mapcar (lambda (arg)
+	      (hpath:relative-to arg (if (stringp loc)
+					 (file-name-directory loc)
+				       (buffer-local-value 'default-directory loc))))
+	    args-list)))
 
 (defun hpath:relative-to (path &optional default-dir)
   "Return PATH relative to optional DEFAULT-DIR or `default-directory'.
@@ -1695,6 +1778,7 @@ pathname is returned.
 
 With optional SUFFIX-FLAG and PATH exists, return suffix added or removed
 from path or t."
+  (setq path (hpath:expand path))
   (let ((return-path)
 	(suffix) suffixes)
     (if (file-exists-p path)
@@ -1708,7 +1792,7 @@ from path or t."
 	  ;; Add suffix
 	  (setq return-path (concat path suffix)))
 	(if (file-exists-p return-path)
-	    (setq suffixes nil);; found a match
+	    (setq suffixes nil) ;; found a match
 	  (setq suffix nil
 		suffixes (cdr suffixes)
 		return-path nil))))

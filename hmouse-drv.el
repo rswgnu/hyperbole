@@ -956,7 +956,7 @@ Return non-nil iff associated help documentation is found."
   "Display doc associated with Assist Key command in current context.
 Return non-nil iff associated documentation is found."
   (interactive)
-  (hkey-help 'assist))
+  (hkey-help t))
 
 ;; Overload help-mode quit-window function to support Hyperbole
 ;; hkey--wconfig window configurations.
@@ -1116,8 +1116,8 @@ the current window.  By default, it is displayed in another window."
 
 
 (defun hkey-toggle-debug (&optional arg)
-  "Toggle whether conflicting local key bindings are overridden by Hyperbole.
-With optional ARG, override them iff ARG is positive."
+  "Toggle whether Hyperbole logs Smart Key events for later analysis/submission using {C-h h m c}.
+With optional ARG, enable iff ARG is positive."
   (interactive "P")
   (if (or (and arg (<= (prefix-numeric-value arg) 0))
 	  (and (not (and arg (> (prefix-numeric-value arg) 0)))

@@ -204,7 +204,7 @@ Nil BUT-SYM means use 'hbut:current'.  If successful, returns a cons of
 					 (mapcar 'hpath:substitute-var
 						 (if mail-dir
 						     ;; Make pathname args absolute for outgoing mail and news messages.
-						     (action:path-args-abs args mail-dir)
+						     (hpath:absolute-arguments args mail-dir)
 						   args))))
 			    (hattr:set b 'creator (or creator hyperb:user-email))
 			    (hattr:set b 'create-time (or create-time (htz:date-sortable-gmt)))

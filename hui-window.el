@@ -496,9 +496,9 @@ If free variable `assist-flag' is non-nil, uses Assist Key."
 	 (window-live-p action-key-release-window)
 	 (not (eq action-key-depress-window action-key-release-window)))))
 
-(defun hmouse-drag-same-window ()
+(defun hmouse-press-release-same-window ()
   "Return non-nil if last Action Key depress and release were in the same window.
-If free variable `assist-flag' is non-nil, uses Assist Key."
+If free variable `assist-flag' is non-nil, use Assist Key."
   (if assist-flag
       (and (window-live-p assist-key-depress-window)
 	   (window-live-p assist-key-release-window)
@@ -533,12 +533,17 @@ items in other modes."
     (hmouse-item-to-window new-window)
     t))
 
+(defun hmouse-drag-same-window ()
+  "Return non-nil if last Action Key depress and release were in the same window and minimum drag distance was exceeded.
+If free variable `assist-flag' is non-nil, uses Assist Key."
+  (or (hmouse-drag-horizontally) (hmouse-drag-vertically) (hmouse-drag-diagonally)))
+
 (defun hmouse-drag-diagonally ()
   "Return non-nil iff last Action Key use was a diagonal drag within a single window.
-If free variable `assist-flag' is non-nil, uses Assist Key.
+If free variable `assist-flag' is non-nil, use Assist Key.
 Value returned is nil if not a diagonal drag, or one of the following symbols
 depending on the direction of the drag: southeast, southwest, northwest, northeast."
-  (when (hmouse-drag-same-window)
+  (when (hmouse-press-release-same-window)
     (let ((last-depress-x) (last-release-x)
 	  (last-depress-y) (last-release-y))
       (if assist-flag
@@ -566,10 +571,10 @@ depending on the direction of the drag: southeast, southwest, northwest, northea
 
 (defun hmouse-drag-horizontally ()
   "Return non-nil iff last Action Key use was a horizontal drag within a single window.
-If free variable `assist-flag' is non-nil, uses Assist Key.
+If free variable `assist-flag' is non-nil, use Assist Key.
 Value returned is nil if not a horizontal drag, 'left if drag moved left or
 'right otherwise."
-  (when (hmouse-drag-same-window)
+  (when (hmouse-press-release-same-window)
     (let ((last-depress-x) (last-release-x)
 	  (last-depress-y) (last-release-y))
       (if assist-flag
@@ -594,7 +599,7 @@ Value returned is nil if not a horizontal drag, 'left if drag moved left or
 
 (defun hmouse-drag-vertically-within-emacs ()
   "Return non-nil iff last Action Key use was a vertical drag that started and ended within the same Emacs frame.
-If free variable `assist-flag' is non-nil, uses Assist Key.
+If free variable `assist-flag' is non-nil, use Assist Key.
 Value returned is nil if not a vertical line drag, 'up if drag moved up or
 'down otherwise."
   (unless (or (hmouse-drag-between-frames) (hmouse-drag-outside-all-windows))
@@ -626,7 +631,7 @@ Value returned is nil if not a vertical line drag, 'up if drag moved up or
 If free variable `assist-flag' is non-nil, uses Assist Key.
 Value returned is nil if not a vertical line drag, 'up if drag moved up or
 'down otherwise."
-  (when (hmouse-drag-same-window)
+  (when (hmouse-press-release-same-window)
     (hmouse-drag-vertically-within-emacs)))
 
 (defun hmouse-drag-window-side ()
@@ -963,18 +968,14 @@ If the Assist Key is:
   "Return non-nil if last Smart Key depress and release locations differ.
 Even if the mouse pointer stays within the same position within a
 window, its frame may have been moved by a bottommost modeline drag."
-  (not (and (eq (if assist-flag
-		    assist-key-depress-window
-		  action-key-depress-window)
-		(if assist-flag
-		    assist-key-release-window
-		  action-key-release-window))
-	    (equal (if assist-flag
-		       assist-key-depress-position
-		     action-key-depress-position)
-		   (if assist-flag
-		       assist-key-release-position
-		     action-key-release-position)))))
+  (or (not (eq (if assist-flag
+		   assist-key-depress-window
+		 action-key-depress-window)
+	       (if assist-flag
+		   assist-key-release-window
+		 action-key-release-window)))
+      ;; Depress and release were in the same window; test if there is a drag.
+      (hmouse-drag-same-window)))
 
 (defun hmouse-modeline-click ()
   "Return non-nil if last Smart Key depress and release were at a single point (less than drag tolerance apart) in a modeline."

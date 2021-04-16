@@ -811,9 +811,21 @@ Default is 'hbut:current."
   (unless hbut
     (setq hbut 'hbut:current))
   (cond ((hbut:is-p hbut)
-	 (apply hrule:action
-		(hattr:get hbut 'actype)
-		(hattr:get hbut 'args)))
+	 (let ((orig-point (point-marker))
+	       text-point)
+	   (when (ibut:is-p hbut)
+	     (ibut:to-text (hattr:get hbut 'lbl-key)))
+	   (setq text-point (point-marker))
+	   (prog1 (apply hrule:action
+			 (hattr:get hbut 'actype)
+			 (hattr:get hbut 'args))
+	     ;; Restore original point prior to ibut:to-text call if action switched buffers or did not move point within the current buffer
+	     (when (or (equal text-point (point-marker))
+		       (not (eq (current-buffer) (marker-buffer orig-point))))
+	       (set-buffer (marker-buffer orig-point))
+	       (goto-char orig-point))
+	     (set-marker orig-point nil)
+	     (set-marker text-point nil))))
 	((and hbut (symbolp hbut))
 	 (hypb:error "(hbut:act): Symbol, %s, has invalid Hyperbole button attributes:\n  %S" hbut (hattr:list hbut)))
 	(t
@@ -1156,7 +1168,8 @@ include delimiters when INCLUDE-DELIMS is non-nil)."
 
 (defvar   hbut:syntax-table (copy-syntax-table emacs-lisp-mode-syntax-table)
   "Modified Elisp syntax table for use with Action and Key Series buttons.
-Makes < > and { } into syntactically matching pairs.")
+Makes < > and { } into syntactically matching pairs after `hyperb:init'
+calls `hbut:modify-syntax'.")
 
 ;;;###autoload
 (defun    hbut:modify-syntax ()
@@ -1668,13 +1681,32 @@ Return the symbol for the button, else nil."
 	(goto-char pos)
 	(ibut:at-p)))))
 
+(defun    ibut:to-text (lbl-key)
+  "Find the nearest implicit button with LBL-KEY (a label or label key) within the visible portion of the current buffer and move to within its button text.
+Return the symbol for the button, else nil."
+    (let ((ibut (ibut:to lbl-key))
+	  (lbl-key-end (nth 2 (ibut:label-p nil nil nil t t))))
+      (when ibut
+	;; Skip past any optional label and separators
+	(goto-char lbl-key-end)
+	(when (and (not (hbut:outside-comment-p))
+		   (looking-at ibut:label-separator-regexp))
+	  ;; Move past up to 2 possible characters of ibut
+	  ;; delimiters; this prevents recognizing labeled,
+	  ;; delimited ibuts of a single character but no one
+	  ;; should need that.
+	  (goto-char (min (+ 2 (match-end 0)) (point-max))))
+	ibut)))
+
 ;;; ------------------------------------------------------------------------
 (defconst ibut:label-start "<["
   "String matching the start of a Hyperbole implicit button label.")
 (defconst ibut:label-end   "]>"
   "String matching the end of a Hyperbole implicit button label.")
+
 (defvar   ibut:label-separator " "
-  "Regular expression that separates an implicit button label from its implicit button text.")
+  "String inserted immediately after a newly created implicit button label to separate it from the implicit button text.
+See also `ibut:label-separator-regexp' for all valid characters that may manually inserted to separate an implicit button label from its text.")
 
 (defvar   ibut:label-separator-regexp "\\s-*[-:=]*\\s-+"
   "Regular expression that separates an implicit button label from its implicit button text.")

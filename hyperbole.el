@@ -713,13 +713,21 @@ This is used only when running from git source and not a package release."
 ;; This call loads the rest of the Hyperbole system.
 (require 'hinit)
 
-;; Prevent multiple initializations of Hyperbole
-(unless (featurep 'hyperbole)
-  (if after-init-time
-      ;; This call initializes Hyperbole key bindings and hooks.
-      (hyperb:init)
-    ;; Initialize after other key bindings are loaded at startup.
-    (add-hook 'after-init-hook #'hyperb:init t)))
+;;;###autoload
+(define-minor-mode hyperbole-mode
+  "The Everyday Hypertextual Information Manager global minor mode."
+  :global t
+  :lighter " Hypb"
+  (if hyperbole-mode
+      (if after-init-time
+          ;; This call initializes Hyperbole key bindings and hooks.
+          (hyperb:init)
+        ;; Initialize after other key bindings are loaded at startup.
+        (add-hook 'after-init-hook #'hyperb:init t))
+    ;; FIXME: hyperb:uninit?
+    (remove-hook 'after-init-hook #'hyperb:init)))
+
+(hyperbole-mode 1)
 
 (makunbound 'hyperbole-loading)
 

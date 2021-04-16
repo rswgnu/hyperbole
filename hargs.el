@@ -85,7 +85,7 @@ interactive form or takes no arguments."
   (and (or (hypb:emacs-byte-code-p action) (listp action))
        (let ((interactive-form (action:commandp action)))
 	 (when interactive-form
-	   (action:path-args-rel
+	   (hpath:relative-arguments
 	    (hargs:iform-read interactive-form modifying))))))
 
 (defun hargs:buffer-substring (start end)
@@ -437,8 +437,7 @@ Insert in minibuffer if active or in other window if minibuffer is inactive."
 		     ;; newline or two whitespace characters.
 		     (looking-at
 		      "[^ \t\n]+\\( [^ \t\n]+\\)*\\( [ \t\n]\\|[\t\n]\\|\\'\\)"))
-	    (setq entry (buffer-substring (match-beginning 0)
-					  (match-beginning 2)))
+	    (setq entry (hypb:get-completion))
 	    (select-window insert-window)
 	    (let ((str (or hargs:string-to-complete
 			   (buffer-substring

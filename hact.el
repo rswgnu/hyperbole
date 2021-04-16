@@ -374,24 +374,6 @@ Autoloads action function if need be to get the parameter list."
 			  nil param))
 	      (action:params action))))
 
-(defun action:path-args-abs (args-list &optional default-dirs)
-  "Return any paths in ARGS-LIST made absolute.
-Uses optional DEFAULT-DIRS or `default-directory'.
-Other arguments are returned unchanged."
-  (mapcar (lambda (arg) (hpath:absolute-to arg default-dirs))
-	  args-list))
-
-(defun action:path-args-rel (args-list)
-  "Return any paths in ARGS-LIST below button source loc directory made relative.
-Other paths are simply expanded.  Non-path arguments are returned unchanged."
-  (let ((loc (hattr:get 'hbut:current 'loc)))
-    (mapcar (lambda (arg)
-	      (hpath:relative-to arg (if (stringp loc)
-					 (file-name-directory loc)
-				       (buffer-local-value 'default-directory loc))))
-	    args-list)))
-
-
 ;;; ========================================================================
 ;;; action type class, actype
 ;;; ========================================================================
@@ -402,7 +384,7 @@ The value of `hrule:action' determines what effect this has.
 Alternatively act as a no-op when testing implicit button type contexts.
 First arg may be a symbol or symbol name for either an action type or a
 function.  Runs `action-act-hook' before performing action."
-  (eval `(cons 'funcall (cons 'hrule:action ',args))))
+  `(funcall hrule:action ,@args))
 
 (defun    actype:act (actype &rest args)
   "Perform action formed from ACTYPE and rest of ARGS and return value.
@@ -420,7 +402,7 @@ performing ACTION."
       ;; being used as a path.  So do this only if actype is a defact
       ;; and not a defun to limit any potential impact. RSW - 9/22/2017
       (and (symbolp action) (symtable:actype-p action)
-	   (setq args (action:path-args-abs args)))
+	   (setq args (hpath:absolute-arguments args)))
       (let ((hist-elt (hhist:element)))
 	(run-hooks 'action-act-hook)
 	(prog1 (or (if (or (symbolp action) (listp action)

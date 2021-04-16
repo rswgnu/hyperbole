@@ -1,3 +1,69 @@
+2021-04-16  Bob Weiner  <rsw@gnu.org>
+
+* hpath.el (hpath:at-p): Fix to allow non-existent paths (or those
+    that possibly can't be resolved) if path at point starts with
+    a special prefix character, e.g. "!date", to run the POSIX date
+    cmd.
+           (hpath:compressed-suffix-regexp): Add this variable and
+    use in hpath:expand-with-variable to properly expand compressed
+    pathnames.
+           (hpath:expand): For compressed Elisp libraries, add any
+    found compressed suffix to the path.
+
+2021-04-15  Bob Weiner  <rsw@gnu.org>
+
+* hpath.el (hpath:call): Add to wrap functions that test path validity,
+    stripping and then re-adding Hyperbole recognized path prefix and suffix
+    after path validity is verified.
+           (hpath:is-p): Use hpath:call wrapper and document stripping of
+    file:// prefix.
+
+* hui-window.el (hmouse-drag-same-window): Rewrite to actually detect a drag.
+    (hmouse-press-release-same-window): Detect if Action or Assist Key (based
+       on assist-flag) has been pressed and released in the same window.
+
+2021-04-14  Bob Weiner  <rsw@gnu.org>
+
+* hmouse-drv.el (hkey-toggle-debug): Fix doc string.
+
+* hpath.el (hpath:is-p): Add support for :line-num:col-num.
+
+2021-04-13  Bob Weiner  <rsw@gnu.org>
+
+* hibtypes.el (hibtypes-path-line-and-column-regexp): Rename to
+   hpath:section-line-and-col-regexp and move to hpath.el
+  hpath.el (hpath:file-line-and-column): Use hpath:line-and-col-regexp.
+
+* hpath.el (hpath:expand-with-variable, hpath:auto-variable-alist,
+            hpath:expand): Add to generalize implicit load variable
+    pathname expansion.
+  hpath.el (hpath:find, hpath:file-line-and-column):
+  hibtypes.el (pathname-line-and-column): Use hpath:expand.
+
+* Makefile (HY-TALK): Add to Hyperbole distribution; slides and demo file
+    discussing the history and utility of Hyperbole.
+
+* hact.el (hact): Simplify macro.
+          (action:path-args-abs, action:path-args-rel):
+    Rename to hpath:absolute-arguments and hpath:relative-argumentss
+    and move to hpath.el to eliminate circular dependency (hpath.el
+    requires hact macro).
+
+* hsettings.el (hyperbole-web-search): Optimize and make service-name
+    matching case-insensitive.
+
+2021-04-07  Bob Weiner  <rsw@gnu.org>
+
+* hbut.el (ibut:label-separator): Explain usage properly in doc string.
+          (ibut:to-text): Add to leave point in button text of ibuts with
+    separate labels.
+          (hbut:act): Move point with ibut:to-text to fix bug where an
+     ibtype expects point to be within the button text but previously
+      was left within the label.
+
+* hpath.el (hpath:url-regexp, hpath:url-regexp2, hpath:url-regexp3):
+    Allow @ symbols in URLs
+
 2021-04-07  Mats Lidell  <matsl@gnu.org>
 
 * test/hypb-tests.el: Rename test file
@@ -54,7 +120,21 @@
 * hbut.el (defal): Add support for use of %s format-style grouping 1 arg
     substitution.
   man/hyperbole.texi (Action Button Link Types): Documented.
-  DEMO (defal): Added new example of Google file type search button.
+  DEMO (defal): Add new example of Google file type search button.
+
+2021-03-20  Stefan Monnier  <monnier@iro.umontreal.ca>
+
+* test/demo-tests.el (demo-factorial-ebutton-test):
+  test/hibtypes-tests.el: Mark those files as not-compilable since they
+    require packages that may not be available during compilation.
+
+* hyperbole.el: Fix release version to one accepted by ELPA.
+    (hyperb:init): Don't use `after-load-alist` as a hook, since it isn't one.
+    (hyperbole-mode): New minor mode.  Loading a file should not change
+    Emacs's behavior, so move the toplevel code to this minor mode: users
+    should enable this minor mode instead of loading the file.
+
+* hypb-maintenance.el: Fix compilation failure in elpa.git checkout.
 
 2021-03-14  Bob Weiner  <rsw@gnu.org>
 
