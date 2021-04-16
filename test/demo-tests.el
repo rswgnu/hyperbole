@@ -255,6 +255,7 @@
   (unwind-protect
       (progn
         (find-file (expand-file-name "MANIFEST" hyperb:dir))
+        (beginning-of-buffer)
         (forward-line 1)
         (should (looking-at "COPYING"))
         (action-key)

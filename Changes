@@ -10,6 +10,16 @@
            (hpath:expand): For compressed Elisp libraries, add any
     found compressed suffix to the path.
 
+2021-04-15  Mats Lidell  <matsl@gnu.org>
+
+* test/hibtypes-tests.el (ibtypes::pathname-anchor-test)
+    (ibtypes::pathname-anchor-line-test, ibtypes::pathname-line-column-test)
+    (ibtypes::pathname-load-path-line-column-test)
+    (ibtypes::pathname-with-dash-loads-file-test)
+    (ibtypes::pathname-directory-test)
+    (ibtypes::pathname-dot-slash-in-other-folder-test)
+    (ibtypes::pathname-dot-slash-in-same-folder-test): Pathname test cases.
+
 2021-04-15  Bob Weiner  <rsw@gnu.org>
 
 * hpath.el (hpath:call): Add to wrap functions that test path validity,
@@ -51,6 +61,15 @@
 
 * hsettings.el (hyperbole-web-search): Optimize and make service-name
     matching case-insensitive.
+
+2021-04-11  Mats Lidell  <matsl@gnu.org>
+
+* test/hibtypes-tests.el (ibtypes::ctags-vgrind-test)
+    (ibtypes::etags-test): Make tests independent of default directory.
+
+* test/demo-tests.el (demo-manifest-test): Make test more robust.
+
+* hypb-ert.el (hypb-run-all-tests): Run all hyperbole tests.
 
 2021-04-07  Bob Weiner  <rsw@gnu.org>
 
