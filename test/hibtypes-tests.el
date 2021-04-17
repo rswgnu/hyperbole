@@ -324,7 +324,7 @@ Bug: Fails with 'Invalid function: hact'."
 
 ;; info-node
 (ert-deftest ibtypes::info-node-test ()
-  "Should work with ibtypes::pathname but does not. Works with action-key!?"
+  "Go to info node."
   (unwind-protect
       (with-temp-buffer
         (insert "\"(emacs)top\"")

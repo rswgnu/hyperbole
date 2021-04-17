@@ -52,7 +52,7 @@
     (ibtype:delete 'ibtypes::defal-url)))
 
 (ert-deftest hbut-defal-url-%s ()
-  "defal supports %s in LINK-EXPR."
+  "Use defal with %s in LINK-EXPR."
   (defal defal-url "https://github.com/rswgnu/hyperbole/pull/%s")
   (unwind-protect
       (with-temp-buffer
@@ -80,8 +80,7 @@
   (should (string= x "test")))
 
 (ert-deftest hbut-defal-function ()
-  "defal call function should only supply the argument portion of
-the button text"
+  "Use only the argument portion of the button text."
   (defal defal-func 'hbut-verify-defal)
   (unwind-protect
       (with-temp-buffer
