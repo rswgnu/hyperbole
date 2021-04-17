@@ -228,6 +228,14 @@ Its default value is #'smart-scroll-down."
      ((hui-select-mark-delimited-sexp) .
       (progn (hui-select-mark-delimited-sexp) (hmouse-kill-region))))
     ;;
+    ((eq major-mode 'occur-mode) .
+     ((occur-mode-goto-occurrence) . (occur-mode-goto-occurrence)))
+    ;;
+    ((eq major-mode 'moccur-mode) .
+     ((moccur-mode-goto-occurrence) . (moccur-mode-goto-occurrence)))
+    ((eq major-mode 'amoccur-mode) .
+     ((amoccur-mode-goto-occurrence) . (amoccur-mode-goto-occurrence)))
+    ;;
     ((eq major-mode 'kotl-mode) .
      ((kotl-mode:action-key) . (kotl-mode:assist-key)))
     ;;
@@ -309,14 +317,6 @@ Its default value is #'smart-scroll-down."
     ((and (memq major-mode '(fortran-mode f90-mode))
 	  buffer-file-name (smart-fortran-at-tag-p)) .
 	  ((smart-fortran) . (smart-fortran nil 'next-tag)))
-    ;;
-    ((eq major-mode 'occur-mode) .
-     ((occur-mode-goto-occurrence) . (occur-mode-goto-occurrence)))
-    ;;
-    ((eq major-mode 'moccur-mode) .
-     ((moccur-mode-goto-occurrence) . (moccur-mode-goto-occurrence)))
-    ((eq major-mode 'amoccur-mode) .
-     ((amoccur-mode-goto-occurrence) . (amoccur-mode-goto-occurrence)))
     ;;
     ((eq major-mode 'calendar-mode) .
      ((smart-calendar) . (smart-calendar-assist)))

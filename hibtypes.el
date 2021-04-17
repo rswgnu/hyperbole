@@ -398,7 +398,7 @@ Each line in the summary may be selected to jump to a section."
                                        (and toc 2))))
         (progn (beginning-of-line)
                (ibut:label-set (buffer-name))
-               (hact 'rfc-toc (buffer-name) opoint))
+               (hact 'rfc-toc (buffer-name) opoint (point)))
       (goto-char opoint)
       nil)))
 

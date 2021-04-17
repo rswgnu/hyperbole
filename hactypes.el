@@ -593,8 +593,8 @@ Return t if found, signal an error if not."
   "Retrieve and display an Internet rfc given by RFC-NUM.
 RFC-NUM may be a string or an integer."
   (interactive "nRFC number to retrieve: ")
-  (if (or (stringp rfc-num) (integerp rfc-num))
-      (hpath:find (hpath:rfc rfc-num))))
+  (when (or (stringp rfc-num) (integerp rfc-num))
+    (browse-url-emacs (hpath:rfc rfc-num))))
 
 (defact link-to-string-match (string n source &optional buffer-p)
   "Find STRING's Nth occurrence in SOURCE and display location at window top.
@@ -643,9 +643,9 @@ Uses `hpath:display-where' setting to control where the man page is displayed."
   (let ((Man-notify-method 'meek))
     (hpath:display-buffer (man topic))))
 
-(defact rfc-toc (&optional buf-name opoint)
+(defact rfc-toc (&optional buf-name opoint sections-start)
   "Compute and display summary of an Internet rfc in BUF-NAME.
-Assumes point has already been moved to start of region to summarize.
+Assume point has already been moved to start of region to summarize.
 Optional OPOINT is point to return to in BUF-NAME after displaying summary."
   (interactive)
   (if buf-name
@@ -661,7 +661,7 @@ Optional OPOINT is point to return to in BUF-NAME after displaying summary."
 	(temp-buffer-show-function 'switch-to-buffer)
 	occur-buffer)
     (hpath:display-buffer (current-buffer))
-    (occur sect-regexp)
+    (occur sect-regexp nil (list (cons sections-start (point-max))))
     (setq occur-buffer (set-buffer "*Occur*"))
     (rename-buffer (format "*%s toc*" buf-name))
     (re-search-forward "^[ ]*[0-9]+:" nil t)

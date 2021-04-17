@@ -60,7 +60,7 @@ Group 1 is the line number.  Group 3 is the column number.")
 (defvar hpath:path-variable-regexp
  (concat "\\`\\.?:[^:;]+:[^:;]+:\\|:\\.?:\\|:[^:;]+:[^:;]+:\\|:[^:;]+:[^:;]+:\\.?\\'"
 	 "\\|"
-	 "\\`\\.?;[^;]+;[^;]+;\\|;\\.?;\\|:[^;]+:[^;]+:\\|;[^;]+;[^;]+;\\|;[^;]+;[^;]+;\\.?\\'")
+	 "\\`\\.?;[^;]+;[^;]+;\\|;\\.?;\\|;[^;]+;[^;]+;\\|;[^;]+;[^;]+;\\|;[^;]+;[^;]+;\\.?\\'")
   ;; A zero-length (null) directory name in the value of PATH indicates the current directory.
   ;; A null directory name may appear as two adjacent colons, or as an initial or trailing colon.
   "Regexp that heuristically matches to colon-separated (Posix) or semicolon-separated (Windows) path variable values.")
@@ -459,9 +459,8 @@ When embedded within a path, the format is ${variable}."
 ;;; Other public variables
 ;;; ************************************************************************
 
-(defvar hpath:rfc "/ftp:anonymous@ftp.ietf.org:rfc/rfc%s.txt"
-  "*String to be used in the call: (hpath:rfc rfc-num)
-to create a path to the RFC document for `rfc-num'.")
+(defvar hpath:rfc "https://www.ietf.org/rfc/rfc%s.txt"
+  "*String to be used in the call: (hpath:rfc rfc-num) to create a path to the RFC document for `rfc-num'.")
 
 (defcustom hpath:suffixes '(".gz" ".Z")
   "*List of filename suffixes to add or remove within `hpath:exists-p' and `hpath:substitute-dir' calls."
@@ -801,10 +800,10 @@ paths are allowed.  Absolute pathnames must begin with a `/' or `~'."
        (setq non-exist t))
      (if (and path (string-match hpath:path-variable-regexp path))
 	 ;; With point inside a path variable, return the path that point is on or to the right of.
-	 (or (and (setq subpath (hargs:delimited "[:\"\']" "[:\"\']"  t t))
+	 (or (and (setq subpath (hargs:delimited "[:\"\']" "[:\"\']" t t nil "[\t\n\r\f]\\|[;:] \\| [;:]"))
 		  (not (string-match "[:;]" subpath))
 		  subpath)
-	     (and (setq subpath (hargs:delimited "[;\"\']" "[;\"\']"  t t))
+	     (and (setq subpath (hargs:delimited "[;\"\']" "[;\"\']"  t t nil "[\t\n\r\f]\\|[;:] \\| [;:]"))
 		  (not (string-match ";\\|:[^:]*:" subpath))
 		  subpath)
 	     ".")
@@ -953,7 +952,7 @@ window in which the buffer is displayed."
 		  (expand-file-name path)
 		(hpath:expand-with-variable path))))
   ;; For compressed Elisp libraries, add any found compressed suffix to the path.
-  (or (locate-library path) path))
+  (or (locate-library path t) path))
 
 (defvar hpath:compressed-suffix-regexp (concat (regexp-opt '(".gz" ".Z" ".zip" ".bz2" ".xz" ".zst")) "\\'")
    "Regexp of compressed file name suffixes.")
@@ -1269,7 +1268,7 @@ stripped, link anchors at the end following a # or , character
 are temporarily stripped, and path variables are expanded with
 `hpath:substitute-value'.  This normalized path form is what is
 returned for PATH."
-  (when (stringp path)
+  (when (and (stringp path) (not (string-match hpath:path-variable-regexp path)))
     (setq path (hpath:call
 		(lambda (path)
 		  (let (modifier
@@ -1559,7 +1558,7 @@ Returns LINKNAME unchanged if it is not a symbolic link but is a pathname."
 		   (buffer-file-name (hpath:find-noselect filename)))))
 
 (defun hpath:validate (path)
-  "Return PATH if PATH is a valid, readable path, else signal error.
+  "Return PATH converted to Posix format if PATH is a valid, readable path, else signal error.
 Info and remote pathnames are considered readable without any
 validation checks.
 
@@ -1573,12 +1572,11 @@ to it."
 	 ;; info or remote path, so don't validate
 	 path)
 	((if (not (hpath:www-p path))
-	     ;; Otherwise, must not be a WWW link ref and must be a readable
-	     ;; path.
+	     ;; Otherwise, must not be a WWW link ref and must be a readable path.
 	     (let ((return-path (hpath:exists-p path)))
 	       (and return-path (file-readable-p return-path)
 		    return-path))))
-	(t (error "(hpath:validate): \"%s\" is not readable." path))))
+	(t (error "(hpath:validate): \"%s\" is not readable" path))))
 
 ;;; URL Handling
 (defun hpath:find-file-urls-p ()

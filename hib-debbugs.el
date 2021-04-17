@@ -104,7 +104,7 @@ Note that `issue' or `debbugs' may be used as well in place of `bug'."
 	      (t (hact 'debbugs-gnu-query (string-to-number (match-string 2))))))))
 
 (defact debbugs-gnu-query (id)
-  "Displays the discussion of Gnu debbugs ID (a positive integer)."
+  "Display the discussion of Gnu debbugs ID (a positive integer)."
   (require 'debbugs-gnu)
   (when (debbugs-get-status id)
     (debbugs-gnu-bugs id)
@@ -241,12 +241,22 @@ Ignore nil valued attributes.  Return t unless no attributes are printed."
 
 (defun debbugs-version-sufficient-p ()
   "Return t iff debbugs version is sufficient for use with Hyperbole (greater than equal to 0.9.7)."
-  (let ((debbugs-src (locate-file "debbugs" load-path '(".el")))
-	version)
-    (when debbugs-src
-      (setq version (shell-command-to-string (format "fgrep -m1 Version: %s | sed -e 's/[^.0-9]//g' | tr -d '\n'" debbugs-src)))
-      (when (not (equal version ""))
-	(version-list-<= (version-to-list "0.9.7") (version-to-list version))))))
+  (save-excursion
+    (let* ((debbugs-src (locate-file "debbugs" load-path '(".el")))
+	   (visiting-debbugs-src (get-file-buffer debbugs-src))
+	   debbugs-src-buffer
+	   version)
+      (when debbugs-src
+	(unwind-protect
+	    (progn (set-buffer (setq debbugs-src-buffer (find-file-noselect debbugs-src)))
+		   (widen)
+		   (goto-char (point-min))
+		   (when (re-search-forward "^;; Version: \\([.0-9]+\\)" nil t)
+		     (setq version (match-string 1))))
+	  (unless visiting-debbugs-src
+	    (kill-buffer debbugs-src-buffer)))
+	(when (not (equal version ""))
+	  (version-list-<= (version-to-list "0.9.7") (version-to-list version)))))))
 
 (provide 'hib-debbugs)
 

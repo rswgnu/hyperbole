@@ -1,11 +1,32 @@
 2021-04-17  Bob Weiner  <rsw@gnu.org>
 
+* hpath.el (hpath:expand): Fix locate-library call to add suffixes and thereby
+    improperly match non-Lisp files with generic names to Lisp library files.
+
+* hui-mouse.el (hkey-alist): Raised priorty of occur modes so don't trigger
+    tag finding when on an occurrence line.
+
+* hibtypes.el (rfc-toc):
+  hactypes.el (rfc-toc): Fix to skip TOC and display only section header lines
+    to jump to sections.
+  hib-debbugs.el (debbugs-version-sufficient-p): Eliminate call out to
+    shell to get debbugs.el version number; this fixes bug where
+    browse-url-emacs sets current-directory to a url and a shell cmd
+    invoked from that buffer can't do a 'cd' and fails.
+  hpath.el (hpath:rfc):
+  hactypes.el (link-to-rfc): Change to using http to retrieve RFCs instead
+    of ftp since this is disabled in many environments.  Change hpath:find
+    call to browse-url-emacs so is always displayed in Emacs.
+
 * hpath.el (hpath:delimited-possible-path): Prevent match to strings
     with embedded double quotes.
            (hpath:at-p): Handle ":.::" current dir expressions in
     path variables.
            (hpath:call): Fix yesterday's handling of anchor only
     references like "#Smart Keys" from DEMO file.
+           (hpath:path-variable-regexp): For Windows, replace : should be ;.
+	   (hpath:is-p): Prevent from matching to PATH-type strings with at
+    least 4 entries; fixes Action Key on Windows path within PATH variable.
 
 2021-04-16  Bob Weiner  <rsw@gnu.org>
 
