@@ -1,3 +1,12 @@
+2021-04-17  Bob Weiner  <rsw@gnu.org>
+
+* hpath.el (hpath:delimited-possible-path): Prevent match to strings
+    with embedded double quotes.
+           (hpath:at-p): Handle ":.::" current dir expressions in
+    path variables.
+           (hpath:call): Fix yesterday's handling of anchor only
+    references like "#Smart Keys" from DEMO file.
+
 2021-04-16  Bob Weiner  <rsw@gnu.org>
 
 * hpath.el (hpath:at-p): Fix to allow non-existent paths (or those
@@ -9,6 +18,10 @@
     pathnames.
            (hpath:expand): For compressed Elisp libraries, add any
     found compressed suffix to the path.
+           (hpath:path-variable-regexp): Add.
+	   (hpath:at-p): Use above variable and detect paths within PATH
+    variables so Action Key can display them.
+           (hpath:is-p): Fix to return nil if path ends up as an empty string.
 
 2021-04-15  Mats Lidell  <matsl@gnu.org>
 
