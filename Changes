@@ -23,6 +23,10 @@
   test/hbut-tests.el (hbut-pathname-with-dash-loads-file-test): Remove
     expected fail and added check for file loading
     
+    Remove expected fail and added check for file loading
+* test/hbut-tests.el (hbut-pathname-with-dash-loads-file-test): Remove
+    expected fail and added check for file loading
+
 * test/hbut-tests.el (hbut-mail-address-test, hbut-pathname-test)
     (hbut-pathname-lisp-variable-test, hbut-pathname-env-variable-test)
     (hbut-pathname-emacs-lisp-file-test, hbut-pathname-anchor-test)

@@ -323,13 +323,13 @@ Bug: With line spec looks in the wrong folder for the file?"
     (kill-buffer "hypb.el")))
 
 (ert-deftest hbut-pathname-with-dash-loads-file-test ()
-  "Pathname with dash loads file.
-Bug: Fails with 'Invalid function: hact'."
-  :expected-result :failed
+  "Pathname with dash loads file."
   (with-temp-buffer
     (insert "\"-${hyperb:dir}/test/hy-test-dependencies.el\"")
     (goto-char 2)
-    (action-key)))
+    (action-key)
+    (hy-test-helpers:should-last-message "Loading")
+    (hy-test-helpers:should-last-message "hy-test-dependencies.el")))
 
 (ert-deftest hbut-pathname-directory-test ()
   "Pathname with directory opens dired."
