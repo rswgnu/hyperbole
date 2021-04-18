@@ -1,3 +1,8 @@
+2021-04-18  Mats Lidell  <matsl@gnu.org>
+
+* Makefile (ELC_KOTL): Add kotl/kprop-em.elc
+    (ELC_COMPILE): Remove kprop-em.elc
+
 2021-04-18  Bob Weiner  <rsw@gnu.org>
 
 * hpath.el (hpath:is-path-variable-p): Add to test if a string is a path-related variable.
