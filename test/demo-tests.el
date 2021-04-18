@@ -239,7 +239,8 @@
 
 ;; org
 (ert-deftest demo-org-hide-header-test ()
-  "Should work with action-key but does not. Works with org modes hide function."
+  "Hide org mode header.
+Bug: Should work with action-key but does not.  Works with org mode's hide function."
   :expected-result :failed
   (with-temp-buffer
     (org-mode)
