@@ -1,25 +1,8 @@
 2021-04-18  Mats Lidell  <matsl@gnu.org>
 
-* test/hibtypes-tests.el (ibtypes::pathname-path-variable-test): Ert test
-    for path variables.
-
-* test/hpath-tests.el (hpath:path-at-point-in-path-variable-test)
-    (hpath:path-at-point-in-path-variable-shorter-than-three-colons-returns-nil-test):
-    Ert test for path variables.
-
-* test/hbut-tests.el (hub-mail-address-test, hub-pathname-test)
-    (hub-pathname-lisp-variable-test, hub-pathname-env-variable-test)
-    (hub-pathname-emacs-lisp-file-test, hub-pathname-anchor-test)
-    (hub-pathname-anchor-line-test, hub-pathname-line-column-test)
-    (hub-pathname-load-path-line-column-test)
-    (hub-pathname-with-dash-loads-file-test, hub-pathname-directory-test)
-    (hub-pathname-dot-slash-in-other-folder-should-fail-test)
-    (hub-annot-bib-test, hub-ctags-vgrind-test, ibtypes::etags-test)
-    (hub-text-toc-test, hub-dir-summary-test, hub-rfc-test)
-    (hub-man-apropos-test, hub-info-node-test): ibtypes test cases
-
 * test/hibtypes-tests.el (ibtypes::pathname-with-dash-loads-file-test):
     Bug fixed - Removed  expected failed.
+
 * test/hbut-tests.el (hbut-pathname-with-dash-loads-file-test): Remove
     expected fail and added check for file loading
 
@@ -34,6 +17,13 @@
     (hbut-text-toc-test, hbut-dir-summary-test, hbut-rfc-test)
     (hbut-man-apropos-test, hbut-info-node-test): ibtypes test cases
     converted to use action-key
+
+* test/hibtypes-tests.el (ibtypes::pathname-path-variable-test): Ert test
+    for path variables.
+
+* test/hpath-tests.el (hpath:path-at-point-in-path-variable-test)
+    (hpath:path-at-point-in-path-variable-shorter-than-three-colons-returns-nil-test):
+    Ert test for path variables.
 
 * test/hbut-tests.el (hbut-pathname-path-variable-test)
     (hbut-pathname-path-variable-with-two-colons-is-one-file-test)
