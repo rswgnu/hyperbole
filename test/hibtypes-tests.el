@@ -178,6 +178,17 @@ Bug: Fails with 'Invalid function: hact'."
       (set-buffer help-buffer)
       (should (string-match "actype:.*link-to-file" (buffer-string))))))
 
+(ert-deftest ibtypes::pathname-path-variable-test ()
+  "Goto file at point in path variable."
+  (unwind-protect
+      (with-temp-buffer
+        (insert "\"/var/lib:/bar:/tmp:/foo\"")
+        (goto-char 16)
+        (ibtypes::pathname)
+        (should (string= "tmp" (buffer-name)))
+        (should (eq major-mode 'dired-mode)))
+    (kill-buffer "tmp")))
+
 ;; Function in buffer XEmac functionality. Is there somethign similar in Emacs?
 
 ;; ibtypes::annot-bib
