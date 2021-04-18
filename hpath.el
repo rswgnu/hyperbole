@@ -57,7 +57,11 @@ Group 1 is the line number.  Group 3 is the column number.")
   "Regexp that matches a markup filename followed by a hash (#) and an optional in-file anchor name.
 # is group 2.  Group 3 is the anchor name.")
 
-(defvar hpath:path-variable-regexp
+(defvar hpath:path-variable-regexp "\\`\\$?[{(]?\\([-_A-Z]*path[-_A-Z]*\\)[)}]?\\'"
+  "Regexp that matches exactly to a standalone path variable name reference.
+Group 1 is the variable name.")
+
+(defvar hpath:path-variable-value-regexp
  (concat "\\`\\.?:[^:;]+:[^:;]+:\\|:\\.?:\\|:[^:;]+:[^:;]+:\\|:[^:;]+:[^:;]+:\\.?\\'"
 	 "\\|"
 	 "\\`\\.?;[^;]+;[^;]+;\\|;\\.?;\\|;[^;]+;[^;]+;\\|;[^;]+;[^;]+;\\|;[^;]+;[^;]+;\\.?\\'")
@@ -798,7 +802,7 @@ paths are allowed.  Absolute pathnames must begin with a `/' or `~'."
 	  subpath)
      (when (and path (not non-exist) (string-match hpath:prefix-regexp path))
        (setq non-exist t))
-     (if (and path (string-match hpath:path-variable-regexp path))
+     (if (and path (string-match hpath:path-variable-value-regexp path))
 	 ;; With point inside a path variable, return the path that point is on or to the right of.
 	 (or (and (setq subpath (hargs:delimited "[:\"\']" "[:\"\']" t t nil "[\t\n\r\f]\\|[;:] \\| [;:]"))
 		  (not (string-match "[:;]" subpath))
@@ -865,6 +869,27 @@ Make any path within a file buffer absolute before returning. "
 		 (setq path (concat mode-prefix default-directory path))))
 	      (t path))))))
 
+(defun hpath:is-path-variable-p (path-var)
+  "Return the value of a colon or semicolon-delimited set in PATH-VAR or nil if not a match."
+  (when (stringp path-var)
+    (or (getenv path-var)
+        (let ((sym (intern-soft path-var)))
+	  (and sym (boundp sym) (stringp (symbol-value sym)) (symbol-value sym))))))
+
+(defun hpath:choose-from-path-variable (path-var &optional action-str)
+  "Interactively choose and return a path from the colon or semicolon-delimited set in PATH-VAR."
+  (let (path-value
+	paths)
+    (when (setq path-value (hpath:is-path-variable-p path-var)
+		paths (and path-value
+			   (split-string path-value (if (string-match ";" path-value) ";" ":") nil "\\s-")))
+      (setq paths (sort (mapcar (lambda (path) (if (string-empty-p path) "." path)) paths) #'string-lessp))
+      (kbd-key:key-series-to-events "?")
+      (completing-read (format "%s path from ${%s}: "
+			       (if (stringp action-str) action-str "Choose")
+			       path-var)
+		       paths nil t))))
+
 (defun hpath:delimited-possible-path (&optional non-exist include-positions)
   "Return delimited possible path or non-delimited remote path at point, if any.
 No validity checking is done on the possible path.  Delimiters may be:
@@ -894,8 +919,9 @@ end-pos) or nil."
 		 (p (car triplet))
 		 (punc (char-syntax ?.)))
 	    ;; May have matched to a string with an embedded double
-	    ;; quote; if so, don't consider it a path.
-	    (when (and (stringp p) (not (string-match "\"" p)) 
+	    ;; quote; if so, don't consider it a path.  Also ignore
+	    ;; whitespace delimited root dirs, e.g. " / ".
+	    (when (and (stringp p) (not (string-match "\"\\|\\`[/\\]+\\'" p))
 		       (delq nil (mapcar (lambda (c) (/= punc (char-syntax c))) p)))
 	      (if include-positions
 		  triplet
@@ -1268,7 +1294,7 @@ stripped, link anchors at the end following a # or , character
 are temporarily stripped, and path variables are expanded with
 `hpath:substitute-value'.  This normalized path form is what is
 returned for PATH."
-  (when (and (stringp path) (not (string-match hpath:path-variable-regexp path)))
+  (when (and (stringp path) (not (string-match hpath:path-variable-value-regexp path)))
     (setq path (hpath:call
 		(lambda (path)
 		  (let (modifier

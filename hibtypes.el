@@ -33,6 +33,7 @@
 ;;; Other required Elisp libraries
 ;;; ************************************************************************
 
+(eval-when-compile (require 'hversion))
 (require 'subr-x) ;; For string-trim
 (require 'hactypes)
 
@@ -207,13 +208,22 @@ display options."
                  (apply #'ibut:label-set path (hpath:start-end path))
                  (hact 'link-to-file path))
         ;;
-        ;; Match to Emacs Lisp and Info files without any directory component.
+        ;; Match PATH-related Environment and Lisp variable names and
+	;; to Emacs Lisp and Info files without any directory component.
         (when (setq path (hpath:delimited-possible-path))
-          (cond ((string-match "\\`[^\\\\/~]+\\.el[cn]?\\(\\.gz\\)?\\'" path)
+          (cond ((and (string-match hpath:path-variable-regexp path)
+		      (setq path (match-string 1 path))
+		      (hpath:is-path-variable-p path))
+		 (setq path (if (or assist-flag (hyperb:stack-frame '(hkey-help)))
+				path
+			      (hpath:choose-from-path-variable path "Display")))
+		 (unless (or (null path) (string-empty-p path))
+		   (hact 'link-to-file path)))
+		((string-match "\\`[^\\\\/~]+\\.el[cn]?\\(\\.gz\\)?\\'" path)
                  (apply #'ibut:label-set path (hpath:start-end path))
                  (if (string-match hpath:prefix-regexp path)
                      (hact 'hpath:find path)
-                   (setq full-path (locate-library path))
+                   (setq full-path (locate-library path t))
                    (if full-path
                        (hact 'link-to-file full-path)
                      (hact 'error "(pathname): \"%s\" not found in `load-path'"
@@ -391,7 +401,8 @@ Each line in the summary may be selected to jump to a section."
   (let ((case-fold-search t)
         (toc)
         (opoint (point)))
-    (if (and (string-match "rfc" (buffer-name))
+    (if (and (string-match "\\`rfc[-_]?[0-9]" (buffer-name))
+	     (not (string-match "toc" (buffer-name)))
              (goto-char (point-min))
              (progn (setq toc (search-forward "Table of Contents" nil t))
                     (re-search-forward "^[ \t]*1.0?[ \t]+[^ \t\n\r]" nil t

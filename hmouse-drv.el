@@ -1388,22 +1388,13 @@ and returns nil."
 	t)))
 
 ;; "hsettings.el" contains documentation for this variable.
-(or (boundp 'smart-scroll-proportional)
-    (defvar smart-scroll-proportional t
-      "*Non-nil means Smart Keys should scroll relative to current line when pressed at the end of a line.
+(unless (boundp 'smart-scroll-proportional)
+  (defvar smart-scroll-proportional t
+    "*Non-nil means Smart Keys should scroll relative to current line when pressed at the end of a line.
 Action Key moves current line to top of window.  Assist Key moves current
 line to bottom of window.  Repeated presses then scroll up or down a
 windowful.  Nil value instead ignores current line and always scrolls up or
 down a windowful."))
-
-;; The smart keys scroll buffers when pressed at the end of lines.
-;; These next two functions do the scrolling and keep point at the end
-;; of line to simplify repeated scrolls when using keyboard smart keys.
-;;
-;; These functions may also be used to test whether the scroll action would
-;; be successful: no action is taken if it would fail (because the beginning
-;; or end of a buffer is already showing) and nil is returned.
-;; t is returned whenever scrolling is performed.
 
 (defun hmouse-function (func assist-flag set-point-arg-list)
   "Execute FUNC for Action Key (Assist Key with ASSIST-FLAG non-nil) and set point from SET-POINT-ARG-LIST.
@@ -1434,6 +1425,15 @@ is not bound to a valid function."
       (setq action-mouse-key-prev-window nil
 	    action-mouse-key-prefix-arg nil))
     t))
+
+;; The smart keys scroll buffers when pressed at the end of lines.
+;; These next two functions do the scrolling and keep point at the end
+;; of line to simplify repeated scrolls when using keyboard smart keys.
+;;
+;; These functions may also be used to test whether the scroll action would
+;; be successful: no action is taken if it would fail (because the beginning
+;; or end of a buffer is already showing) and nil is returned.
+;; t is returned whenever scrolling is performed.
 
 (defun smart-scroll-down ()
   "Scroll down according to value of smart-scroll-proportional.

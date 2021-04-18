@@ -1,7 +1,29 @@
+2021-04-18  Bob Weiner  <rsw@gnu.org>
+
+* hpath.el (hpath:is-path-variable-p): Add to test if a string is a path-related variable.
+           (hpath:choose-from-path-variable):
+  hibtypes.el (pathname): Use this new function.
+
+* hibtypes.el (require 'hversion): Add this since added calls to  hyperb:* into this file.
+
 2021-04-17  Bob Weiner  <rsw@gnu.org>
 
-* hpath.el (hpath:expand): Fix locate-library call to add suffixes and thereby
-    improperly match non-Lisp files with generic names to Lisp library files.
+* hpath.el (hpath:path-variable-regexp, hpath:choose-from-path-variable): Add.
+  hibtypes.el (pathname): Add Action Key activation of *PATH* environment variables and
+    completion-based selection of the desired choice which Hyperbole then displays.
+
+* hmouse-tag.el (smart-lisp-at-tag-p): Ignore referenced environment variables (include $).
+
+* hpath.el (hpath:delimited-possible-path): Ignore space delimited / or \\
+    which look like root directories but are not.
+
+* hibtypes.el (rfc-toc): Make buffer-name match tighter so does not match to
+    *rfc toc* buffers.
+
+* hibtypes.el (pathname):
+  hpath.el (hpath:expand): Fix locate-library calls to not add suffixes and thereby
+    ignore non-Lisp files with generic names that match Lisp library names when
+    a suffix is added.
 
 * hui-mouse.el (hkey-alist): Raised priorty of occur modes so don't trigger
     tag finding when on an occurrence line.
@@ -24,7 +46,7 @@
     path variables.
            (hpath:call): Fix yesterday's handling of anchor only
     references like "#Smart Keys" from DEMO file.
-           (hpath:path-variable-regexp): For Windows, replace : should be ;.
+           (hpath:path-variable-value-regexp): For Windows, replace : should be ;.
 	   (hpath:is-p): Prevent from matching to PATH-type strings with at
     least 4 entries; fixes Action Key on Windows path within PATH variable.
 
@@ -39,7 +61,7 @@
     pathnames.
            (hpath:expand): For compressed Elisp libraries, add any
     found compressed suffix to the path.
-           (hpath:path-variable-regexp): Add.
+           (hpath:path-variable-value-regexp): Add.
 	   (hpath:at-p): Use above variable and detect paths within PATH
     variables so Action Key can display them.
            (hpath:is-p): Fix to return nil if path ends up as an empty string.

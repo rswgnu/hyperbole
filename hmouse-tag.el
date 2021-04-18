@@ -664,25 +664,29 @@ Return nil when point is on the first line of a non-alias Lisp definition."
   (unless (smart-lisp-at-definition-p)
     (save-excursion
       (skip-chars-backward smart-lisp-identifier-chars)
-      (when (and (looking-at smart-lisp-identifier)
-		 ;; Ignore any punctuation matches.
-		 (save-match-data
-		   (not (string-match "\\`[-<>*]+\\'" (match-string 0)))))
-	;; Ignore any leading '<' character from action buttons or
-	;; other links, i.e. only when followed by an alphabetic character.
-	(when (and (eq (following-char) ?\<) (eq ?w (char-syntax (1+ (point)))))
-	  (goto-char (1+ (point))))
-	(if no-flash
+      ;; Ignore environment variables: $PATH, ${PATH}, $(PATH), {$PATH}, ($PATH)
+      (unless (save-excursion
+		(skip-chars-backward "[${(]")
+		(looking-at "\\$[{(]\\|[{]\\$]"))
+	(when (and (looking-at smart-lisp-identifier)
+		   ;; Ignore any punctuation matches.
+		   (save-match-data
+		     (not (string-match "\\`[-<>*]+\\'" (match-string 0)))))
+	  ;; Ignore any leading '<' character from action buttons or
+	  ;; other links, i.e. only when followed by an alphabetic character.
+	  (when (and (eq (following-char) ?\<) (eq ?w (char-syntax (1+ (point)))))
+	    (goto-char (1+ (point))))
+	  (if no-flash
+	      (if (eq (char-after (1- (match-end 0))) ?:)
+		  (buffer-substring-no-properties (point) (1- (match-end 0)))
+		(buffer-substring-no-properties (point) (match-end 0)))
 	    (if (eq (char-after (1- (match-end 0))) ?:)
-		(buffer-substring-no-properties (point) (1- (match-end 0)))
-	      (buffer-substring-no-properties (point) (match-end 0)))
-	  (if (eq (char-after (1- (match-end 0))) ?:)
+		(smart-flash-tag
+		 (buffer-substring-no-properties (point) (1- (match-end 0)))
+		 (point) (1- (match-end 0)))
 	      (smart-flash-tag
-	       (buffer-substring-no-properties (point) (1- (match-end 0)))
-	       (point) (1- (match-end 0)))
-	    (smart-flash-tag
-	     (buffer-substring-no-properties (point) (match-end 0))
-	     (point) (match-end 0))))))))
+	       (buffer-substring-no-properties (point) (match-end 0))
+	       (point) (match-end 0)))))))))
 
 ;;;###autoload
 (defun smart-lisp-mode-p ()
