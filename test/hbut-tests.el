@@ -165,8 +165,7 @@ the button text"
                       (hy-test-helpers:action-key-should-call-hpath:find (expand-file-name "DEMO" hyperb:dir))))))
 
 (ert-deftest hbut-ib-url-with-label ()
-  "Should find link but fails with (user-error \"No link found\")"
-  :expected-result :failed
+  "Find link using label"
   (with-temp-buffer
     (insert "<[PR34]>: \"https://github.com/rswgnu/hyperbole/pull/34\"")
     (goto-char 4)
