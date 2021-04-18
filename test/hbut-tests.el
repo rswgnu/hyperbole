@@ -223,7 +223,7 @@
     (hy-test-helpers:action-key-should-call-hpath:find "/anonymous@var:/bar")))
 
 ;; Mail address
-(ert-deftest hub-mail-address-test ()
+(ert-deftest hbut-mail-address-test ()
   "Open mail from mail address."
   (unwind-protect
       (with-temp-buffer
@@ -234,7 +234,7 @@
     (kill-buffer "*mail*")))
 
 ;; Path name
-(ert-deftest hub-pathname-test ()
+(ert-deftest hbut-pathname-test ()
   (unwind-protect
       (with-temp-buffer
         (insert (format "\"%s\"" (expand-file-name "DEMO" hyperb:dir)))
@@ -243,7 +243,7 @@
         (should (string= "DEMO" (buffer-name))))
     (kill-buffer "DEMO")))
 
-(ert-deftest hub-pathname-lisp-variable-test ()
+(ert-deftest hbut-pathname-lisp-variable-test ()
   (unwind-protect
       (with-temp-buffer
         (insert "\"${hyperb:dir}/DEMO\"")
@@ -252,7 +252,7 @@
         (should (string= "DEMO" (buffer-name))))
     (kill-buffer "DEMO")))
 
-(ert-deftest hub-pathname-env-variable-test ()
+(ert-deftest hbut-pathname-env-variable-test ()
   (unwind-protect
       (with-temp-buffer
         (insert "\"${HOME}\"")
@@ -262,17 +262,18 @@
         (should (= 0 (string-match (getenv "HOME") (file-truename default-directory)))))
     nil))
 
-(ert-deftest hub-pathname-emacs-lisp-file-test ()
+(ert-deftest hbut-pathname-emacs-lisp-file-test ()
   (unwind-protect
       (with-temp-buffer
         (insert "\"hyperbole.el\"")
         (goto-char 2)
         (action-key)
         (should (equal major-mode 'emacs-lisp-mode))
+        (should (buffer-file-name))
         (should (string= "hyperbole.el" (buffer-name)))))
   (kill-buffer "hyperbole.el"))
 
-(ert-deftest hub-pathname-anchor-test ()
+(ert-deftest hbut-pathname-anchor-test ()
   "Pathname with anchor."
   (unwind-protect
       (with-temp-buffer
@@ -283,7 +284,7 @@
         (should (looking-at "\* Smart Keys")))
     (kill-buffer "DEMO")))
 
-(ert-deftest hub-pathname-anchor-line-test ()
+(ert-deftest hbut-pathname-anchor-line-test ()
   "Pathname with anchor and line specification.
 Bug: With line spec looks in the wrong folder for the file?"
   :expected-result :failed
@@ -297,7 +298,7 @@ Bug: With line spec looks in the wrong folder for the file?"
         (should (looking-at "\* Smart Keys")))
     (kill-buffer "DEMO")))
 
-(ert-deftest hub-pathname-line-column-test ()
+(ert-deftest hbut-pathname-line-column-test ()
   "Pathname with line and position specification."
   (unwind-protect
       (with-temp-buffer
@@ -309,8 +310,8 @@ Bug: With line spec looks in the wrong folder for the file?"
         (should (= (current-column) 45)))
     (kill-buffer "DEMO")))
 
-(ert-deftest hub-pathname-load-path-line-column-test ()
-  "Pathname with line and position specification."
+(ert-deftest hbut-pathname-load-path-line-column-test ()
+  "Pathname with `load-path', line and position specification."
   (unwind-protect
       (with-temp-buffer
         (insert "\"${load-path}/hypb.el:10:5\"")
@@ -321,16 +322,14 @@ Bug: With line spec looks in the wrong folder for the file?"
         (should (= (current-column) 5)))
     (kill-buffer "hypb.el")))
 
-(ert-deftest hub-pathname-with-dash-loads-file-test ()
-  "Pathname with dash loads file.
-Bug: Fails with 'Invalid function: hact'."
-  :expected-result :failed
+(ert-deftest hbut-pathname-with-dash-loads-file-test ()
+  "Pathname with dash loads file."
   (with-temp-buffer
     (insert "\"-${hyperb:dir}/test/hy-test-dependencies.el\"")
     (goto-char 2)
     (action-key)))
 
-(ert-deftest hub-pathname-directory-test ()
+(ert-deftest hbut-pathname-directory-test ()
   "Pathname with directory opens dired."
   (unwind-protect
       (with-temp-buffer
@@ -341,7 +340,7 @@ Bug: Fails with 'Invalid function: hact'."
         (should (eq major-mode 'dired-mode)))
     (kill-buffer "tmp")))
 
-(ert-deftest hub-pathname-dot-slash-in-other-folder-should-fail-test ()
+(ert-deftest hbut-pathname-dot-slash-in-other-folder-should-fail-test ()
   "Pathname that starts with ./ only works if in same folder."
   (with-temp-buffer
     (insert "\"./hypb.el\"")
@@ -357,8 +356,8 @@ Bug: Fails with 'Invalid function: hact'."
                     "(Hyperbole Action Key): No action defined for this context; try another location"
                     (cadr err)))))))))
 
-;; hub-annot-bib
-(ert-deftest hub-annot-bib-test ()
+;; hbut-annot-bib
+(ert-deftest hbut-annot-bib-test ()
   (unwind-protect
       (progn
         (hypb:display-file-with-logo (expand-file-name "DEMO" hyperb:dir))
@@ -372,7 +371,7 @@ Bug: Fails with 'Invalid function: hact'."
 
 ;; ctags
 ; Seems ctags -v does not give the proper answer
-(ert-deftest hub-ctags-vgrind-test ()
+(ert-deftest hbut-ctags-vgrind-test ()
   (unwind-protect
       (with-temp-buffer
         (insert "hy-test-helpers:consume-input-events hy-test-helpers.el 21\n")
@@ -402,7 +401,7 @@ Bug: Fails with 'Invalid function: hact'."
     (kill-buffer "hy-test-helpers.el")))
 
 ;; text-toc
-(ert-deftest hub-text-toc-test ()
+(ert-deftest hbut-text-toc-test ()
   (unwind-protect
       (progn
         (hypb:display-file-with-logo (expand-file-name "DEMO" hyperb:dir))
@@ -414,7 +413,7 @@ Bug: Fails with 'Invalid function: hact'."
     (kill-buffer "DEMO")))
 
 ;; dir-summary
-(ert-deftest hub-dir-summary-test ()
+(ert-deftest hbut-dir-summary-test ()
   (unwind-protect
       (progn
         (find-file (expand-file-name "MANIFEST" hyperb:dir))
@@ -429,7 +428,7 @@ Bug: Fails with 'Invalid function: hact'."
       (kill-buffer "HY-ABOUT"))))
 
 ;; rfc
-(ert-deftest hub-rfc-test ()
+(ert-deftest hbut-rfc-test ()
   (dolist (rfc '("RFC822" "RFC-822" "rfc 822"))
     (with-temp-buffer
       (insert rfc)
@@ -439,7 +438,7 @@ Bug: Fails with 'Invalid function: hact'."
         (should (action-key))))))
 
 ;; man-apropos
-(ert-deftest hub-man-apropos-test ()
+(ert-deftest hbut-man-apropos-test ()
   (with-temp-buffer
     (insert "rm (1)   - remove")
     (goto-char 4)
@@ -448,7 +447,7 @@ Bug: Fails with 'Invalid function: hact'."
      (action-key))))
 
 ;; info-node
-(ert-deftest hub-info-node-test ()
+(ert-deftest hbut-info-node-test ()
   "Got to info node."
   (unwind-protect
       (with-temp-buffer

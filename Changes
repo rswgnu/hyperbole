@@ -17,6 +17,20 @@
     (hub-annot-bib-test, hub-ctags-vgrind-test, ibtypes::etags-test)
     (hub-text-toc-test, hub-dir-summary-test, hub-rfc-test)
     (hub-man-apropos-test, hub-info-node-test): ibtypes test cases
+
+* test/hibtypes-tests.el (ibtypes::pathname-with-dash-loads-file-test):
+    Bug fixed - Removed  expected failed.
+
+* test/hbut-tests.el (hbut-mail-address-test, hbut-pathname-test)
+    (hbut-pathname-lisp-variable-test, hbut-pathname-env-variable-test)
+    (hbut-pathname-emacs-lisp-file-test, hbut-pathname-anchor-test)
+    (hbut-pathname-anchor-line-test, hbut-pathname-line-column-test)
+    (hbut-pathname-load-path-line-column-test)
+    (hbut-pathname-with-dash-loads-file-test, hbut-pathname-directory-test)
+    (hbut-pathname-dot-slash-in-other-folder-should-fail-test)
+    (hbut-annot-bib-test, hbut-ctags-vgrind-test, ibtypes::etags-test)
+    (hbut-text-toc-test, hbut-dir-summary-test, hbut-rfc-test)
+    (hbut-man-apropos-test, hbut-info-node-test): ibtypes test cases
     converted to use action-key
 
 * test/hbut-tests.el (hbut-pathname-path-variable-test)
@@ -33,8 +47,6 @@
 * hpath.el (hpath:is-path-variable-p): Add to test if a string is a path-related variable.
            (hpath:choose-from-path-variable):
   hibtypes.el (pathname): Use this new function.
-
-* hibtypes.el (require 'hversion): Add this since added calls to  hyperb:* into this file.
 
 2021-04-17  Mats Lidell  <matsl@gnu.org>
 
