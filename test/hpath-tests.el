@@ -25,5 +25,19 @@
       (hpath:find "${hyperb:dir}/UNKNOWNFILE")
     (error (should (string-search (concat hyperb:dir "UNKNOWNFILE") (cadr err))))))
 
+(ert-deftest hpath:path-at-point-in-path-variable-test ()
+  "Find path at point in path variable."
+  (with-temp-buffer
+    (insert "\":foo:bar:emacs\"")
+    (goto-char 8)
+    (should (string= (hpath:at-p) "bar"))))
+
+(ert-deftest hpath:path-at-point-in-path-variable-shorter-than-three-colons-returns-nil-test ()
+  "Do not identify path variables with less than three colons."
+  (with-temp-buffer
+    (insert "\"foo:bar:lisp\"")
+    (goto-char 7)
+    (should (not (hpath:at-p)))))
+
 (provide 'hpath-tests)
 ;;; hpath-tests.el ends here
