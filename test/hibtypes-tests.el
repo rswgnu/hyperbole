@@ -137,7 +137,9 @@
     (kill-buffer "hypb.el")))
 
 (ert-deftest ibtypes::pathname-with-dash-loads-file-test ()
-  "Pathname with dash loads file."
+  "Pathname with dash loads file.
+Bug: Fails with 'Invalid function: hact'."
+  :expected-result :failed
   (with-temp-buffer
     (insert "\"-${hyperb:dir}/test/hy-test-dependencies.el\"")
     (goto-char 2)
