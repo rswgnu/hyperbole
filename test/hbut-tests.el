@@ -209,7 +209,7 @@ the button text"
     (hy-test-helpers:action-key-should-call-hpath:find "/var/lib:/bar:/tmp")))
 
 (ert-deftest hbut-pathname-path-variable-with-three-colons-is-a-path-test ()
-  "Path variable with two colons is not seen as a path variable."
+  "Path variable with three colons is not seen as a path variable."
   (with-temp-buffer
     (insert "\"/var/lib:/bar:/tmp:/foo\"")
     (goto-char 16)
