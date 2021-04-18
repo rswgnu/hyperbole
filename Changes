@@ -20,6 +20,8 @@
 
 * test/hibtypes-tests.el (ibtypes::pathname-with-dash-loads-file-test):
     Bug fixed - Removed  expected failed.
+    (hbut-pathname-with-dash-loads-file-test): Bug fixed - Removed
+    expected failed.
 
 * test/hbut-tests.el (hbut-mail-address-test, hbut-pathname-test)
     (hbut-pathname-lisp-variable-test, hbut-pathname-env-variable-test)
@@ -47,6 +49,8 @@
 * hpath.el (hpath:is-path-variable-p): Add to test if a string is a path-related variable.
            (hpath:choose-from-path-variable):
   hibtypes.el (pathname): Use this new function.
+
+* hibtypes.el (require 'hversion): Add this since added calls to  hyperb:* into this file.
 
 2021-04-17  Mats Lidell  <matsl@gnu.org>
 
