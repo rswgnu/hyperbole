@@ -20,10 +20,6 @@
 
 * test/hibtypes-tests.el (ibtypes::pathname-with-dash-loads-file-test):
     Bug fixed - Removed  expected failed.
-  test/hbut-tests.el (hbut-pathname-with-dash-loads-file-test): Remove
-    expected fail and added check for file loading
-    
-    Remove expected fail and added check for file loading
 * test/hbut-tests.el (hbut-pathname-with-dash-loads-file-test): Remove
     expected fail and added check for file loading
 
