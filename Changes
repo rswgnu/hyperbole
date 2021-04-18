@@ -6,6 +6,11 @@
 
 * hibtypes.el (require 'hversion): Add this since added calls to  hyperb:* into this file.
 
+2021-04-17  Mats Lidell  <matsl@gnu.org>
+
+* test/hbut-tests.el (hbut-ib-url-with-label): Bug solved - removed
+    expected failed.
+
 2021-04-17  Bob Weiner  <rsw@gnu.org>
 
 * hpath.el (hpath:path-variable-regexp, hpath:choose-from-path-variable): Add.
