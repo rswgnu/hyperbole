@@ -3,6 +3,11 @@
 * hib-debbugs.el (debbugs-version-sufficient-p): No-op when debbugs package
     not found
 
+2021-04-19  Mats Lidell  <matsl@gnu.org>
+
+* hpath.el (hact): Add dependency
+* hact.el (hpath.el): Remove dependency
+
 2021-04-18  Mats Lidell  <matsl@gnu.org>
 
 * test/hibtypes-tests.el (ibtypes::pathname-with-dash-loads-file-test):
