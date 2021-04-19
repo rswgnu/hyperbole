@@ -101,7 +101,7 @@ the button text"
           (error
            (progn
              (should (equal (car err) 'error))
-             (should (string-search "hpath:find" (cadr err)))))))
+             (should (string-match "hpath:find" (cadr err)))))))
     (ibtype:delete 'ibtypes::defal-path-missing)))
 
 (ert-deftest hbut-defil-it ()

@@ -91,7 +91,7 @@
         (re-search-forward "Table of Contents")
         (beginning-of-line)
         (let ((smart-scroll-proportional nil)
-              (pos (point)))
+              (pos (window-start)))
           (end-of-line)
           (action-key)
           (should (< pos (window-start)))))

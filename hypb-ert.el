@@ -29,14 +29,18 @@
 (require 'hbut)
 (require 'hargs)
 
+(defun hypb-run-ert-test-libraries ()
+  "Return the list of test Lisp libraries to load."
+  (directory-files (expand-file-name "test" hyperb:dir) t "^[a-zA-Z].*\\.el$"))
+
 (defun hypb-run-ert-test-symbol (test-symbol)
   "Run the specified TEST-SYMBOL ert test."
-  (mapc 'load-file (directory-files "test" t "\\.el$"))
+  (mapc #'load-file (hypb-run-ert-test-libraries))
   (ert (intern test-symbol)))
 
 (defun hypb-run-ert-test-selector (test-selector)
   "Run the specified TEST-SELECTOR defined ert test."
-  (mapc 'load-file (directory-files "test" t "\\.el$"))
+  (mapc #'load-file (hypb-run-ert-test-libraries))
   (ert test-selector))
 
 (defal hypb-ert-sym 'hypb-run-ert-test-symbol)
@@ -45,7 +49,7 @@
 (defun hypb-run-all-tests ()
   "Run every ert test."
   (interactive)
-  (mapc 'load-file (directory-files (expand-file-name "test" hyperb:dir) t "\\.el$"))
+  (mapc #'load-file (hypb-run-ert-test-libraries))
   (ert t))
 
 (provide 'hypb-ert)

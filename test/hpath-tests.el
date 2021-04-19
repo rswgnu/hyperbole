@@ -19,11 +19,10 @@
 (require 'hpath)
 
 (ert-deftest hpath:find-report-lisp-variable-path-name-when-not-exists ()
-  "hpath:find prints out the wrong filename on lisp variable expanded filenames"
-  :expected-result :failed
+  "Test that hpath:find expands and returns filename when it is non-existent."
   (condition-case err
       (hpath:find "${hyperb:dir}/UNKNOWNFILE")
-    (error (should (string-search (concat hyperb:dir "UNKNOWNFILE") (cadr err))))))
+    (error (should (string-match (concat hyperb:dir "UNKNOWNFILE") (cadr err))))))
 
 (provide 'hpath-tests)
 ;;; hpath-tests.el ends here
