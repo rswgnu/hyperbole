@@ -50,17 +50,21 @@
      type ones.  The tables below summarize which keys work whether inside
      an Org table or outside.
 
-     | Demotion Inside Org Table | Promotion Inside Org Table |
-     |---------------------------+----------------------------|
-     | C-c C-,                   | C-c C-.                    |
-     | C-c C-<                   | C-c C->                    |
+     |----------------------------+-----------------------------|
+     | Demotion Inside Org Table  | Promotion Inside Org Table  |
+     |----------------------------+-----------------------------|
+     | C-c C-,                    | C-c C-.                     |
+     | C-c C-<                    | C-c C->                     |
+     |----------------------------+-----------------------------|
 
+     |----------------------------+-----------------------------|
      | Demotion Outside Org Table | Promotion Outside Org Table |
      |----------------------------+-----------------------------|
      | TAB                        | Shift-TAB or M-TAB          |
      | M-left-arrow               | M-right-arrow               |
      | C-c C-,                    | C-c C-.                     |
      | C-c C-<                    | C-c C->                     |
+     |----------------------------+-----------------------------|
 
    - Klink Copy: New commands that copy a relative or absolute reference
      to a kcell (a klink) to the kill ring or to an Emacs single-letter

@@ -425,6 +425,35 @@ command to return to this DEMO later.
 
 * Implicit Buttons
 
+    Table of Contents
+    -----------------
+    ** Key Series Buttons
+    ** Org Mode
+    ** Implicit Path Links
+       *** Paths with Line and Column Numbers
+       *** HTML Markdown and Emacs Outline Hash Links
+       *** Path Suffixes and Variables
+       *** Path Prefixes
+       *** Info Paths
+       *** Remote Paths
+       *** POSIX and MSWindows Paths
+    ** Internet Request For Comments (RFC) Document Browsing
+    ** MANIFEST Files and Tables of Contents
+    ** World Wide Web URL Buttons
+    ** Email Addresses
+    ** Action Buttons
+       *** Using Action Buttons
+       *** Defining New Action Button Types
+    ** Github (Remote) References
+    ** Gitlab (Remote) References
+    ** Git (Local) References
+    ** Grep, Occurrence, Debugger and Compiler Error Buttons, and Cscope Analyzer Lines
+    ** Annotated Bibliography Buttons
+    ** Completion Selection
+    ** Hyperbole Source Buttons
+    ** UNIX Man Apropos Buttons
+    ** Site-specific Online Library Document IDs
+
 Hyperbole can recognize a wide variety of links embedded within Emacs
 buffers, turning your unmodified text files into hypertexts via its
 incredibly powerful feature: implicit buttons.  An implicit button is

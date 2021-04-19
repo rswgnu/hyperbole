@@ -157,7 +157,7 @@ Below are the lines to add:
     (unless (package-installed-p 'hyperbole)
       (package-refresh-contents)
       (package-install 'hyperbole))
-    (require 'hyperbole)
+    (hyperbole-mode 1)
 
 ----
 

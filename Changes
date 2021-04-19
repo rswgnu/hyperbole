@@ -30,7 +30,7 @@
     ignore non-Lisp files with generic names that match Lisp library names when
     a suffix is added.
 
-* hui-mouse.el (hkey-alist): Raised priorty of occur modes so don't trigger
+* hui-mouse.el (hkey-alist): Raised priority of occur modes so don't trigger
     tag finding when on an occurrence line.
 
 * hibtypes.el (rfc-toc):
@@ -548,17 +548,21 @@ absolute paths.
     to all of the following (inside Org Table is when orgtbl-mode minor
     mode is active and point is in a table):
 
-    | Demotion Inside Org Table | Promotion Inside Org Table |
-    |---------------------------+----------------------------|
-    | C-c C-,                   | C-c C-.                    |
-    | C-c C-<                   | C-c C->                    |
+     |----------------------------+-----------------------------|
+     | Demotion Inside Org Table  | Promotion Inside Org Table  |
+     |----------------------------+-----------------------------|
+     | C-c C-,                    | C-c C-.                     |
+     | C-c C-<                    | C-c C->                     |
+     |----------------------------+-----------------------------|
 
-    | Demotion Outside Org Table | Promotion Outside Org Table |
-    |----------------------------+-----------------------------|
-    | TAB                        | Shift-TAB or M-TAB          |
-    | M-left-arrow               | M-right-arrow               |
-    | C-c C-,                    | C-c C-.                     |
-    | C-c C-<                    | C-c C->                     |
+     |----------------------------+-----------------------------|
+     | Demotion Outside Org Table | Promotion Outside Org Table |
+     |----------------------------+-----------------------------|
+     | TAB                        | Shift-TAB or M-TAB          |
+     | M-left-arrow               | M-right-arrow               |
+     | C-c C-,                    | C-c C-.                     |
+     | C-c C-<                    | C-c C->                     |
+     |----------------------------+-----------------------------|
 
 2020-10-11  Bob Weiner  <rsw@gnu.org>
 

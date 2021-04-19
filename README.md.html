@@ -149,7 +149,7 @@
 (unless (package-installed-p 'hyperbole)
   (package-refresh-contents)
   (package-install 'hyperbole))
-(require 'hyperbole)
+(hyperbole-mode 1)
 </code></pre>
 <hr>
 <p>Now save the file and then restart Emacs.  Hyperbole will then be
