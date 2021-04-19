@@ -1,3 +1,8 @@
+2021-04-19  Mats Lidell  <matsl@gnu.org>
+
+* hpath.el (hact): Add dependency on hact
+* hact.el (mapc): Remove dependency on hpath
+
 2021-04-18  Mats Lidell  <matsl@gnu.org>
 
 * test/hibtypes-tests.el (ibtypes::pathname-with-dash-loads-file-test):

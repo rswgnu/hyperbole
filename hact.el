@@ -16,7 +16,7 @@
 ;;; Other required Elisp libraries
 ;;; ************************************************************************
 
-(eval-and-compile (mapc #'require '(hhist hpath set)))
+(eval-and-compile (mapc #'require '(hhist set)))
 
 ;;; ************************************************************************
 ;;; Public variables
