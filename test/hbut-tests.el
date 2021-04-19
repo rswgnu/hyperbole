@@ -195,32 +195,32 @@
            (should (string-search "ibutton at point already has a label" (cadr err)))))))))
 
 (ert-deftest hbut-pathname-path-variable-test ()
-  "Find file in path variable."
+  "Find file in path variable value."
   (with-temp-buffer
     (insert "\"/var/lib:/bar:/tmp:/foo\"")
     (goto-char 16)
     (hy-test-helpers:action-key-should-call-hpath:find "/tmp")))
 
 (ert-deftest hbut-pathname-path-variable-with-two-colons-is-one-file-test ()
-  "Path variable with two colons is not seen as a path variable."
+  "Path variable value with two colons is insufficient to be recognized as a path variable value."
   (with-temp-buffer
     (insert "\"/var/lib:/bar:/tmp\"")
     (goto-char 16)
     (hy-test-helpers:action-key-should-call-hpath:find "/var/lib:/bar:/tmp")))
 
 (ert-deftest hbut-pathname-path-variable-with-three-colons-is-a-path-test ()
-  "Path variable with three colons is not seen as a path variable."
+  "Path variable value with three colons is sufficient to be recognized as a path variable value."
   (with-temp-buffer
     (insert "\"/var/lib:/bar:/tmp:/foo\"")
     (goto-char 16)
     (hy-test-helpers:action-key-should-call-hpath:find "/tmp")))
 
-(ert-deftest hbut-pathname-path-variable-with-short-first-elemet-is-tramp-url-test ()
-  "Path variable with three colons is a tramp url."
+(ert-deftest hbut-pathname-path-variable-with-short-first-element-is-not-tramp-url-test ()
+  "Path variable with three colons is not seen as a tramp url."
   (with-temp-buffer
-    (insert "\"/var:/bar:/tmp:/foo\"")
+    (insert "\"/a:/bar:/tmp:~foo\"")
     (goto-char 14)
-    (hy-test-helpers:action-key-should-call-hpath:find "/anonymous@var:/bar")))
+    (hy-test-helpers:action-key-should-call-hpath:find "/tmp")))
 
 ;; Mail address
 (ert-deftest hbut-mail-address-test ()
@@ -285,9 +285,7 @@
     (kill-buffer "DEMO")))
 
 (ert-deftest hbut-pathname-anchor-line-test ()
-  "Pathname with anchor and line specification.
-Bug: With line spec looks in the wrong folder for the file?"
-  :expected-result :failed
+  "Pathname with anchor and line specification."
   (unwind-protect
       (with-temp-buffer
         (insert "\"${hyperb:dir}/DEMO#Smart Keys:2\"")
