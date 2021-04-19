@@ -10,6 +10,7 @@ klink.el                  - Implicit reference to a kcell action type, for use i
 kmenu.el                  - Pulldown and popup menus for kotl-mode, the Koutliner mode
 knode.el                  - Generic nodes for use as elements in data structures
 kotl-mode.el              - Major mode for editing koutlines and associated commands
+kotl-orgtbl.el            - Allow use of Org minor-mode table editing in Koutlines
 kproperty.el              - Wrapper for koutline text property implementations
 kprop-em.el               - Koutline text property handling under GNU Emacs
 kprop-xe.el               - Koutline text property handling under XEmacs
