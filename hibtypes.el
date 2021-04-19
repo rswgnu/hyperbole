@@ -177,7 +177,14 @@ any buffer attached to a file in `hyrolo-file-list', or any buffer with
 ;;; ========================================================================
 
 (defib pathname ()
-  "Make a valid pathname display the path entry.
+  "Make a valid pathname at point display the path entry.
+
+If instead is a PATH-style variable name, .e.g. MANPATH, will prompt
+with completion for one of the paths and will then display that.  If
+it is the colon or semicolon-separated string of paths value from a
+PATH-style variable, the path at point is used; empty paths, e.g. ::
+represent the current directory, '.'.
+
 Also works for delimited and non-delimited remote pathnames,
 Texinfo @file{} entries, and hash-style link references to HTML,
 XML, SGML, Markdown or Emacs outline headings, shell script
@@ -209,7 +216,7 @@ display options."
                  (hact 'link-to-file path))
         ;;
         ;; Match PATH-related Environment and Lisp variable names and
-	;; to Emacs Lisp and Info files without any directory component.
+	;; Emacs Lisp and Info files without any directory component.
         (when (setq path (hpath:delimited-possible-path))
           (cond ((and (string-match hpath:path-variable-regexp path)
 		      (setq path (match-string 1 path))
@@ -567,8 +574,8 @@ asterisk characters at the very beginning of the line."
                (save-excursion
                  (beginning-of-line)
                  ;; Entry line within a TOC
-                 (when (looking-at "[ \t]+\\*+[ \t]+\\(.*[^ \t]\\)[ \t]*$")
-                   (setq section (match-string-no-properties 1))))
+                 (when (looking-at "[ \t]+\\*+[ \t]+\\(.*\\)$")
+                   (setq section (string-trim (match-string-no-properties 1)))))
                (progn (ibut:label-set section (match-beginning 1) (match-end 1))
                       t)
                (save-excursion (re-search-backward

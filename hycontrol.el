@@ -4,7 +4,7 @@
 ;;
 ;; Orig-Date:     1-Jun-16 at 15:35:36
 ;;
-;; Copyright (C) 2016-2017  Free Software Foundation, Inc.
+;; Copyright (C) 2016-2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
 ;;
 ;; This file is part of GNU Hyperbole.
@@ -891,7 +891,7 @@ instead of quitting HyControl."
 ;; turns things on and off.
 (define-minor-mode hycontrol-local-frames-mode
   "Toggle Hyperbole Frames control minor mode in the current buffer."
-  nil " HyFrm" nil
+  :lighter " HyFrm"
   :group 'hyperbole-screen
   :global t)
 
@@ -911,7 +911,7 @@ instead of quitting HyControl."
 ;; turns things on and off.
 (define-minor-mode hycontrol-local-windows-mode
   "Toggle Hyperbole Windows control minor mode in the current buffer."
-  nil " HyWin" nil
+  :lighter " HyWin"
   :group 'hyperbole-screen
   :global t)
 

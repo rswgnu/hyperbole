@@ -1,4 +1,4 @@
-;;; hyperbole.el --- GNU Hyperbole: The Everyday Hypertextual Information Manager
+;;; hyperbole.el --- GNU Hyperbole: The Everyday Hypertextual Information Manager  -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 1992-2021  Free Software Foundation, Inc.
 
@@ -169,7 +169,11 @@ See `hkey-binding-entry' for format.")
   "True if Hyperbole key bindings are in use, else nil.")
 
 (defvar hkey-previous-bindings nil
-  "List of global key sequences and their pre-Hyperbole bindings that Hyperbole has overridden.
+  ;; !! FIXME: We should probably instead use a keymap that we just add/remove
+  ;; from the `global-map' so we don't actually modify any keybindings (and
+  ;; hence don't need this var)?
+  "List of bindings that Hyperbole has overridden.
+Holds the global key sequences and their pre-Hyperbole bindings.
 See `hkey-binding-entry' for format.")
 
 (defun hkey-binding-entry (key)
@@ -191,6 +195,10 @@ Entry format is: (key-description key-sequence key-binding)."
   (unless no-add
     (add-to-list 'hkey-previous-bindings (hkey-binding-entry key)))
   (global-set-key key command))
+
+(defvar hmouse-middle-flag)
+(defvar hmouse-bindings-flag)
+(defvar hyperb:user-email)
 
 (defun hkey-initialize ()
   "If `hkey-init' is non-nil, initialize Hyperbole key bindings."
@@ -476,10 +484,10 @@ With optional ARG, override them iff ARG is positive."
 ;; Menu items could call this function before Info is loaded.
 (autoload 'Info-goto-node   "info"       "Jump to specific Info node."  t)
 
-;;; Hyperbole user interface entry points that trigger loading of the
-;;; full Hyperbole system.  These are left commented here for
-;;; reference in case we ever go back to autoloading Hyperbole rather
-;;; than initializing it fully in this file.
+;; Hyperbole user interface entry points that trigger loading of the
+;; full Hyperbole system.  These are left commented here for
+;; reference in case we ever go back to autoloading Hyperbole rather
+;; than initializing it fully in this file.
 
 ;; ;; Action type definitions.
 ;; (autoload 'defact            "hyperbole"
@@ -535,8 +543,8 @@ With optional ARG, override them iff ARG is positive."
 ;; (autoload 'hpath:find-other-window "hyperbole"
 ;; 	  "Edit file FILENAME in other window, possibly using a special command." t)
 
-;;; Auto-autoload doesn't work for next item because it is defined
-;;; within a condition-case, so autoload it here.
+;; Auto-autoload doesn't work for next item because it is defined
+;; within a condition-case, so autoload it here.
 (autoload 'Vm-init    "hvm"    "Initializes Hyperbole Vm support." t)
 
 ;;; ************************************************************************
@@ -615,15 +623,15 @@ If FLAG is nil then text is shown, while if FLAG is t the text is hidden."
 ;; Use any obsolete URL setting from earlier Hyperbole releases to set the
 ;; new URL browsing variable.
 (if (and (boundp 'action-key-url-function) action-key-url-function)
-    (cond ((eq action-key-url-function 'w3-fetch)
-	   (setq browse-url-browser-function 'browse-url-w3))
+    (cond ((eq action-key-url-function #'w3-fetch)
+	   (setq browse-url-browser-function #'browse-url-w3))
 	  ((eq action-key-url-function
-	       'highlight-headers-follow-url-netscape)
-	   (setq browse-url-browser-function 'browse-url-netscape
+	       #'highlight-headers-follow-url-netscape)
+	   (setq browse-url-browser-function #'browse-url-netscape
 		 browse-url-new-window-flag nil))
 	  ((eq action-key-url-function
-	       'highlight-headers-follow-url-netscape-new-window)
-	   (setq browse-url-browser-function 'browse-url-netscape
+	       #'highlight-headers-follow-url-netscape-new-window)
+	   (setq browse-url-browser-function #'browse-url-netscape
 		 browse-url-new-window-flag t))))
 
 ;;; ************************************************************************
@@ -724,9 +732,10 @@ This is used only when running from git source and not a package release."
           (hyperb:init)
         ;; Initialize after other key bindings are loaded at startup.
         (add-hook 'after-init-hook #'hyperb:init t))
-    ;; FIXME: hyperb:uninit?
+    ;; !! FIXME: hyperb:uninit? - write this
     (remove-hook 'after-init-hook #'hyperb:init)))
 
+;; !! FIXME: Loading a file should not change Emacs's behavior.
 (hyperbole-mode 1)
 
 (makunbound 'hyperbole-loading)
