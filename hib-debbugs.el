@@ -243,7 +243,7 @@ Ignore nil valued attributes.  Return t unless no attributes are printed."
   "Return t iff debbugs version is sufficient for use with Hyperbole (greater than equal to 0.9.7)."
   (save-excursion
     (let* ((debbugs-src (locate-file "debbugs" load-path '(".el")))
-	   (visiting-debbugs-src (get-file-buffer debbugs-src))
+	   (visiting-debbugs-src (when debbugs-src (get-file-buffer debbugs-src)))
 	   debbugs-src-buffer
 	   version)
       (when debbugs-src
