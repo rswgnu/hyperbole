@@ -32,6 +32,11 @@
 ;;; Public Variables
 ;;; ************************************************************************
 
+(defcustom hpath:auto-completing-read-modes '(helm-mode ivy-mode selectrum-mode)
+  "*List of boolean mode variables whose modes automatically list completions without the need for pressing the ? key."
+  :type '(repeat variable)
+  :group 'hyperbole-commands)
+
 (defvar hpath:auto-variable-alist
   '(("\\.el[cn]?\\'" . load-path)
     ("\\.org\\'" . org-directory)
@@ -62,9 +67,9 @@ Group 1 is the line number.  Group 3 is the column number.")
 Group 1 is the variable name.")
 
 (defvar hpath:path-variable-value-regexp
- (concat "\\`\\.?:[^:;]+:[^:;]+:\\|:\\.?:\\|:[^:;]+:[^:;]+:\\|:[^:;]+:[^:;]+:\\.?\\'"
+ (concat "\\`\\.?:[^:;\t\n\r\f]+:[^:;\t\n\r\f]+:\\|:\\.?:[^:;\t\n\r\f]+:\\|:[^:;\t\n\r\f]+:[^:;\t\n\r\f]+:\\|:[^:;\t\n\r\f]+:[^:;\t\n\r\f]+:\\.?\\'"
 	 "\\|"
-	 "\\`\\.?;[^;]+;[^;]+;\\|;\\.?;\\|;[^;]+;[^;]+;\\|;[^;]+;[^;]+;\\|;[^;]+;[^;]+;\\.?\\'")
+	 "\\`\\.?;[^;\t\n\r\f]+;[^;\t\n\r\f]+;\\|;\\.?;\\|;[^;\t\n\r\f]+;[^;\t\n\r\f]+;\\|;[^;\t\n\r\f]+;[^;\t\n\r\f]+;\\|;[^;\t\n\r\f]+;[^;\t\n\r\f]+;\\.?\\'")
   ;; A zero-length (null) directory name in the value of PATH indicates the current directory.
   ;; A null directory name may appear as two adjacent colons, or as an initial or trailing colon.
   "Regexp that heuristically matches to colon-separated (Posix) or semicolon-separated (Windows) path variable values.")
@@ -793,25 +798,24 @@ Texinfo file references.  If optional TYPE is the symbol 'file or 'directory,
 then only that path type is accepted as a match.  Only locally reachable
 paths are checked for existence.  With optional NON-EXIST, nonexistent local
 paths are allowed.  Absolute pathnames must begin with a `/' or `~'."
-  (cond
-   ;; Local file URLs
-   ;; ((hpath:is-p (hargs:delimited "file://" "[ \t\n\r\"\'\}]" nil t)))
-   ((hpath:remote-at-p))
-   ((hpath:www-at-p) nil)
-   ((let ((path (hpath:delimited-possible-path non-exist))
-	  subpath)
-     (when (and path (not non-exist) (string-match hpath:prefix-regexp path))
-       (setq non-exist t))
-     (if (and path (string-match hpath:path-variable-value-regexp path))
-	 ;; With point inside a path variable, return the path that point is on or to the right of.
-	 (or (and (setq subpath (hargs:delimited "[:\"\']" "[:\"\']" t t nil "[\t\n\r\f]\\|[;:] \\| [;:]"))
-		  (not (string-match "[:;]" subpath))
-		  subpath)
-	     (and (setq subpath (hargs:delimited "[;\"\']" "[;\"\']"  t t nil "[\t\n\r\f]\\|[;:] \\| [;:]"))
-		  (not (string-match ";\\|:[^:]*:" subpath))
-		  subpath)
-	     ".")
-       (hpath:is-p path type non-exist))))))
+  (let ((path (hpath:delimited-possible-path non-exist))
+	subpath)
+    (when (and path (not non-exist) (string-match hpath:prefix-regexp path))
+      (setq non-exist t))
+    (cond ((and path (string-match hpath:path-variable-value-regexp path))
+	   ;; With point inside a path variable, return the path that point is on or to the right of.
+	   (or (and (setq subpath (hargs:delimited "[:\"\']" "[:\"\']" t t nil "[\t\n\r\f]\\|[;:] \\| [;:]"))
+		    (not (string-match "[:;\t\n\r\f]" subpath))
+		    subpath)
+	       (and (setq subpath (hargs:delimited "[;\"\']" "[;\"\']"  t t nil "[\t\n\r\f]\\|[;:] \\| [;:]"))
+		    (not (string-match "[;\t\n\r\f]\\|:[^:]*:" subpath))
+		    subpath)
+	       "."))
+	  ((hpath:is-p path type non-exist))
+	  ;; Local file URLs
+	  ;; ((hpath:is-p (hargs:delimited "file://" "[ \t\n\r\"\'\}]" nil t)))
+	  ((hpath:remote-at-p))
+	  ((hpath:www-at-p) nil))))
 
 (defun hpath:call (func path)
   "Call FUNC with one argument, a PATH, stripped of any prefix operator and suffix location.
@@ -884,7 +888,8 @@ Make any path within a file buffer absolute before returning. "
 		paths (and path-value
 			   (split-string path-value (if (string-match ";" path-value) ";" ":") nil "\\s-")))
       (setq paths (sort (mapcar (lambda (path) (if (string-empty-p path) "." path)) paths) #'string-lessp))
-      (kbd-key:key-series-to-events "?")
+      (unless (memq t (mapcar (lambda (mode) (and (fboundp mode) (symbol-value mode))) hpath:auto-completing-read-modes))
+	(kbd-key:key-series-to-events "?"))
       (completing-read (format "%s path from ${%s}: "
 			       (if (stringp action-str) action-str "Choose")
 			       path-var)
@@ -973,10 +978,11 @@ window in which the buffer is displayed."
 
 (defun hpath:expand (path)
   "Expand relative PATH using the load variable from the first file matching regexp in `hpath:auto-variable-alist'."
-  (setq path (hpath:substitute-value
-	      (if (string-match "\\`[\\/~.]" path)
-		  (expand-file-name path)
-		(hpath:expand-with-variable path))))
+  (unless (file-name-absolute-p path)
+    (setq path (hpath:substitute-value
+		(if (string-match "\\`[\\/~.]" path)
+		    (expand-file-name path)
+		  (hpath:expand-with-variable path)))))
   ;; For compressed Elisp libraries, add any found compressed suffix to the path.
   (or (locate-library path t) path))
 
@@ -1128,19 +1134,16 @@ buffer but don't display it."
 		     executable)
 		 (cond ((stringp display-executables)
 			(hact 'exec-window-cmd
-			      (hpath:command-string display-executables
-						    filename))
+			      (hpath:command-string display-executables filename))
 			nil)
 		       ((functionp display-executables)
 			(funcall display-executables filename)
 			(current-buffer))
 		       ((and (listp display-executables) display-executables)
-			(setq executable (hpath:find-executable
-					  display-executables))
+			(setq executable (hpath:find-executable display-executables))
 			(if executable
 			    (hact 'exec-window-cmd
-				  (hpath:command-string executable
-							filename))
+				  (hpath:command-string executable filename))
 			  (error "(hpath:find): No available executable from: %s"
 				 display-executables)))
 		       (t (setq path (hpath:validate path))
@@ -1294,7 +1297,10 @@ stripped, link anchors at the end following a # or , character
 are temporarily stripped, and path variables are expanded with
 `hpath:substitute-value'.  This normalized path form is what is
 returned for PATH."
-  (when (and (stringp path) (not (string-match hpath:path-variable-value-regexp path)))
+  (when (and (stringp path) (not (string-match hpath:path-variable-value-regexp path))
+	     ;; If a single character in length, must be a word or symbol character
+	     (or (/= (length path) 1) (and (string-match "\\sw\\|\\s_" path)
+					   (not (string-match "[@#&!*]" path)))))
     (setq path (hpath:call
 		(lambda (path)
 		  (let (modifier
@@ -1357,7 +1363,12 @@ returned for PATH."
 					  (concat modifier (format rtn-path suffix)))
 				      (concat modifier (format rtn-path ""))))))))))
 		path))
-     (unless (string-empty-p path)
+     (unless (or (string-empty-p path)
+		 (string-match "#['`\"]" path)
+		 ;; If a single character in length, must be a word or symbol character
+		 (and (= (length path) 1) (or (not (string-match "\\sw\\|\\s_" path))
+					      (string-match "[@#&!*]" path))))
+
        path)))
 
 (defun hpath:push-tag-mark ()
@@ -1470,14 +1481,16 @@ in-buffer path will not match."
 	    (setq rest-of-path (substring rest-of-path 1)))
 	  (if (or (and sym (boundp sym)) (getenv var-name))
 	      (funcall (if trailing-dir-sep-flag #'directory-file-name #'identity)
-		       ;; hpath:substitute-dir triggers an error when given an
-		       ;; invalid local path but this may be called when
-		       ;; testing for implicit button matches where no error
-		       ;; should occur, so catch the error and ignore variable
-		       ;; expansion in such a case.  -- RSW, 08-26-2019
+		       ;; hpath:substitute-dir may trigger an error but this may
+		       ;; be called when testing for implicit button matches
+		       ;; where no error should occur, so catch the error
+		       ;; and ignore variable expansion in such a case.
+		       ;; -- RSW, 08-26-2019
+		       ;; Removed errors on non-existent paths.
+		       ;; -- RSW, 04-19-2021
 		       (condition-case nil
 			   (hpath:substitute-dir var-name rest-of-path)
-			 (error rest-of-path)))
+			 (error var-name)))
 	    var-group)))
       t t)))
 
@@ -1918,13 +1931,13 @@ local pathname."
 				      ((string-match "path" var-name)
 				       (split-string (getenv var-name) ":"))
 				      (t (getenv var-name))))))
-	   (when (hpath:validate (expand-file-name rest-of-path val))
+	   (when (expand-file-name rest-of-path val)
 	     val))
 	  ((listp val)
 	   (let* ((path (locate-file rest-of-path val (cons "" hpath:suffixes)))
 		  (dir (if path (file-name-directory path))))
 	     (if dir
-		 (hpath:validate (directory-file-name dir))
+		 (directory-file-name dir)
 	       (error "(hpath:substitute-dir): Can't find match for \"%s\""
 		      (concat "$\{" var-name "\}/" rest-of-path)))))
 	  (t (error "(hpath:substitute-dir): Value of VAR-NAME, \"%s\", must be a string or list" var-name)))))

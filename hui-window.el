@@ -4,7 +4,7 @@
 ;;
 ;; Orig-Date:    21-Sep-92
 ;;
-;; Copyright (C) 1992-2019  Free Software Foundation, Inc.
+;; Copyright (C) 1992-2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
 ;;
 ;; This file is part of GNU Hyperbole.
@@ -182,21 +182,16 @@ drag release window.")
     (setq hmouse-alist
 	  (append
 	   '(
-	     ;; If click in the minibuffer when it is not active (blank),
-	     ;; display the Hyperbole minibuffer menu or popup the jump menu.
-	     ((hmouse-inactive-minibuffer-p) .
-	      ((funcall action-key-minibuffer-function) .
-	       (funcall assist-key-minibuffer-function)))
 	     ((hmouse-drag-thing) .
 	      ((hmouse-yank-region) . (hmouse-kill-and-yank-region)))
 	     ((hmouse-drag-window-side) .
 	      ((hmouse-resize-window-side) . (hmouse-resize-window-side)))
 	     ;;
-	     ;; Although Hyperbole can distinguish whether
-	     ;; inter-window drags are between frames or not,
-	     ;; having different behavior for those 2 cases could
-	     ;; be confusing, so treat all modeline drags between
-	     ;; windows the same and comment out this next clause.
+	     ;; Although Hyperbole can distinguish whether inter-window
+	     ;; drags are between frames or not, having different behavior
+	     ;; for those 2 cases could be confusing, so treat all
+	     ;; modeline drags between windows the same and comment out
+	     ;; this next clause.
 	     ;;   Modeline drag between frames
 	     ;;   ((and (hmouse-modeline-depress) (hmouse-drag-between-frames)) .
 	     ;;    ((hmouse-clone-window-to-frame) . (hmouse-move-window-to-frame)))
@@ -234,6 +229,16 @@ drag release window.")
 	      ((or (hmouse-drag-item-to-display)
 		   (hycontrol-clone-window-to-new-frame)) .
 		   (hycontrol-window-to-new-frame)))
+	     ;; If click in the minibuffer when it is not active (blank),
+	     ;; display the Hyperbole minibuffer menu or popup the jump menu.
+	     ((hmouse-inactive-minibuffer-p) .
+	      ((funcall action-key-minibuffer-function) .
+	       (funcall assist-key-minibuffer-function)))
+	     ((and (boundp 'ivy-mode) ivy-mode (minibuffer-window-active-p (selected-window))) .
+	      ((ivy-mouse-done action-key-release-args) . (ivy-mouse-dispatching-done assist-key-release-args)))
+	     ;; Handle widgets in Custom-mode
+	     ((eq major-mode 'Custom-mode) .
+	      ((smart-custom) . (smart-custom-assist)))
 	     ;;
 	     ;; Now since this is not a drag and if there was an active
 	     ;; region prior to when the Action or Assist Key was
@@ -329,9 +334,7 @@ displayed in all windows on screen, including the dired window.
 
 If the directory is re-read into the dired buffer with {g}, then Action
 Key behavior reverts to as though no items have been dragged."
-  nil
-  " DisplayHere"
-  nil
+  :lighter " DisplayHere"
   (if hmouse-dired-display-here-mode
       (progn (set (make-local-variable 'hpath:display-where) 'this-window)
 	     (add-hook 'dired-after-readin-hook 'hmouse-dired-readin-hook nil t))
@@ -460,7 +463,7 @@ Signals an error if the buffer is read-only."
 	;; In this case, we want an error that will terminate execution so that
 	;; hkey-region is not reset to nil.  This allows the user to fix the
 	;; problem and then to try yanking again.
-	(error "(hmouse-yank-region): Use {%s} to enable yanking into this buffer"
+	(error "(hmouse-yank-region): Buffer is read-only; use {%s} to enable yanking"
 	       (hmouse-read-only-toggle-key))
       ;; Permanently return to release point
       (let ((release-window (if assist-flag assist-key-release-window action-key-release-window)))

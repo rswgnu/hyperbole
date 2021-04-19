@@ -585,24 +585,30 @@ Highlight the thrown region for DISPLAY-DELAY seconds.
 
 Return t if thrown, else nil."
   (when (or (use-region-p) throw-region-flag)
-    (if (> (region-end) (region-beginning))
-	;; Non-empty region
-	(if (eq (window-buffer depress-window) (window-buffer release-window))
-	    (user-error "(hkey-insert-region): Can't throw region from and to the same buffer")
-	  (let* ((orig-buf (current-buffer))
-		 (orig-start (region-beginning))
-		 (orig-end (region-end))
-		 (len (- orig-end orig-start))
-		 insert-start
-		 insert-end)
-	    (select-window release-window 'mark-for-redisplay)
-	    (setq insert-start (point)
-		  insert-end (+ insert-start len))
-	    (insert-buffer-substring orig-buf orig-start orig-end)
-	    (hmouse-pulse-region insert-start insert-end)
-	    (sit-for display-delay)
-	    t))
-      (user-error "(hkey-insert-region): Can't throw an empty region"))))
+    (cond ((or (not (window-live-p depress-window))
+	       (not (window-live-p release-window)))
+	   (user-error "(hkey-insert-region): Invalid window: depress window: '%s'; release window: '%s'"
+		       depress-window release-window))
+	  ((> (region-end) (region-beginning))
+	   ;; Non-empty region
+	   (if (and (eq (window-buffer depress-window) (window-buffer release-window))
+		    (<= (region-beginning) (window-point release-window))
+		    (>= (region-end) (window-point release-window)))
+	       (user-error "(hkey-insert-region): Can't throw region to a point within the region")
+	     (let* ((orig-buf (current-buffer))
+		    (orig-start (region-beginning))
+		    (orig-end (region-end))
+		    (len (- orig-end orig-start))
+		    insert-start
+		    insert-end)
+	       (select-window release-window 'mark-for-redisplay)
+	       (setq insert-start (point)
+		     insert-end (+ insert-start len))
+	       (insert-buffer-substring orig-buf orig-start orig-end)
+	       (hmouse-pulse-region insert-start insert-end)
+	       (sit-for display-delay)
+	       t)))
+	  (t (user-error "(hkey-insert-region): Can't throw an empty region")))))
 
 ;;;###autoload
 (defun hkey-buffer-to (from-window to-window)

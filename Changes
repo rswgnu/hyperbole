@@ -1,8 +1,44 @@
+2021-04-19  Bob Weiner  <rsw@gnu.org>
+
+* README.md, README.md.html, INSTALL: Update Hyperbole activation instruction to use
+   (hyperbole-mode 1).
+
+* hpath.el (hpath:substitute-dir): Remove hpath:validate calls, allowing non-existent
+    filenames; validate elsewhere.  This resolves improper replication of final
+    part of a path, e.g. file/file.
+
 2021-04-18  Bob Weiner  <rsw@gnu.org>
+
+* kotl/MANIFEST: Add kotl-orgtbl.el and add copyright and documentation to that file.
+
+* hui-window.el (hmouse-alist): Move minibuffer click handler to after drags so can drag
+    from minibuffer to another window as an action if desired.
+  hui-mouse.el  (hkey-alist, smart-custom, smart-custom-assist): ivy-mode, Custom-mode
+    - Add Action/Assist Mouse and Key support for these modes.
+
+* test/hibtypes-tests.el (ibtypes::pathname-with-dash-loads-file-test): Remove expected
+    failure as this has been resolved.
+
+* hui.el (hui:ebut-modify): Fix bug attempting to use loc attribute before it was set.
+    Set this earlier in the function, separate from other attributes.
+
+* hpath.el (hpath:at-p): Moved remote path handling to lower priority than PATH variable
+    value handling; helps prevent false positives for remote paths.
+
+* DEMO (Implicit Buttons): Add Table of Contents to long Implicit Buttons section.
+
+* hmouse-drv.el (hkey-insert-region): Improve errors and allow for throwing regions within a
+    single buffer as long as the destination is outside of the selected region.
+
+* hibtypes.el (text-toc): Use string-trim to remove occasional stray newline at end of toc sections.
+
+* hpath.el (hpath:auto-completing-read-modes): Add to suppress automatic press of ? key when
+    displaying hpath:choose-from-path-variable completions when any of these modes are enabled.
+           (hpath:at-p, hpath:is-p): Tighten matches to reduce improper multi-line selections.
 
 * hpath.el (hpath:is-path-variable-p): Add to test if a string is a path-related variable.
            (hpath:choose-from-path-variable):
-  hibtypes.el (pathname): Use this new function.
+  hibtypes.el (pathname): Use this new function and document path variable handling.
 
 * hibtypes.el (require 'hversion): Add this since added calls to  hyperb:* into this file.
 

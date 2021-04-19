@@ -169,6 +169,8 @@ Signal an error when no such button is found in the current buffer."
   (let ((lbl (ebut:key-to-label lbl-key))
 	(but-buf (current-buffer))
 	actype but new-lbl)
+    (hattr:set 'hbut:current 'loc (hui:key-src but-buf))
+    (hattr:set 'hbut:current 'dir (hui:key-dir but-buf))
     (save-excursion
       (unless (called-interactively-p 'interactive)
 	(hui:buf-writable-err but-buf "ebut-modify"))
@@ -187,8 +189,6 @@ Signal an error when no such button is found in the current buffer."
 		     (hbut:max-len))
 	     'string))
 
-      (hattr:set 'hbut:current 'loc (hui:key-src but-buf))
-      (hattr:set 'hbut:current 'dir (hui:key-dir but-buf))
       (setq actype (hui:actype (hattr:get but 'actype)))
       (hattr:set 'hbut:current 'actype actype)
       (hattr:set 'hbut:current 'args (hargs:actype-get actype 'modifying))

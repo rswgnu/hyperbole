@@ -99,6 +99,9 @@ Its default value is #'smart-scroll-down."
     ((and (boundp 'company-active-map)
 	  (memq company-active-map (current-minor-mode-maps))) .
 	  ((smart-company-to-definition) . (smart-company-help)))
+    ;; Ivy minibuffer completion mode
+    ((and (boundp 'ivy-mode) ivy-mode (minibuffer-window-active-p (selected-window))) .
+     ((ivy-done) . (ivy-dispatching-done)))
     ;;
     ;; Treemacs hierarchical file manager
     ((eq major-mode 'treemacs-mode) .
@@ -156,7 +159,8 @@ Its default value is #'smart-scroll-down."
     ;; The Smart Menu system is an attractive in-buffer menu system
     ;; that works on any display system that supports Emacs.  It
     ;; predates Emacs' menu systems; it is a part of InfoDock.
-    ;; It is not included with Hyperbole.
+    ;; It is not included with Hyperbole but is compatible with the
+    ;; Smart Keys.
     ;;
     ;; This selects or gives help for a menu item.
     ((eq major-mode 'smart-menu-mode) .
@@ -248,6 +252,10 @@ Its default value is #'smart-scroll-down."
     ((if (= (point) (point-max))
 	 (string-match "^\\*Help\\|Help\\*$" (buffer-name))) .
 	 ((hkey-help-hide) . (hkey-help-hide)))
+    ;;
+    ;; Handle widgets in Custom-mode
+    ((eq major-mode 'Custom-mode) .
+     ((smart-custom) . (smart-custom-assist)))
     ;;
     ;; Emacs bookmarks menu (bookmark.el)
     ((eq major-mode 'bookmark-bmenu-mode) .
@@ -596,6 +604,55 @@ If assist-key is pressed:
 		      (bolp)))
 	 (ibuffer-unmark-forward nil nil 1))
 	(t (ibuffer-mark-for-delete nil nil 1))))
+
+;;; ************************************************************************
+;;; smart-custom and widget functions
+;;; ************************************************************************
+
+(defun smart-custom ()
+  "Use a single key or mouse key to manipulate customizable settings.
+
+Invoked via a key press when in Custom-mode.  It assumes that
+its caller has already checked that the key was pressed in an
+appropriate buffer and has moved the cursor there.
+
+If key is pressed:
+ (1) on the last line of the buffer, exit Custom mode, potentially
+     prompting to save any changes;
+ (2) at the end of any other line, scroll the window down down a windowful;
+ (3) if a mouse event on a widget, activate the widget or display a menu;
+ (4) anywhere else, execute the command bound to {RETURN}."
+  (interactive)
+  (cond ((last-line-p) (Custom-buffer-done)
+	((eolp) (smart-scroll-up)))
+	((mouse-event-p last-command-event)
+	 (widget-button-click action-key-release-args))
+	 ;; Handle widgets in Custom-mode
+	(t (Custom-newline (point)))))
+
+(defun smart-custom-assist ()
+  "Use an assist-key or mouse assist-kkey to manipulate customizable settings.
+
+Invoked via a key press when in Custom-mode.  It assumes that
+its caller has already checked that the key was pressed in an
+appropriate buffer and has moved the cursor there.
+
+If key is pressed:
+ (1) on the last line of the buffer, exit Custom mode, potentially
+     prompting to save any changes;
+ (2) at the end of any other line, scroll the window down down a windowful;
+ (3) if a mouse event on a widget, activate the widget or display a menu;
+ (4) anywhere else, execute the command bound to {RETURN}."
+  (interactive)
+  (cond ((last-line-p) (Custom-buffer-done)
+	((eolp) (smart-scroll-down)))
+	((mouse-event-p last-command-event)
+	 (widget-button-click action-key-release-args))
+	 ;; Handle widgets in Custom-mode
+	(t (Custom-newline (point)))))
+
+
+
 
 ;;; ************************************************************************
 ;;; smart-calendar functions
