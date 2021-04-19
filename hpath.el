@@ -16,6 +16,7 @@
 ;;; Other required Elisp libraries
 ;;; ************************************************************************
 
+(require 'hact)
 (require 'subr-x) ;; For string-trim
 (require 'hversion) ;; for (hyperb:window-system) definition
 (require 'hui-select) ;; for `hui-select-markup-modes'
