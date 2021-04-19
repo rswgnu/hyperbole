@@ -1,4 +1,40 @@
-2021-04-19  Bob Weiner  <rsw@gnu.org>
+2021-04-18  Mats Lidell  <matsl@gnu.org>
+
+* test/hibtypes-tests.el (ibtypes::pathname-with-dash-loads-file-test):
+    Bug fixed - Removed  expected failed.
+
+* test/hbut-tests.el (hbut-pathname-with-dash-loads-file-test): Remove
+    expected fail and added check for file loading
+
+* test/hbut-tests.el (hbut-mail-address-test, hbut-pathname-test)
+    (hbut-pathname-lisp-variable-test, hbut-pathname-env-variable-test)
+    (hbut-pathname-emacs-lisp-file-test, hbut-pathname-anchor-test)
+    (hbut-pathname-anchor-line-test, hbut-pathname-line-column-test)
+    (hbut-pathname-load-path-line-column-test)
+    (hbut-pathname-with-dash-loads-file-test, hbut-pathname-directory-test)
+    (hbut-pathname-dot-slash-in-other-folder-should-fail-test)
+    (hbut-annot-bib-test, hbut-ctags-vgrind-test, ibtypes::etags-test)
+    (hbut-text-toc-test, hbut-dir-summary-test, hbut-rfc-test)
+    (hbut-man-apropos-test, hbut-info-node-test): ibtypes test cases
+    converted to use action-key
+
+* test/hibtypes-tests.el (ibtypes::pathname-path-variable-test): Ert test
+    for path variables.
+
+* test/hpath-tests.el (hpath:path-at-point-in-path-variable-test)
+    (hpath:path-at-point-in-path-variable-shorter-than-three-colons-returns-nil-test):
+    Ert test for path variables.
+
+* test/hbut-tests.el (hbut-pathname-path-variable-test)
+    (hbut-pathname-path-variable-with-two-colons-is-one-file-test)
+    (hbut-pathname-path-variable-with-three-colons-is-a-path-test)
+    (hbut-pathname-path-variable-with-short-first-elemet-is-tramp-url-test):
+    Test for path variables.
+
+* Makefile (ELC_KOTL): Add kotl/kprop-em.elc
+    (ELC_COMPILE): Remove kprop-em.elc
+
+2021-04-18  Bob Weiner  <rsw@gnu.org>
 
 * README.md, README.md.html, INSTALL: Update Hyperbole activation instruction to use
    (hyperbole-mode 1).
@@ -6,8 +42,6 @@
 * hpath.el (hpath:substitute-dir): Remove hpath:validate calls, allowing non-existent
     filenames; validate elsewhere.  This resolves improper replication of final
     part of a path, e.g. file/file.
-
-2021-04-18  Bob Weiner  <rsw@gnu.org>
 
 * kotl/MANIFEST: Add kotl-orgtbl.el and add copyright and documentation to that file.
 
@@ -46,6 +80,12 @@
 
 * test/hbut-tests.el (hbut-ib-url-with-label): Bug solved - removed
     expected failed.
+
+* test/hui-tests.el (hui-ibut-label-create)
+(hui-ibut-label-create-fails-if-label-exists): Test for hui.el
+
+* test/hbut-tests.el (hbut-ib-create-label)
+(hbut-ib-create-label-fails-if-label-exists): Moved to hui-tests.el
 
 2021-04-17  Bob Weiner  <rsw@gnu.org>
 

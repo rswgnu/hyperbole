@@ -11,12 +11,13 @@
 
 ;;; Commentary:
 
-;; Runs unit tests on some of the examples given in the DEMO file.
+;; Runs tests that are based on using the action-key.
 
 ;;; Code:
 
 (require 'ert)
 (require 'hbut)
+(require 'el-mock)
 
 (load (expand-file-name "hy-test-helpers"
                         (file-name-directory (or load-file-name
@@ -51,7 +52,7 @@
     (ibtype:delete 'ibtypes::defal-url)))
 
 (ert-deftest hbut-defal-url-%s ()
-  "defal supports %s in LINK-EXPR."
+  "Use defal with %s in LINK-EXPR."
   (defal defal-url "https://github.com/rswgnu/hyperbole/pull/%s")
   (unwind-protect
       (with-temp-buffer
@@ -79,8 +80,7 @@
   (should (string= x "test")))
 
 (ert-deftest hbut-defal-function ()
-  "defal call function should only supply the argument portion of
-the button text"
+  "Use only the argument portion of the button text."
   (defal defal-func 'hbut-verify-defal)
   (unwind-protect
       (with-temp-buffer
@@ -165,7 +165,7 @@ the button text"
                       (hy-test-helpers:action-key-should-call-hpath:find (expand-file-name "DEMO" hyperb:dir))))))
 
 (ert-deftest hbut-ib-url-with-label ()
-  "Find link using label"
+  "Find link using label."
   (with-temp-buffer
     (insert "<[PR34]>: \"https://github.com/rswgnu/hyperbole/pull/34\"")
     (goto-char 4)
@@ -193,6 +193,277 @@ the button text"
          (progn
            (should (equal (car err) 'error))
            (should (string-search "ibutton at point already has a label" (cadr err)))))))))
+
+(ert-deftest hbut-pathname-path-variable-test ()
+  "Find file in path variable."
+  (with-temp-buffer
+    (insert "\"/var/lib:/bar:/tmp:/foo\"")
+    (goto-char 16)
+    (hy-test-helpers:action-key-should-call-hpath:find "/tmp")))
+
+(ert-deftest hbut-pathname-path-variable-with-two-colons-is-one-file-test ()
+  "Path variable with two colons is not seen as a path variable."
+  (with-temp-buffer
+    (insert "\"/var/lib:/bar:/tmp\"")
+    (goto-char 16)
+    (hy-test-helpers:action-key-should-call-hpath:find "/var/lib:/bar:/tmp")))
+
+(ert-deftest hbut-pathname-path-variable-with-three-colons-is-a-path-test ()
+  "Path variable with three colons is not seen as a path variable."
+  (with-temp-buffer
+    (insert "\"/var/lib:/bar:/tmp:/foo\"")
+    (goto-char 16)
+    (hy-test-helpers:action-key-should-call-hpath:find "/tmp")))
+
+(ert-deftest hbut-pathname-path-variable-with-short-first-elemet-is-tramp-url-test ()
+  "Path variable with three colons is a tramp url."
+  (with-temp-buffer
+    (insert "\"/var:/bar:/tmp:/foo\"")
+    (goto-char 14)
+    (hy-test-helpers:action-key-should-call-hpath:find "/anonymous@var:/bar")))
+
+;; Mail address
+(ert-deftest hbut-mail-address-test ()
+  "Open mail from mail address."
+  (unwind-protect
+      (with-temp-buffer
+        (insert "receiver@mail.org")
+        (goto-char 2)
+        (action-key)
+        (should (string= "*mail*" (buffer-name))))
+    (kill-buffer "*mail*")))
+
+;; Path name
+(ert-deftest hbut-pathname-test ()
+  (unwind-protect
+      (with-temp-buffer
+        (insert (format "\"%s\"" (expand-file-name "DEMO" hyperb:dir)))
+        (goto-char 2)
+        (action-key)
+        (should (string= "DEMO" (buffer-name))))
+    (kill-buffer "DEMO")))
+
+(ert-deftest hbut-pathname-lisp-variable-test ()
+  (unwind-protect
+      (with-temp-buffer
+        (insert "\"${hyperb:dir}/DEMO\"")
+        (goto-char 2)
+        (action-key)
+        (should (string= "DEMO" (buffer-name))))
+    (kill-buffer "DEMO")))
+
+(ert-deftest hbut-pathname-env-variable-test ()
+  (unwind-protect
+      (with-temp-buffer
+        (insert "\"${HOME}\"")
+        (goto-char 2)
+        (action-key)
+        (should (equal major-mode 'dired-mode))
+        (should (= 0 (string-match (getenv "HOME") (file-truename default-directory)))))
+    nil))
+
+(ert-deftest hbut-pathname-emacs-lisp-file-test ()
+  (unwind-protect
+      (with-temp-buffer
+        (insert "\"hyperbole.el\"")
+        (goto-char 2)
+        (action-key)
+        (should (equal major-mode 'emacs-lisp-mode))
+        (should (buffer-file-name))
+        (should (string= "hyperbole.el" (buffer-name)))))
+  (kill-buffer "hyperbole.el"))
+
+(ert-deftest hbut-pathname-anchor-test ()
+  "Pathname with anchor."
+  (unwind-protect
+      (with-temp-buffer
+        (insert "\"${hyperb:dir}/DEMO#Smart Keys\"")
+        (goto-char 2)
+        (action-key)
+        (should (string= "DEMO" (buffer-name)))
+        (should (looking-at "\* Smart Keys")))
+    (kill-buffer "DEMO")))
+
+(ert-deftest hbut-pathname-anchor-line-test ()
+  "Pathname with anchor and line specification.
+Bug: With line spec looks in the wrong folder for the file?"
+  :expected-result :failed
+  (unwind-protect
+      (with-temp-buffer
+        (insert "\"${hyperb:dir}/DEMO#Smart Keys:2\"")
+        (goto-char 2)
+        (action-key)
+        (should (string= "DEMO" (buffer-name)))
+        (forward-line -2)
+        (should (looking-at "\* Smart Keys")))
+    (kill-buffer "DEMO")))
+
+(ert-deftest hbut-pathname-line-column-test ()
+  "Pathname with line and position specification."
+  (unwind-protect
+      (with-temp-buffer
+        (insert "\"${hyperb:dir}/DEMO:3:45\"")
+        (goto-char 2)
+        (action-key)
+        (should (string= "DEMO" (buffer-name)))
+        (should (= (line-number-at-pos) 3))
+        (should (= (current-column) 45)))
+    (kill-buffer "DEMO")))
+
+(ert-deftest hbut-pathname-load-path-line-column-test ()
+  "Pathname with `load-path', line and position specification."
+  (unwind-protect
+      (with-temp-buffer
+        (insert "\"${load-path}/hypb.el:10:5\"")
+        (goto-char 2)
+        (action-key)
+        (should (string= "hypb.el" (buffer-name)))
+        (should (= (line-number-at-pos) 10))
+        (should (= (current-column) 5)))
+    (kill-buffer "hypb.el")))
+
+(ert-deftest hbut-pathname-with-dash-loads-file-test ()
+  "Pathname with dash loads file."
+  (with-temp-buffer
+    (insert "\"-${hyperb:dir}/test/hy-test-dependencies.el\"")
+    (goto-char 2)
+    (action-key)
+    (hy-test-helpers:should-last-message "Loading")
+    (hy-test-helpers:should-last-message "hy-test-dependencies.el")))
+
+(ert-deftest hbut-pathname-directory-test ()
+  "Pathname with directory opens dired."
+  (unwind-protect
+      (with-temp-buffer
+        (insert "\"/tmp\"")
+        (goto-char 2)
+        (action-key)
+        (should (string= "tmp" (buffer-name)))
+        (should (eq major-mode 'dired-mode)))
+    (kill-buffer "tmp")))
+
+(ert-deftest hbut-pathname-dot-slash-in-other-folder-should-fail-test ()
+  "Pathname that starts with ./ only works if in same folder."
+  (with-temp-buffer
+    (insert "\"./hypb.el\"")
+    (goto-char 2)
+    (let ((help-buffer "*Help: Hyperbole Action Key*")
+          (default-directory (expand-file-name "test" hyperb:dir)))
+      (condition-case err
+          (action-key)
+        (error
+         (progn
+           (should (equal (car err) 'error))
+           (should (string-search
+                    "(Hyperbole Action Key): No action defined for this context; try another location"
+                    (cadr err)))))))))
+
+;; hbut-annot-bib
+(ert-deftest hbut-annot-bib-test ()
+  (unwind-protect
+      (progn
+        (hypb:display-file-with-logo (expand-file-name "DEMO" hyperb:dir))
+        (re-search-forward "\\[FSF 19\\]")
+        (backward-char 1)
+        (action-key)
+        (should (looking-at "\\[FSF 19\\] Free Software Foundation"))
+        (forward-line -2)
+        (should (looking-at "\\* References")))
+    (kill-buffer "DEMO")))
+
+;; ctags
+; Seems ctags -v does not give the proper answer
+(ert-deftest hbut-ctags-vgrind-test ()
+  (unwind-protect
+      (with-temp-buffer
+        (insert "hy-test-helpers:consume-input-events hy-test-helpers.el 21\n")
+        (goto-char (point-min))
+        (forward-char 4)
+        (let ((default-directory (expand-file-name "test" hyperb:dir)))
+          (action-key)
+          (set-buffer "hy-test-helpers.el")
+          (should (looking-at "(defun hy-test-helpers:consume-input-events"))))
+    (kill-buffer "hy-test-helpers.el")))
+
+;; etags
+(ert-deftest ibtypes::etags-test ()
+  (unwind-protect
+      (with-temp-buffer
+        (insert "\n")
+        (insert "hy-test-helpers.el,103\n")
+        (insert "(defun hy-test-helpers:consume-input-events 21,359\n")
+        (rename-buffer (concat "TAGS" (buffer-name)))
+        (goto-char (point-min))
+        (forward-line 2)
+        (forward-char 10)
+        (let ((default-directory (expand-file-name "test" hyperb:dir)))
+          (action-key)
+          (set-buffer "hy-test-helpers.el")
+          (should (looking-at "(defun hy-test-helpers:consume-input-events"))))
+    (kill-buffer "hy-test-helpers.el")))
+
+;; text-toc
+(ert-deftest hbut-text-toc-test ()
+  (unwind-protect
+      (progn
+        (hypb:display-file-with-logo (expand-file-name "DEMO" hyperb:dir))
+        (goto-char (point-min))
+        (re-search-forward " \* Koutl")
+        (action-key)
+        (should (bolp))
+        (should (looking-at "^* Koutliner")))
+    (kill-buffer "DEMO")))
+
+;; dir-summary
+(ert-deftest hbut-dir-summary-test ()
+  (unwind-protect
+      (progn
+        (find-file (expand-file-name "MANIFEST" hyperb:dir))
+        (goto-char (point-min))
+        (re-search-forward "HY-ABOUT")
+        (forward-char -2)
+        (let ((hpath:display-where 'this-window))
+          (action-key)
+          (should (string= "HY-ABOUT" (buffer-name)))))
+    (progn
+      (kill-buffer "MANIFEST")
+      (kill-buffer "HY-ABOUT"))))
+
+;; rfc
+(ert-deftest hbut-rfc-test ()
+  (dolist (rfc '("RFC822" "RFC-822" "rfc 822"))
+    (with-temp-buffer
+      (insert rfc)
+      (goto-char 2)
+      (with-mock
+        (mock (actypes::link-to-rfc "822") => t)
+        (should (action-key))))))
+
+;; man-apropos
+(ert-deftest hbut-man-apropos-test ()
+  (with-temp-buffer
+    (insert "rm (1)   - remove")
+    (goto-char 4)
+    (with-mock
+     (mock (man "rm(1)") => t)
+     (action-key))))
+
+;; info-node
+(ert-deftest hbut-info-node-test ()
+  "Got to info node."
+  (unwind-protect
+      (with-temp-buffer
+        (insert "\"(emacs)top\"")
+        (goto-char 6)
+        (action-key)
+        (should (string= "*info*" (buffer-name))))
+    (kill-buffer "*info*")))
+
+;; This file can't be byte-compiled without the `el-mock' package (because of
+;; the use of the `with-mock' macro), which is not a dependency of Hyperbole.
+;;  Local Variables:
+;;  no-byte-compile: t
+;;  End:
 
 (provide 'hbut-tests)
 ;;; hbut-tests.el ends here
