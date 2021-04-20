@@ -91,11 +91,13 @@
 
 (defun hsys-org-link-at-p ()
   "Return non-nil iff point is on an Org mode link.
-Assumes caller has already checked that the current buffer is in `org-mode'."
-  (or (if (boundp 'org-link-any-re)
-	  (org-in-regexp org-link-any-re)
-	(org-in-regexp org-any-link-re))
-      (hsys-org-face-at-p 'org-link)))
+Assumes caller has already checked that the current buffer is in `org-mode'
+or are looking for an Org link in another buffer type."
+  (cond ((boundp 'org-link-bracket-re)
+	 (org-in-regexp org-link-bracket-re))
+	((boundp 'org-bracket-link-regexp)
+	 (org-in-regexp org-bracket-link-regexp))
+	(t (hsys-org-face-at-p 'org-link))))
 
 ;; Assumes caller has already checked that the current buffer is in org-mode.
 (defun hsys-org-target-at-p ()
@@ -105,9 +107,8 @@ Assumes caller has already checked that the current buffer is in `org-mode'."
 
 (defun hsys-org-radio-target-link-at-p ()
   "Return (target-start . target-end) positions iff point is on an Org mode radio target link (referent), else nil."
-  (and (get-text-property (point) 'org-linked-text)
-       (hsys-org-link-at-p)
-       (hsys-org-region-with-text-property-value (point) 'org-linked-text)))
+  (and (hsys-org-face-at-p 'org-link)
+       (hsys-org-link-at-p)))
 
 (defun hsys-org-radio-target-def-at-p ()
   "Return (target-start . target-end) positions iff point is on an Org mode radio target (definition), including any delimiter characters, else nil."
@@ -117,7 +118,7 @@ Assumes caller has already checked that the current buffer is in `org-mode'."
 	(goto-char (or (previous-single-property-change (point) 'face) (point-min))))
       (when (looking-at "<<<")
 	(goto-char (match-end 0)))
-      (and (get-text-property (point) 'org-linked-text)
+      (and (hsys-org-face-at-p 'org-target)
 	   (hsys-org-region-with-text-property-value (point) 'face)))))
 
 (defun hsys-org-radio-target-at-p ()

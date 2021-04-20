@@ -1,5 +1,18 @@
 2021-04-19  Bob Weiner  <rsw@gnu.org>
 
+* hsys-org.el (hsys-org-link-at-p): Change to use org-link-bracket-re so match
+    includes the second display part of an Org link and matches whole link
+    expression.
+              (hsys-org-radio-target-def-at-p): Change org-linked-text
+    property to newer, org-target to properly match radio targets.
+              (hsys-org-radio-target-link-at-p): Correct and simplify.
+
+* hib-doc-id.el: Changed to use "[-" and "-]" delimiters because "[" and "]"
+    are too common and mistakenly match to part of Org links.
+
+* hibtypes.el (mail-address-regexp): Resolve bug#4788, allow first char in
+    address to be a digit.
+
 * hib-debbugs.el (debbugs-version-sufficient-p): No-op when debbugs package
     not found
 

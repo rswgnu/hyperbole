@@ -14,11 +14,12 @@
 ;;  This library defines the `doc-id' implicit button type which lets
 ;;  you create archives of reference documents by topic and then
 ;;  reference them within any Hyperbole readable file by use of simple
-;;  identifiers, like [Emacs-001].
+;;  identifiers, like [-Emacs-001-].  It functions like a rapid access
+;;  card catalog with easy to embed document identifiers.
 ;;
 ;;  TO USE:
 ;;
-;;   Pressing the Action Key on a doc id such as, [Emacs-001],
+;;   Pressing the Action Key on a doc id such as, [-Emacs-001-],
 ;;   displays the online version of the document, if any.  Pressing the
 ;;   Assist Key on it displays its document index entry.
 ;;
@@ -31,7 +32,7 @@
 ;;   You must explicitly load this library in order to use it, since
 ;;   Hyperbole does not load it by default.
 ;;
-;;   The default setup uses doc ids of the form, [Emacs-001], delimited by
+;;   The default setup uses doc ids of the form, [-Emacs-001-], delimited by
 ;;   brackets, starting with a topic name, followed by a - and a
 ;;   multi-digit numeric identifier.
 ;;
@@ -78,9 +79,9 @@
 ;;; Private variables
 ;;; ************************************************************************
 
-(defvar doc-id-start "["
+(defvar doc-id-start "[-"
   "String which delimits start of a site-specific document id.")
-(defvar doc-id-end   "]"
+(defvar doc-id-end   "-]"
   "String which delimits end of a site-specific document id.")
 
 (defvar doc-id-index-entry-regexp "^------+[ \t\n\r]+Title:"
@@ -146,12 +147,12 @@ an error."
   "Display a document from a local document library given its id.
 Ids must be delimited by `doc-id-start' and `doc-id-end' and must
 match the function stored in `doc-id-p'."
-  (and (not (bolp))
-       (let* ((id-and-pos (hbut:label-p t doc-id-start doc-id-end t))
-	      (id (car id-and-pos)))
-	 (if (funcall doc-id-p id)
-	     (progn (ibut:label-set id-and-pos)
-		    (hact 'link-to-doc id))))))
+  (unless (bolp)
+    (let* ((id-and-pos (hbut:label-p t doc-id-start doc-id-end t))
+	   (id (car id-and-pos)))
+      (when (funcall doc-id-p id)
+	(ibut:label-set id-and-pos)
+	(hact 'link-to-doc id)))))
 
 ;;; ************************************************************************
 ;;; Public variables
