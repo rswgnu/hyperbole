@@ -1,3 +1,11 @@
+2021-04-20  Mats Lidell  <matsl@gnu.org>
+
+* test/hpath-tests.el (hpath:find-exec-shell-cmd-test)
+    (hpath:find-exec-window-cmd-test): Path prefix tests.
+
+* test/hbut-tests.el (hbut-find-exec-shell-cmd-test)
+    (hbut-find-exec-window-cmd-test): Path prefix tests.
+
 2021-04-19  Bob Weiner  <rsw@gnu.org>
 
 * hsys-org.el (hsys-org-link-at-p): Change to use org-link-bracket-re so match

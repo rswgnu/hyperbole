@@ -38,5 +38,24 @@
     (goto-char 7)
     (should (not (hpath:at-p)))))
 
+(ert-deftest hpath:find-exec-shell-cmd-test ()
+  "Path prefix ! will run pathname as a non windowed program."
+  (let ((was-called nil))
+    (cl-letf (((symbol-function 'actypes::exec-shell-cmd)
+               (lambda (filename)
+                 (setq was-called (should (string= "/bin/ls" filename))))))
+      (hpath:find "!/bin/ls")
+      (should was-called))))
+
+(ert-deftest hpath:find-exec-window-cmd-test ()
+  "Path prefix & will run pathname as a windowed program."
+  (let ((was-called nil))
+    (cl-letf (((symbol-function 'actypes::exec-window-cmd)
+               (lambda (filename)
+                 (setq was-called (should (string= "/bin/ls" filename))))))
+      (hpath:find "&/bin/ls")
+      (should was-called))))
+
+
 (provide 'hpath-tests)
 ;;; hpath-tests.el ends here
