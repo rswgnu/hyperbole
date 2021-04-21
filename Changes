@@ -1,3 +1,10 @@
+2021-04-21  Bob Weiner  <rsw@gnu.org>
+
+* hactypes.el (exec-shell-cmd, exec-window-cmd): Couple 'cd' and command
+    with '&&' rather than semicolon.  Also, expand default-directory to
+    eliminate '~' home dir refs.   Both of these for better Windows
+    compatibility.
+
 2021-04-20  Bob Weiner  <rsw@gnu.org>
 
 * Makefile (tests, all-tests): Add these target aliases.

@@ -102,8 +102,7 @@ error."
 				    (and (integerp repeat) (>= repeat 0))))
 			      1))
      (list macro repeat)))
-  (if (called-interactively-p 'interactive)
-      nil
+  (unless (called-interactively-p 'interactive)
     (or (and kbd-macro (or (stringp kbd-macro)
 			   (and (symbolp kbd-macro) (fboundp kbd-macro))))
 	(hypb:error "(exec-kbd-macro): Bad macro: %s" kbd-macro))
@@ -130,18 +129,19 @@ kill the last output to the shell buffer before executing SHELL-CMD."
 			     default2)))))
   (require 'comint)
   (let ((buf-name "*Hyperbole Shell*")
-	(obuf (current-buffer)))
+	(obuf (current-buffer))
+	(default-dir (expand-file-name default-directory)))
     (unwind-protect
 	(progn
-	  (if (not (hpath:remote-p default-directory))
-	      (setq shell-cmd
-		    (concat "cd " default-directory "; " shell-cmd)))
+	  (unless (hpath:remote-p default-dir)
+	    (setq shell-cmd
+		  (concat "cd " default-dir " && " shell-cmd)))
 	  (if (and (get-buffer buf-name)
 		   (get-buffer-process (get-buffer buf-name)))
 	      (hpath:display-buffer buf-name)
 	    ;; (hpath:display-buffer (current-buffer))
-	    (if (eq (minibuffer-window) (selected-window))
-		(other-window 1))
+	    (when (eq (minibuffer-window) (selected-window))
+	      (other-window 1))
 	    ;; 'shell' calls pop-to-buffer which normally displays in
 	    ;; another window
 	    (setq buf-name (buffer-name (shell buf-name))))
@@ -169,12 +169,13 @@ kill the last output to the shell buffer before executing SHELL-CMD."
 		       (lambda (cmd) (not (string-equal cmd "")))
 		       default "Enter a shell command." 'string))))
   (require 'comint)
-  (let ((buf-name "*Hyperbole Shell*")
-	(cmd (if (hpath:remote-p default-directory)
-		 (concat "(" shell-cmd ") &")
-	       (concat "(cd " default-directory "; " shell-cmd ") &")))
-	(msg (format "Executing: %s" shell-cmd))
-	(shell-buf))
+  (let* ((buf-name "*Hyperbole Shell*")
+	 (default-dir (expand-file-name default-directory))
+	 (cmd (if (hpath:remote-p default-dir)
+		  (concat "(" shell-cmd ") &")
+		(concat "(cd " default-dir " && " shell-cmd ") &")))
+	 (msg (format "Executing: %s" shell-cmd))
+	 (shell-buf))
     (message msg)
     (save-excursion
       (save-window-excursion
