@@ -4,7 +4,7 @@
 ;;
 ;; Orig-Date:    30-Sep-92 at 19:39:59
 ;;
-;; Copyright (C) 1991-2016  Free Software Foundation, Inc.
+;; Copyright (C) 1991-2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
 ;;
 ;; This file is part of GNU Hyperbole.
@@ -32,9 +32,9 @@
 ;;   You must explicitly load this library in order to use it, since
 ;;   Hyperbole does not load it by default.
 ;;
-;;   The default setup uses doc ids of the form, [-Emacs-001-], delimited by
-;;   brackets, starting with a topic name, followed by a - and a
-;;   multi-digit numeric identifier.
+;;   The default setup uses doc ids of the form, [- Emacs-001 -], delimited
+;;   by minus signs inside square brackets, the id starting with a topic name,
+;;   followed by a minus sign and a multi-digit numeric identifier.
 ;;
 ;;   Typically an index entry should have links to all available forms of its
 ;;   document, e.g. online, printed, source.  Below is a sample index entry form
@@ -42,7 +42,7 @@
 ;;   you prefer a different one, you must change all of the variable values.
 ;;
 ;;  --------------------------------------------------------------------------
-;;  Title:                                                  ID: []
+;;  Title:                                                  ID: [- -]
 ;;  Email-To:
 ;;  Distribution:     
 ;;  
@@ -84,13 +84,15 @@
 (defvar doc-id-end   "-]"
   "String which delimits end of a site-specific document id.")
 
-(defvar doc-id-index-entry-regexp "^------+[ \t\n\r]+Title:"
+(defvar doc-id-index-entry-regexp "^------+\\s-+Title:"
   "Regexp which matches start of a site-specific document index entry.")
 
 (defvar doc-id-match
   (lambda (doc-id)
-    (concat "ID:[ \t]*\\[" (regexp-quote doc-id) "\\]"))
-  "Function which returns regexp which matches only in DOC-ID's index entry.")
+    (concat "ID:[ \t]*"
+	    (regexp-quote doc-id-start) "[ \t]*" (regexp-quote doc-id)
+	    "[ \t]*" (regexp-quote doc-id-end)))
+  "Function of one argument that returns regexp which matches only within DOC-ID's index entry.")
 
 (defvar doc-id-p (lambda (str)
 		   (and (stringp str)
@@ -99,8 +101,8 @@
 			(string-match "\\`\\w+-[0-9][0-9][0-9]+\\'" str)))
   "Value is a function with a boolean result that tests whether `str' is a doc id.")
 
-(defvar doc-id-online-regexp "^Online-Loc:[ \t]*\"\\([^\"]+\\)\""
-  "Regexp whose 1st grouping matches an implicit button which displays an online document within an index entry.")
+(defvar doc-id-online-regexp "^Online-Loc:[ \t]*\"\\([^\"\t\r\n\f]+\\)\""
+  "Regexp whose 1st grouping matches a double quoted index entry implicit button that displays an online document.")
 
 ;;; ************************************************************************
 ;;; Public implicit button types
@@ -121,7 +123,7 @@ an error."
 	   (error "(doc-id-index-entry): You must set the `doc-id-indices' variable first"))
 	  ((let ((hyrolo-entry-regexp doc-id-index-entry-regexp))
 	     (zerop (hyrolo-grep (funcall doc-id-match doc-id)
-			       1 doc-id-indices nil 'no-display)))
+				 1 doc-id-indices nil 'no-display)))
 	   (error "(doc-id-index-entry): %s not found in document index"
 		  delim-doc-id))
 	  ;; Matching index entry has been put into `hyrolo-display-buffer'.
@@ -131,8 +133,7 @@ an error."
 	       (if (re-search-forward doc-id-online-regexp nil t)
 		   (progn
 		     (goto-char (match-beginning 1))
-		     (let ((doc-path (buffer-substring
-				      (match-beginning 1) (match-end 1)))
+		     (let ((doc-path (match-string 1))
 			   (ibut (ibut:at-p)))
 		       (if ibut
 			   (progn (hbut:act ibut)
@@ -175,7 +176,8 @@ Also display standard Hyperbole help for implicit button BUT."
 	(doc-id (hbut:key-to-label (hattr:get but 'lbl-key))))
     (cond ((null doc-id-indices)
 	   (error "(doc-id-index-entry): You must set the `doc-id-indices' variable first"))
-	  ((zerop (hyrolo-grep (funcall doc-id-match doc-id) 1 doc-id-indices))
+	  ((zerop (hyrolo-grep (funcall doc-id-match doc-id) 1 doc-id-indices
+			       nil 'no-display))
 	   (error
 	     "(doc-id-index-entry): No document index entry found for %s%s%s"
 		  doc-id-start doc-id doc-id-end)))

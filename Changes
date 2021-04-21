@@ -1,5 +1,23 @@
 2021-04-20  Bob Weiner  <rsw@gnu.org>
 
+* Makefile (tests, all-tests): Add these target aliases.
+
+* hui-mouse.el (hkey-alist): Move smart-magit-mode handling to a higher priority
+    than Hyperbole button handling so implicit pathname buttons don't trigger.
+    This makes behavior across magit lines consistent and pathnames can still
+    be displayed using the Assist Key (invokes magit {RET} key).
+
+* hyrolo.el (hyrolo-to-entry-end): Default to using entire hyrolo-entry-regexp
+    to determine the outline depth when no hyrolo-entry-group-number is
+    included in the expression.  Fixes issue that could call (goto-char nil).
+
+* hib-doc-id.el (doc-id-online-regexp): Tighten matching to disallow any type
+    of whitespace besides spaces within the document link.
+                (link-to-doc, doc-id:help): Fix bug in hyrolo-grep call not
+    using 'no-display argument causing invalid return type.
+                (doc-id-p): Regexp-quote delimiters and allow for whitespace
+    within them.
+
 * kotl/kotl-autoloads.el: Remove reference to unreleased kexport-menu.el
     to fix bug#47916.
 

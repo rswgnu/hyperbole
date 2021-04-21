@@ -296,7 +296,7 @@ Second arg RETURN-TO-BUFFER is the buffer to leave point within after the displa
 
 ;;;###autoload
 (defun hyrolo-edit (&optional name file)
-  "Edits a rolo entry given by optional NAME within `hyrolo-file-list'.
+  "Edit a rolo entry given by optional NAME within `hyrolo-file-list'.
 With prefix argument, prompts for optional FILE to locate entry within.
 With no NAME arg, simply displays FILE or first entry in `hyrolo-file-list' in an
 editable mode.  NAME may be of the form: parent/child to edit child below a
@@ -397,7 +397,7 @@ but omit file headers, negative values mean find up to the inverse of that
 number of entries and omit file headers.
 
 Return number of entries matched.  See also documentation for the variable
-hyrolo-file-list."
+\`hyrolo-file-list'."
   (interactive "sFind rolo regular expression: \nP")
   (unless (or (integerp max-matches) (memq max-matches '(nil t)))
     (setq max-matches (prefix-numeric-value max-matches)))
@@ -406,15 +406,14 @@ hyrolo-file-list."
 	       ((listp hyrolo-file-or-bufs) hyrolo-file-or-bufs)
 	       ((list hyrolo-file-or-bufs))))
 	(case-fold-search t)
-	(display-buf (if count-only
-			 nil
+	(display-buf (unless count-only
 		       (set-buffer (get-buffer-create hyrolo-display-buffer))))
 	(total-matches 0)
 	(num-matched 0)
 	(inserting (or (eq max-matches t)
 		       (and (integerp max-matches) (< max-matches 0))))
 	(file))
-    (if count-only nil
+    (unless count-only
       (setq buffer-read-only nil)
       (or inserting (erase-buffer)))
     (while (and (setq file (car hyrolo-file-list))
@@ -428,18 +427,17 @@ hyrolo-file-list."
 			       (hyrolo-google-contacts-grep-file file regexp max-matches count-only))
 			      (t (hyrolo-grep-file file regexp max-matches count-only)))
 	    total-matches (+ total-matches num-matched))
-      (if (integerp max-matches)
-	  (setq max-matches
-		(if (>= max-matches 0)
-		    (- max-matches num-matched)
-		  (+ max-matches num-matched)))))
+      (when (integerp max-matches)
+	(setq max-matches
+	      (if (>= max-matches 0)
+		  (- max-matches num-matched)
+		(+ max-matches num-matched)))))
     (unless (or count-only no-display inserting (= total-matches 0))
       (hyrolo-display-matches display-buf))
-    (if (called-interactively-p 'interactive)
-	(message "%s matching entr%s found in rolo."
-		 (if (= total-matches 0) "No" total-matches)
-		 (if (= total-matches 1) "y" "ies")
-		 ))
+    (when (called-interactively-p 'interactive)
+      (message "%s matching entr%s found in rolo."
+	       (if (= total-matches 0) "No" total-matches)
+	       (if (= total-matches 1) "y" "ies")))
     total-matches))
 
 (defun hyrolo-isearch (&optional arg)
@@ -1427,7 +1425,7 @@ Return current point."
 	      include-sub-entries
 	      ;; Prevents including trailing whitespace in entry level
 	      ;; length which in turn causes moving to (point-max).
-	      (goto-char (match-end hyrolo-entry-group-number))
+	      (goto-char (or (match-end hyrolo-entry-group-number) (match-end 0)))
 	      (> (- (point) (line-beginning-position))
 		 curr-entry-level-len)))
   (if next-entry-exists
