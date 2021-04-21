@@ -169,6 +169,9 @@ Its default value is #'smart-scroll-down."
     ((derived-mode-p 'dired-mode) .
      ((smart-dired) . (smart-dired-assist)))
     ;;
+    ((string-prefix-p "magit-" (symbol-name major-mode)) .
+     ((smart-magit) . (smart-magit-assist)))
+    ;;
     ;; If on a Hyperbole button, perform action or give help.
     ((hbut:at-p) .
      ((hui:hbut-act 'hbut:current) . (hui:hbut-help 'hbut:current)))
@@ -377,9 +380,6 @@ Its default value is #'smart-scroll-down."
     ;; Gomoku game
     ((eq major-mode 'gomoku-mode) .
      ((gomoku-human-plays) . (gomoku-human-takes-back)))
-    ;;
-    ((string-prefix-p "magit-" (symbol-name major-mode)) .
-     ((smart-magit) . (smart-magit-assist)))
     ;;
     ;; Support the OO-Browser when available.  It is a separate Emacs
     ;; package not included with Hyperbole.  Hyperbole supplies a stub
