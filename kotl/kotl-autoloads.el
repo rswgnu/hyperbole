@@ -41,7 +41,7 @@ STILL TODO:
 
 \(fn EXPORT-FROM OUTPUT-TO &optional SOFT-NEWLINES-FLAG)" t nil)
 
-(register-definition-prefixes "kexport-collapse" '("kexport:"))
+(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "kexport-collapse" '("kexport:")))
 
 ;;;***
 
@@ -60,23 +60,6 @@ STILL TODO:
 \(fn EXPORT-FROM OUTPUT-TO &optional SOFT-NEWLINES-FLAG)" t nil)
 
 (register-definition-prefixes "kexport-collapse-try" '("kexport:"))
-
-;;;***
-
-;;;### (autoloads nil "kexport-menu" "kexport-menu.el" (0 0 0 0))
-;;; Generated autoloads from kexport-menu.el
-
-(autoload 'kexport:html "kexport-menu" "\
-Export a koutline buffer or file in EXPORT-FROM to html format in OUTPUT-TO.
-By default, this retains newlines within cells as they are.  With optional prefix arg, SOFT-NEWLINES-FLAG,
-hard newlines are not used.  Also converts Urls and Klinks into Html hyperlinks.
-STILL TODO:
-  Make delimited pathnames into file links (but not if within klinks).
-  Copy attributes stored in cell 0 and attributes from each cell.
-
-\(fn EXPORT-FROM OUTPUT-TO &optional SOFT-NEWLINES-FLAG)" t nil)
-
-(register-definition-prefixes "kexport-menu" '("kexport:"))
 
 ;;;***
 
@@ -291,7 +274,7 @@ Signal an error if current buffer is not a Hyperbole outline, else return t." ni
 ;;;### (autoloads nil "kotl-orgtbl" "kotl-orgtbl.el" (0 0 0 0))
 ;;; Generated autoloads from kotl-orgtbl.el
 
-(register-definition-prefixes "kotl-orgtbl" '("kotl-mode:transpose-lines-" "orgtbl-"))
+(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "kotl-orgtbl" '("kotl-mode:transpose-lines-" "orgtbl-")))
 
 ;;;***
 
