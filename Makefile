@@ -378,7 +378,8 @@ packageclean:
 	    *.ps *\# *- *.orig *.rej .nfs* CVS .cvsignore; fi
 
 # Ert test
-.PHONY: test test-ert test-all
+.PHONY: tests test test-ert all-tests test-all
+tests: test
 test: test-ert
 
 BATCH=$(EMACS) $(BATCHFLAGS) $(PRELOADS)
@@ -391,6 +392,7 @@ test-ert:
 	@echo "# Tests: $(TEST_ERT_FILES)"
 	$(BATCH) --eval "(load-file \"test/hy-test-dependencies.el\")" --eval "(progn $(LOAD_TEST_ERT_FILES) (ert-run-tests-batch-and-exit))"
 
+all-tests: test-all
 test-all:
 	@echo "# Tests: $(TEST_ERT_FILES)"
 	$(INTERACTIVE) --eval "(load-file \"test/hy-test-dependencies.el\")" --eval "(progn $(LOAD_TEST_ERT_FILES) (ert-run-tests-interactively t))"
