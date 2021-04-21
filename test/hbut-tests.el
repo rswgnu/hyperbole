@@ -457,6 +457,32 @@
         (should (string= "*info*" (buffer-name))))
     (kill-buffer "*info*")))
 
+;; exec-shell-cmd
+(ert-deftest hbut-find-exec-shell-cmd-test ()
+  "Path prefix ! will run pathname as a non windowed program."
+  (with-temp-buffer
+    (insert "\"!/bin/ls\"")
+    (goto-char 2)
+    (let ((was-called nil))
+      (cl-letf (((symbol-function 'actypes::exec-shell-cmd)
+                 (lambda (filename)
+                   (setq was-called (should (string= "/bin/ls" filename))))))
+        (action-key)
+        (should was-called)))))
+
+;; exec-window-cmd
+(ert-deftest hbut-find-exec-window-cmd-test ()
+  "Path prefix & will run pathname as a windowed program."
+  (with-temp-buffer
+    (insert "\"&/bin/ls\"")
+    (goto-char 2)
+    (let ((was-called nil))
+      (cl-letf (((symbol-function 'actypes::exec-window-cmd)
+                 (lambda (filename)
+                   (setq was-called (should (string= "/bin/ls" filename))))))
+        (action-key)
+        (should was-called)))))
+
 ;; This file can't be byte-compiled without the `el-mock' package (because of
 ;; the use of the `with-mock' macro), which is not a dependency of Hyperbole.
 ;;  Local Variables:
