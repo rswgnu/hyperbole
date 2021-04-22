@@ -195,7 +195,7 @@ With optional prefix arg FULL, display full documentation for command."
 (defun kbd-key:help (but)
   "Display documentation for binding of keyboard key given by BUT's label."
   (let ((kbd-key (hbut:key-to-label (hattr:get but 'lbl-key))))
-    (when kbd-key
+    (when (and kbd-key (not (string-empty-p kbd-key)))
       (kbd-key:doc kbd-key t))))
 
 (defun kbd-key:is-p (str)

@@ -201,15 +201,14 @@ then (match-string 3) = \"?\" and (match-string 4) is the query
 attributes." 
   ;; Point must be before one of the bug#222 characters to match.
   (let ((case-fold-search t))
-    (if (string-match "[bugise#0-9]" (char-to-string (following-char)))
+    (when (string-match "[bugise#0-9]" (char-to-string (following-char)))
 	(save-excursion
 	  (skip-chars-backward "#0-9")
 	  (skip-chars-backward " \t\n\r\f")
 	  (skip-chars-backward "bugdiseBUGDISE#") ;; bug, debbugs or issue
-	  ;; Allow for bug#222?package=hyperbole&severity=high as well as
-	  ;; bug222, or bug#222.
+	  ;; Allow for bug#222?package=hyperbole&severity=high as well as bug222, or bug#222.
 	  (or (looking-at "[ \t\n\r\f]*\\(bug#?\\|debbugs#?\\|issue#?\\)[ \t\n\r\f]*#?\\([1-9][0-9]*\\)?\\(\\?\\)\\([a-z=&0-9%;()]+\\)")
-	      (looking-at "[ \t\n\r\f]*\\(bug#?\\|debbugs#?\\|issue#?\\)[ \t\n\r\f]*#?\\([1-9][0-9]*\\)[\].,;?!\)\>\}]?\\([ \t\n\r\f]\\|\\'\\)")
+	      (looking-at "[ \t\n\r\f]*\\(bug#?\\|debbugs#?\\|issue#?\\)[ \t\n\r\f]*#?\\([1-9][0-9]*\\)[\].,;?:!\)\>\}]?\\([ \t\n\r\f]\\|\\'\\)")
 	      ;; Ignore matches like  #222, so this is not confused with "hib-social.el" social references.
 	      ;; (looking-at "[ \t\n\r\f]*\\(bug\\|debbugs\\|issue\\)?[ \t\n\r\f]*#\\([1-9][0-9]*\\)[\].,;?!\)\>\}]?\\([ \t\n\r\f]\\|\\'\\)")
 	      )))))

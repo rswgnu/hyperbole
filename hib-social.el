@@ -231,7 +231,7 @@
   '(("\\`\\(fb\\|facebook\\)\\'"  . "https://www.facebook.com/hashtag/%s")
     ("\\`\\(gh\\|github\\)\\'"    . "https://github.com/%s/%s/%s%s")
     ("\\`\\(gl\\|gitlab\\)\\'"    . "https://www.gitlab.com/%s/%s/%s%s")
-    ("\\`\\(gt\\|git\\)\\'"       . "(cd %s; git %s %s)")
+    ("\\`\\(gt\\|git\\)\\'"       . "(cd %s && git %s %s)")
     ("\\`\\(in\\|instagram\\)\\'" . "https://www.instagram.com/explore/tags/%s/")
     ("\\`\\(tw\\|twitter\\)\\'"   . "https://twitter.com/search?q=%%23%s&src=hashtag")
 )
@@ -685,7 +685,7 @@ Return t if built, nil otherwise."
 ;;  1. If within a git repo directory, use that repo unless specified in path
 ;;  2. If project name is given or is default, see if assocated repo dir is in cache and use it.
 ;;  3. Prompt to rebuild locate db and then goto 2 if yes else quit
-;;  4. Run: (cd <dir-found>; git <cmd> <item>)
+;;  4. Run: (cd <dir-found> && git <cmd> <item>)
 ;;  5. Otherwise, do nothing.
 ;;
 ;; Don't make this a defact or its arguments may be improperly expanded as pathnames.
@@ -790,6 +790,8 @@ PROJECT value is provided, it defaults to the value of
 		       (setq project-dir (and project (hibtypes-git-project-directory project)))
 		     (error "(git-reference): No git directory found for project `%s'" project)))
 		 (when (equal project-dir "") (setq project-dir nil))
+		 ;; Eliminate ~ that Windows shell can't handle in shell paths
+		 (when project-dir (setq project-dir (expand-file-name project-dir)))
 		 (cond ((and project-dir (file-readable-p project-dir) (file-directory-p project-dir))
 			(if reference
 			    (if (and (equal ref-type "commits") (fboundp 'vc-print-root-log))
@@ -809,7 +811,7 @@ PROJECT value is provided, it defaults to the value of
 							  (if (equal project "") "" " ")
 							  project ref-type
 							  (if (equal reference "") "" " ")
-							  reference)
+							  (substring reference nil (min 9 (length reference))))
 				  (princ (format "Command: %s\n\n" cmd))
 				  (princ (shell-command-to-string cmd)))))
 			  ;; Project-only reference, run dired on the project home directory

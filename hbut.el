@@ -1046,7 +1046,7 @@ represent the output of particular document formatters."
 (defun    hbut:key-to-label (lbl-key)
   "Unnormalize LBL-KEY and return a label string for display."
   (if lbl-key
-      (let* ((pos 0) (len (length lbl-key)) (lbl) c)
+      (let* ((pos 0) (len (length lbl-key)) (lbl "") c)
 	(while (< pos len)
 	  (setq c (aref lbl-key pos)
 		lbl (concat lbl 

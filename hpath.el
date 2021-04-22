@@ -1099,9 +1099,12 @@ buffer but don't display it."
 	    anchor (match-string 3 path)
 	    path (if (match-end 1)
 		     (substring path 0 (match-end 1))
-		   buffer-file-name)))
-    (setq path (hpath:expand path)
-	  filename (hpath:absolute-to path default-directory))
+		   (or buffer-file-name ""))))
+    (if (string-empty-p path)
+	(setq path ""
+	      filename "")
+      (setq path (hpath:expand path)
+	    filename (hpath:absolute-to path default-directory)))
     (if noselect
 	(let ((buf (find-file-noselect filename)))
 	  (with-current-buffer buf

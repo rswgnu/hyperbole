@@ -1,5 +1,18 @@
 2021-04-21  Bob Weiner  <rsw@gnu.org>
 
+* hib-social.el (hibtypes-social-hashtag-alist): Fix to use && for executing
+    git references under any OS as required by Windows.
+                (git-reference): Eliminate ~ that Windows shell can't handle
+    in shell paths.
+    (git-reference): Chop commit numbers in help buffer names to a max of 10 chars
+    for brevity while maintaining uniqueness.
+
+* hib-debbugs.el (debbugs-query:at-p): Fix to allow : immediately after bug link.
+
+* hib-kbd.el (kbd-key:help): Allow for an empty string input.
+  hbut.el (hbut:key-to-label): Fix to return an empty label string when given an
+    empty string as input.  Can prevent a failure in hpath:call.
+
 * hactypes.el (exec-shell-cmd, exec-window-cmd): Couple 'cd' and command
     with '&&' rather than semicolon.  Also, expand default-directory to
     eliminate '~' home dir refs.   Both of these for better Windows
