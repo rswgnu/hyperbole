@@ -1,3 +1,13 @@
+2021-04-22  Mats Lidell  <matsl@gnu.org>
+
+* test/hpath-tests.el (hpath:load-modifier-loads-file)
+    (hpath:load-modifier-with-plain-file-loads-file-from-load-path): Load
+    modifier tests.
+
+* test/hbut-tests.el (hbut-load-modifier-loads-file)
+    (hbut-load-modifier-with-plain-file-loads-file-from-load-path): Load
+    modifier tests.
+
 2021-04-21  Bob Weiner  <rsw@gnu.org>
 
 * hib-social.el (hibtypes-social-hashtag-alist): Fix to use && for executing
