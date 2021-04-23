@@ -56,6 +56,24 @@
       (hpath:find "&/bin/ls")
       (should was-called))))
 
+(ert-deftest hpath:load-modifier-loads-file ()
+  "Path prefix - will load elisp file."
+  (let ((was-called nil))
+    (cl-letf (((symbol-function 'load)
+               (lambda (filename)
+                 (setq was-called (should (string= "/folder/hyperbole.el" filename))))))
+      (hpath:find "-/folder/hyperbole.el")
+      (should was-called))))
+
+(ert-deftest hpath:load-modifier-with-plain-file-loads-file-from-load-path ()
+  "Path prefix - with filename without diretory will load from`load-path'."
+  (let ((was-called nil))
+    (cl-letf (((symbol-function 'load)
+               (lambda (filename)
+                 (setq was-called
+                       (should (string= (locate-library "tutorial.el") filename))))))
+      (hpath:find "-tutorial.el")
+      (should was-called))))
 
 (provide 'hpath-tests)
 ;;; hpath-tests.el ends here
