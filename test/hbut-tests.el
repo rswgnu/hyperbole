@@ -483,6 +483,31 @@
         (action-key)
         (should was-called)))))
 
+(ert-deftest hbut-load-modifier-loads-file ()
+  "Path prefix - will load elisp file."
+  (with-temp-buffer
+    (insert "\"-/folder/hyperbole.el\"")
+    (goto-char 2)
+    (let ((was-called nil))
+      (cl-letf (((symbol-function 'load)
+                 (lambda (filename)
+                   (setq was-called (should (string= "/folder/hyperbole.el" filename))))))
+        (action-key)
+        (should was-called)))))
+
+(ert-deftest hbut-load-modifier-with-plain-file-loads-file-from-load-path ()
+  "Path prefix - with filename without diretory will load from`load-path'."
+  (with-temp-buffer
+    (insert "\"-tutorial.el\"")
+    (goto-char 2)
+    (let ((was-called nil))
+      (cl-letf (((symbol-function 'load)
+                 (lambda (filename)
+                   (setq was-called
+                         (should (string= (locate-library "tutorial.el") filename))))))
+        (action-key)
+        (should was-called)))))
+
 ;; This file can't be byte-compiled without the `el-mock' package (because of
 ;; the use of the `with-mock' macro), which is not a dependency of Hyperbole.
 ;;  Local Variables:
