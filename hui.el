@@ -1054,16 +1054,16 @@ Optional NO-SORT means display in decreasing priority order (natural order)."
 	      (names (htype:names htype-sym))
 	      (term (hargs:read-match
 		     (concat (capitalize tstr)
-			     (format " to describe (RET for all%s): "
+			     (format " to describe (RET or '*' for all%s): "
 				     (if (eq htype-sym 'ibtypes)
 					 " in priority order"
 				       "")))
-		     (mapcar 'list (cons "" names))
+		     (mapcar 'list (append '("" "*") names))
 		     nil t nil htype-sym))
 	      nm-list
 	      doc-list)
 	 (setq nm-list
-	       (if (string-equal term "")
+	       (if (member term '("" "*"))
 		   (let ((type-names
 			   (mapcar (lambda (nm) (concat tprefix nm))
 				   names)))
