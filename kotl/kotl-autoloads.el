@@ -23,43 +23,7 @@ STILL TODO:
 
 \(fn EXPORT-FROM OUTPUT-TO &optional SOFT-NEWLINES-FLAG)" t nil)
 
-(register-definition-prefixes "kexport" '("kexport:"))
-
-;;;***
-
-;;;### (autoloads nil "kexport-collapse" "kexport-collapse.el" (0
-;;;;;;  0 0 0))
-;;; Generated autoloads from kexport-collapse.el
-
-(autoload 'kexport:html "kexport-collapse" "\
-Export a koutline buffer or file in EXPORT-FROM to html format in OUTPUT-TO.
-By default, this retains newlines within cells as they are.  With optional prefix arg, SOFT-NEWLINES-FLAG,
-hard newlines are not used.  Also converts Urls and Klinks into Html hyperlinks.
-STILL TODO:
-  Make delimited pathnames into file links (but not if within klinks).
-  Copy attributes stored in cell 0 and attributes from each cell.
-
-\(fn EXPORT-FROM OUTPUT-TO &optional SOFT-NEWLINES-FLAG)" t nil)
-
-(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "kexport-collapse" '("kexport:")))
-
-;;;***
-
-;;;### (autoloads nil "kexport-collapse-try" "kexport-collapse-try.el"
-;;;;;;  (0 0 0 0))
-;;; Generated autoloads from kexport-collapse-try.el
-
-(autoload 'kexport:html "kexport-collapse-try" "\
-Export a koutline buffer or file in EXPORT-FROM to html format in OUTPUT-TO.
-By default, this retains newlines within cells as they are.  With optional prefix arg, SOFT-NEWLINES-FLAG,
-hard newlines are not used.  Also converts Urls and Klinks into Html hyperlinks.
-STILL TODO:
-  Make delimited pathnames into file links (but not if within klinks).
-  Copy attributes stored in cell 0 and attributes from each cell.
-
-\(fn EXPORT-FROM OUTPUT-TO &optional SOFT-NEWLINES-FLAG)" t nil)
-
-(register-definition-prefixes "kexport-collapse-try" '("kexport:"))
+(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "kexport" '("kexport:")))
 
 ;;;***
 
