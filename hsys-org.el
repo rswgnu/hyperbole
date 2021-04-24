@@ -102,7 +102,9 @@ or are looking for an Org link in another buffer type."
 	   (org-in-regexp org-link-bracket-re))
       (and (boundp 'org-bracket-link-regexp)
 	   (org-in-regexp org-bracket-link-regexp))
-      (hsys-org-face-at-p 'org-link)))
+      (and (boundp 'org-target-link-regexp)
+           (not (null org-target-link-regexp))
+           (org-in-regexp org-target-link-regexp))))
 
 ;; Assumes caller has already checked that the current buffer is in org-mode.
 (defun hsys-org-target-at-p ()
@@ -139,8 +141,8 @@ Assumes caller has already checked that the current buffer is in `org-mode'."
 	(goto-char (or (previous-single-property-change (point) 'face) (point-min))))
       (when (looking-at "<<<?")
 	(goto-char (match-end 0)))
-      (and (not (get-text-property (point) 'org-linked-text))
-	   (hsys-org-region-with-text-property-value (point) 'face)))))
+      (and (get-text-property (point) 'org-linked-text)
+           (hsys-org-region-with-text-property-value (point) 'face)))))
 
 (defun hsys-org-face-at-p (org-face-type)
   "Return ORG-FACE-TYPE iff point is on a character with face ORG-FACE-TYPE, a symbol, else nil."
