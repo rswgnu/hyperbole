@@ -12,35 +12,24 @@
 # This file is part of GNU Hyperbole.
 
 ===========================================================================
-*		         Browsing the Source
-===========================================================================
-
-To explore the Hyperbole source code rather than installing it for use,
-download a tar.gz source archive from either:
-
-    ftp://ftp.gnu.org/gnu/hyperbole/
-
-or
-
-    http://ftpmirror.gnu.org/hyperbole/
-
-which will find the closest mirror of the GNU ftp site and show it to you.
-
-===========================================================================
 *		           Installation
 ===========================================================================
 
-Once you have Emacs set up at your site, GNU Hyperbole may be
-installed by using the Emacs Package Manager.  If you are not
-familiar with it, see the Packages section of the GNU Emacs Manual,
-"(emacs)Packages", or
-"https://www.gnu.org/software/emacs/manual/html_node/emacs/Packages.html". 
+There are multiple package managers you can use to install Hyperbole once
+you have GNU Emacs set up at your site.
+
+** The built-in Emacs package manager
+
+The Emacs Package Manager installs the latest stable version release
+of GNU Hyperbole.  If you are not familiar with it, see the Packages
+section of the GNU Emacs Manual, "(emacs)Packages", or
+"https://www.gnu.org/software/emacs/manual/html_node/emacs/Packages.html".
 
 If you have Hyperbole 5.10 or higher already installed and simply want to
 upgrade it, invoke the Emacs Package Manager with {M-x list-packages RET},
 then use the {U} key followed by the {x} key to upgrade all out-of-date
 packages, Hyperbole among them.  Then skip the text below and move on to
-the next section, Invocation.
+the section, Invocation.
 
 Otherwise, to download and install the Hyperbole package, you should add
 several lines to your personal Emacs initialization file, typically "~/.emacs".
@@ -50,8 +39,8 @@ several lines to your personal Emacs initialization file, typically "~/.emacs".
 Below are the lines to add:
 
 (require 'package)
-(setq package-enable-at-startup nil) ;; Prevent double loading of libraries
-(package-initialize)
+(when (< emacs-major-version 27)
+  (package-initialize))
 (unless (package-installed-p 'hyperbole)
   (package-refresh-contents)	
   (package-install 'hyperbole))
@@ -63,6 +52,28 @@ Now save the file and then restart Emacs.  Hyperbole will then be
 downloaded and compiled for use with your version of Emacs; give it a
 minute or two.  You may see a bunch of compilation warnings but these
 can be safely ignored.
+
+**
+
+===========================================================================
+*		         Browsing the Source
+===========================================================================
+
+To explore the Hyperbole source code online rather than installing it
+for use (which will also give you the source code), open a web page
+to:
+
+  https://git.savannah.gnu.org/cgit/hyperbole.git/tree/
+
+Alternatively, you may download a tar.gz source archive from either:
+
+  ftp://ftp.gnu.org/gnu/hyperbole/
+
+or
+
+  http://ftpmirror.gnu.org/hyperbole/
+
+which will find the closest mirror of the GNU ftp site and show it to you.
 
 ===========================================================================
 *			    Invocation
@@ -85,8 +96,8 @@ You can invoke Hyperbole commands in one of three ways:
    use a specific Hyperbole command such as an Action Key click {M-RET} on
    a pathname to display the associated file or directory.
 
-Use {C-h h d d} for an interactive demonstration of standard Hyperbole
-button capabilities.
+Use {C-h h d d} for an extensive, interactive demonstration of
+standard Hyperbole button capabilities.
 
 {C-h h k e} offers an interactive demonstration of the Koutliner,
 Hyperbole's multi-level autonumbered hypertextual outliner.

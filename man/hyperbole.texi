@@ -6879,13 +6879,12 @@ Below are the lines to add:
 
 @lisp
 (require 'package)
-;; Prevent double loading of libraries
-(setq package-enable-at-startup nil)
-(package-initialize)
+(when (< emacs-major-version 27)
+  (package-initialize))
 (unless (package-installed-p 'hyperbole)
   (package-refresh-contents)	
   (package-install 'hyperbole))
-(require 'hyperbole)
+(hyperbole-mode 1)
 @end lisp
 
 Now save the file and restart Emacs.  Hyperbole will then be
