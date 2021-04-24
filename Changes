@@ -1,3 +1,17 @@
+2021-04-24  Bob Weiner  <rsw@gnu.org>
+
+* hibtypes.el (mail-address): Change so only need to list parent modes in
+    mail-address-mode-list to get a match, e.g. prog-mode.
+              (mail-address-mode-list): Shrunk to just top-level parent modes.
+
+* hui.el (hui:htype-help): Allow '*' as completion choice for interactive
+    completion frameworks where RET does not send an empty string but the first
+    pre-selected choice (which will now be '*').
+
+* kotl/kotl-autoloads.el: Remove unreleased kexport-collapse* files from here.
+
+* INSTALL: Update installation instructions for new hyperbole-mode
+
 2021-04-22  Mats Lidell  <matsl@gnu.org>
 
 * test/hpath-tests.el (hpath:load-modifier-loads-file)

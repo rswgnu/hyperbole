@@ -126,10 +126,7 @@ handle any links they recognize first."
 ;;; ========================================================================
 
 (defvar mail-address-mode-list
-  '(emacs-lisp-mode lisp-interaction-mode lisp-mode scheme-mode
-                    c-mode c++-mode html-mode java-mode js2-mode objc-mode
-                    python-mode smalltalk-mode fundamental-mode text-mode
-                    indented-text-mode web-mode)
+  '(fundamental-mode prog-mode text-mode)
   "List of major modes in which mail address implicit buttons are active.")
 
 (defun mail-address-at-p ()
@@ -151,7 +148,7 @@ any buffer attached to a file in `hyrolo-file-list', or any buffer with
   (when (let ((case-fold-search t))
           (or
            (and (or (null mail-address-mode-list)
-		    (memq major-mode mail-address-mode-list))
+		    (apply #'derived-mode-p mail-address-mode-list))
                 (not (string-match "-Elements\\'" (buffer-name)))
                 ;; Don't want this to trigger within an OOBR-FTR buffer.
                 (not (string-match "\\`\\(OOBR.*-FTR\\|oobr.*-ftr\\)"
