@@ -28,7 +28,7 @@
 ;;; Other required Elisp libraries
 ;;; ************************************************************************
 
-(require 'hactypes)
+(require 'hactypes) ;; This invokes (require 'hargs)
 (require 'seq)
 
 (defvar kbd-key:named-key-list
@@ -88,14 +88,17 @@ Any key sequence must be a string of one of the following:
 		 (modify-syntax-entry ?\} ")\}" (syntax-table))
 		 ;; Handle long series, e.g. eval-elisp actions
 		 (let* ((hbut:max-len (max 3000 (hbut:max-len)))
-			(seq-and-pos (or (hbut:label-p t "{`" "'}" t)
-					 (hbut:label-p t "{" "}" t)
-					 ;; Regular dual single quotes (Texinfo smart quotes)
-					 (hbut:label-p t "``" "''" t)
-					 ;; Typical GNU manual key sequences; note
-					 ;; these are special quote marks, not the
-					 ;; standard ASCII characters.
-					 (hbut:label-p t "‘" "’" t)))
+			(seq-and-pos (or ;; (kbd) calls but only if point is between double quotes
+ 				      (and (hbut:label-p t "(kbd \"" "\"\)" t)
+					   (hbut:label-p t "\"" "\"\)" t))
+				      (hbut:label-p t "{`" "'}" t)
+				      (hbut:label-p t "{" "}" t)
+				      ;; Regular dual single quotes (Texinfo smart quotes)
+				      (hbut:label-p t "``" "''" t)
+				      ;; Typical GNU manual key sequences; note
+				      ;; these are special quote marks, not the
+				      ;; standard ASCII characters.
+				      (hbut:label-p t "‘" "’" t)))
 			;; This excludes delimiters
 			(key-series (car seq-and-pos))
 			(start (cadr seq-and-pos))
