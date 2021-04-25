@@ -2469,7 +2469,8 @@ like www.gnu.org, are also recognized.
 @kindex M-@key{RET}
 @findex org-ctrl-c-ctrl-c
 @findex org-meta-return
-@vindex inhibit-hsys-org
+@vindex hsys-org-enable-smart-keys
+@cindex enable org-mode support
 @cindex disable org-mode support
 @cindex inhibit org-mode support
 @item org-mode
@@ -2497,8 +2498,8 @@ In any other context besides the end of a line, the Action Key invokes
 the Org-mode standard binding of @bkbd{M-@key{RET}}, @code{org-meta-return}.
 
 To disable ALL Hyperbole support within Org major and minor modes, set
-the custom option @code{inhibit-hsys-org} to @code{t}.  Then in Org modes,
-the Action Key will simply invoke @code{org-meta-return}.
+the custom option @code{hsys-org-enable-smart-keys} to @code{nil}.  Then in
+Org modes, the Action Key will simply invoke @code{org-meta-return}.
 
 @end table
 
@@ -9977,14 +9978,20 @@ more limited kind of hyperlinks and offers some BBDB integration as
 Hyperbole does.  For a list of some differences, see:
 @url{https://www.emacswiki.org/emacs/Hyperbole}.
 
-@vindex inhibit-hsys-org
-Smart Key support for Org-mode is already in Hyperbole with compatibility
-with Org's @bkbd{M-RET} binding.  With the flag, @code{inhibit-hsys-org}
-set to @code{t}, Hyperbole gives Org complete control over that key as well.
-
 Org-mode offers traditional Emacs outlining, todo list management,
 agenda and diary management, so it is very complementary to Hyperbole.
 It did not exist when Hyperbole was first developed.
+
+@vindex hsys-org-enable-smart-keys
+Smart Key support for Org-mode is already in Hyperbole.  Use the
+@code{hsys-org-enable-smart-keys} customization variable to control
+the Smart Keys and @bkbd{M-RET} when in Org-mode with
+@code{hyperbole-mode} active.  @code{t} enables Smart Key support
+everywhere.  The symbol, @code{buttons}, is the default; it means the
+Smart Keys are active only when point is within a Hyperbole button.  A
+@code{nil} value means no Smart Key support; Hyperbole gives Org
+complete control over @bkbd{M-RET} so that it behaves just as it does
+normally in Org mode.
 
 @cindex Smart Key
 @cindex mouse key bindings

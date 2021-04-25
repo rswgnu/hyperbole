@@ -1,4 +1,25 @@
+2021-04-25  Bob Weiner  <rsw@gnu.org>
+
+* hsys-org.el (hsys-org-link-at-p): Fix so any of the 3 expressions may match.
+              (hsys-org-enable-smart-keys): Add to allow for 3 levels of
+    Smart Key support in Org mode.
+              (hsys-org-hbut-activate-p):
+  hibtypes.el (org-link-outside-org-mode):
+  hib-org.el (org-mode): Updated to use hsys-org-enable-smart-keys.
+              (inhibit-hsys-org): Remove, replaced by hsys-org-enable-smart-keys.
+  man/hyperbole.texi (Questions and Answers): Updated Org mode section with
+   this new variable.
+              (hsys-org-hbut-activate-p): Remove, move logic to org-mode ibtype.
+
 2021-04-24  Bob Weiner  <rsw@gnu.org>
+
+* hyperbole.el (hyperbole-mode-lighter): Defined so user can remove Hypb modeline
+    display by setting this to "" or nil.
+
+* hib-kbd.el (kbd-key): With point within the double quotes of a (kbd) call, treat
+    it as a key series (kbd-key) implicit button.
+
+* hmouse-tag.el (smart-lisp-at-tag-p): Ignore any double quoted strings.
 
 * hibtypes.el (mail-address): Change so only need to list parent modes in
     mail-address-mode-list to get a match, e.g. prog-mode.

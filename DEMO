@@ -543,9 +543,10 @@ buttons.
 In any other context besides the end of a line, the Action Key invokes
 the Org mode standard binding of {M-RET}, (org-meta-return).
 
-To disable ALL Hyperbole support within Org major and minor modes, set the
-custom option `inhibit-hsys-org' to t.  Then the Action Key will simply
-invoke the Org mode standard binding of {M-RET}, (org-meta-return).
+To disable ALL Hyperbole support within Org major and minor modes, set
+the custom option `hsys-org-enable-smart-keys' to nil.  Then the
+Action Key will simply invoke the Org mode standard binding of
+{M-RET}, (org-meta-return).
 
 ** Implicit Path Links
 

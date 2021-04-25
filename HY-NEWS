@@ -91,7 +91,9 @@
       displaying their commits even from shell and compilation buffers.
 
     - Org Mode: Lowered to near bottom implicit button priority so that all
-      implicit button types will work in Org mode.
+      implicit button types will work in Org mode.  Replaced 'inhibit-hsys-org'
+      setting with 'hsys-org-enable-smart-keys'.  See its documentation for
+      details.
 
     - Debugger Source: In Python tracebacks, may be on a line just below the
       source reference line so if not on a Hyperbole button, move back a line
@@ -103,6 +105,15 @@
 
     - Todotxt Mode Support: Smart key support for the todotxt mode
       https://github.com/rpdillon/todotxt.el.
+
+  ORG MODE
+
+    - hsys-org-enable-smart-keys: New customization to replace 'inhibit-hsys-org'.
+      This applies only in Org major/minor modes when hyperbole-mode is active.
+      t means enable Smart Key support everywhere.  The symbol, buttons, is the
+      default; it means the Smart Keys are active only when point is within a
+      Hyperbole button.  A nil value means no Smart Key support so {M-RET} behaves
+      just as it does normally in Org mode.
 
   ACE WINDOW PACKAGE INTEGRATION - fast window and buffer switching
 

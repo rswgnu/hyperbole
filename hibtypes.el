@@ -96,7 +96,7 @@
 (load "hib-org")
 
 ;; If you want to to disable ALL Hyperbole support within Org major
-;; and minor modes, set the custom option `inhibit-hsys-org' non-nil.
+;; and minor modes, set the custom option `hsys-org-enable-smart-keys' to nil.
 
 ;;; ========================================================================
 ;;; Follows URLs by invoking a web browser.
@@ -112,7 +112,7 @@
   "Follow an Org link in a non-Org mode buffer.
 This should be a very low priority so other Hyperbole types
 handle any links they recognize first."
-  (unless inhibit-hsys-org
+  (when (eq hsys-org-enable-smart-keys t)
     (require 'hsys-org)
     (let ((start-end (hsys-org-link-at-p)))
       (when start-end

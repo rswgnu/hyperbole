@@ -196,6 +196,14 @@ Entry format is: (key-description key-sequence key-binding)."
     (add-to-list 'hkey-previous-bindings (hkey-binding-entry key)))
   (global-set-key key command))
 
+(defun hkey-maybe-global-set-key (key command &optional no-add)
+  "Globally set KEY to COMMAND if KEY is unbound and COMMAND is not on any global key.
+With third argument NO-ADD non-nil, skip storage of prior KEY binding
+which prevents automatic removal of any local bindings to the same key."
+  (or (global-key-binding key)
+      (where-is-internal command)
+      (hkey-global-set-key key command no-add)))
+
 (defvar hmouse-middle-flag)
 (defvar hmouse-bindings-flag)
 (defvar hyperb:user-email)
@@ -275,14 +283,6 @@ Entry format is: (key-description key-sequence key-binding)."
     ;; Store Hyperbole key bindings so can turn them on and off.
     (setq hkey-bindings (hkey-get-bindings)
 	  hkey-bindings-flag t)))
-
-(defun hkey-maybe-global-set-key (key command &optional no-add)
-  "Globally set KEY to COMMAND if KEY is unbound and COMMAND is not on any global key.
-With third argument NO-ADD non-nil, skip storage of prior KEY binding
-which prevents automatic removal of any local bindings to the same key."
-  (or (global-key-binding key)
-      (where-is-internal command)
-      (hkey-global-set-key key command no-add)))
 
 (defun hkey-set-bindings (key-binding-list)
   "Set keys bound by Hyperbole to those in KEY-BINDING-LIST.
@@ -721,11 +721,16 @@ This is used only when running from git source and not a package release."
 ;; This call loads the rest of the Hyperbole system.
 (require 'hinit)
 
+(defcustom hyperbole-mode-lighter " Hypb"
+  "Text to display in the minor-mode area of the modeline when the Hyperbole global minor mode is active."
+  :type 'string
+  :group 'hyperbole)
+
 ;;;###autoload
 (define-minor-mode hyperbole-mode
   "The Everyday Hypertextual Information Manager global minor mode."
   :global t
-  :lighter " Hypb"
+  :lighter hyperbole-mode-lighter
   (if hyperbole-mode
       (if after-init-time
           ;; This call initializes Hyperbole key bindings and hooks.

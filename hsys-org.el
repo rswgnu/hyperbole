@@ -22,17 +22,28 @@
 (require 'org)
 (require 'org-element)
 
-(defcustom inhibit-hsys-org nil
-  "*Non-nil means disable Action Key support in Org major and minor modes."
-  :type 'boolean
+;;;###autoload
+(defcustom hsys-org-enable-smart-keys 'buttons
+  "This option applies only in Org major/minor modes when hyperbole-mode is active.
+The following table shows what the Smart Keys do in various contexts
+with different settings of this option.  For example, a nil value make
+{M-RET} operate as it normally does within Org mode contexts.
+
+|---------------------+-------------------+------------------+----------+------------------|
+| This Option Setting | Smart Key Context | Hyperbole Button | Org Link | Fallback Command |
+|---------------------+-------------------+------------------+----------+------------------|
+| buttons             | Ignore            | Activate         | Ignore   | org-meta-return  |
+| nil                 | Ignore            | Ignore           | Ignore   | org-meta-return  |
+| t                   | Activate          | Activate         | Activate | None             |
+|---------------------+-------------------+------------------+----------+------------------|"
+  :type '(choice (const :tag "buttons - In Org, enable Smart Keys within Hyperbole buttons only" buttons)
+		 (const :tag "nil     - In Org, disable Smart Keys entirely" nil)
+		 (const :tag "t       - In Org, enable all Smart Key contexts" t))
   :initialize #'custom-initialize-default
   :group 'hyperbole-buttons)
 
 (defvar hsys-org-mode-function #'hsys-org-mode-p
   "*Boolean function of no arguments that determines whether point is in an Org mode-related buffer or not.")
-
-;; Make Org-mode's M-RET binding activate implicit buttons
-(add-hook 'org-metareturn-hook #'hsys-org-hbut-activate-p)
 
 (defun hsys-org-mode-p ()
   "Return non-nil if point is within an Org major or minor-mode buffer."
@@ -52,12 +63,6 @@
   (setq last-command 'org-cycle
 	this-command 'org-cycle)
   (org-global-cycle nil))
-
-(defun hsys-org-hbut-activate-p ()
-  "When within an Org major or minor-mode buffer and `inhibit-hsys-org' is nil (the default), activate any Hyperbole button at point and return t, else return nil."
-  (when (and (not inhibit-hsys-org) (funcall hsys-org-mode-function) (hbut:at-p))
-    (hbut:act)
-    t))
 
 ;;; ************************************************************************
 ;;; Public functions
@@ -93,11 +98,11 @@
   "Return non-nil iff point is on an Org mode link.
 Assumes caller has already checked that the current buffer is in `org-mode'
 or are looking for an Org link in another buffer type."
-  (cond ((boundp 'org-link-bracket-re)
-	 (org-in-regexp org-link-bracket-re))
-	((boundp 'org-bracket-link-regexp)
-	 (org-in-regexp org-bracket-link-regexp))
-	(t (hsys-org-face-at-p 'org-link))))
+  (or (and (boundp 'org-link-bracket-re)
+	   (org-in-regexp org-link-bracket-re))
+      (and (boundp 'org-bracket-link-regexp)
+	   (org-in-regexp org-bracket-link-regexp))
+      (hsys-org-face-at-p 'org-link)))
 
 ;; Assumes caller has already checked that the current buffer is in org-mode.
 (defun hsys-org-target-at-p ()

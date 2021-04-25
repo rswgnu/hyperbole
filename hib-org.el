@@ -57,18 +57,23 @@ In any other context besides the end of a line, the Action Key invokes the
 Org mode standard binding of {M-RET}, (org-meta-return).
 
 To disable ALL Hyperbole support within Org major and minor modes, set the
-custom option `inhibit-hsys-org' to t.  Then in Org modes, this will
-simply invoke `org-meta-return'.
+custom option `hsys-org-enable-smart-keys' to nil.  Then in Org modes, this
+will simply invoke `org-meta-return'.
 
 Org links may be used outside of Org mode buffers.  Such links are
 handled by the separate implicit button type, `org-link-outside-org-mode'."
-  (let (start-end)
-    (cond ((and (funcall hsys-org-mode-function)
-		;; Prevent infinite recursion when called via org-metareturn-hook
-		;; from org-meta-return invocation.
-		(not (hyperb:stack-frame '(org-meta-return))))
-	   (if inhibit-hsys-org
-	       (hact 'org-meta-return)
+  (when (and hyperbole-mode
+	     (funcall hsys-org-mode-function)
+	     ;; Prevent infinite recursion when called via org-metareturn-hook
+	     ;; from org-meta-return invocation.
+	     (not (hyperb:stack-frame '(org-meta-return))))
+    (cond ((not hsys-org-enable-smart-keys)
+	   (hact 'org-meta-return))
+	  ((hbut:at-p)
+	   ;; Activate any Hyperbole button at point
+	   (hbut:act))
+	  ((eq hsys-org-enable-smart-keys t)
+	   (let (start-end)
 	     (cond ((hsys-org-agenda-item-at-p)
 		    (hsys-org-set-ibut-label (cons (line-beginning-position) (line-end-position)))
 		    (hact 'org-agenda-show-and-scroll-up current-prefix-arg))
@@ -85,7 +90,11 @@ handled by the separate implicit button type, `org-link-outside-org-mode'."
 		   ((hsys-org-block-start-at-p)
 		    (org-ctrl-c-ctrl-c))
 		   (t
-		    (hact 'org-meta-return))))))))
+		    ;; no operation
+		    t))))
+	  ;; default fallback cmd when (eq hsys-org-enable-smart-keys 'button)
+	  (t
+	   (hact 'org-meta-return)))))
 
 (defun org-mode:help (&optional _but)
   "If on an Org mode heading, cycles through views of the whole buffer outline.
