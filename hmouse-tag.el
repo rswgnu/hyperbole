@@ -664,10 +664,10 @@ Return nil when point is on the first line of a non-alias Lisp definition."
   (unless (smart-lisp-at-definition-p)
     (save-excursion
       (skip-chars-backward smart-lisp-identifier-chars)
-      ;; Ignore environment variables: $PATH, ${PATH}, $(PATH), {$PATH}, ($PATH)
+      ;; Ignore double quoted strings and environment variables: $PATH, ${PATH}, $(PATH), {$PATH}, ($PATH)
       (unless (save-excursion
-		(skip-chars-backward "[${(]")
-		(looking-at "\\$[{(]\\|[{]\\$]"))
+		(skip-chars-backward "[\"${(]")
+		(looking-at "\"\\|\\$[{(]\\|[{]\\$]"))
 	(when (and (looking-at smart-lisp-identifier)
 		   ;; Ignore any punctuation matches.
 		   (save-match-data
