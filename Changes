@@ -1,5 +1,8 @@
 2021-04-25  Bob Weiner  <rsw@gnu.org>
 
+* hib-org.el (org-mode): Add (not (hyperb:stack-frame '(hbut:at-p)))
+    to prevent infinite loop.
+
 * hsys-org.el (hsys-org-link-at-p): Fix so any of the 3 expressions may match.
               (hsys-org-enable-smart-keys): Add to allow for 3 levels of
     Smart Key support in Org mode.

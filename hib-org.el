@@ -69,7 +69,7 @@ handled by the separate implicit button type, `org-link-outside-org-mode'."
 	     (not (hyperb:stack-frame '(org-meta-return))))
     (cond ((not hsys-org-enable-smart-keys)
 	   (hact 'org-meta-return))
-	  ((hbut:at-p)
+	  ((and (not (hyperb:stack-frame '(hbut:at-p))) (hbut:at-p))
 	   ;; Activate any Hyperbole button at point
 	   (hbut:act))
 	  ((eq hsys-org-enable-smart-keys t)
