@@ -655,7 +655,7 @@ any of a manual's indices).  Index items let you jump to a specific,
 referenced point within an Info node.  As an example, suppose you want quick
 access to a summary of Hyperbole's key bindings.  Store "(hyperbole)key
 binding list" in your personal file of buttons (accessed with {C-h h b p})
-and you will always have quick access to a list of Hyperbole's global key
+and you will always have quick access to a list of Hyperbole's key
 bindings.  Press the Action Key on the Info reference and try it.  Press the
 Action Key on the key binding of your personal button file and then store the
 implicit link there if you like.
@@ -1363,7 +1363,7 @@ Alternatively, you may select a key and bind it as part of any setting of
 
 For example:
   (add-hook 'hyperbole-init-hook
-   (lambda () (global-set-key <YOUR-KEY-HERE> 'hmouse-toggle-bindings)))
+   (lambda () (global-set-key <YOUR-KEY-HERE> #'hmouse-toggle-bindings)))
 
 ** Thing Selection
 

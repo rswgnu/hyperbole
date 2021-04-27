@@ -112,8 +112,11 @@
   "Follow an Org link in a non-Org mode buffer.
 This should be a very low priority so other Hyperbole types
 handle any links they recognize first."
-  (when (eq hsys-org-enable-smart-keys t)
-    (require 'hsys-org)
+  (when (and (eq hsys-org-enable-smart-keys t)
+	     (not (funcall hsys-org-mode-function))
+	     ;; Prevent infinite recursion if ever called via org-metareturn-hook
+	     ;; from org-meta-return invocation.
+	     (not (hyperb:stack-frame '(ibtypes::debugger-source org-meta-return))))
     (let ((start-end (hsys-org-link-at-p)))
       (when start-end
         (hsys-org-set-ibut-label start-end)
@@ -999,6 +1002,7 @@ This works with JavaScript and Python tracebacks, gdb, dbx, and xdb.  Such lines
       ;; line and check for a source line again.
       (let ((debugger-source-prior-line t))
 	(unless (or (hbut:at-p)	(/= (forward-line -1) 0))
+	  ;; Don't wrap this next line in (hact) or will break things.
 	  (ibtypes::debugger-source)))))))
 
 ;;; ========================================================================

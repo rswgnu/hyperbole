@@ -1,7 +1,56 @@
+2021-04-26  Bob Weiner  <rsw@gnu.org>
+
+* hui.el (hui:global-bind-key): Renamed from hui:bind-key and made that
+    name bind keys within the hyperbole minor mode map.
+
+* hui-em-but.el (hproperty:but-add): Add make-overlay 4th arg = t to prevent
+    highlighting from spreading to text inserted before an ebut.
+
+* hbut.el (hbut:key-to-label): Ensure is a string and if one char, is not
+    a punctuation char.
+          (ibut:to): Fix possible infinite loop if label being tested is one
+    one character long.  This caused Action Key on "." in path variable values
+    to hang.
+
+* hpath.el (hpath:path-variable-value-regexp, hpath:at-p): Improved regexp
+    structure and expanded classes of excluded chars to prevent spurious path
+    matches by hpath:delimited-possible-path.
+
+
+* hui-mini.el (hyperbole): Enable hyperbole-mode when invoked with {C-h h}.
+
+* hyperbole.el (hyperbole-help-map, hkey-help-set-key): Add to set help keys
+    available only when Hyperbole is enabled.
+
 2021-04-25  Bob Weiner  <rsw@gnu.org>
+
+* hyperbole.el (hkey-override-local-bindings,
+                hkey-install-override-local-bindings,
+                hkey-init-override-local-keys,
+                hkey-toggle-override-local-bindings): Remove, replaced
+    by minor mode.
+  man/hyperbole.texi (Hyperbole Key Bindings): Rename from Global
+    Key Bindings.
+                     (Default Hyperbole Bindings): Rename from
+    Default Global Bindings and remove discussion of overriding keys.
+  hui-menu.el (hui-menu-options): Remove Toggle-Override-Local-Keys.
+  hui-mini.el (hui:menus): Remove Override-Local-Keys.
+
+
+* hyperbole.el (hyperbole-mode): Finish documentation.
 
 * hib-org.el (org-mode): Add (not (hyperb:stack-frame '(hbut:at-p)))
     to prevent infinite loop.
+
+* hyperbole.el (hyperb:uninit): Add for use when disabling hyperbole-mode.
+
+* hpath.el (hpath:posix-mount-point-to-mswindows-alist): Made this an autoload
+    since referenced in hyperbole.
+
+* hyperbole.el (hkey-set-key, hkey-maybe-set-key): Add for use with Hyperbole
+    minor mode.
+               (hkey-initialize):
+  hmouse-sh.el (hmouse-set-key-list): Rewrote to use above functions.
 
 * hsys-org.el (hsys-org-link-at-p): Fix so any of the 3 expressions may match.
               (hsys-org-enable-smart-keys): Add to allow for 3 levels of

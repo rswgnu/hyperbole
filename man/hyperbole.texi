@@ -155,7 +155,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</P>
 
 <PRE>
 Edition 7.1.4
-Printed March 21, 2021.
+Printed April 27, 2021.
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -197,7 +197,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 @example
 Edition 7.1.4
-March 21, 2021
+April 27, 2021
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -259,7 +259,7 @@ years.  The Koutliner is dedicated to my lovely wife, Kathy.
 * Developing with Hyperbole::
 * Glossary::
 * Setup::
-* Global Key Bindings::
+* Hyperbole Key Bindings::
 * Koutliner Keys::
 * Smart Key Reference::
 * Suggestion or Bug Reporting::
@@ -414,10 +414,10 @@ Customization
 * Invisible Text Searches::
 * Button Colors::
 
-Global Key Bindings
+Hyperbole Key Bindings
 
 * Binding Minibuffer Menu Items::
-* Default Global Bindings::
+* Default Hyperbole Bindings::
 
 Smart Key Reference
 
@@ -3429,9 +3429,8 @@ The @samp{KeyBindings/} submenu allows individual changes to each
 keyboard key that Hyperbole binds for its commands, notably the Action
 Key.  @xref{Smart Key Bindings}, for more information.
 
-@xref{Global Key Bindings}, for complete descriptions of Hyperbole's
-global key bindings, how to temporarily disable them and how to manage
-its overriding of local bindings that hide global Hyperbole keys.
+@xref{Hyperbole Key Bindings}, for complete descriptions of Hyperbole's
+key bindings and how to manage them.
 
 @cindex menu, Explicit-Button
 @cindex menu, EBut
@@ -6839,7 +6838,7 @@ by 3 columns, each displaying a different buffer chosen by a set of user
 specifiable filters.
 @end table
 
-@node Setup, Global Key Bindings, Glossary, Top
+@node Setup, Hyperbole Key Bindings, Glossary, Top
 @appendix Setup
 
 Hyperbole must be obtained and setup at your site before you can
@@ -7361,23 +7360,23 @@ be emphasized in a different color or style.  This emphasis is in
 addition to any non-mouse-sensitive button highlighting.
 
 
-@node Global Key Bindings, Koutliner Keys, Setup, Top
-@appendix Global Key Bindings
+@node Hyperbole Key Bindings, Koutliner Keys, Setup, Top
+@appendix Hyperbole Key Bindings
 
 @cindex key binding list
 This appendix covers two topics: 1. how to bind Hyperbole minibuffer
 menu items to global keys and 2. summaries of all of Hyperbole's
-global key bindings and whether each overrides any existing binding or
+key bindings and whether each overrides any existing binding or
 not.  It also describes how to temporarily disable these bindings and
 how to manage whether Hyperbole overrides local, mode-specific key
 bindings that hide global Hyperbole keys.
 
 @menu
 * Binding Minibuffer Menu Items::
-* Default Global Bindings::
+* Default Hyperbole Bindings::
 @end menu
 
-@node Binding Minibuffer Menu Items, Default Global Bindings, Global Key Bindings, Global Key Bindings
+@node Binding Minibuffer Menu Items, Default Hyperbole Bindings, Hyperbole Key Bindings, Hyperbole Key Bindings
 @section Binding Minibuffer Menu Items
 
 @cindex binding keys
@@ -7389,15 +7388,15 @@ key sequence you want to use to activate the menu item.  Immediately
 after it will display the Hyperbole top-level minibuffer menu.  Simply
 select the item you want to bind to your key.
 
-@node Default Global Bindings,  , Binding Minibuffer Menu Items, Global Key Bindings
-@section Default Global Bindings
+@node Default Hyperbole Bindings,  , Binding Minibuffer Menu Items, Hyperbole Key Bindings
+@section Default Hyperbole Bindings
 
-Hyperbole's default global key bindings can be viewed and edited from
+Hyperbole's default key bindings can be viewed and edited from
 either the Cust/KeyBindings minibuffer menu or from the Hyperbole
 menubar menu as shown here:
 
 @float Image,image:Change-Key-Bindings
-@caption{Global Key Bindings Menu}
+@caption{Hyperbole Key Bindings Menu}
 @image{im/menu-key-bindings,6in,,Change Key Bindings}
 @end float
 @sp 1
@@ -7484,15 +7483,16 @@ Thing Selection}, for more information.
 @end table
 
 @vindex hkey-init
-@cindex disable global key bindings
+@cindex disable hyperbole key bindings
 The variable, @code{hkey-init}, controls whether or not any Hyperbole
-global key bindings are made.  It is set to @samp{t} (true) by default in
-@file{hyperbole.el}.  This setting means all Hyperbole key bindings will
-be initialized when Hyperbole is loaded.  If you want to disable these
-bindings permanently, simply add @code{(setq hkey-init nil)} to
-your @file{~/.emacs} file prior to the point at which you load Hyperbole
-and restart Emacs.  Then you will have to choose the Hyperbole commands
-that you want to use and bind those to keys.
+key bindings are made when @code{hyperbole-mode} is active.  It is set
+to @samp{t} (true) by default in @file{hyperbole.el}.  This setting
+means all Hyperbole key bindings will be initialized when Hyperbole is
+loaded.  If you want to disable these bindings permanently, simply add
+@code{(setq hkey-init nil)} to your @file{~/.emacs} file prior to the
+point at which you load Hyperbole and restart Emacs.  Then you will
+have to choose the Hyperbole commands that you want to use and bind
+those to keys.
 
 @vindex file, .emacs
 @findex hyperbole-toggle-bindings
@@ -7527,21 +7527,7 @@ within your personal @file{~/.emacs} file.  For example, @code{(add-hook
 'hyperbole-init-hook (lambda () (global-set-key "\C-ct"
 'hmouse-toggle-bindings)))}.
 
-@vindex hkey-init-override-local-keys
-@cindex overriding local keys
-@cindex disable local key override
-Major mode-specific keys take precedence over global key bindings.  In
-some cases, a major mode will unknowingly override some of the global
-Hyperbole keys, preventing you from using them in that mode.  By
-default, Hyperbole automatically prevents this by checking each time a
-major mode is invoked and unbinding any mode-specific keys that
-interfere with global Hyperbole keys.  If you prefer that this not
-happen permanently, use @bkbd{M-x customize-variable @key{RET}
-hkey-init-override-local-keys @key{RET}}.  Press the Toggle button to
-change the value to @code{nil}.  Then press the ``Apply and Save''
-button.
-
-@node Koutliner Keys, Smart Key Reference, Global Key Bindings, Top
+@node Koutliner Keys, Smart Key Reference, Hyperbole Key Bindings, Top
 @appendix Koutliner Keys
 
 @cindex outliner keys

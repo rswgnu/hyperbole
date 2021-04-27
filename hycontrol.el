@@ -870,9 +870,9 @@ instead of quitting HyControl."
 	   (eq (local-key-binding "q") #'quit-window))
       (call-interactively #'quit-window)
     (when hycontrol-windows-mode
-      (message "Finished controlling windows"))
+      (message "Hyperbole finished controlling windows"))
     (when hycontrol-frames-mode
-      (message "Finished controlling frames"))
+      (message "Hyperbole finished controlling frames"))
     (hycontrol-disable-modes)))
 
 ;;;###autoload

@@ -99,7 +99,7 @@ Call (hproperty:set-item-highlight <color>) to change value."
   "Add between START and END a button using FACE in current buffer.
 If `hproperty:but-emphasize-flag' is non-nil when this is called, emphasize
 that button is selectable whenever the mouse cursor moves over it."
-  (let ((but (make-overlay start end)))
+  (let ((but (make-overlay start end nil t)))
     (overlay-put but 'face face)
     (when hproperty:but-emphasize-flag (overlay-put but 'mouse-face 'highlight))))
 

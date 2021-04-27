@@ -5,7 +5,7 @@
 ;; Author:           Bob Weiner
 ;; Maintainer:       Bob Weiner <rsw@gnu.org>, Mats Lidell <matsl@gnu.org>
 ;; Created:          06-Oct-92 at 11:52:51
-;; Released:         21-Mar-21
+;; Released:         27-Apr-21
 ;; Version:          7.1.4pre
 ;; Keywords:         comm, convenience, files, frames, hypermedia, languages, mail, matching, mouse, multimedia, outlines, tools, wp
 ;; Package:          hyperbole
@@ -146,11 +146,6 @@ context (wherever point is).  {C-u \\[hkey-help]} shows what the Assist Key will
   :type 'boolean
   :group 'hyperbole-keys)
 
-(defcustom hkey-init-override-local-keys t
-  "*If set together with `hkey-init', remove any local key bindings that hide the Hyperbole Smart Keys."
-  :type 'boolean
-  :group 'hyperbole-keys)
-
 ;;; ************************************************************************
 ;;; Public key bindings
 ;;; ************************************************************************
@@ -207,28 +202,38 @@ which prevents automatic removal of any local bindings to the same key."
 (defvar hmouse-middle-flag)
 (defvar hmouse-bindings-flag)
 (defvar hyperb:user-email)
+(defvar hyperbole-help-map (make-sparse-keymap)
+  "Help-map keys available only when Hyperbole minor mode is enabled.")
 
 (defun hkey-initialize ()
   "If `hkey-init' is non-nil, initialize Hyperbole key bindings."
   (when hkey-init
     ;;
-    ;; Binds the Action Key to {M-RET} and the Assist Key to {C-u M-RET}
-    ;; and loads the Hyperbole mouse key bindings.
-    (unless (where-is-internal 'hkey-either)
-      (hkey-global-set-key "\M-\C-m" 'hkey-either))
-    ;;
-    ;; Typically bind the key, {C-h A}, for Action Key help and {C-u C-h A} for Assist key
-    ;; help.
-    (or (where-is-internal 'hkey-help)
-	(hkey-global-set-key [help ?A] 'hkey-help))
-    ;;
     ;; Setup so Hyperbole menus can be accessed from a key.  If not
-    ;; already bound to a key, this typically binds the command `hyperbole' to {C-h h}.
-    (or (where-is-internal 'hyperbole)
+    ;; already bound to a key, this typically binds the command `hyperbole'
+    ;; globally to {C-h h} and activates Hyperbole minor mode.
+    (or (where-is-internal #'hyperbole)
 	;; In GNU Emacs, this binding replaces a command that shows
 	;; the word hello in foreign languages; this binding makes this
 	;; key much more useful.
-	(hkey-global-set-key [help ?h] 'hyperbole))
+	(global-set-key (vector help-char ?h) #'hyperbole))
+    ;;
+    ;; Define help prefix key in this keymap.
+    (set-keymap-parent hyperbole-help-map help-map)
+    (hkey-set-key (vector help-char) hyperbole-help-map)
+    ;;
+    ;; Binds the Action Key to {M-RET} and the Assist Key to {C-u M-RET}
+    ;; and loads the Hyperbole mouse key bindings.
+    (unless (where-is-internal #'hkey-either)
+      ;; Need to map all these variants to ensure can override
+      ;; org-meta-return in Org mode when desired.
+      (mapc (lambda (key) (hkey-set-key (kbd key) #'hkey-either))
+	    '("\M-\C-m" "M-<return>" "M-RET" "ESC <return>" "ESC RET")))
+    ;;
+    ;; Typically bind the key, {C-h A}, for Action Key help and {C-u C-h A} for Assist key
+    ;; help.
+    (or (where-is-internal #'hkey-help)
+	(hkey-help-set-key "A" #'hkey-help))
     ;;
     ;; Provides a site standard way of emulating most Hyperbole mouse drag
     ;; commands from the keyboard.  This is most useful for rapidly creating
@@ -239,34 +244,34 @@ which prevents automatic removal of any local bindings to the same key."
 	  ;; Override facemenu package that adds a keymap on M-o,
 	  ;; since this binding is more important to Hyperbole
 	  ;; users.
-	  (hkey-global-set-key "\M-o" 'hkey-operate)
-	(hkey-maybe-global-set-key "\M-o" 'hkey-operate)))
+	  (hkey-set-key "\M-o" #'hkey-operate)
+	(hkey-maybe-set-key "\M-o" #'hkey-operate)))
     ;;
     ;; Binds {C-c @} to create a user-specified sized grid of windows
     ;; displaying different buffers.
     ;;
-    ;; Don't override prior global bindings of this key.
-    (hkey-maybe-global-set-key "\C-c@" 'hycontrol-windows-grid t)
+    ;; Don't override prior bindings of this key.
+    (hkey-maybe-set-key "\C-c@" #'hycontrol-windows-grid)
     ;;
     ;; Explicit button renames without invoking the Hyperbole menu.
     ;; No binding by default.
-    ;; Don't override prior global bindings of this key.
-    ;; (hkey-maybe-global-set-key "\C-cr" 'hui:ebut-rename t)
+    ;; Don't override prior bindings of this key.
+    ;; (hkey-maybe-set-key "\C-cr" #'hui:ebut-rename)
     ;;
-    ;; Binds {C-c RET} to select larger and larger synctactical units in a
+    ;; Binds {C-c RET} to select larger and larger syntactical units in a
     ;; buffer when invoked repeatedly, showing in the minibuffer the type
     ;; of unit selected each time.
-    (hkey-maybe-global-set-key "\C-c\C-m" 'hui-select-thing)
+    (hkey-maybe-set-key "\C-c\C-m" #'hui-select-thing)
     ;;
     ;; Binds {C-c \} to interactively manage windows and frames.
-    (hkey-maybe-global-set-key "\C-c\\" 'hycontrol-enable-windows-mode)
+    (hkey-maybe-set-key "\C-c\\" #'hycontrol-enable-windows-mode)
     ;;
     ;; Binds {C-c /} to display the Hyperbole Find/Web search menu.
-    (hkey-maybe-global-set-key "\C-c/" 'hui-search-web)
+    (hkey-maybe-set-key "\C-c/" #'hui-search-web)
     ;;
-    ;; Binds {C-c .} to jump between the start and end of an delimited thing.
-    ;; Don't override prior global bindings of this key.
-    (hkey-maybe-global-set-key "\C-c." 'hui-select-goto-matching-delimiter t)
+    ;; Binds {C-c .} to jump between the start and end of a delimited thing.
+    ;; Don't override prior bindings of this key.
+    (hkey-maybe-set-key "\C-c." #'hui-select-goto-matching-delimiter)
     ;;
     ;; This initializes the Smart Mouse Key bindings.  Shifted mouse buttons
     ;; are always set up.  Under InfoDock or with `hmouse-middle-flag'
@@ -351,71 +356,6 @@ frame, those functions by default still return the prior frame."
      (let ((info-dir (expand-file-name "man/" hyperb:dir)))
        (if (file-exists-p info-dir)
 	   (add-to-list 'Info-directory-list info-dir)))))
-
-;;; ************************************************************************
-;;; Prevent local key maps from hiding/overriding the Action and Assist Keys
-;;; ************************************************************************
-
-;; (defun hkey-read-only-bindings ()
-;;   "Binds Action and Assist Key functions in many read-only modes to the key sequence value of `action-key-read-only'.
-;; Does nothing if this variable is nil."
-;;   (and action-key-read-only
-;;        (mapcar
-;; 	(lambda (keymap-sym)
-;; 	    (if (and (boundp keymap-sym) (keymapp keymap-sym))
-;; 		(define-key (symbol-value keymap-sym) action-key-read-only #'action-key)))
-;; 	'(Buffer-menu-mode-map calendar-mode-map dired-mode-map gnus-group-mode-map
-;;           gnus-summary-mode-map Info-mode-map oo-browse-mode-map rmail-mode-map
-;; 	  rmail-summary-mode-map unix-apropos-map))))
-
-;;
-;; Overriding of local key bindings that interfere with global
-;; bindings from Hyperbole.  See `hyperb:init' for the hook that calls
-;; these functions.
-;;
-(defun hkey-override-local-bindings ()
-  "If `hkey-init-override-local-keys' and `hkey-init' are t, override a local key binding that hides the global Hyperbole Smart Keys, by removing it."
-  (interactive)
-  (when hkey-init
-    ;; Do read-only bindings here, even though this will run
-    ;; many times, since each key map exists only after
-    ;; its major mode is first used or loaded.
-    ;; (hkey-read-only-bindings)
-    (if hkey-init-override-local-keys
-	(let (hkey
-	      binding)
-	  (mapc (lambda (descrip-key-cmd)
-		  (and (setq hkey (cadr descrip-key-cmd))
-		       ;; To see the key name, use: (key-description hkey)
-		       (setq binding (local-key-binding hkey))
-		       ;; A number indicates an invalid key prefix, so
-		       ;; there is not actually a local binding for
-		       ;; this key sequence.
-		       (not (numberp binding))
-		       (local-unset-key hkey)))
-		hkey-previous-bindings)))))
-
-(defun hkey-install-override-local-bindings ()
-  ;; Run after any major-mode change within any buffer.
-  (add-hook 'change-major-mode-after-body-hook #'hkey-override-local-bindings)
-  ;; Need to override bindings in any buffers that exist already if
-  ;; overriding is enabled.
-  (and hkey-init hkey-init-override-local-keys
-       (mapc (lambda (buf) (with-current-buffer buf
-			     (hkey-override-local-bindings)))
-	     (buffer-list))))
-
-(defun hkey-toggle-override-local-bindings (&optional arg)
-  "Toggle whether conflicting local key bindings are overridden by Hyperbole.
-With optional ARG, override them iff ARG is positive."
-  (interactive "P")
-  (if (or (and arg (<= (prefix-numeric-value arg) 0))
-	  (and (not (and arg (> (prefix-numeric-value arg) 0)))
-	       hkey-init-override-local-keys))
-      (progn (setq hkey-init-override-local-keys nil)
-	     (message "Local key bindings that conflict with Hyperbole will be left in place."))
-    (setq hkey-init-override-local-keys t)
-    (message "Local key bindings that conflict with Hyperbole will be removed.")))
 
 ;;; ************************************************************************
 ;;; Display Hooks
@@ -638,8 +578,10 @@ If FLAG is nil then text is shown, while if FLAG is t the text is hidden."
 ;;; Load Site-specific Configurations and Initialize Hyperbole Package
 ;;; ************************************************************************
 
+(defconst hyperb:cygdrive '("\\`/cygdrive/" . "/"))
+
 (defun hyperb:init ()
-  "Standard configuration routine for Hyperbole."
+  "Initialize standard Hyperbole configuration."
   (interactive)
   (message "Initializing Hyperbole...")
   ;;
@@ -666,7 +608,7 @@ If FLAG is nil then text is shown, while if FLAG is t the text is hidden."
   ;;
   ;; Abbreviate MSWindows /cygdrive mount point paths.
   (when (file-exists-p "/cygdrive")
-    (add-to-list 'directory-abbrev-alist '("\\`/cygdrive/" . "/")))
+    (add-to-list 'directory-abbrev-alist hyperb:cygdrive))
   ;; When running under a POSIX system with possible access to MSWindows servers,
   ;; cache valid MSWindows mount points.
   (hpath:cache-mswindows-mount-points)
@@ -680,20 +622,19 @@ If FLAG is nil then text is shown, while if FLAG is t the text is hidden."
   ;;
   (hyperb:init-menubar)
   ;;
-  ;; This installs a hook that removes any local key bindings which
-  ;; hide the global Action Key, if `hkey-init' and
-  ;; `hkey-init-override-local-keys' are t.  Typically, the Action Key
-  ;; will be much more useful than the local key anyway.  Setting
-  ;; `hkey-init-override-local-keys' to nil at any time, will prevent
-  ;; removal of further local bindings.
-  (if (featurep 'hyperbole)
-      (hkey-install-override-local-bindings)
-    (eval-after-load 'hyperbole
-      '(hkey-install-override-local-bindings)))
-  ;;
   ;; Hyperbole initialization is complete.
   (message "Initializing Hyperbole...done")
-  (message "Hyperbole %s is ready for action." hyperb:version))
+  (message "Hyperbole mode enabled"))
+
+(defun hyperb:uninit ()
+  "Remove standard Hyperbole initializations/hooks."
+  (setq directory-abbrev-alist (remq hyperb:cygdrive
+				     directory-abbrev-alist)
+	hpath:posix-mount-point-to-mswindows-alist nil)
+  (remove-hook (if (boundp 'write-file-functions)
+		'write-file-functions
+	      'write-file-hooks)
+	    #'hattr:save))
 
 (defun hyperb:autoloads-exist-p ()
   "Return t if all Hyperbole autoload files exist or nil otherwise."
@@ -721,6 +662,24 @@ This is used only when running from git source and not a package release."
 ;; This call loads the rest of the Hyperbole system.
 (require 'hinit)
 
+(defun hkey-set-key (key command)
+  "Define a Hyperbole global minor mode KEY bound to COMMAND."
+  (define-key hyperbole-mode-map key command))
+
+(defun hkey-maybe-set-key (key command)
+  "Define a Hyperbole global minor mode KEY bound to COMMAND only if not bound in current keymaps."
+  (or (key-binding key)
+      (where-is-internal command)
+      (hkey-set-key key command)))
+
+(defun hkey-help-set-key (key command)
+  "Define a Hyperbole minor mode help-map KEY bound to COMMAND."
+  (define-key hyperbole-help-map key command))
+
+(defvar hyperbole-mode-map (make-sparse-keymap)
+  "Keymap for the GNU Hyperbole global minor mode.
+See `hkey-initialize'.")
+
 (defcustom hyperbole-mode-lighter " Hypb"
   "Text to display in the minor-mode area of the modeline when the Hyperbole global minor mode is active."
   :type 'string
@@ -728,19 +687,41 @@ This is used only when running from git source and not a package release."
 
 ;;;###autoload
 (define-minor-mode hyperbole-mode
-  "The Everyday Hypertextual Information Manager global minor mode."
+  "Toggle the Everyday Hypertextual Information Manager global minor mode (Hyperbole mode).
+
+When Hyperbole mode is enabled, the `hyperbole-mode' variable
+is non-nil.
+
+Invoke the Hyperbole minibuffer menu with \\[hyperbole].  See the
+documentation at \"(hyperbole)Top\".
+
+\\{hyperbole-mode-map}"
   :global t
+  :keymap hyperbole-mode-map
   :lighter hyperbole-mode-lighter
   (if hyperbole-mode
+      ;; activate
       (if after-init-time
           ;; This call initializes Hyperbole key bindings and hooks.
           (hyperb:init)
         ;; Initialize after other key bindings are loaded at startup.
         (add-hook 'after-init-hook #'hyperb:init t))
-    ;; !! FIXME: hyperb:uninit? - write this
-    (remove-hook 'after-init-hook #'hyperb:init)))
+    ;; deactivate
+    ;; Delete Hyperbole menu from all menubars.
+    (hui-menu-remove Hyperbole)
+    ;;
+    ;; Remove Hyperbole button comment from future outgoing mail.
+    (when (boundp 'smail:comment) (setq smail:comment nil))
+    (remove-hook 'after-init-hook #'hyperb:init)
+    (hyperb:uninit)))
 
-;; !! FIXME: Loading a file should not change Emacs's behavior.
+;; The keymaps in `emulation-mode-map-alists' take precedence over
+;; `minor-mode-map-alist'
+(add-to-list 'emulation-mode-map-alists `((hyperbole-mode . ,hyperbole-mode-map)))
+
+;; !! FIXME: Loading a file should not change Emacs's behavior but we
+;; need this here for awhile until can ensure Hyperbole users know to
+;; add this to their Emacs init files.
 (hyperbole-mode 1)
 
 (makunbound 'hyperbole-loading)

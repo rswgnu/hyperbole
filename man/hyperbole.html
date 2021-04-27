@@ -1,7 +1,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <!-- This manual is for GNU Hyperbole
-(Edition 7.1.4, Published March, 2021).
+(Edition 7.1.4, Published April, 2021).
 
 Copyright (C) 1989-2021  Free Software Foundation, Inc.
 
@@ -91,7 +91,7 @@ ul.no-bullet {list-style: none}
 <li><a id="stoc-Developing-with-Hyperbole-1" href="#toc-Developing-with-Hyperbole-1">9 Developing with Hyperbole</a></li>
 <li><a id="stoc-Glossary-1" href="#toc-Glossary-1">Appendix A Glossary</a></li>
 <li><a id="stoc-Setup-1" href="#toc-Setup-1">Appendix B Setup</a></li>
-<li><a id="stoc-Global-Key-Bindings-1" href="#toc-Global-Key-Bindings-1">Appendix C Global Key Bindings</a></li>
+<li><a id="stoc-Hyperbole-Key-Bindings-1" href="#toc-Hyperbole-Key-Bindings-1">Appendix C Hyperbole Key Bindings</a></li>
 <li><a id="stoc-Koutliner-Keys-1" href="#toc-Koutliner-Keys-1">Appendix D Koutliner Keys</a></li>
 <li><a id="stoc-Smart-Key-Reference-1" href="#toc-Smart-Key-Reference-1">Appendix E Smart Key Reference</a></li>
 <li><a id="stoc-Suggestion-or-Bug-Reporting-1" href="#toc-Suggestion-or-Bug-Reporting-1">Appendix F Suggestion or Bug Reporting</a></li>
@@ -245,10 +245,10 @@ ul.no-bullet {list-style: none}
     <li><a id="toc-Configuring-Button-Colors" href="#Button-Colors">B.3.8 Configuring Button Colors</a></li>
   </ul></li>
 </ul></li>
-<li><a id="toc-Global-Key-Bindings-1" href="#Global-Key-Bindings">Appendix C Global Key Bindings</a>
+<li><a id="toc-Hyperbole-Key-Bindings-1" href="#Hyperbole-Key-Bindings">Appendix C Hyperbole Key Bindings</a>
 <ul class="no-bullet">
   <li><a id="toc-Binding-Minibuffer-Menu-Items-1" href="#Binding-Minibuffer-Menu-Items">C.1 Binding Minibuffer Menu Items</a></li>
-  <li><a id="toc-Default-Global-Bindings-1" href="#Default-Global-Bindings">C.2 Default Global Bindings</a></li>
+  <li><a id="toc-Default-Hyperbole-Bindings-1" href="#Default-Hyperbole-Bindings">C.2 Default Hyperbole Bindings</a></li>
 </ul></li>
 <li><a id="toc-Koutliner-Keys-1" href="#Koutliner-Keys">Appendix D Koutliner Keys</a></li>
 <li><a id="toc-Smart-Key-Reference-1" href="#Smart-Key-Reference">Appendix E Smart Key Reference</a>
@@ -353,7 +353,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</P>
 
 <PRE>
 Edition 7.1.4
-Printed March 21, 2021.
+Printed April 27, 2021.
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -426,7 +426,7 @@ years.  The Koutliner is dedicated to my lovely wife, Kathy.
 </td></tr>
 <tr><td align="left" valign="top">&bull; <a href="#Setup">Setup</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
 </td></tr>
-<tr><td align="left" valign="top">&bull; <a href="#Global-Key-Bindings">Global Key Bindings</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+<tr><td align="left" valign="top">&bull; <a href="#Hyperbole-Key-Bindings">Hyperbole Key Bindings</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
 </td></tr>
 <tr><td align="left" valign="top">&bull; <a href="#Koutliner-Keys">Koutliner Keys</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
 </td></tr>
@@ -696,11 +696,11 @@ Customization
 </td></tr>
 <tr><th colspan="3" align="left" valign="top"><pre class="menu-comment">
 
-Global Key Bindings
+Hyperbole Key Bindings
 
 </pre></th></tr><tr><td align="left" valign="top">&bull; <a href="#Binding-Minibuffer-Menu-Items">Binding Minibuffer Menu Items</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
 </td></tr>
-<tr><td align="left" valign="top">&bull; <a href="#Default-Global-Bindings">Default Global Bindings</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+<tr><td align="left" valign="top">&bull; <a href="#Default-Hyperbole-Bindings">Default Hyperbole Bindings</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
 </td></tr>
 <tr><th colspan="3" align="left" valign="top"><pre class="menu-comment">
 
@@ -4130,9 +4130,8 @@ See <a href="#Customization">Customization</a>.
 keyboard key that Hyperbole binds for its commands, notably the Action
 Key.  See <a href="#Smart-Key-Bindings">Smart Key Bindings</a>, for more information.
 </p>
-<p>See <a href="#Global-Key-Bindings">Global Key Bindings</a>, for complete descriptions of Hyperbole&rsquo;s
-global key bindings, how to temporarily disable them and how to manage
-its overriding of local bindings that hide global Hyperbole keys.
+<p>See <a href="#Hyperbole-Key-Bindings">Hyperbole Key Bindings</a>, for complete descriptions of Hyperbole&rsquo;s
+key bindings and how to manage them.
 </p>
 <span id="index-menu_002c-Explicit_002dButton"></span>
 <span id="index-menu_002c-EBut"></span>
@@ -8051,7 +8050,7 @@ specifiable filters.
 <hr>
 <span id="Setup"></span><div class="header">
 <p>
-Next: <a href="#Global-Key-Bindings" accesskey="n" rel="next">Global Key Bindings</a>, Previous: <a href="#Glossary" accesskey="p" rel="prev">Glossary</a>, Up: <a href="#Top" accesskey="u" rel="up">Top</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Key-Index" title="Index" rel="index">Index</a>]</p>
+Next: <a href="#Hyperbole-Key-Bindings" accesskey="n" rel="next">Hyperbole Key Bindings</a>, Previous: <a href="#Glossary" accesskey="p" rel="prev">Glossary</a>, Up: <a href="#Top" accesskey="u" rel="up">Top</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Key-Index" title="Index" rel="index">Index</a>]</p>
 </div>
 <span id="Setup-1"></span><h2 class="appendix">Appendix B Setup</h2>
 
@@ -8615,16 +8614,16 @@ addition to any non-mouse-sensitive button highlighting.
 </p>
 
 <hr>
-<span id="Global-Key-Bindings"></span><div class="header">
+<span id="Hyperbole-Key-Bindings"></span><div class="header">
 <p>
 Next: <a href="#Koutliner-Keys" accesskey="n" rel="next">Koutliner Keys</a>, Previous: <a href="#Setup" accesskey="p" rel="prev">Setup</a>, Up: <a href="#Top" accesskey="u" rel="up">Top</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Key-Index" title="Index" rel="index">Index</a>]</p>
 </div>
-<span id="Global-Key-Bindings-1"></span><h2 class="appendix">Appendix C Global Key Bindings</h2>
+<span id="Hyperbole-Key-Bindings-1"></span><h2 class="appendix">Appendix C Hyperbole Key Bindings</h2>
 
 <span id="index-key-binding-list"></span>
 <p>This appendix covers two topics: 1. how to bind Hyperbole minibuffer
 menu items to global keys and 2. summaries of all of Hyperbole&rsquo;s
-global key bindings and whether each overrides any existing binding or
+key bindings and whether each overrides any existing binding or
 not.  It also describes how to temporarily disable these bindings and
 how to manage whether Hyperbole overrides local, mode-specific key
 bindings that hide global Hyperbole keys.
@@ -8632,14 +8631,14 @@ bindings that hide global Hyperbole keys.
 <table class="menu" border="0" cellspacing="0">
 <tr><td align="left" valign="top">&bull; <a href="#Binding-Minibuffer-Menu-Items" accesskey="1">Binding Minibuffer Menu Items</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
 </td></tr>
-<tr><td align="left" valign="top">&bull; <a href="#Default-Global-Bindings" accesskey="2">Default Global Bindings</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+<tr><td align="left" valign="top">&bull; <a href="#Default-Hyperbole-Bindings" accesskey="2">Default Hyperbole Bindings</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
 </td></tr>
 </table>
 
 <hr>
 <span id="Binding-Minibuffer-Menu-Items"></span><div class="header">
 <p>
-Next: <a href="#Default-Global-Bindings" accesskey="n" rel="next">Default Global Bindings</a>, Previous: <a href="#Global-Key-Bindings" accesskey="p" rel="prev">Global Key Bindings</a>, Up: <a href="#Global-Key-Bindings" accesskey="u" rel="up">Global Key Bindings</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Key-Index" title="Index" rel="index">Index</a>]</p>
+Next: <a href="#Default-Hyperbole-Bindings" accesskey="n" rel="next">Default Hyperbole Bindings</a>, Previous: <a href="#Hyperbole-Key-Bindings" accesskey="p" rel="prev">Hyperbole Key Bindings</a>, Up: <a href="#Hyperbole-Key-Bindings" accesskey="u" rel="up">Hyperbole Key Bindings</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Key-Index" title="Index" rel="index">Index</a>]</p>
 </div>
 <span id="Binding-Minibuffer-Menu-Items-1"></span><h3 class="section">C.1 Binding Minibuffer Menu Items</h3>
 
@@ -8653,20 +8652,20 @@ after it will display the Hyperbole top-level minibuffer menu.  Simply
 select the item you want to bind to your key.
 </p>
 <hr>
-<span id="Default-Global-Bindings"></span><div class="header">
+<span id="Default-Hyperbole-Bindings"></span><div class="header">
 <p>
-Previous: <a href="#Binding-Minibuffer-Menu-Items" accesskey="p" rel="prev">Binding Minibuffer Menu Items</a>, Up: <a href="#Global-Key-Bindings" accesskey="u" rel="up">Global Key Bindings</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Key-Index" title="Index" rel="index">Index</a>]</p>
+Previous: <a href="#Binding-Minibuffer-Menu-Items" accesskey="p" rel="prev">Binding Minibuffer Menu Items</a>, Up: <a href="#Hyperbole-Key-Bindings" accesskey="u" rel="up">Hyperbole Key Bindings</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Key-Index" title="Index" rel="index">Index</a>]</p>
 </div>
-<span id="Default-Global-Bindings-1"></span><h3 class="section">C.2 Default Global Bindings</h3>
+<span id="Default-Hyperbole-Bindings-1"></span><h3 class="section">C.2 Default Hyperbole Bindings</h3>
 
-<p>Hyperbole&rsquo;s default global key bindings can be viewed and edited from
+<p>Hyperbole&rsquo;s default key bindings can be viewed and edited from
 either the Cust/KeyBindings minibuffer menu or from the Hyperbole
 menubar menu as shown here:
 </p>
 <div class="float"><span id="image_003aChange_002dKey_002dBindings"></span>
 
 <img src="im/menu-key-bindings.png" alt="Change Key Bindings">
-<div class="float-caption"><p><strong>Image C.1: </strong>Global Key Bindings Menu</p></div></div><br>
+<div class="float-caption"><p><strong>Image C.1: </strong>Hyperbole Key Bindings Menu</p></div></div><br>
 
 <p>Below are descriptions of Hyperbole&rsquo;s default keyboard key bindings:
 </p>
@@ -8771,15 +8770,16 @@ the key is not bound prior to loading Hyperbole.  See <a href="#Smart-Key-Thing-
 </dl>
 
 <span id="index-hkey_002dinit"></span>
-<span id="index-disable-global-key-bindings"></span>
+<span id="index-disable-hyperbole-key-bindings"></span>
 <p>The variable, <code>hkey-init</code>, controls whether or not any Hyperbole
-global key bindings are made.  It is set to &lsquo;<samp>t</samp>&rsquo; (true) by default in
-<samp>hyperbole.el</samp>.  This setting means all Hyperbole key bindings will
-be initialized when Hyperbole is loaded.  If you want to disable these
-bindings permanently, simply add <code>(setq hkey-init nil)</code> to
-your <samp>~/.emacs</samp> file prior to the point at which you load Hyperbole
-and restart Emacs.  Then you will have to choose the Hyperbole commands
-that you want to use and bind those to keys.
+key bindings are made when <code>hyperbole-mode</code> is active.  It is set
+to &lsquo;<samp>t</samp>&rsquo; (true) by default in <samp>hyperbole.el</samp>.  This setting
+means all Hyperbole key bindings will be initialized when Hyperbole is
+loaded.  If you want to disable these bindings permanently, simply add
+<code>(setq hkey-init nil)</code> to your <samp>~/.emacs</samp> file prior to the
+point at which you load Hyperbole and restart Emacs.  Then you will
+have to choose the Hyperbole commands that you want to use and bind
+those to keys.
 </p>
 <span id="index-file_002c-_002eemacs-4"></span>
 <span id="index-hyperbole_002dtoggle_002dbindings-1"></span>
@@ -8814,24 +8814,10 @@ within your personal <samp>~/.emacs</samp> file.  For example, <code>(add-hook
 'hyperbole-init-hook (lambda () (global-set-key &quot;\C-ct&quot;
 'hmouse-toggle-bindings)))</code>.
 </p>
-<span id="index-hkey_002dinit_002doverride_002dlocal_002dkeys"></span>
-<span id="index-overriding-local-keys"></span>
-<span id="index-disable-local-key-override"></span>
-<p>Major mode-specific keys take precedence over global key bindings.  In
-some cases, a major mode will unknowingly override some of the global
-Hyperbole keys, preventing you from using them in that mode.  By
-default, Hyperbole automatically prevents this by checking each time a
-major mode is invoked and unbinding any mode-specific keys that
-interfere with global Hyperbole keys.  If you prefer that this not
-happen permanently, use <kbd>{M-x customize-variable <span class="key">RET</span>
-hkey-init-override-local-keys <span class="key">RET</span>}</kbd>.  Press the Toggle button to
-change the value to <code>nil</code>.  Then press the &ldquo;Apply and Save&rdquo;
-button.
-</p>
 <hr>
 <span id="Koutliner-Keys"></span><div class="header">
 <p>
-Next: <a href="#Smart-Key-Reference" accesskey="n" rel="next">Smart Key Reference</a>, Previous: <a href="#Global-Key-Bindings" accesskey="p" rel="prev">Global Key Bindings</a>, Up: <a href="#Top" accesskey="u" rel="up">Top</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Key-Index" title="Index" rel="index">Index</a>]</p>
+Next: <a href="#Smart-Key-Reference" accesskey="n" rel="next">Smart Key Reference</a>, Previous: <a href="#Hyperbole-Key-Bindings" accesskey="p" rel="prev">Hyperbole Key Bindings</a>, Up: <a href="#Top" accesskey="u" rel="up">Top</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Key-Index" title="Index" rel="index">Index</a>]</p>
 </div>
 <span id="Koutliner-Keys-1"></span><h2 class="appendix">Appendix D Koutliner Keys</h2>
 
@@ -11938,15 +11924,15 @@ Next: <a href="#Function" accesskey="n" rel="next">Function</a>, Previous: <a hr
 <tr><td></td><td valign="top"><a href="#index-C_002dc-_002c"><code>C-c ,</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Moving-Around">Moving Around</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-C_002dc-_002e"><code>C-c .</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Key-Thing-Selection">Smart Key Thing Selection</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-C_002dc-_002e-1"><code>C-c .</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Moving-Around">Moving Around</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-C_002dc-_002e-2"><code>C-c .</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Default-Global-Bindings">Default Global Bindings</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-C_002dc-_002e-2"><code>C-c .</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Default-Hyperbole-Bindings">Default Hyperbole Bindings</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-C_002dc-_002f"><code>C-c /</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Menus">Menus</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-C_002dc-_002f-1"><code>C-c /</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Default-Global-Bindings">Default Global Bindings</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-C_002dc-_002f-2"><code>C-c /</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Default-Global-Bindings">Default Global Bindings</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-C_002dc-_002f-1"><code>C-c /</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Default-Hyperbole-Bindings">Default Hyperbole Bindings</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-C_002dc-_002f-2"><code>C-c /</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Default-Hyperbole-Bindings">Default Hyperbole Bindings</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-C_002dc-_003c"><code>C-c &lt;</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Moving-Around">Moving Around</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-C_002dc-_003e"><code>C-c &gt;</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Moving-Around">Moving Around</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-C_002dc-_0040"><code>C-c @</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Relocating-and-Copying">Relocating and Copying</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-C_002dc-_0040-1"><code>C-c @</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Default-Global-Bindings">Default Global Bindings</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-C_002dc-_0040-2"><code>C-c @</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Default-Global-Bindings">Default Global Bindings</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-C_002dc-_0040-1"><code>C-c @</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Default-Hyperbole-Bindings">Default Hyperbole Bindings</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-C_002dc-_0040-2"><code>C-c @</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Default-Hyperbole-Bindings">Default Hyperbole Bindings</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-C_002dc-c"><code>C-c c</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Relocating-and-Copying">Relocating and Copying</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-C_002dc-C_002da"><code>C-c C-a</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Hiding-and-Showing">Hiding and Showing</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-C_002dc-C_002db"><code>C-c C-b</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Moving-Around">Moving Around</a></td></tr>
@@ -11964,20 +11950,20 @@ Next: <a href="#Function" accesskey="n" rel="next">Function</a>, Previous: <a hr
 <tr><td></td><td valign="top"><a href="#index-C_002dc-C_002du"><code>C-c C-u</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Moving-Around">Moving Around</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-C_002dc-C_002dy"><code>C-c C-y</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Buttons-in-Mail">Buttons in Mail</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-C_002dc-h"><code>C-c h</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Key-Bindings">Smart Key Bindings</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-C_002dc-h-1"><code>C-c h</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Default-Global-Bindings">Default Global Bindings</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-C_002dc-h-1"><code>C-c h</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Default-Hyperbole-Bindings">Default Hyperbole Bindings</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-C_002dc-m"><code>C-c m</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Relocating-and-Copying">Relocating and Copying</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-C_002dc-M_002dc"><code>C-c M-c</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Relocating-and-Copying">Relocating and Copying</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-C_002dc-RET"><code>C-c <span class="key">RET</span></code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Key-Thing-Selection">Smart Key Thing Selection</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-C_002dc-RET-1"><code>C-c <span class="key">RET</span></code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Default-Global-Bindings">Default Global Bindings</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-C_002dc-t"><code>C-c t</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Default-Global-Bindings">Default Global Bindings</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-C_002dc-RET-1"><code>C-c <span class="key">RET</span></code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Default-Hyperbole-Bindings">Default Hyperbole Bindings</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-C_002dc-t"><code>C-c t</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Default-Hyperbole-Bindings">Default Hyperbole Bindings</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-C_002dc-_005c"><code>C-c \</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyControl">HyControl</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-C_002dc-_005c-1"><code>C-c \</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Default-Global-Bindings">Default Global Bindings</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-C_002dc-_005c-1"><code>C-c \</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Default-Hyperbole-Bindings">Default Hyperbole Bindings</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-C_002dc-_005e"><code>C-c ^</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Moving-Around">Moving Around</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-C_002dg"><code>C-g</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Menus">Menus</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-C_002dh-A"><code>C-h A</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Key-Operations">Smart Key Operations</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-C_002dh-A-1"><code>C-h A</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Default-Global-Bindings">Default Global Bindings</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-C_002dh-A-1"><code>C-h A</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Default-Hyperbole-Bindings">Default Hyperbole Bindings</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-C_002dh-h"><code>C-h h</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Menus">Menus</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-C_002dh-h-1"><code>C-h h</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Default-Global-Bindings">Default Global Bindings</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-C_002dh-h-1"><code>C-h h</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Default-Hyperbole-Bindings">Default Hyperbole Bindings</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-C_002dh-h-c-a"><code>C-h h c a</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Customization">Customization</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-C_002dh-h-c-d"><code>C-h h c d</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Key-Debugging">Smart Key Debugging</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-C_002dh-h-c-r"><code>C-h h c r</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Internal-Viewers">Internal Viewers</a></td></tr>
@@ -11987,7 +11973,7 @@ Next: <a href="#Function" accesskey="n" rel="next">Function</a>, Previous: <a hr
 <tr><td></td><td valign="top"><a href="#index-C_002dh-h-d-d"><code>C-h h d d</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Hyperbole-Overview">Hyperbole Overview</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-C_002dh-h-d-i"><code>C-h h d i</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Invocation">Invocation</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-C_002dh-h-f-w"><code>C-h h f w</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Web-Search-Engines">Web Search Engines</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-C_002dh-h-f-w-1"><code>C-h h f w</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Default-Global-Bindings">Default Global Bindings</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-C_002dh-h-f-w-1"><code>C-h h f w</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Default-Hyperbole-Bindings">Default Hyperbole Bindings</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-C_002dh-h-g"><code>C-h h g</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Global-Buttons">Global Buttons</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-C_002dh-h-i-a"><code>C-h h i a</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-C_002dh-h-k-e"><code>C-h h k e</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Koutliner">Koutliner</a></td></tr>
@@ -12006,10 +11992,10 @@ Next: <a href="#Function" accesskey="n" rel="next">Function</a>, Previous: <a hr
 <tr><td></td><td valign="top"><a href="#index-C_002du-C_002dc-C_002dm"><code>C-u C-c C-m</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Relocating-and-Copying">Relocating and Copying</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-C_002du-C_002dc-m"><code>C-u C-c m</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Relocating-and-Copying">Relocating and Copying</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-C_002du-C_002dh-A"><code>C-u C-h A</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Key-Operations">Smart Key Operations</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-C_002du-C_002dh-A-1"><code>C-u C-h A</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Default-Global-Bindings">Default Global Bindings</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-C_002du-C_002dh-A-1"><code>C-u C-h A</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Default-Hyperbole-Bindings">Default Hyperbole Bindings</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-C_002du-M_002do"><code>C-u M-o</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Keyboard-Drags">Keyboard Drags</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-C_002du-M_002dRET"><code>C-u M-<span class="key">RET</span></code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Key-Bindings">Smart Key Bindings</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-C_002du-M_002dRET-1"><code>C-u M-<span class="key">RET</span></code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Default-Global-Bindings">Default Global Bindings</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-C_002du-M_002dRET-1"><code>C-u M-<span class="key">RET</span></code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Default-Hyperbole-Bindings">Default Hyperbole Bindings</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-C_002dx-_0024"><code>C-x $</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Hiding-and-Showing">Hiding and Showing</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-C_002dx-_002b"><code>C-x +</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Creating-and-Deleting-Windows">Creating and Deleting Windows</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-C_002dx-C_002de"><code>C-x C-e</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Creating-Types">Creating Types</a></td></tr>
@@ -12093,7 +12079,7 @@ Next: <a href="#Function" accesskey="n" rel="next">Function</a>, Previous: <a hr
 <tr><td></td><td valign="top"><a href="#index-M_002db"><code>M-b</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Menus">Menus</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-M_002df"><code>M-f</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Menus">Menus</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-M_002do"><code>M-o</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Keyboard-Drags">Keyboard Drags</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-M_002do-1"><code>M-o</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Default-Global-Bindings">Default Global Bindings</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-M_002do-1"><code>M-o</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Default-Hyperbole-Bindings">Default Hyperbole Bindings</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-M_002do-i-_003cwindow_002did_003e"><code>M-o i &lt;window-id&gt;</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Keyboard-Drags">Keyboard Drags</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-M_002do-m-_003cwindow_002did_003e"><code>M-o m &lt;window-id&gt;</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Keyboard-Drags">Keyboard Drags</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-M_002do-r-_003cwindow_002did_003e"><code>M-o r &lt;window-id&gt;</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Keyboard-Drags">Keyboard Drags</a></td></tr>
@@ -12101,7 +12087,7 @@ Next: <a href="#Function" accesskey="n" rel="next">Function</a>, Previous: <a hr
 <tr><td></td><td valign="top"><a href="#index-M_002do-w-_003cwindow_002did_003e"><code>M-o w &lt;window-id&gt;</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Keyboard-Drags">Keyboard Drags</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-M_002dRET"><code>M-<span class="key">RET</span></code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Key-Bindings">Smart Key Bindings</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-M_002dRET-1"><code>M-<span class="key">RET</span></code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-M_002dRET-2"><code>M-<span class="key">RET</span></code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Default-Global-Bindings">Default Global Bindings</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-M_002dRET-2"><code>M-<span class="key">RET</span></code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Default-Hyperbole-Bindings">Default Hyperbole Bindings</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-M_002dx-kotl_002dmode_003ashow_002dsubtree"><code>M-x kotl-mode:show-subtree</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Hiding-and-Showing">Hiding and Showing</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-middle-mouse-key-1"><code>middle mouse key</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Key-Bindings">Smart Key Bindings</a></td></tr>
 <tr><td colspan="4"> <hr></td></tr>
@@ -12457,8 +12443,8 @@ Next: <a href="#Concept-Index" accesskey="n" rel="next">Concept Index</a>, Previ
 <tr><td></td><td valign="top"><a href="#index-file_002c-_002eemacs-1">file, .emacs</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Renaming">Renaming</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-file_002c-_002eemacs-2">file, .emacs</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Buttons-in-Mail">Buttons in Mail</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-file_002c-_002eemacs-3">file, .emacs</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Autonumbering">Autonumbering</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-file_002c-_002eemacs-4">file, .emacs</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Default-Global-Bindings">Default Global Bindings</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-file_002c-_002eemacs-5">file, .emacs</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Default-Global-Bindings">Default Global Bindings</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-file_002c-_002eemacs-4">file, .emacs</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Default-Hyperbole-Bindings">Default Hyperbole Bindings</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-file_002c-_002eemacs-5">file, .emacs</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Default-Hyperbole-Bindings">Default Hyperbole Bindings</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-file_002c-_002ehypb">file, .hypb</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Explicit-Buttons">Explicit Buttons</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-file_002c-_002ekotl-suffix">file, .kotl suffix</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Creating-Outlines">Creating Outlines</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-file_002c-DEMO-1">file, DEMO</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Hyperbole-Overview">Hyperbole Overview</a></td></tr>
@@ -12522,8 +12508,7 @@ Next: <a href="#Concept-Index" accesskey="n" rel="next">Concept Index</a>, Previ
 <tr><td></td><td valign="top"><a href="#index-hkey_002dalist">hkey-alist</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Questions-and-Answers">Questions and Answers</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-hkey_002dalways_002ddisplay_002dmenu">hkey-always-display-menu</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Key-_002d-Smart-Menus">Smart Key - Smart Menus</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-hkey_002deither"><code>hkey-either</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Key-Bindings">Smart Key Bindings</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-hkey_002dinit">hkey-init</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Default-Global-Bindings">Default Global Bindings</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-hkey_002dinit_002doverride_002dlocal_002dkeys">hkey-init-override-local-keys</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Default-Global-Bindings">Default Global Bindings</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-hkey_002dinit">hkey-init</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Default-Hyperbole-Bindings">Default Hyperbole Bindings</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-hkey_002doperate"><code>hkey-operate</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Keyboard-Drags">Keyboard Drags</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-hkey_002dsummarize"><code>hkey-summarize</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Key-_002d-Default-Context">Smart Key - Default Context</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-hmail_003alister">hmail:lister</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Key-_002d-Email-Readers">Smart Key - Email Readers</a></td></tr>
@@ -12539,7 +12524,7 @@ Next: <a href="#Concept-Index" accesskey="n" rel="next">Concept Index</a>, Previ
 <tr><td></td><td valign="top"><a href="#index-hmouse_002dmiddle_002dflag-1">hmouse-middle-flag</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Key-Bindings">Smart Key Bindings</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-hmouse_002dsetup"><code>hmouse-setup</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Questions-and-Answers">Questions and Answers</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-hmouse_002dsetup-1"><code>hmouse-setup</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Questions-and-Answers">Questions and Answers</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-hmouse_002dtoggle_002dbindings"><code>hmouse-toggle-bindings</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Default-Global-Bindings">Default Global Bindings</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-hmouse_002dtoggle_002dbindings"><code>hmouse-toggle-bindings</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Default-Hyperbole-Bindings">Default Hyperbole Bindings</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-hmouse_002dx_002ddiagonal_002dsensitivity">hmouse-x-diagonal-sensitivity</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Mouse-Drags-within-a-Window">Smart Mouse Drags within a Window</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-hmouse_002dx_002ddrag_002dsensitivity">hmouse-x-drag-sensitivity</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Mouse-Drags-within-a-Window">Smart Mouse Drags within a Window</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-hmouse_002dy_002ddiagonal_002dsensitivity">hmouse-y-diagonal-sensitivity</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Mouse-Drags-within-a-Window">Smart Mouse Drags within a Window</a></td></tr>
@@ -12596,7 +12581,7 @@ Next: <a href="#Concept-Index" accesskey="n" rel="next">Concept Index</a>, Previ
 <tr><td></td><td valign="top"><a href="#index-hyperbole_002dpopup_002dmenu-1"><code>hyperbole-popup-menu</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Key-_002d-Default-Context">Smart Key - Default Context</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-hyperbole_002dset_002dkey"><code>hyperbole-set-key</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Binding-Minibuffer-Menu-Items">Binding Minibuffer Menu Items</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-hyperbole_002dtoggle_002dbindings"><code>hyperbole-toggle-bindings</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Key-Bindings">Smart Key Bindings</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-hyperbole_002dtoggle_002dbindings-1"><code>hyperbole-toggle-bindings</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Default-Global-Bindings">Default Global Bindings</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-hyperbole_002dtoggle_002dbindings-1"><code>hyperbole-toggle-bindings</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Default-Hyperbole-Bindings">Default Hyperbole Bindings</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-hyperbole_002dweb_002dsearch_002dalist">hyperbole-web-search-alist</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Web-Search-Engines">Web Search Engines</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-hyperbole_002dweb_002dsearch_002dbrowser_002dfunction">hyperbole-web-search-browser-function</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Menus">Menus</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-hyrolo_002dadd"><code>hyrolo-add</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyRolo-Menu">HyRolo Menu</a></td></tr>
@@ -13140,7 +13125,7 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function</a>, Up: <a href
 <tr><td></td><td valign="top"><a href="#index-cell_002c-transposing">cell, transposing</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Transposing">Transposing</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-cell_002c-yanking-contents">cell, yanking contents</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Adding-and-Killing">Adding and Killing</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-change-key-bindings">change key bindings</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Key-Bindings">Smart Key Bindings</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-change-key-bindings-1">change key bindings</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Default-Global-Bindings">Default Global Bindings</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-change-key-bindings-1">change key bindings</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Default-Hyperbole-Bindings">Default Hyperbole Bindings</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-change_002dlog_002dmode">change-log-mode</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Key-_002d-Lisp-Source-Code">Smart Key - Lisp Source Code</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-changing-the-view-spec">changing the view spec</a>:</td><td>&nbsp;</td><td valign="top"><a href="#View-Specs">View Specs</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-click_002c-buffer-menu">click, buffer menu</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Key-_002d-Buffer-Menus">Smart Key - Buffer Menus</a></td></tr>
@@ -13226,10 +13211,9 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function</a>, Up: <a href
 <tr><td></td><td valign="top"><a href="#index-dired-item-drag">dired item drag</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Displaying-File-and-Buffer-Items">Displaying File and Buffer Items</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-dired_002c-images">dired, images</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Key-_002d-Image-Thumbnails">Smart Key - Image Thumbnails</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-dired_002dsidebar_002dmode">dired-sidebar-mode</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Key-_002d-Dired-Sidebar-Mode">Smart Key - Dired Sidebar Mode</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-disable-global-key-bindings">disable global key bindings</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Default-Global-Bindings">Default Global Bindings</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-disable-Hyperbole">disable Hyperbole</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Key-Bindings">Smart Key Bindings</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-disable-Hyperbole-1">disable Hyperbole</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Default-Global-Bindings">Default Global Bindings</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-disable-local-key-override">disable local key override</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Default-Global-Bindings">Default Global Bindings</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-disable-Hyperbole-1">disable Hyperbole</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Default-Hyperbole-Bindings">Default Hyperbole Bindings</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-disable-hyperbole-key-bindings">disable hyperbole key bindings</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Default-Hyperbole-Bindings">Default Hyperbole Bindings</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-disable-org_002dmode-support">disable org-mode support</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-display">display</a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyControl">HyControl</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-display-function">display function</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Internal-Viewers">Internal Viewers</a></td></tr>
@@ -13382,7 +13366,7 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function</a>, Up: <a href
 <tr><td></td><td valign="top"><a href="#index-Grep">Grep</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Menus">Menus</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-grep-files">grep files</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Menus">Menus</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-grid-of-windows">grid of windows</a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyControl">HyControl</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-grid-of-windows-1">grid of windows</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Default-Global-Bindings">Default Global Bindings</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-grid-of-windows-1">grid of windows</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Default-Hyperbole-Bindings">Default Hyperbole Bindings</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-groupware">groupware</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Glossary">Glossary</a></td></tr>
 <tr><td colspan="4"> <hr></td></tr>
 <tr><th id="Concept-Index_cp_letter-H">H</th><td></td><td></td></tr>
@@ -13523,20 +13507,20 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function</a>, Up: <a href
 <tr><td colspan="4"> <hr></td></tr>
 <tr><th id="Concept-Index_cp_letter-K">K</th><td></td><td></td></tr>
 <tr><td></td><td valign="top"><a href="#index-kcell-link">kcell link</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-key-binding-list">key binding list</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Global-Key-Bindings">Global Key Bindings</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-key-binding_002c-C_002dc-_002e">key binding, C-c .</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Default-Global-Bindings">Default Global Bindings</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-key-binding_002c-C_002dc-_0040">key binding, C-c @</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Default-Global-Bindings">Default Global Bindings</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-key-binding_002c-C_002dc-RET">key binding, C-c <tt class="key">RET</tt></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Default-Global-Bindings">Default Global Bindings</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-key-binding_002c-C_002dc-_005c">key binding, C-c \</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Default-Global-Bindings">Default Global Bindings</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-key-binding_002c-C_002dh-A">key binding, C-h A</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Default-Global-Bindings">Default Global Bindings</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-key-binding_002c-C_002dh-h">key binding, C-h h</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Default-Global-Bindings">Default Global Bindings</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-key-binding_002c-C_002du-C_002dh-A">key binding, C-u C-h A</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Default-Global-Bindings">Default Global Bindings</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-key-binding_002c-M_002do">key binding, M-o</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Default-Global-Bindings">Default Global Bindings</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-key-binding_002c-M_002dRET">key binding, M-<tt class="key">RET</tt></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Default-Global-Bindings">Default Global Bindings</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-key-binding-list">key binding list</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Hyperbole-Key-Bindings">Hyperbole Key Bindings</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-key-binding_002c-C_002dc-_002e">key binding, C-c .</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Default-Hyperbole-Bindings">Default Hyperbole Bindings</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-key-binding_002c-C_002dc-_0040">key binding, C-c @</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Default-Hyperbole-Bindings">Default Hyperbole Bindings</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-key-binding_002c-C_002dc-RET">key binding, C-c <tt class="key">RET</tt></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Default-Hyperbole-Bindings">Default Hyperbole Bindings</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-key-binding_002c-C_002dc-_005c">key binding, C-c \</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Default-Hyperbole-Bindings">Default Hyperbole Bindings</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-key-binding_002c-C_002dh-A">key binding, C-h A</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Default-Hyperbole-Bindings">Default Hyperbole Bindings</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-key-binding_002c-C_002dh-h">key binding, C-h h</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Default-Hyperbole-Bindings">Default Hyperbole Bindings</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-key-binding_002c-C_002du-C_002dh-A">key binding, C-u C-h A</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Default-Hyperbole-Bindings">Default Hyperbole Bindings</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-key-binding_002c-M_002do">key binding, M-o</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Default-Hyperbole-Bindings">Default Hyperbole Bindings</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-key-binding_002c-M_002dRET">key binding, M-<tt class="key">RET</tt></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Default-Hyperbole-Bindings">Default Hyperbole Bindings</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-key-binding_002c-menu">key binding, menu</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Menus">Menus</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-key-binding_002c-smart-keys">key binding, smart keys</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Key-Bindings">Smart Key Bindings</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-key-bindings_002c-toggle">key bindings, toggle</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Key-Bindings">Smart Key Bindings</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-key-bindings_002c-toggle-1">key bindings, toggle</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Default-Global-Bindings">Default Global Bindings</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-key-bindings_002c-toggle-1">key bindings, toggle</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Default-Hyperbole-Bindings">Default Hyperbole Bindings</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-key-sequence">key sequence</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-keyboard-drags">keyboard drags</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Keyboard-Drags">Keyboard Drags</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-keyboard_002c-jump-to-window">keyboard, jump to window</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Keyboard-Drags">Keyboard Drags</a></td></tr>
@@ -13678,7 +13662,7 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function</a>, Up: <a href
 <tr><td></td><td valign="top"><a href="#index-menu_002c-Find">menu, Find</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Menus">Menus</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-menu_002c-Find_002fWeb">menu, Find/Web</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Menus">Menus</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-menu_002c-Find_002fWeb-1">menu, Find/Web</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Web-Search-Engines">Web Search Engines</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-menu_002c-Find_002fWeb-2">menu, Find/Web</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Default-Global-Bindings">Default Global Bindings</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-menu_002c-Find_002fWeb-2">menu, Find/Web</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Default-Hyperbole-Bindings">Default Hyperbole Bindings</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-menu_002c-Gbut">menu, Gbut</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Global-Buttons">Global Buttons</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-menu_002c-Gbut-1">menu, Gbut</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Menus">Menus</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-menu_002c-Global_002dButton">menu, Global-Button</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Global-Buttons">Global Buttons</a></td></tr>
@@ -13703,7 +13687,7 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function</a>, Up: <a href
 <tr><td></td><td valign="top"><a href="#index-menu_002c-Types">menu, Types</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Menus">Menus</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-menu_002c-Web">menu, Web</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Menus">Menus</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-menu_002c-Web-1">menu, Web</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Web-Search-Engines">Web Search Engines</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-menu_002c-Web-2">menu, Web</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Default-Global-Bindings">Default Global Bindings</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-menu_002c-Web-2">menu, Web</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Default-Hyperbole-Bindings">Default Hyperbole Bindings</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-menu_002c-WinConfig">menu, WinConfig</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Menus">Menus</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-menu_002c-Window_002dConfigurations">menu, Window-Configurations</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Menus">Menus</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-menubar-menu_002c-HyRolo">menubar menu, HyRolo</a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyRolo-Menu">HyRolo Menu</a></td></tr>
@@ -13741,7 +13725,7 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function</a>, Up: <a href
 <tr><td></td><td valign="top"><a href="#index-mouse-bindings">mouse bindings</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Menus">Menus</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-mouse-drag_002c-link-creation">mouse drag, link creation</a>:</td><td>&nbsp;</td><td valign="top"><a href="#By-Dragging">By Dragging</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-mouse-key-bindings">mouse key bindings</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Questions-and-Answers">Questions and Answers</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-mouse-key-toggle">mouse key toggle</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Default-Global-Bindings">Default Global Bindings</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-mouse-key-toggle">mouse key toggle</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Default-Hyperbole-Bindings">Default Hyperbole Bindings</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-mouse-keys_002c-unshifted">mouse keys, unshifted</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Key-Bindings">Smart Key Bindings</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-mouse-support">mouse support</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Keys">Smart Keys</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-mouse_002c-moving-trees">mouse, moving trees</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Relocating-and-Copying">Relocating and Copying</a></td></tr>
@@ -13807,7 +13791,6 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function</a>, Up: <a href
 <tr><td></td><td valign="top"><a href="#index-outliner">outliner</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Koutliner">Koutliner</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-outliner-commands">outliner commands</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Menu-Commands">Menu Commands</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-outliner-keys">outliner keys</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Koutliner-Keys">Koutliner Keys</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-overriding-local-keys">overriding local keys</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Default-Global-Bindings">Default Global Bindings</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-overview">overview</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Hiding-and-Showing">Hiding and Showing</a></td></tr>
 <tr><td colspan="4"> <hr></td></tr>
 <tr><th id="Concept-Index_cp_letter-P">P</th><td></td><td></td></tr>
@@ -13904,7 +13887,7 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function</a>, Up: <a href
 <tr><td></td><td valign="top"><a href="#index-search-1">search</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Invisible-Text-Searches">Invisible Text Searches</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-search-engines-menu">search engines menu</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Web-Search-Engines">Web Search Engines</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-searching-the-web">searching the web</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Menus">Menus</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-searching-the-web-1">searching the web</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Default-Global-Bindings">Default Global Bindings</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-searching-the-web-1">searching the web</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Default-Hyperbole-Bindings">Default Hyperbole Bindings</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-searching_002c-rolo">searching, rolo</a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyRolo-Searching">HyRolo Searching</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-selection">selection</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Key-Thing-Selection">Smart Key Thing Selection</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-selection_002c-menu-items">selection, menu items</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Menus">Menus</a></td></tr>
@@ -13940,7 +13923,7 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function</a>, Up: <a href
 <tr><td></td><td valign="top"><a href="#index-Smart-Mouse-Key-1">Smart Mouse Key</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Key-_002d-Delimited-Things">Smart Key - Delimited Things</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-smart-mouse-key-drag">smart mouse key drag</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Mouse-Key-Drags">Smart Mouse Key Drags</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-Smart-Mouse-Key-drag">Smart Mouse Key drag</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Modification">Modification</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-Smart-Mouse-Key-toggle">Smart Mouse Key toggle</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Default-Global-Bindings">Default Global Bindings</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-Smart-Mouse-Key-toggle">Smart Mouse Key toggle</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Default-Hyperbole-Bindings">Default Hyperbole Bindings</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-Smart-Mouse-Keys">Smart Mouse Keys</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Mouse-Keys">Smart Mouse Keys</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-smart-selection">smart selection</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Key-Thing-Selection">Smart Key Thing Selection</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-social-media">social media</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
@@ -13988,7 +13971,7 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function</a>, Up: <a href
 <tr><td></td><td valign="top"><a href="#index-todotxt_002dmode">todotxt-mode</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Key-_002d-Todotxt-Mode">Smart Key - Todotxt Mode</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-toggle-HyControl-mode">toggle HyControl mode</a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyControl">HyControl</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-toggle-key-bindings">toggle key bindings</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Key-Bindings">Smart Key Bindings</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-toggle-key-bindings-1">toggle key bindings</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Default-Global-Bindings">Default Global Bindings</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-toggle-key-bindings-1">toggle key bindings</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Default-Hyperbole-Bindings">Default Hyperbole Bindings</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-toggling-blank-lines">toggling blank lines</a>:</td><td>&nbsp;</td><td valign="top"><a href="#View-Specs">View Specs</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-top_002dlevel-cell">top-level cell</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Creating-Outlines">Creating Outlines</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-top_002dlevel-cell-1">top-level cell</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Idstamps">Idstamps</a></td></tr>
@@ -14070,7 +14053,7 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function</a>, Up: <a href
 <tr><td></td><td valign="top"><a href="#index-web-search">web search</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Menus">Menus</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-web-search-link">web search link</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Action-Types">Action Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-web-search-menu">web search menu</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Web-Search-Engines">Web Search Engines</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-web-search-menu-1">web search menu</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Default-Global-Bindings">Default Global Bindings</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-web-search-menu-1">web search menu</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Default-Hyperbole-Bindings">Default Hyperbole Bindings</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-where-to-display">where to display</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Referent-Display">Referent Display</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-window-by-letter">window by letter</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Keyboard-Drags">Keyboard Drags</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-window-configuration">window configuration</a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyControl">HyControl</a></td></tr>
@@ -14093,7 +14076,7 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function</a>, Up: <a href
 <tr><td></td><td valign="top"><a href="#index-windows">windows</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Glossary">Glossary</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-windows-control">windows control</a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyControl">HyControl</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-windows-grid">windows grid</a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyControl">HyControl</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-windows-grid-1">windows grid</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Default-Global-Bindings">Default Global Bindings</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-windows-grid-1">windows grid</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Default-Hyperbole-Bindings">Default Hyperbole Bindings</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-windows_002c-balance">windows, balance</a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyControl">HyControl</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-windows_002c-equalize">windows, equalize</a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyControl">HyControl</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-windows_002c-rebalance">windows, rebalance</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Creating-and-Deleting-Windows">Creating and Deleting Windows</a></td></tr>

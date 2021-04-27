@@ -68,9 +68,18 @@ Group 1 is the line number.  Group 3 is the column number.")
 Group 1 is the variable name.")
 
 (defvar hpath:path-variable-value-regexp
- (concat "\\`\\.?:[^:;\t\n\r\f]+:[^:;\t\n\r\f]+:\\|:\\.?:[^:;\t\n\r\f]+:\\|:[^:;\t\n\r\f]+:[^:;\t\n\r\f]+:\\|:[^:;\t\n\r\f]+:[^:;\t\n\r\f]+:\\.?\\'"
-	 "\\|"
-	 "\\`\\.?;[^;\t\n\r\f]+;[^;\t\n\r\f]+;\\|;\\.?;\\|;[^;\t\n\r\f]+;[^;\t\n\r\f]+;\\|;[^;\t\n\r\f]+;[^;\t\n\r\f]+;\\|;[^;\t\n\r\f]+;[^;\t\n\r\f]+;\\.?\\'")
+  (let* ((posix-separators ":;")
+	 (windows-separators ";")
+	 (reserved-chars "<>:\"|?*")
+	 (exclude-space  "\t\n\r\f")
+	 (control-chars  "[:cntrl:]")
+	 ;; Posix char set to exclude from paths
+	 (nope (concat "\[^" posix-separators reserved-chars exclude-space control-chars "\]+"))
+	 ;; Windows char set to exclude from paths
+	 (nowin (concat "\[^" windows-separators reserved-chars exclude-space control-chars "\]+")))
+    (concat "\\`\\.?:" nope ":" nope ":\\|:\\.?:" nope ":\\|:" nope ":" nope ":\\|:" nope ":" nope ":\\.?\\'"
+	    "\\|"
+	    "\\`\\.?;" nowin ";" nowin ";\\|;\\.?;\\|;" nowin ";" nowin ";\\|;" nowin ";" nowin ";\\|;" nowin ";" nowin ";\\.?\\'"))
   ;; A zero-length (null) directory name in the value of PATH indicates the current directory.
   ;; A null directory name may appear as two adjacent colons, or as an initial or trailing colon.
   "Regexp that heuristically matches to colon-separated (Posix) or semicolon-separated (Windows) path variable values.")
@@ -123,6 +132,7 @@ If the value of 'hpath:mswindows-mount-prefix' changes, then re-initialize this 
 (defconst hpath:mswindows-path-regexp "\\`.*\\.*[a-zA-Z0-9_.]"
   "Regular expression matching the start of an MSWindows path that does not start with a drive letter but contains directory separators.")
 
+;;;###autoload
 (defvar hpath:posix-mount-point-to-mswindows-alist nil
   "Automatically set alist of (posix-mount-point . window-path-prefix) elements.
 Used to expand posix mount points to Windows UNC paths during posix-to-mswindows conversion.")
@@ -803,7 +813,9 @@ paths are allowed.  Absolute pathnames must begin with a `/' or `~'."
 	subpath)
     (when (and path (not non-exist) (string-match hpath:prefix-regexp path))
       (setq non-exist t))
-    (cond ((and path (string-match hpath:path-variable-value-regexp path))
+    (cond ((and path (string-match hpath:path-variable-value-regexp path)
+		;; Don't allow more than one set of grouping chars
+		(not (string-match "\)\\s-*\(\\|\\]\\s-*\\[\\|\}\\s-*\{" path)))
 	   ;; With point inside a path variable, return the path that point is on or to the right of.
 	   (or (and (setq subpath (hargs:delimited "[:\"\']" "[:\"\']" t t nil "[\t\n\r\f]\\|[;:] \\| [;:]"))
 		    (not (string-match "[:;\t\n\r\f]" subpath))

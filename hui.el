@@ -40,31 +40,58 @@
 ;;; Public functions
 ;;; ************************************************************************
 
-(defun hui:bind-key (cmd &optional new-key)
+(defun hui:global-bind-key (cmd &optional new-key)
   "Remove existing global key binding for CMD, rebind it to optional NEW-KEY (prompted for) and confirm the change."
   (interactive "CCommand to change key binding of: \nKNew key to bind: ")
   (if (not (functionp cmd))
-      (error "(hui:bind-key): Invalid command, `%s'" cmd))
-  (let* ((old-key (where-is-internal cmd global-map t))
+      (error "(hui:global-bind-key): Invalid command, `%s'" cmd))
+  (let* ((old-key (where-is-internal cmd (current-global-map) t))
 	 ;; Force multi-character key sequences to echo in the minibuffer
 	 (echo-keystrokes 1)
 	 old-key-text
 	 new-key-text)
-    (if old-key (setq old-key-text (key-description old-key)))
-    (if (null new-key)
-	(setq new-key
-	      (with-selected-window (minibuffer-window)
-		(read-key-sequence
-		 (if old-key
-		     (format "{%s} runs `%s'; change it to key: " old-key-text cmd)
-		   (format "New key to run `%s': " cmd))))))
+    (when old-key (setq old-key-text (key-description old-key)))
+    (when (null new-key)
+      (setq new-key
+	    (with-selected-window (minibuffer-window)
+	      (read-key-sequence
+	       (if old-key
+		   (format "{%s} runs `%s'; change it to key: " old-key-text cmd)
+		 (format "New key to run `%s': " cmd))))))
     (cond ((equal new-key (kbd "\C-g"))
 	   (keyboard-quit))
 	  (new-key (global-set-key new-key cmd)
 		   (setq new-key-text (key-description new-key))))
     (if old-key
 	(progn (global-unset-key old-key)
-	       (message "{%s} now runs `%s'; prior {%s} binding removed" new-key-text cmd old-key-text))
+	       (message "{%s} now runs `%s'; prior global {%s} binding removed" new-key-text cmd old-key-text))
+      (message "{%s} now runs `%s'" new-key-text cmd))))
+
+(defun hui:bind-key (cmd &optional new-key)
+  "Remove existing Hyperbole key binding for CMD, rebind it to optional NEW-KEY (prompted for) and confirm the change."
+  (interactive "CCommand to change key binding of: \nKNew key to bind: ")
+  (if (not (functionp cmd))
+      (error "(hui:bind-key): Invalid command, `%s'" cmd))
+  (let* ((old-key (where-is-internal cmd hyperbole-mode-map t))
+	 ;; Force multi-character key sequences to echo in the minibuffer
+	 (echo-keystrokes 1)
+	 old-key-text
+	 new-key-text)
+    (when old-key (setq old-key-text (key-description old-key)))
+    (when (null new-key)
+      (setq new-key
+	    (with-selected-window (minibuffer-window)
+	      (read-key-sequence
+	       (if old-key
+		   (format "{%s} runs `%s'; change it to key: " old-key-text cmd)
+		 (format "New key to run `%s': " cmd))))))
+    (cond ((equal new-key (kbd "\C-g"))
+	   (keyboard-quit))
+	  (new-key (define-key hyperbole-mode-map new-key cmd)
+		   (setq new-key-text (key-description new-key))))
+    (if old-key
+	(progn (define-key hyperbole-mode-map old-key nil)
+	       (message "{%s} now runs `%s'; prior Hyperbole {%s} binding removed" new-key-text cmd old-key-text))
       (message "{%s} now runs `%s'" new-key-text cmd))))
 
 (defun hui:ebut-act (&optional but)
@@ -84,7 +111,7 @@ Default is the current button."
 
 (defun hui:ebut-create (&optional start end)
   "Interactively create an explicit Hyperbole button starting from label between optional START and END region points.
-Indicate button creation by delimiting and adding any necessary instance number to the button label.
+Indicate button creation by delimiting and adding any necessary instance number to the button label.
 
 For programmatic creation, use `ebut:program' instead."
   (interactive (list (and (marker-position (hypb:mark-marker t))
@@ -107,6 +134,7 @@ For programmatic creation, use `ebut:program' instead."
       (hattr:set 'hbut:current 'args (hargs:actype-get actype))
       (hattr:set 'hbut:current 'action
 		 (and hui:ebut-prompt-for-action (hui:action actype))))
+    ;; Adds instance number to in-buffer label if necessary
     (ebut:operate lbl nil)
     (when (called-interactively-p 'interactive)
       (hui:ebut-message nil))))

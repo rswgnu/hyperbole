@@ -135,9 +135,9 @@ Return t if cutoff, else nil."
     (vector (hui-menu-key-binding-item "Drag-Emulation-Key  \t\t"   'hkey-operate)                       '(hui:bind-key #'hkey-operate) t)                   ;; {M-o}
     (vector (hui-menu-key-binding-item "Find-Web-Key        \t\t"   'hui-search-web)                     '(hui:bind-key #'hui-search-web) t)                 ;; {C-c /}
     (vector (hui-menu-key-binding-item "Grid-of-Windows-Key \t"     'hycontrol-windows-grid)             '(hui:bind-key #'hycontrol-windows-grid) t)         ;; {C-c @}
-    (vector (hui-menu-key-binding-item "Hyperbole-Menu-Key  \t"     'hyperbole)                          '(hui:bind-key #'hyperbole) t)                      ;; {C-h h}
+    (vector (hui-menu-key-binding-item "Hyperbole-Menu-Key  \t"     'hyperbole)                          '(hui:global-bind-key #'hyperbole) t)                      ;; {C-h h}
     (vector (hui-menu-key-binding-item "Jump-Thing-Key      \t\t"   'hui-select-goto-matching-delimiter) '(hui:bind-key #'hui-select-thing) t)               ;; {C-c .}
-    (vector (hui-menu-key-binding-item "Mark-Thing-Key      \t\t"   'hui-select-thing)                   '(hui:bind-key #'hui-select-thing) t)               ;; {C-c C-m}
+    (vector (hui-menu-key-binding-item "Mark-Thing-Key      \t\t"   'hui-select-thing)                   '(hui:bind-key #'hui-select-thing) t)               ;; {C-c RET}
     (vector (hui-menu-key-binding-item "Smart-Help-Key      \t\t"   'hkey-help)                          '(hui:bind-key #'hkey-help) t)                      ;; {C-h A}
     (vector (hui-menu-key-binding-item "Windows-Control-Key\t"      'hycontrol-enable-windows-mode)      '(hui:bind-key #'hycontrol-enable-windows-mode) t)) ;; {C-C \}
    rest-of-menu))
@@ -160,7 +160,7 @@ Return t if cutoff, else nil."
 	    (vector service
 		    (list #'hyperbole-web-search service nil)
 		    t))
-	  (mapcar 'car hyperbole-web-search-alist)))
+	  (mapcar #'car hyperbole-web-search-alist)))
 
 ;;; ************************************************************************
 ;;; Public variables
@@ -240,8 +240,6 @@ Return t if cutoff, else nil."
 					  isearch-invisible)]
 	    ["Toggle-Messaging-Explicit-Buttons" hyperbole-toggle-messaging
 	     :style toggle :selected (not inhibit-hyperbole-messaging)]
-	    ["Toggle-Override-Local-Keys" hkey-toggle-override-local-bindings
-	     :style toggle :selected hkey-init-override-local-keys]
 	    ["Toggle-Rolo-Dates" hyrolo-toggle-datestamps
 	     :style toggle :selected (and (boundp 'hyrolo-add-hook)
 					  (listp hyrolo-add-hook)
@@ -318,7 +316,7 @@ REBUILD-FLAG is non-nil, in which case the menu is rebuilt."
 		    (hui-menu-remove Hyperbole)
 		    ;;
 		    ;; Remove Hyperbole button comment from future outgoing mail.
-		    (if (boundp 'smail:comment) (setq smail:comment nil)))
+		    (when (boundp 'smail:comment) (setq smail:comment nil)))
 		  t]
 		 "----"
 		 ["Activate-Button-in-Buffer" hui:hbut-act t]

@@ -62,11 +62,10 @@ will simply invoke `org-meta-return'.
 
 Org links may be used outside of Org mode buffers.  Such links are
 handled by the separate implicit button type, `org-link-outside-org-mode'."
-  (when (and hyperbole-mode
-	     (funcall hsys-org-mode-function)
-	     ;; Prevent infinite recursion when called via org-metareturn-hook
+  (when (and (funcall hsys-org-mode-function)
+	     ;; Prevent infinite recursion if ever called via org-metareturn-hook
 	     ;; from org-meta-return invocation.
-	     (not (hyperb:stack-frame '(org-meta-return))))
+	     (not (hyperb:stack-frame '(ibtypes::debugger-source org-meta-return))))
     (cond ((not hsys-org-enable-smart-keys)
 	   (hact 'org-meta-return))
 	  ((and (not (hyperb:stack-frame '(hbut:at-p))) (hbut:at-p))

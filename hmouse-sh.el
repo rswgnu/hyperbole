@@ -31,7 +31,7 @@
 ;;   bottom-divider
 
 (defun hmouse-bind-key-emacs (mouse-key-number depress-cmd release-cmd)
-  "Ensure MOUSE-KEY-NUMBER (1-5), e.g. 1 for [mouse-1], is globally bound to DEPRESS-CMD and RELEASE-CMD (includes depresses and drags).
+  "Ensure MOUSE-KEY-NUMBER (1-5), e.g. 1 for [mouse-1], is bound to DEPRESS-CMD and RELEASE-CMD (includes depresses and drags).
 Use nil as cmd values to unbind a key.  Works under GNU Emacs only."
   (hmouse-set-key-list
    depress-cmd
@@ -149,7 +149,7 @@ Use nil as cmd values to unbind a key.  Works under GNU Emacs only."
 	  ))))
 
 (defun hmouse-bind-shifted-key-emacs (shifted-mouse-key-number depress-cmd release-cmd)
-  "Ensure SHIFTED-MOUSE-KEY-NUMBER (1-5), e.g. 1 for [Smouse-1], is globally bound to DEPRESS-CMD and RELEASE-CMD (includes depresses and drags).
+  "Ensure SHIFTED-MOUSE-KEY-NUMBER (1-5), e.g. 1 for [Smouse-1], is bound to DEPRESS-CMD and RELEASE-CMD (includes depresses and drags).
 Use nil as CMD value to unbind the key.  Works under GNU Emacs only."
   (hmouse-set-key-list
    depress-cmd
@@ -453,7 +453,7 @@ point determined by `mouse-select-region-move-to-beginning'."
   (apply 'mouse-move-point arg-list))
 
 (defun hmouse-set-key-list (binding key-list)
-  (mapc (lambda (key) (hkey-global-set-key key binding)) key-list)
+  (mapc (lambda (key) (hkey-set-key key binding)) key-list)
   nil)
 
 (defun hmouse-shifted-setup (hmouse-middle-flag)

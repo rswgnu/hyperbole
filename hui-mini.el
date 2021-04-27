@@ -73,6 +73,7 @@ documentation, not the full text."
       (progn (beep) nil)
     (unwind-protect
 	(progn
+	  (hyperbole-mode 1)
 	  (hyperb:init-menubar)
 	  (setq hui:menu-p t)
 	  (hui:menu-act (or menu 'hyperbole) menu-list doc-flag help-string-flag)
@@ -107,7 +108,7 @@ that you make with this function."
       (user-error "(hyperbole-set-key): No Hyperbole menu item selected")
     (define-key (current-global-map) key `(lambda () (interactive) (kbd-key:act ,command)))
     (when (called-interactively-p 'interactive)
-      (message "{%s} set to invoke {%s}" (key-description key) (key-description command)))))
+      (message "{%s} globally set to invoke {%s}" (key-description key) (key-description command)))))
 
 (defun hui:menu-act (menu &optional menu-list doc-flag help-string-flag)
   "Prompt user with Hyperbole MENU (a symbol) and perform selected item.
@@ -125,7 +126,7 @@ documentation, not the full text."
 			    (setq menu-alist
 				  (cdr (assq menu (or menu-list hui:menus)))))
 		       (hypb:error "(hui:menu-act): Invalid menu symbol arg: `%s'"
-			      menu)))
+				   menu)))
 	(show-menu t)
 	(rtn)
 	menu-alist act-form)
@@ -409,7 +410,7 @@ constructs.  If not given, the top level Hyperbole menu is used."
 			       (list service
 				     (list #'hyperbole-web-search service)
 				     (format "Search %s" service)))
-			     (mapcar 'car hyperbole-web-search-alist))))))
+			     (mapcar #'car hyperbole-web-search-alist))))))
     web-mini-menu))
 
 (defun hui-search-web ()
@@ -442,7 +443,7 @@ constructs.  If not given, the top level Hyperbole menu is used."
   ;;
   (let ((i 32))
     (while (<= i 126)
-      (define-key hui:menu-mode-map (char-to-string i) 'hui:menu-enter)
+      (define-key hui:menu-mode-map (char-to-string i) #'hui:menu-enter)
       (setq i (1+ i)))))
 
 ;;; ************************************************************************
@@ -516,8 +517,6 @@ constructs.  If not given, the top level Hyperbole menu is used."
 	  ("KeyBindings/" (menu . cust-keys) "Rebinds global Hyperbole keys.")
 	  ("Msg-Toggle-Ebuts" hyperbole-toggle-messaging
 	   "Toggle Hyperbole support for explicit buttons in mail and news buffers.")
-	  ("Override-Local-Keys" hkey-toggle-override-local-bindings
-	   "Toggle whether conflicting local key bindings are overridden by Hyperbole.")
 	  ("Referents/" (menu . cust-referents)
 	   "Sets where Hyperbole button referents are displayed.")
 	  ("Smart-Key-at-Eol/" (menu . cust-eol)
@@ -537,7 +536,7 @@ constructs.  If not given, the top level Hyperbole menu is used."
 	  ("DragKey"       (hui:bind-key #'hkey-operate))                       ;; {M-o}
 	  ("FindWeb"       (hui:bind-key #'hui-search-web)) 	                ;; {C-c /}
 	  ("GridOfWindows" (hui:bind-key #'hycontrol-windows-grid))             ;; {C-c @}
-	  ("HypbMenu"      (hui:bind-key #'hyperbole))                          ;; {C-h h}
+	  ("HypbMenu"      (hui:global-bind-key #'hyperbole))                   ;; {C-h h}
 	  ("JumpThing"     (hui:bind-key #'hui-select-goto-matching-delimiter)) ;; {C-c .}
 	  ("MarkThing"     (hui:bind-key #'hui-select-thing))                   ;; {C-c RET}
 	  ("SmartHelp"     (hui:bind-key #'hkey-help))                          ;; {C-h A}

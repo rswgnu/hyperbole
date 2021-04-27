@@ -1044,21 +1044,25 @@ represent the output of particular document formatters."
 	 src)))
 
 (defun    hbut:key-to-label (lbl-key)
-  "Unnormalize LBL-KEY and return a label string for display."
-  (if lbl-key
-      (let* ((pos 0) (len (length lbl-key)) (lbl "") c)
-	(while (< pos len)
-	  (setq c (aref lbl-key pos)
-		lbl (concat lbl 
-			    (if (eq c ?_)
-				(if (or (= (1+ pos) len)
-					(not (eq (aref lbl-key (1+ pos)) ?_)))
-				    " "
-				  (setq pos (1+ pos))
-				  "_")
-			      (char-to-string c)))
-		pos (1+ pos)))
-	lbl)))
+  "Unnormalize LBL-KEY and return a label string for display.
+If LBL-KEY is not a string or is just punctuation, return nil."
+  (when (and (stringp lbl-key)
+	     (or (/= (length lbl-key) 1)
+		 ;; Can't be a single character of punctuation
+		 (not (memq (char-syntax (aref lbl-key 0)) '(?. ?\" ?\( ?\))))))
+    (let* ((pos 0) (len (length lbl-key)) (lbl "") c)
+      (while (< pos len)
+	(setq c (aref lbl-key pos)
+	      lbl (concat lbl
+			  (if (eq c ?_)
+			      (if (or (= (1+ pos) len)
+				      (not (eq (aref lbl-key (1+ pos)) ?_)))
+				  " "
+				(setq pos (1+ pos))
+				"_")
+			    (char-to-string c)))
+	      pos (1+ pos)))
+      lbl)))
 
 (defun    hbut:label (hbut)
   "Return the label for Hyperbole button symbol HBUT."
@@ -1671,8 +1675,9 @@ Return the symbol for the button, else nil."
 		;; Point might be on closing delimiter of ibut in which
 		;; case ibut:label-p returns nil; move back one
 		;; character to prevent this.
-		found (progn (goto-char (1- (point)))
-			     (equal (ibut:label-p nil nil nil nil t) lbl-key))))
+		found (save-excursion
+			(goto-char (1- (point)))
+			(equal (ibut:label-p nil nil nil nil t) lbl-key))))
 	;; re-search backward
 	(while (and (not found) (re-search-backward regexp nil t))
 	  (setq pos (match-beginning 0)
