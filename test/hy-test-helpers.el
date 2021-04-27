@@ -39,5 +39,14 @@
       (action-key)
       (should was-called))))
 
+(defun hy-test-helpers:hypb-function-should-call-hpath:find (function str)
+  "Call FUNCTION and check that hpath:find was called with STR."
+  (let ((was-called nil))
+    (cl-letf (((symbol-function 'hpath:find)
+               (lambda (filename)
+                 (setq was-called (should (string= str filename))))))
+      (funcall function)
+      (should was-called))))
+
 (provide 'hy-test-helpers)
 ;;; hy-test-helpers.el ends here
