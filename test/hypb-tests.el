@@ -79,8 +79,11 @@
                             s
                             (match-beginning 0) (match-end 0)
                             (match-beginning 1) (match-end 1))))
-                 "b<abbc,0,4,1,3>a<ac,0,2,1,1><abc,0,3,1,2>"))
+                 "b<abbc,0,4,1,3>a<ac,0,2,1,1><abc,0,3,1,2>")))
+
+(ert-deftest hypb:replace-match-string-after-27.1-test ()
   ;; anchors (bug#15107, bug#44861)
+  (skip-unless (version< "27.1" emacs-version))
   (should (equal (hypb:replace-match-string "a\\B" "a aaaa" "b")
                  "a bbba"))
   (should (equal (hypb:replace-match-string "\\`\\|x" "--xx--" "z")

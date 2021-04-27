@@ -38,7 +38,7 @@
         (error
          (progn
            (should (equal (car err) 'error))
-           (should (string-search "ibutton at point already has a label" (cadr err)))))))))
+           (should (string-match "ibutton at point already has a label" (cadr err)))))))))
 
 (provide 'hui-tests)
 ;;; hui-tests.el ends here
