@@ -1,3 +1,14 @@
+2021-04-27  Mats Lidell  <matsl@gnu.org>
+
+* test/hypb-tests.el (hypb:replace-match-string-after-27.1-test): Use
+    separate test for replace matches that were fixed after Emacs 27.1.
+
+* test/hui-tests.el (hui-ibut-label-create-fails-if-label-exists): Use
+    string-match.
+
+* test/hbut-tests.el (hbut-ib-create-label-fails-if-label-exists)
+(hbut-pathname-dot-slash-in-other-folder-should-fail-test): Use string-match.
+
 2021-04-26  Bob Weiner  <rsw@gnu.org>
 
 * hui.el (hui:global-bind-key): Renamed from hui:bind-key and made that

@@ -192,7 +192,7 @@
         (error
          (progn
            (should (equal (car err) 'error))
-           (should (string-search "ibutton at point already has a label" (cadr err)))))))))
+           (should (string-match "ibutton at point already has a label" (cadr err)))))))))
 
 (ert-deftest hbut-pathname-path-variable-test ()
   "Find file in path variable value."
@@ -352,7 +352,7 @@
         (error
          (progn
            (should (equal (car err) 'error))
-           (should (string-search
+           (should (string-match
                     "(Hyperbole Action Key): No action defined for this context; try another location"
                     (cadr err)))))))))
 
