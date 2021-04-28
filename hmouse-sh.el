@@ -257,7 +257,7 @@ Use nil as CMD value to unbind the key.  Works under GNU Emacs only."
 	  ))))
 	   
 (defun hmouse-get-bindings (hmouse-middle-flag)
-  "Return the list of current bindings of mouse keys used by Hyperbole.
+  "Return the list of active bindings of mouse keys used by Hyperbole.
 If HMOUSE-MIDDLE-FLAG is non-nil, includes the middle mouse key binding as well.
 These may be the bindings prior to initializing Hyperbole or the Hyperbole bindings."
   ;; Do nothing when running in batch mode.
@@ -267,7 +267,7 @@ These may be the bindings prior to initializing Hyperbole or the Hyperbole bindi
      ;; Get mouse bindings under Emacs or XEmacs, even if not under a
      ;; window system since they can have frames on ttys and windowed
      ;; displays at the same time.
-     (mapcar (lambda (key) (cons key (global-key-binding key)))
+     (mapcar (lambda (key) (cons key (key-binding key)))
 	     (if (eq window-system 'dps)
 		 ;; NEXTSTEP offers only 2 shift-mouse buttons which we use
 		 ;; as the Smart Keys.
@@ -324,7 +324,7 @@ These may be the bindings prior to initializing Hyperbole or the Hyperbole bindi
 		 )))
      (nconc
       (mapcar (lambda (key)
-		(cons key (global-key-binding key)))
+		(cons key (key-binding key)))
 	      '([(shift button2)] [(shift button2up)]
 		[(shift button3)] [(shift button3up)]))
       (when (boundp 'mode-line-map)
@@ -335,7 +335,7 @@ These may be the bindings prior to initializing Hyperbole or the Hyperbole bindi
 (defun hmouse-get-unshifted-bindings ()
   "Return the list of middle mouse key bindings prior to their use as Smart Keys."
   ;; Do nothing when running in batch mode.
-  (mapc (lambda (key) (cons key (global-key-binding key)))
+  (mapc (lambda (key) (cons key (key-binding key)))
 	(unless (eq window-system 'dps)
 	  ;; X, macOS or MS Windows
 	  '([down-mouse-2] [drag-mouse-2] [mouse-2]
@@ -363,7 +363,7 @@ These may be the bindings prior to initializing Hyperbole or the Hyperbole bindi
 	    )))
   (nconc
    (mapcar (lambda (key)
-	     (cons key (global-key-binding key)))
+	     (cons key (key-binding key)))
 	   '([button2] [button2up]
 	     [button3] [button3up]
 	     ))

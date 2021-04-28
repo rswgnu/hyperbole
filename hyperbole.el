@@ -18,12 +18,14 @@
 
 ;;; Commentary:
 ;;
-;; GNU Hyperbole (pronounced Ga-new Hi-per-bo-lee), or just Hyperbole, is an
-;; easy-to-use, yet powerful and programmable hypertextual information
-;; management system implemented as a GNU Emacs package.  It offers rapid views
-;; and interlinking of all kinds of textual information, utilizing Emacs for
-;; editing.  It can dramatically increase your productivity and greatly reduce
-;; the number of keyboard/mouse keys you'll need to work efficiently.
+;; GNU Hyperbole (pronounced Gnew Hi-per-bo-lee), or just Hyperbole, is like
+;; Markdown for hypertext, letting you use little or no markup in files to
+;; produce easy-to-navigate hypermedia files.  It is an easy-to-use, yet
+;; powerful and programmable hypertextual information management system
+;; implemented as a GNU Emacs package.  It offers rapid views and interlinking
+;; of all kinds of textual information, utilizing Emacs for editing.  It can
+;; dramatically increase your productivity and greatly reduce the number of
+;; keyboard/mouse keys you'll need to work efficiently.
 ;; 
 ;; Hyperbole lets you:
 ;; 
@@ -203,10 +205,14 @@ which prevents automatic removal of any local bindings to the same key."
 (defvar hmouse-bindings-flag)
 (defvar hyperb:user-email)
 (defvar hyperbole-help-map (make-sparse-keymap)
-  "Help-map keys available only when Hyperbole minor mode is enabled.")
+  "Help prefix keymap available only when Hyperbole minor mode is enabled.")
+(defvar hyperbole-mode-specific-map (make-sparse-keymap)
+  "C-c prefix keymap available only when Hyperbole minor mode is enabled.")
 
 (defun hkey-initialize ()
-  "If `hkey-init' is non-nil, initialize Hyperbole key bindings."
+  "If `hkey-init' is non-nil, initialize Hyperbole key bindings.
+Some keys are conditionally bound only if there are no existing prior bindings
+of the commands."
   (when hkey-init
     ;;
     ;; Setup so Hyperbole menus can be accessed from a key.  If not
@@ -221,6 +227,10 @@ which prevents automatic removal of any local bindings to the same key."
     ;; Define help prefix key in this keymap.
     (set-keymap-parent hyperbole-help-map help-map)
     (hkey-set-key (vector help-char) hyperbole-help-map)
+    ;;
+    ;; Define C-c prefix key in this keymap.
+    (set-keymap-parent hyperbole-mode-specific-map mode-specific-map)
+    (hkey-set-key "\C-c" hyperbole-mode-specific-map)
     ;;
     ;; Binds the Action Key to {M-RET} and the Assist Key to {C-u M-RET}
     ;; and loads the Hyperbole mouse key bindings.

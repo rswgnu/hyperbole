@@ -624,6 +624,24 @@ Return nil if no matching button is found."
   "Return list of global button labels."
   (mapcar 'hbut:key-to-label (gbut:key-list)))
 
+(defun gbut:ebut-program (label actype &rest args)
+  "Programmatically create a global explicit Hyperbole button at point from LABEL, ACTYPE (action type), and optional actype ARGS.
+Insert LABEL text at the end of the personal/global button file
+surrounded by <( )> delimiters, adding any necessary instance
+number of the button after the LABEL.  ACTYPE may be a Hyperbole
+action type name (from defact) or an Emacs Lisp function,
+followed by a list of arguments for the actype, aside from the
+button LABEL which is automatically provided as the first
+argument.
+
+For interactive creation, use `hui:gbut-create' instead."
+  (save-excursion
+    (with-current-buffer (find-file-noselect (expand-file-name hbmap:filename hbmap:dir-user))
+      (save-excursion
+	(goto-char (point-max))
+	(when (not (bolp))
+	  (insert "\n"))
+	(eval `(ebut:program label actype ,@args))))))
 
 (defun    gbut:to (lbl-key)
   "Find the global button with LBL-KEY (a label or label key) within the visible portion of the global button file.

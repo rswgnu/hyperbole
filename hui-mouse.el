@@ -1319,6 +1319,15 @@ NO-RECURSE-FLAG non-nil prevents infinite recursions."
 ;;; smart-magit functions
 ;;; ************************************************************************
 
+(defun smart-magit-display-file (return-command)
+  "Execute Magit command bound to return, possibly displaying utilizing hpath:display-buffer setting."
+  (cond ((eq return-command #'magit-diff-visit-file)
+	 ;; Use Hyperbole display variable to determine where
+	 ;; to display the file of the diff.
+	 (magit-diff-visit-file--internal
+	  (magit-file-at-point t t) nil #'hpath:display-buffer))
+	(t (call-interactively return-command))))
+
 (defun smart-magit ()
   "Use a key or mouse key to jump to source and to hide/show changes.
 
@@ -1333,14 +1342,15 @@ If key is pressed:
  (3) on an initial read-only header line, cycle visibility of diff sections;
  (4) anywhere else, hide/show the thing at point (\"TAB\" key binding)
      unless that does nothing in the mode, then jump to the thing at
-     point (\"RET\" key binding)."
+     point (\"RET\" key binding) but display based on the value of
+     `hpath:display-where'."
   (interactive)
   (cond ((last-line-p)
 	 (call-interactively (key-binding "q")))
 	((eolp)
 	 (smart-scroll-up))
 	(t
-	 (let ((magit-display-file-buffer-function #'hpath:display-buffer))
+	 (let ((magit-display-buffer-function #'hpath:display-buffer))
 	   (call-interactively #'smart-magit-tab)))))
 
 (defun smart-magit-assist ()
@@ -1355,19 +1365,21 @@ If assist-key is pressed:
  (1) on the last line, quit from the magit mode (\"q\" key binding);
  (2) at the end of a line, scroll down a windowful;
  (3) on an initial read-only header line, cycle visibility of all sections;
- (4) anywhere else, jump to the thing at point (\"RET\" key binding)."
+ (4) anywhere else, jump to the thing at point (\"RET\" key binding)
+     but display based on the value of `hpath:display-where'."
   (interactive)
   (cond ((last-line-p)
 	 (call-interactively (key-binding "q")))
 	((eolp)
 	 (smart-scroll-down))
 	(t
-	 (let ((magit-display-file-buffer-function #'hpath:display-buffer)
+	 (let ((magit-display-buffer-function #'hpath:display-buffer)
 	       (current-prefix-arg)
 	       (non-text-area-p (and (eventp action-key-depress-args)
 				     (posn-area (event-start action-key-depress-args)))))
-	   (cond (non-text-area-p (magit-section-cycle-global))
-		 (t (call-interactively (key-binding "\r"))))))))
+	   (if non-text-area-p
+	       (magit-section-cycle-global)
+	     (smart-magit-display-file (key-binding (kbd "RET"))))))))
 
 ;; Thanks to Jonas Bernoulli <tarsius>, magit author, for most of this
 ;; next function.
@@ -1375,7 +1387,8 @@ If assist-key is pressed:
   ;; Usage: (define-key magit-section-mode-map "TAB" 'smart-magit-tab
   "Toggle visibility of the body of the current section."
   (interactive (list (magit-current-section)))
-  (let* ((non-text-area-p (and (eventp action-key-depress-args)
+  (let* ((magit-display-buffer-function #'hpath:display-buffer)
+	 (non-text-area-p (and (eventp action-key-depress-args)
 			       (posn-area (event-start action-key-depress-args)))))
     (cond (non-text-area-p (magit-section-cycle-diffs))
 	  ((eq section magit-root-section)
@@ -1390,7 +1403,7 @@ If assist-key is pressed:
 	   (if-let ((command (key-binding (kbd "RET"))))
 	       (progn (setq last-command-event ?\()
 		      (setq this-command command)
-		      (call-interactively command))
+		      (smart-magit-display-file command))
 	     (user-error "Nothing to visit either"))))))
 
 ;;; ************************************************************************

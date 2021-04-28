@@ -24,6 +24,9 @@
 ;;; Public variables
 ;;; ************************************************************************
 
+(defvar hui:hypb-exit            "X"
+  "*Upper case character string which exits from / disable Hyperbole mode, and any active minibuffer menu.")
+
 (defvar hui:menu-select          "\C-m"
   "*Character string which selects the Hyperbole menu item at point.")
 (defvar hui:menu-quit            "Q"
@@ -223,6 +226,12 @@ With optional HELP-STRING-FLAG, instead returns the one line help string for the
 	;; Ignore any keys past the first menu item activation.
 	(discard-input)))))
 
+(defun hui:hypb-exit ()
+  "Exit any Hyperbole minibuffer menu and disable `hyperbole-mode'."
+  (interactive)
+  (hyperbole-mode 0)
+  (hui:menu-enter hui:menu-quit))
+
 (defun hui:menu-enter (&optional char-str)
   "Use CHAR-STR or last input character as minibuffer argument."
   (interactive)
@@ -289,13 +298,14 @@ documentation, not the full text."
   (let* ((menu-line (hui:menu-line menu-alist))
 	 (set:equal-op 'eq)
 	 (select-char (string-to-char hui:menu-select))
+	 (exit-char (string-to-char hui:hypb-exit))
 	 (quit-char (string-to-char hui:menu-quit))
 	 (abort-char (string-to-char hui:menu-abort))
 	 (top-char  (string-to-char hui:menu-top))
 	 (item-keys (mapcar (lambda (item) (aref item 0))
 			    (mapcar 'car (cdr menu-alist))))
 	 ;; 0 matches an empty string return, no selection
-	 (keys (apply 'list 0 1 select-char quit-char abort-char
+	 (keys (apply 'list 0 1 select-char exit-char quit-char abort-char
 		      top-char item-keys))
 	 (key 0)
 	 (hargs:reading-p 'hmenu)
@@ -313,9 +323,9 @@ documentation, not the full text."
     ;;   a menu command character code;
     ;;   1 for in the menu prefix area;
     ;;   0 for at the end of the menu.
-    (cond ((or (eq key 0) (eq key quit-char)) nil)
+    (cond ((memq key (list 0 exit-char quit-char)) nil)
 	  ((eq key abort-char) (beep) nil)
-	  ((or (eq key 1) (eq key top-char)) '(menu . hyperbole))
+	  ((memq key (list 1 top-char)) '(menu . hyperbole))
 	  ((and (eq key select-char)
 		(save-excursion
 		  (if (search-backward " " nil t)
@@ -430,7 +440,16 @@ constructs.  If not given, the top level Hyperbole menu is used."
 (if hui:menu-mode-map
     nil
   (setq hui:menu-mode-map (make-keymap))
+  ;; Make self-inserting chars all execute hui:menu-enter
   (suppress-keymap hui:menu-mode-map)
+  ;;
+  (let ((i 32))
+    (while (<= i 126)
+      (define-key hui:menu-mode-map (char-to-string i) #'hui:menu-enter)
+      (setq i (1+ i))))
+  ;;
+  ;; Bind any active keys for menu mode
+  (define-key hui:menu-mode-map hui:hypb-exit   #'hui:hypb-exit)
   (define-key hui:menu-mode-map hui:menu-quit   #'hui:menu-enter)
   (define-key hui:menu-mode-map hui:menu-abort  #'hui:menu-enter)
   (define-key hui:menu-mode-map hui:menu-top    #'hui:menu-enter)
@@ -441,10 +460,7 @@ constructs.  If not given, the top level Hyperbole menu is used."
   (define-key hui:menu-mode-map [backtab]       #'hui:menu-backward-item) ;; Shift-TAB
   (define-key hui:menu-mode-map "\M-\C-i"       #'hui:menu-backward-item) ;; M-TAB
   ;;
-  (let ((i 32))
-    (while (<= i 126)
-      (define-key hui:menu-mode-map (char-to-string i) #'hui:menu-enter)
-      (setq i (1+ i)))))
+)
 
 ;;; ************************************************************************
 ;;; Hyperbole Minibuffer Menus

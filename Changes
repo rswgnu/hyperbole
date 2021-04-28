@@ -1,3 +1,33 @@
+2021-04-28  Bob Weiner  <rsw@gnu.org>
+
+* hui-mini.el (hui:hypb-exit): "X" to exit from hyperbole-mode
+    when a minibuffer menu is active.  Use {C-h h} to re-enable
+    hyperbole-mode and display the minibuffer menu.
+              (hui:hypb-exit): Command invoked by X in menus.
+
+2021-04-27  Bob Weiner  <rsw@gnu.org>
+
+* hui-mouse.el (smart-magit-display-file): Add and use in smart-magit*
+    functions so when files from diffs are displayed, they utilize
+    Hyperbole's referent display setting, hpath:display-where.
+  man/hyperbole.texi (Smart Key - Magit Mode): Updated Smart Magit
+    doc with the above.
+
+* hbut.el (gbut:ebut-program): Add to programmatically add global
+    explicit buttons at the end of the personal button file.
+
+* hmouse-sh.el (hmouse-get-bindings, hmouse-get-unshifted-bindings):
+  hmouse-key.el (hmouse-check-action-key, hmouse-check-assist-key,
+    hmouse-set-bindings): Change from global bindings to hyperbole-mode
+    ones.
+
+* hui-select.el (hui-select-at-p): Change test from '(and (bobp) (eobp))'
+    to '(eobp)' only so never triggers at the end of a buffer, notably
+    Hyperbole minibuffer menu help displays.
+
+* hyperbole.el (hyperbole-mode-specific-map): Define to shadow without
+    overwriting global C-c bindings.
+
 2021-04-27  Mats Lidell  <matsl@gnu.org>
 
 * test/hypb-tests.el (hypb:replace-match-string-after-27.1-test): Use

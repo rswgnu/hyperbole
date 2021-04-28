@@ -215,7 +215,7 @@
   "Return non-nil if the character after optional POS (or point) matches a syntax entry in `hui-select-syntax-alist'.
 The non-nil value returned is the function to call to select that syntactic unit."
   (interactive "d")
-  (unless (and (bobp) (eobp))
+  (unless (eobp)
     (or (numberp pos) (setq pos (point)))
     (setq hui-select-previous 'char)
     (let* ((syntax (char-syntax (or (char-after pos) (char-before pos))))

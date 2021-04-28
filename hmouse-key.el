@@ -13,7 +13,7 @@
 ;;
 ;;   Supports macOS, X, NEXTSTEP and MS Windows window systems.
 ;;
-;;   `hmouse-install' globally binds the Action and Assist Mouse Keys
+;;   `hmouse-install' binds the Action and Assist Mouse Keys
 ;;   to shifted mouse buttons and optionally binds the Action Mouse Key
 ;;   to the middle mouse button.
 ;;
@@ -37,16 +37,16 @@
 Returns t iff the key is properly bound, else nil."
   (and (or (and (eventp action-key-depress-args) (eventp action-key-release-args))
 	   (not (or action-key-depress-args action-key-release-args)))
-       (where-is-internal 'action-key-depress-emacs (current-global-map) t)
-       (where-is-internal 'action-mouse-key-emacs (current-global-map) t)))
+       (where-is-internal 'action-key-depress-emacs hyperbole-mode-map t)
+       (where-is-internal 'action-mouse-key-emacs hyperbole-mode-map t)))
 
 (defun hmouse-check-assist-key ()
   "After use of the Assist Mouse Key, ensure both depress and release events are assigned to the key.
 Returns t iff the key is properly bound, else nil."
   (and (or (and (eventp assist-key-depress-args) (eventp assist-key-release-args))
 	   (not (or assist-key-depress-args assist-key-release-args)))
-       (where-is-internal 'assist-key-depress-emacs (current-global-map) t)
-       (where-is-internal 'assist-mouse-key-emacs (current-global-map) t)))
+       (where-is-internal 'assist-key-depress-emacs hyperbole-mode-map t)
+       (where-is-internal 'assist-mouse-key-emacs hyperbole-mode-map t)))
 
 (defun hmouse-set-bindings (key-binding-list)
   "Set mouse keys used as Smart Keys to bindings in KEY-BINDING-LIST.
@@ -61,7 +61,7 @@ bindings after Smart Key setup."
     (t
      (mapcar
        (lambda (key-and-binding)
-	 (global-set-key (car key-and-binding) (cdr key-and-binding)))
+	 (hkey-set-key (car key-and-binding) (cdr key-and-binding)))
        key-binding-list))))
 
 (defun hmouse-install (&optional arg)

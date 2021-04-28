@@ -11189,6 +11189,8 @@ Next: <a href="#Smart-Key-_002d-The-OO_002dBrowser" accesskey="n" rel="next">Sma
 <span id="Smart-Key-_002d-Magit-Mode-1"></span><h4 class="subsection">E.2.44 Smart Key - Magit Mode</h4>
 <span id="index-git"></span>
 <span id="index-magit"></span>
+<span id="index-version-control-4"></span>
+<span id="index-hpath_003adisplay_002dwhere-3"></span>
 <div class="format">
 <pre class="format">If pressed within a Magit buffer and not on a button:
   ACTION KEY
@@ -11197,12 +11199,14 @@ Next: <a href="#Smart-Key-_002d-The-OO_002dBrowser" accesskey="n" rel="next">Sma
      (3) on an initial read-only header line, cycle visibility of diff sections;
      (4) anywhere else, hide/show the thing at point (<kbd>{<span class="key">TAB</span>}</kbd> key binding)
          unless that does nothing in the mode, then jump to the thing at point
-         (<kbd>{<span class="key">RET</span>}</kbd> key binding).
+         (<kbd>{<span class="key">RET</span>}</kbd> key binding) but display based on the value of
+         <code>hpath:display-where</code>.
   ASSIST KEY
      (1) on the last line, quit from the magit mode (<kbd>{q}</kbd> key binding);
      (2) at the end of a line, scroll down a windowful;
      (3) on an initial read-only header line, cycle visibility of all sections;
-     (4) anywhere else, jump to the thing at point (<kbd>{<span class="key">RET</span>}</kbd> key binding).&quot;
+     (4) anywhere else, jump to the thing at point (<kbd>{<span class="key">RET</span>}</kbd> key binding)
+         but display based on the value of <code>hpath:display-where</code>.&quot;
 </pre></div>
 
 <hr>
@@ -12533,6 +12537,7 @@ Next: <a href="#Concept-Index" accesskey="n" rel="next">Concept Index</a>, Previ
 <tr><td></td><td valign="top"><a href="#index-hpath_003adisplay_002dwhere">hpath:display-where</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Action-Types">Action Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-hpath_003adisplay_002dwhere-1">hpath:display-where</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Referent-Display">Referent Display</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-hpath_003adisplay_002dwhere-2">hpath:display-where</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Internal-Viewers">Internal Viewers</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-hpath_003adisplay_002dwhere-3">hpath:display-where</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Key-_002d-Magit-Mode">Smart Key - Magit Mode</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-hpath_003aexternal_002ddisplay_002dalist">hpath:external-display-alist</a>:</td><td>&nbsp;</td><td valign="top"><a href="#External-Viewers">External Viewers</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-hpath_003aexternal_002ddisplay_002dalist_002dmacos">hpath:external-display-alist-macos</a>:</td><td>&nbsp;</td><td valign="top"><a href="#External-Viewers">External Viewers</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-hpath_003aexternal_002ddisplay_002dalist_002dmswindows">hpath:external-display-alist-mswindows</a>:</td><td>&nbsp;</td><td valign="top"><a href="#External-Viewers">External Viewers</a></td></tr>
@@ -14026,6 +14031,7 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function</a>, Up: <a href
 <tr><td></td><td valign="top"><a href="#index-version-control-1">version control</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-version-control-2">version control</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-version-control-3">version control</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-version-control-4">version control</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Key-_002d-Magit-Mode">Smart Key - Magit Mode</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-version-description">version description</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Suggestion-or-Bug-Reporting">Suggestion or Bug Reporting</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-vertical-drag">vertical drag</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Creating-and-Deleting-Windows">Creating and Deleting Windows</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-vertical-drag-1">vertical drag</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Mouse-Drags-within-a-Window">Smart Mouse Drags within a Window</a></td></tr>

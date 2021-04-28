@@ -9711,6 +9711,8 @@ If pressed within a Gomoku game buffer:
 @subsection Smart Key - Magit Mode
 @cindex git
 @cindex magit
+@cindex version control
+@vindex hpath:display-where
 @format
 @group
 If pressed within a Magit buffer and not on a button:
@@ -9720,12 +9722,14 @@ If pressed within a Magit buffer and not on a button:
      (3) on an initial read-only header line, cycle visibility of diff sections;
      (4) anywhere else, hide/show the thing at point (@bkbd{@key{TAB}} key binding)
          unless that does nothing in the mode, then jump to the thing at point
-         (@bkbd{@key{RET}} key binding).
+         (@bkbd{@key{RET}} key binding) but display based on the value of
+         @code{hpath:display-where}.
   ASSIST KEY
      (1) on the last line, quit from the magit mode (@bkbd{q} key binding);
      (2) at the end of a line, scroll down a windowful;
      (3) on an initial read-only header line, cycle visibility of all sections;
-     (4) anywhere else, jump to the thing at point (@bkbd{@key{RET}} key binding)."
+     (4) anywhere else, jump to the thing at point (@bkbd{@key{RET}} key binding)
+         but display based on the value of @code{hpath:display-where}."
 @end group
 @end format
 
