@@ -1,3 +1,8 @@
+2021-04-28  Mats Lidell  <matsl@gnu.org>
+
+* Makefile (EL_COMPILE) (ELC_COMPILE): Add hui-dired-sidebar and
+    hypb-maintenance
+
 2021-04-28  Bob Weiner  <rsw@gnu.org>
 
 * hui-mini.el (hui:hypb-exit): "X" to exit from hyperbole-mode
