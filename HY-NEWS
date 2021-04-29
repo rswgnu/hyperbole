@@ -39,6 +39,13 @@
    - ebut:program: Programmatically create an explicit Hyperbole button at
         point from LABEL, ACTYPE (action type), and optional actype ARGS.
 
+  HYROLO
+
+   - After performing a HyRolo search with point in the match buffer,
+     if you want different results, you can quickly do a new regular
+     expression HyRolo search with {r} or a string/logical search with
+     {C-u r}.
+
   KOUTLINER
 
    - Org Table Support: Org table editing now automatically works in the

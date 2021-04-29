@@ -1,5 +1,20 @@
 2021-04-28  Bob Weiner  <rsw@gnu.org>
 
+* hyrolo.el (hyrolo-grep-or-fgrep): Add.
+            (hyrolo-mode-map): Repurpose {r} to do a new regexp
+    HyRolo search, {C-u r} for string search, using above
+    new command.  This key had moved to previous matches but
+    that is already bound to {Shift-TAB} and {M-TAB}.
+            (hyrolo-bbdb-grep, hyrolo-google-contacts-grep): Let
+    current-prefix-arg be nil after captured as arg so does not
+    affect hyrolo-f/grep calls.
+  man/hyperbole.texi (HyRolo Keys): Document new {r} binding.
+
+* hyperbole.el (hyperbole-mode): Add hyperbole-mode-hook.
+               (enable-hyperbole-mode, disable-hyperbole-mode):
+    Add to separate from hyperb:init.
+               (hyperbole-mode): Update to use above functions.
+
 * hui-mini.el (hui:hypb-exit): "X" to exit from hyperbole-mode
     when a minibuffer menu is active.  Use {C-h h} to re-enable
     hyperbole-mode and display the minibuffer menu.
@@ -102,13 +117,10 @@
   hui-menu.el (hui-menu-options): Remove Toggle-Override-Local-Keys.
   hui-mini.el (hui:menus): Remove Override-Local-Keys.
 
-
 * hyperbole.el (hyperbole-mode): Finish documentation.
 
 * hib-org.el (org-mode): Add (not (hyperb:stack-frame '(hbut:at-p)))
     to prevent infinite loop.
-
-* hyperbole.el (hyperb:uninit): Add for use when disabling hyperbole-mode.
 
 * hpath.el (hpath:posix-mount-point-to-mswindows-alist): Made this an autoload
     since referenced in hyperbole.

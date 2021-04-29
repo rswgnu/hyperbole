@@ -353,7 +353,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</P>
 
 <PRE>
 Edition 7.1.4
-Printed April 27, 2021.
+Printed April 28, 2021.
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -6269,25 +6269,31 @@ Next: <a href="#HyRolo-Settings" accesskey="n" rel="next">HyRolo Settings</a>, P
 <span id="index-rolo-keys"></span>
 <p>After a rolo search is performed, point is left in the <em>rolo
 match buffer</em>, <samp>*Hyperbole Rolo*</samp>, which uses <code>hyrolo-mode</code> to
-simplify browsing many rolo matches.  Press <kbd>{?}</kbd> when in the
+simplify browsing many HyRolo matches.  Press <kbd>{?}</kbd> when in the
 match buffer for a summary of available keys, all of which are
 documented in this section.
+</p>
+<span id="index-rolo_002c-r"></span>
+<span id="index-rolo_002c-search-again"></span>
+<p>If your HyRolo search did not match what you want, use <kbd>{r}</kbd> to start
+a new regular expresion query or <kbd>{C-u r}</kbd> for a string query.  The
+rest of the match buffer keys work with the search results currently
+displayed.
 </p>
 <span id="index-HyRolo_002c-see-rolo"></span>
 <span id="index-rolo_002c-TAB"></span>
 <span id="index-rolo_002c-M_002dTAB"></span>
 <span id="index-rolo_002c-SHIFT_002dTAB"></span>
-<span id="index-rolo_002c-r"></span>
 <span id="index-rolo_002c-highlighting-matches"></span>
 <span id="index-rolo_002c-finding-matches"></span>
 <span id="index-rolo_002c-moving-through-matches"></span>
 <p>If your emacs version supports textual highlighting, each search match
 is highlighted for quick, visual location.  {<tt class="key">TAB</tt>} moves point
 forward to successive spans of text which match the search expression.
-<kbd>{M-<span class="key">TAB</span>}</kbd> <kbd>{<span class="key">SHIFT</span>-<span class="key">TAB</span>}</kbd> or <kbd>{r}</kbd> move
-point backward to earlier matches.  These keys allow you to quickly
-find the matching entry of most interest to you if your search
-expression failed to narrow the matches sufficiently.
+<kbd>{M-<span class="key">TAB</span>}</kbd> or <kbd>{<span class="key">SHIFT</span>-<span class="key">TAB</span>}</kbd> move point backward
+to earlier matches.  These keys allow you to quickly find the matching
+entry of most interest to you if your search expression failed to
+narrow the matches sufficiently.
 </p>
 <span id="index-rolo_002c-M_002ds"></span>
 <span id="index-rolo_002c-C_002ds"></span>
@@ -6318,18 +6324,18 @@ the rolo match buffer.
 <span id="index-rolo_002c-t"></span>
 <span id="index-rolo_002c-outlining"></span>
 <p>Single key outlining commands are also available for browsing matches.
-If your search matches a large number of entries, use
-<kbd>{t}</kbd> to get a top-level summary of entries.  Only the first
-line of each first-level match is shown.  If you want to see an
-overview of all the levels, use <kbd>{o}</kbd> which shows the first line
-of every entry level.  If you want an overview of just the first two
-levels, <kbd>{C-u 2 o}</kbd> will work.
+If your search matches a large number of entries, use <kbd>{t}</kbd> to get
+a top-level summary of entries.  Only the first line of each
+first-level match is shown.  If you want to see an overview of all the
+levels, use <kbd>{o}</kbd> which shows the first line of every entry level.
+If you want an overview of just the first two levels, <kbd>{C-u 2 o}</kbd>
+will work.
 </p>
 <p>Press <kbd>{s}</kbd> to show (expand) the entry at point.
 Use <kbd>{h}</kbd> to hide (collapse) the entry.  Press <kbd>{a}</kbd>
 to expand all entries in the buffer.
 </p>
-<p>Many other keys are defined to help you move through matching entries.
+<p>Other keys are defined to help you work with matching entries.
 </p>
 <span id="index-rolo_002c-moving-to-entries"></span>
 <dl compact="compact">
@@ -6357,7 +6363,7 @@ to expand all entries in the buffer.
 <span id="index-u-1"></span>
 </p></dd>
 <dt><kbd>{u}</kbd></dt>
-<dd><p>Move to the previous entry one level up.
+<dd><p>Move to the previous higher entry one level up.
 <span id="index-rolo_002c-_002e"></span>
 <span id="index-rolo_002c-_003c"></span>
 <span id="index-_002e-or-_003c"></span>
@@ -6418,19 +6424,30 @@ Previous: <a href="#HyRolo-Keys" accesskey="p" rel="prev">HyRolo Keys</a>, Up: <
 <span id="index-hyrolo_002dfile_002dlist"></span>
 <span id="index-rolo_002c-personal"></span>
 <p>The files used in any rolo search are given by the
-<code>hyrolo-file-list</code> variable, whose default value is
-typically <code>(&quot;~/.rolo.otl&quot;</code>.  Searches scan only your
-personal rolo file.  Any entries added to this list should be absolute
-filenames.  If a file in the list does not exist or is not readable, it
-is skipped.  Files are searched in the order in which they appear in the
-list.  In general, you should leave your personal rolo file as the
-first entry in the list, since this is the only file to which the Add
-command on the rolo menu adds entries.
+<code>hyrolo-file-list</code> variable, whose default value is typically
+<code>(&quot;~/.rolo.otl&quot;</code>.  Searches scan only your personal rolo file.
+Any entries added to this list should be absolute filenames.  If a
+file in the list does not exist or is not readable, it is skipped.
+Files are searched in the order in which they appear in the list.  In
+general, you should leave your personal rolo file as the first entry
+in the list, since this is the only file to which the Add command on
+the rolo menu adds entries.
 </p>
 <p>Hyperbole releases earlier than 4.17 used a different filename for the
 personal rolo.  If such a file exists, you will be prompted to rename
 it whenever the HyRolo system is loaded.
 </p>
+<p>If you want to have HyRolo search your directory of Org files, add the
+following to your Emacs initialization file:
+</p>
+<div class="format">
+<pre class="format">(add-hook &rsquo;hyperbole-init-hook
+	  (lambda ()
+	    (require &rsquo;org)
+	    (setq hyrolo-file-list (append (hyrolo-initialize-file-list)
+					   (cddr (directory-files org-directory))))))
+</pre></div>
+
 <span id="index-BBDB"></span>
 <span id="index-Big-Brother-DataBase"></span>
 <p>If you use the Big Brother DataBase (BBDB) Emacs package to capture
@@ -13877,6 +13894,7 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function</a>, Up: <a href
 <tr><td></td><td valign="top"><a href="#index-rolo_002c-outlining">rolo, outlining</a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyRolo-Keys">HyRolo Keys</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-rolo_002c-personal">rolo, personal</a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyRolo-Settings">HyRolo Settings</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-rolo_002c-quitting">rolo, quitting</a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyRolo-Keys">HyRolo Keys</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-rolo_002c-search-again">rolo, search again</a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyRolo-Keys">HyRolo Keys</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-root-cell">root cell</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Creating-Outlines">Creating Outlines</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-root-cell-1">root cell</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Idstamps">Idstamps</a></td></tr>
 <tr><td colspan="4"> <hr></td></tr>

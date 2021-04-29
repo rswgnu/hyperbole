@@ -440,6 +440,13 @@ Return number of entries matched.  See also documentation for the variable
 	       (if (= total-matches 1) "y" "ies")))
     total-matches))
 
+;;;###autoload
+(defun hyrolo-grep-or-fgrep (&optional arg)
+  "Grep over `hyrolo-file-list' and display the results as rolo entries.
+With optional prefix ARG, do an fgrep string match instead of a regexp match."
+  (interactive "P")
+  (call-interactively (if arg 'hyrolo-fgrep 'hyrolo-grep)))
+
 (defun hyrolo-isearch (&optional arg)
   "Interactively search forward for the next occurrence of the current match string.
 Then add characters to further narrow the search.  With optional prefix ARG non-nil,
@@ -810,7 +817,8 @@ Output looks like so:
 	(hyrolo-display-format-function #'hyrolo-bbdb-entry-format)
 	;; Kill the bbdb file after use if it is not already in a buffer.
 	(hyrolo-kill-buffers-after-use
-	 (not (get-file-buffer (expand-file-name bbdb-file)))))
+	 (not (get-file-buffer (expand-file-name bbdb-file))))
+	(current-prefix-arg))
     (call-interactively (if arg 'hyrolo-fgrep 'hyrolo-grep))
     (read-only-mode 0)
     (re-search-forward "^\\*" nil t)
@@ -864,7 +872,8 @@ Output looks like so:
   (require 'google-contacts)
   (let ((hyrolo-file-list (list google-contacts-buffer-name))
 	;; Kill the google-contacts buffer after use if it is not already in use.
-	(hyrolo-kill-buffers-after-use (not (get-buffer google-contacts-buffer-name))))
+	(hyrolo-kill-buffers-after-use (not (get-buffer google-contacts-buffer-name)))
+	(current-prefix-arg))
     (call-interactively (if arg 'hyrolo-fgrep 'hyrolo-grep))
     (read-only-mode 0)
     (re-search-forward hyrolo-entry-regexp nil t)
@@ -1528,7 +1537,7 @@ String search expressions are converted to regular expressions.")
   (define-key hyrolo-mode-map "o"        'hyrolo-overview)
   (define-key hyrolo-mode-map "p"        'outline-previous-visible-heading)
   (define-key hyrolo-mode-map "q"        'hyrolo-quit)
-  (define-key hyrolo-mode-map "r"        'hyrolo-previous-match)
+  (define-key hyrolo-mode-map "r"        'hyrolo-grep-or-fgrep)
   (define-key hyrolo-mode-map "s"        'outline-show-subtree)
   (define-key hyrolo-mode-map "\M-s"     'hyrolo-isearch)
   (define-key hyrolo-mode-map "t"        'hyrolo-top-level)

@@ -616,35 +616,12 @@ If FLAG is nil then text is shown, while if FLAG is t the text is hidden."
   ;; Conditionally initialize Hyperbole key bindings (when hkey-init is t).
   (hkey-initialize)
   ;;
-  ;; Abbreviate MSWindows /cygdrive mount point paths.
-  (when (file-exists-p "/cygdrive")
-    (add-to-list 'directory-abbrev-alist hyperb:cygdrive))
-  ;; When running under a POSIX system with possible access to MSWindows servers,
-  ;; cache valid MSWindows mount points.
-  (hpath:cache-mswindows-mount-points)
-  ;;
-  ;; Save button attribute file whenever same dir file is saved and
-  ;; `ebut:hattr-save' is non-nil.
-  (add-hook (if (boundp 'write-file-functions)
-		'write-file-functions
-	      'write-file-hooks)
-	    #'hattr:save t)
-  ;;
-  (hyperb:init-menubar)
+  ;; The keymaps in `emulation-mode-map-alists' take precedence over
+  ;; `minor-mode-map-alist'
+  (add-to-list 'emulation-mode-map-alists `((hyperbole-mode . ,hyperbole-mode-map)))
   ;;
   ;; Hyperbole initialization is complete.
-  (message "Initializing Hyperbole...done")
-  (message "Hyperbole mode enabled"))
-
-(defun hyperb:uninit ()
-  "Remove standard Hyperbole initializations/hooks."
-  (setq directory-abbrev-alist (remq hyperb:cygdrive
-				     directory-abbrev-alist)
-	hpath:posix-mount-point-to-mswindows-alist nil)
-  (remove-hook (if (boundp 'write-file-functions)
-		'write-file-functions
-	      'write-file-hooks)
-	    #'hattr:save))
+  (message "Initializing Hyperbole...done"))
 
 (defun hyperb:autoloads-exist-p ()
   "Return t if all Hyperbole autoload files exist or nil otherwise."
@@ -686,6 +663,48 @@ This is used only when running from git source and not a package release."
   "Define a Hyperbole minor mode help-map KEY bound to COMMAND."
   (define-key hyperbole-help-map key command))
 
+(defun enable-hyperbole-mode ()
+  "Enable Hyperbole global minor mode."
+  (interactive)
+  ;;
+  ;; Abbreviate MSWindows /cygdrive mount point paths.
+  (when (file-exists-p "/cygdrive")
+    (add-to-list 'directory-abbrev-alist hyperb:cygdrive))
+  ;; When running under a POSIX system with possible access to MSWindows servers,
+  ;; cache valid MSWindows mount points.
+  (hpath:cache-mswindows-mount-points)
+  ;;
+  ;; Save button attribute file whenever same dir file is saved and
+  ;; `ebut:hattr-save' is non-nil.
+  (add-hook (if (boundp 'write-file-functions)
+		'write-file-functions
+	      'write-file-hooks)
+	    #'hattr:save t)
+  ;;
+  (hyperb:init-menubar)
+  ;; Activate hyperbole-mode
+  (run-hooks 'hyperbole-mode-hook))
+
+(defun disable-hyperbole-mode ()
+  "Disable Hyperbole keys, menus and hooks."
+  (interactive)
+    ;; Deactivate hyperbole-mode
+    ;; Delete Hyperbole menu from all menubars.
+    (hui-menu-remove Hyperbole)
+    ;;
+    ;; Remove Hyperbole button comment from future outgoing mail.
+    (when (boundp 'smail:comment) (setq smail:comment nil))
+    (remove-hook 'after-init-hook #'hyperb:init)
+    ;;
+    (setq directory-abbrev-alist (remq hyperb:cygdrive
+				       directory-abbrev-alist)
+	  hpath:posix-mount-point-to-mswindows-alist nil)
+    ;;
+    (remove-hook (if (boundp 'write-file-functions)
+		     'write-file-functions
+		   'write-file-hooks)
+		 #'hattr:save))
+
 (defvar hyperbole-mode-map (make-sparse-keymap)
   "Keymap for the GNU Hyperbole global minor mode.
 See `hkey-initialize'.")
@@ -700,7 +719,7 @@ See `hkey-initialize'.")
   "Toggle the Everyday Hypertextual Information Manager global minor mode (Hyperbole mode).
 
 When Hyperbole mode is enabled, the `hyperbole-mode' variable
-is non-nil.
+is non-nil, Hyperbole menus are enabled, as are Hyperbole keys.
 
 Invoke the Hyperbole minibuffer menu with \\[hyperbole].  See the
 documentation at \"(hyperbole)Top\".
@@ -710,24 +729,14 @@ documentation at \"(hyperbole)Top\".
   :keymap hyperbole-mode-map
   :lighter hyperbole-mode-lighter
   (if hyperbole-mode
-      ;; activate
-      (if after-init-time
-          ;; This call initializes Hyperbole key bindings and hooks.
-          (hyperb:init)
-        ;; Initialize after other key bindings are loaded at startup.
-        (add-hook 'after-init-hook #'hyperb:init t))
-    ;; deactivate
-    ;; Delete Hyperbole menu from all menubars.
-    (hui-menu-remove Hyperbole)
-    ;;
-    ;; Remove Hyperbole button comment from future outgoing mail.
-    (when (boundp 'smail:comment) (setq smail:comment nil))
-    (remove-hook 'after-init-hook #'hyperb:init)
-    (hyperb:uninit)))
+      (enable-hyperbole-mode)
+    (disable-hyperbole-mode)))
 
-;; The keymaps in `emulation-mode-map-alists' take precedence over
-;; `minor-mode-map-alist'
-(add-to-list 'emulation-mode-map-alists `((hyperbole-mode . ,hyperbole-mode-map)))
+(if after-init-time
+    ;; Initialize Hyperbole key bindings and hooks.
+    (hyperb:init)
+  ;; Initialize after other key bindings are loaded at startup.
+  (add-hook 'after-init-hook #'hyperb:init t))
 
 ;; !! FIXME: Loading a file should not change Emacs's behavior but we
 ;; need this here for awhile until can ensure Hyperbole users know to

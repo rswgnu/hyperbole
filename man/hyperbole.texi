@@ -155,7 +155,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</P>
 
 <PRE>
 Edition 7.1.4
-Printed April 27, 2021.
+Printed April 28, 2021.
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -197,7 +197,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 @example
 Edition 7.1.4
-April 27, 2021
+April 28, 2021
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -5301,25 +5301,31 @@ you should contact.
 @cindex rolo keys
 After a rolo search is performed, point is left in the @dfn{rolo
 match buffer}, @file{*Hyperbole Rolo*}, which uses @code{hyrolo-mode} to
-simplify browsing many rolo matches.  Press @bkbd{?} when in the
+simplify browsing many HyRolo matches.  Press @bkbd{?} when in the
 match buffer for a summary of available keys, all of which are
 documented in this section.
+
+@kindex rolo, r
+@cindex rolo, search again
+If your HyRolo search did not match what you want, use @bkbd{r} to start
+a new regular expresion query or @bkbd{C-u r} for a string query.  The
+rest of the match buffer keys work with the search results currently
+displayed.
 
 @kindex HyRolo, see rolo
 @kindex rolo, @key{TAB}
 @kindex rolo, M-@key{TAB}
 @kindex rolo, @key{SHIFT}-@key{TAB}
-@kindex rolo, r
 @cindex rolo, highlighting matches
 @cindex rolo, finding matches
 @cindex rolo, moving through matches
 If your emacs version supports textual highlighting, each search match
 is highlighted for quick, visual location.  @{@key{TAB}@} moves point
 forward to successive spans of text which match the search expression.
-@bkbd{M-@key{TAB}} @bkbd{@key{SHIFT}-@key{TAB}} or @bkbd{r} move
-point backward to earlier matches.  These keys allow you to quickly
-find the matching entry of most interest to you if your search
-expression failed to narrow the matches sufficiently.
+@bkbd{M-@key{TAB}} or @bkbd{@key{SHIFT}-@key{TAB}} move point backward
+to earlier matches.  These keys allow you to quickly find the matching
+entry of most interest to you if your search expression failed to
+narrow the matches sufficiently.
 
 @kindex rolo, M-s
 @kindex rolo, C-s
@@ -5350,19 +5356,19 @@ the rolo match buffer.
 @kindex rolo, t
 @cindex rolo, outlining
 Single key outlining commands are also available for browsing matches.
-If your search matches a large number of entries, use
-@bkbd{t} to get a top-level summary of entries.  Only the first
-line of each first-level match is shown.  If you want to see an
-overview of all the levels, use @bkbd{o} which shows the first line
-of every entry level.  If you want an overview of just the first two
-levels, @bkbd{C-u 2 o} will work.
+If your search matches a large number of entries, use @bkbd{t} to get
+a top-level summary of entries.  Only the first line of each
+first-level match is shown.  If you want to see an overview of all the
+levels, use @bkbd{o} which shows the first line of every entry level.
+If you want an overview of just the first two levels, @bkbd{C-u 2 o}
+will work.
 
 Press @bkbd{s} to show (expand) the entry at point.
 Use @bkbd{h} to hide (collapse) the entry.  Press @bkbd{a}
 to expand all entries in the buffer.
 
 @noindent
-Many other keys are defined to help you move through matching entries.
+Other keys are defined to help you work with matching entries.
 
 @cindex rolo, moving to entries
 @table @asis
@@ -5380,7 +5386,7 @@ Move to the next entry at any level.
 Move to the previous entry at any level.
 @kindex rolo, u
 @kitem u
-Move to the previous entry one level up.
+Move to the previous higher entry one level up.
 @kindex rolo, .
 @kindex rolo, <
 @kitem . or <
@@ -5428,18 +5434,29 @@ current frame to its state prior to the rolo search.
 @vindex hyrolo-file-list
 @cindex rolo, personal
 The files used in any rolo search are given by the
-@code{hyrolo-file-list} variable, whose default value is
-typically @code{("~/.rolo.otl"}.  Searches scan only your
-personal rolo file.  Any entries added to this list should be absolute
-filenames.  If a file in the list does not exist or is not readable, it
-is skipped.  Files are searched in the order in which they appear in the
-list.  In general, you should leave your personal rolo file as the
-first entry in the list, since this is the only file to which the Add
-command on the rolo menu adds entries.
+@code{hyrolo-file-list} variable, whose default value is typically
+@code{("~/.rolo.otl"}.  Searches scan only your personal rolo file.
+Any entries added to this list should be absolute filenames.  If a
+file in the list does not exist or is not readable, it is skipped.
+Files are searched in the order in which they appear in the list.  In
+general, you should leave your personal rolo file as the first entry
+in the list, since this is the only file to which the Add command on
+the rolo menu adds entries.
 
 Hyperbole releases earlier than 4.17 used a different filename for the
 personal rolo.  If such a file exists, you will be prompted to rename
 it whenever the HyRolo system is loaded.
+
+If you want to have HyRolo search your directory of Org files, add the
+following to your Emacs initialization file:
+
+@format
+(add-hook 'hyperbole-init-hook
+	  (lambda ()
+	    (require 'org)
+	    (setq hyrolo-file-list (append (hyrolo-initialize-file-list)
+					   (cddr (directory-files org-directory))))))
+@end format
 
 @cindex BBDB
 @cindex Big Brother DataBase
