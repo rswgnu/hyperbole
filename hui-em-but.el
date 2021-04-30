@@ -70,7 +70,7 @@
   :group 'hyperbole-buttons)
 
 (defcustom hproperty:highlight-face 'highlight
-  "Item highlighting face.  Use (hproperty:set-item-highlight) to set."
+  "Item highlighting face."
   :type 'face
   :initialize #'custom-initialize-default
   :group 'hyperbole-buttons)
