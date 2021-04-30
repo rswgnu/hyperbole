@@ -7,6 +7,11 @@
 * hypb-ert.el (hypb-ert-sym, hypb-ert-sel): Change 2nd args to
     strings to fix Emacs 27 byte-compile error.
 
+2021-05-01  Mats Lidell  <matsl@gnu.org>
+
+* hui-em-but.el (hbut-flash): Set defaults
+    (hproperty:color-list): Use defined-colors
+
 2021-04-30  Mats Lidell  <matsl@gnu.org>
 
 * hyrolo.el (hyrolo-highlight-face): Use the 'match face for rolo
