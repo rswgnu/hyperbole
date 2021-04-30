@@ -204,10 +204,10 @@ which prevents automatic removal of any local bindings to the same key."
 (defvar hmouse-middle-flag)
 (defvar hmouse-bindings-flag)
 (defvar hyperb:user-email)
-(defvar hyperbole-help-map (make-sparse-keymap)
-  "Help prefix keymap available only when Hyperbole minor mode is enabled.")
-(defvar hyperbole-mode-specific-map (make-sparse-keymap)
-  "C-c prefix keymap available only when Hyperbole minor mode is enabled.")
+;; (defvar hyperbole-help-map (make-sparse-keymap)
+;;  "Help prefix keymap available only when Hyperbole minor mode is enabled.")
+;; (defvar hyperbole-mode-specific-map (make-sparse-keymap)
+;;   "C-c prefix keymap available only when Hyperbole minor mode is enabled.")
 
 (defun hkey-initialize ()
   "If `hkey-init' is non-nil, initialize Hyperbole key bindings.
@@ -225,12 +225,12 @@ of the commands."
 	(global-set-key (vector help-char ?h) #'hyperbole))
     ;;
     ;; Define help prefix key in this keymap.
-    (set-keymap-parent hyperbole-help-map help-map)
-    (hkey-set-key (vector help-char) hyperbole-help-map)
+    ;; (set-keymap-parent hyperbole-help-map help-map)
+    ;; (hkey-set-key (vector help-char) hyperbole-help-map)
     ;;
     ;; Define C-c prefix key in this keymap.
-    (set-keymap-parent hyperbole-mode-specific-map mode-specific-map)
-    (hkey-set-key "\C-c" hyperbole-mode-specific-map)
+    ;; (set-keymap-parent hyperbole-mode-specific-map mode-specific-map)
+    ;; (hkey-set-key "\C-c" hyperbole-mode-specific-map)
     ;;
     ;; Binds the Action Key to {M-RET} and the Assist Key to {C-u M-RET}
     ;; and loads the Hyperbole mouse key bindings.
@@ -243,7 +243,7 @@ of the commands."
     ;; Typically bind the key, {C-h A}, for Action Key help and {C-u C-h A} for Assist key
     ;; help.
     (or (where-is-internal #'hkey-help)
-	(hkey-help-set-key "A" #'hkey-help))
+	(hkey-set-key (vector help-char ?A) #'hkey-help))
     ;;
     ;; Provides a site standard way of emulating most Hyperbole mouse drag
     ;; commands from the keyboard.  This is most useful for rapidly creating
@@ -617,8 +617,9 @@ If FLAG is nil then text is shown, while if FLAG is t the text is hidden."
   (hkey-initialize)
   ;;
   ;; The keymaps in `emulation-mode-map-alists' take precedence over
-  ;; `minor-mode-map-alist'
-  (add-to-list 'emulation-mode-map-alists `((hyperbole-mode . ,hyperbole-mode-map)))
+  ;; `minor-mode-map-alist'; add this only if other minor modes are
+  ;; overriding Hyperbole keys.
+  ;; (add-to-list 'emulation-mode-map-alists `((hyperbole-mode . ,hyperbole-mode-map)))
   ;;
   ;; Hyperbole initialization is complete.
   (message "Initializing Hyperbole...done"))
@@ -659,13 +660,8 @@ This is used only when running from git source and not a package release."
       (where-is-internal command)
       (hkey-set-key key command)))
 
-(defun hkey-help-set-key (key command)
-  "Define a Hyperbole minor mode help-map KEY bound to COMMAND."
-  (define-key hyperbole-help-map key command))
-
-(defun enable-hyperbole-mode ()
+(defun hyperbole--enable-mode ()
   "Enable Hyperbole global minor mode."
-  (interactive)
   ;;
   ;; Abbreviate MSWindows /cygdrive mount point paths.
   (when (file-exists-p "/cygdrive")
@@ -681,29 +677,26 @@ This is used only when running from git source and not a package release."
 	      'write-file-hooks)
 	    #'hattr:save t)
   ;;
-  (hyperb:init-menubar)
-  ;; Activate hyperbole-mode
-  (run-hooks 'hyperbole-mode-hook))
+  (hyperb:init-menubar))
 
-(defun disable-hyperbole-mode ()
+(defun hyperbole--disable-mode ()
   "Disable Hyperbole keys, menus and hooks."
-  (interactive)
-    ;; Deactivate hyperbole-mode
-    ;; Delete Hyperbole menu from all menubars.
-    (hui-menu-remove Hyperbole)
-    ;;
-    ;; Remove Hyperbole button comment from future outgoing mail.
-    (when (boundp 'smail:comment) (setq smail:comment nil))
-    (remove-hook 'after-init-hook #'hyperb:init)
-    ;;
-    (setq directory-abbrev-alist (remq hyperb:cygdrive
-				       directory-abbrev-alist)
-	  hpath:posix-mount-point-to-mswindows-alist nil)
-    ;;
-    (remove-hook (if (boundp 'write-file-functions)
-		     'write-file-functions
-		   'write-file-hooks)
-		 #'hattr:save))
+  ;; Deactivate hyperbole-mode
+  ;; Delete Hyperbole menu from all menubars.
+  (hui-menu-remove Hyperbole)
+  ;;
+  ;; Remove Hyperbole button comment from future outgoing mail.
+  (when (boundp 'smail:comment) (setq smail:comment nil))
+  (remove-hook 'after-init-hook #'hyperb:init)
+  ;;
+  (setq directory-abbrev-alist (remq hyperb:cygdrive
+				     directory-abbrev-alist)
+	hpath:posix-mount-point-to-mswindows-alist nil)
+  ;;
+  (remove-hook (if (boundp 'write-file-functions)
+		   'write-file-functions
+		 'write-file-hooks)
+	       #'hattr:save))
 
 (defvar hyperbole-mode-map (make-sparse-keymap)
   "Keymap for the GNU Hyperbole global minor mode.
@@ -726,21 +719,26 @@ documentation at \"(hyperbole)Top\".
 
 \\{hyperbole-mode-map}"
   :global t
-  :keymap hyperbole-mode-map
   :lighter hyperbole-mode-lighter
   (if hyperbole-mode
-      (enable-hyperbole-mode)
-    (disable-hyperbole-mode)))
+      (hyperbole--enable-mode)
+    (hyperbole--disable-mode)))
 
+;; This next expression initializes the Hyperbole keymap but does not
+;; activate Hyperbole.  The only user-visible change it should make is
+;; to globally bind {C-h h} to 'hyperbole' which when invoked will both
+;; activate Hyperbole and show its minibuffer menu.
 (if after-init-time
     ;; Initialize Hyperbole key bindings and hooks.
     (hyperb:init)
   ;; Initialize after other key bindings are loaded at startup.
   (add-hook 'after-init-hook #'hyperb:init t))
 
-;; !! FIXME: Loading a file should not change Emacs's behavior but we
-;; need this here for awhile until can ensure Hyperbole users know to
-;; add this to their Emacs init files.
+;; !! FIXME: This next expression activates Hyperbole for compatibility
+;; with prior releases where (require 'hyperbole) was enough to
+;; activate its key bindings.  However, loading a file should not
+;; change Emacs's behavior, so after educating users to add this
+;; next line to their Emacs initializations, it should be removed.
 (hyperbole-mode 1)
 
 (makunbound 'hyperbole-loading)

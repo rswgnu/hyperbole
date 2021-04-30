@@ -817,13 +817,19 @@ paths are allowed.  Absolute pathnames must begin with a `/' or `~'."
 		;; Don't allow more than one set of grouping chars
 		(not (string-match "\)\\s-*\(\\|\\]\\s-*\\[\\|\}\\s-*\{" path)))
 	   ;; With point inside a path variable, return the path that point is on or to the right of.
-	   (or (and (setq subpath (hargs:delimited "[:\"\']" "[:\"\']" t t nil "[\t\n\r\f]\\|[;:] \\| [;:]"))
-		    (not (string-match "[:;\t\n\r\f]" subpath))
-		    subpath)
-	       (and (setq subpath (hargs:delimited "[;\"\']" "[;\"\']"  t t nil "[\t\n\r\f]\\|[;:] \\| [;:]"))
-		    (not (string-match "[;\t\n\r\f]\\|:[^:]*:" subpath))
-		    subpath)
-	       "."))
+	   (setq subpath (or (and (setq subpath (hargs:delimited "[:\"\']" "[:\"\']" t t nil "[\t\n\r\f]\\|[;:] \\| [;:]"))
+				  (not (string-match "[:;\t\n\r\f]" subpath))
+				  subpath)
+			     (and (setq subpath (hargs:delimited "[;\"\']" "[;\"\']"  t t nil "[\t\n\r\f]\\|[;:] \\| [;:]"))
+				  (not (string-match "[;\t\n\r\f]\\|:[^:]*:" subpath))
+				  subpath)))
+	   (if subpath
+	       ;; Could be a shell command from a semicolon separated
+	       ;; list; ignore if so
+	       (unless (and (string-match "\\`\\s-*\\([^; 	]+\\)" subpath)
+			    (executable-find (match-string 1 subpath)))
+		 subpath)
+	     "."))
 	  ((hpath:is-p path type non-exist))
 	  ;; Local file URLs
 	  ;; ((hpath:is-p (hargs:delimited "file://" "[ \t\n\r\"\'\}]" nil t)))

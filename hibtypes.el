@@ -224,7 +224,11 @@ display options."
 		 (setq path (if (or assist-flag (hyperb:stack-frame '(hkey-help)))
 				path
 			      (hpath:choose-from-path-variable path "Display")))
-		 (unless (or (null path) (string-empty-p path))
+		 (unless (or (null path) (string-blank-p path)
+			     ;; Could be a shell command from a semicolon
+			     ;; separated list; ignore if so.
+			     (and (string-match "\\`\\s-*\\([^; 	]+\\)" path)
+				  (executable-find (match-string 1 path))))
 		   (hact 'link-to-file path)))
 		((string-match "\\`[^\\\\/~]+\\.el[cn]?\\(\\.gz\\)?\\'" path)
                  (apply #'ibut:label-set path (hpath:start-end path))

@@ -1,3 +1,19 @@
+2021-04-30  Bob Weiner  <rsw@gnu.org>
+
+* hpath.el (hpath:at-p):
+  hibtypes.el (pathname): Prevent from matching to a shell
+    command within a semicolon separated sequence of commands.
+
+2021-04-29  Bob Weiner  <rsw@gnu.org>
+
+* hyperbole.el (hyperb:init): Remove enhanced priority Hyperbole
+    minor-mode from emulation-mode-map-alists.
+               (hkey-initialize): Remove Hyperbole-specific C-h
+    and C-c prefix maps and use of the corresponding global prefix
+    maps as parent keymaps for hyperbole-mode.  define-key does
+    the right thing for minor modes without any of this.
+               (hkey-help-set-key): Remove, not needed.
+
 2021-04-28  Mats Lidell  <matsl@gnu.org>
 
 * Makefile (EL_COMPILE) (ELC_COMPILE): Add hui-dired-sidebar and
@@ -16,7 +32,7 @@
   man/hyperbole.texi (HyRolo Keys): Document new {r} binding.
 
 * hyperbole.el (hyperbole-mode): Add hyperbole-mode-hook.
-               (enable-hyperbole-mode, disable-hyperbole-mode):
+               (hyperbole--enable-mode, hyperbole--disable-mode):
     Add to separate from hyperb:init.
                (hyperbole-mode): Update to use above functions.
 
