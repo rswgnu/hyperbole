@@ -43,8 +43,8 @@
   (mapc #'load-file (hypb-run-ert-test-libraries))
   (ert test-selector))
 
-(defal hypb-ert-sym 'hypb-run-ert-test-symbol)
-(defal hypb-ert-sel 'hypb-run-ert-test-selector)
+(defal hypb-ert-sym "hypb-run-ert-test-symbol")
+(defal hypb-ert-sel "hypb-run-ert-test-selector")
 
 (defun hypb-run-all-tests ()
   "Run every ert test."

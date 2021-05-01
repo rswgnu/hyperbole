@@ -1,3 +1,8 @@
+2021-05-01  Bob Weiner  <rsw@gnu.org>
+
+* hypb-ert.el (hypb-ert-sym, hypb-ert-sel): Change 2nd args to
+    strings to fix Emacs 27 byte-compile error.
+
 2021-04-30  Bob Weiner  <rsw@gnu.org>
 
 * hpath.el (hpath:at-p):
