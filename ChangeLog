@@ -7,6 +7,26 @@
 * hypb-ert.el (hypb-ert-sym, hypb-ert-sel): Change 2nd args to
     strings to fix Emacs 27 byte-compile error.
 
+2021-05-01  Mats Lidell  <matsl@gnu.org>
+
+* hui-em-but.el (hbut-flash): Set defaults
+    (hproperty:color-list): Use defined-colors
+
+2021-04-30  Mats Lidell  <matsl@gnu.org>
+
+* hyrolo.el (hyrolo-highlight-face): Use the 'match face for rolo
+    searches.
+    (hyrolo-initialize-highlight-face): Remove since not needed when using
+    'match face.
+
+* hui-em-but.el (hbut-flash): Specify a face for flashing that supports
+    light and dark background using built in functionality.
+    (hproperty:background, hproperty:foreground)
+    (hproperty:item-highlight-color, hproperty:but-color)
+    (hproperty:set-flash-color, hproperty:set-item-highlight)
+    (hproperty:set-face-after-init): Remove since not needed when using a
+    fully specified face.
+
 2021-04-30  Bob Weiner  <rsw@gnu.org>
 
 * hpath.el (hpath:at-p):
