@@ -1,5 +1,9 @@
 2021-05-01  Bob Weiner  <rsw@gnu.org>
 
+* ChangeLog: Renamed this file from Changes so change-log-mode will
+    be used (now that Elpa release builds no longer overwrite files
+    named ChangeLog with git log information).
+
 * hypb-ert.el (hypb-ert-sym, hypb-ert-sel): Change 2nd args to
     strings to fix Emacs 27 byte-compile error.
 
@@ -6742,3 +6746,10 @@ V5.07 changes ^^^^:
 ==============================================================================
 V5.06 changes ^^^^:
 ==============================================================================
+
+     For earlier ChangeLog entries, see earlier releases of Hyperbole.
+
+
+     Copyright 1991-2021 Free Software Foundation, Inc.
+     Copying and distribution of this file, with or without modification, are
+     permitted provided the copyright notice and this notice are preserved.

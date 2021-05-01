@@ -349,7 +349,7 @@ If:
 (defun smart-emacs-lisp-mode-p ()
   "Return t if in a mode which use Emacs Lisp symbols."
   ;; Beyond Lisp files, Emacs Lisp symbols appear frequently in Byte-Compiled
-  ;; buffers, debugger buffers, and Help buffers.
+  ;; buffers, debugger buffers, program ChangeLog buffers, and Help buffers.
   (or (memq major-mode #'(emacs-lisp-mode lisp-interaction-mode debugger-mode))
       (string-match "\\`\\*Compile-Log\\(-Show\\)?\\*" (buffer-name))
       (and (or (memq major-mode #'(help-mode change-log-mode))
