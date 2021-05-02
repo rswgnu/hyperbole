@@ -75,6 +75,48 @@
   :initialize #'custom-initialize-default
   :group 'hyperbole-buttons)
 
+(defface hbut-face
+  '((((class color) (min-colors 88) (background light))
+     :background "lightblue")
+    (((class color) (min-colors 88) (background dark))
+     :background "lightblue")
+    (((class color) (min-colors 16) (background light))
+     :background "lightblue")
+    (((class color) (in-colors 16) (background dark))
+     :background "lighblue")
+    (((class color) (min-colors 8))
+     :background "lightblue" :foreground "black")
+    (t :inverse-video t))
+  "Face for hyperbole buttons."
+  :group 'hyperbole-buttons)
+
+(defcustom hproperty:but-face 'hbut-face
+  "Hyperbole face for hyper-buttons."
+  :type 'face
+  :initialize #'custom-initialize-default
+  :group 'hyperbole-buttons)
+
+(defface hbut-item-face
+  '((((class color) (min-colors 88) (background light))
+     :background "yellow")
+    (((class color) (min-colors 88) (background dark))
+     :background "yellow")
+    (((class color) (min-colors 16) (background light))
+     :background "yellow")
+    (((class color) (in-colors 16) (background dark))
+     :background "yellow")
+    (((class color) (min-colors 8))
+     :background "yellow" :foreground "black")
+    (t :inverse-video t))
+  "Face for hyperbole buttons."
+  :group 'hyperbole-buttons)
+
+(defcustom hproperty:item-face 'hbut-item-face
+  "Hyperbole face for hyper-buttons."
+  :type 'face
+  :initialize #'custom-initialize-default
+  :group 'hyperbole-buttons)
+
 ;;; ************************************************************************
 ;;; Public functions
 ;;; ************************************************************************
@@ -249,17 +291,11 @@ highlighted."
 ;;; Private variables
 ;;; ************************************************************************
 
-(defvar hproperty:but-face
-  (progn (defface hbut nil "Hyperbole hyper-button face."
-	   :group 'hyperbole-buttons)
-	 'hbut)
-  "Hyperbole hyper-button face.")
 (setq hproperty:but hproperty:but-face)
 
 (defvar hproperty:item-button nil
   "Button used to highlight an item in a listing buffer.")
 (make-variable-buffer-local 'hproperty:item-button)
-(defvar hproperty:item-face nil "Item marking face.")
 
 (provide 'hui-em-but)
 
