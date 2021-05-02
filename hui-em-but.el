@@ -76,17 +76,10 @@
   :group 'hyperbole-buttons)
 
 (defface hbut-face
-  '((((class color) (min-colors 88) (background light))
-     :background "lightblue")
-    (((class color) (min-colors 88) (background dark))
-     :background "lightblue")
-    (((class color) (min-colors 16) (background light))
-     :background "lightblue")
-    (((class color) (in-colors 16) (background dark))
-     :background "lighblue")
-    (((class color) (min-colors 8))
-     :background "lightblue" :foreground "black")
-    (t :inverse-video t))
+  '((((min-colors 88) (background dark)) (:foreground "salmon1"))
+    (((background dark)) (:background "red" :foreground "black"))
+    (((min-colors 88)) (:foreground "salmon4"))
+    (t (:background "red")))
   "Face for hyperbole buttons."
   :group 'hyperbole-buttons)
 
