@@ -25,8 +25,8 @@
   hui-mouse.el (action-key-error, assist-key-error): When in Org mode,
     if no other context fired, use org-meta-return.
   hsys-org.el (hsys-org-heading-at-p): Add to support Hyperbole
-    EOL handling and use in smart-org.
-
+    EOL handling and use in smart-org.  Also when hsys-org-enable-smart-keys
+    is 'buttons, follow Org links and radio targets.
 
 * kotl/kotl-mode.el (kotl-mode:kill-whole-line): Add override
     of kill-whole-line for Koutliner.

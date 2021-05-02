@@ -1638,11 +1638,21 @@ handled by the separate implicit button type, `org-link-outside-org-mode'."
 		    ;; Continue with any further Smart Key non-Org contexts
 		    nil))))
 	  ((eq hsys-org-enable-smart-keys 'buttons)
-	   (when (hbut:at-p)
-	     ;; Activate/Assist with any Hyperbole button at point
-	     (if (not assist-flag)
-		 (hact 'hbut:act)
-	       (hact 'hkey-help)))
+	   (cond ((hsys-org-radio-target-def-at-p)
+		  (hact 'org-radio-target)
+		  t)
+		 ((setq start-end (hsys-org-link-at-p))
+		  (if (not assist-flag)
+		      (progn (hsys-org-set-ibut-label start-end)
+			     (hact 'org-link))
+		    (hact 'hkey-help))
+		  t)
+ 		 ((hbut:at-p)
+		  ;; Activate/Assist with any Hyperbole button at point
+		  (if (not assist-flag)
+		      (hact 'hbut:act)
+		    (hact 'hkey-help)))
+		 (t (hact 'org-meta-return current-prefix-arg)))
 	   ;; Ignore any further Smart Key non-Org contexts
 	   t)
 	  (t
