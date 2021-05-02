@@ -560,6 +560,9 @@ Excludes character matching square brackets, so may be used with skip-characters
 
 (defun smart-lisp (&optional show-doc)
   "Jump to the definition of any selected Lisp identifier or optionally SHOW-DOC.
+
+Assume caller has checked that (smart-emacs-lisp-mode-p) is true.
+
 If on an Emacs Lisp require, load, or autoload clause and the
 `find-library' function from the \"load-library\" package has
 been loaded, this jumps to the library source whenever possible.
@@ -576,7 +579,7 @@ pressed in an appropriate buffer and has moved the cursor to the selected
 buffer."
 
   (interactive)
-  (unless (and (smart-emacs-lisp-mode-p) (fboundp 'find-library)
+  (unless (and (fboundp 'find-library)
 	       ;; Handle Emacs Lisp `require', `load', and `autoload' clauses.
 	       (let ((opoint (point))
 		     type
@@ -606,30 +609,40 @@ buffer."
 			 (goto-char (match-beginning 0))
 		       (error "(smart-lisp): Found autoload library but no definition for `%s'" name)))
 		   t)))
-    (let* ((elisp-p (smart-emacs-lisp-mode-p))
+    (let* ((elisp-flag (smart-emacs-lisp-mode-p))
 	   (tag (smart-lisp-at-tag-p t))
 	   (tag-sym (intern-soft tag)))
-      (cond ((and show-doc elisp-p)
+      (cond ((and show-doc elisp-flag)
 	     ;; Emacs Lisp function, variable and face documentation display.
 	     (cond ((fboundp tag-sym) (describe-function tag-sym))
 		   ((and tag-sym (boundp tag-sym)) (describe-variable tag-sym))
 		   ((facep tag-sym) (describe-face tag-sym))
 		   (t (error "(smart-lisp): `%s' unbound symbol definition not found" tag))))
-	    ((and elisp-p (fboundp 'find-function-noselect)
+	    ((and elisp-flag (fboundp 'find-function-noselect)
 		  (let ((result (smart-lisp-bound-symbol-def tag-sym)))
 		    (when (cdr result)
 		      (hpath:display-buffer (car result))
 		      (goto-char (cdr result))
 		      t))))
-	    (t (condition-case ()
-		   ;; Tag of any language
-		   (and (featurep 'etags) (smart-tags-display tag show-doc))
-		 (error (unless (and elisp-p (stringp smart-emacs-tags-file)
-				     (condition-case ()
-					 (smart-tags-display
-					  tag show-doc (list smart-emacs-tags-file))
-				       (error nil)))
-			  (error "(smart-lisp): `%s' definition not found in any tag table" tag)))))))))
+	    ;; If elisp-flag is true, then make xref use tags tables to
+	    ;; find symbols not yet loaded into Emacs; otherwise, use
+	    ;; standard xref backends for the current language.
+	    (t (let ((etags-mode (and elisp-flag (boundp 'xref-etags-mode) xref-etags-mode)))
+		 (unwind-protect
+		     (progn
+		       (and (not etags-mode) elisp-flag (fboundp 'xref-etags-mode)
+			    (xref-etags-mode 1))
+		       (condition-case ()
+			   ;; Tag of any language
+			   (and (featurep 'etags) (smart-tags-display tag show-doc))
+			 (error (unless (and elisp-flag (stringp smart-emacs-tags-file)
+					     (condition-case ()
+						 (smart-tags-display
+						  tag show-doc (list smart-emacs-tags-file))
+					       (error nil)))
+				  (error "(smart-lisp): No definition found for `%s'" tag)))))
+		   (and (not etags-mode) elisp-flag (fboundp 'xref-etags-mode)
+			(xref-etags-mode 0)))))))))
 
 (defun smart-lisp-at-definition-p ()
     "Return t when point is in a non-help buffer on the first line of a non-alias Lisp definition, else nil."
@@ -659,7 +672,7 @@ Returns matching ELisp tag name that point is within, else nil."
 	   (string-match "[^-]-[^-]" identifier)))))
 
 (defun smart-lisp-at-tag-p (&optional no-flash)
-  "Return Lisp tag name that point is within, else nil.
+  "Return possibly non-existent Lisp tag name that point is within, else nil.
 Return nil when point is on the first line of a non-alias Lisp definition."
   (unless (smart-lisp-at-definition-p)
     (save-excursion
@@ -1279,11 +1292,13 @@ See the \"${hyperb:dir}/smart-clib-sym\" script for more information."
       found)))
 
 (defun smart-tags-display (tag next &optional list-of-tags-tables)
-  (if next (setq tag nil))
+  (when  next (setq tag nil))
   (let* ((tags-table-list (or list-of-tags-tables
 			      (and (boundp 'tags-table-list)
 				   (nconc (smart-tags-file-list) tags-table-list))
 			      (smart-tags-file-list)))
+	 ;; Identifier searches should almost always be case-sensitive today
+	 (tags-case-fold-search nil)
 	 (func (smart-tags-noselect-function))
 	 (tags-file-name (if tags-table-list
 			     nil
@@ -1299,9 +1314,7 @@ See the \"${hyperb:dir}/smart-clib-sym\" script for more information."
     ;; For InfoDock (XEmacs may also take this branch), force exact match
     ;; when `next' is false (otherwise tag would = nil and the following
     ;; stringp test would fail).
-    (if (featurep 'infodock)
-	(if (stringp tag)
-	    (setq tag (list tag))))
+    (and (featurep 'infodock) (stringp tag) (setq tag (list tag)))
     (if (and func (setq find-tag-result (funcall func tag)))
 	(cond ((eq func 'find-tag-internal)
 	       ;; InfoDock and XEmacs
@@ -1318,10 +1331,12 @@ See the \"${hyperb:dir}/smart-clib-sym\" script for more information."
 	       ;; Emacs with some unknown version of tags.
 	       ;; Signals an error if tag is not found which is caught by
 	       ;; many callers of this function.
-	       (with-no-warnings (find-tag tag))))
+	       ;; Find exact identifier matches only.
+	       (with-no-warnings (find-tag (concat "\\`" (regexp-quote tag) "\\'") nil t))))
       ;; Signals an error if tag is not found which is caught by
       ;; many callers of this function.
-      (with-no-warnings (find-tag tag)))))
+      ;; Find exact identifier matches only.
+      (with-no-warnings (find-tag (concat "\\`" (regexp-quote tag) "\\'") nil t)))))
 
 ;;;###autoload
 (defun smart-tags-file-path (file)

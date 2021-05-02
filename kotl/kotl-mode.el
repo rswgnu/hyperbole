@@ -599,6 +599,12 @@ With optional prefix argument TOP-P non-nil, refill all cells in the outline."
 
 (defalias 'kotl-mode:kill-visual-line 'kotl-mode:kill-line)
 
+(defun kotl-mode:kill-whole-line (&optional arg)
+  "Kill ARG lines from point."
+  (interactive "*P")
+  (let ((kill-whole-line t))
+    (kotl-mode:kill-line arg)))
+
 (defun kotl-mode:kill-region (start end &optional copy-p)
   "Kill region between START and END within a single kcell.
 With optional COPY-P equal to 't, copy region to kill ring but does not
@@ -3131,6 +3137,7 @@ Leave point at end of line now residing at START."
        kill-word
        kill-line
        kill-visual-line
+       kill-whole-line
        kill-region
        kill-ring-save
        kill-sentence

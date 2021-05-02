@@ -1,3 +1,23 @@
+2021-05-02  Bob Weiner  <rsw@gnu.org>
+
+* kotl/kotl-mode.el (kotl-mode:kill-whole-line): Add override
+    of kill-whole-line for Koutliner.
+
+* hibtypes.el (debugger-source, hib-python-traceback, python-tb-previous-line):
+    Separated handling moving back a line to handle 2 line Python
+    error/traceback entries into a function and an additional ibtype.
+    This eliminates an expensive recursive call to hbut:at-p.
+
+* hmouse-tag.el (smart-lisp): When search for an Elisp identifier,
+    enable the xref etags backend to find symbols not yet loaded
+    into Emacs.
+                (smart-tags-display): Use case-insensitive tags
+    lookup since this should be true for most languages in use
+    today.  Also, make find-tag calls use only exact identifier
+    matches, not partial matches.
+                (smart-lisp): Remove (smart-emacs-lisp-mode-p)
+    check since hkey-alist predicate has checked this already.
+
 2021-05-01  Bob Weiner  <rsw@gnu.org>
 
 * hibtypes.el (pathname): Update to treat "-simple" as an Elisp

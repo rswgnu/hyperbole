@@ -76,18 +76,20 @@ executable must be found as well (for Oauth security)."
        ;; If no gpg encryption executable, Oauth login to Google will fail.
        (or (executable-find "gpg2") (executable-find "gpg"))))
 
+'("~/.rolo.otl" "~/.rolo.org" "c:/_rolo.otl")
+
 ;;;###autoload
 (defun hyrolo-initialize-file-list ()
   "Initialize the list of files used for HyRolo search."
   (interactive)
   (let* ((gcontacts (if (hyrolo-google-contacts-p) google-contacts-buffer-name))
 	 (ms "c:/_rolo.otl")
-	 (unix "~/.rolo.otl")
+	 (posix "~/.rolo.otl")
 	 (list (delq nil (if (and (boundp 'bbdb-file) (stringp bbdb-file))
 			     (if hyperb:microsoft-os-p
 				 (list ms bbdb-file gcontacts)
 			       (list  "~/.rolo.otl" bbdb-file gcontacts))
-			   (if hyperb:microsoft-os-p (list ms gcontacts) (list unix gcontacts))))))
+			   (if hyperb:microsoft-os-p (list ms gcontacts) (list posix gcontacts))))))
     (setq hyrolo-file-list list)
     (when (called-interactively-p 'interactive)
       (message "HyRolo Search List: %S" list))

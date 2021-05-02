@@ -26,7 +26,7 @@
 (defcustom hsys-org-enable-smart-keys 'buttons
   "This option applies only in Org major/minor modes when hyperbole-mode is active.
 The following table shows what the Smart Keys do in various contexts
-with different settings of this option.  For example, a nil value make
+with different settings of this option.  For example, a nil value makes
 {M-RET} operate as it normally does within Org mode contexts.
 
 |---------------------+-------------------+------------------+----------+------------------|
