@@ -619,7 +619,7 @@ XEmacs only."
 ;;;###autoload
 (defun hyrolo-sort (&optional hyrolo-file)
   "Sort up to 14 levels of entries in HYROLO-FILE (default is personal rolo).
-Assumes entries are delimited by one or more `*'characters.
+Assume entries are delimited by one or more `*'characters.
 Return list of number of groupings at each entry level."
   (interactive
    (list (let ((default "")

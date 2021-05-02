@@ -155,7 +155,7 @@ uses that one.  Otherwise, triggers an error."
 
 (defun hsys-org-link-at-p ()
   "Return non-nil iff point is on an Org mode link.
-Assumes caller has already checked that the current buffer is in `org-mode'
+Assume caller has already checked that the current buffer is in `org-mode'
 or are looking for an Org link in another buffer type."
   (or (and (boundp 'org-link-bracket-re)
 	   (org-in-regexp org-link-bracket-re))
@@ -165,10 +165,16 @@ or are looking for an Org link in another buffer type."
            (not (null org-target-link-regexp))
            (org-in-regexp org-target-link-regexp))))
 
-;; Assumes caller has already checked that the current buffer is in org-mode.
+;; Assume caller has already checked that the current buffer is in org-mode.
+(defun hsys-org-heading-at-p (&optional _)
+  "Non-nil when on a headline."
+  (unless (eolp)
+    (outline-on-heading-p t)))
+
+;; Assume caller has already checked that the current buffer is in org-mode.
 (defun hsys-org-target-at-p ()
-  "Return non-nil iff point is on an Org mode radio target (definition) or link target (referent).
-Assumes caller has already checked that the current buffer is in `org-mode'."
+  "Return non-nil iff point is on an Org mode radio target (definition) or radio target link (referent).
+Assume caller has already checked that the current buffer is in `org-mode'."
   (hsys-org-face-at-p 'org-target))
 
 (defun hsys-org-radio-target-link-at-p ()

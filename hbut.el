@@ -174,7 +174,7 @@ Return nil if no matching button is found."
   "Return key for the Hyperbole explicit button label that point is within, else nil.
 This is the normalized key form of the explicit button's label.
 
-Assumes point is within the first line of any button label.  All
+Assume point is within the first line of any button label.  All
 following arguments are optional.  If AS-LABEL is non-nil, label
 is returned rather than the key derived from the label.
 START-DELIM and END-DELIM are strings that override default

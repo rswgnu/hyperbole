@@ -674,7 +674,7 @@ Return t if marked, nil otherwise.  If any error occurs such as
 
 (defun hui-select-at-blank-line-or-comment ()
   "Return non-nil if on a blank line or a comment start or end line.
-Assumes point is before any non-whitespace character on the line."
+Assume point is before any non-whitespace character on the line."
   (let ((comment-end-p (and (stringp comment-end)
 			    (not (string-equal comment-end "")))))
     (if (looking-at

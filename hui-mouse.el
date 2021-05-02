@@ -992,7 +992,7 @@ If assist-key is pressed within:
 
 (defun smart-helm-line-has-action ()
   "Mark and return the actions for the helm selection item at the point of Action Key depress, or nil if line lacks any action.
-Assumes Hyperbole has already checked that helm is active."
+Assume Hyperbole has already checked that helm is active."
   (let ((helm-buffer (if (equal helm-action-buffer (buffer-name)) helm-buffer (buffer-name))))
     (save-excursion
       (with-helm-buffer
@@ -1027,7 +1027,7 @@ Assumes Hyperbole has already checked that helm is active."
   "Return non-nil iff Smart Mouse DEPRESS-EVENT was on a helm section header, candidate separator or at eob or eol.
 If non-nil, returns a property list of the form: (section-header <bool> separator <bool> eob <bool> or eol <bool>).
 If a section-header or separator, selects the first following candidate line.
-Assumes Hyperbole has already checked that helm is active."
+Assume Hyperbole has already checked that helm is active."
   (and (eventp depress-event)
        ;; Nil means in the buffer text area
        (not (posn-area (event-start depress-event)))
@@ -1629,7 +1629,7 @@ handled by the separate implicit button type, `org-link-outside-org-mode'."
 		      (hact 'hkey-help))
 		    ;; Ignore any further Smart Key non-Org contexts
 		    t)
-		   ((org-at-heading-p)
+		   ((hsys-org-heading-at-p)
 		    (if (not assist-flag)
 			(hact 'hsys-org-cycle)
 		      (hact 'hsys-org-global-cycle))
@@ -1638,13 +1638,17 @@ handled by the separate implicit button type, `org-link-outside-org-mode'."
 		    ;; Continue with any further Smart Key non-Org contexts
 		    nil))))
 	  ((eq hsys-org-enable-smart-keys 'buttons)
+	   (when (hbut:at-p)
+	     ;; Activate/Assist with any Hyperbole button at point
+	     (if (not assist-flag)
+		 (hact 'hbut:act)
+	       (hact 'hkey-help)))
 	   ;; Ignore any further Smart Key non-Org contexts
 	   t)
 	  (t
 	   ;; hsys-org-enable-smart-keys is set to t, so try other Smart
 	   ;; contexts
 	   nil))))
-
 
 ;;; ************************************************************************
 ;;; smart-outline functions

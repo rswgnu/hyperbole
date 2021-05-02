@@ -69,7 +69,7 @@ Use (setq set (set:remove elt set)) to assure set is always properly modified."
 
 (defun set:combinations (set &optional arity)
   "Return all possible combinations (subsets) of SET including the empty set and the SET itself.
-Assumes SET is a valid set.  With optional ARITY, return only subsets with
+Assume SET is a valid set.  With optional ARITY, return only subsets with
 ARITY members."
   (cond ((null arity) 
 	 (setq arity 0)
@@ -126,7 +126,7 @@ Uses `set:equal-op' for comparison."
 
 (defun set:get (key set)
   "Return the value associated with KEY in SET or nil.
-Assumes elements of SET are of the form (key . value)."
+Assume elements of SET are of the form (key . value)."
   (cdr (car (let ((set:equal-op (lambda (key elt) (equal key (car elt)))))
 	      (set:member key set)))))
 
@@ -164,8 +164,8 @@ Uses `set:equal-op' for comparison.  See also `set:create'."
 Return set if modified, else nil.
 Use (setq set (set:replace elt set)) to assure set is always properly modified.
 
-Uses `set:equal-op' to match against KEY.  Assumes each element in the set
-has a car and a cdr."
+Use `set:equal-op' to match against KEY.  Assume each element in the set has a
+car and a cdr."
   (let ((elt-set (set:member key set)))
     (if elt-set
 	;; replace element

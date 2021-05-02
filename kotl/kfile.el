@@ -356,7 +356,7 @@ VISIBLE-ONLY-P is non-nil.  Signal an error if kotl is not attached to a file."
 
 (defun kfile:build-structure-v2 (kotl-structure cell-data)
   "Build cell list from the KOTL-STRUCTURE and its CELL-DATA.
-Assumes all arguments are valid.  CELL-DATA is a vector of cell fields read
+Assume all arguments are valid.  CELL-DATA is a vector of cell fields read
 from a koutline file.
 
 Return list of outline cells in depth first order.  Invisible top cell is not
@@ -386,7 +386,7 @@ included in the list."
 
 (defun kfile:insert-attributes-v2 (kview kcell-list)
   "Set cell attributes within KVIEW for each element in KCELL-LIST.
-Assumes all cell contents are already in kview and that no cells are
+Assume all cell contents are already in kview and that no cells are
 hidden."
   (let (buffer-read-only)
     (while
@@ -404,7 +404,7 @@ hidden."
 
 (defun kfile:insert-attributes-v3 (kview kcell-vector)
   "Set cell attributes within KVIEW for each element in KCELL-VECTOR.
-Assumes all cell contents are already in kview and that no cells are
+Assume all cell contents are already in kview and that no cells are
 hidden."
   (let ((kcell-num 1)
 	(buffer-read-only))

@@ -22,6 +22,11 @@
   hib-org.el: Move remaining action types to hsys-org.el and delete
     this file.
   test/hib-org-tests.el: Rename to test/smart-org-tests.el.
+  hui-mouse.el (action-key-error, assist-key-error): When in Org mode,
+    if no other context fired, use org-meta-return.
+  hsys-org.el (hsys-org-heading-at-p): Add to support Hyperbole
+    EOL handling and use in smart-org.
+
 
 * kotl/kotl-mode.el (kotl-mode:kill-whole-line): Add override
     of kill-whole-line for Koutliner.
