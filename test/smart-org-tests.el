@@ -42,15 +42,14 @@
       (should (equal (line-number-at-pos) 4)))))
 
 ;; Smart Key Context
-(ert-deftest smart-org-mode-with-smart-keys-on-file-activates ()
-  "With smart keys on file name activates link."
-  (skip-unless nil) ; TODO - Need to use drag to test this"
+(ert-deftest hib-org:org-mode-with-smart-keys-on-delimited-thing-activates ()
+  "With smart keys on delimited thing activates selection."
   (with-temp-buffer
     (let ((hsys-org-enable-smart-keys t))
       (org-mode)
-      (insert "/tmp")
+      (insert "(hy per bo le)")
       (goto-char 1)
-      (hy-test-helpers:hypb-function-should-call-hpath:find 'smart-org "/tmp"))))
+      (should (string= "(hy per bo le)" (substring-no-properties (current-kill 1)))))))
 
 ;; Hyperbole Button
 (ert-deftest smart-org-mode-with-smart-keys-on-hypb-button-activates ()
@@ -75,17 +74,15 @@
        (ibtypes::org-mode)))))
 
 ;; Smart Key Context
-(ert-deftest smart-org-mode-with-smart-keys-buttons-on-file-is-org-meta-return ()
-  "With smart keys as buttons on file name fallbacks to `org-meta-return'."
-  (skip-unless nil) ; TODO - Need to use drag to test this
+(ert-deftest hib-org:org-mode-with-smart-keys-buttons-on-delimited-thing-calls-org-meta-return ()
+  "With smart keys as buttons on delimited falls back to `org-meta-return'."
   (with-temp-buffer
     (let ((hsys-org-enable-smart-keys 'buttons))
       (org-mode)
-      (insert "/tmp")
+      (insert "(hy per bo le)")
       (goto-char 1)
-      (with-mock
-       (mock (org-meta-return) => t)
-       (ibtypes::org-mode)))))
+      (ibtypes::org-mode)
+      (should (string= "(hy per bo le)" (substring-no-properties (current-kill 1)))))))
 
 ;; Hyperbole Button
 (ert-deftest smart-org-mode-with-smart-keys-buttons-on-hypb-button-activates ()
@@ -110,22 +107,15 @@
        (ibtypes::org-mode)))))
 
 ;; Smart Key Context
-(ert-deftest hib-org:org-mode-with-no-smart-keys-on-file-is-org-meta-return ()
+(ert-deftest hib-org:org-mode-with-no-smart-keys-on-delimited-thing-calls-org-meta-return ()
   "With no smart keys on file calls `org-meta-return'."
-  (skip-unless nil) ; TODO - Need to use drag to test this
   (with-temp-buffer
     (let ((hsys-org-enable-smart-keys nil))
       (org-mode)
-      (insert "/tmp")
+      (insert "(hy per bo le)")
       (goto-char 1)
-      (smart-org)
-      ;; Setting the buffer should not be needed but for some reason
-      ;; it looks like we get into ert buffer after smart-org
-      (set-buffer bn)
-      (should (equal (buffer-string) "* /tmp")))))
-      (with-mock
-       (mock (org-meta-return) => t)
-       (ibtypes::org-mode)))))
+      (ibtypes::org-mode)
+      (should (string= "(hy per bo le)" (substring-no-properties (current-kill 1)))))))
 
 ;; Hyperbole Button
 (ert-deftest hib-org:org-mode-with-no-smart-keys-on-hypb-button-is-org-meta-return ()
