@@ -80,7 +80,8 @@ Assist Key = shift-right mouse key."
       (hmouse-set-bindings hmouse-previous-bindings))
   (setq hmouse-bindings-flag nil
 	hmouse-previous-bindings nil)
-  ;; This function does the actual binding of the Hyperbole mouse keys.
+  ;; This function does the actual binding of the Hyperbole mouse keys
+  ;; and the setup of the mouse-set-point command via `hmouse-set-point-command'.
   (hmouse-shifted-setup hmouse-middle-flag)
   (if (called-interactively-p 'interactive)
       ;; Assume emacs has support for 3 mouse keys.

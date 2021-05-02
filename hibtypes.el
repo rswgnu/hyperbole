@@ -208,12 +208,27 @@ display options."
                                   (string-match substring (format-mode-line mode-name)))
                                 '("Buffer Menu" "IBuffer" "Dired"))))
     (let ((path (hpath:at-p))
+	  elisp-suffix
           full-path)
       (if path
-          (progn (when (string-match "\\`file://" path)
-                   (setq path (substring path (match-end 0))))
-                 (apply #'ibut:label-set path (hpath:start-end path))
-                 (hact 'link-to-file path))
+	  (cond ((and (not (string-empty-p path))
+ 		      (= (aref path 0) ?-)
+		      (or (setq elisp-suffix (string-match "\\`[^\\\\/~]+\\.el[cn]?\\(\\.gz\\)?\\'" path))
+			  (string-match "\\`[^.\\/\t\n\r\f]+\\'" path))
+		      (string-match hpath:prefix-regexp path))
+                 (setq path (substring path (match-end 0))
+		       full-path (locate-library path elisp-suffix))
+                 (cond (full-path
+			(hact 'hpath:find (concat "-" path)))
+		       (elisp-suffix
+			(hact 'error "(pathname): \"%s\" not found in `load-path'" path))
+		       ;; Don't match as a pathname ibut; could be a Lisp
+		       ;; symbol or something else starting with a '-'.
+		       (t nil)))
+		(t (when (string-match "\\`file://" path)
+                     (setq path (substring path (match-end 0))))
+                   (apply #'ibut:label-set path (hpath:start-end path))
+                   (hact 'link-to-file path)))
         ;;
         ;; Match PATH-related Environment and Lisp variable names and
 	;; Emacs Lisp and Info files without any directory component.
@@ -237,8 +252,7 @@ display options."
                    (setq full-path (locate-library path t))
                    (if full-path
                        (hact 'link-to-file full-path)
-                     (hact 'error "(pathname): \"%s\" not found in `load-path'"
-                           path))))
+                     (hact 'error "(pathname): \"%s\" not found in `load-path'" path))))
                 ;; Match only if "(filename)" references a valid Info file
                 ;; and point is within the filename, not on any delimiters
                 ;; so that delimited thing matches trigger later.

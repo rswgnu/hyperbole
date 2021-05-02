@@ -364,6 +364,11 @@ Return t unless no next cell."
       (progn (goto-char (kcell-view:start nil label-sep-len))
 	     t)))
 
+(defun kcell-view:next-invisible-p (&optional pos label-sep-len)
+  "Return t if there is a next cell after optional POS or point and it is invisible."
+  (save-excursion (and (kcell-view:next nil label-sep-len)
+		       (kcell-view:invisible-p (point) label-sep-len))))
+
 (defun kcell-view:operate (function &optional start end)
   "Invoke FUNCTION with view restricted to current cell contents.
 Optional START and END are start and endpoints of cell to use."
@@ -412,12 +417,13 @@ Return t unless no previous cell."
 (defun kcell-view:to-label-end (&optional pos)
   "Move point from optional POS to the end of the current cell's label (before the label separator) and return point.
 If between kcells, move to the previous one.  The current cell may be hidden."
-  (if pos (goto-char pos))
+  (when pos (goto-char pos))
   (kview:end-of-actual-line)
   (cond ((null kview)
-	 (error "(kcell-view:to-label-end): Invalid kview; try {M-x kotl-mode RET} to fix it"))
+	 (error "(kcell-view:to-label-end): Invalid kview in %s; try {M-x kotl-mode RET} to fix it"
+		(current-buffer)))
 	(t
-	 (let ((found))
+	 (let (found)
 	   (if (not (setq found (kproperty:get (1- (point)) 'kcell)))
 	       ;; If not at beginning of cell contents, move there.
 	       (goto-char (kproperty:previous-single-change (point) 'kcell)))
@@ -486,14 +492,14 @@ With optional VISIBLE-P, consider only visible siblings."
 
 (defun kcell-view:to-visible-label-end (&optional pos)
   "Move point to the end of the current visible cell's label (before the label separator).
-If between kcells, move to the previous one."
+If between kcells, move to the previous one.  Return final point location."
   (if pos (goto-char pos))
   ;; Ensure point is within a visible part of the current cell, not
   ;; within some collapsed sub-cell.
   (beginning-of-line)
-  (end-of-visible-line)
-  (if (setq pos (kproperty:previous-single-change (point) 'kcell))
-      (goto-char pos))
+  (end-of-line)
+  (when (setq pos (kproperty:previous-single-change (point) 'kcell))
+    (goto-char pos))
   ;; Now move to end of label via embedded kcell property.
   (goto-char (kproperty:previous-single-change (point) 'kcell)))
 
@@ -678,11 +684,6 @@ the lines displayed, since it has hidden branches."
 	    (kcell-view:lines-visible))
 	   (t 0)))
    kview t start end))
-
-(defun kcell-view:next-invisible-p (&optional pos label-sep-len)
-  "Return t if there is a next cell after optional POS or point and it is invisible."
-  (save-excursion (and (kcell-view:next nil label-sep-len)
-		       (kcell-view:invisible-p (point) label-sep-len))))
 
 (defun kview:goto-cell-id (id-string)
   "Move point to start of cell with idstamp ID-STRING and return t, else nil."
@@ -1168,17 +1169,23 @@ valid values of NEW-TYPE."
 (defun kview:valid-position-p (&optional pos)
   "Return non-nil iff point or optional POS is at a position where editing may occur.
 The read-only positions between cells and within cell indentations are invalid."
-  (cond ((null pos)
-	 (>= (current-column) (kcell-view:indent)))
-	((not (integer-or-marker-p pos))
-	 (error "(kview:valid-position-p): Argument POS not an integer
+  (when (cond ((null pos)
+	       (>= (current-column) (kcell-view:indent)))
+	      ((not (integer-or-marker-p pos))
+	       (error "(kview:valid-position-p): Argument POS not an integer
 or marker, `%s'" pos))
-	((or (< pos (point-min)) (> pos (point-max)))
-	 (error "(kview:valid-position-p): Invalid POS argument, `%d'"
-		pos))
-	(t (save-excursion
-	     (goto-char pos)
-	     (>= (current-column) (kcell-view:indent))))))
+	      ((or (< pos (point-min)) (> pos (point-max)))
+	       (error "(kview:valid-position-p): Invalid POS argument, `%d'"
+		      pos))
+	      (t (save-excursion
+		   (goto-char pos)
+		   (>= (current-column) (kcell-view:indent)))))
+    ;; Still might be in spurious characters after the end of the
+    ;; outline; check for this.
+    (<= (point)
+	(save-excursion
+	  (goto-char (kcell-view:start))
+	  (kcell-view:end-contents)))))
 
 ;;; ************************************************************************
 ;;; Private functions
@@ -1207,9 +1214,10 @@ With optional VISIBLE-P, consider only visible cells.  Return t
 unless no previous cell."
   (let* ((opoint (point))
 	 (pos opoint))
-    ;; First skip past the 2 changes for the current kcell property.
-    (setq pos (kproperty:previous-single-change pos 'kcell)
-	  pos (kproperty:previous-single-change pos 'kcell))
+    (when (kview:valid-position-p)
+      ;; First skip past the 2 changes for the current kcell property.
+      (setq pos (kproperty:previous-single-change pos 'kcell)
+	    pos (kproperty:previous-single-change pos 'kcell)))
     (while (and pos (setq pos (kproperty:previous-single-change pos 'kcell))
 		(or (not (kproperty:get pos 'kcell))
 		    (and visible-p (kcell-view:invisible-p pos label-sep-len)))))

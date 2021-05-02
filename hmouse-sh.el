@@ -474,7 +474,7 @@ point determined by `mouse-select-region-move-to-beginning'."
     ;; this.
     (setq kmacro-call-mouse-event nil)
     ;;
-    (setq hmouse-set-point-command 'hmouse-move-point-emacs)
+    (setq hmouse-set-point-command #'hmouse-move-point-emacs)
     (if (eq window-system 'dps)
 	;; NEXTSTEP offers only 2 shift-mouse buttons which we use as the Smart Keys.
 	(progn

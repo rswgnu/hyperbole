@@ -43,7 +43,10 @@
     ("\\.org\\'" . org-directory)
     ("\\.py\\'" . "PYTHONPATH"))
   "Alist of filename patterns and corresponding variables to prepend to resolve them.
-Each element looks like FILENAME-REGEXP . LISP-VARIABLE-OR-ENV-VARIABLE-STR.")
+Each element looks like FILENAME-REGEXP . LISP-VARIABLE-OR-ENV-VARIABLE-STR.
+
+The VARIABLE value may be: a directory path, a list of directory paths
+or a colon or semicolon delimited string of directory paths.")
 
 (defcustom hpath:find-file-urls-mode nil
   "This is t when a remote file access library is available and use of ftp and http urls in file finding commands has been enabled.

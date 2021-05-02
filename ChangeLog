@@ -1,5 +1,22 @@
 2021-05-01  Bob Weiner  <rsw@gnu.org>
 
+* hibtypes.el (pathname): Update to treat "-simple" as an Elisp
+    library to load only if such a library exists; otherwise,
+    is not treated as a pathname.
+
+* kotl/kotl-mode.el (kotl-mode, kotl-mode:pre-self-insert-command):
+    Update kotl-mode to add this new function as a pre-command-hook
+    to prevent Koutline editing with point in an invalid location,
+    after a mouse-set-point outside of editable bounds (which could
+    corrupt the Koutline structure).
+
+* kotl/kview.el (kview:valid-position-p, kcell-view:previous-kcell):
+    Handle when mouse has moved point to a non-editable location at
+    the end of a Koutline.
+
+* hpath.el (hpath:auto-variable-alist): Add doc summarizing valid
+    values of the cdr of each pair, the path variable.
+
 * ChangeLog: Renamed this file from Changes so change-log-mode will
     be used (now that Elpa release builds no longer overwrite files
     named ChangeLog with git log information).
@@ -461,8 +478,9 @@
   hpath.el (hpath:file-line-and-column): Use hpath:line-and-col-regexp.
 
 * hpath.el (hpath:expand-with-variable, hpath:auto-variable-alist,
-            hpath:expand): Add to generalize implicit load variable
-    pathname expansion.
+            hpath:expand): Add to generalize file suffixes that trigger
+     Hyperbole to use a path search for files of the type (implicit
+     pathname expansion).
   hpath.el (hpath:find, hpath:file-line-and-column):
   hibtypes.el (pathname-line-and-column): Use hpath:expand.
 
