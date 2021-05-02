@@ -52,9 +52,13 @@
   "*Command that sets point to the mouse cursor position.")
 
 (defun action-key-error ()
-  (hypb:error "(Hyperbole Action Key): No action defined for this context; try another location"))
+  (if (hsys-org-mode-p)
+      (hact 'org-meta-return current-prefix-arg)
+    (hypb:error "(Hyperbole Action Key): No action defined for this context; try another location")))
 (defun assist-key-error ()
-  (hypb:error "(Hyperbole Assist Key): No action defined for this context; try another location"))
+  (if (hsys-org-mode-p)
+      (hact 'org-meta-return current-prefix-arg)
+    (hypb:error "(Hyperbole Assist Key): No action defined for this context; try another location")))
 
 (defcustom action-key-default-function #'action-key-error
   "*Function run by the Action Key in an unspecified context.
@@ -1593,13 +1597,6 @@ handled by the separate implicit button type, `org-link-outside-org-mode'."
 	   (hact 'org-meta-return current-prefix-arg)
 	   ;; Ignore any further Smart Key non-Org contexts
 	   t)
-	  ((hbut:at-p)
-	   ;; Activate/Assist with any Hyperbole button at point
-	   (if (not assist-flag)
-	       (hact 'hbut:act)
-	     (hact 'hkey-help))
-	   ;; Ignore any further Smart Key non-Org contexts
-	   t)
 	  ((eq hsys-org-enable-smart-keys t)
 	   (let (start-end)
 	     (cond ((hsys-org-agenda-item-at-p)
@@ -1622,22 +1619,31 @@ handled by the separate implicit button type, `org-link-outside-org-mode'."
 			       (hact 'org-link))
 		      (hact 'hkey-help))
 		    t)
+		   ((hsys-org-block-start-at-p)
+		    (hact 'org-ctrl-c-ctrl-c)
+		    t)
+		   ((hbut:at-p)
+		    ;; Activate/Assist with any Hyperbole button at point
+		    (if (not assist-flag)
+			(hact 'hbut:act)
+		      (hact 'hkey-help))
+		    ;; Ignore any further Smart Key non-Org contexts
+		    t)
 		   ((org-at-heading-p)
 		    (if (not assist-flag)
 			(hact 'hsys-org-cycle)
 		      (hact 'hsys-org-global-cycle))
 		    t)
-		   ((hsys-org-block-start-at-p)
-		    (hact 'org-ctrl-c-ctrl-c)
-		    t)
 		   (t
 		    ;; Continue with any further Smart Key non-Org contexts
 		    nil))))
+	  ((eq hsys-org-enable-smart-keys 'buttons)
+	   ;; Ignore any further Smart Key non-Org contexts
+	   t)
 	  (t
-	   ;; hsys-org-enable-smart-keys is set to 'buttons or some
-	   ;; invalid value (treat it just like 'buttons) and 
-	   ;; ignore any further Smart Key non-Org contexts
-	   t))))
+	   ;; hsys-org-enable-smart-keys is set to t, so try other Smart
+	   ;; contexts
+	   nil))))
 
 
 ;;; ************************************************************************
