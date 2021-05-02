@@ -1,5 +1,21 @@
 2021-05-02  Bob Weiner  <rsw@gnu.org>
 
+* hibtypes.el (pathname-line-and-column): Lower priority below grep
+    ibtypes so does not interfere.
+              (grep-msg): Stop from matching to any file names
+    that start with quote marks.  Those are handled elsewhere.
+
+* hui-mouse.el (hkey-alist, smart-org): Add smart-org near the top to
+    handle M-RET dispatching in Org mode prior to most other contexts.
+    Also integrated assist key handling from hsys-org.el org-mode:help
+    into smart-org.
+  hibtypes.el (org-mode): Remove this ibtype; replace with smart-org
+    function; this also ensures that pathnames within org links are
+    handled by Org commands.
+  hib-org.el: Move remaining action types to hsys-org.el and delete
+    this file.
+  test/hib-org-tests.el: Rename to test/smart-org-tests.el.
+
 * kotl/kotl-mode.el (kotl-mode:kill-whole-line): Add override
     of kill-whole-line for Koutliner.
 
@@ -166,9 +182,9 @@
 
 2021-04-26  Mats Lidell  <matsl@gnu.org>
 
-* test/hib-org-tests.el (hib-org:org-mode-with-smart-keys-on-file-is-hypb-button)
-    (hib-org:org-mode-with-smart-keys-buttons-on-file-is-hypb-button)
-    (hib-org:org-mode-with-no-smart-keys-on-file-is-hypb-button): Tests for
+* test/smart-org-tests.el (smart-org-mode-with-smart-keys-on-file-is-hypb-button)
+    (smart-org-mode-with-smart-keys-buttons-on-file-is-hypb-button)
+    (smart-org-mode-with-no-smart-keys-on-file-is-hypb-button): Tests for
     hsys-org-enable-smart-keys.
 
 * test/hy-test-helpers.el
@@ -184,8 +200,8 @@
     (hsys-org:org-radio-target-def-at-p, hsys-org:org-radio-target-at-p)
     (hsys-org:org-internal-link-target-at-p, hsys-org:org-face-at-p): hsys-org tests
 
-* test/hib-org-tests.el (hib-org:org-mode-on-header-cycles-visibility):
-    hib-org test
+* test/smart-org-tests.el (smart-org-mode-on-header-cycles-visibility):
+    smart-org test
 
 * hsys-org.el (hsys-org-link-at-p): Use org-target-link-regexp for radio links
     (hsys-org-internal-link-target-at-p): Inverse boolean check
@@ -206,9 +222,6 @@
 
 * hyperbole.el (hyperbole-mode): Finish documentation.
 
-* hib-org.el (org-mode): Add (not (hyperb:stack-frame '(hbut:at-p)))
-    to prevent infinite loop.
-
 * hpath.el (hpath:posix-mount-point-to-mswindows-alist): Made this an autoload
     since referenced in hyperbole.
 
@@ -222,7 +235,7 @@
     Smart Key support in Org mode.
               (hsys-org-hbut-activate-p):
   hibtypes.el (org-link-outside-org-mode):
-  hib-org.el (org-mode): Updated to use hsys-org-enable-smart-keys.
+  hui-mouse.el (smart-org-mode): Updated to use hsys-org-enable-smart-keys.
               (inhibit-hsys-org): Remove, replaced by hsys-org-enable-smart-keys.
   man/hyperbole.texi (Questions and Answers): Updated Org mode section with
    this new variable.
@@ -567,8 +580,6 @@
     hypb:replace-match-string
 
 2021-04-05  Bob Weiner  <rsw@gnu.org>
-
-* Makefile (ELC_COMPILE): Fix hib-org.elc (was .el).
 
 * hibtypes.el (hypb-ert): Load Hyperbole test runner ibtypes.
 
@@ -934,9 +945,6 @@ absolute paths.
     ibtype priorities.
   hibtypes.el: Changed require to load for all hibtype files so are always
     added when the ibtype priority list is reset.
-
-* hibtypes.el (hib-org): Moved Org links to lowest priority so
-    all implicit button types can be used in Org mode.
 
 2020-10-18  Bob Weiner  <rsw@gnu.org>
 

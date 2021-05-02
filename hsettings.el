@@ -1,4 +1,4 @@
-;;; hsettings.el --- Hyperbole settings which may require customization
+;;; hsettings.el --- GNU Hyperbole settings which may require customization
 ;;
 ;; Author:       Bob Weiner
 ;;

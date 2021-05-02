@@ -1,4 +1,4 @@
-;;; hsys-org.el --- GNU Hyperbole support functions for Support for hib-org.el
+;;; hsys-org.el --- GNU Hyperbole support functions for Org mode
 ;;
 ;; Author:       Bob Weiner
 ;;
@@ -11,12 +11,23 @@
 
 ;;; Commentary:
 ;;
-;;   Support functions for hib-org.el
+;;   Support functions for smart-org in "hui-mouse.el"
+;;
+;;   smart-org is triggered when the major mode is org-mode or is derived
+;;   from org-mode.
+;;
+;;   See the doc for smart-org for details of what it does and
+;;   its compatibility with org-mode.
+;;
+;;   For a good tutorial on basic use of Org-mode, see:
+;;     https://orgmode.org/worg/org-tutorials/orgtutorial_dto.html
 
 ;;; Code:
 ;;; ************************************************************************
 ;;; Other required Elisp libraries
 ;;; ************************************************************************
+
+(eval-when-compile (require 'hmouse-drv))
 
 (require 'hbut)
 (require 'org)
@@ -42,8 +53,60 @@ with different settings of this option.  For example, a nil value makes
   :initialize #'custom-initialize-default
   :group 'hyperbole-buttons)
 
+;;; ************************************************************************
+;;; Public variables
+;;; ************************************************************************
+
 (defvar hsys-org-mode-function #'hsys-org-mode-p
   "*Boolean function of no arguments that determines whether point is in an Org mode-related buffer or not.")
+
+;;; ************************************************************************
+;;; Public Action Types
+;;; ************************************************************************
+
+(defact org-link (&optional link)
+  "Follows an optional Org mode LINK to its target.
+If LINK is nil, follows any link at point.  Otherwise, triggers an error."
+  (if (stringp link)
+      (cond ((fboundp #'org-link-open-from-string)
+	     (org-link-open-from-string link))
+            ((fboundp #'org-open-link-from-string)
+	     (org-open-link-from-string link))) ;; autoloaded
+    (org-open-at-point))) ;; autoloaded
+
+(defact org-internal-link-target (&optional link-target)
+  "Follows an optional Org mode LINK-TARGET back to its link definition.
+If LINK-TARGET is nil, follows any link target at point.  Otherwise, triggers an error."
+  (let (start-end)
+    (cond ((stringp link-target)
+	   (setq start-end t)
+	   (hsys-org-search-internal-link-p link-target))
+	  ((null link-target)
+	   (when (setq start-end (hsys-org-internal-link-target-at-p))
+	     (hsys-org-search-internal-link-p (buffer-substring-no-properties
+					       (car start-end) (cdr start-end))))))
+    (unless start-end
+      (error "(org-internal-link-target): Point must be on a link target (not the link itself)"))))
+
+
+(defact org-radio-target (&optional target)
+  "Jump to the next occurrence of an optional Org mode radio TARGET link.
+If TARGET is nil and point is on a radio target definition or link, it
+uses that one.  Otherwise, triggers an error."
+  (let (start-end)
+    (cond ((stringp target)
+	   (setq start-end t)
+	   (hsys-org-to-next-radio-target-link target))
+	  ((null target)
+	   (when (setq start-end (hsys-org-radio-target-at-p))
+	     (hsys-org-to-next-radio-target-link (buffer-substring-no-properties
+					          (car start-end) (cdr start-end))))))
+    (unless start-end
+      (error "(org-radio-target): Point must be on a radio target definition or link"))))
+
+;;; ************************************************************************
+;;; Public functions
+;;; ************************************************************************
 
 (defun hsys-org-mode-p ()
   "Return non-nil if point is within an Org major or minor-mode buffer."
@@ -63,10 +126,6 @@ with different settings of this option.  For example, a nil value makes
   (setq last-command 'org-cycle
 	this-command 'org-cycle)
   (org-global-cycle nil))
-
-;;; ************************************************************************
-;;; Public functions
-;;; ************************************************************************
 
 (defun hsys-org-region-with-text-property-value (pos property)
   "Return (start . end) buffer positions of the region around POS that shares its non-nil text PROPERTY value, else nil."

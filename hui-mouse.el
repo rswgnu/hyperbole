@@ -42,6 +42,7 @@
   (require 'hmouse-info))
 (unless (fboundp 'smart-c-at-tag-p)
   (require 'hmouse-tag))
+(require 'hsys-org)
 
 ;;; ************************************************************************
 ;;; Public variables
@@ -99,6 +100,11 @@ Its default value is #'smart-scroll-down."
     ((and (boundp 'company-active-map)
 	  (memq company-active-map (current-minor-mode-maps))) .
 	  ((smart-company-to-definition) . (smart-company-help)))
+    ;; Handle any Org mode-specific contexts
+    ((and (not (hyperb:stack-frame '(smart-org)))
+	  (smart-org current-prefix-arg)) .
+     ;; smart-org performs the actions and assist help
+     ((identity t) . (identity t)))
     ;; Ivy minibuffer completion mode
     ((and (boundp 'ivy-mode) ivy-mode (minibuffer-window-active-p (selected-window))) .
      ((ivy-done) . (ivy-dispatching-done)))
@@ -1541,6 +1547,98 @@ If not on a file name, returns nil."
 	(list (if (br-in-browser)
 		  'find-file 'find-file-other-window)
 	      ref))))
+
+;;; ************************************************************************
+;;; smart-org functions
+;;; ************************************************************************
+
+(defun smart-org (&optional assist-flag)
+  "If `hsys-org-enable-smart-keys' is non-nil, follow Org mode references, cycles outline visibility and executes code blocks.
+
+When the Action Key is pressed:
+
+  First, this follows internal links in Org mode files.  When pressed on a
+  link referent/target, the link definition is displayed, allowing two-way
+  navigation between definitions and targets.
+
+  Second, this follows Org mode external links.
+
+  Third, within a radio target definition, this jumps to the first
+  occurrence of an associated radio target.
+
+  Fourth, when point is on an outline heading in Org mode, this
+  cycles the view of the subtree at point.
+
+  Fifth, with point on the first line of a code block definition, this
+  executes the code block via the Org mode standard binding of {C-c C-c},
+  (org-ctrl-c-ctrl-c).
+
+  In any other context besides the end of a line, the Action Key invokes the
+  Org mode standard binding of {M-RET}, (org-meta-return).
+
+When the Assist Key is pressed:
+
+  First, on an Org mode heading, this cycles through views of the whole buffer outline.
+
+  Second, on on an Org mode link or agenda item, this displays standard Hyperbole help.
+
+To disable ALL Hyperbole support within Org major and minor modes, set the
+custom option `hsys-org-enable-smart-keys' to nil.  Then in Org modes, this
+will simply invoke `org-meta-return'.
+
+Org links may be used outside of Org mode buffers.  Such links are
+handled by the separate implicit button type, `org-link-outside-org-mode'."
+  (when (funcall hsys-org-mode-function)
+    (cond ((not hsys-org-enable-smart-keys)
+	   (hact 'org-meta-return current-prefix-arg)
+	   ;; Ignore any further Smart Key non-Org contexts
+	   t)
+	  ((hbut:at-p)
+	   ;; Activate/Assist with any Hyperbole button at point
+	   (if (not assist-flag)
+	       (hact 'hbut:act)
+	     (hact 'hkey-help))
+	   ;; Ignore any further Smart Key non-Org contexts
+	   t)
+	  ((eq hsys-org-enable-smart-keys t)
+	   (let (start-end)
+	     (cond ((hsys-org-agenda-item-at-p)
+		    (if (not assist-flag)
+			(progn (hsys-org-set-ibut-label (cons (line-beginning-position) (line-end-position)))
+			       (hact 'org-agenda-show-and-scroll-up current-prefix-arg))
+		      (hact 'hkey-help))
+		    ;; Ignore any further Smart Key non-Org contexts
+		    t)
+		   ((setq start-end (hsys-org-internal-link-target-at-p))
+		    (hsys-org-set-ibut-label start-end)
+		    (hact 'org-internal-link-target)
+		    t)
+		   ((hsys-org-radio-target-def-at-p)
+		    (hact 'org-radio-target)
+		    t)
+		   ((setq start-end (hsys-org-link-at-p))
+		    (if (not assist-flag)
+			(progn (hsys-org-set-ibut-label start-end)
+			       (hact 'org-link))
+		      (hact 'hkey-help))
+		    t)
+		   ((org-at-heading-p)
+		    (if (not assist-flag)
+			(hact 'hsys-org-cycle)
+		      (hact 'hsys-org-global-cycle))
+		    t)
+		   ((hsys-org-block-start-at-p)
+		    (hact 'org-ctrl-c-ctrl-c)
+		    t)
+		   (t
+		    ;; Continue with any further Smart Key non-Org contexts
+		    nil))))
+	  (t
+	   ;; hsys-org-enable-smart-keys is set to 'buttons or some
+	   ;; invalid value (treat it just like 'buttons) and 
+	   ;; ignore any further Smart Key non-Org contexts
+	   t))))
+
 
 ;;; ************************************************************************
 ;;; smart-outline functions

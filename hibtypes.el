@@ -101,39 +101,10 @@ line and check for a source reference line again."
 (load "hypb-ert")
 
 ;;; ========================================================================
-;;; Follows Org mode links and radio targets and cycles Org heading views
-;;; ========================================================================
-
-(load "hib-org")
-
-;; If you want to to disable ALL Hyperbole support within Org major
-;; and minor modes, set the custom option `hsys-org-enable-smart-keys' to nil.
-
-;;; ========================================================================
 ;;; Follows URLs by invoking a web browser.
 ;;; ========================================================================
 
 (load "hsys-www")
-
-;;; ========================================================================
-;;; Follows Org links that are in non-Org mode buffers
-;;; ========================================================================
-
-(defib org-link-outside-org-mode ()
-  "Follow an Org link in a non-Org mode buffer.
-This should be a very low priority so other Hyperbole types
-handle any links they recognize first."
-  (when (and (eq hsys-org-enable-smart-keys t)
-	     (not (funcall hsys-org-mode-function))
-	     ;; Prevent infinite recursion if ever called via org-metareturn-hook
-	     ;; from org-meta-return invocation.
-	     (not (hyperb:stack-frame '(ibtypes::debugger-source org-meta-return))))
-    (let ((start-end (hsys-org-link-at-p)))
-      (when start-end
-        (hsys-org-set-ibut-label start-end)
-        (hact 'org-open-at-point-global)))))
-
-;; Org links in Org mode are handled at a lower priority in "hib-org.el"
 
 ;;; ========================================================================
 ;;; Composes mail, in another window, to the e-mail address at point.
@@ -287,6 +258,27 @@ display options."
                 ;; Otherwise, fall through and allow other implicit
                 ;; button types to handle this context.
                 ))))))
+
+;;; ========================================================================
+;;; Follows Org links that are in non-Org mode buffers
+;;; ========================================================================
+
+;; Org links in Org mode are handled at the highest priority; see the last
+;; section at the end of this file.
+
+(defib org-link-outside-org-mode ()
+  "Follow an Org link in a non-Org mode buffer.
+This should be a very low priority so other Hyperbole types
+handle any links they recognize first."
+  (when (and (eq hsys-org-enable-smart-keys t)
+	     (not (funcall hsys-org-mode-function))
+	     ;; Prevent infinite recursion if ever called via org-metareturn-hook
+	     ;; from org-meta-return invocation.
+	     (not (hyperb:stack-frame '(ibtypes::debugger-source org-meta-return))))
+    (let ((start-end (hsys-org-link-at-p)))
+      (when start-end
+        (hsys-org-set-ibut-label start-end)
+        (hact 'org-open-at-point-global)))))
 
 ;;; ========================================================================
 ;;; Use the XEmacs func-menu library to jump to a function referred to
@@ -801,6 +793,34 @@ e.g. <ilink: my series of keys: ${hyperb:dir}/HYPB>."
   (hlink 'link-to-ibut "ilink_" ilink:start ilink:end))
 
 ;;; ========================================================================
+;;; Displays files at specific lines and optional column number
+;;; locations.
+;;; ========================================================================
+
+(defib pathname-line-and-column ()
+  "Make a valid pathname:line-num[:column-num] pattern display the path at line-num and optional column-num.
+Also works for remote pathnames.
+May also contain hash-style link references with the following format:
+\"<path>[#<link-anchor>]:<line-num>[:<column-num>]}\".
+
+See `hpath:at-p' function documentation for possible delimiters.
+See `hpath:suffixes' variable documentation for suffixes that are added to or
+removed from pathname when searching for a valid match.
+See `hpath:find' function documentation for special file display options."
+  (let ((path-line-and-col (hpath:delimited-possible-path)))
+    (when (and (stringp path-line-and-col)
+               (string-match hpath:section-line-and-column-regexp path-line-and-col))
+      (let ((file (save-match-data (hpath:expand (match-string-no-properties 1 path-line-and-col))))
+            (line-num (string-to-number (match-string-no-properties 3 path-line-and-col)))
+            (col-num (when (match-end 4)
+                       (string-to-number (match-string-no-properties 5 path-line-and-col)))))
+        (when (save-match-data (setq file (hpath:is-p file)))
+          (ibut:label-set file (match-beginning 1) (match-end 1))
+          (if col-num
+              (hact 'link-to-file-line-and-column file line-num col-num)
+            (hact 'link-to-file-line file line-num)))))))
+
+;;; ========================================================================
 ;;; Jumps to source line associated with ipython, ripgrep, grep or
 ;;; compilation errors.
 ;;; ========================================================================
@@ -902,35 +922,35 @@ in grep and shell buffers."
       (beginning-of-line)
       (when (or
              ;; Grep matches, UNIX C compiler and Introl 68HC11 C compiler errors
-             (looking-at "\\([^ \t\n\r:]+\\): ?\\([1-9][0-9]*\\)[ :]")
+             (looking-at "\\([^ \t\n\r:\"'`]+\\): ?\\([1-9][0-9]*\\)[ :]")
              ;; Grep matches, UNIX C compiler and Introl 68HC11 C
              ;; compiler errors, allowing for file names with
              ;; spaces followed by a null character rather than a :
-             (looking-at "\\([^\t\n\r]+\\)  ?\\([1-9][0-9]*\\)[ :]")
+             (looking-at "\\([^\t\n\r\"'`]+\\)  ?\\([1-9][0-9]*\\)[ :]")
              ;; HP C compiler errors
              (looking-at "[a-zA-Z0-9]+: \"\\([^\t\n\r\",]+\\)\", line \\([0-9]+\\):")
              ;; BSO/Tasking 68HC08 C compiler errors
              (looking-at
               "[a-zA-Z 0-9]+: \\([^ \t\n\r\",]+\\) line \\([0-9]+\\)[ \t]*:")
              ;; UNIX Shell errors
-             (looking-at "\\([^:]+\\): line \\([0-9]+\\): ")
+             (looking-at "\\([^:\"'`]+\\): line \\([0-9]+\\): ")
              ;; UNIX Lint errors
-             (looking-at "[^:]+: \\([^ \t\n\r:]+\\): line \\([0-9]+\\):")
+             (looking-at "[^:\"'`]+: \\([^ \t\n\r:]+\\): line \\([0-9]+\\):")
              ;; SparcWorks C compiler errors (ends with :)
              ;; IBM AIX xlc C compiler errors (ends with .)
-             (looking-at "\"\\([^\"]+\\)\", line \\([0-9]+\\)[:.]")
+             (looking-at "\"\\([^\"'`]+\\)\", line \\([0-9]+\\)[:.]")
              ;; Introl as11 assembler errors
-             (looking-at " \\*+ \\([^ \t\n\r]+\\) - \\([0-9]+\\) ")
+             (looking-at " \\*+ \\([^ \t\n\r\"'`]+\\) - \\([0-9]+\\) ")
              ;; perl5: ... at file.c line 10
-             (looking-at ".+ at \\([^ \t\n\r]+\\) line +\\([0-9]+\\)")
+             (looking-at ".+ at \\([^ \t\n\r\"'`]+\\) line +\\([0-9]+\\)")
              ;; Weblint
-             (looking-at "\\([^ \t\n\r:()]+\\)(\\([0-9]+\\)): ")
+             (looking-at "\\([^ \t\n\r:()\"'`]+\\)(\\([0-9]+\\)): ")
              ;; Microsoft JVC
              ;; file.java(6,1) : error J0020: Expected 'class' or 'interface'
              (looking-at "^\\(\\([a-zA-Z]:\\)?[^:\( \t\n\r-]+\\)[:\(][ \t]*\\([0-9]+\\),")
              ;; Grep match context lines (-A<num> option)
              (and (string-match "grep\\|shell" (buffer-name))
-                  (looking-at "\\([^ \t\n\r:]+\\)-\\([1-9][0-9]*\\)-")))
+                  (looking-at "\\([^ \t\n\r:\"'`]+\\)-\\([1-9][0-9]*\\)-")))
         (let* ((file (match-string-no-properties 1))
                (line-num  (match-string-no-properties 2))
                (but-label (concat file ":" line-num))
@@ -1038,34 +1058,6 @@ This works with JavaScript and Python tracebacks, gdb, dbx, and xdb.  Such lines
         (setq line-num (string-to-number line-num))
         (ibut:label-set but-label)
         (hact 'link-to-file-line file line-num))))))
-
-;;; ========================================================================
-;;; Displays files at specific lines and optional column number
-;;; locations.
-;;; ========================================================================
-
-(defib pathname-line-and-column ()
-  "Make a valid pathname:line-num[:column-num] pattern display the path at line-num and optional column-num.
-Also works for remote pathnames.
-May also contain hash-style link references with the following format:
-\"<path>[#<link-anchor>]:<line-num>[:<column-num>]}\".
-
-See `hpath:at-p' function documentation for possible delimiters.
-See `hpath:suffixes' variable documentation for suffixes that are added to or
-removed from pathname when searching for a valid match.
-See `hpath:find' function documentation for special file display options."
-  (let ((path-line-and-col (hpath:delimited-possible-path)))
-    (when (and (stringp path-line-and-col)
-               (string-match hpath:section-line-and-column-regexp path-line-and-col))
-      (let ((file (save-match-data (hpath:expand (match-string-no-properties 1 path-line-and-col))))
-            (line-num (string-to-number (match-string-no-properties 3 path-line-and-col)))
-            (col-num (when (match-end 4)
-                       (string-to-number (match-string-no-properties 5 path-line-and-col)))))
-        (when (save-match-data (setq file (hpath:is-p file)))
-          (ibut:label-set file (match-beginning 1) (match-end 1))
-          (if col-num
-              (hact 'link-to-file-line-and-column file line-num col-num)
-            (hact 'link-to-file-line file line-num)))))))
 
 ;;; ========================================================================
 ;;; Jumps to source of Emacs Lisp byte-compiler error messages.
@@ -1403,6 +1395,14 @@ arg1 ... argN '>'.  For example, <mail nil \"user@somewhere.org\">."
          (ibut:label-set completion)
          (hact 'completion))))
 
+;;; ========================================================================
+;;; Follows Org mode links and radio targets and cycles Org heading views
+;;; ========================================================================
+
+;; See `smart-org' in "hui-mouse.el"; this is higher priority than all ibytpes
+
+;; If you want to to disable ALL Hyperbole support within Org major
+;; and minor modes, set the custom option `hsys-org-enable-smart-keys' to nil.
 
 (run-hooks 'hibtypes-end-load-hook)
 (provide 'hibtypes)

@@ -1,4 +1,4 @@
-;;; hui-treemacs.el --- Hyperbole Smart Key support for the Treemacs file manager package
+;;; hui-treemacs.el --- GNU Hyperbole Smart Key support for the Treemacs file manager package
 ;;
 ;; Author:       Bob Weiner
 ;;
