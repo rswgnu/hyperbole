@@ -1,3 +1,10 @@
+2021-05-02  Mats Lidell  <matsl@gnu.org>
+
+* hui-em-but.el (hbut-face): Add face for hbuts.
+    (hproperty:but-face): Use face for property.
+    (hbut-item-face): Add face for hbut items.
+    (hproperty:item-face): Use face for property.
+
 2021-05-02  Bob Weiner  <rsw@gnu.org>
 
 * kotl/kotl-mode.el (kotl-mode:kill-whole-line): Add override
