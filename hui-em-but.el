@@ -55,7 +55,7 @@
      :background "red3")
     (((class color) (min-colors 16) (background light))
      :background "red3")
-    (((class color) (in-colors 16) (background dark))
+    (((class color) (min-colors 16) (background dark))
      :background "red3")
     (((class color) (min-colors 8))
      :background "red3" :foreground "black")
