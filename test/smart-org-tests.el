@@ -20,6 +20,7 @@
 (require 'ert)
 (require 'hui-mouse)
 (require 'hact)
+(require 'el-mock)
 
 (declare-function hy-test-helpers:hypb-function-should-call-hpath:find "hy-test-helpers")
 
@@ -40,8 +41,10 @@
       (next-line)
       (should (equal (line-number-at-pos) 4)))))
 
-(ert-deftest smart-org-mode-with-smart-keys-on-file-is-hypb-button ()
-  "With smart keys on file name is hypb button."
+;; Smart Key Context
+(ert-deftest smart-org-mode-with-smart-keys-on-file-activates ()
+  "With smart keys on file name activates link."
+  (skip-unless nil) ; TODO - Need to use drag to test this"
   (with-temp-buffer
     (let ((hsys-org-enable-smart-keys t))
       (org-mode)
@@ -49,8 +52,44 @@
       (goto-char 1)
       (hy-test-helpers:hypb-function-should-call-hpath:find 'smart-org "/tmp"))))
 
-(ert-deftest smart-org-mode-with-smart-keys-buttons-on-file-is-hypb-button ()
-  "With smart keys on file name is hypb button."
+;; Hyperbole Button
+(ert-deftest smart-org-mode-with-smart-keys-on-hypb-button-activates ()
+  "With smart keys on hypb button activates."
+  (with-temp-buffer
+    (let ((hsys-org-enable-smart-keys t))
+      (org-mode)
+      (insert "/tmp")
+      (goto-char 1)
+      (hy-test-helpers:hypb-function-should-call-hpath:find 'ibtypes::org-mode "/tmp"))))
+
+;; Org Link
+(ert-deftest smart-org-mode-with-smart-keys-on-org-link-activates ()
+  "With smart keys on `org-mode' link activates link."
+  (with-temp-buffer
+    (let ((hsys-org-enable-smart-keys t))
+      (org-mode)
+      (insert "[[/tmp][desc]]")
+      (goto-char 9)
+      (with-mock
+       (mock (org-open-at-point) => t)
+       (ibtypes::org-mode)))))
+
+;; Smart Key Context
+(ert-deftest smart-org-mode-with-smart-keys-buttons-on-file-is-org-meta-return ()
+  "With smart keys as buttons on file name fallbacks to `org-meta-return'."
+  (skip-unless nil) ; TODO - Need to use drag to test this
+  (with-temp-buffer
+    (let ((hsys-org-enable-smart-keys 'buttons))
+      (org-mode)
+      (insert "/tmp")
+      (goto-char 1)
+      (with-mock
+       (mock (org-meta-return) => t)
+       (ibtypes::org-mode)))))
+
+;; Hyperbole Button
+(ert-deftest smart-org-mode-with-smart-keys-buttons-on-hypb-button-activates ()
+  "With smart keys as buttons on hypb button activates."
   (with-temp-buffer
     (let ((hsys-org-enable-smart-keys 'buttons))
       (org-mode)
@@ -58,11 +97,24 @@
       (goto-char 1)
       (hy-test-helpers:hypb-function-should-call-hpath:find 'smart-org "/tmp"))))
 
-(ert-deftest smart-org-mode-with-no-smart-keys-on-file-is-hypb-button ()
-  "With no smart keys on file calls org mode M-RET."
+;; Org Link
+(ert-deftest hib-org:org-mode-with-smart-keys-buttons-on-org-link-is-org-meta-return ()
+  "With smart keys as buttons on `org-mode' link uses `org-meta-return'."
   (with-temp-buffer
-    (let ((bn (buffer-name))
-          (hsys-org-enable-smart-keys nil))
+    (let ((hsys-org-enable-smart-keys 'buttons))
+      (org-mode)
+      (insert "[[/tmp][desc]]")
+      (goto-char 9)
+      (with-mock
+       (mock (org-meta-return) => t)
+       (ibtypes::org-mode)))))
+
+;; Smart Key Context
+(ert-deftest hib-org:org-mode-with-no-smart-keys-on-file-is-org-meta-return ()
+  "With no smart keys on file calls `org-meta-return'."
+  (skip-unless nil) ; TODO - Need to use drag to test this
+  (with-temp-buffer
+    (let ((hsys-org-enable-smart-keys nil))
       (org-mode)
       (insert "/tmp")
       (goto-char 1)
@@ -71,6 +123,33 @@
       ;; it looks like we get into ert buffer after smart-org
       (set-buffer bn)
       (should (equal (buffer-string) "* /tmp")))))
+      (with-mock
+       (mock (org-meta-return) => t)
+       (ibtypes::org-mode)))))
+
+;; Hyperbole Button
+(ert-deftest hib-org:org-mode-with-no-smart-keys-on-hypb-button-is-org-meta-return ()
+  "With no smart keys on file calls `org-meta-return'."
+  (with-temp-buffer
+    (let ((hsys-org-enable-smart-keys nil))
+      (org-mode)
+      (insert "/tmp")
+      (goto-char 1)
+      (with-mock
+       (mock (org-meta-return) => t)
+       (ibtypes::org-mode)))))
+
+;; Org Link
+(ert-deftest hib-org:org-mode-with-no-smart-keys-on-org-link-is-org-meta-return ()
+  "With no smart keys on `org-mode' link calls `org-meta-return'."
+  (with-temp-buffer
+    (let ((hsys-org-enable-smart-keys nil))
+      (org-mode)
+      (insert "[[/tmp][desc]]")
+      (goto-char 9)
+      (with-mock
+       (mock (org-meta-return) => t)
+       (ibtypes::org-mode)))))
 
 (provide 'smart-org-tests)
 ;;; smart-org-tests.el ends here
