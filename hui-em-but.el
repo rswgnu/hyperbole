@@ -49,6 +49,11 @@
   :type '(integer :match (lambda (_widget value) (and (integerp value) (> value 0))))
   :group 'hyperbole-buttons)
 
+(defcustom hproperty:but-flash-time-seconds 0.05
+  "*Emacs button flash delay."
+  :type 'float
+  :group 'hyperbole-buttons)
+
 (defface hbut-flash
   '((((class color) (min-colors 88) (background light))
      :background "red3")
@@ -109,11 +114,6 @@
   "Hyperbole face for hyper-buttons."
   :type 'face
   :initialize #'custom-initialize-default
-  :group 'hyperbole-buttons)
-
-(defcustom hproperty:but-flash-time-seconds 0.05
-  "*Emacs button flash delay."
-  :type 'float
   :group 'hyperbole-buttons)
 
 ;;; ************************************************************************
@@ -262,7 +262,7 @@ highlighted."
       (unwind-protect
 	  (progn
 	    (hproperty:set-but-face start hproperty:flash-face)
-	    (sit-for (/ hproperty:but-flash-time 5000.0))) ;; Force display update
+	    (sit-for hproperty:but-flash-time-seconds)) ;; Force display update
 	(hproperty:set-but-face start a)
 	(redisplay t)))
     (and ibut (not prev) (hproperty:but-delete start))))
