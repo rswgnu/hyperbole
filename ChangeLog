@@ -15,6 +15,18 @@
 
 2021-05-02  Mats Lidell  <matsl@gnu.org>
 
+* test/hib-org-tests.el
+    (hib-org:org-mode-with-no-smart-keys-on-file-is-org-meta-return)
+    (hib-org:org-mode-with-no-smart-keys-on-hypb-button-is-org-meta-return)
+    (hib-org:org-mode-with-no-smart-keys-on-org-link-is-org-meta-return)
+    (hib-org:org-mode-with-smart-keys-buttons-on-file-is-org-meta-return)
+    (hib-org:org-mode-with-smart-keys-buttons-on-hypb-button-activates)
+    (hib-org:org-mode-with-smart-keys-buttons-on-org-link-is-org-meta-return)
+    (hib-org:org-mode-with-smart-keys-on-file-activates)
+    (hib-org:org-mode-with-smart-keys-on-hypb-button-activates)
+    (hib-org:org-mode-with-smart-keys-on-org-link-activates):
+    Update and add new tests for hsys-org-enable-smart-keys.
+
 * hui-em-but.el (hbut-face): Add face for hbuts.
     (hproperty:but-face): Use face for property.
     (hbut-item-face): Add face for hbut items.
