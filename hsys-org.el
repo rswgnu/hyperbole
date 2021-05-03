@@ -43,7 +43,7 @@ with different settings of this option.  For example, a nil value makes
 |---------------------+-------------------+------------------+----------+------------------|
 | This Option Setting | Smart Key Context | Hyperbole Button | Org Link | Fallback Command |
 |---------------------+-------------------+------------------+----------+------------------|
-| buttons             | Ignore            | Activate         | Ignore   | org-meta-return  |
+| buttons             | Ignore            | Activate         | Activate | org-meta-return  |
 | nil                 | Ignore            | Ignore           | Ignore   | org-meta-return  |
 | t                   | Activate          | Activate         | Activate | None             |
 |---------------------+-------------------+------------------+----------+------------------|"

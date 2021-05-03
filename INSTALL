@@ -18,7 +18,7 @@
 There are multiple package managers you can use to install Hyperbole once
 you have GNU Emacs set up at your site.
 
-** The built-in Emacs package manager
+** The Built-in Emacs Package Manager
 
 The Emacs Package Manager installs the latest stable version release
 of GNU Hyperbole.  If you are not familiar with it, see the Packages
@@ -46,14 +46,42 @@ Below are the lines to add:
   (package-install 'hyperbole))
 (hyperbole-mode 1)
 
-----
-
 Now save the file and then restart Emacs.  Hyperbole will then be
 downloaded and compiled for use with your version of Emacs; give it a
 minute or two.  You may see a bunch of compilation warnings but these
 can be safely ignored.
 
-**
+
+** The Straight Package Manager (direct from Git Sources)
+
+If you prefer to track Hyperbole development between releases and like to try out new features
+still in testing, then use the Straight package manager instead of the above, which pulls the
+latest Hyperbole source code from its git repository.  This also gives you a cleaner installation
+process without showing you any byte compilation warnings.
+
+;; Use this in your Emacs init file to install Straight
+(progn
+  (defvar bootstrap-version)
+  (setq package-enable-at-startup nil)
+  (let ((bootstrap-file
+         (expand-file-name "straight/repos/straight.el/bootstrap.el" user-emacs-directory))
+        (bootstrap-version 5))
+    (unless (file-exists-p bootstrap-file)
+      (with-current-buffer
+          (url-retrieve-synchronously
+           "https://raw.githubusercontent.com/raxod502/straight.el/develop/install.el"
+           'silent 'inhibit-cookies)
+        (goto-char (point-max))
+        (eval-print-last-sexp)))
+    (load bootstrap-file nil 'nomessage)))
+
+;; Then use this to install Hyperbole
+(straight-use-package
+ '(hyperbole
+   :host nil
+   :repo "https://git.savannah.gnu.org/git/hyperbole.git"
+   :config (hyperbole-mode 1)))
+
 
 ===========================================================================
 *		         Browsing the Source

@@ -1,3 +1,18 @@
+2021-05-02  Bob Weiner  <rsw@gnu.org>
+
+* Update release number to 8.0.0pre (pre-release) as not all the
+    documentation is finished yet.
+
+* INSTALL:
+  man/hyperbole.texi: Made Installation subsections for Stable Release
+    Installation and Git Pre-release Installation with the Straight
+    package manager.
+
+* hmouse-tag.el (smart-tags-display): Fix to never prompt for a tag
+    table if none are found from automatic searches.  This prevents
+    prompting when the Action Key is pressed on a potential identifier
+    that could be anything.
+
 2021-05-02  Mats Lidell  <matsl@gnu.org>
 
 * hui-em-but.el (hbut-face): Add face for hbuts.
@@ -1033,7 +1048,7 @@ absolute paths.
   Makefile (EL_COMPILE, ELC_COMPILE): Added hib-org.el{c}.
 
 ==============================================================================
-V7.1.4 changes ^^^^:
+V8.0.0 changes ^^^^:
 ==============================================================================
 
 2020-09-21  Bob Weiner  <rsw@gnu.org>

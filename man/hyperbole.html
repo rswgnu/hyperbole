@@ -1,7 +1,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <!-- This manual is for GNU Hyperbole
-(Edition 7.1.4, Published April, 2021).
+(Edition 8.0.0, Published May, 2021).
 
 Copyright (C) 1989-2021  Free Software Foundation, Inc.
 
@@ -231,7 +231,11 @@ ul.no-bullet {list-style: none}
 <li><a id="toc-Glossary-1" href="#Glossary">Appendix A Glossary</a></li>
 <li><a id="toc-Setup-1" href="#Setup">Appendix B Setup</a>
 <ul class="no-bullet">
-  <li><a id="toc-Installation-1" href="#Installation">B.1 Installation</a></li>
+  <li><a id="toc-Installation-1" href="#Installation">B.1 Installation</a>
+  <ul class="no-bullet">
+    <li><a id="toc-Stable-Release-Installation-_0028Emacs-Package-Manager_0029" href="#Stable-Release-Installation">B.1.1 Stable Release Installation (Emacs Package Manager)</a></li>
+    <li><a id="toc-Git-Pre_002drelease-Installation-_0028Straight-Package-Manager_0029" href="#Git-Pre_002drelease-Installation">B.1.2 Git Pre-release Installation (Straight Package Manager)</a></li>
+  </ul></li>
   <li><a id="toc-Invocation-1" href="#Invocation">B.2 Invocation</a></li>
   <li><a id="toc-Customization-1" href="#Customization">B.3 Customization</a>
   <ul class="no-bullet">
@@ -352,8 +356,8 @@ WITHOUT ANY WARRANTY, without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</P>
 
 <PRE>
-Edition 7.1.4
-Printed April 28, 2021.
+Edition 8.0.0
+Printed May 3, 2021.
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -838,7 +842,7 @@ Next: <a href="#Smart-Keys" accesskey="n" rel="next">Smart Keys</a>, Previous: <
 <span id="Introduction-1"></span><h2 class="chapter">1 Introduction</h2>
 
 <p>This edition of the GNU Hyperbole Manual is for use with any version
-7.1.4 or greater of GNU Hyperbole.  Hyperbole runs atop GNU Emacs 24.3
+8.0.0 or greater of GNU Hyperbole.  Hyperbole runs atop GNU Emacs 24.3
 or higher.  It will trigger an error if your Emacs is older.
 </p>
 <p>This chapter summarizes the structure of the rest of the manual,
@@ -848,6 +852,36 @@ explains how to subscribe to its mail lists.
 <p>Throughout this manual, sequences of keystrokes are delimited by curly
 braces <kbd>{ }</kbd>, function and variable names use this <code>typeface</code>.
 </p>
+<p>In brief, Hyperbole lets you:
+</p>
+<ul>
+<li> Quickly create hyperlink buttons either from the keyboard or by dragging
+between a source and destination window with a mouse button depressed.
+Later, activate buttons by pressing/clicking on them or by giving the name
+of the button.
+
+</li><li> Activate many kinds of <em>implicit buttons</em> recognized by context within
+text buffers, e.g. URLs, grep output lines, and git commits.  A single key
+or mouse button automatically does the right thing in dozens of contexts;
+just press and go.
+
+</li><li> Build outlines with multi-level numbered outline nodes, e.g. 1.4.8.6, that
+all renumber automatically as any node or tree is moved in the outline.
+Each node also has a permanent hyperlink anchor that you can reference
+from any other node;
+
+</li><li> Manage all your contacts or record-based, unstructured nodes quickly with
+hierarchical categories; each entry can have embedded hyperbuttons of any
+type.  Or create an archive of documents with hierarchical entries and use
+the same search mechanism to quickly find any matching entry;
+
+</li><li> Use single keys to easily manage your Emacs windows or frames and quickly
+retrieve saved window and frame configurations;
+
+</li><li> Search for things in your current buffers, in a directory tree or across
+major web search engines with the touch of a few keys.
+</li></ul>
+
 <table class="menu" border="0" cellspacing="0">
 <tr><td align="left" valign="top">&bull; <a href="#Manual-Overview" accesskey="1">Manual Overview</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
 </td></tr>
@@ -866,6 +900,14 @@ Next: <a href="#Motivation" accesskey="n" rel="next">Motivation</a>, Previous: <
 </div>
 <span id="Manual-Overview-1"></span><h3 class="section">1.1 Manual Overview</h3>
 
+<p>Hyperbole is an efficient, programmable hypertextual information
+management system.  It is intended for everyday work on any GNU Emacs
+platform.  Hyperbole allows hypertext buttons to be embedded within
+unstructured and structured files, mail messages and news articles.
+It offers intuitive mouse-based control of information display within
+multiple windows.  It also provides point-and-click access to Info
+manuals, ftp archives, and the World-Wide Web (WWW).
+</p>
 <span id="index-file_002c-DEMO"></span>
 <span id="index-Hyperbole-demo"></span>
 <span id="index-demo-file"></span>
@@ -985,26 +1027,59 @@ Next: <a href="#Mail-Lists" accesskey="n" rel="next">Mail Lists</a>, Previous: <
 <span id="index-Emacs-Lisp"></span>
 <span id="index-Emacs"></span>
 <p>GNU Hyperbole (pronounced Ga-new Hi-per-bo-lee), or just Hyperbole, is
-an efficient, programmable hypertextual information management
-system.  It is intended for everyday work on any GNU Emacs platform.
-Hyperbole allows hypertext buttons to be embedded within unstructured
-and structured files, mail messages and news articles.  It offers
-intuitive mouse-based control of information display within multiple
-windows.  It also provides point-and-click access to Info manuals, ftp
-archives, and the World-Wide Web (WWW).
+like Markdown for hypertext.  Hyperbole automatically recognizes dozens of
+common, pre-existing patterns in any buffer regardless of mode and can
+instantly activate them as hyperbuttons with a single key: email addresses,
+URLs, grep -n outputs, programming backtraces, sequences of Emacs keys,
+programming identifiers, Texinfo and Info cross-references, Org links,
+Markdown links and on and on.  All you do is load Hyperbole and then your
+text comes to life with no extra effort or complex formatting.
+</p>
+<p>Hyperbole includes easy-to-use, powerful hypertextual button types without
+the need to learn a markup language.  Hyperbole&rsquo;s button types are written
+in Lisp and can be wholly independent of the web, i.e. web links are one
+type of Hyperbole link, not fundamental to its link architecture.
+However, Hyperbole is a great assistant when editing HTML or Javascript or
+when browsing web pages and links.
+</p>
+<p>Hyperbole comes pre-built with most of the implicit button types you will
+need but with a little extra effort and a few lines of code (or even just
+a few words), you can define your own implicit button types to recognize
+your specific buttons and then activate them anywhere in Emacs.  You press
+a single key, <kbd>{M-<span class="key">RET</span>}</kbd> by default, on any kind of Hyperbole
+button to activate it, so you can rely on your muscle memory and let the
+computer do the hard work of figuring out what to do.  <kbd>{C-u
+M-<span class="key">RET</span>}</kbd> shows you what any button will do in any context before you
+activate it, so you can always be sure of what you are doing when needed
+or if some emails you a button (you can do that too).
+</p>
+<p>Hyperbole is something to be experienced and interacted with, not understood
+from reading alone.  It installs normally as a single Emacs package with no
+dependencies outside of standard Emacs libraries.  Most of Hyperbole is a
+single global minor mode that you can activate and deactivate at will.  And
+it can be uninstalled quickly as well if need be, so there is no risk to
+giving it a spin.
+</p>
+<p>Once you have it installed and activated <kbd>{C-u M-x hyperbole-mode <span class="key">RET</span>}</kbd>,
+try the interactive demo with <kbd>{C-h h d d}</kbd>.  In fact, if you
+have Hyperbole loaded, you can press <kbd>{M-<span class="key">RET</span>}</kbd> inside any of the
+brace delimited series of keys you see in this document and it will
+execute them on-the-fly (easy keyboard-macro style buttons in any text).
+</p>
+<p>Hyperbole can dramatically increase your productivity and greatly reduce
+the number of keyboard/mouse keys you&rsquo;ll need to work efficiently.
 </p>
 <p>Hyperbole consists of five parts:
 </p>
 <dl compact="compact">
 <dt><em>Buttons and Smart Keys</em></dt>
-<dd><p>Hyperbole hyperlink and other kinds of buttons (explicit buttons) may be
-added to documents with a simple drag between windows, no markup language
-needed.  Implicit buttons are patterns automatically recognized within
-existing text that perform actions, e.g. bug#24568 displays the bug status
-information for that Emacs bug number, without the need for any additional
-markup.  Global buttons are buttons that are activated by name from
-anywhere within Emacs.
-See <a href="#Buttons">Buttons</a>.
+<dd><p>Hyperbole hyperlink and other kinds of buttons <em>explicit buttons</em> may
+be added to documents with a simple drag between windows, no markup
+language needed.  <em>Implicit buttons</em> are patterns automatically
+recognized within existing text that perform actions, e.g. bug#24568
+displays the bug status information for that Emacs bug number, without the
+need for any additional markup.  <em>Global buttons</em> are buttons that are
+activated by name from anywhere within Emacs.  See <a href="#Buttons">Buttons</a>.
 </p>
 <p>Buttons are accessed by clicking on them or referenced by name (global
 buttons), so they can be activated regardless of what is on screen.
@@ -3097,10 +3172,20 @@ of <kbd>{C-c C-c}</kbd>, <code>org-ctrl-c-ctrl-c</code>.
 <p>In any other context besides the end of a line, the Action Key invokes
 the Org-mode standard binding of <kbd>{M-<span class="key">RET</span>}</kbd>, <code>org-meta-return</code>.
 </p>
-<p>To disable ALL Hyperbole support within Org major and minor modes, set
+<p>To disable Hyperbole support within Org major and minor modes, set
 the custom option <code>hsys-org-enable-smart-keys</code> to <code>nil</code>.  Then in
 Org modes, the Action Key will simply invoke <code>org-meta-return</code>.
 </p>
+<div class="example">
+<pre class="example">|--------------+-------------------+------------------+----------+------------------|
+| This Setting | Smart Key Context | Hyperbole Button | Org Link | Fallback Command |
+|--------------+-------------------+------------------+----------+------------------|
+| buttons      | Ignore            | Activate         | Activate | org-meta-return  |
+| nil          | Ignore            | Ignore           | Ignore   | org-meta-return  |
+| t            | Activate          | Activate         | Activate | None             |
+|--------------+-------------------+------------------+----------+------------------|
+</pre></div>
+
 </dd>
 </dl>
 
@@ -8093,7 +8178,27 @@ Next: <a href="#Invocation" accesskey="n" rel="next">Invocation</a>, Previous: <
 </div>
 <span id="Installation-1"></span><h3 class="section">B.1 Installation</h3>
 
+<p>There are multiple package managers you can use to install Hyperbole once
+you have GNU Emacs set up at your site.
+</p>
+<table class="menu" border="0" cellspacing="0">
+<tr><td align="left" valign="top">&bull; <a href="#Stable-Release-Installation" accesskey="1">Stable Release Installation (Emacs Package Manager)</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="#Git-Pre_002drelease-Installation" accesskey="2">Git Pre-release Installation (Straight Package Manager)</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+</table>
+
+<hr>
+<span id="Stable-Release-Installation"></span><div class="header">
+<p>
+Next: <a href="#Git-Pre_002drelease-Installation" accesskey="n" rel="next">Git Pre-release Installation</a>, Up: <a href="#Installation" accesskey="u" rel="up">Installation</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Key-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<span id="Stable-Release-Installation-_0028Emacs-Package-Manager_0029"></span><h4 class="subsection">B.1.1 Stable Release Installation (Emacs Package Manager)</h4>
+
 <span id="index-installation"></span>
+<span id="index-Emacs-package-manager"></span>
+<span id="index-stable-release-installation"></span>
+<span id="index-installation_002c-stable"></span>
 <span id="index-obtaining-Hyperbole"></span>
 <span id="index-Hyperbole_002c-obtaining-1"></span>
 <p>Once you have Emacs set up at your site, GNU Hyperbole may be
@@ -8127,6 +8232,50 @@ downloaded and compiled for use with your version of Emacs; give it a
 minute or two.  You may see a bunch of compilation warnings but these
 can be safely ignored.
 </p>
+<hr>
+<span id="Git-Pre_002drelease-Installation"></span><div class="header">
+<p>
+Previous: <a href="#Stable-Release-Installation" accesskey="p" rel="prev">Stable Release Installation</a>, Up: <a href="#Installation" accesskey="u" rel="up">Installation</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Key-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<span id="Git-Pre_002drelease-Installation-_0028Straight-Package-Manager_0029"></span><h4 class="subsection">B.1.2 Git Pre-release Installation (Straight Package Manager)</h4>
+
+<span id="index-Straight-package-manager"></span>
+<span id="index-pre_002drelease-installation"></span>
+<span id="index-installation_002c-pre_002drelease"></span>
+<span id="index-installation_002c-from-git"></span>
+<p>If you prefer to track Hyperbole development between releases and like to
+try out new features still in testing, then use the Straight package
+manager instead of the above, which pulls the latest Hyperbole source code
+from its git repository.  This also gives you a cleaner installation
+process without showing you any byte compilation warnings.
+</p>
+<div class="lisp">
+<pre class="lisp">;; Use this in your Emacs init file to install Straight
+(progn
+  (defvar bootstrap-version)
+  (setq package-enable-at-startup nil)
+  (let ((bootstrap-file
+         (expand-file-name &quot;straight/repos/straight.el/bootstrap.el&quot; user-emacs-directory))
+        (bootstrap-version 5))
+    (unless (file-exists-p bootstrap-file)
+      (with-current-buffer
+          (url-retrieve-synchronously
+           &quot;https://raw.githubusercontent.com/raxod502/straight.el/develop/install.el&quot;
+           'silent 'inhibit-cookies)
+        (goto-char (point-max))
+        (eval-print-last-sexp)))
+    (load bootstrap-file nil 'nomessage)))
+</pre><pre class="lisp">
+
+</pre><pre class="lisp">;; Then use this to install Hyperbole
+(straight-use-package
+ '(hyperbole
+   :host nil
+   :repo &quot;https://git.savannah.gnu.org/git/hyperbole.git&quot;
+   :config (hyperbole-mode 1)))
+</pre></div>
+
+
 <p>Now read the next section on Invocation.
 </p>
 <hr>
@@ -11459,13 +11608,13 @@ It did not exist when Hyperbole was first developed.
 <span id="index-hsys_002dorg_002denable_002dsmart_002dkeys-1"></span>
 <p>Smart Key support for Org-mode is already in Hyperbole.  Use the
 <code>hsys-org-enable-smart-keys</code> customization variable to control
-the Smart Keys and <kbd>{M-RET}</kbd> when in Org-mode with
+the Smart Keys and <kbd>{M-<span class="key">RET</span>}</kbd> when in Org-mode with
 <code>hyperbole-mode</code> active.  <code>t</code> enables Smart Key support
 everywhere.  The symbol, <code>buttons</code>, is the default; it means the
 Smart Keys are active only when point is within a Hyperbole button.  A
 <code>nil</code> value means no Smart Key support; Hyperbole gives Org
-complete control over <kbd>{M-RET}</kbd> so that it behaves just as it does
-normally in Org mode.
+complete control over <kbd>{M-<span class="key">RET</span>}</kbd> so that it behaves just as it
+does normally in Org mode.
 </p>
 </li><li> <span id="index-Smart-Key-2"></span>
 <span id="index-mouse-key-bindings"></span>
@@ -13289,6 +13438,7 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function</a>, Up: <a href
 <tr><td></td><td valign="top"><a href="#index-Emacs-Lisp-variables">Emacs Lisp variables</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-Emacs-Lisp-variables-1">Emacs Lisp variables</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Link-Variable-Substitution">Link Variable Substitution</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-emacs-outline">emacs outline</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Inserting-and-Importing">Inserting and Importing</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-Emacs-package-manager">Emacs package manager</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Stable-Release-Installation">Stable Release Installation</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-Emacs-support">Emacs support</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Button-Colors">Button Colors</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-emulation_002c-drag">emulation, drag</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Keyboard-Drags">Keyboard Drags</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-enable-org_002dmode-support">enable org-mode support</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
@@ -13440,7 +13590,7 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function</a>, Up: <a href
 <tr><td></td><td valign="top"><a href="#index-Hyperbole-version">Hyperbole version</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Suggestion-or-Bug-Reporting">Suggestion or Bug Reporting</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-Hyperbole_002c-embedding">Hyperbole, embedding</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Embedding-Hyperbole">Embedding Hyperbole</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-Hyperbole_002c-obtaining">Hyperbole, obtaining</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Top">Top</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-Hyperbole_002c-obtaining-1">Hyperbole, obtaining</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Installation">Installation</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-Hyperbole_002c-obtaining-1">Hyperbole, obtaining</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Stable-Release-Installation">Stable Release Installation</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-Hyperbole_002c-starting">Hyperbole, starting</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Menus">Menus</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-Hyperbole_002c-system-encapsulation">Hyperbole, system encapsulation</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Encapsulating-Systems">Encapsulating Systems</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-hyperlink">hyperlink</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Links">Links</a></td></tr>
@@ -13495,7 +13645,10 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function</a>, Up: <a href
 <tr><td></td><td valign="top"><a href="#index-insert-item">insert item</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Keyboard-Drags">Keyboard Drags</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-inserting-tabs">inserting tabs</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Relocating-and-Copying">Relocating and Copying</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-insertion">insertion</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Inserting-and-Importing">Inserting and Importing</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-installation">installation</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Installation">Installation</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-installation">installation</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Stable-Release-Installation">Stable Release Installation</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-installation_002c-from-git">installation, from git</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Git-Pre_002drelease-Installation">Git Pre-release Installation</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-installation_002c-pre_002drelease">installation, pre-release</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Git-Pre_002drelease-Installation">Git Pre-release Installation</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-installation_002c-stable">installation, stable</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Stable-Release-Installation">Stable Release Installation</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-instance-number">instance number</a>:</td><td>&nbsp;</td><td valign="top"><a href="#By-Menu">By Menu</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-interactive-cmd-char_002c-_002bI">interactive cmd char, +I</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Creating-Action-Types">Creating Action Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-interactive-cmd-char_002c-_002bK">interactive cmd char, +K</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Creating-Action-Types">Creating Action Types</a></td></tr>
@@ -13772,7 +13925,7 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function</a>, Up: <a href
 <tr><td colspan="4"> <hr></td></tr>
 <tr><th id="Concept-Index_cp_letter-O">O</th><td></td><td></td></tr>
 <tr><td></td><td valign="top"><a href="#index-object_002doriented-code-browsing">object-oriented code browsing</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Key-_002d-The-OO_002dBrowser">Smart Key - The OO-Browser</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-obtaining-Hyperbole">obtaining Hyperbole</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Installation">Installation</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-obtaining-Hyperbole">obtaining Hyperbole</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Stable-Release-Installation">Stable Release Installation</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-online-library">online library</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-OO_002dBrowser">OO-Browser</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Key-_002d-The-OO_002dBrowser">Smart Key - The OO-Browser</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-option-setting">option setting</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Customization">Customization</a></td></tr>
@@ -13833,6 +13986,7 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function</a>, Up: <a href
 <tr><td></td><td valign="top"><a href="#index-popup-menu_002c-Rolo">popup menu, Rolo</a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyRolo-Menu">HyRolo Menu</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-posting-buttons">posting buttons</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Buttons-in-Mail">Buttons in Mail</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-posting-news">posting news</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Buttons-in-News">Buttons in News</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-pre_002drelease-installation">pre-release installation</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Git-Pre_002drelease-Installation">Git Pre-release Installation</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-precedence_002c-buttons">precedence, buttons</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Button-Type-Precedence">Button Type Precedence</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-programming-interface">programming interface</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Embedding-Hyperbole">Embedding Hyperbole</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-promotion">promotion</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Relocating-and-Copying">Relocating and Copying</a></td></tr>
@@ -13953,12 +14107,14 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function</a>, Up: <a href
 <tr><td></td><td valign="top"><a href="#index-social-reference">social reference</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-source-line">source line</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-splitting-a-cell">splitting a cell</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Splitting-and-Appending">Splitting and Appending</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-stable-release-installation">stable release installation</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Stable-Release-Installation">Stable Release Installation</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-stack-frame">stack frame</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-stack-frame-1">stack frame</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-star-outline">star outline</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Inserting-and-Importing">Inserting and Importing</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-starting-HyControl">starting HyControl</a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyControl">HyControl</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-starting-Hyperbole">starting Hyperbole</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Menus">Menus</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-storage-manager">storage manager</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Operational-and-Storage-Formats">Operational and Storage Formats</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-Straight-package-manager">Straight package manager</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Git-Pre_002drelease-Installation">Git Pre-release Installation</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-string">string</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Thing-Selection">Thing Selection</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-string-1">string</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Key-_002d-Delimited-Things">Smart Key - Delimited Things</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-submenus">submenus</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Menus">Menus</a></td></tr>

@@ -2,8 +2,19 @@
 				 by Bob Weiner
 
 ===========================================================================
-*                                   V7.1.4
+*                                   V8.0.0
 ===========================================================================
+
+  HYPERBOLE SYSTEM
+
+   - Hyperbole is now a global minor mode that can be toggled with
+     {M-x hyperbole-mode RET}, meaning all of its key bindings can
+     easily be enabled or disabled whenever desired.  Your init file
+     needs to have (hyperbole-mode 1) in it instead of
+     (require 'hyperbole) or Hyperbole will not be enabled upon startup.
+
+     In the modeline where minor modes are shown, "Hypb" now appears
+     whenever Hyperbole is active.
 
   PROGRAMMING
 
@@ -97,11 +108,6 @@
       handles single line log entries that begin with the word 'commit' ,
       displaying their commits even from shell and compilation buffers.
 
-    - Org Mode: Lowered to near bottom implicit button priority so that all
-      implicit button types will work in Org mode.  Replaced 'inhibit-hsys-org'
-      setting with 'hsys-org-enable-smart-keys'.  See its documentation for
-      details.
-
     - Debugger Source: In Python tracebacks, may be on a line just below the
       source reference line so if not on a Hyperbole button, move back a line
       before checking.
@@ -115,12 +121,23 @@
 
   ORG MODE
 
+    - M-RET: Reworked M-RET interface so can control how much or little of
+      Hyperbole works in Org mode when Hyperbole minor mode is enabled.
+
     - hsys-org-enable-smart-keys: New customization to replace 'inhibit-hsys-org'.
       This applies only in Org major/minor modes when hyperbole-mode is active.
       t means enable Smart Key support everywhere.  The symbol, buttons, is the
       default; it means the Smart Keys are active only when point is within a
       Hyperbole button.  A nil value means no Smart Key support so {M-RET} behaves
-      just as it does normally in Org mode.
+      just as it does normally in Org mode.  This table summarizes the operation:
+
+      |--------------+-------------------+------------------+----------+------------------|
+      | Set To       | Smart Key Context | Hyperbole Button | Org Link | Fallback Command |
+      |--------------+-------------------+------------------+----------+------------------|
+      | buttons      | Ignore            | Activate         | Activate | org-meta-return  |
+      | nil          | Ignore            | Ignore           | Ignore   | org-meta-return  |
+      | t            | Activate          | Activate         | Activate | None             |
+      |--------------+-------------------+------------------+----------+------------------|
 
   ACE WINDOW PACKAGE INTEGRATION - fast window and buffer switching
 
@@ -135,12 +152,11 @@
 
   TEST CASES
 
-    - Hyperbole Automated Testing: Git-based distributions of Hyperbole now
-      include a test subdirectory with many tests of hyperbole's button
-      types.  Simply run 'make test' or 'make test-all' from the command-line
-      when in the Hyperbole source directory and you should see all tests
-      pass.  If any fail, you can press the Action Key to see the source of
-      the failure.
+    - Hyperbole Automated Testing: Hyperbole now includes over 130 test cases
+      in the test/ subdirectory.  Simply run 'make test' or 'make test-all'
+      from the command-line when in the Hyperbole source directory and you
+      should see all tests pass.  If any fail, you can press the Action Key
+      to see the source of the failure.
 
     - Defal implicit buttons hypb-ert-sym and hypb-ert-sel: For running
       hyperbole ert test from hyperbole source files.

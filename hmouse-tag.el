@@ -154,7 +154,7 @@ If:
 	    (progn
 	      (smart-tags-display tag next)
 	      (message "Found definition for `%s'" tag))
-	  (error (message "`%s' not found in tag tables" tag)
+	  (error (message "`%s' definition not found in identifier lookup/tag tables" tag)
 		 (beep))))))
 
 ;;;###autoload
@@ -211,7 +211,7 @@ Otherwise:
       (error
        (if (or (not smart-c-use-lib-man)
 	       (not (file-readable-p "~/.CLIBS-LIST")))
-	   (progn (message "`%s' not found in tag tables" tag)
+	   (progn (message "`%s' definition not found in identifier lookup/tag tables" tag)
 		  (beep)
 		  nil)
 	 (message "Checking if `%s' is a C++ library function..." tag)
@@ -219,7 +219,7 @@ Otherwise:
 	     (progn (message "Displaying C++ library man page for `%s'" tag)
 		    (manual-entry tag)
 		    t)
-	   (message "`%s' not found in tag tables or C++ libraries" tag)
+	   (message "`%s' definition not found in identifier lookup/tag tables or C++ libraries" tag)
 	   (beep)
 	   nil))))))
 
@@ -291,13 +291,13 @@ If:
 	  (error
 	   (if (or (not smart-c-use-lib-man)
 		   (not (file-readable-p "~/.CLIBS-LIST")))
-	       (progn (message "`%s' not found in tag tables" tag)
+	       (progn (message "`%s' definition not found in identifier lookup/tag tables" tag)
 		      (beep))
 	     (message "Checking if `%s' is a C library function..." tag)
 	     (if (smart-library-symbol tag)
 		 (progn (message "Displaying C library man page for `%s'" tag)
 			(manual-entry tag))
-	       (message "`%s' not found in tag tables or C libraries" tag)
+	       (message "`%s' definition not found in identifier lookup/tag tables or C libraries" tag)
 	       (beep))))))))
 
 (defconst smart-c-keywords
@@ -374,7 +374,7 @@ in the current directory or any of its ancestor directories."
 	  (smart-tags-display tag next)
 	  (message "Found definition for `%s'" tag))
       (error
-       (message "`%s' not found in tag tables" tag)
+       (message "`%s' definition not found in identifier lookup/tag tables" tag)
        (beep)))))
 
 (defconst smart-fortran-keywords
@@ -443,7 +443,7 @@ Otherwise:
 	(progn
 	  (smart-tags-display tag next)
 	  (message "Found definition for `%s'" tag))
-      (error (progn (message "`%s' not found in tag tables" tag)
+      (error (progn (message "`%s' definition not found in identifier lookup/tag tables" tag)
 		    (beep))))))
 
 ;;; The following should be called only if the OO-Browser is available.
@@ -512,7 +512,7 @@ in the current directory or any of its ancestor directories."
 	  (smart-tags-display tag next)
 	  (message "Found definition for `%s'" tag))
       (error
-       (message "`%s' not found in tag tables" tag)
+       (message "`%s' definition not found in identifier lookup/tag tables" tag)
        (beep)))))
 
 (defconst smart-javascript-keywords
@@ -747,7 +747,7 @@ Otherwise:
       (error
        (if (or (not smart-c-use-lib-man)
 	       (not (file-readable-p "~/.CLIBS-LIST")))
-	   (progn (message "`%s' not found in tag tables" tag)
+	   (progn (message "`%s' definition not found in identifier lookup/tag tables" tag)
 		  (beep))
 	 (message
 	  "Checking if `%s' is an Objective-C library function..." tag)
@@ -756,7 +756,7 @@ Otherwise:
 	       (message
 		"Displaying Objective-C library man page for `%s'" tag)
 	       (manual-entry tag))
-	   (message "`%s' not found in tag tables or Objective-C libraries"
+	   (message "`%s' definition not found in identifier lookup/tag tables or Objective-C libraries"
 		    tag)
 	   (beep)))))))
 
@@ -865,7 +865,7 @@ in the current directory or any of its ancestor directories."
 	(progn
 	  (smart-tags-display tag next)
 	  (message "Found definition for `%s'" tag))
-      (error (progn (message "`%s' not found in tag tables" tag)
+      (error (progn (message "`%s' definition not found in identifier lookup/tag tables" tag)
 		    (beep))))))
 
 ;;; The following should be called only if the OO-Browser is available.
@@ -1300,9 +1300,8 @@ See the \"${hyperb:dir}/smart-clib-sym\" script for more information."
 	 ;; Identifier searches should almost always be case-sensitive today
 	 (tags-case-fold-search nil)
 	 (func (smart-tags-noselect-function))
-	 (tags-file-name (if tags-table-list
-			     nil
-			   (and (boundp 'tags-file-name) tags-file-name)))
+	 (tags-file-name (unless tags-table-list
+			   (when (boundp 'tags-file-name) tags-file-name)))
 	 find-tag-result
 	 ;; For InfoDock and XEmacs
 	 (tags-always-exact t)
@@ -1315,28 +1314,31 @@ See the \"${hyperb:dir}/smart-clib-sym\" script for more information."
     ;; when `next' is false (otherwise tag would = nil and the following
     ;; stringp test would fail).
     (and (featurep 'infodock) (stringp tag) (setq tag (list tag)))
-    (if (and func (setq find-tag-result (funcall func tag)))
-	(cond ((eq func 'find-tag-internal)
-	       ;; InfoDock and XEmacs
-	       (hpath:display-buffer (car find-tag-result))
-	       (goto-char (cdr find-tag-result)))
-	      ((vectorp find-tag-result)
-	       ;; Newer GNU Emacs with xref.el
-	       (hpath:display-buffer (xref-item-buffer find-tag-result))
-	       (goto-char (xref-item-position find-tag-result)))
-	      ((bufferp find-tag-result)
-	       ;; Older GNU Emacs
-	       (hpath:display-buffer find-tag-result))
-	      (t
-	       ;; Emacs with some unknown version of tags.
-	       ;; Signals an error if tag is not found which is caught by
-	       ;; many callers of this function.
-	       ;; Find exact identifier matches only.
-	       (with-no-warnings (find-tag (concat "\\`" (regexp-quote tag) "\\'") nil t))))
-      ;; Signals an error if tag is not found which is caught by
-      ;; many callers of this function.
-      ;; Find exact identifier matches only.
-      (with-no-warnings (find-tag (concat "\\`" (regexp-quote tag) "\\'") nil t)))))
+    (cond ((and func (or tags-table-list tags-file-name) (setq find-tag-result (funcall func tag)))
+	   (cond ((eq func 'find-tag-internal)
+		  ;; InfoDock and XEmacs
+		  (hpath:display-buffer (car find-tag-result))
+		  (goto-char (cdr find-tag-result)))
+		 ((vectorp find-tag-result)
+		  ;; Newer GNU Emacs with xref.el
+		  (hpath:display-buffer (xref-item-buffer find-tag-result))
+		  (goto-char (xref-item-position find-tag-result)))
+		 ((bufferp find-tag-result)
+		  ;; Older GNU Emacs
+		  (hpath:display-buffer find-tag-result))
+		 (t
+		  ;; Emacs with some unknown version of tags.
+		  ;; Signals an error if tag is not found which is caught by
+		  ;; many callers of this function.
+		  ;; Find exact identifier matches only.
+		  (with-no-warnings (find-tag (concat "\\`" (regexp-quote tag) "\\'") nil t)))))
+	  ((or tags-table-list tags-file-name)
+	   ;; Signals an error if tag is not found which is caught by
+	   ;; many callers of this function.
+	   ;; Find exact identifier matches only.
+	   (with-no-warnings (find-tag (concat "\\`" (regexp-quote tag) "\\'") nil t)))
+	  (t
+	   (error "No existing tag tables in which to find `%s'" tag)))))
 
 ;;;###autoload
 (defun smart-tags-file-path (file)
@@ -1376,11 +1378,12 @@ to look.  If no tags file is found, an error is signaled."
 	     smart-emacs-tags-file
 	     (smart-emacs-lisp-mode-p)
 	     (let ((path (file-name-directory curr-dir-or-filename)))
-	       (and path (delq nil (mapcar
-				    (lambda (p)
-				      (and p (equal (file-name-as-directory p)
-						    path)))
-				    load-path)))))
+	       (when path
+		 (delq nil (mapcar
+			    (lambda (p)
+			      (when p
+				(equal (file-name-as-directory p) path)))
+			    load-path)))))
 	(setq tags-table-list (list smart-emacs-tags-file)))
     ;; Return the appropriate tags file list.
     (cond (tags-table-list
@@ -1393,10 +1396,10 @@ to look.  If no tags file is found, an error is signaled."
 	  ((fboundp 'buffer-tag-table-list)
 	   ;; InfoDock and XEmacs
 	   (buffer-tag-table-list))
-	  ((and (boundp 'buffer-tag-table) buffer-tag-table)
+	  ((when (boundp 'buffer-tag-table) buffer-tag-table)
 	   ;; InfoDock and XEmacs
 	   (list buffer-tag-table))
-	  ((and (boundp 'tags-file-name) tags-file-name)
+	  ((when (boundp 'tags-file-name) tags-file-name)
 	   (list tags-file-name))
 	  (t (error "Needed tags file not found; see `man etags' for how to build one")))))
 

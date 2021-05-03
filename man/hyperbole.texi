@@ -154,8 +154,8 @@ WITHOUT ANY WARRANTY, without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</P>
 
 <PRE>
-Edition 7.1.4
-Printed April 28, 2021.
+Edition 8.0.0
+Printed May 3, 2021.
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -196,8 +196,8 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 @sp 2
 
 @example
-Edition 7.1.4
-April 28, 2021
+Edition 8.0.0
+May 3, 2021
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -491,7 +491,7 @@ Smart Keyboard Keys
 @chapter Introduction
 
 This edition of the GNU Hyperbole Manual is for use with any version
-7.1.4 or greater of GNU Hyperbole.  Hyperbole runs atop GNU Emacs 24.3
+8.0.0 or greater of GNU Hyperbole.  Hyperbole runs atop GNU Emacs 24.3
 or higher.  It will trigger an error if your Emacs is older.
 
 This chapter summarizes the structure of the rest of the manual,
@@ -500,6 +500,43 @@ explains how to subscribe to its mail lists.
 
 Throughout this manual, sequences of keystrokes are delimited by curly
 braces @kbd{@{ @}}, function and variable names use this @code{typeface}.
+
+@noindent
+In brief, Hyperbole lets you:
+
+@itemize @bullet
+@item
+Quickly create hyperlink buttons either from the keyboard or by dragging
+between a source and destination window with a mouse button depressed.
+Later, activate buttons by pressing/clicking on them or by giving the name
+of the button.
+
+@item
+Activate many kinds of @emph{implicit buttons} recognized by context within
+text buffers, e.g. URLs, grep output lines, and git commits.  A single key
+or mouse button automatically does the right thing in dozens of contexts;
+just press and go.
+
+@item
+Build outlines with multi-level numbered outline nodes, e.g. 1.4.8.6, that
+all renumber automatically as any node or tree is moved in the outline.
+Each node also has a permanent hyperlink anchor that you can reference
+from any other node;
+
+@item
+Manage all your contacts or record-based, unstructured nodes quickly with
+hierarchical categories; each entry can have embedded hyperbuttons of any
+type.  Or create an archive of documents with hierarchical entries and use
+the same search mechanism to quickly find any matching entry;
+
+@item
+Use single keys to easily manage your Emacs windows or frames and quickly
+retrieve saved window and frame configurations;
+
+@item
+Search for things in your current buffers, in a directory tree or across
+major web search engines with the touch of a few keys.
+@end itemize
 
 @menu
 * Manual Overview::
@@ -510,6 +547,14 @@ braces @kbd{@{ @}}, function and variable names use this @code{typeface}.
 
 @node Manual Overview, Motivation, Introduction, Introduction
 @section   Manual Overview
+
+Hyperbole is an efficient, programmable hypertextual information
+management system.  It is intended for everyday work on any GNU Emacs
+platform.  Hyperbole allows hypertext buttons to be embedded within
+unstructured and structured files, mail messages and news articles.
+It offers intuitive mouse-based control of information display within
+multiple windows.  It also provides point-and-click access to Info
+manuals, ftp archives, and the World-Wide Web (WWW).
 
 @cindex file, DEMO
 @cindex Hyperbole demo
@@ -623,13 +668,47 @@ start moving further, faster.
 @cindex Emacs Lisp
 @cindex Emacs
 GNU Hyperbole (pronounced Ga-new Hi-per-bo-lee), or just Hyperbole, is
-an efficient, programmable hypertextual information management
-system.  It is intended for everyday work on any GNU Emacs platform.
-Hyperbole allows hypertext buttons to be embedded within unstructured
-and structured files, mail messages and news articles.  It offers
-intuitive mouse-based control of information display within multiple
-windows.  It also provides point-and-click access to Info manuals, ftp
-archives, and the World-Wide Web (WWW).
+like Markdown for hypertext.  Hyperbole automatically recognizes dozens of
+common, pre-existing patterns in any buffer regardless of mode and can
+instantly activate them as hyperbuttons with a single key: email addresses,
+URLs, grep -n outputs, programming backtraces, sequences of Emacs keys,
+programming identifiers, Texinfo and Info cross-references, Org links,
+Markdown links and on and on.  All you do is load Hyperbole and then your
+text comes to life with no extra effort or complex formatting.
+
+Hyperbole includes easy-to-use, powerful hypertextual button types without
+the need to learn a markup language.  Hyperbole's button types are written
+in Lisp and can be wholly independent of the web, i.e. web links are one
+type of Hyperbole link, not fundamental to its link architecture.
+However, Hyperbole is a great assistant when editing HTML or Javascript or
+when browsing web pages and links.
+
+Hyperbole comes pre-built with most of the implicit button types you will
+need but with a little extra effort and a few lines of code (or even just
+a few words), you can define your own implicit button types to recognize
+your specific buttons and then activate them anywhere in Emacs.  You press
+a single key, @bkbd{M-@key{RET}} by default, on any kind of Hyperbole
+button to activate it, so you can rely on your muscle memory and let the
+computer do the hard work of figuring out what to do.  @bkbd{C-u
+M-@key{RET}} shows you what any button will do in any context before you
+activate it, so you can always be sure of what you are doing when needed
+or if some emails you a button (you can do that too).
+
+Hyperbole is something to be experienced and interacted with, not understood
+from reading alone.  It installs normally as a single Emacs package with no
+dependencies outside of standard Emacs libraries.  Most of Hyperbole is a
+single global minor mode that you can activate and deactivate at will.  And
+it can be uninstalled quickly as well if need be, so there is no risk to
+giving it a spin.
+
+Once you have it installed and activated @bkbd{C-u M-x hyperbole-mode @key{RET}},
+try the interactive demo with @bkbd{C-h h d d}.  In fact, if you
+have Hyperbole loaded, you can press @bkbd{M-@key{RET}} inside any of the
+brace delimited series of keys you see in this document and it will
+execute them on-the-fly (easy keyboard-macro style buttons in any text).
+
+Hyperbole can dramatically increase your productivity and greatly reduce
+the number of keyboard/mouse keys you'll need to work efficiently.
 
 @page
 @noindent
@@ -637,14 +716,13 @@ Hyperbole consists of five parts:
 
 @table @emph
 @item Buttons and Smart Keys
-Hyperbole hyperlink and other kinds of buttons (explicit buttons) may be
-added to documents with a simple drag between windows, no markup language
-needed.  Implicit buttons are patterns automatically recognized within
-existing text that perform actions, e.g. bug#24568 displays the bug status
-information for that Emacs bug number, without the need for any additional
-markup.  Global buttons are buttons that are activated by name from
-anywhere within Emacs.
-@xref{Buttons}.
+Hyperbole hyperlink and other kinds of buttons @dfn{explicit buttons} may
+be added to documents with a simple drag between windows, no markup
+language needed.  @dfn{Implicit buttons} are patterns automatically
+recognized within existing text that perform actions, e.g. bug#24568
+displays the bug status information for that Emacs bug number, without the
+need for any additional markup.  @dfn{Global buttons} are buttons that are
+activated by name from anywhere within Emacs.  @xref{Buttons}.
 
 Buttons are accessed by clicking on them or referenced by name (global
 buttons), so they can be activated regardless of what is on screen.
@@ -2497,9 +2575,21 @@ of @bkbd{C-c C-c}, @code{org-ctrl-c-ctrl-c}.
 In any other context besides the end of a line, the Action Key invokes
 the Org-mode standard binding of @bkbd{M-@key{RET}}, @code{org-meta-return}.
 
-To disable ALL Hyperbole support within Org major and minor modes, set
+To disable Hyperbole support within Org major and minor modes, set
 the custom option @code{hsys-org-enable-smart-keys} to @code{nil}.  Then in
 Org modes, the Action Key will simply invoke @code{org-meta-return}.
+
+@example
+@group
+|--------------+-------------------+------------------+----------+------------------|
+| This Setting | Smart Key Context | Hyperbole Button | Org Link | Fallback Command |
+|--------------+-------------------+------------------+----------+------------------|
+| buttons      | Ignore            | Activate         | Activate | org-meta-return  |
+| nil          | Ignore            | Ignore           | Ignore   | org-meta-return  |
+| t            | Activate          | Activate         | Activate | None             |
+|--------------+-------------------+------------------+----------+------------------|
+@end group
+@end example
 
 @end table
 
@@ -6873,7 +6963,16 @@ invocation instructions in this appendix.
 @node Installation, Invocation, Setup, Setup
 @section   Installation
 
+There are multiple package managers you can use to install Hyperbole once
+you have GNU Emacs set up at your site.
+
+@node Stable Release Installation
+@subsection Stable Release Installation (Emacs Package Manager)
+
 @cindex installation
+@cindex Emacs package manager
+@cindex stable release installation
+@cindex installation, stable
 @cindex obtaining Hyperbole
 @cindex Hyperbole, obtaining
 Once you have Emacs set up at your site, GNU Hyperbole may be
@@ -6908,6 +7007,49 @@ Now save the file and restart Emacs.  Hyperbole will then be
 downloaded and compiled for use with your version of Emacs; give it a
 minute or two.  You may see a bunch of compilation warnings but these
 can be safely ignored.
+
+@node Git Pre-release Installation
+@subsection Git Pre-release Installation (Straight Package Manager)
+
+@cindex Straight package manager
+@cindex pre-release installation
+@cindex installation, pre-release
+@cindex installation, from git
+If you prefer to track Hyperbole development between releases and like to
+try out new features still in testing, then use the Straight package
+manager instead of the above, which pulls the latest Hyperbole source code
+from its git repository.  This also gives you a cleaner installation
+process without showing you any byte compilation warnings.
+
+@lisp
+@group
+;; Use this in your Emacs init file to install Straight
+(progn
+  (defvar bootstrap-version)
+  (setq package-enable-at-startup nil)
+  (let ((bootstrap-file
+         (expand-file-name "straight/repos/straight.el/bootstrap.el" user-emacs-directory))
+        (bootstrap-version 5))
+    (unless (file-exists-p bootstrap-file)
+      (with-current-buffer
+          (url-retrieve-synchronously
+           "https://raw.githubusercontent.com/raxod502/straight.el/develop/install.el"
+           'silent 'inhibit-cookies)
+        (goto-char (point-max))
+        (eval-print-last-sexp)))
+    (load bootstrap-file nil 'nomessage)))
+@end group
+
+@group
+;; Then use this to install Hyperbole
+(straight-use-package
+ '(hyperbole
+   :host nil
+   :repo "https://git.savannah.gnu.org/git/hyperbole.git"
+   :config (hyperbole-mode 1)))
+@end group
+@end lisp
+
 
 @noindent
 Now read the next section on Invocation.
@@ -9992,13 +10134,13 @@ It did not exist when Hyperbole was first developed.
 @vindex hsys-org-enable-smart-keys
 Smart Key support for Org-mode is already in Hyperbole.  Use the
 @code{hsys-org-enable-smart-keys} customization variable to control
-the Smart Keys and @bkbd{M-RET} when in Org-mode with
+the Smart Keys and @bkbd{M-@key{RET}} when in Org-mode with
 @code{hyperbole-mode} active.  @code{t} enables Smart Key support
 everywhere.  The symbol, @code{buttons}, is the default; it means the
 Smart Keys are active only when point is within a Hyperbole button.  A
 @code{nil} value means no Smart Key support; Hyperbole gives Org
-complete control over @bkbd{M-RET} so that it behaves just as it does
-normally in Org mode.
+complete control over @bkbd{M-@key{RET}} so that it behaves just as it
+does normally in Org mode.
 
 @cindex Smart Key
 @cindex mouse key bindings

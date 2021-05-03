@@ -23,7 +23,7 @@
 ;;; Public variables
 ;;; ************************************************************************
 
-(defconst hyperb:version "7.1.4" "GNU Hyperbole revision number.")
+(defconst hyperb:version "8.0.0pre" "GNU Hyperbole revision number.")
 
 ;;;###autoload
 (defvar hyperb:microsoft-os-p
