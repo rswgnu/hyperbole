@@ -1,3 +1,12 @@
+2021-05-04  Bob Weiner  <rsw@gnu.org>
+
+* man/hyperbole.texi (Manual Stable Release Installation): Add this
+    for old-school, manual installation.  Also, fix installation
+    section formating.
+
+* hsys-org.el (hsys-org-link-at-p): Fix to use Org context to
+    determine if on an Org link.
+
 2021-05-02  Bob Weiner  <rsw@gnu.org>
 
 * Update release number to 8.0.0pre (pre-release) as not all the

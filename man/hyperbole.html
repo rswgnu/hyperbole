@@ -233,8 +233,9 @@ ul.no-bullet {list-style: none}
 <ul class="no-bullet">
   <li><a id="toc-Installation-1" href="#Installation">B.1 Installation</a>
   <ul class="no-bullet">
-    <li><a id="toc-Stable-Release-Installation-_0028Emacs-Package-Manager_0029" href="#Stable-Release-Installation">B.1.1 Stable Release Installation (Emacs Package Manager)</a></li>
-    <li><a id="toc-Git-Pre_002drelease-Installation-_0028Straight-Package-Manager_0029" href="#Git-Pre_002drelease-Installation">B.1.2 Git Pre-release Installation (Straight Package Manager)</a></li>
+    <li><a id="toc-Stable-Package-Installation-_0028Emacs-Package-Manager_0029" href="#Stable-Package-Installation">B.1.1 Stable Package Installation (Emacs Package Manager)</a></li>
+    <li><a id="toc-Manual-Stable-Release-Installation-1" href="#Manual-Stable-Release-Installation">B.1.2 Manual Stable Release Installation</a></li>
+    <li><a id="toc-Git-Pre_002drelease-Installation-_0028Straight-Package-Manager_0029" href="#Git-Pre_002drelease-Installation">B.1.3 Git Pre-release Installation (Straight Package Manager)</a></li>
   </ul></li>
   <li><a id="toc-Invocation-1" href="#Invocation">B.2 Invocation</a></li>
   <li><a id="toc-Customization-1" href="#Customization">B.3 Customization</a>
@@ -356,8 +357,8 @@ WITHOUT ANY WARRANTY, without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</P>
 
 <PRE>
-Edition 8.0.0
-Printed May 3, 2021.
+Edition 8.0.0pre
+Printed May 4, 2021.
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -680,6 +681,16 @@ Setup
 </td></tr>
 <tr><th colspan="3" align="left" valign="top"><pre class="menu-comment">
 
+Installation
+
+</pre></th></tr><tr><td align="left" valign="top">&bull; <a href="#Stable-Package-Installation">Stable Package Installation</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="#Manual-Stable-Release-Installation">Manual Stable Release Installation</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="#Git-Pre_002drelease-Installation">Git Pre-release Installation</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><th colspan="3" align="left" valign="top"><pre class="menu-comment">
+
 Customization
 
 </pre></th></tr><tr><td align="left" valign="top">&bull; <a href="#Referent-Display">Referent Display</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
@@ -842,7 +853,7 @@ Next: <a href="#Smart-Keys" accesskey="n" rel="next">Smart Keys</a>, Previous: <
 <span id="Introduction-1"></span><h2 class="chapter">1 Introduction</h2>
 
 <p>This edition of the GNU Hyperbole Manual is for use with any version
-8.0.0 or greater of GNU Hyperbole.  Hyperbole runs atop GNU Emacs 24.3
+8.0.0pre or greater of GNU Hyperbole.  Hyperbole runs atop GNU Emacs 24.3
 or higher.  It will trigger an error if your Emacs is older.
 </p>
 <p>This chapter summarizes the structure of the rest of the manual,
@@ -3174,10 +3185,13 @@ the Org-mode standard binding of <kbd>{M-<span class="key">RET</span>}</kbd>, <c
 </p>
 <p>To disable Hyperbole support within Org major and minor modes, set
 the custom option <code>hsys-org-enable-smart-keys</code> to <code>nil</code>.  Then in
-Org modes, the Action Key will simply invoke <code>org-meta-return</code>.
-</p>
-<div class="example">
-<pre class="example">|--------------+-------------------+------------------+----------+------------------|
+Org modes, the Action Key will simply invoke <code>org-meta-return</code>.  The
+following table summarizes the effect of this option setting.
+</p></dd>
+</dl>
+
+<div class="format">
+<pre class="verbatim">|--------------+-------------------+------------------+----------+------------------|
 | This Setting | Smart Key Context | Hyperbole Button | Org Link | Fallback Command |
 |--------------+-------------------+------------------+----------+------------------|
 | buttons      | Ignore            | Activate         | Activate | org-meta-return  |
@@ -3185,10 +3199,6 @@ Org modes, the Action Key will simply invoke <code>org-meta-return</code>.
 | t            | Activate          | Activate         | Activate | None             |
 |--------------+-------------------+------------------+----------+------------------|
 </pre></div>
-
-</dd>
-</dl>
-
 
 <hr>
 <span id="Action-Buttons"></span><div class="header">
@@ -8182,20 +8192,25 @@ Next: <a href="#Invocation" accesskey="n" rel="next">Invocation</a>, Previous: <
 you have GNU Emacs set up at your site.
 </p>
 <table class="menu" border="0" cellspacing="0">
-<tr><td align="left" valign="top">&bull; <a href="#Stable-Release-Installation" accesskey="1">Stable Release Installation (Emacs Package Manager)</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+<tr><td align="left" valign="top">&bull; <a href="#Stable-Package-Installation" accesskey="1">Stable Package Installation</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
 </td></tr>
-<tr><td align="left" valign="top">&bull; <a href="#Git-Pre_002drelease-Installation" accesskey="2">Git Pre-release Installation (Straight Package Manager)</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+<tr><td align="left" valign="top">&bull; <a href="#Manual-Stable-Release-Installation" accesskey="2">Manual Stable Release Installation</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="#Git-Pre_002drelease-Installation" accesskey="3">Git Pre-release Installation</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
 </td></tr>
 </table>
 
+<p>After installing Hyperbole, read the next section on Invocation.
+</p>
 <hr>
-<span id="Stable-Release-Installation"></span><div class="header">
+<span id="Stable-Package-Installation"></span><div class="header">
 <p>
-Next: <a href="#Git-Pre_002drelease-Installation" accesskey="n" rel="next">Git Pre-release Installation</a>, Up: <a href="#Installation" accesskey="u" rel="up">Installation</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Key-Index" title="Index" rel="index">Index</a>]</p>
+Next: <a href="#Manual-Stable-Release-Installation" accesskey="n" rel="next">Manual Stable Release Installation</a>, Previous: <a href="#Installation" accesskey="p" rel="prev">Installation</a>, Up: <a href="#Installation" accesskey="u" rel="up">Installation</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Key-Index" title="Index" rel="index">Index</a>]</p>
 </div>
-<span id="Stable-Release-Installation-_0028Emacs-Package-Manager_0029"></span><h4 class="subsection">B.1.1 Stable Release Installation (Emacs Package Manager)</h4>
+<span id="Stable-Package-Installation-_0028Emacs-Package-Manager_0029"></span><h4 class="subsection">B.1.1 Stable Package Installation (Emacs Package Manager)</h4>
 
 <span id="index-installation"></span>
+<span id="index-package-manager"></span>
 <span id="index-Emacs-package-manager"></span>
 <span id="index-stable-release-installation"></span>
 <span id="index-installation_002c-stable"></span>
@@ -8233,11 +8248,40 @@ minute or two.  You may see a bunch of compilation warnings but these
 can be safely ignored.
 </p>
 <hr>
+<span id="Manual-Stable-Release-Installation"></span><div class="header">
+<p>
+Next: <a href="#Git-Pre_002drelease-Installation" accesskey="n" rel="next">Git Pre-release Installation</a>, Previous: <a href="#Stable-Package-Installation" accesskey="p" rel="prev">Stable Package Installation</a>, Up: <a href="#Installation" accesskey="u" rel="up">Installation</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Key-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<span id="Manual-Stable-Release-Installation-1"></span><h4 class="subsection">B.1.2 Manual Stable Release Installation</h4>
+
+<p>If you are old-school, don&rsquo;t like package managers, and prefer doing
+everything by hand, then you can obtain Hyperbole from a tarball:
+</p>
+<p>Download a stable release tar.gz source archive from either
+<a href="ftp://ftp.gnu.org/gnu/hyperbole/">ftp://ftp.gnu.org/gnu/hyperbole/</a> or
+<a href="http://ftpmirror.gnu.org/hyperbole/">http://ftpmirror.gnu.org/hyperbole/</a>, which will find the closest
+mirror of the GNU ftp site and show it to you.
+</p>
+<p>Decompress and unpack the archive to a directory of your choosing.  Move
+into the <samp>hyperbole/</samp> directory and execute the following Posix
+shell command, <code>make bin</code>, to byte-compile the Hyperbole lisp files.
+Then add the following lines to your personal Emacs initialization
+file, <samp>~/.emacs</samp>:
+</p>
+<div class="lisp">
+<pre class="lisp">(push &quot;&lt;directory-ending-with-hyperbole-where-you-unpacked&gt;&quot; load-path)
+(hyperbole-mode 1)
+</pre></div>
+
+<p>Restart Emacs and you should see the <code>Hypb</code> hyperbole minor mode
+indicator in your modeline after startup.
+</p>
+<hr>
 <span id="Git-Pre_002drelease-Installation"></span><div class="header">
 <p>
-Previous: <a href="#Stable-Release-Installation" accesskey="p" rel="prev">Stable Release Installation</a>, Up: <a href="#Installation" accesskey="u" rel="up">Installation</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Key-Index" title="Index" rel="index">Index</a>]</p>
+Previous: <a href="#Manual-Stable-Release-Installation" accesskey="p" rel="prev">Manual Stable Release Installation</a>, Up: <a href="#Installation" accesskey="u" rel="up">Installation</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Key-Index" title="Index" rel="index">Index</a>]</p>
 </div>
-<span id="Git-Pre_002drelease-Installation-_0028Straight-Package-Manager_0029"></span><h4 class="subsection">B.1.2 Git Pre-release Installation (Straight Package Manager)</h4>
+<span id="Git-Pre_002drelease-Installation-_0028Straight-Package-Manager_0029"></span><h4 class="subsection">B.1.3 Git Pre-release Installation (Straight Package Manager)</h4>
 
 <span id="index-Straight-package-manager"></span>
 <span id="index-pre_002drelease-installation"></span>
@@ -8275,9 +8319,6 @@ process without showing you any byte compilation warnings.
    :config (hyperbole-mode 1)))
 </pre></div>
 
-
-<p>Now read the next section on Invocation.
-</p>
 <hr>
 <span id="Invocation"></span><div class="header">
 <p>
@@ -11378,7 +11419,7 @@ Next: <a href="#Smart-Key-_002d-The-OO_002dBrowser" accesskey="n" rel="next">Sma
 <hr>
 <span id="Smart-Key-_002d-The-OO_002dBrowser"></span><div class="header">
 <p>
-Next: <a href="#Smart-Key-_002d-Default-Context" accesskey="n" rel="next">Smart Key - Default Context</a>, Previous: <a href="#Smart-Key-_002d-Magit-Mode" accesskey="p" rel="prev">Smart Key - Magit Mode</a>, Up: <a href="#Smart-Keyboard-Keys" accesskey="u" rel="up">Smart Keyboard Keys</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Key-Index" title="Index" rel="index">Index</a>]</p>
+Next: <a href="#Smart-Key-_002d-Todotxt-Mode" accesskey="n" rel="next">Smart Key - Todotxt Mode</a>, Previous: <a href="#Smart-Key-_002d-Magit-Mode" accesskey="p" rel="prev">Smart Key - Magit Mode</a>, Up: <a href="#Smart-Keyboard-Keys" accesskey="u" rel="up">Smart Keyboard Keys</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Key-Index" title="Index" rel="index">Index</a>]</p>
 </div>
 <span id="Smart-Key-_002d-The-OO_002dBrowser-1"></span><h4 class="subsection">E.2.45 Smart Key - The OO-Browser</h4>
 
@@ -13438,7 +13479,7 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function</a>, Up: <a href
 <tr><td></td><td valign="top"><a href="#index-Emacs-Lisp-variables">Emacs Lisp variables</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-Emacs-Lisp-variables-1">Emacs Lisp variables</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Link-Variable-Substitution">Link Variable Substitution</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-emacs-outline">emacs outline</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Inserting-and-Importing">Inserting and Importing</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-Emacs-package-manager">Emacs package manager</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Stable-Release-Installation">Stable Release Installation</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-Emacs-package-manager">Emacs package manager</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Stable-Package-Installation">Stable Package Installation</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-Emacs-support">Emacs support</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Button-Colors">Button Colors</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-emulation_002c-drag">emulation, drag</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Keyboard-Drags">Keyboard Drags</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-enable-org_002dmode-support">enable org-mode support</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
@@ -13590,7 +13631,7 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function</a>, Up: <a href
 <tr><td></td><td valign="top"><a href="#index-Hyperbole-version">Hyperbole version</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Suggestion-or-Bug-Reporting">Suggestion or Bug Reporting</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-Hyperbole_002c-embedding">Hyperbole, embedding</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Embedding-Hyperbole">Embedding Hyperbole</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-Hyperbole_002c-obtaining">Hyperbole, obtaining</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Top">Top</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-Hyperbole_002c-obtaining-1">Hyperbole, obtaining</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Stable-Release-Installation">Stable Release Installation</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-Hyperbole_002c-obtaining-1">Hyperbole, obtaining</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Stable-Package-Installation">Stable Package Installation</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-Hyperbole_002c-starting">Hyperbole, starting</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Menus">Menus</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-Hyperbole_002c-system-encapsulation">Hyperbole, system encapsulation</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Encapsulating-Systems">Encapsulating Systems</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-hyperlink">hyperlink</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Links">Links</a></td></tr>
@@ -13645,10 +13686,10 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function</a>, Up: <a href
 <tr><td></td><td valign="top"><a href="#index-insert-item">insert item</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Keyboard-Drags">Keyboard Drags</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-inserting-tabs">inserting tabs</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Relocating-and-Copying">Relocating and Copying</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-insertion">insertion</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Inserting-and-Importing">Inserting and Importing</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-installation">installation</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Stable-Release-Installation">Stable Release Installation</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-installation">installation</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Stable-Package-Installation">Stable Package Installation</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-installation_002c-from-git">installation, from git</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Git-Pre_002drelease-Installation">Git Pre-release Installation</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-installation_002c-pre_002drelease">installation, pre-release</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Git-Pre_002drelease-Installation">Git Pre-release Installation</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-installation_002c-stable">installation, stable</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Stable-Release-Installation">Stable Release Installation</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-installation_002c-stable">installation, stable</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Stable-Package-Installation">Stable Package Installation</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-instance-number">instance number</a>:</td><td>&nbsp;</td><td valign="top"><a href="#By-Menu">By Menu</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-interactive-cmd-char_002c-_002bI">interactive cmd char, +I</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Creating-Action-Types">Creating Action Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-interactive-cmd-char_002c-_002bK">interactive cmd char, +K</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Creating-Action-Types">Creating Action Types</a></td></tr>
@@ -13925,7 +13966,7 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function</a>, Up: <a href
 <tr><td colspan="4"> <hr></td></tr>
 <tr><th id="Concept-Index_cp_letter-O">O</th><td></td><td></td></tr>
 <tr><td></td><td valign="top"><a href="#index-object_002doriented-code-browsing">object-oriented code browsing</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Key-_002d-The-OO_002dBrowser">Smart Key - The OO-Browser</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-obtaining-Hyperbole">obtaining Hyperbole</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Stable-Release-Installation">Stable Release Installation</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-obtaining-Hyperbole">obtaining Hyperbole</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Stable-Package-Installation">Stable Package Installation</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-online-library">online library</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-OO_002dBrowser">OO-Browser</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Key-_002d-The-OO_002dBrowser">Smart Key - The OO-Browser</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-option-setting">option setting</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Customization">Customization</a></td></tr>
@@ -13969,6 +14010,7 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function</a>, Up: <a href
 <tr><td></td><td valign="top"><a href="#index-overview">overview</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Hiding-and-Showing">Hiding and Showing</a></td></tr>
 <tr><td colspan="4"> <hr></td></tr>
 <tr><th id="Concept-Index_cp_letter-P">P</th><td></td><td></td></tr>
+<tr><td></td><td valign="top"><a href="#index-package-manager">package manager</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Stable-Package-Installation">Stable Package Installation</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-paragraph_002c-filling">paragraph, filling</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Filling">Filling</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-paste-region">paste region</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Key-Thing-Selection">Smart Key Thing Selection</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-pasting-a-region">pasting a region</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Thing-Selection">Thing Selection</a></td></tr>
@@ -14107,7 +14149,7 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function</a>, Up: <a href
 <tr><td></td><td valign="top"><a href="#index-social-reference">social reference</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-source-line">source line</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-splitting-a-cell">splitting a cell</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Splitting-and-Appending">Splitting and Appending</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-stable-release-installation">stable release installation</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Stable-Release-Installation">Stable Release Installation</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-stable-release-installation">stable release installation</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Stable-Package-Installation">Stable Package Installation</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-stack-frame">stack frame</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-stack-frame-1">stack frame</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-star-outline">star outline</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Inserting-and-Importing">Inserting and Importing</a></td></tr>

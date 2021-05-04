@@ -154,8 +154,8 @@ WITHOUT ANY WARRANTY, without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</P>
 
 <PRE>
-Edition 8.0.0
-Printed May 3, 2021.
+Edition 8.0.0pre
+Printed May 4, 2021.
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -196,8 +196,8 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 @sp 2
 
 @example
-Edition 8.0.0
-May 3, 2021
+Edition 8.0.0pre
+May 4, 2021
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -403,6 +403,12 @@ Setup
 * Invocation::
 * Customization::
 
+Installation
+
+* Stable Package Installation::
+* Manual Stable Release Installation::
+* Git Pre-release Installation::
+
 Customization
 
 * Referent Display::
@@ -491,7 +497,7 @@ Smart Keyboard Keys
 @chapter Introduction
 
 This edition of the GNU Hyperbole Manual is for use with any version
-8.0.0 or greater of GNU Hyperbole.  Hyperbole runs atop GNU Emacs 24.3
+8.0.0pre or greater of GNU Hyperbole.  Hyperbole runs atop GNU Emacs 24.3
 or higher.  It will trigger an error if your Emacs is older.
 
 This chapter summarizes the structure of the rest of the manual,
@@ -2577,10 +2583,13 @@ the Org-mode standard binding of @bkbd{M-@key{RET}}, @code{org-meta-return}.
 
 To disable Hyperbole support within Org major and minor modes, set
 the custom option @code{hsys-org-enable-smart-keys} to @code{nil}.  Then in
-Org modes, the Action Key will simply invoke @code{org-meta-return}.
+Org modes, the Action Key will simply invoke @code{org-meta-return}.  The
+following table summarizes the effect of this option setting.
+@end table
 
-@example
 @group
+@smallformat
+@verbatim
 |--------------+-------------------+------------------+----------+------------------|
 | This Setting | Smart Key Context | Hyperbole Button | Org Link | Fallback Command |
 |--------------+-------------------+------------------+----------+------------------|
@@ -2588,11 +2597,9 @@ Org modes, the Action Key will simply invoke @code{org-meta-return}.
 | nil          | Ignore            | Ignore           | Ignore   | org-meta-return  |
 | t            | Activate          | Activate         | Activate | None             |
 |--------------+-------------------+------------------+----------+------------------|
+@end verbatim
+@end smallformat
 @end group
-@end example
-
-@end table
-
 
 @node Action Buttons,  , Implicit Button Types, Implicit Buttons
 @subsection Action Buttons
@@ -6966,10 +6973,20 @@ invocation instructions in this appendix.
 There are multiple package managers you can use to install Hyperbole once
 you have GNU Emacs set up at your site.
 
-@node Stable Release Installation
-@subsection Stable Release Installation (Emacs Package Manager)
+@menu
+* Stable Package Installation::
+* Manual Stable Release Installation::
+* Git Pre-release Installation::
+@end menu
+
+@noindent
+After installing Hyperbole, read the next section on Invocation.
+
+@node Stable Package Installation, Manual Stable Release Installation, Installation, Installation
+@subsection Stable Package Installation (Emacs Package Manager)
 
 @cindex installation
+@cindex package manager
 @cindex Emacs package manager
 @cindex stable release installation
 @cindex installation, stable
@@ -7008,7 +7025,32 @@ downloaded and compiled for use with your version of Emacs; give it a
 minute or two.  You may see a bunch of compilation warnings but these
 can be safely ignored.
 
-@node Git Pre-release Installation
+@node Manual Stable Release Installation, Git Pre-release Installation, Stable Package Installation, Installation
+@subsection Manual Stable Release Installation
+
+If you are old-school, don't like package managers, and prefer doing
+everything by hand, then you can obtain Hyperbole from a tarball:
+
+Download a stable release tar.gz source archive from either
+@url{ftp://ftp.gnu.org/gnu/hyperbole/} or
+@url{http://ftpmirror.gnu.org/hyperbole/}, which will find the closest
+mirror of the GNU ftp site and show it to you.
+
+Decompress and unpack the archive to a directory of your choosing.  Move
+into the @file{hyperbole/} directory and execute the following Posix
+shell command, @code{make bin}, to byte-compile the Hyperbole lisp files.
+Then add the following lines to your personal Emacs initialization
+file, @file{~/.emacs}:
+
+@lisp
+(push "<directory-ending-with-hyperbole-where-you-unpacked>" load-path)
+(hyperbole-mode 1)
+@end lisp
+
+Restart Emacs and you should see the @code{Hypb} hyperbole minor mode
+indicator in your modeline after startup.
+
+@node Git Pre-release Installation,  , Manual Stable Release Installation, Installation
 @subsection Git Pre-release Installation (Straight Package Manager)
 
 @cindex Straight package manager
@@ -7049,10 +7091,6 @@ process without showing you any byte compilation warnings.
    :config (hyperbole-mode 1)))
 @end group
 @end lisp
-
-
-@noindent
-Now read the next section on Invocation.
 
 @node Invocation, Customization, Installation, Setup
 @section   Invocation
@@ -9892,7 +9930,7 @@ If pressed within a Magit buffer and not on a button:
 @end group
 @end format
 
-@node Smart Key - The OO-Browser, Smart Key - Default Context, Smart Key - Magit Mode, Smart Keyboard Keys
+@node Smart Key - The OO-Browser, Smart Key - Todotxt Mode, Smart Key - Magit Mode, Smart Keyboard Keys
 @subsection Smart Key - The OO-Browser
 
 @cindex OO-Browser
@@ -9972,7 +10010,7 @@ When pressed on an identifier within an OO-Browser source file:
 @end format
 
 
-@node Smart Key - Todotxt Mode,  Smart Key - Default Context,  Smart Key - The OO-Browser,  Smart  Keyboard Keys
+@node Smart Key - Todotxt Mode, Smart Key - Default Context, Smart Key - The OO-Browser, Smart Keyboard Keys
 @subsection Smart Key - Todotext Mode
 
 @cindex todotxt-mode
