@@ -44,10 +44,10 @@
   :group 'hyperbole-buttons)
 
 (defcustom hproperty:but-flash-time 1000
-  "*Emacs button flash delay. Use of this variable is removed. Use
-`hproperty:but-flash-time-seconds' instead for controlling the flash time."
+  "*Emacs button flash delay."
   :type '(integer :match (lambda (_widget value) (and (integerp value) (> value 0))))
   :group 'hyperbole-buttons)
+(make-obsolete-variable 'hproperty:but-flash-time "Use `hproperty:but-flash-time-seconds' instead" "8.0")
 
 (defcustom hproperty:but-flash-time-seconds 0.05
   "*Emacs button flash delay."

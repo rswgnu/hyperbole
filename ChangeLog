@@ -1,3 +1,8 @@
+2021-05-05  Mats Lidell  <matsl@gnu.org>
+
+* hui-em-but.el (hproperty:but-flash-time): Mark hproperty:but-flash as obsolete.
+    (hproperty:but-flash-time-seconds): Add customized flash time based on seconds.
+
 2021-05-04  Bob Weiner  <rsw@gnu.org>
 
 * man/hyperbole.texi (Manual Stable Release Installation): Add this
@@ -6,12 +11,6 @@
 
 * hsys-org.el (hsys-org-link-at-p): Fix to use Org context to
     determine if on an Org link.
-
-2021-05-03  Mats Lidell  <matsl@gnu.org>
-
-* hui-em-but.el (hproperty:but-flash-time-seconds): Add customized flash
-    time based on seconds.
-    (hproperty:but-flash): Use hproperty:but-flash-time-seconds.
 
 2021-05-02  Bob Weiner  <rsw@gnu.org>
 
