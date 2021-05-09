@@ -20,6 +20,7 @@
 (require 'subr-x) ;; For string-trim
 (require 'hversion) ;; for (hyperb:window-system) definition
 (require 'hui-select) ;; for `hui-select-markup-modes'
+(require 'tramp)
 
 (unless (fboundp 'br-in-browser)
     ;; Then the OO-Browser is not loaded, so we can never be within the

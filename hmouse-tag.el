@@ -129,6 +129,12 @@ Keyword matched is grouping 1.  Referent is grouping 2.")
   :group 'hyperbole-commands)
 
 ;;; ************************************************************************
+;;; Public declarations
+;;; ************************************************************************
+(declare-function br-edit "ext:oobr")
+(declare-function br-edit-feature "ext:oobr")
+
+;;; ************************************************************************
 ;;; Public functions
 ;;; ************************************************************************
 

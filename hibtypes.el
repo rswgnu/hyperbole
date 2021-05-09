@@ -74,6 +74,18 @@
   "Regexp with group 1 matching an Internet email address.")
 
 ;;; ************************************************************************
+;;; Public declarations
+;;; ************************************************************************
+(declare-function markdown-footnote-goto-text "ext:markdown")
+(declare-function markdown-footnote-marker-positions "ext:markdown")
+(declare-function markdown-footnote-return "ext:markdown")
+(declare-function markdown-link-p "ext:markdown")
+(declare-function markdown-reference-goto-definition "ext:markdown")
+(declare-function markdown-reference-goto-link "ext:markdown")
+(declare-function markdown-wiki-link-p "ext:markdown")
+(declare-function markdown-footnote-text-positions "ext:markdown")
+
+;;; ************************************************************************
 ;;; Public implicit button types
 ;;; ************************************************************************
 

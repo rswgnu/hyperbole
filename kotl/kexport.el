@@ -20,6 +20,9 @@
 (require 'hpath)
 (require 'hibtypes)
 (require 'klink)
+(require 'kview)
+(require 'kotl-mode)
+(require 'kimport)
 
 ;;; ************************************************************************
 ;;; Public variables

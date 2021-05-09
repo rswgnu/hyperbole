@@ -17,6 +17,7 @@
 
 (eval-and-compile (mapc #'require '(hbut hpath hargs hmail)))
 (eval-when-compile (mapc #'require '(comint hsettings)))
+(require 'bookmark)
 
 ;;; ************************************************************************
 ;;; Standard Hyperbole action types
