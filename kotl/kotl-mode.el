@@ -87,7 +87,7 @@ It provides the following keys:
   ;;
   ;; Ensure that outline structure data is saved when save-buffer is called
   ;; from save-some-buffers, {C-x s}.
-  (add-hook 'local-write-file-hooks #'kotl-mode:update-buffer)
+  (add-hook 'write-file-functions #'kotl-mode:update-buffer)
   (mapc #'make-local-variable
 	'(kotl-previous-mode indent-line-function indent-region-function
 			     outline-isearch-open-invisible-function

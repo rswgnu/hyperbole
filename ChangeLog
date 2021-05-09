@@ -1,3 +1,7 @@
+2021-05-12  Mats Lidell  <matsl@gnu.org>
+
+* kotl/kotl-mode.el (kotl-mode): Use write-file-functions
+
 2021-05-11  Mats Lidell  <matsl@gnu.org>
 
 * hmouse-tag.el (br-edit, br-edit-feature): Add external dependencies.
