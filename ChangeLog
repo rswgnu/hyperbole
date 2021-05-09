@@ -54,6 +54,10 @@
     dynamic variable binding.
                 (hkey-execute): Update hkey-debug call.
 
+2021-05-05  Mats Lidell  <matsl@gnu.org>
+
+* hui-em-but.el (hproperty:but-flash-time): Mark hproperty:but-flash as obsolete.
+    (hproperty:but-flash-time-seconds): Add customized flash time based on seconds.
 
 2021-05-04  Bob Weiner  <rsw@gnu.org>
 
