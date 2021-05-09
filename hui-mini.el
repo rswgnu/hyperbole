@@ -533,6 +533,9 @@ constructs.  If not given, the top level Hyperbole menu is used."
 	  ("KeyBindings/" (menu . cust-keys) "Rebinds global Hyperbole keys.")
 	  ("Msg-Toggle-Ebuts" hyperbole-toggle-messaging
 	   "Toggle Hyperbole support for explicit buttons in mail and news buffers.")
+	  ("Org-M-RET/" (menu . cust-org)
+	   "Sets how much of Hyperbole Smart Key behavior is enabled in Org mode.")
+
 	  ("Referents/" (menu . cust-referents)
 	   "Sets where Hyperbole button referents are displayed.")
 	  ("Smart-Key-at-Eol/" (menu . cust-eol)
@@ -558,6 +561,11 @@ constructs.  If not given, the top level Hyperbole menu is used."
 	  ("SmartHelp"     (hui:bind-key #'hkey-help))                          ;; {C-h A}
 	  ("WinControl"    (hui:bind-key #'hycontrol-enable-windows-mode))      ;; {C-c \}
 	  ))
+       '(cust-org .
+         (("Org M-RETURN>")
+	  ("All-Programmed-Contexts" (customize-save-variable 'hsys-org-enable-smart-keys t))
+	  ("Hypb-Buttons-Only"       (customize-save-variable 'hsys-org-enable-smart-keys 'buttons))
+	  ("Ignore"                  (customize-save-variable 'hsys-org-enable-smart-keys nil))))
        '(cust-referents .
          (("Ref Display>")
 	  ("Any-Frame" (setq hpath:display-where 'other-frame))

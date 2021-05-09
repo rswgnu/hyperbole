@@ -609,40 +609,51 @@ buffer."
 			 (goto-char (match-beginning 0))
 		       (error "(smart-lisp): Found autoload library but no definition for `%s'" name)))
 		   t)))
-    (let* ((elisp-flag (smart-emacs-lisp-mode-p))
-	   (tag (smart-lisp-at-tag-p t))
-	   (tag-sym (intern-soft tag)))
-      (cond ((and show-doc elisp-flag)
-	     ;; Emacs Lisp function, variable and face documentation display.
-	     (cond ((fboundp tag-sym) (describe-function tag-sym))
-		   ((and tag-sym (boundp tag-sym)) (describe-variable tag-sym))
-		   ((facep tag-sym) (describe-face tag-sym))
-		   (t (error "(smart-lisp): `%s' unbound symbol definition not found" tag))))
-	    ((and elisp-flag (fboundp 'find-function-noselect)
-		  (let ((result (smart-lisp-bound-symbol-def tag-sym)))
-		    (when (cdr result)
-		      (hpath:display-buffer (car result))
-		      (goto-char (cdr result))
-		      t))))
-	    ;; If elisp-flag is true, then make xref use tags tables to
-	    ;; find symbols not yet loaded into Emacs; otherwise, use
-	    ;; standard xref backends for the current language.
-	    (t (let ((etags-mode (and elisp-flag (boundp 'xref-etags-mode) xref-etags-mode)))
-		 (unwind-protect
-		     (progn
-		       (and (not etags-mode) elisp-flag (fboundp 'xref-etags-mode)
-			    (xref-etags-mode 1))
-		       (condition-case ()
-			   ;; Tag of any language
-			   (and (featurep 'etags) (smart-tags-display tag show-doc))
-			 (error (unless (and elisp-flag (stringp smart-emacs-tags-file)
-					     (condition-case ()
-						 (smart-tags-display
-						  tag show-doc (list smart-emacs-tags-file))
-					       (error nil)))
-				  (error "(smart-lisp): No definition found for `%s'" tag)))))
-		   (and (not etags-mode) elisp-flag (fboundp 'xref-etags-mode)
-			(xref-etags-mode 0)))))))))
+    (smart-lisp-find-tag nil show-doc)))
+
+(defun smart-lisp-find-tag (&optional tag show-doc)
+  "Find the definition of optional Lisp TAG (or identifier at point) or show its documentation with optional prefix arg SHOW-DOC non-nil.
+Use `hpath:display-buffer' to show definition or documentation."
+  (interactive
+   (list (read-string (format "%s Lisp identifier: "
+			      (if current-prefix-arg
+				  "Show doc for" "Find")))
+	 current-prefix-arg))
+  (unless (stringp tag)
+    (setq tag (smart-lisp-at-tag-p t)))
+  (let* ((elisp-flag (smart-emacs-lisp-mode-p))
+	 (tag-sym (intern-soft tag)))
+    (cond ((and show-doc elisp-flag)
+	   ;; Emacs Lisp function, variable and face documentation display.
+	   (cond ((fboundp tag-sym) (describe-function tag-sym))
+		 ((and tag-sym (boundp tag-sym)) (describe-variable tag-sym))
+		 ((facep tag-sym) (describe-face tag-sym))
+		 (t (error "(smart-lisp): `%s' unbound symbol definition not found" tag))))
+	  ((and elisp-flag (fboundp 'find-function-noselect)
+		(let ((result (smart-lisp-bound-symbol-def tag-sym)))
+		  (when (cdr result)
+		    (hpath:display-buffer (car result))
+		    (goto-char (cdr result))
+		    t))))
+	  ;; If elisp-flag is true, then make xref use tags tables to
+	  ;; find symbols not yet loaded into Emacs; otherwise, use
+	  ;; standard xref backends for the current language.
+	  (t (let ((etags-mode (and elisp-flag (boundp 'xref-etags-mode) xref-etags-mode)))
+	       (unwind-protect
+		   (progn
+		     (and (not etags-mode) elisp-flag (fboundp 'xref-etags-mode)
+			  (xref-etags-mode 1))
+		     (condition-case ()
+			 ;; Tag of any language
+			 (and (featurep 'etags) (smart-tags-display tag show-doc))
+		       (error (unless (and elisp-flag (stringp smart-emacs-tags-file)
+					   (condition-case ()
+					       (smart-tags-display
+						tag show-doc (list smart-emacs-tags-file))
+					     (error nil)))
+				(error "(smart-lisp): No definition found for `%s'" tag)))))
+		 (and (not etags-mode) elisp-flag (fboundp 'xref-etags-mode)
+		      (xref-etags-mode 0))))))))
 
 (defun smart-lisp-at-definition-p ()
     "Return t when point is in a non-help buffer on the first line of a non-alias Lisp definition, else nil."

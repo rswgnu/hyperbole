@@ -98,7 +98,7 @@
 
 (defun hbdata:loc-p (hbdata)
   "[Hyp V1] Return 'L iff HBDATA referent is within a local file system.
-Returns 'R if remote and nil if irrelevant for button action type."
+Return 'R if remote and nil if irrelevant for button action type."
   (nth 1 hbdata))
 
 (defun hbdata:modifier (hbdata)
@@ -143,9 +143,9 @@ Search is case-insensitive.  Return list with elements:
 ;;; ------------------------------------------------------------------------
 
 (defun hbdata:build (&optional mod-lbl-key but-sym)
-  "Construct button data from optional MOD-LBL-KEY and BUT-SYM; modifies BUT-SYM attributes.
+  "Construct button data from optional MOD-LBL-KEY and BUT-SYM; modify BUT-SYM attributes.
 MOD-LBL-KEY nil means create a new entry, otherwise modify existing one.
-Nil BUT-SYM means use 'hbut:current'.  If successful, returns a cons of
+Nil BUT-SYM means use 'hbut:current'.  If successful, return a cons of
  (button-data . button-instance-str), else nil."
   (let* ((but)
 	 (b (hattr:copy (or but-sym 'hbut:current) 'but))
@@ -216,7 +216,7 @@ Nil BUT-SYM means use 'hbut:current'.  If successful, returns a cons of
 
 (defun hbdata:get-entry (lbl-key key-src &optional directory)
   "Return button data entry given by LBL-KEY, KEY-SRC and optional DIRECTORY.
-Returns nil if no matching entry is found.
+Return nil if no matching entry is found.
 A button data entry is a list of attribute values.  Use methods from
 class 'hbdata' to operate on the entry."
   (hbdata:apply-entry
@@ -238,7 +238,7 @@ Nil if LBL-KEY is nil."
 (defun hbdata:instance-last (lbl-key key-src &optional directory)
   "Return highest instance number for repeated button label.
 1 if not repeated, nil if no instance.
-Takes arguments LBL-KEY, KEY-SRC and optional DIRECTORY."
+Utilize arguments LBL-KEY, KEY-SRC and optional DIRECTORY."
   (hbdata:apply-entry
    (lambda ()
      (if (looking-at "[0-9]+")
@@ -247,9 +247,10 @@ Takes arguments LBL-KEY, KEY-SRC and optional DIRECTORY."
    lbl-key key-src directory nil 'instance))
 
 (defun hbdata:delete-entry (lbl-key key-src &optional directory)
-  "Deletes button data entry given by LBL-KEY, KEY-SRC and optional DIRECTORY.
-Returns entry deleted (a list of attribute values) or nil.
-Use methods from class 'hbdata' to operate on the entry."
+  "Delete button data entry given by LBL-KEY, KEY-SRC and optional DIRECTORY.
+Return entry deleted (a list of attribute values) or nil.
+Use methods from class 'hbdata' to operate on the entry.
+If the hbdata buffer is blank/empty, kill it and remove the associated file."
   (hbdata:apply-entry
    (lambda ()
      (prog1 (read (current-buffer))
@@ -272,7 +273,7 @@ Use methods from class 'hbdata' to operate on the entry."
 		   (let ((fname buffer-file-name))
 		     (erase-buffer) (save-buffer) (kill-buffer nil)
 		     (hbmap:dir-remove (file-name-directory fname))
-		     (call-process "rm" nil 0 nil "-f" fname))))))))
+		     (delete-file fname))))))))
    lbl-key key-src directory))
 
 (defun hbdata:delete-entry-at-point ()
@@ -280,7 +281,7 @@ Use methods from class 'hbdata' to operate on the entry."
 
 (defun hbdata:to-entry (but-key key-src &optional directory instance)
   "Return button data entry indexed by BUT-KEY, KEY-SRC, optional DIRECTORY.
-Returns nil if entry is not found.  Leaves point at start of entry when
+Return nil if entry is not found.  Leave point at start of entry when
 successful or where entry should be inserted if unsuccessful.
 A button entry is a list.  Use methods from class 'hbdata' to operate on the
 entry.  Optional INSTANCE non-nil means search for any button instance matching
@@ -303,17 +304,17 @@ but-key."
 ;;; ************************************************************************
 
 (defun hbdata:apply-entry (function lbl-key key-src &optional directory
-			   create instance)
+			   create-flag instance-flag)
   "Invoke FUNCTION with point at hbdata entry given by LBL-KEY, KEY-SRC, optional DIRECTORY.
-With optional CREATE, if no such line exists, inserts a new file entry at the
+With optional CREATE-FLAG, if no such line exists, insert a new file entry at the
 beginning of the hbdata file (which is created if necessary).
-INSTANCE non-nil means search for any button instance matching LBL-KEY and
+INSTANCE-FLAG non-nil means search for any button instance matching LBL-KEY and
 call FUNCTION with point right after any 'ebut:instance-sep' in match.
-Returns value of evaluation when a matching entry is found or nil."
-  (let ((found)
-	(rtn)
-	(opoint)
-	(end-func))
+Return value of evaluation when a matching entry is found or nil."
+  (let (found
+	rtn
+	opoint
+	end-func)
     (save-excursion
       (unwind-protect
 	  (progn
@@ -339,28 +340,29 @@ Returns value of evaluation when a matching entry is found or nil."
 				      (hmail:msg-narrow)
 				      (goto-char opoint)
 				      (lnews:to))))))
-	    (setq found (hbdata:to-entry-buf key-src directory create)))
-	(if found
-	    (let ((case-fold-search t)
-		  (qkey (regexp-quote lbl-key))
-		  (end (save-excursion (if (search-forward "\n\^L" nil t)
-					   (point) (point-max)))))
-	      (if (if instance
-		      (re-search-forward
-		       (concat "\n(\"" qkey "["
-			       ebut:instance-sep "\"]") end t)
-		    (search-forward (concat "\n(\"" lbl-key "\"") end t))
-		  (progn
-		    (or instance (beginning-of-line))
-		    (let (buffer-read-only)
-		      (setq rtn (funcall function)))))))
-	(if end-func (funcall end-func))))
+	    (setq found (hbdata:to-entry-buf key-src directory create-flag)))
+	(when found
+	  (let ((case-fold-search t)
+		(qkey (regexp-quote lbl-key))
+		(end (save-excursion (if (search-forward "\n\^L" nil t)
+					 (point) (point-max)))))
+	    (if (if instance-flag
+		    (re-search-forward
+		     (concat "\n(\"" qkey "["
+			     ebut:instance-sep "\"]") end t)
+		  (search-forward (concat "\n(\"" lbl-key "\"") end t))
+		(progn
+		  (unless instance-flag
+		    (beginning-of-line))
+		  (let (buffer-read-only)
+		    (setq rtn (funcall function)))))))
+	(when end-func (funcall end-func))))
     rtn))
 
 (defun hbdata:to-hbdata-buffer (dir &optional create)
   "Read in the file containing DIR's button data, if any, and return buffer.
-If it does not exist and optional CREATE is non-nil, creates a new
-one and returns buffer, otherwise returns nil."
+If it does not exist and optional CREATE is non-nil, create a new
+one and return buffer, otherwise return nil."
   (let* ((file (expand-file-name hattr:filename (or dir default-directory)))
 	 (existing-file (or (file-exists-p file) (get-file-buffer file)))
 	 (buf (or (get-file-buffer file)
@@ -384,11 +386,11 @@ one and returns buffer, otherwise returns nil."
 
 (defun hbdata:to-entry-buf (key-src &optional directory create)
   "Move point to end of line in but data buffer matching KEY-SRC.
-Uses hbdata file in KEY-SRC's directory, or optional DIRECTORY or if nil, uses
+Use hbdata file in KEY-SRC's directory, or optional DIRECTORY or if nil, use
 `default-directory'.
-With optional CREATE, if no such line exists, inserts a new file entry at the
+With optional CREATE, if no such line exists, insert a new file entry at the
 beginning of the hbdata file (which is created if necessary).
-Returns non-nil if KEY-SRC is found or created, else nil."
+Return non-nil if KEY-SRC is found or created, else nil."
   (let ((rtn) (ln-dir))
     (if (bufferp key-src)
 	;; Button buffer has no file attached

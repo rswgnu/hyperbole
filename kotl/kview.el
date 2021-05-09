@@ -402,9 +402,9 @@ is not part of the current view, else nil."
   "Move to start of previous cell within current view.
 With optional VISIBLE-P, consider only visible cells.
 Return t unless no previous cell."
-  (if (kcell-view:previous-kcell visible-p label-sep-len)
-      (progn (goto-char (kcell-view:start nil label-sep-len))
-	     t)))
+  (when (kcell-view:previous-kcell visible-p label-sep-len)
+    (goto-char (kcell-view:start nil label-sep-len))
+    t))
 
 (defun kcell-view:plist (&optional pos)
   "Return attributes associated with cell at optional POS or point."

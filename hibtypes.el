@@ -101,60 +101,6 @@ line and check for a source reference line again."
 (load "hypb-ert")
 
 ;;; ========================================================================
-;;; Follows URLs by invoking a web browser.
-;;; ========================================================================
-
-(load "hsys-www")
-
-;;; ========================================================================
-;;; Composes mail, in another window, to the e-mail address at point.
-;;; ========================================================================
-
-(defvar mail-address-mode-list
-  '(fundamental-mode prog-mode text-mode)
-  "List of major modes in which mail address implicit buttons are active.")
-
-(defun mail-address-at-p ()
-  "Return e-mail address, a string, that point is within or nil."
-  (let ((case-fold-search t))
-    (save-excursion
-      (skip-chars-backward "^ \t\n\r\f\"\'(){}[];:<>|")
-      (and (or (looking-at mail-address-regexp)
-               (looking-at (concat "mailto:" mail-address-regexp)))
-           (save-match-data
-             (string-match mail-address-tld-regexp (match-string-no-properties 1)))
-           (match-string-no-properties 1)))))
-
-(defib mail-address ()
-  "If on an e-mail address in a specific buffer type, compose mail to that address in another window.
-Applies to any major mode in `mail-address-mode-list', the HyRolo match buffer,
-any buffer attached to a file in `hyrolo-file-list', or any buffer with
-\"mail\" or \"rolo\" (case-insensitive) within its name."
-  (when (let ((case-fold-search t))
-          (or
-           (and (or (null mail-address-mode-list)
-		    (apply #'derived-mode-p mail-address-mode-list))
-                (not (string-match "-Elements\\'" (buffer-name)))
-                ;; Don't want this to trigger within an OOBR-FTR buffer.
-                (not (string-match "\\`\\(OOBR.*-FTR\\|oobr.*-ftr\\)"
-                                   (buffer-name)))
-                (not (string-equal "*Implementors*" (buffer-name))))
-           (and
-            (string-match "mail\\|rolo" (buffer-name))
-            ;; Don't want this to trigger in a mail/news summary buffer.
-            (not (or (hmail:lister-p) (hnews:lister-p))))
-           (when (boundp 'hyrolo-display-buffer)
-             (equal (buffer-name) hyrolo-display-buffer))
-           (and buffer-file-name
-                (boundp 'hyrolo-file-list)
-                (set:member (current-buffer)
-                            (mapcar 'get-file-buffer hyrolo-file-list)))))
-    (let ((address (mail-address-at-p)))
-      (when address
-        (ibut:label-set address (match-beginning 1) (match-end 1))
-        (hact 'mail-other-window nil address)))))
-
-;;; ========================================================================
 ;;; Displays files and directories when a valid pathname is activated.
 ;;; ========================================================================
 
@@ -258,6 +204,60 @@ display options."
                 ;; Otherwise, fall through and allow other implicit
                 ;; button types to handle this context.
                 ))))))
+
+;;; ========================================================================
+;;; Follows URLs by invoking a web browser.
+;;; ========================================================================
+
+(load "hsys-www")
+
+;;; ========================================================================
+;;; Composes mail, in another window, to the e-mail address at point.
+;;; ========================================================================
+
+(defvar mail-address-mode-list
+  '(fundamental-mode prog-mode text-mode)
+  "List of major modes in which mail address implicit buttons are active.")
+
+(defun mail-address-at-p ()
+  "Return e-mail address, a string, that point is within or nil."
+  (let ((case-fold-search t))
+    (save-excursion
+      (skip-chars-backward "^ \t\n\r\f\"\'(){}[];:<>|")
+      (and (or (looking-at mail-address-regexp)
+               (looking-at (concat "mailto:" mail-address-regexp)))
+           (save-match-data
+             (string-match mail-address-tld-regexp (match-string-no-properties 1)))
+           (match-string-no-properties 1)))))
+
+(defib mail-address ()
+  "If on an e-mail address in a specific buffer type, compose mail to that address in another window.
+Applies to any major mode in `mail-address-mode-list', the HyRolo match buffer,
+any buffer attached to a file in `hyrolo-file-list', or any buffer with
+\"mail\" or \"rolo\" (case-insensitive) within its name."
+  (when (let ((case-fold-search t))
+          (or
+           (and (or (null mail-address-mode-list)
+		    (apply #'derived-mode-p mail-address-mode-list))
+                (not (string-match "-Elements\\'" (buffer-name)))
+                ;; Don't want this to trigger within an OOBR-FTR buffer.
+                (not (string-match "\\`\\(OOBR.*-FTR\\|oobr.*-ftr\\)"
+                                   (buffer-name)))
+                (not (string-equal "*Implementors*" (buffer-name))))
+           (and
+            (string-match "mail\\|rolo" (buffer-name))
+            ;; Don't want this to trigger in a mail/news summary buffer.
+            (not (or (hmail:lister-p) (hnews:lister-p))))
+           (when (boundp 'hyrolo-display-buffer)
+             (equal (buffer-name) hyrolo-display-buffer))
+           (and buffer-file-name
+                (boundp 'hyrolo-file-list)
+                (set:member (current-buffer)
+                            (mapcar 'get-file-buffer hyrolo-file-list)))))
+    (let ((address (mail-address-at-p)))
+      (when address
+        (ibut:label-set address (match-beginning 1) (match-end 1))
+        (hact 'mail-other-window nil address)))))
 
 ;;; ========================================================================
 ;;; Follows Org links that are in non-Org mode buffers

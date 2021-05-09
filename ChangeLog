@@ -1,3 +1,60 @@
+2021-05-09  Bob Weiner  <rsw@gnu.org>
+
+* hsys-org.el (hsys-org-radio-target-at-p,
+               hsys-org-radio-target-link-at-p): Fix to return
+    def or target region.
+
+2021-05-08  Bob Weiner  <rsw@gnu.org>
+
+* hsys-org.el (hsys-org-mode-function): Autoload this variable.
+
+* hui-mouse.el (action-key-error, assist-key-error): Document.
+
+* hsys-org.el (hsys-org-meta-return-shared-p): Add to enable full
+    Smart Key functionality in Org mode if either Org or Hyperbole
+    has rebound its M-RET key so there is no need for shared behavior.
+    Affects default setting of hsys-org-enable-smart-keys option.
+
+* hui.el (hui:buf-writable-err): Indicate that buffer is read-only
+    in msg.
+
+* hbut.el (ebut:operate): Fix bug where ebut:operate has been called
+   once, so action key is considered depressed and then one of the
+   hui button commands or gbut:program is invoked independently, in
+   which case the original source location of the depress should be
+   ignored.
+
+* hbdata.el (hbdata:apply-entry): Add '-flag' to last 2 arg names
+    for clarity.
+            (hbdata:delete-entry): Make cross-platform by replacing
+    shell cmd 'rm' with Elisp 'delete-file'.
+
+* hmouse-tag.el (smart-lisp-find-tag, smart-lisp): Add new function
+    smart-lisp-find-tag split out from smart-lisp, so can be used
+    as an actype or bound to a key in lieu of xref-find-definitions.
+
+* hbut.el (ebut:operate): Fix to reuse label text within activated
+    region if point is at the end of the region.
+
+2021-05-07  Bob Weiner  <rsw@gnu.org>
+
+* hui-menu.el (hui-menu-options):
+  hui-mini.el (hui:menus): Add Cust/Org-Meta-Return setting to menus.
+
+* man/hyperbole.texi (Smart Key - Smart Scrolling):
+  hui-mouse.el (action-key-eol-function, assist-key-eol-function):
+    Explain how to disable these functions when desired.
+
+* man/hyperbole.texi (Implicit Button Types): Update to new ordering
+    of org-mode, mail-address, hsys-www, and pathname ibtypes.  This
+    resolves a bug where URLs are mis-categorized as pathnames.
+  hibtypes.el (hpath:www-at-p, mail-address): Make higher priority
+    than pathname ibtype.
+  hmouse-drv.el (hkey-debug): Send all used vars as params to remove
+    dynamic variable binding.
+                (hkey-execute): Update hkey-debug call.
+
+
 2021-05-04  Bob Weiner  <rsw@gnu.org>
 
 * man/hyperbole.texi (Manual Stable Release Installation): Add this

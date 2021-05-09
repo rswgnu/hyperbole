@@ -270,8 +270,8 @@ FILE is temporarily read into a buffer to determine the major mode if necessary.
 	(kill-buffer buf)))))
 
 (defun hypb:format-quote (arg)
-  "Replace all single % with %% in any string ARG so that a call to `format' or `message' ignore them.
-Return either the modified string or the original ARG."
+  "Replace all single % with %% in any string ARG so that a call to `format' or `message' ignores them.
+Return either the modified string or the original ARG when not modified."
   (if (stringp arg)
       (replace-regexp-in-string
        "@@@" "%%" (replace-regexp-in-string
@@ -281,7 +281,7 @@ Return either the modified string or the original ARG."
     arg))
 
 (defun hypb:function-copy (func-symbol)
-  "Copy FUNC-SYMBOL's body for overloading.  Return copy of body."
+  "Copy FUNC-SYMBOL's body for overloading.  Return a copy of the body."
   (if (fboundp func-symbol)
       (let ((func (hypb:indirect-function func-symbol)))
 	(cond ((listp func) (copy-sequence func))

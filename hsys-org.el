@@ -28,13 +28,24 @@
 ;;; ************************************************************************
 
 (eval-when-compile (require 'hmouse-drv))
-
 (require 'hbut)
 (require 'org)
 (require 'org-element)
 
 ;;;###autoload
-(defcustom hsys-org-enable-smart-keys 'buttons
+(defun hsys-org-meta-return-shared-p ()
+  "Return non-nil iff hyperbole-mode is active and it shares the org-meta-return key binding."
+  (let ((org-meta-return-keys (where-is-internal #'org-meta-return org-mode-map)))
+    (when (or (set:intersection org-meta-return-keys
+				(where-is-internal #'hkey-either hyperbole-mode-map))
+	      (set:intersection org-meta-return-keys
+				(where-is-internal #'action-key hyperbole-mode-map)))
+      t)))
+
+;;;###autoload
+(defcustom hsys-org-enable-smart-keys (if (hsys-org-meta-return-shared-p)
+					  'buttons
+					t)
   "This option applies only in Org major/minor modes when hyperbole-mode is active.
 The following table shows what the Smart Keys do in various contexts
 with different settings of this option.  For example, a nil value makes
@@ -57,6 +68,7 @@ with different settings of this option.  For example, a nil value makes
 ;;; Public variables
 ;;; ************************************************************************
 
+;;;###autoload
 (defvar hsys-org-mode-function #'hsys-org-mode-p
   "*Boolean function of no arguments that determines whether point is in an Org mode-related buffer or not.")
 
@@ -190,7 +202,8 @@ Assume caller has already checked that the current buffer is in `org-mode'."
 (defun hsys-org-radio-target-link-at-p ()
   "Return (target-start . target-end) positions iff point is on an Org mode radio target link (referent), else nil."
   (and (hsys-org-face-at-p 'org-link)
-       (hsys-org-link-at-p)))
+       (hsys-org-link-at-p)
+       (hsys-org-region-with-text-property-value (point) 'face)))
 
 (defun hsys-org-radio-target-def-at-p ()
   "Return (target-start . target-end) positions iff point is on an Org mode radio target (definition), including any delimiter characters, else nil."
@@ -205,8 +218,9 @@ Assume caller has already checked that the current buffer is in `org-mode'."
 
 (defun hsys-org-radio-target-at-p ()
   "Return (target-start . target-end) positions iff point is on an Org mode <<<radio target definition>>> or radio target link (referent), including any delimiter characters, else nil."
-  (or (hsys-org-radio-target-def-at-p)
-      (hsys-org-radio-target-link-at-p)))
+  (and (or (hsys-org-radio-target-def-at-p)
+	   (hsys-org-radio-target-link-at-p))
+       (hsys-org-region-with-text-property-value (point) 'face)))
 
 (defun hsys-org-internal-link-target-at-p ()
   "Return (target-start . target-end) positions iff point is on an Org mode <<link target>>, including any delimiter characters, else nil."

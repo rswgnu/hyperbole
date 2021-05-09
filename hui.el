@@ -165,7 +165,7 @@ Signal an error if point is not within a button."
       (hui:ebut-delete-op interactive but-key key-src))))
 
 (defun hui:ebut-edit ()
-  "Create or modifies an explicit Hyperbole button when conditions are met.
+  "Create or modify an explicit Hyperbole button when conditions are met.
 A region must have been delimited with the action-key and point must now be
 within it before this function is called or it will do nothing.  The region
 must be no larger than the size given by a call to (hbut:max-len).  It must
@@ -871,7 +871,7 @@ DEFAULT-ACTYPE may be a valid symbol or symbol name."
     ;;		     (file-name-nondirectory buffer-file-name))))
     (if buffer-read-only
 	(setq err
-	      (format "(%s) Hyperbole button buffer '%s' cannot be edited.  Use {%s} to enable edits."
+	      (format "(%s) Read-only error in Hyperbole button buffer '%s'.  Use {%s} to enable edits."
 		      func-name (buffer-name but-buf) (hmouse-read-only-toggle-key))))
     (set-buffer obuf)
     (if err (progn (pop-to-buffer but-buf) (hypb:error err)))))

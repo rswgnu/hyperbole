@@ -37,6 +37,7 @@
 ;;; Other required Elisp libraries
 ;;; ************************************************************************
 
+(eval-when-compile (require 'hsys-org))
 (require 'hbut)
 (unless (fboundp 'smart-info)
   (require 'hmouse-info))
@@ -52,11 +53,16 @@
   "*Command that sets point to the mouse cursor position.")
 
 (defun action-key-error ()
-  (if (hsys-org-mode-p)
+  "If in Org mode and Hyperbole shares {M-RET}, run org-meta-return, else signal an error."
+  (if (and (funcall hsys-org-mode-function)
+	   (hsys-org-meta-return-shared-p))
       (hact 'org-meta-return current-prefix-arg)
     (hypb:error "(Hyperbole Action Key): No action defined for this context; try another location")))
+
 (defun assist-key-error ()
-  (if (hsys-org-mode-p)
+  "If in Org mode and Hyperbole shares {M-RET}, run org-meta-return, else signal an error."
+  (if (and (funcall hsys-org-mode-function)
+	   (hsys-org-meta-return-shared-p))
       (hact 'org-meta-return current-prefix-arg)
     (hypb:error "(Hyperbole Assist Key): No action defined for this context; try another location")))
 
@@ -81,13 +87,15 @@ to use the Treemacs file manager package instead."
 
 (defcustom action-key-eol-function #'smart-scroll-up
   "*Function run by the Action Key at the end of a line.
-Its default value is #'smart-scroll-up."
+Its default value is #'smart-scroll-up.  To disable it, set it to
+#'ignore."
   :type 'function
   :group 'hyperbole-keys)
 
 (defcustom assist-key-eol-function #'smart-scroll-down
   "*Function run by the Assist Key at the end of a line.
-Its default value is #'smart-scroll-down."
+Its default value is #'smart-scroll-down.  To disable it, set it to
+#'ignore."
   :type 'function
   :group 'hyperbole-keys)
 
@@ -1594,7 +1602,8 @@ Org links may be used outside of Org mode buffers.  Such links are
 handled by the separate implicit button type, `org-link-outside-org-mode'."
   (when (funcall hsys-org-mode-function)
     (cond ((not hsys-org-enable-smart-keys)
-	   (hact 'org-meta-return current-prefix-arg)
+	   (when (hsys-org-meta-return-shared-p)
+	     (hact 'org-meta-return current-prefix-arg))
 	   ;; Ignore any further Smart Key non-Org contexts
 	   t)
 	  ((eq hsys-org-enable-smart-keys t)
@@ -1652,9 +1661,11 @@ handled by the separate implicit button type, `org-link-outside-org-mode'."
 		  (if (not assist-flag)
 		      (hact 'hbut:act)
 		    (hact 'hkey-help)))
-		 (t (hact 'org-meta-return current-prefix-arg)))
-	   ;; Ignore any further Smart Key non-Org contexts
-	   t)
+		 (t
+		  (when (hsys-org-meta-return-shared-p)
+		    (hact 'org-meta-return current-prefix-arg))
+		  ;; Ignore any further Smart Key non-Org contexts
+		  t)))
 	  (t
 	   ;; hsys-org-enable-smart-keys is set to t, so try other Smart
 	   ;; contexts

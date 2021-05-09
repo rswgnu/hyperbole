@@ -127,6 +127,32 @@
   "Hyperbole multi-level autonumbered outliner customizations."
   :group 'hyperbole)
 
+(defvar hyperbole-mode-map (make-sparse-keymap)
+  "Keymap for the GNU Hyperbole global minor mode.
+See `hkey-initialize'.")
+
+(defcustom hyperbole-mode-lighter " Hypb"
+  "Text to display in the minor-mode area of the modeline when the Hyperbole global minor mode is active."
+  :type 'string
+  :group 'hyperbole)
+
+;;;###autoload
+(define-minor-mode hyperbole-mode
+  "Toggle the Everyday Hypertextual Information Manager global minor mode (Hyperbole mode).
+
+When Hyperbole mode is enabled, the `hyperbole-mode' variable
+is non-nil, Hyperbole menus are enabled, as are Hyperbole keys.
+
+Invoke the Hyperbole minibuffer menu with \\[hyperbole].  See the
+documentation at \"(hyperbole)Top\".
+
+\\{hyperbole-mode-map}"
+  :global t
+  :lighter hyperbole-mode-lighter
+  (if hyperbole-mode
+      (hyperbole--enable-mode)
+    (hyperbole--disable-mode)))
+
 ;;; ************************************************************************
 ;;; Other required Elisp libraries
 ;;; ************************************************************************
@@ -697,32 +723,6 @@ This is used only when running from git source and not a package release."
 		   'write-file-functions
 		 'write-file-hooks)
 	       #'hattr:save))
-
-(defvar hyperbole-mode-map (make-sparse-keymap)
-  "Keymap for the GNU Hyperbole global minor mode.
-See `hkey-initialize'.")
-
-(defcustom hyperbole-mode-lighter " Hypb"
-  "Text to display in the minor-mode area of the modeline when the Hyperbole global minor mode is active."
-  :type 'string
-  :group 'hyperbole)
-
-;;;###autoload
-(define-minor-mode hyperbole-mode
-  "Toggle the Everyday Hypertextual Information Manager global minor mode (Hyperbole mode).
-
-When Hyperbole mode is enabled, the `hyperbole-mode' variable
-is non-nil, Hyperbole menus are enabled, as are Hyperbole keys.
-
-Invoke the Hyperbole minibuffer menu with \\[hyperbole].  See the
-documentation at \"(hyperbole)Top\".
-
-\\{hyperbole-mode-map}"
-  :global t
-  :lighter hyperbole-mode-lighter
-  (if hyperbole-mode
-      (hyperbole--enable-mode)
-    (hyperbole--disable-mode)))
 
 ;; This next expression initializes the Hyperbole keymap but does not
 ;; activate Hyperbole.  The only user-visible change it should make is

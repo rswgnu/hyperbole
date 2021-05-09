@@ -155,7 +155,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</P>
 
 <PRE>
 Edition 8.0.0pre
-Printed May 4, 2021.
+Printed May 9, 2021.
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -197,7 +197,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 @example
 Edition 8.0.0pre
-May 4, 2021
+May 9, 2021
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -1989,6 +1989,64 @@ implicit button types (they are listed in increasing order of priority).
 
 @table @code
 
+@findex ibtypes org-mode
+@cindex Org-mode
+@cindex radio target
+@cindex code block
+@cindex links
+@kindex C-c C-c
+@kindex M-@key{RET}
+@findex org-ctrl-c-ctrl-c
+@findex org-meta-return
+@vindex hsys-org-enable-smart-keys
+@cindex enable org-mode support
+@cindex disable org-mode support
+@cindex inhibit org-mode support
+@item org-mode
+For users of Emacs Org-mode, Hyperbole does quite a few things.
+
+First, the Action Key follows internal links in Org-mode files.  When
+pressed on a link referent/target, the link definition is displayed,
+allowing two-way navigation between definitions and targets.
+
+Second, the Action Key follows Org-mode external links.  The Assist
+Key displays help when pressed on an Org-mode link.
+
+Third, within a radio target definition, the Action Key jumps to the
+first occurrence of an associated radio target.
+
+Fourth, when point is on an outline heading in Org-mode, the Action Key
+cycles the view of the subtree at point and the Assist Key cycles the
+view of all headings in the buffer.
+
+Fifth, with point on the first line of a code block definition, the
+Action Key executes the code block via the Org-mode standard binding
+of @bkbd{C-c C-c}, @code{org-ctrl-c-ctrl-c}.
+
+In any other context besides the end of a line, the Action Key invokes
+the Org-mode standard binding of @bkbd{M-@key{RET}}, @code{org-meta-return}.
+
+To disable Hyperbole support within Org major and minor modes, set
+the custom option @code{hsys-org-enable-smart-keys} to @code{nil}.  Then in
+Org modes, the Action Key will simply invoke @code{org-meta-return}.  The
+following table summarizes the effect of this option setting.
+@end table
+
+@smallformat
+@verbatim
+@group
+|--------------+-------------------+------------------+----------+------------------|
+| This Setting | Smart Key Context | Hyperbole Button | Org Link | Fallback Command |
+|--------------+-------------------+------------------+----------+------------------|
+| buttons      | Ignore            | Activate         | Activate | org-meta-return  |
+| nil          | Ignore            | Ignore           | Ignore   | org-meta-return  |
+| t            | Activate          | Activate         | Activate | None             |
+|--------------+-------------------+------------------+----------+------------------|
+@end group
+@end verbatim
+@end smallformat
+
+@table @code
 @findex ibtypes doc-id
 @cindex online library
 @cindex document identifier
@@ -2056,16 +2114,6 @@ is shown.
 
 For @@code, @@findex, @@var and @@vindex references, the associated
 documentation string is displayed.
-
-@findex ibtypes mail-address
-@cindex e-mail address
-@cindex rolo address
-@cindex address
-@item mail-address
-If on an e-mail address in a specific buffer type, compose mail to that
-address in another window. Applies to the rolo match buffer, any buffer
-attached to a file in @code{hyrolo-file-list}, or any buffer
-with @file{mail} or @file{rolo} (case-insensitive) within its name.
 
 @findex ibtypes patch-msg
 @cindex patch output
@@ -2496,6 +2544,29 @@ path at @emph{line-num} and optional @emph{column-num}.  Also works
 for remote pathnames.  May also contain hash-style link references
 with the following format: @file{<path>[#<link-anchor>]:<line-num>[:<column-num>]}.
 
+@findex ibtypes mail-address
+@cindex e-mail address
+@cindex rolo address
+@cindex address
+@item mail-address
+If on an e-mail address in a specific buffer type, compose mail to that
+address in another window. Applies to the rolo match buffer, any buffer
+attached to a file in @code{hyrolo-file-list}, or any buffer
+with @file{mail} or @file{rolo} (case-insensitive) within its name.
+
+@findex ibtypes www-url
+@cindex URL
+@cindex World-wide Web
+@cindex WWW
+@cindex Action Key, web browsing
+@kindex Action Key, web browsing
+@vindex browse-url-browser-function
+@item www-url
+When not in an Emacs web browser buffer, follow any non-ftp URL (link) at point.
+The variable, @code{browse-url-browser-function}, may be used to customize
+which URL browser is called.  Terse URLs which lack a protocol prefix,
+like www.gnu.org, are also recognized.
+
 @findex ibtypes pathname
 @findex hpath:at-p
 @findex hpath:find
@@ -2530,76 +2601,8 @@ delimiters.  See the variable documentation for @code{hpath:suffixes} for
 suffixes that are added to or removed from the pathname when searching
 for a valid match.  See the function documentation for @code{hpath:find}
 for special file display options.
-
-@findex ibtypes www-url
-@cindex URL
-@cindex World-wide Web
-@cindex WWW
-@cindex Action Key, web browsing
-@kindex Action Key, web browsing
-@vindex browse-url-browser-function
-@item www-url
-When not in an Emacs web browser buffer, follow any non-ftp URL (link) at point.
-The variable, @code{browse-url-browser-function}, may be used to customize
-which URL browser is called.  Terse URLs which lack a protocol prefix,
-like www.gnu.org, are also recognized.
-
-@findex ibtypes org-mode
-@cindex Org-mode
-@cindex radio target
-@cindex code block
-@cindex links
-@kindex C-c C-c
-@kindex M-@key{RET}
-@findex org-ctrl-c-ctrl-c
-@findex org-meta-return
-@vindex hsys-org-enable-smart-keys
-@cindex enable org-mode support
-@cindex disable org-mode support
-@cindex inhibit org-mode support
-@item org-mode
-For users of Emacs Org-mode, Hyperbole does quite a few things.
-
-First, the Action Key follows internal links in Org-mode files.  When
-pressed on a link referent/target, the link definition is displayed,
-allowing two-way navigation between definitions and targets.
-
-Second, the Action Key follows Org-mode external links.  The Assist
-Key displays help when pressed on an Org-mode link.
-
-Third, within a radio target definition, the Action Key jumps to the
-first occurrence of an associated radio target.
-
-Fourth, when point is on an outline heading in Org-mode, the Action Key
-cycles the view of the subtree at point and the Assist Key cycles the
-view of all headings in the buffer.
-
-Fifth, with point on the first line of a code block definition, the
-Action Key executes the code block via the Org-mode standard binding
-of @bkbd{C-c C-c}, @code{org-ctrl-c-ctrl-c}.
-
-In any other context besides the end of a line, the Action Key invokes
-the Org-mode standard binding of @bkbd{M-@key{RET}}, @code{org-meta-return}.
-
-To disable Hyperbole support within Org major and minor modes, set
-the custom option @code{hsys-org-enable-smart-keys} to @code{nil}.  Then in
-Org modes, the Action Key will simply invoke @code{org-meta-return}.  The
-following table summarizes the effect of this option setting.
 @end table
 
-@group
-@smallformat
-@verbatim
-|--------------+-------------------+------------------+----------+------------------|
-| This Setting | Smart Key Context | Hyperbole Button | Org Link | Fallback Command |
-|--------------+-------------------+------------------+----------+------------------|
-| buttons      | Ignore            | Activate         | Activate | org-meta-return  |
-| nil          | Ignore            | Ignore           | Ignore   | org-meta-return  |
-| t            | Activate          | Activate         | Activate | None             |
-|--------------+-------------------+------------------+----------+------------------|
-@end verbatim
-@end smallformat
-@end group
 
 @node Action Buttons,  , Implicit Button Types, Implicit Buttons
 @subsection Action Buttons
@@ -2715,9 +2718,10 @@ within the same directory.  If you want to view some other
 directory-specific button file, simply use the normal Emacs file
 finding commands.
 
-If you want group and site-specific button files, simply place links to such
-files at the top of your personal button file and do so for your colleagues.
-This provides a flexible means of connecting to such resources.
+If you want group and site-specific button files, simply place links
+to such files at the top of your personal button file and do so for
+your colleagues.  This provides a flexible means of connecting to
+such resources.
 
 @node Action Types, Button Type Precedence, Button Files, Buttons
 @section   Action Types
@@ -2761,7 +2765,8 @@ Display a message showing the given variable name and its value.
 
 @findex actypes eval-elisp
 @item eval-elisp
-Evaluate a Lisp expression LISP-EXPR for its side-effects and return any non-nil value.
+Evaluate a Lisp expression LISP-EXPR for its side-effects and return
+any non-nil value.
 
 @findex actypes exec-kbd-macro
 @item exec-kbd-macro
@@ -8885,7 +8890,9 @@ When pressed at the end of a line but not the end of a buffer:
      @code{smart-scroll-proportional} is nil or if point is on the top
      window line, it scrolls up (forward) a windowful.  Otherwise, it tries
      to bring the current line to the top of the window, leaving point at
-     the end of the line and returning t if scrolled, nil if not.
+     the end of the line and returning t if scrolled, nil if not.  To disable
+     this behavior entirely, evaluate this line:
+     @code{(customize-set-variable 'action-key-eol-function #'ignore)}
 @end group
 @end format
 @format
@@ -8897,7 +8904,9 @@ When pressed at the end of a line but not the end of a buffer:
      @code{smart-scroll-proportional} is nil or if point is on the bottom
      window line, it scrolls down (backward) a windowful.  Otherwise, it tries
      to bring the current line to the bottom of the window, leaving point at
-     the end of the line and returning t if scrolled, nil if not.
+     the end of the line and returning t if scrolled, nil if not.  To disable
+     this behavior entirely, evaluate this line:
+     @code{(customize-set-variable 'assist-key-eol-function #'ignore)}
 @end group
 @end format
 

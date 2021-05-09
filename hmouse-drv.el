@@ -818,7 +818,7 @@ frame instead."
       ;; Drag frame when the window is on the bottom of its frame.
       (mouse-drag-frame start-event 'move)))))
 
-(defun hkey-debug ()
+(defun hkey-debug (pred pred-value hkey-action)
   (message (format "(HyDebug) %sContext: %s; %s: %s; Buf: %s; Mode: %s; MinibufDepth: %s"
 		   (cond ((eq pred-value 'hbut:current)
 			  (format "ButType: %s; ButLabel: %s; "
@@ -838,14 +838,14 @@ Non-nil ASSIST-FLAG means evaluate second form, otherwise evaluate first form.
 Return non-nil iff a non-nil predicate is found."
   ;; Keep in mind that hkey-alist may be set to hmouse-alist here, with additional predicates.
   (let ((hkey-forms hkey-alist)
-	(pred-value) (hkey-action) hkey-form pred)
+	pred-value hkey-action hkey-form pred)
     (while (and (null pred-value) (setq hkey-form (car hkey-forms)))
       (if (setq hkey-action (if assist-flag (cddr hkey-form) (cadr hkey-form))
 		pred (car hkey-form)
 		pred-value (eval pred))
 	  ;; Conditionally debug after Smart Key release and evaluation
 	  ;; of matching predicate but before hkey-action is executed.
-	  (progn (when hkey-debug (hkey-debug))
+	  (progn (when hkey-debug (hkey-debug pred pred-value hkey-action))
 		 (eval hkey-action))
 	(setq hkey-forms (cdr hkey-forms))))
     pred-value))

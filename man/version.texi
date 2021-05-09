@@ -1,4 +1,4 @@
 @set UPDATED May, 2021
 @set UPDATED-MONTH May 2021
-@set EDITION 8.0.0
-@set VERSION 8.0.0
+@set EDITION 8.0.0pre
+@set VERSION 8.0.0pre

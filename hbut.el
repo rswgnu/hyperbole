@@ -317,25 +317,25 @@ button is found in the current buffer."
 	  (hmail:msg-narrow))))
     (if instance-flag
 	(progn
-	  (if modify
-	      ;; Rename all occurrences of button - those with same label
-	      (let* ((but-key-and-pos (ebut:label-p nil nil nil 'pos))
-		     (at-but (equal (car but-key-and-pos)
-				    (ebut:label-to-key new-label))))
-		(when at-but
-		  (ebut:delimit (nth 1 but-key-and-pos)
-				(nth 2 but-key-and-pos)
-				instance-flag))
-		(cond ((ebut:map
-		        (lambda (lbl start end)
-			  (delete-region start end)
-			  (ebut:delimit
-			   (point)
-			   (progn (insert new-label) (point))
-			   instance-flag))
-			lbl-regexp 'include-delims))
-		      (at-but)
-		      ((hypb:error "(ebut:operate): No button matching: %s" curr-label))))
+	  (when modify
+	    ;; Rename all occurrences of button - those with same label
+	    (let* ((but-key-and-pos (ebut:label-p nil nil nil 'pos))
+		   (at-but (equal (car but-key-and-pos)
+				  (ebut:label-to-key new-label))))
+	      (when at-but
+		(ebut:delimit (nth 1 but-key-and-pos)
+			      (nth 2 but-key-and-pos)
+			      instance-flag))
+	      (cond ((ebut:map
+		      (lambda (lbl start end)
+			(delete-region start end)
+			(ebut:delimit
+			 (point)
+			 (progn (insert new-label) (point))
+			 instance-flag))
+		      lbl-regexp 'include-delims))
+		    (at-but)
+		    ((hypb:error "(ebut:operate): No button matching: %s" curr-label))))
 
 	    ;; Add a new button recording its start and end positions
 	    (let (start end mark prev-point buf-lbl)
@@ -344,17 +344,28 @@ button is found in the current buffer."
 		     (insert new-label)
 		     (setq end (point)))
 		    ((and (hmouse-use-region-p)
-			  (setq mark (marker-position (hypb:mark-marker t)))
-			  (setq prev-point (and action-key-depress-prev-point
-						(marker-position action-key-depress-prev-point)))
-			  (setq start (if (and prev-point mark (<= prev-point mark))
-					  prev-point
-					(region-beginning))
-				end (if (and prev-point mark (> prev-point mark))
-					prev-point
-				      (region-end))
-				buf-lbl (buffer-substring start end))
-			  (equal buf-lbl curr-label))
+			  (if (hyperb:stack-frame
+			       '(hui:ebut-create hui:ebut-edit
+						 hui:ebut-modify hui:gbut-create
+                       				 hui:gbut-modify hui:link-create ebut:program))
+			      ;; Ignore action-key-depress-prev-point
+			      (progn (setq mark (marker-position (hypb:mark-marker t))
+					   start (region-beginning)
+					   end (region-end)
+					   buf-lbl (buffer-substring start end))
+				     (equal buf-lbl curr-label))
+			    ;; Utilize any action-key-depress-prev-point
+			    (progn (setq mark (marker-position (hypb:mark-marker t)))
+				   (setq prev-point (and action-key-depress-prev-point
+							 (marker-position action-key-depress-prev-point)))
+				   (setq start (if (and prev-point mark (<= prev-point mark))
+						   prev-point
+						 (region-beginning))
+					 end (if (and prev-point mark (> prev-point mark))
+						 prev-point
+					       (region-end))
+					 buf-lbl (buffer-substring start end))
+				   (equal buf-lbl curr-label))))
 		     nil)
 		    ((progn (when start (goto-char start))
 			    (looking-at (regexp-quote curr-label)))

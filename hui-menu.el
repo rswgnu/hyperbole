@@ -218,6 +218,23 @@ Return t if cutoff, else nil."
 	  '("----")
 	  (hui-menu-browser "Display-Web-Searches-in" hyperbole-web-search-browser-function)
 	  '("----")
+	  '(("Org-M-RETURN"
+	     "----"
+	     "----"
+	     ["All-Programmed-Contexts"
+	      (customize-save-variable 'hsys-org-enable-smart-keys t)
+	      :style radio :selected (when (boundp 'hsys-org-enable-smart-keys)
+					(eq hsys-org-enable-smart-keys t))]
+	     ["Hypb-Buttons-Only"
+	      (customize-save-variable 'hsys-org-enable-smart-keys 'buttons)
+	      :style radio :selected (when (boundp 'hsys-org-enable-smart-keys)
+					(eq hsys-org-enable-smart-keys 'buttons))]
+	     ["Ignore"
+	      (customize-save-variable 'hsys-org-enable-smart-keys nil)
+	      :style radio :selected (when (boundp 'hsys-org-enable-smart-keys)
+					(eq hsys-org-enable-smart-keys nil))]
+	     ))
+	  '("----")
 	  '(("Smart-Key-Press-at-Eol"
 	     "----"
 	     "----"
@@ -226,18 +243,18 @@ Return t if cutoff, else nil."
 	     ;; with a conditional.
 	     ["Scrolls-a-Windowful"
 	      (setq smart-scroll-proportional nil)
-	      :style radio :selected (if (boundp 'smart-scroll-proportional)
-					 (null smart-scroll-proportional))]
+	      :style radio :selected (when (boundp 'smart-scroll-proportional)
+				       (null smart-scroll-proportional))]
 	     ["Scrolls-Proportionally"
 	      (setq smart-scroll-proportional t)
-	      :style radio :selected (if (boundp 'smart-scroll-proportional)
-					 smart-scroll-proportional)]
+	      :style radio :selected (when (boundp 'smart-scroll-proportional)
+				       smart-scroll-proportional)]
 	     ))
 	  '("----"
 	    ["Toggle-Isearch-Invisible-Text" hypb:toggle-isearch-invisible
 	     :visible (boundp 'isearch-invisible)
-	     :style toggle :selected (and (boundp 'isearch-invisible)
-					  isearch-invisible)]
+	     :style toggle :selected (when (boundp 'isearch-invisible)
+				       isearch-invisible)]
 	    ["Toggle-Messaging-Explicit-Buttons" hyperbole-toggle-messaging
 	     :style toggle :selected (not inhibit-hyperbole-messaging)]
 	    ["Toggle-Rolo-Dates" hyrolo-toggle-datestamps
