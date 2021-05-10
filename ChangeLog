@@ -1,5 +1,9 @@
 2021-05-09  Bob Weiner  <rsw@gnu.org>
 
+* test/demo-tests.el (demo-org-hide-header-test): Fix, add
+    save-excursion around action-key call since somehow the
+    ert test runner changes the current buffer to its stats
+    buffer after this call, then the final should test fails.
 * hsys-org.el (hsys-org-radio-target-at-p,
                hsys-org-radio-target-link-at-p): Fix to return
     def or target region.

@@ -239,18 +239,16 @@
 
 ;; org
 (ert-deftest demo-org-hide-header-test ()
-  "Hide org mode header.
-Bug: Should work with action-key but does not.  Works with org mode's hide function."
-  :expected-result :failed
+  "Hide org mode header."
   (with-temp-buffer
     (org-mode)
     (insert "* 1\n** 2\n*** 3\n")
     (goto-char 1)
     (should (not (org-check-for-hidden 'headlines)))
-    (action-key)
+    (save-excursion
+      (action-key))
     ;;; (org-hide-entry)
-    (should (org-check-for-hidden 'headlines))
-    ))
+    (should (org-check-for-hidden 'headlines))))
 
 ;; Manifest
 (ert-deftest demo-manifest-test ()
