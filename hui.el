@@ -425,34 +425,34 @@ modification   Signal an error when no such button is found."
               (save-buffer)))
 	;; Implicit buttons
 	(save-excursion
-	  (set-buffer but-buf)
-          (ibut:to lbl-key)
-	  (if (and interactive-flag (ibut:at-p))
-              (progn
-                ;; lbl-start and lbl-end mark the text of the ibut, not
-                ;; its name.
-	        (when (hattr:get 'hbut:current 'lbl-end)
-                  (let* ((start (hattr:get 'hbut:current 'lbl-start))
-                         (end (hattr:get 'hbut:current 'lbl-end))
-                         (old-text (buffer-substring start end))
-                         (new-text (read-string "Modify ibut text: " old-text)))
-                    (save-excursion
-                      (goto-char start)
-                      (delete-region start end)
-                      (insert new-text))
-                    (hattr:set 'hbut:current 'lbl-key (ibut:label-to-key new-lbl))))
-                ;; Have to do name change after lbl-start/lbl-end are
-                ;; used so buffer positions do not change.
-	        (ibut:rename lbl new-lbl)
-                (save-buffer)
-	        (hui:ibut-message t))
-            (when (and interactive-flag
-	               (ibut:rename lbl new-lbl))
-              (save-buffer)
-              (message "Button renamed to %s%s%s"
-	               ibut:label-start
-                       new-lbl
-	               ibut:label-end))))))))
+	  (with-current-buffer but-buf
+            (ibut:to lbl-key)
+	    (if (and interactive-flag (ibut:at-p))
+		(progn
+                  ;; lbl-start and lbl-end mark the text of the ibut, not
+                  ;; its name.
+	          (when (hattr:get 'hbut:current 'lbl-end)
+                    (let* ((start (hattr:get 'hbut:current 'lbl-start))
+                           (end (hattr:get 'hbut:current 'lbl-end))
+                           (old-text (buffer-substring start end))
+                           (new-text (read-string "Modify ibut text: " old-text)))
+                      (save-excursion
+			(goto-char start)
+			(delete-region start end)
+			(insert new-text))
+                      (hattr:set 'hbut:current 'lbl-key (ibut:label-to-key new-lbl))))
+                  ;; Have to do name change after lbl-start/lbl-end are
+                  ;; used so buffer positions do not change.
+	          (ibut:rename lbl new-lbl)
+                  (save-buffer)
+	          (hui:ibut-message t))
+              (when (and interactive-flag
+			 (ibut:rename lbl new-lbl))
+		(save-buffer)
+		(message "Button renamed to %s%s%s"
+			 ibut:label-start
+			 new-lbl
+			 ibut:label-end)))))))))
 
 (defun hui:gbut-rename (label)
   "Interactively rename a Hyperbole global button with LABEL.
@@ -519,26 +519,26 @@ Signal an error if point is not within a button."
 	 (hypb:error
 	  "(hbut-delete): Invalid label key argument: '%s'" but-key)))
   (save-excursion
-    (set-buffer (if (bufferp key-src) key-src (find-file-noselect key-src)))
-    (let ((interactive (called-interactively-p 'interactive))
-	  (label (hbut:key-to-label but-key)))
-      (cond ((ebut:to but-key)
-	     (if (and hui:hbut-delete-confirm-flag interactive)
-		 (if (y-or-n-p (format "Delete button %s%s%s? "
-				       ebut:start label ebut:end))
-		     (hui:ebut-delete-op interactive but-key key-src)
-		   (message "")
-		   nil)
-	       (hui:ebut-delete-op interactive but-key key-src)))
-	    ((ibut:to but-key)
-	     (if (and hui:hbut-delete-confirm-flag interactive)
-		 (if (y-or-n-p (format "Delete button %s%s%s? "
-				       ibut:label-start label ibut:label-end))
-		     (hui:ibut-delete-op interactive but-key key-src)
-		   (message "")
-		   nil)
-	       (hui:ibut-delete-op interactive but-key key-src)))
-	    (t (hypb:error "(hbut-delete): Invalid button '%s'" label))))))
+    (with-current-buffer (if (bufferp key-src) key-src (find-file-noselect key-src))
+      (let ((interactive (called-interactively-p 'interactive))
+	    (label (hbut:key-to-label but-key)))
+	(cond ((ebut:to but-key)
+	       (if (and hui:hbut-delete-confirm-flag interactive)
+		   (if (y-or-n-p (format "Delete button %s%s%s? "
+					 ebut:start label ebut:end))
+		       (hui:ebut-delete-op interactive but-key key-src)
+		     (message "")
+		     nil)
+		 (hui:ebut-delete-op interactive but-key key-src)))
+	      ((ibut:to but-key)
+	       (if (and hui:hbut-delete-confirm-flag interactive)
+		   (if (y-or-n-p (format "Delete button %s%s%s? "
+					 ibut:label-start label ibut:label-end))
+		       (hui:ibut-delete-op interactive but-key key-src)
+		     (message "")
+		     nil)
+		 (hui:ibut-delete-op interactive but-key key-src)))
+	      (t (hypb:error "(hbut-delete): Invalid button '%s'" label)))))))
 
 (defun hui:hbut-help (&optional but)
   "Check for and explain an optional button given by symbol, BUT.

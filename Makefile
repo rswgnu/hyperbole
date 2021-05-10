@@ -337,10 +337,10 @@ ftp: package $(pkg_dir)/hyperbole-$(HYPB_VERSION).tar.gz
 autoloads: hyperbole-autoloads.el kotl/kotl-autoloads.el
 
 hyperbole-autoloads.el: $(EL_COMPILE)
-	$(EMACS) $(BATCHFLAGS) -eval '(progn (setq generated-autoload-file (expand-file-name "hyperbole-autoloads.el") backup-inhibited t) (update-directory-autoloads "."))'
+	$(EMACS) $(BATCHFLAGS) --debug n-eval "(progn (setq generated-autoload-file (expand-file-name \"hyperbole-autoloads.el\") backup-inhibited t) (make-directory-autoloads \".\"))"
 
 kotl/kotl-autoloads.el: $(EL_KOTL)
-	$(EMACS) $(BATCHFLAGS) -eval '(progn (setq generated-autoload-file (expand-file-name "kotl/kotl-autoloads.el") backup-inhibited t) (update-directory-autoloads "kotl/"))'
+	$(EMACS) $(BATCHFLAGS) -eval "(progn (setq generated-autoload-file (expand-file-name \"kotl/kotl-autoloads.el\") backup-inhibited t) (update-directory-autoloads \"kotl/\"))"
 
 # Used for ftp.gnu.org tarball distributions.
 $(pkg_dir)/hyperbole-$(HYPB_VERSION).tar.gz:

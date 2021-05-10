@@ -20,6 +20,12 @@
 				    htz hbdata hact view)))
 
 ;;; ************************************************************************
+;;; Public declarations
+;;; ************************************************************************
+
+(declare-function www-url "hsys-www" (url))
+
+;;; ************************************************************************
 ;;; Public definitions
 ;;; ************************************************************************
 
@@ -693,10 +699,10 @@ Return the symbol for the button when found, else nil."
   "Return a list of implicit button label keys from the global button file."
   (when (file-readable-p gbut:file)
     (save-excursion
-      (set-buffer (find-file-noselect gbut:file))
-      (save-restriction
-	(widen)
-	(ibut:label-map #'(lambda (label start end) (ibut:label-to-key label)))))))
+      (with-current-buffer (find-file-noselect gbut:file)
+	(save-restriction
+	  (widen)
+	  (ibut:label-map #'(lambda (label start end) (ibut:label-to-key label))))))))
 
 ;;; ========================================================================
 ;;; hattr class
@@ -1471,19 +1477,19 @@ Return symbol for button deleted or nil."
 	  (end     (hattr:get but-sym 'lbl-end)))
       (when (and start end)
 	(save-excursion
-	  (set-buffer (if (bufferp loc) loc (find-file-noselect loc)))
-	  (when (ibut:to (ibut:key but-sym))
-	    (let (buffer-read-only)
-	      (if (< (point) start)
-		  ;; Find beginning of button named label delimiter and delete
-		  ;; from there.
-		  (progn (goto-char (- (point) (length ibut:label-start)))
-			 (delete-region (point) end))
-		;; No label, just delete delimited ibutton text.
-		(delete-region start end))
-	      (when (looking-at "[ \t]*\r?\n")
-		(delete-region (point) (match-end 0)))
-	      (run-hooks 'ibut-delete-hook))))
+	  (with-current-buffer (if (bufferp loc) loc (find-file-noselect loc))
+	    (when (ibut:to (ibut:key but-sym))
+	      (let (buffer-read-only)
+		(if (< (point) start)
+		    ;; Find beginning of button named label delimiter and delete
+		    ;; from there.
+		    (progn (goto-char (- (point) (length ibut:label-start)))
+			   (delete-region (point) end))
+		  ;; No label, just delete delimited ibutton text.
+		  (delete-region start end))
+		(when (looking-at "[ \t]*\r?\n")
+		  (delete-region (point) (match-end 0)))
+		(run-hooks 'ibut-delete-hook)))))
 	but-sym))))
 
 (defun    ibut:get (&optional lbl-key buffer key-src)

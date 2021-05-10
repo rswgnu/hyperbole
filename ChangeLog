@@ -4,6 +4,22 @@
     save-excursion around action-key call since somehow the
     ert test runner changes the current buffer to its stats
     buffer after this call, then the final should test fails.
+
+* hyperbole.el (action-key-url-function): Remove out-of-date
+    Netscape and w3 references.  Use eww by default.
+               (make-directory-autoloads): Add for Emacs 28
+    compatibility.
+               (hyperb:generate-autoloads): Use above func.
+
+* hypb.el (hypb:file-major-mode):
+  hui.el (hui:gbut-modify, hui:hbut-delete):
+  hbut.el (ibut:delete, gbut:ebut-program): Change set-buffer
+    to with-current-buffer to remove byte-compiler warning.
+          (www-url): Declare this.
+
+* hui-window.el (hmouse-read-only-toggle-key): Remove ref to
+    obsolete toggle-read-only and vc-toggle-read-only.
+
 * hsys-org.el (hsys-org-radio-target-at-p,
                hsys-org-radio-target-link-at-p): Fix to return
     def or target region.
@@ -22,7 +38,8 @@
 * hui.el (hui:buf-writable-err): Indicate that buffer is read-only
     in msg.
 
-* hbut.el (ebut:operate): Fix bug where ebut:operate has been called
+* hui-window.el (hmouse-prior-active-region):
+  hbut.el (ebut:operate): Fix bug where ebut:operate has been called
    once, so action key is considered depressed and then one of the
    hui button commands or gbut:program is invoked independently, in
    which case the original source location of the depress should be

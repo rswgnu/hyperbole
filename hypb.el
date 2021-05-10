@@ -265,7 +265,8 @@ Turning on Fgrep-Git-Log mode runs the normal hook `compilation-mode-hook'."
 FILE is temporarily read into a buffer to determine the major mode if necessary."
   (let ((existing-flag (get-file-buffer file))
 	(buf (find-file-noselect file)))
-    (prog1 (when buf (save-excursion (set-buffer buf) major-mode))
+    (prog1 (when buf (save-excursion (with-current-buffer buf
+				       major-mode)))
       (unless (or existing-flag (null buf))
 	(kill-buffer buf)))))
 

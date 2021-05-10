@@ -311,12 +311,12 @@ part of InfoDock and not a part of Hyperbole)."
   "Return t iff there is a non-empty active region in buffer of the last Smart Mouse Key release."
   (when (setq hkey-value (if assist-flag assist-key-depress-prev-point action-key-depress-prev-point))
     (save-excursion
-      (set-buffer (marker-buffer hkey-value))
-      ;; Store and goto any prior value of point from the region
-      ;; prior to the Smart Key depress, so we can return to it later.
-      (and (goto-char hkey-value)
-	   (hmouse-save-region)
-	   t))))
+      (with-current-buffer (marker-buffer hkey-value)
+	;; Store and goto any prior value of point from the region
+	;; prior to the Smart Key depress, so we can return to it later.
+	(and (goto-char hkey-value)
+	     (hmouse-save-region)
+	     t)))))
 
 (defun hmouse-dired-readin-hook ()
   "Remove local `hpath:display-where' setting whenever re-read a dired directory.
@@ -657,10 +657,8 @@ If free variable `assist-flag' is non-nil, uses Assist Key."
 		    hmouse-side-sensitivity))))))
 
 (defun hmouse-read-only-toggle-key ()
-  "Return the first key binding that toggle read-only mode, or nil if none."
-  (key-description (or (where-is-internal #'read-only-mode nil t)
-		       (where-is-internal #'vc-toggle-read-only nil t)
-		       (where-is-internal #'toggle-read-only nil t))))
+  "Return the first key binding that toggles read-only mode, or nil if none."
+  (key-description (where-is-internal #'read-only-mode nil t)))
 
 (defun hmouse-vertical-action-drag ()
   "Handle an Action Key vertical drag within a window: add a window to the right of this one.
@@ -924,7 +922,7 @@ If the Action Key is:
 	    ((hmouse-release-left-edge) (bury-buffer))
 	    ((hmouse-release-right-edge)
 	     (if (eq major-mode 'Info-mode)
-		 (Info-exit)
+		 (quit-window)
 	       (info)))
 	    (t (funcall action-key-modeline-function))))))
 
