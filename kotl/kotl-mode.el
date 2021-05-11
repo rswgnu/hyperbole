@@ -80,9 +80,12 @@ It provides the following keys:
       ;; defined in kfill.el, so reload it.
       (load "kfill"))
   (setq-local fill-paragraph-function #'kfill:fill-paragraph)
+  ;;
   ;; Prevent insertion of characters outside of editable bounds,
   ;; e.g. after the mouse sets point to a non-editable position
-  (add-hook 'pre-command-hook #'kotl-mode:pre-self-insert-command)
+  ;; !! TODO: This was causing kotl-mode:demote-tree (and promote) to fail
+  ;; (add-hook 'pre-command-hook #'kotl-mode:pre-self-insert-command)
+  ;;
   ;; Ensure that outline structure data is saved when save-buffer is called
   ;; from save-some-buffers, {C-x s}.
   (add-hook 'local-write-file-hooks #'kotl-mode:update-buffer)
@@ -2908,8 +2911,12 @@ newlines at end of tree."
   "If within a Koutline, prior to inserting a character, ensure point is in an editable position.
 Mouse may have moved point outside of an editable area. kotl-mode adds
 this function to `pre-command-hook'."
-  (when (and (eq major-mode 'kotl-mode)
-	     (not (kview:valid-position-p)))
+  (when (and (eq this-command 'self-insert-command)
+	     (called-interactively-p 'interactive)
+	     (eq major-mode 'kotl-mode)
+	     (not (kview:valid-position-p))
+	     ;; Prevent repeatedly moving point to valid position when moving trees
+	     (not (hyperb:stack-frame '(kcell-view:to-label-end))))
     (let ((start (kcell-view:start))
 	  (end (kcell-view:end-contents)))
       (cond ((and (<= start (point)) (<= (point) end))
@@ -3169,7 +3176,7 @@ Leave point at end of line now residing at START."
 
 
   ;; kotl-mode keys
-  (define-key kotl-mode-map "\C-c@"     'kotl-mode:mail-tree)
+  (define-key kotl-mode-map "\C-c\C-@"  'kotl-mode:mail-tree)
   (define-key kotl-mode-map "\C-c+"     'kotl-mode:append-cell)
   (define-key kotl-mode-map "\C-c,"     'kotl-mode:beginning-of-cell)
   (define-key kotl-mode-map "\C-c."     'kotl-mode:end-of-cell)

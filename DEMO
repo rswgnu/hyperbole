@@ -300,7 +300,7 @@ If you ever need to experiment with different sized window grids, use
 for a grid size and then display it.  When you are done, simply press RET
 to exit.
 
-Outside of HyControl, you can invoke the grid of windows command with C-c @
+Outside of HyControl, you can invoke the grid of windows command with {C-c @}
 in most buffers.
 
 There is lots more to discover in HyControl as you explore.

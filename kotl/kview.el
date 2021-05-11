@@ -325,8 +325,8 @@ If labels are off, return cell's idstamp as a string."
       (if (eq label-type 'no)
 	  (kcell-view:idstamp)
 	(kcell-view:to-label-end)
-	(buffer-substring (point) (progn (skip-chars-backward "^ \t\n\r")
-					 (point)))))))
+	(buffer-substring-no-properties (point) (progn (skip-chars-backward "^ \t\n\r")
+						       (point)))))))
 
 (defun kcell-view:level (&optional pos label-sep-len indent)
   "Return the outline level of the current cell or the one at optional POS.

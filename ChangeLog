@@ -1,3 +1,13 @@
+2021-05-10  Bob Weiner  <rsw@gnu.org>
+
+* kotl/kview.el (kcell-view:label): Remove unneeded properties
+    from returned string.
+
+* man/hyperbole.texi (Relocating and Copying, Koutliner Keys):
+  kotl/kotl-mode.el (kotl-mode-map): Change binding of
+    kotl-mode:mail-tree from {C-c @} to {C-c C-@} to
+    prevent conflict with hycontrol-windows-grid binding.
+
 2021-05-09  Bob Weiner  <rsw@gnu.org>
 
 * test/demo-tests.el (demo-org-hide-header-test): Fix, add

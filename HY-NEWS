@@ -63,6 +63,12 @@
      Koutliner via Org table minor mode.  Use {M-x orgtbl-mode RET} to
      toggle this on and off.  See "(Org)Tables" for details.
 
+   - New Mail Tree Key Binding: The kotl-mode:mail-tree command that
+     extracts the current view of a Koutline in text-only format and
+     creates an outgoing email messge with it, has moved from {C-c @}
+     to {C-c C-@} to prevent conflict with the hycontrol-window-grid
+     command bound to {C-c @}.
+
    - New Tree Demotion/Promotion Keys: Tree promotion and demotion keys now
      match the defaults in Org mode and Outline mode, plus some easier to
      type ones.  The tables below summarize which keys work whether inside

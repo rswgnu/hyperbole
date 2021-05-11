@@ -169,23 +169,28 @@ uses that one.  Otherwise, triggers an error."
   "Return non-nil iff point is on an Org mode link.
 Assume caller has already checked that the current buffer is in `org-mode'
 or are looking for an Org link in another buffer type."
-  (let* ((context
-	  ;; Only consider supported types, even if they are not
-	  ;; the closest one.
-	  (org-element-lineage
-	   (org-element-context)
-	   '(clock footnote-definition footnote-reference headline
-		   inlinetask link timestamp)
-	   t))
-	 (type (org-element-type context)))
-    (or (eq type 'link)
-	(and (boundp 'org-link-bracket-re)
-	     (org-in-regexp org-link-bracket-re))
-	(and (boundp 'org-bracket-link-regexp)
-	     (org-in-regexp org-bracket-link-regexp))
-	(and (boundp 'org-target-link-regexp)
-             (not (null org-target-link-regexp))
-             (org-in-regexp org-target-link-regexp)))))
+  ;; If any Org test fails, just return nil
+  (condition-case ()
+      (let* ((context
+	      ;; Only consider supported types, even if they are not
+	      ;; the closest one.
+	      (org-element-lineage
+	       ;; Next line can trigger an error when `looking-at' is called
+	       ;; with a `nil' value of `org-complex-heading-regexp'.
+	       (org-element-context)
+	       '(clock footnote-definition footnote-reference headline
+		       inlinetask link timestamp)
+	       t))
+	     (type (org-element-type context)))
+	(or (eq type 'link)
+	    (and (boundp 'org-link-bracket-re)
+		 (org-in-regexp org-link-bracket-re))
+	    (and (boundp 'org-bracket-link-regexp)
+		 (org-in-regexp org-bracket-link-regexp))
+	    (and (boundp 'org-target-link-regexp)
+		 (not (null org-target-link-regexp))
+		 (org-in-regexp org-target-link-regexp))))
+    (error nil)))
 
 ;; Assume caller has already checked that the current buffer is in org-mode.
 (defun hsys-org-heading-at-p (&optional _)

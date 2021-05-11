@@ -102,7 +102,7 @@
            don't use them to move trees across different outline files.  You
            can, however, copy an outline tree to a non-outline buffer with:
             {C-c M-c}     - Copy a koutline tree to a non-koutline buffer.
-            {C-c @}       - Copy a koutline tree to an outgoing mail message.
+            {C-c C-@}     - Copy a koutline tree to an outgoing mail message.
            
             {C-c c}       - Copy <tree> to follow as sibling of <cell>.
             {C-u C-c c}   - Copy <tree> to follow as first child of <cell>.
@@ -369,7 +369,7 @@ alpha ;; label-type
 
 ;; depth-first kcell attributes
 [[0
-  (creator "rsw@gnu.org" create-time "20170928:19:50:05" id-counter 77 file "/Users/bk/sw-dev/emacs/hyperbole/kotl/EXAMPLE.kotl")]
+  (creator "rsw@gnu.org" create-time "20210510:04:09:59" id-counter 77 file "/Users/bk/Dropbox/emacs/hyperbole/kotl/EXAMPLE.kotl")]
  [20
   (creator "rsw@gnu.org" create-time "19940104:17:38:28" no-fill t)]
  [75

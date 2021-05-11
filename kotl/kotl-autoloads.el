@@ -37,7 +37,9 @@ Return the new kview.
 \(fn FILE-NAME)" t nil)
 
 (autoload 'kfile:is-p "kfile" "\
-Iff current buffer contains an unformatted or formatted koutline, return file format version string, else nil." nil nil)
+Iff current buffer contains an unformatted or formatted koutline, return file format version string, else nil.
+
+\(fn)" nil nil)
 
 (autoload 'kfile:view "kfile" "\
 View an existing kotl version-2 file FILE-NAME in a read-only mode.
@@ -194,10 +196,14 @@ See documentation for `kcell:ref-to-id' for valid cell-ref formats.
 (autoload 'kotl-mode "kotl-mode" "\
 The major mode used to edit and view koutlines.
 It provides the following keys:
-\\{kotl-mode-map}" t nil)
+\\{kotl-mode-map}
+
+\(fn)" t nil)
 
 (autoload 'kotl-mode:example "kotl-mode" "\
-Display the Koutliner example file for demonstration use by a user." t nil)
+Display the Koutliner example file for demonstration use by a user.
+
+\(fn)" t nil)
 
 (autoload 'kotl-mode:overview "kotl-mode" "\
 Show the first line of each cell.
@@ -229,9 +235,11 @@ Display fully expanded tree rooted at CELL-REF.
 \(fn &optional CELL-REF)" t nil)
 
 (autoload 'kotl-mode:is-p "kotl-mode" "\
-Signal an error if current buffer is not a Hyperbole outline, else return t." nil nil)
+Signal an error if current buffer is not a Hyperbole outline, else return t.
 
-(register-definition-prefixes "kotl-mode" '("delete-selection-pre-hook" "kotl-mode" "yank-"))
+\(fn)" nil nil)
+
+(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "kotl-mode" '("delete-selection-pre-hook" "kotl-mode" "yank-")))
 
 ;;;***
 
@@ -259,7 +267,7 @@ Signal an error if current buffer is not a Hyperbole outline, else return t." ni
 ;;;### (autoloads nil "kview" "kview.el" (0 0 0 0))
 ;;; Generated autoloads from kview.el
 
-(register-definition-prefixes "kview" '("kcell-view:" "kview:"))
+(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "kview" '("kcell-view:" "kview:")))
 
 ;;;***
 

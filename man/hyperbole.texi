@@ -4523,7 +4523,7 @@ You can, however, copy an outline tree to a non-outline buffer with:
 @table @asis
 @kitem C-c M-c
 Copy a <tree> to a non-koutline buffer.
-@kitem C-c @@ 
+@kitem C-c C-@@
 Copy a <tree> to an outgoing mail message.
 @end table
 
@@ -8105,7 +8105,7 @@ Leave point at the start of the cell or at its present position if it is
 already within the last sibling cell.
 
 @findex kotl-mode:mail-tree
-@item kotl-mode:mail-tree  @bkbd{C-c @@}
+@item kotl-mode:mail-tree  @bkbd{C-c C-@@}
 Mail outline tree rooted at CELL-REF.  Use "0" for whole outline buffer.
 
 @findex kotl-mode:move-after
