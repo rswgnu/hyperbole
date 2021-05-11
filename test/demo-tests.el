@@ -242,13 +242,17 @@
   "Hide org mode header."
   (with-temp-buffer
     (org-mode)
-    (insert "* 1\n** 2\n*** 3\n")
-    (goto-char 1)
-    (should (not (org-check-for-hidden 'headlines)))
-    (save-excursion
-      (action-key))
-    ;;; (org-hide-entry)
-    (should (org-check-for-hidden 'headlines))))
+    ;; Without this next let, default Org behavior may occur which
+    ;; inserts a new heading when org-meta-return is called rather
+    ;; than collapsing the existing tree of headings.
+    (let ((hsys-org-enable-smart-keys t))
+      (insert "* 1\n** 2\n*** 3\n")
+      (goto-char 1)
+      (should (not (org-check-for-hidden 'headlines)))
+      (save-excursion
+	(action-key))
+;;; (org-hide-entry)
+      (should (org-check-for-hidden 'headlines)))))
 
 ;; Manifest
 (ert-deftest demo-manifest-test ()

@@ -859,6 +859,7 @@ Return non-nil iff associated help documentation is found."
 		       (or action-key-depress-position assist-key-depress-position)))
 	 (mouse-drag-flag (hmouse-drag-p))
 	 (hkey-forms (if mouse-flag hmouse-alist hkey-alist))
+	 (hrule:action 'actype:identity)
 	 hkey-form pred-value call calls cmd-sym doc)
     (while (and (null pred-value) (setq hkey-form (car hkey-forms)))
       (or (setq pred-value (eval (car hkey-form)))

@@ -1,3 +1,20 @@
+2021-05-11  Bob Weiner  <rsw@gnu.org>
+
+* test/demo-tests.el (demo-org-hide-header-test): Force full
+    Smart Key functionality in Org mode to ensure test always
+    works correctly.
+
+* hmouse-drv.el (hkey-help): Set hrule:action to 'actype:identity
+    so potential default org-meta-return command does not trigger
+    when displaying help for a default Smart Key context.
+
+* hsys-org.el (require 'set): Add explicitly since set:intersection
+    is used in this library.
+              (hsys-org-enable-smart-keys): Initialize to 'unset
+    and then set default value in hyperb:init so that needed
+    hyperbole-mode-map is initialized; otherwise, customizations
+    are loaded before Hyperbole is initialized.
+
 2021-05-10  Bob Weiner  <rsw@gnu.org>
 
 * kotl/kview.el (kcell-view:label): Remove unneeded properties

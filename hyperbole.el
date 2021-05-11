@@ -644,6 +644,14 @@ If FLAG is nil then text is shown, while if FLAG is t the text is hidden."
   ;; overriding Hyperbole keys.
   ;; (add-to-list 'emulation-mode-map-alists `((hyperbole-mode . ,hyperbole-mode-map)))
   ;;
+  ;; Initialize this option after hyperbole-mode-map has been
+  ;; initialized, if not yet set by the user.
+  (when (eq hsys-org-enable-smart-keys 'unset)
+    (customize-set-variable 'hsys-org-enable-smart-keys
+			    (if (hsys-org-meta-return-shared-p)
+				'buttons
+			      t)))
+  ;;
   ;; Hyperbole initialization is complete.
   (message "Initializing Hyperbole...done"))
 
