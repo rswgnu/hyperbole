@@ -31,6 +31,8 @@
 (require 'hbut)
 (require 'org)
 (require 'org-element)
+;; Avoid any potential library name conflict by giving the load directory.
+(require 'set (expand-file-name "set" hyperb:dir))
 
 ;;;###autoload
 (defun hsys-org-meta-return-shared-p ()
@@ -43,10 +45,11 @@
       t)))
 
 ;;;###autoload
-(defcustom hsys-org-enable-smart-keys (if (hsys-org-meta-return-shared-p)
-					  'buttons
-					t)
+(defcustom hsys-org-enable-smart-keys 'unset
   "This option applies only in Org major/minor modes when hyperbole-mode is active.
+If set to 'unset prior to loading Hyperbole, then Hyperbole
+initialization will set its value.
+
 The following table shows what the Smart Keys do in various contexts
 with different settings of this option.  For example, a nil value makes
 {M-RET} operate as it normally does within Org mode contexts.
