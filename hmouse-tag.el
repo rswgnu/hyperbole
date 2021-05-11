@@ -131,8 +131,8 @@ Keyword matched is grouping 1.  Referent is grouping 2.")
 ;;; ************************************************************************
 ;;; Public declarations
 ;;; ************************************************************************
-(declare-function br-edit "ext:oobr")
-(declare-function br-edit-feature "ext:oobr")
+(declare-function br-edit "ext:br")
+(declare-function br-edit-feature "ext:br-ftr")
 
 ;;; ************************************************************************
 ;;; Public functions

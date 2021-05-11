@@ -45,7 +45,7 @@
   (require 'hmouse-tag))
 (require 'hsys-org)
 
-(require 'tar-mode)
+(eval-when-compile (require 'tar-mode))
 
 ;;; ************************************************************************
 ;;; Public variables
