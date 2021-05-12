@@ -258,22 +258,23 @@ If the hbdata buffer is blank/empty, kill it and remove the associated file."
 	     (kill))
 	 (beginning-of-line)
 	 (hbdata:delete-entry-at-point)
-	 (if (looking-at empty-file-entry)
-	     (let ((end (point))
-		   (empty-hbdata-file "[ \t\n\r]*\\'"))
-	       (forward-line -1)
-	       (if (eq (following-char) ?\")
-		   ;; Last button entry for filename, so del filename.
-		   (progn (forward-line -1) (delete-region (point) end)))
-	       (save-excursion
-		 (goto-char (point-min))
-		 (if (looking-at empty-hbdata-file)
-		     (setq kill t)))
-	       (if kill
-		   (let ((fname buffer-file-name))
-		     (erase-buffer) (save-buffer) (kill-buffer nil)
-		     (hbmap:dir-remove (file-name-directory fname))
-		     (delete-file fname))))))))
+	 (when (looking-at empty-file-entry)
+	   (let ((end (point))
+		 (empty-hbdata-file "[ \t\n\r]*\\'"))
+	     (forward-line -1)
+	     (when (eq (following-char) ?\")
+		 ;; Last button entry for filename, so del filename.
+		 (forward-line -1)
+		 (delete-region (point) end))
+	     (save-excursion
+	       (goto-char (point-min))
+	       (when (looking-at empty-hbdata-file)
+		 (setq kill t)))
+	     (when kill
+	       (let ((fname buffer-file-name))
+		 (erase-buffer) (save-buffer) (kill-buffer nil)
+		 (hbmap:dir-remove (file-name-directory fname))
+		 (delete-file fname))))))))
    lbl-key key-src directory))
 
 (defun hbdata:delete-entry-at-point ()
@@ -294,10 +295,9 @@ but-key."
 	  but-key key-src directory 'create instance)))
     (hbdata:to-entry-buf key-src directory)
     (forward-line 1)
-    (if pos-entry-cons
-	(progn
-	  (goto-char (car pos-entry-cons))
-	  (cdr pos-entry-cons)))))
+    (when pos-entry-cons
+      (goto-char (car pos-entry-cons))
+      (cdr pos-entry-cons))))
 
 ;;; ************************************************************************
 ;;; Private functions

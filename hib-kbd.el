@@ -11,17 +11,21 @@
 ;;
 ;;; Commentary:
 ;;
-;;   A press of the Action Key on any sequence of keys delimited by braces
-;;   executes its command binding or Hyperbole minibuffer menu binding.
+;;   A press of the Action Key on any series of key sequences delimited by
+;;   curly braces executes all of the associated commands.  Key sequences
+;;   can include Hyperbole minibuffer menu sequences.
 ;;
-;;   A press of the Assist Key on any sequence of keys delimited by braces
-;;   displays the documentation for it.
+;;   A press of the Assist Key on any series of key sequences delimited by
+;;   curly braces displays the documentation for it.
 ;;
 ;;   Sequences of keys should be in human readable string form with spaces
 ;;   between each key, may contain any number of individual key sequences
 ;;   and the whole thing should be delimited by braces, e.g. {M-x apropos
 ;;   RET hyperbole RET}.  Forms such as {\C-b}, {\^b}, and {^b} will not be
 ;;   recognized.
+;;
+;;   Programmatically, to execute a key series given as a string, use:
+;;   (kbd-key:execute "{key series}").
 
 ;;; Code:
 ;;; ************************************************************************
@@ -64,7 +68,7 @@ Each key sequence within KEY-SERIES must be a string of one of the following:
   or a valid key sequence together with its interactive arguments.
 
 Return t if the sequence appears to be valid, else nil."
-  (interactive "kKey sequence to execute (no {}): ")
+  (interactive "sKey series to execute (no {}): ")
   (kbd-key:act key-series))
 
 (defib kbd-key ()
@@ -124,9 +128,9 @@ Any key sequence must be a string of one of the following:
 ;;; ************************************************************************
 
 (defun kbd-key:act (key-series)
-  "Execute the command binding for normalized KEY-SERIES.
-Returns t if KEY-SERIES has a binding, else nil."
-  (interactive "kKeyboard key to execute (no {}): ")
+  "Execute the normalized KEY-SERIES.
+Return t if KEY-SERIES appears valid, else nil."
+  (interactive "sKey series to execute (no {}): ")
   (setq current-prefix-arg nil) ;; Execution of the key-series may set it.
   (let ((binding (kbd-key:binding key-series)))
     (cond ((null binding)
@@ -138,6 +142,14 @@ Returns t if KEY-SERIES has a binding, else nil."
 	   (message "(kbd-key:act): This key does what the Action Key does.")
 	   t)
 	  (t (call-interactively binding) t))))
+
+(defun kbd-key:execute (key-series)
+   "Execute a possibly non-normalized KEY-SERIES with or without curly brace delimiters.
+Return t if KEY-SERIES is a valid key series that is executed, else nil."
+  (interactive "sKey series to execute: ")
+  (when (and key-series
+	     (setq key-series (kbd-key:is-p key-series)))
+    (hact #'kbd-key:act key-series)))
 
 (defun kbd-key:execute-special-series (key-series)
   "Execute key series."

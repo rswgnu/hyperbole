@@ -314,7 +314,8 @@ button is found in the current buffer."
 	 (lbl-regexp (ebut:label-regexp lbl-key))
 	 (modify new-label)
 	 (instance-flag))
-    (or new-label (setq new-label curr-label))
+    (unless new-label
+      (setq new-label curr-label))
     (hattr:set 'hbut:current 'lbl-key (ebut:label-to-key new-label))
     (save-excursion
       (when (setq instance-flag
@@ -341,47 +342,47 @@ button is found in the current buffer."
 			 instance-flag))
 		      lbl-regexp 'include-delims))
 		    (at-but)
-		    ((hypb:error "(ebut:operate): No button matching: %s" curr-label))))
+		    ((hypb:error "(ebut:operate): No button matching: %s" curr-label)))))
 
-	    ;; Add a new button recording its start and end positions
-	    (let (start end mark prev-point buf-lbl)
-	      (cond ((not curr-label)
-		     (setq start (point))
-		     (insert new-label)
-		     (setq end (point)))
-		    ((and (hmouse-use-region-p)
-			  (if (hyperb:stack-frame
-			       '(hui:ebut-create hui:ebut-edit
-						 hui:ebut-modify hui:gbut-create
-                       				 hui:gbut-modify hui:link-create ebut:program))
-			      ;; Ignore action-key-depress-prev-point
-			      (progn (setq mark (marker-position (hypb:mark-marker t))
-					   start (region-beginning)
-					   end (region-end)
-					   buf-lbl (buffer-substring start end))
-				     (equal buf-lbl curr-label))
-			    ;; Utilize any action-key-depress-prev-point
-			    (progn (setq mark (marker-position (hypb:mark-marker t)))
-				   (setq prev-point (and action-key-depress-prev-point
-							 (marker-position action-key-depress-prev-point)))
-				   (setq start (if (and prev-point mark (<= prev-point mark))
-						   prev-point
-						 (region-beginning))
-					 end (if (and prev-point mark (> prev-point mark))
+	  ;; Add a new button recording its start and end positions
+	  (let (start end mark prev-point buf-lbl)
+	    (cond ((not curr-label)
+		   (setq start (point))
+		   (insert new-label)
+		   (setq end (point)))
+		  ((and (hmouse-use-region-p)
+			(if (hyperb:stack-frame
+			     '(hui:ebut-create hui:ebut-edit
+					       hui:ebut-modify hui:gbut-create
+                       			       hui:gbut-modify hui:link-create ebut:program))
+			    ;; Ignore action-key-depress-prev-point
+			    (progn (setq mark (marker-position (hypb:mark-marker t))
+					 start (region-beginning)
+					 end (region-end)
+					 buf-lbl (buffer-substring-no-properties start end))
+				   (equal buf-lbl curr-label))
+			  ;; Utilize any action-key-depress-prev-point
+			  (progn (setq mark (marker-position (hypb:mark-marker t)))
+				 (setq prev-point (and action-key-depress-prev-point
+						       (marker-position action-key-depress-prev-point)))
+				 (setq start (if (and prev-point mark (<= prev-point mark))
 						 prev-point
-					       (region-end))
-					 buf-lbl (buffer-substring start end))
-				   (equal buf-lbl curr-label))))
-		     nil)
-		    ((progn (when start (goto-char start))
-			    (looking-at (regexp-quote curr-label)))
-		     (setq start (point)
-			   end (match-end 0)))
-		    (t (setq start (point))
-		       (insert curr-label)
-		       (setq end (point))))
-	      (ebut:delimit start end instance-flag)
-	      (goto-char start)))
+					       (region-beginning))
+				       end (if (and prev-point mark (> prev-point mark))
+					       prev-point
+					     (region-end))
+				       buf-lbl (buffer-substring-no-properties start end))
+				 (equal buf-lbl curr-label))))
+		   nil)
+		  ((progn (when start (goto-char start))
+			  (looking-at (regexp-quote curr-label)))
+		   (setq start (point)
+			 end (match-end 0)))
+		  (t (setq start (point))
+		     (insert curr-label)
+		     (setq end (point))))
+	    (ebut:delimit start end instance-flag)
+	    (goto-char start))
 
 	  ;; Append any instance-flag string to the button label
 	  (when (stringp instance-flag)

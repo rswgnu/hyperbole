@@ -83,8 +83,7 @@ It provides the following keys:
   ;;
   ;; Prevent insertion of characters outside of editable bounds,
   ;; e.g. after the mouse sets point to a non-editable position
-  ;; !! TODO: This was causing kotl-mode:demote-tree (and promote) to fail
-  ;; (add-hook 'pre-command-hook #'kotl-mode:pre-self-insert-command)
+  (add-hook 'pre-command-hook #'kotl-mode:pre-self-insert-command)
   ;;
   ;; Ensure that outline structure data is saved when save-buffer is called
   ;; from save-some-buffers, {C-x s}.
@@ -2911,23 +2910,26 @@ newlines at end of tree."
   "If within a Koutline, prior to inserting a character, ensure point is in an editable position.
 Mouse may have moved point outside of an editable area. kotl-mode adds
 this function to `pre-command-hook'."
-  (when (and (eq this-command 'self-insert-command)
-	     (called-interactively-p 'interactive)
+  (when (and (memq this-command '(self-insert-command orgtbl-self-insert-command))
 	     (eq major-mode 'kotl-mode)
 	     (not (kview:valid-position-p))
 	     ;; Prevent repeatedly moving point to valid position when moving trees
 	     (not (hyperb:stack-frame '(kcell-view:to-label-end))))
-    (let ((start (kcell-view:start))
-	  (end (kcell-view:end-contents)))
-      (cond ((and (<= start (point)) (<= (point) end))
-	     ;; in-between paragraph breaks within a single cell
-	     (move-to-column (kcell-view:indent nil label-sep-len)))
-	    ((< (- (point) (or (kview:label-separator-length kview) 1))
-		(kcell-view:to-visible-label-end))
-	     ;; Skip past cell label
-	     (goto-char (kcell-view:start)))
-	    ;; Move to cell end
-	    (t (goto-char (kcell-view:end-contents)))))))
+    (when (not (kview:valid-position-p))
+      (kotl-mode:to-valid-position))
+    ;; !! TODO: Delete this commented code if no other issues found.
+    ;; (let ((start (kcell-view:start))
+    ;; 	  (end (kcell-view:end-contents)))
+    ;;   (cond ((and (<= start (point)) (<= (point) end))
+    ;; 	     ;; in-between paragraph breaks within a single cell
+    ;; 	     (move-to-column (kcell-view:indent nil label-sep-len)))
+    ;; 	    ((< (- (point) (or (kview:label-separator-length kview) 1))
+    ;; 		(kcell-view:to-visible-label-end))
+    ;; 	     ;; Skip past cell label
+    ;; 	     (goto-char (kcell-view:start)))
+    ;; 	    ;; Move to cell end
+    ;;      (t (goto-char (kcell-view:end-contents)))))
+    ))
 
 (defun kotl-mode:print-attributes (kview)
   "Print to the `standard-output' stream the attributes of the current visible kcell.

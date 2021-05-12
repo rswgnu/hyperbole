@@ -7585,9 +7585,9 @@ bindings that hide global Hyperbole keys.
 @cindex minibuffer menu bindings
 @findex hyperbole-set-key
 Use @bkbd{M-x hyperbole-set-key @key{RET}} to bind any global key to
-any Hyperbole minibuffer item.  This command will first prompt for the
+any Hyperbole minibuffer menu item.  This command will first prompt for the
 key sequence you want to use to activate the menu item.  Immediately
-after it will display the Hyperbole top-level minibuffer menu.  Simply
+after, it will display the Hyperbole top-level minibuffer menu.  Simply
 select the item you want to bind to your key.
 
 @node Default Hyperbole Bindings,  , Binding Minibuffer Menu Items, Hyperbole Key Bindings

@@ -1,5 +1,28 @@
 2021-05-11  Bob Weiner  <rsw@gnu.org>
 
+* kotl/kotl-mode.el (kotl-mode:pre-self-insert-command):
+  kotl/kview.el (kcell-view:previous-kcell): Force to valid
+    position before moving.  This fixes promotion/demotion bug.
+
+* hib-kbd.el (kbd-key, kbd-key:act): Interactively
+   allow for a key series, not just a single bound
+   key sequence.
+             (kbd-key:execute): Add to programmatically
+   or interactively execute a non-normalized key sequence
+   stored in a string.  Also, improve library commentary
+   and mention this new command.
+
+* hbut.el (ebut:operate): Fix error that could fail to
+    delimit a new ebut.
+
+* hbdata.el (hbdata:delete-entry, hbdata:to-entry): Change
+    partial 'if' to 'when'.
+
+* hui.el (hui:ebut-unmark): Document prefix arg and handle
+    null but-key argument utilizing button at point, if any.
+    Also, fix removal of any single digit instance string
+    in button text.  Clarify let var naming and usage.
+
 * test/demo-tests.el (demo-org-hide-header-test): Force full
     Smart Key functionality in Org mode to ensure test always
     works correctly.

@@ -1212,6 +1212,8 @@ unless no next cell."
   "Move to the point holding the kcell property within the previous cell of the current kview.
 With optional VISIBLE-P, consider only visible cells.  Return t
 unless no previous cell."
+  (when (not (kview:valid-position-p))
+    (kotl-mode:to-valid-position t))
   (let* ((opoint (point))
 	 (pos opoint))
     (when (kview:valid-position-p)

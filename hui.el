@@ -918,14 +918,15 @@ within."
 	      (ebut:delete ebut)
 	    (hypb:error "(ebut-delete): No valid %s button in %s"
 		   (ebut:key-to-label but-key) buf)))
-	(progn (set-buffer buf)
-	       (if interactive
-		   (progn
-		     (call-interactively 'hui:ebut-unmark)
-		     (message "Button deleted."))
-		 (hui:ebut-unmark but-key key-src))
-	       (when (hmail:reader-p) (hmail:msg-narrow))
-	       (message "Button '%s' deleted." (ebut:key-to-label but-key)))
+	(with-current-buffer buf
+	  (if interactive
+	      (progn
+		(call-interactively 'hui:ebut-unmark)
+		(message "Button deleted."))
+	    (hui:ebut-unmark but-key key-src))
+	  (when (hmail:reader-p)
+	    (hmail:msg-narrow))
+	  (message "Button '%s' deleted." (ebut:key-to-label but-key)))
       (hypb:error "(ebut-delete): You may not delete buttons from this buffer"))))
 
 (defun hui:ebut-delimit (start end instance-str)
@@ -943,49 +944,63 @@ within."
 	     (cons actype args))))
 
 (defun hui:ebut-unmark (&optional but-key key-src directory)
-  "Remove delimiters from button given by BUT-KEY in KEY-SRC of DIRECTORY.
-All args are optional, the current button and buffer file are the defaults."
+  "Remove delimiters and any instance number from button given by BUT-KEY in KEY-SRC of DIRECTORY.
+All args are optional, the current button and buffer file are the defaults.
+
+With a prefix argument, also delete the button text between the delimiters."
   (interactive)
   (let ((form (lambda ()
-		(let ((buffer-read-only) start end)
-		  (setq start (match-beginning 0)
-			end (match-end 0))
+		(let ((buffer-read-only) start-delim-pos end-delim-pos text-end)
+		  (setq start-delim-pos (match-beginning 0)
+			end-delim-pos (match-end 0))
 		  (when (fboundp 'hproperty:but-delete)
-		    (hproperty:but-delete start))
+		    (hproperty:but-delete start-delim-pos))
+		  (goto-char (- (point) (length ebut:end)))
 		  (skip-chars-backward " \t\n\r")
-		  (skip-chars-backward "0-9")
-		  (when (eq (preceding-char) (string-to-char ebut:instance-sep))
-		    (setq start (1- (point))))
+		  (setq text-end (point))
+		  ;; Limit instance number removal to single digit 2-9
+		  ;; in case button text contains a colon-separated
+		  ;; number that is part of the text and  should not
+		  ;; be removed.
+		  (skip-chars-backward "2-9")
+		  (skip-chars-backward ebut:instance-sep)
+		  (when (looking-at (concat (regexp-quote ebut:instance-sep)
+					    "[2-9]"
+					    (regexp-quote ebut:end)))
+		    (setq text-end (point)))
 		  (when (search-backward ebut:start (- (point) (hbut:max-len)) t)
 		    (if current-prefix-arg
-			;; Remove button label, delimiters and preceding
-			;; space, if any.
+			;; Remove button text, delimiters and preceding space, if any.
 			(delete-region (max (point-min)
 					    (1- (match-beginning 0)))
-				       end)
+				       end-delim-pos)
 		      ;;
 		      ;; Remove button delimiters only.
 		      ;;
 		      ;; Remove button ending delimiter
-		      (delete-region start end)
+		      (delete-region text-end end-delim-pos)
 		      ;; Remove button starting delimiter
 		      (delete-region (match-beginning 0) (match-end 0))))))))
     (if (called-interactively-p 'interactive)
 	(save-excursion
 	  (when (search-forward ebut:end nil t) (funcall form)))
       ;; Non-interactive invocation.
-      (let ((cur-p))
+      (let (cur-flag)
 	(if (and (or (null key-src) (eq key-src buffer-file-name))
 		 (or (null directory) (eq directory default-directory)))
-	    (setq cur-p t)
+	    (setq cur-flag t)
 	  (set-buffer (find-file-noselect (expand-file-name key-src directory))))
+	(unless (stringp but-key)
+	  (setq but-key (hbut:label-p))
+	  (unless (stringp but-key)
+	    (hypb:error "(ebut-unmark): No Hyperbole button at point to unmark")))
 	(save-excursion
 	  (goto-char (point-min))
 	  (when (re-search-forward (ebut:label-regexp but-key) nil t)
 	    (funcall form)
-	    ;; If modified a buffer other than the current one,
-	    ;; save it.
-	    (or cur-p (save-buffer))))))))
+	    ;; If modified a buffer other than the current one, save it.
+	    (when cur-flag
+	      (save-buffer))))))))
 
 (defun hui:file-find (file-name)
   "If FILE-NAME is readable, find it, else signal an error."
