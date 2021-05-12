@@ -1,3 +1,38 @@
+2021-05-12  Mats Lidell  <matsl@gnu.org>
+
+* hui-treemacs.el (treemacs, treemacs-current-button)
+    (treemacs-current-visibility, treemacs-get-local-buffer)
+    (treemacs-is-treemacs-window?, treemacs-node-buffer-and-position)
+    (treemacs-quit, treemacs-toggle-node): Add external dependencies.
+
+* hui-dired-sidebar.el (dired-sidebar-toggle-sidebar): Add external dependency.
+
+* hui-mouse.el (todotxt-archive, todotxt-bury, todotxt-complete-toggle)
+    (todotxt-edit-item, magit-current-section, magit-diff-visit-file)
+    (magit-diff-visit-file--internal, magit-file-at-point)
+    (magit-section-cycle-diffs, magit-section-cycle-global)
+    (magit-section-hide, magit-section-show, -flatten)
+    (imenu--make-index-alist, image-dired-thumbnail-display-external)
+    (image-dired-display-thumbnail-original-image)
+    (image-dired-mouse-select-thumbnail, helm-action-window)
+    (helm-buffer-get, helm-get-selection, helm-mark-current-line)
+    (helm-next-line, helm-pos-candidate-separator-p)
+    (helm-pos-header-line-p, helm-resume, helm-window, with-helm-buffer)
+    (ibuffer-mark-for-delete, ibuffer-unmark-forward)
+    (ibuffer-unmark-all, ibuffer-do-view, ibuffer-mark-forward)
+    (ibuffer-do-kill-on-deletion-marks, ibuffer-get-marked-buffers)
+    (br-buffer-menu-select, ibuffer-current-buffer)
+    (gnus-topic-read-group): Add external dependencies.
+
+* hycontrol.el (ibuffer-get-marked-buffers)
+    (which-key--hide-popup-ignore-command): Add external dependencies.
+
+* hsettings.el (hproperty:cycle-but-color, hproperty:but-create): Add
+    declarations for hui-em-but functions.
+
+* hpath.el (br-quit, br-in-browser, br-to-view-window): Add external
+    dependencies.
+
 2021-05-11  Mats Lidell  <matsl@gnu.org>
 
 * hmouse-tag.el (br-edit, br-edit-feature): Add external dependencies.

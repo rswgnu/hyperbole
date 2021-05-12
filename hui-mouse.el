@@ -102,6 +102,57 @@ Its default value is #'smart-scroll-down.  To disable it, set it to
   :group 'hyperbole-keys)
 
 ;;; ************************************************************************
+;;; Public declarations
+;;; ************************************************************************
+
+(declare-function todotxt-archive "ext:todotxt")
+(declare-function todotxt-bury "ext:todotxt")
+(declare-function todotxt-complete-toggle "ext:todotxt")
+(declare-function todotxt-edit-item "ext:todotxt")
+
+(declare-function magit-current-section "magit-selection")
+(declare-function magit-diff-visit-file "etx:magit-diff")
+(declare-function magit-diff-visit-file--internal "etx:magit-diff")
+(declare-function magit-file-at-point "etx:magit-git")
+(declare-function magit-section-cycle-diffs "etx:magit-diff")
+(declare-function magit-section-cycle-global "etx:magit-selection")
+(declare-function magit-section-hide "etx:magit-selection")
+(declare-function magit-section-show "etx:magit-selection")
+
+(declare-function -flatten "ext:dash")
+
+(declare-function imenu--make-index-alist "imenu")
+
+(declare-function image-dired-thumbnail-display-external "image-dired")
+(declare-function image-dired-display-thumbnail-original-image "image-dired")
+(declare-function image-dired-mouse-select-thumbnail "image-dired")
+
+(declare-function helm-action-window "ext:helm-lib")
+(declare-function helm-buffer-get "ext:helm-lib")
+;; (declare-function helm-get-current-action "ext:helm-?")
+(declare-function helm-get-selection "ext:helm")
+(declare-function helm-mark-current-line "ext:helm")
+(declare-function helm-next-line "ext:helm")
+(declare-function helm-pos-candidate-separator-p "ext:helm")
+(declare-function helm-pos-header-line-p "ext:helm")
+(declare-function helm-resume "ext:helm")
+(declare-function helm-window "ext:helm-lib")
+(declare-function with-helm-buffer "ext:helm-lib")
+
+(declare-function ibuffer-mark-for-delete "ibuffer")
+(declare-function ibuffer-unmark-forward "ibuffer")
+(declare-function ibuffer-unmark-all "ibuffer")
+(declare-function ibuffer-do-view "ibuffer")
+(declare-function ibuffer-mark-forward "ibuffer")
+(declare-function ibuffer-do-kill-on-deletion-marks "ibuffer")
+(declare-function ibuffer-get-marked-buffers "ibuffer")
+(declare-function ibuffer-current-buffer "ibuffer")
+
+(declare-function br-buffer-menu-select "ext:br")
+
+(declare-function gnus-topic-read-group "gnus-topic")
+
+;;; ************************************************************************
 ;;; Hyperbole context-sensitive keys dispatch table
 ;;; ************************************************************************
 

@@ -22,6 +22,18 @@
   (error "(hui-treemacs): Hyperbole requires Treemacs package version 2.0 or greater"))
 
 ;;; ************************************************************************
+;;; Public declarations
+;;; ************************************************************************
+(declare-function treemacs "ext:treemacs")
+(declare-function treemacs-current-button "ext:treemacs-core-utils")
+(declare-function treemacs-current-visibility "ext:treemacs-scope")
+(declare-function treemacs-get-local-buffer "ext:treemacs-scope")
+(declare-function treemacs-is-treemacs-window? "ext:treemacs-core-utils")
+(declare-function treemacs-node-buffer-and-position "etx:treemacs-mouse-interface")
+(declare-function treemacs-quit "ext:treemacs-core-utils")
+(declare-function treemacs-toggle-node "ext:treemacs-interface")
+
+;;; ************************************************************************
 ;;; smart-treemacs functions
 ;;; ************************************************************************
 
