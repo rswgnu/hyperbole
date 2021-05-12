@@ -110,6 +110,17 @@ Default is nil."
 This permits the Smart Keys to behave as paste keys.")
 
 ;;; ************************************************************************
+;;; Public declarations
+;;; ************************************************************************
+(declare-function br-in-view-window-p "ext:br")
+(declare-function br-next-listing-window "ext:br")
+(declare-function br-to-view-window "ext:br")
+
+(declare-function ace-window "ext:ace-window")
+(declare-function ace-window-display-mode "ext:ace-window")
+(declare-function aw-select "ext:ace-window")
+
+;;; ************************************************************************
 ;;; Private variables
 ;;; ************************************************************************
 

@@ -79,6 +79,17 @@
 	   (push "oo-browser" debbugs-gnu-all-packages)))
 
 ;;; ************************************************************************
+;;; Public declarations
+;;; ************************************************************************
+
+(declare-function debbugs-get-status "ext:debbugs")
+(declare-function debbugs-gnu-bugs "ext:debbugs")
+(declare-function debbugs-gnu-current-id "ext:debbugs")
+(declare-function debbugs-gnu-select-report "ext:debbugs")
+(declare-function debbugs-gnu-show-reports "ext:debbugs")
+(defvar debbugs-gnu-current-query)
+
+;;; ************************************************************************
 ;;; Public implicit button types
 ;;; ************************************************************************
 

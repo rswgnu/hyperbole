@@ -1,3 +1,41 @@
+2021-05-11  Mats Lidell  <matsl@gnu.org>
+
+* hmouse-tag.el (br-edit, br-edit-feature): Add external dependencies.
+
+* hmouse-drv.el (br-in-view-window-p, br-next-listing-window)
+    (br-to-view-window, ace-window, ace-window-display-mode, aw-select):
+    Add external dependency.
+
+* hib-social.el (magit-status-setup-buffer): Add external dependency.
+
+* kotl/kimport.el (kotl-mode): Add require.
+
+* kotl/kexport.el (kview, kotl-mode, kimport): Add requires.
+
+* hui-mouse.el (tar-mode): Add require.
+
+* hpath.el (tramp): Require tramp
+
+* hibtypes.el: (markdown-footnote-goto-text)
+    (markdown-footnote-marker-positions, markdown-footnote-return)
+    (markdown-link-p, markdown-reference-goto-definition)
+    (markdown-reference-goto-link, markdown-wiki-link-p)
+    (markdown-footnote-text-positions):  Add exernal dependencies.
+
+* hib-kbd.el (helm-mode): Add exernal dependency.
+
+* hib-debbugs.el (debbugs-get-status, debbugs-gnu-bugs)
+    (debbugs-gnu-current-id, debbugs-gnu-select-report)
+    (debbugs-gnu-show-reports, debbugs-gnu-current-query):  Add external
+    dependencies.
+
+* hbdata.el (hgnus): Require hgnus
+
+* hargs.el (monkey-filename): Add external dependency to public
+    declarations
+
+* hactypes.el (bookmark): Require bookmark
+
 2021-05-11  Bob Weiner  <rsw@gnu.org>
 
 * kotl/kotl-mode.el (kotl-mode:pre-self-insert-command):

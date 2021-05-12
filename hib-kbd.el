@@ -35,6 +35,9 @@
 (require 'hactypes) ;; This invokes (require 'hargs)
 (require 'seq)
 
+;;; ************************************************************************
+;;; Public variables
+;;; ************************************************************************
 (defvar kbd-key:named-key-list
   '("add" "backspace" "begin" "bs" "clear" "decimal" "delete" "del"
     "divide" "down" "end" "enter" "esc" "home" "left" "insert"
@@ -54,6 +57,11 @@
 	  "\\|<?[fF][0-9][0-9]?>?\\|<[a-zA-Z0-9]+>\\|.\\)")
   "Regexp matching to a single modified keyboard key within a human-readable string.
 Group 1 matches to the set of modifier keys.  Group 3 matches to the unmodified key.")
+
+;;; ************************************************************************
+;;; Public declarations
+;;; ************************************************************************
+(declare-function helm-mode "ext:helm")
 
 ;;; ************************************************************************
 ;;; Public implicit button types

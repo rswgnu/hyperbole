@@ -18,6 +18,7 @@
 
 (require 'kfile)
 (require 'hyrolo)
+(require 'kotl-mode)
 
 ;;; ************************************************************************
 ;;; Public variables
