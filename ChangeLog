@@ -4,6 +4,10 @@
 
 2021-05-12  Mats Lidell  <matsl@gnu.org>
 
+* kotl/kotl-mode.el (kotl-mode:backward-paragraph): Remove XEmacs zmacs-region-stays.
+    (kotl-mode): Silence warning about unused filladapt-mode and supress
+    warning for free vars.
+
 * hui-treemacs.el (treemacs, treemacs-current-button)
     (treemacs-current-visibility, treemacs-get-local-buffer)
     (treemacs-is-treemacs-window?, treemacs-node-buffer-and-position)
@@ -203,7 +207,6 @@
   hmouse-drv.el (hkey-debug): Send all used vars as params to remove
     dynamic variable binding.
                 (hkey-execute): Update hkey-debug call.
-
 2021-05-05  Mats Lidell  <matsl@gnu.org>
 
 * hui-em-but.el (hproperty:but-flash-time): Mark hproperty:but-flash as obsolete.

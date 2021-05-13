@@ -74,7 +74,8 @@ It provides the following keys:
   (set-syntax-table text-mode-syntax-table)
   ;; Turn off filladapt minor mode if on, so that it does not interfere with
   ;; the filling code in "kfill.el".
-  (and (fboundp 'filladapt-mode) filladapt-mode (filladapt-mode 0))
+  (when (and (fboundp 'filladapt-mode) (boundp 'filladapt-mode) filladapt-mode)
+    (filladapt-mode 0))
   (if (/= 3 (length (action:params (symbol-function 'fill-paragraph))))
       ;; Some package such as filladapt has overwritten the primitives
       ;; defined in kfill.el, so reload it.
@@ -162,7 +163,8 @@ It provides the following keys:
   ;; We have been converting a buffer from a foreign format to a koutline.
   ;; Now that it is converted, ensure that `kotl-previous-mode' is set to
   ;; koutline.
-  (setq kotl-previous-mode 'kotl-mode)
+  (with-suppressed-warnings ((free-vars kotl-previous-mode))
+    (setq kotl-previous-mode 'kotl-mode))
   ;; Enable Org Table editing minor mode (user can disable via kotl-mode-hook
   ;; if desired).
   (orgtbl-mode 1)
@@ -1362,8 +1364,7 @@ paragraph-separating line.
 
 See `forward-paragraph' for more information."
   (interactive "p")
-  (setq arg (prefix-numeric-value arg)
-	zmacs-region-stays t);; Maintain region highlight for XEmacs.
+  (setq arg (prefix-numeric-value arg))
   (kotl-mode:forward-paragraph (- arg)))
 
 (defalias 'kotl-mode:backward-para 'kotl-mode:backward-paragraph)
@@ -1609,8 +1610,7 @@ A line which `paragraph-start' matches either separates paragraphs
 A paragraph end is one character before the beginning of a line which is not
 part of the paragraph, or the end of the buffer."
   (interactive "p")
-  (setq arg (prefix-numeric-value arg)
-	zmacs-region-stays t);; Maintain region highlight for XEmacs.
+  (setq arg (prefix-numeric-value arg))
   (if (< arg 0)
       (progn
 	(if (kotl-mode:bocp) (setq arg (1- arg)))
@@ -3069,9 +3069,7 @@ Leave point at end of line now residing at START."
 	nil)))
 
 (defun kotl-mode:maintain-region-highlight ()
-  (setq zmacs-region-stays t) ;; Maintain region highlight for XEmacs.
-  (setq transient-mark-mode t) ;; For GNU Emacs
-  )
+  (setq transient-mark-mode t))
 
 ;;; ------------------------------------------------------------------------
 
