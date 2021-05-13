@@ -96,6 +96,13 @@ column number.  Allow for 'c:' single letter drive prefixes on
 MSWindows and Elisp vars with colons in them.")
 
 ;;; ************************************************************************
+;;; Public Declarations
+;;; ************************************************************************
+(declare-function br-quit "ext:br")
+(declare-function br-in-browser "ext:br")
+(declare-function br-to-view-window "ext:br")
+
+;;; ************************************************************************
 ;;; MS WINDOWS PATH CONVERSIONS
 ;;; ************************************************************************
 

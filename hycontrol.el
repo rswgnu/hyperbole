@@ -424,6 +424,11 @@ The final predicate should always be t, for default values, typically of zero.")
     map)
   "Keymap to use when in Hyperbole HyControl window mode.")
 
+;;; ************************************************************************
+;;; Public declarations
+;;; ************************************************************************
+(declare-function ibuffer-get-marked-buffers "ibuffer")
+(declare-function which-key--hide-popup-ignore-command "ext:which-key")
 
 ;;; ************************************************************************
 ;;; Private variables

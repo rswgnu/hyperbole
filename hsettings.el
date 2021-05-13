@@ -26,6 +26,12 @@
 (require 'hversion)
 (require 'hvar)
 
+;;; ************************************************************************
+;;; Public declarations
+;;; ************************************************************************
+(declare-function hproperty:cycle-but-color "hui-em-but")
+(declare-function hproperty:but-create "hui-em-but")
+
 ;;; Read the comments and modify as desired.
 
 ;;; ************************************************************************

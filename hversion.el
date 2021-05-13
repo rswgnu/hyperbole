@@ -51,6 +51,11 @@ Override this if the system-computed default is incorrect for your specific mous
     "Regexp to match any automounter prefix in a pathname."))
 
 ;;; ************************************************************************
+;;; Public declarations
+;;; ************************************************************************
+(declare-function br-to-view-window "ext:br")
+
+;;; ************************************************************************
 ;;; Support functions
 ;;; ************************************************************************
 
