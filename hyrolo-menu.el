@@ -116,8 +116,11 @@
 ;;; This definition is used only by Emacs.
 (defun hyrolo-menubar-menu ()
   "Add a HyRolo menu to the rolo match buffer menubar."
-  (define-key hyrolo-mode-map [C-down-mouse-3] 'hyrolo-popup-menu)
-  (define-key hyrolo-mode-map [C-mouse-3] nil)
+  (cond ((fboundp 'popup-mode-menu)
+	 (setq mode-popup-menu id-popup-hyrolo-menu))
+	(t
+	 (define-key hyrolo-mode-map [C-down-mouse-3] 'hyrolo-popup-menu)
+	 (define-key hyrolo-mode-map [C-mouse-3] nil)))
   (unless (global-key-binding [menu-bar Rolo])
     (easy-menu-define nil hyrolo-mode-map "Rolo Menubar Menu" id-popup-hyrolo-menu)
     ;; Force a menu-bar update.

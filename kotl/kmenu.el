@@ -191,8 +191,11 @@
 ;;; This definition is used only by XEmacs and Emacs.
 (defun kotl-menubar-menu ()
   "Add a Koutline menu to the menubar for each koutline buffer."
-  (define-key kotl-mode-map [C-down-mouse-3] 'kotl-popup-menu)
-  (define-key kotl-mode-map [C-mouse-3] nil)
+  (cond ((fboundp 'popup-mode-menu)
+	 (setq mode-popup-menu id-popup-kotl-menu))
+	(t
+	 (define-key kotl-mode-map [C-down-mouse-3] 'kotl-popup-menu)
+	 (define-key kotl-mode-map [C-mouse-3] nil)))
   (unless (global-key-binding [menu-bar Koutline])
     (easy-menu-define nil kotl-mode-map "Koutline Menubar Menu" id-popup-kotl-menu)
     ;; Force a menu-bar update.
