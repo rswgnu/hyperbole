@@ -84,6 +84,8 @@
 (declare-function markdown-reference-goto-link "ext:markdown")
 (declare-function markdown-wiki-link-p "ext:markdown")
 (declare-function markdown-footnote-text-positions "ext:markdown")
+(defvar markdown-regex-link-reference)
+(defvar markdown-regex-reference-definition)
 
 ;;; ************************************************************************
 ;;; Public implicit button types
