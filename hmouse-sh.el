@@ -21,6 +21,16 @@
 (require 'hvar)
 
 ;;; ************************************************************************
+;;; Public declarations
+;;; ************************************************************************
+(defvar br-env-spec)
+(defvar br-lang-prefix)
+(defvar company-active-map)
+(defvar java-class-def-name-grpn)
+(defvar java-class-def-regexp)
+(defvar jedi-mode)
+
+;;; ************************************************************************
 ;;; Public functions
 ;;; ************************************************************************
 

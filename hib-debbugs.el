@@ -88,6 +88,7 @@
 (declare-function debbugs-gnu-select-report "ext:debbugs")
 (declare-function debbugs-gnu-show-reports "ext:debbugs")
 (defvar debbugs-gnu-current-query)
+(defvar debbugs-port)
 
 ;;; ************************************************************************
 ;;; Public implicit button types

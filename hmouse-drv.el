@@ -120,6 +120,10 @@ This permits the Smart Keys to behave as paste keys.")
 (declare-function ace-window-display-mode "ext:ace-window")
 (declare-function aw-select "ext:ace-window")
 
+(defvar aw-dispatch-alist)
+(defvar aw-frame-size)
+(defvar aw-keys)
+
 ;;; ************************************************************************
 ;;; Private variables
 ;;; ************************************************************************
