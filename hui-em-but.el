@@ -290,8 +290,6 @@ highlighted."
 ;;; Private variables
 ;;; ************************************************************************
 
-(setq hproperty:but hproperty:but-face)
-
 (defvar hproperty:item-button nil
   "Button used to highlight an item in a listing buffer.")
 (make-variable-buffer-local 'hproperty:item-button)
