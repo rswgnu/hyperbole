@@ -179,7 +179,7 @@
 ;;; ************************************************************************
 
 (defcustom hibtypes-social-default-service "twitter"
-  "Lowercase string matching the name of the default social media service to use when none is specified."
+  "Lowercase string matching the social media service to use as a default."
   :type '(radio (const "facebook")
 		(const "git")
 		(const "github")
@@ -189,7 +189,7 @@
   :group 'hyperbole-button)
 
 (defcustom hibtypes-social-display-function #'browse-url
-  "Function of one argument, a url, to display when a social media reference is activated."
+  "Function of one arg, a url, to display upon activation of a social media reference."
   :type 'function
   :group 'hyperbole-button)
 

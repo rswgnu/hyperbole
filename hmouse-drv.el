@@ -730,7 +730,7 @@ hkey-swap and hkey-throw."
 		   until (and (mouse-event-p end-event)
 			      (not (string-match "\\`down-" (symbol-name (car end-event)))))
 		   finally return (posn-window (event-start end-event))))
-    (message "Done" func)
+    (message "Done")
     (with-selected-window start-window
       (funcall func end-window))))
 

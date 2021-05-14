@@ -358,7 +358,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</P>
 
 <PRE>
 Edition 8.0.0pre
-Printed May 9, 2021.
+Printed May 13, 2021.
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -3122,17 +3122,6 @@ begin with a word constituent character, and must not be in buffers
 whose names begin with a &lsquo; &rsquo; or &lsquo;*&rsquo; character.
 </p>
 
-<span id="index-ibtypes-function_002din_002dbuffer"></span>
-<span id="index-file_002c-func_002dmenu_002eel"></span>
-<span id="index-function-menu"></span>
-<span id="index-func_002dmenu"></span>
-</dd>
-<dt><code>function-in-buffer</code></dt>
-<dd><p>Return the function name defined within this buffer that point is
-within or after, else <code>nil</code>.  This triggers only when the
-func-menu library has been loaded and the current major mode is one
-handled by func-menu.
-</p>
 <span id="index-link_002c-pathname-line-and-column"></span>
 <span id="index-line-and-column"></span>
 <span id="index-pathname_002c-line-and-column"></span>
@@ -3408,11 +3397,6 @@ output to the shell buffer before executing SHELL-CMD.
 </dd>
 <dt><code>exec-window-cmd</code></dt>
 <dd><p>Asynchronously execute an external window-based SHELL-CMD string.
-</p>
-<span id="index-actypes-function_002din_002dbuffer"></span>
-</dd>
-<dt><code>function-in-buffer</code></dt>
-<dd><p>Display the definition of function NAME found at POS in the current buffer.
 </p>
 <span id="index-actypes-hyp_002dconfig"></span>
 </dd>
@@ -5391,7 +5375,7 @@ You can, however, copy an outline tree to a non-outline buffer with:
 <dd><p>Copy a &lt;tree&gt; to a non-koutline buffer.
 <span id="index-C_002dc-C_002d_0040"></span>
 </p></dd>
-<dt><kbd>{C-c C-@ }</kbd></dt>
+<dt><kbd>{C-c C-@}</kbd></dt>
 <dd><p>Copy a &lt;tree&gt; to an outgoing mail message.
 </p></dd>
 </dl>
@@ -8861,9 +8845,9 @@ Next: <a href="#Default-Hyperbole-Bindings" accesskey="n" rel="next">Default Hyp
 <span id="index-minibuffer-menu-bindings"></span>
 <span id="index-hyperbole_002dset_002dkey"></span>
 <p>Use <kbd>{M-x hyperbole-set-key <span class="key">RET</span>}</kbd> to bind any global key to
-any Hyperbole minibuffer item.  This command will first prompt for the
+any Hyperbole minibuffer menu item.  This command will first prompt for the
 key sequence you want to use to activate the menu item.  Immediately
-after it will display the Hyperbole top-level minibuffer menu.  Simply
+after, it will display the Hyperbole top-level minibuffer menu.  Simply
 select the item you want to bind to your key.
 </p>
 <hr>
@@ -12582,7 +12566,6 @@ Next: <a href="#Concept-Index" accesskey="n" rel="next">Concept Index</a>, Previ
 <tr><td></td><td valign="top"><a href="#index-actypes-exec_002dkbd_002dmacro"><code>actypes exec-kbd-macro</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Action-Types">Action Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-actypes-exec_002dshell_002dcmd"><code>actypes exec-shell-cmd</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Action-Types">Action Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-actypes-exec_002dwindow_002dcmd"><code>actypes exec-window-cmd</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Action-Types">Action Types</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-actypes-function_002din_002dbuffer"><code>actypes function-in-buffer</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Action-Types">Action Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-actypes-hyp_002dconfig"><code>actypes hyp-config</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Action-Types">Action Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-actypes-hyp_002drequest"><code>actypes hyp-request</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Action-Types">Action Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-actypes-hyp_002dsource"><code>actypes hyp-source</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Action-Types">Action Types</a></td></tr>
@@ -12673,7 +12656,6 @@ Next: <a href="#Concept-Index" accesskey="n" rel="next">Concept Index</a>, Previ
 <tr><td></td><td valign="top"><a href="#index-file_002c-DEMO-1">file, DEMO</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Hyperbole-Overview">Hyperbole Overview</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-file_002c-DIR">file, DIR</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-file_002c-EXAMPLE_002ekotl">file, EXAMPLE.kotl</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Koutliner">Koutliner</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-file_002c-func_002dmenu_002eel">file, func-menu.el</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-file_002c-hactypes_002eel">file, hactypes.el</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Creating-Types">Creating Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-file_002c-hactypes_002eel-1">file, hactypes.el</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Creating-Action-Types">Creating Action Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-file_002c-hbut_002eel">file, hbut.el</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Creating-Action-Types">Creating Action Types</a></td></tr>
@@ -12863,7 +12845,6 @@ Next: <a href="#Concept-Index" accesskey="n" rel="next">Concept Index</a>, Previ
 <tr><td></td><td valign="top"><a href="#index-ibtypes-elink"><code>ibtypes elink</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-ibtypes-elisp_002dcompiler_002dmsg"><code>ibtypes elisp-compiler-msg</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-ibtypes-etags"><code>ibtypes etags</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-ibtypes-function_002din_002dbuffer"><code>ibtypes function-in-buffer</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-ibtypes-git_002dcommit_002dreference"><code>ibtypes git-commit-reference</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-ibtypes-git_002dreference"><code>ibtypes git-reference</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-ibtypes-github_002dreference"><code>ibtypes github-reference</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
@@ -13556,10 +13537,8 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function</a>, Up: <a href
 <tr><td></td><td valign="top"><a href="#index-frames-control">frames control</a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyControl">HyControl</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-ftp">ftp</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-ftp-1">ftp</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-func_002dmenu">func-menu</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-function">function</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Thing-Selection">Thing Selection</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-function-1">function</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Key-_002d-Delimited-Things">Smart Key - Delimited Things</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-function-menu">function menu</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-functon-call-implicit-button">functon call implicit button</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
 <tr><td colspan="4"> <hr></td></tr>
 <tr><th id="Concept-Index_cp_letter-G">G</th><td></td><td></td></tr>

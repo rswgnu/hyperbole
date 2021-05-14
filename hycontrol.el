@@ -482,6 +482,7 @@ associated key: quit {q}, abort {C-g}, or toggle {t}.")
 
 (defvar hycontrol--frame-widths-pointer nil)
 (defvar hycontrol--frame-heights-pointer nil)
+(defvar hycontrol--buffer-list nil)
 (defvar hycontrol--buffer-list-pointer nil)
 
 (defvar hycontrol--initial-which-key-inhibit nil
@@ -779,7 +780,7 @@ multiple of the default frame font width."
 
 (defun hycontrol-window-display-buffer (window)
   "Given a WINDOW, choose the next appropriate buffer to display therein using `hycontrol-display-buffer-predicate-list'.
-Also uses the value of free variable `buffer-list' as the list of
+Also uses the value of`hycontrol--buffer-list' as the list of
 buffers to distribute among the windows."
   (let ((buf (car hycontrol--buffer-list-pointer)))
     (setq hycontrol--buffer-list-pointer (cdr hycontrol--buffer-list-pointer))
@@ -787,7 +788,7 @@ buffers to distribute among the windows."
       ;; Now on each new pass through buffer-list, the buffer predicate tests will
       ;; be inverted to expand the list of allowed buffers because the
       ;; 1st pass did not produce a buffer for this window.
-      (setq hycontrol--buffer-list-pointer buffer-list
+      (setq hycontrol--buffer-list-pointer hycontrol--buffer-list
 	    buf (car hycontrol--buffer-list-pointer)
 	    hycontrol--buffer-list-pointer (cdr hycontrol--buffer-list-pointer))
       (unless (eq hycontrol--invert-display-buffer-predicates 'ignore)
@@ -882,7 +883,8 @@ instead of quitting HyControl."
 
 ;;;###autoload
 (define-global-minor-mode hycontrol-frames-mode hycontrol-local-frames-mode
-  (lambda () (hycontrol-local-frames-mode 1)))
+  (lambda () (hycontrol-local-frames-mode 1))
+  :group 'hyperbole-screen)
 
 ;; These hooks run by the generated `hycontrol-frames-mode' function
 ;; do the global work of turning on and off the mode.
@@ -1547,9 +1549,9 @@ See documentation of `hycontrol-windows-grid' for further details."
 	       ;; the predicate tests.  Always ignore buffers that
 	       ;; start with a space.  With each succeeding pass, the
 	       ;; predicate list is inverted again.
-	       (let ((buffer-list (hycontrol-windows-grid-buffer-list)))
-		 (setq hycontrol--buffer-list-pointer buffer-list)
-  		 (walk-windows #'hycontrol-window-display-buffer 'no-minibuf))
+	       (setq hycontrol--buffer-list (hycontrol-windows-grid-buffer-list)
+		     hycontrol--buffer-list-pointer hycontrol--buffer-list)
+  	       (walk-windows #'hycontrol-window-display-buffer 'no-minibuf)
 
 	       ;; Prevent user from mistakenly using the typically
 	       ;; large argument that invoked this function; reset it

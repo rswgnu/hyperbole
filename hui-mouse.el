@@ -354,10 +354,6 @@ Its default value is #'smart-scroll-down.  To disable it, set it to
      . ((smart-imenu-display-item-where (car hkey-value) (cdr hkey-value)) .
 	(imenu-choose-buffer-index)))
     ;;
-    ;; Function menu listing mode in XEmacs
-    ((eq major-mode 'fume-list-mode) .
-     ((fume-list-mouse-select current-mouse-event) . (fume-prompt-function-goto)))
-    ;;
     ((and (eq major-mode 'c-mode)
 	  buffer-file-name (smart-c-at-tag-p)) .
 	  ((smart-c) . (smart-c nil 'next-tag)))
@@ -694,8 +690,8 @@ If key is pressed:
  (3) if a mouse event on a widget, activate the widget or display a menu;
  (4) anywhere else, execute the command bound to {RETURN}."
   (interactive)
-  (cond ((last-line-p) (Custom-buffer-done)
-	((eolp) (smart-scroll-up)))
+  (cond ((last-line-p) (Custom-buffer-done))
+	((eolp) (smart-scroll-up))
 	((mouse-event-p last-command-event)
 	 (widget-button-click action-key-release-args))
 	 ;; Handle widgets in Custom-mode
@@ -715,8 +711,8 @@ If key is pressed:
  (3) if a mouse event on a widget, activate the widget or display a menu;
  (4) anywhere else, execute the command bound to {RETURN}."
   (interactive)
-  (cond ((last-line-p) (Custom-buffer-done)
-	((eolp) (smart-scroll-down)))
+  (cond ((last-line-p) (Custom-buffer-done))
+	((eolp) (smart-scroll-down))
 	((mouse-event-p last-command-event)
 	 (widget-button-click action-key-release-args))
 	 ;; Handle widgets in Custom-mode
@@ -1654,13 +1650,13 @@ will simply invoke `org-meta-return'.
 Org links may be used outside of Org mode buffers.  Such links are
 handled by the separate implicit button type, `org-link-outside-org-mode'."
   (when (funcall hsys-org-mode-function)
-    (cond ((not hsys-org-enable-smart-keys)
-	   (when (hsys-org-meta-return-shared-p)
-	     (hact 'org-meta-return current-prefix-arg))
-	   ;; Ignore any further Smart Key non-Org contexts
-	   t)
-	  ((eq hsys-org-enable-smart-keys t)
-	   (let (start-end)
+    (let (start-end)
+      (cond ((not hsys-org-enable-smart-keys)
+	     (when (hsys-org-meta-return-shared-p)
+	       (hact 'org-meta-return current-prefix-arg))
+	     ;; Ignore any further Smart Key non-Org contexts
+	     t)
+	    ((eq hsys-org-enable-smart-keys t)
 	     (cond ((hsys-org-agenda-item-at-p)
 		    (if (not assist-flag)
 			(progn (hsys-org-set-ibut-label (cons (line-beginning-position) (line-end-position)))
@@ -1698,31 +1694,31 @@ handled by the separate implicit button type, `org-link-outside-org-mode'."
 		    t)
 		   (t
 		    ;; Continue with any further Smart Key non-Org contexts
-		    nil))))
-	  ((eq hsys-org-enable-smart-keys 'buttons)
-	   (cond ((hsys-org-radio-target-def-at-p)
-		  (hact 'org-radio-target)
-		  t)
-		 ((setq start-end (hsys-org-link-at-p))
-		  (if (not assist-flag)
-		      (progn (hsys-org-set-ibut-label start-end)
-			     (hact 'org-link))
-		    (hact 'hkey-help))
-		  t)
- 		 ((hbut:at-p)
-		  ;; Activate/Assist with any Hyperbole button at point
-		  (if (not assist-flag)
-		      (hact 'hbut:act)
-		    (hact 'hkey-help)))
-		 (t
-		  (when (hsys-org-meta-return-shared-p)
-		    (hact 'org-meta-return current-prefix-arg))
-		  ;; Ignore any further Smart Key non-Org contexts
-		  t)))
-	  (t
-	   ;; hsys-org-enable-smart-keys is set to t, so try other Smart
-	   ;; contexts
-	   nil))))
+		    nil)))
+	    ((eq hsys-org-enable-smart-keys 'buttons)
+	     (cond ((hsys-org-radio-target-def-at-p)
+		    (hact 'org-radio-target)
+		    t)
+		   ((setq start-end (hsys-org-link-at-p))
+		    (if (not assist-flag)
+			(progn (hsys-org-set-ibut-label start-end)
+			       (hact 'org-link))
+		      (hact 'hkey-help))
+		    t)
+ 		   ((hbut:at-p)
+		    ;; Activate/Assist with any Hyperbole button at point
+		    (if (not assist-flag)
+			(hact 'hbut:act)
+		      (hact 'hkey-help)))
+		   (t
+		    (when (hsys-org-meta-return-shared-p)
+		      (hact 'org-meta-return current-prefix-arg))
+		    ;; Ignore any further Smart Key non-Org contexts
+		    t)))
+	    (t
+	     ;; hsys-org-enable-smart-keys is set to t, so try other Smart
+	     ;; contexts
+	     nil)))))
 
 ;;; ************************************************************************
 ;;; smart-outline functions

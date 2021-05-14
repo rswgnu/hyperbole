@@ -55,11 +55,12 @@
 ;;; Public variables
 ;;; ************************************************************************
 
+(define-obsolete-variable-alias 'wconfig-ring-max 'hywconfig-ring-max "06.00")
 (defcustom hywconfig-ring-max 10
   "*Maximum length of Hyperbole window configuration ring before oldest elements are deleted."
   :type '(integer :match (lambda (_widget value) (and (integerp value) (> value 0))))
   :group 'hyperbole-screen)
-(define-obsolete-variable-alias 'wconfig-ring-max 'hywconfig-ring-max "06.00")
+
 
 ;;; ************************************************************************
 ;;; Public functions

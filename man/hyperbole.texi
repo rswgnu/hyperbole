@@ -155,7 +155,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</P>
 
 <PRE>
 Edition 8.0.0pre
-Printed May 9, 2021.
+Printed May 13, 2021.
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -197,7 +197,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 @example
 Edition 8.0.0pre
-May 9, 2021
+May 13, 2021
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -2524,16 +2524,6 @@ whose names begin with a ` ' or `*' character.
 @c Display the in-buffer definition of an identifier that point is within or after, else nil.
 @c This triggers only when imenu has already been used to generate an in-buffer item index.
 
-@findex ibtypes function-in-buffer
-@vindex file, func-menu.el
-@cindex function menu
-@cindex func-menu
-@item function-in-buffer
-Return the function name defined within this buffer that point is
-within or after, else @code{nil}.  This triggers only when the
-func-menu library has been loaded and the current major mode is one
-handled by func-menu.
-
 @cindex link, pathname line and column
 @cindex line and column
 @cindex pathname, line and column
@@ -2785,10 +2775,6 @@ output to the shell buffer before executing SHELL-CMD.
 @findex actypes exec-window-cmd
 @item exec-window-cmd
 Asynchronously execute an external window-based SHELL-CMD string.
-
-@findex actypes function-in-buffer
-@item function-in-buffer
-Display the definition of function NAME found at POS in the current buffer.
 
 @findex actypes hyp-config
 @item hyp-config

@@ -198,20 +198,6 @@ kill the last output to the shell buffer before executing SHELL-CMD."
 	(comint-send-input)))
     (message msg)))
 
-(defact function-in-buffer (name pos)
-  "Display the definition of function NAME found at POS in the current buffer."
-  (save-excursion
-    (goto-char pos)
-    (unless (looking-at (regexp-quote name))
-      (let ((fume-scanning-message nil))
-	(fume-rescan-buffer)
-	(setq pos (cdr-safe (assoc name fume-funclist))))))
-  (when pos
-    (hpath:display-buffer (current-buffer))
-    (goto-char pos)
-    ;; Move to beginning of the line for compatibility with find-tag.
-    (beginning-of-line)))
-
 (defact hyp-config (&optional out-buf)
   "Insert Hyperbole configuration information at the end of the current buffer or within optional OUT-BUF."
   (hypb:configuration out-buf))

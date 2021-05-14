@@ -293,47 +293,6 @@ handle any links they recognize first."
         (hact 'org-open-at-point-global)))))
 
 ;;; ========================================================================
-;;; Use the XEmacs func-menu library to jump to a function referred to
-;;; in the same file in which it is defined.  Function references
-;;; across files are handled separately by clauses within the
-;;; `hkey-alist' variable.
-;;; ========================================================================
-
-(defib function-in-buffer ()
-  "Display the in-buffer definition of a function name that point is within or after, else nil.
-Trigger only when the \"func-menu.el\" library has been loaded and the
-current major mode is one handled by func-menu."
-  (when (and (boundp 'fume-function-name-regexp-alist)
-             (assq major-mode fume-function-name-regexp-alist)
-             (not (derived-mode-p 'dired-mode))
-             ;; Not sure if this is defined in early versions of Emacs.
-             (fboundp 'skip-syntax-backward)
-             ;; Prevent triggering when on method, class or function definition
-             ;; lines under InfoDock where outlining in programming modes is used.
-             (if (and (featurep 'infodock)
-                      (boundp 'id-outline-in-programming-modes)
-                      id-outline-in-programming-modes
-                      (boundp 'outline-regexp) (stringp outline-regexp))
-                 (save-excursion (beginning-of-line)
-                                 (not (looking-at outline-regexp)))
-               t))
-    (save-excursion
-      (skip-syntax-backward "w_")
-      (when (looking-at "\\(\\sw\\|\\s_\\)+")
-        (let ((function-name (buffer-substring-no-properties (point) (match-end 0)))
-              (start (point))
-              (end (match-end 0))
-              function-pos)
-          (unless fume-funclist
-            (fume-set-defaults)
-            (let ((fume-scanning-message nil))
-              (fume-rescan-buffer)))
-          (setq function-pos (cdr-safe (assoc function-name fume-funclist)))
-          (when function-pos
-            (ibut:label-set function-name start end)
-            (hact 'function-in-buffer function-name function-pos)))))))
-
-;;; ========================================================================
 ;;; Handles internal references within an annotated bibliography, delimiters=[]
 ;;; ========================================================================
 
@@ -728,7 +687,7 @@ Requires the Emacs builtin Tramp library for ftp file retrievals."
          (label-and-file (nth 0 label-start-end))
          (start-pos (nth 1 label-start-end))
          (end-pos (nth 2 label-start-end))
-         lbl but-key lbl-key key-file)
+         lbl but-key lbl-key key-file partial-lbl)
     (when label-and-file
       (setq label-and-file (parse-label-and-file label-and-file)
             partial-lbl (nth 0 label-and-file)

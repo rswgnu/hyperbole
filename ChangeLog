@@ -1,3 +1,21 @@
+2021-05-13  Bob Weiner  <rsw@gnu.org>
+
+* hycontrol.el (hycontrol-frames-mode): Add :group.
+               (hycontrol-make-windows-grid):
+               (hycontrol--buffer-list): Add this var and use instead of
+    free var 'buffer list'.
+
+* hui-mouse.el (smart-custom, smart-custom-assist): Add missing close paren
+    in last-line-p clause.
+
+* hmouse-drv.el (hmouse-choose-windows): Fix unneeded arg to message.
+
+* man/hyperbole.texi (Implicit Button Types): Remove function-in-buffer.
+  hibtypes.el (function-in-buffer):
+  hui-mouse.el (hkey-alist): Remove XEmacs fume function finding; use imenu.
+
+* hibtypes.el (hlink): Add missing let declaration of partial-lbl.
+
 2021-05-13  Mats Lidell  <matsl@gnu.org>
 
 * kotl/kotl-mode.el (kotl-mode): Set hook to be local to buffer.
