@@ -671,8 +671,7 @@ This is used only when running from git source and not a package release."
   "Renerate Hyperbole *-autoload.el files whether they already exist or not."
   (let* ((default-directory hyperb:dir)
 	 (backup-inhibited t)
-	 (al-file (expand-file-name "hyperbole-autoloads.el"))
-	 (generated-autoload-file))
+	 (al-file (expand-file-name "hyperbole-autoloads.el")))
     ;; (make-local-variable 'generated-autoload-file)
     (with-current-buffer (find-file-noselect al-file)
       (setq generated-autoload-file al-file)
@@ -680,7 +679,7 @@ This is used only when running from git source and not a package release."
     (setq al-file (expand-file-name "kotl/kotl-autoloads.el"))
     (with-current-buffer (find-file-noselect al-file)
       (setq generated-autoload-file al-file)
-      (update-directory-autoloads "kotl/")))
+      (update-directory-autoloads ".")))
   (unless (hyperb:autoloads-exist-p)
     (error (format "Hyperbole failed to generate autoload files; try running 'make src' in a shell in %s" hyperb:dir))))
 

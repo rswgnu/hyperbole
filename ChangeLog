@@ -1,5 +1,8 @@
 2021-05-13  Bob Weiner  <rsw@gnu.org>
 
+* hyperbole.el (hyperb:generate-autoloads): Fix improper default-directory
+    when building kotl/kotl-autoloads.el.
+
 * hycontrol.el (hycontrol-frames-mode): Add :group.
                (hycontrol-make-windows-grid):
                (hycontrol--buffer-list): Add this var and use instead of
