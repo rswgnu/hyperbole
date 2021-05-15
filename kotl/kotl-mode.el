@@ -3097,8 +3097,8 @@ Leave point at end of line now residing at START."
 	 ;; Make local-cmd have the same property list as cmd,
 	 ;; e.g. so pending-delete property is the same, but delete
 	 ;; interactive-only property to suppress byte-compiler warnings.
-	 (setplist local-cmd (copy-list (symbol-plist cmd)))
-	 (remprop local-cmd 'interactive-only)
+	 (setplist local-cmd (cl-copy-list (symbol-plist cmd)))
+	 (cl-remprop local-cmd 'interactive-only)
 	 (substitute-key-definition
 	  cmd local-cmd kotl-mode-map global-map)))
      '(
