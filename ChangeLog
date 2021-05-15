@@ -17,6 +17,10 @@
 
 * hib-debbugs.el (debbugs-port): Declare variable.
 
+* hbut.el (ebut:delimit): Use hproperty:but-face.
+
+* hui-em-but.el (hproperty:but): Remove variable only used in one place.
+
 2021-05-13  Bob Weiner  <rsw@gnu.org>
 
 * hyperbole.el (hyperb:generate-autoloads): Fix improper default-directory
