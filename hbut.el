@@ -564,7 +564,7 @@ Insert INSTANCE-FLAG after END, before ending delimiter."
     (set-marker-insertion-type start t)
     (hbut:comment start end)
     (when (fboundp 'hproperty:but-add)
-      (hproperty:but-add start end hproperty:but))
+      (hproperty:but-add start end hproperty:but-face))
     (goto-char end)
     (move-marker start nil)
     (move-marker end nil)
