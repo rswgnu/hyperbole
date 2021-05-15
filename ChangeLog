@@ -1,5 +1,22 @@
 2021-05-14  Mats Lidell  <matsl@gnu.org>
 
+* hsmail.el (mail-reply-buffer): Declare variable.
+
+* hrmail.el (rmail-old-text): Declare variable.
+
+* hmouse-tag.el (br-env-spec, br-lang-prefix, buffer-tag-table)
+    (jedi-mode, java-class-def-name-grpn, java-class-def-regexp): Declare
+    variables.
+
+* hmouse-sh.el (br-env-spec, br-lang-prefix, company-active-map)
+    (java-class-def-name-grpn, java-class-def-regexp, jedi-mode): Declare
+    variables.
+
+* hmouse-drv.el (aw-dispatch-alist, aw-frame-size, aw-keys): Declare
+    variables.
+
+* hib-debbugs.el (debbugs-port): Declare variable.
+
 * hbut.el (ebut:delimit): Use hproperty:but-face.
 
 * hui-em-but.el (hproperty:but): Remove variable only used in one place.

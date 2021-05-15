@@ -72,6 +72,11 @@ If this is nil, use indentation, as specified by `mail-indentation-spaces'.")
 Used by `mail-yank-original' via `mail-indent-citation'.")
 
 ;;; ************************************************************************
+;;; Public declarations
+;;; ************************************************************************
+(defvar mail-reply-buffer)
+
+;;; ************************************************************************
 ;;; Overloaded functions
 ;;; ************************************************************************
 

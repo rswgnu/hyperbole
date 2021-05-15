@@ -134,6 +134,13 @@ Keyword matched is grouping 1.  Referent is grouping 2.")
 (declare-function br-edit "ext:br")
 (declare-function br-edit-feature "ext:br-ftr")
 
+(defvar br-env-spec)
+(defvar br-lang-prefix)
+(defvar buffer-tag-table)
+(defvar jedi-mode)
+(defvar java-class-def-name-grpn)
+(defvar java-class-def-regexp)
+
 ;;; ************************************************************************
 ;;; Public functions
 ;;; ************************************************************************
