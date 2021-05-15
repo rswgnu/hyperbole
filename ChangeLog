@@ -1,3 +1,19 @@
+2021-05-15  Bob Weiner  <rsw@gnu.org>
+
+* hyperbole.el (make-directory-autoloads): Fix definition for Emacs 27.
+
+* hmouse-drv.el (hkey-ace-window-setup): Change global key setting
+    to use hkey-set-key instead to set in Hyperbole's minor mode map.
+
+* Makefile (autoloads): Change to use make-directory-autoloads.
+
+* kotl/kotl-mode.el (kotl-mode-map): Remove 'interactive-only property
+    from kotl-mode commands that overload standard editing commands
+    to suppress byte-compiler warnings that these are for interactive
+    use only.
+
+* hycontrol.el (hycontrol-windows-mode): Add to :group 'hyperbole-screen.
+
 2021-05-14  Mats Lidell  <matsl@gnu.org>
 
 * hsmail.el (mail-reply-buffer): Declare variable.

@@ -23,6 +23,12 @@
 (eval-when-compile (require 'hactypes))
 
 ;;; ************************************************************************
+;;; Public declarations
+;;; ************************************************************************
+
+(declare-function texinfo-copy-node-name "texnfo-upd")
+
+;;; ************************************************************************
 ;;; Public variables
 ;;; ************************************************************************
 
@@ -32,7 +38,7 @@
   :group 'hyperbole-buttons)
 
 (defcustom hui:ebut-prompt-for-action nil
-  "*Non-nil means prompt for a button-specific action when creating explicit buttons."
+  "*Non-nil prompts for a button-specific action on explicit button creation."
   :type 'boolean
   :group 'hyperbole-buttons)
 

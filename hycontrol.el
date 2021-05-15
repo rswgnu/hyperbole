@@ -904,7 +904,8 @@ instead of quitting HyControl."
 
 ;;;###autoload
 (define-global-minor-mode hycontrol-windows-mode hycontrol-local-windows-mode
-  (lambda () (hycontrol-local-windows-mode 1)))
+  (lambda () (hycontrol-local-windows-mode 1))
+  :group 'hyperbole-screen)
 
 ;; These hooks run by the generated `hycontrol-windows-mode' function
 ;; do the global work of turning on and off the mode.
