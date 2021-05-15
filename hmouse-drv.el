@@ -378,7 +378,7 @@ Then whenever point is on an item you want displayed in another
 window, use {M-o i <id-of-window-to-display-item-in>} and watch the
 magic happen."
   (require 'ace-window)
-  (when key (global-set-key key 'ace-window))
+  (when key (hkey-set-key key 'ace-window))
   (setq aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l)
 	;; allows {i} operation to work when only 2 windows exist
 	aw-dispatch-always t)
