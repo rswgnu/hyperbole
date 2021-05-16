@@ -1,3 +1,11 @@
+2021-05-16  Mats Lidell  <matsl@gnu.org>
+
+* hyrolo.el (google-contacts-oauth-token, xml-node-child-string)
+    (xml-node-get-attribute-type, hyrolo-fgrep-logical, google-contacts)
+    (google-contacts-add-margin-to-text, google-contacts-build-node-list)
+    (google-contacts-data, google-contacts-make-buffer)
+    (google-contacts-margin-element): Add external dependencies.
+
 2021-05-15  Bob Weiner  <rsw@gnu.org>
 
 * kotl/kview.el (kcell-view:line):
