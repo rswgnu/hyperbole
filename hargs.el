@@ -40,11 +40,6 @@
 (add-hook 'minibuffer-exit-hook  #'hargs:unset-string-to-complete)
 
 ;;; ************************************************************************
-;;; Public declarations
-;;; ************************************************************************
-(declare-function monkey-filename "ext:monkey")
-
-;;; ************************************************************************
 ;;; Private functions
 ;;; ************************************************************************
 
@@ -338,9 +333,6 @@ Handles all of the interactive argument types that `hargs:iform-read' does."
 	 (cond ((derived-mode-p 'dired-mode)
 		(let ((file (dired-get-filename nil t)))
 		  (and file (hpath:absolute-to file))))
-	       ((eq major-mode 'monkey-mode)
-		(let ((file (monkey-filename t)))
-		  (and file (hpath:absolute-to file))))
 	       ;; Delimited file name.
 	       ((hpath:at-p 'file))
 	       ;; Unquoted remote file name.
@@ -353,10 +345,6 @@ Handles all of the interactive argument types that `hargs:iform-read' does."
 	((eq hargs:reading-p 'directory)
 	 (cond ((derived-mode-p 'dired-mode)
 		(let ((dir (dired-get-filename nil t)))
-		  (and dir (setq dir (hpath:absolute-to dir))
-		       (file-directory-p dir) dir)))
-	       ((eq major-mode 'monkey-mode)
-		(let ((dir (monkey-filename t)))
 		  (and dir (setq dir (hpath:absolute-to dir))
 		       (file-directory-p dir) dir)))
 	       ;; Delimited directory name.

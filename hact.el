@@ -392,10 +392,12 @@ If value is nil, however, t is returned instead, to ensure that implicit button
 types register the performance of the action.  ACTYPE may be a symbol or symbol
 name for either an action type or a function.  Runs `action-act-hook' before
 performing ACTION."
+  (when (null actype)
+    (error "(actype:act): No action type specified"))
   (let ((prefix-arg current-prefix-arg)
 	(action (actype:action actype)))
     (if (null action)
-	(error "(actype:act): Null action for: `%s'" actype)
+	(error "(actype:act): Null action for action type: `%s'" actype)
       ;; Next 2 lines are needed so that relative paths are expanded
       ;; properly.  But in rare cases, this can improperly expand simple
       ;; string arguments like "tags" as a pathname, when it is not

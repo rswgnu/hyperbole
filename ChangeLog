@@ -1,3 +1,15 @@
+2021-05-16  Stefan Monnier  <monnier@iro.umontreal.ca>
+
+* hvar.el: Add lexical binding updates.
+
+2021-05-16  Bob Weiner  <rsw@gnu.org>
+
+* hact.el (actype:act): Add error handler when actype is null
+    rather than checking for an action.
+
+* hargs.el (monkey-filename, hargs:at-p):
+  hibtypes.el (rfc): Remove ancient dired-like monkey-mode support.
+
 2021-05-16  Mats Lidell  <matsl@gnu.org>
 
 * Makefile (version): Do version number check in a portable way.
@@ -139,7 +151,7 @@
 * hpath.el (br-quit, br-in-browser, br-to-view-window): Add external
     dependencies.
 
-* kotl/kotl-mode.el (kotl-mode): Use write-file-functions
+* kotl/kotl-mode.el (kotl-mode): Use write-file-functions.
 
 2021-05-11  Mats Lidell  <matsl@gnu.org>
 
@@ -157,7 +169,7 @@
 
 * hui-mouse.el (tar-mode): Add require.
 
-* hpath.el (tramp): Require tramp
+* hpath.el (tramp): Require tramp.
 
 * hibtypes.el: (markdown-footnote-goto-text)
     (markdown-footnote-marker-positions, markdown-footnote-return)
@@ -172,12 +184,9 @@
     (debbugs-gnu-show-reports, debbugs-gnu-current-query):  Add external
     dependencies.
 
-* hbdata.el (hgnus): Require hgnus
+* hbdata.el (hgnus): Require hgnus.
 
-* hargs.el (monkey-filename): Add external dependency to public
-    declarations
-
-* hactypes.el (bookmark): Require bookmark
+* hactypes.el (bookmark): Require bookmark.
 
 2021-05-11  Bob Weiner  <rsw@gnu.org>
 
