@@ -337,10 +337,10 @@ ftp: package $(pkg_dir)/hyperbole-$(HYPB_VERSION).tar.gz
 autoloads: hyperbole-autoloads.el kotl/kotl-autoloads.el
 
 hyperbole-autoloads.el: $(EL_COMPILE)
-	$(EMACS) $(BATCHFLAGS) $(PRELOADS) --debug --eval "(progn (setq generated-autoload-file (expand-file-name \"hyperbole-autoloads.el\") backup-inhibited t) (make-directory-autoloads \".\" generated-autoload-file))"
+	$(EMACS) $(BATCHFLAGS) $(PRELOADS) --debug --eval "(progn (setq generated-autoload-file (expand-file-name \"hyperbole-autoloads.el\") backup-inhibited t) (let (find-file-hooks) (make-directory-autoloads \".\" generated-autoload-file)))"
 
 kotl/kotl-autoloads.el: $(EL_KOTL)
-	$(EMACS) $(BATCHFLAGS) $(PRELOADS) --eval "(progn (setq generated-autoload-file (expand-file-name \"kotl/kotl-autoloads.el\") backup-inhibited t) (make-directory-autoloads \"kotl/\" generated-autoload-file))"
+	$(EMACS) $(BATCHFLAGS) $(PRELOADS) --eval "(progn (setq generated-autoload-file (expand-file-name \"kotl/kotl-autoloads.el\") backup-inhibited t) (let (find-file-hooks) (make-directory-autoloads \"kotl/\" generated-autoload-file)))"
 
 # Used for ftp.gnu.org tarball distributions.
 $(pkg_dir)/hyperbole-$(HYPB_VERSION).tar.gz:
