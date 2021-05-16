@@ -82,8 +82,13 @@ executable must be found as well (for Oauth security)."
 (declare-function google-contacts-oauth-token "ext:google-contacts")
 (declare-function xml-node-child-string "ext:google-contacts")
 (declare-function xml-node-get-attribute-type "ext:google-contacts")
+(defvar google-contacts-history)
+(defvar google-contacts-expire-time)
+(defvar google-contacts-query-string)
 
 (declare-function hyrolo-fgrep-logical "hyrolo-logic")
+
+(defvar hproperty:highlight-face)
 
 (defun hyrolo-google-contacts-p ()
   "Return non-nil if `hyrolo-google-contacts-flag' is non-nil and google-contacts package and gpg executables are available for use."

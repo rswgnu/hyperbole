@@ -424,7 +424,8 @@ The function does NOT recursively descend into subdirectories of the
 directory or directories specified."
     ;; Don't use a 'let' on this next line or it will fail.
     (setq generated-autoload-file output-file)
-    (update-directory-autoloads dir)))
+    (with-suppressed-warnings ((obsolete update-directory-autoloads))
+      (update-directory-autoloads dir))))
 
 ;; Before the 6.0.1 release, Hyperbole used to patch the package-generate-autoloads
 ;; function to ensure that kotl/ subdirectories were autoloaded.  This
@@ -680,7 +681,7 @@ This is used only when running from git source and not a package release."
   "Renerate Hyperbole *-autoloads.el files whether they already exist or not."
   (let* ((default-directory hyperb:dir)
 	 (backup-inhibited t)
-	 (find-file-hooks) ;; Prevent header insertion
+	 (find-file-hook) ;; Prevent header insertion
 	 (al-file (expand-file-name "hyperbole-autoloads.el")))
     ;; (make-local-variable 'generated-autoload-file)
     (with-current-buffer (find-file-noselect al-file)

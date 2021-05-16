@@ -131,8 +131,21 @@ Keyword matched is grouping 1.  Referent is grouping 2.")
 ;;; ************************************************************************
 ;;; Public declarations
 ;;; ************************************************************************
+
 (declare-function br-edit "ext:br")
 (declare-function br-edit-feature "ext:br-ftr")
+(declare-function python-import-file "ext:br-python-ft")
+(declare-function python-to-definition "ext:br-python-ft")
+
+(declare-function epc:manager-server-process "ext:epc")
+
+(declare-function java-to-definition "ext:br-java-ft")
+
+(declare-function jedi:-get-servers-in-use "ext:jedi-core")
+(declare-function jedi:goto--line-column "ext:jedi-core")
+(declare-function jedi:goto-definition "ext:jedi-core")
+
+(declare-function objc-to-definition "ext:br-objc-ft")
 
 (defvar br-env-spec)
 (defvar br-lang-prefix)

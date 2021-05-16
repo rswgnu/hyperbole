@@ -22,6 +22,7 @@
 ;;; Public declarations
 ;;; ************************************************************************
 (declare-function dired-sidebar-toggle-sidebar "ext:dired-sidebar")
+(defvar dired-sidebar-cycle-subtree-on-click)
 
 ;;; ************************************************************************
 ;;; smart-dired-sidebar functions

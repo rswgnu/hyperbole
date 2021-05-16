@@ -76,6 +76,7 @@
 ;;; ************************************************************************
 ;;; Public declarations
 ;;; ************************************************************************
+
 (declare-function markdown-footnote-goto-text "ext:markdown")
 (declare-function markdown-footnote-marker-positions "ext:markdown")
 (declare-function markdown-footnote-return "ext:markdown")
@@ -86,6 +87,10 @@
 (declare-function markdown-footnote-text-positions "ext:markdown")
 (defvar markdown-regex-link-reference)
 (defvar markdown-regex-reference-definition)
+
+(defvar id-cflow-repeated-indicator)
+
+(defvar cscope-output-line-regexp)
 
 ;;; ************************************************************************
 ;;; Public implicit button types
