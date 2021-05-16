@@ -641,9 +641,11 @@ If FLAG is nil then text is shown, while if FLAG is t the text is hidden."
 	      (concat (user-login-name) (hypb:domain-name)))))
   ;;
   ;; When running from git source and not a release package, ensure
-  ;; auto-autoload.el files are already generated or generate them.
+  ;; *-autoloads.el files are already generated or generate them.
+  ;; Then ensure they are loaded.
   (unless noninteractive
     (hyperb:maybe-generate-autoloads))
+  (hyperb:maybe-load-autoloads)
   ;;
   ;; Modify syntactic character pairs for use with implicit button activations.
   (hbut:modify-syntax)
@@ -680,9 +682,10 @@ This is used only when running from git source and not a package release."
     (hyperb:generate-autoloads)))
 
 (defun hyperb:generate-autoloads ()
-  "Renerate Hyperbole *-autoload.el files whether they already exist or not."
+  "Renerate Hyperbole *-autoloads.el files whether they already exist or not."
   (let* ((default-directory hyperb:dir)
 	 (backup-inhibited t)
+	 (find-file-hooks) ;; Prevent header insertion
 	 (al-file (expand-file-name "hyperbole-autoloads.el")))
     ;; (make-local-variable 'generated-autoload-file)
     (with-current-buffer (find-file-noselect al-file)
@@ -692,6 +695,16 @@ This is used only when running from git source and not a package release."
       (make-directory-autoloads "." al-file)))
   (unless (hyperb:autoloads-exist-p)
     (error (format "Hyperbole failed to generate autoload files; try running 'make src' in a shell in %s" hyperb:dir))))
+
+(defun hyperb:maybe-load-autoloads ()
+  "Load Hyperbole autoload files that have not already been loaded."
+  (let* ((default-directory hyperb:dir)
+	 (hypb-autoloads (expand-file-name "hyperbole-autoloads.el"))
+	 (kotl-autoloads (expand-file-name "kotl/kotl-autoloads.el")))
+    (unless (featurep 'hyperbole-autoloads)
+      (load-file hypb-autoloads))
+    (unless (featurep 'kotl-autoloads)
+      (load-file kotl-autoloads))))
 
 ;; This call loads the rest of the Hyperbole system.
 (require 'hinit)
