@@ -278,7 +278,7 @@ clean:
 version: doc
 	@ echo ""
 	@ echo "Any fgrep output means the version number has not been updated in that file."
-	fgrep -L $(HYPB_VERSION) Makefile HY-ABOUT HY-NEWS README.md hversion.el hyperbole.el man/hyperbole.texi man/version.texi; [ $$? -eq 0 ] || exit 1
+	test 0 -eq $$(fgrep -L $(HYPB_VERSION) Makefile HY-ABOUT HY-NEWS README.md hversion.el hyperbole.el man/hyperbole.texi man/version.texi | wc -c) || exit 1
 	@ echo ""
 
 # Build the Info, HTML and Postscript versions of the user manual and README.md.html.
