@@ -122,8 +122,8 @@ a cell's label and the start of its contents."
   (let* ((opoint (point))
 	 (prev-indent (kcell-view:indent nil label-sep-len))
 	 (next (kcell-view:next visible-p label-sep-len)))
-    (or label-sep-len (setq label-sep-len
-			    (kview:label-separator-length kview)))
+    (unless label-sep-len
+      (setq label-sep-len (kview:label-separator-length kview)))
     ;; Since kcell-view:next leaves point at the start of a cell, the cell's
     ;; indent is just the current-column of point.
     (if (and next (> (current-column) prev-indent))
@@ -138,7 +138,8 @@ With optional VISIBLE-P, consider only visible children.
 Optional LABEL-SEP-LEN is the length of the separation between
 a cell's label and the start of its contents."
   (save-excursion
-    (if pos (goto-char pos))
+    (when pos
+      (goto-char pos))
     (kcell-view:child visible-p label-sep-len)))
 
 (defun kcell-view:collapse (&optional pos label-sep-len)
@@ -157,11 +158,11 @@ a cell's label and the start of its contents.
 
 A cell may be collapsed yet still have some of its text visible.  Use
 `kcell-view:invisible-p' to test for invisibility."
-  (if (memq 'outline (mapcar (lambda (o) (overlay-get o 'invisible))
-			     ;; Allow for empty cell
-			     (overlays-in (1- (kcell-view:start pos label-sep-len))
-					  (kcell-view:end-contents pos))))
-      t))
+  (when (memq 'outline (mapcar (lambda (o) (overlay-get o 'invisible))
+			       ;; Allow for empty cell
+			       (overlays-in (1- (kcell-view:start pos label-sep-len))
+					    (kcell-view:end-contents pos))))
+    t))
 
 (defun kcell-view:hide (&optional pos label-sep-len)
   "Make cell at optional POS or point invisible within the current view.
@@ -179,17 +180,18 @@ Any cell that is invisible is also collapsed as indicated by a call to
   (let ((start (1- (kcell-view:start pos label-sep-len))) ;; Allow for empty cell
 	(end (kcell-view:end-contents pos))
 	(invisible))
-    (if (delq nil (mapcar (lambda (o)
+    (when (delq nil (mapcar (lambda (o)
 			      (and (eq (overlay-get o 'invisible) 'outline)
 				   (>= start (overlay-start o))
 				   (<= end (overlay-end o))))
-			  (overlays-in start end)))
-	t)))
+			    (overlays-in start end)))
+      t)))
 
 (defun kcell-view:contents (&optional pos)
   "Return contents of cell at optional POS or point."
   (save-excursion
-    (if pos (goto-char pos))
+    (when pos
+      (goto-char pos))
     (let ((indent (kcell-view:indent))
 	  (start (kcell-view:start))
 	  (end (kcell-view:end-contents)))
@@ -203,7 +205,8 @@ Any cell that is invisible is also collapsed as indicated by a call to
 Optional NO-FILL non-nil suppresses filling of cell's contents upon insertion
 or movement."
   (unless (zerop (kcell:idstamp cell))
-    (or no-fill (setq no-fill (kcell:get-attr cell 'no-fill)))
+    (unless no-fill
+      (setq no-fill (kcell:get-attr cell 'no-fill)))
     (let* ((label-min-width (kview:label-min-width kview))
 	   (label-fmt (format "%%%ds" label-min-width))
 	   (label (cond ((string-equal klabel "")
@@ -221,7 +224,8 @@ or movement."
 	   (old-point (point))
 	   (fill-prefix (make-string thru-label ?\ ))
 	   contents new-point)
-      (if no-fill (kcell:set-attr cell 'no-fill t))
+      (when no-fill
+	(kcell:set-attr cell 'no-fill t))
       (insert fill-prefix)
       (setq contents (kview:insert-contents cell nil no-fill fill-prefix))
       ;; Insert lines to separate cell from next.
@@ -249,7 +253,8 @@ or movement."
 (defun kcell-view:end (&optional pos)
   "Return end position of cell from optional POS or point.
 Includes blank lines following cell contents."
-  (or pos (setq pos (point)))
+  (unless pos
+    (setq pos (point)))
   (save-excursion
     (or (re-search-forward "[\n\r][\n\r]" nil t)
 	(point-max))))
@@ -258,7 +263,8 @@ Includes blank lines following cell contents."
   "Return end position of cell contents from optional POS or point.
 Excludes blank lines following cell contents."
   (save-excursion
-    (if pos (goto-char pos))
+    (when pos
+      (goto-char pos))
     (goto-char (kcell-view:end))
     (skip-chars-backward "\n\r")
     (point)))
@@ -273,8 +279,8 @@ Excludes blank lines following cell contents."
   "Move to start of the following cell at the same level as the current cell.
 With optional VISIBLE-P, consider only visible cells.
 Return t unless no such cell."
-  (or label-sep-len (setq label-sep-len
-			  (kview:label-separator-length kview)))
+  (unless label-sep-len
+    (setq label-sep-len (kview:label-separator-length kview)))
   (let ((opoint (point))
 	(found) (done)
 	(curr-indent 0)
@@ -292,19 +298,22 @@ Return t unless no such cell."
 	    ;; else go to following node
 	    ))
     ;; If didn't find a match, return to original point.
-    (or found (goto-char opoint))
+    (unless found
+      (goto-char opoint))
     found))
 
 (defun kcell-view:get-attr (attribute &optional pos)
   "Return ATTRIBUTE's value for current cell or cell at optional POS."
   (save-excursion
-    (if pos (goto-char pos))
+    (when pos
+      (goto-char pos))
     (kcell:get-attr (kcell-view:cell) attribute)))
 
 (defun kcell-view:idstamp (&optional pos)
   "Return idstamp string of cell at optional POS or point."
   (save-excursion
-    (if pos (goto-char pos))
+    (when pos
+      (goto-char pos))
     (format "0%s" (or (kcell:idstamp (kcell-view:cell)) ""))))
 
 (defun kcell-view:indent (&optional pos label-sep-len)
@@ -320,7 +329,8 @@ cell's label and the start of its contents."
   "Return displayed label string of cell at optional POS or point.
 If labels are off, return cell's idstamp as a string."
   (save-excursion
-    (if pos (goto-char pos))
+    (when pos
+      (goto-char pos))
     (let ((label-type (kview:label-type kview)))
       (if (eq label-type 'no)
 	  (kcell-view:idstamp)
@@ -334,14 +344,16 @@ If labels are off, return cell's idstamp as a string."
 LABEL-SEP-LEN is the number of spaces between a cell label and
 the start of its body.  Optional INDENT is the indentation in
 characters of the cell whose level is desired."
-  (or label-sep-len (setq label-sep-len (kview:label-separator-length kview)))
+  (unless label-sep-len
+    (setq label-sep-len (kview:label-separator-length kview)))
   (/ (- (or indent (kcell-view:indent pos label-sep-len)) label-sep-len)
      (kview:level-indent kview)))
 
 (defun kcell-view:line (&optional pos)
   "Return contents of cell line at point or optional POS as a string."
   (save-excursion
-    (if pos (goto-char pos))
+    (when pos
+      (goto-char pos))
     (if (kview:valid-position-p)
 	(buffer-substring (kotl-mode:to-start-of-line) (kotl-mode:to-end-of-line))
       (error "(kcell-view:line): Invalid position, `%d'" (point)))))
@@ -360,9 +372,9 @@ characters of the cell whose level is desired."
   "Move to start of next cell within current view.
 With optional VISIBLE-P, consider only visible cells.
 Return t unless no next cell."
-  (if (kcell-view:next-kcell visible-p label-sep-len)
-      (progn (goto-char (kcell-view:start nil label-sep-len))
-	     t)))
+  (when (kcell-view:next-kcell visible-p label-sep-len)
+    (goto-char (kcell-view:start nil label-sep-len))
+    t))
 
 (defun kcell-view:next-invisible-p (&optional pos label-sep-len)
   "Return t if there is a next cell after optional POS or point and it is invisible."
@@ -424,9 +436,9 @@ If between kcells, move to the previous one.  The current cell may be hidden."
 		(current-buffer)))
 	(t
 	 (let (found)
-	   (if (not (setq found (kproperty:get (1- (point)) 'kcell)))
-	       ;; If not at beginning of cell contents, move there.
-	       (goto-char (kproperty:previous-single-change (point) 'kcell)))
+	   (unless (setq found (kproperty:get (1- (point)) 'kcell))
+	     ;; If not at beginning of cell contents, move there.
+	     (goto-char (kproperty:previous-single-change (point) 'kcell)))
 	   ;; Then move to the end of the label (prior to label
 	   ;; separator) via embedded kcell property.
 	   (goto-char (setq found (kproperty:previous-single-change (point) 'kcell)))
@@ -457,17 +469,19 @@ or is nil), before it is returned."
   "Remove ATTRIBUTE, if any, for current cell or cell at optional POS."
   (interactive "*SAttribute to remove: ")
   (save-excursion
-    (if pos (goto-char pos))
+    (when pos
+      (goto-char pos))
     (let ((kcell (kcell:remove-attr (kcell-view:cell) attribute)))
-      (if (called-interactively-p 'interactive)
-	  (message "Cell <%s> now has no %s attribute."
-		   (kcell-view:label) attribute))
+      (when (called-interactively-p 'interactive)
+	(message "Cell <%s> now has no %s attribute."
+		 (kcell-view:label) attribute))1
       kcell)))
 
 (defun kcell-view:set-attr (attribute value &optional pos)
   "Set ATTRIBUTE's VALUE for current cell or cell at optional POS and return the cell."
   (save-excursion
-    (if pos (goto-char pos))
+    (when pos
+      (goto-char pos))
     ;; Returns kcell.
     (kcell:set-attr (kcell-view:cell) attribute value)))
 
@@ -481,7 +495,8 @@ or is nil), before it is returned."
   "Return t if cell at optional POS or point has a successor.
 With optional VISIBLE-P, consider only visible siblings."
   (save-excursion
-    (if pos (goto-char pos))
+    (when pos
+      (goto-char pos))
     (kcell-view:forward visible-p label-sep-len)))
 
 (defun kcell-view:start (&optional pos label-sep-len)
@@ -493,7 +508,8 @@ With optional VISIBLE-P, consider only visible siblings."
 (defun kcell-view:to-visible-label-end (&optional pos)
   "Move point to the end of the current visible cell's label (before the label separator).
 If between kcells, move to the previous one.  Return final point location."
-  (if pos (goto-char pos))
+  (when pos
+    (goto-char pos))
   ;; Ensure point is within a visible part of the current cell, not
   ;; within some collapsed sub-cell.
   (beginning-of-line)
@@ -531,13 +547,13 @@ level."
 
 (defun kview:beginning-of-actual-line ()
   "Go to the beginning of the current line whether collapsed or not."
-  (if (re-search-backward "[\n\r]" nil 'move)
-      (forward-char 1)))
+  (when (re-search-backward "[\n\r]" nil 'move)
+    (forward-char 1)))
 
 (defun kview:buffer (kview)
   "Return KVIEW's buffer or nil if argument is not a kview."
-  (if (kview:is-p kview)
-      (kview:get-attr kview 'view-buffer)))
+  (when (kview:is-p kview)
+    (kview:get-attr kview 'view-buffer)))
 
 (defun kview:char-invisible-p (&optional pos)
   "Return t if the character after point is invisible/hidden, else nil."
@@ -549,7 +565,8 @@ level."
 
 (defun kview:char-visible-p (&optional pos)
   "Return t if the character after point is visible, else nil."
-  (or pos (setq pos (point)))
+  (unless pos
+    (setq pos (point)))
   (and (not (kproperty:get pos 'invisible))
        (not (delq nil (mapcar (lambda (o) (overlay-get o 'invisible))
 			      (overlays-at (or pos (point))))))))
@@ -613,8 +630,8 @@ BLANK-LINES, LEVELS-TO-SHOW, and LINES-TO-SHOW may also be given, otherwise defa
 
 (defun kview:end-of-actual-line ()
   "Go to the end of the current line whether collapsed or not."
-  (if (re-search-forward "[\n\r]" nil 'move)
-      (backward-char 1)))
+  (when (re-search-forward "[\n\r]" nil 'move)
+    (backward-char 1)))
 
 (defun kview:fill-region (start end &optional kcell justify)
   "Fill region between START and END within current view.
@@ -644,12 +661,13 @@ this function is called."
 (defun kview:first-invisible-point (&optional pos)
   "Return the first point following optional POS that is followed by an invisible character, else the end point of the cell contents.
 Value may be the character immediately after point."
-  (or pos (setq pos (point)))
+  (unless pos
+    (setq pos (point)))
   (let ((end (kcell-view:end-contents pos)))
     (while (and pos (< pos end) (kview:char-visible-p pos))
       (if (kproperty:get pos 'invisible)
 	  (setq pos (kproperty:next-single-change pos 'invisible nil end))
-	(let ((overlay (car (delq nil (mapcar (lambda (o) (if (overlay-get o 'invisible) o))
+	(let ((overlay (car (delq nil (mapcar (lambda (o) (when (overlay-get o 'invisible) o))
 					      (overlays-at pos))))))
 	  (setq pos (if overlay (overlay-end overlay) (1+ pos))))))
     (or pos end)))
@@ -657,11 +675,12 @@ Value may be the character immediately after point."
 (defun kview:first-visible-point (&optional pos)
   "Return the first point following optional POS that is followed by a visible character, else (point-max).
 Value may be the character immediately after point."
-  (or pos (setq pos (point)))
+  (unless pos
+    (setq pos (point)))
   (while (and pos (kview:char-invisible-p pos))
     (if (kproperty:get pos 'invisible)
 	(setq pos (kproperty:next-single-change pos 'invisible))
-      (let ((overlay (car (delq nil (mapcar (lambda (o) (if (overlay-get o 'invisible) o))
+      (let ((overlay (car (delq nil (mapcar (lambda (o) (when (overlay-get o 'invisible) o))
 					    (overlays-at pos))))))
 	(setq pos (overlay-end overlay)))))
   (or pos (point-max)))
@@ -718,8 +737,8 @@ the lines displayed, since it has hidden branches."
 (defun kview:idstamp-to-label (permanent-id)
   "Return relative label for cell with PERMANENT-ID within current kview."
   (save-excursion
-    (if (kotl-mode:goto-cell permanent-id)
-	(kcell-view:label))))
+    (when (kotl-mode:goto-cell permanent-id)
+      (kcell-view:label))))
 
 (defun kview:insert-contents (kcell contents no-fill fill-prefix)
   "Insert KCELL's CONTENTS into view at point and fill resulting paragraphs, unless NO-FILL is non-nil.
@@ -749,8 +768,7 @@ value may differ from the value passed in.)"
 	    (goto-char (point-max)))
 	;;
 	;; Filling cell will insert proper indent on all lines.
-	(if (equal contents "")
-	    nil
+	(unless (equal contents "")
 	  (goto-char start)
 	  (beginning-of-line)
 	  (narrow-to-region (point) end)
@@ -769,12 +787,13 @@ value may differ from the value passed in.)"
 
 (defun kview:is-p (object)
   "Is OBJECT a kview?"
-  (if (listp object) (eq (car object) 'kview)))
+  (when (listp object)
+    (eq (car object) 'kview)))
 
 (defun kview:kotl (kview)
   "Return KVIEW's kotl object or nil if argument is not a kview."
-  (if (kview:is-p kview)
-      (kview:get-attr kview 'kotl)))
+  (when (kview:is-p kview)
+    (kview:get-attr kview 'kotl)))
 
 (defun kview:label (klabel-function prev-label child-p)
   "Return label string to display for current cell computed from KLABEL-FUNCTION, PREV-LABEL and CHILD-P."
@@ -790,14 +809,14 @@ non-nil if cell is to be the child of the preceding cell."
 (defun kview:label-min-width (kview)
   "Return KVIEW's label-min-width setting or nil if argument is not a kview.
 See documentation for kview:default-label-min-width."
-  (if (kview:is-p kview)
-      (kview:get-attr kview 'label-min-width)))
+  (when (kview:is-p kview)
+    (kview:get-attr kview 'label-min-width)))
 
 (defun kview:label-separator (kview)
   "Return KVIEW's label-separator setting or nil if argument is not a kview.
 See documentation for kview:default-label-separator."
-  (if (kview:is-p kview)
-      (kview:get-attr kview 'label-separator)))
+  (when (kview:is-p kview)
+    (kview:get-attr kview 'label-separator)))
 
 (defun kview:label-separator-length (kview)
   "Return KVIEW's label-separator length or nil if argument is not a kview.
@@ -807,14 +826,14 @@ See documentation for kview:default-label-separator."
 (defun kview:label-type (kview)
   "Return KVIEW's label-type setting or nil if argument is not a kview.
 See documentation for kview:default-label-type."
-  (if (kview:is-p kview)
-      (kview:get-attr kview 'label-type)))
+  (when (kview:is-p kview)
+    (kview:get-attr kview 'label-type)))
 
 (defun kview:level-indent (kview)
   "Return KVIEW's level-indent setting or nil if argument is not a kview.
 See documentation for kview:default-level-indent."
-  (if (kview:is-p kview)
-      (kview:get-attr kview 'level-indent)))
+  (when (kview:is-p kview)
+    (kview:get-attr kview 'level-indent)))
 
 (defun kview:map-branch (func kview &optional first-p visible-p)
   "Apply FUNC to the sibling trees from point forward within KVIEW and return results as a list.
@@ -830,21 +849,21 @@ FUNC is called so that it may test against this value.  `Label-sep-len'
 contains the label separator length.
 
 See also `kview:map-region', `kview:map-siblings' and `kview:map-tree'."
-    (with-current-buffer (kview:buffer kview)
-      (save-excursion
-	(let ((results)
-	      (label-sep-len (kview:label-separator-length kview))
-	      cell-indent)
-	  (if first-p
-	      ;; Move back to first predecessor at same level.
-	      (while (kcell-view:backward t label-sep-len)))
-	  (setq cell-indent (kcell-view:indent nil label-sep-len))
-	  ;; Terminate when no further cells or when reach a cell at an equal
-	  ;; or higher level in the kotl than the first cell that we processed.
-	  (while (and (setq results (cons (funcall func kview) results))
-		      (kcell-view:next visible-p label-sep-len)
-		      (> (kcell-view:indent nil label-sep-len) cell-indent)))
-	  (nreverse results)))))
+  (with-current-buffer (kview:buffer kview)
+    (save-excursion
+      (let ((results)
+	    (label-sep-len (kview:label-separator-length kview))
+	    cell-indent)
+	(when first-p
+	  ;; Move back to first predecessor at same level.
+	  (while (kcell-view:backward t label-sep-len)))
+	(setq cell-indent (kcell-view:indent nil label-sep-len))
+	;; Terminate when no further cells or when reach a cell at an equal
+	;; or higher level in the kotl than the first cell that we processed.
+	(while (and (setq results (cons (funcall func kview) results))
+		    (kcell-view:next visible-p label-sep-len)
+		    (> (kcell-view:indent nil label-sep-len) cell-indent)))
+	(nreverse results)))))
 
 (defun kview:map-region (func kview &optional visible-p start end)
   "Apply FUNC to each cell in the region within KVIEW and return results as a list.
@@ -938,7 +957,8 @@ See also `kview:map-region', `kview:map-branch' and `kview:map-siblings'."
       (save-excursion
 	;; Next line ensures point is in the root of the current tree if
 	;; the tree is at all hidden.
-	(unless top-p (kotl-mode:to-start-of-line))
+	(unless top-p
+	  (kotl-mode:to-start-of-line))
 	(let* ((results)
 	       (label-sep-len (kview:label-separator-length kview))
 	       (start (set-marker (make-marker) (if top-p (point-min) (point))))
@@ -964,8 +984,8 @@ See also `kview:map-region', `kview:map-branch' and `kview:map-siblings'."
 			   cell-indent))))
 	  ;;
 	  ;; Restore status of temporarily expanded cells.
-	  (if (remq 0 collapsed-cells)
-	      (kview:set-cells-status kview start end collapsed-cells))
+	  (when (remq 0 collapsed-cells)
+	    (kview:set-cells-status kview start end collapsed-cells))
 	  ;;
 	  ;; Remove markers.
 	  (set-marker start nil)
@@ -1061,20 +1081,20 @@ FILL-P is non-nil.  Leave point at TO-START."
 	       (lambda (view)
 		 (save-excursion
 		   (beginning-of-line)
-		   (if (looking-at expr)
-		       (replace-match "" t t))))
+		   (when (looking-at expr)
+		     (replace-match "" t t))))
 	       kview t)))
 	  ;;
-	  (if fill-p
-	      ;; Refill cells lacking no-fill attribute.
-	      (kview:map-tree (lambda (view) (kotl-mode:fill-cell nil t))
-			      kview t))))
+	  (when fill-p
+	    ;; Refill cells lacking no-fill attribute.
+	    (kview:map-tree (lambda (view) (kotl-mode:fill-cell nil t))
+			    kview t))))
     ;;
     (goto-char new-start)
     ;;
     ;; Restore status of temporarily expanded cells.
-    (if (remq 0 collapsed-cells)
-	(kview:set-cells-status kview new-start new-end collapsed-cells))
+    (when (remq 0 collapsed-cells)
+      (kview:set-cells-status kview new-start new-end collapsed-cells))
     ;;
     ;; Delete temporary markers.
     (set-marker new-start nil)))
@@ -1082,13 +1102,14 @@ FILL-P is non-nil.  Leave point at TO-START."
 (defun kview:previous-visible-point (&optional pos)
   "Return the first point preceding optional POS that is followed by a visible character, else (point-min).
 Value may be the character immediately after point."
-  (or pos (setq pos (point)))
+  (unless pos
+    (setq pos (point)))
   (setq pos (1- pos))
   (while (and pos (kview:char-invisible-p pos))
     (if (kproperty:get pos 'invisible)
 	(progn (setq pos (kproperty:previous-single-change pos 'invisible))
-	       (if pos (setq pos (1- pos))))
-      (let ((overlay (car (delq nil (mapcar (lambda (o) (if (overlay-get o 'invisible) o))
+	       (when pos (setq pos (1- pos))))
+      (let ((overlay (car (delq nil (mapcar (lambda (o) (when (overlay-get o 'invisible) o))
 					    (overlays-at pos))))))
 	(setq pos (1- (overlay-start overlay))))))
   (or pos (point-max)))
@@ -1098,7 +1119,7 @@ Value may be the character immediately after point."
   (if (kview:is-p kview)
       (save-excursion
 	(let ((buf (kview:buffer kview)))
-	  (if buf (set-buffer buf)))
+	  (when buf (set-buffer buf)))
 	(kview:set-attr kview 'view-buffer new-buf))
     (error "(kview:set-buffer): Invalid kview argument")))
 
@@ -1149,9 +1170,9 @@ valid values of NEW-TYPE."
 				   nil t)))
 			   label-type
 			 (intern new-type-str)))))
-  (if (not (memq new-type '(alpha legal id ;; no partial-alpha star
-			    )))
-      (error "(kview:set-label-type): Invalid label type, `%s'" new-type))
+  ;; no partial-alpha star
+  (unless (memq new-type '(alpha legal id))
+    (error "(kview:set-label-type): Invalid label type, `%s'" new-type))
   (let ((old-label-type (kview:label-type kview)))
     (if (eq old-label-type new-type)
 	;; Per kview function definitions might have changed, so reset them.
@@ -1163,8 +1184,8 @@ valid values of NEW-TYPE."
 
 (defun kview:top-cell (kview)
   "Return KVIEW's invisible top cell with idstamp 0 or nil if argument is not a kview."
-  (if (kview:is-p kview)
-      (kview:get-attr kview 'top-cell)))
+  (when (kview:is-p kview)
+    (kview:get-attr kview 'top-cell)))
 
 (defun kview:valid-position-p (&optional pos)
   "Return non-nil iff point or optional POS is at a position where editing may occur.
@@ -1193,7 +1214,7 @@ or marker, `%s'" pos))
 
 (defun kview:get-attr (obj attribute)
   "Return the value of OBJ's ATTRIBUTE."
-  (car (cdr (memq attribute (car (cdr (memq 'plist obj)))))))
+  (cadr (memq attribute (cadr (memq 'plist obj)))))
 
 (defun kcell-view:next-kcell (&optional visible-p label-sep-len)
   "Move to the point holding the kcell property within the next cell of the current kview.
@@ -1304,8 +1325,8 @@ new outlines is also set to this new value."
       (funcall reindent-function))
     (kview:set-attr kview 'label-separator label-separator)
     (kview:set-attr kview 'label-separator-length sep-len)
-    (if set-default-p
-	(setq kview:default-label-separator label-separator))))
+    (when set-default-p
+      (setq kview:default-label-separator label-separator))))
 
 (provide 'kview)
 

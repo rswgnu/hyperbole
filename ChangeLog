@@ -1,5 +1,11 @@
 2021-05-15  Bob Weiner  <rsw@gnu.org>
 
+* kotl/kview.el (kcell-view:line):
+  kotl/kotl-mode.el (kotl-mode): Where possible change 'if' to 'when'
+    and '(or (not ...))' to 'unless'.
+                    (cl-lib): Require for cl-remprop.
+                    (kotl-previous-mode): Declare this variable.
+
 * hyperbole.el (make-directory-autoloads): Fix definition for Emacs 27.
 
 * hmouse-drv.el (hkey-ace-window-setup): Change global key setting

@@ -16,7 +16,7 @@
 ;;; Other required Lisp Libraries
 ;;; ************************************************************************
 
-(eval-and-compile (mapc #'require '(delsel hsettings hmail kfile kvspec kcell outline org-table kotl-orgtbl)))
+(eval-and-compile (mapc #'require '(cl-lib delsel hsettings hmail kfile kvspec kcell outline org-table kotl-orgtbl)))
 
 ;;; ************************************************************************
 ;;; Public variables
@@ -24,6 +24,9 @@
 
 (defvar kotl-mode-map nil
   "Keymap containing koutliner editing and viewing commands.")
+
+(defvar kotl-previous-mode nil
+  "Default mode of koutline buffers prior to invocation of kotl-mode.")
 
 (defcustom kotl-mode:shrink-region-flag nil
   "*If non-nil, Koutliner commands automatically shrink the region to within the visible bounds of a single cell before editing it.
@@ -112,8 +115,8 @@ It provides the following keys:
 	  mode-line-format (set:remove "%n" mode-line-format)
 	  outline-regexp (concat " *[0-9][0-9a-z.]*" kview:default-label-separator)))
   ;;
-  (if (fboundp 'add-to-invisibility-spec)
-      (add-to-invisibility-spec '(outline . t)))
+  (when (fboundp 'add-to-invisibility-spec)
+    (add-to-invisibility-spec '(outline . t)))
   (setq indent-line-function 'kotl-mode:indent-line
 	indent-region-function 'kotl-mode:indent-region
 	outline-isearch-open-invisible-function 'kotl-mode:isearch-open-invisible
@@ -187,10 +190,10 @@ It provides the following keys:
   (let* ((example "EXAMPLE.kotl")
 	 (personal-example (expand-file-name example "~/"))
 	 (original-example (expand-file-name example (concat hyperb:dir "kotl/"))))
-    (if (file-newer-than-file-p original-example personal-example)
-	(if (file-exists-p personal-example)
-	    ;; save it and use the original example file
-	    (rename-file personal-example (expand-file-name (concat "SAVED-" example) "~/") t)))
+    (when (file-newer-than-file-p original-example personal-example)
+      (when (file-exists-p personal-example)
+	;; save it and use the original example file
+	(rename-file personal-example (expand-file-name (concat "SAVED-" example) "~/") t)))
     (cond ((get-file-buffer personal-example)
 	   (switch-to-buffer (get-file-buffer personal-example)))
 	  ((file-readable-p personal-example)
@@ -223,13 +226,14 @@ It provides the following keys:
 (defun kotl-mode:backward-kill-word (arg)
   "Kill up to prefix ARG words preceding point within a single cell."
   (interactive "*p")
-  (or arg (setq arg 1))
+  (unless arg
+    (setq arg 1))
   (cond ((< arg 0)
-	 (if (kotl-mode:eocp)
-	     (error "(kotl-mode:backward-kill-word): End of cell")))
+	 (when (kotl-mode:eocp)
+	   (error "(kotl-mode:backward-kill-word): End of cell")))
 	((> arg 0)
-	 (if (kotl-mode:bocp)
-	     (error "(kotl-mode:backward-kill-word): Beginning of cell"))))
+	 (when (kotl-mode:bocp)
+	   (error "(kotl-mode:backward-kill-word): Beginning of cell"))))
   (unless (= arg 0)
     (save-restriction
       (narrow-to-region (kcell-view:start) (kcell-view:end-contents))
@@ -254,15 +258,14 @@ the end of the text and `fill-column'."
 	(bocp)
 	start)
     (setq start (kotl-mode:to-start-of-line))
-    (if (setq bocp (kotl-mode:bocp))
-	(progn
-	  ;; Add a temporary fill-prefix since this is the 1st line of the cell
-	  ;; where label could interfere with centering.
-	  (insert "\n\n") (insert-char ?\  indent)))
+    (when (setq bocp (kotl-mode:bocp))
+      ;; Add a temporary fill-prefix since this is the 1st line of the cell
+      ;; where label could interfere with centering.
+      (insert "\n\n") (insert-char ?\  indent))
     (center-line)
-    (if bocp
-	;; Delete temporary fill prefix.
-	(delete-region start (+ start indent 2)))
+    (when bocp
+      ;; Delete temporary fill prefix.
+      (delete-region start (+ start indent 2)))
     (goto-char opoint)
     ;; Move to editable point if need be.
     (kotl-mode:to-valid-position)))
@@ -324,7 +327,8 @@ With optional prefix arg DELETE-FLAG, delete region."
 		   (concat "^" (make-string indent ?\ ))
 		   (buffer-substring start end)
 		   "" t)))
-  (if delete-flag (delete-region start end)))
+  (when delete-flag
+    (delete-region start end)))
 
 (defun kotl-mode:delete-backward-char (arg &optional kill-flag)
   "Delete up to the preceding prefix ARG characters.
@@ -332,11 +336,12 @@ Return number of characters deleted.
 Optional KILL-FLAG non-nil means save in kill ring instead of deleting.
 Does not delete across cell boundaries."
   (interactive "*P")
-  (if (called-interactively-p 'interactive)
-      (if current-prefix-arg
-	  (setq kill-flag t
-		arg (prefix-numeric-value current-prefix-arg))))
-  (or arg (setq arg 1))
+  (when (called-interactively-p 'interactive)
+    (when current-prefix-arg
+      (setq kill-flag t
+	    arg (prefix-numeric-value current-prefix-arg))))
+  (unless arg
+    (setq arg 1))
   (kotl-mode:delete-char (- arg) kill-flag))
 
 (defun kotl-mode:delete-blank-lines ()
@@ -368,11 +373,12 @@ Return number of characters deleted.
 Optional KILL-FLAG non-nil means save in kill ring instead of deleting.
 Does not delete across cell boundaries."
   (interactive "*P")
-  (if (called-interactively-p 'interactive)
-      (if current-prefix-arg
-	  (setq kill-flag t
-		arg (prefix-numeric-value current-prefix-arg))))
-  (or arg (setq arg 1))
+  (when (called-interactively-p 'interactive)
+    (when current-prefix-arg
+      (setq kill-flag t
+	    arg (prefix-numeric-value current-prefix-arg))))
+  (unless arg
+    (setq arg 1))
   (let ((del-count 0)
 	(indent (kcell-view:indent))
 	count start end)
@@ -442,7 +448,8 @@ With prefix ARG non-nil, join this line to the following line."
    (lambda ()
      (let ((opoint (point)))
        (beginning-of-line)
-       (if arg (kfill:forward-line 1))
+       (when arg
+	 (kfill:forward-line 1))
        (if (eq (preceding-char) ?\n)
 	   (progn
 	     (delete-region (point) (1- (point)))
@@ -464,10 +471,10 @@ IGNORE-COLLAPSED-P is used when caller has already expanded cell, indicating
 it is not collapsed."
   (interactive "*P")
   (cond ((kcell-view:get-attr 'no-fill)
-	 (if (called-interactively-p 'interactive)
-	     (progn (beep)
-		    (message "Current cell has a `do not fill' attribute.")
-		    nil)))
+	 (when (called-interactively-p 'interactive)
+	   (beep)
+	   (message "Current cell has a `do not fill' attribute.")
+	   nil))
 	((string-match "\\`[ \t\n\r]*\\'" (kcell-view:contents))
 	  ;; Cell content is all whitespace.
 	 nil)
@@ -479,10 +486,10 @@ it is not collapsed."
 		  temp-prefix prev-point)
 	     (goto-char start)
 	     ;; Expand cell if collapsed so that filling is done properly.
-	     (if (and (not ignore-collapsed-p)
-		      (kcell-view:collapsed-p start))
-		 (progn (setq collapsed-p (kview:get-cells-status kview start end))
-			(outline-flag-region start end nil)))
+	     (when (and (not ignore-collapsed-p)
+			(kcell-view:collapsed-p start))
+	       (setq collapsed-p (kview:get-cells-status kview start end))
+	       (outline-flag-region start end nil))
 	     (goto-char start)
 	     ;; Add a temporary fill-prefix for first labeled line, so is
 	     ;; filled properly.
@@ -500,14 +507,15 @@ it is not collapsed."
 				  t))))
 	     ;; Delete temporary fill prefix.
 	     (goto-char start)
-	     (if (looking-at temp-prefix)
-		 (replace-match "" t t))
+	     (when (looking-at temp-prefix)
+	       (replace-match "" t t))
 	     ;; Return to original point.
 	     (setq end (kcell-view:end-contents))
 	     (goto-char (min opoint end))
 	     ;;
 	     ;; If cell was collapsed before filling, restore its status.
-	     (if (remq 0 collapsed-p) (kview:set-cells-status kview start end collapsed-p))
+	     (when (remq 0 collapsed-p)
+	       (kview:set-cells-status kview start end collapsed-p))
 	     ;;
 	     ;; Remove markers.
 	     (set-marker start nil)
@@ -651,7 +659,7 @@ but it will be copied to the kill ring and then an error will be signaled."
 		  (kill-append killed (< end start))
 		(kill-new killed))
 	      (setq this-command 'kill-region)
-	      (if read-only (barf-if-buffer-read-only))
+	      (when read-only (barf-if-buffer-read-only))
 	      )))
       (error
        "(kotl-mode:kill-region): Bad region or not within a single Koutline cell"))))
@@ -665,13 +673,14 @@ but it will be copied to the kill ring and then an error will be signaled."
 (defun kotl-mode:kill-sentence (&optional arg)
   "Kill up to prefix ARG (or 1) sentences following point within a single cell."
   (interactive "*p")
-  (or arg (setq arg 1))
+  (when arg
+    (setq arg 1))
   (cond ((> arg 0)
-	 (if (kotl-mode:eocp)
-	     (error "(kotl-mode:kill-sentence): End of cell")))
+	 (when (kotl-mode:eocp)
+	   (error "(kotl-mode:kill-sentence): End of cell")))
 	((< arg 0)
-	 (if (kotl-mode:bocp)
-	     (error "(kotl-mode:kill-sentence): Beginning of cell"))))
+	 (when (kotl-mode:bocp)
+	   (error "(kotl-mode:kill-sentence): Beginning of cell"))))
   (unless (= arg 0)
     (kotl-mode:kill-region (point)
 			   (save-excursion
@@ -680,13 +689,14 @@ but it will be copied to the kill ring and then an error will be signaled."
 (defun kotl-mode:kill-word (arg)
   "Kill up to prefix ARG words following point within a single cell."
   (interactive "*p")
-  (or arg (setq arg 1))
+  (when arg
+    (setq arg 1))
   (cond ((> arg 0)
-	 (if (kotl-mode:eocp)
-	     (error "(kotl-mode:kill-word): End of cell")))
+	 (when (kotl-mode:eocp)
+	   (error "(kotl-mode:kill-word): End of cell")))
 	((< arg 0)
-	 (if (kotl-mode:bocp)
-	     (error "(kotl-mode:kill-word): Beginning of cell"))))
+	 (when (kotl-mode:bocp)
+	   (error "(kotl-mode:kill-word): Beginning of cell"))))
   (unless (= arg 0)
     (save-restriction
       (narrow-to-region (kcell-view:start) (kcell-view:end-contents))
@@ -732,9 +742,9 @@ With ARG N, insert N newlines."
 	    (insert fill-prefix)
 	  (insert-char ?\  indent)))
       (setq arg (1- arg)))
-    (if (and bolp add-prefix)
-	(progn (delete-horizontal-space)
-	       (insert fill-prefix)))))
+    (when (and bolp add-prefix)
+      (delete-horizontal-space)
+      (insert fill-prefix))))
 
 (defun kotl-mode:quoted-insert (arg)
   "Read next input character and insert it.
@@ -1151,8 +1161,8 @@ Leave point at original location but return the tree's new start point."
 		     (if current-prefix-arg "first child of parent"
 		       "preceding sibling"))))
       (list current-prefix-arg))))
-  (if (and (not copy-p) (equal from-cell-ref to-cell-ref))
-      (error "(kotl-mode:move-before): Can't move tree before itself"))
+  (when (and (not copy-p) (equal from-cell-ref to-cell-ref))
+    (error "(kotl-mode:move-before): Can't move tree before itself"))
   (let* ((label-sep-len (kview:label-separator-length kview))
 	 (move-to-point (set-marker
 			 (make-marker)
@@ -1170,18 +1180,18 @@ Leave point at original location but return the tree's new start point."
     ;;
     ;; We can't move a tree to a point within itself, so if that is the case
     ;; and this is not a copy operation, signal an error.
-    (if (and (not copy-p) (>= move-to-point start) (<= move-to-point end))
-	(error "(kotl-mode:move-before): Can't move tree <%s> to within itself"
-	       from-label))
+    (when (and (not copy-p) (>= move-to-point start) (<= move-to-point end))
+      (error "(kotl-mode:move-before): Can't move tree <%s> to within itself"
+	     from-label))
     ;;
     ;; If tree to move has a sibling, point is now at the start of the
     ;; sibling cell.  Mark its label with a property which will be deleted
     ;; whenever the cell label is renumbered.  This tells us whether or not
     ;; to renumber the sibling separately from the tree to move.
-    (if sib-id
-	;; Move to middle of label and insert klabel-original temp property.
-	(progn (goto-char (- (point) label-sep-len 3))
-	       (kproperty:set 'klabel-original t)))
+    (when sib-id
+      ;; Move to middle of label and insert klabel-original temp property.
+      (goto-char (- (point) label-sep-len 3))
+      (kproperty:set 'klabel-original t))
     ;;
     ;; Position for insertion at succeeding-tree, before deletion of
     ;; tree-to-move from old position, in case old position precedes new one.
@@ -1211,14 +1221,13 @@ Leave point at original location but return the tree's new start point."
       ;;
       ;; Move to sibling of tree-to-move within view and update labels within
       ;; view of tree-to-move's original siblings.
-      (if sib-id
-	  (progn
-	    (kotl-mode:goto-cell sib-id t)
-	    ;; Sibling labels may have already been updated if tree was
-	    ;; moved somewhere preceding its siblings.
-	    (let ((label-middle (- (point) label-sep-len 2)))
-	      (if (kproperty:get label-middle 'klabel-original)
-		  (klabel-type:update-labels from-label))))))
+      (when sib-id
+	(kotl-mode:goto-cell sib-id t)
+	;; Sibling labels may have already been updated if tree was
+	;; moved somewhere preceding its siblings.
+	(let ((label-middle (- (point) label-sep-len 2)))
+	  (when (kproperty:get label-middle 'klabel-original)
+	    (klabel-type:update-labels from-label)))))
     ;;
     (goto-char new-tree-start)
     ;;
@@ -1258,9 +1267,9 @@ See also the command `yank-pop' (\\[yank-pop])."
     ;; Then insert into buffer.
     (insert (hypb:replace-match-string
 	     "[\n\r]" yank-text (lambda (match) (concat match indent-str)))))
-  (if (consp arg) (kotl-mode:exchange-point-and-mark))
+  (when (consp arg) (kotl-mode:exchange-point-and-mark))
   ;; If we do get all the way thru, make this-command indicate that.
-  (if (eq this-command t) (setq this-command 'kotl-mode:yank))
+  (when (eq this-command t) (setq this-command 'kotl-mode:yank))
   nil)
 
 (defun kotl-mode:yank-pop (arg)
@@ -1284,7 +1293,8 @@ doc string for `insert-for-yank-1', which see."
   (if (not (eq last-command 'kotl-mode:yank))
       (error "Previous command was not a yank"))
   (setq this-command 'kotl-mode:yank)
-  (or arg (setq arg 1))
+  (when arg
+    (setq arg 1))
   (let ((inhibit-read-only t)
 	(before (< (point) (mark t))))
     (if before
@@ -1301,7 +1311,7 @@ doc string for `insert-for-yank-1', which see."
     ;; Set the window start back where it was in the yank command,
     ;; if possible.
     (set-window-start (selected-window) yank-window-start t)
-    (if before (kotl-mode:exchange-point-and-mark)))
+    (when before (kotl-mode:exchange-point-and-mark)))
   nil)
 
 ;;; ------------------------------------------------------------------------
@@ -1337,17 +1347,18 @@ Return number of cells left to move."
   "Move point backward ARG (or 1) characters and return point."
   (interactive "p")
   (kotl-mode:maintain-region-highlight)
-  (or arg (setq arg 1))
+  (when arg
+    (setq arg 1))
   (if (>= arg 0)
       (while (> arg 0)
 	(cond ((kotl-mode:bobp)
 	       (error "(kotl-mode:backward-char): Beginning of buffer"))
 	      ((kotl-mode:bocp)
-	       (if (kcell-view:previous t)
-		   (kotl-mode:end-of-cell)))
+	       (when (kcell-view:previous t)
+		 (kotl-mode:end-of-cell)))
 	      ((kotl-mode:bolp)
-	       (if (re-search-backward "[\n\r]" nil t)
-		   (kotl-mode:to-valid-position t)))
+	       (when (re-search-backward "[\n\r]" nil t)
+		 (kotl-mode:to-valid-position t)))
 	      (t (backward-char)))
 	(setq arg (1- arg)))
     (kotl-mode:forward-char (- arg)))
@@ -1379,21 +1390,22 @@ See `forward-paragraph' for more information."
 	 (fill-prefix (make-string (kcell-view:indent nil label-sep-len) ?\ )))
     (if (kotl-mode:bobp)
 	(error "(kotl-mode:backward-sentence): First sentence")
-      (if (and (kotl-mode:bocp) (kcell-view:previous nil label-sep-len))
-	  (goto-char (kcell-view:end-contents)))
-      (or arg (setq arg 1))
+      (when (and (kotl-mode:bocp) (kcell-view:previous nil label-sep-len))
+	(goto-char (kcell-view:end-contents)))
+      (when arg
+	(setq arg 1))
       (save-restriction
-	(if (= arg 1)
-	    (narrow-to-region
-	     (- (kcell-view:start nil label-sep-len)
-		(kcell-view:indent nil label-sep-len))
-	     (kcell-view:end-contents)))
+	(when (= arg 1)
+	  (narrow-to-region
+	   (- (kcell-view:start nil label-sep-len)
+	      (kcell-view:indent nil label-sep-len))
+	   (kcell-view:end-contents)))
 	(unwind-protect
 	    (let ((opoint (point)))
 	      (backward-sentence arg)
-	      (if (= opoint (point))
-		  (progn (kcell-view:previous nil label-sep-len)
-			 (backward-sentence arg))))
+	      (when (= opoint (point))
+		(kcell-view:previous nil label-sep-len)
+		(backward-sentence arg)))
 	  (kotl-mode:to-valid-position t)))))
   (point))
 
@@ -1401,7 +1413,8 @@ See `forward-paragraph' for more information."
   "Move point backward ARG (or 1) words and return point."
   (interactive "p")
   (kotl-mode:maintain-region-highlight)
-  (or arg (setq arg 1))
+  (when arg
+    (setq arg 1))
   (if (>= arg 0)
       (while (> arg 0)
 	(cond ((kotl-mode:bobp) (setq arg 0))
@@ -1427,9 +1440,10 @@ See `forward-paragraph' for more information."
   "Move point to beginning of current or ARGth - 1 prior cell and return point."
   (interactive "p")
   (kotl-mode:maintain-region-highlight)
-  (or arg (setq arg 1))
-  (or (integer-or-marker-p arg)
-      (error "(kotl-mode:beginning-of-cell): Wrong type arg, integer-or-marker, `%s'" arg))
+  (when arg
+    (setq arg 1))
+  (unless (integer-or-marker-p arg)
+    (error "(kotl-mode:beginning-of-cell): Wrong type arg, integer-or-marker, `%s'" arg))
   (if (= arg 1)
       (goto-char (kcell-view:start))
     (kotl-mode:backward-cell (1- arg)))
@@ -1442,9 +1456,10 @@ See `forward-paragraph' for more information."
   "Move point to beginning of current or ARGth - 1 line and return point."
   (interactive "p")
   (kotl-mode:maintain-region-highlight)
-  (or arg (setq arg 1))
-  (or (integer-or-marker-p arg)
-      (error "(kotl-mode:to-start-of-line): Wrong type arg, integer-or-marker, `%s'" arg))
+  (when arg
+    (setq arg 1))
+  (unless (integer-or-marker-p arg)
+    (error "(kotl-mode:to-start-of-line): Wrong type arg, integer-or-marker, `%s'" arg))
   (kfill:forward-line (1- arg))
   (unless (eolp)
     (forward-char (prog1 (kcell-view:indent)
@@ -1462,9 +1477,9 @@ Leave point at the start of the cell."
   (interactive)
   (kotl-mode:maintain-region-highlight)
   (let ((label-sep-len (kview:label-separator-length kview)))
-    (if (/= (kcell-view:level nil label-sep-len) 1)
-	;; Enable user to return to this previous position if desired.
-	(push-mark nil 'no-msg))
+    (when (/= (kcell-view:level nil label-sep-len) 1)
+      ;; Enable user to return to this previous position if desired.
+      (push-mark nil 'no-msg))
     (while (and (/= (kcell-view:level nil label-sep-len) 1)
 		(kcell-view:parent nil label-sep-len)))
     (kotl-mode:beginning-of-cell)))
@@ -1479,15 +1494,15 @@ Leave point at the start of the cell."
     (push-mark nil 'no-msg)
     (let ((child))
       (while (and (> arg 0) (kcell-view:child))
-	(or child (setq child t))
+	(unless child
+	  (setq child t))
 	(setq arg (1- arg)))
       ;; Signal an error if couldn't move down at least 1 child level.
       (or child
 	  (progn
 	    (goto-char (hypb:mark t))
 	    (pop-mark)
-	    (error "(kotl-mode:down-level): No child level to which to move")
-	    )))))
+	    (error "(kotl-mode:down-level): No child level to which to move"))))))
 
 (defun kotl-mode:end-of-buffer ()
   "Move point to end of buffer and return point."
@@ -1504,9 +1519,10 @@ With optional ARG > 0, move to the ARGth - 1 next visible cell.
 With optional ARG < 0, move to the ARGth previous visible cell."
   (interactive "p")
   (kotl-mode:maintain-region-highlight)
-  (or arg (setq arg 1))
-  (or (integer-or-marker-p arg)
-      (error "(kotl-mode:end-of-cell): Wrong type arg, integer-or-marker, `%s'" arg))
+  (when arg
+    (setq arg 1))
+  (unless (integer-or-marker-p arg)
+    (error "(kotl-mode:end-of-cell): Wrong type arg, integer-or-marker, `%s'" arg))
   (kotl-mode:next-cell (if (> arg 0) (1- arg) arg))
   (goto-char (kcell-view:end-contents)))
 
@@ -1517,8 +1533,9 @@ With optional ARG < 0, move to the ARGth previous visible cell."
   "Move point to end of current or ARGth - 1 line and return point."
   (interactive "p")
   (kotl-mode:maintain-region-highlight)
-  (or arg (setq arg 1))
-  (or (integer-or-marker-p arg)
+  (when arg
+    (setq arg 1))
+  (unless (integer-or-marker-p arg)
       (error "(kotl-mode:to-end-of-line): Wrong type arg, integer-or-marker, `%s'" arg))
   (kfill:forward-line (1- arg))
   (end-of-visible-line)
@@ -1561,9 +1578,9 @@ already within the first sibling cell."
   (interactive)
   (kotl-mode:maintain-region-highlight)
   (let ((label-sep-len (kview:label-separator-length kview)))
-    (if (save-excursion (kcell-view:backward nil label-sep-len))
+    (when (save-excursion (kcell-view:backward nil label-sep-len))
 	;; Enable user to return to this previous position if desired.
-	(push-mark nil 'no-msg))
+      (push-mark nil 'no-msg))
     (while (kcell-view:backward nil label-sep-len))))
 
 (defun kotl-mode:forward-cell (arg)
@@ -1585,7 +1602,8 @@ Return number of cells left to move."
   "Move point forward ARG (or 1) characters and return point."
   (interactive "p")
   (kotl-mode:maintain-region-highlight)
-  (or arg (setq arg 1))
+  (when arg
+    (setq arg 1))
   (if (>= arg 0)
       (while (> arg 0)
 	(cond ((and (kotl-mode:eolp) (kotl-mode:last-line-p))
@@ -1636,19 +1654,20 @@ part of the paragraph, or the end of the buffer."
     (if (kotl-mode:eobp)
 	(error "(kotl-mode:forward-sentence): Last sentence")
       (if (kotl-mode:eocp) (kcell-view:next nil label-sep-len))
-      (or arg (setq arg 1))
+      (when arg
+	(setq arg 1))
       (save-restriction
-	(if (= arg 1)
-	    (narrow-to-region
-	     (- (kcell-view:start nil label-sep-len)
-		(kcell-view:indent nil label-sep-len))
-	     (kcell-view:end-contents)))
+	(when (= arg 1)
+	  (narrow-to-region
+	   (- (kcell-view:start nil label-sep-len)
+	      (kcell-view:indent nil label-sep-len))
+	   (kcell-view:end-contents)))
 	(unwind-protect
 	    (let ((opoint (point)))
 	      (forward-sentence arg)
-	      (if (= opoint (point))
-		  (progn (kcell-view:next nil label-sep-len)
-			 (forward-sentence arg))))
+	      (when (= opoint (point))
+		(kcell-view:next nil label-sep-len)
+		(forward-sentence arg)))
 	  (kotl-mode:to-valid-position)))))
   (point))
 
@@ -1656,7 +1675,8 @@ part of the paragraph, or the end of the buffer."
   "Move point forward ARG (or 1) words and return point."
   (interactive "p")
   (kotl-mode:maintain-region-highlight)
-  (or arg (setq arg 1))
+  (when arg
+    (setq arg 1))
   (if (>= arg 0)
       (while (> arg 0)
 	(cond ((kotl-mode:eobp) (setq arg 0))
@@ -1669,8 +1689,8 @@ part of the paragraph, or the end of the buffer."
 	;; then we moved over something other than a word (some
 	;; punctuation or an outline autonumber); therefore, leave counter as
 	;; is in order to move forward over next word.
-	(or (kotl-mode:bocp)
-	    (setq arg (1- arg))))
+	(unless (kotl-mode:bocp)
+	  (setq arg (1- arg))))
     (kotl-mode:backward-word (- arg)))
   (point))
 
@@ -1703,15 +1723,14 @@ error if called interactively when CELL-REF is not found."
       (if (string-match "\\(\\.[a-zA-Z]+\\)?\\([|:].*\\)\\|\\.[a-zA-Z]+"
 			cell-ref)
 	  (setq cell-id (substring cell-ref 0 (match-beginning 0))
-		kvspec  (if (match-beginning 2)
-			    (substring
-			     cell-ref (match-beginning 2) (match-end 2))))
+		kvspec  (when (match-beginning 2)
+			  (substring cell-ref (match-beginning 2) (match-end 2))))
 	(setq cell-id cell-ref kvspec nil))
 
       (goto-char (point-min))
       (cond ((eq ?0 (aref cell-id 0))
 	     ;; is an idstamp
-	     (if (kview:goto-cell-id cell-id)
+	     (when (kview:goto-cell-id cell-id)
 		 (setq found (point))))
 	    ;; is a label
 	    ((re-search-forward
@@ -1726,7 +1745,7 @@ error if called interactively when CELL-REF is not found."
       (if (and (not found) (or error-p (called-interactively-p 'interactive)))
 	  (error "(kotl-mode:goto-cell): No `%s' cell in this view" cell-ref)
 	;; Activate any viewspec associated with cell-ref.
-	(if kvspec (kvspec:activate kvspec))))
+	(when kvspec (kvspec:activate kvspec))))
     found))
 
 (defun kotl-mode:head-cell ()
@@ -1747,9 +1766,9 @@ already within the last sibling cell."
   (interactive)
   (kotl-mode:maintain-region-highlight)
   (let ((label-sep-len (kview:label-separator-length kview)))
-    (if (save-excursion (kcell-view:forward nil label-sep-len))
-	;; Enable user to return to this previous position if desired.
-	(push-mark nil 'no-msg))
+    (when (save-excursion (kcell-view:forward nil label-sep-len))
+      ;; Enable user to return to this previous position if desired.
+      (push-mark nil 'no-msg))
     (while (kcell-view:forward nil label-sep-len))))
 
 (defun kotl-mode:mark-paragraph ()
@@ -1927,18 +1946,18 @@ If at tail cell already, do nothing and return nil."
   (and (kotl-mode:bolp)
        (let ((begin-point (kcell-view:plist-point))
 	     (bol))
-	 (and begin-point
-	      (save-excursion
-		;; If first line-begin is less than cell begin point,
-		;; then we know we are on the first line of the cell.
-		(if (setq bol (re-search-backward "^" nil t))
-		    (<= bol begin-point)))))
+	 (when begin-point
+	   (save-excursion
+	     ;; If first line-begin is less than cell begin point,
+	     ;; then we know we are on the first line of the cell.
+	     (when (setq bol (re-search-backward "^" nil t))
+	       (<= bol begin-point)))))
        (point)))
 
 (defun kotl-mode:bolp ()
   "Return point if at beginning of a kview line, else nil."
-  (if (= (current-column) (kcell-view:indent))
-      (point)))
+  (when (= (current-column) (kcell-view:indent))
+    (point)))
 
 (defun kotl-mode:buffer-empty-p ()
   "Return non-nil iff there are no outline cells within current buffer."
@@ -1949,18 +1968,18 @@ If at tail cell already, do nothing and return nil."
 (defun kotl-mode:eobp ()
   "Return point if after the end of the last cell in kview, else nil."
   (interactive)
-  (if (looking-at "^[\n\r]*\\'") (point)))
+  (when (looking-at "^[\n\r]*\\'") (point)))
 
 (defun kotl-mode:eocp ()
   "Return point if in a visible position at the end of a kview cell, else nil."
-  (and (or (eobp)
-	   (looking-at "[\n\r]+\\'")
-	   (and (kotl-mode:eolp)
-		(save-excursion
-		  (skip-chars-forward "\n\r")
-		  (kotl-mode:to-start-of-line)
-		  (kotl-mode:bocp))))
-       (point)))
+  (when (or (eobp)
+	    (looking-at "[\n\r]+\\'")
+	    (when (kotl-mode:eolp)
+	      (save-excursion
+		(skip-chars-forward "\n\r")
+		(kotl-mode:to-start-of-line)
+		(kotl-mode:bocp))))
+    (point)))
 
 (defun kotl-mode:eolp (&optional next-char-visible)
   "Return t if point is at the end of a visible line or the end of the buffer.
@@ -2117,17 +2136,15 @@ Return last newly added cell."
 	(setq cell-level (1- cell-level)
 	      start (point)
 	      parent (kcell-view:parent nil label-sep-len))
-	(if (not (eq parent t))
-	    (progn
-	      (goto-char start)
-	      (error
-	       "(kotl-mode:add-cell): No higher level at which to add cell")
-	      )))
+	(unless (eq parent t)
+	  (goto-char start)
+	  (error
+	   "(kotl-mode:add-cell): No higher level at which to add cell")))
       ;; Skip from point past any children to next cell.
-      (if (kotl-mode:next-tree)
-	  ;; If found a new tree, then move back to prior cell so can add
-	  ;; new cell after it.
-	  (kcell-view:previous nil label-sep-len)))
+      (when (kotl-mode:next-tree)
+	;; If found a new tree, then move back to prior cell so can add
+	;; new cell after it.
+	(kcell-view:previous nil label-sep-len)))
     (goto-char (kcell-view:end))
     ;;
     ;; Insert new cells into view.
@@ -2156,11 +2173,11 @@ Return last newly added cell."
     ;; sibling if any.
     (kotl-mode:to-valid-position t)
     (save-excursion
-      (if (kcell-view:forward t label-sep-len)
-	  (let ((label-type (kview:label-type kview)))
-	    (if (memq label-type '(alpha legal partial-alpha))
-		;; Update the labels of these siblings and their subtrees.
-		(klabel-type:update-labels (klabel:increment klabel))))))
+      (when (kcell-view:forward t label-sep-len)
+	(let ((label-type (kview:label-type kview)))
+	  (when (memq label-type '(alpha legal partial-alpha))
+	    ;; Update the labels of these siblings and their subtrees.
+	    (klabel-type:update-labels (klabel:increment klabel))))))
     ;;
     ;; Leave point within last newly added cell and return this cell.
     (kotl-mode:beginning-of-cell)
@@ -2185,38 +2202,39 @@ to one level and kotl-mode:refill-flag is treated as true."
       (kotl-mode:to-start-of-line)
       (setq start-point (point)
 	    start-level (kcell-view:level start-point label-sep-len))
-      (if fill-p (setq arg 1))
+      (when fill-p
+	(setq arg 1))
       (unwind-protect
 	  (progn
 	    (backward-char 1)
 	    (while (and (> arg 0)
 			(setq prev
 			      (kcell-view:previous nil label-sep-len)))
-	      (if prev
-		  (progn (setq prev-level
-			       (kcell-view:level (point) label-sep-len))
-			 (cond ((> prev-level (+ start-level arg))
-				;; Don't want to demote this far
-				;; so keep looking at prior nodes.
-				nil)
-			       ((= arg (- prev-level start-level))
-				;; Demote to be sibling of this kcell.
-				(setq arg -1))
-			       ((< prev-level start-level)
-				;; prev is at higher level then
-				;; orig, so can't demote
-				(setq prev nil
-				      arg 0))
-			       (t
-				;; Demote below this kcell.  This is
-				;; as far we can demote, though it may
-				;; not be the full amount of arg.
-				(setq arg 0))))))
-	    (if prev
-		(kotl-mode:move-after
-		 (kcell-view:label start-point)
-		 (kcell-view:label) (= arg 0)
-		 nil fill-p)))
+	      (when prev
+		(setq prev-level
+		      (kcell-view:level (point) label-sep-len))
+		(cond ((> prev-level (+ start-level arg))
+		       ;; Don't want to demote this far
+		       ;; so keep looking at prior nodes.
+		       nil)
+		      ((= arg (- prev-level start-level))
+		       ;; Demote to be sibling of this kcell.
+		       (setq arg -1))
+		      ((< prev-level start-level)
+		       ;; prev is at higher level then
+		       ;; orig, so can't demote
+		       (setq prev nil
+			     arg 0))
+		      (t
+		       ;; Demote below this kcell.  This is
+		       ;; as far we can demote, though it may
+		       ;; not be the full amount of arg.
+		       (setq arg 0)))))
+	    (when prev
+	      (kotl-mode:move-after
+	       (kcell-view:label start-point)
+	       (kcell-view:label) (= arg 0)
+	       nil fill-p)))
 	;; Move to start of original cell
 	(kotl-mode:goto-cell orig-id)
 	;; Move to original pos within cell
@@ -2224,8 +2242,8 @@ to one level and kotl-mode:refill-flag is treated as true."
 			   (- (kcell-view:end-contents)
 			      (kcell-view:start))))
 	(kotl-mode:to-valid-position))
-      (if (not prev)
-	  (error "(kotl-mode:demote-tree): Cannot demote any further")))))
+      (unless prev
+	(error "(kotl-mode:demote-tree): Cannot demote any further")))))
 
 (defun kotl-mode:exchange-cells (cell-ref-1 cell-ref-2)
   "Exchange CELL-REF-1 with CELL-REF-2 in current view.  Don't move point."
@@ -2261,15 +2279,16 @@ to one level and kotl-mode:refill-flag is treated as true."
       ;; Set kcell properties.
       (kcell-view:set-cell kcell-1)
       ;; If idstamp labels are on, then must exchange labels in view.
-      (if (eq (kview:label-type kview) 'id)
-	  (klabel:set (kcell-view:idstamp)))
+      (when (eq (kview:label-type kview) 'id)
+	(klabel:set (kcell-view:idstamp)))
       ;; Exchange cell contents.
       (delete-region (kcell-view:start) (kcell-view:end-contents))
       (insert
        (hypb:replace-match-string
 	"\\([\n\r]\\)"
 	contents-1 (concat "\\1" (make-string (kcell-view:indent) ?\ ))))
-      (if kotl-mode:refill-flag (kotl-mode:fill-cell))
+      (when kotl-mode:refill-flag
+	(kotl-mode:fill-cell))
       ;;
       ;; Substitute cell-2 attributes into cell-1 location.
       ;;
@@ -2277,8 +2296,8 @@ to one level and kotl-mode:refill-flag is treated as true."
       (kotl-mode:goto-cell cell-ref-1 t)
       (kcell-view:set-cell kcell-2)
       ;; If idstamp labels are on, then must exchange labels in view.
-      (if (eq (kview:label-type kview) 'id)
-	  (klabel:set (kcell-view:idstamp)))
+      (when (eq (kview:label-type kview) 'id)
+	(klabel:set (kcell-view:idstamp)))
       ;; Exchange cell contents.
       (delete-region (kcell-view:start) (kcell-view:end-contents))
       ;; Add indentation to all but first line.
@@ -2286,7 +2305,8 @@ to one level and kotl-mode:refill-flag is treated as true."
        (hypb:replace-match-string
 	"\\([\n\r]\\)"
 	contents-2 (concat "\\1" (make-string (kcell-view:indent) ?\ ))))
-      (if kotl-mode:refill-flag (kotl-mode:fill-cell)))))
+      (when kotl-mode:refill-flag
+	(kotl-mode:fill-cell)))))
 
 (defun kotl-mode:kill-contents (arg)
   "Kill contents of cell from point to cell end.
@@ -2317,13 +2337,12 @@ If ARG is a non-positive number, nothing is done."
 		 (kview:delete-region start end))
 	(kview:delete-region start end)
 	(kotl-mode:to-valid-position)))
-    (if killed
-	(progn
-	  (cond (sib (klabel-type:update-labels label))
-		((kotl-mode:buffer-empty-p)
-		 ;; Always leave at least 1 visible cell within a view.
-		 (kview:add-cell "1" 1)))
-	  (kotl-mode:to-valid-position)))))
+    (when killed
+      (cond (sib (klabel-type:update-labels label))
+	    ((kotl-mode:buffer-empty-p)
+	     ;; Always leave at least 1 visible cell within a view.
+	     (kview:add-cell "1" 1)))
+      (kotl-mode:to-valid-position))))
 
 (defun kotl-mode:mail-tree (cell-ref invisible-flag)
   "Mail outline tree rooted at CELL-REF.  Use \"0\" for whole outline buffer.
@@ -2367,7 +2386,8 @@ to one level and kotl-mode:refill-flag is treated as true."
       ;; the tree is at all hidden.
       (kotl-mode:to-start-of-line)
       (setq start-point (point))
-      (if fill-p (setq arg 1))
+      (when fill-p
+	(setq arg 1))
       (unwind-protect
 	  (progn
 	    (backward-char 1)
@@ -2376,11 +2396,11 @@ to one level and kotl-mode:refill-flag is treated as true."
 			(not (eq result 0)))
 	      (setq parent result
 		    arg (1- arg)))
-	    (if parent
-		(kotl-mode:move-after
-		 (kcell-view:label start-point)
-		 (kcell-view:label) nil
-		 nil fill-p)))
+	    (when parent
+	      (kotl-mode:move-after
+	       (kcell-view:label start-point)
+	       (kcell-view:label) nil
+	       nil fill-p)))
 	;; Move to start of original cell
 	(kotl-mode:goto-cell orig-id)
 	;; Move to original pos within cell
@@ -2388,8 +2408,8 @@ to one level and kotl-mode:refill-flag is treated as true."
 			   (- (kcell-view:end-contents)
 			      (kcell-view:start))))
 	(kotl-mode:to-valid-position))
-      (if (not parent)
-	  (error "(kotl-mode:promote-tree): Cannot promote any further")))))
+      (unless parent
+	(error "(kotl-mode:promote-tree): Cannot promote any further")))))
 
 (defun kotl-mode:remove-cell-attribute (attribute &optional pos)
   "Remove ATTRIBUTE from the current cell or the cell at optional POS."
@@ -2422,9 +2442,9 @@ to one level and kotl-mode:refill-flag is treated as true."
   (kcell-view:remove-attr attribute pos)
   ;; Note that buffer needs to be saved to store modified property list.
   (set-buffer-modified-p t)
-  (if (called-interactively-p 'interactive)
-      (message "Attribute `%s' removed from cell <%s>."
-	       attribute (kcell-view:label pos))))
+  (when (called-interactively-p 'interactive)
+    (message "Attribute `%s' removed from cell <%s>."
+	     attribute (kcell-view:label pos))))
 
 (defun kotl-mode:set-cell-attribute (attribute value &optional pos)
   "Include ATTRIBUTE VALUE with the current cell or the cell at optional POS.
@@ -2467,9 +2487,9 @@ confirmation."
   (kcell-view:set-attr attribute value pos)
   ;; Note that buffer needs to be saved to store new attribute value.
   (set-buffer-modified-p t)
-  (if (called-interactively-p 'interactive)
-      (message "Attribute `%s' set to `%s' in cell <%s>."
-	       attribute value (kcell-view:label pos))))
+  (when (called-interactively-p 'interactive)
+    (message "Attribute `%s' set to `%s' in cell <%s>."
+	     attribute value (kcell-view:label pos))))
 
 (defun kotl-mode:set-or-remove-cell-attribute (arg)
   "With prefix ARG, interactively run kotl-mode:remove-cell-attribute; otherwise, run kotl-mode:set-cell-attribute."
@@ -2516,7 +2536,7 @@ that contains mark."
 	(setq label-2 (kcell-view:label))
 	(kotl-mode:exchange-cells label-1 label-2)
 	(kcell-view:next t label-sep-len)
-	(if prev (kcell-view:next t label-sep-len))))
+	(when prev (kcell-view:next t label-sep-len))))
      ;;
      ;; Transpose point and mark cells, moving point to the new location of the
      ;; cell which originally contained point.
@@ -2588,7 +2608,8 @@ collapsed."
 With optional prefix ARG, toggle display of blank lines between cells."
   (interactive "P")
   (kotl-mode:show-all)
-  (if arg (kvspec:toggle-blank-lines))
+  (when arg
+    (kvspec:toggle-blank-lines))
   (kotl-mode:collapse-tree t))
 
 ;;;###autoload
@@ -2596,13 +2617,14 @@ With optional prefix ARG, toggle display of blank lines between cells."
   "Show (expand) all cells in the current view.
 With optional prefix ARG, toggle display of blank lines between cells."
   (interactive "P")
-  (if (kotl-mode:is-p)
-      (progn (kview:set-attr kview 'levels-to-show 0)
-	     (kview:set-attr kview 'lines-to-show 0)
-	     (outline-flag-region (point-min) (point-max) nil)
-	     (if arg (kvspec:toggle-blank-lines))
-	     (if (called-interactively-p 'interactive)
-		 (kvspec:update t)))))
+  (when (kotl-mode:is-p)
+    (kview:set-attr kview 'levels-to-show 0)
+    (kview:set-attr kview 'lines-to-show 0)
+    (outline-flag-region (point-min) (point-max) nil)
+    (when arg
+      (kvspec:toggle-blank-lines))
+    (when (called-interactively-p 'interactive)
+      (kvspec:update t))))
 
 ;;;###autoload
 (defun kotl-mode:top-cells (&optional arg)
@@ -2614,7 +2636,8 @@ With optional prefix ARG, toggle display of blank lines between cells."
 	(buffer-read-only))
     (kvspec:levels-to-show 1)
     (kvspec:show-lines-per-cell 1)
-    (if arg (kvspec:toggle-blank-lines))
+    (when arg
+      (kvspec:toggle-blank-lines))
     ;; Restore buffer modification status
     (set-buffer-modified-p modified-p)))
 
@@ -2718,9 +2741,10 @@ See also the documentation for `kotl-mode:cell-attributes'."
 		 (format "+KDisplay properties of koutline %s: "
 			 (if (= arg 1) "cell" "tree"))))))
       (list current-prefix-arg))))
-  (or (integerp cells-flag)
-      (setq cells-flag (prefix-numeric-value cells-flag)))
-  (or (stringp cell-ref) (setq cell-ref (kcell-view:label)))
+  (unless (integerp cells-flag)
+    (setq cells-flag (prefix-numeric-value cells-flag)))
+  (unless (stringp cell-ref)
+    (setq cell-ref (kcell-view:label)))
   ;; Ensure these do not invoke with-output-to-temp-buffer a second time.
   (let ((temp-buffer-show-hook)
 	(temp-buffer-show-function))
@@ -2749,9 +2773,9 @@ See also the documentation for `kotl-mode:cell-attributes'."
 When called interactively, it displays the value in the minibuffer."
   (interactive "SCurrent cell attribute to get: ")
   (let ((value (kcell-view:get-attr attribute pos)))
-    (if (called-interactively-p 'interactive)
-	(message "Attribute \"%s\" = `%s' in cell <%s>."
-		 attribute value (kcell-view:label pos)))
+    (when (called-interactively-p 'interactive)
+      (message "Attribute \"%s\" = `%s' in cell <%s>."
+	       attribute value (kcell-view:label pos)))
     value))
 
 ;;; ************************************************************************
@@ -2774,7 +2798,8 @@ Optionally, INDENT and region START and END may be given."
   "Delete and return contents of cell line at point or optional POS as a string.
 Does not delete newline at end of line."
   (save-excursion
-    (if pos (goto-char pos))
+    (when pos
+      (goto-char pos))
     (if (kview:valid-position-p)
 	(let ((bol (kotl-mode:to-start-of-line))
 	      (eol (kotl-mode:to-end-of-line)))
@@ -2826,11 +2851,12 @@ removing Koutline structure."
   (let ((start (min (point) (mark)))
 	(end (max (point) (mark)))
 	(exchange-p (> (point) (mark))))
-    (if exchange-p (kotl-mode:exchange-point-and-mark))
+    (when exchange-p
+      (kotl-mode:exchange-point-and-mark))
     (kotl-mode:to-visible-position)
     (setq end (kview:first-invisible-point))
     (set-mark (min end (kcell-view:end-contents (point))))
-    (if exchange-p (kotl-mode:exchange-point-and-mark))))
+    (when exchange-p (kotl-mode:exchange-point-and-mark))))
 
 (defun kotl-mode:valid-region-p ()
   "Return t if there is no active region or if the region is within the visible bounds of a single cell, else nil."
@@ -2855,7 +2881,7 @@ cases where `kotl-mode:shrink-region-flag' is nil."
   (if (not (eq major-mode 'kotl-mode))
       t
     ;; Deactivate empty region
-    (if (eq (point) (mark))
+    (when (eq (point) (mark))
 	(deactivate-mark))
     (if (not (kotl-mode:valid-region-p))
 	(if kotl-mode:shrink-region-flag
@@ -2879,7 +2905,8 @@ newlines at end of tree."
 	     (goto-char (progn (kcell-view:previous nil label-sep-len)
 			       (kcell-view:end))))
 	    (t (goto-char (kcell-view:end))))
-      (if omit-end-newlines (skip-chars-backward "\n\r"))
+      (when omit-end-newlines
+	(skip-chars-backward "\n\r"))
       (point))))
 
 (defun kotl-mode:tree-start ()
@@ -2916,20 +2943,7 @@ this function to `pre-command-hook'."
 	     ;; Prevent repeatedly moving point to valid position when moving trees
 	     (not (hyperb:stack-frame '(kcell-view:to-label-end))))
     (when (not (kview:valid-position-p))
-      (kotl-mode:to-valid-position))
-    ;; !! TODO: Delete this commented code if no other issues found.
-    ;; (let ((start (kcell-view:start))
-    ;; 	  (end (kcell-view:end-contents)))
-    ;;   (cond ((and (<= start (point)) (<= (point) end))
-    ;; 	     ;; in-between paragraph breaks within a single cell
-    ;; 	     (move-to-column (kcell-view:indent nil label-sep-len)))
-    ;; 	    ((< (- (point) (or (kview:label-separator-length kview) 1))
-    ;; 		(kcell-view:to-visible-label-end))
-    ;; 	     ;; Skip past cell label
-    ;; 	     (goto-char (kcell-view:start)))
-    ;; 	    ;; Move to cell end
-    ;;      (t (goto-char (kcell-view:end-contents)))))
-    ))
+      (kotl-mode:to-valid-position))))
 
 (defun kotl-mode:print-attributes (kview)
   "Print to the `standard-output' stream the attributes of the current visible kcell.
@@ -3026,13 +3040,13 @@ With optional BACKWARD-P, move backward if possible to get to valid position."
 	    ((kotl-mode:eobp)
 	     (skip-chars-backward "\n\r"))
 	    (t (let ((indent (kcell-view:indent nil label-sep-len)))
-		 (if (bolp)
-		     (if backward-p
-			 (skip-chars-backward "\n\r")
-		       (skip-chars-forward "\n\r")))
+		 (when (bolp)
+		   (if backward-p
+		       (skip-chars-backward "\n\r")
+		     (skip-chars-forward "\n\r")))
 		 (setq indent (kcell-view:indent nil label-sep-len))
-		 (if (< (current-column) indent)
-		     (move-to-column indent))))))))
+		 (when (< (current-column) indent)
+		   (move-to-column indent))))))))
 
 (defun kotl-mode:transpose-lines-internal (start end)
   "Transpose lines at START and END markers within an outline.
@@ -3059,14 +3073,14 @@ Leave point at end of line now residing at START."
 
 (defun kotl-mode:update-buffer ()
   "Update current view buffer in preparation for saving."
-  (if (kview:is-p kview)
-      (let ((mod-p (buffer-modified-p))
-	    (start (window-start)))
-	(save-excursion
-	  (kfile:update)
-	  (set-buffer-modified-p mod-p))
-	(set-window-start nil (max (point-min) start) t)
-	nil)))
+  (when (kview:is-p kview)
+    (let ((mod-p (buffer-modified-p))
+	  (start (window-start)))
+      (save-excursion
+	(kfile:update)
+	(set-buffer-modified-p mod-p))
+      (set-window-start nil (max (point-min) start) t)
+      nil)))
 
 (defun kotl-mode:maintain-region-highlight ()
   (setq transient-mark-mode t))
@@ -3097,8 +3111,8 @@ Leave point at end of line now residing at START."
 	 ;; Make local-cmd have the same property list as cmd,
 	 ;; e.g. so pending-delete property is the same, but delete
 	 ;; interactive-only property to suppress byte-compiler warnings.
-	 (setplist local-cmd (copy-list (symbol-plist cmd)))
-	 (remprop local-cmd 'interactive-only)
+	 (setplist local-cmd (copy-sequence (symbol-plist cmd)))
+	 (cl-remprop local-cmd 'interactive-only)
 	 (substitute-key-definition
 	  cmd local-cmd kotl-mode-map global-map)))
      '(
@@ -3291,8 +3305,8 @@ See `delete-selection-helper'."
 	     (not buffer-read-only))
     (let ((deletion-type (and (symbolp this-command)
 			      (get this-command 'delete-selection))))
-      (if (and deletion-type (kotl-mode:maybe-shrink-region-p))
-	  (delete-selection-helper deletion-type)))))
+      (when (and deletion-type (kotl-mode:maybe-shrink-region-p))
+	(delete-selection-helper deletion-type)))))
 
 (provide 'kotl-mode)
 
