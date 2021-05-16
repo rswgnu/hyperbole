@@ -234,8 +234,8 @@ ul.no-bullet {list-style: none}
   <li><a id="toc-Installation-1" href="#Installation">B.1 Installation</a>
   <ul class="no-bullet">
     <li><a id="toc-Stable-Package-Installation-_0028Emacs-Package-Manager_0029" href="#Stable-Package-Installation">B.1.1 Stable Package Installation (Emacs Package Manager)</a></li>
-    <li><a id="toc-Manual-Stable-Release-Installation-1" href="#Manual-Stable-Release-Installation">B.1.2 Manual Stable Release Installation</a></li>
-    <li><a id="toc-Git-Pre_002drelease-Installation-_0028Straight-Package-Manager_0029" href="#Git-Pre_002drelease-Installation">B.1.3 Git Pre-release Installation (Straight Package Manager)</a></li>
+    <li><a id="toc-Git-Pre_002drelease-Package-Installation-_0028Straight-Package-Manager_0029" href="#Git-Pre_002drelease-Package-Installation">B.1.2 Git Pre-release Package Installation (Straight Package Manager)</a></li>
+    <li><a id="toc-Manual-Tarball-Archive-Installation-1" href="#Manual-Tarball-Archive-Installation">B.1.3 Manual Tarball Archive Installation</a></li>
   </ul></li>
   <li><a id="toc-Invocation-1" href="#Invocation">B.2 Invocation</a></li>
   <li><a id="toc-Customization-1" href="#Customization">B.3 Customization</a>
@@ -358,7 +358,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</P>
 
 <PRE>
 Edition 8.0.0pre
-Printed May 13, 2021.
+Printed May 16, 2021.
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -685,9 +685,9 @@ Installation
 
 </pre></th></tr><tr><td align="left" valign="top">&bull; <a href="#Stable-Package-Installation">Stable Package Installation</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
 </td></tr>
-<tr><td align="left" valign="top">&bull; <a href="#Manual-Stable-Release-Installation">Manual Stable Release Installation</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+<tr><td align="left" valign="top">&bull; <a href="#Git-Pre_002drelease-Package-Installation">Git Pre-release Package Installation</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
 </td></tr>
-<tr><td align="left" valign="top">&bull; <a href="#Git-Pre_002drelease-Installation">Git Pre-release Installation</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+<tr><td align="left" valign="top">&bull; <a href="#Manual-Tarball-Archive-Installation">Manual Tarball Archive Installation</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
 </td></tr>
 <tr><th colspan="3" align="left" valign="top"><pre class="menu-comment">
 
@@ -1325,7 +1325,7 @@ under an external window system.
 <span id="index-smart-keys_002c-unshifted"></span>
 <p>If you set the variable, <code>hmouse-middle-flag</code>, to &lsquo;<samp>t</samp>&rsquo; before
 loading Hyperbole, then you may also use the middle mouse key as the Action
-Key).  If you want both the middle mouse key as the Action Key and the
+Key.  If you want both the middle mouse key as the Action Key and the
 right mouse key as the Assist Key for ease of use, then within your
 personal <samp>~/.emacs</samp> file, add: <code>(add-hook 'hyperbole-init-hook
 'hmouse-add-unshifted-smart-keys)</code> and then restart Emacs.
@@ -6512,7 +6512,7 @@ Previous: <a href="#HyRolo-Keys" accesskey="p" rel="prev">HyRolo Keys</a>, Up: <
 <span id="index-rolo_002c-personal"></span>
 <p>The files used in any rolo search are given by the
 <code>hyrolo-file-list</code> variable, whose default value is typically
-<code>(&quot;~/.rolo.otl&quot;</code>.  Searches scan only your personal rolo file.
+<code>&quot;~/.rolo.otl&quot;</code>.  Searches scan only your personal rolo file.
 Any entries added to this list should be absolute filenames.  If a
 file in the list does not exist or is not readable, it is skipped.
 Files are searched in the order in which they appear in the list.  In
@@ -8186,9 +8186,9 @@ you have GNU Emacs set up at your site.
 <table class="menu" border="0" cellspacing="0">
 <tr><td align="left" valign="top">&bull; <a href="#Stable-Package-Installation" accesskey="1">Stable Package Installation</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
 </td></tr>
-<tr><td align="left" valign="top">&bull; <a href="#Manual-Stable-Release-Installation" accesskey="2">Manual Stable Release Installation</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+<tr><td align="left" valign="top">&bull; <a href="#Git-Pre_002drelease-Package-Installation" accesskey="2">Git Pre-release Package Installation</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
 </td></tr>
-<tr><td align="left" valign="top">&bull; <a href="#Git-Pre_002drelease-Installation" accesskey="3">Git Pre-release Installation</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+<tr><td align="left" valign="top">&bull; <a href="#Manual-Tarball-Archive-Installation" accesskey="3">Manual Tarball Archive Installation</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
 </td></tr>
 </table>
 
@@ -8197,7 +8197,7 @@ you have GNU Emacs set up at your site.
 <hr>
 <span id="Stable-Package-Installation"></span><div class="header">
 <p>
-Next: <a href="#Manual-Stable-Release-Installation" accesskey="n" rel="next">Manual Stable Release Installation</a>, Previous: <a href="#Installation" accesskey="p" rel="prev">Installation</a>, Up: <a href="#Installation" accesskey="u" rel="up">Installation</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Key-Index" title="Index" rel="index">Index</a>]</p>
+Next: <a href="#Git-Pre_002drelease-Package-Installation" accesskey="n" rel="next">Git Pre-release Package Installation</a>, Previous: <a href="#Installation" accesskey="p" rel="prev">Installation</a>, Up: <a href="#Installation" accesskey="u" rel="up">Installation</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Key-Index" title="Index" rel="index">Index</a>]</p>
 </div>
 <span id="Stable-Package-Installation-_0028Emacs-Package-Manager_0029"></span><h4 class="subsection">B.1.1 Stable Package Installation (Emacs Package Manager)</h4>
 
@@ -8240,40 +8240,11 @@ minute or two.  You may see a bunch of compilation warnings but these
 can be safely ignored.
 </p>
 <hr>
-<span id="Manual-Stable-Release-Installation"></span><div class="header">
+<span id="Git-Pre_002drelease-Package-Installation"></span><div class="header">
 <p>
-Next: <a href="#Git-Pre_002drelease-Installation" accesskey="n" rel="next">Git Pre-release Installation</a>, Previous: <a href="#Stable-Package-Installation" accesskey="p" rel="prev">Stable Package Installation</a>, Up: <a href="#Installation" accesskey="u" rel="up">Installation</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Key-Index" title="Index" rel="index">Index</a>]</p>
+Next: <a href="#Manual-Tarball-Archive-Installation" accesskey="n" rel="next">Manual Tarball Archive Installation</a>, Previous: <a href="#Stable-Package-Installation" accesskey="p" rel="prev">Stable Package Installation</a>, Up: <a href="#Installation" accesskey="u" rel="up">Installation</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Key-Index" title="Index" rel="index">Index</a>]</p>
 </div>
-<span id="Manual-Stable-Release-Installation-1"></span><h4 class="subsection">B.1.2 Manual Stable Release Installation</h4>
-
-<p>If you are old-school, don&rsquo;t like package managers, and prefer doing
-everything by hand, then you can obtain Hyperbole from a tarball:
-</p>
-<p>Download a stable release tar.gz source archive from either
-<a href="ftp://ftp.gnu.org/gnu/hyperbole/">ftp://ftp.gnu.org/gnu/hyperbole/</a> or
-<a href="http://ftpmirror.gnu.org/hyperbole/">http://ftpmirror.gnu.org/hyperbole/</a>, which will find the closest
-mirror of the GNU ftp site and show it to you.
-</p>
-<p>Decompress and unpack the archive to a directory of your choosing.  Move
-into the <samp>hyperbole/</samp> directory and execute the following Posix
-shell command, <code>make bin</code>, to byte-compile the Hyperbole lisp files.
-Then add the following lines to your personal Emacs initialization
-file, <samp>~/.emacs</samp>:
-</p>
-<div class="lisp">
-<pre class="lisp">(push &quot;&lt;directory-ending-with-hyperbole-where-you-unpacked&gt;&quot; load-path)
-(hyperbole-mode 1)
-</pre></div>
-
-<p>Restart Emacs and you should see the <code>Hypb</code> hyperbole minor mode
-indicator in your modeline after startup.
-</p>
-<hr>
-<span id="Git-Pre_002drelease-Installation"></span><div class="header">
-<p>
-Previous: <a href="#Manual-Stable-Release-Installation" accesskey="p" rel="prev">Manual Stable Release Installation</a>, Up: <a href="#Installation" accesskey="u" rel="up">Installation</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Key-Index" title="Index" rel="index">Index</a>]</p>
-</div>
-<span id="Git-Pre_002drelease-Installation-_0028Straight-Package-Manager_0029"></span><h4 class="subsection">B.1.3 Git Pre-release Installation (Straight Package Manager)</h4>
+<span id="Git-Pre_002drelease-Package-Installation-_0028Straight-Package-Manager_0029"></span><h4 class="subsection">B.1.2 Git Pre-release Package Installation (Straight Package Manager)</h4>
 
 <span id="index-Straight-package-manager"></span>
 <span id="index-pre_002drelease-installation"></span>
@@ -8311,6 +8282,47 @@ process without showing you any byte compilation warnings.
    :config (hyperbole-mode 1)))
 </pre></div>
 
+<hr>
+<span id="Manual-Tarball-Archive-Installation"></span><div class="header">
+<p>
+Previous: <a href="#Git-Pre_002drelease-Package-Installation" accesskey="p" rel="prev">Git Pre-release Package Installation</a>, Up: <a href="#Installation" accesskey="u" rel="up">Installation</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Key-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<span id="Manual-Tarball-Archive-Installation-1"></span><h4 class="subsection">B.1.3 Manual Tarball Archive Installation</h4>
+
+<p>If you are old-school, don&rsquo;t like package managers, and prefer doing
+everything by hand, then you can obtain Hyperbole from a tarball:
+</p>
+<p>Download either:
+</p>
+<p>1. a stable release tar.gz source archive from either:
+<a href="ftp://ftp.gnu.org/gnu/hyperbole/">ftp://ftp.gnu.org/gnu/hyperbole/</a> or
+<a href="http://ftpmirror.gnu.org/hyperbole/">http://ftpmirror.gnu.org/hyperbole/</a>, which will find the closest
+mirror of the GNU ftp site and show it to you.
+</p>
+<p>or
+</p>
+<p>2. the latest in-development pre-release tar.gz source archive linked
+to at the top of this web page:
+<a href="https://elpa.gnu.org/devel/hyperbole.html">https://elpa.gnu.org/devel/hyperbole.html</a>.
+</p>
+
+<p>Then decompress and unpack the archive to a directory of your
+choosing.  Move into the <samp>hyperbole/</samp> directory and execute
+the following Posix shell command, <code>make bin</code>, to
+byte-compile the Hyperbole lisp files.  Then add the following
+lines to your personal Emacs initialization file,
+<samp>~/.emacs</samp>:
+</p>
+<div class="lisp">
+<pre class="lisp">(unless (and (featurep 'hyperbole) hyperbole-mode)
+  (push &quot;&lt;directory-ending-with-hyperbole-where-you-unpacked&gt;&quot; load-path)
+  (require 'hyperbole)
+  (hyperbole-mode 1))
+</pre></div>
+
+<p>Restart Emacs and you should see the <code>Hypb</code> hyperbole minor mode
+indicator in your modeline after startup.
+</p>
 <hr>
 <span id="Invocation"></span><div class="header">
 <p>
@@ -13678,8 +13690,8 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function</a>, Up: <a href
 <tr><td></td><td valign="top"><a href="#index-inserting-tabs">inserting tabs</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Relocating-and-Copying">Relocating and Copying</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-insertion">insertion</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Inserting-and-Importing">Inserting and Importing</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-installation">installation</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Stable-Package-Installation">Stable Package Installation</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-installation_002c-from-git">installation, from git</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Git-Pre_002drelease-Installation">Git Pre-release Installation</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-installation_002c-pre_002drelease">installation, pre-release</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Git-Pre_002drelease-Installation">Git Pre-release Installation</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-installation_002c-from-git">installation, from git</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Git-Pre_002drelease-Package-Installation">Git Pre-release Package Installation</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-installation_002c-pre_002drelease">installation, pre-release</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Git-Pre_002drelease-Package-Installation">Git Pre-release Package Installation</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-installation_002c-stable">installation, stable</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Stable-Package-Installation">Stable Package Installation</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-instance-number">instance number</a>:</td><td>&nbsp;</td><td valign="top"><a href="#By-Menu">By Menu</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-interactive-cmd-char_002c-_002bI">interactive cmd char, +I</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Creating-Action-Types">Creating Action Types</a></td></tr>
@@ -14019,7 +14031,7 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function</a>, Up: <a href
 <tr><td></td><td valign="top"><a href="#index-popup-menu_002c-Rolo">popup menu, Rolo</a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyRolo-Menu">HyRolo Menu</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-posting-buttons">posting buttons</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Buttons-in-Mail">Buttons in Mail</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-posting-news">posting news</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Buttons-in-News">Buttons in News</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-pre_002drelease-installation">pre-release installation</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Git-Pre_002drelease-Installation">Git Pre-release Installation</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-pre_002drelease-installation">pre-release installation</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Git-Pre_002drelease-Package-Installation">Git Pre-release Package Installation</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-precedence_002c-buttons">precedence, buttons</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Button-Type-Precedence">Button Type Precedence</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-programming-interface">programming interface</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Embedding-Hyperbole">Embedding Hyperbole</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-promotion">promotion</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Relocating-and-Copying">Relocating and Copying</a></td></tr>
@@ -14147,7 +14159,7 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function</a>, Up: <a href
 <tr><td></td><td valign="top"><a href="#index-starting-HyControl">starting HyControl</a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyControl">HyControl</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-starting-Hyperbole">starting Hyperbole</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Menus">Menus</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-storage-manager">storage manager</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Operational-and-Storage-Formats">Operational and Storage Formats</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-Straight-package-manager">Straight package manager</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Git-Pre_002drelease-Installation">Git Pre-release Installation</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-Straight-package-manager">Straight package manager</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Git-Pre_002drelease-Package-Installation">Git Pre-release Package Installation</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-string">string</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Thing-Selection">Thing Selection</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-string-1">string</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Key-_002d-Delimited-Things">Smart Key - Delimited Things</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-submenus">submenus</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Menus">Menus</a></td></tr>

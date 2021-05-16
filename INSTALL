@@ -15,7 +15,7 @@
 *		           Installation
 ===========================================================================
 
-There are multiple package managers you can use to install Hyperbole once
+There are multiple wasy to obtain and install Hyperbole once
 you have GNU Emacs set up at your site.
 
 ** The Built-in Emacs Package Manager
@@ -54,10 +54,12 @@ can be safely ignored.
 
 ** The Straight Package Manager (direct from Git Sources)
 
-If you prefer to track Hyperbole development between releases and like to try out new features
-still in testing, then use the Straight package manager instead of the above, which pulls the
-latest Hyperbole source code from its git repository.  This also gives you a cleaner installation
-process without showing you any byte compilation warnings.
+If you prefer to track Hyperbole development between releases and like
+to try out new features still in testing, then use the Straight
+package manager instead of the above, which pulls the latest Hyperbole
+source code from its git repository.  This also gives you a cleaner
+installation process without showing you any byte compilation
+warnings.
 
 ;; Use this in your Emacs init file to install Straight
 (progn
@@ -82,6 +84,38 @@ process without showing you any byte compilation warnings.
    :repo "https://git.savannah.gnu.org/git/hyperbole.git"
    :config (hyperbole-mode 1)))
 
+** Manual Tarball Archive Installation (stable or pre-release)
+
+If you are old-school, don't like package managers, and prefer doing
+everything by hand, then you can obtain Hyperbole from a tarball:
+
+Download either:
+
+1. a stable release tar.gz source archive from either:
+ftp://ftp.gnu.org/gnu/hyperbole/ or
+http://ftpmirror.gnu.org/hyperbole/, which will find the closest
+mirror of the GNU ftp site and show it to you;
+
+or
+
+2. the latest in-development pre-release tar.gz source archive linked
+to at the top of this web page:
+https://elpa.gnu.org/devel/hyperbole.html.
+
+Then decompress and unpack the archive to a directory of your
+choosing.  Move into the "hyperbole/" directory and execute
+the following Posix shell command, "make bin", to
+byte-compile the Hyperbole lisp files.  Then add the following
+lines to your personal Emacs initialization file,
+"~/.emacs":
+
+(unless (and (featurep 'hyperbole) hyperbole-mode)
+  (push "<directory-ending-with-hyperbole-where-you-unpacked>" load-path)
+  (require 'hyperbole)
+  (hyperbole-mode 1))
+
+Restart Emacs and you should see the "Hypb" hyperbole minor mode
+indicator in your modeline after startup.
 
 ===========================================================================
 *		         Browsing the Source
