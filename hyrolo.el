@@ -69,6 +69,22 @@ executable must be found as well (for Oauth security)."
   :type 'boolean
   :group 'hyperbole-rolo)
 
+;;; ************************************************************************
+;;; Public declarations
+;;; ************************************************************************
+
+(declare-function google-contacts  "ext:google-contacts")
+(declare-function google-contacts-add-margin-to-text "ext:google-contacts")
+(declare-function google-contacts-build-node-list "ext:google-contacts")
+(declare-function google-contacts-data  "ext:google-contacts")
+(declare-function google-contacts-make-buffer "ext:google-contacts")
+(declare-function google-contacts-margin-element "ext:google-contacts")
+(declare-function google-contacts-oauth-token "ext:google-contacts")
+(declare-function xml-node-child-string "ext:google-contacts")
+(declare-function xml-node-get-attribute-type "ext:google-contacts")
+
+(declare-function hyrolo-fgrep-logical "hyrolo-logic")
+
 (defun hyrolo-google-contacts-p ()
   "Return non-nil if `hyrolo-google-contacts-flag' is non-nil and google-contacts package and gpg executables are available for use."
   (and hyrolo-google-contacts-flag
