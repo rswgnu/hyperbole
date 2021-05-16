@@ -673,7 +673,7 @@ but it will be copied to the kill ring and then an error will be signaled."
 (defun kotl-mode:kill-sentence (&optional arg)
   "Kill up to prefix ARG (or 1) sentences following point within a single cell."
   (interactive "*p")
-  (when arg
+  (unless arg
     (setq arg 1))
   (cond ((> arg 0)
 	 (when (kotl-mode:eocp)
@@ -689,7 +689,7 @@ but it will be copied to the kill ring and then an error will be signaled."
 (defun kotl-mode:kill-word (arg)
   "Kill up to prefix ARG words following point within a single cell."
   (interactive "*p")
-  (when arg
+  (unless arg
     (setq arg 1))
   (cond ((> arg 0)
 	 (when (kotl-mode:eocp)
@@ -1293,7 +1293,7 @@ doc string for `insert-for-yank-1', which see."
   (if (not (eq last-command 'kotl-mode:yank))
       (error "Previous command was not a yank"))
   (setq this-command 'kotl-mode:yank)
-  (when arg
+  (unless arg
     (setq arg 1))
   (let ((inhibit-read-only t)
 	(before (< (point) (mark t))))
@@ -1347,7 +1347,7 @@ Return number of cells left to move."
   "Move point backward ARG (or 1) characters and return point."
   (interactive "p")
   (kotl-mode:maintain-region-highlight)
-  (when arg
+  (unless arg
     (setq arg 1))
   (if (>= arg 0)
       (while (> arg 0)
@@ -1392,7 +1392,7 @@ See `forward-paragraph' for more information."
 	(error "(kotl-mode:backward-sentence): First sentence")
       (when (and (kotl-mode:bocp) (kcell-view:previous nil label-sep-len))
 	(goto-char (kcell-view:end-contents)))
-      (when arg
+      (unless arg
 	(setq arg 1))
       (save-restriction
 	(when (= arg 1)
@@ -1413,7 +1413,7 @@ See `forward-paragraph' for more information."
   "Move point backward ARG (or 1) words and return point."
   (interactive "p")
   (kotl-mode:maintain-region-highlight)
-  (when arg
+  (unless arg
     (setq arg 1))
   (if (>= arg 0)
       (while (> arg 0)
@@ -1440,7 +1440,7 @@ See `forward-paragraph' for more information."
   "Move point to beginning of current or ARGth - 1 prior cell and return point."
   (interactive "p")
   (kotl-mode:maintain-region-highlight)
-  (when arg
+  (unless arg
     (setq arg 1))
   (unless (integer-or-marker-p arg)
     (error "(kotl-mode:beginning-of-cell): Wrong type arg, integer-or-marker, `%s'" arg))
@@ -1456,7 +1456,7 @@ See `forward-paragraph' for more information."
   "Move point to beginning of current or ARGth - 1 line and return point."
   (interactive "p")
   (kotl-mode:maintain-region-highlight)
-  (when arg
+  (unless arg
     (setq arg 1))
   (unless (integer-or-marker-p arg)
     (error "(kotl-mode:to-start-of-line): Wrong type arg, integer-or-marker, `%s'" arg))
@@ -1519,7 +1519,7 @@ With optional ARG > 0, move to the ARGth - 1 next visible cell.
 With optional ARG < 0, move to the ARGth previous visible cell."
   (interactive "p")
   (kotl-mode:maintain-region-highlight)
-  (when arg
+  (unless arg
     (setq arg 1))
   (unless (integer-or-marker-p arg)
     (error "(kotl-mode:end-of-cell): Wrong type arg, integer-or-marker, `%s'" arg))
@@ -1533,7 +1533,7 @@ With optional ARG < 0, move to the ARGth previous visible cell."
   "Move point to end of current or ARGth - 1 line and return point."
   (interactive "p")
   (kotl-mode:maintain-region-highlight)
-  (when arg
+  (unless arg
     (setq arg 1))
   (unless (integer-or-marker-p arg)
       (error "(kotl-mode:to-end-of-line): Wrong type arg, integer-or-marker, `%s'" arg))
@@ -1602,7 +1602,7 @@ Return number of cells left to move."
   "Move point forward ARG (or 1) characters and return point."
   (interactive "p")
   (kotl-mode:maintain-region-highlight)
-  (when arg
+  (unless arg
     (setq arg 1))
   (if (>= arg 0)
       (while (> arg 0)
@@ -1654,7 +1654,7 @@ part of the paragraph, or the end of the buffer."
     (if (kotl-mode:eobp)
 	(error "(kotl-mode:forward-sentence): Last sentence")
       (if (kotl-mode:eocp) (kcell-view:next nil label-sep-len))
-      (when arg
+      (unless arg
 	(setq arg 1))
       (save-restriction
 	(when (= arg 1)
@@ -1675,7 +1675,7 @@ part of the paragraph, or the end of the buffer."
   "Move point forward ARG (or 1) words and return point."
   (interactive "p")
   (kotl-mode:maintain-region-highlight)
-  (when arg
+  (unless arg
     (setq arg 1))
   (if (>= arg 0)
       (while (> arg 0)

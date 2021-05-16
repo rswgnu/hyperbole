@@ -1,3 +1,8 @@
+2021-05-15  Bob Weiner  <rsw@gnu.org>
+
+* kotl/kotl-mode.el: Change mistaken '(when arg...)' updates to
+    proper '(unless arg...)'.
+
 2021-05-16  Mats Lidell  <matsl@gnu.org>
 
 * hyrolo.el (google-contacts-oauth-token, xml-node-child-string)
