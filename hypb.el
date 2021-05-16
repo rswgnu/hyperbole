@@ -289,21 +289,8 @@ Return either the modified string or the original ARG when not modified."
 	      ((subrp func) (error "(hypb:function-copy): `%s' is a primitive; can't copy body"
 				   func-symbol))
 	      ((and (hypb:emacs-byte-code-p func) (fboundp 'make-byte-code))
-	       (if (not (fboundp 'compiled-function-arglist))
-		   (let ((new-code (append func nil))) ; turn it into a list
-		     (apply 'make-byte-code new-code))
-		 ;; Can't reference bytecode objects as vectors in modern
-		 ;; XEmacs.
-		 (let ((new-code (nconc
-				  (list (compiled-function-arglist func)
-					(compiled-function-instructions func)
-					(compiled-function-constants func)
-					(compiled-function-stack-depth func)
-					(compiled-function-doc-string func))))
-		       spec)
-		   (when (setq spec (compiled-function-interactive func))
-		     (setq new-code (nconc new-code (list (nth 1 spec)))))
-		   (apply 'make-byte-code new-code))))
+	       (let ((new-code (append func nil))) ; turn it into a list
+		 (apply 'make-byte-code new-code)))
 	      (t (error "(hypb:function-copy): Can't copy function body: %s" func))))
     (error "(hypb:function-copy): `%s' symbol is not bound to a function"
 	   func-symbol)))
