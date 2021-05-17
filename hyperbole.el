@@ -424,8 +424,7 @@ The function does NOT recursively descend into subdirectories of the
 directory or directories specified."
     ;; Don't use a 'let' on this next line or it will fail.
     (setq generated-autoload-file output-file)
-    (with-suppressed-warnings ((obsolete update-directory-autoloads))
-      (update-directory-autoloads dir))))
+    (update-directory-autoloads dir)))
 
 ;; Before the 6.0.1 release, Hyperbole used to patch the package-generate-autoloads
 ;; function to ensure that kotl/ subdirectories were autoloaded.  This
