@@ -4,7 +4,7 @@
 #
 # Orig-Date:    15-Jun-94 at 03:42:38
 #
-# Copyright (C) 1994-2019  Free Software Foundation, Inc.
+# Copyright (C) 1994-2021  Free Software Foundation, Inc.
 # See the file HY-COPY for license information.
 #
 # This file is part of GNU Hyperbole.
@@ -340,7 +340,7 @@ hyperbole-autoloads.el: $(EL_COMPILE)
 	$(EMACS) $(BATCHFLAGS) $(PRELOADS) --debug --eval "(progn (setq generated-autoload-file (expand-file-name \"hyperbole-autoloads.el\") backup-inhibited t) (let (find-file-hooks) (make-directory-autoloads \".\" generated-autoload-file)))"
 
 kotl/kotl-autoloads.el: $(EL_KOTL)
-	$(EMACS) $(BATCHFLAGS) $(PRELOADS) --eval "(progn (setq generated-autoload-file (expand-file-name \"kotl/kotl-autoloads.el\") backup-inhibited t) (let (find-file-hooks) (make-directory-autoloads \"kotl/\" generated-autoload-file)))"
+	$(EMACS) $(BATCHFLAGS) --eval "(progn (setq generated-autoload-file (expand-file-name \"kotl/kotl-autoloads.el\") backup-inhibited t) (let (find-file-hooks) (make-directory-autoloads \"kotl/\" generated-autoload-file)))"
 
 # Used for ftp.gnu.org tarball distributions.
 $(pkg_dir)/hyperbole-$(HYPB_VERSION).tar.gz:
