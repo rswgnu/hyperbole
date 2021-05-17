@@ -3,6 +3,10 @@
 * Makefile (kotl/kotl-autoloads.el): Remove PRELOADS for generating
     autoloads. Patch from Stefan Monnier. Thank you Stefan.
 
+* kotl/kotl-mode.el (kotl-mode):
+  hyperbole.el (fboundp): Do not use with-suppressed-warnings since not
+    available in Emacs 26
+
 * kotl/kmenu.el (id-menubar-set): Add external dependency.
 
 * hyrolo.el (google-contacts-history, google-contacts-expire-time)
