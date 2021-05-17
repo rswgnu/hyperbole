@@ -112,6 +112,7 @@ This permits the Smart Keys to behave as paste keys.")
 ;;; ************************************************************************
 ;;; Public declarations
 ;;; ************************************************************************
+
 (declare-function br-in-view-window-p "ext:br")
 (declare-function br-next-listing-window "ext:br")
 (declare-function br-to-view-window "ext:br")
@@ -121,6 +122,7 @@ This permits the Smart Keys to behave as paste keys.")
 (declare-function aw-select "ext:ace-window")
 
 (defvar aw-dispatch-alist)
+(defvar aw-dispatch-always)
 (defvar aw-frame-size)
 (defvar aw-keys)
 
@@ -831,7 +833,9 @@ frame instead."
      ((and (frame-parameter frame 'drag-with-mode-line)
            (window-at-side-p window 'bottom))
       ;; Drag frame when the window is on the bottom of its frame.
-      (mouse-drag-frame start-event 'move)))))
+      (if (fboundp 'mouse-drag-frame)
+          (mouse-drag-frame start-event 'move)
+        (mouse-drag-frame-move start-event))))))
 
 (defun hkey-debug (pred pred-value hkey-action)
   (message (format "(HyDebug) %sContext: %s; %s: %s; Buf: %s; Mode: %s; MinibufDepth: %s"

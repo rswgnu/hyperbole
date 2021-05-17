@@ -1,3 +1,39 @@
+2021-05-17  Mats Lidell  <matsl@gnu.org>
+
+* kotl/kmenu.el (id-menubar-set): Add external dependency.
+
+* hyrolo.el (google-contacts-history, google-contacts-expire-time)
+    (google-contacts-query-string, hproperty:highlight-face): Declare used
+    variables.
+
+* hyrolo-menu.el (id-menubar-set): Add external dependency.
+    (mode-popup-menu): Declare used variable.
+
+* hyperbole.el (autoloads): Surpress warning for obsolete
+    update-directory-autoloads.
+    (hyperb:generate-autoloads): Use recommended hook.
+
+* hypb.el (mh-e-RCS-id, pm-version, vm-version): Declare used variables.
+
+* hui-dired-sidebar.el (dired-sidebar-cycle-subtree-on-click): Declare
+    used variable.
+
+* hmouse-tag.el (python-import-file, python-to-definition)
+    (epc:manager-server-process, java-to-definition)
+    (jedi:-get-servers-in-use, jedi:goto--line-column)
+    (jedi:goto-definition, objc-to-definition): Add external
+    dependencies.
+
+* hmouse-drv.el (aw-dispatch-always): Declare used variable.
+    (mouse-drag-mode-line): Use version dependent mouse drag function.
+
+2021-05-16  Mats Lidell  <matsl@gnu.org>
+
+* hibtypes.el (id-cflow-repeated-indicator, cscope-output-line-regexp):
+    Declare used variables.
+
+* hbut.el (hproperty:but-face): Declare used variable.
+
 2021-05-16  Stefan Monnier  <monnier@iro.umontreal.ca>
 
 * hvar.el: Add lexical binding updates.
