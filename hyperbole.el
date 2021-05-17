@@ -81,6 +81,13 @@
 ;; Ensure defgroup and defcustom are defined for use throughout Hyperbole.
 (require 'custom)
 
+(defmacro hypb-with-suppressed-warnings (spec &rest body)
+  "Backwards compatibility macro."
+  (declare (debug (sexp &optional body)) (indent 1))
+  (if (fboundp 'with-suppressed-warnings)
+      `(with-suppressed-warnings ,spec ,@body)
+    `(with-no-warnings ,@body)))
+
 (defgroup hyperbole nil
   "Hyperbole customizations category."
   :group 'applications)
@@ -424,7 +431,8 @@ The function does NOT recursively descend into subdirectories of the
 directory or directories specified."
     ;; Don't use a 'let' on this next line or it will fail.
     (setq generated-autoload-file output-file)
-    (update-directory-autoloads dir)))
+    (hypb-with-suppressed-warnings ((obsolete update-directory-autoloads))
+      (update-directory-autoloads dir))))
 
 ;; Before the 6.0.1 release, Hyperbole used to patch the package-generate-autoloads
 ;; function to ensure that kotl/ subdirectories were autoloaded.  This
