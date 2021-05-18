@@ -1,3 +1,10 @@
+2021-05-18  Mats Lidell  <matsl@gnu.org>
+
+* test/kotl-mode-tests.el (setup-kotl-mode-example-test)
+    (smart-menu-loads-kotl-example, kotl-mode-example-loads-kotl-example)
+    (kotl-mode-move-between-cells, kotl-mode-indent-cell-changes-level):
+    Add kotl-mode tests.
+
 2021-05-17  Mats Lidell  <matsl@gnu.org>
 
 * Makefile (kotl/kotl-autoloads.el): Remove PRELOADS for generating
