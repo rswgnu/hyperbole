@@ -18,12 +18,7 @@
 
 (eval-and-compile (mapc #'require '(cl-lib delsel hsettings hmail kfile kvspec kcell outline org-table kotl-orgtbl)))
 
-(defmacro hypb-with-suppressed-warnings (spec &rest body)
-  "Backwards compatibility macro."
-  (declare (debug (sexp &optional body)) (indent 1))
-  (if (fboundp 'with-suppressed-warnings)
-      `(with-suppressed-warnings ,spec ,@body)
-    `(with-no-warnings ,@body)))
+(require 'hypb)
 
 ;;; ************************************************************************
 ;;; Public variables

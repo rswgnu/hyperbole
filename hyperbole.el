@@ -75,18 +75,13 @@
 ;;; Start Initializations
 ;;; ************************************************************************
 
+(require 'hypb)
+
 (defconst hyperbole-loading t
   "Temporary constant available for testing while Hyperbole is loading.")
 
 ;; Ensure defgroup and defcustom are defined for use throughout Hyperbole.
 (require 'custom)
-
-(defmacro hypb-with-suppressed-warnings (spec &rest body)
-  "Backwards compatibility macro."
-  (declare (debug (sexp &optional body)) (indent 1))
-  (if (fboundp 'with-suppressed-warnings)
-      `(with-suppressed-warnings ,spec ,@body)
-    `(with-no-warnings ,@body)))
 
 (defgroup hyperbole nil
   "Hyperbole customizations category."
