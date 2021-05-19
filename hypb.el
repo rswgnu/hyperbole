@@ -18,6 +18,13 @@
 
 (eval-and-compile (mapc #'require '(compile hversion hact locate)))
 
+(defmacro hypb-with-suppressed-warnings (spec &rest body)
+  "Backwards compatibility macro."
+  (declare (debug (sexp &optional body)) (indent 1))
+  (if (fboundp 'with-suppressed-warnings)
+      `(with-suppressed-warnings ,spec ,@body)
+    `(with-no-warnings ,@body)))
+
 ;;; ************************************************************************
 ;;; Public variables
 ;;; ************************************************************************
