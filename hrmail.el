@@ -24,7 +24,7 @@
 ;;; Other required Elisp libraries
 ;;; ************************************************************************
 
-(eval-and-compile (mapc #'require '(hmail hact rmail rmailsum rmailedit)))
+(eval-and-compile (mapc #'require '(hvar hmail hact rmail rmailsum rmailedit)))
 (load "hsmail")
 
 ;;; ************************************************************************
@@ -57,10 +57,11 @@
   (rmail:init)
   ;;
   ;; Setup private abstract interface to mail reader-specific functions
-  ;; used in "hmail.el".
+  ;; used in "hmail.el" and "hactypes.el".
   ;;
   (defalias 'rmail:get-new       'rmail-get-new-mail)
   (defalias 'rmail:msg-forward   'rmail-forward)
+  (defalias 'rmail:msg-to-p      'Rmail-msg-to-p) ;; defined herein
   (defalias 'rmail:summ-msg-to   'rmail-summary-goto-msg)
   (defalias 'rmail:summ-new      'rmail-new-summary)
   (if (called-interactively-p 'interactive)

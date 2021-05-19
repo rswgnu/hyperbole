@@ -1,3 +1,9 @@
+2021-05-18  Bob Weiner  <rsw@gnu.org>
+
+* hrmail.el (rmail:msg-to-p): Alias to Rmail-msg-to-p for use in
+    in hactypes.el.
+            (require 'hvar): Add, used in Rmail-init.
+
 * hpath.el (hpath:to-markup-anchor): Add support for path#anchor
     links in programming, text and outlining major modes.
 

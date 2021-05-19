@@ -20,6 +20,14 @@
 (require 'bookmark)
 
 ;;; ************************************************************************
+;;; Public declarations
+;;; ************************************************************************
+
+(declare-function kotl-mode:goto-cell "kotl-mode")
+(declare-function kotl-mode:beginning-of-buffer "kotl-mode")
+(declare-function rmail:msg-to-p "hrmail")
+
+;;; ************************************************************************
 ;;; Standard Hyperbole action types
 ;;; ************************************************************************
 
