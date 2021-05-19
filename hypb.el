@@ -18,13 +18,6 @@
 
 (eval-and-compile (mapc #'require '(compile hversion hact locate)))
 
-(defmacro hypb-with-suppressed-warnings (spec &rest body)
-  "Backwards compatibility macro."
-  (declare (debug (sexp &optional body)) (indent 1))
-  (if (fboundp 'with-suppressed-warnings)
-      `(with-suppressed-warnings ,spec ,@body)
-    `(with-no-warnings ,@body)))
-
 ;;; ************************************************************************
 ;;; Public variables
 ;;; ************************************************************************
@@ -747,6 +740,40 @@ Optional first arg MINIBUFFER-FLAG t means include the minibuffer window
 in the list, even if it is not active.  If MINIBUFFER-FLAG is neither t
 nor nil it means to not count the minibuffer window even if it is active."
   (window-list nil minibuffer-flag))
+
+(defmacro hypb:with-suppressed-warnings (warnings &rest body)
+  "Like `progn', but prevents compiler WARNINGS in BODY.
+
+Defined here for elpa build compatibility which uses Emacs 26 and
+does not include `with-suppressed-warnings'.
+
+WARNINGS is an associative list where the first element of each
+item is a warning type, and the rest of the elements in each item
+are symbols they apply to.  For instance, if you want to suppress
+byte compilation warnings about the two obsolete functions `foo'
+and `bar', as well as the function `zot' being called with the
+wrong number of parameters, say
+
+\(with-suppressed-warnings ((obsolete foo bar)
+                           (callargs zot))
+  (foo (bar))
+  (zot 1 2))
+
+The warnings that can be suppressed are a subset of the warnings
+in `byte-compile-warning-types'; see the variable
+`byte-compile-warnings' for a fuller explanation of the warning
+types.  The types that can be suppressed with this macro are
+`free-vars', `callargs', `redefine', `obsolete',
+`interactive-only', `lexical', `mapcar', `constants' and
+`suspicious'.
+
+For the `mapcar' case, only the `mapcar' function can be used in
+the symbol list.  For `suspicious', only `set-buffer' can be used."
+
+  (declare (debug (sexp &optional body)) (indent 1))
+  (if (fboundp 'with-suppressed-warnings)
+      `(with-suppressed-warnings ,warnings ,@body)
+    `(with-no-warnings ,@body)))
 
 ;;; ************************************************************************
 ;;; About Hyperbole Setup
