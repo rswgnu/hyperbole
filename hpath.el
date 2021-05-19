@@ -1210,24 +1210,32 @@ buffer but don't display it."
 			   (buffer-name)
 			   anchor))))
 	       (t
-		(let ((opoint (point))
-		      ;; Markdown or outline link ids are case
-		      ;; insensitive and - characters are converted to
-		      ;; spaces at the point of definition unless
-		      ;; anchor contains both - and space characters,
-		      ;; then no conversion occurs.
-		      (case-fold-search t)
-		      (anchor-name (if (string-match "-.* \\| .*-" anchor)
-				       anchor
-				     (subst-char-in-string ?- ?\  anchor))))
+		(let* ((opoint (point))
+		       (prog-mode (derived-mode-p 'prog-mode))
+		       ;; Markdown or outline link ids are case
+		       ;; insensitive and - characters are converted to
+		       ;; spaces at the point of definition unless
+		       ;; anchor contains both - and space characters,
+		       ;; then no conversion occurs.
+		       (case-fold-search (not prog-mode))
+		       (anchor-name (if (or prog-mode
+					    (string-match "-.* \\| .*-" anchor))
+					anchor
+				      (subst-char-in-string ?- ?\  anchor))))
 		  (goto-char (point-min))
 		  (if (re-search-forward (format
-					  (cond ((or (and buffer-file-name
+					  (cond ((derived-mode-p 'outline-mode) ;; Includes Org mode
+						 hpath:outline-section-pattern)
+						(prog-mode
+						 "%s")
+						((or (and buffer-file-name
 							  (string-match hpath:markdown-suffix-regexp buffer-file-name))
 						     (memq major-mode hpath:shell-modes))
 						 hpath:markdown-section-pattern)
-						((eq major-mode 'texinfo-mode)
+						((derived-mode-p 'texinfo-mode)
 						 hpath:texinfo-section-pattern)
+						((derived-mode-p 'text-mode)
+						 "%s")
 						(t hpath:outline-section-pattern))
 					  (regexp-quote anchor-name)) nil t)
 		      (progn (forward-line 0)

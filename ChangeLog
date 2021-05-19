@@ -1,3 +1,6 @@
+* hpath.el (hpath:to-markup-anchor): Add support for path#anchor
+    links in programming, text and outlining major modes.
+
 * hactypes.el (link-to-ebut): Fix bug that always triggered an error
     if key-file was not given.  Also remove interactive conditional
     that prevented normalized-file from being set.
