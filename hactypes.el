@@ -270,41 +270,40 @@ This type of link is for use within a single editor session.  Use
 
 (defact link-to-ebut (key &optional key-file)
   "Perform action given by an explicit button, specified by KEY and optional KEY-FILE.
-KEY-FILE defaults to the current buffer's file name."
+Interactively, KEY-FILE defaults to the current buffer's file name."
   (interactive
    (let (but-lbl
          but-file)
      (while (cond ((setq but-file
-			 (read-file-name
-			  "File of button to link to: " nil nil t))
-		   (if (string-equal but-file "")
-		       (progn (beep) t)))
-		  ((not (file-readable-p but-file))
-		   (message "(link-to-ebut): You cannot read `%s'."
-			    but-file)
-		   (beep) (sit-for 3))))
+                         (read-file-name
+                          "File of button to link to: " nil nil t))
+                   (if (string-equal but-file "")
+                       (progn (beep) t)))
+                  ((not (file-readable-p but-file))
+                   (message "(link-to-ebut): You cannot read `%s'."
+                            but-file)
+                   (beep) (sit-for 3))))
      (list (progn
-	     (find-file-noselect but-file)
-	     (while (string-equal "" (setq but-lbl
-					   (hargs:read-match
-					    "Button to link to: "
-					    (ebut:alist but-file)
-					    nil nil nil 'ebut)))
-	       (beep))
-	     (ebut:label-to-key but-lbl))
-	   but-file)))
+             (find-file-noselect but-file)
+             (while (string-equal "" (setq but-lbl
+                                           (hargs:read-match
+                                            "Button to link to: "
+                                            (ebut:alist but-file)
+                                            nil nil nil 'ebut)))
+               (beep))
+             (ebut:label-to-key but-lbl))
+           but-file)))
   (let (but
-	normalized-file)
-  (if key-file
-      (unless (called-interactively-p 'interactive)
-	(setq normalized-file (hpath:normalize key-file)))
-    (setq normalized-file buffer-file-name))
+        normalized-file)
+    (if key-file
+        (setq normalized-file (hpath:normalize key-file))
+      (setq normalized-file buffer-file-name))
 
-    (if (setq but (and key-file (ebut:get key nil normalized-file)))
-	(hbut:act but)
+    (if (setq but (when normalized-file (ebut:get key nil normalized-file)))
+        (hbut:act but)
       (hypb:error "(link-to-ebut): No button `%s' in `%s'"
-		  (ebut:key-to-label key)
-		  key-file))))
+                  (ebut:key-to-label key)
+                  key-file))))
 
 (defact link-to-elisp-doc (symbol)
   "Display documentation for SYMBOL."

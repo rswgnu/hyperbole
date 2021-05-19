@@ -1,3 +1,7 @@
+* hactypes.el (link-to-ebut): Fix bug that always triggered an error
+    if key-file was not given.  Also remove interactive conditional
+    that prevented normalized-file from being set.
+
 2021-05-17  Mats Lidell  <matsl@gnu.org>
 
 * Makefile (kotl/kotl-autoloads.el): Remove PRELOADS for generating
