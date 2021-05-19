@@ -18,6 +18,8 @@
 
 (eval-and-compile (mapc #'require '(cl-lib delsel hsettings hmail kfile kvspec kcell outline org-table kotl-orgtbl)))
 
+(require 'hypb)
+
 ;;; ************************************************************************
 ;;; Public variables
 ;;; ************************************************************************
@@ -166,7 +168,8 @@ It provides the following keys:
   ;; We have been converting a buffer from a foreign format to a koutline.
   ;; Now that it is converted, ensure that `kotl-previous-mode' is set to
   ;; koutline.
-  (setq kotl-previous-mode 'kotl-mode)
+  (hypb-with-suppressed-warnings ((free-vars kotl-previous-mode))
+    (setq kotl-previous-mode 'kotl-mode))
   ;; Enable Org Table editing minor mode (user can disable via kotl-mode-hook
   ;; if desired).
   (orgtbl-mode 1)
