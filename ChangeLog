@@ -1,5 +1,17 @@
 2021-05-18  Bob Weiner  <rsw@gnu.org>
 
+
+* kotl/kotl-mode.el (kotl-mode:example): Update to allow for
+    an optional directory or absolute file path.  Prompt for
+    the path when interactive and given a prefix argument,
+    archive any existing file and start with a fresh EXAMPLE.kotl
+    file.  Programmatically, give a 2nd arg of t to force
+    archiving of any existing file and starting with a fresh
+    EXAMPLE.kotl file.
+  test/kotl-mode-tests.el (kotl-mode-move-between-cells,
+                           kotl-mode-indent-cell-changes-level):
+    Update to use new kotl-mode:example arguments.
+
 * hrmail.el (rmail:msg-to-p): Alias to Rmail-msg-to-p for use in
     in hactypes.el.
             (require 'hvar): Add, used in Rmail-init.

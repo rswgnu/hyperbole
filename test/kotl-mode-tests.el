@@ -50,7 +50,7 @@
   "Loading kotl-mode example file works."
   (setup-kotl-mode-example-test
    ;; Start in first cell
-   (kotl-mode:example)
+   (kotl-mode:example temporary-file-directory t)
    (should (kotl-mode:first-cell-p))
 
    ;; Move to next cell
@@ -70,7 +70,7 @@
   "Loading kotl-mode example file works."
   (skip-unless (not noninteractive))
   (setup-kotl-mode-example-test
-   (kotl-mode:example)
+   (kotl-mode:example temporary-file-directory t)
    (should (kotl-mode:first-cell-p))
    (kotl-mode:next-cell 1)
    (should (hact 'kbd-key "TAB"))

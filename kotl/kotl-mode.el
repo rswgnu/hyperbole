@@ -16,9 +16,8 @@
 ;;; Other required Lisp Libraries
 ;;; ************************************************************************
 
-(eval-and-compile (mapc #'require '(cl-lib delsel hsettings hmail kfile kvspec kcell outline org-table kotl-orgtbl)))
-
-(require 'hypb)
+(eval-and-compile (mapc #'require '(cl-lib delsel hsettings hmail hypb kfile
+				    kvspec kcell outline org-table kotl-orgtbl)))
 
 ;;; ************************************************************************
 ;;; Public variables
@@ -186,15 +185,41 @@ It provides the following keys:
   (add-hook 'change-major-mode-hook #'kotl-mode:show-all nil t))
 
 ;;;###autoload
-(defun kotl-mode:example ()
-  "Display the Koutliner example file for demonstration use by a user."
-  (interactive)
-  (let* ((example "EXAMPLE.kotl")
-	 (personal-example (expand-file-name example "~/"))
-	 (original-example (expand-file-name example (concat hyperb:dir "kotl/"))))
-    (when (file-newer-than-file-p original-example personal-example)
+(defun kotl-mode:example (&optional example replace-flag)
+  "Display the optional Koutliner EXAMPLE file for demonstration and editing use by a user.
+With optional REPLACE-FLAG non-nil, archive any existing file,
+and replace it with the latest Hyperbole EXAMPLE.
+
+EXAMPLE may be a file or directory name (\"EXAMPLE.kotl\" is appended).
+
+If EXAMPLE is omitted or nil, create or edit the \"~/EXAMPLE.kotl\" file.
+
+When called interactively, prompt for EXAMPLE if given a prefix
+argument, archive any existing file, and replace it with the latest
+Hyperbole EXAMPLE."
+  (interactive
+   (list (when current-prefix-arg
+	   (read-file-name "Path to replace and save EXAMPLE.kotl file: "
+			   nil nil nil "EXAMPLE.kotl"))))
+  (when (and current-prefix-arg (called-interactively-p 'interactive))
+    (setq replace-flag t))
+  (let (personal-example
+	original-example)
+    (unless (stringp example)
+      (setq example "EXAMPLE.kotl"))
+    (when (file-directory-p example)
+      (setq personal-example (expand-file-name "EXAMPLE.kotl" example )
+	    example "EXAMPLE.kotl"))
+    (unless personal-example
+      (if (file-name-absolute-p example)
+	  (setq personal-example example
+		example (file-name-nondirectory example))
+	(setq personal-example (expand-file-name example "~/"))))
+    (setq original-example (expand-file-name example (expand-file-name "kotl/" hyperb:dir)))
+    (when (or replace-flag
+	      (file-newer-than-file-p original-example personal-example))
       (when (file-exists-p personal-example)
-	;; save it and use the original example file
+	;; Save personally edited one and use the newer Hyperbole Example file
 	(rename-file personal-example (expand-file-name (concat "SAVED-" example) "~/") t)))
     (cond ((get-file-buffer personal-example)
 	   (switch-to-buffer (get-file-buffer personal-example)))
@@ -206,8 +231,7 @@ It provides the following keys:
 		   default-directory (expand-file-name "~/")
 		   buffer-auto-save-file-name nil
 		   buffer-read-only nil)
-	     (insert-file-contents
-	      (expand-file-name example (concat hyperb:dir "kotl/")))
+	     (insert-file-contents original-example)
 	     (goto-char (point-min))
 	     (kotl-mode)
 	     (save-buffer)))))
