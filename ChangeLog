@@ -1,5 +1,10 @@
-2021-05-18  Bob Weiner  <rsw@gnu.org>
+2021-05-19  Bob Weiner  <rsw@gnu.org>
 
+* Makefile (kotl/kotl-autoloads.el): Revert commit that removed
+    PRELOADS (needed to define make-directory-autoloads in pre-
+    Emacs 28.
+
+2021-05-18  Bob Weiner  <rsw@gnu.org>
 
 * kotl/kotl-mode.el (kotl-mode:example): Update to allow for
     an optional directory or absolute file path.  Prompt for
