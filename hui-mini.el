@@ -285,13 +285,27 @@ With optional HELP-STRING-FLAG, instead returns the one line help string for the
       (if (eq owind (minibuffer-window))
 	  (select-window owind)))))
 
+(defun hui:menu-item-keys (menu-alist)
+  "Return the list of ordered keys used to activate items in Hyperbole minibuffer MENU-ALIST.
+For each item, the key is either the first capital letter in item
+or if there are none, then its first character."
+  (mapcar (lambda (item)
+	    ;; Return either the first capital letter in item or if
+	    ;; none, then its first character.
+	    (or (catch 'capital
+		  (mapc (lambda (c) (and (<= ?A c) (>= ?Z c)
+					 (throw 'capital c)))
+			item))
+		(aref item 0)))
+	  (mapcar 'car (cdr menu-alist))))
+
 (defun hui:menu-select (menu-alist &optional doc-flag help-string-flag)
-  "Prompts user to choose the first character of any item from MENU-ALIST.
-Case is not significant.  If chosen by direct selection with the Assist Key,
-returns any help string for item, else returns the action form for the item.
+  "Prompts user to choose the first capitalized character of any item from MENU-ALIST.
+The character may be entered in lowercase.  If chosen by direct selection with the Assist Key,
+return any help string for item, else return the action form for the item.
 
 Two additional optional arguments may be given when documentation for
-a menu item should be shown rather than display of a menu.  DOC-FLAG
+a menu item should be shown rather than menu display.  DOC-FLAG
 non-nil means show documentation for any item that is selected by the
 user.  HELP-STRING-FLAG non-nil means show only the first line of the
 documentation, not the full text."
@@ -302,8 +316,7 @@ documentation, not the full text."
 	 (quit-char (string-to-char hui:menu-quit))
 	 (abort-char (string-to-char hui:menu-abort))
 	 (top-char  (string-to-char hui:menu-top))
-	 (item-keys (mapcar (lambda (item) (aref item 0))
-			    (mapcar 'car (cdr menu-alist))))
+	 (item-keys (hui:menu-item-keys menu-alist))
 	 ;; 0 matches an empty string return, no selection
 	 (keys (apply 'list 0 1 select-char exit-char quit-char abort-char
 		      top-char item-keys))
@@ -319,7 +332,7 @@ documentation, not the full text."
       (setq hargs:reading-p 'hmenu)
       (discard-input))
     ;; Here, the minibuffer has been exited, and `key' has been set to either:
-    ;;   a menu item initial character code;
+    ;;   a menu item first capitalized character code;
     ;;   a menu command character code;
     ;;   1 for in the menu prefix area;
     ;;   0 for at the end of the menu.
@@ -330,7 +343,12 @@ documentation, not the full text."
 		(save-excursion
 		  (if (search-backward " " nil t)
 		      (progn (skip-chars-forward " ")
-			     (setq key (following-char))
+			     ;; Get the next following capital letter
+			     (let (case-fold-search)
+			       (setq key
+				     (if (looking-at "[^ \t\nA-Z]*[A-Z]")
+					 (char-before (match-end 0))
+				       (following-char))))
 			     nil)  ;; Drop through.
 		    t))))
 	  (t (hui:menu-item key doc-flag help-string-flag nil menu-alist)))))
@@ -374,21 +392,20 @@ constructs.  If not given, the top level Hyperbole menu is used."
 				    hui:menus))
 			 (hypb:error "(hui:menu-item): Invalid menu symbol arg: `%s'"
 				     menu))))
-  (let ((item-keys (mapcar (lambda (item) (aref item 0))
-			    (mapcar 'car (cdr menu-alist))))
+  (let ((item-keys (hui:menu-item-keys menu-alist))
 	 sublist)
     (when (setq sublist (memq key item-keys))
       (setq hui:menu-keys (concat hui:menu-keys (downcase (char-to-string key))))
       (let* ((label-act-help-list
 	      (nth (- (1+ (length item-keys)) (length sublist))
 		   menu-alist))
-	     (act-form (car (cdr label-act-help-list))))
+	     (act-form (cadr label-act-help-list)))
 	(if (or (eq hargs:reading-p 'hmenu-help)
 		(and doc-flag
 		     ;; Not another menu to display
 		     (not (and (listp act-form) (atom (car act-form)) (atom (cdr act-form))))))
-	    (let* ((help-str (car (cdr (cdr label-act-help-list))))
-		   (cmd (if help-str nil (car (cdr label-act-help-list))))
+	    (let* ((help-str (caddr label-act-help-list))
+		   (cmd (if help-str nil (cadr label-act-help-list)))
 		   (doc-str (if help-str nil (and (functionp cmd) (documentation cmd)))))
 	      (and doc-str (string-match "\n" doc-str)
 		   (setq doc-str (substring doc-str 0 (match-beginning 0))))
@@ -402,7 +419,7 @@ constructs.  If not given, the top level Hyperbole menu is used."
 
 (defun hui:menu-line (menu-alist)
   "Return a menu line string built from MENU-ALIST."
-  (let ((menu-prompt (concat (car (car menu-alist)) "  "))
+  (let ((menu-prompt (concat (caar menu-alist) "  "))
 	(menu-items (mapconcat 'car (cdr menu-alist) "  "))
 	menu-line)
     (setq menu-line (concat menu-prompt menu-items))

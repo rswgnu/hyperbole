@@ -1,3 +1,20 @@
+2021-05-22  Bob Weiner  <rsw@gnu.org>
+
+* hsettings.el (hyperbole-web-search-alist): Update 'gitHub'
+    name.
+
+* hui-mini.el (hui:menu-item, hui:menu-line): Use simplified,
+    concatenated car/cdr functions.
+              (hui:menu-item-keys): Add to modularize menu
+    item selection and allow selection by first capital letter,
+    not just first letter.
+              (hui:menu-select, hui:menu-item): Call hui:menu-item-keys.
+              (hui:menu-select): Update doc string and {RET}
+    direct selection handling.
+  hargs.el (hargs:at-p): When reading a Hyperbole minibuffer menu
+    item, match to the first capitalized char in each item.
+
+* kotl/kexport.el (kexport:font-awesome-css-url,
 2021-05-19  Bob Weiner  <rsw@gnu.org>
 
 * Makefile (kotl/kotl-autoloads.el): Revert commit that removed

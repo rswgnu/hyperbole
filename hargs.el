@@ -316,9 +316,13 @@ Handles all of the interactive argument types that `hargs:iform-read' does."
 		     ;; In menu prefix
 		     1)
 		    ((search-backward " " nil t)
-		     ;; On a menu item
+		     ;; On a menu item, return the first capitalized
+		     ;; char or if none, the first character
 		     (skip-chars-forward " ")
-		     (following-char))
+		     (let (case-fold-search)
+		       (if (looking-at "[^ \t\nA-Z]*[A-Z]")
+			   (char-before (match-end 0))
+			 (following-char))))
 		    ;; At the end of the menu
 		    (t 0)))))
 	((hargs:completion t))

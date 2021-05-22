@@ -123,13 +123,13 @@ minibuffer menu you saw at the beginning; one is for use from the keyboard
 In this demo, we will use the minibuffer menu.  To display the top-level
 Hyperbole menu again use 'C-h h' or click the Action Mouse Key within the
 blank/inactive minibuffer window.  You will see a single line (possibly
-wrapped around) with submenus that end with a forward slash (/) and non-menu
-items.  Type the first letter of any menu item (upper or lower case does not
-matter) or click on it with the Action Mouse Key to select and activate it.
-You may also move forward an item with 'TAB' or 'M-f' or backward an item
-with 'Shift-TAB' or 'M-b' and then use 'RET' to select the item.  Also, notice
-at the left of this menu is your Hyperbole release version number for easy
-reference.
+wrapped around) with submenus that end with a forward slash (/) and
+non-menu items.  Type the first capitalized letter of any menu item (you
+can type it as lower or upper case, it does not matter) or click on it with
+the Action Mouse Key to select and activate it.  You may also move forward
+an item with 'TAB' or 'M-f' or backward an item with 'Shift-TAB' or 'M-b'
+and then use 'RET' to select the item.  Also, notice at the left of this
+menu is your Hyperbole release version number for easy reference.
 
 A press/click of the Assist Key on a menu item pops up a window
 displaying help for it while keeping the current menu on screen.  'C-t' or

@@ -232,7 +232,7 @@ Hyperbole, and then restart Emacs."
     ("Facebook" . "https://www.facebook.com/hashtag/%s")
     ;; To search for a Facebook user, use "https://www.facebook.com/%s".
     ("Google" . "http://www.google.com/search?q=%s")
-    ("Hub(git)" . "https://github.com/search?ref=simplesearch&q=%s")
+    ("gitHub" . "https://github.com/search?ref=simplesearch&q=%s")
     ("Images" . "http://www.google.com/images?hl=en&q=%s")
     ("Maps" . "http://maps.google.com/maps?q=%s")
     ("RFCs" . "https://tools.ietf.org/html/rfc%s")
@@ -241,13 +241,13 @@ Hyperbole, and then restart Emacs."
     ("Wikipedia" . "https://en.wikipedia.org/wiki/%s")
     ("Youtube" . "https://www.youtube.com/results?search_query=%s"))
   "*Alist of (web-service-name . url-with-%s-parameter) elements.
-The first character of each web-service-name must be unique.
+The first capitalized character of each web-service-name must be unique.
 This custom option is used in the Hyperbole Find/Web menu where
 the %s in the url-with-%s-parameter is replaced with an interactively
 obtained search string."
   :initialize #'custom-initialize-default
   :set (lambda (_option value)
-	 (setq hyperbole-web-search-alist value)
+	 (set _option value)
 	 (hyperbole-update-menus))
   :type '(alist :key-type string :value-type string)
   :group 'hyperbole-commands)
