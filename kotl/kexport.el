@@ -4,12 +4,17 @@
 ;;
 ;; Orig-Date:    26-Feb-98
 ;;
-;; Copyright (C) 1998-2017  Free Software Foundation, Inc.
+;; Copyright (C) 1998-2021  Free Software Foundation, Inc.
 ;; See the "../HY-COPY" file for license information.
 ;;
 ;; This file is part of GNU Hyperbole.
 
 ;;; Commentary:
+;; Use "https://validator.w3.org/" to validate the HTML that this generates.
+;;
+;; Within JavaScript-enabled web browsers, koutline parent cells exported to
+;; HTML may be expanded and collapsed interactively.  This feature utilizes
+;; a small 20-line JavaScript snippet is included in each exported koutline.
 
 ;;; Code:
 ;;; ************************************************************************
@@ -18,7 +23,7 @@
 
 (require 'hypb)
 (require 'hpath)
-(require 'hibtypes)
+(require 'hibtypes) ;; loads hsys-www where www-url actype is defined
 (require 'klink)
 (require 'kview)
 (require 'kotl-mode)
@@ -111,9 +116,105 @@ pattern may be:
   as (match-beginning 1) since the regexp has just been matched against
   the target string when it is called.")
 
+
+(defconst kexport:font-awesome-css-url
+  "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.9.0/css/all.min.css"
+  "Url that provides font-awesome expand/collapse glyphicons.
+Font Awesome Free is free and GPL friendly.")
+
+(defconst kexport:font-awesome-css-include
+  "<style>
+
+button {
+ display: inline;
+}
+
+span.nobreak {
+  white-space: nowrap;
+}
+
+div {
+ display: inline;
+}
+
+li {
+ list-style-type: none;
+}
+
+.collapsible {
+  all: unset;
+  background-color: inherit;
+  cursor: pointer;
+  display: block;
+  outline: inherit;
+}
+
+.collapsible:hover {
+  background-color: #FAFAD2;
+}
+
+.content {
+  display: block;
+}
+</style>\n"
+  "CSS that styles collapsible HTML-exported Koutline parent cells")
+
+(defconst kexport:font-awesome-collapsible-javascript
+  "<script>
+var coll = document.getElementsByClassName('collapsible');
+var i;
+
+function childElt(elt, tag)
+{
+    return elt.getElementsByTagName(tag)[0];
+}
+
+for (i = 0; i < coll.length; i++) {
+  coll[i].addEventListener('click', function() {
+    var icon = childElt(this, 'span');
+    var content = this.nextElementSibling;
+    if (content.style.display === 'none') {
+      content.style.display = 'block';
+      icon.classList.add('fas', 'fa-chevron-down');
+      icon.classList.remove('fa-chevron-right');
+    } else {
+      content.style.display = 'none';
+      icon.classList.add('fas', 'fa-chevron-right');
+      icon.classList.remove('fa-chevron-down');
+    }
+  });
+}
+</script>\n"
+  "JavaScript which expands/collapses HTML-exported Koutline parent cells")
+
 ;;; ************************************************************************
 ;;; Public functions
 ;;; ************************************************************************
+
+;;;###autoload
+(defun kexport:buffer (&optional soft-newlines-flag)
+  "Export the current buffer's koutline to the same named file with a \".html\" suffix.
+Return the pathname of the html file created.
+
+By default, this retains newlines within cells as they are.  With optional prefix arg, SOFT-NEWLINES-FLAG,
+hard newlines are not used.  Also converts Urls and Klinks into Html hyperlinks."
+  (interactive "P")
+  (let ((export-from buffer-file-name)
+  	(output-to (concat (file-name-sans-extension buffer-file-name) ".html")))
+    (kexport:html export-from output-to soft-newlines-flag)
+    output-to))
+
+;;;###autoload
+(defun kexport:display (&optional soft-newlines-flag)
+  "Export the current buffer's koutline to the same named file with a \".html\" suffix and display it in a web browser.
+Return the pathname of the html file created.
+
+By default, this retains newlines within cells as they are.  With optional prefix arg, SOFT-NEWLINES-FLAG,
+hard newlines are not used.  Also converts Urls and Klinks into Html hyperlinks."
+  (interactive "P")
+  (let ((html-file (kexport:buffer soft-newlines-flag)))
+    (hact 'www-url (concat "file://" html-file))
+    html-file))
 
 ;;;###autoload
 (defun kexport:html (export-from output-to &optional soft-newlines-flag)
@@ -153,80 +254,109 @@ STILL TODO:
 	 (standard-output (get-buffer output-to-buf-name))
 	 title)
 
-    (set-buffer standard-output)
-    (setq buffer-read-only nil
-	  kexport:output-filename buffer-file-name)
-    (erase-buffer)
-    (set-buffer export-buf-name)
-    (setq kexport:input-filename buffer-file-name)
+    (with-current-buffer standard-output
+      (setq buffer-read-only nil
+	    kexport:output-filename buffer-file-name)
+      (erase-buffer))
+    (with-current-buffer export-buf-name
+      (save-excursion
+	(kotl-mode:beginning-of-buffer)
+	(setq kexport:input-filename buffer-file-name)
 
-    ;; Use the first line of the first cell as the default HTML document title.
-    (setq title (save-excursion
-		  (kotl-mode:beginning-of-buffer)
-		  (kcell-view:contents)))
-    (if (string-match "\n" title)
-	(setq title (substring title 0 (match-beginning 0))))
+	;; Use the first line of the first cell as the default HTML document title.
+	(setq title (save-excursion
+		      (kotl-mode:beginning-of-buffer)
+		      (kcell-view:contents)))
+	(if (string-match "\n" title)
+	    (setq title (substring title 0 (match-beginning 0))))
 
-    ;; If called interactively, prompt user for the title to use.
-    (if (called-interactively-p 'interactive)
-	(setq title (read-string (format "Title for %s: " output-to-buf-name)
-				 title)))
+	;; If called interactively, prompt user for the title to use.
+	(if (called-interactively-p 'interactive)
+	    (setq title (read-string (format "Title for %s: " output-to-buf-name)
+				     title)))
 
-    (princ "<html><head>\n\n")
-    (princ "<a id=\"top\"></a><a id=\"k0\"></a>\n")
-    (princ (format "<title>%s</title>\n" title))
-    (if kexport:html-description
-	(princ (format "<meta id=\"description\" content=\"%s\">\n"
-		       kexport:html-description)))
-    (if kexport:html-keywords
-	(princ (format "<meta id=\"keywords\" content=\"%s\">\n"
-		       kexport:html-keywords)))
-    (princ "</head>\n\n")
-    (princ (format "<body %s>\n\n" kexport:html-body-attributes))
-    (princ (format "<center><h1>%s</h1></center>\n\n" title))
-    (let* ((separator
-	    (hypb:replace-match-string
-	     ">" (hypb:replace-match-string
-		  "<" (kview:label-separator kview) "&lt;")
-	     "&gt;"))
-	   i level label contents)
-      (kview:map-tree
-       (lambda (kview)
-	 (setq level (kcell-view:level)
-	       i level)
-	 (while (> i 1)
-	   (princ "<ul>")
-	   (setq i (1- i)))
-	 (princ "<table><tr>\n")
-	 (setq label (kcell-view:label))
-	 (princ (format "<a id=\"k%s\"></a>" label))
-	 (princ (format "<a id=\"k%s\"></a>\n" (kcell-view:idstamp)))
-	 (princ "<td width=2% valign=top><pre>\n")
-	 (princ (format
-		 "<font %s>%s%s</font></pre></td>\n"
-		 kexport:label-html-font-attributes
-		 label separator))
-	 (princ "<td>")
-	 (setq contents (kcell-view:contents))
-	 (if (string-match "\\`\\([-_$%#@~^&*=+|/A-Za-z0-9 ]+\\):.*\\S-"
-			   contents)
-	     (princ (format "<a id=\"%s\"></a>"
-			    (substring contents 0 (match-end 1)))))
-	 (setq contents (kexport:html-markup contents))
-	 (if soft-newlines-flag
-	     (princ contents)
-	   (princ "<pre>") (princ contents) (princ "</pre>"))
-	 (princ "</td>\n")
-	 (princ "</tr></table>")
-	 (setq i level)
-	 (while (> i 1)
-	   (princ "</ul>")
-	   (setq i (1- i)))
-	 (terpri) (terpri))
-       kview t t))
-    (princ "</body></html>\n")
-    (set-buffer standard-output)
-    (save-buffer)))
+	(princ "<html><head>\n\n")
+	(princ "<a id=\"top\"></a><a id=\"k0\"></a>\n")
+	(princ (format "<title>%s</title>\n" title))
+	(if kexport:html-description
+	    (princ (format "<meta id=\"description\" content=\"%s\">\n"
+			   kexport:html-description)))
+	(if kexport:html-keywords
+	    (princ (format "<meta id=\"keywords\" content=\"%s\">\n"
+			   kexport:html-keywords)))
+	(princ "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">")
+	;; CSS
+	(princ (format "<link rel=\"stylesheet\" href=\"%s\">\n" kexport:font-awesome-css-url))
+	(princ kexport:font-awesome-css-include)
+	;; HTML
+	(princ "</head>\n\n")
+	(princ (format "<body %s>\n\n" kexport:html-body-attributes))
+	(princ (format "<center><h1>%s</h1></center>\n\n" title))
+	(let* ((separator
+		(hypb:replace-match-string
+		 ">" (hypb:replace-match-string
+		      "<" (kview:label-separator kview) "&lt;")
+		 "&gt;"))
+	       i is-parent is-last-sibling no-sibling-stack level label contents)
+	  (kview:map-tree
+	   (lambda (kview)
+	     (setq level (kcell-view:level)
+		   i level
+		   is-parent (kcell-view:child-p)
+		   is-last-sibling (not (kcell-view:sibling-p)))
+	     (when is-parent
+	       (push is-last-sibling no-sibling-stack)
+	       (princ "<button type=\"button\" class=\"collapsible\">\n"))
+	     (while (> i 1)
+	       (princ "<ul>")
+	       (setq i (1- i)))
+	     (princ "<li list-style-type=none><table><tr>\n")
+	     (princ "<td width=1% valign=top>")
+	     (princ (format "<span class=\"fas fa-chevron-down fa-fw\"%s></span>"
+			    (if is-parent
+				""
+			      ;; Fill same space for alignment but don't
+			      ;; show collapsible chevron when not a parent
+			      " style=\"visibility:hidden\"")))
+	     (princ "</td>\n")
+	     (princ "<td width=2% valign=top>\n")
+	     (setq label (kcell-view:label))
+	     (princ (format "<a id=\"k%s\"></a>" label))
+	     (princ (format "<a id=\"k%s\"></a>\n" (kcell-view:idstamp)))
+	     (princ (format
+		     "<pre><font %s>%s%s</font></pre>\n"
+		     kexport:label-html-font-attributes
+		     label separator))
+	     (princ "</td>\n<td>\n")
+	     (setq contents (kcell-view:contents))
+	     (if (string-match "\\`\\([-_$%#@~^&*=+|/A-Za-z0-9 ]+\\):.*\\S-"
+			       contents)
+		 (princ (format "<a id=\"%s\"></a>"
+				(substring contents 0 (match-end 1)))))
+	     (setq contents (kexport:html-markup contents))
+	     (if soft-newlines-flag
+		 (princ contents)
+	       (princ "<pre>") (princ contents) (princ "</pre>"))
+	     (princ "</td>\n")
+	     (princ "</tr></table></li>")
+	     (setq i level)
+	     (while (> i 1)
+	       (princ "</ul>")
+	       (setq i (1- i)))
+	     (cond (is-parent
+		    (princ "\n</button>\n<div class=\"content\">\n"))
+		   ((and (/= level 1) is-last-sibling)
+		    (princ "\n</div>")
+		    (while (pop no-sibling-stack)
+		      (princ "</div>"))))
+	     (when (not is-parent)
+	       (terpri) (terpri)))
+	   kview t))
+	;; JavaScript
+	(princ kexport:font-awesome-collapsible-javascript)
+	(princ "</body></html>\n")))
+    (with-current-buffer standard-output
+      (save-buffer))))
 
 ;;; ************************************************************************
 ;;; Private functions

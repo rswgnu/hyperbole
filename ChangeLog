@@ -15,6 +15,13 @@
     item, match to the first capitalized char in each item.
 
 * kotl/kexport.el (kexport:font-awesome-css-url,
+                   kexport:font-awesome-css-include,
+                   kexport:font-awesome-collapsible-javascript,
+                   kexport:buffer,
+                   kexport:display,
+                   kexport:html): Add/update to support collapsible
+   parent cells in HTML exported Koutlines.
+
 2021-05-19  Bob Weiner  <rsw@gnu.org>
 
 * Makefile (kotl/kotl-autoloads.el): Revert commit that removed
