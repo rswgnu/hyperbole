@@ -1,3 +1,8 @@
+2021-05-23  Bob Weiner  <rsw@gnu.org>
+
+* kotl/kexport.el (kexport:html-replacement-alist): Change \0
+    back to \\& to try to fix link replacements again.
+
 2021-05-22  Bob Weiner  <rsw@gnu.org>
 
 * kotl/kexport.el (kexport:html-file-klink): Change '\0' back to

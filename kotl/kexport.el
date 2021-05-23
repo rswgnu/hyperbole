@@ -78,7 +78,7 @@
    '(">" . "&gt;")
    ;;
    ;; italicize keybindings
-   '("{[^}]+}" . "<i>\0</i>")
+   '("{[^}]+}" . "<i>\\&</i>")
    ;;
    ;; make URLs into hyperlinks
    (cons hpath:url-regexp  'kexport:html-url)
@@ -96,10 +96,10 @@
    ;; make klinks into hyperlinks
    (cons (concat "&lt;\\s-*@\\s-*" kexport:kcell-reference-regexp
 		 "[^&>]*&gt;")
-	 "<a href=\"#k\\1\">\0</a>")
+	 "<a href=\"#k\\1\">\\&</a>")
    (cons (format "&lt;\\s-*@\\s-*\\(%s\\)[^=&>]*&gt;"
 		 kexport:kcell-partial-reference-regexp)
-	 "<a href=\"#k\\1\">\0</a>")
+	 "<a href=\"#k\\1\">\\&</a>")
    (cons (format "&lt;\\s-*\\([^ \t\n\r,<>]+\\)\\s-*,\\s-*%s[^=&>]*&gt;"
 		 kexport:kcell-reference-regexp)
 	 'kexport:html-file-klink)
