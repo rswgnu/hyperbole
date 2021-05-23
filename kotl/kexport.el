@@ -263,17 +263,16 @@ STILL TODO:
 	(kotl-mode:beginning-of-buffer)
 	(setq kexport:input-filename buffer-file-name)
 
-	;; Use the first line of the first cell as the default HTML document title.
-	(setq title (save-excursion
-		      (kotl-mode:beginning-of-buffer)
-		      (kcell-view:contents)))
-	(if (string-match "\n" title)
-	    (setq title (substring title 0 (match-beginning 0))))
-
 	;; If called interactively, prompt user for the title to use.
 	(if (called-interactively-p 'interactive)
 	    (setq title (read-string (format "Title for %s: " output-to-buf-name)
-				     title)))
+				     title))
+	  ;; Otherwise, use the first line of the first cell as the default HTML document title.
+	  (setq title (save-excursion
+			(kotl-mode:beginning-of-buffer)
+			(kcell-view:contents)))
+	  (when (string-match "\n" title)
+	    (setq title (substring title 0 (match-beginning 0)))))
 
 	(princ "<html><head>\n\n")
 	(princ "<a id=\"top\"></a><a id=\"k0\"></a>\n")
@@ -310,8 +309,8 @@ STILL TODO:
 	     (while (> i 1)
 	       (princ "<ul>")
 	       (setq i (1- i)))
-	     (princ "<li list-style-type=none><table><tr>\n")
-	     (princ "<td width=1% valign=top>")
+	     (princ "<li list-style-type=none>\n<table><tr valign=text-bottom>\n")
+	     (princ "<td width=1%>")
 	     (princ (format "<span class=\"fas fa-chevron-down fa-fw\"%s></span>"
 			    (if is-parent
 				""
@@ -319,10 +318,10 @@ STILL TODO:
 			      ;; show collapsible chevron when not a parent
 			      " style=\"visibility:hidden\"")))
 	     (princ "</td>\n")
-	     (princ "<td width=2% valign=top>\n")
+	     (princ "<td width=2%>")
 	     (setq label (kcell-view:label))
 	     (princ (format "<a id=\"k%s\"></a>" label))
-	     (princ (format "<a id=\"k%s\"></a>\n" (kcell-view:idstamp)))
+	     (princ (format "<a id=\"k%s\"></a>" (kcell-view:idstamp)))
 	     (princ (format
 		     "<pre><font %s>%s%s</font></pre>\n"
 		     kexport:label-html-font-attributes
@@ -369,12 +368,12 @@ Works exclusively within a call to `hypb:replace-match-string'."
 			     (match-end 1))))
     (if (equal filename (file-name-nondirectory
 			 kexport:input-filename))
-	"<a href=\"#k\\2\">\0</a>"
-      (format "<a href=\"file://%s#k\\2\">\0</a>"
+	"<a href=\"#k\\2\">\\&</a>"
+      (format "<a href=\"file://%s#k\\2\">\\&</a>"
 	      (expand-file-name filename
-				(if kexport:input-filename
-				    (file-name-directory
-				     kexport:input-filename)))))))
+				(when kexport:input-filename
+				  (file-name-directory
+				   kexport:input-filename)))))))
 
 (defun kexport:html-markup (string)
   "Perform replacements on STRING specified by `kexport:html-replacement-alist'."

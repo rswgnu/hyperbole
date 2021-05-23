@@ -64,6 +64,22 @@
 (eval-when-compile (require 'hbut)) ;; For defib.
 
 ;;; ************************************************************************
+;;; Public variables
+;;; ************************************************************************
+
+(defcustom klink:ignore-modes
+  '(occur-mode moccur-mode amoccur-mode shell-mode telnet-mode ssh-mode term-mode)
+  "Major modes in which to ignore potential klinks to avoid false positives."
+  :type '(list function)
+  :group 'hyperbole-koutliner)
+
+(defcustom klink:c-style-modes
+  '(c-mode c++-mode objc-mode java-mode)
+  "Major modes in which to ignore potential klinks to avoid false positives."
+  :type '(list function)
+  :group 'hyperbole-koutliner)
+
+;;; ************************************************************************
 ;;; Public functions
 ;;; ************************************************************************
 
@@ -115,22 +131,21 @@ link-end-position, (including delimiters)."
   (let (bol klink referent path)
     (if (and
 	 ;; Avoid false matches in certain modes.
-	 (not (memq major-mode '(occur-mode moccur-mode amoccur-mode
-			         shell-mode telnet-mode ssh-mode term-mode)))
+	 (not (memq major-mode klink:ignore-modes))
  	 ;; If this is an OO-Browser listing buffer, ignore anything that
 	 ;; looks like a klink, e.g. a C++ <template> class.
 	 (if (fboundp 'br-browser-buffer-p)
 	     (not (br-browser-buffer-p))
 	   t)
 	 ;; If in a C-based mode, Klinks can only occur within comments.
-	 (if (and (memq major-mode '(c-mode c++-mode objc-mode java-mode))
+	 (if (and (memq major-mode klink:c-style-modes)
 		  (fboundp 'c-within-comment-p))
 	     (or (c-within-comment-p)
 		 (save-excursion
 		   (and (re-search-backward "//\\|\n" nil t) (looking-at "//"))))
 	   t)
-	 ;; Don't match to C/Objective-C/C++ lines like:  #include < path >
-	 (if (memq major-mode '(c-mode c++-mode objc-mode))
+	 ;; Don't match to C-style lines like:  #include < path >
+	 (if (memq major-mode klink:c-style-modes)
 	     (save-excursion
 	       (beginning-of-line)
 	       (setq bol (point))
@@ -168,7 +183,7 @@ link-end-position, (including delimiters)."
 ;;; ************************************************************************
 
 (defib klink ()
-  "Follows a link delimited by <> to a koutline cell.
+  "Follow a link delimited by <> to a koutline cell.
 See documentation for the `link-to-kotl' function for valid klink formats."
   (let* ((link-and-pos (klink:at-p))
 	 (link (car link-and-pos))
@@ -178,7 +193,7 @@ See documentation for the `link-to-kotl' function for valid klink formats."
 	       (hact 'klink:act link start-pos)))))
 
 (defact link-to-kotl (link)
-  "Displays at the top of another window the referent pointed to by LINK.
+  "Display at the top of another window the referent pointed to by LINK.
 LINK may be of any of the following forms, with or without delimiters:
   < pathname [, cell-ref] >
   < [-!&] pathname >
@@ -204,8 +219,8 @@ See documentation for `kcell:ref-to-id' for valid cell-ref formats."
      link)
     ;; < pathname [, cell-ref] >
     (hact 'link-to-kcell (match-string 1 link)
-	  (if (match-end 3)
-	      (kcell:ref-to-id (match-string 3 link)))))
+	  (when (match-end 3)
+	    (kcell:ref-to-id (match-string 3 link)))))
    ((string-match
      "\\`<?\\s-*\\(\\([-!&]\\)?\\s-*[^ \t\n\r\f,<>]+\\)\\s-*>?\\'" link)
     ;; < [-!&] pathname >
@@ -283,7 +298,7 @@ Assume point is in klink referent buffer, where the klink points."
 	      (klink:replace-label klink link-buf start new-label)))))
 
 ;;; ************************************************************************
-;;; Private variables.
+;;; Private variables
 ;;; ************************************************************************
 
 (defvar klink:cell-ref-regexp
