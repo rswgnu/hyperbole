@@ -259,7 +259,8 @@
         (goto-char 2)
         (action-key)
         (should (equal major-mode 'dired-mode))
-        (should (= 0 (string-match (getenv "HOME") (file-truename default-directory)))))
+	(should (= 0 (string-match (file-truename (getenv "HOME"))
+				   (file-truename default-directory)))))
     nil))
 
 (ert-deftest hbut-pathname-emacs-lisp-file-test ()

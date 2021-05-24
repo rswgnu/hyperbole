@@ -83,11 +83,11 @@
 
 (ert-deftest hypb:replace-match-string-after-27.1-test ()
   ;; anchors (bug#15107, bug#44861)
-  (skip-unless (version< "27.1" emacs-version))
-  (should (equal (hypb:replace-match-string "a\\B" "a aaaa" "b")
-                 "a bbba"))
-  (should (equal (hypb:replace-match-string "\\`\\|x" "--xx--" "z")
-                 "z--zz--")))
+  (when (version< "27.1" emacs-version)
+    (should (equal (hypb:replace-match-string "a\\B" "a aaaa" "b")
+                   "a bbba"))
+    (should (equal (hypb:replace-match-string "\\`\\|x" "--xx--" "z")
+                   "z--zz--"))))
 
 (provide 'hypb-tests)
 ;;; hypb-tests.el ends here

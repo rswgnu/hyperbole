@@ -1,5 +1,14 @@
 2021-05-23  Bob Weiner  <rsw@gnu.org>
 
+* test/kotl-mode-tests.el (kotl-mode-indent-cell-changes-level):
+    Ensure always at the beginning of buffer for the test.
+  test/hbut-tests.el (hbut-pathname-env-variable-test):
+  test/hibtypes-tests.el (ibtyeps::pathname-env-variable-test):
+    Use file-truename to normalize both names.
+  test/hypb-tests.el (hypb:replace-match-string-after-27.1-test):
+    Conditionalize but don't skip so no issue arises when looking
+    at all test results.
+
 * kotl/kexport.el (kexport:html-replacement-alist): Change \0
     back to \\& to try to fix link replacements again.
 

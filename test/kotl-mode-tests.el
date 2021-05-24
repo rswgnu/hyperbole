@@ -51,6 +51,7 @@
   (setup-kotl-mode-example-test
    ;; Start in first cell
    (kotl-mode:example temporary-file-directory t)
+   (kotl-mode:beginning-of-buffer)
    (should (kotl-mode:first-cell-p))
 
    ;; Move to next cell
@@ -71,6 +72,7 @@
   (skip-unless (not noninteractive))
   (setup-kotl-mode-example-test
    (kotl-mode:example temporary-file-directory t)
+   (kotl-mode:beginning-of-buffer)
    (should (kotl-mode:first-cell-p))
    (kotl-mode:next-cell 1)
    (should (hact 'kbd-key "TAB"))

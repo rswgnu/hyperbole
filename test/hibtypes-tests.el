@@ -71,12 +71,14 @@
 
 (ert-deftest ibtypes::pathname-env-variable-test ()
   (unwind-protect
-      (with-temp-buffer
-        (insert "\"${HOME}\"")
-        (goto-char 2)
-        (ibtypes::pathname)
-        (should (equal major-mode 'dired-mode))
-        (should (= 0 (string-match (getenv "HOME") (file-truename default-directory)))))
+      (when (getenv "HOME")
+	(with-temp-buffer
+          (insert "\"${HOME}\"")
+          (goto-char 2)
+          (ibtypes::pathname)
+          (should (equal major-mode 'dired-mode))
+          (should (= 0 (string-match (file-truename (getenv "HOME"))
+				     (file-truename default-directory))))))
     nil))
 
 (ert-deftest ibtypes::pathname-emacs-lisp-file-test ()
