@@ -14,7 +14,8 @@
 ;;
 ;; Within JavaScript-enabled web browsers, koutline parent cells exported to
 ;; HTML may be expanded and collapsed interactively.  This feature utilizes
-;; a small 20-line JavaScript snippet is included in each exported koutline.
+;; a small 20-line JavaScript snippet that is included in each exported
+;; koutline. 
 
 ;;; Code:
 ;;; ************************************************************************

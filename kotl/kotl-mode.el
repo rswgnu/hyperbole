@@ -1461,6 +1461,9 @@ See `forward-paragraph' for more information."
   (interactive)
   (kotl-mode:maintain-region-highlight)
   (goto-char (point-min))
+  (when (= (point) 1)
+    ;; Buffer is expanded past editable area, reset narrowing via kotl-mode.
+    (kotl-mode))
   ;; Move to cell start.
   (goto-char (kcell-view:start)))
 
@@ -1537,6 +1540,9 @@ Leave point at the start of the cell."
   (interactive)
   (kotl-mode:maintain-region-highlight)
   (goto-char (point-max))
+  (when (looking-back "\\]\\s-*")
+    ;; Internal Koutline structures are exposed, re-narrow the Koutline
+    (kotl-mode))
   ;; To move to cell end.
   (kotl-mode:to-valid-position t)
   (point))

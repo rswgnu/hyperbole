@@ -1,5 +1,9 @@
 2021-05-23  Bob Weiner  <rsw@gnu.org>
 
+* kotl/kotl-mode.el (kotl-mode:beginning-of-buffer,
+    kotl-mode:end-of-buffer): Re-narrow Koutline to editable
+    region if it has been expanded.
+
 * test/kotl-mode-tests.el (kotl-mode-indent-cell-changes-level):
     Ensure always at the beginning of buffer for the test.
   test/hbut-tests.el (hbut-pathname-env-variable-test):
