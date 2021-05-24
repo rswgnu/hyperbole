@@ -27,6 +27,7 @@
 (require 'custom) ;; For defface.
 (require 'hversion)
 (require 'hmail)
+(require 'xml)
 
 ;; Quiet byte compiler warnings for these free variables.
 (eval-when-compile
@@ -908,7 +909,8 @@ Return number of matching entries found."
       (insert "No result.")
     (print contacts (get-buffer-create "*contacts-data*"))
     (dolist (contact contacts)
-      (let* ((name-value (nth 0 (xml-get-children contact 'gd:name)))
+      (let* (child
+	     (name-value (nth 0 (xml-get-children contact 'gd:name)))
              (fullname (xml-node-child-string (nth 0 (xml-get-children name-value 'gd:fullName))))
              (givenname (xml-node-child-string (nth 0 (xml-get-children name-value 'gd:givenName))))
              (familyname (xml-node-child-string (nth 0 (xml-get-children name-value 'gd:familyName))))

@@ -9,6 +9,9 @@
     Conditionalize but don't skip so no issue arises when looking
     at all test results.
 
+* hyrolo.el: Add (require 'xml) and local binding of child used
+    in google-contacts support.
+
 * kotl/kexport.el (kexport:html-replacement-alist): Change \0
     back to \\& to try to fix link replacements again.
 
