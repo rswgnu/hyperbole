@@ -1,3 +1,14 @@
+2021-05-24  Mats Lidell  <matsl@gnu.org>
+
+* test/kotl-mode-tests.el (kotl-mode-extension-open-buffer-in-kotl-mode)
+    (kotl-mode-set-view-with-kbd, kotl-mode-idstamp-saved-with-file)
+    (kotl-mode-demote-keeps-idstamp, kotl-mode-demote-change-label)
+    (kotl-mode-views, kotl-mode-move-cell-before-cell)
+    (kotl-mode-move-cell-after-cell, kotl-mode-copy-cell-after-cell)
+    (kotl-mode-copy-cell-before-cell, kotl-mode-jump-to-cell)
+    (kotl-mode-goto-child-and-parent, kotl-mode-kill-cell): Add kotl-mode
+    tests.
+
 2021-05-23  Bob Weiner  <rsw@gnu.org>
 
 * kotl/kotl-mode.el (kotl-mode:beginning-of-buffer,
