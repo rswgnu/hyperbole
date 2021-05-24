@@ -12,10 +12,62 @@
 * hyrolo.el: Add (require 'xml) and local binding of child used
     in google-contacts support.
 
+* kotl/kotl-mode.el (kotl-mode:move-after): Suppress label increment
+   when label type is permanent ids (fix bug).
+
 * kotl/kexport.el (kexport:html-replacement-alist): Change \0
     back to \\& to try to fix link replacements again.
 
+* kotl/kotl-mode.el (kotl-mode:goto-cell): Use prefix arg as a
+    number rather than a string when called interactively.
+
+* kotl/kvspec.el (kvspec:activate): Ensure Koutline is narrowed to
+    editable region only.
+
+* kotl/kview.el (kview:goto-cell-id): Simplify and make much more
+    efficient via kproperty:position call.  Allow for integer
+    idstamp argument as well.
+
+* kotl/kcell.el (kcell:ref-to-id): Simplfy using 'when' and
+    'match-string'; update doc on unimplemented Augment features.
+    Fix to validate that idstamp exists before returning and to
+    convert relative kcell labels to idstamps (integers).
+
+* kotl/kproperty.el (kproperty:position): Add to quickly locate
+    the first kcell with a property value.
+                    (kproperty:all-positions): Add to quickly
+    locate all kcells with a property value.
+                    (kproperty:add-properties): Add to set
+    multiple properties from a plist.
+  kotl/kcell.el (kcell:is-p):
+  kotl/kview.el (kcell-view:create, kcell-view:set-cell, kview:goto-cell-id):
+  kotl/kfile.el (kfile:insert-attributes-v2, kfile:insert-attributes-v3):
+    Update to use new kcell and kproperty single-level property-list
+    configuration.
+
 2021-05-22  Bob Weiner  <rsw@gnu.org>
+
+* kotl/kcell.el (kcell:create): Remove contents arg since contents
+    are now stored exclusively in kviews.
+                (kcell:contents): Remove function.
+                (kcell:create-top, kcell-data:create,
+                 kcell-data:to-kcell-v2, kcell-data:to-kcell-v3):
+  kotl/kview.el (kview:add-cell):
+  kotl/kotl-mode.el (kotl-mode:copy-after, kotl-mode:copy-before):
+    Use new kcell:create calling convention (no contents arg).
+
+* kotl/kcell.el (kcell:copy, kcell:create, kcell:is-p):
+Delete knode.el and integrate functionality into kcell.el.
+
+* kotl/kcell.el (kcell:get-attr): Alias to plist-get.
+                (kcell:set-attr): Alias to plist-put.
+
+* kotl/kview.el (kcell-view:cell-from-ref): Add to get a kcell from a cell
+    reference (label or idstamp).
+
+* Makefile:
+  kotl/MANIFEST:
+  kotl/kproperty.el: Merge in "kprop-em.el" and remove "kprop-xe.el".
 
 * kotl/kexport.el (kexport:html-file-klink): Change '\0' back to
    '\\&' to prevent klink nul char insertion bug.

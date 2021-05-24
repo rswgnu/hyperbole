@@ -163,9 +163,8 @@ EL_COMPILE = hact.el hactypes.el hargs.el hbdata.el hbmap.el hbut.el \
 	     hui-dired-sidebar.el hypb-maintenance.el
 
 EL_KOTL = kotl/kexport.el kotl/kfile.el kotl/kfill.el kotl/kimport.el kotl/klabel.el \
-	  kotl/klink.el kotl/kmenu.el kotl/knode.el kotl/kotl-mode.el kotl/kotl-orgtbl.el \
-          kotl/kcell.el kotl/kproperty.el kotl/kprop-em.el \
-	  kotl/kview.el kotl/kvspec.el
+	  kotl/klink.el kotl/kmenu.el kotl/kotl-mode.el kotl/kotl-orgtbl.el \
+          kotl/kcell.el kotl/kproperty.el kotl/kview.el kotl/kvspec.el
 
 ELC_COMPILE =  hactypes.elc hibtypes.elc hib-debbugs.elc hib-doc-id.elc hib-kbd.elc \
 	     hib-social.elc hact.elc \
@@ -179,9 +178,8 @@ ELC_COMPILE =  hactypes.elc hibtypes.elc hib-debbugs.elc hib-doc-id.elc hib-kbd.
 	     set.elc hypb-ert.elc hui-dired-sidebar.elc hypb-maintenance.elc
 
 ELC_KOTL = kotl/kexport.elc kotl/kfile.elc kotl/kfill.elc kotl/kimport.elc kotl/klabel.elc \
-	   kotl/klink.elc kotl/kmenu.elc kotl/knode.elc kotl/kotl-mode.elc kotl/kotl-orgtbl.elc \
-           kotl/kcell.elc kotl/kproperty.elc kotl/kprop-em.elc \
-           kotl/kview.elc kotl/kvspec.elc
+	   kotl/klink.elc kotl/kmenu.elc kotl/kotl-mode.elc kotl/kotl-orgtbl.elc \
+           kotl/kcell.elc kotl/kproperty.elc kotl/kview.elc kotl/kvspec.elc
 
 HY-TALK  = HY-TALK/.hypb HY-TALK/HYPB HY-TALK/HY-TALK.org
 

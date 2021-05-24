@@ -59,7 +59,8 @@ Return the new kview."
     ;; again.
     (unless (kview:is-p kview)
       (kfile:read buffer existing-file))
-    (or (eq major-mode 'kotl-mode) (kotl-mode))
+    (unless (derived-mode-p 'kotl-mode)
+      (kotl-mode))
     kview))
 
 ;;;###autoload
@@ -398,7 +399,7 @@ hidden."
 	  ;; Be sure not to skip past a period which may terminate the label.
 	  (if (re-search-forward "[A-Za-z0-9]\\(\\.?[A-Za-z0-9]\\)*" nil t)
 	      (progn
-		(kproperty:set 'kcell (car kcell-list))
+		(kproperty:add-properties (car kcell-list))
 		(setq kcell-list (cdr kcell-list))))
 	  (search-forward "\n\n" nil t)))))
 
@@ -417,9 +418,8 @@ hidden."
 	  ;; Be sure not to skip past a period which may terminate the label.
 	  (if (re-search-forward "[A-Za-z0-9]\\(\\.?[A-Za-z0-9]\\)*" nil t)
 	      (progn
-		(kproperty:set 'kcell
-			       (kcell-data:to-kcell-v3
-				(aref kcell-vector kcell-num)))
+		(kproperty:add-properties
+		 (kcell-data:to-kcell-v3 (aref kcell-vector kcell-num)))
 		(setq kcell-num (1+ kcell-num))))
 	  (search-forward "\n\n" nil t)))))
 

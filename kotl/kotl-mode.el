@@ -208,7 +208,7 @@ Hyperbole EXAMPLE."
     (unless (stringp example)
       (setq example "EXAMPLE.kotl"))
     (when (file-directory-p example)
-      (setq personal-example (expand-file-name "EXAMPLE.kotl" example )
+      (setq personal-example (expand-file-name "EXAMPLE.kotl" example)
 	    example "EXAMPLE.kotl"))
     (unless personal-example
       (if (file-name-absolute-p example)
@@ -961,7 +961,7 @@ Goes backward if ARG is negative; error if CHAR not found."
 ;;; ------------------------------------------------------------------------
 
 (defun kotl-mode:append-cell (contents-cell append-to-cell)
-  "Append CONTENTS-CELL to APPEND-TO-CELL.
+   "Append CONTENTS-CELL (a cell ref) to APPEND-TO-CELL (a cell ref).
 APPEND-TO-CELL is refilled if neither cell has a no-fill property and
 kotl-mode:refill-flag is enabled."
   (interactive
@@ -1014,7 +1014,7 @@ Leave point at the start of the root cell of the new tree."
   (kview:map-tree
    (lambda (view)
      (kcell-view:set-cell
-      (kcell:create nil (kview:id-increment view))))
+      (kcell:create (kview:id-increment view))))
    kview))
 
 (defun kotl-mode:copy-before (from-cell-ref to-cell-ref parent-p)
@@ -1040,7 +1040,7 @@ Leave point at the start of the root cell of the new tree."
   (kview:map-tree
    (lambda (view)
      (kcell-view:set-cell
-      (kcell:create nil (kview:id-increment view))))
+      (kcell:create (kview:id-increment view))))
    kview))
 
 (defun kotl-mode:copy-to-buffer (cell-ref buffer invisible-flag)
@@ -1107,6 +1107,7 @@ Leave point at original location but return the tree's new start point."
 	 (end   (kotl-mode:tree-end))
 	 (sib-id (if (= 0 (kotl-mode:forward-cell 1))
 		     (kcell-view:idstamp)))
+	 (id-label-flag (eq (kview:label-type kview) 'id))
 	 new-tree-start)
     ;;
     ;; We can't move a tree to a point within itself, so if that is the case
@@ -1119,10 +1120,10 @@ Leave point at original location but return the tree's new start point."
     ;; sibling cell.  Mark its label with a property which will be deleted
     ;; whenever the cell label is renumbered.  This tells us whether or not
     ;; to renumber the sibling separately from the tree to move.
-    (if sib-id
-	;; Move to middle of label and insert klabel-original temp property.
-	(progn (goto-char (- (point) label-sep-len 3))
-	       (kproperty:set 'klabel-original t)))
+    (when sib-id
+      ;; Move to middle of label and insert klabel-original temp property.
+      (goto-char (- (point) label-sep-len 3))
+      (kproperty:set 'klabel-original t))
     ;;
     ;; Position for insertion before deletion of tree-to-move from old
     ;; position, in case old position precedes new one.
@@ -1135,7 +1136,8 @@ Leave point at original location but return the tree's new start point."
 		     to-indent (+ to-indent (kview:level-indent kview))))
       ;; Move to after to-cell-ref's tree for insertion as following sibling.
       (goto-char (kotl-mode:tree-end))
-      (setq to-label (klabel:increment to-label)))
+      (unless id-label-flag
+	(setq to-label (klabel:increment to-label))))
     ;;
     ;; Insert tree-to-move at new location
     ;;
@@ -1153,13 +1155,13 @@ Leave point at original location but return the tree's new start point."
       ;;
       ;; Move to sibling of tree-to-move within view and update labels within
       ;; view of tree-to-move's original siblings.
-      (if sib-id
-	  (progn (kotl-mode:goto-cell sib-id t)
-		 ;; Sibling labels may have already been updated if tree was
-		 ;; moved somewhere preceding its siblings.
-		 (let ((label-middle (- (point) label-sep-len 2)))
-		   (if (kproperty:get label-middle 'klabel-original)
-		       (klabel-type:update-labels from-label))))))
+      (when sib-id
+	(kotl-mode:goto-cell sib-id t)
+	;; Sibling labels may have already been updated if tree was
+	;; moved somewhere preceding its siblings.
+	(let ((label-middle (- (point) label-sep-len 2)))
+	  (when (kproperty:get label-middle 'klabel-original)
+	    (klabel-type:update-labels from-label)))))
     ;;
     (goto-char new-tree-start)
     ;;
@@ -1731,7 +1733,7 @@ CELL-REF is not found within current view.  Will signal same
 error if called interactively when CELL-REF is not found."
   (interactive
    (list (if current-prefix-arg
-	     (format "0%d" (prefix-numeric-value current-prefix-arg))
+	     (prefix-numeric-value current-prefix-arg)
 	   (read-string "Goto cell label or id: "))))
   (setq cell-ref
 	(or (kcell:ref-to-id cell-ref)
@@ -1739,39 +1741,33 @@ error if called interactively when CELL-REF is not found."
   (let* ((opoint (point))
 	 (found)
 	 cell-id kvspec)
-    (if (eq ?| (aref cell-ref 0))
+    (if (and (stringp cell-ref) (eq ?| (aref cell-ref 0)))
 	;; This is a standalone view spec, not a cell reference.
 	(progn (kvspec:activate cell-ref) (setq found (point)))
 
-      ;; !! Remove any relative specs and view specs from
-      ;; cell-ref to form cell-id.  Really should account for relative
-      ;; specs here, but we don't yet support them.
-      (if (string-match "\\(\\.[a-zA-Z]+\\)?\\([|:].*\\)\\|\\.[a-zA-Z]+"
-			cell-ref)
+      ;; !! Todo: Remove any relative specs and view specs from
+      ;; cell-ref to form cell-id.  Really should account for Augment-style
+      ;; relative specs here, but we don't yet support them.
+      (if (and (stringp cell-ref)
+	       (string-match "\\(\\.[a-zA-Z]+\\)?\\([|:].*\\)\\|\\.[a-zA-Z]+"
+			     cell-ref))
 	  (setq cell-id (substring cell-ref 0 (match-beginning 0))
 		kvspec  (when (match-beginning 2)
-			  (substring cell-ref (match-beginning 2) (match-end 2))))
+			  (match-string 2 cell-ref)))
 	(setq cell-id cell-ref kvspec nil))
 
       (goto-char (point-min))
-      (cond ((eq ?0 (aref cell-id 0))
-	     ;; is an idstamp
-	     (when (kview:goto-cell-id cell-id)
-		 (setq found (point))))
-	    ;; is a label
-	    ((re-search-forward
-	      (format "\\([\n\r][\n\r]\\|\\`\\)[ ]*%s%s"
-		      (regexp-quote cell-id)
-		      (regexp-quote (kview:label-separator kview)))
-	      nil t)
-	     (setq found (point)))
-	    ;; no match
-	    (t (goto-char opoint)
-	       nil))
-      (if (and (not found) (or error-p (called-interactively-p 'interactive)))
-	  (error "(kotl-mode:goto-cell): No `%s' cell in this view" cell-ref)
-	;; Activate any viewspec associated with cell-ref.
-	(when kvspec (kvspec:activate kvspec))))
+      (when (or (integerp cell-id)
+		(eq ?0 (aref cell-id 0)))
+	;; is an idstamp
+	(when (kview:goto-cell-id cell-id)
+	  (setq found (point))))
+      (if found
+	  ;; Activate any viewspec associated with cell-ref.
+	  (when kvspec (kvspec:activate kvspec))
+	(goto-char opoint)
+	(when (or error-p (called-interactively-p 'interactive))
+	  (error "(kotl-mode:goto-cell): No `%s' cell in this view" cell-ref))))
     found))
 
 (defun kotl-mode:head-cell ()
@@ -2135,9 +2131,13 @@ If assist-key is pressed:
 (defun kotl-mode:add-cell (&optional relative-level contents plist no-fill)
   "Add a cell following current cell at optional RELATIVE-LEVEL with CONTENTS string, attributes in PLIST, a property list, and NO-FILL flag to prevent any filling of CONTENTS.
 
-Optional prefix arg RELATIVE-LEVEL means add as sibling if nil or >= 0, as
-child if equal to universal argument, {C-u}, and as sibling of current cell's
-parent, otherwise.  If added as sibling of current level, RELATIVE-LEVEL is
+Optional prefix arg RELATIVE-LEVEL means either:
+
+ 1. add as the next sibling if nil or >= 0;
+ 2. as the first child if equal to '(4), given by the universal argument, {C-u};
+ 3. otherwise, as the first sibling of the current cell's parent.
+
+If added as the next sibling of the current level, then RELATIVE-LEVEL is
 used as a repeat count for the number of cells to add.
 
 Return last newly added cell."

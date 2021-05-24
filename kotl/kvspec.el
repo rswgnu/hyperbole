@@ -77,6 +77,7 @@ VIEW-SPEC is a string or t, which means recompute the current view spec.  See
 <${hyperb:dir}/kotl/EXAMPLE.kotl, 2b17=048> for details on valid view specs."
   (interactive (list (read-string "Set view spec: " kvspec:current)))
   (kotl-mode:is-p)
+  (kfile:narrow-to-kcells)
   (when (equal view-spec "")
     (setq view-spec nil))
   (kvspec:initialize)

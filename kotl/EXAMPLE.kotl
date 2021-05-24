@@ -185,7 +185,7 @@
      3b13. Cell Identifiers: Permanent ids are associated with each cell
            and can be used in hyperlinks that are maintained as cells are
            reordered in a file.  (These ids may also be displayed in place
-           of the outline level relative ids.  Use {C-c C-l id RET}.)
+           of the outline level relative ids.  Use {C-c C-l id RET}).
            Permanent ids are numbered from 0, where 0 is the root node of
            the entire outline.  This node is never visible within the
            outline.  Permanent ids always begin with a 0, as in 012, to
@@ -199,7 +199,7 @@
            the kcell id to see attributes for all visible cells in the
            outline.
            
-           Use {C-c C-i}  to add an attribute to or to modify an existing
+           Use {C-c C-i} to add an attribute to or to modify an existing
            attribute of the cell at point.
 
      3b15. File Insertion: The elements of another buffer or file may be
@@ -254,7 +254,7 @@
               koutline buffer or file to create.
 
        3b16c. Augment Files Numbered on the Right-Side: (Skip this if you are
-              unfamiliar with this sort of file.)  Files exported from the
+              unfamiliar with this sort of file).  Files exported from the
               Augment system as text often have alphanumeric statement
               identifiers on the right side.
               
@@ -317,7 +317,7 @@
 
         3c1a. <@ 3b=06> jumps to the cell within this outline which has
               permanent id `06' and relative id `3b'.  <@ 06> does the same
-              thing, as does <@ 2b>, though this latter form will not
+              thing, as does <@ 3b>, though this latter form will not
               maintain the link properly if the cell is moved elsewhere
               within the outline.
 
@@ -360,7 +360,7 @@
     4f. Flexible view handling has been only partially implemented.
 
 
-"bn" ;; kvspec:current
+"ben" ;; kvspec:current
 77 ;; id-counter
 alpha ;; label-type
 3 ;; label-min-width
@@ -369,127 +369,127 @@ alpha ;; label-type
 
 ;; depth-first kcell attributes
 [[0
-  (creator "rsw@gnu.org" create-time "20210510:04:09:59" id-counter 77 file "/Users/bk/Dropbox/emacs/hyperbole/kotl/EXAMPLE.kotl")]
+  (idstamp 0 creator "bw@NYC-WEINERBOB" create-time "20210524:02:30:42" id-counter 77 file "/mnt/c/Users/bob.weiner/Dropbox/emacs/hyperbole/kotl/EXAMPLE.kotl")]
  [20
-  (creator "rsw@gnu.org" create-time "19940104:17:38:28" no-fill t)]
- [75
-  (idstamp 20 creator "rsw@gnu.org" create-time "19940104:17:38:28" no-fill t)]
+  (rear-nonsticky t no-fill t create-time "19940104:17:38:28" creator "rsw@gnu.org" idstamp 20 kcell t)]
+ [2
+  (rear-nonsticky t no-fill t create-time "19940104:17:38:28" creator "rsw@gnu.org" idstamp 2 kcell t)]
  [34
-  (creator "rsw@gnu.org" create-time "19940610:16:43:55")]
+  (rear-nonsticky t create-time "19940610:16:43:55" creator "rsw@gnu.org" idstamp 34 kcell t)]
  [35
-  (creator "rsw@gnu.org" create-time "19940610:16:44:03")]
+  (rear-nonsticky t create-time "19940610:16:44:03" creator "rsw@gnu.org" idstamp 35 kcell t)]
  [4
-  (creator "rsw@gnu.org" create-time "19940104:17:38:29")]
+  (rear-nonsticky t create-time "19940104:17:38:29" creator "rsw@gnu.org" idstamp 4 kcell t)]
  [5
-  (creator "rsw@gnu.org" create-time "19940104:17:38:29")]
+  (rear-nonsticky t create-time "19940104:17:38:29" creator "rsw@gnu.org" idstamp 5 kcell t)]
  [6
-  (creator "rsw@gnu.org" create-time "19940104:17:38:29")]
+  (rear-nonsticky t create-time "19940104:17:38:29" creator "rsw@gnu.org" idstamp 6 kcell t)]
  [14
-  (creator "rsw@gnu.org" create-time "19940104:17:38:29")]
+  (rear-nonsticky t create-time "19940104:17:38:29" creator "rsw@gnu.org" idstamp 14 kcell t)]
  [67
-  (creator "rsw@gnu.org" create-time "19951028:04:29:13" no-fill t)]
+  (rear-nonsticky t no-fill t create-time "19951028:04:29:13" creator "rsw@gnu.org" idstamp 67 kcell t)]
  [15
-  (creator "rsw@gnu.org" create-time "19940104:17:38:29")]
+  (rear-nonsticky t create-time "19940104:17:38:29" creator "rsw@gnu.org" idstamp 15 kcell t)]
  [31
-  (creator "rsw@gnu.org" create-time "19940306:18:11:43")]
+  (rear-nonsticky t create-time "19940306:18:11:43" creator "rsw@gnu.org" idstamp 31 kcell t)]
  [7
-  (creator "rsw@gnu.org" create-time "19940104:17:38:29")]
+  (rear-nonsticky t create-time "19940104:17:38:29" creator "rsw@gnu.org" idstamp 7 kcell t)]
  [46
-  (creator "rsw@gnu.org" create-time "19950614:21:35:17")]
+  (rear-nonsticky t create-time "19950614:21:35:17" creator "rsw@gnu.org" idstamp 46 kcell t)]
  [43
-  (creator "rsw@gnu.org" create-time "19940610:22:00:46")]
+  (rear-nonsticky t create-time "19940610:22:00:46" creator "rsw@gnu.org" idstamp 43 kcell t)]
  [22
-  (creator "rsw@gnu.org" create-time "19940127:22:41:42")]
+  (rear-nonsticky t create-time "19940127:22:41:42" creator "rsw@gnu.org" idstamp 22 kcell t)]
  [32
-  (creator "rsw@gnu.org" create-time "19940610:16:31:28")]
+  (rear-nonsticky t create-time "19940610:16:31:28" creator "rsw@gnu.org" idstamp 32 kcell t)]
  [41
-  (creator "rsw@gnu.org" create-time "19940610:18:55:09")]
+  (rear-nonsticky t create-time "19940610:18:55:09" creator "rsw@gnu.org" idstamp 41 kcell t)]
  [42
-  (creator "rsw@gnu.org" create-time "19940610:18:55:57")]
+  (rear-nonsticky t create-time "19940610:18:55:57" creator "rsw@gnu.org" idstamp 42 kcell t)]
  [33
-  (creator "rsw@gnu.org" create-time "19940610:16:31:29")]
+  (rear-nonsticky t create-time "19940610:16:31:29" creator "rsw@gnu.org" idstamp 33 kcell t)]
  [47
-  (creator "rsw@gnu.org" create-time "19951022:22:59:26" no-fill t)]
+  (rear-nonsticky t no-fill t create-time "19951022:22:59:26" creator "rsw@gnu.org" idstamp 47 kcell t)]
  [8
-  (creator "rsw@gnu.org" create-time "19940104:17:38:29")]
+  (rear-nonsticky t create-time "19940104:17:38:29" creator "rsw@gnu.org" idstamp 8 kcell t)]
  [28
-  (creator "rsw@gnu.org" create-time "19940128:22:50:44")]
+  (rear-nonsticky t create-time "19940128:22:50:44" creator "rsw@gnu.org" idstamp 28 kcell t)]
  [29
-  (creator "rsw@gnu.org" create-time "19940128:22:50:54")]
+  (rear-nonsticky t create-time "19940128:22:50:54" creator "rsw@gnu.org" idstamp 29 kcell t)]
  [10
-  (creator "rsw@gnu.org" create-time "19940104:17:38:29")]
+  (rear-nonsticky t create-time "19940104:17:38:29" creator "rsw@gnu.org" idstamp 10 kcell t)]
  [30
-  (creator "rsw@gnu.org" create-time "19940129:00:27:59")]
+  (rear-nonsticky t create-time "19940129:00:27:59" creator "rsw@gnu.org" idstamp 30 kcell t)]
  [62
-  (creator "rsw@gnu.org" create-time "19951026:08:32:57" no-fill t)]
+  (rear-nonsticky t no-fill t create-time "19951026:08:32:57" creator "rsw@gnu.org" idstamp 62 kcell t)]
  [70
-  (creator "rsw@gnu.org" create-time "19951030:19:18:49" no-fill t)]
+  (rear-nonsticky t no-fill t create-time "19951030:19:18:49" creator "rsw@gnu.org" idstamp 70 kcell t)]
  [71
-  (creator "rsw@gnu.org" create-time "19951030:19:19:40" no-fill t)]
+  (rear-nonsticky t no-fill t create-time "19951030:19:19:40" creator "rsw@gnu.org" idstamp 71 kcell t)]
  [73
-  (creator "rsw@gnu.org" create-time "19951030:19:23:09" no-fill t)]
+  (rear-nonsticky t no-fill t create-time "19951030:19:23:09" creator "rsw@gnu.org" idstamp 73 kcell t)]
  [63
-  (creator "rsw@gnu.org" create-time "19951026:19:31:34" no-fill t)]
+  (rear-nonsticky t no-fill t create-time "19951026:19:31:34" creator "rsw@gnu.org" idstamp 63 kcell t)]
  [64
-  (creator "rsw@gnu.org" create-time "19951026:19:33:01" no-fill t)]
+  (rear-nonsticky t no-fill t create-time "19951026:19:33:01" creator "rsw@gnu.org" idstamp 64 kcell t)]
  [69
-  (creator "rsw@gnu.org" create-time "19951029:06:24:35" no-fill t)]
+  (rear-nonsticky t no-fill t create-time "19951029:06:24:35" creator "rsw@gnu.org" idstamp 69 kcell t)]
  [68
-  (creator "rsw@gnu.org" create-time "19951029:06:24:27" no-fill t)]
+  (rear-nonsticky t no-fill t create-time "19951029:06:24:27" creator "rsw@gnu.org" idstamp 68 kcell t)]
  [65
-  (creator "rsw@gnu.org" create-time "19951026:19:33:08" no-fill t)]
+  (rear-nonsticky t no-fill t create-time "19951026:19:33:08" creator "rsw@gnu.org" idstamp 65 kcell t)]
  [66
-  (creator "rsw@gnu.org" create-time "19951026:19:33:15" no-fill t)]
+  (rear-nonsticky t no-fill t create-time "19951026:19:33:15" creator "rsw@gnu.org" idstamp 66 kcell t)]
  [77
-  (creator "rsw@gnu.org" create-time "19980226:19:54:44" no-fill t)]
+  (rear-nonsticky t no-fill t create-time "19980226:19:54:44" creator "rsw@gnu.org" idstamp 77 kcell t)]
  [48
-  (creator "rsw@gnu.org" create-time "19951023:05:55:19" no-fill t)]
+  (rear-nonsticky t no-fill t create-time "19951023:05:55:19" creator "rsw@gnu.org" idstamp 48 kcell t)]
  [57
-  (creator "rsw@gnu.org" create-time "19951023:10:07:06" no-fill t)]
+  (rear-nonsticky t no-fill t create-time "19951023:10:07:06" creator "rsw@gnu.org" idstamp 57 kcell t)]
  [58
-  (creator "rsw@gnu.org" create-time "19951023:10:07:26" no-fill t)]
+  (rear-nonsticky t no-fill t create-time "19951023:10:07:26" creator "rsw@gnu.org" idstamp 58 kcell t)]
  [49
-  (creator "rsw@gnu.org" create-time "19951023:05:55:55" no-fill t)]
+  (rear-nonsticky t no-fill t create-time "19951023:05:55:55" creator "rsw@gnu.org" idstamp 49 kcell t)]
  [55
-  (creator "rsw@gnu.org" create-time "19951023:08:56:41" no-fill t)]
+  (rear-nonsticky t no-fill t create-time "19951023:08:56:41" creator "rsw@gnu.org" idstamp 55 kcell t)]
  [50
-  (creator "rsw@gnu.org" create-time "19951023:05:57:26" no-fill t)]
+  (rear-nonsticky t no-fill t create-time "19951023:05:57:26" creator "rsw@gnu.org" idstamp 50 kcell t)]
  [51
-  (creator "rsw@gnu.org" create-time "19951023:05:58:31" no-fill t)]
+  (rear-nonsticky t no-fill t create-time "19951023:05:58:31" creator "rsw@gnu.org" idstamp 51 kcell t)]
  [56
-  (creator "rsw@gnu.org" create-time "19951023:08:57:09" no-fill t)]
+  (rear-nonsticky t no-fill t create-time "19951023:08:57:09" creator "rsw@gnu.org" idstamp 56 kcell t)]
  [52
-  (creator "rsw@gnu.org" create-time "19951023:05:59:59" no-fill t)]
+  (rear-nonsticky t no-fill t create-time "19951023:05:59:59" creator "rsw@gnu.org" idstamp 52 kcell t)]
  [53
-  (creator "rsw@gnu.org" create-time "19951023:06:00:48" no-fill t)]
+  (rear-nonsticky t no-fill t create-time "19951023:06:00:48" creator "rsw@gnu.org" idstamp 53 kcell t)]
  [54
-  (creator "rsw@gnu.org" create-time "19951023:06:05:50" no-fill t)]
+  (rear-nonsticky t no-fill t create-time "19951023:06:05:50" creator "rsw@gnu.org" idstamp 54 kcell t)]
  [26
-  (creator "rsw@gnu.org" create-time "19940128:03:56:23")]
+  (rear-nonsticky t create-time "19940128:03:56:23" creator "rsw@gnu.org" idstamp 26 kcell t)]
  [27
-  (creator "rsw@gnu.org" create-time "19940128:22:36:54")]
+  (rear-nonsticky t create-time "19940128:22:36:54" creator "rsw@gnu.org" idstamp 27 kcell t)]
  [59
-  (creator "rsw@gnu.org" create-time "19951024:03:40:05" no-fill t)]
+  (rear-nonsticky t no-fill t create-time "19951024:03:40:05" creator "rsw@gnu.org" idstamp 59 kcell t)]
  [60
-  (creator "rsw@gnu.org" create-time "19951024:03:40:13" no-fill t)]
+  (rear-nonsticky t no-fill t create-time "19951024:03:40:13" creator "rsw@gnu.org" idstamp 60 kcell t)]
  [61
-  (creator "rsw@gnu.org" create-time "19951024:03:40:42" no-fill t)]
+  (rear-nonsticky t no-fill t create-time "19951024:03:40:42" creator "rsw@gnu.org" idstamp 61 kcell t)]
  [1
-  (creator "rsw@gnu.org" create-time "19940104:17:38:29")]
+  (rear-nonsticky t create-time "19940104:17:38:29" creator "rsw@gnu.org" idstamp 1 kcell t)]
  [11
-  (creator "rsw@gnu.org" create-time "19940104:17:38:29")]
+  (rear-nonsticky t create-time "19940104:17:38:29" creator "rsw@gnu.org" idstamp 11 kcell t)]
  [12
-  (creator "rsw@gnu.org" create-time "19940104:17:38:29")]
+  (rear-nonsticky t create-time "19940104:17:38:29" creator "rsw@gnu.org" idstamp 12 kcell t)]
  [44
-  (creator "rsw@gnu.org" create-time "19940728:21:56:49")]
+  (rear-nonsticky t create-time "19940728:21:56:49" creator "rsw@gnu.org" idstamp 44 kcell t)]
  [36
-  (creator "rsw@gnu.org" create-time "19940610:16:49:34")]
+  (rear-nonsticky t create-time "19940610:16:49:34" creator "rsw@gnu.org" idstamp 36 kcell t)]
  [37
-  (creator "rsw@gnu.org" create-time "19940610:16:50:02")]
+  (rear-nonsticky t create-time "19940610:16:50:02" creator "rsw@gnu.org" idstamp 37 kcell t)]
  [38
-  (creator "rsw@gnu.org" create-time "19940610:16:50:13")]
+  (rear-nonsticky t create-time "19940610:16:50:13" creator "rsw@gnu.org" idstamp 38 kcell t)]
  [13
-  (creator "rsw@gnu.org" create-time "19940104:17:38:29")]
+  (rear-nonsticky t create-time "19940104:17:38:29" creator "rsw@gnu.org" idstamp 13 kcell t)]
  [16
-  (creator "rsw@gnu.org" create-time "19940104:17:38:29")]
+  (rear-nonsticky t create-time "19940104:17:38:29" creator "rsw@gnu.org" idstamp 16 kcell t)]
  nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil]

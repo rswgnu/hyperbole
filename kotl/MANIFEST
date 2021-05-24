@@ -8,11 +8,8 @@ kimport.el		  - Convert and insert other outline file formats into koutlines
 klabel.el                 - Display label handling for koutlines
 klink.el                  - Implicit reference to a kcell action type, for use in koutlines
 kmenu.el                  - Pulldown and popup menus for kotl-mode, the Koutliner mode
-knode.el                  - Generic nodes for use as elements in data structures
 kotl-mode.el              - Major mode for editing koutlines and associated commands
-kotl-orgtbl.el            - Allow use of Org minor-mode table editing in Koutlines
-kproperty.el              - Wrapper for koutline text property implementations
-kprop-em.el               - Koutline text property handling under GNU Emacs
-kprop-xe.el               - Koutline text property handling under XEmacs
+kotl-orgtbl.el            - Allow use of Org minor-mode table editing in koutlines
+kproperty.el              - Kcell in-buffer property handling for the Koutliner
 kview.el                  - Display handling of koutlines
 kvspec.el                 - Koutline view specification

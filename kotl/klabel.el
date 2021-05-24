@@ -478,13 +478,13 @@ and the start of its contents."
 CURRENT-CELL-LABEL is the label to display for the current cell.
 If, however, it is \"0\", then all cell labels are updated."
   (let ((label-type (kview:label-type kview)))
-    (if (memq label-type '(alpha legal partial-alpha))
-	(if (string-equal current-cell-label "0")
-	    ;; Update all cells in view.
-	    (klabel-type:set-labels label-type)
-	  ;; Update current tree and its siblings only.
-	  (klabel-type:update-labels-from-point
-	   label-type current-cell-label)))))
+    (when (memq label-type '(alpha legal partial-alpha))
+      (if (string-equal current-cell-label "0")
+	  ;; Update all cells in view.
+	  (klabel-type:set-labels label-type)
+	;; Update current tree and its siblings only.
+	(klabel-type:update-labels-from-point
+	 label-type current-cell-label)))))
 
 (defun klabel-type:update-tree-labels (current-cell-label first-label)
   "Update the labels of current cell and its subtree.
@@ -572,7 +572,7 @@ For example, \"14\" would become \"15\"."
 
 (defun kotl-label:integer-p (label)
   "Return LABEL iff LABEL is composed of all digits, else return nil."
-  (if (string-match "\\`[0-9]+\\'" label) label))
+  (when (string-match "\\`[0-9]+\\'" label) label))
 
 ;; This handles partial alphabetic labels with a maximum single level
 ;; sequence of 17575 items, which = (1- (expt 26 3)), after which it gives

@@ -111,7 +111,19 @@ Return t unless no such cell."
 
 (defun kcell-view:cell (&optional pos)
   "Return kcell at optional POS or point."
-  (kproperty:get (kcell-view:plist-point pos) 'kcell))
+  (kproperty:properties (kcell-view:plist-point pos)))
+
+(defun kcell-view:cell-from-ref (cell-ref)
+  "Return a kcell referenced by CELL-REF, a cell label, id string or integer idstamp.
+Trigger an error if CELL-REF is not a string or is not found."
+  (if (or (stringp cell-ref)
+	  (integerp cell-ref))
+      (let ((idstamp (kcell:ref-to-id cell-ref))
+	    pos)
+	(or (and idstamp (setq pos (kproperty:position 'idstamp idstamp))
+		 (kcell-view:cell pos))
+	    (error "(kcell:get-from-ref): No such Koutline cell: '%s'" cell-ref)))
+    (error "(kcell:get-from-ref): cell-ref arg must be a string, not: %s" cell-ref)))
 
 (defun kcell-view:child (&optional visible-p label-sep-len)
   "Move to start of current cell's child.
@@ -200,8 +212,8 @@ Any cell that is invisible is also collapsed as indicated by a call to
        (concat "\\([\n\r]\\)" (make-string indent ?\ ))
        (buffer-substring start end) "\\1"))))
 
-(defun kcell-view:create (kview cell level klabel &optional no-fill)
-  "Insert into KVIEW at point, CELL at LEVEL (1 = first level) with KLABEL.
+(defun kcell-view:create (kview cell contents level klabel &optional no-fill)
+  "Insert into KVIEW at point, CELL with CONTENTS at LEVEL (1 = first level) with KLABEL.
 Optional NO-FILL non-nil suppresses filling of cell's contents upon insertion
 or movement."
   (unless (zerop (kcell:idstamp cell))
@@ -223,11 +235,11 @@ or movement."
 			  (length label-separator)))
 	   (old-point (point))
 	   (fill-prefix (make-string thru-label ?\ ))
-	   contents new-point)
+	   new-point)
       (when no-fill
 	(kcell:set-attr cell 'no-fill t))
       (insert fill-prefix)
-      (setq contents (kview:insert-contents cell nil no-fill fill-prefix))
+      (setq contents (kview:insert-contents cell contents no-fill fill-prefix))
       ;; Insert lines to separate cell from next.
       (insert (if (or no-fill (equal contents ""))
 		  "\n\n" "\n"))
@@ -247,7 +259,7 @@ or movement."
       (insert label-separator)
       (goto-char old-point)
       ;; Add cell's attributes to the text property list at point.
-      (kproperty:set 'kcell cell)
+      (kproperty:add-properties cell)
       (goto-char new-point))))
 
 (defun kcell-view:end (&optional pos)
@@ -471,10 +483,11 @@ or is nil), before it is returned."
   (save-excursion
     (when pos
       (goto-char pos))
+
     (let ((kcell (kcell:remove-attr (kcell-view:cell) attribute)))
       (when (called-interactively-p 'interactive)
-	(message "Cell <%s> now has no %s attribute."
-		 (kcell-view:label) attribute))1
+	(message "Cell <%s> now has no %s attribute."
+		 (kcell-view:label) attribute))
       kcell)))
 
 (defun kcell-view:set-attr (attribute value &optional pos)
@@ -489,7 +502,7 @@ or is nil), before it is returned."
   "Attach KCELL property to cell at point."
   (save-excursion
     (kcell-view:to-label-end)
-    (kproperty:set 'kcell kcell)))
+    (kproperty:add-properties kcell)))
 
 (defun kcell-view:sibling-p (&optional pos visible-p label-sep-len)
   "Return t if cell at optional POS or point has a successor.
@@ -541,8 +554,8 @@ level."
   (let* ((idstamp (if (klabel:idstamp-p klabel)
 		      (if (stringp klabel) (string-to-number klabel) klabel)
 		    (kview:id-increment kview)))
-	 (new-cell (kcell:create contents idstamp prop-list)))
-    (kcell-view:create kview new-cell level klabel no-fill)
+	 (new-cell (kcell:create idstamp prop-list)))
+    (kcell-view:create kview new-cell contents level klabel no-fill)
     new-cell))
 
 (defun kview:beginning-of-actual-line ()
@@ -704,25 +717,16 @@ the lines displayed, since it has hidden branches."
 	   (t 0)))
    kview t start end))
 
-(defun kview:goto-cell-id (id-string)
-  "Move point to start of cell with idstamp ID-STRING and return t, else nil."
-  (let ((cell-id (string-to-number id-string))
-	(opoint (point))
-	pos kcell)
-    (goto-char (point-min))
-    (while (and (setq pos (kproperty:next-single-change (point) 'kcell))
-		(goto-char pos)
-		(or (null (setq kcell (kproperty:get pos 'kcell)))
-		    (/= (kcell:idstamp kcell) cell-id))
-		;; Skip to the end of this kcell property
-		(setq pos (kproperty:next-single-change (point) 'kcell))
-		(goto-char pos)))
-    (if pos
-	(progn
-	  (forward-char (kview:label-separator-length kview))
-	  t)
-      (goto-char opoint)
-      nil)))
+(defun kview:goto-cell-id (idstamp-or-string)
+  "Move point to start of cell with permanent IDSTAMP-OR-STRING and return t, else nil."
+  (let* ((idstamp (if (integerp idstamp-or-string)
+		      idstamp-or-string
+		    (string-to-number idstamp-or-string)))
+	 (pos (kproperty:position 'idstamp idstamp)))
+    (when pos
+      (goto-char pos)
+      (forward-char (kview:label-separator-length kview))
+      t)))
 
 (defun kview:id-counter (kview)
   "Return the highest current idstamp (an integer) used by KVIEW."
@@ -742,12 +746,13 @@ the lines displayed, since it has hidden branches."
 
 (defun kview:insert-contents (kcell contents no-fill fill-prefix)
   "Insert KCELL's CONTENTS into view at point and fill resulting paragraphs, unless NO-FILL is non-nil.
-FILL-PREFIX is the indentation string for the current cell.
-If CONTENTS is nil, get contents from KCELL.  Return contents inserted (this
-value may differ from the value passed in.)"
+FILL-PREFIX is the indentation string for the current cell.  If
+CONTENTS is nil, get contents from the cell at point.  Return contents
+inserted (this value may differ from the value passed in) due to
+filling."
   (let ((start (point))
 	end)
-    (setq contents (or contents (kcell:contents kcell) ""))
+    (setq contents (or contents ""))
     (insert contents)
     ;;
     ;; Delete any extra newlines at end of cell contents.
@@ -1057,9 +1062,10 @@ FILL-P is non-nil.  Leave point at TO-START."
 	  (if (< from-indent to-indent)
 	      ;; Add indent
 	      (progn
-		(setq expr (make-string (1+ (- to-indent from-indent)) ?\ ))
-		(while (re-search-forward "^ " nil t)
-		  (replace-match expr t t)
+		(setq expr (concat (make-string (- to-indent from-indent) ?\ )
+				   "\\&"))
+		(while (re-search-forward "^[^\n\r\f]" nil t)
+		  (replace-match expr t)
 		  (kfill:forward-line 1)))
 	    ;; Reduce indent in all but first cell lines.
 	    (setq expr (concat "^" (make-string (- from-indent to-indent) ?\ )))
