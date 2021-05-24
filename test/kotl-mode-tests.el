@@ -260,10 +260,7 @@
           (should (string= (kcell-view:label (point)) "1"))
 
           (kotl-mode:goto-cell "2")
-          (should (string= (kcell-view:label (point)) "2"))
-
-          (should-not (kotl-mode:goto-cell "10"))
-          (should-error (kotl-mode:goto-cell "10" t)))
+          (should (string= (kcell-view:label (point)) "2")))
       (delete-file kotl-file))))
 
 (ert-deftest kotl-mode-goto-child-and-parent ()
@@ -283,17 +280,24 @@
           (should (string= (kcell-view:label (point)) "1a")))
       (delete-file kotl-file))))
 
-
 (ert-deftest kotl-mode-kill-cell ()
   "Kotl-mode kill a cell test."
   (let ((kotl-file (make-temp-file "hypb" nil ".kotl")))
     (unwind-protect
         (progn
           (find-file kotl-file)
+          (insert "first")
           (kotl-mode:add-child)
+          (should (string= (kcell-view:label (point)) "1a"))
+
           (kotl-mode:kill-tree)
           (should (string= (kcell-view:label (point)) "1"))
-          (should-error (kotl-mode:kill-tree)))
+          (kotl-mode:beginning-of-cell)
+          (should (looking-at-p "first"))
+
+          (kotl-mode:kill-tree)
+          (kotl-mode:beginning-of-cell)
+          (should (looking-at-p "$")))
       (delete-file kotl-file))))
 
 (provide 'kotl-mode-tests)
