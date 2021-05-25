@@ -101,6 +101,7 @@
           (should (string= (kcell-view:label (point)) "1"))
           (should (hact 'kbd-key "C-c C-v 0 RET"))
           (hy-test-helpers:consume-input-events)
+          (should (eq (kview:label-type kview) 'id))
           (should (string= (kcell-view:label (point)) "01")))
       (delete-file kotl-file))))
 
@@ -116,6 +117,8 @@
 
           ;; Verify idstamp label
           (kvspec:activate "ben0")
+          (should (eq (kview:label-type kview) 'id))
+          (should (string= (kcell-view:idstamp) "01"))
           (should (string= (kcell-view:label (point)) "01"))
 
           ;; Verify idstamp view is active when file is visited next time.
@@ -123,6 +126,8 @@
           (save-buffer)
           (kill-buffer)
           (find-file kotl-file)
+          (should (eq (kview:label-type kview) 'id))
+          (should (string= (kcell-view:idstamp) "01"))
           (should (string= (kcell-view:label (point)) "01")))
       (delete-file kotl-file))))
 
@@ -135,14 +140,17 @@
           (kotl-mode:add-cell)
 
           ;; Verify default label
+          (should (string= (kcell-view:idstamp) "02"))
           (should (string= (kcell-view:label (point)) "2"))
 
           ;; Verify idstamp label
           (kvspec:activate "ben0")
+          (should (string= (kcell-view:idstamp) "02"))
           (should (string= (kcell-view:label (point)) "02"))
 
           ;; Verify demote does not change idstamp label
           (kotl-mode:demote-tree 0)
+          (should (string= (kcell-view:idstamp) "02"))
           (should (string= (kcell-view:label (point)) "02")))
       (delete-file kotl-file))))
 
@@ -162,8 +170,8 @@
           (should (string= (kcell-view:label (point)) "1a")))
       (delete-file kotl-file))))
 
-(ert-deftest kotl-mode-views ()
-  "Kotl-mode views."
+(ert-deftest kotl-mode-label-type-activation ()
+  "Kotl-mode test label type activation."
   (let ((kotl-file (make-temp-file "hypb" nil ".kotl")))
     (unwind-protect
         (progn
@@ -196,7 +204,6 @@
           (should (string= (kcell-view:label (point)) "1"))
           (should (looking-at-p "second")))
       (delete-file kotl-file))))
-
 
 (ert-deftest kotl-mode-move-cell-after-cell ()
   "Move cell after cell."
