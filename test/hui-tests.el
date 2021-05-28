@@ -18,6 +18,12 @@
 (require 'ert)
 (require 'with-simulated-input)
 
+(load (expand-file-name "hy-test-helpers"
+                        (file-name-directory (or load-file-name
+                                                 default-directory))))
+(declare-function hy-test-helpers:consume-input-events "hy-test-helpers")
+
+
 (ert-deftest hui-ibut-label-create ()
   "Create a label for an implicit button."
   (with-temp-buffer
@@ -39,6 +45,62 @@
          (progn
            (should (equal (car err) 'error))
            (should (string-match "ibutton at point already has a label" (cadr err)))))))))
+
+(ert-deftest hui-ebut-create-link-to-directory ()
+  "Create an ebut with link-to-directory."
+  (skip-unless (not noninteractive))
+  (let ((file (make-temp-file "hypb_" nil ".txt")))
+    (unwind-protect
+        (progn
+          (find-file file)
+          (should (hact 'kbd-key "C-h h e c label RET RET link-to-directory RET RET"))
+          (hy-test-helpers:consume-input-events)
+          (should (eq (hattr:get (hbut:at-p) 'actype) 'actypes::link-to-directory))
+          (should (equal (hattr:get (hbut:at-p) 'lbl-key) "label")))
+      (delete-file file))))
+
+(ert-deftest hui-ebut-use-region-as-label ()
+  "Create an ebut using region as label."
+  (skip-unless (not noninteractive))
+  (let ((file (make-temp-file "hypb_" nil ".txt" "label")))
+    (unwind-protect
+        (progn
+          (find-file file)
+          (beginning-of-buffer)
+          (mark-word)
+          (should (hact 'kbd-key "C-h h e c RET link-to-directory RET RET"))
+          (hy-test-helpers:consume-input-events)
+          (should (eq (hattr:get (hbut:at-p) 'actype) 'actypes::link-to-directory))
+          (should (equal (hattr:get (hbut:at-p) 'lbl-key) "label")))
+      (delete-file file))))
+
+(ert-deftest hui-ebut-www-link ()
+  "Create an ebut with an url."
+  (skip-unless (not noninteractive))
+  (let ((file (make-temp-file "hypb_" nil ".txt")))
+    (unwind-protect
+        (progn
+          (find-file file)
+          (should (hact 'kbd-key "C-h h e c label RET RET www-url RET www.example.com RET"))
+          (hy-test-helpers:consume-input-events)
+          (should (eq (hattr:get (hbut:at-p) 'actype) 'actypes::www-url))
+          (should (equal (hattr:get (hbut:at-p) 'args) '("www.example.com")))
+          (should (equal (hattr:get (hbut:at-p) 'lbl-key) "label")))
+      (delete-file file))))
+
+(ert-deftest hui-ebut-create-exec-shell-cmd ()
+  "Create an ebut that executes a command."
+  (skip-unless (not noninteractive))
+  (let ((file (make-temp-file "hypb_" nil ".txt")))
+    (unwind-protect
+        (progn
+          (find-file file)
+          (should (hact 'kbd-key "C-h h e c label RET RET exec-shell-cmd RET ls SPC /tmp RET y RET"))
+          (hy-test-helpers:consume-input-events)
+          (should (eq (hattr:get (hbut:at-p) 'actype) 'actypes::exec-shell-cmd))
+          (should (equal (hattr:get (hbut:at-p) 'args) '("ls /tmp" t nil)))
+          (should (equal (hattr:get (hbut:at-p) 'lbl-key) "label")))
+      (delete-file file))))
 
 (provide 'hui-tests)
 ;;; hui-tests.el ends here
