@@ -1,3 +1,25 @@
+2021-05-27  Bob Weiner  <rsw@gnu.org>
+
+* hpath.el (hpath:expand-with-variable): Fix to not add variable
+    to path if already in the path.
+           (hpath:substitute-match-value): Return STR unchanged
+    if no value substituted for any variable name.
+
+* hbut.el (ebut:program, hbut:action):
+  hact.el (actype:action, actype:doc): Handle lambdas properly.
+
+* hact.el (symtable:actype-p, symtable:ibtype-p): Return nil if
+    arg is not a symbol or string, e.g. a lambda.
+
+2021-05-25  Bob Weiner  <rsw@gnu.org>
+
+* kotl/kotl-mode.el (kotl-mode:to-valid-position): Removed one
+    unused setting of 'indent'.
+
+* kotl/kview.el (kcell-view:level): Use 'floor' to ignore any
+    small remainder when cells at level 1 have labels longer
+    than the allowed indent.
+
 2021-05-23  Bob Weiner  <rsw@gnu.org>
 
 * kotl/kotl-mode.el (kotl-mode:beginning-of-buffer,

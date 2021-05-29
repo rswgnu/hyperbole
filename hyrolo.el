@@ -95,6 +95,7 @@ executable must be found as well (for Oauth security)."
   "Return non-nil if `hyrolo-google-contacts-flag' is non-nil and google-contacts package and gpg executables are available for use."
   (and hyrolo-google-contacts-flag
        (featurep 'google-contacts)
+       (boundp 'google-contacts-buffer-name)
        ;; If no gpg encryption executable, Oauth login to Google will fail.
        (or (executable-find "gpg2") (executable-find "gpg"))))
 
@@ -104,7 +105,7 @@ executable must be found as well (for Oauth security)."
 (defun hyrolo-initialize-file-list ()
   "Initialize the list of files used for HyRolo search."
   (interactive)
-  (let* ((gcontacts (if (hyrolo-google-contacts-p) google-contacts-buffer-name))
+  (let* ((gcontacts (when (hyrolo-google-contacts-p) google-contacts-buffer-name))
 	 (ms "c:/_rolo.otl")
 	 (posix "~/.rolo.otl")
 	 (list (delq nil (if (and (boundp 'bbdb-file) (stringp bbdb-file))
@@ -357,7 +358,7 @@ Returns entry name if found, else nil."
 	       (cond ((and (boundp 'bbdb-file) (stringp bbdb-file) (equal src (expand-file-name bbdb-file)))
 		      ;; For now, can't edit an entry from the bbdb database, signal an error.
 		      (error "(hyrolo-edit-entry): BBDB entries are not editable"))
-		     ((and (featurep 'google-contacts) (equal src (get-buffer google-contacts-buffer-name)))
+		     ((and (hyrolo-google-contacts-p) (equal src (get-buffer google-contacts-buffer-name)))
 		      ;; For now, can't edit an entry from Google Contacts, signal an error.
 		      (error "(hyrolo-edit-entry): Google Contacts entries are not editable"))
 		     (t (hyrolo-edit name src)

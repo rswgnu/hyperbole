@@ -497,7 +497,7 @@
         (should was-called)))))
 
 (ert-deftest hbut-load-modifier-with-plain-file-loads-file-from-load-path ()
-  "Path prefix - with filename without diretory will load from`load-path'."
+  "Path prefix - filename without directory will load from`load-path'."
   (with-temp-buffer
     (insert "\"-tutorial.el\"")
     (goto-char 2)

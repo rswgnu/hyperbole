@@ -3071,12 +3071,11 @@ With optional BACKWARD-P, move backward if possible to get to valid position."
 	     (goto-char (kcell-view:start nil label-sep-len)))
 	    ((kotl-mode:eobp)
 	     (skip-chars-backward "\n\r"))
-	    (t (let ((indent (kcell-view:indent nil label-sep-len)))
-		 (when (bolp)
-		   (if backward-p
-		       (skip-chars-backward "\n\r")
-		     (skip-chars-forward "\n\r")))
-		 (setq indent (kcell-view:indent nil label-sep-len))
+	    (t (when (bolp)
+		 (if backward-p
+		     (skip-chars-backward "\n\r")
+		   (skip-chars-forward "\n\r")))
+	       (let ((indent (kcell-view:indent nil label-sep-len)))
 		 (when (< (current-column) indent)
 		   (move-to-column indent))))))))
 

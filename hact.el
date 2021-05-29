@@ -111,11 +111,13 @@ keys is the Elisp symbol for the type, which includes the prefix.")
 
 (defsubst symtable:actype-p (symbol-or-name)
   "Return the Elisp symbol given by SYMBOL-OR-NAME if it is a Hyperbole action type name, else nil."
-  (symtable:get symbol-or-name symtable:actypes))
+  (when (or (symbolp symbol-or-name) (stringp symbol-or-name))
+    (symtable:get symbol-or-name symtable:actypes)))
 
 (defsubst symtable:ibtype-p (symbol-or-name)
   "Return the Elisp symbol given by SYMBOL-OR-NAME if it is a Hyperbole implicit button type name, else nil."
-  (symtable:get symbol-or-name symtable:ibtypes))
+  (when (or (symbolp symbol-or-name) (stringp symbol-or-name))
+    (symtable:get symbol-or-name symtable:ibtypes)))
 
 (defun    symtable:add (symbol-or-name symtable)
   "Add Hyperbole SYMBOL-OR-NAME to existing SYMTABLE.
@@ -455,13 +457,14 @@ performing ACTION."
 ACTYPE may be a Hyperbole actype or Emacs Lisp function."
   (let (actname
 	action)
-    (if (stringp actype)
-	(setq actname actype
-	      actype (intern actype))
-      (setq actname (symbol-name actype)))
+    (cond ((stringp actype)
+	   (setq actname actype
+		 actype (intern actype)))
+	  ((and actype (symbolp actype))
+	   (setq actname (symbol-name actype))))
     (setq actype (or (symtable:actype-p actname) actype)
 	  action (htype:body actype))
-    (if (fboundp actype)
+    (if (functionp actype)
 	actype
       action)))
 
@@ -515,14 +518,13 @@ Return nil when no documentation."
 	 (but-type (hattr:get hbut 'categ))
 	 (sym-p (and act (symbolp act)))
 	 (end-line) (doc))
-    (cond ((and but-type (fboundp but-type)
+    (cond ((and (functionp but-type)
 		(setq doc (htype:doc but-type)))
 	   ;; Is an implicit button, so use its doc string if any.
 	   )
 	  (sym-p
 	   (setq doc (htype:doc act))))
-    (if (null doc)
-	nil
+    (when doc
       (setq doc (substitute-command-keys doc))
       (or full (setq end-line (string-match "[\n]" doc)
 		     doc (substring doc 0 end-line))))

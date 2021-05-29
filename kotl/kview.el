@@ -358,8 +358,8 @@ the start of its body.  Optional INDENT is the indentation in
 characters of the cell whose level is desired."
   (unless label-sep-len
     (setq label-sep-len (kview:label-separator-length kview)))
-  (/ (- (or indent (kcell-view:indent pos label-sep-len)) label-sep-len)
-     (kview:level-indent kview)))
+  (floor (/ (- (or indent (kcell-view:indent pos label-sep-len)) label-sep-len)
+	    (kview:level-indent kview))))
 
 (defun kcell-view:line (&optional pos)
   "Return contents of cell line at point or optional POS as a string."
@@ -919,9 +919,10 @@ in the view.
 FUNC should take one argument, the kview local variable of the current
 buffer or some other kview, and should operate upon the cell at point.
 
-`Cell-indent' contains the indentation value of the first cell mapped when
-FUNC is called so that it may test against this value.  `Label-sep-len'
-contains the label separator length.
+The variable `cell-indent' contains the indentation value of the
+first cell mapped when FUNC is called so that it may be tested
+against this value.  The variable `label-sep-len' contains the label
+separator length.
 
 See also `kview:map-branch' and `kview:map-tree'."
     (with-current-buffer (kview:buffer kview)
@@ -931,10 +932,10 @@ See also `kview:map-branch' and `kview:map-tree'."
 	      cell-indent)
 	  ;; Next line ensures point is in the root of the current tree if
 	  ;; the tree is at all hidden.
-	  (if visible-p (kotl-mode:to-start-of-line))
-	  (if first-p
-	      ;; Move back to first predecessor at same level.
-	      (while (kcell-view:backward t label-sep-len)))
+	  (when visible-p (kotl-mode:to-start-of-line))
+	  (when first-p
+	    ;; Move back to first predecessor at same level.
+	    (while (kcell-view:backward t label-sep-len)))
 	  (setq cell-indent (kcell-view:indent nil label-sep-len))
 	  ;; Terminate when no further cells at same level.
 	  (while (progn (setq results (cons (funcall func kview) results))
@@ -953,9 +954,10 @@ With optional TOP-P non-nil, maps over all of kview's cells.
 FUNC should take one argument, the kview with the tree to map, and should
 operate upon the cell at point.
 
-`Cell-indent' contains the indentation value of the first cell mapped when
-FUNC is called so that it may test against this value.  `Label-sep-len'
-contains the label separator length.
+The variable `cell-indent' contains the indentation value of the
+first cell mapped when FUNC is called so that it may be tested
+against this value.  The variable `label-sep-len' contains the label
+separator length.
 
 See also `kview:map-region', `kview:map-branch' and `kview:map-siblings'."
     (with-current-buffer (kview:buffer kview)
@@ -1006,9 +1008,10 @@ view.
 FUNC should take one argument, the kview with the tree to map, and
 should operate upon the cell at point.
 
-`Cell-indent' contains the indentation value of the first cell mapped when
-FUNC is called so that it may test against this value.  `Label-sep-len'
-contains the label separator length.
+The variable `cell-indent' contains the indentation value of the
+first cell mapped when FUNC is called so that it may be tested
+against this value.  The variable `label-sep-len' contains the label
+separator length.
 
 See also `kview:map-region', `kview:map-branch' and `kview:map-siblings'."
     (with-current-buffer (kview:buffer kview)

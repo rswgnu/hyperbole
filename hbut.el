@@ -429,7 +429,7 @@ For interactive creation, use `hui:ebut-create' instead."
 	    (hattr:set 'hbut:current 'loc (hui:key-src but-buf))
 	    (hattr:set 'hbut:current 'dir (hui:key-dir but-buf))
             (if (or (and actype-sym (fboundp actype-sym))
-		    (fboundp ,actype))
+		    (functionp ,actype))
 		(hattr:set 'hbut:current 'actype ,actype)
 	      (error "(,actype)"))
 	    (hattr:set 'hbut:current 'args ',args)
@@ -879,7 +879,7 @@ Default is 'hbut:current."
 		   atype
 		 (or action (actype:action atype))))
       ;; Must be an implicit button.
-      (when (fboundp atype) atype))))
+      (when (functionp atype) atype))))
 
 (defun    hbut:at-p ()
   "Return symbol for explicit or implicit Hyperbole button at point or nil.

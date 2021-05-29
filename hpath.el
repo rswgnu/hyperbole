@@ -1009,10 +1009,15 @@ window in which the buffer is displayed."
 (defun hpath:expand (path)
   "Expand relative PATH using the load variable from the first file matching regexp in `hpath:auto-variable-alist'."
   (unless (file-name-absolute-p path)
-    (setq path (hpath:substitute-value
-		(if (string-match "\\`[\\/~.]" path)
-		    (expand-file-name path)
-		  (hpath:expand-with-variable path)))))
+    (let ((substituted-path (hpath:substitute-value
+			     (if (string-match "\\`[\\/~.]" path)
+				 (expand-file-name path)
+			       (hpath:expand-with-variable path)))))
+      (unless (string-match "\\$@?\{\\([^\}]+\\)@?\}" substituted-path)
+	  ;; When no valid variable substitution was found after
+	  ;; potentially adding a variable to the path, use
+	  ;; unchanged path.
+	(setq path substituted-path))))
   ;; For compressed Elisp libraries, add any found compressed suffix to the path.
   (or (locate-library path t) path))
 
@@ -1031,9 +1036,12 @@ window in which the buffer is displayed."
       (setq regexp (caar auto-variable-alist)
 	    variable (cdar auto-variable-alist)
 	    auto-variable-alist (cdr auto-variable-alist))
-      (when (string-match regexp path)
-	(when (or (and (stringp variable) (getenv variable))
-		  (and (symbolp variable) (boundp variable)))
+      (when (and variable (symbolp variable))
+	(setq variable (symbol-name variable)))
+      (when (and path variable (string-match regexp path))
+	(when (and (not (string-match (regexp-quote variable) path))
+		   (or (and (stringp variable) (getenv variable))
+		       (and (symbolp variable) (boundp variable))))
 	  (setq path (format "${%s}/%s" variable path)))
 	(setq auto-variable-alist nil)))
     (concat path compression-suffix)))
@@ -1505,35 +1513,36 @@ in-buffer path will not match."
   "Substitute matching value for Emacs Lisp variables and environment variables in PATH and return PATH."
   ;; Uses free variables `match' and `start' from `hypb:replace-match-string'.
   (substitute-in-file-name
-    (hpath:substitute-match-value
-      "\\$@?\{\\([^\}]+\\)@?\}"
-      path
-      (lambda (matched-str)
-	(let* ((var-group (substring path match start))
-	       (rest-of-path (substring path start))
-	       (var-ext (substring path (match-beginning 1) (match-end 1)))
-	       (var-name (if (= ?@ (aref var-ext (1- (length var-ext))))
-			     (substring var-ext 0 -1)
-			   var-ext))
-	       (trailing-dir-sep-flag (and (not (string-empty-p rest-of-path))
-					   (memq (aref rest-of-path 0) '(?/ ?\\))))
-	       (sym (intern-soft var-name)))
-	  (when (file-name-absolute-p rest-of-path)
-	    (setq rest-of-path (substring rest-of-path 1)))
-	  (if (or (and sym (boundp sym)) (getenv var-name))
-	      (funcall (if trailing-dir-sep-flag #'directory-file-name #'identity)
-		       ;; hpath:substitute-dir may trigger an error but this may
-		       ;; be called when testing for implicit button matches
-		       ;; where no error should occur, so catch the error
-		       ;; and ignore variable expansion in such a case.
-		       ;; -- RSW, 08-26-2019
-		       ;; Removed errors on non-existent paths.
-		       ;; -- RSW, 04-19-2021
-		       (condition-case nil
-			   (hpath:substitute-dir var-name rest-of-path)
-			 (error var-name)))
-	    var-group)))
-      t t)))
+   (hpath:substitute-match-value
+    "\\$@?\{\\([^\}]+\\)@?\}"
+    path
+    (lambda (matched-str)
+      (let* ((var-group (substring path match start))
+	     (rest-of-path (substring path start))
+	     (var-ext (substring path (match-beginning 1) (match-end 1)))
+	     (var-name (if (= ?@ (aref var-ext (1- (length var-ext))))
+			   (substring var-ext 0 -1)
+			 var-ext))
+	     (trailing-dir-sep-flag (and (not (string-empty-p rest-of-path))
+					 (memq (aref rest-of-path 0) '(?/ ?\\))))
+	     (sym (intern-soft var-name)))
+	(when (file-name-absolute-p rest-of-path)
+	  (setq rest-of-path (substring rest-of-path 1)))
+	(if (or (and sym (boundp sym)) (getenv var-name))
+	    ;; directory-file-name or hpath:substitute-dir may trigger
+	    ;; an error but this may be called when testing for
+	    ;; implicit button matches where no error should occur, so
+	    ;; catch the error and ignore variable expansion in such a
+	    ;; case.
+	    ;; -- RSW, 08-26-2019
+	    ;; Removed errors on non-existent paths.
+	    ;; -- RSW, 04-19-2021
+	    (condition-case nil
+		(funcall (if trailing-dir-sep-flag #'directory-file-name #'identity)
+			 (hpath:substitute-dir var-name rest-of-path))
+	      (error ""))
+	  var-group)))
+    t t)))
 
 (defun hpath:substitute-var (path)
   "Replace up to one match in PATH with the first variable from `hpath:variables' whose value contain a string match to PATH.
@@ -1983,11 +1992,11 @@ local pathname."
 		      (concat "$\{" var-name "\}/" rest-of-path)))))
 	  (t (error "(hpath:substitute-dir): Value of VAR-NAME, \"%s\", must be a string or list" var-name)))))
 
-(defun hpath:substitute-match-value (regexp str newtext &optional literal fixedcase)
-  "Replace all matches for REGEXP in STR with NEWTEXT string and return the result.
+(defun hpath:substitute-match-value (regexp str new &optional literal fixedcase)
+  "Replace all matches for REGEXP in STR with NEW string and return the result.
 
 Optional LITERAL non-nil means do a literal replacement.
-Otherwise treat \\ in NEWTEXT string as special:
+Otherwise treat \\ in NEW string as special:
   \\& means substitute original matched text,
   \\N means substitute match for \(...\) number N,
   \\\\ means insert one \\.
@@ -1996,16 +2005,16 @@ If optional fifth arg FIXEDCASE is non-nil, do not alter the case of
 the replacement text.  Otherwise, maybe capitalize the whole text, or
 maybe just word initials, based on the replaced text.  If the replaced
 text has only capital letters and has at least one multiletter word,
-convert NEWTEXT to all caps.  Otherwise if all words are capitalized
-in the replaced text, capitalize each word in NEWTEXT.
+convert NEW to all caps.  Otherwise if all words are capitalized
+in the replaced text, capitalize each word in NEW.
 
-NEWTEXT may instead be a function of one argument (the string to replace in)
+NEW may instead be a function of one argument (the string to replace in)
 that returns a replacement string."
   (unless (stringp str)
-    (error "(hypb:replace-match-string): 2nd arg must be a string: %s" str))
-  (unless (or (stringp newtext) (functionp newtext))
-    (error "(hypb:replace-match-string): 3rd arg must be a string or function: %s"
-	   newtext))
+    (error "(hpath:substitute-match-value): 2nd arg must be a string: %s" str))
+  (unless (or (stringp new) (functionp new))
+    (error "(hpath:substitute-match-value): 3rd arg must be a string or function: %s"
+	   new))
   (let ((rtn-str "")
 	(start 0)
 	(special)
@@ -2015,33 +2024,35 @@ that returns a replacement string."
 	    start (match-end 0)
 	    rtn-str
 	    (concat
-	      rtn-str
-	      (substring str prev-start match)
-	      (cond ((functionp newtext)
-		     (hypb:replace-match-string
-		      regexp (substring str match start)
-		      (funcall newtext str) literal fixedcase))
-		    (literal newtext)
-		    (t (mapconcat
-			 (lambda (c)
-			   (cond (special
-				  (setq special nil)
-				  (cond ((eq c ?\\) "\\")
-					((eq c ?&)
-					 (match-string 0 str))
-					((and (>= c ?0) (<= c ?9))
-					 (if (> c (+ ?0 (length (match-data))))
-					     ;; Invalid match num
-					     (error "(hypb:replace-match-string) Invalid match num: %c" c)
-					   (setq c (- c ?0))
-					   (match-string c str)))
-					(t (char-to-string c))))
-			     ((eq c ?\\)
-			      (setq special t)
-			      nil)
-			     (t (char-to-string c))))
-			 newtext ""))))))
-    (concat rtn-str (substring str start))))
+	     rtn-str
+	     (substring str prev-start match)
+	     (cond ((functionp new)
+		    (hypb:replace-match-string
+		     regexp (substring str match start)
+		     (funcall new str) literal fixedcase))
+		   (literal new)
+		   (t (mapconcat
+		       (lambda (c)
+			 (cond (special
+				(setq special nil)
+				(cond ((eq c ?\\) "\\")
+				      ((eq c ?&)
+				       (match-string 0 str))
+				      ((and (>= c ?0) (<= c ?9))
+				       (if (> c (+ ?0 (length (match-data))))
+					   ;; Invalid match num
+					   (error "(hpath:substitute-match-value): Invalid match num: %c" c)
+					 (setq c (- c ?0))
+					 (match-string c str)))
+				      (t (char-to-string c))))
+			       ((eq c ?\\)
+				(setq special t)
+				nil)
+			       (t (char-to-string c))))
+		       new ""))))))
+    (if (or (null rtn-str) (string-empty-p rtn-str))
+	str
+      (concat rtn-str (substring str start)))))
 
 (defun hpath:substitute-var-name (var-symbol var-dir-val path)
   "Replace with VAR-SYMBOL any occurrences of VAR-DIR-VAL in PATH.
