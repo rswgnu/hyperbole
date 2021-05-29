@@ -1,3 +1,9 @@
+2021-05-29  Mats Lidell  <matsl@gnu.org>
+
+* test/hui-tests.el (hui-ebut-create-link-to-directory)
+    (hui-ebut-use-region-as-label, hui-ebut-www-link)
+    (hui-ebut-create-exec-shell-cmd): ebut create tests.
+
 2021-05-27  Bob Weiner  <rsw@gnu.org>
 
 * hpath.el (hpath:expand-with-variable): Fix to not add variable
