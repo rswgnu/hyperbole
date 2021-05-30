@@ -1,3 +1,11 @@
+2021-05-29  Bob Weiner  <rsw@gnu.org>
+
+* hpath.el (hpath:is-p, hpath:call): Return nil if path
+    sans prefix and suffix is empty and suffix does
+    not begin with a '#' markdown section-style char.
+
+* kotl/kotl-mode.el (kotl-mode:goto-cell): Improve doc.
+
 2021-05-29  Mats Lidell  <matsl@gnu.org>
 
 * test/hui-tests.el (hui-ebut-create-link-to-directory)

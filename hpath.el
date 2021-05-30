@@ -880,10 +880,15 @@ Make any path within a file buffer absolute before returning. "
 							 (setq path (substring path 0 (match-beginning 0)))))
 						   (when (string-match hpath:markup-link-anchor-regexp path)
 						     (prog1 (concat "#" (match-string 3 path))
-						       (setq path (substring path 0 (match-beginning 2))))))))))
-	 (func-result (funcall func path)))
-    (when (or (stringp func-result) suffix)
-      (setq path (concat prefix func-result suffix))
+						       (setq path (substring path 0 (match-beginning 2)))))))))))
+    (setq path (funcall func path))
+    (when (or (and path (not (string-empty-p path)))
+	      ;; If just a numeric suffix like ":40" by itself, ignore
+	      ;; it, but if a markdown type suffix alone, like
+	      ;; "#section", use it.
+	      (and suffix (not (string-empty-p suffix))
+		   (= ?# (aref suffix 0))))
+      (setq path (concat prefix path suffix))
       ;; If path is just a local reference that begins with #,
       ;; in a file buffer, prepend the file name to it.  If an HTML
       ;; file, prepend file:// to it.
@@ -1412,7 +1417,8 @@ returned for PATH."
 					  (concat modifier (format rtn-path suffix)))
 				      (concat modifier (format rtn-path ""))))))))))
 		path))
-     (unless (or (string-empty-p path)
+     (unless (or (null path)
+		 (string-empty-p path)
 		 (string-match "#['`\"]" path)
 		 ;; If a single character in length, must be a word or symbol character
 		 (and (= (length path) 1) (or (not (string-match "\\sw\\|\\s_" path))

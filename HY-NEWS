@@ -7,96 +7,96 @@
 
   HYPERBOLE SYSTEM
 
-   - Hyperbole is now a global minor mode that can be toggled with
-     {M-x hyperbole-mode RET}, meaning all of its key bindings can
-     easily be enabled or disabled whenever desired.  Your init file
-     needs to have (hyperbole-mode 1) in it instead of
-     (require 'hyperbole) or Hyperbole will not be enabled upon startup.
+    - Hyperbole is now a global minor mode that can be toggled with
+      {M-x hyperbole-mode RET}, meaning all of its key bindings can
+      easily be enabled or disabled whenever desired.  Your init file
+      needs to have (hyperbole-mode 1) in it instead of
+      (require 'hyperbole) or Hyperbole will not be enabled upon startup.
 
-     In the modeline where minor modes are shown, "Hypb" now appears
-     whenever Hyperbole is active.
+      In the modeline where minor modes are shown, "Hypb" now appears
+      whenever Hyperbole is active.
 
   PROGRAMMING
 
-   - Simple Action Link Button Type Creation: `defal' is a new,
-     easy-to-use construct that generates new action button types from
-     a type name and a single simple format expression, allowing
-     non-programmers to create their own implicit action button link
-     types that execute key series, display URLs, display the contents
-     of pathnames or invoke functions.  See "(hyperbole)Action Button
-     Link Types" or the "DEMO#Defining New Action Button Types"
-     section.
+    - Simple Action Link Button Type Creation: `defal' is a new,
+      easy-to-use construct that generates new action button types from
+      a type name and a single simple format expression, allowing
+      non-programmers to create their own implicit action button link
+      types that execute key series, display URLs, display the contents
+      of pathnames or invoke functions.  See "(hyperbole)Action Button
+      Link Types" or the "DEMO#Defining New Action Button Types"
+      section.
 
-   - Easy Implicit Link Button Type Creation: `defil' is a new,
-     construct for those familiar with regular expressions but not
-     much Emacs Lisp.  This macro creates more flexible implicit
-     button types than `defal' where the delimiters and text
-     substitution can be specified with regular expressions.  Actions
-     are limited to executing key series, displaying URLs, displaying
-     the contents of pathnames or invoking functions.  See
-     "(hyperbole)Implicit Button Link Types".
+    - Easy Implicit Link Button Type Creation: `defil' is a new,
+      construct for those familiar with regular expressions but not
+      much Emacs Lisp.  This macro creates more flexible implicit
+      button types than `defal' where the delimiters and text
+      substitution can be specified with regular expressions.  Actions
+      are limited to executing key series, displaying URLs, displaying
+      the contents of pathnames or invoking functions.  See
+      "(hyperbole)Implicit Button Link Types".
 
-     Elisp programmers should use the existing `defib' macro for full
-     flexibility in implicit button type creation.  See "hibytpes.el"
-     for examples and "(hyperbole)Programmatic Implicit Button Types"
-     for documentation.
+      Elisp programmers should use the existing `defib' macro for full
+      flexibility in implicit button type creation.  See "hibytpes.el"
+      for examples and "(hyperbole)Programmatic Implicit Button Types"
+      for documentation.
 
-   - Edebuggable Hyperbole Types: `defib' and `defact' type definitions
-     are now interactively debuggable via edebug-defun {C-M-x}.
+    - Edebuggable Hyperbole Types: `defib' and `defact' type definitions
+      are now interactively debuggable via edebug-defun {C-M-x}.
 
-   - kbd-key:is-p: Added this new predicate to test whether point is within
-     a brace-delimited key series.
+    - kbd-key:is-p: Added this new predicate to test whether point is within
+      a brace-delimited key series.
 
-   - ebut:program: Programmatically create an explicit Hyperbole button at
-        point from LABEL, ACTYPE (action type), and optional actype ARGS.
+    - ebut:program: Programmatically create an explicit Hyperbole button at
+	 point from LABEL, ACTYPE (action type), and optional actype ARGS.
 
   HYROLO
 
-   - After performing a HyRolo search with point in the match buffer,
-     if you want different results, you can quickly do a new regular
-     expression HyRolo search with {r} or a string/logical search with
-     {C-u r}.
+    - After performing a HyRolo search with point in the match buffer,
+      if you want different results, you can quickly do a new regular
+      expression HyRolo search with {r} or a string/logical search with
+      {C-u r}.
 
   KOUTLINER
 
-   - Org Table Support: Org table editing now automatically works in the
-     Koutliner via Org table minor mode.  Use {M-x orgtbl-mode RET} to
-     toggle this on and off.  See "(Org)Tables" for details.
+    - Org Table Support: Org table editing now automatically works in the
+      Koutliner via Org table minor mode.  Use {M-x orgtbl-mode RET} to
+      toggle this on and off.  See "(Org)Tables" for details.
 
-   - New Mail Tree Key Binding: The kotl-mode:mail-tree command that
-     extracts the current view of a Koutline in text-only format and
-     creates an outgoing email messge with it, has moved from {C-c @}
-     to {C-c C-@} to prevent conflict with the hycontrol-window-grid
-     command bound to {C-c @}.
+    - New Mail Tree Key Binding: The kotl-mode:mail-tree command that
+      extracts the current view of a Koutline in text-only format and
+      creates an outgoing email messge with it, has moved from {C-c @}
+      to {C-c C-@} to prevent conflict with the hycontrol-window-grid
+      command bound to {C-c @}.
 
-   - New Tree Demotion/Promotion Keys: Tree promotion and demotion keys now
-     match the defaults in Org mode and Outline mode, plus some easier to
-     type ones.  The tables below summarize which keys work whether inside
-     an Org table or outside.
+    - New Tree Demotion/Promotion Keys: Tree promotion and demotion keys now
+      match the defaults in Org mode and Outline mode, plus some easier to
+      type ones.  The tables below summarize which keys work whether inside
+      an Org table or outside.
 
-     |----------------------------+-----------------------------|
-     | Demotion Inside Org Table  | Promotion Inside Org Table  |
-     |----------------------------+-----------------------------|
-     | C-c C-,                    | C-c C-.                     |
-     | C-c C-<                    | C-c C->                     |
-     |----------------------------+-----------------------------|
+      |----------------------------+-----------------------------|
+      | Demotion Inside Org Table  | Promotion Inside Org Table  |
+      |----------------------------+-----------------------------|
+      | C-c C-,                    | C-c C-.                     |
+      | C-c C-<                    | C-c C->                     |
+      |----------------------------+-----------------------------|
 
-     |----------------------------+-----------------------------|
-     | Demotion Outside Org Table | Promotion Outside Org Table |
-     |----------------------------+-----------------------------|
-     | TAB                        | Shift-TAB or M-TAB          |
-     | M-left-arrow               | M-right-arrow               |
-     | C-c C-,                    | C-c C-.                     |
-     | C-c C-<                    | C-c C->                     |
-     |----------------------------+-----------------------------|
+      |----------------------------+-----------------------------|
+      | Demotion Outside Org Table | Promotion Outside Org Table |
+      |----------------------------+-----------------------------|
+      | TAB                        | Shift-TAB or M-TAB          |
+      | M-left-arrow               | M-right-arrow               |
+      | C-c C-,                    | C-c C-.                     |
+      | C-c C-<                    | C-c C->                     |
+      |----------------------------+-----------------------------|
 
-   - Klink Copy: New commands that copy a relative or absolute reference
-     to a kcell (a klink) to the kill ring or to an Emacs single-letter
-     named register:
-       kotl-mode:copy-absolute-klink-to-kill-ring
-       kotl-mode:copy-relative-klink-to-kill-ring
-       kotl-mode:copy-absolute-klink-to-register
-       kotl-mode:copy-relative-klink-to-register
+    - Klink Copy: New commands that copy a relative or absolute reference
+      to a kcell (a klink) to the kill ring or to an Emacs single-letter
+      named register:
+	kotl-mode:copy-absolute-klink-to-kill-ring
+	kotl-mode:copy-relative-klink-to-kill-ring
+	kotl-mode:copy-absolute-klink-to-register
+	kotl-mode:copy-relative-klink-to-register
 
   SMART (ACTION AND ASSIST) KEYS
 

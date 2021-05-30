@@ -497,7 +497,7 @@ Smart Keyboard Keys
 @chapter Introduction
 
 This edition of the GNU Hyperbole Manual is for use with any version
-8.0.0pre or greater of GNU Hyperbole.  Hyperbole runs atop GNU Emacs 24.3
+8.0.0pre or greater of GNU Hyperbole.  Hyperbole runs atop GNU Emacs 27.1
 or higher.  It will trigger an error if your Emacs is older.
 
 This chapter summarizes the structure of the rest of the manual,

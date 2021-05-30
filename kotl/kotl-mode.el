@@ -1729,14 +1729,17 @@ part of the paragraph, or the end of the buffer."
   (point))
 
 (defun kotl-mode:goto-cell (cell-ref &optional error-p)
-  "Move point to start of cell given by CELL-REF.  (See `kcell:ref-to-id'.)
+  "Move point to start of cell given by CELL-REF (see `kcell:ref-to-id').
 Return point if CELL-REF is found within current view, else nil.
-With a prefix argument, CELL-REF is assigned the argument value for use
-as an idstamp.
 
-With optional second arg, ERROR-P, non-nil, signal an error if
-CELL-REF is not found within current view.  Will signal same
-error if called interactively when CELL-REF is not found."
+With optional second arg ERROR-P non-nil, or if called
+interactively, will signal an error if CELL-REF is not found
+within current view.
+
+When called interactively, if a prefix argument is given, use
+that value as CELL-REF and search for it as a permanent idstamp
+regardless of cell label type; without a prefix argument, prompt
+for CELL-REF."
   (interactive
    (list (if current-prefix-arg
 	     (prefix-numeric-value current-prefix-arg)

@@ -9,7 +9,7 @@
 ;; Version:          8.0.0pre
 ;; Keywords:         comm, convenience, files, frames, hypermedia, languages, mail, matching, mouse, multimedia, outlines, tools, wp
 ;; Package:          hyperbole
-;; Package-Requires: ((emacs "24.4"))
+;; Package-Requires: ((emacs "27.1"))
 ;; URL:              http://www.gnu.org/software/hyperbole
 
 ;; See the "HY-COPY" file for license information.
