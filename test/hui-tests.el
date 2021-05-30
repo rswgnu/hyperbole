@@ -56,6 +56,7 @@
           (should (hact 'kbd-key "C-h h e c label RET RET link-to-directory RET RET"))
           (hy-test-helpers:consume-input-events)
           (should (eq (hattr:get (hbut:at-p) 'actype) 'actypes::link-to-directory))
+          (should (equal (hattr:get (hbut:at-p) 'args) '("./")))
           (should (equal (hattr:get (hbut:at-p) 'lbl-key) "label")))
       (delete-file file))))
 
@@ -71,6 +72,7 @@
           (should (hact 'kbd-key "C-h h e c RET link-to-directory RET RET"))
           (hy-test-helpers:consume-input-events)
           (should (eq (hattr:get (hbut:at-p) 'actype) 'actypes::link-to-directory))
+          (should (equal (hattr:get (hbut:at-p) 'args) '("./")))
           (should (equal (hattr:get (hbut:at-p) 'lbl-key) "label")))
       (delete-file file))))
 
