@@ -1,4 +1,4 @@
-;;; hbut-tests.el --- hbut unit tests         -*- lexical-binding: t; -*-
+;;; hmouse-drv-tests.el --- hmouse-drv unit tests         -*- lexical-binding: t; -*-
 
 ;; Author: Mats Lidell <matsl@gnu.org>
 ;;
@@ -12,6 +12,7 @@
 ;;; Commentary:
 
 ;; Runs tests that are based on using the action-key.
+;; See "../hmouse-drv.el"
 
 ;;; Code:
 
@@ -515,5 +516,5 @@
 ;;  no-byte-compile: t
 ;;  End:
 
-(provide 'hbut-tests)
-;;; hbut-tests.el ends here
+(provide 'hmouse-drv-tests)
+;;; hmouse-drv-tests.el ends here
