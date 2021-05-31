@@ -1,3 +1,13 @@
+2021-05-30  Mats Lidell  <matsl@gnu.org>
+
+* test/hbut-tests.el (ebut-program-link-to-directory)
+    (ebut-program-link-to-directory-2): Add test for ebut:program
+
+* test/hmouse-drv-tests.el: Renamed from hbut-tests.el
+
+* test/hui-tests.el (hui-ebut-create-link-to-directory)
+    (hui-ebut-use-region-as-label): Add check on button args
+
 2021-05-29  Bob Weiner  <rsw@gnu.org>
 
 * hpath.el (hpath:is-p, hpath:call): Return nil if path
