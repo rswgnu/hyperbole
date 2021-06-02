@@ -1,3 +1,8 @@
+2021-06-01  Mats Lidell  <matsl@gnu.org>
+
+* test/hbut-tests.el (ebut-program-shell-cmd)
+    (ebut-delete-removes-ebut-and-returns-button-data): Tests for ebuts.
+
 2021-05-30  Mats Lidell  <matsl@gnu.org>
 
 * test/hbut-tests.el (ebut-program-link-to-directory)
