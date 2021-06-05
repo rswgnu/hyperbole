@@ -102,7 +102,7 @@
      :background "yellow")
     (((class color) (min-colors 16) (background light))
      :background "yellow")
-    (((class color) (in-colors 16) (background dark))
+    (((class color) (min-colors 16) (background dark))
      :background "yellow")
     (((class color) (min-colors 8))
      :background "yellow" :foreground "black")
