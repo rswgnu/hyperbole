@@ -1,3 +1,7 @@
+2021-06-06  Mats Lidell  <matsl@gnu.org>
+
+* hui-em-but.el (hbut-item-face): Fix typo.
+
 2021-06-01  Mats Lidell  <matsl@gnu.org>
 
 * test/hbut-tests.el (ebut-program-shell-cmd)
