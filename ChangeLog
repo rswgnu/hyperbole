@@ -1,5 +1,7 @@
 2021-06-19  Mats Lidell  <matsl@gnu.org>
 
+* hui-menu.el (hyperbole-menubar-menu): Use easy-menu-add-item.
+
 * hmouse-drv.el (window-jump, wj-vec-left, wj-vec-right, wj-vec-down)
     (wj-vec-up): Declare function and variables.
 
