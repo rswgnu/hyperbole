@@ -18,6 +18,8 @@
 
 (eval-and-compile (require 'treemacs nil t))
 
+(defvar treemacs-version)
+
 (unless (and (featurep 'treemacs) (string-greaterp treemacs-version "v2"))
   (error "(hui-treemacs): Hyperbole requires Treemacs package version 2.0 or greater"))
 
@@ -32,6 +34,7 @@
 (declare-function treemacs-node-buffer-and-position "etx:treemacs-mouse-interface")
 (declare-function treemacs-quit "ext:treemacs-core-utils")
 (declare-function treemacs-toggle-node "ext:treemacs-interface")
+(defvar aw-ignored-buffers)
 
 ;;; ************************************************************************
 ;;; smart-treemacs functions

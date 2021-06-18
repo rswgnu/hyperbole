@@ -126,6 +126,13 @@ This permits the Smart Keys to behave as paste keys.")
 (defvar aw-frame-size)
 (defvar aw-keys)
 
+;; window-jump
+(declare-function window-jump "ext:window-jump")
+(defvar	wj-vec-left)
+(defvar	wj-vec-right)
+(defvar	wj-vec-down)
+(defvar	wj-vec-up)
+
 ;;; ************************************************************************
 ;;; Private variables
 ;;; ************************************************************************

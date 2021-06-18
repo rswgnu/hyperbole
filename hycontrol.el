@@ -228,6 +228,11 @@ The final predicate should always be t, for default values, typically of zero.")
   "HyControl copy of `prefix-arg' that it changes within key bindings.
 `pre-command-hook' synchronizes this value to `prefix-arg'.")
 
+;;; ************************************************************************
+;;; Public declarations
+;;; ************************************************************************
+(defvar ibuffer-mode-map)
+
 ;;; Frame Keys
 
 (defvar hycontrol-frames-mode-map
