@@ -1540,7 +1540,7 @@ Leave point at the start of the cell."
   (interactive)
   (kotl-mode:maintain-region-highlight)
   (goto-char (point-max))
-  (when (looking-back "\\]\\s-*")
+  (when (looking-back "\\]\\s-*" nil)
     ;; Internal Koutline structures are exposed, re-narrow the Koutline
     (kotl-mode))
   ;; To move to cell end.

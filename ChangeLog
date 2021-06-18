@@ -1,5 +1,8 @@
 2021-06-19  Mats Lidell  <matsl@gnu.org>
 
+* kotl/kotl-mode.el (kotl-mode:end-of-buffer): looking-back requires two
+    args.
+
 * test/hyrolo-tests.el (hyrolo-demo-search-work)
     (hyrolo-demo-tab-jump-to-first-match, hyrolo-demo-toggle-visibility):
     Add tests for hyrolo.
