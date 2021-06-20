@@ -4,7 +4,7 @@
 ;;
 ;; Orig-Date:     7-Jun-89 at 22:08:29
 ;;
-;; Copyright (C) 1991-2019  Free Software Foundation, Inc.
+;; Copyright (C) 1991-2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
 ;;
 ;; This file is part of GNU Hyperbole.
@@ -119,7 +119,7 @@ executable must be found as well (for Oauth security)."
     list))
 
 (define-obsolete-variable-alias 'rolo-file-list 'hyrolo-file-list "06.00")
-(defvar hyrolo-file-list (hyrolo-initialize-file-list)
+(defcustom hyrolo-file-list (hyrolo-initialize-file-list)
   "*List of files containing rolo entries.
 The first file should be a user-specific rolo file, typically in the home
 directory.
@@ -128,7 +128,9 @@ A hyrolo-file consists of:
    (1) an optional header beginning with and ending with a line which matches
        hyrolo-hdr-regexp;
    (2) one or more rolo entries which each begin with
-       hyrolo-entry-regexp and may be nested.")
+       hyrolo-entry-regexp and may be nested."
+  :group 'hyperbole-rolo
+  :type '(repeat file))
 
 (defcustom hyrolo-highlight-face 'match
   "*Face used to highlight rolo search matches."

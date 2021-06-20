@@ -1,5 +1,7 @@
 2021-06-19  Mats Lidell  <matsl@gnu.org>
 
+* hyrolo.el (hyrolo-file-list): Make variable customizable.
+
 * hsettings.el: Do not set user customizable properties
     hproperty:but-highlight-flag, hproperty:but-emphasize-flag,
     hproperty:but-flash-time.
