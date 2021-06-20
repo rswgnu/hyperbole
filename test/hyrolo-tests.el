@@ -53,7 +53,7 @@
     (hyrolo-demo-quit)))
 
 (ert-deftest hyrolo-demo-toggle-visibility ()
-  "Keys h and a shall toogle visibility."
+  "Keys h and a shall toggle visibility."
   (skip-unless (not noninteractive))
   (unwind-protect
       (progn
