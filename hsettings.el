@@ -4,7 +4,7 @@
 ;;
 ;; Orig-Date:    15-Apr-91 at 00:48:49
 ;;
-;; Copyright (C) 1991-2019  Free Software Foundation, Inc.
+;; Copyright (C) 1991-2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
 ;;
 ;; This file is part of GNU Hyperbole.
@@ -29,7 +29,6 @@
 ;;; ************************************************************************
 ;;; Public declarations
 ;;; ************************************************************************
-(declare-function hproperty:cycle-but-color "hui-em-but")
 (declare-function hproperty:but-create "hui-em-but")
 
 ;;; Read the comments and modify as desired.
@@ -263,23 +262,7 @@ obtained search string."
        (require 'hui-em-but)
        ;; Highlight explicit buttons whenever a file is read in.
        (add-hook 'find-file-hook #'hproperty:but-create t)
-       (defalias 'hui:but-flash 'hproperty:but-flash)
-       ;;
-       ;; Substitute for the nil argument below a valid X color name with
-       ;; which to highlight buttons if the default highlighting does not
-       ;; appeal to you. See "hui-em-but.el" for how this works.
-       (hproperty:cycle-but-color nil)
-       ;;
-       ;; Non-nil means highlight all explict buttons with `hproperty:but-face'.
-       (setq hproperty:but-highlight-flag t)
-       ;;
-       ;; Non-nil means visually emphasize that button under mouse cursor is
-       ;; selectable.
-       (setq hproperty:but-emphasize-flag nil)
-       ;;
-       ;; If you find that the Hyperbole button flash time is too slow
-       ;; or too fast, adjust it here.
-       (setq hproperty:but-flash-time 1000)))
+       (defalias 'hui:but-flash 'hproperty:but-flash)))
 
 ;;; ************************************************************************
 ;;; ONLINE LIBRARY CONFIGURATION

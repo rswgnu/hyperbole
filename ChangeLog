@@ -1,3 +1,9 @@
+2021-06-19  Mats Lidell  <matsl@gnu.org>
+
+* hsettings.el: Do not set user customizable properties
+    hproperty:but-highlight-flag, hproperty:but-emphasize-flag,
+    hproperty:but-flash-time.
+
 2021-06-06  Mats Lidell  <matsl@gnu.org>
 
 * hui-em-but.el (hbut-item-face): Fix typo.
