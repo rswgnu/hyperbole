@@ -774,7 +774,7 @@ If assist-key is pressed:
 	 (calendar-scroll-right-three-months 1))
 	((< (current-column) 5) (calendar-cursor-to-nearest-date)
 	 (calendar-scroll-left-three-months 1))
-	(t (diary-view-entries))))
+	(t (diary-mark-entries))))
 
 ;;; ************************************************************************
 ;;; smart-company mode functions
