@@ -1,5 +1,9 @@
 2021-06-19  Mats Lidell  <matsl@gnu.org>
 
+* test/hyrolo-tests.el (hyrolo-demo-search-work)
+    (hyrolo-demo-tab-jump-to-first-match, hyrolo-demo-toggle-visibility):
+    Add tests for hyrolo.
+
 * hyrolo.el (hyrolo-file-list): Make variable customizable.
 
 * hsettings.el: Do not set user customizable properties
