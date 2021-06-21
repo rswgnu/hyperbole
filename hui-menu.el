@@ -292,7 +292,7 @@ Return t if cutoff, else nil."
 				    "Koutline")
 				   ((global-key-binding [menu-bar OO-Browser])
 				    "OO-Browser"))))
-	     (add-submenu nil (infodock-hyperbole-menu t) add-before))))
+             (easy-menu-add-item (current-global-map) '("menu-bar") (infodock-hyperbole-menu t) add-before))))
   ;; Force a menu-bar update.
   (force-mode-line-update))
 

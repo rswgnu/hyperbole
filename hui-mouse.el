@@ -138,6 +138,9 @@ Its default value is #'smart-scroll-down.  To disable it, set it to
 (declare-function helm-resume "ext:helm")
 (declare-function helm-window "ext:helm-lib")
 (declare-function with-helm-buffer "ext:helm-lib")
+(defvar helm-action-buffer)
+(defvar helm-alive-p)
+(defvar helm-buffer)
 
 (declare-function ibuffer-mark-for-delete "ibuffer")
 (declare-function ibuffer-unmark-forward "ibuffer")
@@ -151,6 +154,12 @@ Its default value is #'smart-scroll-down.  To disable it, set it to
 (declare-function br-buffer-menu-select "ext:br")
 
 (declare-function gnus-topic-read-group "gnus-topic")
+
+(declare-function company-show-doc-buffer "ext:company")
+;; (declare-function company-quick-help-manual-begin "ext:company?")
+(declare-function company-show-location "ext:company")
+(declare-function company-select-mouse "ext:company")
+
 
 ;;; ************************************************************************
 ;;; Hyperbole context-sensitive keys dispatch table
@@ -740,9 +749,9 @@ If key is pressed:
 
   (interactive)
   (cond ((eobp) (calendar-cursor-to-nearest-date)
-	 (scroll-calendar-left-three-months 1))
+	 (calendar-scroll-left-three-months 1))
 	((< (current-column) 5) (calendar-cursor-to-nearest-date)
-	 (scroll-calendar-right-three-months 1))
+	 (calendar-scroll-right-three-months 1))
 	(t (calendar-cursor-to-nearest-date)
 	   (diary-view-entries 1))))
 
@@ -762,10 +771,10 @@ If assist-key is pressed:
 
   (interactive)
   (cond ((eobp) (calendar-cursor-to-nearest-date)
-	 (scroll-calendar-right-three-months 1))
+	 (calendar-scroll-right-three-months 1))
 	((< (current-column) 5) (calendar-cursor-to-nearest-date)
-	 (scroll-calendar-left-three-months 1))
-	(t (mark-diary-entries))))
+	 (calendar-scroll-left-three-months 1))
+	(t (diary-mark-entries))))
 
 ;;; ************************************************************************
 ;;; smart-company mode functions
@@ -884,9 +893,7 @@ If assist-key is pressed:
 	 ;; Prevent any region selection from causing multiple files
 	 ;; to be marked for deletion; we want to mark only one.
 	 (deactivate-mark t)
-	 (if (fboundp 'dired-flag-file-deletion)
-	     (dired-flag-file-deletion 1)
-	   (dired-flag-file-deleted 1)))))
+	 (dired-flag-file-deletion 1))))
 
 ;;; ************************************************************************
 ;;; smart-gnus functions

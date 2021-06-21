@@ -1,5 +1,29 @@
 2021-06-19  Mats Lidell  <matsl@gnu.org>
 
+* hui-menu.el (hyperbole-menubar-menu): Use easy-menu-add-item.
+
+* hmouse-drv.el (window-jump, wj-vec-left, wj-vec-right, wj-vec-down)
+    (wj-vec-up): Declare function and variables.
+
+* hsys-org.el (org-link): Use org-link-open-from-string.
+
+* hui-mouse.el (helm-action-buffer, helm-alive-p, helm-buffer): Declare
+    helm variables.
+    (company-show-doc-buffer, company-show-location)
+    (company-select-mouse): Declare helm functions.
+    (smart-calendar): Use calendar-scroll-left-three-months and
+    calendar-scroll-right-three-months
+    (smart-calendar-assist): Use calendar-scroll-left-three-months and
+    calendar-scroll-right-three-months and diary-view-entries.
+
+* hui-treemacs.el (treemacs-version, aw-ignored-buffers): Declare
+    variables.
+
+* hycontrol.el (ibuffer-mode-map): Declare used variable.
+
+* kotl/kotl-mode.el (kotl-mode:end-of-buffer): looking-back requires two
+    args.
+
 * test/hyrolo-tests.el (hyrolo-demo-search-work)
     (hyrolo-demo-tab-jump-to-first-match, hyrolo-demo-toggle-visibility):
     Add tests for hyrolo.

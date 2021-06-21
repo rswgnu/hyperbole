@@ -83,10 +83,7 @@ with different settings of this option.  For example, a nil value makes
   "Follows an optional Org mode LINK to its target.
 If LINK is nil, follows any link at point.  Otherwise, triggers an error."
   (if (stringp link)
-      (cond ((fboundp #'org-link-open-from-string)
-	     (org-link-open-from-string link))
-            ((fboundp #'org-open-link-from-string)
-	     (org-open-link-from-string link))) ;; autoloaded
+      (org-link-open-from-string link)
     (org-open-at-point))) ;; autoloaded
 
 (defact org-internal-link-target (&optional link-target)
