@@ -16,6 +16,7 @@
 ;;; Code:
 
 (require 'hypb)
+(require 'hbut)
 (require 'ert)
 
 ;; Test for replace-regexp-in-string copied from emacs src
@@ -88,6 +89,40 @@
                    "a bbba"))
     (should (equal (hypb:replace-match-string "\\`\\|x" "--xx--" "z")
                    "z--zz--"))))
+
+(ert-deftest hypb:program-create-but-in-buffer ()
+  "Create button with hypb:program in buffer.
+hbut:at-p does not recognise a button created within a buffer."
+  :expected-result :failed
+  (with-temp-buffer
+    (ebut:program "label" 'actypes::link-to-directory "/tmp")
+    (should (eq (hattr:get (hbut:at-p) 'actype) 'actypes::link-to-directory))
+    (should (equal (hattr:get (hbut:at-p) 'args) '("./tmp")))
+    (should (equal (hattr:get (hbut:at-p) 'lbl-key) "label"))))
+
+(ert-deftest hypb:program-create-link-to-dir-but-in-file ()
+  "Create button that links to a directory with hypb:program in a file."
+  (let ((test-file (make-temp-file "test-file")))
+    (unwind-protect
+        (progn
+          (find-file test-file)
+          (ebut:program "label" 'actypes::link-to-directory "/tmp")
+          (should (eq (hattr:get (hbut:at-p) 'actype) 'actypes::link-to-directory))
+          (should (equal (hattr:get (hbut:at-p) 'args) '("/tmp")))
+          (should (equal (hattr:get (hbut:at-p) 'lbl-key) "label")))
+      (delete-file test-file))))
+
+(ert-deftest hypb:program-create-link-to-file-line-and-column-but-in-file ()
+  "Create button that links to file with line and column with hypb:program in buffer."
+  (let ((test-file (make-temp-file "test-file")))
+    (unwind-protect
+        (progn
+          (find-file test-file)
+          (ebut:program "label" 'actypes::link-to-file-line-and-column test-file 2 3)
+          (should (eq (hattr:get (hbut:at-p) 'actype) 'actypes::link-to-file-line-and-column))
+          (should (equal (hattr:get (hbut:at-p) 'args) (list 'test-file 2 3)))
+          (should (equal (hattr:get (hbut:at-p) 'lbl-key) "label")))
+      (delete-file test-file))))
 
 (provide 'hypb-tests)
 ;;; hypb-tests.el ends here
