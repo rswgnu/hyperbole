@@ -16,6 +16,7 @@
 ;;; Code:
 
 (require 'hypb)
+(require 'hbut)
 (require 'ert)
 
 ;; Test for replace-regexp-in-string copied from emacs src
