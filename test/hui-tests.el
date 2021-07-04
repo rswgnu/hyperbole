@@ -76,7 +76,6 @@
 (ert-deftest hui-ebut-modify-link-to-www-url-keeping-all-values-should-not-modify-buffer-or-ebut ()
   "Modify an ebut keeping all initial values should not modify buffer or ebut.
 Modifying the button but keeping the label creates a dubbel label."
-  :expected-result :failed
   (let ((file (make-temp-file "hypb_" nil ".txt")))
     (unwind-protect
         (find-file file)
