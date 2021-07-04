@@ -17,6 +17,7 @@
 
 (require 'ert)
 (require 'with-simulated-input)
+(require 'hui)
 
 (load (expand-file-name "hy-test-helpers"
                         (file-name-directory (or load-file-name
@@ -59,6 +60,37 @@
           (should (equal (hattr:get (hbut:at-p) 'args) '("./")))
           (should (equal (hattr:get (hbut:at-p) 'lbl-key) "label")))
       (delete-file file))))
+
+(ert-deftest hui-ebut-create-link-to-www-url ()
+  "Create an ebut with link to www-url."
+  (let ((file (make-temp-file "hypb_" nil ".txt")))
+    (unwind-protect
+        (find-file file)
+        (with-simulated-input "label RET RET www-url RET www.hypb.org RET"
+          (hui:ebut-create)
+          (should (eq (hattr:get (hbut:at-p) 'actype) 'actypes::www-url))
+          (should (equal (hattr:get (hbut:at-p) 'args) '("www.hypb.org")))
+          (should (equal (hattr:get (hbut:at-p) 'lbl-key) "label")))
+      (delete-file file))))
+
+(ert-deftest hui-ebut-modify-link-to-www-url-keeping-all-values-should-not-modify-buffer-or-ebut ()
+  "Modify an ebut keeping all initial values should not modify buffer or ebut.
+Modifying the button but keeping the label creates a dubbel label."
+  (let ((file (make-temp-file "hypb_" nil ".txt")))
+    (unwind-protect
+        (find-file file)
+        (with-simulated-input "label RET RET www-url RET www.hypb.org RET"
+          (hui:ebut-create)
+          (should (eq (hattr:get (hbut:at-p) 'actype) 'actypes::www-url))
+          (should (equal (hattr:get (hbut:at-p) 'args) '("www.hypb.org")))
+          (should (equal (hattr:get (hbut:at-p) 'lbl-key) "label")))
+        (with-simulated-input "RET RET RET RET"
+          (hui:ebut-modify "label")
+          (should (eq (hattr:get (hbut:at-p) 'actype) 'actypes::www-url))
+          (should (equal (hattr:get (hbut:at-p) 'args) '("www.hypb.org")))
+          (should (equal (hattr:get (hbut:at-p) 'lbl-key) "label"))
+          (should (string= "<(label)>" (buffer-string)))))
+    (delete-file file)))
 
 (ert-deftest hui-ebut-use-region-as-label ()
   "Create an ebut using region as label."

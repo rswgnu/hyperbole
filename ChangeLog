@@ -1,3 +1,9 @@
+2021-07-04  Mats Lidell  <matsl@gnu.org>
+
+* test/hui-tests.el (hui-ebut-create-link-to-www-url)
+    (hui-ebut-modify-link-to-www-url-keeping-all-values-should-not-modify-buffer-or-ebut):
+    Add hui:ebut-create and hui:ebut-modify tests.
+
 2021-07-04  Bob Weiner  <rsw@gnu.org>
 
 * hbut.el (ebut:program): Change to a function from a macro so 'args' are evaluated.
