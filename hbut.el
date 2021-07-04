@@ -410,7 +410,7 @@ button is found in the current buffer."
        "(ebut:operate): Operation failed.  Check button attribute permissions: %s"
        hattr:filename))))
 
-(defmacro ebut:program (label actype &rest args)
+(defun ebut:program (label actype &rest args)
   "Programmatically create an explicit Hyperbole button at point from LABEL, ACTYPE (action type), and optional actype ARGS.
 Insert LABEL text at point surrounded by <( )> delimiters, adding any
 necessary instance number of the button after the LABEL.  ACTYPE may
@@ -419,9 +419,9 @@ function, followed by a list of arguments for the actype, aside from
 the button LABEL which is automatically provided as the first argument.
 
 For interactive creation, use `hui:ebut-create' instead."
-  `(save-excursion
+  (save-excursion
      (let ((but-buf (current-buffer))
-	   (actype-sym (intern-soft (concat "actypes::" (symbol-name ,actype)))))
+	   (actype-sym (intern-soft (concat "actypes::" (symbol-name actype)))))
       (hui:buf-writable-err but-buf "ebut-create")
       (condition-case err
 	  (progn
@@ -429,14 +429,14 @@ For interactive creation, use `hui:ebut-create' instead."
 	    (hattr:set 'hbut:current 'loc (hui:key-src but-buf))
 	    (hattr:set 'hbut:current 'dir (hui:key-dir but-buf))
             (if (or (and actype-sym (fboundp actype-sym))
-		    (functionp ,actype))
-		(hattr:set 'hbut:current 'actype ,actype)
-	      (error "(,actype)"))
-	    (hattr:set 'hbut:current 'args ',args)
-	    (ebut:operate ,label nil))
+		    (functionp actype))
+		(hattr:set 'hbut:current 'actype actype)
+	      (error (format "(%s)" actype)))
+	    (hattr:set 'hbut:current 'args args)
+	    (ebut:operate label nil))
 	(error (hattr:clear 'hbut:current)
 	       (if (and (listp (cdr err)) (= (length (cdr err)) 1))
-		   (error (format "(ebut:program): actype arg must be a bound symbol (not a string): %s" ,actype))
+		   (error (format "(ebut:program): actype arg must be a bound symbol (not a string): %s" actype))
 		 (error "(ebut:program): %s" err)))))))
 
 (defun    ebut:search (string out-buf &optional match-part)
