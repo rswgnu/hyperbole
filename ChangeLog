@@ -5,14 +5,17 @@
 
 2021-07-04  Mats Lidell  <matsl@gnu.org>
 
+* test/hbut-tests.el (ebut-program-link-to-directory)
+    (ebut-program-link-to-directory-2, ebut-program-shell-cmd): Use
+    actypes prefix after ebut:program change.
+
+* test/hbut-tests.el (hypb:program-create-ebut-in-buffer)
+    (hypb:program-create-link-to-file-line-and-column-but-in-file): Add
+    new test cases for ebut:program.
+
 * test/hui-tests.el (hui-ebut-create-link-to-www-url)
     (hui-ebut-modify-link-to-www-url-keeping-all-values-should-not-modify-buffer-or-ebut):
     Add hui:ebut-create and hui:ebut-modify tests.
-
-* test/hypb-tests.el (hypb:program-create-but-in-buffer)
-    (hypb:program-create-link-to-dir-but-in-file)
-    (hypb:program-create-link-to-file-line-and-column-but-in-file): Add
-    test for ebut:program.
 
 2021-07-04  Bob Weiner  <rsw@gnu.org>
 

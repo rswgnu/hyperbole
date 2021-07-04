@@ -26,21 +26,21 @@
     (unwind-protect
         (progn
           (find-file file)
-          (ebut:program "label" 'link-to-directory "/tmp")
+          (ebut:program "label" 'actypes::link-to-directory "/tmp")
           (should (eq (hattr:get (hbut:at-p) 'actype) 'actypes::link-to-directory))
           (should (equal (hattr:get (hbut:at-p) 'args) '("/tmp")))
           (should (equal (hattr:get (hbut:at-p) 'lbl-key) "label")))
       (delete-file file))))
 
 (ert-deftest ebut-program-link-to-directory-2 ()
-  "Programatically create ebut with link-to-directory."
+  "Programatically create ebut with link-to-directory using `temporary-file-directory`."
   (let ((file (make-temp-file "hypb_" nil ".txt")))
     (unwind-protect
         (progn
           (find-file file)
-          (ebut:program "label" 'link-to-directory (temporary-file-directory))
+          (ebut:program "label" 'actypes::link-to-directory temporary-file-directory)
           (should (eq (hattr:get (hbut:at-p) 'actype) 'actypes::link-to-directory))
-          (should (equal (hattr:get (hbut:at-p) 'args) '((temporary-file-directory))))
+          (should (equal (hattr:get (hbut:at-p) 'args) (list temporary-file-directory)))
           (should (equal (hattr:get (hbut:at-p) 'lbl-key) "label")))
       (delete-file file))))
 
@@ -50,7 +50,7 @@
     (unwind-protect
         (progn
           (find-file file)
-          (ebut:program "label" 'exec-shell-cmd "ls /tmp")
+          (ebut:program "label" 'actypes::exec-shell-cmd "ls /tmp")
           (should (eq (hattr:get (hbut:at-p) 'actype) 'actypes::exec-shell-cmd))
           (should (equal (hattr:get (hbut:at-p) 'args) '("ls /tmp")))
           (should (equal (hattr:get (hbut:at-p) 'lbl-key) "label")))
@@ -62,7 +62,7 @@
     (unwind-protect
         (progn
           (find-file file)
-          (ebut:program "label" 'link-to-directory "/tmp")
+          (ebut:program "label" 'actypes::link-to-directory "/tmp")
           (should (hbut:at-p))
           (let ((args (hbut:delete)))
             (should-not (hbut:at-p))
@@ -94,7 +94,27 @@
 	  (with-current-buffer test-buffer
             (should (eq (hattr:get (hbut:at-p) 'actype) 'actypes::link-to-directory))
             (should (equal (hattr:get (hbut:at-p) 'args) '("/tmp")))
-            (should (equal (hattr:get (hbut:at-p) 'lbl-key) "global"))))
+            (should (equal (hattr:get (hbut:at-p) 'lbl-key) "global")))
+
+(ert-deftest hypb:program-create-ebut-in-buffer ()
+  "Create button with hypb:program in buffer.
+BUG: hbut:at-p does not recognise a button created within a buffer."
+  (with-temp-buffer
+    (ebut:program "label" 'actypes::link-to-directory "/tmp")
+    (should (eq (hattr:get (hbut:at-p) 'actype) 'actypes::link-to-directory))
+    (should (equal (hattr:get (hbut:at-p) 'args) '("./tmp")))
+    (should (equal (hattr:get (hbut:at-p) 'lbl-key) "label"))))
+
+(ert-deftest hypb:program-create-link-to-file-line-and-column-but-in-file ()
+  "Create button that links to file with line and column with hypb:program in buffer."
+  (let ((test-file (make-temp-file "test-file")))
+    (unwind-protect
+        (progn
+          (find-file test-file)
+          (ebut:program "label" 'actypes::link-to-file-line-and-column test-file 2 3)
+          (should (eq (hattr:get (hbut:at-p) 'actype) 'actypes::link-to-file-line-and-column))
+          (should (equal (hattr:get (hbut:at-p) 'args) (list test-file 2 3)))
+          (should (equal (hattr:get (hbut:at-p) 'lbl-key) "label")))
       (delete-file test-file))))
 
 (provide 'hbut-tests)
