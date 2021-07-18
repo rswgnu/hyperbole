@@ -26,7 +26,7 @@
     (unwind-protect
         (progn
           (find-file file)
-          (ebut:program "label" 'actypes::link-to-directory "/tmp")
+          (ebut:program "label" 'link-to-directory "/tmp")
           (should (eq (hattr:get (hbut:at-p) 'actype) 'actypes::link-to-directory))
           (should (equal (hattr:get (hbut:at-p) 'args) '("/tmp")))
           (should (equal (hattr:get (hbut:at-p) 'lbl-key) "label")))
@@ -38,7 +38,7 @@
     (unwind-protect
         (progn
           (find-file file)
-          (ebut:program "label" 'actypes::link-to-directory temporary-file-directory)
+          (ebut:program "label" 'link-to-directory temporary-file-directory)
           (should (eq (hattr:get (hbut:at-p) 'actype) 'actypes::link-to-directory))
           (should (equal (hattr:get (hbut:at-p) 'args) (list temporary-file-directory)))
           (should (equal (hattr:get (hbut:at-p) 'lbl-key) "label")))
@@ -50,7 +50,7 @@
     (unwind-protect
         (progn
           (find-file file)
-          (ebut:program "label" 'actypes::exec-shell-cmd "ls /tmp")
+          (ebut:program "label" 'exec-shell-cmd "ls /tmp")
           (should (eq (hattr:get (hbut:at-p) 'actype) 'actypes::exec-shell-cmd))
           (should (equal (hattr:get (hbut:at-p) 'args) '("ls /tmp")))
           (should (equal (hattr:get (hbut:at-p) 'lbl-key) "label")))
@@ -62,7 +62,7 @@
     (unwind-protect
         (progn
           (find-file file)
-          (ebut:program "label" 'actypes::link-to-directory "/tmp")
+          (ebut:program "label" 'link-to-directory "/tmp")
           (should (hbut:at-p))
           (let ((args (hbut:delete)))
             (should-not (hbut:at-p))
@@ -78,8 +78,8 @@
     (unwind-protect
         (with-mock
           (mock (find-file-noselect (expand-file-name hbmap:filename hbmap:dir-user)) => test-buffer)
-          (mock (ebut:program "label" 'actypes::link-to-directory "/tmp") => t)
-          (gbut:ebut-program "label" 'actypes::link-to-directory "/tmp"))
+          (mock (ebut:program "label" 'link-to-directory "/tmp") => t)
+          (gbut:ebut-program "label" 'link-to-directory "/tmp"))
       (delete-file test-file))))
 
 (ert-deftest gbut-program-link-to-directory ()
@@ -90,7 +90,7 @@
 	(progn
           (with-mock
             (mock (find-file-noselect (expand-file-name hbmap:filename hbmap:dir-user)) => test-buffer)
-            (gbut:ebut-program "global" 'actypes::link-to-directory "/tmp"))
+            (gbut:ebut-program "global" 'link-to-directory "/tmp"))
 	  (with-current-buffer test-buffer
             (should (eq (hattr:get (hbut:at-p) 'actype) 'actypes::link-to-directory))
             (should (equal (hattr:get (hbut:at-p) 'args) '("/tmp")))
@@ -100,7 +100,7 @@
   "Create button with hypb:program in buffer.
 BUG: hbut:at-p does not recognise a button created within a buffer."
   (with-temp-buffer
-    (ebut:program "label" 'actypes::link-to-directory "/tmp")
+    (ebut:program "label" 'link-to-directory "/tmp")
     (should (eq (hattr:get (hbut:at-p) 'actype) 'actypes::link-to-directory))
     (should (equal (hattr:get (hbut:at-p) 'args) '("./tmp")))
     (should (equal (hattr:get (hbut:at-p) 'lbl-key) "label"))))
@@ -111,7 +111,7 @@ BUG: hbut:at-p does not recognise a button created within a buffer."
     (unwind-protect
         (progn
           (find-file test-file)
-          (ebut:program "label" 'actypes::link-to-file-line-and-column test-file 2 3)
+          (ebut:program "label" 'link-to-file-line-and-column test-file 2 3)
           (should (eq (hattr:get (hbut:at-p) 'actype) 'actypes::link-to-file-line-and-column))
           (should (equal (hattr:get (hbut:at-p) 'args) (list test-file 2 3)))
           (should (equal (hattr:get (hbut:at-p) 'lbl-key) "label")))
