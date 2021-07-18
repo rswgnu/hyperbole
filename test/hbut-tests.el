@@ -94,7 +94,7 @@
 	  (with-current-buffer test-buffer
             (should (eq (hattr:get (hbut:at-p) 'actype) 'actypes::link-to-directory))
             (should (equal (hattr:get (hbut:at-p) 'args) '("/tmp")))
-            (should (equal (hattr:get (hbut:at-p) 'lbl-key) "global")))
+            (should (equal (hattr:get (hbut:at-p) 'lbl-key) "global")))))))
 
 (ert-deftest hypb:program-create-ebut-in-buffer ()
   "Create button with hypb:program in buffer.
