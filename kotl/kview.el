@@ -1,10 +1,10 @@
-;;; kview.el --- Display handling of koutlines
+;;; kview.el --- Display handling of koutlines  -*- lexical-binding: t; -*-
 ;;
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    6/30/93
 ;;
-;; Copyright (C) 1993-2019  Free Software Foundation, Inc.
+;; Copyright (C) 1993-2021  Free Software Foundation, Inc.
 ;; See the "../HY-COPY" file for license information.
 ;;
 ;; This file is part of GNU Hyperbole.

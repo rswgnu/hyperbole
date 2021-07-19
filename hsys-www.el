@@ -1,10 +1,10 @@
-;;; hsys-www.el --- GNU Hyperbole support for Emacs World-Wide Web (WWW) browsing
+;;; hsys-www.el --- GNU Hyperbole support for Emacs World-Wide Web (WWW) browsing  -*- lexical-binding: t; -*-
 ;;
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     7-Apr-94 at 17:17:39 by Bob Weiner
 ;;
-;; Copyright (C) 1994-2016  Free Software Foundation, Inc.
+;; Copyright (C) 1994-2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
 ;;
 ;; This file is part of GNU Hyperbole.
@@ -144,7 +144,7 @@ is used.  Valid values of this variable include `browse-url-default-browser' and
 	       (hact 'www-url path)
 	       ;; return same buffer
 	       (current-buffer))
-      (apply 'find-file-noselect path args))))
+      (apply #'find-file-noselect path args))))
 
 (provide 'hsys-www)
 

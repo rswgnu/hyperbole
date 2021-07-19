@@ -1,4 +1,4 @@
-;;; kotl-orgtbl.el --- Allow use of Org minor-mode table editing in koutlines
+;;; kotl-orgtbl.el --- Allow use of Org minor-mode table editing in koutlines  -*- lexical-binding: t; -*-
 ;;
 ;; Author:       Bob Weiner
 ;;

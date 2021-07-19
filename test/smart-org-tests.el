@@ -145,5 +145,10 @@
        (mock (org-meta-return nil) => t)
        (smart-org)))))
 
+;; Compilation requires `el-mock' which is not `Package-Require'd.
+;; Local Variables:
+;; no-byte-compile: t
+;; End:
+
 (provide 'smart-org-tests)
 ;;; smart-org-tests.el ends here

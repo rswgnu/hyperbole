@@ -18,7 +18,7 @@
 ;;; Code:
 
 (require 'ert)
-(require 'kotl-mode)
+(require 'kotl-mode "kotl/kotl-mode")
 
 (load (expand-file-name "hy-test-helpers"
                         (file-name-directory (or load-file-name

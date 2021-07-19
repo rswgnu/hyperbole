@@ -1,10 +1,10 @@
-;;; hui-jmenu.el --- Popup menus for jumping to and managing buffers, frames, and windows
+;;; hui-jmenu.el --- Popup menus for jumping to and managing buffers, frames, and windows  -*- lexical-binding: t; -*-
 ;;
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     9-Mar-94 at 23:37:28
 ;;
-;; Copyright (C) 1994-2016  Free Software Foundation, Inc.
+;; Copyright (C) 1994-2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
 ;;
 ;; This file is part of GNU Hyperbole.

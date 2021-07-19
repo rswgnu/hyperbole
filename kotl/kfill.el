@@ -1,10 +1,10 @@
-;;; kfill.el --- Fill and justify koutline cells
+;;; kfill.el --- Fill and justify koutline cells  -*- lexical-binding: t; -*-
 ;;
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    23-Jan-94
 ;;
-;; Copyright (C) 1994-2019  Free Software Foundation, Inc.
+;; Copyright (C) 1994-2021  Free Software Foundation, Inc.
 ;; See the "../HY-COPY" file for license information.
 ;;
 ;; This file is part of GNU Hyperbole.

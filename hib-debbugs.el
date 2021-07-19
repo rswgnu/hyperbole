@@ -1,10 +1,10 @@
-;;; hib-debbugs.el --- Implicit button type for browsing GNU debbugs issues.
+;;; hib-debbugs.el --- Implicit button type for browsing GNU debbugs issues.  -*- lexical-binding: t; -*-
 ;;
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Jun-16 at 14:24:53
 ;;
-;; Copyright (C) 2016  Free Software Foundation, Inc.
+;; Copyright (C) 2016, 2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
 ;;
 ;; This file is part of Hyperbole.  It requires the Emacs package
@@ -122,9 +122,9 @@ Note that `issue' or `debbugs' may be used as well in place of `bug'."
     (debbugs-gnu-bugs id)
     (debbugs-gnu-show-discussion)))
 
-(defun debbugs-gnu-query:help (but)
-  "Make a Gnu debbugs id number at point (optionally prefixed with a # sign) display the pretty pretted status of the bug id.
-Ignore other types of Gnu debbugs query strings."
+(defun debbugs-gnu-query:help (_but)
+  "Make a GNU debbugs id number at point (optionally prefixed with a # sign) display the pretty pretted status of the bug id.
+Ignore other types of GNU debbugs query strings."
   (if (and (debbugs-version-sufficient-p)
 	   (debbugs-query:at-p)
 	   (match-beginning 2))

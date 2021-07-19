@@ -1,10 +1,10 @@
-;;; hyrolo-demo.el --- Code to support DEMO introduction to HyRolo
+;;; hyrolo-demo.el --- Code to support DEMO introduction to HyRolo  -*- lexical-binding: t; -*-
 ;;
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     4-Nov-17 at 13:56:47
 ;;
-;; Copyright (C) 2017  Free Software Foundation, Inc.
+;; Copyright (C) 2017-2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
 ;;
 ;; This file is part of GNU Hyperbole.

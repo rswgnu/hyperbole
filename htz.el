@@ -1,10 +1,10 @@
-;;; htz.el --- Timezone-based time and date support for GNU Hyperbole
+;;; htz.el --- Timezone-based time and date support for GNU Hyperbole  -*- lexical-binding: t; -*-
 ;;
 ;; Author:       Masanobu Umeda             / Bob Weiner
 ;;
 ;; Orig-Date:    14-Oct-91 at 07:22:08
 ;;
-;; Copyright (C) 1991-2016  Free Software Foundation, Inc.
+;; Copyright (C) 1991-2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
 ;;
 ;; Derived from "timezone.el" in GNU Emacs.

@@ -1,10 +1,10 @@
-;;; hvm.el --- GNU Hyperbole buttons in mail reader: Vm
+;;; hvm.el --- GNU Hyperbole buttons in mail reader: Vm  -*- lexical-binding: t; -*-
 ;;
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    10-Oct-91 at 01:51:12
 ;;
-;; Copyright (C) 1991-2016  Free Software Foundation, Inc.
+;; Copyright (C) 1991-2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
 ;;
 ;; This file is part of GNU Hyperbole.
@@ -45,13 +45,13 @@
 ;;; Public variables
 ;;; ************************************************************************
 
-;;; Current versions of VM define this next variable in "vm-vars.el".  We
-;;; define it here for earlier VM versions.
+;; Current versions of VM define this next variable in "vm-vars.el".  We
+;; define it here for earlier VM versions.
 (defvar vm-edit-message-mode nil
   "*Major mode to use when editing messages in VM.")
 
-;;; "hmail.el" procedures will branch improperly if a regular mode, like VM's
-;;; default `text-mode', is used for editing.
+;; "hmail.el" procedures will branch improperly if a regular mode, like VM's
+;; default `text-mode', is used for editing.
 (setq vm-edit-message-mode 'vm-edit-mode)
 
 ;;; ************************************************************************
@@ -190,8 +190,8 @@ Has side-effect of widening buffer."
 	(match-beginning 0)
       (point-max))))
 
-;;; Redefine version of this function from "vm-page.el" to hide any
-;;; Hyperbole button data whenever a message is displayed in its entirety.
+;; Redefine version of this function from "vm-page.el" to hide any
+;; Hyperbole button data whenever a message is displayed in its entirety.
 (defun vm-show-current-message ()
   (save-excursion
     (save-excursion
@@ -220,8 +220,8 @@ Has side-effect of widening buffer."
     (if (fboundp 'hproperty:but-create) (hproperty:but-create))
     (vm-update-summary-and-mode-line)))
 
-;;; Redefine version of this function from "vm-page.el" to treat end of
-;;; text (excluding Hyperbole button data) as end of message.
+;; Redefine version of this function from "vm-page.el" to treat end of
+;; text (excluding Hyperbole button data) as end of message.
 (defun vm-scroll-forward-internal (arg)
   (let ((direction (prefix-numeric-value arg))
 	(w (selected-window)))
@@ -258,8 +258,8 @@ Has side-effect of widening buffer."
 	       (set-window-point w (point))
 	       'end-of-message)))))))
 
-;;; Redefine version of this function from "vm-page.el" (called by
-;;; vm-scroll-* functions).  Make it keep Hyperbole button data hidden.
+;; Redefine version of this function from "vm-page.el" (called by
+;; vm-scroll-* functions).  Make it keep Hyperbole button data hidden.
 (defun vm-widen-page ()
   (if (or (> (point-min) (vm-text-of (car vm-message-pointer)))
 	  (/= (point-max) (vm-text-end-of (car vm-message-pointer))))
@@ -269,9 +269,10 @@ Has side-effect of widening buffer."
 			    (vm-text-of (car vm-message-pointer))
 			  (vm-text-end-of (car vm-message-pointer))))))
 
-;;; Redefine version of this function from "vm-edit.el" to hide
-;;; Hyperbole button data when insert edited message from temporary buffer.
-(hypb:function-overload 'vm-edit-message nil '(hmail:msg-narrow))
+;; Redefine version of this function from "vm-edit.el" to hide
+;; Hyperbole button data when insert edited message from temporary buffer.
+(advice-add 'vm-edit-message :after
+            (lambda () (&rest _) (hmail:msg-narrow)))
 
 ;;; Redefine version of this function from "vm-edit.el" to hide
 ;;; Hyperbole button data when insert edited message from temporary buffer.
@@ -392,12 +393,12 @@ Has side-effect of widening buffer."
 	(t (error "vm search code is missing, can't continue"))))
 )
 
-;;; Hide any Hyperbole button data when reply to or forward a message.
-;;; See "vm-reply.el".
+;; Hide any Hyperbole button data when reply to or forward a message.
+;; See "vm-reply.el".
 (var:append 'vm-mail-mode-hook '(hmail:msg-narrow))
 
-;;; Redefine this function from "vm-folder.el" called whenever new mail is
-;;; incorporated so that it will highlight Hyperbole buttons when possible.
+;; Redefine this function from "vm-folder.el" called whenever new mail is
+;; incorporated so that it will highlight Hyperbole buttons when possible.
 ;;  Returns list of new messages if there were any new messages, nil otherwise.
 (defun vm-assimilate-new-messages (&optional
 				   dont-read-attributes
@@ -516,8 +517,8 @@ Has side-effect of widening buffer."
         (vm-sort-messages vm-ml-sort-keys))
     new-messages ))
 
-;;; Redefine version of `vm-force-mode-line-update' from "vm-folder.el"
-;;; to highlight Hyperbole buttons in summary buffers.
+;; Redefine version of `vm-force-mode-line-update' from "vm-folder.el"
+;; to highlight Hyperbole buttons in summary buffers.
 (defun vm-force-mode-line-update ()
   "Force a mode line update in all frames."
   (if vm-summary-buffer

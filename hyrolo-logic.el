@@ -1,10 +1,10 @@
-;;; hyrolo-logic.el --- Logic functions for GNU Hyperbole Rolo files
+;;; hyrolo-logic.el --- Logic functions for GNU Hyperbole Rolo files  -*- lexical-binding: t; -*-
 ;;
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    13-Jun-89 at 22:57:33
 ;;
-;; Copyright (C) 1989-2016  Free Software Foundation, Inc.
+;; Copyright (C) 1989-2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
 ;;
 ;; This file is part of GNU Hyperbole.

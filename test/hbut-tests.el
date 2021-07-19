@@ -117,5 +117,10 @@ BUG: hbut:at-p does not recognise a button created within a buffer."
           (should (equal (hattr:get (hbut:at-p) 'lbl-key) "label")))
       (delete-file test-file))))
 
+;; FIXME: This file can only be byte-compiled when `el-mock' is installed.
+;; Local Variables:
+;; no-byte-compile: t
+;; End:
+
 (provide 'hbut-tests)
 ;;; hbut-tests.el ends here

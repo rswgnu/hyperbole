@@ -1,10 +1,10 @@
-;;; hui-select.el --- Select larger and larger syntax-driven regions in a buffer.
+;;; hui-select.el --- Select larger and larger syntax-driven regions in a buffer.  -*- lexical-binding: t; -*-
 ;;
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Oct-96 at 02:25:27
 ;;
-;; Copyright (C) 1996-2019  Free Software Foundation, Inc.
+;; Copyright (C) 1996-2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
 ;;
 ;; This file is part of GNU Hyperbole.
