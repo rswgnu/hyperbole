@@ -1,3 +1,8 @@
+2021-07-20  Mats Lidell  <matsl@gnu.org>
+
+* test/hpath-tests.el (hpath:subsitute-value-test): Add tests for
+    hpath:substitute-value.
+
 2021-07-19  Mats Lidell  <matsl@gnu.org>
 
 * test/hmouse-drv-tests.el (hbut-etags-test): Rename test case due to name
