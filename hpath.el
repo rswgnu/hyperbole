@@ -1,10 +1,10 @@
-;;; hpath.el --- GNU Hyperbole support routines for handling POSIX and MSWindows paths
+;;; hpath.el --- GNU Hyperbole support routines for handling POSIX and MSWindows paths  -*- lexical-binding: t; -*-
 ;;
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     1-Nov-91 at 00:44:23
 ;;
-;; Copyright (C) 1991-2020  Free Software Foundation, Inc.
+;; Copyright (C) 1991-2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
 ;;
 ;; This file is part of GNU Hyperbole.
@@ -1517,13 +1517,14 @@ in-buffer path will not match."
 
 (defun hpath:substitute-value (path)
   "Substitute matching value for Emacs Lisp variables and environment variables in PATH and return PATH."
-  ;; Uses free variables `match' and `start' from `hypb:replace-match-string'.
   (substitute-in-file-name
    (hpath:substitute-match-value
     "\\$@?\{\\([^\}]+\\)@?\}"
     path
-    (lambda (matched-str)
-      (let* ((var-group (substring path match start))
+    (lambda (_matched_str)
+      (let* ((match (match-beginning 0))
+             (start (match-end 0))
+             (var-group (substring path match start))
 	     (rest-of-path (substring path start))
 	     (var-ext (substring path (match-beginning 1) (match-end 1)))
 	     (var-name (if (= ?@ (aref var-ext (1- (length var-ext))))
