@@ -1,10 +1,10 @@
-;;; hui-dired-sidebar.el --- Hyperbole Smart Key support for dired sidebar
+;;; hui-dired-sidebar.el --- Hyperbole Smart Key support for dired sidebar  -*- lexical-binding: t; -*-
 ;;
 ;; Author:       Mats Lidell
 ;;
 ;; Orig-Date:    25-Jul-20
 ;;
-;; Copyright (C) 2020 Free Software Foundation, Inc.  See the
+;; Copyright (C) 2020-2021 Free Software Foundation, Inc.  See the
 ;; "HY-COPY" file for license information.
 ;;
 ;; This file is part of GNU Hyperbole.

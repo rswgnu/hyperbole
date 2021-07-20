@@ -1,10 +1,10 @@
-;;; hmouse-mod.el --- Action Key acts as CONTROL modifier and Assist Key as META modifier.
+;;; hmouse-mod.el --- Action Key acts as CONTROL modifier and Assist Key as META modifier.  -*- lexical-binding: t; -*-
 ;;
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     8-Oct-92 at 19:08:31
 ;;
-;; Copyright (C) 1992-2016  Free Software Foundation, Inc.
+;; Copyright (C) 1992-2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
 ;;
 ;; This file is part of GNU Hyperbole.

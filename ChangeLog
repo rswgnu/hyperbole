@@ -1,3 +1,14 @@
+2021-07-19  Mats Lidell  <matsl@gnu.org>
+
+* test/hmouse-drv-tests.el (hbut-etags-test): Rename test case due to name
+    clash.
+
+* Part one of patch from Stefan Monnier. Thank you Stefan.
+  The part applied contains updates to some file regarding:
+  - Use lexical scoping
+  - Update copyright notice
+  - Other small non functional changes
+
 2021-07-11  Mats Lidell  <matsl@gnu.org>
 
 * test/hbut-tests.el (gbut-program-calls-ebut-program)

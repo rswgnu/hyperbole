@@ -1,4 +1,4 @@
-;;; hui-window.el --- Smart Mouse Key window and modeline depress/release actions.
+;;; hui-window.el --- Smart Mouse Key window and modeline depress/release actions.  -*- lexical-binding: t; -*-
 ;;
 ;; Author:       Bob Weiner
 ;;

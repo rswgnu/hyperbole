@@ -1,10 +1,10 @@
-;;; hmail.el --- GNU Hyperbole buttons embedded in e-mail messages
+;;; hmail.el --- GNU Hyperbole buttons embedded in e-mail messages  -*- lexical-binding: t; -*-
 ;;
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     9-Oct-91 at 18:38:05
 ;;
-;; Copyright (C) 1991-2016  Free Software Foundation, Inc.
+;; Copyright (C) 1991-2021  Free Software Foundation, Inc.
 ;; See the HY-COPY (Hyperbole) or BR-COPY (OO-Browser) file for license
 ;; information.
 ;;

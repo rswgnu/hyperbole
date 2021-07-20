@@ -16,6 +16,7 @@
 ;;; Code:
 
 (require 'hib-social)
+(require 'ert)                          ;To define `should' earlier.
 
 ;; Hib-social
 (defun hib-social-should-browse-twitter-url (url &optional new-window)

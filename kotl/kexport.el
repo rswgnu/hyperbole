@@ -1,4 +1,4 @@
-;;; kexport.el --- Convert koutlines to other textual formats, including HTML
+;;; kexport.el --- Convert koutlines to other textual formats, including HTML  -*- lexical-binding: t; -*-
 ;;
 ;; Author:       Bob Weiner
 ;;
