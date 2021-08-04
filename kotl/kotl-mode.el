@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    6/30/93
-;; Last-Mod:     16-Oct-22 at 19:29:20 by Mats Lidell
+;; Last-Mod:      8-Jan-23 at 00:06:52 by Mats Lidell
 ;;
 ;; Copyright (C) 1993-2022  Free Software Foundation, Inc.
 ;; See the "../HY-COPY" file for license information.
@@ -125,16 +125,17 @@ It provides the following keys:
     (setq hyrolo-entry-regexp (concat "^" kview:outline-regexp)
 	  kotl-previous-mode major-mode
 	  ;; Remove outline minor-mode mode-line indication.
+	  ;; FIXME: Why?
 	  minor-mode-alist (copy-sequence minor-mode-alist)
-	  minor-mode-alist (set:remove '(outline-minor-mode " Outl")
-				       minor-mode-alist)
- 	  minor-mode-alist (set:remove '(selective-display " Outline")
-				       minor-mode-alist)
-	  minor-mode-alist (set:remove '(selective-display " Otl")
-				       minor-mode-alist)
+	  minor-mode-alist (delete '(outline-minor-mode " Outl")
+				   minor-mode-alist)
+ 	  minor-mode-alist (delete '(selective-display " Outline")
+				   minor-mode-alist)
+	  minor-mode-alist (delete '(selective-display " Otl")
+				   minor-mode-alist)
 	  ;; Remove indication that buffer is narrowed.
-	  mode-line-format (copy-sequence mode-line-format)
-	  mode-line-format (set:remove "%n" mode-line-format)
+	  mode-line-format (remove "%n" mode-line-format)
+	  outline-regexp (concat " *[0-9][0-9a-z.]*" kview:default-label-separator)
 	  outline-level  #'kcell-view:level
 	  outline-regexp kview:outline-regexp))
   ;;
@@ -2563,9 +2564,10 @@ ATTRIBUTE and ignore any value of POS."
        (setq plist (cdr plist)))
      ;; Remove read-only attributes
      (setq existing-attributes (apply #'set:create existing-attributes)
-	   existing-attributes (set:difference
+	   existing-attributes (cl-set-difference
 				existing-attributes
-				kcell:read-only-attributes))
+				kcell:read-only-attributes
+				:test #'equal))
 
      (while (zerop (length (setq attribute
 				 (completing-read
@@ -2612,9 +2614,10 @@ confirmation."
        (setq plist (cdr plist)))
      ;; Remove read-only attributes
      (setq existing-attributes (apply #'set:create existing-attributes)
-	   existing-attributes (set:difference
+	   existing-attributes (cl-set-difference
 				existing-attributes
-				kcell:read-only-attributes))
+				kcell:read-only-attributes
+				:test #'equal))
 
      (while (zerop (length (setq attribute
 				 (completing-read
@@ -2622,7 +2625,7 @@ confirmation."
 					  (if top-cell-flag
 					      "0"
 					    (kcell-view:label)))
-				  (mapcar 'list
+				  (mapcar '#list
 					  (mapcar 'symbol-name
 						  existing-attributes))))))
        (beep))

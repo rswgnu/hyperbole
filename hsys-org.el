@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     2-Jul-16 at 14:54:14
-;; Last-Mod:      3-Dec-22 at 02:33:37 by Bob Weiner
+;; Last-Mod:      7-Jan-23 at 23:59:42 by Mats Lidell
 ;;
 ;; Copyright (C) 2016-2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -29,6 +29,7 @@
 ;;; ************************************************************************
 
 (eval-when-compile (require 'hmouse-drv))
+(require 'cl-lib)
 (require 'hbut)
 (require 'org)
 (require 'org-element)
@@ -39,10 +40,12 @@
 (defun hsys-org-meta-return-shared-p ()
   "Return non-nil if hyperbole-mode is active and shares the org-meta-return key."
   (let ((org-meta-return-keys (where-is-internal #'org-meta-return org-mode-map)))
-    (when (or (set:intersection org-meta-return-keys
-				(where-is-internal #'hkey-either hyperbole-mode-map))
-	      (set:intersection org-meta-return-keys
-				(where-is-internal #'action-key hyperbole-mode-map)))
+    (when (or (cl-intersection org-meta-return-keys
+			       (where-is-internal #'hkey-either hyperbole-mode-map)
+			       :test #'equal)
+	      (cl-intersection org-meta-return-keys
+			       (where-is-internal #'action-key hyperbole-mode-map)
+			       :test #'equal))
       t)))
 
 ;;;###autoload
@@ -82,7 +85,8 @@ with different settings of this option.  For example, a nil value makes
 
 ;;;###autoload
 (defvar hsys-org-mode-function #'hsys-org-mode-p
-"*Zero arg bool func that returns non-nil if point is in an Org-related buffer.")
+  "Function that determines whether point is in an Org mode-related buffer.
+Called with no argument and should return non-nil if and only if it is.")
 
 ;;; ************************************************************************
 ;;; Public Action Types

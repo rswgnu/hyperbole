@@ -1,9 +1,9 @@
-;;; hact.el --- GNU Hyperbole button action handling  -*- lexical-binding: t; -let*-
+;;; hact.el --- GNU Hyperbole button action handling  -*- lexical-binding: t; -*-
 ;;
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    18-Sep-91 at 02:57:09
-;; Last-Mod:      7-Oct-22 at 23:01:56 by Mats Lidell
+;; Last-Mod:      7-Jan-23 at 23:58:55 by Mats Lidell
 ;;
 ;; Copyright (C) 1991-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -158,12 +158,11 @@ If no SYMBOLS are given, set it to the empty set.  Return the symset.  Uses
 
 (defun    symset:add (elt symbol property)
   "Add ELT to SYMBOL's PROPERTY set.
-Return nil iff ELT is already in SET; otherwise, return PROPERTY's value.
+Return PROPERTY's value.
 Use `eq' for comparison."
   (let* ((set (get symbol property))
-	 (set:equal-op 'eq)
-	 (new-set (set:add elt set)))
-    (and new-set (put symbol property new-set))))
+	 (new-set (if (memq elt set) set (cons elt set))))
+    (put symbol property new-set)))
 
 (defun    symset:clear (symbol)
   "Set SYMBOL's symset to nil."
@@ -178,9 +177,8 @@ Use `eq' for comparison."
 (defun    symset:remove (elt symbol property)
   "Remove ELT from SYMBOL's PROPERTY set and return the new set.
 Assume PROPERTY is a valid set.  Use `eq' for comparison."
-  (let ((set (get symbol property))
-	(set:equal-op 'eq))
-    (put symbol property (set:remove elt set))))
+  (let ((set (get symbol property)))
+    (put symbol property (delq elt set))))
 
 ;;; ========================================================================
 ;;; htype class - Hyperbole Types, e.g. action and implicit button types
