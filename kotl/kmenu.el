@@ -1,10 +1,10 @@
-;;; kmenu.el --- Pulldown and popup menus for kotl-mode, the Koutliner mode
+;;; kmenu.el --- Pulldown and popup menus for kotl-mode, the Koutliner mode  -*- lexical-binding: t; -*-
 ;;
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    28-Mar-94 at 11:22:09
 ;;
-;; Copyright (C) 1994-2019  Free Software Foundation, Inc.
+;; Copyright (C) 1994-2021  Free Software Foundation, Inc.
 ;; See the "../HY-COPY" file for license information.
 ;;
 ;; This file is part of GNU Hyperbole.

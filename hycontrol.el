@@ -1,4 +1,4 @@
-;;; hycontrol.el --- Interactive sizing, moving, replicating and deleting of windows and frames
+;;; hycontrol.el --- Interactive sizing, moving, replicating and deleting of windows and frames  -*- lexical-binding: t; -*-
 ;;
 ;; Author:       Bob Weiner
 ;;
@@ -1411,7 +1411,7 @@ Menu or IBuffer mode."
       (setq hycontrol--invert-display-buffer-predicates
 	    (when items 'ignore))
       ;; Prepend items to buffer list.
-      (apply 'set:create (nconc items (buffer-list (selected-frame)))))))
+      (apply #'set:create (nconc items (buffer-list (selected-frame)))))))
 
 ;;;###autoload
 (defun hycontrol-windows-grid (arg)
@@ -1459,7 +1459,7 @@ See documentation of `hycontrol-windows-grid' for further details."
   (interactive
    (list (prefix-numeric-value current-prefix-arg)
 	 (let* ((set:equal-op 'eq)
-		(mode-strings (mapcar 'symbol-name (apply #'set:create (mapcar (lambda (buf) (buffer-local-value 'major-mode buf))
+		(mode-strings (mapcar #'symbol-name (apply #'set:create (mapcar (lambda (buf) (buffer-local-value 'major-mode buf))
 									       (hycontrol-windows-grid-buffer-list))))))
 	   (intern-soft (completing-read "(HyControl Grid Windows): Major mode of buffers to display: "
 					 mode-strings nil t nil nil (symbol-name major-mode))))))

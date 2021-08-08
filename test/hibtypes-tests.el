@@ -216,11 +216,12 @@
 ; Need cross reference table built by externaö cxref program
 
 ;; ctags
-; Seems ctags -v does not give the proper answer
+;; Seems ctags -v does not give the proper answer
+;; FIXME: Rewrite to not depend on hy-test-helpers.el
 (ert-deftest ibtypes::ctags-vgrind-test ()
   (unwind-protect
       (with-temp-buffer
-        (insert "hy-test-helpers:consume-input-events hy-test-helpers.el 21\n")
+        (insert "hy-test-helpers:consume-input-events hy-test-helpers.el 22\n")
         (goto-char (point-min))
         (forward-char 4)
         (let ((default-directory (expand-file-name "test" hyperb:dir)))
@@ -230,12 +231,13 @@
     (kill-buffer "hy-test-helpers.el")))
 
 ;; etags
+;; FIXME: Rewrite to not depend on hy-test-helpers.el
 (ert-deftest ibtypes::etags-test ()
   (unwind-protect
       (with-temp-buffer
         (insert "\n")
         (insert "hy-test-helpers.el,103\n")
-        (insert "(defun hy-test-helpers:consume-input-events 21,359\n")
+        (insert "(defun hy-test-helpers:consume-input-events 22,359\n")
         (rename-buffer (concat "TAGS" (buffer-name)))
         (goto-char (point-min))
         (forward-line 2)

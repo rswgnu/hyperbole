@@ -16,7 +16,8 @@
 ;;; Code:
 
 (require 'ert)
-(require 'cl-macs)
+(require 'hmouse-drv)                   ;For `action-key'.
+(eval-when-compile (require 'cl-lib))
 
 (defun hy-test-helpers:consume-input-events ()
   "Use recusive-edit to consume the events kbd-key generate."

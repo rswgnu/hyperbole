@@ -1,10 +1,10 @@
-;;; hmoccur.el --- Multi-buffer or multi-file regexp occurrence location.
+;;; hmoccur.el --- Multi-buffer or multi-file regexp occurrence location.  -*- lexical-binding: t; -*-
 ;;
 ;; Author:       Markus Freericks <Mfx@cs.tu-berlin.de> / Bob Weiner
 ;;
 ;; Orig-Date:     1-Aug-91
 ;;
-;; Copyright (C) 1991-2016  Free Software Foundation, Inc.
+;; Copyright (C) 1991-2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
 ;;
 ;; This file is part of GNU Hyperbole.
@@ -69,7 +69,8 @@ serves as a menu to find any of the occurrences in this buffer.
   (let*  ((buffers (if file-regexp (directory-files
 				    (expand-file-name
 				     (or (file-name-directory
-					  file-regexp) "."))
+					  file-regexp)
+					 "."))
 				    'full (file-name-nondirectory file-regexp))
 		     (buffer-list)))
 	  (occbuf (get-buffer-create "*Moccur*"))

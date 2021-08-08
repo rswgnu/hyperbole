@@ -1,4 +1,4 @@
-;;; hib-doc-id.el --- Implicit button type for document id index entries
+;;; hib-doc-id.el --- Implicit button type for document id index entries  -*- lexical-binding: t; -*-
 ;;
 ;; Author:       Bob Weiner
 ;;

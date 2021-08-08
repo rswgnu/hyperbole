@@ -1,10 +1,10 @@
-;;; hbmap.el --- GNU Hyperbole button map maintenance for queries and lookups.
+;;; hbmap.el --- GNU Hyperbole button map maintenance for queries and lookups.  -*- lexical-binding: t; -*-
 ;;
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     6-Oct-91 at 06:34:05
 ;;
-;; Copyright (C) 1991-2016  Free Software Foundation, Inc.
+;; Copyright (C) 1991-2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
 ;;
 ;; This file is part of GNU Hyperbole.
@@ -107,8 +107,7 @@ the error.  Optional NO-SAVE disables saving of the map after operation."
 
 (defvar hbmap:dir-user
   (if (and hyperb:microsoft-os-p
-	   (or (not (fboundp 'getenv))
-	       (not (getenv "HOME"))))
+	   (not (getenv "HOME")))
       "c:/_hyperb/" "~/.hyperb/")
   "Per user directory in which to store top level Hyperbole map data.
 Must end with a directory separator.

@@ -136,5 +136,11 @@ Modifying the button but keeping the label creates a dubbel label."
           (should (equal (hattr:get (hbut:at-p) 'lbl-key) "label")))
       (delete-file file))))
 
+;; This file can't be byte-compiled without `with-simulated-input' which
+;; is not part of the actual dependencies, so:
+;;   Local Variables:
+;;   no-byte-compile: t
+;;   End:
+
 (provide 'hui-tests)
 ;;; hui-tests.el ends here

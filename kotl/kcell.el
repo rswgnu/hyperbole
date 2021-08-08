@@ -1,10 +1,10 @@
-;;; kcell.el --- Internal representation of koutline kcells used by kviews
+;;; kcell.el --- Internal representation of koutline kcells used by kviews  -*- lexical-binding: t; -*-
 ;;
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    5/1/1993
 ;;
-;; Copyright (C) 1993-2016  Free Software Foundation, Inc.
+;; Copyright (C) 1993-2021  Free Software Foundation, Inc.
 ;; See the "../HY-COPY" file for license information.
 ;;
 ;; This file is part of GNU Hyperbole.

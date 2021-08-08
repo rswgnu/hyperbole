@@ -1,10 +1,10 @@
-;;; hui-treemacs.el --- GNU Hyperbole Smart Key support for the Treemacs file manager package
+;;; hui-treemacs.el --- GNU Hyperbole Smart Key support for the Treemacs file manager package  -*- lexical-binding: t; -*-
 ;;
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Nov-17
 ;;
-;; Copyright (C) 2017-2019  Free Software Foundation, Inc.
+;; Copyright (C) 2017-2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
 ;;
 ;; This file is part of GNU Hyperbole.

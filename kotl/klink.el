@@ -1,10 +1,10 @@
-;;; klink.el --- Implicit reference to a kcell action type, for use in koutlines
+;;; klink.el --- Implicit reference to a kcell action type, for use in koutlines  -*- lexical-binding: t; -*-
 ;;
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    15-Nov-93 at 12:15:16
 ;;
-;; Copyright (C) 1993-2016  Free Software Foundation, Inc.
+;; Copyright (C) 1993-2021  Free Software Foundation, Inc.
 ;; See the "../HY-COPY" file for license information.
 ;;
 ;; This file is part of GNU Hyperbole.

@@ -1,10 +1,10 @@
-;;; hhist.el --- History of Hyperbole buttons selected
+;;; hhist.el --- History of Hyperbole buttons selected  -*- lexical-binding: t; -*-
 ;;
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    24-Apr-91 at 03:36:23
 ;;
-;; Copyright (C) 1991-2016  Free Software Foundation, Inc.
+;; Copyright (C) 1991-2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
 ;;
 ;; This file is part of GNU Hyperbole.

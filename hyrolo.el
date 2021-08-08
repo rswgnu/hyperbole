@@ -1,4 +1,4 @@
-;;; hyrolo.el --- Hierarchical, multi-file, easy-to-use contact management system
+;;; hyrolo.el --- Hierarchical, multi-file, easy-to-use contact management system  -*- lexical-binding: t; -*-
 ;;
 ;; Author:       Bob Weiner
 ;;

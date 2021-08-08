@@ -19,7 +19,7 @@
 
 (require 'ert)
 (require 'hsys-org)
-(require 'el-mock)
+(if t (require 'el-mock))
 
 (ert-deftest hsys-org:cycle-on-header-cycles-visibility ()
   "Hide an outline header."
@@ -30,7 +30,7 @@
     (should (not (org-check-for-hidden 'headlines)))
     (hsys-org-cycle)
     (should (org-check-for-hidden 'headlines))
-    (next-line)
+    (with-suppressed-warnings ((interactive-only next-line)) (next-line))
     (should (equal (line-number-at-pos) 4))))
 
 (ert-deftest hsys-org:region-with-text-property-value ()
