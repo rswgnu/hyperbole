@@ -340,7 +340,7 @@ bound to a valid function."
 	(funcall assist-key-default-function)
 	t)))
 
-(defun hkey-either (arg)
+(defun hkey-either (&optional arg)
   "Execute `action-key' or with non-nil ARG execute `assist-key'."
   (interactive "P")
   (when (and (featurep 'hycontrol)

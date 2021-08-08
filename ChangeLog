@@ -1,3 +1,8 @@
+2021-07-17  Bob Weiner  <rsw@gnu.org>
+
+* hmouse-drv.el (hkey-either): Made prefix arg optional so can call programmatically
+    without an arg just by name.
+
 2021-07-11  Mats Lidell  <matsl@gnu.org>
 
 * test/hbut-tests.el (gbut-program-calls-ebut-program)
