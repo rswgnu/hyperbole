@@ -1,3 +1,7 @@
+2021-07-18  Bob Weiner  <rsw@gnu.org>
+
+* hbut.el (ebut:program): Use 'actype:action' to generalize actype handling.
+
 2021-07-17  Bob Weiner  <rsw@gnu.org>
 
 * hmouse-drv.el (hkey-either): Made prefix arg optional so can call programmatically

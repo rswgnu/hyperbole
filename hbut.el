@@ -421,7 +421,7 @@ the button LABEL which is automatically provided as the first argument.
 For interactive creation, use `hui:ebut-create' instead."
   (save-excursion
      (let ((but-buf (current-buffer))
-	   (actype-sym (intern-soft (concat "actypes::" (symbol-name actype)))))
+	   (actype-sym (actype:action actype)))
       (hui:buf-writable-err but-buf "ebut-create")
       (condition-case err
 	  (progn
