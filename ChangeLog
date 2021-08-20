@@ -1,3 +1,8 @@
+2021-08-19  Mats Lidell  <matsl@gnu.org>
+
+* test/hbut-tests.el (hbut-tests:should-match-tmp-folder): Add check for
+    tmp folder.
+
 2021-07-20  Mats Lidell  <matsl@gnu.org>
 
 * hpath.el: Part two of patch from Stefan Monnier. Thank you Stefan. Use

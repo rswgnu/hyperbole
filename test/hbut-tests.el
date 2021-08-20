@@ -20,6 +20,13 @@
 (require 'hactypes)
 (require 'el-mock)
 
+(defun hbut-tests:should-match-tmp-folder (tmp)
+  "Check TMP match either regular /tmp or private/tmp.
+Needed since hyperbole expands all links to absolute paths and
+/tmp can be a symbolic link."
+  (should (or (equal tmp '("/tmp"))
+              (equal tmp '("private/tmp")))))
+
 (ert-deftest ebut-program-link-to-directory ()
   "Programatically create ebut with link-to-directory."
   (let ((file (make-temp-file "hypb_" nil ".txt")))
@@ -67,7 +74,7 @@
           (let ((args (hbut:delete)))
             (should-not (hbut:at-p))
             (should (equal (hbdata:actype args) "actypes::link-to-directory"))
-            (should (equal (hbdata:args args) '("/tmp")))
+            (hbut-tests:should-match-tmp-folder (hbdata:args args))
             ))
       (delete-file file))))
 
@@ -93,7 +100,7 @@
             (gbut:ebut-program "global" 'link-to-directory "/tmp"))
 	  (with-current-buffer test-buffer
             (should (eq (hattr:get (hbut:at-p) 'actype) 'actypes::link-to-directory))
-            (should (equal (hattr:get (hbut:at-p) 'args) '("/tmp")))
+            (hbut-tests:should-match-tmp-folder (hattr:get (hbut:at-p) 'args))
             (should (equal (hattr:get (hbut:at-p) 'lbl-key) "global")))))))
 
 (ert-deftest hypb:program-create-ebut-in-buffer ()
