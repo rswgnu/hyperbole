@@ -410,7 +410,7 @@ button is found in the current buffer."
        "(ebut:operate): Operation failed.  Check button attribute permissions: %s"
        hattr:filename))))
 
-(defun ebut:program (label actype &rest args)
+(defun    ebut:program (label actype &rest args)
   "Programmatically create an explicit Hyperbole button at point from LABEL, ACTYPE (action type), and optional actype ARGS.
 Insert LABEL text at point surrounded by <( )> delimiters, adding any
 necessary instance number of the button after the LABEL.  ACTYPE may
@@ -644,7 +644,7 @@ Return nil if no matching button is found."
   "Return list of global button labels."
   (mapcar 'hbut:key-to-label (gbut:key-list)))
 
-(defun gbut:ebut-program (label actype &rest args)
+(defun    gbut:ebut-program (label actype &rest args)
   "Programmatically create a global explicit Hyperbole button at point from LABEL, ACTYPE (action type), and optional actype ARGS.
 Insert LABEL text at the end of the personal/global button file
 surrounded by <( )> delimiters, adding any necessary instance
