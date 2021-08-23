@@ -1,7 +1,6 @@
-TARBALL=hyperbole-8.0.0pre0.20210605.220551
-
-curl -O https://elpa.gnu.org/devel/$TARBALL.tar
-tar -xf $TARBALL.tar
-ln -s $TARBALL hyperbole
+curl -O https://elpa.gnu.org/devel/hyperbole.tar
+tar -xf hyperbole.tar
+rm hyperbole.tar
+ln -s hyperbole* hyperbole
 cd hyperbole
 make bin
