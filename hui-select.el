@@ -203,6 +203,76 @@
 (defvar hui-select-prior-buffer nil)
 
 ;;; ************************************************************************
+;;; Private variables
+;;; ************************************************************************
+
+(defconst hui-select-syntax-table (make-syntax-table emacs-lisp-mode-syntax-table)
+  "Syntax table to use when selecting delimited things.")
+;; Make braces be thing delimiters, not punctuation.
+(modify-syntax-entry ?\{ "\(\}" hui-select-syntax-table)
+(modify-syntax-entry ?\} "\)\{" hui-select-syntax-table)
+
+(defvar hui-select-bigger-alist
+  '((char nil)
+    (whitespace hui-select-whitespace)
+    (word hui-select-word)
+    (symbol hui-select-symbol)
+    (punctuation nil)
+    (string hui-select-string)
+    (text nil)
+    (comment hui-select-comment)
+    (markup-pair nil)
+    (preprocessor-def nil)
+    (sexp hui-select-sexp)
+    (sexp-start nil)
+    (sexp-end nil)
+    (sexp-up hui-select-sexp-up)
+    (line hui-select-line)
+    (sentence hui-select-sentence)
+    (brace-def-or-declaration hui-select-brace-def-or-declaration)
+    (indent-def hui-select-indent-def)
+    (paragraph hui-select-paragraph)
+    (page hui-select-page)
+    (buffer hui-select-buffer)
+    )
+  "Unordered list of (<region-type-symbol> <region-selection-function>) pairs.
+Used to go from one thing to a bigger thing.  See `hui-select-bigger-thing'.
+Nil value for <region-selection-function> means that region type is skipped
+over when trying to grow the region and is only used when a selection is made
+with point on a character that triggers that type of selection.")
+
+(defvar hui-select-prior-buffer nil)
+(defvar hui-select-prior-point nil)
+
+(defvar hui-select-previous 'char
+  "Most recent type of selection.  Must be set by all hui-select functions.")
+
+(defvar hui-select-region (cons nil nil)
+  "Cons cell that contains a region (<beginning> . <end>).
+The function `hui-select-set-region' updates and returns it.")
+
+(defvar hui-select-old-region (cons nil nil)
+  "Cons cell that contains a region (<beginning> . <end>).")
+
+(defcustom hui-select-syntax-alist
+  '((?w  . hui-select-word)
+    (?_  . hui-select-symbol)
+    (?\" . hui-select-string)
+    (?\( . hui-select-sexp-start)
+    (?\$ . hui-select-sexp-start)
+    (?\' . hui-select-sexp-start)
+    (?\) . hui-select-sexp-end)
+    (?   . hui-select-whitespace)
+    (?\< . hui-select-comment)
+    (?\. . hui-select-punctuation))
+  "*Unordered list of pairs of the form (<syntax-char> <function>) used by the function `hui-select-syntactical-region'.
+Each <function> takes a single position argument and returns a
+region (start . end) defining the boundaries of the thing at that position."
+  :type '(repeat (cons (character :tag "Syntax-Char") function))
+  :group 'hyperbole-commands)
+
+
+;;; ************************************************************************
 ;;; Public functions
 ;;; ************************************************************************
 
@@ -1345,76 +1415,6 @@ list, hui-select-markup-modes."
   "Return (start . end) of the buffer at POS."
   (setq hui-select-previous 'buffer)
   (hui-select-set-region (point-min) (point-max)))
-
-;;; ************************************************************************
-;;; Private variables
-;;; ************************************************************************
-
-(defconst hui-select-syntax-table (make-syntax-table emacs-lisp-mode-syntax-table)
-  "Syntax table to use when selecting delimited things.")
-;; Make braces be thing delimiters, not punctuation.
-(modify-syntax-entry ?\{ "\(\}" hui-select-syntax-table)
-(modify-syntax-entry ?\} "\)\{" hui-select-syntax-table)
-
-(defvar hui-select-bigger-alist
-  '((char nil)
-    (whitespace hui-select-whitespace)
-    (word hui-select-word)
-    (symbol hui-select-symbol)
-    (punctuation nil)
-    (string hui-select-string)
-    (text nil)
-    (comment hui-select-comment)
-    (markup-pair nil)
-    (preprocessor-def nil)
-    (sexp hui-select-sexp)
-    (sexp-start nil)
-    (sexp-end nil)
-    (sexp-up hui-select-sexp-up)
-    (line hui-select-line)
-    (sentence hui-select-sentence)
-    (brace-def-or-declaration hui-select-brace-def-or-declaration)
-    (indent-def hui-select-indent-def)
-    (paragraph hui-select-paragraph)
-    (page hui-select-page)
-    (buffer hui-select-buffer)
-    )
-  "Unordered list of (<region-type-symbol> <region-selection-function>) pairs.
-Used to go from one thing to a bigger thing.  See `hui-select-bigger-thing'.
-Nil value for <region-selection-function> means that region type is skipped
-over when trying to grow the region and is only used when a selection is made
-with point on a character that triggers that type of selection.")
-
-(defvar hui-select-prior-buffer nil)
-(defvar hui-select-prior-point nil)
-
-(defvar hui-select-previous 'char
-  "Most recent type of selection.  Must be set by all hui-select functions.")
-
-(defvar hui-select-region (cons nil nil)
-  "Cons cell that contains a region (<beginning> . <end>).
-The function `hui-select-set-region' updates and returns it.")
-
-(defvar hui-select-old-region (cons nil nil)
-  "Cons cell that contains a region (<beginning> . <end>).")
-
-(defcustom hui-select-syntax-alist
-  '((?w  . hui-select-word)
-    (?_  . hui-select-symbol)
-    (?\" . hui-select-string)
-    (?\( . hui-select-sexp-start)
-    (?\$ . hui-select-sexp-start)
-    (?\' . hui-select-sexp-start)
-    (?\) . hui-select-sexp-end)
-    (?   . hui-select-whitespace)
-    (?\< . hui-select-comment)
-    (?\. . hui-select-punctuation))
-  "*Unordered list of pairs of the form (<syntax-char> <function>) used by the function `hui-select-syntactical-region'.
-Each <function> takes a single position argument and returns a
-region (start . end) defining the boundaries of the thing at that position."
-  :type '(repeat (cons (character :tag "Syntax-Char") function))
-  :group 'hyperbole-commands)
-
 
 (provide 'hui-select)
 

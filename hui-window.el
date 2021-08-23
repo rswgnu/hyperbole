@@ -78,6 +78,7 @@
 (require 'hycontrol)
 ;; If installed, use pulse library for momentary highlighting of buffer/file item lines.
 (require 'pulse nil t)
+(require 'hui-select)
 
 ;;; ************************************************************************
 ;;; Public variables
