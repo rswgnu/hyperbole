@@ -395,3 +395,12 @@ all-tests: test-all
 test-all:
 	@echo "# Tests: $(TEST_ERT_FILES)"
 	$(INTERACTIVE) --eval "(load-file \"test/hy-test-dependencies.el\")" --eval "(progn $(LOAD_TEST_ERT_FILES) (ert-run-tests-interactively t))"
+
+# Hyperbole install tests - Verify that hyperbole can be installed
+# using different sources. See folder "install-test"
+.PHONY: install-elpa install-tarball install-straight install-all
+install-all: install-elpa install-tarball install-straight
+
+install-elpa install-tarball install-straight:
+	@echo "Install Hyperbole using $@"
+	(cd ./install-test/ && ./local-install-test.sh $(subst install-,,$@))
