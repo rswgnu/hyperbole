@@ -25,6 +25,7 @@
 
 (require 'hversion)
 (require 'hvar)
+(require 'browse-url)
 
 ;;; ************************************************************************
 ;;; Public declarations
@@ -216,9 +217,9 @@ Hyperbole, and then restart Emacs."
 	 (hyperbole-toggle-messaging (if value 0 1)))
   :group 'hyperbole-buttons)
 
-(defcustom hyperbole-web-search-browser-function browse-url-browser-function
+(defcustom hyperbole-web-search-browser-function 'browse-url-default-browser
   "*Function of one url argument called by any Hyperbole Find/Web search."
-  :type 'boolean
+  :type browse-url--browser-defcustom-type
   :group 'hyperbole-commands)
 
 (defcustom hyperbole-web-search-alist
