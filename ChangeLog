@@ -1,3 +1,8 @@
+2021-09-11  Mats Lidell  <matsl@gnu.org>
+
+* hsettings.el (hyperbole-web-search-browser-function): Use
+    browse-url--browser-defcustom-type for customization.
+
 2021-09-05  Bob Weiner  <rsw@gnu.org>
 
 * kotl/kexport.el (kexport:html): Fix export-from parameter checks to
