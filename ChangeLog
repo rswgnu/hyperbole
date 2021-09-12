@@ -1,3 +1,11 @@
+2021-09-12  Mats Lidell  <matsl@gnu.org>
+
+* Part of patch from Stefan Monnier. Thank you Stefan.
+  hargs.el (hargs:action-get): Use interactive-form
+  hact.el (action:commandp): Mark as obsolete.
+    (action:create, action:params-emacs): Remove.
+    (actype:interact): Use interactive-form.
+
 2021-07-19  Mats Lidell  <matsl@gnu.org>
 
 * test/hmouse-drv-tests.el (hbut-etags-test): Rename test case due to name

@@ -269,105 +269,19 @@ When optional SYM is given, returns the name for that symbol only, if any."
 ;;; action class
 ;;; ========================================================================
 
-(defun action:commandp (function)
-  "Return interactive calling form if FUNCTION has one, else nil."
-  (let ((action
-	 (cond ((null function) nil)
-	       ((symbolp function)
-		(and (fboundp function)
-		     (hypb:indirect-function function)))
-	       ((and (listp function)
-		     (eq (car function) 'autoload))
-		(error "(action:commandp): Autoload not supported: %s" function))
-	       (t function))))
-    (cond ((and action (fboundp 'interactive-form))
-	   (interactive-form action))
-	  ((hypb:emacs-byte-code-p action)
-	   (cond ((fboundp 'compiled-function-interactive)
-		  (compiled-function-interactive action))
-		 ((commandp action)
-		  (list 'interactive (aref action 5)))))
-	  (t (commandp action)))))
-
-(defun action:create (param-list body)
-  "Create Hyperbole action defined by PARAM-LIST and BODY, a list of Lisp forms."
-  (if (symbolp body)
-      body
-    (list 'function (cons 'lambda (cons param-list body)))))
+(define-obsolete-function-alias 'action:commandp #'interactive-form "Apr 2021")
 
 (defun action:kbd-macro (macro &optional repeat-count)
   "Return Hyperbole action that execute a keyboard MACRO REPEAT-COUNT times."
   (list 'execute-kbd-macro macro repeat-count))
 
 ;; This function is based on Emacs `help-function-arglist'.
-(defun action:params-emacs (def)
-  "Return the argument list for the function DEF which may be a symbol or a function body."
-  ;; Handle symbols aliased to other symbols.
-  (if (and (symbolp def) (fboundp def)) (setq def (indirect-function def)))
-  ;; If definition is a macro, find the function inside it.
-  (if (eq (car-safe def) 'macro) (setq def (cdr def)))
-  (cond
-   ((and (byte-code-function-p def) (listp (aref def 0))) (aref def 0))
-   ((eq (car-safe def) 'lambda) (nth 1 def))
-   ((eq (car-safe def) 'closure) (nth 2 def))
-   ((or (and (byte-code-function-p def) (integerp (aref def 0)))
-	(subrp def))
-    (or (let* ((doc (condition-case nil (documentation def) (error nil)))
-	       (docargs (if doc (car (help-split-fundoc doc nil))))
-	       (arglist (if docargs
-			    (cdar (read-from-string (downcase docargs)))))
-	       (valid t))
-	  ;; Check validity.
-	  (dolist (arg arglist)
-	    (unless (and (symbolp arg)
-			 (let ((name (symbol-name arg)))
-			   (if (eq (aref name 0) ?&)
-			       (memq arg '(&rest &optional))
-			     (not (string-match "\\." name)))))
-	      (setq valid nil)))
-	  (when valid arglist))
-	(let* ((args-desc (if (not (subrp def))
-			      (aref def 0)
-			    (let ((a (subr-arity def)))
-			      (logior (car a)
-				      (if (numberp (cdr a))
-					  (lsh (cdr a) 8)
-					(lsh 1 7))))))
-	       (max (lsh args-desc -8))
-	       (min (logand args-desc 127))
-	       (rest (logand args-desc 128))
-	       (arglist ()))
-	  (dotimes (i min)
-	    (push (intern (concat "arg" (number-to-string (1+ i)))) arglist))
-	  (when (> max min)
-	    (push '&optional arglist)
-	    (dotimes (i (- max min))
-	      (push (intern (concat "arg" (number-to-string (+ 1 i min))))
-		    arglist)))
-	  (unless (zerop rest) (push '&rest arglist) (push 'rest arglist))
-	  (nreverse arglist))))
-   ((and (autoloadp def) (not (eq (nth 4 def) 'keymap)))
-    ;; Force autoload to get function signature.
-    (setq def (autoload-do-load def))
-    (unless (autoloadp def)
-      (action:params-emacs def)))))
 
 (defun action:params (action)
   "Return unmodified ACTION parameter list.
 Autoloads action function if need be to get the parameter list."
-  (when (and (symbolp action) (fboundp action))
-    (setq action (hypb:indirect-function action)))
-  (cond ((null action) nil)
-	((listp action)
-	 (if (eq (car action) 'autoload)
-	     (error "(action:params): Autoload not supported: %s" action)
-	   (car (cdr action))))
-	((hypb:emacs-byte-code-p action)
-	 (if (fboundp 'compiled-function-arglist)
-	     (compiled-function-arglist action)
-	   (action:params-emacs action)))
-	((symbolp action)
-	 (car (cdr (and (fboundp action) (hypb:indirect-function action)))))))
+  ;; FIXME: What do we need this for?
+  (help-function-arglist action 'preserve-names))
 
 (defun action:param-list (action)
   "Return list of actual ACTION parameters (remove `&' special forms)."
@@ -541,7 +455,7 @@ ACTYPE is a symbol that was previously defined with `defact'.
 Return nil only when no action is found or the action has no interactive
 calling form."
   (let ((action (htype:body (symtable:actype-p actype))))
-    (and action (action:commandp action) (or (call-interactively action) t))))
+    (and action (interactive-form action) (or (call-interactively action) t))))
 
 (defun    actype:params (actype)
   "Return list of ACTYPE's parameters, including keywords."

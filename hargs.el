@@ -83,7 +83,7 @@ Current button is being modified when MODIFYING is non-nil.
 Return nil if ACTION is not a list or `byte-code' object, has no
 interactive form or takes no arguments."
   (and (or (hypb:emacs-byte-code-p action) (listp action))
-       (let ((interactive-form (action:commandp action)))
+       (let ((interactive-form (interactive-form action)))
 	 (when interactive-form
 	   (hpath:relative-arguments
 	    (hargs:iform-read interactive-form modifying))))))
