@@ -1,3 +1,9 @@
+2021-09-05  Bob Weiner  <rsw@gnu.org>
+
+* kotl/kexport.el (kexport:html): Fix export-from parameter checks to
+    allow only Koutline buffers and files.  Stop centering title since
+    often places it too far right.
+
 2021-08-19  Mats Lidell  <matsl@gnu.org>
 
 * test/hbut-tests.el (hbut-tests:should-match-tmp-folder): Add check for

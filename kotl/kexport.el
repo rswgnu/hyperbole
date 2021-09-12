@@ -225,14 +225,20 @@ hard newlines are not used.  Also converts Urls and Klinks into Html hyperlinks.
 STILL TODO:
   Make delimited pathnames into file links (but not if within klinks).
   Copy attributes stored in cell 0 and attributes from each cell."
-  (interactive "fKoutline buffer/file to export: \nFHTML buffer/file to save to: \nP")
+  (interactive (list (read-file-name
+		      "Koutline buffer/file to export: " nil buffer-file-name t)
+		     (read-file-name "HTML buffer/file to save to: ")
+		     current-prefix-arg))
   (let* ((export-buf-name
-	  (cond ((or (bufferp export-from)
-		     (get-buffer export-from))
-		 (buffer-name (get-buffer export-from)))
-		((get-file-buffer export-from)
+	  (cond ((get-file-buffer export-from)
 		 (buffer-name (get-file-buffer export-from)))
-		((stringp export-from)
+		((and (or (bufferp export-from)
+			  (get-buffer export-from))
+		      (kotl-mode:is-p))
+		 (buffer-name (get-buffer export-from)))
+		((and (stringp export-from)
+		      (string-match "\\.kotl$" export-from)
+		      (file-readable-p export-from))
 		 (buffer-name (find-file-noselect export-from)))
 		(t (error
 		    "(kexport:html): `%s' is an invalid `export-from' argument" export-from))))
@@ -291,7 +297,7 @@ STILL TODO:
 	;; HTML
 	(princ "</head>\n\n")
 	(princ (format "<body %s>\n\n" kexport:html-body-attributes))
-	(princ (format "<center><h1>%s</h1></center>\n\n" title))
+	(princ (format "<h1>%s</h1>\n\n" title))
 	(let* ((separator
 		(hypb:replace-match-string
 		 ">" (hypb:replace-match-string
