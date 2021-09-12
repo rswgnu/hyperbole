@@ -217,7 +217,7 @@ Hyperbole, and then restart Emacs."
 	 (hyperbole-toggle-messaging (if value 0 1)))
   :group 'hyperbole-buttons)
 
-(defcustom hyperbole-web-search-browser-function 'browse-url-default-browser
+(defcustom hyperbole-web-search-browser-function browse-url-browser-function
   "*Function of one url argument called by any Hyperbole Find/Web search."
   :type browse-url--browser-defcustom-type
   :group 'hyperbole-commands)
