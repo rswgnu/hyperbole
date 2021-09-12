@@ -1,3 +1,8 @@
+2021-09-11  Mats Lidell  <matsl@gnu.org>
+
+* hsettings.el (hyperbole-web-search-browser-function): Use
+    browse-url--browser-defcustom-type for customization.
+
 2021-09-05  Mats Lidell  <matsl@gnu.org>
 
 * test/hyrolo-tests.el (hyrolo-demo-show-overview)
@@ -5,10 +10,6 @@
     (hyrolo-demo-move-between-entries-on-same-level)
     (hyrolo-demo-no-following-same-level-heading): Add tests for rolo keys.
     (hyrolo-demo-toggle-visibility): Update to test key 's'.
-2021-09-11  Mats Lidell  <matsl@gnu.org>
-
-* hsettings.el (hyperbole-web-search-browser-function): Use
-    browse-url--browser-defcustom-type for customization.
 
 2021-08-19  Mats Lidell  <matsl@gnu.org>
 
