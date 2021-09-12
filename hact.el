@@ -1,10 +1,10 @@
-;;; hact.el --- GNU Hyperbole button action handling
+;;; hact.el --- GNU Hyperbole button action handling  -*- lexical-binding: t; -*-
 ;;
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    18-Sep-91 at 02:57:09
 ;;
-;; Copyright (C) 1991-2016  Free Software Foundation, Inc.
+;; Copyright (C) 1991-2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
 ;;
 ;; This file is part of GNU Hyperbole.
@@ -36,7 +36,8 @@ e.g. to inhibit actions.")
 ;;; ========================================================================
 
 (defvar symtable:category-plist nil
-  "Holds a property list of Hyperbole type category symbols ('actypes or 'ibtypes) and their associated symtables.")
+  "Property list mapping Hyperbole type category symbols to symtables.
+The type categories are either 'actypes or 'ibtypes.")
 
 (defsubst symtable:hash-table (symtable)
   "Return the hash-table containing symbol names and values from SYMTABLE."
@@ -125,7 +126,7 @@ Return the Elisp symbol for SYMBOL-OR-NAME.
 Caller must ensure SYMBOL-OR-NAME is a symbol or string."
   (symtable:operate #'puthash symbol-or-name symtable))
 
-(defalias 'symtable:delete 'symtable:remove)
+(defalias 'symtable:delete #'symtable:remove)
 
 (defun    symtable:get (symbol-or-name symtable)
   "Return the Elisp symbol given by Hyperbole SYMBOL-OR-NAME if it is in existing SYMTABLE, else nil.
@@ -166,7 +167,7 @@ Use `eq' for comparison."
   "Set SYMBOL's symset to nil."
   (setf (symbol-plist symbol) nil))
 
-(defalias 'symset:delete 'symset:remove)
+(defalias 'symset:delete #'symset:remove)
 
 (defun    symset:get (symbol property)
   "Return SYMBOL's PROPERTY set."
@@ -247,7 +248,7 @@ Return the Hyperbole symbol for the TYPE if it existed, else nil."
 (defun    htype:names (type-category &optional sym)
   "Return a list of the current definition names for TYPE-CATEGORY in priority order.
 Definition names do not contain the category prefix.
-TYPE-CATEGORY should be 'actypes, 'ibtypes or nil for all.
+TYPE-CATEGORY should be `actypes', `ibtypes' or nil for all.
 When optional SYM is given, returns the name for that symbol only, if any."
   (let ((types (symset:get type-category 'symbols))
 	(sym-name (when sym (symbol-name sym))))
@@ -419,7 +420,7 @@ performing ACTION."
 	  (hhist:add hist-elt))))))
 
 ;; Return the full Elisp symbol for ACTYPE, which may be a string or symbol.
-(defalias   'actype:elisp-symbol 'symtable:actype-p)
+(defalias   'actype:elisp-symbol #'symtable:actype-p)
 
 (defun    actype:def-symbol (actype)
   "Return the abbreviated symbol for ACTYPE used in its `defact'.
@@ -490,7 +491,6 @@ Return symbol created when successful, else nil."
      (symtable:add ',type symtable:actypes)
      (htype:create ,type actypes ,doc ,params ,default-action nil)))
 
-(defalias 'actype:create 'defact)
 (put      'defact 'lisp-indent-function 'defun)
 
 ;; Support edebug-defun for interactive debugging of actypes
@@ -503,6 +503,7 @@ Return symbol created when successful, else nil."
   (([&rest arg]
     [&optional ["&optional" arg &rest arg]]
     &optional ["&rest" arg])))
+(defalias 'actype:create #'defact)
 
 (defun    actype:delete (type)
   "Delete an action TYPE (a symbol).  Return TYPE's symbol if it existed."

@@ -1,10 +1,10 @@
-;;; set.el --- General mathematical operators for unordered sets
+;;; set.el --- General mathematical operators for unordered sets  -*- lexical-binding: t; -*-
 ;;
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    26-Sep-91 at 19:24:19
 ;;
-;; Copyright (C) 1991-2016  Free Software Foundation, Inc.
+;; Copyright (C) 1991-2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
 ;;
 ;; This file is part of GNU Hyperbole.

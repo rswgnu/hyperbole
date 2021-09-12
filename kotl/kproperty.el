@@ -1,4 +1,4 @@
-;;; kproperty.el --- Kcell in-buffer property handling for the Koutliner
+;;; kproperty.el --- Kcell in-buffer property handling for the Koutliner  -*- lexical-binding: t; -*-
 ;;
 ;; Author:       Bob Weiner
 ;;

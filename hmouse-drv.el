@@ -1,10 +1,10 @@
-;;; hmouse-drv.el --- Smart Key/Mouse driver functions.
+;;; hmouse-drv.el --- Smart Key/Mouse driver functions.  -*- lexical-binding: t; -*-
 ;;
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    04-Feb-90
 ;;
-;; Copyright (C) 1989-2019  Free Software Foundation, Inc.
+;; Copyright (C) 1989-2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
 ;;
 ;; This file is part of GNU Hyperbole.

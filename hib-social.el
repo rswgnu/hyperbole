@@ -1,10 +1,10 @@
-;;; hib-social.el --- Implicit button type for social media/git hashtag and username references
+;;; hib-social.el --- Implicit button type for social media/git hashtag and username references  -*- lexical-binding: t; -*-
 ;;
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    20-Jul-16 at 22:41:34
 ;;
-;; Copyright (C) 2016-2020  Free Software Foundation, Inc.
+;; Copyright (C) 2016-2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
 ;;
 ;; This file is part of GNU Hyperbole.

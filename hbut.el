@@ -1,10 +1,10 @@
-;;; hbut.el --- GNU Hyperbole button constructs
+;;; hbut.el --- GNU Hyperbole button constructs  -*- lexical-binding: t; -*-
 ;;
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    18-Sep-91 at 02:57:09
 ;;
-;; Copyright (C) 1991-2016  Free Software Foundation, Inc.
+;; Copyright (C) 1991-2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
 ;;
 ;; This file is part of GNU Hyperbole.
@@ -54,7 +54,7 @@ Nil disables saving.")
   "Return alist of ebuts in FILE or the current buffer.
 Each element is a list of just an explicit button label.  For use
 as a completion table."
-  (mapcar 'list (ebut:list file)))
+  (mapcar #'list (ebut:list file)))
 
 (defun    ebut:at-p (&optional start-delim end-delim)
   "Return explicit Hyperbole button at point or nil.
@@ -173,10 +173,10 @@ Return nil if no matching button is found."
   (and (stringp key) (stringp label)
        (equal key (downcase (ebut:label-to-key label)))))
 
-(defalias 'ebut:key-src            'hbut:key-src)
-(defalias 'ebut:key-src-set-buffer 'hbut:key-src-set-buffer)
-(defalias 'ebut:key-src-fmt        'hbut:key-src-fmt)
-(defalias 'ebut:key-to-label       'hbut:key-to-label)
+(defalias 'ebut:key-src            #'hbut:key-src)
+(defalias 'ebut:key-src-set-buffer #'hbut:key-src-set-buffer)
+(defalias 'ebut:key-src-fmt        #'hbut:key-src-fmt)
+(defalias 'ebut:key-to-label       #'hbut:key-to-label)
 
 (defun    ebut:label-p (&optional as-label start-delim end-delim pos-flag two-lines-flag)
   "Return key for the Hyperbole explicit button label that point is within, else nil.
@@ -236,9 +236,9 @@ label search to two lines."
 		      (list lbl-key but-start but-end)))
 		   (t (if as-label (ebut:key-to-label lbl-key) lbl-key))))))))
 
-(defalias 'ebut:label-regexp 'hbut:label-regexp)
+(defalias 'ebut:label-regexp #'hbut:label-regexp)
 
-(defalias 'ebut:label-to-key 'hbut:label-to-key)
+(defalias 'ebut:label-to-key #'hbut:label-to-key)
 
 (defun    ebut:list (&optional file loc-p)
   "Return list of button labels from in FILE or the current buffer.
@@ -260,7 +260,7 @@ positions at which the button delimiter begins and ends."
 			      (ebut:key-to-label (ebut:label-to-key lbl)))))))
       (if loc-p buts (when buts (apply #'set:create buts))))))
 
-(defalias 'map-ebut 'ebut:map)
+(defalias 'map-ebut #'ebut:map)
 
 (defun    ebut:map (but-func &optional regexp-match include-delims)
   "Apply BUT-FUNC to the explicit buttons in the visible part of the current buffer.
@@ -600,7 +600,7 @@ Insert INSTANCE-FLAG after END, before ending delimiter."
 (defun    gbut:act (label)
   "Activate Hyperbole global button with LABEL."
   (interactive (list (hargs:read-match "Activate global button labeled: "
-				       (mapcar 'list (gbut:label-list))
+				       (mapcar #'list (gbut:label-list))
 				       nil t nil 'gbut)))
   (cond ((null label)
 	 (error "(gbut:act): You have not created any global buttons"))
@@ -642,7 +642,7 @@ Return nil if no matching button is found."
 
 (defun    gbut:label-list ()
   "Return list of global button labels."
-  (mapcar 'hbut:key-to-label (gbut:key-list)))
+  (mapcar #'hbut:key-to-label (gbut:key-list)))
 
 (defun    gbut:ebut-program (label actype &rest args)
   "Programmatically create a global explicit Hyperbole button at point from LABEL, ACTYPE (action type), and optional actype ARGS.
@@ -661,7 +661,7 @@ For interactive creation, use `hui:gbut-create' instead."
 	(goto-char (point-max))
 	(when (not (bolp))
 	  (insert "\n"))
-	(eval `(ebut:program label actype ,@args))))))
+	(eval `(ebut:program ',label ',actype ,@args))))))
 
 (defun    gbut:to (lbl-key)
   "Find the global button with LBL-KEY (a label or label key) within the visible portion of the global button file.
@@ -817,7 +817,7 @@ Suitable for use as part of `write-file-functions'."
   "Set OBJ-SYMBOL's attribute ATTR-SYMBOL to ATTR-VALUE and return ATR-VALUE."
   (put obj-symbol attr-symbol attr-value))
 
-(defalias 'hattr:summarize 'hattr:report)
+(defalias 'hattr:summarize #'hattr:report)
 
 (defvar   hattr:filename
   (if hyperb:microsoft-os-p "_hypb" ".hypb")
@@ -1335,7 +1335,7 @@ source file for the buttons in the menu, if any.")
 
 (defun    hbut:label-list ()
   "Return list of current buffer's Hyperbole button labels."
-  (mapcar 'hbut:key-to-label (hbut:key-list)))
+  (mapcar #'hbut:key-to-label (hbut:key-list)))
 
 ;;; ------------------------------------------------------------------------
 
@@ -1385,7 +1385,7 @@ source file for the buttons in the menu, if any.")
   "Return alist of labeled ibuts in FILE or the current buffer.
 Each element is a list of just an implicit button label.  For use
 as a completion table."
-  (mapcar 'list (ibut:list file)))
+  (mapcar #'list (ibut:list file)))
 
 (defun    ibut:at-p (&optional key-only)
   "Return symbol for implicit button at point, else nil.
@@ -1962,8 +1962,8 @@ use `defib'."
   (&define name [&or stringp lambda-list]
            [&optional stringp]))   ; Match the doc string, if present.
 
-(defalias 'ibtype:create-action-link-type 'defal)
-(defalias 'ibtype:create-regexp-link-type 'defil)
+(defalias 'ibtype:create-action-link-type #'defal)
+(defalias 'ibtype:create-regexp-link-type #'defil)
 
 (defun    ibtype:def-symbol (ibtype)
   "Return the abbreviated symbol for IBTYPE used in its `defib'.

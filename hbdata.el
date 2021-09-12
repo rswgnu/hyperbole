@@ -1,10 +1,10 @@
-;;; hbdata.el --- GNU Hyperbole button attribute accessor functions
+;;; hbdata.el --- GNU Hyperbole button attribute accessor functions  -*- lexical-binding: t; -*-
 ;;
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     2-Apr-91
 ;;
-;; Copyright (C) 1991-2016  Free Software Foundation, Inc.
+;; Copyright (C) 1991-2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
 ;;
 ;; This file is part of GNU Hyperbole.
@@ -202,7 +202,7 @@ Nil BUT-SYM means use 'hbut:current'.  If successful, return a cons of
 				  (args (hattr:get b 'args)))
 			      ;; Replace matches for variable values with their variable names in any pathname args.
 			      (hattr:set b 'args
-					 (mapcar 'hpath:substitute-var
+					 (mapcar #'hpath:substitute-var
 						 (if mail-dir
 						     ;; Make pathname args absolute for outgoing mail and news messages.
 						     (hpath:absolute-arguments args mail-dir)

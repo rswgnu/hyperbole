@@ -1,10 +1,10 @@
-;;; kimport.el --- Convert and insert other outline file formats into koutlines
+;;; kimport.el --- Convert and insert other outline file formats into koutlines  -*- lexical-binding: t; -*-
 ;;
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    15-Nov-93 at 11:57:05
 ;;
-;; Copyright (C) 1993-2017  Free Software Foundation, Inc.
+;; Copyright (C) 1993-2021  Free Software Foundation, Inc.
 ;; See the "../HY-COPY" file for license information.
 ;;
 ;; This file is part of GNU Hyperbole.
