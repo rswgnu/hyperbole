@@ -117,7 +117,6 @@ pattern may be:
   as (match-beginning 1) since the regexp has just been matched against
   the target string when it is called.")
 
-
 (defconst kexport:font-awesome-css-url
   "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.9.0/css/all.min.css"
   "Url that provides font-awesome expand/collapse glyphicons.
@@ -159,6 +158,140 @@ li {
 }
 </style>\n"
   "CSS that styles collapsible HTML-exported Koutline parent cells")
+
+(defconst kexport:font-awesome-css-include-with-menus
+  "<style>
+
+button {
+ display: block;
+}
+
+div {
+ display: block;
+}
+
+li {
+ list-style-type: none;
+}
+
+.collapsible {
+  all: unset;
+  background-color: inherit;
+  cursor: pointer;
+  display: block;
+  outline: inherit;
+}
+
+.collapsible:hover {
+  background-color: #FAFAD2;
+}
+
+.content {
+  display: block;
+}
+
+/* Start Drop-down menu CSS */
+
+/* HTML Nav Styles */
+nav menuitem {
+   position:relative;
+   display:block;
+   opacity:0;
+
+   cursor:pointer;
+}
+
+nav menuitem > menu {
+   position: absolute;
+   pointer-events:none;
+}
+nav > menu { display:flex; }
+
+nav > menu > menuitem { pointer-events: all; opacity:1; }
+menu menuitem a { white-space:nowrap; display:block; }
+
+menuitem:hover > menu {
+   pointer-events:initial;
+}
+menuitem:hover > menu > menuitem,
+menu:hover > menuitem{
+   opacity:1;
+}
+nav > menu > menuitem menuitem menu {
+   transform:translateX(100%);
+   top:0; right:0;
+}
+/* User Styles Below Not Required */
+
+nav {
+   margin-top: 40px;
+   margin-left: 40px;
+}
+
+nav a {
+   background:#75F;
+   color:#FFF;
+   min-width:190px;
+   transition: background 0.5s, color 0.5s, transform 0.5s;
+   margin:0px 6px 6px 0px;
+   padding:20px 40px;
+   box-sizing:border-box;
+   border-radius:3px;
+   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.5);
+   position:relative;
+}
+
+nav a:hover:before {
+   content: '';
+   top:0;left:0;
+   position:absolute;
+   background:rgba(0, 0, 0, 0.2);
+   width:100%;
+   height:100%;
+}
+
+nav > menu > menuitem > a + menu:after{
+   content: '';
+   position:absolute;
+   border:10px solid transparent;
+   border-top: 10px solid white;
+   left:12px;
+   top: -40px;
+}
+nav menuitem > menu > menuitem > a + menu:after{
+   content: '';
+   position:absolute;
+   border:10px solid transparent;
+   border-left: 10px solid white;
+   top: 20px;
+   left:-180px;
+   transition: opacity 0.6, transform 0s;
+}
+
+nav > menu > menuitem > menu > menuitem{
+   transition: transform 0.6s, opacity 0.6s;
+   transform:translateY(150%);
+   opacity:0;
+}
+nav > menu > menuitem:hover > menu > menuitem,
+nav > menu > menuitem.hover > menu > menuitem{
+   transform:translateY(0%);
+   opacity: 1;
+}
+
+menuitem > menu > menuitem > menu > menuitem{
+   transition: transform 0.6s, opacity 0.6s;
+   transform:translateX(195px) translateY(0%);
+   opacity: 0;
+}
+menuitem > menu > menuitem:hover > menu > menuitem,
+menuitem > menu > menuitem.hover > menu > menuitem{
+   transform:translateX(0) translateY(0%);
+   opacity: 1;
+}
+/* End Drop-down menu CSS */
+</style>\n"
+  "CSS that styles collapsible HTML-exported Koutline parent cells and menus")
 
 (defconst kexport:font-awesome-collapsible-javascript
   "<script>
@@ -222,7 +355,7 @@ hard newlines are not used.  Also converts Urls and Klinks into Html hyperlinks.
   "Export a koutline buffer or file in EXPORT-FROM to html format in OUTPUT-TO.
 By default, this retains newlines within cells as they are.  With optional prefix arg, SOFT-NEWLINES-FLAG,
 hard newlines are not used.  Also converts Urls and Klinks into Html hyperlinks.
-STILL TODO:
+!! STILL TODO:
   Make delimited pathnames into file links (but not if within klinks).
   Copy attributes stored in cell 0 and attributes from each cell."
   (interactive (list (read-file-name
@@ -298,6 +431,24 @@ STILL TODO:
 	(princ "</head>\n\n")
 	(princ (format "<body %s>\n\n" kexport:html-body-attributes))
 	(princ (format "<h1>%s</h1>\n\n" title))
+	;; (princ (format "<label for=\"show-menu\" class=\"show-menu\"><h1>%s</h1></label>\n\n" title))
+	;; (princ "<input type=\"checkbox\" id=\"show-menu\" role=\"button\">")
+	;; (princ "<nav>
+	;; 	<menu>
+	;; 		<menuitem id=\"title-menu\">
+	;; 			<a>Dropdown</a>
+	;; 			<menu>")
+	;; (let (text)
+	;;   (kview:map-siblings (lambda (kv)
+	;; 			(setq text (kcell-view:contents))
+	;; 			(princ (format "<menuitem><a href=\"#k%s\">%s</a></menuitem>\n"
+	;; 				       (kcell-view:label)
+	;; 				       (substring text 0 (string-match "\n" text)))))
+	;; 		      kview t))
+	;; (princ "         		</menu>
+	;; 		</menuitem>
+	;; 	</menu>
+   	;;     </nav>\n")
 	(let* ((separator
 		(hypb:replace-match-string
 		 ">" (hypb:replace-match-string
@@ -317,7 +468,7 @@ STILL TODO:
 	       (princ "<ul>")
 	       (setq i (1- i)))
 	     (princ "<li list-style-type=none>\n<table><tr valign=text-bottom>\n")
-	     (princ "<td width=1%>")
+	     (princ "<td width=1% valign=top>")
 	     (princ (format "<span class=\"fas fa-chevron-down fa-fw\"%s></span>"
 			    (if is-parent
 				""
@@ -325,10 +476,10 @@ STILL TODO:
 			      ;; show collapsible chevron when not a parent
 			      " style=\"visibility:hidden\"")))
 	     (princ "</td>\n")
-	     (princ "<td width=2%>")
+	     (princ "<td width=2% valign=top>\n")
 	     (setq label (kcell-view:label))
 	     (princ (format "<a id=\"k%s\"></a>" label))
-	     (princ (format "<a id=\"k%s\"></a>" (kcell-view:idstamp)))
+	     (princ (format "<a id=\"k%s\"></a>\n" (kcell-view:idstamp)))
 	     (princ (format
 		     "<pre><font %s>%s%s</font></pre>\n"
 		     kexport:label-html-font-attributes
@@ -409,6 +560,5 @@ Works exclusively within a call to `hypb:replace-match-string'."
 	    (substring string last-str-char))))
 
 (provide 'kexport)
-
 
 ;;; kexport.el ends here
