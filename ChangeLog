@@ -1,3 +1,11 @@
+2021-09-12  Mats Lidell  <matsl@gnu.org>
+
+* Part three of patch from Stefam Monnier. Thank you Stefan.
+  Incluces updates:
+  - Use lexical scoping
+  - Update copyright notice
+  - Use #'-syntax for functions
+
 2021-09-11  Mats Lidell  <matsl@gnu.org>
 
 * hsettings.el (hyperbole-web-search-browser-function): Use

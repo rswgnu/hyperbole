@@ -1,10 +1,10 @@
-;;; hui.el --- GNU Hyperbole button and hyperlink user interface
+;;; hui.el --- GNU Hyperbole button and hyperlink user interface  -*- lexical-binding: t; -*-
 ;;
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 21:42:03
 ;;
-;; Copyright (C) 1991-2016  Free Software Foundation, Inc.
+;; Copyright (C) 1991-2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
 ;;
 ;; This file is part of GNU Hyperbole.
@@ -634,7 +634,7 @@ See 'hbut:report'."
 	(hui:help-ebut-highlight)
 	(message "%d button%s." total (if (/= total 1) "s" ""))))))
 
-(defalias 'hui:hbut-summarize 'hui:hbut-report)
+(defalias 'hui:hbut-summarize #'hui:hbut-report)
 
 (defun hui:ibut-act (&optional but)
   "Activate optional labeled implicit button symbol BUT in current buffer.
@@ -859,7 +859,7 @@ DEFAULT-ACTYPE may be a valid symbol or symbol name."
   (if (or (null default-actype) (stringp default-actype))
       (actype:elisp-symbol
        (hargs:read-match (or prompt "Button's action type: ")
-			 (mapcar 'list (htype:names 'actypes))
+			 (mapcar #'list (htype:names 'actypes))
 			 nil t default-actype 'actype))
     (hypb:error "(actype): Invalid default action type received")))
 
@@ -1117,7 +1117,7 @@ Optional NO-SORT means display in decreasing priority order (natural order)."
 			   (mapcar (lambda (nm) (concat tprefix nm))
 				   names)))
 		     (if no-sort type-names
-		       (sort type-names 'string<)))
+		       (sort type-names #'string<)))
 		 (cons (concat tprefix term) nil))
 	       doc-list (delq nil (mapcar
 				    (lambda (name)

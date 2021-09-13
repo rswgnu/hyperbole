@@ -1,10 +1,10 @@
-;;; kvspec.el --- Koutline view specification
+;;; kvspec.el --- Koutline view specification  -*- lexical-binding: t; -*-
 ;;
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Oct-95 at 15:17:07
 ;;
-;; Copyright (C) 1995-2019  Free Software Foundation, Inc.
+;; Copyright (C) 1995-2021  Free Software Foundation, Inc.
 ;; See the "../HY-COPY" file for license information.
 ;;
 ;; This file is part of GNU Hyperbole.

@@ -1,10 +1,10 @@
-;;; hsys-org.el --- GNU Hyperbole support functions for Org mode
+;;; hsys-org.el --- GNU Hyperbole support functions for Org mode  -*- lexical-binding: t; -*-
 ;;
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     2-Jul-16 at 14:54:14
 ;;
-;; Copyright (C) 2016-2020  Free Software Foundation, Inc.
+;; Copyright (C) 2016-2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
 ;;
 ;; This file is part of GNU Hyperbole.

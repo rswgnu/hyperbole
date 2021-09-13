@@ -4,7 +4,7 @@
 ;;
 ;; Orig-Date:    28-Oct-94 at 10:59:44
 ;;
-;; Copyright (C) 1994-2019  Free Software Foundation, Inc.
+;; Copyright (C) 1994-2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
 ;;
 ;; This file is part of GNU Hyperbole.
@@ -89,7 +89,7 @@
 			  "Activate:")
 			(mapcar (lambda (label) (vector label `(ebut:act ,label) t))
 				(if hui-menu-order-explicit-buttons
-				    (sort labels 'string-lessp)
+				    (sort labels #'string-lessp)
 				  labels))
 			(if cutoff '(". . ."))
 			'("----" "----"))))))
@@ -212,7 +212,7 @@ Return t if cutoff, else nil."
 				 `(setq hpath:display-where ',sym)
 				 :style 'radio
 				 :selected `(eq hpath:display-where ',sym)))
-			      (mapcar 'car hpath:display-where-alist))))
+			      (mapcar #'car hpath:display-where-alist))))
 	  '("----")
 	  (hui-menu-browser "Display-URLs-in" browse-url-browser-function)
 	  '("----")

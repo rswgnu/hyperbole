@@ -1,10 +1,10 @@
-;;; hmouse-info.el --- Walks through Info networks using one key.
+;;; hmouse-info.el --- Walks through Info networks using one key.  -*- lexical-binding: t; -*-
 ;;
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    04-Apr-89
 ;;
-;; Copyright (C) 1989-2019  Free Software Foundation, Inc.
+;; Copyright (C) 1989-2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
 ;;
 ;; This file is part of GNU Hyperbole.

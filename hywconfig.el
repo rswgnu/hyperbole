@@ -1,10 +1,10 @@
-;;; hywconfig.el --- Save ring of window configurations
+;;; hywconfig.el --- Save ring of window configurations  -*- lexical-binding: t; -*-
 ;;
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    15-Mar-89
 ;;
-;; Copyright (C) 1989-2019  Free Software Foundation, Inc.
+;; Copyright (C) 1989-2021  Free Software Foundation, Inc.
 ;; See the "../HY-COPY" file for license information.
 ;;
 ;; This file is part of GNU Hyperbole.
@@ -58,7 +58,8 @@
 (define-obsolete-variable-alias 'wconfig-ring-max 'hywconfig-ring-max "06.00")
 (defcustom hywconfig-ring-max 10
   "*Maximum length of Hyperbole window configuration ring before oldest elements are deleted."
-  :type '(integer :match (lambda (_widget value) (and (integerp value) (> value 0))))
+  :type `(integer
+          :match ,(lambda (_widget value) (and (integerp value) (> value 0))))
   :group 'hyperbole-screen)
 
 
