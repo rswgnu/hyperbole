@@ -347,13 +347,13 @@ Autoloads action function if need be to get the parameter list."
 ;;; action type class, actype
 ;;; ========================================================================
 
-(defmacro hact (&rest args)
+(defun hact (&rest args)
   "Perform action formed from rest of ARGS and return the result.
 The value of `hrule:action' determines what effect this has.
 Alternatively act as a no-op when testing implicit button type contexts.
 First arg may be a symbol or symbol name for either an action type or a
 function.  Runs `action-act-hook' before performing action."
-  `(funcall hrule:action ,@args))
+  (apply hrule:action args))
 
 (defun    actype:act (actype &rest args)
   "Perform action formed from ACTYPE and rest of ARGS and return value.
