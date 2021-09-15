@@ -1759,8 +1759,8 @@ See also `ibut:label-separator-regexp' for all valid characters that may manuall
 ;;; ========================================================================
 
 (defmacro defib (type params doc at-p &optional to-p style)
-  "Create Hyperbole implicit button TYPE (unquoted symbol) with PARAMS, described by DOC.
-PARAMS are presently ignored.
+  "Create Hyperbole implicit button TYPE with PARAMS, described by DOC.
+TYPE is an unquoted symbol.  PARAMS are presently ignored.
 
 AT-P is a boolean form of no arguments which determines whether or not point
 is within a button of this type and if it is, calls `hact' with an
@@ -1780,6 +1780,11 @@ buttons of this type; most useful when TO-P is also given.
 
 Return symbol created when successful, else nil.  Nil indicates that action
 type for ibtype is presently undefined."
+  (declare (indent defun)
+           (doc-string 3)
+           (debug (&define name lambda-list
+                           [&optional stringp] ; Doc string, if present.
+                           def-body)))
   (when type
     (let ((to-func (when to-p (action:create nil (list to-p))))
 	  (at-func (list at-p)))
@@ -1787,14 +1792,7 @@ type for ibtype is presently undefined."
 	      (htype:create ,type ibtypes ,doc nil ,at-func
 			    '(to-p ,to-func style ,style))))))
 
-(defalias 'ibtype:create 'defib)
-(put      'defib 'lisp-indent-function 'defun)
-
-;; Support edebug-defun for interactive debugging of ibtypes
-(def-edebug-spec defib
-  (&define name lambda-list
-           [&optional stringp]   ; Match the doc string, if present.
-           def-body))
+(defalias 'ibtype:create #'defib)
 
 (defun ibtype:activate-link (referent)
   "Activate a Hyperbole implicit link `referent', either a key series, a URL or a path."
@@ -1859,6 +1857,10 @@ an Action Key press on a button of the form:
 will display one line per commit whose change set matches 'test
 release'.  An Action Key press on any such line will then display the
 commit changes."
+  (declare (debug
+            (&define name stringp stringp stringp [&or stringp lambda-list]
+                     [&optional arg arg stringp]   ; Doc string, if present.
+                     def-body)))
   (when type
     `(prog1
 	 (defib ,type ()
@@ -1899,12 +1901,6 @@ commit changes."
 			(if ,end-regexp-flag (regexp-quote ,end-delim) ,end-delim)
 			"  which display links with:\n    "
 			(if (stringp ,link-expr) (regexp-quote ,link-expr) ,link-expr)))))))
-
-;; Support edebug-defun for interactive debugging of ibtypes
-(def-edebug-spec defil
-  (&define name stringp stringp stringp [&or stringp lambda-list]
-           [&optional arg arg stringp]   ; Match the doc string, if present.
-           def-body))
 
 (defmacro defal (type link-expr &optional doc)
   "Create Hyperbole action button link TYPE (an unquoted symbol) whose buttons look like: <TYPE link-text> where link-text is substituted into LINK-EXPR as grouping 1 (specified either as %s or \\\\1).
@@ -1953,14 +1949,11 @@ fifth line at the seventh character.
 For more flexible regular expression-based link type creation, see
 `defil'.  For the most general implicit button type creation,
 use `defib'."
+  (declare (debug (&define name [&or stringp lambda-list]
+                           [&optional stringp])))
   (when type
     `(defil ,type "<" ">" (format "%s\\s-+\"?\\([^\t\n\r\f'`\"]+\\)\"?" ',type)
-       ,link-expr nil nil ,doc)))
-
-;; Support edebug-defun for interactive debugging of defal
-(def-edebug-spec defal
-  (&define name [&or stringp lambda-list]
-           [&optional stringp]))   ; Match the doc string, if present.
+       ,link-expr nil nil ,doc)))   ; Match the doc string, if present.
 
 (defalias 'ibtype:create-action-link-type #'defal)
 (defalias 'ibtype:create-regexp-link-type #'defil)
