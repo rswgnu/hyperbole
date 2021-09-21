@@ -1,3 +1,8 @@
+2021-09-20  Mats Lidell  <matsl@gnu.org>
+
+* Makefile (bin-warn): Control what warning messages to get when byte
+    compiling.
+
 2021-09-17  Mats Lidell  <matsl@gnu.org>
 
 * hsettings.el (hyperbole-web-search-browser-function): Relax type to
