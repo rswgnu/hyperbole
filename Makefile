@@ -268,7 +268,7 @@ bin: src
 
 # Byte compile files but apply a filter for either including or
 # removing warnings. See variable {C-hv byte-compile-warnings RET} for
-# list if warnings that can be controlled. Default is set to suppress
+# list of warnings that can be controlled. Default is set to suppress
 # warnings for long docstrings.
 #
 # Example for getting warnings for obsolete functions and variables
