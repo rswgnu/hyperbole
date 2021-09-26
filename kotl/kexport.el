@@ -468,7 +468,8 @@ hard newlines are not used.  Also converts Urls and Klinks into Html hyperlinks.
 	       (princ "<ul>")
 	       (setq i (1- i)))
 	     (princ "<li list-style-type=none>\n<table><tr valign=text-bottom>\n")
-	     (princ "<td width=1% valign=top>")
+	     ;; (princ "<td width=1% valign=top>")
+	     (princ "<td width=1%>")
 	     (princ (format "<span class=\"fas fa-chevron-down fa-fw\"%s></span>"
 			    (if is-parent
 				""
@@ -476,7 +477,8 @@ hard newlines are not used.  Also converts Urls and Klinks into Html hyperlinks.
 			      ;; show collapsible chevron when not a parent
 			      " style=\"visibility:hidden\"")))
 	     (princ "</td>\n")
-	     (princ "<td width=2% valign=top>\n")
+	     ;; (princ "<td width=2% valign=top>\n")
+	     (princ "<td width=2%>\n")
 	     (setq label (kcell-view:label))
 	     (princ (format "<a id=\"k%s\"></a>" label))
 	     (princ (format "<a id=\"k%s\"></a>\n" (kcell-view:idstamp)))
