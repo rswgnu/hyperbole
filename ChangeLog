@@ -1,3 +1,16 @@
+2021-09-26  Robert Weiner  <bk@bka-iMac.lan>
+
+* hbut.el (ebut:operate): Rewrote to handle label modification properly and thereby
+    fixed hui-ebut-modify-link-to-www-url-keeping-all-values-should-not-modify-buffer-or-ebut
+    test.
+
+* hmail.el (hmail:hbdata-to-p): Update doc string and generalize to handle button
+    data embedded in non-mail buffers, e.g. temp buffers for testing.
+  test/hbut-tests.el (hypb:program-create-ebut-in-buffer):
+    Above fix resolved bug that hbut:at-p did not recognize a button created
+    within a buffer without a file attached, causing this test to fail.
+    Also fixed ebut-delete-removes-ebut-and-returns-button-data test.
+
 2021-09-26  Bob Weiner  <rsw@gnu.org>
 
 * kotl/kexport.el (kexport:html): Improve vertical alignment of expand/collapse

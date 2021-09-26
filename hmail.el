@@ -78,14 +78,15 @@ MSG-END."
     (if (search-backward hmail:hbdata-sep msg-start t) (1- (point)) msg-end)))
 
 (defun hmail:hbdata-to-p ()
-  "Move point to Hyperbole but data start in an e-mail msg.
-Return t if button data is found."
+  "When in a buffer with embedded Hyperbole button data, move point to the start of the button data.
+Return t if button data is found, else nil."
   (and (cond ((memq major-mode (list hmail:reader hmail:modifier))
 	      (hmail:msg-narrow) t)
 	     ((or (hmail:lister-p) (hnews:lister-p)) t)
 	     ((memq major-mode (list hmail:composer hnews:reader
 				     hnews:composer))
-	      (widen) t))
+	      (widen) t)
+	     ((not buffer-file-name)))
        (progn
 	 (goto-char (point-max))
 	 (if (search-backward hmail:hbdata-sep nil t)

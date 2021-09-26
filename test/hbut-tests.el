@@ -21,11 +21,10 @@
 (require 'el-mock)
 
 (defun hbut-tests:should-match-tmp-folder (tmp)
-  "Check TMP match either regular /tmp or private/tmp.
+  "Check that TMP match either a list of a single element of \"/tmp\" or \"private/tmp\".
 Needed since hyperbole expands all links to absolute paths and
 /tmp can be a symbolic link."
-  (should (or (equal tmp '("/tmp"))
-              (equal tmp '("private/tmp")))))
+  (should (member tmp '(("/tmp") ("./tmp") ("private/tmp")))))
 
 (ert-deftest ebut-program-link-to-directory ()
   "Programatically create ebut with link-to-directory."
@@ -35,7 +34,7 @@ Needed since hyperbole expands all links to absolute paths and
           (find-file file)
           (ebut:program "label" 'link-to-directory "/tmp")
           (should (eq (hattr:get (hbut:at-p) 'actype) 'actypes::link-to-directory))
-          (should (equal (hattr:get (hbut:at-p) 'args) '("/tmp")))
+          (hbut-tests:should-match-tmp-folder (hattr:get (hbut:at-p) 'args))
           (should (equal (hattr:get (hbut:at-p) 'lbl-key) "label")))
       (delete-file file))))
 
@@ -104,12 +103,11 @@ Needed since hyperbole expands all links to absolute paths and
             (should (equal (hattr:get (hbut:at-p) 'lbl-key) "global")))))))
 
 (ert-deftest hypb:program-create-ebut-in-buffer ()
-  "Create button with hypb:program in buffer.
-BUG: hbut:at-p does not recognise a button created within a buffer."
+  "Create button with hypb:program in buffer."
   (with-temp-buffer
     (ebut:program "label" 'link-to-directory "/tmp")
     (should (eq (hattr:get (hbut:at-p) 'actype) 'actypes::link-to-directory))
-    (should (equal (hattr:get (hbut:at-p) 'args) '("./tmp")))
+    (hbut-tests:should-match-tmp-folder (hattr:get (hbut:at-p) 'args))
     (should (equal (hattr:get (hbut:at-p) 'lbl-key) "label"))))
 
 (ert-deftest hypb:program-create-link-to-file-line-and-column-but-in-file ()
