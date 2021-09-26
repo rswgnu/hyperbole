@@ -26,6 +26,12 @@
 * Makefile (bin-warn): Control what warning messages to get when byte
     compiling.
 
+2021-09-18  Mats Lidell  <matsl@gnu.org>
+
+* kotl/kotl-mode.el (kotl-mode:split-cell): Create new plist for split cell.
+
+* test/kotl-mode-tests.el (kotl-mode-split-cell): Add test for split-cell
+
 2021-09-14  Mats Lidell  <matsl@gnu.org>
 
 * hbut.el (defib, defil, defal): Use declare notation for making macros
