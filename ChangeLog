@@ -1,3 +1,7 @@
+2021-09-26  Mats Lidell  <matsl@gnu.org>
+
+* Makefile (bin): Hide docstring warnings.
+
 2021-09-26  Robert Weiner  <bk@bka-iMac.lan>
 
 * hbut.el (ebut:operate): Rewrote to handle label modification properly and thereby
