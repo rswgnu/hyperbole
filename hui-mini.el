@@ -293,9 +293,12 @@ or if there are none, then its first character."
 	    ;; Return either the first capital letter in item or if
 	    ;; none, then its first character.
 	    (or (catch 'capital
-		  (mapc (lambda (c) (and (<= ?A c) (>= ?Z c)
+		  (progn (mapc (lambda (c) (and (<= ?A c) (>= ?Z c)
 					 (throw 'capital c)))
-			item))
+			       item)
+			 ;; Ensure nil is returned from catch if no
+			 ;; matching char is found
+			 nil))
 		(aref item 0)))
 	  (mapcar 'car (cdr menu-alist))))
 

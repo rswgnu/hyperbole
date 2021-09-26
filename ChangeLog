@@ -1,3 +1,8 @@
+2021-09-26  Bob Weiner  <rsw@gnu.org>
+
+* hui-mini.el (hui:menu-item-keys): Fix bug in catch fallthrough that returned
+    the item rather than nil, causing numbers and non-ASCII chars to not work.
+
 2021-09-11  Mats Lidell  <matsl@gnu.org>
 
 * hsettings.el (hyperbole-web-search-browser-function): Use
