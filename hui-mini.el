@@ -4,7 +4,7 @@
 ;;
 ;; Orig-Date:    15-Oct-91 at 20:13:17
 ;;
-;; Copyright (C) 1991-2019  Free Software Foundation, Inc.
+;; Copyright (C) 1991-2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
 ;;
 ;; This file is part of GNU Hyperbole.
@@ -221,7 +221,7 @@ With optional HELP-STRING-FLAG, instead returns the one line help string for the
 	(hypb:error "(hui:menu-doc): The 'hyperbole' command must be bound to a key"))
       (setq unread-command-events
 	    (nconc unread-command-events
-		   (mapcar 'identity (substring key-sequence (length hmenu-key-seq)))))
+		   (mapcar #'identity (substring key-sequence (length hmenu-key-seq)))))
       (prog1 (hui:menu-act 'hyperbole nil t help-string-flag)
 	;; Ignore any keys past the first menu item activation.
 	(discard-input)))))
@@ -321,7 +321,7 @@ documentation, not the full text."
 	 (top-char  (string-to-char hui:menu-top))
 	 (item-keys (hui:menu-item-keys menu-alist))
 	 ;; 0 matches an empty string return, no selection
-	 (keys (apply 'list 0 1 select-char exit-char quit-char abort-char
+	 (keys (apply #'list 0 1 select-char exit-char quit-char abort-char
 		      top-char item-keys))
 	 (key 0)
 	 (hargs:reading-p 'hmenu)
@@ -377,7 +377,7 @@ documentation, not the full text."
 		      (lambda (wind)
 			(nth 3 (window-edges wind)))
 		      winds))
-	   (bot (apply 'max bot-list)))
+	   (bot (apply #'max bot-list)))
       (nth (- (length winds) (length (memq bot bot-list))) winds))))
 
 (defun hui:menu-item (key doc-flag help-string-flag &optional menu menu-alist)
@@ -428,7 +428,7 @@ constructs.  If not given, the top level Hyperbole menu is used."
     (setq menu-line (concat menu-prompt menu-items))
     ;; Narrow menu by changing 2 spaces to 1 if too wide for current frame.
     (if (>= (length menu-line) (1- (frame-width)))
-	(concat menu-prompt (mapconcat 'car (cdr menu-alist) " "))
+	(concat menu-prompt (mapconcat #'car (cdr menu-alist) " "))
       menu-line)))
 
 (defun hui:menu-web-search ()

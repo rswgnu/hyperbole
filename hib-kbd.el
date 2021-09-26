@@ -1,10 +1,10 @@
-;;; hib-kbd.el --- Implicit button type for key sequences delimited with {}.
+;;; hib-kbd.el --- Implicit button type for key sequences delimited with {}.  -*- lexical-binding: t; -*-
 ;;
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    22-Nov-91 at 01:37:57
 ;;
-;; Copyright (C) 1991-2020  Free Software Foundation, Inc.
+;; Copyright (C) 1991-2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
 ;;
 ;; This file is part of GNU Hyperbole.

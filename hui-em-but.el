@@ -4,7 +4,7 @@
 ;;
 ;; Orig-Date:    21-Aug-92
 ;;
-;; Copyright (C) 1992-2020  Free Software Foundation, Inc.
+;; Copyright (C) 1992-2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
 ;;
 ;; This file is part of GNU Hyperbole.

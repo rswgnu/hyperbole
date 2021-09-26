@@ -8,6 +8,24 @@
 * hui-mini.el (hui:menu-item-keys): Fix bug in catch fallthrough that returned
     the item rather than nil, causing numbers and non-ASCII chars to not work.
 
+2021-09-20  Mats Lidell  <matsl@gnu.org>
+
+* Makefile (bin-warn): Control what warning messages to get when byte
+    compiling.
+
+2021-09-14  Mats Lidell  <matsl@gnu.org>
+
+* hbut.el (defib, defil, defal): Use declare notation for making macros
+    possible to debug. Patch from Stefan Monnier. Thank you Stefan.
+
+2021-09-12  Mats Lidell  <matsl@gnu.org>
+
+* Part three of patch from Stefam Monnier. Thank you Stefan.
+  Incluces updates:
+  - Use lexical scoping
+  - Update copyright notice
+  - Use #'-syntax for functions
+
 2021-09-11  Mats Lidell  <matsl@gnu.org>
 
 * hsettings.el (hyperbole-web-search-browser-function): Use

@@ -1,10 +1,10 @@
-;;; hmouse-tag.el --- Smart Key support of programming language constructs
+;;; hmouse-tag.el --- Smart Key support of programming language constructs  -*- lexical-binding: t; -*-
 ;;
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    24-Aug-91
 ;;
-;; Copyright (C) 1991-2019  Free Software Foundation, Inc.
+;; Copyright (C) 1991-2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
 ;;
 ;; This file is part of GNU Hyperbole.

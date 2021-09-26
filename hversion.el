@@ -1,11 +1,11 @@
-;;; hversion.el --- GNU Hyperbole version and system information setup
+;;; hversion.el --- GNU Hyperbole version and system information setup  -*- lexical-binding: t; -*-
 ;;
 ;; Author:       Bob Weiner
 ;; Maintainer:   Bob Weiner, Mats Lidell
 ;;
 ;; Orig-Date:     1-Jan-94
 ;;
-;; Copyright (C) 1994-2020  Free Software Foundation, Inc.
+;; Copyright (C) 1994-2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
 ;;
 ;; This file is part of GNU Hyperbole.
@@ -209,7 +209,7 @@ If nil after system initialization, no window system or mouse support is availab
     (error "(id-info-item): Info index item must be a string: `%s'" index-item))))
 
 (if (not (fboundp 'id-tool-quit))
-(defalias 'id-tool-quit 'eval))
+(defalias 'id-tool-quit #'eval))
 
 (if (not (fboundp 'id-tool-invoke))
 (defun id-tool-invoke (sexp)

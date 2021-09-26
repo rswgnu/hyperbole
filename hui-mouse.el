@@ -1,10 +1,10 @@
-;;; hui-mouse.el --- Use key or mouse key for many functions, e.g. GNU Hyperbole menus
+;;; hui-mouse.el --- Use key or mouse key for many functions, e.g. GNU Hyperbole menus  -*- lexical-binding: t; -*-
 ;;
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    04-Feb-89
 ;;
-;; Copyright (C) 1991-2018  Free Software Foundation, Inc.
+;; Copyright (C) 1991-2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
 ;;
 ;; This file is part of GNU Hyperbole.
@@ -472,7 +472,7 @@ Its default value is #'smart-scroll-down.  To disable it, set it to
      ((smart-todotxt) . (smart-todotxt-assist)))
     )
   "Alist of predicates and form-conses for the Action and Assist Keyboard Keys.
-Each element is: (predicate-form . (action-key-form . assist-key-form)).
+Each element is: (PREDICATE-FORM . (ACTION-KEY-FORM . ASSIST-KEY-FORM)).
 When the Action or Assist Key is pressed, the first or second form,
 respectively, associated with the first non-nil predicate is evaluated.
 
@@ -1305,7 +1305,7 @@ buffer and has moved the cursor to the selected buffer."
   (interactive)
   (hyrolo-edit-entry))
 
-(defalias 'smart-hyrolo-assist 'smart-hyrolo)
+(defalias 'smart-hyrolo-assist #'smart-hyrolo)
 
 ;;; ************************************************************************
 ;;; smart-image-dired functions
@@ -1648,7 +1648,7 @@ When the Assist Key is pressed:
 
   First, on an Org mode heading, this cycles through views of the whole buffer outline.
 
-  Second, on on an Org mode link or agenda item, this displays standard Hyperbole help.
+  Second, on an Org mode link or agenda item, this displays standard Hyperbole help.
 
 To disable ALL Hyperbole support within Org major and minor modes, set the
 custom option `hsys-org-enable-smart-keys' to nil.  Then in Org modes, this

@@ -1,10 +1,10 @@
-;;; hinit.el --- Standard initializations for GNU Hyperbole
+;;; hinit.el --- Standard initializations for GNU Hyperbole  -*- lexical-binding: t; -*-
 ;;
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     1-Oct-91 at 02:32:51
 ;;
-;; Copyright (C) 1991-2019  Free Software Foundation, Inc.
+;; Copyright (C) 1991-2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
 ;;
 ;; This file is part of GNU Hyperbole.

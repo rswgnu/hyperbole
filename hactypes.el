@@ -1,10 +1,10 @@
-;;; hactypes.el --- Default action types for GNU Hyperbole
+;;; hactypes.el --- Default action types for GNU Hyperbole  -*- lexical-binding: t; -*-
 ;;
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    23-Sep-91 at 20:34:36
 ;;
-;; Copyright (C) 1991-2016  Free Software Foundation, Inc.
+;; Copyright (C) 1991-2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
 ;;
 ;; This file is part of GNU Hyperbole.
@@ -58,7 +58,7 @@ inserted, delete the completions window."
 (defact display-boolean (bool-expr)
   "Display a message showing the result value of a BOOL-EXPR.
 Return any non-nil value or t."
-  (let ((result (eval bool-expr)))
+  (let ((result (eval bool-expr t)))
     (message "Boolean result (%s) = %s" (if result "True" "False") (prin1-to-string result))
     (or result t)))
 
@@ -71,7 +71,7 @@ Return any non-nil value or t."
 (defact eval-elisp (lisp-expr)
   "Evaluate a Lisp expression LISP-EXPR for its side-effects and return any non-nil value."
   (interactive "xLisp to eval: ")
-  (eval lisp-expr))
+  (eval lisp-expr t))
 
 (defact exec-kbd-macro (kbd-macro &optional repeat-count)
   "Execute KBD-MACRO REPEAT-COUNT times.
@@ -443,7 +443,7 @@ compatibility with the `hlink' function."
 	       (while (string-equal "" (setq but-lbl
 					     (hargs:read-match
 					      "Global button to link to: "
-					      (mapcar 'list (gbut:label-list))
+					      (mapcar #'list (gbut:label-list))
 					      nil t nil 'gbut)))
 		 (beep))
 	       (hbut:label-to-key but-lbl))))))
@@ -487,8 +487,8 @@ and its buffer must have a file attached."
        ;; an invalid link, but it is difficult to tell which operation
        ;; is in progress, so ignore this for now.  -- RSW, 01-25-2020
 
-       ;; When not on an ibut and moddifying the link, use existing arguments
-       (if (and (boundp 'defaults) defaults (listp defaults))
+       ;; When not on an ibut and modifying the link, use existing arguments
+       (if (and (bound-and-true-p defaults) (listp defaults))
 	   defaults
 	 (list nil nil nil)))))
   (let (but

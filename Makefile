@@ -266,6 +266,25 @@ bin: src
 	$(RM) *.elc kotl/*.elc
 	$(EMACS) $(BATCHFLAGS) $(PRELOADS) -f batch-byte-compile $(EL_KOTL) $(EL_COMPILE)
 
+# Byte compile files but apply a filter for either including or
+# removing warnings. See variable {C-hv byte-compile-warnings RET} for
+# list of warnings that can be controlled. Default is set to suppress
+# warnings for long docstrings.
+#
+# Example for getting warnings for obsolete functions and variables
+#   HYPB_WARNINGS="free-vars" make bin-warn
+# Example for surpressing the free-vars warnings
+#   HYPB_WARNINGS="not free-vars" make bin-warn
+ifeq ($(origin HYPB_WARNINGS), undefined)
+HYPB_BIN_WARN = not docstrings
+else ifeq ($(origin HYPB_WARNINGS), environment)
+HYPB_BIN_WARN = ${HYPB_WARNINGS}
+endif
+bin-warn: src
+	$(RM) *.elc kotl/*.elc
+	$(EMACS) $(BATCHFLAGS) $(PRELOADS) --eval="(setq-default byte-compile-warnings '(${HYPB_BIN_WARN}))" \
+		-f batch-byte-compile $(EL_KOTL) $(EL_COMPILE)
+
 tags: TAGS
 TAGS: $(EL_TAGS)
 	$(ETAGS) $(EL_TAGS)

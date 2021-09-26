@@ -1,4 +1,4 @@
-;;; hsettings.el --- GNU Hyperbole settings which may require customization
+;;; hsettings.el --- GNU Hyperbole settings which may require customization  -*- lexical-binding: t; -*-
 ;;
 ;; Author:       Bob Weiner
 ;;
@@ -263,16 +263,16 @@ obtained search string."
        (require 'hui-em-but)
        ;; Highlight explicit buttons whenever a file is read in.
        (add-hook 'find-file-hook #'hproperty:but-create t)
-       (defalias 'hui:but-flash 'hproperty:but-flash)))
+       (defalias 'hui:but-flash #'hproperty:but-flash)))
 
 ;;; ************************************************************************
 ;;; ONLINE LIBRARY CONFIGURATION
 ;;; ************************************************************************
 
-;;; Support for online library document id references is loaded here but
-;;; requires some additional configuration before use.  See the DESCRIPTION
-;;; section in "hib-doc-id.el" for complete installation and use information.
-;;;
+;; Support for online library document id references is loaded here but
+;; requires some additional configuration before use.  See the DESCRIPTION
+;; section in "hib-doc-id.el" for complete installation and use information.
+;;
 (add-hook 'hibtypes-end-load-hook (lambda () (require 'hib-doc-id)))
 
 ;;; ************************************************************************
