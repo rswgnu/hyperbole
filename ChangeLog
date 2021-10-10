@@ -1,3 +1,11 @@
+2021-10-10  Mats Lidell  <matsl@gnu.org>
+
+* test/kexport-tests.el (kexport:html-creates-html-file)
+    (kexport:html-sets-title-and-header, kexport:html-contains-each-cell)
+    (kexport:html-creates-hierarchy)
+    (kexport:display-creates-html-file-and-displayes-it)
+    (kexport:buffer-calls-kexport:html): Add kexport tests.
+
 2021-09-26  Mats Lidell  <matsl@gnu.org>
 
 * Makefile (bin): Hide docstring warnings.
