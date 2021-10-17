@@ -24,7 +24,7 @@
   "Check that TMP match either a list of a single element of \"/tmp\" or \"private/tmp\".
 Needed since hyperbole expands all links to absolute paths and
 /tmp can be a symbolic link."
-  (should (member tmp '(("/tmp") ("./tmp") ("private/tmp")))))
+  (should (member tmp '(("/tmp") ("./tmp") ("/private/tmp")))))
 
 (ert-deftest ebut-program-link-to-directory ()
   "Programatically create ebut with link-to-directory."
@@ -63,7 +63,7 @@ Needed since hyperbole expands all links to absolute paths and
       (delete-file file))))
 
 (ert-deftest ebut-delete-removes-ebut-and-returns-button-data ()
-  "Remove a ebut."
+  "Remove an ebut."
   (let ((file (make-temp-file "hypb_" nil ".txt")))
     (unwind-protect
         (progn

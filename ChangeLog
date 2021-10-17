@@ -1,3 +1,19 @@
+2021-10-17  Bob Weiner  <rsw@gnu.org>
+
+* hpath.el (hpath:symlink-referent): Fix handling of relative symlinks, adding
+    on current directory as prefix.  This fixes a bug with /tmp on Macs which
+    is a symbolic link to 'private/tmp' and was not expanded properly.
+
+* HY-NEWS: Re-order 8.0.0 entries to emphasize more important features first.
+
+* hyrolo.el (hyrolo-find-file-function): Add this customizable variable.
+            (hyrolo-find-file): Use above variable to edit either the first or with
+    prefix arg, any selected hyrolo-file-list file.
+  hui-mini.el (hui:menus): Add Rolo/File entry for above command.
+  hyrolo-menu.el (infodock-hyrolo-menu): Replace 'Edit-Rolo' with 'Edit-HyRolo-File'.
+  HY-NEWS (HYROLO):
+  man/hyperbole.texi (HyRolo Menu): Add hyrolo-find-file manual doc.
+
 2021-09-26  Robert Weiner  <bk@bka-iMac.lan>
 
 * hbut.el (ebut:operate): Rewrote to handle label modification properly and thereby

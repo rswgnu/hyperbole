@@ -488,10 +488,10 @@ hard newlines are not used.  Also converts Urls and Klinks into Html hyperlinks.
 		     label separator))
 	     (princ "</td>\n<td>\n")
 	     (setq contents (kcell-view:contents))
-	     (if (string-match "\\`\\([-_$%#@~^&*=+|/A-Za-z0-9 ]+\\):.*\\S-"
-			       contents)
-		 (princ (format "<a id=\"%s\"></a>"
-				(substring contents 0 (match-end 1)))))
+	     (when (string-match "\\`\\([-_$%#@~^&*=+|/A-Za-z0-9 ]+\\):.*\\S-"
+				 contents)
+	       (princ (format "<a id=\"%s\"></a>"
+			      (substring contents 0 (match-end 1)))))
 	     (setq contents (kexport:html-markup contents))
 	     (if soft-newlines-flag
 		 (princ contents)

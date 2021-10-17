@@ -1590,10 +1590,17 @@ After any match, the resulting path will contain a varible reference like ${vari
 (defun hpath:symlink-referent (linkname)
   "Return expanded file or directory referent of LINKNAME.
 LINKNAME should not end with a directory delimiter.
-Returns nil if LINKNAME is not a string.
-Returns LINKNAME unchanged if it is not a symbolic link but is a pathname."
-  (if (stringp linkname)
-      (or (file-symlink-p linkname) linkname)))
+Return nil if LINKNAME is not a string.
+Return LINKNAME unchanged if it is not a symbolic link but is a pathname."
+  (when (stringp linkname)
+    (let ((referent (file-symlink-p linkname)))
+      (cond ((null referent)
+	     linkname)
+	    ((file-name-absolute-p referent)
+	     referent)
+	    (t (expand-file-name referent
+				 (directory-file-name (file-name-directory
+						       (directory-file-name (expand-file-name linkname))))))))))
 
 (defun hpath:symlink-expand (referent dirname)
   "Return expanded file or directory REFERENT relative to DIRNAME."

@@ -319,8 +319,7 @@ Return value of evaluation when a matching entry is found or nil."
     (save-excursion
       (unwind-protect
 	  (progn
-	    (if (not (bufferp key-src))
-		nil
+	    (when (bufferp key-src)
 	      (set-buffer key-src)
 	      (cond ((hmail:editor-p)
 		     (setq end-func (lambda ()

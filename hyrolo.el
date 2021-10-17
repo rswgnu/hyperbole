@@ -63,6 +63,12 @@ It must contain a %s indicating where to put the entry name and a second
   :type 'string
   :group 'hyperbole-rolo)
 
+(defcustom hyrolo-find-file-function #'find-file
+  "*Function to interactively display a `hyrolo-file-list' file for editing.
+Use the `hyrolo-edit' function instead to edit a new or existing entry."
+  :type 'function
+  :group 'hyperbole-rolo)
+
 (defcustom hyrolo-google-contacts-flag t
   "*Non-nil means search Google Contacts on each hyrolo query.
 The google-contact package must be loaded and a gpg encryption
@@ -186,7 +192,7 @@ entry which begins with the parent string."
     (error "(hyrolo-add): Invalid name: `%s'" name))
   (when (and (called-interactively-p 'interactive) file)
     (setq file (completing-read "File to add to: "
-				(mapcar 'list hyrolo-file-list))))
+				(mapcar #'list hyrolo-file-list))))
   (unless file
     (setq file (car hyrolo-file-list)))
   (cond ((and file (or (not (stringp file)) (string-equal file "")))
@@ -322,7 +328,7 @@ parent entry which begins with the parent string."
       (if (= (length hyrolo-file-list) 1)
 	  (setq file (car hyrolo-file-list))
 	(setq file (completing-read "Entry's File: "
-				    (mapcar 'list hyrolo-file-list)))))
+				    (mapcar #'list hyrolo-file-list)))))
   (let ((found-point) (file-list (if file (list file) hyrolo-file-list)))
     (or file (setq file (car file-list)))
     (if (null name)
@@ -395,6 +401,21 @@ the logical expression matching."
 		 (if (= total-matches 0) "No" total-matches)
 		 (if (= total-matches 1) "y" "ies")))
     total-matches))
+
+;;;###autoload
+(defun hyrolo-find-file (&optional file)
+  "Select and edit a file in `hyrolo-file-list', defaulting to the first listed file when not given a prefix arg."
+  (interactive "P")
+  (when (or (called-interactively-p 'interactive)
+	    (null file))
+    (if (or (= (length hyrolo-file-list) 1)
+	    (not current-prefix-arg))
+	(setq file (car hyrolo-file-list))
+      (setq file (completing-read "Edit HyRolo file: "
+				  (mapcar #'list hyrolo-file-list)))))
+  (when (stringp file)
+    (funcall hyrolo-find-file-function file)
+    (setq buffer-read-only nil)))
 
 ;;;###autoload
 (defun hyrolo-grep (regexp &optional max-matches hyrolo-file-or-bufs count-only no-display)
@@ -500,7 +521,7 @@ Return t if entry is killed, nil otherwise."
       (error "(hyrolo-kill): Invalid name: `%s'" name))
   (if (and (called-interactively-p 'interactive) current-prefix-arg)
       (setq file (completing-read "Entry's File: "
-				  (mapcar 'list hyrolo-file-list))))
+				  (mapcar #'list hyrolo-file-list))))
   (let ((file-list (if file (list file) hyrolo-file-list))
 	(killed))
     (or file (setq file (car file-list)))
@@ -663,7 +684,7 @@ Return list of number of groupings at each entry level."
 					      hyrolo-file-list)))
 				     buffer-file-name
 				   (car hyrolo-file-list)))))
-		  (mapcar 'list hyrolo-file-list)))
+		  (mapcar #'list hyrolo-file-list)))
 	   (if (string-equal file "") default file))))
   (if (or (not hyrolo-file) (equal hyrolo-file ""))
       (setq hyrolo-file (car hyrolo-file-list)))

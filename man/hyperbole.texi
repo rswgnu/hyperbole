@@ -5258,6 +5258,7 @@ The minibuffer Rolo/ menu offers the following commands:
 @findex hyrolo-add
 @findex hyrolo-display-matches
 @findex hyrolo-edit
+@findex hyrolo-find-file
 @findex hyrolo-kill
 @findex hyrolo-mail-to
 @findex hyrolo-sort
@@ -5272,7 +5273,8 @@ Menu Item       Command                 Description
 Add             hyrolo-add              Adds a hyrolo entry
 Display         hyrolo-display-matches  Displays last matches again
 Edit            hyrolo-edit             Edits an existing hyrolo entry
-Info                                    Displays a hyrolo manual entry
+File            hyrolo-find-file        Edits a @code{hyrolo-file-list} file
+Info            id-info                 Displays a hyrolo manual entry
 Kill            hyrolo-kill             Deletes a hyrolo entry
 Mail            hyrolo-mail             Mails to an address at point
 Order           hyrolo-sort             Sorts all hyrolo levels
@@ -5289,14 +5291,19 @@ Yank            hyrolo-yank             Inserts the first matching
 @end group
 @end example
 
-A prefix argument used with any of the find commands listed above
-limits the search to a maximum number of matches given by the argument.
-The search is terminated whenever that number of matches is found.
+The 'File' menu item displays and edits the first file listed in
+@code{hyrolo-file-list} unless given a prefix argument, in which case
+it prompts with completion for the file to edit.
 
-For any of the above commands that prompt for a name such as Edit or
-Add (not the Find commands), you may use the form parent/child to
-locate a child entry below a specific parent.  Hence, for a HyRolo which
-looks like so:
+A prefix argument used with any of the above menu items with 'Find' in
+their names limits the search to a maximum number of matches given by
+the argument.  The search is terminated whenever that number of
+matches is found.
+
+For any of the above commands that prompt for a HyRolo name, such as
+Edit or Add (not the Find commands), you may use the form parent/child
+to locate a child entry below a specific parent.  Hence, for a HyRolo
+which looks like so:
 
 @example
 @group

@@ -771,6 +771,7 @@ constructs.  If not given, the top level Hyperbole menu is used."
 	  ("Display"          hyrolo-display-matches
 	   "Display last found rolo matches again.")
 	  ("Edit"             hyrolo-edit   "Edit an existing rolo entry.")
+	  ("File"             hyrolo-find-file   "Edit an existing rolo file.")
 	  ("Info"             (id-info "(hyperbole)HyRolo")
 	   "Displays manual section on Hyperbole rolo.")
 	  ("Kill"             hyrolo-kill   "Kill an existing rolo entry.")

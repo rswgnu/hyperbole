@@ -853,7 +853,7 @@ Next: <a href="#Smart-Keys" accesskey="n" rel="next">Smart Keys</a>, Previous: <
 <span id="Introduction-1"></span><h2 class="chapter">1 Introduction</h2>
 
 <p>This edition of the GNU Hyperbole Manual is for use with any version
-8.0.0pre or greater of GNU Hyperbole.  Hyperbole runs atop GNU Emacs 24.3
+8.0.0pre or greater of GNU Hyperbole.  Hyperbole runs atop GNU Emacs 27.1
 or higher.  It will trigger an error if your Emacs is older.
 </p>
 <p>This chapter summarizes the structure of the rest of the manual,
@@ -6226,6 +6226,7 @@ the menu or read the following sections explaining commands.
 <span id="index-hyrolo_002dadd"></span>
 <span id="index-hyrolo_002ddisplay_002dmatches"></span>
 <span id="index-hyrolo_002dedit"></span>
+<span id="index-hyrolo_002dfind_002dfile"></span>
 <span id="index-hyrolo_002dkill"></span>
 <span id="index-hyrolo_002dmail_002dto"></span>
 <span id="index-hyrolo_002dsort"></span>
@@ -6239,7 +6240,8 @@ the menu or read the following sections explaining commands.
 Add             hyrolo-add              Adds a hyrolo entry
 Display         hyrolo-display-matches  Displays last matches again
 Edit            hyrolo-edit             Edits an existing hyrolo entry
-Info                                    Displays a hyrolo manual entry
+File            hyrolo-find-file        Edits a <code>hyrolo-file-list</code> file
+Info            id-info                 Displays a hyrolo manual entry
 Kill            hyrolo-kill             Deletes a hyrolo entry
 Mail            hyrolo-mail             Mails to an address at point
 Order           hyrolo-sort             Sorts all hyrolo levels
@@ -6255,14 +6257,19 @@ Yank            hyrolo-yank             Inserts the first matching
 =====================================================================
 </pre></div>
 
-<p>A prefix argument used with any of the find commands listed above
-limits the search to a maximum number of matches given by the argument.
-The search is terminated whenever that number of matches is found.
+<p>The &rsquo;File&rsquo; menu item displays and edits the first file listed in
+<code>hyrolo-file-list</code> unless given a prefix argument, in which case
+it prompts with completion for the file to edit.
 </p>
-<p>For any of the above commands that prompt for a name such as Edit or
-Add (not the Find commands), you may use the form parent/child to
-locate a child entry below a specific parent.  Hence, for a HyRolo which
-looks like so:
+<p>A prefix argument used with any of the above menu items with &rsquo;Find&rsquo; in
+their names limits the search to a maximum number of matches given by
+the argument.  The search is terminated whenever that number of
+matches is found.
+</p>
+<p>For any of the above commands that prompt for a HyRolo name, such as
+Edit or Add (not the Find commands), you may use the form parent/child
+to locate a child entry below a specific parent.  Hence, for a HyRolo
+which looks like so:
 </p>
 <div class="example">
 <pre class="example">*    Company
@@ -12815,6 +12822,7 @@ Next: <a href="#Concept-Index" accesskey="n" rel="next">Concept Index</a>, Previ
 <tr><td></td><td valign="top"><a href="#index-hyrolo_002dentry_002dregexp">hyrolo-entry-regexp</a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyRolo-Settings">HyRolo Settings</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-hyrolo_002dfgrep"><code>hyrolo-fgrep</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyRolo-Menu">HyRolo Menu</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-hyrolo_002dfile_002dlist">hyrolo-file-list</a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyRolo-Settings">HyRolo Settings</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-hyrolo_002dfind_002dfile"><code>hyrolo-find-file</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyRolo-Menu">HyRolo Menu</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-hyrolo_002dgoogle_002dcontacts_002dfgrep"><code>hyrolo-google-contacts-fgrep</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyRolo-Settings">HyRolo Settings</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-hyrolo_002dgoogle_002dcontacts_002dflag">hyrolo-google-contacts-flag</a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyRolo-Settings">HyRolo Settings</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-hyrolo_002dgoogle_002dcontacts_002dgrep"><code>hyrolo-google-contacts-grep</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyRolo-Settings">HyRolo Settings</a></td></tr>

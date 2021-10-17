@@ -17,10 +17,10 @@
 ;;   Run the test hbut-defal-url
 ;;   <hypb-ert-sym hbut-defal-url>
 ;;
-;;   Run the tests specified by the test selector hbut-defal
+;;   Run the tests that start with the string, "hbut-defal"
 ;;   <hypb-ert-sel hbut-defal>
 ;;
-;;   Run all tests
+;;   Run all Hyperbole tests
 ;;   <hypb-ert-sel t>
 
 ;;; Code:
