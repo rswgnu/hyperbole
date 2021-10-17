@@ -307,6 +307,21 @@
           (should (looking-at-p "$")))
       (delete-file kotl-file))))
 
+(ert-deftest kotl-mode-split-cell ()
+  "Kotl-mode split cell."
+  (let ((kotl-file (make-temp-file "hypb" nil ".kotl")))
+    (unwind-protect
+        (progn
+          (find-file kotl-file)
+          (insert "firstsecond\n")
+          (backward-char 7)
+          (kotl-mode:split-cell)
+          (should (string= (kcell-view:label (point)) "2"))
+          (kotl-mode:demote-tree 0)
+          (should (string= (kcell-view:label (point)) "1a"))
+          (should (string= (kcell-view:idstamp) "02")))
+      (delete-file kotl-file))))
+
 (provide 'kotl-mode-tests)
 ;;; kotl-mode-tests.el ends here
 

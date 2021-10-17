@@ -264,7 +264,8 @@ src: autoloads tags
 # which do not yet exist, plus build TAGS file.
 bin: src
 	$(RM) *.elc kotl/*.elc
-	$(EMACS) $(BATCHFLAGS) $(PRELOADS) -f batch-byte-compile $(EL_KOTL) $(EL_COMPILE)
+	$(EMACS) $(BATCHFLAGS) $(PRELOADS) --eval="(setq-default byte-compile-warnings '(not docstrings))" \
+		-f batch-byte-compile $(EL_KOTL) $(EL_COMPILE)
 
 # Byte compile files but apply a filter for either including or
 # removing warnings. See variable {C-hv byte-compile-warnings RET} for

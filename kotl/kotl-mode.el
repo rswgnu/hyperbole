@@ -2545,7 +2545,7 @@ the current cell."
     ;; delete any preceding whitespace
     (skip-chars-backward " \t\n\r" start)
     (delete-region (max start (point)) (kcell-view:end-contents))
-    (kotl-mode:add-cell arg new-cell-contents (kcell-view:plist))))
+    (kotl-mode:add-cell arg new-cell-contents)))
 
 (defun kotl-mode:transpose-cells (arg)
   "Exchange current and previous visible cells, leaving point after both.
