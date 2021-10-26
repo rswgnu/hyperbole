@@ -750,7 +750,7 @@ See also documentation for `hui:link-possible-types'."
 		     (hui:hbut-label
 		      (cond ((hmouse-prior-active-region)
 			     hkey-region)
-			    ((marker-position (hypb:mark-marker t))
+			    ((use-region-p)
 			     (hui:hbut-label-default
 			      (region-beginning) (region-end))))
 		      "link-directly"

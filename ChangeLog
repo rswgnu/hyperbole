@@ -1,4 +1,7 @@
-<<<<<<< HEAD
+2021-10-26  Mats Lidell  <matsl@gnu.org>
+
+* hui.el (hui:link-directly): Use use-region-p for active region.
+
 2021-10-17  Bob Weiner  <rsw@gnu.org>
 
 * hpath.el (hpath:symlink-referent): Fix handling of relative symlinks, adding
