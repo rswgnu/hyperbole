@@ -1365,6 +1365,12 @@ Return number of cells left to move."
       (kotl-mode:forward-cell (- arg))
     (let ((prior (= arg 0))
 	  (label-sep-len (kview:label-separator-length kview)))
+      (when (not (kview:valid-position-p))
+        (progn
+          (kotl-mode:to-valid-position t)
+          (kotl-mode:beginning-of-cell)
+          (setq arg (1- arg))
+          (setq prior t)))
       (while (and (> arg 0) (setq prior (kcell-view:backward t label-sep-len)))
 	(setq arg (1- arg)))
       (if (or prior (not (called-interactively-p 'interactive)))
@@ -1902,6 +1908,12 @@ Return non-nil iff there is a next tree within this koutline."
       (kotl-mode:next-cell (- arg))
     (let ((previous (= arg 0))
 	  (label-sep-len (kview:label-separator-length kview)))
+      (when (not (kview:valid-position-p))
+        (progn
+          (kotl-mode:to-valid-position t)
+          (kotl-mode:beginning-of-cell)
+          (setq arg (1- arg))
+          (setq previous t)))
       (while (and (> arg 0) (setq previous
 				  (kcell-view:previous t label-sep-len)))
 	(setq arg (1- arg)))
