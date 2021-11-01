@@ -322,8 +322,74 @@
           (should (string= (kcell-view:idstamp) "02")))
       (delete-file kotl-file))))
 
+(ert-deftest kotl-mode-previous-cell-from-invalid-position ()
+  "When in an invalid position previous cell should move back to first valid cell."
+    (let ((kotl-file (make-temp-file "hypb" nil ".kotl")))
+    (unwind-protect
+        (progn
+          (find-file kotl-file)
+          (insert "1")
+          (kotl-mode:add-cell)
+          (insert "2")
+          (kotl-mode:add-cell)
+          (insert "3")
+
+          (kotl-mode:previous-cell 1)
+          (kotl-mode:end-of-cell)
+          (goto-char (1+ (point)))
+          (should-not (kview:valid-position-p))
+
+          (kotl-mode:previous-cell 1)
+          (should (string= (kcell-view:label (point)) "2")))
+      (delete-file kotl-file))))
+
+(ert-deftest kotl-mode-backward-cell-from-invalid-position ()
+  "When in an invalid position backward cell should move back to first valid cell."
+    (let ((kotl-file (make-temp-file "hypb" nil ".kotl")))
+    (unwind-protect
+        (progn
+          (find-file kotl-file)
+          (insert "1")
+          (kotl-mode:add-child)
+          (insert "1a")
+          (kotl-mode:add-parent)
+          (insert "2")
+
+          (kotl-mode:previous-cell 1)
+          (kotl-mode:end-of-cell)
+          (goto-char (1+ (point)))
+          (should-not (kview:valid-position-p))
+
+          (kotl-mode:backward-cell 1)
+          (should (string= (kcell-view:label (point)) "1a")))
+      (delete-file kotl-file))))
+
+(ert-deftest kotl-mode-backward-cell-from-invalid-pos-leave-point-in-valid-pos ()
+  "From invalid pos backward cell leaves point in valid pos on error."
+    (let ((kotl-file (make-temp-file "hypb" nil ".kotl")))
+    (unwind-protect
+        (progn
+          (find-file kotl-file)
+          (insert "1")
+          (kotl-mode:add-child)
+          (insert "1a")
+          (kotl-mode:add-parent)
+          (insert "2")
+
+          (kotl-mode:previous-cell 1)
+          (kotl-mode:end-of-cell)
+          (goto-char (1+ (point)))
+          (should-not (kview:valid-position-p))
+
+          (condition-case err
+              (funcall-interactively #'kotl-mode:backward-cell 2)
+            (error
+             (progn
+               (should (equal (car err) 'error))
+               (should (string-match "(kotl-mode:backward-cell): No prior cell at same level" (cadr err))))))
+          (should (kotl-mode:bocp)) ;; Point is moved to begining of cell
+          (should (string= (kcell-view:label (point)) "1a")))
+      (delete-file kotl-file))))
+
 (provide 'kotl-mode-tests)
 ;;; kotl-mode-tests.el ends here
-
-
-

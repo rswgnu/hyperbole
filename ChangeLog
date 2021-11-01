@@ -1,3 +1,13 @@
+2021-10-31  Mats Lidell  <matsl@gnu.org>
+
+* test/kotl-mode-tests.el (kotl-mode-previous-cell-from-invalid-position)
+    (kotl-mode-backward-cell-from-invalid-position)
+    (kotl-mode-backward-cell-from-invalid-pos-leave-point-in-valid-pos):
+    Test cases for invalid start position before moving backwards.
+
+* kotl/kotl-mode.el (kotl-mode:previous-cell, kotl-mode:backward-cell):
+    Handle case when start pos is invalid.
+
 2021-10-26  Mats Lidell  <matsl@gnu.org>
 
 * hui.el (hui:link-directly): Use use-region-p for active region.
