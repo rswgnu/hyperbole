@@ -181,6 +181,9 @@ It provides the following keys:
   (org-defkey orgtbl-mode-map [(meta return)]
 	      (orgtbl-make-binding 'orgtbl-meta-return 106
 				   [(meta return)] "\M-\C-m"))
+  (org-defkey orgtbl-mode-map "\C-d"
+	      (orgtbl-make-binding 'kotl-mode:delete-char 107
+				   "\C-d"))
   (run-hooks 'kotl-mode-hook)
   (add-hook 'change-major-mode-hook #'kotl-mode:show-all nil t))
 
