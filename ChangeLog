@@ -1,3 +1,11 @@
+2021-11-02  Mats Lidell  <matsl@gnu.org>
+
+* test/kotl-orgtbl-tests.el
+    (kotl-orgtbl-enabled-uses-kotl-mode-delete-char-ouside-of-table):
+    Add test for C-d binding in orgtbl.
+
+* kotl/kotl-mode.el (kotl-mode): Add orgtbl-mode-map binding for C-d.
+
 2021-10-31  Mats Lidell  <matsl@gnu.org>
 
 * test/kotl-mode-tests.el (kotl-mode-previous-cell-from-invalid-position)
