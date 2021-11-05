@@ -120,9 +120,9 @@ Default is the current button."
 Indicate button creation by delimiting and adding any necessary instance number to the button label.
 
 For programmatic creation, use `ebut:program' instead."
-  (interactive (list (and (marker-position (hypb:mark-marker t))
+  (interactive (list (and (marker-position (mark-marker))
 			  (region-beginning))
-		     (and (marker-position (hypb:mark-marker t))
+		     (and (marker-position (mark-marker))
 			  (region-end))))
   (let ((default-lbl) lbl but-buf actype)
     (save-excursion
@@ -179,7 +179,7 @@ be entirely within or entirely outside of an existing explicit button.  When
 region is within the button, the button is interactively modified.  Otherwise,
 a new button is created interactively with the region as the default label."
   (interactive)
-  (let ((m (marker-position (hypb:mark-marker t)))
+  (let ((m (marker-position (mark-marker)))
 	(op action-key-depress-prev-point) (p (point)) (lbl-key))
     (if (and m (eq (marker-buffer m) (marker-buffer op))
 	     (< op m) (<= (- m op) (hbut:max-len))

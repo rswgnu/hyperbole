@@ -1,3 +1,15 @@
+2021-11-05  Mats Lidell  <matsl@gnu.org>
+
+* hypb.el (hypb:mark-marker): Remove compatibility function, use plain
+    mark-marker instead.
+
+* kotl/kotl-mode.el (kotl-mode:transpose-lines, kotl-mode:yank-pop)
+    (kotl-mode:exchange-point-and-mark, kotl-mode:transpose-lines-internal):
+  hui.el (hui:ebut-create, hui:ebut-edit):
+  hsmail.el (mail-yank-original):
+  hbut.el (ebut:operate):
+  hargs.el (hargs:iforms): Use mark-marker.
+
 2021-11-02  Mats Lidell  <matsl@gnu.org>
 
 * test/kotl-orgtbl-tests.el

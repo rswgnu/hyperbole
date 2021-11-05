@@ -357,13 +357,13 @@ button is found in the current buffer."
 						hui:ebut-modify hui:gbut-create
                        				hui:gbut-modify hui:link-create ebut:program))
 			     ;; Ignore action-key-depress-prev-point
-			     (progn (setq mark (marker-position (hypb:mark-marker t))
+			     (progn (setq mark (marker-position (mark-marker))
 					  start (region-beginning)
 					  end (region-end)
 					  buf-lbl (buffer-substring-no-properties start end))
 				    (equal buf-lbl curr-label))
 			   ;; Utilize any action-key-depress-prev-point
-			   (progn (setq mark (marker-position (hypb:mark-marker t)))
+			   (progn (setq mark (marker-position (mark-marker)))
 				  (setq prev-point (and action-key-depress-prev-point
 							(marker-position action-key-depress-prev-point)))
 				  (setq start (if (and prev-point mark (<= prev-point mark))
