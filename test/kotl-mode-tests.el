@@ -38,7 +38,9 @@
   "Loading kotl-mode example file works."
   (skip-unless (not noninteractive))
   (setup-kotl-mode-example-test
-   (should (hact 'kbd-key "C-h h k e"))
+   ;; The additional no op key C-a below avoids ert results window to
+   ;; be set as current
+   (should (hact 'kbd-key "C-h h k e C-a"))
    (hy-test-helpers:consume-input-events)))
 
 (ert-deftest kotl-mode-example-loads-kotl-example ()

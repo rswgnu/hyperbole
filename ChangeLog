@@ -1,5 +1,8 @@
 2021-11-05  Mats Lidell  <matsl@gnu.org>
 
+* test/kotl-mode-tests.el (smart-menu-loads-kotl-example): Add extra no op
+    input char to make test case stable.
+
 * hypb.el (hypb:mark-marker): Remove compatibility function, use plain
     mark-marker instead.
 
