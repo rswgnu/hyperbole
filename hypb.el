@@ -514,12 +514,6 @@ then `locate-post-command-hook'."
 
 (defalias 'hypb:mark #'mark)
 
-(defun hypb:mark-marker (inactive-p)
-  "Return this buffer's mark as a marker object, or nil if no mark.
-INACTIVE-P is unused, it is for compatibility with XEmacs' version of
-`mark-marker'."
-  (mark-marker))
-
 ;;;###autoload
 (defun hypb:map-plist (func plist)
   "Return result of applying FUNC of two args, key and value, to key-value pairs in PLIST, a property list."

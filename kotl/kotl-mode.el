@@ -895,7 +895,7 @@ that contains mark."
    ;; Transpose point and mark lines, leaving point on the line of text that
    ;; originally contained point.
    ((= arg 0)
-    (kotl-mode:transpose-lines-internal (point-marker) (hypb:mark-marker t))
+    (kotl-mode:transpose-lines-internal (point-marker) (mark-marker))
     (kotl-mode:exchange-point-and-mark))
    ;;
    ;; Move previous line past ARG next lines and leave point after previous
@@ -1331,7 +1331,7 @@ doc string for `insert-for-yank-1', which see."
     (if before
 	(funcall (or yank-undo-function 'delete-region) (point) (mark t))
       (funcall (or yank-undo-function 'delete-region) (mark t) (point)))
-    (set-marker (hypb:mark-marker t) (point) (current-buffer))
+    (set-marker (mark-marker) (point) (current-buffer))
     (let* ((yank-text (current-kill arg))
 	   (indent (kcell-view:indent))
 	   (indent-str (make-string indent ?\ )))
@@ -2862,7 +2862,7 @@ Does not delete newline at end of line."
   "Put the mark where point is now, and point where the mark is now.
 This is like `exchange-point-and-mark', but doesn't activate the mark."
   (goto-char (prog1 (hypb:mark t)
-	       (set-marker (hypb:mark-marker t) (point) (current-buffer)))))
+	       (set-marker (mark-marker) (point) (current-buffer)))))
 
 (defun kotl-mode:indent-line (&optional arg)
   "Indent line relative to the previous one.
@@ -3113,10 +3113,10 @@ Leave point at end of line now residing at START."
     ;; Set non-point and non-mark markers to point nowhere before signalling
     ;; an error.
     (or (eq start (point-marker))
-	(eq start (hypb:mark-marker t))
+	(eq start (mark-marker))
 	(set-marker start nil))
     (or (eq end (point-marker))
-	(eq end (hypb:mark-marker t))
+	(eq end (mark-marker))
 	(set-marker start nil))
     (error "(kotl-mode:transpose-lines): Point or mark is at an invalid position")))
 
