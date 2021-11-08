@@ -1,7 +1,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <!-- This manual is for GNU Hyperbole
-(Edition 8.0.0pre, Published May, 2021).
+(Edition 8.0.0pre, Published November, 2021).
 
 Copyright (C) 1989-2021  Free Software Foundation, Inc.
 
@@ -358,7 +358,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</P>
 
 <PRE>
 Edition 8.0.0pre
-Printed May 16, 2021.
+Printed November 7, 2021.
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -9017,20 +9017,20 @@ file.  For example, <code>(add-hook 'hyperbole-init-hook (lambda ()
 (global-set-key &quot;\C-ch&quot; 'hyperbole-toggle-bindings)))</code>.
 </p>
 <span id="index-file_002c-_002eemacs-5"></span>
-<span id="index-hmouse_002dtoggle_002dbindings"></span>
+<span id="index-hyperbole_002dmode"></span>
 <span id="index-mouse-key-toggle"></span>
 <span id="index-Smart-Mouse-Key-toggle"></span>
 <span id="index-C_002dc-t"></span>
-<p>If you want to restore only the mouse bindings that existed before
-Hyperbole was loaded, use the <code>hmouse-toggle-bindings</code> command.
-It switches between the Hyperbole mouse key bindings and those set
+<p>If you ever want to disable Hyperbole key and mouse bindings, simply toggle
+Hyperbole minor mode off with the <code>hyperbole-mode</code> command.
+It switches between Hyperbole mouse key and mouse bindings and those set
 prior to loading Hyperbole and then back again if invoked once more.
 There is no default key binding for this command; use <kbd>{M-x
-hmouse-toggle-bindings <span class="key">RET</span>}</kbd>.  Alternatively, you may select a
+hyperbole-mode <span class="key">RET</span>}</kbd>.  Alternatively, you may select a
 key and bind it as part of any setting of <code>hyperbole-init-hook</code>
 within your personal <samp>~/.emacs</samp> file.  For example, <code>(add-hook
 'hyperbole-init-hook (lambda () (global-set-key &quot;\C-ct&quot;
-'hmouse-toggle-bindings)))</code>.
+'hyperbole-mode)))</code>.
 </p>
 <hr>
 <span id="Koutliner-Keys"></span><div class="header">
@@ -12748,7 +12748,6 @@ Next: <a href="#Concept-Index" accesskey="n" rel="next">Concept Index</a>, Previ
 <tr><td></td><td valign="top"><a href="#index-hmouse_002dmiddle_002dflag-1">hmouse-middle-flag</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Key-Bindings">Smart Key Bindings</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-hmouse_002dsetup"><code>hmouse-setup</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Questions-and-Answers">Questions and Answers</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-hmouse_002dsetup-1"><code>hmouse-setup</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Questions-and-Answers">Questions and Answers</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-hmouse_002dtoggle_002dbindings"><code>hmouse-toggle-bindings</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Default-Hyperbole-Bindings">Default Hyperbole Bindings</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-hmouse_002dx_002ddiagonal_002dsensitivity">hmouse-x-diagonal-sensitivity</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Mouse-Drags-within-a-Window">Smart Mouse Drags within a Window</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-hmouse_002dx_002ddrag_002dsensitivity">hmouse-x-drag-sensitivity</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Mouse-Drags-within-a-Window">Smart Mouse Drags within a Window</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-hmouse_002dy_002ddiagonal_002dsensitivity">hmouse-y-diagonal-sensitivity</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Mouse-Drags-within-a-Window">Smart Mouse Drags within a Window</a></td></tr>
@@ -12802,6 +12801,7 @@ Next: <a href="#Concept-Index" accesskey="n" rel="next">Concept Index</a>, Previ
 <tr><td></td><td valign="top"><a href="#index-hyperbole"><code>hyperbole</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Invocation">Invocation</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-hyperbole-1"><code>hyperbole</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Key-_002d-Default-Context">Smart Key - Default Context</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-hyperbole_002dinit_002dhook">hyperbole-init-hook</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Hook-Variables">Hook Variables</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-hyperbole_002dmode"><code>hyperbole-mode</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Default-Hyperbole-Bindings">Default Hyperbole Bindings</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-hyperbole_002dpopup_002dmenu"><code>hyperbole-popup-menu</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Menus">Menus</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-hyperbole_002dpopup_002dmenu-1"><code>hyperbole-popup-menu</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Key-_002d-Default-Context">Smart Key - Default Context</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-hyperbole_002dset_002dkey"><code>hyperbole-set-key</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Binding-Minibuffer-Menu-Items">Binding Minibuffer Menu Items</a></td></tr>

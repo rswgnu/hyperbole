@@ -19,10 +19,6 @@
 (require 'hui-window)
 (require 'hypb)
 
-;; Quiet byte compiler warnings for these free variables.
-(defvar hkey-action)
-(defvar pred-value)
-
 ;;; ************************************************************************
 ;;; Public variables
 ;;; ************************************************************************
@@ -840,9 +836,7 @@ frame instead."
      ((and (frame-parameter frame 'drag-with-mode-line)
            (window-at-side-p window 'bottom))
       ;; Drag frame when the window is on the bottom of its frame.
-      (if (fboundp 'mouse-drag-frame)
-          (mouse-drag-frame start-event 'move)
-        (mouse-drag-frame-move start-event))))))
+      (mouse-drag-frame start-event 'move)))))
 
 (defun hkey-debug (pred pred-value hkey-action)
   (message (format "(HyDebug) %sContext: %s; %s: %s; Buf: %s; Mode: %s; MinibufDepth: %s"
@@ -858,27 +852,35 @@ frame instead."
 		   (hypb:format-quote (format "%s" hkey-action))
 		   (current-buffer) major-mode (minibuffer-depth))))
 
-(defun hkey-execute (assist-flag)
-  "Evaluate Action Key form (or Assist Key form with ASSIST-FLAG non-nil) for first non-nil predicate from `hkey-alist'.
-Non-nil ASSIST-FLAG means evaluate second form, otherwise evaluate first form.
+(defun hkey-execute (assisting)
+  "Evaluate Action Key form (or Assist Key form with ASSISTING non-nil) for first non-nil predicate from `hkey-alist'.
+Non-nil ASSISTING means evaluate second form, otherwise evaluate first form.
 Return non-nil iff a non-nil predicate is found."
   ;; Keep in mind that hkey-alist may be set to hmouse-alist here, with additional predicates.
   (let ((hkey-forms hkey-alist)
+	(pred-point (point-marker))
 	pred-value hkey-action hkey-form pred)
     (while (and (null pred-value) (setq hkey-form (car hkey-forms)))
-      (if (setq hkey-action (if assist-flag (cddr hkey-form) (cadr hkey-form))
+      (if (setq hkey-action (if assisting (cddr hkey-form) (cadr hkey-form))
 		pred (car hkey-form)
 		pred-value (eval pred))
-	  ;; Conditionally debug after Smart Key release and evaluation
-	  ;; of matching predicate but before hkey-action is executed.
-	  (progn (when hkey-debug (hkey-debug pred pred-value hkey-action))
-		 (eval hkey-action))
+	  (progn
+	    ;; Any Smart Key predicate should leave point unchanged.
+	    ;; Trigger an error if not.
+	    (unless (equal (point-marker) pred-point)
+	      (hypb:error "(Hyperbole): `%s' predicate failed to restore point to %s" pred pred-point))
+	    (set-marker pred-point nil)
+	    ;; Conditionally debug after Smart Key release and evaluation
+	    ;; of matching predicate but before hkey-action is executed.
+	    (when hkey-debug
+	      (hkey-debug pred pred-value hkey-action))
+	    (eval hkey-action))
 	(setq hkey-forms (cdr hkey-forms))))
     pred-value))
 
-(defun hkey-help (&optional assist-flag)
+(defun hkey-help (&optional assisting)
   "Display help for the Action Key command in current context.
-With optional ASSIST-FLAG prefix arg non-nil, display help for the Assist Key command.
+With optional ASSISTING prefix arg non-nil, display help for the Assist Key command.
 Return non-nil iff associated help documentation is found."
   (interactive "P")
   (let* ((mouse-flag (when (mouse-event-p last-command-event)
@@ -891,20 +893,20 @@ Return non-nil iff associated help documentation is found."
       (or (setq pred-value (eval (car hkey-form)))
 	  (setq hkey-forms (cdr hkey-forms))))
     (if pred-value
-	(setq call (if assist-flag (cdr (cdr hkey-form))
+	(setq call (if assisting (cdr (cdr hkey-form))
 		     (cadr hkey-form))
 	      cmd-sym (if (eq (car call) #'funcall)
 			  (cadr call)
 			(car call)))
-      (setq cmd-sym (if assist-flag assist-key-default-function action-key-default-function)
+      (setq cmd-sym (if assisting assist-key-default-function action-key-default-function)
 	    call cmd-sym))
     (if (and (consp call) (eq (car call) 'call-interactively))
-	(if (consp (cadr call))
-	    (setq cmd-sym (if (memq (caadr call) '(function quote))
-			      (cadadr call)
-			    (caadr call)))))
+	(when (consp (cadr call))
+	  (setq cmd-sym (if (memq (caadr call) '(function quote))
+			    (cadadr call)
+			  (caadr call)))))
     (setq calls (if (and (consp call) (eq (car call) 'or))
-		    (mapcar 'identity (cdr call))
+		    (mapcar #'identity (cdr call))
 		  (list cmd-sym)))
 
     (unless (or action-key-depressed-flag action-key-help-flag)
@@ -937,13 +939,13 @@ Return non-nil iff associated help documentation is found."
 		  (with-output-to-temp-buffer
 		      (hypb:help-buf-name
 		       (format "%s %sKey"
-			       (if assist-flag "Assist" "Action")
+			       (if assisting "Assist" "Action")
 			       (if mouse-flag "Mouse " "")))
 		    (princ (format "A %s of the %s %sKey"
 				   (if mouse-flag
 				       (if mouse-drag-flag "drag" "click")
 				     "press")
-				   (if assist-flag "Assist" "Action")
+				   (if assisting "Assist" "Action")
 				   (if mouse-flag "Mouse " "")))
 		    (terpri)
 		    (princ "WHEN  ")
@@ -955,8 +957,8 @@ Return non-nil iff associated help documentation is found."
 		    (mapc (lambda (c)
 			    (when (and (> (length calls) 1)
 				       (not (eq (car calls) c)))
-				;; Is an 'or' set of calls
-				(princ "OR "))
+			      ;; Is an 'or' set of calls
+			      (princ "OR "))
 			    (princ "CALLS ") (princ (if (consp c) c (list c)))
 			    (when (and (fboundp (setq call (if (consp c) (car c) c)))
 				       (setq doc (documentation call)))
@@ -982,7 +984,7 @@ Return non-nil iff associated help documentation is found."
 		    ))
 		"")
 	    (message "No %s Key command for current context."
-		     (if assist-flag "Assist" "Action"))))
+		     (if assisting "Assist" "Action"))))
     doc))
 
 (defun hkey-assist-help ()
@@ -1006,7 +1008,8 @@ details."
   (let ((buf (current-buffer)))
     (if (window-configuration-p hkey--wconfig)
 	(progn (set-window-configuration hkey--wconfig)
-	       (if kill (kill-buffer buf)
+	       (if kill
+		   (kill-buffer buf)
 		 (bury-buffer buf)))
       (hkey-quit-window kill window)))
   (setq hkey--wconfig nil))
@@ -1065,30 +1068,31 @@ the current window.  By default, it is displayed according to the setting of
 	      (when (derived-mode-p 'help-mode)
 		(local-set-key "q" #'hkey-help-hide)))))
       ;; If in an *Org Help* buffer, reselect the Org buffer.
-      (if org-help (select-window owind))
+      (when org-help
+	(select-window owind))
       ;; If in a *Completions* buffer, re-select the window that
       ;; generated the completions.
-      (if (buffer-live-p completion-reference-buffer)
-	  (select-window (get-buffer-window completion-reference-buffer t))))))
+      (when (buffer-live-p completion-reference-buffer)
+	(select-window (get-buffer-window completion-reference-buffer t))))))
 
-(defun hkey-mouse-help (assist-flag args)
+(defun hkey-mouse-help (assisting args)
   "If a Smart Key help flag is set and the other Smart Key is not down, show help.
-Takes two args:  ASSIST-FLAG should be non-nil iff command applies to the Assist Key.
+Takes two args:  ASSISTING should be non-nil iff command applies to the Assist Key.
 ARGS is a list of arguments passed to `hmouse-function'.
 Return t if help is displayed, nil otherwise."
   (let ((help-shown)
-	(other-key-released (not (if assist-flag
+	(other-key-released (not (if assisting
 				     action-key-depressed-flag
 				   assist-key-depressed-flag))))
     (unwind-protect
 	(setq help-shown
 	      (cond ((and  action-key-help-flag other-key-released)
 		     (setq action-key-help-flag nil)
-		     (hmouse-function #'hkey-help assist-flag args)
+		     (hmouse-function #'hkey-help assisting args)
 		     t)
 		    ((and  assist-key-help-flag other-key-released)
 		     (setq assist-key-help-flag nil)
-		     (hmouse-function #'hkey-assist-help assist-flag args)
+		     (hmouse-function #'hkey-assist-help assisting args)
 		     t)))
       (when help-shown
 	;; Then both Smart Keys have been released.
@@ -1104,8 +1108,8 @@ Action Key.
 
 Only works when running under a window system, not from a dumb terminal."
   (interactive "P")
-  (or (hyperb:window-system)
-      (hypb:error "(hkey-operate): Drag actions require mouse support"))
+  (unless (hyperb:window-system)
+    (hypb:error "(hkey-operate): Drag actions require mouse support"))
   (if arg
       (if assist-key-depressed-flag
 	  (progn (assist-mouse-key)
@@ -1133,11 +1137,10 @@ the current window.  By default, it is displayed in another window."
   (interactive)
   (let* ((doc-file (hypb:hkey-help-file))
 	 (buf-name (hypb:help-buf-name "Smart Keys"))
-	 (wind (get-buffer-window buf-name))
-	 owind)
+	 (wind (get-buffer-window buf-name)))
     (when (file-readable-p doc-file)
-      (if (br-in-browser)
-	  (br-to-view-window))
+      (when (br-in-browser)
+	(br-to-view-window))
       (if wind
 	  (select-window wind)
 	(hkey-help-show buf-name current-window)
@@ -1163,7 +1166,8 @@ With optional ARG, enable iff ARG is positive."
 (defun hmouse-depress-inactive-minibuffer-p (event)
   "Return the minibuffer window if the last Smart Mouse Key depress EVENT was in it and it was inactive, else nil."
   (let ((window (posn-window (event-start event))))
-    (if (framep window) (setq window (frame-selected-window window)))
+    (when(framep window)
+      (setq window (frame-selected-window window)))
     (and (window-minibuffer-p window)
 	 (not (minibuffer-window-active-p window))
 	 window)))
@@ -1382,9 +1386,8 @@ compute the actual release location and include that."
    ((boundp 'transient-mark-mode)
     (and transient-mark-mode mark-active))))
 
-(defun hmouse-save-region (&optional frame)
+(defun hmouse-save-region ()
   "Save to `hkey-region' and return any active region within the current buffer.
-Under InfoDock and XEmacs, `zmacs-region' must be t; under GNU Emacs,
 `transient-mark-mode' must be t or the function does nothing."
   (setq hkey-region
 	(when (hmouse-use-region-p)
@@ -1429,14 +1432,14 @@ line to bottom of window.  Repeated presses then scroll up or down a
 windowful.  Nil value instead ignores current line and always scrolls up or
 down a windowful."))
 
-(defun hmouse-function (func assist-flag set-point-arg-list)
-  "Execute FUNC for Action Key (Assist Key with ASSIST-FLAG non-nil) and set point from SET-POINT-ARG-LIST.
+(defun hmouse-function (func assisting set-point-arg-list)
+  "Execute FUNC for Action Key (Assist Key with ASSISTING non-nil) and set point from SET-POINT-ARG-LIST.
 FUNC may be nil in which case no function is called.
 SET-POINT-ARG-LIST is passed to the call of the command bound to
 `hmouse-set-point-command'.  Return nil if `hmouse-set-point-command' variable
 is not bound to a valid function."
   (when (fboundp hmouse-set-point-command)
-    (if assist-flag
+    (if assisting
 	(setq assist-key-release-window (hmouse-key-release-window assist-key-release-position)
 	      assist-key-release-prev-point (point-marker))
       (setq action-key-release-window (hmouse-key-release-window action-key-release-position)
@@ -1450,7 +1453,7 @@ is not bound to a valid function."
 		 (selected-window))))
     (setq action-mouse-key-prefix-arg current-prefix-arg)
     (let ((release-args (hmouse-set-point set-point-arg-list)))
-      (if assist-flag
+      (if assisting
 	  (setq assist-key-release-args release-args)
 	(setq action-key-release-args release-args)))
     (when func
@@ -1515,7 +1518,9 @@ not."
 	  (setq rtn nil)
 	(scroll-up)))
     (end-of-line)
-    (or rtn (progn (beep) (message "End of buffer")))
+    (unless rtn
+      (beep)
+      (message "End of buffer"))
     rtn))
 
 (provide 'hmouse-drv)

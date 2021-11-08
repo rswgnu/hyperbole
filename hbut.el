@@ -183,13 +183,13 @@ Return nil if no matching button is found."
 This is the normalized key form of the explicit button's label.
 
 Assume point is within the first line of any button label.  All
-following arguments are optional.  If AS-LABEL is non-nil, label
-is returned rather than the key derived from the label.
-START-DELIM and END-DELIM are strings that override default
-button delimiters.  With POS-FLAG non-nil, returns list of
-label-or-key, but-start-position, but-end-position.  Positions
-include delimiters.  With TWO-LINES-FLAG non-nil, constrains
-label search to two lines."
+following arguments are optional.  If AS-LABEL is non-nil, return
+label rather than the key derived from the label.  START-DELIM
+and END-DELIM are strings that override default button
+delimiters.  With POS-FLAG non-nil, return the list of label-or-key,
+but-start-position, but-end-position.  Positions include
+delimiters.  With TWO-LINES-FLAG non-nil, constrain label search
+to two lines."
   (let ((opoint (point))
 	(quoted "\\(^\\|[^\\{]\\)")
 	(hbut:max-len hbut:max-len)
@@ -219,8 +219,8 @@ label search to two lines."
 		  (forward-char -1)
 		  (forward-list)
 		  (forward-char -2))
-	      (error (goto-char (1- opoint))))
-	  (goto-char (1- opoint)))
+	      (error (goto-char (max (1- opoint) start))))
+	  (goto-char (max (1- opoint) start)))
 	(when two-lines-flag
 	  (save-excursion
 	    (forward-line 2)
@@ -279,8 +279,7 @@ If successful, return button's instance number, except when instance
 number is 1, then return t.  On failure, as when button does not exist,
 return nil.
 
-If successful, leave point in button data buffer, so caller should use
-`save-excursion'.  Do not save button data buffer."
+Do not save button data buffer."
   (save-excursion
     (let ((lbl-instance (hbdata:write lbl-key but-sym)))
       (run-hooks 'ebut-modify-hook)
@@ -858,11 +857,16 @@ Default is 'hbut:current."
 	   (prog1 (apply hrule:action
 			 (hattr:get hbut 'actype)
 			 (hattr:get hbut 'args))
-	     ;; Restore original point prior to ibut:to-text call if action switched buffers or did not move point within the current buffer
+	     ;; Restore point as it was prior to ibut:to-text call if the action
+	     ;; switched buffers or did not move point within the
+	     ;; current buffer.
 	     (when (or (equal text-point (point-marker))
 		       (not (eq (current-buffer) (marker-buffer orig-point))))
-	       (set-buffer (marker-buffer orig-point))
-	       (goto-char orig-point))
+	       (with-current-buffer (marker-buffer orig-point)
+		 (let ((owind (get-buffer-window nil t)))
+		   (if owind
+		       (set-window-point owind orig-point)
+		     (goto-char orig-point)))))
 	     (set-marker orig-point nil)
 	     (set-marker text-point nil))))
 	((and hbut (symbolp hbut))
@@ -885,8 +889,15 @@ Default is 'hbut:current."
 (defun    hbut:at-p ()
   "Return symbol for explicit or implicit Hyperbole button at point or nil.
 Then use (hbut:act) to activate the button."
-  (or (ebut:at-p) (ibut:at-p)))
-
+  (interactive)
+  (if (called-interactively-p 'interactive)
+      (let ((hbut (or (ebut:at-p) (ibut:at-p))))
+	(when hbut
+	  (if (fboundp #'hkey-help)
+	      (hkey-help)
+	    (message "%S" (symbol-plist hbut)))
+	  hbut))
+    (or (ebut:at-p) (ibut:at-p))))
 
 (defun    hbut:comment (start end)
   "Comment button label spanning region START to END in current buffer.
@@ -1000,7 +1011,7 @@ nil.  BUFFER defaults to the current buffer."
 
 (defun    hbut:key-src (&optional full)
   "Return key source (usually unqualified) for current Hyperbole button.
-Als sets current buffer to key source.
+Also sets current buffer to key source.
 With optional FULL when source is a pathname, return the full pathname."
   (let ((src (cond ((hmail:mode-is-p) (current-buffer))
 		   ;; If buffer represents the output of a document
@@ -1034,7 +1045,7 @@ With optional FULL when source is a pathname, return the full pathname."
 		      (file-name-nondirectory buffer-file-name)))
 		   ;; Handle any preceding @loc hyp-source implicit button location references.
 		   ;; This is used in report buffers of explicit buttons, i.e. hui:hbut-report
-		   ;; and the *Rolo* output buffer.
+		   ;; and the *Hyperbole Rolo* output buffer.
 		   ((save-excursion
 		      (save-restriction
 			(widen)
@@ -1063,9 +1074,9 @@ represent the output of particular document formatters."
 	       ((current-buffer))))))
 
 (defun    hbut:key-src-set-buffer (src)
-  "Set buffer to SRC, a buffer, file, directory or symlink and return SRC or nil if invalid."
+  "Set buffer to SRC, a buffer, buffer name, file, directory or symlink and return SRC or nil if invalid."
   (cond ((null src) nil)
-	((bufferp src)
+	((or (bufferp src) (get-buffer src))
 	 (set-buffer src)
 	 src)
 	((file-directory-p src)
@@ -1401,26 +1412,29 @@ excluding delimiters, not just one."
   ;; when point is at the end of a line.  -- RSW, 02-16-2020
   (unless (eolp)
     (let* ((opoint (point))
-	   (label-key-start-end (ibut:label-p nil nil nil t t))
-	   (lbl-key (car label-key-start-end)))
+	   (name-start-end (ibut:label-p nil nil nil t t))
+	   (lbl-key (or (car name-start-end)
+			(ibut:label-p nil "\"" "\"" nil t))))
       (unwind-protect
 	  (progn
 	    (when (not (hbut:outside-comment-p))
-	      ;; Skip past any optional label and separators
-	      (when label-key-start-end
-		(goto-char (nth 2 label-key-start-end))
-		(when (looking-at ibut:label-separator-regexp)
-		  ;; Move past up to 2 possible characters of ibut
-		  ;; delimiters; this prevents recognizing labeled,
-		  ;; delimited ibuts of a single character but no one
-		  ;; should need that.
-		  (goto-char (min (+ 2 (match-end 0)) (point-max))))))
+	      ;; Skip past any optional name and separators
+	      (when name-start-end
+		(goto-char (nth 2 name-start-end))
+		(if (looking-at ibut:label-separator-regexp)
+		    ;; Move past up to 2 possible characters of ibut
+		    ;; delimiters; this prevents recognizing labeled,
+		    ;; delimited ibuts of a single character since no one
+		    ;; should need that.
+		    (goto-char (min (+ 2 (match-end 0)) (point-max)))
+		  (goto-char opoint))))
 
 	    ;; Check for an implicit button at current point, record its
 	    ;; attributes and return a button symbol for it.
 	    (let ((types (htype:category 'ibtypes))
 		  ;; Global var used in (hact) function, don't delete.
 		  (hrule:action 'actype:identity)
+		  (ibpoint (point-marker))
 		  (itype)
 		  (args)
 		  (is-type))
@@ -1428,9 +1442,14 @@ excluding delimiters, not just one."
 		(hattr:clear 'hbut:current))
 	      (while (and (not is-type) types)
 		(setq itype (car types))
-		(if (and itype (setq args (funcall itype)))
-		    (setq is-type itype)
-		  (setq types (cdr types))))
+		(when (and itype (setq args (funcall itype)))
+		  (setq is-type itype)
+		  ;; Any implicit button type check should leave point
+		  ;; unchanged.  Trigger an error if not.
+		  (unless (equal (point-marker) ibpoint)
+		    (hypb:error "(Hyperbole): `ibtypes::%s' implicit button type test failed to restore point to %s" is-type ibpoint)))
+		(setq types (cdr types)))
+	      (set-marker ibpoint nil)
 	      (when is-type
 		(hattr:set 'hbut:current 'categ is-type)
 		(when lbl-key
@@ -1701,6 +1720,9 @@ Return the symbol for the button, else nil."
     (when (string-match-p "\\s-" lbl-key)
       (setq lbl-key (ibut:label-to-key lbl-key)))
     (let ((regexp (hbut:label-regexp lbl-key t))
+	  (start (point))
+	  at-lbl-key
+	  ibut
 	  pos
 	  found)
       (save-excursion
@@ -1716,31 +1738,60 @@ Return the symbol for the button, else nil."
 		;; character to prevent this.
 		found (save-excursion
 			(goto-char (1- (point)))
-			(equal (ibut:label-p nil nil nil nil t) lbl-key))))
+			(setq ibut (ibut:at-p)
+			      at-lbl-key (hattr:get ibut 'lbl-key))
+			(equal at-lbl-key lbl-key))))
+	(unless found
+	  (goto-char start))
 	;; re-search backward
 	(while (and (not found) (re-search-backward regexp nil t))
 	  (setq pos (match-beginning 0)
-		found (equal (ibut:label-p nil nil nil nil t) lbl-key))))
+		ibut (ibut:at-p)
+		at-lbl-key (hattr:get ibut 'lbl-key)
+		found (equal at-lbl-key lbl-key))))
       (when found
 	(goto-char pos)
-	(ibut:at-p)))))
+	ibut))))
 
 (defun    ibut:to-text (lbl-key)
   "Find the nearest implicit button with LBL-KEY (a label or label key) within the visible portion of the current buffer and move to within its button text.
-Return the symbol for the button, else nil."
-    (let ((ibut (ibut:to lbl-key))
-	  (lbl-key-end (nth 2 (ibut:label-p nil nil nil t t))))
-      (when ibut
-	;; Skip past any optional label and separators
-	(goto-char lbl-key-end)
-	(when (and (not (hbut:outside-comment-p))
-		   (looking-at ibut:label-separator-regexp))
-	  ;; Move past up to 2 possible characters of ibut
-	  ;; delimiters; this prevents recognizing labeled,
-	  ;; delimited ibuts of a single character but no one
-	  ;; should need that.
-	  (goto-char (min (+ 2 (match-end 0)) (point-max))))
-	ibut)))
+This will find an implicit button if point is within its name or text
+or if LBL-KEY is a name/name-key of an existing implicit button.  It
+will not find other unnamed implicit buttons.
+
+Return the symbol for the button if found, else nil."
+  (let* ((name-start-end (ibut:label-p nil nil nil t t))
+	 (name-end (nth 2 name-start-end))
+	 (at-name (car name-start-end))
+	 (at-lbl-key (ibut:label-p nil "\"" "\"" nil t))
+	 (opoint (point))
+	 move-flag
+	 start
+	 ibut)
+    ;; Do not move point if it is already in the text of an
+    ;; implicit button matching LBL-KEY.  If on the name of
+    ;; the same button, move into the text of the button.
+    (cond ((and lbl-key (equal at-lbl-key lbl-key))
+	   (setq ibut 'hbut:current))
+	  ((and at-name (equal at-name lbl-key))
+	   (setq ibut 'hbut:current
+		 move-flag t))
+	  ((and lbl-key (setq ibut (ibut:to lbl-key)))
+	   (setq move-flag t)))
+    (when (and move-flag (not (hbut:outside-comment-p)))
+      ;; Skip past any optional name and separators
+      (if (setq start (hattr:get ibut 'lbl-start))
+	  (goto-char start)
+	(when name-end
+	  (goto-char name-end)
+	  (if (looking-at ibut:label-separator-regexp)
+	      ;; Move past up to 2 possible characters of ibut
+	      ;; delimiters; this prevents recognizing labeled,
+	      ;; delimited ibuts of a single character since no one
+	      ;; should need that.
+	      (goto-char (min (+ 2 (match-end 0)) (point-max)))
+	    (goto-char opoint)))))
+    ibut))
 
 ;;; ------------------------------------------------------------------------
 (defconst ibut:label-start "<["

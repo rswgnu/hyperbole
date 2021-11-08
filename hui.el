@@ -230,7 +230,7 @@ Signal an error when no such button is found in the current buffer."
 		 (and hui:ebut-prompt-for-action (hui:action actype))))
     (ebut:operate lbl new-lbl)
     (when (called-interactively-p 'interactive)
-	(hui:ebut-message t))))
+      (hui:ebut-message t))))
 
 (defun hui:ebut-rename (curr-label new-label)
   "Rename explicit Hyperbole button given by CURR-LABEL to NEW-LABEL.
@@ -281,7 +281,7 @@ Signal an error if any problem occurs."
 		       new-label)))
     (or (ebut:get (ebut:label-to-key curr-label))
 	(hypb:error "(ebut-rename): Can't rename %s since no button data"
-	       curr-label)))
+		    curr-label)))
   (cond (new-label
 	 (ebut:operate curr-label new-label)
 	 (setq hui:ebut-label-prev nil)
@@ -315,12 +315,12 @@ a menu to find any of the occurrences."
 		   (outline-minor-mode 1)))
 	  (if (fboundp 'hproperty:but-create)
 	      (hproperty:but-create nil nil (regexp-quote
-				      (if match-part string
-					(concat ebut:start string ebut:end)))))
+					     (if match-part string
+					       (concat ebut:start string ebut:end)))))
 	  (goto-char (point-min))
 	  (pop-to-buffer out-buf)
 	  (if (called-interactively-p 'interactive) (message "%d match%s." total
-				       (if (> total 1) "es" ""))
+							     (if (> total 1) "es" ""))
 	    total))
       (if (called-interactively-p 'interactive) (message "No matches.")
 	total))))
@@ -510,14 +510,17 @@ The default is the current button."
 	   (hypb:error "(hbut-act): Button is invalid; it has no attributes"))
 	  (t (hui:but-flash) (hbut:act but)))))
 
-(defun hui:hbut-delete (but-key &optional key-src)
-  "Delete a Hyperbole button given by BUT-KEY in optional KEY-SRC (default is current buffer).
+(defun hui:hbut-delete (&optional but-key key-src)
+  "Delete a Hyperbole button given by optional BUT-KEY in optional KEY-SRC (default is current buffer).
 Return t if button is deleted, nil if user chooses not to delete or signal
 an error otherwise.  If called interactively, prompt user whether to delete
 and derive BUT-KEY from the button that point is within.
 Signal an error if point is not within a button."
-  (interactive (list (when (hbut:at-p)
-		       (hattr:get 'hbut:current 'lbl-key))))
+  (interactive)
+  (when (and (null but-key) (hbut:at-p))
+    (setq but-key (hattr:get 'hbut:current 'lbl-key)))
+  (unless key-src
+    (setq key-src (or buffer-file-name (current-buffer))))
   (cond ((null but-key)
 	 (hypb:error
 	  "(hbut-delete): Point is not over the label of an existing button"))
@@ -608,8 +611,8 @@ Also has side effect of moving point to start of default label, if any."
   (when (markerp end) (setq end (marker-position end)))
   ;; Test whether to use region as default button label.
   (when (and (integerp start) (integerp end)
-	   (or skip-len-test
-	       (<= (max (- end start) (- start end)) (hbut:max-len))))
+	     (or skip-len-test
+		 (<= (max (- end start) (- start end)) (hbut:max-len))))
     (goto-char start)
     (buffer-substring-no-properties start end)))
 
@@ -652,7 +655,7 @@ Default is any implicit button at point."
   (hui:hbut-operate #'ibut:act "Activate labeled implicit button: " but))
 
 (defun hui:ibut-label-create ()
-  "Create an implicit button label preceding an existing implicit button at point, if any.
+  "Create an implicit button label preceding the text of an existing implicit button at point, if any.
 Add the label and delimiters around it plus any necessary label instance number.
 Signal an error if point is not on an implicit button or if the button already has a label.
 
@@ -732,8 +735,7 @@ See also documentation for `hui:link-possible-types'."
   (interactive (hmouse-choose-windows #'hui:link))
   (let ((but-window (or depress-window action-key-depress-window))
 	(referent-window (or release-window action-key-release-window (selected-window)))
-	(but-modify nil)
-	link-types num-types type-and-args lbl-key but-loc but-dir)
+	but-modify link-types num-types type-and-args lbl-key but-loc but-dir)
     (select-window referent-window)
     (setq link-types (hui:link-possible-types)
 	  num-types (length link-types))
@@ -764,29 +766,29 @@ See also documentation for `hui:link-possible-types'."
 	   (setq type-and-args (hui:list-remove-text-properties (car link-types)))
 	   (hui:link-create but-modify but-window lbl-key but-loc but-dir type-and-args))
 	  (t ;; more than 1
-	    (let ((item)
-		  type)
-	      (setq type-and-args
-		    (hui:menu-select
-		     (cons '("Link to>")
-			   (mapcar
-			    (lambda (type-and-args)
-			      (setq type (car type-and-args))
-			      (list
-			       (capitalize
-				(if (string-match
-				     "^\\(link-to\\|eval\\)-"
-				     (setq item (symbol-name type)))
-				    (setq item (substring
-						item (match-end 0)))
-				  item))
-			       type-and-args
-			       (documentation (symtable:actype-p type))))
-			    link-types)))
-		    type-and-args (hui:list-remove-text-properties type-and-args))
-	      (hui:link-create
-		but-modify but-window
-		lbl-key but-loc but-dir type-and-args))))
+	   (let ((item)
+		 type)
+	     (setq type-and-args
+		   (hui:menu-select
+		    (cons '("Link to>")
+			  (mapcar
+			   (lambda (type-and-args)
+			     (setq type (car type-and-args))
+			     (list
+			      (capitalize
+			       (if (string-match
+				    "^\\(link-to\\|eval\\)-"
+				    (setq item (symbol-name type)))
+				   (setq item (substring
+					       item (match-end 0)))
+				 item))
+			      type-and-args
+			      (documentation (symtable:actype-p type))))
+			   link-types)))
+		   type-and-args (hui:list-remove-text-properties type-and-args))
+	     (hui:link-create
+	      but-modify but-window
+	      lbl-key but-loc but-dir type-and-args))))
     (hui:ebut-message but-modify)))
 
 ;;; ************************************************************************
@@ -802,35 +804,35 @@ See also documentation for `hui:link-possible-types'."
 	      (params-str (and params (concat " " (prin1-to-string params))))
 	      )
 	 (while (progn
-		 (while (and (setq act-str
-				   (hargs:read
-				    (or prompt (concat "Action" params-str
-						       ": ")) nil nil
-						       nil 'string))
-			     (not (string-equal act-str ""))
-			     (condition-case ()
-				 (progn (setq act (read act-str)) nil)
-			       (error
-				(beep) (message "Invalid action syntax.")
-				(sit-for 3) t))))
-		 (and (not (symbolp act))
-		      params-no-keywords
-		      ;; Use the weak condition that action must
-		      ;; involve at least one of actype's parameters
-		      ;; or else we assume the action is invalid, tell
-		      ;; the user and provide another chance for entry.
-		      (not (memq t
-				 (mapcar
-				  (lambda (param)
-				    (setq param (symbol-name param))
-				    (and (string-match
-					  (concat "[\( \t\n\r,']"
-						  (regexp-quote param)
-						  "[\(\) \t\n\r\"]")
-					  act-str)
-					 t))
-				  params-no-keywords)))
-		      ))
+		  (while (and (setq act-str
+				    (hargs:read
+				     (or prompt (concat "Action" params-str
+							": ")) nil nil
+				     nil 'string))
+			      (not (string-equal act-str ""))
+			      (condition-case ()
+				  (progn (setq act (read act-str)) nil)
+				(error
+				 (beep) (message "Invalid action syntax.")
+				 (sit-for 3) t))))
+		  (and (not (symbolp act))
+		       params-no-keywords
+		       ;; Use the weak condition that action must
+		       ;; involve at least one of actype's parameters
+		       ;; or else we assume the action is invalid, tell
+		       ;; the user and provide another chance for entry.
+		       (not (memq t
+				  (mapcar
+				   (lambda (param)
+				     (setq param (symbol-name param))
+				     (and (string-match
+					   (concat "[\( \t\n\r,']"
+						   (regexp-quote param)
+						   "[\(\) \t\n\r\"]")
+					   act-str)
+					  t))
+				   params-no-keywords)))
+		       ))
 	   (beep) (message "Action must use at least one parameter.")
 	   (sit-for 3))
 	 (let (head)
@@ -903,7 +905,7 @@ DEFAULT-ACTYPE may be a valid symbol or symbol name."
 		 nil t (buffer-name) 'buffer))
 	  (or (null buf-name) (equal buf-name "")))
       (beep))
-  (get-buffer buf-name)))
+    (get-buffer buf-name)))
 
 (defun hui:ebut-delete-op (interactive but-key key-src)
   "INTERACTIVEly or not delete explicit Hyperbole button given by BUT-KEY in KEY-SRC.
@@ -923,7 +925,7 @@ within."
 	  (if ebut
 	      (ebut:delete ebut)
 	    (hypb:error "(ebut-delete): No valid %s button in %s"
-		   (ebut:key-to-label but-key) buf)))
+			(ebut:key-to-label but-key) buf)))
 	(with-current-buffer buf
 	  (if interactive
 	      (progn
@@ -932,7 +934,8 @@ within."
 	    (hui:ebut-unmark but-key key-src))
 	  (when (hmail:reader-p)
 	    (hmail:msg-narrow))
-	  (message "Button '%s' deleted." (ebut:key-to-label but-key)))
+	  (message "Button '%s' deleted." (ebut:key-to-label but-key))
+	  t)
       (hypb:error "(ebut-delete): You may not delete buttons from this buffer"))))
 
 (defun hui:ebut-delimit (start end instance-str)
@@ -1013,7 +1016,7 @@ With a prefix argument, also delete the button text between the delimiters."
   (if (and (stringp file-name) (file-readable-p file-name))
       (find-file file-name)
     (hypb:error "(file-find): \"%s\" does not exist or is not readable"
-	   file-name)))
+		file-name)))
 
 (defun hui:hbut-operate (operation operation-str &optional but)
   "Execute OPERATION (a function) described by OPERATION-STR action on a Hyperbole button.
@@ -1022,23 +1025,23 @@ for with completion of all labeled buttons within the current buffer."
   (unless (or but (setq but (hbut:at-p)))
     (let (lst)
       (cond ((setq lst (nconc (ebut:alist) (ibut:alist)))
-	         (setq but (hbut:get (hbut:label-to-key
-			                      (hargs:read-match operation-str
-                                                    lst nil t
-					                                (hbut:label-p 'as-label) 'hbut)))))
-	        (t (hypb:error "(hbut-operate): No labeled buttons in buffer")))))
+	     (setq but (hbut:get (hbut:label-to-key
+			          (hargs:read-match operation-str
+						    lst nil t
+						    (hbut:label-p 'as-label) 'hbut)))))
+	    (t (hypb:error "(hbut-operate): No labeled buttons in buffer")))))
   (cond ((and (called-interactively-p 'interactive) (null but))
-	     (hypb:error "(hbut-operate): No current button upon which to operate."))
-		((progn (unless but (setq but 'hbut:current))
-				(hbut:is-p but))
-	     (hui:but-flash)
-		 (apply hrule:action
-				operation
-				(list but)))
-	    ((and but (symbolp but))
-		 (hypb:error "(hbut-operate): Symbol, %s, has invalid Hyperbole button attributes:\n  %S" but (hattr:list but)))
-		(t
-		 (hypb:error "(hbut-operate): Invalid Hyperbole button: %s" but))))
+	 (hypb:error "(hbut-operate): No current button upon which to operate."))
+	((progn (unless but (setq but 'hbut:current))
+		(hbut:is-p but))
+	 (hui:but-flash)
+	 (apply hrule:action
+		operation
+		(list but)))
+	((and but (symbolp but))
+	 (hypb:error "(hbut-operate): Symbol, %s, has invalid Hyperbole button attributes:\n  %S" but (hattr:list but)))
+	(t
+	 (hypb:error "(hbut-operate): Invalid Hyperbole button: %s" but))))
 
 (defun hui:hbut-term-highlight (start end)
   "For terminals only: Emphasize a button spanning from START to END."
@@ -1114,17 +1117,17 @@ Optional NO-SORT means display in decreasing priority order (natural order)."
 	 (setq nm-list
 	       (if (member term '("" "*"))
 		   (let ((type-names
-			   (mapcar (lambda (nm) (concat tprefix nm))
-				   names)))
+			  (mapcar (lambda (nm) (concat tprefix nm))
+				  names)))
 		     (if no-sort type-names
 		       (sort type-names #'string<)))
 		 (cons (concat tprefix term) nil))
 	       doc-list (delq nil (mapcar
-				    (lambda (name)
-				      (let ((doc (documentation
-						  (intern-soft name))))
-					(if doc (cons name doc))))
-				    nm-list)))
+				   (lambda (name)
+				     (let ((doc (documentation
+						 (intern-soft name))))
+				       (if doc (cons name doc))))
+				   nm-list)))
 	 (with-output-to-temp-buffer buf-name
 	   (mapcar (lambda (nm-doc-cons)
 		     (princ (car nm-doc-cons)) (terpri)
@@ -1156,7 +1159,7 @@ within."
 	  (if ibut
 	      (ibut:delete ibut)
 	    (hypb:error "(ibut-delete): No valid %s button in %s"
-		   (ibut:key-to-label but-key) buf)))
+			(ibut:key-to-label but-key) buf)))
 	(progn (set-buffer buf)
 	       (when (hmail:reader-p) (hmail:msg-narrow))
 	       (message "Button '%s' deleted." (ibut:key-to-label but-key)))
@@ -1233,8 +1236,8 @@ Koutline Cell            link-to-kcell
 Outline Heading          link-to-string-match
 Buffer attached to File  link-to-file
 Buffer without File      link-to-buffer-tmp"
-;; Elisp Buffer at Start
-;; or End of Sexpression    eval-elisp
+  ;; Elisp Buffer at Start
+  ;; or End of Sexpression    eval-elisp
 
   (let (val)
     (delq nil
@@ -1243,14 +1246,14 @@ Buffer without File      link-to-buffer-tmp"
 		      ((ebut:at-p)
 		       (list 'link-to-ebut (ebut:label-p)))
 		      ((setq val (ibut:at-p t))
-		       (list 'link-to-ibut val)))
+		       (list 'link-to-ibut val (or buffer-file-name (buffer-name)))))
 		(cond ((and (require 'bookmark)
                             (derived-mode-p #'bookmark-bmenu-mode))
                        (list 'link-to-bookmark (bookmark-bmenu-bookmark))))
 		(cond ((derived-mode-p #'Info-mode)
 		       (if (and Info-current-node
 				(member Info-current-node
-				       (Info-index-nodes Info-current-file))
+					(Info-index-nodes Info-current-file))
 				(Info-menu-item-at-p))
 			   (let ((hargs:reading-p 'Info-index-item))
 			     (list 'link-to-Info-index-item (hargs:at-p)))

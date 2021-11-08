@@ -452,10 +452,10 @@
 
 ;; info-node
 (ert-deftest hbut-info-node-test ()
-  "Got to info node."
+  "Test Info node link."
   (unwind-protect
       (with-temp-buffer
-        (insert "\"(emacs)top\"")
+        (insert "\"(emacs)Top\"")
         (goto-char 6)
         (action-key)
         (should (string= "*info*" (buffer-name))))

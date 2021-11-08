@@ -21,7 +21,7 @@
 (require 'el-mock)
 
 (defun hbut-tests:should-match-tmp-folder (tmp)
-  "Check that TMP match either a list of a single element of \"/tmp\" or \"private/tmp\".
+  "Check that TMP matches either a list of a single element of \"/tmp\" or \"private/tmp\".
 Needed since hyperbole expands all links to absolute paths and
 /tmp can be a symbolic link."
   (should (member tmp '(("/tmp") ("./tmp") ("/private/tmp")))))
@@ -70,11 +70,9 @@ Needed since hyperbole expands all links to absolute paths and
           (find-file file)
           (ebut:program "label" 'link-to-directory "/tmp")
           (should (hbut:at-p))
-          (let ((args (hbut:delete)))
+          (let ((success-flag (hui:hbut-delete)))
             (should-not (hbut:at-p))
-            (should (equal (hbdata:actype args) "actypes::link-to-directory"))
-            (hbut-tests:should-match-tmp-folder (hbdata:args args))
-            ))
+            (should (eq success-flag t))))
       (delete-file file))))
 
 (ert-deftest gbut-program-calls-ebut-program ()

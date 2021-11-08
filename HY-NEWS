@@ -20,6 +20,7 @@
 
     - M-RET: Reworked M-RET interface so can control how much or little of
       Hyperbole works in Org mode when Hyperbole minor mode is enabled.
+      See "(hyperbole)enable org-mode support".
 
     - hsys-org-enable-smart-keys: New customization to replace
       'inhibit-hsys-org'.  This applies only in Org major/minor modes when
@@ -36,6 +37,53 @@
       | nil          | Ignore            | Ignore           | Ignore   | org-meta-return  |
       | t            | Activate          | Activate         | Activate | None             |
       |--------------+-------------------+------------------+----------+------------------|
+
+   SIMPLE BUTTON TYPE CREATION
+
+    - Simple Action Link Button Type Creation: `defal' is a new,
+      easy-to-use construct that generates new action button types from
+      a type name and a single simple format expression, allowing
+      non-programmers to create their own implicit action button link
+      types that execute key series, display URLs, display the contents
+      of pathnames or invoke functions.  See "(hyperbole)Action Button
+      Link Types" or the "DEMO#Defining New Action Button Types"
+      section.
+
+    - Easy Implicit Link Button Type Creation: `defil' is a new,
+      construct for those familiar with regular expressions but not
+      much Emacs Lisp.  This macro creates more flexible implicit
+      button types than `defal' where the delimiters and text
+      substitution can be specified with regular expressions.  Actions
+      are limited to executing key series, displaying URLs, displaying
+      the contents of pathnames or invoking functions.  See
+      "(hyperbole)Implicit Button Link Types".
+
+      Elisp programmers should use the existing `defib' macro for full
+      flexibility in implicit button type creation.  See "hibytpes.el"
+      for examples and "(hyperbole)Programmatic Implicit Button Types"
+      for documentation.
+
+  TEST CASES
+
+    - Hyperbole Automated Testing: Hyperbole now includes over 170 test cases
+      in the test/ subdirectory.  Simply run 'make test' or 'make test-all'
+      from the command-line when in the Hyperbole source directory and you
+      should see all tests pass.  If any fail, you can press the Action Key
+      to see the source of the failure.
+
+    - Defal implicit buttons hypb-ert-sym and hypb-ert-sel: For running
+      hyperbole ert test from hyperbole source files.
+	Defines an implicit button for running an ert test
+
+	Example:
+	  Run the test hbut-defal-url
+	  <hypb-ert-sym hbut-defal-url>
+
+	  Run the tests specified by the test selector hbut-defal
+	  <hypb-ert-sel hbut-defal>
+
+	  Run all tests
+	  <hypb-ert-sel t>
 
   HYROLO
 
@@ -56,7 +104,9 @@
 
     - Org Table Support: Org table editing now automatically works in the
       Koutliner via Org table minor mode.  Use {M-x orgtbl-mode RET} to
-      toggle this on and off.  See "(Org)Tables" for details.
+      toggle this on and off.  A press of the Action Key on a | symbol
+      separating fields, also toggles this minor mode on or off. See
+      "(Org)Tables" for details.
 
     - New Mail Tree Key Binding: The kotl-mode:mail-tree command that
       extracts the current view of a Koutline in text-only format and
@@ -122,37 +172,14 @@
 
   PROGRAMMING
 
-    - Simple Action Link Button Type Creation: `defal' is a new,
-      easy-to-use construct that generates new action button types from
-      a type name and a single simple format expression, allowing
-      non-programmers to create their own implicit action button link
-      types that execute key series, display URLs, display the contents
-      of pathnames or invoke functions.  See "(hyperbole)Action Button
-      Link Types" or the "DEMO#Defining New Action Button Types"
-      section.
-
-    - Easy Implicit Link Button Type Creation: `defil' is a new,
-      construct for those familiar with regular expressions but not
-      much Emacs Lisp.  This macro creates more flexible implicit
-      button types than `defal' where the delimiters and text
-      substitution can be specified with regular expressions.  Actions
-      are limited to executing key series, displaying URLs, displaying
-      the contents of pathnames or invoking functions.  See
-      "(hyperbole)Implicit Button Link Types".
-
-      Elisp programmers should use the existing `defib' macro for full
-      flexibility in implicit button type creation.  See "hibytpes.el"
-      for examples and "(hyperbole)Programmatic Implicit Button Types"
-      for documentation.
-
     - Edebuggable Hyperbole Types: `defib' and `defact' type definitions
       are now interactively debuggable via edebug-defun {C-M-x}.
 
-    - kbd-key:is-p: Added this new predicate to test whether point is within
-      a brace-delimited key series.
-
     - ebut:program: Programmatically create an explicit Hyperbole button at
 	 point from LABEL, ACTYPE (action type), and optional actype ARGS.
+
+    - kbd-key:is-p: Added this new predicate to test whether point is within
+      a brace-delimited key series.
 
   ACE WINDOW PACKAGE INTEGRATION - fast window and buffer switching
 
@@ -163,30 +190,6 @@
       rapidly creates a link button at point in the selected window,
       linking to point in the window chosen when prompted.
       See "DEMO#Displaying File and Buffer Items and Moving Buffers".
-
-
-  TEST CASES
-
-    - Hyperbole Automated Testing: Hyperbole now includes over 170 test cases
-      in the test/ subdirectory.  Simply run 'make test' or 'make test-all'
-      from the command-line when in the Hyperbole source directory and you
-      should see all tests pass.  If any fail, you can press the Action Key
-      to see the source of the failure.
-
-    - Defal implicit buttons hypb-ert-sym and hypb-ert-sel: For running
-      hyperbole ert test from hyperbole source files.
-	Defines an implicit button for running an ert test
-
-	Example:
-	  Run the test hbut-defal-url
-	  <hypb-ert-sym hbut-defal-url>
-
-	  Run the tests specified by the test selector hbut-defal
-	  <hypb-ert-sel hbut-defal>
-
-	  Run all tests
-	  <hypb-ert-sel t>
-
 
 
 ===========================================================================

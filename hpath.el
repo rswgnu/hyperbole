@@ -641,10 +641,11 @@ Other arguments are returned unchanged."
 
 (defun hpath:absolute-to (path &optional default-dirs)
   "Return PATH as an absolute path relative to one directory from optional DEFAULT-DIRS or `default-directory'.
-Return PATH unchanged when it is not a valid path or when DEFAULT-DIRS
+Return PATH unchanged when it is a buffer name or not a valid path or when DEFAULT-DIRS
 is invalid.  DEFAULT-DIRS when non-nil may be a single directory or a list of
 directories.  The first one in which PATH is found is used."
   (cond ((not (and (stringp path)
+		   (not (get-buffer path))
 		   (not (hypb:object-p path))
                    (hpath:is-p (hpath:trim path) nil t)))
          path)

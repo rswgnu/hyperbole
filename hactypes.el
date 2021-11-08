@@ -472,44 +472,53 @@ available.  Filename may be given without the .info suffix."
       (id-info string)
     (hypb:error "(link-to-Info-node): Invalid Info node: `%s'" string)))
 
-(defact link-to-ibut (key &optional key-file point)
-  "Perform an action given by an implicit button, specified by KEY, optional KEY-FILE and POINT.
-KEY-FILE defaults to the current buffer's file and POINT to the current point.
+(defact link-to-ibut (key &optional but-src point)
+  "Perform an action given by an implicit button, specified by KEY, optional BUT-SRC and POINT.
+BUT-SRC defaults to the current buffer's file or if there is no
+attached file, then to its buffer name.  POINT defaults to the
+current point.
 
-When creating the button, point must be on the implicit button to which to link
-and its buffer must have a file attached."
+When the button with this action type is created, point must be
+on the implicit button to which to link."
   (interactive
    (let ((ibut-key (ibut:at-p t)))
-     (if (and ibut-key buffer-file-name)
-	 (list ibut-key buffer-file-name (point))
-       ;; TODO: If default is null below and are creating, rather than modifying,
-       ;; the link, it would be better to throw an error than create
-       ;; an invalid link, but it is difficult to tell which operation
-       ;; is in progress, so ignore this for now.  -- RSW, 01-25-2020
+     (cond (ibut-key
+	    (list ibut-key (or buffer-file-name (buffer-name)) (point)))
+	   ;; TODO: If default is null below and are creating, rather than modifying,
+	   ;; the link, it would be better to throw an error than create
+	   ;; an invalid link, but it is difficult to tell which operation
+	   ;; is in progress, so ignore this for now.  -- RSW, 01-25-2020
 
-       ;; When not on an ibut and modifying the link, use existing arguments
-       (if (and (bound-and-true-p defaults) (listp defaults))
-	   defaults
-	 (list nil nil nil)))))
+	   ;; When not on an ibut and modifying the link, use existing arguments
+	   ((and (bound-and-true-p defaults) (listp defaults) defaults)
+	    defaults)
+	   (t
+	    (hypb:error "(link-to-ibut): Point must be on an implicit button to create a link-to-ibut")))))
+  (when (null key)
+    (hypb:error "(link-to-ibut): Point must be on an implicit button to create a link-to-ibut"))
   (let (but
 	normalized-file)
-    (if key-file
-	(unless (called-interactively-p 'interactive)
-	  (setq normalized-file (hpath:normalize key-file)))
-      (setq normalized-file buffer-file-name))
+    (cond (but-src
+	   (unless (and (get-buffer but-src)
+			(not (buffer-file-name (get-buffer but-src))))
+	     (setq normalized-file (hpath:normalize but-src))))
+	  (t (setq normalized-file buffer-file-name)))
     (save-excursion
       (save-restriction
-	(when key-file
-	  (set-buffer (get-file-buffer normalized-file)))
+	(when but-src
+	  (set-buffer (or (get-buffer but-src) (get-file-buffer normalized-file))))
 	(widen)
-	(if (integerp point) (goto-char (min point (point-max))))
+	(when (or (not normalized-file) (hmail:editor-p) (hmail:reader-p))
+	  (hmail:msg-narrow))
+	(when (integerp point)
+	  (goto-char (min point (point-max))))
 	(setq but (ibut:to key))))
     (cond (but
 	   (hbut:act but))
 	  (key
 	   (hypb:error "(link-to-ibut): No implicit button `%s' found in `%s'"
 		       (ibut:key-to-label key)
-		       (or key-file (buffer-name))))
+		       (or but-src (buffer-name))))
 	  (t
 	   (hypb:error "(link-to-ibut): Link reference is null/empty")))))
 

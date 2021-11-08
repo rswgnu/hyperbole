@@ -155,7 +155,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</P>
 
 <PRE>
 Edition 8.0.0pre
-Printed May 16, 2021.
+Printed November 7, 2021.
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -197,7 +197,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 @example
 Edition 8.0.0pre
-May 16, 2021
+November 7, 2021
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -7723,20 +7723,20 @@ file.  For example, @code{(add-hook 'hyperbole-init-hook (lambda ()
 (global-set-key "\C-ch" 'hyperbole-toggle-bindings)))}.
 
 @vindex file, .emacs
-@findex hmouse-toggle-bindings
+@findex hyperbole-mode
 @cindex mouse key toggle
 @cindex Smart Mouse Key toggle
 @kindex C-c t
-If you want to restore only the mouse bindings that existed before
-Hyperbole was loaded, use the @code{hmouse-toggle-bindings} command.
-It switches between the Hyperbole mouse key bindings and those set
+If you ever want to disable Hyperbole key and mouse bindings, simply toggle
+Hyperbole minor mode off with the @code{hyperbole-mode} command.
+It switches between Hyperbole mouse key and mouse bindings and those set
 prior to loading Hyperbole and then back again if invoked once more.
 There is no default key binding for this command; use @bkbd{M-x
-hmouse-toggle-bindings @key{RET}}.  Alternatively, you may select a
+hyperbole-mode @key{RET}}.  Alternatively, you may select a
 key and bind it as part of any setting of @code{hyperbole-init-hook}
 within your personal @file{~/.emacs} file.  For example, @code{(add-hook
 'hyperbole-init-hook (lambda () (global-set-key "\C-ct"
-'hmouse-toggle-bindings)))}.
+'hyperbole-mode)))}.
 
 @node Koutliner Keys, Smart Key Reference, Hyperbole Key Bindings, Top
 @appendix Koutliner Keys

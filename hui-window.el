@@ -1157,8 +1157,7 @@ of the Smart Key."
 		 (hmouse-x-coord
 		  (if assist-flag assist-key-release-args
 		    action-key-release-args)))
-		(shrink-amount (- right-side-ln last-release-x))
-		)
+		(shrink-amount (- right-side-ln last-release-x)))
 	   ;; Restore position of point prior to Action Key release.
 	   (if action-key-release-prev-point
 	       (let ((obuf (current-buffer)))
@@ -1187,13 +1186,10 @@ of the Smart Key."
 	 (w2 (if assist-flag assist-key-release-window
 	       action-key-release-window))
 	 (w1-buf (and w1 (window-buffer w1)))
-	 (w2-buf (and w2 (window-buffer w2)))
-	 )
+	 (w2-buf (and w2 (window-buffer w2))))
     (cond ((not (and w1 w2))
 	   (error "(hmouse-swap-buffers): Last depress or release was not within a window"))
-	  ((eq w1 w2)
-	   ;; Do nothing silently.
-	   )
+	  ((eq w1 w2))  ;; Do nothing silently.
 	  (t ;; Swap window buffers.
 	   (set-window-buffer w1 w2-buf)
 	   (set-window-buffer w2 w1-buf)))))
@@ -1207,27 +1203,24 @@ of the Smart Key."
 	 (w1-width  (and w1 (window-width w1)))
 	 (w1-height (and w1 (window-height w1)))
 	 (w2-width  (and w2 (window-width w2)))
-	 (w2-height (and w2 (window-height w2)))
-	 )
+	 (w2-height (and w2 (window-height w2))))
     (or (and w1 w2)
 	(error "(hmouse-swap-windows): Last depress or release was not within a window"))
     (unwind-protect
 	(progn
 	  (select-window w1)
-	  (if (not (= w1-height (frame-height)))
-	      (shrink-window (- w1-height w2-height)))
-	  (if (not (= w1-width (frame-width)))
-	      (shrink-window-horizontally (- w1-width w2-width)))
+	  (unless (= w1-height (frame-height))
+	    (shrink-window (- w1-height w2-height)))
+	  (unless (= w1-width (frame-width))
+	    (shrink-window-horizontally (- w1-width w2-width)))
 	  (select-window w2)
 	  (setq w2-width (window-width w2)
 		w2-height (window-height w2))
-	  (if (not (= w2-height (frame-height)))
-	      (shrink-window (- w2-height w1-height)))
-	  (if (not (= w2-width (frame-width)))
-	      (shrink-window-horizontally (- w2-width w1-width)))
-	  )
-      (select-window w2)
-      )))
+	  (unless (= w2-height (frame-height))
+	    (shrink-window (- w2-height w1-height)))
+	  (unless (= w2-width (frame-width))
+	    (shrink-window-horizontally (- w2-width w1-width))))
+      (select-window w2))))
 
 (defun hmouse-x-coord (args)
   "Return x coordinate in characters from window system dependent ARGS or nil."
@@ -1235,8 +1228,9 @@ of the Smart Key."
 	       (save-excursion
 		 (hypb:goto-marker args)
 		 (current-column))
-	     (eval (cdr (assoc (hyperb:window-system)
-			       '(("emacs" . (progn (when (eventp args) (setq args (event-start args)))
+	     (funcall (cdr (assoc (hyperb:window-system)
+				  '(("emacs" . (lambda (args)
+						 (when (eventp args) (setq args (event-start args)))
 						   (cond
 						    ((posnp args)
 						     (let ((w-or-f (posn-window args)))
@@ -1247,26 +1241,29 @@ of the Smart Key."
 							    (error 0))
 							  (nth 0 (window-edges w-or-f)))))
 						    (t (car args)))))
-				 ("next"   .  (nth 1 args))
-				 )))))))
-    (if (integerp x) x)))
+				 ("next"   .  (lambda (args) (nth 1 args))))))
+		      args))))
+    (when (integerp x)
+      x)))
 
 (defun hmouse-y-coord (args)
   "Return y coordinate in frame lines from window system dependent ARGS or nil."
-  (let ((y (eval (cdr (assoc (hyperb:window-system)
-			     '(("emacs" . (progn (when (eventp args) (setq args (event-start args)))
-						 (cond ((posnp args)
-							(let ((w-or-f (posn-window args)))
-							  (when (framep w-or-f)
-							    (setq w-or-f (frame-selected-window w-or-f)))
-							  (+ (condition-case ()
-								 (cdr (posn-col-row args))
-							       (error 0))
-							     (nth 1 (window-edges w-or-f)))))
-						       (t (cdr args)))))
-			       ("next"   .  (nth 2 args))
-			       ))))))
-    (if (integerp y) y)))
+  (let ((y (funcall (cdr (assoc (hyperb:window-system)
+				'(("emacs" . (lambda (args)
+					       (when (eventp args) (setq args (event-start args)))
+						    (cond ((posnp args)
+							   (let ((w-or-f (posn-window args)))
+							     (when (framep w-or-f)
+							       (setq w-or-f (frame-selected-window w-or-f)))
+							     (+ (condition-case ()
+								    (cdr (posn-col-row args))
+								  (error 0))
+								(nth 1 (window-edges w-or-f)))))
+							  (t (cdr args)))))
+				  ("next"   .  (lambda (args) (nth 2 args))))))
+		    args)))
+    (when (integerp y)
+      y)))
 
 ;;; ************************************************************************
 ;;; Private variables

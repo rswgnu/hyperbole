@@ -1353,17 +1353,14 @@ See the Hyperbole menu item, Doc/SmartKeys {C-h h d s}, for a summary of
 all Smart Key operations.  For extensive details on Smart Key operation,
 see the Hyperbole manual section, "(hyperbole)Smart Key Reference".
 
-If you ever want to restore the mouse bindings that existed before Hyperbole
-was loaded, use the `hmouse-toggle-bindings' command.  It switches between
-the Hyperbole mouse key bindings and those set prior to loading Hyperbole
-and then back again if invoked once more.  There is no default key binding
-for this command, so you must use `M-x hmouse-toggle-bindings RET'.
-Alternatively, you may select a key and bind it as part of any setting of
-`hyperbole-init-hook' within your personal .emacs file.
+If you ever want to disable Hyperbole key and mouse bindings, simply toggle
+Hyperbole minor mode off with {M-x hyperbole-mode RET}.  Alternatively, you may
+select a key and bind it as part of any setting of `hyperbole-init-hook'
+within your personal .emacs file.
 
 For example:
   (add-hook 'hyperbole-init-hook
-   (lambda () (global-set-key <YOUR-KEY-HERE> #'hmouse-toggle-bindings)))
+   (lambda () (global-set-key <YOUR-KEY-HERE> 'hyperbole-mode)))
 
 ** Thing Selection
 

@@ -1051,10 +1051,10 @@ whole outline buffer."
   (interactive
    (let ((label-default (kcell-view:label)))
      (hargs:iform-read
-      '(interactive
+      `(interactive
 	(list
 	 (hargs:read "Copy tree without attributes: (0 for whole outline) "
-		     nil label-default nil 'kcell)
+		     nil ,label-default nil 'kcell)
 	 (read-buffer "To buffer: "
 		      (save-window-excursion
 			(if (one-window-p)
@@ -2386,10 +2386,10 @@ non-nil."
   (interactive
    (let ((label-default (kcell-view:label)))
      (hargs:iform-read
-      '(interactive
+      `(interactive
 	(list
 	 (hargs:read "Mail tree: (0 for whole outline) "
-		     nil label-default nil 'kcell)
+		     nil ,label-default nil 'kcell)
 	 (y-or-n-p "Include invisible text? "))))))
   (if (equal cell-ref "0")
       (hmail:buffer nil invisible-flag)

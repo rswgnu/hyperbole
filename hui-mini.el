@@ -84,16 +84,16 @@ documentation, not the full text."
       (setq hui:menu-p nil))))
 
 ;;;###autoload
-(defun hyperbole-set-key (key command)
-  "Give KEY a global binding of Hyperbole minibuffer COMMAND keys.
-KEY is a key sequence; noninteractively, it is a string or vector
+(defun hyperbole-set-key (global-key menu-keys)
+  "Bind GLOBAL-KEY to Hyperbole minibuffer MENU-KEYS.
+GLOBAL-KEY is a key sequence; noninteractively, it is a string or vector
 of characters or event types, and non-ASCII characters with codes
 above 127 (such as ISO Latin-1) can be included if you use a vector.
 
-COMMAND is a string of the ASCII key presses used to invoke a
+MENU-KEYS is a string of the ASCII key presses used to invoke a
 Hyperbole minibuffer command.
 
-Note that if KEY has a local binding in the current buffer,
+Note that if GLOBAL-KEY has a local binding in the current buffer,
 that local binding will continue to shadow any global binding
 that you make with this function."
   (interactive
@@ -105,13 +105,13 @@ that you make with this function."
 	    ;; Normalize the key prefix that invokes the Hyperbole minibuffer menu
 	    (kbd (key-description (car (where-is-internal 'hyperbole))))
             (hui:get-keys)))))
-  (or (vectorp key) (stringp key)
-      (signal 'wrong-type-argument (list 'arrayp key)))
-  (if (or (not (stringp command)) (string-empty-p command))
+  (or (vectorp global-key) (stringp global-key)
+      (signal 'wrong-type-argument (list 'arrayp global-key)))
+  (if (or (not (stringp menu-keys)) (string-empty-p menu-keys))
       (user-error "(hyperbole-set-key): No Hyperbole menu item selected")
-    (define-key (current-global-map) key `(lambda () (interactive) (kbd-key:act ,command)))
+    (define-key (current-global-map) global-key `(lambda () (interactive) (kbd-key:act ,menu-keys)))
     (when (called-interactively-p 'interactive)
-      (message "{%s} globally set to invoke {%s}" (key-description key) (key-description command)))))
+      (message "{%s} globally set to invoke {%s}" (key-description global-key) (key-description menu-keys)))))
 
 (defun hui:menu-act (menu &optional menu-list doc-flag help-string-flag)
   "Prompt user with Hyperbole MENU (a symbol) and perform selected item.

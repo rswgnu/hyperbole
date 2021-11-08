@@ -131,8 +131,7 @@ single argument."
 		 (if (= total-matches 1) "y" "ies")))
     total-matches))
 
-(defun hyrolo-logic (sexp &optional in-bufs count-only include-sub-entries
-		     no-sub-entries-out)
+(defun hyrolo-logic (sexp &optional in-bufs count-only include-sub-entries no-sub-entries-out)
   "Apply SEXP to all entries in optional IN-BUFS, display entries where SEXP is non-nil.
 If IN-BUFS is nil, `hyrolo-file-list' is used.  If optional COUNT-ONLY is
 non-nil, don't display entries, return count of matching entries only.  If

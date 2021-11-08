@@ -406,7 +406,8 @@ performing ACTION."
       ;; string arguments like "tags" as a pathname, when it is not
       ;; being used as a path.  So do this only if actype is a defact
       ;; and not a defun to limit any potential impact. RSW - 9/22/2017
-      (and (symbolp action) (symtable:actype-p action)
+      (and (symbolp action)
+	   (symtable:actype-p action)
 	   (setq args (hpath:absolute-arguments args)))
       (let ((hist-elt (hhist:element)))
 	(run-hooks 'action-act-hook)

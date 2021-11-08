@@ -178,62 +178,36 @@ context (wherever point is).  {C-u \\[hkey-help]} shows what the Assist Key will
 ;;; Public key bindings
 ;;; ************************************************************************
 
-;;
-;; Hyperbole key binding for many read-only modes.  Set to nil if unwanted.
-;; No longer used; use regular Action Key instead.
-;;(defvar action-key-read-only "\C-m"
-;;  "Local Action Key binding for special read-only modes.  Set to nil if unwanted.")
-
-(defvar hkey-bindings nil
-  "List of global key sequences bound by Hyperbole.
-See `hkey-binding-entry' for format.")
-
-(defvar hkey-bindings-flag nil
-  "True if Hyperbole key bindings are in use, else nil.")
-
-(defvar hkey-previous-bindings nil
-  ;; !! FIXME: We should probably instead use a keymap that we just add/remove
-  ;; from the `global-map' so we don't actually modify any keybindings (and
-  ;; hence don't need this var)?
-  "List of bindings that Hyperbole has overridden.
-Holds the global key sequences and their pre-Hyperbole bindings.
-See `hkey-binding-entry' for format.")
-
-(defun hkey-binding-entry (key)
-  "Given an Emacs KEY that may be bound, return an entry to save the associated binding.
-Entry format is: (key-description key-sequence key-binding)."
-  (list (key-description key) key (key-binding key)))
-
-(defun hkey-bindings-keys (entries)
-  (mapcar #'cadr entries))
-
 (defun hkey-get-bindings ()
-  "Return a list of entries for storage of Hyperbole key bindings.
+  "Return a keymap of Hyperbole key bindings.
 `hkey-initialize' must have already been called or the list will be empty."
-  (mapcar (lambda (key) (hkey-binding-entry key))
-	  (hkey-bindings-keys hkey-previous-bindings)))
+  hyperbole-mode-map)
 
+(make-obsolete 'hkey-global-set-key 'hkey-set-key "8.0.0")
 (defun hkey-global-set-key (key command &optional no-add)
-  "Same as `global-set-key' except saves prior binding for later restoration unless optional 3rd argument NO-ADD is given as a non-nil value."
-  (unless no-add
-    (add-to-list 'hkey-previous-bindings (hkey-binding-entry key)))
-  (global-set-key key command))
+  "Define a Hyperbole KEY bound to COMMAND.  Optional third arg, NO-ADD is ignored."
+  (define-key hyperbole-mode-map key command))
 
+(make-obsolete 'hkey-maybe-global-set-key 'hkey-maybe-set-key "8.0.0")
 (defun hkey-maybe-global-set-key (key command &optional no-add)
-  "Globally set KEY to COMMAND if KEY is unbound and COMMAND is not on any global key.
-With third argument NO-ADD non-nil, skip storage of prior KEY binding
-which prevents automatic removal of any local bindings to the same key."
-  (or (global-key-binding key)
-      (where-is-internal command)
-      (hkey-global-set-key key command no-add)))
+  "Define a Hyperbole KEY bound to COMMAND if KEY is not bound in `hyperbole-mode-map'.
+Third argument NO-ADD is ignored."
+  (unless (lookup-key hyperbole-mode-map key)
+    (hkey-set-key key command no-add)))
+
+(defun hkey-set-key (key command)
+  "Define a Hyperbole global minor mode KEY bound to COMMAND."
+  (define-key hyperbole-mode-map key command))
+
+(defun hkey-maybe-set-key (key command &optional no-add)
+  "Define a Hyperbole KEY bound to COMMAND if KEY is not bound in `hyperbole-mode-map'.
+Third argument NO-ADD is ignored."
+  (unless (lookup-key hyperbole-mode-map key)
+    (hkey-set-key key command)))
 
 (defvar hmouse-middle-flag)
 (defvar hmouse-bindings-flag)
 (defvar hyperb:user-email)
-;; (defvar hyperbole-help-map (make-sparse-keymap)
-;;  "Help prefix keymap available only when Hyperbole minor mode is enabled.")
-;; (defvar hyperbole-mode-specific-map (make-sparse-keymap)
-;;   "C-c prefix keymap available only when Hyperbole minor mode is enabled.")
 
 (defun hkey-initialize ()
   "If `hkey-init' is non-nil, initialize Hyperbole key bindings.
@@ -244,22 +218,14 @@ of the commands."
     ;; Setup so Hyperbole menus can be accessed from a key.  If not
     ;; already bound to a key, this typically binds the command `hyperbole'
     ;; globally to {C-h h} and activates Hyperbole minor mode.
-    (or (where-is-internal #'hyperbole)
-	;; In GNU Emacs, this binding replaces a command that shows
-	;; the word hello in foreign languages; this binding makes this
-	;; key much more useful.
-	(global-set-key (vector help-char ?h) #'hyperbole))
+    (unless (where-is-internal #'hyperbole (current-global-map))
+      ;; In GNU Emacs, this binding replaces a command that shows
+      ;; the word hello in foreign languages; this binding makes this
+      ;; key much more useful.
+      (global-set-key (vector help-char ?h) #'hyperbole))
     ;;
-    ;; Define help prefix key in this keymap.
-    ;; (set-keymap-parent hyperbole-help-map help-map)
-    ;; (hkey-set-key (vector help-char) hyperbole-help-map)
-    ;;
-    ;; Define C-c prefix key in this keymap.
-    ;; (set-keymap-parent hyperbole-mode-specific-map mode-specific-map)
-    ;; (hkey-set-key "\C-c" hyperbole-mode-specific-map)
-    ;;
-    ;; Binds the Action Key to {M-RET} and the Assist Key to {C-u M-RET}
-    ;; and loads the Hyperbole mouse key bindings.
+    ;; Bind the Action Key to {M-RET} and the Assist Key to {C-u M-RET}
+    ;; and load the Hyperbole mouse key bindings.
     (unless (where-is-internal #'hkey-either)
       ;; Need to map all these variants to ensure can override
       ;; org-meta-return in Org mode when desired.
@@ -271,19 +237,19 @@ of the commands."
     (or (where-is-internal #'hkey-help)
 	(hkey-set-key (vector help-char ?A) #'hkey-help))
     ;;
-    ;; Provides a site standard way of emulating most Hyperbole mouse drag
+    ;; Provide a site standard way of emulating most Hyperbole mouse drag
     ;; commands from the keyboard.  This is most useful for rapidly creating
     ;; Hyperbole link buttons from the keyboard without invoking the Hyperbole
-    ;; menu.  Only works if Hyperbole is run under a window system.
+    ;; menu.  Works only if Hyperbole is run under a window system.
     (when (hyperb:window-system)
-      (if (eq (global-key-binding "\M-o") 'facemenu-keymap)
+      (if (eq (global-key-binding "\M-o") #'facemenu-keymap)
 	  ;; Override facemenu package that adds a keymap on M-o,
 	  ;; since this binding is more important to Hyperbole
 	  ;; users.
 	  (hkey-set-key "\M-o" #'hkey-operate)
 	(hkey-maybe-set-key "\M-o" #'hkey-operate)))
     ;;
-    ;; Binds {C-c @} to create a user-specified sized grid of windows
+    ;; Bind {C-c @} to create a user-specified sized grid of windows
     ;; displaying different buffers.
     ;;
     ;; Don't override prior bindings of this key.
@@ -294,65 +260,32 @@ of the commands."
     ;; Don't override prior bindings of this key.
     ;; (hkey-maybe-set-key "\C-cr" #'hui:ebut-rename)
     ;;
-    ;; Binds {C-c RET} to select larger and larger syntactical units in a
+    ;; Bind {C-c RET} to select larger and larger syntactical units in a
     ;; buffer when invoked repeatedly, showing in the minibuffer the type
     ;; of unit selected each time.
     (hkey-maybe-set-key "\C-c\C-m" #'hui-select-thing)
     ;;
-    ;; Binds {C-c \} to interactively manage windows and frames.
+    ;; Bind {C-c \} to interactively manage windows and frames.
     (hkey-maybe-set-key "\C-c\\" #'hycontrol-enable-windows-mode)
     ;;
-    ;; Binds {C-c /} to display the Hyperbole Find/Web search menu.
+    ;; Bind {C-c /} to display the Hyperbole Find/Web search menu.
     (hkey-maybe-set-key "\C-c/" #'hui-search-web)
     ;;
-    ;; Binds {C-c .} to jump between the start and end of a delimited thing.
+    ;; Bind {C-c .} to jump between the start and end of a delimited thing.
     ;; Don't override prior bindings of this key.
     (hkey-maybe-set-key "\C-c." #'hui-select-goto-matching-delimiter)
     ;;
-    ;; This initializes the Smart Mouse Key bindings.  Shifted mouse buttons
+    ;; Initialize the Smart Mouse Key bindings.  Shifted mouse buttons
     ;; are always set up.  Under InfoDock or with `hmouse-middle-flag'
-    ;; non-nil, this also binds the middle mouse button to the Action Key.
+    ;; non-nil, also bind the middle mouse button to the Action Key.
     ;; These bindings are ignored if a particular frame does not have mouse
     ;; support.
     (hmouse-install hmouse-middle-flag)
     ;;
-    ;; This makes a double or triple click of the left mouse button do the
+    ;; Make a double or triple click of the left mouse button do the
     ;; same thing as {C-c RET}.  It also sets up Java, C++ and HTML modes
     ;; for proper entity selection.
-    (hui-select-initialize)
-    ;;
-    ;; Store Hyperbole key bindings so can turn them on and off.
-    (setq hkey-bindings (hkey-get-bindings)
-	  hkey-bindings-flag t)))
-
-(defun hkey-set-bindings (key-binding-list)
-  "Set keys bound by Hyperbole to those in KEY-BINDING-LIST.
-KEY-BINDING-LIST is the value of either `hkey-previous-bindings'
-\(key bindings prior to Hyperbole load) or `hkey-bindings' (Hyperbole
-bindings after load)."
-  (dolist (key-and-binding key-binding-list)
-     (global-set-key (cadr key-and-binding) (car (cddr key-and-binding)))))
-
-(defun hyperbole-toggle-bindings ()
-  "Toggle between Hyperbole mouse and keyboard keys and their prior bindings."
-  (interactive)
-  (let ((key-binding-list (if hkey-bindings-flag
-			      hkey-previous-bindings
-			    hkey-bindings))
-	(other-bindings-var (if hkey-bindings-flag
-				'hkey-bindings
-			      'hkey-previous-bindings)))
-    (if key-binding-list
-	(progn
-	  (set other-bindings-var (hkey-get-bindings))
-	  (hkey-set-bindings key-binding-list)
-	  (setq hkey-bindings-flag (not hkey-bindings-flag)
-		hmouse-bindings-flag (not hmouse-bindings-flag))
-	  (if (called-interactively-p 'interactive)
-	      (message "%s mouse and keyboard bindings are now in use."
-		       (if hkey-bindings-flag "Hyperbole" "Non-Hyperbole"))))
-      (error "(hyperbole-toggle-bindings): `%s' is empty"
-	     (if hkey-bindings-flag 'hkey-previous-bindings 'hkey-bindings)))))
+    (hui-select-initialize)))
 
 ;;; ************************************************************************
 ;;; Load Hyperbole mouse bindings
@@ -426,49 +359,6 @@ directory or directories specified."
     (setq generated-autoload-file output-file)
     (hypb:with-suppressed-warnings ((obsolete update-directory-autoloads))
       (update-directory-autoloads dir))))
-
-;; Before the 6.0.1 release, Hyperbole used to patch the package-generate-autoloads
-;; function to ensure that kotl/ subdirectories were autoloaded.  This
-;; is no longer used but is left here temporarily for reference.
-;;
-;; Ensure Koutliner autoloads in kotl/ subdirectory are generated and loaded.
-;; (unless (or (fboundp 'kotl-mode)
-;; 	    (and (load "hyperbole-autoloads" t t)
-;; 		 (fboundp 'kotl-mode)))
-;;   (defun hyperb:package-autoloads-subdirectories-p ()
-;;     (require 'package)
-;;     (let ((func (symbol-function 'package-generate-autoloads)))
-;;       ;; If this function contains a call to apply, then it is patched
-;;       ;; with support for finding autoloads in subdirectories and
-;;       ;; nothing more need be done.
-;;       (if (byte-code-function-p func)
-;; 	  (delq nil (mapcar (lambda (item) (eq item 'apply)) (aref func 2)))
-;; 	(string-match "(apply " (prin1-to-string func)))))
-
-;;   (unless (hyperb:package-autoloads-subdirectories-p)
-;;     ;; Function is not patched, so define it here, call it, and then load
-;;     ;; the generated autoloads.  This will happen maximally only once
-;;     ;; per installation of a Hyperbole release.
-;;     (if (not (file-writable-p (expand-file-name "hyperbole-autoloads.el" hyperb:dir)))
-;; 	(error "(Hyperbole): Failure loading, need write permission to \"%s\"" hyperb:dir))
-;;     (defun package-generate-autoloads (name pkg-dir)
-;;       (let* ((auto-name (format "%s-autoloads.el" name))
-;; 	     (generated-autoload-file (expand-file-name auto-name pkg-dir))
-;; 	     ;; Silence `autoload-generate-file-autoloads'.
-;; 	     (noninteractive t)
-;; 	     (backup-inhibited t)
-;; 	     (version-control 'never))
-;; 	(package-autoload-ensure-default-file generated-autoload-file)
-;; 	(apply #'update-directory-autoloads pkg-dir
-;; 	       (delq nil (mapcar (lambda (f) (and (file-directory-p f)
-;; 						  (not (file-symlink-p f))
-;; 						  f))
-;; 				 (directory-files pkg-dir t "[a-zA-Z].*" nil))))
-;; 	(let ((buf (find-buffer-visiting generated-autoload-file)))
-;; 	  (when buf (kill-buffer buf)))
-;; 	auto-name))
-;;     (package-generate-autoloads "hyperbole" hyperb:dir))
-;;   (load "hyperbole-autoloads"))
 
 ;; Menu items could call this function before Info is loaded.
 (autoload 'Info-goto-node   "info"       "Jump to specific Info node."  t)
@@ -706,16 +596,6 @@ This is used only when running from git source and not a package release."
 
 ;; This call loads the rest of the Hyperbole system.
 (require 'hinit)
-
-(defun hkey-set-key (key command)
-  "Define a Hyperbole global minor mode KEY bound to COMMAND."
-  (define-key hyperbole-mode-map key command))
-
-(defun hkey-maybe-set-key (key command)
-  "Define a Hyperbole global minor mode KEY bound to COMMAND only if not bound in current keymaps."
-  (or (key-binding key)
-      (where-is-internal command)
-      (hkey-set-key key command)))
 
 (defun hyperbole--enable-mode ()
   "Enable Hyperbole global minor mode."

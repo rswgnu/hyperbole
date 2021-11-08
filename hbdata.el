@@ -173,10 +173,11 @@ Nil BUT-SYM means use 'hbut:current'.  If successful, return a cons of
 	      (when (setq lbl-instance (hbdata:instance-last new-key loc dir))
 		(setq lbl-instance (concat ebut:instance-sep
 					   (int-to-string (1+ lbl-instance))))
-		;; This line is needed to ensure that the highest
+		;; This expression is needed to ensure that the highest
 		;; numbered instance of a label appears before
 		;; other instances, so 'hbdata:instance-last' will work.
-		(if (hbdata:to-entry-buf loc dir) (forward-line 1))))
+		(when (hbdata:to-entry-buf loc dir)
+		  (forward-line 1))))
 	  (let ((inst-num (hbdata:instance-last new-key loc dir)))
 	    (setq lbl-instance (if inst-num
 				   (hbdata:instance-next
@@ -304,59 +305,70 @@ but-key."
 ;;; Private functions
 ;;; ************************************************************************
 
-(defun hbdata:apply-entry (function lbl-key key-src &optional directory
+(defun hbdata:apply-entry (func lbl-key key-src &optional directory
 			   create-flag instance-flag)
-  "Invoke FUNCTION with point at hbdata entry given by LBL-KEY, KEY-SRC, optional DIRECTORY.
+  "Invoke FUNC with point at hbdata entry given by LBL-KEY, KEY-SRC, optional DIRECTORY.
 With optional CREATE-FLAG, if no such line exists, insert a new file entry at the
 beginning of the hbdata file (which is created if necessary).
 INSTANCE-FLAG non-nil means search for any button instance matching LBL-KEY and
-call FUNCTION with point right after any 'ebut:instance-sep' in match.
+call FUNC with point right after any 'ebut:instance-sep' in match.
 Return value of evaluation when a matching entry is found or nil."
   (let (found
 	rtn
 	opoint
 	end-func)
     (save-excursion
-      (unwind-protect
-	  (progn
-	    (when (bufferp key-src)
-	      (set-buffer key-src)
-	      (cond ((hmail:editor-p)
-		     (setq end-func (lambda ()
-				      (hmail:msg-narrow))))
-		    ((and (hmail:lister-p)
-			  (progn (rmail:summ-msg-to) (rmail:to)))
-		     (setq opoint (point)
-			   key-src (current-buffer)
-			   end-func (lambda ()
-				      (hmail:msg-narrow)
-				      (goto-char opoint)
-				      (lmail:to))))
-		    ((and (hnews:lister-p)
-			  (progn (rnews:summ-msg-to) (rnews:to)))
-		     (setq opoint (point)
-			   key-src (current-buffer)
-			   end-func (lambda ()
-				      (hmail:msg-narrow)
-				      (goto-char opoint)
-				      (lnews:to))))))
-	    (setq found (hbdata:to-entry-buf key-src directory create-flag)))
-	(when found
-	  (let ((case-fold-search t)
-		(qkey (regexp-quote lbl-key))
-		(end (save-excursion (if (search-forward "\n\^L" nil t)
-					 (point) (point-max)))))
-	    (if (if instance-flag
-		    (re-search-forward
-		     (concat "\n(\"" qkey "["
-			     ebut:instance-sep "\"]") end t)
-		  (search-forward (concat "\n(\"" lbl-key "\"") end t))
-		(progn
-		  (unless instance-flag
-		    (beginning-of-line))
-		  (let (buffer-read-only)
-		    (setq rtn (funcall function)))))))
-	(when end-func (funcall end-func))))
+      (save-restriction
+	(unwind-protect
+	    (progn
+	      (when (get-buffer key-src)
+		(set-buffer key-src)
+		(unless buffer-file-name
+		  (cond ((hmail:editor-p)
+			 (setq end-func (lambda ()
+					  (hmail:msg-narrow))))
+			((and (hmail:lister-p)
+			      (progn (rmail:summ-msg-to) (rmail:to)))
+			 (setq opoint (point)
+			       key-src (current-buffer)
+			       end-func (lambda ()
+					  (hmail:msg-narrow)
+					  (goto-char opoint)
+					  (lmail:to))))
+			((and (hnews:lister-p)
+			      (progn (rnews:summ-msg-to) (rnews:to)))
+			 (setq opoint (point)
+			       key-src (current-buffer)
+			       end-func (lambda ()
+					  (hmail:msg-narrow)
+					  (goto-char opoint)
+					  (lnews:to))))
+			;; Any non-file buffer
+			(t
+			 (setq opoint (point)
+			       key-src (current-buffer)
+			       end-func (lambda ()
+					  (widen)
+					  (goto-char opoint)
+					  (narrow-to-region (point-min)
+							    (hmail:hbdata-start))))))))
+	      (setq found (hbdata:to-entry-buf key-src directory create-flag)))
+	  (when found
+	    (let ((case-fold-search t)
+		  (qkey (regexp-quote lbl-key))
+		  (end (save-excursion (if (search-forward "\n\^L" nil t)
+					   (point) (point-max)))))
+	      (if (if instance-flag
+		      (re-search-forward
+		       (concat "\n(\"" qkey "["
+			       ebut:instance-sep "\"]") end t)
+		    (search-forward (concat "\n(\"" lbl-key "\"") end t))
+		  (progn
+		    (unless instance-flag
+		      (beginning-of-line))
+		    (let (buffer-read-only)
+		      (setq rtn (funcall func)))))))
+	  (when end-func (funcall end-func)))))
     rtn))
 
 (defun hbdata:to-hbdata-buffer (dir &optional create)
@@ -392,12 +404,13 @@ With optional CREATE, if no such line exists, insert a new file entry at the
 beginning of the hbdata file (which is created if necessary).
 Return non-nil if KEY-SRC is found or created, else nil."
   (let ((rtn) (ln-dir))
-    (if (bufferp key-src)
+    (if (and (get-buffer key-src)
+	     (setq rtn (set-buffer key-src))
+	     (not buffer-file-name))
 	;; Button buffer has no file attached
-	(progn (setq rtn (set-buffer key-src)
-		     buffer-read-only nil)
-	       (if (not (hmail:hbdata-to-p))
-		   (insert "\n" hmail:hbdata-sep "\n"))
+	(progn (setq buffer-read-only nil)
+	       (unless (hmail:hbdata-to-p)
+		 (insert "\n" hmail:hbdata-sep "\n"))
 	       (backward-char 1))
       (setq directory (or (file-name-directory key-src) directory))
       (let ((ln-file) (link-p key-src))

@@ -510,7 +510,12 @@ hard newlines are not used.  Also converts Urls and Klinks into Html hyperlinks.
 		      (princ "</div>"))))
 	     (when (not is-parent)
 	       (terpri) (terpri)))
-	   kview t))
+	   kview t)
+	  ;; Remove any extra newline at the end of any <pre> text
+	  (save-excursion
+	    (goto-char (point-min))
+	    (when (re-search-forward "\r?\n\\'" nil t)
+	      (replace-match "" nil nil))))
 	;; JavaScript
 	(princ kexport:font-awesome-collapsible-javascript)
 	(princ "</body></html>\n")))

@@ -176,9 +176,9 @@ Its default value is #'smart-scroll-down.  To disable it, set it to
 	  ((smart-company-to-definition) . (smart-company-help)))
     ;; Handle any Org mode-specific contexts
     ((and (not (hyperb:stack-frame '(smart-org)))
-	  (smart-org current-prefix-arg)) .
-     ;; smart-org performs the actions and assist help
-     ((identity t) . (identity t)))
+	  (let ((hrule:action #'actype:identity))
+	    (smart-org current-prefix-arg))) .
+     ((smart-org current-prefix-arg) . (smart-org current-prefix-arg)))
     ;; Ivy minibuffer completion mode
     ((and (boundp 'ivy-mode) ivy-mode (minibuffer-window-active-p (selected-window))) .
      ((ivy-done) . (ivy-dispatching-done)))

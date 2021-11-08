@@ -319,10 +319,10 @@ Also, add language-specific syntax setups to aid in thing selection."
     (require 'hyperbole))
   (when hkey-init
     (transient-mark-mode 1)
-    (hkey-global-set-key [double-down-mouse-1] nil)
-    (hkey-global-set-key [double-mouse-1] 'hui-select-thing-with-mouse)
-    (hkey-global-set-key [triple-down-mouse-1] nil)
-    (hkey-global-set-key [triple-mouse-1] 'hui-select-thing-with-mouse))
+    (hkey-set-key [double-down-mouse-1] nil)
+    (hkey-set-key [double-mouse-1] 'hui-select-thing-with-mouse)
+    (hkey-set-key [triple-down-mouse-1] nil)
+    (hkey-set-key [triple-mouse-1] 'hui-select-thing-with-mouse))
   ;;
   ;; These hooks let you select C++ and Java methods and classes by
   ;; double-clicking on the first character of a definition or on its

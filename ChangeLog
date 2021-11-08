@@ -1,4 +1,97 @@
-<<<<<<< HEAD
+2021-11-07  Bob Weiner  <rsw@gnu.org>
+
+* hui-mini.el (hyperbole-set-key): Rename parameters.
+
+* man/hyperbole.texi (Default Hyperbole Bindings):
+  DEMO:
+  hyperbole.el (hkey-bindings, hkey-bindings-flag,
+    hmouse-toggle-bindings, hkey-bindings, hkey-bindings-flag,
+    hkey-previous-bindings, hkey-set-bindings, hkey-bindings-keys,
+    hkey-binding-entry): Remove since hyperbole-mode handles all of this now
+    and regular key bindings can be used, enabled and disabled.
+    (hkey-get-bindings, hkey-global-set-key, hkey-maybe-global-set-key):
+        Rewrote to use hyperbole-mode-map.
+    (hkey-global-set-key): Replace all usage with hkey-set-key and make obsolete.
+      hui-select.el (hui-select-initialize):
+    (hkey-maybe-global-set-key): Replace all usage with hkey-maybe-set-key
+      and make obsolete.
+    (hkey-maybe-set-key): Rewrote to check for prior key bindings only in
+      hyperbole-mode-map.
+
+* test/hbut-tests.el (ebut-delete-removes-ebut-and-returns-button-data):
+  hui.el (hui:hbut-delete, hui:ebut-delete-op): Fix to match doc and return
+    t when successful.  Simplify test function.  Use button at point if
+    but-key is not given.  Also set key-src if null.
+* hui-mouse.el (hkey-alist): Fix so smart-org call when used as a predicate
+    has no side-effects and move actions to proper part of the alist.
+
+* hbut.el (ibut:at-p): Trigger error if any ibtype predicate moves point.
+  hmouse-drv.el (hkey-execute): Trigger error if any predicate moves point
+    (only actions should).
+    (ibut:to): Optimized, reducing expensive ibut:at-p calls.
+    (ibut:to-text): Optimized, reducing movement and handling all cases.
+
+* hbut.el (ibut:at-p, ibut:to-text): Fix to leave point at the start of ibut text,
+    only skipping past an optional name, if any, not skipping past the text itself.
+          (hbut:act): Use with-current-buffer instead of set-buffer to move
+    point so current-buffer setting does not leak outside this function.  Also
+    reset original point in any active window displaying the original buffer
+    to ensure point does not move if the action took place in another buffer.
+
+* hui-window.el (hmouse-x-coord, hmouse-y-coord): Pass 'args' lexically rather
+    than dynamically, thereby, fixing action key error of unbound argument
+
+2021-10-31  Bob Weiner  <rsw@gnu.org>
+
+* hactypes.el (link-to-ibut): Remove requirement that implicit button linked to
+    be in a buffer with a file attached.  Also, trigger error if `key' arg is null.
+
+* hbut.el (ebut:modify): Add save-restriction and removed doc string saying
+    caller should use save-excursion since this function handles that.
+          (ebut:operate): Add save-restriction around ebut:modify and ebut:create
+    calls.
+
+2021-10-24  Bob Weiner  <rsw@gnu.org>
+
+* hmouse-drv.el (mouse-drag-mode-line): Remove XEmacs 'mouse-drag-frame-move'
+    reference.
+                (hmouse-save-region): Remove unused optional 'frame' arg.
+
+* hbut.el (ibut:to): Fix to handle ibuts with text-only, no separate name
+    by using ibut:-at-p instead of ibut:label-p.
+          (ibut:to-text): Prevent error when lbl-key-end is not found and
+    find double-quoted ibuts with no optional label.
+          (ibut:at-p): Fix handling of double-quoted implicit buttons without
+    any separate name/label.
+          (hbut:at-p): Display button properties when called interactively.
+          (ebut:label-p): Fix handling of start pos if delims are double quotes.
+
+* hpath.el (hpath:relative-arguments): Leave strings that match buffer names
+    unchanged, e.g. link-to-ibut may have a key-src arg that is a buffer name.
+
+* hbut.el (hbut:key-src-set-buffer):
+  hactypes.el (link-to-ibut): Generalize 'key-src' parameter to 'but-src' so
+    handles buffers as well as files.
+
+* hbdata.el (hbdata:apply-entry): Added save-restriction in case in hbdata
+    is stored in a displayable buffer, e.g. *scratch*, which may have a prior
+    visible restriction.  Also, added support for such non-mail/news buffers.
+
+* hui.el (hui:link-possible-types): Fix link-to-ibut use to include ibut's
+    filename or buffer name.
+
+2021-10-21  Bob Weiner  <rsw@gnu.org>
+
+* kotl/kotl-mode.el (kotl-mode:copy-to-buffer, kotl-mode:mail-tree): Change
+    passing of free variable, label-default, to lexically scoped, fixing
+    new bug when using kotl-mode:mail-tree.
+
+2021-10-18  Bob Weiner  <rsw@gnu.org>
+
+* kotl/kexport.el (kexport:html): Remove any extra newline added at the end of some
+    cells after kexport:html-markup is called.  This fixes a bug where HTMLized
+    cells are separated by 2 newlines.
+
 2021-10-17  Bob Weiner  <rsw@gnu.org>
 
 * hpath.el (hpath:symlink-referent): Fix handling of relative symlinks, adding
