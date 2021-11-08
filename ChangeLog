@@ -41,6 +41,29 @@
 * hui-window.el (hmouse-x-coord, hmouse-y-coord): Pass 'args' lexically rather
     than dynamically, thereby, fixing action key error of unbound argument
 
+2021-11-05  Mats Lidell  <matsl@gnu.org>
+
+* test/kotl-mode-tests.el (smart-menu-loads-kotl-example): Add extra no op
+    input char to make test case stable.
+
+* hypb.el (hypb:mark-marker): Remove compatibility function, use plain
+    mark-marker instead.
+
+* kotl/kotl-mode.el (kotl-mode:transpose-lines, kotl-mode:yank-pop)
+    (kotl-mode:exchange-point-and-mark, kotl-mode:transpose-lines-internal):
+  hui.el (hui:ebut-create, hui:ebut-edit):
+  hsmail.el (mail-yank-original):
+  hbut.el (ebut:operate):
+  hargs.el (hargs:iforms): Use mark-marker.
+
+2021-11-02  Mats Lidell  <matsl@gnu.org>
+
+* test/kotl-orgtbl-tests.el
+    (kotl-orgtbl-enabled-uses-kotl-mode-delete-char-ouside-of-table):
+    Add test for C-d binding in orgtbl.
+
+* kotl/kotl-mode.el (kotl-mode): Add orgtbl-mode-map binding for C-d.
+
 2021-10-31  Bob Weiner  <rsw@gnu.org>
 
 * hactypes.el (link-to-ibut): Remove requirement that implicit button linked to
@@ -50,6 +73,20 @@
     caller should use save-excursion since this function handles that.
           (ebut:operate): Add save-restriction around ebut:modify and ebut:create
     calls.
+
+2021-10-31  Mats Lidell  <matsl@gnu.org>
+
+* test/kotl-mode-tests.el (kotl-mode-previous-cell-from-invalid-position)
+    (kotl-mode-backward-cell-from-invalid-position)
+    (kotl-mode-backward-cell-from-invalid-pos-leave-point-in-valid-pos):
+    Test cases for invalid start position before moving backwards.
+
+* kotl/kotl-mode.el (kotl-mode:previous-cell, kotl-mode:backward-cell):
+    Handle case when start pos is invalid.
+
+2021-10-26  Mats Lidell  <matsl@gnu.org>
+
+* hui.el (hui:link-directly): Use use-region-p for active region.
 
 2021-10-24  Bob Weiner  <rsw@gnu.org>
 

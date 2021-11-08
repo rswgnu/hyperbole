@@ -181,6 +181,9 @@ It provides the following keys:
   (org-defkey orgtbl-mode-map [(meta return)]
 	      (orgtbl-make-binding 'orgtbl-meta-return 106
 				   [(meta return)] "\M-\C-m"))
+  (org-defkey orgtbl-mode-map "\C-d"
+	      (orgtbl-make-binding 'kotl-mode:delete-char 107
+				   "\C-d"))
   (run-hooks 'kotl-mode-hook)
   (add-hook 'change-major-mode-hook #'kotl-mode:show-all nil t))
 
@@ -892,7 +895,7 @@ that contains mark."
    ;; Transpose point and mark lines, leaving point on the line of text that
    ;; originally contained point.
    ((= arg 0)
-    (kotl-mode:transpose-lines-internal (point-marker) (hypb:mark-marker t))
+    (kotl-mode:transpose-lines-internal (point-marker) (mark-marker))
     (kotl-mode:exchange-point-and-mark))
    ;;
    ;; Move previous line past ARG next lines and leave point after previous
@@ -1328,7 +1331,7 @@ doc string for `insert-for-yank-1', which see."
     (if before
 	(funcall (or yank-undo-function 'delete-region) (point) (mark t))
       (funcall (or yank-undo-function 'delete-region) (mark t) (point)))
-    (set-marker (hypb:mark-marker t) (point) (current-buffer))
+    (set-marker (mark-marker) (point) (current-buffer))
     (let* ((yank-text (current-kill arg))
 	   (indent (kcell-view:indent))
 	   (indent-str (make-string indent ?\ )))
@@ -1365,6 +1368,12 @@ Return number of cells left to move."
       (kotl-mode:forward-cell (- arg))
     (let ((prior (= arg 0))
 	  (label-sep-len (kview:label-separator-length kview)))
+      (when (not (kview:valid-position-p))
+        (progn
+          (kotl-mode:to-valid-position t)
+          (kotl-mode:beginning-of-cell)
+          (setq arg (1- arg))
+          (setq prior t)))
       (while (and (> arg 0) (setq prior (kcell-view:backward t label-sep-len)))
 	(setq arg (1- arg)))
       (if (or prior (not (called-interactively-p 'interactive)))
@@ -1902,6 +1911,12 @@ Return non-nil iff there is a next tree within this koutline."
       (kotl-mode:next-cell (- arg))
     (let ((previous (= arg 0))
 	  (label-sep-len (kview:label-separator-length kview)))
+      (when (not (kview:valid-position-p))
+        (progn
+          (kotl-mode:to-valid-position t)
+          (kotl-mode:beginning-of-cell)
+          (setq arg (1- arg))
+          (setq previous t)))
       (while (and (> arg 0) (setq previous
 				  (kcell-view:previous t label-sep-len)))
 	(setq arg (1- arg)))
@@ -2847,7 +2862,7 @@ Does not delete newline at end of line."
   "Put the mark where point is now, and point where the mark is now.
 This is like `exchange-point-and-mark', but doesn't activate the mark."
   (goto-char (prog1 (hypb:mark t)
-	       (set-marker (hypb:mark-marker t) (point) (current-buffer)))))
+	       (set-marker (mark-marker) (point) (current-buffer)))))
 
 (defun kotl-mode:indent-line (&optional arg)
   "Indent line relative to the previous one.
@@ -3098,10 +3113,10 @@ Leave point at end of line now residing at START."
     ;; Set non-point and non-mark markers to point nowhere before signalling
     ;; an error.
     (or (eq start (point-marker))
-	(eq start (hypb:mark-marker t))
+	(eq start (mark-marker))
 	(set-marker start nil))
     (or (eq end (point-marker))
-	(eq end (hypb:mark-marker t))
+	(eq end (mark-marker))
 	(set-marker start nil))
     (error "(kotl-mode:transpose-lines): Point or mark is at an invalid position")))
 

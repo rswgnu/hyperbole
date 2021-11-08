@@ -727,7 +727,7 @@ help when appropriate."
 				     prompt)
 				   nil t))))
 	  ;; Get value of mark.  Does not do I/O.
-	  (?m . (integer . (marker-position (hypb:mark-marker t))))
+	  (?m . (integer . (marker-position (mark-marker))))
 	  ;; Get numeric prefix argument or a number from the minibuffer.
 	  (?N . (integer .
 		 (if prefix-arg
@@ -751,7 +751,7 @@ help when appropriate."
 	  (?P . (prefix-arg . prefix-arg))
 	  ;; Get region, point and mark as 2 args.  No I/O
 	  (?r . (region .
-		 (if (marker-position (hypb:mark-marker t))
+		 (if (marker-position (mark-marker))
 		     (list 'args (min (point) (hypb:mark t))
 			   (max (point) (hypb:mark t)))
 		   (list 'args nil nil))))

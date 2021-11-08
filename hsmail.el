@@ -184,7 +184,7 @@ Use (setq sc-nuke-mail-headers 'all) to have them removed."
 		  ;; the removal.
 		  (or (hypb:supercite-p)
 		      (mail-yank-clear-headers
-		       start (marker-position (hypb:mark-marker t))))
+		       start (marker-position (mark-marker))))
 		  (goto-char start)
 		  (let ((mail-indentation-spaces (if arg (prefix-numeric-value arg)
 						   mail-indentation-spaces))
@@ -220,7 +220,7 @@ Use (setq sc-nuke-mail-headers 'all) to have them removed."
 		  ;; It is cleaner to avoid activation, even though the command
 		  ;; loop would deactivate the mark because we inserted text.
 		  (goto-char (prog1 (hypb:mark t)
-			       (set-marker (hypb:mark-marker t)
+			       (set-marker (mark-marker)
 					   (point) (current-buffer))))
 		  (if (not (eolp)) (insert ?\n))))
 	  (with-current-buffer mail-reply-buffer
