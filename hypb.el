@@ -512,8 +512,6 @@ then `locate-post-command-hook'."
 		     current-prefix-arg))
   (locate search-string filter arg))
 
-(defalias 'hypb:mark #'mark)
-
 ;;;###autoload
 (defun hypb:map-plist (func plist)
   "Return result of applying FUNC of two args, key and value, to key-value pairs in PLIST, a property list."

@@ -1540,7 +1540,7 @@ Leave point at the start of the cell."
       ;; Signal an error if couldn't move down at least 1 child level.
       (or child
 	  (progn
-	    (goto-char (hypb:mark t))
+	    (goto-char (mark t))
 	    (pop-mark)
 	    (error "(kotl-mode:down-level): No child level to which to move"))))))
 
@@ -1970,7 +1970,7 @@ If at tail cell already, do nothing and return nil."
       ;; Signal an error if couldn't move up at least 1 parent level.
       (or (and parent (not (eq parent 0)))
 	  (progn
-	    (goto-char (hypb:mark t))
+	    (goto-char (mark t))
 	    (pop-mark)
 	    (error "(kotl-mode:up-level): No parent level to which to move")
 	    )))))
@@ -2838,7 +2838,7 @@ Optionally, INDENT and region START and END may be given."
   (or (integerp indent) (setq indent (kcell-view:indent)))
   (save-excursion
     (save-restriction
-      (narrow-to-region (or start (point)) (or end (hypb:mark t)))
+      (narrow-to-region (or start (point)) (or end (mark t)))
       (goto-char (point-min))
       (let ((indent-str (concat "\n" (make-string indent ?\ ))))
 	(while (search-forward "\n" t t)
@@ -2861,7 +2861,7 @@ Does not delete newline at end of line."
 (defun kotl-mode:exchange-point-and-mark ()
   "Put the mark where point is now, and point where the mark is now.
 This is like `exchange-point-and-mark', but doesn't activate the mark."
-  (goto-char (prog1 (hypb:mark t)
+  (goto-char (prog1 (mark t)
 	       (set-marker (mark-marker) (point) (current-buffer)))))
 
 (defun kotl-mode:indent-line (&optional arg)

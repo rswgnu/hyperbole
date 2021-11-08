@@ -752,8 +752,8 @@ help when appropriate."
 	  ;; Get region, point and mark as 2 args.  No I/O
 	  (?r . (region .
 		 (if (marker-position (mark-marker))
-		     (list 'args (min (point) (hypb:mark t))
-			   (max (point) (hypb:mark t)))
+		     (list 'args (min (point) (mark t))
+			   (max (point) (mark t)))
 		   (list 'args nil nil))))
 	  ;; Get string.
 	  (?s . (string . (read-string prompt default)))

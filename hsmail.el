@@ -41,7 +41,7 @@ for a comment.")
     ;; For compatibility with rsw-modified sendmail.el.
     (defvar mail-yank-hook
       ;; Set off original message.
-      (lambda () (mail-prefix-region (hypb:mark t) (point)))
+      (lambda () (mail-prefix-region (mark t) (point)))
       "*Hook to run mail yank preface function.
 Expects point and mark to be set to the region to preface.")
   ;;
@@ -176,9 +176,9 @@ Use (setq sc-nuke-mail-headers 'all) to have them removed."
 				 buffer-file-coding-system))))))
 		(set-text-properties (point) (mark t) nil))
 		(hmail:msg-narrow)
-		(if (fboundp 'hproperty:but-create) (hproperty:but-create))
-		(if (consp arg)
-		    nil
+		(when (fboundp 'hproperty:but-create)
+		  (hproperty:but-create))
+		(unless (consp arg)
 		  ;; Don't ever remove headers if user uses Supercite package,
 		  ;; since he can set an option in that package to do
 		  ;; the removal.
@@ -209,7 +209,7 @@ Use (setq sc-nuke-mail-headers 'all) to have them removed."
 			  ((and (boundp 'mail-yank-hooks) mail-yank-hooks)
 			   (run-hooks 'mail-yank-hooks))
 			  (t (mail-indent-citation))))
-		  (goto-char (min (point-max) (hypb:mark t)))
+		  (goto-char (min (point-max) (mark t)))
 		  (set-mark opoint)
 		  (delete-region (point) ; Remove trailing blank lines.
 				 (progn (re-search-backward "[^ \t\n\r\f]")
@@ -219,10 +219,11 @@ Use (setq sc-nuke-mail-headers 'all) to have them removed."
 		  ;; This is like exchange-point-and-mark, but doesn't activate the mark.
 		  ;; It is cleaner to avoid activation, even though the command
 		  ;; loop would deactivate the mark because we inserted text.
-		  (goto-char (prog1 (hypb:mark t)
+		  (goto-char (prog1 (mark t)
 			       (set-marker (mark-marker)
 					   (point) (current-buffer))))
-		  (if (not (eolp)) (insert ?\n))))
+		  (unless (eolp)
+		    (insert ?\n))))
 	  (with-current-buffer mail-reply-buffer
 	    (hmail:msg-narrow))))))
 

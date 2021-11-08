@@ -1,5 +1,7 @@
 2021-11-07  Bob Weiner  <rsw@gnu.org>
 
+* hypb.el (hypb:mark): Remove and use builtin mark function.
+
 * hui-mini.el (hyperbole-set-key): Rename parameters.
 
 * man/hyperbole.texi (Default Hyperbole Bindings):

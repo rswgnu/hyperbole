@@ -83,7 +83,8 @@
 	 (echo-keystrokes 1)
 	 old-key-text
 	 new-key-text)
-    (when old-key (setq old-key-text (key-description old-key)))
+    (when old-key
+      (setq old-key-text (key-description old-key)))
     (when (null new-key)
       (setq new-key
 	    (with-selected-window (minibuffer-window)
@@ -120,15 +121,14 @@ Default is the current button."
 Indicate button creation by delimiting and adding any necessary instance number to the button label.
 
 For programmatic creation, use `ebut:program' instead."
-  (interactive (list (and (marker-position (mark-marker))
-			  (region-beginning))
-		     (and (marker-position (mark-marker))
-			  (region-end))))
+  (interactive (list (when (use-region-p) (region-beginning))
+		     (when (use-region-p) (region-end))))
   (let ((default-lbl) lbl but-buf actype)
     (save-excursion
       (setq default-lbl (hui:hbut-label-default start end (not (called-interactively-p 'interactive)))
 	    lbl (hui:hbut-label default-lbl "ebut-create"))
-      (if (not (equal lbl default-lbl)) (setq default-lbl nil))
+      (unless (equal lbl default-lbl)
+	(setq default-lbl nil))
 
       (setq but-buf (if default-lbl (current-buffer) (hui:ebut-buf)))
       (hui:buf-writable-err but-buf "ebut-create")
@@ -179,7 +179,7 @@ be entirely within or entirely outside of an existing explicit button.  When
 region is within the button, the button is interactively modified.  Otherwise,
 a new button is created interactively with the region as the default label."
   (interactive)
-  (let ((m (marker-position (mark-marker)))
+  (let ((m (mark))
 	(op action-key-depress-prev-point) (p (point)) (lbl-key))
     (if (and m (eq (marker-buffer m) (marker-buffer op))
 	     (< op m) (<= (- m op) (hbut:max-len))
@@ -602,7 +602,7 @@ Optional PROMPT string replaces the standard prompt of 'Button label: '."
 	      'string))
 
 (defun hui:hbut-label-default (start end &optional skip-len-test)
-  "Return default label based on START and END region markers or points.
+  "Return default label based on START and END region markers or positions.
 Optional SKIP-LEN-TEST means don't limit label to (hbut:max-len) length.
 Return nil if START or END are invalid or if region fails length test.
 
