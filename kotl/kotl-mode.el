@@ -176,14 +176,17 @@ It provides the following keys:
   ;; same funcitonality when in a table, but may also be invoked from
   ;; a mouse button.
   (org-defkey orgtbl-mode-map "\M-\C-m"
-	      (orgtbl-make-binding 'orgtbl-meta-return 105
-				   "\M-\C-m" [(meta return)]))
+              (orgtbl-make-binding 'orgtbl-meta-return 105
+        			   "\M-\C-m" [(meta return)]))
   (org-defkey orgtbl-mode-map [(meta return)]
-	      (orgtbl-make-binding 'orgtbl-meta-return 106
-				   [(meta return)] "\M-\C-m"))
+              (orgtbl-make-binding 'orgtbl-meta-return 106
+        			   [(meta return)] "\M-\C-m"))
   (org-defkey orgtbl-mode-map "\C-d"
-	      (orgtbl-make-binding 'kotl-mode:delete-char 107
-				   "\C-d"))
+              (orgtbl-make-binding 'kotl-mode:delete-char 201
+        			   "\C-d"))
+  (org-defkey orgtbl-mode-map [(shift iso-lefttab)]
+              (orgtbl-make-binding 'org-shifttab 202
+        			   [(shift iso-lefttab)] [backtab] [(shift tab)]))
   (run-hooks 'kotl-mode-hook)
   (add-hook 'change-major-mode-hook #'kotl-mode:show-all nil t))
 
