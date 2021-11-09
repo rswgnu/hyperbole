@@ -1,3 +1,12 @@
+2021-11-08  Mats Lidell  <matsl@gnu.org>
+
+* test/kotl-orgtbl-tests.el (kotl-orgtbl-action-key-on-vertical-bar-toggles-orgtbl-mode)
+    (kotl-orgtbl-shift-tab-demotes-tree-outside-table): Add tests.
+
+* kotl/kotl-mode.el (kotl-mode): Change binding for orgtbl C-d to use new
+    uniq command name, add binding for orgtbl shift tab to provide demote
+    tree outside of table.
+
 2021-11-07  Bob Weiner  <rsw@gnu.org>
 
 * hypb.el (hypb:mark): Remove and use builtin mark function.
