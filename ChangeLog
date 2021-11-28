@@ -3,6 +3,9 @@
 * hpath.el (hpath:prepend-ls-directory): When in a shell buffer and on a
     filename result of an 'ls *' or recursive 'ls', prepend the subdir to the
     filename and return it, else nil.
+           (hpath:is-p): Fix to handle ".", "~" or "/" paths properly and ensure
+    directory paths end with a / to prevent other functions from mistakenly appending
+    a filename.
 
 2021-11-08  Mats Lidell  <matsl@gnu.org>
 

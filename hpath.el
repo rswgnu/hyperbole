@@ -1034,9 +1034,10 @@ window in which the buffer is displayed."
   "When in a shell buffer and on a filename result of an 'ls *' or recursive 'ls', prepend the subdir to the filename and return it, else nil."
   (when (derived-mode-p #'shell-mode)
     (let ((filename (thing-at-point 'filename t))
+	  (prior-prompt-pos (save-excursion (comint-previous-prompt 1) (point)))
 	  dir)
       (save-excursion
-	(when (and filename (re-search-backward "^$\\|\\`\\|^\\(.+\\):$" nil t)
+	(when (and filename (re-search-backward "^$\\|\\`\\|^\\(.+\\):$" prior-prompt-pos t)
 		   (setq dir (match-string-no-properties 1))
 		   (file-exists-p dir))
 	  (concat (file-name-as-directory dir) filename))))))
@@ -1370,75 +1371,80 @@ returned for PATH."
 	     ;; If a single character in length, must be a word or symbol character
 	     (or (/= (length path) 1) (and (string-match "\\sw\\|\\s_" path)
 					   (not (string-match "[@#&!*]" path)))))
-    (setq path (hpath:call
-		(lambda (path)
-		  (let (modifier
-			suffix)
-		    (setq path (hpath:mswindows-to-posix path))
-		    (and (not (or (string-equal path "")
-				  (string-match "\\`\\s-\\|\\s-\\'" path)))
-			 (or (not (string-match "[()]" path))
-			     (string-match "\\`([^ \t\n\r\)]+)[ *A-Za-z0-9]" path))
-			 ;; Allow for @{ and @} in texinfo-mode
-			 (or (when (string-match "\\$@?\{[^\}]+@?\}" path)
-			       ;; Path may be a link reference with embedded
-			       ;; variables that must be expanded.
-			       (setq path (hpath:substitute-value path)))
-			     t)
-			 (not (string-match "[\t\n\r\"`'|{}\\]" path))
-			 (let ((rtn-path (concat path "%s")))
-			   (and (or (not (hpath:www-p path))
-				    (string-match "\\`ftp[:.]" path))
-				(let ((remote-path (string-match "\\(@.+:\\|^/.+:\\|..+:/\\).*[^:0-9/]" path)))
-				  (when (cond (remote-path
-					       (cond ((eq type 'file)
-						      (not (string-equal "/" (substring path -1))))
-						     ((eq type 'directory)
-						      (string-equal "/" (substring path -1)))
-						     (t)))
-					      ((or (and non-exist
-							(or
-							 ;; Info or remote path, so don't check for.
-							 (string-match "[()]" path)
-							 (hpath:remote-p path)
-							 (setq suffix (hpath:exists-p path t))
-							 ;; Don't allow spaces in non-existent
-							 ;; pathnames.
-							 (not (string-match " " path))))
-						   (setq suffix (hpath:exists-p path t)))
-					       (cond ((eq type 'file)
-						      (not (file-directory-p path)))
-						     ((eq type 'directory)
-						      (file-directory-p path))
-						     (t))))
-				    ;; Might be an encoded URL with % characters, so
-				    ;; decode it before calling format below.
-				    (when (string-match "%" rtn-path)
-				      (let (decoded-path)
-					(while (not (equal rtn-path (setq decoded-path (hypb:decode-url rtn-path))))
-					  (setq rtn-path decoded-path))))
-				    ;; Quote any % except for one %s at the end of the
-				    ;; path part of rtn-path (immediately preceding a #
-				    ;; or , character or the end of string).
-				    (setq rtn-path (hypb:replace-match-string "%" rtn-path "%%" nil t)
-					  rtn-path (hypb:replace-match-string "%%s\\([#,]\\|\\'\\)" rtn-path "%s\\1" nil t))
-				    ;; Return path if non-nil return value.
-				    (if (stringp suffix) ;; suffix could = t, which we ignore
-					(if (string-match (concat (regexp-quote suffix) "%s") rtn-path)
-					    ;; remove suffix
-					    (concat (substring rtn-path 0 (match-beginning 0))
-						    (substring rtn-path (match-end 0)))
-					  ;; add suffix
-					  (concat modifier (format rtn-path suffix)))
-				      (concat modifier (format rtn-path ""))))))))))
-		path))
+    (setq path (hpath:mswindows-to-posix path))
+    (unless (string-match "\\`[.~/]\\'" path)
+      (setq path (hpath:call
+		  (lambda (path)
+		    (let (modifier
+			  suffix)
+		      (and (not (or (string-equal path "")
+				    (string-match "\\`\\s-\\|\\s-\\'" path)))
+			   (or (not (string-match "[()]" path))
+			       (string-match "\\`([^ \t\n\r\)]+)[ *A-Za-z0-9]" path))
+			   ;; Allow for @{ and @} in texinfo-mode
+			   (or (when (string-match "\\$@?\{[^\}]+@?\}" path)
+				 ;; Path may be a link reference with embedded
+				 ;; variables that must be expanded.
+				 (setq path (hpath:substitute-value path)))
+			       t)
+			   (not (string-match "[\t\n\r\"`'|{}\\]" path))
+			   (let ((rtn-path (concat path "%s")))
+			     (and (or (not (hpath:www-p path))
+				      (string-match "\\`ftp[:.]" path))
+				  (let ((remote-path (string-match "\\(@.+:\\|^/.+:\\|..+:/\\).*[^:0-9/]" path)))
+				    (when (cond (remote-path
+						 (cond ((eq type 'file)
+							(not (string-equal "/" (substring path -1))))
+						       ((eq type 'directory)
+							(string-equal "/" (substring path -1)))
+						       (t)))
+						((or (and non-exist
+							  (or
+							   ;; Info or remote path, so don't check for.
+							   (string-match "[()]" path)
+							   (hpath:remote-p path)
+							   (setq suffix (hpath:exists-p path t))
+							   ;; Don't allow spaces in non-existent
+							   ;; pathnames.
+							   (not (string-match " " path))))
+						     (setq suffix (hpath:exists-p path t)))
+						 (cond ((eq type 'file)
+							(not (file-directory-p path)))
+						       ((eq type 'directory)
+							(file-directory-p path))
+						       (t))))
+				      ;; Might be an encoded URL with % characters, so
+				      ;; decode it before calling format below.
+				      (when (string-match "%" rtn-path)
+					(let (decoded-path)
+					  (while (not (equal rtn-path (setq decoded-path (hypb:decode-url rtn-path))))
+					    (setq rtn-path decoded-path))))
+				      ;; Quote any % except for one %s at the end of the
+				      ;; path part of rtn-path (immediately preceding a #
+				      ;; or , character or the end of string).
+				      (setq rtn-path (hypb:replace-match-string "%" rtn-path "%%" nil t)
+					    rtn-path (hypb:replace-match-string "%%s\\([#,]\\|\\'\\)" rtn-path "%s\\1" nil t))
+				      ;; Return path if non-nil return value.
+				      (if (stringp suffix) ;; suffix could = t, which we ignore
+					  (if (string-match (concat (regexp-quote suffix) "%s") rtn-path)
+					      ;; remove suffix
+					      (concat (substring rtn-path 0 (match-beginning 0))
+						      (substring rtn-path (match-end 0)))
+					    ;; add suffix
+					    (concat modifier (format rtn-path suffix)))
+					(concat modifier (format rtn-path ""))))))))))
+		  path)))
      (unless (or (null path)
 		 (string-empty-p path)
 		 (string-match "#['`\"]" path)
-		 ;; If a single character in length, must be a word or symbol character
-		 (and (= (length path) 1) (or (not (string-match "\\sw\\|\\s_" path))
-					      (string-match "[@#&!*]" path))))
-
+		 ;; If a single character in length, must be a word or
+		 ;; symbol character other than [.~ /].
+		 (and (= (length path) 1)
+		      (not (string-match "\\`[.~/]\\'" path))
+		      (or (not (string-match "\\sw\\|\\s_" path))
+			  (string-match "[@#&!*]" path))))
+       (when (file-directory-p path)
+	 (setq path (file-name-as-directory path)))
        path)))
 
 (defun hpath:push-tag-mark ()
