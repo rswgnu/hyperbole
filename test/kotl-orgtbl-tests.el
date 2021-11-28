@@ -25,8 +25,8 @@
                                                  default-directory))))
 (declare-function hy-test-helpers:consume-input-events "hy-test-helpers")
 
-(ert-deftest kotl-orgtbl-enabled-uses-kotl-mode-delete-char-ouside-of-table ()
-  "kotl-mode:detele-char is used ouside of org table."
+(ert-deftest kotl-orgtbl-enabled-uses-kotl-mode-delete-char-outside-of-table ()
+  "kotl-mode:detele-char is used outside of org table."
   (let ((kotl-file (make-temp-file "hypb" nil ".kotl")))
     (unwind-protect
         (progn
@@ -48,6 +48,43 @@
                (should (equal (car err) 'error))
                (should (string-match "(kotl-mode:delete-char): End of cell" (cadr err)))))
             (:success (ert-fail "C-d shall fail when deleting at the end of a cell."))))
+      (delete-file kotl-file))))
+
+(ert-deftest kotl-orgtbl-action-key-on-vertical-bar-toggles-orgtbl-mode ()
+  "Action key on vertical bar toggles orgtbl-mode."
+  (let ((kotl-file (make-temp-file "hypb" nil ".kotl")))
+    (unwind-protect
+        (progn
+          (find-file kotl-file)
+          (should orgtbl-mode)
+
+          ;; Create an org table
+          (should (hact 'kbd-key "RET |-| RET"))
+          (hy-test-helpers:consume-input-events)
+
+          (left-char 1)
+          (action-key)
+          (should-not orgtbl-mode)
+          (action-key)
+          (should orgtbl-mode))
+      (delete-file kotl-file))))
+
+(ert-deftest kotl-orgtbl-shift-tab-demotes-tree-outside-table ()
+  "Shift tab demotes tree outside of org table."
+  (let ((kotl-file (make-temp-file "hypb" nil ".kotl")))
+    (unwind-protect
+        (progn
+          (find-file kotl-file)
+          (should orgtbl-mode)
+
+          (kotl-mode:add-child)
+          (should (string= (kcell-view:label (point)) "1a"))
+
+          (should (hact 'kbd-key "<S-iso-lefttab>"))
+          (hy-test-helpers:consume-input-events)
+
+          (should (equal (kcell-view:level) 1))
+          (should (string= (kcell-view:label (point)) "2")))
       (delete-file kotl-file))))
 
 (provide 'kotl-orgtbl-tests)
