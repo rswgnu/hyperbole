@@ -939,7 +939,7 @@ double quotes, open and close single quote, whitespace, or Texinfo file referenc
 With optional NON-EXIST, nonexistent local paths are allowed.  Absolute pathnames
 must begin with a `/' or `~'.
 
-With optional INCLUDE-POSITIONS, returns a triplet list of (path start-pos
+With optional INCLUDE-POSITIONS, return a triplet list of (path start-pos
 end-pos) or nil."
   ;; Prevents MSWindows to Posix path substitution
   (let ((hyperb:microsoft-os-p t))
@@ -964,6 +964,9 @@ end-pos) or nil."
 	    ;; whitespace delimited root dirs, e.g. " / ".
 	    (when (and (stringp p) (not (string-match "\"\\|\\`[/\\]+\\'" p))
 		       (delq nil (mapcar (lambda (c) (/= punc (char-syntax c))) p)))
+	      ;; Prepend proper directory to ls * or recursive ls file listing
+	      (setq p (or (hpath:prepend-ls-directory) p))
+	      (setcar triplet p)
 	      (if include-positions
 		  triplet
 		p)))))))
@@ -1026,6 +1029,17 @@ window in which the buffer is displayed."
 	(setq path substituted-path))))
   ;; For compressed Elisp libraries, add any found compressed suffix to the path.
   (or (locate-library path t) path))
+
+(defun hpath:prepend-ls-directory ()
+  "When in a shell buffer and on a filename result of an 'ls *' or recursive 'ls', prepend the subdir to the filename and return it, else nil."
+  (when (derived-mode-p #'shell-mode)
+    (let ((filename (thing-at-point 'filename t))
+	  dir)
+      (save-excursion
+	(when (and filename (re-search-backward "^$\\|\\`\\|^\\(.+\\):$" nil t)
+		   (setq dir (match-string-no-properties 1))
+		   (file-exists-p dir))
+	  (concat (file-name-as-directory dir) filename))))))
 
 (defvar hpath:compressed-suffix-regexp (concat (regexp-opt '(".gz" ".Z" ".zip" ".bz2" ".xz" ".zst")) "\\'")
    "Regexp of compressed file name suffixes.")

@@ -133,12 +133,13 @@ PATH-style variable, the path at point is used; empty paths, e.g. ::
 represent the current directory, '.'.
 
 Also works for delimited and non-delimited remote pathnames,
-Texinfo @file{} entries, and hash-style link references to HTML,
-XML, SGML, Markdown or Emacs outline headings, shell script
-comments, and MSWindows paths (see \"${hyperb:dir}/DEMO#POSIX and
-MSWindows Paths\" for details).  Emacs Lisp library
-files (filenames without any directory component that end in .el,
-.elc or .eln) are looked up using the `load-path' directory list.
+recursive 'ls' listings, Texinfo @file{} entries, and hash-style
+link references to HTML, XML, SGML, Markdown or Emacs outline
+headings, shell script comments, and MSWindows paths (see
+\"${hyperb:dir}/DEMO#POSIX and MSWindows Paths\" for details).
+Emacs Lisp library files (filenames without any directory
+component that end in .el, .elc or .eln) are looked up using the
+`load-path' directory list.
 
 The pathname may contain references to Emacs Lisp variables or
 shell environment variables using the syntax, \"${variable-name}\".

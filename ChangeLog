@@ -1,3 +1,9 @@
+2021-11-27  Bob Weiner  <rsw@gnu.org>
+
+* hpath.el (hpath:prepend-ls-directory): When in a shell buffer and on a
+    filename result of an 'ls *' or recursive 'ls', prepend the subdir to the
+    filename and return it, else nil.
+
 2021-11-07  Bob Weiner  <rsw@gnu.org>
 
 * hypb.el (hypb:mark): Remove and use builtin mark function.

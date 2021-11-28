@@ -163,9 +163,12 @@
       source reference line so if not on a Hyperbole button, move back a line
       before checking.
 
-    - Pathname Implicit Buttons: Variable substitutions are now made with
-      fixed case, so that the case of a value with both upper and lower
-      case characters is never changed, for example a value of ${HOME}.
+    - Pathname Implicit Buttons: Recursive 'ls' listings are now recognized
+      properly, prepending the preceding directory to each entry for viewing.
+
+      Variable substitutions are now made with fixed case, so that the
+      case of a value with both upper and lower case characters is
+      never changed, for example a value of ${HOME}.
 
     - Todotxt Mode Support: Smart key support for the todotxt mode
       https://github.com/rpdillon/todotxt.el.
