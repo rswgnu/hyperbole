@@ -60,7 +60,7 @@
       (org-mode)
       (insert "/tmp")
       (goto-char 1)
-      (hy-test-helpers:hypb-function-should-call-hpath:find 'smart-org "/tmp"))))
+      (hy-test-helpers:hypb-function-should-call-hpath:find 'smart-org "/tmp/"))))
 
 ;; Org Link
 (ert-deftest smart-org-mode-with-smart-keys-on-org-link-activates ()
@@ -94,7 +94,7 @@
       (org-mode)
       (insert "/tmp")
       (goto-char 1)
-      (hy-test-helpers:hypb-function-should-call-hpath:find 'action-key "/tmp"))))
+      (hy-test-helpers:hypb-function-should-call-hpath:find 'action-key "/tmp/"))))
 
 ;; Org Link
 (ert-deftest smart-org-mode-with-smart-keys-buttons-on-org-link-calls-org-meta-return ()

@@ -32,7 +32,7 @@
     (goto-char 3)
     (with-simulated-input "TMP RET"
       (hui:ibut-label-create)
-      (should (string= "<[TMP]> \"/tmp\"\n" (buffer-string))))))
+      (should (string= "\"/<[TMP]> tmp\"\n" (buffer-string))))))
 
 (ert-deftest hui-ibut-label-create-fails-if-label-exists ()
   "Creation of a label for an implicit button fails if a label exists."
