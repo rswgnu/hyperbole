@@ -1,3 +1,42 @@
+2021-11-28  Bob Weiner  <rsw@gnu.org>
+
+* hbut.el (ibut:to-name): Move to the start of the name of a given implicit
+    button if one is found.
+          (ibut:at-p): Add 'name' attribute to hbut:current if point is on
+    the name of an ibut.
+          (ibut:next-occurrence, ibut:previous-occurrence): Fix bug that
+    did not find unnamed implicit buttons matching lbl-key because name
+    delimiters were added to the regexp to match.
+          (ibut:at-to-name-p): Add this to move to the start of an ibut name
+    when point is within the ibut.
+
+* hui.el (hui:link-possible-types): Fix to properly get lbl-key for link-to
+    Hyperbole button types.  This resolves a problem when using drags or
+    ace-window {M-o w <window-id>} to create link buttons.
+
+* hui-window.el (hmouse-prior-active-region): Handle when hkey-value's buffer
+    has been killed.
+
+* hbut.el (hbut:funcall): Add to call an ibut manipulation function with point
+    on the ibut (may be a different src buffer than the original source).
+          (ibut:get): Use hbut:funcall which fixes not setting source buffer
+    properly, e.g. when executing link-to-gbut or any type of button with
+    indirection.
+          (ebut:to, ibut:to): Use hbut:funcall.
+
+* hact.el (action:params): Add support for closures.
+          (actype:act):
+  hbdata.el (hbdata:build): Add actype as first arg to hpath:absolute-arguments.
+  hpath.el (hpath:absolute-arguments): Change to make arg absolute only if it has
+    a path-like param name.  Reduces false expansions.
+
+* hbmap.el (hbmap:dir-list, hbmap:dir-member, hbmap:dir-operate): Simplify with unless
+    and when calls.
+    (hbmap:dir-add): Fix via use of backquote to pass dir-name to progn lexically.
+
+* hui-mouse.el (smart-org): Stop handling Hyperbole buttons here and just fall though,
+    so hkey-help shows the help for the button rather than for smart-org.
+
 2021-11-27  Bob Weiner  <rsw@gnu.org>
 
 * hpath.el (hpath:prepend-ls-directory): When in a shell buffer and on a

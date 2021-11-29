@@ -310,7 +310,8 @@ part of InfoDock and not a part of Hyperbole)."
 
 (defun hmouse-prior-active-region ()
   "Return t iff there is a non-empty active region in buffer of the last Smart Mouse Key release."
-  (when (setq hkey-value (if assist-flag assist-key-depress-prev-point action-key-depress-prev-point))
+  (when (and (setq hkey-value (if assist-flag assist-key-depress-prev-point action-key-depress-prev-point))
+	     (buffer-live-p (marker-buffer hkey-value)))
     (save-excursion
       (with-current-buffer (marker-buffer hkey-value)
 	;; Store and goto any prior value of point from the region

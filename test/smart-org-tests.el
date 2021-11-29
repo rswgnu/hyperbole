@@ -60,7 +60,7 @@
       (org-mode)
       (insert "/tmp")
       (goto-char 1)
-      (hy-test-helpers:hypb-function-should-call-hpath:find 'smart-org "/tmp"))))
+      (hy-test-helpers:hypb-function-should-call-hpath:find 'ibtypes::pathname "/tmp"))))
 
 ;; Org Link
 (ert-deftest smart-org-mode-with-smart-keys-on-org-link-activates ()

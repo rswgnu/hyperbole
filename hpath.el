@@ -16,6 +16,7 @@
 ;;; Other required Elisp libraries
 ;;; ************************************************************************
 
+(require 'cl-lib)
 (require 'hact)
 (require 'subr-x) ;; For string-trim
 (require 'hversion) ;; for (hyperb:window-system) definition
@@ -632,12 +633,28 @@ This prevents improper processing of hargs with colons in them, e.g. `actypes::l
   (let (tramp-mode)
     (abbreviate-file-name path)))
 
-(defun hpath:absolute-arguments (args-list &optional default-dirs)
-  "Return any paths in ARGS-LIST made absolute.
-Uses optional DEFAULT-DIRS or `default-directory'.
+(defun hpath:absolute-arguments (actype arg-list &optional default-dirs)
+  "Return any paths in ACTYPE's ARG-LIST made absolute.
+Uses optional DEFAULT-DIRS (a list of dirs or a single dir) or `default-directory'.
 Other arguments are returned unchanged."
-  (mapcar (lambda (arg) (hpath:absolute-to arg default-dirs))
-	  args-list))
+  (let ((param-list (delq nil (mapcar (lambda (param)
+					(when param
+					  (setq param (symbol-name param))
+					  (unless (= ?& (aref param 0))
+					    param)))
+				      (action:params (actype:action actype))))))
+    ;; Extend param-list to length of arg-list in case of any &rest param.
+    (setq param-list
+	  (nconc param-list
+		 (make-list (max 0 (- (length arg-list) (length param-list)))
+			    (last param-list))))
+    (cl-mapcar (lambda (param arg)
+		 (if (or (string-match-p "file" param)
+			 (string-match-p "dir" param)
+			 (string-match-p "path" param))
+		     (hpath:absolute-to arg default-dirs)
+		   arg))
+	       param-list arg-list)))
 
 (defun hpath:absolute-to (path &optional default-dirs)
   "Return PATH as an absolute path relative to one directory from optional DEFAULT-DIRS or `default-directory'.
@@ -1040,7 +1057,10 @@ window in which the buffer is displayed."
 	(when (and filename (re-search-backward "^$\\|\\`\\|^\\(.+\\):$" prior-prompt-pos t)
 		   (setq dir (match-string-no-properties 1))
 		   (file-exists-p dir))
-	  (concat (file-name-as-directory dir) filename))))))
+	  (unless (file-name-absolute-p filename)
+	    (when (file-directory-p dir)
+	      (setq dir (file-name-as-directory dir)))
+	    (concat (file-name-as-directory dir) filename)))))))
 
 (defvar hpath:compressed-suffix-regexp (concat (regexp-opt '(".gz" ".Z" ".zip" ".bz2" ".xz" ".zst")) "\\'")
    "Regexp of compressed file name suffixes.")
@@ -1443,8 +1463,6 @@ returned for PATH."
 		      (not (string-match "\\`[.~/]\\'" path))
 		      (or (not (string-match "\\sw\\|\\s_" path))
 			  (string-match "[@#&!*]" path))))
-       (when (file-directory-p path)
-	 (setq path (file-name-as-directory path)))
        path)))
 
 (defun hpath:push-tag-mark ()
@@ -1461,15 +1479,15 @@ Is a no-op if the function `push-tag-mark' is not available."
 		;; push old position
 		(push-tag-mark)))))
 
-(defun hpath:relative-arguments (args-list)
-  "Return any paths in ARGS-LIST below button source loc directory made relative.
+(defun hpath:relative-arguments (arg-list)
+  "Return any paths in ARG-LIST below button source loc directory made relative.
 Other paths are simply expanded.  Non-path arguments are returned unchanged."
   (let ((loc (hattr:get 'hbut:current 'loc)))
     (mapcar (lambda (arg)
 	      (hpath:relative-to arg (if (stringp loc)
 					 (file-name-directory loc)
 				       (buffer-local-value 'default-directory loc))))
-	    args-list)))
+	    arg-list)))
 
 (defun hpath:relative-to (path &optional default-dir)
   "Return PATH relative to optional DEFAULT-DIR or `default-directory'.

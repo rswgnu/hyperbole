@@ -187,17 +187,18 @@ Nil BUT-SYM means use 'hbut:current'.  If successful, return a cons of
 	(hattr:set b 'lbl-key (concat new-key lbl-instance))
 	(hattr:set b 'loc loc)
 	(hattr:set b 'dir dir)
-	(let ((hbdata (list (hattr:get b 'lbl-key)
+	(let ((actype)
+	      (hbdata (list (hattr:get b 'lbl-key)
 			    (hattr:get b 'action)
 			    ;; Hyperbole V1 referent compatibility, always nil in V2
 			    (hattr:get b 'referent)
 			    ;; Save actype without class prefix.
-			    (let ((actype (hattr:get b 'actype)))
-			      (and actype (symbolp actype)
-				   (setq actype (symbol-name actype))
-				   (intern
-				    (substring actype (if (string-match "::" actype)
-							  (match-end 0) 0)))))
+			    (and (setq actype (hattr:get b 'actype))
+				 (symbolp actype)
+				 (setq actype (symbol-name actype))
+				 (intern
+				  (substring actype (if (string-match "::" actype)
+							(match-end 0) 0))))
 			    (let ((mail-dir (and (fboundp 'hmail:composing-dir)
 						 (hmail:composing-dir l)))
 				  (args (hattr:get b 'args)))
@@ -206,7 +207,7 @@ Nil BUT-SYM means use 'hbut:current'.  If successful, return a cons of
 					 (mapcar #'hpath:substitute-var
 						 (if mail-dir
 						     ;; Make pathname args absolute for outgoing mail and news messages.
-						     (hpath:absolute-arguments args mail-dir)
+						     (hpath:absolute-arguments actype args mail-dir)
 						   args))))
 			    (hattr:set b 'creator (or creator hyperb:user-email))
 			    (hattr:set b 'create-time (or create-time (htz:date-sortable-gmt)))

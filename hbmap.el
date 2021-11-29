@@ -30,25 +30,25 @@ other value when cannot read or write map.
 Optional NO-SAVE disables saving of the map after an add."
   (hbmap:dir-operate (lambda (dir) (not (hbmap:dir-member dir)))
 		     dir-name
-		     '(progn (prin1 (list dir-name) buf) (terpri buf))
+		     `(progn (prin1 (list ,dir-name) (current-buffer))
+			     (terpri (current-buffer)))
 		     no-save))
 
 (defun hbmap:dir-list ()
   "Return list of all directories in which user has written buttons."
   (save-excursion
-    (let ((buf (if (and (file-exists-p hbmap:dir-filename)
-			(not (file-readable-p hbmap:dir-filename)))
-		   nil
+    (let ((buf (unless (and (file-exists-p hbmap:dir-filename)
+			    (not (file-readable-p hbmap:dir-filename)))
 		 (find-file-noselect hbmap:dir-filename)))
-	  (dirs))
-      (if buf
-	  (progn (set-buffer buf)
-		 (goto-char (point-min))
-		 (condition-case ()
-		     (while (setq dirs (cons (car (read (current-buffer)))
-					     dirs)))
-		   (error t))
-		 dirs)))))
+	  dirs)
+      (when buf
+	(set-buffer buf)
+	(goto-char (point-min))
+	(condition-case ()
+	    (while (setq dirs (cons (car (read (current-buffer)))
+				    dirs)))
+	  (error t))
+	dirs))))
 
 (defun hbmap:dir-remove (dir-name &optional no-save)
   "Remove DIR-NAME from map of all dirs in which user has written buttons.
@@ -66,12 +66,13 @@ point is left in a position appropriate for insertion of a new entry."
   (let ((obuf (current-buffer))
 	(buf (and (file-exists-p hbmap:dir-filename)
 		  (find-file-noselect hbmap:dir-filename)))
-	(rtn))
+	rtn)
     (if buf
 	(progn (set-buffer buf) (widen) (goto-char 1)
 	       (if (search-forward (concat "\n(\"" dir-name "\"") nil t)
 		   (progn (beginning-of-line) (setq rtn t))
-		 (goto-char 1) (or (= (forward-line 1) 0) (insert "\n")))
+		 (goto-char 1)
+		 (or (= (forward-line 1) 0) (insert "\n")))
 	       (set-buffer obuf)))
     rtn))
 
@@ -85,20 +86,20 @@ Return t if PRED evaluation is successful and nil when not, except when
 hbmap is not readable or writable, in which case return a symbol indicating
 the error.  Optional NO-SAVE disables saving of the map after operation."
   (save-excursion
-    (let ((buf (if (and (file-exists-p hbmap:dir-filename)
-			(not (file-readable-p hbmap:dir-filename)))
-		   nil
+    (let ((buf (unless (and (file-exists-p hbmap:dir-filename)
+			    (not (file-readable-p hbmap:dir-filename)))
 		 (find-file-noselect hbmap:dir-filename))))
       (if buf
 	  (progn (set-buffer buf)
-		 (if (funcall pred dir-name)
-		     (progn
-		       (setq buffer-read-only nil)
-		       (eval form)
-		       (if no-save t
-			 (if (file-writable-p buffer-file-name)
-			     (progn (save-buffer) t)
-			   'hbmap-not-writable)))))
+		 (when (funcall pred dir-name)
+		   (setq buffer-read-only nil)
+		   (eval form)
+		   (cond (no-save
+			  t)
+			 ((file-writable-p buffer-file-name)
+			  (save-buffer)
+			  t)
+			 (t 'hbmap-not-writable))))
 	'hbmap-not-readable))))
 
 ;;; ************************************************************************

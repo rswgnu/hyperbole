@@ -735,10 +735,7 @@ See also documentation for `hui:link-possible-types'."
   (interactive (hmouse-choose-windows #'hui:link))
   (let ((but-window (or depress-window action-key-depress-window))
 	(referent-window (or release-window action-key-release-window (selected-window)))
-	but-modify link-types num-types type-and-args lbl-key but-loc but-dir)
-    (select-window referent-window)
-    (setq link-types (hui:link-possible-types)
-	  num-types (length link-types))
+	but-name but-modify but-categ link-types num-types type-and-args lbl-key but-loc but-dir)
     (select-window but-window)
     (hui:buf-writable-err (current-buffer) "link-directly")
     (if (ebut:at-p)
@@ -748,16 +745,18 @@ See also documentation for `hui:link-possible-types'."
 	      lbl-key (hattr:get 'hbut:current 'lbl-key))
       (setq but-loc (hui:key-src (current-buffer))
 	    but-dir (hui:key-dir (current-buffer))
-	    lbl-key (hbut:label-to-key
-		     (hui:hbut-label
+	    but-name (hui:hbut-label
 		      (cond ((hmouse-prior-active-region)
 			     hkey-region)
 			    ((use-region-p)
 			     (hui:hbut-label-default
 			      (region-beginning) (region-end))))
 		      "link-directly"
-		      "Create button named: "))))
+		      "Create button named: ")
+	    lbl-key (hbut:label-to-key but-name)))
     (select-window referent-window)
+    (setq link-types (hui:link-possible-types)
+	  num-types (length link-types))
 
     ;; num-types is the number of possible link types to choose among
     (cond ((= num-types 0)
@@ -1239,14 +1238,20 @@ Buffer without File      link-to-buffer-tmp"
   ;; Elisp Buffer at Start
   ;; or End of Sexpression    eval-elisp
 
-  (let (val)
+  (let (val
+	hbut-sym
+	lbl-key)
     (delq nil
-	  (list (cond ((eq (current-buffer) (get-file-buffer gbut:file))
-		       (list 'link-to-gbut (hbut:label-p)))
-		      ((ebut:at-p)
-		       (list 'link-to-ebut (ebut:label-p)))
-		      ((setq val (ibut:at-p t))
-		       (list 'link-to-ibut val (or buffer-file-name (buffer-name)))))
+	  (list (cond ((and (prog1 (setq hbut-sym (hbut:at-p))
+			      ;; Next line forces use of any ibut name in the link.
+			      (save-excursion (ibut:at-to-name-p hbut-sym)))
+			    (setq lbl-key (hattr:get hbut-sym 'lbl-key))
+			    (eq (current-buffer) (get-file-buffer gbut:file)))
+		       (list 'link-to-gbut lbl-key))
+		      ((and hbut-sym (eq (hattr:get hbut-sym 'categ) 'explicit))
+		       (list 'link-to-ebut lbl-key))
+		      (hbut-sym
+		       (list 'link-to-ibut lbl-key (or buffer-file-name (buffer-name)))))
 		(cond ((and (require 'bookmark)
                             (derived-mode-p #'bookmark-bmenu-mode))
                        (list 'link-to-bookmark (bookmark-bmenu-bookmark))))

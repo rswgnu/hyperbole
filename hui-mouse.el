@@ -1688,12 +1688,9 @@ handled by the separate implicit button type, `org-link-outside-org-mode'."
 		    (hact 'org-ctrl-c-ctrl-c)
 		    t)
 		   ((hbut:at-p)
-		    ;; Activate/Assist with any Hyperbole button at point
-		    (if (not assist-flag)
-			(hact 'hbut:act)
-		      (hact 'hkey-help))
-		    ;; Ignore any further Smart Key non-Org contexts
-		    t)
+		    ;; Fall through until Hyperbole button context and
+		    ;; activate normally.
+		    nil)
 		   ((hsys-org-heading-at-p)
 		    (if (not assist-flag)
 			(hact 'hsys-org-cycle)
@@ -1713,10 +1710,9 @@ handled by the separate implicit button type, `org-link-outside-org-mode'."
 		      (hact 'hkey-help))
 		    t)
  		   ((hbut:at-p)
-		    ;; Activate/Assist with any Hyperbole button at point
-		    (if (not assist-flag)
-			(hact 'hbut:act)
-		      (hact 'hkey-help)))
+		    ;; Fall through until Hyperbole button context and
+		    ;; activate normally.
+		    nil)
 		   (t
 		    (when (hsys-org-meta-return-shared-p)
 		      (hact 'org-meta-return current-prefix-arg))
