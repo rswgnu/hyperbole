@@ -144,6 +144,8 @@ PRELOADS = $(SITE_PRELOADS) -l ./hload-path.el -l ./hversion.el -l ./hyperbole.e
 # Compile in batch mode.  Load site-lisp/site-start.el, which may set load-path.
 BATCHFLAGS = -batch -Q
 
+EMACS_BATCH=$(EMACS) $(BATCHFLAGS) $(PRELOADS)
+
 # Directories other than the current directory in which to find files.
 # This doesn't seem to work in all versions of make, so we also add kotl/
 # explicitly to those files which need it.
@@ -224,6 +226,9 @@ help:
 
 all: help
 
+echo:
+	which emacs; echo $(TERM); echo "$(DISPLAY)"
+
 install: elc install-info install-html $(data_dir)/hkey-help.txt
 
 install-info: $(info_dir)/hyperbole.info
@@ -250,8 +255,7 @@ elc: elc-init $(ELC_KOTL) $(ELC_COMPILE)
 	@- \test ! -f $(ELISP_TO_COMPILE) \
             || (echo "These files will be compiled: " \
                  && echo "`cat $(ELISP_TO_COMPILE)`" \
-                 && $(EMACS) $(BATCHFLAGS) $(PRELOADS) \
-                       -f batch-byte-compile `cat $(ELISP_TO_COMPILE)`)
+                 && $(EMACS_BATCH) -f batch-byte-compile `cat $(ELISP_TO_COMPILE)`)
 	@ $(RM) $(ELISP_TO_COMPILE)
 
 elc-init:
@@ -264,7 +268,7 @@ src: autoloads tags
 # which do not yet exist, plus build TAGS file.
 bin: src
 	$(RM) *.elc kotl/*.elc
-	$(EMACS) $(BATCHFLAGS) $(PRELOADS) --eval="(setq-default byte-compile-warnings '(not docstrings))" \
+	$(EMACS_BATCH) --eval="(setq-default byte-compile-warnings '(not docstrings))" \
 		-f batch-byte-compile $(EL_KOTL) $(EL_COMPILE)
 
 # Byte compile files but apply a filter for either including or
@@ -283,7 +287,7 @@ HYPB_BIN_WARN = ${HYPB_WARNINGS}
 endif
 bin-warn: src
 	$(RM) *.elc kotl/*.elc
-	$(EMACS) $(BATCHFLAGS) $(PRELOADS) --eval="(setq-default byte-compile-warnings '(${HYPB_BIN_WARN}))" \
+	$(EMACS_BATCH) --eval="(setq-default byte-compile-warnings '(${HYPB_BIN_WARN}))" \
 		-f batch-byte-compile $(EL_KOTL) $(EL_COMPILE)
 
 tags: TAGS
@@ -355,10 +359,10 @@ ftp: package $(pkg_dir)/hyperbole-$(HYPB_VERSION).tar.gz
 autoloads: hyperbole-autoloads.el kotl/kotl-autoloads.el
 
 hyperbole-autoloads.el: $(EL_COMPILE)
-	$(EMACS) $(BATCHFLAGS) $(PRELOADS) --debug --eval "(progn (setq generated-autoload-file (expand-file-name \"hyperbole-autoloads.el\") backup-inhibited t) (let (find-file-hooks) (make-directory-autoloads \".\" generated-autoload-file)))"
+	$(EMACS_BATCH) --debug --eval "(progn (setq generated-autoload-file (expand-file-name \"hyperbole-autoloads.el\") backup-inhibited t) (let (find-file-hooks) (make-directory-autoloads \".\" generated-autoload-file)))"
 
 kotl/kotl-autoloads.el: $(EL_KOTL)
-	$(EMACS) $(BATCHFLAGS) $(PRELOADS) --debug --eval "(progn (setq generated-autoload-file (expand-file-name \"kotl/kotl-autoloads.el\") backup-inhibited t) (let (find-file-hooks) (make-directory-autoloads \"kotl/\" generated-autoload-file)))"
+	$(EMACS_BATCH) --debug --eval "(progn (setq generated-autoload-file (expand-file-name \"kotl/kotl-autoloads.el\") backup-inhibited t) (let (find-file-hooks) (make-directory-autoloads \"kotl/\" generated-autoload-file)))"
 
 # Used for ftp.gnu.org tarball distributions.
 $(pkg_dir)/hyperbole-$(HYPB_VERSION).tar.gz:
@@ -401,20 +405,21 @@ packageclean:
 tests: test
 test: test-ert
 
-BATCH=$(EMACS) $(BATCHFLAGS) $(PRELOADS)
-INTERACTIVE=$(EMACS) --quick $(PRELOADS)
-
 TEST_ERT_FILES=$(wildcard test/*tests.el)
 LOAD_TEST_ERT_FILES=$(patsubst %,(load-file \"%\"),${TEST_ERT_FILES})
 
 test-ert:
 	@echo "# Tests: $(TEST_ERT_FILES)"
-	$(BATCH) --eval "(load-file \"test/hy-test-dependencies.el\")" --eval "(progn $(LOAD_TEST_ERT_FILES) (ert-run-tests-batch-and-exit))"
+	$(EMACS_BATCH) --eval "(load-file \"test/hy-test-dependencies.el\")" --eval "(progn $(LOAD_TEST_ERT_FILES) (ert-run-tests-batch-and-exit))"
 
 all-tests: test-all
 test-all:
 	@echo "# Tests: $(TEST_ERT_FILES)"
-	$(INTERACTIVE) --eval "(load-file \"test/hy-test-dependencies.el\")" --eval "(progn $(LOAD_TEST_ERT_FILES) (ert-run-tests-interactively t))"
+ifeq ($(TERM), dumb)
+	TERM=vt100 DISPLAY=$(DISPLAY) $(EMACS) --quick $(PRELOADS) --eval "(load-file \"test/hy-test-dependencies.el\")" --eval "(progn $(LOAD_TEST_ERT_FILES) (ert-run-tests-interactively t))"
+else
+	$(EMACS) --quick $(PRELOADS) --eval "(load-file \"test/hy-test-dependencies.el\")" --eval "(progn $(LOAD_TEST_ERT_FILES) (ert-run-tests-interactively t))"
+endif
 
 # Hyperbole install tests - Verify that hyperbole can be installed
 # using different sources. See folder "install-test"
