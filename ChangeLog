@@ -1,5 +1,13 @@
 2021-12-05  Bob Weiner  <rsw@gnu.org>
 
+* kotl/kotl-mode.el: Require 'org so can override org-force-self-insert.
+    (kotl-mode-map): Add kotl-mode overrides for these orgtbl editing
+    commands: org-force-self-insert, orgtbl-ctrl-c-ctrl-c,
+    orgtbl-create-or-convert-from-region org-delete-backward-char,
+    org-delete-char, and orgtbl-self-insert-command.
+    (kotl-mode:clipboard-yank): Change to use newer 'select-enable-clipboard'
+    instead of 'gui-select-enable-clipboard'.
+
 * test/demo-tests.el (demo-smart-scrolling-proportional-test): Fails when run
     under an Emacs dumb terminal in batch mode, so only run interactively.
 

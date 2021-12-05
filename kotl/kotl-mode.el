@@ -17,7 +17,7 @@
 ;;; ************************************************************************
 
 (eval-and-compile (mapc #'require '(cl-lib delsel hsettings hmail hypb kfile
-				    kvspec kcell outline org-table kotl-orgtbl)))
+				    kvspec kcell outline org org-table kotl-orgtbl)))
 
 ;;; ************************************************************************
 ;;; Public variables
@@ -597,7 +597,7 @@ Skip cells with a non-nil no-fill attribute.
 With optional prefix argument TOP-P non-nil, refill all cells in the outline."
   (interactive "P")
   ;; Temporarily expand, then refill cells lacking no-fill property.
-  (kview:map-expanded-tree (lambda (view) (kotl-mode:fill-cell)) kview top-p))
+  (kview:map-expanded-tree (lambda (_kview) (kotl-mode:fill-cell)) kview top-p))
 
 (defun kotl-mode:just-one-space ()
   "Delete all spaces and tabs around point and leave one space."
@@ -994,7 +994,7 @@ kotl-mode:refill-flag is enabled."
 (defun kotl-mode:clipboard-yank ()
   "Insert the clipboard contents, or the last stretch of killed text."
   (interactive "*")
-  (let ((gui-select-enable-clipboard t))
+  (let ((select-enable-clipboard t))
     (kotl-mode:yank)))
 
 (defun kotl-mode:copy-after (from-cell-ref to-cell-ref child-p)
@@ -2625,7 +2625,7 @@ within the current view."
   (interactive "P")
   (kotl-mode:is-p)
   (let (buffer-read-only)
-    (kview:map-tree (lambda (kview)
+    (kview:map-tree (lambda (_kview)
 		      ;; Use free variable label-sep-len bound in kview:map-tree for speed.
 		      (kcell-view:collapse nil label-sep-len))
 		    kview all-flag t)))
@@ -2638,7 +2638,7 @@ the current view."
   (kotl-mode:is-p)
   (let (buffer-read-only)
     (kview:map-tree
-     (lambda (kview)
+     (lambda (_kview)
        ;; Use free variable label-sep-len bound in kview:map-tree for speed.
        (goto-char (kcell-view:start (point) label-sep-len))
        (outline-flag-region (point) (kcell-view:end-contents) nil))
@@ -2831,6 +2831,61 @@ When called interactively, it displays the value in the minibuffer."
 	       attribute value (kcell-view:label pos)))
     value))
 
+;;; ------------------------------------------------------------------------
+;;; Org mode and Org Table overrides to limit editing to a cell
+;;; ------------------------------------------------------------------------
+
+(defun kotl-mode:org-delete-backward-char (n)
+  "Like ‘delete-backward-char’, insert whitespace at field end in tables.
+When deleting backwards, in tables this function will insert whitespace in
+front of the next \"|\" separator, to keep the table aligned.  The table will
+still be marked for re-alignment if the field did fill the entire column,
+because, in this case the deletion might narrow the column."
+  (interactive "p")
+  (kcell-view:operate
+   (lambda () (org-delete-backward-char n))))
+
+(defun kotl-mode:org-delete-char (n)
+  "Like ‘delete-char’, but insert whitespace at field end in tables.
+When deleting characters, in tables this function will insert whitespace in
+front of the next \"|\" separator, to keep the table aligned.  The table will
+still be marked for re-alignment if the field did fill the entire column,
+because, in this case the deletion might narrow the column."
+  (interactive "p")
+  (kcell-view:operate
+   (lambda () (org-delete-char n))))
+
+(defun kotl-mode:org-force-self-insert (n)
+  "Needed to enforce self-insert under remapping."
+  (interactive "p")
+  (kcell-view:operate
+   (lambda () (org-force-self-insert n))))
+
+(defun kotl-mode:orgtbl-ctrl-c-ctrl-c (arg)
+  "If the cursor is inside a table, realign the table.
+If it is a table to be sent away to a receiver, do it.
+With prefix arg, also recompute table."
+  (interactive "P")
+  (kcell-view:operate
+   (lambda () (org-ctrl-c-ctrl-c arg))))
+
+(defun kotl-mode:orgtbl-create-or-convert-from-region (arg)
+  "Create table or convert region to table, if no conflicting binding.
+This installs the table binding `C-c |', but only if there is no
+conflicting binding to this key outside orgtbl-mode."
+  (interactive "P")
+  (kcell-view:operate
+   (lambda () (orgtbl-create-or-convert-from-region arg))))
+
+(defun kotl-mode:orgtbl-self-insert-command (n)
+  "Like `self-insert-command', use overwrite-mode for whitespace in tables.
+If the cursor is in a table looking at whitespace, the whitespace is
+overwritten, and the table is not marked as requiring realignment."
+  (interactive "p")
+  (kcell-view:operate
+   (lambda () (orgtbl-self-insert-command n))))
+
+
 ;;; ************************************************************************
 ;;; Private functions
 ;;; ************************************************************************
@@ -2901,8 +2956,7 @@ removing Koutline structure."
   (interactive)
   ;; Caller has already tested for: (and (not (kotl-mode:valid-region-p)) (region-active-p))
   ;; Reduce the region to within the visible portion of a single cell
-  (let ((start (min (point) (mark)))
-	(end (max (point) (mark)))
+  (let ((end (max (point) (mark)))
 	(exchange-p (> (point) (mark))))
     (when exchange-p
       (kotl-mode:exchange-point-and-mark))
@@ -3241,6 +3295,13 @@ Leave point at end of line now residing at START."
        yank
        yank-pop
        zap-to-char
+       ;;
+       org-delete-backward-char
+       org-delete-char
+       org-force-self-insert
+       orgtbl-ctrl-c-ctrl-c
+       orgtbl-create-or-convert-from-region
+       orgtbl-self-insert-command
        )))
 
 
