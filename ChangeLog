@@ -4,6 +4,12 @@
     under an Emacs dumb terminal in batch mode, so only run interactively.
 
 * hibtypes.el (grep-msg, ripgrep-msg): Allow for ${emacs-lisp-var} with : in its name
+    within the filename/pathname at the start of the line.
+
+* test/demo-tests.el (demo-smart-scrolling-proportional-test): Make run
+    only when running on a window system since does not work properly
+    in batch mode on Macs.
+
 2021-11-28  Bob Weiner  <rsw@gnu.org>
 
 * hbut.el (ibut:to-name): Move to the start of the name of a given implicit

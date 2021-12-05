@@ -880,7 +880,9 @@ buffer)."
                       (and (setq file (buffer-substring-no-properties (point-at-bol) (point-at-eol)))
                            (string-empty-p (string-trim file))))
             (let* ((but-label (concat file ":" line-num))
-                   (source-loc (unless (file-name-absolute-p file)
+		   ;; RSW 12-05-2021 - Added hpath:expand in next line to
+		   ;; resolve any variables in the path before checking if absolute.
+		   (source-loc (unless (file-name-absolute-p (hpath:expand file))
                                  (hbut:key-src t))))
               (when (stringp source-loc)
                 (setq file (expand-file-name file (file-name-directory source-loc))))
@@ -900,8 +902,9 @@ in grep and shell buffers."
     (save-excursion
       (beginning-of-line)
       (when (or
-             ;; Grep matches, UNIX C compiler and Introl 68HC11 C compiler errors
-             (looking-at "\\([^ \t\n\r:\"'`]+\\): ?\\([1-9][0-9]*\\)[ :]")
+             ;; Grep matches (allowing for Emacs Lisp vars with : in
+	     ;; name within the pathname), UNIX C compiler and Introl 68HC11 C compiler errors
+             (looking-at "\\([^ \t\n\r\"'`]*[^ \t\n\r:\"'`]\\): ?\\([1-9][0-9]*\\)[ :]")
              ;; Grep matches, UNIX C compiler and Introl 68HC11 C
              ;; compiler errors, allowing for file names with
              ;; spaces followed by a null character rather than a :
@@ -933,7 +936,9 @@ in grep and shell buffers."
         (let* ((file (match-string-no-properties 1))
                (line-num  (match-string-no-properties 2))
                (but-label (concat file ":" line-num))
-               (source-loc (unless (file-name-absolute-p file)
+	       ;; RSW 12-05-2021 - Added hpath:expand in next line to
+	       ;; resolve any variables in the path before checking if absolute.
+               (source-loc (unless (file-name-absolute-p (hpath:expand file))
                              (hbut:key-src t))))
           (when (stringp source-loc)
             (setq file (expand-file-name file (file-name-directory source-loc))))

@@ -81,7 +81,6 @@
               (pos (point)))
           (end-of-line)
           (action-key)
-	  (sit-for 2)
           (should (= pos (window-start)))))
     (kill-buffer "DEMO")))
 
