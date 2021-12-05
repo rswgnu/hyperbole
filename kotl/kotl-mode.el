@@ -1111,16 +1111,16 @@ Leave point at original location but return the tree's new start point."
 	 (from-indent (kcell-view:indent nil label-sep-len))
 	 (start (kotl-mode:tree-start))
 	 (end   (kotl-mode:tree-end))
-	 (sib-id (if (= 0 (kotl-mode:forward-cell 1))
-		     (kcell-view:idstamp)))
+	 (sib-id (when (= 0 (kotl-mode:forward-cell 1))
+		   (kcell-view:idstamp)))
 	 (id-label-flag (eq (kview:label-type kview) 'id))
 	 new-tree-start)
     ;;
     ;; We can't move a tree to a point within itself, so if that is the case
     ;; and this is not a copy operation, signal an error.
-    (if (and (not copy-p) (>= move-to-point start) (<= move-to-point end))
-	(error "(kotl-mode:move-after): Can't move tree <%s> to within itself"
-	       from-label))
+    (when (and (not copy-p) (>= move-to-point start) (<= move-to-point end))
+      (error "(kotl-mode:move-after): Can't move tree <%s> to within itself"
+	     from-label))
     ;;
     ;; If tree to move has a sibling, point is now at the start of the
     ;; sibling cell.  Mark its label with a property which will be deleted
@@ -1208,8 +1208,8 @@ Leave point at original location but return the tree's new start point."
 	 (from-indent (kcell-view:indent nil label-sep-len))
 	 (start (kotl-mode:tree-start))
 	 (end   (kotl-mode:tree-end))
-	 (sib-id (if (= 0 (kotl-mode:forward-cell 1))
-		     (kcell-view:idstamp)))
+	 (sib-id (when (= 0 (kotl-mode:forward-cell 1))
+		   (kcell-view:idstamp)))
 	 new-tree-start)
     ;;
     ;; We can't move a tree to a point within itself, so if that is the case
@@ -1595,8 +1595,7 @@ With optional ARG < 0, move to the ARGth previous visible cell."
 (defalias 'kotl-mode:move-end-of-line 'kotl-mode:to-end-of-line)
 
 (defun kotl-mode:end-of-tree ()
-  "Move point to the last cell in tree rooted at the current cell.
-Leave point at the start of the cell."
+  "Move point to the start of the last cell in tree rooted at the current cell."
   (interactive)
   (kotl-mode:maintain-region-highlight)
   ;; Enable user to return to this previous position if desired.
@@ -1612,7 +1611,8 @@ Leave point at the start of the cell."
 	;; or higher level in the outline than the first cell that we
 	;; processed.
 	(while (and (kcell-view:next nil label-sep-len)
-		    (> (kcell-view:indent nil label-sep-len) cell-indent))
+		    (>= (- (kcell-view:indent nil label-sep-len) cell-indent)
+			(kview:level-indent kview)))
 	  (setq end-point (point)))
 	(goto-char end-point)))
     (kotl-mode:beginning-of-cell)))
@@ -1872,14 +1872,14 @@ The paragraph marked is the one that contains point or follows point."
   (point))
 
 (defun kotl-mode:next-tree ()
-  "Move past current tree to next tree, or to last cell in tree if no next tree.
-Return non-nil iff there is a next tree within this koutline."
+  "Move past current tree to the start of the next tree, or to the start of the last cell in tree if no next tree.
+Return non-nil iff there is a next tree within the koutline."
   (let ((start-indent (kcell-view:indent))
 	(label-sep-len (kview:label-separator-length kview))
 	(same-tree t))
       (while (and (kcell-view:next nil label-sep-len)
-		  (setq same-tree (< start-indent
-				     (kcell-view:indent nil label-sep-len)))))
+		  (setq same-tree (>= (- (kcell-view:indent nil label-sep-len) start-indent)
+				      (kview:level-indent kview)))))
       (not same-tree)))
 
 (defun kotl-mode:previous-line (arg)
@@ -2953,7 +2953,8 @@ newlines at end of tree."
 	 (next))
     (save-excursion
       (while (and (setq next (kcell-view:next nil label-sep-len))
-		  (< start-indent (kcell-view:indent nil label-sep-len))))
+		  (>= (- (kcell-view:indent nil label-sep-len) start-indent)
+		      (kview:level-indent kview))))
       (cond (next
 	     (goto-char (progn (kcell-view:previous nil label-sep-len)
 			       (kcell-view:end))))

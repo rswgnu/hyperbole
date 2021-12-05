@@ -98,7 +98,8 @@ Return t unless no such cell."
 	  (progn (setq done t)
 		 (goto-char opoint))
 	(setq curr-indent (kcell-view:indent nil label-sep-len))
-	(cond ((= curr-indent start-indent)
+	(cond ((< (abs (- curr-indent start-indent))
+		  (kview:level-indent kview))
 	       (goto-char (kcell-view:start nil label-sep-len))
 	       (setq found t))
 	      ((< curr-indent start-indent)
@@ -138,7 +139,8 @@ a cell's label and the start of its contents."
       (setq label-sep-len (kview:label-separator-length kview)))
     ;; Since kcell-view:next leaves point at the start of a cell, the cell's
     ;; indent is just the current-column of point.
-    (if (and next (> (current-column) prev-indent))
+    (if (and next (>= (- (current-column) prev-indent)
+		      (kview:level-indent kview)))
 	t
       ;; Move back to previous point and return nil.
       (goto-char opoint)
@@ -300,7 +302,8 @@ Return t unless no such cell."
     (while (and (not (or found done))
 		(kcell-view:next visible-p label-sep-len))
       (setq curr-indent (kcell-view:indent nil label-sep-len))
-      (cond ((= curr-indent start-indent)
+      (cond ((< (abs (- curr-indent start-indent))
+		(kview:level-indent kview))
 	     (goto-char (kcell-view:start nil label-sep-len))
 	     (setq found t))
 	    ((< curr-indent start-indent)
@@ -406,7 +409,8 @@ Optional START and END are start and endpoints of cell to use."
 If parent is top cell, move to first cell within view and return 0.
 Otherwise, return t unless optional VISIBLE-P is non-nil and the parent cell
 is not part of the current view, else nil."
-  (or label-sep-len (setq label-sep-len (kview:label-separator-length kview)))
+  (unless label-sep-len
+    (setq label-sep-len (kview:label-separator-length kview)))
   (let ((opoint (point))
 	(parent-level (1- (kcell-view:level nil label-sep-len))))
     (if (= parent-level 0) ;; top cell
@@ -835,7 +839,7 @@ See documentation for kview:default-label-type."
     (kview:get-attr kview 'label-type)))
 
 (defun kview:level-indent (kview)
-  "Return KVIEW's level-indent setting or nil if argument is not a kview.
+  "Return KVIEW's per level-indent setting or nil if argument is not a kview.
 See documentation for kview:default-level-indent."
   (when (kview:is-p kview)
     (kview:get-attr kview 'level-indent)))
@@ -867,7 +871,8 @@ See also `kview:map-region', `kview:map-siblings' and `kview:map-tree'."
 	;; or higher level in the kotl than the first cell that we processed.
 	(while (and (setq results (cons (funcall func kview) results))
 		    (kcell-view:next visible-p label-sep-len)
-		    (> (kcell-view:indent nil label-sep-len) cell-indent)))
+		    (>= (- (kcell-view:indent nil label-sep-len) cell-indent)
+			(kview:level-indent kview))))
 	(nreverse results)))))
 
 (defun kview:map-region (func kview &optional visible-p start end)
@@ -987,8 +992,8 @@ See also `kview:map-region', `kview:map-branch' and `kview:map-siblings'."
 	    ;; or higher level in the kotl than the first cell that we processed.
 	    (while (and (setq results (cons (funcall func kview) results))
 			(kcell-view:next nil label-sep-len)
-			(> (kcell-view:indent nil label-sep-len)
-			   cell-indent))))
+			(>= (- (kcell-view:indent nil label-sep-len) cell-indent)
+			    (kview:level-indent kview)))))
 	  ;;
 	  ;; Restore status of temporarily expanded cells.
 	  (when (remq 0 collapsed-cells)
@@ -1033,8 +1038,8 @@ See also `kview:map-region', `kview:map-branch' and `kview:map-siblings'."
 	    ;; or higher level in the kotl than the first cell that we processed.
 	    (while (and (setq results (cons (funcall func kview) results))
 			(kcell-view:next visible-p label-sep-len)
-			(> (kcell-view:indent nil label-sep-len)
-			   cell-indent))))
+			(>= (- (kcell-view:indent nil label-sep-len) cell-indent)
+			    (kview:level-indent kview)))))
 	  (nreverse results)))))
 
 (defun kview:move (from-start from-end to-start from-indent to-indent
