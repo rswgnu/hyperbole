@@ -304,34 +304,42 @@ Call this function manually if mount points change after Hyperbole is loaded."
 ;;; FILE VIEWER COMMAND SETTINGS
 ;;; ************************************************************************
 
-(defcustom hpath:external-open-office-suffixes "doc[mx]?\\|od[st]\\|ppsx?\\|ppt[mx]?\\|xls[mx]?"
-  "*Regexp of Open Office document suffix alternatives to display externally.
+(defcustom hpath:external-open-office-suffixes "doc[mx]?\\|od[st]\\|ppsx?\\|ppt[mx]?\\|v[dst][s]?[tx]\\|vsd[x]?\\|xls[mx]?"
+  "*Regexp of Open Office document suffix alternatives to display externally with the Action Key
+Do not include an initial period or enclosing grouping parentheses;
+these will be added automatically.
+
 See http://www.openwith.org/programs/openoffice for a full list of
 possible suffixes."
   :type 'string
   :group 'hyperbole-commands)
 
-(defcustom hpath:external-display-alist-macos (list (cons (format "\\.\\(app\\|%s\\|adaptor\\|app\\|bshlf\\|clr\\|concur\\|create\\|diagram\\|dp\\|e?ps\\|frame\\|gif\\|locus\\|Mesa\\|nib\\|pdf\\|project\\|rtf\\|sense\\|tiff\\|tree\\)$"
-								  hpath:external-open-office-suffixes)
+(defcustom hpath:external-file-suffixes "e?ps\\|dvi\\|pdf\\|ps\\.g?[zZ]\\|gif\\|tiff?\\|xpm\\|xbm\\|xwd\\|pm\\|pbm\\|jpe?g\\|ra?s\\|xcf"
+  "*Non-operating system dependent regexp of file suffixes to open outside Emacs with the Action Key when not handled by `hpath:native-image-suffixes'.
+Do not include an initial period or enclosing grouping parentheses; these will be added automatically."
+  :type 'string
+  :group 'hyperbole-commands)
+
+(defcustom hpath:external-display-alist-macos (list (cons (format "\\.\\(%s\\|%s\\|app\\|adaptor\\|bshlf\\|clr\\|concur\\|create\\|diagram\\|dp\\|frame\\|locus\\|Mesa\\|nib\\|project\\|rtf\\|sense\\|tree\\)$"
+								  hpath:external-open-office-suffixes
+								  hpath:external-file-suffixes)
 							  "open"))
   "*An alist of (FILENAME-REGEXP . DISPLAY-PROGRAM-STRING-OR-LIST) elements for the macOS window system.
 See the function `hpath:get-external-display-alist' for detailed format documentation."
   :type '(alist :key-type regexp :value-type string)
   :group 'hyperbole-commands)
 
-;; (defvar hpath:external-display-alist-mswindows (list '("\\.vba$" . "/c/Windows/System32/cmd.exe //c start \"${@//&/^&}\"")
-;; 						     (cons (format "\\.\\(%s\\)$" hpath:external-open-office-suffixes)
-;; 							   "openoffice.exe"))
-
-(defcustom hpath:external-display-alist-mswindows (list '("\\.vba$" . "/c/Windows/System32/cmd.exe //c start \"${@//&/^&}\"")
-							(cons (format "\\.\\(%s\\)$" hpath:external-open-office-suffixes)
-							      "openoffice.exe"))
+(defcustom hpath:external-display-alist-mswindows (list (cons (format "\\.\\(%s\\)$" hpath:external-open-office-suffixes)
+							      "openoffice.exe")
+							(cons (format "\\.\\(%s\\|vba\\)$" hpath:external-file-suffixes)
+							      "/c/Windows/System32/cmd.exe //c start \"${@//&/^&}\""))
   "*An alist of (FILENAME-REGEXP . DISPLAY-PROGRAM-STRING-OR-LIST) elements for MS Windows.
 See the function `hpath:get-external-display-alist' for detailed format documentation."
   :type '(alist :key-type regexp :value-type string)
   :group 'hyperbole-commands)
 
 
+;; Old X Window System configuration prior to use of 'xdg-open'.
 ;; (defvar hpath:external-display-alist-x (list '("\\.e?ps$" . "ghostview")
 ;; 					     '("\\.dvi$"  . "xdvi")
 ;; 					     (cons (format "\\.\\(%s\\)$" hpath:external-open-office-suffixes) "openoffice")
@@ -340,8 +348,9 @@ See the function `hpath:get-external-display-alist' for detailed format document
 ;; 					     '("\\.\\(gif\\|tiff?\\|xpm\\|xbm\\|xwd\\|pm\\|pbm\\|jpe?g\\)"  . "xv")
 ;; 					     '("\\.ra?s$" . "snapshot -l"))
 
-(defcustom hpath:external-display-alist-x (list (cons (format "\\.\\(xcf\\|%s\\)$"
-							      hpath:external-open-office-suffixes)
+(defcustom hpath:external-display-alist-x (list (cons (format "\\.\\(%s\\|%s\\)$"
+							      hpath:external-open-office-suffixes
+							      hpath:external-file-suffixes)
 						      "setsid -w xdg-open"))
   "*An alist of (FILENAME-REGEXP . DISPLAY-PROGRAM-STRING-OR-LIST) elements for the X Window System.
 See the function `hpath:get-external-display-alist' for detailed format documentation."
@@ -459,8 +468,8 @@ Valid DISPLAY-WHERE-SYMBOLs are:
     other-frame             - display in another, possibly existing, frame
     other-frame-one-window  - display in another frame, deleting other windows.")
 
-(defcustom hpath:native-image-suffixes "\\.\\(xpm\\|png\\|gif\\|jpe?g\\)\\'"
-  "Regular expression matching file name suffixes of natively handled image types.
+(defcustom hpath:native-image-suffixes "\\.\\(xbm\\|xpm\\|xwd\\|png\\|gif\\|jpe?g\\)\\'"
+  "Regular expression matching file name suffixes of image types Hyperbole displays in Emacs.
 Used only if the function `image-mode' is defined."
   :type 'regexp
   :group 'hyperbole-commands)
@@ -1880,7 +1889,7 @@ With optional INCLUDE-START-AND-END-P non-nil, returns list of:
 (defun hpath:command-string (cmd filename)
   "Return a single string that runs a shell CMD over FILENAME.
 CMD may contain a single `%s' indicating where FILENAME is to
-be integrated, otherwise the filename is appended as an argument."
+be integrated, otherwise the filename is appended as a double-quoted argument."
   ;; Permit %s substitution of filename within program.
   (if (string-match "[^%]%s" cmd)
       (format cmd filename)
@@ -2002,7 +2011,7 @@ See also documentation for the function (hpath:get-external-display-alist) and t
 	))
 
 (defun hpath:match (filename regexp-alist)
-  "If FILENAME match the car of any element in REGEXP-ALIST, return its cdr.
+  "If FILENAME matches the car of any element in REGEXP-ALIST, return its cdr.
 REGEXP-ALIST elements must be of the form (<filename-regexp>
 . <command-to-display-file>).  <command-to-display-file> may be a string
 representing an external `window-system' command to run or it may be a Lisp

@@ -6,9 +6,31 @@
 * hibtypes.el (grep-msg, ripgrep-msg): Allow for ${emacs-lisp-var} with : in its name
     within the filename/pathname at the start of the line.
 
+* kotl/kview.el (kcell-view:forward, kcell-view:backward, kcell-view:child,
+    kview:map-branch, kview:map-expanded-tree, kview:map-tree):
+  kotl/klabel.el (klabel-type:set-alpha, klabel-type:set-legal,
+    klabel-type:set-partial-alpha):
+  kotl/kotl-mode.el: (kotl-mode:end-of-tree, kotl-mode:next-tree, kotl-mode:tree-end):
+    Change indent handling to only be a different indent if different
+    by (kview:level-indent KVIEW) since if length of label changes at level
+    one, then indent will show as 1 or 2 chars longer.
+
+* Makefile (test-all): When run under Emacs with TERM=dumb, set term
+    to vt100 so tests will at least run and show whether all ran
+    successfully or not.
+
+* hpath.el (hpath:external-file-suffixes): Add this new customization
+    with external file suffixes for the Action Key.  Use in each
+    OS-dependent variable.
+
 * test/demo-tests.el (demo-smart-scrolling-proportional-test): Make run
     only when running on a window system since does not work properly
     in batch mode on Macs.
+
+* hpath.el (hpath:native-image-suffixes): Include xbm and xwd formats.
+           (hpath:external-open-office-suffixes): Include more suffixes.
+           (hpath:external-display-alist-x): Use xdg-open to open file
+    types like .ps previously included in this variable.
 
 2021-11-28  Bob Weiner  <rsw@gnu.org>
 
@@ -23,11 +45,11 @@
     when point is within the ibut.
 
 * hui.el (hui:link-possible-types): Fix to properly get lbl-key for link-to
-    Hyperbole button types.  This resolves a problem when using drags or
-    ace-window {M-o w <window-id>} to create link buttons.
+    Hyperbole button types.  This resolves a problem when using drags or ace-window
+    {M-o w <window-id>} to create link buttons.
 
-* hui-window.el (hmouse-prior-active-region): Handle when hkey-value's buffer
-    has been killed.
+* hui-window.el (hmouse-prior-active-region): Handle when hkey-value's buffer has
+    been killed.
 
 * hbut.el (hbut:funcall): Add to call an ibut manipulation function with point
     on the ibut (may be a different src buffer than the original source).
@@ -60,7 +82,7 @@
 
 2021-11-08  Mats Lidell  <matsl@gnu.org>
 
-* test/kotl-orgtbl-tests.el (kotl-orgtbl-action-key-on-vertical-bar-toggles-orgtbl-mode)
+* test/kotl-orgtbl-tests.el (kotl-orgtbl-action-key-on-vertical-bar-toggles-orgtbl-mode):
     (kotl-orgtbl-shift-tab-demotes-tree-outside-table): Add tests.
 
 * kotl/kotl-mode.el (kotl-mode): Change binding for orgtbl C-d to use new
