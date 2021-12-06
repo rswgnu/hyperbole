@@ -79,7 +79,7 @@
 
 (defun hargs:action-get (action modifying)
   "Interactively get list of arguments for ACTION's parameters.
-Current button is being modified when MODIFYING is non-nil.
+Current button is being modified when MODIFYING is t.
 Return nil if ACTION is not a list or `byte-code' object, has no
 interactive form or takes no arguments."
   (and (or (hypb:emacs-byte-code-p action) (listp action))
@@ -281,8 +281,10 @@ that point is within is returned or nil if none."
 ;;; ************************************************************************
 
 (defun hargs:actype-get (actype &optional modifying)
-  "Interactively gets and return list of arguments for ACTYPE's parameters.
+  "Interactively get and return list of arguments for ACTYPE's parameters.
 Current button is being modified when MODIFYING is non-nil."
+  (when modifying
+    (setq modifying t))
   (hargs:action-get (actype:action-body actype) modifying))
 
 (defun hargs:at-p (&optional no-default)
@@ -479,11 +481,11 @@ Insert in minibuffer if active or in other window if minibuffer is inactive."
 	    (delete-window))
 	  entry)))))
 
-(defun hargs:iform-read (iform &optional modifying)
+(defun hargs:iform-read (iform &optional defaults)
   "Read action arguments according to IFORM, a list with car = 'interactive.
-Optional MODIFYING non-nil indicates current button is being modified, so
-button's current values should be presented as defaults.  Otherwise, uses
-hargs:defaults as list of defaults, if any.
+With optional DEFAULTS equal to t, the current button is being modified, so
+its attribute values should be presented as defaults.  Otherwise, use
+DEFAULTS as a list of defaults to present when reading arguments.
 See also documentation for `interactive'."
   ;; This is mostly a translation of `call-interactively' to Lisp.
   ;;
@@ -496,21 +498,13 @@ See also documentation for `interactive'."
       (let ((prev-reading-p hargs:reading-p))
 	(unwind-protect
 	    (progn
+	      (when (eq defaults t)
+		(setq defaults (hattr:get 'hbut:current 'args)))
 	      (setq hargs:reading-p t)
 	      (if (not (stringp iform))
-		  (let ((defaults (if modifying
-				      (hattr:get 'hbut:current 'args)
-				    (and (boundp 'hargs:defaults)
-					 (listp hargs:defaults)
-					 hargs:defaults))))
-		    (eval iform))
+		  (eval iform)
 		(let ((i 0) (start 0) (end (length iform))
-		      (ientry) (results) (val) (default)
-		      (defaults (if modifying
-				    (hattr:get 'hbut:current 'args)
-				  (and (boundp 'hargs:defaults)
-				       (listp hargs:defaults)
-				       hargs:defaults))))
+		      (ientry) (results) (val) (default))
 		  ;;
 		  ;; Handle special initial interactive string chars.
 		  ;;

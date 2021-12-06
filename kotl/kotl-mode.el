@@ -971,11 +971,11 @@ Goes backward if ARG is negative; error if CHAR not found."
 APPEND-TO-CELL is refilled if neither cell has a no-fill property and
 kotl-mode:refill-flag is enabled."
   (interactive
-   (let* ((label (kcell-view:label))
-	  (hargs:defaults (list label label)))
+   (let* ((label (kcell-view:label)))
      (hargs:iform-read
       '(interactive
-	"*+KAppend contents of cell: \n+KAppend contents of cell <%s> to cell: "))))
+	"*+KAppend contents of cell: \n+KAppend contents of cell <%s> to cell: ")
+      (list label label))))
   (save-excursion
     (kotl-mode:goto-cell contents-cell)
     (let ((contents (kcell-view:contents))
@@ -1004,14 +1004,14 @@ TO-CELL-REF, otherwise make it the sibling following TO-CELL-REF.
 
 Leave point at the start of the root cell of the new tree."
   (interactive
-   (let* ((label (kcell-view:label))
-	  (hargs:defaults (list label label)))
+   (let* ((label (kcell-view:label)))
      (append
       (hargs:iform-read
        (list
 	'interactive
 	(format "*+KCopy tree: \n+KCopy tree <%%s> to follow as %s of cell: "
-		(if current-prefix-arg "child" "sibling"))))
+		(if current-prefix-arg "child" "sibling")))
+       (list label label))
       (list current-prefix-arg))))
   ;;
   ;; Copy tree in current view and leave point at the start of the copy.
@@ -1030,14 +1030,14 @@ TO-CELL-REF's parent, otherwise make it the preceding sibling of TO-CELL-REF.
 
 Leave point at the start of the root cell of the new tree."
   (interactive
-   (let* ((label (kcell-view:label))
-	  (hargs:defaults (list label label)))
+   (let* ((label (kcell-view:label)))
      (append
       (hargs:iform-read
        (list 'interactive
 	     (format "*+KCopy tree: \n+KCopy tree <%%s> to be %s of cell: "
 		     (if current-prefix-arg "first child of parent"
-		       "preceding sibling"))))
+		       "preceding sibling")))
+       (list label label))
       (list current-prefix-arg))))
   ;;
   ;; Copy tree in current view and leave point at the start of the copy.
@@ -1089,14 +1089,14 @@ With optional COPY-P, copies tree rather than moving it.
 
 Leave point at original location but return the tree's new start point."
   (interactive
-   (let* ((label (kcell-view:label))
-	  (hargs:defaults (list label label)))
+   (let* ((label (kcell-view:label)))
      (append
       (hargs:iform-read
        (list
 	'interactive
 	(format "*+KMove tree: \n+KMove tree <%%s> to follow as %s of cell: "
-		(if current-prefix-arg "child" "sibling"))))
+		(if current-prefix-arg "child" "sibling")))
+	  (list label label))
       (list current-prefix-arg))))
   (if (and (not copy-p) (equal from-cell-ref to-cell-ref))
       (error "(kotl-mode:move-after): Can't move tree after itself"))
@@ -1186,14 +1186,14 @@ With optional COPY-P, copies tree rather than moving it.
 
 Leave point at original location but return the tree's new start point."
   (interactive
-   (let* ((label (kcell-view:label))
-	  (hargs:defaults (list label label)))
+   (let* ((label (kcell-view:label)))
      (append
       (hargs:iform-read
        (list 'interactive
 	     (format "*+KMove tree: \n+KMove tree <%%s> to be %s of cell: "
 		     (if current-prefix-arg "first child of parent"
-		       "preceding sibling"))))
+		       "preceding sibling")))
+	  (list label label))
       (list current-prefix-arg))))
   (when (and (not copy-p) (equal from-cell-ref to-cell-ref))
     (error "(kotl-mode:move-before): Can't move tree before itself"))
@@ -2301,18 +2301,17 @@ to one level and kotl-mode:refill-flag is treated as true."
 (defun kotl-mode:exchange-cells (cell-ref-1 cell-ref-2)
   "Exchange CELL-REF-1 with CELL-REF-2 in current view.  Don't move point."
   (interactive
-   (let ((hargs:defaults
-	  (save-excursion
-	    (list (kcell-view:label)
-		  (cond
-		   ((kcell-view:previous t)
-		    (kcell-view:label))
-		   ((kcell-view:next t)
-		    (kcell-view:label))
-		   (t (error
-		       "(kotl-mode:exchange-cells): No two visible cells available")))))))
-     (hargs:iform-read
-      '(interactive "*+KExchange cell: \n+KExchange cell <%s> with cell: "))))
+   (hargs:iform-read
+    '(interactive "*+KExchange cell: \n+KExchange cell <%s> with cell: ")
+    (save-excursion
+      (list (kcell-view:label)
+	    (cond
+	     ((kcell-view:previous t)
+	      (kcell-view:label))
+	     ((kcell-view:next t)
+	      (kcell-view:label))
+	     (t (error
+		 "(kotl-mode:exchange-cells): No two visible cells available")))))))
   (save-excursion
     (let (kcell-1 contents-1
 	  kcell-2 contents-2)
@@ -2783,8 +2782,7 @@ Optional prefix arg CELLS-FLAG selects the cells to print:
 
 See also the documentation for `kotl-mode:cell-attributes'."
   (interactive
-   (let* ((label (kcell-view:label))
-	  (hargs:defaults (list label label)))
+   (let* ((label (kcell-view:label)))
      (append
       (let ((arg (prefix-numeric-value current-prefix-arg)))
 	(if (< arg 1)
@@ -2792,7 +2790,8 @@ See also the documentation for `kotl-mode:cell-attributes'."
 	  (hargs:iform-read
 	   (list 'interactive
 		 (format "+KDisplay properties of koutline %s: "
-			 (if (= arg 1) "cell" "tree"))))))
+			 (if (= arg 1) "cell" "tree")))
+	  (list label label))))
       (list current-prefix-arg))))
   (unless (integerp cells-flag)
     (setq cells-flag (prefix-numeric-value cells-flag)))
@@ -3053,7 +3052,7 @@ this function to `pre-command-hook'."
     (when (not (kview:valid-position-p))
       (kotl-mode:to-valid-position))))
 
-(defun kotl-mode:print-attributes (kview)
+(defun kotl-mode:print-attributes (_kview)
   "Print to the `standard-output' stream the attributes of the current visible kcell.
 Takes argument KVIEW (so it can be used with `kview:map-tree' and so that
 KVIEW is bound correctly) but always operates upon the current view."

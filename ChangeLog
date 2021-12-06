@@ -1,5 +1,13 @@
 2021-12-05  Bob Weiner  <rsw@gnu.org>
 
+* hargs.el (hargs:actype-get): Change to set 'modifying' to t if non-nil
+    for lower-level function call conformance.
+           (hargs:iform-read): Change 'modifying' param to 'defaults'.
+    If it is t, then get current Hyperbole button is being modified,
+    get defaults from it, otherwise, use the value as the defaults
+    when prompting for arguments.  Eliminate use of hargs:defaults
+    dynamic variable.
+
 * kotl/kotl-mode.el: Require 'org so can override org-force-self-insert.
     (kotl-mode-map): Add kotl-mode overrides for these orgtbl editing
     commands: org-force-self-insert, orgtbl-ctrl-c-ctrl-c,

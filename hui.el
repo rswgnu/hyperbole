@@ -225,7 +225,7 @@ Signal an error when no such button is found in the current buffer."
 
       (setq actype (hui:actype (hattr:get but 'actype)))
       (hattr:set 'hbut:current 'actype actype)
-      (hattr:set 'hbut:current 'args (hargs:actype-get actype 'modifying))
+      (hattr:set 'hbut:current 'args (hargs:actype-get actype t))
       (hattr:set 'hbut:current 'action
 		 (and hui:ebut-prompt-for-action (hui:action actype))))
     (ebut:operate lbl new-lbl)
@@ -422,7 +422,7 @@ modification   Signal an error when no such button is found."
 	    (hattr:set 'hbut:current 'dir src-dir)
 	    (setq actype (hui:actype (hattr:get but 'actype)))
 	    (hattr:set 'hbut:current 'actype actype)
-	    (hattr:set 'hbut:current 'args (hargs:actype-get actype 'modifying))
+	    (hattr:set 'hbut:current 'args (hargs:actype-get actype t))
 	    (hattr:set 'hbut:current 'action
 		       (and hui:ebut-prompt-for-action (hui:action actype)))
 	    (set-buffer but-buf)
