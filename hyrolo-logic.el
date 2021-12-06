@@ -118,12 +118,12 @@ single argument."
 	  (setq saved-expr expr)))
       (setq expr (hypb:replace-match-string
 		  "{\\([^{}]+\\)}" expr "\"\\1\"" nil))
-      (setq expr (hypb:replace-match-string "\(| " expr "\(hyrolo-or " t))
-      (setq expr (hypb:replace-match-string "\(@ " expr "\(hyrolo-xor " t))
-      (setq expr (hypb:replace-match-string "\(! " expr "\(hyrolo-not " t))
-      (setq expr (hypb:replace-match-string "\(& " expr "\(hyrolo-and " t))
-      (setq expr (format "(hyrolo-logic (quote %s) nil count-only %s %s)"
-			 expr include-sub-entries no-sub-entries-out))
+      (setq expr (hypb:replace-match-string "\(| " expr "\(hyrolo-or start end  " t))
+      (setq expr (hypb:replace-match-string "\(@ " expr "\(hyrolo-xor start end " t))
+      (setq expr (hypb:replace-match-string "\(! " expr "\(hyrolo-not start end " t))
+      (setq expr (hypb:replace-match-string "\(& " expr "\(hyrolo-and start end " t))
+      (setq expr (format "(hyrolo-logic (quote %s) nil %s %s %s)"
+			 expr count-only include-sub-entries no-sub-entries-out))
       (setq total-matches (eval (read expr))))
     (if (called-interactively-p 'interactive)
 	(message "%s matching entr%s found in rolo."
@@ -142,27 +142,25 @@ INCLUDE-SUB-ENTRIES is nil and optional NO-SUB-ENTRIES-OUT flag is non-nil.
 SEXP should use the free variables `start' and `end' which contain the limits
 of the region on which it should operate.  Returns number of evaluations of
 SEXP that matched entries."
-  (let ((obuf (current-buffer))
-	(display-buf (if count-only
-			 nil
+  (let* ((display-buf (unless count-only
 		       (prog1 (set-buffer (get-buffer-create hyrolo-display-buffer))
 			 (setq buffer-read-only nil)
-			 (erase-buffer)))))
-    (let ((result
-	   (mapcar
-	    (lambda (in-bufs)
-	      (hyrolo-map-logic sexp in-bufs count-only include-sub-entries
-				no-sub-entries-out))
-	    (cond ((null in-bufs) hyrolo-file-list)
-		  ((listp in-bufs) in-bufs)
-		  ((list in-bufs))))))
-      (let ((total-matches (apply '+ result)))
-	(unless (or count-only (= total-matches 0))
-	  (hyrolo-display-matches display-buf))
-	total-matches))))
+			 (erase-buffer))))
+	 (result
+	  (mapcar
+	   (lambda (in-bufs)
+	     (hyrolo-map-logic sexp in-bufs count-only include-sub-entries
+			       no-sub-entries-out))
+	   (cond ((null in-bufs) hyrolo-file-list)
+		 ((listp in-bufs) in-bufs)
+		 ((list in-bufs)))))
+	 (total-matches (apply '+ result)))
+    (unless (or count-only (= total-matches 0))
+      (hyrolo-display-matches display-buf))
+    total-matches))
 
 (defun hyrolo-map-logic (sexp hyrolo-buf &optional count-only
-			 include-sub-entries no-sub-entries-out)
+			 include-sub-entries _no-sub-entries-out)
   "Apply logical SEXP to each entry in HYROLO-BUF and write out matching entries to `hyrolo-display-buffer'.
 If optional COUNT-ONLY is non-nil, don't display entries, return count of
 matching entries only.  If optional INCLUDE-SUB-ENTRIES flag is non-nil, SEXP
@@ -199,36 +197,30 @@ of applications of SEXP that matched entries."
 			next-entry-exists nil
 			curr-entry-level-len (length (match-string-no-properties hyrolo-entry-group-number))
 			end (hyrolo-to-entry-end include-sub-entries curr-entry-level-len))
-		  (let ((result (eval sexp)))
-		    (or count-only
-			(and result (= num-found 0) hdr-pos
-			     (let* ((src (or (buffer-file-name hyrolo-buf)
-					     hyrolo-buf))
-				    (src-line
-				     (format
-				      (concat (if (boundp 'hbut:source-prefix)
-						  hbut:source-prefix
-						"@loc> ")
-					      "%s")
-				      (prin1-to-string src))))
-			       (set-buffer display-buf)
-			       (goto-char (point-max))
-			       (if hdr-pos
-				   (progn
-				     (insert-buffer-substring
-				      hyrolo-buf (car hdr-pos) (cdr hdr-pos))
-				     (insert src-line "\n\n"))
-				 (insert (format hyrolo-hdr-format src-line)))
-			       (set-buffer hyrolo-buf))))
+		  (let ((result (eval sexp `((start . ,start) (end . ,end)))))
+		    (unless count-only
+		      (and result (= num-found 0) hdr-pos
+			   (let* ((src (or (buffer-file-name hyrolo-buf)
+					   hyrolo-buf))
+				  (src-line
+				   (format
+				    (concat (if (boundp 'hbut:source-prefix)
+						hbut:source-prefix
+					      "@loc> ")
+					    "%s")
+				    (prin1-to-string src))))
+			     (set-buffer display-buf)
+			     (goto-char (point-max))
+			     (if hdr-pos
+				 (progn
+				   (insert-buffer-substring
+				    hyrolo-buf (car hdr-pos) (cdr hdr-pos))
+				   (insert src-line "\n\n"))
+			       (insert (format hyrolo-hdr-format src-line)))
+			     (set-buffer hyrolo-buf))))
 		    (if result
 			(progn (goto-char end)
-			       (setq num-found (1+ num-found)
-				     )
-				     ;; end (if (or include-sub-entries
-				     ;; 		 no-sub-entries-out)
-				     ;; 	     end
-				     ;; 	   (goto-char (hyrolo-to-entry-end
-				     ;; 		       t curr-entry-level-len))))
+			       (setq num-found (1+ num-found))
 			       (or count-only
 				   (append-to-buffer display-buf start end)))
 		      (goto-char end-entry-hdr)))))))
@@ -243,7 +235,7 @@ of applications of SEXP that matched entries."
 ;; Do NOT call the following functions directly.
 ;; Send them as parts of an expression to `hyrolo-logic'.
 
-(defun hyrolo-not (&rest pat-list)
+(defun hyrolo-not (start end &rest pat-list)
   "Logical <not> rolo entry filter.  PAT-LIST is a list of pattern elements.
 Each element may be t, nil, or a string."
   (let ((pat))
@@ -255,7 +247,7 @@ Each element may be t, nil, or a string."
       (setq pat-list (cdr pat-list)))
     (not pat-list)))
 
-(defun hyrolo-or (&rest pat-list)
+(defun hyrolo-or (start end &rest pat-list)
   "Logical <or> rolo entry filter.  PAT-LIST is a list of pattern elements.
 Each element may be t, nil, or a string."
   (if (memq t pat-list)
@@ -269,7 +261,7 @@ Each element may be t, nil, or a string."
 	(setq pat-list (cdr pat-list)))
       (if pat-list t nil))))
 
-(defun hyrolo-xor (&rest pat-list)
+(defun hyrolo-xor (start end &rest pat-list)
   "Logical <xor> rolo entry filter.  PAT-LIST is a list of pattern elements.
 Each element may be t, nil, or a string."
   (let ((pat)
@@ -285,7 +277,7 @@ Each element may be t, nil, or a string."
       (setq pat-list (cdr pat-list)))
     (= matches 1)))
 
-(defun hyrolo-and (&rest pat-list)
+(defun hyrolo-and (start end &rest pat-list)
   "Logical <and> rolo entry filter.  PAT-LIST is a list of pattern elements.
 Each element may be t, nil, or a string."
   (unless (memq nil pat-list)
@@ -300,9 +292,9 @@ Each element may be t, nil, or a string."
 
 ;; Work with regular expression patterns rather than strings
 
-(defun hyrolo-r-not (&rest pat-list)
+(defun hyrolo-r-not (start end &rest pat-list)
   "Logical <not> rolo entry filter.  PAT-LIST is a list of pattern elements.
-Each element may be t, nil, or a string."
+Each element may be t, nil, or a regular expression."
   (let ((pat))
     (while (and pat-list
 		(or (null (setq pat (car pat-list)))
@@ -312,9 +304,9 @@ Each element may be t, nil, or a string."
       (setq pat-list (cdr pat-list)))
     (not pat-list)))
 
-(defun hyrolo-r-or (&rest pat-list)
+(defun hyrolo-r-or (start end &rest pat-list)
   "Logical <or> rolo entry filter.  PAT-LIST is a list of pattern elements.
-Each element may be t, nil, or a string."
+Each element may be t, nil, or a regular expression."
   (if (memq t pat-list)
       t
     (let ((pat))
@@ -326,9 +318,9 @@ Each element may be t, nil, or a string."
 	(setq pat-list (cdr pat-list)))
       (if pat-list t nil))))
 
-(defun hyrolo-r-xor (&rest pat-list)
+(defun hyrolo-r-xor (start end &rest pat-list)
   "Logical <xor> rolo entry filter.  PAT-LIST is a list of pattern elements.
-Each element may be t, nil, or a string."
+Each element may be t, nil, or a regular expression."
   (let ((pat)
 	(matches 0))
     (while (and pat-list
@@ -342,9 +334,9 @@ Each element may be t, nil, or a string."
       (setq pat-list (cdr pat-list)))
     (= matches 1)))
 
-(defun hyrolo-r-and (&rest pat-list)
+(defun hyrolo-r-and (start end &rest pat-list)
   "Logical <and> rolo entry filter.  PAT-LIST is a list of pattern elements.
-Each element may be t, nil, or a string."
+Each element may be t, nil, or a regular expression."
   (unless (memq nil pat-list)
     (let ((pat))
       (while (and pat-list

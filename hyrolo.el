@@ -105,14 +105,14 @@ executable must be found as well (for Oauth security)."
        ;; If no gpg encryption executable, Oauth login to Google will fail.
        (or (executable-find "gpg2") (executable-find "gpg"))))
 
-'("~/.rolo.otl" "~/.rolo.org" "c:/_rolo.otl")
+;; '("~/.rolo.otl" "~/.rolo.org")
 
 ;;;###autoload
 (defun hyrolo-initialize-file-list ()
   "Initialize the list of files used for HyRolo search."
   (interactive)
   (let* ((gcontacts (when (hyrolo-google-contacts-p) google-contacts-buffer-name))
-	 (ms "c:/_rolo.otl")
+	 (ms "~/.rolo.otl")
 	 (posix "~/.rolo.otl")
 	 (list (delq nil (if (and (boundp 'bbdb-file) (stringp bbdb-file))
 			     (if hyperb:microsoft-os-p
@@ -585,14 +585,17 @@ Return t if entry is killed, nil otherwise."
   (interactive)
   (hyrolo-verify)
   (let ((start (point))
-	(case-fold-search t))
-    (if (looking-at hyrolo-match-regexp)
-	(goto-char (match-end 0)))
-    (if (re-search-forward hyrolo-match-regexp nil t)
+	(case-fold-search t)
+	(prior-regexp-search (stringp hyrolo-match-regexp)))
+    (when (and prior-regexp-search (looking-at hyrolo-match-regexp))
+      (goto-char (match-end 0)))
+    (if  (and prior-regexp-search (re-search-forward hyrolo-match-regexp nil t))
 	(goto-char (match-beginning 0))
       (goto-char start)
-      (error
-       "(hyrolo-next-match): No following matches for \"%s\"" hyrolo-match-regexp))))
+      (if prior-regexp-search
+	(error
+	 "(hyrolo-next-match): No following matches for \"%s\"" hyrolo-match-regexp)
+	  (error "(hyrolo-next-match): No prior regular expression search to match")))))
 
 (defun hyrolo-overview (levels-to-show)
   "Show the first line of all levels of rolo matches.
@@ -638,7 +641,7 @@ XEmacs only."
 (defun hyrolo-rename (old-file new-file)
   "Prompt user to rename OLD-FILE to NEW-FILE."
   (interactive (if hyperb:microsoft-os-p
-		   '("c:/_rolodex.otl" "c:/_rolo.otl")
+		   '("c:/_rolo.otl" "~/.rolo.otl")
 		 '("~/.rolodex.otl" "~/.rolo.otl")))
   (if (and (equal (car hyrolo-file-list) new-file)
 	   (file-readable-p old-file)
@@ -653,12 +656,12 @@ XEmacs only."
 			     nil))))
       (progn (rename-file old-file new-file 1)
 	     ;; Also rename backup file if it exists.
-	     (if (file-readable-p (concat old-file "~"))
-		 (rename-file (concat old-file "~") (concat new-file "~") 1))
-	     (if (get-file-buffer old-file)
-		 (with-current-buffer (get-file-buffer old-file)
-		   (rename-buffer (file-name-nondirectory new-file))
-		   (setq buffer-file-name (expand-file-name new-file))))
+	     (when (file-readable-p (concat old-file "~"))
+	       (rename-file (concat old-file "~") (concat new-file "~") 1))
+	     (when (get-file-buffer old-file)
+	       (with-current-buffer (get-file-buffer old-file)
+		 (rename-buffer (file-name-nondirectory new-file))
+		 (setq buffer-file-name (expand-file-name new-file))))
 	     (message "(HyRolo): Your personal rolo file is now: \"%s\"."
 		      new-file))))
 
@@ -686,18 +689,18 @@ Return list of number of groupings at each entry level."
 				   (car hyrolo-file-list)))))
 		  (mapcar #'list hyrolo-file-list)))
 	   (if (string-equal file "") default file))))
-  (if (or (not hyrolo-file) (equal hyrolo-file ""))
-      (setq hyrolo-file (car hyrolo-file-list)))
-  (if (not (and (stringp hyrolo-file) (file-readable-p hyrolo-file)))
-      (error "(hyrolo-sort): Invalid or unreadable file: %s" hyrolo-file))
+  (when (or (not hyrolo-file) (equal hyrolo-file ""))
+    (setq hyrolo-file (car hyrolo-file-list)))
+  (unless (and (stringp hyrolo-file) (file-readable-p hyrolo-file))
+    (error "(hyrolo-sort): Invalid or unreadable file: %s" hyrolo-file))
   (let ((level-regexp (regexp-quote "**************"))
 	(entries-per-level-list)
 	(n))
     (while (not (equal level-regexp ""))
       (setq n (hyrolo-sort-level hyrolo-file level-regexp))
-      (if (or (/= n 0) entries-per-level-list)
-	  (setq entries-per-level-list
-		(append (list n) entries-per-level-list)))
+      (when (or (/= n 0) entries-per-level-list)
+	(setq entries-per-level-list
+	      (append (list n) entries-per-level-list)))
       (setq level-regexp (substring level-regexp 0 (- (length level-regexp) 2))))
     entries-per-level-list))
 
@@ -722,7 +725,8 @@ of groupings sorted."
   "Move forward by optional ARG lines (default = 1), ignoring currently invisible newlines only.
 If ARG is negative, move backward -ARG lines.
 If ARG is zero, move to the beginning of the current line."
-  (if (null arg) (setq arg 1))
+  (unless arg
+    (setq arg 1))
   (forward-visible-line arg))
 
 ;; Derived from `sort-lines' in "sort.el" since through at least Emacs 25.0
@@ -739,9 +743,9 @@ the sort order."
     (save-restriction
       (narrow-to-region beg end)
       (goto-char (point-min))
-      (let ;; To make `end-of-line' and etc. to ignore fields.
-	  ((inhibit-field-text-motion t))
-	(sort-subr reverse 'hyrolo-forward-visible-line 'end-of-visible-line)))))
+      ;; To make `end-of-line', etc. ignore fields
+      (let ((inhibit-field-text-motion t))
+	(sort-subr reverse #'hyrolo-forward-visible-line #'end-of-visible-line)))))
 
 ;;;###autoload
 (defun hyrolo-toggle-datestamps (&optional arg)
@@ -765,10 +769,10 @@ Useful when bound to a mouse key."
   (interactive)
   (if (hyrolo-narrowed-p)
       (widen)
-    (if (or (looking-at hyrolo-entry-regexp)
-	    (re-search-backward hyrolo-entry-regexp nil t))
-	(progn (forward-char)
-	       (narrow-to-region (1- (point)) (hyrolo-display-to-entry-end)))))
+    (when (or (looking-at hyrolo-entry-regexp)
+	      (re-search-backward hyrolo-entry-regexp nil t))
+      (forward-char)
+      (narrow-to-region (1- (point)) (hyrolo-display-to-entry-end))))
   (hyrolo-shrink-window)
   (goto-char (point-min)))
 
@@ -797,10 +801,10 @@ hyrolo-file-list."
   (let ((total-matches (hyrolo-grep (format "\\b%s\\b" (regexp-quote string))
 				  max-matches
 				  hyrolo-file count-only no-display)))
-    (if (called-interactively-p 'interactive)
-	(message "%s matching entr%s found in the rolo."
-		 (if (= total-matches 0) "No" total-matches)
-		 (if (= total-matches 1) "y" "ies")))
+    (when (called-interactively-p 'interactive)
+      (message "%s matching entr%s found in the rolo."
+	       (if (= total-matches 0) "No" total-matches)
+	       (if (= total-matches 1) "y" "ies")))
     total-matches))
 
 ;;;###autoload
@@ -1156,71 +1160,70 @@ beginning of a line (^); an example, might be (regexp-quote \"**\") to match
 level two.
 Return number of groupings matched."
   (let ((actual-buf))
-    (if (and (or (null max-groupings) (< 0 max-groupings))
-	     (or (setq actual-buf (hyrolo-buffer-exists-p hyrolo-file-or-buf))
-		 (if (file-exists-p hyrolo-file-or-buf)
-		     (progn (setq actual-buf (find-file-noselect hyrolo-file-or-buf t))
-			    t))))
-	(progn
-	  (set-buffer actual-buf)
-	  (let ((num-found 0)
-		(exact-level-regexp (concat "^\\(" level-regexp "\\)[ \t\n\r]"))
-		(outline-regexp hyrolo-entry-regexp)
-		(buffer-read-only)
-		(level-len))
-	    (goto-char (point-min))
-	    ;; Pass buffer header if it exists
-	    (if (re-search-forward hyrolo-hdr-regexp nil t 2)
-		(forward-line))
-	    (while (and (or (null max-groupings) (< num-found max-groupings))
-			(re-search-forward exact-level-regexp nil t))
-	      (setq num-found (1+ num-found))
-	      (let* ((opoint (prog1 (point) (beginning-of-line)))
-		     (grouping-start (point))
-		     (start grouping-start)
-		     (level-len (or level-len (- (1- opoint) start)))
-		     (next-level-len)
-		     (next-entry-exists)
-		     (grouping-end)
-		     (no-subtree))
-		(while (and (progn
-			      (if (setq next-entry-exists
-					(re-search-forward
-					 hyrolo-entry-regexp nil t 2))
-				  (setq next-level-len
-					(- (point)
-					   (progn (beginning-of-line)
-						  (point)))
-					grouping-end
-					(< next-level-len level-len)
-					no-subtree
-					(<= next-level-len level-len))
-				(setq grouping-end t no-subtree t)
-				(goto-char (point-max)))
-			      (let ((end (point)))
-				(goto-char start)
-				(outline-hide-subtree) ; and hide multiple entry lines
-				;; Move to start of next entry at equal
-				;; or higher level.
-				(setq start
-				      (if no-subtree
-					  end
-					(if (re-search-forward
-					     hyrolo-entry-regexp nil t)
-					    (progn (beginning-of-line) (point))
-					  (point-max))))
-				;; Remember last expression in `progn'
-				;; must always return non-nil.
-				(goto-char start)))
-			    (not grouping-end)))
-		(let ((end (point)))
-		  (goto-char grouping-start)
-		  (funcall func grouping-start end)
-		  (goto-char end))))
-	    (outline-show-all)
-	    (hyrolo-kill-buffer actual-buf)
-	    num-found))
-      0)))
+    (if (not (and (or (null max-groupings) (< 0 max-groupings))
+		  (or (setq actual-buf (hyrolo-buffer-exists-p hyrolo-file-or-buf))
+		      (when (file-exists-p hyrolo-file-or-buf)
+			(setq actual-buf (find-file-noselect hyrolo-file-or-buf t))
+			t))))
+	0
+      (set-buffer actual-buf)
+      (let ((num-found 0)
+	    (exact-level-regexp (concat "^\\(" level-regexp "\\)[ \t\n\r]"))
+	    (outline-regexp hyrolo-entry-regexp)
+	    (buffer-read-only)
+	    (level-len))
+	(goto-char (point-min))
+	;; Pass buffer header if it exists
+	(if (re-search-forward hyrolo-hdr-regexp nil t 2)
+	    (forward-line))
+	(while (and (or (null max-groupings) (< num-found max-groupings))
+		    (re-search-forward exact-level-regexp nil t))
+	  (setq num-found (1+ num-found))
+	  (let* ((opoint (prog1 (point) (beginning-of-line)))
+		 (grouping-start (point))
+		 (start grouping-start)
+		 (level-len (or level-len (- (1- opoint) start)))
+		 (next-level-len)
+		 (next-entry-exists)
+		 (grouping-end)
+		 (no-subtree))
+	    (while (and (progn
+			  (if (setq next-entry-exists
+				    (re-search-forward
+				     hyrolo-entry-regexp nil t 2))
+			      (setq next-level-len
+				    (- (point)
+				       (progn (beginning-of-line)
+					      (point)))
+				    grouping-end
+				    (< next-level-len level-len)
+				    no-subtree
+				    (<= next-level-len level-len))
+			    (setq grouping-end t no-subtree t)
+			    (goto-char (point-max)))
+			  (let ((end (point)))
+			    (goto-char start)
+			    (outline-hide-subtree) ; and hide multiple entry lines
+			    ;; Move to start of next entry at equal
+			    ;; or higher level.
+			    (setq start
+				  (if no-subtree
+				      end
+				    (if (re-search-forward
+					 hyrolo-entry-regexp nil t)
+					(progn (beginning-of-line) (point))
+				      (point-max))))
+			    ;; Remember last expression in `progn'
+			    ;; must always return non-nil.
+			    (goto-char start)))
+			(not grouping-end)))
+	    (let ((end (point)))
+	      (goto-char grouping-start)
+	      (funcall func grouping-start end)
+	      (goto-char end))))
+	(outline-show-all)
+	(hyrolo-kill-buffer actual-buf)
+	num-found))))
 
 ;;; ************************************************************************
 ;;; Private functions

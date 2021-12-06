@@ -1,5 +1,16 @@
 2021-12-05  Bob Weiner  <rsw@gnu.org>
 
+* hyrolo.el (hyrolo-next-match): Handle case when no prior regexp search.
+
+* hyrolo-logic.el (hyrolo-fgrep-logical): Fix improper passage of 'count-only'
+    to 'format'.
+                  (hyrolo-map-logic): Pass 'start' and 'end' args to logical
+    operators in the 'eval' 2nd arg which is the lexical environment.  Eliminates
+    use as dynamic variables.
+
+* hyrolo.el (hyrolo-rename): Unify MS Windows default HyRolo file path
+    with Posix OSes to ~/.rolo.otl.
+
 * hargs.el (hargs:actype-get): Change to set 'modifying' to t if non-nil
     for lower-level function call conformance.
            (hargs:iform-read): Change 'modifying' param to 'defaults'.

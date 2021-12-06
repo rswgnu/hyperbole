@@ -16,8 +16,8 @@
 ;;; Other required Elisp libraries
 ;;; ************************************************************************
 
-(eval-and-compile (mapc #'require '(elisp-mode help-mode hversion hmoccur hbmap
-				    htz hbdata hact view)))
+(eval-and-compile (mapc #'require '(elisp-mode help-mode hversion hmoccur
+				    hbmap htz hbdata hact view)))
 
 ;;; ************************************************************************
 ;;; Public declarations
