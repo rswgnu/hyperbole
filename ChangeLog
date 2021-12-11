@@ -1,3 +1,9 @@
+2021-12-11  Mats Lidell  <matsl@gnu.org>
+
+* test/hpath-tests.el (hypb-run-shell-test-command): Test helper for
+    running shell commands.
+    (hpath:prepend-ls-directory-test): Test for "ls R" listing.
+
 2021-12-05  Bob Weiner  <rsw@gnu.org>
 
 * hyrolo.el (hyrolo-next-match): Handle case when no prior regexp search.

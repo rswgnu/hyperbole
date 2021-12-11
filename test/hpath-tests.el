@@ -18,6 +18,11 @@
 (require 'ert)
 (require 'hpath)
 
+(load (expand-file-name "hy-test-helpers"
+                        (file-name-directory (or load-file-name
+                                                 default-directory))))
+(declare-function hy-test-helpers:action-key-should-call-hpath:find "hy-test-helpers")
+
 (ert-deftest hpath:find-report-lisp-variable-path-name-when-not-exists ()
   "Test that hpath:find expands and returns filename when it is non-existent."
   (condition-case err
@@ -102,6 +107,26 @@
          (should (string= (hpath:substitute-value "$UNDEFINED_IS_NOT_SUBSTITUTED") "$UNDEFINED_IS_NOT_SUBSTITUTED"))
          (should (string= (hpath:substitute-value "${UNDEFINED_IS_NOT_SUBSTITUTED}") "${UNDEFINED_IS_NOT_SUBSTITUTED}"))
          ))
+
+(defun hypb-run-shell-test-command (command buffer)
+  "Run a shell COMMAND with output to BUFFER and select it."
+  (shell-command command buffer nil)
+  (switch-to-buffer buffer)
+  (shell-mode))
+
+(ert-deftest hpath:prepend-ls-directory-test ()
+  "Find file in ls -R listing."
+  (let ((shell-buffer "*hypb-test-shell-buffer*"))
+    (unwind-protect
+        (let ((explicit-shell-file-name "/usr/bin/sh")
+              (default-directory hyperb:dir))
+          (hypb-run-shell-test-command "ls -R" shell-buffer)
+          (dolist (file '("COPYING" "man/version.texi" "man/hkey-help.txt" "man/im/demo.png"))
+            (goto-char (point-min))
+            (should (search-forward (car (last (split-string file "/"))) nil t))
+            (backward-char 5)
+            (hy-test-helpers:action-key-should-call-hpath:find (expand-file-name file hyperb:dir))))
+      (kill-buffer shell-buffer))))
 
 (provide 'hpath-tests)
 ;;; hpath-tests.el ends here
