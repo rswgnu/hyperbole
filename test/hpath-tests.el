@@ -123,7 +123,7 @@
           (hypb-run-shell-test-command "ls -R" shell-buffer)
           (dolist (file '("COPYING" "man/version.texi" "man/hkey-help.txt" "man/im/demo.png"))
             (goto-char (point-min))
-            (search-forward (car (last (split-string file "/"))))
+            (should (search-forward (car (last (split-string file "/"))) nil t))
             (backward-char 5)
             (hy-test-helpers:action-key-should-call-hpath:find (expand-file-name file hyperb:dir))))
       (kill-buffer shell-buffer))))
