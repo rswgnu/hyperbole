@@ -224,8 +224,10 @@ of the commands."
       ;; In GNU Emacs, this binding replaces a command that shows
       ;; the word hello in foreign languages; this binding makes this
       ;; key much more useful.
-      (global-set-key (vector help-char ?h) #'hyperbole)
-      (hkey-set-key "\C-c" (make-sparse-keymap)))
+      (global-set-key (vector help-char ?h) #'hyperbole))
+
+    ;; Set C-c prefix key in hyperbole-mode-map for later key bindings
+    (hkey-set-key "\C-c" (make-sparse-keymap))
     ;;
     ;; Bind the Action Key to {M-RET} and the Assist Key to {C-u M-RET}
     ;; and load the Hyperbole mouse key bindings.
