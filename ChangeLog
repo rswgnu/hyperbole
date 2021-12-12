@@ -1,3 +1,7 @@
+2021-12-12  Bob Weiner  <rsw@gnu.org>
+
+* hyperbole.el (hkey-initialize): Add missing C-c prefix binding for hyperbole-mode-map.
+
 2021-12-05  Bob Weiner  <rsw@gnu.org>
 
 * hyrolo.el (hyrolo-next-match): Handle case when no prior regexp search.

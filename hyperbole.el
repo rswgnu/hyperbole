@@ -192,18 +192,20 @@ context (wherever point is).  {C-u \\[hkey-help]} shows what the Assist Key will
 (defun hkey-maybe-global-set-key (key command &optional no-add)
   "Define a Hyperbole KEY bound to COMMAND if KEY is not bound in `hyperbole-mode-map'.
 Third argument NO-ADD is ignored."
-  (unless (lookup-key hyperbole-mode-map key)
-    (hkey-set-key key command no-add)))
-
-(defun hkey-set-key (key command)
-  "Define a Hyperbole global minor mode KEY bound to COMMAND."
-  (define-key hyperbole-mode-map key command))
+  (hkey-maybe-set-key key command))
 
 (defun hkey-maybe-set-key (key command &optional no-add)
   "Define a Hyperbole KEY bound to COMMAND if KEY is not bound in `hyperbole-mode-map'.
 Third argument NO-ADD is ignored."
-  (unless (lookup-key hyperbole-mode-map key)
-    (hkey-set-key key command)))
+  (let ((lookup-result (lookup-key hyperbole-mode-map key)))
+    (cond ((integerp lookup-result)
+	   (hypb:error "(hkey-maybe-set-key): Prefix key used is not defined: {%s}" (key-description key)))
+	  ((null lookup-result)
+	   (hkey-set-key key command)))))
+
+(defun hkey-set-key (key command)
+  "Define a Hyperbole global minor mode KEY bound to COMMAND."
+  (define-key hyperbole-mode-map key command))
 
 (defvar hmouse-middle-flag)
 (defvar hmouse-bindings-flag)
@@ -222,7 +224,8 @@ of the commands."
       ;; In GNU Emacs, this binding replaces a command that shows
       ;; the word hello in foreign languages; this binding makes this
       ;; key much more useful.
-      (global-set-key (vector help-char ?h) #'hyperbole))
+      (global-set-key (vector help-char ?h) #'hyperbole)
+      (hkey-set-key "\C-c" (make-sparse-keymap)))
     ;;
     ;; Bind the Action Key to {M-RET} and the Assist Key to {C-u M-RET}
     ;; and load the Hyperbole mouse key bindings.
