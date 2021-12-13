@@ -493,3 +493,10 @@ install-all: install-elpa install-elpa-devel install-tarball install-straight
 install-elpa install-elpa-devel install-tarball install-straight:
 	@echo "Install Hyperbole using $@"
 	(cd ./install-test/ && ./local-install-test.sh $(subst install-,,$@))
+
+package-lint:
+	$(EMACS_BATCH) \
+	--eval "(setq package-lint-main-file \"hyperbole.el\")" \
+	--eval "(load-file \"test/hy-test-dependencies.el\")" \
+	-l package-lint.el -f package-lint-batch-and-exit \
+	$(EL_KOTL) $(EL_COMPILE)

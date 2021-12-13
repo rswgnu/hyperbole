@@ -27,5 +27,9 @@
   (package-refresh-contents)
   (package-install 'with-simulated-input))
 
+(unless (package-installed-p 'package-lint)
+  (package-refresh-contents)
+  (package-install 'package-lint))
+
 (provide 'hy-test-dependencies)
 ;;; hy-test-dependencies.el ends here
