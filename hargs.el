@@ -346,8 +346,7 @@ Handles all of the interactive argument types that `hargs:iform-read' does."
 	       ;; Possibly non-existent file name
 	       ((when no-default (hpath:at-p 'file 'non-exist)))
 	       (no-default nil)
-	       ((buffer-file-name))
-	       ))
+	       ((buffer-file-name))))
 	((eq hargs:reading-p 'directory)
 	 (cond ((derived-mode-p 'dired-mode)
 		(let ((dir (dired-get-filename nil t)))
@@ -360,12 +359,10 @@ Handles all of the interactive argument types that `hargs:iform-read' does."
 	       ;; Possibly non-existent directory name
 	       ((when no-default (hpath:at-p 'directory 'non-exist)))
 	       (no-default nil)
-	       (default-directory)
-	       ))
+	       (default-directory)))
 	((eq hargs:reading-p 'string)
 	 (or (hargs:delimited "\"" "\"") (hargs:delimited "'" "'")
-	     (hargs:delimited "`" "'")
-	     ))
+	     (hargs:delimited "`" "'")))
 	((or (eq hargs:reading-p 'actype)
 	     (eq hargs:reading-p 'actypes))
 	 (let ((name (hargs:find-tag-default)))
@@ -763,8 +760,7 @@ help when appropriate."
 	  ;; Get Lisp expression but don't evaluate.
 	  (?x . (sexpression . (read-minibuffer prompt default)))
 	  ;; Get Lisp expression and evaluate.
-	  (?X . (sexpression . (eval-minibuffer prompt default)))
-	  ))
+	  (?X . (sexpression . (eval-minibuffer prompt default)))))
 
 (defvar hargs:iform-vector nil
   "Vector of forms for each interactive command character code.")

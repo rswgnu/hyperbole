@@ -812,8 +812,7 @@ Suitable for use as part of `write-file-functions'."
 		 ;; never holding a buffer which is out of sync with file,
 		 ;; due to some other user's edits.
 		 ;; Maybe this should be user or site configurable.
-		 (or (buffer-modified-p buf) (kill-buffer buf))
-		 )))))
+		 (or (buffer-modified-p buf) (kill-buffer buf)))))))
   ;; Must return nil, so can be used as part of write-file-functions.
   nil)
 
@@ -934,8 +933,7 @@ Ignore email-related buffers."
 	    (goto-char (+ (point) (- end start)))
 	    (if (not (eq (following-char) ?\ ))
 		(insert ?\ ))
-	    (insert comment-end)
-	    )))))
+	    (insert comment-end))))))
 
 ;;; Regexps derived in part from "filladapt.el" by Kyle E. Jones under
 ;;; the GPL.
@@ -961,8 +959,7 @@ Ignore email-related buffers."
     ;; Fortran comments
     "\n[Cc][ \t]+"
     ;; Postscript comments
-    "\n[ \t]*\\(%+[ \t]*\\)+"
-    )
+    "\n[ \t]*\\(%+[ \t]*\\)+")
   "List of regexps of fill prefixes to remove from the middle of buttons.")
 
 (defun    hbut:fill-prefix-remove (label)

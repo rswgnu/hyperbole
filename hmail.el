@@ -245,8 +245,7 @@ Signals error when current mail reader is not supported."
 		;; Found matching msg
 		(buffer-substring (match-beginning 2) (match-end 2))))
 	;; (rmail:msg-hdrs-full toggled)
-	()
-	))))
+	()))))
 
 ;;; ------------------------------------------------------------------------
 ;;; Each mail reader-specific Hyperbole support module must also define

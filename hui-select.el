@@ -163,8 +163,7 @@
     (indented-text-mode "[^ \t\n*]")
     (Info-mode "[^ \t\n]")
     (outline-mode "[^*]")
-    (text-mode  "[^ \t\n*]")
-    )
+    (text-mode  "[^ \t\n*]"))
   "List of (major-mode . non-terminator-line-regexp) elements used to avoid early dropoff when marking indented code.")
 
 (defvar hui-select-indent-end-regexp-alist
@@ -179,8 +178,7 @@
     (fundamental-mode "[ \t]*$")
     (indented-text-mode "[ \t]*$")
     (Info-mode "[ \t]*$")
-    (text-mode  "[ \t]*$")
-    )
+    (text-mode  "[ \t]*$"))
   "List of (major-mode . terminator-line-regexp) elements used to include a final line when marking indented code.")
 
 (defcustom hui-select-char-p nil
@@ -233,8 +231,7 @@
     (indent-def hui-select-indent-def)
     (paragraph hui-select-paragraph)
     (page hui-select-page)
-    (buffer hui-select-buffer)
-    )
+    (buffer hui-select-buffer))
   "Unordered list of (<region-type-symbol> <region-selection-function>) pairs.
 Used to go from one thing to a bigger thing.  See `hui-select-bigger-thing'.
 Nil value for <region-selection-function> means that region type is skipped

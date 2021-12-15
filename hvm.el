@@ -95,8 +95,7 @@ if that value is non-nil."
   (defalias 'rmail:summ-msg-to   'vm-follow-summary-cursor)
   (defalias 'rmail:summ-new      'vm-summarize)
   (if (called-interactively-p 'interactive)
-      (message "Hyperbole VM mail reader support initialized."))
-  )
+      (message "Hyperbole VM mail reader support initialized.")))
 
 (defun Vm-msg-hdrs-full (toggled)
   "If TOGGLED is non-nil, toggle full/hidden headers, else show full headers."
@@ -390,8 +389,7 @@ Has side-effect of widening buffer."
 	  (point-max))
 	 (vm-show-current-message)
 	 (setq vm-system-state 'reading))
-	(t (error "vm search code is missing, can't continue"))))
-)
+	(t (error "vm search code is missing, can't continue")))))
 
 ;; Hide any Hyperbole button data when reply to or forward a message.
 ;; See "vm-reply.el".
@@ -536,8 +534,7 @@ Has side-effect of widening buffer."
 (defvar Vm-msg-start-regexp "\n\nFrom \\|\n\001\001\001\001"
   "Regular expression that begins a Vm mail message.")
 
-(provide 'hvm)
-)
+(provide 'hvm))
 (error nil))
 
 ;; Local Variables:

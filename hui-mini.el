@@ -527,8 +527,7 @@ constructs.  If not given, the top level Hyperbole menu is used."
 		'("Screen/"     (menu . screen)
 		  "Screen display management commands.")
 		'("Win/"        (menu . win)
-		  "Window configuration management commands.")
-		))))
+		  "Window configuration management commands.")))))
        '(butfile .
 	 (("Butfile>")
 	  ("DirFile"      (find-file hbmap:filename)
@@ -538,8 +537,7 @@ constructs.  If not given, the top level Hyperbole menu is used."
 	   "Displays manual section on button files.")
 	  ("PersonalFile" (find-file
 			    (expand-file-name hbmap:filename hbmap:dir-user))
-	   "Edits user-specific button file.")
-	  ))
+	   "Edits user-specific button file.")))
        '(cust .
          (("Cust>")
 	  ("All-Options" (customize-browse 'hyperbole)
@@ -605,8 +603,7 @@ constructs.  If not given, the top level Hyperbole menu is used."
 	  ("EWW" (setq browse-url-browser-function #'eww-browse-url))
 	  ("Firefox" (setq browse-url-browser-function #'browse-url-firefox))
 	  ("KDE" (setq browse-url-browser-function #'browse-url-kde))
-	  ("XTerm" (setq browse-url-browser-function #'browse-url-text-xterm))
-	  ))
+	  ("XTerm" (setq browse-url-browser-function #'browse-url-text-xterm))))
        '(cust-web .
          (("Web Search>")
 	  ("Chrome" (setq hyperbole-web-search-browser-function #'browse-url-chrome))
@@ -617,8 +614,7 @@ constructs.  If not given, the top level Hyperbole menu is used."
 	  ("EWW" (setq hyperbole-web-search-browser-function #'eww-browse-url))
 	  ("Firefox" (setq hyperbole-web-search-browser-function #'browse-url-firefox))
 	  ("KDE" (setq hyperbole-web-search-browser-function #'browse-url-kde))
-	  ("XTerm" (setq hyperbole-web-search-browser-function #'browse-url-text-xterm))
-	  ))
+	  ("XTerm" (setq hyperbole-web-search-browser-function #'browse-url-text-xterm))))
        '(doc .
 	 (("Doc>")
 	  ("About"        (hypb:display-file-with-logo
@@ -643,8 +639,7 @@ constructs.  If not given, the top level Hyperbole menu is used."
 	  ("Types/"       (menu . types)
 	   "Provides documentation on Hyperbole types.")
 	  ("WhyUse"       (find-file (expand-file-name "HY-WHY.kotl" hyperb:dir))
-	   "Lists use cases for Hyperbole Hyperbole.")
-	 ))
+	   "Lists use cases for Hyperbole Hyperbole.")))
        '(ebut .
 	 (("EButton>")
 	  ("Act"    hui:ebut-act
@@ -661,8 +656,7 @@ constructs.  If not given, the top level Hyperbole menu is used."
 	  ("Search" hui:ebut-search
 	   "Locates and displays personally created buttons in context.")
 	  ("Types"  (hui:htype-help-current-window 'actypes)
-	   "Displays documentation for one or all action types used by explicit buttons.")
-	  ))
+	   "Displays documentation for one or all action types used by explicit buttons.")))
        '(ebut-help .
 	 (("Help on>")
 	  ("BufferButs"   (hui:hbut-report -1)
@@ -670,8 +664,7 @@ constructs.  If not given, the top level Hyperbole menu is used."
 	  ("CurrentBut"   (hui:hbut-report)
 	   "Summarizes only current button in buffer.")
 	  ("OrderedButs"  (hui:hbut-report 1)
-	   "Summarizes explicit buttons in lexicographically order.")
-	  ))
+	   "Summarizes explicit buttons in lexicographically order.")))
        '(find .
          (("Find>")
 	  ("GrepFiles"           hypb:rgrep  "Show numbered line matches in all specified files.")
@@ -680,8 +673,7 @@ constructs.  If not given, the top level Hyperbole menu is used."
 	  ("OccurHere"           occur       "Show numbered line matches for regexp from this buffer.")
 	  ("RemoveLines"         hypb:remove-lines "Following point, remove all lines that match regexp.")
 	  ("SaveLines"           hypb:save-lines  "Following point, keep only lines that match regexp.")
-	  ("Web/" (menu . web) "Searches major web sites.")
-	  ))
+	  ("Web/" (menu . web) "Searches major web sites.")))
        '(gbut .
 	 (("GButton>")
 	  ("Act"    gbut:act        "Activates global button by name.")
@@ -692,8 +684,7 @@ constructs.  If not given, the top level Hyperbole menu is used."
 	  ("Info"   (id-info "(hyperbole)Global Buttons")
 	   "Displays manual section on global buttons.")
 	  ("Modify" hui:gbut-modify "Modifies global button attributes.")
-	  ("Rename" hui:gbut-rename "Renames a global button.")
-	  ))
+	  ("Rename" hui:gbut-rename "Renames a global button.")))
        '(ibut .
 	 (("IButton>")
 	  ("Act"    hui:ibut-act
@@ -708,8 +699,7 @@ constructs.  If not given, the top level Hyperbole menu is used."
 	  ("Rename" hui:ibut-rename
 	   "Modifies a label preceding an implicit button in the current buffer.")
 	  ("Types"  (hui:htype-help 'ibtypes 'no-sort)
-	   "Displays documentation for one or all implicit button types.")
-	  ))
+	   "Displays documentation for one or all implicit button types.")))
        '(msg .
 	 (("Msg>")
 	  ("Compose-Hypb-Mail"
@@ -733,8 +723,7 @@ constructs.  If not given, the top level Hyperbole menu is used."
 	  ("Unsub-Hypb-Bug"
 	   (hmail:compose "bug-hyperbole-leave@gnu.org" nil
 			  "Just send the message; subject and body are ignored.")
-	   "Unsubscribe from the Hyperbole bug reporting list.")
-	  ))
+	   "Unsubscribe from the Hyperbole bug reporting list.")))
        '(otl
 	 . (("Kotl>")
 	    ("All"       kotl-mode:show-all "Expand all collapsed cells.")
@@ -763,8 +752,7 @@ constructs.  If not given, the top level Hyperbole menu is used."
 	    ("Top"       kotl-mode:top-cells
 	     "Hide all but top-level cells.")
 	    ("Vspec"     kvspec:activate
-	     "Prompt for and activate a view specifiction.")
-	    ))
+	     "Prompt for and activate a view specifiction.")))
        '(hyrolo .
 	 (("Rolo>")
 	  ("Add"              hyrolo-add	  "Add a new rolo entry.")
@@ -781,8 +769,7 @@ constructs.  If not given, the top level Hyperbole menu is used."
 	  ("StringFind"       hyrolo-fgrep  "Find entries containing a string.")
 	  ("WordFind"         hyrolo-word   "Find entries containing words.")
 	  ("Yank"             hyrolo-yank
-	   "Find an entry containing a string and insert it at point.")
-	  ))
+	   "Find an entry containing a string and insert it at point.")))
        '(screen .
 	 (("Screen>")
 	  ("FramesControl"    hycontrol-enable-frames-mode
@@ -794,8 +781,7 @@ constructs.  If not given, the top level Hyperbole menu is used."
 	  ("ActionTypes"      (hui:htype-help-current-window 'actypes)
 	   "Displays documentation for one or all action types.")
 	  ("IButTypes"        (hui:htype-help-current-window 'ibtypes 'no-sort)
-	   "Displays documentation for one or all implicit button types.")
-	  ))
+	   "Displays documentation for one or all implicit button types.")))
        '(win .
 	 (("WinConfig>")
 	  ("AddName"        hywconfig-add-by-name
@@ -811,10 +797,8 @@ constructs.  If not given, the top level Hyperbole menu is used."
 	   "Saves current window configuration to ring.")
 	  ("YankRing"       (progn (call-interactively 'hywconfig-yank-pop)
 				   (hyperbole 'win))
-	   "Restores next window configuration from ring.")
-	  ))
-       (hui:menu-web-search)
-       ))))
+	   "Restores next window configuration from ring.")))
+       (hui:menu-web-search)))))
 
 ;; Always rebuild the Hyperbole minibuffer menu when this file is loaded.
 (hyperbole-minibuffer-menu)

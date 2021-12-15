@@ -1522,8 +1522,7 @@ the whitespace following the entry hierarchy level.")
    "%s\n"
    "======================================================================\n")
   "Header to insert preceding a file's first rolo entry match when
-file has none of its own.  Used with one argument, the file name."
-  )
+file has none of its own.  Used with one argument, the file name.")
 
 (defconst hyrolo-hdr-regexp "^==="
   "Regular expression to match the first and last lines of rolo file headers.
@@ -1582,8 +1581,7 @@ String search expressions are converted to regular expressions.")
   (define-key hyrolo-mode-map "\C-i"     'hyrolo-next-match)      ;; {TAB}
   (define-key hyrolo-mode-map "\M-\C-i"  'hyrolo-previous-match)  ;; {M-TAB}
   (define-key hyrolo-mode-map [backtab]  'hyrolo-previous-match)  ;; {Shift-TAB}
-  (define-key hyrolo-mode-map "u"        'outline-up-heading)
-  )
+  (define-key hyrolo-mode-map "u"        'outline-up-heading))
 
 ;; Prompt user to rename old personal rolo file to new name, if necessary.
 (unless noninteractive

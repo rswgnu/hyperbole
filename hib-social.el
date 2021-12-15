@@ -237,8 +237,7 @@
     ("\\`\\(gl\\|gitlab\\)\\'"    . "https://www.gitlab.com/%s/%s/%s%s")
     ("\\`\\(gt\\|git\\)\\'"       . "(cd %s && git %s %s)")
     ("\\`\\(in\\|instagram\\)\\'" . "https://www.instagram.com/explore/tags/%s/")
-    ("\\`\\(tw\\|twitter\\)\\'"   . "https://twitter.com/search?q=%%23%s&src=hashtag")
-)
+    ("\\`\\(tw\\|twitter\\)\\'"   . "https://twitter.com/search?q=%%23%s&src=hashtag"))
   "Alist of (social-media-service-regexp  . expression-to-display-hashtag-reference) elements.")
 
 (defconst hibtypes-social-username-alist
@@ -246,8 +245,7 @@
     ("\\`\\(gh\\|github\\)\\'"    . "https://github.com/%s/")
     ("\\`\\(gl\\|gitlab\\)\\'"    . "https://www.gitlab.com/%s/")
     ("\\`\\(in\\|instagram\\)\\'" . "https://www.instagram.com/%s/")
-    ("\\`\\(tw\\|twitter\\)\\'"   . "https://twitter.com/search?q=@%s")
-    )
+    ("\\`\\(tw\\|twitter\\)\\'"   . "https://twitter.com/search?q=@%s"))
   "Alist of (social-media-service-regexp  . url-with-%s-for-username) elements.")
 
 ;; Assume at least a 2-character project name

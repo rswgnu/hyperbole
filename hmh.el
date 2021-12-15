@@ -61,8 +61,7 @@
   (defalias 'rmail:summ-msg-to   'mh-goto-msg)
   (defalias 'rmail:summ-new      'mh-rescan-folder)
   (if (called-interactively-p 'interactive)
-      (message "Hyperbole MH mail reader support initialized."))
-  )
+      (message "Hyperbole MH mail reader support initialized.")))
 
 (defun Mh-hbut-highlight ()
   "Highlight any Hyperbole buttons in buffer for which display support exists."
@@ -70,8 +69,7 @@
 
 (defun Mh-msg-hdrs-full (toggled)
   "If TOGGLED is non-nil, toggle full/hidden headers, else show full headers.
-For now, a no-op."
-  )
+For now, a no-op.")
 
 (defun Mh-msg-narrow ()
   "Narrow mail reader buffer to current message.
