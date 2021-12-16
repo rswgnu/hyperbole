@@ -133,8 +133,7 @@
     "----"
     ["Pop-from-Ring"      hywconfig-delete-pop      (not (hywconfig-ring-empty-p))]
     ["Save-to-Ring"       hywconfig-ring-save       t]
-    ["Yank-from-Ring"     hywconfig-yank-pop        (not (hywconfig-ring-empty-p))]
-    ))
+    ["Yank-from-Ring"     hywconfig-yank-pop        (not (hywconfig-ring-empty-p))]))
 
 ;;; ************************************************************************
 ;;; Private functions

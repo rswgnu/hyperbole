@@ -91,8 +91,7 @@
 	    (or (file-writable-p hbmap:dir-user)
 		(or (progn (hypb:chmod '+ 700 hbmap:dir-user)
 			   (file-writable-p hbmap:dir-user))
-		    (error "(hyperb:init): Can't write to 'hbmap:dir-user'")
-		    )))
+		    (error "(hyperb:init): Can't write to 'hbmap:dir-user'"))))
 	   (t (error "(hyperb:init): `hbmap:dir-user' create failed"))))))
   t)
 

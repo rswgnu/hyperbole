@@ -434,8 +434,7 @@ Does not delete across cell boundaries."
 		       (setq count (1- count))))
 		 (delete-char 1 kill-flag))
 	       (setq arg (1- arg)
-		     del-count (1+ del-count)))
-	     ))
+		     del-count (1+ del-count)))))
 	  ((< arg 0)
 	   (if (kotl-mode:bocp)
 	       (error "(kotl-mode:delete-char): Beginning of cell")
@@ -691,8 +690,7 @@ but it will be copied to the kill ring and then an error will be signaled."
 		  (kill-append killed (< end start))
 		(kill-new killed))
 	      (setq this-command 'kill-region)
-	      (when read-only (barf-if-buffer-read-only))
-	      )))
+	      (when read-only (barf-if-buffer-read-only)))))
       (error
        "(kotl-mode:kill-region): Bad region or not within a single Koutline cell"))))
 
@@ -1975,8 +1973,7 @@ If at tail cell already, do nothing and return nil."
 	  (progn
 	    (goto-char (mark t))
 	    (pop-mark)
-	    (error "(kotl-mode:up-level): No parent level to which to move")
-	    )))))
+	    (error "(kotl-mode:up-level): No parent level to which to move"))))))
 
 
 ;;; ------------------------------------------------------------------------
@@ -3300,8 +3297,7 @@ Leave point at end of line now residing at START."
        org-force-self-insert
        orgtbl-ctrl-c-ctrl-c
        orgtbl-create-or-convert-from-region
-       orgtbl-self-insert-command
-       )))
+       orgtbl-self-insert-command)))
 
 
   ;; kotl-mode keys

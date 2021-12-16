@@ -62,8 +62,7 @@
       ["Tab-Key-Inserts-Spaces" kotl-mode:toggle-indent-tabs-mode
        :style toggle :selected (not kotl-mode:indent-tabs-mode)]
       ["Tab-Key-Tabs-Over" kotl-mode:toggle-tab-flag
-       :style toggle :selected kotl-mode:tab-flag]
-      )
+       :style toggle :selected kotl-mode:tab-flag])
     (if (boundp 'infodock-go-menu) infodock-go-menu)
     '("Jump-to"
       ["Cell"                kotl-mode:goto-cell            t]
@@ -87,8 +86,7 @@
       ["End-of-Tree"         kotl-mode:end-of-tree          t]
       "----"
       ["First-Cell"          kotl-mode:beginning-of-buffer  t]
-      ["Last-Cell"           kotl-mode:end-of-buffer        t]
-      )
+      ["Last-Cell"           kotl-mode:end-of-buffer        t])
     '("Label-Type"
       ["Alphanumeric (Default)"  (kview:set-label-type kview 'alpha)  t]
       ["Legal"                   (kview:set-label-type kview 'legal)  t]
@@ -97,11 +95,9 @@
       ["Permanent-Idstamp"       (kview:set-label-type kview 'id)     t]
       ;; ["Stars"                   (kview:set-label-type kview 'star) t]
       "----"
-      ["Set-Label-Separator"     kview:set-label-separator  t]
-      )
+      ["Set-Label-Separator"     kview:set-label-separator  t])
     '("Link"
-      ["Add-at-Point"        klink:create                   t]
-      )
+      ["Add-at-Point"        klink:create                   t])
     (if (fboundp 'infodock-options-menu) (infodock-options-menu))
     '("Tree"
       ["Copy-to-Buffer"      kotl-mode:copy-to-buffer       t]
@@ -117,8 +113,7 @@
       ["Copy-After-Cell"     kotl-mode:copy-after           t]
       ["Copy-Before-Cell"    kotl-mode:copy-before          t]
       ["Move-After-Cell"     kotl-mode:move-after           t]
-      ["Move-Before-Cell"    kotl-mode:move-before          t]
-      )
+      ["Move-Before-Cell"    kotl-mode:move-before          t])
     '("View"
       ["Set-View-Spec"       kvspec:activate                t]
       ["Toggle-Blank-Lines"  kvspec:toggle-blank-lines      t]
@@ -139,9 +134,7 @@
       ["Show (Expand)"       kotl-mode:show-tree            t]
       ["Show-All"            kotl-mode:show-all             t]
       ["Show-Subtree"        kotl-mode:show-subtree         t]
-      ["Show-Top-Level-Only" kotl-mode:top-cells            t]
-      )
-    ))
+      ["Show-Top-Level-Only" kotl-mode:top-cells            t])))
   "The middle menu entries common to all Koutliner menus.")
 
 (defconst kotl-menu-common-preamble
@@ -154,8 +147,7 @@
     ["Manual"              (id-info "(hyperbole)Outliner") t]
     "----"
      ;; Delete Koutline menu from all menubars.
-    ["Remove-This-Menu"    (hui-menu-remove Koutline kotl-mode-map) t]
-    ))
+    ["Remove-This-Menu"    (hui-menu-remove Koutline kotl-mode-map) t]))
 
 (defconst kotl-menu-common-postamble
   '("----"
@@ -173,8 +165,7 @@
     ["Export-to-HTML"      kexport:html                   t]
     ["Import-to-Koutline"  kimport:file                   t]
     "----"
-    ["Quit"                (id-tool-quit '(kill-buffer nil))  t]
-    ))
+    ["Quit"                (id-tool-quit '(kill-buffer nil))  t]))
 
 ;;; This definition is used by InfoDock only.
 (defconst id-menubar-kotl

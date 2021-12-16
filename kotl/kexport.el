@@ -106,8 +106,7 @@
 	 'kexport:html-file-klink)
    (cons (format "&lt;\\s-*\\([^ \t\n\r,<>]+\\)\\s-*,\\s-*%s[^=&>]*&gt;"
 		 kexport:kcell-partial-reference-regexp)
-	 'kexport:html-file-klink)
-   )
+	 'kexport:html-file-klink))
   "*List of (regexp . replacement-pattern) elements applied in order to the
 contents of each kcell from a koutline exported to HTML format.  Replacement
 pattern may be:

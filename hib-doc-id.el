@@ -196,8 +196,7 @@ Also display standard Hyperbole help for implicit button BUT."
 	(set-buffer-modified-p nil)
 	(setq buffer-read-only nil)
 	(goto-char (point-min)))
-      (kill-buffer report-buf)
-      )))
+      (kill-buffer report-buf))))
 
 (provide 'hib-doc-id)
 

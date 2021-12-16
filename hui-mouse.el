@@ -469,8 +469,7 @@ Its default value is #'smart-scroll-down.  To disable it, set it to
     ;;
     ;; Todotxt
     ((eq major-mode 'todotxt-mode) .
-     ((smart-todotxt) . (smart-todotxt-assist)))
-    )
+     ((smart-todotxt) . (smart-todotxt-assist))))
   "Alist of predicates and form-conses for the Action and Assist Keyboard Keys.
 Each element is: (PREDICATE-FORM . (ACTION-KEY-FORM . ASSIST-KEY-FORM)).
 When the Action or Assist Key is pressed, the first or second form,
@@ -1012,8 +1011,7 @@ If key is pressed within:
 	     (progn (set-buffer gnus-summary-buffer)
 		    (setq this-command 'gnus-summary-next-unread-article)
 		    (gnus-summary-next-unread-article)
-		    (gnus-summary-goto-subject gnus-current-article)
-		    )
+		    (gnus-summary-goto-subject gnus-current-article))
 	   (let ((artic (get-buffer-window gnus-article-buffer)))
 	     (if artic (select-window artic)))))
 	((and (not (eolp)) (Info-handle-in-note)))
@@ -1036,8 +1034,7 @@ If assist-key is pressed within:
 	     (progn (set-buffer gnus-summary-buffer)
 		    (setq this-command 'gnus-summary-prev-article)
 		    (gnus-summary-prev-article nil)
-		    (gnus-summary-goto-subject gnus-current-article)
-		    )
+		    (gnus-summary-goto-subject gnus-current-article))
 	   (let ((artic (get-buffer-window gnus-summary-buffer)))
 	     (if artic (select-window artic)))))
 	((and (not (eolp)) (Info-handle-in-note)))
@@ -1568,8 +1565,7 @@ local variable containing its pathname."
 			(if ref
 			    (if (string-match "(\\(.\\)\\(.+\\))" ref)
 				(setq ref (concat (substring ref 0 (match-end 1))
-						  "\)"))))
-			)))))))
+						  "\)")))))))))))
     (cond ((equal ref "") nil)
 	  ((stringp ref) (list 'manual-entry ref))
 	  (t ref))))
@@ -1590,8 +1586,7 @@ locate the definition."
 		  (if (or (looking-at "\\([_~<>:a-zA-Z0-9]+\\)[ \t\n\r]*(")
 			  (looking-at "\\([_~<:A-Z][_<>:A-Z0-9]+\\)"))
 		      (setq ref (buffer-substring
-				 (match-beginning 1) (match-end 1))
-			    )))))
+				 (match-beginning 1) (match-end 1)))))))
     (if ref
 	(list 'smart-tags-display ref nil
 	      (smart-tags-file-list (and (boundp 'man-path) man-path))))))
@@ -1609,8 +1604,7 @@ If not on a file name, returns nil."
 		    (skip-chars-backward "^ \t")
 		    (if (looking-at "/[^ \t\n\r]+")
 			(setq ref (buffer-substring
-				   (match-beginning 0) (match-end 0))
-			      )))))
+				   (match-beginning 0) (match-end 0)))))))
     (if ref
 	(list (if (br-in-browser)
 		  'find-file 'find-file-other-window)

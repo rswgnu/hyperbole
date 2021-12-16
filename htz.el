@@ -270,8 +270,7 @@ Optional argument TIMEZONE specifies a time zone."
 	  (capitalize (car (rassq month htz:months-assoc)))
 	  (- year (* (/ year 100) 100))	;1990 -> 90
 	  time
-	  (if timezone (concat " " timezone) "")
-	  ))
+	  (if timezone (concat " " timezone) "")))
 
 (defun htz:date-make-unix (year month day time &optional timezone)
   "Approximate Unix date format from YEAR, MONTH, DAY, and TIME.

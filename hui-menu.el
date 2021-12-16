@@ -63,8 +63,7 @@
 	  ["Toggle-URLs-in-New-Window"
 	   (setq browse-url-new-window-flag (not browse-url-new-window-flag))
 	   :style toggle
-	   :selected browse-url-new-window-flag]
-	  )))
+	   :selected browse-url-new-window-flag])))
 
 ;; List explicit buttons in the current buffer for menu activation.
 (defun hui-menu-explicit-buttons (rest-of-menu)
@@ -232,8 +231,7 @@ Return t if cutoff, else nil."
 	     ["Ignore"
 	      (customize-save-variable 'hsys-org-enable-smart-keys nil)
 	      :style radio :selected (when (boundp 'hsys-org-enable-smart-keys)
-					(eq hsys-org-enable-smart-keys nil))]
-	     ))
+					(eq hsys-org-enable-smart-keys nil))]))
 	  '("----")
 	  '(("Smart-Key-Press-at-Eol"
 	     "----"
@@ -248,8 +246,7 @@ Return t if cutoff, else nil."
 	     ["Scrolls-Proportionally"
 	      (setq smart-scroll-proportional t)
 	      :style radio :selected (when (boundp 'smart-scroll-proportional)
-				       smart-scroll-proportional)]
-	     ))
+				       smart-scroll-proportional)]))
 	  '("----"
 	    ["Toggle-Isearch-Invisible-Text" hypb:toggle-isearch-invisible
 	     :visible (boundp 'isearch-invisible)
@@ -262,8 +259,7 @@ Return t if cutoff, else nil."
 					  (listp hyrolo-add-hook)
 					  (memq 'hyrolo-set-date hyrolo-add-hook))]
 	    ["Toggle-Smart-Key-Debug (HyDebug)" hkey-toggle-debug
-	     :style toggle :selected hkey-debug]
-	    ))
+	     :style toggle :selected hkey-debug]))
   "Untitled menu of Hyperbole options.")
 
 (defvar infodock-hyperbole-menu nil)
@@ -345,8 +341,7 @@ REBUILD-FLAG is non-nil, in which case the menu is rebuilt."
 		   ["Edit-Per-Directory-File" (find-file hbmap:filename) t]
 		   ["Edit-Personal-File" (find-file
 					  (expand-file-name
-					   hbmap:filename hbmap:dir-user)) t]
-		   )
+					   hbmap:filename hbmap:dir-user)) t])
 		 (cons "Customize" hui-menu-options)
 		 '("Documentation"
 		   ["Manual"      (id-info "(hyperbole)Top") t]
@@ -366,8 +361,7 @@ REBUILD-FLAG is non-nil, in which case the menu is rebuilt."
 		    ["Show-Action-Types"
 		     (hui:htype-help-current-window 'actypes) t]
 		    ["Show-Implicit-Button-Types"
-		     (hui:htype-help-current-window 'ibtypes 'no-sort) t]
-		    ))
+		     (hui:htype-help-current-window 'ibtypes 'no-sort) t]))
 		 '("Explicit-Button"
 		   :filter hui-menu-explicit-buttons
 		   ["Activate" hui:ebut-act t]
@@ -379,14 +373,12 @@ REBUILD-FLAG is non-nil, in which case the menu is rebuilt."
 		    "----"
 		    ["Buffer-Buttons"   (hui:hbut-report -1) t]
 		    ["Current-Button"   (hui:hbut-report)    t]
-		    ["Ordered-Buttons"  (hui:hbut-report 1)  t]
-		    )
+		    ["Ordered-Buttons"  (hui:hbut-report 1)  t])
 		   ["Modify" hui:ebut-modify t]
 		   ["Rename" hui:ebut-rename t]
 		   ["Search" hui:ebut-search t]
 		   ["Types"
-		    (hui:htype-help-current-window 'actypes) t]
-		   )
+		    (hui:htype-help-current-window 'actypes) t])
 		 (append
 		  '("Find"
 		    ["Manual"   (id-info-item "menu, Find") t]
@@ -405,8 +397,7 @@ REBUILD-FLAG is non-nil, in which case the menu is rebuilt."
 		    ["Save-Lines-Here"      hypb:save-lines t]
 		    "----"
 		    "Web-Search:")
-		  (hui-menu-web-search)
-		  )
+		  (hui-menu-web-search))
 		 '("Global-Button"
 		   :filter hui-menu-global-buttons
 		   ["Create" hui:gbut-create t]
@@ -414,8 +405,7 @@ REBUILD-FLAG is non-nil, in which case the menu is rebuilt."
 		   ["Edit"   hui:gbut-modify t]
 		   ["Help"   gbut:help t]
 		   ["Modify" hui:gbut-modify t]
-                   ["Rename" hui:gbut-rename t]
-		   )
+                   ["Rename" hui:gbut-rename t])
 		 '("Implicit-Button"
 		   ["Manual"   (id-info "(hyperbole)Implicit Buttons") t]
 		   "----"
@@ -424,8 +414,7 @@ REBUILD-FLAG is non-nil, in which case the menu is rebuilt."
 		   ["Help"   hui:hbut-help t]
 		   ["Label"  hui:ibut-label-create t]
 		   ["Rename" hui:ibut-rename t]
-		   ["Types"  (hui:htype-help 'ibtypes 'no-sort) t]
-		   )
+		   ["Types"  (hui:htype-help 'ibtypes 'no-sort) t])
 		 '("Koutliner"
 		   ["Manual" (id-info "(hyperbole)Koutliner") t]
 		   ["Example"   kotl-mode:example t]
@@ -446,8 +435,7 @@ REBUILD-FLAG is non-nil, in which case the menu is rebuilt."
 					  (kcell-view:label)))
 		    (eq major-mode 'kotl-mode)]
 		   ["Show-Top-Level-Only" kotl-mode:hide-body
-		    (eq major-mode 'kotl-mode)]
-		   )
+		    (eq major-mode 'kotl-mode)])
 		 '("Mail-Lists"
 		   ["Manual" (id-info "(hyperbole)Suggestion or Bug Reporting")
 		    t]
@@ -469,8 +457,7 @@ REBUILD-FLAG is non-nil, in which case the menu is rebuilt."
 				   "Just send the message; subject and body are ignored.") t]
 		   ["Leave-Hyperbole-Bug-Report-List"
 		    (hmail:compose "bug-hyperbole-leave@gnu.org" nil
-				   "Just send the message; subject and body are ignored.") t]
-		   )
+				   "Just send the message; subject and body are ignored.") t])
 		 infodock-hyrolo-menu
 		 '("Screen (HyControl)" :filter hui-menu-screen)
 		 hui-menu-hywconfig)))))

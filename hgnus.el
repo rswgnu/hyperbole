@@ -93,8 +93,7 @@ as ARG means don't indent and don't delete any header fields."
       (interactive "P")
       (mail-yank-original arg)
       (exchange-point-and-mark)
-      (run-hooks 'news-reply-header-hook))
-  )
+      (run-hooks 'news-reply-header-hook)))
 
 ;;; ************************************************************************
 ;;; Private variables
