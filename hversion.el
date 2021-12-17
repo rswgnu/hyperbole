@@ -143,8 +143,7 @@ Where a part in the term-type is delimited by a `-' or  an `_'."
 			  (equal (getenv "TERM") "NeXT")
 			  (equal (getenv "TERM") "eterm"))
 		      ;; NEXTSTEP add-on support to Emacs
-		      "next")
-		     )))
+		      "next"))))
     (set-frame-parameter frame 'hyperb:window-system
 			 (and term (setq term (substring term 0 (string-match "[-_]" term)))))
     term))

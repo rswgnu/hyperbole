@@ -85,8 +85,7 @@ Use nil as cmd values to unbind a key.  Works under GNU Emacs only."
 	   [left-fringe down-mouse-5]
 	   [right-fringe down-mouse-5]
 	   [vertical-line down-mouse-5]
-	   [mode-line down-mouse-5])
-	  )))
+	   [mode-line down-mouse-5]))))
 	   
   (hmouse-set-key-list
    release-cmd
@@ -155,8 +154,7 @@ Use nil as cmd values to unbind a key.  Works under GNU Emacs only."
 	   [vertical-line drag-mouse-5]
 	   [vertical-line mouse-5]
 	   [mode-line drag-mouse-5]
-	   [mode-line mouse-5])
-	  ))))
+	   [mode-line mouse-5])))))
 
 (defun hmouse-bind-shifted-key-emacs (shifted-mouse-key-number depress-cmd release-cmd)
   "Ensure SHIFTED-MOUSE-KEY-NUMBER (1-5), e.g. 1 for [Smouse-1], is bound to DEPRESS-CMD and RELEASE-CMD (includes depresses and drags).
@@ -193,8 +191,7 @@ Use nil as CMD value to unbind the key.  Works under GNU Emacs only."
 	   [left-fringe S-down-mouse-5]
 	   [right-fringe S-down-mouse-5]
 	   [vertical-line S-down-mouse-5]
-	   [mode-line S-down-mouse-5])
-	  )))
+	   [mode-line S-down-mouse-5]))))
 	  
   (hmouse-set-key-list
    release-cmd
@@ -263,8 +260,7 @@ Use nil as CMD value to unbind the key.  Works under GNU Emacs only."
 	   [vertical-line S-drag-mouse-5]
 	   [vertical-line S-mouse-5]
 	   [mode-line S-drag-mouse-5]
-	   [mode-line S-mouse-5])
-	  ))))
+	   [mode-line S-mouse-5])))))
 	   
 (defun hmouse-get-bindings (hmouse-middle-flag)
   "Return the list of active bindings of mouse keys used by Hyperbole.
@@ -304,8 +300,7 @@ These may be the bindings prior to initializing Hyperbole or the Hyperbole bindi
 		   [mode-line S-down-mouse-1] [mode-line S-drag-mouse-1]
 		   [mode-line S-mouse-1]
 		   [mode-line S-down-mouse-2] [mode-line S-drag-mouse-2]
-		   [mode-line S-mouse-2]
-		   )
+		   [mode-line S-mouse-2])
 	       ;; X, macOS or MS Windows
 	       '([S-down-mouse-2] [S-drag-mouse-2] [S-mouse-2]
 		 [S-down-mouse-3] [S-drag-mouse-3] [S-mouse-3]
@@ -330,8 +325,7 @@ These may be the bindings prior to initializing Hyperbole or the Hyperbole bindi
 		 [mode-line S-down-mouse-2] [mode-line S-drag-mouse-2]
 		 [mode-line S-mouse-2]
 		 [mode-line S-down-mouse-3] [mode-line S-drag-mouse-3]
-		 [mode-line S-mouse-3]
-		 )))
+		 [mode-line S-mouse-3])))
      (nconc
       (mapcar (lambda (key)
 		(cons key (key-binding key)))
@@ -369,20 +363,17 @@ These may be the bindings prior to initializing Hyperbole or the Hyperbole bindi
 	    [mode-line down-mouse-2] [mode-line drag-mouse-2]
 	    [mode-line mouse-2]
 	    [mode-line down-mouse-3] [mode-line drag-mouse-3]
-	    [mode-line mouse-3]
-	    )))
+	    [mode-line mouse-3])))
   (nconc
    (mapcar (lambda (key)
 	     (cons key (key-binding key)))
 	   '([button2] [button2up]
-	     [button3] [button3up]
-	     ))
+	     [button3] [button3up]))
    (when (boundp 'mode-line-map)
      (mapcar (function
 	      (lambda (key)
 		(cons key (lookup-key mode-line-map key))))
-	     '([button3] [button3up])))
-   ))
+	     '([button3] [button3up])))))
 
 ;; Based on a function from Emacs mouse.el.
 (defun hmouse-posn-set-point (position)

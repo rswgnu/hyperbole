@@ -395,8 +395,7 @@ See the function `hpath:get-external-display-alist' for detailed format document
 			(Info-find-node file "*" nil t))
 		    (error "Invalid file"))))))
 
-      '("\\.rdb\\'" . rdb:initialize)
-      )))
+      '("\\.rdb\\'" . rdb:initialize))))
   "*Alist of (FILENAME-REGEXP . EDIT-FUNCTION) elements for calling special
 functions to display particular file types within Emacs.  See also
 the function (hpath:get-external-display-alist) for external display program settings."
@@ -766,8 +765,7 @@ Always returns nil if (hpath:remote-available-p) returns nil."
 	       ;; host and path
 	       ((and (looking-at "/\\([^/:@ \t\n\r\"`'|]+:[^]@:, \t\n\r\"`'|\)\}]+\\)")
 		     (setq path (match-string-no-properties 1)))
-		(concat "/" user "@" path))
-	       )))
+		(concat "/" user "@" path)))))
       (hpath:delete-trailer path))))
 
 (defun hpath:remote-p (path)
@@ -835,8 +833,7 @@ Always returns nil if (hpath:remote-available-p) returns nil."
 		       "/\\([^/:@ \t\n\r\"`'|]+:[^]@:, \t\n\r\"`'|\)\}]*\\)"
 		       path)
 		      (setq result (match-string-no-properties 1 path)))
-		 (concat "/" user "@" result))
-		))
+		 (concat "/" user "@" result))))
 	 (hpath:delete-trailer result))))
 
 (defun hpath:at-p (&optional type non-exist)
@@ -1767,8 +1764,7 @@ If `/~' appears, all of FILENAME through that `/' is discarded."
        "\\(/\\|[^a-zA-Z0-9]\\)?\\(https?\\|ftp\\|telnet\\|news\\|nntp\\):[/~]"
        filename)
       (substring filename (match-beginning 2))
-    (hyperb:substitute-in-file-name filename)))
-))))
+    (hyperb:substitute-in-file-name filename)))))))
 
 (defun hpath:enable-find-file-urls ()
   "Enable the use of ftp and www Urls as arguments to `find-file' commands."

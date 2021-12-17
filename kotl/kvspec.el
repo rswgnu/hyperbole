@@ -320,9 +320,7 @@ If NUM is less than 1 or greater than the number of lines available, the cell re
 
       ;; Do this last since it can trigger an error if partial alpha is
       ;; selected.
-      (kvspec:numbering) ;; n
-
-      )
+      (kvspec:numbering)) ;; n
     (set-buffer-modified-p modified-p)))
 
 ;;; ************************************************************************

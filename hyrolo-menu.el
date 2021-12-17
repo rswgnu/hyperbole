@@ -44,8 +44,7 @@
     ["Search-for-Regexp" (id-tool-invoke 'hyrolo-grep)  t]
     ["Search-for-String" (id-tool-invoke 'hyrolo-fgrep) t]
     ["Search-for-Word"   (id-tool-invoke 'hyrolo-word)  t]
-    ["Sort-Entries"      (id-tool-invoke 'hyrolo-sort)  t]
-    ))
+    ["Sort-Entries"      (id-tool-invoke 'hyrolo-sort)  t]))
 
 (defconst hyrolo-menu-common-body
   '(
@@ -59,14 +58,12 @@
      ["To-Next-Same-Level"     outline-forward-same-level       t]
      ["To-Previous-Entry"      outline-previous-visible-heading t]
      ["To-Previous-Same-Level" outline-backward-same-level      t]
-     ["Up-a-Level"             outline-up-heading               t]
-     )
+     ["Up-a-Level"             outline-up-heading               t])
     ("Outline"
      ["Hide (Collapse)"        outline-hide-subtree             t]
      ["Show (Expand)"          outline-show-subtree             t]
      ["Show-All"               outline-show-all                 t]
-     ["Show-Only-First-Line"   outline-hide-body                t]
-     ))
+     ["Show-Only-First-Line"   outline-hide-body                t]))
   "The middle menu entries common to all HyRolo menus.")
 
 ;;; This definition is used by InfoDock only.
@@ -79,15 +76,13 @@
       ["Toggle-Read-Only"    read-only-mode                 t]
       ["Write (Save as)"     write-file                     t]
       "----"
-      ["Quit"                (id-tool-quit '(kill-buffer nil))  t]
-      ))
+      ["Quit"                (id-tool-quit '(kill-buffer nil))  t]))
    '(["Edit-Entry-at-Point"  hyrolo-edit-entry         t]
      ["Mail-to-Address"      (id-tool-invoke 'hyrolo-mail-to) t])
    `,@hyrolo-menu-common-body
    '(["Next-Match"          hyrolo-next-match         t]
      ["Previous-Match"      hyrolo-previous-match     t])
-   (list infodock-hyrolo-menu)
-   ))
+   (list infodock-hyrolo-menu)))
 
 ;;; This definition is used by InfoDock and XEmacs.
 (defconst id-popup-hyrolo-menu
@@ -105,8 +100,7 @@
    `,@hyrolo-menu-common-body
    (list infodock-hyrolo-menu)
    '("----"
-     ["Quit"                (id-tool-quit '(hyrolo-quit)) t])
-   ))
+     ["Quit"                (id-tool-quit '(hyrolo-quit)) t])))
 
 ;;; ************************************************************************
 ;;; Public declarations

@@ -65,8 +65,7 @@
   (defalias 'rmail:summ-msg-to   'rmail-summary-goto-msg)
   (defalias 'rmail:summ-new      'rmail-new-summary)
   (if (called-interactively-p 'interactive)
-      (message "Hyperbole RMAIL mail reader support initialized."))
-  )
+      (message "Hyperbole RMAIL mail reader support initialized.")))
 
 (defun Rmail-msg-hdrs-full (toggled)
   "If TOGGLED is non-nil, toggle full/hidden headers, else show full headers."

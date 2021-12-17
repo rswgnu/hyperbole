@@ -45,8 +45,7 @@
     ("[?!~*+ -]+ " . kfill:hanging-list)
     ;; This keeps normal paragraphs from interacting unpleasantly with
     ;; the types given above.
-    ("[^ \t/#%?!~*+-]" . kfill:normal)
-    )
+    ("[^ \t/#%?!~*+-]" . kfill:normal))
 "Value is an alist of the form
 
    ((REGXP . FUNCTION) ...)

@@ -800,8 +800,7 @@ See also documentation for `hui:link-possible-types'."
        (let* ((act) (act-str)
 	      (params (actype:params actype))
 	      (params-no-keywords (actype:param-list actype))
-	      (params-str (and params (concat " " (prin1-to-string params))))
-	      )
+	      (params-str (and params (concat " " (prin1-to-string params)))))
 	 (while (progn
 		  (while (and (setq act-str
 				    (hargs:read
@@ -830,8 +829,7 @@ See also documentation for `hui:link-possible-types'."
 						   "[\(\) \t\n\r\"]")
 					   act-str)
 					  t))
-				   params-no-keywords)))
-		       ))
+				   params-no-keywords)))))
 	   (beep) (message "Action must use at least one parameter.")
 	   (sit-for 3))
 	 (let (head)
@@ -846,8 +844,7 @@ See also documentation for `hui:link-possible-types'."
 			((stringp act)
 			 (setq act (action:kbd-macro act 1)))
 			;; Unrecognized form
-			(t (setq act nil))
-			)))
+			(t (setq act nil)))))
 	 act)))
 
 (defun hui:actype (&optional default-actype prompt)
@@ -1054,8 +1051,7 @@ for with completion of all labeled buttons within the current buffer."
       (widen)
       (narrow-to-region (point) end)
       (sit-for 0)
-      (setq inverse-video nil)
-      )))
+      (setq inverse-video nil))))
 
 (defun hui:hbut-term-unhighlight (start end)
   "For terminals only: Remove any emphasis from hyper-button at START to END."

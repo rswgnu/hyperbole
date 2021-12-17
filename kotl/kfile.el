@@ -380,8 +380,7 @@ included in the list."
 	     ((equal item 0) nil)
 	     (t (setq cell (kcell-data:to-kcell-v2 (aref cell-data item))
 		      cell-list (cons cell cell-list)
-		      sibling-p t)
-		)))
+		      sibling-p t))))
      kotl-structure)
     (nreverse cell-list)))
 
@@ -441,8 +440,7 @@ hidden."
 	      (progn (narrow-to-region start-text end-text)
 		     (goto-char (point-min)))
 	    (error
-	     "(kfile:narrow-to-kcells): Cannot find start or end of kcells"))
-	  ))))
+	     "(kfile:narrow-to-kcells): Cannot find start or end of kcells"))))))
 
 (defun kfile:print-to-string (object)
   "Return a string containing OBJECT, any Lisp object, in pretty-printed form.

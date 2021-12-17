@@ -980,8 +980,7 @@ Return non-nil iff associated help documentation is found."
 				     (actype:doc 'hbut:current t)))
 		      (hattr:report
 		       (nthcdr 2 (hattr:list 'hbut:current))))
-		    (terpri)
-		    ))
+		    (terpri)))
 		"")
 	    (message "No %s Key command for current context."
 		     (if assisting "Assist" "Action"))))
