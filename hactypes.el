@@ -615,7 +615,7 @@ FILE may be a string or nil, in which case the current buffer is used."
   (interactive "fTexinfo file to link to: \nsNode within file to link to: ")
   (let (node-point)
     (if file
-        (set-buffer (find-file-noselect file))
+        (set-buffer (find-find-noselect (hpath:substitute-value file)))
       (setq file buffer-file-name))
     (save-excursion
       (goto-char (point-min))

@@ -397,7 +397,10 @@ Handles all of the interactive argument types that `hargs:iform-read' does."
 	 (let ((sym (hargs:find-tag-default)))
 	   (when (or (fboundp sym) (boundp sym)) sym)))
 	((eq hargs:reading-p 'buffer)
-	 (hargs:find-tag-default))
+	 (let ((tag (hargs:find-tag-default)))
+	   (if (member tag (mapcar #'buffer-name (buffer-list)))
+	       tag
+	     (buffer-name))))
 	((eq hargs:reading-p 'character)
 	 (following-char))
 	((eq hargs:reading-p 'key)
@@ -594,6 +597,11 @@ string read or nil."
       (setq hargs:reading-p prev-reading-p)
       (select-window owind)
       (switch-to-buffer obuf))))
+
+(defun hargs:read-buffer-name (prompt)
+  "Use PROMPT to read an existing buffer name and return it."
+  (hargs:read-match prompt (mapcar #'buffer-name (buffer-list)) nil t nil 'buffer))
+
 
 (defun hargs:read-match (prompt collection
 			 &optional predicate must-match initial-input val-type)

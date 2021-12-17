@@ -879,7 +879,7 @@ item, this moves the menu buffer itself to the release location."
 		 (if (not (window-live-p w1))
 		     (error "(hmouse-item-to-window): Action Mouse Key item drag must start in a live window")
 		   (error "(hmouse-item-to-window): No item to display at start of Action Mouse Key drag")))
-		((buffer-live-p w1-ref)
+		((buffer-live-p w1-ref) ;; Must be a buffer, not a buffer name
 		 (set-window-buffer w2 w1-ref)
 		 (set-buffer w1-ref))
 		((and (stringp w1-ref) (file-readable-p w1-ref))

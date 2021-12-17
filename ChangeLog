@@ -1,5 +1,18 @@
 2021-12-12  Bob Weiner  <rsw@gnu.org>
 
+* hactypes.el (link-to-texinfo-node): Substitute for variable names in file linked to.
+
+* hui.el (hui:link-possible-types): Require 'texnfo-upd when needed to ensure
+    texinfo-copy-node-name is defined before used since it is not autoloaded.
+
+* kotl/kotl-mode.el (kotl-mode:insert-region, kotl-mode:insert-tree): Add these new commands
+    so can insert Koutline parts directly into other buffers without having to copy from
+    the mail buffer via 'kotl-mode:mail-tree'.
+
+* hargs.el (hargs:at-p): Fix so when reading a buffer arg, if tag at point does not match
+    an existing buffer name, then use the buffer name at point.
+           (hargs:read-buffer-name): Add for use by kotl-mode.
+
 * hyperbole.el (hkey-initialize): Add missing C-c prefix binding for hyperbole-mode-map.
 
 2021-12-11  Mats Lidell  <matsl@gnu.org>

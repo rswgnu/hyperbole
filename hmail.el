@@ -117,8 +117,8 @@ Optional SUBJECT and HELP message may also be given."
     (setq subject "Be explicit here.  Make a statement or ask a question."))
   (hmail:invoke address nil subject)
   (eval expr)
-  (if (re-search-backward "^Subject: " nil t)
-      (goto-char (match-end 0)))
+  (when (re-search-backward "^Subject: " nil t)
+    (goto-char (match-end 0)))
   (message (if (stringp help)
 	       help
 	     "Replace subject, compose message, and then mail.")))
@@ -157,9 +157,12 @@ Optional SUBJECT and HELP message may also be given."
 Optional arguments are ADDRESS, CC list and SUBJECT of mail."
   ;; Next 3 lines prevent blank lines between fields due to
   ;; fill-region-as-paragraph within mail-setup.
-  (if (equal address "") (setq address nil))
-  (if (equal cc "") (setq cc nil))
-  (if (equal subject "") (setq subject nil))
+  (when (equal address "")
+    (setq address nil))
+  (when (equal cc "")
+    (setq cc nil))
+  (when (equal subject "")
+    (setq subject nil))
   (compose-mail address subject (if cc (list (cons "CC" cc)))))
 
 
@@ -182,7 +185,8 @@ Optional arguments are ADDRESS, CC list and SUBJECT of mail."
   "Narrows buffer to displayable part of current message.
 Its displayable part begins at optional MSG-START and ends at or before
 MSG-END."
-  (if (hmail:reader-p) (rmail:msg-widen))
+  (when (hmail:reader-p)
+    (rmail:msg-widen))
   (setq msg-start (or msg-start (point-min))
 	msg-end (or msg-end (point-max)))
   (narrow-to-region msg-start (hmail:hbdata-start msg-start msg-end)))
@@ -198,15 +202,17 @@ non-nil.  Optional BUF contains the region and defaults to the current
 buffer.  It may be a buffer or buffer name."
   (interactive (list (region-beginning) (region-end) (current-buffer)
 		     (y-or-n-p "Include invisible text? ")))
-  (or buf (setq buf (current-buffer)))
-  (if (stringp buf) (setq buf (get-buffer buf)))
+  (unless buf
+    (setq buf (current-buffer)))
+  (when (stringp buf)
+    (setq buf (get-buffer buf)))
   (let (mail-buf)
     (hmail:invoke)
     (setq mail-buf (current-buffer))
     (save-excursion
-      (if (search-forward mail-header-separator nil t)
-	  ;; Within header, so move to body
-	  (goto-char (point-max)))
+      (when (search-forward mail-header-separator nil t)
+	;; Within header, so move to body
+	(goto-char (point-max)))
       (set-buffer buf)
       (hypb:insert-region mail-buf start end invisible-flag))))
 

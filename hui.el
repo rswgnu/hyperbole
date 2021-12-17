@@ -1271,6 +1271,7 @@ Buffer without File      link-to-buffer-tmp"
                            (when (and (not (looking-at "@node "))
                                       (not (re-search-backward "^@node " nil t)))
                              (hypb:error "(hui:link-possible-types): Not within a texinfo node"))
+			   (require 'texnfo-upd)
                            (setq node (texinfo-copy-node-name)))
                          (list 'link-to-texinfo-node buffer-file-name node)))
 		      ((hmail:reader-p)

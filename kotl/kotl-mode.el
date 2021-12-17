@@ -2396,29 +2396,6 @@ If ARG is a non-positive number, nothing is done."
 	     (kview:add-cell "1" 1)))
       (kotl-mode:to-valid-position))))
 
-(defun kotl-mode:mail-tree (cell-ref invisible-flag)
-  "Mail outline tree rooted at CELL-REF.  Use \"0\" for whole outline buffer.
-Invisible text is expanded and included in the mail only if INVISIBLE-FLAG is
-non-nil."
-  (interactive
-   (let ((label-default (kcell-view:label)))
-     (hargs:iform-read
-      `(interactive
-	(list
-	 (hargs:read "Mail tree: (0 for whole outline) "
-		     nil ,label-default nil 'kcell)
-	 (y-or-n-p "Include invisible text? "))))))
-  (if (equal cell-ref "0")
-      (hmail:buffer nil invisible-flag)
-    (let (start end)
-      (save-excursion
-	(kotl-mode:goto-cell cell-ref t)
-	(forward-line 0)
-	(setq start (point))
-	(kotl-mode:to-valid-position)
-	(setq end (kotl-mode:tree-end)))
-      (hmail:region start end nil invisible-flag))))
-
 (defun kotl-mode:promote-tree (arg)
   "Move current tree a maximum of prefix ARG levels higher in current view.
 Each cell is refilled iff its `no-fill' attribute is nil and
@@ -2612,6 +2589,82 @@ that contains mark."
 	 nil)
 	(goto-char mark)
 	(set-marker mark nil))))))
+
+;;; ------------------------------------------------------------------------
+;;; Structure Insertion Across Buffers
+;;; ------------------------------------------------------------------------
+
+(defun kotl-mode:insert-region (target-buf start end &optional source-buf invisible-flag)
+  "Insert into TARGET-BUF the region between START and END from the current buffer or optional SOURCE-BUF (a buffer namre or buffer).
+Invisible text is expanded and included only if INVISIBLE-FLAG is non-nil."
+  (interactive
+   (hargs:iform-read
+    '(interactive
+      (let ((target-buf (hargs:read-buffer-name
+			 (format "Insert into buffer (default %s): " (other-buffer)))))
+	(when (buffer-local-value 'buffer-read-only (get-buffer target-buf))
+	  (signal 'buffer-read-only (list target-buf)))
+	(list (region-beginning) (region-end) (current-buffer)
+	      (y-or-n-p "Include invisible text? ")
+	      target-buf)))))
+  (unless source-buf
+    (setq source-buf (current-buffer)))
+  (when (stringp source-buf)
+    (setq source-buf (get-buffer source-buf)))
+    (save-excursion
+      (set-buffer source-buf)
+      (hypb:insert-region target-buf start end invisible-flag)))
+
+(defun kotl-mode:insert-tree (target-buf cell-ref invisible-flag)
+  "Insert into TARGET-BUF the outline tree rooted at CELL-REF.  Use \"0\" for whole outline buffer.
+Invisible text is expanded and included in the mail only if INVISIBLE-FLAG is
+non-nil."
+  (interactive
+   (let ((label-default (kcell-view:label)))
+     (hargs:iform-read
+      `(interactive
+	(list
+	 (prog1
+	     (setq target-buf (hargs:read-buffer-name
+			       (format "Insert tree into buffer (default %s): " (other-buffer))))
+	   (when (buffer-local-value 'buffer-read-only (get-buffer target-buf))
+	     (signal 'buffer-read-only (list target-buf))))
+	 (hargs:read "Insert tree number: (0 for whole outline) "
+		     nil ,label-default nil 'kcell)
+	 (y-or-n-p "Include invisible text? "))))))
+  (if (equal cell-ref "0")
+      (kotl-mode:insert-region target-buf (point-min) (point-max) nil invisible-flag)
+    (let (start end)
+      (save-excursion
+	(kotl-mode:goto-cell cell-ref t)
+	(forward-line 0)
+	(setq start (point))
+	(kotl-mode:to-valid-position)
+	(setq end (kotl-mode:tree-end)))
+      (kotl-mode:insert-region target-buf start end nil invisible-flag))))
+
+(defun kotl-mode:mail-tree (cell-ref invisible-flag)
+  "Mail outline tree rooted at CELL-REF.  Use \"0\" for whole outline buffer.
+Invisible text is expanded and included in the mail only if INVISIBLE-FLAG is
+non-nil."
+  (interactive
+   (let ((label-default (kcell-view:label)))
+     (hargs:iform-read
+      `(interactive
+	(list
+	 (hargs:read "Mail tree: (0 for whole outline) "
+		     nil ,label-default nil 'kcell)
+	 (y-or-n-p "Include invisible text? "))))))
+  (if (equal cell-ref "0")
+      (hmail:buffer nil invisible-flag)
+    (let (start end)
+      (save-excursion
+	(kotl-mode:goto-cell cell-ref t)
+	(forward-line 0)
+	(setq start (point))
+	(kotl-mode:to-valid-position)
+	(setq end (kotl-mode:tree-end)))
+      (hmail:region start end nil invisible-flag))))
 
 ;;; ------------------------------------------------------------------------
 ;;; Structure Viewing
