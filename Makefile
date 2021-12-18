@@ -423,9 +423,9 @@ endif
 
 # Hyperbole install tests - Verify that hyperbole can be installed
 # using different sources. See folder "install-test"
-.PHONY: install-elpa install-tarball install-straight install-all
+.PHONY: install-elpa install-elpa-devel install-tarball install-straight install-all
 install-all: install-elpa install-tarball install-straight
 
-install-elpa install-tarball install-straight:
+install-elpa install-elpa-devel install-tarball install-straight:
 	@echo "Install Hyperbole using $@"
 	(cd ./install-test/ && ./local-install-test.sh $(subst install-,,$@))
