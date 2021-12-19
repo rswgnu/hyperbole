@@ -732,8 +732,10 @@ If ARG is zero, move to the beginning of the current line."
 ;; Derived from `sort-lines' in "sort.el" since through at least Emacs 25.0
 ;; invisible lines are not grouped with the prior visible line, making
 ;; rolo entry (or any record) sorts fail.  This next function fixes that.
+;; Only the last line changes from the original `sort-lines' function.
 (defun hyrolo-sort-lines (reverse beg end)
-  "Sort lines in region alphabetically; argument means descending order.
+  "Sort lines in region alphabetically; REVERSE non-nil means descending order.
+Interactively, REVERSE is the prefix argument, and BEG and END are the region.
 Called from a program, there are three arguments:
 REVERSE (non-nil means reverse order), BEG and END (region to sort).
 The variable `sort-fold-case' determines whether alphabetic case affects
@@ -1162,7 +1164,7 @@ Return number of groupings matched."
   (let ((actual-buf))
     (if (not (and (or (null max-groupings) (< 0 max-groupings))
 		  (or (setq actual-buf (hyrolo-buffer-exists-p hyrolo-file-or-buf))
-		      (when (file-exists-p hyrolo-file-or-buf)
+		      (when (file-readable-p hyrolo-file-or-buf)
 			(setq actual-buf (find-file-noselect hyrolo-file-or-buf t))
 			t))))
 	0
@@ -1176,54 +1178,60 @@ Return number of groupings matched."
 	;; Pass buffer header if it exists
 	(if (re-search-forward hyrolo-hdr-regexp nil t 2)
 	    (forward-line))
+	;; With 'max-groupings' non-nil, loop over all following headers
+	;; with the same parent matching 'level-regexp'.  Otherwise, maximally
+	;; loop over 'max-groupings' such headers.
 	(while (and (or (null max-groupings) (< num-found max-groupings))
 		    (re-search-forward exact-level-regexp nil t))
-	  (setq num-found (1+ num-found))
-	  (let* ((opoint (prog1 (point) (beginning-of-line)))
-		 (grouping-start (point))
-		 (start grouping-start)
-		 (level-len (or level-len (- (1- opoint) start)))
-		 (next-level-len)
-		 (next-entry-exists)
-		 (grouping-end)
-		 (no-subtree))
-	    (while (and (progn
-			  (if (setq next-entry-exists
-				    (re-search-forward
-				     hyrolo-entry-regexp nil t 2))
-			      (setq next-level-len
-				    (- (point)
-				       (progn (beginning-of-line)
-					      (point)))
-				    grouping-end
-				    (< next-level-len level-len)
-				    no-subtree
-				    (<= next-level-len level-len))
-			    (setq grouping-end t no-subtree t)
-			    (goto-char (point-max)))
-			  (let ((end (point)))
-			    (goto-char start)
-			    (outline-hide-subtree) ; and hide multiple entry lines
-			    ;; Move to start of next entry at equal
-			    ;; or higher level.
-			    (setq start
-				  (if no-subtree
-				      end
-				    (if (re-search-forward
-					 hyrolo-entry-regexp nil t)
-					(progn (beginning-of-line) (point))
-				      (point-max))))
-			    ;; Remember last expression in `progn'
-			    ;; must always return non-nil.
-			    (goto-char start)))
-			(not grouping-end)))
-	    (let ((end (point)))
-	      (goto-char grouping-start)
-	      (funcall func grouping-start end)
-	      (goto-char end))))
+	  (hyrolo-map-level-1 actual-buf num-found exact-level-regexp
+			      outline-regexp buffer-read-only level-len func hyrolo-file-or-buf level-regexp max-groupings))
 	(outline-show-all)
 	(hyrolo-kill-buffer actual-buf)
 	num-found))))
+
+(defun hyrolo-map-level-1 (actual-buf num-found exact-level-regexp
+				      outline-regexp buffer-read-only level-len func hyrolo-file-or-buf level-regexp max-groupings)
+  (setq num-found (1+ num-found))
+  (let* ((opoint (prog1 (point) (beginning-of-line)))
+	 (grouping-start (point))
+	 (start grouping-start)
+	 (level-len (or level-len (- (1- opoint) start)))
+	 (next-level-len)
+	 (next-entry-exists)
+	 (grouping-end))
+    ;; Move past any subtrees of the current header at 'level-regexp'.
+    (while (and start
+		(/= (point) (point-max))
+		(progn
+		  (if (setq next-entry-exists (re-search-forward
+					       hyrolo-entry-regexp nil t 2))
+		      (progn (beginning-of-line)
+			     (setq next-level-len (length (match-string hyrolo-entry-group-number))
+				   grouping-end (< next-level-len level-len))
+			     (let ((end (point)))
+			       (goto-char start)
+			       (outline-hide-subtree) ; and hide multiple entry lines
+			       ;; Move to start of next entry at equal or higher level.
+			       ;; Remember last expression in `progn' must always
+			       ;; return non-nil to continue loop.
+			       (unless (setq start (outline-get-next-sibling))
+				 (catch 'error
+				   (if (and (outline-up-heading 1 t)
+					    (outline-get-next-sibling))
+				       (setq start (point))
+				     (goto-char (point-max))                   
+				     (skip-chars-backward " \t\n\r\f")
+				     (setq start nil))))
+			       start))
+		    (setq grouping-end t)
+		    (goto-char (point-max))
+		    (skip-chars-backward " \t\n\r\f")))
+		(not grouping-end)))
+    (let ((end (point)))
+      (goto-char grouping-start)
+      (funcall func grouping-start end)
+      (goto-char end))))
+
 
 ;;; ************************************************************************
 ;;; Private functions

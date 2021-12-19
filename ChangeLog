@@ -1,3 +1,10 @@
+2021-12-19  Bob Weiner  <rsw@gnu.org>
+
+* hyrolo.el (hyrolo-map-level): Fix {C-h h r o} order cmd / sorting just hangs.
+    Rewrote to fix sorting and simplify debugging.
+    Change 'file-exists-p' to 'file-readable-p' so ensure rolo file is readable
+    before processing it.
+
 2021-12-12  Bob Weiner  <rsw@gnu.org>
 
 * hactypes.el (link-to-texinfo-node): Substitute for variable names in file linked to.
