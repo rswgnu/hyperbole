@@ -901,6 +901,7 @@ instead of quitting HyControl."
 ;; This just sets the keymap locally and shows the minor mode
 ;; indicator in the buffer's mode-line; the separate global minor mode
 ;; turns things on and off.
+;;;###autoload
 (define-minor-mode hycontrol-local-frames-mode
   "Toggle Hyperbole Frames control minor mode in the current buffer."
   :lighter " HyFrm"
@@ -922,6 +923,7 @@ instead of quitting HyControl."
 ;; This just sets the keymap locally and shows the minor mode
 ;; indicator in the buffer's mode-line; the separate global minor mode
 ;; turns things on and off.
+;;;###autoload
 (define-minor-mode hycontrol-local-windows-mode
   "Toggle Hyperbole Windows control minor mode in the current buffer."
   :lighter " HyWin"

@@ -327,7 +327,7 @@ Interactively, KEY-FILE defaults to the current buffer's file name."
 (defact link-to-file (path &optional point)
   "Display a file given by PATH scrolled to optional POINT.
 If POINT is given, display the buffer with POINT at the top of
-the window."
+the window or as close as possible."
   (interactive
    (let ((prev-reading-p hargs:reading-p)
 	 (existing-buf t)

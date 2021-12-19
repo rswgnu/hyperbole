@@ -53,7 +53,7 @@
 ;;  
 ;;  Author:           
 ;;  Copyright:        
-;;  Keywords:         
+;;  Keywords:         hypertext
 ;;  
 ;;  Online-Format:    
 ;;  Online-Loc:       ""
