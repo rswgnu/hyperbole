@@ -1561,7 +1561,8 @@ in-buffer path will not match."
 	(list start end)))))
 
 (defun hpath:substitute-value (path)
-  "Substitute matching value for Emacs Lisp variables and environment variables in PATH and return PATH."
+  "Substitute matching value for Emacs Lisp variables and environment variables in PATH and return PATH.
+Format of variables must be \"${variable-name}\"."
    (let ((new-path (hpath:substitute-match-value
 		    "\\$@?\{\\([^\}]+\\)@?\}"
 		    path

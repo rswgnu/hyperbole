@@ -129,7 +129,7 @@ Modifying the button but keeping the label creates a dubbel label."
     (unwind-protect
         (progn
           (find-file file)
-          (should (hact 'kbd-key "C-h h e c label RET RET exec-shell-cmd RET ls SPC /tmp RET y RET"))
+          (should (hact 'kbd-key "C-h h e c label RET RET exec-shell-cmd RET ls SPC /tmp RET y n C-x C-s"))
           (hy-test-helpers:consume-input-events)
           (should (eq (hattr:get (hbut:at-p) 'actype) 'actypes::exec-shell-cmd))
           (should (equal (hattr:get (hbut:at-p) 'args) '("ls /tmp" t nil)))

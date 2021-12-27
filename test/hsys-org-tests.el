@@ -30,7 +30,9 @@
     (should (not (org-check-for-hidden 'headlines)))
     (hsys-org-cycle)
     (should (org-check-for-hidden 'headlines))
-    (with-suppressed-warnings ((interactive-only next-line)) (next-line))
+    (if (fboundp 'with-suppressed-warnings)
+	(with-suppressed-warnings ((interactive-only next-line)) (next-line))
+      (next-line))
     (should (equal (line-number-at-pos) 4))))
 
 (ert-deftest hsys-org:region-with-text-property-value ()

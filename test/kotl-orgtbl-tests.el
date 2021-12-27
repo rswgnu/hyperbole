@@ -26,7 +26,7 @@
 (declare-function hy-test-helpers:consume-input-events "hy-test-helpers")
 
 (ert-deftest kotl-orgtbl-enabled-uses-kotl-mode-delete-char-outside-of-table ()
-  "kotl-mode:detele-char is used outside of org table."
+  "kotl-mode:delete-char is used outside of org table."
   (let ((kotl-file (make-temp-file "hypb" nil ".kotl")))
     (unwind-protect
         (progn
@@ -34,7 +34,7 @@
           (insert "1")
 
           ;; Create an org table and leave point at end of cell
-          (should (hact 'kbd-key "RET |-| RET"))
+          (should (hact 'kbd-key "RET |field1|field2| RET"))
           (hy-test-helpers:consume-input-events)
 
           ;; Verify that kotl-mode:delete-char is used outside of the
@@ -59,7 +59,7 @@
           (should orgtbl-mode)
 
           ;; Create an org table
-          (should (hact 'kbd-key "RET |-| RET"))
+          (should (hact 'kbd-key "RET |field1|field2| RET"))
           (hy-test-helpers:consume-input-events)
 
           (left-char 1)
