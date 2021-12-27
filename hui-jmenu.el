@@ -143,8 +143,9 @@
   (let ((mname (buffer-local-value 'mode-name buffer)))
     (if mname
 	;; Next line needed to ensure mode name is always formatted as
-	;; a string.
-	(format-mode-line (or (car-safe mname) mname))
+	;; a string and spaces are replaced with dashes.
+	(subst-char-in-string ?\ ?-
+			      (format-mode-line (or (car-safe mname) mname)))
       (capitalize (symbol-name (buffer-local-value 'major-mode buffer))))))
 
 (defun hui-menu-frame-name (frame)
@@ -196,27 +197,26 @@
 
 (defun hui-menu-sort-buffers (buffer-and-mode-name-list)
   "Reverse sort and return list of (`buffer-name' . `mode-name') elements by `mode-name' and then by `buffer-name'."
-  (let ((buf (get-buffer-create " tmp-sort")))
-    (with-current-buffer buf
-      (setq buffer-read-only nil)
-      (erase-buffer)
-      (let ((standard-output (current-buffer)))
-	(mapc #'print buffer-and-mode-name-list))
-     (while (search-forward "\n\n" nil t)
-	(replace-match "\n"))
-      (if (hui-menu-program-path "sort")
-	  (call-process-region (point-min) (point-max)
-			       "sort" t t nil "-r" "-k3,3" "-k1,1")
-	;; This fallback of sort-fields can only sort on one field, so
-	;; sort by major-mode and leave buffers within each mode
-	;; unsorted when no UNIX sort program is available.
-	(sort-fields 3 (point-min) (point-max))
-	(reverse-region (point-min) (point-max)))
-      (insert "\)\n")
-      (goto-char (point-min))
-      (insert "\(")
-      (goto-char (point-min))
-      (read (current-buffer)))))
+  (with-temp-buffer
+    (setq buffer-read-only nil)
+    (erase-buffer)
+    (let ((standard-output (current-buffer)))
+      (mapc #'print buffer-and-mode-name-list))
+    (while (search-forward "\n\n" nil t)
+      (replace-match "\n"))
+    (if (hui-menu-program-path "sort")
+	(call-process-region (point-min) (point-max)
+			     "sort" t t nil "-r" "-k3,3" "-k1,1")
+      ;; This fallback of sort-fields can only sort on one field, so
+      ;; sort by major-mode and leave buffers within each mode
+      ;; unsorted when no UNIX sort program is available.
+      (sort-fields 3 (point-min) (point-max))
+      (reverse-region (point-min) (point-max)))
+    (insert "\)\n")
+    (goto-char (point-min))
+    (insert "\(")
+    (goto-char (point-min))
+    (read (current-buffer))))
 
 (defun hui-menu-of-frames ()
   (let ((frames (copy-sequence (frame-list))))

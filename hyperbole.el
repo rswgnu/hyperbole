@@ -138,17 +138,19 @@ See `hkey-initialize'.")
 
 ;;;###autoload
 (define-minor-mode hyperbole-mode
-  "Toggle the Everyday Hypertextual Information Manager global minor mode (Hyperbole mode).
+  "Toggle Hyperbole global minor mode, the Everyday Hypertextual Information Manager.
 
 When Hyperbole mode is enabled, the `hyperbole-mode' variable
 is non-nil, Hyperbole menus are enabled, as are Hyperbole keys.
 
 Invoke the Hyperbole minibuffer menu with \\[hyperbole].  See the
-documentation at \"(hyperbole)Top\".
+Info documentation at \"(hyperbole)Top\".
 
 \\{hyperbole-mode-map}"
   :global t
+  :keymap 'hyperbole-mode-map
   :lighter hyperbole-mode-lighter
+  :require 'hyperbole
   (if hyperbole-mode
       (hyperbole--enable-mode)
     (hyperbole--disable-mode)))
@@ -241,6 +243,9 @@ of the commands."
     ;; help.
     (or (where-is-internal #'hkey-help)
 	(hkey-set-key (vector help-char ?A) #'hkey-help))
+    ;;
+    ;; Define virtual key used to activate hyperbole minor modeline menu
+    ;; (hkey-set-key [hyperbole] (infodock-hyperbole-menu t))
     ;;
     ;; Provide a site standard way of emulating most Hyperbole mouse drag
     ;; commands from the keyboard.  This is most useful for rapidly creating

@@ -1783,7 +1783,7 @@ If key is pressed:
 
 
 (defun smart-outline-assist ()
-  "Collaps, expand, and move outline entries.
+  "Collapse, expand, and move outline entries.
 Invoked via an assist-key press when in `outline-mode'.  It assumes that
 its caller has already checked that the assist-key was pressed in an appropriate
 buffer and has moved the cursor to the selected buffer.

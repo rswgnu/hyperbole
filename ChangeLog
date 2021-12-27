@@ -1,3 +1,32 @@
+2021-12-26  Bob Weiner  <rsw@gnu.org>
+
+* kotl/kotl-mode.el (kotl-mode:exchange-cells): Signal error if invalid type or value
+    is given for a cell ref.  Also, fix setting of idstamps when label type is idstamp.
+
+* hmouse-tag.el (smart-lisp-find-tag): With 'show-doc' arg, if 'tag' is unbound, return
+    nil and ignore this as a tag instead of triggering an error.
+
+* hpath.el (hpath:substitute-value): Fix to properly return unchanged 'path' when it
+    contains a PATH-type colon-separated list of directories but no matching path is
+    found.  Previously the 'substitute-in-file-name' call would improperly expand the
+    variable.
+
+* DEMO (Defining New Action Button Types):
+  man/hyperbole.texi: (Action Button Link Types):
+    Fix to refer to PYTHONLIBPATH instead of PYTHONPATH.
+
+* man/hyperbole.texi: (Smart Keys): Add description of how to activate Hyperbole
+    with {C-h h} or change this binding.
+
+* man/hyperbole.texi: (Smart Key Bindings):
+    Remove discussion of hyperbole-toggle-bindings.  Toggle hyperbole-mode instead.
+
+* hmouse-info.el (Info-read-index-item-name): Remove local binding of
+    Info-complete-menu-buffer to fix completion when linking to Info index items.
+
+* hui-jmenu.el (hui-menu-sort-buffer): Replace 'with-current-buffer' with 'with-temp-buffer'.
+               (hui-menu-buffer-mode-name): Fix to replace spaces in mode-names with dashes.
+
 2021-12-19  Bob Weiner  <rsw@gnu.org>
 
 * hyrolo.el (hyrolo-map-level): Fix {C-h h r o} order cmd / sorting just hangs.

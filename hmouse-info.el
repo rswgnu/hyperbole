@@ -36,16 +36,17 @@ the Top node in filename.  Signal an error if a filename without an
 index is given."
   (let ((completion-ignore-case t)
 	(Info-history-list nil)
-	Info-complete-menu-buffer
 	item-name)
     (save-window-excursion
       (info)
       (setq Info-complete-menu-buffer (clone-buffer)))
     (unwind-protect
-	(progn (while (equal "" (setq item-name
-				      (completing-read prompt #'Info-read-index-item-name-1 nil t))))
-	       item-name)
-      (kill-buffer Info-complete-menu-buffer))))
+	(progn
+	  (while (equal "" (setq item-name
+				 (completing-read prompt #'Info-read-index-item-name-1 nil t))))
+	  item-name)
+      (kill-buffer Info-complete-menu-buffer)
+      (makunbound 'Info-complete-menu-buffer))))
 
 ;;;###autoload
 (defun smart-info ()

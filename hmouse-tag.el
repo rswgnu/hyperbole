@@ -597,8 +597,9 @@ Otherwise, if a definition for the identifier is found within a TAGS
 file in the current directory or any of its ancestor directories, this
 jumps to the definition.
 
-Optional SHOW-DOC flag means show documentation for the tag at point
-rather than displaying its source code definition.
+With optional SHOW-DOC flag, show documentation for the tag at point
+rather than displaying its source code definition.  In this case, tag
+must be a bound or fbound symbol or it is ignored.
 
 This command assumes that its caller has already checked that the key was
 pressed in an appropriate buffer and has moved the cursor to the selected
@@ -638,7 +639,7 @@ buffer."
     (smart-lisp-find-tag nil show-doc)))
 
 (defun smart-lisp-find-tag (&optional tag show-doc)
-  "Find the definition of optional Lisp TAG (or identifier at point) or show its documentation with optional prefix arg SHOW-DOC non-nil.
+  "Find the definition of optional Lisp TAG (or identifier at point when TAG is nil) or show its documentation with optional prefix arg SHOW-DOC non-nil.
 Use `hpath:display-buffer' to show definition or documentation."
   (interactive
    (list (read-string (format "%s Lisp identifier: "
@@ -654,7 +655,9 @@ Use `hpath:display-buffer' to show definition or documentation."
 	   (cond ((fboundp tag-sym) (describe-function tag-sym))
 		 ((and tag-sym (boundp tag-sym)) (describe-variable tag-sym))
 		 ((facep tag-sym) (describe-face tag-sym))
-		 (t (error "(smart-lisp): `%s' unbound symbol definition not found" tag))))
+		 ;; (t (error "(smart-lisp): `%s' unbound symbol definition not found" tag))
+		 ;; Ignore unbound symbols if displaying doc.
+		 (t nil)))
 	  ((and elisp-flag (fboundp 'find-function-noselect)
 		(let ((result (smart-lisp-bound-symbol-def tag-sym)))
 		  (when (cdr result)

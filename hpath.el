@@ -1562,39 +1562,39 @@ in-buffer path will not match."
 
 (defun hpath:substitute-value (path)
   "Substitute matching value for Emacs Lisp variables and environment variables in PATH and return PATH."
-  (substitute-in-file-name
-   (hpath:substitute-match-value
-    "\\$@?\{\\([^\}]+\\)@?\}"
-    path
-    (lambda (_matched_str)
-      (let* ((match (match-beginning 0))
-             (start (match-end 0))
-             (var-group (substring path match start))
-	     (rest-of-path (substring path start))
-	     (var-ext (substring path (match-beginning 1) (match-end 1)))
-	     (var-name (if (= ?@ (aref var-ext (1- (length var-ext))))
-			   (substring var-ext 0 -1)
-			 var-ext))
-	     (trailing-dir-sep-flag (and (not (string-empty-p rest-of-path))
-					 (memq (aref rest-of-path 0) '(?/ ?\\))))
-	     (sym (intern-soft var-name)))
-	(when (file-name-absolute-p rest-of-path)
-	  (setq rest-of-path (substring rest-of-path 1)))
-	(if (or (and sym (boundp sym)) (getenv var-name))
-	    ;; directory-file-name or hpath:substitute-dir may trigger
-	    ;; an error but this may be called when testing for
-	    ;; implicit button matches where no error should occur, so
-	    ;; catch the error and ignore variable expansion in such a
-	    ;; case.
-	    ;; -- RSW, 08-26-2019
-	    ;; Removed errors on non-existent paths.
-	    ;; -- RSW, 04-19-2021
-	    (condition-case nil
-		(funcall (if trailing-dir-sep-flag #'directory-file-name #'identity)
-			 (hpath:substitute-dir var-name rest-of-path))
-	      (error ""))
-	  var-group)))
-    t t)))
+   (let ((new-path (hpath:substitute-match-value
+		    "\\$@?\{\\([^\}]+\\)@?\}"
+		    path
+		    (lambda (_matched_str)
+		      (let* ((var-group (match-string 0 path))
+			     (var-ext (match-string 1 path))
+			     (rest-of-path (substring path (match-end 0)))
+			     (var-name (if (= ?@ (aref var-ext (1- (length var-ext))))
+					   (substring var-ext 0 -1)
+					 var-ext))
+			     (trailing-dir-sep-flag (and (not (string-empty-p rest-of-path))
+							 (memq (aref rest-of-path 0) '(?/ ?\\))))
+			     (sym (intern-soft var-name)))
+			(when (file-name-absolute-p rest-of-path)
+			  (setq rest-of-path (substring rest-of-path 1)))
+			(if (or (and sym (boundp sym)) (getenv var-name))
+			    ;; directory-file-name or hpath:substitute-dir may trigger
+			    ;; an error but this may be called when testing for
+			    ;; implicit button matches where no error should occur, so
+			    ;; catch the error and ignore variable expansion in such a
+			    ;; case.
+			    ;; -- RSW, 08-26-2019
+			    ;; Removed errors on non-existent paths.
+			    ;; -- RSW, 04-19-2021
+			    (condition-case nil
+				(funcall (if trailing-dir-sep-flag #'directory-file-name #'identity)
+					 (hpath:substitute-dir var-name rest-of-path))
+			      (error ""))
+			  var-group)))
+		    t t)))
+     (if (equal new-path path)
+	 path
+       (substitute-in-file-name new-path))))
 
 (defun hpath:substitute-var (path)
   "Replace up to one match in PATH with the first variable from `hpath:variables' whose value contain a string match to PATH.

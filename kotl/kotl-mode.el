@@ -2309,28 +2309,30 @@ to one level and kotl-mode:refill-flag is treated as true."
 	      (kcell-view:label))
 	     (t (error
 		 "(kotl-mode:exchange-cells): No two visible cells available")))))))
+  (unless (and (or (stringp cell-ref-1) (natnump cell-ref-1))
+	       (or (stringp cell-ref-2) (natnump cell-ref-2)))
+    (error "(kotl-mode:exchange-cells): Cell refs must be either strings or numbers >= 0, not: '%s' and '%s'"
+	   cell-ref-1 cell-ref-2))
+  (when (equal cell-ref-1 cell-ref-2)
+    (error "(kotl-mode:exchange-cells): Cannot exchange as both cell refs are the same: '%s' and '%s'"
+	   cell-ref-1 cell-ref-2))
   (save-excursion
-    (let (kcell-1 contents-1
-	  kcell-2 contents-2)
+    (let (kcell-1 contents-1 idstamp-1
+	  kcell-2 contents-2 idstamp-2)
       ;;
       ;; Save cell-1 attributes
       (kotl-mode:goto-cell cell-ref-1 t)
       (setq kcell-1 (kcell-view:cell)
+	    idstamp-1 (kcell-view:idstamp)
 	    contents-1 (kcell-view:contents))
       ;;
       ;; Save cell-2 attributes
       (kotl-mode:goto-cell cell-ref-2 t)
-      (setq kcell-2 (kcell-view:cell)
+      (setq kcell-2 (copy-list (kcell-view:cell))
+	    idstamp-2 (kcell-view:idstamp)
 	    contents-2 (kcell-view:contents))
-      ;;
-      ;; Substitute cell-1 attributes into cell-2 location.
-      ;;
-      ;; Set kcell properties.
-      (kcell-view:set-cell kcell-1)
-      ;; If idstamp labels are on, then must exchange labels in view.
-      (when (eq (kview:label-type kview) 'id)
-	(klabel:set (kcell-view:idstamp)))
-      ;; Exchange cell contents.
+
+      ;; Substitute cell-1 contents into cell-2 location.
       (delete-region (kcell-view:start) (kcell-view:end-contents))
       (insert
        (hypb:replace-match-string
@@ -2338,15 +2340,9 @@ to one level and kotl-mode:refill-flag is treated as true."
 	contents-1 (concat "\\1" (make-string (kcell-view:indent) ?\ ))))
       (when kotl-mode:refill-flag
 	(kotl-mode:fill-cell))
-      ;;
-      ;; Substitute cell-2 attributes into cell-1 location.
-      ;;
-      ;; Set kcell properties.
+
+      ;; Substitute cell-2 contents into cell-1 location.
       (kotl-mode:goto-cell cell-ref-1 t)
-      (kcell-view:set-cell kcell-2)
-      ;; If idstamp labels are on, then must exchange labels in view.
-      (when (eq (kview:label-type kview) 'id)
-	(klabel:set (kcell-view:idstamp)))
       ;; Exchange cell contents.
       (delete-region (kcell-view:start) (kcell-view:end-contents))
       ;; Add indentation to all but first line.
@@ -2355,7 +2351,27 @@ to one level and kotl-mode:refill-flag is treated as true."
 	"\\([\n\r]\\)"
 	contents-2 (concat "\\1" (make-string (kcell-view:indent) ?\ ))))
       (when kotl-mode:refill-flag
-	(kotl-mode:fill-cell)))))
+	(kotl-mode:fill-cell))
+
+      (save-excursion
+	;;
+	;; Substitute cell-1 attributes into cell-2 location.
+	;;
+	(kotl-mode:goto-cell cell-ref-2 t)
+	;; Set kcell properties.
+	(kcell-view:set-cell kcell-1)
+	;; If idstamp labels are on, then must exchange labels in view.
+	(when (eq (kview:label-type kview) 'id)
+ 	  (klabel:set idstamp-1)))
+
+      ;;
+      ;; Substitute cell-2 attributes into cell-1 location.
+      ;;
+      ;; Set kcell properties.
+      (kcell-view:set-cell kcell-2)
+      ;; If idstamp labels are on, then must exchange labels in view.
+      (when (eq (kview:label-type kview) 'id)
+	(klabel:set idstamp-2)))))
 
 (defun kotl-mode:kill-contents (arg)
   "Kill contents of cell from point to cell end.
@@ -2541,9 +2557,10 @@ the current cell."
 (defun kotl-mode:transpose-cells (arg)
   "Exchange current and previous visible cells, leaving point after both.
 If no previous cell, exchange current with next cell.
-With prefix ARG, take current tree and move it past ARG visible cells.
 With prefix ARG = 0, interchange the cell that contains point with the cell
-that contains mark."
+that contains mark.
+With any other non-nil prefix ARG, take the current tree and move it past
+ARG visible cells."
   (interactive "*p")
   (let ((label-sep-len (kview:label-separator-length kview)))
     (cond
@@ -2558,7 +2575,7 @@ that contains mark."
       (let ((label-1 (kcell-view:label))
 	    (prev (kcell-view:previous t label-sep-len))
 	    label-2)
-	(or prev (kcell-view:next t label-sep-len))
+	(unless prev (kcell-view:next t label-sep-len))
 	(setq label-2 (kcell-view:label))
 	(kotl-mode:exchange-cells label-1 label-2)
 	(kcell-view:next t label-sep-len)

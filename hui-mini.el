@@ -25,8 +25,7 @@
 ;;; ************************************************************************
 
 (defvar hui:hypb-exit            "X"
-  "*Upper case character string which exits from / disable Hyperbole mode, and any active minibuffer menu.")
-
+  "*Upper case character string which exits from / disables Hyperbole mode and any active minibuffer menu.")
 (defvar hui:menu-select          "\C-m"
   "*Character string which selects the Hyperbole menu item at point.")
 (defvar hui:menu-quit            "Q"

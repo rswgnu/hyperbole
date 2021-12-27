@@ -813,11 +813,10 @@ button.
 
 *** Defining New Action Button Types
 
-You can do a huge number of things with existing Action Button types
-but sometimes you may want to define your own types for more advanced
-usage.  Hyperbole let's you easily create your own Action Button link
-types without knowing Elisp, if you understand basic pattern
-replacement.
+You can do many things with existing Action Button types but sometimes you
+may want to define your own types for more advanced usage.  Hyperbole lets
+you easily create your own Action Button link types without knowing Elisp, if
+you understand basic regular expression-based pattern replacement.
 
 In your Emacs initialization file, e.g. ~/.emacs, you will add a line of
 the form:
@@ -827,11 +826,13 @@ the form:
 where:
 
     TYPE is the name of the new type you want to create;
+
     LINK-EXPR is a regular expression containing a %s
       replacement string into which Hyperbole will substitute
       the button text following the TYPE from each button activated of
       this type; alternatively, LINK-EXPR may be the name of a function
       of one argument, the button text sans the function name;
+
     Hyperbole automatically creates a doc string for the type but you can
     override this by providing an optional DOC string.
 
@@ -844,10 +845,10 @@ activated as one of these 4 kinds:
     (4) or a function or action type of one argument, the button text sans the
         function name.
 
-Let's try an example.  If you use Python and have a PYTHONPATH
+Let's try an example.  If you use Python and have a PYTHONLIBPATH
 environment variable, then pressing {C-x C-e} after this expression:
 
-   (defal pylib "${PYTHONPATH}/%s")
+   (defal pylib "${PYTHONLIBPATH}/%s")
 
 defines a new action button link type called 'pylib’ whose buttons
 take the form of:

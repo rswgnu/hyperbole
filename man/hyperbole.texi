@@ -155,7 +155,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</P>
 
 <PRE>
 Edition 8.0.0pre
-Printed November 7, 2021.
+Printed December 26, 2021.
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -197,7 +197,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 @example
 Edition 8.0.0pre
-November 7, 2021
+December 26, 2021
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -702,16 +702,17 @@ or if some emails you a button (you can do that too).
 
 Hyperbole is something to be experienced and interacted with, not understood
 from reading alone.  It installs normally as a single Emacs package with no
-dependencies outside of standard Emacs libraries.  Most of Hyperbole is a
-single global minor mode that you can activate and deactivate at will.  And
-it can be uninstalled quickly as well if need be, so there is no risk to
-giving it a spin.
+dependencies outside of standard Emacs libraries, @pxref{Installation}.  Most
+of Hyperbole is a single global minor mode that you can activate and
+deactivate at will.  And it can be uninstalled quickly as well if need be, so
+there is no risk to giving it a spin.
 
-Once you have it installed and activated @bkbd{C-u M-x hyperbole-mode @key{RET}},
-try the interactive demo with @bkbd{C-h h d d}.  In fact, if you
-have Hyperbole loaded, you can press @bkbd{M-@key{RET}} inside any of the
-brace delimited series of keys you see in this document and it will
-execute them on-the-fly (easy keyboard-macro style buttons in any text).
+Once you have it installed and activated (use @bkbd{C-u M-x
+hyperbole-mode @key{RET}}), try the interactive demo with @bkbd{C-h h d d}.
+In fact, if you have Hyperbole loaded, you can press @bkbd{M-@key{RET}}
+inside any of the brace delimited series of keys you see in this document and
+Hyperbole will execute them on-the-fly (easy keyboard-macro style buttons in
+any text).
 
 Hyperbole can dramatically increase your productivity and greatly reduce
 the number of keyboard/mouse keys you'll need to work efficiently.
@@ -896,14 +897,36 @@ Hyperbole, <bug-hyperbole@@gnu.org>.  For more details,
 @vindex hmouse-middle-flag
 @kindex Action Key
 @kindex Assist Key
-Hyperbole offers two special @dfn{Smart Keys}, the Action Key and the
-Assist Key, that perform an extensive array of context-sensitive
-operations across emacs usage.  In many popular modes, they allow you
-to perform common, sometimes complex operations without having to use a
-different key for each operation.  Just press a Smart Key and the
-right thing happens.  This chapter explains typical uses of the Smart
-Keys.  @xref{Smart Key Reference}, for complete descriptions of their
-behavior in all contexts.
+When active, Hyperbole offers two special @dfn{Smart Keys}, the Action Key
+and the Assist Key, that perform an extensive array of context-sensitive
+operations across emacs usage.  In many Emacs modes, they allow you to
+perform common, sometimes complex operations without having to use a
+different key for each operation.  Just press a Smart Key and the right thing
+happens.  This chapter explains typical uses of the Smart Keys.  @xref{Smart
+Key Reference}, for complete descriptions of their behavior in all contexts.
+
+@vindex file, .emacs
+@cindex hyperbole-mode
+@cindex minor mode, hyperbole
+@cindex change key bindings
+@cindex toggle key bindings
+@cindex key bindings, toggle
+@cindex disable Hyperbole
+@kindex C-h h
+@kindex X
+@kindex q
+Use @bkbd{C-h h} to activate Hyperbole (enable @code{hyperbole-mode} and
+display its keyboard-driven minibuffer menu).  Use @bkbd{q} to quit from the
+minibuffer menu while leaving Hyperbole enabled and thus the Smart Keys
+active.  Use@bkbd{X} to quit from the minibuffer menu and disable Hyperbole
+keys.
+
+If you prefer a different key to activate Hyperbole, you can bind it as part
+of any setting of @code{hyperbole-init-hook} within your personal
+@file{~/.emacs} file.  For example, @code{(add-hook
+'hyperbole-init-hook (lambda () (global-set-key "\C-ch"
+'hyperbole--enable-mode) (global-set-key "\C-hh" 'view-hello-file)))}; then
+restart Emacs.
 
 @menu
 * Smart Key Bindings::
@@ -920,27 +943,24 @@ behavior in all contexts.
 
 @kindex C-u M-@key{RET}
 @kindex M-@key{RET}
-From the keyboard, @bkbd{M-@key{RET}} is the Action Key and @bkbd{C-u
-M-@key{RET}} is the Assist Key.  These keys allow context-sensitive
-operation from any keyboard.
-
-@c Removed the following in Hyperbole 6.00 since it was not consistent
-@c across all read-only modes and the standard bindings are easy
-@c enough to use.
-@c
-@c In many read-only modes like Dired (the directory editor and file
-@c manager) and Rmail (the mail reader), @{@key{RET}@} also functions as
-@c the Action Key and @bkbd{C-u @key{RET}} functions as the Assist Key.
+With @code{hyperbole-mode} enabled, @bkbd{M-@key{RET}} is the Action Key
+and @bkbd{C-u M-@key{RET}} is the Assist Key.  These keys allow
+context-sensitive operation from any keyboard.
 
 @kindex shift-middle mouse key
 @kindex shift-left mouse key
 @kindex shift-right mouse key
 @kindex middle mouse key
 @vindex hmouse-middle-flag
-From the mouse, the @dfn{Action Key} is bound to your shift-middle
-mouse key (or shift-left on a 2-button mouse).  The @dfn{Assist Key}
-is bound to your shift-right mouse key, assuming Hyperbole is run
-under an external window system.
+Mouse configuration of the Smart Keys is automatic for GNU Emacs under
+Mac OS X, the X Window System and MS Windows, assuming your emacs program
+has been built with support for any of these window systems.
+
+The @dfn{Action Mouse Key} is bound to your shift-middle mouse key (or
+shift-left on a 2-button mouse).  The @dfn{Assist Mouse Key} is bound to your
+shift-right mouse key, assuming Hyperbole is run under an external window
+system.  These keys support @dfn{Drag Actions}, @pxref{Smart Mouse Keys}, as
+well as the standard Smart Key presses.
 
 @findex hmouse-add-unshifted-smart-keys
 @cindex unshifted mouse bindings
@@ -962,36 +982,19 @@ personal @file{~/.emacs} file, add: @code{(add-hook 'hyperbole-init-hook
 @findex action-mouse-key
 @findex assist-mouse-key
 @findex hkey-either
-If you prefer other key assignments, simply bind the commands
+If you prefer other Smart Key bindings, simply bind the commands
 @code{action-key} and @code{assist-key} to keyboard keys.
-Hyperbole binds @bkbd{M-@key{RET}} to the command @code{hkey-either}.
-It allows for a single key binding for both commands; a prefix
-argument, such as @bkbd{C-u}, then invokes @code{assist-key}.
+Hyperbole binds @bkbd{M-@key{RET}} to the command @code{hkey-either};
+this provides a single key binding for both Smart Key commands; a prefix
+argument, such as @bkbd{C-u}, then invokes @code{assist-key} actions.
 
-You may also bind @code{action-mouse-key} and @code{assist-mouse-key}
-to other mouse keys, though you won't be able to execute mouse drag
-actions with such key bindings.
+You may also bind @code{action-mouse-key} and @code{assist-mouse-key} to
+other mouse keys, though you won't be able to execute mouse drag actions with
+such key bindings. @xref{Smart Mouse Key Drags} and @pxref{Keyboard Drags}.
 
-Mouse configuration of the Smart Keys is automatic for GNU Emacs under
-Mac OS X, the X Window System and MS Windows assuming your emacs program
-has been built with support for any of these window systems.
-
-@vindex file, .emacs
-@findex hyperbole-toggle-bindings
-@cindex change key bindings
-@cindex toggle key bindings
-@cindex key bindings, toggle
-@cindex disable Hyperbole
-@kindex C-c h
-If you ever need to temporarily disable the Hyperbole keyboard and mouse
-bindings, use the @code{hyperbole-toggle-bindings} command.  It switches
-between the Hyperbole key bindings and those set prior to loading Hyperbole
-and then back again if invoked once more.  There is no default key binding
-for this command; use @bkbd{M-x hyperbole-toggle-bindings
-@key{RET}}.  Alternatively, you may select a key and bind it as part of any
-setting of @code{hyperbole-init-hook} within your personal @file{~/.emacs}
-file.  For example, @code{(add-hook 'hyperbole-init-hook (lambda ()
-(global-set-key "\C-ch" 'hyperbole-toggle-bindings)))}.
+To permanently change any of these key bindings, use:
+@code{(add-hook 'hyperbole-init-hook (lambda () (hkey-set-key <KEY> '<CMD>)},
+for example, @code{(hkey-set-key "\M-'" 'hkey-either)}.
 
 @c @cindex Paste Key
 @c @cindex mouse paste
@@ -3162,7 +3165,7 @@ The rename command may be invoked from the Hyperbole menu via
 Ebut/Rename.  Hyperbole does not bind this command to a key by default.
 @bkbd{C-h w hui:ebut-rename @key{RET}} will show what if any key is bound
 within your Emacs.  Bind it within your @file{~/.emacs} file with:
-@code{(global-set-key "\C-cr" 'hui:ebut-rename)}, for example.
+@code{(hkey-set-key "\C-cr" 'hui:ebut-rename)}, for example.
 
 
 @node Deletion, Modification, Renaming, Utilizing Explicit Buttons
@@ -6120,11 +6123,11 @@ button is activated and does one of four things with LINK-EXPR:
 @item invokes a function or action type of one argument, the button text sans the function name, to display it.
 @end enumerate
 
-For example, if you use Python and have a @samp{PYTHONPATH} environment
+For example, if you use Python and have a @samp{PYTHONLIBPATH} environment
 variable, then pressing @bkbd{C-x C-e} @code{eval-last-sexp} after
 this expression:
 
-@code{(defal pylib "$@{PYTHONPATH@}/%s")}
+@code{(defal pylib "$@{PYTHONLIBPATH@}/%s")}
 
 @noindent
 defines a new action button link type called ’pylib’ whose buttons
@@ -6743,16 +6746,15 @@ implicit button type.  See also @b{system encapsulation}.
 
 @cindex InfoDock
 @item InfoDock
-InfoDock was an integrated productivity toolset for software engineers
+InfoDock is an older integrated productivity toolset for software engineers
 and knowledge workers built atop XEmacs; it is no longer maintained or
-updated.  An older version from 1999 may be found at
-infodock.sf.net.
+updated, though many of its packages can be used with GNU Emacs.  An older
+version from 1999 may be found at infodock.sf.net.
 
-InfoDock has much of the power of GNU Emacs, but with an
-easier to use and more comprehensive menu-based user interface.  Most
-objections people raise to using emacs have already been addressed in
-InfoDock.  InfoDock was meant for people who wanted a complete,
-pre-customized environment in one package.
+InfoDock has much of the power of GNU Emacs, but with an easier to use and
+more comprehensive menu-based user interface.  Most objections people raise
+to using emacs have already been addressed in InfoDock.  InfoDock is meant
+for people who prefer a complete, pre-customized environment in one package.
 
 @item Instance Number
 A colon prefaced number appended to the label of a newly created button
@@ -6889,7 +6891,7 @@ The @bkbd{C-h h d s} Doc/SmartKeys menu item displays a full summary of
 Smart Key capabilities.  @xref{Smart Keys}, for complete details.
 
 @item Smart Menus
-Smart Menus are an older in-buffer menu system that worked on dumb
+Smart Menus are an older in-buffer menu system that work on dumb
 terminals and pre-dated Emacs' own dumb terminal menu support.  They
 are included with InfoDock (which is no longer maintained) and are not
 available separately.  They are not a part of Hyperbole and are not
@@ -6934,10 +6936,9 @@ information displayed, its format, modes used to operate on it, its
 display location and so forth.
 
 @item View Spec
-A terse (and to the uninitiated, cryptic) string that specifies a
-particular view of a koutline or a link referent.  If a view spec is
-active for a buffer, the view spec appears within the modeline like so,
-<|view spec>.
+A terse string that specifies a particular view of a koutline or a link
+referent.  If a view spec is active for a buffer, the view spec appears
+within the modeline like so, <|view spec>. @xref{View Specs}
 
 @item Window
 An Emacs window displays a single Emacs buffer within a single frame.
@@ -7612,8 +7613,14 @@ menubar menu as shown here:
 @end float
 @sp 1
 
+@vindex hyperbole-mode-map
+@cindex key bindings
+@cindex minor mode, keymap
 @noindent
-Below are descriptions of Hyperbole's default keyboard key bindings:
+Below are descriptions of Hyperbole's default keyboard key bindings.
+All except @bkbd{C-h h} (the global key used to enable Hyperbole and
+display its minibuffer menu) are bound within Hyperbole's minor mode
+keymap, @code{hyperbole-mode-map}.
 
 @table @asis
 @cindex key binding, M-@key{RET}
@@ -7667,7 +7674,8 @@ links to any other window chosen via the Ace Window prompt.
 @cindex key binding, C-h h
 @kitem C-h h
 Hyperbole Mini Menu: Invoke the Hyperbole minibuffer menu, giving
-access to many Hyperbole commands.
+access to many Hyperbole commands.  This is bound globally as a means
+of enabling Hyperbole minor mode.
 
 @cindex key binding, C-h A
 @cindex key binding, C-u C-h A
@@ -7701,42 +7709,21 @@ to @samp{t} (true) by default in @file{hyperbole.el}.  This setting
 means all Hyperbole key bindings will be initialized when Hyperbole is
 loaded.  If you want to disable these bindings permanently, simply add
 @code{(setq hkey-init nil)} to your @file{~/.emacs} file prior to the
-point at which you load Hyperbole and restart Emacs.  Then you will
-have to choose the Hyperbole commands that you want to use and bind
-those to keys.
-
-@vindex file, .emacs
-@findex hyperbole-toggle-bindings
-@cindex change key bindings
-@cindex toggle key bindings
-@cindex key bindings, toggle
-@cindex disable Hyperbole
-@kindex C-c h
-If you ever have a need to temporarily disable the Hyperbole keyboard and
-mouse bindings, use the @code{hyperbole-toggle-bindings} command.  It
-switches between the Hyperbole key bindings and those set prior to loading
-Hyperbole and then back again if invoked once more.  There is no default
-key binding for this command; use @bkbd{M-x hyperbole-toggle-bindings
-@key{RET}}.  Alternatively, you may select a key and bind it as part of any
-setting of @code{hyperbole-init-hook} within your personal @file{~/.emacs}
-file.  For example, @code{(add-hook 'hyperbole-init-hook (lambda ()
-(global-set-key "\C-ch" 'hyperbole-toggle-bindings)))}.
+point at which you load Hyperbole; then restart Emacs.  Henceforth, you will
+have to choose the Hyperbole commands that you want to use and bind those to
+keys.
 
 @vindex file, .emacs
 @findex hyperbole-mode
 @cindex mouse key toggle
 @cindex Smart Mouse Key toggle
-@kindex C-c t
-If you ever want to disable Hyperbole key and mouse bindings, simply toggle
-Hyperbole minor mode off with the @code{hyperbole-mode} command.
-It switches between Hyperbole mouse key and mouse bindings and those set
-prior to loading Hyperbole and then back again if invoked once more.
-There is no default key binding for this command; use @bkbd{M-x
-hyperbole-mode @key{RET}}.  Alternatively, you may select a
-key and bind it as part of any setting of @code{hyperbole-init-hook}
-within your personal @file{~/.emacs} file.  For example, @code{(add-hook
-'hyperbole-init-hook (lambda () (global-set-key "\C-ct"
-'hyperbole-mode)))}.
+If you ever want to temporarily disable Hyperbole key and mouse bindings,
+simply toggle Hyperbole minor mode off with the @code{hyperbole-mode}
+command.  There is no default key binding for this command; use @bkbd{M-x
+hyperbole-mode @key{RET}}.  Alternatively, you may select a key and bind it
+as part of any setting of @code{hyperbole-init-hook} within your
+personal @file{~/.emacs} file.  For example, @code{(add-hook
+'hyperbole-init-hook (lambda () (global-set-key "\C-ct" 'hyperbole-mode)))}.
 
 @node Koutliner Keys, Smart Key Reference, Hyperbole Key Bindings, Top
 @appendix Koutliner Keys
