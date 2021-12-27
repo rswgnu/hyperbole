@@ -34,6 +34,12 @@
     Change 'file-exists-p' to 'file-readable-p' so ensure rolo file is readable
     before processing it.
 
+2021-12-18  Mats Lidell  <matsl@gnu.org>
+
+* install-test/elpa-devel/.emacs: Init file for install tests.
+
+* Makefile: install-elpa-devel target.
+
 2021-12-12  Bob Weiner  <rsw@gnu.org>
 
 * hactypes.el (link-to-texinfo-node): Substitute for variable names in file linked to.
