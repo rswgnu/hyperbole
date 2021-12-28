@@ -1,3 +1,12 @@
+2021-12-28  Mats Lidell  <matsl@gnu.org>
+
+* kotl/kotl-mode.el (kotl-mode:exchange-cells): Use cl-copy-list.
+
+* test/kotl-mode-tests.el (kotl-mode-transpose-cell)
+(kotl-mode-transpose-cell-with-mark)
+(kotl-mode-transpose-cell-past-multiple-cells): Add test for
+    kotl-mode:transpose-cells.
+
 2021-12-26  Bob Weiner  <rsw@gnu.org>
 
 * kotl/kotl-mode.el (kotl-mode:exchange-cells): Signal error if invalid type or value
