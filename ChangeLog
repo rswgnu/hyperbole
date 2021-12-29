@@ -1,3 +1,9 @@
+2021-12-29  Mats Lidell  <matsl@gnu.org>
+
+* test/hmouse-info-tests.el (hmouse-info-read-index-with-completion)
+(hmouse-info-build-completions-no-match)
+(hmouse-info-build-completions-multiple-matches): hmouse-info tests.
+
 2021-12-28  Mats Lidell  <matsl@gnu.org>
 
 * kotl/kotl-mode.el (kotl-mode:exchange-cells): Use cl-copy-list.
