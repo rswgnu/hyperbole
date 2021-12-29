@@ -2328,7 +2328,7 @@ to one level and kotl-mode:refill-flag is treated as true."
       ;;
       ;; Save cell-2 attributes
       (kotl-mode:goto-cell cell-ref-2 t)
-      (setq kcell-2 (copy-list (kcell-view:cell))
+      (setq kcell-2 (cl-copy-list (kcell-view:cell))
 	    idstamp-2 (kcell-view:idstamp)
 	    contents-2 (kcell-view:contents))
 
