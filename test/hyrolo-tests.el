@@ -181,5 +181,36 @@
              (should (string-match "No following same-level heading" (cadr err)))))))
     (hyrolo-demo-quit)))
 
+(ert-deftest hyrolo-sort-test ()
+  "Rolo files can be sorted."
+  (let ((hyrolo-file (make-temp-file "hypb" nil ".otl")))
+    (unwind-protect
+        (let ((hyrolo-file-list (list hyrolo-file)))
+          (find-file hyrolo-file)
+          (insert "===\nHdr\n===\n")
+          (goto-char (point-min))
+          (should (looking-at "==="))
+          (hyrolo-add "c")
+          (hyrolo-add "b")
+          (hyrolo-add "a")
+          (hyrolo-add "b/d")
+
+          ; Verify insertion order and following date on separate line
+          (goto-char (point-min))
+          (should (looking-at "==="))
+          (dolist (insertion-order '("c" "b" "d" "a"))
+            (goto-char (1+ (should (search-forward insertion-order))))
+            (should (looking-at-p "^\t[0-9/]+$")))
+
+          (hyrolo-sort)
+
+          ; Verify sorted order and following date on separate line
+          (goto-char (point-min))
+          (should (looking-at "==="))
+          (dolist (sorted-order '("a" "b" "d" "c"))
+            (goto-char (1+ (should (search-forward sorted-order))))
+            (should (looking-at-p "^\t[0-9/]+$"))))
+      (delete-file hyrolo-file))))
+
 (provide 'hyrolo-tests)
 ;;; hyrolo-tests.el ends here
