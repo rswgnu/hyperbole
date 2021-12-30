@@ -1,4 +1,4 @@
-;;; hmh.el --- GNU Hyperbole buttons in mail reader: Mh
+;;; hmh.el --- GNU Hyperbole buttons in mail reader: Mh -*- lexical-binding: t; -*-
 ;;
 ;; Author:       Bob Weiner
 ;;
@@ -67,7 +67,7 @@
   "Highlight any Hyperbole buttons in buffer for which display support exists."
   (if (fboundp 'hproperty:but-create) (hproperty:but-create)))
 
-(defun Mh-msg-hdrs-full (toggled)
+(defun Mh-msg-hdrs-full (_toggled)
   "If TOGGLED is non-nil, toggle full/hidden headers, else show full headers.
 For now, a no-op.")
 
@@ -85,7 +85,7 @@ This includes Hyperbole button data."
 
 (defun Mh-msg-prev ()           (mh-previous-undeleted-msg 1))
 
-(defun Mh-msg-to-p (mail-msg-id mail-file)
+(defun Mh-msg-to-p (_mail-msg-id mail-file)
   "Set current buffer to start of msg with MAIL-MSG-ID in MAIL-FILE.
 Returns t if successful, else nil."
   (if (not (file-readable-p mail-file))

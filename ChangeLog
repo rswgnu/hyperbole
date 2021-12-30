@@ -1,5 +1,12 @@
 2021-12-30  Mats Lidell  <matsl@gnu.org>
 
+* hui-menu.el:
+* hui-em-but.el:
+* hsmail.el:
+* hrmail.el:
+* hmh.el:
+* hgnus.el: Use lexical-binding
+
 * test/hyrolo-tests.el (hyrolo-sort-test): Add hyrolo sort test.
 
 2021-12-29  Mats Lidell  <matsl@gnu.org>
