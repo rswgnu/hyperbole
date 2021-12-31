@@ -151,8 +151,6 @@ EMACS_BATCH=$(EMACS) $(BATCHFLAGS) $(PRELOADS)
 # explicitly to those files which need it.
 VPATH = kotl man
 
-EL_SRC = hui-em-but.el
-
 EL_COMPILE = hact.el hactypes.el hargs.el hbdata.el hbmap.el hbut.el \
 	     hgnus.el hhist.el hib-debbugs.el hib-doc-id.el hib-kbd.el \
 	     hib-social.el hibtypes.el \
@@ -162,7 +160,7 @@ EL_COMPILE = hact.el hactypes.el hargs.el hbdata.el hbmap.el hbut.el \
 	     hycontrol.el hui-jmenu.el hui-menu.el hui-mini.el hui-mouse.el hui-select.el \
 	     hui-treemacs.el hui-window.el hui.el hvar.el hversion.el hvm.el hypb.el hyperbole.el \
 	     hyrolo-demo.el hyrolo-logic.el hyrolo-menu.el hyrolo.el hywconfig.el set.el hypb-ert.el \
-	     hui-dired-sidebar.el hypb-maintenance.el
+	     hui-dired-sidebar.el hypb-maintenance.el hui-em-but.el
 
 EL_KOTL = kotl/kexport.el kotl/kfile.el kotl/kfill.el kotl/kimport.el kotl/klabel.el \
 	  kotl/klink.el kotl/kmenu.el kotl/kotl-mode.el kotl/kotl-orgtbl.el \
@@ -185,13 +183,13 @@ ELC_KOTL = kotl/kexport.elc kotl/kfile.elc kotl/kfill.elc kotl/kimport.elc kotl/
 
 HY-TALK  = HY-TALK/.hypb HY-TALK/HYPB HY-TALK/HY-TALK.org
 
-HYPERBOLE_FILES = dir info html $(EL_SRC) $(EL_COMPILE) $(EL_KOTL) \
+HYPERBOLE_FILES = dir info html $(EL_COMPILE) $(EL_KOTL) \
 	$(ELC_COMPILE) $(HY-TALK) ChangeLog COPYING Makefile HY-ABOUT HY-ANNOUNCE HY-NEWS \
 	HY-WHY.kotl INSTALL DEMO DEMO-ROLO.otl MANIFEST README README.md _hypb .hypb smart-clib-sym \
 	topwin.py hyperbole-banner.png $(man_dir)/hkey-help.txt \
 	$(man_dir)/hyperbole.texi $(man_dir)/hyperbole.css $(man_dir)/version.texi
 
-EL_TAGS = $(EL_SRC) $(EL_COMPILE) $(EL_KOTL)
+EL_TAGS = $(EL_COMPILE) $(EL_KOTL)
 
 .SUFFIXES:            # Delete the default suffixes
 .SUFFIXES: .el .elc   # Define the list of file suffixes to match to rules
