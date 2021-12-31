@@ -1,4 +1,4 @@
-;;; hui-menu.el --- Menubar menu of GNU Hyperbole commands
+;;; hui-menu.el --- Menubar menu of GNU Hyperbole commands -*- lexical-binding: t; -*-
 ;;
 ;; Author:       Bob Weiner
 ;;

@@ -1,4 +1,4 @@
-;;; hgnus.el --- GNU Hyperbole buttons in news reader/poster: GNUS
+;;; hgnus.el --- GNU Hyperbole buttons in news reader/poster: GNUS -*- lexical-binding: t; -*-
 ;;
 ;; Author:       Bob Weiner
 ;;
