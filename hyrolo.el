@@ -1224,6 +1224,7 @@ Return number of groupings matched."
 				     (setq start nil))))
 			       start))
 		    (setq grouping-end t)
+		    (outline-hide-subtree) ; hide multiple entry lines
 		    (goto-char (point-max))
 		    (skip-chars-backward " \t\n\r\f")))
 		(not grouping-end)))

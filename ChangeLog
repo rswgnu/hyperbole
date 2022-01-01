@@ -1,3 +1,6 @@
+* hyrolo.el (hyrolo-map-level-1): Fix sorting bug by adding outline-hide-subtree when
+    on last buffer entry so its contents are kept together during hyrolo-sort.
+
 2021-12-26  Bob Weiner  <rsw@gnu.org>
 
 * kotl/kotl-mode.el (kotl-mode:exchange-cells): Signal error if invalid type or value
