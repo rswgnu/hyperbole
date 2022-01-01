@@ -1,4 +1,4 @@
-;;; hsmail.el --- GNU Hyperbole buttons in mail composer: mail and mh-letter
+;;; hsmail.el --- GNU Hyperbole buttons in mail composer: mail and mh-letter -*- lexical-binding: t; -*-
 ;;
 ;; Author:       Bob Weiner
 ;;

@@ -393,5 +393,75 @@
           (should (string= (kcell-view:label (point)) "1a")))
       (delete-file kotl-file))))
 
+(ert-deftest kotl-mode-transpose-cell ()
+  "Transpose cells and leave point in cell."
+  (let ((kotl-file (make-temp-file "hypb" nil ".kotl")))
+    (unwind-protect
+        (progn
+          (find-file kotl-file)
+          (insert "first")
+          (kotl-mode:add-cell)
+          (insert "second")
+          (kotl-mode:beginning-of-cell)
+          (should (string= (kcell-view:idstamp) "02"))
+          (should (looking-at-p "second"))
+
+          (kotl-mode:transpose-cells 1)
+
+          (should (string= (kcell-view:idstamp) "01"))
+          (should (looking-at-p "first"))))
+      (delete-file kotl-file)))
+
+(ert-deftest kotl-mode-transpose-cell-with-mark ()
+  "Transpose cell with cell with mark and change point to mark."
+  (let ((kotl-file (make-temp-file "hypb" nil ".kotl")))
+    (unwind-protect
+        (progn
+          (find-file kotl-file)
+          (insert "first")
+          (push-mark)
+          (kotl-mode:add-cell)
+          (insert "second")
+          (kotl-mode:add-cell)
+          (insert "third")
+          (kotl-mode:beginning-of-cell)
+          (should (string= (kcell-view:idstamp) "03"))
+          (should (looking-at-p "third"))
+
+          (kotl-mode:transpose-cells 0)
+
+          (should (string= (kcell-view:idstamp) "03"))
+          (should (looking-at-p "third"))
+          (should (kotl-mode:first-cell-p)))
+      (delete-file kotl-file))))
+
+(ert-deftest kotl-mode-transpose-cell-past-multiple-cells ()
+  "Transpose cell past multiple cells."
+  (let ((kotl-file (make-temp-file "hypb" nil ".kotl")))
+    (unwind-protect
+        (progn
+          (find-file kotl-file)
+          (insert "first")
+          (kotl-mode:add-cell)
+          (insert "second")
+          (kotl-mode:add-cell)
+          (insert "third")
+          (kotl-mode:beginning-of-buffer)
+          (should (string= (kcell-view:idstamp) "01"))
+          (should (looking-at-p "first"))
+
+          (kotl-mode:transpose-cells 2)
+
+          ; Point moves to cell two
+          (should (string= (kcell-view:idstamp) "03"))
+          (should (looking-at-p "third"))
+
+          ; Verify first cells was moved last
+          (kotl-mode:end-of-buffer)
+          (should (string= (kcell-view:idstamp) "01"))
+          (kotl-mode:beginning-of-cell)
+          (should (looking-at-p "first")))
+      (delete-file kotl-file))))
+
 (provide 'kotl-mode-tests)
 ;;; kotl-mode-tests.el ends here

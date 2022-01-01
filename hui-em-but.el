@@ -1,4 +1,4 @@
-;;; hui-em-but.el --- GNU Emacs button highlighting and flashing support
+;;; hui-em-but.el --- GNU Emacs button highlighting and flashing support -*- lexical-binding: t; -*-
 ;;
 ;; Author:       Bob Weiner
 ;;
@@ -166,11 +166,11 @@ expression which matches an entire button string.
 If REGEXP-MATCH is non-nil, only buttons matching this argument are
 highlighted."
   (when hproperty:but-highlight-flag
-    (hbut:map (lambda (lbl start end)
+    (hbut:map (lambda (_lbl start end)
 		(hproperty:but-add start end hproperty:but-face))
 	      start-delim end-delim regexp-match 'include-delims)))
 
-(defun hproperty:but-create-on-yank (prop-value start end)
+(defun hproperty:but-create-on-yank (_prop-value start end)
   (save-restriction
     (narrow-to-region start end)
     (hproperty:but-create-all)))

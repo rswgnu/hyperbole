@@ -1,4 +1,4 @@
-;;; hrmail.el --- GNU Hyperbole buttons in mail reader: Rmail
+;;; hrmail.el --- GNU Hyperbole buttons in mail reader: Rmail -*- lexical-binding: t; -*-
 ;;
 ;; Author:       Bob Weiner
 ;;

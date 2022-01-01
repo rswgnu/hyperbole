@@ -46,6 +46,32 @@
     variables are utilized for absolute expansions.
         (hpath:find): Add loose test that hpath:display-path-function successfully displayed link in a buffer.
 
+2021-12-30  Mats Lidell  <matsl@gnu.org>
+
+* hui-menu.el:
+* hui-em-but.el:
+* hsmail.el:
+* hrmail.el:
+* hmh.el:
+* hgnus.el: Use lexical-binding
+
+* test/hyrolo-tests.el (hyrolo-sort-test): Add hyrolo sort test.
+
+2021-12-29  Mats Lidell  <matsl@gnu.org>
+
+* test/hmouse-info-tests.el (hmouse-info-read-index-with-completion)
+                            (hmouse-info-build-completions-no-match)
+                            (hmouse-info-build-completions-multiple-matches):
+    hmouse-info tests.
+
+2021-12-28  Mats Lidell  <matsl@gnu.org>
+
+* kotl/kotl-mode.el (kotl-mode:exchange-cells): Use cl-copy-list.
+
+* test/kotl-mode-tests.el (kotl-mode-transpose-cell)
+(kotl-mode-transpose-cell-with-mark)
+(kotl-mode-transpose-cell-past-multiple-cells): Add test for kotl-mode:transpose-cells.
+
 2021-12-26  Bob Weiner  <rsw@gnu.org>
 
 * kotl/kotl-mode.el (kotl-mode:exchange-cells): Signal error if invalid type or value
