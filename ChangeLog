@@ -1,5 +1,7 @@
 2021-12-31  Mats Lidell  <matsl@gnu.org>
 
+* Makefile (EL_SRC): Remove EL_SRC, compile all el-files.
+
 * hui-mini.el: Use lexical binding.
 
 2021-12-31  Bob Weiner  <rsw@gnu.org>
