@@ -394,8 +394,8 @@ modification   Signal an error when no such button is found."
 					  nil t nil 'gbut)))))
   (let ((lbl (hbut:key-to-label lbl-key))
         (interactive-flag (called-interactively-p 'interactive))
-	(src-dir default-directory)
 	(but-buf (find-file-noselect gbut:file))
+	(src-dir (file-name-directory gbut:file))
 	actype but new-lbl)
     (save-excursion
       (unless interactive-flag

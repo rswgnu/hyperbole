@@ -1,3 +1,11 @@
+2021-12-31  Bob Weiner  <rsw@gnu.org>
+
+* hui.el (hui:gbut-modify): Fix 'src-dir' to be dir of 'gbut:file' not default-directory.
+
+* hargs.el (hargs:defaults): Defined this variable.
+  hactypes.el (exec-shell-command, exec-window-command, link-to-file, link-to-ibut):
+    Change 'defaults' to 'hargs:defaults' and make that a global variable.
+
 * hyrolo.el (hyrolo-map-level-1): Fix sorting bug by adding outline-hide-subtree when
     on last buffer entry so its contents are kept together during hyrolo-sort.
 
@@ -7,6 +15,36 @@
   test/hy-test-helpers.el (hy-test-helpers:action-key-should-call-hpath:find):
     Add call to hpath:mswindows-to-posix or under WSL, absolute prefix may not match,
     e.g. one path starts with '/mnt/c' and another with '/c'.
+
+* hpath.el (hpath:remote-regexp, hpath:url-hostnames-regexp, hpath:remote-at-p,
+            hpath:remote-p, substitute-in-file-name, hpath:is-p):
+    Add sftp support.
+
+* hpath.el (hpath:call): Add 3rd arg non-exist to allow for return of non-existent
+    pathnames.
+
+* hpath.el (hpath:find): Include full path with prefix modifier and # anchor in error
+    messages and handle "#Section" links in buffers without attached files.
+           (hpath:display-buffer-other-frame):
+           (hpath:display-buffer-alist): Update new-frame function to copy current
+    frame parameters and to allow isearch to turn off.
+           (hpath:to-markup-anchor): When searching for anchors, treat all caps
+    filenames without suffix like outlines, e.g. README, INSTALL.
+
+2021-12-30  Bob Weiner  <rsw@gnu.org>
+
+* hload-path.el: Add "{hyperb:dir}/test" subdir to load-path so can link to its
+    files without giving any path.
+
+* hpath.el (hpath:expand-with-variable): Fix to handle Lisp symbol auto-variable-alist
+    entries properly.  For example, Elisp file names were not being expanded with
+    the load-path variable.  Also, don't expand URLs.
+        (hpath:expand): Fix to expand path only when not already absolute and a variable
+    matching the path suffix is found.  Any variable added is resolved only if the path
+    then points to an existing, readable file.
+        (hpath:absolute-to, hpath:call): Call hpath:expand to ensure hpath:auto-variable-alist
+    variables are utilized for absolute expansions.
+        (hpath:find): Add loose test that hpath:display-path-function successfully displayed link in a buffer.
 
 2021-12-26  Bob Weiner  <rsw@gnu.org>
 
@@ -89,8 +127,8 @@
 * hargs.el (hargs:actype-get): Change to set 'modifying' to t if non-nil
     for lower-level function call conformance.
            (hargs:iform-read): Change 'modifying' param to 'defaults'.
-    If it is t, then get current Hyperbole button is being modified,
-    get defaults from it, otherwise, use the value as the defaults
+    If it is t, then current Hyperbole button is being modified,
+    get defaults from it; otherwise, use the value as a list of defaults
     when prompting for arguments.  Eliminate use of hargs:defaults
     dynamic variable.
 

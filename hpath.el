@@ -406,23 +406,27 @@ the function (hpath:get-external-display-alist) for external display program set
   (list
    (list 'this-window   #'switch-to-buffer)
    (list 'other-window  (lambda (b)
-			    (if (br-in-browser)
-				(progn (br-to-view-window) (switch-to-buffer b))
-			      (switch-to-buffer-other-window b))))
+			  (if (br-in-browser)
+			      (progn (br-to-view-window)
+				     (switch-to-buffer b))
+			    (switch-to-buffer-other-window b))))
    (list 'one-window    (lambda (b)
-			    (if (br-in-browser)
-				(br-quit))
-			    (delete-other-windows)
-			    (switch-to-buffer b)))
+			  (when (br-in-browser)
+			    (br-quit))
+			  (delete-other-windows)
+			  (switch-to-buffer b)))
    (list 'new-frame     (lambda (b)
-			    (select-frame (make-frame))
-			    (switch-to-buffer b)))
+			  ;; Give temporary modes such as isearch a chance to turn off.
+			  (run-hooks 'mouse-leave-buffer-hook)
+			  (select-frame (make-frame (frame-parameters)))
+			  (switch-to-buffer b)))
    (list 'other-frame   #'hpath:display-buffer-other-frame)
    (list 'other-frame-one-window   (lambda (b)
-				       (hpath:display-buffer-other-frame b)
-				       (delete-other-windows))))
+				     (hpath:display-buffer-other-frame b)
+				     (delete-other-windows))))
   "*Alist of (DISPLAY-WHERE-SYMBOL  DISPLAY-BUFFER-FUNCTION) elements.
 This permits fine-grained control of where Hyperbole displays linked to buffers.
+
 The default value of DISPLAY-WHERE-SYMBOL is given by `hpath:display-where'.
 Valid DISPLAY-WHERE-SYMBOLs are:
     this-window             - display in the current window
@@ -440,22 +444,22 @@ See documentation of `hpath:display-where-alist' for valid values.")
   (list
    (list 'this-window  #'find-file)
    (list 'other-window (lambda (f)
-			   (if (br-in-browser)
-			       (progn (br-to-view-window)
-				      (find-file f))
-			     (find-file-other-window f))))
+			 (if (br-in-browser)
+			     (progn (br-to-view-window)
+				    (find-file f))
+			   (find-file-other-window f))))
    (list 'one-window   (lambda (f)
-			   (if (br-in-browser) (br-quit))
-			   (delete-other-windows)
-			   (find-file f)))
+			 (if (br-in-browser) (br-quit))
+			 (delete-other-windows)
+			 (find-file f)))
    (list 'new-frame    (lambda (f)
-			   (if (fboundp 'find-file-new-frame)
-			       (find-file-new-frame f)
-			     (hpath:find-other-frame f))))
+			 (if (fboundp 'find-file-new-frame)
+			     (find-file-new-frame f)
+			   (hpath:find-other-frame f))))
    (list 'other-frame  #'hpath:find-other-frame)
    (list 'other-frame-one-window (lambda (f)
-				     (hpath:find-other-frame f)
-				     (delete-other-windows))))
+				   (hpath:find-other-frame f)
+				   (delete-other-windows))))
   "*Alist of (DISPLAY-WHERE-SYMBOL DISPLAY-FILE-FUNCTION) elements.
 This permits fine-grained control of where Hyperbole displays linked to files.
 The default value of DISPLAY-WHERE-SYMBOL is given by `hpath:display-where'.
@@ -527,7 +531,7 @@ Its match groupings and their names are:
   7 = hpath:portnumber-grpn  = optional port number to use
   8 = hpath:pathname-grpn    = optional pathname to access.")
 
-(defvar hpath:url-hostnames-regexp  "\\(www\\|ftp\\|telnet\\|news\\|nntp\\)"
+(defvar hpath:url-hostnames-regexp  "\\(www\\|s?ftp\\|telnet\\|news\\|nntp\\)"
   "Grouped regexp alternatives of hostnames that automatically determine the Url access protocol to use.")
 
 (defvar hpath:url-regexp2
@@ -573,7 +577,7 @@ Its match groupings and their names are:
 (defconst hpath:sitename-grpn 5
   "URL site to connect to.  See doc for `hpath:url-regexp' and `hpath:url-regexp[2,3]'.")
 (defconst hpath:hostname-grpn 6
-  "Hostname used to determine the access protocol, e.g. ftp.domain.com.
+  "Hostname used to determine the access protocol, e.g. sftp.domain.com.
 See doc for `hpath:url-regexp' and `hpath:url-regexp[2,3]'.")
 (defconst hpath:portnumber-grpn 7
   "Optional port number to use.  See doc for `hpath:url-regexp' and `hpath:url-regexp[2,3]'.")
@@ -622,7 +626,7 @@ These are used to indicate how to display or execute the pathname.
   & means run it under the current window system.")
 
 (defvar hpath:remote-regexp
-  "\\`/[^/:]+:\\|\\`ftp[:.]\\|\\`www\\.\\|\\`https?:"
+  "\\`/[^/:]+:\\|\\`s?ftp[:.]\\|\\`www\\.\\|\\`https?:"
   "Regexp matching remote pathnames and urls which invoke remote file handlers.")
 
 (defconst hpath:shell-modes '(sh-mode csh-mode shell-script:mode)
@@ -666,31 +670,39 @@ Other arguments are returned unchanged."
 
 (defun hpath:absolute-to (path &optional default-dirs)
   "Return PATH as an absolute path relative to one directory from optional DEFAULT-DIRS or `default-directory'.
-Return PATH unchanged when it is a buffer name or not a valid path or when DEFAULT-DIRS
-is invalid.  DEFAULT-DIRS when non-nil may be a single directory or a list of
-directories.  The first one in which PATH is found is used."
-  (cond ((not (and (stringp path)
-		   (not (get-buffer path))
-		   (not (hypb:object-p path))
-                   (hpath:is-p (hpath:trim path) nil t)))
-         path)
-        ((progn (setq path (hpath:trim path))
-                (not (cond ((null default-dirs)
-                            (setq default-dirs (cons default-directory nil)))
-                           ((stringp default-dirs)
-                            (setq default-dirs (cons default-dirs nil)))
-                           ((listp default-dirs))
-                           (t nil))))
-         path)
-        (t
-         (let ((rtn) dir)
-           (while (and default-dirs (null rtn))
-             (setq dir (expand-file-name
-                        (file-name-as-directory (car default-dirs)))
-                   rtn (expand-file-name path dir)
-                   default-dirs (cdr default-dirs))
-             (or (file-exists-p rtn) (setq rtn nil)))
-           (or rtn path)))))
+Return PATH unchanged when it is absolute, a buffer name, not a valid path,
+or when DEFAULT-DIRS is invalid.  DEFAULT-DIRS when non-nil may be a single
+directory or a list of directories.  The first one in which PATH is found is
+used."
+  (hpath:call
+   (lambda (path non-exist)
+     (when (stringp path)
+       (setq path (hpath:trim path)))
+     (cond ((not (and (stringp path)
+		      (not (hypb:object-p path))
+		      (setq path (hpath:expand path))
+		      (not (get-buffer path))
+		      (not (file-name-absolute-p path))
+                      (hpath:is-p path nil non-exist)))
+            path)
+           ((not (cond ((null default-dirs)
+			(setq default-dirs (cons default-directory nil)))
+                       ((stringp default-dirs)
+			(setq default-dirs (cons default-dirs nil)))
+                       ((listp default-dirs))
+                       (t nil)))
+            path)
+           (t
+            (let ((rtn) dir)
+              (while (and default-dirs (null rtn))
+		(setq dir (expand-file-name
+                           (file-name-as-directory (car default-dirs)))
+                      rtn (expand-file-name path dir)
+                      default-dirs (cdr default-dirs))
+		(unless (file-exists-p rtn)
+		  (setq rtn nil)))
+              (or rtn path)))))
+   path 'allow-spaces))
 
 (defun hpath:tramp-file-name-regexp ()
   "Return a modified `tramp-file-name-regexp' for matching to the beginning of a remote file name.
@@ -718,9 +730,9 @@ Always returns nil if (hpath:remote-available-p) returns nil."
 		     (looking-at (hpath:tramp-file-name-regexp)))
 		(match-string-no-properties 0))
 	       ((looking-at hpath:url-regexp)
-		(if (string-equal (match-string-no-properties hpath:protocol-grpn) "ftp")
+		(if (string-match-p "\\`s?ftp\\'" (match-string-no-properties hpath:protocol-grpn))
 		    (concat
-		     "/ftp:"
+		     (format "/%s:" (match-string-no-properties hpath:protocol-grpn))
 		     ;; user
 		     (if (match-beginning hpath:username-grpn)
 			 (match-string-no-properties hpath:username-grpn)
@@ -736,9 +748,10 @@ Always returns nil if (hpath:remote-available-p) returns nil."
 		  ))
 	       ((or (looking-at hpath:url-regexp2)
 		    (looking-at hpath:url-regexp3))
-		(if (string-equal (match-string-no-properties hpath:hostname-grpn) "ftp")
+		(if (string-match-p "\\`s?ftp\\'" (match-string-no-properties hpath:hostname-grpn))
 		    (concat
-		     "/ftp:" user "@"
+		     (format "/%s:" (match-string-no-properties hpath:hostname-grpn))
+		     user "@"
 		     ;; site
 		     (hpath:delete-trailer
 		      (match-string-no-properties hpath:sitename-grpn))
@@ -782,7 +795,7 @@ Always returns nil if (hpath:remote-available-p) returns nil."
 		((eq remote-package 'tramp)
 		 (if (tramp-tramp-file-p path) path))
 		((string-match hpath:string-url-regexp path)
-		 (if (string-equal "ftp" (match-string-no-properties hpath:protocol-grpn path))
+		 (if (string-match-p "\\`s?ftp\\'" (match-string-no-properties hpath:protocol-grpn path))
 		     (concat
 		      "/"
 		      ;; user
@@ -800,7 +813,9 @@ Always returns nil if (hpath:remote-available-p) returns nil."
 		   ))
 		((or (string-match hpath:string-url-regexp2 path)
 		     (string-match hpath:string-url-regexp3 path))
-		 (if (string-equal "ftp" (match-string-no-properties hpath:hostname-grpn path))
+		 (if (string-match-p "\\`s?ftp\\'"
+				     (match-string-no-properties hpath:hostname-grpn path))
+		     
 		     (concat
 		      "/" user "@"
 		      ;; site
@@ -871,11 +886,13 @@ paths are allowed.  Absolute pathnames must begin with a `/' or `~'."
 	  ((hpath:remote-at-p))
 	  ((hpath:www-at-p) nil))))
 
-(defun hpath:call (func path)
-  "Call FUNC with one argument, a PATH, stripped of any prefix operator and suffix location.
+(defun hpath:call (func path &optional non-exist)
+  "Call FUNC with a PATH, stripped of any prefix operator and suffix location, and optional NON-EXIST flag.
+NON-EXIST may be either t (path cannot contain whitespace) or 'allow-spaces to allow for whitespace.
+
 Return the result of calling FUNC, which must be either nil or the
 possibly modified path, but with the prefix and suffix reattached.
-Make any path within a file buffer absolute before returning. "
+Make any existing path within a file buffer absolute before returning."
   (unless (or (functionp func) (subrp func))
     (error "(hpath:call): Invalid function: %s" func))
   (unless (stringp path)
@@ -883,6 +900,7 @@ Make any path within a file buffer absolute before returning. "
   ;; Convert tabs and newlines to space.
   (setq path (hbut:key-to-label (hbut:label-to-key path)))
   (let* ((orig-path path)
+	 (expanded-path)
 	 (prefix (car (delq nil (list (when (string-match hpath:prefix-regexp path)
 					(prog1 (match-string 0 path)
 					  (setq path (substring path (match-end 0)))))
@@ -905,32 +923,51 @@ Make any path within a file buffer absolute before returning. "
 						   (when (string-match hpath:markup-link-anchor-regexp path)
 						     (prog1 (concat "#" (match-string 3 path))
 						       (setq path (substring path 0 (match-beginning 2)))))))))))
-    (setq path (funcall func path))
-    (when (or (and path (not (string-empty-p path)))
-	      ;; If just a numeric suffix like ":40" by itself, ignore
-	      ;; it, but if a markdown type suffix alone, like
-	      ;; "#section", use it.
-	      (and suffix (not (string-empty-p suffix))
-		   (= ?# (aref suffix 0))))
-      (setq path (concat prefix path suffix))
-      ;; If path is just a local reference that begins with #,
-      ;; in a file buffer, prepend the file name to it.  If an HTML
-      ;; file, prepend file:// to it.
-      (let ((mode-prefix (if (memq major-mode '(js2-mode js-mode js3-mode javascript-mode html-mode web-mode))
-			     "file://" "")))
-	(cond ((and buffer-file-name
-		    ;; ignore HTML color strings
-		    (not (string-match "\\`#[0-9A-Fa-f][0-9A-Fa-f][0-9A-Fa-f][0-9A-Fa-f][0-9A-Fa-f][0-9A-Fa-f]\\'" path))
-		    ;; match to in-file HTML references
-		    (string-match "\\`#[^\'\"<>#]+\\'" path))
-	       (setq path (concat mode-prefix buffer-file-name path)))
-	      ((string-match "\\`[^#]+\\(#[^#]*\\)\\'" path)
-	       ;; file and # reference
-	       (if (memq (aref path 0) '(?/ ?~))
-		   ;; absolute
-		   (setq path (concat mode-prefix path))
-		 (setq path (concat mode-prefix default-directory path))))
-	      (t path))))))
+    (setq expanded-path (hpath:expand path)
+	  path (funcall func expanded-path non-exist))
+    ;; If path is just a local reference that begins with #,
+    ;; in a file buffer, prepend the file name to it.  If an HTML
+    ;; file, prepend file:// to it.
+    (let ((mode-prefix (if (memq major-mode '(js2-mode js-mode js3-mode javascript-mode html-mode web-mode))
+			   "file://"
+			 "")))
+      (if (and path
+	       (not (string-empty-p path))
+	       ;; If just a numeric suffix like ":40" by itself, ignore
+	       ;; it, but if a markdown type suffix alone, like
+	       ;; "#section", use it.
+	       (and suffix (not (string-empty-p suffix))
+		    (= ?# (aref suffix 0))))
+	  (progn
+	    (setq path (concat prefix path suffix))
+	    (cond ((and buffer-file-name
+			;; ignore HTML color strings
+			(not (string-match "\\`#[0-9A-Fa-f][0-9A-Fa-f][0-9A-Fa-f][0-9A-Fa-f][0-9A-Fa-f][0-9A-Fa-f]\\'" path))
+			;; match to in-file HTML references
+			(string-match "\\`#[^\'\"<>#]+\\'" path))
+		   (setq path (concat mode-prefix buffer-file-name path)))
+		  ((string-match "\\`\\([^#]+\\)\\(#[^#]*\\)\\'" path)
+		   ;; file and # reference
+		   (setq suffix (match-string 2 path)
+			 path (match-string 1 path))
+		   (if (file-name-absolute-p path)
+		       ;; already absolute
+		       (setq path (concat mode-prefix path suffix))
+		     ;; make absolute
+		     (setq path (hpath:expand path))
+		     (unless (string-match "\\$@?\{\\([^\}]+\\)@?\}" path)
+		       (expand-file-name path))
+		     (setq path (concat mode-prefix path suffix))))
+		  (t path)))
+
+	(when (or (and (stringp suffix) (not (string-empty-p suffix))
+		       (= ?# (aref suffix 0)))
+		  (and (stringp expanded-path)
+		       (or non-exist
+			   (file-name-absolute-p expanded-path) ;; absolute path
+			   (string-match "\\$@?\{[^\}]+@?\}" expanded-path) ;; path with var
+			   (string-match "\\`([^\):]+)" expanded-path)))) ;; Info node
+	  (concat prefix mode-prefix expanded-path suffix))))))
 
 (defun hpath:is-path-variable-p (path-var)
   "Return the value of a colon or semicolon-delimited set in PATH-VAR or nil if not a match."
@@ -1005,7 +1042,7 @@ is displayed or nil if not displayed because BUFFER is invalid."
   (interactive "bDisplay buffer: ")
   (if (stringp buffer) (setq buffer (get-buffer buffer)))
   (when buffer
-    ;; BW 4/30/2016 - Commented out in case interferes with Smart Key
+    ;; RSW 4/30/2016 - Commented out in case interferes with Smart Key
     ;; selection and yanking of the region via drags.
     ;; (hpath:push-tag-mark)
     (funcall (hpath:display-buffer-function display-where) buffer)
@@ -1019,6 +1056,8 @@ May create a new frame, or reuse an existing one.  See the
 documentation of `hpath:display-buffer' for details.  Return the
 window in which the buffer is displayed."
   (interactive "bDisplay buffer in other frame: ")
+  ;; Give temporary modes such as isearch a chance to turn off.
+  (run-hooks 'mouse-leave-buffer-hook)
   ;; BW 4/30/2016 - Commented out in case interferes with Smart Key
   ;; selection and yanking or the region via drags.
   ;; (hpath:push-tag-mark)
@@ -1039,19 +1078,22 @@ window in which the buffer is displayed."
   (hpath:display-where-function display-where hpath:display-where-alist))
 
 (defun hpath:expand (path)
-  "Expand relative PATH using the load variable from the first file matching regexp in `hpath:auto-variable-alist'."
-  (unless (file-name-absolute-p path)
-    (let ((substituted-path (hpath:substitute-value
-			     (if (string-match "\\`[\\/~.]" path)
-				 (expand-file-name path)
-			       (hpath:expand-with-variable path)))))
-      (unless (string-match "\\$@?\{\\([^\}]+\\)@?\}" substituted-path)
-	  ;; When no valid variable substitution was found after
-	  ;; potentially adding a variable to the path, use
-	  ;; unchanged path.
-	(setq path substituted-path))))
-  ;; For compressed Elisp libraries, add any found compressed suffix to the path.
-  (or (locate-library path t) path))
+  "Expand relative PATH using the path variable from the first file matching regexp in `hpath:auto-variable-alist'.
+Return any absolute PATH unchanged."
+  (when (stringp path)
+    (let (variable-path
+	  substituted-path)
+      (setq variable-path (hpath:expand-with-variable path)
+	    substituted-path (hpath:substitute-value variable-path)
+	    path substituted-path)
+      (if (and (string-match "\\$@?\{\\([^\}]+\\)@?\}" variable-path)
+	       (string-match "\\$@?\{\\([^\}]+\\)@?\}" substituted-path))
+	  ;; If a path is invalid, then a variable may have been prepended but
+	  ;; it will remain unresolved in 'substituted-path', in which case we
+	  ;; want to return 'path' without any further changes.
+	  path
+	;; For compressed Elisp libraries, add any found compressed suffix to the path.
+	(or (locate-library path t) path)))))
 
 (defun hpath:prepend-ls-directory ()
   "When in a shell buffer and on a filename result of an 'ls *' or recursive 'ls', prepend the subdir to the filename and return it, else nil."
@@ -1072,26 +1114,33 @@ window in which the buffer is displayed."
    "Regexp of compressed file name suffixes.")
 
 (defun hpath:expand-with-variable (path)
-  "Assume PATH is relative and prepend to it the ${load variable name} from the first file matching regexp in `hpath:auto-variable-alist' sans any compression suffix in `hpath:compressed-suffix-regexp'."
-  (let ((auto-variable-alist hpath:auto-variable-alist)
-	(compression-suffix (when (string-match hpath:compressed-suffix-regexp path)
-			      (prog1 (match-string 0 path)
-				(setq path (substring path 0 (match-beginning 0))))))
-	regexp
-	variable)
-    (while auto-variable-alist
-      (setq regexp (caar auto-variable-alist)
-	    variable (cdar auto-variable-alist)
-	    auto-variable-alist (cdr auto-variable-alist))
-      (when (and variable (symbolp variable))
-	(setq variable (symbol-name variable)))
-      (when (and path variable (string-match regexp path))
-	(when (and (not (string-match (regexp-quote variable) path))
-		   (or (and (stringp variable) (getenv variable))
-		       (and (symbolp variable) (boundp variable))))
-	  (setq path (format "${%s}/%s" variable path)))
-	(setq auto-variable-alist nil)))
-    (concat path compression-suffix)))
+  "When PATH is relative, prepend to it the ${load variable name} from the first file matching regexp in `hpath:auto-variable-alist' sans any compression suffix in `hpath:compressed-suffix-regexp'.
+If PATH is absolute, return it unchanged."
+  (when (stringp path)
+    (let ((auto-variable-alist hpath:auto-variable-alist)
+	  (compression-suffix (when (string-match hpath:compressed-suffix-regexp path)
+				(prog1 (match-string 0 path)
+				  (setq path (substring path 0 (match-beginning 0))))))
+	  regexp
+	  variable
+	  variable-name)
+      (unless (or (file-name-absolute-p path)
+		  (hpath:url-p path)
+		  (string-match "\\`\\$@?\{\\([^\}]+\\)@?\}" path))
+	(while auto-variable-alist
+	  (setq regexp (caar auto-variable-alist)
+		variable (cdar auto-variable-alist)
+		auto-variable-alist (cdr auto-variable-alist)
+		variable-name (if (and variable (symbolp variable))
+				  (symbol-name variable)
+				variable))
+	  (when (and path variable (string-match regexp path))
+	    (when (and (not (string-match (regexp-quote variable-name) path))
+		       (or (and (stringp variable) (getenv variable))
+			   (and (symbolp variable) (boundp variable))))
+	      (setq path (format "${%s}/%s" variable path)))
+	    (setq auto-variable-alist nil))))
+      (concat path compression-suffix))))
 
 (defun hpath:file-line-and-column (path-line-and-col)
   "Given a `path-line-and-col' string of format: path:line:col, return a list with the parts parsed out, else nil."
@@ -1120,8 +1169,8 @@ See `hpath:find' documentation for acceptable formats of FILENAME."
 
 (defun hpath:find (filename &optional display-where noselect)
   "Edit FILENAME using user customizable settings of display program and location.
-Return the current buffer iff file is displayed within a buffer (not with an external
-program), else nil.
+Return the current buffer iff file is read into a buffer (not displayed with
+an external program), else nil.
 
 FILENAME may contain references to Emacs Lisp variables or shell
 environment variables using the syntax, \"${variable-name}\".
@@ -1189,18 +1238,20 @@ buffer but don't display it."
 	      filename "")
       (setq path (hpath:expand path)
 	    filename (hpath:absolute-to path default-directory)))
-    (if noselect
-	(let ((buf (find-file-noselect filename)))
-	  (with-current-buffer buf
-	    (when (or hash anchor) (hpath:to-markup-anchor hash anchor))
-	    buf))
-      (let ((remote-filename (hpath:remote-p path)))
-	(or modifier remote-filename
-	    (file-exists-p filename)
-	    (error "(hpath:find): \"%s\" does not exist" filename))
-	(or modifier remote-filename
-	    (file-readable-p filename)
-	    (error "(hpath:find): \"%s\" is not readable" filename))
+    (let ((remote-filename (hpath:remote-p path)))
+      (or modifier remote-filename
+	  (file-exists-p filename)
+	  (error "(hpath:find): \"%s\" does not exist"
+		 (concat modifier filename (when hash "#") anchor)))
+      (or modifier remote-filename
+	  (file-readable-p filename)
+	  (error "(hpath:find): \"%s\" is not readable"
+		 (concat modifier filename (when hash "#") anchor)))
+      (if noselect
+	  (let ((buf (find-file-noselect filename)))
+	    (with-current-buffer buf
+	      (when (or hash anchor) (hpath:to-markup-anchor hash anchor))
+	      buf))
 	;; If filename is a remote file (not a directory), we have to copy it to
 	;; a temporary local file and then display that.
 	(when (and remote-filename (not (file-directory-p remote-filename)))
@@ -1210,38 +1261,64 @@ buffer but don't display it."
 		     t t)
 	  (setq filename (cond (anchor (concat remote-filename "#" anchor))
 			       (hash   (concat remote-filename "#"))
-			       (t path)))))
-      (cond (modifier (cond ((= modifier ?!)
-			     (hact 'exec-shell-cmd filename))
-			    ((= modifier ?&)
-			     (hact 'exec-window-cmd filename))
-			    ((= modifier ?-)
-			     (hact 'load filename)))
+			       (t path))))))
+    (cond (modifier (cond ((= modifier ?!)
+			   (hact 'exec-shell-cmd filename))
+			  ((= modifier ?&)
+			   (hact 'exec-window-cmd filename))
+			  ((= modifier ?-)
+			   (hact 'load filename)))
+		    nil)
+
+	  ;; If no path, e.g. just an anchor link in a non-file buffer,
+	  ;; then must display within Emacs, ignoring any external programs.
+	  ((string-empty-p path)
+	   (hpath:display-buffer (current-buffer) display-where)
+	   (when (or hash anchor)
+	     (hpath:to-markup-anchor hash anchor))
+	   (when line-num
+	     ;; With an anchor, goto line relative to anchor
+	     ;; location, otherwise use absolute line number
+	     ;; within the visible buffer portion.
+	     (if (or hash anchor)
+		 (forward-line line-num)
+	       (hpath:to-line line-num)))
+	   (when col-num (move-to-column col-num))
+	   (current-buffer))
+
+	  ;; Display paths either internally or externally.
+	  (t (let ((display-executables (hpath:find-program path))
+		   executable)
+	       (cond ((stringp display-executables)
+		      (hact 'exec-window-cmd
+			    (hpath:command-string display-executables filename))
 		      nil)
-	    (t (let ((display-executables (hpath:find-program path))
-		     executable)
-		 (cond ((stringp display-executables)
-			(hact 'exec-window-cmd
-			      (hpath:command-string display-executables filename))
-			nil)
-		       ((functionp display-executables)
-			(funcall display-executables filename)
-			(current-buffer))
-		       ((and (listp display-executables) display-executables)
-			(setq executable (hpath:find-executable display-executables))
-			(if executable
-			    (hact 'exec-window-cmd
-				  (hpath:command-string executable filename))
-			  (error "(hpath:find): No available executable from: %s"
-				 display-executables)))
-		       (t (setq path (hpath:validate path))
-			  (funcall (hpath:display-path-function display-where) path)
-			  (when (or hash anchor) (hpath:to-markup-anchor hash anchor))
+		     ((functionp display-executables)
+		      (funcall display-executables filename)
+		      (current-buffer))
+		     ((and (listp display-executables) display-executables)
+		      (setq executable (hpath:find-executable display-executables))
+		      (if executable
+			  (hact 'exec-window-cmd
+				(hpath:command-string executable filename))
+			(error "(hpath:find): No available executable from: %s"
+			       display-executables)))
+		     (t (setq path (hpath:validate path))
+			(funcall (hpath:display-path-function display-where) path)
+			;; Perform a loose test that the current buffer
+			;; file name matches the path file name since exact
+			;; matching of path is likely to be wrong in
+			;; certain cases, e.g. with mount point or os path
+			;; alterations.
+			(when (and buffer-file-name
+				   (equal (file-name-nondirectory path)
+					  (file-name-nondirectory buffer-file-name)))
+			  (when (or hash anchor)
+			    (hpath:to-markup-anchor hash anchor))
 			  (when line-num
-			    ;; With an anchor, goto line relative to
-			    ;; anchor location, otherwise use absolute
-			    ;; line number within the visible buffer
-			    ;; portion.
+			    ;; With an anchor, goto line relative to anchor
+			    ;; location, otherwise use absolute line number
+			    ;; within the visible buffer portion.
 			    (if (or hash anchor)
 				(forward-line line-num)
 			      (hpath:to-line line-num)))
@@ -1279,7 +1356,10 @@ buffer but don't display it."
 				      (subst-char-in-string ?- ?\  anchor))))
 		  (goto-char (point-min))
 		  (if (re-search-forward (format
-					  (cond ((derived-mode-p 'outline-mode) ;; Includes Org mode
+					  (cond ((or (derived-mode-p 'outline-mode) ;; Includes Org mode
+						     ;; Treat all caps filenames without suffix like outlines, e.g. README, INSTALL.
+						     (and buffer-file-name
+							  (string-match-p "\\`[A-Z][A-Z0-9]+\\'" buffer-file-name)))
 						 hpath:outline-section-pattern)
 						(prog-mode
 						 "%s")
@@ -1382,17 +1462,19 @@ See also `hpath:internal-display-alist' for internal, `window-system' independen
   "Return normalized PATH if PATH is a Posix or MSWindows path, else nil.
 If optional TYPE is the symbol 'file or 'directory, then only that path type
 is accepted as a match.  The existence of the path is checked only for
-locally reachable paths (Info paths are not checked).  With optional NON-EXIST,
-nonexistent local paths are allowed.  Single spaces are permitted in the middle
-of existing pathnames, but not at the start or end.
+locally reachable paths (Info paths are not checked).
 
-Before the pathname is checked for existence, tabs and newlines
-are converted to a single space, `hpath:prefix-regexp' matches at
-the start are temporarily stripped, \"file://\" prefixes are
-stripped, link anchors at the end following a # or , character
-are temporarily stripped, and path variables are expanded with
-`hpath:substitute-value'.  This normalized path form is what is
-returned for PATH."
+Single spaces are permitted in the middle of existing pathnames, but not at
+the start or end.  With optional NON-EXIST equal to t, nonexistent local
+paths without spaces are allowed.  Set NON-EXIST to 'allow-spaces to allow
+spaces in non-existent paths.
+
+Before the pathname is checked for existence, sequences of tabs and newlines
+are converted to a single space, `hpath:prefix-regexp' matches at the start
+are temporarily stripped, \"file://\" prefixes are stripped, link anchors at
+the end following a # or , character are temporarily stripped, and path
+variables are expanded with `hpath:substitute-value'.  This normalized path
+form is what is returned for PATH."
   (when (and (stringp path) (not (string-match hpath:path-variable-value-regexp path))
 	     ;; If a single character in length, must be a word or symbol character
 	     (or (/= (length path) 1) (and (string-match "\\sw\\|\\s_" path)
@@ -1400,7 +1482,7 @@ returned for PATH."
     (setq path (hpath:mswindows-to-posix path))
     (unless (string-match "\\`[.~/]\\'" path)
       (setq path (hpath:call
-		  (lambda (path)
+		  (lambda (path non-exist)
 		    (let (modifier
 			  suffix)
 		      (and (not (or (string-equal path "")
@@ -1411,12 +1493,15 @@ returned for PATH."
 			   (or (when (string-match "\\$@?\{[^\}]+@?\}" path)
 				 ;; Path may be a link reference with embedded
 				 ;; variables that must be expanded.
-				 (setq path (hpath:substitute-value path)))
+				 (setq path (hpath:substitute-value path)
+				       non-exist t ;; Ensure non-existent path links handled as pathnames.
+				       ))
 			       t)
 			   (not (string-match "[\t\n\r\"`'|{}\\]" path))
 			   (let ((rtn-path (concat path "%s")))
 			     (and (or (not (hpath:www-p path))
-				      (string-match "\\`ftp[:.]" path))
+				      (string-match "\\`s?
+ftp[:.]" path))
 				  (let ((remote-path (string-match "\\(@.+:\\|^/.+:\\|..+:/\\).*[^:0-9/]" path)))
 				    (when (cond (remote-path
 						 (cond ((eq type 'file)
@@ -1430,9 +1515,10 @@ returned for PATH."
 							   (string-match "[()]" path)
 							   (hpath:remote-p path)
 							   (setq suffix (hpath:exists-p path t))
-							   ;; Don't allow spaces in non-existent
-							   ;; pathnames.
-							   (not (string-match " " path))))
+							   ;; Don't allow spaces in non-existent pathnames
+							   ;; unless 'non-exist' equals 'allow-spaces.
+							   (eq non-exist 'allow-spaces)
+							   (not (string-match "\\s-" path))))
 						     (setq suffix (hpath:exists-p path t)))
 						 (cond ((eq type 'file)
 							(not (file-directory-p path)))
@@ -1459,7 +1545,7 @@ returned for PATH."
 					    ;; add suffix
 					    (concat modifier (format rtn-path suffix)))
 					(concat modifier (format rtn-path ""))))))))))
-		  path)))
+		  path non-exist)))
      (unless (or (null path)
 		 (string-empty-p path)
 		 (string-match "#['`\"]" path)
@@ -1762,7 +1848,7 @@ with a character not a letter, digit or underscore; otherwise, enclose
 the entire variable name in braces.
 If `/~' appears, all of FILENAME through that `/' is discarded."
   (if (string-match
-       "\\(/\\|[^a-zA-Z0-9]\\)?\\(https?\\|ftp\\|telnet\\|news\\|nntp\\):[/~]"
+       "\\(/\\|[^a-zA-Z0-9]\\)?\\(https?\\|s?ftp\\|telnet\\|news\\|nntp\\):[/~]"
        filename)
       (substring filename (match-beginning 2))
     (hyperb:substitute-in-file-name filename)))))))

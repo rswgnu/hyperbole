@@ -73,7 +73,8 @@ or a Menu; otherwise returns nil."
     ;; If at end of node, go to next node
     ;;
     ((last-line-p)
-     (if (fboundp 'Info-global-next) (Info-global-next)
+     (if (fboundp 'Info-global-next)
+	 (Info-global-next)
        (Info-next)))
     ((and (fboundp 'Info-mouse-follow-link)
 	  (mouse-event-p action-key-release-args)

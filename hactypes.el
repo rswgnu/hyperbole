@@ -126,9 +126,9 @@ Optional non-nil second argument INTERNAL-CMD inhibits display of the shell
 command line executed.  Optional non-nil third argument KILL-PREV means
 kill the last output to the shell buffer before executing SHELL-CMD."
   (interactive
-   (let ((default  (car defaults))
-	 (default1 (nth 1 defaults))
-	 (default2 (nth 2 defaults)))
+   (let ((default  (car hargs:defaults))
+	 (default1 (nth 1 hargs:defaults))
+	 (default2 (nth 2 hargs:defaults)))
      (list (hargs:read "Shell cmd: "
 		       (lambda (cmd) (not (string-equal cmd "")))
 		       default "Enter a shell command." 'string)
@@ -173,7 +173,7 @@ kill the last output to the shell buffer before executing SHELL-CMD."
 (defact exec-window-cmd (shell-cmd)
   "Asynchronously execute an external window-based SHELL-CMD string."
   (interactive
-   (let ((default  (car defaults)))
+   (let ((default  (car hargs:defaults)))
      (list (hargs:read "Shell cmd: "
 		       (lambda (cmd) (not (string-equal cmd "")))
 		       default "Enter a shell command." 'string))))
@@ -333,9 +333,12 @@ the window or as close as possible."
 	 (existing-buf t)
 	 path-buf)
      (unwind-protect
-	 (let* ((default-directory (or (hattr:get 'hbut:current 'dir) default-directory))
-		(file-path (or (car defaults) default-directory))
-		(file-point (cadr defaults))
+	 (let* ((default-directory (or (hattr:get 'hbut:current 'dir)
+				       (file-name-directory
+					(or (hattr:get 'hbut:current 'loc) ""))
+				       default-directory))
+		(file-path (or (car hargs:defaults) default-directory))
+		(file-point (cadr hargs:defaults))
 		(hargs:reading-p 'file)
 		;; If reading interactive inputs from a key series
 		;; (puts key events into the unread queue), then don't
@@ -490,8 +493,8 @@ on the implicit button to which to link."
 	   ;; is in progress, so ignore this for now.  -- RSW, 01-25-2020
 
 	   ;; When not on an ibut and modifying the link, use existing arguments
-	   ((and (bound-and-true-p defaults) (listp defaults) defaults)
-	    defaults)
+	   ((and (bound-and-true-p hargs:defaults) (listp hargs:defaults) hargs:defaults)
+	    hargs:defaults)
 	   (t
 	    (hypb:error "(link-to-ibut): Point must be on an implicit button to create a link-to-ibut")))))
   (when (null key)

@@ -1,4 +1,4 @@
-;;; hargs.el --- GNU Hyperbole user input functions
+;;; hargs.el --- GNU Hyperbole user input functions    -*- lexical-binding: t; -*-
 ;;
 ;; Author:       Bob Weiner
 ;;
@@ -32,6 +32,9 @@
 ;;; ************************************************************************
 ;;; Public variables
 ;;; ************************************************************************
+
+(defvar hargs:defaults nil
+  "Default arguments read from an existing Hyperbole button when modifying it.")
 
 (defvar hargs:reading-p nil
   "Is either a symbol representing the type of object Hyperbole is prompting the user to input or nil.")
@@ -481,15 +484,15 @@ Insert in minibuffer if active or in other window if minibuffer is inactive."
 	    (delete-window))
 	  entry)))))
 
-(defun hargs:iform-read (iform &optional defaults)
+(defun hargs:iform-read (iform &optional default-args)
   "Read action arguments according to IFORM, a list with car = 'interactive.
-With optional DEFAULTS equal to t, the current button is being modified, so
+With optional DEFAULT-ARGS equal to t, the current button is being modified, so
 its attribute values should be presented as defaults.  Otherwise, use
-DEFAULTS as a list of defaults to present when reading arguments.
+DEFAULT-ARGS as a list of defaults to present when reading arguments.
 See also documentation for `interactive'."
   ;; This is mostly a translation of `call-interactively' to Lisp.
   ;;
-  ;; Save this now, since use of minibuffer will clobber it.
+  ;; Save the prefix arg now, since use of minibuffer will clobber it
   (setq prefix-arg current-prefix-arg)
   (if (not (and (listp iform) (eq (car iform) 'interactive)))
       (error "(hargs:iform-read): arg must be a list whose car = 'interactive")
@@ -498,8 +501,10 @@ See also documentation for `interactive'."
       (let ((prev-reading-p hargs:reading-p))
 	(unwind-protect
 	    (progn
-	      (when (eq defaults t)
-		(setq defaults (hattr:get 'hbut:current 'args)))
+	      (when (eq default-args t)
+		(setq default-args (hattr:get 'hbut:current 'args)
+		      ;; Set hargs:defaults global used by "hactypes.el"
+		      hargs:defaults default-args))
 	      (setq hargs:reading-p t)
 	      (if (not (stringp iform))
 		  (eval iform)
@@ -538,12 +543,12 @@ See also documentation for `interactive'."
 		    (setq start (match-end 0)
 			  ientry (substring iform i (match-beginning 0))
 			  i start
-			  default (car defaults)
+			  default (car default-args)
 			  default (if (or (null default) (stringp default))
 				      default
 				    (prin1-to-string default))
 			  val (hargs:get ientry default (car results))
-			  defaults (cdr defaults)
+			  default-args (cdr default-args)
 			  results (cond ((or (null val) (not (listp val)))
 					 (cons val results))
 					;; Is a list of args?
@@ -627,12 +632,12 @@ VAL-TYPE is a symbol indicating the type of value to be read."
 	(select-window owind)
 	(switch-to-buffer obuf)))))
 
-(defun hargs:select-p (&optional value assist-flag)
+(defun hargs:select-p (&optional value assist-bool)
   "Return optional VALUE or value selected at point if any, else nil.
 If value is the same as the contents of the minibuffer, it is used as
 the current minibuffer argument, otherwise, the minibuffer is erased
 and value is inserted there.
-Optional ASSIST-FLAG non-nil triggers display of Hyperbole menu item
+Optional ASSIST-BOOL non-nil triggers display of Hyperbole menu item
 help when appropriate."
     (when (and (> (minibuffer-depth) 0) (or value (setq value (hargs:at-p))))
       (let ((owind (selected-window)) (back-to)
@@ -647,7 +652,8 @@ help when appropriate."
 	       ;;
 	       ;; Selecting a menu item
 	       ((eq hargs:reading-p 'hmenu)
-		(if assist-flag (setq hargs:reading-p 'hmenu-help))
+		(when assist-bool
+		  (setq hargs:reading-p 'hmenu-help))
 		(hui:menu-enter str-value))
 	       ;;
 	       ;; Enter existing value into the minibuffer as the desired parameter.

@@ -42,6 +42,13 @@ It must end with a directory separator character.")
 ;; Also allow ".kot" for DOS and Windows users.
 (add-to-list 'auto-mode-alist '("\\.kotl?\\'" . kotl-mode))
 
+;;; ************************************************************************
+;;; Hyperbole test importation settings
+;;; ************************************************************************
+
+(add-to-list 'load-path (expand-file-name "test" hyperb:dir))
+
+
 ;; Ensure final name (after resolving all links) of hyperb:dir is
 ;; used after setting up load-path; otherwise, Hyperbole may fail
 ;; to substitute this as a variable into link path buttons.
