@@ -20,7 +20,7 @@
 (eval-when-compile (require 'cl-lib))
 
 (defun hy-test-helpers:consume-input-events ()
-  "Use recusive-edit to consume the events kbd-key generate."
+  "Use recusive-edit to consume the events kbd-key generates."
   (run-with-timer 0.1 nil (lambda () (if (< 0 (recursion-depth)) (exit-recursive-edit))))
   (recursive-edit))
 
@@ -36,7 +36,8 @@
   (let ((was-called nil))
     (cl-letf (((symbol-function 'hpath:find)
                (lambda (filename)
-                 (setq was-called (should (string= str filename))))))
+		 (setq filename (hpath:mswindows-to-posix filename)
+                       was-called (should (string= str filename))))))
       (action-key)
       (should was-called))))
 

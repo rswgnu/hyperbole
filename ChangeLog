@@ -1,6 +1,13 @@
 * hyrolo.el (hyrolo-map-level-1): Fix sorting bug by adding outline-hide-subtree when
     on last buffer entry so its contents are kept together during hyrolo-sort.
 
+* test/hibtypes-tests.el: (ibtypes::pathname-dot-slash-in-other-folder-test): Update
+    now that invalid paths trigger the pathname ibtype and throw an error when the
+    invalid path is resolved with hpath:find.
+  test/hy-test-helpers.el (hy-test-helpers:action-key-should-call-hpath:find):
+    Add call to hpath:mswindows-to-posix or under WSL, absolute prefix may not match,
+    e.g. one path starts with '/mnt/c' and another with '/c'.
+
 2021-12-26  Bob Weiner  <rsw@gnu.org>
 
 * kotl/kotl-mode.el (kotl-mode:exchange-cells): Signal error if invalid type or value

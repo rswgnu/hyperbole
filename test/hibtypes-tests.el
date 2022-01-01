@@ -159,18 +159,19 @@
     (kill-buffer "tmp")))
 
 (ert-deftest ibtypes::pathname-dot-slash-in-other-folder-test ()
-  "Pathname that starts with ./ only works if in same folder."
+  "Invalid pathname that starts with ./ triggers an error when resolved."
   (with-temp-buffer
     (insert "\"./hypb.el\"")
     (goto-char 2)
-    (let ((help-buffer "*Help: Hyperbole Action Key*")
-          (default-directory (expand-file-name "test" hyperb:dir)))
-      (hkey-help)
-      (set-buffer help-buffer)
-      (should (string-match "no matching context" (buffer-string))))))
+    (condition-case err
+        (action-key)
+      (error
+       (progn
+         (should (equal (car err) 'error))
+         (should (string-match "hpath:find" (cadr err))))))))
 
 (ert-deftest ibtypes::pathname-dot-slash-in-same-folder-test ()
-  "Pathname that starts with ./ only works if in same folder."
+  "Pathname that starts with ./ resolves properly when found in default-directory."
   (with-temp-buffer
     (insert "\"./hypb.el\"")
     (goto-char 2)
