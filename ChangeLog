@@ -1,3 +1,8 @@
+2022-01-02  Mats Lidell  <matsl@gnu.org>
+
+* test/hui-tests.el (hui-ebut-create-link-to-info-index-using-completion):
+    New test case.
+
 2022-01-01  Bob Weiner  <rsw@gnu.org>
 
 * test/hpath-tests.el (hpath:prepend-ls-directory-test):
