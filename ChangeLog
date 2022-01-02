@@ -1,3 +1,17 @@
+2022-01-01  Bob Weiner  <rsw@gnu.org>
+
+* test/hpath-tests.el (hpath:prepend-ls-directory-test):
+  hpath.el (hpath:prepend-ls-directory): Make work under MS Windows with Git bash or
+    cmd.exe.  Fix to prepend dir after an 'ls kotl' type command.
+
+* hpath.el (hpath:expand): Fix to use locate-library only if filename contains ".el".
+    This prevents improperly finding non-Elisp files within the load-path, e.g. an
+    INSTALL file.
+
+* hpath.el (hpath:substitute-dir): Fix to handle when part of the directory is
+    included in 'rest-of-path' in which case only the preceding part of the dir
+    should be returned.
+
 2021-12-31  Bob Weiner  <rsw@gnu.org>
 
 * hui.el (hui:gbut-modify): Fix 'src-dir' to be dir of 'gbut:file' not default-directory.
@@ -135,7 +149,7 @@
 
 * test/hpath-tests.el (hypb-run-shell-test-command): Test helper for
     running shell commands.
-    (hpath:prepend-ls-directory-test): Test for "ls R" listing.
+    (hpath:prepend-ls-directory-test): Test for "ls -R" listing.
 
 2021-12-05  Bob Weiner  <rsw@gnu.org>
 

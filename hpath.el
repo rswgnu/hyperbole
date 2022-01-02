@@ -923,8 +923,12 @@ Make any existing path within a file buffer absolute before returning."
 						   (when (string-match hpath:markup-link-anchor-regexp path)
 						     (prog1 (concat "#" (match-string 3 path))
 						       (setq path (substring path 0 (match-beginning 2)))))))))))
-    (setq expanded-path (hpath:expand path)
-	  path (funcall func expanded-path non-exist))
+    (if (or (null path) (string-empty-p path))
+	(setq expanded-path ""
+	      path "")
+      (setq expanded-path (hpath:expand path)
+	    path (funcall func expanded-path non-exist)))
+    ;;
     ;; If path is just a local reference that begins with #,
     ;; in a file buffer, prepend the file name to it.  If an HTML
     ;; file, prepend file:// to it.
@@ -943,22 +947,23 @@ Make any existing path within a file buffer absolute before returning."
 	    (cond ((and buffer-file-name
 			;; ignore HTML color strings
 			(not (string-match "\\`#[0-9A-Fa-f][0-9A-Fa-f][0-9A-Fa-f][0-9A-Fa-f][0-9A-Fa-f][0-9A-Fa-f]\\'" path))
-			;; match to in-file HTML references
+			;; match to in-file #anchor references
 			(string-match "\\`#[^\'\"<>#]+\\'" path))
 		   (setq path (concat mode-prefix buffer-file-name path)))
 		  ((string-match "\\`\\([^#]+\\)\\(#[^#]*\\)\\'" path)
-		   ;; file and # reference
+		   ;; file and #anchor reference
 		   (setq suffix (match-string 2 path)
 			 path (match-string 1 path))
-		   (if (file-name-absolute-p path)
-		       ;; already absolute
-		       (setq path (concat mode-prefix path suffix))
+		   (unless (file-name-absolute-p path)
 		     ;; make absolute
 		     (setq path (hpath:expand path))
 		     (unless (string-match "\\$@?\{\\([^\}]+\\)@?\}" path)
-		       (expand-file-name path))
+		       (setq path (expand-file-name path))))
+		   (when (or non-exist (file-exists-p path))
 		     (setq path (concat mode-prefix path suffix))))
-		  (t path)))
+		  (t
+		   (when (or non-exist (file-exists-p path))
+		     path))))
 
 	(when (or (and (stringp suffix) (not (string-empty-p suffix))
 		       (= ?# (aref suffix 0)))
@@ -967,7 +972,8 @@ Make any existing path within a file buffer absolute before returning."
 			   (file-name-absolute-p expanded-path) ;; absolute path
 			   (string-match "\\$@?\{[^\}]+@?\}" expanded-path) ;; path with var
 			   (string-match "\\`([^\):]+)" expanded-path)))) ;; Info node
-	  (concat prefix mode-prefix expanded-path suffix))))))
+	  (when (or non-exist (file-exists-p expanded-path))
+	    (concat prefix mode-prefix expanded-path suffix)))))))
 
 (defun hpath:is-path-variable-p (path-var)
   "Return the value of a colon or semicolon-delimited set in PATH-VAR or nil if not a match."
@@ -1024,7 +1030,8 @@ end-pos) or nil."
 	    ;; whitespace delimited root dirs, e.g. " / ".
 	    (when (and (stringp p) (not (string-match "\"\\|\\`[/\\]+\\'" p))
 		       (delq nil (mapcar (lambda (c) (/= punc (char-syntax c))) p)))
-	      ;; Prepend proper directory to ls * or recursive ls file listing
+	      ;; Prepend proper directory to ls *, recursive ls or dir file listings
+	      ;; when needed.
 	      (setq p (or (hpath:prepend-ls-directory) p))
 	      (setcar triplet p)
 	      (if include-positions
@@ -1086,29 +1093,49 @@ Return any absolute PATH unchanged."
       (setq variable-path (hpath:expand-with-variable path)
 	    substituted-path (hpath:substitute-value variable-path)
 	    path substituted-path)
-      (if (and (string-match "\\$@?\{\\([^\}]+\\)@?\}" variable-path)
-	       (string-match "\\$@?\{\\([^\}]+\\)@?\}" substituted-path))
-	  ;; If a path is invalid, then a variable may have been prepended but
-	  ;; it will remain unresolved in 'substituted-path', in which case we
-	  ;; want to return 'path' without any further changes.
-	  path
-	;; For compressed Elisp libraries, add any found compressed suffix to the path.
-	(or (locate-library path t) path)))))
+      (cond ((and (string-match "\\$@?\{\\([^\}]+\\)@?\}" variable-path)
+		  (string-match "\\$@?\{\\([^\}]+\\)@?\}" substituted-path))
+	     ;; If a path is invalid, then a variable may have been prepended but
+	     ;; it will remain unresolved in 'substituted-path', in which case we
+	     ;; want to return 'path' without any further changes.
+	     path)
+	    ;; For compressed Elisp libraries, add any found compressed suffix to the path.
+	    ((string-match-p "\\.el\\(\\.\\|\\'\\)" path)
+	     (or (locate-library path t) path))
+	    ((or (string-match-p "\\`\\(#\\|([^\)\\/]+)\\|[^.\\/].*\\.[^.\\/]\\)" path)
+		 (string-match-p "[\\/~]" path))
+	     ;; Don't expand if an Info path, URL, #anchor or has a directory prefix
+	     path)
+	    (t (expand-file-name path))))))
 
 (defun hpath:prepend-ls-directory ()
-  "When in a shell buffer and on a filename result of an 'ls *' or recursive 'ls', prepend the subdir to the filename and return it, else nil."
+  "When in a shell buffer and on a filename result of an 'ls *' or recursive 'ls -R' or 'dir' command, prepend the subdir to the filename when needed and return it, else return nil."
   (when (derived-mode-p #'shell-mode)
     (let ((filename (thing-at-point 'filename t))
-	  (prior-prompt-pos (save-excursion (comint-previous-prompt 1) (point)))
+	  (prior-prompt-pos (save-excursion (comint-previous-prompt 1) (1- (point))))
 	  dir)
       (save-excursion
-	(when (and filename (re-search-backward "^$\\|\\`\\|^\\(.+\\):$" prior-prompt-pos t)
-		   (setq dir (match-string-no-properties 1))
-		   (file-exists-p dir))
+	(when (and filename
+		   (if (memq system-type '(windows-nt cygwin ms-dos))
+		       ;; Windows Cmd or PowerShell dir cmds
+		       (and (re-search-backward "^\\s-*\\(Directory: \\|Directory of \\)\\(.+\\)$" prior-prompt-pos t)
+			    (setq dir (match-string-no-properties 2)))
+		     ;; POSIX
+		     (or (and (re-search-backward "^$\\|\\`\\|^\\(.+\\):$" prior-prompt-pos t)
+			      (setq dir (match-string-no-properties 1)))
+			 (and (re-search-backward "\\(^\\| \\)ls.* [\'\"]?\\([^\'\"\n\r]+[^\'\" \n\r]\\)[\'\"]?$" prior-prompt-pos t)
+			      (setq dir (match-string-no-properties 2)))))
+		   (and dir (not (string-empty-p dir))))
 	  (unless (file-name-absolute-p filename)
-	    (when (file-directory-p dir)
-	      (setq dir (file-name-as-directory dir)))
-	    (concat (file-name-as-directory dir) filename)))))))
+	    ;; If dir ends with a glob expression, then the dir is
+	    ;; already prepended to each file listing, the file name should simply be
+	    ;; expanded; otherwise, prepend the dir.
+	    (if (and dir (string-match-p "\\*[^\\/\n\r]*$" dir))
+		(expand-file-name filename)
+	      (when (file-directory-p dir)
+		(setq dir (file-name-as-directory dir)))
+	      (when (and dir (not (string-empty-p dir)) (file-exists-p dir))
+		(expand-file-name (concat (file-name-as-directory dir) filename))))))))))
 
 (defvar hpath:compressed-suffix-regexp (concat (regexp-opt '(".gz" ".Z" ".zip" ".bz2" ".xz" ".zst")) "\\'")
    "Regexp of compressed file name suffixes.")
@@ -1138,6 +1165,8 @@ If PATH is absolute, return it unchanged."
 	    (when (and (not (string-match (regexp-quote variable-name) path))
 		       (or (and (stringp variable) (getenv variable))
 			   (and (symbolp variable) (boundp variable))))
+	      (when (string-match "\\`\\.[\\/]" path)
+		(setq path (substring path (match-end 0))))
 	      (setq path (format "${%s}/%s" variable path)))
 	    (setq auto-variable-alist nil))))
       (concat path compression-suffix))))
@@ -2114,11 +2143,11 @@ list, return the first directory prepended to REST-OF-PATH which produces a vali
 local pathname."
   (let (sym val)
     (cond ((not (stringp var-name))
-	   (error "(hpath:substitute-dir): VAR-NAME, `%s', must be a string" var-name))
+	   (error "(hpath:substitute-dir): var-name, `%s', must be a string" var-name))
 	  ((not (or (and (setq sym (intern-soft var-name))
 			 (boundp sym))
 		    (getenv var-name)))
-	   (error "(hpath:substitute-dir): VAR-NAME, \"%s\", is not a bound variable nor a set environment variable"
+	   (error "(hpath:substitute-dir): var-name, \"%s\", is not a bound variable nor a set environment variable"
 		  var-name))
 	  ((let ((case-fold-search t))
 	     (stringp (setq val (cond ((and (boundp sym) sym)
@@ -2130,7 +2159,12 @@ local pathname."
 	     val))
 	  ((listp val)
 	   (let* ((path (locate-file rest-of-path val (cons "" hpath:suffixes)))
-		  (dir (if path (file-name-directory path))))
+		  (suffix-added (car (delq nil (mapcar (lambda (suffix) (when (string-suffix-p suffix path)
+									  suffix))
+						       hpath:suffixes))))
+		  (dir (when path
+			 (substring path 0 (- (+ (length rest-of-path)
+						 (if suffix-added (length suffix-added) 0)))))))
 	     (if dir
 		 (directory-file-name dir)
 	       (error "(hpath:substitute-dir): Can't find match for \"%s\""

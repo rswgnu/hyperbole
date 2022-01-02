@@ -168,7 +168,7 @@
       (error
        (progn
          (should (equal (car err) 'error))
-         (should (string-match "hpath:find" (cadr err))))))))
+         (should (string-match "No action defined" (cadr err))))))))
 
 (ert-deftest ibtypes::pathname-dot-slash-in-same-folder-test ()
   "Pathname that starts with ./ resolves properly when found in default-directory."

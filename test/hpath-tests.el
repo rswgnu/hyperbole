@@ -116,9 +116,17 @@
   "Find file in ls -R listing."
   (let ((shell-buffer "*hypb-test-shell-buffer*"))
     (unwind-protect
-        (let ((explicit-shell-file-name "/usr/bin/sh")
-              (default-directory hyperb:dir))
-          (hypb-run-shell-test-command "ls -R" shell-buffer)
+        (let* ((explicit-shell-file-name (or (executable-find "sh")
+					     (executable-find "bash")
+					     (executable-find "cmd")))
+	       (shell-file-name explicit-shell-file-name)
+	       (shell-cmd
+		(if (memq system-type '(windows-nt cygwin ms-dos))
+		    "dir -R"
+		  "ls -R"))
+               (default-directory hyperb:dir))
+	  (should explicit-shell-file-name)
+          (hypb-run-shell-test-command shell-cmd shell-buffer)
           (dolist (file '("COPYING" "man/version.texi" "man/hkey-help.txt" "man/im/demo.png"))
             (goto-char (point-min))
             (should (search-forward (car (last (split-string file "/"))) nil t))

@@ -207,7 +207,7 @@
   (with-temp-buffer
     (insert "\"/var/lib:/bar:/tmp\"")
     (goto-char 16)
-    (hy-test-helpers:action-key-should-call-hpath:find "/var/lib:/bar:/tmp")))
+    (should (not (hpath:at-p)))))
 
 (ert-deftest hbut-pathname-path-variable-with-three-colons-is-a-path-test ()
   "Path variable value with three colons is sufficient to be recognized as a path variable value."
