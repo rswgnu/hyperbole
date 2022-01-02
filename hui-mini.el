@@ -1,4 +1,4 @@
-;;; hui-mini.el --- Single line command menus for GNU Hyperbole
+;;; hui-mini.el --- Single line command menus for GNU Hyperbole   -*- lexical-binding: t; -*-
 ;;
 ;; Author:       Bob Weiner
 ;;
@@ -124,15 +124,14 @@ non-nil means show documentation for any item that is selected by the
 user.  HELP-STRING-FLAG non-nil means show only the first line of the
 documentation, not the full text."
   (setq hui:menu-keys "")
-  (let ((set-menu '(or (and menu (symbolp menu)
-			    (setq menu-alist
-				  (cdr (assq menu (or menu-list hui:menus)))))
-		       (hypb:error "(hui:menu-act): Invalid menu symbol arg: `%s'"
-				   menu)))
-	(show-menu t)
+  (let ((show-menu t)
 	(rtn)
 	menu-alist act-form)
-    (while (and show-menu (eval set-menu))
+    (while (and show-menu (or (and menu (symbolp menu)
+			           (setq menu-alist
+				         (cdr (assq menu (or menu-list hui:menus)))))
+		              (hypb:error "(hui:menu-act): Invalid menu symbol arg: `%s'"
+				          menu)))
       (cond ((and (consp (setq act-form (hui:menu-select menu-alist doc-flag help-string-flag)))
 		  (cdr act-form)
 		  (symbolp (cdr act-form)))
@@ -174,14 +173,13 @@ Optional second argument MENU-LIST is a Hyperbole menu list structure from
 which to extract MENU.  It defaults to `hui:menus'.  See its definition for
 the menu list structure."
   (setq hui:menu-keys "")
-  (let ((set-menu '(or (and menu (symbolp menu)
-			    (setq menu-alist
-				  (cdr (assq menu (or menu-list hui:menus)))))
-		       (hypb:error "(hui:menu-get-keys): Invalid menu symbol arg: `%s'"
-			      menu)))
-	(show-menu t)
+  (let ((show-menu t)
 	menu-alist act-form)
-    (while (and show-menu (eval set-menu))
+    (while (and show-menu (or (and menu (symbolp menu)
+			           (setq menu-alist
+				         (cdr (assq menu (or menu-list hui:menus)))))
+		              (hypb:error "(hui:menu-get-keys): Invalid menu symbol arg: `%s'"
+			                  menu)))
       (cond ((and (consp (setq act-form (hui:menu-select menu-alist)))
 		  (cdr act-form)
 		  (symbolp (cdr act-form)))
