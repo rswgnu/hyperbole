@@ -143,11 +143,11 @@ Modifying the button but keeping the label creates a dubbel label."
     (unwind-protect
         (progn
           (find-file file)
-          (should (hact 'kbd-key "C-h h e c label RET RET link-to-Info-index-item RET (hyperbole)Introduct TAB RET"))
+          (should (hact 'kbd-key "C-h h e c hypb-intro-button RET RET link-to-Info-index-item RET (hyperbole)Introduct TAB RET"))
           (hy-test-helpers:consume-input-events)
           (should (eq (hattr:get (hbut:at-p) 'actype) 'actypes::link-to-Info-index-item))
           (should (equal (hattr:get (hbut:at-p) 'args) '("(hyperbole)Introduction")))
-          (should (equal (hattr:get (hbut:at-p) 'lbl-key) "label")))
+          (should (equal (hattr:get (hbut:at-p) 'lbl-key) "hypb-intro-button")))
       (progn
         (kill-buffer "*info*")
         (delete-file file)))))
