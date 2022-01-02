@@ -1,5 +1,9 @@
 2022-01-02  Mats Lidell  <matsl@gnu.org>
 
+* test/hy-test-helpers.el (hy-test-helpers:action-key-should-call-hpath:find)
+    (hy-test-helpers:hypb-function-should-call-hpath:find): Do a string
+    match and expand-file-name match.
+
 * test/hui-tests.el (hui-ebut-create-link-to-info-index-using-completion):
     New test case.
 
