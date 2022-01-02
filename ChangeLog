@@ -10,7 +10,8 @@
 
 * hpath.el (hpath:substitute-dir): Fix to handle when part of the directory is
     included in 'rest-of-path' in which case only the preceding part of the dir
-    should be returned.
+    should be returned.  Also, account for when "./" or "../" is removed from
+    'rest-of-path', thereby lengthening the directory to return.
 
 2021-12-31  Mats Lidell  <matsl@gnu.org>
 

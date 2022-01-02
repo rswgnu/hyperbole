@@ -2164,7 +2164,12 @@ local pathname."
 						       hpath:suffixes))))
 		  (dir (when path
 			 (substring path 0 (- (+ (length rest-of-path)
-						 (if suffix-added (length suffix-added) 0)))))))
+						 (if (string-match "\\`\\.+[\\/]" rest-of-path)
+						     (- (length (match-string 0 rest-of-path)))
+						   0)
+						 (if suffix-added
+						     (length suffix-added)
+						   0)))))))
 	     (if dir
 		 (directory-file-name dir)
 	       (error "(hpath:substitute-dir): Can't find match for \"%s\""
