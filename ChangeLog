@@ -16,6 +16,9 @@
 
 2022-01-02  Mats Lidell  <matsl@gnu.org>
 
+* test/hui-tests.el (hui-ebut-create-link-to-info-index-using-completion):
+    Link to emacs info index.
+
 * test/hy-test-helpers.el (hy-test-helpers:action-key-should-call-hpath:find)
     (hy-test-helpers:hypb-function-should-call-hpath:find): Do a string
     match and expand-file-name match.
