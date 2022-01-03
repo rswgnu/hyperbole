@@ -1,3 +1,19 @@
+2022-01-02  Bob Weiner  <rsw@gnu.org>
+
+* test/hpath-tests.el (hpath:should-exist-paths, hpath:should-not-exist-paths):
+    Add these two ert tests to check hpath expansion code.  Each test reports
+    any failures from a whole list of test paths.
+                      (hpath--should-exist-paths, hpath--should-not-exist-paths,
+                       hpath--should-exist-p, hpath--should-not-exist-p):
+    Support code for above two tests.
+
+* hypb.el (hypb:string-count-matches): Add to count regexp matches in a string.
+
+* hpath.el (hpath:is-p): Replace most string-match with string-match-p for performance.
+
+* hpath.el (hpath:variable-regexp): Add new constant representing Hyperbole pathname
+    variable format and use throughout hpath.el.
+
 2022-01-02  Mats Lidell  <matsl@gnu.org>
 
 * test/hy-test-helpers.el (hy-test-helpers:action-key-should-call-hpath:find)

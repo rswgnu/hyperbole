@@ -691,6 +691,26 @@ Syntax tables are char-tables whose values are encoded as raw
 descriptors."
   (aset (or syntax-table (syntax-table)) char raw-descriptor))
 
+
+(defun hypb:string-count-matches (regexp str &optional start end)
+  "Count occurrences of `regexp' in `str'.
+
+`start', inclusive, and `end', exclusive, delimit the part of `str' to
+match.  `start' and `end' are both indexed starting at 0; the initial
+character in `str' is index 0.
+
+This function starts looking for the next match from the end of the
+previous match.  Hence, it ignores matches that overlap a previously
+found match."
+  (let ((count 0)
+	(start 0)
+        (str-len (length str)))
+    (while (and (< start str-len)
+		(string-match regexp str start))
+      (setq count (1+ count)
+	    start (match-end 0)))
+    count))
+
 (defun hypb:supercite-p ()
   "Return non-nil iff the Emacs add-on supercite package is in use."
   (let (hook-val)
