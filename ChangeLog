@@ -1,5 +1,7 @@
 2022-01-06  Mats Lidell  <matsl@gnu.org>
 
+* hsmail.el: Cleanup patch from Stefan Monnier. Thank you Stefan.
+
 * test/hpath-tests.el (hpath:auto-variable-alist-load-path-test)
     (hpath:auto-variable-alist-org-folder-test)
     (hpath:auto-variable-alist-pythonpath-test): Add tests for
