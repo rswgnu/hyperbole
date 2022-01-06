@@ -210,5 +210,43 @@
             (hy-test-helpers:action-key-should-call-hpath:find (expand-file-name file hyperb:dir))))
       (kill-buffer shell-buffer))))
 
+(defun hpath-tests--insert (str &optional with-quotes)
+  "Insert STR with quotes if WITH-QUOTES is not nil."
+  (concat (when with-quotes "\"") str (when with-quotes "\"")))
+
+(ert-deftest hpath:auto-variable-alist-load-path-test ()
+  "An elisp file should be looked up in the load path."
+  (let ((load-path (list hyperb:dir))
+        (el-file "hyperbole.el"))
+    (dolist (with-quotes '(nil t))
+      (with-temp-buffer
+        (insert (hpath-tests--insert el-file with-quotes))
+        (goto-char 4)
+        (hy-test-helpers:action-key-should-call-hpath:find (expand-file-name el-file hyperb:dir))))))
+
+(ert-deftest hpath:auto-variable-alist-org-folder-test ()
+  "An org file should be looked up in the org directory."
+  (let ((org-directory (expand-file-name "HY-TALK" hyperb:dir))
+        (org-file "HY-TALK.org"))
+    (dolist (with-quotes '(nil t))
+      (with-temp-buffer
+        (insert (hpath-tests--insert org-file with-quotes))
+        (goto-char 4)
+        (hy-test-helpers:action-key-should-call-hpath:find (expand-file-name org-file org-directory))))))
+
+(ert-deftest hpath:auto-variable-alist-pythonpath-test ()
+  "A python file should be looked up in the PYTHONPATH."
+  (let ((py-file "topwin.py")
+        (old-python-path (getenv "PYTHONPATH")))
+    (unwind-protect
+        (progn
+          (setenv "PYTHONPATH" hyperb:dir)
+          (dolist (with-quotes '(nil t))
+            (with-temp-buffer
+              (insert (hpath-tests--insert py-file with-quotes))
+              (goto-char 4)
+              (hy-test-helpers:action-key-should-call-hpath:find (expand-file-name py-file hyperb:dir)))))
+      (setenv "PYTHONPATH" old-python-path))))
+
 (provide 'hpath-tests)
 ;;; hpath-tests.el ends here
