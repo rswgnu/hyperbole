@@ -1,3 +1,10 @@
+2022-01-06  Mats Lidell  <matsl@gnu.org>
+
+* test/hpath-tests.el (hpath:auto-variable-alist-load-path-test)
+    (hpath:auto-variable-alist-org-folder-test)
+    (hpath:auto-variable-alist-pythonpath-test): Add tests for
+    hpath:auto-variable-alist patterns.
+
 2022-01-02  Bob Weiner  <rsw@gnu.org>
 
 * test/hpath-tests.el (hpath:should-exist-paths, hpath:should-not-exist-paths):

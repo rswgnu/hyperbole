@@ -210,5 +210,35 @@
             (hy-test-helpers:action-key-should-call-hpath:find (expand-file-name file hyperb:dir))))
       (kill-buffer shell-buffer))))
 
+(ert-deftest hpath:auto-variable-alist-load-path-test ()
+  "An elisp file should be looked up in the load path."
+  (let ((load-path (list hyperb:dir))
+        (el-file "hyperbole.el"))
+    (with-temp-buffer
+      (insert "\"" el-file "\"")
+      (goto-char 4)
+      (hy-test-helpers:action-key-should-call-hpath:find (expand-file-name el-file hyperb:dir)))))
+
+(ert-deftest hpath:auto-variable-alist-org-folder-test ()
+  "An org file should be looked up in the org directory."
+  (let ((org-directory (expand-file-name "HY-TALK" hyperb:dir))
+        (org-file "HY-TALK.org"))
+    (with-temp-buffer
+      (insert "\"" org-file "\"")
+      (goto-char 4)
+      (hy-test-helpers:action-key-should-call-hpath:find (expand-file-name org-file org-directory)))))
+
+(ert-deftest hpath:auto-variable-alist-pythonpath-test ()
+  "A python file should be looked up in the PYTHONPATH."
+  (let ((py-file "topwin.py")
+        (old-python-path (getenv "PYTHONPATH")))
+    (unwind-protect
+        (with-temp-buffer
+          (insert "\"" py-file "\"")
+          (goto-char 4)
+          (setenv "PYTHONPATH" hyperb:dir)
+          (hy-test-helpers:action-key-should-call-hpath:find (expand-file-name py-file hyperb:dir)))
+      (setenv "PYTHONPATH" old-python-path))))
+
 (provide 'hpath-tests)
 ;;; hpath-tests.el ends here
