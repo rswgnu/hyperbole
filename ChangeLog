@@ -4,6 +4,7 @@
     (hpath:auto-variable-alist-org-folder-test)
     (hpath:auto-variable-alist-pythonpath-test): Add tests for
     hpath:auto-variable-alist patterns.
+    (hpath-tests--insert): Add test helper.
 
 2022-01-02  Bob Weiner  <rsw@gnu.org>
 
