@@ -45,7 +45,7 @@
         (verify-keybinding "\C-hA" #'hkey-help)
         (verify-keybinding "\M-o" #'hkey-operate)))))
 
-(ert-deftest hyperbole-kkey-init-controls-tests ()
+(ert-deftest hyperbole-hkey-init-controls-tests ()
   "Verify that `hkey-init` controls if keys are initialized."
   (let ((hyperbole-mode-map (make-sparse-keymap))
         (hkey-init nil))
