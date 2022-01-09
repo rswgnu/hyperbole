@@ -22,48 +22,39 @@
 ;; function is that in the event of a failure, it makes the keybinding
 ;; that failed show up in ERT's output. -- Copied from edebug-tests.el
 
-(ert-deftest hyperbole-keymap-tests ()
-  "Verify all key bindings are set."
+(defun hyperbole-key-bindings (set)
+  "If SET is t verify keys are bound and if nil they are not bound."
   (let ((hyperbole-mode-map (make-sparse-keymap))
-        (hkey-init t))
+        (hkey-init set))
     (cl-letf (((symbol-function 'where-is-internal) (lambda (_func &optional _map) nil))
               ((symbol-function 'hyperb:window-system) (lambda () t)))
       (hkey-initialize)
-      (cl-macrolet ((verify-keybinding (key binding)
-                      `(should (eq (lookup-key hyperbole-mode-map ,key)
-                                   ,binding))))
-        (verify-keybinding "\C-c@" #'hycontrol-windows-grid)
-        (verify-keybinding "\C-c\C-m" #'hui-select-thing)
-        (verify-keybinding "\C-c\\" #'hycontrol-enable-windows-mode)
-        (verify-keybinding "\C-c/" #'hui-search-web)
-        (verify-keybinding "\C-c." #'hui-select-goto-matching-delimiter)
-        (mapc (lambda (key) (verify-keybinding key #'hkey-either))
+      (cl-macrolet ((verify-keybinding (verify key binding)
+                      `(if ,verify
+                           (should (eq (lookup-key hyperbole-mode-map ,key)
+                                       ,binding))
+                         (should-not (eq (lookup-key hyperbole-mode-map ,key)
+                                         ,binding)))))
+        (verify-keybinding set "\C-c@" #'hycontrol-windows-grid)
+        (verify-keybinding set "\C-c\C-m" #'hui-select-thing)
+        (verify-keybinding set "\C-c\\" #'hycontrol-enable-windows-mode)
+        (verify-keybinding set "\C-c/" #'hui-search-web)
+        (verify-keybinding set "\C-c." #'hui-select-goto-matching-delimiter)
+        (mapc (lambda (key) (verify-keybinding set key #'hkey-either))
               '("\M-\C-m"
                 ;; Todo: How to verify these bindings.
                 ;;"ESC RET" "M-RET" "ESC <return>" "M-<return>"
                 ))
-        (verify-keybinding "\C-hA" #'hkey-help)
-        (verify-keybinding "\M-o" #'hkey-operate)))))
+        (verify-keybinding set "\C-hA" #'hkey-help)
+        (verify-keybinding set "\M-o" #'hkey-operate)))))
+
+(ert-deftest hyperbole-keymap-tests ()
+  "Verify all key bindings are set."
+  (hyperbole-key-bindings t))
 
 (ert-deftest hyperbole-hkey-init-controls-tests ()
-  "Verify that `hkey-init` controls if keys are initialized."
-  (let ((hyperbole-mode-map (make-sparse-keymap))
-        (hkey-init nil))
-    (cl-letf (((symbol-function 'where-is-internal) (lambda (_func &optional _map) nil))
-              ((symbol-function 'hyperb:window-system) (lambda () t)))
-      (hkey-initialize)
-      (cl-macrolet ((verify-keybinding (key binding)
-                      `(should-not (eq (lookup-key hyperbole-mode-map ,key)
-                                       ,binding))))
-        (verify-keybinding "\C-c@" #'hycontrol-windows-grid)
-        (verify-keybinding "\C-c\C-m" #'hui-select-thing)
-        (verify-keybinding "\C-c\\" #'hycontrol-enable-windows-mode)
-        (verify-keybinding "\C-c/" #'hui-search-web)
-        (verify-keybinding "\C-c." #'hui-select-goto-matching-delimiter)
-        (mapc (lambda (key) (verify-keybinding key #'hkey-either))
-              '("\M-\C-m" "M-<return>" "M-RET" "ESC <return>" "ESC RET"))
-        (verify-keybinding "\C-hA" #'hkey-help)
-        (verify-keybinding "\M-o" #'hkey-operate)))))
+  "Verify all key bindings are set."
+  (hyperbole-key-bindings nil))
 
 (ert-deftest hyperbole-global-key-binding-tests ()
   "Verify the global keys are bound."
