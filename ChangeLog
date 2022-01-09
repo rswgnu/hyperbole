@@ -1,6 +1,16 @@
+2022-01-09  Bob Weiner  <rsw@gnu.org>
+
+* topwin.py: Update to Python 3.7 or greater.
+
+* Makefile (EL_TAGS): Add test functions to tags file.
+
+* test/hpath-tests.el (hpath:auto-variable-alist-load-path-test):
+    Ensure directories without final slashes and .el files without double
+    quotes  are handled properly.
+
 2022-01-08  Bob Weiner  <rsw@gnu.org>
 
-* hpath.el (hpath:return-one-value): Completely rewrote to handle complex
+* hpath.el (hpath:return-one-value): Complete rewrite to handle complex
     multi-variable paths like:  "${load-path}/../hyperbole/$DOT/hypb.el")
     where DOT = ".".
 

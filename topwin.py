@@ -1,4 +1,4 @@
-#!python2
+#!python
 #
 # SUMMARY:      Outputs the [application name] of the topmost window at mouse screen position or nothing if none
 # USAGE:        <script> <x-screen-coordinate> <y-screen-coordinate>
@@ -18,7 +18,7 @@ import Quartz
 from sys import argv, exit
 
 if len(argv) < 3:
-    print "%s: ERROR - Call with 2 numeric arguments, X and Y representing an absolute screen position" % argv[0]
+    print(f"{argv[0]}: ERROR - Call with 2 numeric arguments, X and Y representing an absolute screen position") 
     exit(1)
 
 x = int(argv[1]); y = int(argv[2])
@@ -39,7 +39,7 @@ def filter_and_print_top_window(x, y):
         win_width = int(bounds_val('Width')); win_height = int(bounds_val('Height'))
 
         if win_x <= x and x < win_x + win_width and win_y <= y and y < win_y + win_height:
-            print ('[' + ((val('kCGWindowOwnerName') or '') + ']')).encode('utf8')
+            print('[' + ((val('kCGWindowOwnerName') or '') + ']')).encode('utf8')
             # Add this line back in if you need to see the specific window within the app at the given position.
             # + ('' if val('kCGWindowName') is None else (' ' + val('kCGWindowName') or '')) \
 

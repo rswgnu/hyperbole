@@ -218,14 +218,14 @@
   (concat (when with-quotes "\"") str (when with-quotes "\"")))
 
 (ert-deftest hpath:auto-variable-alist-load-path-test ()
-  "An elisp file should be looked up in the load path."
-  (let ((load-path (list hyperb:dir))
-        (el-file "hyperbole.el"))
+ "An elisp file, even without double quotes, should be looked up in the load path."
+  (let ((load-path (list (expand-file-name "kotl" hyperb:dir)))
+        (el-file "kview.el"))
     (dolist (with-quotes '(nil t))
       (with-temp-buffer
-        (insert (hpath-tests--insert el-file with-quotes))
+        (insert (hpath-tests--insert el-file))
         (goto-char 4)
-        (hy-test-helpers:action-key-should-call-hpath:find (expand-file-name el-file hyperb:dir))))))
+        (hy-test-helpers:action-key-should-call-hpath:find (expand-file-name el-file (car load-path)))))))
 
 (ert-deftest hpath:auto-variable-alist-org-folder-test ()
   "An org file should be looked up in the org directory."

@@ -189,7 +189,9 @@ HYPERBOLE_FILES = dir info html $(EL_COMPILE) $(EL_KOTL) \
 	topwin.py hyperbole-banner.png $(man_dir)/hkey-help.txt \
 	$(man_dir)/hyperbole.texi $(man_dir)/hyperbole.css $(man_dir)/version.texi
 
-EL_TAGS = $(EL_COMPILE) $(EL_KOTL)
+TEST_ERT_FILES = $(wildcard test/*tests.el)
+
+EL_TAGS = $(EL_COMPILE) $(EL_KOTL) $(TEST_ERT_FILES)
 
 .SUFFIXES:            # Delete the default suffixes
 .SUFFIXES: .el .elc   # Define the list of file suffixes to match to rules
@@ -403,7 +405,6 @@ packageclean:
 tests: test
 test: test-ert
 
-TEST_ERT_FILES=$(wildcard test/*tests.el)
 LOAD_TEST_ERT_FILES=$(patsubst %,(load-file \"%\"),${TEST_ERT_FILES})
 
 test-ert:

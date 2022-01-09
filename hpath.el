@@ -2186,9 +2186,9 @@ function to call with FILENAME as its single argument."
     cmd))
 
 (defun hpath:get-single-string-variable-value (var-name)
-  "Return VAR-NAME's value if is a string without any colon or semicolon; otherwise, return nil.
-Trigger an error if VAR-NAME is not a string, a valid existing variable, or its value is not a string or list."
-  (let (sym val)
+  "Return VAR-NAME's value if is a string without any colon or semicolon; otherwise, return nil."
+  (let (sym
+	val)
     (cond ((not (stringp var-name))
 	   ;; (error "(hpath:get-single-string-variable-value): var-name, `%s', must be a string" var-name)
 	   nil)
@@ -2209,8 +2209,8 @@ Trigger an error if VAR-NAME is not a string, a valid existing variable, or its 
 	  ((listp val)
 	   (setq val nil))
 	  (t
-	   (error "(hpath:get-single-string-variable-value): Value of var-name, \"%s\", must be a string or list" var-name)
-	   nil))
+	   ;; (error "(hpath:get-single-string-variable-value): Value of var-name, \"%s\", must be a string or list" var-name)
+	   (setq val nil)))
     val))
 
 (defun hpath:substitute-dir (path-prefix var-name rest-of-path trailing-dir-sep-flag &optional return-path-flag)
