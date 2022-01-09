@@ -1,4 +1,4 @@
-;;; hypb.el --- Miscellaneous GNU Hyperbole support features
+;;; hypb.el --- Miscellaneous GNU Hyperbole support features  -*- lexical-binding: t; -*-
 ;;
 ;; Author:       Bob Weiner
 ;;
@@ -86,7 +86,7 @@ OP may be +, -, xor, or default =."
   (let ((func (cond ((eq op '+)   #'logior)
 		    ((eq op '-)   (lambda (p1 p2) (logand (lognot p1) p2)))
 		    ((eq op 'xor) #'logxor)
-		    (t            (lambda (p1 p2) p1)))))
+		    (t            (lambda (p1 p2) p2 p1)))))
     (set-file-modes file (funcall func (hypb:oct-to-int octal-permissions)
 				  (file-modes file)))))
 
@@ -258,7 +258,7 @@ The current commit entry may be displayed with a press of RET, the Action Key or
   (compile (format "git log -S'%s' --line-prefix='commit ' --oneline" string)
 	   #'hypb:fgrep-git-log-mode))
 
-(defun hypb:fgrep-git-log-activate (ignore1 &optional ignore2)
+(defun hypb:fgrep-git-log-activate (_ignore1 &optional _ignore2)
   "Display git commit for the current line when `compile-goto-error' {RET} is used.
 Does not support use of next and previous error; simply displays the current one."
   (interactive '(nil))
@@ -624,9 +624,9 @@ Removes any trailing newline at the end of the output."
     (flush-lines regexp nil nil t))
 
 ;;;###autoload
-(defun hypb:rgrep (pattern &optional prefix-arg)
+(defun hypb:rgrep (pattern &optional prefx-arg)
   "Recursively grep with symbol at point or PATTERN over all non-backup and non-autosave files in the current directory tree.
-If in an Emacs Lisp mode buffer and no PREFIX-ARG is given, limit search to only .el and .el.gz files."
+If in an Emacs Lisp mode buffer and no PREFX-ARG is given, limit search to only .el and .el.gz files."
   (interactive (list (if (and (not current-prefix-arg) (equal (buffer-name) "*Locate*"))
 			 (read-string "Grep files listed here for: ")
 		       (let ((default (symbol-at-point)))
@@ -647,7 +647,7 @@ If in an Emacs Lisp mode buffer and no PREFIX-ARG is given, limit search to only
 	    (format "%s %s -e \%c%s\%c ."
 		    hypb:rgrep-command
 		    (if (and (memq major-mode '(emacs-lisp-mode lisp-interaction-mode))
-			     (not prefix-arg))
+			     (not prefx-arg))
 			(if (string-match "\\`rg " hypb:rgrep-command)
 			    "-g \"*.el\" -g \"*.el.gz\""
 			  "--include=\"*.el\" --include=\"*.el.gz\"")
@@ -691,22 +691,30 @@ Syntax tables are char-tables whose values are encoded as raw
 descriptors."
   (aset (or syntax-table (syntax-table)) char raw-descriptor))
 
-
 (defun hypb:string-count-matches (regexp str &optional start end)
-  "Count occurrences of `regexp' in `str'.
+  "Count occurrences of REGEXP in STR, limited to optional START and END positions.
 
-`start', inclusive, and `end', exclusive, delimit the part of `str' to
-match.  `start' and `end' are both indexed starting at 0; the initial
-character in `str' is index 0.
+START is inclusive and indexed from 0; END is exclusive.
 
 This function starts looking for the next match from the end of the
 previous match.  Hence, it ignores matches that overlap a previously
 found match."
-  (let ((count 0)
-	(start 0)
-        (str-len (length str)))
+  (let ((str-len (length str))
+	(count 0)
+	substr)
+    (when (and start (or (>= start str-len) (< start 0)))
+      (error "(hypb:string-count-matches): 'start' (%d) must be >= 0 and < str length (%d)"
+	     start str-len))
+    (when (and end (or (> end str-len) (< end 0)))
+      (error "(hypb:string-count-matches): 'end' (%d) must be >= 0 and <= str length (%d)"
+	     end str-len))
+    (setq start (or start 0)
+	  end (or end str-len)
+	  substr (substring str start end)
+	  end (- end start)
+	  start 0)
     (while (and (< start str-len)
-		(string-match regexp str start))
+		(string-match regexp substr start))
       (setq count (1+ count)
 	    start (match-end 0)))
     count))
@@ -813,7 +821,7 @@ the symbol list.  For `suspicious', only `set-buffer' can be used."
     ;; A stub for this function is defined in hversion.el when not running in InfoDock.
     (id-browse-file file)
     (unless existing-buf
-      (hypb:display-file-with-logo-emacs file)
+      (hypb:insert-hyperbole-banner)
       (goto-char (point-min))
       (skip-syntax-forward "-")
       (set-window-start (selected-window) 1)
@@ -844,7 +852,7 @@ the symbol list.  For `suspicious', only `set-buffer' can be used."
 	     (hypb:function-symbol-replace
 	      constant sym-to-replace replace-with-sym))))))
 
-(defun hypb:display-file-with-logo-emacs (&optional file)
+(defun hypb:insert-hyperbole-banner ()
   "Display an optional text FILE with the Hyperbole banner prepended.
 Without file, the banner is prepended to the current buffer."
   (let ((hyperbole-banner-path (expand-file-name "hyperbole-banner.png" hyperb:dir)))

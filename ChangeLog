@@ -6,7 +6,14 @@
 
 * test/hpath-tests.el (hpath:auto-variable-alist-load-path-test):
     Ensure directories without final slashes and .el files without double
-    quotes  are handled properly.
+    quotes are handled properly.
+
+* hypb.el (hypb:string-count-matches): Rewrite to handle start and end properly.
+
+* hypb.el (hyupb:insert-hyperbole-banner): Renamed from 'hypb:display-file-with-logo-emacs'
+    and removed unused 'file' parameter.
+
+* hypb.el: Use lexical binding and remove any lexical binding errors.
 
 2022-01-08  Bob Weiner  <rsw@gnu.org>
 
