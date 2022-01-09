@@ -4,7 +4,7 @@
 ;;
 ;; Orig-Date:     9-May-91 at 04:50:20
 ;;
-;; Copyright (C) 1991-2016  Free Software Foundation, Inc.
+;; Copyright (C) 1991-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
 ;;
 ;; This file is part of GNU Hyperbole.
@@ -17,6 +17,9 @@
 ;;; ************************************************************************
 
 (require 'sendmail)
+(require 'hypb)                         ;For `hypb:supercite-p'.
+
+(defvar inhibit-hyperbole-messaging) ;; From "hsettings.el".
 
 ;;; ************************************************************************
 ;;; Public variables
@@ -24,43 +27,16 @@
 
 (defvar smail:comment nil
   "Default comment form to evaluate and add to outgoing mail and Gnus postings.
-Default is nil for no comment.  Set to: '(format \"Comments: GNU Hyperbole mail buttons accepted, v%s.\n\" hyperb:version)
+Default is nil for no comment.  Set to:
+
+    (format \"Comments: GNU Hyperbole mail buttons accepted, v%s.\n\"
+                hyperb:version)
+
 for a comment.")
 
-;;; Used by 'mail-send' in Emacs "sendmail.el".
-(if (boundp 'send-mail-function)
-    (or (if (listp send-mail-function)
-	    (unless (equal (nth 2 send-mail-function) '(smail:widen))
-	      (error
-	       "(hsmail): Set 'send-mail-function' to a symbol-name, not a list, before load")))
-	(setq send-mail-function `(lambda () (smail:widen) (,send-mail-function))))
-  (error "(hsmail): Install an Emacs \"sendmail.el\" which includes 'send-mail-function'"))
-
-(if (fboundp 'mail-prefix-region)
-    ;;
-    ;; For compatibility with rsw-modified sendmail.el.
-    (defvar mail-yank-hook
-      ;; Set off original message.
-      (lambda () (mail-prefix-region (mark t) (point)))
-      "*Hook to run mail yank preface function.
-Expects point and mark to be set to the region to preface.")
-  ;;
-  ;; Else for compatibility with Supercite and GNU Emacs.
-  ;; If you create your own yank hook, set this variable rather than
-  ;; `mail-yank-hook' from above.
-  (defvar mail-citation-hook nil
-    "Hook for modifying a citation just inserted in the mail buffer.
-Each hook function can find the citation between (point) and (mark t),
-and should leave point and mark around the citation text as modified.
-The hook functions can find the header of the cited message
-in the variable `mail-citation-header', whether or not this is included
-in the cited portion of the message.
-
-If this hook is entirely empty (nil), a default action is taken
-instead of no action.")
-  (defvar mail-yank-hooks '(mail-indent-citation)
-      "*Obsolete hook to run mail yank citation function.  Use mail-citation-hook instead.
-Expects point and mark to be set to the region to cite."))
+;; Used by 'mail-send' in Emacs "sendmail.el".
+;; FIXME: Is this still needed?
+(add-function :before send-mail-function #'smail:widen)
 
 ;; For compatibility with Supercite and GNU Emacs.
 (defvar mail-yank-prefix "> "
@@ -81,16 +57,17 @@ Used by `mail-yank-original' via `mail-indent-citation'.")
 ;;; ************************************************************************
 
 (defun smail:comment-add (&optional comment-form)
-  "Add a comment to the current outgoing message if Hyperbole has been loaded and `inhibit-hyperbole-messaging' is nil.
+  "Add a comment to the current outgoing message.
+Only if Hyperbole has been loaded and `inhibit-hyperbole-messaging' is nil.
 Optional COMMENT-FORM is evaluated to obtain the string to add to the
 message.  If not given, 'smail:comment' is evaluated by default."
   (if (and (featurep 'hyperbole) (not inhibit-hyperbole-messaging))
-      (let ((comment (eval (or comment-form smail:comment))))
+      (let ((comment (eval (or comment-form smail:comment) t)))
 	(if comment
 	    (save-excursion
 	      (goto-char (point-min))
 	      (and (or (search-forward mail-header-separator nil t)
-		       (if (eq major-mode 'mh-letter-mode)
+		       (if (derived-mode-p 'mh-letter-mode)
 			   (search-forward "\n--------" nil t)))
 		   (not (search-backward comment nil t))
 		   (progn (beginning-of-line) (insert comment))))))))
