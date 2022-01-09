@@ -1,3 +1,9 @@
+2022-01-09  Mats Lidell  <matsl@gnu.org>
+
+* test/hyperbole-tests.el (hyperbole-keymap-tests)
+    (hyperbole-hkey-init-controls-tests)
+    (hyperbole-global-key-binding-tests): Keybinding tests.
+
 2022-01-09  Bob Weiner  <rsw@gnu.org>
 
 * topwin.py: Update to Python 3.7 or greater.
