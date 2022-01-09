@@ -1685,8 +1685,8 @@ in-buffer path will not match."
 With optional RETURN-PATH-FLAG non-nil, return the whole path,
 expanded and with the variable value substituted.
 
-The caller must have run `string-match' over `path' immediately prior
-to calling this function."
+The caller must have run `string-match' over `path' immediately
+prior to calling this function."
   (unless (match-data)
     (error "(hpath:return-one-value): Caller failed to run (string-match hpath:variable-regexp path) before calling this"))
   (let* ((var-group (match-string 0 path))
@@ -1722,19 +1722,44 @@ to calling this function."
   "Substitute matching value for Emacs Lisp variables and environment variables in PATH and return PATH.
 Format of path-type variables must be \"${variable-name}\"; other,
 single-valued variables may be given as \"$variable-name\"."
-   (let* ((braces-var-count (hypb:string-count-matches hpath:variable-regexp path))
-	  (new-path
-	   (cond ((= braces-var-count 0)
-		  path)
-		 ((= braces-var-count 1)
-		  (hpath:return-one-value path t))
-		 (t (hpath:substitute-match-value
-		     hpath:variable-regexp
-		     path
-		     (lambda (matched-str) (hpath:return-one-value matched-str))
-		     t t)))))
-     (when (stringp new-path)
-       (substitute-in-file-name new-path))))
+
+;; Algorithm
+;;  1. Extract all ${} and $ vars into a reverse order list and save start and end points.
+;;  2. Get value of each var.
+;;  3. For each string var not containing [:;], replace its var-name with var value.
+;;  4. Run hpath:return-one-value on this reversed list.
+  (let ((start 0)
+	(new-path (copy-sequence path))
+	multi-dir-vars
+	var-name
+	var-start
+	var-end
+	var-value
+	result)
+    (while (and (< start (length new-path))
+		(string-match hpath:variable-regexp new-path start))
+      (setq var-name (match-string 1 new-path)
+	    var-start (match-beginning 0)
+	    var-end (match-end 0)
+	    var-value (hpath:get-single-string-variable-value var-name))
+      (if var-value
+	  (setq new-path (hpath:return-one-value new-path t)
+		start (+ var-start (length var-value)))
+	(setq multi-dir-vars (cons var-name multi-dir-vars)
+	      start var-end)))
+    (while multi-dir-vars
+      (setq result nil
+	    var-name (car multi-dir-vars)
+	    multi-dir-vars (cdr multi-dir-vars))
+      (while (and (not result)
+		  (string-match hpath:variable-regexp new-path))
+	;; Match multi-dir-vars in reverse order so can
+	;; match each var to a path without other variables.
+	(when (string-equal (match-string 1 new-path)
+			    var-name)
+	  (setq result (hpath:return-one-value new-path t)
+		new-path (if (string-empty-p result) new-path result)))))
+    new-path))
 
 (defun hpath:substitute-var (path)
   "Replace up to one match in PATH with the first variable from `hpath:variables' whose value contains a string match to PATH.
@@ -2160,6 +2185,34 @@ function to call with FILENAME as its single argument."
       (setq regexp-alist (cdr regexp-alist)))
     cmd))
 
+(defun hpath:get-single-string-variable-value (var-name)
+  "Return VAR-NAME's value if is a string without any colon or semicolon; otherwise, return nil.
+Trigger an error if VAR-NAME is not a string, a valid existing variable, or its value is not a string or list."
+  (let (sym val)
+    (cond ((not (stringp var-name))
+	   ;; (error "(hpath:get-single-string-variable-value): var-name, `%s', must be a string" var-name)
+	   nil)
+	  ((not (or (and (setq sym (intern-soft var-name))
+			 (boundp sym))
+		    (setq val (getenv var-name))))
+	   ;; (error "(hpath:get-single-string-variable-value): var-name, \"%s\", is not a bound variable nor a set environment variable"
+	   ;;   var-name)
+	   nil)
+	  ((let ((case-fold-search t))
+	     (or (stringp (setq val (cond ((and (boundp sym) sym)
+					       (symbol-value sym))
+					      ((and (string-match "path" var-name)
+						    (seq-find (lambda (c) (memq c '(?: ?\;))) (or (getenv var-name) "")))
+					       nil)
+					      (t (getenv var-name)))))
+		 (setq val nil))))
+	  ((listp val)
+	   (setq val nil))
+	  (t
+	   (error "(hpath:get-single-string-variable-value): Value of var-name, \"%s\", must be a string or list" var-name)
+	   nil))
+    val))
+
 (defun hpath:substitute-dir (path-prefix var-name rest-of-path trailing-dir-sep-flag &optional return-path-flag)
   "Return PATH-PREFIX, dir for VAR-NAME, TRAILING-DIR-SEP-FLAG and REST-OF-PATH when optional RETURN-PATH-FLAG is non-nil.
 Otherwise, return just the dir for VAR-NAME.  Trigger an error when no match.
@@ -2185,8 +2238,9 @@ local pathname."
 	  ((let ((case-fold-search t))
 	     (stringp (setq val (cond ((and (boundp sym) sym)
 				       (symbol-value sym))
-				      ((string-match "path" var-name)
-				       (split-string (getenv var-name) ":"))
+				      ((and (string-match "path" var-name)
+					    (seq-find (lambda (c) (memq c '(?: ?\;))) (or (getenv var-name) "")))
+				       (split-string (getenv var-name) "[:;]"))
 				      (t (getenv var-name)))))))
 	  ((listp val)
 	   (unless (and (setq path (locate-file rest-of-path val (cons "" hpath:suffixes)))

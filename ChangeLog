@@ -1,3 +1,9 @@
+2022-01-08  Bob Weiner  <rsw@gnu.org>
+
+* hpath.el (hpath:return-one-value): Completely rewrote to handle complex
+    multi-variable paths like:  "${load-path}/../hyperbole/$DOT/hypb.el")
+    where DOT = ".".
+
 2022-01-02  Bob Weiner  <rsw@gnu.org>
 
 * test/hpath-tests.el (hpath:should-exist-paths, hpath:should-not-exist-paths):

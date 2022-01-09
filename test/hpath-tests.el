@@ -39,8 +39,7 @@
     "../hyperbole/./hypb.el"
     "~"
     "~/."
-    ;; Comment next one out until can make hpath:substitute-dir handle it.
-    ;; "${load-path}/../hyperbole/${DOT}/hypb.el"
+    "${load-path}/../hyperbole/${DOT}/hypb.el"
     "${load-path}/../hyperbole/$DOT/hypb.el"
     "$DOT"
     "${DOT}"
@@ -72,14 +71,18 @@
 
 (defun hpath--should-exist-p (path)
   (let ((default-directory hyperb:dir)
-	(expanded (hpath:expand path)))
+	(expanded (condition-case err
+		      (hpath:expand path)
+		    (error (list path err)))))
     (if (file-exists-p expanded)
 	t
       (list path expanded))))
 
 (defun hpath--should-not-exist-p (path)
   (let ((default-directory hyperb:dir)
-	(expanded (hpath:expand path)))
+	(expanded (condition-case err
+		      (hpath:expand path)
+		    (error path))))
     (if (not (file-exists-p expanded))
 	t
       (list path expanded))))
