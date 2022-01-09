@@ -1,6 +1,6 @@
-;;; hypb-ert --- ert button support                   -*- lexical-binding: t; -*-
+;;; hypb-ert.el --- ert button support                   -*- lexical-binding: t; -*-
 
-;; Author: Mats Lidell <matsl@gnu.org>
+;; Author: Mats Lidell <matsl@gnu.org> and Bob Weiner <rsw@gnu.org>
 ;;
 ;; Orig-Date: 31-Mar-21 at 21:11:00
 ;;
@@ -11,17 +11,18 @@
 
 ;;; Commentary:
 
-;; Defines an implicit button for running an ert test
+;; Creates two action link implicit button types for running any Hyperbole test
+;; defined in "${hyperb:dir}/test/".
 ;;
-;; Example:
-;;   Run the test hbut-defal-url
-;;   <hypb-ert-sym hbut-defal-url>
+;; Examples:
+;;   Run the test named hbut-defal-url:
+;;     <hyperbole-run-test hbut-defal-url>
 ;;
-;;   Run the tests that start with the string, "hbut-defal"
-;;   <hypb-ert-sel hbut-defal>
+;;   Run the tests that start with the string, "hbut-defal":
+;;     <hyperbole-run-tests hbut-defal>
 ;;
-;;   Run all Hyperbole tests
-;;   <hypb-ert-sel t>
+;;   Run all Hyperbole tests:
+;;     <hyperbole-run-tests t>
 
 ;;; Code:
 
@@ -29,27 +30,35 @@
 (require 'hbut)
 (require 'hargs)
 
-(defun hypb-run-ert-test-libraries ()
-  "Return the list of test Lisp libraries to load."
-  (directory-files (expand-file-name "test" hyperb:dir) t "^[a-zA-Z].*\\.el$"))
+(defun hypb-ert-get-require-symbols ()
+  "Return the list of test Lisp library symbols to require."
+  (mapcar (lambda (file)
+	    (intern (substring file 0 -3)))
+	  (directory-files (expand-file-name "test" hyperb:dir) nil "^[a-zA-Z].*\\.el$")))
 
-(defun hypb-run-ert-test-symbol (test-symbol)
-  "Run the specified TEST-SYMBOL ert test."
-  (mapc #'load-file (hypb-run-ert-test-libraries))
-  (ert (intern test-symbol)))
+(defun hypb-ert-require-libraries ()
+  (mapc #'require (hypb-ert-get-require-symbols)))
 
-(defun hypb-run-ert-test-selector (test-selector)
+(defun hypb-ert-run-test (test-name)
+  "Run the specified TEST-NAME ert test."
+  (hypb-ert-require-libraries)
+  (let ((test-sym (intern-soft test-name)))
+    (if test-sym
+	(ert test-sym)
+      (user-error "Invalid test name: %s" test-name))))
+
+(defun hypb-ert-run-tests (test-selector)
   "Run the specified TEST-SELECTOR defined ert test."
-  (mapc #'load-file (hypb-run-ert-test-libraries))
-  (ert test-selector))
+  (hypb-ert-require-libraries)
+  (ert (regexp-quote test-selector)))
 
-(defal hypb-ert-sym "hypb-run-ert-test-symbol")
-(defal hypb-ert-sel "hypb-run-ert-test-selector")
+(defal hyperbole-run-test  "hypb-ert-run-test")
+(defal hyperbole-run-tests "hypb-ert-run-tests")
 
-(defun hypb-run-all-tests ()
+(defun hypb-ert-run-all-tests ()
   "Run every ert test."
   (interactive)
-  (mapc #'load-file (hypb-run-ert-test-libraries))
+  (hypb-ert-require-libraries)
   (ert t))
 
 (provide 'hypb-ert)

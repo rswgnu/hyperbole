@@ -10,10 +10,14 @@
 
 * hypb.el (hypb:string-count-matches): Rewrite to handle start and end properly.
 
-* hypb.el (hyupb:insert-hyperbole-banner): Renamed from 'hypb:display-file-with-logo-emacs'
-    and removed unused 'file' parameter.
+* hypb.el (hypb:insert-hyperbole-banner): Rename from 'hypb:display-file-with-logo-emacs'
+    and remove unused 'file' parameter.
 
 * hypb.el: Use lexical binding and remove any lexical binding errors.
+
+* hypb-ert.el: Rewrite to improve naming and to load tests once only using require.
+
+* test/hmouse-drv-tests.el (hbut-defal): Generalize to prevent failures.
 
 2022-01-08  Bob Weiner  <rsw@gnu.org>
 

@@ -65,25 +65,26 @@
 
   TEST CASES
 
-    - Hyperbole Automated Testing: Hyperbole now includes over 170 test cases
+    - Hyperbole Automated Testing: Hyperbole now includes over 200 test cases
       in the test/ subdirectory.  Simply run 'make test' or 'make test-all'
       from the command-line when in the Hyperbole source directory and you
       should see all tests pass.  If any fail, you can press the Action Key
       to see the source of the failure.
 
-    - Defal implicit buttons hypb-ert-sym and hypb-ert-sel: For running
-      hyperbole ert test from hyperbole source files.
-	Defines an implicit button for running an ert test
+    - Implicit Button Types to Run Tests: The file "hypb-ert.el" contains two
+      action link types:
+        hyperbole-run-test  - run a single Hyperbole test by name
+        hyperbole-run-tests - run one more tests matching a pattern
+      
+        Example uses:
+          Run the test hbut-defal-url
+            <hyperbole-run-test hbut-defal-url>
 
-	Example:
-	  Run the test hbut-defal-url
-	  <hypb-ert-sym hbut-defal-url>
+          Run the tests specified by the test selector hbut-defal
+            <hyperbole-run-tests hbut-defal>
 
-	  Run the tests specified by the test selector hbut-defal
-	  <hypb-ert-sel hbut-defal>
-
-	  Run all tests
-	  <hypb-ert-sel t>
+          Run all tests
+            <hyperbole-run-tests t>
 
   HYROLO
 

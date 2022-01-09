@@ -16,5 +16,5 @@ cd $app/$install_method
 emacs --batch -l $app/$install_method/.emacs \
       --eval '(load (expand-file-name "test/hy-test-dependencies.el" hyperb:dir))' \
       -l hypb-ert \
-      --eval "(mapc #'load-file (hypb-run-ert-test-libraries))" \
+      --eval "(hypb-ert-require-libraries)" \
       -f ert-run-tests-batch-and-exit

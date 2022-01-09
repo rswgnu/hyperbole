@@ -31,11 +31,10 @@
       (with-temp-buffer
         (insert "<defal-path DEMO>")
         (goto-char 4)
-        (action-key)
-        (should (string= (expand-file-name "DEMO" hyperb:dir) buffer-file-name))))
-    (progn
-      (kill-buffer "DEMO")
-      (ibtype:delete 'ibtypes::defal-path)))
+        (hy-test-helpers:action-key-should-call-hpath:find "${hyperb:dir}/DEMO"))
+    (when (string-match-p "DEMO" (buffer-name))
+      (kill-buffer (current-buffer)))
+    (ibtype:delete 'ibtypes::defal-path)))
 
 (defun hbut-defal-url (url &optional new-window)
   "Verify call with proper URL and optional NEW-WINDOW."
@@ -102,7 +101,7 @@
           (error
            (progn
              (should (equal (car err) 'error))
-             (should (string-match "hpath:find" (cadr err)))))))
+             (should (string-match-p "hpath:find" (cadr err)))))))
     (ibtype:delete 'ibtypes::defal-path-missing)))
 
 (ert-deftest hbut-defil-it ()
