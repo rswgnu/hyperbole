@@ -1741,7 +1741,7 @@ single-valued variables may be given as \"$variable-name\"."
       (setq var-name (match-string 1 new-path)
 	    var-start (match-beginning 0)
 	    var-end (match-end 0)
-	    var-value (hpath:get-single-string-variable-value var-name))
+	    var-value (save-match-data (hpath:get-single-string-variable-value var-name)))
       (if var-value
 	  (setq new-path (hpath:return-one-value new-path t)
 		start (+ var-start (length var-value)))
