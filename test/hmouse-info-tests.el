@@ -4,7 +4,7 @@
 ;;
 ;; Orig-Date: 29-Dec-21 at 09:02:00
 ;;
-;; Copyright (C) 2021  Free Software Foundation, Inc.
+;; Copyright (C) 2021-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
 ;;
 ;; This file is part of GNU Hyperbole.
@@ -42,6 +42,11 @@
         (dolist (m (Info-build-menu-item-completions "regexp" nil t))
           (should (string-prefix-p "regexp" m t))))
     (kill-buffer "*info*")))
+
+;; FIXME: Can't compile when `with-simulated-input' is absent!
+;; Local Variables:
+;; no-byte-compile: t
+;; End:
 
 (provide 'hmouse-info-tests)
 ;;; hmouse-info-tests.el ends here
