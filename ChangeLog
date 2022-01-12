@@ -1,3 +1,15 @@
+2022-01-11  Mats Lidell  <matsl@gnu.org>
+
+* test/hmouse-info-tests.el: Don't byte compile since depends on
+    with-simulated-input. Patch from Stefan Monnier. Thank you Stefan.
+
+2022-01-09  Mats Lidell  <matsl@gnu.org>
+
+* test/hyperbole-tests.el (hyperbole-keymap-tests)
+    (hyperbole-hkey-init-controls-tests)
+    (hyperbole-global-key-binding-tests): Keybinding tests.
+    (hyperbole-key-bindings): Combine tests in one helper function.
+
 2022-01-11  Bob Weiner  <rsw@gnu.org>
 
 * hbut.el (hbut:act): If point is within the button to be activated, prevent
