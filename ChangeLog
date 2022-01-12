@@ -1,3 +1,9 @@
+2022-01-11  Bob Weiner  <rsw@gnu.org>
+
+* hbut.el (hbut:act): If point is within the button to be activated, prevent
+    ibut:to-text call which recursively calls hbut:act and can cause problems
+    with key series buttons at least.  Much more efficient in most cases.
+
 2022-01-09  Bob Weiner  <rsw@gnu.org>
 
 * topwin.py: Update to Python 3.7 or greater.

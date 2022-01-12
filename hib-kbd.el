@@ -121,6 +121,11 @@ Any key sequence must be a string of one of the following:
 		   (when (memq (char-before start) '(nil ?\ ?\t ?\n ?\j ?\f ?\"))
 		     (when (and (stringp key-series)
 				(not (eq key-series "")))
+		       ;; Replace any ${} internal or env vars; leave
+		       ;; $VAR untouched for the shell to evaluate.
+		       (let ((hpath:variable-regexp "\\${\\([^}]+\\)}"))
+			 (setq key-series (hpath:substitute-value key-series)))
+
 		       (setq key-series (kbd-key:normalize key-series)
 			     binding (kbd-key:binding key-series)))
 		     (and (stringp key-series)

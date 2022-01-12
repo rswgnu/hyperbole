@@ -361,7 +361,7 @@ they can be quickly collapsed and re-organized in standard ways.
 
      In practice, fiddling with the frame sizes sounds like:
      'Hyperbole Frame Control. Press Period. Numeral 20. Go left
-     ten. Press H. Press W. Press Q.' It’s just… great.  I can’t say
+     ten. Press H. Press W. Press Q.' It’s just great.  I can’t say
      enough nice things about it. I always know I’ve found a killer
      piece of functionality when I find myself desperately wishing I
      had it everywhere."
