@@ -30,15 +30,6 @@
 (require 'hbut)
 (require 'hargs)
 
-(defun hypb-ert-get-require-symbols ()
-  "Return the list of test Lisp library symbols to require."
-  (mapcar (lambda (file)
-	    (intern (substring file 0 -3)))
-	  (directory-files (expand-file-name "test" hyperb:dir) nil "^[a-zA-Z].*\\.el$")))
-
-(defun hypb-ert-require-libraries ()
-  (mapc #'require (hypb-ert-get-require-symbols)))
-
 (defun hypb-ert-run-test (test-name)
   "Run the specified TEST-NAME ert test."
   (hypb-ert-require-libraries)
@@ -51,6 +42,15 @@
   "Run the specified TEST-SELECTOR defined ert test."
   (hypb-ert-require-libraries)
   (ert (regexp-quote test-selector)))
+
+(defun hypb-ert-get-require-symbols ()
+  "Return the list of test Lisp library symbols to require."
+  (mapcar (lambda (file)
+	    (intern (substring file 0 -3)))
+	  (directory-files (expand-file-name "test" hyperb:dir) nil "^[a-zA-Z].*\\.el$")))
+
+(defun hypb-ert-require-libraries ()
+  (mapc #'require (hypb-ert-get-require-symbols)))
 
 (defal hyperbole-run-test  "hypb-ert-run-test")
 (defal hyperbole-run-tests "hypb-ert-run-tests")
