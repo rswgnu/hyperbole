@@ -19,6 +19,8 @@
 
 * test/hmouse-drv-tests.el (hbut-defal): Generalize to prevent failures.
 
+* hmouse-drv.el (hkey-debug): Improve to show action type and its arguments.
+
 2022-01-08  Bob Weiner  <rsw@gnu.org>
 
 * hpath.el (hpath:return-one-value): Complete rewrite to handle complex

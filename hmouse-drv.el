@@ -839,18 +839,23 @@ frame instead."
       (mouse-drag-frame start-event 'move)))))
 
 (defun hkey-debug (pred pred-value hkey-action)
-  (message (format "(HyDebug) %sContext: %s; %s: %s; Buf: %s; Mode: %s; MinibufDepth: %s"
-		   (cond ((eq pred-value 'hbut:current)
-			  (format "ButType: %s; ButLabel: %s; "
-				  (hattr:get  'hbut:current 'categ)
-				  (hypb:format-quote (hbut:label 'hbut:current))))
-			 ((functionp pred-value)
-			  (format "Selection Func: %s; " pred-value))
-			 (t ""))
-		   pred
-		   (if assist-flag "Assist" "Action")
-		   (hypb:format-quote (format "%s" hkey-action))
-		   (current-buffer) major-mode (minibuffer-depth))))
+  (message "(HyDebug) %sContext: %s; %s: %s; Buf: %s; Mode: %s; MinibufDepth: %s"
+	   (cond ((eq pred-value 'hbut:current)
+		  (format "ButType: %s; ButLabel: %s; "
+			  (hattr:get 'hbut:current 'categ)
+			  (hypb:format-quote (hbut:label 'hbut:current))))
+		 ((functionp pred-value)
+		  (format "Selection Func: %s; " pred-value))
+		 (t ""))
+	   pred
+	   (if assist-flag "Assist" "Action")
+	   (if (hattr:get  'hbut:current 'actype)
+	       (cons (hattr:get  'hbut:current 'actype)
+		     (hattr:get  'hbut:current 'args))
+	     (hypb:format-quote (format "%s" hkey-action)))
+	   (current-buffer)
+	   major-mode
+	   (minibuffer-depth)))
 
 (defun hkey-execute (assisting)
   "Evaluate Action Key form (or Assist Key form with ASSISTING non-nil) for first non-nil predicate from `hkey-alist'.
