@@ -409,15 +409,15 @@ LOAD_TEST_ERT_FILES=$(patsubst %,(load-file \"%\"),${TEST_ERT_FILES})
 
 test-ert:
 	@echo "# Tests: $(TEST_ERT_FILES)"
-	$(EMACS_BATCH) --eval "(load-file \"test/hy-test-dependencies.el\")" --eval "(progn $(LOAD_TEST_ERT_FILES) (ert-run-tests-batch-and-exit))"
+	$(EMACS_BATCH) --eval "(load-file \"test/hy-test-dependencies.el\")" --eval "(let ((auto-save-default)) $(LOAD_TEST_ERT_FILES) (ert-run-tests-batch-and-exit))"
 
 all-tests: test-all
 test-all:
 	@echo "# Tests: $(TEST_ERT_FILES)"
 ifeq ($(TERM), dumb)
-	TERM=vt100 DISPLAY=$(DISPLAY) $(EMACS) --quick $(PRELOADS) --eval "(load-file \"test/hy-test-dependencies.el\")" --eval "(progn $(LOAD_TEST_ERT_FILES) (ert-run-tests-interactively t))"
+	TERM=vt100 DISPLAY=$(DISPLAY) $(EMACS) --quick $(PRELOADS) --eval "(load-file \"test/hy-test-dependencies.el\")" --eval "(let ((auto-save-default)) $(LOAD_TEST_ERT_FILES) (ert-run-tests-interactively t))"
 else
-	$(EMACS) --quick $(PRELOADS) --eval "(load-file \"test/hy-test-dependencies.el\")" --eval "(progn $(LOAD_TEST_ERT_FILES) (ert-run-tests-interactively t))"
+	$(EMACS) --quick $(PRELOADS) --eval "(load-file \"test/hy-test-dependencies.el\")" --eval "(let ((auto-save-default)) $(LOAD_TEST_ERT_FILES) (ert-run-tests-interactively t))"
 endif
 
 # Hyperbole install tests - Verify that hyperbole can be installed
