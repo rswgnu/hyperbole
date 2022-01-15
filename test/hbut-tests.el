@@ -98,7 +98,8 @@ Needed since hyperbole expands all links to absolute paths and
 	  (with-current-buffer test-buffer
             (should (eq (hattr:get (hbut:at-p) 'actype) 'actypes::link-to-directory))
             (hbut-tests:should-match-tmp-folder (hattr:get (hbut:at-p) 'args))
-            (should (equal (hattr:get (hbut:at-p) 'lbl-key) "global")))))))
+            (should (equal (hattr:get (hbut:at-p) 'lbl-key) "global"))))
+      (delete-file test-file))))
 
 (ert-deftest hypb:program-create-ebut-in-buffer ()
   "Create button with hypb:program in buffer."
