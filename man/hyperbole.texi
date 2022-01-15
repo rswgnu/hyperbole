@@ -1993,7 +1993,7 @@ implicit button types (they are listed in increasing order of priority).
 @table @code
 
 @findex ibtypes org-mode
-@cindex Org-mode
+@cindex org-mode
 @cindex radio target
 @cindex code block
 @cindex links
@@ -2001,12 +2001,17 @@ implicit button types (they are listed in increasing order of priority).
 @kindex M-@key{RET}
 @findex org-ctrl-c-ctrl-c
 @findex org-meta-return
+@findex hsys-org-mode-p
+@vindex file, hsys-org.el
 @vindex hsys-org-enable-smart-keys
 @cindex enable org-mode support
 @cindex disable org-mode support
 @cindex inhibit org-mode support
 @item org-mode
-For users of Emacs Org-mode, Hyperbole does quite a few things.
+Hyperbole recognizes Org mode constructs in any of these modes:
+@code{org-mode}, @code{org-agenda-mode}, @code{outshine-mode}
+or @code{poporg-mode}.  (See the function @code{hsys-org-mode-p}).
+Hyperbole does quite a few things for Org mode users.
 
 First, the Action Key follows internal links in Org-mode files.  When
 pressed on a link referent/target, the link definition is displayed,
@@ -4452,17 +4457,57 @@ Set the variable, @code{kotl-mode:indent-tabs-mode}, to
 Use @bkbd{M-1 @key{TAB}} to toggle the @key{TAB} and
 @bkbd{M-@key{TAB}} keys back to promoting and demoting trees.
 
+
+@cindex Org tables
+The Koutliner supports Org Table editing, @pxref{Tables,,, org, the Org
+Mode Manual}, via Org table minor mode.  Use {M-x orgtbl-mode RET} to
+toggle this on and off.  A press of the Action Key on a @code{|} symbol,
+also toggles this minor mode on or off.
+
+@cindex outline mode
+@kindex M-0 @key{TAB}
+@kindex M-0 M-@key{TAB}
+Tree demotion and promotion keys match the defaults in Org mode and
+Outline mode, plus some easier to type ones.  The tables below
+summarize which keys work whether inside an Org table or outside.
+
+Note that you must use @bkbd{M-0 @key{TAB}} and @bkbd{M-0 M-@key{TAB}} to
+demote/promote Koutline trees when in a table since @key{TAB} by itself
+moves between fields within a table.
+
+@example
+@noindent
+|----------------------------+-----------------------------|
+| Demotion Inside  Org Table | Promotion Inside  Org Table |
+|----------------------------+-----------------------------|
+| M-0 TAB                    | M-0 Shift-TAB or M-0 M-TAB  |
+| C-c C-,                    | C-c C-.                     |
+| C-c C-<                    | C-c C->                     |
+|----------------------------+-----------------------------|
+
+|----------------------------+-----------------------------|
+| Demotion Outside Org Table | Promotion Outside Org Table |
+|----------------------------+-----------------------------|
+| TAB                        | Shift-TAB or M-TAB          |
+| M-left-arrow               | M-right-arrow               |
+| C-c C-,                    | C-c C-.                     |
+| C-c C-<                    | C-c C->                     |
+|----------------------------+-----------------------------|
+@end example
+
+
 @cindex tree, copying
 @cindex tree, moving
 @cindex Action Key, cell argument
 @kindex koutliner, Action Key, cell argument
-For maximum flexibility in rearranging outlines, there are commands that
-move or copy entire trees.  Each of these commands prompts for the label
-of the root cell to move or copy and for a second cell which specifies
-the new location for the moved or copied tree.  You may either accept
-the default provided, type in the cell label, or when a mouse is
-available, simply double click with the Action Key on the contents of a
-cell.  The Koutliner knows to use the cell's label in such cases.
+For maximum flexibility in rearranging outlines, there are commands
+that move or copy entire trees anywhere within the outline.  Each of
+these commands prompts for the label of the root cell to move or copy
+and for a second cell which specifies the new location for the moved
+or copied tree.  You may either accept the default provided, type in
+the cell label, or when a mouse is available, simply double click with
+the Action Key on the contents of a cell.  The Koutliner knows to use
+the cell's label in such cases.
 
 In the following commands, words delimited with <> represent the
 arguments for which each command prompts.  Note how the use of prefix
@@ -4596,12 +4641,12 @@ right margins.
 @cindex refilling
 @cindex attribute, no-fill
 @cindex cell, no-fill attribute
-Set the variable, @code{kotl-mode:refill-flag}, to @samp{t} if you want
-moving, promoting, demoting, exchanging, splitting and appending cells
-to also automatically refill each cell.  Generally, this is not
-recommended since if you happen to move a cell that you carefully
-formatted yet forgot to give a `no-fill' property, then your formatting
-will be lost.
+Set the variable, @code{kotl-mode:refill-flag}, to @samp{t} if you
+want moving, promoting, demoting, exchanging, splitting and appending
+cells to also automatically refill each cell, aside from any that have
+a `no-fill' property.  Generally, this is not recommended since if you
+happen to move a cell that you carefully formatted yet forgot to give
+a `no-fill' property, then your formatting will be lost.
 
 
 @node Transposing, Splitting and Appending, Filling, Editing
@@ -7256,10 +7301,10 @@ be of interest to users.
 @cindex internal display
 @cindex external display
 Hyperbole lets you control where link referents are displayed.  It also
-permits setting a specific Emacs function or external program
-to display them.  There are four categories of referents, each with
-its own display setting, listed in decreasing order of priority.  All
-of these variables are defined within @file{hpath.el}.
+permits setting a specific Emacs function or external program to display
+them.  There are four categories of referents, each with its own
+customizable display setting, listed in decreasing order of priority.
+All of these variables are defined within @file{hpath.el}.
 
 @example
 Referent Category             Variable Setting

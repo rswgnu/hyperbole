@@ -191,7 +191,7 @@ but-start-position, but-end-position.  Positions include
 delimiters.  With TWO-LINES-FLAG non-nil, constrain label search
 to two lines."
   (let ((opoint (point))
-	(quoted "\\(^\\|[^\\{]\\)")
+	(quoted "\\(^\\|[^\\{$]\\)")
 	(hbut:max-len hbut:max-len)
 	npoint start lbl-key end but-start but-end start-regexp end-regexp)
     (unless start-delim (setq start-delim ebut:start))

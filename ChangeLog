@@ -1,7 +1,29 @@
+2022-01-15  Bob Weiner  <rsw@gnu.org>
+
+* hpath.el (hpath:absolute-arguments): Check that each arg is non-nil
+    before calling hpath:absolute-to.
+
+* kotl/kotl-mode.el (kotl-mode:skip-filling-p) Add to test whether to
+    fill around point or not based on context.  Prevents filling in tables.
+
+2022-01-14  Bob Weiner  <rsw@gnu.org>
+
+* hbut.el (ebut:label-p): Add '$' as additional quoting character so
+   ${var} does not match when looking for a brace-delimited key series.
+
+* hpath.el (hpath:at-p, hpath:is-p): Add file-exists-p test to immediately
+    handle any simple paths with directories, for example.
+
 2022-01-11  Mats Lidell  <matsl@gnu.org>
 
 * test/hmouse-info-tests.el: Don't byte compile since depends on
     with-simulated-input. Patch from Stefan Monnier. Thank you Stefan.
+
+2022-01-11  Bob Weiner  <rsw@gnu.org>
+
+* hbut.el (hbut:act): If point is within the button to be activated, prevent
+    ibut:to-text call which recursively calls hbut:act and can cause problems
+    with key series buttons at least.  Much more efficient in most cases.
 
 2022-01-09  Mats Lidell  <matsl@gnu.org>
 
@@ -9,12 +31,6 @@
     (hyperbole-hkey-init-controls-tests)
     (hyperbole-global-key-binding-tests): Keybinding tests.
     (hyperbole-key-bindings): Combine tests in one helper function.
-
-2022-01-11  Bob Weiner  <rsw@gnu.org>
-
-* hbut.el (hbut:act): If point is within the button to be activated, prevent
-    ibut:to-text call which recursively calls hbut:act and can cause problems
-    with key series buttons at least.  Much more efficient in most cases.
 
 2022-01-09  Bob Weiner  <rsw@gnu.org>
 
@@ -1429,7 +1445,7 @@ Delete knode.el and integrate functionality into kcell.el.
     Add to separate from hyperb:init.
                (hyperbole-mode): Update to use above functions.
 
-* hui-mini.el (hui:hypb-exit): "X" to exit from hyperbole-mode
+* hui-mini.el (hui:hypb-exit): {X} to exit from hyperbole-mode
     when a minibuffer menu is active.  Use {C-h h} to re-enable
     hyperbole-mode and display the minibuffer menu.
               (hui:hypb-exit): Command invoked by X in menus.
@@ -2281,8 +2297,9 @@ absolute paths.
     mode is active and point is in a table):
 
      |----------------------------+-----------------------------|
-     | Demotion Inside Org Table  | Promotion Inside Org Table  |
+     | Demotion Inside  Org Table | Promotion Inside  Org Table |
      |----------------------------+-----------------------------|
+     | M-0 TAB                    | M-0 Shift-TAB or M-0 M-TAB  |
      | C-c C-,                    | C-c C-.                     |
      | C-c C-<                    | C-c C->                     |
      |----------------------------+-----------------------------|

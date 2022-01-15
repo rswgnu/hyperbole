@@ -108,12 +108,12 @@ attribute):
 
 Note that `issue' or `debbugs' may be used as well in place of `bug'."
   (when (debbugs-version-sufficient-p)
-    (if (debbugs-query:at-p)
-	(cond ((and (match-beginning 3) (string-equal "?" (match-string 3)))
-	       (hact 'debbugs-gnu-query:string (buffer-substring-no-properties
-						(or (match-beginning 1) (match-beginning 2))
-						(match-end 4))))
-	      (t (hact 'debbugs-gnu-query (string-to-number (match-string 2))))))))
+    (when (debbugs-query:at-p)
+      (if (and (match-beginning 3) (string-equal "?" (match-string 3)))
+	  (hact 'debbugs-gnu-query:string (buffer-substring-no-properties
+					   (or (match-beginning 1) (match-beginning 2))
+					   (match-end 4)))
+	(hact 'debbugs-gnu-query (string-to-number (match-string 2)))))))
 
 (defact debbugs-gnu-query (id)
   "Display the discussion of Gnu debbugs ID (a positive integer)."
@@ -175,7 +175,8 @@ issue number.  Note that `issue' or `debbugs' may be used as well in place of `b
     (setq attr-pair-list
 	  (mapcar (lambda (elt) (cons (car elt) (cadr elt)))
 		  (url-parse-query-string url-query-string))) ;; autoloaded
-    (if id (push (cons 'bugs (list (string-to-number id))) attr-pair-list))
+    (when id
+      (push (cons 'bugs (list (string-to-number id))) attr-pair-list))
     (debbugs-gnu-query:list attr-pair-list)))
 
 (defun debbugs-gnu-query:list (query-attribute-list)
@@ -187,7 +188,9 @@ severity, and package."
   (setq debbugs-gnu-current-query nil)
   (dolist (attr query-attribute-list)
     (add-to-list 'debbugs-gnu-current-query
-		 (cons (if (symbolp (car attr)) (car attr) (intern (car attr)))
+		 (cons (if (symbolp (car attr))
+			   (car attr)
+			 (intern (car attr)))
 		       (cdr attr))))
   (debbugs-gnu-show-reports))
 
@@ -207,7 +210,7 @@ severity, and package."
 ;;; ************************************************************************
 
 (defun debbugs-query:at-p ()
-  "Return t if point appear to be within a debbugs id.
+  "Return t if point appears to be within a debbugs id.
 Id number is (match-string 2).  If this is a query with attributes,
 then (match-string 3) = \"?\" and (match-string 4) is the query
 attributes." 
@@ -220,10 +223,9 @@ attributes."
 	  (skip-chars-backward "bugdiseBUGDISE#") ;; bug, debbugs or issue
 	  ;; Allow for bug#222?package=hyperbole&severity=high as well as bug222, or bug#222.
 	  (or (looking-at "[ \t\n\r\f]*\\(bug#?\\|debbugs#?\\|issue#?\\)[ \t\n\r\f]*#?\\([1-9][0-9]*\\)?\\(\\?\\)\\([a-z=&0-9%;()]+\\)")
-	      (looking-at "[ \t\n\r\f]*\\(bug#?\\|debbugs#?\\|issue#?\\)[ \t\n\r\f]*#?\\([1-9][0-9]*\\)[\].,;?:!\)\>\}]?\\([ \t\n\r\f]\\|\\'\\)")
+	      (looking-at "[ \t\n\r\f]*\\(bug#?\\|debbugs#?\\|issue#?\\)[ \t\n\r\f]*#?\\([1-9][0-9]*\\)[\].,;?:!\)\>\}]?\\([ \t\n\r\f]\\|\\'\\)"))))))
 	      ;; Ignore matches like  #222, so this is not confused with "hib-social.el" social references.
 	      ;; (looking-at "[ \t\n\r\f]*\\(bug\\|debbugs\\|issue\\)?[ \t\n\r\f]*#\\([1-9][0-9]*\\)[\].,;?!\)\>\}]?\\([ \t\n\r\f]\\|\\'\\)")
-	      )))))
 
 (defun debbugs-query:status (id)
   "Pretty print to `standard-output' the status attributes of debbugs ID (a positive integer).
@@ -231,7 +233,7 @@ Ignore nil valued attributes.  Return t unless no attributes are printed."
   (require 'debbugs-gnu)
   ;; The (car (debbugs-get-status id)) is a list of (attribute . value) pairs which we sort below.
   (let ((attrib-list
-	 (sort (delq nil (mapcar (lambda (elt) (if (cdr elt) elt)) (car (debbugs-get-status id))))
+	 (sort (delq nil (mapcar (lambda (elt) (when (cdr elt) elt)) (car (debbugs-get-status id))))
 	       (lambda (a b) (string-lessp (car a) (car b)))))
 	(has-attr) attr len val)
     (unless (or (null attrib-list) (not (listp attrib-list)))

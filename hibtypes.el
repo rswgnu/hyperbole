@@ -1368,6 +1368,20 @@ arg1 ... argN '>'.  For example, <mail nil \"user@somewhere.org\">."
               (apply hrule:action actype args)
             (apply hrule:action actype (mapcar #'eval args))))))))
 
+;; !! Todo: Finish this
+
+;; (defun action:help (label)
+;;   "Display documentation for action button function or variable."
+;;   (interactive (list (hargs:read-match "Report on global button labeled: "
+;; 				       (mapcar 'list (gbut:label-list))
+;; 				       nil t nil 'hbut)))
+;;   (let* ((lbl-key (hbut:label-to-key label))
+;; 	 (but (hbut:get lbl-key nil gbut:file)))
+;;     (if but
+;; 	(hbut:report but)
+;;       (error "(gbut:help): No global button labeled: %s" label))))
+
+
 ;;; ========================================================================
 ;;; Inserts completion into minibuffer or other window.
 ;;; ========================================================================

@@ -665,9 +665,10 @@ Other arguments are returned unchanged."
 		 (make-list (max 0 (- (length arg-list) (length param-list)))
 			    (last param-list))))
     (cl-mapcar (lambda (param arg)
-		 (if (or (string-match-p "file" param)
-			 (string-match-p "dir" param)
-			 (string-match-p "path" param))
+		 (if (and arg
+			  (or (string-match-p "file" param)
+			      (string-match-p "dir" param)
+			      (string-match-p "path" param)))
 		     (hpath:absolute-to arg default-dirs)
 		   arg))
 	       param-list arg-list)))
@@ -867,7 +868,9 @@ paths are allowed.  Absolute pathnames must begin with a `/' or `~'."
 	subpath)
     (when (and path (not non-exist) (string-match hpath:prefix-regexp path))
       (setq non-exist t))
-    (cond ((and path (string-match hpath:path-variable-value-regexp path)
+    (cond ((and path (file-readable-p path))
+	   path)
+	  ((and path (string-match hpath:path-variable-value-regexp path)
 		;; Don't allow more than one set of grouping chars
 		(not (string-match "\)\\s-*\(\\|\\]\\s-*\\[\\|\}\\s-*\{" path)))
 	   ;; With point inside a path variable, return the path that point is on or to the right of.
@@ -1516,7 +1519,8 @@ form is what is returned for PATH."
 	     (or (/= (length path) 1) (and (string-match-p "\\sw\\|\\s_" path)
 					   (not (string-match-p "[@#&!*]" path)))))
     (setq path (hpath:mswindows-to-posix path))
-    (unless (string-match-p "\\`[.~/]\\'" path)
+    (unless (or (string-match-p "\\`[.~/]\\'" path)
+		(file-readable-p path))
       (setq path (hpath:call
 		  (lambda (path non-exist)
 		    (let (modifier

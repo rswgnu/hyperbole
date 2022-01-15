@@ -495,17 +495,27 @@ With prefix ARG non-nil, join this line to the following line."
 	     (fixup-whitespace))
 	 (goto-char opoint))))))
 
+(defun kotl-mode:skip-filling-p (interactive-flag)
+  "Return t if filling is to be skipped due to a no-fill attribute or with point in a table, else return nil."
+  (not (cond ((and (fboundp #'org-at-table-p) (org-at-table-p))
+	      (when interactive-flag
+		(beep)
+		(message "Filling is disabled within tables")
+		nil))
+	     ((kcell-view:get-attr 'no-fill)
+	      (when interactive-flag
+		(beep)
+		(message "Current cell has a `do not fill' attribute")
+		nil))
+	     (t))))
+
 (defun kotl-mode:fill-cell (&optional justify ignore-collapsed-p)
   "Fill current cell within current view if it lacks a non-nil `no-fill' attribute.
 With optional JUSTIFY, justify cell as well.
 IGNORE-COLLAPSED-P is used when caller has already expanded cell, indicating
 it is not collapsed."
   (interactive "*P")
-  (cond ((kcell-view:get-attr 'no-fill)
-	 (when (called-interactively-p 'interactive)
-	   (beep)
-	   (message "Current cell has a `do not fill' attribute.")
-	   nil))
+  (cond ((kotl-mode:skip-filling-p (called-interactively-p 'interactive)))
 	((string-match "\\`[ \t\n\r]*\\'" (kcell-view:contents))
 	  ;; Cell content is all whitespace.
 	 nil)
@@ -560,32 +570,33 @@ it is not collapsed."
 With optional JUSTIFY, justify the paragraph as well.
 Ignore any non-nil no-fill attribute attached to the cell."
   (interactive "*P")
-  (let ((indent (kcell-view:indent))
-	(opoint (point-marker))
-	start end)
-    (re-search-backward (concat "\\`\\|" paragraph-separate))
-    (kotl-mode:to-valid-position)
-    (setq start (point-marker))
-    ;; Add a temporary fill-prefix for the 1st line in the cell which
-    ;; contains a label, so that it is filled properly.
-    (insert "\n\n") (insert-char ?\  indent)
-    (setq end (point-marker))
-    ;; Return to original paragraph point.  This is the correct formula,
-    ;; considering the fill prefix that was just added.
-    (goto-char (min (max opoint (point)) (kcell-view:end-contents)))
-    (if (fboundp 'fill-paragraph-and-align)
-	(fill-paragraph-and-align justify)
-      (fill-paragraph justify))
-    ;; Delete temporary fill prefix.
-    (delete-region start end)
-    ;; Return to original point.
-    (goto-char (min opoint (kcell-view:end-contents)))
-    ;; Move to editable point if need be.
-    (kotl-mode:to-valid-position)
-    ;; Remove markers
-    (set-marker opoint nil)
-    (set-marker start nil)
-    (set-marker end nil)))
+  (unless (kotl-mode:skip-filling-p (called-interactively-p 'interactive))
+    (let ((indent (kcell-view:indent))
+	  (opoint (point-marker))
+	  start end)
+      (re-search-backward (concat "\\`\\|" paragraph-separate))
+      (kotl-mode:to-valid-position)
+      (setq start (point-marker))
+      ;; Add a temporary fill-prefix for the 1st line in the cell which
+      ;; contains a label, so that it is filled properly.
+      (insert "\n\n") (insert-char ?\  indent)
+      (setq end (point-marker))
+      ;; Return to original paragraph point.  This is the correct formula,
+      ;; considering the fill prefix that was just added.
+      (goto-char (min (max opoint (point)) (kcell-view:end-contents)))
+      (if (fboundp 'fill-paragraph-and-align)
+	  (fill-paragraph-and-align justify)
+	(fill-paragraph justify))
+      ;; Delete temporary fill prefix.
+      (delete-region start end)
+      ;; Return to original point.
+      (goto-char (min opoint (kcell-view:end-contents)))
+      ;; Move to editable point if need be.
+      (kotl-mode:to-valid-position)
+      ;; Remove markers
+      (set-marker opoint nil)
+      (set-marker start nil)
+      (set-marker end nil))))
 
 ;; XEmacs binds this to {M-q}.
 (defalias 'kotl-mode:fill-paragraph-or-region 'kotl-mode:fill-paragraph)

@@ -20,7 +20,7 @@
 
     - M-RET: Reworked M-RET interface so can control how much or little of
       Hyperbole works in Org mode when Hyperbole minor mode is enabled.
-      See "(hyperbole)enable org-mode support".
+      See "(hyperbole)enable org-mode support" and "hsys-org.el".
 
     - hsys-org-enable-smart-keys: New customization to replace
       'inhibit-hsys-org'.  This applies only in Org major/minor modes when
@@ -38,7 +38,7 @@
       | t            | Activate          | Activate         | Activate | None             |
       |--------------+-------------------+------------------+----------+------------------|
 
-   SIMPLE BUTTON TYPE CREATION
+   EASILY CREATE YOUR OWN BUTTON TYPES
 
     - Simple Action Link Button Type Creation: `defal' is a new,
       easy-to-use construct that generates new action button types from
@@ -49,13 +49,13 @@
       Link Types" or the "DEMO#Defining New Action Button Types"
       section.
 
-    - Easy Implicit Link Button Type Creation: `defil' is a new,
+    - Easy Implicit Link Button Type Creation: `defil' is a new
       construct for those familiar with regular expressions but not
-      much Emacs Lisp.  This macro creates more flexible implicit
-      button types than `defal' where the delimiters and text
-      substitution can be specified with regular expressions.  Actions
-      are limited to executing key series, displaying URLs, displaying
-      the contents of pathnames or invoking functions.  See
+      much Emacs Lisp.  This creates more flexible implicit button
+      types than `defal' where the delimiters and text substitution
+      can be specified with regular expressions.  Actions are limited
+      to executing key series, displaying URLs, displaying the
+      contents of pathnames or invoking functions.  See
       "(hyperbole)Implicit Button Link Types".
 
       Elisp programmers should use the existing `defib' macro for full
@@ -69,8 +69,9 @@
       in the test/ subdirectory.  Simply run 'make test' or 'make test-all'
       from the command-line when in the Hyperbole source directory and you
       should see all tests pass.  If any fail, you can press the Action Key
-      to see the source of the failure.
-
+      to see the source of the failure.  Full testing is suppored under POSIX
+      systems only.
+ 
     - Implicit Button Types to Run Tests: The file "hypb-ert.el" contains two
       action link types:
         hyperbole-run-test  - run a single Hyperbole test by name
@@ -105,9 +106,10 @@
 
     - Org Table Support: Org table editing now automatically works in the
       Koutliner via Org table minor mode.  Use {M-x orgtbl-mode RET} to
-      toggle this on and off.  A press of the Action Key on a | symbol
-      separating fields, also toggles this minor mode on or off. See
-      "(Org)Tables" for details.
+      toggle this on and off.  A press of the Action Key on a | symbol,
+      also toggles this minor mode on or off. See "(Org)Tables" for details.
+      Use a prefix arg with {TAB} to promote/demote Koutline trees when in
+      a table since {TAB} moves between fields within a table.
 
     - New Mail Tree Key Binding: The kotl-mode:mail-tree command that
       extracts the current view of a Koutline in text-only format and
@@ -121,8 +123,9 @@
       an Org table or outside.
 
       |----------------------------+-----------------------------|
-      | Demotion Inside Org Table  | Promotion Inside Org Table  |
+      | Demotion Inside  Org Table | Promotion Inside  Org Table |
       |----------------------------+-----------------------------|
+      | M-0 TAB                    | M-0 Shift-TAB or M-0 M-TAB  |
       | C-c C-,                    | C-c C-.                     |
       | C-c C-<                    | C-c C->                     |
       |----------------------------+-----------------------------|
@@ -143,6 +146,17 @@
 	kotl-mode:copy-relative-klink-to-kill-ring
 	kotl-mode:copy-absolute-klink-to-register
 	kotl-mode:copy-relative-klink-to-register
+
+  MENUS
+
+    - Minibuffer Menu Changes:
+        + Items Activated by First Capital Letter: Used to be by the first
+          letter.  This allows more flexibility in naming, e.g.
+          where two items start with the same first letter.
+
+        + {X} exits Hyperbole mode: This disables the Hyperbole minor mode
+          completely and exits from the menu.  {C-h h} re-enables the
+          global minor mode and display the top-level Hyperbole menu.
 
   SMART (ACTION AND ASSIST) KEYS
 
@@ -173,6 +187,20 @@
 
     - Todotxt Mode Support: Smart key support for the todotxt mode
       https://github.com/rpdillon/todotxt.el.
+
+    - UNIX Shell Errors: Jump to associated source line from a shell error of the
+      form:  "<pathname>: line <num>: ".
+
+  CUSTOMIZATON
+
+    - Customizable Display Program File Mappings:
+      The variables:
+         hpath:internal-display-alist
+         hpath:external-display-alist-macos
+         hpath:external-display-alist-mswindows
+         hpath:external-display-alist-x)
+      are all customizable.
+
 
   PROGRAMMING
 
@@ -223,9 +251,6 @@
     - Magit Mode: Action Key expands/collapses like {TAB} and Assist Key
       jumps to items like {RET}.  See "(hyperbole)Smart Key - Magit Mode".
 
-    - UNIX Shell Errors: Jump to associated source line from a shell error of the
-      form:  "<pathname>: line <num>: ".
-
   BUTTON TYPES
 
     - {Key Series} Button Support for Helm and Counsel: Key series buttons
@@ -268,7 +293,7 @@
       Bookmark or to a Texinfo Node.
 
     - link-to-texinfo-node Action Type: Now takes a first file parameter,
-      rather than only working on the current buffer.
+      rather than working only on the current buffer.
 
   KOUTLINER
 
@@ -2606,7 +2631,7 @@ are new in 2016 and you should look through them all.
       Rolo/Mail minibuffer menu item and Rolo/Mail-to-Address for window
       system menus.
 
-    - New variable, wrolo-yank-reformat-function permits reformatting of an
+    - New variable, wrolo-yank-reformat-function, permits reformatting of an
       entry yanked into the current buffer with {C-h h r y}, rolo-yank.
 
   WINDOW CONFIGURATIONS 
@@ -2615,4 +2640,3 @@ are new in 2016 and you should look through them all.
       the Win menu after performing their actions.  This allows you to yank
       or pop window configurations repeatedly until you get to the one you
       want.
-
