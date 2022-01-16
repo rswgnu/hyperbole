@@ -1,5 +1,7 @@
 ;; Use this in your Emacs init file to install Straight
 (progn
+  (when (< emacs-major-version 27)
+    (error "Hyperbole requires Emacs 27 or above; you are running version %d" emacs-major-version))
   (defvar bootstrap-version)
   (setq package-enable-at-startup nil)
   (let ((bootstrap-file
@@ -23,4 +25,4 @@
 
 (hyperbole-mode 1)
 
-(message "%s" "Hyperbole successfully installed")
+(message "%s" "Hyperbole successfully installed and activated")
