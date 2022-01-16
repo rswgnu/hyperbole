@@ -2634,7 +2634,7 @@ which when activated run Hyperbole tests using the ERT framework.  The
 @item hyperbole-run-test
 Recognize buttons of the form @code{<hyperbole-run-test test-name>}
 which when activated run individual Hyperbole tests, each given
-by the @code<test-name> argument, an unquoted name.
+by the @code{<test-name>} argument, an unquoted name.
 @end table
 
 
@@ -4496,7 +4496,7 @@ Use @bkbd{M-1 @key{TAB}} to toggle the @key{TAB} and
 
 @cindex Org tables
 The Koutliner supports Org Table editing, @pxref{Tables,,, org, the Org
-Mode Manual}, via Org table minor mode.  Use {M-x orgtbl-mode RET} to
+Mode Manual}, via Org table minor mode.  Use @{M-x orgtbl-mode RET@} to
 toggle this on and off.  A press of the Action Key on a @code{|} symbol,
 also toggles this minor mode on or off.
 
@@ -8875,11 +8875,11 @@ When in an Org mode context and @code{hsys-org-enable-smart-keys} is non-nil:
      cycles the view of the subtree at point.
 
      (5) with point on the first line of a code block definition, this
-     executes the code block via the Org mode standard binding of {C-c C-c},
+     executes the code block via the Org mode standard binding of @{C-c C-c@},
      (org-ctrl-c-ctrl-c).
 
      (6) In any other context besides the end of a line, the Action Key invokes the
-     Org mode standard binding of {M-RET}, (org-meta-return).
+     Org mode standard binding of @{M-RET@}, (org-meta-return).
 
   ASSIST KEY
      (1) on an Org mode heading, this cycles through views of the whole buffer outline.
@@ -9347,13 +9347,13 @@ When pressed within Custom-mode for editing customizations:
          prompting to save any changes;
      (2) at the end of any other line, scroll the window down down a windowful;
      (3) if a mouse event on a widget, activate the widget or display a menu;
-     (4) anywhere else, execute the command bound to {RETURN}.
+     (4) anywhere else, execute the command bound to @{RETURN@}.
   ASSIST KEY
      (1) on the last line of the buffer, exit Custom mode, potentially
          prompting to save any changes;
      (2) at the end of any other line, scroll the window down down a windowful;
      (3) if a mouse event on a widget, activate the widget or display a menu;
-     (4) anywhere else, execute the command bound to {RETURN}.
+     (4) anywhere else, execute the command bound to @{RETURN@}.
 
 
 @node Smart Key - Bookmark Mode, Smart Key - Pages Directory Mode, Smart Key - Custom Mode, Smart Keyboard Keys
