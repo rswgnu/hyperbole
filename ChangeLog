@@ -1,5 +1,7 @@
 2022-01-15  Bob Weiner  <rsw@gnu.org>
 
+* man/hyperbole.texi (Testing): Add to describe test usage.
+
 * hpath.el (hpath:absolute-arguments): Check that each arg is non-nil
     before calling hpath:absolute-to.
 
@@ -2162,9 +2164,6 @@ Delete knode.el and integrate functionality into kcell.el.
     intuitive logical expression matching.  Made rolo-logical searches in DEMO
     work.
 
-2020-12-03  Bob Weiner  <rsw@gnu.org>
-
-* hibtypes.el (Info-node): Allowed for backslash double-quotes around node name, e.g. when in a doc string.
 2021-01-30  Mats Lidell  <matsl@gnu.org>
 
 * Makefile (test-ert, test-all): Add ert test targets
@@ -2194,6 +2193,10 @@ Delete knode.el and integrate functionality into kcell.el.
     (demo-man-appropos-test, demo-factorial-test)
     (demo-factorial-ebutton-test): Test cases
     (demo-should-browse-url): Test helper
+
+2020-12-03  Bob Weiner  <rsw@gnu.org>
+
+* hibtypes.el (Info-node): Allowed for backslash double-quotes around node name, e.g. when in a doc string.
 
 2020-11-22  Bob Weiner  <rsw@gnu.org>
 

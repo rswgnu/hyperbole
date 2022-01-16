@@ -52,7 +52,7 @@
 This manual is for GNU Hyperbole
 (Edition @value{EDITION}, Published @value{UPDATED}).
 
-Copyright @copyright{} 1989-2021  Free Software Foundation, Inc.
+Copyright @copyright{} 1989-2022  Free Software Foundation, Inc.
 
 @quotation
 Permission is granted to copy, distribute and/or modify this document
@@ -142,7 +142,7 @@ Texinfo markup language.
 <CENTER><H3><A HREF="mailto:rsw@@gnu.org">Say thanks or send a testimonial if you like Hyperbole.</A></H3></CENTER>
 
 
-<P>Copyright &copy; 1989-2021  Free Software Foundation, Inc.</P>
+<P>Copyright &copy; 1989-2022  Free Software Foundation, Inc.</P>
 
 <P>GNU Hyperbole is available for use, modification, and distribution under
 the terms of the GNU General Public License (GPL) Version 3 or later,
@@ -155,7 +155,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</P>
 
 <PRE>
 Edition 8.0.0pre
-Printed December 26, 2021.
+Printed January 16, 2022.
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -183,7 +183,7 @@ Printed December 26, 2021.
 
 @sp 2
 @noindent
-Copyright @copyright{} 1989-2021  Free Software Foundation, Inc.
+Copyright @copyright{} 1989-2022  Free Software Foundation, Inc.
 
 GNU Hyperbole is available for use, modification, and distribution
 under the terms of the GNU General Public License (GPL) Version 3 or
@@ -197,7 +197,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 @example
 Edition 8.0.0pre
-December 26, 2021
+January 16, 2022
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -424,6 +424,7 @@ Hyperbole Key Bindings
 
 * Binding Minibuffer Menu Items::
 * Default Hyperbole Bindings::
+* Testing::
 
 Smart Key Reference
 
@@ -443,6 +444,8 @@ Smart Mouse Keys
 Smart Keyboard Keys
 
 * Smart Key - Company Mode::
+* Smart Key - Org Mode::
+* Smart Key - Ivy::
 * Smart Key - Treemacs::
 * Smart Key - Dired Sidebar Mode::
 * Smart Key - Emacs Pushbuttons::
@@ -459,6 +462,7 @@ Smart Keyboard Keys
 * Smart Key - The Koutliner::
 * Smart Key - RDB Mode::
 * Smart Key - Help Buffers::
+* Smart Key - Custom Mode::
 * Smart Key - Bookmark Mode::
 * Smart Key - Pages Directory Mode::
 * Smart Key - Python Source Code::
@@ -2548,9 +2552,12 @@ with the following format: @file{<path>[#<link-anchor>]:<line-num>[:<column-num>
 @cindex address
 @item mail-address
 If on an e-mail address in a specific buffer type, compose mail to that
-address in another window. Applies to the rolo match buffer, any buffer
+address in another window. Applies to any major mode
+in @code{mail-address-mode-list}, the rolo match buffer, any buffer
 attached to a file in @code{hyrolo-file-list}, or any buffer
-with @file{mail} or @file{rolo} (case-insensitive) within its name.
+with @file{mail} or @file{rolo} (case-insensitive) within its name.  If
+@code{mail-address-mode-list} is set to nil, this button type is active
+in all buffers.
 
 @findex ibtypes www-url
 @cindex URL
@@ -2599,6 +2606,35 @@ delimiters.  See the variable documentation for @code{hpath:suffixes} for
 suffixes that are added to or removed from the pathname when searching
 for a valid match.  See the function documentation for @code{hpath:find}
 for special file display options.
+
+@cindex PATH-type variable
+@cindex colon-separated paths
+@cindex semicolon-separated paths
+@noindent
+If instead is a PATH-style variable name, .e.g. @code{MANPATH}, will
+prompt with completion for one of the paths and will then display that.
+If it is the colon or semicolon-separated string of paths value from a
+PATH-style variable, the path at point is displayed; empty paths,
+e.g. @file{::} represent the current directory, @file{.}.  Must have at
+least four paths within the variable value for this to work.
+
+
+@findex ibtypes hyperbole-run-tests
+@cindex running tests
+@cindex testing
+@cindex ert
+@cindex Emacs Regression Test framework
+@item hyperbole-run-tests
+Recognize buttons of the form @code{<hyperbole-run-tests test-selector>}
+which when activated run Hyperbole tests using the ERT framework.  The
+@code{test-selector} argument is as described in @code{ert-select-tests}.
+
+
+@findex ibtypes hyperbole-run-test
+@item hyperbole-run-test
+Recognize buttons of the form @code{<hyperbole-run-test test-name>}
+which when activated run individual Hyperbole tests, each given
+by the @code<test-name> argument, an unquoted name.
 @end table
 
 
@@ -7631,6 +7667,7 @@ bindings that hide global Hyperbole keys.
 @menu
 * Binding Minibuffer Menu Items::
 * Default Hyperbole Bindings::
+* Testing::
 @end menu
 
 @node Binding Minibuffer Menu Items, Default Hyperbole Bindings, Hyperbole Key Bindings, Hyperbole Key Bindings
@@ -7645,7 +7682,7 @@ key sequence you want to use to activate the menu item.  Immediately
 after, it will display the Hyperbole top-level minibuffer menu.  Simply
 select the item you want to bind to your key.
 
-@node Default Hyperbole Bindings,  , Binding Minibuffer Menu Items, Hyperbole Key Bindings
+@node Default Hyperbole Bindings, Testing, Binding Minibuffer Menu Items, Hyperbole Key Bindings
 @section Default Hyperbole Bindings
 
 Hyperbole's default key bindings can be viewed and edited from
@@ -7769,6 +7806,37 @@ hyperbole-mode @key{RET}}.  Alternatively, you may select a key and bind it
 as part of any setting of @code{hyperbole-init-hook} within your
 personal @file{~/.emacs} file.  For example, @code{(add-hook
 'hyperbole-init-hook (lambda () (global-set-key "\C-ct" 'hyperbole-mode)))}.
+
+@node Testing,  , Default Hyperbole Bindings, Hyperbole Key Bindings
+@section Testing
+
+Hyperbole includes over 200 automated test cases in the @file{test/}
+subdirectory.  You can run all of them by moving to the Hyperbole home
+directory in a Posix shell and run @code{make test-all} or @code{make
+test} to run just non-interactive tests.  If any tests fail, you can
+press the Action Key to see the source of the failure.  Full testing is
+suppored under POSIX systems only.
+
+With Hyperbole active, you can also define implicit buttons that run
+individual or sets of Hyperbole tests.  The file @file{hypb-ert.el} contains
+two action link types:
+
+@example
+@code{hyperbole-run-test}  - run a single Hyperbole test by name
+@code{hyperbole-run-tests} - run one more tests matching a pattern
+
+@noindent
+Example uses with a press of the Action Key:
+
+  Run the test hbut-defal-url:
+    <hyperbole-run-test hbut-defal-url>
+
+  Run the tests specified by the test selector hbut-defal:
+    <hyperbole-run-tests hbut-defal>
+
+  Run all tests:
+    <hyperbole-run-tests t>
+@end example
 
 @node Koutliner Keys, Smart Key Reference, Hyperbole Key Bindings, Top
 @appendix Koutliner Keys
@@ -8717,6 +8785,8 @@ If dragged from an Emacs window to outside of Emacs:
 
 @menu
 * Smart Key - Company Mode::
+* Smart Key - Org Mode::
+* Smart Key - Ivy::
 * Smart Key - Treemacs::
 * Smart Key - Dired Sidebar Mode::
 * Smart Key - Emacs Pushbuttons::
@@ -8733,6 +8803,7 @@ If dragged from an Emacs window to outside of Emacs:
 * Smart Key - The Koutliner::
 * Smart Key - RDB Mode::
 * Smart Key - Help Buffers::
+* Smart Key - Custom Mode::
 * Smart Key - Bookmark Mode::
 * Smart Key - Pages Directory Mode::
 * Smart Key - Python Source Code::
@@ -8765,7 +8836,7 @@ If dragged from an Emacs window to outside of Emacs:
 * Smart Key - Default Context::
 @end menu
 
-@node Smart Key - Company Mode, Smart Key - Treemacs, Smart Keyboard Keys, Smart Keyboard Keys
+@node Smart Key - Company Mode, Smart Key - Org Mode, Smart Keyboard Keys, Smart Keyboard Keys
 @subsection Smart Key - Company Mode
 
 @cindex company-mode
@@ -8782,8 +8853,56 @@ When company-mode is active:
 @end group
 @end format
 
+@node Smart Key - Org Mode, Smart Key - Ivy, Smart Key - Company Mode, Smart Keyboard Keys
+@subsection Smart Key - Org Mode
 
-@node Smart Key - Treemacs, Smart Key - Dired Sidebar Mode, Smart Key - Company Mode, Smart Keyboard Keys
+@vindex hsys-org-enable-smart-keys
+@cindex Org mode
+@format
+@group
+When in an Org mode context and @code{hsys-org-enable-smart-keys} is non-nil:
+  ACTION KEY
+     (1) follows internal links in Org mode files.  When pressed on a
+         link referent/target, the link definition is displayed, allowing two-way
+          navigation between definitions and targets.
+
+     (2) follows Org mode external links.
+
+     (3) within a radio target definition, this jumps to the first
+     occurrence of an associated radio target.
+
+     (4) when point is on an outline heading in Org mode, this
+     cycles the view of the subtree at point.
+
+     (5) with point on the first line of a code block definition, this
+     executes the code block via the Org mode standard binding of {C-c C-c},
+     (org-ctrl-c-ctrl-c).
+
+     (6) In any other context besides the end of a line, the Action Key invokes the
+     Org mode standard binding of {M-RET}, (org-meta-return).
+
+  ASSIST KEY
+     (1) on an Org mode heading, this cycles through views of the whole buffer outline.
+
+     (2) on an Org mode link or agenda item, this displays standard Hyperbole help.
+@end group
+@end format
+
+@vindex org-link-outside-org-mode
+@noindent
+Org links may be used outside of Org mode buffers.  Such links are
+handled by the separate implicit button type, @code{org-link-outside-org-mode}.
+
+
+@node Smart Key - Ivy, Smart Key - Treemacs, Smart Key - Org Mode, Smart Keyboard Keys
+@subsection Smart Key - Ivy
+
+@cindex Ivy completion
+@cindex completion, Ivy
+When an Ivy completion list is active, a press of either Smart Key on a
+completion candidate selects that one and exits the minibuffer.
+
+@node Smart Key - Treemacs, Smart Key - Dired Sidebar Mode, Smart Key - Ivy, Smart Keyboard Keys
 @subsection Smart Key - Treemacs
 
 @cindex Treemacs
@@ -9205,7 +9324,7 @@ relational databases (part of InfoDock):
 @end group
 @end format
 
-@node Smart Key - Help Buffers, Smart Key - Bookmark Mode, Smart Key - RDB Mode, Smart Keyboard Keys
+@node Smart Key - Help Buffers, Smart Key - Custom Mode, Smart Key - RDB Mode, Smart Keyboard Keys
 @subsection Smart Key - Help Buffers
 @cindex help buffer
 @format
@@ -9217,7 +9336,27 @@ When pressed at the end of a Help buffer:
 @end group
 @end format
 
-@node Smart Key - Bookmark Mode, Smart Key - Pages Directory Mode, Smart Key - Help Buffers, Smart Keyboard Keys
+@node Smart Key - Custom Mode, Smart Key - Bookmark Mode, Smart Key - Help Buffers, Smart Keyboard Keys
+@subsection Smart Key - Custom Mode
+
+@cindex Custom mode
+@noindent
+When pressed within Custom-mode for editing customizations:
+  ACTION KEY
+     (1) on the last line of the buffer, exit Custom mode, potentially
+         prompting to save any changes;
+     (2) at the end of any other line, scroll the window down down a windowful;
+     (3) if a mouse event on a widget, activate the widget or display a menu;
+     (4) anywhere else, execute the command bound to {RETURN}.
+  ASSIST KEY
+     (1) on the last line of the buffer, exit Custom mode, potentially
+         prompting to save any changes;
+     (2) at the end of any other line, scroll the window down down a windowful;
+     (3) if a mouse event on a widget, activate the widget or display a menu;
+     (4) anywhere else, execute the command bound to {RETURN}.
+
+
+@node Smart Key - Bookmark Mode, Smart Key - Pages Directory Mode, Smart Key - Custom Mode, Smart Keyboard Keys
 @subsection Smart Key - Bookmark Mode
 
 @format

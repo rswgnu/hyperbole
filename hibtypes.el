@@ -254,7 +254,10 @@ display options."
   "If on an e-mail address in a specific buffer type, compose mail to that address in another window.
 Applies to any major mode in `mail-address-mode-list', the HyRolo match buffer,
 any buffer attached to a file in `hyrolo-file-list', or any buffer with
-\"mail\" or \"rolo\" (case-insensitive) within its name."
+\"mail\" or \"rolo\" (case-insensitive) within its name.
+
+If `mail-address-mode-list' is set to nil, this button type is active
+in all buffers."
   (when (let ((case-fold-search t))
           (or
            (and (or (null mail-address-mode-list)

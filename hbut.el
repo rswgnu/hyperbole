@@ -1998,13 +1998,8 @@ Here is a sample use case.  Let's create a button type whose
 buttons perform a grep-like function over a current repo's git
 log entries.  The buttons use this format: [<text to match>].
 
-The following defines the button type called search-git-log with a
-a key series action surrounded by braces:
-
-  (defil search-git-log \"[<\" \">]\" \".*\" \"{M-: (hypb:fgrep-git-log \\\"\\\\&\\\") RET}\")
-
-or this simpler version skips the explicit text substitution (\\\\&)
-and instead uses the function that takes the button text as an argument:
+The following defines the button type called search-git-log which
+calls hypb:fgrep-git-log with the text of the button as an argument:
 
   (defil search-git-log \"[<\" \">]\" \".*\" #'hypb:fgrep-git-log)
 

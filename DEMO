@@ -763,12 +763,15 @@ or without quotes.
 
 ** Email Addresses
 
-An Action Key press on an email address of any common domain name will start
-composing an email message to that name within Emacs.  This is limited to
-major modes listed in the variable, mail-address-mode-list.  Try composing a
-message to <hyperbole-users@gnu.org> and tell us what you think of Hyperbole.
-Even better, a press of or on {C-h h m c} composes mail to the list that
-includes your system information.
+An Action Key press on an email address of any common domain name will
+start composing an email message to that name within Emacs.  This is
+limited to major modes listed in the variable, mail-address-mode-list.
+If that variable is nil, then email addresses are active in every
+buffer.
+
+Try composing a message to <hyperbole-users@gnu.org> and tell us what
+you think of Hyperbole.  Even better, a press of or on {C-h h m c}
+composes mail to the list that includes your system information.
 
 ** Action Buttons
 

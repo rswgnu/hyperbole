@@ -1126,7 +1126,8 @@ Optional NO-SORT means display in decreasing priority order (natural order)."
 	 (with-output-to-temp-buffer buf-name
 	   (mapcar (lambda (nm-doc-cons)
 		     (princ (car nm-doc-cons)) (terpri)
-		     (princ (cdr nm-doc-cons)) (terpri))
+		     (princ (cdr nm-doc-cons)) (terpri)
+		     (terpri))
 		   doc-list)))))
 
 (defun hui:htype-help-current-window (htype-sym &optional no-sort)

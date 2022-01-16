@@ -1,4 +1,4 @@
-;;; hypb-ert.el --- ert button support                   -*- lexical-binding: t; -*-
+;;; hypb-ert.el --- Hyperbole test runner action button types    -*- lexical-binding: t; -*-
 
 ;; Author: Mats Lidell <matsl@gnu.org> and Bob Weiner <rsw@gnu.org>
 ;;

@@ -164,6 +164,10 @@
       evaluate: (symset:clear 'ibtypes) and then reload hibtypes.{el,elc},
       the priority order of all implicit button types is reset.
 
+    - Mail Address Activation Everywhere: Email addresses are recognized as
+      implicit buttons in major modes given by `mail-address-mode-list'.  If
+      you set that to nil, however, they will be recognized in all major modes.
+
     - Magit Mode Support: Just click or press the Action Key somewhere and it
       will typically display what you want.  Extensive Action Key support in
       Magit modes for cycling through display views and displaying items.
@@ -181,15 +185,32 @@
     - Pathname Implicit Buttons: Recursive 'ls' listings are now recognized
       properly, prepending the preceding directory to each entry for viewing.
 
+      An Action Key press on a defined PATH-style variable name, e.g. MANPATH,
+      will prompt with completion for one of the paths and will then display
+      that.  If it is the colon or semicolon-separated string of paths value
+      from a PATH-style variable, the path at point is displayed; empty paths,
+      e.g. :: represent the current directory, ’.’.  Must have at least four
+      paths within the variable value for this to work.
+
+      Much improved pathname handling including multiple variables per
+      path, embedded . or .. within paths, better recognition of semicolon
+      separated pathnames in Windows PATH variable.
+
       Variable substitutions are now made with fixed case, so that the
       case of a value with both upper and lower case characters is
       never changed, for example a value of ${HOME}.
+
+      file:// URLs are now resolved properly.
 
     - Todotxt Mode Support: Smart key support for the todotxt mode
       https://github.com/rpdillon/todotxt.el.
 
     - UNIX Shell Errors: Jump to associated source line from a shell error of the
       form:  "<pathname>: line <num>: ".
+
+    - Internet RFC Links (e.g. RFC-822): Change to using http to retrieve RFCs
+      instead of ftp since this is disabled in many environments.  Always display
+      with Emacs' web browser rather than externally.
 
   CUSTOMIZATON
 
@@ -200,7 +221,6 @@
          hpath:external-display-alist-mswindows
          hpath:external-display-alist-x)
       are all customizable.
-
 
   PROGRAMMING
 
@@ -213,6 +233,9 @@
     - kbd-key:is-p: Added this new predicate to test whether point is within
       a brace-delimited key series.
 
+    - hypb:def-to-buffer: Quick copying of program definitions and insertion
+      at the start of another buffer.  Can be bound and used in key series.
+
   ACE WINDOW PACKAGE INTEGRATION - fast window and buffer switching
 
     - After installing the ace-window package and loading Hyperbole, execute
@@ -223,6 +246,9 @@
       linking to point in the window chosen when prompted.
       See "DEMO#Displaying File and Buffer Items and Moving Buffers".
 
+    - Throw A Region Elsewhere Within the Same Buffer: {M-o t <window-id>}
+      when used with a selected region can now throw to the source buffer
+      as long as point is outside the selected region in the target window.
 
 ===========================================================================
 *                                   V7.1.3
