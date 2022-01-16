@@ -1,3 +1,9 @@
+2022-01-15  Mats Lidell  <matsl@gnu.org>
+
+* Makefile (test-ert, test-all): Turn off auto-save.
+
+* test/hbut-tests.el (gbut-program-link-to-directory): Remove temp file.
+
 2022-01-15  Bob Weiner  <rsw@gnu.org>
 
 * man/hyperbole.texi (Testing): Add to describe test usage.
