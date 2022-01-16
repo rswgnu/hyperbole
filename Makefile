@@ -55,6 +55,17 @@
 #                  "man/hyperbole.html"   - Web browsable version
 #                  "man/hyperbole.pdf"    - Printable version
 #                  "man/hyperbole.texi"   - source form
+#
+#               * Developer targets
+#
+#               To run unit tests:
+#                   make test           - run not interactive tests in batch mode
+#                   make test-all       - run all tests startin an emacs in windowed mode
+#
+#               Verify hyperbole installation using different sources:
+#                   make install-<source>
+#               Where source can be 'elpa', 'elpa-devel', 'tarball' (tarball from elpa-devel),
+#               'straight' (git master from savannah) or 'all'.
 
 # Code:
 ##########################################################################
@@ -223,6 +234,17 @@ help:
 	@ echo "    man/hyperbole.html    - Web browsable version"
 	@ echo "    man/hyperbole.pdf     - Printable version"
 	@ echo "    man/hyperbole.texi    - source form"
+	@ echo ""
+	@ echo "* Developer targets"
+	@ echo ""
+	@ echo "To run unit tests:"
+	@ echo "    make test           - run not interactive tests in batch mode"
+	@ echo "    make test-all       - run all tests startin an emacs in windowed mode"
+	@ echo ""
+	@ echo "Verify hyperbole installation using different sources:"
+	@ echo "    make install-<source>"
+	@ echo "Where source can be 'elpa', 'elpa-devel', 'tarball' (tarball from elpa-devel),"
+	@ echo "'straight' (git master from savannah) or 'all'."
 
 all: help
 
@@ -423,7 +445,7 @@ endif
 # Hyperbole install tests - Verify that hyperbole can be installed
 # using different sources. See folder "install-test"
 .PHONY: install-elpa install-elpa-devel install-tarball install-straight install-all
-install-all: install-elpa install-tarball install-straight
+install-all: install-elpa install-elpa-devel install-tarball install-straight
 
 install-elpa install-elpa-devel install-tarball install-straight:
 	@echo "Install Hyperbole using $@"
