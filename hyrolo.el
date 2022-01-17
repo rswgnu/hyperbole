@@ -289,8 +289,9 @@ entry which begins with the parent string."
 If DISPLAY-BUF is nil, use the value in `hyrolo-display-buffer'.
 Second arg RETURN-TO-BUFFER is the buffer to leave point within after the display."
   (interactive)
-  (or display-buf (setq display-buf (get-buffer hyrolo-display-buffer)))
-  (if display-buf nil
+  (unless display-buf
+    (setq display-buf (get-buffer hyrolo-display-buffer)))
+  (unless display-buf
     (error "(hyrolo-display-matches): Search the rolo first"))
   ;; Save current window configuration if rolo match buffer is not
   ;; displayed in one of the windows already.
@@ -301,9 +302,11 @@ Second arg RETURN-TO-BUFFER is the buffer to leave point within after the displa
      (error (get-buffer-window display-buf)))
    (setq hyrolo--wconfig (current-window-configuration)))
   (hyrolo-to-buffer display-buf)
-  (if (eq major-mode 'hyrolo-mode) nil (hyrolo-mode))
+  (unless (eq major-mode 'hyrolo-mode)
+    (hyrolo-mode))
   (setq buffer-read-only nil)
-  (if (fboundp 'hproperty:but-create) (hproperty:but-create))
+  (when (fboundp 'hproperty:but-create)
+    (hproperty:but-create))
   (hyrolo-shrink-window)
   (goto-char (point-min))
   (set-buffer-modified-p nil)
@@ -311,7 +314,8 @@ Second arg RETURN-TO-BUFFER is the buffer to leave point within after the displa
   (run-hooks 'hyrolo-display-hook)
   ;; Leave point in match buffer unless a specific RETURN-TO-BUFFER has
   ;; been specified.  Use {q} to quit and restore display.
-  (if return-to-buffer (hyrolo-to-buffer return-to-buffer)))
+  (when return-to-buffer
+    (hyrolo-to-buffer return-to-buffer)))
 
 ;;;###autoload
 (defun hyrolo-edit (&optional name file)
@@ -321,14 +325,15 @@ With no NAME arg, simply displays FILE or first entry in `hyrolo-file-list' in a
 editable mode.  NAME may be of the form: parent/child to edit child below a
 parent entry which begins with the parent string."
   (interactive "sEdit rolo entry named: \nP")
-  (if (string-equal name "") (setq name nil))
+  (when (string-equal name "")
+    (setq name nil))
   (and name (not (stringp name))
        (error "(hyrolo-edit): Invalid name: `%s'" name))
-  (if (and (called-interactively-p 'interactive) current-prefix-arg)
-      (if (= (length hyrolo-file-list) 1)
-	  (setq file (car hyrolo-file-list))
-	(setq file (completing-read "Entry's File: "
-				    (mapcar #'list hyrolo-file-list)))))
+  (when (and (called-interactively-p 'interactive) current-prefix-arg)
+    (if (= (length hyrolo-file-list) 1)
+	(setq file (car hyrolo-file-list))
+      (setq file (completing-read "Entry's File: "
+				  (mapcar #'list hyrolo-file-list)))))
   (let ((found-point) (file-list (if file (list file) hyrolo-file-list)))
     (or file (setq file (car file-list)))
     (if (null name)
@@ -481,6 +486,20 @@ With optional prefix ARG, do an fgrep string match instead of a regexp match."
   (interactive "P")
   (call-interactively (if arg 'hyrolo-fgrep 'hyrolo-grep)))
 
+(defun hyrolo-hide-subtree ()
+  "Move back to the start of current subtree if any and hide everything after the heading.
+
+Necessary, since with reveal-mode active, outline-hide-subtree works
+only if on the heading line of the subtree."
+  (interactive)
+  (let ((opoint (point)))
+    (forward-line 0)
+    (unless (looking-at outline-regexp)
+      (outline-previous-visible-heading 1))
+    (if (looking-at outline-regexp)
+	(outline-hide-subtree)
+      (goto-char opoint))))
+
 (defun hyrolo-isearch (&optional arg)
   "Interactively search forward for the next occurrence of the current match string.
 Then add characters to further narrow the search.  With optional prefix ARG non-nil,
@@ -589,13 +608,13 @@ Return t if entry is killed, nil otherwise."
 	(prior-regexp-search (stringp hyrolo-match-regexp)))
     (when (and prior-regexp-search (looking-at hyrolo-match-regexp))
       (goto-char (match-end 0)))
-    (if  (and prior-regexp-search (re-search-forward hyrolo-match-regexp nil t))
+    (if (and prior-regexp-search (re-search-forward hyrolo-match-regexp nil t))
 	(goto-char (match-beginning 0))
       (goto-char start)
       (if prior-regexp-search
-	(error
-	 "(hyrolo-next-match): No following matches for \"%s\"" hyrolo-match-regexp)
-	  (error "(hyrolo-next-match): No prior regular expression search to match")))))
+	  (error
+	   "(hyrolo-next-match): No following matches for \"%s\"" hyrolo-match-regexp)
+	(error "(hyrolo-next-match): No prior regular expression search to match")))))
 
 (defun hyrolo-overview (levels-to-show)
   "Show the first line of all levels of rolo matches.
@@ -609,6 +628,7 @@ With a prefix argument of LEVELS-TO-SHOW > 0, show the first lines of entries on
 		     (<= levels-to-show 0))
 	    (not (integerp levels-to-show))))
       (setq levels-to-show 100))
+  (hyrolo-hide-subtree) ;; Ensure reveal-mode does not expand current entry.
   (hyrolo-show-levels levels-to-show))
 
 (defun hyrolo-previous-match ()
@@ -616,8 +636,7 @@ With a prefix argument of LEVELS-TO-SHOW > 0, show the first lines of entries on
   (interactive)
   (hyrolo-verify)
   (let ((case-fold-search t))
-    (if (re-search-backward hyrolo-match-regexp nil t)
-	nil
+    (unless (re-search-backward hyrolo-match-regexp nil t)
       (error
        "(hyrolo-previous-match): No prior matches for \"%s\"" hyrolo-match-regexp))))
 
@@ -782,6 +801,7 @@ Useful when bound to a mouse key."
   "Show only the first line of all `top-level' rolo matches."
   (interactive)
   (hyrolo-verify)
+  (hyrolo-hide-subtree)
   (hyrolo-show-levels 1))
 
 ;;;###autoload
@@ -1501,6 +1521,7 @@ Calls the functions given by `hyrolo-mode-hook'.
   ;;
   (when (fboundp 'outline-minor-mode)
     (outline-minor-mode 1))
+  (reveal-mode 1) ;; Expose hidden text as move into it.
   (run-hooks 'hyrolo-mode-hook))
 
 ;;; ************************************************************************
@@ -1576,7 +1597,7 @@ String search expressions are converted to regular expressions.")
   (define-key hyrolo-mode-map "b"        'outline-backward-same-level)
   (define-key hyrolo-mode-map "e"        'hyrolo-edit-entry)
   (define-key hyrolo-mode-map "f"        'outline-forward-same-level)
-  (define-key hyrolo-mode-map "h"        'outline-hide-subtree)
+  (define-key hyrolo-mode-map "h"        'hyrolo-hide-subtree)
   (define-key hyrolo-mode-map "l"        'hyrolo-locate)
   (define-key hyrolo-mode-map "m"        'hyrolo-mail-to)
   (define-key hyrolo-mode-map "n"        'outline-next-visible-heading)

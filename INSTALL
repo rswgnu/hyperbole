@@ -18,7 +18,7 @@
 There are multiple wasy to obtain and install Hyperbole once
 you have GNU Emacs set up at your site.
 
-** The Built-in Emacs Package Manager
+** The Stable Release (from GNU Elpa using the built-in Emacs Package Manager)
 
 The Emacs Package Manager installs the latest stable version release
 of GNU Hyperbole.  If you are not familiar with it, see the Packages
@@ -38,9 +38,9 @@ several lines to your personal Emacs initialization file, typically "~/.emacs".
 
 Below are the lines to add:
 
-(require 'package)
 (when (< emacs-major-version 27)
-  (package-initialize))
+  (error "Hyperbole requires Emacs 27 or above; you are running version %d" emacs-major-version))
+(require 'package)
 (unless (package-installed-p 'hyperbole)
   (package-refresh-contents)	
   (package-install 'hyperbole))
@@ -52,7 +52,47 @@ minute or two.  You may see a bunch of compilation warnings but these
 can be safely ignored.
 
 
-** The Straight Package Manager (direct from Git Sources)
+** The Latest Development Snapshot (from GNU Elpa-Devel using the built-in Emacs Package Manager)
+
+The Elpa In-Development package pulls from the latest Hyperbole
+development branch tip and does not require installation of any new
+package manager software.  Since Hyperbole is a mature package, this is
+usually fine to use and update on a day-to-day basis.  But new features
+are tested on this branch and once in awhile it may break for a short
+time before a fix is pushed.  With this branch you'll be able to submit
+bug reports and feature requests but will not be able to submit pull
+requests for changes to the developers; use the Git In-Development
+Package instead for that.
+
+If you have Hyperbole 5.10 or higher already installed and simply want to
+upgrade it, invoke the Emacs Package Manager with {M-x list-packages RET},
+then use the {U} key followed by the {x} key to upgrade all out-of-date
+packages, Hyperbole among them.  Then skip the text below and move on to
+the section, Invocation.
+
+Otherwise, to download and install the Hyperbole package, you should add
+several lines to your personal Emacs initialization file, typically "~/.emacs".
+(For further details, see "(emacs)Init File", or
+"https://www.gnu.org/software/emacs/manual/html_node/emacs/Init-File.html").
+
+Below are the lines to add:
+
+(when (< emacs-major-version 27)
+  (error "Hyperbole requires Emacs 27 or above; you are running version %d" emacs-major-version))
+(require 'package)
+(add-to-list 'package-archives '("gnu-devel" . "https://elpa.gnu.org/devel/"))
+(unless (package-installed-p 'hyperbole)
+  (package-refresh-contents)
+  (package-install 'hyperbole))
+(hyperbole-mode 1)
+
+Now save the file and restart Emacs.  Hyperbole will then be downloaded
+and compiled for use with your version of Emacs; give it a minute or two.
+You may see a bunch of compilation warnings but these can be safely
+ignored.
+
+
+** The Git Master Branch (from git source using the Straight Package Manager)
 
 If you prefer to track Hyperbole development between releases and like
 to try out new features still in testing, then use the Straight
@@ -61,8 +101,23 @@ source code from its git repository.  This also gives you a cleaner
 installation process without showing you any byte compilation
 warnings.
 
+If you have Hyperbole 5.10 or higher already installed and simply want to
+upgrade it, invoke the Emacs Package Manager with {M-x list-packages RET},
+then use the {U} key followed by the {x} key to upgrade all out-of-date
+packages, Hyperbole among them.  Then skip the text below and move on to
+the section, Invocation.
+
+Otherwise, to download and install the Hyperbole package, you should add
+several lines to your personal Emacs initialization file, typically "~/.emacs".
+(For further details, see "(emacs)Init File", or
+"https://www.gnu.org/software/emacs/manual/html_node/emacs/Init-File.html").
+
+Below are the lines to add:
+
 ;; Use this in your Emacs init file to install Straight
 (progn
+  (when (< emacs-major-version 27)
+    (error "Hyperbole requires Emacs 27 or above; you are running version %d" emacs-major-version))
   (defvar bootstrap-version)
   (setq package-enable-at-startup nil)
   (let ((bootstrap-file
@@ -84,11 +139,14 @@ warnings.
    :repo "https://git.savannah.gnu.org/git/hyperbole.git"
    :config (hyperbole-mode 1)))
 
-** Manual Tarball Archive Installation (stable or pre-release)
+Now save the file and restart Emacs.  Hyperbole will then be downloaded
+and compiled for use with your version of Emacs; give it a minute or two.
+
+
+** The Stable or Pre-Release Tarball Archive (manually installed)
 
 If you are old-school, don't like package managers, and prefer doing
 everything by hand, then you can obtain Hyperbole from a tarball:
-
 Download either:
 
 1. a stable release tar.gz source archive from either:
@@ -110,6 +168,8 @@ lines to your personal Emacs initialization file,
 "~/.emacs":
 
 (unless (and (featurep 'hyperbole) hyperbole-mode)
+  (when (< emacs-major-version 27)
+    (error "Hyperbole requires Emacs 27 or above; you are running version %d" emacs-major-version))
   (push "<directory-ending-with-hyperbole-where-you-unpacked>" load-path)
   (require 'hyperbole)
   (hyperbole-mode 1))

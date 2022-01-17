@@ -1243,8 +1243,8 @@ Activates only if point is within the first line of the Info-node name."
                                (hbut:label-p t "`" "'" t t)))
          (ref (car node-ref-and-pos))
          (node-ref (and (stringp ref)
-                        (string-match "\\`([^\):]+)" ref)
-                        (hpath:is-p (car node-ref-and-pos) nil t))))
+                        (string-match-p "\\`([^\): \t\n\r\f]+)" ref)
+                        (hpath:is-p ref nil t))))
     (and node-ref
          (ibut:label-set node-ref-and-pos)
          (hact 'link-to-Info-node node-ref))))

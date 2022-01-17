@@ -7,14 +7,28 @@
 
   HYPERBOLE SYSTEM
 
-    - Hyperbole is now a global minor mode that can be toggled with {M-x
-      hyperbole-mode RET}, meaning all of its key bindings can easily be
-      enabled or disabled whenever desired.  Your init file needs to have
-      (hyperbole-mode 1) in it instead of (require 'hyperbole) or Hyperbole
-      will not be enabled upon startup.
+    - Installation: Hyperbole package installation options are greatly expanded.
+      Stable or in-development branches may be installed with the Emacs package
+      manager.  The Straight package manager may be used to keep up with
+      git-based development and submit pull requests.  And stable and
+      in-development tar balls are available for manual installation.  See
+      "(hyperbole)Installation".
 
-      In the modeline where minor modes are shown, "Hypb" now appears
-      whenever Hyperbole is active.
+    - Global Minor Mode: Hyperbole is now a global minor mode that can be
+      toggled with {M-x hyperbole-mode RET}, meaning all of its key bindings
+      can easily be enabled or disabled whenever desired.  Your init file needs
+      to have (hyperbole-mode 1) in it instead of (require 'hyperbole) or
+      Hyperbole will not be enabled upon startup.  See "(hyperbole)Usage".
+
+      Modeline Indicator: In the modeline where minor modes are shown,
+      "Hypb" now appears whenever Hyperbole is active.
+
+      Hooks: When hyperbole-mode is enabled, hyperbole-mode-hook and
+      hyperbole-mode-on-hook are run.  When hyperbole-mode is disabled,
+      hyperbole-mode-hook and hyperbole-mode-off-hook are run.
+
+      Lexical Binding: All code is now largely lexically bound, improving
+      quality and debugability.
 
   ORG MODE
 
@@ -28,7 +42,10 @@
       everywhere.  The symbol, buttons, is the default; it means the Smart
       Keys are active only when point is within a Hyperbole button.  A nil
       value means no Smart Key support so {M-RET} behaves just as it does
-      normally in Org mode.  This table summarizes the operation:
+      normally in Org mode.  See "(hyperbole)Org-mode".  Use {C-h h c o}
+      to customize this setting.
+
+      This table summarizes the operation:
 
       |--------------+-------------------+------------------+----------+------------------|
       | Set To       | Smart Key Context | Hyperbole Button | Org Link | Fallback Command |
@@ -70,7 +87,7 @@
       from the command-line when in the Hyperbole source directory and you
       should see all tests pass.  If any fail, you can press the Action Key
       to see the source of the failure.  Full testing is suppored under POSIX
-      systems only.
+      systems only.  See "Makefile".
  
     - Implicit Button Types to Run Tests: The file "hypb-ert.el" contains two
       action link types:
@@ -87,21 +104,30 @@
           Run all tests
             <hyperbole-run-tests t>
 
-  HYROLO
+  HYROLO  (See "(hyperbole)HyRolo").
 
     - Faster searching within HyRolo match buffer: After performing a HyRolo
       search with point in the match buffer, if you want different results,
       you can quickly do a new regular expression HyRolo search with {r} or
-      a string/logical search with {C-u r}.
+      a string/logical search with {C-u r}.  This key had moved to previous
+      matches but that is already bound to {Shift-TAB} and {M-TAB}.
+
+    - Auto-Expansion of Entries: If an entry is collapsed/hidden, moving to
+      any hidden part auto-expands it and then re-collapses it when point is
+      moved to another entry (just like isearch).  A side-effect of this is
+      that the {h} hide entry subtree command now moves to the beginning of
+      the entry.
 
     - hyrolo-find-file: New command that selects and edits a file in
       `hyrolo-file-list', defaulting to the first listed file when not given
       a prefix arg.  Available in the minibuffer menu as Rolo/File and the
       pulldown menu as Rolo/Find-HyRolo-File.
 
-  KOUTLINER
+    - hyrolo-highlight-face: Now uses the Emacs 'match' face by default.
 
-    - Export Koutlines to Collapsible Web Pages: The {M-x kexport:html RET}
+  KOUTLINER  (See "(hyperbole)Koutliner").
+
+    - Export Koutlines to Collapsible Web Pages: The {M-x kexport:display RET}
       command now produces web-based expandable/collapsible outlines.
 
     - Org Table Support: Org table editing now automatically works in the
@@ -114,7 +140,7 @@
     - New Mail Tree Key Binding: The kotl-mode:mail-tree command that
       extracts the current view of a Koutline in text-only format and
       creates an outgoing email messge with it, has moved from {C-c @}
-      to {C-c C-@} to prevent conflict with the hycontrol-window-grid
+      to {C-c C-@} to prevent conflict with the global hycontrol-window-grid
       command bound to {C-c @}.
 
     - New Tree Demotion/Promotion Keys: Tree promotion and demotion keys now
@@ -147,6 +173,18 @@
 	kotl-mode:copy-absolute-klink-to-register
 	kotl-mode:copy-relative-klink-to-register
 
+    - Prevent Movement Outside Editable Cell Bounds: Add
+      kotl-mode:pre-self-insert-command as a pre-command-hook
+      to prevent Koutline editing with point in an invalid location,
+      after a mouse-set-point outside of editable bounds.
+
+    - {C-h h k e} (kotl-mode:example): Update to allow for an optional
+      directory or absolute file path.  Prompt for the path when interactive.
+      Given a prefix argument, archive any existing file and start with a
+      fresh EXAMPLE.kotl file for editing.  Programmatically, give a 2nd
+      arg of t to force archiving of any existing file and starting with
+      a fresh EXAMPLE.kotl file.
+
   MENUS
 
     - Minibuffer Menu Changes:
@@ -158,15 +196,24 @@
           completely and exits from the menu.  {C-h h} re-enables the
           global minor mode and display the top-level Hyperbole menu.
 
-  SMART (ACTION AND ASSIST) KEYS
+  SMART (ACTION AND ASSIST) KEYS  (See "(hyperbole)Smart Keys").
+
+    - Generalized Anchored Pathnames:  "pathname#anchor" now works in
+      programming modes as well as text and outlining modes where anchors
+      are prefixed with the comment character in each mode or a # symbol.
 
     - Implicit Button Types Reprioritization: Modified hibtypes.el so if
       evaluate: (symset:clear 'ibtypes) and then reload hibtypes.{el,elc},
       the priority order of all implicit button types is reset.
 
+    - Treat kbd Strings as Key Series Buttons: An Action Key press within
+      the string of (kbd "string") issues the keys in string as if they were
+      pressed individually, ie.g the same as the key series, {string}.
+
     - Mail Address Activation Everywhere: Email addresses are recognized as
-      implicit buttons in major modes given by `mail-address-mode-list'.  If
-      you set that to nil, however, they will be recognized in all major modes.
+      implicit buttons in major modes descended from `mail-address-mode-list'.
+      If you set that to nil, however, they will be recognized in all major
+      modes.
 
     - Magit Mode Support: Just click or press the Action Key somewhere and it
       will typically display what you want.  Extensive Action Key support in
@@ -228,13 +275,26 @@
       are now interactively debuggable via edebug-defun {C-M-x}.
 
     - ebut:program: Programmatically create an explicit Hyperbole button at
-	 point from LABEL, ACTYPE (action type), and optional actype ARGS.
+      point from LABEL, ACTYPE (action type), and optional actype ARGS.
+
+    - gbut:ebut-program: Programmatically add global explicit buttons at the
+      end of the personal button file.
+      
+    - kbd-key implicit button type: Interactive creation now allows for
+      a full key series, not just a single key binding.
 
     - kbd-key:is-p: Added this new predicate to test whether point is within
       a brace-delimited key series.
 
+    - kbd-key:execute: Added to programmatically or interactively execute a
+      non-normalized key series stored in a string.
+
     - hypb:def-to-buffer: Quick copying of program definitions and insertion
       at the start of another buffer.  Can be bound and used in key series.
+
+    - smart-lisp-find-tag: New function that automatically finds tags tables
+      and jumps to Emacs Lisp deefinitions.  It can be used in any type
+      of file as an action button, e.g. <smart-lisp-find-tag "ibut:at-p">.
 
   ACE WINDOW PACKAGE INTEGRATION - fast window and buffer switching
 

@@ -155,7 +155,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</P>
 
 <PRE>
 Edition 8.0.0pre
-Printed January 16, 2022.
+Printed January 17, 2022.
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -197,7 +197,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 @example
 Edition 8.0.0pre
-January 16, 2022
+January 17, 2022
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -249,6 +249,7 @@ years.  The Koutliner is dedicated to my lovely wife, Kathy.
 
 @menu
 * Introduction::
+* Usage::
 * Smart Keys::
 * Buttons::
 * Menus::
@@ -279,6 +280,12 @@ Introduction
 * Motivation::
 * Hyperbole Overview::
 * Mail Lists::
+
+Usage
+
+* Invocation::
+* Documentation::
+* Hyperbole Hooks::
 
 Smart Keys
 
@@ -400,13 +407,13 @@ Explicit Button Technicalities
 Setup
 
 * Installation::
-* Invocation::
 * Customization::
 
 Installation
 
-* Stable Package Installation::
-* Git Pre-release Package Installation::
+* Elpa Stable Package Installation::
+* Elpa In-Development Package Installation::
+* Git In-Development Package Installation::
 * Manual Tarball Archive Installation::
 
 Customization
@@ -497,7 +504,7 @@ Smart Keyboard Keys
 @end detailmenu
 @end menu
 
-@node Introduction, Smart Keys, Top, Top
+@node Introduction, Usage, Top, Top
 @chapter Introduction
 
 This edition of the GNU Hyperbole Manual is for use with any version
@@ -711,12 +718,11 @@ of Hyperbole is a single global minor mode that you can activate and
 deactivate at will.  And it can be uninstalled quickly as well if need be, so
 there is no risk to giving it a spin.
 
-Once you have it installed and activated (use @bkbd{C-u M-x
-hyperbole-mode @key{RET}}), try the interactive demo with @bkbd{C-h h d d}.
+Once you have it installed, try the interactive demo with @bkbd{C-h h d d}.
 In fact, if you have Hyperbole loaded, you can press @bkbd{M-@key{RET}}
-inside any of the brace delimited series of keys you see in this document and
-Hyperbole will execute them on-the-fly (easy keyboard-macro style buttons in
-any text).
+inside any of the brace delimited series of keys you see in this document
+and Hyperbole will execute them on-the-fly (easy keyboard-macro style
+buttons in any text).
 
 Hyperbole can dramatically increase your productivity and greatly reduce
 the number of keyboard/mouse keys you'll need to work efficiently.
@@ -890,7 +896,124 @@ There is a separate mail list to report problems or bugs with
 Hyperbole, <bug-hyperbole@@gnu.org>.  For more details,
 @pxref{Suggestion or Bug Reporting}.
 
-@node Smart Keys, Buttons, Introduction, Top
+@node Usage, Smart Keys, Introduction, Top
+@chapter Usage
+
+Once Hyperbole has been installed for use at your site, loaded into your
+Emacs session and activated with @code{(hyperbole-mode 1)}, it is ready
+for use.  You will see a Hyperbole menu on your menubar and @code{Hypb} in
+your modeline.
+
+@menu
+* Invocation::
+* Documentation::
+* Hyperbole Hooks::
+@end menu
+
+@node Invocation, Documentation, Usage, Usage
+@section   Invocation
+
+@noindent
+You can invoke Hyperbole's commands in one of three ways:
+
+@itemize @bullet
+@item use the Hyperbole entry on your menubar;
+
+@findex hyperbole
+@item type @bkbd{C-h h} or @bkbd{M-x hyperbole @key{RET}} to display the Hyperbole minibuffer menu;
+
+@item use a specific Hyperbole command, for example, a press of @bkbd{M-@key{RET}}
+on a pathname to display the associated file or directory.
+@end itemize
+
+@vindex file, .emacs
+@cindex hyperbole-mode
+@cindex minor mode, hyperbole
+@cindex change key bindings
+@cindex toggle key bindings
+@cindex key bindings, toggle
+@cindex disable Hyperbole
+@kindex C-h h
+@kindex X
+@kindex q
+@bkbd{C-h h} enables Hyperbole if it has been disabled and displays a
+Hyperbole menu in the minibuffer for quick keyboard or mouse-based selection.
+Select an item from this menu by typing the item's first capital letter.
+Use @bkbd{q} to quit from the minibuffer menu while leaving Hyperbole enabled.
+Use@bkbd{X} to quit from the minibuffer menu and disable Hyperbole minor mode.
+
+Use @bkbd{C-h h d d} for an interactive demonstration of standard Hyperbole
+button capabilities.
+
+Type @bkbd{C-h h k e} for an interactive demonstration of the Koutliner,
+Hyperbole's multi-level autonumbered hypertextual outliner.
+
+To try out HyControl, Hyperbole's interactive frame and window control
+system, use @bkbd{C-h h s w} for window control or @bkbd{C-h h s f} for
+frame control.  Pressing @bkbd{t} switches between window and frame
+control once in HyControl.  Hyperbole also binds @bkbd{C-c \\} for quick
+access to HyControl's window control menu if it was not already bound
+prior to Hyperbole's initialization.
+
+A long video demonstrating most of HyControl's features is available at
+@url{https://youtu.be/M3-aMh1ccJk}.
+
+The above are the best interactive ways to learn about Hyperbole.
+
+@node Documentation, Hyperbole Hooks, Invocation, Usage
+@section Documentation
+
+@vindex Info-directory-list
+@vindex hyperb:dir
+@cindex Hyperbole manual
+@noindent
+The Hyperbole Manual is a reference manual, not a simple introduction.
+It is included in the @file{man/} subdirectory of the Hyperbole package
+directory in four forms:
+
+@cindex Info manual
+@cindex Texinfo manual
+@vindex file, man/hyperbole.info
+@vindex file, man/hyperbole.html
+@vindex file, man/hyperbole.pdf
+@vindex file, man/hyperbole.texi
+@example
+@file{man/hyperbole.info}   - online Info browser version
+@file{man/hyperbole.html}   - web HTML version
+@file{man/hyperbole.pdf}    - printable version
+@file{man/hyperbole.texi}   - source form
+@end example
+
+@kindex C-h h d i
+The Hyperbole package installation places the Info version of this
+manual where needed and adds an entry for Hyperbole into the Info
+directory under the Emacs category.  @bkbd{C-h h d i} will let you
+browse the manual.  Then use @bkbd{s} to search for anything
+throughout the manual.  For web browsing, point your browser
+to @file{@code{$@{hyperb:dir@}}/man/hyperbole.html}, wherever the
+Hyperbole package directory is on your system; often this
+is: @file{~/.emacs.d/elpa/hyperbole-$@{hyperb:version@}/}.
+
+
+@node Hyperbole Hooks,  , Documentation, Usage
+@section Hyperbole Hooks
+@vindex hyperbole-init-hook
+@vindex hyperbole-mode-hook
+@vindex hyperbole-mode-on-hook
+@vindex hyperbole-mode-off-hook
+When Hyperbole's code is first loaded and initialized, @code{hyperbole-init-hook}
+is run.  When @code{hyperbole-mode} is enabled, @code{hyperbole-mode-hook} and
+@code{hyperbole-mode-on-hook} are run.  When @code{hyperbole-mode} is disabled,
+@code{hyperbole-mode-hook} and hyperbole-mode-off-hook are run.
+
+If you prefer a different key to activate Hyperbole, you can bind it as part
+of any setting of @code{hyperbole-init-hook} within your personal
+@file{~/.emacs} file.  For example, @code{(add-hook
+'hyperbole-init-hook (lambda () (global-set-key "\C-ch"
+'hyperbole--enable-mode) (global-set-key "\C-hh" 'view-hello-file)))}; then
+restart Emacs.
+
+@node Smart Keys, Buttons, Usage, Top
 @chapter Smart Keys
 
 @cindex Smart Key
@@ -908,29 +1031,6 @@ perform common, sometimes complex operations without having to use a
 different key for each operation.  Just press a Smart Key and the right thing
 happens.  This chapter explains typical uses of the Smart Keys.  @xref{Smart
 Key Reference}, for complete descriptions of their behavior in all contexts.
-
-@vindex file, .emacs
-@cindex hyperbole-mode
-@cindex minor mode, hyperbole
-@cindex change key bindings
-@cindex toggle key bindings
-@cindex key bindings, toggle
-@cindex disable Hyperbole
-@kindex C-h h
-@kindex X
-@kindex q
-Use @bkbd{C-h h} to activate Hyperbole (enable @code{hyperbole-mode} and
-display its keyboard-driven minibuffer menu).  Use @bkbd{q} to quit from the
-minibuffer menu while leaving Hyperbole enabled and thus the Smart Keys
-active.  Use@bkbd{X} to quit from the minibuffer menu and disable Hyperbole
-keys.
-
-If you prefer a different key to activate Hyperbole, you can bind it as part
-of any setting of @code{hyperbole-init-hook} within your personal
-@file{~/.emacs} file.  For example, @code{(add-hook
-'hyperbole-init-hook (lambda () (global-set-key "\C-ch"
-'hyperbole--enable-mode) (global-set-key "\C-hh" 'view-hello-file)))}; then
-restart Emacs.
 
 @menu
 * Smart Key Bindings::
@@ -1388,7 +1488,7 @@ Change the value to your desired command.  Then press @key{RET}.
 @end itemize
 
 @node Smart Mouse Key Drags,  , Smart Mouse Key Modeline Clicks, Smart Keys
-@section Smart Mouse Key Drags
+@section   Smart Mouse Key Drags
 
 @cindex smart mouse key drag
 @cindex Action Mouse Key drag
@@ -2007,10 +2107,6 @@ implicit button types (they are listed in increasing order of priority).
 @findex org-meta-return
 @findex hsys-org-mode-p
 @vindex file, hsys-org.el
-@vindex hsys-org-enable-smart-keys
-@cindex enable org-mode support
-@cindex disable org-mode support
-@cindex inhibit org-mode support
 @item org-mode
 Hyperbole recognizes Org mode constructs in any of these modes:
 @code{org-mode}, @code{org-agenda-mode}, @code{outshine-mode}
@@ -2038,9 +2134,17 @@ of @bkbd{C-c C-c}, @code{org-ctrl-c-ctrl-c}.
 In any other context besides the end of a line, the Action Key invokes
 the Org-mode standard binding of @bkbd{M-@key{RET}}, @code{org-meta-return}.
 
+@vindex hsys-org-enable-smart-keys
+@cindex enable org-mode support
+@cindex disable org-mode support
+@cindex inhibit org-mode support
+@kindex C-h h c o
 To disable Hyperbole support within Org major and minor modes, set
 the custom option @code{hsys-org-enable-smart-keys} to @code{nil}.  Then in
-Org modes, the Action Key will simply invoke @code{org-meta-return}.  The
+Org modes, the Action Key will simply invoke @code{org-meta-return}.
+@bkbd{C-h h c o} will customize this setting interactively.
+
+The
 following table summarizes the effect of this option setting.
 @end table
 
@@ -2247,13 +2351,16 @@ the location from which to retrieve RFCs.  Requires the Emacs builtin
 Tramp library for ftp file retrievals.
 
 @findex ibtypes kbd-key
+@cindex key series
 @cindex key sequence
-@cindex sequence of keys
+@cindex series of keys
+@cindex kbd function
 @item kbd-key
 Execute a key series (series of key sequences) around point,
 delimited by curly braces, @{@}.  Key series should be in
 human readable form, e.g.@: @bkbd{C-x C-b}.  Formats such as @{^x^b@}
-will not be recognized.
+will not be recognized.  The string within @code{(kbd "string")} also
+acts as a key series button.
 
 Any key sequence must be a string of one of the following:
 @itemize @bullet
@@ -2552,7 +2659,7 @@ with the following format: @file{<path>[#<link-anchor>]:<line-num>[:<column-num>
 @cindex address
 @item mail-address
 If on an e-mail address in a specific buffer type, compose mail to that
-address in another window. Applies to any major mode
+address in another window. Applies to any major mode descended from those
 in @code{mail-address-mode-list}, the rolo match buffer, any buffer
 attached to a file in @code{hyrolo-file-list}, or any buffer
 with @file{mail} or @file{rolo} (case-insensitive) within its name.  If
@@ -2634,7 +2741,7 @@ which when activated run Hyperbole tests using the ERT framework.  The
 @item hyperbole-run-test
 Recognize buttons of the form @code{<hyperbole-run-test test-name>}
 which when activated run individual Hyperbole tests, each given
-by the @code<test-name> argument, an unquoted name.
+by the @code{<test-name>} argument, an unquoted name.
 @end table
 
 
@@ -3102,15 +3209,14 @@ creation process).
 
 If a region was selected prior to the start of the drag, it is used as
 the button label, otherwise, you are prompted for the label.  Then
-Hyperbole uses the link referent context to determine the type of link
-to make.  If there are a few different types of links which are
-applicable from the context, you will be prompted with a list of the
-types.  Simply use the Action Key or the first letter of the link type
-to select one of the type names and to finish the link creation.
-Hyperbole will then insert explicit button delimiters around the
-button label and will display a message in the minibuffer indicating
-the button label, its action/link type, and any arguments, notably the
-thing to which it links.
+Hyperbole uses the link referent context to determine the type of link to
+make.  If there are a few different types of links which are applicable
+from the context, you will be prompted with a list of the types.  Simply
+use the Action Key or the first capital letter of the link type to select
+one of the type names and to finish the link creation.  Hyperbole will
+then insert explicit button delimiters around the button label and will
+display a message in the minibuffer indicating the button label, its
+action/link type, and any arguments, notably the thing to which it links.
 
 The following table shows the type of link that will be created based
 upon the referent context in which the Action Key is released.
@@ -4177,7 +4283,9 @@ file included with Hyperbole.  Use @bkbd{C-h h k e} to display that
 file, as pictured on the following page.  It is an actual outline file
 that explains major outliner operations.  You can test out the viewing,
 editing and motion commands with this file since a personal copy is made
-when you invoke this command.
+when you invoke this command.  If you have already edited this file and
+want to start with a fresh one, give the command a prefix argument:
+@bkbd{C-u C-h h k e}.
 
 @xref{Koutliner Keys}, for a full summary of the key bindings and
 commands available in the Koutliner.
@@ -4496,8 +4604,8 @@ Use @bkbd{M-1 @key{TAB}} to toggle the @key{TAB} and
 
 @cindex Org tables
 The Koutliner supports Org Table editing, @pxref{Tables,,, org, the Org
-Mode Manual}, via Org table minor mode.  Use {M-x orgtbl-mode RET} to
-toggle this on and off.  A press of the Action Key on a @code{|} symbol,
+Mode Manual}, via Org table minor mode.  Use @bkbd{M-x orgtbl-mode @key{RET}}
+to toggle this on and off.  A press of the Action Key on a @code{|} symbol,
 also toggles this minor mode on or off.
 
 @cindex outline mode
@@ -5528,12 +5636,10 @@ matches.  Standard string, @bkbd{C-s}, and regular expression,
 @bkbd{C-M-s}, interactive search commands are also available within
 the rolo match buffer.
 
-@kindex rolo, a
-@kindex rolo, h
 @kindex rolo, o
-@kindex rolo, s
 @kindex rolo, t
-@cindex rolo, outlining
+@cindex rolo, top-level entries
+@cindex rolo, outline of entries
 Single key outlining commands are also available for browsing matches.
 If your search matches a large number of entries, use @bkbd{t} to get
 a top-level summary of entries.  Only the first line of each
@@ -5542,9 +5648,18 @@ levels, use @bkbd{o} which shows the first line of every entry level.
 If you want an overview of just the first two levels, @bkbd{C-u 2 o}
 will work.
 
-Press @bkbd{s} to show (expand) the entry at point.
-Use @bkbd{h} to hide (collapse) the entry.  Press @bkbd{a}
-to expand all entries in the buffer.
+@kindex rolo, a
+@kindex rolo, h
+@kindex rolo, s
+@cindex rolo, auto-expanding entries
+@cindex rolo, hiding entries
+@cindex rolo, showing entries
+Press @bkbd{s} to show (expand) the entry at point.  Use @bkbd{h} to hide
+(collapse) the entry.  Press @bkbd{a} to expand all entries in the
+buffer.  If an entry is collapsed/hidden, moving to any hidden part
+auto-expands it and then re-collapses it when point is moved to another
+entry (just like isearch).  A side-effect of this is that the @bkbd{h}
+hide entry subtree command now moves to the beginning of the entry.
 
 @noindent
 Other keys are defined to help you work with matching entries.
@@ -6471,8 +6586,6 @@ quickly.
 
 @vindex class, ebut
 @vindex file, hbut.el
-@findex ebut:create
-@findex ebut:map
 The Hyperbole class @samp{ebut} supports programmatic access to explicit
 buttons.  Examine it within the @file{hbut.el} file for full details.
 
@@ -6488,10 +6601,16 @@ the button LABEL which is automatically provided as the first argument.
 
 For interactive explicit creation, use @code{hui:ebut-create} instead.
 
+@findex ebut:create
+@findex ebut:map
 The documentation for @code{(ebut:create)} explains the set of
 attributes necessary to create an explicit button.  For operations over
 the whole set of buttons within the visible (non-narrowed) portion of a
 buffer, use the @code{(ebut:map)} function.
+
+@findex gbut:ebut-program
+Similarly, @code{gbut:ebut-program} programmatically adds global explicit
+buttons at the end of the personal button file.
 
 
 @node Encapsulating Systems, Embedding Hyperbole, Explicit Button Technicalities, Developing with Hyperbole
@@ -7039,42 +7158,46 @@ Hyperbole must be obtained and setup at your site before you can
 use it.  Instructions are given below.  If you are using InfoDock
 version 4.0.7 or higher, Hyperbole is pre-installed so you may skip
 the installation instructions and simply continue with the
-invocation instructions in this appendix.
+next section about customizing Hyperbole's behavior.
 
 @menu
 * Installation::
-* Invocation::
 * Customization::
 @end menu
 
-@node Installation, Invocation, Setup, Setup
+@node Installation, Customization, Setup, Setup
 @section   Installation
 
 There are multiple package managers you can use to install Hyperbole once
-you have GNU Emacs set up at your site.
+you have GNU Emacs set up at your site.  Choose one based on your needs.
 
 @menu
-* Stable Package Installation::
-* Git Pre-release Package Installation::
+* Elpa Stable Package Installation::
+* Elpa In-Development Package Installation::
+* Git In-Development Package Installation::
 * Manual Tarball Archive Installation::
 @end menu
 
 @noindent
 After installing Hyperbole, read the next section on Invocation.
 
-@node Stable Package Installation, Git Pre-release Package Installation, Installation, Installation
-@subsection Stable Package Installation (Emacs Package Manager)
+@node Elpa Stable Package Installation, Elpa In-Development Package Installation, Installation, Installation
+@subsection Elpa Stable Package Installation (Emacs Package Manager)
 
 @cindex installation
+@cindex elpa package
 @cindex package manager
 @cindex Emacs package manager
 @cindex stable release installation
 @cindex installation, stable
 @cindex obtaining Hyperbole
 @cindex Hyperbole, obtaining
-Once you have Emacs set up at your site, GNU Hyperbole may be
-installed by using the Emacs Package Manager.  If you are not familiar
-with it, @pxref{Packages,,,emacs,the GNU Emacs Manual}.
+Once you have Emacs set up at your site, the stable, released version of
+GNU Hyperbole may be installed by using the Emacs Package Manager.  If
+you are not familiar with it, @pxref{Packages,,,emacs,the GNU Emacs
+Manual}.  Releases are very rare and the in-development branch may be
+many months and features ahead, so you may want to consider using either
+the Elpa In-Development or Git In-Development installation instead.
 
 If you have Hyperbole installed and simply want to upgrade it, invoke
 the Emacs Package Manager with @bkbd{M-x list-packages @key{RET}},
@@ -7091,37 +7214,106 @@ the GNU Emacs Manual}).
 Below are the lines to add:
 
 @lisp
-(require 'package)
+@group
 (when (< emacs-major-version 27)
-  (package-initialize))
+  (error "Hyperbole requires Emacs 27 or above; you are running version %d" emacs-major-version))
+(require 'package)
 (unless (package-installed-p 'hyperbole)
   (package-refresh-contents)	
   (package-install 'hyperbole))
 (hyperbole-mode 1)
+@end group
 @end lisp
 
-Now save the file and restart Emacs.  Hyperbole will then be
-downloaded and compiled for use with your version of Emacs; give it a
-minute or two.  You may see a bunch of compilation warnings but these
-can be safely ignored.
+Now save the file and restart Emacs.  Hyperbole will then be downloaded
+and compiled for use with your version of Emacs; give it a minute or two.
+You may see a bunch of compilation warnings but these can be safely
+ignored.
 
-@node Git Pre-release Package Installation, Manual Tarball Archive Installation, Stable Package Installation, Installation
-@subsection Git Pre-release Package Installation (Straight Package Manager)
+@node Elpa In-Development Package Installation, Git In-Development Package Installation, Elpa Stable Package Installation, Installation
+@subsection Elpa In-Development Package Installation
+
+@cindex elpa-devel package
+@cindex in-development installation
+@cindex pre-release installation
+@cindex installation, pre-release
+@cindex installation, from git
+The Elpa In-Development package pulls from the latest Hyperbole
+development branch tip and does not require installation of any new
+package manager software.  Since Hyperbole is a mature package, this is
+usually fine to use and update on a day-to-day basis.  But new features
+are tested on this branch and once in awhile it may break for a short
+time before a fix is pushed.  With this branch you'll be able to submit
+bug reports and feature requests but will not be able to submit pull
+requests for changes to the developers; use the Git In-Development
+Package instead for that.
+
+If you have Hyperbole installed and simply want to upgrade it, invoke
+the Emacs Package Manager with @bkbd{M-x list-packages @key{RET}},
+then use the @bkbd{U} key followed by the @bkbd{x} key to upgrade all
+out-of-date packages, Hyperbole among them.  Then skip the text below
+and move on to the next section, @pxref{Invocation}.
+
+Otherwise, to download and install the Hyperbole package, you should add
+several lines to your personal Emacs initialization file, @file{~/.emacs}.
+(For further details, @pxref{Init File,,The Emacs Initialization File,emacs,
+the GNU Emacs Manual}).
+
+@noindent
+Below are the lines to add:
+
+@lisp
+@group
+(when (< emacs-major-version 27)
+  (error "Hyperbole requires Emacs 27 or above; you are running version %d" emacs-major-version))
+(require 'package)
+(add-to-list 'package-archives '("gnu-devel" . "https://elpa.gnu.org/devel/"))
+(unless (package-installed-p 'hyperbole)
+  (package-refresh-contents)
+  (package-install 'hyperbole))
+(hyperbole-mode 1)
+@end group
+@end lisp
+
+Now save the file and restart Emacs.  Hyperbole will then be downloaded
+and compiled for use with your version of Emacs; give it a minute or two.
+You may see a bunch of compilation warnings but these can be safely
+ignored.
+
+@node Git In-Development Package Installation, Manual Tarball Archive Installation, Elpa In-Development Package Installation, Installation
+@subsection Git In-Development Package Installation (Straight Package Manager)
 
 @cindex Straight package manager
 @cindex pre-release installation
 @cindex installation, pre-release
 @cindex installation, from git
-If you prefer to track Hyperbole development between releases and like to
-try out new features still in testing, then use the Straight package
-manager instead of the above, which pulls the latest Hyperbole source code
-from its git repository.  This also gives you a cleaner installation
-process without showing you any byte compilation warnings.
+If you potentially want to contribute to Hyperbole development and send
+pull requests to the Hyperbole development team or to try out new
+features still in testing, you can use the Straight package manager.  It
+pulls the latest Hyperbole source code directly from its git repository.
+This also gives you a clean installation process without showing you any
+minor byte compilation warnings.
+
+If you have Hyperbole installed and simply want to upgrade it, invoke
+the Emacs Package Manager with @bkbd{M-x list-packages @key{RET}},
+then use the @bkbd{U} key followed by the @bkbd{x} key to upgrade all
+out-of-date packages, Hyperbole among them.  Then skip the text below
+and move on to the next section, @pxref{Invocation}.
+
+Otherwise, to download and install the Hyperbole package, you should add
+several lines to your personal Emacs initialization file, @file{~/.emacs}.
+(For further details, @pxref{Init File,,The Emacs Initialization File,emacs,
+the GNU Emacs Manual}).
+
+@noindent
+Below are the lines to add:
 
 @lisp
 @group
 ;; Use this in your Emacs init file to install Straight
 (progn
+  (when (< emacs-major-version 27)
+    (error "Hyperbole requires Emacs 27 or above; you are running version %d" emacs-major-version))
   (defvar bootstrap-version)
   (setq package-enable-at-startup nil)
   (let ((bootstrap-file
@@ -7147,7 +7339,10 @@ process without showing you any byte compilation warnings.
 @end group
 @end lisp
 
-@node Manual Tarball Archive Installation,  , Git Pre-release Package Installation, Installation
+Now save the file and restart Emacs.  Hyperbole will then be downloaded
+and compiled for use with your version of Emacs; give it a minute or two.
+
+@node Manual Tarball Archive Installation,  , Git In-Development Package Installation, Installation
 @subsection Manual Tarball Archive Installation
 
 If you are old-school, don't like package managers, and prefer doing
@@ -7172,99 +7367,28 @@ to at the top of this web page:
 
 
 Then decompress and unpack the archive to a directory of your
-choosing.  Move into the @file{hyperbole/} directory and execute
+choosing.  Move into the @file{hyperbole-<version>/} directory and execute
 the following Posix shell command, @code{make bin}, to
 byte-compile the Hyperbole lisp files.  Then add the following
 lines to your personal Emacs initialization file,
 @file{~/.emacs}:
 
 @lisp
+@group
 (unless (and (featurep 'hyperbole) hyperbole-mode)
+  (when (< emacs-major-version 27)
+    (error "Hyperbole requires Emacs 27 or above; you are running version %d" emacs-major-version))
   (push "<directory-ending-with-hyperbole-where-you-unpacked>" load-path)
   (require 'hyperbole)
   (hyperbole-mode 1))
+@end group
 @end lisp
 
 Restart Emacs and you should see the @code{Hypb} hyperbole minor mode
 indicator in your modeline after startup.
 
-@node Invocation, Customization, Installation, Setup
-@section   Invocation
-
-Once Hyperbole has been installed for use at your site and loaded into
-your Emacs session, it is ready for use.  You will see a Hyperbole
-menu on your menubar and @bkbd{C-h h} will display a Hyperbole menu in
-the minibuffer for quick keyboard or mouse-based selection.  Select an
-item from this menu by typing the item's first letter.  Use @bkbd{q}
-to quit from the menu.
-
-@noindent
-You can invoke Hyperbole's commands in one of three ways:
-
-@itemize @bullet
-@item use the Hyperbole entry on your menubar;
-
-@findex hyperbole
-@item type @bkbd{C-h h} or @bkbd{M-x hyperbole @key{RET}} to display the Hyperbole minibuffer menu;
-
-@item use a specific Hyperbole command, for example, a press of
-@bkbd{M-@key{RET}} on a pathname to display the associated file or
-directory.
-@end itemize
-
-Use @bkbd{C-h h d d} for an interactive demonstration of standard Hyperbole
-button capabilities.
-
-Type @bkbd{C-h h k e} for an interactive demonstration of the Koutliner,
-Hyperbole's multi-level autonumbered hypertextual outliner.
-
-To try out HyControl, Hyperbole's interactive frame and window control
-system, use @bkbd{C-h h s w} for window control or @bkbd{C-h h s f}
-for frame control.  Pressing @bkbd{t} switches between window and
-frame control once in HyControl.  Hyperbole also binds @bkbd{C-c \\}
-for quick access to HyControl's window control menu if it was not
-already bound prior to Hyperbole's initialization.  A long video
-demonstrating most of HyControl's features is available at
-@url{https://youtu.be/M3-aMh1ccJk}.
-
-@vindex Info-directory-list
-@vindex hyperb:dir
-@cindex Hyperbole manual
-@noindent
-The above are the best interactive ways to learn about Hyperbole.  The
-Hyperbole Manual is a reference manual, not a simple introduction.  It
-is included in the @file{man/} subdirectory of the Hyperbole package
-directory in four forms:
-
-@cindex Info manual
-@cindex Texinfo manual
-@vindex file, man/hyperbole.info
-@vindex file, man/hyperbole.html
-@vindex file, man/hyperbole.pdf
-@vindex file, man/hyperbole.texi
-@example
-@file{man/hyperbole.info}   - online Info browser version
-@file{man/hyperbole.html}   - web HTML version
-@file{man/hyperbole.pdf}    - printable version
-@file{man/hyperbole.texi}   - source form
-@end example
-
-@kindex C-h h d i
-The Hyperbole package installation places the Info version of this
-manual where needed and adds an entry for Hyperbole into the Info
-directory under the Emacs category.  @bkbd{C-h h d i} will let you
-browse the manual.  Then use @bkbd{s} to search for anything
-throughout the manual.  For web browsing, point your browser
-at @file{@code{$@{hyperb:dir@}}/man/hyperbole.html}, wherever the
-Hyperbole package directory is on your system; often this
-is: @file{~/.emacs.d/elpa/hyperbole-$@{hyperb:version@}/}.
-
-@noindent
-Advanced users may want to continue on to the next section about
-configuring Hyperbole's behavior.
-
 @page
-@node Customization,  , Invocation, Setup
+@node Customization,  , Installation, Setup
 @section   Customization
 
 @cindex menu, Cust
@@ -7631,6 +7755,11 @@ the @file{hui-*-b*.el} files for lists of potential colors and the
 code which supports this behavior.  A call
 to @code{(hproperty:cycle-but-color)} in the @file{hsettings.el} file
 changes the color used to highlight and flash explicit buttons.
+
+@vindex hproperty:but-flash-time-seconds
+@cindex button flash time
+You may also change the length of time in fractions of a second that a
+button flashes by setting @code{hproperty:but-flash-time-seconds}.
 
 @vindex hproperty:but-highlight-flag
 Whether or not buttons are highlighted is controlled
@@ -8862,24 +8991,24 @@ When company-mode is active:
 @group
 When in an Org mode context and @code{hsys-org-enable-smart-keys} is non-nil:
   ACTION KEY
-     (1) follows internal links in Org mode files.  When pressed on a
-         link referent/target, the link definition is displayed, allowing two-way
-          navigation between definitions and targets.
+     (1) follows internal links in Org mode files.  When pressed on a link
+         referent/target, the link definition is displayed, allowing two-way
+         navigation between definitions and targets.
 
      (2) follows Org mode external links.
 
-     (3) within a radio target definition, this jumps to the first
-     occurrence of an associated radio target.
+     (3) within a radio target definition, this jumps to the first occurrence
+         of an associated radio target.
 
-     (4) when point is on an outline heading in Org mode, this
-     cycles the view of the subtree at point.
+     (4) when point is on an outline heading in Org mode, this cycles the view
+         of the subtree at point.
 
-     (5) with point on the first line of a code block definition, this
-     executes the code block via the Org mode standard binding of {C-c C-c},
-     (org-ctrl-c-ctrl-c).
+     (5) with point on the first line of a code block definition, this executes
+         the code block via the Org mode standard binding of @bkbd{C-c C-c},
+         @code{(org-ctrl-c-ctrl-c)}.
 
      (6) In any other context besides the end of a line, the Action Key invokes the
-     Org mode standard binding of {M-RET}, (org-meta-return).
+         Org mode standard binding of @bkbd{M-@key{RET}}, @code{(org-meta-return)}.
 
   ASSIST KEY
      (1) on an Org mode heading, this cycles through views of the whole buffer outline.
@@ -9347,14 +9476,13 @@ When pressed within Custom-mode for editing customizations:
          prompting to save any changes;
      (2) at the end of any other line, scroll the window down down a windowful;
      (3) if a mouse event on a widget, activate the widget or display a menu;
-     (4) anywhere else, execute the command bound to {RETURN}.
+     (4) anywhere else, execute the command bound to @key{RET}.
   ASSIST KEY
      (1) on the last line of the buffer, exit Custom mode, potentially
          prompting to save any changes;
      (2) at the end of any other line, scroll the window down down a windowful;
      (3) if a mouse event on a widget, activate the widget or display a menu;
-     (4) anywhere else, execute the command bound to {RETURN}.
-
+     (4) anywhere else, execute the command bound to @key{RET}.
 
 @node Smart Key - Bookmark Mode, Smart Key - Pages Directory Mode, Smart Key - Custom Mode, Smart Keyboard Keys
 @subsection Smart Key - Bookmark Mode

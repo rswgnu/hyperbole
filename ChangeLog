@@ -1,3 +1,22 @@
+2022-01-16  Bob Weiner  <rsw@gnu.org>
+
+* EXAMPLE.kotl: Add section on Org table-handling support.
+
+* hyrolo.el (hyrolo-mode): Add use of reveal minor mode.
+            (hyrolo-hide-subtree): Add and bound to {h} to work with reveal mode.
+            (hyrolo-overview):
+            (hyrolo-top-level): Ensure reveal-mode does not expand current entry.
+
+* hibtypes.el (Info-node): Tighten match to disallow whitespace in filenames and reduce
+    false matches.
+
+* install-test/: Update to error if Emacs version < 27 since then Hyperbole cannot run.
+    Also, indicate that Hyperbole has been activated ater running script.
+* man/hyperbole.texi (Elpa In-Development Package Installation): Add this section.
+    INSTALL (The Latest Development Snapshot): Add this section.
+  man/hyperbole.texi (Usage): Addes this chapter and included Invocation section that
+    had been in the Setup Appendix.
+
 2022-01-15  Mats Lidell  <matsl@gnu.org>
 
 * Makefile (test-ert, test-all): Turn off auto-save.
@@ -886,7 +905,7 @@ Delete knode.el and integrate functionality into kcell.el.
 
 * kotl/kotl-mode.el (kotl-mode:example): Update to allow for
     an optional directory or absolute file path.  Prompt for
-    the path when interactive and given a prefix argument,
+    the path when interactive.  Given a prefix argument,
     archive any existing file and start with a fresh EXAMPLE.kotl
     file.  Programmatically, give a 2nd arg of t to force
     archiving of any existing file and starting with a fresh
@@ -926,7 +945,7 @@ Delete knode.el and integrate functionality into kcell.el.
 
 * kotl/kotl-mode.el (kotl-mode):
   hyperbole.el (fboundp): Do not use with-suppressed-warnings since not
-    available in Emacs 26
+    available in all versions of Emacs 27
 
 2021-05-17  Mats Lidell  <matsl@gnu.org>
 
@@ -980,7 +999,7 @@ Delete knode.el and integrate functionality into kcell.el.
 
 * Makefile (version): Do version number check in a portable way.
 
-* hyperbole.el (hyperb:maybe-load-autoloads, hyperb:maybe-load-autoloads):
+* hyperbole.el (hyperb:maybe-load-autoloads):
     Only load autoloads if present.
 
 * hypb.el (hypb:function-copy): Remove XEmacs compatibility code for
@@ -1081,7 +1100,7 @@ Delete knode.el and integrate functionality into kcell.el.
 2021-05-12  Mats Lidell  <matsl@gnu.org>
 
 * kotl/kotl-mode.el (kotl-mode:backward-paragraph): Remove XEmacs zmacs-region-stays.
-    (kotl-mode): Silence warning about unused filladapt-mode and supress
+    (kotl-mode): Silence warning about unused filladapt-mode and suppress
     warning for free vars.
 
 * hui-treemacs.el (treemacs, treemacs-current-button)
@@ -1164,7 +1183,7 @@ Delete knode.el and integrate functionality into kcell.el.
    allow for a key series, not just a single bound
    key sequence.
              (kbd-key:execute): Add to programmatically
-   or interactively execute a non-normalized key sequence
+   or interactively execute a non-normalized key series
    stored in a string.  Also, improve library commentary
    and mention this new command.
 
@@ -1503,7 +1522,7 @@ Delete knode.el and integrate functionality into kcell.el.
 * hbut.el (hbut:key-to-label): Ensure is a string and if one char, is not
     a punctuation char.
           (ibut:to): Fix possible infinite loop if label being tested is one
-    one character long.  This caused Action Key on "." in path variable values
+    character long.  This caused Action Key on "." in path variable values
     to hang.
 
 * hpath.el (hpath:path-variable-value-regexp, hpath:at-p): Improved regexp
