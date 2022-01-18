@@ -2063,9 +2063,10 @@ be integrated, otherwise the filename is appended as a double-quoted argument."
 (defun hpath:display-where-function (display-where display-where-alist)
   "Return the function to display a Hyperbole buffer or path using symbol DISPLAY-WHERE or if null, `hpath:display-where'.
 DISPLAY-WHERE-ALIST is a lookup table mapping from DISPLAY-WHERE values to associated functions."
-  (unless display-where (setq display-where hpath:display-where))
-  (car (cdr (or (assq display-where display-where-alist)
-		(assq 'other-window display-where-alist)))))
+  (unless display-where
+    (setq display-where hpath:display-where))
+  (cadr (or (assq display-where display-where-alist)
+	    (assq 'other-window display-where-alist))))
 
 (defun hpath:remote-available-p ()
   "Return non-nil if a remote file access package is available, nil otherwise.

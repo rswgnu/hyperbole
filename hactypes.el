@@ -321,7 +321,7 @@ Interactively, KEY-FILE defaults to the current buffer's file name."
 	((not (or (boundp symbol) (fboundp symbol)))
 	 (hypb:error "(link-to-elisp-doc): `%s' not defined" symbol))
 	(t (let ((temp-buffer-show-function 'switch-to-buffer))
-	     (hpath:display-buffer (current-buffer))
+	     (hpath:display-buffer (help-buffer))
 	     (describe-symbol symbol)))))
 
 (defact link-to-file (path &optional point)

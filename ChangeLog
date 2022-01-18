@@ -9,6 +9,11 @@
 * test/MANIFEST         - Add summary of Hyperbole test case files
   install-test/MANIFEST - Add summary of Hyperbole installation test files
 
+* hibtypes.el (texinfo-ref): Add missing quoting in front of symbol in this line:
+    (hact 'link-to-elisp-doc `',symbol)
+  hactypes.el (link-to-elisp-doc): Fix to properly use hpath:display-where setting
+    to display symbol documentation.
+
 2022-01-16  Bob Weiner  <rsw@gnu.org>
 
 * EXAMPLE.kotl: Add section on Org table-handling support.

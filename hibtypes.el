@@ -1161,7 +1161,7 @@ For @code, @findex, @var and @vindex references, the associated documentation st
                (when (and symbol (pcase type-str
                                    ((or "code" "findex") (fboundp symbol))
                                    ((or "var" "vindex") (boundp symbol))))
-                 (hact 'link-to-elisp-doc symbol))))
+                 (hact 'link-to-elisp-doc `',symbol))))
             ;; If at an @node and point is within a node name reference
             ;; other than the current node, display it.
             ((save-excursion
