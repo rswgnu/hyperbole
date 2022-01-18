@@ -82,12 +82,13 @@
 
   TEST CASES
 
-    - Hyperbole Automated Testing: Hyperbole now includes over 200 test cases
-      in the test/ subdirectory.  Simply run 'make test' or 'make test-all'
-      from the command-line when in the Hyperbole source directory and you
-      should see all tests pass.  If any fail, you can press the Action Key
-      to see the source of the failure.  Full testing is suppored under POSIX
-      systems only.  See "Makefile".
+    - Hyperbole Automated Testing: Extensive quality improvements throughout
+      Hyperbole thanks in part to over 200 test cases now included in the
+      test/ subdirectory.  Simply run 'make test' or 'make test-all' from the
+      command-line when in the Hyperbole source directory and you should see
+      all tests pass.  If any fail, you can press the Action Key to see the
+      source of the failure.  Full testing is suppored under POSIX systems
+      only.  See "Makefile" and "test/MANIFEST".
  
     - Implicit Button Types to Run Tests: The file "hypb-ert.el" contains two
       action link types:
@@ -103,6 +104,10 @@
 
           Run all tests
             <hyperbole-run-tests t>
+ 
+    - Installation Testing: install-test/local-install-test.sh automatically
+      installs Hyperbole for testing from one or more of its releases or
+      development branches.  See "Makefile" and "install-test/MANIFEST".
 
   HYROLO  (See "(hyperbole)HyRolo").
 
@@ -123,12 +128,21 @@
       a prefix arg.  Available in the minibuffer menu as Rolo/File and the
       pulldown menu as Rolo/Find-HyRolo-File.
 
+    - Sorting Entries Rewritten:  {C-h h r o} re-ordering HyRolo entries has
+      been rewritten for compatibility and improved debugging with the latest
+      Emacs releases.
+
     - hyrolo-highlight-face: Now uses the Emacs 'match' face by default.
+
+    - Under MS Windows, the default HyRolo file is now "~/.rolo.otl" like
+      all other operating systems, instead of "~/_rolo.otl".  Any older file
+      name will be relocated to the newer name.
 
   KOUTLINER  (See "(hyperbole)Koutliner").
 
     - Export Koutlines to Collapsible Web Pages: The {M-x kexport:display RET}
-      command now produces web-based expandable/collapsible outlines.
+      command creates and displays a web-based expandable/collapsible outline
+      from the Koutline in the current buffer.  See "(hyperbole)Exporting".
 
     - Org Table Support: Org table editing now automatically works in the
       Koutliner via Org table minor mode.  Use {M-x orgtbl-mode RET} to
@@ -137,16 +151,20 @@
       Use a prefix arg with {TAB} to promote/demote Koutline trees when in
       a table since {TAB} moves between fields within a table.
 
-    - New Mail Tree Key Binding: The kotl-mode:mail-tree command that
+    - New Mail Tree Key Binding: The `kotl-mode:mail-tree' command that
       extracts the current view of a Koutline in text-only format and
       creates an outgoing email messge with it, has moved from {C-c @}
       to {C-c C-@} to prevent conflict with the global hycontrol-window-grid
       command bound to {C-c @}.
 
+    - The new commands, `kotl-mode:insert-region' and `kotl-mode:insert-tree'
+      insert parts of Koutlines directly into other buffers without having
+      to copy to a mail/message buffer first.
+
     - New Tree Demotion/Promotion Keys: Tree promotion and demotion keys now
       match the defaults in Org mode and Outline mode, plus some easier to
       type ones.  The tables below summarize which keys work whether inside
-      an Org table or outside.
+      an Org table or outside.  See "(hyperbole)Promoting and Demoting".
 
       |----------------------------+-----------------------------|
       | Demotion Inside  Org Table | Promotion Inside  Org Table |
@@ -185,6 +203,10 @@
       arg of t to force archiving of any existing file and starting with
       a fresh EXAMPLE.kotl file.
 
+    - Modes to Ignore Klinks: C-style languages use <includes> that can be
+      mistaken for klinks.  New customizations 'klink:ignore-modes' and
+      'klink:c-style-modes' set the modes where klink matches are ignored.
+
   MENUS
 
     - Minibuffer Menu Changes:
@@ -198,13 +220,39 @@
 
   SMART (ACTION AND ASSIST) KEYS  (See "(hyperbole)Smart Keys").
 
-    - Generalized Anchored Pathnames:  "pathname#anchor" now works in
+    - Explicit buttons may be created in any kind of temporary buffer
+      without an attached file, similar to what already existed for mail
+      message buffers.
+
+    - Pathname Implicit Buttons: Much improved pathname handling including
+      multiple variables per path, embedded . or .. within paths, better
+      recognition of semicolon separated pathnames in Windows PATH variable.
+
+      Variable substitutions are now made with fixed case, so that the
+      case of a value with both upper and lower case characters is
+      never changed, for example a value of ${HOME}.
+
+      Recursive 'ls' listings are now recognized properly, prepending the
+      preceding directory to each entry for viewing.
+
+      Generalized Anchored Pathnames:  "pathname#anchor" now works in
       programming modes as well as text and outlining modes where anchors
       are prefixed with the comment character in each mode or a # symbol.
 
-    - Implicit Button Types Reprioritization: Modified hibtypes.el so if
-      evaluate: (symset:clear 'ibtypes) and then reload hibtypes.{el,elc},
-      the priority order of all implicit button types is reset.
+      PATH-style Variable Support:  An Action Key press on a defined PATH-style
+      variable name, e.g. MANPATH, will prompt with completion for one of the
+      paths and will then display that.  If it is the colon or semicolon-
+      separated string of paths value from a PATH-style variable, the path at
+      point is displayed; empty paths, e.g. :: represents the current directory,
+      ’.’.  Must have at least four paths within the variable value for this
+      to work.
+
+      file:// URLs are now resolved properly.
+
+    - Any Lisp or environment variable that stores a directory or set of
+      directories may be prepended to any "grep -n" output line with the form
+      "${var-name}/" and the Action Key will recognize the directory and display
+      the appropriate line.
 
     - Treat kbd Strings as Key Series Buttons: An Action Key press within
       the string of (kbd "string") issues the keys in string as if they were
@@ -229,26 +277,6 @@
       source reference line so if not on a Hyperbole button, move back a line
       before checking.
 
-    - Pathname Implicit Buttons: Recursive 'ls' listings are now recognized
-      properly, prepending the preceding directory to each entry for viewing.
-
-      An Action Key press on a defined PATH-style variable name, e.g. MANPATH,
-      will prompt with completion for one of the paths and will then display
-      that.  If it is the colon or semicolon-separated string of paths value
-      from a PATH-style variable, the path at point is displayed; empty paths,
-      e.g. :: represent the current directory, ’.’.  Must have at least four
-      paths within the variable value for this to work.
-
-      Much improved pathname handling including multiple variables per
-      path, embedded . or .. within paths, better recognition of semicolon
-      separated pathnames in Windows PATH variable.
-
-      Variable substitutions are now made with fixed case, so that the
-      case of a value with both upper and lower case characters is
-      never changed, for example a value of ${HOME}.
-
-      file:// URLs are now resolved properly.
-
     - Todotxt Mode Support: Smart key support for the todotxt mode
       https://github.com/rpdillon/todotxt.el.
 
@@ -259,6 +287,10 @@
       instead of ftp since this is disabled in many environments.  Always display
       with Emacs' web browser rather than externally.
 
+    - Implicit Button Types Reprioritization: Modified "hibtypes.el" so if
+      evaluate: (symset:clear 'ibtypes) and then reload hibtypes.{el,elc},
+      the priority order of all implicit button types is reset.
+
   CUSTOMIZATON
 
     - Customizable Display Program File Mappings:
@@ -267,9 +299,19 @@
          hpath:external-display-alist-macos
          hpath:external-display-alist-mswindows
          hpath:external-display-alist-x)
-      are all customizable.
+      are all customizable and their default values utilize the per operating
+      system generic 'open' commands based on file suffix associations (for file
+      types not handled by Emacs).
+
+      The new customizable variable, `hpath:external-file-suffixes', holds a regular
+      expression of operating system independent file suffixes to open outside Emacs
+      with the Action Key when not handled by `hpath:native-image-suffixes'.
 
   PROGRAMMING
+
+    - With the Hyperbole menu Cust/Debug-Toggle enabled, the messages printed
+      for each Smart Key press now include the action type and its arguments
+      for improved debugging.
 
     - Edebuggable Hyperbole Types: `defib' and `defact' type definitions
       are now interactively debuggable via edebug-defun {C-M-x}.
@@ -295,6 +337,11 @@
     - smart-lisp-find-tag: New function that automatically finds tags tables
       and jumps to Emacs Lisp deefinitions.  It can be used in any type
       of file as an action button, e.g. <smart-lisp-find-tag "ibut:at-p">.
+
+    - ibut:at-p: Trigger an error if any implicit button type predicate
+      permanently moves point to simplify debugging such predicates.
+
+    - hypb:string-count-matches: Count regexp matches in a string.
 
   ACE WINDOW PACKAGE INTEGRATION - fast window and buffer switching
 

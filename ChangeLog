@@ -6,6 +6,9 @@
                 (smart-lisp-at-non-htype-tag-p): Use when don't want to resolve
     Hyperbole htypes.
 
+* man/hyperbole.texi (Promoting and Demoting): Add this section separated from
+    Relocating and Copying.
+
 * test/MANIFEST         - Add summary of Hyperbole test case files
   install-test/MANIFEST - Add summary of Hyperbole installation test files
 
@@ -291,7 +294,7 @@
     the mail buffer via 'kotl-mode:mail-tree'.
 
 * hargs.el (hargs:at-p): Fix so when reading a buffer arg, if tag at point does not match
-    an existing buffer name, then use the buffer name at point.
+    an existing buffer name, then use the current buffer name.
            (hargs:read-buffer-name): Add for use by kotl-mode.
 
 * hyperbole.el (hkey-initialize): Add missing C-c prefix binding for hyperbole-mode-map.
@@ -417,8 +420,8 @@
     (kotl-orgtbl-shift-tab-demotes-tree-outside-table): Add tests.
 
 * kotl/kotl-mode.el (kotl-mode): Change binding for orgtbl C-d to use new
-    uniq command name, add binding for orgtbl shift tab to provide demote
-    tree outside of table.
+    kotl-mode:delete-char command; add binding for orgtbl shift tab to enable
+    demotion of trees outside of tables.
 
 2021-11-07  Bob Weiner  <rsw@gnu.org>
 
@@ -519,7 +522,7 @@
                 (hmouse-save-region): Remove unused optional 'frame' arg.
 
 * hbut.el (ibut:to): Fix to handle ibuts with text-only, no separate name
-    by using ibut:-at-p instead of ibut:label-p.
+    by using ibut:at-p instead of ibut:label-p.
           (ibut:to-text): Prevent error when lbl-key-end is not found and
     find double-quoted ibuts with no optional label.
           (ibut:at-p): Fix handling of double-quoted implicit buttons without
@@ -534,7 +537,7 @@
   hactypes.el (link-to-ibut): Generalize 'key-src' parameter to 'but-src' so
     handles buffers as well as files.
 
-* hbdata.el (hbdata:apply-entry): Added save-restriction in case in hbdata
+* hbdata.el (hbdata:apply-entry): Added save-restriction in case hbdata
     is stored in a displayable buffer, e.g. *scratch*, which may have a prior
     visible restriction.  Also, added support for such non-mail/news buffers.
 
@@ -581,7 +584,7 @@
 
 * Makefile (bin): Hide docstring warnings.
 
-2021-09-26  Robert Weiner  <bk@bka-iMac.lan>
+2021-09-26  Robert Weiner  <rsw@gnul.org>
 
 * hbut.el (ebut:operate): Rewrote to handle label modification properly and thereby
     fixed hui-ebut-modify-link-to-www-url-keeping-all-values-should-not-modify-buffer-or-ebut
@@ -627,11 +630,6 @@
   - Use lexical scoping
   - Update copyright notice
   - Use #'-syntax for functions
-
-2021-09-11  Mats Lidell  <matsl@gnu.org>
-
-* hsettings.el (hyperbole-web-search-browser-function): Use
-    browse-url--browser-defcustom-type for customization.
 
 2021-09-05  Bob Weiner  <rsw@gnu.org>
 
@@ -887,7 +885,8 @@ Delete knode.el and integrate functionality into kcell.el.
    with table row-level valign=text-bottom.
 
 * kotl/klink.el (klink:ignore-modes, klink:c-style-modes): Add so
-    can customize.
+    can customize which modes in which klinks are ignored to avoid
+    false matches.
 
 * hsettings.el (hyperbole-web-search-alist): Update 'gitHub'
     name.

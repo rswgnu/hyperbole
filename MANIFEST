@@ -98,3 +98,8 @@ topwin.py            - Python script to find the topmost macOS app window at a s
 hsys-org.el          - GNU Hyperbole support functions for Org mode
 hsys-www.el          - GNU Hyperbole support for Emacs W3 World-Wide Web (WWW) browsing
 
+--- HYPERBOLE TEST CASES ---
+test/MANIFEST        - Summary of Hyperbole test case files
+
+--- HYPERBOLE INSTALLATION TEST CONFIGURATIONS ---
+install-test/MANIFEST - Summary of Hyperbole installation test files

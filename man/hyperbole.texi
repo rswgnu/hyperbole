@@ -358,6 +358,7 @@ Koutliner
 Editing
 
 * Adding and Killing::
+* Promoting and Demoting::
 * Relocating and Copying::
 * Moving Around::
 * Filling::
@@ -1923,10 +1924,13 @@ Spacing between words within a button label is irrelevant to Hyperbole.
 Button labels may wrap across several lines without causing a problem;
 just be sure to select the first line of the button to activate it.
 
-Explicit buttons may be added to any editable text file; for source
-code files, simply place buttons within comments.  Buttons that you
-use for quick navigation to websites or other things you do often
-should be added to your personal button file.  @xref{Button Files}.
+Explicit buttons may be added to any editable buffer including
+temporary buffers without any attached files (such buttons will
+last only the length of a single Emacs session).  For source code
+files, simply place Hyperbole explicit buttons within comments.
+Buttons that you use for quick navigation to websites or other things
+you do often should be added to your personal button file.
+@xref{Button Files}.
 
 @cindex button, moving
 @cindex moving buttons
@@ -2142,7 +2146,8 @@ the Org-mode standard binding of @bkbd{M-@key{RET}}, @code{org-meta-return}.
 To disable Hyperbole support within Org major and minor modes, set
 the custom option @code{hsys-org-enable-smart-keys} to @code{nil}.  Then in
 Org modes, the Action Key will simply invoke @code{org-meta-return}.
-@bkbd{C-h h c o} will customize this setting interactively.
+@bkbd{C-h h c o} (minibuffer menu Cust/Org-M-RET) will interactively customize
+this setting.
 
 The
 following table summarizes the effect of this option setting.
@@ -2342,13 +2347,12 @@ when selected.
 @cindex Request For Comment
 @cindex RFC
 @cindex remote file
-@cindex ftp
+@cindex http
 @item rfc
 Retrieve and display an Internet Request for Comments (RFC) standards
 document referenced at point.  The following formats are recognized:
 RFC822, rfc-822, and RFC 822.  The @code{hpath:rfc} variable specifies
-the location from which to retrieve RFCs.  Requires the Emacs builtin
-Tramp library for ftp file retrievals.
+the location from which to retrieve RFCs via HTTP.
 
 @findex ibtypes kbd-key
 @cindex key series
@@ -2702,10 +2706,14 @@ details).  Emacs Lisp library files (filenames without any directory
 component that end in .el and .elc) are located using
 the @code{load-path} directory list.
 
+@vindex hpath:variable-regexp
+@cindex pathname variables
 @noindent
 The pathname may contain references to Emacs Lisp variables or shell
 environment variables using the syntax, \"$@{variable-name@}\".
-@xref{Link Variable Substitution}, for how this handled.
+@xref{Link Variable Substitution}, for how this handled.  The constant,
+@code{hpath:variable-regexp}, matches to this pattern within pathnames.
+
 
 @noindent
 See the function documentation for @code{hpath:at-p} for possible
@@ -4519,6 +4527,7 @@ selected region, since that will destroy the outline structure.
 
 @menu
 * Adding and Killing::
+* Promoting and Demoting::
 * Relocating and Copying::
 * Moving Around::
 * Filling::
@@ -4528,7 +4537,7 @@ selected region, since that will destroy the outline structure.
 * Exporting::
 @end menu
 
-@node Adding and Killing, Relocating and Copying, Editing, Editing
+@node Adding and Killing, Promoting and Demoting, Editing, Editing
 @subsection  Adding and Killing
 
 @kindex koutliner, C-j
@@ -4559,9 +4568,8 @@ kills the entire contents of the cell regardless of the location of
 point.  You may then yank the contents into another cell or another
 buffer with @bkbd{C-y}.
 
-
-@node Relocating and Copying, Moving Around, Adding and Killing, Editing
-@subsection  Relocating and Copying
+@node Promoting and Demoting, Relocating and Copying, Adding and Killing, Editing
+@subsection  Promoting and Demoting
 
 @cindex promotion
 @cindex demotion
@@ -4639,6 +4647,8 @@ moves between fields within a table.
 |----------------------------+-----------------------------|
 @end example
 
+@node Relocating and Copying, Moving Around, Promoting and Demoting, Editing
+@subsection  Relocating and Copying
 
 @cindex tree, copying
 @cindex tree, moving
@@ -4941,17 +4951,25 @@ create.
 @cindex outline, HTML conversion
 @cindex exporting
 @cindex HTML conversion
-@findex kexport:html
 Koutlines may be @dfn{exported} to other file formats.  Presently, the
 only format supported is conversion to HTML for publishing on the
 World-Wide Web.
 
-@bkbd{M-x kexport:html @key{RET}} prompts for the koutline buffer or
-file to export, the HTML file or buffer to which to output, and the
-title to use for the HTML file.  Completion of filenames is provided.
-The conversion will then be done and the output file or buffer will be
-written; the output file will not be displayed.
+@findex kexport:display
+@vindex browse-url-browser-function
+@bkbd{M-x kexport:display @key{RET}} exports the current Koutline buffer
+to a temporary HTML file and displays the file in the web browser given by 
+@code{browse-url-browser-function}.  Any tree in the HTML outline may be
+expanded or collapsed by clicking the left mouse button on its root cell,
+for ease of viewing.
 
+@findex kexport:html
+Alternatively, @bkbd{M-x kexport:html @key{RET}} prompts for the koutline
+buffer or file to export, the HTML file or buffer to which to output, and
+the title to use for the HTML file.  Completion of filenames is provided.
+The conversion will then be done and the output file or buffer will be
+written; the output file will not be displayed.  You must display it
+manually if desired.
 
 @node Viewing, Links, Editing, Koutliner
 @section   Viewing
@@ -5232,6 +5250,21 @@ example, @samp{<|ben>}, when activated, sets the view in the current
 outline to display blank lines, to use ellipses after collapsed lines
 and to label cells with the alphanumeric style.
 @end table
+
+@vindex klink:ignore-modes
+@vindex klink:c-style-modes
+@cindex modes to ignore klinks
+@cindex klinks, ignoring
+Because  klinks use a very generic syntax, surrounded by <angle brackets>,
+in certain modes, mostly C-based programming modes, certain non-klink syntax
+can be mistakenly identified as klinks.  Therefore, the Koutliner provides
+two customizable variables which disable klink recognition in selected major
+modes, @code{klink:ignore-modes} and @code{klink:c-style-modes}.  Add a mode
+to one of these if you find any syntax that improperly registers as a klink.
+
+* kotl/klink.el (klink:ignore-modes, klink:c-style-modes): Add so
+    can customize.
+
 
 @node Cell Attributes, Koutliner History, Links, Koutliner
 @section   Cell Attributes
@@ -7473,7 +7506,6 @@ Internal Image Display        hpath:native-image-suffixes
 Internal Custom Display       hpath:internal-display-alist
 External Display              hpath:external-display-alist
 Internal Standard Display     hpath:display-where
-
 @end example
 
 @noindent
@@ -7572,7 +7604,7 @@ external, window-system specific viewers.
 @cindex link, viewer program
 
 @cindex external display
-@vindex hpath:external-display-alist
+@findex hpath:get-external-display-alist
 If you use Hyperbole under a window system,
 the @code{hpath:get-external-display-alist} function in @file{hpath.el}
 supports hyperlinks that open files using external, non-Emacs tools, e.g.@:
@@ -7596,6 +7628,13 @@ for each available window system: @code{hpath:external-display-alist-macos},
 @code{hpath:external-display-alist-mswindows}, and
 @code{hpath:external-display-alist-x}.  Examine and modify these
 values to suit your needs.
+
+@vindex hpath:external-file-suffixes
+Part of these values for each operating system come from the
+variable, @code{hpath:external-file-suffixes}', which holds a regular
+expression of operating system independent file suffixes to open outside
+Emacs.
+
 
 @c @cindex MIME
 @c @cindex mailcap
@@ -7676,7 +7715,7 @@ Cust/Web-Search menu.  Below is the equivalent Hyperbole menubar menu.
 @cindex remote pathnames
 Hyperbole always recognizes URLs within buffers when the Action Key is
 pressed on them.  But sometimes it is useful to enter a URL at a prompt
-and have it displayed.  Hyperbole can recognize ftp and www URLs given to
+and have it displayed.  Hyperbole can recognize s/ftp and www URLs given to
 the @code{find-file} command (or any other @code{find-file-*} commands).
 But because there is added overhead with this feature, it is not enabled by
 default.
@@ -9681,7 +9720,8 @@ When pressed on a Lisp symbol within any of these types of buffers
 (Lisp code, debugger, compilation, or help) or in change-log-mode
 on an Emacs Lisp bound identifier:
   ACTION KEY
-     Jumps to the definition of any selected Lisp construct.  If on an
+     Jumps to the definition of any selected Lisp construct.  This includes
+     Hyperbole implicit button type and action type references.  If on an
      Emacs Lisp require, load, or autoload clause and the (find-library)
      function is defined, jumps to the library source, if possible.
   ASSIST KEY

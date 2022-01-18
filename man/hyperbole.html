@@ -187,13 +187,14 @@ ul.no-bullet {list-style: none}
   <li><a id="toc-Editing-1" href="#Editing">7.5 Editing</a>
   <ul class="no-bullet">
     <li><a id="toc-Adding-and-Killing-1" href="#Adding-and-Killing">7.5.1 Adding and Killing</a></li>
-    <li><a id="toc-Relocating-and-Copying-1" href="#Relocating-and-Copying">7.5.2 Relocating and Copying</a></li>
-    <li><a id="toc-Moving-Around-1" href="#Moving-Around">7.5.3 Moving Around</a></li>
-    <li><a id="toc-Filling-1" href="#Filling">7.5.4 Filling</a></li>
-    <li><a id="toc-Transposing-1" href="#Transposing">7.5.5 Transposing</a></li>
-    <li><a id="toc-Splitting-and-Appending-1" href="#Splitting-and-Appending">7.5.6 Splitting and Appending</a></li>
-    <li><a id="toc-Inserting-and-Importing-1" href="#Inserting-and-Importing">7.5.7 Inserting and Importing</a></li>
-    <li><a id="toc-Exporting-1" href="#Exporting">7.5.8 Exporting</a></li>
+    <li><a id="toc-Promoting-and-Demoting-1" href="#Promoting-and-Demoting">7.5.2 Promoting and Demoting</a></li>
+    <li><a id="toc-Relocating-and-Copying-1" href="#Relocating-and-Copying">7.5.3 Relocating and Copying</a></li>
+    <li><a id="toc-Moving-Around-1" href="#Moving-Around">7.5.4 Moving Around</a></li>
+    <li><a id="toc-Filling-1" href="#Filling">7.5.5 Filling</a></li>
+    <li><a id="toc-Transposing-1" href="#Transposing">7.5.6 Transposing</a></li>
+    <li><a id="toc-Splitting-and-Appending-1" href="#Splitting-and-Appending">7.5.7 Splitting and Appending</a></li>
+    <li><a id="toc-Inserting-and-Importing-1" href="#Inserting-and-Importing">7.5.8 Inserting and Importing</a></li>
+    <li><a id="toc-Exporting-1" href="#Exporting">7.5.9 Exporting</a></li>
   </ul></li>
   <li><a id="toc-Viewing-1" href="#Viewing">7.6 Viewing</a>
   <ul class="no-bullet">
@@ -613,6 +614,8 @@ Koutliner
 Editing
 
 </pre></th></tr><tr><td align="left" valign="top">&bull; <a href="#Adding-and-Killing">Adding and Killing</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="#Promoting-and-Demoting">Promoting and Demoting</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
 </td></tr>
 <tr><td align="left" valign="top">&bull; <a href="#Relocating-and-Copying">Relocating and Copying</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
 </td></tr>
@@ -2510,10 +2513,13 @@ Spacing between words within a button label is irrelevant to Hyperbole.
 Button labels may wrap across several lines without causing a problem;
 just be sure to select the first line of the button to activate it.
 </p>
-<p>Explicit buttons may be added to any editable text file; for source
-code files, simply place buttons within comments.  Buttons that you
-use for quick navigation to websites or other things you do often
-should be added to your personal button file.  See <a href="#Button-Files">Button Files</a>.
+<p>Explicit buttons may be added to any editable buffer including
+temporary buffers without any attached files (such buttons will
+last only the length of a single Emacs session).  For source code
+files, simply place Hyperbole explicit buttons within comments.
+Buttons that you use for quick navigation to websites or other things
+you do often should be added to your personal button file.
+See <a href="#Button-Files">Button Files</a>.
 </p>
 <span id="index-button_002c-moving"></span>
 <span id="index-moving-buttons"></span>
@@ -2743,7 +2749,8 @@ the Org-mode standard binding of <kbd>{M-<span class="key">RET</span>}</kbd>, <c
 <p>To disable Hyperbole support within Org major and minor modes, set
 the custom option <code>hsys-org-enable-smart-keys</code> to <code>nil</code>.  Then in
 Org modes, the Action Key will simply invoke <code>org-meta-return</code>.
-<kbd>{C-h h c o}</kbd> will customize this setting interactively.
+<kbd>{C-h h c o}</kbd> (minibuffer menu Cust/Org-M-RET) will interactively customize
+this setting.
 </p>
 <p>The
 following table summarizes the effect of this option setting.
@@ -2960,14 +2967,13 @@ when selected.
 <span id="index-Request-For-Comment"></span>
 <span id="index-RFC"></span>
 <span id="index-remote-file"></span>
-<span id="index-ftp"></span>
+<span id="index-http"></span>
 </dd>
 <dt><code>rfc</code></dt>
 <dd><p>Retrieve and display an Internet Request for Comments (RFC) standards
 document referenced at point.  The following formats are recognized:
 RFC822, rfc-822, and RFC 822.  The <code>hpath:rfc</code> variable specifies
-the location from which to retrieve RFCs.  Requires the Emacs builtin
-Tramp library for ftp file retrievals.
+the location from which to retrieve RFCs via HTTP.
 </p>
 <span id="index-ibtypes-kbd_002dkey"></span>
 <span id="index-key-series"></span>
@@ -3328,7 +3334,7 @@ like www.gnu.org, are also recognized.
 <span id="index-hpath_003afind"></span>
 <span id="index-hpath_003asuffixes"></span>
 <span id="index-Tramp"></span>
-<span id="index-ftp-1"></span>
+<span id="index-ftp"></span>
 <span id="index-pathname"></span>
 <span id="index-remote-path"></span>
 <span id="index-filename"></span>
@@ -3347,10 +3353,14 @@ details).  Emacs Lisp library files (filenames without any directory
 component that end in .el and .elc) are located using
 the <code>load-path</code> directory list.
 </p>
+<span id="index-hpath_003avariable_002dregexp"></span>
+<span id="index-pathname-variables"></span>
 <p>The pathname may contain references to Emacs Lisp variables or shell
 environment variables using the syntax, \&quot;${variable-name}\&quot;.
-See <a href="#Link-Variable-Substitution">Link Variable Substitution</a>, for how this handled.
+See <a href="#Link-Variable-Substitution">Link Variable Substitution</a>, for how this handled.  The constant,
+<code>hpath:variable-regexp</code>, matches to this pattern within pathnames.
 </p>
+
 <p>See the function documentation for <code>hpath:at-p</code> for possible
 delimiters.  See the variable documentation for <code>hpath:suffixes</code> for
 suffixes that are added to or removed from the pathname when searching
@@ -5393,26 +5403,28 @@ selected region, since that will destroy the outline structure.
 <table class="menu" border="0" cellspacing="0">
 <tr><td align="left" valign="top">&bull; <a href="#Adding-and-Killing" accesskey="1">Adding and Killing</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
 </td></tr>
-<tr><td align="left" valign="top">&bull; <a href="#Relocating-and-Copying" accesskey="2">Relocating and Copying</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+<tr><td align="left" valign="top">&bull; <a href="#Promoting-and-Demoting" accesskey="2">Promoting and Demoting</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
 </td></tr>
-<tr><td align="left" valign="top">&bull; <a href="#Moving-Around" accesskey="3">Moving Around</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+<tr><td align="left" valign="top">&bull; <a href="#Relocating-and-Copying" accesskey="3">Relocating and Copying</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
 </td></tr>
-<tr><td align="left" valign="top">&bull; <a href="#Filling" accesskey="4">Filling</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+<tr><td align="left" valign="top">&bull; <a href="#Moving-Around" accesskey="4">Moving Around</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
 </td></tr>
-<tr><td align="left" valign="top">&bull; <a href="#Transposing" accesskey="5">Transposing</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+<tr><td align="left" valign="top">&bull; <a href="#Filling" accesskey="5">Filling</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
 </td></tr>
-<tr><td align="left" valign="top">&bull; <a href="#Splitting-and-Appending" accesskey="6">Splitting and Appending</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+<tr><td align="left" valign="top">&bull; <a href="#Transposing" accesskey="6">Transposing</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
 </td></tr>
-<tr><td align="left" valign="top">&bull; <a href="#Inserting-and-Importing" accesskey="7">Inserting and Importing</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+<tr><td align="left" valign="top">&bull; <a href="#Splitting-and-Appending" accesskey="7">Splitting and Appending</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
 </td></tr>
-<tr><td align="left" valign="top">&bull; <a href="#Exporting" accesskey="8">Exporting</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+<tr><td align="left" valign="top">&bull; <a href="#Inserting-and-Importing" accesskey="8">Inserting and Importing</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="#Exporting" accesskey="9">Exporting</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
 </td></tr>
 </table>
 
 <hr>
 <span id="Adding-and-Killing"></span><div class="header">
 <p>
-Next: <a href="#Relocating-and-Copying" accesskey="n" rel="next">Relocating and Copying</a>, Previous: <a href="#Editing" accesskey="p" rel="prev">Editing</a>, Up: <a href="#Editing" accesskey="u" rel="up">Editing</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Key-Index" title="Index" rel="index">Index</a>]</p>
+Next: <a href="#Promoting-and-Demoting" accesskey="n" rel="next">Promoting and Demoting</a>, Previous: <a href="#Editing" accesskey="p" rel="prev">Editing</a>, Up: <a href="#Editing" accesskey="u" rel="up">Editing</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Key-Index" title="Index" rel="index">Index</a>]</p>
 </div>
 <span id="Adding-and-Killing-1"></span><h4 class="subsection">7.5.1 Adding and Killing</h4>
 
@@ -5444,13 +5456,12 @@ kills the entire contents of the cell regardless of the location of
 point.  You may then yank the contents into another cell or another
 buffer with <kbd>{C-y}</kbd>.
 </p>
-
 <hr>
-<span id="Relocating-and-Copying"></span><div class="header">
+<span id="Promoting-and-Demoting"></span><div class="header">
 <p>
-Next: <a href="#Moving-Around" accesskey="n" rel="next">Moving Around</a>, Previous: <a href="#Adding-and-Killing" accesskey="p" rel="prev">Adding and Killing</a>, Up: <a href="#Editing" accesskey="u" rel="up">Editing</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Key-Index" title="Index" rel="index">Index</a>]</p>
+Next: <a href="#Relocating-and-Copying" accesskey="n" rel="next">Relocating and Copying</a>, Previous: <a href="#Adding-and-Killing" accesskey="p" rel="prev">Adding and Killing</a>, Up: <a href="#Editing" accesskey="u" rel="up">Editing</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Key-Index" title="Index" rel="index">Index</a>]</p>
 </div>
-<span id="Relocating-and-Copying-1"></span><h4 class="subsection">7.5.2 Relocating and Copying</h4>
+<span id="Promoting-and-Demoting-1"></span><h4 class="subsection">7.5.2 Promoting and Demoting</h4>
 
 <span id="index-promotion"></span>
 <span id="index-demotion"></span>
@@ -5527,6 +5538,12 @@ moves between fields within a table.
 |----------------------------+-----------------------------|
 </pre></div>
 
+<hr>
+<span id="Relocating-and-Copying"></span><div class="header">
+<p>
+Next: <a href="#Moving-Around" accesskey="n" rel="next">Moving Around</a>, Previous: <a href="#Promoting-and-Demoting" accesskey="p" rel="prev">Promoting and Demoting</a>, Up: <a href="#Editing" accesskey="u" rel="up">Editing</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Key-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<span id="Relocating-and-Copying-1"></span><h4 class="subsection">7.5.3 Relocating and Copying</h4>
 
 <span id="index-tree_002c-copying"></span>
 <span id="index-tree_002c-moving"></span>
@@ -5627,7 +5644,7 @@ See <a href="#Inserting-and-Importing">Inserting and Importing</a>.
 <p>
 Next: <a href="#Filling" accesskey="n" rel="next">Filling</a>, Previous: <a href="#Relocating-and-Copying" accesskey="p" rel="prev">Relocating and Copying</a>, Up: <a href="#Editing" accesskey="u" rel="up">Editing</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Key-Index" title="Index" rel="index">Index</a>]</p>
 </div>
-<span id="Moving-Around-1"></span><h4 class="subsection">7.5.3 Moving Around</h4>
+<span id="Moving-Around-1"></span><h4 class="subsection">7.5.4 Moving Around</h4>
 
 <span id="index-outline_002c-motion"></span>
 <p>In addition to normal emacs movement commands, you can move within a
@@ -5696,7 +5713,7 @@ cell or from one cell or tree to another.
 <p>
 Next: <a href="#Transposing" accesskey="n" rel="next">Transposing</a>, Previous: <a href="#Moving-Around" accesskey="p" rel="prev">Moving Around</a>, Up: <a href="#Editing" accesskey="u" rel="up">Editing</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Key-Index" title="Index" rel="index">Index</a>]</p>
 </div>
-<span id="Filling-1"></span><h4 class="subsection">7.5.4 Filling</h4>
+<span id="Filling-1"></span><h4 class="subsection">7.5.5 Filling</h4>
 
 <span id="index-outline_002c-filling"></span>
 <span id="index-filling"></span>
@@ -5741,7 +5758,7 @@ a &lsquo;no-fill&rsquo; property, then your formatting will be lost.
 <p>
 Next: <a href="#Splitting-and-Appending" accesskey="n" rel="next">Splitting and Appending</a>, Previous: <a href="#Filling" accesskey="p" rel="prev">Filling</a>, Up: <a href="#Editing" accesskey="u" rel="up">Editing</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Key-Index" title="Index" rel="index">Index</a>]</p>
 </div>
-<span id="Transposing-1"></span><h4 class="subsection">7.5.5 Transposing</h4>
+<span id="Transposing-1"></span><h4 class="subsection">7.5.6 Transposing</h4>
 
 <p>The Koutliner move and copy commands rearrange entire trees.  The
 following two commands, in contrast, exchange the locations of two
@@ -5773,7 +5790,7 @@ fewer visible, it makes the current cell the last cell in the outline.
 <p>
 Next: <a href="#Inserting-and-Importing" accesskey="n" rel="next">Inserting and Importing</a>, Previous: <a href="#Transposing" accesskey="p" rel="prev">Transposing</a>, Up: <a href="#Editing" accesskey="u" rel="up">Editing</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Key-Index" title="Index" rel="index">Index</a>]</p>
 </div>
-<span id="Splitting-and-Appending-1"></span><h4 class="subsection">7.5.6 Splitting and Appending</h4>
+<span id="Splitting-and-Appending-1"></span><h4 class="subsection">7.5.7 Splitting and Appending</h4>
 
 <span id="index-splitting-a-cell"></span>
 <span id="index-cell_002c-splitting"></span>
@@ -5805,7 +5822,7 @@ This helps maintain any special formatting the appended text may have.
 <p>
 Next: <a href="#Exporting" accesskey="n" rel="next">Exporting</a>, Previous: <a href="#Splitting-and-Appending" accesskey="p" rel="prev">Splitting and Appending</a>, Up: <a href="#Editing" accesskey="u" rel="up">Editing</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Key-Index" title="Index" rel="index">Index</a>]</p>
 </div>
-<span id="Inserting-and-Importing-1"></span><h4 class="subsection">7.5.7 Inserting and Importing</h4>
+<span id="Inserting-and-Importing-1"></span><h4 class="subsection">7.5.8 Inserting and Importing</h4>
 
 <span id="index-outline_002c-inserting-into"></span>
 <span id="index-outline_002c-importing-into"></span>
@@ -5894,24 +5911,32 @@ create.
 <p>
 Previous: <a href="#Inserting-and-Importing" accesskey="p" rel="prev">Inserting and Importing</a>, Up: <a href="#Editing" accesskey="u" rel="up">Editing</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Key-Index" title="Index" rel="index">Index</a>]</p>
 </div>
-<span id="Exporting-1"></span><h4 class="subsection">7.5.8 Exporting</h4>
+<span id="Exporting-1"></span><h4 class="subsection">7.5.9 Exporting</h4>
 
 <span id="index-outline_002c-exporting-from"></span>
 <span id="index-outline_002c-HTML-conversion"></span>
 <span id="index-exporting"></span>
 <span id="index-HTML-conversion"></span>
-<span id="index-kexport_003ahtml"></span>
 <p>Koutlines may be <em>exported</em> to other file formats.  Presently, the
 only format supported is conversion to HTML for publishing on the
 World-Wide Web.
 </p>
-<p><kbd>{M-x kexport:html <span class="key">RET</span>}</kbd> prompts for the koutline buffer or
-file to export, the HTML file or buffer to which to output, and the
-title to use for the HTML file.  Completion of filenames is provided.
-The conversion will then be done and the output file or buffer will be
-written; the output file will not be displayed.
+<span id="index-kexport_003adisplay"></span>
+<span id="index-browse_002durl_002dbrowser_002dfunction-2"></span>
+<p><kbd>{M-x kexport:display <span class="key">RET</span>}</kbd> exports the current Koutline buffer
+to a temporary HTML file and displays the file in the web browser given by 
+<code>browse-url-browser-function</code>.  Any tree in the HTML outline may be
+expanded or collapsed by clicking the left mouse button on its root cell,
+for ease of viewing.
 </p>
-
+<span id="index-kexport_003ahtml"></span>
+<p>Alternatively, <kbd>{M-x kexport:html <span class="key">RET</span>}</kbd> prompts for the koutline
+buffer or file to export, the HTML file or buffer to which to output, and
+the title to use for the HTML file.  Completion of filenames is provided.
+The conversion will then be done and the output file or buffer will be
+written; the output file will not be displayed.  You must display it
+manually if desired.
+</p>
 <hr>
 <span id="Viewing"></span><div class="header">
 <p>
@@ -6225,6 +6250,21 @@ outline to display blank lines, to use ellipses after collapsed lines
 and to label cells with the alphanumeric style.
 </p></dd>
 </dl>
+
+<span id="index-klink_003aignore_002dmodes"></span>
+<span id="index-klink_003ac_002dstyle_002dmodes"></span>
+<span id="index-modes-to-ignore-klinks"></span>
+<span id="index-klinks_002c-ignoring"></span>
+<p>Because  klinks use a very generic syntax, surrounded by &lt;angle brackets&gt;,
+in certain modes, mostly C-based programming modes, certain non-klink syntax
+can be mistakenly identified as klinks.  Therefore, the Koutliner provides
+two customizable variables which disable klink recognition in selected major
+modes, <code>klink:ignore-modes</code> and <code>klink:c-style-modes</code>.  Add a mode
+to one of these if you find any syntax that improperly registers as a klink.
+</p>
+<p>* kotl/klink.el (klink:ignore-modes, klink:c-style-modes): Add so
+    can customize.
+</p>
 
 <hr>
 <span id="Cell-Attributes"></span><div class="header">
@@ -8747,7 +8787,6 @@ Internal Image Display        hpath:native-image-suffixes
 Internal Custom Display       hpath:internal-display-alist
 External Display              hpath:external-display-alist
 Internal Standard Display     hpath:display-where
-
 </pre></div>
 
 <p>Continue reading the next sections for information on how referents
@@ -8858,7 +8897,7 @@ Next: <a href="#Link-Variable-Substitution" accesskey="n" rel="next">Link Variab
 <span id="index-link_002c-viewer-program"></span>
 
 <span id="index-external-display-1"></span>
-<span id="index-hpath_003aexternal_002ddisplay_002dalist"></span>
+<span id="index-hpath_003aget_002dexternal_002ddisplay_002dalist-1"></span>
 <p>If you use Hyperbole under a window system,
 the <code>hpath:get-external-display-alist</code> function in <samp>hpath.el</samp>
 supports hyperlinks that open files using external, non-Emacs tools, e.g.
@@ -8883,6 +8922,13 @@ for each available window system: <code>hpath:external-display-alist-macos</code
 <code>hpath:external-display-alist-x</code>.  Examine and modify these
 values to suit your needs.
 </p>
+<span id="index-hpath_003aexternal_002dfile_002dsuffixes"></span>
+<p>Part of these values for each operating system come from the
+variable, <code>hpath:external-file-suffixes</code>&rsquo;, which holds a regular
+expression of operating system independent file suffixes to open outside
+Emacs.
+</p>
+
 
 <hr>
 <span id="Link-Variable-Substitution"></span><div class="header">
@@ -8965,7 +9011,7 @@ Next: <a href="#Invisible-Text-Searches" accesskey="n" rel="next">Invisible Text
 <span id="index-remote-pathnames"></span>
 <p>Hyperbole always recognizes URLs within buffers when the Action Key is
 pressed on them.  But sometimes it is useful to enter a URL at a prompt
-and have it displayed.  Hyperbole can recognize ftp and www URLs given to
+and have it displayed.  Hyperbole can recognize s/ftp and www URLs given to
 the <code>find-file</code> command (or any other <code>find-file-*</code> commands).
 But because there is added overhead with this feature, it is not enabled by
 default.
@@ -11210,7 +11256,8 @@ Next: <a href="#Smart-Key-_002d-Java-Source-Code" accesskey="n" rel="next">Smart
 (Lisp code, debugger, compilation, or help) or in change-log-mode
 on an Emacs Lisp bound identifier:
   ACTION KEY
-     Jumps to the definition of any selected Lisp construct.  If on an
+     Jumps to the definition of any selected Lisp construct.  This includes
+     Hyperbole implicit button type and action type references.  If on an
      Emacs Lisp require, load, or autoload clause and the (find-library)
      function is defined, jumps to the library source, if possible.
   ASSIST KEY
@@ -11689,7 +11736,7 @@ Next: <a href="#Smart-Key-_002d-HyRolo-Match-Buffers" accesskey="n" rel="next">S
 <span id="index-click_002c-world_002dwide-web"></span>
 <span id="index-W3"></span>
 <span id="index-URL-2"></span>
-<span id="index-browse_002durl_002dbrowser_002dfunction-2"></span>
+<span id="index-browse_002durl_002dbrowser_002dfunction-3"></span>
 <span id="index-World_002dwide-Web-2"></span>
 <span id="index-WWW-2"></span>
 <span id="index-C_002dh-h-c-u-1"></span>
@@ -12640,12 +12687,12 @@ Next: <a href="#Function" accesskey="n" rel="next">Function</a>, Previous: <a hr
 <tr><td></td><td valign="top"><a href="#index-koutliner_002c-C_002dx-i"><code>koutliner, C-x i</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Inserting-and-Importing">Inserting and Importing</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-koutliner_002c-C_002dy"><code>koutliner, C-y</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Adding-and-Killing">Adding and Killing</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-koutliner_002c-M_002d0-C_002dc-t"><code>koutliner, M-0 C-c t</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Transposing">Transposing</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-koutliner_002c-M_002d1-TAB"><code>koutliner, M-1 <span class="key">TAB</span></code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Relocating-and-Copying">Relocating and Copying</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-koutliner_002c-M_002d1-TAB"><code>koutliner, M-1 <span class="key">TAB</span></code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Promoting-and-Demoting">Promoting and Demoting</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-koutliner_002c-M_002dj"><code>koutliner, M-j</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Filling">Filling</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-koutliner_002c-M_002dq"><code>koutliner, M-q</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Filling">Filling</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-koutliner_002c-M_002dRET"><code>koutliner, M-<span class="key">RET</span></code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Hiding-and-Showing">Hiding and Showing</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-koutliner_002c-M_002dTAB"><code>koutliner, M-<span class="key">TAB</span></code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Relocating-and-Copying">Relocating and Copying</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-koutliner_002c-TAB"><code>koutliner, <span class="key">TAB</span></code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Relocating-and-Copying">Relocating and Copying</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-koutliner_002c-M_002dTAB"><code>koutliner, M-<span class="key">TAB</span></code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Promoting-and-Demoting">Promoting and Demoting</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-koutliner_002c-TAB"><code>koutliner, <span class="key">TAB</span></code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Promoting-and-Demoting">Promoting and Demoting</a></td></tr>
 <tr><td colspan="4"> <hr></td></tr>
 <tr><th id="Key-Index_ky_letter-L">L</th><td></td><td></td></tr>
 <tr><td></td><td valign="top"><a href="#index-l"><code>l</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyControl">HyControl</a></td></tr>
@@ -12653,8 +12700,8 @@ Next: <a href="#Function" accesskey="n" rel="next">Function</a>, Previous: <a hr
 <tr><td colspan="4"> <hr></td></tr>
 <tr><th id="Key-Index_ky_letter-M">M</th><td></td><td></td></tr>
 <tr><td></td><td valign="top"><a href="#index-m"><code>m</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyControl">HyControl</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-M_002d0-M_002dTAB"><code>M-0 M-<span class="key">TAB</span></code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Relocating-and-Copying">Relocating and Copying</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-M_002d0-TAB"><code>M-0 <span class="key">TAB</span></code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Relocating-and-Copying">Relocating and Copying</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-M_002d0-M_002dTAB"><code>M-0 M-<span class="key">TAB</span></code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Promoting-and-Demoting">Promoting and Demoting</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-M_002d0-TAB"><code>M-0 <span class="key">TAB</span></code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Promoting-and-Demoting">Promoting and Demoting</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-M_002db"><code>M-b</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Menus">Menus</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-M_002df"><code>M-f</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Menus">Menus</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-M_002do"><code>M-o</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Keyboard-Drags">Keyboard Drags</a></td></tr>
@@ -12988,7 +13035,8 @@ Next: <a href="#Concept-Index" accesskey="n" rel="next">Concept Index</a>, Previ
 <tr><th id="Function_fn_letter-B">B</th><td></td><td></td></tr>
 <tr><td></td><td valign="top"><a href="#index-browse_002durl_002dbrowser_002dfunction">browse-url-browser-function</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-browse_002durl_002dbrowser_002dfunction-1">browse-url-browser-function</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Action-Types">Action Types</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-browse_002durl_002dbrowser_002dfunction-2">browse-url-browser-function</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Key-_002d-WWW-URLs">Smart Key - WWW URLs</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-browse_002durl_002dbrowser_002dfunction-2">browse-url-browser-function</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Exporting">Exporting</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-browse_002durl_002dbrowser_002dfunction-3">browse-url-browser-function</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Key-_002d-WWW-URLs">Smart Key - WWW URLs</a></td></tr>
 <tr><td colspan="4"> <hr></td></tr>
 <tr><th id="Function_fn_letter-C">C</th><td></td><td></td></tr>
 <tr><td></td><td valign="top"><a href="#index-c_002b_002b_002dcpp_002dinclude_002dpath">c++-cpp-include-path</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Key-_002d-C_002b_002b-Source-Code">Smart Key - C++ Source Code</a></td></tr>
@@ -13117,17 +13165,19 @@ Next: <a href="#Concept-Index" accesskey="n" rel="next">Concept Index</a>, Previ
 <tr><td></td><td valign="top"><a href="#index-hpath_003adisplay_002dwhere-1">hpath:display-where</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Referent-Display">Referent Display</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-hpath_003adisplay_002dwhere-2">hpath:display-where</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Internal-Viewers">Internal Viewers</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-hpath_003adisplay_002dwhere-3">hpath:display-where</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Key-_002d-Magit-Mode">Smart Key - Magit Mode</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-hpath_003aexternal_002ddisplay_002dalist">hpath:external-display-alist</a>:</td><td>&nbsp;</td><td valign="top"><a href="#External-Viewers">External Viewers</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-hpath_003aexternal_002ddisplay_002dalist_002dmacos">hpath:external-display-alist-macos</a>:</td><td>&nbsp;</td><td valign="top"><a href="#External-Viewers">External Viewers</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-hpath_003aexternal_002ddisplay_002dalist_002dmswindows">hpath:external-display-alist-mswindows</a>:</td><td>&nbsp;</td><td valign="top"><a href="#External-Viewers">External Viewers</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-hpath_003aexternal_002ddisplay_002dalist_002dx">hpath:external-display-alist-x</a>:</td><td>&nbsp;</td><td valign="top"><a href="#External-Viewers">External Viewers</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-hpath_003aexternal_002dfile_002dsuffixes">hpath:external-file-suffixes</a>:</td><td>&nbsp;</td><td valign="top"><a href="#External-Viewers">External Viewers</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-hpath_003afind"><code>hpath:find</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-hpath_003afind_002dfile_002durls_002dmode"><code>hpath:find-file-urls-mode</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Using-URLs-with-Find_002dFile">Using URLs with Find-File</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-hpath_003aget_002dexternal_002ddisplay_002dalist"><code>hpath:get-external-display-alist</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#External-Viewers">External Viewers</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-hpath_003aget_002dexternal_002ddisplay_002dalist-1"><code>hpath:get-external-display-alist</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#External-Viewers">External Viewers</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-hpath_003ainternal_002ddisplay_002dalist">hpath:internal-display-alist</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Internal-Viewers">Internal Viewers</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-hpath_003ainternal_002ddisplay_002dalist-1">hpath:internal-display-alist</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Internal-Viewers">Internal Viewers</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-hpath_003anative_002dimage_002dsuffixes">hpath:native-image-suffixes</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Internal-Viewers">Internal Viewers</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-hpath_003asuffixes">hpath:suffixes</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-hpath_003avariable_002dregexp">hpath:variable-regexp</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-hpath_003avariables">hpath:variables</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Link-Variable-Substitution">Link Variable Substitution</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-hproperty_003abut_002dcreate"><code>hproperty:but-create</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Button-Colors">Button Colors</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-hproperty_003abut_002demphasize_002dflag">hproperty:but-emphasize-flag</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Button-Colors">Button Colors</a></td></tr>
@@ -13271,6 +13321,7 @@ Next: <a href="#Concept-Index" accesskey="n" rel="next">Concept Index</a>, Previ
 <tr><td colspan="4"> <hr></td></tr>
 <tr><th id="Function_fn_letter-K">K</th><td></td><td></td></tr>
 <tr><td></td><td valign="top"><a href="#index-kcell_003aref_002dto_002did"><code>kcell:ref-to-id</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Action-Types">Action Types</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-kexport_003adisplay"><code>kexport:display</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Exporting">Exporting</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-kexport_003ahtml"><code>kexport:html</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Exporting">Exporting</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-kfile_003afind"><code>kfile:find</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Menu-Commands">Menu Commands</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-kfile_003awrite"><code>kfile:write</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Koutliner-Keys">Koutliner Keys</a></td></tr>
@@ -13284,8 +13335,10 @@ Next: <a href="#Concept-Index" accesskey="n" rel="next">Concept Index</a>, Previ
 <tr><td></td><td valign="top"><a href="#index-kimport_003astar_002doutline"><code>kimport:star-outline</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Inserting-and-Importing">Inserting and Importing</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-kimport_003asuffix_002dalist">kimport:suffix-alist</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Inserting-and-Importing">Inserting and Importing</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-kimport_003atext"><code>kimport:text</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Inserting-and-Importing">Inserting and Importing</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-klink_003ac_002dstyle_002dmodes">klink:c-style-modes</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Links">Links</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-klink_003acreate"><code>klink:create</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Menu-Commands">Menu Commands</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-klink_003acreate-1"><code>klink:create</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Koutliner-Keys">Koutliner Keys</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-klink_003aignore_002dmodes">klink:ignore-modes</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Links">Links</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-kotl_002dmode"><code>kotl-mode</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Inserting-and-Importing">Inserting and Importing</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-kotl_002dmode-1"><code>kotl-mode</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Inserting-and-Importing">Inserting and Importing</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-kotl_002dmode_002dhook">kotl-mode-hook</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Hook-Variables">Hook Variables</a></td></tr>
@@ -13345,7 +13398,7 @@ Next: <a href="#Concept-Index" accesskey="n" rel="next">Concept Index</a>, Previ
 <tr><td></td><td valign="top"><a href="#index-kotl_002dmode_003ahide_002dtree-1"><code>kotl-mode:hide-tree</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Koutliner-Keys">Koutliner Keys</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-kotl_002dmode_003aindent_002dline"><code>kotl-mode:indent-line</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Koutliner-Keys">Koutliner Keys</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-kotl_002dmode_003aindent_002dregion"><code>kotl-mode:indent-region</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Koutliner-Keys">Koutliner Keys</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-kotl_002dmode_003aindent_002dtabs_002dmode">kotl-mode:indent-tabs-mode</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Relocating-and-Copying">Relocating and Copying</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-kotl_002dmode_003aindent_002dtabs_002dmode">kotl-mode:indent-tabs-mode</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Promoting-and-Demoting">Promoting and Demoting</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-kotl_002dmode_003ajust_002done_002dspace"><code>kotl-mode:just-one-space</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Koutliner-Keys">Koutliner Keys</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-kotl_002dmode_003akill_002dcontents"><code>kotl-mode:kill-contents</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Koutliner-Keys">Koutliner Keys</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-kotl_002dmode_003akill_002dline"><code>kotl-mode:kill-line</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Koutliner-Keys">Koutliner Keys</a></td></tr>
@@ -13796,7 +13849,7 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function</a>, Up: <a href
 <tr><td></td><td valign="top"><a href="#index-delimited-things">delimited things</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Key-Thing-Selection">Smart Key Thing Selection</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-demo-file">demo file</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Manual-Overview">Manual Overview</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-demonstration">demonstration</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Hyperbole-Overview">Hyperbole Overview</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-demotion">demotion</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Relocating-and-Copying">Relocating and Copying</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-demotion">demotion</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Promoting-and-Demoting">Promoting and Demoting</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-diagonal-drag">diagonal drag</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Saving-and-Restoring-Window-Configurations">Saving and Restoring Window Configurations</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-diagonal-drag-1">diagonal drag</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Mouse-Drags-within-a-Window">Smart Mouse Drags within a Window</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-digital-signature">digital signature</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Glossary">Glossary</a></td></tr>
@@ -13931,7 +13984,6 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function</a>, Up: <a href
 <tr><td></td><td valign="top"><a href="#index-frame_002c-zoom">frame, zoom</a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyControl">HyControl</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-frames-control">frames control</a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyControl">HyControl</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-ftp">ftp</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-ftp-1">ftp</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-function">function</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Thing-Selection">Thing Selection</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-function-1">function</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Key-_002d-Delimited-Things">Smart Key - Delimited Things</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-functon-call-implicit-button">functon call implicit button</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
@@ -13988,6 +14040,7 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function</a>, Up: <a href
 <tr><td></td><td valign="top"><a href="#index-horizontal-drag-1">horizontal drag</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Mouse-Drags-within-a-Window">Smart Mouse Drags within a Window</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-HTML-conversion">HTML conversion</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Exporting">Exporting</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-HTML-tag-pair">HTML tag pair</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Key-Thing-Selection">Smart Key Thing Selection</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-http">http</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-HyControl">HyControl</a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyControl">HyControl</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-HyControl-corner-placement">HyControl corner placement</a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyControl">HyControl</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-HyControl-edge-placement">HyControl edge placement</a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyControl">HyControl</a></td></tr>
@@ -14072,7 +14125,7 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function</a>, Up: <a href
 <tr><td></td><td valign="top"><a href="#index-inhibit-org_002dmode-support">inhibit org-mode support</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-initialization-file">initialization file</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Autonumbering">Autonumbering</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-insert-item">insert item</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Keyboard-Drags">Keyboard Drags</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-inserting-tabs">inserting tabs</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Relocating-and-Copying">Relocating and Copying</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-inserting-tabs">inserting tabs</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Promoting-and-Demoting">Promoting and Demoting</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-insertion">insertion</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Inserting-and-Importing">Inserting and Importing</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-installation">installation</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Elpa-Stable-Package-Installation">Elpa Stable Package Installation</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-installation_002c-from-git">installation, from git</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Elpa-In_002dDevelopment-Package-Installation">Elpa In-Development Package Installation</a></td></tr>
@@ -14147,12 +14200,13 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function</a>, Up: <a href
 <tr><td></td><td valign="top"><a href="#index-klink_002c-inserting">klink, inserting</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Links">Links</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-klink_002c-internal">klink, internal</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Links">Links</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-klink_002c-view-spec">klink, view spec</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Links">Links</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-klinks_002c-ignoring">klinks, ignoring</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Links">Links</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-knowledge-transfer">knowledge transfer</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Koutliner-History">Koutliner History</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-koutline-link">koutline link</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-koutline-mode">koutline mode</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Inserting-and-Importing">Inserting and Importing</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-Koutliner-commands">Koutliner commands</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Menu-Commands">Menu Commands</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-Koutliner-menu">Koutliner menu</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Menu-Commands">Menu Commands</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-Koutliner_002c-toggle-tab-behavior">Koutliner, toggle tab behavior</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Relocating-and-Copying">Relocating and Copying</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-Koutliner_002c-toggle-tab-behavior">Koutliner, toggle tab behavior</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Promoting-and-Demoting">Promoting and Demoting</a></td></tr>
 <tr><td colspan="4"> <hr></td></tr>
 <tr><th id="Concept-Index_cp_letter-L">L</th><td></td><td></td></tr>
 <tr><td></td><td valign="top"><a href="#index-label-separator_002c-changing">label separator, changing</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Autonumbering">Autonumbering</a></td></tr>
@@ -14332,6 +14386,7 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function</a>, Up: <a href
 <tr><td></td><td valign="top"><a href="#index-modeline_002c-Smart-Keys">modeline, Smart Keys</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Key-Operations">Smart Key Operations</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-modeline_002c-unbury-buffer">modeline, unbury buffer</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Mouse-Key-Modeline-Clicks">Smart Mouse Key Modeline Clicks</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-modeline_002c-view-spec">modeline, view spec</a>:</td><td>&nbsp;</td><td valign="top"><a href="#View-Specs">View Specs</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-modes-to-ignore-klinks">modes to ignore klinks</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Links">Links</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-mouse">mouse</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Glossary">Glossary</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-mouse-bindings">mouse bindings</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Menus">Menus</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-mouse-drag_002c-link-creation">mouse drag, link creation</a>:</td><td>&nbsp;</td><td valign="top"><a href="#By-Dragging">By Dragging</a></td></tr>
@@ -14367,13 +14422,13 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function</a>, Up: <a href
 <tr><td></td><td valign="top"><a href="#index-option-setting">option setting</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Customization">Customization</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-option-settings">option settings</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Menus">Menus</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-Org-mode">Org mode</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Key-_002d-Org-Mode">Smart Key - Org Mode</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-Org-tables">Org tables</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Relocating-and-Copying">Relocating and Copying</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-Org-tables">Org tables</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Promoting-and-Demoting">Promoting and Demoting</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-org_002dmode">org-mode</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-Org_002dmode">Org-mode</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Questions-and-Answers">Questions and Answers</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-other-frame">other frame</a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyControl">HyControl</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-other-window">other window</a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyControl">HyControl</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-outline-file-suffix">outline file suffix</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Creating-Outlines">Creating Outlines</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-outline-mode">outline mode</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Relocating-and-Copying">Relocating and Copying</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-outline-mode">outline mode</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Promoting-and-Demoting">Promoting and Demoting</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-outline-mode-1">outline mode</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Inserting-and-Importing">Inserting and Importing</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-outline-processor">outline processor</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Glossary">Glossary</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-outline-structure">outline structure</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Autonumbering">Autonumbering</a></td></tr>
@@ -14417,6 +14472,7 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function</a>, Up: <a href
 <tr><td></td><td valign="top"><a href="#index-patch-output">patch output</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-PATH_002dtype-variable">PATH-type variable</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-pathname">pathname</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-pathname-variables">pathname variables</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-pathname_002c-line-and-column">pathname, line and column</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-permanent-identifier">permanent identifier</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Koutliner">Koutliner</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-permanent-identifier-1">permanent identifier</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Idstamps">Idstamps</a></td></tr>
@@ -14431,7 +14487,7 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function</a>, Up: <a href
 <tr><td></td><td valign="top"><a href="#index-pre_002drelease-installation-1">pre-release installation</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Git-In_002dDevelopment-Package-Installation">Git In-Development Package Installation</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-precedence_002c-buttons">precedence, buttons</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Button-Type-Precedence">Button Type Precedence</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-programming-interface">programming interface</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Embedding-Hyperbole">Embedding Hyperbole</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-promotion">promotion</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Relocating-and-Copying">Relocating and Copying</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-promotion">promotion</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Promoting-and-Demoting">Promoting and Demoting</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-proportional-scrolling">proportional scrolling</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Glossary">Glossary</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-proportional-scrolling-1">proportional scrolling</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Key-_002d-Smart-Scrolling">Smart Key - Smart Scrolling</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-pulldown-menu">pulldown menu</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Menus">Menus</a></td></tr>
@@ -14578,7 +14634,7 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function</a>, Up: <a href
 <tr><td></td><td valign="top"><a href="#index-table-of-contents">table of contents</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-table-of-contents-1">table of contents</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-table-of-contents-2">table of contents</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Action-Types">Action Types</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-tabs_002c-inserting">tabs, inserting</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Relocating-and-Copying">Relocating and Copying</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-tabs_002c-inserting">tabs, inserting</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Promoting-and-Demoting">Promoting and Demoting</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-tag">tag</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-TAGS-file">TAGS file</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-tags-file">tags file</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
@@ -14608,14 +14664,14 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function</a>, Up: <a href
 <tr><td></td><td valign="top"><a href="#index-Tramp-1">Tramp</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Using-URLs-with-Find_002dFile">Using URLs with Find-File</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-transposing-cells">transposing cells</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Transposing">Transposing</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-tree_002c-copying">tree, copying</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Relocating-and-Copying">Relocating and Copying</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-tree_002c-demoting">tree, demoting</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Relocating-and-Copying">Relocating and Copying</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-tree_002c-demoting">tree, demoting</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Promoting-and-Demoting">Promoting and Demoting</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-tree_002c-exporting">tree, exporting</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Relocating-and-Copying">Relocating and Copying</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-tree_002c-filling">tree, filling</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Filling">Filling</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-tree_002c-hide-subtree">tree, hide subtree</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Hiding-and-Showing">Hiding and Showing</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-tree_002c-killing">tree, killing</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Adding-and-Killing">Adding and Killing</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-tree_002c-mailing">tree, mailing</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Relocating-and-Copying">Relocating and Copying</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-tree_002c-moving">tree, moving</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Relocating-and-Copying">Relocating and Copying</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-tree_002c-promoting">tree, promoting</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Relocating-and-Copying">Relocating and Copying</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-tree_002c-promoting">tree, promoting</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Promoting-and-Demoting">Promoting and Demoting</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-tree_002c-show">tree, show</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Hiding-and-Showing">Hiding and Showing</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-tree_002c-show-1">tree, show</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Hiding-and-Showing">Hiding and Showing</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-tree_002c-show-subtree">tree, show subtree</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Hiding-and-Showing">Hiding and Showing</a></td></tr>
