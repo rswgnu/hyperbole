@@ -1,3 +1,11 @@
+2022-01-17  Bob Weiner  <rsw@gnu.org>
+
+* hmouse-tag.el (smart-lisp-htype-tag): Add to transform ibtype and actype tags
+    into bound emacs symbols for lookup.
+                (smart-lisp-at-tag-p): Rewrite to use smart-lisp-htyp-tag.
+                (smart-lisp-at-non-htype-tag-p): Use when don't want to resolve
+    Hyperbole htypes.
+
 * test/MANIFEST         - Add summary of Hyperbole test case files
   install-test/MANIFEST - Add summary of Hyperbole installation test files
 

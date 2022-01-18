@@ -595,7 +595,8 @@ been loaded, this jumps to the library source whenever possible.
 
 Otherwise, if a definition for the identifier is found within a TAGS
 file in the current directory or any of its ancestor directories, this
-jumps to the definition.
+jumps to the definition.  Supports Hyperbole implicit button types and
+action types.
 
 With optional SHOW-DOC flag, show documentation for the tag at point
 rather than displaying its source code definition.  In this case, tag
@@ -674,7 +675,8 @@ Use `hpath:display-buffer' to show definition or documentation."
 			  (xref-etags-mode 1))
 		     (condition-case ()
 			 ;; Tag of any language
-			 (and (featurep 'etags) (smart-tags-display tag show-doc))
+			 (when (featurep 'etags)
+			   (smart-tags-display tag show-doc))
 		       (error (unless (and elisp-flag (stringp smart-emacs-tags-file)
 					   (condition-case ()
 					       (smart-tags-display
@@ -703,7 +705,7 @@ Use `hpath:display-buffer' to show definition or documentation."
       (looking-at "\\(;*[ \t]*\\)?(\\(autoload\\|load\\|require\\)")))
 
 (defun smart-lisp-at-change-log-tag-p ()
-  "When in a change-log mode, match to only bound Elisp identifiers and those with a '-' somewhere in the middle.
+  "When in a change-log mode, match to bound Elisp identifiers only and those with a '-' somewhere in the middle.
 These tight tests help eliminate undesired matches.
 Returns matching ELisp tag name that point is within, else nil."
   (when (derived-mode-p 'change-log-mode)
@@ -711,7 +713,35 @@ Returns matching ELisp tag name that point is within, else nil."
       (and identifier (intern-soft identifier)
 	   (string-match "[^-]-[^-]" identifier)))))
 
+(defun smart-lisp-htype-tag (tag)
+  "Given TAG at point, if it is a Hyperbole type, return the full symbol name, else return the TAG unchanged."
+  (setq tag (cond ((and tag (string-match-p "::" tag))
+		   tag)
+		  ((and tag
+			(save-excursion
+			  (skip-chars-backward "^ \t\n\r\f")
+			  (skip-chars-backward " \t\n\r\f")
+			  (equal (smart-lisp-at-non-htype-tag-p t) "hact")))
+		   ;; If tag is preceded by an 'hact' call, then treat as a Hyperbole actype.
+		   (or (symtable:actype-p tag) tag))
+		  (tag
+		   (if (intern-soft tag)
+		       tag
+		     (or (symtable:ibtype-p tag) (symtable:actype-p tag) tag)))))
+  (cond ((or (null tag) (stringp tag))
+	 tag)
+	((symbolp tag)
+	 (symbol-name tag))))
+
 (defun smart-lisp-at-tag-p (&optional no-flash)
+  "Return possibly non-existent Lisp tag name that point is within, else nil.
+Return nil when point is on the first line of a non-alias Lisp definition.
+
+Resolve Hyperbole implicit button type and action type references."
+  (smart-lisp-htype-tag 
+   (smart-lisp-at-non-htype-tag-p no-flash)))
+
+(defun smart-lisp-at-non-htype-tag-p (&optional no-flash)
   "Return possibly non-existent Lisp tag name that point is within, else nil.
 Return nil when point is on the first line of a non-alias Lisp definition."
   (unless (smart-lisp-at-definition-p)
