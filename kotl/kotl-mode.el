@@ -411,53 +411,57 @@ Does not delete across cell boundaries."
 	    arg (prefix-numeric-value current-prefix-arg))))
   (unless arg
     (setq arg 1))
-  (let ((del-count 0)
-	(indent (kcell-view:indent))
-	count start end)
-    (cond ((> arg 0)
-	   (if (kotl-mode:eocp)
-	       (error "(kotl-mode:delete-char): End of cell")
-	     (setq end (kcell-view:end)
-		   arg (min arg (- end (point))))
-	     (while (and (> arg 0) (not (kotl-mode:eocp)))
-	       (if (kotl-mode:eolp)
-		   (if (not (eq ?\  (char-syntax (following-char))))
-		       (setq arg 0
-			     del-count (1- del-count))
-		     (delete-char 1 kill-flag)
-		     ;; There may be non-whitespace characters in the
-		     ;; indent area.  Don't delete them.
-		     (setq count indent)
-		     (while (and (> count 0)
-				 (eq ?\ (char-syntax (following-char))))
-		       (delete-char 1)
-		       (setq count (1- count))))
-		 (delete-char 1 kill-flag))
-	       (setq arg (1- arg)
-		     del-count (1+ del-count)))))
-	  ((< arg 0)
-	   (if (kotl-mode:bocp)
-	       (error "(kotl-mode:delete-char): Beginning of cell")
-	     (setq start (kcell-view:start)
-		   arg (max arg (- start (point))))
-	     (while (and (< arg 0) (not (kotl-mode:bocp)))
-	       (if (kotl-mode:bolp)
-		   (if (not (eq ?\  (char-syntax (preceding-char))))
-		       (setq arg 0
-			     del-count (1- del-count))
-		     ;; There may be non-whitespace characters in the
-		     ;; indent area.  Don't delete them.
-		     (setq count indent)
-		     (while (and (> count 0)
-				 (eq ?\ (char-syntax (preceding-char))))
-		       (delete-char -1)
-		       (setq count (1- count)))
-		     (if (zerop count)
-			 (delete-char -1 kill-flag)))
-		 (delete-char -1 kill-flag))
-	       (setq arg (1+ arg)
-		     del-count (1+ del-count))))))
-    del-count))
+
+  (if (not (and (boundp 'kview) (kview:is-p kview)))
+      ;; Support use within Org tables outside of the Koutliner
+      (delete-char arg kill-flag)
+    (let ((del-count 0)
+	  (indent (kcell-view:indent))
+	  count start end)
+      (cond ((> arg 0)
+	     (if (kotl-mode:eocp)
+		 (error "(kotl-mode:delete-char): End of cell")
+	       (setq end (kcell-view:end)
+		     arg (min arg (- end (point))))
+	       (while (and (> arg 0) (not (kotl-mode:eocp)))
+		 (if (kotl-mode:eolp)
+		     (if (not (eq ?\  (char-syntax (following-char))))
+			 (setq arg 0
+			       del-count (1- del-count))
+		       (delete-char 1 kill-flag)
+		       ;; There may be non-whitespace characters in the
+		       ;; indent area.  Don't delete them.
+		       (setq count indent)
+		       (while (and (> count 0)
+				   (eq ?\ (char-syntax (following-char))))
+			 (delete-char 1)
+			 (setq count (1- count))))
+		   (delete-char 1 kill-flag))
+		 (setq arg (1- arg)
+		       del-count (1+ del-count)))))
+	    ((< arg 0)
+	     (if (kotl-mode:bocp)
+		 (error "(kotl-mode:delete-char): Beginning of cell")
+	       (setq start (kcell-view:start)
+		     arg (max arg (- start (point))))
+	       (while (and (< arg 0) (not (kotl-mode:bocp)))
+		 (if (kotl-mode:bolp)
+		     (if (not (eq ?\  (char-syntax (preceding-char))))
+			 (setq arg 0
+			       del-count (1- del-count))
+		       ;; There may be non-whitespace characters in the
+		       ;; indent area.  Don't delete them.
+		       (setq count indent)
+		       (while (and (> count 0)
+				   (eq ?\ (char-syntax (preceding-char))))
+			 (delete-char -1)
+			 (setq count (1- count)))
+		       (if (zerop count)
+			   (delete-char -1 kill-flag)))
+		   (delete-char -1 kill-flag))
+		 (setq arg (1+ arg)
+		       del-count (1+ del-count))))))
+      del-count)))
 
 (defun kotl-mode:delete-horizontal-space ()
   "Delete all spaces and tabs around point."
@@ -2464,8 +2468,10 @@ to one level and kotl-mode:refill-flag is treated as true."
       (unless parent
 	(error "(kotl-mode:promote-tree): Cannot promote any further")))))
 
-(defun kotl-mode:remove-cell-attribute (attribute &optional pos)
-  "Remove ATTRIBUTE from the current cell or the cell at optional POS."
+(defun kotl-mode:remove-cell-attribute (attribute &optional pos top-cell-flag)
+  "Remove ATTRIBUTE from the current cell or the cell at optional POS.
+With optional prefix arg TOP-CELL-FLAG non-nil, removethe hidden top cell's
+ATTRIBUTE and ignore any value of POS."
   (interactive
    (let* ((plist (copy-sequence (kcell-view:plist)))
 	  (existing-attributes plist)
@@ -2490,18 +2496,25 @@ to one level and kotl-mode:refill-flag is treated as true."
 						  existing-attributes))))))
        (beep))
      (setq attribute (intern attribute))
-     (list attribute nil)))
+     (list attribute nil top-cell-flag)))
   (barf-if-buffer-read-only)
-  (kcell-view:remove-attr attribute pos)
+  (if top-cell-flag
+      (kcell:remove-attr (kview:top-cell kview) attribute)
+    (kcell-view:remove-attr attribute pos))
   ;; Note that buffer needs to be saved to store modified property list.
   (set-buffer-modified-p t)
   (when (called-interactively-p 'interactive)
     (message "Attribute `%s' removed from cell <%s>."
-	     attribute (kcell-view:label pos))))
+	     attribute (if top-cell-flag
+			   "0"
+			 (kcell-view:label pos)))))
 
-(defun kotl-mode:set-cell-attribute (attribute value &optional pos)
+(defun kotl-mode:set-cell-attribute (attribute value &optional pos top-cell-flag)
   "Include ATTRIBUTE VALUE with the current cell or the cell at optional POS.
-Replace any existing value that ATTRIBUTE has.
+Replace any existing value that ATTRIBUTE has.  With optional prefix arg
+TOP-CELL-FLAG non-nil, modify the hidden top cell's ATTRIBUTE and ignore any
+value of POS.
+
 When called interactively, display the setting in the minibuffer as
 confirmation."
   (interactive
@@ -2535,14 +2548,18 @@ confirmation."
 		      (prin1-to-string value t)))
        (setq value (read-minibuffer
 		    (format "Set property `%s' to (use double quotes around a string): " attribute))))
-     (list attribute value nil)))
+     (list attribute value nil current-prefix-arg)))
   (barf-if-buffer-read-only)
-  (kcell-view:set-attr attribute value pos)
+  (if top-cell-flag
+      (kcell:set-attr (kview:top-cell kview) attribute value)
+    (kcell-view:set-attr attribute value pos))
   ;; Note that buffer needs to be saved to store new attribute value.
   (set-buffer-modified-p t)
   (when (called-interactively-p 'interactive)
     (message "Attribute `%s' set to `%s' in cell <%s>."
-	     attribute value (kcell-view:label pos))))
+	     attribute value   (if top-cell-flag
+				   "0"
+				 (kcell-view:label pos)))))
 
 (defun kotl-mode:set-or-remove-cell-attribute (arg)
   "With prefix ARG, interactively run kotl-mode:remove-cell-attribute; otherwise, run kotl-mode:set-cell-attribute."
@@ -2898,14 +2915,22 @@ See also the documentation for `kotl-mode:cell-attributes'."
 		;; (< cells-flag 1)
 		(t (kotl-mode:cell-attributes t))))))))
 
-(defun kotl-mode:get-cell-attribute (attribute &optional pos)
+(defun kotl-mode:get-cell-attribute (attribute &optional pos top-cell-flag)
   "Return ATTRIBUTE's value for the current cell or the cell at optional POS.
+With optional prefix arg TOP-CELL-FLAG non-nil, return the hidden top cell's
+ATTRIBUTE and ignore any value of POS.
+
 When called interactively, it displays the value in the minibuffer."
   (interactive "SCurrent cell attribute to get: ")
-  (let ((value (kcell-view:get-attr attribute pos)))
+  (let ((value
+	 (if top-cell-flag
+	     (kcell:get-attr (kview:top-cell kview) attribute)
+	   (kcell-view:get-attr attribute pos))))
     (when (called-interactively-p 'interactive)
       (message "Attribute \"%s\" = `%s' in cell <%s>."
-	       attribute value (kcell-view:label pos)))
+	       attribute value (if top-cell-flag
+				   "0"
+				 (kcell-view:label pos))))
     value))
 
 ;;; ------------------------------------------------------------------------

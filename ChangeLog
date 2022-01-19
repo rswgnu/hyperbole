@@ -1,3 +1,36 @@
+2022-01-19  Bob Weiner  <rsw@gnu.org>
+
+* hactypes.el (link-to-texinfo-node, link-to-Info-index-item, link-to-Info-node):
+    Remove any runs of tabs or newlines that might be in name and replace each
+    with a single space.
+
+* kotl/kcell.el (kcell:ref-to-id):
+  kotl/kview.el (kcell-view:cell-from-ref): Support lookup of top-cell with
+    idstamp = 0.
+  kotl/kcell.el (kcell:create): Prevent multiple adds of kcell and idstamp
+   attributes.
+  kotl/kfile.el (kfile:read-v2, kfile:read-v4-or-v3):
+  kotl/kview.el (kview:create): Add 3rd optional parameter, top-cell-attributes,
+    so can restore complete set of top-cell attributes when reading.
+  kotl/kcell.el (kcell:create-top): Change to take entire plist as arg rather
+    than individual attributes.
+  kotl/kotl-mode.el (kotl-mode:get-cell-attribute, kotl-mode:remove-cell-attribute,
+                     kotl-mode:set-cell-attribute): Add optional prefix
+    arg of TOP-CELL-FLAG which if non-nil means edit the top cell's attributes.
+
+* test/kexport-tests.el (kexport:html-sets-title-and-header):
+  kotl/kexport.el (kexport:html): Update so title and header come from either
+    top-level 0 cell 'title attribute or the kotl filename without any .kotl
+    suffix.
+
+2022-01-18  Bob Weiner  <rsw@gnu.org>
+
+* kotl/kotl-mode.el (kotl-mode:delete-char): Fix to handle Org table use outside
+    koutlines.
+
+* hmouse-tag.el (smart-tags-display): Fix change in xref format by using
+    this test: (eq (type-of find-tag-result) 'xref-item)
+
 2022-01-17  Bob Weiner  <rsw@gnu.org>
 
 * hmouse-tag.el (smart-lisp-htype-tag): Add to transform ibtype and actype tags
@@ -581,7 +614,7 @@
 * test/kexport-tests.el (kexport:html-creates-html-file)
     (kexport:html-sets-title-and-header, kexport:html-contains-each-cell)
     (kexport:html-creates-hierarchy)
-    (kexport:display-creates-html-file-and-displayes-it)
+    (kexport:display-creates-html-file-and-displays-it)
     (kexport:buffer-calls-kexport:html): Add kexport tests.
 
 2021-09-26  Mats Lidell  <matsl@gnu.org>

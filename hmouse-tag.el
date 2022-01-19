@@ -1389,7 +1389,8 @@ See the \"${hyperb:dir}/smart-clib-sym\" script for more information."
 		  ;; InfoDock and XEmacs
 		  (hpath:display-buffer (car find-tag-result))
 		  (goto-char (cdr find-tag-result)))
-		 ((vectorp find-tag-result)
+		 ((or (eq (type-of find-tag-result) 'xref-item)
+		      (vectorp find-tag-result))
 		  ;; Newer GNU Emacs with xref.el
 		  (hpath:display-buffer (xref-item-buffer find-tag-result))
 		  (goto-char (xref-item-position find-tag-result)))

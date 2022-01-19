@@ -121,9 +121,11 @@ Trigger an error if CELL-REF is not a string or is not found."
 	  (integerp cell-ref))
       (let ((idstamp (kcell:ref-to-id cell-ref))
 	    pos)
-	(or (and idstamp (setq pos (kproperty:position 'idstamp idstamp))
-		 (kcell-view:cell pos))
-	    (error "(kcell:get-from-ref): No such Koutline cell: '%s'" cell-ref)))
+	(cond ((and idstamp (zerop idstamp))
+	       (kview:top-cell kview))
+	      ((and idstamp (setq pos (kproperty:position 'idstamp idstamp)))
+	       (kcell-view:cell pos))
+	      (t (error "(kcell:get-from-ref): No such Koutline cell: '%s'" cell-ref))))
     (error "(kcell:get-from-ref): cell-ref arg must be a string, not: %s" cell-ref)))
 
 (defun kcell-view:child (&optional visible-p label-sep-len)
@@ -589,9 +591,9 @@ level."
 			      (overlays-at (or pos (point))))))))
 
 (defun kview:create (buffer-name
-			 &optional id-counter label-type level-indent
-			 label-separator label-min-width blank-lines
-			 levels-to-show lines-to-show)
+			 &optional id-counter top-cell-attributes
+			 label-type level-indent label-separator
+			 label-min-width blank-lines levels-to-show lines-to-show)
   "Return a new kview for BUFFER-NAME.
 Optional ID-COUNTER is the maximum permanent id previously given out in this
 outline.  Optional LABEL-TYPE, LEVEL-INDENT, LABEL-SEPARATOR, LABEL-MIN-WIDTH,
@@ -617,11 +619,13 @@ BLANK-LINES, LEVELS-TO-SHOW, and LINES-TO-SHOW may also be given, otherwise defa
     ;; Don't recreate view if it exists.
     (unless (and (boundp 'kview) (kview:is-p kview) (eq (kview:buffer kview) buf))
       (make-local-variable 'kview)
+      (unless top-cell-attributes
+	(setq top-cell-attributes (list 'file buffer-file-name 'id-counter id-counter)))
       (setq kview
 	    (list 'kview 'plist
 		  (list 'view-buffer (current-buffer)
 			'top-cell
-			(kcell:create-top buffer-file-name id-counter)
+			(kcell:create-top top-cell-attributes)
 			'label-type (or label-type kview:default-label-type)
 			'label-min-width (or label-min-width
 					     kview:default-label-min-width)

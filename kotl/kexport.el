@@ -145,15 +145,18 @@ li {
   background-color: inherit;
   cursor: pointer;
   display: block;
+  font-size: 0;
   outline: inherit;
 }
 
 .collapsible:hover {
   background-color: #FAFAD2;
+  font-size: 0;
 }
 
 .content {
   display: block;
+  font-size: 0;
 }
 </style>\n"
   "CSS that styles collapsible HTML-exported Koutline parent cells")
@@ -391,7 +394,8 @@ hard newlines are not used.  Also converts Urls and Klinks into Html hyperlinks.
 		(t (error
 		    "(kexport:html): `%s' is an invalid `output-to' argument" output-to))))
 	 (standard-output (get-buffer output-to-buf-name))
-	 title)
+	 ;; Get any title attribute from cell 0, invisible root of the outline
+	 (title (kcell:get-attr (kcell-view:cell-from-ref 0) 'title)))
 
     (with-current-buffer standard-output
       (setq buffer-read-only nil
@@ -406,10 +410,11 @@ hard newlines are not used.  Also converts Urls and Klinks into Html hyperlinks.
 	(if (called-interactively-p 'interactive)
 	    (setq title (read-string (format "Title for %s: " output-to-buf-name)
 				     title))
-	  ;; Otherwise, use the first line of the first cell as the default HTML document title.
-	  (setq title (save-excursion
-			(kotl-mode:beginning-of-buffer)
-			(kcell-view:contents)))
+	  ;; Otherwise, use any previously retrieved title attribute or if
+	  ;; none, then the name of the current file sans the .kotl suffix.
+	  (unless title
+	    (setq title (file-name-sans-extension (file-name-nondirectory
+						   buffer-file-name))))
 	  (when (string-match "\n" title)
 	    (setq title (substring title 0 (match-beginning 0)))))
 

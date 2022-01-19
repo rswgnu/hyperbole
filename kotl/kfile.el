@@ -102,22 +102,22 @@ Return the new kview."
   "Create a new koutline file attached to BUFFER, with a single empty level 1 kotl cell.
 Return file's kview."
   (or buffer (setq buffer (current-buffer)))
-  (if (not (bufferp buffer))
-      (error "(kfile:create): Invalid buffer argument, %s" buffer))
+  (unless (bufferp buffer)
+    (error "(kfile:create): Invalid buffer argument, %s" buffer))
   (set-buffer buffer)
-  (if buffer-read-only
-      (error "(kfile:create): %s is read-only" buffer))
+  (when buffer-read-only
+    (error "(kfile:create): %s is read-only" buffer))
   (widen)
 
   (let ((empty-p (zerop (buffer-size)))
 	import-from view standard-output)
 
-    (if (not empty-p)
-	;; This is a foreign file whose elements must be converted into
-	;; koutline cells.
-	(progn (setq import-from (kimport:copy-and-set-buffer buffer))
-	       (set-buffer buffer)
-	       (erase-buffer))) ;; We copied the contents to `import-from'.
+    (unless empty-p
+      ;; This is a foreign file whose elements must be converted into
+      ;; koutline cells.
+      (setq import-from (kimport:copy-and-set-buffer buffer))
+      (set-buffer buffer)
+      (erase-buffer)) ;; We copied the contents to `import-from'.
 
     (setq view (kview:create (buffer-name buffer))
 	  standard-output (current-buffer))
@@ -149,8 +149,8 @@ Return file's kview."
       (kimport:file import-from (current-buffer))
       ;; If import buffer name starts with a space, kill it, as it is no
       ;; longer needed.
-      (if (eq ?\ (aref (buffer-name import-from) 0))
-	  (kill-buffer import-from)))
+      (when (eq ?\ (aref (buffer-name import-from) 0))
+	(kill-buffer import-from)))
 
     view))
 
@@ -200,8 +200,8 @@ Return the new view."
     ;; kcell-list is a depth-first list of kcells to be attached to the cell
     ;; contents within the kview down below.
     (setq kcell-list (kfile:build-structure-v2 kotl-structure cell-data)
-	  view (kview:create (buffer-name buffer) cell-count label-type
-				 level-indent label-separator label-min-width))
+	  view (kview:create (buffer-name buffer) cell-count nil label-type
+			     level-indent label-separator label-min-width))
     ;;
     (kfile:narrow-to-kcells)
     (goto-char (point-min))
@@ -236,8 +236,9 @@ If V3-FLAG is true, read as a version-3 buffer."
 	  level-indent (read)
 	  cell-data (read))
     ;;
-    (setq view (kview:create (buffer-name buffer) cell-count label-type
-			     level-indent label-separator label-min-width))
+    (setq top-cell-attributes (aref (aref cell-data 0) 1)
+	  view (kview:create (buffer-name buffer) cell-count top-cell-attributes
+			     label-type level-indent label-separator label-min-width))
     ;;
     (kfile:narrow-to-kcells)
     (goto-char (point-min))
@@ -294,8 +295,8 @@ VISIBLE-ONLY-P is non-nil.  Signal an error if kotl is not attached to a file."
       ;;
       (widen)
       (goto-char (point-min))
-      (if (search-forward "\n\^_\n" nil t)
-	  (delete-region (point-min) (match-end 0)))
+      (when (search-forward "\n\^_\n" nil t)
+	(delete-region (point-min) (match-end 0)))
       (princ ";; -*- Mode: kotl -*- \n")
       (prin1 kfile:version)
       (princ " ;; file-format\n\^_\n")
@@ -323,7 +324,7 @@ VISIBLE-ONLY-P is non-nil.  Signal an error if kotl is not attached to a file."
       ;; buffer is narrowed here, only the narrowed portion will be saved to
       ;; the file.  Narrow as an option since saving only the portion of the
       ;; file visible in a view may be useful in some situations.
-      (if visible-only-p (kfile:narrow-to-kcells))
+      (when visible-only-p (kfile:narrow-to-kcells))
       ;;
       ;; Return point to its original position as given by the opoint marker.
       (goto-char opoint)
@@ -334,12 +335,12 @@ VISIBLE-ONLY-P is non-nil.  Signal an error if kotl is not attached to a file."
 (defun kfile:write (file)
   "Write current outline to FILE."
   (interactive "FWrite outline file: ")
-  (if (or (null file) (string-equal file ""))
-      (error "(kfile:write): Invalid file name, \"%s\"" file))
+  (when (or (null file) (string-equal file ""))
+    (error "(kfile:write): Invalid file name, \"%s\"" file))
   ;; If arg is just a directory, use same file name, but in that directory.
-  (if (and (file-directory-p file) buffer-file-name)
-      (setq file (concat (file-name-as-directory file)
-			 (file-name-nondirectory buffer-file-name))))
+  (when (and (file-directory-p file) buffer-file-name)
+    (setq file (concat (file-name-as-directory file)
+		       (file-name-nondirectory buffer-file-name))))
   (kcell:set-attr (kview:top-cell kview) 'file file)
   (set-visited-file-name file)
   ;; Set-visited-file-name clears local-write-file-hooks that we use to save
@@ -396,10 +397,9 @@ hidden."
 	  ;; Here we search past the cell identifier
 	  ;; for the location at which to place cell properties.
 	  ;; Be sure not to skip past a period which may terminate the label.
-	  (if (re-search-forward "[A-Za-z0-9]\\(\\.?[A-Za-z0-9]\\)*" nil t)
-	      (progn
-		(kproperty:add-properties (car kcell-list))
-		(setq kcell-list (cdr kcell-list))))
+	  (when (re-search-forward "[A-Za-z0-9]\\(\\.?[A-Za-z0-9]\\)*" nil t)
+	    (kproperty:add-properties (car kcell-list))
+	    (setq kcell-list (cdr kcell-list)))
 	  (search-forward "\n\n" nil t)))))
 
 (defun kfile:insert-attributes-v3 (kview kcell-vector)
@@ -415,32 +415,31 @@ hidden."
 	  ;; Here we search past the cell identifier
 	  ;; for the location at which to place cell properties.
 	  ;; Be sure not to skip past a period which may terminate the label.
-	  (if (re-search-forward "[A-Za-z0-9]\\(\\.?[A-Za-z0-9]\\)*" nil t)
-	      (progn
-		(kproperty:add-properties
-		 (kcell-data:to-kcell-v3 (aref kcell-vector kcell-num)))
-		(setq kcell-num (1+ kcell-num))))
+	  (when (re-search-forward "[A-Za-z0-9]\\(\\.?[A-Za-z0-9]\\)*" nil t)
+	    (kproperty:add-properties
+	     (kcell-data:to-kcell-v3 (aref kcell-vector kcell-num)))
+	    (setq kcell-num (1+ kcell-num)))
 	  (search-forward "\n\n" nil t)))))
 
 (defun kfile:narrow-to-kcells ()
   "Narrow kotl file to kcell section only."
   (interactive)
-  (if (kview:is-p kview)
-      (let ((start-text) (end-text))
-	(save-excursion
-	  (widen)
-	  (goto-char (point-min))
-	  ;; Skip to start of kcells.
-	  (if (search-forward "\n\^_" nil t)
-	      (setq start-text (1+ (match-end 0))))
-	  ;; Skip past end of kcells.
-	  (if (and start-text (search-forward "\n\^_" nil t))
-	      (setq end-text (1+ (match-beginning 0))))
-	  (if (and start-text end-text)
-	      (progn (narrow-to-region start-text end-text)
-		     (goto-char (point-min)))
-	    (error
-	     "(kfile:narrow-to-kcells): Cannot find start or end of kcells"))))))
+  (when (kview:is-p kview)
+    (let ((start-text) (end-text))
+      (save-excursion
+	(widen)
+	(goto-char (point-min))
+	;; Skip to start of kcells.
+	(when (search-forward "\n\^_" nil t)
+	  (setq start-text (1+ (match-end 0))))
+	;; Skip past end of kcells.
+	(when (and start-text (search-forward "\n\^_" nil t))
+	  (setq end-text (1+ (match-beginning 0))))
+	(if (and start-text end-text)
+	    (progn (narrow-to-region start-text end-text)
+		   (goto-char (point-min)))
+	  (error
+	   "(kfile:narrow-to-kcells): Cannot find start or end of kcells"))))))
 
 (defun kfile:print-to-string (object)
   "Return a string containing OBJECT, any Lisp object, in pretty-printed form.
@@ -488,8 +487,8 @@ handle, whenever this is possible."
 		(delete-region
 		 (point)
 		 (progn (skip-chars-forward " \t") (point)))
-		(if (not (eq ?' (char-after (1- (point)))))
-		    (insert ?\n)))
+		(when (not (eq ?' (char-after (1- (point)))))
+		  (insert ?\n)))
 	       ((condition-case ()
 		    (prog1 t (up-list 1))
 		  (error nil))
@@ -499,8 +498,8 @@ handle, whenever this is possible."
 		(delete-region
 		 (point)
 		 (progn (skip-chars-forward " \t") (point)))
-		(if (not (eq ?' (char-after (1- (point)))))
-		    (insert ?\n)))
+		(when (not (eq ?' (char-after (1- (point)))))
+		  (insert ?\n)))
 	       (t (goto-char (point-max)))))
 	    (goto-char (point-min))
 	    (indent-sexp)
@@ -519,8 +518,8 @@ Output stream is STREAM, or value of `standard-output' (which see)."
   (let ((filename))
     (while (not filename)
       (setq filename (read-file-name prompt nil nil existing-p))
-      (if (or (null filename) (equal filename ""))
-	  (progn (beep) (setq filename nil))))
+      (when (or (null filename) (equal filename ""))
+	(beep) (setq filename nil)))
     filename))
 
 (provide 'kfile)

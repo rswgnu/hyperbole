@@ -39,9 +39,10 @@
         (delete-file html-file)))))
 
 (ert-deftest kexport:html-sets-title-and-header ()
-  "kexport:html set title and header from first cell."
-  (let ((kotl-file (make-temp-file "hypb" nil ".kotl"))
-        (html-file  (make-temp-file "hypb" nil ".html")))
+  "kexport:html set title and header from kotl filename without suffix."
+  (let* ((kotl-file (make-temp-file "hypb" nil ".kotl"))
+         (html-file  (make-temp-file "hypb" nil ".html"))
+	 (title (file-name-sans-extension (file-name-nondirectory kotl-file))))
     (unwind-protect
         (progn
           (find-file kotl-file)
@@ -52,8 +53,8 @@
             (kexport:html kotl-file html-file))
           (find-file html-file)
           (goto-char (point-min))
-          (re-search-forward "<title>first</title>")
-          (re-search-forward "<h1>first</h1>"))
+          (re-search-forward (format "<title>%s</title>" title))
+          (re-search-forward (format "<h1>%s</h1>" title)))
       (progn
         (delete-file kotl-file)
         (delete-file html-file)))))
@@ -104,7 +105,7 @@
         (delete-file kotl-file)
         (delete-file html-file)))))
 
-(ert-deftest kexport:display-creates-html-file-and-displayes-it ()
+(ert-deftest kexport:display-creates-html-file-and-displays-it ()
   "kexport:display creates html file and displays it in external browser."
   (let* ((kotl-file (make-temp-file "hypb" nil ".kotl"))
          (html-file (concat (file-name-sans-extension kotl-file) ".html"))

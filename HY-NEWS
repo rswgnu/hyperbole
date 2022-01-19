@@ -203,6 +203,10 @@
       arg of t to force archiving of any existing file and starting with
       a fresh EXAMPLE.kotl file.
 
+    - Koutlines have a hidden top-level root cell 0 that allows referring
+      to the whole outline as a tree.  Now attributes of this cell can be
+      set or retrieved like any other cell.
+
     - Modes to Ignore Klinks: C-style languages use <includes> that can be
       mistaken for klinks.  New customizations 'klink:ignore-modes' and
       'klink:c-style-modes' set the modes where klink matches are ignored.
