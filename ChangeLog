@@ -1,5 +1,9 @@
 2022-01-19  Bob Weiner  <rsw@gnu.org>
 
+* kotl/kotl-mode.el (kotl-mode:set-cell-attribute, kotl-mode:remove-cell-attribute):
+    Update interactive parts to utilize the hidden top-level 0 cell when given a
+    zero-valued prefix argument.
+
 * hactypes.el (link-to-texinfo-node, link-to-Info-index-item, link-to-Info-node):
     Remove any runs of tabs or newlines that might be in name and replace each
     with a single space.

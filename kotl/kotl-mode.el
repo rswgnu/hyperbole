@@ -2475,6 +2475,8 @@ ATTRIBUTE and ignore any value of POS."
   (interactive
    (let* ((plist (copy-sequence (kcell-view:plist)))
 	  (existing-attributes plist)
+	  (top-cell-flag (zerop (prefix-numeric-value
+				 current-prefix-arg)))
 	  attribute)
      (barf-if-buffer-read-only)
      ;; Remove attribute values leaving only attribute symbols in existing-attributes.
@@ -2490,7 +2492,9 @@ ATTRIBUTE and ignore any value of POS."
      (while (zerop (length (setq attribute
 				 (completing-read
 				  (format "Name of attribute to remove from cell <%s>: "
-					  (kcell-view:label))
+					  (if top-cell-flag
+					      "0"
+					    (kcell-view:label)))
 				  (mapcar 'list
 					  (mapcar 'symbol-name
 						  existing-attributes))))))
@@ -2520,6 +2524,8 @@ confirmation."
   (interactive
    (let* ((plist (copy-sequence (kcell-view:plist)))
 	  (existing-attributes plist)
+	  (top-cell-flag (zerop (prefix-numeric-value
+				 current-prefix-arg)))
 	  attribute value)
      (barf-if-buffer-read-only)
      ;; Remove attribute values leaving only attribute symbols in existing-attributes.
@@ -2535,19 +2541,23 @@ confirmation."
      (while (zerop (length (setq attribute
 				 (completing-read
 				  (format "Name of attribute to set in cell <%s>: "
-					  (kcell-view:label))
+					  (if top-cell-flag
+					      "0"
+					    (kcell-view:label)))
 				  (mapcar 'list
 					  (mapcar 'symbol-name
 						  existing-attributes))))))
        (beep))
      (setq attribute (intern attribute)
-	   value (kcell-view:get-attr attribute))
+	   value (if top-cell-flag
+		     (kcell:get-attr (kview:top-cell kview) attribute)
+		   (kcell-view:get-attr attribute)))
      (if value
 	 (setq value (read-minibuffer
-		      (format "Change the value of `%s' to: " attribute)
-		      (prin1-to-string value t)))
+		      (format "Change the value of `%s' to (use double quotes around a string): " attribute)
+		      (prin1-to-string value)))
        (setq value (read-minibuffer
-		    (format "Set property `%s' to (use double quotes around a string): " attribute))))
+		    (format "Set attribute `%s' to (use double quotes around a string): " attribute))))
      (list attribute value nil current-prefix-arg)))
   (barf-if-buffer-read-only)
   (if top-cell-flag
