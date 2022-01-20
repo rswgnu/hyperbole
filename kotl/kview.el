@@ -619,8 +619,11 @@ BLANK-LINES, LEVELS-TO-SHOW, and LINES-TO-SHOW may also be given, otherwise defa
     ;; Don't recreate view if it exists.
     (unless (and (boundp 'kview) (kview:is-p kview) (eq (kview:buffer kview) buf))
       (make-local-variable 'kview)
-      (unless top-cell-attributes
-	(setq top-cell-attributes (list 'file buffer-file-name 'id-counter id-counter)))
+      ;; File location may have changed since saved, so always inject the
+      ;; current file name here and update cell count id-counter.
+      (setq top-cell-attributes
+	    (plist-put (plist-put top-cell-attributes 'id-counter id-counter)
+		       'file buffer-file-name))
       (setq kview
 	    (list 'kview 'plist
 		  (list 'view-buffer (current-buffer)
