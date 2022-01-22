@@ -463,5 +463,23 @@
           (should (looking-at-p "first")))
       (delete-file kotl-file))))
 
+(ert-deftest kotl-mode-copy-kotl-file-updates-root-id-attributes ()
+  "Verify root id-attribute is updated when kotl mode is copied."
+  (let ((kotl-file (make-temp-file "hypb" nil ".kotl"))
+        (new-name (concat (make-temp-name (concat temporary-file-directory "hypb")) ".kotl")))
+    (unwind-protect
+        (progn
+          (find-file kotl-file)
+          (insert "a cell")
+          (save-buffer)
+          (should (string= (kcell:get-attr (kcell-view:cell-from-ref 0) 'file) kotl-file))
+
+          (copy-file kotl-file new-name)
+          (find-file new-name)
+          (should (string= (kcell:get-attr (kcell-view:cell-from-ref 0) 'file) new-name)))
+      (progn
+        (delete-file kotl-file)
+        (delete-file new-name)))))
+
 (provide 'kotl-mode-tests)
 ;;; kotl-mode-tests.el ends here

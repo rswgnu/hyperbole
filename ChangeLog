@@ -1,3 +1,9 @@
+2022-01-22  Mats Lidell  <matsl@gnu.org>
+
+* test/kotl-mode-tests.el
+    (kotl-mode-copy-kotl-file-updates-root-id-attributes): Verify that
+    root cell attribute for file name is updated.
+
 2022-01-20  Bob Weiner  <rsw@gnu.org>
 
 * kotl/kview.el (kview:create): Ensure top-level 0 cell file attribute is always updated
