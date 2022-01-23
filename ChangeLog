@@ -1,3 +1,7 @@
+* hui.el (hui:gbut-create, hui:gibut-create): Move position of 'set-buffer' call after
+    'hui:buf-writable-err' call so they do not interfere with each other, causing buttons
+    to be written to the wrong buffer.
+
 2022-01-23  Mats Lidell  <matsl@gnu.org>
 
 * test/hui-tests.el (hui-gibut-create-link-to-file)

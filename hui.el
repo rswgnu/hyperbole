@@ -344,10 +344,11 @@ See `hui:gibut-create' for details."
       (save-excursion
         (setq src-dir default-directory
 	      actype (hui:actype)
-	      but-buf (set-buffer (find-file-noselect gbut:file)))
+	      but-buf (find-file-noselect gbut:file))
         (hui:buf-writable-err but-buf "gbut-create")
         ;; This prevents movement of point which might be useful to user.
         (save-excursion
+	  (set-buffer but-buf)
 	  (goto-char (point-max))
           (unless (bolp)
 	    (insert "\n"))
@@ -481,10 +482,11 @@ Use `hui:gbut-create' to create a global explicit button."
         delimited-label)
     (save-excursion
       (setq delimited-label (concat ibut:label-start lbl ibut:label-end)
-	    but-buf (set-buffer (find-file-noselect gbut:file)))
+	    but-buf (find-file-noselect gbut:file))
       (hui:buf-writable-err but-buf "gibut-create")
       ;; This prevents movement of point which might be useful to user.
       (save-excursion
+	(set-buffer but-buf)
 	(goto-char (point-max))
         (unless (bolp)
 	  (insert "\n"))
