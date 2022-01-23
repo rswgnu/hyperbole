@@ -1415,6 +1415,8 @@ Menu or IBuffer mode."
       ;; Prepend items to buffer list.
       (apply #'set:create (nconc items (buffer-list (selected-frame)))))))
 
+;;; Split selected frame into a grid of windows given by row and
+;;; column count, displaying different buffers in each window.
 ;;;###autoload
 (defun hycontrol-windows-grid (arg)
   "Display a grid of windows in the selected frame, sized according to prefix ARG.
@@ -1424,7 +1426,11 @@ the number of grid columns.
 If ARG is 0, prompt for a major mode whose buffers should be
 displayed first in the grid windows, then prompt for the grid size.
 
-Otherwise, prompt for the grid size if ARG is an invalid size.
+If ARG is < 0, prompt for a glob-type file pattern and display
+files that match the pattern in an auto-sized windows grid.
+
+Otherwise, prompt for the grid size if ARG is an invalid size
+(positive and more than two digits).
 
 With a current buffer in Dired, Buffer Menu or IBuffer mode that
 contains marked items, the buffers associated with those items
@@ -1439,18 +1445,49 @@ Then, if there are not enough buffers for all windows, the buffers
 that failed to match to any predicate are used.  In all cases, buffers
 whose names start with a space are ignored.
 
-When done, this resets the persistent prefix argument to 1 to
-prevent following commands from using the often large grid size
+When done, this resets the persistent HyControl prefix argument to 1
+to prevent following commands from using the often large grid size
 argument."
   (interactive "p")
-  (setq arg (abs (prefix-numeric-value (or arg current-prefix-arg))))
-  (if (/= arg 0)
-      (hycontrol-make-windows-grid arg)
-    (setq current-prefix-arg 0)
-    (call-interactively #'hycontrol-windows-grid-by-major-mode)))
+  (setq arg (prefix-numeric-value (or arg current-prefix-arg)))
+  (cond ((> arg 0)
+	 (hycontrol-make-windows-grid arg))
+	((< arg 0)
+	 (setq current-prefix-arg nil)
+	 (call-interactively #'hycontrol-windows-grid-by-file-pattern))
+	(t
+	 (setq current-prefix-arg 0)
+	 (call-interactively #'hycontrol-windows-grid-by-major-mode))))
 
-;;; Split selected frame into a grid of windows given by row and
-;;; column count, displaying different buffers in each window.
+(defun hycontrol-windows-grid-by-buffer-list (buffers)
+  "Display an automatically sized window grid showing list of BUFFERS."
+  (let* ((num-buffers (length buffers))
+	 (grid-digit (ceiling (sqrt num-buffers)))
+	 (grid-size (+ (* grid-digit 10) grid-digit)))
+    (if (null buffers)
+	(error "(hycontrol-windows-grid-by-buffer-list): No matching buffers")
+      (mapc #'switch-to-buffer (reverse buffers))
+      (hycontrol-make-windows-grid grid-size))))
+
+(defun hycontrol-windows-grid-by-file-list (files)
+  "Display an automatically sized window grid showing list of FILES."
+  (let* ((num-files (length files))
+	 (grid-digit (ceiling (sqrt num-files)))
+	 (grid-size (+ (* grid-digit 10) grid-digit)))
+    (if (null files)
+	(error "(hycontrol-windows-grid-by-file-list): No matching files")
+      (mapc #'find-file (reverse files))
+      (hycontrol-make-windows-grid grid-size))))
+
+;;;###autoload
+(defun hycontrol-windows-grid-by-file-pattern (pattern &optional full)
+  "Display an automatically sized window grid showing files found from glob PATTERN.
+Use absolute file paths if optional FULL is non-nil."
+  (interactive "FPattern of files to display in windows grid: \nP")
+  (let* ((find-file-wildcards t)
+	 (files (file-expand-wildcards pattern full)))
+    (hycontrol-windows-grid-by-file-list files)))
+
 ;;;###autoload
 (defun hycontrol-windows-grid-by-major-mode (arg mode)
   "Display a grid of windows in the selected frame, sized according to prefix ARG, with buffers of major MODE.
@@ -1568,7 +1605,7 @@ See documentation of `hycontrol-windows-grid' for further details."
       (error (set-window-configuration wconfig)
 	     (if (and hycontrol-help-flag (or hycontrol-frames-mode hycontrol-windows-mode))
 		 (pop-to-buffer "*Messages*"))
-	     (error "(HyDebug): %s" err)))))
+	     (error "(HyDebug): Grid Size: %d; %s" arg err)))))
 
 
 (defun hycontrol-delete-other-windows ()

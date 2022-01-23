@@ -205,7 +205,6 @@
 
     - Koutlines have a hidden top-level root cell 0 that allows referring
       to the whole outline as a tree.  Now attributes of this cell can be
-      set or retrieved like any other cell.
       set, retrieved or removed like any other cell.
 
       {C-c h} prompts for a kcell id and displays its attributes.
@@ -597,6 +596,10 @@
       the selected window changes.  Also made frame buffer swapping work anytime
       there are two or more frames regardless of how many windows in each.  See
       "DEMO#Swapping Buffers".
+
+    - Windows Grid by File Pattern: {C--1 C-c @} prompts for a glob-type file pattern,
+      finds all the matching files and then displays them in an auto-sized windows grid
+      based on the number of files.
 
   HYROLO
 

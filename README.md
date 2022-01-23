@@ -196,8 +196,8 @@ can be safely ignored and have no impact on Hyperbole's performance.
 
 Once Hyperbole has been installed for use at your site and loaded into your
 Emacs session, it is ready for use.  You will see a Hyperbole menu on your
-menubar and {C-h h} will display a Hyperbole menu in the minibuffer for
-quick keyboard-based selection.
+menubar and 'Hypb' in the minor-mode section of your modeline.  {C-h h} will
+display a Hyperbole menu in the minibuffer for quick keyboard-based selection.
 
 You can invoke Hyperbole commands in one of three ways:
 

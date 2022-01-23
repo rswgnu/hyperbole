@@ -787,11 +787,11 @@ Ignore nil valued attributes.  Return t unless no attributes are printed."
 	  (princ (format (concat "   %s:%" len "s%S\n") attr " "
 			 (let (str)
 			   (cond ((string-match "time" attr)
-				  (htz:date-unix val
-						 (and (>= (aref val 0) ?0)
-						      (<= (aref val 0) ?9)
-						      "GMT") htz:local))
-				 ((and (setq str (if (stringp val) val
+				  (htz:date-unix val (and (>= (aref val 0) ?0)
+							  (<= (aref val 0) ?9)
+							  "GMT") htz:local))
+				 ((and (setq str (if (stringp val)
+						     val
 						   (prin1-to-string val)))
 				       (string-match "\\`actypes::" str))
 				  (make-symbol (substring str (match-end 0))))

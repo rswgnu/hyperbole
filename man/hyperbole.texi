@@ -155,7 +155,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</P>
 
 <PRE>
 Edition 8.0.0pre
-Printed January 17, 2022.
+Printed January 22, 2022.
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -197,7 +197,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 @example
 Edition 8.0.0pre
-January 17, 2022
+January 22, 2022
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -3922,6 +3922,9 @@ to display.
 If the prefix argument is 0, prompt for a major mode whose buffers
 should be displayed first in the grid windows, then prompt for the grid size.
 
+If the prefix argument is < 0, prompt for a glob-type file pattern and display
+files that match the pattern in an auto-sized windows grid.
+
 Otherwise, prompt for the grid size if the prefix argument is an invalid
 size.
 
@@ -3942,10 +3945,18 @@ names start with a space are ignored.
 When done, this resets the persistent prefix argument to 1 to prevent
 following commands from using the often large grid size argument.
 
+@findex hycontrol-window-grid-repeatedly
 If you ever need to experiment with different sized window grids, use
 @bkbd{M-x hycontrol-window-grid-repeatedly @key{RET}}.  It will
 repeatedly prompt you for a grid size and then display it.  When you
 are done, simply press @bkbd{@key{RET}} to exit.
+
+@findex hycontrol-windows-grid-by-buffer-list
+@findex hycontrol-windows-grid-by-file-pattern
+@findex hycontrol-windows-grid-by-file-list
+Programmatically, there are a number of ways to generate and display a windows grid.
+@code{hycontrol-windows-grid-by-file-pattern} creates a windows grid from a glob file
+pattern.  It is bound to @bkbd{C--1 C-c @@}.  @code{hycontrol-windows-grid-by-buffer-list} creates a windows grid from a list of buffers or buffer names.  @code{hycontrol-windows-grid-by-file-list} creates a windows grid from a list of file names.
 
 @cindex frame resize
 @vindex hycontrol-frame-widths
@@ -5271,9 +5282,9 @@ to one of these if you find any syntax that improperly registers as a klink.
 
 @cindex cell, attribute
 @cindex attribute
-@dfn{Attributes} are named variables whose values are specific to an
-outline cell.  Thus, each cell has its own attribute list.  Every cell
-has three standard attributes:
+@dfn{Attributes} are named properties whose values are specific to an
+outline cell.  Thus, each cell, including the invisible 0 root cell,
+has its own attribute list.  Every cell has three standard attributes:
 
 @table @emph
 @cindex idstamp attribute
@@ -5299,10 +5310,24 @@ format, such as @samp{Jan 28 18:27:59 CST 2021}.
 @cindex attribute, adding
 @cindex attribute, modifying
 @cindex attribute, removing
-@bkbd{C-c C-i} is the command to add an attribute to or to modify an
-existing attribute of the cell at point.  Think of it as inserting an
-attribute value.  To remove an attribute from a cell, set its value to
-@samp{nil}.
+@cindex attribute, setting
+@bkbd{C-c C-i} adds, modifies or removes an attribute from a cell.
+The prefix argument given to this command determines what it does.
+
+@table @asis
+@item @bkbd{C-c C-i}
+sets an attribute of the cell at point; setting an attribute's value
+to @samp{nil} is the same as removing it.
+
+@item @bkbd{C-u C-c C-i}
+removes an attribute of the cell at point
+
+@item @bkbd{C-0 C-c C-i}
+sets an attribute of the invisible 0 root cell
+
+@item @bkbd{C--1 C-c C-i}
+removes an attribute of the invisible 0 root cell
+@end table
 
 
 @cindex attribute, no-fill
@@ -5317,14 +5342,12 @@ you from invoking explicit commands that refill the cell.
 
 @kindex koutliner, Assist Key, listing attributes
 @cindex Assist Key, listing attributes
-@cindex listing attributes
+@cindex attributes, displaying
+@cindex displaying attributes
 @cindex outline, attribute list
 @kindex koutliner, C-c h
-@kindex koutliner, C-u C-c h
-The attribute lists for the cells in the tree rooted at point may be
-inspected by pressing the Assist Key within the contents of a cell.
 @bkbd{C-c h} prompts for a cell label and displays the cell's
-attributes.  @bkbd{C-u C-c h} prompts for a cell label and shows
+attributes.  @bkbd{C-u C-c h} prompts for a cell label and displays
 the attributes for it and its subtree; use 0 as the kcell id to see
 attributes for all visible cells in the outline.
 
@@ -7905,8 +7928,15 @@ item, @bkbd{C-h h f w}, will do the same thing.
 Display a grid of windows in the selected frame, sized according to the
 prefix argument.  The left digit of the argument is the number of grid rows
 and the right digit is the number of grid columns.  The argument is
-prompted for if not given.  This binding is made only if the key is not
-bound prior to loading Hyperbole.
+prompted for if not given.
+
+If the argument is 0, prompt for a major mode whose buffers should be
+displayed first in the grid windows, then prompt for the grid size.
+
+If the argument is < 0, prompt for a glob-type file pattern and display
+files that match the pattern in an auto-sized windows grid.
+
+This binding is made only if the key is not bound prior to loading Hyperbole.
 
 For further details, see the @bkbd{@@} key binding description
 in @ref{HyControl}.

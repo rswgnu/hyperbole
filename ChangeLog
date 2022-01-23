@@ -1,3 +1,14 @@
+2022-01-22  Bob Weiner  <rsw@gnu.org>
+
+* hycontrol.el (hycontrol-windows-grid-by-file-pattern): Add this command that creates
+    a windows grid from a glob file pattern.  Bound to {C--1 C-c @}.
+               (hycontrol-windows-grid-by-buffer-list):  Add this function which takes
+    a list of buffers and displays them in a windows grid.
+               (hycontrol-windows-grid-by-file-list): Add this function which takes
+    a list of files and displays them in a windows grid.
+  man/hyperbole.texi (Default Hyperbole Bindings, HyControl):
+  HY-NEWS (HYCONTROL): Document new above command.
+
 * kotl/kotl-mode.el (kotl-mode:set-or-remove-cell-attribute): Change to support
     0 root cell attribute set or remove via prefix arg.
   kotl/EXAMPLE.kotl: Update 'Cell Attributes' description with the above change.

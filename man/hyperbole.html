@@ -370,7 +370,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</P>
 
 <PRE>
 Edition 8.0.0pre
-Printed January 17, 2022.
+Printed January 22, 2022.
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -4682,6 +4682,9 @@ to display.
 <p>If the prefix argument is 0, prompt for a major mode whose buffers
 should be displayed first in the grid windows, then prompt for the grid size.
 </p>
+<p>If the prefix argument is &lt; 0, prompt for a glob-type file pattern and display
+files that match the pattern in an auto-sized windows grid.
+</p>
 <p>Otherwise, prompt for the grid size if the prefix argument is an invalid
 size.
 </p>
@@ -4702,10 +4705,18 @@ names start with a space are ignored.
 <p>When done, this resets the persistent prefix argument to 1 to prevent
 following commands from using the often large grid size argument.
 </p>
+<span id="index-hycontrol_002dwindow_002dgrid_002drepeatedly"></span>
 <p>If you ever need to experiment with different sized window grids, use
 <kbd>{M-x hycontrol-window-grid-repeatedly <span class="key">RET</span>}</kbd>.  It will
 repeatedly prompt you for a grid size and then display it.  When you
 are done, simply press <kbd>{<span class="key">RET</span>}</kbd> to exit.
+</p>
+<span id="index-hycontrol_002dwindows_002dgrid_002dby_002dbuffer_002dlist"></span>
+<span id="index-hycontrol_002dwindows_002dgrid_002dby_002dfile_002dpattern"></span>
+<span id="index-hycontrol_002dwindows_002dgrid_002dby_002dfile_002dlist"></span>
+<p>Programmatically, there are a number of ways to generate and display a windows grid.
+<code>hycontrol-windows-grid-by-file-pattern</code> creates a windows grid from a glob file
+pattern.  It is bound to <kbd>{C--1 C-c @}</kbd>.  <code>hycontrol-windows-grid-by-buffer-list</code> creates a windows grid from a list of buffers or buffer names.  <code>hycontrol-windows-grid-by-file-list</code> creates a windows grid from a list of file names.
 </p>
 <span id="index-frame-resize"></span>
 <span id="index-hycontrol_002dframe_002dwidths"></span>
@@ -6275,9 +6286,9 @@ Next: <a href="#Koutliner-History" accesskey="n" rel="next">Koutliner History</a
 
 <span id="index-cell_002c-attribute"></span>
 <span id="index-attribute"></span>
-<p><em>Attributes</em> are named variables whose values are specific to an
-outline cell.  Thus, each cell has its own attribute list.  Every cell
-has three standard attributes:
+<p><em>Attributes</em> are named properties whose values are specific to an
+outline cell.  Thus, each cell, including the invisible 0 root cell,
+has its own attribute list.  Every cell has three standard attributes:
 </p>
 <dl compact="compact">
 <dd><span id="index-idstamp-attribute"></span>
@@ -6307,11 +6318,29 @@ format, such as &lsquo;<samp>Jan 28 18:27:59 CST 2021</samp>&rsquo;.
 <span id="index-attribute_002c-adding"></span>
 <span id="index-attribute_002c-modifying"></span>
 <span id="index-attribute_002c-removing"></span>
-<p><kbd>{C-c C-i}</kbd> is the command to add an attribute to or to modify an
-existing attribute of the cell at point.  Think of it as inserting an
-attribute value.  To remove an attribute from a cell, set its value to
-&lsquo;<samp>nil</samp>&rsquo;.
+<span id="index-attribute_002c-setting"></span>
+<p><kbd>{C-c C-i}</kbd> adds, modifies or removes an attribute from a cell.
+The prefix argument given to this command determines what it does.
 </p>
+<dl compact="compact">
+<dt><kbd>{C-c C-i}</kbd></dt>
+<dd><p>sets an attribute of the cell at point; setting an attribute&rsquo;s value
+to &lsquo;<samp>nil</samp>&rsquo; is the same as removing it.
+</p>
+</dd>
+<dt><kbd>{C-u C-c C-i}</kbd></dt>
+<dd><p>removes an attribute of the cell at point
+</p>
+</dd>
+<dt><kbd>{C-0 C-c C-i}</kbd></dt>
+<dd><p>sets an attribute of the invisible 0 root cell
+</p>
+</dd>
+<dt><kbd>{C--1 C-c C-i}</kbd></dt>
+<dd><p>removes an attribute of the invisible 0 root cell
+</p></dd>
+</dl>
+
 
 <span id="index-attribute_002c-no_002dfill-2"></span>
 <span id="index-cell_002c-no_002dfill-attribute-2"></span>
@@ -6325,14 +6354,12 @@ See <a href="#Filling">Filling</a>.
 </p>
 <span id="index-koutliner_002c-Assist-Key_002c-listing-attributes"></span>
 <span id="index-Assist-Key_002c-listing-attributes"></span>
-<span id="index-listing-attributes"></span>
+<span id="index-attributes_002c-displaying"></span>
+<span id="index-displaying-attributes"></span>
 <span id="index-outline_002c-attribute-list"></span>
 <span id="index-koutliner_002c-C_002dc-h"></span>
-<span id="index-koutliner_002c-C_002du-C_002dc-h"></span>
-<p>The attribute lists for the cells in the tree rooted at point may be
-inspected by pressing the Assist Key within the contents of a cell.
-<kbd>{C-c h}</kbd> prompts for a cell label and displays the cell&rsquo;s
-attributes.  <kbd>{C-u C-c h}</kbd> prompts for a cell label and shows
+<p><kbd>{C-c h}</kbd> prompts for a cell label and displays the cell&rsquo;s
+attributes.  <kbd>{C-u C-c h}</kbd> prompts for a cell label and displays
 the attributes for it and its subtree; use 0 as the kcell id to see
 attributes for all visible cells in the outline.
 </p>
@@ -9231,8 +9258,15 @@ item, <kbd>{C-h h f w}</kbd>, will do the same thing.
 <dd><p>Display a grid of windows in the selected frame, sized according to the
 prefix argument.  The left digit of the argument is the number of grid rows
 and the right digit is the number of grid columns.  The argument is
-prompted for if not given.  This binding is made only if the key is not
-bound prior to loading Hyperbole.
+prompted for if not given.
+</p>
+<p>If the argument is 0, prompt for a major mode whose buffers should be
+displayed first in the grid windows, then prompt for the grid size.
+</p>
+<p>If the argument is &lt; 0, prompt for a glob-type file pattern and display
+files that match the pattern in an auto-sized windows grid.
+</p>
+<p>This binding is made only if the key is not bound prior to loading Hyperbole.
 </p>
 <p>For further details, see the <kbd>{@}</kbd> key binding description
 in <a href="#HyControl">HyControl</a>.
@@ -12678,7 +12712,6 @@ Next: <a href="#Function" accesskey="n" rel="next">Function</a>, Previous: <a hr
 <tr><td></td><td valign="top"><a href="#index-koutliner_002c-C_002dj"><code>koutliner, C-j</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Adding-and-Killing">Adding and Killing</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-koutliner_002c-C_002dM_002dj"><code>koutliner, C-M-j</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Filling">Filling</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-koutliner_002c-C_002dM_002dq"><code>koutliner, C-M-q</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Filling">Filling</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-koutliner_002c-C_002du-C_002dc-h"><code>koutliner, C-u C-c h</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Cell-Attributes">Cell Attributes</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-koutliner_002c-C_002du-C_002dc-k"><code>koutliner, C-u C-c k</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Adding-and-Killing">Adding and Killing</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-koutliner_002c-C_002du-C_002dc-M_002dl"><code>koutliner, C-u C-c M-l</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Autonumbering">Autonumbering</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-koutliner_002c-C_002du-C_002dc-s"><code>koutliner, C-u C-c s</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Splitting-and-Appending">Splitting and Appending</a></td></tr>
@@ -13209,6 +13242,10 @@ Next: <a href="#Concept-Index" accesskey="n" rel="next">Concept Index</a>, Previ
 <tr><td></td><td valign="top"><a href="#index-hycontrol_002dkeep_002dwindow_002dflag-1">hycontrol-keep-window-flag</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Mouse-Drags-outside-a-Window">Smart Mouse Drags outside a Window</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-hycontrol_002dscreen_002doffset_002dalist">hycontrol-screen-offset-alist</a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyControl">HyControl</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-hycontrol_002dset_002dscreen_002doffsets"><code>hycontrol-set-screen-offsets</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyControl">HyControl</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-hycontrol_002dwindow_002dgrid_002drepeatedly"><code>hycontrol-window-grid-repeatedly</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyControl">HyControl</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-hycontrol_002dwindows_002dgrid_002dby_002dbuffer_002dlist"><code>hycontrol-windows-grid-by-buffer-list</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyControl">HyControl</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-hycontrol_002dwindows_002dgrid_002dby_002dfile_002dlist"><code>hycontrol-windows-grid-by-file-list</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyControl">HyControl</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-hycontrol_002dwindows_002dgrid_002dby_002dfile_002dpattern"><code>hycontrol-windows-grid-by-file-pattern</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyControl">HyControl</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-hypb_003argrep_002dcommand">hypb:rgrep-command</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Menus">Menus</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-hyperb_003adir">hyperb:dir</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Documentation">Documentation</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-hyperbole"><code>hyperbole</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Invocation">Invocation</a></td></tr>
@@ -13655,6 +13692,8 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function</a>, Up: <a href
 <tr><td></td><td valign="top"><a href="#index-attribute_002c-no_002dfill-1">attribute, no-fill</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Splitting-and-Appending">Splitting and Appending</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-attribute_002c-no_002dfill-2">attribute, no-fill</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Cell-Attributes">Cell Attributes</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-attribute_002c-removing">attribute, removing</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Cell-Attributes">Cell Attributes</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-attribute_002c-setting">attribute, setting</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Cell-Attributes">Cell Attributes</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-attributes_002c-displaying">attributes, displaying</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Cell-Attributes">Cell Attributes</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-Augment">Augment</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Koutliner-History">Koutliner History</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-Augment-1">Augment</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Glossary">Glossary</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-Augment-outline">Augment outline</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Inserting-and-Importing">Inserting and Importing</a></td></tr>
@@ -13869,6 +13908,7 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function</a>, Up: <a href
 <tr><td></td><td valign="top"><a href="#index-display-outside-Emacs">display outside Emacs</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Referent-Display">Referent Display</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-display-where">display where</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Referent-Display">Referent Display</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-DisplayHere-mode">DisplayHere mode</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Key-_002d-Dired-Mode">Smart Key - Dired Mode</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-displaying-attributes">displaying attributes</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Cell-Attributes">Cell Attributes</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-distributed-collaboration">distributed collaboration</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Koutliner-History">Koutliner History</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-document-identifier">document identifier</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-double-click">double click</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Key-Argument-Selection">Smart Key Argument Selection</a></td></tr>
@@ -14247,7 +14287,6 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function</a>, Up: <a href
 <tr><td></td><td valign="top"><a href="#index-Lisp-variables-1">Lisp variables</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Link-Variable-Substitution">Link Variable Substitution</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-list">list</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Thing-Selection">Thing Selection</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-list-1">list</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Key-_002d-Delimited-Things">Smart Key - Delimited Things</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-listing-attributes">listing attributes</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Cell-Attributes">Cell Attributes</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-locate-files">locate files</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Menus">Menus</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-logging-Smart-Key-behavior">logging Smart Key behavior</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Key-Debugging">Smart Key Debugging</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-logical-rolo-searches">logical rolo searches</a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyRolo-Searching">HyRolo Searching</a></td></tr>
