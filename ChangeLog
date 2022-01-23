@@ -1,4 +1,15 @@
-<<<<<<< HEAD
+2022-01-23  Mats Lidell  <matsl@gnu.org>
+
+* test/hui-tests.el (hui-gibut-create-link-to-file)
+    (hui-gibut-create-link-to-file-line)
+    (hui-gibut-create-link-to-file-line-and-column)
+    (hui-gibut-create-info-node): Test cases for global implicit buttons.
+
+* test/hbut-tests.el (gbut-program-eval-elisp)
+    (gbut-program-link-to-file, gbut-program-link-to-file-line)
+    (gbut-program-link-to-file-line-and-column): Test case for global
+    button programatically created button.
+
 2022-01-22  Bob Weiner  <rsw@gnu.org>
 
 * hycontrol.el (hycontrol-windows-grid-by-file-pattern): Add this command that creates
