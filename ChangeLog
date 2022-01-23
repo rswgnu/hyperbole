@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 2022-01-22  Bob Weiner  <rsw@gnu.org>
 
 * hycontrol.el (hycontrol-windows-grid-by-file-pattern): Add this command that creates
@@ -14,6 +15,12 @@
   kotl/EXAMPLE.kotl: Update 'Cell Attributes' description with the above change.
   HY-NEWS: Add Koutlines 0 cell attribute handling description.
   man/hyperbole.texi (Cell Attributes): Document above change.
+
+2022-01-22  Mats Lidell  <matsl@gnu.org>
+
+* test/kotl-mode-tests.el
+    (kotl-mode-copy-kotl-file-updates-root-id-attributes): Verify that
+    root cell attribute for file name is updated.
 
 2022-01-21  Bob Weiner  <rsw@gnu.org>
 
