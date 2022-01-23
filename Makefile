@@ -437,8 +437,15 @@ all-tests: test-all
 test-all:
 	@echo "# Tests: $(TEST_ERT_FILES)"
 ifeq ($(TERM), dumb)
-	TERM=vt100 DISPLAY=$(DISPLAY) $(EMACS) --quick $(PRELOADS) --eval "(load-file \"test/hy-test-dependencies.el\")" --eval "(let ((auto-save-default)) $(LOAD_TEST_ERT_FILES) (ert-run-tests-interactively t))"
+ifneq (,$(findstring .apple.,$(DISPLAY)))
+        # Found, on MacOS, use graphical UI MacOS 'Emacs' script
+	TERM=xterm-256color EMACS=Emacs $(EMACS) --quick $(PRELOADS) --eval "(load-file \"test/hy-test-dependencies.el\")" --eval "(let ((auto-save-default)) $(LOAD_TEST_ERT_FILES) (ert-run-tests-interactively t))"
 else
+        # Not found, set TERM so tests will at least run within parent Emacs session
+	TERM=vt100 $(EMACS) --quick $(PRELOADS) --eval "(load-file \"test/hy-test-dependencies.el\")" --eval "(let ((auto-save-default)) $(LOAD_TEST_ERT_FILES) (ert-run-tests-interactively t))"
+endif
+else
+        # Typical case, run emacs normally
 	$(EMACS) --quick $(PRELOADS) --eval "(load-file \"test/hy-test-dependencies.el\")" --eval "(let ((auto-save-default)) $(LOAD_TEST_ERT_FILES) (ert-run-tests-interactively t))"
 endif
 
