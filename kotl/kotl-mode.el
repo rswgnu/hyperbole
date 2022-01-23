@@ -2572,10 +2572,24 @@ confirmation."
 				 (kcell-view:label pos)))))
 
 (defun kotl-mode:set-or-remove-cell-attribute (arg)
-  "With prefix ARG, interactively run kotl-mode:remove-cell-attribute; otherwise, run kotl-mode:set-cell-attribute."
-  (interactive "P")
-  (call-interactively
-   (if arg #'kotl-mode:remove-cell-attribute #'kotl-mode:set-cell-attribute)))
+  "With numeric prefix ARG, interactively run kotl-mode:remove-cell-attribute; otherwise, run kotl-mode:set-cell-attribute.
+Prefix ARG selects the cells whose attributes are removed or set:
+  If =  0, set one of the attributes of the invisible root cell;
+  If <  0, remove one of the attributes of the invisible root cell;
+  If =  1, set one of the attributes of the current cell;
+  If >  1, remove one of the attributes of the current cell."
+  (interactive "p")
+  (cond ((not (integerp arg))
+	 (error "(kotl-mode:set-or-remove-cell-attribute): ARG must be an integer, not '%s'" arg))
+	((= arg 0)
+	 (call-interactively #'kotl-mode:set-cell-attribute))
+	((< arg 0)
+	 (setq current-prefix-arg 0)
+	 (call-interactively #'kotl-mode:remove-cell-attribute))
+	((= arg 1)
+	 (call-interactively #'kotl-mode:set-cell-attribute))
+	((> arg 1)
+	 (call-interactively #'kotl-mode:remove-cell-attribute))))
 
 (defun kotl-mode:split-cell (&optional arg)
   "Split the current cell into two cells and move to the new cell.
@@ -2859,46 +2873,41 @@ With optional SHOW-FLAG, expand the tree instead."
   (kotl-mode:hide-tree cell-ref t))
 
 (defun kotl-mode:cell-attributes (all-flag)
-  "Display a temporary buffer with the attributes of the current kcell.
-With prefix arg ALL-FLAG non-nil, display the attributes of all visible
-kcells in the current buffer.
+  "Print attributes of the current kcell to standard output.
+With prefix arg ALL-FLAG non-nil, print the attributes of all visible
+kcells from the current buffer to standard output.
 
 See also the documentation for `kotl-mode:cell-help'."
   (interactive "P")
-  ;; Ensure these do not invoke with-output-to-temp-buffer a second time.
-  (let ((temp-buffer-show-hook)
-	(temp-buffer-show-function))
-    (with-help-window (hypb:help-buf-name "Koutliner")
-      (save-excursion
-	(if (not all-flag)
-	    (kotl-mode:print-attributes kview)
-	  (let ((label-sep-len (kview:label-separator-length kview)))
-	    (kotl-mode:beginning-of-buffer)
-	    (while (progn (kotl-mode:print-attributes kview)
-			  (kcell-view:next t label-sep-len)))))))))
+  (save-excursion
+    (if (not all-flag)
+	(kotl-mode:print-attributes kview)
+      (let ((label-sep-len (kview:label-separator-length kview)))
+	(kotl-mode:beginning-of-buffer)
+	(while (progn (kotl-mode:print-attributes kview)
+		      (kcell-view:next t label-sep-len)))))))
 
 (defun kotl-mode:cell-help (&optional cell-ref cells-flag)
   "Display a temporary buffer with CELL-REF's attributes.
 CELL-REF defaults to current cell.
-Optional prefix arg CELLS-FLAG selects the cells to print:
-  If = 1, print CELL-REF's cell only;
-  If > 1, print CELL-REF's visible tree (the tree rooted at CELL-REF);
-  If < 1, print all visible cells in current view (CELL-REF is not used).
+Optional prefix arg CELLS-FLAG selects the cells whose attributes are printed:
+  If =  1, print CELL-REF's cell only;
+  If >  1, print CELL-REF's visible tree (the tree rooted at CELL-REF);
+  If <= 0, print all visible cells in current view (CELL-REF is not used).
 
 See also the documentation for `kotl-mode:cell-attributes'."
   (interactive
-   (let* ((label (kcell-view:label)))
-     (append
-      (let ((arg (prefix-numeric-value current-prefix-arg)))
-	(if (< arg 1)
-	    0
-	  (hargs:iform-read
-	   (list 'interactive
-		 (format "+KDisplay properties of koutline %s: "
-			 (if (= arg 1) "cell" "tree")))
-	  (list label label))))
-      (list current-prefix-arg))))
+   (append
+    (let ((arg (prefix-numeric-value current-prefix-arg)))
+      (if (< arg 1)
+	  '("0")
+	(hargs:iform-read
+	 (list 'interactive
+	       (format "+KDisplay properties of koutline %s: "
+		       (if (= arg 1) "cell" "tree"))))))
+    (list current-prefix-arg)))
   (unless (integerp cells-flag)
+    ;; If cells-flag is nil, this sets it to 1
     (setq cells-flag (prefix-numeric-value cells-flag)))
   (unless (stringp cell-ref)
     (setq cell-ref (kcell-view:label)))
@@ -2907,23 +2916,22 @@ See also the documentation for `kotl-mode:cell-attributes'."
 	(temp-buffer-show-function))
     (with-help-window (hypb:help-buf-name "Koutliner")
       (save-excursion
-	(if (equal cell-ref "0")
+	(if (or (member cell-ref '("0" 0))
+		(<= cells-flag 0))
 	    (progn
 	      (hattr:report (kcell:plist (kview:top-cell kview)))
 	      (terpri)
 	      (cond ((= cells-flag 1) nil)
 		    ((> cells-flag 1)
 		     (kview:map-tree #'kotl-mode:print-attributes kview t t))
-		    ;; (< cells-flag 1)
+		    ;; (<= cells-flag 0)
 		    (t (kotl-mode:cell-attributes t))))
 	  (cond ((= cells-flag 1)
 		 (kotl-mode:goto-cell cell-ref)
 		 (kotl-mode:print-attributes kview))
 		((> cells-flag 1)
 		 (kotl-mode:goto-cell cell-ref)
-		 (kview:map-tree #'kotl-mode:print-attributes kview nil t))
-		;; (< cells-flag 1)
-		(t (kotl-mode:cell-attributes t))))))))
+		 (kview:map-tree #'kotl-mode:print-attributes kview nil t))))))))
 
 (defun kotl-mode:get-cell-attribute (attribute &optional pos top-cell-flag)
   "Return ATTRIBUTE's value for the current cell or the cell at optional POS.
@@ -3167,8 +3175,8 @@ this function to `pre-command-hook'."
 
 (defun kotl-mode:print-attributes (_kview)
   "Print to the `standard-output' stream the attributes of the current visible kcell.
-Takes argument KVIEW (so it can be used with `kview:map-tree' and so that
-KVIEW is bound correctly) but always operates upon the current view."
+Takes argument _KVIEW (so it can be used with `kview:map-tree') but always operates
+upon the current view."
   ;; Move to start of visible cell to avoid printing attributes for an
   ;; invisible kcell which point may be over.
   ;; Print first line of cell for reference.

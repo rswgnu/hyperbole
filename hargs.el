@@ -801,8 +801,9 @@ help when appropriate."
 	  ;; Get kcell from koutline.
 	  (?K . (kcell . (hargs:read-match
 			  prompt
-			  ;; Match to visible cell labels only
-			  (kview:map-tree (lambda (view) (kcell-view:label)) kview t t)
+			  ;; Match to "0" and visible cell labels only
+			  (cons "0"
+				(kview:map-tree (lambda (view) (kcell-view:label)) kview t t))
 			  nil t (kcell-view:visible-label) 'kcell)))
 	  ;; Get kcell or path reference for use in a link.
 	  (?L . (klink . (hargs:read prompt nil default nil 'klink)))

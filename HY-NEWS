@@ -206,6 +206,17 @@
     - Koutlines have a hidden top-level root cell 0 that allows referring
       to the whole outline as a tree.  Now attributes of this cell can be
       set or retrieved like any other cell.
+      set, retrieved or removed like any other cell.
+
+      {C-c h} prompts for a kcell id and displays its attributes.
+      {C-u C-c h} prompts for a kcell id and displays the attributes for it
+      and its subtree; use 0 as the kcell id to see attributes for all visible
+      cells in the outline.
+
+      {C-c C-i} sets an attribute of the cell at point.
+      {C-u C-c C-i} removes an attribute of the cell at point.
+      {C-0 C-c C-i} sets an attribute of the invisible 0 root cell.
+      {C--1 C-c C-i} removes an attribute of the invisible 0 root cell.
 
     - Modes to Ignore Klinks: C-style languages use <includes> that can be
       mistaken for klinks.  New customizations 'klink:ignore-modes' and
