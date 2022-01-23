@@ -17,6 +17,7 @@
 
 (require 'ert)
 (require 'with-simulated-input)
+(require 'el-mock)
 (require 'hui)
 
 (load (expand-file-name "hy-test-helpers"
@@ -151,6 +152,67 @@ Modifying the button but keeping the label creates a dubbel label."
       (progn
         (kill-buffer "*info*")
         (delete-file file)))))
+
+(ert-deftest hui-gibut-create-link-to-file ()
+  "Programatically create implicit button link to file."
+  (let ((test-file (make-temp-file "gbut" nil ".txt")))
+    (setq test-buffer (find-file-noselect test-file))
+    (unwind-protect
+	(progn
+          (with-mock
+            (mock (find-file-noselect gbut:file) => test-buffer)
+            (hui:gibut-create "global" test-file))
+	  (with-current-buffer test-buffer
+            (should (eq (hattr:get (hbut:at-p) 'actype) 'actypes::link-to-file))
+            (should (equal (hattr:get (hbut:at-p) 'args) (list test-file)))
+            (should (equal (hattr:get (hbut:at-p) 'lbl-key) "global"))))
+      (delete-file test-file))))
+
+(ert-deftest hui-gibut-create-link-to-file-line ()
+  "Programatically create implicit button link to file and line."
+  (let ((test-file (make-temp-file "gbut" nil ".txt")))
+    (setq test-buffer (find-file-noselect test-file))
+    (unwind-protect
+	(progn
+          (with-mock
+            (mock (find-file-noselect gbut:file) => test-buffer)
+            (hui:gibut-create "global" (concat test-file ":10")))
+	  (with-current-buffer test-buffer
+            (should (eq (hattr:get (hbut:at-p) 'actype) 'actypes::link-to-file-line))
+            (should (equal (hattr:get (hbut:at-p) 'args) (list test-file 10)))
+            (should (equal (hattr:get (hbut:at-p) 'lbl-key) "global"))))
+      (delete-file test-file))))
+
+(ert-deftest hui-gibut-create-link-to-file-line-and-column ()
+  "Programatically create implicit button link to file, line and column."
+  (let ((test-file (make-temp-file "gbut" nil ".txt")))
+    (setq test-buffer (find-file-noselect test-file))
+    (unwind-protect
+	(progn
+          (with-mock
+            (mock (find-file-noselect gbut:file) => test-buffer)
+            (hui:gibut-create "global" (concat test-file ":10:20")))
+	  (with-current-buffer test-buffer
+            (should (eq (hattr:get (hbut:at-p) 'actype) 'actypes::link-to-file-line-and-column))
+            (should (equal (hattr:get (hbut:at-p) 'args) (list test-file 10 20)))
+            (should (equal (hattr:get (hbut:at-p) 'lbl-key) "global"))))
+      (delete-file test-file))))
+
+(ert-deftest hui-gibut-create-info-node ()
+  "Programatically create implicit button link to info node."
+  (let ((test-file (make-temp-file "gbut" nil ".txt"))
+        (info-node "(hyperbole)Implicit Button"))
+    (setq test-buffer (find-file-noselect test-file))
+    (unwind-protect
+	(progn
+          (with-mock
+            (mock (find-file-noselect gbut:file) => test-buffer)
+            (hui:gibut-create "global" (concat "\"" info-node "\"")))
+	  (with-current-buffer test-buffer
+            (should (eq (hattr:get (hbut:at-p) 'actype) 'actypes::link-to-Info-node))
+            (should (equal (hattr:get (hbut:at-p) 'args) (list info-node)))
+            (should (equal (hattr:get (hbut:at-p) 'lbl-key) "global"))))
+      (delete-file test-file))))
 
 ;; This file can't be byte-compiled without `with-simulated-input' which
 ;; is not part of the actual dependencies, so:
