@@ -51,7 +51,7 @@ The type categories are either 'actypes or 'ibtypes.")
   "Inline the return of the symtable for TYPE-CATEGORY, one of 'actypes or 'ibtypes."
   (plist-get symtable:category-plist type-category))
 
-(defun  symtable:operate (operation symbol-or-name symtable)
+(defun    symtable:operate (operation symbol-or-name symtable)
   "Call hash-table function OPERATION with Hyperbole SYMBOL-OR-NAME as key upon SYMTABLE.
 Trigger an error if SYMBOL-OR-NAME cannot be mapped to an existing Elisp
 symbol or if SYMTABLE is invalid."
@@ -423,7 +423,7 @@ performing ACTION."
 	  (hhist:add hist-elt))))))
 
 ;; Return the full Elisp symbol for ACTYPE, which may be a string or symbol.
-(defalias   'actype:elisp-symbol #'symtable:actype-p)
+(defalias 'actype:elisp-symbol #'symtable:actype-p)
 
 (defun    actype:def-symbol (actype)
   "Return the abbreviated symbol for ACTYPE used in its `defact'.

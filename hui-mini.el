@@ -648,7 +648,7 @@ constructs.  If not given, the top level Hyperbole menu is used."
 	  ("Info"
 	   (id-info "(hyperbole)Explicit Buttons")
 	   "Displays manual section on explicit buttons.")
-	  ("Modify" hui:ebut-modify "Modifies any desired button attributes.")
+	  ("Modify" hui:ebut-modify "Modifies explicit button attributes.")
 	  ("Rename" hui:ebut-rename "Relabels an explicit button.")
 	  ("Search" hui:ebut-search
 	   "Locates and displays personally created buttons in context.")
@@ -693,6 +693,7 @@ constructs.  If not given, the top level Hyperbole menu is used."
 	   "Displays manual section on implicit buttons.")
 	  ("Label"  hui:ibut-label-create
 	   "Creates an implicit button label preceding an existing implicit button at point, if any.")
+	  ("Modify" hui:ibut-modify "Modifies named implicit button attributes.")
 	  ("Rename" hui:ibut-rename
 	   "Modifies a label preceding an implicit button in the current buffer.")
 	  ("Types"  (hui:htype-help 'ibtypes 'no-sort)

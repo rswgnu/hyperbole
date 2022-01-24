@@ -195,11 +195,15 @@ a new button is created interactively with the region as the default label."
 Signal an error when no such button is found in the current buffer."
   (interactive (list (save-excursion
 		       (hui:buf-writable-err (current-buffer) "ebut-modify")
-		       (or (ebut:label-p)
-			   (ebut:label-to-key
-			    (hargs:read-match "Button to modify: "
-					      (ebut:alist) nil t
-					      nil 'ebut))))))
+		       (ebut:label-to-key
+			(hargs:read-match "Button to modify: "
+					  (ebut:alist) nil t
+					  (ebut:label-p t) 'ebut)))))
+  (unless (stringp lbl-key)
+    (if (called-interactively-p)
+	(error "(hui:ebut-modify): No explicit button to modify")
+      (error "(hui:ebut-modify): 'lbl-key' argument must be a string, not '%s'" lbl-key)))
+
   (let ((lbl (ebut:key-to-label lbl-key))
 	(but-buf (current-buffer))
 	actype but new-lbl)
@@ -227,8 +231,10 @@ Signal an error when no such button is found in the current buffer."
       (hattr:set 'hbut:current 'actype actype)
       (hattr:set 'hbut:current 'args (hargs:actype-get actype t))
       (hattr:set 'hbut:current 'action
-		 (and hui:ebut-prompt-for-action (hui:action actype))))
-    (ebut:operate lbl new-lbl)
+		 (and hui:ebut-prompt-for-action (hui:action actype)))
+      (set-buffer but-buf)
+      (save-excursion
+	(ebut:operate lbl new-lbl)))
     (when (called-interactively-p 'interactive)
       (hui:ebut-message t))))
 
@@ -347,8 +353,8 @@ See `hui:gibut-create' for details."
 	      but-buf (find-file-noselect gbut:file))
         (hui:buf-writable-err but-buf "gbut-create")
         ;; This prevents movement of point which might be useful to user.
+	(set-buffer but-buf)
         (save-excursion
-	  (set-buffer but-buf)
 	  (goto-char (point-max))
           (unless (bolp)
 	    (insert "\n"))
@@ -392,7 +398,13 @@ modification   Signal an error when no such button is found."
 		       (hbut:label-to-key
 			(hargs:read-match "Global button to modify: "
 					  (mapcar #'list (gbut:label-list))
-					  nil t nil 'gbut)))))
+					  nil t (gbut:label-p t) 'gbut)))))
+  (unless (stringp lbl-key)
+    (if (called-interactively-p)
+	(error "(hui:gbut-modify): No global button to modify")
+      (error "(hui:gbut-modify): 'lbl-key' argument must be a string, not '%s'" lbl-key)))
+
+
   (let ((lbl (hbut:key-to-label lbl-key))
         (interactive-flag (called-interactively-p 'interactive))
 	(but-buf (find-file-noselect gbut:file))
@@ -427,12 +439,13 @@ modification   Signal an error when no such button is found."
 	    (hattr:set 'hbut:current 'action
 		       (and hui:ebut-prompt-for-action (hui:action actype)))
 	    (set-buffer but-buf)
-	    (ebut:operate lbl new-lbl)
+	    (save-excursion
+	      (ebut:operate lbl new-lbl))
             (when interactive-flag
               (save-buffer)))
 	;; Implicit buttons
-	(save-excursion
-	  (with-current-buffer but-buf
+	(with-current-buffer but-buf
+	  (save-excursion
             (ibut:to lbl-key)
 	    (if (and interactive-flag (ibut:at-p))
 		(progn
@@ -485,8 +498,8 @@ Use `hui:gbut-create' to create a global explicit button."
 	    but-buf (find-file-noselect gbut:file))
       (hui:buf-writable-err but-buf "gibut-create")
       ;; This prevents movement of point which might be useful to user.
+      (set-buffer but-buf)
       (save-excursion
-	(set-buffer but-buf)
 	(goto-char (point-max))
         (unless (bolp)
 	  (insert "\n"))
@@ -692,6 +705,75 @@ its buttons, the label is simply inserted at point."
 	     (hui:ibut-message nil)))
 	  (t (error "(hui:ibut-label-create): To add a label, point must be within the text of an implicit button")))))
 
+(defun hui:ibut-modify (lbl-key)
+  "Modify a named implicit Hyperbole button given by LBL-KEY.
+Signal an error when no such button is found in the current buffer."
+  (interactive (list (save-excursion
+		       (hui:buf-writable-err (current-buffer) "ibut-modify")
+		       (ibut:label-to-key
+			(hargs:read-match "Button to modify: "
+					  (ibut:alist) nil t
+					  (ibut:label-p t) 'ibut)))))
+  (unless (stringp lbl-key)
+    (if (called-interactively-p)
+	(error "(hui:ibut-modify): No named implicit button to modify")
+      (error "(hui:ibut-modify): 'lbl-key' argument must be a string, not '%s'" lbl-key)))
+
+  (let ((lbl (ibut:key-to-label lbl-key))
+        (interactive-flag (called-interactively-p 'interactive))
+	(but-buf (current-buffer))
+	actype args but new-lbl)
+    (hattr:set 'hbut:current 'loc (hui:key-src but-buf))
+    (hattr:set 'hbut:current 'dir (hui:key-dir but-buf))
+    (save-excursion
+      (unless (called-interactively-p 'interactive)
+	(hui:buf-writable-err but-buf "ibut-modify"))
+
+      (unless (setq but (ibut:get lbl-key but-buf))
+	(pop-to-buffer but-buf)
+	(hypb:error "(ibut-modify): Invalid button, no data for '%s'" lbl))
+
+      (setq new-lbl
+	    (hargs:read
+	     "Change button name to: "
+	     (lambda (lbl)
+	       (and (not (string-equal lbl "")) (<= (length lbl) (hbut:max-len))))
+	     lbl
+	     (format "(ibut-modify): Enter a string of at most %s chars."
+		     (hbut:max-len))
+	     'string))
+
+      ;; Implicit buttons
+      (with-current-buffer but-buf
+	(save-excursion
+          (ibut:to lbl-key)
+	  (if (and interactive-flag (ibut:at-p))
+	      (progn
+                ;; lbl-start and lbl-end mark the text of the ibut, not
+                ;; its name.
+	        (when (hattr:get 'hbut:current 'lbl-end)
+                  (let* ((start (hattr:get 'hbut:current 'lbl-start))
+                         (end (hattr:get 'hbut:current 'lbl-end))
+                         (old-text (buffer-substring start end))
+                         (new-text (read-string "Modify ibut text: " old-text)))
+                    (save-excursion
+		      (goto-char start)
+		      (delete-region start end)
+		      (insert new-text))
+                    (hattr:set 'hbut:current 'lbl-key (ibut:label-to-key new-lbl))))
+                ;; Have to do name change after lbl-start/lbl-end are
+                ;; used so buffer positions do not change.
+	        (ibut:rename lbl new-lbl)
+                (save-buffer)
+	        (hui:ibut-message t))
+            (when (and interactive-flag
+		       (ibut:rename lbl new-lbl))
+	      (save-buffer)
+	      (message "Button renamed to %s%s%s"
+		       ibut:label-start
+		       new-lbl
+		       ibut:label-end))))))))
+
 (defun hui:ibut-rename (lbl-key)
   "Rename a label preceding a Hyperbole implicit button in the current buffer given by LBL-KEY.
 Signal an error when no such button is found in the current buffer."
@@ -850,17 +932,20 @@ See also documentation for `hui:link-possible-types'."
 	 act)))
 
 (defun hui:actype (&optional default-actype prompt)
-  "Using optional DEFAULT-ACTYPE, PROMPT for a button action type.
+  "Using optional DEFAULT-ACTYPE, PROMPT for and return a button action type.
 DEFAULT-ACTYPE may be a valid symbol or symbol name."
   (when (and default-actype (symbolp default-actype))
     (setq default-actype (symbol-name default-actype)
 	  default-actype (actype:def-symbol default-actype)
 	  default-actype (when default-actype (symbol-name default-actype))))
   (if (or (null default-actype) (stringp default-actype))
-      (actype:elisp-symbol
-       (hargs:read-match (or prompt "Button's action type: ")
-			 (mapcar #'list (htype:names 'actypes))
-			 nil t default-actype 'actype))
+      (let ((actype-name
+	     (hargs:read-match (or prompt "Button's action type: ")
+			       (nconc
+				(mapcar #'list (htype:names 'actypes))
+				(mapcar #'list (all-completions "" obarray)))
+			       nil t default-actype 'actype)))
+	(or (actype:def-symbol actype-name) (intern actype-name)))
     (hypb:error "(actype): Invalid default action type received")))
 
 (defun hui:buf-writable-err (but-buf func-name)
