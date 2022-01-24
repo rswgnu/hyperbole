@@ -1,8 +1,9 @@
 ;;; hib-social-tests.el --- Test for hib-social      -*- lexical-binding: t; -*-
 
-;; Author: Mats Lidell <matsl@gnu.org>
+;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
-;; Orig-Date: 20-Feb-21 at 23:24:00
+;; Orig-Date:    20-Feb-21 at 23:24:00
+;; Last-Mod:     24-Jan-22 at 00:38:39 by Bob Weiner
 ;;
 ;; Copyright (C) 2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.

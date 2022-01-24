@@ -1,8 +1,9 @@
 ;;; hibtypes.el --- GNU Hyperbole default implicit button types  -*- lexical-binding: t; -*-
 ;;
-;; Author: Bob Weiner
+;; Author:       Bob Weiner
 ;;
-;; Orig-Date: 19-Sep-91 at 20:45:31
+;; Orig-Date:    19-Sep-91 at 20:45:31
+;; Last-Mod:     24-Jan-22 at 00:31:57 by Bob Weiner
 ;;
 ;; Copyright (C) 1991-2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.

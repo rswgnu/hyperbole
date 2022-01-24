@@ -1,8 +1,9 @@
 ;;; hyrolo-tests.el --- unit tests for hyrolo.el         -*- lexical-binding: t; -*-
 
-;; Author: Mats Lidell <matsl@gnu.org>
+;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
-;; Orig-Date: 19-Jun-21 at 22:42:00
+;; Orig-Date:    19-Jun-21 at 22:42:00
+;; Last-Mod:     24-Jan-22 at 00:41:23 by Bob Weiner
 ;;
 ;; Copyright (C) 2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.

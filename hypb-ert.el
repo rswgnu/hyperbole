@@ -1,8 +1,9 @@
 ;;; hypb-ert.el --- Hyperbole test runner action button types    -*- lexical-binding: t; -*-
 
-;; Author: Mats Lidell <matsl@gnu.org> and Bob Weiner <rsw@gnu.org>
+;; Author:       Mats Lidell <matsl@gnu.org> and Bob Weiner <rsw@gnu.org>
 ;;
-;; Orig-Date: 31-Mar-21 at 21:11:00
+;; Orig-Date:    31-Mar-21 at 21:11:00
+;; Last-Mod:     24-Jan-22 at 00:36:17 by Bob Weiner
 ;;
 ;; Copyright (C) 2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.

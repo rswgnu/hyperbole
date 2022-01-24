@@ -1,8 +1,9 @@
 ;;; hmouse-info-tests.el --- hmouse-info unit tests         -*- lexical-binding: t; -*-
 
-;; Author: Mats Lidell <matsl@gnu.org>
+;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
-;; Orig-Date: 29-Dec-21 at 09:02:00
+;; Orig-Date:    29-Dec-21 at 09:02:00
+;; Last-Mod:     24-Jan-22 at 00:39:27 by Bob Weiner
 ;;
 ;; Copyright (C) 2021-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
