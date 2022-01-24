@@ -314,11 +314,11 @@
   "Pathname with `load-path', line and position specification."
   (unwind-protect
       (with-temp-buffer
-        (insert "\"${load-path}/hypb.el:10:5\"")
+        (insert "\"${load-path}/hypb.el:11:5\"")
         (goto-char 2)
         (action-key)
         (should (string= "hypb.el" (buffer-name)))
-        (should (= (line-number-at-pos) 10))
+        (should (= (line-number-at-pos) 11))
         (should (= (current-column) 5)))
     (kill-buffer "hypb.el")))
 
@@ -377,7 +377,7 @@
 (ert-deftest hbut-ctags-vgrind-test ()
   (unwind-protect
       (with-temp-buffer
-        (insert "hy-test-helpers:consume-input-events hy-test-helpers.el 22\n")
+        (insert "hy-test-helpers:consume-input-events hy-test-helpers.el 23\n")
         (goto-char (point-min))
         (forward-char 4)
         (let ((default-directory (expand-file-name "test" hyperb:dir)))
@@ -392,8 +392,8 @@
   (unwind-protect
       (with-temp-buffer
         (insert "\n")
-        (insert "hy-test-helpers.el,103\n")
-        (insert "(defun hy-test-helpers:consume-input-events 22,359\n")
+        (insert "hy-test-helpers.el,237\n")
+        (insert "(defun hy-test-helpers:consume-input-events 23,518\n")
         (rename-buffer (concat "TAGS" (buffer-name)))
         (goto-char (point-min))
         (forward-line 2)

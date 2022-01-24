@@ -1,5 +1,8 @@
 2022-01-23  Bob Weiner  <rsw@gnu.org>
 
+* Makefile (TAGS): Include ert-deftest definitions in TAGS file.
+           (TEST_ERT_FILES): Add hy-test-*.el so indexed in TAGS file.
+
 * hbut.el (gbut:label-p): Add to return global button label point is on if nay.
     Use in 'hui:gbut-modify'.
 
