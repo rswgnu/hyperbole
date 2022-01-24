@@ -3,6 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    15-Oct-91 at 20:13:17
+;; Last-Mod:     24-Jan-22 at 00:18:47 by Bob Weiner
 ;;
 ;; Copyright (C) 1991-2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -688,6 +689,7 @@ constructs.  If not given, the top level Hyperbole menu is used."
 	    "Activates implicit button at point or prompts for labeled implicit button to activate.")
 	  ("DeleteIButType"   (hui:htype-delete 'ibtypes)
 	   "Deletes specified button type.")
+	  ("Edit"   hui:ibut-modify "Edits/modifies named implicit button attributes.")
 	  ("Help"   hui:hbut-help   "Reports on button's attributes.")
 	  ("Info"   (id-info "(hyperbole)Implicit Buttons")
 	   "Displays manual section on implicit buttons.")

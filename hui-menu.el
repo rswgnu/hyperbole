@@ -3,6 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    28-Oct-94 at 10:59:44
+;; Last-Mod:     24-Jan-22 at 00:18:47 by Bob Weiner
 ;;
 ;; Copyright (C) 1994-2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -411,8 +412,10 @@ REBUILD-FLAG is non-nil, in which case the menu is rebuilt."
 		   "----"
 		   ["Activate" hui:ibut-act t]
 		   ["Delete-Type" (hui:htype-delete 'ibtypes) t]
+		   ["Edit"   hui:ibut-modify t]
 		   ["Help"   hui:hbut-help t]
 		   ["Label"  hui:ibut-label-create t]
+		   ["Modify" hui:ibut-modify t]
 		   ["Rename" hui:ibut-rename t]
 		   ["Types"  (hui:htype-help 'ibtypes 'no-sort) t])
 		 '("Koutliner"

@@ -5,8 +5,9 @@
 
 * Makefile (test-all): Add conditionals to always run GUI Emacs if DISPLAY is set.
 
-* hui-mini.el (hui:menus): Add named Ibut/Modify.
-* hui.el (hui:ebut-modify, hui:gbut-modify): Interactively if on a button, still allow
+* hui-menu.el (infodock-hyperbole-menu): Add Implicit-Button/{Edit, Modify}.
+  hui-mini.el (hui:menus): Add named Ibut/{Edit, Modify} (do the same thing).
+  hui.el (hui:ebut-modify, hui:gbut-modify): Interactively if on a button, still allow
     choice of another button.
          (hui:ibut-modify): Add named ibut modification.
          (hui:ebut-modify, hui:gbut-modify): Add 2nd save-excursion so point does
