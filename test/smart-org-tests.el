@@ -2,9 +2,10 @@
 
 ;; Copyright (C) 2021  Mats Lidell
 
-;; Author: Mats Lidell <matsl@gnu.org>
+;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
-;; Orig-Date: 23-Apr-21 at 22:21:00
+;; Orig-Date:    23-Apr-21 at 22:21:00
+;; Last-Mod:     24-Jan-22 at 00:42:19 by Bob Weiner
 ;;
 ;; Copyright (C) 2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.

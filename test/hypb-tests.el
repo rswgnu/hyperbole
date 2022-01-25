@@ -1,8 +1,9 @@
 ;;; hypb-tests.el --- test for hypb.el         -*- lexical-binding: t; -*-
 
-;; Author: Mats Lidell <matsl@gnu.org>
+;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
-;; Orig-Date: 5-Apr-21 at 18:53:10
+;; Orig-Date:     5-Apr-21 at 18:53:10
+;; Last-Mod:     24-Jan-22 at 00:41:04 by Bob Weiner
 ;;
 ;; Copyright (C) 2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.

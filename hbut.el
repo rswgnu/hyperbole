@@ -3,6 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    18-Sep-91 at 02:57:09
+;; Last-Mod:     24-Jan-22 at 00:18:32 by Bob Weiner
 ;;
 ;; Copyright (C) 1991-2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -621,6 +622,25 @@ Insert INSTANCE-FLAG after END, before ending delimiter."
 Return entry deleted (a list of attribute values) or nil."
   (hbut:delete lbl-key nil gbut:file))
 
+(defun    gbut:ebut-program (label actype &rest args)
+  "Programmatically create a global explicit Hyperbole button at point from LABEL, ACTYPE (action type), and optional actype ARGS.
+Insert LABEL text at the end of the personal/global button file
+surrounded by <( )> delimiters, adding any necessary instance
+number of the button after the LABEL.  ACTYPE may be a Hyperbole
+action type name (from defact) or an Emacs Lisp function,
+followed by a list of arguments for the actype, aside from the
+button LABEL which is automatically provided as the first
+argument.
+
+For interactive creation, use `hui:gbut-create' instead."
+  (save-excursion
+    (with-current-buffer (find-file-noselect (expand-file-name hbmap:filename hbmap:dir-user))
+      (save-excursion
+	(goto-char (point-max))
+	(when (not (bolp))
+	  (insert "\n"))
+	(eval `(ebut:program ',label ',actype ,@args))))))
+
 (defun    gbut:get (&optional lbl-key)
   "Return global Hyperbole button symbol given by optional LBL-KEY if found in gbut:file.
 
@@ -648,24 +668,20 @@ Return nil if no matching button is found."
   "Return list of global button labels."
   (mapcar #'hbut:key-to-label (gbut:key-list)))
 
-(defun    gbut:ebut-program (label actype &rest args)
-  "Programmatically create a global explicit Hyperbole button at point from LABEL, ACTYPE (action type), and optional actype ARGS.
-Insert LABEL text at the end of the personal/global button file
-surrounded by <( )> delimiters, adding any necessary instance
-number of the button after the LABEL.  ACTYPE may be a Hyperbole
-action type name (from defact) or an Emacs Lisp function,
-followed by a list of arguments for the actype, aside from the
-button LABEL which is automatically provided as the first
-argument.
+(defun    gbut:label-p (&optional as-label start-delim end-delim pos-flag two-lines-flag)
+  "Return key for the Hyperbole global button label that point is within, else nil.
+This is the normalized key form of the explicit button's label.
 
-For interactive creation, use `hui:gbut-create' instead."
-  (save-excursion
-    (with-current-buffer (find-file-noselect (expand-file-name hbmap:filename hbmap:dir-user))
-      (save-excursion
-	(goto-char (point-max))
-	(when (not (bolp))
-	  (insert "\n"))
-	(eval `(ebut:program ',label ',actype ,@args))))))
+Assume point is within the first line of any button label.  All
+following arguments are optional.  If AS-LABEL is non-nil, return
+label rather than the key derived from the label.  START-DELIM
+and END-DELIM are strings that override default button
+delimiters.  With POS-FLAG non-nil, return the list of label-or-key,
+but-start-position, but-end-position.  Positions include
+delimiters.  With TWO-LINES-FLAG non-nil, constrain label search
+to two lines."
+  (when (equal buffer-file-name gbut:file)
+    (hbut:label-p as-label start-delim end-delim pos-flag two-lines-flag)))
 
 (defun    gbut:to (lbl-key)
   "Find the global button with LBL-KEY (a label or label key) within the visible portion of the global button file.

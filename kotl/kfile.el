@@ -3,6 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    10/31/93
+;; Last-Mod:     24-Jan-22 at 00:25:17 by Bob Weiner
 ;;
 ;; Copyright (C) 1993-2021  Free Software Foundation, Inc.
 ;; See the "../HY-COPY" file for license information.

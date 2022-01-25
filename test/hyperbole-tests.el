@@ -1,8 +1,9 @@
 ;;; hyperbole-tests.el --- Tests for hyperbole.el  -*- lexical-binding: t; -*-
 ;;
-;; Author: Mats Lidell <matsl@gnu.org>
+;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
-;; Orig-Date: 8-Jan-22 at 23:40:00
+;; Orig-Date:     8-Jan-22 at 23:40:00
+;; Last-Mod:     24-Jan-22 at 00:41:15 by Bob Weiner
 ;;
 ;; Copyright (C) 2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.

@@ -962,7 +962,7 @@ A long video demonstrating most of HyControl's features is available at
 The above are the best interactive ways to learn about Hyperbole.
 
 @node Documentation, Hyperbole Hooks, Invocation, Usage
-@section Documentation
+@section   Documentation
 
 @vindex Info-directory-list
 @vindex hyperb:dir
@@ -997,7 +997,7 @@ is: @file{~/.emacs.d/elpa/hyperbole-$@{hyperb:version@}/}.
 
 
 @node Hyperbole Hooks,  , Documentation, Usage
-@section Hyperbole Hooks
+@section   Hyperbole Hooks
 @vindex hyperbole-init-hook
 @vindex hyperbole-mode-hook
 @vindex hyperbole-mode-on-hook
@@ -1509,7 +1509,7 @@ Mouse Keys}.
 @end menu
 
 @node Creating and Deleting Windows, Saving and Restoring Window Configurations, Smart Mouse Key Drags, Smart Mouse Key Drags
-@subsection Creating and Deleting Windows
+@subsection  Creating and Deleting Windows
 
 @cindex drag, horizontal
 @cindex horizontal drag
@@ -1533,7 +1533,7 @@ you'll be left with windows of differing heights.  Use @bkbd{C-x +} to
 re-balance the sizes of the remaining windows, so they are fairly even.
 
 @node Saving and Restoring Window Configurations, Resizing Windows, Creating and Deleting Windows, Smart Mouse Key Drags
-@subsection Saving and Restoring Window Configurations
+@subsection  Saving and Restoring Window Configurations
 
 @cindex window configuration drag
 @cindex drag, window configuration
@@ -1554,7 +1554,7 @@ way they were saved.  Since a ring is circular, after the oldest element is
 restored, the newest element will again be restored and so on.
 
 @node Resizing Windows, Moving Frames, Saving and Restoring Window Configurations, Smart Mouse Key Drags
-@subsection Resizing Windows
+@subsection  Resizing Windows
 
 @cindex resizing windows
 @cindex drag, resize window
@@ -1567,7 +1567,7 @@ window separator to where you want it.  Drags from a blank area of a
 modeline show visible feedback as the window is resized.
 
 @node Moving Frames, Dragging Buffers, Resizing Windows, Smart Mouse Key Drags
-@subsection Moving Frames
+@subsection  Moving Frames
 
 @cindex dragging frames
 @cindex moving frames
@@ -1594,7 +1594,7 @@ from the titlebar.  If you use a click-to-focus window manager, click on
 the desired frame first and then depress to drag.
 
 @node Dragging Buffers,  , Moving Frames, Smart Mouse Key Drags
-@subsection Dragging Buffers, Windows and Items
+@subsection  Dragging Buffers, Windows and Items
 
 Smart Mouse Key drags let you display buffers and windows however you want
 them.  Dired and buffer-menu items may also be displayed in specific
@@ -2001,10 +2001,12 @@ activate it whenever the need arises.
 Global buttons are managed with the Hyperbole Gbut/ menu accessed with
 @bkbd{C-h h g}.  The Create item, @bkbd{C-h h g c}, prompts for a
 global button name, an action type, and the action's associated
-arguments, such as a file to link to.  It then creates the button.  To
-activate the button, use the Act menu item, @bkbd{C-h h g a}.  Type
-the button's name and its action will be  To remove the
-button, use the Delete menu item, @bkbd{C-h h g d}; @pxref{Deletion}.
+arguments, such as a file to which to link.  It then creates the button.
+To activate the button, use the Act menu item, @bkbd{C-h h g a}.  Type
+the button's name, press @bkbd{@key{RET}}, and then Hyperbole prompts
+you for its action type and associated arguments.  @bkbd{C-h h g e} to
+edit an existing global button.  To remove a button, use the Delete menu
+item, @bkbd{C-h h g d}; @pxref{Deletion}.
 
 Global buttons are actually explicit buttons stored at the end of your
 personal button file, @pxref{Button Files}.  You can always go into that
@@ -2066,6 +2068,7 @@ point-and-click type behavior beyond implicit button types.  @xref{Smart
 Key Operations}.
 
 @cindex implicit button labels
+@cindex implicit button names
 @cindex labeling implicit buttons
 @cindex naming implicit buttons
 Individual implicit buttons may be labeled/named, allowing activation
@@ -2076,11 +2079,16 @@ button with a label of 'My Emacs Files':
 <[My Emacs Files]>: "~/.emacs.d"
 @end example
 
+@kindex C-h h i e
+@kindex C-h h i l
 The label is delimited by @samp{<[} and @samp{]>} and can be followed
 by any number of :, - or = separator characters, including none.  You
 can activate the button either from its label or its text.  With point
 on the text of an implicit button, @bkbd{C-h h i l} will label it.  Or
-you may simply type the label and delimiters manually.
+you may simply type the label and delimiters manually.  You can also
+simply edit any implicit button manually but for a little more help in
+editing named implicit buttons, use @bkbd{C-h h i e} which prompts
+you to rename the button and to change its text (the button itself).
 
 @menu
 * Implicit Button Types::
@@ -2754,7 +2762,7 @@ by the @code{<test-name>} argument, an unquoted name.
 
 
 @node Action Buttons,  , Implicit Button Types, Implicit Buttons
-@subsection Action Buttons
+@subsection  Action Buttons
 
 @cindex action button
 @cindex implicit action button

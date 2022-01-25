@@ -3,6 +3,7 @@
 # Author:       Bob Weiner
 #
 # Orig-Date:    15-Jun-94 at 03:42:38
+# Last-Mod:     24-Jan-22 at 00:45:29 by Bob Weiner
 #
 # Copyright (C) 1994-2021  Free Software Foundation, Inc.
 # See the file HY-COPY for license information.
@@ -200,7 +201,7 @@ HYPERBOLE_FILES = dir info html $(EL_COMPILE) $(EL_KOTL) \
 	topwin.py hyperbole-banner.png $(man_dir)/hkey-help.txt \
 	$(man_dir)/hyperbole.texi $(man_dir)/hyperbole.css $(man_dir)/version.texi
 
-TEST_ERT_FILES = $(wildcard test/*tests.el)
+TEST_ERT_FILES = $(wildcard test/*tests.el) $(wildcard test/hy-test-*.el)
 
 EL_TAGS = $(EL_COMPILE) $(EL_KOTL) $(TEST_ERT_FILES)
 
@@ -314,7 +315,7 @@ bin-warn: src
 
 tags: TAGS
 TAGS: $(EL_TAGS)
-	$(ETAGS) $(EL_TAGS)
+	$(ETAGS) --regex='/(ert-deftest[ \t]+\([^ \t\n\r\f()]+\) ?/' $(EL_TAGS)
 
 clean:
 	$(RM) hyperbole-autoloads.el kotl/kotl-autoloads.el $(ELC_COMPILE) $(ELC_KOTL) TAGS
@@ -437,8 +438,15 @@ all-tests: test-all
 test-all:
 	@echo "# Tests: $(TEST_ERT_FILES)"
 ifeq ($(TERM), dumb)
-	TERM=vt100 DISPLAY=$(DISPLAY) $(EMACS) --quick $(PRELOADS) --eval "(load-file \"test/hy-test-dependencies.el\")" --eval "(let ((auto-save-default)) $(LOAD_TEST_ERT_FILES) (ert-run-tests-interactively t))"
+ifneq (,$(findstring .apple.,$(DISPLAY)))
+        # Found, on MacOS, use graphical UI MacOS 'Emacs' script
+	TERM=xterm-256color EMACS=Emacs $(EMACS) --quick $(PRELOADS) --eval "(load-file \"test/hy-test-dependencies.el\")" --eval "(let ((auto-save-default)) $(LOAD_TEST_ERT_FILES) (ert-run-tests-interactively t))"
 else
+        # Not found, set TERM so tests will at least run within parent Emacs session
+	TERM=vt100 $(EMACS) --quick $(PRELOADS) --eval "(load-file \"test/hy-test-dependencies.el\")" --eval "(let ((auto-save-default)) $(LOAD_TEST_ERT_FILES) (ert-run-tests-interactively t))"
+endif
+else
+        # Typical case, run emacs normally
 	$(EMACS) --quick $(PRELOADS) --eval "(load-file \"test/hy-test-dependencies.el\")" --eval "(let ((auto-save-default)) $(LOAD_TEST_ERT_FILES) (ert-run-tests-interactively t))"
 endif
 

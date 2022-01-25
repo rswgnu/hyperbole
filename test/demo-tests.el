@@ -1,8 +1,9 @@
 ;;; demo-tests.el --- unit tests from examples in the DEMO         -*- lexical-binding: t; -*-
 
-;; Author: Mats Lidell <matsl@gnu.org>
+;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
-;; Orig-Date: 30-Jan-21 at 12:00:00
+;; Orig-Date:    30-Jan-21 at 12:00:00
+;; Last-Mod:     24-Jan-22 at 00:38:00 by Bob Weiner
 ;;
 ;; Copyright (C) 2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.

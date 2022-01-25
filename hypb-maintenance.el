@@ -1,5 +1,10 @@
 ;;; hypb-maintenance.el --- functions for maintenance tasks  -*- lexical-binding: t; -*-
 ;;
+;; Author:       Mats Lidell <matsl@gnu.org>
+;;
+;; Orig-Date:    31-Mar-21 at 21:11:00
+;; Last-Mod:     24-Jan-22 at 00:36:39 by Bob Weiner
+;;
 ;; Copyright (C) 1991-2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
 ;;
