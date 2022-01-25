@@ -1,4 +1,19 @@
-<<<<<<< HEAD
+2022-01-25  Bob Weiner  <rsw@gnu.org>
+
+* hpath.el (seq): Add (require 'seq) since seq-find is used herein.
+
+* hbut.el (defib): Add back edebug spec for defib that must have been accidentally
+    removed in some merge.
+
+* hibtypes.el (pathname): Add missing 'ibut:label-set' to enable flashing of simple
+    Fix that when path was expanded or normalized, pathname button would not flash
+    since it did not match the text.  Use 'orig-path' instead, except when point is
+    within a PATH-like variable value of colon or semicolon separated directories;
+    then use just the individual 'path' selected.
+
+* hactypes.el (link-to-kcell): Fix to process cell-ref only after any non-nil
+    file is displayed.
+
 2022-01-22  Bob Weiner  <rsw@gnu.org>
 
 * hycontrol.el (hycontrol-windows-grid-by-file-pattern): Add this command that creates

@@ -18,6 +18,7 @@
 
 (require 'cl-lib)
 (require 'hact)
+(require 'seq) ;; For seq-find
 (require 'subr-x) ;; For string-trim
 (require 'hversion) ;; for (hyperb:window-system) definition
 (require 'hui-select) ;; for `hui-select-markup-modes'
@@ -857,7 +858,7 @@ Always returns nil if (hpath:remote-available-p) returns nil."
 	 (hpath:delete-trailer result))))
 
 (defun hpath:at-p (&optional type non-exist)
-  "Return delimited path or non-delimited remote path at point, if any.
+  "Return expanded and normalized delimited path or non-delimited remote path at point, if any.
 World-Wide Web urls are ignored and therefore dealt with by other code.
 Delimiters may be: double quotes, open and close single quote, whitespace, or
 Texinfo file references.  If optional TYPE is the symbol 'file or 'directory,
@@ -990,7 +991,8 @@ Make any existing path within a file buffer absolute before returning."
 	  (and sym (boundp sym) (stringp (symbol-value sym)) (symbol-value sym))))))
 
 (defun hpath:choose-from-path-variable (path-var &optional action-str)
-  "Interactively choose and return a path from the colon or semicolon-delimited set in PATH-VAR."
+  "Interactively choose and return a path from the colon or semicolon-delimited set in PATH-VAR.
+Optional ACTION-STR is used at the start of a prompt to choose the path."
   (let (path-value
 	paths)
     (when (setq path-value (hpath:is-path-variable-p path-var)
@@ -1533,6 +1535,9 @@ form is what is returned for PATH."
 			   (or (when (string-match-p hpath:variable-regexp path)
 				 ;; Path may be a link reference with embedded
 				 ;; variables that must be expanded.
+				 ;; A variable may be a PATH-type variable
+				 ;; where the first matching expansion
+				 ;; that matches the full path must be utilized.
 				 (setq path (hpath:substitute-value path)
 				       non-exist t)) ;; Ensure non-existent path links handled as pathnames.
 			       t)

@@ -182,15 +182,16 @@ link-end-position, (including delimiters)."
 ;;; Hyperbole type definitions
 ;;; ************************************************************************
 
+
 (defib klink ()
   "Follow a link delimited by <> to a koutline cell.
 See documentation for the `link-to-kotl' function for valid klink formats."
   (let* ((link-and-pos (klink:at-p))
 	 (link (car link-and-pos))
 	 (start-pos (car (cdr link-and-pos))))
-    (if link
-	(progn (ibut:label-set link-and-pos)
-	       (hact 'klink:act link start-pos)))))
+    (when link
+      (ibut:label-set link-and-pos)
+      (hact 'klink:act link start-pos))))
 
 (defact link-to-kotl (link)
   "Display at the top of another window the referent pointed to by LINK.
@@ -230,6 +231,7 @@ See documentation for `kcell:ref-to-id' for valid cell-ref formats."
 ;;; ************************************************************************
 ;;; Private functions
 ;;; ************************************************************************
+
 
 (defun klink:act (link start-pos)
   (let ((obuf (current-buffer)))

@@ -34,6 +34,7 @@
 ;;; ************************************************************************
 
 (eval-when-compile (require 'hversion))
+(require 'cl-seq) ;; for cl-count
 (require 'subr-x) ;; For string-trim
 (require 'hactypes)
 
@@ -155,9 +156,11 @@ display options."
               (delq nil (mapcar (lambda (substring)
                                   (string-match substring (format-mode-line mode-name)))
                                 '("Buffer Menu" "IBuffer" "Dired"))))
-    (let ((path (hpath:at-p))
-	  elisp-suffix
-          full-path)
+    (let* ((orig-path (hpath:delimited-possible-path))
+	   ;; Normalized and expanded path
+	   (path (hpath:at-p))
+	   elisp-suffix
+           full-path)
       (if path
 	  (cond ((and (not (string-empty-p path))
  		      (= (aref path 0) ?-)
@@ -168,7 +171,7 @@ display options."
 		       full-path (locate-library path elisp-suffix))
                  (cond (full-path
 			(setq path (concat "-" path))
-			(apply #'ibut:label-set path (hpath:start-end path))
+			(apply #'ibut:label-set orig-path (hpath:start-end orig-path))
 			(hact 'hpath:find path))
 		       (elisp-suffix
 			(hact 'error "(pathname): \"%s\" not found in `load-path'" path))
@@ -177,12 +180,17 @@ display options."
 		       (t nil)))
 		(t (when (string-match "\\`file://" path)
                      (setq path (substring path (match-end 0))))
-                   (apply #'ibut:label-set path (hpath:start-end path))
+		   (if (or (> (cl-count ?: orig-path) 2)
+			   (> (cl-count ?\; orig-path) 2))
+		       ;; PATH-like set of values; select just the one point is on
+                       (apply #'ibut:label-set path (hpath:start-end path))
+		     ;; Otherwise, use the unchanged orig-path
+                     (apply #'ibut:label-set orig-path (hpath:start-end orig-path)))
                    (hact 'link-to-file path)))
         ;;
         ;; Match PATH-related Environment and Lisp variable names and
 	;; Emacs Lisp and Info files without any directory component.
-        (when (setq path (hpath:delimited-possible-path))
+        (when (setq path orig-path)
           (cond ((and (string-match hpath:path-variable-regexp path)
 		      (setq path (match-string 1 path))
 		      (hpath:is-path-variable-p path))
@@ -194,6 +202,7 @@ display options."
 			     ;; separated list; ignore if so.
 			     (and (string-match "\\`\\s-*\\([^; 	]+\\)" path)
 				  (executable-find (match-string 1 path))))
+                   (apply #'ibut:label-set path (hpath:start-end path))
 		   (hact 'link-to-file path)))
 		((setq elisp-suffix (string-match "\\`[^\\\\/~]+\\.el[cn]?\\(\\.gz\\)?\\'" path))
                  (cond ((string-match hpath:prefix-regexp path)
@@ -202,7 +211,7 @@ display options."
                        ((setq full-path
 			      (let ((load-suffixes '(".el")))
 				(locate-library path elisp-suffix)))
-			(apply #'ibut:label-set path (hpath:start-end path))
+			(apply #'ibut:label-set orig-path (hpath:start-end orig-path))
 			(hact 'link-to-file full-path))
 		       (elisp-suffix
 			(hact 'error "(pathname): \"%s\" not found in `load-path'" path))
@@ -216,10 +225,10 @@ display options."
                       (string-match "\\`(\\([^ \t\n\r\f]+\\))\\'" path)
                       (save-match-data (require 'info))
                       (Info-find-file (match-string 1 path) t))
-                 (apply #'ibut:label-set path (hpath:start-end path))
+                 (apply #'ibut:label-set orig-path (hpath:start-end orig-path))
                  (hact 'link-to-Info-node (format "%sTop" path)))
                 ((string-match hpath:info-suffix path)
-                 (apply #'ibut:label-set path (hpath:start-end path))
+                 (apply #'ibut:label-set orig-path (hpath:start-end orig-path))
                  (hact 'link-to-Info-node (format "(%s)Top" path)))
                 ;; Otherwise, fall through and allow other implicit
                 ;; button types to handle this context.
