@@ -1,5 +1,16 @@
 2022-01-25  Bob Weiner  <rsw@gnu.org>
 
+
+* kotl/kotl-mode.el (kotl-mode:copy-region-to-buffer): Fix interactive args listed in wrong
+    order.
+* kotl/kotl-mode.el (kotl-mode:copy-region-to-buffer): Replace 'kotl-mode:insert-region'.
+		    (kotl-mode:copy-tree-to-buffer): Replace 'kotl-mode:insert-tree'.
+                    (kotl-mode:copy-tree-or-region-to-buffer): New binding for {C-c M-c}.
+
+* man/hyperbole.texi (Koutliner Keys):
+  kotl/kmenu.el (kotl-menu-common-body):
+  kotl/kotl-mode.el (kotl-mode:copy-tree-to-buffer): Replace 'kotl-mode:copy-to-buffer'.
+
 * hpath.el (seq): Add (require 'seq) since seq-find is used herein.
 
 * hbut.el (defib): Add back edebug spec for defib that must have been accidentally

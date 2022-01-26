@@ -8179,10 +8179,12 @@ TO-CELL-REF's parent, otherwise make it the preceding sibling of TO-CELL-REF.
 
 Leave point at the start of the root cell of the new tree.
 
-@findex kotl-mode:copy-to-buffer
-@item kotl-mode:copy-to-buffer  @bkbd{C-c M-c}
-Copy outline tree rooted at CELL-REF to a non-koutline BUFFER.
-Use 0 to copy the whole outline buffer.
+@findex kotl-mode:copy-tree-or-region-to-buffer
+@item kotl-mode:copy-tree-or-region-to-buffer  @bkbd{C-c M-c}
+If no usable active region, prompt for and copy a Koutline tree to a
+specified buffer, otherwise, copy the active region.
+Use 0 to copy the whole outline buffer.  Prompt for whether or not
+to expand and include any hidden/invisible text within the copied text.
 
 @findex kotl-mode:copy-to-register
 @item kotl-mode:copy-to-register  @bkbd{C-x x}

@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    6/30/93
-;; Last-Mod:     24-Jan-22 at 00:25:28 by Bob Weiner
+;; Last-Mod:     25-Jan-22 at 23:46:26 by Bob Weiner
 ;;
 ;; Copyright (C) 1993-2021  Free Software Foundation, Inc.
 ;; See the "../HY-COPY" file for license information.
@@ -1062,37 +1062,6 @@ Leave point at the start of the root cell of the new tree."
      (kcell-view:set-cell
       (kcell:create (kview:id-increment view))))
    kview))
-
-(defun kotl-mode:copy-to-buffer (cell-ref buffer invisible-flag)
-  "Copy outline tree rooted at CELL-REF to a non-koutline BUFFER.
-Invisible text is expanded and included in the copy only if INVISIBLE-FLAG is
-non-nil.  The tree is inserted before point in BUFFER.  Use \"0\" to copy the
-whole outline buffer."
-  (interactive
-   (let ((label-default (kcell-view:label)))
-     (hargs:iform-read
-      `(interactive
-	(list
-	 (hargs:read "Copy tree without attributes: (0 for whole outline) "
-		     nil ,label-default nil 'kcell)
-	 (read-buffer "To buffer: "
-		      (save-window-excursion
-			(if (one-window-p)
-			    (select-frame (next-frame))
-			  (other-window 1))
-			(buffer-name))
-		      t)
-	 (y-or-n-p "Copy invisible text? "))))))
-  (message "") ;; Erase last interactive prompt, if any.
-  (setq buffer (get-buffer-create buffer))
-  (if (equal cell-ref "0")
-      (hypb:insert-region buffer (point-min) (point-max) invisible-flag)
-    (let (start end)
-      (save-excursion
-	(kotl-mode:goto-cell cell-ref t)
-	(save-excursion (kfill:forward-line 0) (setq start (point)))
-	(setq end (kotl-mode:tree-end)))
-      (hypb:insert-region buffer start end invisible-flag))))
 
 (defun kotl-mode:move-after (from-cell-ref to-cell-ref child-p
 			     &optional copy-p fill-p)
@@ -2661,19 +2630,20 @@ ARG visible cells."
 ;;; Structure Insertion Across Buffers
 ;;; ------------------------------------------------------------------------
 
-(defun kotl-mode:insert-region (target-buf start end &optional source-buf invisible-flag)
-  "Insert into TARGET-BUF the region between START and END from the current buffer or optional SOURCE-BUF (a buffer namre or buffer).
+(defun kotl-mode:copy-region-to-buffer (target-buf start end &optional source-buf invisible-flag)
+  "Copy to TARGET-BUF the region between START and END from the current buffer or optional SOURCE-BUF (a buffer or buffer name).
 Invisible text is expanded and included only if INVISIBLE-FLAG is non-nil."
   (interactive
    (hargs:iform-read
     '(interactive
       (let ((target-buf (hargs:read-buffer-name
-			 (format "Insert into buffer (default %s): " (other-buffer)))))
+			 (format "Buffer to copy region to (default %s): " (other-buffer)))))
 	(when (buffer-local-value 'buffer-read-only (get-buffer target-buf))
 	  (signal 'buffer-read-only (list target-buf)))
-	(list (region-beginning) (region-end) (current-buffer)
-	      (y-or-n-p "Include invisible text? ")
-	      target-buf)))))
+	(list target-buf
+	      (region-beginning) (region-end)
+	      (current-buffer)
+	      (y-or-n-p "Include any invisible text? "))))))
   (unless source-buf
     (setq source-buf (current-buffer)))
   (when (stringp source-buf)
@@ -2682,10 +2652,10 @@ Invisible text is expanded and included only if INVISIBLE-FLAG is non-nil."
       (set-buffer source-buf)
       (hypb:insert-region target-buf start end invisible-flag)))
 
-(defun kotl-mode:insert-tree (target-buf cell-ref invisible-flag)
-  "Insert into TARGET-BUF the outline tree rooted at CELL-REF.  Use \"0\" for whole outline buffer.
-Invisible text is expanded and included in the mail only if INVISIBLE-FLAG is
-non-nil."
+(defun kotl-mode:copy-tree-to-buffer (target-buf cell-ref invisible-flag)
+  "Copy to point in TARGET-BUF the text of the outline tree rooted at CELL-REF.
+Use \"0\" for whole outline buffer.  Invisible text is expanded and
+included only if INVISIBLE-FLAG is non-nil."
   (interactive
    (let ((label-default (kcell-view:label)))
      (hargs:iform-read
@@ -2693,22 +2663,32 @@ non-nil."
 	(list
 	 (prog1
 	     (setq target-buf (hargs:read-buffer-name
-			       (format "Insert tree into buffer (default %s): " (other-buffer))))
+			       (format "Buffer to copy tree text to (default %s): " (other-buffer))))
 	   (when (buffer-local-value 'buffer-read-only (get-buffer target-buf))
 	     (signal 'buffer-read-only (list target-buf))))
-	 (hargs:read "Insert tree number: (0 for whole outline) "
+	 (hargs:read (format "Tree number to copy to %s: (0 for whole outline) "
+			     target-buf)
 		     nil ,label-default nil 'kcell)
-	 (y-or-n-p "Include invisible text? "))))))
+	 (y-or-n-p "Include any invisible text? "))))))
+  (message "") ;; Erase last interactive prompt, if any.
+  (setq target-buf (get-buffer-create target-buf))
   (if (equal cell-ref "0")
-      (kotl-mode:insert-region target-buf (point-min) (point-max) nil invisible-flag)
+      (kotl-mode:copy-region-to-buffer target-buf (point-min) (point-max) nil invisible-flag)
     (let (start end)
       (save-excursion
 	(kotl-mode:goto-cell cell-ref t)
-	(forward-line 0)
-	(setq start (point))
+	(save-excursion (kfill:forward-line 0) (setq start (point)))
 	(kotl-mode:to-valid-position)
 	(setq end (kotl-mode:tree-end)))
-      (kotl-mode:insert-region target-buf start end nil invisible-flag))))
+      (kotl-mode:copy-region-to-buffer target-buf start end nil invisible-flag))))
+
+(defun kotl-mode:copy-tree-or-region-to-buffer ()
+  "If no usable active region, prompt for and copy a Koutline tree to a specified buffer, otherwise, copy the active region."
+  (interactive)
+  (call-interactively 
+   (if (use-region-p)
+       #'kotl-mode:copy-region-to-buffer
+     #'kotl-mode:copy-tree-to-buffer)))
 
 (defun kotl-mode:mail-tree (cell-ref invisible-flag)
   "Mail outline tree rooted at CELL-REF.  Use \"0\" for whole outline buffer.
@@ -3440,7 +3420,7 @@ Leave point at end of line now residing at START."
   (define-key kotl-mode-map "\C-c\C-b"  'kotl-mode:backward-cell)
   (define-key kotl-mode-map "\C-cc"     'kotl-mode:copy-after)
   (define-key kotl-mode-map "\C-c\C-c"  'kotl-mode:copy-before)
-  (define-key kotl-mode-map "\C-c\M-c"  'kotl-mode:copy-to-buffer)
+  (define-key kotl-mode-map "\C-c\M-c"  'kotl-mode:copy-tree-or-region-to-buffer)
   (define-key kotl-mode-map "\C-cd"     'kotl-mode:down-level)
   (define-key kotl-mode-map "\C-c\C-d"  'kotl-mode:down-level)
   (define-key kotl-mode-map "\C-ce"     'kotl-mode:exchange-cells)

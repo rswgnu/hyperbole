@@ -94,15 +94,13 @@
             {C-c $}       - Move to the last cell in the tree rooted at point.
 
       3b8. Tree Movement and Copying: Entire outline trees can be moved or
-           copied with single commands.  Simply invoke the desired command
-           and then double click with the Action Key on the desired root cell
-           for each argument for which you are prompted.
+           copied within an outline with single commands.  Simply invoke
+           the desired command and then double click/press with the Action
+           Key on the desired root cell for each argument for which you are
+           prompted.
            
            Copying and moving only work within a single outline right now, so
-           don't use them to move trees across different outline files.  You
-           can, however, copy an outline tree to a non-outline buffer with:
-            {C-c M-c}     - Copy a koutline tree to a non-koutline buffer.
-            {C-c C-@}     - Copy a koutline tree to an outgoing mail message.
+           don't try to move or copy trees to another Koutline file.
            
             {C-c c}       - Copy <tree> to follow as sibling of <cell>.
             {C-u C-c c}   - Copy <tree> to follow as first child of <cell>.
@@ -123,13 +121,21 @@
            of the root cell of the tree to move and then double click within
            the body of the root cell of the tree you want it to follow.
 
-      3b9. Cell Transposition:  The move and copy commands rearrange entire
+      3b9. Tree Text or Region Copying to a Non-Koutline Buffer: 
+            {C-c M-c} - Copy <tree> text or active region to a non-Koutline buffer.
+            {C-c C-@} - Copy <tree> text to an outgoing mail message.
+           
+           Each above command prompts for whether or not to include
+           hidden/invisible text when copying.  If yes, all invisible text
+           is expanded before copying.
+
+     3b10. Cell Transposition:  The move and copy commands rearrange entire
            trees.  The following two commands exchange the locations of two
            cells.
 
-        3b9a. {C-c e} prompts for two cell addresses and exchanges the cells.
+       3b10a. {C-c e} prompts for two cell addresses and exchanges the cells.
 
-        3b9b. {C-c t} does not prompt.  It exchanges the current and
+       3b10b. {C-c t} does not prompt.  It exchanges the current and
               preceding cells.  If there is no preceding cell it exchanges
               the current and next cell.
               
@@ -141,7 +147,7 @@
               there are fewer visible, it makes the current cell the last
               cell in the outline.
 
-     3b10. Cell Splitting: You can split one cell into two adjacent cells
+     3b11. Cell Splitting: You can split one cell into two adjacent cells
            with {C-c s}.  This leaves the cell contents preceding point in
            the current cell, minus any trailing whitespace, and moves the
            contents following point to a new sibling cell which is inserted
@@ -151,15 +157,15 @@
            All cell attributes in the original cell are propagated to the new
            one.
 
-     3b11. Cell Appending:  {C-c +} appends the contents of a specified cell
+     3b12. Cell Appending:  {C-c +} appends the contents of a specified cell
            to the end of another cell.
 
-     3b12. Hiding and Showing:  Individual cells, branches, or particular
+     3b13. Hiding and Showing:  Individual cells, branches, or particular
            levels in the outline may be hidden or shown.  These commands work
            even when an outline buffer is read-only, e.g. when its file is
            not checked out of a version control system yet.
 
-       3b12a. {C-c C-h}  - Hide (collapse) tree rooted at point.
+       3b13a. {C-c C-h}  - Hide (collapse) tree rooted at point.
               {C-c C-s}  - Show (expand)   tree rooted at point.
               
               {C-c C-a}  - Show (expand) all cells in the outline.
@@ -178,11 +184,11 @@
               toggle display of blank lines between cells as well,
               e.g. {C-u C-c C-o}.  Try it now.
 
-       3b12b. A click or press of the Action Key within a cell's body, but
+       3b13b. A click or press of the Action Key within a cell's body, but
               not on a button, toggles between hiding and showing the tree
               rooted at point.
 
-     3b13. Cell Identifiers: Permanent ids are associated with each cell
+     3b14. Cell Identifiers: Permanent ids are associated with each cell
            and can be used in hyperlinks that are maintained as cells are
            reordered in a file.  (These ids may also be displayed in place
            of the outline level relative ids.  Use {C-c C-l id RET}).
@@ -191,7 +197,7 @@
            outline.  Permanent ids always begin with a 0, as in 012, to
            distinguish them from relative ids.
 
-     3b14. Cell Attributes: Each cell has its own attribute list.  The
+     3b15. Cell Attributes: Each cell has its own attribute list.  The
            attribute lists for the cells in the tree rooted at point can be
            displayed by pressing the Assist Key.  {C-c h} prompts for a kcell
            id and displays its attributes.  {C-u C-c h} prompts for a kcell
@@ -205,29 +211,29 @@
            {C-0 C-c C-i} sets an attribute of the invisible 0 root cell.
            {C--1 C-c C-i} removes an attribute of the invisible 0 root cell.
 
-     3b15. File Insertion: The elements of another buffer or file may be
+     3b16. File Insertion: The elements of another buffer or file may be
            inserted into a koutline as a set of cells by using the {C-x i}
            command.  When prompted, you may use a buffer name or file name
            from which to insert.
 
-       3b15a. The cells will be inserted as the successors of the current
+       3b16a. The cells will be inserted as the successors of the current
               cell unless {C-u C-x i} is used and then they are inserted as
               the initial children of the current cell.
 
-       3b15b. See the documentation for the variables, kimport:mode-alist and
+       3b16b. See the documentation for the variables, kimport:mode-alist and
               kimport:suffix-alist, for information on mode and
               suffix-specific conversions performed on files before they are
               inserted.  This same conversion process applies if you invoke
               {M-x kotl-mode RET} in a non-koutline buffer or if you perform
               a generic file import as described in <@ 3b16=063>.
 
-       3b15c. Use {M-x kimport:insert-file-contents RET} to insert the
+       3b16c. Use {M-x kimport:insert-file-contents RET} to insert the
               entire contents of a file into the current cell at the
               location of point.  {M-x kimport:insert-buffer RET} does the
               same for an existing buffer.  {C-x r i} does the same with the
               contents of a text register that you specify.
 
-     3b16. File Importing: The Koutliner supports conversion of three
+     3b17. File Importing: The Koutliner supports conversion of three
            types of files into koutline files.  You can choose to
            import a file into an existing koutline, following the tree
            at point, or to create a new koutline of the imported file
@@ -236,13 +242,13 @@
            the file to import.  Use one of the following commands if
            you want to control the type of importation explicitly.
 
-       3b16a. Text Files
+       3b17a. Text Files
 
-         3b16a1. In a text buffer, use {M-x kotl-mode RET} to convert the
+         3b17a1. In a text buffer, use {M-x kotl-mode RET} to convert the
                  buffer into a koutline in-place.  You will lose the old
                  format of the buffer when you do this.
 
-         3b16a2. Use {M-x kimport:text RET} and you will be prompted for a
+         3b17a2. Use {M-x kimport:text RET} and you will be prompted for a
                  text buffer or file to import and the new koutline buffer or
                  file to create from its text.  It will also import the
                  contents, attributes and level structure of cells from a
@@ -250,13 +256,13 @@
                  
                  With this command, your original file remains intact.
 
-       3b16b. Star Outline Files: Star outlines are standard Emacs outlines
+       3b17b. Star Outline Files: Star outlines are standard Emacs outlines
               where each entry begins with one or more asterisk characters.
               Use {M-x kimport:star-outline RET} and you will be prompted
               for the star outline buffer or file to import and the new
               koutline buffer or file to create.
 
-       3b16c. Augment Files Numbered on the Right-Side: (Skip this if you are
+       3b17c. Augment Files Numbered on the Right-Side: (Skip this if you are
               unfamiliar with this sort of file).  Files exported from the
               Augment system as text often have alphanumeric statement
               identifiers on the right side.
@@ -265,48 +271,48 @@
               for the augment buffer or file to import and the koutline to
               create.
 
-     3b17. File Exporting: The Koutliner can produce a nicely indented HTML
+     3b18. File Exporting: The Koutliner can produce a nicely indented HTML
            version of an outline with hyperlinks and hyperlink anchors
            intact.  Use {M-x kexport:html RET} to export a koutline file or
            existing buffer.
 
-     3b18. View Specification: Flexible views of outlines may be specified
+     3b19. View Specification: Flexible views of outlines may be specified
            with succinct single character codes.
 
-       3b18a. The current view spec is shown in the modeline after the buffer
+       3b19a. The current view spec is shown in the modeline after the buffer
               name, delimited by <|>.
 
-       3b18b. The current view spec is saved whenever the outline is saved.
+       3b19b. The current view spec is saved whenever the outline is saved.
               The next time the outline is read in, this will be the initial
               view.  The standard initial viewspec is <|ben>.
 
-       3b18c. {C-c C-v} prompts for a view spec string in which the following
+       3b19c. {C-c C-v} prompts for a view spec string in which the following
               codes are valid.  Any invalid characters in a view spec are
               ignored.
 
-         3b18c1. a:  Show all cell levels and all lines in cells.
+         3b19c1. a:  Show all cell levels and all lines in cells.
 
-         3b18c2. b: Turn on blank lines between cells.  Without this code,
+         3b19c2. b: Turn on blank lines between cells.  Without this code,
                  blank lines will be turned off.  You can also use the {C-c
                  b} key binding to toggle line numbers on and off
                  independent of any other view settings.
 
-         3b18c3. cN: Hide any lines greater than N in each cell.  0 means
+         3b19c3. cN: Hide any lines greater than N in each cell.  0 means
                  don't cutoff any lines.
 
-         3b18c4. e: Show ellipses when some content is hidden (This is
+         3b19c4. e: Show ellipses when some content is hidden (This is
                  always on in modern versions of Emacs; it cannot be
                  turned off).
 
-         3b18c5. lN: Hide cells at levels deeper than N.  0 means don't hide
+         3b19c5. lN: Hide cells at levels deeper than N.  0 means don't hide
                  any cells.
 
-         3b18c6. n:  Turn on the default label type.
+         3b19c6. n:  Turn on the default label type.
                  n0: Display idstamps.
                  n1: Display alpha labels.
                  n.: Display legal labels.
 
-       3b18d. Press the Action Key on this view spec of <|c2l1> to turn off
+       3b19d. Press the Action Key on this view spec of <|c2l1> to turn off
               blank lines, to clip each cell after its second line, and to
               hide all cells below level one.  Use {C-u C-c C-a} to restore a
               view of all cells.
@@ -394,7 +400,7 @@
 
 
 "ben" ;; kvspec:current
-81 ;; id-counter
+82 ;; id-counter
 alpha ;; label-type
 3 ;; label-min-width
 ". " ;; label-separator
@@ -402,133 +408,135 @@ alpha ;; label-type
 
 ;; depth-first kcell attributes
 [[0
-  (idstamp 0 creator "rsw@gnu.org" create-time "20220117:22:23:52" id-counter 81 file "/home/bob.weiner/Dropbox/emacs/hyperbole/kotl/EXAMPLE.kotl")]
+  (idstamp 0 creator "rsw@gnu.org" create-time "20220117:22:23:52" id-counter 82 file "/c/Users/bob.weiner/Dropbox/emacs/hyperbole/kotl/EXAMPLE.kotl")]
  [20
-  (kcell t idstamp 20 rear-nonsticky t no-fill t create-time "19940104:17:38:28" creator "rsw@gnu.org")]
+  (creator "rsw@gnu.org" create-time "19940104:17:38:28" no-fill t rear-nonsticky t idstamp 20 kcell t)]
  [2
-  (kcell t idstamp 2 rear-nonsticky t no-fill t create-time "19940104:17:38:28" creator "rsw@gnu.org")]
+  (creator "rsw@gnu.org" create-time "19940104:17:38:28" no-fill t rear-nonsticky t idstamp 2 kcell t)]
  [34
-  (kcell t idstamp 34 rear-nonsticky t create-time "19940610:16:43:55" creator "rsw@gnu.org")]
+  (creator "rsw@gnu.org" create-time "19940610:16:43:55" rear-nonsticky t idstamp 34 kcell t)]
  [35
-  (kcell t idstamp 35 rear-nonsticky t create-time "19940610:16:44:03" creator "rsw@gnu.org")]
+  (creator "rsw@gnu.org" create-time "19940610:16:44:03" rear-nonsticky t idstamp 35 kcell t)]
  [4
-  (kcell t idstamp 4 rear-nonsticky t create-time "19940104:17:38:29" creator "rsw@gnu.org")]
+  (creator "rsw@gnu.org" create-time "19940104:17:38:29" rear-nonsticky t idstamp 4 kcell t)]
  [5
-  (kcell t idstamp 5 rear-nonsticky t create-time "19940104:17:38:29" creator "rsw@gnu.org")]
+  (creator "rsw@gnu.org" create-time "19940104:17:38:29" rear-nonsticky t idstamp 5 kcell t)]
  [6
-  (kcell t idstamp 6 rear-nonsticky t create-time "19940104:17:38:29" creator "rsw@gnu.org")]
+  (creator "rsw@gnu.org" create-time "19940104:17:38:29" rear-nonsticky t idstamp 6 kcell t)]
  [14
-  (kcell t idstamp 14 rear-nonsticky t create-time "19940104:17:38:29" creator "rsw@gnu.org")]
+  (creator "rsw@gnu.org" create-time "19940104:17:38:29" rear-nonsticky t idstamp 14 kcell t)]
  [67
-  (kcell t idstamp 67 rear-nonsticky t no-fill t create-time "19951028:04:29:13" creator "rsw@gnu.org")]
+  (creator "rsw@gnu.org" create-time "19951028:04:29:13" no-fill t rear-nonsticky t idstamp 67 kcell t)]
  [15
-  (kcell t idstamp 15 rear-nonsticky t create-time "19940104:17:38:29" creator "rsw@gnu.org")]
+  (creator "rsw@gnu.org" create-time "19940104:17:38:29" rear-nonsticky t idstamp 15 kcell t)]
  [31
-  (kcell t idstamp 31 rear-nonsticky t create-time "19940306:18:11:43" creator "rsw@gnu.org")]
+  (creator "rsw@gnu.org" create-time "19940306:18:11:43" rear-nonsticky t idstamp 31 kcell t)]
  [7
-  (kcell t idstamp 7 rear-nonsticky t create-time "19940104:17:38:29" creator "rsw@gnu.org")]
+  (creator "rsw@gnu.org" create-time "19940104:17:38:29" rear-nonsticky t idstamp 7 kcell t)]
  [46
-  (kcell t idstamp 46 rear-nonsticky t create-time "19950614:21:35:17" creator "rsw@gnu.org")]
+  (creator "rsw@gnu.org" create-time "19950614:21:35:17" rear-nonsticky t idstamp 46 kcell t)]
  [43
-  (kcell t idstamp 43 rear-nonsticky t create-time "19940610:22:00:46" creator "rsw@gnu.org")]
+  (creator "rsw@gnu.org" create-time "19940610:22:00:46" rear-nonsticky t idstamp 43 kcell t)]
  [22
-  (kcell t idstamp 22 rear-nonsticky t create-time "19940127:22:41:42" creator "rsw@gnu.org")]
+  (creator "rsw@gnu.org" create-time "19940127:22:41:42" rear-nonsticky t idstamp 22 kcell t)]
+ [82
+  (no-fill t create-time "20220126:04:52:26" creator "rsw@gnu.org" idstamp 82 kcell t fontified t)]
  [32
-  (kcell t idstamp 32 rear-nonsticky t create-time "19940610:16:31:28" creator "rsw@gnu.org")]
+  (creator "rsw@gnu.org" create-time "19940610:16:31:28" rear-nonsticky t idstamp 32 kcell t)]
  [41
-  (kcell t idstamp 41 rear-nonsticky t create-time "19940610:18:55:09" creator "rsw@gnu.org")]
+  (creator "rsw@gnu.org" create-time "19940610:18:55:09" rear-nonsticky t idstamp 41 kcell t)]
  [42
-  (kcell t idstamp 42 rear-nonsticky t create-time "19940610:18:55:57" creator "rsw@gnu.org")]
+  (creator "rsw@gnu.org" create-time "19940610:18:55:57" rear-nonsticky t idstamp 42 kcell t)]
  [33
-  (kcell t idstamp 33 rear-nonsticky t create-time "19940610:16:31:29" creator "rsw@gnu.org")]
+  (creator "rsw@gnu.org" create-time "19940610:16:31:29" rear-nonsticky t idstamp 33 kcell t)]
  [47
-  (kcell t idstamp 47 rear-nonsticky t no-fill t create-time "19951022:22:59:26" creator "rsw@gnu.org")]
+  (creator "rsw@gnu.org" create-time "19951022:22:59:26" no-fill t rear-nonsticky t idstamp 47 kcell t)]
  [8
-  (kcell t idstamp 8 rear-nonsticky t create-time "19940104:17:38:29" creator "rsw@gnu.org")]
+  (creator "rsw@gnu.org" create-time "19940104:17:38:29" rear-nonsticky t idstamp 8 kcell t)]
  [28
-  (kcell t idstamp 28 rear-nonsticky t create-time "19940128:22:50:44" creator "rsw@gnu.org")]
+  (creator "rsw@gnu.org" create-time "19940128:22:50:44" rear-nonsticky t idstamp 28 kcell t)]
  [29
-  (kcell t idstamp 29 rear-nonsticky t create-time "19940128:22:50:54" creator "rsw@gnu.org")]
+  (creator "rsw@gnu.org" create-time "19940128:22:50:54" rear-nonsticky t idstamp 29 kcell t)]
  [10
-  (kcell t idstamp 10 rear-nonsticky t create-time "19940104:17:38:29" creator "rsw@gnu.org")]
+  (creator "rsw@gnu.org" create-time "19940104:17:38:29" rear-nonsticky t idstamp 10 kcell t)]
  [30
-  (kcell t idstamp 30 rear-nonsticky t create-time "19940129:00:27:59" creator "rsw@gnu.org")]
+  (creator "rsw@gnu.org" create-time "19940129:00:27:59" rear-nonsticky t idstamp 30 kcell t)]
  [62
-  (kcell t idstamp 62 rear-nonsticky t no-fill t create-time "19951026:08:32:57" creator "rsw@gnu.org")]
+  (creator "rsw@gnu.org" create-time "19951026:08:32:57" no-fill t rear-nonsticky t idstamp 62 kcell t)]
  [70
-  (kcell t idstamp 70 rear-nonsticky t no-fill t create-time "19951030:19:18:49" creator "rsw@gnu.org")]
+  (creator "rsw@gnu.org" create-time "19951030:19:18:49" no-fill t rear-nonsticky t idstamp 70 kcell t)]
  [71
-  (kcell t idstamp 71 rear-nonsticky t no-fill t create-time "19951030:19:19:40" creator "rsw@gnu.org")]
+  (creator "rsw@gnu.org" create-time "19951030:19:19:40" no-fill t rear-nonsticky t idstamp 71 kcell t)]
  [73
-  (kcell t idstamp 73 rear-nonsticky t no-fill t create-time "19951030:19:23:09" creator "rsw@gnu.org")]
+  (creator "rsw@gnu.org" create-time "19951030:19:23:09" no-fill t rear-nonsticky t idstamp 73 kcell t)]
  [63
-  (kcell t idstamp 63 rear-nonsticky t no-fill t create-time "19951026:19:31:34" creator "rsw@gnu.org")]
+  (creator "rsw@gnu.org" create-time "19951026:19:31:34" no-fill t rear-nonsticky t idstamp 63 kcell t)]
  [64
-  (kcell t idstamp 64 rear-nonsticky t no-fill t create-time "19951026:19:33:01" creator "rsw@gnu.org")]
+  (creator "rsw@gnu.org" create-time "19951026:19:33:01" no-fill t rear-nonsticky t idstamp 64 kcell t)]
  [69
-  (kcell t idstamp 69 rear-nonsticky t no-fill t create-time "19951029:06:24:35" creator "rsw@gnu.org")]
+  (creator "rsw@gnu.org" create-time "19951029:06:24:35" no-fill t rear-nonsticky t idstamp 69 kcell t)]
  [68
-  (kcell t idstamp 68 rear-nonsticky t no-fill t create-time "19951029:06:24:27" creator "rsw@gnu.org")]
+  (creator "rsw@gnu.org" create-time "19951029:06:24:27" no-fill t rear-nonsticky t idstamp 68 kcell t)]
  [65
-  (kcell t idstamp 65 rear-nonsticky t no-fill t create-time "19951026:19:33:08" creator "rsw@gnu.org")]
+  (creator "rsw@gnu.org" create-time "19951026:19:33:08" no-fill t rear-nonsticky t idstamp 65 kcell t)]
  [66
-  (kcell t idstamp 66 rear-nonsticky t no-fill t create-time "19951026:19:33:15" creator "rsw@gnu.org")]
+  (creator "rsw@gnu.org" create-time "19951026:19:33:15" no-fill t rear-nonsticky t idstamp 66 kcell t)]
  [77
-  (kcell t idstamp 77 rear-nonsticky t no-fill t create-time "19980226:19:54:44" creator "rsw@gnu.org")]
+  (creator "rsw@gnu.org" create-time "19980226:19:54:44" no-fill t rear-nonsticky t idstamp 77 kcell t)]
  [48
-  (kcell t idstamp 48 rear-nonsticky t no-fill t create-time "19951023:05:55:19" creator "rsw@gnu.org")]
+  (creator "rsw@gnu.org" create-time "19951023:05:55:19" no-fill t rear-nonsticky t idstamp 48 kcell t)]
  [57
-  (kcell t idstamp 57 rear-nonsticky t no-fill t create-time "19951023:10:07:06" creator "rsw@gnu.org")]
+  (creator "rsw@gnu.org" create-time "19951023:10:07:06" no-fill t rear-nonsticky t idstamp 57 kcell t)]
  [58
-  (kcell t idstamp 58 rear-nonsticky t no-fill t create-time "19951023:10:07:26" creator "rsw@gnu.org")]
+  (creator "rsw@gnu.org" create-time "19951023:10:07:26" no-fill t rear-nonsticky t idstamp 58 kcell t)]
  [49
-  (kcell t idstamp 49 rear-nonsticky t no-fill t create-time "19951023:05:55:55" creator "rsw@gnu.org")]
+  (creator "rsw@gnu.org" create-time "19951023:05:55:55" no-fill t rear-nonsticky t idstamp 49 kcell t)]
  [55
-  (kcell t idstamp 55 rear-nonsticky t no-fill t create-time "19951023:08:56:41" creator "rsw@gnu.org")]
+  (creator "rsw@gnu.org" create-time "19951023:08:56:41" no-fill t rear-nonsticky t idstamp 55 kcell t)]
  [50
-  (kcell t idstamp 50 rear-nonsticky t no-fill t create-time "19951023:05:57:26" creator "rsw@gnu.org")]
+  (creator "rsw@gnu.org" create-time "19951023:05:57:26" no-fill t rear-nonsticky t idstamp 50 kcell t)]
  [51
-  (kcell t idstamp 51 rear-nonsticky t no-fill t create-time "19951023:05:58:31" creator "rsw@gnu.org")]
+  (creator "rsw@gnu.org" create-time "19951023:05:58:31" no-fill t rear-nonsticky t idstamp 51 kcell t)]
  [56
-  (kcell t idstamp 56 rear-nonsticky t no-fill t create-time "19951023:08:57:09" creator "rsw@gnu.org")]
+  (creator "rsw@gnu.org" create-time "19951023:08:57:09" no-fill t rear-nonsticky t idstamp 56 kcell t)]
  [52
-  (kcell t idstamp 52 rear-nonsticky t no-fill t create-time "19951023:05:59:59" creator "rsw@gnu.org")]
+  (creator "rsw@gnu.org" create-time "19951023:05:59:59" no-fill t rear-nonsticky t idstamp 52 kcell t)]
  [53
-  (kcell t idstamp 53 rear-nonsticky t no-fill t create-time "19951023:06:00:48" creator "rsw@gnu.org")]
+  (creator "rsw@gnu.org" create-time "19951023:06:00:48" no-fill t rear-nonsticky t idstamp 53 kcell t)]
  [54
-  (kcell t idstamp 54 rear-nonsticky t no-fill t create-time "19951023:06:05:50" creator "rsw@gnu.org")]
+  (creator "rsw@gnu.org" create-time "19951023:06:05:50" no-fill t rear-nonsticky t idstamp 54 kcell t)]
  [26
-  (kcell t idstamp 26 rear-nonsticky t create-time "19940128:03:56:23" creator "rsw@gnu.org")]
+  (creator "rsw@gnu.org" create-time "19940128:03:56:23" rear-nonsticky t idstamp 26 kcell t)]
  [27
-  (kcell t idstamp 27 rear-nonsticky t create-time "19940128:22:36:54" creator "rsw@gnu.org")]
+  (creator "rsw@gnu.org" create-time "19940128:22:36:54" rear-nonsticky t idstamp 27 kcell t)]
  [59
-  (kcell t idstamp 59 rear-nonsticky t no-fill t create-time "19951024:03:40:05" creator "rsw@gnu.org")]
+  (creator "rsw@gnu.org" create-time "19951024:03:40:05" no-fill t rear-nonsticky t idstamp 59 kcell t)]
  [60
-  (kcell t idstamp 60 rear-nonsticky t no-fill t create-time "19951024:03:40:13" creator "rsw@gnu.org")]
+  (creator "rsw@gnu.org" create-time "19951024:03:40:13" no-fill t rear-nonsticky t idstamp 60 kcell t)]
  [61
-  (kcell t idstamp 61 rear-nonsticky t no-fill t create-time "19951024:03:40:42" creator "rsw@gnu.org")]
+  (creator "rsw@gnu.org" create-time "19951024:03:40:42" no-fill t rear-nonsticky t idstamp 61 kcell t)]
  [1
-  (kcell t idstamp 1 rear-nonsticky t create-time "19940104:17:38:29" creator "rsw@gnu.org")]
+  (creator "rsw@gnu.org" create-time "19940104:17:38:29" rear-nonsticky t idstamp 1 kcell t)]
  [11
-  (kcell t idstamp 11 rear-nonsticky t create-time "19940104:17:38:29" creator "rsw@gnu.org")]
+  (creator "rsw@gnu.org" create-time "19940104:17:38:29" rear-nonsticky t idstamp 11 kcell t)]
  [80
-  (fontified nil kcell t idstamp 80 creator "rsw@gnu.org" create-time "20220117:22:26:40" no-fill t)]
+  (no-fill t create-time "20220117:22:26:40" creator "rsw@gnu.org" idstamp 80 kcell t fontified nil)]
  [81
-  (fontified nil kcell t idstamp 81 creator "rsw@gnu.org" create-time "20220117:22:26:47" no-fill t)]
+  (no-fill t create-time "20220117:22:26:47" creator "rsw@gnu.org" idstamp 81 kcell t fontified nil)]
  [78
-  (fontified nil kcell t idstamp 78 creator "rsw@gnu.org" create-time "20220117:22:26:33" no-fill t)]
+  (no-fill t create-time "20220117:22:26:33" creator "rsw@gnu.org" idstamp 78 kcell t fontified nil)]
  [12
-  (kcell t idstamp 12 rear-nonsticky t create-time "19940104:17:38:29" creator "rsw@gnu.org")]
+  (creator "rsw@gnu.org" create-time "19940104:17:38:29" rear-nonsticky t idstamp 12 kcell t)]
  [44
-  (kcell t idstamp 44 rear-nonsticky t create-time "19940728:21:56:49" creator "rsw@gnu.org")]
+  (creator "rsw@gnu.org" create-time "19940728:21:56:49" rear-nonsticky t idstamp 44 kcell t)]
  [36
-  (kcell t idstamp 36 rear-nonsticky t create-time "19940610:16:49:34" creator "rsw@gnu.org")]
+  (creator "rsw@gnu.org" create-time "19940610:16:49:34" rear-nonsticky t idstamp 36 kcell t)]
  [37
-  (kcell t idstamp 37 rear-nonsticky t create-time "19940610:16:50:02" creator "rsw@gnu.org")]
+  (creator "rsw@gnu.org" create-time "19940610:16:50:02" rear-nonsticky t idstamp 37 kcell t)]
  [38
-  (kcell t idstamp 38 rear-nonsticky t create-time "19940610:16:50:13" creator "rsw@gnu.org")]
+  (creator "rsw@gnu.org" create-time "19940610:16:50:13" rear-nonsticky t idstamp 38 kcell t)]
  [13
-  (kcell t idstamp 13 rear-nonsticky t create-time "19940104:17:38:29" creator "rsw@gnu.org")]
+  (creator "rsw@gnu.org" create-time "19940104:17:38:29" rear-nonsticky t idstamp 13 kcell t)]
  [16
-  (kcell t idstamp 16 rear-nonsticky t create-time "19940104:17:38:29" creator "rsw@gnu.org")]
+  (creator "rsw@gnu.org" create-time "19940104:17:38:29" rear-nonsticky t idstamp 16 kcell t)]
  nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil]

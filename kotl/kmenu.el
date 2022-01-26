@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    28-Mar-94 at 11:22:09
-;; Last-Mod:     24-Jan-22 at 00:25:21 by Bob Weiner
+;; Last-Mod:     25-Jan-22 at 23:36:14 by Bob Weiner
 ;;
 ;; Copyright (C) 1994-2021  Free Software Foundation, Inc.
 ;; See the "../HY-COPY" file for license information.
@@ -101,7 +101,7 @@
       ["Add-at-Point"        klink:create                   t])
     (if (fboundp 'infodock-options-menu) (infodock-options-menu))
     '("Tree"
-      ["Copy-to-Buffer"      kotl-mode:copy-to-buffer       t]
+      ["Copy-to-Buffer"      kotl-mode:copy-tree-to-buffer  t]
       ["Demote"              kotl-mode:demote-tree
        :active t :keys "TAB"]
       ["Kill"                kotl-mode:kill-tree            t]

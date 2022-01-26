@@ -157,9 +157,12 @@
       to {C-c C-@} to prevent conflict with the global hycontrol-window-grid
       command bound to {C-c @}.
 
-    - The new commands, `kotl-mode:insert-region' and `kotl-mode:insert-tree'
-      insert parts of Koutlines directly into other buffers without having
-      to copy to a mail/message buffer first.
+    - New Copy Command: The new command, `kotl-mode:copy-tree-or-region-to-buffer',
+      bound to {C-c M-c} copies a Koutline tree or the active region
+      to a specified buffer.  Prompts dictate whether invisible text
+      is included or not.  This allows copying parts of Koutlines
+      directly into other buffers without having to copy to a
+      mail/message buffer first.
 
     - New Tree Demotion/Promotion Keys: Tree promotion and demotion keys now
       match the defaults in Org mode and Outline mode, plus some easier to
