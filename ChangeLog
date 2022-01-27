@@ -97,6 +97,10 @@
 * hypb.el (hypb--installation-type, hypb:configuration): Add function to
     provide installation type and version number and use it.
 
+2022-01-27  Mats Lidell  <matsl@gnu.org>
+
+* hargs.el (hargs:reading-symbol): Renaming var.
+
 2022-01-25  Bob Weiner  <rsw@gnu.org>
 
 * kotl/kotl-mode.el (kotl-mode:copy-region-to-buffer): Fix interactive args listed in wrong
