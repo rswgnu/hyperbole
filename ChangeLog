@@ -1,9 +1,17 @@
+2022-01-28  Mats Lidell  <matsl@gnu.org>
+
+* hargs.el (hargs:make-iform-vector): Converted to macro.
+    (hargs:iform-vector): Use defconst.
+    (hargs:iform-extensions-vector): Use defconst.
+    Patch from Stefan Monnier. Thank you Stefan.
+
 2022-01-27  Mats Lidell  <matsl@gnu.org>
 
 * hargs.el (hargs:reading-symbol): Renaming var.
     (hargs:find-tag-default): Remove own implementation for
     find-tag-default and find-tag--default and rely on implementation in
     Emacs.
+    Patch from Stefan Monnier. Thank you Stefan.
 
 2022-01-25  Bob Weiner  <rsw@gnu.org>
 
