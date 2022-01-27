@@ -1,6 +1,9 @@
 2022-01-27  Mats Lidell  <matsl@gnu.org>
 
 * hargs.el (hargs:reading-symbol): Renaming var.
+    (hargs:find-tag-default): Remove own implementation for
+    find-tag-default and find-tag--default and rely on implementation in
+    Emacs.
 
 2022-01-25  Bob Weiner  <rsw@gnu.org>
 
