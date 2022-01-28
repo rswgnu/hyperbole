@@ -773,7 +773,7 @@ help when appropriate."
 		   prompt
 		   ;; Match to "0" and visible cell labels only
 		   (cons "0"
-			 (kview:map-tree (lambda (kview) (kcell-view:label)) kview t t))
+			 (kview:map-tree (lambda (_view) (kcell-view:label)) kview t t))
 		   nil t (kcell-view:visible-label) 'kcell)))
    ;; Get kcell or path reference for use in a link.
    (?L . (klink . (hargs:read prompt nil default nil 'klink)))
