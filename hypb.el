@@ -3,9 +3,9 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     6-Oct-91 at 03:42:38
-;; Last-Mod:     24-Jan-22 at 00:21:55 by Bob Weiner
+;; Last-Mod:     28-Jan-22 at 23:49:07 by Mats Lidell
 ;;
-;; Copyright (C) 1991-2019  Free Software Foundation, Inc.
+;; Copyright (C) 1991-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
 ;;
 ;; This file is part of GNU Hyperbole.
@@ -107,6 +107,19 @@ Global keymap is used unless optional KEYMAP is given."
 	        "}"))
     (error "(hypb:cmd-key-string): Invalid cmd-sym arg: %s" cmd-sym)))
 
+(defun hypb--installation-type ()
+  "Return type of Hyperbole installation."
+  (let ((hypb-dir-name (file-name-nondirectory (directory-file-name hyperb:dir))))
+    (cond
+     ;; elpa-devel install -- hyperbole-8.0.0pre0.20220126.1138
+     ((string-match "hyperbole-\\([.[:digit:]]+pre[.[:digit:]]+\\).*" hypb-dir-name)
+      (list "elpa-devel" (match-string 1 hypb-dir-name)))
+     ;; git
+     ((file-exists-p (expand-file-name ".git" hyperb:dir))
+      (ignore-errors
+        (let ((default-directory hyperb:dir))
+          (list "git" (shell-command-to-string "git rev-parse HEAD"))))))))
+
 ;;;###autoload
 (defun hypb:configuration (&optional out-buf)
   "Insert Emacs configuration information at the end of optional OUT-BUF or the current buffer."
@@ -147,6 +160,9 @@ Global keymap is used unless optional KEYMAP is given."
                                (concat "PIEmail " pm-version))))))
       (when (and (boundp 'hnews:reader) (boundp 'gnus-version) hnews:reader)
         (insert (format "\tNews Reader: %s\n" gnus-version)))
+      (let ((install-type (hypb--installation-type)))
+        (when install-type
+          (insert (format "\tInstall:     %s, %s" (car install-type) (cadr install-type)))))
       (insert "\n")
       ;; Insert recent Hyperbole debugging messages if any.
       (when (get-buffer "*Messages*")

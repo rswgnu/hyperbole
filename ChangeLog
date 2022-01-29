@@ -1,5 +1,11 @@
-2022-01-25  Bob Weiner  <rsw@gnu.org>
+2022-01-28  Mats Lidell  <matsl@gnu.org>
 
+* test/hypb-tests.el (hypb--installation-type-test): Add unit test.
+
+* hypb.el (hypb--installation-type, hypb:configuration): Add function to
+    provide installation type and version number and use it.
+
+2022-01-25  Bob Weiner  <rsw@gnu.org>
 
 * kotl/kotl-mode.el (kotl-mode:copy-region-to-buffer): Fix interactive args listed in wrong
     order.
