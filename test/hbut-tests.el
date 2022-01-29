@@ -27,6 +27,14 @@ Needed since hyperbole expands all links to absolute paths and
 /tmp can be a symbolic link."
   (should (member tmp '(("/tmp") ("./tmp") ("/private/tmp")))))
 
+(defun hbut-tests--verify-hattr-at-p (actype args loc lbl-key)
+  "Verify the attribute of hbut at point.
+Checks ACTYPE, ARGS, LOC and LBL-KEY."
+  (should (eq (hattr:get (hbut:at-p) 'actype) actype))
+  (should (equal (hattr:get (hbut:at-p) 'args) args))
+  (should (equal (hattr:get (hbut:at-p) 'loc) loc))
+  (should (equal (hattr:get (hbut:at-p) 'lbl-key) lbl-key)))
+
 (ert-deftest ebut-program-link-to-directory ()
   "Programatically create ebut with link-to-directory."
   (let ((file (make-temp-file "hypb_" nil ".txt")))
@@ -47,6 +55,7 @@ Needed since hyperbole expands all links to absolute paths and
         (progn
           (find-file file)
           (ebut:program "label" 'link-to-directory temporary-file-directory)
+          (hbut-tests--verify-hattr-at-p 'actypes::link-to-directory (list temporary-file-directory) file "label")
           (should (eq (hattr:get (hbut:at-p) 'actype) 'actypes::link-to-directory))
           (should (equal (hattr:get (hbut:at-p) 'args) (list temporary-file-directory)))
           (should (equal (hattr:get (hbut:at-p) 'loc) file))
@@ -60,6 +69,7 @@ Needed since hyperbole expands all links to absolute paths and
         (progn
           (find-file file)
           (ebut:program "label" 'exec-shell-cmd "ls /tmp")
+          (hbut-tests--verify-hattr-at-p 'actypes::exec-shell-cmd '("ls /tmp") file "label")
           (should (eq (hattr:get (hbut:at-p) 'actype) 'actypes::exec-shell-cmd))
           (should (equal (hattr:get (hbut:at-p) 'args) '("ls /tmp")))
           (should (equal (hattr:get (hbut:at-p) 'loc) file))
@@ -116,6 +126,7 @@ Needed since hyperbole expands all links to absolute paths and
             (mock (find-file-noselect (expand-file-name hbmap:filename hbmap:dir-user)) => test-buffer)
             (gbut:ebut-program "global" 'eval-elisp '()))
 	  (with-current-buffer test-buffer
+            (hbut-tests--verify-hattr-at-p 'actypes::eval-elisp '(()) test-file "global")
             (should (eq (hattr:get (hbut:at-p) 'actype) 'actypes::eval-elisp))
             (should (equal (hattr:get (hbut:at-p) 'loc) test-file))
             (should (equal (hattr:get (hbut:at-p) 'args) '(())))
@@ -132,6 +143,7 @@ Needed since hyperbole expands all links to absolute paths and
             (mock (find-file-noselect (expand-file-name hbmap:filename hbmap:dir-user)) => test-buffer)
             (gbut:ebut-program "global" 'link-to-file test-file))
 	  (with-current-buffer test-buffer
+            (hbut-tests--verify-hattr-at-p 'actypes::link-to-file (list test-file) test-file "global")
             (should (eq (hattr:get (hbut:at-p) 'actype) 'actypes::link-to-file))
             (should (equal (hattr:get (hbut:at-p) 'args) (list test-file)))
             (should (equal (hattr:get (hbut:at-p) 'loc) test-file))
@@ -148,6 +160,7 @@ Needed since hyperbole expands all links to absolute paths and
             (mock (find-file-noselect (expand-file-name hbmap:filename hbmap:dir-user)) => test-buffer)
             (gbut:ebut-program "global" 'link-to-file-line test-file 10))
 	  (with-current-buffer test-buffer
+            (hbut-tests--verify-hattr-at-p 'actypes::link-to-file-line (list test-file 10) test-file "global")
             (should (eq (hattr:get (hbut:at-p) 'actype) 'actypes::link-to-file-line))
             (should (equal (hattr:get (hbut:at-p) 'args) (list test-file 10)))
             (should (equal (hattr:get (hbut:at-p) 'loc) test-file))
@@ -164,6 +177,7 @@ Needed since hyperbole expands all links to absolute paths and
             (mock (find-file-noselect (expand-file-name hbmap:filename hbmap:dir-user)) => test-buffer)
             (gbut:ebut-program "global" 'link-to-file-line-and-column test-file 10 20))
 	  (with-current-buffer test-buffer
+            (hbut-tests--verify-hattr-at-p 'actypes::link-to-file-line-and-column (list test-file 10 20) test-file "global")
             (should (eq (hattr:get (hbut:at-p) 'actype) 'actypes::link-to-file-line-and-column))
             (should (equal (hattr:get (hbut:at-p) 'args) (list test-file 10 20)))
             (should (equal (hattr:get (hbut:at-p) 'loc) test-file))
@@ -185,10 +199,7 @@ Needed since hyperbole expands all links to absolute paths and
         (progn
           (find-file test-file)
           (ebut:program "label" 'link-to-file-line-and-column test-file 2 3)
-          (should (eq (hattr:get (hbut:at-p) 'actype) 'actypes::link-to-file-line-and-column))
-          (should (equal (hattr:get (hbut:at-p) 'args) (list test-file 2 3)))
-            (should (equal (hattr:get (hbut:at-p) 'loc) test-file))
-          (should (equal (hattr:get (hbut:at-p) 'lbl-key) "label")))
+          (hbut-tests--verify-hattr-at-p 'actypes::link-to-file-line-and-column (list test-file 2 3) test-file "label"))
       (delete-file test-file))))
 
 ;; FIXME: This file can only be byte-compiled when `el-mock' is installed.

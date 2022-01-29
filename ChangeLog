@@ -42,6 +42,11 @@
 * hact.el (actype:act): Allow for builtin subr objects like 'cons';
     This fixes Action Buttons that start with <progn ...>, for example.
 
+2022-01-29  Mats Lidell  <matsl@gnu.org>
+
+* test/hbut-tests.el (hbut-tests--verify-hattr-at-p): Verify hbut
+    attribute helper.
+
 2022-01-29  Bob Weiner  <rsw@gnu.org>
 
 * hbut.el (hbut:key-list): Fix doc.
