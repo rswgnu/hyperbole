@@ -3,9 +3,9 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:     5-Apr-21 at 18:53:10
-;; Last-Mod:     24-Jan-22 at 00:41:04 by Bob Weiner
+;; Last-Mod:     28-Jan-22 at 23:49:07 by Mats Lidell
 ;;
-;; Copyright (C) 2021  Free Software Foundation, Inc.
+;; Copyright (C) 2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
 ;;
 ;; This file is part of GNU Hyperbole.
@@ -19,6 +19,7 @@
 (require 'hypb)
 (require 'hbut)
 (require 'ert)
+(require 'el-mock)
 
 ;; Test for replace-regexp-in-string copied from emacs src
 (ert-deftest hypb:replace-match-string-test ()
@@ -90,6 +91,33 @@
                    "a bbba"))
     (should (equal (hypb:replace-match-string "\\`\\|x" "--xx--" "z")
                    "z--zz--"))))
+
+;; RSW 2022-01-29: Comment this out until Mats and I decide how it should work
+;; (ert-deftest hypb--installation-type-test ()
+;;   "Verify installation type alternatives."
+;;   (let ((hyperb:dir "/home/user/.emacs.d/elpa/hyperbole-8.0.0pre0.20220126.1138"))
+;;     (should (equal (hypb--installation-type) '("elpa-devel" "8.0.0pre0.20220126.1138"))))
+;;   (let ((hyperb:dir "/a_git_folder"))
+;;     (with-mock
+;;       (mock (file-exists-p "/a_git_folder/.git") => t)
+;;       (mock (shell-command-to-string "git rev-parse HEAD") => "abcdefg")
+;;       (should (equal (hypb--installation-type) '("git" "abcdefg")))))
+;;   (let ((hyperb:dir "/a_git_folder"))
+;;     (with-mock
+;;       (mock (file-exists-p "/a_git_folder/.git") => t)
+;;       (cl-letf (((symbol-function 'shell-command-to-string)
+;;                  (lambda (_cmd) (error "Something bad happend"))))
+;;         (should (equal (hypb--installation-type) '("git" "abcdefg"))))))
+;;   (let ((hyperb:dir "/a_git_folder"))
+;;     (with-mock
+;;       (mock (file-exists-p "/a_git_folder/.git") => nil)
+;;       (should-not (hypb--installation-type)))))
+
+;; This file can't be byte-compiled without the `el-mock' package (because of
+;; the use of the `with-mock' macro), which is not a dependency of Hyperbole.
+;;  Local Variables:
+;;  no-byte-compile: t
+;;  End:
 
 (provide 'hypb-tests)
 ;;; hypb-tests.el ends here

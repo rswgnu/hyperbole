@@ -1,5 +1,8 @@
 2022-01-29  Bob Weiner  <rsw@gnu.org>
 
+* test/hypb-tests.el (hypb--installation-type-test): Comment out until decide
+    all contexts it should handle and when best to use it.
+
 * man/hyperbole.texi (Glossary): Add Klink and Kcell Ref definitions.
     Update idstamp definition to include 0 root cell.
 
@@ -7,8 +10,14 @@
     unless there is a kcell ref within the link.  Also, generalize so when in
     any programming major mode, klinks are recognized within comments only.
 
+2022-01-28  Mats Lidell  <matsl@gnu.org>
+
+* test/hypb-tests.el (hypb--installation-type-test): Add unit test.
+
 2022-01-25  Bob Weiner  <rsw@gnu.org>
 
+* hypb.el (hypb--installation-type, hypb:configuration): Add function to
+    provide installation type and version number and use it.
 
 * kotl/kotl-mode.el (kotl-mode:copy-region-to-buffer): Fix interactive args listed in wrong
     order.
