@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    15-Nov-93 at 12:15:16
-;; Last-Mod:     24-Jan-22 at 00:25:18 by Bob Weiner
+;; Last-Mod:     29-Jan-22 at 10:54:02 by Bob Weiner
 ;;
 ;; Copyright (C) 1993-2021  Free Software Foundation, Inc.
 ;; See the "../HY-COPY" file for license information.
@@ -138,6 +138,11 @@ link-end-position, (including delimiters)."
 	 (if (fboundp 'br-browser-buffer-p)
 	     (not (br-browser-buffer-p))
 	   t)
+	 ;; If in a programming mode, Klinks can occur only within comments.
+	 (if (derived-mode-p 'prog-mode)
+	     ;; Next line means point is within a comment
+	     (nth 4 (syntax-ppss))
+	   t)
 	 ;; If in a C-based mode, Klinks can only occur within comments.
 	 (if (and (memq major-mode klink:c-style-modes)
 		  (fboundp 'c-within-comment-p))
@@ -146,6 +151,7 @@ link-end-position, (including delimiters)."
 		   (and (re-search-backward "//\\|\n" nil t) (looking-at "//"))))
 	   t)
 	 ;; Don't match to C-style lines like:  #include < path >
+	 ;; even if inside a comment.
 	 (if (memq major-mode klink:c-style-modes)
 	     (save-excursion
 	       (beginning-of-line)
@@ -155,6 +161,7 @@ link-end-position, (including delimiters)."
 	   t)
 	 (save-excursion
 	   ;; Don't match Elisp print objects such as #<buffer>
+	   ;; even if inside a comment
 	   (and (search-backward "<" bol t)
 		(not (eq (preceding-char) ?#))
 		;; Don't match to \<(explicit)> Hyperbole buttons
@@ -168,11 +175,11 @@ link-end-position, (including delimiters)."
 		 (progn (setq path (substring referent 0 (match-beginning 0)))
 			(hpath:is-p path))
 	       (hpath:is-p referent)))
-	 ;; Eliminate matches to e-mail addresses like, <user@domain>.
+	 ;; Eliminate matches to e-mail addresses like, <user@domain>
 	 (not (string-match "[^<> \t\n\r\f][!&@]" referent))
 	 ;; Eliminate matches to URLs
 	 (not (string-match "\\`[a-zA-Z]+:" referent))
-	 ;; Don't match to <HTML> and </SGML> tags.
+	 ;; Don't match to <HTML> and </SGML> type tags
 	 (not (and (memq major-mode hui-select-markup-modes)
 		   ;; Assume , followed by a number is a klink.
 		   (not (string-match ",\\s-*[0-9]" referent))
@@ -196,7 +203,7 @@ See documentation for the `link-to-kotl' function for valid klink formats."
 
 (defact link-to-kotl (link)
   "Display at the top of another window the referent pointed to by LINK.
-LINK may be of any of the following forms, with or without delimiters:
+LINK may be of any of the following forms:
   < pathname [, cell-ref] >
   < [-!&] pathname >
   < @ cell-ref >
@@ -215,18 +222,18 @@ See documentation for `kcell:ref-to-id' for valid cell-ref formats."
     (hact 'link-to-kcell
 	  nil
 	  (kcell:ref-to-id (match-string 1 link))))
-   ((string-match
-     (format "\\`<?\\s-*\\([^ \t\n\r\f,<>]+\\)\\s-*\\(,\\s-*\\(%s\\)\\)?\\s-*>?\\'"
-	     klink:cell-ref-regexp)
-     link)
-    ;; < pathname [, cell-ref] >
+   ((and (string-match
+	  (format "\\`<?\\s-*\\([^ \t\n\r\f,<>]+\\)\\s-*\\(,\\s-*\\(%s\\)\\)?\\s-*>?\\'"
+		  klink:cell-ref-regexp)
+	  link)
+	 (match-end 3))
+    ;; < pathname, cell-ref >
     (hact 'link-to-kcell (match-string 1 link)
-	  (when (match-end 3)
-	    (kcell:ref-to-id (match-string 3 link)))))
+	  (kcell:ref-to-id (match-string 3 link))))
    ((string-match
      "\\`<?\\s-*\\(\\([-!&]\\)?\\s-*[^ \t\n\r\f,<>]+\\)\\s-*>?\\'" link)
     ;; < [-!&] pathname >
-    (hpath:find-other-window (match-string 1 link)))
+    (hpath:find (match-string 1 link)))
    (t (error "(link-to-kotl): Invalid link specifier, %s" link))))
 
 ;;; ************************************************************************

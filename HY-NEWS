@@ -194,6 +194,11 @@
 	kotl-mode:copy-absolute-klink-to-register
 	kotl-mode:copy-relative-klink-to-register
 
+    - Klinks Ignored Outside Comments in Programming Language Modes: In
+      previous Hyperbole versions, this was true for C-based language
+      modes.  Now it is true for any programming mode descended from
+      `prog-mode'.
+
     - Prevent Movement Outside Editable Cell Bounds: Add
       kotl-mode:pre-self-insert-command as a pre-command-hook
       to prevent Koutline editing with point in an invalid location,

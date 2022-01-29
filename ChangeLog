@@ -1,3 +1,12 @@
+2022-01-29  Bob Weiner  <rsw@gnu.org>
+
+* man/hyperbole.texi (Glossary): Add Klink and Kcell Ref definitions.
+    Update idstamp definition to include 0 root cell.
+
+* kotl/klink.el (link-to-kotl): Fix so does not treat pathname refs as Koutlines
+    unless there is a kcell ref within the link.  Also, generalize so when in
+    any programming major mode, klinks are recognized within comments only.
+
 2022-01-25  Bob Weiner  <rsw@gnu.org>
 
 
@@ -1016,13 +1025,13 @@ Delete knode.el and integrate functionality into kcell.el.
   kotl/kproperty.el: Merge in "kprop-em.el" and remove "kprop-xe.el".
 
 * kotl/kexport.el (kexport:html-file-klink): Change '\0' back to
-   '\\&' to prevent klink nul char insertion bug.
+    '\\&' to prevent klink nul char insertion bug.
                   (kexport:html): Fix cell label vertical alignment
-   with table row-level valign=text-bottom.
+    with table row-level valign=text-bottom.
 
 * kotl/klink.el (klink:ignore-modes, klink:c-style-modes): Add so
-    can customize which modes in which klinks are ignored to avoid
-    false matches.
+    can customize modes in which klinks are ignored to avoid false
+    matches.
 
 * hsettings.el (hyperbole-web-search-alist): Update 'gitHub'
     name.

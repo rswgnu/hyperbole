@@ -3038,7 +3038,7 @@ If FILE is @samp{nil}, use the current buffer.  If CELL-REF is
 @findex actypes link-to-kotl
 @item link-to-kotl
 Display at the top of a window the referent pointed to by LINK.
-LINK may be of any of the following forms, with or without delimiters:
+LINK may be of any of the following forms:
 @example
   < pathname [, cell-ref] >
   < [-!&] pathname >
@@ -5281,8 +5281,12 @@ two customizable variables which disable klink recognition in selected major
 modes, @code{klink:ignore-modes} and @code{klink:c-style-modes}.  Add a mode
 to one of these if you find any syntax that improperly registers as a klink.
 
-* kotl/klink.el (klink:ignore-modes, klink:c-style-modes): Add so
-    can customize.
+@code{klink:ignore-modes} is for non-programming modes, as Hyperbole ensures
+that within all programming major modes, klinks are recognized only when point
+is within a comment.
+
+@code{klink:c-style-modes} is rarely needed but is there if Hyperbole ever
+mistakenly recognizes a pattern within a comment as a klink when it isn't.
 
 
 @node Cell Attributes, Koutliner History, Links, Koutliner
@@ -5298,7 +5302,8 @@ has its own attribute list.  Every cell has three standard attributes:
 @cindex idstamp attribute
 @item idstamp
 The permanent id of the cell, typically used in cross-file hyperlinks
-that reference the cell.
+that reference the cell, this is a whole number that starts from 0, which
+is always the hidden root cell of the outline tree.
 
 @cindex creator attribute
 @cindex e-mail address
@@ -6752,7 +6757,6 @@ if any emacs-related terms are unfamiliar to you.
 @table @b
 
 @item Action
-@itemx Button Action
 An executable behavior associated with a Hyperbole button.  @dfn{Links}
 are a specific class of actions which display existing entities, such as
 files. See also @b{Action Type}.
@@ -7038,6 +7042,35 @@ A single sequence of keys that can invoke an Emacs command.
 A series of one or more Emacs key sequences delimited by braces that
 Hyperbole processes when activated as an implicit button, as if the
 keys were typed in by the user.
+
+@item Kcell Ref
+A reference to a Koutline cell.  Such a reference may be:
+
+  12       - a whole number representing a permanent idstamp
+
+or any of the following string forms:
+
+  1 or 1b   - relative id, augment style
+  1.2       - relative id, legal style
+  012       - permanent idstamp
+  1a=012    - both relative and permanent ids (in that order) separated by =
+  |viewspec - a viewspec setting, rather than a cell reference
+
+Optionally, any of these id forms (or the relative form) may be followed by
+zero or more whitespace characters, a | and some view specification
+characters.  @xref{View Specs}
+
+@item Klink
+An angle bracket, <>, delimited implicit button type that displays a
+koutline cell referent at the top of a window.  The link may be of any
+of the following forms:
+@example
+  < pathname [, kcell-ref] >
+  < [-!&] pathname >
+  < @@ kcell-ref >
+@end example
+
+See the above definition of @italic{Kcell Ref} for kcell-ref formats.
 
 @item Koutline
 A hierarchically ordered grouping of cells which may be stored as a file
@@ -8183,6 +8216,7 @@ Leave point at the start of the root cell of the new tree.
 @item kotl-mode:copy-tree-or-region-to-buffer  @bkbd{C-c M-c}
 If no usable active region, prompt for and copy a Koutline tree to a
 specified buffer, otherwise, copy the active region.
+
 Use 0 to copy the whole outline buffer.  Prompt for whether or not
 to expand and include any hidden/invisible text within the copied text.
 
@@ -8196,7 +8230,7 @@ With optional prefix arg DELETE-FLAG, delete region.
 Delete up to the preceding prefix ARG characters.
 Return number of characters deleted.
 Optional KILL-FLAG non-nil means save in kill ring instead of deleting.
-Does not delete across cell boundaries.
+Do not delete across cell boundaries.
 
 @findex kotl-mode:delete-blank-lines
 @item kotl-mode:delete-blank-lines  @bkbd{C-x C-o}
@@ -8212,7 +8246,7 @@ whitespace at the end of the cell.
 Delete up to prefix ARG characters following point.
 Return number of characters deleted.
 Optional KILL-FLAG non-nil means save in kill ring instead of deleting.
-Does not delete across cell boundaries.
+Do not delete across cell boundaries.
 
 @findex kotl-mode:delete-indentation
 @item kotl-mode:delete-indentation  @bkbd{M-^}

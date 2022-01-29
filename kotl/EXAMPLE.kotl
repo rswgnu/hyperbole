@@ -121,7 +121,7 @@
            of the root cell of the tree to move and then double click within
            the body of the root cell of the tree you want it to follow.
 
-      3b9. Tree Text or Region Copying to a Non-Koutline Buffer: 
+      3b9. Tree Text or Region Copying to a Non-Koutline Buffer:
             {C-c M-c} - Copy <tree> text or active region to a non-Koutline buffer.
             {C-c C-@} - Copy <tree> text to an outgoing mail message.
            

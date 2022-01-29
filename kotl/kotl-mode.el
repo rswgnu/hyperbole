@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    6/30/93
-;; Last-Mod:     25-Jan-22 at 23:46:26 by Bob Weiner
+;; Last-Mod:     29-Jan-22 at 09:58:17 by Bob Weiner
 ;;
 ;; Copyright (C) 1993-2021  Free Software Foundation, Inc.
 ;; See the "../HY-COPY" file for license information.
@@ -367,7 +367,7 @@ With optional prefix arg DELETE-FLAG, delete region."
   "Delete up to the preceding prefix ARG characters.
 Return number of characters deleted.
 Optional KILL-FLAG non-nil means save in kill ring instead of deleting.
-Does not delete across cell boundaries."
+Do not delete across cell boundaries."
   (interactive "*P")
   (when (called-interactively-p 'interactive)
     (when current-prefix-arg
@@ -404,7 +404,7 @@ whitespace at the end of the cell."
   "Delete up to prefix ARG characters following point.
 Return number of characters deleted.
 Optional KILL-FLAG non-nil means save in kill ring instead of deleting.
-Does not delete across cell boundaries."
+Do not delete across cell boundaries."
   (interactive "*P")
   (when (called-interactively-p 'interactive)
     (when current-prefix-arg
@@ -2683,7 +2683,10 @@ included only if INVISIBLE-FLAG is non-nil."
       (kotl-mode:copy-region-to-buffer target-buf start end nil invisible-flag))))
 
 (defun kotl-mode:copy-tree-or-region-to-buffer ()
-  "If no usable active region, prompt for and copy a Koutline tree to a specified buffer, otherwise, copy the active region."
+  "If no usable active region, prompt for and copy a Koutline tree to a specified buffer, otherwise, copy the active region.
+
+Use 0 to copy the whole outline buffer.  Prompt for whether or not
+to expand and include any hidden/invisible text within the copied text."
   (interactive)
   (call-interactively 
    (if (use-region-p)
@@ -3005,7 +3008,7 @@ Optionally, INDENT and region START and END may be given."
 
 (defun kotl-mode:delete-line (&optional pos)
   "Delete and return contents of cell line at point or optional POS as a string.
-Does not delete newline at end of line."
+Do not delete newline at end of line."
   (save-excursion
     (when pos
       (goto-char pos))
