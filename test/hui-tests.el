@@ -27,6 +27,14 @@
 (declare-function hy-test-helpers:consume-input-events "hy-test-helpers")
 
 
+(defun hui-tests--verify-hattr-at-p (actype args loc lbl-key)
+  "Verify the attribute of hbut at point.
+Checks ACTYPE, ARGS, LOC and LBL-KEY."
+  (should (eq (hattr:get (hbut:at-p) 'actype) actype))
+  (should (equal (hattr:get (hbut:at-p) 'args) args))
+  (should (equal (hattr:get (hbut:at-p) 'loc) loc))
+  (should (equal (hattr:get (hbut:at-p) 'lbl-key) lbl-key)))
+
 (ert-deftest hui-ibut-label-create ()
   "Create a label for an implicit button."
   (with-temp-buffer
@@ -58,6 +66,7 @@
           (find-file file)
           (should (hact 'kbd-key "C-h h e c label RET RET link-to-directory RET RET"))
           (hy-test-helpers:consume-input-events)
+          (hui-tests--verify-hattr-at-p 'actypes::link-to-directory '("./") file "label")
           (should (eq (hattr:get (hbut:at-p) 'actype) 'actypes::link-to-directory))
           (should (equal (hattr:get (hbut:at-p) 'args) '("./")))
           (should (equal (hattr:get (hbut:at-p) 'loc) file))
@@ -71,6 +80,7 @@
         (find-file file)
         (with-simulated-input "label RET RET www-url RET www.hypb.org RET"
           (hui:ebut-create)
+          (hui-tests--verify-hattr-at-p 'actypes::www-url '("www.hypb.org") file "label")
           (should (eq (hattr:get (hbut:at-p) 'actype) 'actypes::www-url))
           (should (equal (hattr:get (hbut:at-p) 'args) '("www.hypb.org")))
           (should (equal (hattr:get (hbut:at-p) 'loc) file))
@@ -85,12 +95,14 @@ Modifying the button but keeping the label creates a dubbel label."
         (find-file file)
         (with-simulated-input "label RET RET www-url RET www.hypb.org RET"
           (hui:ebut-create)
+          (hui-tests--verify-hattr-at-p 'actypes::www-url '("www.hypb.org") file "label")
           (should (eq (hattr:get (hbut:at-p) 'actype) 'actypes::www-url))
           (should (equal (hattr:get (hbut:at-p) 'args) '("www.hypb.org")))
           (should (equal (hattr:get (hbut:at-p) 'loc) file))
           (should (equal (hattr:get (hbut:at-p) 'lbl-key) "label")))
         (with-simulated-input "RET RET RET RET"
           (hui:ebut-modify "label")
+          (hui-tests--verify-hattr-at-p 'actypes::www-url '("www.hypb.org") file "label")
           (should (eq (hattr:get (hbut:at-p) 'actype) 'actypes::www-url))
           (should (equal (hattr:get (hbut:at-p) 'args) '("www.hypb.org")))
           (should (equal (hattr:get (hbut:at-p) 'lbl-key) "label"))
@@ -109,6 +121,7 @@ Modifying the button but keeping the label creates a dubbel label."
           (mark-word)
           (should (hact 'kbd-key "C-h h e c RET link-to-directory RET RET"))
           (hy-test-helpers:consume-input-events)
+          (hui-tests--verify-hattr-at-p 'actypes::link-to-directory '("./") file "label")
           (should (eq (hattr:get (hbut:at-p) 'actype) 'actypes::link-to-directory))
           (should (equal (hattr:get (hbut:at-p) 'args) '("./")))
           (should (equal (hattr:get (hbut:at-p) 'loc) file))
@@ -124,6 +137,7 @@ Modifying the button but keeping the label creates a dubbel label."
           (find-file file)
           (should (hact 'kbd-key "C-h h e c label RET RET www-url RET www.example.com RET"))
           (hy-test-helpers:consume-input-events)
+          (hui-tests--verify-hattr-at-p  'actypes::www-url '("www.example.com") file "label")
           (should (eq (hattr:get (hbut:at-p) 'actype) 'actypes::www-url))
           (should (equal (hattr:get (hbut:at-p) 'args) '("www.example.com")))
           (should (equal (hattr:get (hbut:at-p) 'loc) file))
@@ -139,6 +153,7 @@ Modifying the button but keeping the label creates a dubbel label."
           (find-file file)
           (should (hact 'kbd-key "C-h h e c label RET RET exec-shell-cmd RET ls SPC /tmp RET y n C-x C-s"))
           (hy-test-helpers:consume-input-events)
+          (hui-tests--verify-hattr-at-p 'actypes::exec-shell-cmd '("ls /tmp" t nil) file "label")
           (should (eq (hattr:get (hbut:at-p) 'actype) 'actypes::exec-shell-cmd))
           (should (equal (hattr:get (hbut:at-p) 'args) '("ls /tmp" t nil)))
           (should (equal (hattr:get (hbut:at-p) 'loc) file))
@@ -154,6 +169,7 @@ Modifying the button but keeping the label creates a dubbel label."
           (find-file file)
           (should (hact 'kbd-key "C-h h e c emacs-package-button RET RET link-to-Info-index-item RET (emacs)packag TAB RET"))
           (hy-test-helpers:consume-input-events)
+          (hui-tests--verify-hattr-at-p 'actypes::link-to-Info-index-item '("(emacs)Package") file "emacs-package-button")
           (should (eq (hattr:get (hbut:at-p) 'actype) 'actypes::link-to-Info-index-item))
           (should (equal (hattr:get (hbut:at-p) 'args) '("(emacs)Package")))
           (should (equal (hattr:get (hbut:at-p) 'loc) file))
@@ -172,6 +188,7 @@ Modifying the button but keeping the label creates a dubbel label."
             (mock (find-file-noselect gbut:file) => test-buffer)
             (hui:gibut-create "global" test-file))
 	  (with-current-buffer test-buffer
+            (hui-tests--verify-hattr-at-p 'actypes::link-to-file (list test-file) test-file "global")
             (should (eq (hattr:get (hbut:at-p) 'actype) 'actypes::link-to-file))
             (should (equal (hattr:get (hbut:at-p) 'args) (list test-file)))
             (should (equal (hattr:get (hbut:at-p) 'loc) test-file))
@@ -188,6 +205,7 @@ Modifying the button but keeping the label creates a dubbel label."
             (mock (find-file-noselect gbut:file) => test-buffer)
             (hui:gibut-create "global" (concat test-file ":10")))
 	  (with-current-buffer test-buffer
+            (hui-tests--verify-hattr-at-p 'actypes::link-to-file-line (list test-file 10) test-file "global")
             (should (eq (hattr:get (hbut:at-p) 'actype) 'actypes::link-to-file-line))
             (should (equal (hattr:get (hbut:at-p) 'args) (list test-file 10)))
             (should (equal (hattr:get (hbut:at-p) 'loc) test-file))
@@ -204,6 +222,7 @@ Modifying the button but keeping the label creates a dubbel label."
             (mock (find-file-noselect gbut:file) => test-buffer)
             (hui:gibut-create "global" (concat test-file ":10:20")))
 	  (with-current-buffer test-buffer
+            (hui-tests--verify-hattr-at-p 'actypes::link-to-file-line-and-column (list test-file 10 20) test-file "global")
             (should (eq (hattr:get (hbut:at-p) 'actype) 'actypes::link-to-file-line-and-column))
             (should (equal (hattr:get (hbut:at-p) 'args) (list test-file 10 20)))
             (should (equal (hattr:get (hbut:at-p) 'loc) test-file))
@@ -221,6 +240,7 @@ Modifying the button but keeping the label creates a dubbel label."
             (mock (find-file-noselect gbut:file) => test-buffer)
             (hui:gibut-create "global" (concat "\"" info-node "\"")))
 	  (with-current-buffer test-buffer
+            (hui-tests--verify-hattr-at-p 'actypes::link-to-Info-node (list info-node) test-file "global")
             (should (eq (hattr:get (hbut:at-p) 'actype) 'actypes::link-to-Info-node))
             (should (equal (hattr:get (hbut:at-p) 'args) (list info-node)))
             (should (equal (hattr:get (hbut:at-p) 'loc) test-file))

@@ -44,6 +44,9 @@
 
 2022-01-29  Mats Lidell  <matsl@gnu.org>
 
+* test/hui-tests.el (hui-tests--verify-hattr-at-p): Verify hbut attribute
+    helper.
+
 * test/hbut-tests.el (hbut-tests--verify-hattr-at-p): Verify hbut
     attribute helper.
 
