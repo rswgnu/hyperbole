@@ -55,11 +55,7 @@ Checks ACTYPE, ARGS, LOC and LBL-KEY."
         (progn
           (find-file file)
           (ebut:program "label" 'link-to-directory temporary-file-directory)
-          (hbut-tests--verify-hattr-at-p 'actypes::link-to-directory (list temporary-file-directory) file "label")
-          (should (eq (hattr:get (hbut:at-p) 'actype) 'actypes::link-to-directory))
-          (should (equal (hattr:get (hbut:at-p) 'args) (list temporary-file-directory)))
-          (should (equal (hattr:get (hbut:at-p) 'loc) file))
-          (should (equal (hattr:get (hbut:at-p) 'lbl-key) "label")))
+          (hbut-tests--verify-hattr-at-p 'actypes::link-to-directory (list temporary-file-directory) file "label"))
       (delete-file file))))
 
 (ert-deftest ebut-program-shell-cmd ()
@@ -69,11 +65,7 @@ Checks ACTYPE, ARGS, LOC and LBL-KEY."
         (progn
           (find-file file)
           (ebut:program "label" 'exec-shell-cmd "ls /tmp")
-          (hbut-tests--verify-hattr-at-p 'actypes::exec-shell-cmd '("ls /tmp") file "label")
-          (should (eq (hattr:get (hbut:at-p) 'actype) 'actypes::exec-shell-cmd))
-          (should (equal (hattr:get (hbut:at-p) 'args) '("ls /tmp")))
-          (should (equal (hattr:get (hbut:at-p) 'loc) file))
-          (should (equal (hattr:get (hbut:at-p) 'lbl-key) "label")))
+          (hbut-tests--verify-hattr-at-p 'actypes::exec-shell-cmd '("ls /tmp") file "label"))
       (delete-file file))))
 
 (ert-deftest ebut-delete-removes-ebut-and-returns-button-data ()
@@ -126,11 +118,7 @@ Checks ACTYPE, ARGS, LOC and LBL-KEY."
             (mock (find-file-noselect (expand-file-name hbmap:filename hbmap:dir-user)) => test-buffer)
             (gbut:ebut-program "global" 'eval-elisp '()))
 	  (with-current-buffer test-buffer
-            (hbut-tests--verify-hattr-at-p 'actypes::eval-elisp '(()) test-file "global")
-            (should (eq (hattr:get (hbut:at-p) 'actype) 'actypes::eval-elisp))
-            (should (equal (hattr:get (hbut:at-p) 'loc) test-file))
-            (should (equal (hattr:get (hbut:at-p) 'args) '(())))
-            (should (equal (hattr:get (hbut:at-p) 'lbl-key) "global"))))
+            (hbut-tests--verify-hattr-at-p 'actypes::eval-elisp '(()) test-file "global")))
       (delete-file test-file))))
 
 (ert-deftest gbut-program-link-to-file ()
@@ -143,11 +131,7 @@ Checks ACTYPE, ARGS, LOC and LBL-KEY."
             (mock (find-file-noselect (expand-file-name hbmap:filename hbmap:dir-user)) => test-buffer)
             (gbut:ebut-program "global" 'link-to-file test-file))
 	  (with-current-buffer test-buffer
-            (hbut-tests--verify-hattr-at-p 'actypes::link-to-file (list test-file) test-file "global")
-            (should (eq (hattr:get (hbut:at-p) 'actype) 'actypes::link-to-file))
-            (should (equal (hattr:get (hbut:at-p) 'args) (list test-file)))
-            (should (equal (hattr:get (hbut:at-p) 'loc) test-file))
-            (should (equal (hattr:get (hbut:at-p) 'lbl-key) "global"))))
+            (hbut-tests--verify-hattr-at-p 'actypes::link-to-file (list test-file) test-file "global")))
       (delete-file test-file))))
 
 (ert-deftest gbut-program-link-to-file-line ()
@@ -160,11 +144,7 @@ Checks ACTYPE, ARGS, LOC and LBL-KEY."
             (mock (find-file-noselect (expand-file-name hbmap:filename hbmap:dir-user)) => test-buffer)
             (gbut:ebut-program "global" 'link-to-file-line test-file 10))
 	  (with-current-buffer test-buffer
-            (hbut-tests--verify-hattr-at-p 'actypes::link-to-file-line (list test-file 10) test-file "global")
-            (should (eq (hattr:get (hbut:at-p) 'actype) 'actypes::link-to-file-line))
-            (should (equal (hattr:get (hbut:at-p) 'args) (list test-file 10)))
-            (should (equal (hattr:get (hbut:at-p) 'loc) test-file))
-            (should (equal (hattr:get (hbut:at-p) 'lbl-key) "global"))))
+            (hbut-tests--verify-hattr-at-p 'actypes::link-to-file-line (list test-file 10) test-file "global")))
       (delete-file test-file))))
 
 (ert-deftest gbut-program-link-to-file-line-and-column ()
@@ -177,11 +157,7 @@ Checks ACTYPE, ARGS, LOC and LBL-KEY."
             (mock (find-file-noselect (expand-file-name hbmap:filename hbmap:dir-user)) => test-buffer)
             (gbut:ebut-program "global" 'link-to-file-line-and-column test-file 10 20))
 	  (with-current-buffer test-buffer
-            (hbut-tests--verify-hattr-at-p 'actypes::link-to-file-line-and-column (list test-file 10 20) test-file "global")
-            (should (eq (hattr:get (hbut:at-p) 'actype) 'actypes::link-to-file-line-and-column))
-            (should (equal (hattr:get (hbut:at-p) 'args) (list test-file 10 20)))
-            (should (equal (hattr:get (hbut:at-p) 'loc) test-file))
-            (should (equal (hattr:get (hbut:at-p) 'lbl-key) "global"))))
+            (hbut-tests--verify-hattr-at-p 'actypes::link-to-file-line-and-column (list test-file 10 20) test-file "global")))
       (delete-file test-file))))
 
 (ert-deftest hypb:program-create-ebut-in-buffer ()
