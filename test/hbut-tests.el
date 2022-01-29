@@ -36,6 +36,7 @@ Needed since hyperbole expands all links to absolute paths and
           (ebut:program "label" 'link-to-directory "/tmp")
           (should (eq (hattr:get (hbut:at-p) 'actype) 'actypes::link-to-directory))
           (hbut-tests:should-match-tmp-folder (hattr:get (hbut:at-p) 'args))
+          (should (equal (hattr:get (hbut:at-p) 'loc) file))
           (should (equal (hattr:get (hbut:at-p) 'lbl-key) "label")))
       (delete-file file))))
 
@@ -48,6 +49,7 @@ Needed since hyperbole expands all links to absolute paths and
           (ebut:program "label" 'link-to-directory temporary-file-directory)
           (should (eq (hattr:get (hbut:at-p) 'actype) 'actypes::link-to-directory))
           (should (equal (hattr:get (hbut:at-p) 'args) (list temporary-file-directory)))
+          (should (equal (hattr:get (hbut:at-p) 'loc) file))
           (should (equal (hattr:get (hbut:at-p) 'lbl-key) "label")))
       (delete-file file))))
 
@@ -60,6 +62,7 @@ Needed since hyperbole expands all links to absolute paths and
           (ebut:program "label" 'exec-shell-cmd "ls /tmp")
           (should (eq (hattr:get (hbut:at-p) 'actype) 'actypes::exec-shell-cmd))
           (should (equal (hattr:get (hbut:at-p) 'args) '("ls /tmp")))
+          (should (equal (hattr:get (hbut:at-p) 'loc) file))
           (should (equal (hattr:get (hbut:at-p) 'lbl-key) "label")))
       (delete-file file))))
 
@@ -99,6 +102,7 @@ Needed since hyperbole expands all links to absolute paths and
 	  (with-current-buffer test-buffer
             (should (eq (hattr:get (hbut:at-p) 'actype) 'actypes::link-to-directory))
             (hbut-tests:should-match-tmp-folder (hattr:get (hbut:at-p) 'args))
+            (should (equal (hattr:get (hbut:at-p) 'loc) test-file))
             (should (equal (hattr:get (hbut:at-p) 'lbl-key) "global"))))
       (delete-file test-file))))
 
@@ -113,6 +117,7 @@ Needed since hyperbole expands all links to absolute paths and
             (gbut:ebut-program "global" 'eval-elisp '()))
 	  (with-current-buffer test-buffer
             (should (eq (hattr:get (hbut:at-p) 'actype) 'actypes::eval-elisp))
+            (should (equal (hattr:get (hbut:at-p) 'loc) test-file))
             (should (equal (hattr:get (hbut:at-p) 'args) '(())))
             (should (equal (hattr:get (hbut:at-p) 'lbl-key) "global"))))
       (delete-file test-file))))
@@ -129,6 +134,7 @@ Needed since hyperbole expands all links to absolute paths and
 	  (with-current-buffer test-buffer
             (should (eq (hattr:get (hbut:at-p) 'actype) 'actypes::link-to-file))
             (should (equal (hattr:get (hbut:at-p) 'args) (list test-file)))
+            (should (equal (hattr:get (hbut:at-p) 'loc) test-file))
             (should (equal (hattr:get (hbut:at-p) 'lbl-key) "global"))))
       (delete-file test-file))))
 
@@ -144,6 +150,7 @@ Needed since hyperbole expands all links to absolute paths and
 	  (with-current-buffer test-buffer
             (should (eq (hattr:get (hbut:at-p) 'actype) 'actypes::link-to-file-line))
             (should (equal (hattr:get (hbut:at-p) 'args) (list test-file 10)))
+            (should (equal (hattr:get (hbut:at-p) 'loc) test-file))
             (should (equal (hattr:get (hbut:at-p) 'lbl-key) "global"))))
       (delete-file test-file))))
 
@@ -159,6 +166,7 @@ Needed since hyperbole expands all links to absolute paths and
 	  (with-current-buffer test-buffer
             (should (eq (hattr:get (hbut:at-p) 'actype) 'actypes::link-to-file-line-and-column))
             (should (equal (hattr:get (hbut:at-p) 'args) (list test-file 10 20)))
+            (should (equal (hattr:get (hbut:at-p) 'loc) test-file))
             (should (equal (hattr:get (hbut:at-p) 'lbl-key) "global"))))
       (delete-file test-file))))
 
@@ -179,6 +187,7 @@ Needed since hyperbole expands all links to absolute paths and
           (ebut:program "label" 'link-to-file-line-and-column test-file 2 3)
           (should (eq (hattr:get (hbut:at-p) 'actype) 'actypes::link-to-file-line-and-column))
           (should (equal (hattr:get (hbut:at-p) 'args) (list test-file 2 3)))
+            (should (equal (hattr:get (hbut:at-p) 'loc) test-file))
           (should (equal (hattr:get (hbut:at-p) 'lbl-key) "label")))
       (delete-file test-file))))
 
