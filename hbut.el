@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    18-Sep-91 at 02:57:09
-;; Last-Mod:     24-Jan-22 at 00:18:32 by Bob Weiner
+;; Last-Mod:     30-Jan-22 at 03:17:19 by Bob Weiner
 ;;
 ;; Copyright (C) 1991-2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -17,7 +17,8 @@
 ;;; Other required Elisp libraries
 ;;; ************************************************************************
 
-(eval-and-compile (mapc #'require '(elisp-mode help-mode hversion hmoccur
+;; Require 'cl for `copy-list'
+(eval-and-compile (mapc #'require '(cl elisp-mode help-mode hversion hmoccur
 				    hbmap htz hbdata hact view)))
 
 ;;; ************************************************************************
@@ -1422,7 +1423,7 @@ source file for the buttons in the menu, if any.")
 ;;; ------------------------------------------------------------------------
 
 (defun    hbut:key-list ()
-  "Return list of global button label keys."
+  "Return list of explicit and named implicit button label keys in current buffer."
   (nconc (hbut:ebut-key-list) (hbut:ibut-key-list)))
 
 (defun    hbut:ebut-key-list (&optional key-src)
@@ -1534,6 +1535,9 @@ excluding delimiters, not just one."
 		  (or (hattr:get 'hbut:current 'args)
 		      (not (listp args))
 		      (progn
+			(setq args (copy-list args))
+			(when (eq (car args) #'hact)
+			  (setq args (cdr args)))
 			(hattr:set 'hbut:current 'actype
 				   (or
 				    ;; Hyperbole action type

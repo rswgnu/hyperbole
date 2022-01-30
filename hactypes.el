@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    23-Sep-91 at 20:34:36
-;; Last-Mod:     24-Jan-22 at 00:16:30 by Bob Weiner
+;; Last-Mod:     29-Jan-22 at 19:47:39 by Bob Weiner
 ;;
 ;; Copyright (C) 1991-2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -60,7 +60,8 @@ inserted, delete the completions window."
   "Display a message showing the result value of a BOOL-EXPR.
 Return any non-nil value or t."
   (let ((result (eval bool-expr t)))
-    (message "Boolean result (%s) = %s" (if result "True" "False") (prin1-to-string result))
+    (message "Boolean result (%s) = %S; Expr: %S"
+	     (if result "True" "False") result bool-expr)
     (or result t)))
 
 (defact display-variable (var)

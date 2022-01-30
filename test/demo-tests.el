@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    30-Jan-21 at 12:00:00
-;; Last-Mod:     24-Jan-22 at 00:38:00 by Bob Weiner
+;; Last-Mod:     30-Jan-22 at 03:11:47 by Bob Weiner
 ;;
 ;; Copyright (C) 2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -202,15 +202,42 @@
         (goto-char 5)
         (action-key)
         (should (string= "DEMO" (buffer-name)))
-        (should (looking-at "\s*Table of Contents")))
+        (should (= 5 (line-number-at-pos (point)))))
     (kill-buffer "DEMO")))
 
-(ert-deftest demo-implicit-button-action-button-function-calls-test ()
+(ert-deftest demo-implicit-button-action-button-function-call-test ()
   (with-temp-buffer
     (insert "<message \"%d\" (eval (+ 2 2))>")
     (goto-char 2)
     (action-key)
     (hy-test-helpers:should-last-message "4")))
+
+(ert-deftest demo-implicit-button-action-button-sexp-test ()
+  (with-temp-buffer
+    (insert
+     "<progn (mapc (lambda (f) (bury-buffer (find-file-noselect
+                                             (expand-file-name f hyperb:dir))))
+		   '(\"hibtypes.el\" \"hactypes.el\" \"hsettings.el\"))
+	     (message \"Last 3 buffers are: %S\"
+		      (mapcar #'buffer-name
+			      (nthcdr (- (length (buffer-list)) 3) (buffer-list))))>")
+    (goto-char 2)
+    (action-key)
+    (let* ((bufs (reverse (buffer-list)))
+ 	   (hsettings-buf (buffer-name (nth 0 bufs)))
+	   (hactypes-buf  (buffer-name (nth 1 bufs)))
+	   (hibtypes-buf  (buffer-name (nth 2 bufs))))
+      (should (and (hy-test-helpers:should-last-message "Last 3 buffers are")
+		   (string-match-p "hsettings\\.el" hsettings-buf)
+		   (string-match-p "hactypes\\.el"  hactypes-buf)
+		   (string-match-p "hibtypes\\.el"  hibtypes-buf))))))
+
+(ert-deftest demo-implicit-button-action-button-boolean-function-call-test ()
+  (with-temp-buffer
+    (insert "<string-empty-p \"False\">")
+    (goto-char 2)
+    (action-key)
+    (hy-test-helpers:should-last-message "Boolean result (False) = nil")))
 
 (ert-deftest demo-implicit-button-action-button-variable-display-test ()
   (with-temp-buffer

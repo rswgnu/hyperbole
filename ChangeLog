@@ -1,4 +1,25 @@
+2022-01-30  Bob Weiner  <rsw@gnu.org>
+
+* hact.el (actype:act): Allow for builtin subr objects like 'cons';
+    This fixes Action Buttons that start with <progn ...>, for example.
+
 2022-01-29  Bob Weiner  <rsw@gnu.org>
+
+* hbut.el (hbut:key-list): Fix doc.
+
+* test/demo-tests.el (demo-implicit-button-action-button-sexp-test):
+                     (demo-implicit-button-action-button-boolean-function-call-test):
+    Add to test Action Button sexp and boolean functions.
+
+* hactypes.el (display-boolean): Change to add 'bool-expr' to output msg.
+
+* hibtypes.el (action): Fix bug that when intern-soft returns nil, then check
+    if returned symbol is boundp, neglected to check that symbol was not nil
+    and therefore (boundp nil) was returning t, causing the logic to misfire.
+    Also, add 'hact' calls at the end and double quote variable args or will
+    trigger an error.
+
+* hact.el (actype:eval): Simplify action with args call.
 
 * hycontrol.el (hycontrol-invert-prefix-arg): Add to invert prefix arg or change
     0 to -1.

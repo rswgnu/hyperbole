@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 20:45:31
-;; Last-Mod:     24-Jan-22 at 00:31:57 by Bob Weiner
+;; Last-Mod:     30-Jan-22 at 03:12:41 by Bob Weiner
 ;;
 ;; Copyright (C) 1991-2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -1351,12 +1351,15 @@ arg1 ... argN '>'.  For example, <mail nil \"user@somewhere.org\">."
               lbl (substring lbl 1)))
       (setq actype (if (string-match-p " " lbl) (car (split-string lbl)) lbl)
             actype-sym (intern-soft (concat "actypes::" actype))
-            actype (or (and (or (fboundp actype-sym) (boundp actype-sym)) actype-sym)
-                       (progn (setq actype-sym (intern-soft actype))
-                              (and (or (fboundp actype-sym) (boundp actype-sym)) actype-sym))))
-      ;; Ignore unbound symbols
-      (unless (and actype (or (fboundp actype) (boundp actype) (special-form-p actype)))
-        (setq actype nil))
+	    ;; Must ignore that (boundp nil) would be t here.
+            actype (or (and actype-sym
+			    (or (fboundp actype-sym) (boundp actype-sym)
+				(special-form-p actype-sym))
+			    actype-sym)
+                       (and (setq actype-sym (intern-soft actype))
+			    (or (fboundp actype-sym) (boundp actype-sym)
+				(special-form-p actype-sym))
+			    actype-sym)))
       (when actype
         (ibut:label-set lbl start-pos end-pos)
         (setq action (read (concat "(" lbl ")"))
@@ -1364,7 +1367,8 @@ arg1 ... argN '>'.  For example, <mail nil \"user@somewhere.org\">."
         (cond ((and (symbolp actype) (fboundp actype)
                     (string-match "-p\\'" (symbol-name actype)))
                ;; Is a function with a boolean result
-               (setq action `(display-boolean ',action)
+               (setq args `(',action)
+		     action `(display-boolean ',action)
                      actype #'display-boolean))
               ((and (null args) (symbolp actype) (boundp actype)
                     (or var-flag (not (fboundp actype))))
@@ -1378,22 +1382,26 @@ arg1 ... argN '>'.  For example, <mail nil \"user@somewhere.org\">."
                    #'actype:identity
                  #'actype:eval)))
           (if (eq hrule:action #'actype:identity)
-              (apply hrule:action actype args)
-            (apply hrule:action actype (mapcar #'eval args))))))))
+              `(hact ,actype ,@args)
+            `(hact ,actype ,@(mapcar #'eval ,args))))))))
 
-;; !! Todo: Finish this
-
-;; (defun action:help (label)
-;;   "Display documentation for action button function or variable."
-;;   (interactive (list (hargs:read-match "Report on global button labeled: "
-;; 				       (mapcar 'list (gbut:label-list))
-;; 				       nil t nil 'hbut)))
-;;   (let* ((lbl-key (hbut:label-to-key label))
-;; 	 (but (hbut:get lbl-key nil gbut:file)))
-;;     (if but
-;; 	(hbut:report but)
-;;       (error "(gbut:help): No global button labeled: %s" label))))
-
+(defun action:help (hbut)
+  "Display documentation for action button at point.
+If a boolean function or variable, display its value."
+  (interactive
+   (list
+    (when hbut
+      (hbut:label hbut))))
+  (when (hbut:is-p hbut)
+    (let* ((label (hbut:key-to-label (hattr:get hbut 'lbl-key)))
+	   (actype (hattr:get hbut 'actype))
+	   (args (hattr:get hbut 'args)))
+      (setq actype (or (htype:def-symbol actype) actype))
+      (if hbut
+	  (progn (hbut:report hbut)
+		 (when (memq actype '(display-boolean display-variable))
+		   (apply #'actype:eval actype args)))
+	(error "(action:help): No action button labeled: %s" label)))))
 
 ;;; ========================================================================
 ;;; Inserts completion into minibuffer or other window.

@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    18-Sep-91 at 02:57:09
-;; Last-Mod:     24-Jan-22 at 00:15:02 by Bob Weiner
+;; Last-Mod:     30-Jan-22 at 03:07:43 by Bob Weiner
 ;;
 ;; Copyright (C) 1991-2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -416,6 +416,7 @@ performing ACTION."
 	(run-hooks 'action-act-hook)
 	(prog1 (or (if (or (symbolp action) (listp action)
 			   (hypb:emacs-byte-code-p action)
+			   (subrp action)
 			   (and (stringp action) (not (integerp action))
 				(setq action (key-binding action))))
 		       (eval (cons action args))
@@ -443,8 +444,7 @@ and ARGS are extracted.  ACTYPE may be a symbol or symbol name for
 either an action type or a function.  Run `action-act-hook' before
 performing ACTION."
   (let ((prefix-arg current-prefix-arg)
-	(action (actype:action actype))
-	(act '(apply action args)))
+	(action (actype:action actype)))
     (if (null action)
 	(error "(actype:act): Null action for: `%s'" actype)
       (let ((hist-elt (hhist:element)))
@@ -453,7 +453,7 @@ performing ACTION."
 		       (hypb:emacs-byte-code-p action)
 		       (and (stringp action) (not (integerp action))
 			    (setq action (key-binding action))))
-		   (eval act)
+		   (apply action args)
 		 (eval action))
 	  (hhist:add hist-elt))))))
 
