@@ -7,7 +7,7 @@
 @c Author:       Bob Weiner
 @c
 @c Orig-Date:     6-Nov-91 at 11:18:03
-@c Last-Mod:     30-Jan-22 at 12:16:37 by Bob Weiner
+@c Last-Mod:     30-Jan-22 at 12:57:08 by Bob Weiner
 
 @c %**start of header (This is for running Texinfo on a region.)
 @setfilename hyperbole.info
@@ -156,7 +156,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</P>
 
 <PRE>
 Edition 8.0.0pre
-Printed January 29, 2022.
+Printed January 30, 2022.
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -198,7 +198,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 @example
 Edition 8.0.0pre
-January 29, 2022
+January 30, 2022
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -5293,7 +5293,7 @@ view specification of: blank lines turned off, cutoff after one line
 per cell, and showing ellipses for cells or trees which are collapsed.
 
 @cindex klink, view spec
-@cindex view spec klink
+@cindex view spec, klink
 @item view spec
 The third format sets a view spec for the current koutline.  For
 example, @samp{<|ben>}, when activated, sets the view in the current
@@ -7338,13 +7338,13 @@ several lines to your personal Emacs initialization file, @file{~/.emacs}.
 (For further details, @pxref{Init File,,The Emacs Initialization File,emacs,
 the GNU Emacs Manual}).
 
-@noindent
-Below are the lines to add:
-
 @lisp
 @group
+;; Below are the lines to add:
+
 (when (< emacs-major-version 27)
-  (error "Hyperbole requires Emacs 27 or above; you are running version %d" emacs-major-version))
+  (error "Hyperbole requires Emacs 27 or above, not %d"
+         emacs-major-version))
 (require 'package)
 (unless (package-installed-p 'hyperbole)
   (package-refresh-contents)	
@@ -7387,15 +7387,16 @@ several lines to your personal Emacs initialization file, @file{~/.emacs}.
 (For further details, @pxref{Init File,,The Emacs Initialization File,emacs,
 the GNU Emacs Manual}).
 
-@noindent
-Below are the lines to add:
-
 @lisp
 @group
+;; Below are the lines to add:
+
 (when (< emacs-major-version 27)
-  (error "Hyperbole requires Emacs 27 or above; you are running version %d" emacs-major-version))
+  (error "Hyperbole requires Emacs 27 or above, not %d"
+         emacs-major-version))
 (require 'package)
-(add-to-list 'package-archives '("gnu-devel" . "https://elpa.gnu.org/devel/"))
+(add-to-list 'package-archives
+             '("gnu-devel" . "https://elpa.gnu.org/devel/"))
 (unless (package-installed-p 'hyperbole)
   (package-refresh-contents)
   (package-install 'hyperbole))
@@ -7433,19 +7434,18 @@ several lines to your personal Emacs initialization file, @file{~/.emacs}.
 (For further details, @pxref{Init File,,The Emacs Initialization File,emacs,
 the GNU Emacs Manual}).
 
-@noindent
-Below are the lines to add:
-
-@lisp
+@smalllisp
 @group
 ;; Use this in your Emacs init file to install Straight
 (progn
   (when (< emacs-major-version 27)
-    (error "Hyperbole requires Emacs 27 or above; you are running version %d" emacs-major-version))
+    (error "Hyperbole requires Emacs 27 or above, not %d"
+           emacs-major-version))
   (defvar bootstrap-version)
   (setq package-enable-at-startup nil)
   (let ((bootstrap-file
-         (expand-file-name "straight/repos/straight.el/bootstrap.el" user-emacs-directory))
+         (expand-file-name "straight/repos/straight.el/bootstrap.el"
+                           user-emacs-directory))
         (bootstrap-version 5))
     (unless (file-exists-p bootstrap-file)
       (with-current-buffer
@@ -7455,9 +7455,7 @@ Below are the lines to add:
         (goto-char (point-max))
         (eval-print-last-sexp)))
     (load bootstrap-file nil 'nomessage)))
-@end group
 
-@group
 ;; Then use this to install Hyperbole
 (straight-use-package
  '(hyperbole
@@ -7465,7 +7463,7 @@ Below are the lines to add:
    :repo "https://git.savannah.gnu.org/git/hyperbole.git"
    :config (hyperbole-mode 1)))
 @end group
-@end lisp
+@end smalllisp
 
 Now save the file and restart Emacs.  Hyperbole will then be downloaded
 and compiled for use with your version of Emacs; give it a minute or two.
@@ -7479,20 +7477,15 @@ everything by hand, then you can obtain Hyperbole from a tarball:
 @noindent
 Download either:
 
-@noindent
-1. a stable release tar.gz source archive from either:
+@table @asis
+@item 1. a stable release tar.gz source archive from either:
 @url{ftp://ftp.gnu.org/gnu/hyperbole/} or
 @url{http://ftpmirror.gnu.org/hyperbole/}, which will find the closest
 mirror of the GNU ftp site and show it to you.
 
-@noindent
-or
-
-@noindent
-2. the latest in-development pre-release tar.gz source archive linked
-to at the top of this web page:
+@item 2. the latest in-development pre-release tar.gz source archive linked to at the top of this web page:
 @url{https://elpa.gnu.org/devel/hyperbole.html}.
-
+@end table
 
 Then decompress and unpack the archive to a directory of your
 choosing.  Move into the @file{hyperbole-<version>/} directory and execute
@@ -7505,8 +7498,10 @@ lines to your personal Emacs initialization file,
 @group
 (unless (and (featurep 'hyperbole) hyperbole-mode)
   (when (< emacs-major-version 27)
-    (error "Hyperbole requires Emacs 27 or above; you are running version %d" emacs-major-version))
-  (push "<directory-ending-with-hyperbole-where-you-unpacked>" load-path)
+    (error "Hyperbole requires Emacs 27 or above, not %d"
+           emacs-major-version))
+  (push "<directory-ending-with-hyperbole-where-you-unpacked>"
+        load-path)
   (require 'hyperbole)
   (hyperbole-mode 1))
 @end group
@@ -7596,7 +7591,7 @@ All of these variables are defined within @file{hpath.el}.
 
 @example
 Referent Category             Variable Setting
-========================================================================
+======================================================================
 Internal Image Display        hpath:native-image-suffixes
 Internal Custom Display       hpath:internal-display-alist
 External Display              hpath:external-display-alist
@@ -7637,13 +7632,14 @@ The first regular expression that matches each filename is the one
 used.  This can be used to format raw data files for convenient
 display.
 
+@noindent
 By default, this setting handles the following types of files:
 @table @emph
-@item Audio Files
+@item @bullet{} Audio Files
 Major audio format files are played with the @code{play-sound-file} command.
-@item Info Manuals
+@item @bullet{} Info Manuals
 Files with a @file{.info} suffix (may also be compressed) are displayed in the Info browser.
-@item RDB Files
+@item @bullet{} RDB Files
 Files with an @file{.rdb} suffix are displayed as relational databases using the RDB package
 available with InfoDock.
 @end table
@@ -9126,6 +9122,7 @@ When company-mode is active:
 @end group
 @end format
 
+@page
 @node Smart Key - Org Mode, Smart Key - Ivy, Smart Key - Company Mode, Smart Keyboard Keys
 @subsection Smart Key - Org Mode
 

@@ -370,7 +370,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</P>
 
 <PRE>
 Edition 8.0.0pre
-Printed January 29, 2022.
+Printed January 30, 2022.
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -6280,7 +6280,7 @@ view specification of: blank lines turned off, cutoff after one line
 per cell, and showing ellipses for cells or trees which are collapsed.
 </p>
 <span id="index-klink_002c-view-spec"></span>
-<span id="index-view-spec-klink"></span>
+<span id="index-view-spec_002c-klink"></span>
 </dd>
 <dt><em>view spec</em></dt>
 <dd><p>The third format sets a view spec for the current koutline.  For
@@ -8607,11 +8607,12 @@ and move on to the next section, see <a href="#Invocation">Invocation</a>.
 several lines to your personal Emacs initialization file, <samp>~/.emacs</samp>.
 (For further details, see <a href="https://www.gnu.org/software/emacs/manual/html_mono/emacs.html#Init-File">The Emacs Initialization File</a> in <cite>the GNU Emacs Manual</cite>).
 </p>
-<p>Below are the lines to add:
-</p>
 <div class="lisp">
-<pre class="lisp">(when (&lt; emacs-major-version 27)
-  (error &quot;Hyperbole requires Emacs 27 or above; you are running version %d&quot; emacs-major-version))
+<pre class="lisp">;; Below are the lines to add:
+
+(when (&lt; emacs-major-version 27)
+  (error &quot;Hyperbole requires Emacs 27 or above, not %d&quot;
+         emacs-major-version))
 (require 'package)
 (unless (package-installed-p 'hyperbole)
   (package-refresh-contents)	
@@ -8656,13 +8657,15 @@ and move on to the next section, see <a href="#Invocation">Invocation</a>.
 several lines to your personal Emacs initialization file, <samp>~/.emacs</samp>.
 (For further details, see <a href="https://www.gnu.org/software/emacs/manual/html_mono/emacs.html#Init-File">The Emacs Initialization File</a> in <cite>the GNU Emacs Manual</cite>).
 </p>
-<p>Below are the lines to add:
-</p>
 <div class="lisp">
-<pre class="lisp">(when (&lt; emacs-major-version 27)
-  (error &quot;Hyperbole requires Emacs 27 or above; you are running version %d&quot; emacs-major-version))
+<pre class="lisp">;; Below are the lines to add:
+
+(when (&lt; emacs-major-version 27)
+  (error &quot;Hyperbole requires Emacs 27 or above, not %d&quot;
+         emacs-major-version))
 (require 'package)
-(add-to-list 'package-archives '(&quot;gnu-devel&quot; . &quot;https://elpa.gnu.org/devel/&quot;))
+(add-to-list 'package-archives
+             '(&quot;gnu-devel&quot; . &quot;https://elpa.gnu.org/devel/&quot;))
 (unless (package-installed-p 'hyperbole)
   (package-refresh-contents)
   (package-install 'hyperbole))
@@ -8702,17 +8705,17 @@ and move on to the next section, see <a href="#Invocation">Invocation</a>.
 several lines to your personal Emacs initialization file, <samp>~/.emacs</samp>.
 (For further details, see <a href="https://www.gnu.org/software/emacs/manual/html_mono/emacs.html#Init-File">The Emacs Initialization File</a> in <cite>the GNU Emacs Manual</cite>).
 </p>
-<p>Below are the lines to add:
-</p>
 <div class="lisp">
 <pre class="lisp">;; Use this in your Emacs init file to install Straight
 (progn
   (when (&lt; emacs-major-version 27)
-    (error &quot;Hyperbole requires Emacs 27 or above; you are running version %d&quot; emacs-major-version))
+    (error &quot;Hyperbole requires Emacs 27 or above, not %d&quot;
+           emacs-major-version))
   (defvar bootstrap-version)
   (setq package-enable-at-startup nil)
   (let ((bootstrap-file
-         (expand-file-name &quot;straight/repos/straight.el/bootstrap.el&quot; user-emacs-directory))
+         (expand-file-name &quot;straight/repos/straight.el/bootstrap.el&quot;
+                           user-emacs-directory))
         (bootstrap-version 5))
     (unless (file-exists-p bootstrap-file)
       (with-current-buffer
@@ -8722,9 +8725,8 @@ several lines to your personal Emacs initialization file, <samp>~/.emacs</samp>.
         (goto-char (point-max))
         (eval-print-last-sexp)))
     (load bootstrap-file nil 'nomessage)))
-</pre><pre class="lisp">
 
-</pre><pre class="lisp">;; Then use this to install Hyperbole
+;; Then use this to install Hyperbole
 (straight-use-package
  '(hyperbole
    :host nil
@@ -8747,17 +8749,17 @@ everything by hand, then you can obtain Hyperbole from a tarball:
 </p>
 <p>Download either:
 </p>
-<p>1. a stable release tar.gz source archive from either:
-<a href="ftp://ftp.gnu.org/gnu/hyperbole/">ftp://ftp.gnu.org/gnu/hyperbole/</a> or
+<dl compact="compact">
+<dt>1. a stable release tar.gz source archive from either:</dt>
+<dd><p><a href="ftp://ftp.gnu.org/gnu/hyperbole/">ftp://ftp.gnu.org/gnu/hyperbole/</a> or
 <a href="http://ftpmirror.gnu.org/hyperbole/">http://ftpmirror.gnu.org/hyperbole/</a>, which will find the closest
 mirror of the GNU ftp site and show it to you.
 </p>
-<p>or
-</p>
-<p>2. the latest in-development pre-release tar.gz source archive linked
-to at the top of this web page:
-<a href="https://elpa.gnu.org/devel/hyperbole.html">https://elpa.gnu.org/devel/hyperbole.html</a>.
-</p>
+</dd>
+<dt>2. the latest in-development pre-release tar.gz source archive linked to at the top of this web page:</dt>
+<dd><p><a href="https://elpa.gnu.org/devel/hyperbole.html">https://elpa.gnu.org/devel/hyperbole.html</a>.
+</p></dd>
+</dl>
 
 <p>Then decompress and unpack the archive to a directory of your
 choosing.  Move into the <samp>hyperbole-&lt;version&gt;/</samp> directory and execute
@@ -8769,8 +8771,10 @@ lines to your personal Emacs initialization file,
 <div class="lisp">
 <pre class="lisp">(unless (and (featurep 'hyperbole) hyperbole-mode)
   (when (&lt; emacs-major-version 27)
-    (error &quot;Hyperbole requires Emacs 27 or above; you are running version %d&quot; emacs-major-version))
-  (push &quot;&lt;directory-ending-with-hyperbole-where-you-unpacked&gt;&quot; load-path)
+    (error &quot;Hyperbole requires Emacs 27 or above, not %d&quot;
+           emacs-major-version))
+  (push &quot;&lt;directory-ending-with-hyperbole-where-you-unpacked&gt;&quot;
+        load-path)
   (require 'hyperbole)
   (hyperbole-mode 1))
 </pre></div>
@@ -8872,7 +8876,7 @@ All of these variables are defined within <samp>hpath.el</samp>.
 </p>
 <div class="example">
 <pre class="example">Referent Category             Variable Setting
-========================================================================
+======================================================================
 Internal Image Display        hpath:native-image-suffixes
 Internal Custom Display       hpath:internal-display-alist
 External Display              hpath:external-display-alist
@@ -8918,13 +8922,13 @@ display.
 </p>
 <p>By default, this setting handles the following types of files:
 </p><dl compact="compact">
-<dt><em>Audio Files</em></dt>
+<dt><em>&bull; Audio Files</em></dt>
 <dd><p>Major audio format files are played with the <code>play-sound-file</code> command.
 </p></dd>
-<dt><em>Info Manuals</em></dt>
+<dt><em>&bull; Info Manuals</em></dt>
 <dd><p>Files with a <samp>.info</samp> suffix (may also be compressed) are displayed in the Info browser.
 </p></dd>
-<dt><em>RDB Files</em></dt>
+<dt><em>&bull; RDB Files</em></dt>
 <dd><p>Files with an <samp>.rdb</samp> suffix are displayed as relational databases using the RDB package
 available with InfoDock.
 </p></dd>
@@ -14828,13 +14832,13 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function</a>, Up: <a href
 <tr><td></td><td valign="top"><a href="#index-view">view</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Viewing">Viewing</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-view-mode">view mode</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Key-_002d-View-Mode">Smart Key - View Mode</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-view-spec">view spec</a>:</td><td>&nbsp;</td><td valign="top"><a href="#View-Specs">View Specs</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-view-spec-klink">view spec klink</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Links">Links</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-view-spec_002c-all-lines-and-levels">view spec, all lines and levels</a>:</td><td>&nbsp;</td><td valign="top"><a href="#View-Specs">View Specs</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-view-spec_002c-blank-lines">view spec, blank lines</a>:</td><td>&nbsp;</td><td valign="top"><a href="#View-Specs">View Specs</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-view-spec_002c-changing">view spec, changing</a>:</td><td>&nbsp;</td><td valign="top"><a href="#View-Specs">View Specs</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-view-spec_002c-characters">view spec, characters</a>:</td><td>&nbsp;</td><td valign="top"><a href="#View-Specs">View Specs</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-view-spec_002c-ellipses">view spec, ellipses</a>:</td><td>&nbsp;</td><td valign="top"><a href="#View-Specs">View Specs</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-view-spec_002c-example">view spec, example</a>:</td><td>&nbsp;</td><td valign="top"><a href="#View-Specs">View Specs</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-view-spec_002c-klink">view spec, klink</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Links">Links</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-view-spec_002c-label-type">view spec, label type</a>:</td><td>&nbsp;</td><td valign="top"><a href="#View-Specs">View Specs</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-view-spec_002c-lines-per-cell">view spec, lines per cell</a>:</td><td>&nbsp;</td><td valign="top"><a href="#View-Specs">View Specs</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-view-spec_002c-setting">view spec, setting</a>:</td><td>&nbsp;</td><td valign="top"><a href="#View-Specs">View Specs</a></td></tr>
