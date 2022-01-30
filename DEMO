@@ -264,44 +264,53 @@ the argument is used to adjust one dimension of the frame.
 ** Windows Grid
 
 The @ command splits a frame into a grid of up to 9 rows by 9 columns of
-windows, showing a different buffer in each window, if available.  First
-let's expand our frame to full screen with the {.1 %} command and then show
-a 2 x 3 grid.  We can do multiple commands in one 'key series'.  Press the
-action key within the braces: {.1 % .23 @}.
+windows, showing a different buffer in each window, if available.  Outside of
+HyControl, you can invoke the grid of windows command with {C-c @} in most
+buffers.
 
-You can even write something like this to do the whole thing in one sequence.
-First, let's quit out of HyControl Frames mode with {Q}.  Then go back to one
-window with {C-x 1}.  Now we can execute a single sequence from any buffer
-that creates our 2x3 window grid: {C-h h s f .1 % .23 @ Q}.  Pretty amazing,
-right?  You can separate each command by any number of spaces or even jam
-them all together: {C-hhsf.1%.23@Q}.  Use SPC (separated by spaces) to
-include a space as part of the key series.
+By default, this command shows buffers with attached files only and prompts
+for the size of the grid to display.  With a negative prefix argument, the @
+command prompts for a shell glob-type pattern of files to match, e.g. *hypb*.el,
+and then chooses the smallest square grid patterns that can accomodate the number
+of files matched, e.g. 3x3 or 4x4, etc.
 
-A zero argument to the @ command is special.  It means you want to display
-buffers with a particular major mode first, e.g. emacs-lisp-mode.  You will
-be prompted for the major mode and then the size of the grid.
 
+With a zero prefix argument, the @ command prompts for a major mode name,
+e.g. emacs-lisp-mode, then the size of the grid and then displays the existing
+buffers with that major mode.
+
+Let's try this unique command.  First we will expand our frame to full screen
+with the {C-h h s f .1 % Q} command and then show a 2 x 3 grid.  We can do the whole
+thing in one 'key series'.  Press the action key within the braces:
+{C-h h s f .1 % .23 @ Q}.  Using the global key binding in any buffer is even simpler:
+{C-23 C-c @}. Pretty amazing, right?  You can separate each command by any number of
+spaces or even jam them all together: {C-hhsf.1%.23@Q}.  Use SPC (separated by spaces)
+to include a space as part of the key series.
+
+Now let's display a 2x2 grid of windows preferring Emacs Lisp buffers.
 First let's add a few Emacs Lisp files to the bottom of our buffer list.
-Press the Action Key anywhere within the first line of this action button:
+Press the Action Key anywhere within the first line of the code of this
+action button:
 
-   <progn (mapc (lambda (f) (bury-buffer (find-file-noselect (expand-file-name f hyperb:dir))))
+   <progn (mapc (lambda (f) (bury-buffer (find-file-noselect f)))
                 '("hibtypes.el" "hactypes.el" "hsettings.el"))
           (message "Last 3 buffers are: %S"
                    (mapcar #'buffer-name
                            (nthcdr (- (length (buffer-list)) 3) (buffer-list))))>
 
-Now let's display a 2x2 grid of windows preferring Emacs Lisp buffers:
-To try it, activate this key series button:
+To display the grid, activate this key series button:
 
-   {C-hhsf .0 @ emacs-lisp-mode RET 22 RET}
+   {C-0 C-c @ emacs-lisp-mode RET 22 RET}
+
+Or how about we display a bunch of matching files in a directory, say Elisp files
+with 'hypb' in their names:
+
+   {C--1 C-c @ *hypb*.el RET}
 
 If you ever need to experiment with different sized window grids, use
 {M-x hycontrol-window-grid-repeatedly RET}.  It will repeatedly prompt you
 for a grid size and then display it.  When you are done, simply press RET
 to exit.
-
-Outside of HyControl, you can invoke the grid of windows command with {C-c @}
-in most buffers.
 
 There is lots more to discover in HyControl as you explore.
 
@@ -792,7 +801,7 @@ brackets, < >, and come in three types:
      with an Elisp function name rather than an action type name.  They may
      contain any number of levels of embedded Lisp s-expressions, e.g.
 
-          <find-file-other-window (expand-file-name "EXAMPLE.kotl" hyperb:dir)>
+          <find-file-other-window (expand-file-name "kotl/EXAMPLE.kotl" hyperb:dir)>
 
   3. variable displays - these consist of an Elisp variable name only and
      display a message with the variable name and value, e.g.

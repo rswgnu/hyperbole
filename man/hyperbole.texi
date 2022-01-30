@@ -7,6 +7,7 @@
 @c Author:       Bob Weiner
 @c
 @c Orig-Date:     6-Nov-91 at 11:18:03
+@c Last-Mod:     29-Jan-22 at 18:04:53 by Bob Weiner
 
 @c %**start of header (This is for running Texinfo on a region.)
 @setfilename hyperbole.info
@@ -155,7 +156,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</P>
 
 <PRE>
 Edition 8.0.0pre
-Printed January 22, 2022.
+Printed January 29, 2022.
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -197,7 +198,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 @example
 Edition 8.0.0pre
-January 22, 2022
+January 29, 2022
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -3908,7 +3909,19 @@ Clear the prefix argument to a value of 0.
 
 @kindex screen, 0-9
 @kitem 0-9
-Multiply the prefix argument by 10 and add the digit pressed.
+Multiply the prefix argument by 10 and add the digit pressed (or subtract it if
+prefix argument is negative).
+
+@kindex screen, -
+@kitem -
+If HyControl mode was just enabled or the last command was prefix arg-related,
+invert the value of the prefix argument or if 0, set it to -1.  Otherwise,
+depending on whether in Frames or Windows mode, shrink the frame or window to
+the minimum size needed to display its text.
+
+@kindex C-u
+@kitem C-u
+Multiply the prefix argument by 4 each time this is pressed.
 
 @cindex windows grid
 @cindex grid of windows
@@ -3919,7 +3932,15 @@ Multiply the prefix argument by 10 and add the digit pressed.
 Display a @dfn{grid of windows} in the selected frame sized according to
 the prefix argument or via a prompted input.  Left digit of the argument is
 the number of grid rows and the right digit is the number of grid columns
-to display.
+to display.  The buffers displayed in the grid are determined by the value
+of the prefix argument given to the command or by the selected items in the
+current window if in Buffer Menu, Ibuffer Menu or Dired mode.
+
+@vindex hycontrol-display-buffer-predicate-list
+With no prefix argument and no items chosen, the selected frame's buffer list
+is filtered through @code{hycontrol-display-buffer-predicate-list}, a list of
+predicate/boolean filter functions.  The default predicate selects existing
+buffers with attached files and displays those.
 
 @float Image,image:2x3-Windows-Grid
 @caption{2x3 Windows Grid}
@@ -3927,31 +3948,38 @@ to display.
 @end float
 @sp 1
 
-If the prefix argument is 0, prompt for a major mode whose buffers
-should be displayed first in the grid windows, then prompt for the grid size.
+With a prefix argument of 0, the user is prompted for a major mode name and
+the windows grid size.  Only those buffers with the named major mode are
+displayed.
 
-If the prefix argument is < 0, prompt for a glob-type file pattern and display
-files that match the pattern in an auto-sized windows grid.
+With a prefix argument < 0, the user is prompted for a shell glob-type file
+pattern; matching files are read into buffers and displayed in an auto-sized
+square windows grid.
 
-Otherwise, prompt for the grid size if the prefix argument is an invalid
-size.
-
-@vindex hycontrol-display-buffer-predicate-list
-With a current buffer in Dired, Buffer Menu or IBuffer mode that
-contains marked items, the buffers associated with those items are
-displayed first in the grid (unless the prefix argument is 0).
-
-Then the most recently used buffers are displayed in each window, first
-selecting only those buffers which match any of the predicate expressions
-in @code{hycontrol-display-buffer-predicate-list}.  (The default predicate
-list chooses buffers with attached files).
-
-Then, if there are not enough buffers for all windows, the buffers that
-failed to match to any predicate are used. In all cases, buffers whose
-names start with a space are ignored.
+Otherwise, when the prefix argument is an invalid size, the windows grid
+command prompts for the grid size.
 
 When done, this resets the persistent prefix argument to 1 to prevent
 following commands from using the often large grid size argument.
+
+@c OLD PRE-VERSION 8 BEHAVIOR
+@c @vindex hycontrol-display-buffer-predicate-list
+@c With a current buffer in Dired, Buffer Menu or IBuffer mode that
+@c contains marked items, the buffers associated with those items exclusively
+@c are displayed in the grid (unless the prefix argument is 0).
+
+@c Then the most recently used buffers are displayed in each window, first
+@c selecting only those buffers which match any of the predicate expressions
+@c in @code{hycontrol-display-buffer-predicate-list}.  (The default predicate
+@c list chooses buffers with attached files).
+
+@c Then, if there are not enough buffers for all windows, the buffers that
+@c failed to match to any predicate are used. In all cases, buffers whose
+@c names start with a space are ignored.
+
+@c When done, this resets the persistent prefix argument to 1 to prevent
+@c following commands from using the often large grid size argument.
+
 
 @findex hycontrol-window-grid-repeatedly
 If you ever need to experiment with different sized window grids, use
@@ -3964,7 +3992,10 @@ are done, simply press @bkbd{@key{RET}} to exit.
 @findex hycontrol-windows-grid-by-file-list
 Programmatically, there are a number of ways to generate and display a windows grid.
 @code{hycontrol-windows-grid-by-file-pattern} creates a windows grid from a glob file
-pattern.  It is bound to @bkbd{C--1 C-c @@}.  @code{hycontrol-windows-grid-by-buffer-list} creates a windows grid from a list of buffers or buffer names.  @code{hycontrol-windows-grid-by-file-list} creates a windows grid from a list of file names.
+pattern.  It is bound to @bkbd{C--1 C-c @@}.  @code{hycontrol-windows-grid-by-buffer-list}
+creates a windows grid from a list of buffers or buffer names.
+@code{hycontrol-windows-grid-by-file-list} creates a windows grid from a list of file
+names.
 
 @cindex frame resize
 @vindex hycontrol-frame-widths
@@ -7245,7 +7276,7 @@ Frames may contain many windows.
 A feature of HyControl invoked with @bkbd{@@} which creates, lays out
 and populates a grid of a specified size of new Emacs windows, e.g. 4 rows
 by 3 columns, each displaying a different buffer chosen by a set of user
-specifiable filters.
+specifiable filters or from a list.
 @end table
 
 @node Setup, Hyperbole Key Bindings, Glossary, Top
@@ -7974,7 +8005,7 @@ prompted for if not given.
 If the argument is 0, prompt for a major mode whose buffers should be
 displayed first in the grid windows, then prompt for the grid size.
 
-If the argument is < 0, prompt for a glob-type file pattern and display
+If the argument is < 0, prompt for a shell glob-type file pattern and display
 files that match the pattern in an auto-sized windows grid.
 
 This binding is made only if the key is not bound prior to loading Hyperbole.

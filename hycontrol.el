@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     1-Jun-16 at 15:35:36
-;; Last-Mod:     24-Jan-22 at 00:19:05 by Bob Weiner
+;; Last-Mod:     29-Jan-22 at 16:03:51 by Bob Weiner
 ;;
 ;; Copyright (C) 2016-2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -257,7 +257,7 @@ The final predicate should always be t, for default values, typically of zero.")
     (define-key map [kp-9]  (lambda () (interactive) (hycontrol-numeric-keypad 'kp-9 hycontrol-arg)))
 
     ;; Clear hycontrol-arg
-    (define-key map "."     (lambda () (interactive) (setq hycontrol-arg 0) (hycontrol-frame-to-screen-edges 0)))
+    (define-key map "."     'hycontrol-reset-prefix-arg)
     (define-key map "@"     'hycontrol-windows-grid)
     (define-key map "?"     'hycontrol-toggle-help)
     (define-key map "a"     'hycontrol-frame-adjust-widths)
@@ -302,7 +302,7 @@ The final predicate should always be t, for default values, typically of zero.")
     (define-key map "~"     (lambda () (interactive)
 			      (unless (hycontrol-frame-swap-buffers)
 				(hycontrol-user-error hycontrol-debug "(HyControl): There must be at least two frames and the frame to swap to must have only a single window."))))
-    (define-key map "-"     'hycontrol-frame-minimize-lines)
+    (define-key map "-"     'hycontrol-minus-key)
     (define-key map "+"     'toggle-frame-maximized)
     (define-key map "="     (lambda () (interactive)
 			      (and (> (length (visible-frame-list)) 1)
@@ -312,8 +312,7 @@ The final predicate should always be t, for default values, typically of zero.")
 					    f (frame-pixel-width) (frame-pixel-height) t))
 					 (visible-frame-list)))))
 
-    (define-key map "\C-u"  (lambda () (interactive) (setq hycontrol-arg (* hycontrol-arg 4))
-			      (if (> hycontrol-arg hycontrol-maximum-units) (setq hycontrol-arg 4))))
+    (define-key map "\C-u"  'hycontrol-multiply-universal-arg)
     (define-key map "0"     (lambda () (interactive) (hycontrol-universal-arg-digit 0)))
     (define-key map "1"     (lambda () (interactive) (hycontrol-universal-arg-digit 1)))
     (define-key map "2"     (lambda () (interactive) (hycontrol-universal-arg-digit 2)))
@@ -358,7 +357,7 @@ The final predicate should always be t, for default values, typically of zero.")
     (define-key map [kp-9]  (lambda () (interactive) (hycontrol-numeric-keypad 'kp-9 hycontrol-arg)))
 
     ;; Clear hycontrol-arg
-    (define-key map "."     (lambda () (interactive) (setq hycontrol-arg 0) (hycontrol-frame-to-screen-edges 0)))
+    (define-key map "."     'hycontrol-reset-prefix-arg)
     (define-key map "@"     'hycontrol-windows-grid)
     (define-key map "?"     'hycontrol-toggle-help)
     (define-key map "a"     'hycontrol-frame-adjust-widths)
@@ -408,14 +407,13 @@ The final predicate should always be t, for default values, typically of zero.")
     (define-key map "~"     (lambda () (interactive)
 			      (unless (hycontrol-window-swap-buffers)
 				(hycontrol-user-error hycontrol-debug "(HyControl): There must be precisely two windows within the selected frame to swap buffers."))))
-    (define-key map "-"     'hycontrol-window-minimize-lines)
+    (define-key map "-"     'hycontrol-minus-key)
     (define-key map "+"     'hycontrol-window-maximize-lines)
     (define-key map "="     (lambda () (interactive) (and (> (length (window-list)) 1)
 							  (y-or-n-p "Resize windows evenly across this frame?")
 							  (balance-windows))))
 
-    (define-key map "\C-u"  (lambda () (interactive) (setq hycontrol-arg (* hycontrol-arg 4))
-			      (if (> hycontrol-arg hycontrol-maximum-units) (setq hycontrol-arg 4))))
+    (define-key map "\C-u"  'hycontrol-multiply-universal-arg)
     (define-key map "0"     (lambda () (interactive) (hycontrol-universal-arg-digit 0)))
     (define-key map "1"     (lambda () (interactive) (hycontrol-universal-arg-digit 1)))
     (define-key map "2"     (lambda () (interactive) (hycontrol-universal-arg-digit 2)))
@@ -542,9 +540,55 @@ associated key: quit {q}, abort {C-g}, or toggle {t}.")
   "Return non-nil if HyControl mode should remain active."
   (null hycontrol--exit-status))
 
+
+(defun hycontrol-invert-prefix-arg ()
+  "Invert the sign of the current Hycontrol prefix argument.
+If the argument is 0, set it to -1."
+  (interactive)
+  (setq this-command 'hycontrol-invert-prefix-arg
+	hycontrol-arg (if (zerop hycontrol-arg) -1 (- hycontrol-arg))))
+
+(defun hycontrol-minus-key ()
+  "Conditional command to execute when the minus key is pressed in a HyControl mode."
+  (interactive)
+  (cond ((and (symbolp last-command)
+	      (string-match-p "\\`\\(hui:menu-enter\\|hycontrol.*-\\(frames\\|windows\\|prefix\\|universal\\)-\\(mode\\|arg\\)\\)" (symbol-name last-command)))
+	 (hycontrol-invert-prefix-arg))
+	(hycontrol-frames-mode
+	 (hycontrol-frame-minimize-lines))
+	(t
+	 (hycontrol-window-minimize-lines))))
+
+(defun hycontrol-multiply-universal-arg ()
+  "Return the new prefix argument based on existing `hycontrol-arg' and one press of the universal arg, C-u."
+  (interactive)
+  (setq this-command 'hycontrol-multiply-universal-arg
+	hycontrol-arg (* hycontrol-arg 4))
+  (when (> (abs hycontrol-arg) hycontrol-maximum-units)
+    (setq hycontrol-arg (if (< hycontrol-arg 0) -4 4)))
+  hycontrol-arg)
+
+(defun hycontrol-reset-prefix-arg ()
+  "Reset HyControl prefix arg to 0."
+  (interactive)
+  (setq hycontrol-arg 0)
+  (hycontrol-frame-to-screen-edges 0))
+
 (defun hycontrol-universal-arg-digit (digit)
   "Return the new prefix argument based on existing `hycontrol-arg' and new DIGIT."
-  (setq hycontrol-arg (+ (* hycontrol-arg 10) digit)) (if (> hycontrol-arg hycontrol-maximum-units) (setq hycontrol-arg digit))
+  (setq this-command 'hycontrol-universal-arg-digit
+	hycontrol-arg
+	(if (< hycontrol-arg 0)
+	    (if (and (= hycontrol-arg -1)
+		     (not (zerop digit)))
+		(- digit)
+	       (- (* hycontrol-arg 10) digit))
+	  (+ (* hycontrol-arg 10) digit)))
+  (when (> (abs hycontrol-arg) hycontrol-maximum-units)
+    (setq hycontrol-arg
+	  (if (< hycontrol-arg 0)
+	      (- digit)
+	    digit)))
   hycontrol-arg)
 
 
@@ -784,8 +828,39 @@ multiple of the default frame font width."
 	      hycontrol-display-buffer-predicate-list)
     (error "(HyDebug): Invalid expression in `hycontrol-display-buffer-predicate-list' - %s" err)))
 
+(defvar hycontrol--blank-buffer (get-buffer-create "BLANK")
+      "Blank buffer to display in extra window grid windows after selected buffer list is exhausted.")
+
 (defun hycontrol-window-display-buffer (window)
-  "Given a WINDOW, choose the next appropriate buffer to display therein using `hycontrol-display-buffer-predicate-list'.
+  "Given a WINDOW, choose the next appropriate buffer to display from `hycontrol--buffer-list'.
+
+When `hycontrol--invert-display-buffer-predicates' is non-nil and not 'ignore,
+the list of buffers used is further filtered using the functions and sexpressions
+in `hycontrol-display-buffer-predicate-list', which by default filters
+a frame's buffer-list to just those buffers with attached files.
+
+Filtering is disabled if a specific list of buffers is sent to the
+`hycontrol-make-windows-grid' function that calls this."
+  (let ((buf (car hycontrol--buffer-list-pointer)))
+    (setq hycontrol--buffer-list-pointer (cdr hycontrol--buffer-list-pointer))
+    (while (and buf (or (= (aref (buffer-name buf) 0) ?\ )
+			(and (not hycontrol--invert-display-buffer-predicates)
+			     (not (eval (cons 'or (hycontrol-display-buffer-predicate-results buf)))))
+			(and hycontrol--invert-display-buffer-predicates
+			     (not (eq hycontrol--invert-display-buffer-predicates 'ignore))
+			     (eval (cons 'or (hycontrol-display-buffer-predicate-results buf))))))
+      ;; Buffer is not one to display, get the next one and test again.
+      (setq buf (car hycontrol--buffer-list-pointer)
+	    hycontrol--buffer-list-pointer (cdr hycontrol--buffer-list-pointer)))
+    (set-window-buffer window
+		       (or buf
+			   ;; Out of buffers to display, display a blank one
+			   hycontrol--blank-buffer))))
+
+(defun hycontrol-window-display-buffer-with-repeats (window)
+  "This is no longer used since Hyperbole V8.  Left here for reference.
+
+Given a WINDOW, choose the next appropriate buffer to display therein using `hycontrol-display-buffer-predicate-list'.
 Also uses the value of`hycontrol--buffer-list' as the list of
 buffers to distribute among the windows."
   (let ((buf (car hycontrol--buffer-list-pointer)))
@@ -1413,8 +1488,8 @@ Menu or IBuffer mode."
       ;; items are not filtered out.
       (setq hycontrol--invert-display-buffer-predicates
 	    (when items 'ignore))
-      ;; Prepend items to buffer list.
-      (apply #'set:create (nconc items (buffer-list (selected-frame)))))))
+      ;; Return either non-nil items or frame's full buffer list.
+      (or items (buffer-list (selected-frame))))))
 
 ;;; Split selected frame into a grid of windows given by row and
 ;;; column count, displaying different buffers in each window.
@@ -1468,7 +1543,7 @@ argument."
     (if (null buffers)
 	(error "(hycontrol-windows-grid-by-buffer-list): No matching buffers")
       (mapc #'switch-to-buffer (reverse buffers))
-      (hycontrol-make-windows-grid grid-size))))
+      (hycontrol-make-windows-grid grid-size buffers))))
 
 (defun hycontrol-windows-grid-by-file-list (files)
   "Display an automatically sized window grid showing list of FILES."
@@ -1477,8 +1552,8 @@ argument."
 	 (grid-size (+ (* grid-digit 10) grid-digit)))
     (if (null files)
 	(error "(hycontrol-windows-grid-by-file-list): No matching files")
-      (mapc #'find-file (reverse files))
-      (hycontrol-make-windows-grid grid-size))))
+      (setq buffers (nreverse (mapcar #'find-file (reverse files))))
+      (hycontrol-make-windows-grid grid-size buffers))))
 
 ;;;###autoload
 (defun hycontrol-windows-grid-by-file-pattern (pattern &optional full)
@@ -1527,7 +1602,7 @@ See documentation of `hycontrol-windows-grid' for further details."
 	(hycontrol-windows-grid arg)
 	(setq arg nil)))))
 
-(defun hycontrol-make-windows-grid (arg)
+(defun hycontrol-make-windows-grid (arg &optional buffer-list)
   "Display a grid of windows in the selected frame, sized according to prefix ARG.
 Left digit of ARG is the number of grid rows and the right digit is
 the number of grid columns. 
@@ -1595,7 +1670,8 @@ See documentation of `hycontrol-windows-grid' for further details."
 	       ;; the predicate tests.  Always ignore buffers that
 	       ;; start with a space.  With each succeeding pass, the
 	       ;; predicate list is inverted again.
-	       (setq hycontrol--buffer-list (hycontrol-windows-grid-buffer-list)
+	       (setq hycontrol--buffer-list (or buffer-list
+						(hycontrol-windows-grid-buffer-list))
 		     hycontrol--buffer-list-pointer hycontrol--buffer-list)
   	       (walk-windows #'hycontrol-window-display-buffer 'no-minibuf)
 

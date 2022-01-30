@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    10/31/93
-;; Last-Mod:     24-Jan-22 at 00:25:17 by Bob Weiner
+;; Last-Mod:     29-Jan-22 at 15:24:12 by Bob Weiner
 ;;
 ;; Copyright (C) 1993-2021  Free Software Foundation, Inc.
 ;; See the "../HY-COPY" file for license information.
@@ -412,7 +412,7 @@ hidden."
     (while
 	(progn
 	  (skip-chars-forward "\n")
-	  ;; !!! Won't work if label-type is 'no.
+	  ;; !! Todo: Won't work if label-type is 'no.
 	  ;; Here we search past the cell identifier
 	  ;; for the location at which to place cell properties.
 	  ;; Be sure not to skip past a period which may terminate the label.

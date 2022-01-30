@@ -1,5 +1,27 @@
 2022-01-29  Bob Weiner  <rsw@gnu.org>
 
+* hycontrol.el (hycontrol-invert-prefix-arg): Add to invert prefix arg or change
+    0 to -1.
+               (hycontrol-reset-prefix-arg): Turn into a named function so can
+    test if was 'last-command'.
+               (hycontrol-universal-arg-digit): Rewrite to handle negative args.
+	       (hycontrol-multiply-universal-arg):
+	       (hycontrol-minus-key): Add to have named commands.
+  man/hyperbole.texi (HyControl):
+  DEMO (Windows Grid): Rewrite section to match latest behavior.
+  man/hyperbole.texi (HyControl): Update to include - and C-u key bindings.
+
+* hycontrol.el (hycontrol-window-display-buffer): Rewrite to display a BLANK
+    buffer in each window after exhaust the selected list of buffers, rather
+    than displaying the same non-blank buffers in multiple windows.  Also,
+    no longer use 'hycontrol--invert-display-buffer-predicates' to fill
+    extra windows with the inversion of any filters
+
+    Update doc to reflect full behavior of the function.
+
+    Left for reference 'hycontrol-window-display-buffer-with-repeats' with all
+    of this pre-V8 behavior.
+
 * test/hypb-tests.el (hypb--installation-type-test): Comment out until decide
     all contexts it should handle and when best to use it.
 
@@ -14,10 +36,12 @@
 
 * test/hypb-tests.el (hypb--installation-type-test): Add unit test.
 
-2022-01-25  Bob Weiner  <rsw@gnu.org>
+2022-01-25  Mats Lidell  <matsl@gnu.org>
 
 * hypb.el (hypb--installation-type, hypb:configuration): Add function to
     provide installation type and version number and use it.
+
+2022-01-25  Bob Weiner  <rsw@gnu.org>
 
 * kotl/kotl-mode.el (kotl-mode:copy-region-to-buffer): Fix interactive args listed in wrong
     order.

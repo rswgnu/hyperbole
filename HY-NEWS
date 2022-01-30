@@ -600,14 +600,18 @@
 
   HYCONTROL
 
+    - Windows Grid by File Pattern: {C--1 C-c @} prompts for a glob-type file
+      pattern, finds all the matching files and then displays them in an auto-sized
+      windows grid based on the number of files.
+
     - Buffer/Window Swapping: Improved {~} so current buffer remains the same but
       the selected window changes.  Also made frame buffer swapping work anytime
       there are two or more frames regardless of how many windows in each.  See
       "DEMO#Swapping Buffers".
 
-    - Windows Grid by File Pattern: {C--1 C-c @} prompts for a glob-type file pattern,
-      finds all the matching files and then displays them in an auto-sized windows grid
-      based on the number of files.
+    - HyControl Now Accepts Negative Prefix Args: If the minus key is pressed when
+      HyControl is invoked or after any other prefix arg command, it will invert the
+      current prefix arg value (or when zero, set the prefix arg to -1).
 
   HYROLO
 
