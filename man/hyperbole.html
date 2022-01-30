@@ -370,7 +370,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</P>
 
 <PRE>
 Edition 8.0.0pre
-Printed January 22, 2022.
+Printed January 29, 2022.
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -2594,10 +2594,12 @@ activate it whenever the need arises.
 <p>Global buttons are managed with the Hyperbole Gbut/ menu accessed with
 <kbd>{C-h h g}</kbd>.  The Create item, <kbd>{C-h h g c}</kbd>, prompts for a
 global button name, an action type, and the action&rsquo;s associated
-arguments, such as a file to link to.  It then creates the button.  To
-activate the button, use the Act menu item, <kbd>{C-h h g a}</kbd>.  Type
-the button&rsquo;s name and its action will be  To remove the
-button, use the Delete menu item, <kbd>{C-h h g d}</kbd>; see <a href="#Deletion">Deletion</a>.
+arguments, such as a file to which to link.  It then creates the button.
+To activate the button, use the Act menu item, <kbd>{C-h h g a}</kbd>.  Type
+the button&rsquo;s name, press <kbd>{<span class="key">RET</span>}</kbd>, and then Hyperbole prompts
+you for its action type and associated arguments.  <kbd>{C-h h g e}</kbd> to
+edit an existing global button.  To remove a button, use the Delete menu
+item, <kbd>{C-h h g d}</kbd>; see <a href="#Deletion">Deletion</a>.
 </p>
 <p>Global buttons are actually explicit buttons stored at the end of your
 personal button file, see <a href="#Button-Files">Button Files</a>.  You can always go into that
@@ -2662,6 +2664,7 @@ The Hyperbole Smart Keys offer additional extensive context-sensitive
 point-and-click type behavior beyond implicit button types.  See <a href="#Smart-Key-Operations">Smart Key Operations</a>.
 </p>
 <span id="index-implicit-button-labels"></span>
+<span id="index-implicit-button-names"></span>
 <span id="index-labeling-implicit-buttons"></span>
 <span id="index-naming-implicit-buttons"></span>
 <p>Individual implicit buttons may be labeled/named, allowing activation
@@ -2672,11 +2675,16 @@ button with a label of &rsquo;My Emacs Files&rsquo;:
 <pre class="example">&lt;[My Emacs Files]&gt;: &quot;~/.emacs.d&quot;
 </pre></div>
 
+<span id="index-C_002dh-h-i-e"></span>
+<span id="index-C_002dh-h-i-l"></span>
 <p>The label is delimited by &lsquo;<samp>&lt;[</samp>&rsquo; and &lsquo;<samp>]&gt;</samp>&rsquo; and can be followed
 by any number of :, - or = separator characters, including none.  You
 can activate the button either from its label or its text.  With point
 on the text of an implicit button, <kbd>{C-h h i l}</kbd> will label it.  Or
-you may simply type the label and delimiters manually.
+you may simply type the label and delimiters manually.  You can also
+simply edit any implicit button manually but for a little more help in
+editing named implicit buttons, use <kbd>{C-h h i e}</kbd> which prompts
+you to rename the button and to change its text (the button itself).
 </p>
 <table class="menu" border="0" cellspacing="0">
 <tr><td align="left" valign="top">&bull; <a href="#Implicit-Button-Types" accesskey="1">Implicit Button Types</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
@@ -3715,7 +3723,7 @@ valid CELL-REF formats.
 </dd>
 <dt><code>link-to-kotl</code></dt>
 <dd><p>Display at the top of a window the referent pointed to by LINK.
-LINK may be of any of the following forms, with or without delimiters:
+LINK may be of any of the following forms:
 </p><div class="example">
 <pre class="example">  &lt; pathname [, cell-ref] &gt;
   &lt; [-!&amp;] pathname &gt;
@@ -4659,7 +4667,23 @@ and frame submodes.
 <span id="index-0_002d9"></span>
 </dd>
 <dt><kbd>{0-9}</kbd></dt>
-<dd><p>Multiply the prefix argument by 10 and add the digit pressed.
+<dd><p>Multiply the prefix argument by 10 and add the digit pressed (or subtract it if
+prefix argument is negative).
+</p>
+<span id="index-screen_002c-_002d"></span>
+<span id="index-_002d"></span>
+</dd>
+<dt><kbd>{-}</kbd></dt>
+<dd><p>If HyControl mode was just enabled or the last command was prefix arg-related,
+invert the value of the prefix argument or if 0, set it to -1.  Otherwise,
+depending on whether in Frames or Windows mode, shrink the frame or window to
+the minimum size needed to display its text.
+</p>
+<span id="index-C_002du"></span>
+<span id="index-C_002du-1"></span>
+</dd>
+<dt><kbd>{C-u}</kbd></dt>
+<dd><p>Multiply the prefix argument by 4 each time this is pressed.
 </p>
 <span id="index-windows-grid"></span>
 <span id="index-grid-of-windows"></span>
@@ -4672,39 +4696,40 @@ and frame submodes.
 <p>Display a <em>grid of windows</em> in the selected frame sized according to
 the prefix argument or via a prompted input.  Left digit of the argument is
 the number of grid rows and the right digit is the number of grid columns
-to display.
+to display.  The buffers displayed in the grid are determined by the value
+of the prefix argument given to the command or by the selected items in the
+current window if in Buffer Menu, Ibuffer Menu or Dired mode.
+</p>
+<span id="index-hycontrol_002ddisplay_002dbuffer_002dpredicate_002dlist"></span>
+<p>With no prefix argument and no items chosen, the selected frame&rsquo;s buffer list
+is filtered through <code>hycontrol-display-buffer-predicate-list</code>, a list of
+predicate/boolean filter functions.  The default predicate selects existing
+buffers with attached files and displays those.
 </p>
 <div class="float"><span id="image_003a2x3_002dWindows_002dGrid"></span>
 
 <img src="im/wgrid-2x3.png" alt="2x3 Windows Grid">
 <div class="float-caption"><p><strong>Image 6.1: </strong>2x3 Windows Grid</p></div></div><br>
 
-<p>If the prefix argument is 0, prompt for a major mode whose buffers
-should be displayed first in the grid windows, then prompt for the grid size.
+<p>With a prefix argument of 0, the user is prompted for a major mode name and
+the windows grid size.  Only those buffers with the named major mode are
+displayed.
 </p>
-<p>If the prefix argument is &lt; 0, prompt for a glob-type file pattern and display
-files that match the pattern in an auto-sized windows grid.
+<p>With a prefix argument &lt; 0, the user is prompted for a shell glob-type file
+pattern; matching files are read into buffers and displayed in an auto-sized
+square windows grid.
 </p>
-<p>Otherwise, prompt for the grid size if the prefix argument is an invalid
-size.
-</p>
-<span id="index-hycontrol_002ddisplay_002dbuffer_002dpredicate_002dlist"></span>
-<p>With a current buffer in Dired, Buffer Menu or IBuffer mode that
-contains marked items, the buffers associated with those items are
-displayed first in the grid (unless the prefix argument is 0).
-</p>
-<p>Then the most recently used buffers are displayed in each window, first
-selecting only those buffers which match any of the predicate expressions
-in <code>hycontrol-display-buffer-predicate-list</code>.  (The default predicate
-list chooses buffers with attached files).
-</p>
-<p>Then, if there are not enough buffers for all windows, the buffers that
-failed to match to any predicate are used. In all cases, buffers whose
-names start with a space are ignored.
+<p>Otherwise, when the prefix argument is an invalid size, the windows grid
+command prompts for the grid size.
 </p>
 <p>When done, this resets the persistent prefix argument to 1 to prevent
 following commands from using the often large grid size argument.
 </p>
+
+
+
+
+
 <span id="index-hycontrol_002dwindow_002dgrid_002drepeatedly"></span>
 <p>If you ever need to experiment with different sized window grids, use
 <kbd>{M-x hycontrol-window-grid-repeatedly <span class="key">RET</span>}</kbd>.  It will
@@ -4716,7 +4741,10 @@ are done, simply press <kbd>{<span class="key">RET</span>}</kbd> to exit.
 <span id="index-hycontrol_002dwindows_002dgrid_002dby_002dfile_002dlist"></span>
 <p>Programmatically, there are a number of ways to generate and display a windows grid.
 <code>hycontrol-windows-grid-by-file-pattern</code> creates a windows grid from a glob file
-pattern.  It is bound to <kbd>{C--1 C-c @}</kbd>.  <code>hycontrol-windows-grid-by-buffer-list</code> creates a windows grid from a list of buffers or buffer names.  <code>hycontrol-windows-grid-by-file-list</code> creates a windows grid from a list of file names.
+pattern.  It is bound to <kbd>{C--1 C-c @}</kbd>.  <code>hycontrol-windows-grid-by-buffer-list</code>
+creates a windows grid from a list of buffers or buffer names.
+<code>hycontrol-windows-grid-by-file-list</code> creates a windows grid from a list of file
+names.
 </p>
 <span id="index-frame-resize"></span>
 <span id="index-hycontrol_002dframe_002dwidths"></span>
@@ -4967,8 +4995,8 @@ the size of the selected frame.
 </p>
 <span id="index-shrink-window"></span>
 <span id="index-window_002c-shrink"></span>
-<span id="index-screen_002c-_002d"></span>
-<span id="index-_002d"></span>
+<span id="index-screen_002c-_002d-1"></span>
+<span id="index-_002d-1"></span>
 </dd>
 <dt><kbd>{-}</kbd></dt>
 <dd><p>In WINDOWS mode, shrink window to its smallest possible number of lines
@@ -6273,8 +6301,12 @@ two customizable variables which disable klink recognition in selected major
 modes, <code>klink:ignore-modes</code> and <code>klink:c-style-modes</code>.  Add a mode
 to one of these if you find any syntax that improperly registers as a klink.
 </p>
-<p>* kotl/klink.el (klink:ignore-modes, klink:c-style-modes): Add so
-    can customize.
+<p><code>klink:ignore-modes</code> is for non-programming modes, as Hyperbole ensures
+that within all programming major modes, klinks are recognized only when point
+is within a comment.
+</p>
+<p><code>klink:c-style-modes</code> is rarely needed but is there if Hyperbole ever
+mistakenly recognizes a pattern within a comment as a klink when it isn&rsquo;t.
 </p>
 
 <hr>
@@ -6295,7 +6327,8 @@ has its own attribute list.  Every cell has three standard attributes:
 </dd>
 <dt><em>idstamp</em></dt>
 <dd><p>The permanent id of the cell, typically used in cross-file hyperlinks
-that reference the cell.
+that reference the cell, this is a whole number that starts from 0, which
+is always the hidden root cell of the outline tree.
 </p>
 <span id="index-creator-attribute"></span>
 <span id="index-e_002dmail-address-1"></span>
@@ -7931,7 +7964,6 @@ if any emacs-related terms are unfamiliar to you.
 </p>
 <dl compact="compact">
 <dt><b>Action</b></dt>
-<dt><b>Button Action</b></dt>
 <dd><p>An executable behavior associated with a Hyperbole button.  <em>Links</em>
 are a specific class of actions which display existing entities, such as
 files. See also <b>Action Type</b>.
@@ -8260,6 +8292,37 @@ Hyperbole processes when activated as an implicit button, as if the
 keys were typed in by the user.
 </p>
 </dd>
+<dt><b>Kcell Ref</b></dt>
+<dd><p>A reference to a Koutline cell.  Such a reference may be:
+</p>
+<p>12       - a whole number representing a permanent idstamp
+</p>
+<p>or any of the following string forms:
+</p>
+<p>1 or 1b   - relative id, augment style
+  1.2       - relative id, legal style
+  012       - permanent idstamp
+  1a=012    - both relative and permanent ids (in that order) separated by =
+  |viewspec - a viewspec setting, rather than a cell reference
+</p>
+<p>Optionally, any of these id forms (or the relative form) may be followed by
+zero or more whitespace characters, a | and some view specification
+characters.  See <a href="#View-Specs">View Specs</a>
+</p>
+</dd>
+<dt><b>Klink</b></dt>
+<dd><p>An angle bracket, &lt;&gt;, delimited implicit button type that displays a
+koutline cell referent at the top of a window.  The link may be of any
+of the following forms:
+</p><div class="example">
+<pre class="example">  &lt; pathname [, kcell-ref] &gt;
+  &lt; [-!&amp;] pathname &gt;
+  &lt; @ kcell-ref &gt;
+</pre></div>
+
+<p>See the above definition of <em>Kcell Ref</em> for kcell-ref formats.
+</p>
+</dd>
 <dt><b>Koutline</b></dt>
 <dd><p>A hierarchically ordered grouping of cells which may be stored as a file
 and viewed and edited as an outline.
@@ -8465,7 +8528,7 @@ Frames may contain many windows.
 <dd><p>A feature of HyControl invoked with <kbd>{@}</kbd> which creates, lays out
 and populates a grid of a specified size of new Emacs windows, e.g. 4 rows
 by 3 columns, each displaying a different buffer chosen by a set of user
-specifiable filters.
+specifiable filters or from a list.
 </p></dd>
 </dl>
 
@@ -9263,7 +9326,7 @@ prompted for if not given.
 <p>If the argument is 0, prompt for a major mode whose buffers should be
 displayed first in the grid windows, then prompt for the grid size.
 </p>
-<p>If the argument is &lt; 0, prompt for a glob-type file pattern and display
+<p>If the argument is &lt; 0, prompt for a shell glob-type file pattern and display
 files that match the pattern in an auto-sized windows grid.
 </p>
 <p>This binding is made only if the key is not bound prior to loading Hyperbole.
@@ -9540,11 +9603,14 @@ TO-CELL-REF&rsquo;s parent, otherwise make it the preceding sibling of TO-CELL-R
 </p>
 <p>Leave point at the start of the root cell of the new tree.
 </p>
-<span id="index-kotl_002dmode_003acopy_002dto_002dbuffer"></span>
+<span id="index-kotl_002dmode_003acopy_002dtree_002dor_002dregion_002dto_002dbuffer"></span>
 </dd>
-<dt><code>kotl-mode:copy-to-buffer  <kbd>{C-c M-c}</kbd></code></dt>
-<dd><p>Copy outline tree rooted at CELL-REF to a non-koutline BUFFER.
-Use 0 to copy the whole outline buffer.
+<dt><code>kotl-mode:copy-tree-or-region-to-buffer  <kbd>{C-c M-c}</kbd></code></dt>
+<dd><p>If no usable active region, prompt for and copy a Koutline tree to a
+specified buffer, otherwise, copy the active region.
+</p>
+<p>Use 0 to copy the whole outline buffer.  Prompt for whether or not
+to expand and include any hidden/invisible text within the copied text.
 </p>
 <span id="index-kotl_002dmode_003acopy_002dto_002dregister"></span>
 </dd>
@@ -9558,7 +9624,7 @@ With optional prefix arg DELETE-FLAG, delete region.
 <dd><p>Delete up to the preceding prefix ARG characters.
 Return number of characters deleted.
 Optional KILL-FLAG non-nil means save in kill ring instead of deleting.
-Does not delete across cell boundaries.
+Do not delete across cell boundaries.
 </p>
 <span id="index-kotl_002dmode_003adelete_002dblank_002dlines"></span>
 </dd>
@@ -9576,7 +9642,7 @@ whitespace at the end of the cell.
 <dd><p>Delete up to prefix ARG characters following point.
 Return number of characters deleted.
 Optional KILL-FLAG non-nil means save in kill ring instead of deleting.
-Does not delete across cell boundaries.
+Do not delete across cell boundaries.
 </p>
 <span id="index-kotl_002dmode_003adelete_002dindentation"></span>
 </dd>
@@ -12540,6 +12606,7 @@ Next: <a href="#Function" accesskey="n" rel="next">Function</a>, Previous: <a hr
 <tr><td colspan="4"> <hr></td></tr>
 <tr><th id="Key-Index_ky_symbol-6">-</th><td></td><td></td></tr>
 <tr><td></td><td valign="top"><a href="#index-_002d"><code>-</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyControl">HyControl</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-_002d-1"><code>-</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyControl">HyControl</a></td></tr>
 <tr><td colspan="4"> <hr></td></tr>
 <tr><th id="Key-Index_ky_symbol-7">.</th><td></td><td></td></tr>
 <tr><td></td><td valign="top"><a href="#index-_002e"><code>.</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyControl">HyControl</a></td></tr>
@@ -12634,6 +12701,8 @@ Next: <a href="#Function" accesskey="n" rel="next">Function</a>, Previous: <a hr
 <tr><td></td><td valign="top"><a href="#index-C_002dh-h-f-w-1"><code>C-h h f w</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Default-Hyperbole-Bindings">Default Hyperbole Bindings</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-C_002dh-h-g"><code>C-h h g</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Global-Buttons">Global Buttons</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-C_002dh-h-i-a"><code>C-h h i a</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-C_002dh-h-i-e"><code>C-h h i e</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-C_002dh-h-i-l"><code>C-h h i l</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-C_002dh-h-k-e"><code>C-h h k e</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Koutliner">Koutliner</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-C_002dh-h-m-c"><code>C-h h m c</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Key-Debugging">Smart Key Debugging</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-C_002dh-h-m-r"><code>C-h h m r</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Key-Debugging">Smart Key Debugging</a></td></tr>
@@ -12645,6 +12714,8 @@ Next: <a href="#Function" accesskey="n" rel="next">Function</a>, Previous: <a hr
 <tr><td></td><td valign="top"><a href="#index-C_002dmouse_002d3"><code>C-mouse-3</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Menu-Commands">Menu Commands</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-C_002dmouse_002d3-1"><code>C-mouse-3</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyRolo-Menu">HyRolo Menu</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-C_002dt"><code>C-t</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Menus">Menus</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-C_002du"><code>C-u</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyControl">HyControl</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-C_002du-1"><code>C-u</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyControl">HyControl</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-C_002du-C_002dc-c"><code>C-u C-c c</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Relocating-and-Copying">Relocating and Copying</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-C_002du-C_002dc-C_002dc"><code>C-u C-c C-c</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Relocating-and-Copying">Relocating and Copying</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-C_002du-C_002dc-C_002dm"><code>C-u C-c C-m</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Relocating-and-Copying">Relocating and Copying</a></td></tr>
@@ -12805,6 +12876,7 @@ Next: <a href="#Function" accesskey="n" rel="next">Function</a>, Previous: <a hr
 <tr><td></td><td valign="top"><a href="#index-screen_002c-_0029"><code>screen, )</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyControl">HyControl</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-screen_002c-_002b"><code>screen, +</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyControl">HyControl</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-screen_002c-_002d"><code>screen, -</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyControl">HyControl</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-screen_002c-_002d-1"><code>screen, -</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyControl">HyControl</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-screen_002c-_002e"><code>screen, .</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyControl">HyControl</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-screen_002c-0_002d9"><code>screen, 0-9</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyControl">HyControl</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-screen_002c-_003d"><code>screen, =</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyControl">HyControl</a></td></tr>
@@ -13399,8 +13471,8 @@ Next: <a href="#Concept-Index" accesskey="n" rel="next">Concept Index</a>, Previ
 <tr><td></td><td valign="top"><a href="#index-kotl_002dmode_003acenter_002dparagraph"><code>kotl-mode:center-paragraph</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Koutliner-Keys">Koutliner Keys</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-kotl_002dmode_003acopy_002dafter"><code>kotl-mode:copy-after</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Koutliner-Keys">Koutliner Keys</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-kotl_002dmode_003acopy_002dbefore"><code>kotl-mode:copy-before</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Koutliner-Keys">Koutliner Keys</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-kotl_002dmode_003acopy_002dto_002dbuffer"><code>kotl-mode:copy-to-buffer</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Koutliner-Keys">Koutliner Keys</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-kotl_002dmode_003acopy_002dto_002dregister"><code>kotl-mode:copy-to-register</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Koutliner-Keys">Koutliner Keys</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-kotl_002dmode_003acopy_002dtree_002dor_002dregion_002dto_002dbuffer"><code>kotl-mode:copy-tree-or-region-to-buffer</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Koutliner-Keys">Koutliner Keys</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-kotl_002dmode_003adelete_002dbackward_002dchar"><code>kotl-mode:delete-backward-char</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Koutliner-Keys">Koutliner Keys</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-kotl_002dmode_003adelete_002dblank_002dlines"><code>kotl-mode:delete-blank-lines</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Koutliner-Keys">Koutliner Keys</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-kotl_002dmode_003adelete_002dchar"><code>kotl-mode:delete-char</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Koutliner-Keys">Koutliner Keys</a></td></tr>
@@ -14151,6 +14223,7 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function</a>, Up: <a href
 <tr><td></td><td valign="top"><a href="#index-implicit-button-1">implicit button</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-implicit-button-labels">implicit button labels</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-implicit-button-link">implicit button link</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-implicit-button-names">implicit button names</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-implicit-button-type">implicit button type</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Programmatic-Implicit-Button-Types">Programmatic Implicit Button Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-implicit-button-types">implicit button types</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-importing">importing</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Inserting-and-Importing">Inserting and Importing</a></td></tr>

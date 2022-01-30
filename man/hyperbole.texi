@@ -7,7 +7,7 @@
 @c Author:       Bob Weiner
 @c
 @c Orig-Date:     6-Nov-91 at 11:18:03
-@c Last-Mod:     29-Jan-22 at 18:04:53 by Bob Weiner
+@c Last-Mod:     30-Jan-22 at 12:16:37 by Bob Weiner
 
 @c %**start of header (This is for running Texinfo on a region.)
 @setfilename hyperbole.info
@@ -7101,7 +7101,7 @@ of the following forms:
   < @@ kcell-ref >
 @end example
 
-See the above definition of @italic{Kcell Ref} for kcell-ref formats.
+See the above definition of @emph{Kcell Ref} for kcell-ref formats.
 
 @item Koutline
 A hierarchically ordered grouping of cells which may be stored as a file
