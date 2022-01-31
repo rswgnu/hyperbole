@@ -3,7 +3,7 @@
 # Author:       Bob Weiner
 #
 # Orig-Date:    15-Jun-94 at 03:42:38
-# Last-Mod:     24-Jan-22 at 00:45:29 by Bob Weiner
+# Last-Mod:     30-Jan-22 at 13:03:37 by Bob Weiner
 #
 # Copyright (C) 1994-2021  Free Software Foundation, Inc.
 # See the file HY-COPY for license information.
@@ -400,7 +400,7 @@ $(pkg_dir)/hyperbole-$(HYPB_VERSION).tar: $(HYPERBOLE_FILES)
 	make version
 	cd $(pkg_dir) && $(RM) -fr $(pkg_hyperbole) $(pkg_hyperbole)-$(HYPB_VERSION)
 	cd .. && COPYFILE_DISABLE=1 $(TAR) -clf $(pkg_dir)/h.tar hyperbole
-	cd $(pkg_dir) && COPYFILE_DISABLE=1 $(TAR) xf h.tar && cd $(pkg_hyperbole) && $(MAKE) packageclean
+	cd $(pkg_dir) && COPYFILE_DISABLE=1 $(TAR) xvf h.tar && cd $(pkg_hyperbole) && $(MAKE) packageclean
 	cd $(pkg_hyperbole) && make autoloads && chmod 755 topwin.py && \
 	cd $(pkg_dir) && $(RM) h.tar; \
 	  mv $(pkg_hyperbole) $(pkg_hyperbole)-$(HYPB_VERSION) && \

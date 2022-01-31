@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     1-Nov-91 at 00:44:23
-;; Last-Mod:     24-Jan-22 at 00:18:47 by Bob Weiner
+;; Last-Mod:     30-Jan-22 at 23:08:42 by Bob Weiner
 ;;
 ;; Copyright (C) 1991-2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -868,19 +868,19 @@ paths are checked for existence.  With optional NON-EXIST, nonexistent local
 paths are allowed.  Absolute pathnames must begin with a `/' or `~'."
   (let ((path (hpath:delimited-possible-path non-exist))
 	subpath)
-    (when (and path (not non-exist) (string-match hpath:prefix-regexp path))
+    (when (and path (not non-exist) (string-match-p hpath:prefix-regexp path))
       (setq non-exist t))
     (cond ((and path (file-readable-p path))
 	   path)
-	  ((and path (string-match hpath:path-variable-value-regexp path)
+	  ((and path (string-match-p hpath:path-variable-value-regexp path)
 		;; Don't allow more than one set of grouping chars
-		(not (string-match "\)\\s-*\(\\|\\]\\s-*\\[\\|\}\\s-*\{" path)))
+		(not (string-match-p "\)\\s-*\(\\|\\]\\s-*\\[\\|\}\\s-*\{" path)))
 	   ;; With point inside a path variable, return the path that point is on or to the right of.
-	   (setq subpath (or (and (setq subpath (hargs:delimited "[:\"\']" "[:\"\']" t t nil "[\t\n\r\f]\\|[;:] \\| [;:]"))
-				  (not (string-match "[:;\t\n\r\f]" subpath))
+	   (setq subpath (or (and (setq subpath (hargs:delimited "^\\s-*\\|[:\"\']" "[:\"\']\\|\\s-*$" t t nil "[\t\n\r\f]\\|[;:] \\| [;:]"))
+				  (not (string-match-p "[:;\t\n\r\f]" subpath))
 				  subpath)
-			     (and (setq subpath (hargs:delimited "[;\"\']" "[;\"\']"  t t nil "[\t\n\r\f]\\|[;:] \\| [;:]"))
-				  (not (string-match "[;\t\n\r\f]\\|:[^:]*:" subpath))
+			     (and (setq subpath (hargs:delimited "^\\s-*\\|[;\"\']" "[;\"\']\\|\\s-*$"  t t nil "[\t\n\r\f]\\|[;:] \\| [;:]"))
+				  (not (string-match-p "[;\t\n\r\f]\\|:[^:]*:" subpath))
 				  subpath)))
 	   (if subpath
 	       ;; Could be a shell command from a semicolon separated
@@ -1030,19 +1030,19 @@ end-pos) or nil."
 	;; . or .., don't treat it as a pathname.  Only look for
 	;; whitespace delimited filenames if non-exist is nil.
 	(unless non-exist
-	  (let* ((triplet (hargs:delimited "^\\|\\(\\s-\\|[\]\[(){}<>\;&,@]\\)*"
-					   "\\([\]\[(){}<>\;&,@]\\|:*\\s-\\)+\\|$"
+	  (let* ((triplet (hargs:delimited "^\\|\\(\\s-\\|[\]\[()<>\;&,@]\\)+"
+					   "\\([\]\[()<>\;&,@]\\|:*\\s-\\)+\\|$"
 					   t t t))
 		 (p (car triplet))
 		 (punc (char-syntax ?.)))
 	    ;; May have matched to a string with an embedded double
-	    ;; quote; if so, don't consider it a path.  Also ignore
-	    ;; whitespace delimited root dirs, e.g. " / ".
-	    (when (and (stringp p) (not (string-match "\"\\|\\`[/\\]+\\'" p))
+	    ;; quote or surrounded by braces; if so, don't consider it a path.
+            ;; Also ignore whitespace delimited root dirs, e.g. " / ".
+	    (when (and (stringp p) (not (string-match-p "\\`{.*}\\'\\|\"\\|\\`[/\\]+\\'" p))
 		       (delq nil (mapcar (lambda (c) (/= punc (char-syntax c))) p)))
-	      ;; Prepend proper directory to ls *, recursive ls or dir file listings
-	      ;; when needed.
-	      (setq p (or (hpath:prepend-ls-directory) p))
+	      ;; Prepend proper directory from cd, ls *, recursive ls or dir file
+	      ;; listings when needed.
+	      (setq p (or (hpath:prepend-shell-directory p) p))
 	      (setcar triplet p)
 	      (if include-positions
 		  triplet
@@ -1121,23 +1121,24 @@ Return any absolute or invalid PATH unchanged."
 	     substituted-path)
 	    (t (expand-file-name substituted-path))))))
 
-(defun hpath:prepend-ls-directory ()
+(defun hpath:prepend-shell-directory (&optional filename)
   "When in a shell buffer and on a filename result of an 'ls *' or recursive 'ls -R' or 'dir' command, prepend the subdir to the filename when needed and return it, else return nil."
   (when (derived-mode-p #'shell-mode)
-    (let ((filename (thing-at-point 'filename t))
-	  (prior-prompt-pos (save-excursion (comint-previous-prompt 1) (1- (point))))
+    (let ((prior-prompt-pos (save-excursion (comint-previous-prompt 1) (1- (point))))
 	  dir)
+      (unless (stringp filename)
+	(setq filename (thing-at-point 'filename t)))
       (save-excursion
 	(when (and filename
 		   (if (memq system-type '(windows-nt cygwin ms-dos))
 		       ;; Windows Cmd or PowerShell dir cmds
-		       (and (re-search-backward "^\\s-*\\(Directory: \\|Directory of \\)\\(.+\\)$" prior-prompt-pos t)
+		       (and (re-search-backward "^\\s-*\\(cd \\|pushd \\|Directory: \\|Directory of \\)\\(.+\\)$" prior-prompt-pos t)
 			    (setq dir (match-string-no-properties 2)))
 		     ;; POSIX
 		     (or (and (re-search-backward "^$\\|\\`\\|^\\(.+\\):$" prior-prompt-pos t)
 			      (setq dir (match-string-no-properties 1)))
-			 (and (re-search-backward "\\(^\\| \\)ls.* [\'\"]?\\([^\'\"\n\r]+[^\'\" \n\r]\\)[\'\"]?$" prior-prompt-pos t)
-			      (setq dir (match-string-no-properties 2)))))
+			 (and (re-search-backward "\\(^\\| \\)\\(cd\\|pushd\\|ls\\)\\(\\s-+-[-a-zA-Z0-9]*\\)*\\s-+[\'\"]?\\([^&!;,\'\"\t\n\r\f]+[^&!;,\'\" \t\n\r\f]\\)[\'\"]?" prior-prompt-pos t)
+			      (setq dir (match-string-no-properties 4)))))
 		   (and dir (not (string-empty-p dir))))
 	  (unless (file-name-absolute-p filename)
 	    ;; If dir ends with a glob expression, then the dir is
@@ -1148,7 +1149,7 @@ Return any absolute or invalid PATH unchanged."
 	      (when (file-directory-p dir)
 		(setq dir (file-name-as-directory dir)))
 	      (when (and dir (not (string-empty-p dir)) (file-exists-p dir))
-		(expand-file-name (concat (file-name-as-directory dir) filename))))))))))
+		(expand-file-name filename dir)))))))))
 
 (defvar hpath:compressed-suffix-regexp (concat (regexp-opt '(".gz" ".Z" ".zip" ".bz2" ".xz" ".zst")) "\\'")
    "Regexp of compressed file name suffixes.")
@@ -1670,7 +1671,7 @@ in-buffer path will not match."
   ;; Create a regexp from path by regexp-quoting it and then matching spaces
   ;; to any whitespace.
   (when (stringp path)
-    (let ((path-regexp (replace-regexp-in-string "[ \t\n\r]+" "[ \t\n\r]" (regexp-quote path) t t))
+    (let ((path-regexp (replace-regexp-in-string "[ \t\n\r\f]+" "[ \t\n\r\f]" (regexp-quote path) t t))
 	  (opoint (point))
 	  found
 	  search-end-point
@@ -2210,12 +2211,13 @@ function to call with FILENAME as its single argument."
 	   ;;   var-name)
 	   nil)
 	  ((let ((case-fold-search t))
-	     (or (stringp (setq val (cond ((and (boundp sym) sym)
-					       (symbol-value sym))
-					      ((and (string-match "path" var-name)
-						    (seq-find (lambda (c) (memq c '(?: ?\;))) (or (getenv var-name) "")))
-					       nil)
-					      (t (getenv var-name)))))
+	     (or (stringp (setq val (cond ((and sym (boundp sym))
+					   (symbol-value sym))
+					  ((and (string-match-p "path" var-name)
+						(seq-find (lambda (c) (memq c '(?: ?\;)))
+							  (or (getenv var-name) "")))
+					   nil)
+					  (t (getenv var-name)))))
 		 (setq val nil))))
 	  ((listp val)
 	   (setq val nil))
@@ -2225,7 +2227,7 @@ function to call with FILENAME as its single argument."
     val))
 
 (defun hpath:substitute-dir (path-prefix var-name rest-of-path trailing-dir-sep-flag &optional return-path-flag)
-  "Return PATH-PREFIX, dir for VAR-NAME, TRAILING-DIR-SEP-FLAG and REST-OF-PATH when optional RETURN-PATH-FLAG is non-nil.
+  "Return the concatenation of PATH-PREFIX, dir for VAR-NAME, TRAILING-DIR-SEP-FLAG and REST-OF-PATH when optional RETURN-PATH-FLAG is non-nil.
 Otherwise, return just the dir for VAR-NAME.  Trigger an error when no match.
 With RETURN-PATH-FLAG non-nil, return path expanded and with first variable value substituted.
 
@@ -2254,7 +2256,9 @@ local pathname."
 				       (split-string (getenv var-name) "[:;]"))
 				      (t (getenv var-name)))))))
 	  ((listp val)
-	   (unless (and (setq path (locate-file rest-of-path val (cons "" hpath:suffixes)))
+	   (unless (and (setq path (locate-file rest-of-path val (cons "" hpath:suffixes)
+						(lambda (f) (when (file-readable-p f)
+							      'dir-ok))))
 			return-path-flag)
 	     (let* ((suffix-added (car (delq nil (mapcar (lambda (suffix)
 							   (when (string-suffix-p suffix path)
@@ -2278,7 +2282,10 @@ local pathname."
     (cond ((and return-path-flag path)
 	   (concat path-prefix path))
 	  ((and return-path-flag rest-of-path)
-	   (concat path-prefix val trailing-dir-sep-flag rest-of-path))
+	   (if (stringp val)
+	       (concat path-prefix val trailing-dir-sep-flag rest-of-path)
+	     (error "(hpath:substitute-dir): Can't find match for \"%s\""
+		    (concat "$\{" var-name "\}/" rest-of-path))))
 	  (t val))))
 
 (defun hpath:substitute-match-value (regexp str new &optional literal fixedcase)

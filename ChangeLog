@@ -1,5 +1,23 @@
 2022-01-30  Bob Weiner  <rsw@gnu.org>
 
+* hpath.el (hpath:at-p): Fix start and end delimiters to hargs:delimited so match
+    to PATH variable values when not surrounded by double quotes.
+  hargs.el (hargs:delimited): Fix not matching start and end patterns at the
+    beginning and end of lines.  Also, simplify when start end end delims differ,
+    eliminating the need to check whether point is between strings rather than
+    inside one.
+           (hpath:delimited-possible-path): Fix hargs:delimited start delimiter
+    to use + instead of * to match to unquoted pathnames.  Also, allow {} in paths
+    so can match to var names in path but not if braces are the first and last
+    chars of path.
+
+* hpath.el (hpath:prepend-shell-directory): Rename from 'hpath:prepend-ls-directory'.
+    Add support for 'cd' and 'pushd' commands.
+  hibtypes.el (ripgrep-msg, grep-msg): When in shell mode, expand path with above
+   function.
+              (hpath:substitute-dir): Fix to make 'locate-file' call handle dirs,
+   so final expansion can be a directory, e.g. on Macs App bundles are directories.
+
 * hact.el (actype:act): Allow for builtin subr objects like 'cons';
     This fixes Action Buttons that start with <progn ...>, for example.
 

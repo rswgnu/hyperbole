@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    28-Feb-21 at 23:26:00
-;; Last-Mod:     24-Jan-22 at 00:39:38 by Bob Weiner
+;; Last-Mod:     30-Jan-22 at 16:36:14 by Bob Weiner
 ;;
 ;; Copyright (C) 2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -192,7 +192,7 @@
   (switch-to-buffer buffer)
   (shell-mode))
 
-(ert-deftest hpath:prepend-ls-directory-test ()
+(ert-deftest hpath:prepend-shell-directory-test ()
   "Find file in ls -R listing."
   (let ((shell-buffer "*hypb-test-shell-buffer*"))
     (unwind-protect

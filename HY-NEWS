@@ -63,7 +63,7 @@
       non-programmers to create their own implicit action button link
       types that execute key series, display URLs, display the contents
       of pathnames or invoke functions.  See "(hyperbole)Action Button
-      Link Types" or the "DEMO#Defining New Action Button Types"
+      Link Types" or the "DEMO2#Defining New Action Button Types"
       section.
 
     - Easy Implicit Link Button Type Creation: `defil' is a new
@@ -246,6 +246,13 @@
       without an attached file, similar to what already existed for mail
       message buffers.
 
+    - 'ls' and 'grep' Directory Changes:  'ls' listings are now recognized
+      properly, prepending the preceding directory to each entry for viewing.
+
+      Similarly, if a 'cd' or 'pushd' command is issued prior to a 'grep -n'
+      or 'ripgrep' command, Hyperbole will prepend that directory to the grep
+      output before jumping to the resultant path.
+
     - Pathname Implicit Buttons: Much improved pathname handling including
       multiple variables per path, embedded . or .. within paths, better
       recognition of semicolon separated pathnames in Windows PATH variable.
@@ -253,9 +260,6 @@
       Variable substitutions are now made with fixed case, so that the
       case of a value with both upper and lower case characters is
       never changed, for example a value of ${HOME}.
-
-      Recursive 'ls' listings are now recognized properly, prepending the
-      preceding directory to each entry for viewing.
 
       Generalized Anchored Pathnames:  "pathname#anchor" now works in
       programming modes as well as text and outlining modes where anchors
@@ -373,7 +377,7 @@
     - Fast Window Links: The hkey-window-link command bound to {M-o w}
       rapidly creates a link button at point in the selected window,
       linking to point in the window chosen when prompted.
-      See "DEMO#Displaying File and Buffer Items and Moving Buffers".
+      See "DEMO2#Displaying File and Buffer Items and Moving Buffers".
 
     - Throw A Region Elsewhere Within the Same Buffer: {M-o t <window-id>}
       when used with a selected region can now throw to the source buffer
@@ -491,7 +495,7 @@
 *                                   V7.1.1
 ===========================================================================
 
-  DEMO
+  DEMO2
 
     - Global Buttons: Added a new example of a labeled global implicit button
       displaying a todo file maintained in Koutliner format.  See
@@ -752,7 +756,7 @@
 
   DOCUMENTATION
 
-    - DEMO: New sections on Button Files and Global Buttons.
+    - DEMO2: New sections on Button Files and Global Buttons.
 
     - Action Types: link-to-gbut, link-to-ibut - Added.
 
@@ -764,7 +768,7 @@
       ilink (link to implicit button), glink (link to global button), and
       elink (link to explicit button).
 
-    - DEMO (Action Buttons): Added description and examples.
+    - DEMO2 (Action Buttons): Added description and examples.
 
     - Path Variables: Better documented how these are handled.
 
@@ -773,6 +777,8 @@
 
     - Glossary: Updated Implicit Button and Global Button entries with
       changes.
+
+    - Installation: All new manual section on multiple ways to install Hyperbole.
 
 
   KOUTLINER

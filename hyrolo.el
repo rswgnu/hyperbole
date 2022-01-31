@@ -28,6 +28,7 @@
 (require 'custom) ;; For defface.
 (require 'hversion)
 (require 'hmail)
+(require 'sort)
 (require 'xml)
 
 ;; Quiet byte compiler warnings for these free variables.

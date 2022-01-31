@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    31-Oct-91 at 23:17:35
-;; Last-Mod:     24-Jan-22 at 00:17:53 by Bob Weiner
+;; Last-Mod:     30-Jan-22 at 22:15:38 by Bob Weiner
 ;;
 ;; Copyright (C) 1991-2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -93,6 +93,8 @@ interactive form or takes no arguments."
 	    (hargs:iform-read interactive-form modifying))))))
 
 (defun hargs:buffer-substring (start end)
+  "Return the buffer substring sans any properties between START and END positions.
+Convert NUL characters to colons for use with grep lines."
   (let ((string (buffer-substring-no-properties start end)))
     ;; This may trigger on a colored grep-like output line which has
     ;; an embedded null character with a display text property that
@@ -110,45 +112,57 @@ treated as a regular expression.  END-REGEXP-FLAG is similar.
 With optional LIST-POSITIONS-FLAG, return list of (string-matched start-pos end-pos).
 With optional EXCLUDE-REGEXP, any matched string is ignored if it matches this regexp."
   (let* ((opoint (point))
+	 (line-begin (line-beginning-position))
+	 ;; This initial limit if the forward search limit for start delimiters
 	 (limit (if start-regexp-flag opoint
 		  (+ opoint (1- (length start-delim)))))
-	 (start-search-func (if start-regexp-flag 're-search-forward
-			      'search-forward))
-	 (end-search-func (if end-regexp-flag 're-search-forward
-			    'search-forward))
+	 (forward-search-func (if start-regexp-flag 're-search-forward
+				'search-forward))
+	 (reverse-search-func (if end-regexp-flag 're-search-backward
+				'search-backward))
 	 (count 0)
 	 first
 	 start
 	 end)
-    (save-excursion
-      (beginning-of-line)
-      (while (and (setq start (funcall start-search-func start-delim limit t))
-		  (setq count (1+ count))
-		  (< (point) opoint)
-		  ;; This is not to find the real end delimiter but to find
-		  ;; end delimiters that precede the current argument and are
-		  ;; therefore false matches, hence the search is limited to
-		  ;; prior to the original point.
-		  (funcall end-search-func end-delim opoint t)
-		  (setq count (1+ count)))
-	(setq first (or first start)
-	      start nil))
-      (when (and (not start) (> count 0) (zerop (% count 2)))
-	;; Since strings can span lines but this function matches only
-	;; strings that start on the current line, when start-delim and
-	;; end-delim are the same and there are an even number of
-	;; delimiters in the search range, causing the end-delim
-	;; search to match to what should probably be the start-delim,
-	;; assume point is within a string and not between two other strings.
-	;; -- RSW, 02-05-2019
-	(setq start (if (string-equal start-delim end-delim)
-			(point)
-		      first)))
-      (when start
+    (if (string-equal start-delim end-delim)
+	(save-excursion
+	  (beginning-of-line)
+	  (while (and (setq start (funcall forward-search-func start-delim limit t))
+		      (setq count (1+ count))
+		      (< (point) opoint)
+		      ;; This is not to find the real end delimiter but to find
+		      ;; end delimiters that precede the current argument and are
+		      ;; therefore false matches, hence the search is limited to
+		      ;; prior to the original point.
+		      (funcall forward-search-func end-delim opoint t)
+		      (setq count (1+ count)))
+	    (setq first (or first start)
+		  start nil))
+	  (when (and (not start) (> count 0) (zerop (% count 2)))
+	    ;; Since strings can span lines but this function matches only
+	    ;; strings that start on the current line, when start-delim and
+	    ;; end-delim are the same and there are an even number of
+	    ;; delimiters in the search range, causing the end-delim
+	    ;; search to match to what should probably be the start-delim,
+	    ;; assume point is within a string and not between two other strings.
+	    ;; -- RSW, 02-05-2019
+	    (setq start (if (string-equal start-delim end-delim)
+			    (point)
+			  first))))
+      ;;
+      ;; Start and end delims are different, so don't have to worry
+      ;; about whether in or outside two of the same delimiters and
+      ;; can match much more simply.
+      (save-excursion
+	(setq start (when (funcall reverse-search-func start-delim line-begin t)
+		      (match-end 0)))))
+
+    (when start
+      (save-excursion
 	(forward-line 2)
 	(setq limit (point))
 	(goto-char opoint)
-	(and (funcall end-search-func end-delim limit t)
+	(and (funcall forward-search-func end-delim limit t)
 	     (setq end (match-beginning 0))
 	     ;; Ignore any preceding backslash, e.g. when a double-quoted
 	     ;; string is embedded within a doc string, except when

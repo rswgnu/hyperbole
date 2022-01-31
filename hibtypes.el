@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 20:45:31
-;; Last-Mod:     30-Jan-22 at 03:12:41 by Bob Weiner
+;; Last-Mod:     30-Jan-22 at 16:37:47 by Bob Weiner
 ;;
 ;; Copyright (C) 1991-2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -897,8 +897,9 @@ buffer)."
 		   ;; resolve any variables in the path before checking if absolute.
 		   (source-loc (unless (file-name-absolute-p (hpath:expand file))
                                  (hbut:key-src t))))
-              (when (stringp source-loc)
-                (setq file (expand-file-name file (file-name-directory source-loc))))
+              (if (stringp source-loc)
+                  (setq file (expand-file-name file (file-name-directory source-loc)))
+		(setq file (or (hpath:prepend-shell-directory file) file)))
               (when (file-readable-p file)
                 (setq line-num (string-to-number line-num))
                 (ibut:label-set but-label)
@@ -953,8 +954,9 @@ in grep and shell buffers."
 	       ;; resolve any variables in the path before checking if absolute.
                (source-loc (unless (file-name-absolute-p (hpath:expand file))
                              (hbut:key-src t))))
-          (when (stringp source-loc)
-            (setq file (expand-file-name file (file-name-directory source-loc))))
+          (if (stringp source-loc)
+              (setq file (expand-file-name file (file-name-directory source-loc)))
+	    (setq file (or (hpath:prepend-shell-directory file) file)))
           (setq line-num (string-to-number line-num))
           (ibut:label-set but-label)
           (hact 'link-to-file-line file line-num))))))
