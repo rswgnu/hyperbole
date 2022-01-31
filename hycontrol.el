@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     1-Jun-16 at 15:35:36
-;; Last-Mod:     29-Jan-22 at 16:03:51 by Bob Weiner
+;; Last-Mod:     31-Jan-22 at 00:33:24 by Bob Weiner
 ;;
 ;; Copyright (C) 2016-2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -1525,15 +1525,30 @@ When done, this resets the persistent HyControl prefix argument to 1
 to prevent following commands from using the often large grid size
 argument."
   (interactive "p")
-  (setq arg (prefix-numeric-value (or arg current-prefix-arg)))
-  (cond ((> arg 0)
-	 (hycontrol-make-windows-grid arg))
-	((< arg 0)
-	 (setq current-prefix-arg nil)
-	 (call-interactively #'hycontrol-windows-grid-by-file-pattern))
-	(t
-	 (setq current-prefix-arg 0)
-	 (call-interactively #'hycontrol-windows-grid-by-major-mode))))
+  (let* ((key "\C-c@")
+	 (this-key-flag (and (called-interactively-p 'interactive)
+			     (equal (this-command-keys) key))))
+    (cond ((and this-key-flag (derived-mode-p 'org-mode))
+	   ;; Prevent a conflict with binding in Org mode
+	   (call-interactively (lookup-key org-mode-map key)))
+	  ((and this-key-flag (derived-mode-p 'outline-mode))
+	   ;; Prevent a conflict with binding in Outline mode
+	   (call-interactively (lookup-key outline-mode-map key)))
+	  ((and this-key-flag (boundp 'outline-minor-mode)
+		outline-minor-mode)
+	   ;; Prevent a conflict with binding in Outline minor mode
+	   (call-interactively (lookup-key outline-minor-mode-map key)))
+	  ;;
+	  ;; No key conflicts, display window grid
+	  (t (setq arg (prefix-numeric-value (or arg current-prefix-arg)))
+	     (cond ((> arg 0)
+		    (hycontrol-make-windows-grid arg))
+		   ((< arg 0)
+		    (setq current-prefix-arg nil)
+		    (call-interactively #'hycontrol-windows-grid-by-file-pattern))
+		   (t
+		    (setq current-prefix-arg 0)
+		    (call-interactively #'hycontrol-windows-grid-by-major-mode)))))))
 
 (defun hycontrol-windows-grid-by-buffer-list (buffers)
   "Display an automatically sized window grid showing list of BUFFERS."

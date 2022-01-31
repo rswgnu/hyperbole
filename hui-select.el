@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Oct-96 at 02:25:27
-;; Last-Mod:     24-Jan-22 at 00:18:48 by Bob Weiner
+;; Last-Mod:     31-Jan-22 at 00:48:38 by Bob Weiner
 ;;
 ;; Copyright (C) 1996-2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -301,6 +301,11 @@ The non-nil value returned is the function to call to select that syntactic unit
   (interactive)
   (cond ((memq major-mode hui-select-markup-modes)
 	 (hui-select-goto-matching-tag))
+	((and (derived-mode-p 'org-mode)
+	      (called-interactively-p 'interactive)
+	      (equal (this-command-keys) "\C-c."))
+	 ;; Prevent a conflict with {C-c .} binding in Org mode
+	 (call-interactively (lookup-key org-mode-map "\C-c.")))
 	((and (preceding-char) (or (= ?\) (char-syntax (preceding-char)))
 				   (= ?\" (preceding-char))))
 	 (backward-sexp))
@@ -403,21 +408,28 @@ interactively, the type of selection is displayed in the minibuffer."
 	  ;; Reset selection based on the syntax of character at point.
 	  (hui-select-reset)
 	  nil)))
-  (let ((region (hui-select-get-region-boundaries)))
-    (unless region
-      (when (eq hui-select-previous 'punctuation)
-	(setq region (hui-select-word (point)))))
-    (when region
-      (goto-char (car region))
-      (set-mark (cdr region))
-      (when (fboundp 'activate-region) (activate-region))
-      (when (and (boundp 'transient-mark-mode)
-	         transient-mark-mode)
-	(setq mark-active t))
-      (and (called-interactively-p 'interactive) hui-select-display-type
-	   (message "%s" hui-select-previous))
-      (run-hooks 'hui-select-thing-hook)
-      t)))
+  (cond ((and (derived-mode-p 'org-mode)
+	      (called-interactively-p 'interactive)
+	      (equal (this-command-keys) "\C-c\C-m"))
+	 ;; Prevent a conflict with {C-c RET} binding in Org mode
+	 (call-interactively (lookup-key org-mode-map "\C-c\C-m")))
+	;;
+	;; No key conflicts, perform normal Hyperbole operation
+	(t (let ((region (hui-select-get-region-boundaries)))
+	     (unless region
+	       (when (eq hui-select-previous 'punctuation)
+		 (setq region (hui-select-word (point)))))
+	     (when region
+	       (goto-char (car region))
+	       (set-mark (cdr region))
+	       (when (fboundp 'activate-region) (activate-region))
+	       (when (and (boundp 'transient-mark-mode)
+			  transient-mark-mode)
+		 (setq mark-active t))
+	       (and (called-interactively-p 'interactive) hui-select-display-type
+		    (message "%s" hui-select-previous))
+	       (run-hooks 'hui-select-thing-hook)
+	       t)))))
 
 ;;;###autoload
 (defun hui-select-thing-with-mouse (event)

@@ -1,3 +1,16 @@
+2022-01-31  Bob Weiner  <rsw@gnu.org>
+
+* hui-select.el (hui-select-thing): Hyperbole binds this to {C-c RET} which
+    conflicts with an Org mode binding, so if in Org mode, use its binding
+    when this command is called interactively from that key.
+  hycontrol.el (hycontrol-windows-grid): Hyperbole binds this to {C-c @} which
+    conflicts with bindings in Org mode, Outline mode and Outline minor mode.
+    Modify this command to use those bindings when called interactively from
+    that key.
+  hui-select.el (hui-select-goto-matching-delimiter): Hyperbole binds this to
+    {C-c .} which conflicts with an Org mode binding, so if in Org mode, use
+    its binding when this command is called interactively from that key.
+
 2022-01-30  Bob Weiner  <rsw@gnu.org>
 
 * hpath.el (hpath:at-p): Fix start and end delimiters to hargs:delimited so match
@@ -17,6 +30,10 @@
    function.
               (hpath:substitute-dir): Fix to make 'locate-file' call handle dirs,
    so final expansion can be a directory, e.g. on Macs App bundles are directories.
+
+* hsmail.el: Switch from use of sendmail.el to message.el.
+    (message-send-hook): Remove use of advice-add which caused
+    a recursive loop.  Add smail:widen to message-send-hook instead.
 
 * hact.el (actype:act): Allow for builtin subr objects like 'cons';
     This fixes Action Buttons that start with <progn ...>, for example.
