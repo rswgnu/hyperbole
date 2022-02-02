@@ -331,7 +331,7 @@ Interactively, KEY-FILE defaults to the current buffer's file name."
 If POINT is given, display the buffer with POINT at the top of
 the window or as close as possible."
   (interactive
-   (let ((prev-reading-p hargs:reading-symbol)
+   (let ((prev-reading-p hargs:reading-type)
 	 (existing-buf t)
 	 path-buf)
      (unwind-protect
@@ -341,7 +341,7 @@ the window or as close as possible."
 				       default-directory))
 		(file-path (or (car hargs:defaults) default-directory))
 		(file-point (cadr hargs:defaults))
-		(hargs:reading-symbol 'file)
+		(hargs:reading-type 'file)
 		;; If reading interactive inputs from a key series
 		;; (puts key events into the unread queue), then don't
 		;; insert default-directory into the minibuffer
@@ -378,7 +378,7 @@ the window or as close as possible."
 				       (goto-char (min (point-max) file-point)))))))
 	   (if (and path-buf (not line-num))
 	       (with-current-buffer path-buf
-		 (setq hargs:reading-symbol 'character)
+		 (setq hargs:reading-type 'character)
 		 (if (y-or-n-p
 		      (format "y = Display at present position (line %d); n = no position? "
 			      (count-lines 1 (point))))
@@ -391,7 +391,7 @@ the window or as close as possible."
 					(when column-num (move-to-column column-num))
 					(point))))
 	       (list (or path orig-path)))))
-       (setq hargs:reading-symbol prev-reading-p)
+       (setq hargs:reading-type prev-reading-p)
        (when (and path-buf (not existing-buf))
 	 (kill-buffer path-buf)))))
   (if path

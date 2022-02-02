@@ -1,3 +1,7 @@
+2022-02-02  Mats Lidell  <matsl@gnu.org>
+
+* hargs.el (hargs:reading-type): Renaming var.
+
 2022-01-31  Bob Weiner  <rsw@gnu.org>
 
 * hui-select.el (hui-select-thing): Hyperbole binds this to {C-c RET} which
@@ -96,10 +100,6 @@
 
 * hypb.el (hypb--installation-type, hypb:configuration): Add function to
     provide installation type and version number and use it.
-
-2022-01-27  Mats Lidell  <matsl@gnu.org>
-
-* hargs.el (hargs:reading-symbol): Renaming var.
 
 2022-01-25  Bob Weiner  <rsw@gnu.org>
 
