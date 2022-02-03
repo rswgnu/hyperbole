@@ -99,8 +99,8 @@
   (let ((hyperb:dir "/a_git_folder"))
     (with-mock
       (mock (file-exists-p "/a_git_folder/.git") => t)
-      (mock (shell-command-to-string "git rev-parse HEAD") => "abcdefg")
-      (should (equal (hypb--installation-type) '("git" "abcdefg")))))
+      (mock (shell-command-to-string "git rev-parse HEAD") => "d43d05a0973e8adcbfdd8c85681dac5de669aaa9")
+      (should (equal (hypb--installation-type) '("git" "d43d05a097")))))
   (let ((hyperb:dir "/a_git_folder"))
     (with-mock
       (mock (file-exists-p "/a_git_folder/.git") => nil)
