@@ -5,7 +5,7 @@
 ;; Orig-Date:    30-may-21 at 09:33:00
 ;; Last-Mod:     24-Jan-22 at 00:38:20 by Bob Weiner
 ;;
-;; Copyright (C) 2021  Free Software Foundation, Inc.
+;; Copyright (C) 2021-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
 ;;
 ;; This file is part of GNU Hyperbole.
@@ -27,14 +27,6 @@ Needed since hyperbole expands all links to absolute paths and
 /tmp can be a symbolic link."
   (should (member tmp '(("/tmp") ("./tmp") ("/private/tmp")))))
 
-(defun hbut-tests--verify-hattr-at-p (actype args loc lbl-key)
-  "Verify the attribute of hbut at point.
-Checks ACTYPE, ARGS, LOC and LBL-KEY."
-  (should (eq (hattr:get (hbut:at-p) 'actype) actype))
-  (should (equal (hattr:get (hbut:at-p) 'args) args))
-  (should (equal (hattr:get (hbut:at-p) 'loc) loc))
-  (should (equal (hattr:get (hbut:at-p) 'lbl-key) lbl-key)))
-
 (ert-deftest ebut-program-link-to-directory ()
   "Programatically create ebut with link-to-directory."
   (let ((file (make-temp-file "hypb_" nil ".txt")))
@@ -55,7 +47,7 @@ Checks ACTYPE, ARGS, LOC and LBL-KEY."
         (progn
           (find-file file)
           (ebut:program "label" 'link-to-directory temporary-file-directory)
-          (hbut-tests--verify-hattr-at-p 'actypes::link-to-directory (list temporary-file-directory) file "label"))
+          (hy-test-helpers-verify-hattr-at-p :actype 'actypes::link-to-directory :args (list temporary-file-directory) :loc file :lbl-key "label"))
       (delete-file file))))
 
 (ert-deftest ebut-program-shell-cmd ()
@@ -65,7 +57,7 @@ Checks ACTYPE, ARGS, LOC and LBL-KEY."
         (progn
           (find-file file)
           (ebut:program "label" 'exec-shell-cmd "ls /tmp")
-          (hbut-tests--verify-hattr-at-p 'actypes::exec-shell-cmd '("ls /tmp") file "label"))
+          (hy-test-helpers-verify-hattr-at-p :actype 'actypes::exec-shell-cmd :args '("ls /tmp") :loc file :lbl-key "label"))
       (delete-file file))))
 
 (ert-deftest ebut-delete-removes-ebut-and-returns-button-data ()
@@ -118,7 +110,7 @@ Checks ACTYPE, ARGS, LOC and LBL-KEY."
             (mock (find-file-noselect (expand-file-name hbmap:filename hbmap:dir-user)) => test-buffer)
             (gbut:ebut-program "global" 'eval-elisp '()))
 	  (with-current-buffer test-buffer
-            (hbut-tests--verify-hattr-at-p 'actypes::eval-elisp '(()) test-file "global")))
+            (hy-test-helpers-verify-hattr-at-p :actype 'actypes::eval-elisp :args  '(()) :loc test-file :lbl-key "global")))
       (delete-file test-file))))
 
 (ert-deftest gbut-program-link-to-file ()
@@ -131,7 +123,7 @@ Checks ACTYPE, ARGS, LOC and LBL-KEY."
             (mock (find-file-noselect (expand-file-name hbmap:filename hbmap:dir-user)) => test-buffer)
             (gbut:ebut-program "global" 'link-to-file test-file))
 	  (with-current-buffer test-buffer
-            (hbut-tests--verify-hattr-at-p 'actypes::link-to-file (list test-file) test-file "global")))
+            (hy-test-helpers-verify-hattr-at-p :actype 'actypes::link-to-file :args (list test-file) :loc test-file :lbl-key "global")))
       (delete-file test-file))))
 
 (ert-deftest gbut-program-link-to-file-line ()
@@ -144,7 +136,7 @@ Checks ACTYPE, ARGS, LOC and LBL-KEY."
             (mock (find-file-noselect (expand-file-name hbmap:filename hbmap:dir-user)) => test-buffer)
             (gbut:ebut-program "global" 'link-to-file-line test-file 10))
 	  (with-current-buffer test-buffer
-            (hbut-tests--verify-hattr-at-p 'actypes::link-to-file-line (list test-file 10) test-file "global")))
+            (hy-test-helpers-verify-hattr-at-p :actype 'actypes::link-to-file-line :args (list test-file 10) :loc test-file :lbl-key "global")))
       (delete-file test-file))))
 
 (ert-deftest gbut-program-link-to-file-line-and-column ()
@@ -157,7 +149,7 @@ Checks ACTYPE, ARGS, LOC and LBL-KEY."
             (mock (find-file-noselect (expand-file-name hbmap:filename hbmap:dir-user)) => test-buffer)
             (gbut:ebut-program "global" 'link-to-file-line-and-column test-file 10 20))
 	  (with-current-buffer test-buffer
-            (hbut-tests--verify-hattr-at-p 'actypes::link-to-file-line-and-column (list test-file 10 20) test-file "global")))
+            (hy-test-helpers-verify-hattr-at-p :actype 'actypes::link-to-file-line-and-column :args (list test-file 10 20) :loc test-file :lbl-key"global")))
       (delete-file test-file))))
 
 (ert-deftest hypb:program-create-ebut-in-buffer ()
@@ -175,7 +167,7 @@ Checks ACTYPE, ARGS, LOC and LBL-KEY."
         (progn
           (find-file test-file)
           (ebut:program "label" 'link-to-file-line-and-column test-file 2 3)
-          (hbut-tests--verify-hattr-at-p 'actypes::link-to-file-line-and-column (list test-file 2 3) test-file "label"))
+          (hy-test-helpers-verify-hattr-at-p :actype 'actypes::link-to-file-line-and-column :args (list test-file 2 3) :loc test-file :lbl-key "label"))
       (delete-file test-file))))
 
 ;; FIXME: This file can only be byte-compiled when `el-mock' is installed.

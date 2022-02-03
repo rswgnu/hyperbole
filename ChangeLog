@@ -1,3 +1,12 @@
+2022-02-03  Mats Lidell  <matsl@gnu.org>
+
+* test/hbut-tests.el (hbut-tests--verify-hattr-at-p):
+  test/hui-tests.el (hui-tests--verify-hattr-at-p): Remove local helper
+    and use hy-test-helpers-verify-hattr-at-p.
+
+* test/hy-test-helpers.el (hy-test-helpers-verify-hattr-at-p): Add helper
+    function.
+
 2022-02-02  Mats Lidell  <matsl@gnu.org>
 
 * hargs.el (hargs:reading-type): Renaming var.
