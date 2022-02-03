@@ -5,7 +5,7 @@
 ;; Orig-Date:    04-Feb-89
 ;; Last-Mod:     24-Jan-22 at 00:18:48 by Bob Weiner
 ;;
-;; Copyright (C) 1991-2021  Free Software Foundation, Inc.
+;; Copyright (C) 1991-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
 ;;
 ;; This file is part of GNU Hyperbole.
@@ -201,7 +201,7 @@ Its default value is #'smart-scroll-down.  To disable it, set it to
     ;; accept argument or give completion help.
     ((and (> (minibuffer-depth) 0)
 	  (eq (selected-window) (minibuffer-window))
-	  (not (eq hargs:reading-p 'hmenu))
+	  (not (eq hargs:reading-type 'hmenu))
 	  (not (smart-helm-alive-p))) .
 	  ((funcall (key-binding (kbd "RET"))) . (smart-completion-help)))
     ;;
@@ -216,7 +216,7 @@ Its default value is #'smart-scroll-down.  To disable it, set it to
     ;; session and activate the selected item.
     ((and (> (minibuffer-depth) 0)
 	  (eq (selected-window) (minibuffer-window))
-	  (or (eq hargs:reading-p 'hmenu)
+	  (or (eq hargs:reading-type 'hmenu)
 	      (smart-helm-alive-p))) .
 	  ((funcall (key-binding (kbd "RET"))) . (funcall (key-binding (kbd "RET")))))
     ;;

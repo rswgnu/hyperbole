@@ -1345,9 +1345,9 @@ Buffer without File      link-to-buffer-tmp"
 				(member Info-current-node
 					(Info-index-nodes Info-current-file))
 				(Info-menu-item-at-p))
-			   (let ((hargs:reading-p 'Info-index-item))
+			   (let ((hargs:reading-type 'Info-index-item))
 			     (list 'link-to-Info-index-item (hargs:at-p)))
-			 (let ((hargs:reading-p 'Info-node))
+			 (let ((hargs:reading-type 'Info-node))
 			   (list 'link-to-Info-node (hargs:at-p)))))
                       ((derived-mode-p #'texinfo-mode)
                        (let (node)
@@ -1363,10 +1363,10 @@ Buffer without File      link-to-buffer-tmp"
 		       (list 'link-to-mail
 			     (list (rmail:msg-id-get) buffer-file-name))))
 		(cond
-		 ((let ((hargs:reading-p 'directory))
+		 ((let ((hargs:reading-type 'directory))
 		    (setq val (hargs:at-p t)))
 		  (list 'link-to-directory val))
-		 ((let ((hargs:reading-p 'file))
+		 ((let ((hargs:reading-type 'file))
 		    (setq val (hargs:at-p t)))
 		  (list 'link-to-file val (point)))
 		 ((derived-mode-p #'kotl-mode)

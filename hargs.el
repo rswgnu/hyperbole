@@ -5,7 +5,7 @@
 ;; Orig-Date:    31-Oct-91 at 23:17:35
 ;; Last-Mod:     30-Jan-22 at 22:15:38 by Bob Weiner
 ;;
-;; Copyright (C) 1991-2021  Free Software Foundation, Inc.
+;; Copyright (C) 1991-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
 ;;
 ;; This file is part of GNU Hyperbole.
@@ -37,8 +37,8 @@
 (defvar hargs:defaults nil
   "Default arguments read from an existing Hyperbole button when modifying it.")
 
-(defvar hargs:reading-p nil
-  "Is either a symbol representing the type of object Hyperbole is prompting the user to input or nil.")
+(defvar hargs:reading-type nil
+  "Symbol representing the type of object Hyperbole is prompting the user to input.")
 
 (add-hook 'completion-setup-hook #'hargs:set-string-to-complete)
 (add-hook 'minibuffer-exit-hook  #'hargs:unset-string-to-complete)
@@ -233,7 +233,7 @@ element of the list is always the symbol 'args."
     (mapc (lambda (elt)
 	    (aset vec (car elt)
 		  `(lambda (prompt default)
-		     (setq hargs:reading-p ',(cadr elt))
+		     (setq hargs:reading-type ',(cadr elt))
 		     ,(cddr elt))))
 	  iform-alist)
     vec))
@@ -306,29 +306,29 @@ Current button is being modified when MODIFYING is non-nil."
   (hargs:action-get (actype:action-body actype) modifying))
 
 (defun hargs:at-p (&optional no-default)
-  "Return thing at point, if of hargs:reading-p type, or default.
+  "Return thing at point, if of hargs:reading-type type, or default.
 If optional argument NO-DEFAULT is non-nil, nil is returned instead of any
 default values.
 
 Caller should have checked whether an argument is presently being read
-and has set `hargs:reading-p' to an appropriate argument type.
+and has set `hargs:reading-type' to an appropriate argument type.
 Handles all of the interactive argument types that `hargs:iform-read' does."
-  (cond ((and (eq hargs:reading-p 'kcell)
+  (cond ((and (eq hargs:reading-type 'kcell)
 	      (eq major-mode 'kotl-mode)
 	      (not (looking-at "^$")))
 	 (kcell-view:label))
-	((and (eq hargs:reading-p 'klink)
+	((and (eq hargs:reading-type 'klink)
 	      (not (looking-at "^$")))
 	 (if (eq major-mode 'kotl-mode)
 	     (kcell-view:reference
 	      nil (and (boundp 'default-dir) default-dir))
-	   (let ((hargs:reading-p 'file))
+	   (let ((hargs:reading-type 'file))
 	     (list (hargs:at-p)))))
-	((eq hargs:reading-p 'kvspec)
+	((eq hargs:reading-type 'kvspec)
 	 (read-string "Koutline view spec: "
 		      (when (boundp 'kvspec:current) kvspec:current)))
 	((eolp) nil)
-	((and (eq hargs:reading-p 'hmenu)
+	((and (eq hargs:reading-type 'hmenu)
 	      (eq (selected-window) (minibuffer-window)))
 	   (char-to-string
 	    (save-excursion
@@ -346,14 +346,14 @@ Handles all of the interactive argument types that `hargs:iform-read' does."
 		    ;; At the end of the menu
 		    (t 0)))))
 	((hargs:completion t))
-	((eq hargs:reading-p 'ebut) (ebut:label-p 'as-label))
-	((eq hargs:reading-p 'ibut) (ibut:label-p 'as-label))
-	((eq hargs:reading-p 'gbut)
+	((eq hargs:reading-type 'ebut) (ebut:label-p 'as-label))
+	((eq hargs:reading-type 'ibut) (ibut:label-p 'as-label))
+	((eq hargs:reading-type 'gbut)
 	 (when (eq (current-buffer) (get-file-buffer gbut:file))
 	   (hbut:label-p 'as-label)))
-	((eq hargs:reading-p 'hbut) (hbut:label-p 'as-label))
+	((eq hargs:reading-type 'hbut) (hbut:label-p 'as-label))
 	((hbut:label-p) nil)
-	((eq hargs:reading-p 'file)
+	((eq hargs:reading-type 'file)
 	 (cond ((derived-mode-p 'dired-mode)
 		(let ((file (dired-get-filename nil t)))
 		  (and file (hpath:absolute-to file))))
@@ -365,7 +365,7 @@ Handles all of the interactive argument types that `hargs:iform-read' does."
 	       ((when no-default (hpath:at-p 'file 'non-exist)))
 	       (no-default nil)
 	       ((buffer-file-name))))
-	((eq hargs:reading-p 'directory)
+	((eq hargs:reading-type 'directory)
 	 (cond ((derived-mode-p 'dired-mode)
 		(let ((dir (dired-get-filename nil t)))
 		  (and dir (setq dir (hpath:absolute-to dir))
@@ -378,19 +378,19 @@ Handles all of the interactive argument types that `hargs:iform-read' does."
 	       ((when no-default (hpath:at-p 'directory 'non-exist)))
 	       (no-default nil)
 	       (default-directory)))
-	((eq hargs:reading-p 'string)
+	((eq hargs:reading-type 'string)
 	 (or (hargs:delimited "\"" "\"") (hargs:delimited "'" "'")
 	     (hargs:delimited "`" "'")))
-	((or (eq hargs:reading-p 'actype)
-	     (eq hargs:reading-p 'actypes))
+	((or (eq hargs:reading-type 'actype)
+	     (eq hargs:reading-type 'actypes))
 	 (let ((name (hargs:find-tag-default)))
 	   (car (set:member name (htype:names 'actypes)))))
-	((or (eq hargs:reading-p 'ibtype)
-	     (eq hargs:reading-p 'ibtypes))
+	((or (eq hargs:reading-type 'ibtype)
+	     (eq hargs:reading-type 'ibtypes))
 	 (let ((name (hargs:find-tag-default)))
 	   (car (set:member name (htype:names 'ibtypes)))))
-	((eq hargs:reading-p 'sexpression) (hargs:sexpression-p))
-	((memq hargs:reading-p '(Info-index-item Info-node))
+	((eq hargs:reading-type 'sexpression) (hargs:sexpression-p))
+	((memq hargs:reading-type '(Info-index-item Info-node))
 	 (when (eq major-mode 'Info-mode)
 	   (let ((file (Info-current-filename-sans-extension))
 		 (node (cond ((Info-note-at-p))
@@ -405,24 +405,24 @@ Handles all of the interactive argument types that `hargs:iform-read' does."
 		   (file
 		    (concat "(" file ")" node))
 		   (t node)))))
-	((eq hargs:reading-p 'mail)
+	((eq hargs:reading-type 'mail)
 	 (and (hmail:reader-p) buffer-file-name
 	      (prin1-to-string (list (rmail:msg-id-get) buffer-file-name))))
-	((eq hargs:reading-p 'symbol)
+	((eq hargs:reading-type 'symbol)
 	 (let ((sym (hargs:find-tag-default)))
 	   (when (or (fboundp sym) (boundp sym)) sym)))
-	((eq hargs:reading-p 'buffer)
+	((eq hargs:reading-type 'buffer)
 	 (let ((tag (hargs:find-tag-default)))
 	   (if (member tag (mapcar #'buffer-name (buffer-list)))
 	       tag
 	     (buffer-name))))
-	((eq hargs:reading-p 'character)
+	((eq hargs:reading-type 'character)
 	 (following-char))
-	((eq hargs:reading-p 'key)
+	((eq hargs:reading-type 'key)
 	 (require 'hib-kbd)
 	 (let ((key-seq (hbut:label-p 'as-label "{" "}")))
 	   (when key-seq (kbd-key:normalize key-seq))))
-	((eq hargs:reading-p 'integer)
+	((eq hargs:reading-type 'integer)
 	 (save-excursion (skip-chars-backward "-0-9")
 			 (when (looking-at "-?[0-9]+")
 			   (read (current-buffer)))))))
@@ -513,14 +513,14 @@ See also documentation for `interactive'."
       (error "(hargs:iform-read): arg must be a list whose car = 'interactive")
     (setq iform (car (cdr iform)))
     (unless (or (null iform) (and (stringp iform) (equal iform "")))
-      (let ((prev-reading-p hargs:reading-p))
+      (let ((prev-reading-p hargs:reading-type))
 	(unwind-protect
 	    (progn
 	      (when (eq default-args t)
 		(setq default-args (hattr:get 'hbut:current 'args)
 		      ;; Set hargs:defaults global used by "hactypes.el"
 		      hargs:defaults default-args))
-	      (setq hargs:reading-p t)
+	      (setq hargs:reading-type t)
 	      (if (not (stringp iform))
 		  (eval iform)
 		(let ((i 0) (start 0) (end (length iform))
@@ -572,7 +572,7 @@ See also documentation for `interactive'."
 					(t ;; regular list value
 					 (cons val results)))))
 		  (nreverse results))))
-	  (setq hargs:reading-p prev-reading-p))))))
+	  (setq hargs:reading-type prev-reading-p))))))
 
 (defun hargs:read (prompt &optional predicate default err val-type)
   "PROMPT without completion for a value matching PREDICATE and return it.
@@ -583,15 +583,15 @@ Optional VAL-TYPE is a symbol indicating the type of value to be read.  If
 VAL-TYPE equals `sexpression', then return that type; otherwise return the
 string read or nil."
   (let ((bad-val) (val) (stringify)
-	(prev-reading-p hargs:reading-p) (read-func)
+	(prev-reading-p hargs:reading-type) (read-func)
 	(owind (selected-window))
 	(obuf (current-buffer)))
     (unwind-protect
 	(progn
 	  (cond ((or (null val-type) (eq val-type 'sexpression))
 		 (setq read-func 'read-minibuffer
-		       hargs:reading-p 'sexpression))
-		(t (setq read-func 'read-string hargs:reading-p val-type
+		       hargs:reading-type 'sexpression))
+		(t (setq read-func 'read-string hargs:reading-type val-type
 			 stringify t)))
 	  (while (progn (and default (not (stringp default))
 			     (setq default (prin1-to-string default)))
@@ -611,7 +611,7 @@ string read or nil."
 	      (message err)
 	      (sit-for 3)))
 	  val)
-      (setq hargs:reading-p prev-reading-p)
+      (setq hargs:reading-type prev-reading-p)
       (select-window owind)
       (switch-to-buffer obuf))))
 
@@ -631,19 +631,19 @@ means value returned must be from COLLECTION.  Optional INITIAL-INPUT
 is a string inserted after PROMPT as the default value.  Optional
 VAL-TYPE is a symbol indicating the type of value to be read."
   (unless (and must-match (null collection))
-    (let ((prev-reading-p hargs:reading-p)
+    (let ((prev-reading-p hargs:reading-type)
 	  (completion-ignore-case t)
 	  (owind (selected-window))
 	  (obuf (current-buffer))
 	  result)
       (unwind-protect
 	  (progn
-	    (setq hargs:reading-p (or val-type t)
+	    (setq hargs:reading-type (or val-type t)
 		  result (completing-read prompt collection predicate must-match initial-input))
 	    (if (and (equal result "") initial-input)
 		initial-input
 	      result))
-	(setq hargs:reading-p prev-reading-p)
+	(setq hargs:reading-type prev-reading-p)
 	(select-window owind)
 	(switch-to-buffer obuf)))))
 
@@ -666,9 +666,9 @@ help when appropriate."
 	      (cond
 	       ;;
 	       ;; Selecting a menu item
-	       ((eq hargs:reading-p 'hmenu)
+	       ((eq hargs:reading-type 'hmenu)
 		(when assist-bool
-		  (setq hargs:reading-p 'hmenu-help))
+		  (setq hargs:reading-type 'hmenu-help))
 		(hui:menu-enter str-value))
 	       ;;
 	       ;; Enter existing value into the minibuffer as the desired parameter.
@@ -801,10 +801,10 @@ help when appropriate."
 	'(
 	  ;; Get existing Info node name, possibly prefixed with its (filename).
 	  (?I . (Info-node .
-	         (let ((prev-reading-p hargs:reading-p))
+	         (let ((prev-reading-p hargs:reading-type))
 		   (unwind-protect
 		       (progn (require 'info)
-			      (setq hargs:reading-p 'Info-node)
+			      (setq hargs:reading-type 'Info-node)
 			      ;; Prevent empty completions list from
 			      ;; triggering an error in Info-read-node-name.
 			      (unless Info-current-file-completions
@@ -812,7 +812,7 @@ help when appropriate."
 				    (Info-build-node-completions)
 				  (error (setq Info-current-file-completions '(("None"))))))
 			      (Info-read-node-name prompt))
-		     (setq hargs:reading-p prev-reading-p)))))
+		     (setq hargs:reading-type prev-reading-p)))))
 	  ;; Get kcell from koutline.
 	  (?K . (kcell . (hargs:read-match
 			  prompt
@@ -842,18 +842,18 @@ help when appropriate."
 	  (?V . (kvspec . (hargs:read prompt nil nil nil 'kvspec)))
 	  ;; Get existing Info index item name, possibly prefixed with its (filename).
 	  (?X . (Info-index-item .
-	         (let ((prev-reading-p hargs:reading-p))
+	         (let ((prev-reading-p hargs:reading-type))
 		   (unwind-protect
 		       (let (file item)
 			 (require 'info)
-			 (setq hargs:reading-p 'Info-index-item
+			 (setq hargs:reading-type 'Info-index-item
 			       item (Info-read-index-item-name prompt))
 			 (if (string-match "^(\\([^\)]+\\))\\(.*\\)" item)
 			     item
 			   (if (setq file (Info-current-filename-sans-extension))
 			       (format "(%s)%s" file item)
 			     item)))
-		     (setq hargs:reading-p prev-reading-p)))))))
+		     (setq hargs:reading-type prev-reading-p)))))))
 
 (defvar hargs:iform-extensions-vector nil
   "Vector of forms for each interactive command character code.")

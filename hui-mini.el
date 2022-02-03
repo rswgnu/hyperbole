@@ -5,7 +5,7 @@
 ;; Orig-Date:    15-Oct-91 at 20:13:17
 ;; Last-Mod:     24-Jan-22 at 00:18:47 by Bob Weiner
 ;;
-;; Copyright (C) 1991-2021  Free Software Foundation, Inc.
+;; Copyright (C) 1991-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
 ;;
 ;; This file is part of GNU Hyperbole.
@@ -213,7 +213,7 @@ With optional HELP-STRING-FLAG, instead returns the one line help string for the
   (when (and (stringp key-sequence)
 	     (not (eq key-sequence ""))
 	     (kbd-key:hyperbole-mini-menu-key-p key-sequence))
-    (let ((hargs:reading-p 'hmenu-help)
+    (let ((hargs:reading-type 'hmenu-help)
 	  (hmenu-key-seq (car (where-is-internal #'hyperbole))))
       (unless hmenu-key-seq
 	(hypb:error "(hui:menu-doc): The 'hyperbole' command must be bound to a key"))
@@ -322,7 +322,7 @@ documentation, not the full text."
 	 (keys (apply #'list 0 1 select-char exit-char quit-char abort-char
 		      top-char item-keys))
 	 (key 0)
-	 (hargs:reading-p 'hmenu)
+	 (hargs:reading-type 'hmenu)
 	 sublist)
     (while (not (memq (setq key (upcase
 				 (string-to-char
@@ -330,7 +330,7 @@ documentation, not the full text."
 				   "" menu-line hui:menu-mode-map))))
 		      keys))
       (beep)
-      (setq hargs:reading-p 'hmenu)
+      (setq hargs:reading-type 'hmenu)
       (discard-input))
     ;; Here, the minibuffer has been exited, and `key' has been set to either:
     ;;   a menu item first capitalized character code;
@@ -401,7 +401,7 @@ constructs.  If not given, the top level Hyperbole menu is used."
 	      (nth (- (1+ (length item-keys)) (length sublist))
 		   menu-alist))
 	     (act-form (cadr label-act-help-list)))
-	(if (or (eq hargs:reading-p 'hmenu-help)
+	(if (or (eq hargs:reading-type 'hmenu-help)
 		(and doc-flag
 		     ;; Not another menu to display
 		     (not (and (listp act-form) (atom (car act-form)) (atom (cdr act-form))))))
