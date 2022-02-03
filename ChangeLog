@@ -1,11 +1,7 @@
 2022-02-03  Mats Lidell  <matsl@gnu.org>
 
-* test/hbut-tests.el (hbut-tests--verify-hattr-at-p):
-  test/hui-tests.el (hui-tests--verify-hattr-at-p): Remove local helper
-    and use hy-test-helpers-verify-hattr-at-p.
-
 * test/hy-test-helpers.el (hy-test-helpers-verify-hattr-at-p): Add helper
-    function.
+    function and use it.
 
 2022-02-02  Mats Lidell  <matsl@gnu.org>
 
@@ -50,14 +46,6 @@
 
 * hact.el (actype:act): Allow for builtin subr objects like 'cons';
     This fixes Action Buttons that start with <progn ...>, for example.
-
-2022-01-29  Mats Lidell  <matsl@gnu.org>
-
-* test/hui-tests.el (hui-tests--verify-hattr-at-p): Verify hbut attribute
-    helper.
-
-* test/hbut-tests.el (hbut-tests--verify-hattr-at-p): Verify hbut
-    attribute helper.
 
 2022-01-29  Bob Weiner  <rsw@gnu.org>
 
