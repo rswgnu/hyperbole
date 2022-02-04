@@ -1,5 +1,9 @@
 2022-02-04  Mats Lidell  <matsl@gnu.org>
 
+* test/hargs-tests.el (hargs-get-verify-extension-characters)
+    (hargs-get-verify-extension-characters-K+): Test cases for extension
+    characters.
+
 * hargs.el (hargs:make-iform-vector): Converted to macro.
     (hargs:iform-vector): Use defconst.
     (hargs:iform-extensions-vector): Use defconst.
