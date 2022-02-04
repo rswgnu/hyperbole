@@ -92,26 +92,19 @@
     (should (equal (hypb:replace-match-string "\\`\\|x" "--xx--" "z")
                    "z--zz--"))))
 
-;; RSW 2022-01-29: Comment this out until Mats and I decide how it should work
-;; (ert-deftest hypb--installation-type-test ()
-;;   "Verify installation type alternatives."
-;;   (let ((hyperb:dir "/home/user/.emacs.d/elpa/hyperbole-8.0.0pre0.20220126.1138"))
-;;     (should (equal (hypb--installation-type) '("elpa-devel" "8.0.0pre0.20220126.1138"))))
-;;   (let ((hyperb:dir "/a_git_folder"))
-;;     (with-mock
-;;       (mock (file-exists-p "/a_git_folder/.git") => t)
-;;       (mock (shell-command-to-string "git rev-parse HEAD") => "abcdefg")
-;;       (should (equal (hypb--installation-type) '("git" "abcdefg")))))
-;;   (let ((hyperb:dir "/a_git_folder"))
-;;     (with-mock
-;;       (mock (file-exists-p "/a_git_folder/.git") => t)
-;;       (cl-letf (((symbol-function 'shell-command-to-string)
-;;                  (lambda (_cmd) (error "Something bad happend"))))
-;;         (should (equal (hypb--installation-type) '("git" "abcdefg"))))))
-;;   (let ((hyperb:dir "/a_git_folder"))
-;;     (with-mock
-;;       (mock (file-exists-p "/a_git_folder/.git") => nil)
-;;       (should-not (hypb--installation-type)))))
+(ert-deftest hypb--installation-type-test ()
+  "Verify installation type alternatives."
+  (let ((hyperb:dir "/home/user/.emacs.d/elpa/hyperbole-8.0.0pre0.20220126.1138"))
+    (should (equal (hypb--installation-type) '("elpa-devel" "8.0.0pre0.20220126.1138"))))
+  (let ((hyperb:dir "/a_git_folder"))
+    (with-mock
+      (mock (file-exists-p "/a_git_folder/.git") => t)
+      (mock (shell-command-to-string "git rev-parse HEAD") => "d43d05a0973e8adcbfdd8c85681dac5de669aaa9")
+      (should (equal (hypb--installation-type) '("git" "d43d05a097")))))
+  (let ((hyperb:dir "/a_git_folder"))
+    (with-mock
+      (mock (file-exists-p "/a_git_folder/.git") => nil)
+      (should-not (hypb--installation-type)))))
 
 ;; This file can't be byte-compiled without the `el-mock' package (because of
 ;; the use of the `with-mock' macro), which is not a dependency of Hyperbole.

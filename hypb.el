@@ -118,7 +118,9 @@ Global keymap is used unless optional KEYMAP is given."
      ((file-exists-p (expand-file-name ".git" hyperb:dir))
       (ignore-errors
         (let ((default-directory hyperb:dir))
-          (list "git" (shell-command-to-string "git rev-parse HEAD"))))))))
+          (list
+           "git"
+           (substring (shell-command-to-string "git rev-parse HEAD") 0 10))))))))
 
 ;;;###autoload
 (defun hypb:configuration (&optional out-buf)

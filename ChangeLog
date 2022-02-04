@@ -1,3 +1,7 @@
+2022-02-03  Mats Lidell  <matsl@gnu.org>
+
+* hypb.el (hypb--installation-type): Return 10 digit git hash.
+
 2022-02-02  Mats Lidell  <matsl@gnu.org>
 
 * hargs.el (hargs:reading-type): Renaming var.
