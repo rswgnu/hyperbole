@@ -29,6 +29,7 @@
 (require 'hpath)
 (require 'hypb)
 (require 'set)
+(require 'etags)                        ;For `find-tag--default'
 
 ;;; ************************************************************************
 ;;; Public variables
@@ -47,39 +48,7 @@
 ;;; Private functions
 ;;; ************************************************************************
 
-;;; From etags.el, so don't have to load the whole thing.
-(unless (fboundp 'find-tag-default)
-  (defun find-tag-default ()
-    (or (and (boundp 'find-tag-default-hook)
-	     (not (memq find-tag-default-hook '(nil find-tag-default)))
-	     (condition-case data
-		 (funcall find-tag-default-hook)
-	       (error
-		(message "value of find-tag-default-hook signalled error: %s"
-			 data)
-		(sit-for 1)
-		nil)))
-	(save-excursion
-	  (unless (memq (char-syntax (preceding-char)) '(?w ?_))
-	    (while (not (looking-at "\\sw\\|\\s_\\|\\'"))
-	      (forward-char 1)))
-	  (while (looking-at "\\sw\\|\\s_")
-	    (forward-char 1))
-	  (when (re-search-backward "\\sw\\|\\s_" nil t)
-	    (forward-char 1)
-	    (regexp-quote (buffer-substring (point)
-					    (progn (forward-sexp -1)
-						   (while (looking-at "\\s'")
-						     (forward-char 1))
-						   (point)))))))))
-
-(unless (fboundp 'find-tag--default)
-  (defun find-tag--default ()
-    (funcall (or (when (fboundp find-tag-default-function) find-tag-default-function)
-		 (get major-mode 'find-tag-default-function)
-		 'find-tag-default))))
-(defalias 'hargs:find-tag-default 'find-tag--default)
-
+(defalias 'hargs:find-tag-default #'find-tag--default)
 
 (defun hargs:action-get (action modifying)
   "Interactively get list of arguments for ACTION's parameters.
