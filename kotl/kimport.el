@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    15-Nov-93 at 11:57:05
-;; Last-Mod:     24-Jan-22 at 00:25:18 by Bob Weiner
+;; Last-Mod:      5-Feb-22 at 15:46:39 by Bob Weiner
 ;;
 ;; Copyright (C) 1993-2021  Free Software Foundation, Inc.
 ;; See the "../HY-COPY" file for license information.
@@ -50,19 +50,22 @@ as the initial set of children of the current cell, if any.
 
 ;;;###autoload
 (defvar kimport:suffix-alist
-  '(("\\.otl$". kimport:star-outline)
+  '(("\\.org$" . kimport:star-outline)
+    ("\\.otl$" . kimport:star-outline)
     ("\\.aug$" . kimport:aug-post-outline))
   "Alist of (buffer-name-suffix-regexp . importation-function) elements.
 This determines the type of importation done on a file when `kimport:file' is
 called.  Each importation-function must take two arguments, a buffer/file to
-import and a buffer/file into which to insert the imported elements and a
-third optional argument, CHILDREN-P, which when non-nil means insert imported
-cells as the initial set of children of the current cell, if any.
+import and a buffer/file into which to insert the imported elements.
+A third optional argument, CHILDREN-P, may be given; when non-nil, insert
+imported cells as the initial set of children of the current cell, if any.
 
-   .otl  - imported as an Emacs outline whose entries begin with asterisks;
+   .org  - import format is an Emacs outline whose entries begin with asterisks;
+   .otl  - import format is an Emacs outline whose entries begin with asterisks;
    .kot
-   .kotl - imported as a structured koutline
-   .aug  - imported as an Augment post-numbered outline.")
+   .kotl - import format is a Koutline
+   .aug  - import format is an Augment post-numbered outline
+           (see https://dougengelbart.org/content/view/148/).")
 
 (defconst kimport:star-heading "^\\(\\*+\\)"
   "Regular expression matching a star outline heading with the number of stars given by groupoing 1.")

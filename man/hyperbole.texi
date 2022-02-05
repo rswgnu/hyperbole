@@ -7,7 +7,7 @@
 @c Author:       Bob Weiner
 @c
 @c Orig-Date:     6-Nov-91 at 11:18:03
-@c Last-Mod:     30-Jan-22 at 12:57:08 by Bob Weiner
+@c Last-Mod:      5-Feb-22 at 16:55:30 by Bob Weiner
 
 @c %**start of header (This is for running Texinfo on a region.)
 @setfilename hyperbole.info
@@ -156,7 +156,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</P>
 
 <PRE>
 Edition 8.0.0pre
-Printed January 30, 2022.
+Printed February 5, 2022.
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -198,7 +198,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 @example
 Edition 8.0.0pre
-January 30, 2022
+February 5, 2022
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -4376,6 +4376,9 @@ a number of major Koutliner commands:
 
 @cindex outliner commands
 @cindex Koutliner commands
+@cindex Koutliner import/export commands
+@cindex importing, Koutliner
+@cindex exporting, Koutliner
 @cindex Koutliner menu
 @cindex menu, Koutliner
 @findex kotl-mode:show-all
@@ -4397,6 +4400,7 @@ Blanks       kvspec:toggle-blank-lines  Toggle blank lines on or off
 Create       kfile:find                 Edit or create an outline
 Downto       kotl-mode:hide-sublevels   Hide cells deeper than a level
 Examp        <sample outliner file>     Show self-descriptive example
+Format/      Submenu                    Import/Export commands
 Hide         kotl-mode:hide-tree        Hide tree with root at point
 Info         <outliner documentation>   Show outliner manual section
 Kill         kotl-mode:kill-tree        Kill the current tree
@@ -4931,12 +4935,13 @@ cell.
 
 @vindex kimport:mode-alist
 @vindex kimport:suffix-alist
-@cindex outline, conversion
+@cindex outline, formatting
 @findex kotl-mode
 @cindex outline mode
 @cindex koutline mode
 @cindex file, importing
 @cindex importing a file
+@cindex Koutline import
 For information on mode and suffix-specific conversions performed on
 file elements before they are inserted, see the documentation for the
 variables, @code{kimport:mode-alist} and @code{kimport:suffix-alist}.  This
@@ -4992,34 +4997,44 @@ have alphanumeric statement identifiers on the right side.  You can
 import such files while maintaining their outline structure.  Use
 @bkbd{M-x kimport:aug-post-outline @key{RET}} and you will be
 prompted for the Augment buffer or file to import and the koutline to
-create.
+create.  See @url{https://dougengelbart.org/content/view/148/} for more
+information.
 
 @node Exporting,  , Inserting and Importing, Editing
 @subsection  Exporting
 
-@cindex outline, exporting from
+@cindex outline, exporting
 @cindex outline, HTML conversion
 @cindex exporting
 @cindex HTML conversion
 Koutlines may be @dfn{exported} to other file formats.  Presently, the
 only format supported is conversion to HTML for publishing on the
-World-Wide Web.
+World-Wide Web.  Use the Kotl/Format minibuffer menu, @bkbd{C-h h k f},
+for this.
 
 @findex kexport:display
 @vindex browse-url-browser-function
-@bkbd{M-x kexport:display @key{RET}} exports the current Koutline buffer
-to a temporary HTML file and displays the file in the web browser given by 
-@code{browse-url-browser-function}.  Any tree in the HTML outline may be
-expanded or collapsed by clicking the left mouse button on its root cell,
-for ease of viewing.
+@kindex C-h h k f d
+@bkbd{C-h h k f d} or @bkbd{M-x kexport:display @key{RET}} exports the
+current Koutline buffer to a temporary HTML file and displays the file
+in the web browser given by @code{browse-url-browser-function}.  Any tree
+in the HTML outline may be expanded or collapsed by clicking the left
+mouse button on its root cell, for ease of viewing.
 
 @findex kexport:html
-Alternatively, @bkbd{M-x kexport:html @key{RET}} prompts for the koutline
-buffer or file to export, the HTML file or buffer to which to output, and
-the title to use for the HTML file.  Completion of filenames is provided.
-The conversion will then be done and the output file or buffer will be
-written; the output file will not be displayed.  You must display it
-manually if desired.
+@kindex C-h h k f h
+Alternatively, @bkbd{C-h h k f h} or @bkbd{M-x kexport:html @key{RET}}
+prompts for the koutline buffer or file to export, the HTML file or buffer
+to which to output, and the title to use for the HTML file.  Completion of
+filenames is provided.  The conversion will then be done and the output
+file or buffer will be written; the output file will not be displayed.
+You must display it manually, if desired.
+
+@findex kexport:koutline
+@kindex C-h h k f k
+@bkbd{C-h h k f k} or @bkbd{M-x kexport:koutline @key{RET}} exports the current
+Koutline buffer to a @file{.html} file of the same name.  The output file will
+not be displayed; you must display it manually, if desired.
 
 @node Viewing, Links, Editing, Koutliner
 @section   Viewing

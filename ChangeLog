@@ -1,5 +1,22 @@
 2022-02-05  Bob Weiner  <rsw@gnu.org>
 
+* kotl/kexport.el (kexport:buffer): Rename to 'kexport:koutline'.
+  test/kexport-tests.el (kexport:buffer-calls-kexport:html): Rename to
+    'kexport:koutline-calls-kexport:html'.
+
+* hui-mini.el (hui:menus): Kotl/Format - Add new submenu for import/export
+    of Koutlines to match one from the Koutline pulldown menu.
+  man/hyperbole.texi (Exporting):
+                     (Menu Commands): Document new menu and add 'kexport:koutline'
+    command documentation.
+
+* kotl/kimport.el (kimport:suffix-alist): Add importation of Org outlines
+    as Koutlines.
+
+* kotl/kmenu.el (kotl-menu-common-postamble): In pulldown Koutliner menu,
+    change 'Export-to-HTML' to 'Export-Other-Koutline-to-HTML'.  Add
+    'Display-This-Koutline-in-Web-Browser' and 'Export-This-Koutline-to-HTML'.
+
 * hpath.el (hpath:outline-section-pattern): Remove leading spaces
  	   (hpath:to-markup-anchor): Search for leading spaces in above regexp
     only after not finding a match without leading spaces.  This prevents

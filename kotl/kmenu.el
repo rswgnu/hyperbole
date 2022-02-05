@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    28-Mar-94 at 11:22:09
-;; Last-Mod:     25-Jan-22 at 23:36:14 by Bob Weiner
+;; Last-Mod:      5-Feb-22 at 16:24:59 by Bob Weiner
 ;;
 ;; Copyright (C) 1994-2021  Free Software Foundation, Inc.
 ;; See the "../HY-COPY" file for license information.
@@ -163,8 +163,10 @@
      :keys "C-x C-q"]
     ["Write (Save as)"     kfile:write                    t]
     "----"
-    ["Export-to-HTML"      kexport:html                   t]
-    ["Import-to-Koutline"  kimport:file                   t]
+    ["Display-This-Koutline-in-Web-Browser" kexport:display t]
+    ["Export-Other-Koutline-to-HTML"        kexport:html    t]
+    ["Export-This-Koutline-to-HTML"         kexport:koutline  t]
+    ["Import-to-Koutline"                   kimport:file    t]
     "----"
     ["Quit"                (id-tool-quit '(kill-buffer nil))  t]))
 

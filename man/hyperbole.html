@@ -1,7 +1,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <!-- This manual is for GNU Hyperbole
-(Edition 8.0.0pre, Published January, 2022).
+(Edition 8.0.0pre, Published February, 2022).
 
 Copyright (C) 1989-2022  Free Software Foundation, Inc.
 
@@ -370,7 +370,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</P>
 
 <PRE>
 Edition 8.0.0pre
-Printed January 30, 2022.
+Printed February 5, 2022.
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -5226,6 +5226,9 @@ a number of major Koutliner commands:
 </p>
 <span id="index-outliner-commands"></span>
 <span id="index-Koutliner-commands"></span>
+<span id="index-Koutliner-import_002fexport-commands"></span>
+<span id="index-importing_002c-Koutliner"></span>
+<span id="index-exporting_002c-Koutliner"></span>
 <span id="index-Koutliner-menu"></span>
 <span id="index-menu_002c-Koutliner"></span>
 <span id="index-kotl_002dmode_003ashow_002dall"></span>
@@ -5247,6 +5250,7 @@ Blanks       kvspec:toggle-blank-lines  Toggle blank lines on or off
 Create       kfile:find                 Edit or create an outline
 Downto       kotl-mode:hide-sublevels   Hide cells deeper than a level
 Examp        &lt;sample outliner file&gt;     Show self-descriptive example
+Format/      Submenu                    Import/Export commands
 Hide         kotl-mode:hide-tree        Hide tree with root at point
 Info         &lt;outliner documentation&gt;   Show outliner manual section
 Kill         kotl-mode:kill-tree        Kill the current tree
@@ -5882,12 +5886,13 @@ cell.
 </p>
 <span id="index-kimport_003amode_002dalist"></span>
 <span id="index-kimport_003asuffix_002dalist"></span>
-<span id="index-outline_002c-conversion"></span>
+<span id="index-outline_002c-formatting"></span>
 <span id="index-kotl_002dmode"></span>
 <span id="index-outline-mode-1"></span>
 <span id="index-koutline-mode"></span>
 <span id="index-file_002c-importing"></span>
 <span id="index-importing-a-file"></span>
+<span id="index-Koutline-import"></span>
 <p>For information on mode and suffix-specific conversions performed on
 file elements before they are inserted, see the documentation for the
 variables, <code>kimport:mode-alist</code> and <code>kimport:suffix-alist</code>.  This
@@ -5943,7 +5948,8 @@ have alphanumeric statement identifiers on the right side.  You can
 import such files while maintaining their outline structure.  Use
 <kbd>{M-x kimport:aug-post-outline <span class="key">RET</span>}</kbd> and you will be
 prompted for the Augment buffer or file to import and the koutline to
-create.
+create.  See <a href="https://dougengelbart.org/content/view/148/">https://dougengelbart.org/content/view/148/</a> for more
+information.
 </p>
 <hr>
 <span id="Exporting"></span><div class="header">
@@ -5952,29 +5958,38 @@ Previous: <a href="#Inserting-and-Importing" accesskey="p" rel="prev">Inserting 
 </div>
 <span id="Exporting-1"></span><h4 class="subsection">7.5.9 Exporting</h4>
 
-<span id="index-outline_002c-exporting-from"></span>
+<span id="index-outline_002c-exporting-1"></span>
 <span id="index-outline_002c-HTML-conversion"></span>
 <span id="index-exporting"></span>
 <span id="index-HTML-conversion"></span>
 <p>Koutlines may be <em>exported</em> to other file formats.  Presently, the
 only format supported is conversion to HTML for publishing on the
-World-Wide Web.
+World-Wide Web.  Use the Kotl/Format minibuffer menu, <kbd>{C-h h k f}</kbd>,
+for this.
 </p>
 <span id="index-kexport_003adisplay"></span>
 <span id="index-browse_002durl_002dbrowser_002dfunction-2"></span>
-<p><kbd>{M-x kexport:display <span class="key">RET</span>}</kbd> exports the current Koutline buffer
-to a temporary HTML file and displays the file in the web browser given by 
-<code>browse-url-browser-function</code>.  Any tree in the HTML outline may be
-expanded or collapsed by clicking the left mouse button on its root cell,
-for ease of viewing.
+<span id="index-C_002dh-h-k-f-d"></span>
+<p><kbd>{C-h h k f d}</kbd> or <kbd>{M-x kexport:display <span class="key">RET</span>}</kbd> exports the
+current Koutline buffer to a temporary HTML file and displays the file
+in the web browser given by <code>browse-url-browser-function</code>.  Any tree
+in the HTML outline may be expanded or collapsed by clicking the left
+mouse button on its root cell, for ease of viewing.
 </p>
 <span id="index-kexport_003ahtml"></span>
-<p>Alternatively, <kbd>{M-x kexport:html <span class="key">RET</span>}</kbd> prompts for the koutline
-buffer or file to export, the HTML file or buffer to which to output, and
-the title to use for the HTML file.  Completion of filenames is provided.
-The conversion will then be done and the output file or buffer will be
-written; the output file will not be displayed.  You must display it
-manually if desired.
+<span id="index-C_002dh-h-k-f-h"></span>
+<p>Alternatively, <kbd>{C-h h k f h}</kbd> or <kbd>{M-x kexport:html <span class="key">RET</span>}</kbd>
+prompts for the koutline buffer or file to export, the HTML file or buffer
+to which to output, and the title to use for the HTML file.  Completion of
+filenames is provided.  The conversion will then be done and the output
+file or buffer will be written; the output file will not be displayed.
+You must display it manually, if desired.
+</p>
+<span id="index-kexport_003akoutline"></span>
+<span id="index-C_002dh-h-k-f-k"></span>
+<p><kbd>{C-h h k f k}</kbd> or <kbd>{M-x kexport:koutline <span class="key">RET</span>}</kbd> exports the current
+Koutline buffer to a <samp>.html</samp> file of the same name.  The output file will
+not be displayed; you must display it manually, if desired.
 </p>
 <hr>
 <span id="Viewing"></span><div class="header">
@@ -12708,6 +12723,9 @@ Next: <a href="#Function" accesskey="n" rel="next">Function</a>, Previous: <a hr
 <tr><td></td><td valign="top"><a href="#index-C_002dh-h-i-e"><code>C-h h i e</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-C_002dh-h-i-l"><code>C-h h i l</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-C_002dh-h-k-e"><code>C-h h k e</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Koutliner">Koutliner</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-C_002dh-h-k-f-d"><code>C-h h k f d</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Exporting">Exporting</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-C_002dh-h-k-f-h"><code>C-h h k f h</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Exporting">Exporting</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-C_002dh-h-k-f-k"><code>C-h h k f k</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Exporting">Exporting</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-C_002dh-h-m-c"><code>C-h h m c</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Key-Debugging">Smart Key Debugging</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-C_002dh-h-m-r"><code>C-h h m r</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Key-Debugging">Smart Key Debugging</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-C_002dh-h-s-f"><code>C-h h s f</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyControl">HyControl</a></td></tr>
@@ -13436,6 +13454,7 @@ Next: <a href="#Concept-Index" accesskey="n" rel="next">Concept Index</a>, Previ
 <tr><td></td><td valign="top"><a href="#index-kcell_003aref_002dto_002did"><code>kcell:ref-to-id</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Action-Types">Action Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-kexport_003adisplay"><code>kexport:display</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Exporting">Exporting</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-kexport_003ahtml"><code>kexport:html</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Exporting">Exporting</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-kexport_003akoutline"><code>kexport:koutline</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Exporting">Exporting</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-kfile_003afind"><code>kfile:find</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Menu-Commands">Menu Commands</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-kfile_003awrite"><code>kfile:write</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Koutliner-Keys">Koutliner Keys</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-kill_002dring">kill-ring</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Window-Configurations">Window Configurations</a></td></tr>
@@ -14065,6 +14084,7 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function</a>, Up: <a href
 <tr><td></td><td valign="top"><a href="#index-explicit-button_002c-programmatic-creation">explicit button, programmatic creation</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Programmatic-Button-Creation">Programmatic Button Creation</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-exporting">exporting</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Exporting">Exporting</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-exporting-an-outline">exporting an outline</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Relocating-and-Copying">Relocating and Copying</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-exporting_002c-Koutliner">exporting, Koutliner</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Menu-Commands">Menu Commands</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-external-display">external display</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Referent-Display">Referent Display</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-external-display-1">external display</a>:</td><td>&nbsp;</td><td valign="top"><a href="#External-Viewers">External Viewers</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-external-klink">external klink</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Links">Links</a></td></tr>
@@ -14232,6 +14252,7 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function</a>, Up: <a href
 <tr><td></td><td valign="top"><a href="#index-implicit-button-types">implicit button types</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-importing">importing</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Inserting-and-Importing">Inserting and Importing</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-importing-a-file">importing a file</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Inserting-and-Importing">Inserting and Importing</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-importing_002c-Koutliner">importing, Koutliner</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Menu-Commands">Menu Commands</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-in_002ddevelopment-installation">in-development installation</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Elpa-In_002dDevelopment-Package-Installation">Elpa In-Development Package Installation</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-inactive-minibuffer">inactive minibuffer</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Minibuffer-Menu-Activation">Minibuffer Menu Activation</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-Info-browser">Info browser</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Mouse-Key-Modeline-Clicks">Smart Mouse Key Modeline Clicks</a></td></tr>
@@ -14319,9 +14340,11 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function</a>, Up: <a href
 <tr><td></td><td valign="top"><a href="#index-klink_002c-view-spec">klink, view spec</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Links">Links</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-klinks_002c-ignoring">klinks, ignoring</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Links">Links</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-knowledge-transfer">knowledge transfer</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Koutliner-History">Koutliner History</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-Koutline-import">Koutline import</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Inserting-and-Importing">Inserting and Importing</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-koutline-link">koutline link</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-koutline-mode">koutline mode</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Inserting-and-Importing">Inserting and Importing</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-Koutliner-commands">Koutliner commands</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Menu-Commands">Menu Commands</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-Koutliner-import_002fexport-commands">Koutliner import/export commands</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Menu-Commands">Menu Commands</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-Koutliner-menu">Koutliner menu</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Menu-Commands">Menu Commands</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-Koutliner_002c-toggle-tab-behavior">Koutliner, toggle tab behavior</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Promoting-and-Demoting">Promoting and Demoting</a></td></tr>
 <tr><td colspan="4"> <hr></td></tr>
@@ -14550,12 +14573,12 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function</a>, Up: <a href
 <tr><td></td><td valign="top"><a href="#index-outline-structure">outline structure</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Autonumbering">Autonumbering</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-outline_002c-all-cells">outline, all cells</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Hiding-and-Showing">Hiding and Showing</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-outline_002c-attribute-list">outline, attribute list</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Cell-Attributes">Cell Attributes</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-outline_002c-conversion">outline, conversion</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Inserting-and-Importing">Inserting and Importing</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-outline_002c-creating">outline, creating</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Creating-Outlines">Creating Outlines</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-outline_002c-exporting">outline, exporting</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Relocating-and-Copying">Relocating and Copying</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-outline_002c-exporting-from">outline, exporting from</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Exporting">Exporting</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-outline_002c-exporting-1">outline, exporting</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Exporting">Exporting</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-outline_002c-filling">outline, filling</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Filling">Filling</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-outline_002c-foreign-file">outline, foreign file</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Inserting-and-Importing">Inserting and Importing</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-outline_002c-formatting">outline, formatting</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Inserting-and-Importing">Inserting and Importing</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-outline_002c-hiding">outline, hiding</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Hiding-and-Showing">Hiding and Showing</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-outline_002c-HTML-conversion">outline, HTML conversion</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Exporting">Exporting</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-outline_002c-importing">outline, importing</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Relocating-and-Copying">Relocating and Copying</a></td></tr>

@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    15-Oct-91 at 20:13:17
-;; Last-Mod:      5-Feb-22 at 11:39:04 by Bob Weiner
+;; Last-Mod:      5-Feb-22 at 16:48:59 by Bob Weiner
 ;;
 ;; Copyright (C) 1991-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -516,7 +516,7 @@ constructs.  If not given, the top level Hyperbole menu is used."
 		  "Jumps back to location prior to last Hyperbole button follow.")
 		'("Ibut/"       (menu . ibut)
 		  "Implicit button and button type commands.")
-		'("Kotl/"   (menu . otl)
+		'("Kotl/"       (menu . kotl)
 		  "Autonumbered outlining and hyperlink capabilities.")
 		'("Msg/"        (menu . msg)
 		  "Mail and News messaging capabilities.")
@@ -700,6 +700,42 @@ constructs.  If not given, the top level Hyperbole menu is used."
 	   "Modifies a label preceding an implicit button in the current buffer.")
 	  ("Types"  (hui:htype-help 'ibtypes 'no-sort)
 	   "Displays documentation for one or all implicit button types.")))
+       '(kotl
+	 . (("Kotl>")
+	    ("All"       kotl-mode:show-all "Expand all collapsed cells.")
+	    ("Blanks"    kvspec:toggle-blank-lines
+	     "Toggle blank lines between cells on or off.")
+	    ("Create"    kfile:find   "Create or edit an outline file.")
+	    ("Downto"    kotl-mode:hide-sublevels
+	     "Hide all cells in outline deeper than a particular level.")
+	    ("Examp"     kotl-mode:example
+	     "Display a self-descriptive example outline file.")
+	    ("Format/"  (menu . kotl-format) "Imports/Exports Koutlines.")
+	    ("Hide"      (progn (kotl-mode:is-p)
+				(kotl-mode:hide-tree (kcell-view:label)))
+	     "Collapse tree rooted at point.")
+	    ("Info"
+	     (id-info "(hyperbole)Koutliner")
+	     "Display manual section on Hyperbole Koutliner.")
+	    ("Kill"      kotl-mode:kill-tree
+	     "Kill ARG following trees starting from point.")
+	    ("Link"      klink:create
+	     "Create and insert an implicit link at point.")
+	    ("Overvw"  kotl-mode:overview
+	     "Show first line of each cell.")
+	    ("Show"      (progn (kotl-mode:is-p)
+				(kotl-mode:show-tree (kcell-view:label)))
+	     "Expand tree rooted at point.")
+	    ("Top"       kotl-mode:top-cells
+	     "Hide all but top-level cells.")
+	    ("Vspec"     kvspec:activate
+	     "Prompt for and activate a view specifiction.")))
+       '(kotl-format .
+	 (("Format>")
+	    ("Display-in-Browser"      kexport:display  "Export and display current Koutline in default web browser")
+	    ("Html-Export-Other"       kexport:html     "Prompt for a Koutline buffer/file and output HTML file; export it.")
+            ("Import-to-Koutline"      kimport:file     "Import a buffer/file into a new or existing Koutline.")
+	    ("Koutline-Export-to-Html" kexport:koutline "Export current Koutline and save as an HTML file for web usage.")))
        '(msg .
 	 (("Msg>")
 	  ("Compose-Hypb-Mail"
@@ -724,35 +760,6 @@ constructs.  If not given, the top level Hyperbole menu is used."
 	   (hmail:compose "bug-hyperbole-leave@gnu.org" nil
 			  "Just send the message; subject and body are ignored.")
 	   "Unsubscribe from the Hyperbole bug reporting list.")))
-       '(otl
-	 . (("Kotl>")
-	    ("All"       kotl-mode:show-all "Expand all collapsed cells.")
-	    ("Blanks"    kvspec:toggle-blank-lines
-	     "Toggle blank lines between cells on or off.")
-	    ("Create"    kfile:find   "Create or edit an outline file.")
-	    ("Downto"    kotl-mode:hide-sublevels
-	     "Hide all cells in outline deeper than a particular level.")
-	    ("Examp"     kotl-mode:example
-	     "Display a self-descriptive example outline file.")
-	    ("Hide"      (progn (kotl-mode:is-p)
-				(kotl-mode:hide-tree (kcell-view:label)))
-	     "Collapse tree rooted at point.")
-	    ("Info"
-	     (id-info "(hyperbole)Koutliner")
-	     "Display manual section on Hyperbole Koutliner.")
-	    ("Kill"      kotl-mode:kill-tree
-	     "Kill ARG following trees starting from point.")
-	    ("Link"      klink:create
-	     "Create and insert an implicit link at point.")
-	    ("Overvw"  kotl-mode:overview
-	     "Show first line of each cell.")
-	    ("Show"      (progn (kotl-mode:is-p)
-				(kotl-mode:show-tree (kcell-view:label)))
-	     "Expand tree rooted at point.")
-	    ("Top"       kotl-mode:top-cells
-	     "Hide all but top-level cells.")
-	    ("Vspec"     kvspec:activate
-	     "Prompt for and activate a view specifiction.")))
        '(hyrolo .
 	 (("Rolo>")
 	  ("Add"              hyrolo-add	  "Add a new rolo entry.")

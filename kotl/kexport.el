@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    26-Feb-98
-;; Last-Mod:     24-Jan-22 at 00:25:17 by Bob Weiner
+;; Last-Mod:      5-Feb-22 at 16:24:59 by Bob Weiner
 ;;
 ;; Copyright (C) 1998-2021  Free Software Foundation, Inc.
 ;; See the "../HY-COPY" file for license information.
@@ -329,7 +329,7 @@ for (i = 0; i < coll.length; i++) {
 ;;; ************************************************************************
 
 ;;;###autoload
-(defun kexport:buffer (&optional soft-newlines-flag)
+(defun kexport:koutline (&optional soft-newlines-flag)
   "Export the current buffer's koutline to the same named file with a \".html\" suffix.
 Return the pathname of the html file created.
 
@@ -349,7 +349,7 @@ Return the pathname of the html file created.
 By default, this retains newlines within cells as they are.  With optional prefix arg, SOFT-NEWLINES-FLAG,
 hard newlines are not used.  Also converts Urls and Klinks into Html hyperlinks."
   (interactive "P")
-  (let ((html-file (kexport:buffer soft-newlines-flag)))
+  (let ((html-file (kexport:koutline soft-newlines-flag)))
     (hact 'www-url (concat "file://" html-file))
     html-file))
 

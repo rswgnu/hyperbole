@@ -5,7 +5,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    10-Oct-21 at 17:30:00
-;; Last-Mod:     24-Jan-22 at 00:41:36 by Bob Weiner
+;; Last-Mod:      5-Feb-22 at 16:24:59 by Bob Weiner
 ;;
 ;; Copyright (C) 2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -125,8 +125,8 @@
         (delete-file kotl-file)
         (delete-file html-file)))))
 
-(ert-deftest kexport:buffer-calls-kexport:html ()
-  "kexport:buffer calls kexport:html and returns html buffer name."
+(ert-deftest kexport:koutline-calls-kexport:html ()
+  "kexport:koutline calls kexport:html and returns html buffer name."
   (let* ((kotl-file (make-temp-file "hypb"))
          (html-file (concat kotl-file ".html")))
     (unwind-protect
@@ -137,7 +137,7 @@
                      (should (equal soft-newlines-flag nil))
                      nil)))
           (find-file kotl-file)
-          (should (string= (kexport:buffer) html-file)))
+          (should (string= (kexport:koutline) html-file)))
       (progn
         (delete-file kotl-file)))))
 
