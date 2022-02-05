@@ -19,6 +19,13 @@
 
 2022-01-31  Bob Weiner  <rsw@gnu.org>
 
+* hpath.el (hpath:outline-section-pattern): Change to allow for indented
+    asterisks at the beginning of a line and to match when text is followed
+    by a punctuation character, even if not at the end of the line, e.g.
+    section-name: description.  Also, allow for human-readable versions of
+    bound key sequences as section anchors and support anchors in fundamental
+    mode.  New features used in "DEMO".
+
 * hui-select.el (hui-select-thing): Hyperbole binds this to {C-c RET} which
     conflicts with an Org mode binding, so if in Org mode, use its binding
     when this command is called interactively from that key.

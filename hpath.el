@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     1-Nov-91 at 00:44:23
-;; Last-Mod:     30-Jan-22 at 23:08:42 by Bob Weiner
+;; Last-Mod:     31-Jan-22 at 22:39:52 by Bob Weiner
 ;;
 ;; Copyright (C) 1991-2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -621,7 +621,7 @@ use with `string-match'.")
 (defconst hpath:markdown-suffix-regexp "\\.[mM][dD]"
   "Regexp that matches to a Markdown file suffix.")
 
-(defconst hpath:outline-section-pattern "^\*+[ \t]+%s\\([ \t[:punct:]]*\\)$"
+(defconst hpath:outline-section-pattern "^[ \t]*\\*+[ \t]+%s[ \t]*\\([:punct:]+\\|$\\)"
   "Regexp matching an Emacs outline section header and containing a %s for replacement of a specific section name.")
 
 (defvar hpath:prefix-regexp "\\`[-!&][ ]*"
@@ -1394,7 +1394,7 @@ buffer but don't display it."
 		       ;; then no conversion occurs.
 		       (case-fold-search (not prog-mode))
 		       (anchor-name (if (or prog-mode
-					    (string-match "-.* \\| .*-" anchor))
+					    (string-match-p "-.* \\| .*-" anchor))
 					anchor
 				      (subst-char-in-string ?- ?\  anchor))))
 		  (goto-char (point-min))
@@ -1407,7 +1407,7 @@ buffer but don't display it."
 						(prog-mode
 						 "%s")
 						((or (and buffer-file-name
-							  (string-match hpath:markdown-suffix-regexp buffer-file-name))
+							  (string-match-p hpath:markdown-suffix-regexp buffer-file-name))
 						     (memq major-mode hpath:shell-modes))
 						 hpath:markdown-section-pattern)
 						((derived-mode-p 'texinfo-mode)

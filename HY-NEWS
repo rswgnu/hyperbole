@@ -5,16 +5,17 @@
 *                                   V8.0.0
 ===========================================================================
 
-  HYPERBOLE SYSTEM
 
-    - Installation: Hyperbole package installation options are greatly expanded.
+** HYPERBOLE SYSTEM
+
+  *** Installation: Hyperbole package installation options are greatly expanded.
       Stable or in-development branches may be installed with the Emacs package
       manager.  The Straight package manager may be used to keep up with
       git-based development and submit pull requests.  And stable and
       in-development tar balls are available for manual installation.  See
       "(hyperbole)Installation".
 
-    - Global Minor Mode: Hyperbole is now a global minor mode that can be
+  *** Global Minor Mode: Hyperbole is now a global minor mode that can be
       toggled with {M-x hyperbole-mode RET}, meaning all of its key bindings
       can easily be enabled or disabled whenever desired.  Your init file needs
       to have (hyperbole-mode 1) in it instead of (require 'hyperbole) or
@@ -30,13 +31,14 @@
       Lexical Binding: All code is now largely lexically bound, improving
       quality and debugability.
 
-  ORG MODE
 
-    - M-RET: Reworked M-RET interface so can control how much or little of
+** ORG MODE
+
+  *** M-RET: Reworked M-RET interface so can control how much or little of
       Hyperbole works in Org mode when Hyperbole minor mode is enabled.
       See "(hyperbole)enable org-mode support" and "hsys-org.el".
 
-    - hsys-org-enable-smart-keys: New customization to replace
+  *** hsys-org-enable-smart-keys: New customization to replace
       'inhibit-hsys-org'.  This applies only in Org major/minor modes when
       hyperbole-mode is active.  t means enable Smart Key support
       everywhere.  The symbol, buttons, is the default; it means the Smart
@@ -55,9 +57,10 @@
       | t            | Activate          | Activate         | Activate | None             |
       |--------------+-------------------+------------------+----------+------------------|
 
-   EASILY CREATE YOUR OWN BUTTON TYPES
 
-    - Simple Action Link Button Type Creation: `defal' is a new,
+** EASILY CREATE YOUR OWN BUTTON TYPES
+
+  *** Simple Action Link Button Type Creation: `defal' is a new,
       easy-to-use construct that generates new action button types from
       a type name and a single simple format expression, allowing
       non-programmers to create their own implicit action button link
@@ -66,7 +69,7 @@
       Link Types" or the "DEMO2#Defining New Action Button Types"
       section.
 
-    - Easy Implicit Link Button Type Creation: `defil' is a new
+  *** Easy Implicit Link Button Type Creation: `defil' is a new
       construct for those familiar with regular expressions but not
       much Emacs Lisp.  This creates more flexible implicit button
       types than `defal' where the delimiters and text substitution
@@ -80,9 +83,10 @@
       for examples and "(hyperbole)Programmatic Implicit Button Types"
       for documentation.
 
-  TEST CASES
 
-    - Hyperbole Automated Testing: Extensive quality improvements throughout
+** TEST CASES
+
+  *** Hyperbole Automated Testing: Extensive quality improvements throughout
       Hyperbole thanks in part to over 200 test cases now included in the
       test/ subdirectory.  Simply run 'make test' or 'make test-all' from the
       command-line when in the Hyperbole source directory and you should see
@@ -90,7 +94,7 @@
       source of the failure.  Full testing is suppored under POSIX systems
       only.  See "Makefile" and "test/MANIFEST".
  
-    - Implicit Button Types to Run Tests: The file "hypb-ert.el" contains two
+  *** Implicit Button Types to Run Tests: The file "hypb-ert.el" contains two
       action link types:
         hyperbole-run-test  - run a single Hyperbole test by name
         hyperbole-run-tests - run one more tests matching a pattern
@@ -105,66 +109,68 @@
           Run all tests
             <hyperbole-run-tests t>
  
-    - Installation Testing: install-test/local-install-test.sh automatically
+  *** Installation Testing: install-test/local-install-test.sh automatically
       installs Hyperbole for testing from one or more of its releases or
       development branches.  See "Makefile" and "install-test/MANIFEST".
 
-  HYROLO  (See "(hyperbole)HyRolo").
 
-    - Faster searching within HyRolo match buffer: After performing a HyRolo
+** HYROLO  (See "(hyperbole)HyRolo").
+
+  *** Faster searching within HyRolo match buffer: After performing a HyRolo
       search with point in the match buffer, if you want different results,
       you can quickly do a new regular expression HyRolo search with {r} or
       a string/logical search with {C-u r}.  This key had moved to previous
       matches but that is already bound to {Shift-TAB} and {M-TAB}.
 
-    - Auto-Expansion of Entries: If an entry is collapsed/hidden, moving to
+  *** Auto-Expansion of Entries: If an entry is collapsed/hidden, moving to
       any hidden part auto-expands it and then re-collapses it when point is
       moved to another entry (just like isearch).  A side-effect of this is
       that the {h} hide entry subtree command now moves to the beginning of
       the entry.
 
-    - hyrolo-find-file: New command that selects and edits a file in
+  *** hyrolo-find-file: New command that selects and edits a file in
       `hyrolo-file-list', defaulting to the first listed file when not given
       a prefix arg.  Available in the minibuffer menu as Rolo/File and the
       pulldown menu as Rolo/Find-HyRolo-File.
 
-    - Sorting Entries Rewritten:  {C-h h r o} re-ordering HyRolo entries has
+  *** Sorting Entries Rewritten:  {C-h h r o} re-ordering HyRolo entries has
       been rewritten for compatibility and improved debugging with the latest
       Emacs releases.
 
-    - hyrolo-highlight-face: Now uses the Emacs 'match' face by default.
+  *** hyrolo-highlight-face: Now uses the Emacs 'match' face by default.
 
-    - Under MS Windows, the default HyRolo file is now "~/.rolo.otl" like
+  *** Under MS Windows, the default HyRolo file is now "~/.rolo.otl" like
       all other operating systems, instead of "~/_rolo.otl".  Any older file
       name will be relocated to the newer name.
 
-  KOUTLINER  (See "(hyperbole)Koutliner").
 
-    - Export Koutlines to Collapsible Web Pages: The {M-x kexport:display RET}
+** KOUTLINER  (See "(hyperbole)Koutliner").
+
+  *** Export Koutlines to Collapsible Web Pages: The {M-x kexport:display RET}
       command creates and displays a web-based expandable/collapsible outline
       from the Koutline in the current buffer.  See "(hyperbole)Exporting".
 
-    - Org Table Support: Org table editing now automatically works in the
+  *** Org Table Support: Org table editing now automatically works in the
       Koutliner via Org table minor mode.  Use {M-x orgtbl-mode RET} to
       toggle this on and off.  A press of the Action Key on a | symbol,
       also toggles this minor mode on or off. See "(Org)Tables" for details.
       Use a prefix arg with {TAB} to promote/demote Koutline trees when in
       a table since {TAB} moves between fields within a table.
 
-    - New Mail Tree Key Binding: The `kotl-mode:mail-tree' command that
+  *** New Mail Tree Key Binding: The `kotl-mode:mail-tree' command that
       extracts the current view of a Koutline in text-only format and
       creates an outgoing email messge with it, has moved from {C-c @}
       to {C-c C-@} to prevent conflict with the global hycontrol-window-grid
       command bound to {C-c @}.
 
-    - New Copy Command: The new command, `kotl-mode:copy-tree-or-region-to-buffer',
+  *** New Copy Command: The new command, `kotl-mode:copy-tree-or-region-to-buffer',
       bound to {C-c M-c} copies a Koutline tree or the active region
       to a specified buffer.  Prompts dictate whether invisible text
       is included or not.  This allows copying parts of Koutlines
       directly into other buffers without having to copy to a
       mail/message buffer first.
 
-    - New Tree Demotion/Promotion Keys: Tree promotion and demotion keys now
+  *** New Tree Demotion/Promotion Keys: Tree promotion and demotion keys now
       match the defaults in Org mode and Outline mode, plus some easier to
       type ones.  The tables below summarize which keys work whether inside
       an Org table or outside.  See "(hyperbole)Promoting and Demoting".
@@ -186,7 +192,7 @@
       | C-c C-<                    | C-c C->                     |
       |----------------------------+-----------------------------|
 
-    - Klink Copy: New commands that copy a relative or absolute reference
+  *** Klink Copy: New commands that copy a relative or absolute reference
       to a kcell (a klink) to the kill ring or to an Emacs single-letter
       named register:
 	kotl-mode:copy-absolute-klink-to-kill-ring
@@ -194,24 +200,24 @@
 	kotl-mode:copy-absolute-klink-to-register
 	kotl-mode:copy-relative-klink-to-register
 
-    - Klinks Ignored Outside Comments in Programming Language Modes: In
+  *** Klinks Ignored Outside Comments in Programming Language Modes: In
       previous Hyperbole versions, this was true for C-based language
       modes.  Now it is true for any programming mode descended from
       `prog-mode'.
 
-    - Prevent Movement Outside Editable Cell Bounds: Add
+  *** Prevent Movement Outside Editable Cell Bounds: Add
       kotl-mode:pre-self-insert-command as a pre-command-hook
       to prevent Koutline editing with point in an invalid location,
       after a mouse-set-point outside of editable bounds.
 
-    - {C-h h k e} (kotl-mode:example): Update to allow for an optional
+  *** {C-h h k e} (kotl-mode:example): Update to allow for an optional
       directory or absolute file path.  Prompt for the path when interactive.
       Given a prefix argument, archive any existing file and start with a
       fresh EXAMPLE.kotl file for editing.  Programmatically, give a 2nd
       arg of t to force archiving of any existing file and starting with
       a fresh EXAMPLE.kotl file.
 
-    - Koutlines have a hidden top-level root cell 0 that allows referring
+  *** Koutlines have a hidden top-level root cell 0 that allows referring
       to the whole outline as a tree.  Now attributes of this cell can be
       set, retrieved or removed like any other cell.
 
@@ -225,13 +231,14 @@
       {C-0 C-c C-i} sets an attribute of the invisible 0 root cell.
       {C--1 C-c C-i} removes an attribute of the invisible 0 root cell.
 
-    - Modes to Ignore Klinks: C-style languages use <includes> that can be
+  *** Modes to Ignore Klinks: C-style languages use <includes> that can be
       mistaken for klinks.  New customizations 'klink:ignore-modes' and
       'klink:c-style-modes' set the modes where klink matches are ignored.
 
-  MENUS
 
-    - Minibuffer Menu Changes:
+** MENUS
+
+  *** Minibuffer Menu Changes:
         + Items Activated by First Capital Letter: Used to be by the first
           letter.  This allows more flexibility in naming, e.g.
           where two items start with the same first letter.
@@ -240,20 +247,21 @@
           completely and exits from the menu.  {C-h h} re-enables the
           global minor mode and display the top-level Hyperbole menu.
 
-  SMART (ACTION AND ASSIST) KEYS  (See "(hyperbole)Smart Keys").
 
-    - Explicit buttons may be created in any kind of temporary buffer
+** SMART (ACTION AND ASSIST) KEYS  (See "(hyperbole)Smart Keys").
+
+  *** Explicit buttons may be created in any kind of temporary buffer
       without an attached file, similar to what already existed for mail
       message buffers.
 
-    - 'ls' and 'grep' Directory Changes:  'ls' listings are now recognized
+  *** 'ls' and 'grep' Directory Changes:  'ls' listings are now recognized
       properly, prepending the preceding directory to each entry for viewing.
 
       Similarly, if a 'cd' or 'pushd' command is issued prior to a 'grep -n'
       or 'ripgrep' command, Hyperbole will prepend that directory to the grep
       output before jumping to the resultant path.
 
-    - Pathname Implicit Buttons: Much improved pathname handling including
+  *** Pathname Implicit Buttons: Much improved pathname handling including
       multiple variables per path, embedded . or .. within paths, better
       recognition of semicolon separated pathnames in Windows PATH variable.
 
@@ -275,21 +283,21 @@
 
       file:// URLs are now resolved properly.
 
-    - Any Lisp or environment variable that stores a directory or set of
+  *** Any Lisp or environment variable that stores a directory or set of
       directories may be prepended to any "grep -n" output line with the form
       "${var-name}/" and the Action Key will recognize the directory and display
       the appropriate line.
 
-    - Treat kbd Strings as Key Series Buttons: An Action Key press within
+  *** Treat kbd Strings as Key Series Buttons: An Action Key press within
       the string of (kbd "string") issues the keys in string as if they were
       pressed individually, ie.g the same as the key series, {string}.
 
-    - Mail Address Activation Everywhere: Email addresses are recognized as
+  *** Mail Address Activation Everywhere: Email addresses are recognized as
       implicit buttons in major modes descended from `mail-address-mode-list'.
       If you set that to nil, however, they will be recognized in all major
       modes.
 
-    - Magit Mode Support: Just click or press the Action Key somewhere and it
+  *** Magit Mode Support: Just click or press the Action Key somewhere and it
       will typically display what you want.  Extensive Action Key support in
       Magit modes for cycling through display views and displaying items.
 
@@ -299,27 +307,28 @@
       handles single line log entries that begin with the word 'commit' ,
       displaying their commits even from shell and compilation buffers.
 
-    - Debugger Source: In Python tracebacks, may be on a line just below the
+  *** Debugger Source: In Python tracebacks, may be on a line just below the
       source reference line so if not on a Hyperbole button, move back a line
       before checking.
 
-    - Todotxt Mode Support: Smart key support for the todotxt mode
+  *** Todotxt Mode Support: Smart key support for the todotxt mode
       https://github.com/rpdillon/todotxt.el.
 
-    - UNIX Shell Errors: Jump to associated source line from a shell error of the
+  *** UNIX Shell Errors: Jump to associated source line from a shell error of the
       form:  "<pathname>: line <num>: ".
 
-    - Internet RFC Links (e.g. RFC-822): Change to using http to retrieve RFCs
+  *** Internet RFC Links (e.g. RFC-822): Change to using http to retrieve RFCs
       instead of ftp since this is disabled in many environments.  Always display
       with Emacs' web browser rather than externally.
 
-    - Implicit Button Types Reprioritization: Modified "hibtypes.el" so if
+  *** Implicit Button Types Reprioritization: Modified "hibtypes.el" so if
       evaluate: (symset:clear 'ibtypes) and then reload hibtypes.{el,elc},
       the priority order of all implicit button types is reset.
 
-  CUSTOMIZATON
 
-    - Customizable Display Program File Mappings:
+** CUSTOMIZATON
+
+  *** Customizable Display Program File Mappings:
       The variables:
          hpath:internal-display-alist
          hpath:external-display-alist-macos
@@ -333,53 +342,55 @@
       expression of operating system independent file suffixes to open outside Emacs
       with the Action Key when not handled by `hpath:native-image-suffixes'.
 
-  PROGRAMMING
 
-    - With the Hyperbole menu Cust/Debug-Toggle enabled, the messages printed
+** PROGRAMMING
+
+  *** With the Hyperbole menu Cust/Debug-Toggle enabled, the messages printed
       for each Smart Key press now include the action type and its arguments
       for improved debugging.
 
-    - Edebuggable Hyperbole Types: `defib' and `defact' type definitions
+  *** Edebuggable Hyperbole Types: `defib' and `defact' type definitions
       are now interactively debuggable via edebug-defun {C-M-x}.
 
-    - ebut:program: Programmatically create an explicit Hyperbole button at
+  *** ebut:program: Programmatically create an explicit Hyperbole button at
       point from LABEL, ACTYPE (action type), and optional actype ARGS.
 
-    - gbut:ebut-program: Programmatically add global explicit buttons at the
+  *** gbut:ebut-program: Programmatically add global explicit buttons at the
       end of the personal button file.
       
-    - kbd-key implicit button type: Interactive creation now allows for
+  *** kbd-key implicit button type: Interactive creation now allows for
       a full key series, not just a single key binding.
 
-    - kbd-key:is-p: Added this new predicate to test whether point is within
+  *** kbd-key:is-p: Added this new predicate to test whether point is within
       a brace-delimited key series.
 
-    - kbd-key:execute: Added to programmatically or interactively execute a
+  *** kbd-key:execute: Added to programmatically or interactively execute a
       non-normalized key series stored in a string.
 
-    - hypb:def-to-buffer: Quick copying of program definitions and insertion
+  *** hypb:def-to-buffer: Quick copying of program definitions and insertion
       at the start of another buffer.  Can be bound and used in key series.
 
-    - smart-lisp-find-tag: New function that automatically finds tags tables
+  *** smart-lisp-find-tag: New function that automatically finds tags tables
       and jumps to Emacs Lisp deefinitions.  It can be used in any type
       of file as an action button, e.g. <smart-lisp-find-tag "ibut:at-p">.
 
-    - ibut:at-p: Trigger an error if any implicit button type predicate
+  *** ibut:at-p: Trigger an error if any implicit button type predicate
       permanently moves point to simplify debugging such predicates.
 
-    - hypb:string-count-matches: Count regexp matches in a string.
+  *** hypb:string-count-matches: Count regexp matches in a string.
 
-  ACE WINDOW PACKAGE INTEGRATION - fast window and buffer switching
 
-    - After installing the ace-window package and loading Hyperbole, execute
+** ACE WINDOW PACKAGE INTEGRATION - fast window and buffer switching
+
+  *** After installing the ace-window package and loading Hyperbole, execute
       (hkey-ace-window-setup "\M-o") to enable the following capabilities:
 
-    - Fast Window Links: The hkey-window-link command bound to {M-o w}
+  *** Fast Window Links: The hkey-window-link command bound to {M-o w}
       rapidly creates a link button at point in the selected window,
       linking to point in the window chosen when prompted.
       See "DEMO2#Displaying File and Buffer Items and Moving Buffers".
 
-    - Throw A Region Elsewhere Within the Same Buffer: {M-o t <window-id>}
+  *** Throw A Region Elsewhere Within the Same Buffer: {M-o t <window-id>}
       when used with a selected region can now throw to the source buffer
       as long as point is outside the selected region in the target window.
 
