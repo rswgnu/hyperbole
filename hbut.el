@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    18-Sep-91 at 02:57:09
-;; Last-Mod:     30-Jan-22 at 03:17:19 by Bob Weiner
+;; Last-Mod:      5-Feb-22 at 11:42:05 by Bob Weiner
 ;;
 ;; Copyright (C) 1991-2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -600,9 +600,6 @@ Insert INSTANCE-FLAG after END, before ending delimiter."
 ;;; gbut class - Global Hyperbole buttons - activated by typing label name
 ;;; ========================================================================
 
-(defvar   gbut:file (expand-file-name hbmap:filename hbmap:dir-user)
-  "File that stores globally accessible Hyperbole buttons, accessed by name.")
-
 (defun    gbut:act (label)
   "Activate Hyperbole global button with LABEL."
   (interactive (list (hargs:read-match "Activate global button labeled: "
@@ -621,7 +618,7 @@ Insert INSTANCE-FLAG after END, before ending delimiter."
 (defun    gbut:delete (&optional lbl-key)
   "Delete Hyperbole global button based on optional LBL-KEY or button at point.
 Return entry deleted (a list of attribute values) or nil."
-  (hbut:delete lbl-key nil gbut:file))
+  (hbut:delete lbl-key nil (gbut:file)))
 
 (defun    gbut:ebut-program (label actype &rest args)
   "Programmatically create a global explicit Hyperbole button at point from LABEL, ACTYPE (action type), and optional actype ARGS.
@@ -642,8 +639,12 @@ For interactive creation, use `hui:gbut-create' instead."
 	  (insert "\n"))
 	(eval `(ebut:program ',label ',actype ,@args))))))
 
+(defun    gbut:file ()
+  "Return the absolute filename that stores Hyperbole global buttons (those accessed by name)."
+  (expand-file-name hbmap:filename hbmap:dir-user))
+
 (defun    gbut:get (&optional lbl-key)
-  "Return global Hyperbole button symbol given by optional LBL-KEY if found in gbut:file.
+  "Return global Hyperbole button symbol given by optional LBL-KEY if found in (gbut:file).
 
 Retrieve any button data, convert into a button object and return a symbol
 which references the button.
@@ -652,7 +653,7 @@ All arguments are optional.  When none are given, return a symbol for
 the button that point is within.
 
 Return nil if no matching button is found."
-  (hbut:get lbl-key nil gbut:file))
+  (hbut:get lbl-key nil (gbut:file)))
 
 (defun    gbut:help (label)
   "Display help for Hyperbole global button with LABEL."
@@ -660,7 +661,7 @@ Return nil if no matching button is found."
 				       (mapcar 'list (gbut:label-list))
 				       nil t nil 'hbut)))
   (let* ((lbl-key (hbut:label-to-key label))
-	 (but (hbut:get lbl-key nil gbut:file)))
+	 (but (hbut:get lbl-key nil (gbut:file))))
     (if but
 	(hbut:report but)
       (error "(gbut:help): No global button labeled: %s" label))))
@@ -681,18 +682,18 @@ delimiters.  With POS-FLAG non-nil, return the list of label-or-key,
 but-start-position, but-end-position.  Positions include
 delimiters.  With TWO-LINES-FLAG non-nil, constrain label search
 to two lines."
-  (when (equal buffer-file-name gbut:file)
+  (when (equal buffer-file-name (gbut:file))
     (hbut:label-p as-label start-delim end-delim pos-flag two-lines-flag)))
 
 (defun    gbut:to (lbl-key)
   "Find the global button with LBL-KEY (a label or label key) within the visible portion of the global button file.
 Leave point inside the button label, if it has one.
 Return the symbol for the button when found, else nil."
-  (when (file-readable-p gbut:file)
+  (when (file-readable-p (gbut:file))
     (let ((obuf (current-buffer))
 	  (opoint (point))
 	  found)
-      (set-buffer (find-file-noselect gbut:file))
+      (set-buffer (find-file-noselect (gbut:file)))
       (setq found (hbut:to lbl-key))
       (if found
 	  (hpath:display-buffer (current-buffer) 'this-window)
@@ -708,7 +709,7 @@ Return the symbol for the button when found, else nil."
 (defun    gbut:ebut-key-list ()
   "Return a list of explicit button label keys from the global button file."
   (save-excursion
-    (when (hbdata:to-entry-buf gbut:file)
+    (when (hbdata:to-entry-buf (gbut:file))
       (let (gbuts)
 	(save-restriction
 	  (narrow-to-region (point) (if (search-forward "\f" nil t)
@@ -721,9 +722,9 @@ Return the symbol for the button when found, else nil."
 
 (defun    gbut:ibut-key-list ()
   "Return a list of implicit button label keys from the global button file."
-  (when (file-readable-p gbut:file)
+  (when (file-readable-p (gbut:file))
     (save-excursion
-      (with-current-buffer (find-file-noselect gbut:file)
+      (with-current-buffer (find-file-noselect (gbut:file))
 	(save-restriction
 	  (widen)
 	  (ibut:label-map #'(lambda (label start end) (ibut:label-to-key label))))))))

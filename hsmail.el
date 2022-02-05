@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     9-May-91 at 04:50:20
-;; Last-Mod:     24-Jan-22 at 00:18:47 by Bob Weiner
+;; Last-Mod:      5-Feb-22 at 11:15:20 by Bob Weiner
 ;;
 ;; Copyright (C) 1991-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -17,7 +17,7 @@
 ;;; Other required Elisp libraries
 ;;; ************************************************************************
 
-(require 'sendmail)
+(require 'message)
 (require 'hypb)                         ;For `hypb:supercite-p'.
 
 (defvar inhibit-hyperbole-messaging) ;; From "hsettings.el".
@@ -35,23 +35,13 @@ Default is nil for no comment.  Set to:
 
 for a comment.")
 
-;; Used by 'mail-send' in Emacs "sendmail.el".
-;; FIXME: Is this still needed?
-(add-function :before send-mail-function #'smail:widen)
+;; Used by 'message-send' in Emacs "message.el".
+(add-hook 'message-send-hook  #'smail:widen)
 
 ;; For compatibility with Supercite and GNU Emacs.
-(defvar mail-yank-prefix "> "
-  "*Prefix to insert on lines of yanked message being replied to.
-If this is nil, use indentation, as specified by `mail-indentation-spaces'.")
-
-(defvar mail-indentation-spaces 3
-  "*Number of spaces to insert at the beginning of each cited line.
-Used by `mail-yank-original' via `mail-indent-citation'.")
-
-;;; ************************************************************************
-;;; Public declarations
-;;; ************************************************************************
-(defvar mail-reply-buffer)
+;; message-mode defines message-yank-prefix - mail-yank-prefix removed
+;; message-mode defines message-indentation-spaces - mail-indentation-spaces removed
+;; message-mode defines message-reply-buffer - mail-reply-buffer removed
 
 ;;; ************************************************************************
 ;;; Overloaded functions
@@ -75,40 +65,88 @@ message.  If not given, 'smail:comment' is evaluated by default."
 
 (defun smail:widen ()
   "Widens outgoing mail buffer to include Hyperbole button data."
-  (if (fboundp 'mail+narrow) (mail+narrow) (widen)))
+  (if (fboundp #'mail+narrow) (mail+narrow) (widen)))
 
-;; Redefine this function from Emacs "sendmail.el" to work with supercite.
-(defun mail-indent-citation ()
-  "Modify text just inserted from a message to be cited.
-The inserted text should be the region.
-When this function returns, the region is again around the modified text.
+;; Redefine this function from "message.el" to include Hyperbole button
+;; data when yanking in a message and to highlight buttons if possible.
+(defun message--yank-original-internal (arg)
+  "See `message-yank-original'.
 
-Normally, indent each nonblank line `mail-indentation-spaces' spaces.
-However, if `mail-yank-prefix' is non-nil, insert that prefix on each line."
-  ;; Don't ever remove headers if user uses Supercite package,
-  ;; since he can set an option in that package to do
-  ;; the removal.
-  (unless (hypb:supercite-p)
-    (mail-yank-clear-headers (region-beginning) (region-end)))
-  (if (null mail-yank-prefix)
-      (indent-rigidly (region-beginning) (region-end)
-		      mail-indentation-spaces)
-    (save-excursion
-      (let ((end (set-marker (make-marker) (region-end))))
-	(goto-char (region-beginning))
-	(while (< (point) end)
-	  (insert mail-yank-prefix)
-	  (forward-line 1))))))
+If supercite is in use, header fields are never deleted.
+Use (setq sc-nuke-mail-headers 'all) to have them removed."
+  (let ((modified (buffer-modified-p))
+	body-text
+	opoint)
+	(when (and message-reply-buffer
+		   message-cite-function)
+	  (when (equal message-cite-reply-position 'above)
+	    (save-excursion
+	      (setq body-text
+		    (buffer-substring (message-goto-body)
+				      (point-max)))
+	      (delete-region (message-goto-body) (point-max))))
+	  (when (bufferp message-reply-buffer)
+	    (delete-windows-on message-reply-buffer t)
+	    (with-current-buffer message-reply-buffer
+	      ;; Hyperbole addition: Might be called from newsreader
+	      ;; before any Hyperbole mail reader support has been autoloaded.
+	      (cond ((fboundp 'rmail:msg-widen) (rmail:msg-widen))
+		    ((eq major-mode 'news-reply-mode) (widen)))
+	      (hmail:msg-narrow)
+	      (when (fboundp 'hproperty:but-create)
+		(hproperty:but-create))))
+	  (setq opoint (point))
+	  (push-mark (save-excursion
+		       (cond
+			((bufferp message-reply-buffer)
+			 (insert-buffer-substring message-reply-buffer))
+			((and (consp message-reply-buffer)
+			      (functionp (car message-reply-buffer)))
+			 (apply (car message-reply-buffer)
+				(cdr message-reply-buffer))))
+		       (unless (bolp)
+			 (insert ?\n))
+		       (point)))
+	  (unless arg
+	    (funcall message-cite-function)
+	    (unless (eq (char-before (mark t)) ?\n)
+	      (let ((pt (point)))
+		(goto-char (mark t))
+		(insert-before-markers ?\n)
+		(goto-char pt))))
+	  (pcase message-cite-reply-position
+	    ('above
+	     (message-goto-body)
+	     (insert body-text)
+	     (insert (if (bolp) "\n" "\n\n"))
+	     (message-goto-body))
+	    ('below
+	     (message-goto-signature)))
+	  ;; Hyperbole addition
+	  (when (bufferp message-reply-buffer)
+	    (with-current-buffer message-reply-buffer
+	      (hmail:msg-narrow)))
+	  ;; Add a `message-setup-very-last-hook' here?
+	  ;; Add `gnus-article-highlight-citation' here?
+	  (unless modified
+            (setq message-checksum (message-checksum))))))
+
 
 ;; Redefine this function from "sendmail.el" to include Hyperbole button
 ;; data when yanking in a message and to highlight buttons if possible.
 (defun mail-yank-original (arg)
   "Insert the message being replied to, if any (in Rmail).
-Puts point before the text and mark after.
-Applies 'mail-citation-hook', 'mail-yank-hook' or 'mail-yank-hooks'
+Put point before the text and mark after.
+
+Normally indent each nonblank line ARG spaces (default 3).
+However, if ‘mail-yank-prefix’ is non-nil, insert that prefix
+on each line.
+
+Apply `mail-citation-hook', `mail-yank-hook' or `mail-yank-hooks'
 to text (in decreasing order of precedence).
-Just \\[universal-argument] as argument means don't apply hooks
-and don't delete any header fields.
+
+Just \\[universal-argument] as argument means don't indent,
+insert no prefix, and don't delete any header fields.
 
 If supercite is in use, header fields are never deleted.
 Use (setq sc-nuke-mail-headers 'all) to have them removed."
@@ -132,8 +170,8 @@ Use (setq sc-nuke-mail-headers 'all) to have them removed."
 		;; frame, delete that window to save space.
 		(delete-windows-on original t)
 		(with-current-buffer original
-		  ;; Might be called from newsreader before any
-		  ;; Hyperbole mail reader support has been autoloaded.
+		  ;; Hyperbole addition: Might be called from newsreader
+		  ;; before any Hyperbole mail reader support has been autoloaded.
 		  (cond ((fboundp 'rmail:msg-widen) (rmail:msg-widen))
 			((eq major-mode 'news-reply-mode) (widen))))
 		(setq opoint (point))
@@ -153,56 +191,57 @@ Use (setq sc-nuke-mail-headers 'all) to have them removed."
 			       (with-current-buffer original
 				 buffer-file-coding-system))))))
 		(set-text-properties (point) (mark t) nil))
-		(hmail:msg-narrow)
-		(when (fboundp 'hproperty:but-create)
-		  (hproperty:but-create))
-		(unless (consp arg)
-		  ;; Don't ever remove headers if user uses Supercite package,
-		  ;; since he can set an option in that package to do
-		  ;; the removal.
-		  (or (hypb:supercite-p)
-		      (mail-yank-clear-headers
-		       start (marker-position (mark-marker))))
-		  (goto-char start)
-		  (let ((mail-indentation-spaces (if arg (prefix-numeric-value arg)
-						   mail-indentation-spaces))
-			;; Avoid error in Transient Mark mode
-			;; on account of mark's being inactive.
-			(mark-even-if-inactive t))
-		    (cond ((and (boundp 'mail-citation-hook) mail-citation-hook)
-			   ;; Bind mail-citation-header to the inserted
-			   ;; message's header.
-			   (let ((mail-citation-header
-				  (buffer-substring-no-properties
-				   start
-				   (save-excursion
-				     (save-restriction
-				       (narrow-to-region start (point-max))
-				       (goto-char start)
-				       (rfc822-goto-eoh)
-				       (point))))))
-			     (run-hooks 'mail-citation-hook)))
-			  ((and (boundp 'mail-yank-hook) mail-yank-hook)
-			   (run-hooks 'mail-yank-hook))
-			  ((and (boundp 'mail-yank-hooks) mail-yank-hooks)
-			   (run-hooks 'mail-yank-hooks))
-			  (t (mail-indent-citation))))
-		  (goto-char (min (point-max) (mark t)))
-		  (set-mark opoint)
-		  (delete-region (point) ; Remove trailing blank lines.
-				 (progn (re-search-backward "[^ \t\n\r\f]")
-					(end-of-line)
-					(point))))
-		(unless (eq major-mode 'news-reply-mode)
-		  ;; This is like exchange-point-and-mark, but doesn't activate the mark.
-		  ;; It is cleaner to avoid activation, even though the command
-		  ;; loop would deactivate the mark because we inserted text.
-		  (goto-char (prog1 (mark t)
-			       (set-marker (mark-marker)
-					   (point) (current-buffer))))
-		  (unless (eolp)
-		    (insert ?\n))))
-	  (with-current-buffer mail-reply-buffer
+	      ;; Hyperbole addition
+	      (hmail:msg-narrow)
+	      (when (fboundp 'hproperty:but-create)
+		(hproperty:but-create))
+	      (unless (consp arg)
+		;; Don't ever remove headers if user uses Supercite package,
+		;; since he can set an option in that package to do
+		;; the removal.
+		(or (hypb:supercite-p)
+		    (mail-yank-clear-headers
+		     start (marker-position (mark-marker))))
+		(goto-char start)
+		(let ((message-indentation-spaces (if arg (prefix-numeric-value arg)
+						    message-indentation-spaces))
+		      ;; Avoid error in Transient Mark mode
+		      ;; on account of mark's being inactive.
+		      (mark-even-if-inactive t))
+		  (cond ((and (boundp 'mail-citation-hook) mail-citation-hook)
+			 ;; Bind mail-citation-header to the inserted message's header.
+			 (let ((mail-citation-header
+				(buffer-substring-no-properties
+				 start
+				 (save-excursion
+				   (save-restriction
+				     (narrow-to-region start (point-max))
+				     (goto-char start)
+				     (rfc822-goto-eoh)
+				     (point))))))
+			   (run-hooks 'mail-citation-hook)))
+			((and (boundp 'mail-yank-hook) mail-yank-hook)
+			 (run-hooks 'mail-yank-hook))
+			((and (boundp 'mail-yank-hooks) mail-yank-hooks)
+			 (run-hooks 'mail-yank-hooks))
+			(t (funcall message-indent-citation-function))))
+		(goto-char (min (point-max) (mark t)))
+		(set-mark opoint)
+		(delete-region (point)	; Remove trailing blank lines.
+			       (progn (re-search-backward "[^ \t\n\r\f]")
+				      (end-of-line)
+				      (point))))
+	      (unless (eq major-mode 'news-reply-mode)
+		;; This is like exchange-point-and-mark, but doesn't activate the mark.
+		;; It is cleaner to avoid activation, even though the command
+		;; loop would deactivate the mark because we inserted text.
+		(goto-char (prog1 (mark t)
+			     (set-marker (mark-marker)
+					 (point) (current-buffer))))
+		(unless (eolp)
+		  (insert ?\n))))
+	  ;; Hyperbole addition
+	  (with-current-buffer message-reply-buffer
 	    (hmail:msg-narrow))))))
 
 ;;; ************************************************************************

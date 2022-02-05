@@ -1,3 +1,27 @@
+2022-02-05  Bob Weiner  <rsw@gnu.org>
+
+* hpath.el (hpath:outline-section-pattern): Remove leading spaces
+ 	   (hpath:to-markup-anchor): Search for leading spaces in above regexp
+    only after not finding a match without leading spaces.  This prevents
+    matching to Table of Contents entries with the same section name but indented.
+
+* hui.el (hui:gbut-create, hui:buf-writable-err): Fix sporadic bug where err
+    function did not trigger an error but changed the (current-buffer), thereby
+    cause the 'hui:gbut-create' function to improperly place a global button
+    in the wrong buffer.
+         (hui:error): Remove, has been obsolete for a long time.  Use hypb:error.
+	 (hui:ebut-delimit): Remove, has been obsolete for a long time.
+    Use ebut:delimit instead.
+  hargs.el (hargs:action-get): Add a save-excursion to fix above bug as this
+    was temporarily changing the current-buffer.
+
+* hbut.el (gbut:file): Change from a variable to a function so if user resets
+    any of its components, the current value is always used.  Fixes bug where
+    global buttons were written to the wrong file.
+
+* hsmail.el (mail-yank-original): Fix indentation of this overloaded function.
+            (message--yank-original-internal): Add overloading of this function.
+
 2022-02-04  Mats Lidell  <matsl@gnu.org>
 
 * test/hargs-tests.el (hargs-get-verify-extension-characters)
@@ -8450,3 +8474,5 @@ V5.06 changes ^^^^:
      Copyright 1991-2021 Free Software Foundation, Inc.
      Copying and distribution of this file, with or without modification, are
      permitted provided the copyright notice and this notice are preserved.
+
+

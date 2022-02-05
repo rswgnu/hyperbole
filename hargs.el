@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    31-Oct-91 at 23:17:35
-;; Last-Mod:     30-Jan-22 at 22:15:38 by Bob Weiner
+;; Last-Mod:      5-Feb-22 at 13:06:32 by Bob Weiner
 ;;
 ;; Copyright (C) 1991-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -86,11 +86,12 @@
 Current button is being modified when MODIFYING is t.
 Return nil if ACTION is not a list or `byte-code' object, has no
 interactive form or takes no arguments."
-  (and (or (hypb:emacs-byte-code-p action) (listp action))
-       (let ((interactive-form (action:commandp action)))
-	 (when interactive-form
-	   (hpath:relative-arguments
-	    (hargs:iform-read interactive-form modifying))))))
+  (save-excursion
+    (and (or (hypb:emacs-byte-code-p action) (listp action))
+	 (let ((interactive-form (action:commandp action)))
+	   (when interactive-form
+	     (hpath:relative-arguments
+	      (hargs:iform-read interactive-form modifying)))))))
 
 (defun hargs:buffer-substring (start end)
   "Return the buffer substring sans any properties between START and END positions.
@@ -356,7 +357,7 @@ Handles all of the interactive argument types that `hargs:iform-read' does."
 	((eq hargs:reading-type 'ebut) (ebut:label-p 'as-label))
 	((eq hargs:reading-type 'ibut) (ibut:label-p 'as-label))
 	((eq hargs:reading-type 'gbut)
-	 (when (eq (current-buffer) (get-file-buffer gbut:file))
+	 (when (eq (current-buffer) (get-file-buffer (gbut:file)))
 	   (hbut:label-p 'as-label)))
 	((eq hargs:reading-type 'hbut) (hbut:label-p 'as-label))
 	((hbut:label-p) nil)

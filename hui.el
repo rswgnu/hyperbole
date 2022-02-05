@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 21:42:03
-;; Last-Mod:     24-Jan-22 at 00:18:52 by Bob Weiner
+;; Last-Mod:      5-Feb-22 at 13:05:28 by Bob Weiner
 ;;
 ;; Copyright (C) 1991-2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -201,7 +201,7 @@ Signal an error when no such button is found in the current buffer."
 					  (ebut:alist) nil t
 					  (ebut:label-p t) 'ebut)))))
   (unless (stringp lbl-key)
-    (if (called-interactively-p)
+    (if (called-interactively-p 'interactive)
 	(error "(hui:ebut-modify): No explicit button to modify")
       (error "(hui:ebut-modify): 'lbl-key' argument must be a string, not '%s'" lbl-key)))
 
@@ -332,9 +332,6 @@ a menu to find any of the occurrences."
       (if (called-interactively-p 'interactive) (message "No matches.")
 	total))))
 
-(defun hui:error (&rest args)
-  (hypb:error "(hui:error): Obsolete, use hypb:error instead"))
-
 (defun hui:gbut-create (lbl ibut-flag)
   "Create a Hyperbole global explicit button with LBL.
 
@@ -349,24 +346,27 @@ See `hui:gibut-create' for details."
           but-buf
           src-dir)
       (save-excursion
-        (setq src-dir default-directory
+	(setq src-dir default-directory
 	      actype (hui:actype)
-	      but-buf (find-file-noselect gbut:file))
-        (hui:buf-writable-err but-buf "gbut-create")
-        ;; This prevents movement of point which might be useful to user.
+              but-buf (find-file-noselect (gbut:file)))
 	(set-buffer but-buf)
+        (hui:buf-writable-err (current-buffer) "gbut-create")
+        ;; This prevents movement of point which might be useful to user.
         (save-excursion
 	  (goto-char (point-max))
           (unless (bolp)
 	    (insert "\n"))
 	  ;; loc = Directory of the global button file
 	  (hattr:set 'hbut:current 'loc (hui:key-src but-buf))
-	  ;; dir = default-directory of current buffer when button is created
+	  ;; dir = default-directory of current buffer at the start of
+	  ;; this `hui:gbut-create' function call (when button is created)
 	  (hattr:set 'hbut:current 'dir src-dir)
 	  (hattr:set 'hbut:current 'actype actype)
 	  (hattr:set 'hbut:current 'args (hargs:actype-get actype))
-	  (hattr:set 'hbut:current 'action
-		     (and hui:ebut-prompt-for-action (hui:action actype)))
+	  (hattr:set 'hbut:current 'action (when hui:ebut-prompt-for-action
+					     (hui:action actype)))
+	  ;; Ensure ebut:operate is given but-buf as the current buffer
+	  (set-buffer but-buf)
 	  (setq lbl (concat lbl (ebut:operate lbl nil)))
 	  (goto-char (point-max))
 	  (insert "\n")
@@ -381,12 +381,12 @@ and derive BUT-KEY from the button that point is within.
 Signal an error if point is not within a button."
   (interactive (list (save-excursion
 		       (hui:buf-writable-err
-			(find-file-noselect gbut:file) "gbut-delete")
+			(find-file-noselect (gbut:file)) "gbut-delete")
 		       (hbut:label-to-key
 			(hargs:read-match "Global button to delete: "
 					  (mapcar #'list (gbut:label-list))
 					  nil t nil 'gbut)))))
-  (hui:hbut-delete but-key gbut:file))
+  (hui:hbut-delete but-key (gbut:file)))
 
 (defun hui:gbut-modify (lbl-key)
   "Modify a global Hyperbole button given by LBL-KEY.
@@ -395,21 +395,21 @@ When called interactively, save the global button buffer after the
 modification   Signal an error when no such button is found."
   (interactive (list (save-excursion
 		       (hui:buf-writable-err
-			(find-file-noselect gbut:file) "gbut-modify")
+			(find-file-noselect (gbut:file)) "gbut-modify")
 		       (hbut:label-to-key
 			(hargs:read-match "Global button to modify: "
 					  (mapcar #'list (gbut:label-list))
 					  nil t (gbut:label-p t) 'gbut)))))
   (unless (stringp lbl-key)
-    (if (called-interactively-p)
+    (if (called-interactively-p 'interactive)
 	(error "(hui:gbut-modify): No global button to modify")
       (error "(hui:gbut-modify): 'lbl-key' argument must be a string, not '%s'" lbl-key)))
 
 
   (let ((lbl (hbut:key-to-label lbl-key))
         (interactive-flag (called-interactively-p 'interactive))
-	(but-buf (find-file-noselect gbut:file))
-	(src-dir (file-name-directory gbut:file))
+	(but-buf (find-file-noselect (gbut:file)))
+	(src-dir (file-name-directory (gbut:file)))
 	actype but new-lbl)
     (save-excursion
       (unless interactive-flag
@@ -480,7 +480,7 @@ modification   Signal an error when no such button is found."
 When in the global button buffer, the default is the button at point."
   (interactive (list (save-excursion
 		       (hui:buf-writable-err
-			(find-file-noselect gbut:file) "gbut-rename")
+			(find-file-noselect (gbut:file)) "gbut-rename")
 		       (hbut:label-to-key
 			(hargs:read-match "Global button to rename: "
 					  (mapcar #'list (gbut:label-list))
@@ -496,7 +496,7 @@ Use `hui:gbut-create' to create a global explicit button."
         delimited-label)
     (save-excursion
       (setq delimited-label (concat ibut:label-start lbl ibut:label-end)
-	    but-buf (find-file-noselect gbut:file))
+	    but-buf (find-file-noselect (gbut:file)))
       (hui:buf-writable-err but-buf "gibut-create")
       ;; This prevents movement of point which might be useful to user.
       (set-buffer but-buf)
@@ -683,7 +683,7 @@ its buttons, the label is simply inserted at point."
 	 (ibut-start (when ibut (hattr:get 'hbut:current 'lbl-start)))
 	 ;; non-nil when point is within an existing ibut label
 	 (label-key-start-end (when ibut (ibut:label-p nil nil nil t t)))
-	 lbl actype)
+	 lbl)
     (cond (label-key-start-end
 	   (error "(hui:ibut-label-create): ibutton at point already has a label; try hui:ibut-rename"))
 	  (ibut
@@ -716,21 +716,21 @@ Signal an error when no such button is found in the current buffer."
 					  (ibut:alist) nil t
 					  (ibut:label-p t) 'ibut)))))
   (unless (stringp lbl-key)
-    (if (called-interactively-p)
+    (if (called-interactively-p 'interactive)
 	(error "(hui:ibut-modify): No named implicit button to modify")
       (error "(hui:ibut-modify): 'lbl-key' argument must be a string, not '%s'" lbl-key)))
 
   (let ((lbl (ibut:key-to-label lbl-key))
         (interactive-flag (called-interactively-p 'interactive))
 	(but-buf (current-buffer))
-	actype args but new-lbl)
+	new-lbl)
     (hattr:set 'hbut:current 'loc (hui:key-src but-buf))
     (hattr:set 'hbut:current 'dir (hui:key-dir but-buf))
     (save-excursion
       (unless (called-interactively-p 'interactive)
 	(hui:buf-writable-err but-buf "ibut-modify"))
 
-      (unless (setq but (ibut:get lbl-key but-buf))
+      (unless (ibut:get lbl-key but-buf)
 	(pop-to-buffer but-buf)
 	(hypb:error "(ibut-modify): Invalid button, no data for '%s'" lbl))
 
@@ -786,11 +786,11 @@ Signal an error when no such button is found in the current buffer."
 					      (ibut:alist) nil t nil 'ibut))))))
   (let ((lbl (ibut:key-to-label lbl-key))
 	(but-buf (current-buffer))
-	actype but new-lbl)
+	new-lbl)
     (unless (called-interactively-p 'interactive)
       (hui:buf-writable-err but-buf "ibut-rename"))
 
-    (unless (setq but (ibut:get lbl-key but-buf))
+    (unless (ibut:get lbl-key but-buf)
       (hypb:error "(ibut-rename): Invalid button: '%s'." lbl))
 
     (setq new-lbl
@@ -820,7 +820,7 @@ See also documentation for `hui:link-possible-types'."
   (interactive (hmouse-choose-windows #'hui:link))
   (let ((but-window (or depress-window action-key-depress-window))
 	(referent-window (or release-window action-key-release-window (selected-window)))
-	but-name but-modify but-categ link-types num-types type-and-args lbl-key but-loc but-dir)
+	but-name but-modify link-types num-types type-and-args lbl-key but-loc but-dir)
     (select-window but-window)
     (hui:buf-writable-err (current-buffer) "link-directly")
     (if (ebut:at-p)
@@ -951,22 +951,23 @@ DEFAULT-ACTYPE may be a valid symbol or symbol name."
 
 (defun hui:buf-writable-err (but-buf func-name)
   "If BUT-BUF is read-only, signal an error from FUNC-NAME."
-  (let ((obuf (prog1 (current-buffer) (set-buffer but-buf)))
-	;; (unwritable (and buffer-file-name
-	;;		 (not (file-writable-p buffer-file-name))))
-	(err))
+  (let (err)
+    ;; (unwritable (and buffer-file-name
+    ;;		 (not (file-writable-p buffer-file-name))))
     ;; (if unwritable
     ;;     Commented error out since some people want to be able to create
     ;;     buttons within files which they have purposely marked read-only.
     ;;     (setq err
     ;;	     (format "(ebut-modify): Hyperbole lacks permission to write to '%s'."
     ;;		     (file-name-nondirectory buffer-file-name))))
-    (if buffer-read-only
+    (with-current-buffer but-buf
+      (when buffer-read-only
 	(setq err
 	      (format "(%s) Read-only error in Hyperbole button buffer '%s'.  Use {%s} to enable edits."
-		      func-name (buffer-name but-buf) (hmouse-read-only-toggle-key))))
-    (set-buffer obuf)
-    (if err (progn (pop-to-buffer but-buf) (hypb:error err)))))
+		      func-name (buffer-name but-buf) (hmouse-read-only-toggle-key)))))
+    (when err
+      (pop-to-buffer but-buf)
+      (hypb:error err))))
 
 (defun hui:ebut-buf (&optional prompt)
   "Prompt for and return a buffer in which to place a button."
@@ -1021,9 +1022,6 @@ within."
 	  (message "Button '%s' deleted." (ebut:key-to-label but-key))
 	  t)
       (hypb:error "(ebut-delete): You may not delete buttons from this buffer"))))
-
-(defun hui:ebut-delimit (start end instance-str)
-  (hypb:error "(hui:ebut-delimit): Obsolete, use ebut:delimit instead"))
 
 (defun hui:ebut-message (but-modify-flag)
   (let ((actype (symbol-name (hattr:get 'hbut:current 'actype)))
@@ -1141,8 +1139,8 @@ for with completion of all labeled buttons within the current buffer."
       (sit-for 0)
       (setq inverse-video nil))))
 
-(defun hui:hbut-term-unhighlight (start end)
-  "For terminals only: Remove any emphasis from hyper-button at START to END."
+(defun hui:hbut-term-unhighlight (start _end)
+  "For terminals only: Remove any emphasis from hyper-button at START to _END."
   (save-excursion
     (save-restriction
       (goto-char start)
@@ -1331,7 +1329,7 @@ Buffer without File      link-to-buffer-tmp"
 			      ;; Next line forces use of any ibut name in the link.
 			      (save-excursion (ibut:at-to-name-p hbut-sym)))
 			    (setq lbl-key (hattr:get hbut-sym 'lbl-key))
-			    (eq (current-buffer) (get-file-buffer gbut:file)))
+			    (eq (current-buffer) (get-file-buffer (gbut:file))))
 		       (list 'link-to-gbut lbl-key))
 		      ((and hbut-sym (eq (hattr:get hbut-sym 'categ) 'explicit))
 		       (list 'link-to-ebut lbl-key))

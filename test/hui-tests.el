@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    30-Jan-21 at 12:00:00
-;; Last-Mod:     24-Jan-22 at 00:40:28 by Bob Weiner
+;; Last-Mod:      5-Feb-22 at 11:39:04 by Bob Weiner
 ;;
 ;; Copyright (C) 2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -161,7 +161,7 @@ Modifying the button but keeping the label creates a dubbel label."
     (unwind-protect
 	(progn
           (with-mock
-            (mock (find-file-noselect gbut:file) => test-buffer)
+            (mock (find-file-noselect (gbut:file)) => test-buffer)
             (hui:gibut-create "global" test-file))
 	  (with-current-buffer test-buffer
             (should (eq (hattr:get (hbut:at-p) 'actype) 'actypes::link-to-file))
@@ -176,7 +176,7 @@ Modifying the button but keeping the label creates a dubbel label."
     (unwind-protect
 	(progn
           (with-mock
-            (mock (find-file-noselect gbut:file) => test-buffer)
+            (mock (find-file-noselect (gbut:file)) => test-buffer)
             (hui:gibut-create "global" (concat test-file ":10")))
 	  (with-current-buffer test-buffer
             (should (eq (hattr:get (hbut:at-p) 'actype) 'actypes::link-to-file-line))
@@ -191,7 +191,7 @@ Modifying the button but keeping the label creates a dubbel label."
     (unwind-protect
 	(progn
           (with-mock
-            (mock (find-file-noselect gbut:file) => test-buffer)
+            (mock (find-file-noselect (gbut:file)) => test-buffer)
             (hui:gibut-create "global" (concat test-file ":10:20")))
 	  (with-current-buffer test-buffer
             (should (eq (hattr:get (hbut:at-p) 'actype) 'actypes::link-to-file-line-and-column))
@@ -207,7 +207,7 @@ Modifying the button but keeping the label creates a dubbel label."
     (unwind-protect
 	(progn
           (with-mock
-            (mock (find-file-noselect gbut:file) => test-buffer)
+            (mock (find-file-noselect (gbut:file)) => test-buffer)
             (hui:gibut-create "global" (concat "\"" info-node "\"")))
 	  (with-current-buffer test-buffer
             (should (eq (hattr:get (hbut:at-p) 'actype) 'actypes::link-to-Info-node))

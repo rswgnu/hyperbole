@@ -621,8 +621,8 @@ use with `string-match'.")
 (defconst hpath:markdown-suffix-regexp "\\.[mM][dD]"
   "Regexp that matches to a Markdown file suffix.")
 
-(defconst hpath:outline-section-pattern "^[ \t]*\\*+[ \t]+%s[ \t]*\\([:punct:]+\\|$\\)"
-  "Regexp matching an Emacs outline section header and containing a %s for replacement of a specific section name.")
+(defconst hpath:outline-section-pattern "^\\*+[ \t]+%s[ \t]*\\([:punct:]+\\|$\\)"
+  "Bol-anchored, no leading spaces regexp matching an Emacs outline section header and containing a %s for replacement of a specific section name.")
 
 (defvar hpath:prefix-regexp "\\`[-!&][ ]*"
   "Regexp matching command characters which may precede a pathname.
@@ -1396,26 +1396,33 @@ buffer but don't display it."
 		       (anchor-name (if (or prog-mode
 					    (string-match-p "-.* \\| .*-" anchor))
 					anchor
-				      (subst-char-in-string ?- ?\  anchor))))
+				      (subst-char-in-string ?- ?\  anchor)))
+		       (referent-regexp (format
+					 (cond ((or (derived-mode-p 'outline-mode) ;; Includes Org mode
+						    ;; Treat all caps filenames without suffix like outlines, e.g. README, INSTALL.
+						    (and buffer-file-name
+							 (string-match-p "\\`[A-Z][A-Z0-9]+\\'" buffer-file-name)))
+						hpath:outline-section-pattern)
+					       (prog-mode
+						"%s")
+					       ((or (and buffer-file-name
+							 (string-match-p hpath:markdown-suffix-regexp buffer-file-name))
+						    (memq major-mode hpath:shell-modes))
+						hpath:markdown-section-pattern)
+					       ((derived-mode-p 'texinfo-mode)
+						hpath:texinfo-section-pattern)
+					       ((derived-mode-p 'text-mode)
+						"%s")
+					       (t hpath:outline-section-pattern))
+					 (regexp-quote anchor-name)))
+		       (referent-leading-spaces-regexp
+			(when (and (not (string-empty-p referent-regexp))
+				   (= (aref referent-regexp 0) ?^))
+			  (concat "^[ \t]+" (substring referent-regexp 1)))))
 		  (goto-char (point-min))
-		  (if (re-search-forward (format
-					  (cond ((or (derived-mode-p 'outline-mode) ;; Includes Org mode
-						     ;; Treat all caps filenames without suffix like outlines, e.g. README, INSTALL.
-						     (and buffer-file-name
-							  (string-match-p "\\`[A-Z][A-Z0-9]+\\'" buffer-file-name)))
-						 hpath:outline-section-pattern)
-						(prog-mode
-						 "%s")
-						((or (and buffer-file-name
-							  (string-match-p hpath:markdown-suffix-regexp buffer-file-name))
-						     (memq major-mode hpath:shell-modes))
-						 hpath:markdown-section-pattern)
-						((derived-mode-p 'texinfo-mode)
-						 hpath:texinfo-section-pattern)
-						((derived-mode-p 'text-mode)
-						 "%s")
-						(t hpath:outline-section-pattern))
-					  (regexp-quote anchor-name)) nil t)
+		  (if (or (re-search-forward referent-regexp nil t)
+			  (and referent-leading-spaces-regexp
+			       (re-search-forward referent-leading-spaces-regexp nil t)))
 		      (progn (forward-line 0)
 			     (when (eq (current-buffer) (window-buffer))
 			       (recenter 0)))

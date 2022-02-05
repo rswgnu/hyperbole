@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    15-Oct-91 at 20:13:17
-;; Last-Mod:     24-Jan-22 at 00:18:47 by Bob Weiner
+;; Last-Mod:      5-Feb-22 at 11:39:04 by Bob Weiner
 ;;
 ;; Copyright (C) 1991-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -675,8 +675,8 @@ constructs.  If not given, the top level Hyperbole menu is used."
        '(gbut .
 	 (("GButton>")
 	  ("Act"    gbut:act        "Activates global button by name.")
-	  ("Create" hui:gbut-create "Adds a global button to gbut:file.")
-	  ("Delete" hui:gbut-delete "Removes a global button from gbut:file.")
+	  ("Create" hui:gbut-create "Adds a global button to (gbut:file).")
+	  ("Delete" hui:gbut-delete "Removes a global button from (gbut:file).")
 	  ("Edit"   hui:gbut-modify "Modifies global button attributes.")
 	  ("Help"   gbut:help       "Reports on a global button by name.")
 	  ("Info"   (id-info "(hyperbole)Global Buttons")
