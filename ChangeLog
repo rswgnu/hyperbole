@@ -1,3 +1,8 @@
+2022-03-20  Mats Lidell  <matsl@gnu.org>
+
+* test/hmouse-drv-tests.el (hbut-key-press-on-hyphen-in-elisp-symbol): Add
+    test case.
+
 2022-03-13  Mats Lidell  <matsl@gnu.org>
 
 * man/hyperbole.texi: Fix spelling.
