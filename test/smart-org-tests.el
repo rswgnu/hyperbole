@@ -5,7 +5,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    23-Apr-21 at 22:21:00
-;; Last-Mod:     24-Jan-22 at 00:42:19 by Bob Weiner
+;; Last-Mod:      6-Feb-22 at 00:57:50 by Bob Weiner
 ;;
 ;; Copyright (C) 2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -22,6 +22,7 @@
 (require 'hui-mouse)
 (require 'hact)
 (require 'el-mock)
+(require 'hy-test-helpers "test/hy-test-helpers")
 
 (declare-function hy-test-helpers:hypb-function-should-call-hpath:find "hy-test-helpers")
 

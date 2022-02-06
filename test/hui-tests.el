@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    30-Jan-21 at 12:00:00
-;; Last-Mod:      5-Feb-22 at 11:39:04 by Bob Weiner
+;; Last-Mod:      6-Feb-22 at 00:59:55 by Bob Weiner
 ;;
 ;; Copyright (C) 2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -19,13 +19,48 @@
 (require 'ert)
 (require 'with-simulated-input)
 (require 'el-mock)
+(require 'hy-test-helpers "test/hy-test-helpers")
 (require 'hui)
 
-(load (expand-file-name "hy-test-helpers"
-                        (file-name-directory (or load-file-name
-                                                 default-directory))))
 (declare-function hy-test-helpers:consume-input-events "hy-test-helpers")
 
+(ert-deftest hui-gbut-modify-link-to-file-button ()
+  "A global button with action type link-to-file shall be possible to edit."
+  (skip-unless (not noninteractive))
+  (let* ((enable-recursive-minibuffers t)
+	 (old-home (getenv "HOME"))
+         (default-directory "/tmp")
+         (hbmap:dir-user (make-temp-file "HHHHhyperbole" t))
+         (hbmap:dir-filename (expand-file-name  "HBMAP" hbmap:dir-user))
+         (gbut-file-buffer (find-file (gbut:file)))
+         ;; (linked-file "/var/folders/8s/b7pm6fms2nsc1x2651dpvrd00000gq/T/HHHH86evcO")
+         (linked-file (make-temp-file "HHHH")))
+    (unwind-protect
+	(progn
+	  (write-region "" nil linked-file) ;; Ensure linked file has been created
+          (let ((create-gbut (format "C-h h g c abcd RET link-to-file RET %s RET y" linked-file))
+		(modify-gbut (format "C-h h g e abcd RET RET RET M-: (delete-minibuffer-contents) RET %s RET y" linked-file)))
+            (setenv "HOME" "/tmp")
+            ;; Create using keys
+            (hact 'kbd-key create-gbut)
+            (hy-test-helpers:consume-input-events)
+            ;; Create using program
+            ;; (gbut:ebut-program "abcd" 'link-to-file linked-file)
+
+            (set-buffer gbut-file-buffer)
+	    (forward-char 2)
+            (should (eq (hattr:get (hbut:at-p) 'actype) 'actypes::link-to-file))
+
+	    (goto-char (point-max))
+            (hact 'kbd-key modify-gbut)
+            (hy-test-helpers:consume-input-events)
+
+	    (goto-char (+ (point-min) 2))
+            (should (eq (hattr:get (hbut:at-p) 'actype) 'actypes::link-to-file))
+	    t))
+      (setenv "HOME" old-home)
+      (delete-directory hbmap:dir-user t)
+      (save-some-buffers t))))
 
 (ert-deftest hui-ibut-label-create ()
   "Create a label for an implicit button."

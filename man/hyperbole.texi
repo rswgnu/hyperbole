@@ -7,7 +7,7 @@
 @c Author:       Bob Weiner
 @c
 @c Orig-Date:     6-Nov-91 at 11:18:03
-@c Last-Mod:      5-Feb-22 at 16:55:30 by Bob Weiner
+@c Last-Mod:      5-Feb-22 at 22:38:23 by Bob Weiner
 
 @c %**start of header (This is for running Texinfo on a region.)
 @setfilename hyperbole.info
@@ -4954,12 +4954,13 @@ Use @bkbd{M-x kimport:insert-file-contents @key{RET}} to insert an
 entire file into the current cell following point.
 
 @findex kimport:file
+@kindex C-h h k f f
 The outliner supports conversion of three types of files into koutline
 files.  You can import a file into an existing koutline,
 following the tree at point, or can create a new koutline from the
-imported file contents.  @bkbd{M-x kimport:file @key{RET}} selects the
-importation type based on the buffer or filename suffix of the file to
-import.
+imported file contents.  @bkbd{C-h h k f f} or @bkbd{M-x kimport:file @key{RET}}
+selects the importation type based on the buffer or filename suffix of the
+file to import.
 
 @findex kotl-mode
 If you want to convert a buffer from some other mode into a koutline and

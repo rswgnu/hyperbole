@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    20-Feb-21 at 23:45:00
-;; Last-Mod:     24-Jan-22 at 00:38:50 by Bob Weiner
+;; Last-Mod:      6-Feb-22 at 00:56:55 by Bob Weiner
 ;;
 ;; Copyright (C) 2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -20,10 +20,8 @@
 (require 'hib-kbd)
 (require 'info)
 (require 'el-mock)
+(require 'hy-test-helpers "test/hy-test-helpers")
 
-(load (expand-file-name "hy-test-helpers"
-                        (file-name-directory (or load-file-name
-                                                 default-directory))))
 (declare-function hy-test-helpers:consume-input-events "hy-test-helpers")
 (declare-function hy-test-helpers:should-last-message "hy-test-helpers")
 
@@ -189,9 +187,12 @@
         (insert "\"/var/lib:/bar:/tmp:/foo\"")
         (goto-char 16)
         (ibtypes::pathname)
+	(when (car (hattr:get 'hbut:current 'args))
+	  (set-buffer (find-file-noselect (car (hattr:get 'hbut:current 'args)))))
         (should (string= "tmp" (buffer-name)))
         (should (eq major-mode 'dired-mode)))
-    (kill-buffer "tmp")))
+    (when (get-buffer "tmp")
+      (kill-buffer (get-buffer "tmp")))))
 
 ;; Function in buffer XEmac functionality. Is there somethign similar in Emacs?
 

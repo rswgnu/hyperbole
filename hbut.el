@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    18-Sep-91 at 02:57:09
-;; Last-Mod:      5-Feb-22 at 11:42:05 by Bob Weiner
+;; Last-Mod:      5-Feb-22 at 23:17:58 by Bob Weiner
 ;;
 ;; Copyright (C) 1991-2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -364,17 +364,17 @@ button is found in the current buffer."
 					  buf-lbl (buffer-substring-no-properties start end))
 				    (equal buf-lbl curr-label))
 			   ;; Utilize any action-key-depress-prev-point
-			   (progn (setq mark (marker-position (mark-marker)))
-				  (setq prev-point (and action-key-depress-prev-point
-							(marker-position action-key-depress-prev-point)))
-				  (setq start (if (and prev-point mark (<= prev-point mark))
-						  prev-point
-						(region-beginning))
-					end (if (and prev-point mark (> prev-point mark))
-						prev-point
-					      (region-end))
-					buf-lbl (buffer-substring-no-properties start end))
-				  (equal buf-lbl curr-label))))
+			   (setq mark (marker-position (mark-marker)))
+			   (setq prev-point (and action-key-depress-prev-point
+						 (marker-position action-key-depress-prev-point)))
+			   (setq start (if (and prev-point mark (<= prev-point mark))
+					   prev-point
+					 (region-beginning))
+				 end (if (and prev-point mark (> prev-point mark))
+					 prev-point
+				       (region-end))
+				 buf-lbl (buffer-substring-no-properties start end))
+			   (equal buf-lbl curr-label)))
 		    nil)
 		   ((progn (when start (goto-char start))
 			   (looking-at (regexp-quote curr-label)))

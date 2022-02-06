@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 21:42:03
-;; Last-Mod:      5-Feb-22 at 13:05:28 by Bob Weiner
+;; Last-Mod:      6-Feb-22 at 00:49:59 by Bob Weiner
 ;;
 ;; Copyright (C) 1991-2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -439,6 +439,7 @@ modification   Signal an error when no such button is found."
 	    (hattr:set 'hbut:current 'args (hargs:actype-get actype t))
 	    (hattr:set 'hbut:current 'action
 		       (and hui:ebut-prompt-for-action (hui:action actype)))
+	    ;; Ensure ebut:operate is given but-buf as the current buffer
 	    (set-buffer but-buf)
 	    (save-excursion
 	      (ebut:operate lbl new-lbl))

@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    15-Oct-91 at 20:13:17
-;; Last-Mod:      5-Feb-22 at 16:48:59 by Bob Weiner
+;; Last-Mod:      5-Feb-22 at 22:33:19 by Bob Weiner
 ;;
 ;; Copyright (C) 1991-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -733,8 +733,8 @@ constructs.  If not given, the top level Hyperbole menu is used."
        '(kotl-format .
 	 (("Format>")
 	    ("Display-in-Browser"      kexport:display  "Export and display current Koutline in default web browser")
+            ("File-Import-to-Koutline" kimport:file     "Import a buffer/file into a new or existing Koutline.")
 	    ("Html-Export-Other"       kexport:html     "Prompt for a Koutline buffer/file and output HTML file; export it.")
-            ("Import-to-Koutline"      kimport:file     "Import a buffer/file into a new or existing Koutline.")
 	    ("Koutline-Export-to-Html" kexport:koutline "Export current Koutline and save as an HTML file for web usage.")))
        '(msg .
 	 (("Msg>")

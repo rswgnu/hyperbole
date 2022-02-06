@@ -1,10 +1,38 @@
+2022-02-06  Bob Weiner  <rsw@gnu.org>
+
+* hpath.el (hpath:absolute-to, hpath:call): Add checks to ensure
+    path is a string.
+           (hpath:at-p): Call to 'hpath:mswindows-to-posix' may
+    have abbreviated a path, so expand it back here for improved
+    matching to path found in the buffer previously.
+
+* hmouse-drv.el (hkey-execute): Ensure Emacs debug variables are
+    enabled when 'hkey-debug' is enabled.
+
+* hsmail.el (mail-yank-original, message--yank-original-internal,
+             mail-send-hook): Finish updating these and ready for testing.
+
+* HY-NEWS:
+  man/hyperbole.texi (Inserting and Importing): Add kimport:file
+    minibuffer menu binding.
+
+* test/*-tests.el: Simplify by requiring "hy-test-helpers" rather than
+    loading it with a complex call in every module.
+
+* test/hui-tests.el (hui-gbut-modify-link-to-file-button): Add this
+    debugged global button creation and modification test.
+
 2022-02-05  Mats Lidell  <matsl@gnu.org>
 
 * hargs.el (hargs:find-tag-default): Remove own implementation for
-    find-tag-default and find-tag--default and rely on implementation in
+    'find-tag-default' and 'find-tag--default' and rely on implementation in
     Emacs.
 
 2022-02-05  Bob Weiner  <rsw@gnu.org>
+
+* HY-NEWS (Minibuffer Menu Changes): Mention new Kotl/Format menu.
+  man/hyperbole.texi (Inserting and Importing): Add {C-h h k f f}
+    kimport:file minibuffer menu binding and relabel its menu items.
 
 * hypb.el (hypb:straight-package-plist): Add and use in tests.
           (hypb:installation-type): Support all install types.

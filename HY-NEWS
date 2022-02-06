@@ -146,9 +146,10 @@
 
 ** KOUTLINER  (See "(hyperbole)Koutliner").
 
-  *** Export Koutlines to Collapsible Web Pages: The {M-x kexport:display RET}
-      command creates and displays a web-based expandable/collapsible outline
-      from the Koutline in the current buffer.  See "(hyperbole)Exporting".
+  *** Export Koutlines to Collapsible Web Pages: {C-h h k f d} or
+      {M-x kexport:display RET} command creates and displays a web-based
+      expandable/collapsible outline from the Koutline in the current buffer.
+      See "(hyperbole)Exporting" and the new Koutliner Format submenu.
 
   *** Org Table Support: Org table editing now automatically works in the
       Koutliner via Org table minor mode.  Use {M-x orgtbl-mode RET} to
@@ -239,13 +240,18 @@
 ** MENUS
 
   *** Minibuffer Menu Changes:
-        + Items Activated by First Capital Letter: Used to be by the first
+        - Items Activated by First Capital Letter: Used to be by the first
           letter.  This allows more flexibility in naming, e.g.
           where two items start with the same first letter.
 
-        + {X} exits Hyperbole mode: This disables the Hyperbole minor mode
+        - {X} exits Hyperbole mode: This disables the Hyperbole minor mode
           completely and exits from the menu.  {C-h h} re-enables the
           global minor mode and display the top-level Hyperbole menu.
+
+        - Koutliner Formatting Menus: Full set of commands to import
+          text and outline files to Koutlines and to export Koutlines
+	  to HTML for web viewing.  See "(hyperbole)Inserting and Importing"
+          and "(hyperbole)Exporting".
 
 
 ** SMART (ACTION AND ASSIST) KEYS  (See "(hyperbole)Smart Keys").

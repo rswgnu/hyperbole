@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    28-Feb-21 at 23:26:00
-;; Last-Mod:     30-Jan-22 at 16:36:14 by Bob Weiner
+;; Last-Mod:      6-Feb-22 at 00:56:13 by Bob Weiner
 ;;
 ;; Copyright (C) 2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -18,10 +18,8 @@
 
 (require 'ert)
 (require 'hpath)
+(require 'hy-test-helpers "test/hy-test-helpers")
 
-(load (expand-file-name "hy-test-helpers"
-                        (file-name-directory (or load-file-name
-                                                 default-directory))))
 (declare-function hy-test-helpers:action-key-should-call-hpath:find "hy-test-helpers")
 
 (defconst hpath--should-exist-paths
@@ -114,7 +112,7 @@
   (with-temp-buffer
     (insert "\":foo:bar:emacs\"")
     (goto-char 8)
-    (should (string= (hpath:at-p) "bar"))))
+    (should (string= (hpath:at-p) (expand-file-name "bar")))))
 
 (ert-deftest hpath:path-at-point-in-path-variable-shorter-than-three-colons-returns-nil-test ()
   "Do not identify path variables with less than three colons."

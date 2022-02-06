@@ -5,7 +5,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:     2-Nov-21 at 17:04:30
-;; Last-Mod:     24-Jan-22 at 00:42:02 by Bob Weiner
+;; Last-Mod:      6-Feb-22 at 00:55:05 by Bob Weiner
 ;;
 ;; Copyright (C) 2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -20,10 +20,8 @@
 
 (require 'ert)
 (require 'kotl-mode "kotl/kotl-mode")
+(require 'hy-test-helpers "test/hy-test-helpers")
 
-(load (expand-file-name "hy-test-helpers"
-                        (file-name-directory (or load-file-name
-                                                 default-directory))))
 (declare-function hy-test-helpers:consume-input-events "hy-test-helpers")
 
 (ert-deftest kotl-orgtbl-enabled-uses-kotl-mode-delete-char-outside-of-table ()

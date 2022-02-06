@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    28-Feb-21 at 22:52:00
-;; Last-Mod:     24-Jan-22 at 00:39:17 by Bob Weiner
+;; Last-Mod:      6-Feb-22 at 00:58:06 by Bob Weiner
 ;;
 ;; Copyright (C) 2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -20,10 +20,8 @@
 (require 'ert)
 (require 'hbut)
 (require 'el-mock)
+(require 'hy-test-helpers "test/hy-test-helpers")
 
-(load (expand-file-name "hy-test-helpers"
-                        (file-name-directory (or load-file-name
-                                                 default-directory))))
 (declare-function hy-test-helpers:consume-input-events "hy-test-helpers")
 
 (ert-deftest hbut-defal ()

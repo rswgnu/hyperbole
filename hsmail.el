@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     9-May-91 at 04:50:20
-;; Last-Mod:      5-Feb-22 at 11:15:20 by Bob Weiner
+;; Last-Mod:      5-Feb-22 at 22:13:05 by Bob Weiner
 ;;
 ;; Copyright (C) 1991-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -11,6 +11,7 @@
 ;; This file is part of GNU Hyperbole.
 
 ;;; Commentary:
+;;    Works with both "message.el" and older "sendmail.el" settings.
 
 ;;; Code:
 ;;; ************************************************************************
@@ -19,6 +20,7 @@
 
 (require 'message)
 (require 'hypb)                         ;For `hypb:supercite-p'.
+(require 'sendmail)
 
 (defvar inhibit-hyperbole-messaging) ;; From "hsettings.el".
 
@@ -37,6 +39,8 @@ for a comment.")
 
 ;; Used by 'message-send' in Emacs "message.el".
 (add-hook 'message-send-hook  #'smail:widen)
+;; Used by 'mail-send' in Emacs "sendmail.el".
+(add-hook 'mail-send-hook  #'smail:widen)
 
 ;; For compatibility with Supercite and GNU Emacs.
 ;; message-mode defines message-yank-prefix - mail-yank-prefix removed
@@ -140,7 +144,7 @@ Put point before the text and mark after.
 
 Normally indent each nonblank line ARG spaces (default 3).
 However, if ‘mail-yank-prefix’ is non-nil, insert that prefix
-on each line.
+on each line when `mail-indent-citation' is called.
 
 Apply `mail-citation-hook', `mail-yank-hook' or `mail-yank-hooks'
 to text (in decreasing order of precedence).
@@ -203,8 +207,8 @@ Use (setq sc-nuke-mail-headers 'all) to have them removed."
 		    (mail-yank-clear-headers
 		     start (marker-position (mark-marker))))
 		(goto-char start)
-		(let ((message-indentation-spaces (if arg (prefix-numeric-value arg)
-						    message-indentation-spaces))
+		(let ((mail-indentation-spaces (if arg (prefix-numeric-value arg)
+						 mail-indentation-spaces))
 		      ;; Avoid error in Transient Mark mode
 		      ;; on account of mark's being inactive.
 		      (mark-even-if-inactive t))
@@ -224,7 +228,7 @@ Use (setq sc-nuke-mail-headers 'all) to have them removed."
 			 (run-hooks 'mail-yank-hook))
 			((and (boundp 'mail-yank-hooks) mail-yank-hooks)
 			 (run-hooks 'mail-yank-hooks))
-			(t (funcall message-indent-citation-function))))
+			(t (mail-indent-citation))))
 		(goto-char (min (point-max) (mark t)))
 		(set-mark opoint)
 		(delete-region (point)	; Remove trailing blank lines.
@@ -241,8 +245,7 @@ Use (setq sc-nuke-mail-headers 'all) to have them removed."
 		(unless (eolp)
 		  (insert ?\n))))
 	  ;; Hyperbole addition
-	  (with-current-buffer message-reply-buffer
-	    (hmail:msg-narrow))))))
+	  (hmail:msg-narrow)))))
 
 ;;; ************************************************************************
 ;;; Private variables
