@@ -1,5 +1,19 @@
 2022-02-06  Bob Weiner  <rsw@gnu.org>
 
+* test/hui-tests.el (hui-gbut-modify-link-to-file-button): Some
+    improvements but not yet fixed.
+
+* hui.el (hui:ebut-buf): Don't filter any visible buffers out
+    since buttons can be in buffers without attached files now.
+         (hui:ignore-buffers-regexp): When prompting for a buffer
+    name, ignore any buffers whose names match to this.")
+
+* hypb.el (hypb:assert-same-start-and-end-buffer): Add to ensure
+    current buffer name doesn't change in some Hyperbole calls.
+  hui.el (hui:ebut-create, hui:ebut-modify, hui:gbut-create,
+          hui:gbut-modify, hui:ibut-modify, hui:link-create):
+    Use new above macro.
+
 * hpath.el (hpath:absolute-to, hpath:call): Add checks to ensure
     path is a string.
            (hpath:at-p): Call to 'hpath:mswindows-to-posix' may

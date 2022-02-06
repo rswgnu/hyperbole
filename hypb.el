@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     6-Oct-91 at 03:42:38
-;; Last-Mod:      5-Feb-22 at 20:53:31 by Bob Weiner
+;; Last-Mod:      6-Feb-22 at 12:49:34 by Bob Weiner
 ;;
 ;; Copyright (C) 1991-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -50,6 +50,21 @@ It must end with a space."
 ;;; ************************************************************************
 ;;; Public functions
 ;;; ************************************************************************
+
+(defmacro hypb:assert-same-start-and-end-buffer (&rest body)
+  "Trigger an error with traceback if the buffer is not live or its name differs at the start and end of BODY."
+  (declare (indent 0) (debug t))
+  `(let ((debug-on-error t)
+	 (start-buffer (current-buffer)))
+     (unless (buffer-live-p start-buffer)
+       (error "Start buffer, '%s', is not live" (current-buffer)))
+     ;; `kill-buffer' can change current-buffer in some odd cases.
+     (unwind-protect
+	 (progn ,@body)
+       (unless  (eq start-buffer (current-buffer))
+	 (error "Start buffer, '%s', differs from end buffer, '%s'" start-buffer (current-buffer)))
+       (unless (buffer-live-p start-buffer)
+	 (error "End buffer, '%s', is not live" (current-buffer))))))
 
 (defun hypb:call-process-p (program &optional infile predicate &rest args)
   "Call an external PROGRAM with INFILE for input.

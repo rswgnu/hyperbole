@@ -187,11 +187,12 @@
         (insert "\"/var/lib:/bar:/tmp:/foo\"")
         (goto-char 16)
         (ibtypes::pathname)
-	(when (car (hattr:get 'hbut:current 'args))
-	  (set-buffer (find-file-noselect (car (hattr:get 'hbut:current 'args)))))
+	;; (when (car (hattr:get 'hbut:current 'args))
+	;; (set-buffer (find-file-noselect (car (hattr:get 'hbut:current 'args)))))
         (should (string= "tmp" (buffer-name)))
         (should (eq major-mode 'dired-mode)))
-    (when (get-buffer "tmp")
+    (when (and (get-buffer "tmp")
+	       (buffer-live-p (get-buffer "tmp")))
       (kill-buffer (get-buffer "tmp")))))
 
 ;; Function in buffer XEmac functionality. Is there somethign similar in Emacs?

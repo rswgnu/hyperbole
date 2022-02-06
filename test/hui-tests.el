@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    30-Jan-21 at 12:00:00
-;; Last-Mod:      6-Feb-22 at 00:59:55 by Bob Weiner
+;; Last-Mod:      6-Feb-22 at 13:40:46 by Bob Weiner
 ;;
 ;; Copyright (C) 2021-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -20,6 +20,7 @@
 (require 'with-simulated-input)
 (require 'el-mock)
 (require 'hy-test-helpers "test/hy-test-helpers")
+(require 'hib-kbd)
 (require 'hui)
 
 (declare-function hy-test-helpers:consume-input-events "hy-test-helpers")
@@ -36,30 +37,34 @@
          ;; (linked-file "/var/folders/8s/b7pm6fms2nsc1x2651dpvrd00000gq/T/HHHH86evcO")
          (linked-file (make-temp-file "HHHH")))
     (unwind-protect
-	(progn
+	(cl-letf (((symbol-function 'kbd)
+		   (symbol-function 'kbd-key:kbd)))
 	  (write-region "" nil linked-file) ;; Ensure linked file has been created
-          (let ((create-gbut (format "C-h h g c abcd RET link-to-file RET %s RET y" linked-file))
-		(modify-gbut (format "C-h h g e abcd RET RET RET M-: (delete-minibuffer-contents) RET %s RET y" linked-file)))
+          (let ((create-gbut (format "abcd RET link-to-file RET %s RET y C-x C-s" linked-file))
+		(modify-gbut (format "abcd RET RET RET M-: (delete-minibuffer-contents) RET %s RET y" linked-file)))
             (setenv "HOME" "/tmp")
-            ;; Create using keys
-            (hact 'kbd-key create-gbut)
-            (hy-test-helpers:consume-input-events)
+
+            (set-buffer gbut-file-buffer)
+	    (with-simulated-input create-gbut
+              (hact (lambda () (call-interactively 'hui:gbut-create))))
+
             ;; Create using program
             ;; (gbut:ebut-program "abcd" 'link-to-file linked-file)
 
-            (set-buffer gbut-file-buffer)
 	    (forward-char 2)
             (should (eq (hattr:get (hbut:at-p) 'actype) 'actypes::link-to-file))
 
-	    (goto-char (point-max))
-            (hact 'kbd-key modify-gbut)
-            (hy-test-helpers:consume-input-events)
+	    (goto-char (point-max)) ;; Move past button so does not prompt with label
+	    (with-simulated-input modify-gbut
+              (hact (lambda () (call-interactively 'hui:gbut-modify))))
 
+            ;; (set-buffer gbut-file-buffer)
 	    (goto-char (+ (point-min) 2))
             (should (eq (hattr:get (hbut:at-p) 'actype) 'actypes::link-to-file))
 	    t))
       (setenv "HOME" old-home)
-      (delete-directory hbmap:dir-user t)
+      (when (file-writable-p hbmap:dir-user)
+	(delete-directory hbmap:dir-user t))
       (save-some-buffers t))))
 
 (ert-deftest hui-ibut-label-create ()
