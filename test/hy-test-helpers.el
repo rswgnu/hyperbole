@@ -5,7 +5,7 @@
 ;; Orig-Date:    30-Jan-21 at 12:00:00
 ;; Last-Mod:     24-Jan-22 at 00:40:54 by Bob Weiner
 ;;
-;; Copyright (C) 2021  Free Software Foundation, Inc.
+;; Copyright (C) 2021-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
 ;;
 ;; This file is part of GNU Hyperbole.
@@ -51,6 +51,15 @@
                  (setq was-called (should (or (string= str filename) (string= str (expand-file-name filename))))))))
       (funcall function)
       (should was-called))))
+
+(cl-defun hy-test-helpers-verify-hattr-at-p (&key actype args loc lbl-key)
+  "Verify the attribute of hbut at point.
+Checks ACTYPE, ARGS, LOC and LBL-KEY."
+  (let ((hbut-at-p (hbut:at-p)))
+    (should (eq (hattr:get hbut-at-p 'actype) actype))
+    (should (equal (hattr:get hbut-at-p 'args) args))
+    (should (equal (hattr:get hbut-at-p 'loc) loc))
+    (should (equal (hattr:get hbut-at-p 'lbl-key) lbl-key))))
 
 (provide 'hy-test-helpers)
 ;;; hy-test-helpers.el ends here
