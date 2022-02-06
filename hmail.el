@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     9-Oct-91 at 18:38:05
-;; Last-Mod:     24-Jan-22 at 00:18:46 by Bob Weiner
+;; Last-Mod:      5-Feb-22 at 17:59:17 by Bob Weiner
 ;;
 ;; Copyright (C) 1991-2021  Free Software Foundation, Inc.
 ;; See the HY-COPY (Hyperbole) or BR-COPY (OO-Browser) file for license
@@ -115,7 +115,7 @@ Optional SUBJECT and HELP message may also be given."
   (interactive "sDeliver e-mail to: \nSubject: ")
   (require 'hactypes) ;; Needed in case EXPR calls hact.
   (unless (or (stringp help) (stringp subject))
-    (setq subject "Be explicit here.  Make a statement or ask a question."))
+    (setq subject "Delete this text but write a detailed subject.  Make a statement or ask a question."))
   (hmail:invoke address nil subject)
   (eval expr)
   (when (re-search-backward "^Subject: " nil t)

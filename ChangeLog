@@ -1,5 +1,15 @@
 2022-02-05  Bob Weiner  <rsw@gnu.org>
 
+* hypb.el (hypb:straight-package-plist): Add and use in tests.
+          (hypb:installation-type): Support all install types.
+  test/hypb-tests.el (hypb:installation-type-test): Support all install types.
+
+* hmail.el (hmail:compose): Clarify subject line use even more.
+  hypb.el (hypb:configuration): Removed unneeded InfoDock clause and use
+    emacs-version variable rather than (emacs-version) function.
+          (hypb--installation-type): Rename to 'hypb:installation-type' and
+    expand to handle all installation types.
+
 * kotl/kexport.el (kexport:buffer): Rename to 'kexport:koutline'.
   test/kexport-tests.el (kexport:buffer-calls-kexport:html): Rename to
     'kexport:koutline-calls-kexport:html'.
