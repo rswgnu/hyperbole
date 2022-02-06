@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    23-Sep-91 at 20:34:36
-;; Last-Mod:     29-Jan-22 at 19:47:39 by Bob Weiner
+;; Last-Mod:      5-Feb-22 at 11:39:05 by Bob Weiner
 ;;
 ;; Copyright (C) 1991-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -439,7 +439,7 @@ the window or as close as possible."
 Optional second arg, KEY-FILE, is not used but is for calling
 compatibility with the `hlink' function."
   (interactive
-   (let ((gbut-file (hpath:validate (hpath:substitute-value gbut:file)))
+   (let ((gbut-file (hpath:validate (hpath:substitute-value (gbut:file))))
 	 but-lbl)
      (if (not (file-readable-p gbut-file))
 	 (hypb:error "(link-to-gbut): You cannot read `%s'" gbut-file)

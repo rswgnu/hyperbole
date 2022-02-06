@@ -880,7 +880,11 @@ Return non-nil iff a non-nil predicate is found."
 	    ;; of matching predicate but before hkey-action is executed.
 	    (when hkey-debug
 	      (hkey-debug pred pred-value hkey-action))
-	    (eval hkey-action))
+	    (if hkey-debug
+		(let ((debug-on-error t)
+		      (debug-on-quit t))
+		  (eval hkey-action))
+	      (eval hkey-action)))
 	(setq hkey-forms (cdr hkey-forms))))
     pred-value))
 

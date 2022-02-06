@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     1-Nov-91 at 00:44:23
-;; Last-Mod:     30-Jan-22 at 23:08:42 by Bob Weiner
+;; Last-Mod:     31-Jan-22 at 22:39:52 by Bob Weiner
 ;;
 ;; Copyright (C) 1991-2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -621,8 +621,8 @@ use with `string-match'.")
 (defconst hpath:markdown-suffix-regexp "\\.[mM][dD]"
   "Regexp that matches to a Markdown file suffix.")
 
-(defconst hpath:outline-section-pattern "^\*+[ \t]+%s\\([ \t[:punct:]]*\\)$"
-  "Regexp matching an Emacs outline section header and containing a %s for replacement of a specific section name.")
+(defconst hpath:outline-section-pattern "^\\*+[ \t]+%s[ \t]*\\([:punct:]+\\|$\\)"
+  "Bol-anchored, no leading spaces regexp matching an Emacs outline section header and containing a %s for replacement of a specific section name.")
 
 (defvar hpath:prefix-regexp "\\`[-!&][ ]*"
   "Regexp matching command characters which may precede a pathname.
@@ -681,35 +681,37 @@ Return PATH unchanged when it is absolute, a buffer name, not a valid path,
 or when DEFAULT-DIRS is invalid.  DEFAULT-DIRS when non-nil may be a single
 directory or a list of directories.  The first one in which PATH is found is
 used."
-  (hpath:call
-   (lambda (path non-exist)
-     (when (stringp path)
-       (setq path (hpath:trim path)))
-     (cond ((not (and (stringp path)
-		      (not (hypb:object-p path))
-		      (setq path (hpath:expand path))
-		      (not (get-buffer path))
-		      (not (file-name-absolute-p path))
-                      (hpath:is-p path nil non-exist)))
-            path)
-           ((not (cond ((null default-dirs)
-			(setq default-dirs (cons default-directory nil)))
-                       ((stringp default-dirs)
-			(setq default-dirs (cons default-dirs nil)))
-                       ((listp default-dirs))
-                       (t nil)))
-            path)
-           (t
-            (let ((rtn) dir)
-              (while (and default-dirs (null rtn))
-		(setq dir (expand-file-name
-                           (file-name-as-directory (car default-dirs)))
-                      rtn (expand-file-name path dir)
-                      default-dirs (cdr default-dirs))
-		(unless (file-exists-p rtn)
-		  (setq rtn nil)))
-              (or rtn path)))))
-   path 'allow-spaces))
+  (if (not (stringp path))
+      path
+    (hpath:call
+     (lambda (path non-exist)
+       (when (stringp path)
+	 (setq path (hpath:trim path)))
+       (cond ((not (and (stringp path)
+			(not (hypb:object-p path))
+			(setq path (hpath:expand path))
+			(not (get-buffer path))
+			(not (file-name-absolute-p path))
+			(hpath:is-p path nil non-exist)))
+              path)
+             ((not (cond ((null default-dirs)
+			  (setq default-dirs (cons default-directory nil)))
+			 ((stringp default-dirs)
+			  (setq default-dirs (cons default-dirs nil)))
+			 ((listp default-dirs))
+			 (t nil)))
+              path)
+             (t
+              (let ((rtn) dir)
+		(while (and default-dirs (null rtn))
+		  (setq dir (expand-file-name
+                             (file-name-as-directory (car default-dirs)))
+			rtn (expand-file-name path dir)
+			default-dirs (cdr default-dirs))
+		  (unless (file-exists-p rtn)
+		    (setq rtn nil)))
+		(or rtn path)))))
+     path 'allow-spaces)))
 
 (defun hpath:tramp-file-name-regexp ()
   "Return a modified `tramp-file-name-regexp' for matching to the beginning of a remote file name.
@@ -887,7 +889,7 @@ paths are allowed.  Absolute pathnames must begin with a `/' or `~'."
 	       ;; list; ignore if so
 	       (unless (and (string-match "\\`\\s-*\\([^; 	]+\\)" subpath)
 			    (executable-find (match-string 1 subpath)))
-		 subpath)
+		 (expand-file-name subpath))
 	     "."))
 	  ((hpath:is-p path type non-exist))
 	  ;; Local file URLs
@@ -910,28 +912,30 @@ Make any existing path within a file buffer absolute before returning."
   (setq path (hbut:key-to-label (hbut:label-to-key path)))
   (let* ((orig-path path)
 	 (expanded-path)
-	 (prefix (car (delq nil (list (when (string-match hpath:prefix-regexp path)
-					(prog1 (match-string 0 path)
-					  (setq path (substring path (match-end 0)))))
-				      (when (string-match "\\`file://" path)
-					(setq path (substring path (match-end 0)))
-					nil)
-				      (when (string-match hpath:prefix-regexp path)
-					(prog1 (match-string 0 path)
-					  (setq path (substring path (match-end 0)))))))))
-	 (suffix (apply #'concat (nreverse (list (when (string-match hpath:line-and-column-regexp path)
-						   (prog1 (match-string 0 path)
-						     (setq path (substring path 0 (match-beginning 0)))))
-						 (if (string-match-p hpath:variable-regexp path)
-						     ;; Path may be a link reference with a suffix component
-						     ;; following a comma or # symbol, so temporarily strip
-						     ;; these, if any, before expanding any embedded variables.
-						     (when (string-match "[ \t\n\r]*[#,]" path)
-						       (prog1 (substring path (1- (match-end 0)))
-							 (setq path (substring path 0 (match-beginning 0)))))
-						   (when (string-match hpath:markup-link-anchor-regexp path)
-						     (prog1 (concat "#" (match-string 3 path))
-						       (setq path (substring path 0 (match-beginning 2)))))))))))
+	 (prefix (when (stringp path)
+		   (car (delq nil (list (when (string-match hpath:prefix-regexp path)
+					  (prog1 (match-string 0 path)
+					    (setq path (substring path (match-end 0)))))
+					(when (string-match "\\`file://" path)
+					  (setq path (substring path (match-end 0)))
+					  nil)
+					(when (string-match hpath:prefix-regexp path)
+					  (prog1 (match-string 0 path)
+					    (setq path (substring path (match-end 0))))))))))
+	 (suffix (when (stringp path)
+		   (apply #'concat (nreverse (list (when (string-match hpath:line-and-column-regexp path)
+						     (prog1 (match-string 0 path)
+						       (setq path (substring path 0 (match-beginning 0)))))
+						   (if (string-match-p hpath:variable-regexp path)
+						       ;; Path may be a link reference with a suffix component
+						       ;; following a comma or # symbol, so temporarily strip
+						       ;; these, if any, before expanding any embedded variables.
+						       (when (string-match "[ \t\n\r]*[#,]" path)
+							 (prog1 (substring path (1- (match-end 0)))
+							   (setq path (substring path 0 (match-beginning 0)))))
+						     (when (string-match hpath:markup-link-anchor-regexp path)
+						       (prog1 (concat "#" (match-string 3 path))
+							 (setq path (substring path 0 (match-beginning 2))))))))))))
     (if (or (null path) (string-empty-p path))
 	(setq expanded-path ""
 	      path "")
@@ -1394,28 +1398,35 @@ buffer but don't display it."
 		       ;; then no conversion occurs.
 		       (case-fold-search (not prog-mode))
 		       (anchor-name (if (or prog-mode
-					    (string-match "-.* \\| .*-" anchor))
+					    (string-match-p "-.* \\| .*-" anchor))
 					anchor
-				      (subst-char-in-string ?- ?\  anchor))))
+				      (subst-char-in-string ?- ?\  anchor)))
+		       (referent-regexp (format
+					 (cond ((or (derived-mode-p 'outline-mode) ;; Includes Org mode
+						    ;; Treat all caps filenames without suffix like outlines, e.g. README, INSTALL.
+						    (and buffer-file-name
+							 (string-match-p "\\`[A-Z][A-Z0-9]+\\'" buffer-file-name)))
+						hpath:outline-section-pattern)
+					       (prog-mode
+						"%s")
+					       ((or (and buffer-file-name
+							 (string-match-p hpath:markdown-suffix-regexp buffer-file-name))
+						    (memq major-mode hpath:shell-modes))
+						hpath:markdown-section-pattern)
+					       ((derived-mode-p 'texinfo-mode)
+						hpath:texinfo-section-pattern)
+					       ((derived-mode-p 'text-mode)
+						"%s")
+					       (t hpath:outline-section-pattern))
+					 (regexp-quote anchor-name)))
+		       (referent-leading-spaces-regexp
+			(when (and (not (string-empty-p referent-regexp))
+				   (= (aref referent-regexp 0) ?^))
+			  (concat "^[ \t]+" (substring referent-regexp 1)))))
 		  (goto-char (point-min))
-		  (if (re-search-forward (format
-					  (cond ((or (derived-mode-p 'outline-mode) ;; Includes Org mode
-						     ;; Treat all caps filenames without suffix like outlines, e.g. README, INSTALL.
-						     (and buffer-file-name
-							  (string-match-p "\\`[A-Z][A-Z0-9]+\\'" buffer-file-name)))
-						 hpath:outline-section-pattern)
-						(prog-mode
-						 "%s")
-						((or (and buffer-file-name
-							  (string-match hpath:markdown-suffix-regexp buffer-file-name))
-						     (memq major-mode hpath:shell-modes))
-						 hpath:markdown-section-pattern)
-						((derived-mode-p 'texinfo-mode)
-						 hpath:texinfo-section-pattern)
-						((derived-mode-p 'text-mode)
-						 "%s")
-						(t hpath:outline-section-pattern))
-					  (regexp-quote anchor-name)) nil t)
+		  (if (or (re-search-forward referent-regexp nil t)
+			  (and referent-leading-spaces-regexp
+			       (re-search-forward referent-leading-spaces-regexp nil t)))
 		      (progn (forward-line 0)
 			     (when (eq (current-buffer) (window-buffer))
 			       (recenter 0)))

@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     6-Oct-91 at 03:42:38
-;; Last-Mod:     28-Jan-22 at 23:49:07 by Mats Lidell
+;; Last-Mod:      5-Feb-22 at 20:53:31 by Bob Weiner
 ;;
 ;; Copyright (C) 1991-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -107,18 +107,43 @@ Global keymap is used unless optional KEYMAP is given."
 	        "}"))
     (error "(hypb:cmd-key-string): Invalid cmd-sym arg: %s" cmd-sym)))
 
-(defun hypb--installation-type ()
-  "Return type of Hyperbole installation."
-  (let ((hypb-dir-name (file-name-nondirectory (directory-file-name hyperb:dir))))
+(defun hypb:installation-type ()
+  "Return a list of (hyperbole-installation-type-string hyperbole-install-version-number-string).
+If no matching installation type is found, return a list of (\"unknown\" hyperb:dir)."
+  (let ((hypb-dir-name (file-name-nondirectory (directory-file-name hyperb:dir)))
+	(dir-sep-string (substring (file-name-as-directory ".") -1)))
     (cond
-     ;; elpa-devel install -- hyperbole-8.0.0pre0.20220126.1138
-     ((string-match "hyperbole-\\([.[:digit:]]+pre[.[:digit:]]+\\).*" hypb-dir-name)
+     ;; straight.el package install -- hyperbole gnu-elpa-mirror master 56cd3d8 2022-02-05
+     ((string-match (concat dir-sep-string "straight" dir-sep-string
+			    "build" dir-sep-string "hyperbole") hyperb:dir)
+      (let* ((plist (hypb:straight-package-plist "hyperbole"))
+	     (pkg-version (plist-get plist :version))
+	     (git-commit (when (string-match " \\([a-f0-9]+\\) " pkg-version)
+			   (match-string 1 pkg-version))))
+	(list "straight" git-commit)))
+     ;; elpa-devel package install -- hyperbole-8.0.0pre0.20220126.1138
+     ((string-match "hyperbole-\\([.[:digit:]]+pre[.[:digit:]]+\\)" hypb-dir-name)
       (list "elpa-devel" (match-string 1 hypb-dir-name)))
-     ;; git
+     ;; melpa/quelpa package install -- hyperbole-20220205.1429
+     ((string-match "hyperbole-\\([1-9][0-9][0-9][0-9][0-1][0-9][0-3][0-9]\\.[0-9]+\\)"
+		    hypb-dir-name)
+      (list "melpa" (match-string 1 hypb-dir-name)))
+     ;; git install -- hyperbole d27f4c5197
      ((file-exists-p (expand-file-name ".git" hyperb:dir))
       (ignore-errors
         (let ((default-directory hyperb:dir))
-          (list "git" (shell-command-to-string "git rev-parse HEAD"))))))))
+          (list
+           "git"
+           (substring (shell-command-to-string "git rev-parse HEAD") 0 10)))))
+     ;; elpa package install -- /elpa/hyperbole-8.0.0"
+     ((and (string-match-p (concat dir-sep-string "elpa" dir-sep-string) hyperb:dir)
+	   (string-match "hyperbole-\\([.[:digit:]]+\\)" hypb-dir-name))
+      (list "elpa" (match-string 1 hypb-dir-name)))
+     ;; tarball archive install -- hyperbole-8.0.0
+     ((string-match "hyperbole-\\([.[:digit:]]+\\)" hypb-dir-name)
+      (list "archive" (match-string 1 hypb-dir-name)))
+     ;; unknown -- hyperbole
+     (t (list "unknown" hyperb:dir)))))
 
 ;;;###autoload
 (defun hypb:configuration (&optional out-buf)
@@ -131,12 +156,8 @@ Global keymap is used unless optional KEYMAP is given."
       (goto-char (point-max)))
     (delete-blank-lines) (delete-blank-lines)
     (let ((start (point)))
-      (insert (format "I use:\tEditor:      %s\n\tHyperbole:   %s\n"
-		      (cond ((boundp 'infodock-version)
-			     infodock-version)
-			    (t (hypb:replace-match-string
-				" of .+" (emacs-version) "" t)))
-                      hyperb:version))
+      (insert (format "I use:\tEditor:      GNU Emacs %s\n\tHyperbole:   %s\n"
+		      emacs-version hyperb:version))
       (when (and (boundp 'br-version) (stringp br-version))
 	(insert (format "\tOO-Browser:  %s\n" br-version)))
       (when (and (boundp 'system-configuration) (stringp system-configuration))
@@ -160,7 +181,7 @@ Global keymap is used unless optional KEYMAP is given."
                                (concat "PIEmail " pm-version))))))
       (when (and (boundp 'hnews:reader) (boundp 'gnus-version) hnews:reader)
         (insert (format "\tNews Reader: %s\n" gnus-version)))
-      (let ((install-type (hypb--installation-type)))
+      (let ((install-type (hypb:installation-type)))
         (when install-type
           (insert (format "\tInstall:     %s, %s" (car install-type) (cadr install-type)))))
       (insert "\n")
@@ -707,6 +728,14 @@ than a string.
 Syntax tables are char-tables whose values are encoded as raw
 descriptors."
   (aset (or syntax-table (syntax-table)) char raw-descriptor))
+
+(defun hypb:straight-package-plist (pkg-string)
+  "Return a property list of package-name, package-download-source and pckage-version for PKG-STRING, else return nil.
+This is for the straight.el package manager."
+  (when (fboundp #'straight-bug-report-package-info)
+    (car (delq nil (mapcar (lambda (pkg-plist)
+			     (when (equal (plist-get pkg-plist :package) pkg-string) pkg-plist))
+			   (straight-bug-report-package-info))))))
 
 (defun hypb:string-count-matches (regexp str &optional start end)
   "Count occurrences of REGEXP in STR, limited to optional START and END positions.

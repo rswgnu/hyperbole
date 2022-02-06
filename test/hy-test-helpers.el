@@ -37,7 +37,9 @@
   (let ((was-called nil))
     (cl-letf (((symbol-function 'hpath:find)
                (lambda (filename)
-		 (setq was-called (should (or (string= str filename) (string= str (expand-file-name filename))))))))
+		 (if (not (and (stringp str) (stringp filename)))
+		     (should (eq t (message "str = %s; filename = %s" str filename)))
+		   (setq was-called (should (or (string= str filename) (string= str (expand-file-name filename)))))))))
       (action-key)
       (should was-called))))
 

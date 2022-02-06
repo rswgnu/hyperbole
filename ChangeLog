@@ -1,13 +1,118 @@
+2022-02-06  Bob Weiner  <rsw@gnu.org>
+
+* hpath.el (hpath:absolute-to, hpath:call): Add checks to ensure
+    path is a string.
+           (hpath:at-p): Call to 'hpath:mswindows-to-posix' may
+    have abbreviated a path, so expand it back here for improved
+    matching to path found in the buffer previously.
+
+* hmouse-drv.el (hkey-execute): Ensure Emacs debug variables are
+    enabled when 'hkey-debug' is enabled.
+
+* hsmail.el (mail-yank-original, message--yank-original-internal,
+             mail-send-hook): Finish updating these and ready for testing.
+
+* HY-NEWS:
+  man/hyperbole.texi (Inserting and Importing): Add kimport:file
+    minibuffer menu binding.
+
+* test/*-tests.el: Simplify by requiring "hy-test-helpers" rather than
+    loading it with a complex call in every module.
+
+* test/hui-tests.el (hui-gbut-modify-link-to-file-button): Add this
+    debugged global button creation and modification test.
+
+2022-02-05  Mats Lidell  <matsl@gnu.org>
+
+* hargs.el (hargs:find-tag-default): Remove own implementation for
+    'find-tag-default' and 'find-tag--default' and rely on implementation in
+    Emacs.
+
+2022-02-05  Bob Weiner  <rsw@gnu.org>
+
+* HY-NEWS (Minibuffer Menu Changes): Mention new Kotl/Format menu.
+  man/hyperbole.texi (Inserting and Importing): Add {C-h h k f f}
+    kimport:file minibuffer menu binding and relabel its menu items.
+
+* hypb.el (hypb:straight-package-plist): Add and use in tests.
+          (hypb:installation-type): Support all install types.
+  test/hypb-tests.el (hypb:installation-type-test): Support all install types.
+
+* hmail.el (hmail:compose): Clarify subject line use even more.
+  hypb.el (hypb:configuration): Removed unneeded InfoDock clause and use
+    emacs-version variable rather than (emacs-version) function.
+          (hypb--installation-type): Rename to 'hypb:installation-type' and
+    expand to handle all installation types.
+
+* kotl/kexport.el (kexport:buffer): Rename to 'kexport:koutline'.
+  test/kexport-tests.el (kexport:buffer-calls-kexport:html): Rename to
+    'kexport:koutline-calls-kexport:html'.
+
+* hui-mini.el (hui:menus): Kotl/Format - Add new submenu for import/export
+    of Koutlines to match one from the Koutline pulldown menu.
+  man/hyperbole.texi (Exporting):
+                     (Menu Commands): Document new menu and add 'kexport:koutline'
+    command documentation.
+
+* kotl/kimport.el (kimport:suffix-alist): Add importation of Org outlines
+    as Koutlines.
+
+* kotl/kmenu.el (kotl-menu-common-postamble): In pulldown Koutliner menu,
+    change 'Export-to-HTML' to 'Export-Other-Koutline-to-HTML'.  Add
+    'Display-This-Koutline-in-Web-Browser' and 'Export-This-Koutline-to-HTML'.
+
+* hpath.el (hpath:outline-section-pattern): Remove leading spaces
+ 	   (hpath:to-markup-anchor): Search for leading spaces in above regexp
+    only after not finding a match without leading spaces.  This prevents
+    matching to Table of Contents entries with the same section name but indented.
+
+* hui.el (hui:gbut-create, hui:buf-writable-err): Fix sporadic bug where err
+    function did not trigger an error but changed the (current-buffer), thereby
+    cause the 'hui:gbut-create' function to improperly place a global button
+    in the wrong buffer.
+         (hui:error): Remove, has been obsolete for a long time.  Use hypb:error.
+	 (hui:ebut-delimit): Remove, has been obsolete for a long time.
+    Use ebut:delimit instead.
+  hargs.el (hargs:action-get): Add a save-excursion to fix above bug as this
+    was temporarily changing the current-buffer.
+
+* hbut.el (gbut:file): Change from a variable to a function so if user resets
+    any of its components, the current value is always used.  Fixes bug where
+    global buttons were written to the wrong file.
+
+* hsmail.el (mail-yank-original): Fix indentation of this overloaded function.
+            (message--yank-original-internal): Add overloading of this function.
+
+2022-02-04  Mats Lidell  <matsl@gnu.org>
+
+* test/hargs-tests.el (hargs-get-verify-extension-characters)
+    (hargs-get-verify-extension-characters-K+): Test cases for extension
+    characters.
+
+* hargs.el (hargs:make-iform-vector): Converted to macro.
+    (hargs:iform-vector): Use defconst.
+    (hargs:iform-extensions-vector): Use defconst.
+    Patch from Stefan Monnier. Thank you Stefan.
+
 2022-02-03  Mats Lidell  <matsl@gnu.org>
 
 * test/hy-test-helpers.el (hy-test-helpers-verify-hattr-at-p): Add helper
     function and use it.
+
+* hypb.el (hypb--installation-type): Return 10 digit git hash.
 
 2022-02-02  Mats Lidell  <matsl@gnu.org>
 
 * hargs.el (hargs:reading-type): Renaming var.
 
 2022-01-31  Bob Weiner  <rsw@gnu.org>
+
+* hpath.el (hpath:outline-section-pattern): Change to allow for indented
+    asterisks at the beginning of a line and to match when text is followed
+    by a punctuation character, even if not at the end of the line, e.g.
+    section-name: description.  Also, allow for human-readable versions of
+    bound key sequences as section anchors and support anchors in fundamental
+    mode.  New features used in "DEMO".
 
 * hui-select.el (hui-select-thing): Hyperbole binds this to {C-c RET} which
     conflicts with an Org mode binding, so if in Org mode, use its binding
@@ -8433,3 +8538,5 @@ V5.06 changes ^^^^:
      Copyright 1991-2021 Free Software Foundation, Inc.
      Copying and distribution of this file, with or without modification, are
      permitted provided the copyright notice and this notice are preserved.
+
+

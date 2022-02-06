@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    19-Jun-21 at 22:42:00
-;; Last-Mod:     24-Jan-22 at 00:41:23 by Bob Weiner
+;; Last-Mod:      6-Feb-22 at 00:58:33 by Bob Weiner
 ;;
 ;; Copyright (C) 2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -20,10 +20,8 @@
 (require 'hact)
 (require 'hyrolo)
 (require 'hyrolo-demo)
+(require 'hy-test-helpers "test/hy-test-helpers")
 
-(load (expand-file-name "hy-test-helpers"
-                        (file-name-directory (or load-file-name
-                                                 default-directory))))
 (declare-function hy-test-helpers:consume-input-events "hy-test-helpers")
 (declare-function hy-test-helpers:should-last-message "hy-test-helpers")
 

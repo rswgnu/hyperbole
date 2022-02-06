@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    30-Jan-21 at 12:00:00
-;; Last-Mod:     30-Jan-22 at 03:11:47 by Bob Weiner
+;; Last-Mod:      6-Feb-22 at 03:30:00 by Bob Weiner
 ;;
 ;; Copyright (C) 2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -26,10 +26,8 @@
 (require 'eww)
 (require 'compile)
 (require 'el-mock)
+(require 'hy-test-helpers "test/hy-test-helpers")
 
-(load (expand-file-name "hy-test-helpers"
-                        (file-name-directory (or load-file-name
-                                                 default-directory))))
 (declare-function hy-test-helpers:consume-input-events "hy-test-helpers")
 (declare-function hy-test-helpers:should-last-message "hy-test-helpers")
 (declare-function hyrolo-demo-quit "hyrolo-demo.el")
@@ -63,7 +61,7 @@
       (progn
         (hypb:display-file-with-logo (expand-file-name "DEMO" hyperb:dir))
         (goto-char (point-min))
-        (re-search-forward " \* Koutl")
+        (re-search-forward " \\* Koutl")
         (action-key)
         (should (bolp))
         (should (looking-at "^* Koutliner")))
