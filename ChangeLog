@@ -1,3 +1,9 @@
+2022-02-05  Mats Lidell  <matsl@gnu.org>
+
+* hargs.el (hargs:find-tag-default): Remove own implementation for
+    find-tag-default and find-tag--default and rely on implementation in
+    Emacs.
+
 2022-02-05  Bob Weiner  <rsw@gnu.org>
 
 * hypb.el (hypb:straight-package-plist): Add and use in tests.
@@ -48,7 +54,6 @@
 
 * hsmail.el (mail-yank-original): Fix indentation of this overloaded function.
             (message--yank-original-internal): Add overloading of this function.
-
 2022-02-04  Mats Lidell  <matsl@gnu.org>
 
 * test/hargs-tests.el (hargs-get-verify-extension-characters)
