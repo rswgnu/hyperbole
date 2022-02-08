@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    18-Sep-91 at 02:57:09
-;; Last-Mod:      7-Feb-22 at 23:03:27 by Mats Lidell
+;; Last-Mod:      8-Feb-22 at 23:54:24 by Mats Lidell
 ;;
 ;; Copyright (C) 1991-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -17,9 +17,8 @@
 ;;; Other required Elisp libraries
 ;;; ************************************************************************
 
-;; Require `cl-lib' for `cl-copy-list'.
-(eval-and-compile (mapc #'require '(cl-lib elisp-mode help-mode hversion hmoccur
-				    hbmap htz hbdata hact view)))
+(eval-and-compile (mapc #'require '(elisp-mode help-mode hversion hmoccur
+                                               hbmap htz hbdata hact view)))
 
 ;;; ************************************************************************
 ;;; Public declarations
@@ -1536,7 +1535,7 @@ excluding delimiters, not just one."
 		  (or (hattr:get 'hbut:current 'args)
 		      (not (listp args))
 		      (progn
-			(setq args (cl-copy-list args)) ;FIXME: copy-sequence?
+			(setq args (copy-sequence args))
 			(when (eq (car args) #'hact)
 			  (setq args (cdr args)))
 			(hattr:set 'hbut:current 'actype

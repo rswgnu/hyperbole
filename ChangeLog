@@ -1,6 +1,7 @@
-2022-02-07  Mats Lidell  <matsl@gnu.org>
+2022-02-08  Mats Lidell  <matsl@gnu.org>
 
-* hbut.el (ibut:at-p): Use cl-lib. Thank you Stefan.
+* hbut.el (ibut:at-p): Use copy-sequence, remove dependency on
+    cl-lib. Thanks Stefan Monnier.
 
 2022-02-06  Bob Weiner  <rsw@gnu.org>
 
