@@ -1,3 +1,8 @@
+2022-02-08  Mats Lidell  <matsl@gnu.org>
+
+* hbut.el (ibut:at-p): Use copy-sequence, remove dependency on
+    cl-lib. Thanks Stefan Monnier.
+
 2022-02-06  Bob Weiner  <rsw@gnu.org>
 
 * test/hui-tests.el (hui-gbut-modify-link-to-file-button): Some
