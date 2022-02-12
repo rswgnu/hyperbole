@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    15-Oct-91 at 20:13:17
-;; Last-Mod:      5-Feb-22 at 22:33:19 by Bob Weiner
+;; Last-Mod:     12-Feb-22 at 13:52:10 by Bob Weiner
 ;;
 ;; Copyright (C) 1991-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -82,6 +82,13 @@ documentation, not the full text."
 	  (hui:menu-act (or menu 'hyperbole) menu-list doc-flag help-string-flag)
 	  t)
       (setq hui:menu-p nil))))
+
+;;;###autoload
+(defun hyperbole-demo (&optional arg)
+  "Display the Hyperbole FAST-DEMO.
+With a prefix arg, display the older, more extensive DEMO file."
+  (interactive "P")
+  (hypb:display-file-with-logo (if arg "DEMO" "FAST-DEMO")))
 
 ;;;###autoload
 (defun hyperbole-set-key (global-key menu-keys)
@@ -615,23 +622,16 @@ constructs.  If not given, the top level Hyperbole menu is used."
 	  ("XTerm" (setq hyperbole-web-search-browser-function #'browse-url-text-xterm))))
        '(doc .
 	 (("Doc>")
-	  ("About"        (hypb:display-file-with-logo
-			   (expand-file-name "HY-ABOUT" hyperb:dir))
-	   "Overview of Hyperbole.")
-	  ("Demo"         (hypb:display-file-with-logo
-			    (expand-file-name "DEMO" hyperb:dir))
-	   "Demonstrates Hyperbole features.")
-	  ("Files"        (hypb:display-file-with-logo
-			    (expand-file-name "MANIFEST" hyperb:dir))
+	  ("About"        (hypb:display-file-with-logo "HY-ABOUT") "Overview of Hyperbole.")
+	  ("Demo"         hyperbole-demo "Demonstrates Hyperbole features.")
+	  ("Files"        (hypb:display-file-with-logo "MANIFEST")
 	   "Summarizes Hyperbole system files.  Click on an entry to view it.")
 	  ("Glossary"
 	   (id-info "(hyperbole)Glossary")
 	   "Glossary of Hyperbole terms.")
 	  ("Info"         (id-info "(hyperbole)Top")
 	   "Online Info version of Hyperbole manual.")
-	  ("New"          (hypb:display-file-with-logo
-			   (expand-file-name "HY-NEWS" hyperb:dir))
-	   "Recent changes to Hyperbole.")
+	  ("New"          (hypb:display-file-with-logo "HY-NEWS") "Recent changes to Hyperbole.")
 	  ("SmartKeys"    (hkey-summarize 'current-window)
 	   "Summarizes Smart Key mouse or keyboard handling.")
 	  ("Types/"       (menu . types)

@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    30-Jan-21 at 12:00:00
-;; Last-Mod:      6-Feb-22 at 03:30:00 by Bob Weiner
+;; Last-Mod:     12-Feb-22 at 13:33:53 by Bob Weiner
 ;;
 ;; Copyright (C) 2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -37,7 +37,7 @@
   "Go to the header from a #ref."
   (unwind-protect
       (progn
-        (hypb:display-file-with-logo (expand-file-name "DEMO" hyperb:dir))
+        (hypb:display-file-with-logo "DEMO")
         (goto-char (point-min))
         (re-search-forward "#Smart Keys")
         (action-key)
@@ -48,7 +48,7 @@
 (ert-deftest demo-smart-mouse-keys-ebut-test ()
   (unwind-protect
       (progn
-        (hypb:display-file-with-logo (expand-file-name "DEMO" hyperb:dir))
+        (hypb:display-file-with-logo "DEMO")
         (goto-char (point-min))
         (re-search-forward "<(Smart")
         (action-key)
@@ -59,7 +59,7 @@
 (ert-deftest demo-table-of-contents-test ()
   (unwind-protect
       (progn
-        (hypb:display-file-with-logo (expand-file-name "DEMO" hyperb:dir))
+        (hypb:display-file-with-logo "DEMO")
         (goto-char (point-min))
         (re-search-forward " \\* Koutl")
         (action-key)
@@ -72,7 +72,7 @@
   (skip-unless (not noninteractive))
   (unwind-protect
       (progn
-        (hypb:display-file-with-logo (expand-file-name "DEMO" hyperb:dir))
+        (hypb:display-file-with-logo "DEMO")
         (goto-char (point-min))
         (re-search-forward "Table of Contents")
         (beginning-of-line)
@@ -86,7 +86,7 @@
 (ert-deftest demo-smart-scrolling-non-proportional-test ()
   (unwind-protect
       (progn
-        (hypb:display-file-with-logo (expand-file-name "DEMO" hyperb:dir))
+        (hypb:display-file-with-logo "DEMO")
         (goto-char (point-min))
         (re-search-forward "Table of Contents")
         (beginning-of-line)
@@ -127,7 +127,7 @@
   (skip-unless (not noninteractive))
   (unwind-protect
       (progn
-        (hypb:display-file-with-logo (expand-file-name "DEMO" hyperb:dir))
+        (hypb:display-file-with-logo "DEMO")
         (should (hact 'kbd-key "C-h h s f @ 22 RET Q"))
         (hy-test-helpers:consume-input-events)
         (should (eq 4 (length (window-list)))))
@@ -137,7 +137,7 @@
   (skip-unless (not noninteractive))
   (unwind-protect
       (progn
-        (hypb:display-file-with-logo (expand-file-name "DEMO" hyperb:dir))
+        (hypb:display-file-with-logo "DEMO")
         (should (hact 'kbd-key "C-h h s f @ 33 RET Q"))
         (hy-test-helpers:consume-input-events)
         (should (eq 9 (length (window-list)))))
@@ -357,7 +357,7 @@
   (skip-unless (not noninteractive))
   (unwind-protect
       (progn
-        (hypb:display-file-with-logo (expand-file-name "DEMO" hyperb:dir))
+        (hypb:display-file-with-logo "DEMO")
         (should (hact 'kbd-key "C-h h f o Hyperbole RET"))
         (hy-test-helpers:consume-input-events)
         (set-buffer "*Occur*")
@@ -370,7 +370,7 @@
 (ert-deftest demo-annotated-reference-test ()
   (unwind-protect
       (progn
-        (hypb:display-file-with-logo (expand-file-name "DEMO" hyperb:dir))
+        (hypb:display-file-with-logo "DEMO")
         (re-search-forward "\\[FSF 19\\]")
         (backward-char 1)
         (action-key)
@@ -393,7 +393,7 @@
   (skip-unless (not noninteractive))
   (unwind-protect
       (progn
-        (hypb:display-file-with-logo (expand-file-name "DEMO" hyperb:dir))
+        (hypb:display-file-with-logo "DEMO")
         (should (hact 'kbd-key "C-h h a factorial RET"))
         (hy-test-helpers:consume-input-events)
         (hy-test-helpers:should-last-message "Factorial of 5 = 120"))
@@ -403,7 +403,7 @@
   (skip-unless (not noninteractive))
   (unwind-protect
       (progn
-        (hypb:display-file-with-logo (expand-file-name "DEMO" hyperb:dir))
+        (hypb:display-file-with-logo "DEMO")
         (re-search-forward "<(factorial)>")
         (forward-char -5)
         (action-key)

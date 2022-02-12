@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     6-Oct-91 at 03:42:38
-;; Last-Mod:      6-Feb-22 at 12:49:34 by Bob Weiner
+;; Last-Mod:     12-Feb-22 at 12:50:34 by Bob Weiner
 ;;
 ;; Copyright (C) 1991-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -877,7 +877,12 @@ the symbol list.  For `suspicious', only `set-buffer' can be used."
 
 ;;;###autoload
 (defun hypb:display-file-with-logo (file)
-  "Display a text FILE in help mode with the Hyperbole banner prepended."
+  "Display a text FILE in help mode with the Hyperbole banner prepended.
+If FILE is not an absolute path, expand it relative to `hyperb:dir'."
+  (unless (stringp file)
+    (error "(hypb:display-file-with-logo): 'file' must be a string, not '%s'" file))
+  (unless (file-name-absolute-p file)
+    (setq file (expand-file-name file hyperb:dir)))
   (let ((existing-buf (when (stringp file) (get-file-buffer file))))
     ;; A stub for this function is defined in hversion.el when not running in InfoDock.
     (id-browse-file file)

@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    28-Oct-94 at 10:59:44
-;; Last-Mod:     24-Jan-22 at 00:18:47 by Bob Weiner
+;; Last-Mod:     12-Feb-22 at 13:51:20 by Bob Weiner
 ;;
 ;; Copyright (C) 1994-2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -171,8 +171,7 @@ Return t if cutoff, else nil."
 		  (if (= (aref hyperb:version 0) ?0)
 		      (substring hyperb:version 1)
 		    hyperb:version))
-	  #'(hypb:display-file-with-logo
-	     (expand-file-name "HY-ABOUT" hyperb:dir))
+	  #'(hypb:display-file-with-logo "HY-ABOUT")
 	  t))
 
 (defconst hui-menu-options
@@ -311,16 +310,14 @@ REBUILD-FLAG is non-nil, in which case the menu is rebuilt."
 		 "Hyperbole"
 		 :config 'Hyperbole
 		 hui-menu-about
-		 ["Demonstration"  (hypb:display-file-with-logo
-				    (expand-file-name "DEMO" hyperb:dir)) t]
+		 ["Demonstration"  hyperbole-demo t]
 		 ;; Comment InfoDock manual reference out until
 		 ;; InfoDock is modernized for Emacs 25.
 		 ;; (if (and (boundp 'infodock-version) infodock-version)
 		 ;;     ["Manual"      (id-info "(infodock)Hyperbole Menu") t]
 		 ;;   ["Manual"      (id-info "(hyperbole)Top") t])
 		 ["Manual"         (id-info "(hyperbole)Top") t]
-		 ["What-is-New?"   (hypb:display-file-with-logo
-				    (expand-file-name "HY-NEWS" hyperb:dir)) t]
+		 ["What-is-New?"   (hypb:display-file-with-logo "HY-NEWS") t]
 		 ["Why-Use?"       (find-file
 				    (expand-file-name "HY-WHY.kotl" hyperb:dir)) t]
 		 "----"
@@ -347,11 +344,9 @@ REBUILD-FLAG is non-nil, in which case the menu is rebuilt."
 		 '("Documentation"
 		   ["Manual"      (id-info "(hyperbole)Top") t]
 		   "----"
-		   ["Demonstration"  (hypb:display-file-with-logo
-				      (expand-file-name "DEMO" hyperb:dir)) t]
+		   ["Demonstration"  hyperbole-demo t]
 		   ["Glossary"    (id-info "(hyperbole)Glossary") t]
-		   ["Manifest"    (hypb:display-file-with-logo
-				   (expand-file-name "MANIFEST" hyperb:dir)) t]
+		   ["Manifest"    (hypb:display-file-with-logo "MANIFEST") t]
 		   ["Smart-Key-Summary" (id-browse-file (hypb:hkey-help-file)) t]
 		   ("Types"
 		    ["Action-Types-Manual"

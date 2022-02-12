@@ -116,7 +116,7 @@ Hyperbole home page: https://www.gnu.org/software/hyperbole.  If you have
 already downloaded Hyperbole, see the "HY-ABOUT" file for a longer
 description and overview of Hyperbole.
 
-See "DEMO" for a demonstration of standard Hyperbole button capabilities.
+See "FAST-DEMO" for a demonstration of standard Hyperbole button capabilities.
 This is the best way to initially interactively learn about Hyperbole after
 installing it.
 
@@ -144,8 +144,8 @@ Various forms of the reference manual for Hyperbole are below the
 
 "MANIFEST" summarizes most of the files in the distribution.
 
-See "DEMO" for a demonstration of standard Hyperbole button capabilities.
-This is the best way to initially interactively learn about Hyperbole.
+See "DEMO" for a lengthier tutorial of standard Hyperbole button
+capabilities.  This is the best way to go deeper into all of Hyperbole.
 The Hyperbole Manual is a reference manual, not a simple introduction.
 
 Naming conventions:
@@ -185,6 +185,18 @@ Hyperbole key bindings (Smart Keys).
 
 	   				-- Bob Glickstein
 					   Z-Code Software Corporation
+
+-------
+
+  GNU Hyperbole is a game-changer for your mental model of information
+  management and personal productivity.  Even if you don't use it you should
+  study one or two of the modules and compare them to how you solve the same
+  problem with your preferred tool of choice.  It is subtle, and subtle is one
+  of the hardest and post powerful things to reside in your mental landscape
+  these days.
+
+                                       -- Grant Rettke
+                                          Org2Blog Maintainer
 
 -------
 

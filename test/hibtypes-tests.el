@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    20-Feb-21 at 23:45:00
-;; Last-Mod:      6-Feb-22 at 00:56:55 by Bob Weiner
+;; Last-Mod:     12-Feb-22 at 13:33:53 by Bob Weiner
 ;;
 ;; Copyright (C) 2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -201,7 +201,7 @@
 (ert-deftest ibtypes::annot-bib-test ()
   (unwind-protect
       (progn
-        (hypb:display-file-with-logo (expand-file-name "DEMO" hyperb:dir))
+        (hypb:display-file-with-logo "DEMO")
         (re-search-forward "\\[FSF 19\\]")
         (backward-char 1)
         (ibtypes::annot-bib)
@@ -258,7 +258,7 @@
 (ert-deftest ibtypes::text-toc-test ()
   (unwind-protect
       (progn
-        (hypb:display-file-with-logo (expand-file-name "DEMO" hyperb:dir))
+        (hypb:display-file-with-logo "DEMO")
         (goto-char (point-min))
         (re-search-forward " \* Koutl")
         (ibtypes::text-toc)

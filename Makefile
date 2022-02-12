@@ -3,7 +3,7 @@
 # Author:       Bob Weiner
 #
 # Orig-Date:    15-Jun-94 at 03:42:38
-# Last-Mod:     30-Jan-22 at 13:03:37 by Bob Weiner
+# Last-Mod:     12-Feb-22 at 14:03:45 by Bob Weiner
 #
 # Copyright (C) 1994-2021  Free Software Foundation, Inc.
 # See the file HY-COPY for license information.
@@ -197,8 +197,8 @@ HY-TALK  = HY-TALK/.hypb HY-TALK/HYPB HY-TALK/HY-TALK.org
 
 HYPERBOLE_FILES = dir info html $(EL_COMPILE) $(EL_KOTL) \
 	$(ELC_COMPILE) $(HY-TALK) ChangeLog COPYING Makefile HY-ABOUT HY-ANNOUNCE HY-NEWS \
-	HY-WHY.kotl INSTALL DEMO DEMO-ROLO.otl MANIFEST README README.md _hypb .hypb smart-clib-sym \
-	topwin.py hyperbole-banner.png $(man_dir)/hkey-help.txt \
+	HY-WHY.kotl INSTALL DEMO DEMO-ROLO.otl FAST-DEMO MANIFEST README README.md _hypb \
+        .hypb smart-clib-sym topwin.py hyperbole-banner.png $(man_dir)/hkey-help.txt \
 	$(man_dir)/hyperbole.texi $(man_dir)/hyperbole.css $(man_dir)/version.texi
 
 TEST_ERT_FILES = $(wildcard test/*tests.el) $(wildcard test/hy-test-*.el)
@@ -327,7 +327,7 @@ version: doc
 	@ echo ""
 
 # Build the Info, HTML and Postscript versions of the user manual and README.md.html.
-doc: info html pdf README.md.html
+doc: README.md.html info html pdf
 
 TEXINFO_SRC = $(man_dir)/hyperbole.texi $(man_dir)/version.texi $(man_dir)/hkey-help.txt $(man_dir)/im/*.png
 

@@ -1,5 +1,21 @@
 2022-02-12  Bob Weiner  <rsw@gnu.org>
 
+* hypb-maintenance.el (hypb:web-repo-location): Update to RSW's Hyperbole
+    local website path.
+
+* hui-menu.el:
+  FAST-DEMO: Add this shorter demo/intro with a reference to the older DEMO.
+  hui-mini.el: Add 'hyperbole-demo' function to view FAST-DEMO or with
+    a prefix arg, DEMO.
+
+* hypb.el (hypb:display-file-with-logo): Expand non-absolute paths within
+    hyperb:dir to simplify calls to this function.
+  test/demo-tests.el
+  test/hibtypes-tests.el
+  test/hmouse-drv-tests.el
+  hui-menu.el
+  hui-mini: Simplify calls to above function in all these files.
+
 * test/hui-tests.el (hui-gbut-modify-link-to-file-button): Fix order of
     file save
 

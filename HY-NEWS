@@ -1220,6 +1220,11 @@
 
   DOCUMENTATION
 
+    - FAST-DEMO: New, simplified introductory demo to Hyperbole focused on
+      implicit buttons.  Includes links to Hyperbole videos and the prior
+      "DEMO".  {C-h h d d} display "FAST-DEMO" and {C-u C-h h d d} displays
+      the prior "DEMO".
+
     - Why Use Hyperbole: "HY-WHY.kotl" lists use cases for Hyperbole with
       hyperlinks to associated "DEMO" sections for each.  View this via
       the minibuffer menu with {C-h h d w} or via the `Why-Use?' Hyperbole

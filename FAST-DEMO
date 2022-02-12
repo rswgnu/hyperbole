@@ -1,0 +1,293 @@
+* GNU Hyperbole Fast Demo by Bob Weiner
+
+  Send an email or a testimonial if you like Hyperbole to <rsw@gnu.org>.
+
+  This demo is the fast way to get started with Hyperbole after installation.
+  The prior, lengthier Hyperbole demo/tutorial can be found in this file: "DEMO".
+
+* Introductory Videos
+
+  If you prefer video introductions, visit the videos linked to below; otherwise,
+  skip to the next section.
+
+  |-----------------------------------------------------+------------------------------|
+  | GNU Hyperbole Videos                                | Web Link                     |
+  |-----------------------------------------------------+------------------------------|
+  |-----------------------------------------------------+------------------------------|
+  | Overview and Demo                                   | https://youtu.be/WKwZHSbHmPg |
+  |   Covers all of Hyperbole                           |                              |
+  |   Hyperlink timestamps to watch each short section  |                              |
+  |-----------------------------------------------------+------------------------------|
+  | Quick Introduction                                  | https://youtu.be/K1MNUctggwI |
+  |-----------------------------------------------------+------------------------------|
+  | Introduction to Buttons                             | https://youtu.be/zoEht66N2PI |
+  |-----------------------------------------------------+------------------------------|
+  | HyRolo, the fast contact/hierarchical record viewer | https://youtu.be/xdJGFdgKPFY |
+  |-----------------------------------------------------+------------------------------|
+  | HyControl, the fast Emacs frame and window manager  | https://youtu.be/M3-aMh1ccJk |
+  |-----------------------------------------------------+------------------------------|
+  | Find/Web Search                                     | https://youtu.be/8lMlJed0-OM |
+  |-----------------------------------------------------+------------------------------|
+
+
+* Implicit Buttons
+
+  Hyperbole automatically recognizes many common and complex patterns
+  within Emacs buffers and turns them into hyperbuttons that either link to
+  other things or perform a set of actions.  No need for markup, simply press
+  on a button in any kind of Emacs buffer to activate it.
+
+  These patterns are called implicit buttons and are activated by pressing
+  {M-RET} (ESC RETURN, ALT-RETURN, or CMD-RETURN) or SHIFT-MIDDLE-MOUSE anywhere
+  within them.  Hyperbole recognizes these buttons using its predefined implicit button
+  types that specify how to recognize each type of button and what action it performs.
+  (For example, the web links in the table above are implicit buttons that display web
+  pages).  You can also add your own button and action types.
+
+  Try pressing {M-RET} or SHIFT-MIDDLE-MOUSE on some of the implicit buttons in double
+  quotes below to activate them and see how they behave.  Press {C-h A} on any Hyperbole
+  button to see exactly what it does prior to activating it.
+
+
+* Pathname Implicit Buttons
+
+    "HY-NEWS#ORG MODE:2:6"   - outline section anchor & relative line number
+
+       Display the file, "HY-NEWS", go to the star-outline section 'ORG MODE', move
+       2 lines into that section and then move 6 characters forward.
+
+       Existing files and pathnames are recognized without double quotes as well.
+
+       The variable, <hpath:display-where>, determines where Hyperbole displays all
+       button referents, whether in another window or frame.
+
+    "#Key Series Implicit Buttons"
+
+       Display at the top of another window the named section from the current buffer.
+
+    <[comp]>: "README.md#Hyperbole Components" - Markdown anchor with spaces intact
+
+       Display the file, "README.md", scrolled to it outline section, "Hyperbole
+       Components".  Name this button, 'comp'.   Then you can link to it elsewhere
+       in the buffer with <ilink: comp>.  {M-RET} on the ilink to activates the button
+       it links to.
+
+    "${hyperb:dir}/HY-NEWS"          - Elisp or environment variables; $VAR shell
+                                       vars work too
+
+
+    "subr.el"                        - edit any Elisp library in load-path
+
+       The variable, hpath:auto-variable-alist, determines which file suffixes
+       are looked up using variables containing multiple search directories. By
+       default, Org files, Python files and Elisp files are handled.
+
+    "(hyperbole)action-key-modeline-function" 
+
+       Double quoted Info manual refererences are also implicit buttons.
+       You can link to both nodes/sections in GNU Info manuals as well
+       as to specific lines referenced by an index entry, as shown
+       above, providing fine-grained structured document linking.  Remember
+       this as there will be more Info links below.
+
+
+* Key Series Implicit Buttons
+
+    A key series is an arbitrary length set of Emacs keystrokes surrounded by
+    braces, like a visual keyboard macro.  RET, SPC and ESC are translated
+    into their respective keys.  Activate them with {M-RET} or SHIFT-MIDDLE-MOUSE.
+
+    {C-h A}
+
+       Press {C-h A} when over any Hyperbole button for an explanation of what it does.
+
+    {M-x dired-other-window RET ${hyperb:dir}/*.org RET}
+
+       Hyperbole home directory Dired listing of Org files only
+
+    {C-c @ 22 RET}
+
+       Display a 2x2 grid of windows in the current frame of the 4 most recently
+       used buffers.
+
+    {C--1 C-c @ kotl/kotl-*.el RET}
+
+       Find the Hyperbole Koutliner source files that begin with 'kotl' and display
+       them in an auto-sized grid of windows.
+
+    {C-u 0 C-c @ python-mode RET 33 RET}
+
+       Display the 9 mostly recently used Python buffers in a 3x3 grid.  Other buffers
+       fill in the grid if there are not enough Python ones.
+
+    {C-x d ${hyperb:dir} RET}
+
+       Dired the Hyperbole home directory based on its variable.
+
+    {C-x C-b C-x C-q M-x keep-lines RET .py$ RET C-x C-q}
+
+       Display a buffer list of Python file buffers only
+
+    {C-x C-b C-x C-q M-x keep-lines RET [\\/]$ RET C-x C-q}
+
+       Buffer list of directory buffers only
+
+
+* Posix/Linux Shell Command Implicit Buttons
+
+    { M-x shell RET M-> (pushd ${hyperb:dir}) RET }
+
+       Move to a directory in a shell based on a Lisp variable.
+       Sections within key series surrounded by parentheses maintain
+       spaces between words without the need to use 'SPC'.
+
+    {M-x shell RET M-> (export HYPERBOLE_DIR=${hyperb:dir} && 
+     cd $HYPERBOLE_DIR && grep -n gbut:label-list *.el) RET}
+
+       Use both a Hyperbole resolved variable, ${hyperb:dir}, and a shell-resolved
+       environment variable, $HYPERBOLE_DIR, to grep through Lisp files.
+
+    {M-x shell RET M-> (apropos grep) RET}
+
+       Use Posix apropos command to list grep-related commands.  Then press {M-RET} on
+       any lines output to display the man page for the associated command.
+
+* Grep Messages, Stack Traces, Man Page Apropos Implicit Buttons
+
+  These implicit buttons typically appear in shell buffers.  You issue a shell command and
+  then use {M-RET} or SHIFT-MIDDLE-MOUSE on the output lines of the command to display
+  the associated reference.
+
+** grep -n gbut:label-list *.el
+hactypes.el:454:					      (mapcar #'list (gbut:label-list))
+hbut.el:605:				       (mapcar #'list (gbut:label-list))
+
+       An Action Key press anywhere on the text of the two above output lines from a grep -n
+       or a ripgrep command jumps to the referenced line.
+
+** python topwin.py
+Traceback (most recent call last):
+  File "topwin.py", line 18, in <module>
+    import Quartz
+
+       An Action Key press anywhere on the above 2 non-blank lines jumps to the source of the
+       error.  You can jump into any stack frame this way when debugging from pretty much any
+       language, even in a regular shell.
+
+** man -k spell
+aspell(1)                - interactive spell checker
+aspell-import(1)         - import old personal dictionaries into GNU Aspell
+pspell-config(1)         - prints information about a libpspell installation
+
+       An Action Key press anywhere on the above 3 non-blank lines displays the associated
+       man documentation page.
+
+
+* Action Buttons (generalized form of implicit buttons)
+
+  If you know your way around Emacs Lisp and want to quickly turn snippets of Lisp code
+  or Lisp variables into Hyperbole buttons, just remove any outer parentheses and surround
+  the remaining code with <angle-brackets>.
+
+  Here are some examples.
+
+    <shell>
+
+       Jump to an existing shell buffer or create a new one.
+
+    <fill-column>
+
+       Display the variable value of 'fill-column' in the minibuffer
+
+    <find-file-other-window (expand-file-name "DEMO" hyperb:dir)>
+    <hpath:find "${hyperb:dir}/DEMO")>
+    "${hyperb:dir}/DEMO"
+
+       All three of the above do essentially the same thing, displaying the file.
+
+    <kotl/EXAMPLE.kotl, 3b10 |c2en>
+
+       Display a Hyperbole Koutline starting from cell 3b10 with lines per cell clipped to 2.
+
+
+* Many More Implicit Button Types to Learn Across Time
+
+  Activate this button, <emacs-lisp-mode>, to set this buffer into
+  Emacs Lisp mode.  Then an Action Key press on each of the implicit
+  button types below will jump to its Lisp definition.  Use this if you
+  want to see what each type can do.  <normal-mode> reverts to the standard mode.
+
+|-----------------------+------------------------+--------------------------|
+|                          Implicit Button Types                            |
+|-----------------------+------------------------+--------------------------|
+| action                | annot-bib              | completion               |
+| cscope                | ctags                  | debbugs-gnu-mode         |
+| debbugs-gnu-query     | debugger-source        | dir-summary              |
+| doc-id                | elink                  | elisp-compiler-msg       |
+| etags                 | function-in-buffer     | git-commit-reference     |
+| glink                 | gnus-push-button       | grep-msg                 |
+| hyp-address           | hyp-source             | id-cflow                 |
+| ilink                 | Info-node              | ipython-stack-frame      |
+| kbd-key               | klink                  | mail-address             |
+| man-apropos           | markdown-internal-link | org-mode                 |
+| patch-msg             | pathname               | pathname-line-and-column |
+| rfc                   | rfc-toc                | ripgrep-msg              |
+| social-reference      | texinfo-ref            | text-toc                 |
+| www-url               |                        |                          |
+|---------------------------------------------------------------------------|
+
+Implicit button types are stored in their own namespace, 'ibtypes::', so to
+see the doc on the 'pathname' ibtype, use {C-h f ibtypes::pathname RET}.
+
+
+* Hyperbole Subsystems
+
+  Hyperbole includes a number of subsystems that can raise your productivity
+  when looking up any kind of hierarchical records (including those from
+  Org mode or Outline mode), managing the precise location of windows and
+  frames, and one of the most advanced legal outliners available anywhere.
+
+** HyRolo
+
+  HyRolo is an advanced hierarchical, record-oriented retrieval system that
+  uses text files for storing its records.  Most often this is used for contact
+  management but it can quickly be adapted to most any record-oriented lookup
+  task requiring fast retrieval.  Press {M-RET} on "(hyperbole)HyRolo".
+
+** HyControl
+
+  Hyperbole includes the fastest, easiest-to-use Emacs window and frame
+  management system available, HyControl, found under the Hyperbole Screen
+  menu, {C-h h s}.  If you use a lot of Emacs windows or frames (native window
+  system windows), then this tool is for you.  Press {M-RET} on "(hyperbole)HyControl".
+
+** Koutliner
+
+  The Hyperbole Koutliner produces multi-level, autonumbered hierarchies of
+  cells.  Each cell has two identifiers, a relative autonumber indicating its
+  present position within the outline and a permanent identifier suitable for
+  use within hyperlink references to the cell.
+
+  A demonstration of the Koutliner is found on the Hyperbole Kotl/Example menu
+  entry.  {C-h h k e}, gives you an editable copy of Hyperbole's example
+  Koutliner file.  This explains the Koutliner commands and lets you try them
+  out as you learn.  Additional documentation can be found in
+  "(hyperbole)Koutliner".  "(hyperbole)Koutliner Keys" summarizes, in
+  alphabetical order, the Koutliner commands which are bound to keys.
+
+
+* Reference Documentation
+
+  As noted at the start, "DEMO" provides a more extensive, interactive look
+  into Hyperbole.  The even deeper Hyperbole reference manual covers in detail
+  how each button or action type works, how to create your own button and action
+  types and much more.  See "(hyperbole)" or use {C-h h d i}.
+
+  The Hyperbole Manual is a reference manual, not a simple introduction.  It is
+  included in the "${hyperb:dir}/man/" subdirectory of Hyperbole in four forms:
+
+    "man/hyperbole.info"   - online Info browser version
+    "man/hyperbole.html"   - web HTML version
+    "man/hyperbole.pdf"    - printable version
+    "man/hyperbole.texi"   - source form
+

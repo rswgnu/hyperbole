@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    31-Mar-21 at 21:11:00
-;; Last-Mod:     24-Jan-22 at 00:36:39 by Bob Weiner
+;; Last-Mod:     12-Feb-22 at 14:09:43 by Bob Weiner
 ;;
 ;; Copyright (C) 1991-2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -16,7 +16,7 @@
 (require 'kexport "kotl/kexport")
 (require 'kimport "kotl/kimport")
 
-(defvar hypb:web-repo-location "../hyperbole-web/"
+(defvar hypb:web-repo-location "../hyweb/hyperbole/"
   "The location of hyperbole repo for the web pages.")
 
 (defconst hypb:hy-news-header
@@ -64,6 +64,7 @@ Point `hypb:web-repo-location' to where the web repo is located."
   ;; DEMO DEMO-ROLO.otl
   (copy-file "DEMO" hypb:web-repo-location t)
   (copy-file "DEMO-ROLO.otl" hypb:web-repo-location t)
+  (copy-file "FAST-DEMO" hypb:web-repo-location t)
 
   ;; man recursive
   (copy-directory "man" hypb:web-repo-location nil t nil)
@@ -71,13 +72,14 @@ Point `hypb:web-repo-location' to where the web repo is located."
 	   (file-expand-wildcards (concat hypb:web-repo-location "man/im/*.eps")))
     (delete-file file))
 
-  ;; DEMO.html
-  (let ((export-buffer (make-temp-name "export")))
-    (kimport:star-outline "DEMO" export-buffer)
-    (kexport:html export-buffer (concat hypb:web-repo-location "DEMO.html") nil)
-    (with-current-buffer export-buffer
-      (set-buffer-modified-p nil)
-      (kill-buffer)))
+  ;; DEMO.html and FAST-DEMO.html
+  (dolist (file '("DEMO" "FAST-DEMO"))
+    (let ((export-buffer (make-temp-name "export")))
+      (kimport:star-outline file export-buffer)
+      (kexport:html export-buffer (concat hypb:web-repo-location file ".html") nil)
+      (with-current-buffer export-buffer
+	(set-buffer-modified-p nil)
+	(kill-buffer))))
 
   ;; koutline-example.html
   (kexport:html "kotl/EXAMPLE.kotl" (concat hypb:web-repo-location "koutline-example.html") nil)

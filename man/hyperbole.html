@@ -370,7 +370,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</P>
 
 <PRE>
 Edition 8.0.0pre
-Printed February 5, 2022.
+Printed February 12, 2022.
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -411,14 +411,15 @@ time on Hyperbole and love to hear user stories in addition to any
 problem reports.
 </p>
 <p>Before we delve into Hyperbole, a number of acknowledgments are in
-order.  Peter Wegner and Morris Moore encouraged the growth of this
-work.  Douglas Engelbart showed us the bigger picture and will forever
-be an inspiration.  His life-long quest at augmenting individual and
-team capabilities represents a model from which we continue to draw.
-Chris Nuzum has used Hyperbole since its inception, often
-demonstrating its power in creative ways.  Many thanks to Mats Lidell,
-a long-time Hyperbole user, who has helped maintain it throughout the
-years.  The Koutliner is dedicated to my lovely wife, Kathy.
+order.  Many thanks to Mats Lidell, a long-time Hyperbole user and
+developer, who maintains Hyperbole with me and with whom I enjoy
+interacting.  Peter Wegner and Morris Moore encouraged the growth of
+this work.  Douglas Engelbart showed us the bigger picture and will
+forever be an inspiration.  His life-long quest at augmenting
+individual and team capabilities represents a model from which we
+continue to draw.  Chris Nuzum has used Hyperbole since its inception,
+often demonstrating its power in creative ways.  The Koutliner is
+dedicated to my lovely wife, Kathy.
 </p>
 <table class="menu" border="0" cellspacing="0">
 <tr><td align="left" valign="top">&bull; <a href="#Introduction" accesskey="1">Introduction</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
@@ -953,17 +954,17 @@ It offers intuitive mouse-based control of information display within
 multiple windows.  It also provides point-and-click access to Info
 manuals, ftp archives, and the World-Wide Web (WWW).
 </p>
-<span id="index-file_002c-DEMO"></span>
+<span id="index-file_002c-FAST_002dDEMO"></span>
 <span id="index-Hyperbole-demo"></span>
 <span id="index-demo-file"></span>
 <span id="index-tutorial"></span>
 <p>This is a reference manual with extensive details about Hyperbole use.  If
 you prefer a simpler, more interactive introduction to Hyperbole,
-the <samp>DEMO</samp> file included in the Hyperbole distribution demonstrates
+the <samp>FAST-DEMO</samp> file included in the Hyperbole distribution demonstrates
 many of Hyperbole&rsquo;s standard facilities without the need to read through
-this reference manual.  The DEMO is a good way to rapidly understand some
+this reference manual.  The FAST-DEMO is a good way to rapidly understand some
 of what Hyperbole can do for you.  Once Hyperbole is installed,
-(see <a href="#Setup">Setup</a>), you can access the DEMO with the key sequence <kbd>{C-h h
+(see <a href="#Setup">Setup</a>), you can access the FAST-DEMO with the key sequence <kbd>{C-h h
 d d}</kbd>.
 </p>
 <p>See <a href="#Glossary">Glossary</a>, for definitions of Hyperbole terms.  In some cases,
@@ -1178,13 +1179,13 @@ for real-world usage and is well structured).
 </dl>
 
 <span id="index-C_002dh-h-d-d"></span>
-<span id="index-file_002c-DEMO-1"></span>
+<span id="index-file_002c-FAST_002dDEMO-1"></span>
 <span id="index-demonstration"></span>
 <span id="index-button-demo"></span>
 <p>Hyperbole may be used simply for browsing through documents
 pre-configured with Hyperbole buttons, in which case, you can safely
 ignore most of the information in this manual.  Jump right into the
-Hyperbole demonstration by typing <kbd>{C-h h d d}</kbd>, assuming Hyperbole
+Hyperbole fast demonstration by typing <kbd>{C-h h d d}</kbd>, assuming Hyperbole
 has been installed at your site.  If you need to install
 Hyperbole, see <a href="#Setup">Setup</a>, for Hyperbole installation and configuration
 information.  The demo offers a much less technical introduction to
@@ -2799,14 +2800,15 @@ minibuffer or the other window.
 </p>
 <span id="index-ibtypes-hyp_002dsource"></span>
 <span id="index-Hyperbole-report"></span>
+<span id="index-file_002c-DEMO"></span>
 </dd>
 <dt><code>hyp-source</code></dt>
 <dd><p>Turn source location entries following an &lsquo;@loc&gt;&rsquo; line in Hyperbole
 reports into buttons that jump to the associated location.  For
-example, <kbd>{C-h h d d C-h h e h o}</kbd> summarizes the properties of the
-explicit buttons in the <samp>DEMO</samp> file and each button in that report
+example, <kbd>{C-u C-h h d d C-h h e h o}</kbd> summarizes the properties of the
+explicit buttons in the <samp>${hyperb:dir}/DEMO</samp> file and each button in that report
 buffer behaves the same as the corresponding button in the original
-<samp>DEMO</samp> file.
+<samp>${hyperb:dir}/DEMO</samp> file.
 </p>
 <span id="index-ibtypes-hyp_002daddress"></span>
 <span id="index-Hyperbole-mail-list"></span>
@@ -3102,7 +3104,7 @@ handled elsewhere.
 </dd>
 <dt><code>git-reference</code></dt>
 <dd><p>Display the git entity associated with REFERENCE and optional PROJECT.
-See <samp>DEMO#Git (Local) References</samp> for examples.
+See <samp>${hyperb:dir}/DEMO#Git (Local) References</samp> for examples.
 </p>
 <p>REFERENCE is a string of one of the following forms:
 </p><ul>
@@ -3147,7 +3149,7 @@ produced by git log.
 </dd>
 <dt><code>github-reference</code></dt>
 <dd><p>Display the Github entity associated with REFERENCE and optional USER and PROJECT.
-See <samp>../DEMO#Github (Remote) References</samp> for examples.
+See <samp>${hyperb:dir}/DEMO#Github (Remote) References</samp> for examples.
 </p>
 <p>REFERENCE is a string of one of the following forms:
 </p><ul>
@@ -13207,9 +13209,10 @@ Next: <a href="#Concept-Index" accesskey="n" rel="next">Concept Index</a>, Previ
 <tr><td></td><td valign="top"><a href="#index-file_002c-_002eemacs-4">file, .emacs</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Default-Hyperbole-Bindings">Default Hyperbole Bindings</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-file_002c-_002ehypb">file, .hypb</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Explicit-Buttons">Explicit Buttons</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-file_002c-_002ekotl-suffix">file, .kotl suffix</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Creating-Outlines">Creating Outlines</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-file_002c-DEMO-1">file, DEMO</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Hyperbole-Overview">Hyperbole Overview</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-file_002c-DEMO">file, DEMO</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-file_002c-DIR">file, DIR</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-file_002c-EXAMPLE_002ekotl">file, EXAMPLE.kotl</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Koutliner">Koutliner</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-file_002c-FAST_002dDEMO-1">file, FAST-DEMO</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Hyperbole-Overview">Hyperbole Overview</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-file_002c-hactypes_002eel">file, hactypes.el</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Creating-Types">Creating Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-file_002c-hactypes_002eel-1">file, hactypes.el</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Creating-Action-Types">Creating Action Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-file_002c-hbut_002eel">file, hbut.el</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Creating-Action-Types">Creating Action Types</a></td></tr>
@@ -14097,7 +14100,7 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function</a>, Up: <a href
 <tr><th id="Concept-Index_cp_letter-F">F</th><td></td><td></td></tr>
 <tr><td></td><td valign="top"><a href="#index-file-display-function">file display function</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Internal-Viewers">Internal Viewers</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-file-viewer_002c-Treemacs">file viewer, Treemacs</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Mouse-Key-Modeline-Clicks">Smart Mouse Key Modeline Clicks</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-file_002c-DEMO">file, DEMO</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Manual-Overview">Manual Overview</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-file_002c-FAST_002dDEMO">file, FAST-DEMO</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Manual-Overview">Manual Overview</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-file_002c-hycontrol_002eel">file, hycontrol.el</a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyControl">HyControl</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-file_002c-importing">file, importing</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Inserting-and-Importing">Inserting and Importing</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-filename">filename</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>

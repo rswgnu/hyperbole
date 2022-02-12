@@ -436,9 +436,9 @@ See the [HY-COPY](HY-COPY) and [COPYING](COPYING) files for license information.
 
 See the [MANIFEST](MANIFEST) file for summaries of Hyperbole distribution files.
 
-See [DEMO](DEMO) for a demonstration of standard Hyperbole button capabilities.
-This is the best way to initially interactively learn about Hyperbole after
-installing it.
+See [FAST-DEMO](FAST-DEMO) for a demonstration of Hyperbole implicit button
+capabilities.  This is the best way to initially interactively learn about
+Hyperbole after installing it.
 
 Various forms of the Hyperbole are below the "man/" subdirectory.
 
@@ -447,10 +447,9 @@ Various forms of the Hyperbole are below the "man/" subdirectory.
 
 [MANIFEST](MANIFEST) summarizes most of the files in the distribution.
 
-See [DEMO](DEMO) for a demonstration of standard Hyperbole button
-capabilities.  This is the best way to initially interactively learn
-about Hyperbole.  The Hyperbole Manual is a reference manual, not a
-simple introduction.
+See [DEMO](DEMO) for a lengthier tutorial of standard Hyperbole button
+capabilities.  This is the best way to go deeper into all of Hyperbole.
+The Hyperbole Manual is a reference manual, not a simple introduction.
 
 Naming conventions:
 
@@ -510,6 +509,17 @@ Keys).
 
                         -- Aditya Siram  
 
+-------
+
+  GNU Hyperbole is a game-changer for your mental model of information
+  management and personal productivity.  Even if you don't use it you should
+  study one or two of the modules and compare them to how you solve the same
+  problem with your preferred tool of choice.  It is subtle, and subtle is one
+  of the hardest and post powerful things to reside in your mental landscape
+  these days.
+
+                        -- Grant Rettke__
+                           Org2Blog Maintainer
 -------
 
   For me, Emacs isn't Emacs without Hyperbole.  I have depended on Hyperbole

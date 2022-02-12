@@ -36,7 +36,7 @@
   (skip-unless (not noninteractive))
   (unwind-protect
       (progn
-        (should (hact 'kbd-key "C-h h d d"))
+        (should (hact 'kbd-key "C-u C-h h d d"))
         (hy-test-helpers:consume-input-events)
         (should (string= (buffer-name (current-buffer)) "DEMO" ))
         (should (hact 'kbd-key "C-h h a factorial RET"))

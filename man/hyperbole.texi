@@ -7,7 +7,7 @@
 @c Author:       Bob Weiner
 @c
 @c Orig-Date:     6-Nov-91 at 11:18:03
-@c Last-Mod:      5-Feb-22 at 22:38:23 by Bob Weiner
+@c Last-Mod:     12-Feb-22 at 14:02:21 by Bob Weiner
 
 @c %**start of header (This is for running Texinfo on a region.)
 @setfilename hyperbole.info
@@ -156,7 +156,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</P>
 
 <PRE>
 Edition 8.0.0pre
-Printed February 5, 2022.
+Printed February 12, 2022.
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -198,7 +198,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 @example
 Edition 8.0.0pre
-February 5, 2022
+February 12, 2022
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -239,14 +239,15 @@ time on Hyperbole and love to hear user stories in addition to any
 problem reports.
 
 Before we delve into Hyperbole, a number of acknowledgments are in
-order.  Peter Wegner and Morris Moore encouraged the growth of this
-work.  Douglas Engelbart showed us the bigger picture and will forever
-be an inspiration.  His life-long quest at augmenting individual and
-team capabilities represents a model from which we continue to draw.
-Chris Nuzum has used Hyperbole since its inception, often
-demonstrating its power in creative ways.  Many thanks to Mats Lidell,
-a long-time Hyperbole user, who has helped maintain it throughout the
-years.  The Koutliner is dedicated to my lovely wife, Kathy.
+order.  Many thanks to Mats Lidell, a long-time Hyperbole user and
+developer, who maintains Hyperbole with me and with whom I enjoy
+interacting.  Peter Wegner and Morris Moore encouraged the growth of
+this work.  Douglas Engelbart showed us the bigger picture and will
+forever be an inspiration.  His life-long quest at augmenting
+individual and team capabilities represents a model from which we
+continue to draw.  Chris Nuzum has used Hyperbole since its inception,
+often demonstrating its power in creative ways.  The Koutliner is
+dedicated to my lovely wife, Kathy.
 
 @menu
 * Introduction::
@@ -575,17 +576,17 @@ It offers intuitive mouse-based control of information display within
 multiple windows.  It also provides point-and-click access to Info
 manuals, ftp archives, and the World-Wide Web (WWW).
 
-@cindex file, DEMO
+@cindex file, FAST-DEMO
 @cindex Hyperbole demo
 @cindex demo file
 @cindex tutorial
 This is a reference manual with extensive details about Hyperbole use.  If
 you prefer a simpler, more interactive introduction to Hyperbole,
-the @file{DEMO} file included in the Hyperbole distribution demonstrates
+the @file{FAST-DEMO} file included in the Hyperbole distribution demonstrates
 many of Hyperbole's standard facilities without the need to read through
-this reference manual.  The DEMO is a good way to rapidly understand some
+this reference manual.  The FAST-DEMO is a good way to rapidly understand some
 of what Hyperbole can do for you.  Once Hyperbole is installed,
-(@pxref{Setup}), you can access the DEMO with the key sequence @bkbd{C-h h
+(@pxref{Setup}), you can access the FAST-DEMO with the key sequence @bkbd{C-h h
 d d}.
 
 @xref{Glossary}, for definitions of Hyperbole terms.  In some cases,
@@ -790,13 +791,13 @@ for real-world usage and is well structured).
 @end table
 
 @kindex C-h h d d
-@vindex file, DEMO
+@vindex file, FAST-DEMO
 @cindex demonstration
 @cindex button demo
 Hyperbole may be used simply for browsing through documents
 pre-configured with Hyperbole buttons, in which case, you can safely
 ignore most of the information in this manual.  Jump right into the
-Hyperbole demonstration by typing @bkbd{C-h h d d}, assuming Hyperbole
+Hyperbole fast demonstration by typing @bkbd{C-h h d d}, assuming Hyperbole
 has been installed at your site.  If you need to install
 Hyperbole, @pxref{Setup}, for Hyperbole installation and configuration
 information.  The demo offers a much less technical introduction to
@@ -2196,13 +2197,14 @@ minibuffer or the other window.
 
 @findex ibtypes hyp-source
 @cindex Hyperbole report
+@vindex file, DEMO
 @item hyp-source
 Turn source location entries following an `@@loc>' line in Hyperbole
 reports into buttons that jump to the associated location.  For
-example, @bkbd{C-h h d d C-h h e h o} summarizes the properties of the
-explicit buttons in the @file{DEMO} file and each button in that report
+example, @bkbd{C-u C-h h d d C-h h e h o} summarizes the properties of the
+explicit buttons in the @file{$@{hyperb:dir@}/DEMO} file and each button in that report
 buffer behaves the same as the corresponding button in the original
-@file{DEMO} file.
+@file{$@{hyperb:dir@}/DEMO} file.
 
 @findex ibtypes hyp-address
 @cindex Hyperbole mail list
@@ -2471,7 +2473,7 @@ handled elsewhere.
 @vindex hibtypes-git-default-project
 @item git-reference
 Display the git entity associated with REFERENCE and optional PROJECT.
-See @file{DEMO#Git (Local) References} for examples.
+See @file{$@{hyperb:dir@}/DEMO#Git (Local) References} for examples.
 
 REFERENCE is a string of one of the following forms:
 @itemize @bullet
@@ -2510,7 +2512,7 @@ produced by git log.
 @vindex hibtypes-github-default-user
 @item github-reference
 Display the Github entity associated with REFERENCE and optional USER and PROJECT.
-See @file{../DEMO#Github (Remote) References} for examples.
+See @file{$@{hyperb:dir@}/DEMO#Github (Remote) References} for examples.
 
 REFERENCE is a string of one of the following forms:
 @itemize @bullet
