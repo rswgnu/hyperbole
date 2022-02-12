@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    30-Jan-21 at 12:00:00
-;; Last-Mod:      6-Feb-22 at 13:40:46 by Bob Weiner
+;; Last-Mod:     12-Feb-22 at 11:20:05 by Bob Weiner
 ;;
 ;; Copyright (C) 2021-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -37,35 +37,43 @@
          ;; (linked-file "/var/folders/8s/b7pm6fms2nsc1x2651dpvrd00000gq/T/HHHH86evcO")
          (linked-file (make-temp-file "HHHH")))
     (unwind-protect
-	(cl-letf (((symbol-function 'kbd)
-		   (symbol-function 'kbd-key:kbd)))
-	  (write-region "" nil linked-file) ;; Ensure linked file has been created
-          (let ((create-gbut (format "abcd RET link-to-file RET %s RET y C-x C-s" linked-file))
-		(modify-gbut (format "abcd RET RET RET M-: (delete-minibuffer-contents) RET %s RET y" linked-file)))
-            (setenv "HOME" "/tmp")
+	(progn (make-directory default-directory t)
+	       (should (file-readable-p default-directory))
+	       (should (file-readable-p hbmap:dir-user))
+	       (cl-letf (((symbol-function 'kbd)
+			  (symbol-function 'kbd-key:kbd)))
+		 (write-region "" nil linked-file) ;; Ensure linked file has been created
+		 (let ((create-gbut (format "abcd RET link-to-file RET %s RET y C-x C-s" linked-file))
+		       (modify-gbut (format "abcd RET RET RET M-: (delete-minibuffer-contents) RET %s RET y" linked-file)))
+		   (setenv "HOME" "/tmp")
 
-            (set-buffer gbut-file-buffer)
-	    (with-simulated-input create-gbut
-              (hact (lambda () (call-interactively 'hui:gbut-create))))
+		   (set-buffer gbut-file-buffer)
+		   (with-simulated-input create-gbut
+		     (hact (lambda () (call-interactively 'hui:gbut-create))))
 
-            ;; Create using program
-            ;; (gbut:ebut-program "abcd" 'link-to-file linked-file)
+		   ;; Create using program
+		   ;; (gbut:ebut-program "abcd" 'link-to-file linked-file)
 
-	    (forward-char 2)
-            (should (eq (hattr:get (hbut:at-p) 'actype) 'actypes::link-to-file))
+		   (forward-char 2)
+		   (should (eq (hattr:get (hbut:at-p) 'actype) 'actypes::link-to-file))
 
-	    (goto-char (point-max)) ;; Move past button so does not prompt with label
-	    (with-simulated-input modify-gbut
-              (hact (lambda () (call-interactively 'hui:gbut-modify))))
+		   (goto-char (point-max)) ;; Move past button so does not prompt with label
+		   (with-simulated-input modify-gbut
+		     (hact (lambda () (call-interactively 'hui:gbut-modify))))
 
-            ;; (set-buffer gbut-file-buffer)
-	    (goto-char (+ (point-min) 2))
-            (should (eq (hattr:get (hbut:at-p) 'actype) 'actypes::link-to-file))
-	    t))
+		   ;; (set-buffer gbut-file-buffer)
+		   (goto-char (+ (point-min) 2))
+		   (should (eq (hattr:get (hbut:at-p) 'actype) 'actypes::link-to-file))
+		   t)))
       (setenv "HOME" old-home)
+      ;; Mainly save the temp gbut file even though it is going to be
+      ;; deleted to ensure file-write-hooks are run cleanly and no
+      ;; unsaved buffers are left open
+      (save-excursion
+	(set-buffer gbut-file-buffer)
+	(save-buffer))
       (when (file-writable-p hbmap:dir-user)
-	(delete-directory hbmap:dir-user t))
-      (save-some-buffers t))))
+	(delete-directory hbmap:dir-user t)))))
 
 (ert-deftest hui-ibut-label-create ()
   "Create a label for an implicit button."
