@@ -1,3 +1,12 @@
+2022-02-12  Bob Weiner  <rsw@gnu.org>
+
+* test/hui-tests.el (hui-gbut-modify-link-to-file-button): Fix order of
+    file save
+
+* hactypes.el (hactypes:link-to-file-interactively) Make this a
+    standalone function to simplify interactive call in 'link-to-file'
+    and simplify debugging.
+
 2022-02-08  Mats Lidell  <matsl@gnu.org>
 
 * hbut.el (ibut:at-p): Use copy-sequence, remove dependency on
