@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 20:45:31
-;; Last-Mod:     30-Jan-22 at 16:37:47 by Bob Weiner
+;; Last-Mod:     12-Feb-22 at 10:42:20 by Mats Lidell
 ;;
 ;; Copyright (C) 1991-2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -708,7 +708,7 @@ Requires the Emacs builtin Tramp library for ftp file retrievals."
          (label-and-file (nth 0 label-start-end))
          (start-pos (nth 1 label-start-end))
          (end-pos (nth 2 label-start-end))
-         lbl but-key lbl-key key-file partial-lbl)
+         but-key lbl-key key-file partial-lbl)
     (when label-and-file
       (setq label-and-file (parse-label-and-file label-and-file)
             partial-lbl (nth 0 label-and-file)

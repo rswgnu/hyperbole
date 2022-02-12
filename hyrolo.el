@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     7-Jun-89 at 22:08:29
-;; Last-Mod:     24-Jan-22 at 00:23:35 by Bob Weiner
+;; Last-Mod:     12-Feb-22 at 10:42:19 by Mats Lidell
 ;;
 ;; Copyright (C) 1991-2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -955,7 +955,7 @@ Return number of matching entries found."
     (hyrolo-grep-file hyrolo-file-or-buf regexp max-matches count-only)))
 
 ;; Derived from google-contacts.el.
-(defun hyrolo-google-contacts-insert-data (contacts token contact-prefix-string)
+(defun hyrolo-google-contacts-insert-data (contacts _token contact-prefix-string)
   (if (not contacts)
       ;; No contacts, insert a string and return nil
       (insert "No result.")
@@ -975,8 +975,6 @@ Return number of matching entries found."
              (organization-title (xml-node-child-string (nth 0 (xml-get-children organization-value 'gd:orgTitle))))
 
              (notes (xml-node-child-string (nth 0 (xml-get-children contact 'content))))
-             ;; Links
-             (links (xml-get-children contact 'link))
 
              ;; Multiple values
              ;; Format is ((rel-type . data) (rel-type . data) … )
@@ -1211,8 +1209,8 @@ Return number of groupings matched."
 	(hyrolo-kill-buffer actual-buf)
 	num-found))))
 
-(defun hyrolo-map-level-1 (actual-buf num-found exact-level-regexp
-				      outline-regexp buffer-read-only level-len func hyrolo-file-or-buf level-regexp max-groupings)
+(defun hyrolo-map-level-1 (_actual-buf num-found _exact-level-regexp
+				      outline-regexp buffer-read-only level-len func _hyrolo-file-or-buf _level-regexp _max-groupings)
   (setq num-found (1+ num-found))
   (let* ((opoint (prog1 (point) (beginning-of-line)))
 	 (grouping-start (point))
@@ -1230,21 +1228,20 @@ Return number of groupings matched."
 		      (progn (beginning-of-line)
 			     (setq next-level-len (length (match-string hyrolo-entry-group-number))
 				   grouping-end (< next-level-len level-len))
-			     (let ((end (point)))
-			       (goto-char start)
-			       (outline-hide-subtree) ; and hide multiple entry lines
-			       ;; Move to start of next entry at equal or higher level.
-			       ;; Remember last expression in `progn' must always
-			       ;; return non-nil to continue loop.
-			       (unless (setq start (outline-get-next-sibling))
-				 (catch 'error
-				   (if (and (outline-up-heading 1 t)
-					    (outline-get-next-sibling))
-				       (setq start (point))
-				     (goto-char (point-max))                   
-				     (skip-chars-backward " \t\n\r\f")
-				     (setq start nil))))
-			       start))
+			     (goto-char start)
+			     (outline-hide-subtree) ; and hide multiple entry lines
+			     ;; Move to start of next entry at equal or higher level.
+			     ;; Remember last expression in `progn' must always
+			     ;; return non-nil to continue loop.
+			     (unless (setq start (outline-get-next-sibling))
+			       (catch 'error
+				 (if (and (outline-up-heading 1 t)
+					  (outline-get-next-sibling))
+				     (setq start (point))
+				   (goto-char (point-max))                   
+				   (skip-chars-backward " \t\n\r\f")
+				   (setq start nil))))
+			     start)
 		    (setq grouping-end t)
 		    (outline-hide-subtree) ; hide multiple entry lines
 		    (goto-char (point-max))
@@ -1298,7 +1295,7 @@ HYROLO-BUF may be a file-name, `buffer-name', or buffer."
 	    ", "
 	    (substring name-str (match-beginning first) (match-end first)))))
 
-(defun hyrolo-highlight-matches (regexp start end)
+(defun hyrolo-highlight-matches (regexp start _end)
   "Highlight matches for REGEXP in region from START to END."
   (when (fboundp 'hproperty:but-add)
     (let ((hproperty:but-emphasize-flag))
@@ -1488,7 +1485,7 @@ Return point where matching entry begins or nil if not found."
     (widen)
     found))
 
-(defun hyrolo-to-buffer (buffer &optional other-window-flag frame)
+(defun hyrolo-to-buffer (buffer &optional other-window-flag _frame)
   "Pop to BUFFER."
   (pop-to-buffer buffer other-window-flag))
 

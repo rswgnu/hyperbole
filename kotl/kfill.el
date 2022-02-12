@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    23-Jan-94
-;; Last-Mod:     24-Jan-22 at 00:25:17 by Bob Weiner
+;; Last-Mod:     12-Feb-22 at 10:42:20 by Mats Lidell
 ;;
 ;; Copyright (C) 1994-2021  Free Software Foundation, Inc.
 ;; See the "../HY-COPY" file for license information.
@@ -85,13 +85,11 @@ Setting this variable automatically makes it local to the current buffer.")
 If there isn’t room, go as far as possible (no error).  Return the
 number of lines that could not be moved, otherwise 0."
   (or (integerp n) (setq n 1))
-  (let ((opoint (point)))
-    (forward-visible-line n)
-    (if (< n 0)
-	nil
-      (skip-chars-forward "\n\r"))
-;    (- (abs n) (count-matches "\n" opoint (point)))
-    0))
+  (forward-visible-line n)
+  (if (< n 0)
+      nil
+    (skip-chars-forward "\n\r"))
+  0)
 
 (defun kfill:do-auto-fill ()
   (save-restriction

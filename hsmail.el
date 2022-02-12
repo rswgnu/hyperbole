@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     9-May-91 at 04:50:20
-;; Last-Mod:      5-Feb-22 at 22:13:05 by Bob Weiner
+;; Last-Mod:     12-Feb-22 at 10:30:45 by Mats Lidell
 ;;
 ;; Copyright (C) 1991-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -79,8 +79,7 @@ message.  If not given, 'smail:comment' is evaluated by default."
 If supercite is in use, header fields are never deleted.
 Use (setq sc-nuke-mail-headers 'all) to have them removed."
   (let ((modified (buffer-modified-p))
-	body-text
-	opoint)
+	body-text)
 	(when (and message-reply-buffer
 		   message-cite-function)
 	  (when (equal message-cite-reply-position 'above)

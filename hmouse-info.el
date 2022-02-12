@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    04-Apr-89
-;; Last-Mod:     24-Jan-22 at 00:18:46 by Bob Weiner
+;; Last-Mod:     12-Feb-22 at 10:42:20 by Mats Lidell
 ;;
 ;; Copyright (C) 1989-2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -233,7 +233,7 @@ entry and returns t; otherwise returns nil."
 
 ;;; Much of this is derived in part from "info.el".
 
-(defun Info-build-menu-item-completions (string predicate action)
+(defun Info-build-menu-item-completions (string _predicate action)
   ;; See comments in `Info-complete-menu-item' for free variables used.
   (with-current-buffer Info-complete-menu-buffer
     (save-excursion
@@ -343,7 +343,7 @@ This works regardless of the current buffer."
 ;;;###autoload
 (defun Info-note-at-p ()
   "Return the name of the Info cross-reference note at point, or nil if none."
-  (let ((note-name) (opoint (point)))
+  (let ((opoint (point)))
     (save-excursion
       (skip-chars-forward "^:")
       (if (and (re-search-backward
@@ -373,7 +373,6 @@ See `completing-read' for a description of arguments and usage."
    ;; If a file name was given, complete index-items in the file.
    ((string-match "\\`(\\([^)]+\\))" string)
     (let ((file0 (match-string 0 string))
-	  (file1 (match-string 1 string))
 	  (index-item (substring string (match-end 0)))
 	  Info-complete-nodes
 	  completions)

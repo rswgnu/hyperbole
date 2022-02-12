@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Oct-95 at 15:17:07
-;; Last-Mod:     24-Jan-22 at 00:25:33 by Bob Weiner
+;; Last-Mod:     12-Feb-22 at 10:42:20 by Mats Lidell
 ;;
 ;; Copyright (C) 1995-2021  Free Software Foundation, Inc.
 ;; See the "../HY-COPY" file for license information.
@@ -103,7 +103,7 @@ display all levels of cells."
   (if (< levels-to-keep 0)
       (error "(kvspec:levels-to-show): Must display at least one level"))
   (kview:map-tree
-   (lambda (kview)
+   (lambda (_kview)
      (if (/= (kcell-view:level) levels-to-keep)
 	 (kotl-mode:show-tree)
        (kotl-mode:hide-subtree)
@@ -121,7 +121,7 @@ display all levels of cells."
       (error "(kvspec:show-lines-per-cell): Invalid lines per cell, `%d'" num))
   (kview:set-attr kview 'lines-to-show num)
   ;; Now show NUM lines in cells.
-  (kview:map-tree (lambda (kview)
+  (kview:map-tree (lambda (_kview)
 		    (kcell-view:expand (point))
 		    (kvspec:show-lines-this-cell num)) kview t t))
 
@@ -263,7 +263,7 @@ view specs."
 If NUM is less than 1 or greater than the number of lines available, the cell remains fully expanded."
   ;; Use free variable label-sep-len bound in kview:map-* for speed.
   (unless (< num 1)
-    (let ((start (goto-char (kcell-view:start (point) label-sep-len)))
+    (let ((_start (goto-char (kcell-view:start (point) label-sep-len)))
 	  (end (kcell-view:end-contents)))
       ;; Hide all but num lines of the cell.
       (and (search-forward "\n" end t num)

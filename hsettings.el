@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    15-Apr-91 at 00:48:49
-;; Last-Mod:     24-Jan-22 at 00:18:47 by Bob Weiner
+;; Last-Mod:     12-Feb-22 at 10:42:19 by Mats Lidell
 ;;
 ;; Copyright (C) 1991-2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -213,7 +213,7 @@ to your personal Emacs initialization file, prior to loading
 Hyperbole, and then restart Emacs."
   :type 'boolean
   :initialize #'custom-initialize-set
-  :set (lambda (symbol value)
+  :set (lambda (_symbol value)
 	 ;; Invert value to produce ARG for hyperbole-toggle-messaging.
 	 (hyperbole-toggle-messaging (if value 0 1)))
   :group 'hyperbole-buttons)

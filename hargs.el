@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    31-Oct-91 at 23:17:35
-;; Last-Mod:      5-Feb-22 at 21:48:56 by Bob Weiner
+;; Last-Mod:     12-Feb-22 at 10:11:21 by Mats Lidell
 ;;
 ;; Copyright (C) 1991-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -788,7 +788,7 @@ help when appropriate."
 		   prompt
 		   ;; Match to "0" and visible cell labels only
 		   (cons "0"
-			 (kview:map-tree (lambda (kview) (kcell-view:label)) kview t t))
+			 (kview:map-tree (lambda (_kview) (kcell-view:label)) kview t t))
 		   nil t (kcell-view:visible-label) 'kcell)))
    ;; Get kcell or path reference for use in a link.
    (?L . (klink . (hargs:read prompt nil default nil 'klink)))

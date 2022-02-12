@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    15-Oct-91 at 20:13:17
-;; Last-Mod:      5-Feb-22 at 22:33:19 by Bob Weiner
+;; Last-Mod:     12-Feb-22 at 10:34:50 by Mats Lidell
 ;;
 ;; Copyright (C) 1991-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -322,8 +322,7 @@ documentation, not the full text."
 	 (keys (apply #'list 0 1 select-char exit-char quit-char abort-char
 		      top-char item-keys))
 	 (key 0)
-	 (hargs:reading-type 'hmenu)
-	 sublist)
+	 (hargs:reading-type 'hmenu))
     (while (not (memq (setq key (upcase
 				 (string-to-char
 				  (read-from-minibuffer

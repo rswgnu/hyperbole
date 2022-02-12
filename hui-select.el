@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Oct-96 at 02:25:27
-;; Last-Mod:     31-Jan-22 at 00:48:38 by Bob Weiner
+;; Last-Mod:     12-Feb-22 at 10:42:19 by Mats Lidell
 ;;
 ;; Copyright (C) 1996-2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -352,7 +352,7 @@ Also, add language-specific syntax setups to aid in thing selection."
   ;;
   ;; Make tag begin and end delimiters act like grouping characters,
   ;; for easy syntactical selection of tags.
-  (let (hook-sym syntax-table keymap mode-str)
+  (let (hook-sym mode-str)
     (mapc (lambda (mode)
             (setq mode-str (symbol-name mode)
                   hook-sym (intern (concat mode-str "-hook"))
@@ -1421,7 +1421,7 @@ list, hui-select-markup-modes."
     (hui-select-set-region (progn (backward-page) (point))
 			   (progn (forward-page) (point)))))
 
-(defun hui-select-buffer (pos)
+(defun hui-select-buffer (_pos)
   "Return (start . end) of the buffer at POS."
   (setq hui-select-previous 'buffer)
   (hui-select-set-region (point-min) (point-max)))

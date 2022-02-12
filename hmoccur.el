@@ -3,7 +3,7 @@
 ;; Author:       Markus Freericks <Mfx@cs.tu-berlin.de> / Bob Weiner
 ;;
 ;; Orig-Date:     1-Aug-91
-;; Last-Mod:     24-Jan-22 at 00:18:46 by Bob Weiner
+;; Last-Mod:     12-Feb-22 at 10:22:49 by Mats Lidell
 ;;
 ;; Copyright (C) 1991-2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -84,7 +84,6 @@ serves as a menu to find any of the occurrences in this buffer.
     (insert "Lines matching '" regexp "':\n\n")
     (let ((currbuf) (currfile) (kill-buf)
 	  ;; Disable syntax highlighting of new buffers created by this command.
-	  (font-lock-auto-fontify) ;; For XEmacs and InfoDock
 	  (font-lock-global-modes) ;; For GNU Emacs
 	  )
       (while buffers

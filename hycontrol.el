@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     1-Jun-16 at 15:35:36
-;; Last-Mod:     31-Jan-22 at 00:33:24 by Bob Weiner
+;; Last-Mod:     12-Feb-22 at 10:34:32 by Mats Lidell
 ;;
 ;; Copyright (C) 2016-2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -1277,8 +1277,7 @@ If already at the top, adjust its height to ARG percent of the screen (50% by de
 if ARG is 1 or nil) but keep it at the top of the screen."
   (interactive "p")
   (setq arg (hycontrol-frame-resize-percentage arg))
-  (let ((frame-resize-pixelwise t)
-	(top (nth 1 (hycontrol-frame-edges))))
+  (let ((frame-resize-pixelwise t))
     (if (hycontrol-frame-at-top-p)
 	;; Reduce frame height to ARG percent, keeping top side fixed.
 	(set-frame-height nil (floor (* (frame-pixel-height) arg)) nil t)
@@ -1750,8 +1749,7 @@ otherwise, delete the original window."
   (interactive)
   (let ((w (selected-window))
 	(frame-resize-pixelwise t)
-	(only-one-window (one-window-p))
-	buf)
+	(only-one-window (one-window-p)))
     (cond ((window-minibuffer-p w)
 	   (beep)
 	   (minibuffer-message "(Hyperbole): Select a non-minibuffer window"))

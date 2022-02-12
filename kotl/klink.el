@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    15-Nov-93 at 12:15:16
-;; Last-Mod:     29-Jan-22 at 10:54:02 by Bob Weiner
+;; Last-Mod:     12-Feb-22 at 10:05:44 by Mats Lidell
 ;;
 ;; Copyright (C) 1993-2021  Free Software Foundation, Inc.
 ;; See the "../HY-COPY" file for license information.
@@ -92,11 +92,10 @@ See documentation for `kcell:ref-to-id' for valid cell-ref formats."
   (interactive
    ;; Don't change the name or delete default-dir used here.  It is referenced
    ;; in "hargs.el" for argument getting.
-   (let ((default-dir default-directory))
-     (barf-if-buffer-read-only)
-     (save-excursion
-       (hargs:iform-read
-	(list 'interactive "*+LInsert link to <[file,] cell-id [|vspecs]>: ")))))
+   (barf-if-buffer-read-only)
+   (save-excursion
+     (hargs:iform-read
+      (list 'interactive "*+LInsert link to <[file,] cell-id [|vspecs]>: "))))
   (barf-if-buffer-read-only)
   ;; Reference generally is a string.  It may be a list as a string, e.g.
   ;; "(\"file\" \"cell\")", in which case, we remove the unneeded internal
@@ -104,8 +103,7 @@ See documentation for `kcell:ref-to-id' for valid cell-ref formats."
   (and (stringp reference) (> (length reference) 0)
        (eq (aref reference 0) ?\()
        (setq reference (hypb:replace-match-string "\\\"" reference "" t)))
-  (let ((default-dir default-directory)
-	file-ref cell-ref)
+  (let (file-ref cell-ref)
     (setq reference (klink:parse reference)
 	  file-ref  (car reference)
 	  cell-ref  (car (cdr reference)))

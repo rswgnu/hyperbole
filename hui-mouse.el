@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    04-Feb-89
-;; Last-Mod:     24-Jan-22 at 00:18:48 by Bob Weiner
+;; Last-Mod:     12-Feb-22 at 10:36:40 by Mats Lidell
 ;;
 ;; Copyright (C) 1991-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -1615,7 +1615,7 @@ If not on a file name, returns nil."
 ;;; smart-org functions
 ;;; ************************************************************************
 
-(defun smart-org (&optional assist-flag)
+(defun smart-org (&optional _assist-flag)
   "If `hsys-org-enable-smart-keys' is non-nil, follow Org mode references, cycles outline visibility and executes code blocks.
 
 When the Action Key is pressed:
