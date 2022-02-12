@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    23-Sep-91 at 20:34:36
-;; Last-Mod:      5-Feb-22 at 11:39:05 by Bob Weiner
+;; Last-Mod:     12-Feb-22 at 10:38:30 by Bob Weiner
 ;;
 ;; Copyright (C) 1991-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -326,74 +326,77 @@ Interactively, KEY-FILE defaults to the current buffer's file name."
 	     (hpath:display-buffer (help-buffer))
 	     (describe-symbol symbol)))))
 
+(defun  hactypes:link-to-file-interactively ()
+  "Get a path to link to and return it as a one item list."
+  (let ((prev-reading-p hargs:reading-type)
+	(existing-buf t)
+	path-buf)
+    (unwind-protect
+	(let* ((default-directory (or (hattr:get 'hbut:current 'dir)
+				      (file-name-directory
+				       (or (hattr:get 'hbut:current 'loc) ""))
+				      default-directory))
+	       (file-path (or (car hargs:defaults) default-directory))
+	       (file-point (cadr hargs:defaults))
+	       (hargs:reading-type 'file)
+	       ;; If reading interactive inputs from a key series
+	       ;; (puts key events into the unread queue), then don't
+	       ;; insert default-directory into the minibuffer
+	       ;; prompt, allowing time to remove any extra pathname
+	       ;; quotes added in the key series.
+	       (insert-default-directory (not unread-command-events))
+	       ;; Remove any double quotes and whitespace at the
+	       ;; start and end of the path that interactive use may
+	       ;; have introduced.
+	       (path (hpath:trim (read-file-name "Path to link to: "
+						 file-path file-path)))
+	       (orig-path path)
+	       path-line-and-col
+	       line-num
+	       column-num
+	       normalized-path)
+	  ;; Handle if :line:column are included in path.
+	  (setq path-line-and-col (hpath:file-line-and-column path))
+	  (when path-line-and-col
+	    (setq path (nth 0 path-line-and-col)
+		  line-num (nth 1 path-line-and-col)
+		  column-num (nth 2 path-line-and-col)))
+	  ;; Ensure any variables and heading suffixes following
+	  ;; [#,] are removed before doing path matching.
+	  (setq normalized-path (or (hpath:is-p path) path))
+	  (when (not (or (file-name-absolute-p path)
+			 (string-match "\\`\\$\{" path)))
+	    (setq path (concat default-directory path)))
+	  (setq existing-buf (get-file-buffer normalized-path)
+		path-buf (or existing-buf
+			     (and (file-readable-p normalized-path)
+				  (prog1 (set-buffer (find-file-noselect normalized-path t))
+				    (when (integerp file-point)
+				      (goto-char (min (point-max) file-point)))))))
+	  (if (and path-buf (not line-num))
+	      (with-current-buffer path-buf
+		(setq hargs:reading-type 'character)
+		(if (y-or-n-p
+		     (format "y = Display at present position (line %d); n = no position? "
+			     (count-lines 1 (point))))
+		    (list path (point))
+		  (list path)))
+	    (if path-buf
+		(delq nil (list path (save-excursion
+				       (goto-char (point-min))
+				       (forward-line (1- line-num))
+				       (when column-num (move-to-column column-num))
+				       (point))))
+	      (list (or path orig-path)))))
+      (setq hargs:reading-type prev-reading-p)
+      (when (and path-buf (not existing-buf))
+	(kill-buffer path-buf)))))
+
 (defact link-to-file (path &optional point)
   "Display a file given by PATH scrolled to optional POINT.
 If POINT is given, display the buffer with POINT at the top of
 the window or as close as possible."
-  (interactive
-   (let ((prev-reading-p hargs:reading-type)
-	 (existing-buf t)
-	 path-buf)
-     (unwind-protect
-	 (let* ((default-directory (or (hattr:get 'hbut:current 'dir)
-				       (file-name-directory
-					(or (hattr:get 'hbut:current 'loc) ""))
-				       default-directory))
-		(file-path (or (car hargs:defaults) default-directory))
-		(file-point (cadr hargs:defaults))
-		(hargs:reading-type 'file)
-		;; If reading interactive inputs from a key series
-		;; (puts key events into the unread queue), then don't
-		;; insert default-directory into the minibuffer
-		;; prompt, allowing time to remove any extra pathname
-		;; quotes added in the key series.
-		(insert-default-directory (not unread-command-events))
-		;; Remove any double quotes and whitespace at the
-		;; start and end of the path that interactive use may
-		;; have introduced.
-		(path (hpath:trim (read-file-name "Path to link to: "
-						  file-path file-path)))
-		(orig-path path)
-		path-line-and-col
-		line-num
-		column-num
-		normalized-path)
-	   ;; Handle if :line:column are included in path.
-	   (setq path-line-and-col (hpath:file-line-and-column path))
-	   (when path-line-and-col
-	     (setq path (nth 0 path-line-and-col)
-		   line-num (nth 1 path-line-and-col)
-		   column-num (nth 2 path-line-and-col)))
-	   ;; Ensure any variables and heading suffixes following
-	   ;; [#,] are removed before doing path matching.
-	   (setq normalized-path (hpath:is-p path))
-	   (when (not (or (file-name-absolute-p path)
-			  (string-match "\\`\\$\{" path)))
-	     (setq path (concat default-directory path)))
-	   (setq existing-buf (get-file-buffer normalized-path)
-		 path-buf (or existing-buf
-			      (and (file-readable-p normalized-path)
-				   (prog1 (set-buffer (find-file-noselect normalized-path t))
-				     (when (integerp file-point)
-				       (goto-char (min (point-max) file-point)))))))
-	   (if (and path-buf (not line-num))
-	       (with-current-buffer path-buf
-		 (setq hargs:reading-type 'character)
-		 (if (y-or-n-p
-		      (format "y = Display at present position (line %d); n = no position? "
-			      (count-lines 1 (point))))
-		     (list path (point))
-		   (list path)))
-	     (if path-buf
-		 (delq nil (list path (save-excursion
-					(goto-char (point-min))
-					(forward-line (1- line-num))
-					(when column-num (move-to-column column-num))
-					(point))))
-	       (list (or path orig-path)))))
-       (setq hargs:reading-type prev-reading-p)
-       (when (and path-buf (not existing-buf))
-	 (kill-buffer path-buf)))))
+  (interactive (hactypes:link-to-file-interactively))
   (if path
       (progn
 	;; Remove any double quotes and whitespace at the start and end of
