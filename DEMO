@@ -881,11 +881,14 @@ fifth line at the seventh character.
 
 ----
 
-As another example, suppose you want to do a web search for Emacs Lisp libraries whose names may be very generic, like hyperbole.  For this, you can use a Google filetype-specific search.
+As another example, suppose you want to do a web search for Emacs Lisp
+libraries whose names may be very generic, like hyperbole.  For this,
+you can use a Google filetype-specific search.
 
 Define an action link type with:
 
-    (defal elsearch "https://www.google.com/search?q=%s+filetype:el" "Find Elisp libraries via a Google file type search")
+    (defal elsearch "https://www.google.com/search?q=%s+filetype:el"
+           "Find Elisp libraries via a Google file type search")
 
 Then, an Action Key press on:
 

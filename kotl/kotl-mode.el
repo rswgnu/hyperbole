@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    6/30/93
-;; Last-Mod:     29-Jan-22 at 09:58:17 by Bob Weiner
+;; Last-Mod:     12-Feb-22 at 18:19:52 by Bob Weiner
 ;;
 ;; Copyright (C) 1993-2021  Free Software Foundation, Inc.
 ;; See the "../HY-COPY" file for license information.
@@ -1726,6 +1726,7 @@ part of the paragraph, or the end of the buffer."
 (defun kotl-mode:goto-cell (cell-ref &optional error-p)
   "Move point to start of cell given by CELL-REF (see `kcell:ref-to-id').
 Return point if CELL-REF is found within current view, else nil.
+(See the doc for `kcell:ref-to-id', for valid formats).
 
 With optional second arg ERROR-P non-nil, or if called
 interactively, will signal an error if CELL-REF is not found
@@ -1740,7 +1741,7 @@ for CELL-REF."
 	     (prefix-numeric-value current-prefix-arg)
 	   (read-string "Goto cell label or id: "))))
   (setq cell-ref
-	(or (kcell:ref-to-id cell-ref)
+	(or (kcell:ref-to-id cell-ref t)
 	    (error "(kotl-mode:goto-cell): Invalid cell reference, `%s'" cell-ref)))
   (let* ((opoint (point))
 	 (found)

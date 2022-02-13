@@ -1,5 +1,20 @@
 2022-02-12  Bob Weiner  <rsw@gnu.org>
 
+* kotl/klink.el (klink:act): Add save-excursion, so point always ends
+    at the right place in displayed buffer after the relative id
+    is updated when out-of-date.
+
+* kotl/kcell.el (kcell:ref-to-id): Fix viewspec parsing by adding
+   the optional 'kviewspec-flag' parameter.
+  kotl/kview.el (kcell-view:cell-from-ref): Test that ref is an int.
+  kotl/kotl-mode.el (kotl-mode:goto-cell):
+  kotl/klink.el (link-to-kotl): Send true kviewspec-flag to
+    kcell:ref-to-id calls.
+
+* hib-social.el (git-commit-reference):
+  man/hyperbole.texi (git-commit-reference): Update doc to include
+    commands `hypb:fgrep-git-log' and `hypb:grep-git-log'.
+
 * hypb-maintenance.el (hypb:web-repo-location): Update to RSW's Hyperbole
     local website path.
 

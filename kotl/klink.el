@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    15-Nov-93 at 12:15:16
-;; Last-Mod:     29-Jan-22 at 10:54:02 by Bob Weiner
+;; Last-Mod:     12-Feb-22 at 18:50:58 by Bob Weiner
 ;;
 ;; Copyright (C) 1993-2021  Free Software Foundation, Inc.
 ;; See the "../HY-COPY" file for license information.
@@ -203,7 +203,7 @@ See documentation for the `link-to-kotl' function for valid klink formats."
 
 (defact link-to-kotl (link)
   "Display at the top of another window the referent pointed to by LINK.
-LINK may be of any of the following forms:
+LINK may be of any of the following forms; the <> are optional:
   < pathname [, cell-ref] >
   < [-!&] pathname >
   < @ cell-ref >
@@ -221,7 +221,7 @@ See documentation for `kcell:ref-to-id' for valid cell-ref formats."
     ;; < @ cell-ref > or < |viewspec > or < :augment-viewspec >
     (hact 'link-to-kcell
 	  nil
-	  (kcell:ref-to-id (match-string 1 link))))
+	  (kcell:ref-to-id (match-string 1 link) t)))
    ((and (string-match
 	  (format "\\`<?\\s-*\\([^ \t\n\r\f,<>]+\\)\\s-*\\(,\\s-*\\(%s\\)\\)?\\s-*>?\\'"
 		  klink:cell-ref-regexp)
@@ -229,7 +229,7 @@ See documentation for `kcell:ref-to-id' for valid cell-ref formats."
 	 (match-end 3))
     ;; < pathname, cell-ref >
     (hact 'link-to-kcell (match-string 1 link)
-	  (kcell:ref-to-id (match-string 3 link))))
+	  (kcell:ref-to-id (match-string 3 link) t)))
    ((string-match
      "\\`<?\\s-*\\(\\([-!&]\\)?\\s-*[^ \t\n\r\f,<>]+\\)\\s-*>?\\'" link)
     ;; < [-!&] pathname >
@@ -245,9 +245,10 @@ See documentation for `kcell:ref-to-id' for valid cell-ref formats."
   (let ((obuf (current-buffer)))
     ;; Perform klink's action which is to jump to link referent.
     (hact 'link-to-kotl link)
-    ;; Update klink label if need be, which might be in a different buffer
-    ;; than the current one.
-    (klink:update-label link start-pos obuf)))
+    (save-excursion
+      ;; Update klink label if need be, which might be in a different buffer
+      ;; than the current one.
+      (klink:update-label link start-pos obuf))))
 
 (defun klink:parse (reference)
   "Return (file-ref cell-ref) list parsed from REFERENCE string.

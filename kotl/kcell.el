@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    5/1/1993
-;; Last-Mod:     24-Jan-22 at 00:25:12 by Bob Weiner
+;; Last-Mod:     12-Feb-22 at 19:02:00 by Bob Weiner
 ;;
 ;; Copyright (C) 1993-2021  Free Software Foundation, Inc.
 ;; See the "../HY-COPY" file for license information.
@@ -76,10 +76,14 @@ not already there."
 
 (defalias 'kcell:plist 'identity)
 
-(defun kcell:ref-to-id (cell-ref)
+(defun kcell:ref-to-id (cell-ref &optional kviewspec-flag)
   "When CELL-REF is valid, return a CELL-REF string converted to a cell idstamp (integer).
 If CELL-REF contains both a relative and a permanent id, the permanent id is
 returned.  If CELL-REF is invalid, nil is returned.
+
+If optional KVIEWSPEC-FLAG is non-nil and CELL-REF includes a
+viewspec, return the concatenation of the idstamp, an optional space
+and the viewspec.
 
 CELL-REF may be a whole number:
 
@@ -90,7 +94,7 @@ or any of the following string forms:
   1.2       - relative id, legal style
   012       - permanent idstamp
   1a=012    - both relative and permanent ids (in that order) separated by =
-  |viewspec - a viewspec setting, rather than a cell reference
+  |viewspec - a koutliner viewspec setting, rather than a cell reference
   :viewspec - an augment viewspec, ignored for now.
 
 Optionally, any of these id forms (or the relative form) may be followed by
@@ -101,52 +105,53 @@ Augment capabilities not yet implemented and ignored for now:
   1. Augment viewspec characters preceded by a colon
   2. Any of the above id forms followed by a period and some
      alpha characters indicating a location relative to the id."
-  (cond ((integerp cell-ref)
-	 (if (zerop cell-ref)
-	     0
-	   (when (kproperty:position 'idstamp cell-ref)
-	     cell-ref)))
-	((stringp cell-ref)
-	 (setq cell-ref (hypb:replace-match-string "\\s-+" cell-ref "" t))
-	 (if (string-equal cell-ref "0")
-	     0
-	   (let (specs
-		 result)
-	     ;; Ignore Augment :viewspecs.
-	     (when (string-match ":" cell-ref)
-	       (setq cell-ref (substring cell-ref 0 (match-beginning 0))))
-	     ;; Separate koutline |viewspecs from cell id.
-	     (when (string-match "\\(\\.[a-zA-Z]\\||\\)" cell-ref)
-	       (setq specs (substring cell-ref (match-beginning 1))
-		     cell-ref (substring cell-ref 0 (match-beginning 0))))
-	     (setq result
-		   (cond
-		    ((string-match "[^.= \t\n\r\f0-9a-zA-Z]" cell-ref) nil)
-		    ((or (string-match "^\\([.0-9a-zA-Z]+\\)=\\(0[0-9]*\\)$"
-				       cell-ref)
-			 ;; idstamp only
-			 (string-match "^\\(\\)\\(0[0-9]*\\)$" cell-ref))
-		     (setq result (string-to-number (match-string 2 cell-ref)))
-		     ;; Validate that idstamp value exists, else return nil
-		     (when (kproperty:position 'idstamp result)
-		       result))
-		    ((string-match "^\\([.0-9a-zA-Z]+\\)$" cell-ref)
-		     ;; relative label
-		     (setq result (match-string 1 cell-ref))
-		     (save-excursion
-		       (goto-char (point-min))
-		       (when (re-search-forward (concat "^[ \t]*" (regexp-quote result)
-							(regexp-quote (kview:label-separator kview)))
-						nil t)
+    (cond ((integerp cell-ref)
+	   (if (zerop cell-ref)
+	       0
+	     (when (kproperty:position 'idstamp cell-ref)
+	       cell-ref)))
+	  ((stringp cell-ref)
+	   (let (kviewspec
+		 idstamp-string)
+	     (setq cell-ref (hypb:replace-match-string "\\s-+" cell-ref "" t))
+	     (if (string-equal cell-ref "0")
+		 "0"
+	       ;; Ignore Augment :viewspec.
+	       (when (string-match ":" cell-ref)
+		 (setq cell-ref (substring cell-ref 0 (match-beginning 0))))
+	       ;; Separate koutline |kviewspec from cell id.
+	       (when (string-match "|" cell-ref)
+		 (setq kviewspec (substring cell-ref (match-beginning 0))
+		       cell-ref (substring cell-ref 0 (match-beginning 0))))
+	       (setq idstamp-string
+		     (cond
+		      ((string-match-p "[^.= \t\n\r\f0-9a-zA-Z]" cell-ref) nil)
+		      ((or (string-match "^\\([.0-9a-zA-Z]+\\)=\\(0[0-9]*\\)$"
+					 cell-ref)
+			   ;; idstamp only
+			   (string-match "^\\(\\)\\(0[0-9]*\\)$" cell-ref))
+		       (setq idstamp-string (match-string 2 cell-ref))
+		       ;; Validate that idstamp value exists, else return nil
+		       (when (kproperty:position 'idstamp (string-to-number idstamp-string))
+			 idstamp-string))
+		      ((string-match "^\\([.0-9a-zA-Z]+\\)$" cell-ref)
+		       ;; relative label
+		       (setq idstamp-string (match-string 1 cell-ref))
+		       (save-excursion
+			 (goto-char (point-min))
+			 (when (re-search-forward (concat "^[ \t]*" (regexp-quote idstamp-string)
+							  (regexp-quote (kview:label-separator kview)))
+						  nil t)
 
-			 (setq result (string-to-number (kcell-view:idstamp)))
-			 ;; Validate that idstamp value exists, else return nil
-			 (when (kproperty:position 'idstamp result)
-			   result))))))
-	     (cond (result
-		    (if specs (concat result specs) result))
-		   (specs
-		    (when (eq ?| (aref specs 0)) specs))))))))
+			   (setq idstamp-string (kcell-view:idstamp))
+			   ;; Validate that idstamp value exists, else return nil
+			   (when (kproperty:position 'idstamp (string-to-number idstamp-string))
+			     idstamp-string)))))))
+	     (if idstamp-string
+		 (if (and kviewspec-flag kviewspec)
+		     (concat idstamp-string kviewspec)
+		   (string-to-number idstamp-string))
+	       kviewspec)))))
 	
 (defun kcell:remove-attr (kcell attribute)
   "Remove KCELL's ATTRIBUTE, if any, and return modified KCELL."

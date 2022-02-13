@@ -3134,12 +3134,19 @@ See <samp>${hyperb:dir}/DEMO#Git (Local) References</samp> for examples.
 value is provided, it defaults to the value of <code>hibtypes-git-default-project</code>. 
 </p>
 <span id="index-ibtypes-git_002dcommit_002dreference"></span>
+<span id="index-hypb_003afgrep_002dgit_002dlog"></span>
+<span id="index-hypb_003agrep_002dgit_002dlog"></span>
 <span id="index-git-commit-reference"></span>
+<span id="index-git-grep"></span>
+<span id="index-git-log-grep_002fmatch"></span>
 <span id="index-version-control-1"></span>
 </dd>
 <dt><code>git-commit-reference</code></dt>
-<dd><p>Display the diff for a git commit reference, e.g. commit a55e21, typically
-produced by git log.
+<dd><p>Display the changeset for a git commit reference, e.g. commit a55e21, typically
+produced by git log.  Hyperbole also includes two commands, <code>hypb:fgrep-git-log</code>
+and <code>hypb:grep-git-log</code> to list git commit references whose changesets contain
+either the string (fgrep) or regular expression (grep) given.  Then an Action Key
+press displays the associated changeset.
 </p>
 <span id="index-ibtypes-github_002dreference"></span>
 <span id="index-github-reference"></span>
@@ -4524,7 +4531,7 @@ access to popular web search engines.
 <p>The Find/Web menu looks like this:
 </p>
 <div class="example">
-<pre class="example">Web&gt;  Amazon Bing Dictionary Elisp Facebook Google Hub(git)
+<pre class="example">Web&gt;  Amazon Bing Dictionary Elisp Facebook Google gitHub
       Images Maps RFCs StackOverflow Twitter Wikipedia Youtube
 </pre></div>
 </li></ul>
@@ -7655,7 +7662,7 @@ text (&lsquo;<samp>\\&amp;</samp>&rsquo;) or any numbered grouping from TEXT-REG
 e.g. &lsquo;<samp>\\1</samp>&rsquo;, may be referenced in the LINK-EXPR to form the
 link referent.
 </p>
-<p>Here is a sample use case.  Let&rsquo;s create a button type whose whose
+<p>Here is a sample use case.  Let&rsquo;s create a button type whose
 buttons perform a grep-like function over a current repo&rsquo;s git log
 entries.  The buttons use this format: [&lt;text to match&gt;].
 </p>
@@ -7680,7 +7687,10 @@ Hyperbole source buffer, an Action Key press on a button of the form:
 release&rsquo;.  An Action Key press on any such line will then display the
 commit changes.
 </p>
-
+<p>If you don&rsquo;t mind extra text for every button, you could instead use
+Action Buttons of the form: &lt;hypb:fgrep-git-log &quot;string&quot;&gt; to do the
+same thing without any special definitions.
+</p>
 <hr>
 <span id="Programmatic-Implicit-Button-Types"></span><div class="header">
 <p>
@@ -9799,7 +9809,7 @@ Return number of cells left to move.
 </dd>
 <dt><code>kotl-mode:goto-cell  <kbd>{C-c g}</kbd></code></dt>
 <dd><p>Move point to start of cell given by CELL-REF.  (See the documentation
-for <code>(kcell:ref-to-id)</code>, for valid formats.)  Return point iff
+for <code>(kcell:ref-to-id)</code>, for valid formats).  Return point iff
 CELL-REF is found within current view.  With a prefix argument, CELL-REF
 is assigned the argument value for use as an idstamp.
 </p>
@@ -13345,6 +13355,8 @@ Next: <a href="#Concept-Index" accesskey="n" rel="next">Concept Index</a>, Previ
 <tr><td></td><td valign="top"><a href="#index-hycontrol_002dwindows_002dgrid_002dby_002dbuffer_002dlist"><code>hycontrol-windows-grid-by-buffer-list</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyControl">HyControl</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-hycontrol_002dwindows_002dgrid_002dby_002dfile_002dlist"><code>hycontrol-windows-grid-by-file-list</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyControl">HyControl</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-hycontrol_002dwindows_002dgrid_002dby_002dfile_002dpattern"><code>hycontrol-windows-grid-by-file-pattern</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyControl">HyControl</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-hypb_003afgrep_002dgit_002dlog"><code>hypb:fgrep-git-log</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-hypb_003agrep_002dgit_002dlog"><code>hypb:grep-git-log</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-hypb_003argrep_002dcommand">hypb:rgrep-command</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Menus">Menus</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-hyperb_003adir">hyperb:dir</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Documentation">Documentation</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-hyperbole"><code>hyperbole</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Invocation">Invocation</a></td></tr>
@@ -14134,6 +14146,8 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function</a>, Up: <a href
 <tr><td></td><td valign="top"><a href="#index-gdb">gdb</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-git">git</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Key-_002d-Magit-Mode">Smart Key - Magit Mode</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-git-commit-reference">git commit reference</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-git-grep">git grep</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-git-log-grep_002fmatch">git log grep/match</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-git-reference">git reference</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-github-reference">github reference</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-gitlab-reference">gitlab reference</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>

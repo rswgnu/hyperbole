@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    20-Jul-16 at 22:41:34
-;; Last-Mod:     24-Jan-22 at 00:18:33 by Bob Weiner
+;; Last-Mod:     12-Feb-22 at 18:51:06 by Bob Weiner
 ;;
 ;; Copyright (C) 2016-2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -610,7 +610,12 @@ PROJECT value is provided, it defaults to the value of
 ;;; Local git repository commit references
 
 (defib git-commit-reference ()
-  "Display the diff for a git commit reference, e.g. \"commit a55e21\", typically produced by git log."
+  "Display the changeset for a git commit reference, e.g. \"commit a55e21\", typically produced by git log.
+Hyperbole also includes two commands, `hypb:fgrep-git-log' and
+`hypb:grep-git-log' to list git commit references whose changesets
+contain either the string (fgrep) or regular expression (grep) given.
+Then an Action Key displays the associated changeset.
+"
   (when (save-excursion
 	  (beginning-of-line)
 	  (looking-at "\\(^\\|\\s-+\\)\\(commit #?\\([0-9a-f][0-9a-f][0-9a-f][0-9a-f]+\\)\\)\\(\\s-\\|$\\)"))

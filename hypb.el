@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     6-Oct-91 at 03:42:38
-;; Last-Mod:     12-Feb-22 at 12:50:34 by Bob Weiner
+;; Last-Mod:     12-Feb-22 at 14:59:21 by Bob Weiner
 ;;
 ;; Copyright (C) 1991-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -307,7 +307,8 @@ If no matching installation type is found, return a list of (\"unknown\" hyperb:
 
 (defun hypb:fgrep-git-log (string)
   "Asynchronously list git log entries whose changesets include `string' for selection and display.
-The current commit entry may be displayed with a press of RET, the Action Key or the Assist Key."
+A press of RET, the Action Key or the Assist Key on any log line will display its committed changes."
+  (interactive "sFgrep git commits containing: ")
   (compile (format "git log -S'%s' --line-prefix='commit ' --oneline" string)
 	   #'hypb:fgrep-git-log-mode))
 
@@ -474,7 +475,9 @@ If MARKER is invalid signal an error."
 	     (switch-to-buffer buffer)))))
 
 (defun hypb:grep-git-log (regexp)
-  "Asynchronously list git log entries whose changesets include `regexp'."
+  "Asynchronously list git log entries whose changesets include `regexp' for selection and display.
+A press of RET, the Action Key or the Assist Key on any log line will display its committed changes."
+  (interactive "sGrep git commits containing: ")
   (compile (format "git log -G'%s' --line-prefix='commit ' --oneline" regexp)))
 
 (defun hypb:help-buf-name (&optional suffix)

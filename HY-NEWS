@@ -267,6 +267,11 @@
       or 'ripgrep' command, Hyperbole will prepend that directory to the grep
       output before jumping to the resultant path.
 
+  *** Git Log Grep: New commands, 'hypb:fgrep-git-log' and 'hypb:grep-git-log',
+      allow f/grepping over repo changesets and listing associated commit log
+      messages.  The Action Key on any resulting log entry displays the commit
+      changeset.
+
   *** Pathname Implicit Buttons: Much improved pathname handling including
       multiple variables per path, embedded . or .. within paths, better
       recognition of semicolon separated pathnames in Windows PATH variable.

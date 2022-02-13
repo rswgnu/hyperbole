@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    6/30/93
-;; Last-Mod:     24-Jan-22 at 00:25:32 by Bob Weiner
+;; Last-Mod:     12-Feb-22 at 18:51:04 by Bob Weiner
 ;;
 ;; Copyright (C) 1993-2021  Free Software Foundation, Inc.
 ;; See the "../HY-COPY" file for license information.
@@ -122,9 +122,9 @@ Trigger an error if CELL-REF is not a string or is not found."
 	  (integerp cell-ref))
       (let ((idstamp (kcell:ref-to-id cell-ref))
 	    pos)
-	(cond ((and idstamp (zerop idstamp))
+	(cond ((and (integerp idstamp) (zerop idstamp))
 	       (kview:top-cell kview))
-	      ((and idstamp (setq pos (kproperty:position 'idstamp idstamp)))
+	      ((and (integerp idstamp) (setq pos (kproperty:position 'idstamp idstamp)))
 	       (kcell-view:cell pos))
 	      (t (error "(kcell:get-from-ref): No such Koutline cell: '%s'" cell-ref))))
     (error "(kcell:get-from-ref): cell-ref arg must be a string, not: %s" cell-ref)))

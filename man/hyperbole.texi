@@ -7,7 +7,7 @@
 @c Author:       Bob Weiner
 @c
 @c Orig-Date:     6-Nov-91 at 11:18:03
-@c Last-Mod:     12-Feb-22 at 14:02:21 by Bob Weiner
+@c Last-Mod:     12-Feb-22 at 18:11:31 by Bob Weiner
 
 @c %**start of header (This is for running Texinfo on a region.)
 @setfilename hyperbole.info
@@ -2499,11 +2499,18 @@ If given, PROJECT overrides any project value in REFERENCE.  If no PROJECT
 value is provided, it defaults to the value of @code{hibtypes-git-default-project}. 
 
 @findex ibtypes git-commit-reference
+@findex hypb:fgrep-git-log
+@findex hypb:grep-git-log
 @cindex git commit reference
+@cindex git grep
+@cindex git log grep/match
 @cindex version control
 @item git-commit-reference
-Display the diff for a git commit reference, e.g. commit a55e21, typically
-produced by git log.
+Display the changeset for a git commit reference, e.g. commit a55e21, typically
+produced by git log.  Hyperbole also includes two commands, @code{hypb:fgrep-git-log}
+and @code{hypb:grep-git-log} to list git commit references whose changesets contain
+either the string (fgrep) or regular expression (grep) given.  Then an Action Key
+press displays the associated changeset.
 
 @findex ibtypes github-reference
 @cindex github reference
@@ -3784,7 +3791,7 @@ Web/ -             Select a search engine and term and search with them.
 
 @smallexample
 @noindent
-Web>  Amazon Bing Dictionary Elisp Facebook Google Hub(git)
+Web>  Amazon Bing Dictionary Elisp Facebook Google gitHub
       Images Maps RFCs StackOverflow Twitter Wikipedia Youtube
 @end smallexample
 @end itemize
@@ -6510,7 +6517,7 @@ text (@samp{\\&}) or any numbered grouping from TEXT-REGEXP,
 e.g. @samp{\\1}, may be referenced in the LINK-EXPR to form the
 link referent.
 
-Here is a sample use case.  Let's create a button type whose whose
+Here is a sample use case.  Let's create a button type whose
 buttons perform a grep-like function over a current repo's git log
 entries.  The buttons use this format: [<text to match>].
 
@@ -6537,6 +6544,9 @@ will display one line per commit whose change set matches 'test
 release'.  An Action Key press on any such line will then display the
 commit changes.
 
+If you don't mind extra text for every button, you could instead use
+Action Buttons of the form: <hypb:fgrep-git-log "string"> to do the
+same thing without any special definitions.
 
 @node  Programmatic Implicit Button Types,  , Implicit Button Link Types, Creating Implicit Button Types
 @subsubsection Programmatic Implicit Button Types
@@ -8402,7 +8412,7 @@ Move point forward ARG (or 1) words and return point.
 @findex kotl-mode:goto-cell
 @item kotl-mode:goto-cell  @bkbd{C-c g}
 Move point to start of cell given by CELL-REF.  (See the documentation
-for @code{(kcell:ref-to-id)}, for valid formats.)  Return point iff
+for @code{(kcell:ref-to-id)}, for valid formats).  Return point iff
 CELL-REF is found within current view.  With a prefix argument, CELL-REF
 is assigned the argument value for use as an idstamp.
 

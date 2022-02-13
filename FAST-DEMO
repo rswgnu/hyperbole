@@ -212,10 +212,10 @@ pspell-config(1)         - prints information about a libpspell installation
 
 * Many More Implicit Button Types to Learn Across Time
 
-  Activate this button, <emacs-lisp-mode>, to set this buffer into
-  Emacs Lisp mode.  Then an Action Key press on each of the implicit
-  button types below will jump to its Lisp definition.  Use this if you
-  want to see what each type can do.  <normal-mode> reverts to the standard mode.
+  Activate this button, <emacs-lisp-mode>, to set this buffer into Emacs Lisp mode.
+  Then an Action Key press on each of the implicit button types below will jump to
+  its Lisp definition.  Use this if you want to see what each type can do.
+  <normal-mode> reverts to the standard mode.
 
 |-----------------------+------------------------+--------------------------|
 |                          Implicit Button Types                            |
@@ -237,8 +237,9 @@ pspell-config(1)         - prints information about a libpspell installation
 |---------------------------------------------------------------------------|
 
 Implicit button types are stored in their own namespace, 'ibtypes::', so to
-see the doc on the 'pathname' ibtype, use {C-h f ibtypes::pathname RET}.
-
+see the doc on the 'pathname' ibtype, use {C-h f ibtypes::pathname RET}.  To
+lean how to create new kinds of implicit button and action types, see:
+"(hyperbole)Creating Types".
 
 * Hyperbole Subsystems
 
