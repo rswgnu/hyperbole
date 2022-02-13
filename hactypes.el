@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    23-Sep-91 at 20:34:36
-;; Last-Mod:     12-Feb-22 at 10:38:30 by Bob Weiner
+;; Last-Mod:     13-Feb-22 at 19:48:50 by Mats Lidell
 ;;
 ;; Copyright (C) 1991-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -437,7 +437,7 @@ the window or as close as possible."
       (hpath:find-line path line-num))
     (move-to-column column-num)))
 
-(defact link-to-gbut (key &optional key-file)
+(defact link-to-gbut (key &optional _key-file)
   "Perform an action given by an existing global button, specified by KEY.
 Optional second arg, KEY-FILE, is not used but is for calling
 compatibility with the `hlink' function."

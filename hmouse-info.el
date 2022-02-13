@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    04-Apr-89
-;; Last-Mod:     24-Jan-22 at 00:18:46 by Bob Weiner
+;; Last-Mod:     12-Feb-22 at 10:42:20 by Mats Lidell
 ;;
 ;; Copyright (C) 1989-2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -233,7 +233,7 @@ entry and returns t; otherwise returns nil."
 
 ;;; Much of this is derived in part from "info.el".
 
-(defun Info-build-menu-item-completions (string predicate action)
+(defun Info-build-menu-item-completions (string _predicate action)
   ;; See comments in `Info-complete-menu-item' for free variables used.
   (with-current-buffer Info-complete-menu-buffer
     (save-excursion

@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    17-Apr-94
-;; Last-Mod:     24-Jan-22 at 00:25:18 by Bob Weiner
+;; Last-Mod:     12-Feb-22 at 10:42:20 by Mats Lidell
 ;;
 ;; Copyright (C) 1994-2021  Free Software Foundation, Inc.
 ;; See the "../HY-COPY" file for license information.
@@ -80,11 +80,11 @@
 	 (intern-soft (concat "klabel:child-"
 			      (symbol-name label-type))))
 	((eq label-type 'no)
-	 (lambda (label) ""))
+	 (lambda (_label) ""))
 	((eq label-type 'star)
 	 (lambda (label) (concat label "*")))
 	((eq label-type 'id)
-	 (lambda (label) (format "0%s" (or (kview:id-counter kview) ""))))
+	 (lambda (_label) (format "0%s" (or (kview:id-counter kview) ""))))
 	(t (error
 	    "(klabel-type:child): Invalid label type setting: `%s'"
 	    label-type))))
@@ -95,11 +95,11 @@ If the label is \"0\", its first child is computed, otherwise, the next sibling 
   (cond ((memq label-type '(alpha legal partial-alpha))
 	 (intern-soft (concat "klabel:increment-" (symbol-name label-type))))
 	((eq label-type 'no)
-	 (lambda (label) ""))
+	 (lambda (_label) ""))
 	((eq label-type 'star)
 	 (lambda (label) (if (string-equal label "0") "*" label)))
 	((eq label-type 'id)
-	 (lambda (label) (format "0%s" (or (kview:id-increment kview) ""))))
+	 (lambda (_label) (format "0%s" (or (kview:id-increment kview) ""))))
 	(t (error
 	    "(klabel:increment): Invalid label type setting: `%s'" label-type))))
 
@@ -262,7 +262,7 @@ is the display label of the cell preceding the current one and child-p is
 non-nil if cell is to be the child of the preceding cell."
   (or label-type (setq label-type (kview:label-type kview)))
   (cond ((eq label-type 'no)
-	 (lambda (prev-label &optional child-p)
+	 (lambda (_prev-label &optional _child-p)
 	   ""))
 	((eq label-type 'partial-alpha)
 	 (lambda (prev-label &optional child-p)
@@ -271,7 +271,7 @@ non-nil if cell is to be the child of the preceding cell."
 		   "a" "1")
 	     (kotl-label:increment prev-label 1))))
 	((eq label-type 'id)
-	 (lambda (prev-label &optional child-p)
+	 (lambda (_prev-label &optional _child-p)
 	   (kcell-view:idstamp)))
 	(t (intern-soft (concat "klabel-type:"
 				(symbol-name label-type) "-label")))))
@@ -368,7 +368,7 @@ and the start of its contents."
 	(goto-char opoint)
 	(setq current-cell-label nil)))))
 
-(defun klabel-type:set-id (current-cell-label label-sep-len &rest ignore)
+(defun klabel-type:set-id (_current-cell-label label-sep-len &rest _ignore)
   "Set the labels of current cell, its following siblings and their subtrees.
 CURRENT-CELL-LABEL is the label to display for the current cell."
   ;; Only need to do this when switching from one label type to another,
@@ -413,7 +413,7 @@ and the start of its contents."
 	(goto-char opoint)
 	(setq current-cell-label nil)))))
 
-(defun klabel-type:set-no (current-cell-label label-sep-len &rest ignore)
+(defun klabel-type:set-no (_current-cell-label label-sep-len &rest _ignore)
   "Set the labels of current cell, its following siblings and their subtrees.
 CURRENT-CELL-LABEL is the label to display for the current cell."
   ;; Only need to do this when switching from one label type to another,
@@ -463,7 +463,7 @@ and the start of its contents."
 	(goto-char opoint)
 	(setq current-cell-label nil)))))
 
-(defun klabel-type:set-star (current-cell-label label-sep-len &rest ignore)
+(defun klabel-type:set-star (_current-cell-label label-sep-len &rest _ignore)
   "Set the labels of current cell, its following siblings and their subtrees.
 CURRENT-CELL-LABEL is the label to display for the current cell.
 LABEL-SEP-LEN is the length of the separation between a cell's label
@@ -490,7 +490,7 @@ If, however, it is \"0\", then all cell labels are updated."
 	(klabel-type:update-labels-from-point
 	 label-type current-cell-label)))))
 
-(defun klabel-type:update-tree-labels (current-cell-label first-label)
+(defun klabel-type:update-tree-labels (_current-cell-label first-label)
   "Update the labels of current cell and its subtree.
 CURRENT-CELL-LABEL is the label to display for the current cell.
 Use `(klabel-type:update-labels \"0\")' to update all cells in an outline."

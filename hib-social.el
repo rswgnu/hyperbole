@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    20-Jul-16 at 22:41:34
-;; Last-Mod:     12-Feb-22 at 18:51:06 by Bob Weiner
+;; Last-Mod:     13-Feb-22 at 19:49:11 by Mats Lidell
 ;;
 ;; Copyright (C) 2016-2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -668,7 +668,7 @@ Return the project directory found or nil if none."
       ;; ...and return it.
       project-dir)))
 
-(defun hibtypes-git-build-or-add-to-repos-cache (project &optional prompt-flag)
+(defun hibtypes-git-build-or-add-to-repos-cache (project &optional _prompt-flag)
   "Store cache of local git repo directories in `hibtypes-git-repos-cache'.
 With optional PROMPT-FLAG non-nil, prompt user whether to build the cache before building.
 Return t if built, nil otherwise."

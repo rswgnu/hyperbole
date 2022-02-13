@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    18-Sep-91 at 02:57:09
-;; Last-Mod:      8-Feb-22 at 23:54:24 by Mats Lidell
+;; Last-Mod:     12-Feb-22 at 10:42:20 by Mats Lidell
 ;;
 ;; Copyright (C) 1991-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -256,7 +256,7 @@ positions at which the button delimiter begins and ends."
 				;; Normalize label spacing
 				(list (ebut:key-to-label (ebut:label-to-key lbl))
 				      start end))
-			    (lambda (lbl start end)
+			    (lambda (lbl _start _end)
 			      ;; Normalize label spacing
 			      (ebut:key-to-label (ebut:label-to-key lbl)))))))
       (if loc-p buts (when buts (apply #'set:create buts))))))
@@ -334,7 +334,7 @@ button is found in the current buffer."
 			      (nth 2 but-key-and-pos)
 			      instance-flag))
 	      (cond ((ebut:map
-		      (lambda (lbl start end)
+		      (lambda (_lbl start end)
 			(delete-region start end)
 			(ebut:delimit
 			 (point)
@@ -524,7 +524,7 @@ enables partial matches."
 Leave point inside the button label.  Return the symbol for the button, else nil."
   (unless lbl-key
     (setq lbl-key (ebut:label-p nil nil nil nil t)))
-  (hbut:funcall (lambda (lbl-key buffer key-src)
+  (hbut:funcall (lambda (lbl-key _buffer _key-src)
 		  ;; Handle a label given rather than a label key
 		  (if (string-match-p "\\s-" lbl-key)
 		      (setq lbl-key (ebut:label-to-key lbl-key)))
@@ -726,7 +726,7 @@ Return the symbol for the button when found, else nil."
       (with-current-buffer (find-file-noselect (gbut:file))
 	(save-restriction
 	  (widen)
-	  (ibut:label-map #'(lambda (label start end) (ibut:label-to-key label))))))))
+	  (ibut:label-map #'(lambda (label _start _end) (ibut:label-to-key label))))))))
 
 ;;; ========================================================================
 ;;; hattr class
@@ -1446,7 +1446,7 @@ source file for the buttons in the menu, if any.")
     (when (hbut:key-src-set-buffer (or key-src (current-buffer)))
       (save-restriction
 	(widen)
-	(ibut:label-map #'(lambda (label start end) (ibut:label-to-key label)))))))
+	(ibut:label-map #'(lambda (label _start _end) (ibut:label-to-key label)))))))
 
 ;;; ========================================================================
 ;;; ibut class - Implicit Hyperbole Buttons
@@ -1608,7 +1608,7 @@ Return nil if no matching button is found."
   (save-excursion
     (unless lbl-key
       (setq lbl-key (ibut:label-p nil nil nil nil t)))
-    (hbut:funcall (lambda (lbl-key buffer key-src)
+    (hbut:funcall (lambda (lbl-key _buffer _key-src)
 		    (goto-char (point-min))
 		    (ibut:next-occurrence lbl-key)
 		    (ibut:at-p))
@@ -1620,8 +1620,8 @@ Return nil if no matching button is found."
     (let ((categ (hattr:get object 'categ)))
       (and categ (string-match "\\`ibtypes::" (symbol-name categ))))))
 
-(defun    ibut:label-map (but-func &optional start-delim end-delim
-				   regexp-match include-delims)
+(defun    ibut:label-map (but-func &optional _start-delim _end-delim
+				   _regexp-match _include-delims)
   "Apply BUT-FUNC to buttons delimited by optional START-DELIM and END-DELIM.
 START-DELIM defaults to ibut:label-start; END-DELIM defaults to ibut:label-end.
 If REGEXP-MATCH is non-nil, only buttons which match this argument are
@@ -1715,7 +1715,7 @@ positions at which the button label delimiter begins and ends."
 				;; Normalize label spacing
 				(list (ibut:key-to-label (ibut:label-to-key lbl))
 				      start end))
-			    (lambda (lbl start end)
+			    (lambda (lbl _start _end)
 			      ;; Normalize label spacing
 			      (ibut:key-to-label (ibut:label-to-key lbl)))))))
       (if loc-p buts (when buts (apply #'set:create buts))))))
@@ -1732,7 +1732,7 @@ positions at which the button label delimiter begins and ends."
 (defalias 'ibut:label-to-key 'hbut:label-to-key)
 (defalias 'map-ibut          'ibut:map)
 
-(defun    ibut:map (but-func &optional start-delim end-delim
+(defun    ibut:map (but-func &optional _start-delim _end-delim
 			     regexp-match include-delims)
   "Apply BUT-FUNC to the labeled implicit buttons in the visible part of the current buffer.
 If REGEXP-MATCH is non-nil, only buttons which match this argument are
@@ -1781,7 +1781,7 @@ Leave point inside the button text or its optional label, if it has one.
 Return the symbol for the button, else nil."
   (unless lbl-key
     (setq lbl-key (ibut:label-p nil nil nil nil t)))
-  (hbut:funcall (lambda (lbl-key buffer key-src)
+  (hbut:funcall (lambda (lbl-key _buffer _key-src)
 		  (when lbl-key
 		    ;; Handle a label given rather than a label key
 		    (when (string-match-p "\\s-" lbl-key)
@@ -1855,14 +1855,11 @@ Return the symbol for the button if found, else nil."
   (unless lbl-key
     (setq lbl-key (ibut:label-p nil nil nil nil t)))
   (hbut:funcall
-   (lambda (lbl-key buffer key-src)
+   (lambda (lbl-key _buffer _key-src)
      (let* ((name-start-end (ibut:label-p nil nil nil t t))
 	    (name-start (nth 1 name-start-end))
 	    (at-name (car name-start-end))
 	    (at-lbl-key (ibut:label-p nil "\"" "\"" nil t))
-	    (opoint (point))
-	    move-flag
-	    start
 	    ibut)
        (cond ((or (and at-name (equal at-name lbl-key))
 		  (and lbl-key (equal at-lbl-key lbl-key)))
@@ -1887,7 +1884,7 @@ Return the symbol for the button if found, else nil."
   (unless lbl-key
     (setq lbl-key (ibut:label-p nil nil nil nil t)))
   (hbut:funcall
-   (lambda (lbl-key buffer key-src)
+   (lambda (lbl-key _buffer _key-src)
      (let* ((name-start-end (ibut:label-p t nil nil t t))
 	    (name-end (nth 2 name-start-end))
 	    (at-name (car name-start-end))
@@ -1939,7 +1936,7 @@ See also `ibut:label-separator-regexp' for all valid characters that may manuall
 ;;; ibtype class - Implicit button types
 ;;; ========================================================================
 
-(defmacro defib (type params doc at-p &optional to-p style)
+(defmacro defib (type _params doc at-p &optional to-p style)
   "Create Hyperbole implicit button TYPE with PARAMS, described by DOC.
 TYPE is an unquoted symbol.  PARAMS are presently ignored.
 
