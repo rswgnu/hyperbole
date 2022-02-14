@@ -5,7 +5,7 @@
 ;; Author:           Bob Weiner
 ;; Maintainer:       Bob Weiner <rsw@gnu.org>, Mats Lidell <matsl@gnu.org>
 ;; Created:          06-Oct-92 at 11:52:51
-;; Last-Mod:     24-Jan-22 at 00:23:14 by Bob Weiner
+;; Last-Mod:     12-Feb-22 at 10:42:19 by Mats Lidell
 ;; Released:         03-May-21
 ;; Version:          8.0.0pre
 ;; Keywords:         comm, convenience, files, frames, hypermedia, languages, mail, matching, mouse, multimedia, outlines, tools, wp
@@ -187,17 +187,17 @@ context (wherever point is).  {C-u \\[hkey-help]} shows what the Assist Key will
   hyperbole-mode-map)
 
 (make-obsolete 'hkey-global-set-key 'hkey-set-key "8.0.0")
-(defun hkey-global-set-key (key command &optional no-add)
+(defun hkey-global-set-key (key command &optional _no-add)
   "Define a Hyperbole KEY bound to COMMAND.  Optional third arg, NO-ADD is ignored."
   (define-key hyperbole-mode-map key command))
 
 (make-obsolete 'hkey-maybe-global-set-key 'hkey-maybe-set-key "8.0.0")
-(defun hkey-maybe-global-set-key (key command &optional no-add)
+(defun hkey-maybe-global-set-key (key command &optional _no-add)
   "Define a Hyperbole KEY bound to COMMAND if KEY is not bound in `hyperbole-mode-map'.
 Third argument NO-ADD is ignored."
   (hkey-maybe-set-key key command))
 
-(defun hkey-maybe-set-key (key command &optional no-add)
+(defun hkey-maybe-set-key (key command &optional _no-add)
   "Define a Hyperbole KEY bound to COMMAND if KEY is not bound in `hyperbole-mode-map'.
 Third argument NO-ADD is ignored."
   (let ((lookup-result (lookup-key hyperbole-mode-map key)))

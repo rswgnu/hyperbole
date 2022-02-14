@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    26-Feb-98
-;; Last-Mod:      5-Feb-22 at 16:24:59 by Bob Weiner
+;; Last-Mod:     12-Feb-22 at 10:42:20 by Mats Lidell
 ;;
 ;; Copyright (C) 1998-2021  Free Software Foundation, Inc.
 ;; See the "../HY-COPY" file for license information.
@@ -461,7 +461,7 @@ hard newlines are not used.  Also converts Urls and Klinks into Html hyperlinks.
 		 "&gt;"))
 	       i is-parent is-last-sibling no-sibling-stack level label contents)
 	  (kview:map-tree
-	   (lambda (kview)
+	   (lambda (_kview)
 	     (setq level (kcell-view:level)
 		   i level
 		   is-parent (kcell-view:child-p)

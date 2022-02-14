@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    7/27/93
-;; Last-Mod:     24-Jan-22 at 00:25:31 by Bob Weiner
+;; Last-Mod:     12-Feb-22 at 10:42:20 by Mats Lidell
 ;;
 ;; Copyright (C) 1993-2021  Free Software Foundation, Inc.
 ;; See the "../HY-COPY" file for license information.
@@ -35,7 +35,7 @@
   "Return a list of all non-narrowed buffer positions of kcells with PROPERTY set to VALUE, else nil.
 Use (kcell-view:start <position>) on each returned <position> to get
 the start position of each cell's content."
-  (kproperty:map (lambda (start end) start) property value))
+  (kproperty:map (lambda (start _end) start) property value))
 
 (defalias 'kproperty:get 'get-text-property)
 

@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     2-Apr-91
-;; Last-Mod:     24-Jan-22 at 00:18:05 by Bob Weiner
+;; Last-Mod:     12-Feb-22 at 10:12:23 by Mats Lidell
 ;;
 ;; Copyright (C) 1991-2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -82,7 +82,7 @@
   "Return the list of any arguments given in HBDATA."
   (nth 4 hbdata))
 
-(defun hbdata:categ (hbdata)
+(defun hbdata:categ (_hbdata)
   "Return the category of HBDATA's button."
   'explicit)
 
@@ -149,8 +149,7 @@ Search is case-insensitive.  Return list with elements:
 MOD-LBL-KEY nil means create a new entry, otherwise modify existing one.
 Nil BUT-SYM means use 'hbut:current'.  If successful, return a cons of
  (button-data . button-instance-str), else nil."
-  (let* ((but)
-	 (b (hattr:copy (or but-sym 'hbut:current) 'but))
+  (let* ((b (hattr:copy (or but-sym 'hbut:current) 'but))
 	 (l (hattr:get b 'loc))
 	 (key (or mod-lbl-key (hattr:get b 'lbl-key)))
 	 (new-key (if mod-lbl-key (hattr:get b 'lbl-key) key))

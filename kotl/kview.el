@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    6/30/93
-;; Last-Mod:     12-Feb-22 at 18:51:04 by Bob Weiner
+;; Last-Mod:     13-Feb-22 at 19:50:05 by Mats Lidell
 ;;
 ;; Copyright (C) 1993-2021  Free Software Foundation, Inc.
 ;; See the "../HY-COPY" file for license information.
@@ -394,7 +394,7 @@ Return t unless no next cell."
     (goto-char (kcell-view:start nil label-sep-len))
     t))
 
-(defun kcell-view:next-invisible-p (&optional pos label-sep-len)
+(defun kcell-view:next-invisible-p (&optional _pos label-sep-len)
   "Return t if there is a next cell after optional POS or point and it is invisible."
   (save-excursion (and (kcell-view:next nil label-sep-len)
 		       (kcell-view:invisible-p (point) label-sep-len))))
@@ -941,8 +941,7 @@ See also `kview:map-branch' and `kview:map-tree'."
     (with-current-buffer (kview:buffer kview)
       (save-excursion
 	(let ((results)
-	      (label-sep-len (kview:label-separator-length kview))
-	      cell-indent)
+	      (label-sep-len (kview:label-separator-length kview)))
 	  ;; Next line ensures point is in the root of the current tree if
 	  ;; the tree is at all hidden.
 	  (when visible-p (kotl-mode:to-start-of-line))
@@ -1100,7 +1099,7 @@ FILL-P is non-nil.  Leave point at TO-START."
 					 1)
 				      ?\ )))
 	      (kview:map-tree
-	       (lambda (view)
+	       (lambda (_view)
 		 (save-excursion
 		   (beginning-of-line)
 		   (when (looking-at expr)
@@ -1109,7 +1108,7 @@ FILL-P is non-nil.  Leave point at TO-START."
 	  ;;
 	  (when fill-p
 	    ;; Refill cells lacking no-fill attribute.
-	    (kview:map-tree (lambda (view) (kotl-mode:fill-cell nil t))
+	    (kview:map-tree (lambda (_view) (kotl-mode:fill-cell nil t))
 			    kview t))))
     ;;
     (goto-char new-start)
