@@ -1,3 +1,8 @@
+2022-02-22  Mats Lidell  <matsl@gnu.org>
+
+* test/kcell-tests.el (kcell-tests--ref-to-id): Add test for
+    kcell:ref-to-id.
+
 2022-02-13  Bob Weiner  <rsw@gnu.org>
 
 * hibtypes.el (elisp-compiler-msg): Add Action Key support for Elisp
