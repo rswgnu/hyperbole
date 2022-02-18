@@ -92,6 +92,7 @@ Hyperbole Key Press/Click in Special Modes
   Any Known Lisp or ChangeLog   Jumps to identifier def    Referent Doc
   Fortran Mode                  Jumps to identifier def    Jumps to next def
   Emacs Lisp Compiler Error     Jumps to def with error    <- same
+  Emacs Regression Test (ERT)   Jumps to def with error    <- same
   Other Compiler Error          Jumps to src error line    <- same
   Grep or Occur Match           Jumps to match source line <- same
   Multi-buffer Occur Match      Jumps to match source line <- same

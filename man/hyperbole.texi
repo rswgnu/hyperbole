@@ -7,7 +7,7 @@
 @c Author:       Bob Weiner
 @c
 @c Orig-Date:     6-Nov-91 at 11:18:03
-@c Last-Mod:     12-Feb-22 at 18:11:31 by Bob Weiner
+@c Last-Mod:     13-Feb-22 at 11:38:53 by Bob Weiner
 
 @c %**start of header (This is for running Texinfo on a region.)
 @setfilename hyperbole.info
@@ -2257,9 +2257,11 @@ program.  Patch applies diffs to source code.
 @cindex byte compiler error
 @cindex Emacs Lisp compiler error
 @cindex compiler error
+@cindex Emacs Regression Test (ERT) symbol
 @item elisp-compiler-msg
-Jump to the source code for a definition associated with an Emacs Lisp
-byte-compiler error message.  This works anywhere within an error line.
+Jump to source code for definition associated with an Emacs Lisp
+byte-compiler error message or ERT test output line.  Works when
+activated anywhere within such a line.
 
 @findex ibtypes debugger-source
 @cindex gdb

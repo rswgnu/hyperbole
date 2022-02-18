@@ -151,6 +151,9 @@
       expandable/collapsible outline from the Koutline in the current buffer.
       See "(hyperbole)Exporting" and the new Koutliner Format submenu.
 
+  *** Org File Importation: Org files may now be imported to a Koutline using
+      {M-x kimport:file RET}.
+
   *** Org Table Support: Org table editing now automatically works in the
       Koutliner via Org table minor mode.  Use {M-x orgtbl-mode RET} to
       toggle this on and off.  A press of the Action Key on a | symbol,

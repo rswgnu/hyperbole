@@ -3,7 +3,7 @@
 # Author:       Bob Weiner
 #
 # Orig-Date:    15-Jun-94 at 03:42:38
-# Last-Mod:     12-Feb-22 at 14:03:45 by Bob Weiner
+# Last-Mod:     13-Feb-22 at 10:35:20 by Bob Weiner
 #
 # Copyright (C) 1994-2021  Free Software Foundation, Inc.
 # See the file HY-COPY for license information.
@@ -405,7 +405,7 @@ $(pkg_dir)/hyperbole-$(HYPB_VERSION).tar: $(HYPERBOLE_FILES)
 	cd $(pkg_dir) && $(RM) h.tar; \
 	  mv $(pkg_hyperbole) $(pkg_hyperbole)-$(HYPB_VERSION) && \
 	  COPYFILE_DISABLE=1 $(TAR) -clf $(pkg_dir)/hyperbole-$(HYPB_VERSION).tar hyperbole-$(HYPB_VERSION)
-	$(INSTALL) HY-ABOUT HY-ANNOUNCE HY-NEWS HY-WHY.kotl INSTALL README $(pkg_dir)/; chmod 644 $(pkg_dir)/*.tar
+	$(INSTALL) HY-ABOUT HY-ANNOUNCE HY-NEWS HY-WHY.kotl INSTALL README README.md README.html $(pkg_dir)/; chmod 644 $(pkg_dir)/*.tar
 
 pkgclean: packageclean
 packageclean:

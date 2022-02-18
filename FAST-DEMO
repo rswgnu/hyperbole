@@ -152,6 +152,7 @@
        Use Posix apropos command to list grep-related commands.  Then press {M-RET} on
        any lines output to display the man page for the associated command.
 
+
 * Grep Messages, Stack Traces, Man Page Apropos Implicit Buttons
 
   These implicit buttons typically appear in shell buffers.  You issue a shell command and
@@ -240,6 +241,7 @@ Implicit button types are stored in their own namespace, 'ibtypes::', so to
 see the doc on the 'pathname' ibtype, use {C-h f ibtypes::pathname RET}.  To
 lean how to create new kinds of implicit button and action types, see:
 "(hyperbole)Creating Types".
+
 
 * Hyperbole Subsystems
 

@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    6/30/93
-;; Last-Mod:     12-Feb-22 at 18:19:52 by Bob Weiner
+;; Last-Mod:     13-Feb-22 at 10:08:36 by Bob Weiner
 ;;
 ;; Copyright (C) 1993-2021  Free Software Foundation, Inc.
 ;; See the "../HY-COPY" file for license information.
@@ -3443,8 +3443,12 @@ Leave point at end of line now residing at START."
   ;; Override this global binding for set-selective-display with a similar
   ;; function appropriate for kotl-mode.
   (define-key kotl-mode-map "\C-x$"     'kotl-mode:hide-sublevels)
+  (define-key kotl-mode-map [(tab)]     'kotl-mode:tab-command) ;; TAB
   (define-key kotl-mode-map "\C-i"      'kotl-mode:tab-command) ;; TAB
+  (define-key kotl-mode-map [(shift tab)] 'kotl-mode:untab-command) ;; Shift-TAB
+  (define-key kotl-mode-map [S-iso-lefttab] 'kotl-mode:untab-command) ;; Shift-TAB
   (define-key kotl-mode-map [backtab]   'kotl-mode:untab-command) ;; Shift-TAB
+  (define-key kotl-mode-map [(meta tab)] 'kotl-mode:untab-command) ;; M-TAB
   (define-key kotl-mode-map "\M-\C-i"   'kotl-mode:untab-command) ;; M-TAB
   (define-key kotl-mode-map "\C-c\C-i"  'kotl-mode:set-or-remove-cell-attribute)
   (define-key kotl-mode-map "\C-j"      'kotl-mode:add-cell)
