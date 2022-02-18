@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    10/31/93
-;; Last-Mod:     29-Jan-22 at 15:24:12 by Bob Weiner
+;; Last-Mod:     12-Feb-22 at 10:42:20 by Mats Lidell
 ;;
 ;; Copyright (C) 1993-2021  Free Software Foundation, Inc.
 ;; See the "../HY-COPY" file for license information.
@@ -281,7 +281,7 @@ VISIBLE-ONLY-P is non-nil.  Signal an error if kotl is not attached to a file."
       ;; Prepare cell data for saving.
       (kfile:narrow-to-kcells)
       (kview:map-tree
-        (lambda (view)
+        (lambda (_view)
 	  (setq cell (kcell-view:cell))
 	  (aset kcell-data
 		kcell-num
@@ -386,7 +386,7 @@ included in the list."
      kotl-structure)
     (nreverse cell-list)))
 
-(defun kfile:insert-attributes-v2 (kview kcell-list)
+(defun kfile:insert-attributes-v2 (_kview kcell-list)
   "Set cell attributes within KVIEW for each element in KCELL-LIST.
 Assume all cell contents are already in kview and that no cells are
 hidden."
@@ -403,7 +403,7 @@ hidden."
 	    (setq kcell-list (cdr kcell-list)))
 	  (search-forward "\n\n" nil t)))))
 
-(defun kfile:insert-attributes-v3 (kview kcell-vector)
+(defun kfile:insert-attributes-v3 (_kview kcell-vector)
   "Set cell attributes within KVIEW for each element in KCELL-VECTOR.
 Assume all cell contents are already in kview and that no cells are
 hidden."

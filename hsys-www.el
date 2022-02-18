@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     7-Apr-94 at 17:17:39 by Bob Weiner
-;; Last-Mod:     24-Jan-22 at 00:18:47 by Bob Weiner
+;; Last-Mod:     12-Feb-22 at 10:42:19 by Mats Lidell
 ;;
 ;; Copyright (C) 1994-2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -113,7 +113,7 @@ is used.  Valid values of this variable include `browse-url-default-browser' and
     (error "(www-url): `browse-url-browser-function' must be set to a web browser invoking function")))
 
 ;;;###autoload
-(defun www-url-expand-file-name (path &optional dir)
+(defun www-url-expand-file-name (path &optional _dir)
   "Expand PATH in DIR.  Return http urls unchanged."
   (if (listp path)
       (setq dir  (car (cdr path))

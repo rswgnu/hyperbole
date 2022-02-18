@@ -6,6 +6,11 @@
 
 * kotl/kotl-mode.el (kotl-mode-map): Add more tab related bindings.
 
+2022-02-13  Mats Lidell  <matsl@gnu.org>
+
+* Silence warnings about unused lexical arguments by prefixing names with
+    underscores.
+
 2022-02-12  Bob Weiner  <rsw@gnu.org>
 
 * kotl/klink.el (klink:act): Add save-excursion, so point always ends

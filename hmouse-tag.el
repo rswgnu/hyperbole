@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    24-Aug-91
-;; Last-Mod:     24-Jan-22 at 00:18:46 by Bob Weiner
+;; Last-Mod:     12-Feb-22 at 10:42:20 by Mats Lidell
 ;;
 ;; Copyright (C) 1991-2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -474,7 +474,7 @@ Otherwise:
 		    (beep))))))
 
 ;;; The following should be called only if the OO-Browser is available.
-(defun smart-java-oo-browser (&optional junk)
+(defun smart-java-oo-browser (&optional _junk)
   "Jumps to the definition of selected Java construct via OO-Browser support.
 Optional JUNK is ignored.  Does nothing if the OO-Browser is not available.
 
@@ -832,7 +832,7 @@ Otherwise:
 	   (beep)))))))
 
 ;;; The following should be called only if the OO-Browser is available.
-(defun smart-objc-oo-browser (&optional junk)
+(defun smart-objc-oo-browser (&optional _junk)
   "Jump to the definition of selected Objective-C construct via OO-Browser support.
 Optional JUNK is ignored.  Does nothing if the OO-Browser is not available.
 
@@ -940,7 +940,7 @@ in the current directory or any of its ancestor directories."
 		    (beep))))))
 
 ;;; The following should be called only if the OO-Browser is available.
-(defun smart-python-oo-browser (&optional junk)
+(defun smart-python-oo-browser (&optional _junk)
   "Jumps to the definition of selected Python construct via OO-Browser support.
 Optional JUNK is ignored.  Does nothing if the OO-Browser is not available.
 

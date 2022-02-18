@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    15-Nov-93 at 11:57:05
-;; Last-Mod:      5-Feb-22 at 15:46:39 by Bob Weiner
+;; Last-Mod:     12-Feb-22 at 10:42:20 by Mats Lidell
 ;;
 ;; Copyright (C) 1993-2021  Free Software Foundation, Inc.
 ;; See the "../HY-COPY" file for license information.
@@ -662,7 +662,7 @@ in IMPORT-FROM, used to show a running tally of the imported entries."
   count)
 
 (defun kimport:text-paragraphs (import-from output-to klabel
-			        output-level count total)
+			        output-level _count total)
   "Insert text paragraphs from IMPORT-FROM into existing OUTPUT-TO.
 First cell is inserted with KLABEL at OUTPUT-LEVEL, as the sibling of the
 previous cell, with the COUNT of inserted paragraphs starting at 0.  TOTAL is
