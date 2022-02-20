@@ -3,7 +3,7 @@
 # Author:       Bob Weiner
 #
 # Orig-Date:    15-Jun-94 at 03:42:38
-# Last-Mod:     13-Feb-22 at 10:35:20 by Bob Weiner
+# Last-Mod:     19-Feb-22 at 10:43:51 by Mats Lidell
 #
 # Copyright (C) 1994-2021  Free Software Foundation, Inc.
 # See the file HY-COPY for license information.
@@ -449,6 +449,9 @@ else
         # Typical case, run emacs normally
 	$(EMACS) --quick $(PRELOADS) --eval "(load-file \"test/hy-test-dependencies.el\")" --eval "(let ((auto-save-default)) $(LOAD_TEST_ERT_FILES) (ert-run-tests-interactively t))"
 endif
+
+test-all-output:
+	$(EMACS) --quick $(PRELOADS) --eval "(load-file \"test/hy-test-dependencies.el\")" --eval "(let ((auto-save-default) (ert-quiet t)) $(LOAD_TEST_ERT_FILES) (ert-run-tests-interactively t) (with-current-buffer \"*ert*\" (append-to-file (point-min) (point-max) \"ERT-OUTPUT\")) (kill-emacs))"
 
 # Hyperbole install tests - Verify that hyperbole can be installed
 # using different sources. See folder "install-test"
