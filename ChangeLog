@@ -17,6 +17,11 @@
     hyperbole-mode-map binding.  Defer to org-mode and outline-minor-mode
     only when current command key matches this binding.
 
+2022-02-19  Mats Lidell  <matsl@gnu.org>
+
+* Makefile (test-all-output): Add target for interactive tests with
+    summary output.
+
 2022-02-18  Mats Lidell  <matsl@gnu.org>
 
 * test/kcell-tests.el (kcell-tests--ref-to-id): Add test for
