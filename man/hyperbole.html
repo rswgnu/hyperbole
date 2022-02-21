@@ -170,7 +170,7 @@ ul.no-bullet {list-style: none}
     </ul></li>
     <li><a id="toc-Renaming-1" href="#Renaming">4.7.2 Renaming</a></li>
     <li><a id="toc-Deletion-1" href="#Deletion">4.7.3 Deletion</a></li>
-    <li><a id="toc-Modification-1" href="#Modification">4.7.4 Modification</a></li>
+    <li><a id="toc-Editing-1" href="#Editing">4.7.4 Editing</a></li>
     <li><a id="toc-Searching-and-Summarizing-1" href="#Searching-and-Summarizing">4.7.5 Searching and Summarizing</a></li>
     <li><a id="toc-Buttons-in-Mail-1" href="#Buttons-in-Mail">4.7.6 Buttons in Mail</a></li>
     <li><a id="toc-Buttons-in-News-1" href="#Buttons-in-News">4.7.7 Buttons in News</a></li>
@@ -184,7 +184,7 @@ ul.no-bullet {list-style: none}
   <li><a id="toc-Creating-Outlines-1" href="#Creating-Outlines">7.2 Creating Outlines</a></li>
   <li><a id="toc-Autonumbering-1" href="#Autonumbering">7.3 Autonumbering</a></li>
   <li><a id="toc-Idstamps-1" href="#Idstamps">7.4 Idstamps</a></li>
-  <li><a id="toc-Editing-1" href="#Editing">7.5 Editing</a>
+  <li><a id="toc-Editing-Outlines-1" href="#Editing-Outlines">7.5 Editing Outlines</a>
   <ul class="no-bullet">
     <li><a id="toc-Adding-and-Killing-1" href="#Adding-and-Killing">7.5.1 Adding and Killing</a></li>
     <li><a id="toc-Promoting-and-Demoting-1" href="#Promoting-and-Demoting">7.5.2 Promoting and Demoting</a></li>
@@ -196,7 +196,7 @@ ul.no-bullet {list-style: none}
     <li><a id="toc-Inserting-and-Importing-1" href="#Inserting-and-Importing">7.5.8 Inserting and Importing</a></li>
     <li><a id="toc-Exporting-1" href="#Exporting">7.5.9 Exporting</a></li>
   </ul></li>
-  <li><a id="toc-Viewing-1" href="#Viewing">7.6 Viewing</a>
+  <li><a id="toc-Viewing-Outlines-1" href="#Viewing-Outlines">7.6 Viewing Outlines</a>
   <ul class="no-bullet">
     <li><a id="toc-Hiding-and-Showing-1" href="#Hiding-and-Showing">7.6.1 Hiding and Showing</a></li>
     <li><a id="toc-View-Specs-1" href="#View-Specs">7.6.2 View Specs</a></li>
@@ -370,7 +370,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</P>
 
 <PRE>
 Edition 8.0.0pre
-Printed February 12, 2022.
+Printed February 20, 2022.
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -572,7 +572,7 @@ Utilizing Explicit Buttons
 </td></tr>
 <tr><td align="left" valign="top">&bull; <a href="#Deletion">Deletion</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
 </td></tr>
-<tr><td align="left" valign="top">&bull; <a href="#Modification">Modification</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+<tr><td align="left" valign="top">&bull; <a href="#Editing">Editing</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
 </td></tr>
 <tr><td align="left" valign="top">&bull; <a href="#Searching-and-Summarizing">Searching and Summarizing</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
 </td></tr>
@@ -600,9 +600,9 @@ Koutliner
 </td></tr>
 <tr><td align="left" valign="top">&bull; <a href="#Idstamps">Idstamps</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
 </td></tr>
-<tr><td align="left" valign="top">&bull; <a href="#Editing">Editing</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+<tr><td align="left" valign="top">&bull; <a href="#Editing-Outlines">Editing Outlines</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
 </td></tr>
-<tr><td align="left" valign="top">&bull; <a href="#Viewing">Viewing</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+<tr><td align="left" valign="top">&bull; <a href="#Viewing-Outlines">Viewing Outlines</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
 </td></tr>
 <tr><td align="left" valign="top">&bull; <a href="#Links">Links</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
 </td></tr>
@@ -612,7 +612,7 @@ Koutliner
 </td></tr>
 <tr><th colspan="3" align="left" valign="top"><pre class="menu-comment">
 
-Editing
+Editing Outlines
 
 </pre></th></tr><tr><td align="left" valign="top">&bull; <a href="#Adding-and-Killing">Adding and Killing</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
 </td></tr>
@@ -634,7 +634,7 @@ Editing
 </td></tr>
 <tr><th colspan="3" align="left" valign="top"><pre class="menu-comment">
 
-Viewing
+Viewing Outlines
 
 </pre></th></tr><tr><td align="left" valign="top">&bull; <a href="#Hiding-and-Showing">Hiding and Showing</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
 </td></tr>
@@ -1334,15 +1334,18 @@ on a pathname to display the associated file or directory.
 <span id="index-change-key-bindings"></span>
 <span id="index-toggle-key-bindings"></span>
 <span id="index-key-bindings_002c-toggle"></span>
+<span id="index-enable-Hyperbole"></span>
 <span id="index-disable-Hyperbole"></span>
+<span id="index-Hyperbole-minibufer-menu"></span>
 <span id="index-C_002dh-h"></span>
-<span id="index-X"></span>
-<span id="index-q"></span>
+<span id="index-C_002dh-h-X"></span>
+<span id="index-C_002dh-h-q"></span>
 <p><kbd>{C-h h}</kbd> enables Hyperbole if it has been disabled and displays a
 Hyperbole menu in the minibuffer for quick keyboard or mouse-based selection.
 Select an item from this menu by typing the item&rsquo;s first capital letter.
 Use <kbd>{q}</kbd> to quit from the minibuffer menu while leaving Hyperbole enabled.
-Use<kbd>{X}</kbd> to quit from the minibuffer menu and disable Hyperbole minor mode.
+Use<kbd>{X}</kbd> (note this is capitalized) to quit from the minibuffer menu
+and disable Hyperbole minor mode.
 </p>
 <p>Use <kbd>{C-h h d d}</kbd> for an interactive demonstration of standard Hyperbole
 button capabilities.
@@ -1657,6 +1660,7 @@ Hyperbole Key Press/Click in Special Modes
   Any Known Lisp or ChangeLog   Jumps to identifier def    Referent Doc
   Fortran Mode                  Jumps to identifier def    Jumps to next def
   Emacs Lisp Compiler Error     Jumps to def with error    &lt;- same
+  Emacs Regression Test (ERT)   Jumps to def with error    &lt;- same
   Other Compiler Error          Jumps to src error line    &lt;- same
   Grep or Occur Match           Jumps to match source line &lt;- same
   Multi-buffer Occur Match      Jumps to match source line &lt;- same
@@ -2531,7 +2535,7 @@ this happen).  A single button may also appear multiple times within the
 same buffer; simply copy the button label with its delimiters
 to a new location if you need another copy of it.
 </p>
-<p>For details on how to create, activate, delete or modify explicit
+<p>For details on how to create, activate, delete or edit explicit
 buttons, see <a href="#Utilizing-Explicit-Buttons">Utilizing Explicit Buttons</a>.
 </p>
 <span id="index-link-button-1"></span>
@@ -2866,10 +2870,12 @@ program.  Patch applies diffs to source code.
 <span id="index-byte-compiler-error"></span>
 <span id="index-Emacs-Lisp-compiler-error"></span>
 <span id="index-compiler-error"></span>
+<span id="index-Emacs-Regression-Test-_0028ERT_0029-symbol"></span>
 </dd>
 <dt><code>elisp-compiler-msg</code></dt>
-<dd><p>Jump to the source code for a definition associated with an Emacs Lisp
-byte-compiler error message.  This works anywhere within an error line.
+<dd><p>Jump to source code for definition associated with an Emacs Lisp
+byte-compiler error message or ERT test output line.  Works when
+activated anywhere within such a line.
 </p>
 <span id="index-ibtypes-debugger_002dsource"></span>
 <span id="index-gdb"></span>
@@ -3892,7 +3898,7 @@ buttons.
 </td></tr>
 <tr><td align="left" valign="top">&bull; <a href="#Deletion" accesskey="3">Deletion</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
 </td></tr>
-<tr><td align="left" valign="top">&bull; <a href="#Modification" accesskey="4">Modification</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+<tr><td align="left" valign="top">&bull; <a href="#Editing" accesskey="4">Editing</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
 </td></tr>
 <tr><td align="left" valign="top">&bull; <a href="#Searching-and-Summarizing" accesskey="5">Searching and Summarizing</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
 </td></tr>
@@ -4070,7 +4076,7 @@ within your Emacs.  Bind it within your <samp>~/.emacs</samp> file with:
 <hr>
 <span id="Deletion"></span><div class="header">
 <p>
-Next: <a href="#Modification" accesskey="n" rel="next">Modification</a>, Previous: <a href="#Renaming" accesskey="p" rel="prev">Renaming</a>, Up: <a href="#Utilizing-Explicit-Buttons" accesskey="u" rel="up">Utilizing Explicit Buttons</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Key-Index" title="Index" rel="index">Index</a>]</p>
+Next: <a href="#Editing" accesskey="n" rel="next">Editing</a>, Previous: <a href="#Renaming" accesskey="p" rel="prev">Renaming</a>, Up: <a href="#Utilizing-Explicit-Buttons" accesskey="u" rel="up">Utilizing Explicit Buttons</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Key-Index" title="Index" rel="index">Index</a>]</p>
 </div>
 <span id="Deletion-1"></span><h4 class="subsection">4.7.3 Deletion</h4>
 
@@ -4089,21 +4095,20 @@ interactively deleting explicit buttons.  Set it to &lsquo;<samp>nil</samp>&rsqu
 prefer no confirmation.
 </p>
 <hr>
-<span id="Modification"></span><div class="header">
+<span id="Editing"></span><div class="header">
 <p>
 Next: <a href="#Searching-and-Summarizing" accesskey="n" rel="next">Searching and Summarizing</a>, Previous: <a href="#Deletion" accesskey="p" rel="prev">Deletion</a>, Up: <a href="#Utilizing-Explicit-Buttons" accesskey="u" rel="up">Utilizing Explicit Buttons</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Key-Index" title="Index" rel="index">Index</a>]</p>
 </div>
-<span id="Modification-1"></span><h4 class="subsection">4.7.4 Modification</h4>
+<span id="Editing-1"></span><h4 class="subsection">4.7.4 Editing</h4>
 
-<span id="index-explicit-button-modification"></span>
-<span id="index-button-modification"></span>
+<span id="index-explicit-button-editing"></span>
+<span id="index-button-editing"></span>
 <span id="index-Smart-Mouse-Key-drag"></span>
 <span id="index-button-attributes"></span>
-<p>Ebut/Modify prompts you with each of the elements from the button&rsquo;s
-attributes list and allows you to modify each in turn.  Ebut/Edit does
-the exact same thing and is there for people who prefer that term.
+<p>Ebut/Edit prompts you with each of the elements from the button&rsquo;s
+attributes list and allows you to edit each in turn.
 </p>
-<p>There is a quicker way to modify explicit link buttons, however.  Simply
+<p>There is a quicker way to edit explicit link buttons, however.  Simply
 drag with the Action Mouse Key from within the button label to a link
 destination in a different window, just as you would when creating a new
 button with a mouse drag.  Remember that drags may also be emulated from
@@ -4112,7 +4117,7 @@ the keyboard.  See <a href="#Creation">Creation</a>.
 <hr>
 <span id="Searching-and-Summarizing"></span><div class="header">
 <p>
-Next: <a href="#Buttons-in-Mail" accesskey="n" rel="next">Buttons in Mail</a>, Previous: <a href="#Modification" accesskey="p" rel="prev">Modification</a>, Up: <a href="#Utilizing-Explicit-Buttons" accesskey="u" rel="up">Utilizing Explicit Buttons</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Key-Index" title="Index" rel="index">Index</a>]</p>
+Next: <a href="#Buttons-in-Mail" accesskey="n" rel="next">Buttons in Mail</a>, Previous: <a href="#Editing" accesskey="p" rel="prev">Editing</a>, Up: <a href="#Utilizing-Explicit-Buttons" accesskey="u" rel="up">Utilizing Explicit Buttons</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Key-Index" title="Index" rel="index">Index</a>]</p>
 </div>
 <span id="Searching-and-Summarizing-1"></span><h4 class="subsection">4.7.5 Searching and Summarizing</h4>
 
@@ -4383,7 +4388,7 @@ item, including the action that it performs.  &quot;/&quot; at the end of an ite
 indicates that it brings up a submenu.
 </p>
 <span id="index-C_002dt"></span>
-<span id="index-q-1"></span>
+<span id="index-q"></span>
 <span id="index-C_002dg"></span>
 <span id="index-menu_002c-top_002dlevel"></span>
 <span id="index-top_002dlevel-menu"></span>
@@ -5097,7 +5102,7 @@ sizes by which to zoom.
 <span id="index-Q"></span>
 </dd>
 <dt><kbd>{Q}</kbd></dt>
-<dd><span id="index-q-2"></span>
+<dd><span id="index-q-1"></span>
 </dd>
 <dt><kbd>{q}</kbd></dt>
 <dd><p>Press <kbd>{Q}</kbd> to globally quit HyControl mode and restore normal key bindings.
@@ -5210,9 +5215,9 @@ commands available in the Koutliner.
 </td></tr>
 <tr><td align="left" valign="top">&bull; <a href="#Idstamps" accesskey="4">Idstamps</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
 </td></tr>
-<tr><td align="left" valign="top">&bull; <a href="#Editing" accesskey="5">Editing</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+<tr><td align="left" valign="top">&bull; <a href="#Editing-Outlines" accesskey="5">Editing Outlines</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
 </td></tr>
-<tr><td align="left" valign="top">&bull; <a href="#Viewing" accesskey="6">Viewing</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+<tr><td align="left" valign="top">&bull; <a href="#Viewing-Outlines" accesskey="6">Viewing Outlines</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
 </td></tr>
 <tr><td align="left" valign="top">&bull; <a href="#Links" accesskey="7">Links</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
 </td></tr>
@@ -5399,7 +5404,7 @@ initialization file, <samp>~/.emacs</samp>, substituting for &lsquo;your-separat
 <hr>
 <span id="Idstamps"></span><div class="header">
 <p>
-Next: <a href="#Editing" accesskey="n" rel="next">Editing</a>, Previous: <a href="#Autonumbering" accesskey="p" rel="prev">Autonumbering</a>, Up: <a href="#Koutliner" accesskey="u" rel="up">Koutliner</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Key-Index" title="Index" rel="index">Index</a>]</p>
+Next: <a href="#Editing-Outlines" accesskey="n" rel="next">Editing Outlines</a>, Previous: <a href="#Autonumbering" accesskey="p" rel="prev">Autonumbering</a>, Up: <a href="#Koutliner" accesskey="u" rel="up">Koutliner</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Key-Index" title="Index" rel="index">Index</a>]</p>
 </div>
 <span id="Idstamps-1"></span><h3 class="section">7.4 Idstamps</h3>
 
@@ -5428,11 +5433,11 @@ begin with a 0, as in 012, to distinguish them from relative ids.
 </p>
 
 <hr>
-<span id="Editing"></span><div class="header">
+<span id="Editing-Outlines"></span><div class="header">
 <p>
-Next: <a href="#Viewing" accesskey="n" rel="next">Viewing</a>, Previous: <a href="#Idstamps" accesskey="p" rel="prev">Idstamps</a>, Up: <a href="#Koutliner" accesskey="u" rel="up">Koutliner</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Key-Index" title="Index" rel="index">Index</a>]</p>
+Next: <a href="#Viewing-Outlines" accesskey="n" rel="next">Viewing Outlines</a>, Previous: <a href="#Idstamps" accesskey="p" rel="prev">Idstamps</a>, Up: <a href="#Koutliner" accesskey="u" rel="up">Koutliner</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Key-Index" title="Index" rel="index">Index</a>]</p>
 </div>
-<span id="Editing-1"></span><h3 class="section">7.5 Editing</h3>
+<span id="Editing-Outlines-1"></span><h3 class="section">7.5 Editing Outlines</h3>
 
 <p>Text editing within the Koutliner works just as it does for other
 buffers, except when you need to deal with the structural components of
@@ -5476,7 +5481,7 @@ selected region, since that will destroy the outline structure.
 <hr>
 <span id="Adding-and-Killing"></span><div class="header">
 <p>
-Next: <a href="#Promoting-and-Demoting" accesskey="n" rel="next">Promoting and Demoting</a>, Previous: <a href="#Editing" accesskey="p" rel="prev">Editing</a>, Up: <a href="#Editing" accesskey="u" rel="up">Editing</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Key-Index" title="Index" rel="index">Index</a>]</p>
+Next: <a href="#Promoting-and-Demoting" accesskey="n" rel="next">Promoting and Demoting</a>, Previous: <a href="#Editing-Outlines" accesskey="p" rel="prev">Editing Outlines</a>, Up: <a href="#Editing-Outlines" accesskey="u" rel="up">Editing Outlines</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Key-Index" title="Index" rel="index">Index</a>]</p>
 </div>
 <span id="Adding-and-Killing-1"></span><h4 class="subsection">7.5.1 Adding and Killing</h4>
 
@@ -5511,7 +5516,7 @@ buffer with <kbd>{C-y}</kbd>.
 <hr>
 <span id="Promoting-and-Demoting"></span><div class="header">
 <p>
-Next: <a href="#Relocating-and-Copying" accesskey="n" rel="next">Relocating and Copying</a>, Previous: <a href="#Adding-and-Killing" accesskey="p" rel="prev">Adding and Killing</a>, Up: <a href="#Editing" accesskey="u" rel="up">Editing</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Key-Index" title="Index" rel="index">Index</a>]</p>
+Next: <a href="#Relocating-and-Copying" accesskey="n" rel="next">Relocating and Copying</a>, Previous: <a href="#Adding-and-Killing" accesskey="p" rel="prev">Adding and Killing</a>, Up: <a href="#Editing-Outlines" accesskey="u" rel="up">Editing Outlines</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Key-Index" title="Index" rel="index">Index</a>]</p>
 </div>
 <span id="Promoting-and-Demoting-1"></span><h4 class="subsection">7.5.2 Promoting and Demoting</h4>
 
@@ -5593,7 +5598,7 @@ moves between fields within a table.
 <hr>
 <span id="Relocating-and-Copying"></span><div class="header">
 <p>
-Next: <a href="#Moving-Around" accesskey="n" rel="next">Moving Around</a>, Previous: <a href="#Promoting-and-Demoting" accesskey="p" rel="prev">Promoting and Demoting</a>, Up: <a href="#Editing" accesskey="u" rel="up">Editing</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Key-Index" title="Index" rel="index">Index</a>]</p>
+Next: <a href="#Moving-Around" accesskey="n" rel="next">Moving Around</a>, Previous: <a href="#Promoting-and-Demoting" accesskey="p" rel="prev">Promoting and Demoting</a>, Up: <a href="#Editing-Outlines" accesskey="u" rel="up">Editing Outlines</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Key-Index" title="Index" rel="index">Index</a>]</p>
 </div>
 <span id="Relocating-and-Copying-1"></span><h4 class="subsection">7.5.3 Relocating and Copying</h4>
 
@@ -5694,7 +5699,7 @@ See <a href="#Inserting-and-Importing">Inserting and Importing</a>.
 <hr>
 <span id="Moving-Around"></span><div class="header">
 <p>
-Next: <a href="#Filling" accesskey="n" rel="next">Filling</a>, Previous: <a href="#Relocating-and-Copying" accesskey="p" rel="prev">Relocating and Copying</a>, Up: <a href="#Editing" accesskey="u" rel="up">Editing</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Key-Index" title="Index" rel="index">Index</a>]</p>
+Next: <a href="#Filling" accesskey="n" rel="next">Filling</a>, Previous: <a href="#Relocating-and-Copying" accesskey="p" rel="prev">Relocating and Copying</a>, Up: <a href="#Editing-Outlines" accesskey="u" rel="up">Editing Outlines</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Key-Index" title="Index" rel="index">Index</a>]</p>
 </div>
 <span id="Moving-Around-1"></span><h4 class="subsection">7.5.4 Moving Around</h4>
 
@@ -5763,7 +5768,7 @@ cell or from one cell or tree to another.
 <hr>
 <span id="Filling"></span><div class="header">
 <p>
-Next: <a href="#Transposing" accesskey="n" rel="next">Transposing</a>, Previous: <a href="#Moving-Around" accesskey="p" rel="prev">Moving Around</a>, Up: <a href="#Editing" accesskey="u" rel="up">Editing</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Key-Index" title="Index" rel="index">Index</a>]</p>
+Next: <a href="#Transposing" accesskey="n" rel="next">Transposing</a>, Previous: <a href="#Moving-Around" accesskey="p" rel="prev">Moving Around</a>, Up: <a href="#Editing-Outlines" accesskey="u" rel="up">Editing Outlines</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Key-Index" title="Index" rel="index">Index</a>]</p>
 </div>
 <span id="Filling-1"></span><h4 class="subsection">7.5.5 Filling</h4>
 
@@ -5808,7 +5813,7 @@ a &lsquo;no-fill&rsquo; property, then your formatting will be lost.
 <hr>
 <span id="Transposing"></span><div class="header">
 <p>
-Next: <a href="#Splitting-and-Appending" accesskey="n" rel="next">Splitting and Appending</a>, Previous: <a href="#Filling" accesskey="p" rel="prev">Filling</a>, Up: <a href="#Editing" accesskey="u" rel="up">Editing</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Key-Index" title="Index" rel="index">Index</a>]</p>
+Next: <a href="#Splitting-and-Appending" accesskey="n" rel="next">Splitting and Appending</a>, Previous: <a href="#Filling" accesskey="p" rel="prev">Filling</a>, Up: <a href="#Editing-Outlines" accesskey="u" rel="up">Editing Outlines</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Key-Index" title="Index" rel="index">Index</a>]</p>
 </div>
 <span id="Transposing-1"></span><h4 class="subsection">7.5.6 Transposing</h4>
 
@@ -5840,7 +5845,7 @@ fewer visible, it makes the current cell the last cell in the outline.
 <hr>
 <span id="Splitting-and-Appending"></span><div class="header">
 <p>
-Next: <a href="#Inserting-and-Importing" accesskey="n" rel="next">Inserting and Importing</a>, Previous: <a href="#Transposing" accesskey="p" rel="prev">Transposing</a>, Up: <a href="#Editing" accesskey="u" rel="up">Editing</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Key-Index" title="Index" rel="index">Index</a>]</p>
+Next: <a href="#Inserting-and-Importing" accesskey="n" rel="next">Inserting and Importing</a>, Previous: <a href="#Transposing" accesskey="p" rel="prev">Transposing</a>, Up: <a href="#Editing-Outlines" accesskey="u" rel="up">Editing Outlines</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Key-Index" title="Index" rel="index">Index</a>]</p>
 </div>
 <span id="Splitting-and-Appending-1"></span><h4 class="subsection">7.5.7 Splitting and Appending</h4>
 
@@ -5872,7 +5877,7 @@ This helps maintain any special formatting the appended text may have.
 <hr>
 <span id="Inserting-and-Importing"></span><div class="header">
 <p>
-Next: <a href="#Exporting" accesskey="n" rel="next">Exporting</a>, Previous: <a href="#Splitting-and-Appending" accesskey="p" rel="prev">Splitting and Appending</a>, Up: <a href="#Editing" accesskey="u" rel="up">Editing</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Key-Index" title="Index" rel="index">Index</a>]</p>
+Next: <a href="#Exporting" accesskey="n" rel="next">Exporting</a>, Previous: <a href="#Splitting-and-Appending" accesskey="p" rel="prev">Splitting and Appending</a>, Up: <a href="#Editing-Outlines" accesskey="u" rel="up">Editing Outlines</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Key-Index" title="Index" rel="index">Index</a>]</p>
 </div>
 <span id="Inserting-and-Importing-1"></span><h4 class="subsection">7.5.8 Inserting and Importing</h4>
 
@@ -5964,7 +5969,7 @@ information.
 <hr>
 <span id="Exporting"></span><div class="header">
 <p>
-Previous: <a href="#Inserting-and-Importing" accesskey="p" rel="prev">Inserting and Importing</a>, Up: <a href="#Editing" accesskey="u" rel="up">Editing</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Key-Index" title="Index" rel="index">Index</a>]</p>
+Previous: <a href="#Inserting-and-Importing" accesskey="p" rel="prev">Inserting and Importing</a>, Up: <a href="#Editing-Outlines" accesskey="u" rel="up">Editing Outlines</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Key-Index" title="Index" rel="index">Index</a>]</p>
 </div>
 <span id="Exporting-1"></span><h4 class="subsection">7.5.9 Exporting</h4>
 
@@ -6002,11 +6007,11 @@ Koutline buffer to a <samp>.html</samp> file of the same name.  The output file 
 not be displayed; you must display it manually, if desired.
 </p>
 <hr>
-<span id="Viewing"></span><div class="header">
+<span id="Viewing-Outlines"></span><div class="header">
 <p>
-Next: <a href="#Links" accesskey="n" rel="next">Links</a>, Previous: <a href="#Editing" accesskey="p" rel="prev">Editing</a>, Up: <a href="#Koutliner" accesskey="u" rel="up">Koutliner</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Key-Index" title="Index" rel="index">Index</a>]</p>
+Next: <a href="#Links" accesskey="n" rel="next">Links</a>, Previous: <a href="#Editing-Outlines" accesskey="p" rel="prev">Editing Outlines</a>, Up: <a href="#Koutliner" accesskey="u" rel="up">Koutliner</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Key-Index" title="Index" rel="index">Index</a>]</p>
 </div>
-<span id="Viewing-1"></span><h3 class="section">7.6 Viewing</h3>
+<span id="Viewing-Outlines-1"></span><h3 class="section">7.6 Viewing Outlines</h3>
 
 <span id="index-outline_002c-viewing"></span>
 <span id="index-view"></span>
@@ -6023,7 +6028,7 @@ effectively browse and study large amounts of material.
 <hr>
 <span id="Hiding-and-Showing"></span><div class="header">
 <p>
-Next: <a href="#View-Specs" accesskey="n" rel="next">View Specs</a>, Previous: <a href="#Viewing" accesskey="p" rel="prev">Viewing</a>, Up: <a href="#Viewing" accesskey="u" rel="up">Viewing</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Key-Index" title="Index" rel="index">Index</a>]</p>
+Next: <a href="#View-Specs" accesskey="n" rel="next">View Specs</a>, Previous: <a href="#Viewing-Outlines" accesskey="p" rel="prev">Viewing Outlines</a>, Up: <a href="#Viewing-Outlines" accesskey="u" rel="up">Viewing Outlines</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Key-Index" title="Index" rel="index">Index</a>]</p>
 </div>
 <span id="Hiding-and-Showing-1"></span><h4 class="subsection">7.6.1 Hiding and Showing</h4>
 
@@ -6125,7 +6130,7 @@ point.  Try it with either your mouse or with <kbd>{M-<span class="key">RET</spa
 <hr>
 <span id="View-Specs"></span><div class="header">
 <p>
-Previous: <a href="#Hiding-and-Showing" accesskey="p" rel="prev">Hiding and Showing</a>, Up: <a href="#Viewing" accesskey="u" rel="up">Viewing</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Key-Index" title="Index" rel="index">Index</a>]</p>
+Previous: <a href="#Hiding-and-Showing" accesskey="p" rel="prev">Hiding and Showing</a>, Up: <a href="#Viewing-Outlines" accesskey="u" rel="up">Viewing Outlines</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Key-Index" title="Index" rel="index">Index</a>]</p>
 </div>
 <span id="View-Specs-1"></span><h4 class="subsection">7.6.2 View Specs</h4>
 
@@ -6239,7 +6244,7 @@ cells below level one.
 <hr>
 <span id="Links"></span><div class="header">
 <p>
-Next: <a href="#Cell-Attributes" accesskey="n" rel="next">Cell Attributes</a>, Previous: <a href="#Viewing" accesskey="p" rel="prev">Viewing</a>, Up: <a href="#Koutliner" accesskey="u" rel="up">Koutliner</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Key-Index" title="Index" rel="index">Index</a>]</p>
+Next: <a href="#Cell-Attributes" accesskey="n" rel="next">Cell Attributes</a>, Previous: <a href="#Viewing-Outlines" accesskey="p" rel="prev">Viewing Outlines</a>, Up: <a href="#Koutliner" accesskey="u" rel="up">Koutliner</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Key-Index" title="Index" rel="index">Index</a>]</p>
 </div>
 <span id="Links-1"></span><h3 class="section">7.7 Links</h3>
 
@@ -9256,12 +9261,9 @@ Next: <a href="#Koutliner-Keys" accesskey="n" rel="next">Koutliner Keys</a>, Pre
 <span id="index-key-binding-list"></span>
 <p>This appendix covers two topics: 1. how to bind Hyperbole minibuffer
 menu items to global keys and 2. summaries of all of Hyperbole&rsquo;s
-key bindings and whether each overrides any existing binding or
-not.  It also describes how to temporarily disable these bindings and
-how to manage whether Hyperbole overrides local, mode-specific key
-bindings that hide global Hyperbole keys.
-</p>
-<table class="menu" border="0" cellspacing="0">
+default key bindings.  User-specific Hyperbole key binding customizations
+override Hyperbole&rsquo;s defaults.
+</p><table class="menu" border="0" cellspacing="0">
 <tr><td align="left" valign="top">&bull; <a href="#Binding-Minibuffer-Menu-Items" accesskey="1">Binding Minibuffer Menu Items</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
 </td></tr>
 <tr><td align="left" valign="top">&bull; <a href="#Default-Hyperbole-Bindings" accesskey="2">Default Hyperbole Bindings</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
@@ -9326,7 +9328,7 @@ keymap, <code>hyperbole-mode-map</code>.
 </dd>
 <dt><kbd>{C-c \}</kbd></dt>
 <dd><p>HyControl: Control windows, frames and buffer display.  This binding
-is made only if the key is not bound prior to loading Hyperbole.
+is made only if the key is not bound prior to initializing Hyperbole.
 </p>
 <span id="index-C_002dc-_002f-1"></span>
 <span id="index-C_002dh-h-f-w-1"></span>
@@ -9340,20 +9342,25 @@ is made only if the key is not bound prior to loading Hyperbole.
 <dd><p>Search the Web: Display a minibuffer menu of web search engines.  Once
 an engine is selected, prompt for a search term and perform the
 associated search.  This binding is made only if the key is not bound
-prior to loading Hyperbole; otherwise, the Find/Web minibuffer menu
+prior to initializing Hyperbole; otherwise, the Find/Web minibuffer menu
 item, <kbd>{C-h h f w}</kbd>, will do the same thing.
 </p>
 <span id="index-C_002dc-_0040"></span>
 <span id="index-key-binding_002c-C_002dc-_0040"></span>
 <span id="index-windows-grid-1"></span>
 <span id="index-grid-of-windows-1"></span>
+<span id="index-C_002dh-h-h"></span>
+<span id="index-restore-frame-configuration"></span>
+<span id="index-frame-configuration_002c-restore"></span>
+<span id="index-restore-window-configuration"></span>
+<span id="index-window-configuration_002c-restore"></span>
 <span id="index-C_002dc-_0040-1"></span>
 </dd>
 <dt><kbd>{C-c @}</kbd></dt>
 <dd><p>Display a grid of windows in the selected frame, sized according to the
 prefix argument.  The left digit of the argument is the number of grid rows
-and the right digit is the number of grid columns.  The argument is
-prompted for if not given.
+and the right digit is the number of grid columns.  Use <kbd>{C-h h h}</kbd> to
+restore the prior frame configuration.
 </p>
 <p>If the argument is 0, prompt for a major mode whose buffers should be
 displayed first in the grid windows, then prompt for the grid size.
@@ -9361,7 +9368,7 @@ displayed first in the grid windows, then prompt for the grid size.
 <p>If the argument is &lt; 0, prompt for a shell glob-type file pattern and display
 files that match the pattern in an auto-sized windows grid.
 </p>
-<p>This binding is made only if the key is not bound prior to loading Hyperbole.
+<p>This binding is made only if the key is not bound prior to initializing Hyperbole.
 </p>
 <p>For further details, see the <kbd>{@}</kbd> key binding description
 in <a href="#HyControl">HyControl</a>.
@@ -9372,19 +9379,26 @@ in <a href="#HyControl">HyControl</a>.
 <dt><kbd>{M-o}</kbd></dt>
 <dd><p>Drag Operation: Keyboard emulation of the start and stop of mouse
 drags to invoke Smart Key actions.  This binding is made only if the
-key is not bound prior to loading Hyperbole and if Emacs is run under
+key is not bound prior to initializing Hyperbole and if Emacs is run under
 a window system.  If the Ace Window package is loaded, then Ace Window
 commands are typically bound to <kbd>{M-o}</kbd> instead.  Then <kbd>{M-o w}</kbd>
-may be used to quickly create an explicit link button in the selected window that
-links to any other window chosen via the Ace Window prompt.
+may be used to quickly create an explicit link button in the selected window
+that links to any other window chosen via the Ace Window prompt.
 </p>
 <span id="index-key-binding_002c-C_002dh-h"></span>
 <span id="index-C_002dh-h-2"></span>
 </dd>
 <dt><kbd>{C-h h}</kbd></dt>
-<dd><p>Hyperbole Mini Menu: Invoke the Hyperbole minibuffer menu, giving
-access to many Hyperbole commands.  This is bound globally as a means
-of enabling Hyperbole minor mode.
+<dd><span id="index-C_002dh-h-X-1"></span>
+</dd>
+<dt><kbd>{C-h h X}</kbd></dt>
+<dd><span id="index-Hyperbole-minibuffer-menu"></span>
+<span id="index-enable-Hyperbole-1"></span>
+<span id="index-disable-Hyperbole-1"></span>
+<p>Hyperbole Mini Menu: Enable Hyperbole minor mode and invoke the
+Hyperbole minibuffer menu, giving access to many Hyperbole commands.
+This is bound globally.  Use <kbd>{C-h h X}</kbd> to close the Hyperbole
+minibuffer menu and disable Hyperbole minor mode.
 </p>
 <span id="index-key-binding_002c-C_002dh-A"></span>
 <span id="index-key-binding_002c-C_002du-C_002dh-A"></span>
@@ -9405,7 +9419,7 @@ of enabling Hyperbole minor mode.
 when invoked repeatedly, showing in the minibuffer the type of unit
 marked each time.  For example, if on an opening brace at the start of
 a C, Java or Javascript function, this marks the whole function.  This
-binding is made only if the key is not bound prior to loading
+binding is made only if the key is not bound prior to initializing
 Hyperbole.
 </p>
 <span id="index-key-binding_002c-C_002dc-_002e"></span>
@@ -9414,7 +9428,7 @@ Hyperbole.
 <dt><kbd>{C-c .}</kbd></dt>
 <dd><p>Delimited Thing Jump: Jump between the start and end of a delimited
 thing, which may be an HTML tag pair.  This binding is made only if
-the key is not bound prior to loading Hyperbole.  See <a href="#Smart-Key-Thing-Selection">Smart Key Thing Selection</a>, for more information.
+the key is not bound prior to initializing Hyperbole.  See <a href="#Smart-Key-Thing-Selection">Smart Key Thing Selection</a>, for more information.
 </p></dd>
 </dl>
 
@@ -12613,8 +12627,6 @@ Next: <a href="#Function" accesskey="n" rel="next">Function</a>, Previous: <a hr
  &nbsp; 
 <a class="summary-letter" href="#Key-Index_ky_letter-W"><b>W</b></a>
  &nbsp; 
-<a class="summary-letter" href="#Key-Index_ky_letter-X"><b>X</b></a>
- &nbsp; 
 <a class="summary-letter" href="#Key-Index_ky_letter-Z"><b>Z</b></a>
  &nbsp; 
 </td></tr></table>
@@ -12732,6 +12744,7 @@ Next: <a href="#Function" accesskey="n" rel="next">Function</a>, Previous: <a hr
 <tr><td></td><td valign="top"><a href="#index-C_002dh-h-f-w"><code>C-h h f w</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Web-Search-Engines">Web Search Engines</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-C_002dh-h-f-w-1"><code>C-h h f w</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Default-Hyperbole-Bindings">Default Hyperbole Bindings</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-C_002dh-h-g"><code>C-h h g</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Global-Buttons">Global Buttons</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-C_002dh-h-h"><code>C-h h h</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Default-Hyperbole-Bindings">Default Hyperbole Bindings</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-C_002dh-h-i-a"><code>C-h h i a</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-C_002dh-h-i-e"><code>C-h h i e</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-C_002dh-h-i-l"><code>C-h h i l</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
@@ -12742,8 +12755,11 @@ Next: <a href="#Function" accesskey="n" rel="next">Function</a>, Previous: <a hr
 <tr><td></td><td valign="top"><a href="#index-C_002dh-h-k-f-k"><code>C-h h k f k</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Exporting">Exporting</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-C_002dh-h-m-c"><code>C-h h m c</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Key-Debugging">Smart Key Debugging</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-C_002dh-h-m-r"><code>C-h h m r</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Key-Debugging">Smart Key Debugging</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-C_002dh-h-q"><code>C-h h q</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Invocation">Invocation</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-C_002dh-h-s-f"><code>C-h h s f</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyControl">HyControl</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-C_002dh-h-s-w"><code>C-h h s w</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyControl">HyControl</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-C_002dh-h-X"><code>C-h h X</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Invocation">Invocation</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-C_002dh-h-X-1"><code>C-h h X</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Default-Hyperbole-Bindings">Default Hyperbole Bindings</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-C_002dh-t"><code>C-h t</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Hyperbole-Overview">Hyperbole Overview</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-C_002dM_002dh"><code>C-M-h</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Hiding-and-Showing">Hiding and Showing</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-C_002dM_002dx"><code>C-M-x</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Creating-Types">Creating Types</a></td></tr>
@@ -12870,10 +12886,9 @@ Next: <a href="#Function" accesskey="n" rel="next">Function</a>, Previous: <a hr
 <tr><td></td><td valign="top"><a href="#index-p-1"><code>p</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyRolo-Keys">HyRolo Keys</a></td></tr>
 <tr><td colspan="4"> <hr></td></tr>
 <tr><th id="Key-Index_ky_letter-Q">Q</th><td></td><td></td></tr>
-<tr><td></td><td valign="top"><a href="#index-q"><code>q</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Invocation">Invocation</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-q-1"><code>q</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Menus">Menus</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-q"><code>q</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Menus">Menus</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-Q"><code>Q</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyControl">HyControl</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-q-2"><code>q</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyControl">HyControl</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-q-1"><code>q</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyControl">HyControl</a></td></tr>
 <tr><td colspan="4"> <hr></td></tr>
 <tr><th id="Key-Index_ky_letter-R">R</th><td></td><td></td></tr>
 <tr><td></td><td valign="top"><a href="#index-r"><code>r</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyControl">HyControl</a></td></tr>
@@ -12980,9 +12995,6 @@ Next: <a href="#Function" accesskey="n" rel="next">Function</a>, Previous: <a hr
 <tr><td></td><td valign="top"><a href="#index-w"><code>w</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyControl">HyControl</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-W"><code>W</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyControl">HyControl</a></td></tr>
 <tr><td colspan="4"> <hr></td></tr>
-<tr><th id="Key-Index_ky_letter-X">X</th><td></td><td></td></tr>
-<tr><td></td><td valign="top"><a href="#index-X"><code>X</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Invocation">Invocation</a></td></tr>
-<tr><td colspan="4"> <hr></td></tr>
 <tr><th id="Key-Index_ky_letter-Z">Z</th><td></td><td></td></tr>
 <tr><td></td><td valign="top"><a href="#index-Z"><code>Z</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyControl">HyControl</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-z"><code>z</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyControl">HyControl</a></td></tr>
@@ -13056,8 +13068,6 @@ Next: <a href="#Function" accesskey="n" rel="next">Function</a>, Previous: <a hr
 <a class="summary-letter" href="#Key-Index_ky_letter-U"><b>U</b></a>
  &nbsp; 
 <a class="summary-letter" href="#Key-Index_ky_letter-W"><b>W</b></a>
- &nbsp; 
-<a class="summary-letter" href="#Key-Index_ky_letter-X"><b>X</b></a>
  &nbsp; 
 <a class="summary-letter" href="#Key-Index_ky_letter-Z"><b>Z</b></a>
  &nbsp; 
@@ -13843,7 +13853,7 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function</a>, Up: <a href
 <tr><td></td><td valign="top"><a href="#index-button-action">button action</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Action-Types">Action Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-button-activation">button activation</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Key-Operations">Smart Key Operations</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-button-attribute">button attribute</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Explicit-Buttons">Explicit Buttons</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-button-attributes">button attributes</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Modification">Modification</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-button-attributes">button attributes</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Editing">Editing</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-button-attributes-1">button attributes</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Operational-and-Storage-Formats">Operational and Storage Formats</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-button-category">button category</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Buttons">Buttons</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-button-click">button click</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Key-_002d-Hyperbole-Buttons">Smart Key - Hyperbole Buttons</a></td></tr>
@@ -13852,6 +13862,7 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function</a>, Up: <a href
 <tr><td></td><td valign="top"><a href="#index-button-data-saving">button data saving</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Hook-Variables">Hook Variables</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-button-deletion">button deletion</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Deletion">Deletion</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-button-demo">button demo</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Hyperbole-Overview">Hyperbole Overview</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-button-editing">button editing</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Editing">Editing</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-button-emphasis">button emphasis</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Button-Colors">Button Colors</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-button-file_002c-directory">button file, directory</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Button-Files">Button Files</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-button-file_002c-HYPB">button file, HYPB</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Menus">Menus</a></td></tr>
@@ -13870,7 +13881,6 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function</a>, Up: <a href
 <tr><td></td><td valign="top"><a href="#index-button-label-2">button label</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Button-Label-Normalization">Button Label Normalization</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-button-label-overlap">button label overlap</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Button-Type-Precedence">Button Type Precedence</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-button-mailing">button mailing</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Buttons-in-Mail">Buttons in Mail</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-button-modification">button modification</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Modification">Modification</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-button-name">button name</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Explicit-Buttons">Explicit Buttons</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-button-posting">button posting</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Buttons-in-Mail">Buttons in Mail</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-button-posting-1">button posting</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Buttons-in-News">Buttons in News</a></td></tr>
@@ -13914,7 +13924,7 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function</a>, Up: <a href
 <tr><td></td><td valign="top"><a href="#index-cell_002c-no_002dfill-attribute">cell, no-fill attribute</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Filling">Filling</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-cell_002c-no_002dfill-attribute-1">cell, no-fill attribute</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Splitting-and-Appending">Splitting and Appending</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-cell_002c-no_002dfill-attribute-2">cell, no-fill attribute</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Cell-Attributes">Cell Attributes</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-cell_002c-selection">cell, selection</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Editing">Editing</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-cell_002c-selection">cell, selection</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Editing-Outlines">Editing Outlines</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-cell_002c-show-all">cell, show all</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Hiding-and-Showing">Hiding and Showing</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-cell_002c-show-levels">cell, show levels</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Hiding-and-Showing">Hiding and Showing</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-cell_002c-show-subtree">cell, show subtree</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Hiding-and-Showing">Hiding and Showing</a></td></tr>
@@ -14013,6 +14023,7 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function</a>, Up: <a href
 <tr><td></td><td valign="top"><a href="#index-dired_002c-images">dired, images</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Key-_002d-Image-Thumbnails">Smart Key - Image Thumbnails</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-dired_002dsidebar_002dmode">dired-sidebar-mode</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Key-_002d-Dired-Sidebar-Mode">Smart Key - Dired Sidebar Mode</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-disable-Hyperbole">disable Hyperbole</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Invocation">Invocation</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-disable-Hyperbole-1">disable Hyperbole</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Default-Hyperbole-Bindings">Default Hyperbole Bindings</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-disable-hyperbole-key-bindings">disable hyperbole key bindings</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Default-Hyperbole-Bindings">Default Hyperbole Bindings</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-disable-org_002dmode-support">disable org-mode support</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-display">display</a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyControl">HyControl</a></td></tr>
@@ -14071,9 +14082,12 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function</a>, Up: <a href
 <tr><td></td><td valign="top"><a href="#index-Emacs-Lisp-variables-1">Emacs Lisp variables</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Link-Variable-Substitution">Link Variable Substitution</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-emacs-outline">emacs outline</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Inserting-and-Importing">Inserting and Importing</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-Emacs-package-manager">Emacs package manager</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Elpa-Stable-Package-Installation">Elpa Stable Package Installation</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-Emacs-Regression-Test-_0028ERT_0029-symbol">Emacs Regression Test (ERT) symbol</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-Emacs-Regression-Test-framework">Emacs Regression Test framework</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-Emacs-support">Emacs support</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Button-Colors">Button Colors</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-emulation_002c-drag">emulation, drag</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Keyboard-Drags">Keyboard Drags</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-enable-Hyperbole">enable Hyperbole</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Invocation">Invocation</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-enable-Hyperbole-1">enable Hyperbole</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Default-Hyperbole-Bindings">Default Hyperbole Bindings</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-enable-org_002dmode-support">enable org-mode support</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-enabling-URLs-in-find_002dfile">enabling URLs in find-file</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Using-URLs-with-Find_002dFile">Using URLs with Find-File</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-end-of-line-click">end of line click</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Key-_002d-Smart-Scrolling">Smart Key - Smart Scrolling</a></td></tr>
@@ -14091,9 +14105,9 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function</a>, Up: <a href
 <tr><td></td><td valign="top"><a href="#index-explicit-button-1">explicit button</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Explicit-Buttons">Explicit Buttons</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-explicit-button-creation">explicit button creation</a>:</td><td>&nbsp;</td><td valign="top"><a href="#By-Dragging">By Dragging</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-explicit-button-deletion">explicit button deletion</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Deletion">Deletion</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-explicit-button-editing">explicit button editing</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Editing">Editing</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-explicit-button-formats">explicit button formats</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Operational-and-Storage-Formats">Operational and Storage Formats</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-explicit-button-link">explicit button link</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-explicit-button-modification">explicit button modification</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Modification">Modification</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-explicit-button-renaming">explicit button renaming</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Renaming">Renaming</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-explicit-button-searching">explicit button searching</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Searching-and-Summarizing">Searching and Summarizing</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-explicit-button-storage">explicit button storage</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Operational-and-Storage-Formats">Operational and Storage Formats</a></td></tr>
@@ -14123,6 +14137,7 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function</a>, Up: <a href
 <tr><td></td><td valign="top"><a href="#index-find_002dfile_002c-browsing-URLs">find-file, browsing URLs</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Using-URLs-with-Find_002dFile">Using URLs with Find-File</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-flashing-buttons">flashing buttons</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Button-Colors">Button Colors</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-frame-configuration">frame configuration</a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyControl">HyControl</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-frame-configuration_002c-restore">frame configuration, restore</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Default-Hyperbole-Bindings">Default Hyperbole Bindings</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-frame-relocate">frame relocate</a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyControl">HyControl</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-frame-resize">frame resize</a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyControl">HyControl</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-frame_002c-delete">frame, delete</a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyControl">HyControl</a></td></tr>
@@ -14218,6 +14233,8 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function</a>, Up: <a href
 <tr><td></td><td valign="top"><a href="#index-Hyperbole-main-menu">Hyperbole main menu</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Menus">Menus</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-Hyperbole-manual">Hyperbole manual</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Documentation">Documentation</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-Hyperbole-menubar-menu">Hyperbole menubar menu</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Menus">Menus</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-Hyperbole-minibufer-menu">Hyperbole minibufer menu</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Invocation">Invocation</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-Hyperbole-minibuffer-menu">Hyperbole minibuffer menu</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Default-Hyperbole-Bindings">Default Hyperbole Bindings</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-hyperbole-popup-menu">hyperbole popup menu</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Menus">Menus</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-Hyperbole-pulldown-menu">Hyperbole pulldown menu</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Menus">Menus</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-Hyperbole-report">Hyperbole report</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
@@ -14612,7 +14629,7 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function</a>, Up: <a href
 <tr><td></td><td valign="top"><a href="#index-outline_002c-showing">outline, showing</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Hiding-and-Showing">Hiding and Showing</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-outline_002c-top_002dlevel">outline, top-level</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Hiding-and-Showing">Hiding and Showing</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-outline_002c-view-specs">outline, view specs</a>:</td><td>&nbsp;</td><td valign="top"><a href="#View-Specs">View Specs</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-outline_002c-viewing">outline, viewing</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Viewing">Viewing</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-outline_002c-viewing">outline, viewing</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Viewing-Outlines">Viewing Outlines</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-outline_002dminor_002dmode">outline-minor-mode</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Key-_002d-Emacs-Outline-Mode">Smart Key - Emacs Outline Mode</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-outline_002dmode">outline-mode</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Key-_002d-Emacs-Outline-Mode">Smart Key - Emacs Outline Mode</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-outliner">outliner</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Koutliner">Koutliner</a></td></tr>
@@ -14677,6 +14694,8 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function</a>, Up: <a href
 <tr><td></td><td valign="top"><a href="#index-Request-For-Comment-1">Request For Comment</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-resize-frame-percentage">resize frame percentage</a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyControl">HyControl</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-resizing-windows">resizing windows</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Resizing-Windows">Resizing Windows</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-restore-frame-configuration">restore frame configuration</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Default-Hyperbole-Bindings">Default Hyperbole Bindings</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-restore-window-configuration">restore window configuration</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Default-Hyperbole-Bindings">Default Hyperbole Bindings</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-restoring-windows">restoring windows</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Window-Configurations">Window Configurations</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-RFC">RFC</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-RFC-1">RFC</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
@@ -14761,7 +14780,7 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function</a>, Up: <a href
 <tr><td></td><td valign="top"><a href="#index-Smart-Mouse-Key">Smart Mouse Key</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Thing-Selection">Thing Selection</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-Smart-Mouse-Key-1">Smart Mouse Key</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Key-_002d-Delimited-Things">Smart Key - Delimited Things</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-smart-mouse-key-drag">smart mouse key drag</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Mouse-Key-Drags">Smart Mouse Key Drags</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-Smart-Mouse-Key-drag">Smart Mouse Key drag</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Modification">Modification</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-Smart-Mouse-Key-drag">Smart Mouse Key drag</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Editing">Editing</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-Smart-Mouse-Key-toggle">Smart Mouse Key toggle</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Default-Hyperbole-Bindings">Default Hyperbole Bindings</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-Smart-Mouse-Keys">Smart Mouse Keys</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Mouse-Keys">Smart Mouse Keys</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-smart-selection">smart selection</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Key-Thing-Selection">Smart Key Thing Selection</a></td></tr>
@@ -14871,7 +14890,7 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function</a>, Up: <a href
 <tr><td></td><td valign="top"><a href="#index-version-description">version description</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Suggestion-or-Bug-Reporting">Suggestion or Bug Reporting</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-vertical-drag">vertical drag</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Creating-and-Deleting-Windows">Creating and Deleting Windows</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-vertical-drag-1">vertical drag</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Mouse-Drags-within-a-Window">Smart Mouse Drags within a Window</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-view">view</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Viewing">Viewing</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-view">view</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Viewing-Outlines">Viewing Outlines</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-view-mode">view mode</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Key-_002d-View-Mode">Smart Key - View Mode</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-view-spec">view spec</a>:</td><td>&nbsp;</td><td valign="top"><a href="#View-Specs">View Specs</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-view-spec_002c-all-lines-and-levels">view spec, all lines and levels</a>:</td><td>&nbsp;</td><td valign="top"><a href="#View-Specs">View Specs</a></td></tr>
@@ -14902,6 +14921,7 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function</a>, Up: <a href
 <tr><td></td><td valign="top"><a href="#index-window-configuration-commands">window configuration commands</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Window-Configurations">Window Configurations</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-window-configuration-drag">window configuration drag</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Saving-and-Restoring-Window-Configurations">Saving and Restoring Window Configurations</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-window-configuration-ring">window configuration ring</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Window-Configurations">Window Configurations</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-window-configuration_002c-restore">window configuration, restore</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Default-Hyperbole-Bindings">Default Hyperbole Bindings</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-window-configurations">window configurations</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Window-Configurations">Window Configurations</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-window-link-button">window link button</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Keyboard-Drags">Keyboard Drags</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-window-system">window system</a>:</td><td>&nbsp;</td><td valign="top"><a href="#External-Viewers">External Viewers</a></td></tr>

@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    23-Sep-91 at 20:34:36
-;; Last-Mod:     13-Feb-22 at 19:48:50 by Mats Lidell
+;; Last-Mod:     20-Feb-22 at 22:13:32 by Bob Weiner
 ;;
 ;; Copyright (C) 1991-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -498,12 +498,12 @@ on the implicit button to which to link."
    (let ((ibut-key (ibut:at-p t)))
      (cond (ibut-key
 	    (list ibut-key (or buffer-file-name (buffer-name)) (point)))
-	   ;; TODO: If default is null below and are creating, rather than modifying,
+	   ;; TODO: If default is null below and are creating, rather than editing
 	   ;; the link, it would be better to throw an error than create
 	   ;; an invalid link, but it is difficult to tell which operation
 	   ;; is in progress, so ignore this for now.  -- RSW, 01-25-2020
 
-	   ;; When not on an ibut and modifying the link, use existing arguments
+	   ;; When not on an ibut and editing the link, use existing arguments
 	   ((and (bound-and-true-p hargs:defaults) (listp hargs:defaults) hargs:defaults)
 	    hargs:defaults)
 	   (t

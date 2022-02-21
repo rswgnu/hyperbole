@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    31-Oct-91 at 23:17:35
-;; Last-Mod:     12-Feb-22 at 10:11:21 by Mats Lidell
+;; Last-Mod:     20-Feb-22 at 22:15:24 by Bob Weiner
 ;;
 ;; Copyright (C) 1991-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -36,7 +36,7 @@
 ;;; ************************************************************************
 
 (defvar hargs:defaults nil
-  "Default arguments read from an existing Hyperbole button when modifying it.")
+  "Default arguments read from an existing Hyperbole button when editing it.")
 
 (defvar hargs:reading-type nil
   "Symbol representing the type of object Hyperbole is prompting the user to input.")
@@ -50,9 +50,9 @@
 
 (defalias 'hargs:find-tag-default #'find-tag--default)
 
-(defun hargs:action-get (action modifying)
+(defun hargs:action-get (action editing-flag)
   "Interactively get list of arguments for ACTION's parameters.
-Current button is being modified when MODIFYING is t.
+Current button is being edited when EDITING-FLAG is t.
 Return nil if ACTION is not a list or `byte-code' object, has no
 interactive form or takes no arguments."
   (save-excursion
@@ -60,7 +60,7 @@ interactive form or takes no arguments."
 	 (let ((interactive-form (action:commandp action)))
 	   (when interactive-form
 	     (hpath:relative-arguments
-	      (hargs:iform-read interactive-form modifying)))))))
+	      (hargs:iform-read interactive-form editing-flag)))))))
 
 (defun hargs:buffer-substring (start end)
   "Return the buffer substring sans any properties between START and END positions.
@@ -275,12 +275,12 @@ that point is within is returned or nil if none."
 ;;; Public functions
 ;;; ************************************************************************
 
-(defun hargs:actype-get (actype &optional modifying)
+(defun hargs:actype-get (actype &optional editing-flag)
   "Interactively get and return list of arguments for ACTYPE's parameters.
-Current button is being modified when MODIFYING is non-nil."
-  (when modifying
-    (setq modifying t))
-  (hargs:action-get (actype:action-body actype) modifying))
+Current button is being edited when EDITING-FLAG is non-nil."
+  (when editing-flag
+    (setq editing-flag t))
+  (hargs:action-get (actype:action-body actype) editing-flag))
 
 (defun hargs:at-p (&optional no-default)
   "Return thing at point, if of hargs:reading-type type, or default.
@@ -478,7 +478,7 @@ Insert in minibuffer if active or in other window if minibuffer is inactive."
 
 (defun hargs:iform-read (iform &optional default-args)
   "Read action arguments according to IFORM, a list with car = `interactive'.
-With optional DEFAULT-ARGS equal to t, the current button is being modified, so
+With optional DEFAULT-ARGS equal to t, the current button is being edited, so
 its attribute values should be presented as defaults.  Otherwise, use
 DEFAULT-ARGS as a list of defaults to present when reading arguments.
 See also documentation for `interactive'."

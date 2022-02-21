@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     6-Oct-91 at 03:42:38
-;; Last-Mod:     20-Feb-22 at 14:16:25 by Bob Weiner
+;; Last-Mod:     20-Feb-22 at 22:12:33 by Bob Weiner
 ;;
 ;; Copyright (C) 1991-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -719,7 +719,7 @@ If in an Emacs Lisp mode buffer and no PREFX-ARG is given, limit search to only 
 			  "--include=\"*.el\" --include=\"*.el.gz\"")
 		      (if (string-match "\\`rg " hypb:rgrep-command)
 			  "-g \"!*~\" -g \"!#*\" -g \"!TAGS\""
-			"--exclude=\"*~\" --exclude=\"#*\" --exclude=\"TAGS\""))
+			"--exclude=\".git\" --exclude=\"CVS\" --exclude=\"*~\" --exclude=\"#*\" --exclude=\"TAGS\""))
 		    delim pattern delim))))
     (setq this-command `(grep ,grep-cmd))
     (push this-command command-history)

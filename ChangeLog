@@ -1,5 +1,18 @@
 2022-02-20  Bob Weiner  <rsw@gnu.org>
 
+* hypb.el (hypb:rgrep): Exclude .git and CVS directories.
+
+* hui-menu.el (infodock-hyperbole-menu):
+  hui-mini.el (hui:menus): Remove button Modify menu items.  Use Edit.
+  hbut.el (ebut:edit): Rename from 'ebut:modify'.
+  hui.el (hui:ebut-edit-region): Rename this function of no arguments from 'hui:ebut-edit'.
+         (hui:ebut-edit, hui:gbut-edit, hui:ibut-edit):
+  In Hyperbole code, change all '-modify' functions to '-edit'.
+
+* man/hyperbole.texi (Editing): Rename from Modification.
+                     (Editing Outlines): Rename from Editing.
+		     (Viewing Outlines): Rename from Viewing.
+
 * hhist.el (hhist:add): Trigger error if elt is not a frame config.
 
 * man/hyperbole.texi (Default Hyperbole Bindings): Document here

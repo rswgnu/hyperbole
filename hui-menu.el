@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    28-Oct-94 at 10:59:44
-;; Last-Mod:     12-Feb-22 at 13:51:20 by Bob Weiner
+;; Last-Mod:     20-Feb-22 at 21:52:10 by Bob Weiner
 ;;
 ;; Copyright (C) 1994-2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -363,14 +363,13 @@ REBUILD-FLAG is non-nil, in which case the menu is rebuilt."
 		   ["Activate" hui:ebut-act t]
 		   ["Create" hui:ebut-create t]
 		   ["Delete" hui:ebut-delete t]
-		   ["Edit"   hui:ebut-modify t]
+		   ["Edit"   hui:ebut-edit t]
 		   ("Help"
 		    ["Manual"   (id-info "(hyperbole)Location") t]
 		    "----"
 		    ["Buffer-Buttons"   (hui:hbut-report -1) t]
 		    ["Current-Button"   (hui:hbut-report)    t]
 		    ["Ordered-Buttons"  (hui:hbut-report 1)  t])
-		   ["Modify" hui:ebut-modify t]
 		   ["Rename" hui:ebut-rename t]
 		   ["Search" hui:ebut-search t]
 		   ["Types"
@@ -398,19 +397,17 @@ REBUILD-FLAG is non-nil, in which case the menu is rebuilt."
 		   :filter hui-menu-global-buttons
 		   ["Create" hui:gbut-create t]
 		   ["Delete" hui:gbut-delete t]
-		   ["Edit"   hui:gbut-modify t]
+		   ["Edit"   hui:gbut-edit t]
 		   ["Help"   gbut:help t]
-		   ["Modify" hui:gbut-modify t]
                    ["Rename" hui:gbut-rename t])
 		 '("Implicit-Button"
 		   ["Manual"   (id-info "(hyperbole)Implicit Buttons") t]
 		   "----"
 		   ["Activate" hui:ibut-act t]
 		   ["Delete-Type" (hui:htype-delete 'ibtypes) t]
-		   ["Edit"   hui:ibut-modify t]
+		   ["Edit"   hui:ibut-edit t]
 		   ["Help"   hui:hbut-help t]
 		   ["Label"  hui:ibut-label-create t]
-		   ["Modify" hui:ibut-modify t]
 		   ["Rename" hui:ibut-rename t]
 		   ["Types"  (hui:htype-help 'ibtypes 'no-sort) t])
 		 '("Koutliner"

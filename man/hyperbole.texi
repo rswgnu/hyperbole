@@ -7,7 +7,7 @@
 @c Author:       Bob Weiner
 @c
 @c Orig-Date:     6-Nov-91 at 11:18:03
-@c Last-Mod:     20-Feb-22 at 15:50:00 by Bob Weiner
+@c Last-Mod:     20-Feb-22 at 22:50:22 by Bob Weiner
 
 @c %**start of header (This is for running Texinfo on a region.)
 @setfilename hyperbole.info
@@ -335,7 +335,7 @@ Utilizing Explicit Buttons
 * Creation::
 * Renaming::
 * Deletion::
-* Modification::
+* Editing::
 * Searching and Summarizing::
 * Buttons in Mail::
 * Buttons in News::
@@ -351,13 +351,13 @@ Koutliner
 * Creating Outlines::
 * Autonumbering::
 * Idstamps::
-* Editing::
-* Viewing::
+* Editing Outlines::
+* Viewing Outlines::
 * Links::
 * Cell Attributes::
 * Koutliner History::
 
-Editing
+Editing Outlines
 
 * Adding and Killing::
 * Promoting and Demoting::
@@ -369,7 +369,7 @@ Editing
 * Inserting and Importing::
 * Exporting::
 
-Viewing
+Viewing Outlines
 
 * Hiding and Showing::
 * View Specs::
@@ -1946,7 +1946,7 @@ this happen).  A single button may also appear multiple times within the
 same buffer; simply copy the button label with its delimiters
 to a new location if you need another copy of it.
 
-For details on how to create, activate, delete or modify explicit
+For details on how to create, activate, delete or edit explicit
 buttons, @pxref{Utilizing Explicit Buttons}.
 
 @cindex link button
@@ -3192,7 +3192,7 @@ buttons.
 * Creation::
 * Renaming::
 * Deletion::
-* Modification::
+* Editing::
 * Searching and Summarizing::
 * Buttons in Mail::
 * Buttons in News::
@@ -3346,7 +3346,7 @@ within your Emacs.  Bind it within your @file{~/.emacs} file with:
 @code{(hkey-set-key "\C-cr" 'hui:ebut-rename)}, for example.
 
 
-@node Deletion, Modification, Renaming, Utilizing Explicit Buttons
+@node Deletion, Editing, Renaming, Utilizing Explicit Buttons
 @subsection  Deletion
 
 @cindex explicit button deletion
@@ -3363,24 +3363,23 @@ is true by default, causing Hyperbole to require confirmation before
 interactively deleting explicit buttons.  Set it to @samp{nil} if you
 prefer no confirmation.
 
-@node Modification, Searching and Summarizing, Deletion, Utilizing Explicit Buttons
-@subsection  Modification
+@node Editing, Searching and Summarizing, Deletion, Utilizing Explicit Buttons
+@subsection  Editing
 
-@cindex explicit button modification
-@cindex button modification
+@cindex explicit button editing
+@cindex button editing
 @cindex Smart Mouse Key drag
 @cindex button attributes
-Ebut/Modify prompts you with each of the elements from the button's
-attributes list and allows you to modify each in turn.  Ebut/Edit does
-the exact same thing and is there for people who prefer that term.
+Ebut/Edit prompts you with each of the elements from the button's
+attributes list and allows you to edit each in turn.
 
-There is a quicker way to modify explicit link buttons, however.  Simply
+There is a quicker way to edit explicit link buttons, however.  Simply
 drag with the Action Mouse Key from within the button label to a link
 destination in a different window, just as you would when creating a new
 button with a mouse drag.  Remember that drags may also be emulated from
 the keyboard.  @xref{Creation}.
 
-@node Searching and Summarizing, Buttons in Mail, Modification, Utilizing Explicit Buttons
+@node Searching and Summarizing, Buttons in Mail, Editing, Utilizing Explicit Buttons
 @subsection  Searching and Summarizing
 
 @cindex explicit button summary
@@ -4373,8 +4372,8 @@ commands available in the Koutliner.
 * Creating Outlines::
 * Autonumbering::
 * Idstamps::
-* Editing::
-* Viewing::
+* Editing Outlines::
+* Viewing Outlines::
 * Links::
 * Cell Attributes::
 * Koutliner History::
@@ -4545,7 +4544,7 @@ initialization file, @file{~/.emacs}, substituting for `your-separator':
 @end lisp
 
 
-@node Idstamps, Editing, Autonumbering, Koutliner
+@node Idstamps, Editing Outlines, Autonumbering, Koutliner
 @section   Idstamps
 
 @cindex permanent identifier
@@ -4572,8 +4571,8 @@ outline may be treated as a single tree when needed.  Idstamps always
 begin with a 0, as in 012, to distinguish them from relative ids.
 
 
-@node Editing, Viewing, Idstamps, Koutliner
-@section   Editing
+@node Editing Outlines, Viewing Outlines, Idstamps, Koutliner
+@section   Editing Outlines
 
 Text editing within the Koutliner works just as it does for other
 buffers, except when you need to deal with the structural components of
@@ -4605,7 +4604,7 @@ selected region, since that will destroy the outline structure.
 * Exporting::
 @end menu
 
-@node Adding and Killing, Promoting and Demoting, Editing, Editing
+@node Adding and Killing, Promoting and Demoting, Editing Outlines, Editing Outlines
 @subsection  Adding and Killing
 
 @kindex koutliner, C-j
@@ -4636,7 +4635,7 @@ kills the entire contents of the cell regardless of the location of
 point.  You may then yank the contents into another cell or another
 buffer with @bkbd{C-y}.
 
-@node Promoting and Demoting, Relocating and Copying, Adding and Killing, Editing
+@node Promoting and Demoting, Relocating and Copying, Adding and Killing, Editing Outlines
 @subsection  Promoting and Demoting
 
 @cindex promotion
@@ -4715,7 +4714,7 @@ moves between fields within a table.
 |----------------------------+-----------------------------|
 @end example
 
-@node Relocating and Copying, Moving Around, Promoting and Demoting, Editing
+@node Relocating and Copying, Moving Around, Promoting and Demoting, Editing Outlines
 @subsection  Relocating and Copying
 
 @cindex tree, copying
@@ -4790,7 +4789,7 @@ koutline with the @bkbd{M-x kimport:text @key{RET}} command.
 @xref{Inserting and Importing}.
 
 
-@node Moving Around, Filling, Relocating and Copying, Editing
+@node Moving Around, Filling, Relocating and Copying, Editing Outlines
 @subsection  Moving Around
 
 @cindex outline, motion
@@ -4830,7 +4829,7 @@ Move to the last cell in the tree rooted at point, regardless of level.
 @end table
 
 
-@node Filling, Transposing, Moving Around, Editing
+@node Filling, Transposing, Moving Around, Editing Outlines
 @subsection  Filling
 
 @cindex outline, filling
@@ -4871,7 +4870,7 @@ happen to move a cell that you carefully formatted yet forgot to give
 a `no-fill' property, then your formatting will be lost.
 
 
-@node Transposing, Splitting and Appending, Filling, Editing
+@node Transposing, Splitting and Appending, Filling, Editing Outlines
 @subsection  Transposing
 
 The Koutliner move and copy commands rearrange entire trees.  The
@@ -4899,7 +4898,7 @@ the current tree maximally past the next N visible cells.  If there are
 fewer visible, it makes the current cell the last cell in the outline.
 
 
-@node Splitting and Appending, Inserting and Importing, Transposing, Editing
+@node Splitting and Appending, Inserting and Importing, Transposing, Editing Outlines
 @subsection  Splitting and Appending
 
 @cindex splitting a cell
@@ -4927,7 +4926,7 @@ cell has a `no-fill' attribute, which prevents all but user requested
 filling of a cell, then the cell appended to inherits this property.
 This helps maintain any special formatting the appended text may have.
 
-@node Inserting and Importing, Exporting, Splitting and Appending, Editing
+@node Inserting and Importing, Exporting, Splitting and Appending, Editing Outlines
 @subsection  Inserting and Importing
 
 @cindex outline, inserting into
@@ -5015,7 +5014,7 @@ prompted for the Augment buffer or file to import and the koutline to
 create.  See @url{https://dougengelbart.org/content/view/148/} for more
 information.
 
-@node Exporting,  , Inserting and Importing, Editing
+@node Exporting,  , Inserting and Importing, Editing Outlines
 @subsection  Exporting
 
 @cindex outline, exporting
@@ -5051,8 +5050,8 @@ You must display it manually, if desired.
 Koutline buffer to a @file{.html} file of the same name.  The output file will
 not be displayed; you must display it manually, if desired.
 
-@node Viewing, Links, Editing, Koutliner
-@section   Viewing
+@node Viewing Outlines, Links, Editing Outlines, Koutliner
+@section   Viewing Outlines
 
 @cindex outline, viewing
 @cindex view
@@ -5064,7 +5063,7 @@ effectively browse and study large amounts of material.
 * View Specs::
 @end menu
 
-@node Hiding and Showing, View Specs, Viewing, Viewing
+@node Hiding and Showing, View Specs, Viewing Outlines, Viewing Outlines
 @subsection  Hiding and Showing
 
 @cindex outline, hiding
@@ -5159,7 +5158,7 @@ Hyperbole button, toggles between hiding and showing the tree rooted at
 point.  Try it with either your mouse or with @bkbd{M-@key{RET}}.
 
 
-@node View Specs,  , Hiding and Showing, Viewing
+@node View Specs,  , Hiding and Showing, Viewing Outlines
 @subsection  View Specs
 
 @cindex view spec
@@ -5259,7 +5258,7 @@ Then use @bkbd{C-c C-v} to set a view spec of `c2l1'.  This will turn
 off blank lines, clip each cell after its second line, and hide all
 cells below level one.
 
-@node Links, Cell Attributes, Viewing, Koutliner
+@node Links, Cell Attributes, Viewing Outlines, Koutliner
 @section   Links
 
 @cindex link
@@ -8022,11 +8021,16 @@ item, @bkbd{C-h h f w}, will do the same thing.
 @cindex key binding, C-c @@
 @cindex windows grid
 @cindex grid of windows
+@kindex C-h h h
+@cindex restore frame configuration
+@cindex frame configuration, restore
+@cindex restore window configuration
+@cindex window configuration, restore
 @kitem C-c @@
 Display a grid of windows in the selected frame, sized according to the
 prefix argument.  The left digit of the argument is the number of grid rows
-and the right digit is the number of grid columns.  The argument is
-prompted for if not given.
+and the right digit is the number of grid columns.  Use @bkbd{C-h h h} to
+restore the prior frame configuration.
 
 If the argument is 0, prompt for a major mode whose buffers should be
 displayed first in the grid windows, then prompt for the grid size.
@@ -8051,7 +8055,7 @@ that links to any other window chosen via the Ace Window prompt.
 
 @cindex key binding, C-h h
 @kitem C-h h
-@kinem C-h h X
+@kitem C-h h X
 @cindex Hyperbole minibuffer menu
 @cindex enable Hyperbole
 @cindex disable Hyperbole

@@ -256,6 +256,8 @@
 	  to HTML for web viewing.  See "(hyperbole)Inserting and Importing"
           and "(hyperbole)Exporting".
 
+        - Button Modify Commands Removed: Use the Edit commands instead.
+          This applies to the pull-down menu as well.
 
 ** SMART (ACTION AND ASSIST) KEYS  (See "(hyperbole)Smart Keys").
 

@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    30-Jan-21 at 12:00:00
-;; Last-Mod:     12-Feb-22 at 11:20:05 by Bob Weiner
+;; Last-Mod:     20-Feb-22 at 22:22:23 by Bob Weiner
 ;;
 ;; Copyright (C) 2021-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -25,7 +25,7 @@
 
 (declare-function hy-test-helpers:consume-input-events "hy-test-helpers")
 
-(ert-deftest hui-gbut-modify-link-to-file-button ()
+(ert-deftest hui-gbut-edit-link-to-file-button ()
   "A global button with action type link-to-file shall be possible to edit."
   (skip-unless (not noninteractive))
   (let* ((enable-recursive-minibuffers t)
@@ -44,7 +44,7 @@
 			  (symbol-function 'kbd-key:kbd)))
 		 (write-region "" nil linked-file) ;; Ensure linked file has been created
 		 (let ((create-gbut (format "abcd RET link-to-file RET %s RET y C-x C-s" linked-file))
-		       (modify-gbut (format "abcd RET RET RET M-: (delete-minibuffer-contents) RET %s RET y" linked-file)))
+		       (edit-gbut (format "abcd RET RET RET M-: (delete-minibuffer-contents) RET %s RET y" linked-file)))
 		   (setenv "HOME" "/tmp")
 
 		   (set-buffer gbut-file-buffer)
@@ -58,8 +58,8 @@
 		   (should (eq (hattr:get (hbut:at-p) 'actype) 'actypes::link-to-file))
 
 		   (goto-char (point-max)) ;; Move past button so does not prompt with label
-		   (with-simulated-input modify-gbut
-		     (hact (lambda () (call-interactively 'hui:gbut-modify))))
+		   (with-simulated-input edit-gbut
+		     (hact (lambda () (call-interactively 'hui:gbut-edit))))
 
 		   ;; (set-buffer gbut-file-buffer)
 		   (goto-char (+ (point-min) 2))
@@ -119,9 +119,9 @@
           (hy-test-helpers-verify-hattr-at-p :actype 'actypes::www-url :args '("www.hypb.org") :loc file :lbl-key "label"))
       (delete-file file))))
 
-(ert-deftest hui-ebut-modify-link-to-www-url-keeping-all-values-should-not-modify-buffer-or-ebut ()
-  "Modify an ebut keeping all initial values should not modify buffer or ebut.
-Modifying the button but keeping the label creates a dubbel label."
+(ert-deftest hui-ebut-edit-link-to-www-url-keeping-all-values-should-not-modify-buffer-or-ebut ()
+  "Edit an ebut keeping all initial values should not modify buffer or ebut.
+Ensure modifying the button but keeping the label does not create a double label."
   (let ((file (make-temp-file "hypb_" nil ".txt")))
     (unwind-protect
         (find-file file)
@@ -129,7 +129,7 @@ Modifying the button but keeping the label creates a dubbel label."
           (hui:ebut-create)
           (hy-test-helpers-verify-hattr-at-p :actype 'actypes::www-url :args '("www.hypb.org") :loc file :lbl-key "label"))
         (with-simulated-input "RET RET RET RET"
-          (hui:ebut-modify "label")
+          (hui:ebut-edit "label")
           (hy-test-helpers-verify-hattr-at-p :actype 'actypes::www-url :args '("www.hypb.org") :loc file :lbl-key "label")
           (should (string= "<(label)>" (buffer-string)))))
     (delete-file file)))

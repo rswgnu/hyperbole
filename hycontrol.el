@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     1-Jun-16 at 15:35:36
-;; Last-Mod:     20-Feb-22 at 16:29:37 by Bob Weiner
+;; Last-Mod:     20-Feb-22 at 22:45:47 by Bob Weiner
 ;;
 ;; Copyright (C) 2016-2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -123,7 +123,8 @@
 ;;; ************************************************************************
 
 (require 'hhist)     ; To store frame-config when hycontrol-windows-grid is used
-(require 'hyperbole) ; For hyperbole-mode-map and requires 'set and 'hypb
+(require 'hypb)
+(require 'set)
 ;; Frame face enlarging/shrinking (zooming) requires this separately available library.
 ;; Everything else works fine without it, so don't make it a required dependency.
 (require 'zoom-frm nil t)
@@ -1278,8 +1279,7 @@ If already at the top, adjust its height to ARG percent of the screen (50% by de
 if ARG is 1 or nil) but keep it at the top of the screen."
   (interactive "p")
   (setq arg (hycontrol-frame-resize-percentage arg))
-  (let ((frame-resize-pixelwise t)
-	(top (nth 1 (hycontrol-frame-edges))))
+  (let ((frame-resize-pixelwise t))
     (if (hycontrol-frame-at-top-p)
 	;; Reduce frame height to ARG percent, keeping top side fixed.
 	(set-frame-height nil (floor (* (frame-pixel-height) arg)) nil t)
@@ -1498,7 +1498,8 @@ Menu or IBuffer mode."
 (defun hycontrol-windows-grid (arg)
   "Display a grid of windows in the selected frame, sized according to prefix ARG.
 Left digit of ARG is the number of grid rows and the right digit is
-the number of grid columns.
+the number of grid columns.  Use {C-h h h} to restore the prior frame
+configuration.
 
 If ARG is 0, prompt for a major mode whose buffers should be
 displayed first in the grid windows, then prompt for the grid size.
@@ -1567,12 +1568,12 @@ argument."
 
 (defun hycontrol-windows-grid-by-file-list (files)
   "Display an automatically sized window grid showing list of FILES."
-  (let* ((num-files (length files))
-	 (grid-digit (ceiling (sqrt num-files)))
-	 (grid-size (+ (* grid-digit 10) grid-digit)))
     (if (null files)
 	(error "(hycontrol-windows-grid-by-file-list): No matching files")
-      (setq buffers (nreverse (mapcar #'find-file (reverse files))))
+  (let* ((num-files (length files))
+	 (grid-digit (ceiling (sqrt num-files)))
+	 (grid-size (+ (* grid-digit 10) grid-digit))
+	 (buffers (nreverse (mapcar #'find-file (reverse files)))))
       (hycontrol-make-windows-grid grid-size buffers))))
 
 ;;;###autoload
@@ -1755,15 +1756,13 @@ otherwise, delete the original window."
   (interactive)
   (let ((w (selected-window))
 	(frame-resize-pixelwise t)
-	(only-one-window (one-window-p))
-	buf)
+	(only-one-window (one-window-p)))
     (cond ((window-minibuffer-p w)
 	   (beep)
 	   (minibuffer-message "(Hyperbole): Select a non-minibuffer window"))
 	  (t
 	   ;; Give temporary modes such as isearch a chance to turn off.
 	   (run-hooks 'mouse-leave-buffer-hook)
-	   (setq buf (window-buffer w))
 	   (select-frame (make-frame (frame-parameters)))
 	   (unless only-one-window
 	     (hycontrol-set-frame-size nil (window-size w t t) (window-size w nil t) t))

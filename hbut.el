@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    18-Sep-91 at 02:57:09
-;; Last-Mod:     12-Feb-22 at 10:42:20 by Mats Lidell
+;; Last-Mod:     20-Feb-22 at 22:08:04 by Bob Weiner
 ;;
 ;; Copyright (C) 1991-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -100,6 +100,19 @@ Return entry deleted (a list of attribute values) or nil."
 	   (entry   (hbdata:delete-entry but-key loc)))
       (run-hooks 'ebut-delete-hook)
       entry)))
+
+(defun    ebut:edit (&optional lbl-key but-sym)
+  "Edit existing Hyperbole button from optional LBL-KEY and BUT-SYM.
+Defaults are the key for any button label at point and `hbut:current'.
+If successful, return button's instance number, except when instance
+number is 1, then return t.  On failure, as when button does not exist,
+return nil.
+
+Do not save button data buffer."
+  (save-excursion
+    (let ((lbl-instance (hbdata:write lbl-key but-sym)))
+      (run-hooks 'ebut-edit-hook)
+      lbl-instance)))
 
 (defun    ebut:get (&optional lbl-key buffer key-src)
   "Return explicit Hyperbole button symbol given by LBL-KEY and BUFFER.
@@ -273,19 +286,6 @@ start position of the delimited button label and its end position (positions
 include delimiters when INCLUDE-DELIMS is non-nil)."
   (hbut:map but-func ebut:start ebut:end regexp-match include-delims))
 
-(defun    ebut:modify (&optional lbl-key but-sym)
-  "Modify existing Hyperbole button from optional LBL-KEY and BUT-SYM.
-Defaults are the key for any button label at point and `hbut:current'.
-If successful, return button's instance number, except when instance
-number is 1, then return t.  On failure, as when button does not exist,
-return nil.
-
-Do not save button data buffer."
-  (save-excursion
-    (let ((lbl-instance (hbdata:write lbl-key but-sym)))
-      (run-hooks 'ebut-modify-hook)
-      lbl-instance)))
-
 (defun    ebut:next-occurrence (lbl-key &optional buffer)
   "Move point to next occurrence of button with LBL-KEY in optional BUFFER.
 BUFFER defaults to current buffer.  It may be a buffer name.
@@ -321,7 +321,7 @@ button is found in the current buffer."
     (hattr:set 'hbut:current 'lbl-key (ebut:label-to-key new-label))
     (save-excursion
       (when (setq instance-flag
-		  (if modify (ebut:modify lbl-key) (ebut:create)))
+		  (if modify (ebut:edit lbl-key) (ebut:create)))
 	(when (hmail:editor-p)
 	  (hmail:msg-narrow))))
     (cond (modify
@@ -353,9 +353,8 @@ button is found in the current buffer."
 		    (setq end (point)))
 		   ((and (hmouse-use-region-p)
 			 (if (hyperb:stack-frame
-			      '(hui:ebut-create hui:ebut-edit
-						hui:ebut-modify hui:gbut-create
-                       				hui:gbut-modify hui:link-create ebut:program))
+			      '(hui:ebut-create hui:ebut-edit hui:ebut-edit-region hui:gbut-create
+                       				hui:gbut-edit hui:link-create ebut:program))
 			     ;; Ignore action-key-depress-prev-point
 			     (progn (setq mark (marker-position (mark-marker))
 					  start (region-beginning)
@@ -1636,7 +1635,7 @@ expression which matches an entire button string."
   (hbut:map but-func ibut:label-start ibut:label-end))
 
 (defun    ibut:rename (old-lbl new-lbl)
-  "Modify a label preceding the text of a Hyperbole implicit button in the current buffer from OLD-LBL to NEW-LBL.
+  "Rename a label preceding the text of a Hyperbole implicit button in the current buffer from OLD-LBL to NEW-LBL.
 Return t if the label is changed, else nil.
 
 Signal an error when no such button is found in the current buffer.

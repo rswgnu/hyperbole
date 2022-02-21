@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Sep-92
-;; Last-Mod:     24-Jan-22 at 00:18:52 by Bob Weiner
+;; Last-Mod:     20-Feb-22 at 22:17:04 by Bob Weiner
 ;;
 ;; Copyright (C) 1992-2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -47,7 +47,7 @@
 ;;   buffer/file menu item         Display buffer/file in      Swap window buffers
 ;;                                   window of button release
 ;;   buffer/file menu 1st line     Move buffer/file menu       Swap window buffers
-;;   anywhere else                 Create/modify a link button Swap window buffers
+;;   anywhere else                 Create/edit a link button   Swap window buffers
 ;;
 ;; Drag outside of Emacs from:
 ;;   buffer/file menu item         Display buffer/file in      Move window to a new frame
