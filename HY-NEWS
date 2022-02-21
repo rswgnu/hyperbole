@@ -948,7 +948,8 @@
       org-mode to handle jumps to its own locations for compatibility.
       Similarly, in org-mode buffers when not on an Org link or heading,
       and the {M-RET} Action Key is pressed, Hyperbole defers to Org's
-      org-meta-return command.
+      org-meta-return command.  Hyperbole bindings of {C-c RET}, {C-c .}
+      and {C-c @} also defer to org-mode.
 
     - Drag-based Kill, Copy and Yank: Added support for dragging across
       frames.

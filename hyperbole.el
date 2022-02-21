@@ -5,7 +5,7 @@
 ;; Author:           Bob Weiner
 ;; Maintainer:       Bob Weiner <rsw@gnu.org>, Mats Lidell <matsl@gnu.org>
 ;; Created:          06-Oct-92 at 11:52:51
-;; Last-Mod:     12-Feb-22 at 10:42:19 by Mats Lidell
+;; Last-Mod:     20-Feb-22 at 12:15:16 by Bob Weiner
 ;; Released:         03-May-21
 ;; Version:          8.0.0pre
 ;; Keywords:         comm, convenience, files, frames, hypermedia, languages, mail, matching, mouse, multimedia, outlines, tools, wp
@@ -374,68 +374,9 @@ directory or directories specified."
 ;; Menu items could call this function before Info is loaded.
 (autoload 'Info-goto-node   "info"       "Jump to specific Info node."  t)
 
-;; Hyperbole user interface entry points that trigger loading of the
-;; full Hyperbole system.  These are left commented here for
-;; reference in case we ever go back to autoloading Hyperbole rather
-;; than initializing it fully in this file.
-
-;; ;; Action type definitions.
-;; (autoload 'defact            "hyperbole"
-;;   "Creates an action TYPE (an unquoted symbol) with PARAMS, described by DOC."
-;;   nil 'macro)
-;; ;; Implicit button type definitions.
-;; (autoload 'defib             "hyperbole"
-;;   "Creates implicit button TYPE (unquoted sym) with PARAMS, described by DOC."
-;;   nil 'macro)
-
-;; (autoload 'ebut:map          "hyperbole"      "Map over the Hyperbole explicit buttons in a buffer." nil)
-;; (autoload 'hbut:key-src      "hyperbole"      "Called by {e} command in rolo match buffer.")
-;; (autoload 'hui:ebut-rename   "hyperbole"      "Rename a Hyperbole button."     t)
-;; (autoload 'hyperbole         "hyperbole"      "Hyperbole info manager menus."  t)
-
-;; (autoload 'action-key        "hyperbole"
-;;   "Context-sensitive Action Key command."                                  t)
-;; (autoload 'action-key-depress "hyperbole"     "Depress context-sensitive Action Key." t)
-;; (autoload 'assist-key-depress "hyperbole"     "Depress context-sensitive Assist Key." t)
-;; (autoload 'action-key-depress-emacs "hyperbole" "Depress context-sensitive Action Key." t)
-;; (autoload 'assist-key-depress-emacs "hyperbole" "Depress context-sensitive Assist Key." t)
-;; (autoload 'action-mouse-key-emacs  "hyperbole" "Execute context-sensitive Action Key." t)
-;; (autoload 'assist-mouse-key-emacs  "hyperbole" "Execute context-sensitive Assist Key." t)
-;; (autoload 'hkey-help         "hyperbole"
-;;   "Display help for the Action Key command in current context.
-;; With optional ASSIST-FLAG non-nil, display help for the Assist Key command.
-;; Returns non-nil iff associated help documentation is found."               t)
-;; (autoload 'hkey-assist-help  "hyperbole"
-;;   "Display help for the Assist Key command in current context."            t)
-;; (autoload 'hkey-help-hide    "hyperbole"
-;;   "Restores frame to configuration prior to help buffer display."        nil)
-;; (autoload 'hkey-help-show    "hyperbole"
-;;   "Saves prior frame configuration if BUFFER displays help."             nil)
-;; (autoload 'assist-key        "hyperbole"
-;;   "Context-sensitive Assist Key command."                                  t)
-;; (autoload 'action-mouse-key  "hyperbole"
-;;   "Context-sensitive Action Mouse Key command."                            t)
-;; (autoload 'assist-mouse-key  "hyperbole"
-;;   "Context-sensitive Assist Mouse Key command."                            t)
-;; (autoload 'hkey-operate      "hyperbole"      "Emulate Hyperbole mouse key drags." t)
-;; (autoload 'symset:add        "hyperbole"      "Adds ELT to SYMBOL's PROP set." nil)
-;; (autoload 'hact              "hyperbole"      "Performs action formed from rest of ARGS." nil)
-;; (autoload 'actypes::exec-window-cmd "hyperbole"
-;; 	  "Executes an external window-based SHELL-CMD string asynchronously." nil)
-;; (autoload 'hpath:absolute-to "hyperbole"
-;; 	  "Make PATH absolute from optional DEFAULT-DIRS." nil)
-;; (autoload 'hpath:display-buffer "hyperbole"
-;; 	  "Displays and selects BUFFER at optional DISPLAY-WHERE location or at `hpath:display-where'." t)
-;; (autoload 'hpath:find        "hyperbole"
-;; 	  "Edit file FILENAME, possibly using a special command." t)
-;; (autoload 'hpath:find-other-frame "hyperbole"
-;; 	  "Edit file FILENAME in other frame, possibly using a special command." t)
-;; (autoload 'hpath:find-other-window "hyperbole"
-;; 	  "Edit file FILENAME in other window, possibly using a special command." t)
-
 ;; Auto-autoload doesn't work for next item because it is defined
 ;; within a condition-case, so autoload it here.
-(autoload 'Vm-init    "hvm"    "Initializes Hyperbole Vm support." t)
+(autoload 'Vm-init          "hvm"    "Initializes Hyperbole Vm support." t)
 
 ;;; ************************************************************************
 ;;; Outline Mode Aliases

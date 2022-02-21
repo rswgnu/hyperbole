@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Oct-96 at 02:25:27
-;; Last-Mod:     12-Feb-22 at 10:42:19 by Mats Lidell
+;; Last-Mod:     20-Feb-22 at 14:50:54 by Bob Weiner
 ;;
 ;; Copyright (C) 1996-2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -299,19 +299,23 @@ The non-nil value returned is the function to call to select that syntactic unit
 (defun hui-select-goto-matching-delimiter ()
   "Jump back and forth between the start and end delimiters of a thing."
   (interactive)
-  (cond ((memq major-mode hui-select-markup-modes)
-	 (hui-select-goto-matching-tag))
-	((and (derived-mode-p 'org-mode)
-	      (called-interactively-p 'interactive)
-	      (equal (this-command-keys) "\C-c."))
-	 ;; Prevent a conflict with {C-c .} binding in Org mode
-	 (call-interactively (lookup-key org-mode-map "\C-c.")))
-	((and (preceding-char) (or (= ?\) (char-syntax (preceding-char)))
-				   (= ?\" (preceding-char))))
-	 (backward-sexp))
-	((and (following-char) (or (= ?\( (char-syntax (following-char)))
-				   (= ?\" (following-char))))
-	 (forward-sexp))))
+  (if (memq major-mode hui-select-markup-modes)
+      (hui-select-goto-matching-tag)
+    (let* ((key (hypb:cmd-key-vector #'hui-select-goto-matching-delimiter
+				     hyperbole-mode-map))
+	   (org-key-cmd (and (derived-mode-p 'org-mode)
+			     (called-interactively-p 'interactive)
+			     (equal (this-single-command-keys) key)
+			     (lookup-key org-mode-map key))))
+      (cond (org-key-cmd
+	     ;; Prevent a conflict with {C-c .} binding in Org mode
+	     (call-interactively org-key-cmd))
+	    ((and (preceding-char) (or (= ?\) (char-syntax (preceding-char)))
+				       (= ?\" (preceding-char))))
+	     (backward-sexp))
+	    ((and (following-char) (or (= ?\( (char-syntax (following-char)))
+				       (= ?\" (following-char))))
+	     (forward-sexp))))))
 
 ;;;###autoload
 (defun hui-select-initialize ()
@@ -408,28 +412,31 @@ interactively, the type of selection is displayed in the minibuffer."
 	  ;; Reset selection based on the syntax of character at point.
 	  (hui-select-reset)
 	  nil)))
-  (cond ((and (derived-mode-p 'org-mode)
-	      (called-interactively-p 'interactive)
-	      (equal (this-command-keys) "\C-c\C-m"))
-	 ;; Prevent a conflict with {C-c RET} binding in Org mode
-	 (call-interactively (lookup-key org-mode-map "\C-c\C-m")))
-	;;
-	;; No key conflicts, perform normal Hyperbole operation
-	(t (let ((region (hui-select-get-region-boundaries)))
-	     (unless region
-	       (when (eq hui-select-previous 'punctuation)
-		 (setq region (hui-select-word (point)))))
-	     (when region
-	       (goto-char (car region))
-	       (set-mark (cdr region))
-	       (when (fboundp 'activate-region) (activate-region))
-	       (when (and (boundp 'transient-mark-mode)
-			  transient-mark-mode)
-		 (setq mark-active t))
-	       (and (called-interactively-p 'interactive) hui-select-display-type
-		    (message "%s" hui-select-previous))
-	       (run-hooks 'hui-select-thing-hook)
-	       t)))))
+    (let* ((key (hypb:cmd-key-vector #'hui-select-thing hyperbole-mode-map))
+	   (org-key-cmd (and (derived-mode-p 'org-mode)
+			     (called-interactively-p 'interactive)
+			     (equal (this-single-command-keys) key)
+			     (lookup-key org-mode-map key))))
+      (cond (org-key-cmd
+	     ;; Prevent a conflict with {C-c RET} binding in Org mode
+	     (call-interactively org-key-cmd))
+	    ;;
+	    ;; No key conflicts, perform normal Hyperbole operation
+	    (t (let ((region (hui-select-get-region-boundaries)))
+		 (unless region
+		   (when (eq hui-select-previous 'punctuation)
+		     (setq region (hui-select-word (point)))))
+		 (when region
+		   (goto-char (car region))
+		   (set-mark (cdr region))
+		   (when (fboundp 'activate-region) (activate-region))
+		   (when (and (boundp 'transient-mark-mode)
+			      transient-mark-mode)
+		     (setq mark-active t))
+		   (and (called-interactively-p 'interactive) hui-select-display-type
+			(message "%s" hui-select-previous))
+		   (run-hooks 'hui-select-thing-hook)
+		   t))))))
 
 ;;;###autoload
 (defun hui-select-thing-with-mouse (event)

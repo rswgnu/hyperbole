@@ -1,3 +1,22 @@
+2022-02-20  Bob Weiner  <rsw@gnu.org>
+
+* hhist.el (hhist:add): Trigger error if elt is not a frame config.
+
+* man/hyperbole.texi (Default Hyperbole Bindings): Document here
+    {C-h h X} to exit from/disable Hyperbole mode.
+
+* hyperbole.el: Remove long commented-out autoloads; generated
+    automatically where needed now.
+
+* hypb.el (hypb:cmd-key-string): Rename to 'hypb:cmd-key-series'
+    since puts braces around the return value and update doc.
+          (hypb:cmd-key-vector): Add to commpare to 'this-single-command-keys'.
+
+* hui-select.el (hui-select-goto-matching-delimiter, hui-select-thing):
+  hycontrol.el (hycontrol-windows-grid): Remove hard-coding of
+    hyperbole-mode-map binding.  Defer to org-mode and outline-minor-mode
+    only when current command key matches this binding.
+
 2022-02-18  Mats Lidell  <matsl@gnu.org>
 
 * test/kcell-tests.el (kcell-tests--ref-to-id): Add test for

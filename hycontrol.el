@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     1-Jun-16 at 15:35:36
-;; Last-Mod:     31-Jan-22 at 00:33:24 by Bob Weiner
+;; Last-Mod:     20-Feb-22 at 16:29:37 by Bob Weiner
 ;;
 ;; Copyright (C) 2016-2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -122,7 +122,8 @@
 ;;; Other required Elisp libraries
 ;;; ************************************************************************
 
-(require 'set)
+(require 'hhist)     ; To store frame-config when hycontrol-windows-grid is used
+(require 'hyperbole) ; For hyperbole-mode-map and requires 'set and 'hypb
 ;; Frame face enlarging/shrinking (zooming) requires this separately available library.
 ;; Everything else works fine without it, so don't make it a required dependency.
 (require 'zoom-frm nil t)
@@ -1525,30 +1526,34 @@ When done, this resets the persistent HyControl prefix argument to 1
 to prevent following commands from using the often large grid size
 argument."
   (interactive "p")
-  (let* ((key "\C-c@")
+  (let* ((key (hypb:cmd-key-vector #'hycontrol-windows-grid hyperbole-mode-map))
 	 (this-key-flag (and (called-interactively-p 'interactive)
-			     (equal (this-command-keys) key))))
-    (cond ((and this-key-flag (derived-mode-p 'org-mode))
+			     (equal (this-single-command-keys) key))))
+    (cond ((and this-key-flag (derived-mode-p 'org-mode)
+		(lookup-key org-mode-map key))
 	   ;; Prevent a conflict with binding in Org mode
 	   (call-interactively (lookup-key org-mode-map key)))
-	  ((and this-key-flag (derived-mode-p 'outline-mode))
+	  ((and this-key-flag (derived-mode-p 'outline-mode)
+		(lookup-key outline-mode-map key))
 	   ;; Prevent a conflict with binding in Outline mode
 	   (call-interactively (lookup-key outline-mode-map key)))
 	  ((and this-key-flag (boundp 'outline-minor-mode)
-		outline-minor-mode)
+		outline-minor-mode (lookup-key outline-minor-mode-map key))
 	   ;; Prevent a conflict with binding in Outline minor mode
 	   (call-interactively (lookup-key outline-minor-mode-map key)))
 	  ;;
 	  ;; No key conflicts, display window grid
-	  (t (setq arg (prefix-numeric-value (or arg current-prefix-arg)))
-	     (cond ((> arg 0)
-		    (hycontrol-make-windows-grid arg))
-		   ((< arg 0)
-		    (setq current-prefix-arg nil)
-		    (call-interactively #'hycontrol-windows-grid-by-file-pattern))
-		   (t
-		    (setq current-prefix-arg 0)
-		    (call-interactively #'hycontrol-windows-grid-by-major-mode)))))))
+	  (t (let ((hist-elt (hhist:element)))
+	       (setq arg (prefix-numeric-value (or arg current-prefix-arg)))
+	       (cond ((> arg 0)
+		      (hycontrol-make-windows-grid arg))
+		     ((< arg 0)
+		      (setq current-prefix-arg nil)
+		      (call-interactively #'hycontrol-windows-grid-by-file-pattern))
+		     (t
+		      (setq current-prefix-arg 0)
+		      (call-interactively #'hycontrol-windows-grid-by-major-mode)))
+	       (hhist:add hist-elt)))))) ;; Save prior frame configuration for easy return
 
 (defun hycontrol-windows-grid-by-buffer-list (buffers)
   "Display an automatically sized window grid showing list of BUFFERS."

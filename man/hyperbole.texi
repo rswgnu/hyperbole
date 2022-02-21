@@ -7,7 +7,7 @@
 @c Author:       Bob Weiner
 @c
 @c Orig-Date:     6-Nov-91 at 11:18:03
-@c Last-Mod:     13-Feb-22 at 11:38:53 by Bob Weiner
+@c Last-Mod:     20-Feb-22 at 15:50:00 by Bob Weiner
 
 @c %**start of header (This is for running Texinfo on a region.)
 @setfilename hyperbole.info
@@ -156,7 +156,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</P>
 
 <PRE>
 Edition 8.0.0pre
-Printed February 12, 2022.
+Printed February 20, 2022.
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -198,7 +198,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 @example
 Edition 8.0.0pre
-February 12, 2022
+February 20, 2022
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -935,15 +935,18 @@ on a pathname to display the associated file or directory.
 @cindex change key bindings
 @cindex toggle key bindings
 @cindex key bindings, toggle
+@cindex enable Hyperbole
 @cindex disable Hyperbole
+@cindex Hyperbole minibufer menu
 @kindex C-h h
-@kindex X
-@kindex q
+@kindex C-h h X
+@kindex C-h h q
 @bkbd{C-h h} enables Hyperbole if it has been disabled and displays a
 Hyperbole menu in the minibuffer for quick keyboard or mouse-based selection.
 Select an item from this menu by typing the item's first capital letter.
 Use @bkbd{q} to quit from the minibuffer menu while leaving Hyperbole enabled.
-Use@bkbd{X} to quit from the minibuffer menu and disable Hyperbole minor mode.
+Use@bkbd{X} (note this is capitalized) to quit from the minibuffer menu
+and disable Hyperbole minor mode.
 
 Use @bkbd{C-h h d d} for an interactive demonstration of standard Hyperbole
 button capabilities.
@@ -7948,11 +7951,8 @@ addition to any non-mouse-sensitive button highlighting.
 @cindex key binding list
 This appendix covers two topics: 1. how to bind Hyperbole minibuffer
 menu items to global keys and 2. summaries of all of Hyperbole's
-key bindings and whether each overrides any existing binding or
-not.  It also describes how to temporarily disable these bindings and
-how to manage whether Hyperbole overrides local, mode-specific key
-bindings that hide global Hyperbole keys.
-
+default key bindings.  User-specific Hyperbole key binding customizations
+override Hyperbole's defaults.
 @menu
 * Binding Minibuffer Menu Items::
 * Default Hyperbole Bindings::
@@ -8003,7 +8003,7 @@ Assist Key: Invoke the Assist Key in the present context.
 @cindex key binding, C-c \
 @kitem C-c @backslashchar{}
 HyControl: Control windows, frames and buffer display.  This binding
-is made only if the key is not bound prior to loading Hyperbole.
+is made only if the key is not bound prior to initializing Hyperbole.
 
 @kindex C-c /
 @kindex C-h h f w
@@ -8015,7 +8015,7 @@ is made only if the key is not bound prior to loading Hyperbole.
 Search the Web: Display a minibuffer menu of web search engines.  Once
 an engine is selected, prompt for a search term and perform the
 associated search.  This binding is made only if the key is not bound
-prior to loading Hyperbole; otherwise, the Find/Web minibuffer menu
+prior to initializing Hyperbole; otherwise, the Find/Web minibuffer menu
 item, @bkbd{C-h h f w}, will do the same thing.
 
 @kindex C-c @@
@@ -8034,7 +8034,7 @@ displayed first in the grid windows, then prompt for the grid size.
 If the argument is < 0, prompt for a shell glob-type file pattern and display
 files that match the pattern in an auto-sized windows grid.
 
-This binding is made only if the key is not bound prior to loading Hyperbole.
+This binding is made only if the key is not bound prior to initializing Hyperbole.
 
 For further details, see the @bkbd{@@} key binding description
 in @ref{HyControl}.
@@ -8043,17 +8043,22 @@ in @ref{HyControl}.
 @kitem M-o
 Drag Operation: Keyboard emulation of the start and stop of mouse
 drags to invoke Smart Key actions.  This binding is made only if the
-key is not bound prior to loading Hyperbole and if Emacs is run under
+key is not bound prior to initializing Hyperbole and if Emacs is run under
 a window system.  If the Ace Window package is loaded, then Ace Window
 commands are typically bound to @bkbd{M-o} instead.  Then @bkbd{M-o w}
-may be used to quickly create an explicit link button in the selected window that
-links to any other window chosen via the Ace Window prompt.
+may be used to quickly create an explicit link button in the selected window
+that links to any other window chosen via the Ace Window prompt.
 
 @cindex key binding, C-h h
 @kitem C-h h
-Hyperbole Mini Menu: Invoke the Hyperbole minibuffer menu, giving
-access to many Hyperbole commands.  This is bound globally as a means
-of enabling Hyperbole minor mode.
+@kinem C-h h X
+@cindex Hyperbole minibuffer menu
+@cindex enable Hyperbole
+@cindex disable Hyperbole
+Hyperbole Mini Menu: Enable Hyperbole minor mode and invoke the
+Hyperbole minibuffer menu, giving access to many Hyperbole commands.
+This is bound globally.  Use @bkbd{C-h h X} to close the Hyperbole
+minibuffer menu and disable Hyperbole minor mode.
 
 @cindex key binding, C-h A
 @cindex key binding, C-u C-h A
@@ -8068,14 +8073,14 @@ Mark Things: Mark larger and larger synctactical units in a buffer
 when invoked repeatedly, showing in the minibuffer the type of unit
 marked each time.  For example, if on an opening brace at the start of
 a C, Java or Javascript function, this marks the whole function.  This
-binding is made only if the key is not bound prior to loading
+binding is made only if the key is not bound prior to initializing
 Hyperbole.
 
 @cindex key binding, C-c .
 @kitem C-c .
 Delimited Thing Jump: Jump between the start and end of a delimited
 thing, which may be an HTML tag pair.  This binding is made only if
-the key is not bound prior to loading Hyperbole.  @xref{Smart Key
+the key is not bound prior to initializing Hyperbole.  @xref{Smart Key
 Thing Selection}, for more information.
 @end table
 

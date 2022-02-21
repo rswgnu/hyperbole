@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    24-Apr-91 at 03:36:23
-;; Last-Mod:     24-Jan-22 at 00:18:32 by Bob Weiner
+;; Last-Mod:     20-Feb-22 at 16:40:21 by Bob Weiner
 ;;
 ;; Copyright (C) 1991-2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -25,16 +25,17 @@
 ;;; ************************************************************************
 
 (defun hhist:add (elt)
-  "Add ELT to hyper-history list if not the same as current or previous loc.
-ELT must have been created via a call to 'hhist:element'."
+  "Add ELT to hyper-history list if not the same as current or prior location (frame configuration).
+ELT must have been created via a call to 'hhist:element' prior to
+changing the current frame configuration somehow."
   ;; Even though this next line looks useless, it cures a problem with
   ;; window buffer correspondences on startup, so don't remove it.
   (set-buffer (window-buffer (selected-window)))
-  (let ((prev-config elt))
-    (if (or (equal prev-config (current-frame-configuration))
-	    (equal prev-config (car *hhist*)))
-	nil
-      (setq *hhist* (cons elt *hhist*)))))
+  (when (not (frame-configuration-p elt))
+    (error "(hhist:add): 'elt' must be a frame configuration, not " elt))
+  (unless (or (equal elt (car *hhist*))
+	      (equal elt (current-frame-configuration)))
+    (setq *hhist* (cons elt *hhist*))))
 
 (defun hhist:element ()
   "Return a history element for current point location."
@@ -53,17 +54,17 @@ The command is ignored with ARG < 1."
 		  ((listp arg) 1)
 		  (t arg)))
   (let ((prev-config))
-    (if (null *hhist*)
-	(and (> arg 0)
-	     (message "(hhist:remove): No previous location to which to return.")
-	     (beep))
+    (when *hhist*
+      (when (< arg 1)
+	(message "(hhist:remove): No previous location to which to return.")
+	(beep))
       (while (and (> arg 0) *hhist*)
 	(setq prev-config (car *hhist*)
 	      *hhist* (cdr *hhist*)
 	      arg (1- arg)))
-      (if (frame-configuration-p prev-config)
-	  ;; Minify but keep any frames created after this frame configuration was saved.
-	  (set-frame-configuration prev-config t)))))
+      (when (frame-configuration-p prev-config)
+	;; Minify but keep any frames created after this frame configuration was saved.
+	(set-frame-configuration prev-config t)))))
 
 (defun hhist:init ()
   "Reset history list."

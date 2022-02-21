@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     6-Oct-91 at 03:42:38
-;; Last-Mod:     12-Feb-22 at 14:59:21 by Bob Weiner
+;; Last-Mod:     20-Feb-22 at 14:16:25 by Bob Weiner
 ;;
 ;; Copyright (C) 1991-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -106,9 +106,11 @@ OP may be +, -, xor, or default =."
     (set-file-modes file (funcall func (hypb:oct-to-int octal-permissions)
 				  (file-modes file)))))
 
-(defun hypb:cmd-key-string (cmd-sym &optional keymap)
-  "Return a single pretty printed key sequence string bound to CMD-SYM.
-Global keymap is used unless optional KEYMAP is given."
+(defun hypb:cmd-key-series (cmd-sym &optional keymap)
+  "Return a single, brace-delimited, human readable key sequence string bound to CMD-SYM.
+Global keymap is used unless optional KEYMAP is given.
+
+Trigger an error if CMD-SYM is not bound."
   (if (and cmd-sym (symbolp cmd-sym) (fboundp cmd-sym))
       (let* ((get-keys (lambda (cmd-sym keymap)
 		         (key-description (where-is-internal
@@ -120,7 +122,15 @@ Global keymap is used unless optional KEYMAP is given."
 			    " " (symbol-name cmd-sym) " RET")
 	          keys)
 	        "}"))
-    (error "(hypb:cmd-key-string): Invalid cmd-sym arg: %s" cmd-sym)))
+    (error "(hypb:cmd-key-series): Invalid cmd-sym arg: %s" cmd-sym)))
+
+(defun hypb:cmd-key-vector (cmd-sym &optional keymap)
+  "Return as a vector the first key sequence bound to CMD-SYM from global keymap or optional KEYMAP.
+Return nil if no valid key binding is found.
+
+The returned value may be compared with `equal' to `this-single-command-keys'.
+Use `key-description' to make it human readable."
+  (where-is-internal cmd-sym keymap t))
 
 (defun hypb:installation-type ()
   "Return a list of (hyperbole-installation-type-string hyperbole-install-version-number-string).
