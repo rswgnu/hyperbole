@@ -107,8 +107,10 @@
 
     {C-c @ 22 RET}
 
-       Display a 2x2 grid of windows in the current frame of the 4 most recently
-       used buffers.
+       Display a 2x2 windows grid in the current frame of the 4 most recently
+       used buffers.  Before you try this, remember the binding {C-h h h} for History.
+       Use that to return to your current window configuration after pressing the Action
+       Key on any windows grid button.
 
     {C--1 C-c @ kotl/kotl-*.el RET}
 
