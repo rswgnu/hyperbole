@@ -1,3 +1,22 @@
+2022-02-27  Bob Weiner  <rsw@gnu.org>
+
+* FAST-DEMO:
+  hycontrol.el (hycontrol-windows-grid-marked-items): Add.
+               (hycontrol-make-windows-grid): Use above function so can automatically
+    size grid when items are marked within a listing buffer.
+
+2022-02-26  Bob Weiner  <rsw@gnu.org>
+
+* hycontrol.el (hycontrol-windows-grid-by-buffer-list):
+  (hycontrol-windows-grid-by-file-list):
+  (hycontrol-windows-grid-minimum-size): Add this function and use in above functions.
+
+* man/hyperbole.texi (Menus):
+  hui-menu.el (hui-menu-web-search):
+  hui-mini.el (hui:menu-web-search):
+  hsettings.el (hyperbole-web-search-alist): Add support for Emacs "webjump.el" under
+    Jump menu item.  Jumps to URLs rather than searching.
+
 2022-02-20  Bob Weiner  <rsw@gnu.org>
 
 * hypb.el (hypb:rgrep): Exclude .git and CVS directories.

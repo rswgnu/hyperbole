@@ -126,6 +126,10 @@
 
        Dired the Hyperbole home directory based on its variable.
 
+       Within this dired buffer, mark a few files with {m} and then press {@} to display
+       a window grid of those files only.  That works in Buffer Menu and IBuffer modes
+       as well.
+
     {C-x C-b C-x C-q M-x keep-lines RET .py$ RET C-x C-q}
 
        Display a buffer list of Python file buffers only

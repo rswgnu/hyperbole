@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    28-Oct-94 at 10:59:44
-;; Last-Mod:     20-Feb-22 at 21:52:10 by Bob Weiner
+;; Last-Mod:     26-Feb-22 at 17:03:44 by Bob Weiner
 ;;
 ;; Copyright (C) 1994-2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -156,11 +156,20 @@ Return t if cutoff, else nil."
 
 (defun hui-menu-web-search ()
   ;; Pulldown menu
-  (mapcar (lambda (service)
-	    (vector service
-		    (list #'hyperbole-web-search service nil)
-		    t))
-	  (mapcar #'car hyperbole-web-search-alist)))
+  (let* (service
+	 action)
+    (mapcar (lambda (service-and-action)
+	      (setq service (car service-and-action)
+		    action  (cdr service-and-action))
+	      (if (stringp action)
+		  (vector service
+			  (list #'hyperbole-web-search service nil)
+			  t)
+		(vector service
+			;; a command symbol
+			action
+			t)))
+	    hyperbole-web-search-alist)))
 
 ;;; ************************************************************************
 ;;; Public variables

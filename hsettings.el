@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    15-Apr-91 at 00:48:49
-;; Last-Mod:     12-Feb-22 at 10:42:19 by Mats Lidell
+;; Last-Mod:     26-Feb-22 at 16:29:33 by Bob Weiner
 ;;
 ;; Copyright (C) 1991-2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -235,13 +235,14 @@ Hyperbole, and then restart Emacs."
     ("Google" . "http://www.google.com/search?q=%s")
     ("gitHub" . "https://github.com/search?ref=simplesearch&q=%s")
     ("Images" . "http://www.google.com/images?hl=en&q=%s")
+    ("Jump"   . webjump)
     ("Maps" . "http://maps.google.com/maps?q=%s")
     ("RFCs" . "https://tools.ietf.org/html/rfc%s")
     ("StackOverflow" . "https://stackoverflow.com/search?q=%s")
     ("Twitter" . "https://twitter.com/search?q=%s")
     ("Wikipedia" . "https://en.wikipedia.org/wiki/%s")
     ("Youtube" . "https://www.youtube.com/results?search_query=%s"))
-  "*Alist of (web-service-name . url-with-%s-parameter) elements.
+  "*Alist of (web-service-name . url-with-%s-parameter-or-cmd) elements.
 The first capitalized character of each web-service-name must be unique.
 This custom option is used in the Hyperbole Find/Web menu where
 the %s in the url-with-%s-parameter is replaced with an interactively

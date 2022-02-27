@@ -370,7 +370,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</P>
 
 <PRE>
 Edition 8.0.0pre
-Printed February 20, 2022.
+Printed February 27, 2022.
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -4523,21 +4523,23 @@ access to popular web search engines.
 <span id="index-C_002dc-_002f"></span>
 <span id="index-hyperbole_002dweb_002dsearch_002dbrowser_002dfunction"></span>
 
-</li><li> Web/ -             Select a search engine and term and search with them.
-                   Hyperbole binds the key <kbd>{C-c /}</kbd> for quick
+</li><li> Web/ -             Select a search engine and term and search with them or
+                   use Jump to go to a named URL (using webjump library).
+
+<p>Hyperbole binds the key <kbd>{C-c /}</kbd> for quick
                    access to this menu, if it is not already bound
-                   prior to Hyperbole&rsquo;s initialization.  The Cust/Web-Search
+                   prior to Hyperbole&rsquo;s initialization.  The Cust/Web-Search-Search
                    menu sets the option, <code>hyperbole-web-search-browser-function</code>,
                    which determines whether web search results are displayed
                    within Emacs or with an external web browser.  A short
                    video introduction to the Find/Web menu may be
                    found at <a href="https://youtu.be/8lMlJed0-OM">https://youtu.be/8lMlJed0-OM</a>.
-
+</p>
 <p>The Find/Web menu looks like this:
 </p>
 <div class="example">
-<pre class="example">Web&gt;  Amazon Bing Dictionary Elisp Facebook Google gitHub
-      Images Maps RFCs StackOverflow Twitter Wikipedia Youtube
+<pre class="example">Web&gt;  Amazon Bing Dictionary Elisp Facebook Google gitHub Images
+      Jump Maps RFCs StackOverflow Twitter Wikipedia Youtube
 </pre></div>
 </li></ul>
 
@@ -4731,7 +4733,7 @@ displayed.
 </p>
 <p>With a prefix argument &lt; 0, the user is prompted for a shell glob-type file
 pattern; matching files are read into buffers and displayed in an auto-sized
-square windows grid.
+windows grid.
 </p>
 <p>Otherwise, when the prefix argument is an invalid size, the windows grid
 command prompts for the grid size.

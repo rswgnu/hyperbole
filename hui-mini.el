@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    15-Oct-91 at 20:13:17
-;; Last-Mod:     20-Feb-22 at 21:52:10 by Bob Weiner
+;; Last-Mod:     26-Feb-22 at 16:51:07 by Bob Weiner
 ;;
 ;; Copyright (C) 1991-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -438,14 +438,23 @@ constructs.  If not given, the top level Hyperbole menu is used."
 
 (defun hui:menu-web-search ()
   "Hyperbole minibuffer menu of web search engines."
-  (let ((web-mini-menu
-	 (cons 'web
-	       (cons '("Web>")
-		     (mapcar (lambda (service)
-			       (list service
-				     (list #'hyperbole-web-search service)
-				     (format "Search %s" service)))
-			     (mapcar #'car hyperbole-web-search-alist))))))
+  (let* (service
+	 action
+	 (web-mini-menu
+	  (cons 'web
+		(cons '("Web>")
+		      (mapcar (lambda (service-and-action)
+				(setq service (car service-and-action)
+				      action  (cdr service-and-action))
+				(if (stringp action)
+				    (list service
+					  (list #'hyperbole-web-search service)
+					  (format "Search %s" service))
+				  (list service
+					;; a command symbol
+					action
+					"Prompt for webjump URL")))
+			      hyperbole-web-search-alist)))))
     web-mini-menu))
 
 (defun hui-search-web ()

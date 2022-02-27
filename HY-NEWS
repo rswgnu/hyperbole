@@ -251,6 +251,11 @@
           completely and exits from the menu.  {C-h h} re-enables the
           global minor mode and display the top-level Hyperbole menu.
 
+  *** Minibuffer and Pulldown Menu Changes:
+
+        - Find/Web/Jump: Use the Emacs webjump library to select a URL by name
+          and jump to it.
+
         - Koutliner Formatting Menus: Full set of commands to import
           text and outline files to Koutlines and to export Koutlines
 	  to HTML for web viewing.  See "(hyperbole)Inserting and Importing"
@@ -258,6 +263,7 @@
 
         - Button Modify Commands Removed: Use the Edit commands instead.
           This applies to the pull-down menu as well.
+
 
 ** SMART (ACTION AND ASSIST) KEYS  (See "(hyperbole)Smart Keys").
 
@@ -634,6 +640,10 @@
     - Windows Grid by File Pattern: {C--1 C-c @} prompts for a glob-type file
       pattern, finds all the matching files and then displays them in an auto-sized
       windows grid based on the number of files.
+
+    - Autosize Windows Grid of Marked Items: When in a Dired, Buffer Menu or IBuffer
+      buffer and items are marked, {@} will display them in an auto-sized window grid
+      rather than prompting for a size.
 
     - Buffer/Window Swapping: Improved {~} so current buffer remains the same but
       the selected window changes.  Also made frame buffer swapping work anytime

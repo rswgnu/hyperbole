@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     1-Jun-16 at 15:35:36
-;; Last-Mod:     20-Feb-22 at 22:45:47 by Bob Weiner
+;; Last-Mod:     27-Feb-22 at 01:11:05 by Bob Weiner
 ;;
 ;; Copyright (C) 2016-2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -1470,27 +1470,33 @@ Heights are given in screen percentages by the list
       (set-face-background 'mode-line fg))
     (force-mode-line-update t)))
 
+(defun hycontrol-windows-grid-marked-items ()
+  "Return any marked items in Dired, Buffer Menu or IBuffer mode."
+  ;; Get the list of marked items if in an item list buffer and
+  ;; convert items to buffers.
+  (let ((items (cond ((and (derived-mode-p 'dired-mode)
+			   (mapcar #'find-file-noselect (dired-get-marked-files))))
+		     ((and (eq major-mode 'Buffer-menu-mode)
+			   (Buffer-menu-marked-buffers)))
+		     ((and (eq major-mode 'ibuffer-mode)
+			   (ibuffer-get-marked-buffers))))))
+    ;; Ignore buffer list predicate filters when items exist so the
+    ;; items are not filtered out.
+    (setq hycontrol--invert-display-buffer-predicates
+	  (when items 'ignore))
+    ;; Return either non-nil items or frame's full buffer list.
+    items))
+
 (defun hycontrol-windows-grid-buffer-list ()
-  "Return the existing frame's buffer list with any marked items prepended.
-Marked items are included when the current buffer is in Dired, Buffer
-Menu or IBuffer mode."
-  ;; If selecting buffers by major-mode, then ignore any marked items.
+  "Return either any marked items in Dired, Buffer Menu or IBuffer mode or the existing frame's buffer list.
+If selecting buffers by major-mode, then ignore any marked items."
   (if (and (boundp 'mode) (symbolp mode))
       (buffer-list (selected-frame))
     ;; Get the list of marked items if in an item list buffer and
     ;; convert items to buffers.
-    (let ((items (cond ((and (derived-mode-p 'dired-mode)
-			     (mapcar #'find-file-noselect (dired-get-marked-files))))
-		       ((and (eq major-mode 'Buffer-menu-mode)
-			     (Buffer-menu-marked-buffers)))
-		       ((and (eq major-mode 'ibuffer-mode)
-			     (ibuffer-get-marked-buffers))))))
-      ;; Ignore buffer list predicate filters when items exist so the
-      ;; items are not filtered out.
-      (setq hycontrol--invert-display-buffer-predicates
-	    (when items 'ignore))
-      ;; Return either non-nil items or frame's full buffer list.
-      (or items (buffer-list (selected-frame))))))
+    ;; Return either non-nil items or frame's full buffer list.
+    (or (hycontrol-windows-grid-marked-items)
+	(buffer-list (selected-frame)))))
 
 ;;; Split selected frame into a grid of windows given by row and
 ;;; column count, displaying different buffers in each window.
@@ -1499,10 +1505,10 @@ Menu or IBuffer mode."
   "Display a grid of windows in the selected frame, sized according to prefix ARG.
 Left digit of ARG is the number of grid rows and the right digit is
 the number of grid columns.  Use {C-h h h} to restore the prior frame
-configuration.
+configuration after a grid is displayed.
 
 If ARG is 0, prompt for a major mode whose buffers should be
-displayed first in the grid windows, then prompt for the grid size.
+displayed in the grid windows, then prompt for the grid size.
 
 If ARG is < 0, prompt for a glob-type file pattern and display
 files that match the pattern in an auto-sized windows grid.
@@ -1512,13 +1518,12 @@ Otherwise, prompt for the grid size if ARG is an invalid size
 
 With a current buffer in Dired, Buffer Menu or IBuffer mode that
 contains marked items, the buffers associated with those items
-are displayed first in the grid (unless ARG is 0).
+are displayed in the grid (unless ARG is 0).
 
-Then the most recently used buffers are displayed in each window,
+By default, the most recently used buffers are displayed in each window,
 first selecting only those buffers which match any of the
 predicate expressions in `hycontrol-display-buffer-predicate-list'.
 \(The default predicate list chooses buffers with attached files).
-
 Then, if there are not enough buffers for all windows, the buffers
 that failed to match to any predicate are used.  In all cases, buffers
 whose names start with a space are ignored.
@@ -1556,24 +1561,31 @@ argument."
 		      (call-interactively #'hycontrol-windows-grid-by-major-mode)))
 	       (hhist:add hist-elt)))))) ;; Save prior frame configuration for easy return
 
+(defun hycontrol-windows-grid-minimum-size (num-buffers)
+  "Return the minimum integer window grid size to display NUM-BUFFERS.  Minimize number of rows rather than columns.
+Size is a 2 digit whole number with the first digit number of rows and
+the second, number of columns of windows."
+  (let* ((num-cols (ceiling (sqrt num-buffers)))
+	 (num-rows (1- num-cols))
+	 (grid-size (+ (* num-rows 10) num-cols)))
+    (when (< (* num-rows num-cols) num-buffers)
+      (setq grid-size (+ 10 grid-size)))
+    grid-size))
+
 (defun hycontrol-windows-grid-by-buffer-list (buffers)
   "Display an automatically sized window grid showing list of BUFFERS."
-  (let* ((num-buffers (length buffers))
-	 (grid-digit (ceiling (sqrt num-buffers)))
-	 (grid-size (+ (* grid-digit 10) grid-digit)))
     (if (null buffers)
 	(error "(hycontrol-windows-grid-by-buffer-list): No matching buffers")
-      (mapc #'switch-to-buffer (reverse buffers))
-      (hycontrol-make-windows-grid grid-size buffers))))
+      (let ((grid-size (hycontrol-windows-grid-minimum-size (length buffers))))
+	(mapc #'switch-to-buffer (reverse buffers))
+	(hycontrol-make-windows-grid grid-size buffers))))
 
 (defun hycontrol-windows-grid-by-file-list (files)
   "Display an automatically sized window grid showing list of FILES."
     (if (null files)
 	(error "(hycontrol-windows-grid-by-file-list): No matching files")
-  (let* ((num-files (length files))
-	 (grid-digit (ceiling (sqrt num-files)))
-	 (grid-size (+ (* grid-digit 10) grid-digit))
-	 (buffers (nreverse (mapcar #'find-file (reverse files)))))
+      (let ((grid-size (hycontrol-windows-grid-minimum-size (length files)))
+	    (buffers (nreverse (mapcar #'find-file (reverse files)))))
       (hycontrol-make-windows-grid grid-size buffers))))
 
 ;;;###autoload
@@ -1596,7 +1608,7 @@ See documentation of `hycontrol-windows-grid' for further details."
    (list (prefix-numeric-value current-prefix-arg)
 	 (let* ((set:equal-op 'eq)
 		(mode-strings (mapcar #'symbol-name (apply #'set:create (mapcar (lambda (buf) (buffer-local-value 'major-mode buf))
-									       (hycontrol-windows-grid-buffer-list))))))
+										(hycontrol-windows-grid-buffer-list))))))
 	   (intern-soft (completing-read "(HyControl Grid Windows): Major mode of buffers to display: "
 					 mode-strings nil t nil nil (symbol-name major-mode))))))
   (let ((hycontrol-display-buffer-predicate-list `((eq major-mode ',mode))))
@@ -1626,10 +1638,19 @@ See documentation of `hycontrol-windows-grid' for further details."
 (defun hycontrol-make-windows-grid (arg &optional buffer-list)
   "Display a grid of windows in the selected frame, sized according to prefix ARG.
 Left digit of ARG is the number of grid rows and the right digit is
-the number of grid columns. 
+the number of grid columns.  If ARG is invalid, prompt for grid size.
+
+If optional BUFFER-LIST is provided, use its length to determine
+minimum grid size, ignoring ARG.
 
 See documentation of `hycontrol-windows-grid' for further details."
   (interactive "p")
+
+  (unless buffer-list
+    (setq buffer-list (hycontrol-windows-grid-marked-items)))
+
+  (when buffer-list
+    (setq arg (hycontrol-windows-grid-minimum-size (length buffer-list))))
 
   ;; Check ARG, must be 2 digits of [1-9], else read a new ARG or
   ;; signal an error when in a HyControl mode and help is displayed.

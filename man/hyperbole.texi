@@ -7,7 +7,7 @@
 @c Author:       Bob Weiner
 @c
 @c Orig-Date:     6-Nov-91 at 11:18:03
-@c Last-Mod:     20-Feb-22 at 22:50:22 by Bob Weiner
+@c Last-Mod:     27-Feb-22 at 01:28:50 by Bob Weiner
 
 @c %**start of header (This is for running Texinfo on a region.)
 @setfilename hyperbole.info
@@ -156,7 +156,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</P>
 
 <PRE>
 Edition 8.0.0pre
-Printed February 20, 2022.
+Printed February 27, 2022.
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -198,7 +198,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 @example
 Edition 8.0.0pre
-February 20, 2022
+February 27, 2022
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -3781,10 +3781,12 @@ SaveLines -        Following point, keep only lines that match regexp.
 @vindex hyperbole-web-search-browser-function
 
 @item
-Web/ -             Select a search engine and term and search with them.
+Web/ -             Select a search engine and term and search with them or
+                   use Jump to go to a named URL (using webjump library).
+
                    Hyperbole binds the key @bkbd{C-c /} for quick
                    access to this menu, if it is not already bound
-                   prior to Hyperbole's initialization.  The Cust/Web-Search
+                   prior to Hyperbole's initialization.  The Cust/Web-Search-Search
                    menu sets the option, @code{hyperbole-web-search-browser-function},
                    which determines whether web search results are displayed
                    within Emacs or with an external web browser.  A short
@@ -3795,8 +3797,8 @@ Web/ -             Select a search engine and term and search with them.
 
 @smallexample
 @noindent
-Web>  Amazon Bing Dictionary Elisp Facebook Google gitHub
-      Images Maps RFCs StackOverflow Twitter Wikipedia Youtube
+Web>  Amazon Bing Dictionary Elisp Facebook Google gitHub Images
+      Jump Maps RFCs StackOverflow Twitter Wikipedia Youtube
 @end smallexample
 @end itemize
 
@@ -3967,7 +3969,7 @@ displayed.
 
 With a prefix argument < 0, the user is prompted for a shell glob-type file
 pattern; matching files are read into buffers and displayed in an auto-sized
-square windows grid.
+windows grid.
 
 Otherwise, when the prefix argument is an invalid size, the windows grid
 command prompts for the grid size.
