@@ -3,7 +3,7 @@
 # Author:       Bob Weiner
 #
 # Orig-Date:    15-Jun-94 at 03:42:38
-# Last-Mod:     19-Feb-22 at 10:43:51 by Mats Lidell
+# Last-Mod:     27-Feb-22 at 22:44:32 by Mats Lidell
 #
 # Copyright (C) 1994-2021  Free Software Foundation, Inc.
 # See the file HY-COPY for license information.
@@ -41,6 +41,9 @@
 #
 #               To release a Hyperbole Emacs package to ELPA and ftp.gnu.org:
 #		     make release
+#
+#		Generate the web site sources prepared for upload:
+#		    make web-site         - generate web site in folder $(HYPB_WEB_REPO_LOCATION)"
 #
 #               To setup Hyperbole to run directly from the latest test source
 #               code, use:
@@ -146,6 +149,9 @@ pkg_hyperbole = $(pkg_dir)/hyperbole
 # Temp file to use to build .elc files.
 ELISP_TO_COMPILE = $(pkg_dir)/elc-${USER}
 
+# Path to dir where the web repository is located i.e. hypb:web-repo-location
+HYPB_WEB_REPO_LOCATION = "../hyweb/hyperbole/"
+
 ##########################################################################
 #                     NO CHANGES REQUIRED BELOW HERE.                    #
 ##########################################################################
@@ -229,6 +235,10 @@ help:
 	@ echo "     make doc"
 	@ echo "  To release a Hyperbole Emacs package to ELPA and ftp.gnu.org:"
 	@ echo "     make release"
+	@ echo ""
+	@ echo "  Generate we site sources prepared for upload:"
+	@ echo "    make web-site         - generate web site in folder $(HYPB_WEB_REPO_LOCATION)"
+
 	@ echo ""
 	@ echo "The Hyperbole Manual is included in the package in four forms:"
 	@ echo "    man/hyperbole.info    - GNU browsable version"
@@ -347,6 +357,14 @@ $(man_dir)/hyperbole.pdf: $(TEXINFO_SRC)
 #   Documentation is here: https://www.npmjs.com/package/markdown-to-html
 README.md.html: README.md
 	github-markdown README.md > README.md.html
+
+# web-site maintenance: "https://www.gnu.org/software/hyperbole/"
+web-site:
+	$(EMACS_BATCH) --debug -l hypb-maintenance --eval '(let ((hypb:web-repo-location $(HYPB_WEB_REPO_LOCATION))) (hypb:web-repo-update))'
+	@ echo
+	@ echo "Web site source created ..."
+	@ echo "Goto \"$(HYPB_WEB_REPO_LOCATION)\" and run \"cvs commit -m <comment>\" to upload it."
+	@ echo
 
 # Generate a Hyperbole package suitable for distribution via the Emacs package manager.
 pkg: package
