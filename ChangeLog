@@ -1,3 +1,7 @@
+2022-02-27  Mats Lidell  <matsl@gnu.org>
+
+* Makefile (web-site): Add target for preparing web site sources
+
 2022-02-27  Bob Weiner  <rsw@gnu.org>
 
 * FAST-DEMO:
