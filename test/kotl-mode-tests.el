@@ -1,13 +1,11 @@
 ;;; kotl-mode-tests.el --- kotl-mode-el tests            -*- lexical-binding: t; -*-
 
-;; Copyright (C) 2021-2022  Mats Lidell
-
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    18-May-21 at 22:14:10
-;; Last-Mod:     28-Feb-22 at 22:43:37 by Mats Lidell
+;; Last-Mod:      1-Mar-22 at 23:16:05 by Mats Lidell
 ;;
-;; Copyright (C) 2021  Free Software Foundation, Inc.
+;; Copyright (C) 2021-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
 ;;
 ;; This file is part of GNU Hyperbole.
