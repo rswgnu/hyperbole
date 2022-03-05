@@ -1,13 +1,11 @@
 ;;; kexport-tests.el --- kexport tests            -*- lexical-binding: t; -*-
 
-;; Copyright (C) 2021  Mats Lidell
-
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    10-Oct-21 at 17:30:00
-;; Last-Mod:      5-Feb-22 at 16:24:59 by Bob Weiner
+;; Last-Mod:      1-Mar-22 at 23:23:49 by Mats Lidell
 ;;
-;; Copyright (C) 2021  Free Software Foundation, Inc.
+;; Copyright (C) 2021-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
 ;;
 ;; This file is part of GNU Hyperbole.
