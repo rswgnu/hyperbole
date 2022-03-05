@@ -3,7 +3,7 @@
 # Author:       Bob Weiner
 #
 # Orig-Date:    15-Jun-94 at 03:42:38
-# Last-Mod:     27-Feb-22 at 22:44:32 by Mats Lidell
+# Last-Mod:      9-Mar-22 at 21:25:34 by Mats Lidell
 #
 # Copyright (C) 1994-2021  Free Software Foundation, Inc.
 # See the file HY-COPY for license information.
@@ -377,7 +377,9 @@ release: package git-push $(pkg_dir)/hyperbole-$(HYPB_VERSION).tar.gz elpa ftp
 
 # Ensure local hyperbole directory is synchronized with master before building a release.
 git-pull:
-	git pull
+	git checkout master && git pull
+	git diff-index --quiet master
+
 git-push:
 	git push
 
@@ -410,20 +412,16 @@ $(pkg_dir)/hyperbole-$(HYPB_VERSION).tar.gz:
 	cd $(pkg_dir) && $(GZIP) hyperbole-$(HYPB_VERSION).tar > hyperbole-$(HYPB_VERSION).tar.gz
 
 $(pkg_dir)/hyperbole-$(HYPB_VERSION).tar.sig: $(pkg_dir)/hyperbole-$(HYPB_VERSION).tar
+	$(RM) $(pkg_dir)/hyperbole-$(HYPB_VERSION).tar.sig
 	cd $(pkg_dir) && $(GPG) -ba -o hyperbole-$(HYPB_VERSION).tar.sig hyperbole-$(HYPB_VERSION).tar
 	@ echo; echo "Hyperbole package built successfully:"
 	@ ls -l $(pkg_dir)/hyperbole-$(HYPB_VERSION).tar*
 
-$(pkg_dir)/hyperbole-$(HYPB_VERSION).tar: $(HYPERBOLE_FILES)
-	make version
-	cd $(pkg_dir) && $(RM) -fr $(pkg_hyperbole) $(pkg_hyperbole)-$(HYPB_VERSION)
-	cd .. && COPYFILE_DISABLE=1 $(TAR) -clf $(pkg_dir)/h.tar hyperbole
-	cd $(pkg_dir) && COPYFILE_DISABLE=1 $(TAR) xvf h.tar && cd $(pkg_hyperbole) && $(MAKE) packageclean
-	cd $(pkg_hyperbole) && make autoloads && chmod 755 topwin.py && \
-	cd $(pkg_dir) && $(RM) h.tar; \
-	  mv $(pkg_hyperbole) $(pkg_hyperbole)-$(HYPB_VERSION) && \
-	  COPYFILE_DISABLE=1 $(TAR) -clf $(pkg_dir)/hyperbole-$(HYPB_VERSION).tar hyperbole-$(HYPB_VERSION)
-	$(INSTALL) HY-ABOUT HY-ANNOUNCE HY-NEWS HY-WHY.kotl INSTALL README README.md README.html $(pkg_dir)/; chmod 644 $(pkg_dir)/*.tar
+$(pkg_dir)/hyperbole-$(HYPB_VERSION).tar: version $(HYPERBOLE_FILES)
+	$(RM) -fr $(pkg_hyperbole) $(pkg_hyperbole)-$(HYPB_VERSION).tar
+	git archive --format=tar --prefix=hyperbole-$(HYPB_VERSION)/ HEAD | (cd $(pkg_dir) && tar xf -)
+	cd $(pkg_hyperbole)-$(HYPB_VERSION) && make autoloads && chmod 755 topwin.py
+	COPYFILE_DISABLE=1 $(TAR) -C $(pkg_dir) -clf $(pkg_hyperbole)-$(HYPB_VERSION).tar hyperbole-$(HYPB_VERSION)
 
 pkgclean: packageclean
 packageclean:
