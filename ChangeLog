@@ -1,3 +1,8 @@
+2022-03-06  Mats Lidell  <matsl@gnu.org>
+
+* hmail.el (hmail:region): Insert kotl cell at the beginning of the mail
+    body. bug#44487 Suggestion by Jean Louis. Thanks Jean.
+
 2022-03-05  Mats Lidell  <matsl@gnu.org>
 
 * hypb-maintenance.el: Remove modified source buffers.

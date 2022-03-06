@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     9-Oct-91 at 18:38:05
-;; Last-Mod:      5-Feb-22 at 17:59:17 by Bob Weiner
+;; Last-Mod:      6-Mar-22 at 22:29:00 by Mats Lidell
 ;;
 ;; Copyright (C) 1991-2021  Free Software Foundation, Inc.
 ;; See the HY-COPY (Hyperbole) or BR-COPY (OO-Browser) file for license
@@ -211,9 +211,8 @@ buffer.  It may be a buffer or buffer name."
     (hmail:invoke)
     (setq mail-buf (current-buffer))
     (save-excursion
-      (when (search-forward mail-header-separator nil t)
-	;; Within header, so move to body
-	(goto-char (point-max)))
+      (rfc822-goto-eoh)
+      (forward-line)
       (set-buffer buf)
       (hypb:insert-region mail-buf start end invisible-flag))))
 
