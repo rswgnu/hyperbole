@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    31-Mar-21 at 21:11:00
-;; Last-Mod:     12-Feb-22 at 14:09:43 by Bob Weiner
+;; Last-Mod:      5-Mar-22 at 16:14:59 by Mats Lidell
 ;;
 ;; Copyright (C) 1991-2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -82,10 +82,18 @@ Point `hypb:web-repo-location' to where the web repo is located."
 	(kill-buffer))))
 
   ;; koutline-example.html
-  (kexport:html "kotl/EXAMPLE.kotl" (concat hypb:web-repo-location "koutline-example.html") nil)
+  (let ((example-src-name "kotl/EXAMPLE.kotl"))
+    (kexport:html example-src-name (concat hypb:web-repo-location "koutline-example.html") nil)
+    (with-current-buffer (get-file-buffer example-src-name)
+      (set-buffer-modified-p nil)
+      (kill-buffer)))
  
   ;; HY-WHY.html
-  (kexport:html "HY-WHY.kotl" (concat hypb:web-repo-location "HY-WHY.html") nil))
+  (let ((hy-why-src-name "HY-WHY.kotl"))
+    (kexport:html hy-why-src-name (concat hypb:web-repo-location "HY-WHY.html") nil)
+    (with-current-buffer (get-file-buffer hy-why-src-name)
+      (set-buffer-modified-p nil)
+      (kill-buffer))))
 
 (provide 'hypb-maintenance)
 ;;; hypb-maintenance.el ends here

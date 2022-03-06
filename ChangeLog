@@ -1,3 +1,7 @@
+2022-03-05  Mats Lidell  <matsl@gnu.org>
+
+* hypb-maintenance.el: Remove modified source buffers.
+
 2022-03-01  Mats Lidell  <matsl@gnu.org>
 
 * test/kotl-mode-tests.el (kotl-mode-hide-cell): Add test case.
