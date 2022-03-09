@@ -1,3 +1,11 @@
+2022-03-09  Mats Lidell  <matsl@gnu.org>
+
+* Makefile ($(pkg_dir)/hyperbole-$(HYPB_VERSION).tar): Package files under
+    source control, depend on version.
+    ($(pkg_dir)/hyperbole-$(HYPB_VERSION).tar.sig): Remove sig-file just
+    before generation.
+    (git-pull): Ensure repository only contains master sources.
+
 2022-03-06  Mats Lidell  <matsl@gnu.org>
 
 * hmail.el (hmail:region): Insert kotl cell at the beginning of the mail
