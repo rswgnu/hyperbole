@@ -79,7 +79,7 @@
       "(hyperbole)Implicit Button Link Types".
 
       Elisp programmers should use the existing `defib' macro for full
-      flexibility in implicit button type creation.  See "hibytpes.el"
+      flexibility in implicit button type creation.  See "hibtypes.el"
       for examples and "(hyperbole)Programmatic Implicit Button Types"
       for documentation.
 
@@ -91,7 +91,7 @@
       test/ subdirectory.  Simply run 'make test' or 'make test-all' from the
       command-line when in the Hyperbole source directory and you should see
       all tests pass.  If any fail, you can press the Action Key to see the
-      source of the failure.  Full testing is suppored under POSIX systems
+      source of the failure.  Full testing is supported under POSIX systems
       only.  See "Makefile" and "test/MANIFEST".
  
   *** Implicit Button Types to Run Tests: The file "hypb-ert.el" contains two
@@ -163,7 +163,7 @@
 
   *** New Mail Tree Key Binding: The `kotl-mode:mail-tree' command that
       extracts the current view of a Koutline in text-only format and
-      creates an outgoing email messge with it, has moved from {C-c @}
+      creates an outgoing email message with it, has moved from {C-c @}
       to {C-c C-@} to prevent conflict with the global hycontrol-window-grid
       command bound to {C-c @}.
 
@@ -312,7 +312,7 @@
 
   *** Treat kbd Strings as Key Series Buttons: An Action Key press within
       the string of (kbd "string") issues the keys in string as if they were
-      pressed individually, ie.g the same as the key series, {string}.
+      pressed individually, i.e. the same as the key series, {string}.
 
   *** Mail Address Activation Everywhere: Email addresses are recognized as
       implicit buttons in major modes descended from `mail-address-mode-list'.
@@ -393,7 +393,7 @@
       at the start of another buffer.  Can be bound and used in key series.
 
   *** smart-lisp-find-tag: New function that automatically finds tags tables
-      and jumps to Emacs Lisp deefinitions.  It can be used in any type
+      and jumps to Emacs Lisp definitions.  It can be used in any type
       of file as an action button, e.g. <smart-lisp-find-tag "ibut:at-p">.
 
   *** ibut:at-p: Trigger an error if any implicit button type predicate
@@ -558,7 +558,7 @@
       label has been increased from 100 to 200 characters.  The variable
       hbut:max-len controls this.  If you locally set this to 0 in any
       new button type definition, then for that type of button, there
-      will be no maximumm limit.  Since Action Implicit Buttons can be
+      will be no maximum limit.  Since Action Implicit Buttons can be
       a series of Lisp calls, they are now unlimited in length.
 
 ===========================================================================
@@ -858,7 +858,7 @@
 
     - ebut:key-src-set-buffer, hbut:key-src-set-buffer, hbut:key-list,
       hbut:ebut-key-list, hbut:ibut-key-list, hbut:label-list): Added
-      to allow selection of labeled Hyperbole buttons in currrent buffer by
+      to allow selection of labeled Hyperbole buttons in current buffer by
       name.
 
     - gbut:get, hbut:map, ibut:label-map, ibut:key-src, ibut:key-to-label,
@@ -1732,7 +1732,7 @@ are new in 2016 and you should look through them all.
       paths that begin with a ~.
 
     - New variable, `hpath:info-suffix', is a regular expression of Info
-      filename suffixes which may be ommitted when using parenthesized Info
+      filename suffixes which may be omitted when using parenthesized Info
       filenames in links; this allows for compressed Info file matches and Info
       pathnames of the form "(Hyperbole)" to work.  That displays the top node
       of the Hyperbole Manual in the Info browser.
@@ -2538,7 +2538,7 @@ are new in 2016 and you should look through them all.
 
   DOCUMENTATION
 
-    - Rewrote the Hyperbole manual for clarity and ease of reading.  Addded
+    - Rewrote the Hyperbole manual for clarity and ease of reading.  Added
       a number of images.
 
   ACTION AND ASSIST KEYS
@@ -2664,7 +2664,7 @@ are new in 2016 and you should look through them all.
   KOUTLINER
 
     - XEmacs 19.14 and above: Fixed display of current viewspec in the
-      modeline to accomodate modeline extents (specialized modeline regions).
+      modeline to accommodate modeline extents (specialized modeline regions).
       This eliminated an error that occurred when reading in an Koutline file.
 
     - Fixed bug that prevented installation of Koutliner mode-specific

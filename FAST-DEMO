@@ -84,7 +84,7 @@
 
     "(hyperbole)action-key-modeline-function" 
 
-       Double quoted Info manual refererences are also implicit buttons.
+       Double quoted Info manual references are also implicit buttons.
        You can link to both nodes/sections in GNU Info manuals as well
        as to specific lines referenced by an index entry, as shown
        above, providing fine-grained structured document linking.  Remember
