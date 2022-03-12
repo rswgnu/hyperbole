@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    31-Mar-21 at 21:11:00
-;; Last-Mod:     12-Feb-22 at 14:09:43 by Bob Weiner
+;; Last-Mod:     27-Feb-22 at 10:14:34 by Bob Weiner
 ;;
 ;; Copyright (C) 1991-2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -85,7 +85,9 @@ Point `hypb:web-repo-location' to where the web repo is located."
   (kexport:html "kotl/EXAMPLE.kotl" (concat hypb:web-repo-location "koutline-example.html") nil)
  
   ;; HY-WHY.html
-  (kexport:html "HY-WHY.kotl" (concat hypb:web-repo-location "HY-WHY.html") nil))
+  (kexport:html "HY-WHY.kotl" (concat hypb:web-repo-location "HY-WHY.html") nil)
+
+  (message "Local copy of Hyperbole webside updated successfully."))
 
 (provide 'hypb-maintenance)
 ;;; hypb-maintenance.el ends here

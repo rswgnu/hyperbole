@@ -1,4 +1,26 @@
+2022-03-12  Bob Weiner  <rsw@gnu.org>
+
+* man/hyperbole.texi (Implicit Button Types): In org-mode description, use @smallexample instead
+    of @group which was showing the markup in the Info file.
+
 2022-02-27  Bob Weiner  <rsw@gnu.org>
+
+* hyrolo.el (hyrolo-map-level-1): Remove unused parameters and rename to 'hyrolo-map-single-subtree'.
+
+* hpath.el (hpath:at-p): If find a PATH variable value, call hpath:is-p on the path
+    selected (normalizes it) before returning.  Ensures parameters 'type' and 'non-exist'
+    are respected in this case.  Also, test if individual path exists without requiring
+    three or more separated directories prior to doing this test.
+  test/hmouse-drv-tests.el (hbut-pathname-path-variable-with-two-colons-is-one-file-test):
+    Change to 'hbut-pathname-path-variable-with-two-colons-a-path-test'
+    and make 'should' instead of 'should not'.
+  test/hpath-tests.el (hpath:path-at-point-in-path-variable-test): Fix to call
+    'hpath:at-p' with non-exist flag true.
+
+* Makefile (README.md.html): Switch to use 'md2html' instead of 'github-markdown' due
+    to problems with local link ids not being generated properly.  Also, this simplifies
+    from an npm library with many dependencies to a quick Python program.  Add GNU sed
+    calls to fix case-sensitivity and URL encode char problems in anchor IDs.
 
 * FAST-DEMO:
   hycontrol.el (hycontrol-windows-grid-marked-items): Add.

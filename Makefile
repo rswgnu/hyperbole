@@ -3,7 +3,7 @@
 # Author:       Bob Weiner
 #
 # Orig-Date:    15-Jun-94 at 03:42:38
-# Last-Mod:     19-Feb-22 at 10:43:51 by Mats Lidell
+# Last-Mod:     27-Feb-22 at 12:51:17 by Bob Weiner
 #
 # Copyright (C) 1994-2021  Free Software Foundation, Inc.
 # See the file HY-COPY for license information.
@@ -343,10 +343,19 @@ pdf: $(man_dir)/hyperbole.pdf
 $(man_dir)/hyperbole.pdf: $(TEXINFO_SRC)
 	cd $(man_dir) && $(TEXI2PDF) hyperbole.texi
 
-# github-markdown is an npm, installed with: npm install markdown-to-html -g
-#   Documentation is here: https://www.npmjs.com/package/markdown-to-html
+# md2html is a Python package that comes from the md2html-phuker repo on github.
+#   Documentation is here: https://github.com/Phuker/md2html
+#   Need the GNU sed call below because md2html generates ids with the wrong case and leaves URL encoded chars in ids.
+#   To test links in the generated html:
+#     Run a Python directory web browser in this directory: python -m http.server 8000
+#     Open the page in a web browser:                       http://localhost:8000/README.md.html
+#
+# Used to use github-markdown is an npm, installed with: npm install markdown-to-html -g
+#   But then it's links broke.  Documentation is here: https://www.npmjs.com/package/markdown-to-html
+#	github-markdown README.md > README.md.html
 README.md.html: README.md
-	github-markdown README.md > README.md.html
+	md2html README.md -f -o - | sed - -e 's/\(id="[^%]*\)\(%[A-Z0-9][A-Z0-9]\)/\1/g' -e 's/\(id="[^"]*"\)/\L\1/g' > README.md.html
+	md2html README.md -f -o README.md.html
 
 # Generate a Hyperbole package suitable for distribution via the Emacs package manager.
 pkg: package
