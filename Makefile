@@ -3,7 +3,7 @@
 # Author:       Bob Weiner
 #
 # Orig-Date:    15-Jun-94 at 03:42:38
-# Last-Mod:     27-Feb-22 at 12:51:17 by Bob Weiner
+# Last-Mod:     12-Mar-22 at 15:08:16 by Bob Weiner
 #
 # Copyright (C) 1994-2021  Free Software Foundation, Inc.
 # See the file HY-COPY for license information.
@@ -41,6 +41,9 @@
 #
 #               To release a Hyperbole Emacs package to ELPA and ftp.gnu.org:
 #		     make release
+#
+#		Generate the web site sources prepared for upload:
+#		    make web-site         - generate web site in folder $(HYPB_WEB_REPO_LOCATION)"
 #
 #               To setup Hyperbole to run directly from the latest test source
 #               code, use:
@@ -146,6 +149,9 @@ pkg_hyperbole = $(pkg_dir)/hyperbole
 # Temp file to use to build .elc files.
 ELISP_TO_COMPILE = $(pkg_dir)/elc-${USER}
 
+# Path to dir where the web repository is located i.e. hypb:web-repo-location
+HYPB_WEB_REPO_LOCATION = "../hyweb/hyperbole/"
+
 ##########################################################################
 #                     NO CHANGES REQUIRED BELOW HERE.                    #
 ##########################################################################
@@ -229,6 +235,10 @@ help:
 	@ echo "     make doc"
 	@ echo "  To release a Hyperbole Emacs package to ELPA and ftp.gnu.org:"
 	@ echo "     make release"
+	@ echo ""
+	@ echo "  Generate we site sources prepared for upload:"
+	@ echo "    make web-site         - generate web site in folder $(HYPB_WEB_REPO_LOCATION)"
+
 	@ echo ""
 	@ echo "The Hyperbole Manual is included in the package in four forms:"
 	@ echo "    man/hyperbole.info    - GNU browsable version"
@@ -357,6 +367,14 @@ README.md.html: README.md
 	md2html README.md -f -o - | sed - -e 's/\(id="[^%]*\)\(%[A-Z0-9][A-Z0-9]\)/\1/g' -e 's/\(id="[^"]*"\)/\L\1/g' > README.md.html
 	md2html README.md -f -o README.md.html
 
+# web-site maintenance: "https://www.gnu.org/software/hyperbole/"
+web-site:
+	$(EMACS_BATCH) --debug -l hypb-maintenance --eval '(let ((hypb:web-repo-location $(HYPB_WEB_REPO_LOCATION))) (hypb:web-repo-update))'
+	@ echo
+	@ echo "Web site source created ..."
+	@ echo "Goto \"$(HYPB_WEB_REPO_LOCATION)\" and run \"cvs commit -m <comment>\" to upload it."
+	@ echo
+
 # Generate a Hyperbole package suitable for distribution via the Emacs package manager.
 pkg: package
 package: git-pull doc autoloads $(pkg_dir)/hyperbole-$(HYPB_VERSION).tar.sig
@@ -368,7 +386,9 @@ release: package git-push $(pkg_dir)/hyperbole-$(HYPB_VERSION).tar.gz elpa ftp
 
 # Ensure local hyperbole directory is synchronized with master before building a release.
 git-pull:
-	git pull
+	git checkout master && git pull
+	git diff-index --quiet master
+
 git-push:
 	git push
 
@@ -401,20 +421,16 @@ $(pkg_dir)/hyperbole-$(HYPB_VERSION).tar.gz:
 	cd $(pkg_dir) && $(GZIP) hyperbole-$(HYPB_VERSION).tar > hyperbole-$(HYPB_VERSION).tar.gz
 
 $(pkg_dir)/hyperbole-$(HYPB_VERSION).tar.sig: $(pkg_dir)/hyperbole-$(HYPB_VERSION).tar
+	$(RM) $(pkg_dir)/hyperbole-$(HYPB_VERSION).tar.sig
 	cd $(pkg_dir) && $(GPG) -ba -o hyperbole-$(HYPB_VERSION).tar.sig hyperbole-$(HYPB_VERSION).tar
 	@ echo; echo "Hyperbole package built successfully:"
 	@ ls -l $(pkg_dir)/hyperbole-$(HYPB_VERSION).tar*
 
-$(pkg_dir)/hyperbole-$(HYPB_VERSION).tar: $(HYPERBOLE_FILES)
-	make version
-	cd $(pkg_dir) && $(RM) -fr $(pkg_hyperbole) $(pkg_hyperbole)-$(HYPB_VERSION)
-	cd .. && COPYFILE_DISABLE=1 $(TAR) -clf $(pkg_dir)/h.tar hyperbole
-	cd $(pkg_dir) && COPYFILE_DISABLE=1 $(TAR) xvf h.tar && cd $(pkg_hyperbole) && $(MAKE) packageclean
-	cd $(pkg_hyperbole) && make autoloads && chmod 755 topwin.py && \
-	cd $(pkg_dir) && $(RM) h.tar; \
-	  mv $(pkg_hyperbole) $(pkg_hyperbole)-$(HYPB_VERSION) && \
-	  COPYFILE_DISABLE=1 $(TAR) -clf $(pkg_dir)/hyperbole-$(HYPB_VERSION).tar hyperbole-$(HYPB_VERSION)
-	$(INSTALL) HY-ABOUT HY-ANNOUNCE HY-NEWS HY-WHY.kotl INSTALL README README.md README.html $(pkg_dir)/; chmod 644 $(pkg_dir)/*.tar
+$(pkg_dir)/hyperbole-$(HYPB_VERSION).tar: version $(HYPERBOLE_FILES)
+	$(RM) -fr $(pkg_hyperbole) $(pkg_hyperbole)-$(HYPB_VERSION).tar
+	git archive --format=tar --prefix=hyperbole-$(HYPB_VERSION)/ HEAD | (cd $(pkg_dir) && tar xf -)
+	cd $(pkg_hyperbole)-$(HYPB_VERSION) && make autoloads && chmod 755 topwin.py
+	COPYFILE_DISABLE=1 $(TAR) -C $(pkg_dir) -clf $(pkg_hyperbole)-$(HYPB_VERSION).tar hyperbole-$(HYPB_VERSION)
 
 pkgclean: packageclean
 packageclean:

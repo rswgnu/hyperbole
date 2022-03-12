@@ -1,13 +1,11 @@
 ;;; kotl-mode-tests.el --- kotl-mode-el tests            -*- lexical-binding: t; -*-
 
-;; Copyright (C) 2021  Mats Lidell
-
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    18-May-21 at 22:14:10
-;; Last-Mod:      6-Feb-22 at 00:57:24 by Bob Weiner
+;; Last-Mod:      1-Mar-22 at 23:16:05 by Mats Lidell
 ;;
-;; Copyright (C) 2021  Free Software Foundation, Inc.
+;; Copyright (C) 2021-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
 ;;
 ;; This file is part of GNU Hyperbole.
@@ -479,6 +477,23 @@
       (progn
         (delete-file kotl-file)
         (delete-file new-name)))))
+
+(ert-deftest kotl-mode-hide-cell ()
+  "Verify cell is hidden and unhidden on `action-key' press."
+  (let ((kotl-file (make-temp-file "hypb" nil ".kotl")))
+    (unwind-protect
+        (progn
+          (find-file kotl-file)
+          (insert "1")
+          (kotl-mode:newline 1)
+          (insert "2")
+          (kotl-mode:beginning-of-buffer)
+          (action-key)                  ; Hide cell
+          (forward-char 1)
+          (should (outline-invisible-p))
+          (action-key)                  ; Unhide cell
+          (should-not (outline-invisible-p)))
+      (delete-file kotl-file))))
 
 (provide 'kotl-mode-tests)
 ;;; kotl-mode-tests.el ends here

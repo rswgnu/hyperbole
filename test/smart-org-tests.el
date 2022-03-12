@@ -1,13 +1,11 @@
 ;;; smart-org-tests.el --- smart-org-el tests            -*- lexical-binding: t; -*-
 
-;; Copyright (C) 2021  Mats Lidell
-
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    23-Apr-21 at 22:21:00
-;; Last-Mod:      6-Feb-22 at 00:57:50 by Bob Weiner
+;; Last-Mod:      1-Mar-22 at 23:23:32 by Mats Lidell
 ;;
-;; Copyright (C) 2021  Free Software Foundation, Inc.
+;; Copyright (C) 2021-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
 ;;
 ;; This file is part of GNU Hyperbole.

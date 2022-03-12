@@ -3,6 +3,31 @@
 * man/hyperbole.texi (Implicit Button Types): In org-mode description, use @smallexample instead
     of @group which was showing the markup in the Info file.
 
+2022-03-09  Mats Lidell  <matsl@gnu.org>
+
+* Makefile ($(pkg_dir)/hyperbole-$(HYPB_VERSION).tar): Package files under
+    source control, depend on version.
+    ($(pkg_dir)/hyperbole-$(HYPB_VERSION).tar.sig): Remove sig-file just
+    before generation.
+    (git-pull): Ensure repository only contains master sources.
+
+2022-03-06  Mats Lidell  <matsl@gnu.org>
+
+* hmail.el (hmail:region): Insert kotl cell at the beginning of the mail
+    body. bug#44487 Suggestion by Jean Louis. Thanks Jean.
+
+2022-03-05  Mats Lidell  <matsl@gnu.org>
+
+* hypb-maintenance.el: Remove modified source buffers.
+
+2022-03-01  Mats Lidell  <matsl@gnu.org>
+
+* test/kotl-mode-tests.el (kotl-mode-hide-cell): Add test case.
+
+2022-02-27  Mats Lidell  <matsl@gnu.org>
+
+* Makefile (web-site): Add target for preparing web site sources
+
 2022-02-27  Bob Weiner  <rsw@gnu.org>
 
 * hyrolo.el (hyrolo-map-level-1): Remove unused parameters and rename to 'hyrolo-map-single-subtree'.

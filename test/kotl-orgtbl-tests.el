@@ -1,13 +1,11 @@
 ;;; kotl-orgtbl-tests.el --- kotl orgtbl tests            -*- lexical-binding: t; -*-
 
-;; Copyright (C) 2021  Mats Lidell
-
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:     2-Nov-21 at 17:04:30
-;; Last-Mod:      6-Feb-22 at 00:55:05 by Bob Weiner
+;; Last-Mod:      1-Mar-22 at 23:24:01 by Mats Lidell
 ;;
-;; Copyright (C) 2021  Free Software Foundation, Inc.
+;; Copyright (C) 2021-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
 ;;
 ;; This file is part of GNU Hyperbole.
