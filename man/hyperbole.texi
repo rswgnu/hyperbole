@@ -7,7 +7,7 @@
 @c Author:       Bob Weiner
 @c
 @c Orig-Date:     6-Nov-91 at 11:18:03
-@c Last-Mod:     27-Feb-22 at 01:28:50 by Bob Weiner
+@c Last-Mod:     12-Mar-22 at 15:01:03 by Bob Weiner
 
 @c %**start of header (This is for running Texinfo on a region.)
 @setfilename hyperbole.info
@@ -156,7 +156,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</P>
 
 <PRE>
 Edition 8.0.0pre
-Printed February 27, 2022.
+Printed March 12, 2022.
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -198,7 +198,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 @example
 Edition 8.0.0pre
-February 27, 2022
+March 12, 2022
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -2166,9 +2166,7 @@ The
 following table summarizes the effect of this option setting.
 @end table
 
-@smallformat
-@verbatim
-@group
+@smallexample
 |--------------+-------------------+------------------+----------+------------------|
 | This Setting | Smart Key Context | Hyperbole Button | Org Link | Fallback Command |
 |--------------+-------------------+------------------+----------+------------------|
@@ -2176,9 +2174,7 @@ following table summarizes the effect of this option setting.
 | nil          | Ignore            | Ignore           | Ignore   | org-meta-return  |
 | t            | Activate          | Activate         | Activate | None             |
 |--------------+-------------------+------------------+----------+------------------|
-@end group
-@end verbatim
-@end smallformat
+@end smallexample
 
 @table @code
 @findex ibtypes doc-id
