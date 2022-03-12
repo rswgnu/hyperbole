@@ -112,7 +112,7 @@
   (with-temp-buffer
     (insert "\":foo:bar:emacs\"")
     (goto-char 8)
-    (should (string= (hpath:at-p) (expand-file-name "bar")))))
+    (should (string= (hpath:at-p nil t) (expand-file-name "bar")))))
 
 (ert-deftest hpath:path-at-point-in-path-variable-shorter-than-three-colons-returns-nil-test ()
   "Do not identify path variables with less than three colons."

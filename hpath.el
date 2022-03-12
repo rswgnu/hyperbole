@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     1-Nov-91 at 00:44:23
-;; Last-Mod:     31-Jan-22 at 22:39:52 by Bob Weiner
+;; Last-Mod:     27-Feb-22 at 16:25:23 by Bob Weiner
 ;;
 ;; Copyright (C) 1991-2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -874,23 +874,34 @@ paths are allowed.  Absolute pathnames must begin with a `/' or `~'."
       (setq non-exist t))
     (cond ((and path (file-readable-p path))
 	   path)
-	  ((and path (string-match-p hpath:path-variable-value-regexp path)
+	  ((and path
 		;; Don't allow more than one set of grouping chars
-		(not (string-match-p "\)\\s-*\(\\|\\]\\s-*\\[\\|\}\\s-*\{" path)))
-	   ;; With point inside a path variable, return the path that point is on or to the right of.
-	   (setq subpath (or (and (setq subpath (hargs:delimited "^\\s-*\\|[:\"\']" "[:\"\']\\|\\s-*$" t t nil "[\t\n\r\f]\\|[;:] \\| [;:]"))
-				  (not (string-match-p "[:;\t\n\r\f]" subpath))
-				  subpath)
-			     (and (setq subpath (hargs:delimited "^\\s-*\\|[;\"\']" "[;\"\']\\|\\s-*$"  t t nil "[\t\n\r\f]\\|[;:] \\| [;:]"))
-				  (not (string-match-p "[;\t\n\r\f]\\|:[^:]*:" subpath))
-				  subpath)))
-	   (if subpath
-	       ;; Could be a shell command from a semicolon separated
-	       ;; list; ignore if so
-	       (unless (and (string-match "\\`\\s-*\\([^; 	]+\\)" subpath)
-			    (executable-find (match-string 1 subpath)))
-		 (expand-file-name subpath))
-	     "."))
+		(not (string-match-p "\)\\s-*\(\\|\\]\\s-*\\[\\|\}\\s-*\{" path))
+		;; With point inside a path variable, return the path that point is on or to the right of.
+		(setq subpath (or (and (setq subpath (hargs:delimited "[:\"\']\\|^\\s-*" "[:\"\']\\|\\s-*$" t t nil "[\t\n\r\f]\\|[;:] \\| [;:]"))
+				       (not (string-match-p "[:;\t\n\r\f]" subpath))
+				       subpath)
+				  (and (setq subpath (hargs:delimited "[;\"\']\\|^\\s-*" "[;\"\']\\|\\s-*$"  t t nil "[\t\n\r\f]\\|[;:] \\| [;:]"))
+				       (not (string-match-p "[;\t\n\r\f]\\|:[^:]*:" subpath))
+				       subpath)))
+		;; Handle anchored or action prefix char paths in the
+		;; following clause; otherwise, might just be looking
+		;; at part of the path
+		(and subpath (not (or (string-match-p "#" subpath)
+				      (string-match-p hpath:prefix-regexp subpath))))
+		(setq subpath
+		      (if subpath
+			  (cond ((and (string-match "\\`\\s-*\\([^; \t]+\\)" subpath)
+				      (executable-find (match-string 1 subpath)))
+				 ;; Could be a shell command from a semicolon separated
+				 ;; list; ignore if so
+				 nil)
+				(t (expand-file-name subpath)))
+			;; Only default to current path if know are within a PATH value
+			(when (string-match-p hpath:path-variable-value-regexp path)
+			  ".")))
+		(hpath:is-p subpath type non-exist))
+	   subpath)
 	  ((hpath:is-p path type non-exist))
 	  ;; Local file URLs
 	  ;; ((hpath:is-p (hargs:delimited "file://" "[ \t\n\r\"\'\}]" nil t)))
