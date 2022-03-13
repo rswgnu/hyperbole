@@ -99,7 +99,7 @@ all new, interactive DEMO and explore sections of interest:
 
    {C-h h d d}
 
-To permanantly activate Hyperbole in your Emacs initialization file, add
+To permanently activate Hyperbole in your Emacs initialization file, add
 the line:
 
    (hyperbole-mode 1)

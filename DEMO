@@ -271,7 +271,7 @@ buffers.
 By default, this command shows buffers with attached files only and prompts
 for the size of the grid to display.  With a negative prefix argument, the @
 command prompts for a shell glob-type pattern of files to match, e.g. *hypb*.el,
-and then chooses the smallest square grid patterns that can accomodate the number
+and then chooses the smallest square grid patterns that can accommodate the number
 of files matched, e.g. 3x3 or 4x4, etc.
 
 
@@ -1551,7 +1551,7 @@ displayed in a newly created and selected frame.
 So now you can rapidly put a bunch of buffers and files on your screen wherever
 you like.  Typically, a brief visual pulse is shown first at the source item and
 then in the destination window, to help you see that the transfer has been
-made.  An Assist Key Drag will move the the item list buffer to the destination
+made.  An Assist Key Drag will move the item list buffer to the destination
 (swapping buffers), just as it does with other buffers.  Practice these drags as
 they will prove very beneficial across time.
 

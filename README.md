@@ -456,9 +456,9 @@ Naming conventions:
   - All Hyperbole-specific code files begin with an 'h', aside from the
     Koutliner files which are in the kotl/ subdirectory and begin with a 'k'.
 
-  - Hyperbole user-interface files begin with 'hui-' or 'hmous'.
+  - Hyperbole user-interface files begin with 'hui-' or 'hmouse-'.
 
-  - Files that define implicit button types begin with 'hib'.
+  - Files that define implicit button types begin with 'hib-'.
 
   - Encapsulations of foreign systems begin with 'hsys-'.
 
@@ -690,7 +690,7 @@ tired of trying to manage our own distributed information pools with standard
 UNIX tools.  And so Hyperbole was conceived and raved about until it
 got its name.
 
-Since then Hyperbole has proved indispensible at improving information
+Since then Hyperbole has proved indispensable at improving information
 access and organization in daily use over many years.  Why not start
 improving your information handling efficiency today?
 
