@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     7-Jun-89 at 22:08:29
-;; Last-Mod:     12-Feb-22 at 10:42:19 by Mats Lidell
+;; Last-Mod:     13-Mar-22 at 10:47:52 by Bob Weiner
 ;;
 ;; Copyright (C) 1991-2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -241,7 +241,7 @@ entry which begins with the parent string."
 		   (goto-char (point-max))
 		   (if (and (> first-char ?0)
 			    (re-search-backward
-			     (concat "^\\*[ \t]*["
+			     (concat "^\\*[ \t]+["
 				     (substring
 				      "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
 				      0 (min (- first-char ?0) 62))
@@ -364,7 +364,7 @@ parent entry which begins with the parent string."
 
 (defun hyrolo-edit-entry ()
   "Edit the source entry of the rolo match buffer entry at point.
-Returns entry name if found, else nil."
+Return entry name if found, else nil."
   (interactive)
   (let ((name (hyrolo-name-at))
 	src)
@@ -393,7 +393,7 @@ Nil value of MAX-MATCHES means find all matches, t value means find all
 matches but omit file headers, negative values mean find up to the inverse of
 that number of entries and omit file headers.
 
-Returns number of entries matched.  See also documentation for the variable
+Return number of entries matched.  See also documentation for the variable
 `hyrolo-file-list' and the function `hyrolo-fgrep-logical' for documentation on
 the logical expression matching."
   (interactive "sFind rolo string (or logical expression): \nP")
@@ -717,12 +717,16 @@ Return list of number of groupings at each entry level."
   (let ((level-regexp (regexp-quote "**************"))
 	(entries-per-level-list)
 	(n))
-    (while (not (equal level-regexp ""))
+    (while (not (string-empty-p level-regexp))
       (setq n (hyrolo-sort-level hyrolo-file level-regexp))
       (when (or (/= n 0) entries-per-level-list)
-	(setq entries-per-level-list
-	      (append (list n) entries-per-level-list)))
+	(setq entries-per-level-list (cons (list (/ (length level-regexp) 2) n)
+					   entries-per-level-list)))
+      ;; Subtract 2 here because there are two chars per star when
+      ;; regexp-quoted: \\*
       (setq level-regexp (substring level-regexp 0 (- (length level-regexp) 2))))
+    (goto-char (point-min))
+    (hyrolo-kill-buffer (current-buffer))
     entries-per-level-list))
 
 (defun hyrolo-sort-level (hyrolo-file level-regexp &optional max-groupings)
@@ -730,9 +734,10 @@ Return list of number of groupings at each entry level."
 To a maximum of optional MAX-GROUPINGS.  Nil value of MAX-GROUPINGS means all
 groupings at the given level.  LEVEL-REGEXP should simply match the text of
 any rolo entry of the given level, not the beginning of a line (^); an
-example, might be (regexp-quote \"**\") to match level two.  Returns number
+example, might be (regexp-quote \"**\") to match level two.  Return number
 of groupings sorted."
   (interactive "sSort rolo file: \nRegexp for level's entries: \nP")
+  (outline-hide-sublevels (/ (length level-regexp) 2))
   (let ((sort-fold-case t))
     (hyrolo-map-level
      (lambda (start end) (hyrolo-sort-lines nil start end))
@@ -1095,7 +1100,7 @@ Nil value of MAX-MATCHES means find all matches, t value means find all matches
 but omit file headers, negative values mean find up to the inverse of that
 number of entries and omit file headers.  Optional COUNT-ONLY non-nil
 means don't retrieve matching entries.
-Returns number of matching entries found."
+Return number of matching entries found."
   (hyrolo-grep-file hyrolo-file-or-buf (regexp-quote string) max-matches count-only))
 
 (defun hyrolo-grep-file (hyrolo-file-or-buf regexp &optional max-matches count-only)
@@ -1191,70 +1196,52 @@ Return number of groupings matched."
 			t))))
 	0
       (set-buffer actual-buf)
-      (let ((num-found 0)
-	    (exact-level-regexp (concat "^\\(" level-regexp "\\)[ \t\n\r]"))
-	    (outline-regexp hyrolo-entry-regexp)
-	    (buffer-read-only)
-	    (level-len))
+      (let* ((num-found 0)
+	     (total-found 0)
+	     (exact-level-regexp (concat "^\\(" level-regexp "\\)[ \t\n\r\f]"))
+	     (buffer-read-only)
+	     (level-len (/ (length level-regexp) 2)))
 	(goto-char (point-min))
 	;; Pass buffer header if it exists
-	(if (re-search-forward hyrolo-hdr-regexp nil t 2)
-	    (forward-line))
-	;; With 'max-groupings' non-nil, loop over all following headers
+	(when (re-search-forward hyrolo-hdr-regexp nil t 2)
+	  (forward-line))
+	;; With 'max-groupings' non-nil, loop over all following entries
 	;; with the same parent matching 'level-regexp'.  Otherwise, maximally
-	;; loop over 'max-groupings' such headers.
-	(while (and (or (null max-groupings) (< num-found max-groupings))
-		    (re-search-forward exact-level-regexp nil t))
-	  (hyrolo-map-level-1 actual-buf num-found exact-level-regexp
-			      outline-regexp buffer-read-only level-len func hyrolo-file-or-buf level-regexp max-groupings))
-	(outline-show-all)
-	(hyrolo-kill-buffer actual-buf)
-	num-found))))
+	;; loop over 'max-groupings' such entries.
+	(while (and (> level-len 0) (or (null max-groupings) (< total-found max-groupings))
+		    (< 0 (setq num-found
+			       (hyrolo-map-single-subtree func exact-level-regexp level-len buffer-read-only))))
+	  (setq total-found (+ num-found total-found)))
+	;; Caller may have adjusted entry visibility, so don't do this: (outline-show-all)
+	total-found))))
 
-(defun hyrolo-map-level-1 (_actual-buf num-found _exact-level-regexp
-				      outline-regexp buffer-read-only level-len func _hyrolo-file-or-buf _level-regexp _max-groupings)
-  (setq num-found (1+ num-found))
-  (let* ((opoint (prog1 (point) (beginning-of-line)))
-	 (grouping-start (point))
-	 (start grouping-start)
-	 (level-len (or level-len (- (1- opoint) start)))
-	 (next-level-len)
-	 (next-entry-exists)
-	 (grouping-end))
-    ;; Move past any subtrees of the current header at 'level-regexp'.
-    (while (and start
-		(/= (point) (point-max))
-		(progn
-		  (if (setq next-entry-exists (re-search-forward
-					       hyrolo-entry-regexp nil t 2))
-		      (progn (beginning-of-line)
-			     (setq next-level-len (length (match-string hyrolo-entry-group-number))
-				   grouping-end (< next-level-len level-len))
-			     (let ((end (point)))
-			       (goto-char start)
-			       (outline-hide-subtree) ; and hide multiple entry lines
-			       ;; Move to start of next entry at equal or higher level.
-			       ;; Remember last expression in `progn' must always
-			       ;; return non-nil to continue loop.
-			       (unless (setq start (outline-get-next-sibling))
-				 (catch 'error
-				   (if (and (outline-up-heading 1 t)
-					    (outline-get-next-sibling))
-				       (setq start (point))
-				     (goto-char (point-max))                   
-				     (skip-chars-backward " \t\n\r\f")
-				     (setq start nil))))
-			       start))
-		    (setq grouping-end t)
-		    (outline-hide-subtree) ; hide multiple entry lines
-		    (goto-char (point-max))
-		    (skip-chars-backward " \t\n\r\f")))
-		(not grouping-end)))
-    (let ((end (point)))
-      (goto-char grouping-start)
-      (funcall func grouping-start end)
-      (goto-char end))))
-
+(defun hyrolo-map-single-subtree (func exact-level-regexp level-len buffer-read-only)
+  "See doc for `hyrolo-map-level'.  Return number of groupings matched."
+  (let* ((start (point))
+	 (end 0)
+	 (num-found 0)
+	 (higher-level-entry-regexp))
+    ;; Move to the next instance of 'level-regexp'.
+    ;; Although subtrees are hidden, searches will still see them.
+    (when (re-search-forward exact-level-regexp nil t)
+      ;; First entry exists
+      (save-excursion
+	(forward-line 0)
+	(setq num-found (1+ num-found)
+	      start (point)))
+      ;; Move to start of next entry at equal
+      ;; or higher level else, to buffer end.
+      (setq higher-level-entry-regexp (format "^\\(\\*\\{1,%d\\}\\)[ \t]" (1- level-len)))
+      (if (and (/= level-len 1)
+	       (re-search-forward higher-level-entry-regexp nil t))
+	  (forward-line 0)
+	(goto-char (point-max))
+	(skip-chars-backward " \t\n\r\f"))
+      (save-excursion
+	(setq end (point))
+	(goto-char start)
+	(funcall func start end)))
+    num-found))
 
 ;;; ************************************************************************
 ;;; Private functions

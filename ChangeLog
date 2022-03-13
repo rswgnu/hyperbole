@@ -1,3 +1,7 @@
+2022-03-13  Bob Weiner  <rsw@gnu.org>
+
+* hyrolo.el (hyrolo-sort): Simplify and fix multi-level entry sorting.
+
 2022-03-12  Bob Weiner  <rsw@gnu.org>
 
 * man/hyperbole.texi (Implicit Button Types): In org-mode description, use @smallexample instead
