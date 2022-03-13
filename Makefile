@@ -3,7 +3,7 @@
 # Author:       Bob Weiner
 #
 # Orig-Date:    15-Jun-94 at 03:42:38
-# Last-Mod:     12-Mar-22 at 15:08:16 by Bob Weiner
+# Last-Mod:     13-Mar-22 at 10:56:50 by Bob Weiner
 #
 # Copyright (C) 1994-2021  Free Software Foundation, Inc.
 # See the file HY-COPY for license information.
@@ -42,8 +42,8 @@
 #               To release a Hyperbole Emacs package to ELPA and ftp.gnu.org:
 #		     make release
 #
-#		Generate the web site sources prepared for upload:
-#		    make web-site         - generate web site in folder $(HYPB_WEB_REPO_LOCATION)"
+#		Generate the website sources prepared for upload:
+#		    make website         - generate web site in folder $(HYPB_WEB_REPO_LOCATION)"
 #
 #               To setup Hyperbole to run directly from the latest test source
 #               code, use:
@@ -237,7 +237,7 @@ help:
 	@ echo "     make release"
 	@ echo ""
 	@ echo "  Generate we site sources prepared for upload:"
-	@ echo "    make web-site         - generate web site in folder $(HYPB_WEB_REPO_LOCATION)"
+	@ echo "    make website         - generate web site in folder $(HYPB_WEB_REPO_LOCATION)"
 
 	@ echo ""
 	@ echo "The Hyperbole Manual is included in the package in four forms:"
@@ -367,11 +367,11 @@ README.md.html: README.md
 	md2html README.md -f -o - | sed - -e 's/\(id="[^%]*\)\(%[A-Z0-9][A-Z0-9]\)/\1/g' -e 's/\(id="[^"]*"\)/\L\1/g' > README.md.html
 	md2html README.md -f -o README.md.html
 
-# web-site maintenance: "https://www.gnu.org/software/hyperbole/"
-web-site:
+# website maintenance: "https://www.gnu.org/software/hyperbole/"
+website:
 	$(EMACS_BATCH) --debug -l hypb-maintenance --eval '(let ((hypb:web-repo-location $(HYPB_WEB_REPO_LOCATION))) (hypb:web-repo-update))'
 	@ echo
-	@ echo "Web site source created ..."
+	@ echo "Website source created ..."
 	@ echo "Goto \"$(HYPB_WEB_REPO_LOCATION)\" and run \"cvs commit -m <comment>\" to upload it."
 	@ echo
 
