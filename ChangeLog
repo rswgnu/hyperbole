@@ -1,3 +1,8 @@
+2022-03-20  Bob Weiner  <rsw@gnu.org>
+
+* hyrolo.el (hyrolo-fgrep): Fix to match logical expressions across an entire tree of entries
+    when no matches within individual subentries.
+
 2022-03-13  Bob Weiner  <rsw@gnu.org>
 
 * hyrolo.el (hyrolo-sort): Simplify and fix multi-level entry sorting.

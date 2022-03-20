@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     7-Jun-89 at 22:08:29
-;; Last-Mod:     13-Mar-22 at 10:47:52 by Bob Weiner
+;; Last-Mod:     20-Mar-22 at 10:53:11 by Bob Weiner
 ;;
 ;; Copyright (C) 1991-2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -382,7 +382,7 @@ Return entry name if found, else nil."
 
 ;;;###autoload
 (defun hyrolo-fgrep (string &optional max-matches hyrolo-file count-only no-display)
-  "Display rolo entries matching STRING (or a logical match expression).
+  "Display rolo entries matching STRING (or a logical match expression) and return count of matches.
 To a maximum of optional prefix arg MAX-MATCHES, in file(s) from optional
 HYROLO-FILE or `hyrolo-file-list'.  Default is to find all matching entries.
 Each entry is displayed with all of its sub-entries.  Optional COUNT-ONLY
@@ -397,12 +397,17 @@ Return number of entries matched.  See also documentation for the variable
 `hyrolo-file-list' and the function `hyrolo-fgrep-logical' for documentation on
 the logical expression matching."
   (interactive "sFind rolo string (or logical expression): \nP")
-  (let ((total-matches
-	 (if (string-match "\(\\(and\\|or\\|xor\\|not\\)\\>" string)
-	     ;; Search string contains embedded logic operators.
-	     (hyrolo-fgrep-logical string count-only nil t)
-	   (hyrolo-grep (regexp-quote string) max-matches
-			hyrolo-file count-only no-display))))
+  (let ((total-matches 0))
+    (if (string-match "\(\\(and\\|or\\|xor\\|not\\)\\>" string)
+	(progn
+	  ;; Search string contains embedded logic operators.
+	  ;; First try to match logical expression within a single
+	  ;; subentry to minimize entries displayed.  If no match,
+	  ;; then match across ancestors and descendants.
+	  (when (zerop (setq total-matches (hyrolo-fgrep-logical string count-only nil t)))
+	    (hyrolo-fgrep-logical string count-only t t)))
+      (setq total-matches (hyrolo-grep (regexp-quote string) max-matches
+				       hyrolo-file count-only no-display)))
     (if (called-interactively-p 'interactive)
 	(message "%s matching entr%s found in rolo."
 		 (if (= total-matches 0) "No" total-matches)
@@ -426,7 +431,7 @@ the logical expression matching."
 
 ;;;###autoload
 (defun hyrolo-grep (regexp &optional max-matches hyrolo-file-or-bufs count-only no-display)
-  "Display rolo entries matching REGEXP.
+  "Display rolo entries matching REGEXP and return count of matches.
 To a maximum of prefix arg MAX-MATCHES, in buffer(s) from optional HYROLO-FILE-OR-BUFS or
 hyrolo-file-list.  Default is to find all matching entries.  Each entry is
 displayed with all of its sub-entries.  Optional COUNT-ONLY non-nil means don't
