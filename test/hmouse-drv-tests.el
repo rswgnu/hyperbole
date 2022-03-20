@@ -3,9 +3,9 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    28-Feb-21 at 22:52:00
-;; Last-Mod:     12-Feb-22 at 13:33:53 by Bob Weiner
+;; Last-Mod:     20-Mar-22 at 20:04:47 by Mats Lidell
 ;;
-;; Copyright (C) 2021  Free Software Foundation, Inc.
+;; Copyright (C) 2021-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
 ;;
 ;; This file is part of GNU Hyperbole.
@@ -21,8 +21,6 @@
 (require 'hbut)
 (require 'el-mock)
 (require 'hy-test-helpers "test/hy-test-helpers")
-
-(declare-function hy-test-helpers:consume-input-events "hy-test-helpers")
 
 (ert-deftest hbut-defal ()
   (defal defal-path "${hyperb:dir}/\\1")
@@ -509,6 +507,21 @@
                          (should (string= (locate-library "tutorial.el") filename))))))
         (action-key)
         (should was-called)))))
+
+(ert-deftest hbut-key-press-on-hyphen-in-elisp-symbol ()
+  "Key press on hyphen in elisp symbol uses smart-lisp-find-tag.
+Regression: Looked up path name '-narrow'."
+  (let* ((symbol-name "hmail:msg-narrow")
+         (el-file (make-temp-file "hypb" nil ".el" (concat "(" symbol-name ")"))))
+    (unwind-protect
+        (with-current-buffer (find-file el-file)
+          (goto-char (point-min))
+          (goto-char (1- (re-search-forward "-")))
+          (should (string= (smart-lisp-at-tag-p) symbol-name))
+          (with-mock
+            (mock (smart-lisp-find-tag nil nil) => t)
+            (action-key)))
+      (delete-file el-file))))
 
 ;; This file can't be byte-compiled without the `el-mock' package (because of
 ;; the use of the `with-mock' macro), which is not a dependency of Hyperbole.
