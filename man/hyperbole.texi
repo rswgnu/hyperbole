@@ -7,7 +7,7 @@
 @c Author:       Bob Weiner
 @c
 @c Orig-Date:     6-Nov-91 at 11:18:03
-@c Last-Mod:     12-Mar-22 at 15:01:03 by Bob Weiner
+@c Last-Mod:     20-Mar-22 at 22:13:17 by Bob Weiner
 
 @c %**start of header (This is for running Texinfo on a region.)
 @setfilename hyperbole.info
@@ -156,7 +156,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</P>
 
 <PRE>
 Edition 8.0.0pre
-Printed March 12, 2022.
+Printed March 20, 2022.
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -198,7 +198,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 @example
 Edition 8.0.0pre
-March 12, 2022
+March 20, 2022
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -4648,16 +4648,37 @@ substructure) are promoted and demoted, not individual cells.
 
 @kindex koutliner, @key{TAB}
 @kindex koutliner, M-@key{TAB}
+@kindex koutliner, Shift-@key{TAB}
+@kindex koutliner, M-left
+@kindex koutliner, M-right
+@kindex koutliner, C-c C-,
+@kindex koutliner, C-c C-.
+@kindex koutliner, C-c C->
+@kindex koutliner, C-c C-<
+
+@example
+@noindent
+|-----------------------------+----------------------------|
+| Promotion Outside Org Table | Demotion Outside Org Table |
+|-----------------------------+----------------------------|
+| Shift-TAB or M-TAB          | TAB                        |
+| M-left                      | M-right                    |
+| C-c C-,                     | C-c C-.                    |
+| C-c C-<                     | C-c C->                    |
+|-----------------------------+----------------------------|
+@end example
+
+
 Trees may be demoted or promoted by pressing @key{TAB} or
-@bkbd{M-@key{TAB}} (or @bkbd{@key{SHIFT}-@key{TAB}}) respectively, as in
-most outliners today.  @bkbd{M-0 @key{TAB}} and @bkbd{M-0 M-@key{TAB}}
-demote and promote trees and additionally refill each cell that is not
-specially marked to prevent refilling.  @xref{Filling}.  A positive or
-negative prefix argument to these commands promotes or demotes the tree
-up to a maximum of the number of levels given by the argument.  The
-outline may not support movement of the tree by the number of levels
-requested, however, in which case the maximal possible adjustment is
-made.
+@bkbd{M-@key{TAB}} (or @bkbd{@key{SHIFT}-@key{TAB}}) respectively, as
+in most outliners today.  @bkbd{M-0 @key{TAB}} and @bkbd{M-0
+M-@key{TAB}} demote and promote trees and additionally refill each
+cell that is not specially marked to prevent refilling.
+@xref{Filling}.  A positive or negative prefix argument to these
+commands promotes or demotes the tree up to a maximum of the number of
+levels given by the argument.  The outline may not support movement of
+the tree by the number of levels requested, however, in which case the
+maximal possible adjustment is made.
 
 @kindex koutliner, M-1 @key{TAB}
 @cindex inserting tabs
@@ -4676,7 +4697,7 @@ Use @bkbd{M-1 @key{TAB}} to toggle the @key{TAB} and
 
 
 @cindex Org tables
-The Koutliner supports Org Table editing, @pxref{Tables,,, org, the Org
+The Koutliner also supports Org Table editing, @pxref{Tables,,, org, the Org
 Mode Manual}, via Org table minor mode.  Use @bkbd{M-x orgtbl-mode @key{RET}}
 to toggle this on and off.  A press of the Action Key on a @code{|} symbol,
 also toggles this minor mode on or off.
@@ -4695,18 +4716,9 @@ moves between fields within a table.
 @example
 @noindent
 |----------------------------+-----------------------------|
-| Demotion Inside  Org Table | Promotion Inside  Org Table |
+| Promotion Inside Org Table | Demotion Inside Org Table   |
 |----------------------------+-----------------------------|
-| M-0 TAB                    | M-0 Shift-TAB or M-0 M-TAB  |
-| C-c C-,                    | C-c C-.                     |
-| C-c C-<                    | C-c C->                     |
-|----------------------------+-----------------------------|
-
-|----------------------------+-----------------------------|
-| Demotion Outside Org Table | Promotion Outside Org Table |
-|----------------------------+-----------------------------|
-| TAB                        | Shift-TAB or M-TAB          |
-| M-left-arrow               | M-right-arrow               |
+| M-0 Shift-TAB or M-0 M-TAB | M-0 TAB                     |
 | C-c C-,                    | C-c C-.                     |
 | C-c C-<                    | C-c C->                     |
 |----------------------------+-----------------------------|
@@ -4719,14 +4731,20 @@ moves between fields within a table.
 @cindex tree, moving
 @cindex Action Key, cell argument
 @kindex koutliner, Action Key, cell argument
+Like Org mode, you can move the tree rooted at point past trees rooted
+at the same level with @bkbd{M-down} and before trees with @bkbd{M-up}.
+Give a prefix argument to move past that many other trees.  (A 0 valued
+argument is automatically changed to 1).
+
 For maximum flexibility in rearranging outlines, there are commands
-that move or copy entire trees anywhere within the outline.  Each of
-these commands prompts for the label of the root cell to move or copy
-and for a second cell which specifies the new location for the moved
-or copied tree.  You may either accept the default provided, type in
-the cell label, or when a mouse is available, simply double click with
-the Action Key on the contents of a cell.  The Koutliner knows to use
-the cell's label in such cases.
+that move or copy entire trees anywhere within the outline as
+described in the table below.  Each of these commands prompts for the
+label of the root cell to move or copy and for a second cell which
+specifies the new location for the moved or copied tree.  You may
+either accept the default provided, type in the cell label, or when a
+mouse is available, simply double click with the Action Key on the
+contents of a cell.  The Koutliner knows to use the cell's label in
+such cases.
 
 In the following commands, words delimited with <> represent the
 arguments for which each command prompts.  Note how the use of prefix
@@ -4734,6 +4752,11 @@ arguments changes each command's behavior from insertion at the sibling
 level to insertion at the child level.
 
 @table @asis
+@kitem M-down
+Move current tree past prefix arg same level trees.
+@kitem M-up
+Move current tree back prefix arg same level trees.
+
 @kitem C-c c
 Copy <tree> to be the successor of <cell>.
 @kitem C-u C-c c

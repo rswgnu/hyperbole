@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    22-Nov-91 at 01:37:57
-;; Last-Mod:     24-Jan-22 at 00:18:33 by Bob Weiner
+;; Last-Mod:     20-Mar-22 at 16:25:31 by Bob Weiner
 ;;
 ;; Copyright (C) 1991-2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -54,8 +54,8 @@
   "Regexp that matches to any of the dedicated keyboard key names in lower or uppercase.")
 
 (defvar kbd-key:modified-key-regexp
-  (concat "\\(\\([ACHMS]-\\|kp-\\)+\\)\\s-*\\(<?\\<" kbd-key:named-key-regexp "\\>>?"
-	  "\\|<?[fF][0-9][0-9]?>?\\|<[a-zA-Z0-9]+>\\|.\\)")
+  (concat "\\(\\[?\\([ACHMS]-\\|kp-\\)+\\)\\s-*\\(\\(<?\\<" kbd-key:named-key-regexp "\\>>?"
+	  "\\|<?[fF][0-9][0-9]?>?\\|<[a-zA-Z0-9]+>\\|.\\)\\]?\\)")
   "Regexp matching to a single modified keyboard key within a human-readable string.
 Group 1 matches to the set of modifier keys.  Group 3 matches to the unmodified key.")
 
@@ -119,7 +119,7 @@ Any key sequence must be a string of one of the following:
 		   ;; Match only when start delimiter is preceded by whitespace,
 		   ;; double quotes or is the 1st buffer character, so do not
 		   ;; match to things like ${variable}.
-		   (when (memq (char-before start) '(nil ?\ ?\t ?\n ?\j ?\f ?\"))
+		   (when (memq (char-before start) '(nil ?\ ?\t ?\n ?\r ?\f ?\"))
 		     (when (and (stringp key-series)
 				(not (eq key-series "")))
 		       ;; Replace any ${} internal or env vars; leave

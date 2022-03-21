@@ -370,7 +370,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</P>
 
 <PRE>
 Edition 8.0.0pre
-Printed March 12, 2022.
+Printed March 20, 2022.
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -5532,16 +5532,36 @@ substructure) are promoted and demoted, not individual cells.
 </p>
 <span id="index-koutliner_002c-TAB"></span>
 <span id="index-koutliner_002c-M_002dTAB"></span>
+<span id="index-koutliner_002c-Shift_002dTAB"></span>
+<span id="index-koutliner_002c-M_002dleft"></span>
+<span id="index-koutliner_002c-M_002dright"></span>
+<span id="index-koutliner_002c-C_002dc-C_002d_002c"></span>
+<span id="index-koutliner_002c-C_002dc-C_002d_002e"></span>
+<span id="index-koutliner_002c-C_002dc-C_002d_003e"></span>
+<span id="index-koutliner_002c-C_002dc-C_002d_003c"></span>
+
+<div class="example">
+<pre class="example">|-----------------------------+----------------------------|
+| Promotion Outside Org Table | Demotion Outside Org Table |
+|-----------------------------+----------------------------|
+| Shift-TAB or M-TAB          | TAB                        |
+| M-left                      | M-right                    |
+| C-c C-,                     | C-c C-.                    |
+| C-c C-&lt;                     | C-c C-&gt;                    |
+|-----------------------------+----------------------------|
+</pre></div>
+
+
 <p>Trees may be demoted or promoted by pressing <tt class="key">TAB</tt> or
-<kbd>{M-<span class="key">TAB</span>}</kbd> (or <kbd>{<span class="key">SHIFT</span>-<span class="key">TAB</span>}</kbd>) respectively, as in
-most outliners today.  <kbd>{M-0 <span class="key">TAB</span>}</kbd> and <kbd>{M-0 M-<span class="key">TAB</span>}</kbd>
-demote and promote trees and additionally refill each cell that is not
-specially marked to prevent refilling.  See <a href="#Filling">Filling</a>.  A positive or
-negative prefix argument to these commands promotes or demotes the tree
-up to a maximum of the number of levels given by the argument.  The
-outline may not support movement of the tree by the number of levels
-requested, however, in which case the maximal possible adjustment is
-made.
+<kbd>{M-<span class="key">TAB</span>}</kbd> (or <kbd>{<span class="key">SHIFT</span>-<span class="key">TAB</span>}</kbd>) respectively, as
+in most outliners today.  <kbd>{M-0 <span class="key">TAB</span>}</kbd> and <kbd>{M-0
+M-<span class="key">TAB</span>}</kbd> demote and promote trees and additionally refill each
+cell that is not specially marked to prevent refilling.
+See <a href="#Filling">Filling</a>.  A positive or negative prefix argument to these
+commands promotes or demotes the tree up to a maximum of the number of
+levels given by the argument.  The outline may not support movement of
+the tree by the number of levels requested, however, in which case the
+maximal possible adjustment is made.
 </p>
 <span id="index-koutliner_002c-M_002d1-TAB"></span>
 <span id="index-inserting-tabs"></span>
@@ -5560,7 +5580,7 @@ Use <kbd>{M-1 <span class="key">TAB</span>}</kbd> to toggle the <tt class="key">
 </p>
 
 <span id="index-Org-tables"></span>
-<p>The Koutliner supports Org Table editing, see <a href="https://www.gnu.org/software/emacs/manual/html_mono/org.html#Tables">Tables</a> in <cite>the Org
+<p>The Koutliner also supports Org Table editing, see <a href="https://www.gnu.org/software/emacs/manual/html_mono/org.html#Tables">Tables</a> in <cite>the Org
 Mode Manual</cite>, via Org table minor mode.  Use <kbd>{M-x orgtbl-mode <span class="key">RET</span>}</kbd>
 to toggle this on and off.  A press of the Action Key on a <code>|</code> symbol,
 also toggles this minor mode on or off.
@@ -5578,18 +5598,9 @@ moves between fields within a table.
 </p>
 <div class="example">
 <pre class="example">|----------------------------+-----------------------------|
-| Demotion Inside  Org Table | Promotion Inside  Org Table |
+| Promotion Inside Org Table | Demotion Inside Org Table   |
 |----------------------------+-----------------------------|
-| M-0 TAB                    | M-0 Shift-TAB or M-0 M-TAB  |
-| C-c C-,                    | C-c C-.                     |
-| C-c C-&lt;                    | C-c C-&gt;                     |
-|----------------------------+-----------------------------|
-
-|----------------------------+-----------------------------|
-| Demotion Outside Org Table | Promotion Outside Org Table |
-|----------------------------+-----------------------------|
-| TAB                        | Shift-TAB or M-TAB          |
-| M-left-arrow               | M-right-arrow               |
+| M-0 Shift-TAB or M-0 M-TAB | M-0 TAB                     |
 | C-c C-,                    | C-c C-.                     |
 | C-c C-&lt;                    | C-c C-&gt;                     |
 |----------------------------+-----------------------------|
@@ -5606,14 +5617,20 @@ Next: <a href="#Moving-Around" accesskey="n" rel="next">Moving Around</a>, Previ
 <span id="index-tree_002c-moving"></span>
 <span id="index-Action-Key_002c-cell-argument"></span>
 <span id="index-koutliner_002c-Action-Key_002c-cell-argument"></span>
+<p>Like Org mode, you can move the tree rooted at point past trees rooted
+at the same level with <kbd>{M-down}</kbd> and before trees with <kbd>{M-up}</kbd>.
+Give a prefix argument to move past that many other trees.  (A 0 valued
+argument is automatically changed to 1).
+</p>
 <p>For maximum flexibility in rearranging outlines, there are commands
-that move or copy entire trees anywhere within the outline.  Each of
-these commands prompts for the label of the root cell to move or copy
-and for a second cell which specifies the new location for the moved
-or copied tree.  You may either accept the default provided, type in
-the cell label, or when a mouse is available, simply double click with
-the Action Key on the contents of a cell.  The Koutliner knows to use
-the cell&rsquo;s label in such cases.
+that move or copy entire trees anywhere within the outline as
+described in the table below.  Each of these commands prompts for the
+label of the root cell to move or copy and for a second cell which
+specifies the new location for the moved or copied tree.  You may
+either accept the default provided, type in the cell label, or when a
+mouse is available, simply double click with the Action Key on the
+contents of a cell.  The Koutliner knows to use the cell&rsquo;s label in
+such cases.
 </p>
 <p>In the following commands, words delimited with &lt;&gt; represent the
 arguments for which each command prompts.  Note how the use of prefix
@@ -5621,7 +5638,16 @@ arguments changes each command&rsquo;s behavior from insertion at the sibling
 level to insertion at the child level.
 </p>
 <dl compact="compact">
-<dd><span id="index-C_002dc-c"></span>
+<dd><span id="index-M_002ddown"></span>
+</dd>
+<dt><kbd>{M-down}</kbd></dt>
+<dd><p>Move current tree past prefix arg same level trees.
+<span id="index-M_002dup"></span>
+</p></dd>
+<dt><kbd>{M-up}</kbd></dt>
+<dd><p>Move current tree back prefix arg same level trees.
+</p>
+<span id="index-C_002dc-c"></span>
 </dd>
 <dt><kbd>{C-c c}</kbd></dt>
 <dd><p>Copy &lt;tree&gt; to be the successor of &lt;cell&gt;.
@@ -12818,6 +12844,10 @@ Next: <a href="#Function" accesskey="n" rel="next">Function</a>, Previous: <a hr
 <tr><td></td><td valign="top"><a href="#index-koutliner_002c-C_002dc-a"><code>koutliner, C-c a</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Adding-and-Killing">Adding and Killing</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-koutliner_002c-C_002dc-b"><code>koutliner, C-c b</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#View-Specs">View Specs</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-koutliner_002c-C_002dc-b-1"><code>koutliner, C-c b</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#View-Specs">View Specs</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-koutliner_002c-C_002dc-C_002d_002c"><code>koutliner, C-c C-,</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Promoting-and-Demoting">Promoting and Demoting</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-koutliner_002c-C_002dc-C_002d_002e"><code>koutliner, C-c C-.</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Promoting-and-Demoting">Promoting and Demoting</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-koutliner_002c-C_002dc-C_002d_003c"><code>koutliner, C-c C-&lt;</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Promoting-and-Demoting">Promoting and Demoting</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-koutliner_002c-C_002dc-C_002d_003e"><code>koutliner, C-c C-&gt;</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Promoting-and-Demoting">Promoting and Demoting</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-koutliner_002c-C_002dc-C_002di"><code>koutliner, C-c C-i</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Cell-Attributes">Cell Attributes</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-koutliner_002c-C_002dc-C_002dk"><code>koutliner, C-c C-k</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Adding-and-Killing">Adding and Killing</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-koutliner_002c-C_002dc-C_002dl"><code>koutliner, C-c C-l</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Autonumbering">Autonumbering</a></td></tr>
@@ -12845,9 +12875,12 @@ Next: <a href="#Function" accesskey="n" rel="next">Function</a>, Previous: <a hr
 <tr><td></td><td valign="top"><a href="#index-koutliner_002c-M_002d0-C_002dc-t"><code>koutliner, M-0 C-c t</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Transposing">Transposing</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-koutliner_002c-M_002d1-TAB"><code>koutliner, M-1 <span class="key">TAB</span></code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Promoting-and-Demoting">Promoting and Demoting</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-koutliner_002c-M_002dj"><code>koutliner, M-j</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Filling">Filling</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-koutliner_002c-M_002dleft"><code>koutliner, M-left</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Promoting-and-Demoting">Promoting and Demoting</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-koutliner_002c-M_002dq"><code>koutliner, M-q</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Filling">Filling</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-koutliner_002c-M_002dRET"><code>koutliner, M-<span class="key">RET</span></code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Hiding-and-Showing">Hiding and Showing</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-koutliner_002c-M_002dright"><code>koutliner, M-right</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Promoting-and-Demoting">Promoting and Demoting</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-koutliner_002c-M_002dTAB"><code>koutliner, M-<span class="key">TAB</span></code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Promoting-and-Demoting">Promoting and Demoting</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-koutliner_002c-Shift_002dTAB"><code>koutliner, Shift-<span class="key">TAB</span></code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Promoting-and-Demoting">Promoting and Demoting</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-koutliner_002c-TAB"><code>koutliner, <span class="key">TAB</span></code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Promoting-and-Demoting">Promoting and Demoting</a></td></tr>
 <tr><td colspan="4"> <hr></td></tr>
 <tr><th id="Key-Index_ky_letter-L">L</th><td></td><td></td></tr>
@@ -12859,6 +12892,7 @@ Next: <a href="#Function" accesskey="n" rel="next">Function</a>, Previous: <a hr
 <tr><td></td><td valign="top"><a href="#index-M_002d0-M_002dTAB"><code>M-0 M-<span class="key">TAB</span></code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Promoting-and-Demoting">Promoting and Demoting</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-M_002d0-TAB"><code>M-0 <span class="key">TAB</span></code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Promoting-and-Demoting">Promoting and Demoting</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-M_002db"><code>M-b</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Menus">Menus</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-M_002ddown"><code>M-down</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Relocating-and-Copying">Relocating and Copying</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-M_002df"><code>M-f</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Menus">Menus</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-M_002do"><code>M-o</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Keyboard-Drags">Keyboard Drags</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-M_002do-1"><code>M-o</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Default-Hyperbole-Bindings">Default Hyperbole Bindings</a></td></tr>
@@ -12870,6 +12904,7 @@ Next: <a href="#Function" accesskey="n" rel="next">Function</a>, Previous: <a hr
 <tr><td></td><td valign="top"><a href="#index-M_002dRET"><code>M-<span class="key">RET</span></code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Key-Bindings">Smart Key Bindings</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-M_002dRET-1"><code>M-<span class="key">RET</span></code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-M_002dRET-2"><code>M-<span class="key">RET</span></code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Default-Hyperbole-Bindings">Default Hyperbole Bindings</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-M_002dup"><code>M-up</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Relocating-and-Copying">Relocating and Copying</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-M_002dx-kotl_002dmode_003ashow_002dsubtree"><code>M-x kotl-mode:show-subtree</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Hiding-and-Showing">Hiding and Showing</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-middle-mouse-key-1"><code>middle mouse key</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Key-Bindings">Smart Key Bindings</a></td></tr>
 <tr><td colspan="4"> <hr></td></tr>

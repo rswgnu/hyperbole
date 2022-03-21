@@ -161,6 +161,32 @@
       Use a prefix arg with {TAB} to promote/demote Koutline trees when in
       a table since {TAB} moves between fields within a table.
 
+  *** New Tree Movement Commands: Like Org mode, {[M-down]} and {[M-up]} move
+      the current tree past or before other trees at the same level.  With a
+      prefix argument, move past that many trees.
+
+  *** New Tree Promotion/Demotion Keys: Tree promotion and demotion keys now
+      match many of the defaults in Org mode and Outline mode, plus some
+      easier to type ones.  The tables below summarize which keys work whether
+      inside an Org table or outside.  See "(hyperbole)Promoting and Demoting".
+
+      |----------------------------+-----------------------------|
+      | Promotion Inside Org Table | Demotion Inside Org Table   |
+      |----------------------------+-----------------------------|
+      | M-0 Shift-TAB or M-0 M-TAB | M-0 TAB                     |
+      | C-c C-,                    | C-c C-.                     |
+      | C-c C-<                    | C-c C->                     |
+      |----------------------------+-----------------------------|
+
+      |-----------------------------+----------------------------|
+      | Promotion Outside Org Table | Demotion Outside Org Table |
+      |-----------------------------+----------------------------|
+      | Shift-TAB or M-TAB          | TAB                        |
+      | M-left                      | M-right                    |
+      | C-c C-,                     | C-c C-.                    |
+      | C-c C-<                     | C-c C->                    |
+      |-----------------------------+----------------------------|
+
   *** New Mail Tree Key Binding: The `kotl-mode:mail-tree' command that
       extracts the current view of a Koutline in text-only format and
       creates an outgoing email messge with it, has moved from {C-c @}
@@ -173,28 +199,6 @@
       is included or not.  This allows copying parts of Koutlines
       directly into other buffers without having to copy to a
       mail/message buffer first.
-
-  *** New Tree Demotion/Promotion Keys: Tree promotion and demotion keys now
-      match the defaults in Org mode and Outline mode, plus some easier to
-      type ones.  The tables below summarize which keys work whether inside
-      an Org table or outside.  See "(hyperbole)Promoting and Demoting".
-
-      |----------------------------+-----------------------------|
-      | Demotion Inside  Org Table | Promotion Inside  Org Table |
-      |----------------------------+-----------------------------|
-      | M-0 TAB                    | M-0 Shift-TAB or M-0 M-TAB  |
-      | C-c C-,                    | C-c C-.                     |
-      | C-c C-<                    | C-c C->                     |
-      |----------------------------+-----------------------------|
-
-      |----------------------------+-----------------------------|
-      | Demotion Outside Org Table | Promotion Outside Org Table |
-      |----------------------------+-----------------------------|
-      | TAB                        | Shift-TAB or M-TAB          |
-      | M-left-arrow               | M-right-arrow               |
-      | C-c C-,                    | C-c C-.                     |
-      | C-c C-<                    | C-c C->                     |
-      |----------------------------+-----------------------------|
 
   *** Klink Copy: New commands that copy a relative or absolute reference
       to a kcell (a klink) to the kill ring or to an Emacs single-letter

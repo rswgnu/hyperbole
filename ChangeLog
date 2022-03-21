@@ -1,5 +1,18 @@
 2022-03-20  Bob Weiner  <rsw@gnu.org>
 
+* HY-NEWS (New Tree Promotion/Demotion Keys):
+  man/hyperbole.texi (Promoting and Demoting):
+  kotl/EXAMPLE.kotl: Fix 3d2 promotion/demotion tables.
+
+* hib-kbd.el (kbd-key:modified-key-regexp): Allow for square brackets around modified keys,
+    like [M-down].
+
+* kotl/kotl-mode.el (kotl-mode:move-tree-backward, kotl-mode:move-tree-forward): Add to replicate
+    Org mode M-up and M-down arrow tree movement and rebind these keys.
+  kotl/EXAMPLE.kotl: Doc new [M-down] and [M-up] key bindings.
+  man/hyperbole.texi (Relocating and Copying):
+  HY-NEWS (New Tree Movement Commands): Document these new commands.
+
 * hyrolo.el (hyrolo-fgrep): Fix to match logical expressions across an entire tree of entries
     when no matches within individual subentries.
 
