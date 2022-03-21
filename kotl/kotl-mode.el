@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    6/30/93
-;; Last-Mod:     20-Mar-22 at 15:36:24 by Bob Weiner
+;; Last-Mod:     20-Mar-22 at 22:34:26 by Bob Weiner
 ;;
 ;; Copyright (C) 1993-2021  Free Software Foundation, Inc.
 ;; See the "../HY-COPY" file for license information.
@@ -2424,9 +2424,9 @@ If arg is 0, make it 1; if arg is negative, move prior to that number of trees."
 		      (when (zerop n)
 			(setq to-tree (kcell-view:label)))))
     (if to-tree
-	(goto-char (+ (move-func from-tree to-tree nil)
+	(goto-char (+ (funcall move-func from-tree to-tree nil)
 		      point-offset))
-      (error "(kotl-mode:move-forward): Cannot move past %d trees at the same level" num-trees))))
+      (error "(kotl-mode:move-tree): Cannot move past %d trees at the same level" num-trees))))
 
 (defun kotl-mode:promote-tree (arg)
   "Move current tree a maximum of prefix ARG levels higher in current view.
@@ -3521,10 +3521,10 @@ Leave point at end of line now residing at START."
   (define-key kotl-mode-map "\C-c\C-u"  'kotl-mode:up-level)
   (define-key kotl-mode-map "\C-c\C-v"  'kvspec:activate)
   (define-key kotl-mode-map "\C-x\C-w"  'kfile:write)
-  (define-key kotl-mode-map [M-up]              'kotl-mode:transpose-lines-up)
-  (define-key kotl-mode-map (kbd "ESC <up>")    'kotl-mode:transpose-lines-up)
-  (define-key kotl-mode-map [M-down]            'kotl-mode:transpose-lines-down)
-  (define-key kotl-mode-map (kbd "ESC <down>")  'kotl-mode:transpose-lines-down)
+  (define-key kotl-mode-map [M-up]              'kotl-mode:move-tree-backward)
+  (define-key kotl-mode-map (kbd "ESC <up>")    'kotl-mode:move-tree-backward)
+  (define-key kotl-mode-map [M-down]            'kotl-mode:move-tree-forward)
+  (define-key kotl-mode-map (kbd "ESC <down>")  'kotl-mode:move-tree-forward)
   (mapc (lambda (key)
 	  (define-key kotl-mode-map key         'kotl-mode:promote-tree))
 	(list (kbd "M-<left>") (kbd "ESC <left>") (kbd "C-c C-<") (kbd "C-c C-,")))
