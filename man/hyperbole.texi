@@ -61,7 +61,7 @@ under the terms of the GNU Free Documentation License, Version 1.3 or
 any later version published by the Free Software Foundation.
 
 @sp 1
-GNU Hyperbole sofware is distributed under the terms of the GNU
+GNU Hyperbole software is distributed under the terms of the GNU
 General Public License version 3 or later, as published by the Free
 Software Foundation, Inc.
 @sp 1
@@ -937,7 +937,7 @@ on a pathname to display the associated file or directory.
 @cindex key bindings, toggle
 @cindex enable Hyperbole
 @cindex disable Hyperbole
-@cindex Hyperbole minibufer menu
+@cindex Hyperbole minibuffer menu
 @kindex C-h h
 @kindex C-h h X
 @kindex C-h h q
@@ -2456,7 +2456,7 @@ Each line of the summary may be selected to jump to the associated section.
 
 @findex ibtypes actions
 @cindex action implicit button
-@cindex functon call implicit button
+@cindex function call implicit button
 @cindex variable display implicit button
 @item action
 Execute an angle bracket delimited Hyperbole action, Elisp function call or
@@ -2566,7 +2566,7 @@ REFERENCE is a string of one of the following forms:
 @item <project>/<ref-item>
 @item /<group>/<project>.
 or
-@item /<project-or-group> (where a group is a colection of projects)
+@item /<project-or-group> (where a group is a collection of projects)
 @end itemize
 
 <ref-item> is one of these:
@@ -4784,7 +4784,7 @@ with mouse clicks.  Click the Assist Key within the indentation to the
 left of a cell and you will be prompted for a tree to move.  Double
 click the Action Key within the contents of the root cell of the tree to
 move and then double click within the root contents of the tree you want
-it to follow as a sucessor.
+it to follow as a successor.
 
 The Koutliner supports copying and moving within a single outline only
 right now, so don't try to to move trees across different outline files.
@@ -4908,7 +4908,7 @@ locations.
 
 @kindex koutliner, C-c t
 @bkbd{C-c t} does not prompt.  It exchanges the current
-and immediatly prior cell, regardless of their levels.  If there is no
+and immediately prior cell, regardless of their levels.  If there is no
 prior cell it exchanges the current and next cell.
 
 @cindex cell, mark and point
@@ -5338,7 +5338,7 @@ and the whole outline visible.
 @item external
 The second klink format is an external link to another koutline, such
 as, @samp{<EXAMPLE.kotl, 3=012 |c1e>}, which displays the named file,
-starting at the cell 3 (whose permanent identifer is 012), with the
+starting at the cell 3 (whose permanent identifier is 012), with the
 view specification of: blank lines turned off, cutoff after one line
 per cell, and showing ellipses for cells or trees which are collapsed.
 
@@ -5745,7 +5745,7 @@ documented in this section.
 @kindex rolo, r
 @cindex rolo, search again
 If your HyRolo search did not match what you want, use @bkbd{r} to start
-a new regular expresion query or @bkbd{C-u r} for a string query.  The
+a new regular expression query or @bkbd{C-u r} for a string query.  The
 rest of the match buffer keys work with the search results currently
 displayed.
 
@@ -6515,7 +6515,7 @@ A call to the @code{defil} macro of the form:
              &optional START-REGEXP-FLAG END-REGEXP-FLAG DOC)}
 
 @noindent
-will create a new Hyperbole implicit button link TYPE (an uquoted
+will create a new Hyperbole implicit button link TYPE (an unquoted
 symbol), recognized in a buffer via START-DELIM and END-DELIM
 (strings) and the TEXT-REGEXP pattern between the delimiters.  With
 optional START-REGEXP-FLAG true, START-DELIM is treated as a regular
@@ -6745,7 +6745,7 @@ buttons.  Examine it within the @file{hbut.el} file for full details.
 @findex ebut:program
 The simplest way to create explicit buttons programmatically is to
 call @code{ebut:program}.  This generates an explicit button at point
-from LABEL, ACTYPE (action type) and any optional ACTYYPE ARGS.
+from LABEL, ACTYPE (action type) and any optional ACTYPE ARGS.
 It inserts the LABEL text at point surrounded by <( )> delimiters, adding any
 necessary instance number of the button after the LABEL.  ACTYPE may
 be a Hyperbole action type name (from defact) or an Emacs Lisp
@@ -7276,7 +7276,7 @@ Smart Menus are an older in-buffer menu system that work on dumb
 terminals and pre-dated Emacs' own dumb terminal menu support.  They
 are included with InfoDock (which is no longer maintained) and are not
 available separately.  They are not a part of Hyperbole and are not
-necesary for its use but are still supported by the Smart Keys.
+necessary for its use but are still supported by the Smart Keys.
 
 @item Source Buffer / File
 The buffer or file within which a Hyperbole button is embedded.
@@ -7601,7 +7601,7 @@ Use Cust/All-Options @bkbd{C-h h c a} to display an expandable tree of
 customizable Hyperbole options.  Hyperbole's customizations are
 further grouped into several sub-categories, one for the Koutliner,
 one for the HyRolo, etc.  You can select either an entire category or a
-specfic option and they will appear in another window for editing.
+specific option and they will appear in another window for editing.
 Simply follow the instructions on screen and then press the ``Apply
 and Save'' button to make any changes permanent.
 
@@ -8094,7 +8094,7 @@ Assist Key Help: Show what the Assist Key will do in the same context.
 
 @cindex key binding, C-c @key{RET}
 @kitem C-c @key{RET}
-Mark Things: Mark larger and larger synctactical units in a buffer
+Mark Things: Mark larger and larger syntactical units in a buffer
 when invoked repeatedly, showing in the minibuffer the type of unit
 marked each time.  For example, if on an opening brace at the start of
 a C, Java or Javascript function, this marks the whole function.  This
@@ -8141,7 +8141,7 @@ subdirectory.  You can run all of them by moving to the Hyperbole home
 directory in a Posix shell and run @code{make test-all} or @code{make
 test} to run just non-interactive tests.  If any tests fail, you can
 press the Action Key to see the source of the failure.  Full testing is
-suppored under POSIX systems only.
+supported under POSIX systems only.
 
 With Hyperbole active, you can also define implicit buttons that run
 individual or sets of Hyperbole tests.  The file @file{hypb-ert.el} contains
@@ -8926,7 +8926,7 @@ If depressed within a window modeline:
      (7) dragged from a bottommost modeline when the frame has a non-nil
          @code{drag-with-mode-line} property, then move the frame until
          release of the Action Mouse Key;
-     (8) otherwide, dragged from a another modeline to outside of
+     (8) otherwise, dragged from a another modeline to outside of
          Emacs (MacOS only), create a new frame sized to match the
          selected window with the same buffer.
 @end group
@@ -9269,7 +9269,7 @@ When in a Treemacs file browser buffer:
 
 @cindex dired-sidebar-mode
 Dired-sidebar is an add-on Emacs package that puts dired in a sidebar
-and optionally integrates with vareous other packages.  Use the Emacs
+and optionally integrates with various other packages.  Use the Emacs
 package manager to install it and then invoke it with
 @bkbd{M-x dired-sidebar-toggle-sidebar @key{RET}} and quit with @bkbd{q}.
 
@@ -9284,7 +9284,7 @@ When in a dired-sidebar buffer:
      (2) at the end of an entry line: invoke `action-key-eol-function',
          typically to scroll up proportionally, if an Action Key press; invoke
          `assist-key-eol-function', typically to scroll down proportionally,
-         if an Asisst Key press;
+         if an Assist Key press;
      (3) on the first line of the buffer (other than the end of line),
          dired is run on the current directory of this dired-sidebar;
      (4) at the end of the first or last line of the buffer,
@@ -9407,7 +9407,7 @@ Smart Menus are an older in-buffer menu system that worked on dumb
 terminals and pre-dated Emacs' own dumb terminal menu support.  They
 are included with InfoDock (which is no longer maintained) and are not
 available separately.  They are not a part of Hyperbole and are not
-necesary for its use.
+necessary for its use.
 
 @format
 @group

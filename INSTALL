@@ -16,7 +16,7 @@
 *		           Installation
 ===========================================================================
 
-There are multiple wasy to obtain and install Hyperbole once
+There are multiple ways to obtain and install Hyperbole once
 you have GNU Emacs set up at your site.
 
 ** The Stable Release (from GNU Elpa using the built-in Emacs Package Manager)
