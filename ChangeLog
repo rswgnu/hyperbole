@@ -18,6 +18,9 @@
 
 2022-03-20  Mats Lidell  <matsl@gnu.org>
 
+* test/hyrolo-tests.el (hyrolo-sort-records-at-different-levels): Add test
+    for rolo sort.
+
 * test/hmouse-drv-tests.el (hbut-key-press-on-hyphen-in-elisp-symbol): Add
     test case.
 

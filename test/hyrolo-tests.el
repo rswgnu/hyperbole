@@ -3,9 +3,9 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    19-Jun-21 at 22:42:00
-;; Last-Mod:      6-Feb-22 at 00:58:33 by Bob Weiner
+;; Last-Mod:     20-Mar-22 at 19:57:17 by Mats Lidell
 ;;
-;; Copyright (C) 2021  Free Software Foundation, Inc.
+;; Copyright (C) 2021-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
 ;;
 ;; This file is part of GNU Hyperbole.
@@ -209,6 +209,44 @@
           (dolist (sorted-order '("a" "b" "d" "c"))
             (goto-char (1+ (should (search-forward sorted-order))))
             (should (looking-at-p "^\t[0-9/]+$"))))
+      (delete-file hyrolo-file))))
+
+(ert-deftest hyrolo-sort-records-at-different-levels ()
+  "Rolo can sort records at different levels."
+  (let ((hyrolo-file (make-temp-file "hypb" nil ".otl"
+                                     (concat "* 2\n\t2022-03-20\n"
+                                             "** 2\n\t2022-03-20\n"
+                                             "*** 2\n\t2022-03-20\n"
+                                             "*** 1\n\t2022-03-20\n"
+                                             "** 1\n\t2022-03-20\n"
+                                             "*** 2\n\t2022-03-20\n"
+                                             "*** 1\n\t2022-03-20\n"
+                                             "* 1\n\t2022-03-20\n"
+                                             "** 2\n\t2022-03-20\n"
+                                             "*** 2\n\t2022-03-20\n"
+                                             "*** 1\n\t2022-03-20\n"
+                                             "** 1\n\t2022-03-20\n"
+                                             "*** 2\n\t2022-03-20\n"
+                                             "*** 1\n\t2022-03-20\n")))
+        (sorted-hyrolo-file (concat "* 1\n\t2022-03-20\n"
+                                    "** 1\n\t2022-03-20\n"
+                                    "*** 1\n\t2022-03-20\n"
+                                    "*** 2\n\t2022-03-20\n"
+                                    "** 2\n\t2022-03-20\n"
+                                    "*** 1\n\t2022-03-20\n"
+                                    "*** 2\n\t2022-03-20\n"
+                                    "* 2\n\t2022-03-20\n"
+                                    "** 1\n\t2022-03-20\n"
+                                    "*** 1\n\t2022-03-20\n"
+                                    "*** 2\n\t2022-03-20\n"
+                                    "** 2\n\t2022-03-20\n"
+                                    "*** 1\n\t2022-03-20\n"
+                                    "*** 2\n\t2022-03-20\n")))
+    (unwind-protect
+        (let ((hyrolo-file-list (list hyrolo-file)))
+          (find-file hyrolo-file)
+          (hyrolo-sort)
+          (should (string= (buffer-string) sorted-hyrolo-file)))
       (delete-file hyrolo-file))))
 
 (provide 'hyrolo-tests)
