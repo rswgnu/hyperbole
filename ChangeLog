@@ -1,3 +1,9 @@
+2022-03-26  Bob Weiner  <rsw@gnu.org>
+
+* hyrolo.el (hyrolo-add): Fix both top-level and multi-level insertion.
+            (hyrolo-entry-name-regexp): Add.
+  test/hyrolo-tests.el (hyrolo-add-items-at-multiple-levels): Add from Mats.
+
 2022-03-20  Bob Weiner  <rsw@gnu.org>
 
 * HY-NEWS (New Tree Promotion/Demotion Keys):

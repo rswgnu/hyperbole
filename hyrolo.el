@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     7-Jun-89 at 22:08:29
-;; Last-Mod:     20-Mar-22 at 10:53:11 by Bob Weiner
+;; Last-Mod:     26-Mar-22 at 14:57:44 by Bob Weiner
 ;;
 ;; Copyright (C) 1991-2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -64,6 +64,9 @@ It must contain a %s indicating where to put the entry name and a second
 %s indicating where to put the e-mail address."
   :type 'string
   :group 'hyperbole-rolo)
+
+(defvar hyrolo-entry-name-regexp "[-_a-zA-Z0-9@.]+\\( ?, ?[-_a-zA-Z0-9@.]+\\)?"
+  "*Regexp matching a hyrolo entry name after matching to `hyrolo-entry-regexp'.")
 
 (defcustom hyrolo-find-file-function #'find-file
   "*Function to interactively display a `hyrolo-file-list' file for editing.
@@ -209,14 +212,16 @@ entry which begins with the parent string."
   (let ((parent "") (level "") end)
     (widen)
     (goto-char 1)
-    (while (string-match "\\`[^\]\[<>{}\"]*/" name)
+    ;; If name includes slash level separator character, walk down
+    ;; existing matching tree of entries to find insertion point.
+    (while (string-match "\\`[^\]\[/<>{}\"]*/" name)
       (setq end (1- (match-end 0))
 	    parent (substring name 0 end)
 	    name (substring name (min (1+ end) (length name))))
       (if (re-search-forward
-	   (concat hyrolo-entry-regexp (regexp-quote parent)) nil t)
+	   (concat hyrolo-entry-regexp (regexp-quote parent) "\\s-") nil t)
 	  (setq level (match-string-no-properties hyrolo-entry-group-number))
-	(error "(hyrolo-add): `%s' category not found in \"%s\""
+	(error "(hyrolo-add): Insertion failed, `%s' parent entry not found in \"%s\""
 	       parent file)))
     (narrow-to-region (point) (progn (hyrolo-to-entry-end t (length level)) (point)))
     (let* ((len (length name))
@@ -233,36 +238,40 @@ entry which begins with the parent string."
       ;; to that of `name'.
       (if (and (= level-len 1)
 	       (equal hyrolo-entry-regexp "^\\(\\*+\\)\\([ \t]+\\)"))
-	  (progn (goto-char (point-min))
-		 (if (re-search-forward (concat hyrolo-entry-regexp
-						(regexp-quote (char-to-string first-char)))
-					nil t)
-		     (goto-char (match-beginning 0))
-		   (goto-char (point-max))
-		   (if (and (> first-char ?0)
-			    (re-search-backward
-			     (concat "^\\*[ \t]+["
-				     (substring
-				      "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
-				      0 (min (- first-char ?0) 62))
-				     "]")
-			     nil t))
-		       (progn (goto-char (match-end 0))
-			      (hyrolo-to-entry-end t level-len)
-			      ;; Now at the insertion point, immediately after
-			      ;; the last existing entry whose first character
-			      ;; is less than that of `name'.  Setting `again'
-			      ;; to nil prevents further searching for an
-			      ;; insertion point.
-			      (setq again nil)))))
+	  (let ((case-fold-search))
+	    (goto-char (point-min))
+	    (if (re-search-forward (concat hyrolo-entry-regexp
+					   (regexp-quote (char-to-string first-char)))
+				   nil t)
+		(goto-char (match-beginning 0))
+	      (goto-char (point-max))
+	      (if (and (> first-char ?0)
+		       (re-search-backward
+			(concat "^\\*[ \t]+["
+				(substring
+				 "0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[]^_`abcdefghijklmnopqrstuvwxyz"
+				 0 (min (- first-char ?0) 62))
+				"])")
+			nil t))
+		  (progn (goto-char (match-end 0))
+			 (hyrolo-to-entry-end t level-len)
+			 ;; Now at the insertion point, immediately after
+			 ;; the last existing entry whose first character
+			 ;; is less than that of `name'.  Setting `again'
+			 ;; to nil prevents further searching for an
+			 ;; insertion point.
+			 (setq again nil)))))
 	(goto-char (point-min)))
 
       (while (and again (re-search-forward hyrolo-entry-regexp nil 'end))
 	(setq entry-level-len (length (match-string-no-properties hyrolo-entry-group-number)))
 	(if (/= entry-level-len level-len)
 	    (hyrolo-to-entry-end t entry-level-len)
-	  (setq entry (buffer-substring-no-properties (point) (+ (point) len))
-		entry-spc (match-string-no-properties hyrolo-entry-trailing-space-group-number))
+	  (setq entry-spc (match-string-no-properties hyrolo-entry-trailing-space-group-number)
+		entry (buffer-substring-no-properties (point)
+						      (save-excursion
+							(re-search-forward hyrolo-entry-name-regexp nil t)
+							(point))))
 	  (cond ((string-lessp entry name)
 		 (hyrolo-to-entry-end t entry-level-len))
 		((string-lessp name entry)

@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    19-Jun-21 at 22:42:00
-;; Last-Mod:     20-Mar-22 at 19:57:17 by Mats Lidell
+;; Last-Mod:     26-Mar-22 at 14:56:33 by Bob Weiner
 ;;
 ;; Copyright (C) 2021-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -24,6 +24,18 @@
 
 (declare-function hy-test-helpers:consume-input-events "hy-test-helpers")
 (declare-function hy-test-helpers:should-last-message "hy-test-helpers")
+
+(ert-deftest hyrolo-add-items-at-multiple-levels ()
+  "Rolo files can have items at different levels."
+  (let ((hyrolo-file (make-temp-file "hypb" nil ".otl")))
+    (let ((hyrolo-file-list (list hyrolo-file)))
+      (find-file hyrolo-file)
+      (insert "===\nHdr\n===\n")
+      (goto-char (point-min))
+      (should (looking-at "==="))
+      (hyrolo-add "a")
+      (hyrolo-add "a/b")
+      (hyrolo-add "a/b/c"))))
 
 (ert-deftest hyrolo-demo-search-work ()
   "Use demo example and search for work should match work."
