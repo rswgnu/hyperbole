@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    30-Jan-21 at 12:00:00
-;; Last-Mod:      6-Feb-22 at 00:55:55 by Bob Weiner
+;; Last-Mod:     26-Mar-22 at 11:25:43 by Mats Lidell
 ;;
 ;; Copyright (C) 2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -36,6 +36,11 @@
   (skip-unless (not noninteractive))
   (unwind-protect
       (progn
+        ;; Preload DEMO file to avoid race with *ert* buffer and set
+        ;; *ert* buffer current
+        (hypb:display-file-with-logo "DEMO")
+        (set-buffer "*ert*")
+
         (should (hact 'kbd-key "C-u C-h h d d"))
         (hy-test-helpers:consume-input-events)
         (should (string= (buffer-name (current-buffer)) "DEMO" ))

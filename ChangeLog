@@ -1,3 +1,8 @@
+2022-03-26  Mats Lidell  <matsl@gnu.org>
+
+* test/hib-kbd-tests.el (kbd-key-hy-demo-factorial-test): Preload DEMO
+    file to avoid race with *ert* display.
+
 2022-03-20  Bob Weiner  <rsw@gnu.org>
 
 * HY-NEWS (New Tree Promotion/Demotion Keys):
