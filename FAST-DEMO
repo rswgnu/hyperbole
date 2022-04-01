@@ -142,15 +142,15 @@
 
 * Posix/Linux Shell Command Implicit Buttons
 
-    The shell command part of the demo requires as shell that is
+    The shell command part of the demo requires a shell that is
     compatible with bash.  If you are using another shell you can for
     this part switch to bash,
 
     { M-x set-variable RET shell-file-name RET "/usr/bin/bash" RET }
 
-       Set the name of the inferior shell to /usr/bin/bash. If you
-       need this the don't forget to reset it when you are ready with
-       the demo.
+       Set the name of the inferior shell to /usr/bin/bash. If you do
+       this don't forget to reset it to your preferred shell when you
+       are ready with the demo.
 
     { M-x shell RET M-> (pushd ${hyperb:dir}) RET }
 
