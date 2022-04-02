@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    18-May-21 at 22:14:10
-;; Last-Mod:      1-Mar-22 at 23:16:05 by Mats Lidell
+;; Last-Mod:      2-Apr-22 at 23:58:08 by Mats Lidell
 ;;
 ;; Copyright (C) 2021-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -493,6 +493,57 @@
           (should (outline-invisible-p))
           (action-key)                  ; Unhide cell
           (should-not (outline-invisible-p)))
+      (delete-file kotl-file))))
+
+(ert-deftest kotl-mode-move-tree-forward ()
+  "Should move tree forward."
+  (let ((kotl-file (make-temp-file "hypb" nil ".kotl")))
+    (unwind-protect
+        (progn
+          (find-file kotl-file)
+          (insert "1")
+          (kotl-mode:add-cell)
+          (insert "2")
+          (kotl-mode:beginning-of-buffer)
+
+          (should (string= (kcell-view:idstamp) "01"))
+          (should (string= (kcell-view:label (point)) "1"))
+          (should (looking-at "1"))
+          (kotl-mode:move-tree-forward)
+          (should (string= (kcell-view:idstamp) "01"))
+          (should (string= (kcell-view:label (point)) "2"))
+          (should (looking-at "1"))
+
+          (kotl-mode:beginning-of-buffer)
+          (should (string= (kcell-view:idstamp) "02"))
+          (should (string= (kcell-view:label (point)) "1"))
+          (should (looking-at "2")))
+      (delete-file kotl-file))))
+
+
+(ert-deftest kotl-mode-move-tree-backward ()
+  "Should move tree backward."
+  (let ((kotl-file (make-temp-file "hypb" nil ".kotl")))
+    (unwind-protect
+        (progn
+          (find-file kotl-file)
+          (insert "1")
+          (kotl-mode:add-cell)
+          (insert "2")
+          (kotl-mode:beginning-of-cell)
+
+          (should (string= (kcell-view:idstamp) "02"))
+          (should (string= (kcell-view:label (point)) "2"))
+          (should (looking-at "2"))
+          (kotl-mode:move-tree-backward)
+          (should (string= (kcell-view:idstamp) "02"))
+          (should (string= (kcell-view:label (point)) "1"))
+          (should (looking-at "2"))
+
+          (kotl-mode:next-cell 1)
+          (should (string= (kcell-view:idstamp) "01"))
+          (should (string= (kcell-view:label (point)) "2"))
+          (should (looking-at "1")))
       (delete-file kotl-file))))
 
 (provide 'kotl-mode-tests)
