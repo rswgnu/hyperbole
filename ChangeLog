@@ -1,4 +1,8 @@
-<<<<<<< HEAD
+2022-04-02  Mats Lidell  <matsl@gnu.org>
+
+* test/kotl-mode-tests.el (kotl-mode-move-tree-forward)
+    (kotl-mode-move-tree-backward): Add tests for tree movement.
+
 2022-03-26  Bob Weiner  <rsw@gnu.org>
 
 * hyrolo.el (hyrolo-add): Fix both top-level and multi-level insertion.
