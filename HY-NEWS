@@ -352,7 +352,7 @@
       the priority order of all implicit button types is reset.
 
 
-** CUSTOMIZATON
+** CUSTOMIZATION
 
   *** Customizable Display Program File Mappings:
       The variables:
@@ -627,7 +627,7 @@
       See "(hyperbole)Moving Frames" for information on how to configure this
       feature.
 
-  CUSTOMIZATON
+  CUSTOMIZATION
 
     - hproperty:flash-face: Face used when flashing a button; now customizable.
 
@@ -1237,7 +1237,7 @@
       or similar prefix is now required so there is no ambiguity with social
       references including 'git #commit-number'.
 
-  CUSTOMIZATON
+  CUSTOMIZATION
 
     - Smart Key Hooks: New hooks run before and after Smart Key depress and
       release events: action-key-depress-hook, action-key-release-hook,
