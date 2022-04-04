@@ -2,8 +2,8 @@
 ;;
 ;; Author:       Bob Weiner
 ;;
-;; Orig-Date:    5/1/1993
-;; Last-Mod:     12-Feb-22 at 19:02:00 by Bob Weiner
+;; Orig-Date:     1-May-93
+;; Last-Mod:      3-Apr-22 at 16:23:56 by Bob Weiner
 ;;
 ;; Copyright (C) 1993-2021  Free Software Foundation, Inc.
 ;; See the "../HY-COPY" file for license information.
@@ -12,9 +12,13 @@
 
 ;;; Commentary:
 ;;
-;;   Defines kcells, nodes in Koutlines, along with a persistent representation
-;;   called kcell-data for writing to files.  Node text content is stored
-;;   separately in kview for efficiency. 
+;;   Defines kcells, in-memory, individually addressable elements of Koutlines,
+;;   along with a persistent representation called kcell-data for writing to
+;;   files.  Node text content is stored separately in the kview for efficiency.
+;;
+;;   For compatibility between kcell and kcell-data representations,
+;;   the unique per Koutline permanent idstamp for each kcell is also stored
+;;   separately.  This also allows fast retrieval.
 
 ;;; Code:
 ;;; ************************************************************************
@@ -37,42 +41,33 @@ Add to this list but don't remove any of the default elements.")
 ;;; ************************************************************************
 
 ;;;
-;;; kcell
+;;; kcell - In-memory representation of Koutline cells
 ;;;
 
 (defun kcell:copy (kcell)
   "Return a copy of KCELL."
   (copy-tree kcell))
 
-(defun kcell:create (idstamp &optional plist)
-  "Return a new kcell which has permanent IDSTAMP (an integer) and optional additional property list, PLIST.
+(defun kcell:create (&optional plist)
+  "Return a new kcell with optional property list, PLIST.
 User id of `creator' of cell and `create-time' are added to cell's PLIST if
 not already there."
-  (unless (klabel:idstamp-p idstamp)
-      (error "(kcell:create): Invalid `idstamp' argument: '%s'" idstamp))
   (nconc
-   (unless (memq 'kcell plist)
-     (list 'kcell t))
-   (unless (memq 'idstamp plist)
-     (list 'idstamp idstamp))
    (unless (memq 'creator plist)
      (list 'creator hyperb:user-email
 	   'create-time (htz:date-sortable-gmt)))
    plist))
 
 (defun kcell:create-top (&optional top-cell-attributes)
-  "Return a new koutline top cell optionally attached to FILE with current idstamp COUNTER."
-  (kcell:create 0 top-cell-attributes))
+  "Return a new koutline top cell with optional property list of TOP-CELL-ATTRIBUTES.
+The idstamp of the top cell is always 0 and this cell stores the idstamp-counter."
+  (kcell:create top-cell-attributes))
 
 (defalias 'kcell:get-attr 'plist-get)
 
-(defun kcell:idstamp (kcell)
-  "Return permanent idstamp of KCELL as an integer."
-  (kcell:get-attr kcell 'idstamp))
-
 (defun kcell:is-p (object)
   "Is OBJECT a kcell?"
-  (and (listp object) (plist-get object 'kcell)))
+  (and (listp object) (plist-get object 'creator)))
 
 (defalias 'kcell:plist 'identity)
 
@@ -183,25 +178,20 @@ Augment capabilities not yet implemented and ignored for now:
   "Store the current user's id as the creator of KCELL."
   (kcell:set-attr kcell 'creator hyperb:user-email))
 
-(defun kcell:set-idstamp (kcell idstamp)
-  "Set KCELL's permanent IDSTAMP (an integer) and return IDSTAMP."
-  (kcell:set-attr kcell 'idstamp idstamp)
-  (kcell:idstamp kcell))
-
 ;;;
-;;; kcell-data - Persistent representation of kotl cells (written to files).
+;;; kcell-data - Persistent representation of Koutline cells (written to files)
 ;;;
 
-(defun kcell-data:create (cell)
-  "Given a kotl CELL, return a kcell-data structure to write to a file.
+(defun kcell-data:create (cell idstamp)
+  "Given a kotl CELL and IDSTAMP (an integer), return a kcell-data structure to write to a file.
 If CELL, its idstamp, or its property list are nil, this repairs the cell by
 assuming it is the cell at point and filling in the missing information."
-   (let ((idstamp (kcell:idstamp cell))
-	 (plist (nthcdr 2 (kcell:plist cell))))
+   (let ((plist (kcell:plist cell)))
      (if (and cell idstamp plist)
 	 (vector idstamp plist)
        (kcell-data:create
-	(kcell:create (or idstamp (kview:id-increment kview)) plist)))))
+	(kcell:create plist)
+	(or idstamp (kview:id-increment kview))))))
 
 (defun kcell-data:idstamp (kcell-data)
   (aref kcell-data 0))
@@ -214,21 +204,13 @@ assuming it is the cell at point and filling in the missing information."
 
 (defun kcell-data:to-kcell-v2 (kcell-data)
   (if (vectorp kcell-data)
-      (kcell:create
-       ;; Repair invalid idstamps on the fly.
-       (or (kcell-data:idstamp kcell-data) (kview:id-increment kview))
-       (kcell-data:plist-v2 kcell-data))
-    ;; Repair invalid cells on the fly.
-    (kcell:create (kview:id-increment kview))))
+      (kcell:create (kcell-data:plist-v2 kcell-data))
+    (kcell:create)))
 
 (defun kcell-data:to-kcell-v3 (kcell-data)
   (if (vectorp kcell-data)
-      (kcell:create
-       ;; Repair invalid idstamps on the fly.
-       (or (kcell-data:idstamp kcell-data) (kview:id-increment kview))
-       (kcell-data:plist-v3 kcell-data))
-    ;; Repair invalid cells on the fly.
-    (kcell:create (kview:id-increment kview))))
+      (kcell:create (kcell-data:plist-v3 kcell-data))
+    (kcell:create)))
 
 (provide 'kcell)
 

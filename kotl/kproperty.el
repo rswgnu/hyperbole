@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    7/27/93
-;; Last-Mod:     12-Feb-22 at 10:42:20 by Mats Lidell
+;; Last-Mod:      3-Apr-22 at 18:33:09 by Bob Weiner
 ;;
 ;; Copyright (C) 1993-2021  Free Software Foundation, Inc.
 ;; See the "../HY-COPY" file for license information.
@@ -29,6 +29,11 @@
 (defun kproperty:add-properties (plist)
   "Add properties at point and the following character from PLIST."
   (kproperty:put (point) (min (+ 2 (point)) (point-max))
+		 plist))
+
+(defun kproperty:remove-properties (plist)
+  "Remove properties at point and the following character from PLIST."
+  (kproperty:remove (point) (min (+ 2 (point)) (point-max))
 		 plist))
 
 (defun kproperty:all-positions (property value)
@@ -80,7 +85,7 @@ properties."
 The optional fourth argument, OBJECT, is the string or buffer containing the
 text.  PROPERTY-LIST should be a plist; if the value of a property is
 non-nil, then only a property with a matching value will be removed.
-Returns t if any property was changed, nil otherwise."
+Return t if any property was changed, nil otherwise."
   (let ((changed) plist property value next)
     (while property-list
       (setq property (car property-list)

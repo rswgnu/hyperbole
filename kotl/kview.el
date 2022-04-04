@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    6/30/93
-;; Last-Mod:     13-Feb-22 at 19:50:05 by Mats Lidell
+;; Last-Mod:      3-Apr-22 at 19:00:16 by Bob Weiner
 ;;
 ;; Copyright (C) 1993-2021  Free Software Foundation, Inc.
 ;; See the "../HY-COPY" file for license information.
@@ -113,7 +113,7 @@ Return t unless no such cell."
 
 (defun kcell-view:cell (&optional pos)
   "Return kcell at optional POS or point."
-  (kproperty:properties (kcell-view:plist-point pos)))
+  (kproperty:get (kcell-view:plist-point pos) 'kcell))
 
 (defun kcell-view:cell-from-ref (cell-ref)
   "Return a kcell referenced by CELL-REF, a cell label, id string or integer idstamp.
@@ -217,11 +217,14 @@ Any cell that is invisible is also collapsed as indicated by a call to
        (concat "\\([\n\r]\\)" (make-string indent ?\ ))
        (buffer-substring start end) "\\1"))))
 
-(defun kcell-view:create (kview cell contents level klabel &optional no-fill)
-  "Insert into KVIEW at point, CELL with CONTENTS at LEVEL (1 = first level) with KLABEL.
+(defun kcell-view:create (kview cell contents level idstamp klabel &optional no-fill)
+  "Insert into KVIEW at point, CELL with CONTENTS at LEVEL (1 = first level) with IDSTAMP and KLABEL.
+If the current view displays klabels, then KLABEL should be inserted
+prior to this call, with point following it.
+
 Optional NO-FILL non-nil suppresses filling of cell's contents upon insertion
 or movement."
-  (unless (zerop (kcell:idstamp cell))
+  (unless (zerop idstamp)
     (unless no-fill
       (setq no-fill (kcell:get-attr cell 'no-fill)))
     (let* ((label-min-width (kview:label-min-width kview))
@@ -264,7 +267,8 @@ or movement."
       (insert label-separator)
       (goto-char old-point)
       ;; Add cell's attributes to the text property list at point.
-      (kproperty:add-properties cell)
+      (kproperty:set 'idstamp idstamp)
+      (kproperty:set 'kcell cell)
       (goto-char new-point))))
 
 (defun kcell-view:end (&optional pos)
@@ -321,18 +325,29 @@ Return t unless no such cell."
     found))
 
 (defun kcell-view:get-attr (attribute &optional pos)
-  "Return ATTRIBUTE's value for current cell or cell at optional POS."
+  "Return ATTRIBUTE's value for current cell or cell at optional POS
+Use 0 for POS to retrieve top cell's attributes."
+  (if (eq pos 0)
+      (if (eq attribute 'idstamp)
+	  0
+	(kcell:get-attr (kview:top-cell kview) attribute))
+    (save-excursion
+      (goto-char (or pos (kcell-view:plist-point)))
+      (if (eq attribute 'idstamp)
+	  (kproperty:get (point) attribute)
+	(kcell:get-attr (kcell-view:cell) attribute)))))
+
+(defun kcell-view:idstamp-integer (&optional pos)
+  "Return idstamp integer >= 0 of cell at optional POS or point."
   (save-excursion
-    (when pos
-      (goto-char pos))
-    (kcell:get-attr (kcell-view:cell) attribute)))
+    (goto-char (or pos (kcell-view:plist-point)))
+    (kproperty:get (point) 'idstamp)))
 
 (defun kcell-view:idstamp (&optional pos)
   "Return idstamp string of cell at optional POS or point."
   (save-excursion
-    (when pos
-      (goto-char pos))
-    (format "0%s" (or (kcell:idstamp (kcell-view:cell)) ""))))
+    (goto-char (or pos (kcell-view:plist-point)))
+    (format "0%s" (or (kproperty:get (point) 'idstamp) ""))))
 
 (defun kcell-view:indent (&optional pos label-sep-len)
   "Return indentation of cell at optional POS or point.
@@ -485,31 +500,40 @@ or is nil), before it is returned."
 	  (kcell-view:label pos) (kcell-view:idstamp pos)))
 
 (defun kcell-view:remove-attr (attribute &optional pos)
-  "Remove ATTRIBUTE, if any, for current cell or cell at optional POS."
+  "Remove ATTRIBUTE, if any, for current cell or cell at optional POS.  Return the modified cell."
   (interactive "*SAttribute to remove: ")
-  (save-excursion
-    (when pos
-      (goto-char pos))
-
-    (let ((kcell (kcell:remove-attr (kcell-view:cell) attribute)))
-      (when (called-interactively-p 'interactive)
-	(message "Cell <%s> now has no %s attribute."
-		 (kcell-view:label) attribute))
+  (unless (eq attribute 'idstamp) ;; Can't remove idstamp
+    (let (mod-cell)
+      (save-excursion
+	(goto-char (or pos (kcell-view:plist-point)))
+	(setq mod-cell (kcell:remove-attr (kcell-view:cell) attribute))
+	(kproperty:add-properties (list 'kcell mod-cell))
+	(when (called-interactively-p 'interactive)
+	  (message "Cell <%s> now has no %s attribute."
+		   (kcell-view:label) attribute)))
       kcell)))
 
 (defun kcell-view:set-attr (attribute value &optional pos)
-  "Set ATTRIBUTE's VALUE for current cell or cell at optional POS and return the cell."
-  (save-excursion
-    (when pos
-      (goto-char pos))
-    ;; Returns kcell.
-    (kcell:set-attr (kcell-view:cell) attribute value)))
+  "Set ATTRIBUTE's VALUE for current cell or cell at optional POS and return the modified cell.
+Use 0 for POS to set top cell's attributes."
+  (unless (and (eq pos 0) (eq attribute 'idstamp)) ;; top cell idstamp set when Koutline is created
+    (save-excursion
+      (goto-char (or pos (kcell-view:plist-point)))
+      (if (eq attribute 'idstamp)
+	  (progn (kproperty:set attribute value)
+		 (kcell-view:cell))
+	;; Returns kcell
+	(let ((mod-cell (kcell:set-attr (if (eq pos 0) (kview:top-cell kview) (kcell-view:cell))
+					attribute value)))
+	  (kproperty:add-properties (list 'kcell mod-cell))
+	  mod-cell)))))
 
-(defun kcell-view:set-cell (kcell)
-  "Attach KCELL property to cell at point."
+(defun kcell-view:set-cell (kcell idstamp)
+  "Attach KCELL and IDSTAMP (an integer) properties to cell at point."
   (save-excursion
     (kcell-view:to-label-end)
-    (kproperty:add-properties kcell)))
+    (kproperty:add-properties
+     (list 'idstamp idstamp 'kcell kcell))))
 
 (defun kcell-view:sibling-p (&optional pos visible-p label-sep-len)
   "Return t if cell at optional POS or point has a successor.
@@ -561,8 +585,8 @@ level."
   (let* ((idstamp (if (klabel:idstamp-p klabel)
 		      (if (stringp klabel) (string-to-number klabel) klabel)
 		    (kview:id-increment kview)))
-	 (new-cell (kcell:create idstamp prop-list)))
-    (kcell-view:create kview new-cell contents level klabel no-fill)
+	 (new-cell (kcell:create prop-list)))
+    (kcell-view:create kview new-cell contents level idstamp klabel no-fill)
     new-cell))
 
 (defun kview:beginning-of-actual-line ()
@@ -620,11 +644,8 @@ BLANK-LINES, LEVELS-TO-SHOW, and LINES-TO-SHOW may also be given, otherwise defa
     ;; Don't recreate view if it exists.
     (unless (and (boundp 'kview) (kview:is-p kview) (eq (kview:buffer kview) buf))
       (make-local-variable 'kview)
-      ;; File location may have changed since saved, so always inject the
-      ;; current file name here and update cell count id-counter.
-      (setq top-cell-attributes
-	    (plist-put (plist-put top-cell-attributes 'id-counter id-counter)
-		       'file buffer-file-name))
+      ;; Update cell count id-counter.
+      (setq top-cell-attributes (plist-put top-cell-attributes 'id-counter id-counter))
       (setq kview
 	    (list 'kview 'plist
 		  (list 'view-buffer (current-buffer)

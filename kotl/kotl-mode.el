@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    6/30/93
-;; Last-Mod:     20-Mar-22 at 22:34:26 by Bob Weiner
+;; Last-Mod:      3-Apr-22 at 23:08:47 by Bob Weiner
 ;;
 ;; Copyright (C) 1993-2021  Free Software Foundation, Inc.
 ;; See the "../HY-COPY" file for license information.
@@ -1033,8 +1033,7 @@ Leave point at the start of the root cell of the new tree."
   ;; Alter the copied tree so each cell appears to be newly created.
   (kview:map-tree
    (lambda (view)
-     (kcell-view:set-cell
-      (kcell:create (kview:id-increment view))))
+     (kcell-view:set-cell (kcell:create) (kview:id-increment view)))
    kview))
 
 (defun kotl-mode:copy-before (from-cell-ref to-cell-ref parent-p)
@@ -1059,8 +1058,7 @@ Leave point at the start of the root cell of the new tree."
   ;; Alter the copied tree so each cell appears to be newly created.
   (kview:map-tree
    (lambda (view)
-     (kcell-view:set-cell
-      (kcell:create (kview:id-increment view))))
+     (kcell-view:set-cell (kcell:create) (kview:id-increment view)))
    kview))
 
 (defun kotl-mode:move-after (from-cell-ref to-cell-ref child-p
@@ -2309,13 +2307,13 @@ to one level and kotl-mode:refill-flag is treated as true."
       ;; Save cell-1 attributes
       (kotl-mode:goto-cell cell-ref-1 t)
       (setq kcell-1 (kcell-view:cell)
-	    idstamp-1 (kcell-view:idstamp)
+	    idstamp-1 (kcell-view:idstamp-integer)
 	    contents-1 (kcell-view:contents))
       ;;
       ;; Save cell-2 attributes
       (kotl-mode:goto-cell cell-ref-2 t)
       (setq kcell-2 (cl-copy-list (kcell-view:cell))
-	    idstamp-2 (kcell-view:idstamp)
+	    idstamp-2 (kcell-view:idstamp-integer)
 	    contents-2 (kcell-view:contents))
 
       ;; Substitute cell-1 contents into cell-2 location.
@@ -2345,19 +2343,19 @@ to one level and kotl-mode:refill-flag is treated as true."
 	;;
 	(kotl-mode:goto-cell cell-ref-2 t)
 	;; Set kcell properties.
-	(kcell-view:set-cell kcell-1)
+	(kcell-view:set-cell kcell-1 idstamp-1)
 	;; If idstamp labels are on, then must exchange labels in view.
 	(when (eq (kview:label-type kview) 'id)
- 	  (klabel:set idstamp-1)))
+ 	  (klabel:set (format "0%d" idstamp-1))))
 
       ;;
       ;; Substitute cell-2 attributes into cell-1 location.
       ;;
       ;; Set kcell properties.
-      (kcell-view:set-cell kcell-2)
+      (kcell-view:set-cell kcell-2 idstamp-2)
       ;; If idstamp labels are on, then must exchange labels in view.
       (when (eq (kview:label-type kview) 'id)
-	(klabel:set idstamp-2)))))
+ 	(klabel:set (format "0%d" idstamp-2))))))
 
 (defun kotl-mode:kill-contents (arg)
   "Kill contents of cell from point to cell end.
@@ -2937,7 +2935,8 @@ See also the documentation for `kotl-mode:cell-attributes'."
 	(if (or (member cell-ref '("0" 0))
 		(<= cells-flag 0))
 	    (progn
-	      (hattr:report (kcell:plist (kview:top-cell kview)))
+	      (hattr:report (append '(idstamp 0)
+				    (kcell:plist (kview:top-cell kview))))
 	      (terpri)
 	      (cond ((= cells-flag 1) nil)
 		    ((> cells-flag 1)
@@ -2959,9 +2958,13 @@ ATTRIBUTE and ignore any value of POS.
 When called interactively, it displays the value in the minibuffer."
   (interactive "SCurrent cell attribute to get: ")
   (let ((value
-	 (if top-cell-flag
+	 (if (eq attribute 'idstamp)
+	     (if top-cell-flag
+		 0
+	       (kproperty:get (kcell-view:plist-point pos) attribute))
+	   (if top-cell-flag
 	     (kcell:get-attr (kview:top-cell kview) attribute)
-	   (kcell-view:get-attr attribute pos))))
+	   (kcell-view:get-attr attribute pos)))))
     (when (called-interactively-p 'interactive)
       (message "Attribute \"%s\" = `%s' in cell <%s>."
 	       attribute value (if top-cell-flag
@@ -3204,7 +3207,9 @@ upon the current view."
 		       (progn (kview:end-of-actual-line)
 			      (point)))))
   (terpri)
-  (hattr:report (kcell:plist (kcell-view:cell)))
+  (hattr:report
+   (append (list 'idstamp (kcell-view:idstamp-integer))
+	   (kcell:plist (kcell-view:cell))))
   (terpri))
 
 (put 'outline 'reveal-toggle-invisible 'kotl-mode:reveal-toggle-invisible)

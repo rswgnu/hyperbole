@@ -1,3 +1,53 @@
+2022-04-03  Kathy  <bk@water-imac.lan>
+
+* test/kotl-mode-tests.el (setup-kotl-mode-example-test): Fix so handles multiple buffers with same
+    buffer name prefix.
+
+* kotl/kproperty.el (kproperty:remove-properties): Add and use in kcell-view:remove-attr.
+
+* test/kotl-mode-tests.el (kotl-mode-copy-kotl-file-updates-root-id-attributes): Change from 'file attr
+    test to 'label-type.
+
+* kotl/kview.el (kcell-view:idstamp-integer): Add to return idstamp as int instead of string.
+
+* kotl/kcell.el (kcell-data:create): Add idstamp as 2nd parameter.
+  kotl/kfile.el (kfile:update): Call kcell-data:create with 2nd parameter.
+
+* kotl/kotl-mode.el (kotl-mode:exchange-cells): Give idstamp as second arg to kcell-view:set-cell calls.
+                    (kotl-mode:cell-help, kotl-mode:print-attributes, kotl-mode:get-cell-attribute):
+    Handle separate idstamp attribute.
+  kotl/kview.el (kcell-view:set-cell, kotl-mode:copy-after, kotl-mode:copy-before): Set kcell and
+    idstamp as separate text properties.
+
+* kotl/kview.el (kcell-view:idstamp, kcell-view:get-attr, kcell-view:set-attr,
+    kcell-view:remove-attr, kcell-view:create): Always move to point with cell's text properties
+    and handle text property idstamp.
+                (kcell-view:create): Pass idstamp as a parameter.
+                (kview:add-cell):
+  kotl/kcell.el (kcell:create):
+  kotl/kfile.el (kfile:insert-attributes-v2, kfile:insert-attributes-v3): Store idstamp as a
+    koutline text property outside the kcell, for efficiency.
+* kotl/kcell.el (kcell:set-idstamp): Remove, use kcell-view:set-attr instead.
+                (kcell:idstamp): Remove, use kcell-view:idstamp instead.
+                (kcell-data:to-kcell-v2, kcell-data:to-kcell-v3): Remove use of view-based idstamp.
+
+* kotl/kcell.el (kcell-data:create): idstamp is no longer stored in a kcell's property list, so
+    don't try to delete it from the plist when creating the persistent representation keyed
+    by the numeric value of the idstamp.
+
+* kotl/kfile.el (kfile:insert-attributes-v2, kfile:insert-attributes-v3): In Koutline buffer,
+    store kcell properties as a single 'kcell text property, as previously in Hyperbole 7.1.3.
+    This allows other text properties to be stored at the same position without being written
+    out as kcell properties.
+  kotl/kcell.el (kcell:create): Stop writing 'kcell attr out to save space.
+                (kcell:is-p): Test for 'creator attr rather than 'kcell since no longer
+    writing that attr.
+  kotl/kview.el (kcell-view:cell): Update to use 'kcell text property.
+
+* kotl/kview.el (kview:create):
+  kotl/kfile.el (kfile:write, file:update): Remove read/write of Koutline 'file attribute;
+    just use buffer-file-name.
+
 2022-04-02  Mats Lidell  <matsl@gnu.org>
 
 * test/kotl-mode-tests.el (kotl-mode-move-tree-forward)

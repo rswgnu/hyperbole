@@ -28,8 +28,8 @@
        (progn
          ,@body
          (should (equal major-mode 'kotl-mode))
-         (should (string= (buffer-name (current-buffer)) "EXAMPLE.kotl")))
-     (kill-buffer "EXAMPLE.kotl")))
+         (should (string-prefix-p "EXAMPLE.kotl" (buffer-name (current-buffer)))))
+     (kill-buffer (current-buffer))))
 
 (ert-deftest smart-menu-loads-kotl-example ()
   "Loading kotl-mode example file works."
@@ -43,7 +43,7 @@
 (ert-deftest kotl-mode-example-loads-kotl-example ()
   "Loading kotl-mode example file works."
   (setup-kotl-mode-example-test
-   (kotl-mode:example)))
+   (kotl-mode:example nil t)))
 
 (ert-deftest kotl-mode-move-between-cells ()
   "Loading kotl-mode example file works."
@@ -462,21 +462,21 @@
 
 (ert-deftest kotl-mode-copy-kotl-file-updates-root-id-attributes ()
   "Verify root id-attribute is updated when kotl mode is copied."
-  (let ((kotl-file (make-temp-file "hypb" nil ".kotl"))
-        (new-name (concat (make-temp-name (concat temporary-file-directory "hypb")) ".kotl")))
+  (let* ((kotl-file (make-temp-file "hypb" nil ".kotl"))
+         (indent (kcell:get-attr (kcell-view:cell-from-ref 0) 'level-indent))
+         (new-name (concat (make-temp-name (concat temporary-file-directory "hypb")) ".kotl")))
     (unwind-protect
         (progn
           (find-file kotl-file)
           (insert "a cell")
           (save-buffer)
-          (should (string= (kcell:get-attr (kcell-view:cell-from-ref 0) 'file) kotl-file))
+          (should (string= (kcell:get-attr (kcell-view:cell-from-ref 0) 'level-indent) indent))
 
           (copy-file kotl-file new-name)
           (find-file new-name)
-          (should (string= (kcell:get-attr (kcell-view:cell-from-ref 0) 'file) new-name)))
-      (progn
-        (delete-file kotl-file)
-        (delete-file new-name)))))
+          (should (string= (kcell:get-attr (kcell-view:cell-from-ref 0) 'level-indent) indent)))
+      (delete-file kotl-file)
+      (delete-file new-name))))
 
 (ert-deftest kotl-mode-hide-cell ()
   "Verify cell is hidden and unhidden on `action-key' press."

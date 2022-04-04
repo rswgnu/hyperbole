@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    10/31/93
-;; Last-Mod:     12-Feb-22 at 10:42:20 by Mats Lidell
+;; Last-Mod:      3-Apr-22 at 16:17:53 by Bob Weiner
 ;;
 ;; Copyright (C) 1993-2021  Free Software Foundation, Inc.
 ;; See the "../HY-COPY" file for license information.
@@ -258,7 +258,7 @@ If V3-FLAG is true, read as a version-3 buffer."
 Leave outline file expanded with structure data showing unless optional
 VISIBLE-ONLY-P is non-nil.  Signal an error if kotl is not attached to a file."
   (let* ((top (kview:top-cell kview))
-	 (file (kcell:get-attr top 'file))
+	 (file buffer-file-name)
 	 (label-type (kview:label-type kview))
 	 (label-min-width (kview:label-min-width kview))
 	 (label-separator (kview:label-separator kview))
@@ -285,13 +285,13 @@ VISIBLE-ONLY-P is non-nil.  Signal an error if kotl is not attached to a file."
 	  (setq cell (kcell-view:cell))
 	  (aset kcell-data
 		kcell-num
-		(kcell-data:create cell))
+		(kcell-data:create cell (kcell-view:idstamp-integer)))
 	  (setq kcell-num (1+ kcell-num)))
 	kview t)
       ;; Save top cell, 0, last since above loop may increment the total
       ;; number of cells counter stored in it, if any invalid cells are
       ;; encountered.
-      (aset kcell-data 0 (kcell-data:create top))
+      (aset kcell-data 0 (kcell-data:create top 0))
       (setq id-counter (kcell:get-attr top 'id-counter))
       ;;
       (widen)
@@ -342,7 +342,6 @@ VISIBLE-ONLY-P is non-nil.  Signal an error if kotl is not attached to a file."
   (when (and (file-directory-p file) buffer-file-name)
     (setq file (concat (file-name-as-directory file)
 		       (file-name-nondirectory buffer-file-name))))
-  (kcell:set-attr (kview:top-cell kview) 'file file)
   (set-visited-file-name file)
   ;; Set-visited-file-name clears local-write-file-hooks that we use to save
   ;; koutlines properly, so reinitialize local variables.
@@ -390,7 +389,9 @@ included in the list."
   "Set cell attributes within KVIEW for each element in KCELL-LIST.
 Assume all cell contents are already in kview and that no cells are
 hidden."
-  (let (buffer-read-only)
+  (let (buffer-read-only
+	idstamp
+	kcell-data)
     (while
 	(progn
 	  (skip-chars-forward "\n")
@@ -399,16 +400,24 @@ hidden."
 	  ;; for the location at which to place cell properties.
 	  ;; Be sure not to skip past a period which may terminate the label.
 	  (when (re-search-forward "[A-Za-z0-9]\\(\\.?[A-Za-z0-9]\\)*" nil t)
-	    (kproperty:add-properties (car kcell-list))
+	    (setq kcell-data (car kcell-list)
+		  ;; Repair invalid idstamps on the fly.
+		  idstamp (if (vectorp kcell-data)
+			      (or (kcell-data:idstamp kcell-data) (kview:id-increment kview))
+			    (kview:id-increment kview)))
+	    (kproperty:set 'idstamp idstamp)
+	    (kproperty:set 'kcell (car kcell-list))
 	    (setq kcell-list (cdr kcell-list)))
 	  (search-forward "\n\n" nil t)))))
 
 (defun kfile:insert-attributes-v3 (_kview kcell-vector)
-  "Set cell attributes within KVIEW for each element in KCELL-VECTOR.
+  "Set cell attributes within _KVIEW for each element in KCELL-VECTOR.
 Assume all cell contents are already in kview and that no cells are
 hidden."
   (let ((kcell-num 1)
-	(buffer-read-only))
+	buffer-read-only
+	idstamp
+	kcell-data)
     (while
 	(progn
 	  (skip-chars-forward "\n")
@@ -417,8 +426,13 @@ hidden."
 	  ;; for the location at which to place cell properties.
 	  ;; Be sure not to skip past a period which may terminate the label.
 	  (when (re-search-forward "[A-Za-z0-9]\\(\\.?[A-Za-z0-9]\\)*" nil t)
-	    (kproperty:add-properties
-	     (kcell-data:to-kcell-v3 (aref kcell-vector kcell-num)))
+	    (setq kcell-data (aref kcell-vector kcell-num)
+		  ;; Repair invalid idstamps on the fly.
+		  idstamp (if (vectorp kcell-data)
+			      (or (kcell-data:idstamp kcell-data) (kview:id-increment kview))
+			    (kview:id-increment kview)))
+	    (kproperty:set 'idstamp idstamp)
+	    (kproperty:set 'kcell (kcell-data:to-kcell-v3 kcell-data))
 	    (setq kcell-num (1+ kcell-num)))
 	  (search-forward "\n\n" nil t)))))
 
