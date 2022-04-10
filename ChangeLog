@@ -1,3 +1,8 @@
+2022-04-09  Mats Lidell  <matsl@gnu.org>
+
+* test/hyrolo-tests.el (hyrolo-add-items-at-multiple-levels): Add check
+    and remove test temp file.
+
 2022-04-03  Kathy  <bk@water-imac.lan>
 
 * test/kotl-mode-tests.el (setup-kotl-mode-example-test): Fix so handles multiple buffers with same
