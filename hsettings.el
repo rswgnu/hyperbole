@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    15-Apr-91 at 00:48:49
-;; Last-Mod:     26-Feb-22 at 16:29:33 by Bob Weiner
+;; Last-Mod:     10-Apr-22 at 10:55:06 by Bob Weiner
 ;;
 ;; Copyright (C) 1991-2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -251,7 +251,7 @@ obtained search string."
   :set (lambda (_option value)
 	 (set _option value)
 	 (hyperbole-update-menus))
-  :type '(alist :key-type string :value-type string)
+  :type '(alist :key-type string :value-type (choice string symbol))
   :group 'hyperbole-commands)
 
 ;;; ************************************************************************

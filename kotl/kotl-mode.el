@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    6/30/93
-;; Last-Mod:      3-Apr-22 at 23:08:47 by Bob Weiner
+;; Last-Mod:     12-Apr-22 at 01:39:17 by Bob Weiner
 ;;
 ;; Copyright (C) 1993-2021  Free Software Foundation, Inc.
 ;; See the "../HY-COPY" file for license information.
@@ -325,24 +325,42 @@ See `center-line' for more info."
     ;; Move to editable point if need be.
     (kotl-mode:to-valid-position)))
 
-(defun kotl-mode:copy-absolute-klink-to-kill-ring (&optional pos)
+(defun kotl-mode:copy-kcell-reference-to-register (klink register)
+  "Copy a KLINK at point or if in a kcell, a klink to that kcell, to a REGISTER named by a single character."
+  (interactive
+   (let ((klink (klink:absolute (klink:at-p))))
+     (list
+      (cond (klink)
+	    ((derived-mode-p 'kotl-mode)
+	     (setq klink (kcell-view:absolute-reference))))
+      (when klink
+	(register-read-with-preview (format "Copy %s to register: " klink))))))
+  (if (and (stringp klink) register)
+      (set-register register klink)
+    (user-error "(kotl-mode:copy-kcell-reference-to-register): Point is not within a Koutliner klink or kcell")))
+
+(defun kotl-mode:copy-absolute-kcell-link-to-kill-ring (&optional pos)
   "Add an absolute kcell reference (from optional POS or point) for use outside the outline as a new kill ring entry."
   (interactive "d")
   (kill-new (kcell-view:absolute-reference pos)))
 
-(defun kotl-mode:copy-relative-klink-to-kill-ring (&optional pos)
+(defun kotl-mode:copy-relative-kcell-link-to-kill-ring (&optional pos)
   "Add a relative kcell reference (from optional POS or point) as a new kill ring entry."
   (interactive "d")
   (kill-new (kcell-view:reference pos)))
 
-(defun kotl-mode:copy-absolute-klink-to-register (register pos)
+(defun kotl-mode:copy-absolute-kcell-link-to-register (register pos)
   "Copy into REGISTER an absolute kcell reference (from optional POS or point)."
-  (interactive "cCopy to register: \nd")
+  (interactive
+   (list (register-read-with-preview "Copy absolute link to current cell to register: ")
+	 (point)))
   (set-register register (kcell-view:absolute-reference pos)))
 
-(defun kotl-mode:copy-relative-klink-to-register (register pos)
+(defun kotl-mode:copy-relative-kcell-link-to-register (register pos)
   "Copy into REGISTER a relative kcell reference (from optional POS or point)."
-  (interactive "cCopy to register: \nd")
+  (interactive
+   (list (register-read-with-preview "Copy relative link to current cell to register: ")
+	 (point)))
   (set-register register (kcell-view:reference pos)))
 
 (defun kotl-mode:copy-region-as-kill (start end)
@@ -670,45 +688,74 @@ With optional COPY-P equal to 't, copy region to kill ring but does not
 kill it.  With COPY-P any other non-nil value, return region as a
 string without affecting kill ring.
 
+If called interactively and there is no active region, copy any selectable
+thing at point; see `hypb:selectable-thing'.
+
 If the buffer is read-only and COPY-P is nil, the region will not be deleted
-but it will be copied to the kill ring and then an error will be signaled."
+but it will be copied to the kill ring and then an error will be signaled.
+
+If a completion is active, this aborts the completion only."
   (interactive "*r")
-  (let ((read-only (and (not copy-p) buffer-read-only)))
-    (if read-only (setq copy-p t))
-    (if (and (number-or-marker-p start)
-	     (number-or-marker-p end)
-	     (eq (kcell-view:cell start)
-		 (kcell-view:cell end)))
-	(save-excursion
-	  (goto-char start)
-	  (let ((indent (kcell-view:indent))
-		killed subst-str)
-	    ;; Convert region to string
-	    ;; Convert all occurrences of newline + indent
-	    ;; to just newline, eliminating indent.
-	    ;; Then save to kill ring.
-	    (setq subst-str (concat "\\([\n\r]\\)" (make-string indent ?\ ))
-		  killed
-		  (hypb:replace-match-string
-		   subst-str (buffer-substring start end) "\\1"))
-	    (unless copy-p
-	      ;; If last char of region is a newline, then delete indent in
-	      ;; following line.
-	      (delete-region
-	       start (+ end (if (memq (char-after (1- (max start end)))
-				      '(?\n ?\r))
-				indent
-			      0))))
-	    (if (and copy-p (not (eq copy-p t)))
-		;; Return killed region as a string.
-		killed
-	      (if (eq last-command 'kill-region)
-		  (kill-append killed (< end start))
-		(kill-new killed))
-	      (setq this-command 'kill-region)
-	      (when read-only (barf-if-buffer-read-only)))))
-      (error
-       "(kotl-mode:kill-region): Bad region or not within a single Koutline cell"))))
+  (let ((read-only (and (not copy-p) buffer-read-only))
+	thing)
+    (when read-only
+      (setq copy-p t))
+    (prog1 (cond
+	    ((eq last-command 'complete)
+	     (delete-region (point) cmpl-last-insert-location)
+	     (insert cmpl-original-string)
+	     (setq completion-to-accept nil))
+	    ;; If called interactively and no region is active, copy thing at point
+	    ((and (memq this-command '(kotl-mode:kill-region kotl-mode:copy-region-as-kill))
+		  (not (use-region-p))
+		  (setq thing (hypb:selectable-thing)))
+	     (if (and copy-p (not (eq copy-p t)))
+		 ;; Return thing as a string
+		 thing
+	       (if (eq last-command 'kill-region)
+		   (kill-append thing (< end start))
+		 (kill-new thing))
+	       (setq deactivate-mark t)))
+	    ;; If no thing to process, copy region whether active or not
+	    ((and (number-or-marker-p start)
+		  (number-or-marker-p end)
+		  (eq (kcell-view:cell start)
+		      (kcell-view:cell end)))
+	     (save-excursion
+	       (goto-char start)
+	       (let ((indent (kcell-view:indent))
+		     killed subst-str)
+		 ;; Convert region to string
+		 ;; Convert all occurrences of newline + indent
+		 ;; to just newline, eliminating indent.
+		 ;; Then save to kill ring.
+		 (setq subst-str (concat "\\([\n\r]\\)" (make-string indent ?\ ))
+		       killed
+		       (hypb:replace-match-string
+			subst-str (buffer-substring start end) "\\1"))
+		 (unless copy-p
+		   ;; If last char of region is a newline, then delete indent in
+		   ;; following line.
+		   (delete-region
+		    start (+ end (if (memq (char-after (1- (max start end)))
+					   '(?\n ?\r))
+				     indent
+				   0))))
+		 (if (and copy-p (not (eq copy-p t)))
+		     ;; Return killed region as a string.
+		     killed
+		   (if (eq last-command 'kill-region)
+		       (kill-append killed (< end start))
+		     (kill-new killed))
+		   (setq this-command 'kill-region)
+		   (setq deactivate-mark t)
+		   (when read-only (barf-if-buffer-read-only))
+		   nil))))
+	    (t (error "(kotl-mode:kill-region): Bad region or not within a single Koutline cell")))
+      (when (and copy-p (memq this-command '(kill-region kotl-mode:kill-region kotl-mode:copy-region-as-kill)))
+	(if thing
+	    (message "Saved selectable thing: %s" thing)
+	  (indicate-copied-region))))))
 
 ;; Bound to {C-w} when completion.el library is loaded.
 (defalias 'kotl-mode:completion-kill-region 'kotl-mode:kill-region)

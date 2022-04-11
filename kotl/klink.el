@@ -1,9 +1,9 @@
-;;; klink.el --- Implicit reference to a kcell action type, for use in koutlines  -*- lexical-binding: t; -*-
+;;; klink.el --- Implicit reference to a Koutline kcell  -*- lexical-binding: t; -*-
 ;;
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    15-Nov-93 at 12:15:16
-;; Last-Mod:     12-Feb-22 at 18:50:58 by Bob Weiner
+;; Last-Mod:     10-Apr-22 at 23:11:46 by Bob Weiner
 ;;
 ;; Copyright (C) 1993-2021  Free Software Foundation, Inc.
 ;; See the "../HY-COPY" file for license information.
@@ -84,6 +84,17 @@
 ;;; Public functions
 ;;; ************************************************************************
 
+(defun klink:absolute (label-and-pos)
+  "With point in a klink's source buffer and LABEL-AND-POS a list of (klink-label, klink-start, klink-end) including delimiters, return an absolute klink string.
+Klink is of the form: \"<absolute-file-name, cell-ref>\".
+See documentation for `kcell:ref-to-id' for valid cell-ref formats."
+  (when (and (derived-mode-p 'kotl-mode) label-and-pos (listp label-and-pos))
+    (let* ((file-and-cell-ref (klink:parse (car label-and-pos)))
+	   (file (or (car file-and-cell-ref) buffer-file-name))
+	   (cell-ref (nth 1 file-and-cell-ref)))
+      (klink:set-yank-handler
+       (format "<%s, %s>" (expand-file-name file) cell-ref)))))
+
 ;;;###autoload
 (defun klink:create (reference)
   "Insert at point an implicit link to REFERENCE.
@@ -108,11 +119,11 @@ See documentation for `kcell:ref-to-id' for valid cell-ref formats."
 	file-ref cell-ref)
     (setq reference (klink:parse reference)
 	  file-ref  (car reference)
-	  cell-ref  (car (cdr reference)))
+	  cell-ref  (nth 1 reference))
     ;; Don't need filename if link is to a cell in current buffer.
-    (if (and file-ref (equal buffer-file-name
-			     (expand-file-name file-ref default-directory)))
-	(setq file-ref nil))
+    (when (and file-ref (equal buffer-file-name
+			       (expand-file-name file-ref default-directory)))
+      (setq file-ref nil))
     (cond (file-ref
 	   (setq file-ref (hpath:relative-to file-ref))
 		 ;; "./" prefix, if any.
@@ -124,67 +135,77 @@ See documentation for `kcell:ref-to-id' for valid cell-ref formats."
 	  (cell-ref (insert "<@ " cell-ref ">"))
 	  (t  (error "(klink:create) Invalid reference, `%s'" reference)))))
 
+;;;###autoload
 (defun klink:at-p ()
   "Return non-nil iff point is within a klink.
 See documentation for the `actypes::link-to-kotl' function for valid klink
 formats.  Value returned is a list of: link-label, link-start-position, and
 link-end-position, (including delimiters)."
-  (let (bol klink referent path)
-    (if (and
-	 ;; Avoid false matches in certain modes.
-	 (not (memq major-mode klink:ignore-modes))
- 	 ;; If this is an OO-Browser listing buffer, ignore anything that
-	 ;; looks like a klink, e.g. a C++ <template> class.
-	 (if (fboundp 'br-browser-buffer-p)
-	     (not (br-browser-buffer-p))
-	   t)
-	 ;; If in a programming mode, Klinks can occur only within comments.
-	 (if (derived-mode-p 'prog-mode)
-	     ;; Next line means point is within a comment
-	     (nth 4 (syntax-ppss))
-	   t)
-	 ;; If in a C-based mode, Klinks can only occur within comments.
-	 (if (and (memq major-mode klink:c-style-modes)
-		  (fboundp 'c-within-comment-p))
-	     (or (c-within-comment-p)
-		 (save-excursion
-		   (and (re-search-backward "//\\|\n" nil t) (looking-at "//"))))
-	   t)
-	 ;; Don't match to C-style lines like:  #include < path >
-	 ;; even if inside a comment.
-	 (if (memq major-mode klink:c-style-modes)
-	     (save-excursion
-	       (beginning-of-line)
-	       (setq bol (point))
-	       (require 'hmouse-tag)
-	       (not (looking-at smart-c-include-regexp)))
-	   t)
-	 (save-excursion
-	   ;; Don't match Elisp print objects such as #<buffer>
-	   ;; even if inside a comment
-	   (and (search-backward "<" bol t)
-		(not (eq (preceding-char) ?#))
-		;; Don't match to \<(explicit)> Hyperbole buttons
-		(not (eq (char-after (1+ (point))) ?\())))
-	 (setq klink (hbut:label-p t "<" ">" t))
-	 (stringp (setq referent (car klink)))
-	 (setq referent (string-trim referent))
-	 ;; Ensure it conforms to some klink specification.
-	 (or (string-match "^ *[-@|!&]" referent)
-	     (if (string-match "\\s-*," referent)
-		 (progn (setq path (substring referent 0 (match-beginning 0)))
-			(hpath:is-p path))
-	       (hpath:is-p referent)))
-	 ;; Eliminate matches to e-mail addresses like, <user@domain>
-	 (not (string-match "[^<> \t\n\r\f][!&@]" referent))
-	 ;; Eliminate matches to URLs
-	 (not (string-match "\\`[a-zA-Z]+:" referent))
-	 ;; Don't match to <HTML> and </SGML> type tags
-	 (not (and (memq major-mode hui-select-markup-modes)
-		   ;; Assume , followed by a number is a klink.
-		   (not (string-match ",\\s-*[0-9]" referent))
-		   (string-match "\\`[a-zA-Z!/]" referent))))
-	klink)))
+  (let (bol label-and-pos referent path)
+    (when (and
+	   ;; Avoid false matches in certain modes.
+	   (not (memq major-mode klink:ignore-modes))
+ 	   ;; If this is an OO-Browser listing buffer, ignore anything that
+	   ;; looks like a klink, e.g. a C++ <template> class.
+	   (if (fboundp 'br-browser-buffer-p)
+	       (not (br-browser-buffer-p))
+	     t)
+	   ;; If in a programming mode, Klinks can occur only within comments.
+	   (if (derived-mode-p 'prog-mode)
+	       ;; Next line means point is within a comment
+	       (nth 4 (syntax-ppss))
+	     t)
+	   ;; If in a C-based mode, Klinks can only occur within comments.
+	   (if (and (memq major-mode klink:c-style-modes)
+		    (fboundp 'c-within-comment-p))
+	       (or (c-within-comment-p)
+		   (save-excursion
+		     (and (re-search-backward "//\\|\n" nil t) (looking-at "//"))))
+	     t)
+	   ;; Don't match to C-style lines like:  #include < path >
+	   ;; even if inside a comment.
+	   (if (memq major-mode klink:c-style-modes)
+	       (save-excursion
+		 (beginning-of-line)
+		 (setq bol (point))
+		 (require 'hmouse-tag)
+		 (not (looking-at smart-c-include-regexp)))
+	     t)
+	   (save-excursion
+	     ;; Don't match Elisp print objects such as #<buffer>
+	     ;; even if inside a comment
+	     (and (search-backward "<" bol t)
+		  (not (eq (preceding-char) ?#))
+		  ;; Don't match to \<(explicit)> Hyperbole buttons
+		  (not (eq (char-after (1+ (point))) ?\())))
+	   (setq label-and-pos (hbut:label-p t "<" ">" t))
+	   (stringp (setq referent (car label-and-pos)))
+	   (setq referent (string-trim referent))
+	   ;; Ensure it conforms to some klink specification.
+	   (or (string-match "^ *[-@|!&]" referent)
+	       (if (string-match "\\s-*," referent)
+		   (progn (setq path (substring referent 0 (match-beginning 0)))
+			  (hpath:is-p path))
+		 (hpath:is-p referent)))
+	   ;; Eliminate matches to e-mail addresses like, <user@domain>
+	   (not (string-match "[^<> \t\n\r\f][!&@]" referent))
+	   ;; Eliminate matches to URLs
+	   (not (string-match "\\`[a-zA-Z]+:" referent))
+	   ;; Don't match to <HTML> and </SGML> type tags
+	   (not (and (memq major-mode hui-select-markup-modes)
+		     ;; Assume , followed by a number is a klink.
+		     (not (string-match ",\\s-*[0-9]" referent))
+		     (string-match "\\`[a-zA-Z!/]" referent))))
+      label-and-pos)))
+
+(defun klink:set-yank-handler (klink)
+  "Add yank-handler to KLINK so link is made relative when yanked into the same koutline or the same directory.
+Return the modified KLINK."
+  (add-text-properties 0 (length klink)
+		       (list 'yank-handler 'klink:yank-handler
+			     'yank-excluded-properties (cons 'yank-handler (get-text-property 0 'yank-excluded-properties klink)))
+		       klink)
+  klink)
 
 ;;; ************************************************************************
 ;;; Hyperbole type definitions
@@ -196,7 +217,7 @@ link-end-position, (including delimiters)."
 See documentation for the `link-to-kotl' function for valid klink formats."
   (let* ((link-and-pos (klink:at-p))
 	 (link (car link-and-pos))
-	 (start-pos (car (cdr link-and-pos))))
+	 (start-pos (nth 1 link-and-pos)))
     (when link
       (ibut:label-set link-and-pos)
       (hact 'klink:act link start-pos))))
@@ -253,8 +274,8 @@ See documentation for `kcell:ref-to-id' for valid cell-ref formats."
 (defun klink:parse (reference)
   "Return (file-ref cell-ref) list parsed from REFERENCE string.
 Either element of the list may be nil if REFERENCE does not contain that
-element.  REFERENCE should be one of the following forms (and may include an
-optional pair of <> delimiters:
+element.  REFERENCE must be one of the following forms (and may include an
+optional pair of <> delimiters) or an error is triggered:
   (pathname, cell-ref)
   pathname, cell-ref
   cell-ref
@@ -274,7 +295,7 @@ See documentation for `kcell:ref-to-id' for valid cell-ref formats."
      reference)
     ;; pathname cell-ref
     (list (match-string 1 reference) (match-string 2 reference)))
-   ((string-match (format "\\`\\s-*<?\\s-*\\(%s\\)\\s-*>?\\s-*\\'"
+   ((string-match (format "\\`\\s-*<?@?\\s-*\\(%s\\)\\s-*>?\\s-*\\'"
 			  klink:cell-ref-regexp)
 		  reference)
     ;; cell-ref
@@ -308,6 +329,21 @@ Assume point is in klink referent buffer, where the klink points."
 	  (if (and new-label (not (equal label new-label)))
 	      (klink:replace-label klink link-buf start new-label)))))
 
+(defun klink:yank-handler (klink)
+  (if (string-match "<\\([^,]+\\), \\(.+\\)" klink)
+      (let* ((file (match-string 1 klink))
+	     (rest (match-string 2 klink))
+	     (dir (file-name-directory file)))
+	(cond ((equal file buffer-file-name)
+	       ;; Remove the klink filename since yanking into the
+	       ;; same file
+	       (insert (format "<@ %s" rest)))
+	      ((and buffer-file-name (equal dir (file-name-directory buffer-file-name)))
+	       ;; Use filename without dir since yanking into same directory
+	       (insert (format "<%s, %s" (file-name-nondirectory file) rest)))
+	      (t (insert klink))))
+    (insert klink)))
+				 
 ;;; ************************************************************************
 ;;; Private variables
 ;;; ************************************************************************

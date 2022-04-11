@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    18-Sep-91 at 02:57:09
-;; Last-Mod:     20-Feb-22 at 22:08:04 by Bob Weiner
+;; Last-Mod:     10-Apr-22 at 09:45:19 by Bob Weiner
 ;;
 ;; Copyright (C) 1991-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -972,11 +972,11 @@ Ignore email-related buffers."
 	      nil
 	    (goto-char start)
 	    (insert comment-start)
-	    (if (not (eq (preceding-char) ?\ ))
-		(insert ?\ ))
+	    (unless (eq (preceding-char) ?\ )
+	      (insert ?\ ))
 	    (goto-char (+ (point) (- end start)))
-	    (if (not (eq (following-char) ?\ ))
-		(insert ?\ ))
+	    (unless (eq (following-char) ?\ )
+	      (insert ?\ ))
 	    (insert comment-end))))))
 
 ;;; Regexps derived in part from "filladapt.el" by Kyle E. Jones under
@@ -1009,12 +1009,11 @@ Ignore email-related buffers."
 (defun    hbut:fill-prefix-remove (label)
   "Remove any recognized fill prefix from within LABEL.
 `hbut:fill-prefix-regexps' is a list of fill prefixes to recognize."
-  (if (string-match "\n" label)
-      (mapc (lambda (fill-prefix)
-	      (and (string-match "\n" label)
-		   (setq label
-			 (hypb:replace-match-string fill-prefix label " " t))))
-	    hbut:fill-prefix-regexps))
+  (when (string-match "\n" label)
+    (mapc (lambda (prefix)
+	    (when (string-match "\n" label)
+	      (setq label (hypb:replace-match-string prefix label " " t))))
+	  hbut:fill-prefix-regexps))
   label)
 
 (defun    hbut:delete (&optional lbl-key buffer key-src)
@@ -1070,7 +1069,8 @@ nil.  BUFFER defaults to the current buffer."
 
 (defun    hbut:is-p (object)
   "Return non-nil if OBJECT is a symbol representing a Hyperbole button."
- (and (symbolp object) (hattr:get object 'categ)))
+ (when (symbolp object)
+   (hattr:get object 'categ)))
 
 (defun    hbut:key (hbut)
   "Return the key for Hyperbole button symbol HBUT."
@@ -1131,17 +1131,17 @@ With optional FULL when source is a pathname, return the full pathname."
   "Return unformatted filename associated with formatted current buffer.
 This is used to obtain the source of Hyperbole buttons for buffers that
 represent the output of particular document formatters."
-  (and (or (eq major-mode 'Info-mode)
-	   (string-match "\\.info\\(-[0-9]+\\)?$" (buffer-name)))
-       (let ((src (and buffer-file-name
-		       (substring
-			buffer-file-name
-			0 (string-match "\\.[^.]+$" buffer-file-name)))))
-	 (cond ((file-exists-p (concat src ".texi"))
-		(concat src ".texi"))
-	       ((file-exists-p (concat src ".texinfo"))
-		(concat src ".texinfo"))
-	       ((current-buffer))))))
+  (when (or (eq major-mode 'Info-mode)
+	    (string-match "\\.info\\(-[0-9]+\\)?$" (buffer-name)))
+    (let ((src (and buffer-file-name
+		    (substring
+		     buffer-file-name
+		     0 (string-match "\\.[^.]+$" buffer-file-name)))))
+      (cond ((file-exists-p (concat src ".texi"))
+	     (concat src ".texi"))
+	    ((file-exists-p (concat src ".texinfo"))
+	     (concat src ".texinfo"))
+	    ((current-buffer))))))
 
 (defun    hbut:key-src-set-buffer (src)
   "Set buffer to SRC, a buffer, buffer name, file, directory or symlink and return SRC or nil if invalid."
@@ -1570,8 +1570,7 @@ Return symbol for button deleted or nil."
   (unless but-sym
     (setq but-sym 'hbut:current))
   (when (ibut:is-p but-sym)
-    (let ((but-key (hattr:get but-sym 'lbl-key))
-	  (loc     (hattr:get but-sym 'loc))
+    (let ((loc     (hattr:get but-sym 'loc))
 	  (start   (hattr:get but-sym 'lbl-start))
 	  (end     (hattr:get but-sym 'lbl-end)))
       (when (and start end)

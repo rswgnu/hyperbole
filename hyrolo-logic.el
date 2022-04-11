@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    13-Jun-89 at 22:57:33
-;; Last-Mod:     24-Jan-22 at 00:23:35 by Bob Weiner
+;; Last-Mod:     10-Apr-22 at 09:53:39 by Bob Weiner
 ;;
 ;; Copyright (C) 1989-2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -136,13 +136,12 @@ single argument."
   "Apply SEXP to all entries in optional IN-BUFS, display entries where SEXP is non-nil.
 If IN-BUFS is nil, `hyrolo-file-list' is used.  If optional COUNT-ONLY is
 non-nil, don't display entries, return count of matching entries only.  If
-optional INCLUDE-SUB-ENTRIES flag is non-nil, SEXP will be applied across all
-sub-entries at once.  Default is to apply SEXP to each entry and sub-entry
-separately.  Entries are displayed with all of their sub-entries unless
-INCLUDE-SUB-ENTRIES is nil and optional NO-SUB-ENTRIES-OUT flag is non-nil.
-SEXP should use the free variables `start' and `end' which contain the limits
-of the region on which it should operate.  Returns number of evaluations of
-SEXP that matched entries."
+optional INCLUDE-SUB-ENTRIES flag is non-nil, apply SEXP across all sub-entries
+at once.  Default is to apply SEXP to each entry and sub-entry separately.
+Entries are displayed with all of their sub-entries unless INCLUDE-SUB-ENTRIES
+is nil and optional NO-SUB-ENTRIES-OUT flag is non-nil.  SEXP should utilize the
+free variables `start' and `end' as the region on which to operate.
+Return the number of evaluations of SEXP that match entries."
   (let* ((display-buf (unless count-only
 		       (prog1 (set-buffer (get-buffer-create hyrolo-display-buffer))
 			 (setq buffer-read-only nil)
@@ -164,13 +163,12 @@ SEXP that matched entries."
 			 include-sub-entries _no-sub-entries-out)
   "Apply logical SEXP to each entry in HYROLO-BUF and write out matching entries to `hyrolo-display-buffer'.
 If optional COUNT-ONLY is non-nil, don't display entries, return count of
-matching entries only.  If optional INCLUDE-SUB-ENTRIES flag is non-nil, SEXP
-will be applied across all sub-entries at once.  Default is to apply SEXP to
-each entry and sub-entry separately.  Entries are displayed with all of their
-sub-entries unless INCLUDE-SUB-ENTRIES is nil and optional NO-SUB-ENTRIES-OUT
-flag is non-nil.  SEXP should use the free variables `start' and `end' which
-contain the limits of the region on which it should operate.  Returns number
-of applications of SEXP that matched entries."
+matching entries only.  If optional INCLUDE-SUB-ENTRIES flag is non-nil, apply
+SEXP across all sub-entries at once.  Default is to apply SEXP to each entry
+and sub-entry separately.  Entries are displayed with all of their sub-entries
+unless INCLUDE-SUB-ENTRIES is nil and optional NO-SUB-ENTRIES-OUT flag is non-nil.
+SEXP should utilize the free variables `start' and `end' as the region on which
+to operate.  Return the number of evaluations of SEXP that match entries."
   (setq hyrolo-buf (or (get-buffer hyrolo-buf) hyrolo-buf))
   (if (or (bufferp hyrolo-buf)
 	  (if (file-exists-p hyrolo-buf)

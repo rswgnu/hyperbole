@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    15-Nov-93 at 11:57:05
-;; Last-Mod:     12-Feb-22 at 10:42:20 by Mats Lidell
+;; Last-Mod:     11-Apr-22 at 23:51:03 by Bob Weiner
 ;;
 ;; Copyright (C) 1993-2021  Free Software Foundation, Inc.
 ;; See the "../HY-COPY" file for license information.
@@ -120,6 +120,7 @@ BUFFER may be a buffer or a buffer name."
   (insert-buffer-substring buffer)
   (kotl-mode:add-indent-to-region))
 
+;;;###autoload
 (defun kimport:insert-file (import-from children-p)
   "Insert each element in IMPORT-FROM as a separate cell in the current view.
 Insert as sibling cells following the current cell unless prefix arg,
@@ -147,6 +148,7 @@ Set mark after the inserted text."
     (push-mark (+ (point) (car (cdr tem)))))
   (kotl-mode:add-indent-to-region))
 
+;;;###autoload
 (defun kimport:insert-register (register &optional arg)
   "Insert contents of register REGISTER at point in current cell.
 REGISTER is a character naming the register to insert.
@@ -167,8 +169,9 @@ Interactively, second arg is non-nil if prefix ARG is supplied."
            (princ (marker-position val) (current-buffer)))
           (t
            (error "Register `%c' does not contain text" register))))
-  ;; Do want to activate the mark here.
-  (if (not arg) (exchange-point-and-mark)))
+  (unless arg
+    ;; Do want to activate the mark here.
+    (exchange-point-and-mark)))
 
 ;;; Augment right-side numbered files, blank line between cells
 ;;;

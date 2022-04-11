@@ -1,9 +1,61 @@
+2022-04-12  Bob Weiner  <rsw@gnu.org>
+
+* hypb.el (hypb:selectable-thing): Add and use in hypb:kill-ring-save, kotl-mode:kill-region,
+          (hypb:selectable-thing-and-bounds): Add and use in hypb:copy-to-register.
+  hui-select.el (hui-select-get-region): Rename to hui-select-get-thing.
+
+2022-04-11  Bob Weiner  <rsw@gnu.org>
+
+* kotl/kimport.el (kimport:insert-register): Make autoload since could be invoked from {C-x r i}
+    when in a Koutline.
+                  (kimport:insert-file): Make autoload since could be invoked from {C-x i} when
+    in a Koutline.
+
+2022-04-10  Bob Weiner  <rsw@gnu.org>
+
+* kotl/klink.el (klink:absolute): Add.
+                (klink:parse): Allow for '<@' at the start of a klink reference.
+
+* hypb.el (hypb:copy-to-register): Add.
+  hyperbole.el (hkey-initialize): Bind {C-x r s} to hypb:copy-to-register in hyperbole-mode.
+
+* hypb.el (hypb:kill-ring-save):
+  hyperbole.el (hkey-initialize): Override the {M-w} command from "simple.el" when hyperbole-mode is
+    active to allow copying selectable thing at point if no region is active.
+
+* kotl/kotl-mode.el (kotl-mode:kill-region): When called interactively with no region active, copy
+    selectable thing at point or reference to kcell at point.  Also show copied region to the user
+    if called interactively with copy-p flag.
+
+* kotl/kview.el (require 'klink): Add.
+                (kcell-view:absolute-reference, kcell-view:reference): Return nil if not in kotl-mode.
+
+* kotl/kotl-mode.el (kotl-mode:copy-kcell-reference-to-register): Add to save a Koutline cell reference
+    at point to a register.
+                    (kotl-mode:copy-absolute-kcell-link-to-kill-ring): Rename from
+    kotl-mode:copy-absolute-klink-to-kill-ring.
+                    (kotl-mode:copy-relative-kcell-link-to-kill-ring): Rename from
+    kotl-mode:copy-relative-klink-to-kill-ring.
+                    (kotl-mode:copy-absolute-kcell-link-to-register): Rename from
+    kotl-mode:copy-absolute-klink-to-register.
+                    (kotl-mode:copy-relative-kcell-link-to-register): Rename from
+    kotl-mode:copy-relative-klink-to-register.
+
+* kotl/klink.el (klink:at-p): Make an autoload since klinks may be tested in non-Koutline buffers.
+    Also add yank-handler text property used when yanking klink into a buffer.
+                (klink:set-yank-handler):
+                (klink:yank-handler): Add to handle yanks of klinks and adjust based on yank location.
+  kotl/kview.el (kcell-view:absolute-reference, kcell-view:reference): Use klink:set-yank-handler.
+
+* hsettings.el (hyperbole-web-search-alist): Update value-type property to allow for function symbols,
+    e.g. webjump item.
+
 2022-04-09  Mats Lidell  <matsl@gnu.org>
 
 * test/hyrolo-tests.el (hyrolo-add-items-at-multiple-levels): Add check
     and remove test temp file.
 
-2022-04-03  Kathy  <bk@water-imac.lan>
+2022-04-03  Bob Weiner  <rsw@gnu.org>
 
 * test/kotl-mode-tests.el (setup-kotl-mode-example-test): Fix so handles multiple buffers with same
     buffer name prefix.

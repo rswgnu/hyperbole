@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    6/30/93
-;; Last-Mod:      3-Apr-22 at 19:00:16 by Bob Weiner
+;; Last-Mod:     10-Apr-22 at 22:31:58 by Bob Weiner
 ;;
 ;; Copyright (C) 1993-2021  Free Software Foundation, Inc.
 ;; See the "../HY-COPY" file for license information.
@@ -17,7 +17,7 @@
 ;;; Other required Lisp Libraries
 ;;; ************************************************************************
 
-(eval-and-compile (mapc #'require '(klabel kfill hypb)))
+(eval-and-compile (mapc #'require '(klabel kfill klink hypb)))
 ;; Quiet byte compiler warnings for this free variable.
 (eval-when-compile
   (defvar label-sep-len nil))
@@ -481,23 +481,27 @@ If between kcells, move to the previous one.  The current cell may be hidden."
 	     (error "(kcell-view:to-label-end): Can't find end of current cell's label"))))))
 
 (defun kcell-view:absolute-reference (&optional pos)
-  "Return a reference to the kcell at optional POS or point for use in a link.
+  "Return a klink to the kcell at optional POS or point; return nil if not in a kcell.
 The reference is a string of the form, \"<kcell-file, cell-ref>\"
 where cell-ref is as described in the documentation for
 `kcell:ref-to-id'.  Kcell-file is an absolute path to the current
 Koutline file."
-  (format "<%s, %s=%s>" buffer-file-name
-	  (kcell-view:label pos) (kcell-view:idstamp pos)))
+  (when (derived-mode-p 'kotl-mode)
+    (klink:set-yank-handler
+     (format "<%s, %s=%s>" buffer-file-name
+	     (kcell-view:label pos) (kcell-view:idstamp pos)))))
 
 (defun kcell-view:reference (&optional pos relative-dir)
-  "Return a reference to the kcell at optional POS or point for use in a link.
+  "Return a klink to the kcell at optional POS or point; return nil if not in a kcell.
 The reference is a string of the form, \"<kcell-file, cell-ref>\"
 where cell-ref is as described in the documentation for
 `kcell:ref-to-id'.  Kcell-file is made relative to optional
 RELATIVE-DIR (or `default-directory' if RELATIVE-DIR is not given
 or is nil), before it is returned."
-  (format "<%s, %s=%s>" (hpath:relative-to buffer-file-name relative-dir)
-	  (kcell-view:label pos) (kcell-view:idstamp pos)))
+  (when (derived-mode-p 'kotl-mode)
+    (klink:set-yank-handler
+     (format "<%s, %s=%s>" (hpath:relative-to buffer-file-name relative-dir)
+	     (kcell-view:label pos) (kcell-view:idstamp pos)))))
 
 (defun kcell-view:remove-attr (attribute &optional pos)
   "Remove ATTRIBUTE, if any, for current cell or cell at optional POS.  Return the modified cell."

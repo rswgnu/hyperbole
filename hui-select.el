@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Oct-96 at 02:25:27
-;; Last-Mod:     20-Feb-22 at 14:50:54 by Bob Weiner
+;; Last-Mod:     12-Apr-22 at 00:43:21 by Bob Weiner
 ;;
 ;; Copyright (C) 1996-2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -391,8 +391,8 @@ Also, add language-specific syntax setups to aid in thing selection."
 	(hui-select-word (point)))))
 
 ;;;###autoload
-(defun hui-select-get-region ()
-  "Return the region that `hui-select-thing' would select."
+(defun hui-select-get-thing ()
+  "Return the thing at point that `hui-select-thing' would select."
   (let ((region-bounds (hui-select-get-region-boundaries)))
     (when region-bounds
       (buffer-substring-no-properties (car region-bounds) (cdr region-bounds)))))

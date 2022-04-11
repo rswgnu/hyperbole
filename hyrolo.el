@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     7-Jun-89 at 22:08:29
-;; Last-Mod:     26-Mar-22 at 14:57:44 by Bob Weiner
+;; Last-Mod:     10-Apr-22 at 23:46:44 by Bob Weiner
 ;;
 ;; Copyright (C) 1991-2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -224,8 +224,7 @@ entry which begins with the parent string."
 	(error "(hyrolo-add): Insertion failed, `%s' parent entry not found in \"%s\""
 	       parent file)))
     (narrow-to-region (point) (progn (hyrolo-to-entry-end t (length level)) (point)))
-    (let* ((len (length name))
-	   (name-level (concat level "*"))
+    (let* ((name-level (concat level "*"))
 	   (level-len (length name-level))
 	   (first-char (aref name 0))
 	   (entry "")
@@ -980,8 +979,7 @@ Return number of matching entries found."
       (insert "No result.")
     (print contacts (get-buffer-create "*contacts-data*"))
     (dolist (contact contacts)
-      (let* (child
-	     (name-value (nth 0 (xml-get-children contact 'gd:name)))
+      (let* ((name-value (nth 0 (xml-get-children contact 'gd:name)))
              (fullname (xml-node-child-string (nth 0 (xml-get-children name-value 'gd:fullName))))
              (givenname (xml-node-child-string (nth 0 (xml-get-children name-value 'gd:givenName))))
              (familyname (xml-node-child-string (nth 0 (xml-get-children name-value 'gd:familyName))))
@@ -995,7 +993,7 @@ Return number of matching entries found."
 
              (notes (xml-node-child-string (nth 0 (xml-get-children contact 'content))))
              ;; Links
-             (links (xml-get-children contact 'link))
+             ;; (links (xml-get-children contact 'link))
 
              ;; Multiple values
              ;; Format is ((rel-type . data) (rel-type . data) … )
@@ -1229,12 +1227,13 @@ Return number of groupings matched."
 	;; Caller may have adjusted entry visibility, so don't do this: (outline-show-all)
 	total-found))))
 
-(defun hyrolo-map-single-subtree (func exact-level-regexp level-len buffer-read-only)
+(defun hyrolo-map-single-subtree (func exact-level-regexp level-len read-only-flag)
   "See doc for `hyrolo-map-level'.  Return number of groupings matched."
   (let* ((start (point))
 	 (end 0)
 	 (num-found 0)
-	 (higher-level-entry-regexp))
+	 (higher-level-entry-regexp)
+	 (buffer-read-only read-only-flag))
     ;; Move to the next instance of 'level-regexp'.
     ;; Although subtrees are hidden, searches will still see them.
     (when (re-search-forward exact-level-regexp nil t)
@@ -1498,7 +1497,7 @@ Return point where matching entry begins or nil if not found."
 CURR-ENTRY-LEVEL-LEN is the integer length of the last entry
 header found.  If INCLUDE-SUB-ENTRIES is nil, CURR-ENTRY-LEVEL-LEN is not needed.
 Return current point."
-  ;; Sets free variable, next-entry-exists, for speed.
+  ;; Set free variable, next-entry-exists, for speed.
   (while (and (setq next-entry-exists
 		    (re-search-forward hyrolo-entry-regexp nil t))
 	      include-sub-entries

@@ -5,7 +5,7 @@
 ;; Author:           Bob Weiner
 ;; Maintainer:       Bob Weiner <rsw@gnu.org>, Mats Lidell <matsl@gnu.org>
 ;; Created:          06-Oct-92 at 11:52:51
-;; Last-Mod:     20-Feb-22 at 12:15:16 by Bob Weiner
+;; Last-Mod:     10-Apr-22 at 21:12:50 by Bob Weiner
 ;; Released:         03-May-21
 ;; Version:          8.0.0pre
 ;; Keywords:         comm, convenience, files, frames, hypermedia, languages, mail, matching, mouse, multimedia, outlines, tools, wp
@@ -260,12 +260,6 @@ of the commands."
 	  (hkey-set-key "\M-o" #'hkey-operate)
 	(hkey-maybe-set-key "\M-o" #'hkey-operate)))
     ;;
-    ;; Bind {C-c @} to create a user-specified sized grid of windows
-    ;; displaying different buffers.
-    ;;
-    ;; Don't override prior bindings of this key.
-    (hkey-maybe-set-key "\C-c@" #'hycontrol-windows-grid)
-    ;;
     ;; Explicit button renames without invoking the Hyperbole menu.
     ;; No binding by default.
     ;; Don't override prior bindings of this key.
@@ -275,6 +269,20 @@ of the commands."
     ;; buffer when invoked repeatedly, showing in the minibuffer the type
     ;; of unit selected each time.
     (hkey-maybe-set-key "\C-c\C-m" #'hui-select-thing)
+    ;;
+    ;; Override the {M-w} command from "simple.el" when hyperbole-mode is active
+    ;; to allow copying kcell references or regions to the kill ring.
+    (hkey-set-key [remap kill-ring-save] #'hypb:kill-ring-save)
+    ;;
+    ;; Override the {C-x r s} command from "register.el" when hyperbole-mode is active
+    ;; to allow saving kcell references or regions to a register.
+    (hkey-set-key "\C-xrs" #'hypb:copy-to-register)
+    ;;
+    ;; Bind {C-c @} to create a user-specified sized grid of windows
+    ;; displaying different buffers.
+    ;;
+    ;; Don't override prior bindings of this key.
+    (hkey-maybe-set-key "\C-c@" #'hycontrol-windows-grid)
     ;;
     ;; Bind {C-c \} to interactively manage windows and frames.
     (hkey-maybe-set-key "\C-c\\" #'hycontrol-enable-windows-mode)
