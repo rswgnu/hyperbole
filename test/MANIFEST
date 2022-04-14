@@ -9,6 +9,7 @@ hmouse-drv-tests.el     - hmouse-drv unit tests
 hmouse-info-tests.el    - hmouse-info unit tests
 hpath-tests.el          - unit tests for hpath
 hsys-org-tests.el       - hsys-org tests
+hui-select-tests.el     - hui-select tests
 hui-tests.el            - Tests for hui.el
 hypb-tests.el           - test for hypb.el
 hyperbole-tests.el      - Tests for hyperbole.el
