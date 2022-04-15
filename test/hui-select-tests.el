@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    14-Apr-22 at 23:45:52
-;; Last-Mod:     15-Apr-22 at 00:31:20 by Mats Lidell
+;; Last-Mod:     15-Apr-22 at 22:38:51 by Mats Lidell
 ;;
 ;; Copyright (C) 2021  Free Software Foundation, Inc.
 ;; See the "../HY-COPY" file for license information.
@@ -24,7 +24,7 @@
 (require 'ert)
 (require 'hui-select)
 
-(ert-deftest hui-select__at-delimited-thing-p ()
+(ert-deftest hui-select--at-delimited-thing-p ()
   "At delimited thing p returns type of thing."
   (with-temp-buffer
     (insert "(\"x\") ")
@@ -49,7 +49,7 @@
     (goto-char 5)
     (should (equal (hui-select-at-delimited-thing-p) 'hui-select-sexp-end))))
 
-(ert-deftest hui-select__delimited-thing ()
+(ert-deftest hui-select--delimited-thing ()
   "Delimited thing marks region of thing."
   (with-temp-buffer
     (insert "(\"x\") ")
@@ -65,7 +65,7 @@
     (should (string= (buffer-substring-no-properties (region-beginning) (region-end)) "\"x\""))))
 
 
-(ert-deftest hui-select__delimited-thing-ending-in-newline ()
+(ert-deftest hui-select--delimited-thing-ending-in-newline ()
   "Delimited thing marks region of thing when next char after things is a newline."
   (with-temp-buffer
     (insert "(\"x\")\n")
