@@ -2,9 +2,10 @@
 
 * test/MANIFEST: Add hui-select.el
 
-* test/hui-select-tests.el (hui-select__at-delimited-thing-p)
-    (hui-select__delimited-thing)
-    (hui-select__delimited-thing-ending-in-newline): Add tests.
+* test/hui-select-tests.el (hui-select--thing)
+    (hui-select--thing-interactive-prints-type-of-match)
+    (hui-select--at-delimited-thing-p) (hui-select--delimited-thing)
+    (hui-select--delimited-thing-ending-in-newline): Add hui-select tests.
 
 2022-04-12  Bob Weiner  <rsw@gnu.org>
 
