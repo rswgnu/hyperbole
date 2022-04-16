@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    15-Oct-91 at 20:13:17
-;; Last-Mod:     26-Feb-22 at 16:51:07 by Bob Weiner
+;; Last-Mod:     16-Apr-22 at 16:47:36 by Bob Weiner
 ;;
 ;; Copyright (C) 1991-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -18,7 +18,7 @@
 ;;; ************************************************************************
 
 (require 'hypb)
-(require 'hsettings)                    ;For hyperbole-web-search-alist
+(require 'hsettings)                    ; For hyperbole-web-search-alist
 (require 'browse-url)
 
 ;;; ************************************************************************
@@ -339,7 +339,7 @@ documentation, not the full text."
       (beep)
       (setq hargs:reading-type 'hmenu)
       (discard-input))
-    ;; Here, the minibuffer has been exited, and `key' has been set to either:
+    ;; Here, the minibuffer has been exited, and `key' has been set to one of:
     ;;   a menu item first capitalized character code;
     ;;   a menu command character code;
     ;;   1 for in the menu prefix area;
@@ -365,25 +365,15 @@ documentation, not the full text."
 ;;; Private functions
 ;;; ************************************************************************
 
-(if (fboundp 'window-lowest-p)
-    (defun hui:bottom-window ()
-      "Return a window that is at the bottom of the selected frame."
-      (let ((winds (hypb:window-list 'no-mini))
-	    (window))
-	(while (and (not window) winds)
-	  (if (window-lowest-p (car winds))
-	      (setq window (car winds))
-	    (setq winds (cdr winds))))
-	window))
-  (defun hui:bottom-window ()
-    "Return a window that is at the bottom of the selected frame."
-    (let* ((winds (hypb:window-list 'no-mini))
-	   (bot-list (mapcar
-		      (lambda (wind)
-			(nth 3 (window-edges wind)))
-		      winds))
-	   (bot (apply #'max bot-list)))
-      (nth (- (length winds) (length (memq bot bot-list))) winds))))
+(defun hui:bottom-window ()
+  "Return a window that is at the bottom of the selected frame."
+  (let* ((winds (hypb:window-list 'no-mini))
+	 (bot-list (mapcar
+		    (lambda (wind)
+		      (nth 3 (window-edges wind)))
+		    winds))
+	 (bot (apply #'max bot-list)))
+    (nth (- (length winds) (length (memq bot bot-list))) winds)))
 
 (defun hui:menu-item (key doc-flag help-string-flag &optional menu menu-alist)
 "Return either the action or the documentation for a Hyperbole minibuffer menu item KEY.
@@ -453,7 +443,7 @@ constructs.  If not given, the top level Hyperbole menu is used."
 				  (list service
 					;; a command symbol
 					action
-					"Prompt for webjump URL")))
+					"Run a command that prompts for a search term and performs the search")))
 			      hyperbole-web-search-alist)))))
     web-mini-menu))
 
@@ -471,8 +461,7 @@ constructs.  If not given, the top level Hyperbole menu is used."
 
 (defvar hui:menu-mode-map nil
   "Keymap containing Hyperbole minibuffer menu commands.")
-(if hui:menu-mode-map
-    nil
+(unless hui:menu-mode-map
   (setq hui:menu-mode-map (make-keymap))
   ;; Make self-inserting chars all execute hui:menu-enter
   (suppress-keymap hui:menu-mode-map)
@@ -490,11 +479,9 @@ constructs.  If not given, the top level Hyperbole menu is used."
   (define-key hui:menu-mode-map hui:menu-select #'hui:menu-enter)
   (define-key hui:menu-mode-map "\M-b"          #'hui:menu-backward-item)
   (define-key hui:menu-mode-map "\M-f"          #'hui:menu-forward-item)
-  (define-key hui:menu-mode-map "\C-i"          #'hui:menu-forward-item)  ;; TAB
+  (define-key hui:menu-mode-map "\C-i"          #'hui:menu-forward-item) ;; TAB
   (define-key hui:menu-mode-map [backtab]       #'hui:menu-backward-item) ;; Shift-TAB
-  (define-key hui:menu-mode-map "\M-\C-i"       #'hui:menu-backward-item) ;; M-TAB
-  ;;
-)
+  (define-key hui:menu-mode-map "\M-\C-i"       #'hui:menu-backward-item)) ;; M-TAB
 
 ;;; ************************************************************************
 ;;; Hyperbole Minibuffer Menus
@@ -513,35 +500,22 @@ constructs.  If not given, the top level Hyperbole menu is used."
 			  hyperb:version)))
 	   (list (list (concat "Hy" version ">"))))
 	 (delq nil
-	       (list
-		'("Act"         hui:hbut-act
-		  "Activate button at point or prompt for a labeled button in buffer.")
-		'("Butfile/"    (menu . butfile)
-		  "Quick access button files menus.")
-		'("Cust/"       (menu . cust)
-		  "Customizes Hyperbole by setting major options.")
-		'("Doc/"        (menu . doc)
-		  "Quick access to Hyperbole documentation.")
-		'("Ebut/"       (menu . ebut)
-		  "Explicit button commands.")
-		'("Find/"       (menu . find)
-		  "Find matching line commands.")
-		'("Gbut/"       (menu . gbut)
-		  "Global button commands.")
-		'("Hist"        (hhist:remove current-prefix-arg)
+	       '(
+		 ("Act"         hui:hbut-act     "Activate button at point or prompt for a labeled button in buffer.")
+		 ("Butfile/"    (menu . butfile) "Quick access button files menus.")
+		 ("Cust/"       (menu . cust)    "Customizes Hyperbole by setting major options.")
+		 ("Doc/"        (menu . doc)     "Quick access to Hyperbole documentation.")
+		 ("Ebut/"       (menu . ebut)    "Explicit button commands.")
+		 ("Find/"       (menu . find)    "Find matching line commands.")
+		 ("Gbut/"       (menu . gbut)    "Global button commands.")
+		 ("Hist"        (hhist:remove current-prefix-arg)
 		  "Jumps back to location prior to last Hyperbole button follow.")
-		'("Ibut/"       (menu . ibut)
-		  "Implicit button and button type commands.")
-		'("Kotl/"       (menu . kotl)
-		  "Autonumbered outlining and hyperlink capabilities.")
-		'("Msg/"        (menu . msg)
-		  "Mail and News messaging capabilities.")
-		'("Rolo/"       (menu . hyrolo)
-		  "Hierarchical, multi-file rolo lookup and edit commands.")
-		'("Screen/"     (menu . screen)
-		  "Screen display management commands.")
-		'("Win/"        (menu . win)
-		  "Window configuration management commands.")))))
+		 ("Ibut/"       (menu . ibut)    "Implicit button and button type commands.")
+		 ("Kotl/"       (menu . kotl)    "Autonumbered outlining and hyperlink capabilities.")
+		 ("Msg/"        (menu . msg)     "Mail and News messaging capabilities.")
+		 ("Rolo/"       (menu . hyrolo)  "Hierarchical, multi-file rolo lookup and edit commands.")
+		 ("Screen/"     (menu . screen)  "Screen display management commands.")
+		 ("Win/"        (menu . win)     "Window configuration management commands.")))))
        '(butfile .
 	 (("Butfile>")
 	  ("DirFile"      (find-file hbmap:filename)
@@ -554,28 +528,28 @@ constructs.  If not given, the top level Hyperbole menu is used."
 	   "Edits user-specific button file.")))
        '(cust .
          (("Cust>")
-	  ("All-Options" (customize-browse 'hyperbole)
+	  ("All-Options"       (customize-browse 'hyperbole)
 	   "Display tree of Hyperbole customizable options by group.")
-	  ("Debug-Toggle" hkey-toggle-debug
+	  ("Debug-Toggle"      hkey-toggle-debug
 	   "Toggle display of Smart Key context after each press, for debugging.")
-	  ("Find-File-URLs" hpath:find-file-urls-mode
+	  ("Find-File-URLs"    hpath:find-file-urls-mode
 	   "Toggle find-file support for ftp and www URLs.")
 	  ("Isearch-Invisible" hypb:toggle-isearch-invisible
 	   "Toggle whether isearch searches invisible text or not.")
-	  ("KeyBindings/" (menu . cust-keys) "Rebinds global Hyperbole keys.")
-	  ("Msg-Toggle-Ebuts" hyperbole-toggle-messaging
+	  ("KeyBindings/"      (menu . cust-keys) "Rebinds global Hyperbole keys.")
+	  ("Msg-Toggle-Ebuts"  hyperbole-toggle-messaging
 	   "Toggle Hyperbole support for explicit buttons in mail and news buffers.")
-	  ("Org-M-RET/" (menu . cust-org)
+	  ("Org-M-RET/"        (menu . cust-org)
 	   "Sets how much of Hyperbole Smart Key behavior is enabled in Org mode.")
 
-	  ("Referents/" (menu . cust-referents)
+	  ("Referents/"        (menu . cust-referents)
 	   "Sets where Hyperbole button referents are displayed.")
 	  ("Smart-Key-at-Eol/" (menu . cust-eol)
 	   "Sets how scrolling via end of line presses works.")
 	  ("Toggle-Rolo-Dates" hyrolo-toggle-datestamps
 	   "Toggle whether date stamps are updated when rolo entries are edited.")
-	  ("URL-Display/" (menu . cust-urls) "Sets where URLs are displayed.")
-	  ("Web-Search/" (menu . cust-web) "Sets where Web Searches are displayed.")))
+	  ("URL-Display/"      (menu . cust-urls) "Sets where URLs are displayed.")
+	  ("Web-Search/"       (menu . cust-web) "Sets where Web Searches are displayed.")))
        '(cust-eol .
          (("Smart Key press at eol scrolls>")
 	  ("Proportionally" (setq smart-scroll-proportional t))
@@ -600,123 +574,109 @@ constructs.  If not given, the top level Hyperbole menu is used."
 	  ("Ignore"                  (customize-save-variable 'hsys-org-enable-smart-keys nil))))
        '(cust-referents .
          (("Ref Display>")
-	  ("Any-Frame" (setq hpath:display-where 'other-frame))
+	  ("Any-Frame"   (setq hpath:display-where 'other-frame))
 	  ("Current-Win" (setq hpath:display-where 'this-window))
 	  ("Diff-Frame-One-Win"
 	   (setq hpath:display-where 'other-frame-one-window))
-	  ("New-Frame" (setq hpath:display-where 'new-frame))
-	  ("Other-Win" (setq hpath:display-where 'other-window))
-	  ("Single-Win" (setq hpath:display-where 'one-window))))
+	  ("New-Frame"   (setq hpath:display-where 'new-frame))
+	  ("Other-Win"   (setq hpath:display-where 'other-window))
+	  ("Single-Win"  (setq hpath:display-where 'one-window))))
        '(cust-urls .
          (("URL Display>")
-	  ("Chrome" (setq browse-url-browser-function #'browse-url-chrome))
-	  ("Default" (setq browse-url-browser-function
-			   (if (and (boundp 'browse-url-generic-program) (stringp browse-url-generic-program))
-			       #'browse-url-generic
-			     #'browse-url-default-browser)))
-	  ("EWW" (setq browse-url-browser-function #'eww-browse-url))
-	  ("Firefox" (setq browse-url-browser-function #'browse-url-firefox))
-	  ("KDE" (setq browse-url-browser-function #'browse-url-kde))
-	  ("XTerm" (setq browse-url-browser-function #'browse-url-text-xterm))))
+	  ("Chrome"      (setq browse-url-browser-function #'browse-url-chrome))
+	  ("Default"     (setq browse-url-browser-function
+			       (if (and (boundp 'browse-url-generic-program) (stringp browse-url-generic-program))
+				   #'browse-url-generic
+				 #'browse-url-default-browser)))
+	  ("EWW"         (setq browse-url-browser-function #'eww-browse-url))
+	  ("Firefox"     (setq browse-url-browser-function #'browse-url-firefox))
+	  ("KDE"         (setq browse-url-browser-function #'browse-url-kde))
+	  ("XTerm"       (setq browse-url-browser-function #'browse-url-text-xterm))))
        '(cust-web .
          (("Web Search>")
-	  ("Chrome" (setq hyperbole-web-search-browser-function #'browse-url-chrome))
-	  ("Default" (setq hyperbole-web-search-browser-function
-			   (if (and (boundp 'browse-url-generic-program) (stringp browse-url-generic-program))
-			       #'browse-url-generic
-			     #'browse-url-default-browser)))
-	  ("EWW" (setq hyperbole-web-search-browser-function #'eww-browse-url))
-	  ("Firefox" (setq hyperbole-web-search-browser-function #'browse-url-firefox))
-	  ("KDE" (setq hyperbole-web-search-browser-function #'browse-url-kde))
-	  ("XTerm" (setq hyperbole-web-search-browser-function #'browse-url-text-xterm))))
+	  ("Chrome"      (setq hyperbole-web-search-browser-function #'browse-url-chrome))
+	  ("Default"     (setq hyperbole-web-search-browser-function
+			       (if (and (boundp 'browse-url-generic-program) (stringp browse-url-generic-program))
+				   #'browse-url-generic
+				 #'browse-url-default-browser)))
+	  ("EWW"         (setq hyperbole-web-search-browser-function #'eww-browse-url))
+	  ("Firefox"     (setq hyperbole-web-search-browser-function #'browse-url-firefox))
+	  ("KDE"         (setq hyperbole-web-search-browser-function #'browse-url-kde))
+	  ("XTerm"       (setq hyperbole-web-search-browser-function #'browse-url-text-xterm))))
        '(doc .
 	 (("Doc>")
-	  ("About"        (hypb:display-file-with-logo "HY-ABOUT") "Overview of Hyperbole.")
-	  ("Demo"         hyperbole-demo "Demonstrates Hyperbole features.")
-	  ("Files"        (hypb:display-file-with-logo "MANIFEST")
+	  ("About"       (hypb:display-file-with-logo "HY-ABOUT") "Overview of Hyperbole.")
+	  ("Demo"        hyperbole-demo                           "Demonstrates Hyperbole features.")
+	  ("Files"       (hypb:display-file-with-logo "MANIFEST")
 	   "Summarizes Hyperbole system files.  Click on an entry to view it.")
-	  ("Glossary"
-	   (id-info "(hyperbole)Glossary")
-	   "Glossary of Hyperbole terms.")
-	  ("Info"         (id-info "(hyperbole)Top")
-	   "Online Info version of Hyperbole manual.")
-	  ("New"          (hypb:display-file-with-logo "HY-NEWS") "Recent changes to Hyperbole.")
-	  ("SmartKeys"    (hkey-summarize 'current-window)
-	   "Summarizes Smart Key mouse or keyboard handling.")
-	  ("Types/"       (menu . types)
-	   "Provides documentation on Hyperbole types.")
-	  ("WhyUse"       (find-file (expand-file-name "HY-WHY.kotl" hyperb:dir))
+	  ("Glossary"    (id-info "(hyperbole)Glossary")          "Glossary of Hyperbole terms.")
+	  ("Info"        (id-info "(hyperbole)Top")               "Online Info version of Hyperbole manual.")
+	  ("New"         (hypb:display-file-with-logo "HY-NEWS")  "Recent changes to Hyperbole.")
+	  ("SmartKeys"   (hkey-summarize 'current-window)         "Summarizes Smart Key mouse or keyboard handling.")
+	  ("Types/"      (menu . types)                           "Provides documentation on Hyperbole types.")
+	  ("WhyUse"      (find-file (expand-file-name "HY-WHY.kotl" hyperb:dir))
 	   "Lists use cases for Hyperbole Hyperbole.")))
        '(ebut .
 	 (("EButton>")
-	  ("Act"    hui:ebut-act
+	  ("Act"         hui:ebut-act
 	    "Activates explicit button at point or prompts for explicit button to activate.")
-	  ("Create" hui:ebut-create "Adds an explicit button to the current buffer.")
-	  ("Delete" hui:ebut-delete "Removes an explicit button from the current buffer.")
-	  ("Edit"   hui:ebut-edit "Modifies any desired button attributes.")
-	  ("Help/"  (menu . ebut-help) "Summarizes button attributes.")
-	  ("Info"
-	   (id-info "(hyperbole)Explicit Buttons")
-	   "Displays manual section on explicit buttons.")
-	  ("Rename" hui:ebut-rename "Relabels an explicit button.")
-	  ("Search" hui:ebut-search
-	   "Locates and displays personally created buttons in context.")
-	  ("Types"  (hui:htype-help-current-window 'actypes)
+	  ("Create"      hui:ebut-create                        "Adds an explicit button to the current buffer.")
+	  ("Delete"      hui:ebut-delete                        "Removes an explicit button from the current buffer.")
+	  ("Edit"        hui:ebut-edit                          "Modifies any desired button attributes.")
+	  ("Help/"       (menu . ebut-help)                     "Summarizes button attributes.")
+	  ("Info"        (id-info "(hyperbole)Explicit Buttons") "Displays manual section on explicit buttons.")
+	  ("Rename"      hui:ebut-rename                         "Relabels an explicit button.")
+	  ("Search"      hui:ebut-search                         "Locates and displays personally created buttons in context.")
+	  ("Types"       (hui:htype-help-current-window 'actypes)
 	   "Displays documentation for one or all action types used by explicit buttons.")))
        '(ebut-help .
 	 (("Help on>")
-	  ("BufferButs"   (hui:hbut-report -1)
-	   "Summarizes all explicit buttons in buffer.")
-	  ("CurrentBut"   (hui:hbut-report)
-	   "Summarizes only current button in buffer.")
-	  ("OrderedButs"  (hui:hbut-report 1)
-	   "Summarizes explicit buttons in lexicographically order.")))
+	  ("BufferButs"  (hui:hbut-report -1) "Summarizes all explicit buttons in buffer.")
+	  ("CurrentBut"  (hui:hbut-report)    "Summarizes only current button in buffer.")
+	  ("OrderedButs" (hui:hbut-report 1)  "Summarizes explicit buttons in lexicographically order.")))
        '(find .
          (("Find>")
-	  ("GrepFiles"           hypb:rgrep  "Show numbered line matches in all specified files.")
-	  ("LocateFiles"         hypb:locate "Locate matching file names anywhere across a system.")
-	  ("MatchFileBuffers"    moccur      "Show numbered line matches for regexp in all file-based buffers.")
-	  ("OccurHere"           occur       "Show numbered line matches for regexp from this buffer.")
+	  ("GrepFiles"           hypb:rgrep        "Show numbered line matches in all specified files.")
+	  ("LocateFiles"         hypb:locate       "Locate matching file names anywhere across a system.")
+	  ("MatchFileBuffers"    moccur            "Show numbered line matches for regexp in all file-based buffers.")
+	  ("OccurHere"           occur             "Show numbered line matches for regexp from this buffer.")
 	  ("RemoveLines"         hypb:remove-lines "Following point, remove all lines that match regexp.")
-	  ("SaveLines"           hypb:save-lines  "Following point, keep only lines that match regexp.")
-	  ("Web/" (menu . web) "Searches major web sites.")))
+	  ("SaveLines"           hypb:save-lines   "Following point, keep only lines that match regexp.")
+	  ("Web/"                (menu . web)      "Searches major web sites.")))
        '(gbut .
 	 (("GButton>")
 	  ("Act"    gbut:act        "Activates global button by name.")
 	  ("Create" hui:gbut-create "Adds a global button to (gbut:file).")
 	  ("Delete" hui:gbut-delete "Removes a global button from (gbut:file).")
-	  ("Edit"   hui:gbut-edit "Modifies global button attributes.")
+	  ("Edit"   hui:gbut-edit   "Modifies global button attributes.")
 	  ("Help"   gbut:help       "Reports on a global button by name.")
-	  ("Info"   (id-info "(hyperbole)Global Buttons")
+	  ("Info"   (id-info        "(hyperbole)Global Buttons")
 	   "Displays manual section on global buttons.")
 	  ("Rename" hui:gbut-rename "Renames a global button.")))
        '(ibut .
 	 (("IButton>")
-	  ("Act"    hui:ibut-act
+	  ("Act"            hui:ibut-act
 	    "Activates implicit button at point or prompts for labeled implicit button to activate.")
-	  ("DeleteIButType"   (hui:htype-delete 'ibtypes)
+	  ("DeleteIButType" (hui:htype-delete 'ibtypes)
 	   "Deletes specified button type.")
-	  ("Edit"   hui:ibut-edit "Edits/modifies named implicit button attributes.")
-	  ("Help"   hui:hbut-help   "Reports on button's attributes.")
-	  ("Info"   (id-info "(hyperbole)Implicit Buttons")
+	  ("Edit"           hui:ibut-edit "Edits/modifies named implicit button attributes.")
+	  ("Help"           hui:hbut-help "Reports on button's attributes.")
+	  ("Info"           (id-info "(hyperbole)Implicit Buttons")
 	   "Displays manual section on implicit buttons.")
-	  ("Label"  hui:ibut-label-create
+	  ("Label"          hui:ibut-label-create
 	   "Creates an implicit button label preceding an existing implicit button at point, if any.")
-	  ("Rename" hui:ibut-rename
+	  ("Rename"         hui:ibut-rename
 	   "Modifies a label preceding an implicit button in the current buffer.")
-	  ("Types"  (hui:htype-help 'ibtypes 'no-sort)
+	  ("Types"          (hui:htype-help 'ibtypes 'no-sort)
 	   "Displays documentation for one or all implicit button types.")))
        '(kotl
 	 . (("Kotl>")
-	    ("All"       kotl-mode:show-all "Expand all collapsed cells.")
-	    ("Blanks"    kvspec:toggle-blank-lines
-	     "Toggle blank lines between cells on or off.")
-	    ("Create"    kfile:find   "Create or edit an outline file.")
-	    ("Downto"    kotl-mode:hide-sublevels
-	     "Hide all cells in outline deeper than a particular level.")
-	    ("Examp"     kotl-mode:example
-	     "Display a self-descriptive example outline file.")
-	    ("Format/"  (menu . kotl-format) "Imports/Exports Koutlines.")
+	    ("All"       kotl-mode:show-all        "Expand all collapsed cells.")
+	    ("Blanks"    kvspec:toggle-blank-lines "Toggle blank lines between cells on or off.")
+	    ("Create"    kfile:find                "Create or edit an outline file.")
+	    ("Downto"    kotl-mode:hide-sublevels  "Hide all cells in outline deeper than a particular level.")
+	    ("Examp"     kotl-mode:example         "Display a self-descriptive example outline file.")
+	    ("Format/"   (menu . kotl-format)      "Imports/Exports Koutlines.")
 	    ("Hide"      (progn (kotl-mode:is-p)
 				(kotl-mode:hide-tree (kcell-view:label)))
 	     "Collapse tree rooted at point.")
@@ -727,7 +687,7 @@ constructs.  If not given, the top level Hyperbole menu is used."
 	     "Kill ARG following trees starting from point.")
 	    ("Link"      klink:create
 	     "Create and insert an implicit link at point.")
-	    ("Overvw"  kotl-mode:overview
+	    ("Overvw"    kotl-mode:overview
 	     "Show first line of each cell.")
 	    ("Show"      (progn (kotl-mode:is-p)
 				(kotl-mode:show-tree (kcell-view:label)))
@@ -768,21 +728,18 @@ constructs.  If not given, the top level Hyperbole menu is used."
 	   "Unsubscribe from the Hyperbole bug reporting list.")))
        '(hyrolo .
 	 (("Rolo>")
-	  ("Add"              hyrolo-add	  "Add a new rolo entry.")
-	  ("Display"          hyrolo-display-matches
-	   "Display last found rolo matches again.")
-	  ("Edit"             hyrolo-edit   "Edit an existing rolo entry.")
-	  ("File"             hyrolo-find-file   "Edit an existing rolo file.")
-	  ("Info"             (id-info "(hyperbole)HyRolo")
-	   "Displays manual section on Hyperbole rolo.")
-	  ("Kill"             hyrolo-kill   "Kill an existing rolo entry.")
-	  ("Mail"             hyrolo-mail-to "Mail to address following point.")
-	  ("Order"            hyrolo-sort   "Order rolo entries in a file.")
-	  ("RegexFind"        hyrolo-grep   "Find entries containing a regexp.")
-	  ("StringFind"       hyrolo-fgrep  "Find entries containing a string.")
-	  ("WordFind"         hyrolo-word   "Find entries containing words.")
-	  ("Yank"             hyrolo-yank
-	   "Find an entry containing a string and insert it at point.")))
+	  ("Add"              hyrolo-add	            "Add a new rolo entry.")
+	  ("Display"          hyrolo-display-matches        "Display last found rolo matches again.")
+	  ("Edit"             hyrolo-edit                   "Edit an existing rolo entry.")
+	  ("File"             hyrolo-find-file              "Edit an existing rolo file.")
+	  ("Info"             (id-info "(hyperbole)HyRolo") "Displays manual section on Hyperbole rolo.")
+	  ("Kill"             hyrolo-kill                   "Kill an existing rolo entry.")
+	  ("Mail"             hyrolo-mail-to                "Mail to address following point.")
+	  ("Order"            hyrolo-sort                   "Order rolo entries in a file.")
+	  ("RegexFind"        hyrolo-grep                   "Find entries containing a regexp.")
+	  ("StringFind"       hyrolo-fgrep                  "Find entries containing a string.")
+	  ("WordFind"         hyrolo-word                   "Find entries containing words.")
+	  ("Yank"             hyrolo-yank                   "Find an entry containing a string and insert it at point.")))
        '(screen .
 	 (("Screen>")
 	  ("FramesControl"    hycontrol-enable-frames-mode
@@ -797,19 +754,16 @@ constructs.  If not given, the top level Hyperbole menu is used."
 	   "Displays documentation for one or all implicit button types.")))
        '(win .
 	 (("WinConfig>")
-	  ("AddName"        hywconfig-add-by-name
-	   "Name current window configuration.")
-	  ("DeleteName"     hywconfig-delete-by-name
-	   "Delete named window configuration.")
-	  ("RestoreName"    hywconfig-restore-by-name
-	   "Restore frame to window configuration given by name.")
-	  ("PopRing"        (progn (hywconfig-delete-pop)
-				   (hyperbole 'win))
+	  ("AddName"          hywconfig-add-by-name     "Name current window configuration.")
+	  ("DeleteName"       hywconfig-delete-by-name  "Delete named window configuration.")
+	  ("RestoreName"      hywconfig-restore-by-name "Restore frame to window configuration given by name.")
+	  ("PopRing"          (progn (hywconfig-delete-pop)
+				     (hyperbole 'win))
 	   "Restores window configuration from ring and removes it from ring.")
-	  ("SaveRing"       (hywconfig-ring-save)
+	  ("SaveRing"         (hywconfig-ring-save)
 	   "Saves current window configuration to ring.")
-	  ("YankRing"       (progn (call-interactively 'hywconfig-yank-pop)
-				   (hyperbole 'win))
+	  ("YankRing"         (progn (call-interactively 'hywconfig-yank-pop)
+				     (hyperbole 'win))
 	   "Restores next window configuration from ring.")))
        (hui:menu-web-search)))))
 
