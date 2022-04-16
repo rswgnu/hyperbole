@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     6-Oct-91 at 03:42:38
-;; Last-Mod:     12-Apr-22 at 01:40:32 by Bob Weiner
+;; Last-Mod:     16-Apr-22 at 00:42:39 by Mats Lidell
 ;;
 ;; Copyright (C) 1991-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -854,7 +854,7 @@ The value returned is the value of the last form in BODY."
   "Return a list of any selectable thing at point as a string, start position of thing, end position of thing, or nil if none.
 Start and end may be nil if thing was generated rather than extracted from a region."
   (let (thing-and-bounds thing start end)
-    (cond ((setq thing-and-bounds (klink-at-p))
+    (cond ((setq thing-and-bounds (klink:at-p))
 	   (when thing-and-bounds
 	     (setcar (klink:absolute thing-and-bounds) thing-and-bounds)
 	     thing-and-bounds))
