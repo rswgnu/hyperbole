@@ -1,3 +1,12 @@
+2022-04-15  Mats Lidell  <matsl@gnu.org>
+
+* test/MANIFEST: Add hui-select.el
+
+* test/hui-select-tests.el (hui-select--thing)
+    (hui-select--thing-interactive-prints-type-of-match)
+    (hui-select--at-delimited-thing-p) (hui-select--delimited-thing)
+    (hui-select--delimited-thing-ending-in-newline): Add hui-select tests.
+
 2022-04-12  Bob Weiner  <rsw@gnu.org>
 
 * hypb.el (hypb:selectable-thing): Add and use in hypb:kill-ring-save, kotl-mode:kill-region,
