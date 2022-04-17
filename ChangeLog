@@ -4,6 +4,8 @@
 
 2022-04-18  Mats Lidell  <matsl@gnu.org>
 
+* hui-select.el: Remove mention of Emacs versions in comment.
+
 * hmoccur.el (moccur): Remove XEmacs and InfoDock font-lock code.
 
 * hui-mouse.el: Remove mention of Emacs versions and NEXTSTEP.
