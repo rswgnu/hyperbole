@@ -2,6 +2,12 @@
 
 * hact.el (hact): Use defun. Patch from Stefan Monnier. Thanks Stefan.
 
+* hyrolo.el (hyrolo-prompt):
+    (hyrolo-rename): Remove XEmacs dialog box and parameter.
+
+* hui-window.el (hmouse-modeline-event-p): Remove XEmacs and old Emacs
+    compatibility code.
+
 2022-06-16  Mats Lidell  <matsl@gnu.org>
 
 * Makefile (hyperbole-autoloads.el, kotl/kotl-autoloads.el): Use

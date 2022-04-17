@@ -3,9 +3,9 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     7-Jun-89 at 22:08:29
-;; Last-Mod:     15-May-22 at 22:28:48 by Bob Weiner
+;; Last-Mod:     18-Jun-22 at 21:53:51 by Mats Lidell
 ;;
-;; Copyright (C) 1991-2021  Free Software Foundation, Inc.
+;; Copyright (C) 1991-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
 ;;
 ;; This file is part of GNU Hyperbole.
@@ -655,14 +655,9 @@ With a prefix argument of LEVELS-TO-SHOW > 0, show the first lines of entries on
       (error
        "(hyrolo-previous-match): No prior matches for \"%s\"" hyrolo-match-regexp))))
 
-(defun hyrolo-prompt (keyboard-function dialog-box-function prompt)
-  "Use KEYBOARD-FUNCTION or DIALOG-BOX-FUNCTION, if available, to PROMPT for a yes/no answer.
-XEmacs only."
-  (if (and (fboundp 'device-type) (not (eq (device-type) 'tty))
-	   (fboundp 'yes-or-no-p-maybe-dialog-box))
-      ;; Graphical XEmacs
-      (funcall dialog-box-function prompt)
-    (funcall keyboard-function prompt)))
+(defun hyrolo-prompt (keyboard-function prompt)
+  "Use KEYBOARD-FUNCTION to PROMPT for a yes/no answer."
+  (funcall keyboard-function prompt))
 
 (defun hyrolo-quit ()
   "Quit from the rolo match buffer and restore the prior frame display."
@@ -681,7 +676,7 @@ XEmacs only."
 	   (file-readable-p old-file)
 	   (progn (beep)
 		  (or (hyrolo-prompt
-		       'y-or-n-p 'yes-or-no-p-dialog-box
+		       'y-or-n-p
 		       (format "(hyrolo-rename): Rename \"%s\" to the new standard \"%s\"? "
 			       old-file new-file))
 		      ;; Setup to get rolo matches from OLD-FILE.
