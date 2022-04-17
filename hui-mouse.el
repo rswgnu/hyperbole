@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    04-Feb-89
-;; Last-Mod:      5-Jun-22 at 17:59:48 by Bob Weiner
+;; Last-Mod:     18-Jun-22 at 21:57:35 by Mats Lidell
 ;;
 ;; Copyright (C) 1991-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -20,12 +20,12 @@
 ;;  If you want to use your shift-middle mouse button to select Hyperbole menu
 ;;  items and Hyperbole buttons, follow these instructions.
 ;;
-;;  If you plan to use a mouse only with the X window system (XEmacs, GNU Emacs
-;;  19, or InfoDock), macOS, or NEXTSTEP, and you want to use the
-;;  shift-middle and shift-right buttons, you need not do any mouse
-;;  configuration.  Your Emacs executable must have been built so as to
-;;  include the mouse support files for your window system, however.  These
-;;  are in the Emacs "src" directory: for X - "x*.c", for macOS - "ns*.c".
+;;  If you plan to use a mouse only with the X window system or macOS
+;;  and you want to use the shift-middle and shift-right buttons, you
+;;  need not do any mouse configuration.  Your Emacs executable must
+;;  have been built so as to include the mouse support files for your
+;;  window system, however.  These are in the Emacs "src" directory:
+;;  for X - "x*.c", for macOS - "ns*.c".
 ;;
 ;;  To use a different mouse key or a different window system, modify the
 ;;  mouse key bindings in "hmouse-sh.el".
