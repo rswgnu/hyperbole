@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    6/30/93
-;; Last-Mod:     10-Apr-22 at 22:31:58 by Bob Weiner
+;; Last-Mod:     16-Apr-22 at 17:59:27 by Bob Weiner
 ;;
 ;; Copyright (C) 1993-2021  Free Software Foundation, Inc.
 ;; See the "../HY-COPY" file for license information.
@@ -515,7 +515,7 @@ or is nil), before it is returned."
 	(when (called-interactively-p 'interactive)
 	  (message "Cell <%s> now has no %s attribute."
 		   (kcell-view:label) attribute)))
-      kcell)))
+      mod-cell)))
 
 (defun kcell-view:set-attr (attribute value &optional pos)
   "Set ATTRIBUTE's VALUE for current cell or cell at optional POS and return the modified cell.

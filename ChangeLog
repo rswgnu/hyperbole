@@ -1,4 +1,18 @@
+2022-04-17  Bob Weiner  <rsw@gnu.org>
+
+* HY-NEWS (Klink Copy): Updated with latest key bindings.
+
 2022-04-16  Bob Weiner  <rsw@gnu.org>
+
+* kotl/kotl-mode.el (kotl-mode:kill-region): Handle when called under alias
+    kotl-mode:completion-kill-region.
+
+* kotl/kview.el (kcell-view:remove-attr): Replace invalid 'kcell' with 'mod-cell'.
+
+* man/hyperbole.texi (Web Search Engines): Document option to use an Emacs command.
+                     (Klinks): Rename from Links.
+		     (Klinks): Reorder descriptions and add doc for {M-w}, {C-y},
+    {C-x r s} and {C-x r i} use with klinks and kcell references.
 
 * hui-mini.el (hui:menus): Update formatting to improve readability.
 

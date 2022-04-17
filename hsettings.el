@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    15-Apr-91 at 00:48:49
-;; Last-Mod:     10-Apr-22 at 10:55:06 by Bob Weiner
+;; Last-Mod:     16-Apr-22 at 16:48:26 by Bob Weiner
 ;;
 ;; Copyright (C) 1991-2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -178,11 +178,11 @@ package to display search results."
 ;;;###autoload
 (defun hyperbole-toggle-messaging (&optional arg)
   "Toggle Hyperbole support for explicit buttons in mail and news buffers.
-Toggles the boolean variable `inhibit-hyperbole-messaging’ and either
-adds hooks (nil value) or removes them (t value).
+Toggle the boolean variable `inhibit-hyperbole-messaging’ and either
+add hooks (nil value) or remove them (t value).
 
-With optional prefix ARG > 0, enables support.  If ARG <= 0,
-disables/inhibits support."
+With optional prefix ARG > 0, enable support.  If ARG <= 0,
+disable/inhibit support."
   (interactive "P")
   (setq inhibit-hyperbole-messaging (if (null arg)
 					(not inhibit-hyperbole-messaging)
@@ -246,7 +246,8 @@ Hyperbole, and then restart Emacs."
 The first capitalized character of each web-service-name must be unique.
 This custom option is used in the Hyperbole Find/Web menu where
 the %s in the url-with-%s-parameter is replaced with an interactively
-obtained search string."
+obtained search string; if second argument is a command instead, then
+it is called interactively to prompt for the search string."
   :initialize #'custom-initialize-default
   :set (lambda (_option value)
 	 (set _option value)

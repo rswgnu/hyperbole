@@ -352,6 +352,19 @@
            a koutline or {C-h h k l} when not in a koutline to insert a
            klink.
 
+      3c3. If you prefer the standard copy and yank model that Emacs
+           provides, place point within a klink when there is no active
+           region and use {M-w} to copy the klink.  Then {C-y} will yank it
+           into any buffer you desire.
+
+      3c4. To instead copy a reference to the current Koutline cell, use
+           {M-w} outside of a klink when no region is active.
+
+      3c5. {C-x r s} prompts for an Emacs register and saves either the
+           current klink or the current cell reference to the register.  {C-x
+           r i} with the same register then inserts the Koutline reference at
+           point.
+
     3d. Org table editing is supported.
 
       3d1. You must use the first line of the cell to label your table
@@ -403,7 +416,7 @@
 
 
 "ben" ;; kvspec:current
-82 ;; id-counter
+85 ;; id-counter
 alpha ;; label-type
 3 ;; label-min-width
 ". " ;; label-separator
@@ -411,7 +424,7 @@ alpha ;; label-type
 
 ;; depth-first kcell attributes
 [[0
-  (idstamp 0 creator "rsw@gnu.org" create-time "20220117:22:23:52" id-counter 82 file "/Users/bk/Dropbox/emacs/hyperbole/kotl/EXAMPLE.kotl")]
+  (idstamp 0 creator "rsw@gnu.org" create-time "20220117:22:23:52" id-counter 85 file "/Users/bk/Dropbox/emacs/hyperbole/kotl/EXAMPLE.kotl")]
  [20
   (creator "rsw@gnu.org" create-time "19940104:17:38:28" no-fill t)]
  [2
@@ -517,9 +530,15 @@ alpha ;; label-type
  [60
   (creator "rsw@gnu.org" create-time "19951024:03:40:13" no-fill t)]
  [61
-  (creator "rsw@gnu.org" create-time "19951024:03:40:42" no-fill t)]
+  (creator "rsw@gnu.org" create-time "19951024:03:40:42")]
  [1
   (creator "rsw@gnu.org" create-time "19940104:17:38:29")]
+ [83
+  (creator "rsw@gnu.org" create-time "20220416:21:55:12")]
+ [84
+  (creator "rsw@gnu.org" create-time "20220416:22:01:13")]
+ [85
+  (creator "rsw@gnu.org" create-time "20220416:22:04:05")]
  [11
   (creator "rsw@gnu.org" create-time "19940104:17:38:29")]
  [80

@@ -7,7 +7,7 @@
 @c Author:       Bob Weiner
 @c
 @c Orig-Date:     6-Nov-91 at 11:18:03
-@c Last-Mod:     20-Mar-22 at 22:13:17 by Bob Weiner
+@c Last-Mod:     16-Apr-22 at 17:54:02 by Bob Weiner
 
 @c %**start of header (This is for running Texinfo on a region.)
 @setfilename hyperbole.info
@@ -3094,7 +3094,7 @@ Display the Texinfo node with NODENAME (a string) from the current buffer.
 @cindex web search link
 @item link-to-web-search
 Search web SERVICE-NAME for SEARCH-TERM.  Uses @code{hyperbole-web-search-alist}
-to match each service to its search url.  Uses @code{hyperbole-web-search-browser-function}
+to match each service to its search url or Emacs command.  Uses @code{hyperbole-web-search-browser-function}
 and the @code{browse-url} package to display search results.
 
 @findex actypes man-show
@@ -4516,8 +4516,8 @@ labeling options.  The default, alpha labels, legal labels, and
 permanent idstamps (permanent cell ids) are all available.
 
 @cindex label separator, changing
-@cindex cell, label separator
-@cindex outline, label separator
+@cindex cell label separator
+@cindex outline label separator
 @kindex koutliner, C-c M-l
 @kindex koutliner, C-u C-c M-l
 A cell label is normally followed by a period and a space, called the
@@ -4548,7 +4548,7 @@ initialization file, @file{~/.emacs}, substituting for `your-separator':
 @cindex permanent identifier
 @cindex idstamp
 Idstamps (permanent ids) are associated with each cell.  They maintain
-hyperlinks as cells are reordered within a koutline.  @xref{Links}.
+hyperlinks as cells are reordered within a koutline.  @xref{Klinks}.
 Idstamps may be displayed in place of the outline level relative ids.
 Use @bkbd{C-c C-l id @key{RET}}.
 
@@ -4585,7 +4585,7 @@ since the Koutliner uses differently named commands made to act
 like the regular editing commands.  Koutliner commands, however, account
 for the structure and indentation in koutlines.
 
-@cindex cell, selection
+@cindex cell selection
 You may use the mouse to select parts of the contents of a single cell
 for editing.  But don't drag across cell boundaries and then edit the
 selected region, since that will destroy the outline structure.
@@ -4882,7 +4882,7 @@ right margins.
 @vindex kotl-mode:refill-flag
 @cindex refilling
 @cindex attribute, no-fill
-@cindex cell, no-fill attribute
+@cindex cell no-fill attribute
 Set the variable, @code{kotl-mode:refill-flag}, to @samp{t} if you
 want moving, promoting, demoting, exchanging, splitting and appending
 cells to also automatically refill each cell, aside from any that have
@@ -4940,7 +4940,7 @@ aside from the creation attributes and idstamp.
 @cindex cell, appending
 @cindex appending to a cell
 @cindex attribute, no-fill
-@cindex cell, no-fill attribute
+@cindex cell no-fill attribute
 @bkbd{C-c +} appends the contents of a specified cell to the end of
 another cell.  It has no effect on cell attributes, except that if one
 cell has a `no-fill' attribute, which prevents all but user requested
@@ -5196,7 +5196,7 @@ following the outline buffer name, unless the variable,
 display.  The modeline display appears as <|viewspec> to aid rapid
 visual location.  The | (pipe character) is also used in links that
 specify view specs to indicate the start of a view spec sequence.
-@xref{Links}.
+@xref{klinks}.
 
 @cindex outline, view specs
 The current view spec is saved whenever the outline is saved.  The next
@@ -5279,8 +5279,8 @@ Then use @bkbd{C-c C-v} to set a view spec of `c2l1'.  This will turn
 off blank lines, clip each cell after its second line, and hide all
 cells below level one.
 
-@node Links, Cell Attributes, Viewing Outlines, Koutliner
-@section   Links
+@node Klinks, Cell Attributes, Viewing Outlines, Koutliner
+@section   Klinks
 
 @cindex link
 @cindex hyperlink
@@ -5289,34 +5289,14 @@ cells below level one.
 Cells may include hyperlinks that refer to other cells or to external
 sources of information.  Explicit Hyperbole buttons may be created as
 usual with mouse drags (@pxref{By Dragging, Creation Via Action Key
-Drags}).  A @dfn{klink} is a special implicit link button, delimited by
-<> separators, that jumps to a koutline cell.  This section discusses
-klinks.
-
-@kindex koutliner, Action Key, klink
-@cindex Action Key, klink
-@cindex klink, activating
-@cindex klink referent
-Press the Action Key over a klink to follow it.  This will flash the
-klink as a button and then will display its referent in the other
-window.  If the klink contains a view spec, it will be applied when
-the referent is displayed.
-
-@cindex klink, inserting
-@kindex koutliner, C-c l
-There are a number of easy ways to insert klinks into koutlines.  If you
-have mouse support under Hyperbole, simply click the Action Key within
-the indentation to the left of a cell text.  If you then double click on
-some cell, a link to that cell will be inserted where you started.  From
-a keyboard, use @bkbd{C-c l} when in a koutline or @bkbd{C-h h k
-l} when not in a koutline to insert a klink.  Since klinks are
-implicit buttons, you may instead type in the text of the klink just as
-you see it in the examples below and it will work exactly as if it had
-been entered with the insert link command.
+Drags}).  Implicit Hyperbole buttons may be added to Koutline text as
+well.  A @dfn{klink} is a special implicit link button, delimited by
+<> separators, that jumps to a koutline cell and may also adjust the
+current outline viewspecs.  This section discusses klinks.
 
 @cindex klink, formats
 @noindent
-There are basically three forms of klinks:
+There are three forms of klinks:
 
 @table @emph
 @cindex internal klink
@@ -5351,11 +5331,50 @@ outline to display blank lines, to use ellipses after collapsed lines
 and to label cells with the alphanumeric style.
 @end table
 
+@kindex koutliner, Action Key, klink
+@cindex Action Key, klink
+@cindex klink, activating
+@cindex klink referent
+Press the Action Key over a klink to follow it.  This will flash the
+klink as a button and then will display its referent in the other
+window.  If the klink contains a view spec, it will be applied when
+the referent is displayed.
+
+@cindex klink, inserting
+@kindex koutliner, C-c l
+There are a number of easy ways to insert klinks into koutlines.  If you
+have mouse support under Hyperbole, simply click the Action Key within
+the indentation to the left of a cell text.  If you then double click on
+some cell, a link to that cell will be inserted where you started.  From
+a keyboard, use @bkbd{C-c l} when in a koutline or @bkbd{C-h h k l} when
+not in a koutline to insert a klink.  Since klinks are implicit buttons,
+you may instead type in the text of the klink just as you saw them in the
+examples above and they will work exactly as if they had been entered with
+the insert link command.
+
+@kindex M-w
+@kindex C-y
+@cindex klink, copying
+@cindex klink, yanking
+@cindex cell link
+@cindex cell reference
+@kindex C-x r i
+@kindex C-x r s
+@cindex klink, to/from Emacs register
+If you prefer the standard copy and yank model that Emacs provides, place
+point within a klink when there is no active region and use @bkbd{M-w} to
+copy the klink.  Then @bkbd{C-y} will yank it into any buffer you desire.
+To instead copy a reference to the current Koutline cell, use @bkbd{M-w}
+@emph{outside of} a klink when no region is active.  @bkbd{C-x r s} prompts
+for an Emacs register and saves either the current klink or the current cell
+reference to the register.  @bkbd{C-x r i} with the same register then inserts
+the Koutline reference at point.
+
 @vindex klink:ignore-modes
 @vindex klink:c-style-modes
 @cindex modes to ignore klinks
 @cindex klinks, ignoring
-Because  klinks use a very generic syntax, surrounded by <angle brackets>,
+Because klinks use a very generic syntax, surrounded by <angle brackets>,
 in certain modes, mostly C-based programming modes, certain non-klink syntax
 can be mistakenly identified as klinks.  Therefore, the Koutliner provides
 two customizable variables which disable klink recognition in selected major
@@ -5369,11 +5388,10 @@ is within a comment.
 @code{klink:c-style-modes} is rarely needed but is there if Hyperbole ever
 mistakenly recognizes a pattern within a comment as a klink when it isn't.
 
-
 @node Cell Attributes, Koutliner History, Links, Koutliner
 @section   Cell Attributes
 
-@cindex cell, attribute
+@cindex cell attribute
 @cindex attribute
 @dfn{Attributes} are named properties whose values are specific to an
 outline cell.  Thus, each cell, including the invisible 0 root cell,
@@ -5393,7 +5411,7 @@ is always the hidden root cell of the outline tree.
 The e-mail address of the person who created this cell.
 
 @cindex create-time attribute
-@cindex cell, creation time
+@cindex cell creation time
 @item create-time
 The time at which the cell was created.  This is stored in a form that
 allows for easy data comparisons but is displayed in a human readable
@@ -5425,7 +5443,7 @@ removes an attribute of the invisible 0 root cell
 
 
 @cindex attribute, no-fill
-@cindex cell, no-fill attribute
+@cindex cell no-fill attribute
 @cindex no-fill attribute
 The `no-fill' attribute is special.  When set to @samp{t}, it
 prevents movement, promotion, demotion, exchange, split or append
@@ -7829,6 +7847,20 @@ The Find/Web menu offers quick access to major web search engines.  It
 is typically bound to @bkbd{C-c /} or if not, then @bkbd{C-h h f w} is
 always available.  Your standard web browser will be used to return
 the search results.
+
+The @code{hyperbole-web-search-alist} variable controls the items in
+this menu.  Elements of this alist are of the form:
+(<web-service-name> . <url-with-%s-parameter-or-command>).  The first
+capitalized character of each <web-service-name> must be unique for
+minibuffer menu selection.  The second part of an element is either:
+@table @asis
+@item 1.
+a URL with an embedded %s indicating where to substitute a search term
+that is interactively prompted for when the menu item is activated;
+@item 2.
+or an Emacs command symbol that interactively prompts for a URL and a
+search term and then displays the search results.
+@end table
 
 Advanced users can change the search engines listed in the Find/Web
 menu with @bkbd{M-x customize-variable @key{RET}

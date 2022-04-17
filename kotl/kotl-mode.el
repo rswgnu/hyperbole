@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    6/30/93
-;; Last-Mod:     12-Apr-22 at 01:39:17 by Bob Weiner
+;; Last-Mod:     16-Apr-22 at 18:13:59 by Bob Weiner
 ;;
 ;; Copyright (C) 1993-2021  Free Software Foundation, Inc.
 ;; See the "../HY-COPY" file for license information.
@@ -706,7 +706,8 @@ If a completion is active, this aborts the completion only."
 	     (insert cmpl-original-string)
 	     (setq completion-to-accept nil))
 	    ;; If called interactively and no region is active, copy thing at point
-	    ((and (memq this-command '(kotl-mode:kill-region kotl-mode:copy-region-as-kill))
+	    ((and (memq this-command '(kotl-mode:completion-kill-region
+				       kotl-mode:kill-region kotl-mode:copy-region-as-kill))
 		  (not (use-region-p))
 		  (setq thing (hypb:selectable-thing)))
 	     (if (and copy-p (not (eq copy-p t)))
