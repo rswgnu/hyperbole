@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    28-Oct-94 at 10:59:44
-;; Last-Mod:     17-Apr-22 at 23:44:09 by Mats Lidell
+;; Last-Mod:     18-Apr-22 at 00:29:31 by Mats Lidell
 ;;
 ;; Copyright (C) 1994-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -108,4 +108,3 @@
 (provide 'hyrolo-menu)
 
 ;;; hyrolo-menu.el ends here
-oo
