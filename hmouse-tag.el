@@ -3,9 +3,9 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    24-Aug-91
-;; Last-Mod:     12-Feb-22 at 10:42:20 by Mats Lidell
+;; Last-Mod:     17-Apr-22 at 23:15:45 by Mats Lidell
 ;;
-;; Copyright (C) 1991-2021  Free Software Foundation, Inc.
+;; Copyright (C) 1991-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
 ;;
 ;; This file is part of GNU Hyperbole.
@@ -125,7 +125,7 @@ Each directory must end with a directory separator."
 Keyword matched is grouping 1.  Referent is grouping 2.")
 
 (defcustom smart-emacs-tags-file nil
-  "*Full path name of etags file for InfoDock, XEmacs or GNU Emacs source."
+  "*Full path name of etags file for GNU Emacs source."
   :type '(file :must-match t)
   :group 'hyperbole-commands)
 
@@ -1156,17 +1156,7 @@ TAG-SYM may be a function, variable or face."
 			     nil
 			   (and (boundp 'tags-file-name) tags-file-name)))
 	 find-tag-result
-	 ;; For InfoDock and XEmacs
-	 (tags-always-exact t)
-	 (tag-table-alist
-	  (mapcar (lambda (tags-file) (cons "." tags-file))
-		  tags-table-list))
-	 ;; For GNU Emacs
 	 (tags-add-tables nil))
-    ;; For InfoDock (XEmacs may also take this branch), force exact match
-    ;; (otherwise tag might = nil and the following stringp test could fail).
-    (if (featurep 'infodock)
-	(if (stringp tag) (setq tag (list tag))))
     (condition-case ()
 	(and func (funcall func tag) t)
       (error nil))))
@@ -1374,30 +1364,12 @@ See the \"${hyperb:dir}/smart-clib-sym\" script for more information."
 	 (tags-file-name (unless tags-table-list
 			   (when (boundp 'tags-file-name) tags-file-name)))
 	 find-tag-result
-	 ;; For InfoDock and XEmacs
-	 (tags-always-exact t)
-	 (tag-table-alist
-	  (mapcar (lambda (tags-file) (cons "." tags-file))
-		  tags-table-list))
-	 ;; For GNU Emacs
 	 (tags-add-tables nil))
-    ;; For InfoDock (XEmacs may also take this branch), force exact match
-    ;; when `next' is false (otherwise tag would = nil and the following
-    ;; stringp test would fail).
-    (and (featurep 'infodock) (stringp tag) (setq tag (list tag)))
     (cond ((and func (or tags-table-list tags-file-name) (setq find-tag-result (funcall func tag)))
-	   (cond ((eq func 'find-tag-internal)
-		  ;; InfoDock and XEmacs
-		  (hpath:display-buffer (car find-tag-result))
-		  (goto-char (cdr find-tag-result)))
-		 ((or (eq (type-of find-tag-result) 'xref-item)
+	   (cond ((or (eq (type-of find-tag-result) 'xref-item)
 		      (vectorp find-tag-result))
-		  ;; Newer GNU Emacs with xref.el
 		  (hpath:display-buffer (xref-item-buffer find-tag-result))
 		  (goto-char (xref-item-position find-tag-result)))
-		 ((bufferp find-tag-result)
-		  ;; Older GNU Emacs
-		  (hpath:display-buffer find-tag-result))
 		 (t
 		  ;; Emacs with some unknown version of tags.
 		  ;; Signals an error if tag is not found which is caught by
@@ -1465,12 +1437,6 @@ to look.  If no tags file is found, an error is signaled."
 	   ;; GNU Emacs in other cases
 	   (tags-table-check-computed-list)
 	   tags-table-computed-list)
-	  ((fboundp 'buffer-tag-table-list)
-	   ;; InfoDock and XEmacs
-	   (buffer-tag-table-list))
-	  ((when (boundp 'buffer-tag-table) buffer-tag-table)
-	   ;; InfoDock and XEmacs
-	   (list buffer-tag-table))
 	  ((when (boundp 'tags-file-name) tags-file-name)
 	   (list tags-file-name))
 	  (t (error "Needed tags file not found; see `man etags' for how to build one")))))
