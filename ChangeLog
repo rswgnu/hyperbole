@@ -2,6 +2,11 @@
 
 * hact.el (hact): Use defun. Patch from Stefan Monnier. Thanks Stefan.
 
+2022-04-18  Mats Lidell  <matsl@gnu.org>
+
+* kotl/kotl-mode.el (kotl-mode:fill-paragraph-or-region):
+    (kotl-mode-map): Remove XEmacs compatibility code.
+
 * hmouse-drv.el (hmouse-use-region-p): Remove XEmacs and InfoDock
     compatibility code.
 
