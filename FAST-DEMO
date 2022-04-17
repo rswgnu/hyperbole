@@ -101,9 +101,9 @@
 
        Press {C-h A} when over any Hyperbole button for an explanation of what it does.
 
-    {M-x dired-other-window RET ${hyperb:dir}/*.org RET}
+    {M-x dired-other-window RET ${hyperb:dir}/*.el RET}
 
-       Hyperbole home directory Dired listing of Org files only
+       Hyperbole home directory Dired listing of Emacs Lisp files only
 
     {C-c @ 22 RET}
 
@@ -117,10 +117,11 @@
        Find the Hyperbole Koutliner source files that begin with 'kotl' and display
        them in an auto-sized grid of windows.
 
-    {C-u 0 C-c @ python-mode RET 33 RET}
+    {C-u 0 C-c @ emacs-lisp-mode RET 33 RET}
 
-       Display the 9 mostly recently used Python buffers in a 3x3 grid.  Other buffers
-       fill in the grid if there are not enough Python ones.
+       Display the 9 mostly recently used Emacs Lisp buffers in a 3x3
+       grid.  A BLANK buffer fills in the grid if there are not enough
+       Emacs Lisp ones.
 
     {C-x d ${hyperb:dir} RET}
 
@@ -130,9 +131,9 @@
        a window grid of those files only.  That works in Buffer Menu and IBuffer modes
        as well.
 
-    {C-x C-b C-x C-q M-x keep-lines RET .py$ RET C-x C-q}
+    {C-x C-b C-x C-q M-x keep-lines RET .el$ RET C-x C-q}
 
-       Display a buffer list of Python file buffers only
+       Display a buffer list of Emacs Lisp file buffers only
 
     {C-x C-b C-x C-q M-x keep-lines RET [\\/]$ RET C-x C-q}
 
@@ -140,6 +141,16 @@
 
 
 * Posix/Linux Shell Command Implicit Buttons
+
+    The shell command part of the demo requires a shell that is
+    compatible with bash.  If you are using another shell you can for
+    this part switch to bash,
+
+    { M-x set-variable RET shell-file-name RET "/usr/bin/bash" RET }
+
+       Set the name of the inferior shell to /usr/bin/bash. If you do
+       this don't forget to reset it to your preferred shell when you
+       are ready with the demo.
 
     { M-x shell RET M-> (pushd ${hyperb:dir}) RET }
 
