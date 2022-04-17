@@ -2,6 +2,8 @@
 
 * hact.el (hact): Use defun. Patch from Stefan Monnier. Thanks Stefan.
 
+* hmouse-mod.el (hmouse-mod-last-char): Remove XEmacs compatibility code.
+
 * hyrolo.el (hyrolo-prompt):
     (hyrolo-rename): Remove XEmacs dialog box and parameter.
 
