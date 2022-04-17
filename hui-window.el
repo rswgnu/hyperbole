@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Sep-92
-;; Last-Mod:     20-Feb-22 at 22:17:04 by Bob Weiner
+;; Last-Mod:     17-Apr-22 at 11:39:16 by Bob Weiner
 ;;
 ;; Copyright (C) 1992-2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -851,7 +851,6 @@ item, this moves the menu buffer itself to the release location."
 	 ;; Release may be outside of an Emacs window in which case,
 	 ;; create a new frame and window.
 	 (w2 (or action-key-release-window (frame-selected-window (hycontrol-make-frame))))
-	 (buf-name)
 	 (w1-ref)
 	 (pos))
     (when (and (window-live-p w1) (window-live-p w2))
@@ -1051,32 +1050,22 @@ If free variable `assist-flag' is non-nil, uses Assist Key."
       (eq (lookup-key keymap [mode-line mouse-1]) 'mode-line-previous-buffer))))
 
 (defun hmouse-modeline-resize-window ()
-  "Resizes window whose mode line was depressed on by the last Smart Key.
+  "Resize window whose mode line was depressed upon with the last Smart Key.
 Resize amount depends upon the vertical difference between press and release
 of the Smart Key."
   (cond ((not (hyperb:window-system)) nil)
-	(t (let* ((owind (selected-window))
-		  (window (smart-window-of-coords
-			   (if assist-flag assist-key-depress-args
-			     action-key-depress-args)))
-		  (mode-ln (and window (1- (nth 3 (window-edges window)))))
-		  (last-release-y
-		   (hmouse-y-coord
-		    (if assist-flag assist-key-release-args
-		      action-key-release-args)))
-		  (shrink-amount (- mode-ln last-release-y)))
-	     ;; Restore position of point prior to Action Key release.
-	     (if action-key-release-prev-point
-		 (let ((obuf (current-buffer)))
-		   (unwind-protect
-		       (progn
-			 (set-buffer
-			  (marker-buffer action-key-release-prev-point))
-			 (goto-char
-			  (marker-position action-key-release-prev-point)))
-		     (set-buffer obuf))))))))
+	(t ;; Restore position of point prior to Action Key release.
+	 (when action-key-release-prev-point
+	   (let ((obuf (current-buffer)))
+	     (unwind-protect
+		 (progn
+		   (set-buffer
+		    (marker-buffer action-key-release-prev-point))
+		   (goto-char
+		    (marker-position action-key-release-prev-point)))
+	       (set-buffer obuf)))))))
 
-(defun hmouse-clone-window-to-frame (&optional always-delete-flag)
+(defun hmouse-clone-window-to-frame (&optional _always-delete-flag)
   (let ((hycontrol-keep-window-flag t))
     (hmouse-move-window-to-frame)))
 

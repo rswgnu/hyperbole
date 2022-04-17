@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     8-Oct-92 at 19:08:31
-;; Last-Mod:     24-Jan-22 at 00:18:46 by Bob Weiner
+;; Last-Mod:     17-Apr-22 at 13:09:12 by Bob Weiner
 ;;
 ;; Copyright (C) 1992-2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -170,7 +170,8 @@ Second argument COUNT is used as a prefix argument to the command."
   (interactive "p")
   (if (and (boundp 'action-key-depressed-flag)
 	   (boundp 'assist-key-depressed-flag))
-      (let ((modifiers (event-modifiers last-command-event))
+      (let (
+	    ;; (modifiers (event-modifiers last-command-event))
 	    (c (hmouse-mod-last-char)))
 	(cond ((and c action-key-depressed-flag assist-key-depressed-flag)
 	       (setq action-key-cancelled t

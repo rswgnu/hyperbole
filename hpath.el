@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     1-Nov-91 at 00:44:23
-;; Last-Mod:     27-Feb-22 at 16:25:23 by Bob Weiner
+;; Last-Mod:     17-Apr-22 at 13:15:55 by Bob Weiner
 ;;
 ;; Copyright (C) 1991-2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -257,8 +257,7 @@ Path must be a string or an error will be triggered.  See
 Call this function manually if mount points change after Hyperbole is loaded."
   (interactive)
   (when (not hyperb:microsoft-os-p)
-    (let (mount-points-alist
-          mount-points-to-add)
+    (let (mount-points-to-add)
       ;; Convert plist to alist for sorting.
       (hypb:map-plist (lambda (path mount-point)
 			(when (string-match "\\`\\([a-zA-Z]\\):\\'" path)
@@ -367,41 +366,40 @@ See the function `hpath:get-external-display-alist' for detailed format document
   "Regexp matching to the end of Info manual file names.")
 
 (defcustom hpath:internal-display-alist
-  (let ((info-suffix "\\.info\\(-[0-9]+\\)?\\(\\.gz\\|\\.Z\\|-z\\)?\\'"))
-    (delq
-     nil
-     (list
+  (delq
+   nil
+   (list
 
-      ;; Support internal sound when available.
-      (if (fboundp 'play-sound-file)
-	  '("\\.\\(au\\|mp3\\|ogg\\|wav\\)$" . play-sound-file))
+    ;; Support internal sound when available.
+    (if (fboundp 'play-sound-file)
+	'("\\.\\(au\\|mp3\\|ogg\\|wav\\)$" . play-sound-file))
 
-      ;; Run the OO-Browser on OOBR or OOBR-FTR Environment files.
-      '("\\(\\`\\|/\\)\\(OOBR\\|oobr\\).*\\(-FTR\\|-ftr\\)?\\'" . br-env-browse)
+    ;; Run the OO-Browser on OOBR or OOBR-FTR Environment files.
+    '("\\(\\`\\|/\\)\\(OOBR\\|oobr\\).*\\(-FTR\\|-ftr\\)?\\'" . br-env-browse)
 
-      ;; Display the top node from Info online manuals.
-      (cons
-       (concat hpath:info-suffix
-	       "\\|/\\(info\\|INFO\\)/[^.]+$\\|/\\(info-local\\|INFO-LOCAL\\)/[^.]+$")
-       (lambda (file)
-	 (if (and (string-match hpath:info-suffix file)
-		  (match-beginning 1))
-	     ;; Removed numbered trailer to get basic filename.
-	     (setq file (concat (substring-no-properties file 0 (match-beginning 1))
-				(substring-no-properties file (match-end 1)))))
-	 (require 'info)
-	 ;; Ensure that *info* buffer is displayed in the right place.
-	 (hpath:display-buffer (current-buffer))
-	 (condition-case ()
-	     (Info-find-node file "Top")
-	   (error (if (and file (file-exists-p file))
-		      (progn
-			(if (get-buffer "*info*")
-			    (kill-buffer "*info*"))
-			(Info-find-node file "*" nil t))
-		    (error "Invalid file"))))))
+    ;; Display the top node from Info online manuals.
+    (cons
+     (concat hpath:info-suffix
+	     "\\|/\\(info\\|INFO\\)/[^.]+$\\|/\\(info-local\\|INFO-LOCAL\\)/[^.]+$")
+     (lambda (file)
+       (if (and (string-match hpath:info-suffix file)
+		(match-beginning 1))
+	   ;; Removed numbered trailer to get basic filename.
+	   (setq file (concat (substring-no-properties file 0 (match-beginning 1))
+			      (substring-no-properties file (match-end 1)))))
+       (require 'info)
+       ;; Ensure that *info* buffer is displayed in the right place.
+       (hpath:display-buffer (current-buffer))
+       (condition-case ()
+	   (Info-find-node file "Top")
+	 (error (if (and file (file-exists-p file))
+		    (progn
+		      (if (get-buffer "*info*")
+			  (kill-buffer "*info*"))
+		      (Info-find-node file "*" nil t))
+		  (error "Invalid file"))))))
 
-      '("\\.rdb\\'" . rdb:initialize))))
+    '("\\.rdb\\'" . rdb:initialize)))
   "*Alist of (FILENAME-REGEXP . EDIT-FUNCTION) elements for calling special
 functions to display particular file types within Emacs.  See also
 the function (hpath:get-external-display-alist) for external display program settings."
@@ -921,8 +919,7 @@ Make any existing path within a file buffer absolute before returning."
     (error "(%s): '%s' must be a string" func path))
   ;; Convert tabs and newlines to space.
   (setq path (hbut:key-to-label (hbut:label-to-key path)))
-  (let* ((orig-path path)
-	 (expanded-path)
+  (let* ((expanded-path)
 	 (prefix (when (stringp path)
 		   (car (delq nil (list (when (string-match hpath:prefix-regexp path)
 					  (prog1 (match-string 0 path)

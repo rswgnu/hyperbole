@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    22-Nov-91 at 01:37:57
-;; Last-Mod:     20-Mar-22 at 16:25:31 by Bob Weiner
+;; Last-Mod:     17-Apr-22 at 12:53:49 by Bob Weiner
 ;;
 ;; Copyright (C) 1991-2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -237,30 +237,26 @@ Any key sequence must be a string of one of the following:
   a HyControl key sequence,
   a M-x extended command,
   or a valid key sequence together with its interactive arguments."
-  ;; Temporarily make open and close braces have list syntax for
-  ;; matching purposes.
-  (let ((open-brace-syntax (hypb:get-raw-syntax-descriptor ?\{))
-	(close-brace-syntax (hypb:get-raw-syntax-descriptor ?\})))
-    ;; Handle long series, e.g. eval-elisp actions
-    (let* ((hbut:max-len (max 3000 (hbut:max-len)))
-	   ;; STR must include delimiters but they are stripped from `key-series'.
-	   (key-series (or (kbd-key:remove-delimiters str "{`" "'}")
-			   (kbd-key:remove-delimiters str "{" "}")
-			   ;; Regular dual single quotes (Texinfo smart quotes)
-			   (kbd-key:remove-delimiters str "``" "''")
-			   ;; Typical GNU manual key sequences; note
-			   ;; these are special quote marks, not the
-			   ;; standard ASCII characters.
-			   (kbd-key:remove-delimiters str "‘" "’")))
-	   binding)
-      (when (and (stringp key-series)
-		 (not (eq key-series "")))
-	(setq key-series (kbd-key:normalize key-series)
-	      binding (kbd-key:binding key-series)))
-      (and (stringp key-series)
-	   (or (and binding (not (integerp binding)))
-	       (kbd-key:special-sequence-p key-series))
-	   key-series))))
+  ;; Handle long series, e.g. eval-elisp actions
+  (let* ((hbut:max-len (max 3000 (hbut:max-len)))
+	 ;; STR must include delimiters but they are stripped from `key-series'.
+	 (key-series (or (kbd-key:remove-delimiters str "{`" "'}")
+			 (kbd-key:remove-delimiters str "{" "}")
+			 ;; Regular dual single quotes (Texinfo smart quotes)
+			 (kbd-key:remove-delimiters str "``" "''")
+			 ;; Typical GNU manual key sequences; note
+			 ;; these are special quote marks, not the
+			 ;; standard ASCII characters.
+			 (kbd-key:remove-delimiters str "‘" "’")))
+	 binding)
+    (when (and (stringp key-series)
+	       (not (eq key-series "")))
+      (setq key-series (kbd-key:normalize key-series)
+	    binding (kbd-key:binding key-series)))
+    (and (stringp key-series)
+	 (or (and binding (not (integerp binding)))
+	     (kbd-key:special-sequence-p key-series))
+	 key-series)))
 
 (defun kbd-key:normalize (key-series)
   "Normalize a human-readable string of keyboard keys, KEY-SERIES (without any surrounding {}).
@@ -280,8 +276,9 @@ keyboad input queue, as if they had been typed by the user."
 	   (let ((norm-key-series (copy-sequence key-series))
 		 (case-fold-search nil)
 		 (case-replace t)
-		 (substring)
-		 (arg))
+		 ;; (substring)
+		 ;; (arg)
+		 )
 	     (setq norm-key-series (kbd-key:mark-spaces-to-keep norm-key-series "(" ")")
 		   norm-key-series (kbd-key:mark-spaces-to-keep norm-key-series "\\[" "\\]")
 		   norm-key-series (kbd-key:mark-spaces-to-keep norm-key-series "<" ">")

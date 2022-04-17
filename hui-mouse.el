@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    04-Feb-89
-;; Last-Mod:     12-Feb-22 at 10:36:40 by Mats Lidell
+;; Last-Mod:     17-Apr-22 at 13:46:49 by Bob Weiner
 ;;
 ;; Copyright (C) 1991-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -1455,10 +1455,11 @@ If assist-key is pressed:
 
 ;; Thanks to Jonas Bernoulli <tarsius>, magit author, for most of this
 ;; next function.
+;; Usage: (define-key magit-section-mode-map "TAB" 'smart-magit-tab)
 (defun smart-magit-tab (section)
-  ;; Usage: (define-key magit-section-mode-map "TAB" 'smart-magit-tab
   "Toggle visibility of the body of the current section."
   (interactive (list (magit-current-section)))
+  (require 'magit)
   (let* ((magit-display-buffer-function #'hpath:display-buffer)
 	 (non-text-area-p (and (eventp action-key-depress-args)
 			       (posn-area (event-start action-key-depress-args)))))

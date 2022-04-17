@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    15-Apr-91 at 00:48:49
-;; Last-Mod:     16-Apr-22 at 16:48:26 by Bob Weiner
+;; Last-Mod:     17-Apr-22 at 11:18:39 by Bob Weiner
 ;;
 ;; Copyright (C) 1991-2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -249,8 +249,8 @@ the %s in the url-with-%s-parameter is replaced with an interactively
 obtained search string; if second argument is a command instead, then
 it is called interactively to prompt for the search string."
   :initialize #'custom-initialize-default
-  :set (lambda (_option value)
-	 (set _option value)
+  :set (lambda (option value)
+	 (set option value)
 	 (hyperbole-update-menus))
   :type '(alist :key-type string :value-type (choice string symbol))
   :group 'hyperbole-commands)

@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    24-Apr-91 at 03:36:23
-;; Last-Mod:     20-Feb-22 at 16:40:21 by Bob Weiner
+;; Last-Mod:     17-Apr-22 at 12:41:30 by Bob Weiner
 ;;
 ;; Copyright (C) 1991-2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -32,7 +32,7 @@ changing the current frame configuration somehow."
   ;; window buffer correspondences on startup, so don't remove it.
   (set-buffer (window-buffer (selected-window)))
   (when (not (frame-configuration-p elt))
-    (error "(hhist:add): 'elt' must be a frame configuration, not " elt))
+    (error "(hhist:add): 'elt' must be a frame configuration, not %s" elt))
   (unless (or (equal elt (car *hhist*))
 	      (equal elt (current-frame-configuration)))
     (setq *hhist* (cons elt *hhist*))))

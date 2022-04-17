@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     2-Apr-91
-;; Last-Mod:     12-Feb-22 at 10:12:23 by Mats Lidell
+;; Last-Mod:     17-Apr-22 at 12:38:53 by Bob Weiner
 ;;
 ;; Copyright (C) 1991-2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -187,32 +187,32 @@ Nil BUT-SYM means use 'hbut:current'.  If successful, return a cons of
 	(hattr:set b 'lbl-key (concat new-key lbl-instance))
 	(hattr:set b 'loc loc)
 	(hattr:set b 'dir dir)
-	(let ((actype)
-	      (hbdata (list (hattr:get b 'lbl-key)
-			    (hattr:get b 'action)
-			    ;; Hyperbole V1 referent compatibility, always nil in V2
-			    (hattr:get b 'referent)
-			    ;; Save actype without class prefix.
-			    (and (setq actype (hattr:get b 'actype))
-				 (symbolp actype)
-				 (setq actype (symbol-name actype))
-				 (intern
-				  (substring actype (if (string-match "::" actype)
-							(match-end 0) 0))))
-			    (let ((mail-dir (and (fboundp 'hmail:composing-dir)
-						 (hmail:composing-dir l)))
-				  (args (hattr:get b 'args)))
-			      ;; Replace matches for variable values with their variable names in any pathname args.
-			      (hattr:set b 'args
-					 (mapcar #'hpath:substitute-var
-						 (if mail-dir
-						     ;; Make pathname args absolute for outgoing mail and news messages.
-						     (hpath:absolute-arguments actype args mail-dir)
-						   args))))
-			    (hattr:set b 'creator (or creator hyperb:user-email))
-			    (hattr:set b 'create-time (or create-time (htz:date-sortable-gmt)))
-			    (hattr:set b 'modifier modifier)
-			    (hattr:set b 'mod-time mod-time))))
+	(let* ((actype)
+	       (hbdata (list (hattr:get b 'lbl-key)
+			     (hattr:get b 'action)
+			     ;; Hyperbole V1 referent compatibility, always nil in V2
+			     (hattr:get b 'referent)
+			     ;; Save actype without class prefix.
+			     (and (setq actype (hattr:get b 'actype))
+				  (symbolp actype)
+				  (setq actype (symbol-name actype))
+				  (intern
+				   (substring actype (if (string-match "::" actype)
+							 (match-end 0) 0))))
+			     (let ((mail-dir (and (fboundp 'hmail:composing-dir)
+						  (hmail:composing-dir l)))
+				   (args (hattr:get b 'args)))
+			       ;; Replace matches for variable values with their variable names in any pathname args.
+			       (hattr:set b 'args
+					  (mapcar #'hpath:substitute-var
+						  (if mail-dir
+						      ;; Make pathname args absolute for outgoing mail and news messages.
+						      (hpath:absolute-arguments actype args mail-dir)
+						    args))))
+			     (hattr:set b 'creator (or creator hyperb:user-email))
+			     (hattr:set b 'create-time (or create-time (htz:date-sortable-gmt)))
+			     (hattr:set b 'modifier modifier)
+			     (hattr:set b 'mod-time mod-time))))
 	  ;; Ensure modified attributes are saved to `but-sym' or hbut:current.
 	  (hattr:copy b (or but-sym 'hbut:current))
 	  (cons hbdata lbl-instance))))))

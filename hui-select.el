@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Oct-96 at 02:25:27
-;; Last-Mod:     12-Apr-22 at 00:43:21 by Bob Weiner
+;; Last-Mod:     17-Apr-22 at 11:32:25 by Bob Weiner
 ;;
 ;; Copyright (C) 1996-2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -356,7 +356,7 @@ Also, add language-specific syntax setups to aid in thing selection."
   ;;
   ;; Make tag begin and end delimiters act like grouping characters,
   ;; for easy syntactical selection of tags.
-  (let (hook-sym syntax-table keymap mode-str)
+  (let (hook-sym mode-str)
     (mapc (lambda (mode)
             (setq mode-str (symbol-name mode)
                   hook-sym (intern (concat mode-str "-hook"))

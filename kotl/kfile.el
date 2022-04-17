@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    10/31/93
-;; Last-Mod:      3-Apr-22 at 16:17:53 by Bob Weiner
+;; Last-Mod:     17-Apr-22 at 12:17:44 by Bob Weiner
 ;;
 ;; Copyright (C) 1993-2021  Free Software Foundation, Inc.
 ;; See the "../HY-COPY" file for license information.
@@ -221,7 +221,7 @@ Return the new view."
 If V3-FLAG is true, read as a version-3 buffer."
   (let ((standard-input buffer)
 	cell-count label-type label-min-width label-separator
-	level-indent cell-data view)
+	level-indent cell-data top-cell-attributes view)
     (widen)
     (goto-char (point-min))
     ;; Skip past cell contents here.

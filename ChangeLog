@@ -1,5 +1,30 @@
 2022-04-17  Bob Weiner  <rsw@gnu.org>
 
+* hsys-www.el (www-url-expand-file-name): Fix to expand non-remote, non-url paths.
+
+* hpath.el (hpath:call): Remove unused 'orig-path' local binding.
+
+* hibtypes.el (action:help): Fix interactive call to use any hbut at point.
+
+* hib-kbd.el (kbd-key:is-p): Remove unused open/close-brace-syntax local vars.
+
+* hbdata.el (hbdata:build): Fix 'actype' ref by changing let to let*.
+
+* kotl/kview.el (kview:map-siblings): Add let of 'cell-indent' so is local.
+
+* kotl/kfill.el (kfill:forward-line): Correct doc that this always returns 0 and remove
+    unused local var 'opoint'.
+
+* hinit.el (hui-menu-remove): Remove set of 'keymap' to 'global-map' when 'keymap' is null;
+    just use one or the other for the menubar binding.  Return value is never used, so
+    ignore it.
+
+* hypb.el (hypb:copy-to-register): Remove improper let definition of 'start' and 'end'
+    since are given as function parameters.
+          (hypb:selectable-thing-and-bounds): Fix to properly return a list.
+
+* hui-window.el (hmouse-modeline-resize-window): Remove all unused local variables.
+
 * HY-NEWS (Klink Copy): Updated with latest key bindings.
 
 2022-04-16  Bob Weiner  <rsw@gnu.org>

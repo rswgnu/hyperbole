@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     9-May-91 at 04:50:20
-;; Last-Mod:      5-Feb-22 at 22:13:05 by Bob Weiner
+;; Last-Mod:     17-Apr-22 at 11:23:02 by Bob Weiner
 ;;
 ;; Copyright (C) 1991-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -79,8 +79,7 @@ message.  If not given, 'smail:comment' is evaluated by default."
 If supercite is in use, header fields are never deleted.
 Use (setq sc-nuke-mail-headers 'all) to have them removed."
   (let ((modified (buffer-modified-p))
-	body-text
-	opoint)
+	body-text)
 	(when (and message-reply-buffer
 		   message-cite-function)
 	  (when (equal message-cite-reply-position 'above)
@@ -99,7 +98,6 @@ Use (setq sc-nuke-mail-headers 'all) to have them removed."
 	      (hmail:msg-narrow)
 	      (when (fboundp 'hproperty:but-create)
 		(hproperty:but-create))))
-	  (setq opoint (point))
 	  (push-mark (save-excursion
 		       (cond
 			((bufferp message-reply-buffer)
@@ -158,8 +156,8 @@ Use (setq sc-nuke-mail-headers 'all) to have them removed."
   (if mail-reply-action
       (let ((start (point))
 	    (original mail-reply-action)
-	    (omark (mark t))
-	    opoint)
+	    (opoint (point))
+	    (omark (mark t)))
 	(and (consp original) (eq (car original) 'insert-buffer)
 	     (setq original (nth 1 original)))
 	(unwind-protect
@@ -178,7 +176,6 @@ Use (setq sc-nuke-mail-headers 'all) to have them removed."
 		  ;; before any Hyperbole mail reader support has been autoloaded.
 		  (cond ((fboundp 'rmail:msg-widen) (rmail:msg-widen))
 			((eq major-mode 'news-reply-mode) (widen))))
-		(setq opoint (point))
 		(with-no-warnings
 		  ;; We really want this to set mark.
 		  (insert-buffer original)

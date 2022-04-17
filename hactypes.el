@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    23-Sep-91 at 20:34:36
-;; Last-Mod:     20-Feb-22 at 22:13:32 by Bob Weiner
+;; Last-Mod:     17-Apr-22 at 12:37:06 by Bob Weiner
 ;;
 ;; Copyright (C) 1991-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -35,8 +35,7 @@
 (defact annot-bib (key)
   "Follow internal ref KEY within an annotated bibliography, delimiters=[]."
   (interactive "sReference key (no []): ")
-  (let ((opoint (point))
-	(key-regexp (concat "^[*]*[ \t]*\\\[" (ebut:key-to-label key) "\\\]"))
+  (let ((key-regexp (concat "^[*]*[ \t]*\\\[" (ebut:key-to-label key) "\\\]"))
 	citation)
     (if (save-excursion
 	  (goto-char (point-max))
@@ -185,8 +184,7 @@ kill the last output to the shell buffer before executing SHELL-CMD."
 	 (cmd (if (hpath:remote-p default-dir)
 		  (concat "(" shell-cmd ") &")
 		(concat "(cd " default-dir " && " shell-cmd ") &")))
-	 (msg (format "Executing: %s" shell-cmd))
-	 (shell-buf))
+	 (msg (format "Executing: %s" shell-cmd)))
     (message msg)
     (save-excursion
       (save-window-excursion

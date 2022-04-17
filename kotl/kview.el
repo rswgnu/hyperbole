@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    6/30/93
-;; Last-Mod:     16-Apr-22 at 17:59:27 by Bob Weiner
+;; Last-Mod:     17-Apr-22 at 12:57:50 by Bob Weiner
 ;;
 ;; Copyright (C) 1993-2021  Free Software Foundation, Inc.
 ;; See the "../HY-COPY" file for license information.
@@ -195,8 +195,7 @@ a cell's label and the start of its contents.
 Any cell that is invisible is also collapsed as indicated by a call to
 `kcell-view:collapsed-p'."
   (let ((start (1- (kcell-view:start pos label-sep-len))) ;; Allow for empty cell
-	(end (kcell-view:end-contents pos))
-	(invisible))
+	(end (kcell-view:end-contents pos)))
     (when (delq nil (mapcar (lambda (o)
 			      (and (eq (overlay-get o 'invisible) 'outline)
 				   (>= start (overlay-start o))
@@ -963,21 +962,23 @@ against this value.  The variable `label-sep-len' contains the label
 separator length.
 
 See also `kview:map-branch' and `kview:map-tree'."
-    (with-current-buffer (kview:buffer kview)
-      (save-excursion
-	(let ((results)
-	      (label-sep-len (kview:label-separator-length kview)))
-	  ;; Next line ensures point is in the root of the current tree if
-	  ;; the tree is at all hidden.
-	  (when visible-p (kotl-mode:to-start-of-line))
-	  (when first-p
-	    ;; Move back to first predecessor at same level.
-	    (while (kcell-view:backward t label-sep-len)))
-	  (setq cell-indent (kcell-view:indent nil label-sep-len))
-	  ;; Terminate when no further cells at same level.
-	  (while (progn (setq results (cons (funcall func kview) results))
-			(kcell-view:forward visible-p label-sep-len)))
-	  (nreverse results)))))
+  (with-current-buffer (kview:buffer kview)
+    (save-excursion
+      (let ((label-sep-len (kview:label-separator-length kview))
+	    cell-indent
+	    results)
+	;; Next line ensures point is in the root of the current tree if
+	;; the tree is at all hidden.
+	(when visible-p
+	  (kotl-mode:to-start-of-line))
+	(when first-p
+	  ;; Move back to first predecessor at same level.
+	  (while (kcell-view:backward t label-sep-len)))
+	(setq cell-indent (kcell-view:indent nil label-sep-len))
+	;; Terminate when no further cells at same level.
+	(while (progn (setq results (cons (funcall func kview) results))
+		      (kcell-view:forward visible-p label-sep-len)))
+	(nreverse results)))))
 
 (defun kview:map-expanded-tree (func kview &optional top-p)
   "Temporarily expand the tree at point, apply FUNC to the tree in the KVIEW and return results as a list.

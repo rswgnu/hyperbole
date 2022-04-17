@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 20:45:31
-;; Last-Mod:     13-Feb-22 at 11:37:13 by Bob Weiner
+;; Last-Mod:     17-Apr-22 at 13:47:31 by Bob Weiner
 ;;
 ;; Copyright (C) 1991-2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -708,7 +708,7 @@ Requires the Emacs builtin Tramp library for ftp file retrievals."
          (label-and-file (nth 0 label-start-end))
          (start-pos (nth 1 label-start-end))
          (end-pos (nth 2 label-start-end))
-         lbl but-key lbl-key key-file partial-lbl)
+         but-key lbl-key key-file partial-lbl)
     (when label-and-file
       (setq label-and-file (parse-label-and-file label-and-file)
             partial-lbl (nth 0 label-and-file)
@@ -1402,8 +1402,8 @@ arg1 ... argN '>'.  For example, <mail nil \"user@somewhere.org\">."
 If a boolean function or variable, display its value."
   (interactive
    (list
-    (when hbut
-      (hbut:label hbut))))
+    (when (hbut:at-p)
+      (hbut:label 'hbut:current))))
   (when (hbut:is-p hbut)
     (let* ((label (hbut:key-to-label (hattr:get hbut 'lbl-key)))
 	   (actype (hattr:get hbut 'actype))

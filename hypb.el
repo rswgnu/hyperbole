@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     6-Oct-91 at 03:42:38
-;; Last-Mod:     16-Apr-22 at 00:42:39 by Mats Lidell
+;; Last-Mod:     17-Apr-22 at 11:43:32 by Bob Weiner
 ;;
 ;; Copyright (C) 1991-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -238,8 +238,6 @@ thing at point; see `hypb:selectable-thing'."
 		     t))
   (let (thing-and-bounds
 	thing
-	start
-	end
 	str)
     (prog1 (setq str
 		 ;; If called interactively and no region is active, copy thing at
@@ -851,7 +849,7 @@ The value returned is the value of the last form in BODY."
 	 (hui-select-get-thing))))
 
 (defun hypb:selectable-thing-and-bounds ()
-  "Return a list of any selectable thing at point as a string, start position of thing, end position of thing, or nil if none.
+  "Return a list of any selectable thing at point as: (<string> <start position of thing> <end position of thing>) or nil if none.
 Start and end may be nil if thing was generated rather than extracted from a region."
   (let (thing-and-bounds thing start end)
     (cond ((setq thing-and-bounds (klink:at-p))
@@ -867,9 +865,9 @@ Start and end may be nil if thing was generated rather than extracted from a reg
 		(list (buffer-substring-no-properties start end) start end)))
 	  ((hui-select-at-delimited-thing-p)
 	   (when (setq thing-and-bounds (hui-select-get-region-boundaries))
-	     (buffer-substring-no-properties (car thing-and-bounds) (cdr thing-and-bounds))
-	     (car thing-and-bounds)
-	     (cdr thing-and-bounds))))))
+	     (list (buffer-substring-no-properties (car thing-and-bounds) (cdr thing-and-bounds))
+		   (car thing-and-bounds)
+		   (cdr thing-and-bounds)))))))
 
 (defun hypb:set-raw-syntax-descriptor (char raw-descriptor &optional syntax-table)
   "Set the syntax of CHAR to RAW-DESCRIPTOR (syntax table value) in the current syntax table or optional SYNTAX-TABLE.

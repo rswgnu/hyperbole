@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     7-Apr-94 at 17:17:39 by Bob Weiner
-;; Last-Mod:     12-Feb-22 at 10:42:19 by Mats Lidell
+;; Last-Mod:     17-Apr-22 at 13:37:44 by Bob Weiner
 ;;
 ;; Copyright (C) 1994-2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -113,15 +113,17 @@ is used.  Valid values of this variable include `browse-url-default-browser' and
     (error "(www-url): `browse-url-browser-function' must be set to a web browser invoking function")))
 
 ;;;###autoload
-(defun www-url-expand-file-name (path &optional _dir)
-  "Expand PATH in DIR.  Return http urls unchanged."
-  (if (listp path)
-      (setq dir  (car (cdr path))
-	    path (car path)))
-  (cond ((string-match "\\`www\\.\\|\\`https?:" path)
-	 path)
-	(t (require 'hpath)
-	   (or (hpath:remote-p path) path))))
+(defun www-url-expand-file-name (path &optional dir)
+  "Expand and return  non-url and non-remote PATH in DIR.
+Return http urls unchanged.  Normalize remote paths."
+  (when (listp path)
+    (setq path (car path)
+	  dir  (car (cdr path))))
+  (if (string-match "\\`www\\.\\|\\`https?:" path)
+      path
+    (require 'hpath)
+    (or (hpath:remote-p path)
+	(expand-file-name path dir))))
 
 ;;;###autoload
 (defun www-url-find-file-noselect (path &rest args)
