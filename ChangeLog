@@ -2,6 +2,9 @@
 
 * hact.el (hact): Use defun. Patch from Stefan Monnier. Thanks Stefan.
 
+* hmouse-drv.el (hmouse-use-region-p): Remove XEmacs and InfoDock
+    compatibility code.
+
 * kotl/kmenu.el (id-menubar-set): Remove declared unused function.
     (id-menubar-kotl): Remove unsued InfoDock menu.
     (kotl-menubar-menu): Remove XEmacs compatibility code.
