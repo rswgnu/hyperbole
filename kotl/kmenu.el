@@ -3,9 +3,9 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    28-Mar-94 at 11:22:09
-;; Last-Mod:      5-Feb-22 at 22:33:45 by Bob Weiner
+;; Last-Mod:     17-Apr-22 at 23:51:03 by Mats Lidell
 ;;
-;; Copyright (C) 1994-2021  Free Software Foundation, Inc.
+;; Copyright (C) 1994-2022  Free Software Foundation, Inc.
 ;; See the "../HY-COPY" file for license information.
 ;;
 ;; This file is part of GNU Hyperbole.
@@ -18,12 +18,6 @@
 ;;; ************************************************************************
 
 (require 'easymenu)
-
-;;; ************************************************************************
-;;; Public declarations
-;;; ************************************************************************
-
-(declare-function id-menubar-set "ext:infodock")
 
 ;;; ************************************************************************
 ;;; Public variables
@@ -170,14 +164,6 @@
     "----"
     ["Quit"                (id-tool-quit '(kill-buffer nil))  t]))
 
-;;; This definition is used by InfoDock only.
-(defconst id-menubar-kotl
-  (cons
-   (append kotl-menu-common-preamble
-	   kotl-menu-common-postamble)
-   kotl-menu-common-body))
-
-;;; This definition is used by InfoDock, XEmacs and GNU Emacs.
 (defconst id-popup-kotl-menu
    (append kotl-menu-common-preamble
 	   `("----"
@@ -185,41 +171,25 @@
 	   kotl-menu-common-postamble))
 
 ;;; ************************************************************************
-;;; Public declarations
-;;; ************************************************************************
-(defvar mode-popup-menu)                ; InfoDock
-
-;;; ************************************************************************
 ;;; Public functions
 ;;; ************************************************************************
 
-;;; This definition is used only by XEmacs and Emacs.
 (defun kotl-menubar-menu ()
   "Add a Koutline menu to the menubar for each koutline buffer."
-  (cond ((fboundp 'popup-mode-menu)
-	 (setq mode-popup-menu id-popup-kotl-menu))
-	(t
-	 (define-key kotl-mode-map [C-down-mouse-3] 'kotl-popup-menu)
-	 (define-key kotl-mode-map [C-mouse-3] nil)))
+  (define-key kotl-mode-map [C-down-mouse-3] 'kotl-popup-menu)
+  (define-key kotl-mode-map [C-mouse-3] nil)
   (unless (global-key-binding [menu-bar Koutline])
     (easy-menu-define nil kotl-mode-map "Koutline Menubar Menu" id-popup-kotl-menu)
     ;; Force a menu-bar update.
     (force-mode-line-update)))
 
-;;; This definition is used only by XEmacs and Emacs.
 (defun kotl-popup-menu (event)
   "Popup the Koutline buffer menu."
   (interactive "@e")
   (mouse-set-point event)
   (popup-menu id-popup-kotl-menu))
 
-(cond ((featurep 'infodock)
-       ;; InfoDock under a window system
-       (require 'id-menubars)
-       (id-menubar-set 'kotl-mode 'id-menubar-kotl))
-      (t
-       ;; Emacs or XEmacs under a window system
-       (add-hook 'kotl-mode-hook #'kotl-menubar-menu)))
+(add-hook 'kotl-mode-hook #'kotl-menubar-menu)
 
 (provide 'kmenu)
 

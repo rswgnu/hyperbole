@@ -2,6 +2,11 @@
 
 * hact.el (hact): Use defun. Patch from Stefan Monnier. Thanks Stefan.
 
+* kotl/kmenu.el (id-menubar-set): Remove declared unused function.
+    (id-menubar-kotl): Remove unsued InfoDock menu.
+    (kotl-menubar-menu): Remove XEmacs compatibility code.
+    (kotl-mode-hook): Set hook unconditionally.
+
 * hyrolo-menu.el (id-menubar-hyrolo): Remove InfoDock menu.
     (id-menubar-set, mode-popup-menu): Remove unused public declarations.
     (hyrolo-menubar-menu): Remove XEmacs compatibility code.
