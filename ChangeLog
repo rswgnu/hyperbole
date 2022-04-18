@@ -1,5 +1,8 @@
 2022-04-18  Mats Lidell  <matsl@gnu.org>
 
+* Makefile (elpa, elpa_hypb_dir): Remove elpa target. ELPA picks up latest
+    master from savannah automatically.
+
 * test/kotl-mode-tests.el (kotl-mode--add-cell-set-fill-attribute): Verify
     add-cell do not set no-fill flag.
 
