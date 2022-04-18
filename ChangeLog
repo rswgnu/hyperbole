@@ -1,4 +1,60 @@
+2022-04-18  Bob Weiner  <rsw@gnu.org>
+
+* kotl/kotl-mode.el (kotl-mode:fill-cell): Fix issue where 'end' was set
+    to a non-marker type and then attempt to remove marker errored.  Move
+    marker deletion to before end type is changed.
+
+* kotl/kview.el (kcell-view:create): Remove (or no-fill (equal contents ""))
+    and always add 2 newlines after cell.
+
 2022-04-17  Bob Weiner  <rsw@gnu.org>
+
+* kotl/kotl-mode.el (kotl-mode:split-cell): Copy non-read-only attributes from
+    current cell's plist into new cell.
+
+* kotl/kview.el (kview:add-cell, kcell-view:create): Add new optional sibling-p
+    parameter; use this and kotl-mode:refill-flag in addition to no-fill parameter
+    to determine whether to fill cell contents on creation.  Only the no-fill
+    parameter sets the same named attribute on the cell.
+* kotl/kotl-mode.el (kotl-mode:add-cell): Send sibling-p valude to kview:add-cell.
+
+* kotl/kotl-mode.el (kotl-mode:add-cell): Fix to not use sibling-p or
+    `kotl-mode:refill-flag' to determine no-fill attribute of new cell.
+
+* hui.el (hui:delimited-selectable-thing-and-bounds): Fix arg order of setcar call.
+
+* kotl/kotl-mode.el (kotl-mode:kill-region): Fix interactive sexp to not error when
+    mark is not set.
+                    (kotl-mode:kill-or-copy-region): Add and use in above command.
+
+  hui.el (hui-kill-ring-save, hui-copy-to-register): Fix to signal an error if called
+    when mark is not set.
+
+* kotl/kotl-mode.el (kotl-mode:yank, kotl-mode:yank-pop): Fix to use insert-for-yank
+    and thereby match doc about honoring yank handling variables.
+
+* kotl/klink.el (klink:set-yank-handler): Fix by setting yank-handler to a list.
+
+* man/hyperbole.texi (Default Hyperbole Bindings): Add {M-w} and {C-x r s} doc for
+    copying delimited things.
+
+* kotl/kotl-mode.el (kotl-mode:maybe-shrink-region-p): Prevent error when no mark set.
+
+* hypb.el (hypb:selectable-thing, hypb:selectable-thing-and-bounds): Change prefix to
+    hui:delimited- and move to hui.el.
+
+* hyperbole.el (hkey-initialize):
+  hypb.el (hypb:copy-to-register): Rename to 'hui-copy-to-register' and move to hui.el.
+  hyperbole.el (hkey-initialize):
+  hypb.el (hypb:kill-ring-save): Rename to 'hui-kill-ring-save' and move to hui.el.
+
+* hyperbole.el (hyperbole--mark-even-if-inactive): Add to store value of
+    `mark-even-if-inactive' prior to enabling `hyperbole-mode'.")
+    (hyperbole--enable-mode, hyperbole--disable-mode): Use above new variable.
+
+* hypb.el (hypb:copy-to-register):
+  kotl/kotl-mode.el (kotl-mode:kill-region): Add that 'transient-mark-mode' must be
+    non-nil to copy thing at point when no region is active.
 
 * hsys-www.el (www-url-expand-file-name): Fix to expand non-remote, non-url paths.
 

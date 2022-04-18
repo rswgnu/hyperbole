@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 21:42:03
-;; Last-Mod:     20-Feb-22 at 22:19:24 by Bob Weiner
+;; Last-Mod:     17-Apr-22 at 22:31:52 by Bob Weiner
 ;;
 ;; Copyright (C) 1991-2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -42,6 +42,110 @@
   "*Non-nil prompts for a button-specific action on explicit button creation."
   :type 'boolean
   :group 'hyperbole-buttons)
+
+;;; ************************************************************************
+;;; Public Commands Bound to Keys
+;;; ************************************************************************
+
+;; Derived from copy-to-register of "register.el"
+;;;###autoload
+(defun hui-copy-to-register (register start end &optional delete-flag region)
+  "Copy region or thing into register REGISTER.
+With prefix arg, delete as well.
+Called from program, takes five args: REGISTER, START, END, DELETE-FLAG,
+and REGION.  START and END are buffer positions indicating what to copy.
+The optional argument REGION if non-nil, indicates that we're not just
+copying some text between START and END, but we're copying the region.
+
+Interactively, reads the register using `register-read-with-preview'.
+
+If called interactively, `transient-mark-mode' is non-nil, and
+there is no active region, copy any delimited selectable thing at
+point; see `hui:delimited-selectable-thing'."
+  (interactive (list (register-read-with-preview "Copy to register: ")
+		     (when mark-active (region-beginning))
+		     (when mark-active (region-end))
+		     current-prefix-arg
+		     t))
+  (let (thing-and-bounds
+	thing
+	str)
+    (prog1 (setq str
+		 ;; If called interactively, transient-mark-mode is
+		 ;; enabled, and no region is active, copy thing 
+		 ;; at point or current kcell ref when in kotl-mode
+		 (cond ((and (called-interactively-p 'interactive)
+			     transient-mark-mode
+			     (not (use-region-p))
+			     (prog1 (setq thing-and-bounds (hui:delimited-selectable-thing-and-bounds)
+					  start (nth 1 thing-and-bounds)
+					  end   (nth 2 thing-and-bounds)
+					  thing (nth 0 thing-and-bounds))
+			       (when (and delete-flag start end)
+				 (delete-region start end))))
+			thing)
+		       ((and start end region)
+			(funcall region-extract-function delete-flag))
+		       ((and start end)
+			(filter-buffer-substring start end delete-flag))
+		       (t ;; no region
+			(signal 'mark-inactive nil))))
+      (set-register register str)
+      (setq deactivate-mark t)
+      (cond (delete-flag)
+	    ((called-interactively-p 'interactive)
+	     (if thing
+		 (message "Saved selectable thing: %s" thing)
+	       (indicate-copied-region)))))))
+
+;; Override the {M-w} command from "simple.el" when hyperbole-mode is active
+;; to allow copying kcell references or regions.
+;;;###autoload
+(defun hui-kill-ring-save (beg end &optional region)
+  "Save the active region as if killed, but don't kill it.
+In Transient Mark mode, deactivate the mark.
+If `interprogram-cut-function' is non-nil, also save the text for a window
+system cut and paste.
+
+If called interactively, `transient-mark-mode' is non-nil, and
+there is no active region, copy any delimited selectable thing at
+point; see `hui:delimited-selectable-thing'.
+
+If you want to append the killed region to the last killed text,
+use \\[append-next-kill] before \\[kill-ring-save].
+
+The copied text is filtered by `filter-buffer-substring' before it is
+saved in the kill ring, so the actual saved text might be different
+from what was in the buffer.
+
+When called from Lisp, save in the kill ring the stretch of text
+between BEG and END, unless the optional argument REGION is
+non-nil, in which case ignore BEG and END, and save the current
+region instead.
+
+This command is similar to `copy-region-as-kill', except that it gives
+visual feedback indicating the extent of the region being copied."
+  ;; Pass mark first, then point, because the order matters when
+  ;; calling `kill-append'.
+  (interactive (list (when mark-active (region-beginning))
+		     (when mark-active (region-end))
+		     (prefix-numeric-value current-prefix-arg)))
+  (let (thing)
+    (if (or (use-region-p)
+	    (null transient-mark-mode)
+	    (not (called-interactively-p 'interactive)))
+	(copy-region-as-kill beg end region)
+      (setq thing (hui:delimited-selectable-thing))
+      (if (stringp thing)
+	  (progn (kill-new thing)
+		 (setq deactivate-mark t))
+	(copy-region-as-kill beg end region)))
+    ;; This use of called-interactively-p is correct because the code it
+    ;; controls just gives the user visual feedback.
+    (when (called-interactively-p 'interactive)
+      (if thing
+	  (message "Saved selectable thing: %s" thing)
+	(indicate-copied-region)))))
 
 ;;; ************************************************************************
 ;;; Public functions
@@ -101,6 +205,47 @@
 	(progn (define-key hyperbole-mode-map old-key nil)
 	       (message "{%s} now runs `%s'; prior Hyperbole {%s} binding removed" new-key-text cmd old-key-text))
       (message "{%s} now runs `%s'" new-key-text cmd))))
+
+(defun hui:delimited-selectable-thing ()
+  "Return any delimited selectable thing at point as a string or nil if none.
+
+With point:
+  in a Koutline klink, copy the klink;
+  in a Koutline cell, outside any klink, copy a klink reference to the current cell;
+  on a Hyperbole button, copy the text of the button excluding delimiters;
+  at the start of a paired delimiter, copy the text including the delimiters.
+"
+  (cond ((klink:absolute (klink:at-p)))
+	((derived-mode-p 'kotl-mode)
+	 (kcell-view:absolute-reference))
+	((let* ((hbut (hbut:at-p))
+		(start (when hbut (hattr:get hbut 'lbl-start)))
+		(end (when hbut (hattr:get hbut 'lbl-end))))
+	   (and start end
+		(buffer-substring-no-properties start end))))
+	((hui-select-at-delimited-thing-p)
+	 (hui-select-get-thing))))
+
+(defun hui:delimited-selectable-thing-and-bounds ()
+  "Return a list of any delimited selectable thing at point as: (<string> <start position of thing> <end position of thing>) or nil if none.
+Start and end may be nil if thing was generated rather than extracted from a region."
+  (let (thing-and-bounds thing start end)
+    (cond ((setq thing-and-bounds (klink:at-p))
+	   (when thing-and-bounds
+	     (setcar thing-and-bounds (klink:absolute thing-and-bounds))
+	     thing-and-bounds))
+	  ((derived-mode-p 'kotl-mode)
+	   (list (kcell-view:absolute-reference)))
+	  ((setq thing (hbut:at-p)
+		 start (when thing (hattr:get thing 'lbl-start))
+		 end (when thing (hattr:get thing 'lbl-end)))
+	   (and start end
+		(list (buffer-substring-no-properties start end) start end)))
+	  ((hui-select-at-delimited-thing-p)
+	   (when (setq thing-and-bounds (hui-select-get-region-boundaries))
+	     (list (buffer-substring-no-properties (car thing-and-bounds) (cdr thing-and-bounds))
+		   (car thing-and-bounds)
+		   (cdr thing-and-bounds)))))))
 
 (defun hui:ebut-act (&optional but)
   "Activate optional explicit button symbol BUT in current buffer.

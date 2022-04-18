@@ -1,7 +1,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <!-- This manual is for GNU Hyperbole
-(Edition 8.0.0pre, Published March, 2022).
+(Edition 8.0.0pre, Published April, 2022).
 
 Copyright (C) 1989-2022  Free Software Foundation, Inc.
 
@@ -10,7 +10,7 @@ under the terms of the GNU Free Documentation License, Version 1.3 or
 any later version published by the Free Software Foundation.
 
 
-GNU Hyperbole sofware is distributed under the terms of the GNU
+GNU Hyperbole software is distributed under the terms of the GNU
 General Public License version 3 or later, as published by the Free
 Software Foundation, Inc.
 
@@ -201,7 +201,7 @@ ul.no-bullet {list-style: none}
     <li><a id="toc-Hiding-and-Showing-1" href="#Hiding-and-Showing">7.6.1 Hiding and Showing</a></li>
     <li><a id="toc-View-Specs-1" href="#View-Specs">7.6.2 View Specs</a></li>
   </ul></li>
-  <li><a id="toc-Links-1" href="#Links">7.7 Links</a></li>
+  <li><a id="toc-Klinks-1" href="#Klinks">7.7 Klinks</a></li>
   <li><a id="toc-Cell-Attributes-1" href="#Cell-Attributes">7.8 Cell Attributes</a></li>
   <li><a id="toc-Koutliner-History-1" href="#Koutliner-History">7.9 Koutliner History</a></li>
 </ul></li>
@@ -370,7 +370,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</P>
 
 <PRE>
 Edition 8.0.0pre
-Printed March 20, 2022.
+Printed April 17, 2022.
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -604,7 +604,7 @@ Koutliner
 </td></tr>
 <tr><td align="left" valign="top">&bull; <a href="#Viewing-Outlines">Viewing Outlines</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
 </td></tr>
-<tr><td align="left" valign="top">&bull; <a href="#Links">Links</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+<tr><td align="left" valign="top">&bull; <a href="#Klinks">Klinks</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
 </td></tr>
 <tr><td align="left" valign="top">&bull; <a href="#Cell-Attributes">Cell Attributes</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
 </td></tr>
@@ -1336,7 +1336,7 @@ on a pathname to display the associated file or directory.
 <span id="index-key-bindings_002c-toggle"></span>
 <span id="index-enable-Hyperbole"></span>
 <span id="index-disable-Hyperbole"></span>
-<span id="index-Hyperbole-minibufer-menu"></span>
+<span id="index-Hyperbole-minibuffer-menu"></span>
 <span id="index-C_002dh-h"></span>
 <span id="index-C_002dh-h-X"></span>
 <span id="index-C_002dh-h-q"></span>
@@ -3087,7 +3087,7 @@ Each line of the summary may be selected to jump to the associated section.
 </p>
 <span id="index-ibtypes-actions"></span>
 <span id="index-action-implicit-button"></span>
-<span id="index-functon-call-implicit-button"></span>
+<span id="index-function-call-implicit-button"></span>
 <span id="index-variable-display-implicit-button"></span>
 </dd>
 <dt><code>action</code></dt>
@@ -3212,7 +3212,7 @@ See <samp>../DEMO#Gitlab (Remote) References</samp> for examples.
 </li><li> &lt;project&gt;/&lt;ref-item&gt;
 </li><li> /&lt;group&gt;/&lt;project&gt;.
 or
-</li><li> /&lt;project-or-group&gt; (where a group is a colection of projects)
+</li><li> /&lt;project-or-group&gt; (where a group is a collection of projects)
 </li></ul>
 
 <p>&lt;ref-item&gt; is one of these:
@@ -3786,7 +3786,7 @@ Return &lsquo;<samp>t</samp>&rsquo; if found, &lsquo;<samp>nil</samp>&rsquo; if 
 </dd>
 <dt><code>link-to-web-search</code></dt>
 <dd><p>Search web SERVICE-NAME for SEARCH-TERM.  Uses <code>hyperbole-web-search-alist</code>
-to match each service to its search url.  Uses <code>hyperbole-web-search-browser-function</code>
+to match each service to its search url or Emacs command.  Uses <code>hyperbole-web-search-browser-function</code>
 and the <code>browse-url</code> package to display search results.
 </p>
 <span id="index-actypes-man_002dshow"></span>
@@ -5219,7 +5219,7 @@ commands available in the Koutliner.
 </td></tr>
 <tr><td align="left" valign="top">&bull; <a href="#Viewing-Outlines" accesskey="6">Viewing Outlines</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
 </td></tr>
-<tr><td align="left" valign="top">&bull; <a href="#Links" accesskey="7">Links</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+<tr><td align="left" valign="top">&bull; <a href="#Klinks" accesskey="7">Klinks</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
 </td></tr>
 <tr><td align="left" valign="top">&bull; <a href="#Cell-Attributes" accesskey="8">Cell Attributes</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
 </td></tr>
@@ -5375,8 +5375,8 @@ labeling options.  The default, alpha labels, legal labels, and
 permanent idstamps (permanent cell ids) are all available.
 </p>
 <span id="index-label-separator_002c-changing"></span>
-<span id="index-cell_002c-label-separator"></span>
-<span id="index-outline_002c-label-separator"></span>
+<span id="index-cell-label-separator"></span>
+<span id="index-outline-label-separator"></span>
 <span id="index-koutliner_002c-C_002dc-M_002dl"></span>
 <span id="index-koutliner_002c-C_002du-C_002dc-M_002dl"></span>
 <p>A cell label is normally followed by a period and a space, called the
@@ -5411,7 +5411,7 @@ Next: <a href="#Editing-Outlines" accesskey="n" rel="next">Editing Outlines</a>,
 <span id="index-permanent-identifier-1"></span>
 <span id="index-idstamp-1"></span>
 <p>Idstamps (permanent ids) are associated with each cell.  They maintain
-hyperlinks as cells are reordered within a koutline.  See <a href="#Links">Links</a>.
+hyperlinks as cells are reordered within a koutline.  See <a href="#Klinks">Klinks</a>.
 Idstamps may be displayed in place of the outline level relative ids.
 Use <kbd>{C-c C-l id <span class="key">RET</span>}</kbd>.
 </p>
@@ -5452,7 +5452,7 @@ since the Koutliner uses differently named commands made to act
 like the regular editing commands.  Koutliner commands, however, account
 for the structure and indentation in koutlines.
 </p>
-<span id="index-cell_002c-selection"></span>
+<span id="index-cell-selection"></span>
 <p>You may use the mouse to select parts of the contents of a single cell
 for editing.  But don&rsquo;t drag across cell boundaries and then edit the
 selected region, since that will destroy the outline structure.
@@ -5691,7 +5691,7 @@ with mouse clicks.  Click the Assist Key within the indentation to the
 left of a cell and you will be prompted for a tree to move.  Double
 click the Action Key within the contents of the root cell of the tree to
 move and then double click within the root contents of the tree you want
-it to follow as a sucessor.
+it to follow as a successor.
 </p>
 <p>The Koutliner supports copying and moving within a single outline only
 right now, so don&rsquo;t try to to move trees across different outline files.
@@ -5827,7 +5827,7 @@ right margins.
 <span id="index-kotl_002dmode_003arefill_002dflag"></span>
 <span id="index-refilling"></span>
 <span id="index-attribute_002c-no_002dfill"></span>
-<span id="index-cell_002c-no_002dfill-attribute"></span>
+<span id="index-cell-no_002dfill-attribute"></span>
 <p>Set the variable, <code>kotl-mode:refill-flag</code>, to &lsquo;<samp>t</samp>&rsquo; if you
 want moving, promoting, demoting, exchanging, splitting and appending
 cells to also automatically refill each cell, aside from any that have
@@ -5857,7 +5857,7 @@ locations.
 </p>
 <span id="index-koutliner_002c-C_002dc-t"></span>
 <p><kbd>{C-c t}</kbd> does not prompt.  It exchanges the current
-and immediatly prior cell, regardless of their levels.  If there is no
+and immediately prior cell, regardless of their levels.  If there is no
 prior cell it exchanges the current and next cell.
 </p>
 <span id="index-cell_002c-mark-and-point"></span>
@@ -5893,7 +5893,7 @@ aside from the creation attributes and idstamp.
 <span id="index-cell_002c-appending"></span>
 <span id="index-appending-to-a-cell"></span>
 <span id="index-attribute_002c-no_002dfill-1"></span>
-<span id="index-cell_002c-no_002dfill-attribute-1"></span>
+<span id="index-cell-no_002dfill-attribute-1"></span>
 <p><kbd>{C-c +}</kbd> appends the contents of a specified cell to the end of
 another cell.  It has no effect on cell attributes, except that if one
 cell has a &lsquo;no-fill&rsquo; attribute, which prevents all but user requested
@@ -6035,7 +6035,7 @@ not be displayed; you must display it manually, if desired.
 <hr>
 <span id="Viewing-Outlines"></span><div class="header">
 <p>
-Next: <a href="#Links" accesskey="n" rel="next">Links</a>, Previous: <a href="#Editing-Outlines" accesskey="p" rel="prev">Editing Outlines</a>, Up: <a href="#Koutliner" accesskey="u" rel="up">Koutliner</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Key-Index" title="Index" rel="index">Index</a>]</p>
+Next: <a href="#Klinks" accesskey="n" rel="next">Klinks</a>, Previous: <a href="#Editing-Outlines" accesskey="p" rel="prev">Editing Outlines</a>, Up: <a href="#Koutliner" accesskey="u" rel="up">Koutliner</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Key-Index" title="Index" rel="index">Index</a>]</p>
 </div>
 <span id="Viewing-Outlines-1"></span><h3 class="section">7.6 Viewing Outlines</h3>
 
@@ -6174,7 +6174,7 @@ following the outline buffer name, unless the variable,
 display.  The modeline display appears as &lt;|viewspec&gt; to aid rapid
 visual location.  The | (pipe character) is also used in links that
 specify view specs to indicate the start of a view spec sequence.
-See <a href="#Links">Links</a>.
+See <a href="#Klinks">Klinks</a>.
 </p>
 <span id="index-outline_002c-view-specs"></span>
 <p>The current view spec is saved whenever the outline is saved.  The next
@@ -6268,11 +6268,11 @@ off blank lines, clip each cell after its second line, and hide all
 cells below level one.
 </p>
 <hr>
-<span id="Links"></span><div class="header">
+<span id="Klinks"></span><div class="header">
 <p>
 Next: <a href="#Cell-Attributes" accesskey="n" rel="next">Cell Attributes</a>, Previous: <a href="#Viewing-Outlines" accesskey="p" rel="prev">Viewing Outlines</a>, Up: <a href="#Koutliner" accesskey="u" rel="up">Koutliner</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Key-Index" title="Index" rel="index">Index</a>]</p>
 </div>
-<span id="Links-1"></span><h3 class="section">7.7 Links</h3>
+<span id="Klinks-1"></span><h3 class="section">7.7 Klinks</h3>
 
 <span id="index-link"></span>
 <span id="index-hyperlink"></span>
@@ -6281,33 +6281,13 @@ Next: <a href="#Cell-Attributes" accesskey="n" rel="next">Cell Attributes</a>, P
 <p>Cells may include hyperlinks that refer to other cells or to external
 sources of information.  Explicit Hyperbole buttons may be created as
 usual with mouse drags (see <a href="#By-Dragging">Creation Via Action Key
-Drags</a>).  A <em>klink</em> is a special implicit link button, delimited by
-&lt;&gt; separators, that jumps to a koutline cell.  This section discusses
-klinks.
-</p>
-<span id="index-koutliner_002c-Action-Key_002c-klink"></span>
-<span id="index-Action-Key_002c-klink"></span>
-<span id="index-klink_002c-activating"></span>
-<span id="index-klink-referent"></span>
-<p>Press the Action Key over a klink to follow it.  This will flash the
-klink as a button and then will display its referent in the other
-window.  If the klink contains a view spec, it will be applied when
-the referent is displayed.
-</p>
-<span id="index-klink_002c-inserting"></span>
-<span id="index-koutliner_002c-C_002dc-l"></span>
-<p>There are a number of easy ways to insert klinks into koutlines.  If you
-have mouse support under Hyperbole, simply click the Action Key within
-the indentation to the left of a cell text.  If you then double click on
-some cell, a link to that cell will be inserted where you started.  From
-a keyboard, use <kbd>{C-c l}</kbd> when in a koutline or <kbd>{C-h h k
-l}</kbd> when not in a koutline to insert a klink.  Since klinks are
-implicit buttons, you may instead type in the text of the klink just as
-you see it in the examples below and it will work exactly as if it had
-been entered with the insert link command.
+Drags</a>).  Implicit Hyperbole buttons may be added to Koutline text as
+well.  A <em>klink</em> is a special implicit link button, delimited by
+&lt;&gt; separators, that jumps to a koutline cell and may also adjust the
+current outline viewspecs.  This section discusses klinks.
 </p>
 <span id="index-klink_002c-formats"></span>
-<p>There are basically three forms of klinks:
+<p>There are three forms of klinks:
 </p>
 <dl compact="compact">
 <dd><span id="index-internal-klink"></span>
@@ -6331,7 +6311,7 @@ and the whole outline visible.
 <dt><em>external</em></dt>
 <dd><p>The second klink format is an external link to another koutline, such
 as, &lsquo;<samp>&lt;EXAMPLE.kotl, 3=012 |c1e&gt;</samp>&rsquo;, which displays the named file,
-starting at the cell 3 (whose permanent identifer is 012), with the
+starting at the cell 3 (whose permanent identifier is 012), with the
 view specification of: blank lines turned off, cutoff after one line
 per cell, and showing ellipses for cells or trees which are collapsed.
 </p>
@@ -6346,11 +6326,78 @@ and to label cells with the alphanumeric style.
 </p></dd>
 </dl>
 
+<span id="index-koutliner_002c-Action-Key_002c-klink"></span>
+<span id="index-Action-Key_002c-klink"></span>
+<span id="index-klink_002c-activating"></span>
+<span id="index-klink-referent"></span>
+<p>Press the Action Key over a klink to follow it.  This will flash the
+klink as a button and then will display its referent in the other
+window.  If the klink contains a view spec, it will be applied when
+the referent is displayed.
+</p>
+<span id="index-klink_002c-inserting"></span>
+<span id="index-koutliner_002c-C_002dc-l"></span>
+<p>There are a number of easy ways to insert klinks into koutlines.  If you
+have mouse support under Hyperbole, simply click the Action Key within
+the indentation to the left of a cell text.  If you then double click on
+some cell, a link to that cell will be inserted where you started.  From
+a keyboard, use <kbd>{C-c l}</kbd> when in a koutline or <kbd>{C-h h k l}</kbd> when
+not in a koutline to insert a klink.  Since klinks are implicit buttons,
+you may instead type in the text of the klink just as you saw them in the
+examples above and they will work exactly as if they had been entered with
+the insert link command.
+</p>
+<span id="index-M_002dw"></span>
+<span id="index-C_002dy"></span>
+<span id="index-klink_002c-copying"></span>
+<span id="index-klink_002c-yanking"></span>
+<span id="index-cell-link"></span>
+<span id="index-cell-reference"></span>
+<span id="index-kotl_002dmode_003acopy_002dabsolute_002dklink_002dto_002dkill_002dring"></span>
+<p>If you prefer the standard copy and yank model that Emacs provides, place
+point within a klink when there is no active region and use <kbd>{M-w}</kbd> to
+copy the klink.  To instead copy a reference to the current Koutline cell,
+use <kbd>{M-w}</kbd> <em>outside of</em> a klink when no region is active or
+<kbd>{M-x kotl-mode:copy-absolute-klink-to-kill-ring <span class="key">RET</span>}</kbd> anywhere
+within a cell.  Then <kbd>{C-y}</kbd> will yank the last copied text into any
+buffer you desire.  Of course, when a region is active, <kbd>{M-w}</kbd> will
+copy the region as it does normally in Emacs.
+</p>
+<span id="index-C_002dx-r-i"></span>
+<span id="index-C_002dx-r-s"></span>
+<span id="index-klink_002c-to_002ffrom-Emacs-register"></span>
+<span id="index-register_002c-klinks"></span>
+<span id="index-kotl_002dmode_003acopy_002dabsolute_002dklink_002dto_002dregister"></span>
+<p>Similarly, you can copy to an Emacs register rather than the kill ring.
+When no region is active/highlighted, <kbd>{C-x r s}</kbd> prompts for an Emacs
+register and saves to it either the current klink or, when outside of a
+klink, a reference to the current cell.  <kbd>{M-x
+kotl-mode:copy-absolute-klink-to-register <span class="key">RET</span>}</kbd> anywhere within a cell
+saves a reference to the current cell to a register.
+</p>
+<p><kbd>{C-x r i}</kbd> with the same register then inserts at point the Koutline
+reference previously saved.  When a region is active, these operate on the
+region instead.
+</p>
+<span id="index-kotl_002dmode_003acopy_002dabsolute_002dklink_002dto_002dkill_002dring-1"></span>
+<span id="index-kotl_002dmode_003acopy_002drelative_002dklink_002dto_002dkill_002dring"></span>
+<span id="index-kotl_002dmode_003acopy_002dabsolute_002dklink_002dto_002dregister-1"></span>
+<span id="index-kotl_002dmode_003acopy_002drelative_002dklink_002dto_002dregister"></span>
+<span id="index-cell-reference_002c-copying"></span>
+<p>There are also commands not bound to keys that always copy a klink reference
+to the current cell:
+</p><div class="example">
+<pre class="example">kotl-mode:copy-absolute-klink-to-kill-ring
+kotl-mode:copy-relative-klink-to-kill-ring
+kotl-mode:copy-absolute-klink-to-register
+kotl-mode:copy-relative-klink-to-register
+</pre></div>
+
 <span id="index-klink_003aignore_002dmodes"></span>
 <span id="index-klink_003ac_002dstyle_002dmodes"></span>
 <span id="index-modes-to-ignore-klinks"></span>
 <span id="index-klinks_002c-ignoring"></span>
-<p>Because  klinks use a very generic syntax, surrounded by &lt;angle brackets&gt;,
+<p>Because klinks use a very generic syntax, surrounded by &lt;angle brackets&gt;,
 in certain modes, mostly C-based programming modes, certain non-klink syntax
 can be mistakenly identified as klinks.  Therefore, the Koutliner provides
 two customizable variables which disable klink recognition in selected major
@@ -6364,15 +6411,14 @@ is within a comment.
 <p><code>klink:c-style-modes</code> is rarely needed but is there if Hyperbole ever
 mistakenly recognizes a pattern within a comment as a klink when it isn&rsquo;t.
 </p>
-
 <hr>
 <span id="Cell-Attributes"></span><div class="header">
 <p>
-Next: <a href="#Koutliner-History" accesskey="n" rel="next">Koutliner History</a>, Previous: <a href="#Links" accesskey="p" rel="prev">Links</a>, Up: <a href="#Koutliner" accesskey="u" rel="up">Koutliner</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Key-Index" title="Index" rel="index">Index</a>]</p>
+Next: <a href="#Koutliner-History" accesskey="n" rel="next">Koutliner History</a>, Previous: <a href="#Klinks" accesskey="p" rel="prev">Klinks</a>, Up: <a href="#Koutliner" accesskey="u" rel="up">Koutliner</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Key-Index" title="Index" rel="index">Index</a>]</p>
 </div>
 <span id="Cell-Attributes-1"></span><h3 class="section">7.8 Cell Attributes</h3>
 
-<span id="index-cell_002c-attribute"></span>
+<span id="index-cell-attribute"></span>
 <span id="index-attribute"></span>
 <p><em>Attributes</em> are named properties whose values are specific to an
 outline cell.  Thus, each cell, including the invisible 0 root cell,
@@ -6394,7 +6440,7 @@ is always the hidden root cell of the outline tree.
 <dd><p>The e-mail address of the person who created this cell.
 </p>
 <span id="index-create_002dtime-attribute"></span>
-<span id="index-cell_002c-creation-time"></span>
+<span id="index-cell-creation-time"></span>
 </dd>
 <dt><em>create-time</em></dt>
 <dd><p>The time at which the cell was created.  This is stored in a form that
@@ -6432,7 +6478,7 @@ to &lsquo;<samp>nil</samp>&rsquo; is the same as removing it.
 
 
 <span id="index-attribute_002c-no_002dfill-2"></span>
-<span id="index-cell_002c-no_002dfill-attribute-2"></span>
+<span id="index-cell-no_002dfill-attribute-2"></span>
 <span id="index-no_002dfill-attribute"></span>
 <p>The &lsquo;no-fill&rsquo; attribute is special.  When set to &lsquo;<samp>t</samp>&rsquo;, it
 prevents movement, promotion, demotion, exchange, split or append
@@ -6761,7 +6807,7 @@ documented in this section.
 <span id="index-rolo_002c-r"></span>
 <span id="index-rolo_002c-search-again"></span>
 <p>If your HyRolo search did not match what you want, use <kbd>{r}</kbd> to start
-a new regular expresion query or <kbd>{C-u r}</kbd> for a string query.  The
+a new regular expression query or <kbd>{C-u r}</kbd> for a string query.  The
 rest of the match buffer keys work with the search results currently
 displayed.
 </p>
@@ -7666,7 +7712,7 @@ Lisp, aside from the instructions provided here.
 <p><code>(defil TYPE START-DELIM END-DELIM TEXT-REGEXP LINK-EXPR
              &amp;optional START-REGEXP-FLAG END-REGEXP-FLAG DOC)</code>
 </p>
-<p>will create a new Hyperbole implicit button link TYPE (an uquoted
+<p>will create a new Hyperbole implicit button link TYPE (an unquoted
 symbol), recognized in a buffer via START-DELIM and END-DELIM
 (strings) and the TEXT-REGEXP pattern between the delimiters.  With
 optional START-REGEXP-FLAG true, START-DELIM is treated as a regular
@@ -7917,7 +7963,7 @@ buttons.  Examine it within the <samp>hbut.el</samp> file for full details.
 <span id="index-ebut_003aprogram"></span>
 <p>The simplest way to create explicit buttons programmatically is to
 call <code>ebut:program</code>.  This generates an explicit button at point
-from LABEL, ACTYPE (action type) and any optional ACTYYPE ARGS.
+from LABEL, ACTYPE (action type) and any optional ACTYPE ARGS.
 It inserts the LABEL text at point surrounded by &lt;( )&gt; delimiters, adding any
 necessary instance number of the button after the LABEL.  ACTYPE may
 be a Hyperbole action type name (from defact) or an Emacs Lisp
@@ -8523,7 +8569,7 @@ Smart Key capabilities.  See <a href="#Smart-Keys">Smart Keys</a>, for complete 
 terminals and pre-dated Emacs&rsquo; own dumb terminal menu support.  They
 are included with InfoDock (which is no longer maintained) and are not
 available separately.  They are not a part of Hyperbole and are not
-necesary for its use but are still supported by the Smart Keys.
+necessary for its use but are still supported by the Smart Keys.
 </p>
 </dd>
 <dt><b>Source Buffer / File</b></dt>
@@ -8880,7 +8926,7 @@ file and are available in future Emacs sessions.
 customizable Hyperbole options.  Hyperbole&rsquo;s customizations are
 further grouped into several sub-categories, one for the Koutliner,
 one for the HyRolo, etc.  You can select either an entire category or a
-specfic option and they will appear in another window for editing.
+specific option and they will appear in another window for editing.
 Simply follow the instructions on screen and then press the &ldquo;Apply
 and Save&rdquo; button to make any changes permanent.
 </p>
@@ -9133,6 +9179,22 @@ is typically bound to <kbd>{C-c /}</kbd> or if not, then <kbd>{C-h h f w}</kbd> 
 always available.  Your standard web browser will be used to return
 the search results.
 </p>
+<p>The <code>hyperbole-web-search-alist</code> variable controls the items in
+this menu.  Elements of this alist are of the form:
+(&lt;web-service-name&gt; . &lt;url-with-%s-parameter-or-command&gt;).  The first
+capitalized character of each &lt;web-service-name&gt; must be unique for
+minibuffer menu selection.  The second part of an element is either:
+</p><dl compact="compact">
+<dt>1.</dt>
+<dd><p>a URL with an embedded %s indicating where to substitute a search term
+that is interactively prompted for when the menu item is activated;
+</p></dd>
+<dt>2.</dt>
+<dd><p>or an Emacs command symbol that interactively prompts for a URL and a
+search term and then displays the search results.
+</p></dd>
+</dl>
+
 <p>Advanced users can change the search engines listed in the Find/Web
 menu with <kbd>{M-x customize-variable <span class="key">RET</span>
 hyperbole-web-search-alist <span class="key">RET</span>}</kbd>.  Changes are automatically
@@ -9418,7 +9480,7 @@ that links to any other window chosen via the Ace Window prompt.
 <dd><span id="index-C_002dh-h-X-1"></span>
 </dd>
 <dt><kbd>{C-h h X}</kbd></dt>
-<dd><span id="index-Hyperbole-minibuffer-menu"></span>
+<dd><span id="index-Hyperbole-minibuffer-menu-1"></span>
 <span id="index-enable-Hyperbole-1"></span>
 <span id="index-disable-Hyperbole-1"></span>
 <p>Hyperbole Mini Menu: Enable Hyperbole minor mode and invoke the
@@ -9441,7 +9503,7 @@ minibuffer menu and disable Hyperbole minor mode.
 <span id="index-C_002dc-RET-1"></span>
 </dd>
 <dt><kbd>{C-c <span class="key">RET</span>}</kbd></dt>
-<dd><p>Mark Things: Mark larger and larger synctactical units in a buffer
+<dd><p>Mark Things: Mark larger and larger syntactical units in a buffer
 when invoked repeatedly, showing in the minibuffer the type of unit
 marked each time.  For example, if on an opening brace at the start of
 a C, Java or Javascript function, this marks the whole function.  This
@@ -9455,6 +9517,37 @@ Hyperbole.
 <dd><p>Delimited Thing Jump: Jump between the start and end of a delimited
 thing, which may be an HTML tag pair.  This binding is made only if
 the key is not bound prior to initializing Hyperbole.  See <a href="#Smart-Key-Thing-Selection">Smart Key Thing Selection</a>, for more information.
+</p>
+<span id="index-key-binding_002c-M_002dw"></span>
+<span id="index-mark_002deven_002dif_002dinactive"></span>
+<span id="index-hui_002dkill_002dring_002dsave"></span>
+<span id="index-M_002dw-1"></span>
+</dd>
+<dt><kbd>{M-w}</kbd></dt>
+<dd><span id="index-copying-things-to-kill-ring"></span>
+<p>Delimited Thing, Koutline Cell Reference or Region Copy: While Hyperbole is
+active, it sets <code>mark-even-if-inactive</code> to <code>nil</code> and overrides
+<kbd>{M-w}</kbd> with its own command, <code>hui-kill-ring-save</code>, which copies the
+region only when it is active/highlighted.  When there is no active region,
+<kbd>{M-w}</kbd> does one of the following:
+</p>
+<ol>
+<li> in a Koutline klink, copies the klink;
+</li><li> in a Koutline cell, outside any klink, copies a klink reference to the current cell;
+</li><li> on a Hyperbole button, copies the text of the button excluding delimiters;
+</li><li> at the start of a paired delimiter, copy the text including the delimiters.
+</li></ol>
+
+<span id="index-key-binding_002c-C_002dx-r-s"></span>
+<span id="index-C_002dx-r-s-1"></span>
+</dd>
+<dt><kbd>{C-x r s}</kbd></dt>
+<dd><span id="index-copying-things-to-registers"></span>
+<p>Delimited Thing, Koutline Cell Reference or Region Save to Register: This
+does the same thing as <kbd>{M-w}</kbd> except it copies to an Emacs register
+given by a letter or number rather than the kill ring.  While Hyperbole is active,
+it overrides <kbd>{C-x r s}</kbd> with its own command, <code>hui-copy-to-register</code>.
+which copies the region only when it is active/highlighted.
 </p></dd>
 </dl>
 
@@ -9494,7 +9587,7 @@ subdirectory.  You can run all of them by moving to the Hyperbole home
 directory in a Posix shell and run <code>make test-all</code> or <code>make
 test</code> to run just non-interactive tests.  If any tests fail, you can
 press the Action Key to see the source of the failure.  Full testing is
-suppored under POSIX systems only.
+supported under POSIX systems only.
 </p>
 <p>With Hyperbole active, you can also define implicit buttons that run
 individual or sets of Hyperbole tests.  The file <samp>hypb-ert.el</samp> contains
@@ -9931,9 +10024,15 @@ With optional COPY-P equal to t, copy region to kill ring but don&rsquo;t
 kill it.  With COPY-P any other non-nil value, return region as a
 string without affecting the kill ring.
 </p>
+<p>If called interactively and there is no active region, copy any
+delimited selectable thing at point; see the documentation for
+<code>hui:delimited-selectable-thing</code>.
+</p>
 <p>If the buffer is read-only and COPY-P is nil, the region will not be
 deleted but it will be copied to the kill ring and then an error will be
 signaled.
+</p>
+<p>If a completion is active, this aborts the completion only.
 </p>
 <span id="index-kotl_002dmode_003akill_002dring_002dsave"></span>
 </dd>
@@ -10404,7 +10503,7 @@ Next: <a href="#Smart-Mouse-Drags-between-Windows" accesskey="n" rel="next">Smar
      (7) dragged from a bottommost modeline when the frame has a non-nil
          <code>drag-with-mode-line</code> property, then move the frame until
          release of the Action Mouse Key;
-     (8) otherwide, dragged from a another modeline to outside of
+     (8) otherwise, dragged from a another modeline to outside of
          Emacs (MacOS only), create a new frame sized to match the
          selected window with the same buffer.
 </pre></div>
@@ -10805,7 +10904,7 @@ Next: <a href="#Smart-Key-_002d-Emacs-Pushbuttons" accesskey="n" rel="next">Smar
 
 <span id="index-dired_002dsidebar_002dmode"></span>
 <p>Dired-sidebar is an add-on Emacs package that puts dired in a sidebar
-and optionally integrates with vareous other packages.  Use the Emacs
+and optionally integrates with various other packages.  Use the Emacs
 package manager to install it and then invoke it with
 <kbd>{M-x dired-sidebar-toggle-sidebar <span class="key">RET</span>}</kbd> and quit with <kbd>{q}</kbd>.
 </p>
@@ -10819,7 +10918,7 @@ package manager to install it and then invoke it with
      (2) at the end of an entry line: invoke &lsquo;action-key-eol-function&rsquo;,
          typically to scroll up proportionally, if an Action Key press; invoke
          &lsquo;assist-key-eol-function&rsquo;, typically to scroll down proportionally,
-         if an Asisst Key press;
+         if an Assist Key press;
      (3) on the first line of the buffer (other than the end of line),
          dired is run on the current directory of this dired-sidebar;
      (4) at the end of the first or last line of the buffer,
@@ -10951,7 +11050,7 @@ Next: <a href="#Smart-Key-_002d-Dired-Mode" accesskey="n" rel="next">Smart Key -
 terminals and pre-dated Emacs&rsquo; own dumb terminal menu support.  They
 are included with InfoDock (which is no longer maintained) and are not
 available separately.  They are not a part of Hyperbole and are not
-necesary for its use.
+necessary for its use.
 </p>
 <div class="format">
 <pre class="format">When pressed on a Smart Menu item (this is an older in-buffer menu
@@ -12808,6 +12907,10 @@ Next: <a href="#Function" accesskey="n" rel="next">Function</a>, Previous: <a hr
 <tr><td></td><td valign="top"><a href="#index-C_002dx-C_002de"><code>C-x C-e</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Creating-Types">Creating Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-C_002dx-m"><code>C-x m</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Buttons-in-Mail">Buttons in Mail</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-C_002dx-o"><code>C-x o</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Keyboard-Drags">Keyboard Drags</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-C_002dx-r-i"><code>C-x r i</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Klinks">Klinks</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-C_002dx-r-s"><code>C-x r s</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Klinks">Klinks</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-C_002dx-r-s-1"><code>C-x r s</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Default-Hyperbole-Bindings">Default Hyperbole Bindings</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-C_002dy"><code>C-y</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Klinks">Klinks</a></td></tr>
 <tr><td colspan="4"> <hr></td></tr>
 <tr><th id="Key-Index_ky_letter-D">D</th><td></td><td></td></tr>
 <tr><td></td><td valign="top"><a href="#index-d"><code>d</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyControl">HyControl</a></td></tr>
@@ -12838,7 +12941,7 @@ Next: <a href="#Function" accesskey="n" rel="next">Function</a>, Previous: <a hr
 <tr><td></td><td valign="top"><a href="#index-keypad-number"><code>keypad number</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyControl">HyControl</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-koutliner_002c-Action-Key_002c-cell-argument"><code>koutliner, Action Key, cell argument</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Relocating-and-Copying">Relocating and Copying</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-koutliner_002c-Action-Key_002c-hide-or-show-cell"><code>koutliner, Action Key, hide or show cell</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Hiding-and-Showing">Hiding and Showing</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-koutliner_002c-Action-Key_002c-klink"><code>koutliner, Action Key, klink</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Links">Links</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-koutliner_002c-Action-Key_002c-klink"><code>koutliner, Action Key, klink</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Klinks">Klinks</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-koutliner_002c-Assist-Key_002c-listing-attributes"><code>koutliner, Assist Key, listing attributes</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Cell-Attributes">Cell Attributes</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-koutliner_002c-C_002dc-_002b"><code>koutliner, C-c +</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Splitting-and-Appending">Splitting and Appending</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-koutliner_002c-C_002dc-a"><code>koutliner, C-c a</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Adding-and-Killing">Adding and Killing</a></td></tr>
@@ -12855,7 +12958,7 @@ Next: <a href="#Function" accesskey="n" rel="next">Function</a>, Previous: <a hr
 <tr><td></td><td valign="top"><a href="#index-koutliner_002c-C_002dc-e"><code>koutliner, C-c e</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Transposing">Transposing</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-koutliner_002c-C_002dc-h"><code>koutliner, C-c h</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Cell-Attributes">Cell Attributes</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-koutliner_002c-C_002dc-k"><code>koutliner, C-c k</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Adding-and-Killing">Adding and Killing</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-koutliner_002c-C_002dc-l"><code>koutliner, C-c l</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Links">Links</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-koutliner_002c-C_002dc-l"><code>koutliner, C-c l</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Klinks">Klinks</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-koutliner_002c-C_002dc-M_002dj"><code>koutliner, C-c M-j</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Filling">Filling</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-koutliner_002c-C_002dc-M_002dl"><code>koutliner, C-c M-l</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Autonumbering">Autonumbering</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-koutliner_002c-C_002dc-M_002dq"><code>koutliner, C-c M-q</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Filling">Filling</a></td></tr>
@@ -12905,6 +13008,8 @@ Next: <a href="#Function" accesskey="n" rel="next">Function</a>, Previous: <a hr
 <tr><td></td><td valign="top"><a href="#index-M_002dRET-1"><code>M-<span class="key">RET</span></code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-M_002dRET-2"><code>M-<span class="key">RET</span></code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Default-Hyperbole-Bindings">Default Hyperbole Bindings</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-M_002dup"><code>M-up</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Relocating-and-Copying">Relocating and Copying</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-M_002dw"><code>M-w</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Klinks">Klinks</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-M_002dw-1"><code>M-w</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Default-Hyperbole-Bindings">Default Hyperbole Bindings</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-M_002dx-kotl_002dmode_003ashow_002dsubtree"><code>M-x kotl-mode:show-subtree</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Hiding-and-Showing">Hiding and Showing</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-middle-mouse-key-1"><code>middle mouse key</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Key-Bindings">Smart Key Bindings</a></td></tr>
 <tr><td colspan="4"> <hr></td></tr>
@@ -13377,6 +13482,7 @@ Next: <a href="#Concept-Index" accesskey="n" rel="next">Concept Index</a>, Previ
 <tr><td></td><td valign="top"><a href="#index-hsys_002dorg_002dmode_002dp"><code>hsys-org-mode-p</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-htype_002dcreate_002dhook">htype-create-hook</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Hook-Variables">Hook Variables</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-htype_002ddelete_002dhook">htype-delete-hook</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Hook-Variables">Hook Variables</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-hui_002dkill_002dring_002dsave"><code>hui-kill-ring-save</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Default-Hyperbole-Bindings">Default Hyperbole Bindings</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-hui_002dmenu_002dscreen_002dcommands"><code>hui-menu-screen-commands</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Mouse-Key-Modeline-Clicks">Smart Mouse Key Modeline Clicks</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-hui_002dselect_002dgoto_002dmatching_002dtag"><code>hui-select-goto-matching-tag</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Key-Thing-Selection">Smart Key Thing Selection</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-hui_002dselect_002dthing"><code>hui-select-thing</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Key-Thing-Selection">Smart Key Thing Selection</a></td></tr>
@@ -13529,10 +13635,10 @@ Next: <a href="#Concept-Index" accesskey="n" rel="next">Concept Index</a>, Previ
 <tr><td></td><td valign="top"><a href="#index-kimport_003astar_002doutline"><code>kimport:star-outline</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Inserting-and-Importing">Inserting and Importing</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-kimport_003asuffix_002dalist">kimport:suffix-alist</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Inserting-and-Importing">Inserting and Importing</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-kimport_003atext"><code>kimport:text</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Inserting-and-Importing">Inserting and Importing</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-klink_003ac_002dstyle_002dmodes">klink:c-style-modes</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Links">Links</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-klink_003ac_002dstyle_002dmodes">klink:c-style-modes</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Klinks">Klinks</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-klink_003acreate"><code>klink:create</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Menu-Commands">Menu Commands</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-klink_003acreate-1"><code>klink:create</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Koutliner-Keys">Koutliner Keys</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-klink_003aignore_002dmodes">klink:ignore-modes</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Links">Links</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-klink_003aignore_002dmodes">klink:ignore-modes</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Klinks">Klinks</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-kotl_002dmode"><code>kotl-mode</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Inserting-and-Importing">Inserting and Importing</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-kotl_002dmode-1"><code>kotl-mode</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Inserting-and-Importing">Inserting and Importing</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-kotl_002dmode_002dhook">kotl-mode-hook</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Hook-Variables">Hook Variables</a></td></tr>
@@ -13554,8 +13660,14 @@ Next: <a href="#Concept-Index" accesskey="n" rel="next">Concept Index</a>, Previ
 <tr><td></td><td valign="top"><a href="#index-kotl_002dmode_003acell_002dhelp"><code>kotl-mode:cell-help</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Koutliner-Keys">Koutliner Keys</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-kotl_002dmode_003acenter_002dline"><code>kotl-mode:center-line</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Koutliner-Keys">Koutliner Keys</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-kotl_002dmode_003acenter_002dparagraph"><code>kotl-mode:center-paragraph</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Koutliner-Keys">Koutliner Keys</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-kotl_002dmode_003acopy_002dabsolute_002dklink_002dto_002dkill_002dring"><code>kotl-mode:copy-absolute-klink-to-kill-ring</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Klinks">Klinks</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-kotl_002dmode_003acopy_002dabsolute_002dklink_002dto_002dkill_002dring-1"><code>kotl-mode:copy-absolute-klink-to-kill-ring</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Klinks">Klinks</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-kotl_002dmode_003acopy_002dabsolute_002dklink_002dto_002dregister"><code>kotl-mode:copy-absolute-klink-to-register</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Klinks">Klinks</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-kotl_002dmode_003acopy_002dabsolute_002dklink_002dto_002dregister-1"><code>kotl-mode:copy-absolute-klink-to-register</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Klinks">Klinks</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-kotl_002dmode_003acopy_002dafter"><code>kotl-mode:copy-after</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Koutliner-Keys">Koutliner Keys</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-kotl_002dmode_003acopy_002dbefore"><code>kotl-mode:copy-before</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Koutliner-Keys">Koutliner Keys</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-kotl_002dmode_003acopy_002drelative_002dklink_002dto_002dkill_002dring"><code>kotl-mode:copy-relative-klink-to-kill-ring</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Klinks">Klinks</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-kotl_002dmode_003acopy_002drelative_002dklink_002dto_002dregister"><code>kotl-mode:copy-relative-klink-to-register</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Klinks">Klinks</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-kotl_002dmode_003acopy_002dto_002dregister"><code>kotl-mode:copy-to-register</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Koutliner-Keys">Koutliner Keys</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-kotl_002dmode_003acopy_002dtree_002dor_002dregion_002dto_002dbuffer"><code>kotl-mode:copy-tree-or-region-to-buffer</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Koutliner-Keys">Koutliner Keys</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-kotl_002dmode_003adelete_002dbackward_002dchar"><code>kotl-mode:delete-backward-char</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Koutliner-Keys">Koutliner Keys</a></td></tr>
@@ -13653,6 +13765,7 @@ Next: <a href="#Concept-Index" accesskey="n" rel="next">Concept Index</a>, Previ
 <tr><th id="Function_fn_letter-M">M</th><td></td><td></td></tr>
 <tr><td></td><td valign="top"><a href="#index-mail"><code>mail</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Buttons-in-Mail">Buttons in Mail</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-mail_002dyank_002doriginal">mail-yank-original</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Buttons-in-Mail">Buttons in Mail</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-mark_002deven_002dif_002dinactive">mark-even-if-inactive</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Default-Hyperbole-Bindings">Default Hyperbole Bindings</a></td></tr>
 <tr><td colspan="4"> <hr></td></tr>
 <tr><th id="Function_fn_letter-O">O</th><td></td><td></td></tr>
 <tr><td></td><td valign="top"><a href="#index-objc_002dcpp_002dinclude_002dpath">objc-cpp-include-path</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Key-_002d-Objective_002dC-Source-Code">Smart Key - Objective-C Source Code</a></td></tr>
@@ -13789,8 +13902,8 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function</a>, Up: <a href
 <tr><td></td><th align="left">Index Entry</th><td>&nbsp;</td><th align="left"> Section</th></tr>
 <tr><td colspan="4"> <hr></td></tr>
 <tr><th id="Concept-Index_cp_symbol-1">&lt;</th><td></td><td></td></tr>
-<tr><td></td><td valign="top"><a href="#index-_003c_003e-delimiters">&lt;&gt; delimiters</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Links">Links</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-_003c_0040-klink_003e">&lt;@ klink&gt;</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Links">Links</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-_003c_003e-delimiters">&lt;&gt; delimiters</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Klinks">Klinks</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-_003c_0040-klink_003e">&lt;@ klink&gt;</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Klinks">Klinks</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-_003c_007cviewspec_003e">&lt;|viewspec&gt;</a>:</td><td>&nbsp;</td><td valign="top"><a href="#View-Specs">View Specs</a></td></tr>
 <tr><td colspan="4"> <hr></td></tr>
 <tr><th id="Concept-Index_cp_symbol-2">|</th><td></td><td></td></tr>
@@ -13807,7 +13920,7 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function</a>, Up: <a href
 <tr><td></td><td valign="top"><a href="#index-Action-Key-drag">Action Key drag</a>:</td><td>&nbsp;</td><td valign="top"><a href="#By-Dragging">By Dragging</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-Action-Key_002c-cell-argument">Action Key, cell argument</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Relocating-and-Copying">Relocating and Copying</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-Action-Key_002c-hide-or-show-cell">Action Key, hide or show cell</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Hiding-and-Showing">Hiding and Showing</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-Action-Key_002c-klink">Action Key, klink</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Links">Links</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-Action-Key_002c-klink">Action Key, klink</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Klinks">Klinks</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-Action-Key_002c-web-browsing">Action Key, web browsing</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-Action-Mouse-Key">Action Mouse Key</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Thing-Selection">Thing Selection</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-Action-Mouse-Key-1">Action Mouse Key</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Key-_002d-Delimited-Things">Smart Key - Delimited Things</a></td></tr>
@@ -13940,12 +14053,20 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function</a>, Up: <a href
 <tr><td></td><td valign="top"><a href="#index-C_002fC_002b_002b-call-trees">C/C++ call trees</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-C_002fC_002b_002b-cross_002dreference">C/C++ cross-reference</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-call-tree_002c-C">call tree, C</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-cell-attribute">cell attribute</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Cell-Attributes">Cell Attributes</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-cell-creation-time">cell creation time</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Cell-Attributes">Cell Attributes</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-cell-label-separator">cell label separator</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Autonumbering">Autonumbering</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-cell-link">cell link</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Klinks">Klinks</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-cell-no_002dfill-attribute">cell no-fill attribute</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Filling">Filling</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-cell-no_002dfill-attribute-1">cell no-fill attribute</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Splitting-and-Appending">Splitting and Appending</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-cell-no_002dfill-attribute-2">cell no-fill attribute</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Cell-Attributes">Cell Attributes</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-cell-reference">cell reference</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Klinks">Klinks</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-cell-reference_002c-copying">cell reference, copying</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Klinks">Klinks</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-cell-selection">cell selection</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Editing-Outlines">Editing Outlines</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-cell_002c-adding">cell, adding</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Adding-and-Killing">Adding and Killing</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-cell_002c-appending">cell, appending</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Splitting-and-Appending">Splitting and Appending</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-cell_002c-attribute">cell, attribute</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Cell-Attributes">Cell Attributes</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-cell_002c-collapse">cell, collapse</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Hiding-and-Showing">Hiding and Showing</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-cell_002c-creating">cell, creating</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Adding-and-Killing">Adding and Killing</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-cell_002c-creation-time">cell, creation time</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Cell-Attributes">Cell Attributes</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-cell_002c-exchanging">cell, exchanging</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Transposing">Transposing</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-cell_002c-expand">cell, expand</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Hiding-and-Showing">Hiding and Showing</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-cell_002c-filling">cell, filling</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Filling">Filling</a></td></tr>
@@ -13954,12 +14075,7 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function</a>, Up: <a href
 <tr><td></td><td valign="top"><a href="#index-cell_002c-idstamp-0">cell, idstamp 0</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Creating-Outlines">Creating Outlines</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-cell_002c-idstamp-0-1">cell, idstamp 0</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Idstamps">Idstamps</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-cell_002c-killing">cell, killing</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Adding-and-Killing">Adding and Killing</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-cell_002c-label-separator">cell, label separator</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Autonumbering">Autonumbering</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-cell_002c-mark-and-point">cell, mark and point</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Transposing">Transposing</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-cell_002c-no_002dfill-attribute">cell, no-fill attribute</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Filling">Filling</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-cell_002c-no_002dfill-attribute-1">cell, no-fill attribute</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Splitting-and-Appending">Splitting and Appending</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-cell_002c-no_002dfill-attribute-2">cell, no-fill attribute</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Cell-Attributes">Cell Attributes</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-cell_002c-selection">cell, selection</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Editing-Outlines">Editing Outlines</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-cell_002c-show-all">cell, show all</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Hiding-and-Showing">Hiding and Showing</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-cell_002c-show-levels">cell, show levels</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Hiding-and-Showing">Hiding and Showing</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-cell_002c-show-subtree">cell, show subtree</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Hiding-and-Showing">Hiding and Showing</a></td></tr>
@@ -14012,6 +14128,8 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function</a>, Up: <a href
 <tr><td></td><td valign="top"><a href="#index-copy-buffer">copy buffer</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Displaying-Buffers">Displaying Buffers</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-copy-region">copy region</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Key-Thing-Selection">Smart Key Thing Selection</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-copying">copying</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Relocating-and-Copying">Relocating and Copying</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-copying-things-to-kill-ring">copying things to kill ring</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Default-Hyperbole-Bindings">Default Hyperbole Bindings</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-copying-things-to-registers">copying things to registers</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Default-Hyperbole-Bindings">Default Hyperbole Bindings</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-create-link-button">create link button</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Keyboard-Drags">Keyboard Drags</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-create_002dtime-attribute">create-time attribute</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Cell-Attributes">Cell Attributes</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-creating-buttons">creating buttons</a>:</td><td>&nbsp;</td><td valign="top"><a href="#By-Dragging">By Dragging</a></td></tr>
@@ -14153,7 +14271,7 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function</a>, Up: <a href
 <tr><td></td><td valign="top"><a href="#index-exporting_002c-Koutliner">exporting, Koutliner</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Menu-Commands">Menu Commands</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-external-display">external display</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Referent-Display">Referent Display</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-external-display-1">external display</a>:</td><td>&nbsp;</td><td valign="top"><a href="#External-Viewers">External Viewers</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-external-klink">external klink</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Links">Links</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-external-klink">external klink</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Klinks">Klinks</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-external-program">external program</a>:</td><td>&nbsp;</td><td valign="top"><a href="#External-Viewers">External Viewers</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-external-viewer">external viewer</a>:</td><td>&nbsp;</td><td valign="top"><a href="#External-Viewers">External Viewers</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-extracting-from-tar-files">extracting from tar files</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Key-_002d-Tar-File-Mode">Smart Key - Tar File Mode</a></td></tr>
@@ -14189,7 +14307,7 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function</a>, Up: <a href
 <tr><td></td><td valign="top"><a href="#index-ftp">ftp</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-function">function</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Thing-Selection">Thing Selection</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-function-1">function</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Key-_002d-Delimited-Things">Smart Key - Delimited Things</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-functon-call-implicit-button">functon call implicit button</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-function-call-implicit-button">function call implicit button</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
 <tr><td colspan="4"> <hr></td></tr>
 <tr><th id="Concept-Index_cp_letter-G">G</th><td></td><td></td></tr>
 <tr><td></td><td valign="top"><a href="#index-game_002c-gomoku">game, gomoku</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Key-_002d-Gomoku-Game">Smart Key - Gomoku Game</a></td></tr>
@@ -14268,8 +14386,8 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function</a>, Up: <a href
 <tr><td></td><td valign="top"><a href="#index-Hyperbole-main-menu">Hyperbole main menu</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Menus">Menus</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-Hyperbole-manual">Hyperbole manual</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Documentation">Documentation</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-Hyperbole-menubar-menu">Hyperbole menubar menu</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Menus">Menus</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-Hyperbole-minibufer-menu">Hyperbole minibufer menu</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Invocation">Invocation</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-Hyperbole-minibuffer-menu">Hyperbole minibuffer menu</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Default-Hyperbole-Bindings">Default Hyperbole Bindings</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-Hyperbole-minibuffer-menu">Hyperbole minibuffer menu</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Invocation">Invocation</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-Hyperbole-minibuffer-menu-1">Hyperbole minibuffer menu</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Default-Hyperbole-Bindings">Default Hyperbole Bindings</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-hyperbole-popup-menu">hyperbole popup menu</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Menus">Menus</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-Hyperbole-pulldown-menu">Hyperbole pulldown menu</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Menus">Menus</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-Hyperbole-report">Hyperbole report</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
@@ -14281,7 +14399,7 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function</a>, Up: <a href
 <tr><td></td><td valign="top"><a href="#index-Hyperbole_002c-starting">Hyperbole, starting</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Menus">Menus</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-Hyperbole_002c-system-encapsulation">Hyperbole, system encapsulation</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Encapsulating-Systems">Encapsulating Systems</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-hyperbole_002dmode">hyperbole-mode</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Invocation">Invocation</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-hyperlink">hyperlink</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Links">Links</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-hyperlink">hyperlink</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Klinks">Klinks</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-hyperlink-anchor">hyperlink anchor</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Koutliner">Koutliner</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-hypertext">hypertext</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Hyperbole-Overview">Hyperbole Overview</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-hypertext-1">hypertext</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Glossary">Glossary</a></td></tr>
@@ -14354,7 +14472,7 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function</a>, Up: <a href
 <tr><td></td><td valign="top"><a href="#index-internal-custom-display">internal custom display</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Internal-Viewers">Internal Viewers</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-internal-display">internal display</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Referent-Display">Referent Display</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-internal-image-display">internal image display</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Internal-Viewers">Internal Viewers</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-internal-klink">internal klink</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Links">Links</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-internal-klink">internal klink</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Klinks">Klinks</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-internal-standard-display">internal standard display</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Internal-Viewers">Internal Viewers</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-internal-viewer">internal viewer</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Internal-Viewers">Internal Viewers</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-Internet-RFC">Internet RFC</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
@@ -14385,8 +14503,10 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function</a>, Up: <a href
 <tr><td></td><td valign="top"><a href="#index-key-binding_002c-C_002dh-A">key binding, C-h A</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Default-Hyperbole-Bindings">Default Hyperbole Bindings</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-key-binding_002c-C_002dh-h">key binding, C-h h</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Default-Hyperbole-Bindings">Default Hyperbole Bindings</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-key-binding_002c-C_002du-C_002dh-A">key binding, C-u C-h A</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Default-Hyperbole-Bindings">Default Hyperbole Bindings</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-key-binding_002c-C_002dx-r-s">key binding, C-x r s</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Default-Hyperbole-Bindings">Default Hyperbole Bindings</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-key-binding_002c-M_002do">key binding, M-o</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Default-Hyperbole-Bindings">Default Hyperbole Bindings</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-key-binding_002c-M_002dRET">key binding, M-<tt class="key">RET</tt></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Default-Hyperbole-Bindings">Default Hyperbole Bindings</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-key-binding_002c-M_002dw">key binding, M-w</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Default-Hyperbole-Bindings">Default Hyperbole Bindings</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-key-binding_002c-menu">key binding, menu</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Menus">Menus</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-key-binding_002c-smart-keys">key binding, smart keys</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Key-Bindings">Smart Key Bindings</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-key-bindings">key bindings</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Default-Hyperbole-Bindings">Default Hyperbole Bindings</a></td></tr>
@@ -14401,15 +14521,18 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function</a>, Up: <a href
 <tr><td></td><td valign="top"><a href="#index-kill-and-yank-2">kill and yank</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Key-_002d-Delimited-Things">Smart Key - Delimited Things</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-kill-region">kill region</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Key-Thing-Selection">Smart Key Thing Selection</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-klink">klink</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-klink-1">klink</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Links">Links</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-klink-referent">klink referent</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Links">Links</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-klink_002c-activating">klink, activating</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Links">Links</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-klink_002c-external">klink, external</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Links">Links</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-klink_002c-formats">klink, formats</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Links">Links</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-klink_002c-inserting">klink, inserting</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Links">Links</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-klink_002c-internal">klink, internal</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Links">Links</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-klink_002c-view-spec">klink, view spec</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Links">Links</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-klinks_002c-ignoring">klinks, ignoring</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Links">Links</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-klink-1">klink</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Klinks">Klinks</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-klink-referent">klink referent</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Klinks">Klinks</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-klink_002c-activating">klink, activating</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Klinks">Klinks</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-klink_002c-copying">klink, copying</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Klinks">Klinks</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-klink_002c-external">klink, external</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Klinks">Klinks</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-klink_002c-formats">klink, formats</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Klinks">Klinks</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-klink_002c-inserting">klink, inserting</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Klinks">Klinks</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-klink_002c-internal">klink, internal</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Klinks">Klinks</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-klink_002c-to_002ffrom-Emacs-register">klink, to/from Emacs register</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Klinks">Klinks</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-klink_002c-view-spec">klink, view spec</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Klinks">Klinks</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-klink_002c-yanking">klink, yanking</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Klinks">Klinks</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-klinks_002c-ignoring">klinks, ignoring</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Klinks">Klinks</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-knowledge-transfer">knowledge transfer</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Koutliner-History">Koutliner History</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-Koutline-import">Koutline import</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Inserting-and-Importing">Inserting and Importing</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-koutline-link">koutline link</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
@@ -14436,7 +14559,7 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function</a>, Up: <a href
 <tr><td></td><td valign="top"><a href="#index-level">level</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Hiding-and-Showing">Hiding and Showing</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-level-1">level</a>:</td><td>&nbsp;</td><td valign="top"><a href="#View-Specs">View Specs</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-line-and-column">line and column</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-link">link</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Links">Links</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-link">link</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Klinks">Klinks</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-link-action-types">link action types</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Action-Types">Action Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-link-button">link button</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Keyboard-Drags">Keyboard Drags</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-link-button-1">link button</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Explicit-Buttons">Explicit Buttons</a></td></tr>
@@ -14596,7 +14719,7 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function</a>, Up: <a href
 <tr><td></td><td valign="top"><a href="#index-modeline_002c-Smart-Keys">modeline, Smart Keys</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Key-Operations">Smart Key Operations</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-modeline_002c-unbury-buffer">modeline, unbury buffer</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Mouse-Key-Modeline-Clicks">Smart Mouse Key Modeline Clicks</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-modeline_002c-view-spec">modeline, view spec</a>:</td><td>&nbsp;</td><td valign="top"><a href="#View-Specs">View Specs</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-modes-to-ignore-klinks">modes to ignore klinks</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Links">Links</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-modes-to-ignore-klinks">modes to ignore klinks</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Klinks">Klinks</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-mouse">mouse</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Glossary">Glossary</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-mouse-bindings">mouse bindings</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Menus">Menus</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-mouse-drag_002c-link-creation">mouse drag, link creation</a>:</td><td>&nbsp;</td><td valign="top"><a href="#By-Dragging">By Dragging</a></td></tr>
@@ -14638,6 +14761,7 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function</a>, Up: <a href
 <tr><td></td><td valign="top"><a href="#index-other-frame">other frame</a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyControl">HyControl</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-other-window">other window</a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyControl">HyControl</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-outline-file-suffix">outline file suffix</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Creating-Outlines">Creating Outlines</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-outline-label-separator">outline label separator</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Autonumbering">Autonumbering</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-outline-mode">outline mode</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Promoting-and-Demoting">Promoting and Demoting</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-outline-mode-1">outline mode</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Inserting-and-Importing">Inserting and Importing</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-outline-processor">outline processor</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Glossary">Glossary</a></td></tr>
@@ -14655,7 +14779,6 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function</a>, Up: <a href
 <tr><td></td><td valign="top"><a href="#index-outline_002c-importing">outline, importing</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Relocating-and-Copying">Relocating and Copying</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-outline_002c-importing-into">outline, importing into</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Inserting-and-Importing">Inserting and Importing</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-outline_002c-inserting-into">outline, inserting into</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Inserting-and-Importing">Inserting and Importing</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-outline_002c-label-separator">outline, label separator</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Autonumbering">Autonumbering</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-outline_002c-label-type">outline, label type</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Autonumbering">Autonumbering</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-outline_002c-mailing">outline, mailing</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Relocating-and-Copying">Relocating and Copying</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-outline_002c-motion">outline, motion</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Moving-Around">Moving Around</a></td></tr>
@@ -14717,6 +14840,7 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function</a>, Up: <a href
 <tr><td></td><td valign="top"><a href="#index-region-selection">region selection</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Key-Thing-Selection">Smart Key Thing Selection</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-region-throw">region throw</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Keyboard-Drags">Keyboard Drags</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-region_002c-active">region, active</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Mouse-Drags-within-a-Window">Smart Mouse Drags within a Window</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-register_002c-klinks">register, klinks</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Klinks">Klinks</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-relative-autonumber">relative autonumber</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Koutliner">Koutliner</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-relative-identifier">relative identifier</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Autonumbering">Autonumbering</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-remote-file">remote file</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
@@ -14934,7 +15058,7 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function</a>, Up: <a href
 <tr><td></td><td valign="top"><a href="#index-view-spec_002c-characters">view spec, characters</a>:</td><td>&nbsp;</td><td valign="top"><a href="#View-Specs">View Specs</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-view-spec_002c-ellipses">view spec, ellipses</a>:</td><td>&nbsp;</td><td valign="top"><a href="#View-Specs">View Specs</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-view-spec_002c-example">view spec, example</a>:</td><td>&nbsp;</td><td valign="top"><a href="#View-Specs">View Specs</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-view-spec_002c-klink">view spec, klink</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Links">Links</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-view-spec_002c-klink">view spec, klink</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Klinks">Klinks</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-view-spec_002c-label-type">view spec, label type</a>:</td><td>&nbsp;</td><td valign="top"><a href="#View-Specs">View Specs</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-view-spec_002c-lines-per-cell">view spec, lines per cell</a>:</td><td>&nbsp;</td><td valign="top"><a href="#View-Specs">View Specs</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-view-spec_002c-setting">view spec, setting</a>:</td><td>&nbsp;</td><td valign="top"><a href="#View-Specs">View Specs</a></td></tr>

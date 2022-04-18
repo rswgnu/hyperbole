@@ -200,21 +200,24 @@
       directly into other buffers without having to copy to a
       mail/message buffer first.
 
-  *** Klink Copy: Place point within a link to a Koutline cell (klink) when
-      there is no active region and use {M-w} to copy the klink.  Then {C-y}
-      will yank it into any buffer you desire.  To instead copy a reference to
-      the current Koutline cell, use {M-w} outside of a klink when no region
-      is active.  {C-x r s} prompts for an Emacs register and saves either the
-      current klink or the current cell reference to the register.  {C-x
-      r i} with the same register then inserts the Koutline reference at
-      point.
+  *** Klink Copy: When `transient-mark-mode' is enabled and there is no active region:
 
-      The new commands that you can bind to your own keys for copying klinks
-      to the kill ring and to registers are:
-	kotl-mode:copy-absolute-klink-to-kill-ring
-	kotl-mode:copy-relative-klink-to-kill-ring
-	kotl-mode:copy-absolute-klink-to-register
-	kotl-mode:copy-relative-klink-to-register
+        within a link to a Koutline cell (klink), {M-w} copies the klink; then
+        {C-y} yanks it into any buffer you desire.
+
+        {M-w} outside of a klink instead copies a reference to the current
+        Koutline cell.
+
+        {C-x r s} prompts for an Emacs register and saves either the current
+        klink or the current cell reference to the register; {C-x r i} with the
+        same register then inserts at point the saved Koutline reference.
+
+      The new commands that you can bind to your own keys for copying klink
+      references to the current cell to the kill ring and to registers are:
+        kotl-mode:copy-absolute-klink-to-kill-ring
+        kotl-mode:copy-relative-klink-to-kill-ring
+        kotl-mode:copy-absolute-klink-to-register
+        kotl-mode:copy-relative-klink-to-register
 
   *** Klinks Ignored Outside Comments in Programming Language Modes: In
       previous Hyperbole versions, this was true for C-based language

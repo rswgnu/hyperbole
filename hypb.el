@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     6-Oct-91 at 03:42:38
-;; Last-Mod:     17-Apr-22 at 11:43:32 by Bob Weiner
+;; Last-Mod:     17-Apr-22 at 17:59:53 by Bob Weiner
 ;;
 ;; Copyright (C) 1991-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -216,51 +216,6 @@ If no matching installation type is found, return a list of (\"unknown\" hyperb:
 	  (insert-buffer-substring "*Messages*")
 	  (keep-lines "^(HyDebug)" opoint (point))))
       (untabify start (point)))))
-
-;; Derived from copy-to-register of "register.el"
-;;;###autoload
-(defun hypb:copy-to-register (register start end &optional delete-flag region)
-  "Copy region or thing into register REGISTER.
-With prefix arg, delete as well.
-Called from program, takes five args: REGISTER, START, END, DELETE-FLAG,
-and REGION.  START and END are buffer positions indicating what to copy.
-The optional argument REGION if non-nil, indicates that we're not just
-copying some text between START and END, but we're copying the region.
-
-Interactively, reads the register using `register-read-with-preview'.
-
-If called interactively and there is no active region, copy any selectable
-thing at point; see `hypb:selectable-thing'."
-  (interactive (list (register-read-with-preview "Copy to register: ")
-		     (region-beginning)
-		     (region-end)
-		     current-prefix-arg
-		     t))
-  (let (thing-and-bounds
-	thing
-	str)
-    (prog1 (setq str
-		 ;; If called interactively and no region is active, copy thing at
-		 ;; point or current kcell ref when in kotl-mode
-		 (cond ((and (called-interactively-p 'interactive)
-			     (not (use-region-p))
-			     (prog1 (setq thing-and-bounds (hypb:selectable-thing-and-bounds)
-					  start (nth 1 thing-and-bounds)
-					  end   (nth 2 thing-and-bounds)
-					  thing (nth 0 thing-and-bounds))
-			       (when (and delete-flag start end)
-				 (delete-region start end))))
-			thing)
-		       (region
-			(funcall region-extract-function delete-flag))
-		       (t (filter-buffer-substring start end delete-flag))))
-      (set-register register str)
-      (setq deactivate-mark t)
-      (cond (delete-flag)
-	    ((called-interactively-p 'interactive)
-	     (if thing
-		 (message "Saved selectable thing: %s" thing)
-	       (indicate-copied-region)))))))
 
 (defun hypb:debug ()
   "Load Hyperbole hbut.el source file and set debugging traceback flag."
@@ -590,52 +545,6 @@ copied, otherwise, it is omitted."
     (while (< start end)
       (or (kview:char-invisible-p start) (append-to-buffer buffer start (1+ start)))
       (setq start (1+ start)))))
-	
-;; Override the {M-w} command from "simple.el" when hyperbole-mode is active
-;; to allow copying kcell references or regions.
-;;;###autoload
-(defun hypb:kill-ring-save (beg end &optional region)
-  "Save the active region as if killed, but don't kill it.
-In Transient Mark mode, deactivate the mark.
-If `interprogram-cut-function' is non-nil, also save the text for a window
-system cut and paste.
-
-If called interactively and there is no active region, copy any selectable
-thing at point; see `hypb:selectable-thing'.
-
-If you want to append the killed region to the last killed text,
-use \\[append-next-kill] before \\[kill-ring-save].
-
-The copied text is filtered by `filter-buffer-substring' before it is
-saved in the kill ring, so the actual saved text might be different
-from what was in the buffer.
-
-When called from Lisp, save in the kill ring the stretch of text
-between BEG and END, unless the optional argument REGION is
-non-nil, in which case ignore BEG and END, and save the current
-region instead.
-
-This command is similar to `copy-region-as-kill', except that it gives
-visual feedback indicating the extent of the region being copied."
-  ;; Pass mark first, then point, because the order matters when
-  ;; calling `kill-append'.
-  (interactive (list (mark) (point)
-		     (prefix-numeric-value current-prefix-arg)))
-  (let (thing)
-    (if (or (use-region-p)
-	    (not (called-interactively-p 'interactive)))
-	(copy-region-as-kill beg end region)
-      (setq thing (hypb:selectable-thing))
-      (if (stringp thing)
-	  (progn (kill-new thing)
-		 (setq deactivate-mark t))
-	(copy-region-as-kill beg end region)))
-    ;; This use of called-interactively-p is correct because the code it
-    ;; controls just gives the user visual feedback.
-    (when (called-interactively-p 'interactive)
-      (if thing
-	  (message "Saved selectable thing: %s" thing)
-	(indicate-copied-region)))))
 
 ;;;###autoload
 (defun hypb:locate (search-string &optional filter arg)
@@ -834,40 +743,6 @@ The value returned is the value of the last form in BODY."
       (progn (select-window window)
 	     (select-frame-set-input-focus (window-frame window)))
     (error "(hypb:select-window-frame): Argument must be a live window, not '%s'" window)))
-
-(defun hypb:selectable-thing ()
-  "Return any selectable thing at point as a string or nil if none."
-  (cond ((klink:absolute (klink:at-p)))
-	((derived-mode-p 'kotl-mode)
-	 (kcell-view:absolute-reference))
-	((let* ((hbut (hbut:at-p))
-		(start (when hbut (hattr:get hbut 'lbl-start)))
-		(end (when hbut (hattr:get hbut 'lbl-end))))
-	   (and start end
-		(buffer-substring-no-properties start end))))
-	((hui-select-at-delimited-thing-p)
-	 (hui-select-get-thing))))
-
-(defun hypb:selectable-thing-and-bounds ()
-  "Return a list of any selectable thing at point as: (<string> <start position of thing> <end position of thing>) or nil if none.
-Start and end may be nil if thing was generated rather than extracted from a region."
-  (let (thing-and-bounds thing start end)
-    (cond ((setq thing-and-bounds (klink:at-p))
-	   (when thing-and-bounds
-	     (setcar (klink:absolute thing-and-bounds) thing-and-bounds)
-	     thing-and-bounds))
-	  ((derived-mode-p 'kotl-mode)
-	   (list (kcell-view:absolute-reference)))
-	  ((setq thing (hbut:at-p)
-		 start (when thing (hattr:get thing 'lbl-start))
-		 end (when thing (hattr:get thing 'lbl-end)))
-	   (and start end
-		(list (buffer-substring-no-properties start end) start end)))
-	  ((hui-select-at-delimited-thing-p)
-	   (when (setq thing-and-bounds (hui-select-get-region-boundaries))
-	     (list (buffer-substring-no-properties (car thing-and-bounds) (cdr thing-and-bounds))
-		   (car thing-and-bounds)
-		   (cdr thing-and-bounds)))))))
 
 (defun hypb:set-raw-syntax-descriptor (char raw-descriptor &optional syntax-table)
   "Set the syntax of CHAR to RAW-DESCRIPTOR (syntax table value) in the current syntax table or optional SYNTAX-TABLE.

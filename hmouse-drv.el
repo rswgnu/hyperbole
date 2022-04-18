@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    04-Feb-90
-;; Last-Mod:     24-Jan-22 at 00:18:46 by Bob Weiner
+;; Last-Mod:     17-Apr-22 at 15:11:15 by Bob Weiner
 ;;
 ;; Copyright (C) 1989-2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -1383,21 +1383,16 @@ compute the actual release location and include that."
 
 (defun hmouse-use-region-p ()
   "Return t if there is a non-empty, highlighted region, else nil."
-  (cond
-   ;; Newer GNU Emacs
-   ((fboundp 'use-region-p)
-    (let ((use-empty-active-region))
-      (use-region-p)))
-   ;; InfoDock and XEmacs
-   ((fboundp 'region-exists-p)
-    (and (fboundp 'region-active-p) (region-active-p) (region-exists-p)))
-   ;; Older GNU Emacs
-   ((boundp 'transient-mark-mode)
-    (and transient-mark-mode mark-active))))
+  ;; Newer GNU Emacs
+  (if (fboundp 'use-region-p)
+      (let ((use-empty-active-region))
+	(use-region-p))
+    ;; Older GNU Emacs
+    (and transient-mark-mode mark-active)))
 
 (defun hmouse-save-region ()
   "Save to `hkey-region' and return any active region within the current buffer.
-`transient-mark-mode' must be t or the function does nothing."
+`transient-mark-mode' must be t or this sets `hkey-region' to nil."
   (setq hkey-region
 	(when (hmouse-use-region-p)
 	  (buffer-substring (region-beginning) (region-end)))))

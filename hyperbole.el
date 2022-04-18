@@ -5,7 +5,7 @@
 ;; Author:           Bob Weiner
 ;; Maintainer:       Bob Weiner <rsw@gnu.org>, Mats Lidell <matsl@gnu.org>
 ;; Created:          06-Oct-92 at 11:52:51
-;; Last-Mod:     10-Apr-22 at 21:12:50 by Bob Weiner
+;; Last-Mod:     17-Apr-22 at 17:35:31 by Bob Weiner
 ;; Released:         03-May-21
 ;; Version:          8.0.0pre
 ;; Keywords:         comm, convenience, files, frames, hypermedia, languages, mail, matching, mouse, multimedia, outlines, tools, wp
@@ -156,6 +156,9 @@ Info documentation at \"(hyperbole)Top\".
       (hyperbole--enable-mode)
     (hyperbole--disable-mode)))
 
+(defvar hyperbole--mark-even-if-inactive
+  "Stores value of `mark-even-if-inactive' prior to enabling `hyperbole-mode'.")
+
 ;;; ************************************************************************
 ;;; Other required Elisp libraries
 ;;; ************************************************************************
@@ -271,12 +274,12 @@ of the commands."
     (hkey-maybe-set-key "\C-c\C-m" #'hui-select-thing)
     ;;
     ;; Override the {M-w} command from "simple.el" when hyperbole-mode is active
-    ;; to allow copying kcell references or regions to the kill ring.
-    (hkey-set-key [remap kill-ring-save] #'hypb:kill-ring-save)
+    ;; to allow copying delimited things, kcell references or regions to the kill ring.
+    (hkey-set-key [remap kill-ring-save] #'hui-kill-ring-save)
     ;;
     ;; Override the {C-x r s} command from "register.el" when hyperbole-mode is active
-    ;; to allow saving kcell references or regions to a register.
-    (hkey-set-key "\C-xrs" #'hypb:copy-to-register)
+    ;; to allow copying delimited things, kcell references or regions to a register.
+    (hkey-set-key "\C-xrs" #'hui-copy-to-register)
     ;;
     ;; Bind {C-c @} to create a user-specified sized grid of windows
     ;; displaying different buffers.
@@ -559,6 +562,11 @@ This is used only when running from git source and not a package release."
 
 (defun hyperbole--enable-mode ()
   "Enable Hyperbole global minor mode."
+  ;; Store the current value and set `mark-even-if-inactive' to nil so
+  ;; can select delimited things if the region is not active when
+  ;; hyperbole-mode is enabled.
+  (setq hyperbole--mark-even-if-inactive mark-even-if-inactive
+	mark-even-if-inactive nil)
   ;;
   ;; Abbreviate MSWindows /cygdrive mount point paths.
   (when (file-exists-p "/cygdrive")
@@ -589,6 +597,11 @@ This is used only when running from git source and not a package release."
   (setq directory-abbrev-alist (remq hyperb:cygdrive
 				     directory-abbrev-alist)
 	hpath:posix-mount-point-to-mswindows-alist nil)
+  ;;
+  ;; Reset the value of `mark-even-if-inactive' if the user has not
+  ;; changed it while Hyperbole was active.
+  (unless mark-even-if-inactive
+    (setq mark-even-if-inactive hyperbole--mark-even-if-inactive))
   ;;
   (remove-hook (if (boundp 'write-file-functions)
 		   'write-file-functions

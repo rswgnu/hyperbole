@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    6/30/93
-;; Last-Mod:     16-Apr-22 at 18:13:59 by Bob Weiner
+;; Last-Mod:     18-Apr-22 at 00:45:33 by Bob Weiner
 ;;
 ;; Copyright (C) 1993-2021  Free Software Foundation, Inc.
 ;; See the "../HY-COPY" file for license information.
@@ -545,8 +545,8 @@ it is not collapsed."
 	(t (let* ((indent (kcell-view:indent))
 		  (opoint (set-marker (make-marker) (point)))
 		  (start  (set-marker (make-marker) (kcell-view:start)))
-		  (collapsed-p)
 		  (end    (set-marker (make-marker) (kcell-view:end-contents)))
+		  (collapsed-p)
 		  temp-prefix prev-point)
 	     (goto-char start)
 	     ;; Expand cell if collapsed so that filling is done properly.
@@ -574,6 +574,7 @@ it is not collapsed."
 	     (when (looking-at temp-prefix)
 	       (replace-match "" t t))
 	     ;; Return to original point.
+	     (set-marker end nil)
 	     (setq end (kcell-view:end-contents))
 	     (goto-char (min opoint end))
 	     ;;
@@ -583,7 +584,6 @@ it is not collapsed."
 	     ;;
 	     ;; Remove markers.
 	     (set-marker start nil)
-	     (set-marker end nil)
 	     (set-marker opoint nil))
 	   ;; Move to editable point if need be.
 	   (kotl-mode:to-valid-position))))
@@ -688,15 +688,22 @@ With optional COPY-P equal to 't, copy region to kill ring but does not
 kill it.  With COPY-P any other non-nil value, return region as a
 string without affecting kill ring.
 
-If called interactively and there is no active region, copy any selectable
-thing at point; see `hypb:selectable-thing'.
+If called interactively, `transient-mark-mode' is non-nil, and
+there is no active region, copy any delimited selectable thing at
+point; see `hui:delimited-selectable-thing'.
 
 If the buffer is read-only and COPY-P is nil, the region will not be deleted
 but it will be copied to the kill ring and then an error will be signaled.
 
 If a completion is active, this aborts the completion only."
-  (interactive "*r")
+  (interactive
+   (progn (barf-if-buffer-read-only)
+	  (list (when mark-active (region-beginning))
+		(when mark-active (region-end)))))
   (let ((read-only (and (not copy-p) buffer-read-only))
+	(kill-commands '(kill-region kotl-mode:completion-kill-region
+                         kotl-mode:kill-region kotl-mode:copy-region-as-kill))
+	thing-and-bounds
 	thing)
     (when read-only
       (setq copy-p t))
@@ -705,18 +712,18 @@ If a completion is active, this aborts the completion only."
 	     (delete-region (point) cmpl-last-insert-location)
 	     (insert cmpl-original-string)
 	     (setq completion-to-accept nil))
-	    ;; If called interactively and no region is active, copy thing at point
-	    ((and (memq this-command '(kotl-mode:completion-kill-region
-				       kotl-mode:kill-region kotl-mode:copy-region-as-kill))
+	    ;; If called interactively, transient-mark-mode is non-nil, and no region is active, copy thing at point
+	    ((and (memq this-command kill-commands)
+		  transient-mark-mode
 		  (not (use-region-p))
-		  (setq thing (hypb:selectable-thing)))
+		  (setq thing-and-bounds (hui:delimited-selectable-thing-and-bounds)
+			start (nth 1 thing-and-bounds)
+			end   (nth 2 thing-and-bounds)
+			thing (nth 0 thing-and-bounds)))
 	     (if (and copy-p (not (eq copy-p t)))
 		 ;; Return thing as a string
 		 thing
-	       (if (eq last-command 'kill-region)
-		   (kill-append thing (< end start))
-		 (kill-new thing))
-	       (setq deactivate-mark t)))
+	       (kotl-mode:kill-or-copy-region start end copy-p thing)))
 	    ;; If no thing to process, copy region whether active or not
 	    ((and (number-or-marker-p start)
 		  (number-or-marker-p end)
@@ -724,39 +731,46 @@ If a completion is active, this aborts the completion only."
 		      (kcell-view:cell end)))
 	     (save-excursion
 	       (goto-char start)
-	       (let ((indent (kcell-view:indent))
-		     killed subst-str)
-		 ;; Convert region to string
-		 ;; Convert all occurrences of newline + indent
-		 ;; to just newline, eliminating indent.
-		 ;; Then save to kill ring.
-		 (setq subst-str (concat "\\([\n\r]\\)" (make-string indent ?\ ))
-		       killed
-		       (hypb:replace-match-string
-			subst-str (buffer-substring start end) "\\1"))
-		 (unless copy-p
-		   ;; If last char of region is a newline, then delete indent in
-		   ;; following line.
-		   (delete-region
-		    start (+ end (if (memq (char-after (1- (max start end)))
-					   '(?\n ?\r))
-				     indent
-				   0))))
-		 (if (and copy-p (not (eq copy-p t)))
-		     ;; Return killed region as a string.
-		     killed
-		   (if (eq last-command 'kill-region)
-		       (kill-append killed (< end start))
-		     (kill-new killed))
-		   (setq this-command 'kill-region)
-		   (setq deactivate-mark t)
-		   (when read-only (barf-if-buffer-read-only))
-		   nil))))
+	       (kotl-mode:kill-or-copy-region start end copy-p)))
 	    (t (error "(kotl-mode:kill-region): Bad region or not within a single Koutline cell")))
-      (when (and copy-p (memq this-command '(kill-region kotl-mode:kill-region kotl-mode:copy-region-as-kill)))
+      (when (and copy-p (memq this-command kill-commands))
 	(if thing
 	    (message "Saved selectable thing: %s" thing)
 	  (indicate-copied-region))))))
+
+(defun kotl-mode:kill-or-copy-region (start end copy-p &optional kill-str)
+  (when (and start end)
+    (let ((indent (kcell-view:indent))
+	  subst-str)
+      ;; Convert region to string
+      ;; Convert all occurrences of newline + indent
+      ;; to just newline, eliminating indent.
+      ;; Then save to kill ring.
+      (setq subst-str (concat "\\([\n\r]\\)" (make-string indent ?\ ))
+	    kill-str
+	    (hypb:replace-match-string
+	     subst-str (buffer-substring start end) "\\1"))
+      (unless copy-p
+	;; If last char of region is a newline, then delete indent in
+	;; following line.
+	(delete-region
+	 start (+ end (if (memq (char-after (1- (max start end)))
+				'(?\n ?\r))
+			  indent
+			0))))))
+  (cond ((and copy-p (not (eq copy-p t)))
+	 ;; Return killed region as a string.
+	 kill-str)
+	((not (and start end))
+	 (signal 'mark-inactive nil))
+	(t (if (eq last-command 'kill-region)
+	       (kill-append kill-str (< end start))
+	     (kill-new kill-str))
+	   (setq this-command 'kill-region)
+	   (setq deactivate-mark t)
+	   (when (and (not copy-p) buffer-read-only)
+	     (barf-if-buffer-read-only))
+	   nil)))
 
 ;; Bound to {C-w} when completion.el library is loaded.
 (defalias 'kotl-mode:completion-kill-region 'kotl-mode:kill-region)
@@ -1328,8 +1342,8 @@ See also the command `yank-pop' (\\[yank-pop])."
 	 (indent-str (make-string indent ?\ )))
     ;; Convert all occurrences of newline to newline + cell indent.
     ;; Then insert into buffer.
-    (insert (hypb:replace-match-string
-	     "[\n\r]" yank-text (lambda (match) (concat match indent-str)))))
+    (insert-for-yank (hypb:replace-match-string
+		      "[\n\r]" yank-text (lambda (match) (concat match indent-str)))))
   (when (consp arg) (kotl-mode:exchange-point-and-mark))
   ;; If we do get all the way thru, make this-command indicate that.
   (when (eq this-command t) (setq this-command 'kotl-mode:yank))
@@ -1369,8 +1383,8 @@ doc string for `insert-for-yank-1', which see."
 	   (indent-str (make-string indent ?\ )))
       ;; Convert all occurrences of newline to newline + cell indent.
       ;; Then insert into buffer.
-      (insert (hypb:replace-match-string
-	       "[\n\r]" yank-text (concat "\\0" indent-str))))
+      (insert-for-yank (hypb:replace-match-string
+			"[\n\r]" yank-text (concat "\\0" indent-str))))
     ;; Set the window start back where it was in the yank command,
     ;; if possible.
     (set-window-start (selected-window) yank-window-start t)
@@ -2240,8 +2254,7 @@ Return last newly added cell."
 		    ;; add as sibling of parent of current cell
 		    (t (klabel:increment (klabel:parent klabel))))
 	      new-cell (kview:add-cell klabel cell-level contents plist
-				       (or no-fill sibling-p
-					   (not kotl-mode:refill-flag))))
+				       no-fill sibling-p))
       ;;
       ;; sibling-p must be true if we are looping here so there is no need to
       ;; conditionalize how to increment the labels.
@@ -2646,15 +2659,31 @@ Prefix ARG selects the cells whose attributes are removed or set:
 The cell contents after point become part of the newly created cell.
 The default is to create the new cell as a sibling of the current cell.
 With optional universal ARG, {C-u}, the new cell is added as the child of
-the current cell."
+the current cell.  Non-read-only attributes from the current cell are
+replicated in the new cell."
   (interactive "*P")
   (let ((new-cell-contents (kotl-mode:kill-region
 			    (point) (kcell-view:end-contents) 'string))
-	(start (kcell-view:start)))
+	(start (kcell-view:start))
+	(current-plist (kcell-view:plist))
+	plist
+	prop
+	val)
+
+    ;; Create a plist for the new cell, dropping any kcell:read-only-attributes
+    (while current-plist
+      (setq prop (nth 0 current-plist)
+	    val  (nth 1 current-plist))
+      (setq current-plist (nthcdr 2 current-plist))
+      (unless (memq prop kcell:read-only-attributes)
+	(setq plist (cons prop (cons val plist)))))
+
     ;; delete any preceding whitespace
     (skip-chars-backward " \t\n\r" start)
     (delete-region (max start (point)) (kcell-view:end-contents))
-    (kotl-mode:add-cell arg new-cell-contents)))
+    (kotl-mode:add-cell arg new-cell-contents
+			plist
+			(kcell-view:get-attr 'no-fill))))
 
 (defun kotl-mode:transpose-cells (arg)
   "Exchange current and previous visible cells, leaving point after both.
@@ -3177,7 +3206,7 @@ cases where `kotl-mode:shrink-region-flag' is nil."
   (if (not (eq major-mode 'kotl-mode))
       t
     ;; Deactivate empty region
-    (when (eq (point) (mark))
+    (when (eq (point) (when mark-active (mark)))
 	(deactivate-mark))
     (if (not (kotl-mode:valid-region-p))
 	(if kotl-mode:shrink-region-flag

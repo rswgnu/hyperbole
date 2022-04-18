@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Oct-96 at 02:25:27
-;; Last-Mod:     17-Apr-22 at 11:32:25 by Bob Weiner
+;; Last-Mod:     17-Apr-22 at 15:33:00 by Bob Weiner
 ;;
 ;; Copyright (C) 1996-2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -406,37 +406,35 @@ interactively, the type of selection is displayed in the minibuffer."
   (interactive
    (cond ((and (fboundp 'use-region-p) (use-region-p))
 	  nil)
-	 ((and (boundp 'transient-mark-mode) transient-mark-mode mark-active)
+	 ((and transient-mark-mode mark-active)
 	  nil)
 	 (t
 	  ;; Reset selection based on the syntax of character at point.
 	  (hui-select-reset)
 	  nil)))
-    (let* ((key (hypb:cmd-key-vector #'hui-select-thing hyperbole-mode-map))
-	   (org-key-cmd (and (derived-mode-p 'org-mode)
-			     (called-interactively-p 'interactive)
-			     (equal (this-single-command-keys) key)
-			     (lookup-key org-mode-map key))))
-      (cond (org-key-cmd
-	     ;; Prevent a conflict with {C-c RET} binding in Org mode
-	     (call-interactively org-key-cmd))
-	    ;;
-	    ;; No key conflicts, perform normal Hyperbole operation
-	    (t (let ((region (hui-select-get-region-boundaries)))
-		 (unless region
-		   (when (eq hui-select-previous 'punctuation)
-		     (setq region (hui-select-word (point)))))
-		 (when region
-		   (goto-char (car region))
-		   (set-mark (cdr region))
-		   (when (fboundp 'activate-region) (activate-region))
-		   (when (and (boundp 'transient-mark-mode)
-			      transient-mark-mode)
-		     (setq mark-active t))
-		   (and (called-interactively-p 'interactive) hui-select-display-type
-			(message "%s" hui-select-previous))
-		   (run-hooks 'hui-select-thing-hook)
-		   t))))))
+  (let* ((key (hypb:cmd-key-vector #'hui-select-thing hyperbole-mode-map))
+	 (org-key-cmd (and (derived-mode-p 'org-mode)
+			   (called-interactively-p 'interactive)
+			   (equal (this-single-command-keys) key)
+			   (lookup-key org-mode-map key))))
+    (cond (org-key-cmd
+	   ;; Prevent a conflict with {C-c RET} binding in Org mode
+	   (call-interactively org-key-cmd))
+	  ;;
+	  ;; No key conflicts, perform normal Hyperbole operation
+	  (t (let ((region (hui-select-get-region-boundaries)))
+	       (unless region
+		 (when (eq hui-select-previous 'punctuation)
+		   (setq region (hui-select-word (point)))))
+	       (when region
+		 (goto-char (car region))
+		 (set-mark (cdr region))
+		 (when transient-mark-mode
+		   (activate-mark))
+		 (and (called-interactively-p 'interactive) hui-select-display-type
+		      (message "%s" hui-select-previous))
+		 (run-hooks 'hui-select-thing-hook)
+		 t))))))
 
 ;;;###autoload
 (defun hui-select-thing-with-mouse (event)

@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    6/30/93
-;; Last-Mod:     17-Apr-22 at 12:57:50 by Bob Weiner
+;; Last-Mod:     18-Apr-22 at 00:12:50 by Bob Weiner
 ;;
 ;; Copyright (C) 1993-2021  Free Software Foundation, Inc.
 ;; See the "../HY-COPY" file for license information.
@@ -216,7 +216,7 @@ Any cell that is invisible is also collapsed as indicated by a call to
        (concat "\\([\n\r]\\)" (make-string indent ?\ ))
        (buffer-substring start end) "\\1"))))
 
-(defun kcell-view:create (kview cell contents level idstamp klabel &optional no-fill)
+(defun kcell-view:create (kview cell contents level idstamp klabel &optional no-fill sibling-p)
   "Insert into KVIEW at point, CELL with CONTENTS at LEVEL (1 = first level) with IDSTAMP and KLABEL.
 If the current view displays klabels, then KLABEL should be inserted
 prior to this call, with point following it.
@@ -246,10 +246,12 @@ or movement."
       (when no-fill
 	(kcell:set-attr cell 'no-fill t))
       (insert fill-prefix)
-      (setq contents (kview:insert-contents cell contents no-fill fill-prefix))
+      (setq contents (kview:insert-contents cell contents
+					    (or no-fill sibling-p
+						(null kotl-mode:refill-flag))
+					    fill-prefix))
       ;; Insert lines to separate cell from next.
-      (insert (if (or no-fill (equal contents ""))
-		  "\n\n" "\n"))
+      (insert "\n\n")
       (unless (kview:get-attr kview 'blank-lines)
 	;; Make blank lines invisible.
 	(kproperty:put (1- (point)) (min (point) (point-max))
@@ -579,7 +581,7 @@ If labels are off, return cell's idstamp as a string."
 ;;; kview - one view per buffer, multiple views per kotl
 ;;;
 
-(defun kview:add-cell (klabel level &optional contents prop-list no-fill)
+(defun kview:add-cell (klabel level &optional contents prop-list no-fill sibling-p)
   "Create a new cell with full KLABEL and add it at point at LEVEL within outline.
 Optional cell CONTENTS and PROP-LIST may also be given, as well
 as NO-FILL which skips filling of any CONTENTS.  Return new cell.
@@ -589,7 +591,7 @@ level."
 		      (if (stringp klabel) (string-to-number klabel) klabel)
 		    (kview:id-increment kview)))
 	 (new-cell (kcell:create prop-list)))
-    (kcell-view:create kview new-cell contents level idstamp klabel no-fill)
+    (kcell-view:create kview new-cell contents level idstamp klabel no-fill sibling-p)
     new-cell))
 
 (defun kview:beginning-of-actual-line ()

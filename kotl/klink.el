@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    15-Nov-93 at 12:15:16
-;; Last-Mod:     10-Apr-22 at 23:11:46 by Bob Weiner
+;; Last-Mod:     17-Apr-22 at 21:02:07 by Bob Weiner
 ;;
 ;; Copyright (C) 1993-2021  Free Software Foundation, Inc.
 ;; See the "../HY-COPY" file for license information.
@@ -202,7 +202,7 @@ link-end-position, (including delimiters)."
   "Add yank-handler to KLINK so link is made relative when yanked into the same koutline or the same directory.
 Return the modified KLINK."
   (add-text-properties 0 (length klink)
-		       (list 'yank-handler 'klink:yank-handler
+		       (list 'yank-handler '(klink:yank-handler)
 			     'yank-excluded-properties (cons 'yank-handler (get-text-property 0 'yank-excluded-properties klink)))
 		       klink)
   klink)

@@ -7,7 +7,7 @@
 @c Author:       Bob Weiner
 @c
 @c Orig-Date:     6-Nov-91 at 11:18:03
-@c Last-Mod:     16-Apr-22 at 17:54:02 by Bob Weiner
+@c Last-Mod:     17-Apr-22 at 23:24:34 by Bob Weiner
 
 @c %**start of header (This is for running Texinfo on a region.)
 @setfilename hyperbole.info
@@ -156,7 +156,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</P>
 
 <PRE>
 Edition 8.0.0pre
-Printed March 20, 2022.
+Printed April 17, 2022.
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -198,7 +198,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 @example
 Edition 8.0.0pre
-March 20, 2022
+April 17, 2022
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -353,7 +353,7 @@ Koutliner
 * Idstamps::
 * Editing Outlines::
 * Viewing Outlines::
-* Links::
+* Klinks::
 * Cell Attributes::
 * Koutliner History::
 
@@ -4372,7 +4372,7 @@ commands available in the Koutliner.
 * Idstamps::
 * Editing Outlines::
 * Viewing Outlines::
-* Links::
+* Klinks::
 * Cell Attributes::
 * Koutliner History::
 @end menu
@@ -5071,7 +5071,7 @@ You must display it manually, if desired.
 Koutline buffer to a @file{.html} file of the same name.  The output file will
 not be displayed; you must display it manually, if desired.
 
-@node Viewing Outlines, Links, Editing Outlines, Koutliner
+@node Viewing Outlines, Klinks, Editing Outlines, Koutliner
 @section   Viewing Outlines
 
 @cindex outline, viewing
@@ -5196,7 +5196,7 @@ following the outline buffer name, unless the variable,
 display.  The modeline display appears as <|viewspec> to aid rapid
 visual location.  The | (pipe character) is also used in links that
 specify view specs to indicate the start of a view spec sequence.
-@xref{klinks}.
+@xref{Klinks}.
 
 @cindex outline, view specs
 The current view spec is saved whenever the outline is saved.  The next
@@ -5358,17 +5358,47 @@ the insert link command.
 @cindex klink, yanking
 @cindex cell link
 @cindex cell reference
+@findex kotl-mode:copy-absolute-klink-to-kill-ring
+If you prefer the standard copy and yank model that Emacs provides, place
+point within a klink when there is no active region and use @bkbd{M-w} to
+copy the klink.  To instead copy a reference to the current Koutline cell,
+use @bkbd{M-w} @emph{outside of} a klink when no region is active or
+@bkbd{M-x kotl-mode:copy-absolute-klink-to-kill-ring @key{RET}} anywhere
+within a cell.  Then @bkbd{C-y} will yank the last copied text into any
+buffer you desire.  Of course, when a region is active, @bkbd{M-w} will
+copy the region as it does normally in Emacs.
+
 @kindex C-x r i
 @kindex C-x r s
 @cindex klink, to/from Emacs register
-If you prefer the standard copy and yank model that Emacs provides, place
-point within a klink when there is no active region and use @bkbd{M-w} to
-copy the klink.  Then @bkbd{C-y} will yank it into any buffer you desire.
-To instead copy a reference to the current Koutline cell, use @bkbd{M-w}
-@emph{outside of} a klink when no region is active.  @bkbd{C-x r s} prompts
-for an Emacs register and saves either the current klink or the current cell
-reference to the register.  @bkbd{C-x r i} with the same register then inserts
-the Koutline reference at point.
+@cindex register, klinks
+@findex kotl-mode:copy-absolute-klink-to-register
+Similarly, you can copy to an Emacs register rather than the kill ring.
+When no region is active/highlighted, @bkbd{C-x r s} prompts for an Emacs
+register and saves to it either the current klink or, when outside of a
+klink, a reference to the current cell.  @bkbd{M-x
+kotl-mode:copy-absolute-klink-to-register @key{RET}} anywhere within a cell
+saves a reference to the current cell to a register.
+
+@bkbd{C-x r i} with the same register then inserts at point the Koutline
+reference previously saved.  When a region is active, these operate on the
+region instead.
+
+@findex kotl-mode:copy-absolute-klink-to-kill-ring
+@findex kotl-mode:copy-relative-klink-to-kill-ring
+@findex kotl-mode:copy-absolute-klink-to-register
+@findex kotl-mode:copy-relative-klink-to-register
+@cindex cell reference, copying
+There are also commands not bound to keys that always copy a klink reference
+to the current cell:
+@example
+@group
+kotl-mode:copy-absolute-klink-to-kill-ring
+kotl-mode:copy-relative-klink-to-kill-ring
+kotl-mode:copy-absolute-klink-to-register
+kotl-mode:copy-relative-klink-to-register
+@end group
+@end example
 
 @vindex klink:ignore-modes
 @vindex klink:c-style-modes
@@ -5388,7 +5418,7 @@ is within a comment.
 @code{klink:c-style-modes} is rarely needed but is there if Hyperbole ever
 mistakenly recognizes a pattern within a comment as a klink when it isn't.
 
-@node Cell Attributes, Koutliner History, Links, Koutliner
+@node Cell Attributes, Koutliner History, Klinks, Koutliner
 @section   Cell Attributes
 
 @cindex cell attribute
@@ -8139,6 +8169,33 @@ Delimited Thing Jump: Jump between the start and end of a delimited
 thing, which may be an HTML tag pair.  This binding is made only if
 the key is not bound prior to initializing Hyperbole.  @xref{Smart Key
 Thing Selection}, for more information.
+
+@cindex key binding, M-w
+@vindex mark-even-if-inactive
+@findex hui-kill-ring-save
+@kitem M-w
+@cindex copying things to kill ring
+Delimited Thing, Koutline Cell Reference or Region Copy: While Hyperbole is
+active, it sets @code{mark-even-if-inactive} to @code{nil} and overrides
+@bkbd{M-w} with its own command, @code{hui-kill-ring-save}, which copies the
+region only when it is active/highlighted.  When there is no active region,
+@bkbd{M-w} does one of the following:
+
+@enumerate
+@item in a Koutline klink, copies the klink;
+@item in a Koutline cell, outside any klink, copies a klink reference to the current cell;
+@item on a Hyperbole button, copies the text of the button excluding delimiters;
+@item at the start of a paired delimiter, copy the text including the delimiters.
+@end enumerate
+
+@cindex key binding, C-x r s
+@kitem C-x r s
+@cindex copying things to registers
+Delimited Thing, Koutline Cell Reference or Region Save to Register: This
+does the same thing as @bkbd{M-w} except it copies to an Emacs register
+given by a letter or number rather than the kill ring.  While Hyperbole is active,
+it overrides @bkbd{C-x r s} with its own command, @code{hui-copy-to-register}.
+which copies the region only when it is active/highlighted.
 @end table
 
 @vindex hkey-init
@@ -8547,9 +8604,15 @@ With optional COPY-P equal to t, copy region to kill ring but don't
 kill it.  With COPY-P any other non-nil value, return region as a
 string without affecting the kill ring.
 
+If called interactively and there is no active region, copy any
+delimited selectable thing at point; see the documentation for
+@code{hui:delimited-selectable-thing}.
+
 If the buffer is read-only and COPY-P is nil, the region will not be
 deleted but it will be copied to the kill ring and then an error will be
 signaled.
+
+If a completion is active, this aborts the completion only.
 
 @findex kotl-mode:kill-ring-save
 @item kotl-mode:kill-ring-save  @bkbd{M-w}
