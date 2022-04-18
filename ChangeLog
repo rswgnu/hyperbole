@@ -2,6 +2,8 @@
 
 * Makefile (elpa, elpa_hypb_dir): Remove elpa target. ELPA picks up latest
     master from savannah automatically.
+    (git-push): Not needed. package target ensures we are on the latest
+    sources.
 
 * test/kotl-mode-tests.el (kotl-mode--add-cell-set-fill-attribute): Verify
     add-cell do not set no-fill flag.
