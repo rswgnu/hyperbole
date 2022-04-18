@@ -3,7 +3,7 @@
 # Author:       Bob Weiner
 #
 # Orig-Date:    15-Jun-94 at 03:42:38
-# Last-Mod:     18-Apr-22 at 23:00:52 by Mats Lidell
+# Last-Mod:     18-Apr-22 at 23:46:38 by Mats Lidell
 #
 # Copyright (C) 1994-2021  Free Software Foundation, Inc.
 # See the file HY-COPY for license information.
@@ -374,17 +374,26 @@ website:
 
 # Generate a Hyperbole package suitable for distribution via the Emacs package manager.
 pkg: package
-package: git-pull doc autoloads $(pkg_dir)/hyperbole-$(HYPB_VERSION).tar.sig
+package: git-pull doc git-verify-no-update $(pkg_dir)/hyperbole-$(HYPB_VERSION).tar.sig
 
 # Generate and distribute a Hyperbole release to ftp.gnu.org.
 # One step in this is to generate an autoloads file for the Koutliner, kotl/kotl-autoloads.el.
-release: package $(pkg_dir)/hyperbole-$(HYPB_VERSION).tar.gz ftp
+release: package $(pkg_dir)/hyperbole-$(HYPB_VERSION).tar.gz ftp git-tag-release
 	@ echo; echo "Hyperbole $(HYPB_VERSION) released to ftp.gnu.org successfully."
 
 # Ensure local hyperbole directory is synchronized with master before building a release.
 git-pull:
+	echo "If this step failes check your work directory for not commited changes"
 	git checkout master && git pull
 	git diff-index --quiet master
+
+git-verify-no-update:
+	echo "If this step fails check your work directory for updated docs and push these to savannah"
+	git diff-index --quiet master
+
+git-tag-release:
+	echo git tag -a hyperbole-$(HYPB_VERSION) -m "Hyperbole release $(HYPB_VERSION)"
+	echo git push origin hyperbole-$(HYPB_VERSION)
 
 # Send compressed tarball for uploading to GNU ftp site; this must be done from the directory
 # containing the tarball to upload.
