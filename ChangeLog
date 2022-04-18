@@ -1,3 +1,8 @@
+2022-04-18  Mats Lidell  <matsl@gnu.org>
+
+* test/kotl-mode-tests.el (kotl-mode--add-cell-set-fill-attribute): Verify
+    add-cell do not set no-fill flag.
+
 2022-04-18  Bob Weiner  <rsw@gnu.org>
 
 * kotl/kotl-mode.el (kotl-mode:fill-cell): Fix issue where 'end' was set
