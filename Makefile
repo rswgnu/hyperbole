@@ -3,9 +3,9 @@
 # Author:       Bob Weiner
 #
 # Orig-Date:    15-Jun-94 at 03:42:38
-# Last-Mod:     18-Apr-22 at 23:46:38 by Mats Lidell
+# Last-Mod:     19-Apr-22 at 22:37:51 by Mats Lidell
 #
-# Copyright (C) 1994-2021  Free Software Foundation, Inc.
+# Copyright (C) 1994-2022  Free Software Foundation, Inc.
 # See the file HY-COPY for license information.
 #
 # This file is part of GNU Hyperbole.
@@ -35,6 +35,11 @@
 #
 #               To build only the output formats of the Hyperbole Manual:
 #		     make doc
+#
+#		Note: Releasing to ELPA is automatic in that the
+#		master branch on savannah is automatically synced
+#		daily by ELPA. The pkg and release targets are for
+#		making and uploading tar ball to ftp.gnu.org.
 #
 #               To assemble a Hyperbole Emacs package for testing:
 #		     make pkg
