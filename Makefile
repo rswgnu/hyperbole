@@ -3,7 +3,7 @@
 # Author:       Bob Weiner
 #
 # Orig-Date:    15-Jun-94 at 03:42:38
-# Last-Mod:     19-Apr-22 at 22:37:51 by Mats Lidell
+# Last-Mod:     19-Apr-22 at 22:43:10 by Mats Lidell
 #
 # Copyright (C) 1994-2022  Free Software Foundation, Inc.
 # See the file HY-COPY for license information.
@@ -388,7 +388,7 @@ release: package $(pkg_dir)/hyperbole-$(HYPB_VERSION).tar.gz ftp git-tag-release
 
 # Ensure local hyperbole directory is synchronized with master before building a release.
 git-pull:
-	echo "If this step failes check your work directory for not commited changes"
+	echo "If this step fails check your work directory for not committed changes"
 	git checkout master && git pull
 	git diff-index --quiet master
 
