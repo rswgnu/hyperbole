@@ -1,3 +1,16 @@
+2022-04-19  Mats Lidell  <matsl@gnu.org>
+
+* Makefile (elpa, elpa_hypb_dir): Remove elpa target. ELPA picks up latest
+    master from savannah automatically.
+    (git-push): Not needed. package target ensures we are on the latest
+    sources.
+    (git-verify-no-update): Verify no files have changed compared to master.
+    (git-tag-release): Tag the relase in git and push to origin.
+    (package): Use git-verify-no-update and skip autoloads, it happens later.
+    (release): Use git-tag-release as the last step after uploading with
+    ftp.
+    Add comment about automatic ELPA releases.
+
 2022-04-18  Mats Lidell  <matsl@gnu.org>
 
 * test/kotl-mode-tests.el (kotl-mode--add-cell-set-fill-attribute): Verify
