@@ -1,5 +1,8 @@
 2022-04-24  Bob Weiner  <rsw@gnu.org>
 
+* hsettings.el (hyperbole-web-search): Handle functions as
+   'hyperbole-web-search-alist' values.
+
 * FAST-DEMO (Introduction, Hyperbole Explicit and Global Buttons): Add.
 
 * Makefile (help): Update Hyperbole maintainer Makefile doc

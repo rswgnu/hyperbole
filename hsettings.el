@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    15-Apr-91 at 00:48:49
-;; Last-Mod:     17-Apr-22 at 11:18:39 by Bob Weiner
+;; Last-Mod:     24-Apr-22 at 13:14:18 by Bob Weiner
 ;;
 ;; Copyright (C) 1991-2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -141,7 +141,8 @@ lines"
 (defun hyperbole-default-web-search-term ()
   "Return a default search term if region is active and not too large."
   (and (region-active-p)
-       (<= (count-lines (region-beginning) (region-end)) hyperbole-default-web-search-term-max-lines)
+       (<= (count-lines (region-beginning) (region-end))
+	   hyperbole-default-web-search-term-max-lines)
        (buffer-substring-no-properties (region-beginning) (region-end))))
 
 (defun hyperbole-read-web-search-arguments (&optional service-name search-term)
@@ -164,15 +165,16 @@ package to display search results."
   (interactive)
   (cl-multiple-value-bind (service-name search-term)
       (hyperbole-read-web-search-arguments service-name search-term)
-    (let ((search-pat (cdr (assoc service-name hyperbole-web-search-alist
+    (let ((browse-url-browser-function hyperbole-web-search-browser-function)
+	  (search-pat (cdr (assoc service-name hyperbole-web-search-alist
 				  (lambda (service1 service2)
 				    (equal (downcase service1) (downcase service2)))))))
-      (if search-pat
-	  (let ((browse-url-browser-function
-		 hyperbole-web-search-browser-function))
-	    (browse-url
-	     (format search-pat (browse-url-url-encode-chars search-term "[*\"()',=;?% ]"))))
-	(user-error "(Hyperbole): Invalid web search service `%s'" service-name)))))
+      (setq search-term (browse-url-url-encode-chars search-term "[*\"()',=;?% ]"))
+      (cond ((stringp search-pat)
+	     (browse-url (format search-pat search-term)))
+	    ((functionp search-pat)
+	     (funcall search-pat search-term))
+	    (t (user-error "(Hyperbole): Invalid web search service `%s'" service-name))))))
 
 ;; This must be defined before the defcustom `inhbit-hyperbole-messaging'.
 ;;;###autoload
@@ -242,12 +244,13 @@ Hyperbole, and then restart Emacs."
     ("Twitter" . "https://twitter.com/search?q=%s")
     ("Wikipedia" . "https://en.wikipedia.org/wiki/%s")
     ("Youtube" . "https://www.youtube.com/results?search_query=%s"))
-  "*Alist of (web-service-name . url-with-%s-parameter-or-cmd) elements.
+  "*Alist of (web-service-name . emacs-cmd-or-url-with-%s-parameter) elements.
 The first capitalized character of each web-service-name must be unique.
 This custom option is used in the Hyperbole Find/Web menu where
 the %s in the url-with-%s-parameter is replaced with an interactively
-obtained search string; if second argument is a command instead, then
-it is called interactively to prompt for the search string."
+obtained search term; if second argument is a command instead, then
+it is called interactively to prompt for the search term with which it
+then runs the search."
   :initialize #'custom-initialize-default
   :set (lambda (option value)
 	 (set option value)
