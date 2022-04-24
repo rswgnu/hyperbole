@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 21:42:03
-;; Last-Mod:     17-Apr-22 at 22:31:52 by Bob Weiner
+;; Last-Mod:     24-Apr-22 at 09:50:01 by Bob Weiner
 ;;
 ;; Copyright (C) 1991-2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -1441,14 +1441,13 @@ in which to create button.  BUT-DIR is the directory of BUT-LOC.
 TYPE-AND-ARGS is the action type for the button followed by any
 arguments it requires.  Any text properties are removed from string
 arguments."
-  (hypb:assert-same-start-and-end-buffer
-    (hattr:set 'hbut:current 'loc but-loc)
-    (hattr:set 'hbut:current 'dir but-dir)
-    (hattr:set 'hbut:current 'actype (actype:elisp-symbol (car type-and-args)))
-    (hattr:set 'hbut:current 'args (cdr type-and-args))
-    (select-window but-window)
-    (let ((label (ebut:key-to-label lbl-key)))
-      (ebut:operate label (when edit-flag label)))))
+  (hattr:set 'hbut:current 'loc but-loc)
+  (hattr:set 'hbut:current 'dir but-dir)
+  (hattr:set 'hbut:current 'actype (actype:elisp-symbol (car type-and-args)))
+  (hattr:set 'hbut:current 'args (cdr type-and-args))
+  (select-window but-window)
+  (let ((label (ebut:key-to-label lbl-key)))
+    (ebut:operate label (when edit-flag label))))
 
 (defun hui:link-possible-types ()
   "Return list of possible link action types during editing of a Hyperbole button.

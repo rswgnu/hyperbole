@@ -1,3 +1,11 @@
+2022-04-24  Bob Weiner  <rsw@gnu.org>
+
+* hui.el (hui:link-create): Remove 'hypb:assert-same-start-and-end-buffer'
+    macro call as this may be called from hkey-operate via {M-o} which
+    when called a second time can leave point in a buffer different than
+    the start buffer, triggering an error when trying to create a button
+    even though buttton creation would otherwise work properly: bug#55058.
+
 2022-04-18  Bob Weiner  <rsw@gnu.org>
 
 * kotl/kotl-mode.el (kotl-mode:fill-cell): Fix issue where 'end' was set
