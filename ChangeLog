@@ -1,3 +1,13 @@
+2022-04-24  Mats Lidell  <matsl@gnu.org>
+
+* test/hui-tests.el (hui--delimited-selectable-thing--in-cell-return-ref)
+    (hui--delimited-selectable-thing--in-ibut-return-ibut-text)
+    (hui--delimited-selectable-thing--ibut-label-return-ibut-text)
+    (hui--delimited-selectable-thing--in-ebut-return-ebut-text)
+    (hui--delimited-selectable-thing--start-of-paired-delimiter)
+    (hui--delimited-selectable-thing--in-kcell-link-return-link): Add
+    tests for hui:delimited-selectable-thing.
+
 2022-04-24  Bob Weiner  <rsw@gnu.org>
 
 * hsettings.el (hyperbole-web-search): Handle functions as
