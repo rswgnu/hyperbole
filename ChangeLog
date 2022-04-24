@@ -1,3 +1,12 @@
+2022-04-24  Bob Weiner  <rsw@gnu.org>
+
+* Makefile (help): Update Hyperbole maintainer Makefile doc
+           (git-tag-release): Re-enable these commands which were
+    commented out for testing.
+           (website): Change so pushes website to production.  Use
+    'website-local' to update local CVS website files from the
+    hyperbole distribution.
+
 2022-04-24  Mats Lidell  <matsl@gnu.org>
 
 * Makefile (website-push): Add push of website.
