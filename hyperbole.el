@@ -5,7 +5,7 @@
 ;; Author:           Bob Weiner
 ;; Maintainer:       Bob Weiner <rsw@gnu.org>, Mats Lidell <matsl@gnu.org>
 ;; Created:          06-Oct-92 at 11:52:51
-;; Last-Mod:     17-Apr-22 at 17:35:31 by Bob Weiner
+;; Last-Mod:     24-Apr-22 at 13:36:22 by Bob Weiner
 ;; Released:         03-May-21
 ;; Version:          8.0.0pre
 ;; Keywords:         comm, convenience, files, frames, hypermedia, languages, mail, matching, mouse, multimedia, outlines, tools, wp
@@ -211,7 +211,18 @@ Third argument NO-ADD is ignored."
 
 (defun hkey-set-key (key command)
   "Define a Hyperbole global minor mode KEY bound to COMMAND."
-  (define-key hyperbole-mode-map key command))
+  (interactive
+   (let* ((menu-prompting nil)
+          (key (read-key-sequence "Set Hyperbole key: " nil t)))
+     (list key
+           (read-command (format "Set key %s to command: "
+                                 (key-description key))))))
+  (or (vectorp key) (stringp key)
+      (signal 'wrong-type-argument (list 'arrayp key)))
+  (prog1 (define-key hyperbole-mode-map key command)
+    (when (called-interactively-p 'interactive)
+      (message "{%s} set to invoke `%s' when Hyperbole is active"
+	       (key-description key) command))))
 
 (defvar hmouse-middle-flag)
 (defvar hmouse-bindings-flag)

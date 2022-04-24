@@ -1,3 +1,8 @@
+2022-04-24  Bob Weiner  <rsw@gnu.org>
+
+* hyperbole.el (hkey-set-key): Turn into a command with interactive
+    calling support.
+
 2022-04-24  Mats Lidell  <matsl@gnu.org>
 
 * test/hui-tests.el (hui--delimited-selectable-thing--in-cell-return-ref)
