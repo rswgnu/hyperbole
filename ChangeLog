@@ -1,3 +1,9 @@
+2022-04-24  Mats Lidell  <matsl@gnu.org>
+
+* Makefile (website-push): Add push of website.
+    (release): Use website-push.
+    (CVS): Add cvs command as macro and use it in website-push.
+
 2022-04-24  Bob Weiner  <rsw@gnu.org>
 
 * hbut.el (ebut:get): Add 2 more params: start-delim and end-delim used

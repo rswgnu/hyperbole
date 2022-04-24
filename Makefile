@@ -3,7 +3,7 @@
 # Author:       Bob Weiner
 #
 # Orig-Date:    15-Jun-94 at 03:42:38
-# Last-Mod:     19-Apr-22 at 22:43:10 by Mats Lidell
+# Last-Mod:     24-Apr-22 at 16:44:56 by Mats Lidell
 #
 # Copyright (C) 1994-2022  Free Software Foundation, Inc.
 # See the file HY-COPY for license information.
@@ -142,7 +142,7 @@ MAKE = \make
 RM = \rm -f
 TAR = \tar
 ZIP = \zip -qry
-
+CVS = \cvs
 
 # Directory in which to create new package distributions of Hyperbole.
 pkg_dir = /tmp
@@ -377,13 +377,17 @@ website:
 	@ echo "Goto \"$(HYPB_WEB_REPO_LOCATION)\" and run \"cvs commit -m <comment>\" to upload it."
 	@ echo
 
+website-push: website
+	cd "$(HYPB_WEB_REPO_LOCATION)"
+	$(CVS) commit -m "Hyperbole release $(HYPB_VERSION)"
+
 # Generate a Hyperbole package suitable for distribution via the Emacs package manager.
 pkg: package
 package: git-pull doc git-verify-no-update $(pkg_dir)/hyperbole-$(HYPB_VERSION).tar.sig
 
 # Generate and distribute a Hyperbole release to ftp.gnu.org.
 # One step in this is to generate an autoloads file for the Koutliner, kotl/kotl-autoloads.el.
-release: package $(pkg_dir)/hyperbole-$(HYPB_VERSION).tar.gz ftp git-tag-release
+release: package $(pkg_dir)/hyperbole-$(HYPB_VERSION).tar.gz ftp website-push git-tag-release
 	@ echo; echo "Hyperbole $(HYPB_VERSION) released to ftp.gnu.org successfully."
 
 # Ensure local hyperbole directory is synchronized with master before building a release.
