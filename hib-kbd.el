@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    22-Nov-91 at 01:37:57
-;; Last-Mod:     17-Apr-22 at 12:53:49 by Bob Weiner
+;; Last-Mod:     24-Apr-22 at 17:34:04 by Bob Weiner
 ;;
 ;; Copyright (C) 1991-2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -85,7 +85,7 @@ Return t if the sequence appears to be valid, else nil."
 Key sequences should be in human readable form, e.g. {C-x C-b}, or what `key-description' returns.
 Forms such as {\C-b}, {\^b}, and {^M} will not be recognized.
 
-Any key sequence must be a string of one of the following:
+Any key sequence within the series must be a string of one of the following:
   a Hyperbole minibuffer menu item key sequence,
   a HyControl key sequence,
   a M-x extended command,
@@ -148,14 +148,17 @@ Return t if KEY-SERIES appears valid, else nil."
   (setq current-prefix-arg nil) ;; Execution of the key-series may set it.
   (let ((binding (kbd-key:binding key-series)))
     (cond ((null binding)
-	   (when (kbd-key:special-sequence-p key-series)
-	     (kbd-key:execute-special-series key-series)
-	     t))
+	   (if (kbd-key:special-sequence-p key-series)
+	       (kbd-key:execute-special-series key-series)
+	     (kbd-key:key-series-to-events key-series))
+	   t)
 	  ((memq binding '(action-key action-mouse-key hkey-either))
 	   (beep)
 	   (message "(kbd-key:act): This key does what the Action Key does.")
 	   t)
-	  (t (call-interactively binding) t))))
+	  ((not (integerp binding))
+	   (call-interactively binding)
+	   t))))
 
 (defun kbd-key:execute (key-series)
    "Execute a possibly non-normalized KEY-SERIES with or without curly brace delimiters.
@@ -232,7 +235,7 @@ With optional prefix arg FULL, display full documentation for command."
 Key sequences should be in human readable form, e.g. {C-x C-b}, or what `key-description' returns.
 Forms such as {\C-b}, {\^b}, and {^M} will not be recognized.
 
-Any key sequence must be a string of one of the following:
+Any key sequence within the series must be a string of one of the following:
   a Hyperbole minibuffer menu item key sequence,
   a HyControl key sequence,
   a M-x extended command,

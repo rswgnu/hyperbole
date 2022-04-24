@@ -1,5 +1,12 @@
 2022-04-24  Bob Weiner  <rsw@gnu.org>
 
+* hib-kbd.el (kbd-key:act): Fix to handle non-special key series that
+    contains more than one command, e.g "C-uC-n C-uC-n".
+
+* hui-mini.el (hyperbole-set-key): Generalize to bind commands or
+    Hyperbole minibuffer menu key strings in any keymap, with
+    (global-key-map) as a default.
+
 * hyperbole.el (hkey-set-key): Turn into a command with interactive
     calling support.
 

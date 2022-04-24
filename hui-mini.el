@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    15-Oct-91 at 20:13:17
-;; Last-Mod:     17-Apr-22 at 11:24:59 by Bob Weiner
+;; Last-Mod:     24-Apr-22 at 16:33:12 by Bob Weiner
 ;;
 ;; Copyright (C) 1991-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -91,34 +91,48 @@ With a prefix arg, display the older, more extensive DEMO file."
   (hypb:display-file-with-logo (if arg "DEMO" "FAST-DEMO")))
 
 ;;;###autoload
-(defun hyperbole-set-key (global-key menu-keys)
-  "Bind GLOBAL-KEY to Hyperbole minibuffer MENU-KEYS.
-GLOBAL-KEY is a key sequence; noninteractively, it is a string or vector
+(defun hyperbole-set-key (keymap key binding)
+  "In KEYMAP, bind KEY to Hyperbole minibuffer BINDING.
+If KEYMAP is nil, use the value of (global-key-map).
+
+KEY is a key sequence; noninteractively, it is a string or vector
 of characters or event types, and non-ASCII characters with codes
 above 127 (such as ISO Latin-1) can be included if you use a vector.
 
-MENU-KEYS is a string of the ASCII key presses used to invoke a
-Hyperbole minibuffer command.
+BINDING is one of:
+  nil     - immediately remove key binding from keymap
+  string  - upon key press, execute the BINDING string as a key series
+  command - upon key press, run the command interactively.
 
-Note that if GLOBAL-KEY has a local binding in the current buffer,
-that local binding will continue to shadow any global binding
-that you make with this function."
+Note that other local or minor mode bindings may shadow/override any
+binding made with this function."
   (interactive
    (let* ((menu-prompting nil)
           (key (read-key-sequence "Set Hyperbole key globally: ")))
      (setq hui:menu-keys "")
-     (list key
+     (list nil
+	   key
+	   ;; Read Hyperbole minibuffer menu keys to bind to 'key' in 'keymap'
 	   (concat
 	    ;; Normalize the key prefix that invokes the Hyperbole minibuffer menu
 	    (kbd (key-description (car (where-is-internal 'hyperbole))))
-            (hui:get-keys)))))
-  (or (vectorp global-key) (stringp global-key)
-      (signal 'wrong-type-argument (list 'arrayp global-key)))
-  (if (or (not (stringp menu-keys)) (string-empty-p menu-keys))
-      (user-error "(hyperbole-set-key): No Hyperbole menu item selected")
-    (define-key (current-global-map) global-key `(lambda () (interactive) (kbd-key:act ,menu-keys)))
+	    (hui:get-keys)))))
+  (when (and keymap (not (keymapp keymap)))
+    (error "(hyperbole-set-key): First arg must be either nil or a keymap, not '%s'" keymap))
+  (unless keymap
+    (setq keymap (current-global-map)))
+  (or (vectorp key) (stringp key)
+      (error "(hyperbole-set-key): Second arg must be a vector or string key sequence, not '%s'" key))
+  (prog1 (cond ((stringp binding)
+		(if (string-empty-p binding)
+		    (error "(hyperbole-set-key): Third arg must be a non-empty string")
+		  (define-key keymap key `(lambda () (interactive) (kbd-key:act ,binding)))))
+	       ((or (null binding) (commandp binding))
+		(define-key keymap key binding))
+	       (t
+		(error "(hyperbole-set-key): Invalid binding for {%s}: '%s'" key binding)))
     (when (called-interactively-p 'interactive)
-      (message "{%s} globally set to invoke {%s}" (key-description global-key) (key-description menu-keys)))))
+      (message "{%s} set to invoke {%s}" (key-description key) binding))))
 
 (defun hui:menu-act (menu &optional menu-list doc-flag help-string-flag)
   "Prompt user with Hyperbole MENU (a symbol) and perform selected item.

@@ -87,8 +87,8 @@
 ** TEST CASES
 
   *** Hyperbole Automated Testing: Extensive quality improvements throughout
-      Hyperbole thanks in part to over 200 test cases now included in the
-      test/ subdirectory.  Simply run 'make test' or 'make test-all' from the
+      Hyperbole thanks in part to over 230 test cases now included in the
+      test/ subdirectory.  Simply run 'make test-all' or 'make test' from the
       command-line when in the Hyperbole source directory and you should see
       all tests pass.  If any fail, you can press the Action Key to see the
       source of the failure.  Full testing is supported under POSIX systems
