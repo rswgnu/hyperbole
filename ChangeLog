@@ -1,5 +1,7 @@
 2022-04-24  Bob Weiner  <rsw@gnu.org>
 
+* FAST-DEMO (Introduction, Hyperbole Explicit and Global Buttons): Add.
+
 * Makefile (help): Update Hyperbole maintainer Makefile doc
            (git-tag-release): Re-enable these commands which were
     commented out for testing.
