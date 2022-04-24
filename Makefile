@@ -3,7 +3,7 @@
 # Author:       Bob Weiner
 #
 # Orig-Date:    15-Jun-94 at 03:42:38
-# Last-Mod:     24-Apr-22 at 16:36:55 by Mats Lidell
+# Last-Mod:     24-Apr-22 at 16:44:56 by Mats Lidell
 #
 # Copyright (C) 1994-2022  Free Software Foundation, Inc.
 # See the file HY-COPY for license information.
@@ -142,7 +142,7 @@ MAKE = \make
 RM = \rm -f
 TAR = \tar
 ZIP = \zip -qry
-
+CVS = \cvs
 
 # Directory in which to create new package distributions of Hyperbole.
 pkg_dir = /tmp
@@ -379,7 +379,7 @@ website:
 
 website-push: website
 	cd "$(HYPB_WEB_REPO_LOCATION)"
-	echo cvs commit -m "Hyperbole release $(HYPB_VERSION)"
+	$(CVS) commit -m "Hyperbole release $(HYPB_VERSION)"
 
 # Generate a Hyperbole package suitable for distribution via the Emacs package manager.
 pkg: package
