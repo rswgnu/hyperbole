@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    30-Jan-21 at 12:00:00
-;; Last-Mod:     23-Apr-22 at 11:10:58 by Mats Lidell
+;; Last-Mod:     24-Apr-22 at 19:00:26 by Mats Lidell
 ;;
 ;; Copyright (C) 2021-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -272,15 +272,15 @@ Ensure modifying the button but keeping the label does not create a double label
           (should (equal (hui:delimited-selectable-thing) file)))
       (delete-file file))))
 
-(ert-deftest hui--delimited-selectable-thing--in-ebut-return-nil ()
-  "In ebut return nothing."
+(ert-deftest hui--delimited-selectable-thing--in-ebut-return-ebut-text ()
+  "In ebut return ebut text."
   (let ((file (make-temp-file "hypb" nil ".txt")))
     (unwind-protect
         (progn
           (find-file file)
           (ebut:program "label" 'exec-shell-cmd "echo abc")
           (beginning-of-buffer)
-          (should (equal (hui:delimited-selectable-thing) nil)))
+          (should (equal (hui:delimited-selectable-thing) "<(label)>")))
       (delete-file file))))
 
 (ert-deftest hui--delimited-selectable-thing--start-of-paired-delimiter ()

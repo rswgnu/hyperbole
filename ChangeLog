@@ -3,7 +3,7 @@
 * test/hui-tests.el (hui--delimited-selectable-thing--in-cell-return-ref)
     (hui--delimited-selectable-thing--in-ibut-return-ibut-text)
     (hui--delimited-selectable-thing--ibut-label-return-ibut-text)
-    (hui--delimited-selectable-thing--in-ebut-return-nil)
+    (hui--delimited-selectable-thing--in-ebut-return-ebut-text)
     (hui--delimited-selectable-thing--start-of-paired-delimiter)
     (hui--delimited-selectable-thing--in-kcell-link-return-link): Add
     tests for hui:delimited-selectable-thing.
