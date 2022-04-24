@@ -1,5 +1,12 @@
 2022-04-24  Bob Weiner  <rsw@gnu.org>
 
+* hbut.el (ebut:get): Add 2 more params: start-delim and end-delim used
+    in ebut:get.  Add button attributes lbl-start and lbl-end when button
+    is at point, used by 'hui:delimited-selectable-thing'. This fixes
+    capturing the text of explicit buttons using {M-w} or {C-x r s} when
+    no region is selected.
+          (ebut:at-p): Send start-delim and end-delim to ebut:get call.
+
 * hui.el (hui:link-create): Remove 'hypb:assert-same-start-and-end-buffer'
     macro call as this may be called from hkey-operate via {M-o} which
     when called a second time can leave point in a buffer different than

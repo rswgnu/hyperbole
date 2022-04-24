@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    18-Sep-91 at 02:57:09
-;; Last-Mod:     10-Apr-22 at 09:45:19 by Bob Weiner
+;; Last-Mod:     24-Apr-22 at 11:01:49 by Bob Weiner
 ;;
 ;; Copyright (C) 1991-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -62,9 +62,7 @@ as a completion table."
 Assume point is within first line of button label, if at all.
 Optional START-DELIM and END-DELIM are strings that override default
 button delimiters."
-  (let ((key (ebut:label-p nil start-delim end-delim)))
-    (when key
-      (ebut:get key))))
+  (ebut:get nil nil nil start-delim end-delim))
 
 (defun    ebut:create (&optional but-sym)
   "Create Hyperbole explicit button based on optional BUT-SYM.
@@ -114,7 +112,7 @@ Do not save button data buffer."
       (run-hooks 'ebut-edit-hook)
       lbl-instance)))
 
-(defun    ebut:get (&optional lbl-key buffer key-src)
+(defun    ebut:get (&optional lbl-key buffer key-src start-delim end-delim)
   "Return explicit Hyperbole button symbol given by LBL-KEY and BUFFER.
 KEY-SRC is given when retrieving global buttons and is the full source pathname.
 
@@ -128,15 +126,24 @@ buffer.
 Return nil if no matching button is found."
   (hattr:clear 'hbut:current)
   (save-excursion
-    (let ((key-file) (key-dir) (but-data) (actype))
+    (let (actype
+	  but-data
+	  key-dir
+	  key-file
+	  lbl-end
+	  lbl-key-and-pos
+	  lbl-start)
       (unless lbl-key
-	(setq lbl-key (ebut:label-p)))
+	(setq lbl-key-and-pos (ebut:label-p nil start-delim end-delim t)
+	      lbl-key   (nth 0 lbl-key-and-pos)
+	      lbl-start (nth 1 lbl-key-and-pos)
+	      lbl-end   (nth 2 lbl-key-and-pos)))
       (when buffer
 	  (if (bufferp buffer)
 	      (set-buffer buffer)
 	    (error "(ebut:get): Invalid buffer argument: %s" buffer)))
       (when (not key-src)
-	(when (not (equal lbl-key (ebut:label-p)))
+	(when (not (equal lbl-key (ebut:label-p nil start-delim end-delim)))
 	  (goto-char (point-min))
 	  (ebut:next-occurrence lbl-key))
 	(when (setq key-src (ebut:key-src 'full))
@@ -151,6 +158,10 @@ Return nil if no matching button is found."
 					      key-dir)))
 	(when but-data
 	  (hattr:set 'hbut:current 'lbl-key lbl-key)
+	  (when lbl-start
+	    (hattr:set 'hbut:current 'lbl-start lbl-start))
+	  (when lbl-end
+	    (hattr:set 'hbut:current 'lbl-end lbl-end))
 	  (hattr:set 'hbut:current 'loc key-src)
 	  (hattr:set 'hbut:current 'categ 'explicit)
 	  (hattr:set 'hbut:current 'action nil)
