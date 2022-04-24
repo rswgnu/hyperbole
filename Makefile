@@ -3,9 +3,9 @@
 # Author:       Bob Weiner
 #
 # Orig-Date:    15-Jun-94 at 03:42:38
-# Last-Mod:     13-Mar-22 at 10:56:50 by Bob Weiner
+# Last-Mod:     19-Apr-22 at 22:43:10 by Mats Lidell
 #
-# Copyright (C) 1994-2021  Free Software Foundation, Inc.
+# Copyright (C) 1994-2022  Free Software Foundation, Inc.
 # See the file HY-COPY for license information.
 #
 # This file is part of GNU Hyperbole.
@@ -36,10 +36,15 @@
 #               To build only the output formats of the Hyperbole Manual:
 #		     make doc
 #
+#		Note: Releasing to ELPA is automatic in that the
+#		master branch on savannah is automatically synced
+#		daily by ELPA. The pkg and release targets are for
+#		making and uploading tar ball to ftp.gnu.org.
+#
 #               To assemble a Hyperbole Emacs package for testing:
 #		     make pkg
 #
-#               To release a Hyperbole Emacs package to ELPA and ftp.gnu.org:
+#               To release a Hyperbole Emacs package to ftp.gnu.org:
 #		     make release
 #
 #		Generate the website sources prepared for upload:
@@ -112,9 +117,6 @@ TEXI2HTML = makeinfo --html --no-split --css-ref="hyperbole.css"
 TEXI2PDF = makeinfo --pdf --no-split
 
 # Where to find the parent tree of the Hyperbole source directory.
-id_dir = $(HOME)/sw-dev/emacs
-# Where to find the local clone of the Elpa Hyperbole package repository
-elpa_hypb_dir = $(id_dir)/elpa/packages/hyperbole
 id_dir = $(HOME)/sw-dev/emacs
 # Where to find the .texi source of the user manual.
 man_dir := $(shell pwd)/man
@@ -377,30 +379,26 @@ website:
 
 # Generate a Hyperbole package suitable for distribution via the Emacs package manager.
 pkg: package
-package: git-pull doc autoloads $(pkg_dir)/hyperbole-$(HYPB_VERSION).tar.sig
+package: git-pull doc git-verify-no-update $(pkg_dir)/hyperbole-$(HYPB_VERSION).tar.sig
 
-# Generate and distribute a Hyperbole release to GNU ELPA and ftp.gnu.org.
+# Generate and distribute a Hyperbole release to ftp.gnu.org.
 # One step in this is to generate an autoloads file for the Koutliner, kotl/kotl-autoloads.el.
-release: package git-push $(pkg_dir)/hyperbole-$(HYPB_VERSION).tar.gz elpa ftp
-	@ echo; echo "Hyperbole $(HYPB_VERSION) released to elpa and ftp.gnu.org successfully."
+release: package $(pkg_dir)/hyperbole-$(HYPB_VERSION).tar.gz ftp git-tag-release
+	@ echo; echo "Hyperbole $(HYPB_VERSION) released to ftp.gnu.org successfully."
 
 # Ensure local hyperbole directory is synchronized with master before building a release.
 git-pull:
+	echo "If this step fails check your work directory for not committed changes"
 	git checkout master && git pull
 	git diff-index --quiet master
 
-git-push:
-	git push
+git-verify-no-update:
+	echo "If this step fails check your work directory for updated docs and push these to savannah"
+	git diff-index --quiet master
 
-# Once the release version number is updated in hyperbole.el and the release is pushed to
-# git, ELPA will automatically check and build its Hyperbole archive, allowing users to
-# update their packages of Hyperbole.  ELPA does this twice a day now.
-elpa: package
-	cd $(elpa_hypb_dir) && git pull http://git.savannah.gnu.org/r/hyperbole.git master \
-	&& git tag -s hyperbole-$(HYPB_VERSION) && git push
-
-elpa-test: package
-	cd $(elpa_hypb_dir) && git pull http://git.savannah.gnu.org/r/hyperbole.git master
+git-tag-release:
+	echo git tag -a hyperbole-$(HYPB_VERSION) -m "Hyperbole release $(HYPB_VERSION)"
+	echo git push origin hyperbole-$(HYPB_VERSION)
 
 # Send compressed tarball for uploading to GNU ftp site; this must be done from the directory
 # containing the tarball to upload.

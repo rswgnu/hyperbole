@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    18-May-21 at 22:14:10
-;; Last-Mod:      2-Apr-22 at 23:58:08 by Mats Lidell
+;; Last-Mod:     18-Apr-22 at 22:40:33 by Mats Lidell
 ;;
 ;; Copyright (C) 2021-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -544,6 +544,18 @@
           (should (string= (kcell-view:idstamp) "01"))
           (should (string= (kcell-view:label (point)) "2"))
           (should (looking-at "1")))
+      (delete-file kotl-file))))
+
+(ert-deftest kotl-mode--add-cell-set-fill-attribute ()
+  "Add cell shall set the fill attribute."
+  (let ((kotl-file (make-temp-file "hypb" nil ".kotl")))
+    (unwind-protect
+        (progn
+          (find-file kotl-file)
+          (insert "1")
+          (should-not (kcell-view:get-attr 'no-fill))
+          (kotl-mode:add-cell)
+          (should-not (kcell-view:get-attr 'no-fill)))
       (delete-file kotl-file))))
 
 (provide 'kotl-mode-tests)
