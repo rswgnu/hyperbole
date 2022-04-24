@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    30-Jan-21 at 12:00:00
-;; Last-Mod:     20-Feb-22 at 22:22:23 by Bob Weiner
+;; Last-Mod:     24-Apr-22 at 19:00:26 by Mats Lidell
 ;;
 ;; Copyright (C) 2021-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -238,6 +238,85 @@ Ensure modifying the button but keeping the label does not create a double label
 	  (with-current-buffer test-buffer
             (hy-test-helpers-verify-hattr-at-p :actype 'actypes::link-to-Info-node :args (list info-node) :loc test-file :lbl-key "global")))
       (delete-file test-file))))
+
+(ert-deftest hui--delimited-selectable-thing--in-cell-return-ref ()
+  "In kotl cell return klink ref."
+  (let ((kotl-file (make-temp-file "hypb" nil ".kotl")))
+    (unwind-protect
+        (progn
+          (find-file kotl-file)
+          (setq klink (klink:parse (hui:delimited-selectable-thing)))
+          (should (string-match kotl-file (car klink)))
+          (should (string= (cadr klink) "1=01")))
+      (delete-file kotl-file))))
+
+(ert-deftest hui--delimited-selectable-thing--in-ibut-return-ibut-text ()
+  "In ibut return ibut text."
+  (let ((file (make-temp-file "hypb" nil ".txt")))
+    (unwind-protect
+        (progn
+          (find-file file)
+          (insert file)
+          (goto-char 2)
+          (should (equal (hui:delimited-selectable-thing) file)))
+      (delete-file file))))
+
+(ert-deftest hui--delimited-selectable-thing--ibut-label-return-ibut-text ()
+  "In ibut label return ibut text without label."
+  (let ((file (make-temp-file "hypb" nil ".txt")))
+    (unwind-protect
+        (progn
+          (find-file file)
+          (insert "<[lnk]>: " file "\n")
+          (beginning-of-buffer)
+          (should (equal (hui:delimited-selectable-thing) file)))
+      (delete-file file))))
+
+(ert-deftest hui--delimited-selectable-thing--in-ebut-return-ebut-text ()
+  "In ebut return ebut text."
+  (let ((file (make-temp-file "hypb" nil ".txt")))
+    (unwind-protect
+        (progn
+          (find-file file)
+          (ebut:program "label" 'exec-shell-cmd "echo abc")
+          (beginning-of-buffer)
+          (should (equal (hui:delimited-selectable-thing) "<(label)>")))
+      (delete-file file))))
+
+(ert-deftest hui--delimited-selectable-thing--start-of-paired-delimiter ()
+  "At start of paired delimiter return text with delimiters."
+  (let ((file (make-temp-file "hypb" nil ".txt")))
+    (unwind-protect
+        (progn
+          (find-file file)
+          (insert "(xyz)\n")
+          (beginning-of-buffer)
+          (emacs-lisp-mode)
+          (should (equal (hui:delimited-selectable-thing) "(xyz)")))
+      (delete-file file))))
+
+(ert-deftest hui--delimited-selectable-thing--in-kcell-link-return-link ()
+  "In kcell link return link."
+  (let ((kotl-file (make-temp-file "hypb" nil ".kotl"))
+        klink)
+    (unwind-protect
+        (progn
+          (find-file kotl-file)
+          (klink:create "1")
+          (kotl-mode:beginning-of-cell)
+
+          ;; Outside of link
+          (setq klink (klink:parse (hui:delimited-selectable-thing)))
+          (should (string= (cadr klink) "1=01"))
+          (should (string-match kotl-file (car klink)))
+
+          ;; Within link
+          (forward-char 1)
+          (should (looking-at-p "@ 1"))
+          (setq klink (klink:parse (hui:delimited-selectable-thing)))
+          (should (string= (cadr klink) "1"))
+          (should (string-match kotl-file (car klink))))
+      (delete-file kotl-file))))
 
 ;; This file can't be byte-compiled without `with-simulated-input' which
 ;; is not part of the actual dependencies, so:
