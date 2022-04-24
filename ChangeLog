@@ -1,3 +1,8 @@
+2022-04-24  Mats Lidell  <matsl@gnu.org>
+
+* Makefile (website-push): Add push of website.
+    (release): Use website-push.
+
 2022-04-24  Bob Weiner  <rsw@gnu.org>
 
 * hui.el (hui:link-create): Remove 'hypb:assert-same-start-and-end-buffer'
