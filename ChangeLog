@@ -1,3 +1,11 @@
+2022-04-26  Mats Lidell  <matsl@gnu.org>
+
+* test/hui-tests.el (hui--kill-ring-save--yank-in-same-kotl)
+    (hui--kill-ring-save--yank-in-other-kotl)
+    (hui--kill-ring-save--yank-in-other-file)
+    (hui--kill-ring-save--yank-in-other-file-other-dir): Add
+    hui-kill-ring-save tests.
+
 2022-04-24  Bob Weiner  <rsw@gnu.org>
 
 * hib-kbd.el (kbd-key:act): Fix to handle non-special key series that
