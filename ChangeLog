@@ -1,3 +1,11 @@
+2022-04-27  Mats Lidell  <matsl@gnu.org>
+
+* test/hui-tests.el (hui--copy-to-register--yank-in-same-kotl)
+    (hui--copy-to-register--yank-in-other-kotl)
+    (hui--copy-to-register--yank-in-other-file)
+    (hui--copy-to-register--yank-in-other-file-other-dir): Add
+    hui-copy-to-register tests.
+
 2022-04-26  Mats Lidell  <matsl@gnu.org>
 
 * test/hui-tests.el (hui--kill-ring-save--yank-in-same-kotl)
