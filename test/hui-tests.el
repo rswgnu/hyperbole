@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    30-Jan-21 at 12:00:00
-;; Last-Mod:     24-Apr-22 at 19:00:26 by Mats Lidell
+;; Last-Mod:     25-Apr-22 at 23:50:46 by Mats Lidell
 ;;
 ;; Copyright (C) 2021-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -317,6 +317,99 @@ Ensure modifying the button but keeping the label does not create a double label
           (should (string= (cadr klink) "1"))
           (should (string-match kotl-file (car klink))))
       (delete-file kotl-file))))
+
+(ert-deftest hui--kill-ring-save--yank-in-same-kotl ()
+  "Yank saved klink into same kotl file."
+  (skip-unless (not noninteractive))
+  (let ((kotl-file (make-temp-file "hypb" nil ".kotl")))
+    (unwind-protect
+        (progn
+          (find-file kotl-file)
+          (klink:create "1")
+          (kotl-mode:beginning-of-cell)
+
+          (forward-char 1)
+          (call-interactively #'hui-kill-ring-save)
+
+          (kotl-mode:add-cell)
+          (yank)
+          (kotl-mode:beginning-of-cell)
+          (should (looking-at-p "<@ 1>"))
+          (forward-char 1)
+          (should (equal (hattr:get (hbut:at-p) 'actype) 'klink:act)))
+      (delete-file kotl-file))))
+
+(ert-deftest hui--kill-ring-save--yank-in-other-kotl ()
+  "Yank saved klink into other kotl file."
+  (skip-unless (not noninteractive))
+  (let ((kotl-file (make-temp-file "hypb" nil ".kotl"))
+        (other-file (make-temp-file "hypb" nil ".kotl")))
+    (unwind-protect
+        (progn
+          (find-file kotl-file)
+          (klink:create "1")
+          (kotl-mode:beginning-of-cell)
+
+          (forward-char 1)
+          (call-interactively #'hui-kill-ring-save)
+
+          (find-file other-file)
+          (yank)
+          (kotl-mode:beginning-of-cell)
+          (should (looking-at-p (concat "<" (file-name-nondirectory kotl-file) ", 1>")))
+          (forward-char 1)
+          (should (equal (hattr:get (hbut:at-p) 'actype) 'klink:act)))
+      (delete-file kotl-file)
+      (delete-file other-file))))
+
+(ert-deftest hui--kill-ring-save--yank-in-other-file ()
+  "Yank saved klink into other file."
+  (skip-unless (not noninteractive))
+  (let ((kotl-file (make-temp-file "hypb" nil ".kotl"))
+        (other-file (make-temp-file "hypb" nil ".txt")))
+    (unwind-protect
+        (progn
+          (find-file kotl-file)
+          (klink:create "1")
+          (kotl-mode:beginning-of-cell)
+
+          (forward-char 1)
+          (call-interactively #'hui-kill-ring-save)
+
+          (find-file other-file)
+          (yank)
+          (beginning-of-buffer)
+          (should (looking-at-p (concat "<" (file-name-nondirectory kotl-file) ", 1>")))
+          (forward-char 1)
+          (should (equal (hattr:get (hbut:at-p) 'actype) 'klink:act)))
+      (delete-file kotl-file)
+      (delete-file other-file))))
+
+(ert-deftest hui--kill-ring-save--yank-in-other-file-other-dir ()
+  "Yank saved klink into other file in other dir."
+  (skip-unless (not noninteractive))
+  (let ((kotl-file (make-temp-file "hypb" nil ".kotl"))
+        (other-dir (make-temp-file "hypb" t))
+        (other-file "other-file"))
+    (unwind-protect
+        (progn
+          (find-file kotl-file)
+          (klink:create "1")
+          (kotl-mode:beginning-of-cell)
+
+          (forward-char 1)
+          (call-interactively #'hui-kill-ring-save)
+
+          (find-file (concat (file-name-as-directory other-dir) other-file))
+          (yank)
+          (save-buffer 0)
+          (beginning-of-buffer)
+          (should (looking-at-p (concat "<" kotl-file ", 1>")))
+          (forward-char 1)
+          (should (equal (hattr:get (hbut:at-p) 'actype) 'klink:act)))
+      (delete-file kotl-file)
+      (delete-file other-file)
+      (delete-directory other-dir))))
 
 ;; This file can't be byte-compiled without `with-simulated-input' which
 ;; is not part of the actual dependencies, so:
