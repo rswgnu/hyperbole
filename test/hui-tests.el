@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    30-Jan-21 at 12:00:00
-;; Last-Mod:     25-Apr-22 at 23:50:46 by Mats Lidell
+;; Last-Mod:     27-Apr-22 at 23:24:09 by Mats Lidell
 ;;
 ;; Copyright (C) 2021-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -402,6 +402,107 @@ Ensure modifying the button but keeping the label does not create a double label
 
           (find-file (concat (file-name-as-directory other-dir) other-file))
           (yank)
+          (save-buffer 0)
+          (beginning-of-buffer)
+          (should (looking-at-p (concat "<" kotl-file ", 1>")))
+          (forward-char 1)
+          (should (equal (hattr:get (hbut:at-p) 'actype) 'klink:act)))
+      (delete-file kotl-file)
+      (delete-file other-file)
+      (delete-directory other-dir))))
+
+(ert-deftest hui--copy-to-register--yank-in-same-kotl ()
+  "Yank klink in register into same kotl file."
+  (skip-unless (not noninteractive))
+  (let ((kotl-file (make-temp-file "hypb" nil ".kotl")))
+    (unwind-protect
+        (progn
+          (find-file kotl-file)
+          (klink:create "1")
+          (kotl-mode:beginning-of-cell)
+
+          (forward-char 1)
+          (with-mock
+            (mock (register-read-with-preview  "Copy to register: ") => ?a)
+            (call-interactively #'hui-copy-to-register))
+
+          (kotl-mode:add-cell)
+          (insert-register ?a)
+          (kotl-mode:beginning-of-cell)
+          (should (looking-at-p "<@ 1>"))
+          (forward-char 1)
+          (should (equal (hattr:get (hbut:at-p) 'actype) 'klink:act)))
+      (delete-file kotl-file))))
+
+(ert-deftest hui--copy-to-register--yank-in-other-kotl ()
+  "Yank klink in register into other kotl file."
+  (skip-unless (not noninteractive))
+  (let ((kotl-file (make-temp-file "hypb" nil ".kotl"))
+        (other-file (make-temp-file "hypb" nil ".kotl")))
+    (unwind-protect
+        (progn
+          (find-file kotl-file)
+          (klink:create "1")
+          (kotl-mode:beginning-of-cell)
+
+          (forward-char 1)
+          (with-mock
+            (mock (register-read-with-preview  "Copy to register: ") => ?a)
+            (call-interactively #'hui-copy-to-register))
+
+          (find-file other-file)
+          (insert-register ?a)
+          (kotl-mode:beginning-of-cell)
+          (should (looking-at-p (concat "<" (file-name-nondirectory kotl-file) ", 1>")))
+          (forward-char 1)
+          (should (equal (hattr:get (hbut:at-p) 'actype) 'klink:act)))
+      (delete-file kotl-file)
+      (delete-file other-file))))
+
+(ert-deftest hui--copy-to-register--yank-in-other-file ()
+  "Yank klink in regiuster into other file."
+  (skip-unless (not noninteractive))
+  (let ((kotl-file (make-temp-file "hypb" nil ".kotl"))
+        (other-file (make-temp-file "hypb" nil ".txt")))
+    (unwind-protect
+        (progn
+          (find-file kotl-file)
+          (klink:create "1")
+          (kotl-mode:beginning-of-cell)
+
+          (forward-char 1)
+          (with-mock
+            (mock (register-read-with-preview  "Copy to register: ") => ?a)
+            (call-interactively #'hui-copy-to-register))
+
+          (find-file other-file)
+          (insert-register ?a)
+          (beginning-of-buffer)
+          (should (looking-at-p (concat "<" (file-name-nondirectory kotl-file) ", 1>")))
+          (forward-char 1)
+          (should (equal (hattr:get (hbut:at-p) 'actype) 'klink:act)))
+      (delete-file kotl-file)
+      (delete-file other-file))))
+
+(ert-deftest hui--copy-to-register--yank-in-other-file-other-dir ()
+  "Yank klink in register into other file in other dir."
+  (skip-unless (not noninteractive))
+  (let ((kotl-file (make-temp-file "hypb" nil ".kotl"))
+        (other-dir (make-temp-file "hypb" t))
+        (other-file "other-file"))
+    (unwind-protect
+        (progn
+          (find-file kotl-file)
+          (klink:create "1")
+          (kotl-mode:beginning-of-cell)
+
+          (forward-char 1)
+          (with-mock
+            (mock (register-read-with-preview  "Copy to register: ") => ?a)
+            (call-interactively #'hui-copy-to-register))
+
+          (find-file (concat (file-name-as-directory other-dir) other-file))
+          (insert-register ?a)
           (save-buffer 0)
           (beginning-of-buffer)
           (should (looking-at-p (concat "<" kotl-file ", 1>")))
