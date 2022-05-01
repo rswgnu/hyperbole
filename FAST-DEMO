@@ -300,7 +300,7 @@ learn how to create new kinds of implicit button and action types, see:
   has two other categories of buttons:
 
     `Explicit buttons' are manually created and embedded within buffers and
-    explictly assigned any of many action types that Hyperbole includes.
+    explicitly assigned any of many action types that Hyperbole includes.
     These contrast with implicit buttons which Hyperbole generates
     automatically by recognizing text patterns in buffers.  Explicit buttons
     look like this: <(fake button)>.  They are quickly recognizable, yet

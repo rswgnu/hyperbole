@@ -1,3 +1,7 @@
+2022-04-30  Mats Lidell  <matsl@gnu.org>
+
+* FAST-DEMO: Fix spelling.
+
 2022-04-27  Mats Lidell  <matsl@gnu.org>
 
 * test/hui-tests.el (hui--copy-to-register--yank-in-same-kotl)
