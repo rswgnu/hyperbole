@@ -3,9 +3,9 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    31-Mar-21 at 21:11:00
-;; Last-Mod:     12-Mar-22 at 15:14:34 by Bob Weiner
+;; Last-Mod:      2-May-22 at 00:11:09 by Mats Lidell
 ;;
-;; Copyright (C) 1991-2021  Free Software Foundation, Inc.
+;; Copyright (C) 1991-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
 ;;
 ;; This file is part of GNU Hyperbole.
@@ -61,10 +61,15 @@ Point `hypb:web-repo-location' to where the web repo is located."
   ;; hyperbole.html
   (copy-file "README.md.html" (concat hypb:web-repo-location "hyperbole.html") t)
 
-  ;; DEMO DEMO-ROLO.otl
+  ;; DEMO DEMO-ROLO.otl HY-ABOUT INSTALL HY-COPY COPYING MANIFEST
   (copy-file "DEMO" hypb:web-repo-location t)
   (copy-file "DEMO-ROLO.otl" hypb:web-repo-location t)
   (copy-file "FAST-DEMO" hypb:web-repo-location t)
+  (copy-file "HY-ABOUT" hypb:web-repo-location t)
+  (copy-file "INSTALL" hypb:web-repo-location t)
+  (copy-file "HY-COPY" hypb:web-repo-location t)
+  (copy-file "COPYING" hypb:web-repo-location t)
+  (copy-file "MANIFEST" hypb:web-repo-location t)
 
   ;; man recursive
   (copy-directory "man" hypb:web-repo-location nil t nil)
