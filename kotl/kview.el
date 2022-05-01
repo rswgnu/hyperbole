@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    6/30/93
-;; Last-Mod:     18-Apr-22 at 00:12:50 by Bob Weiner
+;; Last-Mod:      1-May-22 at 10:27:06 by Bob Weiner
 ;;
 ;; Copyright (C) 1993-2021  Free Software Foundation, Inc.
 ;; See the "../HY-COPY" file for license information.
@@ -604,6 +604,7 @@ level."
   (when (kview:is-p kview)
     (kview:get-attr kview 'view-buffer)))
 
+;;;###autoload
 (defun kview:char-invisible-p (&optional pos)
   "Return t if the character after point is invisible/hidden, else nil."
   (or pos (setq pos (point)))
@@ -612,6 +613,7 @@ level."
 			      (overlays-at (or pos (point))))))
     t))
 
+;;;###autoload
 (defun kview:char-visible-p (&optional pos)
   "Return t if the character after point is visible, else nil."
   (unless pos

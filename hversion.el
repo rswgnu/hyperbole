@@ -4,7 +4,7 @@
 ;; Maintainer:   Bob Weiner, Mats Lidell
 ;;
 ;; Orig-Date:     1-Jan-94
-;; Last-Mod:     24-Jan-22 at 00:18:53 by Bob Weiner
+;; Last-Mod:      1-May-22 at 10:25:28 by Bob Weiner
 ;;
 ;; Copyright (C) 1994-2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -24,7 +24,7 @@
 ;;; Public variables
 ;;; ************************************************************************
 
-(defconst hyperb:version "8.0.0pre" "GNU Hyperbole revision number.")
+(defconst hyperb:version "8.0.0" "GNU Hyperbole revision number.")
 
 ;;;###autoload
 (defvar hyperb:microsoft-os-p

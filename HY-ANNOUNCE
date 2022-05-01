@@ -1,12 +1,12 @@
 From: Bob Weiner <rsw@gnu.org>
 To: gnu-emacs-sources@gnu.org, emacs-tangents@gnu.org, hyperbole-users@gnu.org, hyperbole-announce@gnu.org
-Subject: GNU Hyperbole Version 8: The Epiphany Release
+Subject: GNU Hyperbole Major Release 8
 --text follows this line--
 ========================================================================
 * Overview
 ========================================================================
 
-GNU Hyperbole 8.0.0, The Epiphany Release, is now available on GNU ELPA.
+GNU Hyperbole 8.0.0, the Epiphany release, is now available on GNU ELPA.
 Hyperbole is a unique hypertextual information management Emacs package
 that works across all Emacs modes, letting the computer do the hard work
 while you benefit from its sophisticated context-sensitive linking and
@@ -80,7 +80,7 @@ Then as you grow with it across time, it helps you build new capabilities
 that continue to speed your work.
 
 ========================================================================
-* Using Hyperbole
+* Installing and Using Hyperbole
 ========================================================================
 
 To install within GNU Emacs, use:

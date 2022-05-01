@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     6-Oct-91 at 03:42:38
-;; Last-Mod:     17-Apr-22 at 17:59:53 by Bob Weiner
+;; Last-Mod:      1-May-22 at 10:25:55 by Bob Weiner
 ;;
 ;; Copyright (C) 1991-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -146,7 +146,7 @@ If no matching installation type is found, return a list of (\"unknown\" hyperb:
 	     (git-commit (when (string-match " \\([a-f0-9]+\\) " pkg-version)
 			   (match-string 1 pkg-version))))
 	(list "straight" git-commit)))
-     ;; elpa-devel package install -- hyperbole-8.0.0pre0.20220126.1138
+     ;; elpa-devel package install -- hyperbole-7.0.0pre0.20220126.1138
      ((string-match "hyperbole-\\([.[:digit:]]+pre[.[:digit:]]+\\)" hypb-dir-name)
       (list "elpa-devel" (match-string 1 hypb-dir-name)))
      ;; melpa/quelpa package install -- hyperbole-20220205.1429

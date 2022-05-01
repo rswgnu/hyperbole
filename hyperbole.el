@@ -5,9 +5,9 @@
 ;; Author:           Bob Weiner
 ;; Maintainer:       Bob Weiner <rsw@gnu.org>, Mats Lidell <matsl@gnu.org>
 ;; Created:          06-Oct-92 at 11:52:51
-;; Last-Mod:     24-Apr-22 at 13:36:22 by Bob Weiner
+;; Last-Mod:      1-May-22 at 10:31:04 by Bob Weiner
 ;; Released:         03-May-21
-;; Version:          8.0.0pre
+;; Version:          8.0.0
 ;; Keywords:         comm, convenience, files, frames, hypermedia, languages, mail, matching, mouse, multimedia, outlines, tools, wp
 ;; Package:          hyperbole
 ;; Package-Requires: ((emacs "27.0"))
