@@ -4,24 +4,7 @@
  send us a thank you or a testimonial describing your usage if you like
  Hyperbole (mailto:rsw@gnu.org)].
 
-<!-- START doctoc generated TOC -->
-**Table of Contents**
-
-- [Summary](#summary)
-- [Mailing Lists](#mailing-lists)
-- [Ftp and Git Repository Downloads](#ftp-and-git-repository-downloads)
-- [Installation](#installation)
-- [Invocation](#invocation)
-- [Hyperbole Components](#hyperbole-components)
-- [Hyperbole Buttons](#hyperbole-buttons)
-- [Important Features](#important-features)
-- [Hyperbole Uses](#hyperbole-uses)
-- [Files](#files)
-- [Programmer Quick Reference](#programmer-quick-reference)
-- [User Quotes](#user-quotes)
-- [Why was Hyperbole developed?](#why-was-hyperbole-developed)
-
-<!-- END doctoc generated TOC -->
+[TOC]
 
 ![Hyperbole screenshot of the Koutliner, DEMO file and HyRolo](man/im/hyperbole-cv.png)
 

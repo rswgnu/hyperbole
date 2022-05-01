@@ -1,5 +1,16 @@
 2022-05-01  Bob Weiner  <rsw@gnu.org>
 
+* HY-ANNOUNCE: Shrink width of videos table to prevent wrapping.
+
+* README.md: Use [TOC] to automatically generate table of contents with md2html
+    program.
+
+* Makefile (website-local): Add dependency on README.md.html.
+
+==============================================================================
+V8.0.1 changes ^^^^:
+==============================================================================
+
 * Update release number to 8.0.0.
 
 2022-04-30  Mats Lidell  <matsl@gnu.org>

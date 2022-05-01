@@ -3,7 +3,7 @@
 # Author:       Bob Weiner
 #
 # Orig-Date:    15-Jun-94 at 03:42:38
-# Last-Mod:     24-Apr-22 at 12:02:48 by Bob Weiner
+# Last-Mod:      1-May-22 at 11:33:26 by Bob Weiner
 #
 # Copyright (C) 1994-2022  Free Software Foundation, Inc.
 # See the file HY-COPY for license information.
@@ -369,7 +369,7 @@ README.md.html: README.md
 
 # website maintenance: "https://www.gnu.org/software/hyperbole/"
 # Locally update Hyperbole website
-website-local:
+website-local: README.md.html
 	$(EMACS_BATCH) --debug -l hypb-maintenance --eval '(let ((hypb:web-repo-location $(HYPB_WEB_REPO_LOCATION))) (hypb:web-repo-update))'
 
 # Push to public Hyperbole website
