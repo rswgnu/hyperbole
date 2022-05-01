@@ -452,10 +452,9 @@ encapsulates the button attribute storage implemented by Hyperbole.
 [hmail.el](hmail.el) provides a basic abstract interface for
 integrating mail readers other than Rmail into Hyperbole.
 
-See the [Hyperbole Questions and Answers](man/hyperbole.html#Questions
-and Answers) appendix in the Hyperbole manual for information on how
-to alter the default context-sensitive Hyperbole key bindings (Smart
-Keys).
+See the [Hyperbole Questions and Answers](man/hyperbole.html#Questions-and-Answers)
+appendix in the Hyperbole manual for information on how to alter the
+default context-sensitive Hyperbole key bindings (Smart Keys).
 
 ## User Quotes
 

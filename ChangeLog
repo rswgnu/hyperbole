@@ -1,4 +1,12 @@
+2022-05-02  Mats Lidell  <matsl@gnu.org>
+
+* hypb-maintenance.el (hypb:web-repo-update): Add files to website that
+    are linked from hyperbole.html. i.e. README.md.
+
 2022-05-01  Bob Weiner  <rsw@gnu.org>
+
+* hypb-maintenance.el (hypb:web-repo-update): Add hui.el, hbut.el, hbdata.el and hmail.el
+    referenced in hyperbole.html.
 
 * HY-ANNOUNCE: Shrink width of videos table to prevent wrapping.
 
