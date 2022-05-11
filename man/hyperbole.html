@@ -1,7 +1,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <!-- This manual is for GNU Hyperbole
-(Edition 8.0.0, Published May, 2022).
+(Edition 8.0.1pre, Published May, 2022).
 
 Copyright (C) 1989-2022  Free Software Foundation, Inc.
 
@@ -369,8 +369,8 @@ WITHOUT ANY WARRANTY, without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</P>
 
 <PRE>
-Edition 8.0.0
-Printed May 1, 2022.
+Edition 8.0.1pre
+Printed May 11, 2022.
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -888,7 +888,7 @@ Next: <a href="#Usage" accesskey="n" rel="next">Usage</a>, Previous: <a href="#T
 <span id="Introduction-1"></span><h2 class="chapter">1 Introduction</h2>
 
 <p>This edition of the GNU Hyperbole Manual is for use with any version
-8.0.0 or greater of GNU Hyperbole.  Hyperbole runs atop GNU Emacs 27.1
+8.0.1pre or greater of GNU Hyperbole.  Hyperbole runs atop GNU Emacs 27.1
 or higher.  It will trigger an error if your Emacs is older.
 </p>
 <p>This chapter summarizes the structure of the rest of the manual,
@@ -1138,7 +1138,7 @@ operations across emacs usage, including activating and showing help
 for Hyperbole buttons.  In many popular Emacs modes, they allow you to
 perform common, sometimes complex operations without having to use a
 different key for each operation.  Just press a Smart Key and the
-right thing happens.  See <a href="#Smart-Keys">Smart Keys</a>;
+right thing happens.  See <a href="#Smart-Keys">Smart Keys</a>.
 </p>
 </dd>
 <dt><em>Contact and Text Finder</em></dt>
@@ -1520,7 +1520,7 @@ argument, such as <kbd>{C-u}</kbd>, then invokes <code>assist-key</code> actions
 </p>
 <p>You may also bind <code>action-mouse-key</code> and <code>assist-mouse-key</code> to
 other mouse keys, though you won&rsquo;t be able to execute mouse drag actions with
-such key bindings. See <a href="#Smart-Mouse-Key-Drags">Smart Mouse Key Drags</a> and see <a href="#Keyboard-Drags">Keyboard Drags</a>.
+such key bindings.  See <a href="#Smart-Mouse-Key-Drags">Smart Mouse Key Drags</a>, and see <a href="#Keyboard-Drags">Keyboard Drags</a>.
 </p>
 <p>To permanently change any of these key bindings, use:
 <code>(add-hook 'hyperbole-init-hook (lambda () (hkey-set-key &lt;KEY&gt; '&lt;CMD&gt;)</code>,
@@ -2117,7 +2117,7 @@ their buffers.
 diagonal mouse drags within a single window.  A diagonal drag in any
 direction of the Action Key saves the current window configuration to a
 ring of window configurations, just like the Emacs text kill ring.
-(See <a href="https://www.gnu.org/software/emacs/manual/html_mono/emacs.html#Kill-Ring">Kill Ring</a> in <cite>the Emacs Manual</cite>).  Each diagonal drag in any
+See <a href="https://www.gnu.org/software/emacs/manual/html_mono/emacs.html#Kill-Ring">Kill Ring</a> in <cite>the Emacs Manual</cite>.  Each diagonal drag in any
 direction of the Assist Key restores a prior saved window configuration
 from the ring.  Window configurations are restored in reverse order of the
 way they were saved.  Since a ring is circular, after the oldest element is
@@ -8412,7 +8412,7 @@ keys were typed in by the user.
 </p>
 <p>Optionally, any of these id forms (or the relative form) may be followed by
 zero or more whitespace characters, a | and some view specification
-characters.  See <a href="#View-Specs">View Specs</a>
+characters.  See <a href="#View-Specs">View Specs</a>.
 </p>
 </dd>
 <dt><b>Klink</b></dt>
@@ -8621,7 +8621,7 @@ display location and so forth.
 <dt><b>View Spec</b></dt>
 <dd><p>A terse string that specifies a particular view of a koutline or a link
 referent.  If a view spec is active for a buffer, the view spec appears
-within the modeline like so, &lt;|view spec&gt;. See <a href="#View-Specs">View Specs</a>
+within the modeline like so, &lt;|view spec&gt;.  See <a href="#View-Specs">View Specs</a>.
 </p>
 </dd>
 <dt><b>Window</b></dt>
@@ -11089,16 +11089,14 @@ Next: <a href="#Smart-Key-_002d-Hyperbole-Buttons" accesskey="n" rel="next">Smar
          for display in another window, then this entry is displayed in the current
          window (DisplayHere minor mode is shown in the mode-line; use <kbd>{g}</kbd> to
          disable it)
-     (2) on the first line of the buffer:
+     (2) on a dired header line (other than the end of line):
          (a) within the leading whitespace, then if any deletes are to be
              performed, they are executed after user verification; otherwise,
              nothing is done;
          (b) otherwise, dired is run in another window on the ancestor directory
-             of the current directory path up through the location of point;
-             if point is before the first character, then the / root directory
-             is used.
-     (3) on or after the last line in the buffer or at the end of the first line,
-         this dired invocation is quit.
+             of the current directory path up through the location of point; if
+             point is on the first character, then the / root directory is used.
+     (3) on or after the last line in the buffer, this dired invocation is quit.
 </pre></div>
 <div class="format">
 <pre class="format">  ASSIST KEY
@@ -11106,8 +11104,8 @@ Next: <a href="#Smart-Key-_002d-Hyperbole-Buttons" accesskey="n" rel="next">Smar
      (2) on a # character, all auto-save files in the directory are marked for
          deletion;
      (3) anywhere else within an entry line, the current entry is marked for deletion;
-     (4) on or after the last line in the buffer or at the end of the first line,
-         all delete marks on all entries are undone.
+     (4) on or after the last line in the buffer, all delete marks on all entries are
+         undone.
 </pre></div>
 
 <hr>

@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Oct-95 at 15:17:07
-;; Last-Mod:     12-Feb-22 at 10:42:20 by Mats Lidell
+;; Last-Mod:     11-May-22 at 00:51:57 by Bob Weiner
 ;;
 ;; Copyright (C) 1995-2021  Free Software Foundation, Inc.
 ;; See the "../HY-COPY" file for license information.
@@ -53,6 +53,7 @@
 ;;; Other required Elisp libraries
 ;;; ************************************************************************
 
+(require 'hact) ;; Ensure symtable:add is defined.
 (require 'kview)
 
 ;; Quiet byte compiler warnings for these free variables.

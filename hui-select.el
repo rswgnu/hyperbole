@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Oct-96 at 02:25:27
-;; Last-Mod:     17-Apr-22 at 15:33:00 by Bob Weiner
+;; Last-Mod:      8-May-22 at 11:06:42 by Bob Weiner
 ;;
 ;; Copyright (C) 1996-2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -205,11 +205,13 @@
 ;;; Private variables
 ;;; ************************************************************************
 
-(defconst hui-select-syntax-table (make-syntax-table emacs-lisp-mode-syntax-table)
+(defconst hui-select-syntax-table
+  (let ((st (make-syntax-table emacs-lisp-mode-syntax-table)))
+    ;; Make braces be thing delimiters, not punctuation.
+    (modify-syntax-entry ?\{ "(}" st)
+    (modify-syntax-entry ?\} "){" st)
+    st)
   "Syntax table to use when selecting delimited things.")
-;; Make braces be thing delimiters, not punctuation.
-(modify-syntax-entry ?\{ "\(\}" hui-select-syntax-table)
-(modify-syntax-entry ?\} "\)\{" hui-select-syntax-table)
 
 (defvar hui-select-bigger-alist
   '((char nil)
@@ -368,8 +370,8 @@ Also, add language-specific syntax setups to aid in thing selection."
                                            (keymap (symbol-value ',keymap-sym)))
 			               (modify-syntax-entry ?<  "(>" syntax-table)
 			               (modify-syntax-entry ?>  ")<" syntax-table)
-			               (modify-syntax-entry ?\{ "\(\}" syntax-table)
-			               (modify-syntax-entry ?\} "\)\{" syntax-table)
+			               (modify-syntax-entry ?\{ "(}" syntax-table)
+			               (modify-syntax-entry ?\} "){" syntax-table)
 			               (modify-syntax-entry ?\" "\"" syntax-table)
 			               (modify-syntax-entry ?=  "."  syntax-table)
 			               (modify-syntax-entry ?.  "_"  syntax-table)

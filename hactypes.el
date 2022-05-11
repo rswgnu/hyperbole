@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    23-Sep-91 at 20:34:36
-;; Last-Mod:     17-Apr-22 at 12:37:06 by Bob Weiner
+;; Last-Mod:      2-May-22 at 00:25:26 by Bob Weiner
 ;;
 ;; Copyright (C) 1991-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -16,9 +16,7 @@
 ;;; Other required Elisp libraries
 ;;; ************************************************************************
 
-(eval-and-compile (mapc #'require '(hbut hpath hargs hmail)))
-(eval-when-compile (mapc #'require '(comint hsettings)))
-(require 'bookmark)
+(eval-and-compile (mapc #'require '(bookmark hvar hsettings comint hbut hpath hargs hmail)))
 
 ;;; ************************************************************************
 ;;; Public declarations

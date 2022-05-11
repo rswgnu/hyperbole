@@ -4,7 +4,7 @@
 ;; Maintainer:   Bob Weiner, Mats Lidell
 ;;
 ;; Orig-Date:     1-Jan-94
-;; Last-Mod:      1-May-22 at 10:25:28 by Bob Weiner
+;; Last-Mod:     11-May-22 at 01:11:22 by Bob Weiner
 ;;
 ;; Copyright (C) 1994-2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -24,18 +24,7 @@
 ;;; Public variables
 ;;; ************************************************************************
 
-(defconst hyperb:version "8.0.0" "GNU Hyperbole revision number.")
-
-;;;###autoload
-(defvar hyperb:microsoft-os-p
-  (memq system-type '(ms-windows windows-nt ms-dos win32))
-  "Non-nil iff Hyperbole is running under a Microsoft OS but not under Windows Subsystem for Linux (WSL).
-Use `hyperb:wsl-os-p' to test if running under WSL.")
-
-;;;###autoload
-(defvar hyperb:wsl-os-p
-  (and (eq system-type 'gnu/linux) (executable-find "wsl.exe") t)
-  "T iff Hyperbole is running under Microsoft Windows Subsystem for Linux (WSL).")
+(defconst hyperb:version "8.0.1pre" "GNU Hyperbole revision number.")
 
 ;;;###autoload
 (defvar hyperb:mouse-buttons

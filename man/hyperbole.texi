@@ -7,7 +7,7 @@
 @c Author:       Bob Weiner
 @c
 @c Orig-Date:     6-Nov-91 at 11:18:03
-@c Last-Mod:      1-May-22 at 10:32:20 by Bob Weiner
+@c Last-Mod:     11-May-22 at 01:17:39 by Bob Weiner
 
 @c %**start of header (This is for running Texinfo on a region.)
 @setfilename hyperbole.info
@@ -155,8 +155,8 @@ WITHOUT ANY WARRANTY, without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</P>
 
 <PRE>
-Edition 8.0.0
-Printed May 1, 2022.
+Edition 8.0.1pre
+Printed May 11, 2022.
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -197,8 +197,8 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 @sp 2
 
 @example
-Edition 8.0.0
-May 1, 2022
+Edition 8.0.1pre
+May 11, 2022
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -511,7 +511,7 @@ Smart Keyboard Keys
 @chapter Introduction
 
 This edition of the GNU Hyperbole Manual is for use with any version
-8.0.0 or greater of GNU Hyperbole.  Hyperbole runs atop GNU Emacs 27.1
+8.0.1pre or greater of GNU Hyperbole.  Hyperbole runs atop GNU Emacs 27.1
 or higher.  It will trigger an error if your Emacs is older.
 
 This chapter summarizes the structure of the rest of the manual,
@@ -755,7 +755,7 @@ operations across emacs usage, including activating and showing help
 for Hyperbole buttons.  In many popular Emacs modes, they allow you to
 perform common, sometimes complex operations without having to use a
 different key for each operation.  Just press a Smart Key and the
-right thing happens.  @xref{Smart Keys};
+right thing happens.  @xref{Smart Keys}.
 
 @item Contact and Text Finder
 an interactive, textual information management interface, including
@@ -1100,7 +1100,7 @@ argument, such as @bkbd{C-u}, then invokes @code{assist-key} actions.
 
 You may also bind @code{action-mouse-key} and @code{assist-mouse-key} to
 other mouse keys, though you won't be able to execute mouse drag actions with
-such key bindings. @xref{Smart Mouse Key Drags} and @pxref{Keyboard Drags}.
+such key bindings.  @xref{Smart Mouse Key Drags}, and @pxref{Keyboard Drags}.
 
 To permanently change any of these key bindings, use:
 @code{(add-hook 'hyperbole-init-hook (lambda () (hkey-set-key <KEY> '<CMD>)},
@@ -1552,7 +1552,7 @@ Hyperbole allows you to save and restore window configurations with simple
 diagonal mouse drags within a single window.  A diagonal drag in any
 direction of the Action Key saves the current window configuration to a
 ring of window configurations, just like the Emacs text kill ring.
-(@xref{Kill Ring,,,emacs, the Emacs Manual}).  Each diagonal drag in any
+@xref{Kill Ring,,,emacs, the Emacs Manual}.  Each diagonal drag in any
 direction of the Assist Key restores a prior saved window configuration
 from the ring.  Window configurations are restored in reverse order of the
 way they were saved.  Since a ring is circular, after the oldest element is
@@ -7190,7 +7190,7 @@ or any of the following string forms:
 
 Optionally, any of these id forms (or the relative form) may be followed by
 zero or more whitespace characters, a | and some view specification
-characters.  @xref{View Specs}
+characters.  @xref{View Specs}.
 
 @item Klink
 An angle bracket, <>, delimited implicit button type that displays a
@@ -7367,7 +7367,7 @@ display location and so forth.
 @item View Spec
 A terse string that specifies a particular view of a koutline or a link
 referent.  If a view spec is active for a buffer, the view spec appears
-within the modeline like so, <|view spec>. @xref{View Specs}
+within the modeline like so, <|view spec>.  @xref{View Specs}.
 
 @item Window
 An Emacs window displays a single Emacs buffer within a single frame.
@@ -9543,16 +9543,14 @@ If pressed within a dired-mode (directory editor) buffer:
          for display in another window, then this entry is displayed in the current
          window (DisplayHere minor mode is shown in the mode-line; use @bkbd{g} to
          disable it)
-     (2) on the first line of the buffer:
+     (2) on a dired header line (other than the end of line):
          (a) within the leading whitespace, then if any deletes are to be
              performed, they are executed after user verification; otherwise,
              nothing is done;
          (b) otherwise, dired is run in another window on the ancestor directory
-             of the current directory path up through the location of point;
-             if point is before the first character, then the / root directory
-             is used.
-     (3) on or after the last line in the buffer or at the end of the first line,
-         this dired invocation is quit.
+             of the current directory path up through the location of point; if
+             point is on the first character, then the / root directory is used.
+     (3) on or after the last line in the buffer, this dired invocation is quit.
 @end group
 @end format
 @format
@@ -9562,8 +9560,8 @@ If pressed within a dired-mode (directory editor) buffer:
      (2) on a # character, all auto-save files in the directory are marked for
          deletion;
      (3) anywhere else within an entry line, the current entry is marked for deletion;
-     (4) on or after the last line in the buffer or at the end of the first line,
-         all delete marks on all entries are undone.
+     (4) on or after the last line in the buffer, all delete marks on all entries are
+         undone.
 @end group
 @end format
 

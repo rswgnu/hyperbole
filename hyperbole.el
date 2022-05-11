@@ -5,9 +5,9 @@
 ;; Author:           Bob Weiner
 ;; Maintainer:       Bob Weiner <rsw@gnu.org>, Mats Lidell <matsl@gnu.org>
 ;; Created:          06-Oct-92 at 11:52:51
-;; Last-Mod:      1-May-22 at 10:31:04 by Bob Weiner
-;; Released:         03-May-21
-;; Version:          8.0.0
+;; Last-Mod:     11-May-22 at 01:16:34 by Bob Weiner
+;; Released:         01-May-22
+;; Version:          8.0.1pre
 ;; Keywords:         comm, convenience, files, frames, hypermedia, languages, mail, matching, mouse, multimedia, outlines, tools, wp
 ;; Package:          hyperbole
 ;; Package-Requires: ((emacs "27.0"))
@@ -163,6 +163,7 @@ Info documentation at \"(hyperbole)Top\".
 ;;; Other required Elisp libraries
 ;;; ************************************************************************
 
+(require 'hload-path)
 ;; Avoid any potential library name conflict by giving the load directory.
 (require 'set (expand-file-name "set" hyperb:dir))
 (require 'hypb)
@@ -256,8 +257,8 @@ of the commands."
     ;;
     ;; Typically bind the key, {C-h A}, for Action Key help and {C-u C-h A} for Assist key
     ;; help.
-    (or (where-is-internal #'hkey-help)
-	(hkey-set-key (vector help-char ?A) #'hkey-help))
+    (unless (where-is-internal #'hkey-help)
+      (hkey-set-key (vector help-char ?A) #'hkey-help))
     ;;
     ;; Define virtual key used to activate hyperbole minor modeline menu
     ;; (hkey-set-key [hyperbole] (infodock-hyperbole-menu t))
@@ -371,34 +372,6 @@ frame, those functions by default still return the prior frame."
 (add-hook 'temp-buffer-show-hook #'hkey-help-show)
 (setq temp-buffer-show-function #'hkey-help-show)
 
-;;; ************************************************************************
-;;; Autoloads
-;;; ************************************************************************
-
-;; New autoload generation function defined only in Emacs 28
-(unless (fboundp #'make-directory-autoloads)
-  (defun make-directory-autoloads (dir output-file)
-    "Update autoload definitions for Lisp files in the directories DIRS.
-DIR can be either a single directory or a list of
-directories.  (The latter usage is discouraged.)
-
-The autoloads will be written to OUTPUT-FILE.  If any Lisp file
-binds ‘generated-autoload-file’ as a file-local variable, write
-its autoloads into the specified file instead.
-
-The function does NOT recursively descend into subdirectories of the
-directory or directories specified."
-    ;; Don't use a 'let' on this next line or it will fail.
-    (setq generated-autoload-file output-file)
-    (hypb:with-suppressed-warnings ((obsolete update-directory-autoloads))
-      (update-directory-autoloads dir))))
-
-;; Menu items could call this function before Info is loaded.
-(autoload 'Info-goto-node   "info"       "Jump to specific Info node."  t)
-
-;; Auto-autoload doesn't work for next item because it is defined
-;; within a condition-case, so autoload it here.
-(autoload 'Vm-init          "hvm"    "Initializes Hyperbole Vm support." t)
 
 ;;; ************************************************************************
 ;;; Outline Mode Aliases
@@ -500,13 +473,6 @@ If FLAG is nil then text is shown, while if FLAG is t the text is hidden."
 		   user-mail-address)
 	      (concat (user-login-name) (hypb:domain-name)))))
   ;;
-  ;; When running from git source and not a release package, ensure
-  ;; *-autoloads.el files are already generated or generate them.
-  ;; Then ensure they are loaded.
-  (unless noninteractive
-    (hyperb:maybe-generate-autoloads))
-  (hyperb:maybe-load-autoloads)
-  ;;
   ;; Modify syntactic character pairs for use with implicit button activations.
   (hbut:modify-syntax)
   ;;
@@ -528,45 +494,6 @@ If FLAG is nil then text is shown, while if FLAG is t the text is hidden."
   ;;
   ;; Hyperbole initialization is complete.
   (message "Initializing Hyperbole...done"))
-
-(defun hyperb:autoloads-exist-p ()
-  "Return t if all Hyperbole autoload files exist or nil otherwise."
-  (and (file-readable-p (expand-file-name "hyperbole-autoloads.el" hyperb:dir))
-       (file-readable-p (expand-file-name "kotl-autoloads.el"
-					  (expand-file-name "kotl" hyperb:dir)))))
-
-(defun hyperb:maybe-generate-autoloads ()
-  "Ensure Hyperbole *-autoload.el files are already generated or generate them.
-This is used only when running from git source and not a package release."
-  (unless (hyperb:autoloads-exist-p)
-    (hyperb:generate-autoloads)))
-
-(defun hyperb:generate-autoloads ()
-  "Renerate Hyperbole *-autoloads.el files whether they already exist or not."
-  (let* ((default-directory hyperb:dir)
-	 (backup-inhibited t)
-	 (find-file-hook) ;; Prevent header insertion
-	 (al-file (expand-file-name "hyperbole-autoloads.el")))
-    ;; (make-local-variable 'generated-autoload-file)
-    (with-current-buffer (find-file-noselect al-file)
-      (make-directory-autoloads "." al-file))
-    (setq al-file (expand-file-name "kotl/kotl-autoloads.el"))
-    (with-current-buffer (find-file-noselect al-file)
-      (make-directory-autoloads "." al-file)))
-  (unless (hyperb:autoloads-exist-p)
-    (error (format "Hyperbole failed to generate autoload files; try running 'make src' in a shell in %s" hyperb:dir))))
-
-(defun hyperb:maybe-load-autoloads ()
-  "Load Hyperbole autoload files that have not already been loaded."
-  (let* ((default-directory hyperb:dir)
-	 (hypb-autoloads (expand-file-name "hyperbole-autoloads.el"))
-	 (kotl-autoloads (expand-file-name "kotl/kotl-autoloads.el")))
-    (unless (featurep 'hyperbole-autoloads)
-      (when (file-readable-p hypb-autoloads)
-        (load-file hypb-autoloads)))
-    (unless (featurep 'kotl-autoloads)
-      (when (file-readable-p kotl-autoloads)
-        (load-file kotl-autoloads)))))
 
 ;; This call loads the rest of the Hyperbole system.
 (require 'hinit)

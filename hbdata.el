@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     2-Apr-91
-;; Last-Mod:     17-Apr-22 at 12:38:53 by Bob Weiner
+;; Last-Mod:     10-May-22 at 00:24:16 by Bob Weiner
 ;;
 ;; Copyright (C) 1991-2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -50,6 +50,7 @@
 ;;; Other required Elisp libraries
 ;;; ************************************************************************
 
+(require 'hversion) ;; For hyperb:microsoft-os-p
 (require 'hbmap)
 (require 'hgnus)
 

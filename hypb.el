@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     6-Oct-91 at 03:42:38
-;; Last-Mod:      1-May-22 at 10:25:55 by Bob Weiner
+;; Last-Mod:     12-May-22 at 00:03:09 by Bob Weiner
 ;;
 ;; Copyright (C) 1991-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -710,16 +710,16 @@ If in an Emacs Lisp mode buffer and no PREFX-ARG is given, limit search to only 
 	 (grep-cmd
 	  (if (and (not current-prefix-arg) (equal (buffer-name) "*Locate*"))
 	      (format "%s -e \%c%s\%c %s" hypb:rgrep-command delim pattern delim (hypb:locate-pathnames))
-	    (format "%s %s -e \%c%s\%c ."
+	    (format "%s %s %s -e \%c%s\%c ."
 		    hypb:rgrep-command
-		    (if (and (memq major-mode '(emacs-lisp-mode lisp-interaction-mode))
-			     (not prefx-arg))
-			(if (string-match "\\`rg " hypb:rgrep-command)
-			    "-g \"*.el\" -g \"*.el.gz\""
-			  "--include=\"*.el\" --include=\"*.el.gz\"")
+		    (when (and (memq major-mode '(emacs-lisp-mode lisp-interaction-mode))
+			       (not prefx-arg))
 		      (if (string-match "\\`rg " hypb:rgrep-command)
-			  "-g \"!*~\" -g \"!#*\" -g \"!TAGS\""
-			"--exclude=\".git\" --exclude=\"CVS\" --exclude=\"*~\" --exclude=\"#*\" --exclude=\"TAGS\""))
+			  "-g \"*.el\" -g \"*.el.gz\""
+			"--include=\"*.el\" --include=\"*.el.gz\""))
+		    (if (string-match "\\`rg " hypb:rgrep-command)
+			"-g \"!*~\" -g \"!#*\" -g \"!TAGS\""
+		      "--exclude=\".git\" --exclude=\"CVS\" --exclude=\"*~\" --exclude=\"#*\" --exclude=\"TAGS\"")
 		    delim pattern delim))))
     (setq this-command `(grep ,grep-cmd))
     (push this-command command-history)
@@ -838,40 +838,6 @@ Optional first arg MINIBUFFER-FLAG t means include the minibuffer window
 in the list, even if it is not active.  If MINIBUFFER-FLAG is neither t
 nor nil it means to not count the minibuffer window even if it is active."
   (window-list nil minibuffer-flag))
-
-(defmacro hypb:with-suppressed-warnings (warnings &rest body)
-  "Like `progn', but prevents compiler WARNINGS in BODY.
-
-Defined here for elpa build compatibility which uses Emacs 26 and
-does not include `with-suppressed-warnings'.
-
-WARNINGS is an associative list where the first element of each
-item is a warning type, and the rest of the elements in each item
-are symbols they apply to.  For instance, if you want to suppress
-byte compilation warnings about the two obsolete functions `foo'
-and `bar', as well as the function `zot' being called with the
-wrong number of parameters, say
-
-\(with-suppressed-warnings ((obsolete foo bar)
-                           (callargs zot))
-  (foo (bar))
-  (zot 1 2))
-
-The warnings that can be suppressed are a subset of the warnings
-in `byte-compile-warning-types'; see the variable
-`byte-compile-warnings' for a fuller explanation of the warning
-types.  The types that can be suppressed with this macro are
-`free-vars', `callargs', `redefine', `obsolete',
-`interactive-only', `lexical', `mapcar', `constants' and
-`suspicious'.
-
-For the `mapcar' case, only the `mapcar' function can be used in
-the symbol list.  For `suspicious', only `set-buffer' can be used."
-
-  (declare (debug (sexp &optional body)) (indent 1))
-  (if (fboundp 'with-suppressed-warnings)
-      `(with-suppressed-warnings ,warnings ,@body)
-    `(with-no-warnings ,@body)))
 
 ;;; ************************************************************************
 ;;; About Hyperbole Setup

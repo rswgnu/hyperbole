@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     1-Oct-91 at 02:32:51
-;; Last-Mod:     17-Apr-22 at 12:11:55 by Bob Weiner
+;; Last-Mod:      8-May-22 at 19:32:32 by Bob Weiner
 ;;
 ;; Copyright (C) 1991-2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -35,7 +35,7 @@
   ;; browser.  Define this as a dummy function that always returns nil
   ;; until the OO-Browser is ever loaded.
   (defun br-in-browser ()
-    "Always returns nil since the OO-Browser is not loaded."
+    "Always return nil since the OO-Browser is not loaded."
     nil))
 
 ;;;###autoload
@@ -67,7 +67,7 @@
 ;;; ************************************************************************
 
 (defun hyperb:check-dir-user ()
-  "Ensures `hbmap:dir-user' exists and is writable or signals an error."
+  "Ensure `hbmap:dir-user' exists and is writable or signal an error."
   (if (or (null hbmap:dir-user) (not (stringp hbmap:dir-user))
 	  (and (setq hbmap:dir-user (file-name-as-directory
 				     (expand-file-name hbmap:dir-user)))

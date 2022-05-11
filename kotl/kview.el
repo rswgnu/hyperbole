@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    6/30/93
-;; Last-Mod:      1-May-22 at 10:27:06 by Bob Weiner
+;; Last-Mod:     11-May-22 at 00:54:33 by Bob Weiner
 ;;
 ;; Copyright (C) 1993-2021  Free Software Foundation, Inc.
 ;; See the "../HY-COPY" file for license information.
@@ -17,7 +17,7 @@
 ;;; Other required Lisp Libraries
 ;;; ************************************************************************
 
-(eval-and-compile (mapc #'require '(klabel kfill klink hypb)))
+(eval-and-compile (mapc #'require '(hact klabel kfill klink hypb)))
 ;; Quiet byte compiler warnings for this free variable.
 (eval-when-compile
   (defvar label-sep-len nil))

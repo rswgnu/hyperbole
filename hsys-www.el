@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     7-Apr-94 at 17:17:39 by Bob Weiner
-;; Last-Mod:     17-Apr-22 at 13:37:44 by Bob Weiner
+;; Last-Mod:     11-May-22 at 00:01:48 by Bob Weiner
 ;;
 ;; Copyright (C) 1994-2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -28,6 +28,7 @@
 ;;; Other required Elisp libraries
 ;;; ************************************************************************
 
+(require 'hload-path)
 ;;; This does not require any particular web browser.
 (require 'browse-url)
 (require 'hbut)

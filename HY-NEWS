@@ -2,6 +2,23 @@
 				 by Bob Weiner
 
 ===========================================================================
+*                                   V8.0.1pre
+===========================================================================
+
+** HYPERBOLE SYSTEM
+
+*** Native Comp Autoloads: Work around Emacs bug where async native comp of
+    a package being installed does not load hyperbole-autoloads.el (require
+    libraries to eliminate all Error-level messages).
+
+
+** SMART KEYS
+
+*** Smart Dired: Action Key subdirectory selection at point now works on
+    any dired header line, not just the first one.  Use {i} to insert
+    multiple subdirectories in Dired mode.
+
+===========================================================================
 *                                   V8.0.0
 ===========================================================================
 

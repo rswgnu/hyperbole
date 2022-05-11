@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    6/30/93
-;; Last-Mod:     18-Apr-22 at 00:45:33 by Bob Weiner
+;; Last-Mod:     12-May-22 at 00:11:23 by Bob Weiner
 ;;
 ;; Copyright (C) 1993-2021  Free Software Foundation, Inc.
 ;; See the "../HY-COPY" file for license information.
@@ -168,7 +168,7 @@ It provides the following keys:
   ;; We have been converting a buffer from a foreign format to a koutline.
   ;; Now that it is converted, ensure that `kotl-previous-mode' is set to
   ;; koutline.
-  (hypb:with-suppressed-warnings ((free-vars kotl-previous-mode))
+  (hyperb:with-suppressed-warnings ((free-vars kotl-previous-mode))
     (setq kotl-previous-mode 'kotl-mode))
   ;; Enable Org Table editing minor mode (user can disable via kotl-mode-hook
   ;; if desired).

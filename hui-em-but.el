@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Aug-92
-;; Last-Mod:     24-Jan-22 at 00:18:47 by Bob Weiner
+;; Last-Mod:     11-May-22 at 00:01:27 by Bob Weiner
 ;;
 ;; Copyright (C) 1992-2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -26,6 +26,7 @@
 ;;; Other required Elisp libraries
 ;;; ************************************************************************
 
+(require 'hload-path)
 (require 'custom) ;; For defface.
 (require 'hbut)
 (eval-when-compile (require 'hyrolo))

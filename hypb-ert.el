@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org> and Bob Weiner <rsw@gnu.org>
 ;;
 ;; Orig-Date:    31-Mar-21 at 21:11:00
-;; Last-Mod:     24-Jan-22 at 00:36:17 by Bob Weiner
+;; Last-Mod:     11-May-22 at 00:00:42 by Bob Weiner
 ;;
 ;; Copyright (C) 2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -27,6 +27,7 @@
 
 ;;; Code:
 
+(require 'hload-path)
 (require 'ert)
 (require 'hbut)
 (require 'hargs)

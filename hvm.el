@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    10-Oct-91 at 01:51:12
-;; Last-Mod:     24-Jan-22 at 00:18:53 by Bob Weiner
+;; Last-Mod:      8-May-22 at 23:59:33 by Bob Weiner
 ;;
 ;; Copyright (C) 1991-2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -33,6 +33,8 @@
 
 (condition-case nil
 (progn
+
+(require 'hload-path)
 
 (eval-and-compile
   (require 'hmail)

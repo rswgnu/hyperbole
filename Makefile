@@ -3,7 +3,7 @@
 # Author:       Bob Weiner
 #
 # Orig-Date:    15-Jun-94 at 03:42:38
-# Last-Mod:      1-May-22 at 11:33:26 by Bob Weiner
+# Last-Mod:     11-May-22 at 01:30:04 by Bob Weiner
 #
 # Copyright (C) 1994-2022  Free Software Foundation, Inc.
 # See the file HY-COPY for license information.
@@ -83,7 +83,7 @@
 
 # This ver setup won't work under any make except GNU make, so set it manually.
 #HYPB_VERSION = "`head -3 hversion.el | tail -1 | sed -e 's/.*|\(.*\)|.*/\1/'`"
-HYPB_VERSION = 8.0.0
+HYPB_VERSION = 8.0.1pre
 
 # Emacs executable used to byte-compile .el files into .elc's.
 # Possibilities include: emacs, infodock, etc.
@@ -145,11 +145,11 @@ ZIP = \zip -qry
 CVS = \cvs
 
 # Directory in which to create new package distributions of Hyperbole.
-pkg_dir = /tmp
-pkg_hyperbole = $(pkg_dir)/hyperbole
+pkg_parent = /tmp
+pkg_hyperbole = $(pkg_parent)/hyperbole-$(HYPB_VERSION)
 
 # Temp file to use to build .elc files.
-ELISP_TO_COMPILE = $(pkg_dir)/elc-${USER}
+ELISP_TO_COMPILE = $(pkg_parent)/elc-${USER}
 
 # Path to dir where the web repository is located i.e. hypb:web-repo-location
 HYPB_WEB_REPO_LOCATION = "../hyweb/hyperbole/"
@@ -162,7 +162,7 @@ HYPB_WEB_REPO_LOCATION = "../hyweb/hyperbole/"
 PRELOADS = $(SITE_PRELOADS) -l ./hload-path.el -l ./hversion.el -l ./hyperbole.el 
 
 # Compile in batch mode.  Load site-lisp/site-start.el, which may set load-path.
-BATCHFLAGS = -batch -Q
+BATCHFLAGS = -batch -Q --eval "(setq debug-on-error t)"
 
 EMACS_BATCH=$(EMACS) $(BATCHFLAGS) $(PRELOADS)
 
@@ -378,11 +378,11 @@ website: website-local
 
 # Generate a Hyperbole package suitable for distribution via the Emacs package manager.
 pkg: package
-package: git-pull doc git-verify-no-update $(pkg_dir)/hyperbole-$(HYPB_VERSION).tar.sig
+package: doc $(pkg_parent)/hyperbole-$(HYPB_VERSION).tar.sig
 
 # Generate and distribute a Hyperbole release to ftp.gnu.org.
 # One step in this is to generate an autoloads file for the Koutliner, kotl/kotl-autoloads.el.
-release: package $(pkg_dir)/hyperbole-$(HYPB_VERSION).tar.gz ftp website git-tag-release
+release: git-pull git-verify-no-update package $(pkg_parent)/hyperbole-$(HYPB_VERSION).tar.gz ftp website git-tag-release
 	@ echo; echo "Hyperbole $(HYPB_VERSION) released to ftp.gnu.org successfully."
 
 # Ensure local hyperbole directory is synchronized with master before building a release.
@@ -401,8 +401,8 @@ git-tag-release:
 
 # Send compressed tarball for uploading to GNU ftp site; this must be done from the directory
 # containing the tarball to upload.
-ftp: package $(pkg_dir)/hyperbole-$(HYPB_VERSION).tar.gz
-	cd $(pkg_dir) && $(GNUFTP) hyperbole-$(HYPB_VERSION).tar.gz
+ftp: package $(pkg_parent)/hyperbole-$(HYPB_VERSION).tar.gz
+	cd $(pkg_parent) && $(GNUFTP) hyperbole-$(HYPB_VERSION).tar.gz
 
 # Autoloads
 autoloads: hyperbole-autoloads.el kotl/kotl-autoloads.el
@@ -414,20 +414,21 @@ kotl/kotl-autoloads.el: $(EL_KOTL)
 	$(EMACS_BATCH) --debug --eval "(progn (setq generated-autoload-file (expand-file-name \"kotl/kotl-autoloads.el\") backup-inhibited t) (let (find-file-hooks) (make-directory-autoloads \"kotl/\" generated-autoload-file)))"
 
 # Used for ftp.gnu.org tarball distributions.
-$(pkg_dir)/hyperbole-$(HYPB_VERSION).tar.gz:
-	cd $(pkg_dir) && $(GZIP) hyperbole-$(HYPB_VERSION).tar > hyperbole-$(HYPB_VERSION).tar.gz
+$(pkg_parent)/hyperbole-$(HYPB_VERSION).tar.gz:
+	cd $(pkg_parent) && $(GZIP) hyperbole-$(HYPB_VERSION).tar > hyperbole-$(HYPB_VERSION).tar.gz
 
-$(pkg_dir)/hyperbole-$(HYPB_VERSION).tar.sig: $(pkg_dir)/hyperbole-$(HYPB_VERSION).tar
-	$(RM) $(pkg_dir)/hyperbole-$(HYPB_VERSION).tar.sig
-	cd $(pkg_dir) && $(GPG) -ba -o hyperbole-$(HYPB_VERSION).tar.sig hyperbole-$(HYPB_VERSION).tar
-	@ echo; echo "Hyperbole package built successfully:"
-	@ ls -l $(pkg_dir)/hyperbole-$(HYPB_VERSION).tar*
+$(pkg_parent)/hyperbole-$(HYPB_VERSION).tar.sig: $(pkg_parent)/hyperbole-$(HYPB_VERSION).tar
+	$(RM) $(pkg_parent)/hyperbole-$(HYPB_VERSION).tar.sig && \
+	cd $(pkg_parent) && $(GPG) -ba -o hyperbole-$(HYPB_VERSION).tar.sig hyperbole-$(HYPB_VERSION).tar && \
+	echo &&  echo "Hyperbole package built successfully:" && \
+	ls -l $(pkg_parent)/hyperbole-$(HYPB_VERSION).tar*
 
-$(pkg_dir)/hyperbole-$(HYPB_VERSION).tar: version $(HYPERBOLE_FILES)
-	$(RM) -fr $(pkg_hyperbole) $(pkg_hyperbole)-$(HYPB_VERSION).tar
-	git archive --format=tar --prefix=hyperbole-$(HYPB_VERSION)/ HEAD | (cd $(pkg_dir) && tar xf -)
-	cd $(pkg_hyperbole)-$(HYPB_VERSION) && make autoloads && chmod 755 topwin.py
-	COPYFILE_DISABLE=1 $(TAR) -C $(pkg_dir) -clf $(pkg_hyperbole)-$(HYPB_VERSION).tar hyperbole-$(HYPB_VERSION)
+$(pkg_parent)/hyperbole-$(HYPB_VERSION).tar: version $(HYPERBOLE_FILES)
+	$(RM) -fr $(pkg_hyperbole) $(pkg_hyperbole).tar
+	# git archive --format=tar --prefix=hyperbole-$(HYPB_VERSION)/ HEAD | (cd $(pkg_parent) && tar xf -)
+	(mkdir -p $(pkg_hyperbole) && git ls-files | tar Tzcf - - | (cd $(pkg_hyperbole) && tar zxf -)) && \
+	$(CP) hyperbole-pkg.el $(pkg_hyperbole) && cd $(pkg_hyperbole) && make autoloads && chmod 755 topwin.py && \
+	COPYFILE_DISABLE=1 $(TAR) -C $(pkg_parent) -clf $(pkg_hyperbole).tar hyperbole-$(HYPB_VERSION)
 
 pkgclean: packageclean
 packageclean:

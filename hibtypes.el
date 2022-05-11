@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 20:45:31
-;; Last-Mod:     17-Apr-22 at 13:47:31 by Bob Weiner
+;; Last-Mod:     11-May-22 at 00:32:46 by Bob Weiner
 ;;
 ;; Copyright (C) 1991-2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -1066,7 +1066,7 @@ This works with JavaScript and Python tracebacks, gdb, dbx, and xdb.  Such lines
   "Jump to source code for definition associated with an Emacs Lisp byte-compiler error message or ERT test output line.
 Works when activated anywhere within such a line."
   (when (or (member (buffer-name) '("*Compile-Log-Show*" "*Compile-Log*"
-                                    "*compilation*"))
+                                    "*compilation*" "*Async-native-compile-log*"))
             (save-excursion
               (and (re-search-backward "^[^ \t\n\r]" nil t)
                    (looking-at "While compiling"))))

@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    04-Feb-89
-;; Last-Mod:     17-Apr-22 at 13:46:49 by Bob Weiner
+;; Last-Mod:     10-May-22 at 23:37:13 by Bob Weiner
 ;;
 ;; Copyright (C) 1991-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -38,6 +38,7 @@
 ;;; Other required Elisp libraries
 ;;; ************************************************************************
 
+(require 'hload-path)
 (eval-when-compile (require 'hsys-org))
 (require 'hbut)
 (unless (fboundp 'smart-info)
@@ -483,10 +484,6 @@ Action and Assist Mouse Keys.")
 ;;; driver code
 ;;; ************************************************************************
 
-;; The following autoload is needed if another subsystem besides
-;; Hyperbole uses this mouse handling code.
-(autoload 'var:append "hvar" "Append to a list variable." nil)
-
 (require 'hargs)
 (defvar hmouse-alist hkey-alist
   "Alist of predicates and form-conses for the Action and Assist Mouse Keys.
@@ -834,25 +831,25 @@ If key is pressed:
      for display in another window, then this entry is displayed in the current
      window (DisplayHere minor mode is shown in the mode-line; use {g}
      to disable it)
- (2) on the first line of the buffer (other than the end of line):
+ (2) on a dired header line (other than the end of line):
      (a) within the leading whitespace, then if any deletes are to be
          performed, they are executed after user verification; otherwise,
          nothing is done;
      (b) otherwise, dired is run in another window on the ancestor directory
          of the current directory path up through the location of point;
-         if point is before the first character, then the / root directory
+         if point is on the first character, then the / root directory
          is used.
- (3) on or after the last line in the buffer or at the end of the first line,
-     this dired invocation is quit."
+ (3) on or after the last line in the buffer, this dired invocation is quit."
 
   (interactive)
-  (cond ((first-line-p)
-	 (cond ((eolp) (quit-window))
-	       ((and (looking-at "\\s-")
+  (cond ((save-excursion
+	   (forward-line 0)
+	   (looking-at dired-subdir-regexp))
+	 (cond ((and (looking-at "\\s-")
 		     (save-excursion
 		       (skip-syntax-backward "-"))
 		     (bolp))
-		;; In whitespace at beginning of 1st line, perform deletes.
+		;; In whitespace at beginning of a directory header line, perform deletes.
 		(if (save-excursion
 		      (goto-char (point-min))
 		      (re-search-forward "^D" nil t))
@@ -880,8 +877,8 @@ If assist-key is pressed:
      deletion;
  (3) anywhere else within an entry line, the current entry is marked for
      deletion;
- (4) on or after the last line in the buffer or at the end of the
-     first line, all delete marks on all entries are undone."
+ (4) on or after the last line in the buffer, all delete marks on all entries
+     are undone."
 
   (interactive)
   (cond ((or (last-line-p) (and (first-line-p) (eolp)))

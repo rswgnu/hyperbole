@@ -1,3 +1,58 @@
+2022-05-12  Bob Weiner  <rsw@gnu.org>
+
+* hypb.el (hypb:rgrep): Fix so --exclude directories are always included; sexp
+    nesting was wrong.
+
+2022-05-11  Bob Weiner  <rsw@gnu.org>
+
+* hversion.el (hyperb:microsoft-os-p, hyperb:wsl-os-p): Move to "hload-path.el".
+  All the changes in the last 3 days resolve the async native compiler Errors,
+  leaving just warnings which may be ignored.
+
+2022-05-10  Bob Weiner  <rsw@gnu.org>
+
+* hibtypes.el (elisp-compiler-msg): Add support for "*Async-native-compile-log*".
+
+* hui-mouse.el (smart-dired): Remove 'quit-window' when (eolp) since Hyperbole globally
+    controls EOL behavior and overrides this.  Extend subdir display when on any Dired
+    header line (not just the first one), i.e. when subdirs are inserted with {i}.
+
+* hbdata.el (require 'hversion): Add to satisfy async nativecomp.
+
+* hypb.el (hypb:with-suppressed-warnings): Move to "hload-path.el" and rename to
+    'hyperb:with-suppressed-warnings'.
+
+2022-05-09  Bob Weiner  <rsw@gnu.org>
+
+* Makefile (release): Add 'git-pull' and 'git-verify-no-update' dependencies and remove
+    from 'pkg' target so can make test packages without having to synchronize with git
+    master.
+           (hyperbole-$(HYPB_VERSION).tar): Archive the current state of the Hyperbole
+    branch rather than the last commit, so can test packages before committing.
+
+* hyperbole.el:
+  hrmail.el:
+  hmh.el:
+  hgnus.el:
+  hsys-www.el:
+  hui-em-but.el:
+  hui-mouse.el:
+  hypb-ert.el:
+  hvm.el (hload-path): Add require of this library to handle autoloads.
+
+2022-05-08  Bob Weiner  <rsw@gnu.org>
+
+* hyperbole.el (hyperb:init): Run 'hyperb:maybe-generate-autoloads' even if
+    Emacs is noninteractive.
+               (hyperb:init): Move loading of autoloads from here to "hload-path.el"
+    so can be loaded when native compilation is invoked asynchronously upon
+    Hyperbole package installation.
+  hload-path.el: Move whole autoloads section from "hyperbole.el" to here.
+
+2022-05-02  Bob Weiner  <rsw@gnu.org>
+
+* hactypes.el (require 'hvar): Add to ensure var:append is defined.
+
 2022-05-02  Mats Lidell  <matsl@gnu.org>
 
 * hypb-maintenance.el (hypb:web-repo-update): Add files to website that
