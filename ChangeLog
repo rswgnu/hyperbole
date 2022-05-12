@@ -1,5 +1,10 @@
 2022-05-12  Bob Weiner  <rsw@gnu.org>
 
+* hibtypes.el (elisp-compiler-msg): Add "*ert*" output buffer and support for
+    Emacs native compiler "In <function>" lines.
+              (grep-msg): Add support for Emacs native compiler "Compiling <file>"
+    and "Loading <file>" lines (jumps to 1st line of the file).
+
 * hypb.el (hypb:rgrep): Fix so --exclude directories are always included; sexp
     nesting was wrong.
 

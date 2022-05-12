@@ -12,11 +12,16 @@
     libraries to eliminate all Error-level messages).
 
 
-** SMART KEYS
+** SMART (ACTION AND ASSIST) KEYS  (See "(hyperbole)Smart Keys").
 
 *** Smart Dired: Action Key subdirectory selection at point now works on
     any dired header line, not just the first one.  Use {i} to insert
     multiple subdirectories in Dired mode.
+
+*** Compilation and Grep Error Lines: Error lines in the Emacs Regression
+    Test buffer, *ert*, are now supported, as well as the 'Compiling <file>',
+    'Loading <file>' and 'In <function>' lines from Emacs Lisp native
+    compilation.
 
 ===========================================================================
 *                                   V8.0.0
