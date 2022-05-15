@@ -1,3 +1,29 @@
+2022-05-14  Bob Weiner  <rsw@gnu.org>
+
+* hsys-org.el (hsys-org-todo-occur): Add.
+  hui-mini.el (hui-search-web): Hyperbole binds this to {C-c /} which
+    conflicts with an Org mode binding, so if in Org mode, use its binding
+    when this command is called interactively from that key.
+
+* man/hyperbole.texi (Implicit Button Types, Smart Key - Org Mode): Add Org
+    mode Action Key todo cycling and Assist Key todo set cycling.
+  hsys-org.el (hsys-org-cycle, hsys-org-global-cycle): FIX: Remove setting of
+    last-command which causes cursor to jump around somewhere else in the
+    buffer when unfolding a headline rather than just unfolding it
+              (hsys-org-todo-at-p, hsys-org-todo-cycle, hsys-org-todo-set-cycle):
+    Add to cycle through todo states (and switch to a different set) on the Action
+    and Assist Keys respectively.
+  hmouse-drv.el (action-key-depress, assist-key-depress): Maintain last command
+    when is org-todo to support proper Smart Key Org todo cycling.
+
+* hpath.el (hpath:find): Remove any trailing characters with punctuation syntax,
+    e.g. period.
+
+* HY-NEWS (M-S-left and M-S-Right):
+  man/hyperbole.texi (Promoting and Demoting):
+  kotl/kotl-mode.el (kotl-mode-map): Org compatibility - Add [M-S-left] and
+    [M-S-right] to promote and demote trees.
+
 2022-05-12  Bob Weiner  <rsw@gnu.org>
 
 * hibtypes.el (elisp-compiler-msg): Add "*ert*" output buffer and support for

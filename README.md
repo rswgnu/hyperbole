@@ -8,6 +8,25 @@
 
 ![Hyperbole screenshot of the Koutliner, DEMO file and HyRolo](man/im/hyperbole-cv.png)
 
+## Videos
+
+If you prefer video introductions, visit the videos linked to below;
+otherwise, skip to the next section.
+
+   - [Overview and Demo](https://youtu.be/WKwZHSbHmPg)
+      Covers all of Hyperbole
+      Hyperlink timestamps to watch each section
+
+   - [Quick Introduction](https://youtu.be/K1MNUctggwI)
+
+   - [Introduction to Buttons](https://youtu.be/zoEht66N2PI)
+
+   - [HyRolo, fast contact/hierarchical record viewer](https://youtu.be/xdJGFdgKPFY)
+
+   - [HyControl, fast Emacs frame and window manager](https://youtu.be/M3-aMh1ccJk)
+
+   - [Find/Web Search](https://youtu.be/8lMlJed0-OM)
+
 ## Summary
 
 `GNU Hyperbole` (pronounced Ga-new Hi-per-bo-lee), or just `Hyperbole`, is
@@ -82,16 +101,17 @@ In short, Hyperbole lets you:
    6. Search for things in your current buffers, in a directory tree or
 	  across major web search engines with the touch of a few keys.
 
-The common thread in all these features is making retrieval, management and
-display of information fast and easy.  That is Hyperbole's purpose.  It may
-be broad but it works amazingly well.  If it is textual information,
-Hyperbole can work with it.  In contrast to Org mode, Hyperbole works across
-all Emacs modes and speeds your work by turning all kinds of references into
-clickable hyperlinks and allowing you to create new hyperlinks by dragging
-between two windows.  The [Hyperbole wiki
-page](https://www.emacswiki.org/emacs/Hyperbole) explains the many ways it
-differs from and is complementary to Org mode.  Hyperbole is designed to
-work with Org mode, so use them both across your tasks.
+The common thread in all these features is making retrieval,
+management and display of information fast and easy.  That is
+Hyperbole's purpose.  It may be broad but it works amazingly well.  If
+it is textual information, Hyperbole can work with it.  In contrast to
+Org mode, Hyperbole works across all Emacs modes and speeds your work
+by turning all kinds of references into clickable hyperlinks and
+allowing you to create new hyperlinks by dragging between two windows.
+The [Hyperbole wiki page](https://www.emacswiki.org/emacs/Hyperbole)
+explains the many ways it differs from and is complementary to Org
+mode.  Hyperbole is designed to work with Org mode, so use them both
+across your tasks.
 
 Hyperbole allows hypertext buttons to be embedded within unstructured and
 structured files, mail messages and news articles.  It offers intuitive
@@ -112,13 +132,13 @@ through the GNU Emacs package manager.
 
    - **hyperbole-users@gnu.org** - User list for GNU Hyperbole
 
-       [info and subscription]: http://lists.gnu.org/mailman/listinfo/hyperbole-users
-       [web archive]: http://lists.gnu.org/pipermail/hyperbole-users/
+       [info and subscription](http://lists.gnu.org/mailman/listinfo/hyperbole-users)
+       [web archive](http://lists.gnu.org/pipermail/hyperbole-users/)
 
    - **bug-hyperbole@gnu.org** - List for bug reporting
 
-       [info and subscription]: http://lists.gnu.org/mailman/listinfo/bug-hyperbole
-       [web archive]: http://lists.gnu.org/archive/html/bug-hyperbole/
+       [info and subscription](http://lists.gnu.org/mailman/listinfo/bug-hyperbole)
+       [web archive](http://lists.gnu.org/archive/html/bug-hyperbole/)
 
 ## Ftp and Git Repository Downloads
 

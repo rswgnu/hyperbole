@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    04-Feb-89
-;; Last-Mod:     10-May-22 at 23:37:13 by Bob Weiner
+;; Last-Mod:     14-May-22 at 18:31:38 by Bob Weiner
 ;;
 ;; Copyright (C) 1991-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -1634,6 +1634,9 @@ When the Action Key is pressed:
   executes the code block via the Org mode standard binding of {C-c C-c},
   (org-ctrl-c-ctrl-c).
 
+  Sixth, if on an Org todo keyword, cycles through the keywords in
+  that set or if final done keyword, removes it.
+
   In any other context besides the end of a line, the Action Key invokes the
   Org mode standard binding of {M-RET}, (org-meta-return).
 
@@ -1642,6 +1645,9 @@ When the Assist Key is pressed:
   First, on an Org mode heading, this cycles through views of the whole buffer outline.
 
   Second, on an Org mode link or agenda item, this displays standard Hyperbole help.
+
+  Third, if on an Org todo keyword, moves to the first todo keyword in
+  the next set, if any.
 
 To disable ALL Hyperbole support within Org major and minor modes, set the
 custom option `hsys-org-enable-smart-keys' to nil.  Then in Org modes, this
@@ -1657,7 +1663,12 @@ handled by the separate implicit button type, `org-link-outside-org-mode'."
 	     ;; Ignore any further Smart Key non-Org contexts
 	     t)
 	    ((eq hsys-org-enable-smart-keys t)
-	     (cond ((hsys-org-agenda-item-at-p)
+	     (cond ((or (hsys-org-todo-at-p)
+			(eq last-command #'org-todo))
+		    (if (not assist-flag)
+			(hact 'hsys-org-todo-cycle)
+		      (hact 'hsys-org-todo-set-cycle)))
+		   ((hsys-org-agenda-item-at-p)
 		    (if (not assist-flag)
 			(progn (hsys-org-set-ibut-label (cons (line-beginning-position) (line-end-position)))
 			       (hact 'org-agenda-show-and-scroll-up current-prefix-arg))

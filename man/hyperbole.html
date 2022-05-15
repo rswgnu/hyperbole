@@ -370,7 +370,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</P>
 
 <PRE>
 Edition 8.0.1pre
-Printed May 11, 2022.
+Printed May 15, 2022.
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -2751,8 +2751,22 @@ view of all headings in the buffer.
 Action Key executes the code block via the Org-mode standard binding
 of <kbd>{C-c C-c}</kbd>, <code>org-ctrl-c-ctrl-c</code>.
 </p>
+<p>Sixth, if on an Org todo keyword, cycles through the keywords in
+that set or if final done keyword, removes it.
+</p>
 <p>In any other context besides the end of a line, the Action Key invokes
 the Org-mode standard binding of <kbd>{M-<span class="key">RET</span>}</kbd>, <code>org-meta-return</code>.
+</p>
+<p>If the Assist Key is pressed instead of the Action Key:
+</p>
+<p>First, on an Org mode heading, this cycles through views of the whole buffer outline.
+</p>
+<p>Second, on an Org mode link or agenda item, this displays standard Hyperbole help.
+</p>
+<p>Third, if on an Org todo keyword, moves to the first todo keyword in
+the next set, if any.
+</p>
+<p>In any other context, it behaves like the Action Key.
 </p>
 <span id="index-hsys_002dorg_002denable_002dsmart_002dkeys"></span>
 <span id="index-enable-org_002dmode-support"></span>
@@ -5535,6 +5549,8 @@ substructure) are promoted and demoted, not individual cells.
 <span id="index-koutliner_002c-Shift_002dTAB"></span>
 <span id="index-koutliner_002c-M_002dleft"></span>
 <span id="index-koutliner_002c-M_002dright"></span>
+<span id="index-koutliner_002c-M_002dShift_002dleft"></span>
+<span id="index-koutliner_002c-M_002dShift_002dright"></span>
 <span id="index-koutliner_002c-C_002dc-C_002d_002c"></span>
 <span id="index-koutliner_002c-C_002dc-C_002d_002e"></span>
 <span id="index-koutliner_002c-C_002dc-C_002d_003e"></span>
@@ -5546,6 +5562,7 @@ substructure) are promoted and demoted, not individual cells.
 |-----------------------------+----------------------------|
 | Shift-TAB or M-TAB          | TAB                        |
 | M-left                      | M-right                    |
+| M-Shift-left                | M-Shift-right              |
 | C-c C-,                     | C-c C-.                    |
 | C-c C-&lt;                     | C-c C-&gt;                    |
 |-----------------------------+----------------------------|
@@ -10836,13 +10853,19 @@ Next: <a href="#Smart-Key-_002d-Ivy" accesskey="n" rel="next">Smart Key - Ivy</a
          the code block via the Org mode standard binding of <kbd>{C-c C-c}</kbd>,
          <code>(org-ctrl-c-ctrl-c)</code>.
 
-     (6) In any other context besides the end of a line, the Action Key invokes the
+     (6) if on an Org todo keyword, cycles through the keywords in that set or
+         if final done keyword, removes it.
+
+     (7) In any other context besides the end of a line, the Action Key invokes the
          Org mode standard binding of <kbd>{M-<span class="key">RET</span>}</kbd>, <code>(org-meta-return)</code>.
 
   ASSIST KEY
      (1) on an Org mode heading, this cycles through views of the whole buffer outline.
 
      (2) on an Org mode link or agenda item, this displays standard Hyperbole help.
+
+     (3) if on an Org todo keyword, moves to the first todo keyword in the next set, if
+         any.
 </pre></div>
 
 <span id="index-org_002dlink_002doutside_002dorg_002dmode"></span>
@@ -12980,6 +13003,8 @@ Next: <a href="#Function" accesskey="n" rel="next">Function</a>, Previous: <a hr
 <tr><td></td><td valign="top"><a href="#index-koutliner_002c-M_002dq"><code>koutliner, M-q</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Filling">Filling</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-koutliner_002c-M_002dRET"><code>koutliner, M-<span class="key">RET</span></code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Hiding-and-Showing">Hiding and Showing</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-koutliner_002c-M_002dright"><code>koutliner, M-right</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Promoting-and-Demoting">Promoting and Demoting</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-koutliner_002c-M_002dShift_002dleft"><code>koutliner, M-Shift-left</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Promoting-and-Demoting">Promoting and Demoting</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-koutliner_002c-M_002dShift_002dright"><code>koutliner, M-Shift-right</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Promoting-and-Demoting">Promoting and Demoting</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-koutliner_002c-M_002dTAB"><code>koutliner, M-<span class="key">TAB</span></code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Promoting-and-Demoting">Promoting and Demoting</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-koutliner_002c-Shift_002dTAB"><code>koutliner, Shift-<span class="key">TAB</span></code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Promoting-and-Demoting">Promoting and Demoting</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-koutliner_002c-TAB"><code>koutliner, <span class="key">TAB</span></code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Promoting-and-Demoting">Promoting and Demoting</a></td></tr>

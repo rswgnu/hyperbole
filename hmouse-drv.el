@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    04-Feb-90
-;; Last-Mod:     17-Apr-22 at 15:11:15 by Bob Weiner
+;; Last-Mod:     15-May-22 at 00:12:19 by Bob Weiner
 ;;
 ;; Copyright (C) 1989-2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -174,6 +174,8 @@ This permits the Smart Keys to behave as paste keys.")
   (when (and (not assist-key-depressed-flag)
 	     (hmouse-modeline-event-p action-key-depress-args))
     (mouse-drag-mode-line action-key-depress-args))
+  (when (eq last-command #'org-todo)
+    (setq this-command #'org-todo))
   (run-hooks 'action-key-depress-hook))
 
 (defun assist-key-depress (&rest args)
@@ -195,6 +197,8 @@ This permits the Smart Keys to behave as paste keys.")
   (when (and (not action-key-depressed-flag)
 	     (hmouse-modeline-event-p assist-key-depress-args))
     (mouse-drag-mode-line assist-key-depress-args))
+  (when (eq last-command #'org-todo)
+    (setq this-command #'org-todo))
   (run-hooks 'assist-key-depress-hook))
 
 (defun action-key-depress-emacs (event)
@@ -864,6 +868,7 @@ Non-nil ASSISTING means evaluate second form, otherwise evaluate first form.
 Return non-nil iff a non-nil predicate is found."
   ;; Keep in mind that hkey-alist may be set to hmouse-alist here, with additional predicates.
   (let ((hkey-forms hkey-alist)
+	(assist-flag assisting)
 	(pred-point (point-marker))
 	pred-value hkey-action hkey-form pred)
     (while (and (null pred-value) (setq hkey-form (car hkey-forms)))

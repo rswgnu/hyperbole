@@ -12,6 +12,23 @@
     libraries to eliminate all Error-level messages).
 
 
+** KOUTLINER  (See "(hyperbole)Koutliner").
+
+*** M-S-left and M-S-Right: Org compatibility - Add tree promote and demote 
+    commands to these keys (same as existing M-left and M-right keys).
+
+
+** ORG MODE
+
+  *** Todo Cycling: An Action Key press on an Org mode todo state keyword,
+      cycles to the next state.  An Assist Key press in the same place 
+      cycles to the next set of states, if any.
+
+  *** {C-c /}: Hyperbole {C-c /} web search binding defers to org-mode
+      binding, 'org-show-todo-tree' but uses the improved Hyperbole version,
+      'hsys-org-todo-occur' which allows filtering to specific todo states.
+
+
 ** SMART (ACTION AND ASSIST) KEYS  (See "(hyperbole)Smart Keys").
 
 *** Smart Dired: Action Key subdirectory selection at point now works on

@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    15-Oct-91 at 20:13:17
-;; Last-Mod:     24-Apr-22 at 16:33:12 by Bob Weiner
+;; Last-Mod:     15-May-22 at 00:51:30 by Bob Weiner
 ;;
 ;; Copyright (C) 1991-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -463,7 +463,22 @@ constructs.  If not given, the top level Hyperbole menu is used."
 (defun hui-search-web ()
   "Prompt for a web search engine and search term and then perform the search."
   (interactive)
-  (hyperbole 'web))
+  (let* ((key (hypb:cmd-key-vector #'hui-search-web hyperbole-mode-map))
+	 (org-key-cmd (and (derived-mode-p 'org-mode)
+			   (called-interactively-p 'interactive)
+			   (equal (this-single-command-keys) key)
+			   (lookup-key org-mode-map key))))
+    (setq a org-key-cmd)
+    (if org-key-cmd
+	;; Prevent a conflict with {C-c /} binding in Org mode; use
+	;; more flexible, filtering Hyperbole version of this Org command
+	;; if Org mode binding has not been changed.
+	(call-interactively (if (eq org-key-cmd #'org-sparse-tree)
+				#'hsys-org-todo-occur
+			      org-key-cmd))
+      ;;
+      ;; No key conflicts, perform normal Hyperbole operation
+      (hyperbole 'web))))
 
 ;;; ************************************************************************
 ;;; Private variables

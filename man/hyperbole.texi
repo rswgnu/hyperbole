@@ -7,7 +7,7 @@
 @c Author:       Bob Weiner
 @c
 @c Orig-Date:     6-Nov-91 at 11:18:03
-@c Last-Mod:     11-May-22 at 01:17:39 by Bob Weiner
+@c Last-Mod:     15-May-22 at 00:21:56 by Bob Weiner
 
 @c %**start of header (This is for running Texinfo on a region.)
 @setfilename hyperbole.info
@@ -156,7 +156,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</P>
 
 <PRE>
 Edition 8.0.1pre
-Printed May 11, 2022.
+Printed May 15, 2022.
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -198,7 +198,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 @example
 Edition 8.0.1pre
-May 11, 2022
+May 15, 2022
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -2148,8 +2148,22 @@ Fifth, with point on the first line of a code block definition, the
 Action Key executes the code block via the Org-mode standard binding
 of @bkbd{C-c C-c}, @code{org-ctrl-c-ctrl-c}.
 
+Sixth, if on an Org todo keyword, cycles through the keywords in
+that set or if final done keyword, removes it.
+
 In any other context besides the end of a line, the Action Key invokes
 the Org-mode standard binding of @bkbd{M-@key{RET}}, @code{org-meta-return}.
+
+If the Assist Key is pressed instead of the Action Key:
+
+First, on an Org mode heading, this cycles through views of the whole buffer outline.
+
+Second, on an Org mode link or agenda item, this displays standard Hyperbole help.
+
+Third, if on an Org todo keyword, moves to the first todo keyword in
+the next set, if any.
+
+In any other context, it behaves like the Action Key.
 
 @vindex hsys-org-enable-smart-keys
 @cindex enable org-mode support
@@ -4651,6 +4665,8 @@ substructure) are promoted and demoted, not individual cells.
 @kindex koutliner, Shift-@key{TAB}
 @kindex koutliner, M-left
 @kindex koutliner, M-right
+@kindex koutliner, M-Shift-left
+@kindex koutliner, M-Shift-right
 @kindex koutliner, C-c C-,
 @kindex koutliner, C-c C-.
 @kindex koutliner, C-c C->
@@ -4663,6 +4679,7 @@ substructure) are promoted and demoted, not individual cells.
 |-----------------------------+----------------------------|
 | Shift-TAB or M-TAB          | TAB                        |
 | M-left                      | M-right                    |
+| M-Shift-left                | M-Shift-right              |
 | C-c C-,                     | C-c C-.                    |
 | C-c C-<                     | C-c C->                    |
 |-----------------------------+----------------------------|
@@ -9303,13 +9320,19 @@ When in an Org mode context and @code{hsys-org-enable-smart-keys} is non-nil:
          the code block via the Org mode standard binding of @bkbd{C-c C-c},
          @code{(org-ctrl-c-ctrl-c)}.
 
-     (6) In any other context besides the end of a line, the Action Key invokes the
+     (6) if on an Org todo keyword, cycles through the keywords in that set or
+         if final done keyword, removes it.
+
+     (7) In any other context besides the end of a line, the Action Key invokes the
          Org mode standard binding of @bkbd{M-@key{RET}}, @code{(org-meta-return)}.
 
   ASSIST KEY
      (1) on an Org mode heading, this cycles through views of the whole buffer outline.
 
      (2) on an Org mode link or agenda item, this displays standard Hyperbole help.
+
+     (3) if on an Org todo keyword, moves to the first todo keyword in the next set, if
+         any.
 @end group
 @end format
 

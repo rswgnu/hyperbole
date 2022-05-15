@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    6/30/93
-;; Last-Mod:     12-May-22 at 00:11:23 by Bob Weiner
+;; Last-Mod:     14-May-22 at 11:55:40 by Bob Weiner
 ;;
 ;; Copyright (C) 1993-2021  Free Software Foundation, Inc.
 ;; See the "../HY-COPY" file for license information.
@@ -3609,10 +3609,12 @@ Leave point at end of line now residing at START."
   (define-key kotl-mode-map (kbd "ESC <down>")  'kotl-mode:move-tree-forward)
   (mapc (lambda (key)
 	  (define-key kotl-mode-map key         'kotl-mode:promote-tree))
-	(list (kbd "M-<left>") (kbd "ESC <left>") (kbd "C-c C-<") (kbd "C-c C-,")))
+	(list (kbd "M-<left>") (kbd "M-S-<left>") (kbd "ESC <left>")
+	      (kbd "ESC S-<left>") (kbd "C-c C-<") (kbd "C-c C-,")))
   (mapc (lambda (key)
 	  (define-key kotl-mode-map key         'kotl-mode:demote-tree))
-	(list (kbd "M-<right>") (kbd "ESC <right>") (kbd "C-c C->") (kbd "C-c C-."))))
+	(list (kbd "M-<right>") (kbd "M-S-<right>") (kbd "ESC <right>")
+	      (kbd "ESC S-<right>") (kbd "C-c C->") (kbd "C-c C-."))))
 
 ;; When delete-selection-mode (pending-delete-mode) is enabled, make
 ;; these commands delete the region.

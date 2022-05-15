@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     2-Jul-16 at 14:54:14
-;; Last-Mod:     24-Jan-22 at 00:18:47 by Bob Weiner
+;; Last-Mod:     15-May-22 at 00:50:06 by Bob Weiner
 ;;
 ;; Copyright (C) 2016-2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -12,7 +12,7 @@
 
 ;;; Commentary:
 ;;
-;;   Support functions for smart-org in "hui-mouse.el"
+;;   Support functions for "hui-mouse.el#smart-org".
 ;;
 ;;   smart-org is triggered when the major mode is org-mode or is derived
 ;;   from org-mode.
@@ -130,15 +130,33 @@ uses that one.  Otherwise, triggers an error."
 
 (defun hsys-org-cycle ()
   "Call `org-cycle' and force it to be set as `this-command' to cycle through all states."
-  (setq last-command 'org-cycle
-	this-command 'org-cycle)
+  (setq this-command 'org-cycle)
   (org-cycle))
 
 (defun hsys-org-global-cycle ()
   "Call `org-global-cycle' and force it to be set as `this-command' to cycle through all states."
-  (setq last-command 'org-cycle
-	this-command 'org-cycle)
+  (setq this-command 'org-cycle)
   (org-global-cycle nil))
+
+(defun hsys-org-todo-cycle ()
+  "Call `org-todo' and force it to be set as `this-command' to cycle through all states."
+  (setq this-command 'org-todo)
+  (org-todo))
+
+(defun hsys-org-todo-set-cycle ()
+  "Call `org-todo' to switch to the next set of keywords and force it to be set as `this-command'."
+  (setq this-command 'org-todo)
+  (org-call-with-arg 'org-todo 'nextset))
+
+(defun hsys-org-todo-occur (&optional keyword)
+  "Filter to a tree of todos matching optional `keyword' together with all higher headlines above each match.
+Match to all todos if `keyword' is nil or the empty string."
+  (interactive
+   (list (hargs:read-match "List todos matching keyword: " org-todo-keywords-1)))
+  (unless keyword (setq keyword ""))
+  (message "%d '%s' TODO entries found"
+	   (org-occur (concat "^" org-outline-regexp " *" (regexp-quote keyword)))
+	   keyword))
 
 (defun hsys-org-region-with-text-property-value (pos property)
   "Return (start . end) buffer positions of the region around POS that shares its non-nil text PROPERTY value, else nil."
@@ -204,6 +222,13 @@ or are looking for an Org link in another buffer type."
   "Return non-nil iff point is on an Org mode radio target (definition) or radio target link (referent).
 Assume caller has already checked that the current buffer is in `org-mode'."
   (hsys-org-face-at-p 'org-target))
+
+;; Assume caller has already checked that the current buffer is in org-mode.
+(defun hsys-org-todo-at-p ()
+  "Return non-nil iff point is on an Org mode todo keyword.
+Assume caller has already checked that the current buffer is in `org-mode'."
+  (when (assq :todo-keyword (org-context))
+    t))
 
 (defun hsys-org-radio-target-link-at-p ()
   "Return (target-start . target-end) positions iff point is on an Org mode radio target link (referent), else nil."

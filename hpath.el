@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     1-Nov-91 at 00:44:23
-;; Last-Mod:     17-Apr-22 at 13:15:55 by Bob Weiner
+;; Last-Mod:     14-May-22 at 13:53:16 by Bob Weiner
 ;;
 ;; Copyright (C) 1991-2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -1287,7 +1287,11 @@ buffer but don't display it."
 	    anchor (match-string 3 path)
 	    path (if (match-end 1)
 		     (substring path 0 (match-end 1))
-		   (or buffer-file-name ""))))
+		   (or buffer-file-name "")))
+      ;; 'anchor' may improproperly include trailing punctuation;
+      ;; remove it if so.
+      (when (string-match "\\s.+\\'" anchor)
+	(setq anchor (substring anchor 0 (match-beginning 0)))))
     (if (string-empty-p path)
 	(setq path ""
 	      filename "")
