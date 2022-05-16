@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     1-Nov-91 at 00:44:23
-;; Last-Mod:     14-May-22 at 13:53:16 by Bob Weiner
+;; Last-Mod:     15-May-22 at 23:36:25 by Bob Weiner
 ;;
 ;; Copyright (C) 1991-2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -947,7 +947,9 @@ Make any existing path within a file buffer absolute before returning."
     (if (or (null path) (string-empty-p path))
 	(setq expanded-path ""
 	      path "")
-      (setq expanded-path (hpath:expand path)
+      ;; Never expand paths with a prefix character, e.g. program
+      ;; names which need to use exec-directory expansion.
+      (setq expanded-path (if prefix (hpath:resolve path) (hpath:expand path))
 	    path (funcall func expanded-path non-exist)))
     ;;
     ;; If path is just a local reference that begins with #,
@@ -1106,6 +1108,26 @@ window in which the buffer is displayed."
   "Return the function to display a Hyperbole path using optional symbol DISPLAY-WHERE or `hpath:display-where'."
   (hpath:display-where-function display-where hpath:display-where-alist))
 
+(defun hpath:resolve (path)
+  "Resolve any variable in PATH or prepend any path variable from the first PATH matching regexp in `hpath:auto-variable-alist'.
+Return any absolute or invalid PATH unchanged."
+  (when (stringp path)
+    (unless (string-match-p hpath:variable-regexp path)
+      (setq path (substitute-in-file-name path)))
+    (let (variable-path
+	  substituted-path)
+      (setq variable-path (hpath:expand-with-variable path)
+	    substituted-path (hpath:substitute-value variable-path))
+      (cond ((or (null substituted-path) (string-empty-p substituted-path))
+	     path)
+	    ((and (string-match-p hpath:variable-regexp variable-path)
+		  (string-match-p hpath:variable-regexp substituted-path))
+	     ;; If a path is invalid, then a variable may have been prepended but
+	     ;; it will remain unresolved in `substituted-path', in which case we
+	     ;; want to return `path' without any further changes.
+	     path)
+	    (t substituted-path)))))
+
 (defun hpath:expand (path)
   "Expand relative PATH using the path variable from the first file matching regexp in `hpath:auto-variable-alist'.
 Return any absolute or invalid PATH unchanged."
@@ -1249,7 +1271,7 @@ If FILENAME does not start with a prefix character:
   location of the link anchor;
 
   if it matches a regular expression in the alist returned by
-  \(hpath:get-external-display-alist), invoke the associated external
+  (hpath:get-external-display-alist), invoke the associated external
   display program
 
   if not, consult `hpath:internal-display-alist' for a specialized internal
@@ -1295,8 +1317,11 @@ buffer but don't display it."
     (if (string-empty-p path)
 	(setq path ""
 	      filename "")
-      (setq path (hpath:expand path)
-	    filename (hpath:absolute-to path default-directory)))
+      ;; Never expand filenames with modifier prepended.
+      (if modifier
+	  (setq path (hpath:resolve path))
+	(setq path (hpath:expand path)
+	      filename (hpath:absolute-to path default-directory))))
     (let ((remote-filename (hpath:remote-p path)))
       (or modifier remote-filename
 	  (file-exists-p filename)

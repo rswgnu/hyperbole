@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Oct-96 at 02:25:27
-;; Last-Mod:      8-May-22 at 11:06:42 by Bob Weiner
+;; Last-Mod:     15-May-22 at 22:30:57 by Bob Weiner
 ;;
 ;; Copyright (C) 1996-2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -350,8 +350,8 @@ Also, add language-specific syntax setups to aid in thing selection."
   ;; Allow for marking and moving brace delimited groups.
   (var:add-and-run-hook 'lisp-mode-hook
 			(lambda ()
-			  (modify-syntax-entry ?\{ "\(\}" lisp-mode-syntax-table)
-			  (modify-syntax-entry ?\} "\)\{" lisp-mode-syntax-table)))
+			  (modify-syntax-entry ?\{ "(}" lisp-mode-syntax-table)
+			  (modify-syntax-entry ?\} "){" lisp-mode-syntax-table)))
   ;;
   ;; This hook makes tags, comments, sentences and text blocks
   ;; selectable in SGML-related modes.
@@ -368,8 +368,8 @@ Also, add language-specific syntax setups to aid in thing selection."
 			          `(lambda ()
                                      (let ((syntax-table (symbol-value ',syntax-table-sym))
                                            (keymap (symbol-value ',keymap-sym)))
-			               (modify-syntax-entry ?<  "(>" syntax-table)
-			               (modify-syntax-entry ?>  ")<" syntax-table)
+			               (modify-syntax-entry ?\< "(>" syntax-table)
+			               (modify-syntax-entry ?\> ")<" syntax-table)
 			               (modify-syntax-entry ?\{ "(}" syntax-table)
 			               (modify-syntax-entry ?\} "){" syntax-table)
 			               (modify-syntax-entry ?\" "\"" syntax-table)

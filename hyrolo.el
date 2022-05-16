@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     7-Jun-89 at 22:08:29
-;; Last-Mod:     10-Apr-22 at 23:46:44 by Bob Weiner
+;; Last-Mod:     15-May-22 at 22:28:48 by Bob Weiner
 ;;
 ;; Copyright (C) 1991-2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -1576,8 +1576,8 @@ String search expressions are converted to regular expressions.")
     ()
   (setq hyrolo-mode-syntax-table (make-syntax-table text-mode-syntax-table))
   ;; Support syntactic selection of delimited e-mail addresses.
-  (modify-syntax-entry ?\<  "\(\>" hyrolo-mode-syntax-table)
-  (modify-syntax-entry ?\>  "\)\<" hyrolo-mode-syntax-table))
+  (modify-syntax-entry ?\<  "(>" hyrolo-mode-syntax-table)
+  (modify-syntax-entry ?\>  ")<" hyrolo-mode-syntax-table))
 
 (defvar hyrolo-mode-map nil
   "Keymap for the rolo match buffer.")

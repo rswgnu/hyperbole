@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    22-Nov-91 at 01:37:57
-;; Last-Mod:     24-Apr-22 at 17:34:04 by Bob Weiner
+;; Last-Mod:     15-May-22 at 22:26:22 by Bob Weiner
 ;;
 ;; Copyright (C) 1991-2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -97,13 +97,15 @@ Any key sequence within the series must be a string of one of the following:
     (let ((open-brace-syntax (hypb:get-raw-syntax-descriptor ?\{))
 	  (close-brace-syntax (hypb:get-raw-syntax-descriptor ?\})))
       (unwind-protect
-	  (progn (modify-syntax-entry ?\{ "(\}" (syntax-table))
-		 (modify-syntax-entry ?\} ")\}" (syntax-table))
+	  (progn (modify-syntax-entry ?\{ "(}" (syntax-table))
+		 (modify-syntax-entry ?\} "){" (syntax-table))
 		 ;; Handle long series, e.g. eval-elisp actions
 		 (let* ((hbut:max-len (max 3000 (hbut:max-len)))
-			(seq-and-pos (or ;; (kbd) calls but only if point is between double quotes
+			(seq-and-pos (or
+				      ;; (kbd) calls but only if point is between double quotes
  				      (and (hbut:label-p t "(kbd \"" "\"\)" t)
 					   (hbut:label-p t "\"" "\"\)" t))
+				      ;; braces delimiters
 				      (hbut:label-p t "{`" "'}" t)
 				      (hbut:label-p t "{" "}" t)
 				      ;; Regular dual single quotes (Texinfo smart quotes)

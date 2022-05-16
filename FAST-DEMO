@@ -176,9 +176,9 @@
     with bash.  If you are using another shell you can for this part switch
     to bash,
 
-    { M-x set-variable RET shell-file-name RET "/usr/bin/bash" RET }
+    { M-x set-variable RET shell-file-name RET C-u M-! which SPC bash RET RET }
 
-       Set the name of the inferior shell to /usr/bin/bash. If you do this
+       Set the name of the inferior shell to /bin/bash. If you do this
        don't forget to reset it to your preferred shell when you are ready
        with the demo.
 

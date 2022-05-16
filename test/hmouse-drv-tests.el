@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    28-Feb-21 at 22:52:00
-;; Last-Mod:     20-Mar-22 at 20:04:47 by Mats Lidell
+;; Last-Mod:     15-May-22 at 23:42:24 by Bob Weiner
 ;;
 ;; Copyright (C) 2021-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -497,16 +497,12 @@
 
 (ert-deftest hbut-load-modifier-with-plain-file-loads-file-from-load-path ()
   "Path prefix - filename without directory will load from`load-path'."
+  (setq features (delq 'tutorial features))
   (with-temp-buffer
     (insert "\"-tutorial.el\"")
     (goto-char 2)
-    (let ((was-called nil))
-      (cl-letf (((symbol-function 'load)
-                 (lambda (filename)
-                   (setq was-called
-                         (should (string= (locate-library "tutorial.el") filename))))))
-        (action-key)
-        (should was-called)))))
+    (action-key)
+    (should (featurep 'tutorial))))
 
 (ert-deftest hbut-key-press-on-hyphen-in-elisp-symbol ()
   "Key press on hyphen in elisp symbol uses smart-lisp-find-tag.

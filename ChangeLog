@@ -1,3 +1,31 @@
+2022-05-16  Bob Weiner  <rsw@gnu.org>
+
+* FAST-DEMO: Change from /usr/bin/bash to /bin/bash.
+
+* hycontrol.el (hycontrol-windows-grid-by-file-pattern): Fix improper relative path
+    resolution when called interactively; force use of full paths.
+
+2022-05-15  Bob Weiner  <rsw@gnu.org>
+
+* hycontrol.el (hycontrol-windows-grid-by-file-pattern): Fix interactive pattern
+    to prompt for a string, not a file.
+
+* hpath.el (hpath:resolve): Add to resolve path variables without doing a path expand.
+           (hpath:find, hpath:call): Resolve but never expand paths with modifier char
+    [-!&] as first char since these might need to be searched in exec-directory, not
+    the current path.
+ test/hpath-tests.el (hpath:load-modifier-with-plain-file-loads-file-from-load-path):
+ test/hmouse-drv-tests.el (hbut-load-modifier-with-plain-file-loads-file-from-load-path):
+    Update to handle non-expansion of relative Lisp library files.
+
+* hui-select.el (hui-select-initialize):
+  hib-kbd.el (kbd-key): Fix close bracket syntax to match open (was close).
+
+* hbut.el (ebut:label-p): Fix handling when point is on final RET and
+    have nested lists as in here with braces:
+    { M-x shell RET M-> (pushd ${hyperb:dir}) RET }
+    by adding a (forward-list) call in the first 'while' construct.
+
 2022-05-14  Bob Weiner  <rsw@gnu.org>
 
 * hsys-org.el (hsys-org-todo-occur): Add.

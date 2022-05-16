@@ -150,13 +150,9 @@
 
 (ert-deftest hpath:load-modifier-with-plain-file-loads-file-from-load-path ()
   "Path prefix - with filename without diretory will load from`load-path'."
-  (let ((was-called nil))
-    (cl-letf (((symbol-function 'load)
-               (lambda (filename)
-                 (setq was-called
-                       (should (string= (locate-library "tutorial.el") filename))))))
-      (hpath:find "-tutorial.el")
-      (should was-called))))
+  (setq features (delq 'tutorial features))
+  (hpath:find "-tutorial.el")
+  (should (featurep 'tutorial)))
 
 (ert-deftest hpath:substitute-value-test ()
   "Environment and Lisp variables shall be substituted in a path."

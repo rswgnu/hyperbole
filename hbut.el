@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    18-Sep-91 at 02:57:09
-;; Last-Mod:     24-Apr-22 at 11:01:49 by Bob Weiner
+;; Last-Mod:     15-May-22 at 23:07:36 by Bob Weiner
 ;;
 ;; Copyright (C) 1991-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -232,7 +232,16 @@ to two lines."
 				(re-search-forward (concat quoted start-regexp) npoint t))
 		      (setq start t))
 		    start)
-		  (< (point) opoint)
+		  ;; Handle expressions like:
+		  ;; { M-x shell RET M-> (pushd ${hyperb:dir}) RET }
+		  (save-excursion
+		    (when (eq ?\( (char-syntax (preceding-char)))
+		      (condition-case ()
+			  (progn
+			    (forward-char -1)
+			    (forward-list))
+			(error nil)))
+		    (< (point) opoint))
 		  (re-search-forward (concat "[^\\{]" end-regexp) opoint t))
 	(setq start nil))
       (when start

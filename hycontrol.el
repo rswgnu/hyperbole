@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     1-Jun-16 at 15:35:36
-;; Last-Mod:     27-Feb-22 at 01:11:05 by Bob Weiner
+;; Last-Mod:     16-May-22 at 00:12:56 by Bob Weiner
 ;;
 ;; Copyright (C) 2016-2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -1591,8 +1591,10 @@ the second, number of columns of windows."
 ;;;###autoload
 (defun hycontrol-windows-grid-by-file-pattern (pattern &optional full)
   "Display an automatically sized window grid showing files found from glob PATTERN.
-Use absolute file paths if optional FULL is non-nil."
-  (interactive "FPattern of files to display in windows grid: \nP")
+Use absolute file paths if called interactively or optional FULL is non-nil."
+  (interactive
+   (list (read-string "Pattern of files to display in windows grid: ")
+	 t))
   (let* ((find-file-wildcards t)
 	 (files (file-expand-wildcards pattern full)))
     (hycontrol-windows-grid-by-file-list files)))
