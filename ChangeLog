@@ -1,3 +1,11 @@
+2022-05-22  Mats Lidell  <matsl@gnu.org>
+
+* test/kexport-tests.el:
+  test/hmouse-info-tests.el:
+  test/hmouse-drv-tests.el:
+  test/hbut-tests.el: Don't byte compile of test files that depend on
+    external test support packages.
+
 2022-05-16  Bob Weiner  <rsw@gnu.org>
 
 * FAST-DEMO: Change from /usr/bin/bash to /bin/bash.

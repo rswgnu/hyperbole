@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    29-Dec-21 at 09:02:00
-;; Last-Mod:     24-Jan-22 at 00:39:27 by Bob Weiner
+;; Last-Mod:     22-May-22 at 11:11:53 by Mats Lidell
 ;;
 ;; Copyright (C) 2021-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -44,10 +44,12 @@
           (should (string-prefix-p "regexp" m t))))
     (kill-buffer "*info*")))
 
-;; FIXME: Can't compile when `with-simulated-input' is absent!
-;; Local Variables:
-;; no-byte-compile: t
-;; End:
+;; This file can't be byte-compiled without the `with-simulated-input'
+;; package (because of the use of the `with-simulated-input' macro),
+;; which is not a dependency of Hyperbole.
+;;  Local Variables:
+;;  no-byte-compile: t
+;;  End:
 
 (provide 'hmouse-info-tests)
 ;;; hmouse-info-tests.el ends here

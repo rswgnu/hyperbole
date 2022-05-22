@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    28-Feb-21 at 22:52:00
-;; Last-Mod:     15-May-22 at 23:42:24 by Bob Weiner
+;; Last-Mod:     22-May-22 at 11:13:48 by Mats Lidell
 ;;
 ;; Copyright (C) 2021-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -20,6 +20,7 @@
 (require 'ert)
 (require 'hbut)
 (require 'el-mock)
+(require 'with-simulated-input)
 (require 'hy-test-helpers "test/hy-test-helpers")
 
 (ert-deftest hbut-defal ()
@@ -519,8 +520,10 @@ Regression: Looked up path name '-narrow'."
             (action-key)))
       (delete-file el-file))))
 
-;; This file can't be byte-compiled without the `el-mock' package (because of
-;; the use of the `with-mock' macro), which is not a dependency of Hyperbole.
+;; This file can't be byte-compiled without the `el-mock' and
+;; `with-simulated-input' package (because of the use of the
+;; `with-mock' and `with-simulated-input' macro), which is not a
+;; dependency of Hyperbole.
 ;;  Local Variables:
 ;;  no-byte-compile: t
 ;;  End:
