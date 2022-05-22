@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    10-Oct-21 at 17:30:00
-;; Last-Mod:      1-Mar-22 at 23:23:49 by Mats Lidell
+;; Last-Mod:     22-May-22 at 10:57:14 by Mats Lidell
 ;;
 ;; Copyright (C) 2021-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -138,6 +138,12 @@
           (should (string= (kexport:koutline) html-file)))
       (progn
         (delete-file kotl-file)))))
+
+;; This file can't be byte-compiled without the `el-mock' package (because of
+;; the use of the `with-mock' macro), which is not a dependency of Hyperbole.
+;;  Local Variables:
+;;  no-byte-compile: t
+;;  End:
 
 (provide 'kexport-tests)
 ;;; kexport-tests.el ends here

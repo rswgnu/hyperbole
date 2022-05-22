@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    30-may-21 at 09:33:00
-;; Last-Mod:     24-Jan-22 at 00:38:20 by Bob Weiner
+;; Last-Mod:     22-May-22 at 10:57:31 by Mats Lidell
 ;;
 ;; Copyright (C) 2021-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -170,10 +170,11 @@ Needed since hyperbole expands all links to absolute paths and
           (hy-test-helpers-verify-hattr-at-p :actype 'actypes::link-to-file-line-and-column :args (list test-file 2 3) :loc test-file :lbl-key "label"))
       (delete-file test-file))))
 
-;; FIXME: This file can only be byte-compiled when `el-mock' is installed.
-;; Local Variables:
-;; no-byte-compile: t
-;; End:
+;; This file can't be byte-compiled without the `el-mock' package (because of
+;; the use of the `with-mock' macro), which is not a dependency of Hyperbole.
+;;  Local Variables:
+;;  no-byte-compile: t
+;;  End:
 
 (provide 'hbut-tests)
 ;;; hbut-tests.el ends here
