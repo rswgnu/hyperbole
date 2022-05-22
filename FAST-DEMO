@@ -153,7 +153,7 @@
        A BLANK buffer fills in the grid if there are not enough Emacs Lisp
        ones.
 
-    {C-x d ${hyperb:dir} RET}
+    {C-x 4 d ${hyperb:dir} RET}
 
        Dired the Hyperbole home directory based on its variable.
 
@@ -176,7 +176,7 @@
     with bash.  If you are using another shell you can for this part switch
     to bash,
 
-    { M-x set-variable RET shell-file-name RET C-u M-! which SPC bash RET RET }
+    { M-x set-variable RET shell-file-name RET C-u M-! /usr/bin/env SPC bash RET RET }
 
        Set the name of the inferior shell to /bin/bash. If you do this
        don't forget to reset it to your preferred shell when you are ready

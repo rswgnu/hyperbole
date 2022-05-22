@@ -5,7 +5,7 @@
 ;; Author:           Bob Weiner
 ;; Maintainer:       Bob Weiner <rsw@gnu.org>, Mats Lidell <matsl@gnu.org>
 ;; Created:          06-Oct-92 at 11:52:51
-;; Last-Mod:     11-May-22 at 01:16:34 by Bob Weiner
+;; Last-Mod:     22-May-22 at 12:48:36 by Bob Weiner
 ;; Released:         01-May-22
 ;; Version:          8.0.1pre
 ;; Keywords:         comm, convenience, files, frames, hypermedia, languages, mail, matching, mouse, multimedia, outlines, tools, wp
@@ -251,7 +251,7 @@ of the commands."
     ;; and load the Hyperbole mouse key bindings.
     (unless (where-is-internal #'hkey-either)
       ;; Need to map all these variants to ensure can override
-      ;; org-meta-return in Org mode when desired.
+      ;; `org-meta-return' in Org mode when desired.
       (mapc (lambda (key) (hkey-set-key (kbd key) #'hkey-either))
 	    '("\M-\C-m" "M-<return>" "M-RET" "ESC <return>" "ESC RET")))
     ;;

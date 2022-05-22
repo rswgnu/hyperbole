@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     1-Nov-91 at 00:44:23
-;; Last-Mod:     15-May-22 at 23:36:25 by Bob Weiner
+;; Last-Mod:     22-May-22 at 13:34:43 by Bob Weiner
 ;;
 ;; Copyright (C) 1991-2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -382,11 +382,15 @@ See the function `hpath:get-external-display-alist' for detailed format document
      (concat hpath:info-suffix
 	     "\\|/\\(info\\|INFO\\)/[^.]+$\\|/\\(info-local\\|INFO-LOCAL\\)/[^.]+$")
      (lambda (file)
-       (if (and (string-match hpath:info-suffix file)
-		(match-beginning 1))
-	   ;; Removed numbered trailer to get basic filename.
-	   (setq file (concat (substring-no-properties file 0 (match-beginning 1))
-			      (substring-no-properties file (match-end 1)))))
+       (when (and (string-match hpath:info-suffix file)
+		  (match-beginning 1))
+	 ;; Removed numbered trailer to get basic filename.
+	 (setq file (concat (substring-no-properties file 0 (match-beginning 1))
+			    (substring-no-properties file (match-end 1)))))
+       ;; Ensure that Info files with non-absolute directories outside of the
+       ;; `Info-directory-list' are resolved properly, e.g. "man/hyperbole.info".
+       (unless (file-name-absolute-p file)
+	 (setq file (expand-file-name "man/hyperbole.info")))
        (require 'info)
        ;; Ensure that *info* buffer is displayed in the right place.
        (hpath:display-buffer (current-buffer))

@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    23-Apr-21 at 22:21:00
-;; Last-Mod:      1-Mar-22 at 23:23:32 by Mats Lidell
+;; Last-Mod:     22-May-22 at 13:44:31 by Bob Weiner
 ;;
 ;; Copyright (C) 2021-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -54,13 +54,23 @@
 
 ;; Hyperbole Button
 (ert-deftest smart-org-mode-with-smart-keys-on-hypb-button-activates ()
-  "With smart keys on hypb button activates."
+  "With smart keys on hypb button activates the button."
   (with-temp-buffer
     (let ((hsys-org-enable-smart-keys t))
       (org-mode)
       (insert "/tmp")
       (goto-char 1)
       (hy-test-helpers:hypb-function-should-call-hpath:find 'ibtypes::pathname "/tmp"))))
+
+;; Hyperbole Button
+(ert-deftest smart-org-mode-with-smart-keys-buttons-on-hypb-button-activates ()
+  "With smart keys as buttons on hypb button activates the button."
+  (with-temp-buffer
+    (let ((hsys-org-enable-smart-keys 'buttons))
+      (org-mode)
+      (insert "/tmp")
+      (goto-char 1)
+      (hy-test-helpers:hypb-function-should-call-hpath:find 'action-key "/tmp"))))
 
 ;; Org Link
 (ert-deftest smart-org-mode-with-smart-keys-on-org-link-activates ()
@@ -83,21 +93,11 @@
       (insert "(hy per bo le)\n")
       (goto-char 14)
       (with-mock
-       (mock (org-meta-return nil) => t)
+       (mock (hsys-org-meta-return nil) => t)
        (smart-org)))))
 
-;; Hyperbole Button
-(ert-deftest smart-org-mode-with-smart-keys-buttons-on-hypb-button-activates ()
-  "With smart keys as buttons on hypb button activates."
-  (with-temp-buffer
-    (let ((hsys-org-enable-smart-keys 'buttons))
-      (org-mode)
-      (insert "/tmp")
-      (goto-char 1)
-      (hy-test-helpers:hypb-function-should-call-hpath:find 'action-key "/tmp"))))
-
 ;; Org Link
-(ert-deftest smart-org-mode-with-smart-keys-buttons-on-org-link-calls-org-meta-return ()
+(ert-deftest smart-org-mode-with-smart-keys-buttons-on-org-link-activates ()
   "With smart keys as buttons on `org-mode' link activates link."
   (with-temp-buffer
     (let ((hsys-org-enable-smart-keys 'buttons))
@@ -130,7 +130,7 @@
       (insert "/tmp")
       (goto-char 1)
       (with-mock
-       (mock (org-meta-return nil) => t)
+       (mock (hsys-org-meta-return nil) => t)
        (smart-org)))))
 
 ;; Org Link
@@ -142,7 +142,7 @@
       (insert "[[/tmp][desc]]")
       (goto-char 9)
       (with-mock
-       (mock (org-meta-return nil) => t)
+       (mock (hsys-org-meta-return nil) => t)
        (smart-org)))))
 
 ;; Compilation requires `el-mock' which is not `Package-Require'd.

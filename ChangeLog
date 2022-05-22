@@ -1,3 +1,27 @@
+2022-05-22  Bob Weiner  <rsw@gnu.org>
+
+* hpath.el (hpath:internal-display-alist): Fix so Info files with non-absolute
+    directories outside of the 'Info-directory-list' are resolved properly,
+    e.g. "man/hyperbole.info".
+
+* hui-mouse.el (hkey-alist, smart-org): Remove _assist-flag from 'smart-org' calls
+    since already use global 'assist-flag' instead.
+
+* hsys-org.el (hsys-org-meta-return): Add this and autoload it so can centrally
+    control Hyperbole calls to 'org-meta-return'.  Also, fix passing of non-numeric
+    args to that function, e.g. '(4).
+  hui-mouse.el (action-key-error, assist-key-error, smart-org):
+  test/smart-org-tests.el (smart-org-mode-with-smart-keys-buttons-on-delimited-thing-calls-org-meta-return,
+    smart-org-mode-with-no-smart-keys-on-hypb-button-calls-org-meta-return,
+    smart-org-mode-with-no-smart-keys-on-org-link-is-org-meta-return): Call 'hsys-org-meta-return'.
+
+* kotl/klink.el (link-to-kotl): Fix and remove 'kcell:ref-to-id' calls because
+    current buffer will not be set to the Koutline file yet if link contains a file
+    reference.
+
+* hactypes.el (link-to-kcell): Fix ordering of cond clauses so file part of links
+    are properly handled before handling cell-ref part.
+
 2022-05-22  Mats Lidell  <matsl@gnu.org>
 
 * test/kexport-tests.el:

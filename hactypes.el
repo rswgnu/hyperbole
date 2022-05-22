@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    23-Sep-91 at 20:34:36
-;; Last-Mod:      2-May-22 at 00:25:26 by Bob Weiner
+;; Last-Mod:     22-May-22 at 12:52:36 by Bob Weiner
 ;;
 ;; Copyright (C) 1991-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -540,17 +540,17 @@ If FILE is nil, use the current buffer.
 If CELL-REF is nil, show the first cell in the view."
   (interactive "fKotl file to link to: \n+KKcell to link to: ")
   (require 'kfile)
-  (cond ((and (stringp cell-ref) (> (length cell-ref) 0)
-	      (eq ?| (aref cell-ref 0)))
-	 ;; Activate view spec in current window.
-	 (kotl-mode:goto-cell cell-ref))
-	((if file
+  (cond	((if file
 	     (hpath:find file)
 	   (hpath:display-buffer (current-buffer)))
 	 (if cell-ref
 	     (kotl-mode:goto-cell cell-ref)
 	   (kotl-mode:beginning-of-buffer))
-	 (recenter 0))))
+	 (recenter 0))
+	((and (stringp cell-ref) (> (length cell-ref) 0)
+	      (eq ?| (aref cell-ref 0)))
+	 ;; Activate view spec in current window.
+	 (kotl-mode:goto-cell cell-ref))))
 
 (defact link-to-mail (mail-msg-id &optional mail-file)
   "Display mail msg with MAIL-MSG-ID from optional MAIL-FILE.

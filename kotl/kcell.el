@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     1-May-93
-;; Last-Mod:      3-Apr-22 at 16:23:56 by Bob Weiner
+;; Last-Mod:     22-May-22 at 10:22:02 by Bob Weiner
 ;;
 ;; Copyright (C) 1993-2021  Free Software Foundation, Inc.
 ;; See the "../HY-COPY" file for license information.
@@ -71,6 +71,7 @@ The idstamp of the top cell is always 0 and this cell stores the idstamp-counter
 
 (defalias 'kcell:plist 'identity)
 
+;;;###autoload
 (defun kcell:ref-to-id (cell-ref &optional kviewspec-flag)
   "When CELL-REF is valid, return a CELL-REF string converted to a cell idstamp (integer).
 If CELL-REF contains both a relative and a permanent id, the permanent id is

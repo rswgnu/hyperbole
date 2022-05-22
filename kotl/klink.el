@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    15-Nov-93 at 12:15:16
-;; Last-Mod:     17-Apr-22 at 21:02:07 by Bob Weiner
+;; Last-Mod:     22-May-22 at 12:52:17 by Bob Weiner
 ;;
 ;; Copyright (C) 1993-2021  Free Software Foundation, Inc.
 ;; See the "../HY-COPY" file for license information.
@@ -232,25 +232,22 @@ LINK may be of any of the following forms; the <> are optional:
 See documentation for `kcell:ref-to-id' for valid cell-ref formats."
 
   (interactive "sKotl link specifier: ")
-  (or (stringp link) (error "(link-to-kotl): Non-string link argument, %s"
-			    link))
+  (unless (stringp link)
+    (error "(link-to-kotl): Non-string link argument, %s" link))
   (cond
    ((or (string-match (format "\\`<?\\s-*@\\s-*\\(%s\\)\\s-*>?\\'"
 			      klink:cell-ref-regexp) link)
 	(string-match (format "\\`<?\\s-*\\([|:]%s\\)\\s-*>?\\'"
 			      klink:cell-ref-regexp) link))
     ;; < @ cell-ref > or < |viewspec > or < :augment-viewspec >
-    (hact 'link-to-kcell
-	  nil
-	  (kcell:ref-to-id (match-string 1 link) t)))
+    (hact 'link-to-kcell nil (match-string 1 link)))
    ((and (string-match
 	  (format "\\`<?\\s-*\\([^ \t\n\r\f,<>]+\\)\\s-*\\(,\\s-*\\(%s\\)\\)?\\s-*>?\\'"
 		  klink:cell-ref-regexp)
 	  link)
 	 (match-end 3))
     ;; < pathname, cell-ref >
-    (hact 'link-to-kcell (match-string 1 link)
-	  (kcell:ref-to-id (match-string 3 link) t)))
+    (hact 'link-to-kcell (match-string 1 link) (match-string 3 link)))
    ((string-match
      "\\`<?\\s-*\\(\\([-!&]\\)?\\s-*[^ \t\n\r\f,<>]+\\)\\s-*>?\\'" link)
     ;; < [-!&] pathname >
@@ -260,7 +257,6 @@ See documentation for `kcell:ref-to-id' for valid cell-ref formats."
 ;;; ************************************************************************
 ;;; Private functions
 ;;; ************************************************************************
-
 
 (defun klink:act (link start-pos)
   (let ((obuf (current-buffer)))
