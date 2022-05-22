@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    23-Apr-21 at 22:21:00
-;; Last-Mod:     22-May-22 at 13:44:31 by Bob Weiner
+;; Last-Mod:     22-May-22 at 15:04:44 by Bob Weiner
 ;;
 ;; Copyright (C) 2021-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -93,7 +93,7 @@
       (insert "(hy per bo le)\n")
       (goto-char 14)
       (with-mock
-       (mock (hsys-org-meta-return nil) => t)
+       (mock (hsys-org-meta-return) => t)
        (smart-org)))))
 
 ;; Org Link
@@ -130,7 +130,7 @@
       (insert "/tmp")
       (goto-char 1)
       (with-mock
-       (mock (hsys-org-meta-return nil) => t)
+       (mock (hsys-org-meta-return) => t)
        (smart-org)))))
 
 ;; Org Link
@@ -142,7 +142,7 @@
       (insert "[[/tmp][desc]]")
       (goto-char 9)
       (with-mock
-       (mock (hsys-org-meta-return nil) => t)
+       (mock (hsys-org-meta-return) => t)
        (smart-org)))))
 
 ;; Compilation requires `el-mock' which is not `Package-Require'd.

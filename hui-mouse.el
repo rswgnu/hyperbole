@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    04-Feb-89
-;; Last-Mod:     22-May-22 at 13:04:43 by Bob Weiner
+;; Last-Mod:     22-May-22 at 15:05:45 by Bob Weiner
 ;;
 ;; Copyright (C) 1991-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -60,14 +60,14 @@
   "If in Org mode and Hyperbole shares {M-RET}, run org-meta-return, else signal an error."
   (if (and (funcall hsys-org-mode-function)
 	   (hsys-org-meta-return-shared-p))
-      (hact 'hsys-org-meta-return 'current-prefix-arg)
+      (hact 'hsys-org-meta-return)
     (hypb:error "(Hyperbole Action Key): No action defined for this context; try another location")))
 
 (defun assist-key-error ()
   "If in Org mode and Hyperbole shares {M-RET}, run org-meta-return, else signal an error."
   (if (and (funcall hsys-org-mode-function)
 	   (hsys-org-meta-return-shared-p))
-      (hact 'hsys-org-meta-return 'current-prefix-arg)
+      (hact 'hsys-org-meta-return)
     (hypb:error "(Hyperbole Assist Key): No action defined for this context; try another location")))
 
 (defcustom action-key-default-function #'action-key-error
@@ -1659,7 +1659,7 @@ handled by the separate implicit button type, `org-link-outside-org-mode'."
     (let (start-end)
       (cond ((not hsys-org-enable-smart-keys)
 	     (when (hsys-org-meta-return-shared-p)
-	       (hact 'hsys-org-meta-return 'current-prefix-arg))
+	       (hact 'hsys-org-meta-return))
 	     ;; Ignore any further Smart Key non-Org contexts
 	     t)
 	    ((eq hsys-org-enable-smart-keys t)
@@ -1719,7 +1719,7 @@ handled by the separate implicit button type, `org-link-outside-org-mode'."
 		    nil)
 		   (t
 		    (when (hsys-org-meta-return-shared-p)
-		      (hact 'hsys-org-meta-return 'current-prefix-arg))
+		      (hact 'hsys-org-meta-return))
 		    ;; Ignore any further Smart Key non-Org contexts
 		    t)))
 	    (t

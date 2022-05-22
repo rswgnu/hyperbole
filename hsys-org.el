@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     2-Jul-16 at 14:54:14
-;; Last-Mod:     22-May-22 at 13:08:54 by Bob Weiner
+;; Last-Mod:     22-May-22 at 15:05:49 by Bob Weiner
 ;;
 ;; Copyright (C) 2016-2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -46,11 +46,11 @@
       t)))
 
 ;;;###autoload
-(defun hsys-org-meta-return (&optional arg)
-  "Call `org-meta-return' with the numeric value of any prefix ARG when given."
+(defun hsys-org-meta-return ()
+  "Call `org-meta-return' with the numeric value of any prefix arg when given."
   (interactive "P")
-  (if arg
-      (org-meta-return (prefix-numeric-value arg))
+  (if current-prefix-arg
+      (org-meta-return (prefix-numeric-value current-prefix-arg))
     (org-meta-return)))
 
 ;;;###autoload
