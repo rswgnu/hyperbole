@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     6-Oct-91 at 03:42:38
-;; Last-Mod:     12-May-22 at 00:03:09 by Bob Weiner
+;; Last-Mod:      4-Jun-22 at 01:29:24 by Bob Weiner
 ;;
 ;; Copyright (C) 1991-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -223,7 +223,8 @@ If no matching installation type is found, return a list of (\"unknown\" hyperb:
   (or (featurep 'hinit) (load "hyperbole"))
   (or (and (featurep 'hbut)
 	   (let ((func (hypb:indirect-function 'ebut:create)))
-	     (not (or (hypb:emacs-byte-code-p func)
+	     (not (or (subrp func)
+		      (hypb:emacs-byte-code-p func)
 		      (eq 'byte-code
 			  (car (car (nthcdr 3 (hypb:indirect-function
 					       'ebut:create)))))))))
@@ -301,6 +302,7 @@ If no matching installation type is found, return a list of (\"unknown\" hyperb:
 		       dname))))
       (concat "@" dname))))
 
+;;;###autoload
 (defun hypb:emacs-byte-code-p (obj)
   "Return non-nil iff OBJ is an Emacs byte compiled object."
   (or (and (fboundp 'byte-code-function-p) (byte-code-function-p obj))
@@ -871,7 +873,11 @@ If FILE is not an absolute path, expand it relative to `hyperb:dir'."
       (skip-syntax-forward "-")
       (set-window-start (selected-window) 1)
       (set-buffer-modified-p nil)
-      (help-mode))))
+      (help-mode)
+      ;; On some versions of Emacs like Emacs28, need a slight delay
+      ;; for file loading before searches will work properly.
+      ;; Otherwise, "test/demo-tests.el" may fail.
+      (sit-for 0.05))))
 
 (defun hypb:browse-home-page ()
   "Visit the web home page for Hyperbole."

@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    18-Sep-91 at 02:57:09
-;; Last-Mod:     30-Jan-22 at 03:07:43 by Bob Weiner
+;; Last-Mod:     30-May-22 at 13:55:46 by Bob Weiner
 ;;
 ;; Copyright (C) 1991-2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -301,58 +301,19 @@ When optional SYM is given, returns the name for that symbol only, if any."
   "Return Hyperbole action that execute a keyboard MACRO REPEAT-COUNT times."
   (list 'execute-kbd-macro macro repeat-count))
 
-;; This function is based on Emacs `help-function-arglist'.
 (defun action:params-emacs (def)
   "Return the argument list for the function DEF which may be a symbol or a function body."
-  ;; Handle symbols aliased to other symbols.
-  (if (and (symbolp def) (fboundp def)) (setq def (indirect-function def)))
-  ;; If definition is a macro, find the function inside it.
-  (if (eq (car-safe def) 'macro) (setq def (cdr def)))
-  (cond
-   ((and (byte-code-function-p def) (listp (aref def 0))) (aref def 0))
-   ((eq (car-safe def) 'lambda) (nth 1 def))
-   ((eq (car-safe def) 'closure) (nth 2 def))
-   ((or (and (byte-code-function-p def) (integerp (aref def 0)))
-	(subrp def))
-    (or (let* ((doc (condition-case nil (documentation def) (error nil)))
-	       (docargs (if doc (car (help-split-fundoc doc nil))))
-	       (arglist (if docargs
-			    (cdar (read-from-string (downcase docargs)))))
-	       (valid t))
-	  ;; Check validity.
-	  (dolist (arg arglist)
-	    (unless (and (symbolp arg)
-			 (let ((name (symbol-name arg)))
-			   (if (eq (aref name 0) ?&)
-			       (memq arg '(&rest &optional))
-			     (not (string-match "\\." name)))))
-	      (setq valid nil)))
-	  (when valid arglist))
-	(let* ((args-desc (if (not (subrp def))
-			      (aref def 0)
-			    (let ((a (subr-arity def)))
-			      (logior (car a)
-				      (if (numberp (cdr a))
-					  (lsh (cdr a) 8)
-					(lsh 1 7))))))
-	       (max (lsh args-desc -8))
-	       (min (logand args-desc 127))
-	       (rest (logand args-desc 128))
-	       (arglist ()))
-	  (dotimes (i min)
-	    (push (intern (concat "arg" (number-to-string (1+ i)))) arglist))
-	  (when (> max min)
-	    (push '&optional arglist)
-	    (dotimes (i (- max min))
-	      (push (intern (concat "arg" (number-to-string (+ 1 i min))))
-		    arglist)))
-	  (unless (zerop rest) (push '&rest arglist) (push 'rest arglist))
-	  (nreverse arglist))))
-   ((and (autoloadp def) (not (eq (nth 4 def) 'keymap)))
-    ;; Force autoload to get function signature.
-    (setq def (autoload-do-load def))
-    (unless (autoloadp def)
-      (action:params-emacs def)))))
+  (let ((params (help-function-arglist def t)))
+    (cond ((listp params) ;; includes nil
+	   params)
+	  ((stringp params)
+	   (when (and (autoloadp def) (not (eq (nth 4 def) 'keymap)))
+	     ;; Force autoload to get function signature.
+	     (setq def (autoload-do-load def))
+	     (unless (autoloadp def)
+	       (action:params-emacs def))))
+	  (t
+	   (error "(action:params-emacs): Construct not supported: %s" def)))))
 
 (defun action:params (action)
   "Return unmodified ACTION parameter list.
@@ -360,6 +321,8 @@ Autoloads action function if need be to get the parameter list."
   (when (and (symbolp action) (fboundp action))
     (setq action (hypb:indirect-function action)))
   (cond ((null action) nil)
+	((fboundp 'help-function-arglist)
+	 (help-function-arglist action t))
 	((listp action)
 	 (cond ((eq (car action) 'closure)
 		(nth 2 action))
@@ -451,6 +414,7 @@ performing ACTION."
 	(run-hooks 'action-act-hook)
 	(prog1 (if (or (symbolp action) (listp action)
 		       (hypb:emacs-byte-code-p action)
+		       (subrp action)
 		       (and (stringp action) (not (integerp action))
 			    (setq action (key-binding action))))
 		   (apply action args)

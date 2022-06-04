@@ -3,7 +3,7 @@
 # Author:       Bob Weiner
 #
 # Orig-Date:    15-Jun-94 at 03:42:38
-# Last-Mod:     11-May-22 at 01:30:04 by Bob Weiner
+# Last-Mod:      4-Jun-22 at 01:26:17 by Bob Weiner
 #
 # Copyright (C) 1994-2022  Free Software Foundation, Inc.
 # See the file HY-COPY for license information.
@@ -333,7 +333,7 @@ clean:
 version: doc
 	@ echo ""
 	@ echo "Any fgrep output means the version number has not been updated in that file."
-	test 0 -eq $$(fgrep -L $(HYPB_VERSION) Makefile HY-ABOUT HY-NEWS README.md hversion.el hyperbole.el man/hyperbole.texi man/version.texi | wc -c) || exit 1
+	test 0 -eq $$(fgrep -L $(HYPB_VERSION) hyperbole-pkg.el Makefile HY-ABOUT HY-NEWS README.md hversion.el hyperbole.el man/hyperbole.texi man/version.texi | wc -c) || exit 1
 	@ echo ""
 
 # Build the Info, HTML and Postscript versions of the user manual and README.md.html.
@@ -462,8 +462,8 @@ test-all:
 	@echo "# Tests: $(TEST_ERT_FILES)"
 ifeq ($(TERM), dumb)
 ifneq (,$(findstring .apple.,$(DISPLAY)))
-        # Found, on MacOS, use graphical UI MacOS 'Emacs' script
-	TERM=xterm-256color EMACS=Emacs $(EMACS) --quick $(PRELOADS) --eval "(load-file \"test/hy-test-dependencies.el\")" --eval "(let ((auto-save-default)) $(LOAD_TEST_ERT_FILES) (ert-run-tests-interactively t))"
+        # Found, on MacOS
+	TERM=xterm-256color $(EMACS) --quick $(PRELOADS) --eval "(load-file \"test/hy-test-dependencies.el\")" --eval "(let ((auto-save-default)) $(LOAD_TEST_ERT_FILES) (ert-run-tests-interactively t))"
 else
         # Not found, set TERM so tests will at least run within parent Emacs session
 	TERM=vt100 $(EMACS) --quick $(PRELOADS) --eval "(load-file \"test/hy-test-dependencies.el\")" --eval "(let ((auto-save-default)) $(LOAD_TEST_ERT_FILES) (ert-run-tests-interactively t))"

@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    23-Sep-91 at 20:34:36
-;; Last-Mod:     22-May-22 at 12:52:36 by Bob Weiner
+;; Last-Mod:     28-May-22 at 10:23:19 by Bob Weiner
 ;;
 ;; Copyright (C) 1991-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -628,7 +628,7 @@ FILE may be a string or nil, in which case the current buffer is used."
     (setq node (replace-regexp-in-string "[ \t\n\r\f]+" " " node t t)))
   (let (node-point)
     (if file
-        (set-buffer (find-find-noselect (hpath:substitute-value file)))
+        (set-buffer (find-file-noselect (hpath:substitute-value file)))
       (setq file buffer-file-name))
     (save-excursion
       (goto-char (point-min))

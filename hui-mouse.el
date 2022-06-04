@@ -39,13 +39,12 @@
 ;;; ************************************************************************
 
 (require 'hload-path)
-(eval-when-compile (require 'hsys-org))
+(require 'hsys-org)
 (require 'hbut)
 (unless (fboundp 'smart-info)
   (require 'hmouse-info))
 (unless (fboundp 'smart-c-at-tag-p)
   (require 'hmouse-tag))
-(require 'hsys-org)
 
 (eval-when-compile (require 'tar-mode))
 

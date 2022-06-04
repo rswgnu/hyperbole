@@ -85,7 +85,7 @@ hib-doc-id.el        - Implicit button type for document id index entries
 hib-kbd.el           - Implicit button type for key sequences delimited with {}
 hib-social.el        - Implicit button type for social media/git hashtag and username references
 hinit.el             - Standard initializations for GNU Hyperbole
-hload-path.el        - GNU Hyperbole load-path setup
+hload-path.el        - GNU Hyperbole load-path and autoload early initializations
 hsettings.el         - GNU Hyperbole settings which may require customization
 hvar.el              - Variable manipulation routines for GNU Hyperbole
 hypb-maintenance.el  - Support for updating Hyperbole web pages

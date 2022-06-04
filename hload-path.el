@@ -1,9 +1,9 @@
-;;; hload-path.el --- GNU Hyperbole load-path setup  -*- lexical-binding: t; -*-
+;;; hload-path.el --- GNU Hyperbole load-path and autoload early initializations  -*- lexical-binding: t; -*-
 ;;
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    29-Jun-16 at 14:39:33
-;; Last-Mod:     11-May-22 at 00:12:11 by Bob Weiner
+;; Last-Mod:      1-Jun-22 at 23:20:50 by Bob Weiner
 ;;
 ;; Copyright (C) 1992-2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.

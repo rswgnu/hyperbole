@@ -23,26 +23,28 @@
 (declare-function hy-test-helpers:action-key-should-call-hpath:find "hy-test-helpers")
 
 (defconst hpath--should-exist-paths
-  '("hypb.el"
-    "kotl/kview.el"
-    "${hyperb:dir}"
-    "${hyperb:dir}/hypb.el"
-    "${hyperb:dir}/kotl/kview.el"
-    "kview.el"
-    "${load-path}/kview.el"
-    "${load-path}/kotl/kview.el"
-    "${hyperb:dir}/./hypb.el"
-    "${hyperb:dir}/../hyperbole/hypb.el"
-    "./hypb.el"
-    "../hyperbole/hypb.el"
-    "../hyperbole/./hypb.el"
-    "~"
-    "~/."
-    "${load-path}/../hyperbole/${DOT}/hypb.el"
-    "${load-path}/../hyperbole/$DOT/hypb.el"
-    "$DOT"
-    "${DOT}"
-    )
+  (let ((hyperb-dir-basename (file-name-nondirectory (directory-file-name hyperb:dir))))
+    (list
+     "hypb.el"
+     "kotl/kview.el"
+     "${hyperb:dir}"
+     "${hyperb:dir}/hypb.el"
+     "${hyperb:dir}/kotl/kview.el"
+     "kview.el"
+     "${load-path}/kview.el"
+     "${load-path}/kotl/kview.el"
+     "${hyperb:dir}/./hypb.el"
+     (format "${hyperb:dir}/../%s/hypb.el" hyperb-dir-basename)
+     "./hypb.el"
+     (format "../%s/hypb.el" hyperb-dir-basename)
+     (format "../%s/./hypb.el" hyperb-dir-basename)
+     "~"
+     "~/."
+     (format "${load-path}/../%s/${DOT}/hypb.el" hyperb-dir-basename)
+     (format "${load-path}/../%s/$DOT/hypb.el" hyperb-dir-basename)
+     "$DOT"
+     "${DOT}"
+     ))
   "List of paths to test that should exist when expanded in ${hyperb:dir}.")
 
 (defconst hpath--should-not-exist-paths
@@ -91,14 +93,14 @@
   (setenv "DOT" ".")
   (let ((failures (delq t (mapcar #'hpath--should-exist-p hpath--should-exist-paths))))
     (if failures
-        (ert-fail (cons "These (original-path expanded-path) entries failed to exist when expanded:" failures))
+        (ert-fail (cons "These (original-path expanded-path) entries failed to exist when expanded with hpath:expand:" failures))
       t)))
 
 (ert-deftest hpath:should-not-exist-paths ()
   "Expand paths in `hpath--should-not-exist-paths' and trigger an error on the first one that exists."
   (let ((failures (delq t (mapcar #'hpath--should-not-exist-p hpath--should-not-exist-paths))))
     (if failures
-        (ert-fail (cons "These (original-path expanded-path) entries improperly existed when expanded:" failures))
+        (ert-fail (cons "These (original-path expanded-path) entries improperly existed when expanded with hpath:expand:" failures))
       t)))
 
 (ert-deftest hpath:find-report-lisp-variable-path-name-when-not-exists ()

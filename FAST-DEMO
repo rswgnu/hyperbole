@@ -172,9 +172,14 @@
 
 * Posix/Linux Shell Command Implicit Buttons
 
+    Some of the below commands require recursive use of the minibuffer, so let's
+    ensure that is enabled:
+
+    <setq enable-recursive-minibuffers t>
+
     The shell command part of the demo requires a shell that is compatible
-    with bash.  If you are using another shell you can for this part switch
-    to bash,
+    with bash.  If you are using another shell you can switch to bash for
+    this part of the demo:
 
     { M-x set-variable RET shell-file-name RET C-u M-! /usr/bin/env SPC bash RET RET }
 
