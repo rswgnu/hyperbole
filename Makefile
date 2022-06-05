@@ -303,6 +303,13 @@ bin: src
 	$(RM) *.elc kotl/*.elc
 	$(EMACS_BATCH) --eval="(setq-default byte-compile-warnings '(not docstrings))" \
 		-f batch-byte-compile $(EL_KOTL) $(EL_COMPILE)
+eln: src bin
+	$(EMACS_BATCH) \
+	  --eval="(progn \
+	            (setq-default byte-compile-warnings '(not docstrings)) \
+	            (load \"hyperbole-autoloads\") \
+                    (load \"kotl/kotl-autoloads\"))" \
+		-f batch-native-compile $(EL_KOTL) $(EL_COMPILE)
 
 # Byte compile files but apply a filter for either including or
 # removing warnings.  See variable {C-hv byte-compile-warnings RET} for
