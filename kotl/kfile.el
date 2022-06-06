@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    10/31/93
-;; Last-Mod:     17-Apr-22 at 12:17:44 by Bob Weiner
+;; Last-Mod:      5-Jun-22 at 17:59:19 by Bob Weiner
 ;;
 ;; Copyright (C) 1993-2021  Free Software Foundation, Inc.
 ;; See the "../HY-COPY" file for license information.
@@ -470,7 +470,7 @@ handle, whenever this is possible."
 	    (let ((print-escape-newlines kfile:escape-newlines))
 	      (prin1 object (current-buffer)))
 	    (goto-char (point-min))
-	    (while (not (eobp))
+	    (while (not (smart-eobp))
 	      ;; (message "%06d" (- (point-max) (point)))
 	      (cond
 	       ((looking-at "\\s\(")

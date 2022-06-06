@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Oct-96 at 02:25:27
-;; Last-Mod:     15-May-22 at 22:30:57 by Bob Weiner
+;; Last-Mod:      5-Jun-22 at 17:59:19 by Bob Weiner
 ;;
 ;; Copyright (C) 1996-2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -285,7 +285,7 @@ region (start . end) defining the boundaries of the thing at that position."
   "Return non-nil if the character after optional POS (or point) matches a syntax entry in `hui-select-syntax-alist'.
 The non-nil value returned is the function to call to select that syntactic unit."
   (interactive "d")
-  (unless (eobp)
+  (unless (smart-eobp)
     (or (numberp pos) (setq pos (point)))
     (setq hui-select-previous 'char)
     (let* ((syntax (char-syntax (or (char-after pos) (char-before pos))))
@@ -1066,7 +1066,7 @@ list, hui-select-indent-modes."
       ;; an outline entry, in which case we mark entries as indented blocks.
       (hui-select-indent-def pos)
       (save-excursion
-        (when (memq (char-syntax (if (eobp) (preceding-char) (char-after pos)))
+        (when (memq (char-syntax (if (smart-eobp) (preceding-char) (char-after pos)))
 	          '(?w ?_))
 	  (setq hui-select-previous 'symbol)
 	  (condition-case ()
@@ -1337,7 +1337,7 @@ list, hui-select-markup-modes."
 			  (throw 'done opoint))
 		        (setq count (1- count))
 		        (when (= count 0)
-                          (cond ((eobp)
+                          (cond ((smart-eobp)
                                  (if bolp
 				     ;; Include leading space since the
 				     ;; start and end tags begin and end

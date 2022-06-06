@@ -1,3 +1,8 @@
+2022-06-05  Bob Weiner  <rsw@gnu.org>
+
+* hui-mouse.el (smart-eolp): Exclude when on blank line and nothing but whitespace until eob.
+               (smart-eobp): Add and replace 'eolp' calls with this, including in 'smart-eolp'.
+
 2022-06-05  Mats Lidell  <matsl@gnu.org>
 
 * Makefile (eln): Target for native byte compilation.

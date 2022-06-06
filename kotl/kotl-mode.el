@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    6/30/93
-;; Last-Mod:     14-May-22 at 11:55:40 by Bob Weiner
+;; Last-Mod:      5-Jun-22 at 17:59:19 by Bob Weiner
 ;;
 ;; Copyright (C) 1993-2021  Free Software Foundation, Inc.
 ;; See the "../HY-COPY" file for license information.
@@ -2064,7 +2064,7 @@ If at tail cell already, do nothing and return nil."
 
 (defun kotl-mode:eocp ()
   "Return point if in a visible position at the end of a kview cell, else nil."
-  (when (or (eobp)
+  (when (or (smart-eobp)
 	    (looking-at "[\n\r]+\\'")
 	    (when (kotl-mode:eolp)
 	      (save-excursion
@@ -2076,7 +2076,7 @@ If at tail cell already, do nothing and return nil."
 (defun kotl-mode:eolp (&optional next-char-visible)
   "Return t if point is at the end of a visible line or the end of the buffer.
 With optional NEXT-CHAR-VISIBLE, return t only if the following char is visible."
-  (or (eobp)
+  (or (smart-eobp)
       (and (eolp)
 	   (if next-char-visible
 	       (not (kview:char-invisible-p))

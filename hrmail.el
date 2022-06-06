@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     9-May-91 at 04:22:02
-;; Last-Mod:      9-May-22 at 22:37:10 by Bob Weiner
+;; Last-Mod:      5-Jun-22 at 17:59:19 by Bob Weiner
 ;;
 ;; Copyright (C) 1991-2016  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -103,7 +103,7 @@ This includes Hyperbole button data."
   (interactive)
   (let ((count 0) opoint)
     (save-excursion
-     (while (and (not (eobp))
+     (while (and (not (smart-eobp))
 		 (progn (setq opoint (point))
 			(re-search-backward "^\^_" nil t)))
        (if (= opoint (point))

@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    23-Sep-91 at 20:34:36
-;; Last-Mod:     28-May-22 at 10:23:19 by Bob Weiner
+;; Last-Mod:      5-Jun-22 at 17:59:19 by Bob Weiner
 ;;
 ;; Copyright (C) 1991-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -48,7 +48,7 @@
 Unless point is at the end of the buffer or if a completion has already been
 inserted, delete the completions window."
   (interactive)
-  (if (eobp)
+  (if (smart-eobp)
       (progn (bury-buffer nil)
 	     (delete-window))
     (hargs:completion)))

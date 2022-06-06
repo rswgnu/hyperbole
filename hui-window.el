@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Sep-92
-;; Last-Mod:     17-Apr-22 at 11:39:16 by Bob Weiner
+;; Last-Mod:      5-Jun-22 at 17:59:19 by Bob Weiner
 ;;
 ;; Copyright (C) 1992-2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -812,7 +812,7 @@ With optional boolean NEW-WINDOW non-nil, sensibly split the release window befo
   "Save a mark, then insert at point the text from `hkey-region' and indent it."
   (indent-for-tab-command)
   (push-mark nil t)
-  (if (eobp) (insert "\n"))
+  (if (smart-eobp) (insert "\n"))
   (insert hkey-region)
   (indent-region (point) (mark))
   (message "") ;; Clear any indenting message.

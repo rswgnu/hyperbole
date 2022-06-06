@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     6-Oct-91 at 03:42:38
-;; Last-Mod:      4-Jun-22 at 01:29:24 by Bob Weiner
+;; Last-Mod:      5-Jun-22 at 17:59:19 by Bob Weiner
 ;;
 ;; Copyright (C) 1991-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -452,7 +452,7 @@ If EVENT, use EVENT's position to determine the starting position."
       (goto-char (posn-point (event-start event)))
       (let (beg end)
         (cond
-         ((and (not (eobp)) (get-text-property (point) 'mouse-face))
+         ((and (not (smart-eobp)) (get-text-property (point) 'mouse-face))
           (setq end (point) beg (1+ (point))))
          ((and (not (bobp))
                (get-text-property (1- (point)) 'mouse-face))

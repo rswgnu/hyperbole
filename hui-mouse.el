@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    04-Feb-89
-;; Last-Mod:     22-May-22 at 15:05:45 by Bob Weiner
+;; Last-Mod:      5-Jun-22 at 17:59:48 by Bob Weiner
 ;;
 ;; Copyright (C) 1991-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -521,7 +521,7 @@ smart keyboard keys.")
 
 (defun last-line-p ()
   "Return true if point is on the last line of the buffer."
-  (save-excursion (end-of-line) (eobp)))
+  (save-excursion (end-of-line) (smart-eobp)))
 
 (defun smart-completion-help ()
   "Offer completion help for current minibuffer argument, if any."
@@ -744,7 +744,7 @@ If key is pressed:
  (3) on a date, the diary entries for the date, if any, are displayed."
 
   (interactive)
-  (cond ((eobp) (calendar-cursor-to-nearest-date)
+  (cond ((smart-eobp) (calendar-cursor-to-nearest-date)
 	 (calendar-scroll-left-three-months 1))
 	((< (current-column) 5) (calendar-cursor-to-nearest-date)
 	 (calendar-scroll-right-three-months 1))
@@ -766,7 +766,7 @@ If assist-key is pressed:
      calendar window."
 
   (interactive)
-  (cond ((eobp) (calendar-cursor-to-nearest-date)
+  (cond ((smart-eobp) (calendar-cursor-to-nearest-date)
 	 (calendar-scroll-right-three-months 1))
 	((< (current-column) 5) (calendar-cursor-to-nearest-date)
 	 (calendar-scroll-left-three-months 1))
@@ -1057,7 +1057,7 @@ Assume Hyperbole has already checked that helm is active."
 	(setq cursor-type hkey-debug) ; For testing where mouse presses set point.
 	(and (eventp action-key-depress-args)
 	     (goto-char (posn-point (event-start action-key-depress-args))))
-	(when (not (or (eobp)
+	(when (not (or (smart-eobp)
 		       (smart-helm-at-header)
 		       (helm-pos-candidate-separator-p)))
 	  (let ((helm-selection-point (point)))
@@ -1095,7 +1095,7 @@ Assume Hyperbole has already checked that helm is active."
 	   (mouse-set-point depress-event)
 	   (setq things (list 'section-header (helm-pos-header-line-p)
 			      'separator (helm-pos-candidate-separator-p)
-			      'eob (eobp)
+			      'eob (smart-eobp)
 			      'eol (eolp)))
 	   (cond ((or (plist-get things 'section-header) (plist-get things 'separator))
 		  (helm-next-line 1)
@@ -1773,7 +1773,7 @@ If key is pressed:
   (interactive)
   (cond (smart-outline-cut
 	 (setq smart-outline-cut nil) (yank))
-	((eobp) (outline-show-all))
+	((smart-eobp) (outline-show-all))
 	((and (bolp) (looking-at outline-regexp))
 	 (setq smart-outline-cut t)
 	 (kill-region
@@ -1811,7 +1811,7 @@ If assist-key is pressed:
 
   (interactive)
   (cond (smart-outline-cut (yank))
-	((eobp) (outline-hide-body))
+	((smart-eobp) (outline-hide-body))
 	((and (bolp) (looking-at outline-regexp))
 	 (setq smart-outline-cut t)
 	 (kill-region (point)
@@ -1870,7 +1870,7 @@ If key is pressed:
  (1) at the end of buffer, bury buffer
  (2) on a todo item, toggle the completion"
   (interactive)
-  (cond ((eobp) (todotxt-bury))
+  (cond ((smart-eobp) (todotxt-bury))
 	(t (todotxt-complete-toggle))))
 
 (defun smart-todotxt-assist ()
@@ -1881,15 +1881,26 @@ If key is pressed:
  (2) on a todo item, edit it"
 
   (interactive)
-  (cond ((eobp) (todotxt-archive))
+  (cond ((smart-eobp) (todotxt-archive))
 	(t (todotxt-edit-item))))
+
+(defun smart-eobp ()
+  "Return t if point is past the last visible buffer line with text."
+  (and (or (eobp)
+	   ;; On a blank line and nothing but whitespace until eob
+	   (save-excursion
+	     (beginning-of-line)
+	     (looking-at "[ \t\n\r\f]+\\'")))
+       (or (not (smart-outline-char-invisible-p))
+	   (not (smart-outline-char-invisible-p (1- (point)))))))
 
 (defun smart-eolp ()
   "Return t if point is at the end of a visible line but not the end of the buffer."
   ;; smart-helm handles eol for helm buffers
   (unless (and (smart-helm-alive-p) (equal (helm-buffer-get) (buffer-name)))
-    (and (not (eobp)) (eolp) (or (not (smart-outline-char-invisible-p))
-				 (not (smart-outline-char-invisible-p (1- (point))))))))
+    (and (not (smart-eobp)) (eolp)
+	 (or (not (smart-outline-char-invisible-p))
+	     (not (smart-outline-char-invisible-p (1- (point))))))))
 
 ;;; ************************************************************************
 ;;; smart-push-button functions
