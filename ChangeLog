@@ -1,3 +1,7 @@
+2022-06-05  Mats Lidell  <matsl@gnu.org>
+
+* Makefile (eln): Target for native byte compilation.
+
 2022-06-04  Bob Weiner  <rsw@gnu.org>
 
 * test/hpath-tests.el (hpath--should-exist-paths): Fix to handle Hyperbole package installation dirs.
