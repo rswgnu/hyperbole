@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    30-Jan-21 at 12:00:00
-;; Last-Mod:     12-Feb-22 at 13:33:53 by Bob Weiner
+;; Last-Mod:      9-Jun-22 at 21:58:42 by Mats Lidell
 ;;
 ;; Copyright (C) 2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -409,6 +409,124 @@
         (action-key)
         (hy-test-helpers:should-last-message "Factorial of 5 = 120"))
     (kill-buffer "DEMO")))
+
+;; Fast demo key series
+(ert-deftest fast-demo-key-series-help-buffer ()
+  "Action key on C-hA brings up help buffer for action key."
+  (let ((help-buffer "*Help: Hyperbole Action Key*"))
+    (unwind-protect
+        (with-temp-buffer
+          (insert "{C-h A}")
+          (goto-char 3)
+          (action-key)
+          (should (get-buffer help-buffer)))
+      (kill-buffer help-buffer))))
+
+(ert-deftest fast-demo-key-series-window-grid-22 ()
+  "Action key on window grid key series creates a grid."
+  (skip-unless (not noninteractive))
+  (with-temp-buffer
+    (insert "{C-c @ 22 RET}")
+    (goto-char 3)
+    (action-key)
+    (hy-test-helpers:consume-input-events)
+    (should (= 4 (length (window-list))))))
+
+(ert-deftest fast-demo-key-series-kotl-files ()
+  "Action key brings up kotl files in a grid.
+Note: Depends on ket series in FAST-DEMO and how many files in
+hyberbole folder that starts with kotl."
+  (skip-unless (not noninteractive))
+  (unwind-protect
+      (progn
+        (hypb:display-file-with-logo "FAST-DEMO")
+        (search-forward "{C--1 C-c")
+        (action-key)
+        (hy-test-helpers:consume-input-events)
+        (should (= 4 (length (window-list)))))
+    (kill-buffer "FAST-DEMO")))
+
+(ert-deftest fast-demo-key-series-emacs-lisp-mode ()
+  "Action key brings up `emacs-lisp-mode' files in a grid.
+Note: Relies on that empty windows are created when there are not
+enough files with matching mode loaded."
+  (skip-unless (not noninteractive))
+  (with-temp-buffer
+    (insert "{C-u 0 C-c @ emacs-lisp-mode RET 33 RET}")
+    (goto-char 3)
+    (action-key)
+    (hy-test-helpers:consume-input-events)
+    (should (= 9 (length (window-list))))))
+
+(ert-deftest fast-demo-key-series-hyperbole-dir ()
+  "Action key on hyperb:dir brings up hyperbole folder."
+  (skip-unless (not noninteractive))
+  (with-temp-buffer
+    (insert "{C-x 4 d ${hyperb:dir} RET}")
+    (goto-char 5)
+    (action-key)
+    (hy-test-helpers:consume-input-events)
+    (should (equal 'dired-mode major-mode))
+    (should (equal hyperb:dir (expand-file-name default-directory)))))
+
+(ert-deftest fast-demo-key-series-keep-lines-ext ()
+  "Action key opens Ibuffer and keep lines with extension."
+  (skip-unless (not noninteractive))
+  (let ((buff "*Ibuffer*")
+        (old (global-key-binding (kbd "C-x C-b")))
+        (tmp (make-temp-file "hypb" nil ".hypb-test")))
+    (unwind-protect
+        (with-temp-buffer
+          (global-set-key (kbd "C-x C-b") 'ibuffer)
+          (find-file-noselect tmp)
+          (insert "{C-x C-b C-x C-q M-x keep-lines RET .hypb-test$ RET C-x C-q}")
+          (goto-char 5)
+          (action-key)
+          (hy-test-helpers:consume-input-events)
+          (with-current-buffer buff
+            (should (looking-at-p (concat ".*" tmp)))))
+      (kill-buffer buff)
+      (global-set-key (kbd "C-x C-b") old)
+      (kill-buffer (get-file-buffer tmp))
+      (delete-file tmp))))
+
+(ert-deftest fast-demo-key-series-keep-lines-slash ()
+  "Action key opens Ibuffer and keep lines that contains a slash."
+  (skip-unless (not noninteractive))
+  (let ((buff "*Ibuffer*")
+        (old (global-key-binding (kbd "C-x C-b")))
+        (dir (dired hyperb:dir)))
+    (unwind-protect
+        (with-temp-buffer
+          (global-set-key (kbd "C-x C-b") 'ibuffer)
+          (insert "{C-x C-b C-x C-q M-x keep-lines RET [\\/]$ RET C-x C-q}")
+          (goto-char 5)
+          (action-key)
+          (hy-test-helpers:consume-input-events)
+          (with-current-buffer buff
+            (should (looking-at-p (concat ".*[\\/]")))))
+      (kill-buffer buff)
+      (global-set-key (kbd "C-x C-b") old)
+      (kill-buffer dir))))
+
+(ert-deftest fast-demo-key-series-keep-lines-dired ()
+  "Action key opens Ibuffer and keep `dired-mode' lines."
+  (skip-unless (not noninteractive))
+  (let ((buff "*Ibuffer*")
+        (old (global-key-binding (kbd "C-x C-b")))
+        (dir (dired hyperb:dir)))
+    (unwind-protect
+        (with-temp-buffer
+          (global-set-key (kbd "C-x C-b") 'ibuffer)
+          (insert "{C-x C-b / RET dired-mode RET}")
+          (goto-char 5)
+          (action-key)
+          (hy-test-helpers:consume-input-events)
+          (with-current-buffer buff
+            (should (looking-at-p (concat ".*Dired by name")))))
+      (kill-buffer buff)
+      (global-set-key (kbd "C-x C-b") old)
+      (kill-buffer dir))))
 
 ;; This file can't be byte-compiled without the `el-mock' package (because of
 ;; the use of the `with-mock' macro), which is not a dependency of Hyperbole.
