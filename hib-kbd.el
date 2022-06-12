@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    22-Nov-91 at 01:37:57
-;; Last-Mod:     15-May-22 at 22:26:22 by Bob Weiner
+;; Last-Mod:     12-Jun-22 at 15:57:09 by Mats Lidell
 ;;
 ;; Copyright (C) 1991-2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -54,7 +54,7 @@
   "Regexp that matches to any of the dedicated keyboard key names in lower or uppercase.")
 
 (defvar kbd-key:modified-key-regexp
-  (concat "\\(\\[?\\([ACHMS]-\\|kp-\\)+\\)\\s-*\\(\\(<?\\<" kbd-key:named-key-regexp "\\>>?"
+  (concat "\\(\\[?\\([ACHMS]-\\|kp-\\)+\\)[ \t\n\r\f]*\\(\\(<?\\<" kbd-key:named-key-regexp "\\>>?"
 	  "\\|<?[fF][0-9][0-9]?>?\\|<[a-zA-Z0-9]+>\\|.\\)\\]?\\)")
   "Regexp matching to a single modified keyboard key within a human-readable string.
 Group 1 matches to the set of modifier keys.  Group 3 matches to the unmodified key.")
@@ -306,7 +306,7 @@ keyboad input queue, as if they had been typed by the user."
 				    "<ESC>\\|<ESCAPE>\\|@key{ESC}\\|\\<ESC\\(APE\\)?\\>" norm-key-series " M-" t)
 		   ;; ESC ESC
 		   norm-key-series (hypb:replace-match-string
-				    "M-\\s-*M-" norm-key-series " ESC M-" t)
+				    "M-[ \t\n\r\f]*M-" norm-key-series " ESC M-" t)
 		   ;; Separate with a space any keys with a modifier
 		   norm-key-series (hypb:replace-match-string kbd-key:modified-key-regexp
 							      norm-key-series " \\1\\3 ")
@@ -483,7 +483,7 @@ Also, initialize `kbd-key:mini-menu-key' to the key sequence that invokes the Hy
 
 (defun kbd-key:mark-spaces-to-keep (string start-delim end-delim)
   "Return STRING with all spaces between any START-DELIM string and END-DELIM string marked for non-replacement."
-  (let ((regexp (format "\\(%s\\S-*\\)\\s-\\(.*%s\\)"
+  (let ((regexp (format "\\(%s[^ \t\n\r\f]*\\)[ \t\n\r\f]\\(.*%s\\)"
 			start-delim end-delim))
 	(start 0)
 	(end)
@@ -493,7 +493,7 @@ Also, initialize `kbd-key:mini-menu-key' to the key sequence that invokes the Hy
 	    end (match-end 0)
 	    substring (match-string 0 string)
 	    string (concat (substring string 0 start)
-			   (hypb:replace-match-string "\\s-" substring "\0\0\0" t)
+			   (hypb:replace-match-string "[ \t\n\r\f]" substring "\0\0\0" t)
 			   (if (< end (length string))
 			       (substring string end)
 			     ""))

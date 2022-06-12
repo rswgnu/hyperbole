@@ -1,9 +1,14 @@
+2022-06-12  Mats Lidell  <matsl@gnu.org>
+
+* hib-kbd.el: Replace \\s- with [ \t\n\r\f] to eliminate mode based
+    differences.
+
 2022-06-09  Mats Lidell  <matsl@gnu.org>
 
 * test/demo-tests.el:
     (fast-demo-key-series-window-grid-22, fast-demo-key-series-kotl-files)
     (fast-demo-key-series-emacs-lisp-mode)
-    (fast-demo-key-series-hyperbole-dir) 
+    (fast-demo-key-series-hyperbole-dir)
     (fast-demo-key-series-keep-lines-ext)
     (fast-demo-key-series-keep-lines-slash)
     (fast-demo-key-series-keep-lines-dired): Add tests for FAST-DEMO key
