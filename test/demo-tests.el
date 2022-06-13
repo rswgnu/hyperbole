@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    30-Jan-21 at 12:00:00
-;; Last-Mod:     13-Jun-22 at 11:55:52 by Mats Lidell
+;; Last-Mod:     14-Jun-22 at 00:26:10 by Mats Lidell
 ;;
 ;; Copyright (C) 2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -531,7 +531,7 @@ enough files with matching mode loaded."
 (ert-deftest fast-demo-key-series-shell-pushd-hyperb-dir ()
   "Action key executes pushd shell command."
   (skip-unless (not noninteractive))
-  (let ((shell-file-name "/bin/bash")
+  (let ((shell-file-name (executable-find "bash"))
         (shell-buffer-name "*shell*"))
     (unwind-protect
         (with-temp-buffer
@@ -540,10 +540,11 @@ enough files with matching mode loaded."
           (action-key)
           (hy-test-helpers:consume-input-events)
           (with-current-buffer shell-buffer-name
-            (sit-for 0.5)
             (goto-char (point-min))
             (end-of-line)
-            (should (search-forward "PWD="))
+            (with-timeout (5 (ert-fail "Test timed out"))
+              (while (not (search-forward "PWD=" nil t))
+                (accept-process-output (get-buffer-process shell-buffer-name))))
             (should (looking-at-p (directory-file-name hyperb:dir)))))
       (set-process-query-on-exit-flag (get-buffer-process shell-buffer-name) nil)
       (kill-buffer shell-buffer-name))))
@@ -551,7 +552,7 @@ enough files with matching mode loaded."
 (ert-deftest fast-demo-key-series-shell-grep ()
   "Action key executes grep shell command."
   (skip-unless (not noninteractive))
-  (let ((shell-file-name "/bin/bash")
+  (let ((shell-file-name (executable-find "bash"))
         (shell-buffer-name "*shell*"))
     (unwind-protect
         (with-temp-buffer
@@ -560,8 +561,9 @@ enough files with matching mode loaded."
           (action-key)
           (hy-test-helpers:consume-input-events)
           (with-current-buffer shell-buffer-name
-            (sit-for 0.5)
-            (goto-char (point-min))
+            (with-timeout (5 (ert-fail "Test timed out"))
+              (while (not (string-match-p "\n.*\.el:[0-9]+:.*defun.*gbut:label-list \(\)" (buffer-substring-no-properties (point-min) (point-max))))
+                (accept-process-output (get-buffer-process shell-buffer-name))))
             (should (string-match-p "\n.*\.el:[0-9]+:.*defun.*gbut:label-list \(\)" (buffer-substring-no-properties (point-min) (point-max))))))
       (set-process-query-on-exit-flag (get-buffer-process shell-buffer-name) nil)
       (kill-buffer shell-buffer-name))))
@@ -569,7 +571,7 @@ enough files with matching mode loaded."
 (ert-deftest fast-demo-key-series-shell-apropos ()
   "Action key executes apropos shell command."
   (skip-unless (not noninteractive))
-  (let ((shell-file-name "/bin/bash")
+  (let ((shell-file-name (executable-find "bash"))
         (shell-buffer-name "*shell*"))
     (unwind-protect
         (with-temp-buffer
@@ -578,8 +580,9 @@ enough files with matching mode loaded."
           (action-key)
           (hy-test-helpers:consume-input-events)
           (with-current-buffer shell-buffer-name
-            (sit-for 0.5)
-            (goto-char (point-min))
+            (with-timeout (5 (ert-fail "Test timed out"))
+              (while (not (string-match-p "\ngrep \(1\).*-" (buffer-substring-no-properties (point-min) (point-max))))
+                (accept-process-output (get-buffer-process shell-buffer-name))))
             (should (string-match-p "\ngrep \(1\).*-" (buffer-substring-no-properties (point-min) (point-max))))))
       (set-process-query-on-exit-flag (get-buffer-process shell-buffer-name) nil)
       (kill-buffer shell-buffer-name))))
