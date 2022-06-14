@@ -1,3 +1,17 @@
+2022-06-14  Mats Lidell  <matsl@gnu.org>
+
+* hload-path.el (hload-path--make-directory-autoloads)
+    (hload-path--internal-make-directory-autoloads): Use defalias for
+    compatibility function.
+    (hyperb:generate-autoloads): Use it.
+
+* hibtypes.el (cl-lib): Require cl-lib to remove package-lint warning.
+
+* hyperbole.el: Remove defalias for compatilility with obsolete functions
+    since Emacs 25.1 and outline-flag-region available since 2003.
+
+* hui-em-but.el (hproperty:good-colors): package-lint code formating.
+
 2022-06-13  Mats Lidell  <matsl@gnu.org>
 
 * test/demo-tests.el (fast-demo-key-series-shell-pushd-hyperb-dir)
