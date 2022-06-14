@@ -1,3 +1,9 @@
+2022-06-13  Mats Lidell  <matsl@gnu.org>
+
+* test/demo-tests.el (fast-demo-key-series-shell-pushd-hyperb-dir)
+    (fast-demo-key-series-shell-grep, fast-demo-key-series-shell-apropos):
+    Tests for shell related key series examples in the fast demo.
+
 2022-06-12  Mats Lidell  <matsl@gnu.org>
 
 * hib-kbd.el: Replace \\s- with [ \t\n\r\f] to eliminate mode based
