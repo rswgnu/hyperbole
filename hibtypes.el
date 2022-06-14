@@ -3,9 +3,9 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 20:45:31
-;; Last-Mod:     12-May-22 at 02:05:28 by Bob Weiner
+;; Last-Mod:     14-Jun-22 at 20:06:40 by Mats Lidell
 ;;
-;; Copyright (C) 1991-2021  Free Software Foundation, Inc.
+;; Copyright (C) 1991-2022 Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
 ;;
 ;; This file is part of GNU Hyperbole.
@@ -35,7 +35,7 @@
 ;;; ************************************************************************
 
 (eval-when-compile (require 'hversion))
-(require 'cl-seq) ;; for cl-count
+(require 'cl-lib) ;; for cl-count
 (require 'subr-x) ;; For string-trim
 (require 'hactypes)
 

@@ -1,11 +1,11 @@
 ;;; hyperbole.el --- GNU Hyperbole: The Everyday Hypertextual Information Manager  -*- lexical-binding: t; -*-
 
-;; Copyright (C) 1992-2021  Free Software Foundation, Inc.
+;; Copyright (C) 1992-2022  Free Software Foundation, Inc.
 
 ;; Author:           Bob Weiner
 ;; Maintainer:       Bob Weiner <rsw@gnu.org>, Mats Lidell <matsl@gnu.org>
 ;; Created:          06-Oct-92 at 11:52:51
-;; Last-Mod:     22-May-22 at 12:48:36 by Bob Weiner
+;; Last-Mod:     14-Jun-22 at 21:32:43 by Mats Lidell
 ;; Released:         01-May-22
 ;; Version:          8.0.1pre
 ;; Keywords:         comm, convenience, files, frames, hypermedia, languages, mail, matching, mouse, multimedia, outlines, tools, wp
@@ -378,25 +378,6 @@ frame, those functions by default still return the prior frame."
 ;;; ************************************************************************
 
 (require 'outline)
-(unless (fboundp 'outline-hide-body)
-  (defalias 'outline-hide-body 'hide-body))
-(unless (fboundp 'outline-hide-entry)
-  (defalias 'outline-hide-entry 'hide-entry))
-(unless (fboundp 'outline-show-entry)
-  (defalias 'outline-show-entry 'show-entry))
-(unless (fboundp 'outline-show-all)
-  (defalias 'outline-show-all 'show-all))
-(unless (fboundp 'outline-hide-subtree)
-  (defalias 'outline-hide-subtree 'hide-subtree))
-(unless (fboundp 'outline-show-subtree)
-  (defalias 'outline-show-subtree 'show-subtree))
-(unless (fboundp 'outline-flag-region)
-  (defun outline-flag-region (from to flag)
-    "Hide or show lines from FROM to TO, according to FLAG.
-If FLAG is nil then text is shown, while if FLAG is t the text is hidden."
-    (if flag
-	(subst-char-in-region from to ?\n ?\r t)
-      (subst-char-in-region from to ?\r ?\n t))))
 (unless (fboundp 'outline-invisible-in-p)
   (defun outline-invisible-in-p (beg end)
     "Return t if there is an invisible character between BEG and END, else nil."

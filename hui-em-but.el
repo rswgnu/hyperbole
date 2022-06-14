@@ -3,9 +3,9 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Aug-92
-;; Last-Mod:     11-May-22 at 00:01:27 by Bob Weiner
+;; Last-Mod:     14-Jun-22 at 21:22:39 by Mats Lidell
 ;;
-;; Copyright (C) 1992-2021  Free Software Foundation, Inc.
+;; Copyright (C) 1992-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
 ;;
 ;; This file is part of GNU Hyperbole.
@@ -218,8 +218,7 @@ highlighted."
 	"medium violet red" "indianred4" "firebrick1" "DarkGoldenrod"
 	"NavyBlue" "darkorchid" "tomato3" "mediumseagreen" "deeppink"
 	"forestgreen" "mistyrose4" "slategrey" "purple4" "dodgerblue3"
-	"mediumvioletred" "lightsalmon3" "orangered2" "turquoise4" "Gray55"
-	)
+	"mediumvioletred" "lightsalmon3" "orangered2" "turquoise4" "Gray55")
     hproperty:color-list)
   "Good colors for contrast against wheat background and black foreground.")
 
