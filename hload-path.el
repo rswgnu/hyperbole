@@ -3,9 +3,9 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    29-Jun-16 at 14:39:33
-;; Last-Mod:      1-Jun-22 at 23:20:50 by Bob Weiner
+;; Last-Mod:     14-Jun-22 at 21:14:45 by Mats Lidell
 ;;
-;; Copyright (C) 1992-2021  Free Software Foundation, Inc.
+;; Copyright (C) 1992-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
 ;;
 ;; This file is part of GNU Hyperbole.
@@ -110,9 +110,13 @@ the symbol list.  For `suspicious', only `set-buffer' can be used."
     `(with-no-warnings ,@body)))
 ;; New autoload generation function defined only in Emacs 28
 
-(unless (fboundp #'make-directory-autoloads)
-  (defun make-directory-autoloads (dir output-file)
-    "Update autoload definitions for Lisp files in the directories DIRS.
+(defalias 'hload-path--make-directory-autoloads
+  (if (fboundp #'make-directory-autoloads)
+      #'make-directory-autoloads
+    #'hload-path--internal-make-directory-autoloads))
+
+(defun hload-path--internal-make-directory-autoloads (dir output-file)
+  "Update autoload definitions for Lisp files in the directories DIRS.
 DIR can be either a single directory or a list of
 directories.  (The latter usage is discouraged.)
 
@@ -122,10 +126,10 @@ its autoloads into the specified file instead.
 
 The function does NOT recursively descend into subdirectories of the
 directory or directories specified."
-    ;; Don't use a 'let' on this next line or it will fail.
-    (setq generated-autoload-file output-file)
-    (hyperb:with-suppressed-warnings ((obsolete update-directory-autoloads))
-      (update-directory-autoloads dir))))
+  ;; Don't use a 'let' on this next line or it will fail.
+  (setq generated-autoload-file output-file)
+  (hyperb:with-suppressed-warnings ((obsolete update-directory-autoloads))
+    (update-directory-autoloads dir)))
 
 ;; Menu items could call this function before Info is loaded.
 (autoload 'Info-goto-node   "info" "Jump to specific Info node."  t)
@@ -154,10 +158,10 @@ This is used only when running from git source and not a package release."
 	 (al-file (expand-file-name "hyperbole-autoloads.el")))
     ;; (make-local-variable 'generated-autoload-file)
     (with-current-buffer (find-file-noselect al-file)
-      (make-directory-autoloads "." al-file))
+      (hload-path--make-directory-autoloads "." al-file))
     (setq al-file (expand-file-name "kotl/kotl-autoloads.el"))
     (with-current-buffer (find-file-noselect al-file)
-      (make-directory-autoloads "." al-file)))
+      (hload-path--make-directory-autoloads "." al-file)))
   (unless (hyperb:autoloads-exist-p)
     (error (format "Hyperbole failed to generate autoload files; try running 'make src' in a shell in %s" hyperb:dir))))
 
