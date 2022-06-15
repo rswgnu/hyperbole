@@ -3,7 +3,7 @@
 # Author:       Bob Weiner
 #
 # Orig-Date:    15-Jun-94 at 03:42:38
-# Last-Mod:      4-Jun-22 at 01:26:17 by Bob Weiner
+# Last-Mod:     16-Jun-22 at 00:46:38 by Mats Lidell
 #
 # Copyright (C) 1994-2022  Free Software Foundation, Inc.
 # See the file HY-COPY for license information.
@@ -415,10 +415,10 @@ ftp: package $(pkg_parent)/hyperbole-$(HYPB_VERSION).tar.gz
 autoloads: hyperbole-autoloads.el kotl/kotl-autoloads.el
 
 hyperbole-autoloads.el: $(EL_COMPILE)
-	$(EMACS_BATCH) --debug --eval "(progn (setq generated-autoload-file (expand-file-name \"hyperbole-autoloads.el\") backup-inhibited t) (let (find-file-hooks) (make-directory-autoloads \".\" generated-autoload-file)))"
+	$(EMACS_BATCH) --debug --eval "(progn (setq generated-autoload-file (expand-file-name \"hyperbole-autoloads.el\") backup-inhibited t) (let (find-file-hooks) (hload-path--make-directory-autoloads \".\" generated-autoload-file)))"
 
 kotl/kotl-autoloads.el: $(EL_KOTL)
-	$(EMACS_BATCH) --debug --eval "(progn (setq generated-autoload-file (expand-file-name \"kotl/kotl-autoloads.el\") backup-inhibited t) (let (find-file-hooks) (make-directory-autoloads \"kotl/\" generated-autoload-file)))"
+	$(EMACS_BATCH) --debug --eval "(progn (setq generated-autoload-file (expand-file-name \"kotl/kotl-autoloads.el\") backup-inhibited t) (let (find-file-hooks) (hload-path--make-directory-autoloads \"kotl/\" generated-autoload-file)))"
 
 # Used for ftp.gnu.org tarball distributions.
 $(pkg_parent)/hyperbole-$(HYPB_VERSION).tar.gz:
