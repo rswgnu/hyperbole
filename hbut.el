@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    18-Sep-91 at 02:57:09
-;; Last-Mod:      7-Jan-23 at 23:38:44 by Mats Lidell
+;; Last-Mod:      7-Jan-23 at 23:50:59 by Mats Lidell
 ;;
 ;; Copyright (C) 1991-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -327,10 +327,8 @@ move to the first occurrence of the button."
   "Operate on and modify properties of an explicit button given by CURR-LABEL.
 When NEW-LABEL is non-nil, this is substituted for CURR-LABEL and the
 associated button is modified.  Otherwise, a new button is created.
-
 If CURR-LABEL is nil, the text in the active region is used as the
 button label, if any, otherwise, an error is signaled.
-
 Return instance string appended to label to form a per-buffer unique
 label; nil if label is already unique.  Signal an error when no such
 button is found in the current buffer."
@@ -366,68 +364,67 @@ button is found in the current buffer."
 		    (at-but)
 		    ((hypb:error "(ebut:operate): No button matching: %s" curr-label)))))
 
-	    ;; Add a new button recording its start and end positions
-	    (let (start end mark prev-point buf-lbl)
-	      (cond ((not curr-label)
-		     (setq start (point))
-		     (insert new-label)
-		     (setq end (point)))
-		    ((and (hmouse-use-region-p)
-			  (if hbut--inhibit-something
-			      '(hui:ebut-create hui:ebut-edit hui:ebut-edit-region hui:gbut-create
-                       				hui:gbut-edit hui:link-create ebut:program))
-			      ;; Ignore action-key-depress-prev-point
-			      (progn (setq mark (marker-position (mark-marker))
-					   start (region-beginning)
-					   end (region-end)
-					 buf-lbl (buffer-substring-no-properties start end))
-				     (equal buf-lbl curr-label))
-			    ;; Utilize any action-key-depress-prev-point
-			    (progn (setq mark (marker-position (mark-marker)))
-				   (setq prev-point (and action-key-depress-prev-point
-							 (marker-position action-key-depress-prev-point)))
-				   (setq start (if (and prev-point mark (<= prev-point mark))
-						 prev-point
-					       (region-beginning))
-				       end (if (and prev-point mark (> prev-point mark))
-					       prev-point
-					     (region-end))
-				       buf-lbl (buffer-substring-no-properties start end))
-				 (equal buf-lbl curr-label))))
-		   nil)
-		  ((progn (when start (goto-char start))
-			  (looking-at (regexp-quote curr-label)))
-		   (setq start (point)
-			 end (match-end 0)))
-		  (t (setq start (point))
-		     (insert curr-label)
-		     (setq end (point))))
-	    (ebut:delimit start end instance-flag)
-	    (goto-char start))
+	  (instance-flag
+	   ;; Add a new button recording its start and end positions
+	   (let (start end mark prev-point buf-lbl)
+	     (cond ((not curr-label)
+		    (setq start (point))
+		    (insert new-label)
+		    (setq end (point)))
+		   ((and (hmouse-use-region-p)
+			 (if hbut--inhibit-something
+			     ;; Ignore action-key-depress-prev-point
+			     (progn (setq mark (marker-position (mark-marker))
+					  start (region-beginning)
+					  end (region-end)
+					  buf-lbl (buffer-substring-no-properties start end))
+				    (equal buf-lbl curr-label))
+			   ;; Utilize any action-key-depress-prev-point
+			   (setq mark (marker-position (mark-marker)))
+			   (setq prev-point (and action-key-depress-prev-point
+						 (marker-position action-key-depress-prev-point)))
+			   (setq start (if (and prev-point mark (<= prev-point mark))
+					   prev-point
+					 (region-beginning))
+				 end (if (and prev-point mark (> prev-point mark))
+					 prev-point
+				       (region-end))
+				 buf-lbl (buffer-substring-no-properties start end))
+			   (equal buf-lbl curr-label)))
+		    nil)
+		   ((progn (when start (goto-char start))
+			   (looking-at (regexp-quote curr-label)))
+		    (setq start (point)
+			  end (match-end 0)))
+		   (t (setq start (point))
+		      (insert curr-label)
+		      (setq end (point))))
+	     (ebut:delimit start end instance-flag)
+	     (goto-char start)))
 
-	  ;; Append any instance-flag string to the button label
-	  (when (stringp instance-flag)
-	    (setq new-label (concat new-label instance-flag))
-	    (hattr:set 'hbut:current 'lbl-key (ebut:label-to-key new-label)))
+	  (t (hypb:error
+	      "(ebut:operate): Operation failed.  Check button attribute permissions: %s"
+	      hattr:filename)))
 
-	  ;; Position point
-	  (let ((new-key (ebut:label-to-key new-label)))
-	    (cond ((equal (ebut:label-p) new-key)
-		   ;; In case right before the start of the desired
-		   ;; button's delimiters.
-		   (forward-char 2) (search-backward ebut:start nil t)
-		   (goto-char (match-end 0)))
-		  ((let ((regexp (ebut:label-regexp new-key)))
-		     (or (re-search-forward  regexp nil t)
-			 (re-search-backward regexp nil t)))
-		   (goto-char (+ (match-beginning 0) (length ebut:start))))))
+    ;; Append any instance-flag string to the button label
+    (when (stringp instance-flag)
+      (setq new-label (concat new-label instance-flag))
+      (hattr:set 'hbut:current 'lbl-key (ebut:label-to-key new-label)))
 
-	  ;; instance-flag might be 't which we don't want to return.
-	  (when (stringp instance-flag) instance-flag))
+    ;; Position point
+    (let ((new-key (ebut:label-to-key new-label)))
+      (cond ((equal (ebut:label-p) new-key)
+	     ;; In case right before the start of the desired
+	     ;; button's delimiters.
+	     (forward-char 2) (search-backward ebut:start nil t)
+	     (goto-char (match-end 0)))
+	    ((let ((regexp (ebut:label-regexp new-key)))
+	       (or (re-search-forward  regexp nil t)
+		   (re-search-backward regexp nil t)))
+	     (goto-char (+ (match-beginning 0) (length ebut:start))))))
 
-      (hypb:error
-       "(ebut:operate): Operation failed.  Check button attribute permissions: %s"
-       hattr:filename))
+    ;; instance-flag might be 't which we don't want to return.
+    (when (stringp instance-flag) instance-flag)))
 
 (defun    ebut:program (label actype &rest args)
   "Programmatically create an explicit Hyperbole button at point.
