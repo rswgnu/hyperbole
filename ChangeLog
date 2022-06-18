@@ -2,7 +2,6 @@
 
 * Part of patch from Stefan. Thanks Stefan.
   hbut.el (hbut--inhibit-something): Add variable.
-  Use #' shorthand
   Other refactoring
   hgnus.el (news-setup-hook): Use add-hook.
 
