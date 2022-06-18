@@ -1,4 +1,4 @@
-2021-09-14  Mats Lidell  <matsl@gnu.org>
+2022-06-18  Mats Lidell  <matsl@gnu.org>
 
 * hact.el (hact): Use defun. Patch from Stefan Monnier. Thanks Stefan.
 
