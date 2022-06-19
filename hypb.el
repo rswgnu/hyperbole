@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     6-Oct-91 at 03:42:38
-;; Last-Mod:      5-Jun-22 at 17:59:19 by Bob Weiner
+;; Last-Mod:     19-Jun-22 at 14:50:52 by Bob Weiner
 ;;
 ;; Copyright (C) 1991-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -357,12 +357,11 @@ Return either the modified string or the original ARG when not modified."
     arg))
 
 (defun hypb:function-copy (func-symbol)
-  "Copy FUNC-SYMBOL's body for overloading.  Return a copy of the body."
+  "Copy FUNC-SYMBOL's body for overloading.  Return a copy of the body or the original if a subr/primitive."
   (if (fboundp func-symbol)
       (let ((func (hypb:indirect-function func-symbol)))
 	(cond ((listp func) (copy-sequence func))
-	      ((subrp func) (error "(hypb:function-copy): `%s' is a primitive; can't copy body"
-				   func-symbol))
+	      ((subrp func) func)
 	      ((and (hypb:emacs-byte-code-p func) (fboundp 'make-byte-code))
 	       (let ((new-code (append func nil))) ; turn it into a list
 		 (apply 'make-byte-code new-code)))
@@ -375,8 +374,8 @@ Return either the modified string or the original ARG when not modified."
   (let ((old-func-sym (intern
 			(concat "hypb--old-"
 				(symbol-name func-sym)))))
-    (or (fboundp old-func-sym)
-	(defalias old-func-sym (hypb:function-copy func-sym)))
+    (unless (fboundp old-func-sym)
+      (defalias old-func-sym (hypb:function-copy func-sym)))
     (let* ((old-func (hypb:indirect-function old-func-sym))
 	   (old-param-list (action:params old-func))
 	   (param-list (action:param-list old-func))

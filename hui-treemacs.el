@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Nov-17
-;; Last-Mod:     24-Jan-22 at 00:18:48 by Bob Weiner
+;; Last-Mod:     19-Jun-22 at 13:58:47 by Bob Weiner
 ;;
 ;; Copyright (C) 2017-2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -11,18 +11,25 @@
 ;; This file is part of GNU Hyperbole.
 
 ;;; Commentary:
+;; Ignore loading of this file unless the Treemacs package v2 or
+;; greater has been installed.
 
 ;;; Code:
 ;;; ************************************************************************
 ;;; Other required Elisp libraries
 ;;; ************************************************************************
 
-(eval-and-compile (require 'treemacs nil t))
+(when (or (require 'treemacs nil t)
+	  (and (require 'package)
+	       (package-installed-p 'treemacs)
+	       (package-activate 'treemacs)))
+
+(require 'treemacs)
 
 (defvar treemacs-version)
 
-(unless (and (featurep 'treemacs) (string-greaterp treemacs-version "v2"))
-  (error "(hui-treemacs): Hyperbole requires Treemacs package version 2.0 or greater"))
+(unless (string-greaterp treemacs-version "v2")
+  (error "(hui-treemacs): Hyperbole requires Treemacs package version 2.0 or greater, not %s" treemacs-version))
 
 ;;; ************************************************************************
 ;;; Public declarations
@@ -92,7 +99,7 @@ If key is pressed:
 
 ;;;###autoload
 (defun smart-treemacs-modeline ()
-  "Toggle display of Treemacs file viewer based on Smart Action Key click on a modeline.
+  "Toggle display of Treemacs from Smart Action Key click on a modeline.
 
 When pressed on the Treemacs buffer modeline or Treemacs is displaying
 the default directory of the buffer modeline clicked upon, then
@@ -122,3 +129,4 @@ Suitable for use as a value of `action-key-modeline-buffer-id-function'."
 
 (provide 'hui-treemacs)
 ;;; hui-treemacs.el ends here
+)

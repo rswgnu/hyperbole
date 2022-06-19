@@ -580,10 +580,13 @@ enough files with matching mode loaded."
           (action-key)
           (hy-test-helpers:consume-input-events)
           (with-current-buffer shell-buffer-name
-            (with-timeout (5 (ert-fail "Test timed out"))
-              (while (not (string-match-p "\ngrep \(1\).*-" (buffer-substring-no-properties (point-min) (point-max))))
-                (accept-process-output (get-buffer-process shell-buffer-name))))
-            (should (string-match-p "\ngrep \(1\).*-" (buffer-substring-no-properties (point-min) (point-max))))))
+	    (let ((buf-len (point-max)))
+	      (sleep-for 0.1)
+	      (while (/= buf-len (point-max))
+		(setq buf-len (point-max))
+		(accept-process-output)
+		(sleep-for 0.1)))
+            (should (string-match-p "\ngrep\(1\).*-" (buffer-substring-no-properties (point-min) (point-max))))))
       (set-process-query-on-exit-flag (get-buffer-process shell-buffer-name) nil)
       (kill-buffer shell-buffer-name))))
 

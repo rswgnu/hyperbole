@@ -3,7 +3,7 @@
 # Author:       Bob Weiner
 #
 # Orig-Date:    15-Jun-94 at 03:42:38
-# Last-Mod:     19-Jun-22 at 10:55:03 by Bob Weiner
+# Last-Mod:     19-Jun-22 at 15:47:27 by Bob Weiner
 #
 # Copyright (C) 1994-2022  Free Software Foundation, Inc.
 # See the file HY-COPY for license information.
@@ -58,6 +58,8 @@
 #                    make src     - setup to run directly from .el files
 #                  or
 #                    make bin     - setup to build and run from .elc files
+#                  or
+#                    make eln     - setup to build and run from .eln natively compiled files
 #
 #               The Hyperbole Manual is included in the package in four forms:
 #                  "man/hyperbole.info"   - GNU browsable version
@@ -86,7 +88,8 @@
 HYPB_VERSION = 8.0.1pre
 
 # Emacs executable used to byte-compile .el files into .elc's.
-# Possibilities include: emacs, infodock, etc.
+# To override which executable is used from the commandline, do something like this:
+#  make EMACS=/Applications/Emacs28-nativecomp.app/Contents/MacOS/Emacs bin
 EMACS = \emacs
 
 # Site-specific Emacs Lisp libraries to load before byte-compiling any files
@@ -162,7 +165,9 @@ HYPB_WEB_REPO_LOCATION = "../hyweb/hyperbole/"
 PRELOADS = $(SITE_PRELOADS) -l ./hload-path.el -l ./hversion.el -l ./hyperbole.el 
 
 # Compile in batch mode.  Load site-lisp/site-start.el, which may set load-path.
-BATCHFLAGS = -batch -Q --eval "(setq debug-on-error t)"
+# Show complete expression; do not abbreviate any exprs in batch logs with ...
+BATCHFLAGS = -batch -Q --eval "(progn (setq debug-on-error t) (setq backtrace-line-length 0) \
+                                 (message \"  emacs-version = %s\n  system-configuration = %s\n  emacs = %s%s\" emacs-version system-configuration invocation-directory invocation-name))"
 
 EMACS_BATCH=$(EMACS) $(BATCHFLAGS) $(PRELOADS)
 
@@ -303,14 +308,20 @@ bin: src
 	$(RM) *.elc kotl/*.elc
 	$(EMACS_BATCH) --eval="(setq-default byte-compile-warnings '(not docstrings))" \
 		-f batch-byte-compile $(EL_KOTL) $(EL_COMPILE)
+
+# Create -l "file.el" load-file command-line args for each Hyperbole .el file for use in
+# eln native compile target below.
+LOAD_EL = $(shell echo "$(EL_KOTL) $(EL_COMPILE)" | sed - -e 's+ +" -l "./+g' -e 's+^+-l "+')"
+
+load-hyperbole:
+	$(EMACS_BATCH) \
+          $(LOAD_EL)
+
 eln: src
 	$(EMACS_BATCH) \
-	  --eval="(progn \
-	            (setq-default byte-compile-warnings '(not docstrings)) \
-	            (load \"hyperbole-autoloads\") \
-                    (load \"kotl/kotl-autoloads\") \
-		    (mapc #'load-file '($(EL_COMPILE) $(EL_KOTL)))" \
-		-f batch-native-compile $(EL_KOTL) $(EL_COMPILE)
+          $(LOAD_EL) \
+	  --eval="(setq-default byte-compile-warnings '(not docstrings))" \
+	  -f batch-native-compile $(EL_KOTL) $(EL_COMPILE)
 
 # Byte compile files but apply a filter for either including or
 # removing warnings.  See variable {C-hv byte-compile-warnings RET} for

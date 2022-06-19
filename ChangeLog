@@ -1,3 +1,20 @@
+2022-06-19  Bob Weiner  <rsw@gnu.org>
+
+* hui-treemacs.el: Change to load and compile only when the treemacs package is
+    installed (rather than triggering an error if this is loaded when treemacs
+    is missing, since this can happen when building/compiling Hyperbole).
+
+* Makefile (BATCHFLAGS): Output emacs version, sys and path information.
+           (LOAD_EL): Add to gen cmd line args to load all Hyperbole .el files.
+           (load-hyperbole): Add to allow testing of loading all of Hyperbole.
+           (eln): Use LOAD_EL and remove autoloads loading prior to native compiling.
+
+* test/demo-tests.el (fast-demo-key-series-shell-apropos): Fix to handle shell startup delay.
+
+* hypb.el (hypb:function-copy): Since many functions may become primitives
+    when using the native compiler, return the primitive function in such
+    cases rather than triggering an error.
+
 2022-06-19  Mats Lidell  <matsl@gnu.org>
 
 * hui-select.el: Remove mention of Emacs versions in comment.
