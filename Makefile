@@ -3,7 +3,7 @@
 # Author:       Bob Weiner
 #
 # Orig-Date:    15-Jun-94 at 03:42:38
-# Last-Mod:     16-Jun-22 at 00:46:38 by Mats Lidell
+# Last-Mod:     19-Jun-22 at 10:55:03 by Bob Weiner
 #
 # Copyright (C) 1994-2022  Free Software Foundation, Inc.
 # See the file HY-COPY for license information.
@@ -303,12 +303,13 @@ bin: src
 	$(RM) *.elc kotl/*.elc
 	$(EMACS_BATCH) --eval="(setq-default byte-compile-warnings '(not docstrings))" \
 		-f batch-byte-compile $(EL_KOTL) $(EL_COMPILE)
-eln: src bin
+eln: src
 	$(EMACS_BATCH) \
 	  --eval="(progn \
 	            (setq-default byte-compile-warnings '(not docstrings)) \
 	            (load \"hyperbole-autoloads\") \
-                    (load \"kotl/kotl-autoloads\"))" \
+                    (load \"kotl/kotl-autoloads\") \
+		    (mapc #'load-file '($(EL_COMPILE) $(EL_KOTL)))" \
 		-f batch-native-compile $(EL_KOTL) $(EL_COMPILE)
 
 # Byte compile files but apply a filter for either including or
