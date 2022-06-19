@@ -1,8 +1,4 @@
-2022-06-18  Mats Lidell  <matsl@gnu.org>
-
-* hact.el (hact): Use defun. Patch from Stefan Monnier. Thanks Stefan.
-
-2022-04-18  Mats Lidell  <matsl@gnu.org>
+2022-06-19  Mats Lidell  <matsl@gnu.org>
 
 * hui-select.el: Remove mention of Emacs versions in comment.
 
@@ -39,6 +35,10 @@
 
 * hui-window.el (hmouse-modeline-event-p): Remove XEmacs and old Emacs
     compatibility code.
+
+2022-06-18  Mats Lidell  <matsl@gnu.org>
+
+* hact.el (hact): Use defun. Patch from Stefan Monnier. Thanks Stefan.
 
 2022-06-16  Mats Lidell  <matsl@gnu.org>
 
