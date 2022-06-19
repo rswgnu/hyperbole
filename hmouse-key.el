@@ -3,9 +3,9 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    30-May-94 at 00:11:57
-;; Last-Mod:     24-Jan-22 at 00:18:46 by Bob Weiner
+;; Last-Mod:     17-Apr-22 at 22:10:08 by Mats Lidell
 ;;
-;; Copyright (C) 1994-2021  Free Software Foundation, Inc.
+;; Copyright (C) 1994-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
 ;;
 ;; This file is part of GNU Hyperbole.
@@ -58,7 +58,7 @@ bindings after Smart Key setup."
     ;; Do nothing when running in batch mode.
     (noninteractive)
     ;;
-    ;; GNU Emacs, XEmacs or InfoDock
+    ;; GNU Emacs or InfoDock
     (t
      (mapcar
        (lambda (key-and-binding)

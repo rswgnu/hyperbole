@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    04-Feb-90
-;; Last-Mod:     22-May-22 at 09:59:49 by Bob Weiner
+;; Last-Mod:     18-Jun-22 at 21:55:43 by Mats Lidell
 ;;
 ;; Copyright (C) 1989-2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -1388,12 +1388,8 @@ compute the actual release location and include that."
 
 (defun hmouse-use-region-p ()
   "Return t if there is a non-empty, highlighted region, else nil."
-  ;; Newer GNU Emacs
-  (if (fboundp 'use-region-p)
-      (let ((use-empty-active-region))
-	(use-region-p))
-    ;; Older GNU Emacs
-    (and transient-mark-mode mark-active)))
+  (let ((use-empty-active-region))
+    (use-region-p)))
 
 (defun hmouse-save-region ()
   "Save to `hkey-region' and return any active region within the current buffer.

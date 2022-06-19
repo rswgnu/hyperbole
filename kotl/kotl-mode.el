@@ -3,9 +3,9 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    6/30/93
-;; Last-Mod:      5-Jun-22 at 17:59:19 by Bob Weiner
+;; Last-Mod:     18-Jun-22 at 21:56:13 by Mats Lidell
 ;;
-;; Copyright (C) 1993-2021  Free Software Foundation, Inc.
+;; Copyright (C) 1993-2022  Free Software Foundation, Inc.
 ;; See the "../HY-COPY" file for license information.
 ;;
 ;; This file is part of GNU Hyperbole.
@@ -620,9 +620,6 @@ Ignore any non-nil no-fill attribute attached to the cell."
       (set-marker opoint nil)
       (set-marker start nil)
       (set-marker end nil))))
-
-;; XEmacs binds this to {M-q}.
-(defalias 'kotl-mode:fill-paragraph-or-region 'kotl-mode:fill-paragraph)
 
 (defun kotl-mode:fill-tree (&optional top-p)
   "Refill each cell within the tree whose root is at point.
@@ -3549,12 +3546,8 @@ Leave point at end of line now residing at START."
   (define-key kotl-mode-map "\C-c\C-h"  'kotl-mode:hide-tree)
   ;; Since the next key binds M-BS, it may already have a local binding,
   ;; in which case we don't want to bind it here.
-  (if (string-match "XEmacs" emacs-version)
-      (unless (lookup-key kotl-mode-map '[(meta backspace)])
-	(define-key kotl-mode-map '[(meta backspace)] 'kotl-mode:hide-subtree))
-    ;; Do this under GNU Emacs only or will overwrite M-BS binding above.
-    (unless (lookup-key kotl-mode-map "\M-\C-h")
-      (define-key kotl-mode-map "\M-\C-h"   'kotl-mode:hide-subtree)))
+  (unless (lookup-key kotl-mode-map "\M-\C-h")
+    (define-key kotl-mode-map "\M-\C-h"   'kotl-mode:hide-subtree))
   ;; Override this global binding for set-selective-display with a similar
   ;; function appropriate for kotl-mode.
   (define-key kotl-mode-map "\C-x$"     'kotl-mode:hide-sublevels)

@@ -3,9 +3,9 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    15-Apr-91 at 00:48:49
-;; Last-Mod:     24-Apr-22 at 13:14:18 by Bob Weiner
+;; Last-Mod:     18-Jun-22 at 21:56:43 by Mats Lidell
 ;;
-;; Copyright (C) 1991-2021  Free Software Foundation, Inc.
+;; Copyright (C) 1991-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
 ;;
 ;; This file is part of GNU Hyperbole.
@@ -259,7 +259,7 @@ then runs the search."
   :group 'hyperbole-commands)
 
 ;;; ************************************************************************
-;;; GNU EMACS AND XEMACS CONFIGURATION
+;;; GNU EMACS CONFIGURATION
 ;;; ************************************************************************
 
 ;; No-op unless set by one of the conditionals below.

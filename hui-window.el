@@ -3,9 +3,9 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Sep-92
-;; Last-Mod:      5-Jun-22 at 17:59:19 by Bob Weiner
+;; Last-Mod:     18-Jun-22 at 21:53:08 by Mats Lidell
 ;;
-;; Copyright (C) 1992-2021  Free Software Foundation, Inc.
+;; Copyright (C) 1992-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
 ;;
 ;; This file is part of GNU Hyperbole.
@@ -988,7 +988,7 @@ window, its frame may have been moved by a bottommost modeline drag."
        (not (or (hmouse-drag-horizontally) (hmouse-drag-vertically) (hmouse-drag-diagonally)))))
 
 (defun hmouse-emacs-modeline-event-p (event)
-  "GNU Emacs: Return non-nil if EVENT happened on a window mode line."
+  "Return non-nil if EVENT happened on a window mode line."
   (or (and (eventp event) (eq (posn-area (event-start event)) 'mode-line))
       ;; If drag release was to an unselected frame mode-line, on
       ;; click-to-focus systems, the release event will not include
@@ -1006,22 +1006,7 @@ window, its frame may have been moved by a bottommost modeline drag."
     (when (and (hyperb:window-system) event
 	       (not (posnp event))
 	       (not (markerp event)))
-      (cond
-       ;; Modern GNU Emacs
-       ((fboundp 'posn-area)
-	(hmouse-emacs-modeline-event-p event))
-       ;; XEmacs
-       ((fboundp 'event-over-modeline-p)
-	(event-over-modeline-p event))
-       ;; Early Emacs
-       (t
-	(let* ((w (smart-window-of-coords event))
-	       (mode-ln (if w (nth 3 (window-edges w))))
-	       (last-press-y (hmouse-y-coord event)))
-	  ;; Mode-line is always 1 less than the bottom of the window, unless it
-	  ;; is a minibuffer window which does not have a modeline.
-	  (if (not (eq w (minibuffer-window))) (setq mode-ln (1- mode-ln)))
-	  (and last-press-y mode-ln (= last-press-y mode-ln)))))))
+      (hmouse-emacs-modeline-event-p event)))
 
 (defun hmouse-modeline-depress ()
   "Return non-nil if Action Key was depressed on a window mode line.

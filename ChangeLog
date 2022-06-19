@@ -1,3 +1,41 @@
+2022-06-19  Mats Lidell  <matsl@gnu.org>
+
+* hui-select.el: Remove mention of Emacs versions in comment.
+
+* hmoccur.el (moccur): Remove XEmacs and InfoDock font-lock code.
+
+* hui-mouse.el: Remove mention of Emacs versions and NEXTSTEP.
+
+* hsettings.el: Remove XEmacs from comment.
+
+* kotl/kotl-mode.el (kotl-mode:fill-paragraph-or-region):
+    (kotl-mode-map): Remove XEmacs compatibility code.
+
+* hmouse-drv.el (hmouse-use-region-p): Remove XEmacs and InfoDock
+    compatibility code.
+
+* kotl/kmenu.el (id-menubar-set): Remove declared unused function.
+    (id-menubar-kotl): Remove unsued InfoDock menu.
+    (kotl-menubar-menu): Remove XEmacs compatibility code.
+    (kotl-mode-hook): Set hook unconditionally.
+
+* hyrolo-menu.el (id-menubar-hyrolo): Remove InfoDock menu.
+    (id-menubar-set, mode-popup-menu): Remove unused public declarations.
+    (hyrolo-menubar-menu): Remove XEmacs compatibility code.
+    (hyrolo-mode-hook): Set hook unconditionally.
+
+* hmouse-tag.el (smart-emacs-tags-file): Remove XEmacs, Infodock from doc.
+    (smart-tags-find-p, smart-tags-display, smart-tags-file-list):
+    Remove XEmacs and Infodock compatibility code.
+
+* hmouse-mod.el (hmouse-mod-last-char): Remove XEmacs compatibility code.
+
+* hyrolo.el (hyrolo-prompt):
+    (hyrolo-rename): Remove XEmacs dialog box and parameter.
+
+* hui-window.el (hmouse-modeline-event-p): Remove XEmacs and old Emacs
+    compatibility code.
+
 2022-06-18  Mats Lidell  <matsl@gnu.org>
 
 * hact.el (hact): Use defun. Patch from Stefan Monnier. Thanks Stefan.

@@ -3,9 +3,9 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    28-Oct-94 at 10:59:44
-;; Last-Mod:     24-Jan-22 at 00:23:35 by Bob Weiner
+;; Last-Mod:     18-Apr-22 at 00:29:31 by Mats Lidell
 ;;
-;; Copyright (C) 1994-2021  Free Software Foundation, Inc.
+;; Copyright (C) 1994-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
 ;;
 ;; This file is part of GNU Hyperbole.
@@ -67,25 +67,6 @@
      ["Show-Only-First-Line"   outline-hide-body                t]))
   "The middle menu entries common to all HyRolo menus.")
 
-;;; This definition is used by InfoDock only.
-(defconst id-menubar-hyrolo
-  (append
-   '(("Rolo"
-      ["Help"                describe-mode                  t]
-      ["Manual"              (id-info "(hyperbole)Rolo Keys") t]
-      "----"
-      ["Toggle-Read-Only"    read-only-mode                 t]
-      ["Write (Save as)"     write-file                     t]
-      "----"
-      ["Quit"                (id-tool-quit '(kill-buffer nil))  t]))
-   '(["Edit-Entry-at-Point"  hyrolo-edit-entry         t]
-     ["Mail-to-Address"      (id-tool-invoke 'hyrolo-mail-to) t])
-   `,@hyrolo-menu-common-body
-   '(["Next-Match"          hyrolo-next-match         t]
-     ["Previous-Match"      hyrolo-previous-match     t])
-   (list infodock-hyrolo-menu)))
-
-;;; This definition is used by InfoDock and XEmacs.
 (defconst id-popup-hyrolo-menu
   (append
    '("Rolo"
@@ -104,44 +85,25 @@
      ["Quit"                (id-tool-quit '(hyrolo-quit)) t])))
 
 ;;; ************************************************************************
-;;; Public declarations
-;;; ************************************************************************
-
-(declare-function id-menubar-set "ext:infodock")
-
-(defvar mode-popup-menu)
-
-;;; ************************************************************************
 ;;; Public functions
 ;;; ************************************************************************
 
-;;; This definition is used only by Emacs.
 (defun hyrolo-menubar-menu ()
   "Add a HyRolo menu to the rolo match buffer menubar."
-  (cond ((fboundp 'popup-mode-menu)
-	 (setq mode-popup-menu id-popup-hyrolo-menu))
-	(t
-	 (define-key hyrolo-mode-map [C-down-mouse-3] 'hyrolo-popup-menu)
-	 (define-key hyrolo-mode-map [C-mouse-3] nil)))
+  (define-key hyrolo-mode-map [C-down-mouse-3] 'hyrolo-popup-menu)
+  (define-key hyrolo-mode-map [C-mouse-3] nil)
   (unless (global-key-binding [menu-bar Rolo])
     (easy-menu-define nil hyrolo-mode-map "Rolo Menubar Menu" id-popup-hyrolo-menu)
     ;; Force a menu-bar update.
     (force-mode-line-update)))
 
-;;; This definition is used only by XEmacs and Emacs.
 (defun hyrolo-popup-menu (event)
   "Popup the Hyperbole Rolo match buffer menu."
   (interactive "@e")
   (mouse-set-point event)
   (popup-menu id-popup-hyrolo-menu))
 
-(cond ((featurep 'infodock)
-       ;; InfoDock under a window system
-       (require 'id-menubars)
-       (id-menubar-set 'hyrolo-mode 'id-menubar-hyrolo))
-      (t
-       ;; Emacs or XEmacs under a window system
-       (add-hook 'hyrolo-mode-hook #'hyrolo-menubar-menu)))
+(add-hook 'hyrolo-mode-hook #'hyrolo-menubar-menu)
 
 (provide 'hyrolo-menu)
 

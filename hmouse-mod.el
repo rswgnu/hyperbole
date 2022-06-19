@@ -3,9 +3,9 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     8-Oct-92 at 19:08:31
-;; Last-Mod:     17-Apr-22 at 13:09:12 by Bob Weiner
+;; Last-Mod:     17-Apr-22 at 22:38:13 by Mats Lidell
 ;;
-;; Copyright (C) 1992-2021  Free Software Foundation, Inc.
+;; Copyright (C) 1992-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
 ;;
 ;; This file is part of GNU Hyperbole.
@@ -202,10 +202,8 @@ Second argument COUNT is used as a prefix argument to the command."
   (keyboard-quit))
 
 (defun hmouse-mod-last-char ()
-  (cond	((boundp 'last-command-char) ;; XEmacs
-	 (and (>= 0 last-command-char) (< last-command-char 128) last-command-char))
-	((characterp last-command-event) ;; GNU Emacs
-	 last-command-event)))
+  (when (characterp last-command-event)
+    last-command-event))
 
 (provide 'hmouse-mod)
 
