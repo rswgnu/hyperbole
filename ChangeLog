@@ -1,5 +1,8 @@
 2022-06-19  Bob Weiner  <rsw@gnu.org>
 
+* test/demo-tests.el (fast-demo-key-series-shell-apropos): Allow optional space
+    before matching section number.
+
 * hui-treemacs.el: Change to load and compile only when the treemacs package is
     installed (rather than triggering an error if this is loaded when treemacs
     is missing, since this can happen when building/compiling Hyperbole).

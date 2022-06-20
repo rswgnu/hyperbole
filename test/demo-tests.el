@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    30-Jan-21 at 12:00:00
-;; Last-Mod:     14-Jun-22 at 00:26:10 by Mats Lidell
+;; Last-Mod:     19-Jun-22 at 20:25:19 by Bob Weiner
 ;;
 ;; Copyright (C) 2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -586,7 +586,7 @@ enough files with matching mode loaded."
 		(setq buf-len (point-max))
 		(accept-process-output)
 		(sleep-for 0.1)))
-            (should (string-match-p "\ngrep\(1\).*-" (buffer-substring-no-properties (point-min) (point-max))))))
+            (should (string-match-p "\ngrep ?\(1\).*-" (buffer-substring-no-properties (point-min) (point-max))))))
       (set-process-query-on-exit-flag (get-buffer-process shell-buffer-name) nil)
       (kill-buffer shell-buffer-name))))
 
