@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    30-Jan-21 at 12:00:00
-;; Last-Mod:     16-Jul-22 at 22:39:30 by Mats Lidell
+;; Last-Mod:     16-Jul-22 at 22:39:47 by Mats Lidell
 ;;
 ;; Copyright (C) 2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -581,9 +581,9 @@ enough files with matching mode loaded."
           (hy-test-helpers:consume-input-events)
           (with-current-buffer shell-buffer-name
             (with-timeout (5 (ert-fail "Test timed out"))
-              (while (not (string-match-p "\ngrep[ ]*\(1\).*-" (buffer-substring-no-properties (point-min) (point-max))))
+              (while (not (string-match-p "\ngrep ?\(1\).*-" (buffer-substring-no-properties (point-min) (point-max))))
                 (accept-process-output (get-buffer-process shell-buffer-name))))
-            (should (string-match-p "\ngrep[ ]*\(1\).*-" (buffer-substring-no-properties (point-min) (point-max))))))
+            (should (string-match-p "\ngrep ?\(1\).*-" (buffer-substring-no-properties (point-min) (point-max))))))
       (set-process-query-on-exit-flag (get-buffer-process shell-buffer-name) nil)
       (kill-buffer shell-buffer-name))))
 
