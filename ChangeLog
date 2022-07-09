@@ -1,5 +1,13 @@
 2022-07-17  Mats Lidell  <matsl@gnu.org>
 
+* kotl/kotl-mode.el (kotl-mode:beginning-of-line): Rename from
+    kotl-mode:to-start-of-line since it is the preferred name but was
+    blocked due to XEmacs byte compiler bug.
+    (kotl-mode:to-start-of-line): Mark as obsolete from version 8.0.1.
+
+* hmouse-sh.el (hmouse-get-bindings): Do not mention XEmacs since it is
+    not supported.
+
 * kotl/kview.el:
 * kotl/kotl-mode.el:
 * kotl/klabel.el: Use lbl-sep-len for all defun parameters to avoid name
