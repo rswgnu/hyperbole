@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    24-Apr-91 at 03:36:23
-;; Last-Mod:     17-Apr-22 at 12:41:30 by Bob Weiner
+;; Last-Mod:      9-Jul-22 at 01:00:43 by Mats Lidell
 ;;
 ;; Copyright (C) 1991-2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -25,8 +25,9 @@
 ;;; ************************************************************************
 
 (defun hhist:add (elt)
-  "Add ELT to hyper-history list if not the same as current or prior location (frame configuration).
-ELT must have been created via a call to 'hhist:element' prior to
+  "Add ELT to hyper-history list.
+Do not add if not the same as current or prior location (frame configuration).
+ELT must have been created via a call to `hhist:element' prior to
 changing the current frame configuration somehow."
   ;; Even though this next line looks useless, it cures a problem with
   ;; window buffer correspondences on startup, so don't remove it.

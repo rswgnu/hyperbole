@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    10/31/93
-;; Last-Mod:      5-Jun-22 at 17:59:19 by Bob Weiner
+;; Last-Mod:      4-Jul-22 at 23:24:42 by Mats Lidell
 ;;
 ;; Copyright (C) 1993-2021  Free Software Foundation, Inc.
 ;; See the "../HY-COPY" file for license information.
@@ -66,7 +66,9 @@ Return the new kview."
 
 ;;;###autoload
 (defun kfile:is-p ()
-  "Iff current buffer contains an unformatted or formatted koutline, return file format version string, else nil."
+  "Iff current buffer contain a koutline, return file format version string.
+If not a koutline return nil.  This works both for unformatted
+and formatted koutlines."
   (let (ver-string)
     (save-excursion
       (save-restriction
@@ -100,8 +102,8 @@ Return the new kview."
 ;;; ************************************************************************
 
 (defun kfile:create (buffer)
-  "Create a new koutline file attached to BUFFER, with a single empty level 1 kotl cell.
-Return file's kview."
+  "Create a new koutline file attached to BUFFER and return file's kview.
+File is created with a single empty level 1 kotl cell."
   (or buffer (setq buffer (current-buffer)))
   (unless (bufferp buffer)
     (error "(kfile:create): Invalid buffer argument, %s" buffer))
@@ -156,9 +158,10 @@ Return file's kview."
     view))
 
 (defun kfile:read (buffer existing-file-p &optional ver-string)
-  "Create a new kotl view by reading BUFFER or create an empty view when EXISTING-FILE-P is nil.
-Optional VER-STRING is the outline format version number for the BUFFER that
-was previously read by calling `kfile:is-p'.
+  "Create a new kotl view by reading BUFFER.
+Create an empty view when EXISTING-FILE-P is nil.  Optional
+VER-STRING is the outline format version number for the BUFFER
+that was previously read by calling `kfile:is-p'.
 
 Return the new view."
   (cond ((not (bufferp buffer))
