@@ -1,3 +1,11 @@
+2022-07-11  Mats Lidell  <matsl@gnu.org>
+
+* test/hy-test-helpers.el (hy-test-helpers:should-last-message): Use
+    function messages-buffer for getting the *Messages* buffer.
+
+* test/hui-select-tests.el (hui-select--thing): Limit test case to run in
+    interactive mode, i.e. make test-all.
+
 2022-06-19  Bob Weiner  <rsw@gnu.org>
 
 * test/demo-tests.el (fast-demo-key-series-shell-apropos): Allow optional space

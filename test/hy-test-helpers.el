@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    30-Jan-21 at 12:00:00
-;; Last-Mod:     24-Jan-22 at 00:40:54 by Bob Weiner
+;; Last-Mod:     11-Jul-22 at 23:23:08 by Mats Lidell
 ;;
 ;; Copyright (C) 2021-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -27,7 +27,7 @@
 
 (defun hy-test-helpers:should-last-message (msg)
   "Verify last message is MSG."
-  (with-current-buffer "*Messages*"
+  (with-current-buffer (messages-buffer)
     (should (save-excursion
               (goto-char (point-max))
               (search-backward msg (- (point-max) 350))))))

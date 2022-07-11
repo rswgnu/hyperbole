@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    14-Apr-22 at 23:45:52
-;; Last-Mod:     15-Apr-22 at 23:53:52 by Mats Lidell
+;; Last-Mod:     11-Jul-22 at 23:29:45 by Mats Lidell
 ;;
 ;; Copyright (C) 2021  Free Software Foundation, Inc.
 ;; See the "../HY-COPY" file for license information.
@@ -80,6 +80,7 @@
 
 (ert-deftest hui-select--thing ()
   "`hui-select-thing' selects bigger sections of text when called repeatedly."
+  (skip-unless (not noninteractive))
   (hui-select-reset)
   (with-temp-buffer
     (insert "Buffer\n\nParagraph\nline.  One word.\n")
