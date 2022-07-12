@@ -1,3 +1,13 @@
+2022-07-16  Mats Lidell  <matsl@gnu.org>
+
+* kotl/kvspec.el (kvspec:show-lines-this-cell): Use kview-label-sep-len.
+
+* kotl/kotl-mode.el (kotl-mode:collapse-tree, kotl-mode:expand-tree): Use
+    kview-label-sep-len.
+
+* kotl/kview.el (kview-label-sep-len): Rename global variable.
+    (kcell-view:lines-visible, kview:set-cells-status): Use it.
+
 2022-07-15  Mats Lidell  <matsl@gnu.org>
 
 * test/hypb-tests.el: Remove test cases for hypb:replace-match-string.

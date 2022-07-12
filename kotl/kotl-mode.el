@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    6/30/93
-;; Last-Mod:     15-Jul-22 at 22:07:35 by Mats Lidell
+;; Last-Mod:     16-Jul-22 at 22:33:04 by Mats Lidell
 ;;
 ;; Copyright (C) 1993-2022  Free Software Foundation, Inc.
 ;; See the "../HY-COPY" file for license information.
@@ -2834,8 +2834,8 @@ within the current view."
   (kotl-mode:is-p)
   (let (buffer-read-only)
     (kview:map-tree (lambda (_kview)
-		      ;; Use free variable label-sep-len bound in kview:map-tree for speed.
-		      (kcell-view:collapse nil label-sep-len))
+		      ;; Use free variable kview-label-sep-len bound in kview:map-tree for speed.
+		      (kcell-view:collapse nil kview-label-sep-len))
 		    kview all-flag t)))
 
 (defun kotl-mode:expand-tree (&optional all-flag)
@@ -2847,8 +2847,8 @@ the current view."
   (let (buffer-read-only)
     (kview:map-tree
      (lambda (_kview)
-       ;; Use free variable label-sep-len bound in kview:map-tree for speed.
-       (goto-char (kcell-view:start (point) label-sep-len))
+       ;; Use free variable kview-label-sep-len bound in kview:map-tree for speed.
+       (goto-char (kcell-view:start (point) kview-label-sep-len))
        (outline-flag-region (point) (kcell-view:end-contents) nil))
      kview all-flag t)))
 

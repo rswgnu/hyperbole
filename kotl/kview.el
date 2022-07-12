@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    6/30/93
-;; Last-Mod:     15-Jul-22 at 23:25:24 by Mats Lidell
+;; Last-Mod:     16-Jul-22 at 22:33:12 by Mats Lidell
 ;;
 ;; Copyright (C) 1993-2022  Free Software Foundation, Inc.
 ;; See the "../HY-COPY" file for license information.
@@ -19,8 +19,8 @@
 
 (eval-and-compile (mapc #'require '(hact klabel kfill klink hypb)))
 ;; Quiet byte compiler warnings for this free variable.
-(eval-when-compile
-  (defvar label-sep-len nil))
+
+(defvar kview-label-sep-len nil)
 
 ;;; ************************************************************************
 ;;; Public variables
@@ -394,7 +394,7 @@ characters of the cell whose level is desired."
 
 (defun kcell-view:lines-visible ()
   "Return the number of lines visible within the current cell."
-  ;; Use free variable label-sep-len bound in kview:map-* for speed.
+  ;; Use free variable kview-label-sep-len bound in kview:map-* for speed.
   (if (kcell-view:invisible-p)
       0
     (let* ((start (kcell-view:start nil (kview:label-separator-length kview)))
@@ -748,11 +748,11 @@ the lines displayed, since it has hidden branches."
   ;; subcells, indicating its branches are hidden.
   (kview:map-region
    (lambda ()
-     (cond ((kcell-view:next-invisible-p (point) label-sep-len)
+     (cond ((kcell-view:next-invisible-p (point) kview-label-sep-len)
 	    ;; Skip to end of this subtree
 	    (prog1 (- (kcell-view:lines-visible))
 	      (goto-char (kotl-mode:tree-end t))))
-	   ((kcell-view:collapsed-p (point) label-sep-len)
+	   ((kcell-view:collapsed-p (point) kview-label-sep-len)
 	    (kcell-view:lines-visible))
 	   (t 0)))
    kview t start end))
@@ -1192,7 +1192,7 @@ displayed, since it has hidden branches."
 	      ;; Hide the subtree of this cell and display only
 	      ;; (- status) lines.
 	      (kvspec:show-lines-this-cell (- status))
-	      (if (save-excursion (kcell-view:parent nil label-sep-len))
+	      (if (save-excursion (kcell-view:parent nil kview-label-sep-len))
 		  (kotl-mode:hide-subtree)
 		(error "(kview:set-cells-status): Invisible cell `%s' is missing its parent cell"
 		       (kcell-view:label))))
