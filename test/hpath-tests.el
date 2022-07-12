@@ -3,9 +3,9 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    28-Feb-21 at 23:26:00
-;; Last-Mod:      6-Feb-22 at 00:56:13 by Bob Weiner
+;; Last-Mod:     12-Jul-22 at 23:09:14 by Mats Lidell
 ;;
-;; Copyright (C) 2021  Free Software Foundation, Inc.
+;; Copyright (C) 2021-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
 ;;
 ;; This file is part of GNU Hyperbole.
@@ -210,19 +210,18 @@
             (hy-test-helpers:action-key-should-call-hpath:find (expand-file-name file hyperb:dir))))
       (kill-buffer shell-buffer))))
 
-(defun hpath-tests--insert (str &optional with-quotes)
-  "Insert STR with quotes if WITH-QUOTES is not nil."
-  (concat (when with-quotes "\"") str (when with-quotes "\"")))
-
 (ert-deftest hpath:auto-variable-alist-load-path-test ()
  "An elisp file, even without double quotes, should be looked up in the load path."
   (let ((load-path (list (expand-file-name "kotl" hyperb:dir)))
         (el-file "kview.el"))
-    (dolist (with-quotes '(nil t))
-      (with-temp-buffer
-        (insert (hpath-tests--insert el-file))
-        (goto-char 4)
-        (hy-test-helpers:action-key-should-call-hpath:find (expand-file-name el-file (car load-path)))))))
+    (with-temp-buffer
+      (insert el-file)
+      (goto-char 4)
+      (hy-test-helpers:action-key-should-call-hpath:find (expand-file-name el-file (car load-path))))))
+
+(defun hpath-tests--insert (str &optional with-quotes)
+  "Insert STR with quotes if WITH-QUOTES is not nil."
+  (concat (when with-quotes "\"") str (when with-quotes "\"")))
 
 (ert-deftest hpath:auto-variable-alist-org-folder-test ()
   "An org file should be looked up in the org directory."
