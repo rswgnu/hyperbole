@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    30-Jan-21 at 12:00:00
-;; Last-Mod:     27-Apr-22 at 23:24:09 by Mats Lidell
+;; Last-Mod:     12-Jul-22 at 23:25:15 by Mats Lidell
 ;;
 ;; Copyright (C) 2021-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -72,6 +72,7 @@
       (save-excursion
 	(set-buffer gbut-file-buffer)
 	(save-buffer))
+      (delete-file linked-file)
       (when (file-writable-p hbmap:dir-user)
 	(delete-directory hbmap:dir-user t)))))
 

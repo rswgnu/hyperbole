@@ -1,3 +1,11 @@
+2022-07-12  Mats Lidell  <matsl@gnu.org>
+
+* test/hpath-tests.el (hpath:auto-variable-alist-load-path-test): Simplify
+    test case to only test with unquoted file name.
+
+* test/hui-tests.el (hui-gbut-edit-link-to-file-button): Remove test file
+    after test case is completed.
+
 2022-07-11  Mats Lidell  <matsl@gnu.org>
 
 * test/hy-test-helpers.el (hy-test-helpers:should-last-message): Use
