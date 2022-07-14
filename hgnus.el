@@ -5,7 +5,7 @@
 ;; Orig-Date:    24-Dec-91 at 22:29:28
 ;; Last-Mod:      9-May-22 at 00:01:49 by Bob Weiner
 ;;
-;; Copyright (C) 1991-2016  Free Software Foundation, Inc.
+;; Copyright (C) 1991-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
 ;;
 ;; This file is part of GNU Hyperbole.
@@ -70,13 +70,6 @@
 	;; Selected subject is different from current article's.
 	(gnus-summary-display-article article))))
 
-
-;;; Redefine 'gnus-inews-article' from "gnuspost.el" to make it include
-;;; any signature before Hyperbole button data.  Does this by having
-;;; signature inserted within narrowed buffer and then applies a hook to
-;;; have the buffer widened before sending.
-(hypb:function-symbol-replace
-  'gnus-inews-article 'widen 'hmail:msg-narrow)
 
 ;;; Overload this function from "rnewspost.el" for supercite compatibility
 ;;; only when supercite is in use.

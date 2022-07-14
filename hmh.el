@@ -5,7 +5,7 @@
 ;; Orig-Date:    21-May-91 at 17:06:36
 ;; Last-Mod:      9-May-22 at 22:36:31 by Bob Weiner
 ;;
-;; Copyright (C) 1991-2016  Free Software Foundation, Inc.
+;; Copyright (C) 1991-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
 ;;
 ;; This file is part of GNU Hyperbole.
@@ -135,20 +135,24 @@ Returns t if successful, else nil."
 ;;; Private functions
 ;;; ************************************************************************
 ;;;
-;;; Redefine version of this function from mh-e.el to run mh-show-hook at end.
-;;; This hook may already be run, depending on the version of mh-e you are
-;;; running, but running it twice shouldn't do any harm.  Comment this out if
-;;; you know that your mh-e.el already runs the hook.
-(hypb:function-overload 'mh-display-msg nil
-			'(run-hooks 'mh-show-hook))
+;; Redefine version of this function from mh-e.el to run mh-show-hook at end.
+;; This hook may already be run, depending on the version of mh-e you are
+;; running, but running it twice shouldn't do any harm.  Comment this out if
+;; you know that your mh-e.el already runs the hook.
+;; FIXME: `mh-show.el' has not changed much since Emacs-27 (which we require),
+;; so we should not need such an advice, yet AFAICT `mh-display-msg'
+;; doesn't run this hook, on `mh-show-msg' does.
+(advice-add 'mh-display-msg :after #'hmh--run-show-hook)
+(defun hmh--run-show-hook (&rest _) (run-hooks 'mh-show-hook))
 
-;;;
-;;; Redefine version of 'mh-regenerate-headers' to highlight Hyperbole
-;;; buttons when possible.
-;;;
-(hypb:function-overload 'mh-regenerate-headers nil
-			'(if (fboundp 'hproperty:but-create)
-			     (hproperty:but-create)))
+;;
+;; Redefine version of 'mh-regenerate-headers' to highlight Hyperbole
+;; buttons when possible.
+;;
+;; FIXME: Add a hook to MH-E so we don't need this advice.
+(advice-add 'mh-regenerate-headers :after #'hmh--highlight-buttons)
+(defun hmh--highlight-buttons (&rest _)
+  (if (fboundp 'hproperty:but-create) (hproperty:but-create)))
 
 ;;;
 ;;; Set 'mh-send-letter' hook to widen to include button data before sending.

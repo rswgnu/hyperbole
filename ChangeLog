@@ -1,3 +1,10 @@
+2022-07-14  Mats Lidell  <matsl@gnu.org>
+
+* hypb.el:
+* hrmail.el:
+* hmh.el:
+* hgnus.el: Patch by Stefan Monnier, Thank you Stefan.
+
 2022-07-12  Mats Lidell  <matsl@gnu.org>
 
 * test/hpath-tests.el (hpath:auto-variable-alist-load-path-test): Simplify
