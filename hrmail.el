@@ -5,7 +5,7 @@
 ;; Orig-Date:     9-May-91 at 04:22:02
 ;; Last-Mod:      5-Jun-22 at 17:59:19 by Bob Weiner
 ;;
-;; Copyright (C) 1991-2016  Free Software Foundation, Inc.
+;; Copyright (C) 1991-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
 ;;
 ;; This file is part of GNU Hyperbole.
@@ -167,15 +167,18 @@ Return t if successful, else nil."
 ;;; Overloaded functions
 ;;; ************************************************************************
 
-(if (featurep 'rmail-hyperbole)
+(if (featurep 'rmail-hyperbole)         ;FIXME: Nowhere to be found.
     ;; No overloads are necessary, the needed features are built-in.
     nil
 
-;;; else
-;;;
-;;; Redefine version of this function from "rmailedit.el" to include any
-;;; hidden Hyperbole button data when computing message length.
-(defun rmail-cease-edit ()
+;; else
+;;
+;; Redefine version of this function from "rmailedit.el" to include any
+;; hidden Hyperbole button data when computing message length.
+;; FIXME: Copy&redefine like this is *evil*.  Use an advice or a hook.
+;; We can make changes to `rmail.el' if needed.
+(advice-add 'rmail-cease-edit :override #'hrmail--rmail-cease-edit)
+(defun hrmail--rmail-cease-edit ()
   "Finish editing message; switch back to Rmail proper."
   (interactive)
   ;; Make sure buffer ends with a newline.
@@ -251,9 +254,12 @@ Return t if successful, else nil."
   (setq buffer-read-only t))
 
 
-;;; Redefine version of this function from "rmail.el" to include any
-;;; Hyperbole button data.
-(defun rmail-forward (resend)
+;; Redefine version of this function from "rmail.el" to include any
+;; Hyperbole button data.
+;; FIXME: Copy&redefine like this is *evil*.  Use an advice or a hook.
+;; We can make changes to `rmail.el' if needed.
+(advice-add 'rmail-forward :override #'hrmail--rmail-forward)
+(defun hrmail--rmail-forward (resend)
   "Forward the current message to another user.
 With prefix argument, \"resend\" the message instead of forwarding it;
 see the documentation of `rmail-resend'."
@@ -320,31 +326,27 @@ see the documentation of `rmail-resend'."
 		(insert-buffer-substring forward-buffer)
 		(hmail:msg-narrow))))))))
 
-;;; Redefine version of 'rmail-get-new-mail' from "rmail.el" to highlight
-;;; Hyperbole buttons when possible.
-;;;
-(if (boundp 'rmail-get-new-mail-post-hook)
-    (add-hook 'rmail-get-new-mail-post-hook
-	      (lambda ()
-		(if (fboundp 'hproperty:but-create)
-		    (progn (widen) (hproperty:but-create)
-			   (rmail-show-message)))))
-  (hypb:function-overload 'rmail-get-new-mail nil
-			  '(if (fboundp 'hproperty:but-create)
-			       (progn (widen) (hproperty:but-create)
-				      (rmail-show-message)))))
+;; Redefine version of 'rmail-get-new-mail' from "rmail.el" to highlight
+;; Hyperbole buttons when possible.
+;;
 
-;;; Redefine version of 'rmail-new-summary' from "rmailsum.el" to
-;;; highlight Hyperbole buttons when possible.
-;;;
-(if (boundp 'rmail-summary-create-post-hook)
-    (add-hook 'rmail-summary-create-post-hook
-	      (lambda ()
-		(if (fboundp 'hproperty:but-create)
-		    (hproperty:but-create))))
-  (hypb:function-overload 'rmail-new-summary nil
-			  '(if (fboundp 'hproperty:but-create)
-			       (hproperty:but-create))))
+(defun hrmail--show-msg-and-buttons (&rest _)
+  (if (fboundp 'hproperty:but-create)
+      (progn (widen) (hproperty:but-create)
+	     (rmail-show-message))))
+(if (boundp 'rmail-get-new-mail-post-hook) ;FIXME: Doesn't exist.  XEmacs?
+    (add-hook 'rmail-get-new-mail-post-hook #'hrmail--show-msg-and-buttons)
+  ;; FIXME: Why change `rmail-get-new-mail' rather than `rmail-show-message'?
+  (advice-add 'rmail-get-new-mail :after #'hrmail--show-msg-and-buttons))
+
+;; Redefine version of 'rmail-new-summary' from "rmailsum.el" to
+;; highlight Hyperbole buttons when possible.
+;;
+(defun hrmail--highlight-buttons (&rest _)
+  (if (fboundp 'hproperty:but-create) (hproperty:but-create)))
+(if (boundp 'rmail-summary-create-post-hook) ;FIXME: Doesn't exist.  XEmacs?
+    (add-hook 'rmail-summary-create-post-hook #'hrmail--highlight-buttons)
+  (advice-add 'rmail-new-summary :after #'hrmail--highlight-buttons))
 
 ;; end not InfoDock
 )

@@ -303,10 +303,8 @@ If no matching installation type is found, return a list of (\"unknown\" hyperb:
       (concat "@" dname))))
 
 ;;;###autoload
-(defun hypb:emacs-byte-code-p (obj)
-  "Return non-nil iff OBJ is an Emacs byte compiled object."
-  (or (and (fboundp 'byte-code-function-p) (byte-code-function-p obj))
-      (and (fboundp 'compiled-function-p) (compiled-function-p obj))))
+(define-obsolete-function-alias 'hypb:emacs-byte-code-p
+  #'byte-code-function-p "2022")
 
 (defun hypb:error (&rest args)
   "Signal an error typically to be caught by `hyperbole'."
@@ -355,88 +353,6 @@ Return either the modified string or the original ARG when not modified."
 		   nil t)
        nil t)
     arg))
-
-(defun hypb:function-copy (func-symbol)
-  "Copy FUNC-SYMBOL's body for overloading.  Return a copy of the body or the original if a subr/primitive."
-  (if (fboundp func-symbol)
-      (let ((func (hypb:indirect-function func-symbol)))
-	(cond ((listp func) (copy-sequence func))
-	      ((subrp func) func)
-	      ((and (hypb:emacs-byte-code-p func) (fboundp 'make-byte-code))
-	       (let ((new-code (append func nil))) ; turn it into a list
-		 (apply 'make-byte-code new-code)))
-	      (t (error "(hypb:function-copy): Can't copy function body: %s" func))))
-    (error "(hypb:function-copy): `%s' symbol is not bound to a function"
-	   func-symbol)))
-
-(defun hypb:function-overload (func-sym prepend &rest new-forms)
-  "Redefine function named FUNC-SYM by either PREPENDing (or appending if nil) rest of quoted NEW-FORMS."
-  (let ((old-func-sym (intern
-			(concat "hypb--old-"
-				(symbol-name func-sym)))))
-    (unless (fboundp old-func-sym)
-      (defalias old-func-sym (hypb:function-copy func-sym)))
-    (let* ((old-func (hypb:indirect-function old-func-sym))
-	   (old-param-list (action:params old-func))
-	   (param-list (action:param-list old-func))
-	   (old-func-call
-	     (list (if (memq '&rest old-param-list)
-		       ;; Have to account for extra list wrapper from &rest.
-		       (cons 'apply
-			     (cons (list 'quote old-func-sym) param-list))
-		     (cons old-func-sym param-list)))))
-      (eval (append
-	      (list 'defun func-sym old-param-list)
-	      (delq nil
-		    (list
-		      (documentation old-func-sym)
-		      (action:commandp old-func-sym)))
-	      (if prepend
-		  (append new-forms old-func-call)
-		(append old-func-call new-forms)))))))
-
-(defun hypb:function-symbol-replace (func-sym sym-to-replace replace-with-sym)
-  "Replace in body of FUNC-SYM SYM-TO-REPLACE with REPLACE-WITH-SYM.
-FUNC-SYM may be a function symbol or its body.  All occurrences within lists
-are replaced.  Returns body of modified FUNC-SYM."
-  (let ((body (hypb:indirect-function func-sym))
-	(constant-vector) (constant))
-    (if (subrp body)
-        ;; Non-Lisp code, can't do any replacement
-        body
-      (if (listp body)
-	  ;; assume V18 byte compiler
-	  (setq constant-vector
-	        (car (delq nil (mapcar
-			        (lambda (elt)
-				  (and (listp elt)
-				       (vectorp (setq constant-vector (nth 2 elt)))
-				       constant-vector))
-			        body))))
-        ;; assume EMACS byte compiler   (eq (compiled-function-p body) t)
-        (setq constant (if (fboundp 'compiled-function-constants)
-			   (compiled-function-constants body)
-		         (aref body 2))
-	      constant-vector (when (vectorp constant) constant)))
-      (if constant-vector
-	  ;; Code is byte-compiled.
-	  (hypb:constant-vector-symbol-replace
-	   constant-vector sym-to-replace replace-with-sym)
-        ;;
-        ;; Code is not byte-compiled.
-        ;; Replaces occurrence of symbol within lists only.
-        (hypb:map-sublists
-         (lambda (atom list)
-	   ;; The ' in the next line *is* required for proper substitution.
-	   (when (eq atom 'sym-to-replace)
-	     (let ((again t))
-	       (while (and again list)
-	         (if (eq (car list) atom)
-		     (progn (setcar list replace-with-sym)
-			    (setq again nil))
-		   (setq list (cdr list)))))))
-         body))
-      body)))
 
 ;; Extracted from part of `choose-completion' in "simple.el"
 (defun hypb:get-completion (&optional event)
@@ -585,17 +501,6 @@ then `locate-post-command-hook'."
   (cl-loop for (k v) on plist by #'cddr
 	   collect (funcall func k v) into result
 	   finally return result))
-
-(defun hypb:map-sublists (func list)
-  "Apply FUNC to every atom found at any level of LIST.
-FUNC must take two arguments, an atom and a list in which the atom is found.
-Returns values from applications of FUNC as a list with the same
-structure as LIST.  FUNC is therefore normally used just for its side-effects."
-  (mapcar (lambda (elt)
-	    (if (atom elt)
-		(funcall func elt list)
-	      (hypb:map-sublists func elt)))
-	  list))
 
 (defun hypb:map-vector (func object)
   "Return list of results of application of FUNC to each element of OBJECT.
@@ -887,20 +792,6 @@ If FILE is not an absolute path, expand it relative to `hyperb:dir'."
 ;;; ************************************************************************
 ;;; Private functions
 ;;; ************************************************************************
-
-(defun hypb:constant-vector-symbol-replace
-  (constant-vector sym-to-replace replace-with-sym)
-  "Replace symbols within a byte-compiled constant vector."
-  (let ((i (length constant-vector))
-	constant)
-    (while (>= (setq i (1- i)) 0)
-      (setq constant (aref constant-vector i))
-      (cond ((eq constant sym-to-replace)
-	     (aset constant-vector i replace-with-sym))
-	    ((and (fboundp 'compiled-function-p)
-		  (compiled-function-p constant))
-	     (hypb:function-symbol-replace
-	      constant sym-to-replace replace-with-sym))))))
 
 (defun hypb:insert-hyperbole-banner ()
   "Display an optional text FILE with the Hyperbole banner prepended.
