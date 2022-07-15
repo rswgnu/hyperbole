@@ -3,9 +3,9 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:     5-Apr-21 at 18:53:10
-;; Last-Mod:     15-Jul-22 at 23:09:21 by Mats Lidell
+;; Last-Mod:     15-Jul-22 at 23:26:35 by Mats Lidell
 ;;
-;; Copyright (C) 2022  Free Software Foundation, Inc.
+;; Copyright (C) 2021-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
 ;;
 ;; This file is part of GNU Hyperbole.
