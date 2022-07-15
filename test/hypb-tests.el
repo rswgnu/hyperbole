@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:     5-Apr-21 at 18:53:10
-;; Last-Mod:     15-Jul-22 at 20:32:47 by Mats Lidell
+;; Last-Mod:     15-Jul-22 at 20:58:43 by Mats Lidell
 ;;
 ;; Copyright (C) 2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -33,13 +33,13 @@
   (let ((case-fold-search t))
     (should (equal (hypb:replace-match-string "a+" "xy" "ABAABBABAABA")
                    "XYBXYBBXYBXYBXY"))
-    (should (equal (hypb:replace-match-string "a+" "xy" "ABAABBABAABA" nil t)
+    (should (equal (hypb:replace-match-string "a+" "xy" "ABAABBABAABA" t nil)
                    "xyBxyBBxyBxyBxy"))
     (should (equal (hypb:replace-match-string
                     "a[bc]*" "xyz" "a A ab AB Ab aB abc ABC Abc AbC aBc")
                    "xyz XYZ xyz XYZ Xyz xyz xyz XYZ Xyz Xyz xyz"))
     (should (equal (hypb:replace-match-string
-                    "a[bc]*" "xyz" "a A ab AB Ab aB abc ABC Abc AbC aBc" nil t)
+                    "a[bc]*" "xyz" "a A ab AB Ab aB abc ABC Abc AbC aBc" t nil)
                    "xyz xyz xyz xyz xyz xyz xyz xyz xyz xyz xyz")))
   (let ((case-fold-search nil))
     (should (equal (hypb:replace-match-string "a+" "xy" "ABAABBABAABA")
@@ -54,13 +54,13 @@
                  "y<ef,ij,gh,cd,ab>kl"))
   ;; LITERAL
   (should (equal (hypb:replace-match-string
-                  "a\\(b*\\)" "<\\1,\\&>" "babbcaabacbab" t nil)
+                  "a\\(b*\\)" "<\\1,\\&>" "babbcaabacbab" nil t)
                  "b<\\1,\\&>c<\\1,\\&><\\1,\\&><\\1,\\&>cb<\\1,\\&>"))
   (should (equal (hypb:replace-match-string
                   "a" "\\\\,\\?" "aba")
                  "\\,\\?b\\,\\?"))
   (should (equal (hypb:replace-match-string
-                  "a" "\\\\,\\?" "aba" t nil)
+                  "a" "\\\\,\\?" "aba" nil t)
                  "\\\\,\\?b\\\\,\\?"))
   ;; SUBEXP
   ; Available in subr-replace-regexp-in-string. Not supported here

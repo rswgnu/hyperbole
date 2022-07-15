@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    15-Nov-93 at 12:15:16
-;; Last-Mod:     15-Jul-22 at 20:00:09 by Mats Lidell
+;; Last-Mod:     15-Jul-22 at 21:21:12 by Mats Lidell
 ;;
 ;; Copyright (C) 1993-2021  Free Software Foundation, Inc.
 ;; See the "../HY-COPY" file for license information.
@@ -114,7 +114,7 @@ See documentation for `kcell:ref-to-id' for valid cell-ref formats."
   ;; double quotes and then parse it with pattern matching.
   (and (stringp reference) (> (length reference) 0)
        (eq (aref reference 0) ?\()
-       (setq reference (hypb:replace-match-string "\\\"" "" reference t)))
+       (setq reference (hypb:replace-match-string "\\\"" "" reference nil t)))
   (let ((default-dir default-directory)
 	file-ref cell-ref)
     (setq reference (klink:parse reference)

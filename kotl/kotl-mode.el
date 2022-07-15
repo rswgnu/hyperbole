@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    6/30/93
-;; Last-Mod:     15-Jul-22 at 20:00:09 by Mats Lidell
+;; Last-Mod:     15-Jul-22 at 21:21:12 by Mats Lidell
 ;;
 ;; Copyright (C) 1993-2022  Free Software Foundation, Inc.
 ;; See the "../HY-COPY" file for license information.
@@ -377,7 +377,7 @@ With optional prefix arg DELETE-FLAG, delete region."
 		  (hypb:replace-match-string
 		   (concat "^" (make-string indent ?\ ))
 		   ""
-		   (buffer-substring start end) t)))
+		   (buffer-substring start end) nil t)))
   (when delete-flag
     (delete-region start end)))
 

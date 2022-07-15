@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    15-Nov-93 at 11:57:05
-;; Last-Mod:     15-Jul-22 at 20:00:09 by Mats Lidell
+;; Last-Mod:     15-Jul-22 at 21:21:12 by Mats Lidell
 ;;
 ;; Copyright (C) 1993-2021  Free Software Foundation, Inc.
 ;; See the "../HY-COPY" file for license information.
@@ -717,7 +717,7 @@ Remove the indent and return the remaining region as a string."
 		(concat "^" (make-string (current-column) ?\ ))))
       (if indent-regexp
 	  (hypb:replace-match-string
-			  indent-regexp "" (buffer-substring start end) t)
+			  indent-regexp "" (buffer-substring start end) nil t)
 	(buffer-substring start end)))))
 
 ;; Do this at the end so kotl-mode can utilize kimport definitions.

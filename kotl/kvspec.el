@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Oct-95 at 15:17:07
-;; Last-Mod:     15-Jul-22 at 20:00:09 by Mats Lidell
+;; Last-Mod:     15-Jul-22 at 21:21:12 by Mats Lidell
 ;;
 ;; Copyright (C) 1995-2021  Free Software Foundation, Inc.
 ;; See the "../HY-COPY" file for license information.
@@ -131,7 +131,7 @@ display all levels of cells."
   (interactive)
   (setq kvspec:current
 	(if (string-match "b" kvspec:current)
-	    (hypb:replace-match-string "b" "" kvspec:current t)
+	    (hypb:replace-match-string "b" "" kvspec:current nil t)
 	  (concat "b" kvspec:current)))
   (kvspec:blank-lines)
   (kvspec:update-modeline))
@@ -147,7 +147,7 @@ view specs."
 	 ;; Use given view-spec after removing extraneous characters.
 	 (setq view-spec
 	       (hypb:replace-match-string
-		"[^.*~0-9abcdefgilnrsv]+" "" view-spec t))
+		"[^.*~0-9abcdefgilnrsv]+" "" view-spec nil t))
 	 (unless (string-match "e" view-spec)
 	   ;; Force 'e' elide view spec if not there.
 	   (setq view-spec
