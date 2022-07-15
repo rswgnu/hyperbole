@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     1-Nov-91 at 00:44:23
-;; Last-Mod:     22-May-22 at 13:34:43 by Bob Weiner
+;; Last-Mod:     15-Jul-22 at 20:30:24 by Mats Lidell
 ;;
 ;; Copyright (C) 1991-2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -1631,8 +1631,8 @@ form is what is returned for PATH."
 				      ;; Quote any % except for one %s at the end of the
 				      ;; path part of rtn-path (immediately preceding a #
 				      ;; or , character or the end of string).
-				      (setq rtn-path (hypb:replace-match-string "%" rtn-path "%%" nil t)
-					    rtn-path (hypb:replace-match-string "%%s\\([#,]\\|\\'\\)" rtn-path "%s\\1" nil t))
+				      (setq rtn-path (hypb:replace-match-string "%" "%%" rtn-path nil t)
+					    rtn-path (hypb:replace-match-string "%%s\\([#,]\\|\\'\\)" "%s\\1" rtn-path nil t))
 				      ;; Return path if non-nil return value.
 				      (if (stringp suffix) ;; suffix could = t, which we ignore
 					  (if (string-match (concat (regexp-quote suffix) "%s") rtn-path)
@@ -2376,8 +2376,8 @@ that returns a replacement string."
 	     (substring str prev-start match)
 	     (cond ((functionp new)
 		    (hypb:replace-match-string
-		     regexp (substring str match start)
-		     (funcall new str) literal fixedcase))
+		     regexp (funcall new str)
+		     (substring str match start) literal fixedcase))
 		   (literal new)
 		   (t (mapconcat
 		       (lambda (c)
@@ -2410,7 +2410,7 @@ If PATH is modified, return PATH, otherwise return nil."
     (let ((new-path (hypb:replace-match-string
 		     (regexp-quote (file-name-as-directory
 				    (or var-dir-val default-directory)))
-		     path (concat "$\{" (symbol-name var-symbol) "\}/")
+		     (concat "$\{" (symbol-name var-symbol) "\}/") path
 		     t t)))
       (if (equal new-path path) nil new-path))))
 

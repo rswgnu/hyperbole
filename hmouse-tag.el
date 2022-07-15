@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    24-Aug-91
-;; Last-Mod:     17-Apr-22 at 23:15:45 by Mats Lidell
+;; Last-Mod:     15-Jul-22 at 20:00:09 by Mats Lidell
 ;;
 ;; Copyright (C) 1991-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -1285,7 +1285,7 @@ Look for packages in `smart-java-package-path'."
 		(if library-path
 		    (hpath:find (expand-file-name
 				 (hypb:replace-match-string
-				  "\\." referent (file-name-as-directory "") t)
+				  "\\." (file-name-as-directory "") referent t)
 				 library-path))
 		  ;; Show the current directory, which should contain this package.
 		  (hpath:find default-directory)))
@@ -1295,9 +1295,9 @@ Look for packages in `smart-java-package-path'."
 	    (if (string-match "\\.\\*" referent)
 		(setq subfile (substring referent 0 (match-beginning 0))
 		      subfile (hypb:replace-match-string
-			       "\\." subfile (file-name-as-directory "") t))
+			       "\\." (file-name-as-directory "") subfile t))
 	      (setq subpath (hypb:replace-match-string
-			     "\\." referent (file-name-as-directory "") t)
+			     "\\." (file-name-as-directory "") referent t)
 		    subfile (concat subpath ".java")))
 	    ;;
 	    ;; Try to find the path containing referent.

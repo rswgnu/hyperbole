@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:     5-Apr-21 at 18:53:10
-;; Last-Mod:     15-Jul-22 at 18:48:03 by Mats Lidell
+;; Last-Mod:     15-Jul-22 at 20:32:47 by Mats Lidell
 ;;
 ;; Copyright (C) 2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -24,43 +24,43 @@
 ;; Test for replace-regexp-in-string copied from emacs src
 (ert-deftest hypb:replace-match-string-test ()
   ;; Test cases added before refactoring to check new = nil case
-  (should (equal (hypb:replace-match-string ".*" "abc" nil) "abc"))
-  (should (equal (hypb:replace-match-string ".*" "abc" "x") "x"))
+  (should (equal (hypb:replace-match-string ".*" nil "abc") "abc"))
+  (should (equal (hypb:replace-match-string ".*" "x" "abc") "x"))
 
-  (should (equal (hypb:replace-match-string "a+" "abaabbabaaba" "xy")
+  (should (equal (hypb:replace-match-string "a+" "xy" "abaabbabaaba")
                  "xybxybbxybxybxy"))
   ;; FIXEDCASE
   (let ((case-fold-search t))
-    (should (equal (hypb:replace-match-string "a+" "ABAABBABAABA" "xy")
+    (should (equal (hypb:replace-match-string "a+" "xy" "ABAABBABAABA")
                    "XYBXYBBXYBXYBXY"))
-    (should (equal (hypb:replace-match-string "a+" "ABAABBABAABA" "xy" nil t)
+    (should (equal (hypb:replace-match-string "a+" "xy" "ABAABBABAABA" nil t)
                    "xyBxyBBxyBxyBxy"))
     (should (equal (hypb:replace-match-string
-                    "a[bc]*" "a A ab AB Ab aB abc ABC Abc AbC aBc" "xyz")
+                    "a[bc]*" "xyz" "a A ab AB Ab aB abc ABC Abc AbC aBc")
                    "xyz XYZ xyz XYZ Xyz xyz xyz XYZ Xyz Xyz xyz"))
     (should (equal (hypb:replace-match-string
-                    "a[bc]*" "a A ab AB Ab aB abc ABC Abc AbC aBc" "xyz" nil t)
+                    "a[bc]*" "xyz" "a A ab AB Ab aB abc ABC Abc AbC aBc" nil t)
                    "xyz xyz xyz xyz xyz xyz xyz xyz xyz xyz xyz")))
   (let ((case-fold-search nil))
-    (should (equal (hypb:replace-match-string "a+" "ABAABBABAABA" "xy")
+    (should (equal (hypb:replace-match-string "a+" "xy" "ABAABBABAABA")
                    "ABAABBABAABA")))
   ;; group substitution
   (should (equal (hypb:replace-match-string
-                  "a\\(b*\\)" "babbcaabacbab" "<\\1,\\&>")
+                  "a\\(b*\\)" "<\\1,\\&>" "babbcaabacbab")
                  "b<bb,abb>c<,a><b,ab><,a>cb<b,ab>"))
   (should (equal (hypb:replace-match-string
                   "x\\(?2:..\\)\\(?1:..\\)\\(..\\)\\(..\\)\\(..\\)"
-                  "yxabcdefghijkl" "<\\3,\\5,\\4,\\1,\\2>")
+                  "<\\3,\\5,\\4,\\1,\\2>" "yxabcdefghijkl")
                  "y<ef,ij,gh,cd,ab>kl"))
   ;; LITERAL
   (should (equal (hypb:replace-match-string
-                  "a\\(b*\\)" "babbcaabacbab" "<\\1,\\&>" t nil)
+                  "a\\(b*\\)" "<\\1,\\&>" "babbcaabacbab" t nil)
                  "b<\\1,\\&>c<\\1,\\&><\\1,\\&><\\1,\\&>cb<\\1,\\&>"))
   (should (equal (hypb:replace-match-string
-                  "a" "aba" "\\\\,\\?")
+                  "a" "\\\\,\\?" "aba")
                  "\\,\\?b\\,\\?"))
   (should (equal (hypb:replace-match-string
-                  "a" "aba" "\\\\,\\?" t nil)
+                  "a" "\\\\,\\?" "aba" t nil)
                  "\\\\,\\?b\\\\,\\?"))
   ;; SUBEXP
   ; Available in subr-replace-regexp-in-string. Not supported here
@@ -73,27 +73,27 @@
   ;                 "ab" "x" "abcabdabeabf" nil nil nil 4)
   ;                "bdxexf"))
   ;; An empty pattern matches once before every character.
-  (should (equal (hypb:replace-match-string "" "abc" "x")
+  (should (equal (hypb:replace-match-string "" "x" "abc")
                  "xaxbxc"))
-  (should (equal (hypb:replace-match-string "y*" "abc" "x")
+  (should (equal (hypb:replace-match-string "y*" "x" "abc")
                  "xaxbxc"))
   ;; replacement function
   (should (equal (hypb:replace-match-string
                   "a\\(b*\\)c"
-                  "babbcaacabc"
                   (lambda (s)
                     (format "<%s,%s,%s,%s,%s>"
                             s
                             (match-beginning 0) (match-end 0)
-                            (match-beginning 1) (match-end 1))))
+                            (match-beginning 1) (match-end 1)))
+                  "babbcaacabc")
                  "b<abbc,0,4,1,3>a<ac,0,2,1,1><abc,0,3,1,2>")))
 
 (ert-deftest hypb:replace-match-string-after-27.1-test ()
   ;; anchors (bug#15107, bug#44861)
   (when (version< "27.1" emacs-version)
-    (should (equal (hypb:replace-match-string "a\\B" "a aaaa" "b")
+    (should (equal (hypb:replace-match-string "a\\B" "b" "a aaaa")
                    "a bbba"))
-    (should (equal (hypb:replace-match-string "\\`\\|x" "--xx--" "z")
+    (should (equal (hypb:replace-match-string "\\`\\|x" "z" "--xx--")
                    "z--zz--"))))
 
 (ert-deftest hypb:installation-type-test ()

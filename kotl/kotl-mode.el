@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    6/30/93
-;; Last-Mod:     18-Jun-22 at 21:56:13 by Mats Lidell
+;; Last-Mod:     15-Jul-22 at 20:00:09 by Mats Lidell
 ;;
 ;; Copyright (C) 1993-2022  Free Software Foundation, Inc.
 ;; See the "../HY-COPY" file for license information.
@@ -376,8 +376,8 @@ With optional prefix arg DELETE-FLAG, delete region."
     (set-register register
 		  (hypb:replace-match-string
 		   (concat "^" (make-string indent ?\ ))
-		   (buffer-substring start end)
-		   "" t)))
+		   ""
+		   (buffer-substring start end) t)))
   (when delete-flag
     (delete-region start end)))
 
@@ -746,7 +746,7 @@ If a completion is active, this aborts the completion only."
       (setq subst-str (concat "\\([\n\r]\\)" (make-string indent ?\ ))
 	    kill-str
 	    (hypb:replace-match-string
-	     subst-str (buffer-substring start end) "\\1"))
+	     subst-str "\\1" (buffer-substring start end)))
       (unless copy-p
 	;; If last char of region is a newline, then delete indent in
 	;; following line.
@@ -1340,7 +1340,7 @@ See also the command `yank-pop' (\\[yank-pop])."
     ;; Convert all occurrences of newline to newline + cell indent.
     ;; Then insert into buffer.
     (insert-for-yank (hypb:replace-match-string
-		      "[\n\r]" yank-text (lambda (match) (concat match indent-str)))))
+		      "[\n\r]" (lambda (match) (concat match indent-str)) yank-text)))
   (when (consp arg) (kotl-mode:exchange-point-and-mark))
   ;; If we do get all the way thru, make this-command indicate that.
   (when (eq this-command t) (setq this-command 'kotl-mode:yank))
@@ -1381,7 +1381,7 @@ doc string for `insert-for-yank-1', which see."
       ;; Convert all occurrences of newline to newline + cell indent.
       ;; Then insert into buffer.
       (insert-for-yank (hypb:replace-match-string
-			"[\n\r]" yank-text (concat "\\0" indent-str))))
+			"[\n\r]" (concat "\\0" indent-str) yank-text)))
     ;; Set the window start back where it was in the yank command,
     ;; if possible.
     (set-window-start (selected-window) yank-window-start t)
@@ -2379,7 +2379,7 @@ to one level and kotl-mode:refill-flag is treated as true."
       (insert
        (hypb:replace-match-string
 	"\\([\n\r]\\)"
-	contents-1 (concat "\\1" (make-string (kcell-view:indent) ?\ ))))
+	(concat "\\1" (make-string (kcell-view:indent) ?\ )) contents-1))
       (when kotl-mode:refill-flag
 	(kotl-mode:fill-cell))
 
@@ -2391,7 +2391,7 @@ to one level and kotl-mode:refill-flag is treated as true."
       (insert
        (hypb:replace-match-string
 	"\\([\n\r]\\)"
-	contents-2 (concat "\\1" (make-string (kcell-view:indent) ?\ ))))
+	(concat "\\1" (make-string (kcell-view:indent) ?\ )) contents-2))
       (when kotl-mode:refill-flag
 	(kotl-mode:fill-cell))
 

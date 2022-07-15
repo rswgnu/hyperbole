@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    13-Jun-89 at 22:57:33
-;; Last-Mod:     10-Apr-22 at 09:53:39 by Bob Weiner
+;; Last-Mod:     15-Jul-22 at 20:00:09 by Mats Lidell
 ;;
 ;; Copyright (C) 1989-2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -101,28 +101,28 @@ single argument."
 	;; Search string does not contain embedded logic
 	;; operators; do a string search instead.
 	(setq total-matches (hyrolo-fgrep expr))
-      (setq expr (hypb:replace-match-string "\(or " expr "\(| " t))
-      (setq expr (hypb:replace-match-string "\(xor " expr "\(@ " t))
-      (setq expr (hypb:replace-match-string "\(not " expr "\(! " t))
-      (setq expr (hypb:replace-match-string "\(and " expr "\(& " t))
+      (setq expr (hypb:replace-match-string "\(or " "\(| " expr t))
+      (setq expr (hypb:replace-match-string "\(xor " "\(@ " expr t))
+      (setq expr (hypb:replace-match-string "\(not " "\(! " expr t))
+      (setq expr (hypb:replace-match-string "\(and " "\(& " expr t))
       (setq expr (hypb:replace-match-string
-		  "\"\\([^\"]*\\)\"" expr "{\\1}" nil))
+		  "\"\\([^\"]*\\)\"" "{\\1}" expr nil))
       (setq expr (hypb:replace-match-string
-		  "\(\\([^@|!&()][^()\"]*\\)\)" expr "{\\1}" nil))
+		  "\(\\([^@|!&()][^()\"]*\\)\)" "{\\1}" expr nil))
       (let ((saved-expr expr))
 	(while
 	    (not (equal
 		  saved-expr
 		  (setq expr (hypb:replace-match-string
 			      "\\(\\s-\\)\\([^{}()\" \t\n\r]+\\)\\([^{}()]*[()]\\)"
-			      expr "\\1\"\\2\"\\3" nil))))
+			      "\\1\"\\2\"\\3" expr nil))))
 	  (setq saved-expr expr)))
       (setq expr (hypb:replace-match-string
-		  "{\\([^{}]+\\)}" expr "\"\\1\"" nil))
-      (setq expr (hypb:replace-match-string "\(| " expr "\(hyrolo-or start end  " t))
-      (setq expr (hypb:replace-match-string "\(@ " expr "\(hyrolo-xor start end " t))
-      (setq expr (hypb:replace-match-string "\(! " expr "\(hyrolo-not start end " t))
-      (setq expr (hypb:replace-match-string "\(& " expr "\(hyrolo-and start end " t))
+		  "{\\([^{}]+\\)}" "\"\\1\"" expr nil))
+      (setq expr (hypb:replace-match-string "\(| " "\(hyrolo-or start end  " expr t))
+      (setq expr (hypb:replace-match-string "\(@ " "\(hyrolo-xor start end " expr t))
+      (setq expr (hypb:replace-match-string "\(! " "\(hyrolo-not start end " expr t))
+      (setq expr (hypb:replace-match-string "\(& " "\(hyrolo-and start end " expr t))
       (setq expr (format "(hyrolo-logic (quote %s) nil %s %s %s)"
 			 expr count-only include-sub-entries no-sub-entries-out))
       (setq total-matches (eval (read expr))))

@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    26-Feb-98
-;; Last-Mod:     12-Feb-22 at 10:42:20 by Mats Lidell
+;; Last-Mod:     15-Jul-22 at 20:46:06 by Mats Lidell
 ;;
 ;; Copyright (C) 1998-2021  Free Software Foundation, Inc.
 ;; See the "../HY-COPY" file for license information.
@@ -456,9 +456,9 @@ hard newlines are not used.  Also converts Urls and Klinks into Html hyperlinks.
    	;;     </nav>\n")
 	(let* ((separator
 		(hypb:replace-match-string
-		 ">" (hypb:replace-match-string
-		      "<" (kview:label-separator kview) "&lt;")
-		 "&gt;"))
+		 ">" "&gt;"
+		 (hypb:replace-match-string
+		      "<" "&lt;" (kview:label-separator kview))))
 	       i is-parent is-last-sibling no-sibling-stack level label contents)
 	  (kview:map-tree
 	   (lambda (_kview)
@@ -549,7 +549,7 @@ Works exclusively within a call to `hypb:replace-match-string'."
   "Perform replacements on STRING specified by `kexport:html-replacement-alist'."
   (mapc
    (lambda (elt)
-     (setq string (hypb:replace-match-string (car elt) string (cdr elt))))
+     (setq string (hypb:replace-match-string (car elt) (cdr elt) string)))
    kexport:html-replacement-alist)
   string)
 

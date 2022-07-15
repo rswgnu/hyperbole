@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     6-Oct-91 at 03:42:38
-;; Last-Mod:     19-Jun-22 at 14:50:52 by Bob Weiner
+;; Last-Mod:     15-Jul-22 at 19:38:59 by Mats Lidell
 ;;
 ;; Copyright (C) 1991-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -544,7 +544,7 @@ WINDOW pixelwise."
 	((symbolp object)
 	 (get object 'hyperbole))))
 
-(defun hypb:replace-match-string (regexp str new &optional literal fixedcase)
+(defun hypb:replace-match-string (regexp new str &optional literal fixedcase)
   "Replace all matches for REGEXP in STR with NEW string and return the result.
 If NEW is nil, return STR unchanged.
 
