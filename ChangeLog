@@ -1,3 +1,21 @@
+2022-07-13  Stefan Monnier  <monnier@iro.umontreal.ca>
+
+* hrmail.el (rmail-cease-edit, rmail-forward, rmail-get-new-mail)
+    (rmail-new-summary): Use `advice-add` rather than straight redefinition
+    or `hypb:function-overload`.
+
+* hmh.el (mh-display-msg, mh-regenerate-headers): Use `advice-add`
+    rather than `hypb:function-overload`.
+
+* hgnus.el (gnus-inews-article): Remove hack on function that was
+    deleted back in Nov 1995.
+
+* hypb.el (hypb:emacs-byte-code-p): `byte-code-function-p` is always
+    defined in Emacs≥27.
+    (hypb:function-copy, hypb:function-overload)
+    (hypb:function-symbol-replace, hypb:map-sublists)
+    (hypb:constant-vector-symbol-replace): Delete functions.
+
 2022-07-12  Mats Lidell  <matsl@gnu.org>
 
 * test/hpath-tests.el (hpath:auto-variable-alist-load-path-test): Simplify
