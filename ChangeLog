@@ -1,17 +1,20 @@
-2022-07-15  Mats Lidell  <matsl@gnu.org>
+2022-07-13  Stefan Monnier  <monnier@iro.umontreal.ca>
 
-Patch below by Stefan Monnier, Thank you Stefan.
+* hrmail.el (rmail-cease-edit, rmail-forward, rmail-get-new-mail)
+    (rmail-new-summary): Use `advice-add` rather than straight redefinition
+    or `hypb:function-overload`.
 
-* hypb.el (hypb:function-copy, hypb:function-overload)
+* hmh.el (mh-display-msg, mh-regenerate-headers): Use `advice-add`
+    rather than `hypb:function-overload`.
+
+* hgnus.el (gnus-inews-article): Remove hack on function that was
+    deleted back in Nov 1995.
+
+* hypb.el (hypb:emacs-byte-code-p): `byte-code-function-p` is always
+    defined in Emacs≥27.
+    (hypb:function-copy, hypb:function-overload)
     (hypb:function-symbol-replace, hypb:map-sublists)
-    (hypb:constant-vector-symbol-replace): Remove hypb function and symbol
-    manipulation functions.
-    (hypb:emacs-byte-code-p): Deprecate function. Use byte-code-function-p.
-
-* hrmail.el:
-* hmh.el: Use advice-add instead of hypb functions.
-
-* hgnus.el: Remove redefine of gnus-inews-article. Not available in Emacs.
+    (hypb:constant-vector-symbol-replace): Delete functions.
 
 2022-07-12  Mats Lidell  <matsl@gnu.org>
 
