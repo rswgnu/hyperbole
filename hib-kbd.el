@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    22-Nov-91 at 01:37:57
-;; Last-Mod:     15-Jul-22 at 21:10:19 by Mats Lidell
+;; Last-Mod:     15-Jul-22 at 22:07:35 by Mats Lidell
 ;;
 ;; Copyright (C) 1991-2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -288,33 +288,33 @@ keyboad input queue, as if they had been typed by the user."
 		   norm-key-series (kbd-key:mark-spaces-to-keep norm-key-series "\\[" "\\]")
 		   norm-key-series (kbd-key:mark-spaces-to-keep norm-key-series "<" ">")
 		   norm-key-series (kbd-key:mark-spaces-to-keep norm-key-series "\"" "\"")
-		   norm-key-series (hypb:replace-match-string
+		   norm-key-series (replace-regexp-in-string
 				    "<DEL>\\|<DELETE>\\|@key{DEL}\\|\\<DEL\\>" " DEL " norm-key-series nil t)
-		   norm-key-series (hypb:replace-match-string
+		   norm-key-series (replace-regexp-in-string
 				    "<BS>\\|<BACKSPACE>\\|@key{BS}\\|\\<BS\\>" " BS " norm-key-series nil t)
-		   norm-key-series (hypb:replace-match-string
+		   norm-key-series (replace-regexp-in-string
 				    "<RET>\\|<RTN>\\|<RETURN>\\|@key{RET}\\|@key{RTN}\\|\\<RETURN\\>\\|\\<RET\\>\\|\\<RTN\\>"
 				    " RET " norm-key-series nil t)
-		   norm-key-series (hypb:replace-match-string
+		   norm-key-series (replace-regexp-in-string
 				    "<TAB>\\|@key{TAB}\\|\\<TAB\\>" " TAB " norm-key-series nil t)
 		   ;; Includes conversion of spaces-to-keep markup to
 		   ;; SPC; otherwise, later calls to `kbd' will remove
 		   ;; these spaces.
-		   norm-key-series (hypb:replace-match-string
+		   norm-key-series (replace-regexp-in-string
 				    "\\\\ \\|\0\0\0\\|<SPC>\\|@key{SPC}\\|\\<SPC\\>" " SPC " norm-key-series nil t)
-		   norm-key-series (hypb:replace-match-string
+		   norm-key-series (replace-regexp-in-string
 				    "<ESC>\\|<ESCAPE>\\|@key{ESC}\\|\\<ESC\\(APE\\)?\\>" " M-" norm-key-series nil t)
 		   ;; ESC ESC
-		   norm-key-series (hypb:replace-match-string
+		   norm-key-series (replace-regexp-in-string
 				    "M-[ \t\n\r\f]*M-" " ESC M-" norm-key-series nil t)
 		   ;; Separate with a space any keys with a modifier
-		   norm-key-series (hypb:replace-match-string kbd-key:modified-key-regexp
+		   norm-key-series (replace-regexp-in-string kbd-key:modified-key-regexp
 							      " \\1\\3 " norm-key-series)
 		   ;; Normalize regular whitespace to single spaces
-		   norm-key-series (hypb:replace-match-string "[ \t\n\r\f]+" " " norm-key-series nil t)
+		   norm-key-series (replace-regexp-in-string "[ \t\n\r\f]+" " " norm-key-series nil t)
 
 		   ;; Unqote special {} chars.
-		   norm-key-series (hypb:replace-match-string "\\\\\\([{}]\\)"
+		   norm-key-series (replace-regexp-in-string "\\\\\\([{}]\\)"
 							      "\\1" norm-key-series)
 		   norm-key-series (hpath:trim norm-key-series))
 	     ;; (while (string-match "\\`\\(C-u\\|M-\\)\\(-?[0-9]+\\)" norm-key-series)
@@ -493,7 +493,7 @@ Also, initialize `kbd-key:mini-menu-key' to the key sequence that invokes the Hy
 	    end (match-end 0)
 	    substring (match-string 0 string)
 	    string (concat (substring string 0 start)
-			   (hypb:replace-match-string "[ \t\n\r\f]" "\0\0\0" substring nil t)
+			   (replace-regexp-in-string "[ \t\n\r\f]" "\0\0\0" substring nil t)
 			   (if (< end (length string))
 			       (substring string end)
 			     ""))

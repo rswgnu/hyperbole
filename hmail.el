@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     9-Oct-91 at 18:38:05
-;; Last-Mod:     15-Jul-22 at 21:21:12 by Mats Lidell
+;; Last-Mod:     15-Jul-22 at 22:07:35 by Mats Lidell
 ;;
 ;; Copyright (C) 1991-2021  Free Software Foundation, Inc.
 ;; See the HY-COPY (Hyperbole) or BR-COPY (OO-Browser) file for license
@@ -147,7 +147,7 @@ Optional SUBJECT and HELP message may also be given."
 				      0 (string-match "-" reader-name))))
 	   hmail-func)
       (mapcar (lambda (func-suffix)
-		(setq hmail-func (hypb:replace-match-string
+		(setq hmail-func (replace-regexp-in-string
 				  "Summ-" "" func-suffix nil t))
 		(defalias (intern (concat class-prefix hmail-func))
 		  (intern (concat reader-prefix "-" func-suffix))))

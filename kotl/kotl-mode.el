@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    6/30/93
-;; Last-Mod:     15-Jul-22 at 21:21:12 by Mats Lidell
+;; Last-Mod:     15-Jul-22 at 22:07:35 by Mats Lidell
 ;;
 ;; Copyright (C) 1993-2022  Free Software Foundation, Inc.
 ;; See the "../HY-COPY" file for license information.
@@ -374,7 +374,7 @@ With optional prefix arg DELETE-FLAG, delete region."
   (interactive "cCopy to register: \nr\nP")
   (let ((indent (kcell-view:indent)))
     (set-register register
-		  (hypb:replace-match-string
+		  (replace-regexp-in-string
 		   (concat "^" (make-string indent ?\ ))
 		   ""
 		   (buffer-substring start end) nil t)))
@@ -745,7 +745,7 @@ If a completion is active, this aborts the completion only."
       ;; Then save to kill ring.
       (setq subst-str (concat "\\([\n\r]\\)" (make-string indent ?\ ))
 	    kill-str
-	    (hypb:replace-match-string
+	    (replace-regexp-in-string
 	     subst-str "\\1" (buffer-substring start end)))
       (unless copy-p
 	;; If last char of region is a newline, then delete indent in
@@ -1339,7 +1339,7 @@ See also the command `yank-pop' (\\[yank-pop])."
 	 (indent-str (make-string indent ?\ )))
     ;; Convert all occurrences of newline to newline + cell indent.
     ;; Then insert into buffer.
-    (insert-for-yank (hypb:replace-match-string
+    (insert-for-yank (replace-regexp-in-string
 		      "[\n\r]" (lambda (match) (concat match indent-str)) yank-text)))
   (when (consp arg) (kotl-mode:exchange-point-and-mark))
   ;; If we do get all the way thru, make this-command indicate that.
@@ -1380,7 +1380,7 @@ doc string for `insert-for-yank-1', which see."
 	   (indent-str (make-string indent ?\ )))
       ;; Convert all occurrences of newline to newline + cell indent.
       ;; Then insert into buffer.
-      (insert-for-yank (hypb:replace-match-string
+      (insert-for-yank (replace-regexp-in-string
 			"[\n\r]" (concat "\\0" indent-str) yank-text)))
     ;; Set the window start back where it was in the yank command,
     ;; if possible.
@@ -2377,7 +2377,7 @@ to one level and kotl-mode:refill-flag is treated as true."
       ;; Substitute cell-1 contents into cell-2 location.
       (delete-region (kcell-view:start) (kcell-view:end-contents))
       (insert
-       (hypb:replace-match-string
+       (replace-regexp-in-string
 	"\\([\n\r]\\)"
 	(concat "\\1" (make-string (kcell-view:indent) ?\ )) contents-1))
       (when kotl-mode:refill-flag
@@ -2389,7 +2389,7 @@ to one level and kotl-mode:refill-flag is treated as true."
       (delete-region (kcell-view:start) (kcell-view:end-contents))
       ;; Add indentation to all but first line.
       (insert
-       (hypb:replace-match-string
+       (replace-regexp-in-string
 	"\\([\n\r]\\)"
 	(concat "\\1" (make-string (kcell-view:indent) ?\ )) contents-2))
       (when kotl-mode:refill-flag

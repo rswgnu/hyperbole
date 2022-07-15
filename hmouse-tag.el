@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    24-Aug-91
-;; Last-Mod:     15-Jul-22 at 21:21:12 by Mats Lidell
+;; Last-Mod:     15-Jul-22 at 22:07:35 by Mats Lidell
 ;;
 ;; Copyright (C) 1991-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -1284,7 +1284,7 @@ Look for packages in `smart-java-package-path'."
 	      (let ((library-path (smart-java-library-path referent)))
 		(if library-path
 		    (hpath:find (expand-file-name
-				 (hypb:replace-match-string
+				 (replace-regexp-in-string
 				  "\\." (file-name-as-directory "") referent nil t)
 				 library-path))
 		  ;; Show the current directory, which should contain this package.
@@ -1294,9 +1294,9 @@ Look for packages in `smart-java-package-path'."
 	    ;; package.
 	    (if (string-match "\\.\\*" referent)
 		(setq subfile (substring referent 0 (match-beginning 0))
-		      subfile (hypb:replace-match-string
+		      subfile (replace-regexp-in-string
 			       "\\." (file-name-as-directory "") subfile nil t))
-	      (setq subpath (hypb:replace-match-string
+	      (setq subpath (replace-regexp-in-string
 			     "\\." (file-name-as-directory "") referent nil t)
 		    subfile (concat subpath ".java")))
 	    ;;

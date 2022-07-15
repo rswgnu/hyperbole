@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    04-Apr-89
-;; Last-Mod:     15-Jul-22 at 21:21:12 by Mats Lidell
+;; Last-Mod:     15-Jul-22 at 22:07:35 by Mats Lidell
 ;;
 ;; Copyright (C) 1989-2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -352,7 +352,7 @@ This works regardless of the current buffer."
 	       (<= (match-beginning 0) opoint)
 	       (> (match-end 0) opoint))
 	  ;; Remove newline and extra spaces from `note-name'
-	  (hypb:replace-match-string "[ \t\n\r]+" " "
+	  (replace-regexp-in-string "[ \t\n\r]+" " "
 				     (match-string-no-properties 2) nil t)))))
 
 (defun Info-read-index-item-name-1 (string predicate code)

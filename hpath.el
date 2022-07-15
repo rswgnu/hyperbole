@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     1-Nov-91 at 00:44:23
-;; Last-Mod:     15-Jul-22 at 21:21:12 by Mats Lidell
+;; Last-Mod:     15-Jul-22 at 22:07:35 by Mats Lidell
 ;;
 ;; Copyright (C) 1991-2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -1631,8 +1631,8 @@ form is what is returned for PATH."
 				      ;; Quote any % except for one %s at the end of the
 				      ;; path part of rtn-path (immediately preceding a #
 				      ;; or , character or the end of string).
-				      (setq rtn-path (hypb:replace-match-string "%" "%%" rtn-path t nil)
-					    rtn-path (hypb:replace-match-string "%%s\\([#,]\\|\\'\\)" "%s\\1" rtn-path t nil))
+				      (setq rtn-path (replace-regexp-in-string "%" "%%" rtn-path t nil)
+					    rtn-path (replace-regexp-in-string "%%s\\([#,]\\|\\'\\)" "%s\\1" rtn-path t nil))
 				      ;; Return path if non-nil return value.
 				      (if (stringp suffix) ;; suffix could = t, which we ignore
 					  (if (string-match (concat (regexp-quote suffix) "%s") rtn-path)
@@ -2375,7 +2375,7 @@ that returns a replacement string."
 	     rtn-str
 	     (substring str prev-start match)
 	     (cond ((functionp new)
-		    (hypb:replace-match-string
+		    (replace-regexp-in-string
 		     regexp (funcall new str)
 		     (substring str match start) fixedcase literal))
 		   (literal new)
@@ -2407,7 +2407,7 @@ that returns a replacement string."
 Replacement is done iff VAR-DIR-VAL is an absolute path.
 If PATH is modified, return PATH, otherwise return nil."
   (when (and (stringp var-dir-val) (file-name-absolute-p var-dir-val))
-    (let ((new-path (hypb:replace-match-string
+    (let ((new-path (replace-regexp-in-string
 		     (regexp-quote (file-name-as-directory
 				    (or var-dir-val default-directory)))
 		     (concat "$\{" (symbol-name var-symbol) "\}/") path
