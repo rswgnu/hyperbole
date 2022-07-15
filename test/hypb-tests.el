@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:     5-Apr-21 at 18:53:10
-;; Last-Mod:     15-Jul-22 at 22:07:35 by Mats Lidell
+;; Last-Mod:     15-Jul-22 at 23:09:21 by Mats Lidell
 ;;
 ;; Copyright (C) 2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -20,82 +20,6 @@
 (require 'hbut)
 (require 'ert)
 (require 'el-mock)
-
-;; Test for replace-regexp-in-string copied from emacs src
-(ert-deftest replace-regexp-in-string-test ()
-  ;; Test cases added before refactoring to check new = nil case
-  ;; Disabled due to nil not being a valid third arg in replace-regexp-in-string.
-  ;; (should (equal (replace-regexp-in-string ".*" nil "abc") "abc"))
-  (should (equal (replace-regexp-in-string ".*" "x" "abc") "x"))
-
-  (should (equal (replace-regexp-in-string "a+" "xy" "abaabbabaaba")
-                 "xybxybbxybxybxy"))
-  ;; FIXEDCASE
-  (let ((case-fold-search t))
-    (should (equal (replace-regexp-in-string "a+" "xy" "ABAABBABAABA")
-                   "XYBXYBBXYBXYBXY"))
-    (should (equal (replace-regexp-in-string "a+" "xy" "ABAABBABAABA" t nil)
-                   "xyBxyBBxyBxyBxy"))
-    (should (equal (replace-regexp-in-string
-                    "a[bc]*" "xyz" "a A ab AB Ab aB abc ABC Abc AbC aBc")
-                   "xyz XYZ xyz XYZ Xyz xyz xyz XYZ Xyz Xyz xyz"))
-    (should (equal (replace-regexp-in-string
-                    "a[bc]*" "xyz" "a A ab AB Ab aB abc ABC Abc AbC aBc" t nil)
-                   "xyz xyz xyz xyz xyz xyz xyz xyz xyz xyz xyz")))
-  (let ((case-fold-search nil))
-    (should (equal (replace-regexp-in-string "a+" "xy" "ABAABBABAABA")
-                   "ABAABBABAABA")))
-  ;; group substitution
-  (should (equal (replace-regexp-in-string
-                  "a\\(b*\\)" "<\\1,\\&>" "babbcaabacbab")
-                 "b<bb,abb>c<,a><b,ab><,a>cb<b,ab>"))
-  (should (equal (replace-regexp-in-string
-                  "x\\(?2:..\\)\\(?1:..\\)\\(..\\)\\(..\\)\\(..\\)"
-                  "<\\3,\\5,\\4,\\1,\\2>" "yxabcdefghijkl")
-                 "y<ef,ij,gh,cd,ab>kl"))
-  ;; LITERAL
-  (should (equal (replace-regexp-in-string
-                  "a\\(b*\\)" "<\\1,\\&>" "babbcaabacbab" nil t)
-                 "b<\\1,\\&>c<\\1,\\&><\\1,\\&><\\1,\\&>cb<\\1,\\&>"))
-  (should (equal (replace-regexp-in-string
-                  "a" "\\\\,\\?" "aba")
-                 "\\,\\?b\\,\\?"))
-  (should (equal (replace-regexp-in-string
-                  "a" "\\\\,\\?" "aba" nil t)
-                 "\\\\,\\?b\\\\,\\?"))
-  ;; SUBEXP
-  ; Available in subr-replace-regexp-in-string. Not supported here
-  ; (should (equal (replace-regexp-in-string
-  ;                 "\\(a\\)\\(b*\\)c" "xy" "babbcdacd" nil nil 2)
-  ;                "baxycdaxycd"))
-  ;; START
-  ; Available in subr-replace-regexp-in-string. Not supported here
-  ; (should (equal (replace-regexp-in-string
-  ;                 "ab" "x" "abcabdabeabf" nil nil nil 4)
-  ;                "bdxexf"))
-  ;; An empty pattern matches once before every character.
-  (should (equal (replace-regexp-in-string "" "x" "abc")
-                 "xaxbxc"))
-  (should (equal (replace-regexp-in-string "y*" "x" "abc")
-                 "xaxbxc"))
-  ;; replacement function
-  (should (equal (replace-regexp-in-string
-                  "a\\(b*\\)c"
-                  (lambda (s)
-                    (format "<%s,%s,%s,%s,%s>"
-                            s
-                            (match-beginning 0) (match-end 0)
-                            (match-beginning 1) (match-end 1)))
-                  "babbcaacabc")
-                 "b<abbc,0,4,1,3>a<ac,0,2,1,1><abc,0,3,1,2>")))
-
-(ert-deftest replace-regexp-in-string-after-27.1-test ()
-  ;; anchors (bug#15107, bug#44861)
-  (when (version< "27.1" emacs-version)
-    (should (equal (replace-regexp-in-string "a\\B" "b" "a aaaa")
-                   "a bbba"))
-    (should (equal (replace-regexp-in-string "\\`\\|x" "z" "--xx--")
-                   "z--zz--"))))
 
 (ert-deftest hypb:installation-type-test ()
   "Verify installation type alternatives."
