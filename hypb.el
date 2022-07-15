@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     6-Oct-91 at 03:42:38
-;; Last-Mod:     15-Jul-22 at 20:56:15 by Mats Lidell
+;; Last-Mod:     15-Jul-22 at 21:33:00 by Mats Lidell
 ;;
 ;; Copyright (C) 1991-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -563,14 +563,7 @@ in the replaced text, capitalize each word in NEW.
 
 NEW may instead be a function of one argument (the string to replace in)
 that returns a replacement string."
-  (if (null new)
-      str
-    (unless (stringp str)
-      (error "(hypb:replace-match-string): 2nd arg must be a string: %s" str))
-    (unless (or (stringp new) (functionp new))
-      (error "(hypb:replace-match-string): 3rd arg must be a string or function: %s"
-	     new))
-    (replace-regexp-in-string regexp new str fixedcase literal)))
+  (replace-regexp-in-string regexp new str fixedcase literal))
 
 (defun hypb:return-process-output (program &optional infile &rest args)
   "Return as a string the output from external PROGRAM with INFILE for input.

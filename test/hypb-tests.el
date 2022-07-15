@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:     5-Apr-21 at 18:53:10
-;; Last-Mod:     15-Jul-22 at 20:58:43 by Mats Lidell
+;; Last-Mod:     15-Jul-22 at 21:40:52 by Mats Lidell
 ;;
 ;; Copyright (C) 2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -24,7 +24,8 @@
 ;; Test for replace-regexp-in-string copied from emacs src
 (ert-deftest hypb:replace-match-string-test ()
   ;; Test cases added before refactoring to check new = nil case
-  (should (equal (hypb:replace-match-string ".*" nil "abc") "abc"))
+  ;; Disabled due to nil not being a valid third arg in replace-regexp-in-string.
+  ;; (should (equal (hypb:replace-match-string ".*" nil "abc") "abc"))
   (should (equal (hypb:replace-match-string ".*" "x" "abc") "x"))
 
   (should (equal (hypb:replace-match-string "a+" "xy" "abaabbabaaba")
