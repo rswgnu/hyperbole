@@ -1,9 +1,17 @@
-2022-07-14  Mats Lidell  <matsl@gnu.org>
+2022-07-15  Mats Lidell  <matsl@gnu.org>
 
-* hypb.el:
+Patch below by Stefan Monnier, Thank you Stefan.
+
+* hypb.el (hypb:function-copy, hypb:function-overload)
+    (hypb:function-symbol-replace, hypb:map-sublists)
+    (hypb:constant-vector-symbol-replace): Remove hypb function and symbol
+    manipulation functions.
+    (hypb:emacs-byte-code-p): Deprecate function. Use byte-code-function-p.
+
 * hrmail.el:
-* hmh.el:
-* hgnus.el: Patch by Stefan Monnier, Thank you Stefan.
+* hmh.el: Use advice-add instead of hypb functions.
+
+* hgnus.el: Remove redefine of gnus-inews-article. Not available in Emacs.
 
 2022-07-12  Mats Lidell  <matsl@gnu.org>
 
