@@ -1,3 +1,10 @@
+2022-07-15  Mats Lidell  <matsl@gnu.org>
+
+* test/hypb-tests.el: Remove test cases for hypb:replace-match-string.
+
+* hypb.el (hypb:replace-match-string): Mark as obsolete. Replace all
+    calls, in numerous places, to use replace-regexp-in-string.
+
 2022-07-13  Stefan Monnier  <monnier@iro.umontreal.ca>
 
 * hrmail.el (rmail-cease-edit, rmail-forward, rmail-get-new-mail)

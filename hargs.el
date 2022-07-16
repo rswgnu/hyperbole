@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    31-Oct-91 at 23:17:35
-;; Last-Mod:     20-Feb-22 at 22:15:24 by Bob Weiner
+;; Last-Mod:     15-Jul-22 at 22:07:35 by Mats Lidell
 ;;
 ;; Copyright (C) 1991-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -150,7 +150,7 @@ With optional EXCLUDE-REGEXP, any matched string is ignored if it matches this r
 	     (>= end opoint)
 	     (let ((string (hargs:buffer-substring start end)))
 	       (unless (and (stringp exclude-regexp) (string-match exclude-regexp string) )
-		 (setq string (hypb:replace-match-string "[\n\r\f]\\s-*" string " " t))
+		 (setq string (replace-regexp-in-string "[\n\r\f]\\s-*" " " string nil t))
 		 (unless hyperb:microsoft-os-p
 		   (setq string (hpath:mswindows-to-posix string)))
 		 (if list-positions-flag

@@ -3,9 +3,9 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     1-May-93
-;; Last-Mod:     22-May-22 at 10:22:02 by Bob Weiner
+;; Last-Mod:     15-Jul-22 at 23:24:10 by Mats Lidell
 ;;
-;; Copyright (C) 1993-2021  Free Software Foundation, Inc.
+;; Copyright (C) 1993-2022  Free Software Foundation, Inc.
 ;; See the "../HY-COPY" file for license information.
 ;;
 ;; This file is part of GNU Hyperbole.
@@ -109,7 +109,7 @@ Augment capabilities not yet implemented and ignored for now:
 	  ((stringp cell-ref)
 	   (let (kviewspec
 		 idstamp-string)
-	     (setq cell-ref (hypb:replace-match-string "\\s-+" cell-ref "" t))
+	     (setq cell-ref (replace-regexp-in-string "\\s-+" "" cell-ref nil t))
 	     (if (string-equal cell-ref "0")
 		 "0"
 	       ;; Ignore Augment :viewspec.

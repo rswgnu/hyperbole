@@ -3,9 +3,9 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    26-Feb-98
-;; Last-Mod:     12-Feb-22 at 10:42:20 by Mats Lidell
+;; Last-Mod:     15-Jul-22 at 23:24:27 by Mats Lidell
 ;;
-;; Copyright (C) 1998-2021  Free Software Foundation, Inc.
+;; Copyright (C) 1998-2022  Free Software Foundation, Inc.
 ;; See the "../HY-COPY" file for license information.
 ;;
 ;; This file is part of GNU Hyperbole.
@@ -455,10 +455,10 @@ hard newlines are not used.  Also converts Urls and Klinks into Html hyperlinks.
 	;; 	</menu>
    	;;     </nav>\n")
 	(let* ((separator
-		(hypb:replace-match-string
-		 ">" (hypb:replace-match-string
-		      "<" (kview:label-separator kview) "&lt;")
-		 "&gt;"))
+		(replace-regexp-in-string
+		 ">" "&gt;"
+		 (replace-regexp-in-string
+		      "<" "&lt;" (kview:label-separator kview))))
 	       i is-parent is-last-sibling no-sibling-stack level label contents)
 	  (kview:map-tree
 	   (lambda (_kview)
@@ -533,7 +533,7 @@ hard newlines are not used.  Also converts Urls and Klinks into Html hyperlinks.
 
 (defun kexport:html-file-klink (string)
   "Convert STRING containing a klink with a file reference to Html format.
-Works exclusively within a call to `hypb:replace-match-string'."
+Works exclusively within a call to `replace-regexp-in-string'."
   (let ((filename (substring string (match-beginning 1)
 			     (match-end 1))))
     (if (equal filename (file-name-nondirectory
@@ -549,13 +549,13 @@ Works exclusively within a call to `hypb:replace-match-string'."
   "Perform replacements on STRING specified by `kexport:html-replacement-alist'."
   (mapc
    (lambda (elt)
-     (setq string (hypb:replace-match-string (car elt) string (cdr elt))))
+     (setq string (replace-regexp-in-string (car elt) (cdr elt) string)))
    kexport:html-replacement-alist)
   string)
 
 (defun kexport:html-url (string)
   "Convert STRING containing a Url to Html format.
-Works exclusively within a call to `hypb:replace-match-string'."
+Works exclusively within a call to `replace-regexp-in-string'."
   (let* ((url (substring string (match-beginning hpath:url-grpn)
 			 (match-end hpath:url-grpn)))
 	 (last-str-char (length string))

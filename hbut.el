@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    18-Sep-91 at 02:57:09
-;; Last-Mod:     15-May-22 at 23:07:36 by Bob Weiner
+;; Last-Mod:     15-Jul-22 at 22:07:35 by Mats Lidell
 ;;
 ;; Copyright (C) 1991-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -1032,7 +1032,7 @@ Ignore email-related buffers."
   (when (string-match "\n" label)
     (mapc (lambda (prefix)
 	    (when (string-match "\n" label)
-	      (setq label (hypb:replace-match-string prefix label " " t))))
+	      (setq label (replace-regexp-in-string prefix " " label nil t))))
 	  hbut:fill-prefix-regexps))
   label)
 
@@ -1260,10 +1260,10 @@ whitespace sequences with `_'."
   (when label
     (setq label (hbut:fill-prefix-remove label)
 	  ;; Remove leading and trailing space.
-	  label (hypb:replace-match-string "\\`[ \t\n\r]+\\|[ \t\n\r]+\\'"
-					   label "" t)
-	  label (hypb:replace-match-string "_" label "__" t))
-    (hypb:replace-match-string "[ \t\n\r]+" label "_" t)))
+	  label (replace-regexp-in-string "\\`[ \t\n\r]+\\|[ \t\n\r]+\\'"
+					   "" label nil t)
+	  label (replace-regexp-in-string "_" "__" label nil t))
+    (replace-regexp-in-string "[ \t\n\r]+" "_" label nil t)))
 
 (defun    hbut:map (but-func &optional start-delim end-delim
 			     regexp-match include-delims)
