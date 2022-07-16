@@ -3,9 +3,9 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    6/30/93
-;; Last-Mod:     11-May-22 at 00:54:33 by Bob Weiner
+;; Last-Mod:     15-Jul-22 at 23:25:24 by Mats Lidell
 ;;
-;; Copyright (C) 1993-2021  Free Software Foundation, Inc.
+;; Copyright (C) 1993-2022  Free Software Foundation, Inc.
 ;; See the "../HY-COPY" file for license information.
 ;;
 ;; This file is part of GNU Hyperbole.
@@ -212,9 +212,9 @@ Any cell that is invisible is also collapsed as indicated by a call to
 	  (start (kcell-view:start))
 	  (end (kcell-view:end-contents)))
       ;; Remove indentation from all but first line.
-      (hypb:replace-match-string
+      (replace-regexp-in-string
        (concat "\\([\n\r]\\)" (make-string indent ?\ ))
-       (buffer-substring start end) "\\1"))))
+       "\\1" (buffer-substring start end)))))
 
 (defun kcell-view:create (kview cell contents level idstamp klabel &optional no-fill sibling-p)
   "Insert into KVIEW at point, CELL with CONTENTS at LEVEL (1 = first level) with IDSTAMP and KLABEL.

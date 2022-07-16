@@ -3,9 +3,9 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    15-Nov-93 at 11:57:05
-;; Last-Mod:     11-Apr-22 at 23:51:03 by Bob Weiner
+;; Last-Mod:     15-Jul-22 at 23:24:41 by Mats Lidell
 ;;
-;; Copyright (C) 1993-2021  Free Software Foundation, Inc.
+;; Copyright (C) 1993-2022  Free Software Foundation, Inc.
 ;; See the "../HY-COPY" file for license information.
 ;;
 ;; This file is part of GNU Hyperbole.
@@ -716,8 +716,8 @@ Remove the indent and return the remaining region as a string."
 	    (if (re-search-forward "[\n\r][ \t]+" end t)
 		(concat "^" (make-string (current-column) ?\ ))))
       (if indent-regexp
-	  (hypb:replace-match-string
-			  indent-regexp (buffer-substring start end) "" t)
+	  (replace-regexp-in-string
+			  indent-regexp "" (buffer-substring start end) nil t)
 	(buffer-substring start end)))))
 
 ;; Do this at the end so kotl-mode can utilize kimport definitions.

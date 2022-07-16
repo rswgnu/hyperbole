@@ -3,9 +3,9 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Oct-95 at 15:17:07
-;; Last-Mod:     11-May-22 at 00:51:57 by Bob Weiner
+;; Last-Mod:     15-Jul-22 at 23:25:45 by Mats Lidell
 ;;
-;; Copyright (C) 1995-2021  Free Software Foundation, Inc.
+;; Copyright (C) 1995-2022  Free Software Foundation, Inc.
 ;; See the "../HY-COPY" file for license information.
 ;;
 ;; This file is part of GNU Hyperbole.
@@ -131,7 +131,7 @@ display all levels of cells."
   (interactive)
   (setq kvspec:current
 	(if (string-match "b" kvspec:current)
-	    (hypb:replace-match-string "b" kvspec:current "" t)
+	    (replace-regexp-in-string "b" "" kvspec:current nil t)
 	  (concat "b" kvspec:current)))
   (kvspec:blank-lines)
   (kvspec:update-modeline))
@@ -146,8 +146,8 @@ view specs."
   (cond ((stringp view-spec)
 	 ;; Use given view-spec after removing extraneous characters.
 	 (setq view-spec
-	       (hypb:replace-match-string
-		"[^.*~0-9abcdefgilnrsv]+" view-spec "" t))
+	       (replace-regexp-in-string
+		"[^.*~0-9abcdefgilnrsv]+" "" view-spec nil t))
 	 (unless (string-match "e" view-spec)
 	   ;; Force 'e' elide view spec if not there.
 	   (setq view-spec
