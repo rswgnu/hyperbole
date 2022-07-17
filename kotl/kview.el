@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    6/30/93
-;; Last-Mod:     17-Jul-22 at 10:39:07 by Mats Lidell
+;; Last-Mod:     17-Jul-22 at 10:54:29 by Mats Lidell
 ;;
 ;; Copyright (C) 1993-2022  Free Software Foundation, Inc.
 ;; See the "../HY-COPY" file for license information.
@@ -21,7 +21,8 @@
 ;; Quiet byte compiler warnings for this free variable.
 
 (define-obsolete-variable-alias 'label-sep-len 'kview-label-sep-len "8.0.1")
-(defvar kview-label-sep-len nil)
+(defvar kview-label-sep-len nil
+  "Length of the separation between cell's label and start of its contents.")
 
 ;;; ************************************************************************
 ;;; Public variables
