@@ -72,6 +72,9 @@
   MANIFEST: Added above file.
 
 2022-07-06  Bob Weiner  <rsw@gnu.org>
+* hsys-org.el (hsys-org-link-at-p, hsys-org-heading-at-p): Update to use
+    'smart-eolp' and 'smart-eobp'.
+
 2022-06-19  Bob Weiner  <rsw@gnu.org>
 
 * test/demo-tests.el (fast-demo-key-series-shell-apropos): Allow optional space
