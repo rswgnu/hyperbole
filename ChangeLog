@@ -65,6 +65,13 @@
 * test/hui-select-tests.el (hui-select--thing): Limit test case to run in
     interactive mode, i.e. make test-all.
 
+2022-07-10  Bob Weiner  <rsw@gnu.org>
+
+* hsys-youtube.el: Add action button type to play segments of Youtube videos.
+  Makefile (EL_COMPILE, ELc_COMPILE):
+  MANIFEST: Added above file.
+
+2022-07-06  Bob Weiner  <rsw@gnu.org>
 2022-06-19  Bob Weiner  <rsw@gnu.org>
 
 * test/demo-tests.el (fast-demo-key-series-shell-apropos): Allow optional space
