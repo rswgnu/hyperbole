@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    6/30/93
-;; Last-Mod:     17-Jul-22 at 11:09:42 by Mats Lidell
+;; Last-Mod:     17-Jul-22 at 16:25:03 by Mats Lidell
 ;;
 ;; Copyright (C) 1993-2022  Free Software Foundation, Inc.
 ;; See the "../HY-COPY" file for license information.
@@ -290,7 +290,7 @@ the end of the text and `fill-column'."
 	(opoint (point-marker))
 	(bocp)
 	start)
-    (setq start (kotl-mode:to-start-of-line))
+    (setq start (kotl-mode:beginning-of-line))
     (when (setq bocp (kotl-mode:bocp))
       ;; Add a temporary fill-prefix since this is the 1st line of the cell
       ;; where label could interfere with centering.
@@ -488,7 +488,7 @@ Do not delete across cell boundaries."
   (save-restriction
     (narrow-to-region
      (save-excursion
-       (kotl-mode:to-start-of-line))
+       (kotl-mode:beginning-of-line))
      (save-excursion
        (kotl-mode:to-end-of-line)))
     (delete-horizontal-space)))
@@ -635,7 +635,7 @@ With optional prefix argument TOP-P non-nil, refill all cells in the outline."
   (save-excursion
     (save-restriction
       (save-excursion
-	(narrow-to-region (kotl-mode:to-start-of-line) (kotl-mode:to-end-of-line)))
+	(narrow-to-region (kotl-mode:beginning-of-line) (kotl-mode:to-end-of-line)))
       (just-one-space))))
 
 (defun kotl-mode:kill-line (&optional arg)
@@ -662,7 +662,7 @@ With optional prefix argument TOP-P non-nil, refill all cells in the outline."
 	(kill-region (point) (setq arg (kotl-mode:to-end-of-line))))
        ((= num-arg 0)
 	;; kill to bol
-	(kill-region (point) (setq arg (kotl-mode:to-start-of-line))))
+	(kill-region (point) (setq arg (kotl-mode:beginning-of-line))))
        (t ;; (/= num-arg 0)
 	;; Find start and end of region to kill
 	(let ((start (point))
@@ -821,7 +821,7 @@ too long."
 	    (insert-char ?\  indent))
 	  (do-auto-fill)
 	  (kfill:forward-line 1)
-	  (kotl-mode:to-start-of-line))
+	  (kotl-mode:beginning-of-line))
       (while (> arg 0)
 	(insert ?\n)
 	(insert-char ?\  indent)
@@ -993,7 +993,7 @@ that contains mark."
       (insert "\n")
       (insert-char ?\  (kcell-view:indent))
       (insert line-to-move)
-      (kotl-mode:to-start-of-line)))))
+      (kotl-mode:beginning-of-line)))))
 
 (defun kotl-mode:transpose-paragraphs (arg)
   "Interchange this (or next) paragraph with previous one."
@@ -1532,17 +1532,14 @@ See `forward-paragraph' for more information."
     (kotl-mode:backward-cell (1- arg)))
   (point))
 
-;;; Avoid XEmacs byte-compiler bug which inserts nil for calls to this
-;;; function if named kotl-mode:beginning-of-line.
-;;;
-(defun kotl-mode:to-start-of-line (&optional arg)
+(defun kotl-mode:beginning-of-line (&optional arg)
   "Move point to beginning of current or ARGth - 1 line and return point."
   (interactive "p")
   (kotl-mode:maintain-region-highlight)
   (unless arg
     (setq arg 1))
   (unless (integer-or-marker-p arg)
-    (error "(kotl-mode:to-start-of-line): Wrong type arg, integer-or-marker, `%s'" arg))
+    (error "(kotl-mode:beginning-of-line): Wrong type arg, integer-or-marker, `%s'" arg))
   (kfill:forward-line (1- arg))
   (unless (eolp)
     (forward-char (prog1 (kcell-view:indent)
@@ -1550,8 +1547,8 @@ See `forward-paragraph' for more information."
   (point))
 
 ;;; This ensures that the key bound to `beginning-of-line' is replaced in kotl-mode.
-(defalias 'kotl-mode:beginning-of-line 'kotl-mode:to-start-of-line)
-(defalias 'kotl-mode:beginning-of-visual-line 'kotl-mode:to-start-of-line)
+(define-obsolete-function-alias 'kotl-mode:to-start-of-line #'kotl-mode:beginning-of-line "8.0.1")
+(defalias 'kotl-mode:beginning-of-visual-line 'kotl-mode:beginning-of-line)
 (defalias 'kotl-mode:move-beginning-of-line 'kotl-mode:beginning-of-line)
 
 (defun kotl-mode:beginning-of-tree ()
@@ -2066,7 +2063,7 @@ If at tail cell already, do nothing and return nil."
 	    (when (kotl-mode:eolp)
 	      (save-excursion
 		(skip-chars-forward "\n\r")
-		(kotl-mode:to-start-of-line)
+		(kotl-mode:beginning-of-line)
 		(kotl-mode:bocp))))
     (point)))
 
@@ -2291,7 +2288,7 @@ to one level and kotl-mode:refill-flag is treated as true."
 	   start-level start-point prev prev-level)
       ;; Next line ensures point is in the root of the current tree if
       ;; the tree is at all hidden.
-      (kotl-mode:to-start-of-line)
+      (kotl-mode:beginning-of-line)
       (setq start-point (point)
 	    start-level (kcell-view:level start-point lbl-sep-len))
       (when fill-p
@@ -2501,7 +2498,7 @@ to one level and kotl-mode:refill-flag is treated as true."
 	   start-point)
       ;; Next line ensures point is in the root of the current tree if
       ;; the tree is at all hidden.
-      (kotl-mode:to-start-of-line)
+      (kotl-mode:beginning-of-line)
       (setq start-point (point))
       (when fill-p
 	(setq arg 1))
@@ -2922,7 +2919,7 @@ With optional SHOW-FLAG, expand the subtree instead."
   (save-excursion
     ;; Next line ensures point is in the root of the current tree if
     ;; the tree is at all hidden.
-    (kotl-mode:to-start-of-line)
+    (kotl-mode:beginning-of-line)
     (if cell-ref
 	(kotl-mode:goto-cell cell-ref t)
       (kotl-mode:beginning-of-cell))
@@ -2945,7 +2942,7 @@ With optional SHOW-FLAG, expand the tree instead."
   (save-excursion
     ;; Next line ensures point is in the root of the current tree if
     ;; the tree is at all hidden.
-    (kotl-mode:to-start-of-line)
+    (kotl-mode:beginning-of-line)
     (let ((start (if cell-ref
 		     (kotl-mode:goto-cell cell-ref t)
 		   (kotl-mode:beginning-of-cell)))
@@ -3124,7 +3121,7 @@ Do not delete newline at end of line."
     (when pos
       (goto-char pos))
     (if (kview:valid-position-p)
-	(let ((bol (kotl-mode:to-start-of-line))
+	(let ((bol (kotl-mode:beginning-of-line))
 	      (eol (kotl-mode:to-end-of-line)))
 	  (prog1
 	      (buffer-substring bol eol)

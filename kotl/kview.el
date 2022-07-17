@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    6/30/93
-;; Last-Mod:     17-Jul-22 at 11:09:42 by Mats Lidell
+;; Last-Mod:     17-Jul-22 at 16:22:51 by Mats Lidell
 ;;
 ;; Copyright (C) 1993-2022  Free Software Foundation, Inc.
 ;; See the "../HY-COPY" file for license information.
@@ -391,7 +391,7 @@ characters of the cell whose level is desired."
     (when pos
       (goto-char pos))
     (if (kview:valid-position-p)
-	(buffer-substring (kotl-mode:to-start-of-line) (kotl-mode:to-end-of-line))
+	(buffer-substring (kotl-mode:beginning-of-line) (kotl-mode:to-end-of-line))
       (error "(kcell-view:line): Invalid position, `%d'" (point)))))
 
 (defun kcell-view:lines-visible ()
@@ -576,7 +576,7 @@ If labels are off, return cell's idstamp as a string."
   (save-excursion
     ;; Next line ensures point is in the root of the current tree if
     ;; the tree is at all hidden.
-    (kotl-mode:to-start-of-line)
+    (kotl-mode:beginning-of-line)
     (kcell-view:label pos)))
 
 ;;;
@@ -976,7 +976,7 @@ See also `kview:map-branch' and `kview:map-tree'."
 	;; Next line ensures point is in the root of the current tree if
 	;; the tree is at all hidden.
 	(when visible-p
-	  (kotl-mode:to-start-of-line))
+	  (kotl-mode:beginning-of-line))
 	(when first-p
 	  ;; Move back to first predecessor at same level.
 	  (while (kcell-view:backward t lbl-sep-len)))
@@ -1009,7 +1009,7 @@ See also `kview:map-region', `kview:map-branch' and `kview:map-siblings'."
 	;; Next line ensures point is in the root of the current tree if
 	;; the tree is at all hidden.
 	(unless top-p
-	  (kotl-mode:to-start-of-line))
+	  (kotl-mode:beginning-of-line))
 	(let* ((results)
 	       (lbl-sep-len (kview:label-separator-length kview))
 	       (start (set-marker (make-marker) (if top-p (point-min) (point))))
@@ -1071,6 +1071,7 @@ See also `kview:map-region', `kview:map-branch' and `kview:map-siblings'."
 				   (kcell-view:next visible-p lbl-sep-len))))
 	    ;; Next line ensures point is in the root of the current tree if
 	    ;; the tree is at all hidden.
+	    (kotl-mode:beginning-of-line)
 	    (kotl-mode:to-start-of-line)
 	    (setq cell-indent (kcell-view:indent nil lbl-sep-len))
 	    ;; Terminate when no further cells or when reach a cell at an equal
