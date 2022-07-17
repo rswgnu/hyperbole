@@ -1,5 +1,10 @@
 2022-07-17  Mats Lidell  <matsl@gnu.org>
 
+* kotl/kview.el:
+* kotl/kotl-mode.el:
+* kotl/klabel.el: Use lbl-sep-len for all defun parameters to avoid name
+    clash with obsolete variable label-sep-len.
+
 * kotl/kvspec.el (kvspec:show-lines-this-cell): Use kview-label-sep-len.
 
 * kotl/kotl-mode.el (kotl-mode:collapse-tree, kotl-mode:expand-tree): Use

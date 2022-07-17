@@ -3,9 +3,9 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    17-Apr-94
-;; Last-Mod:     12-Feb-22 at 10:42:20 by Mats Lidell
+;; Last-Mod:     17-Jul-22 at 11:13:30 by Mats Lidell
 ;;
-;; Copyright (C) 1994-2021  Free Software Foundation, Inc.
+;; Copyright (C) 1994-2022  Free Software Foundation, Inc.
 ;; See the "../HY-COPY" file for license information.
 ;;
 ;; This file is part of GNU Hyperbole.
@@ -327,11 +327,11 @@ With optional CHILD-P, return label for first child cell of PREV-LABEL cell."
       (let ((klabel-type:changing-flag t))
 	(klabel-type:update-labels-from-point label-type first-label)))))
 
-(defun klabel-type:set-alpha (current-cell-label label-sep-len current-indent
+(defun klabel-type:set-alpha (current-cell-label lbl-sep-len current-indent
 			      per-level-indent &optional current-tree-only)
   "Set the labels of current cell, its following siblings and their subtrees.
 CURRENT-CELL-LABEL is the label to display for the current cell.
-LABEL-SEP-LEN is the length of the separation between a cell's label
+LBL-SEP-LEN is the length of the separation between a cell's label
 and the start of its contents."
   (let (label-prefix label-suffix suffix-val suffix-function opoint)
     (if current-cell-label
@@ -347,20 +347,20 @@ and the start of its contents."
 				'kotl-label:int-to-alpha)))
     (while current-cell-label
       ;; Set current cell's label.
-      (klabel:set current-cell-label label-sep-len)
+      (klabel:set current-cell-label lbl-sep-len)
       ;; Process any subtrees of current cell.
-      (if (kcell-view:child nil label-sep-len)
+      (if (kcell-view:child nil lbl-sep-len)
 	  ;; Recurse over subtree.
 	  (klabel-type:set-alpha
 	   (klabel:child-alpha current-cell-label)
-	   label-sep-len
+	   lbl-sep-len
 	   (+ current-indent per-level-indent)
 	   per-level-indent))
       ;; Process next sibling of current cell if any.
       (setq opoint (point))
       (if (and (not current-tree-only)
-	       (kcell-view:next nil label-sep-len)
-	       (< (abs (- (kcell-view:indent nil label-sep-len) current-indent))
+	       (kcell-view:next nil lbl-sep-len)
+	       (< (abs (- (kcell-view:indent nil lbl-sep-len) current-indent))
 		  (kview:level-indent kview)))
 	  (setq suffix-val (1+ suffix-val)
 		label-suffix (funcall suffix-function suffix-val)
@@ -368,21 +368,21 @@ and the start of its contents."
 	(goto-char opoint)
 	(setq current-cell-label nil)))))
 
-(defun klabel-type:set-id (_current-cell-label label-sep-len &rest _ignore)
+(defun klabel-type:set-id (_current-cell-label lbl-sep-len &rest _ignore)
   "Set the labels of current cell, its following siblings and their subtrees.
 CURRENT-CELL-LABEL is the label to display for the current cell."
   ;; Only need to do this when switching from one label type to another,
   ;; i.e. when every cell label will be updated.  So if not starting with the
   ;; first cell, do nothing.
   (if (kotl-mode:first-cell-p)
-      (while (and (klabel:set (kcell-view:idstamp) label-sep-len)
-		  (kcell-view:next nil label-sep-len)))))
+      (while (and (klabel:set (kcell-view:idstamp) lbl-sep-len)
+		  (kcell-view:next nil lbl-sep-len)))))
 
-(defun klabel-type:set-legal (current-cell-label label-sep-len current-indent
+(defun klabel-type:set-legal (current-cell-label lbl-sep-len current-indent
 			      per-level-indent &optional current-tree-only)
   "Set the labels of current cell, its following siblings and their subtrees.
 CURRENT-CELL-LABEL is the label to display for the current cell.
-LABEL-SEP-LEN is the length of the separation between a cell's label
+LBL-SEP-LEN is the length of the separation between a cell's label
 and the start of its contents."
   (let (label-prefix label-suffix suffix-val opoint)
     (if current-cell-label
@@ -392,20 +392,20 @@ and the start of its contents."
 	      suffix-val (string-to-number label-suffix)))
     (while current-cell-label
       ;; Set current cell's label.
-      (klabel:set current-cell-label label-sep-len)
+      (klabel:set current-cell-label lbl-sep-len)
       ;; Process any subtrees of current cell.
-      (if (kcell-view:child nil label-sep-len)
+      (if (kcell-view:child nil lbl-sep-len)
 	  ;; Recurse over subtree.
 	  (klabel-type:set-legal
 	   (klabel:child-legal current-cell-label)
-	   label-sep-len
+	   lbl-sep-len
 	   (+ current-indent per-level-indent)
 	   per-level-indent))
       ;; Process next sibling of current cell if any.
       (setq opoint (point))
       (if (and (not current-tree-only)
-	       (kcell-view:next nil label-sep-len)
-	       (< (abs (- (kcell-view:indent nil label-sep-len) current-indent))
+	       (kcell-view:next nil lbl-sep-len)
+	       (< (abs (- (kcell-view:indent nil lbl-sep-len) current-indent))
 		  (kview:level-indent kview)))
 	  (setq suffix-val (1+ suffix-val)
 		label-suffix (int-to-string suffix-val)
@@ -413,22 +413,22 @@ and the start of its contents."
 	(goto-char opoint)
 	(setq current-cell-label nil)))))
 
-(defun klabel-type:set-no (_current-cell-label label-sep-len &rest _ignore)
+(defun klabel-type:set-no (_current-cell-label lbl-sep-len &rest _ignore)
   "Set the labels of current cell, its following siblings and their subtrees.
 CURRENT-CELL-LABEL is the label to display for the current cell."
   ;; Only need to do this when switching from one label type to another,
   ;; i.e. when every cell label will be updated.  So if not starting with the
   ;; first cell, do nothing.
   (if (kotl-mode:first-cell-p)
-      (while (and (klabel:set "" label-sep-len)
-		  (kcell-view:next nil label-sep-len)))))
+      (while (and (klabel:set "" lbl-sep-len)
+		  (kcell-view:next nil lbl-sep-len)))))
 
-(defun klabel-type:set-partial-alpha (current-cell-label label-sep-len
+(defun klabel-type:set-partial-alpha (current-cell-label lbl-sep-len
                                       current-indent per-level-indent
 				      &optional current-tree-only)
   "Set the labels of current cell, its following siblings and their subtrees.
 CURRENT-CELL-LABEL is the label to display for the current cell.
-LABEL-SEP-LEN is the length of the separation between a cell's label
+LBL-SEP-LEN is the length of the separation between a cell's label
 and the start of its contents."
   (let (label-suffix suffix-val suffix-function opoint)
     (if current-cell-label
@@ -442,20 +442,20 @@ and the start of its contents."
 				'kotl-label:int-to-alpha)))
     (while current-cell-label
       ;; Set current cell's label.
-      (klabel:set current-cell-label label-sep-len)
+      (klabel:set current-cell-label lbl-sep-len)
       ;; Process any subtrees of current cell.
-      (if (kcell-view:child nil label-sep-len)
+      (if (kcell-view:child nil lbl-sep-len)
 	  ;; Recurse over subtree.
 	  (klabel-type:set-partial-alpha
 	   (klabel:child-partial-alpha current-cell-label)
-	   label-sep-len
+	   lbl-sep-len
 	   (+ current-indent per-level-indent)
 	   per-level-indent))
       ;; Process next sibling of current cell if any.
       (setq opoint (point))
       (if (and (not current-tree-only)
-	       (kcell-view:next nil label-sep-len)
-	       (< (abs (- (kcell-view:indent nil label-sep-len) current-indent))
+	       (kcell-view:next nil lbl-sep-len)
+	       (< (abs (- (kcell-view:indent nil lbl-sep-len) current-indent))
 		  (kview:level-indent kview)))
 	  (setq suffix-val (1+ suffix-val)
 		label-suffix (funcall suffix-function suffix-val)
@@ -463,19 +463,19 @@ and the start of its contents."
 	(goto-char opoint)
 	(setq current-cell-label nil)))))
 
-(defun klabel-type:set-star (_current-cell-label label-sep-len &rest _ignore)
+(defun klabel-type:set-star (_current-cell-label lbl-sep-len &rest _ignore)
   "Set the labels of current cell, its following siblings and their subtrees.
 CURRENT-CELL-LABEL is the label to display for the current cell.
-LABEL-SEP-LEN is the length of the separation between a cell's label
+LBL-SEP-LEN is the length of the separation between a cell's label
 and the start of its contents."
   ;; Only need to do this when switching from one label type to another,
   ;; i.e. when every cell label will be updated.  So if not starting with the
   ;; first cell, do nothing.
   (if (kotl-mode:first-cell-p)
       (while (and (klabel:set (make-string
-			       (kcell-view:level nil label-sep-len) ?*)
-			      label-sep-len)
-		  (kcell-view:next nil label-sep-len)))))
+			       (kcell-view:level nil lbl-sep-len) ?*)
+			      lbl-sep-len)
+		  (kcell-view:next nil lbl-sep-len)))))
 
 (defun klabel-type:update-labels (current-cell-label)
   "Update the labels of current cell, its following siblings and their subtrees if need be.
@@ -495,12 +495,12 @@ If, however, it is \"0\", then all cell labels are updated."
 CURRENT-CELL-LABEL is the label to display for the current cell.
 Use `(klabel-type:update-labels \"0\")' to update all cells in an outline."
   (let ((label-type (kview:label-type kview))
-	(label-sep-len (kview:label-separator-length kview)))
+	(lbl-sep-len (kview:label-separator-length kview)))
     (save-excursion
       (funcall (intern-soft (concat "klabel-type:set-"
 				    (symbol-name label-type)))
-	       first-label label-sep-len
-	       (kcell-view:indent nil label-sep-len)
+	       first-label lbl-sep-len
+	       (kcell-view:indent nil lbl-sep-len)
 	       (kview:level-indent kview)
 	       ;; Update current tree only.
 	       t))))
@@ -614,13 +614,13 @@ N may be an integer or a string containing an integer."
 ;;; Private functions
 ;;; ************************************************************************
 
-(defun klabel:set (new-label &optional label-sep-len)
+(defun klabel:set (new-label &optional lbl-sep-len)
   "Replace label displayed in cell at point with NEW-LABEL, which may be a different label type.
 Return NEW-LABEL string."
   (let ((modified (buffer-modified-p))
 	(buffer-read-only)
-	(thru-label (- (kcell-view:indent nil label-sep-len)
-		       (or label-sep-len
+	(thru-label (- (kcell-view:indent nil lbl-sep-len)
+		       (or lbl-sep-len
 			   (kview:label-separator-length kview)))))
     (save-excursion
       (kcell-view:to-label-end)
@@ -639,12 +639,12 @@ For example, the full label \"1a2\" has kotl-label \"2\", as does \"1.1.2\"."
     (error "(klabel:to-kotl-label): Invalid label, `%s'" label)))
 
 (defun klabel-type:update-labels-from-point (label-type first-label)
-  (let ((label-sep-len (kview:label-separator-length kview)))
+  (let ((lbl-sep-len (kview:label-separator-length kview)))
     (save-excursion
       (funcall (intern-soft (concat "klabel-type:set-"
 				    (symbol-name label-type)))
-	       first-label label-sep-len
-	       (kcell-view:indent nil label-sep-len)
+	       first-label lbl-sep-len
+	       (kcell-view:indent nil lbl-sep-len)
 	       (kview:level-indent kview)))))
 
 (provide 'klabel)
