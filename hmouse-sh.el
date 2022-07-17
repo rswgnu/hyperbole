@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     3-Sep-91 at 21:40:58
-;; Last-Mod:     24-Jan-22 at 00:18:46 by Bob Weiner
+;; Last-Mod:      9-Jul-22 at 16:41:14 by Mats Lidell
 ;;
 ;; Copyright (C) 1991-2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -271,8 +271,8 @@ These may be the bindings prior to initializing Hyperbole or the Hyperbole bindi
   (unless noninteractive
     (nconc
      (when hmouse-middle-flag (hmouse-get-unshifted-bindings))
-     ;; Get mouse bindings under Emacs or XEmacs, even if not under a
-     ;; window system since they can have frames on ttys and windowed
+     ;; Get mouse bindings under Emacs, even if not under a window
+     ;; system, since there can be frames on ttys and windowed
      ;; displays at the same time.
      (mapcar (lambda (key) (cons key (key-binding key)))
 	     (if (eq window-system 'dps)
