@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Oct-95 at 15:17:07
-;; Last-Mod:     15-Jul-22 at 23:25:45 by Mats Lidell
+;; Last-Mod:     16-Jul-22 at 22:33:26 by Mats Lidell
 ;;
 ;; Copyright (C) 1995-2022  Free Software Foundation, Inc.
 ;; See the "../HY-COPY" file for license information.
@@ -55,11 +55,6 @@
 
 (require 'hact) ;; Ensure symtable:add is defined.
 (require 'kview)
-
-;; Quiet byte compiler warnings for these free variables.
-(eval-when-compile
-  (defvar label-sep-len nil)
-  (defvar modeline-format nil))
 
 ;;; ************************************************************************
 ;;; Public variables
@@ -262,9 +257,9 @@ view specs."
 (defun kvspec:show-lines-this-cell (num)
   "Assume the current cell is fully expanded and collapse to show NUM lines within it.
 If NUM is less than 1 or greater than the number of lines available, the cell remains fully expanded."
-  ;; Use free variable label-sep-len bound in kview:map-* for speed.
+  ;; Use free variable kview-label-sep-len bound in kview:map-* for speed.
   (unless (< num 1)
-    (let ((_start (goto-char (kcell-view:start (point) label-sep-len)))
+    (let ((_start (goto-char (kcell-view:start (point) kview-label-sep-len)))
 	  (end (kcell-view:end-contents)))
       ;; Hide all but num lines of the cell.
       (and (search-forward "\n" end t num)
