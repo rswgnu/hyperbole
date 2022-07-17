@@ -1,3 +1,9 @@
+2022-07-19  Mats Lidell  <matsl@gnu.org>
+
+* test/demo-tests.el (fast-demo-key-series-shell-apropos): Add optional
+    whitespace after command to accomodate for different versions on
+    apropos.
+
 2022-07-17  Mats Lidell  <matsl@gnu.org>
 
 * hypb.el (hypb:replace-match-string): Fix obsolete version to 8.0.1.
