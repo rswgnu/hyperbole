@@ -1,4 +1,4 @@
-2022-07-16  Mats Lidell  <matsl@gnu.org>
+2022-07-17  Mats Lidell  <matsl@gnu.org>
 
 * kotl/kvspec.el (kvspec:show-lines-this-cell): Use kview-label-sep-len.
 
@@ -7,6 +7,7 @@
 
 * kotl/kview.el (kview-label-sep-len): Rename global variable.
     (kcell-view:lines-visible, kview:set-cells-status): Use it.
+    (label-sep-len):  Mark variable as obsolete. Use kview-label-sep-len.
 
 2022-07-15  Mats Lidell  <matsl@gnu.org>
 

@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    6/30/93
-;; Last-Mod:     16-Jul-22 at 22:33:12 by Mats Lidell
+;; Last-Mod:     17-Jul-22 at 10:39:07 by Mats Lidell
 ;;
 ;; Copyright (C) 1993-2022  Free Software Foundation, Inc.
 ;; See the "../HY-COPY" file for license information.
@@ -20,6 +20,7 @@
 (eval-and-compile (mapc #'require '(hact klabel kfill klink hypb)))
 ;; Quiet byte compiler warnings for this free variable.
 
+(define-obsolete-variable-alias 'label-sep-len 'kview-label-sep-len "8.0.1")
 (defvar kview-label-sep-len nil)
 
 ;;; ************************************************************************
