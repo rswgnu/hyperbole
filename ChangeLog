@@ -4,6 +4,32 @@
     whitespace after command to accomodate for different versions on
     apropos.
 
+2022-07-17  Mats Lidell  <matsl@gnu.org>
+
+* hypb.el (hypb:replace-match-string): Fix obsolete version to 8.0.1.
+
+* kotl/kotl-mode.el (kotl-mode:beginning-of-line): Rename from
+    kotl-mode:to-start-of-line since it is the preferred name but was
+    blocked due to XEmacs byte compiler bug.
+    (kotl-mode:to-start-of-line): Mark as obsolete from version 8.0.1.
+
+* hmouse-sh.el (hmouse-get-bindings): Do not mention XEmacs since it is
+    not supported.
+
+* kotl/kview.el:
+* kotl/kotl-mode.el:
+* kotl/klabel.el: Use lbl-sep-len for all defun parameters to avoid name
+    clash with obsolete variable label-sep-len.
+
+* kotl/kvspec.el (kvspec:show-lines-this-cell): Use kview-label-sep-len.
+
+* kotl/kotl-mode.el (kotl-mode:collapse-tree, kotl-mode:expand-tree): Use
+    kview-label-sep-len.
+
+* kotl/kview.el (kview-label-sep-len): Rename global variable.
+    (kcell-view:lines-visible, kview:set-cells-status): Use it.
+    (label-sep-len):  Mark variable as obsolete. Use kview-label-sep-len.
+
 2022-07-15  Mats Lidell  <matsl@gnu.org>
 
 * test/hypb-tests.el: Remove test cases for hypb:replace-match-string.
