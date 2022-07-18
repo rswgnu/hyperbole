@@ -1,9 +1,9 @@
-;;; hsys-youtube.el --- Action buttons to play timestamped segments of Youtube videos
+;;; hsys-youtube.el --- Action buttons to play timestamped segments of Youtube videos    -*- lexical-binding: t; -*-
 ;;
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    10-Jul-22 at 18:10:56
-;; Last-Mod:     17-Jul-22 at 13:07:05 by Bob Weiner
+;; Last-Mod:     17-Jul-22 at 22:49:58 by Bob Weiner
 ;;
 ;; Copyright (C) 2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -101,6 +101,11 @@ Called when the Assist Key is pressed on such a button."
   "Search Youtube for SEARCH-TERM."
   (interactive "sSearch Youtube for: ")
   (hyperbole-web-search "Youtube" search-term))
+
+(defun hsys-youtube-search:help (search-term)
+  "Display in the minibuffer the Youtube url to search for SEARCH-TERM."
+  (interactive "sShow Youtube search url for: ")
+  (hyperbole-web-search "Youtube" search-term t))
 
 (defun hsys-youtube-play (video-id &optional start-time-string end-time-string)
   "Play a VIDEO-ID from the point specified by optional START-TIME-STRING.

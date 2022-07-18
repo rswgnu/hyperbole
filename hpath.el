@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     1-Nov-91 at 00:44:23
-;; Last-Mod:     15-Jul-22 at 23:23:25 by Mats Lidell
+;; Last-Mod:     17-Jul-22 at 09:55:47 by Bob Weiner
 ;;
 ;; Copyright (C) 1991-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -446,7 +446,9 @@ Valid DISPLAY-WHERE-SYMBOLs are:
 
 (defvar hpath:display-where 'other-window
   "Symbol specifying the default method to use to display Hyperbole link referents.
-See documentation of `hpath:display-where-alist' for valid values.")
+See documentation of `hpath:display-where-alist' for valid values.
+
+See Info node `(elisp)Choosing Window Options' for where Emacs displays buffers.")
 
 (defvar hpath:display-where-alist
   (list

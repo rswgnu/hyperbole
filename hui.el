@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 21:42:03
-;; Last-Mod:     24-Apr-22 at 09:50:01 by Bob Weiner
+;; Last-Mod:     11-Jul-22 at 19:14:36 by Bob Weiner
 ;;
 ;; Copyright (C) 1991-2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -1306,9 +1306,9 @@ for with completion of all labeled buttons within the current buffer."
 
 (defun hui:help-ebut-highlight ()
   "Highlight any explicit buttons in help buffer associated with current buffer."
-  (if (fboundp 'hproperty:but-create)
-      (with-current-buffer (get-buffer (hypb:help-buf-name))
-	(hproperty:but-create))))
+  (when (fboundp 'hproperty:but-create)
+    (with-current-buffer (get-buffer (hypb:help-buf-name))
+      (hproperty:but-create))))
 
 (defun hui:htype-delete (htype-sym)
   "Delete HTYPE-SYM from use in current Hyperbole session.
