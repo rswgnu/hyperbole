@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Jun-16 at 14:24:53
-;; Last-Mod:      9-Jul-22 at 00:33:19 by Mats Lidell
+;; Last-Mod:     20-Jul-22 at 19:23:07 by Mats Lidell
 ;;
 ;; Copyright (C) 2016, 2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -124,7 +124,7 @@ Note that `issue' or `debbugs' may be used as well in place of `bug'."
     (debbugs-gnu-show-discussion)))
 
 (defun debbugs-gnu-query:help (_but)
-  "Make a GNU display the pretty pretted status of the bug id.
+  "Make a Gnu debbugs id number at point display the pretty-printed bug status.
 The id number can optionally be prefixed with a # sign.
 Ignore other types of GNU debbugs query strings."
   (if (and (debbugs-version-sufficient-p)
@@ -140,7 +140,7 @@ Ignore other types of GNU debbugs query strings."
       (hact 'smart-debbugs-gnu)))
 
 (defun debbugs-gnu-mode:help (&optional _but)
-  "Pretty print the status of a Debbugs listing entry to a window below."
+  "Make a Gnu debbugs listing at point pretty-print its status to a window below."
   (condition-case ()
       (let ((display-buffer-overriding-action
 	     '(display-buffer-below-selected . nil)))
@@ -161,8 +161,7 @@ Ignore other types of GNU debbugs query strings."
     (call-interactively (key-binding "\C-m")))
 
 (defun debbugs-gnu-query:string (url-query-string)
-  "Display the results of a Gnu debbugs query.
-Parse and apply attributes from URL-QUERY-STRING.
+  "Show the results of a Gnu debbugs query with attributes from URL-QUERY-STRING.
 URL-QUERY-STRING must be a valid URL query string (part after the
 question mark) of debbugs attributes and values,
 i.e. \"attr1=val1&attr2=val2&attr3=val3\" URL encoded characters
@@ -185,9 +184,8 @@ used as well in place of `bug'."
     (debbugs-gnu-query:list attr-pair-list)))
 
 (defun debbugs-gnu-query:list (query-attribute-list)
-  "Display the results of a Gnu debbugs query.
-Apply attributes from QUERY-ATTRIBUTE-LIST to.  Each element of
-the list should be of the form (attribute . attribute-value).
+  "Show the results of a Gnu debbugs query with QUERY-ATTRIBUTE-LIST attributes.
+Each element of the list should be of the form (attribute . attribute-value).
 Attribute may be a symbol or a string.  Common attributes
 include: status, severity, and package."
   (require 'debbugs-gnu)

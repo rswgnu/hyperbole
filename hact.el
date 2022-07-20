@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    18-Sep-91 at 02:57:09
-;; Last-Mod:     30-May-22 at 13:55:46 by Bob Weiner
+;; Last-Mod:     20-Jul-22 at 19:16:16 by Mats Lidell
 ;;
 ;; Copyright (C) 1991-2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -54,7 +54,7 @@ TYPE-CATEGORY is one of `actypes' or `ibtypes'."
   (plist-get symtable:category-plist type-category))
 
 (defun    symtable:operate (operation symbol-or-name symtable)
-  "Call hash-table function OPERATION with SYMBOL-OR-NAME as key upon SYMTABLE.
+  "Call hash-table OPERATION with Hyperbole SYMBOL-OR-NAME key for SYMTABLE.
 Trigger an error if SYMBOL-OR-NAME cannot be mapped to an existing Elisp
 symbol or if SYMTABLE is invalid."
   (let ((name (cond ((stringp symbol-or-name)
@@ -113,12 +113,12 @@ with the `ibtypes::' prefix and one without.  The value for both
 keys is the Elisp symbol for the type, which includes the prefix.")
 
 (defsubst symtable:actype-p (symbol-or-name)
-  "Return the symbol given by SYMBOL-OR-NAME if it is a action type."
+  "Return SYMBOL-OR-NAME if it is a Hyperbole action type, else nil."
   (when (or (symbolp symbol-or-name) (stringp symbol-or-name))
     (symtable:get symbol-or-name symtable:actypes)))
 
 (defsubst symtable:ibtype-p (symbol-or-name)
-  "Return the symbol given by SYMBOL-OR-NAME if it is an implicit button type."
+  "Return SYMBOL-OR-NAME if it is a Hyperbole implicit button type, else nil."
   (when (or (symbolp symbol-or-name) (stringp symbol-or-name))
     (symtable:get symbol-or-name symtable:ibtypes)))
 
@@ -131,7 +131,7 @@ Caller must ensure SYMBOL-OR-NAME is a symbol or string."
 (defalias 'symtable:delete #'symtable:remove)
 
 (defun    symtable:get (symbol-or-name symtable)
-  "Return the symbol given by SYMBOL-OR-NAME if it is in existing SYMTABLE.
+  "Remove SYMBOL-OR-NAME if it is in existing SYMTABLE.
 Caller must ensure SYMBOL-OR-NAME is a symbol or string."
   (symtable:operate #'gethash symbol-or-name symtable))
 

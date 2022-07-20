@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    31-Oct-91 at 23:17:35
-;; Last-Mod:     18-Jul-22 at 21:49:36 by Mats Lidell
+;; Last-Mod:     20-Jul-22 at 19:17:13 by Mats Lidell
 ;;
 ;; Copyright (C) 1991-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -76,7 +76,7 @@ Convert NUL characters to colons for use with grep lines."
 			&optional start-regexp-flag end-regexp-flag
 			list-positions-flag exclude-regexp)
   "Return a delimited string that point is within the first line of, or nil.
-The string is normalized, single line.
+The string is normalized and reduced to a single line.
 START-DELIM and END-DELIM are strings that specify the argument
 delimiters.  With optional START-REGEXP-FLAG non-nil, START-DELIM is
 treated as a regular expression.  END-REGEXP-FLAG is similar.
