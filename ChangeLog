@@ -1,5 +1,6 @@
 2022-10-03  Mats Lidell  <matsl@gnu.org>
 
+* kotl/kotl-mode.el:
 * hypb.el:
 * hycontrol.el:
 * hui-select.el:
