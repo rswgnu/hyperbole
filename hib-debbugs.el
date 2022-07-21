@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Jun-16 at 14:24:53
-;; Last-Mod:     24-Jan-22 at 00:18:32 by Bob Weiner
+;; Last-Mod:     20-Jul-22 at 19:23:07 by Mats Lidell
 ;;
 ;; Copyright (C) 2016, 2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -96,7 +96,7 @@
 ;;; ************************************************************************
 
 (defib debbugs-gnu-query ()
-  "Display the results of a Debbugs query based on a bug reference string around point.
+  "Display the results of a Debbugs query from a bug reference string around point.
 This works in most types of buffers.  If the query includes a
 single id number, display the original message submission for
 that id and allow browsing of the followup discussion.  Accepts
@@ -124,7 +124,8 @@ Note that `issue' or `debbugs' may be used as well in place of `bug'."
     (debbugs-gnu-show-discussion)))
 
 (defun debbugs-gnu-query:help (_but)
-  "Make a GNU debbugs id number at point (optionally prefixed with a # sign) display the pretty pretted status of the bug id.
+  "Make a Gnu debbugs id number at point display the pretty-printed bug status.
+The id number can optionally be prefixed with a # sign.
 Ignore other types of GNU debbugs query strings."
   (if (and (debbugs-version-sufficient-p)
 	   (debbugs-query:at-p)
@@ -139,7 +140,7 @@ Ignore other types of GNU debbugs query strings."
       (hact 'smart-debbugs-gnu)))
 
 (defun debbugs-gnu-mode:help (&optional _but)
-  "Make a Gnu debbugs listing entry at point pretty print the status of the issue to a window below."
+  "Make a Gnu debbugs listing at point pretty-print its status to a window below."
   (condition-case ()
       (let ((display-buffer-overriding-action
 	     '(display-buffer-below-selected . nil)))
@@ -160,12 +161,14 @@ Ignore other types of GNU debbugs query strings."
     (call-interactively (key-binding "\C-m")))
 
 (defun debbugs-gnu-query:string (url-query-string)
-  "Parse and apply attributes from URL-QUERY-STRING to display the results of a Gnu debbugs query.
-URL-QUERY-STRING must be a valid URL query string (part after the question
-mark) of debbugs attributes and values, i.e. \"attr1=val1&attr2=val2&attr3=val3\"
-URL encoded characters are decoded.  An optional prefix of \"bug#<id-number>?\"
-may also be included at the front of the string to limit the query to a particular
-issue number.  Note that `issue' or `debbugs' may be used as well in place of `bug'."
+  "Show the results of a Gnu debbugs query with attributes from URL-QUERY-STRING.
+URL-QUERY-STRING must be a valid URL query string (part after the
+question mark) of debbugs attributes and values,
+i.e. \"attr1=val1&attr2=val2&attr3=val3\" URL encoded characters
+are decoded.  An optional prefix of \"bug#<id-number>?\" may also
+be included at the front of the string to limit the query to a
+particular issue number.  Note that `issue' or `debbugs' may be
+used as well in place of `bug'."
   (let* ((case-fold-search t)
 	 (id (when (string-match "\\`\\(bug\\|debbugs\\|issue\\)\\s-?#?\\s-?\\(\\([1-9][0-9]*\\)\\|\\?\\)+"
 				 url-query-string)
@@ -181,10 +184,10 @@ issue number.  Note that `issue' or `debbugs' may be used as well in place of `b
     (debbugs-gnu-query:list attr-pair-list)))
 
 (defun debbugs-gnu-query:list (query-attribute-list)
-  "Apply attributes from QUERY-ATTRIBUTE-LIST to display the results of a Gnu debbugs query.
+  "Show the results of a Gnu debbugs query with QUERY-ATTRIBUTE-LIST attributes.
 Each element of the list should be of the form (attribute . attribute-value).
-Attribute may be a symbol or a string.  Common attributes include: status,
-severity, and package."
+Attribute may be a symbol or a string.  Common attributes
+include: status, severity, and package."
   (require 'debbugs-gnu)
   (setq debbugs-gnu-current-query nil)
   (dolist (attr query-attribute-list)
@@ -196,7 +199,8 @@ severity, and package."
   (debbugs-gnu-show-reports))
 
 (defun smart-debbugs-gnu ()
-  "Display the discussion on the issue at point when the Action Key is pressed on a Gnu Debbugs listing entry ."
+  "Display the discussion on the issue at point.
+When the Action Key is pressed on a Gnu Debbugs listing entry."
   (debbugs-gnu-show-discussion))
 
 ;; (let ((entries (cdar tabulated-list-entries)))
@@ -229,8 +233,9 @@ attributes."
 	      ;; (looking-at "[ \t\n\r\f]*\\(bug\\|debbugs\\|issue\\)?[ \t\n\r\f]*#\\([1-9][0-9]*\\)[\].,;?!\)\>\}]?\\([ \t\n\r\f]\\|\\'\\)")
 
 (defun debbugs-query:status (id)
-  "Pretty print to `standard-output' the status attributes of debbugs ID (a positive integer).
-Ignore nil valued attributes.  Return t unless no attributes are printed."
+  "Pretty print to `standard-output' the status attributes of debbugs ID.
+Debbugs ID is a positive integer.  Ignore nil valued attributes.
+Return t unless no attributes are printed."
   (require 'debbugs-gnu)
   ;; The (car (debbugs-get-status id)) is a list of (attribute . value) pairs which we sort below.
   (let ((attrib-list
@@ -254,7 +259,8 @@ Ignore nil valued attributes.  Return t unless no attributes are printed."
 	has-attr))))
 
 (defun debbugs-version-sufficient-p ()
-  "Return t iff debbugs version is sufficient for use with Hyperbole (greater than equal to 0.9.7)."
+  "Return t iff debbugs version is sufficient for use with Hyperbole.
+Must be greater than equal to 0.9.7."
   (save-excursion
     (let* ((debbugs-src (locate-file "debbugs" load-path '(".el")))
 	   (visiting-debbugs-src (when debbugs-src (get-file-buffer debbugs-src)))

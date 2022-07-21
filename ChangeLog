@@ -1,6 +1,8 @@
 2022-07-20  Mats Lidell  <matsl@gnu.org>
 
-* hactypes.el: Shorten docs strings to be within 80 char limit.
+* hactypes.el:
+* hib-debbugs.el:
+* hargs.el: Shorten docs strings to be within 80 char limit.
 
 2022-07-19  Mats Lidell  <matsl@gnu.org>
 
