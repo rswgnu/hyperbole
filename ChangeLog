@@ -85,6 +85,12 @@
   MANIFEST: Added above file.
 
 2022-07-06  Bob Weiner  <rsw@gnu.org>
+2022-07-02  Bob Weiner  <rsw@gnu.org>
+
+* hyrolo.el (hyrolo-org, hyrolo-helm-org-rifle, hyrolo-org-roam): Add HyRolo-
+    based searching of Org files, helm-based searching of HyRolo files and
+    Hyrolo-based searching of Org Roam files.
+
 * hsys-org.el (hsys-org-link-at-p, hsys-org-heading-at-p): Update to use
     'smart-eolp' and 'smart-eobp'.
 
