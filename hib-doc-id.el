@@ -3,9 +3,9 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    30-Sep-92 at 19:39:59
-;; Last-Mod:      9-Jul-22 at 00:36:20 by Mats Lidell
+;; Last-Mod:     21-Jul-22 at 11:21:45 by Mats Lidell
 ;;
-;; Copyright (C) 1991-2021  Free Software Foundation, Inc.
+;; Copyright (C) 1991-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
 ;;
 ;; This file is part of GNU Hyperbole.
@@ -93,7 +93,7 @@
     (concat "ID:[ \t]*"
 	    (regexp-quote doc-id-start) "[ \t]*" (regexp-quote doc-id)
 	    "[ \t]*" (regexp-quote doc-id-end)))
-  "Function that returns regexp which matches only within DOC-ID's index entry.")
+  "Single arg function returning regexp matching within DOC-ID's index entry only.")
 
 (defvar doc-id-p (lambda (str)
 		   (and (stringp str)
@@ -103,8 +103,8 @@
   "Value is a function with a boolean result that tests whether `str' is a doc id.")
 
 (defvar doc-id-online-regexp "^Online-Loc:[ \t]*\"\\([^\"\t\r\n\f]+\\)\""
-  "Regexp whose 1st grouping matches a double quoted index entry.
-The match is an implicit button that displays an online document.")
+  "Regexp with 1st grouping matching a double quoted index entry implicit button.
+The implicit button displays an online document.")
 
 ;;; ************************************************************************
 ;;; Public implicit button types
