@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    18-Sep-91 at 02:57:09
-;; Last-Mod:     18-Jul-22 at 21:49:49 by Mats Lidell
+;; Last-Mod:     21-Jul-22 at 10:09:13 by Mats Lidell
 ;;
 ;; Copyright (C) 1991-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -662,8 +662,7 @@ For interactive creation, use `hui:gbut-create' instead."
 	(eval `(ebut:program ',label ',actype ,@args))))))
 
 (defun    gbut:file ()
-  "Return filename that store global buttons (those accessed by name).
-The filename is absolute."
+  "Return the absolute path for the global button (those accessed by name) file."
   (expand-file-name hbmap:filename hbmap:dir-user))
 
 (defun    gbut:get (&optional lbl-key)
@@ -1275,7 +1274,7 @@ whitespace sequences with `_'."
 
 (defun    hbut:map (but-func &optional start-delim end-delim
 			     regexp-match include-delims)
-  "Apply BUT-FUNC to a set of buttons in the visible part of the current buffer.
+  "Apply BUT-FUNC to a set of hbuttons in the visible part of the current buffer.
 The set of buttons are those whose labels are delimited by
 optional START-DELIM and END-DELIM and that match any optional
 REGEXP-MATCH.
@@ -1326,7 +1325,7 @@ calls `hbut:modify-syntax'.")
 
 ;;;###autoload
 (defun    hbut:modify-syntax ()
-  "Modify syntactic character pairs.
+  "Modify syntactic character pairs in syntax tables.
 Modify `hbut:syntax-table' and `help-mode-syntax-table'.  For use
 with implicit button activations."
   ;; Treat angle brackets as opening and closing delimiters for ease
@@ -1341,7 +1340,7 @@ with implicit button activations."
   nil)
 
 (defun    hbut:outside-comment-p ()
-  "True within a programming language buffer and prior match is outside a comment."
+  "True if in a programming mode and regexp match is outside a comment, else nil."
   (when (and (derived-mode-p 'prog-mode)
 	     (not (eq major-mode 'lisp-interaction-mode))
 	     (not (memq major-mode hui-select-markup-modes)))
@@ -1671,7 +1670,7 @@ expression which matches an entire button string."
   (hbut:map but-func ibut:label-start ibut:label-end))
 
 (defun    ibut:rename (old-lbl new-lbl)
-  "Rename an implicit button label in the current buffer from OLD-LBL to NEW-LBL.
+  "Change an implicit button name in the current buffer from OLD-LBL to NEW-LBL.
 Return t if the label is changed, else nil.
 
 Signal an error when no such button is found in the current buffer.
@@ -1771,9 +1770,8 @@ positions at which the button label delimiter begins and ends."
 
 (defun    ibut:map (but-func &optional _start-delim _end-delim
 			     regexp-match include-delims)
-  "Apply BUT-FUNC to the labeled implicit buttons.
-Button is in the visible part of the current buffer.  If
-REGEXP-MATCH is non-nil, only buttons which match this argument
+  "Apply BUT-FUNC to the visible, named implicit buttons.
+If REGEXP-MATCH is non-nil, only buttons which match this argument
 are considered.
 
 BUT-FUNC must take precisely three arguments: the button label, the
@@ -1861,10 +1859,9 @@ Return the symbol for the button, else nil."
 		lbl-key))
 
 (defun    ibut:at-to-name-p (&optional ibut)
-  "Move to start of an implicit buttons name, if any (past opening delimiter).
-Point is on an implicit button or optional IBUT.  When found, set
-the name and lbl-key properties of IBUT.  Return t if name is
-found, else nil."
+  "If point is on an implicit button, optional IBUT, move to the start of its name.
+If name is found, leave point after its opening delimiter and set the name
+and lbl-key properties of IBUT.  Return t if name is found, else nil."
   (let ((opoint (point))
 	move-flag
 	name
@@ -1886,7 +1883,7 @@ found, else nil."
     move-flag))
 
 (defun    ibut:to-name (lbl-key)
-  "Move to the start of the nearest implicit buttons delimited button name.
+  "Move to the name of the nearest named implicit button matching LBL-KEY.
 Find the nearest implicit button with LBL-KEY (a label or label
 key), within the visible portion of the current buffer and move
 to the start of its delimited button name (after opening
@@ -1919,7 +1916,7 @@ Return the symbol for the button if found, else nil."
    lbl-key))
 
 (defun    ibut:to-text (lbl-key)
-  "Move to within nearest implicit button text.
+  "Move to the text of the nearest implicit button matching LBL-KEY.
 Find the nearest implicit button with LBL-KEY (a label or label
 key) within the visible portion of the current buffer and move to
 within its button text.  This will find an implicit button if
@@ -1973,14 +1970,14 @@ Return the symbol for the button if found, else nil."
   "String matching the end of a Hyperbole implicit button label.")
 
 (defvar   ibut:label-separator " "
-  "String inserted immediately after a newly created implicit button label.
+  "String inserted immediately after a newly created implicit button name.
 This separates it from the implicit button text.  See also
 `ibut:label-separator-regexp' for all valid characters that may
 manually inserted to separate an implicit button label from its
 text.")
 
 (defvar   ibut:label-separator-regexp "\\s-*[-:=]*\\s-+"
-  "Regular expression that separates an implicit button label from its button text.")
+  "Regular expression that separates an implicit button name from its button text.")
 
 ;;; ========================================================================
 ;;; ibtype class - Implicit button types
@@ -2036,7 +2033,7 @@ type for ibtype is presently undefined."
 (defalias 'ibtype:create #'defib)
 
 (defun ibtype:activate-link (referent)
-  "Activate an implicit link REFERENT, either a key series, a URL or a path."
+  "Activate an implicit link REFERENT, either a key series, a url or a path."
   (when referent
     (let ((key-series (kbd-key:is-p referent)))
       (if key-series
@@ -2077,8 +2074,8 @@ the whole button text (\\\\&) or any numbered grouping from
 TEXT-REGEXP, e.g. \\\\1, may be referenced in the LINK-EXPR to
 form the link referent.
 
-Here is a sample use case.  Let us create a button type whose
-buttons perform a grep-like function over a current repositorys git
+Here is a sample use case.  Create a button type whose buttons
+perform a grep-like function over a current repository's git
 log entries.  The buttons use this format: [<text to match>].
 
 The following defines the button type called search-git-log which
