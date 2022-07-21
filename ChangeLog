@@ -1,10 +1,19 @@
-2022-07-19  Mats Lidell  <matsl@gnu.org>
+2022-07-17  Bob Weiner  <rsw@gnu.org>
+
+* hmouse-drv.el (hkey-debug): Add print of all button properties when on
+    a Hyperbole button.
+
 * hsettings.el (hyperbole-web-search): Add optional 'return-search-expr-flag'
     to return search expression rather than doing the search.  Use
     with Assist Key.
 
 * hibtypes.el (action): Call ibut:create to ensure button attributes
     are set properly.
+  hbut.el (ibut:create): Return nil if at end-of-buffer.
+
+* hui-mouse.el (smart-imenu-item-p): Support -99 position value
+    that Emacs uses to indicate a rescan should be done.
+
 * test/demo-tests.el (fast-demo-key-series-shell-pushd-hyperb-dir,
                       fast-demo-key-series-shell-grep,
                       fast-demo-key-series-shell-apropos):
@@ -13,11 +22,11 @@
 
 * hact.el (htype:symbol): Return nil if type-category is invalid.
 
+2022-07-17  Mats Lidell  <matsl@gnu.org>
+
 * test/demo-tests.el (fast-demo-key-series-shell-apropos): Add optional
     whitespace after command to accomodate for different versions on
     apropos.
-
-2022-07-17  Mats Lidell  <matsl@gnu.org>
 
 * hypb.el (hypb:replace-match-string): Fix obsolete version to 8.0.1.
 
@@ -68,11 +77,19 @@
     (hypb:function-symbol-replace, hypb:map-sublists)
     (hypb:constant-vector-symbol-replace): Delete functions.
 
+2022-07-12  Bob Weiner  <rsw@gnu.org>
+
 * hbut.el (ibut:create): Add, extracted from 'ibut:at-p'; define
     with cl-defun so can optionally use non-positional colon-prefixed
     keyword args to specify specific args.
 
 * hmouse-drv.el (hkey-help): Set 'assist-flag' so matches Assist Key
+    behavior in edges cases.
+
+* hactypes.el (display-value): Add to display a value when a get or
+    value function returns that value.
+  hibtypes.el (action): Use 'display-value'.
+
 2022-07-12  Mats Lidell  <matsl@gnu.org>
 
 * test/hpath-tests.el (hpath:auto-variable-alist-load-path-test): Simplify
@@ -120,6 +137,34 @@
 
 * hsys-org.el (hsys-org-link-at-p, hsys-org-heading-at-p): Update to use
     'smart-eolp' and 'smart-eobp'.
+
+2022-06-26  Bob Weiner  <rsw@gnu.org>
+
+* hui-mouse.el (hkey-alist): Fix smart-lisp to jump to load, autoload and
+    require targets.
+  hmouse-tag.el (smart-lisp-at-load-expression-p): Ensure expr ends with
+    whitespace (a full word).
+
+2022-06-25  Bob Weiner  <rsw@gnu.org>
+
+* hui-mini.el (hui:menu-forward-item, hui:menu-backward-item): Update to
+    handle menus without a name> prefix, e.g. a-Z menu.  Also add numeric
+    prefix arg handling.
+
+2022-06-20  Bob Weiner  <rsw@gnu.org>
+
+* hui-mini.el (hui:menu-to-personal-section): Add.
+              (hui:menu-item): Add support for inserting menu item label
+    into the action when the action is 'hui:menu-to-personal-section'.
+              (hui:menu-a-z): Add this customizable menu.
+
+* hyrolo.el (hyrolo-add): Add newline before adding entry if point is not
+    at the beginning of the line for insertion, i.e. when buffer does not
+    end with a newline.
+
+* hui-mini.el (hui:menu-multi-line): Add to change long minibuffer menu lines
+    into multi-line menus.
+              (hui:menu-line): Update to use 'hui:menu-multi-line'.
 
 2022-06-19  Bob Weiner  <rsw@gnu.org>
 
@@ -9516,5 +9561,3 @@ V5.06 changes ^^^^:
      Copyright 1991-2021 Free Software Foundation, Inc.
      Copying and distribution of this file, with or without modification, are
      permitted provided the copyright notice and this notice are preserved.
-
-
