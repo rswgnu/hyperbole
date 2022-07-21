@@ -1,5 +1,6 @@
 2022-07-20  Mats Lidell  <matsl@gnu.org>
 
+* hib-debbugs.el:
 * hargs.el: Shorten docs strings to be within 80 char limit.
 
 2022-07-19  Mats Lidell  <matsl@gnu.org>
