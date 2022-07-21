@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    22-Nov-91 at 01:37:57
-;; Last-Mod:     18-Jul-22 at 21:49:59 by Mats Lidell
+;; Last-Mod:     21-Jul-22 at 11:40:53 by Mats Lidell
 ;;
 ;; Copyright (C) 1991-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -338,7 +338,7 @@ keyboad input queue, as if they had been typed by the user."
 
 (defun kbd-key:remove-delimiters (str start-delim end-delim)
   "Return STR sans START-DELIM and END-DELIM (strings).
-Return iff it starts and ends with these delimiters."
+Return nil if STR does not start and end with the given delimiters."
   (when (and (string-match (format "\\`%s" (regexp-quote start-delim)) str)
 	     (string-match (format "%s\\'"  (regexp-quote end-delim)) str))
     (string-trim str start-delim end-delim)))
@@ -459,13 +459,13 @@ For an approximate inverse of this, see `key-description'."
 
 (defun kbd-key:extended-command-p (key-series)
   "Return non-nil if the KEY-SERIES is a normalized extended command invocation.
-A command of the form M-x command."
+That is, 'M-x command'."
   (when (stringp key-series)
     (string-match kbd-key:extended-command-prefix key-series)))
 
 (defun kbd-key:hyperbole-hycontrol-key-p (key-series)
-  "True if normalized, non-nil KEY-SERIES is given when in a HyControl mode.
-Allows for multiple key sequences strung together."
+  "Return t if KEY-SERIES is normalized, non-nil and in HyControl mode, else nil.
+Allow for multiple key sequences strung together."
   (and key-series
        (featurep 'hycontrol)
        (or hycontrol-windows-mode hycontrol-frames-mode)
