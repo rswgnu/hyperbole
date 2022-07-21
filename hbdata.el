@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     2-Apr-91
-;; Last-Mod:     10-May-22 at 00:24:16 by Bob Weiner
+;; Last-Mod:      8-Jul-22 at 22:47:23 by Mats Lidell
 ;;
 ;; Copyright (C) 1991-2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -146,9 +146,10 @@ Search is case-insensitive.  Return list with elements:
 ;;; ------------------------------------------------------------------------
 
 (defun hbdata:build (&optional mod-lbl-key but-sym)
-  "Construct button data from optional MOD-LBL-KEY and BUT-SYM; modify BUT-SYM attributes.
-MOD-LBL-KEY nil means create a new entry, otherwise modify existing one.
-Nil BUT-SYM means use 'hbut:current'.  If successful, return a cons of
+  "Construct button data from optional MOD-LBL-KEY and BUT-SYM.
+Modify BUT-SYM attributes.  MOD-LBL-KEY nil means create a new
+entry, otherwise modify existing one.  Nil BUT-SYM means use
+'hbut:current'.  If successful, return a cons of
  (button-data . button-instance-str), else nil."
   (let* ((b (hattr:copy (or but-sym 'hbut:current) 'but))
 	 (l (hattr:get b 'loc))
@@ -222,7 +223,7 @@ Nil BUT-SYM means use 'hbut:current'.  If successful, return a cons of
   "Return button data entry given by LBL-KEY, KEY-SRC and optional DIRECTORY.
 Return nil if no matching entry is found.
 A button data entry is a list of attribute values.  Use methods from
-class 'hbdata' to operate on the entry."
+class `hbdata' to operate on the entry."
   (hbdata:apply-entry
    (lambda () (read (current-buffer)))
    lbl-key key-src directory))
@@ -253,7 +254,7 @@ Utilize arguments LBL-KEY, KEY-SRC and optional DIRECTORY."
 (defun hbdata:delete-entry (lbl-key key-src &optional directory)
   "Delete button data entry given by LBL-KEY, KEY-SRC and optional DIRECTORY.
 Return entry deleted (a list of attribute values) or nil.
-Use methods from class 'hbdata' to operate on the entry.
+Use methods from class `hbdata' to operate on the entry.
 If the hbdata buffer is blank/empty, kill it and remove the associated file."
   (hbdata:apply-entry
    (lambda ()
@@ -288,7 +289,7 @@ If the hbdata buffer is blank/empty, kill it and remove the associated file."
   "Return button data entry indexed by BUT-KEY, KEY-SRC, optional DIRECTORY.
 Return nil if entry is not found.  Leave point at start of entry when
 successful or where entry should be inserted if unsuccessful.
-A button entry is a list.  Use methods from class 'hbdata' to operate on the
+A button entry is a list.  Use methods from class `hbdata' to operate on the
 entry.  Optional INSTANCE non-nil means search for any button instance matching
 but-key."
   (let ((pos-entry-cons
@@ -309,9 +310,10 @@ but-key."
 
 (defun hbdata:apply-entry (func lbl-key key-src &optional directory
 			   create-flag instance-flag)
-  "Invoke FUNC with point at hbdata entry given by LBL-KEY, KEY-SRC, optional DIRECTORY.
-With optional CREATE-FLAG, if no such line exists, insert a new file entry at the
-beginning of the hbdata file (which is created if necessary).
+  "Invoke FUNC with point at hbdata entry.
+Hbdata is given by LBL-KEY, KEY-SRC and optional DIRECTORY.
+With optional CREATE-FLAG, if no such line exists, insert a new file entry at
+the beginning of the hbdata file (which is created if necessary).
 INSTANCE-FLAG non-nil means search for any button instance matching LBL-KEY and
 call FUNC with point right after any 'ebut:instance-sep' in match.
 Return value of evaluation when a matching entry is found or nil."

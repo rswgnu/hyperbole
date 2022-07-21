@@ -68,7 +68,7 @@ Return any non-nil value or t."
   (or (symbol-value var) t))
 
 (defact eval-elisp (lisp-expr)
-  "Evaluate a Lisp expression LISP-EXPR for its side-effects and return any non-nil value."
+  "Evaluate a LISP-EXPR for its side-effects and return any non-nil value."
   (interactive "xLisp to eval: ")
   (eval lisp-expr t))
 
@@ -205,11 +205,12 @@ kill the last output to the shell buffer before executing SHELL-CMD."
     (message msg)))
 
 (defact hyp-config (&optional out-buf)
-  "Insert Hyperbole configuration information at the end of the current buffer or within optional OUT-BUF."
+  "Insert Hyperbole configuration information at the end of the current buffer.
+Insert in optional OUT-BUF if specified."
   (hypb:configuration out-buf))
 
 (defact hyp-request (&optional out-buf)
-  "Insert into optional OUT-BUF a description of how to subscribe or unsubscribe from a Hyperbole mail list via email."
+  "Insert into optional OUT-BUF how to (un)subscribe from a Hyperbole mail list."
   (save-excursion
     (and out-buf (set-buffer out-buf))
     ;; Allows for insertion prior to user's email signature
@@ -275,7 +276,7 @@ This type of link is for use within a single editor session.  Use
   (hpath:find directory))
 
 (defact link-to-ebut (key &optional key-file)
-  "Perform action given by an explicit button, specified by KEY and optional KEY-FILE.
+  "Perform explicit button action specified by KEY and optional KEY-FILE.
 Interactively, KEY-FILE defaults to the current buffer's file name."
   (interactive
    (let (but-lbl
@@ -469,7 +470,8 @@ suffix."
     (hypb:error "(link-to-Info-index-entry): Invalid Info index item: `%s'" index-item)))
 
 (defact link-to-Info-node (string)
-  "Display an Info node given by STRING or if not found, try to display it as an Info index item.
+  "Display an Info node given by STRING.
+If not found, try to display it as an Info index item.
 STRING must be a string of the form \"(filename)name\".  During
 button creation, completion for both filename and node names is
 available.  Filename may be given without the .info suffix."
@@ -483,7 +485,7 @@ available.  Filename may be given without the .info suffix."
     (hypb:error "(link-to-Info-node): Invalid Info node: `%s'" string)))
 
 (defact link-to-ibut (key &optional but-src point)
-  "Perform an action given by an implicit button, specified by KEY, optional BUT-SRC and POINT.
+  "Perform implicit button action specified by KEY, optional BUT-SRC and POINT.
 BUT-SRC defaults to the current buffer's file or if there is no
 attached file, then to its buffer name.  POINT defaults to the
 current point.
