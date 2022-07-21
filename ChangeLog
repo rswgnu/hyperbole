@@ -1,4 +1,8 @@
 2022-07-19  Mats Lidell  <matsl@gnu.org>
+* hsettings.el (hyperbole-web-search): Add optional 'return-search-expr-flag'
+    to return search expression rather than doing the search.  Use
+    with Assist Key.
+
 * test/demo-tests.el (fast-demo-key-series-shell-pushd-hyperb-dir,
                       fast-demo-key-series-shell-grep,
                       fast-demo-key-series-shell-apropos):
