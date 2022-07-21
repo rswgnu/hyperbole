@@ -89,6 +89,16 @@
   MANIFEST: Added above file.
 
 2022-07-06  Bob Weiner  <rsw@gnu.org>
+
+* hypb.el (hypb:require-package): Add to install a package, if necessary,
+    and require its library with the same name.
+          (hypb:helm-info): Add to require helm package and call helm-info.
+
+2022-07-04  Bob Weiner  <rsw@gnu.org>
+
+* hypb.el (hypb:devdocs-lookup): Install and load devdocs package and then
+    call its 'devdocs-lookup' function.
+
 2022-07-02  Bob Weiner  <rsw@gnu.org>
 
 * hyrolo.el (hyrolo-org, hyrolo-helm-org-rifle, hyrolo-org-roam): Add HyRolo-
