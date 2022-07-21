@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    18-Sep-91 at 02:57:09
-;; Last-Mod:     20-Jul-22 at 19:16:16 by Mats Lidell
+;; Last-Mod:     21-Jul-22 at 08:58:11 by Mats Lidell
 ;;
 ;; Copyright (C) 1991-2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -131,12 +131,12 @@ Caller must ensure SYMBOL-OR-NAME is a symbol or string."
 (defalias 'symtable:delete #'symtable:remove)
 
 (defun    symtable:get (symbol-or-name symtable)
-  "Remove SYMBOL-OR-NAME if it is in existing SYMTABLE.
+  "Return Hyperbole SYMBOL-OR-NAME if it is in SYMTABLE, else nil.
 Caller must ensure SYMBOL-OR-NAME is a symbol or string."
   (symtable:operate #'gethash symbol-or-name symtable))
 
 (defun    symtable:remove (symbol-or-name symtable)
-  "Remove the symbol given by SYMBOL-OR-NAME if it is in existing SYMTABLE.
+  "Remove the Hyperbole SYMBOL-OR-NAME if it is in SYMTABLE.
 Always return nil.
 Caller must ensure SYMBOL-OR-NAME is a symbol or string."
   (symtable:operate #'remhash symbol-or-name symtable))
