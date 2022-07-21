@@ -3,6 +3,8 @@
     to return search expression rather than doing the search.  Use
     with Assist Key.
 
+* hibtypes.el (action): Call ibut:create to ensure button attributes
+    are set properly.
 * test/demo-tests.el (fast-demo-key-series-shell-pushd-hyperb-dir,
                       fast-demo-key-series-shell-grep,
                       fast-demo-key-series-shell-apropos):
@@ -66,6 +68,11 @@
     (hypb:function-symbol-replace, hypb:map-sublists)
     (hypb:constant-vector-symbol-replace): Delete functions.
 
+* hbut.el (ibut:create): Add, extracted from 'ibut:at-p'; define
+    with cl-defun so can optionally use non-positional colon-prefixed
+    keyword args to specify specific args.
+
+* hmouse-drv.el (hkey-help): Set 'assist-flag' so matches Assist Key
 2022-07-12  Mats Lidell  <matsl@gnu.org>
 
 * test/hpath-tests.el (hpath:auto-variable-alist-load-path-test): Simplify
@@ -73,6 +80,12 @@
 
 * test/hui-tests.el (hui-gbut-edit-link-to-file-button): Remove test file
     after test case is completed.
+
+2022-07-11  Bob Weiner  <rsw@gnu.org>
+
+* hibtypes.el (action:help): Allow for action button assist key :help
+    functions, even if the action button type is not a Hyperbole type,
+    i.e. a regular function.
 
 2022-07-11  Mats Lidell  <matsl@gnu.org>
 

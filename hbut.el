@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    18-Sep-91 at 02:57:09
-;; Last-Mod:     15-Jul-22 at 22:07:35 by Mats Lidell
+;; Last-Mod:     17-Jul-22 at 16:26:56 by Bob Weiner
 ;;
 ;; Copyright (C) 1991-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -17,8 +17,8 @@
 ;;; Other required Elisp libraries
 ;;; ************************************************************************
 
-(eval-and-compile (mapc #'require '(elisp-mode help-mode hversion hmoccur
-                                               hbmap htz hbdata hact view)))
+(eval-and-compile (mapc #'require '(cl-lib elisp-mode help-mode hversion
+				    hmoccur hbmap htz hbdata hact view)))
 
 ;;; ************************************************************************
 ;;; Public declarations
@@ -1519,52 +1519,11 @@ excluding delimiters, not just one."
 		    ;; should need that.
 		    (goto-char (min (+ 2 (match-end 0)) (point-max)))
 		  (goto-char opoint))))
-
-	    ;; Check for an implicit button at current point, record its
-	    ;; attributes and return a button symbol for it.
-	    (let ((types (htype:category 'ibtypes))
-		  ;; Global var used in (hact) function, don't delete.
-		  (hrule:action 'actype:identity)
-		  (ibpoint (point-marker))
-		  (itype)
-		  (args)
-		  (is-type))
-	      (unless key-only
-		(hattr:clear 'hbut:current))
-	      (while (and (not is-type) types)
-		(setq itype (car types))
-		(when (and itype (setq args (funcall itype)))
-		  (setq is-type itype)
-		  ;; Any implicit button type check should leave point
-		  ;; unchanged.  Trigger an error if not.
-		  (unless (equal (point-marker) ibpoint)
-		    (hypb:error "(Hyperbole): `ibtypes::%s' implicit button type test failed to restore point to %s" is-type ibpoint)))
-		(setq types (cdr types)))
-	      (set-marker ibpoint nil)
-	      (when is-type
-		(when name
-		  (hattr:set 'hbut:current 'name name))
-		(hattr:set 'hbut:current 'categ is-type)
-		(when lbl-key
-		  (hattr:set 'hbut:current 'lbl-key lbl-key))
-		(if key-only
-		    (hattr:get 'hbut:current 'lbl-key)
-		  (hattr:set 'hbut:current 'loc (save-excursion
-						  (hbut:key-src 'full)))
-		  (or (hattr:get 'hbut:current 'args)
-		      (not (listp args))
-		      (progn
-			(setq args (copy-sequence args))
-			(when (eq (car args) #'hact)
-			  (setq args (cdr args)))
-			(hattr:set 'hbut:current 'actype
-				   (or
-				    ;; Hyperbole action type
-				    (symtable:actype-p (car args))
-				    ;; Regular Emacs Lisp function symbol
-				    (car args)))
-			(hattr:set 'hbut:current 'args (cdr args))))
-		  'hbut:current))))
+	    (if key-only
+		lbl-key
+	      ;; Check for an implicit button at current point, record its
+	      ;; attributes and return a button symbol for it.
+	      (ibut:create)))
 	(goto-char opoint)))))
 
 (defun    ibut:at-type-p (ibut-type-symbol)
@@ -1582,6 +1541,78 @@ associated arguments from the button."
 	      ;; Global var used in (hact) function, don't delete.
 	      (hrule:action 'actype:identity))
 	  (funcall ibut-type-symbol))))))
+
+(cl-defun ibut:create (&optional &key name lbl-key lbl-start lbl-end
+				 loc categ actype args action)
+  "Return `hbut:current' symbol with attributes of implicit button at point.
+Return nil if no implicit button at point."
+  ;; :args is ignored unless :categ is also given.
+
+  ;; Since the Smart Keys handle end-of-line and end-of-buffer
+  ;; separately from whether point is within an implicit button,
+  ;; always report not within one when point is at the end of a line.
+  ;; -- RSW, 02-16-2020 and 07-17-2022
+  (unless (or (eolp) (eobp))
+    (let* ((types (htype:category 'ibtypes))
+	   ;; Global var used in (hact) function, don't delete.
+	   (hrule:action 'actype:identity)
+	   (name-start-end (ibut:label-p t nil nil t t))
+	   (ibpoint (point-marker))
+	   (itype)
+	   (is-type categ))
+
+      (unless name
+	(setq name (nth 0 name-start-end)))
+      (unless lbl-key
+	(setq lbl-key (or (ibut:label-to-key name)
+			  (ibut:label-p nil "\"" "\"" nil))))
+      (unless lbl-start
+	(setq lbl-start (nth 1 name-start-end)))
+      (unless lbl-end
+	(setq lbl-end (nth 2 name-start-end)))
+
+      (hattr:clear 'hbut:current)
+      (unless is-type
+	(while (and (not is-type) types)
+	  (setq itype (car types))
+	  (when (and itype (setq args (funcall itype)))
+	    (setq is-type itype)
+	    ;; Any implicit button type check should leave point
+	    ;; unchanged.  Trigger an error if not.
+	    (unless (equal (point-marker) ibpoint)
+	      (hypb:error "(Hyperbole): `ibtypes::%s' implicit button type test failed to restore point to %s" is-type ibpoint)))
+	  (setq types (cdr types))))
+
+      (set-marker ibpoint nil)
+      (when is-type
+	(when name
+	  (hattr:set 'hbut:current 'name name))
+	(when lbl-start
+	  (hattr:set 'hbut:current 'lbl-start lbl-start))
+	(when lbl-end
+	  (hattr:set 'hbut:current 'lbl-end lbl-end))
+	(hattr:set 'hbut:current 'categ is-type)
+	(when lbl-key
+	  (hattr:set 'hbut:current 'lbl-key lbl-key))
+	(hattr:set 'hbut:current 'loc (or loc (save-excursion
+						(hbut:key-src 'full))))
+	(when action
+	  (hattr:set 'hbut:current 'action action))
+	(or args
+	    (hattr:get 'hbut:current 'args)
+	    (not (listp args))
+	    (progn
+	      (setq args (copy-sequence args))
+	      (when (eq (car args) #'hact)
+		(setq args (cdr args)))
+	      (hattr:set 'hbut:current 'actype
+			 (or
+			  ;; Hyperbole action type
+			  (symtable:actype-p (car args))
+			  ;; Regular Emacs Lisp function symbol
+			  (car args)))
+	      (hattr:set 'hbut:current 'args (cdr args))))
+	'hbut:current))))
 
 (defun    ibut:delete (&optional but-sym)
   "Delete Hyperbole implicit button based on optional BUT-SYM.

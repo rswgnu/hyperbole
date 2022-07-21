@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    18-Sep-91 at 02:57:09
-;; Last-Mod:     30-May-22 at 13:55:46 by Bob Weiner
+;; Last-Mod:     17-Jul-22 at 12:58:33 by Bob Weiner
 ;;
 ;; Copyright (C) 1991-2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -264,8 +264,10 @@ When optional SYM is given, returns the name for that symbol only, if any."
 ;;; ------------------------------------------------------------------------
 
 (defun   htype:symbol (type type-category)
-  "Return possibly new Hyperbole type symbol composed from TYPE and TYPE-CATEGORY (both symbols)."
-  (intern (concat (symbol-name type-category) "::" (symbol-name type))))
+  "Return possibly new Hyperbole type symbol composed from TYPE and TYPE-CATEGORY (both symbols).
+TYPE-CATEGORY must be one of `actypes' or `ibtypes'; if not, return nil."
+  (when (memq type-category '(actypes ibtypes))
+    (intern (concat (symbol-name type-category) "::" (symbol-name type)))))
 
 ;;; ========================================================================
 ;;; action class

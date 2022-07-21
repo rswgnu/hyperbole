@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 20:45:31
-;; Last-Mod:     14-Jun-22 at 20:06:40 by Mats Lidell
+;; Last-Mod:     17-Jul-22 at 23:19:27 by Bob Weiner
 ;;
 ;; Copyright (C) 1991-2022 Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -1357,7 +1357,7 @@ action type or a function symbol to call, i.e. '<'actype-or-elisp-symbol
 arg1 ... argN '>'.  For example, <mail nil \"user@somewhere.org\">."
   (let* ((hbut:max-len 0)
          (label-key-start-end (ibut:label-p nil action:start action:end t))
-         (ibut-key (nth 0 label-key-start-end))
+         (lbl-key (nth 0 label-key-start-end))
          (start-pos (nth 1 label-key-start-end))
          (end-pos (nth 2 label-key-start-end))
          actype actype-sym action args lbl var-flag)
@@ -1369,7 +1369,7 @@ arg1 ... argN '>'.  For example, <mail nil \"user@somewhere.org\">."
     ;;   and end-delim is either:
     ;;     at the end of the buffer
     ;;     or is followed by a space, punctuation or grouping character.
-    (when (and ibut-key (or (null (char-before start-pos))
+    (when (and lbl-key (or (null (char-before start-pos))
                             (memq (char-syntax (char-before start-pos)) '(?\  ?\> ?\( ?\))))
                (not (memq (char-syntax (char-after (1+ start-pos))) '(?\  ?\>)))
                (or (null (char-after end-pos))
@@ -1377,7 +1377,7 @@ arg1 ... argN '>'.  For example, <mail nil \"user@somewhere.org\">."
                    ;; Some of these characters may have symbol-constituent syntax
                    ;; rather than punctuation, so check them individually.
                    (memq (char-after end-pos) '(?. ?, ?\; ?: ?! ?\' ?\"))))
-      (setq lbl (ibut:key-to-label ibut-key))
+      (setq lbl (ibut:key-to-label lbl-key))
       ;; Handle $ preceding var name in cases where same name is
       ;; bound as a function symbol
       (when (string-match "\\`\\$" lbl)
@@ -1395,21 +1395,33 @@ arg1 ... argN '>'.  For example, <mail nil \"user@somewhere.org\">."
 				(special-form-p actype-sym))
 			    actype-sym)))
       (when actype
-        (ibut:label-set lbl start-pos end-pos)
         (setq action (read (concat "(" lbl ")"))
               args (cdr action))
-        (cond ((and (symbolp actype) (fboundp actype)
-                    (string-match "-p\\'" (symbol-name actype)))
-               ;; Is a function with a boolean result
-               (setq args `(',action)
-		     action `(display-boolean ',action)
-                     actype #'display-boolean))
-              ((and (null args) (symbolp actype) (boundp actype)
-                    (or var-flag (not (fboundp actype))))
-               ;; Is a variable, display its value as the action
-               (setq args `(',actype)
-                     action `(display-variable ',actype)
-                     actype #'display-variable)))
+	(unless assist-flag
+          (cond ((and (symbolp actype) (fboundp actype)
+                      (string-match "-p\\'" (symbol-name actype)))
+		 ;; Is a function with a boolean result
+		 (setq args `(',action)
+		       action `(display-boolean ',action)
+                       actype #'display-boolean))
+		((and (null args) (symbolp actype) (boundp actype)
+                      (or var-flag (not (fboundp actype))))
+		 ;; Is a variable, display its value as the action
+		 (setq args `(',actype)
+                       action `(display-variable ',actype)
+                       actype #'display-variable))
+		((and (symbolp actype) (fboundp actype)
+                      (string-match "\\b\\(get\\|value\\)" (symbol-name actype)))
+		 ;; For 'get' and 'value' functions, display the action
+		 ;; result in the minibuffer
+		 (setq args `(',action)
+                       action `(display-value ',action)
+                       actype #'display-value))))
+
+	;; Create implicit button structure
+	(ibut:create :lbl-key lbl-key :lbl-start start-pos :lbl-end end-pos
+		     :categ 'ibtypes::action :actype actype :args args :action action)
+
         ;; Necessary so can return a null value, which actype:act cannot.
         (let ((hrule:action
                (if (eq hrule:action #'actype:identity)
@@ -1429,10 +1441,15 @@ If a boolean function or variable, display its value."
   (when (hbut:is-p hbut)
     (let* ((label (hbut:key-to-label (hattr:get hbut 'lbl-key)))
 	   (actype (hattr:get hbut 'actype))
-	   (args (hattr:get hbut 'args)))
+	   (args (hattr:get hbut 'args))
+	   (type-help-func))
       (setq actype (or (htype:def-symbol actype) actype))
       (if hbut
-	  (progn (hbut:report hbut)
+	  (progn (setq type-help-func (intern-soft (concat (symbol-name actype) ":help")))
+		 (if (functionp type-help-func)
+		     (funcall type-help-func hbut)
+		   (let ((total (hbut:report hbut)))
+		     (when total (hui:help-ebut-highlight))))
 		 (when (memq actype '(display-boolean display-variable))
 		   (apply #'actype:eval actype args)))
 	(error "(action:help): No action button labeled: %s" label)))))
