@@ -3,9 +3,9 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    24-Apr-91 at 03:36:23
-;; Last-Mod:      9-Jul-22 at 01:00:43 by Mats Lidell
+;; Last-Mod:     21-Jul-22 at 11:17:46 by Mats Lidell
 ;;
-;; Copyright (C) 1991-2021  Free Software Foundation, Inc.
+;; Copyright (C) 1991-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
 ;;
 ;; This file is part of GNU Hyperbole.
@@ -26,7 +26,7 @@
 
 (defun hhist:add (elt)
   "Add ELT to hyper-history list.
-Do not add if not the same as current or prior location (frame configuration).
+Do not add if the same as current or prior location (frame configuration).
 ELT must have been created via a call to `hhist:element' prior to
 changing the current frame configuration somehow."
   ;; Even though this next line looks useless, it cures a problem with
