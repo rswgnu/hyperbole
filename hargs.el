@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    31-Oct-91 at 23:17:35
-;; Last-Mod:     15-Jul-22 at 22:07:35 by Mats Lidell
+;; Last-Mod:     20-Jul-22 at 19:17:13 by Mats Lidell
 ;;
 ;; Copyright (C) 1991-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -75,12 +75,14 @@ Convert NUL characters to colons for use with grep lines."
 (defun hargs:delimited (start-delim end-delim
 			&optional start-regexp-flag end-regexp-flag
 			list-positions-flag exclude-regexp)
-  "Return a normalized, single line, delimited string that point is within the first line of, or nil.
+  "Return a delimited string that point is within the first line of, or nil.
+The string is normalized and reduced to a single line.
 START-DELIM and END-DELIM are strings that specify the argument
 delimiters.  With optional START-REGEXP-FLAG non-nil, START-DELIM is
 treated as a regular expression.  END-REGEXP-FLAG is similar.
-With optional LIST-POSITIONS-FLAG, return list of (string-matched start-pos end-pos).
-With optional EXCLUDE-REGEXP, any matched string is ignored if it matches this regexp."
+With optional LIST-POSITIONS-FLAG, return list of (string-matched
+start-pos end-pos).  With optional EXCLUDE-REGEXP, any matched
+string is ignored if it matches this regexp."
   (let* ((opoint (point))
 	 (line-begin (line-beginning-position))
 	 ;; This initial limit if the forward search limit for start delimiters
