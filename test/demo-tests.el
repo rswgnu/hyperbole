@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    30-Jan-21 at 12:00:00
-;; Last-Mod:     16-Jul-22 at 22:39:47 by Mats Lidell
+;; Last-Mod:     17-Jul-22 at 14:31:49 by Bob Weiner
 ;;
 ;; Copyright (C) 2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -531,8 +531,9 @@ enough files with matching mode loaded."
 (ert-deftest fast-demo-key-series-shell-pushd-hyperb-dir ()
   "Action key executes pushd shell command."
   (skip-unless (not noninteractive))
-  (let ((shell-file-name (executable-find "bash"))
-        (shell-buffer-name "*shell*"))
+  (let* ((shell-file-name (executable-find "sh"))
+         (shell-buffer-name "*shell*")
+	 (existing-shell-flag (get-buffer-process shell-buffer-name)))
     (unwind-protect
         (with-temp-buffer
           (insert "{ M-x shell RET M-> (pushd ${hyperb:dir} && echo \"PWD=$(pwd)\") RET }")
@@ -546,14 +547,16 @@ enough files with matching mode loaded."
               (while (not (search-forward "PWD=" nil t))
                 (accept-process-output (get-buffer-process shell-buffer-name))))
             (should (looking-at-p (directory-file-name hyperb:dir)))))
-      (set-process-query-on-exit-flag (get-buffer-process shell-buffer-name) nil)
-      (kill-buffer shell-buffer-name))))
+      (unless existing-shell-flag
+	(set-process-query-on-exit-flag (get-buffer-process shell-buffer-name) nil)
+	(kill-buffer shell-buffer-name)))))
 
 (ert-deftest fast-demo-key-series-shell-grep ()
   "Action key executes grep shell command."
   (skip-unless (not noninteractive))
-  (let ((shell-file-name (executable-find "bash"))
-        (shell-buffer-name "*shell*"))
+  (let* ((shell-file-name (executable-find "sh"))
+         (shell-buffer-name "*shell*")
+	 (existing-shell-flag (get-buffer-process shell-buffer-name)))
     (unwind-protect
         (with-temp-buffer
           (insert "{M-x shell RET M-> (export HYPERBOLE_DIR=${hyperb:dir} && cd $HYPERBOLE_DIR && grep -n gbut:label-list *.el) RET}")
@@ -562,17 +565,19 @@ enough files with matching mode loaded."
           (hy-test-helpers:consume-input-events)
           (with-current-buffer shell-buffer-name
             (with-timeout (5 (ert-fail "Test timed out"))
-              (while (not (string-match-p "\n.*\.el:[0-9]+:.*defun.*gbut:label-list \(\)" (buffer-substring-no-properties (point-min) (point-max))))
+              (while (not (string-match-p "\n.*\\.el:[0-9]+:.*defun.*gbut:label-list ()" (buffer-substring-no-properties (point-min) (point-max))))
                 (accept-process-output (get-buffer-process shell-buffer-name))))
-            (should (string-match-p "\n.*\.el:[0-9]+:.*defun.*gbut:label-list \(\)" (buffer-substring-no-properties (point-min) (point-max))))))
-      (set-process-query-on-exit-flag (get-buffer-process shell-buffer-name) nil)
-      (kill-buffer shell-buffer-name))))
+            (should (string-match-p "\n.*\\.el:[0-9]+:.*defun.*gbut:label-list ()" (buffer-substring-no-properties (point-min) (point-max))))))
+      (unless existing-shell-flag
+	(set-process-query-on-exit-flag (get-buffer-process shell-buffer-name) nil)
+	(kill-buffer shell-buffer-name)))))
 
 (ert-deftest fast-demo-key-series-shell-apropos ()
   "Action key executes apropos shell command."
   (skip-unless (not noninteractive))
-  (let ((shell-file-name (executable-find "bash"))
-        (shell-buffer-name "*shell*"))
+  (let* ((shell-file-name (executable-find "sh"))
+         (shell-buffer-name "*shell*")
+	 (existing-shell-flag (get-buffer-process shell-buffer-name)))
     (unwind-protect
         (with-temp-buffer
           (insert "{M-x shell RET M-> (apropos grep) RET}")
@@ -581,11 +586,12 @@ enough files with matching mode loaded."
           (hy-test-helpers:consume-input-events)
           (with-current-buffer shell-buffer-name
             (with-timeout (5 (ert-fail "Test timed out"))
-              (while (not (string-match-p "\ngrep ?\(1\).*-" (buffer-substring-no-properties (point-min) (point-max))))
+              (while (not (string-match-p "\ngrep ?(1).*-" (buffer-substring-no-properties (point-min) (point-max))))
                 (accept-process-output (get-buffer-process shell-buffer-name))))
-            (should (string-match-p "\ngrep ?\(1\).*-" (buffer-substring-no-properties (point-min) (point-max))))))
-      (set-process-query-on-exit-flag (get-buffer-process shell-buffer-name) nil)
-      (kill-buffer shell-buffer-name))))
+            (should (string-match-p "\ngrep ?(1).*-" (buffer-substring-no-properties (point-min) (point-max))))))
+      (unless existing-shell-flag
+	(set-process-query-on-exit-flag (get-buffer-process shell-buffer-name) nil)
+	(kill-buffer shell-buffer-name)))))
 
 ;; This file can't be byte-compiled without the `el-mock' package (because of
 ;; the use of the `with-mock' macro), which is not a dependency of Hyperbole.

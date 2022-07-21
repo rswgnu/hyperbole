@@ -1,4 +1,11 @@
 2022-07-19  Mats Lidell  <matsl@gnu.org>
+* test/demo-tests.el (fast-demo-key-series-shell-pushd-hyperb-dir,
+                      fast-demo-key-series-shell-grep,
+                      fast-demo-key-series-shell-apropos):
+    Use 'sh' instead of 'bash' for wider applicability.
+    Don't kill shell buffer if it exists before the test is invoked.
+
+* hact.el (htype:symbol): Return nil if type-category is invalid.
 
 * test/demo-tests.el (fast-demo-key-series-shell-apropos): Add optional
     whitespace after command to accomodate for different versions on
