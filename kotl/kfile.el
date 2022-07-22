@@ -3,9 +3,9 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    10/31/93
-;; Last-Mod:      4-Jul-22 at 23:24:42 by Mats Lidell
+;; Last-Mod:     22-Jul-22 at 15:17:31 by Mats Lidell
 ;;
-;; Copyright (C) 1993-2021  Free Software Foundation, Inc.
+;; Copyright (C) 1993-2022  Free Software Foundation, Inc.
 ;; See the "../HY-COPY" file for license information.
 ;;
 ;; This file is part of GNU Hyperbole.
@@ -66,8 +66,8 @@ Return the new kview."
 
 ;;;###autoload
 (defun kfile:is-p ()
-  "Iff current buffer contain a koutline, return file format version string.
-If not a koutline return nil.  This works both for unformatted
+  "Iff current buffer contains a koutline, return file format version string.
+If not a koutline, return nil. This works both for unformatted
 and formatted koutlines."
   (let (ver-string)
     (save-excursion

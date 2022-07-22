@@ -1,4 +1,4 @@
-2022-07-21  Mats Lidell  <matsl@gnu.org>
+2022-07-22  Mats Lidell  <matsl@gnu.org>
 
 * kotl/kfile.el: Shorten docs strings to be within 80 char limit.
 
