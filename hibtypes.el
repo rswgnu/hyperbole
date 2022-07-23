@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 20:45:31
-;; Last-Mod:     17-Jul-22 at 23:19:27 by Bob Weiner
+;; Last-Mod:     23-Jul-22 at 01:30:20 by Bob Weiner
 ;;
 ;; Copyright (C) 1991-2022 Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -1370,7 +1370,7 @@ arg1 ... argN '>'.  For example, <mail nil \"user@somewhere.org\">."
     ;;     at the end of the buffer
     ;;     or is followed by a space, punctuation or grouping character.
     (when (and lbl-key (or (null (char-before start-pos))
-                            (memq (char-syntax (char-before start-pos)) '(?\  ?\> ?\( ?\))))
+                           (memq (char-syntax (char-before start-pos)) '(?\  ?\> ?\( ?\))))
                (not (memq (char-syntax (char-after (1+ start-pos))) '(?\  ?\>)))
                (or (null (char-after end-pos))
                    (memq (char-syntax (char-after end-pos)) '(?\  ?\> ?. ?\( ?\)))

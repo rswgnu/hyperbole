@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    18-Sep-91 at 02:57:09
-;; Last-Mod:     17-Jul-22 at 16:26:56 by Bob Weiner
+;; Last-Mod:     23-Jul-22 at 01:57:12 by Bob Weiner
 ;;
 ;; Copyright (C) 1991-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -1543,7 +1543,7 @@ associated arguments from the button."
 	  (funcall ibut-type-symbol))))))
 
 (cl-defun ibut:create (&optional &key name lbl-key lbl-start lbl-end
-				 loc categ actype args action)
+				 loc dir categ actype args action)
   "Return `hbut:current' symbol with attributes of implicit button at point.
 Return nil if no implicit button at point."
   ;; :args is ignored unless :categ is also given.
@@ -1555,7 +1555,7 @@ Return nil if no implicit button at point."
   (unless (or (eolp) (eobp))
     (let* ((types (htype:category 'ibtypes))
 	   ;; Global var used in (hact) function, don't delete.
-	   (hrule:action 'actype:identity)
+	   (hrule:action #'actype:identity)
 	   (name-start-end (ibut:label-p t nil nil t t))
 	   (ibpoint (point-marker))
 	   (itype)
@@ -1596,10 +1596,11 @@ Return nil if no implicit button at point."
 	  (hattr:set 'hbut:current 'lbl-key lbl-key))
 	(hattr:set 'hbut:current 'loc (or loc (save-excursion
 						(hbut:key-src 'full))))
+	(hattr:set 'hbut:current 'dir (or dir (hui:key-dir (current-buffer))))
 	(when action
-	  (hattr:set 'hbut:current 'action action))
-	(or args
-	    (hattr:get 'hbut:current 'args)
+	  (hattr:set 'hbut:current 'action action)
+	  (unless args (setq args action)))
+	(or (hattr:get 'hbut:current 'args)
 	    (not (listp args))
 	    (progn
 	      (setq args (copy-sequence args))
@@ -1607,6 +1608,7 @@ Return nil if no implicit button at point."
 		(setq args (cdr args)))
 	      (hattr:set 'hbut:current 'actype
 			 (or
+			  actype
 			  ;; Hyperbole action type
 			  (symtable:actype-p (car args))
 			  ;; Regular Emacs Lisp function symbol

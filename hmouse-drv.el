@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    04-Feb-90
-;; Last-Mod:     17-Jul-22 at 23:15:34 by Bob Weiner
+;; Last-Mod:     23-Jul-22 at 01:57:43 by Bob Weiner
 ;;
 ;; Copyright (C) 1989-2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -856,8 +856,9 @@ frame instead."
 	   pred
 	   (if assist-flag "Assist" "Action")
 	   (if (hattr:get  'hbut:current 'actype)
-	       (cons (hattr:get  'hbut:current 'actype)
-		     (hattr:get  'hbut:current 'args))
+	       (or (hattr:get  'hbut:current 'action)
+		   (cons (hattr:get  'hbut:current 'actype)
+			 (hattr:get  'hbut:current 'args)))
 	     (hypb:format-quote (format "%s" hkey-action)))
 	   (current-buffer)
 	   major-mode
