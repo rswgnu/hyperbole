@@ -5,6 +5,7 @@
 
 2022-07-20  Mats Lidell  <matsl@gnu.org>
 
+* hact.el:
 * hmouse-tag.el:
 * hbdata.el:
 * hactypes.el:

@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    18-Sep-91 at 02:57:09
-;; Last-Mod:     30-May-22 at 13:55:46 by Bob Weiner
+;; Last-Mod:     21-Jul-22 at 08:58:11 by Mats Lidell
 ;;
 ;; Copyright (C) 1991-2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -49,11 +49,12 @@ The type categories are either 'actypes or 'ibtypes.")
   (plist-get symtable 'name))
 
 (defsubst symtable:select (type-category)
-  "Inline the return of the symtable for TYPE-CATEGORY, one of 'actypes or 'ibtypes."
+  "Inline the return of the symtable for TYPE-CATEGORY.
+TYPE-CATEGORY is one of `actypes' or `ibtypes'."
   (plist-get symtable:category-plist type-category))
 
 (defun    symtable:operate (operation symbol-or-name symtable)
-  "Call hash-table function OPERATION with Hyperbole SYMBOL-OR-NAME as key upon SYMTABLE.
+  "Call hash-table OPERATION with Hyperbole SYMBOL-OR-NAME key for SYMTABLE.
 Trigger an error if SYMBOL-OR-NAME cannot be mapped to an existing Elisp
 symbol or if SYMTABLE is invalid."
   (let ((name (cond ((stringp symbol-or-name)
@@ -112,12 +113,12 @@ with the `ibtypes::' prefix and one without.  The value for both
 keys is the Elisp symbol for the type, which includes the prefix.")
 
 (defsubst symtable:actype-p (symbol-or-name)
-  "Return the Elisp symbol given by SYMBOL-OR-NAME if it is a Hyperbole action type name, else nil."
+  "Return SYMBOL-OR-NAME if it is a Hyperbole action type, else nil."
   (when (or (symbolp symbol-or-name) (stringp symbol-or-name))
     (symtable:get symbol-or-name symtable:actypes)))
 
 (defsubst symtable:ibtype-p (symbol-or-name)
-  "Return the Elisp symbol given by SYMBOL-OR-NAME if it is a Hyperbole implicit button type name, else nil."
+  "Return SYMBOL-OR-NAME if it is a Hyperbole implicit button type, else nil."
   (when (or (symbolp symbol-or-name) (stringp symbol-or-name))
     (symtable:get symbol-or-name symtable:ibtypes)))
 
@@ -130,12 +131,12 @@ Caller must ensure SYMBOL-OR-NAME is a symbol or string."
 (defalias 'symtable:delete #'symtable:remove)
 
 (defun    symtable:get (symbol-or-name symtable)
-  "Return the Elisp symbol given by Hyperbole SYMBOL-OR-NAME if it is in existing SYMTABLE, else nil.
+  "Return Hyperbole SYMBOL-OR-NAME if it is in SYMTABLE, else nil.
 Caller must ensure SYMBOL-OR-NAME is a symbol or string."
   (symtable:operate #'gethash symbol-or-name symtable))
 
 (defun    symtable:remove (symbol-or-name symtable)
-  "Remove the Elisp symbol given by Hyperbole SYMBOL-OR-NAME if it is in existing SYMTABLE.
+  "Remove the Hyperbole SYMBOL-OR-NAME if it is in SYMTABLE.
 Always return nil.
 Caller must ensure SYMBOL-OR-NAME is a symbol or string."
   (symtable:operate #'remhash symbol-or-name symtable))
@@ -247,7 +248,7 @@ Return the Hyperbole symbol for the TYPE if it existed, else nil."
   (documentation type))
 
 (defun    htype:names (type-category &optional sym)
-  "Return a list of the current definition names for TYPE-CATEGORY in priority order.
+  "Return a list of current definition names for TYPE-CATEGORY in priority order.
 Definition names do not contain the category prefix.
 TYPE-CATEGORY should be `actypes', `ibtypes' or nil for all.
 When optional SYM is given, returns the name for that symbol only, if any."
@@ -264,7 +265,8 @@ When optional SYM is given, returns the name for that symbol only, if any."
 ;;; ------------------------------------------------------------------------
 
 (defun   htype:symbol (type type-category)
-  "Return possibly new Hyperbole type symbol composed from TYPE and TYPE-CATEGORY (both symbols)."
+  "Return possibly new Hyperbole type symbol composed from TYPE and TYPE-CATEGORY.
+TYPE and TYPE-CATEGORY are both symbols."
   (intern (concat (symbol-name type-category) "::" (symbol-name type))))
 
 ;;; ========================================================================
@@ -302,7 +304,8 @@ When optional SYM is given, returns the name for that symbol only, if any."
   (list 'execute-kbd-macro macro repeat-count))
 
 (defun action:params-emacs (def)
-  "Return the argument list for the function DEF which may be a symbol or a function body."
+  "Return the argument list for the function DEF.
+DEF may be a symbol or a function body."
   (let ((params (help-function-arglist def t)))
     (cond ((listp params) ;; includes nil
 	   params)
@@ -392,7 +395,7 @@ performing ACTION."
 
 (defun    actype:def-symbol (actype)
   "Return the abbreviated symbol for ACTYPE used in its `defact'.
-ACTYPE must be a symbol or string that begins with 'actype::' or nil
+ACTYPE must be a symbol or string that begins with `actype::' or nil
 is returned."
   (let ((name (if (stringp actype)
 		  actype
@@ -422,7 +425,8 @@ performing ACTION."
 	  (hhist:add hist-elt))))))
 
 (defun    actype:action (actype)
-  "Return action part of ACTYPE (a bound function symbol, symbol name or function body).
+  "Return action part of ACTYPE.
+ACTYPE is a bound function symbol, symbol name or function body.
 ACTYPE may be a Hyperbole actype or Emacs Lisp function."
   (let (actname
 	action)
