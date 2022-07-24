@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     6-Oct-91 at 03:42:38
-;; Last-Mod:     17-Jul-22 at 11:38:43 by Bob Weiner
+;; Last-Mod:     24-Jul-22 at 11:41:00 by Bob Weiner
 ;;
 ;; Copyright (C) 1991-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -602,14 +602,16 @@ that returns a replacement string."
 
 ;;;###autoload
 (defun hypb:require-package (package-name)
-  "Install, if necessary, and require the Emacs PACKAGE-NAME.
+  "Prompt user to install, if necessary, and require the Emacs PACKAGE-NAME.
 PACKAGE-NAME may be a symbol or a string."
   (when (stringp package-name)
     (setq package-name (intern package-name)))
   (unless (symbolp package-name)
     (error "(hypb:require-package): package-name must be a symbol or string, not '%s'" package-name))
   (unless (package-installed-p package-name)
-    (package-install package-name))
+    (if (y-or-n-p (format "Install package `%s' required by this command?" package-name))
+	(package-install package-name)
+      (keyboard-quit)))
   (require package-name))
 
 (defun hypb:return-process-output (program &optional infile &rest args)

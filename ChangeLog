@@ -1,5 +1,8 @@
 2022-07-24  Bob Weiner  <rsw@gnu.org>
 
+* hypb.el (hypb:require-package): Prompt user with y/n query before
+    installing a package when it is not already installed.
+
 * hbut.el (ibut:at-p, ibut:create): Ensure lbl-key is always set to
     name, if available, and lbl-start and lbl-end point to the text
     start and end for an ibut.
