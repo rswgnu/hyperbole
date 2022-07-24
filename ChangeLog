@@ -1,5 +1,9 @@
 2022-07-24  Bob Weiner  <rsw@gnu.org>
 
+* hbut.el (ibut:at-p, ibut:create): Ensure lbl-key is always set to
+    name, if available, and lbl-start and lbl-end point to the text
+    start and end for an ibut.
+
 * hibtypes.el (action): Ensure actypes:: prefix is added to any action
     attribute that uses a Hyperbole actype.  Also, set args attribute
     to exclude the actype.

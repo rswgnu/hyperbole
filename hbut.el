@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    18-Sep-91 at 02:57:09
-;; Last-Mod:     24-Jul-22 at 10:29:28 by Bob Weiner
+;; Last-Mod:     24-Jul-22 at 11:29:49 by Bob Weiner
 ;;
 ;; Copyright (C) 1991-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -1504,9 +1504,8 @@ excluding delimiters, not just one."
   (unless (eolp)
     (let* ((opoint (point))
 	   (name-start-end (ibut:label-p t nil nil t t))
-	   (name  (nth 0 name-start-end))
-	   (start (nth 1 name-start-end))
-	   (end   (nth 2 name-start-end))
+	   (name       (nth 0 name-start-end))
+	   (name-end   (nth 2 name-start-end))
 	   (lbl-key (or (ibut:label-to-key name)
 			(ibut:label-p nil "\"" "\"" nil t))))
       (unwind-protect
@@ -1514,7 +1513,7 @@ excluding delimiters, not just one."
 	    (when (not (hbut:outside-comment-p))
 	      ;; Skip past any optional name and separators
 	      (when name-start-end
-		(goto-char end)
+		(goto-char name-end)
 		(if (looking-at ibut:label-separator-regexp)
 		    ;; Move past up to 2 possible characters of ibut
 		    ;; delimiters; this prevents recognizing labeled,
@@ -1525,9 +1524,11 @@ excluding delimiters, not just one."
 	    (if key-only
 		lbl-key
 	      ;; Check for an implicit button at current point, record its
-	      ;; attributes and return a button symbol for it.
-	      (ibut:create :name name :lbl-key lbl-key :lbl-start start
-			   :lbl-end end)))
+	      ;; attributes and return a button symbol for it.  This call
+	      ;; typically writes the text start and end attributes saved as
+	      ;; `lbl-start' and `lbl-end' after finding the ibut type at point.
+	      ;; So do not pass these attributes in to this call.
+	      (ibut:create :name name :lbl-key lbl-key)))
 	(goto-char opoint)))))
 
 (defun    ibut:at-type-p (ibut-type-symbol)
@@ -1552,7 +1553,10 @@ associated arguments from the button."
 Return nil if no implicit button at point."
   ;; :args is ignored unless :categ is also given.
 
-  ;; lbl-start and lbl-end should always be the start and end of the
+  ;; `lbl-key' attribute will be set from the button name, if any;
+  ;; otherwise, from its text.
+
+  ;; `lbl-start' and `lbl-end' will be set from the start and end of the
   ;; ibut text, excluding delimiters, not of its name.
 
   ;; Since the Smart Keys handle end-of-line and end-of-buffer
@@ -1583,14 +1587,14 @@ Return nil if no implicit button at point."
 
       (when is-type
 	(let ((current-name      (hattr:get 'hbut:current 'name))
-	      (current-lbl-key   (hattr:get 'hbut:current 'lbl-key))
+	      ;; (current-lbl-key   (hattr:get 'hbut:current 'lbl-key))
 	      (current-lbl-start (hattr:get 'hbut:current 'lbl-start))
 	      (current-lbl-end   (hattr:get 'hbut:current 'lbl-end))
-	      (current-categ     (hattr:get 'hbut:current 'categ))
+	      ;; (current-categ     (hattr:get 'hbut:current 'categ))
 	      (current-loc       (hattr:get 'hbut:current 'loc))
 	      (current-dir       (hattr:get 'hbut:current 'dir))
 	      (current-action    (hattr:get 'hbut:current 'action))
-	      (current-actype    (hattr:get 'hbut:current 'actype))
+	      ;; (current-actype    (hattr:get 'hbut:current 'actype))
 	      (current-args      (hattr:get 'hbut:current 'args)))
 
 	  (if current-name
@@ -1600,13 +1604,12 @@ Return nil if no implicit button at point."
 	    (when name
 	      (hattr:set 'hbut:current 'name name)))
 
-	  (if current-lbl-key
-	      (setq lbl-key current-lbl-key)
-	    (unless lbl-key
-	      (setq lbl-key (or (ibut:label-to-key name)
-				(ibut:label-p nil "\"" "\"" nil t))))
-	    (when lbl-key
-	      (hattr:set 'hbut:current 'lbl-key lbl-key)))
+	  ;; Need to ignore current-lbl-key and use name if any
+	  (setq lbl-key (or (ibut:label-to-key name)
+			    lbl-key
+			    (ibut:label-p nil "\"" "\"" nil t)))
+	  (when lbl-key
+	    (hattr:set 'hbut:current 'lbl-key lbl-key))
 
 	  (if current-lbl-start
 	      (setq lbl-start current-lbl-start)
