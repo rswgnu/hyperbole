@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    30-Jan-21 at 12:00:00
-;; Last-Mod:     23-Jul-22 at 19:18:48 by Bob Weiner
+;; Last-Mod:     24-Jul-22 at 09:18:04 by Bob Weiner
 ;;
 ;; Copyright (C) 2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -526,15 +526,15 @@ enough files with matching mode loaded."
       (global-set-key (kbd "C-x C-b") old)
       (hy-test-helpers:kill-buffer dir))))
 
-(ert-deftest fast-demo-key-series-shell-pushd-hyperb-dir ()
-  "Action key executes pushd shell command."
+(ert-deftest fast-demo-key-series-shell-cd-hyperb-dir ()
+  "Action key executes cd shell command."
   (skip-unless (not noninteractive))
   (let* ((shell-file-name (executable-find "sh"))
          (shell-buffer-name "*shell*")
 	 (existing-shell-flag (get-buffer-process shell-buffer-name)))
     (unwind-protect
         (with-temp-buffer
-          (insert "{ M-x shell RET M-> (pushd ${hyperb:dir} && echo \"PWD=$(pwd)\") RET }")
+          (insert "{ M-x shell RET M-> (cd ${hyperb:dir} && echo \"PWD=$(pwd)\") RET }")
           (goto-char 5)
           (action-key)
           (hy-test-helpers:consume-input-events)

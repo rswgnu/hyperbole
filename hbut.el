@@ -233,7 +233,7 @@ to two lines."
 		      (setq start t))
 		    start)
 		  ;; Handle expressions like:
-		  ;; { M-x shell RET M-> (pushd ${hyperb:dir}) RET }
+		  ;; { M-x shell RET M-> (cd ${hyperb:dir}) RET }
 		  (save-excursion
 		    (when (eq ?\( (char-syntax (preceding-char)))
 		      (condition-case ()
@@ -1563,7 +1563,6 @@ Return nil if no implicit button at point."
     (let* ((types (htype:category 'ibtypes))
 	   ;; Global var used in (hact) function, don't delete.
 	   (hrule:action #'actype:identity)
-	   (lbl-key-start-end)
 	   (ibpoint (point-marker))
 	   (itype)
 	   (is-type categ))

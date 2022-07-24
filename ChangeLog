@@ -1,3 +1,6 @@
+* test/demo-tests.el (fast-demo-key-series-shell-cd-hyperb-dir):
+  FAST-DEMO: Change pushd to cd since /bin/sh does not support pushd.
+
 2022-07-23  Bob Weiner  <rsw@gnu.org>
 
 * hbut.el (ibut:to): Clear any hbut:current attributes before trying
@@ -65,7 +68,7 @@
 * hui-mouse.el (smart-imenu-item-p): Support -99 position value
     that Emacs uses to indicate a rescan should be done.
 
-* test/demo-tests.el (fast-demo-key-series-shell-pushd-hyperb-dir,
+* test/demo-tests.el (fast-demo-key-series-shell-cd-hyperb-dir,
                       fast-demo-key-series-shell-grep,
                       fast-demo-key-series-shell-apropos):
     Use 'sh' instead of 'bash' for wider applicability.
@@ -300,7 +303,7 @@
 
 2022-06-13  Mats Lidell  <matsl@gnu.org>
 
-* test/demo-tests.el (fast-demo-key-series-shell-pushd-hyperb-dir)
+* test/demo-tests.el (fast-demo-key-series-shell-cd-hyperb-dir)
     (fast-demo-key-series-shell-grep, fast-demo-key-series-shell-apropos):
     Tests for shell related key series examples in the fast demo.
 
@@ -420,7 +423,7 @@
 
 * hbut.el (ebut:label-p): Fix handling when point is on final RET and
     have nested lists as in here with braces:
-    { M-x shell RET M-> (pushd ${hyperb:dir}) RET }
+    { M-x shell RET M-> (cd ${hyperb:dir}) RET }
     by adding a (forward-list) call in the first 'while' construct.
 
 2022-05-14  Bob Weiner  <rsw@gnu.org>
