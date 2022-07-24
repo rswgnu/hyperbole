@@ -1,3 +1,22 @@
+* hib-debbugs.el (debbugs-version-sufficient-p): Handle if version
+    is nil due to edebug mocking of 'find-file-noselect'.
+  test/hui-tests.el (hui-gibut-create-link-to-file,
+    hui-gibut-create-link-to-file-line,
+    hui-gibut-create-link-to-file-line-and-column):
+  test/hbut-tests.el (gbut-program-calls-ebut-program)
+    gbut-program-link-to-directory, gbut-program-eval-elisp,
+    gbut-program-link-to-file, gbut-program-link-to-file-line,
+    gbut-program-link-to-file-line-and-column):
+      Replace mock of 'find-file-noselect' with 'hpath:find-noselect'
+      so tests do not interfere with other calls to 'find-file-noselect'.
+
+* test/hy-test-helpers.el (hy-test-helpers:kill-buffer):
+    Add to kill buffers only when they exist.
+  test/demo-tests.el (fast-demo-key-series-shell-apropos):
+    Use 'hy-test-helpers:kill-buffer'.
+  test/hy-test-dependencies.el (hy-test-ensure-package-installed):
+    Simplified by defining this function.
+
 2022-07-17  Bob Weiner  <rsw@gnu.org>
 
 * hmouse-drv.el (hkey-debug): Add print of all button properties when on
