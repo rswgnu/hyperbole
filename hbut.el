@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    18-Sep-91 at 02:57:09
-;; Last-Mod:     23-Jul-22 at 01:57:12 by Bob Weiner
+;; Last-Mod:     23-Jul-22 at 23:39:56 by Bob Weiner
 ;;
 ;; Copyright (C) 1991-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -650,7 +650,7 @@ argument.
 
 For interactive creation, use `hui:gbut-create' instead."
   (save-excursion
-    (with-current-buffer (find-file-noselect (expand-file-name hbmap:filename hbmap:dir-user))
+    (with-current-buffer (hpath:find-noselect (expand-file-name hbmap:filename hbmap:dir-user))
       (save-excursion
 	(goto-char (point-max))
 	(when (not (bolp))
@@ -889,6 +889,7 @@ Default is 'hbut:current."
     (setq hbut 'hbut:current))
   (cond ((hbut:is-p hbut)
 	 (let ((orig-point (point-marker))
+	       (action (hattr:get hbut 'action))
 	       text-point)
 	   (when (ibut:is-p hbut)
 	     ;; Determine whether point is already within hbut; if
@@ -921,12 +922,12 @@ Default is 'hbut:current."
 			      (>= delim-text-end (point)))
 		   (ibut:to-text (hattr:get hbut 'lbl-key))))))
 	   (setq text-point (point-marker))
-	   (prog1 (apply hrule:action
-			 (hattr:get hbut 'actype)
-			 (hattr:get hbut 'args))
-	     ;; Restore point as it was prior to ibut:to-text call if the action
-	     ;; switched buffers or did not move point within the
-	     ;; current buffer.
+	   (prog1 (if action
+		      (apply hrule:action action)
+		    (apply hrule:action (hattr:get hbut 'actype) (hattr:get hbut 'args)))
+	     ;; Restore point as it was prior to `ibut:to-text' call
+	     ;; if the action switched buffers or did not move point
+	     ;; within the current buffer.
 	     (when (or (equal text-point (point-marker))
 		       (not (eq (current-buffer) (marker-buffer orig-point))))
 	       (with-current-buffer (marker-buffer orig-point)
@@ -942,10 +943,10 @@ Default is 'hbut:current."
 	 (hypb:error "(hbut:act): Invalid Hyperbole button: %s" hbut))))
 
 (defun    hbut:action (hbut)
-  "Return appropriate action for Hyperbole button symbol HBUT."
+  "Return appropriate action name/function for Hyperbole button symbol HBUT."
   (let ((categ (hattr:get hbut 'categ)) (atype) (action))
     (if (eq categ 'explicit)
-	(progn (setq action (hattr:get hbut 'action)
+	(progn (setq action (car (hattr:get hbut 'action))
 		     atype  (hattr:get hbut 'actype))
 	       (if (= (length (symbol-name atype)) 2)
 		   atype
@@ -1503,7 +1504,9 @@ excluding delimiters, not just one."
   (unless (eolp)
     (let* ((opoint (point))
 	   (name-start-end (ibut:label-p t nil nil t t))
-	   (name (car name-start-end))
+	   (name  (nth 0 name-start-end))
+	   (start (nth 1 name-start-end))
+	   (end   (nth 2 name-start-end))
 	   (lbl-key (or (ibut:label-to-key name)
 			(ibut:label-p nil "\"" "\"" nil t))))
       (unwind-protect
@@ -1511,7 +1514,7 @@ excluding delimiters, not just one."
 	    (when (not (hbut:outside-comment-p))
 	      ;; Skip past any optional name and separators
 	      (when name-start-end
-		(goto-char (nth 2 name-start-end))
+		(goto-char end)
 		(if (looking-at ibut:label-separator-regexp)
 		    ;; Move past up to 2 possible characters of ibut
 		    ;; delimiters; this prevents recognizing labeled,
@@ -1523,7 +1526,8 @@ excluding delimiters, not just one."
 		lbl-key
 	      ;; Check for an implicit button at current point, record its
 	      ;; attributes and return a button symbol for it.
-	      (ibut:create)))
+	      (ibut:create :name name :lbl-key lbl-key :lbl-start start
+			   :lbl-end end)))
 	(goto-char opoint)))))
 
 (defun    ibut:at-type-p (ibut-type-symbol)
@@ -1548,6 +1552,9 @@ associated arguments from the button."
 Return nil if no implicit button at point."
   ;; :args is ignored unless :categ is also given.
 
+  ;; lbl-start and lbl-end should always be the start and end of the
+  ;; ibut text, excluding delimiters, not of its name.
+
   ;; Since the Smart Keys handle end-of-line and end-of-buffer
   ;; separately from whether point is within an implicit button,
   ;; always report not within one when point is at the end of a line.
@@ -1556,20 +1563,10 @@ Return nil if no implicit button at point."
     (let* ((types (htype:category 'ibtypes))
 	   ;; Global var used in (hact) function, don't delete.
 	   (hrule:action #'actype:identity)
-	   (name-start-end (ibut:label-p t nil nil t t))
+	   (lbl-key-start-end)
 	   (ibpoint (point-marker))
 	   (itype)
 	   (is-type categ))
-
-      (unless name
-	(setq name (nth 0 name-start-end)))
-      (unless lbl-key
-	(setq lbl-key (or (ibut:label-to-key name)
-			  (ibut:label-p nil "\"" "\"" nil))))
-      (unless lbl-start
-	(setq lbl-start (nth 1 name-start-end)))
-      (unless lbl-end
-	(setq lbl-end (nth 2 name-start-end)))
 
       (hattr:clear 'hbut:current)
       (unless is-type
@@ -1584,6 +1581,19 @@ Return nil if no implicit button at point."
 	  (setq types (cdr types))))
 
       (set-marker ibpoint nil)
+
+      (unless name
+	(setq name (ibut:label-p t nil nil nil t)))
+      (unless (and lbl-key lbl-start lbl-end)
+	(setq lbl-key-start-end (ibut:label-p nil "\"" "\"" t t)))
+      (unless lbl-key
+	(setq lbl-key (or (ibut:label-to-key name)
+			  (nth 0 lbl-key-start-end))))
+      (unless lbl-start
+	(setq lbl-start (nth 1 lbl-key-start-end)))
+      (unless lbl-end
+	(setq lbl-end (nth 2 lbl-key-start-end)))
+
       (when is-type
 	(when name
 	  (hattr:set 'hbut:current 'name name))
@@ -1613,7 +1623,7 @@ Return nil if no implicit button at point."
 			  (symtable:actype-p (car args))
 			  ;; Regular Emacs Lisp function symbol
 			  (car args)))
-	      (hattr:set 'hbut:current 'args (cdr args))))
+	      (hattr:set 'hbut:current 'args (if actype args (cdr args)))))
 	'hbut:current))))
 
 (defun    ibut:delete (&optional but-sym)
@@ -1830,6 +1840,7 @@ the whole buffer."
   "Find the nearest implicit button with LBL-KEY (a label or label key) within the visible portion of the current buffer.
 Leave point inside the button text or its optional label, if it has one.
 Return the symbol for the button, else nil."
+  (hattr:clear 'hbut:current)
   (unless lbl-key
     (setq lbl-key (ibut:label-p nil nil nil nil t)))
   (hbut:funcall (lambda (lbl-key _buffer _key-src)

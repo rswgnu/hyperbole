@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 20:45:31
-;; Last-Mod:     23-Jul-22 at 18:26:19 by Bob Weiner
+;; Last-Mod:     23-Jul-22 at 22:32:54 by Bob Weiner
 ;;
 ;; Copyright (C) 1991-2022 Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -1430,10 +1430,8 @@ arg1 ... argN '>'.  For example, <mail nil \"user@somewhere.org\">."
 		 (setq args `(',actype)
                        action `(display-variable ',actype)
                        actype #'display-variable))
-		((and (symbolp actype) (fboundp actype)
-                      (string-match "\\b\\(get\\|value\\)" (symbol-name actype)))
-		 ;; For 'get' and 'value' functions, display the action
-		 ;; result in the minibuffer
+		(t
+		 ;; All other expressions, display the action result in the minibuffer
 		 (setq args `(',action)
                        action `(display-value ',action)
                        actype #'display-value))))

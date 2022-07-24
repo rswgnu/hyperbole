@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    15-Oct-91 at 20:13:17
-;; Last-Mod:     17-Jul-22 at 09:48:06 by Bob Weiner
+;; Last-Mod:     23-Jul-22 at 23:04:56 by Bob Weiner
 ;;
 ;; Copyright (C) 1991-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -913,7 +913,7 @@ constructs.  If not given, the top level Hyperbole menu is used."
 	;; ("B")
 	;; ("C")
 	("Devdocs-Lookup"             hypb:devdocs-lookup)
-	;; ("E")
+	("Emacs-Index-Search"         emacs-index-search)
 	;; ("F")
 	;; ("G")
 	;; ("H")

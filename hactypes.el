@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    23-Sep-91 at 20:34:36
-;; Last-Mod:     12-Jul-22 at 01:21:40 by Bob Weiner
+;; Last-Mod:     23-Jul-22 at 22:25:35 by Bob Weiner
 ;;
 ;; Copyright (C) 1991-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -65,13 +65,13 @@ Return any non-nil value or t."
   "Display a message showing VALUE (a symbol) and its value.
 Return any non-nil value or t."
   (let ((result (eval value)))
-    (message "%s" result)
+    (message "%S" result)
     (or result t)))
 
 (defact display-variable (var)
   "Display a message showing VAR (a symbol) and its value.
 Return any non-nil value or t."
-  (message "%s = %s" var (symbol-value var))
+  (message "%s = %S" var (symbol-value var))
   (or (symbol-value var) t))
 
 (defact eval-elisp (lisp-expr)

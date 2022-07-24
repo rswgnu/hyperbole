@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Jun-16 at 14:24:53
-;; Last-Mod:     24-Jan-22 at 00:18:32 by Bob Weiner
+;; Last-Mod:     23-Jul-22 at 19:55:32 by Bob Weiner
 ;;
 ;; Copyright (C) 2016, 2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -269,7 +269,7 @@ Ignore nil valued attributes.  Return t unless no attributes are printed."
 		     (setq version (match-string 1))))
 	  (unless visiting-debbugs-src
 	    (kill-buffer debbugs-src-buffer)))
-	(when (not (equal version ""))
+	(when (and version (not (equal version "")))
 	  (version-list-<= (version-to-list "0.9.7") (version-to-list version)))))))
 
 (provide 'hib-debbugs)

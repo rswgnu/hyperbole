@@ -1,3 +1,22 @@
+2022-07-23  Bob Weiner  <rsw@gnu.org>
+
+* hbut.el (ibut:to): Clear any hbut:current attributes before trying
+   to find the matching ibut.
+
+* hibtypes.el (action): Display the result of evaluating the action
+    in the minibuffer for all types of expressions.
+  hactypes.el (display-value, display-variable): Fix to display
+    Lisp-readable values.
+
+* hui.el (hui:gibut-create): Add (ibut:create) call so 'hbut:current
+    stores the attributes of the newly created global button.
+
+* hbut.el (hbut:action): If action defined, return only first
+    element to match the return when actype is used.
+          (hbut:act): Use action attribute if defined.
+	  (ibut:create): Prevent removal of 1st arg if actype
+    is set.
+
 * hibtypes.el (elisp-compiler-msg): Add support for ERT "Test <symbol>"
     lines to jump to the def of the symbol and for symbol and pathname
     references from backtraces in ERT output.
@@ -20,6 +39,15 @@
     Use 'hy-test-helpers:kill-buffer'.
   test/hy-test-dependencies.el (hy-test-ensure-package-installed):
     Simplified by defining this function.
+
+2022-07-22  Bob Weiner  <rsw@gnu.org>
+
+* hmouse-drv.el (hkey-debug): Use 'action' attribute if set, otherwise,
+    use 'actype' and 'args'.
+
+* hbut.el (ibut:create): Add 'dir' key parameter and set as hbut:current
+    attribute.  Remove '(or args)' as that was preventing set of
+ hbut:current attributes.
 
 2022-07-17  Bob Weiner  <rsw@gnu.org>
 
