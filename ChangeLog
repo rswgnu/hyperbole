@@ -1,9 +1,10 @@
 2022-10-03  Mats Lidell  <matsl@gnu.org>
 
+* hibtypes.el:
 * hyrolo-logic.el:
 * hyperbole.el:
 * hversion.el:
-* hui-window.el: 
+* hui-window.el:
 * hmouse-key.el:
 * hmouse-drv.el:
 * hload-path.el:
