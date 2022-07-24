@@ -1,3 +1,7 @@
+* hibtypes.el (elisp-compiler-msg): Add support for ERT "Test <symbol>"
+    lines to jump to the def of the symbol and for symbol and pathname
+    references from backtraces in ERT output.
+
 * hib-debbugs.el (debbugs-version-sufficient-p): Handle if version
     is nil due to edebug mocking of 'find-file-noselect'.
   test/hui-tests.el (hui-gibut-create-link-to-file,
