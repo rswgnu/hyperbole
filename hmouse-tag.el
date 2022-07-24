@@ -1446,7 +1446,8 @@ to look.  If no tags file is found, an error is signaled."
 ;;; ************************************************************************
 
 (defun smart-tags-noselect-function ()
-  "Return the best available function for finding a tag definition without selecting it."
+  "Return the best available function for finding a tag definition.
+The function does not select the tag definition."
   (car (delq nil (mapcar (lambda (func) (if (fboundp func) func))
 			 #'(xref-definition find-tag-noselect find-tag-internal)))))
 

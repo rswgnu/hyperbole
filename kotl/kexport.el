@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    26-Feb-98
-;; Last-Mod:     15-Jul-22 at 23:24:27 by Mats Lidell
+;; Last-Mod:     18-Jul-22 at 21:50:10 by Mats Lidell
 ;;
 ;; Copyright (C) 1998-2022  Free Software Foundation, Inc.
 ;; See the "../HY-COPY" file for license information.
@@ -36,14 +36,15 @@
 ;;; ************************************************************************
 
 (defvar kexport:input-filename nil
-  "This is automatically set to the full pathname of the file presently being exported.")
+  "This is automatically set to the full pathname of the exported file.")
 
 (defvar kexport:output-filename nil
-  "This is automatically set to the full pathname of the file presently being exported.")
+  "This is automatically set to the full pathname of the exported file.")
 
 (defcustom kexport:html-body-attributes
   "BGCOLOR=\"#FFFFFF\"" ;; white background
-  "*String of HTML attributes attached to the <BODY> tag of an HTML exported koutline file."
+  "*String of HTML attributes attached to the <BODY> tag.
+Part of an HTML exported koutline file."
   :type 'string
   :group 'hyperbole-koutliner)
 
@@ -55,7 +56,8 @@
   :group 'hyperbole-koutliner)
 
 (defcustom kexport:html-keywords nil
-  "*String of comma separated keywords to include with an HTML-exported document, or nil for none."
+  "*String of comma separated keywords to include with an HTML-exported document.
+If nil, use no keywords."
   :type '(choice (const nil)
 		 (string))
   :group 'hyperbole-koutliner)
@@ -108,9 +110,9 @@
    (cons (format "&lt;\\s-*\\([^ \t\n\r,<>]+\\)\\s-*,\\s-*%s[^=&>]*&gt;"
 		 kexport:kcell-partial-reference-regexp)
 	 'kexport:html-file-klink))
-  "*List of (regexp . replacement-pattern) elements applied in order to the
-contents of each kcell from a koutline exported to HTML format.  Replacement
-pattern may be:
+  "*List of (regexp . replacement-pattern) elements applied in order.
+The elements are applied to the contents of each kcell from a
+koutline exported to HTML format.  Replacement pattern may be:
   a string with references to regexp's grouping numbers, e.g. \\1, or
   a function of one argument (it is passed the string being replaced in)
   which returns the modified string.  The function may use expressions such
@@ -160,7 +162,7 @@ li {
   font-size: 0;
 }
 </style>\n"
-  "CSS that styles collapsible HTML-exported Koutline parent cells")
+  "CSS that styles collapsible HTML-exported Koutline parent cells.")
 
 (defconst kexport:font-awesome-css-include-with-menus
   "<style>
@@ -294,7 +296,7 @@ menuitem > menu > menuitem.hover > menu > menuitem{
 }
 /* End Drop-down menu CSS */
 </style>\n"
-  "CSS that styles collapsible HTML-exported Koutline parent cells and menus")
+  "CSS that styles collapsible HTML-exported Koutline parent cells and menus.")
 
 (defconst kexport:font-awesome-collapsible-javascript
   "<script>
@@ -322,7 +324,7 @@ for (i = 0; i < coll.length; i++) {
   });
 }
 </script>\n"
-  "JavaScript which expands/collapses HTML-exported Koutline parent cells")
+  "JavaScript which expands/collapses HTML-exported Koutline parent cells.")
 
 ;;; ************************************************************************
 ;;; Public functions
@@ -330,11 +332,12 @@ for (i = 0; i < coll.length; i++) {
 
 ;;;###autoload
 (defun kexport:koutline (&optional soft-newlines-flag)
-  "Export the current buffer's koutline to the same named file with a \".html\" suffix.
+  "Export current buffer's koutline to the same named file with a \".html\" suffix.
 Return the pathname of the html file created.
 
-By default, this retains newlines within cells as they are.  With optional prefix arg, SOFT-NEWLINES-FLAG,
-hard newlines are not used.  Also converts Urls and Klinks into Html hyperlinks."
+By default, this retains newlines within cells as they are.  With
+optional prefix arg, SOFT-NEWLINES-FLAG, hard newlines are not
+used.  Also converts Urls and Klinks into Html hyperlinks."
   (interactive "P")
   (let ((export-from buffer-file-name)
   	(output-to (concat (file-name-sans-extension buffer-file-name) ".html")))
@@ -343,11 +346,13 @@ hard newlines are not used.  Also converts Urls and Klinks into Html hyperlinks.
 
 ;;;###autoload
 (defun kexport:display (&optional soft-newlines-flag)
-  "Export the current buffer's koutline to the same named file with a \".html\" suffix and display it in a web browser.
+  "Export the current buffer's koutline and display it in a web browser.
+The buffer is exported to the same named file with a \".html\" suffix.
 Return the pathname of the html file created.
 
-By default, this retains newlines within cells as they are.  With optional prefix arg, SOFT-NEWLINES-FLAG,
-hard newlines are not used.  Also converts Urls and Klinks into Html hyperlinks."
+By default, this retains newlines within cells as they are.  With
+optional prefix arg, SOFT-NEWLINES-FLAG, hard newlines are not
+used.  Also converts Urls and Klinks into Html hyperlinks."
   (interactive "P")
   (let ((html-file (kexport:koutline soft-newlines-flag)))
     (hact 'www-url (concat "file://" html-file))
@@ -356,8 +361,9 @@ hard newlines are not used.  Also converts Urls and Klinks into Html hyperlinks.
 ;;;###autoload
 (defun kexport:html (export-from output-to &optional soft-newlines-flag)
   "Export a koutline buffer or file in EXPORT-FROM to html format in OUTPUT-TO.
-By default, this retains newlines within cells as they are.  With optional prefix arg, SOFT-NEWLINES-FLAG,
-hard newlines are not used.  Also converts Urls and Klinks into Html hyperlinks.
+By default, this retains newlines within cells as they are.  With
+optional prefix arg, SOFT-NEWLINES-FLAG, hard newlines are not
+used.  Also converts Urls and Klinks into Html hyperlinks.
 !! STILL TODO:
   Make delimited pathnames into file links (but not if within klinks).
   Copy attributes stored in cell 0 and attributes from each cell."

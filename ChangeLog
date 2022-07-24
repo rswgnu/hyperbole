@@ -61,35 +61,27 @@
     attribute.  Remove '(or args)' as that was preventing set of
  hbut:current attributes.
 
-2022-07-17  Bob Weiner  <rsw@gnu.org>
+2022-07-21  Mats Lidell  <matsl@gnu.org>
 
-* hmouse-drv.el (hkey-debug): Add print of all button properties when on
-    a Hyperbole button.
+* kotl/kexport.el:
+* kotl/kcell.el: Shorten docs strings to be within 80 char limit.
 
-* hsettings.el (hyperbole-web-search): Add optional 'return-search-expr-flag'
-    to return search expression rather than doing the search.  Use
-    with Assist Key.
+2022-07-20  Mats Lidell  <matsl@gnu.org>
 
-* hibtypes.el (action): Call ibut:create to ensure button attributes
-    are set properly.
-  hbut.el (ibut:create): Return nil if at end-of-buffer.
+* hact.el:
+* hmouse-tag.el:
+* hbdata.el:
+* hactypes.el:
+* hib-debbugs.el:
+* hargs.el: Shorten docs strings to be within 80 char limit.
 
-* hui-mouse.el (smart-imenu-item-p): Support -99 position value
-    that Emacs uses to indicate a rescan should be done.
-
-* test/demo-tests.el (fast-demo-key-series-shell-cd-hyperb-dir,
-                      fast-demo-key-series-shell-grep,
-                      fast-demo-key-series-shell-apropos):
-    Use 'sh' instead of 'bash' for wider applicability.
-    Don't kill shell buffer if it exists before the test is invoked.
-
-* hact.el (htype:symbol): Return nil if type-category is invalid.
-
-2022-07-17  Mats Lidell  <matsl@gnu.org>
+2022-07-19  Mats Lidell  <matsl@gnu.org>
 
 * test/demo-tests.el (fast-demo-key-series-shell-apropos): Add optional
     whitespace after command to accomodate for different versions on
     apropos.
+
+2022-07-17  Mats Lidell  <matsl@gnu.org>
 
 * hypb.el (hypb:replace-match-string): Fix obsolete version to 8.0.1.
 
@@ -114,6 +106,30 @@
 * kotl/kview.el (kview-label-sep-len): Rename global variable.
     (kcell-view:lines-visible, kview:set-cells-status): Use it.
     (label-sep-len):  Mark variable as obsolete. Use kview-label-sep-len.
+
+2022-07-17  Bob Weiner  <rsw@gnu.org>
+
+* hmouse-drv.el (hkey-debug): Add print of all button properties when on
+    a Hyperbole button.
+
+* hsettings.el (hyperbole-web-search): Add optional 'return-search-expr-flag'
+    to return search expression rather than doing the search.  Use
+    with Assist Key.
+
+* hibtypes.el (action): Call ibut:create to ensure button attributes
+    are set properly.
+  hbut.el (ibut:create): Return nil if at end-of-buffer.
+
+* hui-mouse.el (smart-imenu-item-p): Support -99 position value
+    that Emacs uses to indicate a rescan should be done.
+
+* test/demo-tests.el (fast-demo-key-series-shell-cd-hyperb-dir,
+                      fast-demo-key-series-shell-grep,
+                      fast-demo-key-series-shell-apropos):
+    Use 'sh' instead of 'bash' for wider applicability.
+    Don't kill shell buffer if it exists before the test is invoked.
+
+* hact.el (htype:symbol): Return nil if type-category is invalid.
 
 2022-07-15  Mats Lidell  <matsl@gnu.org>
 
