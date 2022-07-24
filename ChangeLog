@@ -1,10 +1,19 @@
+2022-07-24  Bob Weiner  <rsw@gnu.org>
+
+* hibtypes.el (action): Ensure actypes:: prefix is added to any action
+    attribute that uses a Hyperbole actype.  Also, set args attribute
+    to exclude the actype.
+
+* hbut.el (ibut:create): Rewrite to prefer values from hbut:current
+    over any passed in individually.
+
 * test/demo-tests.el (fast-demo-key-series-shell-cd-hyperb-dir):
   FAST-DEMO: Change pushd to cd since /bin/sh does not support pushd.
 
-2022-07-23  Bob Weiner  <rsw@gnu.org>
+* hpath.el (hpath:find): Rename filename arg to pathname and trigger
+    an error if not a string.
 
-* hbut.el (ibut:to): Clear any hbut:current attributes before trying
-   to find the matching ibut.
+2022-07-23  Bob Weiner  <rsw@gnu.org>
 
 * hibtypes.el (action): Display the result of evaluating the action
     in the minibuffer for all types of expressions.

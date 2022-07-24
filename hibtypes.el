@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 20:45:31
-;; Last-Mod:     23-Jul-22 at 22:32:54 by Bob Weiner
+;; Last-Mod:     24-Jul-22 at 09:46:12 by Bob Weiner
 ;;
 ;; Copyright (C) 1991-2022 Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -1417,22 +1417,29 @@ arg1 ... argN '>'.  For example, <mail nil \"user@somewhere.org\">."
       (when actype
         (setq action (read (concat "(" lbl ")"))
               args (cdr action))
+	;; Ensure action uses an fboundp symbol if executing a
+	;; Hyperbole actype.
+	(setq a action)
+	(when (and (car action) (symbolp (car action)))
+	  (setcar action
+		  (or (intern-soft (concat "actypes::" (symbol-name (car action))))
+		      (car action))))
 	(unless assist-flag
           (cond ((and (symbolp actype) (fboundp actype)
                       (string-match "-p\\'" (symbol-name actype)))
 		 ;; Is a function with a boolean result
-		 (setq args `(',action)
+		 (setq args `(',args)
 		       action `(display-boolean ',action)
                        actype #'display-boolean))
 		((and (null args) (symbolp actype) (boundp actype)
                       (or var-flag (not (fboundp actype))))
 		 ;; Is a variable, display its value as the action
-		 (setq args `(',actype)
+		 (setq args `(',args)
                        action `(display-variable ',actype)
                        actype #'display-variable))
 		(t
 		 ;; All other expressions, display the action result in the minibuffer
-		 (setq args `(',action)
+		 (setq args `(',args)
                        action `(display-value ',action)
                        actype #'display-value))))
 
