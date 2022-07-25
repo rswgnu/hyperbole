@@ -1,6 +1,7 @@
 2022-09-14  Mats Lidell  <matsl@gnu.org>
 
-* hmoccur.el: Shorten docs strings to be within 80 char limit.
+* hmoccur.el:
+* hmouse-key.el: Shorten docs strings to be within 80 char limit.
 
 2022-09-13  Mats Lidell  <matsl@gnu.org>
 
