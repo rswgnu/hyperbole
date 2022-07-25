@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    20-Feb-21 at 23:16:00
-;; Last-Mod:     24-Jan-22 at 00:40:43 by Bob Weiner
+;; Last-Mod:     23-Jul-22 at 18:37:43 by Bob Weiner
 ;;
 ;; Copyright (C) 2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -19,17 +19,13 @@
 (package-initialize)
 (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/"))
 
-(unless (package-installed-p 'el-mock)
-  (package-refresh-contents)
-  (package-install 'el-mock))
+(defun hy-test-ensure-package-installed (pkg-symbol)
+  (unless (package-installed-p pkg-symbol)
+    (package-refresh-contents)
+    (package-install pkg-symbol)))
 
-(unless (package-installed-p 'with-simulated-input)
-  (package-refresh-contents)
-  (package-install 'with-simulated-input))
-
-(unless (package-installed-p 'package-lint)
-  (package-refresh-contents)
-  (package-install 'package-lint))
+(mapc (lambda (sym) (hy-test-ensure-package-installed sym))
+      '(el-mock package-lint with-simulated-input))
 
 (provide 'hy-test-dependencies)
 ;;; hy-test-dependencies.el ends here
