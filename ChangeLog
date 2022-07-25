@@ -1,3 +1,7 @@
+2022-09-13  Mats Lidell  <matsl@gnu.org>
+
+* hmouse-info.el: Shorten docs strings to be within 80 char limit.
+
 2022-09-12  Mats Lidell  <matsl@gnu.org>
 
 * hpath.el (hpath:tramp-file-name-regexp): Handle tramp regexp from
