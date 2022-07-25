@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    30-Jan-21 at 12:00:00
-;; Last-Mod:     12-Jul-22 at 23:25:15 by Mats Lidell
+;; Last-Mod:     23-Jul-22 at 20:06:18 by Bob Weiner
 ;;
 ;; Copyright (C) 2021-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -194,7 +194,7 @@ Ensure modifying the button but keeping the label does not create a double label
     (unwind-protect
 	(progn
           (with-mock
-            (mock (find-file-noselect (gbut:file)) => test-buffer)
+            (mock (hpath:find-noselect (gbut:file)) => test-buffer)
             (hui:gibut-create "global" test-file))
 	  (with-current-buffer test-buffer
             (hy-test-helpers-verify-hattr-at-p :actype 'actypes::link-to-file :args (list test-file) :loc test-file :lbl-key "global")))
@@ -207,7 +207,7 @@ Ensure modifying the button but keeping the label does not create a double label
     (unwind-protect
 	(progn
           (with-mock
-            (mock (find-file-noselect (gbut:file)) => test-buffer)
+            (mock (hpath:find-noselect (gbut:file)) => test-buffer)
             (hui:gibut-create "global" (concat test-file ":10")))
 	  (with-current-buffer test-buffer
             (hy-test-helpers-verify-hattr-at-p :actype 'actypes::link-to-file-line :args (list test-file 10) :loc test-file :lbl-key "global")))
@@ -220,7 +220,7 @@ Ensure modifying the button but keeping the label does not create a double label
     (unwind-protect
 	(progn
           (with-mock
-            (mock (find-file-noselect (gbut:file)) => test-buffer)
+            (mock (hpath:find-noselect (gbut:file)) => test-buffer)
             (hui:gibut-create "global" (concat test-file ":10:20")))
 	  (with-current-buffer test-buffer
             (hy-test-helpers-verify-hattr-at-p :actype 'actypes::link-to-file-line-and-column :args (list test-file 10 20) :loc test-file :lbl-key "global")))
@@ -234,7 +234,7 @@ Ensure modifying the button but keeping the label does not create a double label
     (unwind-protect
 	(progn
           (with-mock
-            (mock (find-file-noselect (gbut:file)) => test-buffer)
+            (mock (hpath:find-noselect (gbut:file)) => test-buffer)
             (hui:gibut-create "global" (concat "\"" info-node "\"")))
 	  (with-current-buffer test-buffer
             (hy-test-helpers-verify-hattr-at-p :actype 'actypes::link-to-Info-node :args (list info-node) :loc test-file :lbl-key "global")))

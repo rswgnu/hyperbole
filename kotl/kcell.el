@@ -59,8 +59,9 @@ not already there."
    plist))
 
 (defun kcell:create-top (&optional top-cell-attributes)
-  "Return a new koutline top cell with optional property list of TOP-CELL-ATTRIBUTES.
-The idstamp of the top cell is always 0 and this cell stores the idstamp-counter."
+  "Return a new top cell with optional property list of TOP-CELL-ATTRIBUTES.
+The idstamp of the top cell is always 0 and this cell stores the
+idstamp-counter."
   (kcell:create top-cell-attributes))
 
 (defalias 'kcell:get-attr 'plist-get)
@@ -73,7 +74,7 @@ The idstamp of the top cell is always 0 and this cell stores the idstamp-counter
 
 ;;;###autoload
 (defun kcell:ref-to-id (cell-ref &optional kviewspec-flag)
-  "When CELL-REF is valid, return a CELL-REF string converted to a cell idstamp (integer).
+  "Return a CELL-REF string converted to a cell idstamp (integer).
 If CELL-REF contains both a relative and a permanent id, the permanent id is
 returned.  If CELL-REF is invalid, nil is returned.
 
@@ -184,7 +185,7 @@ Augment capabilities not yet implemented and ignored for now:
 ;;;
 
 (defun kcell-data:create (cell idstamp)
-  "Given a kotl CELL and IDSTAMP (an integer), return a kcell-data structure to write to a file.
+  "Given a kotl CELL and IDSTAMP (an integer), return a kcell-data structure.
 If CELL, its idstamp, or its property list are nil, this repairs the cell by
 assuming it is the cell at point and filling in the missing information."
    (let ((plist (kcell:plist cell)))
