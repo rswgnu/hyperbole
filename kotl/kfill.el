@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    23-Jan-94
-;; Last-Mod:     17-Apr-22 at 12:25:45 by Bob Weiner
+;; Last-Mod:      4-Jul-22 at 23:34:12 by Mats Lidell
 ;;
 ;; Copyright (C) 1994-2021  Free Software Foundation, Inc.
 ;; See the "../HY-COPY" file for license information.
@@ -104,7 +104,9 @@ If there isn’t room, go as far as possible (no error).  Always return 0."
       (do-auto-fill))))
 
 (defun kfill:fill-paragraph (&optional arg skip-prefix-remove)
-  "Fill paragraph at or after point when in kotl-mode.  Prefix ARG means justify as well."
+  "Fill paragraph at or after point when in kotl-mode.
+Prefix ARG means justify as well.  If SKIP-PREFIX-REMOVE is not
+nil, keep the paragraph prefix."
   (interactive (progn
 		 (barf-if-buffer-read-only)
 		 (list (when current-prefix-arg 'full) nil)))
@@ -140,10 +142,11 @@ If there isn’t room, go as far as possible (no error).  Always return 0."
 ;;; Redefine this built-in function so that it sets `prior-fill-prefix' also.
 ;;;
 (defun set-fill-prefix (&optional turn-off)
-  "Set `fill-prefix' to the current line up to point or remove it if optional TURN-OFF flag is non-nil.
-Also sets `prior-fill-prefix' to the previous value of `fill-prefix'.
-Filling removes any prior fill prefix, adjusts line lengths and then adds the
-fill prefix at the beginning of each line."
+  "Set `fill-prefix' to the current line up to point.
+Remove it if optional TURN-OFF flag is non-nil.  Also sets
+`prior-fill-prefix' to the previous value of `fill-prefix'.
+Filling removes any prior fill prefix, adjusts line lengths and
+then adds the fill prefix at the beginning of each line."
   (interactive)
   (setq prior-fill-prefix fill-prefix)
   (let ((left-margin-pos (save-excursion (move-to-left-margin) (point))))
