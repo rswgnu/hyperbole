@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     6-Oct-91 at 03:42:38
-;; Last-Mod:     17-Jul-22 at 10:17:21 by Mats Lidell
+;; Last-Mod:     24-Jul-22 at 11:41:00 by Bob Weiner
 ;;
 ;; Copyright (C) 1991-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -272,6 +272,14 @@ If no matching installation type is found, return a list of (\"unknown\" hyperb:
     (goto-char (point-min))
     (forward-line 1)))
 
+;;;###autoload
+(defun hypb:devdocs-lookup ()
+  "Prompt for and display a devdocs.io docset section within Emacs.
+will this install the Emacs devdocs package when needed."
+  (interactive)
+  (hypb:require-package 'devdocs)
+  (devdocs-lookup))
+
 (defun hypb:domain-name ()
   "Return current Internet domain name with '@' prepended or nil if none."
   (let* ((dname-cmd (or (file-exists-p "/usr/bin/domainname")
@@ -414,6 +422,24 @@ With optional SUFFIX string, uses it rather than buffer name."
     (if (string-match (regexp-quote hypb:help-buf-prefix) bn)
 	(buffer-name (generate-new-buffer bn))
       (concat hypb:help-buf-prefix bn "*"))))
+
+;;;###autoload
+(defun hypb:helm-apropos (&optional symbol-name)
+  "Prompt for and display the doc for a command, function, variable or face.
+With optional SYMBOL-NAME non-nil, display the doc for that.
+This will this install the Emacs helm package when needed."
+  (interactive "P")
+  (hypb:require-package 'helm)
+  (helm-apropos symbol-name))
+
+;;;###autoload
+(defun hypb:helm-info (&optional refresh)
+  "Prompt across all Info manuals and display the node selected.
+With optional prefix arg REFRESH non-nil, refresh the cache of Info manuals.
+This will this install the Emacs helm package when needed."
+  (interactive "P")
+  (hypb:require-package 'helm)
+  (helm-info refresh))
 
 (defun hypb:hkey-help-file ()
   "Return the full path to the Hyperbole mouse key help file."
@@ -573,6 +599,20 @@ that returns a replacement string."
       (error "(hypb:replace-match-string): 3rd arg must be a string or function: %s"
 	     new))
     (replace-regexp-in-string regexp new str fixedcase literal)))
+
+;;;###autoload
+(defun hypb:require-package (package-name)
+  "Prompt user to install, if necessary, and require the Emacs PACKAGE-NAME.
+PACKAGE-NAME may be a symbol or a string."
+  (when (stringp package-name)
+    (setq package-name (intern package-name)))
+  (unless (symbolp package-name)
+    (error "(hypb:require-package): package-name must be a symbol or string, not '%s'" package-name))
+  (unless (package-installed-p package-name)
+    (if (y-or-n-p (format "Install package `%s' required by this command?" package-name))
+	(package-install package-name)
+      (keyboard-quit)))
+  (require package-name))
 
 (defun hypb:return-process-output (program &optional infile &rest args)
   "Return as a string the output from external PROGRAM with INFILE for input.

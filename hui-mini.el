@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    15-Oct-91 at 20:13:17
-;; Last-Mod:     15-May-22 at 00:51:30 by Bob Weiner
+;; Last-Mod:     23-Jul-22 at 23:04:56 by Bob Weiner
 ;;
 ;; Copyright (C) 1991-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -217,16 +217,29 @@ the menu list structure."
 	    (t (setq show-menu nil))))
     hui:menu-keys))
 
-(defun hui:menu-backward-item ()
-  "Move point back to the previous start of a selectable minibuffer menu item.  If on the first item, move to the last."
-  (interactive)
-  (if (save-excursion (not (search-backward ">" nil t)))
-      (goto-char (point-max)))
-  (if (and (re-search-backward "[ \t]+[^> \t\n]" nil t)
-	   (save-excursion (search-backward ">" nil t)))
-      (skip-chars-forward " \t")
-    (goto-char (point-min))
-    (hui:menu-backward-item)))
+(defun hui:menu-backward-item (&optional arg)
+  "Move point back to the optional ARGth previous start of a selectable minibuffer menu item.
+If on the menu name prefix or the first item, move to the last item."
+  (interactive "p")
+  (unless arg (setq arg 1))
+  (if (< arg 0)
+      (hui:menu-forward-item (- arg))
+    (let (opoint)
+      (while (> arg 0)
+	;; First skip back past menu name/description prompt, if within it.
+	(when (save-excursion (not (search-backward "\\(^\\|[ \t]\\)[^< \t\n\r]+>" nil t)))
+	  (setq opoint (point))
+	  (skip-chars-backward "^ \t\n\r")
+	  (skip-chars-forward " \t")
+	  (skip-chars-forward "^<> \t\n\r")
+	  (unless (looking-at ">\\s-")
+	    (goto-char opoint)
+	    (skip-chars-backward "^ \t\n\r")))
+	(if (re-search-backward "\\s-[^> \t\n\r]" nil t)
+	    (forward-char 1)
+	  (goto-char (point-max))
+	  (skip-chars-backward "^ \t\n\r"))
+	(setq arg (1- arg))))))
 
 (defun hui:menu-doc (key-sequence &optional help-string-flag)
   "Return formatted documentation for a normalized Hyperbole minibuffer menu KEY-SEQUENCE.
@@ -266,17 +279,29 @@ With optional HELP-STRING-FLAG, instead returns the one line help string for the
       (insert input)))
   (exit-minibuffer))
 
-(defun hui:menu-forward-item ()
-  "Move point to the next selectable minibuffer menu item.  If on the last item, move to the first."
-  ;; First skip past menu name/description prompt, if need be.
-  (interactive)
-  (if (save-excursion (not (search-backward ">" nil t)))
-      (search-forward ">" nil t))
-  (if (re-search-forward "[ \t]+[^> \t\n]" nil t)
-      (backward-char 1)
-    (goto-char (point-min))
-    (if (search-forward ">" nil t)
-	(hui:menu-forward-item))))
+(defun hui:menu-forward-item (&optional arg)
+  "Move point to the optional prefix ARGth next selectable minibuffer menu item.
+If on the menu name prefix or the last item, move to the first item."
+  (interactive "p")
+  (unless arg (setq arg 1))
+  (if (< arg 0)
+      (hui:menu-backward-item (- arg))
+    (let (opoint)
+      (while (> arg 0)
+	;; First skip past menu name/description prompt, if within it.
+	(when (save-excursion (not (search-backward "\\(^\\|[ \t]\\)[^< \t\n\r]+>" nil t)))
+	  (setq opoint (point))
+	  (skip-chars-backward "^ \t\n\r")
+	  (skip-chars-forward " \t")
+	  (skip-chars-forward "^<> \t\n\r")
+	  (unless (looking-at ">\\s-")
+	    (goto-char opoint)))
+	(if (re-search-forward "\\s-+[^> \t\n\r]" nil t)
+	    (backward-char 1)
+	  (goto-char (point-min))
+	  (when (looking-at "[^< \t\n\r]+>\\s-")
+	    (hui:menu-forward-item)))
+	(setq arg (1- arg))))))
 
 (defun hui:menu-help (help-str)
   "Displays HELP-STR in a small window at the bottom of the selected frame.  HELP-STR must be a string."
@@ -374,6 +399,15 @@ documentation, not the full text."
 		    t))))
 	  (t (hui:menu-item key doc-flag help-string-flag nil menu-alist)))))
 
+(defun hui:menu-to-personal-section (section)
+  "Go to top-level SECTION in personal button file; add the section if necessary."
+  (let* ((hypb-personal-file (expand-file-name hbmap:filename hbmap:dir-user))
+	 (hyrolo-file-list (list hypb-personal-file))
+	 (hyrolo-add-hook)) ;; Prevent addition of dates when add navigation sections
+    (if (= 1 (hyrolo-fgrep section 1 nil t t))
+	(hpath:find (concat hypb-personal-file "#" section))
+      (hyrolo-add section))))
+
 ;;; ************************************************************************
 ;;; Private functions
 ;;; ************************************************************************
@@ -410,6 +444,7 @@ constructs.  If not given, the top level Hyperbole menu is used."
       (let* ((label-act-help-list
 	      (nth (- (1+ (length item-keys)) (length sublist))
 		   menu-alist))
+	     (label (car label-act-help-list))
 	     (act-form (cadr label-act-help-list)))
 	(if (or (eq hargs:reading-type 'hmenu-help)
 		(and doc-flag
@@ -426,18 +461,49 @@ constructs.  If not given, the top level Hyperbole menu is used."
 		(concat (car label-act-help-list) "\n  "
 			help-str "\n    Action: "
 			(prin1-to-string act-form))))
-	  act-form)))))
+	  (if (eq act-form #'hui:menu-to-personal-section)
+	      (list #'hui:menu-to-personal-section label)
+	    act-form))))))
 
 (defun hui:menu-line (menu-alist)
   "Return a menu line string built from MENU-ALIST."
   (let ((menu-prompt (concat (caar menu-alist) "  "))
 	(menu-items (mapconcat 'car (cdr menu-alist) "  "))
+	(width (1- (frame-width)))
 	menu-line)
     (setq menu-line (concat menu-prompt menu-items))
-    ;; Narrow menu by changing 2 spaces to 1 if too wide for current frame.
-    (if (>= (length menu-line) (1- (frame-width)))
-	(concat menu-prompt (mapconcat #'car (cdr menu-alist) " "))
+    (when (>= (length menu-line) width)
+      ;; Narrow menu by changing 2 spaces to 1 if too wide for current frame.
+      (setq menu-line (concat menu-prompt (mapconcat #'car (cdr menu-alist) " "))))
+    (if (>= (length menu-line) width)
+	;; If still too wide, switch to a multi-line layout.
+	(hui:menu-multi-line menu-alist)
       menu-line)))
+
+(defun hui:menu-multi-line (menu-alist)
+  "Return the formatted text for a multi-line minibuffer window popup menu with a menu of commands from optional MENU-ALIST."
+  (let* ((items-in-line 0)
+	 (item-start 0)
+	 (menu-strings (mapcar #'car menu-alist))
+	 (max-item-len
+	  (when menu-strings (+ 1 (apply 'max (mapcar #'length menu-strings))))))
+    (unless menu-strings
+      (error "(hui:menu-multi-line): Invalid menu specified, '%s'." menu-alist))
+    (with-temp-buffer
+      (let (indent-tabs-mode)
+	(mapcar
+	 (lambda (s)
+	   (setq item-start (* max-item-len items-in-line))
+	   (if (or (>= item-start (frame-width))
+		   (>= (+ item-start max-item-len) (frame-width)))
+	       (progn
+		 (setq items-in-line 0)
+		 (insert "\n" s))
+	     (move-to-column item-start t)
+	     (insert s))
+	   (setq items-in-line (1+ items-in-line)))
+	 menu-strings)
+	(buffer-string)))))
 
 (defun hui:menu-web-search ()
   "Hyperbole minibuffer menu of web search engines."
@@ -529,21 +595,23 @@ constructs.  If not given, the top level Hyperbole menu is used."
 	   (list (list (concat "Hy" version ">"))))
 	 (delq nil
 	       '(
-		 ("Act"         hui:hbut-act     "Activate button at point or prompt for a labeled button in buffer.")
-		 ("Butfile/"    (menu . butfile) "Quick access button files menus.")
-		 ("Cust/"       (menu . cust)    "Customizes Hyperbole by setting major options.")
-		 ("Doc/"        (menu . doc)     "Quick access to Hyperbole documentation.")
-		 ("Ebut/"       (menu . ebut)    "Explicit button commands.")
-		 ("Find/"       (menu . find)    "Find matching line commands.")
-		 ("Gbut/"       (menu . gbut)    "Global button commands.")
+		 ("Act"         hui:hbut-act      "Activate button at point or prompt for a labeled button in buffer.")
+		 ("Butfile/"    (menu . butfile)  "Quick access button files menus.")
+		 ("Cust/"       (menu . cust)     "Customizes Hyperbole by setting major options.")
+		 ("Doc/"        (menu . doc)      "Quick access to Hyperbole documentation.")
+		 ("Ebut/"       (menu . ebut)     "Explicit button commands.")
+		 ("Find/"       (menu . find)     "Find matching line commands.")
+		 ("Gbut/"       (menu . gbut)     "Global button commands.")
 		 ("Hist"        (hhist:remove current-prefix-arg)
 		  "Jumps back to location prior to last Hyperbole button follow.")
-		 ("Ibut/"       (menu . ibut)    "Implicit button and button type commands.")
-		 ("Kotl/"       (menu . kotl)    "Autonumbered outlining and hyperlink capabilities.")
-		 ("Msg/"        (menu . msg)     "Mail and News messaging capabilities.")
-		 ("Rolo/"       (menu . hyrolo)  "Hierarchical, multi-file rolo lookup and edit commands.")
-		 ("Screen/"     (menu . screen)  "Screen display management commands.")
-		 ("Win/"        (menu . win)     "Window configuration management commands.")))))
+		 ("Ibut/"       (menu . ibut)     "Implicit button and button type commands.")
+		 ("Kotl/"       (menu . kotl)     "Autonumbered outlining and hyperlink capabilities.")
+		 ("Msg/"        (menu . msg)      "Mail and News messaging capabilities.")
+		 ("Rolo/"       (menu . hyrolo)   "Hierarchical, multi-file rolo lookup and edit commands.")
+		 ("Screen/"     (menu . screen)   "Screen display management commands.")
+		 ("To/"         (menu . to)       "A-Z menu to search and add Emacs artifacts")
+		 ("Win/"        (menu . win)      "Window configuration management commands.")
+		 ))))
        '(butfile .
 	 (("Butfile>")
 	  ("DirFile"      (find-file hbmap:filename)
@@ -774,6 +842,7 @@ constructs.  If not given, the top level Hyperbole menu is used."
 	   "Interactively delete, jump to, move, replicate, and resize frames.")
 	  ("WindowsControl"   hycontrol-enable-windows-mode
 	   "Interactively delete, jump to, rebalance, resize, and split windows.")))
+       (cons 'to hui:menu-to)
        '(types .
 	 (("Types>")
 	  ("ActionTypes"      (hui:htype-help-current-window 'actypes)
@@ -794,6 +863,92 @@ constructs.  If not given, the top level Hyperbole menu is used."
 				     (hyperbole 'win))
 	   "Restores next window configuration from ring.")))
        (hui:menu-web-search)))))
+
+;;; ************************************************************************
+;;; Public Customizations - must come after menus are defined
+;;; ************************************************************************
+
+(defcustom hui:menu-to
+      '(("To>")
+	("Agenda-or-Search"           org-agenda)
+	("Bookmarks"                  bookmark-jump)
+	("Calendar"                   calendar)
+	("Directories"                hui:menu-to-personal-section)
+	;; ("E")
+	("recent-Files"               recentf-open-files)
+	("Global-Buttons"             (find-file (expand-file-name hbmap:filename hbmap:dir-user)))
+	;; ("Helm"                       (menu . helm) "Display Hyperbole helm control menu")
+	;; ("I")
+	("Jump-to-Websites"           webjump)
+	("Koutlines"                  hui:menu-to-personal-section)
+	;; ("L")
+	("buffer-Menu-Filter")
+	("Notes"                      hyrolo-org)
+	("Org-Search"                 helm-org-rifle-org-directory)
+	("Projects"                   hui:menu-to-personal-section)
+	("Rolo"                       hyrolo-fgrep)
+	;; ("<Quit-Menu>")
+	("Shell-Commands"             hui:menu-to-personal-section)
+	("Todos"                      org-todo-list)
+	("URL-Links"                  hui:menu-to-personal-section)
+	;; ("V")
+	("Web-Search/"                (menu . web) "Display Hyperbole web search menu")
+	;; ("X")
+	;; ("Y")
+	;; ("Zettelkasten-Search")
+	)
+      "*Hyperbole minibuffer To menu items of the form:
+\(LABEL-STRING ACTION-SEXP DOC-STR)."
+  :set  (lambda (var value)
+	  (if (fboundp #'hyperbole-minibuffer-menu)
+	      (progn (set-default var value)
+		     (hyperbole-minibuffer-menu))
+	    (set-default var value)))
+  :type '(list string sexp (set string nil))
+  :group 'hyperbole-buttons)
+
+(defcustom hui:doc-a-z
+      '(("a-Z>")
+	("Apropos-Symbol"             hypb:helm-apropos)
+	;; ("B")
+	;; ("C")
+	("Devdocs-Lookup"             hypb:devdocs-lookup)
+	("Emacs-Index-Search"         emacs-index-search)
+	;; ("F")
+	;; ("G")
+	;; ("H")
+	("Info-Search"                hypb:helm-info)
+	;; ("J")
+	;; ("K")
+	;; ("L")
+	;; ("M")
+	;; ("N")
+	;; ("O")
+	;; ("P")
+	("<Quit-Menu>")
+	;; ("R")
+	;; ("S")
+	;; ("T")
+	;; ("U")
+	;; ("V")
+	;; ("W")
+	;; ("X")
+	;; ("Y")
+	;; ("Z")
+	)
+      "*Hyperbole minibuffer To menu items of the form:
+\(LABEL-STRING ACTION-SEXP DOC-STR)."
+  :set  (lambda (var value)
+	  (if (fboundp #'hyperbole-minibuffer-menu)
+	      (progn (set-default var value)
+		     (hyperbole-minibuffer-menu))
+	    (set-default var value)))
+  :type '(list string sexp (set string nil))
+  :group 'hyperbole-buttons)
+
+;;; ************************************************************************
+;;; Initializations
+;;; ************************************************************************
 
 ;; Always rebuild the Hyperbole minibuffer menu when this file is loaded.
 (hyperbole-minibuffer-menu)

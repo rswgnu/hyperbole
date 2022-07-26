@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    24-Aug-91
-;; Last-Mod:     15-Jul-22 at 22:07:35 by Mats Lidell
+;; Last-Mod:     17-Jul-22 at 09:56:15 by Bob Weiner
 ;;
 ;; Copyright (C) 1991-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -703,7 +703,7 @@ Use `hpath:display-buffer' to show definition or documentation."
     "Return t when point is on the first line of a Lisp library load expression, else nil."
     (save-excursion
       (beginning-of-line)
-      (looking-at "\\(;*[ \t]*\\)?(\\(autoload\\|load\\|require\\)")))
+      (looking-at "\\(;*[ \t]*\\)?(\\(autoload\\|load\\|require\\)\\s-")))
 
 (defun smart-lisp-at-change-log-tag-p ()
   "When in a change-log mode, match to bound Elisp identifiers only and those with a '-' somewhere in the middle.
