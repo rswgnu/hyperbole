@@ -88,7 +88,7 @@
   "Return an absolute klink string from LABEL-AND-POS list.
 With point in a klink's source buffer and LABEL-AND-POS a list
 of (klink-label, klink-start, klink-end) including delimiters,
-return an absolute klink string.  Klink is of the form:
+return an absolute klink string.  Klink returned is of the form:
 \"<absolute-file-name, cell-ref>\".  See documentation for
 `kcell:ref-to-id' for valid cell-ref formats."
   (when (and (derived-mode-p 'kotl-mode) label-and-pos (listp label-and-pos))
