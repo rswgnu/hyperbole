@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     3-Sep-91 at 21:40:58
-;; Last-Mod:      9-Jul-22 at 16:41:14 by Mats Lidell
+;; Last-Mod:     17-Jul-22 at 11:39:09 by Bob Weiner
 ;;
 ;; Copyright (C) 1991-2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -40,6 +40,14 @@
 ;;   horizontal-scroll-bar
 ;;   right-divider
 ;;   bottom-divider
+
+;; tab-bar sample Smart Mouse setup
+;; (define-key tab-prefix-map [down-mouse-2] #'action-key-depress-emacs)
+;; (define-key tab-prefix-map [mouse-2]      #'action-mouse-key-emacs)
+
+;; tab-line sample Smart Mouse setup
+;; (define-key tab-line-tab-map [tab-line down-mouse-2] #'action-key-depress-emacs)
+;; (define-key tab-line-tab-map [tab-line mouse-2]      #'action-mouse-key-emacs)
 
 (defun hmouse-bind-key-emacs (mouse-key-number depress-cmd release-cmd)
   "Ensure MOUSE-KEY-NUMBER (1-5), e.g. 1 for [mouse-1], is bound to DEPRESS-CMD and RELEASE-CMD (includes depresses and drags).

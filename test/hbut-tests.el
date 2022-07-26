@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    30-may-21 at 09:33:00
-;; Last-Mod:     22-May-22 at 10:57:31 by Mats Lidell
+;; Last-Mod:     23-Jul-22 at 20:04:45 by Bob Weiner
 ;;
 ;; Copyright (C) 2021-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -19,6 +19,7 @@
 (require 'ert)
 (require 'hbut)
 (require 'hactypes)
+(require 'hpath)
 (require 'el-mock)
 
 (defun hbut-tests:should-match-tmp-folder (tmp)
@@ -79,7 +80,7 @@ Needed since hyperbole expands all links to absolute paths and
     (setq test-buffer (find-file-noselect test-file))
     (unwind-protect
         (with-mock
-          (mock (find-file-noselect (expand-file-name hbmap:filename hbmap:dir-user)) => test-buffer)
+          (mock (hpath:find-noselect (expand-file-name hbmap:filename hbmap:dir-user)) => test-buffer)
           (mock (ebut:program "label" 'link-to-directory "/tmp") => t)
           (gbut:ebut-program "label" 'link-to-directory "/tmp"))
       (delete-file test-file))))
@@ -91,7 +92,7 @@ Needed since hyperbole expands all links to absolute paths and
     (unwind-protect
 	(progn
           (with-mock
-            (mock (find-file-noselect (expand-file-name hbmap:filename hbmap:dir-user)) => test-buffer)
+            (mock (hpath:find-noselect (expand-file-name hbmap:filename hbmap:dir-user)) => test-buffer)
             (gbut:ebut-program "global" 'link-to-directory "/tmp"))
 	  (with-current-buffer test-buffer
             (should (eq (hattr:get (hbut:at-p) 'actype) 'actypes::link-to-directory))
@@ -107,7 +108,7 @@ Needed since hyperbole expands all links to absolute paths and
     (unwind-protect
 	(progn
           (with-mock
-            (mock (find-file-noselect (expand-file-name hbmap:filename hbmap:dir-user)) => test-buffer)
+            (mock (hpath:find-noselect (expand-file-name hbmap:filename hbmap:dir-user)) => test-buffer)
             (gbut:ebut-program "global" 'eval-elisp '()))
 	  (with-current-buffer test-buffer
             (hy-test-helpers-verify-hattr-at-p :actype 'actypes::eval-elisp :args  '(()) :loc test-file :lbl-key "global")))
@@ -120,7 +121,7 @@ Needed since hyperbole expands all links to absolute paths and
     (unwind-protect
 	(progn
           (with-mock
-            (mock (find-file-noselect (expand-file-name hbmap:filename hbmap:dir-user)) => test-buffer)
+            (mock (hpath:find-noselect (expand-file-name hbmap:filename hbmap:dir-user)) => test-buffer)
             (gbut:ebut-program "global" 'link-to-file test-file))
 	  (with-current-buffer test-buffer
             (hy-test-helpers-verify-hattr-at-p :actype 'actypes::link-to-file :args (list test-file) :loc test-file :lbl-key "global")))
@@ -133,7 +134,7 @@ Needed since hyperbole expands all links to absolute paths and
     (unwind-protect
 	(progn
           (with-mock
-            (mock (find-file-noselect (expand-file-name hbmap:filename hbmap:dir-user)) => test-buffer)
+            (mock (hpath:find-noselect (expand-file-name hbmap:filename hbmap:dir-user)) => test-buffer)
             (gbut:ebut-program "global" 'link-to-file-line test-file 10))
 	  (with-current-buffer test-buffer
             (hy-test-helpers-verify-hattr-at-p :actype 'actypes::link-to-file-line :args (list test-file 10) :loc test-file :lbl-key "global")))
@@ -146,7 +147,7 @@ Needed since hyperbole expands all links to absolute paths and
     (unwind-protect
 	(progn
           (with-mock
-            (mock (find-file-noselect (expand-file-name hbmap:filename hbmap:dir-user)) => test-buffer)
+            (mock (hpath:find-noselect (expand-file-name hbmap:filename hbmap:dir-user)) => test-buffer)
             (gbut:ebut-program "global" 'link-to-file-line-and-column test-file 10 20))
 	  (with-current-buffer test-buffer
             (hy-test-helpers-verify-hattr-at-p :actype 'actypes::link-to-file-line-and-column :args (list test-file 10 20) :loc test-file :lbl-key"global")))

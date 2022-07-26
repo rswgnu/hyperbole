@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    28-Feb-21 at 23:26:00
-;; Last-Mod:     12-Jul-22 at 23:09:14 by Mats Lidell
+;; Last-Mod:     24-Jul-22 at 10:31:32 by Bob Weiner
 ;;
 ;; Copyright (C) 2021-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -184,9 +184,10 @@
 
 (defun hypb-run-shell-test-command (command buffer)
   "Run a shell COMMAND with output to BUFFER and select it."
-  (shell-command command buffer nil)
   (switch-to-buffer buffer)
-  (shell-mode))
+  (shell-mode)
+  (goto-char (point-max))
+  (shell-command command buffer nil))
 
 (ert-deftest hpath:prepend-shell-directory-test ()
   "Find file in ls -R listing."
@@ -203,7 +204,7 @@
                (default-directory hyperb:dir))
 	  (should explicit-shell-file-name)
           (hypb-run-shell-test-command shell-cmd shell-buffer)
-          (dolist (file '("COPYING" "man/version.texi" "man/hkey-help.txt" "man/im/demo.png"))
+          (dolist (file '("COPYING" "man/hkey-help.txt" "man/version.texi" "man/im/demo.png"))
             (goto-char (point-min))
             (should (search-forward (car (last (split-string file "/"))) nil t))
             (backward-char 5)
