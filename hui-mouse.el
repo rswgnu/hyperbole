@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    04-Feb-89
-;; Last-Mod:     18-Jun-22 at 21:57:35 by Mats Lidell
+;; Last-Mod:     17-Jul-22 at 15:03:45 by Bob Weiner
 ;;
 ;; Copyright (C) 1991-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -378,7 +378,9 @@ Its default value is #'smart-scroll-down.  To disable it, set it to
 	  buffer-file-name (smart-asm-at-tag-p)) .
 	  ((smart-asm) . (smart-asm nil 'next-tag)))
     ;;
-    ((or (and (smart-lisp-mode-p) (smart-lisp-at-tag-p))
+    ((or (and (smart-lisp-mode-p)
+	      (or (smart-lisp-at-load-expression-p)
+		  (smart-lisp-at-tag-p)))
 	 ;; Tightly limit Lisp matches in change-log-mode.
 	 (smart-lisp-at-change-log-tag-p)) .
 	 ((smart-lisp) . (smart-lisp 'show-doc)))
@@ -1367,8 +1369,8 @@ NO-RECURSE-FLAG non-nil prevents infinite recursions."
       (when index-item
 	(setq index-position (when (markerp (cdr index-item))
 			       (marker-position (cdr index-item))))
-	(if (eq index-position 1)
-	    ;; If index position is 1, this means the index markers have
+	(if (memq index-position '(1 -99))
+	    ;; If index position is 1 or -99, this means the index markers have
 	    ;; become out of date after buffer edits (likely imenu-auto-rescan
 	    ;; is nil), so do a single rescan to try to fix this.
 	    (unless no-recurse-flag
