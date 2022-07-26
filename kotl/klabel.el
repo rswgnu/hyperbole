@@ -621,7 +621,8 @@ N may be an integer or a string containing an integer."
 
 (defun klabel:set (new-label &optional lbl-sep-len)
   "Replace label displayed in cell at point with NEW-LABEL.
-The label type may be different.  Return NEW-LABEL string."
+The new label type may differ from the old type.
+Return NEW-LABEL string."
   (let ((modified (buffer-modified-p))
 	(buffer-read-only)
 	(thru-label (- (kcell-view:indent nil lbl-sep-len)
