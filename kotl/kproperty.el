@@ -47,7 +47,7 @@ the start position of each cell's content."
 
 (defun kproperty:map (function property value)
   "Apply FUNCTION to each character with PROPERTY VALUE in the current buffer.
-FUNCTION is called with the start and end points of the text span
+FUNCTION is called with the start and end points of the text span,
 with the matching PROPERTY and with point at the start."
   (let ((result)
 	(start (point-min))
