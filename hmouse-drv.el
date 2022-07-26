@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    04-Feb-90
-;; Last-Mod:     18-Jun-22 at 21:55:43 by Mats Lidell
+;; Last-Mod:     23-Jul-22 at 01:57:43 by Bob Weiner
 ;;
 ;; Copyright (C) 1989-2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -846,7 +846,8 @@ frame instead."
 (defun hkey-debug (pred pred-value hkey-action)
   (message "(HyDebug) %sContext: %s; %s: %s; Buf: %s; Mode: %s; MinibufDepth: %s"
 	   (cond ((eq pred-value 'hbut:current)
-		  (format "ButType: %s; ButLabel: %s; "
+		  (format "ButProps: %S\nButType: %s; ButLabel: %s; "
+			  (symbol-plist 'hbut:current)
 			  (hattr:get 'hbut:current 'categ)
 			  (hypb:format-quote (hbut:label 'hbut:current))))
 		 ((functionp pred-value)
@@ -855,8 +856,9 @@ frame instead."
 	   pred
 	   (if assist-flag "Assist" "Action")
 	   (if (hattr:get  'hbut:current 'actype)
-	       (cons (hattr:get  'hbut:current 'actype)
-		     (hattr:get  'hbut:current 'args))
+	       (or (hattr:get  'hbut:current 'action)
+		   (cons (hattr:get  'hbut:current 'actype)
+			 (hattr:get  'hbut:current 'args)))
 	     (hypb:format-quote (format "%s" hkey-action)))
 	   (current-buffer)
 	   major-mode
@@ -903,6 +905,7 @@ Return non-nil iff associated help documentation is found."
 	 (mouse-drag-flag (hmouse-drag-p))
 	 (hkey-forms (if mouse-flag hmouse-alist hkey-alist))
 	 (hrule:action 'actype:identity)
+	 (assist-flag assisting)
 	 hkey-form pred-value call calls cmd-sym doc)
     (while (and (null pred-value) (setq hkey-form (car hkey-forms)))
       (or (setq pred-value (eval (car hkey-form)))
