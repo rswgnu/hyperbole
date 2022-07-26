@@ -65,7 +65,7 @@ with the matching PROPERTY and with point at the start."
 
 (defun kproperty:position (property value)
   "Return the non-narrowed buffer position of the first kcell with PROPERTY VALUE.
-If no kcell with PROPERTY VALUE return nil.
+If no kcell with PROPERTY VALUE, return nil.
 Use (kcell-view:start <position>) on the returned <position> to get
 the start position of the cell's content."
   (text-property-any (point-min) (point-max) property value))
