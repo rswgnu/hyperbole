@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     8-Oct-92 at 19:08:31
-;; Last-Mod:     17-Apr-22 at 22:38:13 by Mats Lidell
+;; Last-Mod:     26-Jul-22 at 23:56:52 by Mats Lidell
 ;;
 ;; Copyright (C) 1992-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -87,7 +87,7 @@ Restore it by calling (hmouse-mod-mode 0).")
 
 ;;;###autoload
 (define-minor-mode hmouse-mod-mode
-  "Toggle use of the Smart Keys as Control- and Meta- modifiers (Hmouse Modifier mode).
+  "Toggle use of Smart Keys as Control- and Meta- modifiers (Hmouse Modifier mode).
 With a prefix argument ARG, enable Hmouse Mod mode if ARG is
 positive, and disable it otherwise.  If called from Lisp, enable
 the mode if ARG is omitted or nil.
@@ -136,7 +136,7 @@ It accounts for modifier Smart Keys."
   (use-global-map hmouse-mod--global-map))
 
 (defun hmouse-mod-execute-command (key count)
-  "Execute the command associated with keyboard KEY or if KEY is a prefix, records it.
+  "Execute command associated with keyboard KEY or if KEY is a prefix, record it.
 Second argument COUNT is used as a prefix argument to the command."
   (if (stringp key) (setq key (concat hmouse-mod--prefix key)))
   (let ((binding (key-binding key))
