@@ -483,7 +483,7 @@ and the start of its contents."
 		  (kcell-view:next nil lbl-sep-len)))))
 
 (defun klabel-type:update-labels (current-cell-label)
-  "Update the labels of current cell, its siblings and their subtrees if need be.
+  "Update the labels of current cell, its following siblings and their subtrees.
 CURRENT-CELL-LABEL is the label to display for the current cell.
 If, however, it is \"0\", then all cell labels are updated."
   (let ((label-type (kview:label-type kview)))
