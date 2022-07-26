@@ -38,7 +38,7 @@
 
 (defun kproperty:all-positions (property value)
   "Return a list of all non-narrowed positions of kcells with PROPERTY VALUE.
-If no kcells with PROPERTY VALUE return nil.
+If no kcells with PROPERTY VALUE, return nil.
 Use (kcell-view:start <position>) on each returned <position> to get
 the start position of each cell's content."
   (kproperty:map (lambda (start _end) start) property value))
