@@ -85,7 +85,7 @@
 ;;; ************************************************************************
 
 (defun klink:absolute (label-and-pos)
-  "Return an absolute klink string.
+  "Return an absolute klink string from LABEL-AND-POS list.
 With point in a klink's source buffer and LABEL-AND-POS a list
 of (klink-label, klink-start, klink-end) including delimiters,
 return an absolute klink string.  Klink is of the form:
