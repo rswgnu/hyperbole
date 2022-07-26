@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 21:42:03
-;; Last-Mod:     24-Apr-22 at 09:50:01 by Bob Weiner
+;; Last-Mod:     23-Jul-22 at 20:11:01 by Bob Weiner
 ;;
 ;; Copyright (C) 1991-2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -643,10 +643,11 @@ When in the global button buffer, the default is the button at point."
 Use `hui:gbut-create' to create a global explicit button."
   (interactive "sCreate global implicit button labeled: \nsButton text (with any delimiters): ")
   (let (but-buf
+	opoint
         delimited-label)
     (save-excursion
       (setq delimited-label (concat ibut:label-start lbl ibut:label-end)
-	    but-buf (find-file-noselect (gbut:file)))
+	    but-buf (hpath:find-noselect (gbut:file)))
       (hui:buf-writable-err but-buf "gibut-create")
       ;; This prevents movement of point which might be useful to user.
       (set-buffer but-buf)
@@ -654,7 +655,11 @@ Use `hui:gbut-create' to create a global explicit button."
 	(goto-char (point-max))
         (unless (bolp)
 	  (insert "\n"))
+	(setq opoint (point))
         (insert delimited-label ": " text "\n")
+	(save-excursion
+	  (goto-char (+ opoint (length ibut:label-start)))
+	  (ibut:create))
 	(save-buffer))
       (message "`%s' global implicit button created." lbl))))
 
@@ -1306,9 +1311,9 @@ for with completion of all labeled buttons within the current buffer."
 
 (defun hui:help-ebut-highlight ()
   "Highlight any explicit buttons in help buffer associated with current buffer."
-  (if (fboundp 'hproperty:but-create)
-      (with-current-buffer (get-buffer (hypb:help-buf-name))
-	(hproperty:but-create))))
+  (when (fboundp 'hproperty:but-create)
+    (with-current-buffer (get-buffer (hypb:help-buf-name))
+      (hproperty:but-create))))
 
 (defun hui:htype-delete (htype-sym)
   "Delete HTYPE-SYM from use in current Hyperbole session.

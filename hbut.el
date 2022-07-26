@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    18-Sep-91 at 02:57:09
-;; Last-Mod:     15-Jul-22 at 22:07:35 by Mats Lidell
+;; Last-Mod:     24-Jul-22 at 11:29:49 by Bob Weiner
 ;;
 ;; Copyright (C) 1991-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -17,8 +17,8 @@
 ;;; Other required Elisp libraries
 ;;; ************************************************************************
 
-(eval-and-compile (mapc #'require '(elisp-mode help-mode hversion hmoccur
-                                               hbmap htz hbdata hact view)))
+(eval-and-compile (mapc #'require '(cl-lib elisp-mode help-mode hversion
+				    hmoccur hbmap htz hbdata hact view)))
 
 ;;; ************************************************************************
 ;;; Public declarations
@@ -233,7 +233,7 @@ to two lines."
 		      (setq start t))
 		    start)
 		  ;; Handle expressions like:
-		  ;; { M-x shell RET M-> (pushd ${hyperb:dir}) RET }
+		  ;; { M-x shell RET M-> (cd ${hyperb:dir}) RET }
 		  (save-excursion
 		    (when (eq ?\( (char-syntax (preceding-char)))
 		      (condition-case ()
@@ -650,7 +650,7 @@ argument.
 
 For interactive creation, use `hui:gbut-create' instead."
   (save-excursion
-    (with-current-buffer (find-file-noselect (expand-file-name hbmap:filename hbmap:dir-user))
+    (with-current-buffer (hpath:find-noselect (expand-file-name hbmap:filename hbmap:dir-user))
       (save-excursion
 	(goto-char (point-max))
 	(when (not (bolp))
@@ -889,6 +889,7 @@ Default is 'hbut:current."
     (setq hbut 'hbut:current))
   (cond ((hbut:is-p hbut)
 	 (let ((orig-point (point-marker))
+	       (action (hattr:get hbut 'action))
 	       text-point)
 	   (when (ibut:is-p hbut)
 	     ;; Determine whether point is already within hbut; if
@@ -921,12 +922,12 @@ Default is 'hbut:current."
 			      (>= delim-text-end (point)))
 		   (ibut:to-text (hattr:get hbut 'lbl-key))))))
 	   (setq text-point (point-marker))
-	   (prog1 (apply hrule:action
-			 (hattr:get hbut 'actype)
-			 (hattr:get hbut 'args))
-	     ;; Restore point as it was prior to ibut:to-text call if the action
-	     ;; switched buffers or did not move point within the
-	     ;; current buffer.
+	   (prog1 (if action
+		      (apply hrule:action action)
+		    (apply hrule:action (hattr:get hbut 'actype) (hattr:get hbut 'args)))
+	     ;; Restore point as it was prior to `ibut:to-text' call
+	     ;; if the action switched buffers or did not move point
+	     ;; within the current buffer.
 	     (when (or (equal text-point (point-marker))
 		       (not (eq (current-buffer) (marker-buffer orig-point))))
 	       (with-current-buffer (marker-buffer orig-point)
@@ -942,10 +943,10 @@ Default is 'hbut:current."
 	 (hypb:error "(hbut:act): Invalid Hyperbole button: %s" hbut))))
 
 (defun    hbut:action (hbut)
-  "Return appropriate action for Hyperbole button symbol HBUT."
+  "Return appropriate action name/function for Hyperbole button symbol HBUT."
   (let ((categ (hattr:get hbut 'categ)) (atype) (action))
     (if (eq categ 'explicit)
-	(progn (setq action (hattr:get hbut 'action)
+	(progn (setq action (car (hattr:get hbut 'action))
 		     atype  (hattr:get hbut 'actype))
 	       (if (= (length (symbol-name atype)) 2)
 		   atype
@@ -1503,7 +1504,8 @@ excluding delimiters, not just one."
   (unless (eolp)
     (let* ((opoint (point))
 	   (name-start-end (ibut:label-p t nil nil t t))
-	   (name (car name-start-end))
+	   (name       (nth 0 name-start-end))
+	   (name-end   (nth 2 name-start-end))
 	   (lbl-key (or (ibut:label-to-key name)
 			(ibut:label-p nil "\"" "\"" nil t))))
       (unwind-protect
@@ -1511,7 +1513,7 @@ excluding delimiters, not just one."
 	    (when (not (hbut:outside-comment-p))
 	      ;; Skip past any optional name and separators
 	      (when name-start-end
-		(goto-char (nth 2 name-start-end))
+		(goto-char name-end)
 		(if (looking-at ibut:label-separator-regexp)
 		    ;; Move past up to 2 possible characters of ibut
 		    ;; delimiters; this prevents recognizing labeled,
@@ -1519,52 +1521,14 @@ excluding delimiters, not just one."
 		    ;; should need that.
 		    (goto-char (min (+ 2 (match-end 0)) (point-max)))
 		  (goto-char opoint))))
-
-	    ;; Check for an implicit button at current point, record its
-	    ;; attributes and return a button symbol for it.
-	    (let ((types (htype:category 'ibtypes))
-		  ;; Global var used in (hact) function, don't delete.
-		  (hrule:action 'actype:identity)
-		  (ibpoint (point-marker))
-		  (itype)
-		  (args)
-		  (is-type))
-	      (unless key-only
-		(hattr:clear 'hbut:current))
-	      (while (and (not is-type) types)
-		(setq itype (car types))
-		(when (and itype (setq args (funcall itype)))
-		  (setq is-type itype)
-		  ;; Any implicit button type check should leave point
-		  ;; unchanged.  Trigger an error if not.
-		  (unless (equal (point-marker) ibpoint)
-		    (hypb:error "(Hyperbole): `ibtypes::%s' implicit button type test failed to restore point to %s" is-type ibpoint)))
-		(setq types (cdr types)))
-	      (set-marker ibpoint nil)
-	      (when is-type
-		(when name
-		  (hattr:set 'hbut:current 'name name))
-		(hattr:set 'hbut:current 'categ is-type)
-		(when lbl-key
-		  (hattr:set 'hbut:current 'lbl-key lbl-key))
-		(if key-only
-		    (hattr:get 'hbut:current 'lbl-key)
-		  (hattr:set 'hbut:current 'loc (save-excursion
-						  (hbut:key-src 'full)))
-		  (or (hattr:get 'hbut:current 'args)
-		      (not (listp args))
-		      (progn
-			(setq args (copy-sequence args))
-			(when (eq (car args) #'hact)
-			  (setq args (cdr args)))
-			(hattr:set 'hbut:current 'actype
-				   (or
-				    ;; Hyperbole action type
-				    (symtable:actype-p (car args))
-				    ;; Regular Emacs Lisp function symbol
-				    (car args)))
-			(hattr:set 'hbut:current 'args (cdr args))))
-		  'hbut:current))))
+	    (if key-only
+		lbl-key
+	      ;; Check for an implicit button at current point, record its
+	      ;; attributes and return a button symbol for it.  This call
+	      ;; typically writes the text start and end attributes saved as
+	      ;; `lbl-start' and `lbl-end' after finding the ibut type at point.
+	      ;; So do not pass these attributes in to this call.
+	      (ibut:create :name name :lbl-key lbl-key)))
 	(goto-char opoint)))))
 
 (defun    ibut:at-type-p (ibut-type-symbol)
@@ -1582,6 +1546,119 @@ associated arguments from the button."
 	      ;; Global var used in (hact) function, don't delete.
 	      (hrule:action 'actype:identity))
 	  (funcall ibut-type-symbol))))))
+
+(cl-defun ibut:create (&optional &key name lbl-key lbl-start lbl-end
+				 loc dir categ actype args action)
+  "Return `hbut:current' symbol with attributes of implicit button at point.
+Return nil if no implicit button at point."
+  ;; :args is ignored unless :categ is also given.
+
+  ;; `lbl-key' attribute will be set from the button name, if any;
+  ;; otherwise, from its text.
+
+  ;; `lbl-start' and `lbl-end' will be set from the start and end of the
+  ;; ibut text, excluding delimiters, not of its name.
+
+  ;; Since the Smart Keys handle end-of-line and end-of-buffer
+  ;; separately from whether point is within an implicit button,
+  ;; always report not within one when point is at the end of a line.
+  ;; -- RSW, 02-16-2020 and 07-17-2022
+  (unless (or (eolp) (eobp))
+    (let* ((types (htype:category 'ibtypes))
+	   ;; Global var used in (hact) function, don't delete.
+	   (hrule:action #'actype:identity)
+	   (ibpoint (point-marker))
+	   (itype)
+	   (is-type categ))
+
+      (hattr:clear 'hbut:current)
+      (unless is-type
+	(while (and (not is-type) types)
+	  (setq itype (car types))
+	  (when (and itype (setq args (funcall itype)))
+	    (setq is-type itype)
+	    ;; Any implicit button type check should leave point
+	    ;; unchanged.  Trigger an error if not.
+	    (unless (equal (point-marker) ibpoint)
+	      (hypb:error "(Hyperbole): `ibtypes::%s' implicit button type test failed to restore point to %s" is-type ibpoint)))
+	  (setq types (cdr types))))
+
+      (set-marker ibpoint nil)
+
+      (when is-type
+	(let ((current-name      (hattr:get 'hbut:current 'name))
+	      ;; (current-lbl-key   (hattr:get 'hbut:current 'lbl-key))
+	      (current-lbl-start (hattr:get 'hbut:current 'lbl-start))
+	      (current-lbl-end   (hattr:get 'hbut:current 'lbl-end))
+	      ;; (current-categ     (hattr:get 'hbut:current 'categ))
+	      (current-loc       (hattr:get 'hbut:current 'loc))
+	      (current-dir       (hattr:get 'hbut:current 'dir))
+	      (current-action    (hattr:get 'hbut:current 'action))
+	      ;; (current-actype    (hattr:get 'hbut:current 'actype))
+	      (current-args      (hattr:get 'hbut:current 'args)))
+
+	  (if current-name
+	      (setq name current-name)
+	    (unless name
+	      (setq name (ibut:label-p t nil nil nil t)))
+	    (when name
+	      (hattr:set 'hbut:current 'name name)))
+
+	  ;; Need to ignore current-lbl-key and use name if any
+	  (setq lbl-key (or (ibut:label-to-key name)
+			    lbl-key
+			    (ibut:label-p nil "\"" "\"" nil t)))
+	  (when lbl-key
+	    (hattr:set 'hbut:current 'lbl-key lbl-key))
+
+	  (if current-lbl-start
+	      (setq lbl-start current-lbl-start)
+	    (when lbl-start
+	      (hattr:set 'hbut:current 'lbl-start lbl-start)))
+
+	  (if current-lbl-end
+	      (setq lbl-end current-lbl-end)
+	    (when lbl-end
+	      (hattr:set 'hbut:current 'lbl-end lbl-end)))
+
+	  (hattr:set 'hbut:current 'categ is-type)
+
+	  (if current-loc
+	      (setq loc current-loc)
+	    (unless loc
+	      (setq loc (save-excursion (hbut:key-src 'full))))
+	    (when loc
+	      (hattr:set 'hbut:current 'loc loc)))
+
+	  (if current-dir
+	      (setq dir current-dir)
+	    (unless dir
+	      (setq dir (hui:key-dir (current-buffer))))
+	    (when dir
+	      (hattr:set 'hbut:current 'dir dir)))
+
+	  (if current-action
+	      (setq action current-action)
+	    (when action
+	      (hattr:set 'hbut:current 'action action)))
+	  (when action
+	    (unless args (setq args action)))
+
+	  (or current-args
+	      (not (listp args))
+	      (progn
+		(setq args (copy-sequence args))
+		(when (eq (car args) #'hact)
+		  (setq args (cdr args)))
+		(hattr:set 'hbut:current 'actype
+			   (or
+			    actype
+			    ;; Hyperbole action type
+			    (symtable:actype-p (car args))
+			    ;; Regular Emacs Lisp function symbol
+			    (car args)))
+		(hattr:set 'hbut:current 'args (if actype args (cdr args))))))
+	'hbut:current))))
 
 (defun    ibut:delete (&optional but-sym)
   "Delete Hyperbole implicit button based on optional BUT-SYM.
