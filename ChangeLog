@@ -1,5 +1,6 @@
 2022-07-26  Mats Lidell  <matsl@gnu.org>
 
+* hib-doc-id.el:
 * hhist.el:
 * hbut.el:
 * kotl/kotl-orgtbl.el: Shorten docs strings to be within 80 char limit.
