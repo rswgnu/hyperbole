@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    22-Nov-91 at 01:37:57
-;; Last-Mod:     15-Jul-22 at 23:21:33 by Mats Lidell
+;; Last-Mod:     21-Jul-22 at 11:40:53 by Mats Lidell
 ;;
 ;; Copyright (C) 1991-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -44,19 +44,20 @@
     "divide" "down" "end" "enter" "esc" "home" "left" "insert"
     "multiply" "newline" "next" "prior" "return" "ret" "right" "rtn"
     "subtract" "tab" "up")
-  "List of dedicated keyboard key names which may be used with modifier keys.  Function keys are handled elsewhere.")
+  "List of dedicated keyboard key names which may be used with modifier keys.
+Function keys are handled elsewhere.")
 
 (defvar kbd-key:named-key-regexp
   (concat
    (mapconcat 'downcase kbd-key:named-key-list "\\|")
    "\\|"
    (mapconcat 'upcase kbd-key:named-key-list "\\|"))
-  "Regexp that matches to any of the dedicated keyboard key names in lower or uppercase.")
+  "Regexp that matches the dedicated keyboard key names in lower or uppercase.")
 
 (defvar kbd-key:modified-key-regexp
   (concat "\\(\\[?\\([ACHMS]-\\|kp-\\)+\\)[ \t\n\r\f]*\\(\\(<?\\<" kbd-key:named-key-regexp "\\>>?"
 	  "\\|<?[fF][0-9][0-9]?>?\\|<[a-zA-Z0-9]+>\\|.\\)\\]?\\)")
-  "Regexp matching to a single modified keyboard key within a human-readable string.
+  "Regexp matching a single modified keyboard key within a human-readable string.
 Group 1 matches to the set of modifier keys.  Group 3 matches to the unmodified key.")
 
 ;;; ************************************************************************
@@ -81,9 +82,11 @@ Return t if the sequence appears to be valid, else nil."
   (kbd-key:act key-series))
 
 (defib kbd-key ()
-  "Execute a key series (series of key sequences) around point, delimited by curly braces, {}.
-Key sequences should be in human readable form, e.g. {C-x C-b}, or what `key-description' returns.
-Forms such as {\C-b}, {\^b}, and {^M} will not be recognized.
+  "Execute a key series (series of key sequences) around point.
+The key series is delimited by curly braces, {}.  Key sequences
+should be in human readable form, e.g. {C-x C-b}, or what
+`key-description' returns.  Forms such as {\C-b}, {\^b}, and {^M}
+will not be recognized.
 
 Any key sequence within the series must be a string of one of the following:
   a Hyperbole minibuffer menu item key sequence,
@@ -163,7 +166,8 @@ Return t if KEY-SERIES appears valid, else nil."
 	   t))))
 
 (defun kbd-key:execute (key-series)
-   "Execute a possibly non-normalized KEY-SERIES with or without curly brace delimiters.
+  "Execute a possibly non-normalized KEY-SERIES.
+The KEY-SERIES can be with or without curly brace delimiters.
 Return t if KEY-SERIES is a valid key series that is executed, else nil."
   (interactive "sKey series to execute: ")
   (when (and key-series
@@ -189,13 +193,15 @@ Return t if KEY-SERIES is a valid key series that is executed, else nil."
 		 helm-flag orig-binding))))))
 
 (defun kbd-key:maybe-enable-helm (helm-flag orig-M-x-binding)
-  "Enable helm-mode if HELM-FLAG is non-nil.  Restore M-x binding to ORIG-M-X-BINDING."
+  "Enable helm-mode if HELM-FLAG is non-nil.
+Restore M-x binding to ORIG-M-X-BINDING."
   (when helm-flag (helm-mode 1))
   (global-set-key [?\M-x] orig-M-x-binding))
 
 (defun kbd-key:key-series-to-events (key-series)
-  "Insert the key-series as a series of keyboard events into Emacs' unread input stream.
-Emacs then executes them when its command-loop regains control."
+  "Insert the key-series as a series of keyboard events.
+The events are inserted into Emacs unread input stream.  Emacs
+then executes them when its command-loop regains control."
   (setq unread-command-events (nconc unread-command-events
 				     (listify-key-sequence
 				      (kbd-key:kbd key-series)))))
@@ -233,9 +239,12 @@ With optional prefix arg FULL, display full documentation for command."
       (kbd-key:doc kbd-key t))))
 
 (defun kbd-key:is-p (str)
-  "If STR is a curly-brace {} delimited key series, return the non-delimited, normalized form, else nil.
-Key sequences should be in human readable form, e.g. {C-x C-b}, or what `key-description' returns.
-Forms such as {\C-b}, {\^b}, and {^M} will not be recognized.
+  "Return the non-delimited, normalized form, of a delimited key series, STR.
+When STR is a curly-brace {} delimited key series, a
+non-delimited, normalized form is returned, else nil.  Key
+sequences should be in human readable form, e.g. {C-x C-b}, or
+what `key-description' returns.  Forms such as {\C-b}, {\^b}, and
+{^M} will not be recognized.
 
 Any key sequence within the series must be a string of one of the following:
   a Hyperbole minibuffer menu item key sequence,
@@ -264,9 +273,10 @@ Any key sequence within the series must be a string of one of the following:
 	 key-series)))
 
 (defun kbd-key:normalize (key-series)
-  "Normalize a human-readable string of keyboard keys, KEY-SERIES (without any surrounding {}).
-Return the normalized but still human-readable format.
-Use `kbd-key:key-series-to-events' to add the key series to Emacs'
+  "Normalize a human-readable string of keyboard keys, KEY-SERIES.
+The KEY-SERIES is without any surrounding {}.  Return the
+normalized but still human-readable format.  Use
+`kbd-key:key-series-to-events' to add the key series to Emacs'
 keyboad input queue, as if they had been typed by the user."
   (interactive "kKeyboard key sequence to normalize (no {}): ")
   ;;
@@ -327,7 +337,8 @@ keyboad input queue, as if they had been typed by the user."
 	(t (error "(kbd-key:normalize): requires a string argument, not `%s'" key-series))))
 
 (defun kbd-key:remove-delimiters (str start-delim end-delim)
-  "Return STR sans START-DELIM and END-DELIM (strings) iff it starts and ends with these delimiters."
+  "Return STR sans START-DELIM and END-DELIM (strings).
+Return nil if STR does not start and end with the given delimiters."
   (when (and (string-match (format "\\`%s" (regexp-quote start-delim)) str)
 	     (string-match (format "%s\\'"  (regexp-quote end-delim)) str))
     (string-trim str start-delim end-delim)))
@@ -447,13 +458,14 @@ For an approximate inverse of this, see `key-description'."
       res)))
 
 (defun kbd-key:extended-command-p (key-series)
-  "Return non-nil if the string KEY-SERIES is a normalized extended command invocation, i.e. M-x command."
+  "Return non-nil if the KEY-SERIES is a normalized extended command invocation.
+That is, 'M-x command'."
   (when (stringp key-series)
     (string-match kbd-key:extended-command-prefix key-series)))
 
 (defun kbd-key:hyperbole-hycontrol-key-p (key-series)
-  "Return t if normalized, non-nil KEY-SERIES is given when in a HyControl mode, else nil.
-Allows for multiple key sequences strung together."
+  "Return t if KEY-SERIES is normalized, non-nil and in HyControl mode, else nil.
+Allow for multiple key sequences strung together."
   (and key-series
        (featurep 'hycontrol)
        (or hycontrol-windows-mode hycontrol-frames-mode)

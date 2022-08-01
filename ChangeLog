@@ -1,6 +1,13 @@
 2022-07-26  Mats Lidell  <matsl@gnu.org>
 
 * kotl/kproperty.el:
+* kotl/klink.el:
+* kotl/klabel.el:
+* kotl/kfile.el:
+* hib-kbd.el:
+* hib-doc-id.el:
+* hhist.el:
+* hbut.el:
 * kotl/kotl-orgtbl.el: Shorten docs strings to be within 80 char limit.
 
 2022-07-25  Mats Lidell  <matsl@gnu.org>
