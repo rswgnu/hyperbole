@@ -1,5 +1,6 @@
 2022-09-14  Mats Lidell  <matsl@gnu.org>
 
+* hsettings.el:
 * hywconfig.el:
 * htz.el:
 * hmouse-mod.el:
