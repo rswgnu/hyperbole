@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    15-Apr-91 at 00:48:49
-;; Last-Mod:     18-Jun-22 at 21:56:43 by Mats Lidell
+;; Last-Mod:     17-Jul-22 at 16:27:17 by Bob Weiner
 ;;
 ;; Copyright (C) 1991-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -156,7 +156,7 @@ lines"
 				     (hyperbole-default-web-search-term))))
     (list service-name search-term)))
 
-(defun hyperbole-web-search (&optional service-name search-term)
+(defun hyperbole-web-search (&optional service-name search-term return-search-expr-flag)
   "Search web SERVICE-NAME for SEARCH-TERM.
 Both arguments are optional and are prompted for when not given or when null.
 Uses `hyperbole-web-search-alist' to match each service to its search url.
@@ -170,11 +170,17 @@ package to display search results."
 				  (lambda (service1 service2)
 				    (equal (downcase service1) (downcase service2)))))))
       (setq search-term (browse-url-url-encode-chars search-term "[*\"()',=;?% ]"))
-      (cond ((stringp search-pat)
-	     (browse-url (format search-pat search-term)))
-	    ((functionp search-pat)
-	     (funcall search-pat search-term))
-	    (t (user-error "(Hyperbole): Invalid web search service `%s'" service-name))))))
+      (if return-search-expr-flag
+	  (cond ((stringp search-pat)
+		 (format search-pat search-term))
+		((functionp search-pat)
+		 (list search-pat search-term))
+		(t (user-error "(Hyperbole): Invalid web search service `%s'" service-name)))
+	(cond ((stringp search-pat)
+	       (browse-url (format search-pat search-term)))
+	      ((functionp search-pat)
+	       (funcall search-pat search-term))
+	      (t (user-error "(Hyperbole): Invalid web search service `%s'" service-name)))))))
 
 ;; This must be defined before the defcustom `inhbit-hyperbole-messaging'.
 ;;;###autoload

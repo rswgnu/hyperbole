@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     7-Jun-89 at 22:08:29
-;; Last-Mod:     18-Jun-22 at 21:53:51 by Mats Lidell
+;; Last-Mod:      3-Jul-22 at 09:46:59 by Bob Weiner
 ;;
 ;; Copyright (C) 1991-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -279,6 +279,8 @@ entry which begins with the parent string."
 		 (setq again nil match t)))))
       (setq buffer-read-only nil)
       (unless match
+	(unless (zerop (current-column))
+	  (insert "\n"))
 	(insert (concat level "*")
 		(if (string-equal entry-spc "") "   " entry-spc)
 		name "\n")
@@ -1096,6 +1098,55 @@ otherwise just use the cdr of the item."
        (xml-get-children (google-contacts-data query-string token)
 			 'entry)
        token "* "))))
+
+;;; ************************************************************************
+;;; Org Package Integrations
+;;; ************************************************************************
+
+;;;###autoload
+(defun hyrolo-helm-org-rifle ()
+  "Prompt for a search pattern with helm and interactively show all matches from `hyrolo-file-list'."
+  (interactive)
+  (unless (package-installed-p 'helm-org-rifle)
+    (package-install 'helm-org-rifle))
+  (require 'helm-org-rifle)
+  (let ((files (seq-filter #'file-readable-p hyrolo-file-list)))
+    (save-excursion
+      (mapc (lambda (file)
+	      (set-buffer (find-file-noselect file))
+	      (org-mode))
+	    files))
+    (helm-org-rifle-files files)))
+
+;;;###autoload
+(defun hyrolo-org ()
+  "Prompt for patterns and search Org directory files for string or logic-based matches."
+  (interactive "sFind Org directory string (or logical expression): \nP")
+  (require 'org)
+  (unless (file-readable-p org-directory)
+    (make-directory org-directory))
+  (if (file-readable-p org-directory)
+      (if (fboundp #'helm-org-rifle-org-directory)
+	  (helm-org-rifle-org-directory)
+	(let ((hyrolo-file-list (cddr (directory-files org-directory t "\\.org$"))))
+	  (hyrolo-fgrep string max-matches)))
+    (error "(hyrolo-org): `org-directory', \"%s\", does not exist" org-directory)))
+
+;;;###autoload
+(defun hyrolo-org-roam (string &optional max-matches)
+  "Search Org Roam directory files for string or logic-based matches."
+  (interactive "sFind Org Roam directory string (or logical expression): \nP")
+  (unless (package-installed-p 'org-roam)
+    (package-install #'org-roam))
+  (require 'org-roam)
+  (unless (file-readable-p org-roam-directory)
+    (make-directory org-roam-directory))
+  (unless org-roam-db-autosync-mode
+    (org-roam-db-autosync-mode))
+  (if (file-readable-p org-roam-directory)
+      (let ((hyrolo-file-list (cddr (directory-files org-roam-directory t "\\.org$"))))
+	(hyrolo-fgrep string max-matches))
+    (error "(hyrolo-org-roam): `org-roam-directory', \"%s\", does not exist" org-roam-directory)))
 
 ;;; ************************************************************************
 ;;; Public functions

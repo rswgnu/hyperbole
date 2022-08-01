@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    15-Nov-93 at 11:57:05
-;; Last-Mod:     15-Jul-22 at 23:24:41 by Mats Lidell
+;; Last-Mod:     18-Jul-22 at 21:50:27 by Mats Lidell
 ;;
 ;; Copyright (C) 1993-2022  Free Software Foundation, Inc.
 ;; See the "../HY-COPY" file for license information.
@@ -33,7 +33,7 @@
 This determines the type of importation done on a file when `kimport:file' is
 called if the major mode of the import file matches the car of an element in
 this list.  If there is no match, then `kimport:suffix-alist' is checked.  If
-that yields no match, the element in this list whose car is 't is used.  It
+that yields no match, the element in this list whose car is t is used.  It
 normally does an import of a koutline or text file.
 
 Each importation-function must take two arguments, a buffer/file to import
@@ -68,7 +68,8 @@ imported cells as the initial set of children of the current cell, if any.
            (see https://dougengelbart.org/content/view/148/).")
 
 (defconst kimport:star-heading "^\\(\\*+\\)"
-  "Regular expression matching a star outline heading with the number of stars given by groupoing 1.")
+  "Regular expression matching a star outline heading.
+The number of stars is given by groupoing 1.")
 
 ;;; ************************************************************************
 ;;; Public functions
@@ -76,7 +77,7 @@ imported cells as the initial set of children of the current cell, if any.
 
 ;;;###autoload
 (defun kimport:file (import-from output-to &optional children-p)
-  "Import a buffer or file IMPORT-FROM into the koutline in buffer or file OUTPUT-TO.
+  "Import a buffer or file IMPORT-FROM into a koutline in buffer or file OUTPUT-TO.
 
 Any suffix in IMPORT-FROM's buffer name is used to determine the type of
 importation.  All others are imported as text, one paragraph per cell.
@@ -430,7 +431,8 @@ The variable, `paragraph-start,' is used to determine paragraphs."
 
 (defun kimport:aug-post-statements (import-from output-to klabel output-level
  			            import-level count total)
-  "Insert post-numbered Augment statements (contents only) from IMPORT-FROM into existing OUTPUT-TO.
+  "Insert post-numbered Augment statements (contents only) from IMPORT-FROM.
+Is inserted in existing OUTPUT-TO.
 
 KLABEL is the label to use for the first imported statement.
 OUTPUT-LEVEL is the level at which to insert the first statement.
@@ -484,11 +486,13 @@ in IMPORT-FROM, used to show a running tally of the imported statements."
 
 ;;;###autoload
 (defun kimport:copy-and-set-buffer (source)
-  "Copy and untabify SOURCE, set copy buffer as current buffer for this command and return the copy buffer.
-SOURCE may be a buffer name, a buffer or a file name.
-If SOURCE buffer name begins with a space, it is not copied under the
-assumption that it already has been.  If SOURCE is a koutline, it is not
-copied since there is no need to copy it to import it."
+  "Copy and untabify SOURCE.
+Set copy buffer as current buffer for this command and return the
+copy buffer.  SOURCE may be a buffer name, a buffer or a file
+name.  If SOURCE buffer name begins with a space, it is not
+copied under the assumption that it already has been.  If SOURCE
+is a koutline, it is not copied since there is no need to copy it
+to import it."
   (setq source (set-buffer (or (get-buffer source)
 			       (find-file-noselect source))))
   (let ((mode (or (if (boundp 'kotl-previous-mode) kotl-previous-mode)
@@ -575,7 +579,8 @@ will be added as children of the cell where this function leaves point
 
 (defun kimport:kcells (import-from output-to klabel output-level
 		       import-level count total)
-  "Insert visible koutline cells (contents and attributes) from IMPORT-FROM into existing OUTPUT-TO.
+  "Insert visible koutline cells (contents and attributes) from IMPORT-FROM.
+Insert into existing OUTPUT-TO.
 
 KLABEL is the label to use for the first imported cell.
 OUTPUT-LEVEL is the level at which to insert the first cell.

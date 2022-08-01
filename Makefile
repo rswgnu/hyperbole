@@ -3,7 +3,7 @@
 # Author:       Bob Weiner
 #
 # Orig-Date:    15-Jun-94 at 03:42:38
-# Last-Mod:     19-Jun-22 at 15:47:27 by Bob Weiner
+# Last-Mod:     10-Jul-22 at 23:40:15 by Bob Weiner
 #
 # Copyright (C) 1994-2022  Free Software Foundation, Inc.
 # See the file HY-COPY for license information.
@@ -181,7 +181,7 @@ EL_COMPILE = hact.el hactypes.el hargs.el hbdata.el hbmap.el hbut.el \
 	     hib-social.el hibtypes.el \
 	     hinit.el hload-path.el hmail.el hmh.el hmoccur.el hmouse-info.el \
 	     hmouse-drv.el hmouse-key.el hmouse-mod.el hmouse-sh.el hmouse-tag.el \
-	     hpath.el hrmail.el hsettings.el hsmail.el hsys-org.el hsys-www.el htz.el \
+	     hpath.el hrmail.el hsettings.el hsmail.el hsys-org.el hsys-www.el hsys-youtube.el htz.el \
 	     hycontrol.el hui-jmenu.el hui-menu.el hui-mini.el hui-mouse.el hui-select.el \
 	     hui-treemacs.el hui-window.el hui.el hvar.el hversion.el hvm.el hypb.el hyperbole.el \
 	     hyrolo-demo.el hyrolo-logic.el hyrolo-menu.el hyrolo.el hywconfig.el set.el hypb-ert.el \
@@ -196,7 +196,7 @@ ELC_COMPILE =  hactypes.elc hibtypes.elc hib-debbugs.elc hib-doc-id.elc hib-kbd.
 	     hargs.elc hbdata.elc hbmap.elc hbut.elc hgnus.elc hhist.elc \
 	     hinit.elc hload-path.elc hmail.elc hmh.elc hmoccur.elc hmouse-info.elc \
 	     hmouse-drv.elc hmouse-key.elc hmouse-mod.elc hmouse-sh.elc hmouse-tag.elc \
-	     hpath.elc hrmail.elc hsettings.elc hsmail.elc hsys-org.elc hsys-www.elc htz.elc \
+	     hpath.elc hrmail.elc hsettings.elc hsmail.elc hsys-org.elc hsys-www.elc hsys-youtube.elc htz.elc \
 	     hycontrol.elc hui-jmenu.elc hui-menu.elc hui-mini.elc hui-mouse.elc hui-select.elc \
 	     hui-treemacs.elc hui-window.elc hui.elc hvar.elc hversion.elc hvm.elc hypb.elc hyperbole.elc \
 	     hyrolo-demo.elc hyrolo-logic.elc hyrolo-menu.elc hyrolo.elc hywconfig.elc \
