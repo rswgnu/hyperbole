@@ -1,5 +1,6 @@
 2022-07-26  Mats Lidell  <matsl@gnu.org>
 
+* kotl/klink.el:
 * kotl/klabel.el:
 * kotl/kfile.el:
 * hib-kbd.el:
