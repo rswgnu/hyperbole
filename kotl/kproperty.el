@@ -37,7 +37,8 @@
 		 plist))
 
 (defun kproperty:all-positions (property value)
-  "Return a list of all non-narrowed buffer positions of kcells with PROPERTY set to VALUE, else nil.
+  "Return a list of all non-narrowed positions of kcells with PROPERTY VALUE.
+If no kcells with PROPERTY VALUE, return nil.
 Use (kcell-view:start <position>) on each returned <position> to get
 the start position of each cell's content."
   (kproperty:map (lambda (start _end) start) property value))
@@ -45,9 +46,9 @@ the start position of each cell's content."
 (defalias 'kproperty:get 'get-text-property)
 
 (defun kproperty:map (function property value)
-  "Apply FUNCTION to each character with PROPERTY `eq' to VALUE in the current buffer.
-FUNCTION is called with the start and end points of the text span with the matching PROPERTY
-and with point at the start."
+  "Apply FUNCTION to each character with PROPERTY VALUE in the current buffer.
+FUNCTION is called with the start and end points of the text span,
+with the matching PROPERTY and with point at the start."
   (let ((result)
 	(start (point-min))
 	end)
@@ -63,7 +64,8 @@ and with point at the start."
 (defalias 'kproperty:next-single-change 'next-single-property-change)
 
 (defun kproperty:position (property value)
-  "Return the non-narrowed buffer position of the first kcell with PROPERTY set to VALUE, else nil.
+  "Return the non-narrowed buffer position of the first kcell with PROPERTY VALUE.
+If no kcell with PROPERTY VALUE, return nil.
 Use (kcell-view:start <position>) on the returned <position> to get
 the start position of the cell's content."
   (text-property-any (point-min) (point-max) property value))
