@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Jun-16 at 14:24:53
-;; Last-Mod:     20-Jul-22 at 19:23:07 by Mats Lidell
+;; Last-Mod:     24-Jul-22 at 10:41:16 by Bob Weiner
 ;;
 ;; Copyright (C) 2016, 2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -275,7 +275,7 @@ Must be greater than equal to 0.9.7."
 		     (setq version (match-string 1))))
 	  (unless visiting-debbugs-src
 	    (kill-buffer debbugs-src-buffer)))
-	(when (not (equal version ""))
+	(when (and version (not (equal version "")))
 	  (version-list-<= (version-to-list "0.9.7") (version-to-list version)))))))
 
 (provide 'hib-debbugs)

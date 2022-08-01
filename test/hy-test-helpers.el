@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    30-Jan-21 at 12:00:00
-;; Last-Mod:     11-Jul-22 at 23:23:08 by Mats Lidell
+;; Last-Mod:     23-Jul-22 at 18:39:05 by Bob Weiner
 ;;
 ;; Copyright (C) 2021-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -51,6 +51,11 @@
                  (setq was-called (should (or (string= str filename) (string= str (expand-file-name filename))))))))
       (funcall function)
       (should was-called))))
+
+(defun hy-test-helpers:kill-buffer (buffer)
+  "Kill BUFFER if it exists."
+  (when (get-buffer buffer)
+    (kill-buffer buffer)))
 
 (cl-defun hy-test-helpers-verify-hattr-at-p (&key actype args loc lbl-key)
   "Verify the attribute of hbut at point.
