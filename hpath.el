@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     1-Nov-91 at 00:44:23
-;; Last-Mod:     15-Jul-22 at 23:23:25 by Mats Lidell
+;; Last-Mod:     24-Jul-22 at 01:02:25 by Bob Weiner
 ;;
 ;; Copyright (C) 1991-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -446,7 +446,9 @@ Valid DISPLAY-WHERE-SYMBOLs are:
 
 (defvar hpath:display-where 'other-window
   "Symbol specifying the default method to use to display Hyperbole link referents.
-See documentation of `hpath:display-where-alist' for valid values.")
+See documentation of `hpath:display-where-alist' for valid values.
+
+See Info node `(elisp)Choosing Window Options' for where Emacs displays buffers.")
 
 (defvar hpath:display-where-alist
   (list
@@ -1248,20 +1250,20 @@ program), else nil.
 See `hpath:find' documentation for acceptable formats of FILENAME."
   (hpath:find filename nil t))
 
-(defun hpath:find (filename &optional display-where noselect)
-  "Edit FILENAME using user customizable settings of display program and location.
+(defun hpath:find (pathname &optional display-where noselect)
+  "Edit PATHNAME using user customizable settings of display program and location.
 Return the current buffer iff file is read into a buffer (not displayed with
 an external program), else nil.
 
-FILENAME may contain references to Emacs Lisp variables or shell
+PATHNAME may contain references to Emacs Lisp variables or shell
 environment variables using the syntax, \"${variable-name}\".
 
-FILENAME may start with a special prefix character that is handled as follows:
-  !filename  - execute as a non-windowed program within a shell;
-  &filename  - execute as a windowed program;
-  -filename  - load as an Emacs Lisp program.
+PATHNAME may start with a special prefix character that is handled as follows:
+  !pathname  - execute as a non-windowed program within a shell;
+  &pathname  - execute as a windowed program;
+  -pathname  - load as an Emacs Lisp program.
 
-If FILENAME does not start with a prefix character:
+If PATHNAME does not start with a prefix character:
 
   it may be followed by a hash-style link reference to HTML, XML,
   SGML, shell script comment, Markdown or Emacs outline headings
@@ -1290,6 +1292,8 @@ If FILENAME does not start with a prefix character:
 Optional third argument, NOSELECT, means simply find the file and return its
 buffer but don't display it."
   (interactive "FFind file: ")
+  (unless (stringp pathname)
+    (error "(hpath:find): pathname arg must be a string, not, %S" pathname))
   (let ((case-fold-search t)
 	(default-directory default-directory)
 	modifier loc anchor hash path line-num col-num)
@@ -1299,10 +1303,10 @@ buffer but don't display it."
 				(if (stringp loc)
 				    (file-name-directory loc)
 				  default-directory)))
-    (when (string-match hpath:prefix-regexp filename)
-      (setq modifier (aref filename 0)
-	    filename (substring filename (match-end 0))))
-    (setq path filename) ;; default
+    (when (string-match hpath:prefix-regexp pathname)
+      (setq modifier (aref pathname 0)
+	    pathname (substring pathname (match-end 0))))
+    (setq path pathname) ;; default
     (when (string-match hpath:line-and-column-regexp path)
       (setq line-num (string-to-number (match-string 1 path))
 	    col-num (when (match-string 3 path)
@@ -1320,42 +1324,42 @@ buffer but don't display it."
 	(setq anchor (substring anchor 0 (match-beginning 0)))))
     (if (string-empty-p path)
 	(setq path ""
-	      filename "")
-      ;; Never expand filenames with modifier prepended.
+	      pathname "")
+      ;; Never expand pathnames with modifier prepended.
       (if modifier
 	  (setq path (hpath:resolve path))
 	(setq path (hpath:expand path)
-	      filename (hpath:absolute-to path default-directory))))
-    (let ((remote-filename (hpath:remote-p path)))
-      (or modifier remote-filename
-	  (file-exists-p filename)
+	      pathname (hpath:absolute-to path default-directory))))
+    (let ((remote-pathname (hpath:remote-p path)))
+      (or modifier remote-pathname
+	  (file-exists-p pathname)
 	  (error "(hpath:find): \"%s\" does not exist"
-		 (concat modifier filename (when hash "#") anchor)))
-      (or modifier remote-filename
-	  (file-readable-p filename)
+		 (concat modifier pathname (when hash "#") anchor)))
+      (or modifier remote-pathname
+	  (file-readable-p pathname)
 	  (error "(hpath:find): \"%s\" is not readable"
-		 (concat modifier filename (when hash "#") anchor)))
+		 (concat modifier pathname (when hash "#") anchor)))
       (if noselect
-	  (let ((buf (find-file-noselect filename)))
+	  (let ((buf (find-file-noselect pathname)))
 	    (with-current-buffer buf
 	      (when (or hash anchor) (hpath:to-markup-anchor hash anchor))
 	      buf))
-	;; If filename is a remote file (not a directory), we have to copy it to
+	;; If pathname is a remote file (not a directory), we have to copy it to
 	;; a temporary local file and then display that.
-	(when (and remote-filename (not (file-directory-p remote-filename)))
-	  (copy-file remote-filename
+	(when (and remote-pathname (not (file-directory-p remote-pathname)))
+	  (copy-file remote-pathname
 		     (setq path (concat hpath:tmp-prefix
-					(file-name-nondirectory remote-filename)))
+					(file-name-nondirectory remote-pathname)))
 		     t t)
-	  (setq filename (cond (anchor (concat remote-filename "#" anchor))
-			       (hash   (concat remote-filename "#"))
+	  (setq pathname (cond (anchor (concat remote-pathname "#" anchor))
+			       (hash   (concat remote-pathname "#"))
 			       (t path))))))
     (cond (modifier (cond ((= modifier ?!)
-			   (hact 'exec-shell-cmd filename))
+			   (hact 'exec-shell-cmd pathname))
 			  ((= modifier ?&)
-			   (hact 'exec-window-cmd filename))
+			   (hact 'exec-window-cmd pathname))
 			  ((= modifier ?-)
-			   (hact 'load filename)))
+			   (hact 'load pathname)))
 		    nil)
 
 	  ;; If no path, e.g. just an anchor link in a non-file buffer,
@@ -1379,16 +1383,16 @@ buffer but don't display it."
 		   executable)
 	       (cond ((stringp display-executables)
 		      (hact 'exec-window-cmd
-			    (hpath:command-string display-executables filename))
+			    (hpath:command-string display-executables pathname))
 		      nil)
 		     ((functionp display-executables)
-		      (funcall display-executables filename)
+		      (funcall display-executables pathname)
 		      (current-buffer))
 		     ((and (listp display-executables) display-executables)
 		      (setq executable (hpath:find-executable display-executables))
 		      (if executable
 			  (hact 'exec-window-cmd
-				(hpath:command-string executable filename))
+				(hpath:command-string executable pathname))
 			(error "(hpath:find): No available executable from: %s"
 			       display-executables)))
 		     (t (setq path (hpath:validate path))

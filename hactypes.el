@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    23-Sep-91 at 20:34:36
-;; Last-Mod:      5-Jun-22 at 17:59:19 by Bob Weiner
+;; Last-Mod:     23-Jul-22 at 22:25:35 by Bob Weiner
 ;;
 ;; Copyright (C) 1991-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -33,7 +33,7 @@
 (defact annot-bib (key)
   "Follow internal ref KEY within an annotated bibliography, delimiters=[]."
   (interactive "sReference key (no []): ")
-  (let ((key-regexp (concat "^[*]*[ \t]*\\\[" (ebut:key-to-label key) "\\\]"))
+  (let ((key-regexp (concat "^[*]*[ \t]*\\[" (ebut:key-to-label key) "\\]"))
 	citation)
     (if (save-excursion
 	  (goto-char (point-max))
@@ -61,10 +61,17 @@ Return any non-nil value or t."
 	     (if result "True" "False") result bool-expr)
     (or result t)))
 
-(defact display-variable (var)
-  "Display a message showing `var` (a symbol) and its value.
+(defact display-value (value)
+  "Display a message showing VALUE (a symbol) and its value.
 Return any non-nil value or t."
-  (message "%s = %s" var (symbol-value var))
+  (let ((result (eval value)))
+    (message "%S" result)
+    (or result t)))
+
+(defact display-variable (var)
+  "Display a message showing VAR (a symbol) and its value.
+Return any non-nil value or t."
+  (message "%s = %S" var (symbol-value var))
   (or (symbol-value var) t))
 
 (defact eval-elisp (lisp-expr)
