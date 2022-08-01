@@ -1,5 +1,6 @@
 2022-07-26  Mats Lidell  <matsl@gnu.org>
 
+* hbut.el:
 * kotl/kotl-orgtbl.el: Shorten docs strings to be within 80 char limit.
 
 2022-07-25  Mats Lidell  <matsl@gnu.org>
