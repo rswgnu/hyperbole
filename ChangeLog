@@ -86,7 +86,7 @@
 2022-07-21  Mats Lidell  <matsl@gnu.org>
 
 * kotl/kexport.el:
-* kotl/kcell.el: Shorten docs strings to be within 80 char limit
+* kotl/kcell.el: Shorten docs strings to be within 80 char limit.
 
 2022-07-20  Mats Lidell  <matsl@gnu.org>
 
