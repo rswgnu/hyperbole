@@ -1,6 +1,7 @@
 2022-09-18  Mats Lidell  <matsl@gnu.org>
 
 * hypb.el (hypb:replace-match-string): Remove function.
+    (hypb:emacs-byte-code-p): Remove obsolete definition.
 
 * kotl/kview.el (kview:map-tree): Remove duplicate call to go to
     beginning of line.
