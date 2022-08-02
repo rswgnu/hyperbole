@@ -1,5 +1,7 @@
 2022-09-18  Mats Lidell  <matsl@gnu.org>
 
+* hypb.el (hypb:replace-match-string): Remove function.
+
 * kotl/kview.el (kview:map-tree): Remove duplicate call to go to
     beginning of line.
 
