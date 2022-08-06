@@ -3,9 +3,9 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    26-Sep-91 at 19:24:19
-;; Last-Mod:     12-Feb-22 at 10:42:19 by Mats Lidell
+;; Last-Mod:      6-Aug-22 at 23:23:08 by Mats Lidell
 ;;
-;; Copyright (C) 1991-2021  Free Software Foundation, Inc.
+;; Copyright (C) 1991-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
 ;;
 ;; This file is part of GNU Hyperbole.
@@ -69,9 +69,10 @@ Use (setq set (set:remove elt set)) to assure set is always properly modified."
 ;; ************************************************************************
 
 (defun set:combinations (set &optional arity)
-  "Return all possible combinations (subsets) of SET including the empty set and the SET itself.
-Assume SET is a valid set.  With optional ARITY, return only subsets with
-ARITY members."
+  "Return all possible combinations (subsets) of SET.
+This includes the empty set and the SET itself.  Assume SET is a
+valid set.  With optional ARITY, return only subsets with ARITY
+members."
   (cond ((null arity) 
 	 (setq arity 0)
 	 (cons nil (apply 'nconc (mapcar (lambda (_elt) (setq arity (1+ arity)) (set:combinations set arity))
