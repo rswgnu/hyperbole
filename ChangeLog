@@ -1,5 +1,6 @@
 2022-09-14  Mats Lidell  <matsl@gnu.org>
 
+* hyrolo-logic.el:
 * hywconfig.el:
 * htz.el:
 * hmouse-mod.el:
@@ -201,7 +202,7 @@
 * hib-doc-id.el:
 * hhist.el:
 * hbut.el:
-* kotl/kotl-orgtbl.el: Shorten docs strings to be within 80 char limit.
+* kotl/kotl-orgtbl.el:  Shorten docs strings to be within 80 char limit.
 
 2022-07-25  Mats Lidell  <matsl@gnu.org>
 
