@@ -3,9 +3,9 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     4-Nov-17 at 13:56:47
-;; Last-Mod:     24-Jan-22 at 00:23:34 by Bob Weiner
+;; Last-Mod:      6-Aug-22 at 21:33:05 by Mats Lidell
 ;;
-;; Copyright (C) 2017-2021  Free Software Foundation, Inc.
+;; Copyright (C) 2017-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
 ;;
 ;; This file is part of GNU Hyperbole.
@@ -32,7 +32,7 @@
 
 ;;;###autoload
 (defun hyrolo-demo-fgrep (string &optional max-matches)
-  "Display rolo entries in \"DEMO-ROLO.otl\" matching STRING (or a logical match expression).
+  "Display rolo entries in \"DEMO-ROLO.otl\" matching STRING or a logic expression.
 Display to a maximum of optional prefix arg MAX-MATCHES.
 Each entry is displayed with all of its sub-entries.
 
@@ -49,7 +49,8 @@ logical expression matching."
 
 ;;;###autoload
 (defun hyrolo-demo-fgrep-logical (expr &optional count-only include-sub-entries no-sub-entries-out)
-  "Display rolo entries in \"DEMO-ROLO.otl\" matching EXPR which may contain prefix logical operators.
+  "Display rolo entries in \"DEMO-ROLO.otl\" matching EXPR.
+EXPR may contain prefix logical operators.
 If optional COUNT-ONLY is non-nil, don't display entries, return
 count of matching entries only.  If optional INCLUDE-SUB-ENTRIES
 flag is non-nil, SEXP will be applied across all sub-entries at
