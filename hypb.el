@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     6-Oct-91 at 03:42:38
-;; Last-Mod:     18-Sep-22 at 22:39:36 by Mats Lidell
+;; Last-Mod:      3-Oct-22 at 20:33:54 by Mats Lidell
 ;;
 ;; Copyright (C) 1991-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -52,7 +52,9 @@ It must end with a space."
 ;;; ************************************************************************
 
 (defmacro hypb:assert-same-start-and-end-buffer (&rest body)
-  "Trigger an error with traceback if the buffer is not live or its name differs at the start and end of BODY."
+  "Assert that buffers name does not change during execution of BODY.
+Trigger an error with traceback if the buffer is not live or its
+name differs at the start and end of BODY."
   (declare (indent 0) (debug t))
   `(let ((debug-on-error t)
 	 (start-buffer (current-buffer)))
@@ -107,7 +109,7 @@ OP may be +, -, xor, or default =."
 				  (file-modes file)))))
 
 (defun hypb:cmd-key-series (cmd-sym &optional keymap)
-  "Return a single, brace-delimited, human readable key sequence string bound to CMD-SYM.
+  "Return a brace-delimited, human readable key sequence string bound to CMD-SYM.
 Global keymap is used unless optional KEYMAP is given.
 
 Trigger an error if CMD-SYM is not bound."
@@ -125,16 +127,20 @@ Trigger an error if CMD-SYM is not bound."
     (error "(hypb:cmd-key-series): Invalid cmd-sym arg: %s" cmd-sym)))
 
 (defun hypb:cmd-key-vector (cmd-sym &optional keymap)
-  "Return as a vector the first key sequence bound to CMD-SYM from global keymap or optional KEYMAP.
-Return nil if no valid key binding is found.
+  "Return as a vector the first key sequence bound to CMD-SYM.
+Search global keymap or optional KEYMAP.  Return nil if no valid
+key binding is found.
 
 The returned value may be compared with `equal' to `this-single-command-keys'.
 Use `key-description' to make it human readable."
   (where-is-internal cmd-sym keymap t))
 
 (defun hypb:installation-type ()
-  "Return a list of (hyperbole-installation-type-string hyperbole-install-version-number-string).
-If no matching installation type is found, return a list of (\"unknown\" hyperb:dir)."
+  "Return type of installation and version number.
+Is a list of (hyperbole-installation-type-string
+hyperbole-install-version-number-string).  If no matching
+installation type is found, return a list of (\"unknown\"
+`hyperb:dir')."
   (let ((hypb-dir-name (file-name-nondirectory (directory-file-name hyperb:dir)))
 	(dir-sep-string (substring (file-name-as-directory ".") -1)))
     (cond
@@ -172,7 +178,8 @@ If no matching installation type is found, return a list of (\"unknown\" hyperb:
 
 ;;;###autoload
 (defun hypb:configuration (&optional out-buf)
-  "Insert Emacs configuration information at the end of optional OUT-BUF or the current buffer."
+  "Insert Emacs configuration information at the end of a buffer.
+Use optional OUT-BUF if present, else the current buffer."
   (save-excursion
     (and out-buf (set-buffer out-buf))
     (goto-char (point-min))
@@ -260,7 +267,9 @@ If no matching installation type is found, return a list of (\"unknown\" hyperb:
 
 ;;;###autoload
 (defun hypb:def-to-buffer (&optional arg buffer)
-  "Copy next optional ARG (default = 1) code definitions to the start of BUFFER (default = *scratch*) and leave point at the start of the inserted text."
+  "Copy next optional ARG code definitions to the start of optional BUFFER.
+Default ARG is 1 and default BUFFER is \"*scratch*\".  Leave
+point at the start of the inserted text."
   (interactive "p\nbDef insertion buffer (default *scratch*): ")
   (let ((def (save-excursion
 	       (mark-defun arg)
@@ -320,21 +329,24 @@ will this install the Emacs devdocs package when needed."
     (error msg)))
 
 (defun hypb:fgrep-git-log (string)
-  "Asynchronously list git log entries whose changesets include `string' for selection and display.
-A press of RET, the Action Key or the Assist Key on any log line will display its committed changes."
+  "List git log entries whose changesets include STRING for selection and display.
+Listing is asynchronous.  A press of RET, the Action Key or the
+Assist Key on any log line will display its committed changes."
   (interactive "sFgrep git commits containing: ")
   (compile (format "git log -S'%s' --line-prefix='commit ' --oneline" string)
 	   #'hypb:fgrep-git-log-mode))
 
 (defun hypb:fgrep-git-log-activate (_ignore1 &optional _ignore2)
   "Display git commit for the current line when `compile-goto-error' {RET} is used.
-Does not support use of next and previous error; simply displays the current one."
+Does not support use of next and previous error; simply displays
+the current one."
   (interactive '(nil))
   (hkey-either nil))
 
 (define-derived-mode hypb:fgrep-git-log-mode compilation-mode "Fgrep-Git-Log"
-  "Major mode (derived from `compilation-mode' for listing a matching set of git commits for selection and display.
-Turning on Fgrep-Git-Log mode runs the normal hook `compilation-mode-hook'."
+  "Major mode for listing a matching set of git commits for selection and display.
+Mode is derived from `compilation-mode'.  Turning on
+Fgrep-Git-Log mode runs the normal hook `compilation-mode-hook'."
   (setq-local next-error-function #'hypb:fgrep-git-log-activate))
 
 (defun hypb:file-major-mode (file)
@@ -355,8 +367,10 @@ Return a flattened list of all matching files."
 			 dirs)))
 
 (defun hypb:format-quote (arg)
-  "Replace all single % with %% in any string ARG so that a call to `format' or `message' ignores them.
-Return either the modified string or the original ARG when not modified."
+  "Replace all single % with %% in any string ARG.
+This is so that a call to `format' or `message' ignores them.
+Return either the modified string or the original ARG when not
+modified."
   (if (stringp arg)
       (replace-regexp-in-string
        "@@@" "%%" (replace-regexp-in-string
@@ -390,7 +404,8 @@ If EVENT, use EVENT's position to determine the starting position."
         (buffer-substring-no-properties beg end)))))
 
 (defun hypb:get-raw-syntax-descriptor (char &optional syntax-table)
-  "Return the raw syntax descriptor for CHAR using the current syntax table or optional SYNTAX-TABLE."
+  "Return the raw syntax descriptor for CHAR.
+Use the current syntax table or optional SYNTAX-TABLE."
   (aref (or syntax-table (syntax-table)) char))
 
 ;; Derived from pop-global-mark of "simple.el" in GNU Emacs.
@@ -413,8 +428,9 @@ If MARKER is invalid signal an error."
 	     (switch-to-buffer buffer)))))
 
 (defun hypb:grep-git-log (regexp)
-  "Asynchronously list git log entries whose changesets include `regexp' for selection and display.
-A press of RET, the Action Key or the Assist Key on any log line will display its committed changes."
+  "List git log entries whose changesets include REGEXP for selection and display.
+Listing is asynchronous.  A press of RET, the Action Key or the
+Assist Key on any log line will display its committed changes."
   (interactive "sGrep git commits containing: ")
   (compile (format "git log -G'%s' --line-prefix='commit ' --oneline" regexp)))
 
@@ -478,9 +494,10 @@ Resolves autoloadable function symbols properly."
       func)))
 
 (defun hypb:insert-region (buffer start end invisible-flag)
-  "Insert into BUFFER the contents of the region from START to END within the current buffer.
-INVISIBLE-FLAG, if non-nil, means invisible text in an outline region is
-copied, otherwise, it is omitted."
+  "Insert into BUFFER the contents of the region from START to END.
+Contents is fetch from within the current buffer.
+INVISIBLE-FLAG, if non-nil, means invisible text in an outline
+region is copied, otherwise, it is omitted."
   (if invisible-flag
       ;; Skip hidden blank lines between cells but include hidden outline text.
       (while (< start end)
@@ -494,7 +511,7 @@ copied, otherwise, it is omitted."
 
 ;;;###autoload
 (defun hypb:locate (search-string &optional filter arg)
-  "Find file name match anywhere, calling the value of `locate-command', and putting results in the `*Locate*' buffer.
+  "Find file name match anywhere and put results in the `*Locate*' buffer.
 Pass it SEARCH-STRING as argument.  Interactively, prompt for SEARCH-STRING.
 With prefix arg ARG, prompt for the exact shell command to run instead.
 
@@ -526,7 +543,7 @@ then `locate-post-command-hook'."
 
 ;;;###autoload
 (defun hypb:map-plist (func plist)
-  "Return result of applying FUNC of two args, key and value, to key-value pairs in PLIST, a property list."
+  "Apply FUNC of two args, key and value, to key-value pairs in PLIST."
   (cl-loop for (k v) on plist by #'cddr
 	   collect (funcall func k v) into result
 	   finally return result))
@@ -545,7 +562,8 @@ OBJECT should be a vector or `byte-code' object."
     (nreverse result)))
 
 (defun hypb:mark-object (object)
-  "Mark OBJECT as a Hyperbole object if possible to prevent generic functions from changing it.
+  "Mark OBJECT as a Hyperbole object.
+If possible to prevent generic functions from changing it.
 OBJECT must be a non-empty string or a symbol or this has no effect."
   (cond ((and (stringp object) (not (string-empty-p object)))
 	 (put-text-property 0 1 'hyperbole t object))
@@ -615,14 +633,17 @@ Removes any trailing newline at the end of the output."
     output))
 
 (defun hypb:remove-lines (regexp)
- "Remove lines containing match for REGEXP within the active region or to the end of buffer."
+  "Remove lines containing match for REGEXP.
+Apply within an active region or to the end of buffer."
     (interactive "sRemove lines with match for regexp: ")
     (flush-lines regexp nil nil t))
 
 ;;;###autoload
 (defun hypb:rgrep (pattern &optional prefx-arg)
-  "Recursively grep with symbol at point or PATTERN over all non-backup and non-autosave files in the current directory tree.
-If in an Emacs Lisp mode buffer and no PREFX-ARG is given, limit search to only .el and .el.gz files."
+  "Recursively grep with symbol at point or PATTERN.
+Grep over all non-backup and non-autosave files in the current
+directory tree.  If in an Emacs Lisp mode buffer and no PREFX-ARG
+is given, limit search to only .el and .el.gz files."
   (interactive (list (if (and (not current-prefix-arg) (equal (buffer-name) "*Locate*"))
 			 (read-string "Grep files listed here for: ")
 		       (let ((default (symbol-at-point)))
@@ -656,12 +677,13 @@ If in an Emacs Lisp mode buffer and no PREFX-ARG is given, limit search to only 
     (grep grep-cmd)))
 
 (defun hypb:save-lines (regexp)
- "Save only lines containing match for REGEXP within the active region or to the end of buffer."
+  "Save only lines containing match for REGEXP.
+Apply within an active region or to the end of buffer."
     (interactive "sSave lines with match for regexp: ")
     (keep-lines regexp nil nil t))
 
 (defmacro hypb:save-selected-window-and-input-focus (&rest body)
-  "Execute BODY, then restore the selected window in each frame and the previously selected frame with input focus.
+  "Execute BODY, restore selected windows in frames and frame with input focus.
 The value returned is the value of the last form in BODY."
   `(let ((frame (selected-frame)))
      (prog1 (save-selected-window ,@body)
@@ -675,9 +697,10 @@ The value returned is the value of the last form in BODY."
     (error "(hypb:select-window-frame): Argument must be a live window, not '%s'" window)))
 
 (defun hypb:set-raw-syntax-descriptor (char raw-descriptor &optional syntax-table)
-  "Set the syntax of CHAR to RAW-DESCRIPTOR (syntax table value) in the current syntax table or optional SYNTAX-TABLE.
-Return the RAW-DESCRIPTOR.  Use the `syntax-after' function to
-retrieve the raw descriptor for a buffer position.
+  "Set the syntax of CHAR to RAW-DESCRIPTOR (syntax table value).
+Set in the current syntax table or optional SYNTAX-TABLE.  Return
+the RAW-DESCRIPTOR.  Use the `syntax-after' function to retrieve
+the raw descriptor for a buffer position.
 
 Similar to modify-syntax-entry but uses a raw descriptor
 previously extracted from a syntax table to set the value rather
@@ -688,8 +711,10 @@ descriptors."
   (aset (or syntax-table (syntax-table)) char raw-descriptor))
 
 (defun hypb:straight-package-plist (pkg-string)
-  "Return a property list of package-name, package-download-source and pckage-version for PKG-STRING, else return nil.
-This is for the straight.el package manager."
+  "Return package info for a straight.el built package with name PKG-STRING.
+The package info is a property list of package-name,
+package-download-source and package-version for PKG-STRING, else
+return nil.  This is for the straight.el package manager."
   (when (fboundp #'straight-bug-report-package-info)
     (car (delq nil (mapcar (lambda (pkg-plist)
 			     (when (equal (plist-get pkg-plist :package) pkg-string) pkg-plist))
