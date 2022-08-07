@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     2-Jul-16 at 14:54:14
-;; Last-Mod:     22-May-22 at 15:05:49 by Bob Weiner
+;; Last-Mod:      2-Jul-22 at 14:45:35 by Bob Weiner
 ;;
 ;; Copyright (C) 2016-2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -197,32 +197,33 @@ Match to all todos if `keyword' is nil or the empty string."
 Assume caller has already checked that the current buffer is in `org-mode'
 or are looking for an Org link in another buffer type."
   ;; If any Org test fails, just return nil
-  (condition-case ()
-      (let* ((context
-	      ;; Only consider supported types, even if they are not
-	      ;; the closest one.
-	      (org-element-lineage
-	       ;; Next line can trigger an error when `looking-at' is called
-	       ;; with a `nil' value of `org-complex-heading-regexp'.
-	       (org-element-context)
-	       '(clock footnote-definition footnote-reference headline
-		       inlinetask link timestamp)
-	       t))
-	     (type (org-element-type context)))
-	(or (eq type 'link)
-	    (and (boundp 'org-link-bracket-re)
-		 (org-in-regexp org-link-bracket-re))
-	    (and (boundp 'org-bracket-link-regexp)
-		 (org-in-regexp org-bracket-link-regexp))
-	    (and (boundp 'org-target-link-regexp)
-		 (not (null org-target-link-regexp))
-		 (org-in-regexp org-target-link-regexp))))
-    (error nil)))
+  (unless (or (smart-eolp) (smart-eobp))
+    (condition-case ()
+	(let* ((context
+		;; Only consider supported types, even if they are not
+		;; the closest one.
+		(org-element-lineage
+		 ;; Next line can trigger an error when `looking-at' is called
+		 ;; with a `nil' value of `org-complex-heading-regexp'.
+		 (org-element-context)
+		 '(clock footnote-definition footnote-reference headline
+			 inlinetask link timestamp)
+		 t))
+	       (type (org-element-type context)))
+	  (or (eq type 'link)
+	      (and (boundp 'org-link-bracket-re)
+		   (org-in-regexp org-link-bracket-re))
+	      (and (boundp 'org-bracket-link-regexp)
+		   (org-in-regexp org-bracket-link-regexp))
+	      (and (boundp 'org-target-link-regexp)
+		   (not (null org-target-link-regexp))
+		   (org-in-regexp org-target-link-regexp))))
+      (error nil))))
 
 ;; Assume caller has already checked that the current buffer is in org-mode.
 (defun hsys-org-heading-at-p (&optional _)
   "Non-nil when on a headline."
-  (unless (eolp)
+  (unless (or (smart-eolp) (smart-eobp))
     (outline-on-heading-p t)))
 
 ;; Assume caller has already checked that the current buffer is in org-mode.
