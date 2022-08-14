@@ -269,7 +269,7 @@ characters, else nil."
 
 (defun hsys-org-radio-target-at-p ()
   "Return target region iff point is on an Org mode definition or referent.
-Target positions is (target-start . target-end).  It is returned
+Target region is (target-start . target-end).  It is returned
 iff point is on an Org mode <<<radio target definition>>> or
 radio target link (referent), including any delimiter characters,
 else nil."
