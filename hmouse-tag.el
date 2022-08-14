@@ -706,7 +706,7 @@ Returns nil if in a help buffer."
 	     (not (looking-at "\\(;*[ \t]*\\)?(default"))))))
 
 (defun smart-lisp-at-load-expression-p ()
-    "Non-nil if point is on the first line of a Lisp library load expression."
+"Return t if on the first line of a Lisp library load expression, else nil."
     (save-excursion
       (beginning-of-line)
       (looking-at "\\(;*[ \t]*\\)?(\\(autoload\\|load\\|require\\)\\s-")))
