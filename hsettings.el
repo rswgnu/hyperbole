@@ -152,7 +152,6 @@ lines"
   "Read from the keyboard a list of (web-search-service-string search-term-string).
 With optional non-empty SERVICE-NAME and SEARCH-TERM arguments,
 use those and do not read from the keyboard."
-are given as not null and not empty strings."
   (let ((completion-ignore-case t))
     (while (or (not (stringp service-name)) (equal service-name ""))
       (setq service-name (completing-read "Search service: " hyperbole-web-search-alist
