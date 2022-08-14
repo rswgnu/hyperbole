@@ -138,7 +138,7 @@ uses that one.  Otherwise, triggers an error."
       (and (boundp 'poporg-mode) poporg-mode)))
 
 (defun hsys-org-cycle ()
-  "Call `org-cycle' and set `this-command' to cycle through all states."
+  "Call `org-cycle' and set as `this-command' to cycle through all states."
   (setq this-command 'org-cycle)
   (org-cycle))
 
