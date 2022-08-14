@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    24-Aug-91
-;; Last-Mod:     27-Jul-22 at 11:11:34 by Mats Lidell
+;; Last-Mod:     14-Aug-22 at 19:18:17 by Mats Lidell
 ;;
 ;; Copyright (C) 1991-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -574,8 +574,7 @@ in the current directory or any of its ancestor directories."
 
 ;;;###autoload
 (defconst smart-lisp-identifier-first-char-regexp "[-<>*a-zA-Z]"
-  "Character set regexp matching the first character of a Lisp identifier.")
-The square brackets are included.")
+  "Regexp matching the first character of a Lisp identifier.")
 
 ;;;###autoload
 (defconst smart-lisp-identifier-chars "-_:/*+=%$&?!<>a-zA-Z0-9~^"
@@ -693,8 +692,7 @@ Use `hpath:display-buffer' to show definition or documentation."
 		      (xref-etags-mode 0))))))))
 
 (defun smart-lisp-at-definition-p ()
-"Return t if in a non-help buf and on line 1 of a non-alias Lisp def, else nil."
-Returns nil if in a help buffer."
+  "Non-nil if point is on the first line of a non-alias Lisp definition."
     (unless (derived-mode-p 'help-mode)
       (save-excursion
 	(beginning-of-line)
@@ -706,17 +704,16 @@ Returns nil if in a help buffer."
 	     (not (looking-at "\\(;*[ \t]*\\)?(default"))))))
 
 (defun smart-lisp-at-load-expression-p ()
-"Return t if on the first line of a Lisp library load expression, else nil."
+  "Return t if on the first line of a Lisp library load expression, else nil."
     (save-excursion
       (beginning-of-line)
       (looking-at "\\(;*[ \t]*\\)?(\\(autoload\\|load\\|require\\)\\s-")))
 
 (defun smart-lisp-at-change-log-tag-p ()
   "When in change-log mode, match to bound Elisp identifiers only.
-Match to bound Elisp identifiers only and those with a '-'
-somewhere in the middle.  These tight tests help eliminate
-undesired matches.  Returns matching ELisp tag name that point is
-within, else nil."
+Also match to identifiers with a '-' in the middle.
+These tight tests help eliminate undesired matches.
+Return matching Elisp tag name that point is within, else nil."
   (when (derived-mode-p 'change-log-mode)
     (let ((identifier (smart-lisp-at-tag-p)))
       (and identifier (intern-soft identifier)
