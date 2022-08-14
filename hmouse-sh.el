@@ -505,7 +505,7 @@ point determined by `mouse-select-region-move-to-beginning'."
 	  hmouse-bindings-flag t)))
 
 (defun hmouse-unshifted-setup (&optional middle-key-only-flag)
-  "Bind the middle and right mouse key as the Action and Assist Key respectively.
+  "Bind the middle and right mouse keys as Action and Assist Keys, respectively.
 With optional MIDDLE-KEY-ONLY-FLAG non-nil, bind only the middle mouse key."
   (interactive)
   ;; Globally Emacs uses key-translation-map to link mouse-1 to
