@@ -1175,7 +1175,7 @@ TAG-SYM may be a function, variable or face."
       (error nil))))
 
 (defun smart-java-cross-reference ()
-  "If within a Java @see comment display the associated definition for editing.
+  "If within a Java @see comment, edit the def and return non-nil, else nil.
 Non-nil is returned even if the @see referent cannot be found.
 
 Does nothing if the `oo-browser' command is undefined, since it requires that
