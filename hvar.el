@@ -101,7 +101,7 @@ copy of these values for future re-use, see `var:append-all'."
   var::append-list)
 
 (defun var:run-hook-in-matching-buffers (mode hook-function)
-  "Call HOOK-FUNCTION in all buffers with major MODE.
+  "Call HOOK-FUNCTION in all buffers with major MODE, a symbol.
 This is used after a hook is changed to affect buffers that
 existed before the change was made."
   (mapc (lambda (buf) (with-current-buffer buf (funcall hook-function)))
