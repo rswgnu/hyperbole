@@ -246,7 +246,7 @@ Assume caller has already checked that the current buffer is in `org-mode'."
     t))
 
 (defun hsys-org-radio-target-link-at-p ()
-  "Return target positions iff point is on an Org mode radio target referent.
+  "Return target region iff point is on an Org mode radio target referent.
 Target positions is (target-start . target-end) iff point is on
 an Org mode radio target link (referent), else nil."
   (and (hsys-org-face-at-p 'org-link)
