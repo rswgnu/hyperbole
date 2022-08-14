@@ -712,7 +712,7 @@ Returns nil if in a help buffer."
       (looking-at "\\(;*[ \t]*\\)?(\\(autoload\\|load\\|require\\)\\s-")))
 
 (defun smart-lisp-at-change-log-tag-p ()
-  "When in change-log mode match to bound Elisp identifiers only.
+  "When in change-log mode, match to bound Elisp identifiers only.
 Match to bound Elisp identifiers only and those with a '-'
 somewhere in the middle.  These tight tests help eliminate
 undesired matches.  Returns matching ELisp tag name that point is
