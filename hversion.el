@@ -52,7 +52,7 @@ your specific mouse.")
 
 ;; Called in hyperbole.el.
 (defun hyperb:stack-frame (function-list &optional debug-flag)
-  "Return the nearest elisp stack frame that called a function from FUNCTION-LIST.
+  "Return the nearest Elisp stack frame that called a function from FUNCTION-LIST.
 Return nil if there is no match.  If FUNCTION-LIST contains
 'load, 'autoload or 'require, detect autoloads not visible within
 the Lisp level stack frames.
