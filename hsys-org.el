@@ -148,7 +148,7 @@ uses that one.  Otherwise, triggers an error."
   (org-global-cycle nil))
 
 (defun hsys-org-todo-cycle ()
-  "Call `org-todo' and set `this-command' to cycle through all states."
+  "Call `org-todo' and set as `this-command' to cycle through all states."
   (setq this-command 'org-todo)
   (org-todo))
 
