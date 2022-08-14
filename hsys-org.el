@@ -143,7 +143,7 @@ uses that one.  Otherwise, triggers an error."
   (org-cycle))
 
 (defun hsys-org-global-cycle ()
-  "Call `org-global-cycle' and set `this-command' to cycle through all states."
+  "Call `org-global-cycle' and set as `this-command' to cycle through all states."
   (setq this-command 'org-cycle)
   (org-global-cycle nil))
 
