@@ -646,7 +646,7 @@ buffer."
 (defun smart-lisp-find-tag (&optional tag show-doc)
   "Find the definition of optional Lisp TAG or show its documentation.
 Use identifier at point when TAG is nil.  With optional prefix
-arg SHOW-DOC non-nil show its documentation.
+arg SHOW-DOC non-nil, show its documentation.
 Use `hpath:display-buffer' to show definition or documentation."
   (interactive
    (list (read-string (format "%s Lisp identifier: "
