@@ -889,7 +889,7 @@ line_number column_number)."
   (jedi:goto--line-column line column))
 
 (defun smart-python-jedi-to-definition-p ()
-  "If Jedi identifier server is running, test and use it to jump to the definition.
+  "If Jedi Python identifier server is running, use it to jump to the definition.
 See https://tkf.github.io/emacs-jedi/latest/."
   ;; Use functions from jedi-core.el only, not from jedi.el, since
   ;; company-jedi.el users will have loaded only jedi-core.el.
