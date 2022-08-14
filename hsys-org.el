@@ -278,7 +278,7 @@ else nil."
        (hsys-org-region-with-text-property-value (point) 'face)))
 
 (defun hsys-org-internal-link-target-at-p ()
-  "Return target positions iff point is on an Org mode <<link target>>.
+  "Return target region iff point is on an Org mode <<link target>>.
 This is including any delimiter characters.  Target positions
 is (target-start . target-end)."
   (when (hsys-org-target-at-p)
