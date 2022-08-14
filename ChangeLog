@@ -1,6 +1,17 @@
-2022-08-06  Mats Lidell  <matsl@gnu.org>
+2022-08-14  Mats Lidell  <matsl@gnu.org>
 
-* set.el: Shorten docs strings to be within 80 char limit.
+* set.el: 
+* hyrolo-demo.el:
+* hui-jmenu.el:
+* hui-em-but.el:
+* hsys-youtube.el: Shorten docs strings to be within 80 char limit.
+
+* hload-path.el (hload-path--make-directory-autoloads): Use
+    loaddefs-generate if available.
+
+2022-08-07  Mats Lidell  <matsl@gnu.org>
+
+* kotl/kvspec.el: Shorten docs strings to be within 80 char limit.
 
 2022-07-26  Mats Lidell  <matsl@gnu.org>
 
