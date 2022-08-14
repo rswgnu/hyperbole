@@ -279,7 +279,7 @@ else nil."
 
 (defun hsys-org-internal-link-target-at-p ()
   "Return target region iff point is on an Org mode <<link target>>.
-This is including any delimiter characters.  Target positions
+This is including any delimiter characters.  Target region
 is (target-start . target-end)."
   (when (hsys-org-target-at-p)
     (save-excursion
