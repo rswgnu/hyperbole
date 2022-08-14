@@ -574,7 +574,7 @@ in the current directory or any of its ancestor directories."
 
 ;;;###autoload
 (defconst smart-lisp-identifier-first-char-regexp "[-<>*a-zA-Z]"
-  "Regexp matching the first character of a Lisp identifier.
+  "Character set regexp matching the first character of a Lisp identifier.")
 The square brackets are included.")
 
 ;;;###autoload
