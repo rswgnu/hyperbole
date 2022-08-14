@@ -291,7 +291,9 @@ is (target-start . target-end)."
            (hsys-org-region-with-text-property-value (point) 'face)))))
 
 (defun hsys-org-face-at-p (org-face-type)
-  "Return ORG-FACE-TYPE iff point is on a character with that face, else nil."
+  "Return ORG-FACE-TYPE iff point is on a character with that face, else nil.
+  ORG-FACE-TYPE must be a symbol, not a symbol name."
+  
   (let ((face-prop (get-text-property (point) 'face)))
     (when (or (eq face-prop org-face-type)
 	      (and (listp face-prop) (memq org-face-type face-prop)))
