@@ -6,6 +6,8 @@
 
 2022-09-14  Mats Lidell  <matsl@gnu.org>
 
+* Makefile (EL_COMPILE, ELC_COMPILE): Add hui-register.
+
 * hywconfig.el:
 * htz.el:
 * hmouse-mod.el:
