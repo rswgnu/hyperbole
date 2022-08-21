@@ -111,9 +111,12 @@ the symbol list.  For `suspicious', only `set-buffer' can be used."
 ;; New autoload generation function defined only in Emacs 28
 
 (defalias 'hload-path--make-directory-autoloads
-  (if (fboundp #'make-directory-autoloads)
-      #'make-directory-autoloads
-    #'hload-path--internal-make-directory-autoloads))
+  (cond ((fboundp 'loaddefs-generate)
+         #'loaddefs-generate)
+        ((fboundp #'make-directory-autoloads)
+         #'make-directory-autoloads)
+        (t
+         #'hload-path--internal-make-directory-autoloads)))
 
 (defun hload-path--internal-make-directory-autoloads (dir output-file)
   "Update autoload definitions for Lisp files in the directories DIRS.

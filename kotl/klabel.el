@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    17-Apr-94
-;; Last-Mod:     17-Jul-22 at 11:13:30 by Mats Lidell
+;; Last-Mod:     18-Jul-22 at 21:58:23 by Mats Lidell
 ;;
 ;; Copyright (C) 1994-2022  Free Software Foundation, Inc.
 ;; See the "../HY-COPY" file for license information.
@@ -44,7 +44,8 @@
   (funcall (kview:get-attr kview 'label-increment) label))
 
 (defun klabel:format (label)
-  "Format a generic cell LABEL (a string) and return it in the proper display type for the current kview."
+  "Format a generic cell LABEL (a string) and return the display type.
+Return the proper display type for the current kview."
   (let ((label-type (or (kview:get-attr kview 'label-type) kview:default-label-type)))
     (cond ((memq label-type '(alpha id legal partial-alpha))
 	   label)
@@ -90,8 +91,10 @@
 	    label-type))))
 
 (defun klabel-type:increment (label-type)
-  "Return a function that takes a single label argument and computes the next cell label of LABEL-TYPE.
-If the label is \"0\", its first child is computed, otherwise, the next sibling is computed."
+  "Return a function and compute the next cell label of LABEL-TYPE.
+The function takes a single label argument.  If the label is
+\"0\", its first child is computed, otherwise, the next sibling
+is computed."
   (cond ((memq label-type '(alpha legal partial-alpha))
 	 (intern-soft (concat "klabel:increment-" (symbol-name label-type))))
 	((eq label-type 'no)
@@ -255,11 +258,13 @@ First visible outline cell is level 1."
 ;;
 (defun klabel-type:function (&optional label-type)
   "Return function which will return display label for current cell.
-Label format is optional LABEL-TYPE or the default label type for the current view.
+Label format is optional LABEL-TYPE or the default label type for
+the current view.
 
-Function signature is: (func prev-label &optional child-p), where prev-label
-is the display label of the cell preceding the current one and child-p is
-non-nil if cell is to be the child of the preceding cell."
+Function signature is: (func prev-label &optional child-p), where
+prev-label is the display label of the cell preceding the current
+one and child-p is non-nil if cell is to be the child of the
+preceding cell."
   (or label-type (setq label-type (kview:label-type kview)))
   (cond ((eq label-type 'no)
 	 (lambda (_prev-label &optional _child-p)
@@ -478,7 +483,7 @@ and the start of its contents."
 		  (kcell-view:next nil lbl-sep-len)))))
 
 (defun klabel-type:update-labels (current-cell-label)
-  "Update the labels of current cell, its following siblings and their subtrees if need be.
+  "Update the labels of current cell, its following siblings and their subtrees.
 CURRENT-CELL-LABEL is the label to display for the current cell.
 If, however, it is \"0\", then all cell labels are updated."
   (let ((label-type (kview:label-type kview)))
@@ -615,7 +620,8 @@ N may be an integer or a string containing an integer."
 ;;; ************************************************************************
 
 (defun klabel:set (new-label &optional lbl-sep-len)
-  "Replace label displayed in cell at point with NEW-LABEL, which may be a different label type.
+  "Replace label displayed in cell at point with NEW-LABEL.
+The new label type may differ from the old type.
 Return NEW-LABEL string."
   (let ((modified (buffer-modified-p))
 	(buffer-read-only)

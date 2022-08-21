@@ -578,7 +578,7 @@ enough files with matching mode loaded."
 	 (existing-shell-flag (get-buffer-process shell-buffer-name)))
     (unwind-protect
         (with-temp-buffer
-          (insert "{M-x shell RET M-> (time apropos grep) RET RET}")
+          (insert "{M-x shell RET M-> (apropos grep) RET RET}")
           (goto-char 5)
           (action-key)
           (hy-test-helpers:consume-input-events)
