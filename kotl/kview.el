@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    6/30/93
-;; Last-Mod:     17-Jul-22 at 16:22:51 by Mats Lidell
+;; Last-Mod:     11-Aug-22 at 00:31:40 by Bob Weiner
 ;;
 ;; Copyright (C) 1993-2022  Free Software Foundation, Inc.
 ;; See the "../HY-COPY" file for license information.
@@ -55,6 +55,9 @@ Labels are padded with spaces on the left.  Default value is 4."
 Default value is \". \"."
   :type 'string
   :group 'hyperbole-koutliner)
+
+(defconst kview:outline-regexp (concat "\\( *\\)[0-9][0-9a-z.]*\\(" kview:default-label-separator "\\)")
+  "Koutline view `outline-regexp' value that handles all label formats.")
 
 (defcustom kview:default-label-type 'alpha
   "*Default label-type to use for new koutlines.  Default value is 'alpha.

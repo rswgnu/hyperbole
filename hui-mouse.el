@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    04-Feb-89
-;; Last-Mod:     17-Jul-22 at 15:03:45 by Bob Weiner
+;; Last-Mod:     21-Aug-22 at 10:59:08 by Bob Weiner
 ;;
 ;; Copyright (C) 1991-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -1292,10 +1292,10 @@ If assist-key is pressed within:
 ;;; ************************************************************************
 
 (defun smart-hyrolo ()
-  "In hyrolo match buffer, edits current entry.
+  "In hyrolo match buffer, edit current entry.
 Uses one key or mouse key.
 
-Invoked via a key press when in the `hyrolo-display-buffer'.  It assumes that
+Invoked via a key press when in the `hyrolo-display-buffer'.  Assume that
 its caller has already checked that the key was pressed in an appropriate
 buffer and has moved the cursor to the selected buffer."
   (interactive)

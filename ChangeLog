@@ -1,3 +1,70 @@
+2022-08-21  Bob Weiner  <rsw@gnu.org>
+
+* hyrolo.el (hyrolo-set-date): Don't add a date if in a Koutline
+    buffer.
+* hyrolo.el (hyrolo-add, hyrolo-edit, hyrolo-toggle-narrow-to-entry,
+             hyrolo-grep-file, hyrolo-to):
+  hyrolo-logic.el (hyrolo-map-logic):
+            Replace use of 'widen' with new function, 'hyrolo-widen',
+    which widens only to the textual part of a buffer, leaving
+    Koutline meta-data hidden, for example.
+            (hyrolo-edit, hyrolo-add): If in a Koutline, ensure point is
+    left in a valid, editable position.
+            (hyrolo-narrowed-p): Remove.  Use 'buffer-narrowed-p' instead.
+	    (hyrolo-show-levels): Make argument of NUM-LEVELS relative
+    to first matched level, so some entries are always shown.
+            (hyrolo-min-matched-level): Add and use in 'hyrolo-show-levels'
+            (hyrolo-back-to-visible-point): Add and use in
+    'hyrolo-show-levels'.
+            (hyrolo-display-matches): Move invocation of 'hyrolo-mode'
+    to when the match display buffer is created in 'hyrolo-set-display-buffer'.
+            (hyrolo-set-display-buffer): Add and used above.
+
+2022-08-20  Bob Weiner  <rsw@gnu.org>
+
+* hyrolo.el (hyrolo-grep): Add support for 'outline-regexp' and
+    'outline-level' variables from multiple file types.
+            (hyrolo-mode): Set local value of 'outline-level' to
+    'hyrolo-mode-outline-level' and define that function to support
+    star outlines and Koutlines.  Also, make 'hyrolo-entry-regexp'
+    local and set it to its default value, after which it may be
+    modified.
+            (hyrolo-previous-match): Change so can be used in a
+    predicate when a match is found.
+            (hyrolo-mode-outline-level): Add and use in 'hyrolo-mode'.
+
+* kotl/kotl-mode.el (kotl-mode): Add local settings of:
+    'hyrolo-entry-regexp', 'outline-level', and 'outline-regexp'
+     specific to Koutlines.
+  kotl/kview.el (kview:outline-regexp): Regexp quote
+    use of 'kview:default-label-separator'.
+            (hyrolo-name-at): Change to only go to beginning of
+    the current line to check if at the start of a hyrolo entry;
+    don't do a reverse search any more.
+
+2022-08-11  Bob Weiner  <rsw@gnu.org>
+
+* kotl/kview.el (kview:outline-regexp): Add groupings to match
+    to 'hyperbole-entry-regexp' when HyRolo searches kotls.
+
+* kotl/kotl-mode.el (kotl-mode): Set this mode with 'special
+    property since cells are specially formatted and edited.
+  hyrolo.el (hyrolo-grep-file):
+  hyrolo-logic.el (hyrolo-map-logic): Don't widen buffers whose
+    major mode is marked 'special.
+
+2022-08-08  Bob Weiner  <rsw@gnu.org>
+
+* kotl/kview.el (kview:outline-regexp): Add so can be referenced
+    elsewhere.
+  kotl/kotl-mode.el (kotl-mode): Use kview:outline-regexp.
+
+2022-08-07  Bob Weiner  <rsw@gnu.org>
+
+* hyrolo.el (hyrolo-org, hyrolo-org-roam): Remove cddr call to filter
+    . and .. out since match to "\\.org$" already does.  Also add
+    missing arguments to hyrolo-org and complete doc strings.
+
 2022-07-26  Mats Lidell  <matsl@gnu.org>
 
 * kotl/kotl-orgtbl.el: Shorten docs strings to be within 80 char limit.

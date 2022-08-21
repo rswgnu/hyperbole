@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    6/30/93
-;; Last-Mod:     17-Jul-22 at 16:25:03 by Mats Lidell
+;; Last-Mod:     20-Aug-22 at 18:29:51 by Bob Weiner
 ;;
 ;; Copyright (C) 1993-2022  Free Software Foundation, Inc.
 ;; See the "../HY-COPY" file for license information.
@@ -69,6 +69,9 @@ Normally set from the UNDO element of a yank-handler; see `insert-for-yank'.")
 ;;; Public functions
 ;;; ************************************************************************
 
+;; Koutline mode is suitable only for specially formatted data.
+(put 'kotl-mode 'mode-class 'special)
+
 ;;;###autoload
 (defun kotl-mode ()
   "The major mode used to edit and view koutlines.
@@ -95,15 +98,17 @@ It provides the following keys:
   ;; from save-some-buffers, {C-x s}.
   (add-hook 'write-file-functions #'kotl-mode:update-buffer nil 'local)
   (mapc #'make-local-variable
-	'(kotl-previous-mode indent-line-function indent-region-function
-			     outline-isearch-open-invisible-function
-			     outline-regexp
-			     line-move-ignore-invisible minor-mode-alist
-			     selective-display-ellipses
-			     paragraph-separate paragraph-start))
+	'(hyrolo-entry-regexp kotl-previous-mode
+			      indent-line-function indent-region-function
+			      outline-isearch-open-invisible-function
+			      outline-level outline-regexp
+			      line-move-ignore-invisible minor-mode-alist
+			      selective-display-ellipses
+			      paragraph-separate paragraph-start))
   ;; Used by kimport.el functions.
   (unless (and (boundp 'kotl-previous-mode) kotl-previous-mode)
-    (setq kotl-previous-mode major-mode
+    (setq hyrolo-entry-regexp (concat "^" kview:outline-regexp)
+	  kotl-previous-mode major-mode
 	  ;; Remove outline minor-mode mode-line indication.
 	  minor-mode-alist (copy-sequence minor-mode-alist)
 	  minor-mode-alist (set:remove '(outline-minor-mode " Outl")
@@ -115,7 +120,8 @@ It provides the following keys:
 	  ;; Remove indication that buffer is narrowed.
 	  mode-line-format (copy-sequence mode-line-format)
 	  mode-line-format (set:remove "%n" mode-line-format)
-	  outline-regexp (concat " *[0-9][0-9a-z.]*" kview:default-label-separator)))
+	  outline-level  #'kcell-view:level
+	  outline-regexp kview:outline-regexp))
   ;;
   (when (fboundp 'add-to-invisibility-spec)
     (add-to-invisibility-spec '(outline . t)))

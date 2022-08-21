@@ -160,6 +160,7 @@
         (should (hact 'kbd-key "<"))
         (should (equal (point) (point-min)))
 
+	(re-search-forward hyrolo-hdr-regexp nil t 2)
         (should (hact 'kbd-key "n"))
         (should (looking-at "\\*\\*\\s-+Strong"))
 
@@ -178,10 +179,12 @@
         (load "../hyrolo-demo")
         (should (hact 'kbd-key "C-x 4r com RET TAB"))
         (hy-test-helpers:consume-input-events)
+
         (should (string= (buffer-name) "*Hyperbole Rolo*"))
         (should (hact 'kbd-key "<"))
         (should (equal (point) (point-min)))
 
+	(re-search-forward hyrolo-hdr-regexp nil t 2)
         (should (hact 'kbd-key "n"))
         (should (looking-at "\\*\\*\\s-+Strong"))
 
