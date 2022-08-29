@@ -1,3 +1,76 @@
+2022-08-28  Bob Weiner  <rsw@gnu.org>
+
+* kotl/klink.el (klink:act): Ensure 'hact' value is returned, not
+    the result of the 'klink:update-label' call.
+  hbut.el (hbut:get-key-src): Add to get source of button without
+    setting as current buffer.
+  kotl/klink.el (klink:at-p): Use 'hbut:get-key-src' to resolve
+    relative klink paths properly.
+
+* kotl/kotl-mode.el (kotl-mode:to-start-of-line):
+    Remove and use 'kotl-mode:beginning-of-line' instead.
+
+* hact.el (action:commandp, action:params, actype:eval):
+  hargs.el (hargs:action-get):
+  hypb.el (hypb:debug, hypb:map-vector):
+    Replace use of 'hypb:emacs-byte-code-p' with builtin
+    'byte-code-function-p.
+
+* hibtypes.el (elisp-compiler-msg):
+    Replace 'hypb:replace-match-string' with 'replace-regexp-in-string'.
+
+* hbut.el (ibut:at-p): Fix to returns nil if name and lbl-key are both nil.
+    Also add support for <> and {} ibut delimiters.
+
+* hui-mouse.el (hkey-alist): In HyRolo match buffer, test major-mode
+    rather than buffer name.
+
+* hyrolo.el (hyrolo-mode): Don't reinitialize local variables to default
+    values when already in hyrolo-mode and mode is invoked again.
+
+* kotl/kview.el (kcell-view:to-label-end): Remove check if in a buffer
+    with a kview so can be used in HyRolo match buffer as well.
+                (kcell-view:to-label-end): Handle no kview in in HyRolo
+    match buffer.
+
+* hyrolo.el (hyrolo-kill, hyrolo-toggle-narrow-to-entry,
+             hyrolo-google-contacts-grep, hyrolo-grep-file,
+             hyrolo-display-to-entry-end, hyrolo-name-at):
+  kotl/kimport.el (kimport:star-entries): Don't fold case when searching
+    for 'hyrolo-entry-regexp'.
+    (hyrolo-isearch-for-regexp): Add 2nd parameter, 'fold-search-flag'
+  used to set 'case-fold-search'.
+
+* hyrolo.el (hyrolo-find-file-noselect-function): Add so can customize
+    low-level function used by HyRolo to read in each file searched by
+    HyRolo.
+            (hyrolo-find-file): Add second optional parameter, 'find-function',
+    used to find the file.
+            (hyrolo-find-file-noselect): Add and use 'hyrolo-find-file-noselect-function'.
+	    (hyrolo-add, hyrolo-edit, hyrolo-grep, hyrolo-helm-org-rifle,
+             hyrolo-grep-file, hyrolo-map-level, hyrolo-to): Update to call
+    'hyrolo-find-file-noselect'.
+            (hyrolo-add-match): Retain entry properties in match buffer.
+	    (hyrolo-mode): Make 'outline-regexp' local in match buffer.
+
+2022-08-27  Bob Weiner  <rsw@gnu.org>
+
+* hyrolo.el (hyrolo-file-suffix-regexp): Match only to these
+    file suffixes when searching for HyRolo files in directories.
+            (hyrolo-search-directories, hyrolo-fgrep-directories,
+             hyrolo-grep-directories, hyrolo-helm-org-rifle-directories):
+    Add these functions to do HyRolo searches over filtered filenames
+    in directories.
+            (hyrolo-org): Separate helm-org-rifle behavior into a new
+    command, 'hyrolo-helm-org-directory-rifle'.
+            (hyrolo-helm-org-rifle, hyrolo-helm-org-directory-rifle):
+    Let 'helm-org-rifle-show-full-contents' be true.
+
+* hyrolo.el (hyrolo-helm-org-rifle): Limit to .org and .otl files.
+
+* hypb.el (hypb:filter-directories, hypb:readable-directories):
+    Add and use in "hyrolo.el".
+
 2022-08-21  Bob Weiner  <rsw@gnu.org>
 
 * hyrolo.el (hyrolo-set-date): Don't add a date if in a Koutline

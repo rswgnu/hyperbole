@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    6/30/93
-;; Last-Mod:     11-Aug-22 at 00:31:40 by Bob Weiner
+;; Last-Mod:     29-Aug-22 at 00:15:19 by Bob Weiner
 ;;
 ;; Copyright (C) 1993-2022  Free Software Foundation, Inc.
 ;; See the "../HY-COPY" file for license information.
@@ -362,7 +362,8 @@ cell's label and the start of its contents."
   (+ (save-excursion
        (kcell-view:to-label-end pos)
        (current-column))
-     (or lbl-sep-len (kview:label-separator-length kview))))
+     (or lbl-sep-len (kview:label-separator-length kview)
+	 (length kview:default-label-separator))))
 
 (defun kcell-view:label (&optional pos)
   "Return displayed label string of cell at optional POS or point.
@@ -470,21 +471,21 @@ Return t unless no previous cell."
   "Move point from optional POS to the end of the current cell's label (before the label separator) and return point.
 If between kcells, move to the previous one.  The current cell may be hidden."
   (when pos (goto-char pos))
-  (kview:end-of-actual-line)
-  (cond ((null kview)
-	 (error "(kcell-view:to-label-end): Invalid kview in %s; try {M-x kotl-mode RET} to fix it"
-		(current-buffer)))
-	(t
-	 (let (found)
-	   (unless (setq found (kproperty:get (1- (point)) 'kcell))
-	     ;; If not at beginning of cell contents, move there.
-	     (goto-char (kproperty:previous-single-change (point) 'kcell)))
-	   ;; Then move to the end of the label (prior to label
-	   ;; separator) via embedded kcell property.
-	   (goto-char (setq found (kproperty:previous-single-change (point) 'kcell)))
-	   (if found
-	       (point)
-	     (error "(kcell-view:to-label-end): Can't find end of current cell's label"))))))
+  (if (save-excursion
+	(goto-char (line-beginning-position))
+	(looking-at kview:outline-regexp))
+      (setq found (goto-char (- (match-end 0) 2)))
+    (kview:end-of-actual-line)
+    (let (found)
+      (unless (setq found (kproperty:get (1- (point)) 'kcell))
+	;; If not at beginning of cell contents, move there.
+	(goto-char (kproperty:previous-single-change (point) 'kcell)))
+      ;; Then move to the end of the label (prior to label
+      ;; separator) via embedded kcell property.
+      (goto-char (setq found (kproperty:previous-single-change (point) 'kcell)))
+      (if found
+	  (point)
+	(error "(kcell-view:to-label-end): Can't find end of current cell's label")))))
 
 (defun kcell-view:absolute-reference (&optional pos)
   "Return a klink to the kcell at optional POS or point; return nil if not in a kcell.
@@ -1075,7 +1076,6 @@ See also `kview:map-region', `kview:map-branch' and `kview:map-siblings'."
 	    ;; Next line ensures point is in the root of the current tree if
 	    ;; the tree is at all hidden.
 	    (kotl-mode:beginning-of-line)
-	    (kotl-mode:to-start-of-line)
 	    (setq cell-indent (kcell-view:indent nil lbl-sep-len))
 	    ;; Terminate when no further cells or when reach a cell at an equal
 	    ;; or higher level in the kotl than the first cell that we processed.

@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    04-Feb-89
-;; Last-Mod:     21-Aug-22 at 10:59:08 by Bob Weiner
+;; Last-Mod:     28-Aug-22 at 23:15:16 by Bob Weiner
 ;;
 ;; Copyright (C) 1991-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -450,7 +450,7 @@ Its default value is #'smart-scroll-down.  To disable it, set it to
     ((eq major-mode 'w3-mode) .
      ((w3-follow-link) . (w3-goto-last-buffer)))
     ;;
-    ((and (boundp 'hyrolo-display-buffer) (equal (buffer-name) hyrolo-display-buffer)) .
+    ((eq major-mode 'hyrolo-mode) .
      ((smart-hyrolo) . (smart-hyrolo-assist)))
     ;;
     ((eq major-mode 'image-dired-thumbnail-mode) .

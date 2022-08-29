@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     4-Nov-17 at 13:56:47
-;; Last-Mod:      6-Aug-22 at 21:33:05 by Mats Lidell
+;; Last-Mod:     27-Aug-22 at 15:35:52 by Bob Weiner
 ;;
 ;; Copyright (C) 2017-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -32,7 +32,7 @@
 
 ;;;###autoload
 (defun hyrolo-demo-fgrep (string &optional max-matches)
-  "Display rolo entries in \"DEMO-ROLO.otl\" matching STRING or a logic expression.
+  "Display rolo entries in \"DEMO-ROLO.otl\" matching STRING or a logical sexpression.
 Display to a maximum of optional prefix arg MAX-MATCHES.
 Each entry is displayed with all of its sub-entries.
 
@@ -42,8 +42,8 @@ that number of entries and omit file headers.
 
 Returns number of entries matched.  See also documentation for
 the function `hyrolo-demo-fgrep-logical' for documentation on the
-logical expression matching."
-  (interactive "sFind rolo string (or logical expression): \nP")
+logical sexpression matching."
+  (interactive "sFind rolo string (or logical sexpression): \nP")
   (let ((hyrolo-file-list (list (expand-file-name "DEMO-ROLO.otl" hyperb:dir))))
     (hyrolo-fgrep string max-matches)))
 

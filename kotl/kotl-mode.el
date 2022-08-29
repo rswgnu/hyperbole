@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    6/30/93
-;; Last-Mod:     20-Aug-22 at 18:29:51 by Bob Weiner
+;; Last-Mod:     29-Aug-22 at 00:15:34 by Bob Weiner
 ;;
 ;; Copyright (C) 1993-2022  Free Software Foundation, Inc.
 ;; See the "../HY-COPY" file for license information.
@@ -1553,7 +1553,6 @@ See `forward-paragraph' for more information."
   (point))
 
 ;;; This ensures that the key bound to `beginning-of-line' is replaced in kotl-mode.
-(define-obsolete-function-alias 'kotl-mode:to-start-of-line #'kotl-mode:beginning-of-line "8.0.1")
 (defalias 'kotl-mode:beginning-of-visual-line 'kotl-mode:beginning-of-line)
 (defalias 'kotl-mode:move-beginning-of-line 'kotl-mode:beginning-of-line)
 

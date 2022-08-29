@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    15-Nov-93 at 12:15:16
-;; Last-Mod:     18-Jul-22 at 21:50:46 by Mats Lidell
+;; Last-Mod:     29-Aug-22 at 01:12:26 by Bob Weiner
 ;;
 ;; Copyright (C) 1993-2022  Free Software Foundation, Inc.
 ;; See the "../HY-COPY" file for license information.
@@ -188,8 +188,8 @@ link-end-position, (including delimiters)."
 	   (or (string-match "^ *[-@|!&]" referent)
 	       (if (string-match "\\s-*," referent)
 		   (progn (setq path (substring referent 0 (match-beginning 0)))
-			  (hpath:is-p path))
-		 (hpath:is-p referent)))
+			  (hpath:is-p (expand-file-name path (file-name-directory (hbut:get-key-src)))))
+		 (hpath:is-p (expand-file-name referent (file-name-directory (hbut:get-key-src))))))
 	   ;; Eliminate matches to e-mail addresses like, <user@domain>
 	   (not (string-match "[^<> \t\n\r\f][!&@]" referent))
 	   ;; Eliminate matches to URLs
@@ -265,11 +265,11 @@ See documentation for `kcell:ref-to-id' for valid cell-ref formats."
 (defun klink:act (link start-pos)
   (let ((obuf (current-buffer)))
     ;; Perform klink's action which is to jump to link referent.
-    (hact 'link-to-kotl link)
-    (save-excursion
-      ;; Update klink label if need be, which might be in a different buffer
-      ;; than the current one.
-      (klink:update-label link start-pos obuf))))
+    (prog1 (hact 'link-to-kotl link)
+      (save-excursion
+	;; Update klink label if need be, which might be in a different buffer
+	;; than the current one.
+	(klink:update-label link start-pos obuf)))))
 
 (defun klink:parse (reference)
   "Return (file-ref cell-ref) list parsed from REFERENCE string.

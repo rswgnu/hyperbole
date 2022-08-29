@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    18-Sep-91 at 02:57:09
-;; Last-Mod:     24-Jul-22 at 11:29:49 by Bob Weiner
+;; Last-Mod:     29-Aug-22 at 01:35:59 by Bob Weiner
 ;;
 ;; Copyright (C) 1991-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -1094,6 +1094,52 @@ symbol for the button or button label that point is within or
 nil.  BUFFER defaults to the current buffer."
   (or (ebut:get lbl-key buffer key-src) (ibut:get lbl-key buffer key-src)))
 
+(defun    hbut:get-key-src (&optional full)
+  "Return key source (usually unqualified) for current Hyperbole button.
+With optional FULL when source is a pathname, return the full pathname."
+  (cond ((hmail:mode-is-p) (current-buffer))
+	;; If buffer represents the output of a document
+	;; formatter, e.g. an Info document produced from a
+	;; Texinfo source, then return the Texinfo source
+	;; file, for example.
+	((hbut:key-src-fmt))
+	;; Handle directory movement within `make' output.
+	((save-excursion
+	   (and (re-search-backward
+		 "^[a-z]*make[^a-z]+\\(Entering\\|Leaving\\) directory `\\([^']+\\)'" nil t)
+		(string-equal "Entering" (match-string 1))))
+	 (let ((limit (match-end 2))
+	       ;; Latest working directory that `make' reported
+	       (wd (match-string 2))
+	       cd)
+	   ;; But another cd or pushd command may have been issued.
+	   ;; Return the closest directory from the make output.
+	   (if (re-search-backward
+		"\\<\\(cd\\|pushd\\)\\s +[\"\']?\\([^;\"\'\n\r\^L\\]+\\)"
+		limit t)
+	       (progn (setq cd (match-string 2))
+		      ;; Eliminate any trailing whitespace.
+		      (setq cd (substring
+				cd 0 (string-match "\\s +\\'" cd)))
+		      (expand-file-name cd wd))
+	     wd)))
+	(buffer-file-name
+	 (if full
+	     buffer-file-name
+	   (file-name-nondirectory buffer-file-name)))
+	;; Handle any preceding @loc hyp-source implicit button location references.
+	;; This is used in report buffers of explicit buttons, i.e. hui:hbut-report
+	;; and the *Hyperbole Rolo* output buffer.
+	((save-excursion
+	   (save-restriction
+	     (widen)
+	     (end-of-visible-line)
+	     (when (and (search-backward hbut:source-prefix nil t)
+			(or (memq (preceding-char) '(?\n ?\r))
+			    (= (point) (point-min))))
+	       (hbut:source full)))))
+	(t (current-buffer))))
+
 (defun    hbut:is-p (object)
   "Return non-nil if OBJECT is a symbol representing a Hyperbole button."
  (when (symbolp object)
@@ -1108,50 +1154,9 @@ nil.  BUFFER defaults to the current buffer."
 
 (defun    hbut:key-src (&optional full)
   "Return key source (usually unqualified) for current Hyperbole button.
-Also sets current buffer to key source.
+Also set current buffer to key source.
 With optional FULL when source is a pathname, return the full pathname."
-  (let ((src (cond ((hmail:mode-is-p) (current-buffer))
-		   ;; If buffer represents the output of a document
-		   ;; formatter, e.g. an Info document produced from a
-		   ;; Texinfo source, then return the Texinfo source
-		   ;; file, for example.
-		   ((hbut:key-src-fmt))
-		   ;; Handle directory movement within `make' output.
-		   ((save-excursion
-		      (and (re-search-backward
-			    "^[a-z]*make[^a-z]+\\(Entering\\|Leaving\\) directory `\\([^']+\\)'" nil t)
-			   (string-equal "Entering" (match-string 1))))
-		    (let ((limit (match-end 2))
-			  ;; Latest working directory that `make' reported
-			  (wd (match-string 2))
-			  cd)
-		      ;; But another cd or pushd command may have been issued.
-		      ;; Return the closest directory from the make output.
-		      (if (re-search-backward
-			   "\\<\\(cd\\|pushd\\)\\s +[\"\']?\\([^;\"\'\n\r\^L\\]+\\)"
-			   limit t)
-			  (progn (setq cd (match-string 2))
-				 ;; Eliminate any trailing whitespace.
-				 (setq cd (substring
-					   cd 0 (string-match "\\s +\\'" cd)))
-				 (expand-file-name cd wd))
-			wd)))
-		   (buffer-file-name
-		    (if full
-			buffer-file-name
-		      (file-name-nondirectory buffer-file-name)))
-		   ;; Handle any preceding @loc hyp-source implicit button location references.
-		   ;; This is used in report buffers of explicit buttons, i.e. hui:hbut-report
-		   ;; and the *Hyperbole Rolo* output buffer.
-		   ((save-excursion
-		      (save-restriction
-			(widen)
-			(end-of-visible-line)
-			(when (and (search-backward hbut:source-prefix nil t)
-				   (or (memq (preceding-char) '(?\n ?\r))
-				       (= (point) (point-min))))
-			  (hbut:source full)))))
-		   (t (current-buffer)))))
+  (let ((src (hbut:get-key-src full)))
     (hbut:key-src-set-buffer src)))
 
 (defun    hbut:key-src-fmt ()
@@ -1523,7 +1528,9 @@ excluding delimiters, not just one."
 	   (name       (nth 0 name-start-end))
 	   (name-end   (nth 2 name-start-end))
 	   (lbl-key (or (ibut:label-to-key name)
-			(ibut:label-p nil "\"" "\"" nil t))))
+			(ibut:label-p nil "\"" "\"" nil t)
+			(ibut:label-p nil "<" ">" nil t)
+			(ibut:label-p nil "{" "}" nil t))))
       (unwind-protect
 	  (progn
 	    (when (not (hbut:outside-comment-p))
@@ -1596,7 +1603,8 @@ Return nil if no implicit button at point."
 	    ;; Any implicit button type check should leave point
 	    ;; unchanged.  Trigger an error if not.
 	    (unless (equal (point-marker) ibpoint)
-	      (hypb:error "(Hyperbole): `ibtypes::%s' implicit button type test failed to restore point to %s" is-type ibpoint)))
+	      (hypb:error "(Hyperbole): `%s' at-p test improperly moved point from %s to %s"
+			  is-type ibpoint (point-marker))))
 	  (setq types (cdr types))))
 
       (set-marker ibpoint nil)

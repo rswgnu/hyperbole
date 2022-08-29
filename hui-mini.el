@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    15-Oct-91 at 20:13:17
-;; Last-Mod:     23-Jul-22 at 23:04:56 by Bob Weiner
+;; Last-Mod:     29-Aug-22 at 00:19:54 by Bob Weiner
 ;;
 ;; Copyright (C) 1991-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -491,7 +491,7 @@ constructs.  If not given, the top level Hyperbole menu is used."
       (error "(hui:menu-multi-line): Invalid menu specified, '%s'." menu-alist))
     (with-temp-buffer
       (let (indent-tabs-mode)
-	(mapcar
+	(mapc
 	 (lambda (s)
 	   (setq item-start (* max-item-len items-in-line))
 	   (if (or (>= item-start (frame-width))
@@ -534,7 +534,6 @@ constructs.  If not given, the top level Hyperbole menu is used."
 			   (called-interactively-p 'interactive)
 			   (equal (this-single-command-keys) key)
 			   (lookup-key org-mode-map key))))
-    (setq a org-key-cmd)
     (if org-key-cmd
 	;; Prevent a conflict with {C-c /} binding in Org mode; use
 	;; more flexible, filtering Hyperbole version of this Org command
