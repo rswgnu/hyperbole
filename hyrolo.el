@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     7-Jun-89 at 22:08:29
-;; Last-Mod:     29-Aug-22 at 00:38:15 by Bob Weiner
+;; Last-Mod:     29-Aug-22 at 02:21:41 by Bob Weiner
 ;;
 ;; Copyright (C) 1991-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -462,10 +462,11 @@ Default to the first listed file when not given a prefix arg."
 (defun hyrolo-find-file-noselect (&optional file)
   "HyRolo function to read a FILE in literally.
 It uses the setting of `hyrolo-find-file-noselect-function'."
-  (if (string-match "\\.org$" file)
-      (let ((find-file-literally t))
-	(hyrolo-find-file file hyrolo-find-file-noselect-function nil t))
-    (hyrolo-find-file file hyrolo-find-file-noselect-function)))
+  (let (enable-local-variables)
+    (if (string-match "\\.org$" file)
+	(let ((find-file-literally t))
+	  (hyrolo-find-file file hyrolo-find-file-noselect-function nil t))
+      (hyrolo-find-file file hyrolo-find-file-noselect-function))))
 
 (defun hyrolo-forward-visible-line (&optional arg)
   "Move forward by optional ARG lines (default = 1), ignoring currently invisible newlines only.
