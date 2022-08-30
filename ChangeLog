@@ -1,5 +1,13 @@
 2022-08-29  Bob Weiner  <rsw@gnu.org>
 
+* hbut.el (ebut:key-src): Rename to 'ebut:to-key-src'.
+          (hbut:key-src): Rename to 'hbut:to-key-src'.
+          (ibut:key-src): Rename to 'ibut:to-key-src'.
+
+* hyrolo.el (hyrolo-verify, hyrolo-isearch, hyrolo-next-match,
+             hyrolo-previous-match, hyrolo-isearch-for-regexp):
+    Add support for use in main HyRolo file, not just match buffer.
+
 * hui-select.el (hui-select-goto-matching-delimiter, hui-select-thing):
   hui-mini.el (hui-search-web): Use Org cmd if matching key binding
     called from a keyboard macro.

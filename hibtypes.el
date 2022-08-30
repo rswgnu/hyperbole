@@ -852,7 +852,7 @@ buffer)."
                            (string-empty-p (string-trim file))))
             (let* ((but-label (concat file ":" line-num))
                    (source-loc (unless (file-name-absolute-p file)
-                                 (hbut:key-src t))))
+                                 (hbut:to-key-src t))))
               (when (stringp source-loc)
                 (setq file (expand-file-name file (file-name-directory source-loc))))
               (when (file-readable-p file)
@@ -897,7 +897,7 @@ buffer)."
 		   ;; RSW 12-05-2021 - Added hpath:expand in next line to
 		   ;; resolve any variables in the path before checking if absolute.
 		   (source-loc (unless (file-name-absolute-p (hpath:expand file))
-                                 (hbut:key-src t))))
+                                 (hbut:to-key-src t))))
               (if (stringp source-loc)
                   (setq file (expand-file-name file (file-name-directory source-loc)))
 		(setq file (or (hpath:prepend-shell-directory file) file)))
@@ -957,7 +957,7 @@ in grep and shell buffers."
 	       ;; RSW 12-05-2021 - Added hpath:expand in next line to
 	       ;; resolve any variables in the path before checking if absolute.
                (source-loc (unless (file-name-absolute-p (hpath:expand file))
-                             (hbut:key-src t))))
+                             (hbut:to-key-src t))))
           (if (stringp source-loc)
               (setq file (expand-file-name file (file-name-directory source-loc)))
 	    (setq file (or (hpath:prepend-shell-directory file) file)))

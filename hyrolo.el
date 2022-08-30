@@ -397,7 +397,7 @@ Return entry name if found, else nil."
   (let ((name (hyrolo-name-at))
 	src)
     (if name
-	(progn (setq src (hbut:key-src))
+	(progn (setq src (hbut:to-key-src))
 	       (cond ((and (boundp 'bbdb-file) (stringp bbdb-file) (equal src (expand-file-name bbdb-file)))
 		      ;; For now, can't edit an entry from the bbdb database, signal an error.
 		      (error "(hyrolo-edit-entry): BBDB entries are not editable"))
@@ -579,10 +579,12 @@ search for the current match regular expression rather than string."
   (if arg
       (hyrolo-isearch-regexp)
     (hyrolo-verify)
-    (setq unread-command-events
-	  (append unread-command-events (string-to-list (regexp-quote hyrolo-match-regexp))))
-    (let ((case-fold-search t))
-      (isearch-forward))))
+    (if hyrolo-match-regexp
+	(progn (setq unread-command-events
+		     (append unread-command-events (string-to-list (regexp-quote hyrolo-match-regexp))))
+	       (let ((case-fold-search t))
+		 (isearch-forward)))
+      (error (substitute-command-keys "(hyrolo-isearch): Use {\\[hyrolo-grep-or-fgrep]} to do an initial search")))))
 
 (defun hyrolo-isearch-regexp (&optional arg)
   "Interactively search forward for the next occurrence of the current match regexp.
@@ -595,7 +597,9 @@ search for the current match string rather than regular expression."
 
 (defun hyrolo-verify ()
   "Verify point is in a rolo match buffer."
-  (when (not (equal (buffer-name) hyrolo-display-buffer))
+  (when (not (member (buffer-name) (list hyrolo-display-buffer
+					 (and (car hyrolo-file-list)
+					      (file-name-nondirectory (car hyrolo-file-list))))))
     (error "(HyRolo): Use this command in the %s match buffer"
 	   hyrolo-display-buffer)))
 
@@ -687,7 +691,7 @@ Raise an error if a match is not found."
       (if prior-regexp-search
 	  (error
 	   "(hyrolo-next-match): No following matches for \"%s\"" hyrolo-match-regexp)
-	(error "(hyrolo-next-match): No prior regular expression search to match")))))
+	(error (substitute-command-keys "(hyrolo-next-match): Use {\\[hyrolo-grep-or-fgrep]} to do a search first"))))))
 
 (defun hyrolo-overview (levels-to-show)
   "Show the first line of all levels of rolo matches.
@@ -710,10 +714,12 @@ This could be the current match if point is past its `hyrolo-match-regexp'.
 Raise an error if a match is not found."
   (interactive)
   (hyrolo-verify)
-  (let ((case-fold-search t))
-    (or (re-search-backward hyrolo-match-regexp nil t)
-	(error
-	 "(hyrolo-previous-match): No prior matches for \"%s\"" hyrolo-match-regexp))))
+  (if hyrolo-match-regexp
+      (let ((case-fold-search t))
+	(or (re-search-backward hyrolo-match-regexp nil t)
+	    (error
+	     "(hyrolo-previous-match): No prior matches for \"%s\"" hyrolo-match-regexp)))
+    (error (substitute-command-keys "(hyrolo-previous-match): Use {\\[hyrolo-grep-or-fgrep]} to do an initial search"))))
 
 (defun hyrolo-prompt (keyboard-function prompt)
   "Use KEYBOARD-FUNCTION to PROMPT for a yes/no answer."
@@ -1477,10 +1483,11 @@ HYROLO-BUF may be a file-name, `buffer-name', or buffer."
 Then add characters to further narrow the search."
   (hyrolo-verify)
   (if (stringp regexp)
-      (setq unread-command-events
-	    (append unread-command-events (string-to-list regexp))))
-  (let ((case-fold-search fold-search-flag))
-    (isearch-forward-regexp)))
+      (progn (setq unread-command-events
+		   (append unread-command-events (string-to-list regexp)))
+	     (let ((case-fold-search fold-search-flag))
+	       (isearch-forward-regexp)))
+    (error "(hyrolo-isearch-for-regexp): 'regexp' must be a string, not: %s" regexp)))
 
 (defun hyrolo-kill-buffer (&optional hyrolo-buf)
   "Kill optional HYROLO-BUF if unchanged and `hyrolo-kill-buffers-after-use' is t.

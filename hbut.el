@@ -146,8 +146,8 @@ Return nil if no matching button is found."
 	(when (not (equal lbl-key (ebut:label-p nil start-delim end-delim)))
 	  (goto-char (point-min))
 	  (ebut:next-occurrence lbl-key))
-	(when (setq key-src (ebut:key-src 'full))
-	  ;; `ebut:key-src' sets current buffer to key-src buffer.
+	(when (setq key-src (ebut:to-key-src 'full))
+	  ;; `ebut:to-key-src' sets current buffer to key-src buffer.
 	  (setq buffer (current-buffer))))
       (when (and (stringp lbl-key) key-src)
 	(when (stringp key-src)
@@ -198,7 +198,7 @@ Return nil if no matching button is found."
   (and (stringp key) (stringp label)
        (equal key (downcase (ebut:label-to-key label)))))
 
-(defalias 'ebut:key-src            #'hbut:key-src)
+(defalias 'ebut:to-key-src            #'hbut:to-key-src)
 (defalias 'ebut:key-src-set-buffer #'hbut:key-src-set-buffer)
 (defalias 'ebut:key-src-fmt        #'hbut:key-src-fmt)
 (defalias 'ebut:key-to-label       #'hbut:key-to-label)
@@ -1072,8 +1072,8 @@ point when desired."
     (let ((loc (hattr:get 'hbut:current 'loc)))
       (when loc
 	(set-buffer (or (get-buffer loc) (find-file-noselect loc)))))
-    (setq key-src (hbut:key-src 'full)
-	  ;; `hbut:key-src' sets current buffer to key-src buffer.
+    (setq key-src (hbut:to-key-src 'full)
+	  ;; `hbut:to-key-src' sets current buffer to key-src buffer.
 	  buffer (or buffer (current-buffer))))
   (when (stringp lbl-key)
     (when key-src
@@ -1152,7 +1152,7 @@ With optional FULL when source is a pathname, return the full pathname."
     (error "(hbut:key): Argument is not a Hyperbole button symbol, `%s'"
 	   hbut)))
 
-(defun    hbut:key-src (&optional full)
+(defun    hbut:to-key-src (&optional full)
   "Return key source (usually unqualified) for current Hyperbole button.
 Also set current buffer to key source.
 With optional FULL when source is a pathname, return the full pathname."
@@ -1382,7 +1382,7 @@ Return number of buttons reported on or nil if none."
 		  (t 1)))
   (let* ((but (if (and arg (symbolp arg)) arg (hbut:at-p)))
 	 (curr-key (and but (hattr:get but 'lbl-key)))
-	 (key-src (or (and but (hattr:get but 'loc)) (hbut:key-src)))
+	 (key-src (or (and but (hattr:get but 'loc)) (hbut:to-key-src)))
 	 (lbl-lst (cond ((not arg)
 			 (if curr-key (list (ebut:key-to-label curr-key))))
 			((symbolp arg) (if curr-key
@@ -1650,7 +1650,7 @@ Return nil if no implicit button at point."
 	  (if current-loc
 	      (setq loc current-loc)
 	    (unless loc
-	      (setq loc (save-excursion (hbut:key-src 'full))))
+	      (setq loc (save-excursion (hbut:to-key-src 'full))))
 	    (when loc
 	      (hattr:set 'hbut:current 'loc loc)))
 
@@ -1848,7 +1848,7 @@ positions at which the button label delimiter begins and ends."
     (error "(ibut:key): Argument is not a Hyperbole implicit button symbol, `%s'"
 	   ibut)))
 
-(defalias 'ibut:key-src      'hbut:key-src)
+(defalias 'ibut:to-key-src   'hbut:to-key-src)
 (defalias 'ibut:key-to-label 'hbut:key-to-label)
 (defalias 'ibut:label-to-key 'hbut:label-to-key)
 (defalias 'map-ibut          'ibut:map)
