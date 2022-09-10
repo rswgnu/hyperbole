@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell
 ;;
 ;; Orig-Date:     6-Oct-91 at 03:42:38
-;; Last-Mod:     27-Aug-22 at 13:46:22 by Mats Lidell
+;; Last-Mod:     11-Sep-22 at 00:39:27 by Mats Lidell
 ;;
 ;; Copyright (C) 1991-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -14,8 +14,8 @@
 
 ;;; Commentary:
 ;;
-;; Proof of concept: Implements a register struct for ebut.  To be
-;; completed with similar for ibut.
+;; Implements a struct for ebut and ibut, a content type of a
+;; register.  See "(Emacs) Registers"
 ;;
 
 (eval-when-compile (require 'cl-lib))
@@ -30,6 +30,7 @@
   "Button register struct."
   label file mpos link)
 
+;;;###autoload
 (defun hypb-register-struct-at-point ()
   "Make a Hyperbole link to button register struct for button at point."
   (let* ((ebut-label (ebut:label-p))
