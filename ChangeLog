@@ -6,6 +6,11 @@
 
 2022-09-14  Mats Lidell  <matsl@gnu.org>
 
+* test/hui-register-tests.el (hui-register-test--create-register-content)
+    (hui-register-test--register-val-jump-to)
+    (hui-register-test--register-val-insert): Add test cases for
+    hui-register.
+
 * Makefile (EL_COMPILE, ELC_COMPILE): Add hui-register.
 
 * hywconfig.el:
