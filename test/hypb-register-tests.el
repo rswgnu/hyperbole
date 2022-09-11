@@ -1,9 +1,9 @@
-;;; hypb-register-tests.el --- one line summary                -*- lexical-binding: t; -*-
+;;; hypb-register-tests.el --- test for hypb-register         -*- lexical-binding: t; -*-
 ;;
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    10-Sep-22 at 20:43:17
-;; Last-Mod:     10-Sep-22 at 23:14:13 by Mats Lidell
+;; Last-Mod:     11-Sep-22 at 17:27:34 by Mats Lidell
 ;;
 ;; Copyright (C) 2021-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
