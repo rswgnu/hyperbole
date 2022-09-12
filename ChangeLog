@@ -1,3 +1,11 @@
+2022-09-12  Mats Lidell  <matsl@gnu.org>
+
+* hpath.el (hpath:tramp-file-name-regexp): Handle tramp regexp from
+    different Emacs versions.
+
+* test/hpath-tests.el (hpath:remote-at-p): Add test case for
+    hpath:remote-at-p.
+
 2022-08-29  Bob Weiner  <rsw@gnu.org>
 
 * hbut.el (ebut:key-src): Rename to 'ebut:to-key-src'.
