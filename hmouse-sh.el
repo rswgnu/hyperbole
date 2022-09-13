@@ -169,7 +169,7 @@ Use nil as cmd value to unbind a key."
 (defun hmouse-bind-shifted-key-emacs (shifted-mouse-key-number depress-cmd release-cmd)
   "Ensure SHIFTED-MOUSE-KEY-NUMBER (1-5) is bound to DEPRESS-CMD and RELEASE-CMD.
 This includes depresses and drags.  Shifted Mouse Key 1 is
-[S-mouse-1], etc.  Use nil as CMD value to unbind the key."
+[S-mouse-1], etc.  Use nil as cmd value to unbind the key."
   (hmouse-set-key-list
    depress-cmd
    (nth (1- shifted-mouse-key-number)
