@@ -275,7 +275,7 @@ This includes depresses and drags.  Shifted Mouse Key 1 is
 	   
 (defun hmouse-get-bindings (hmouse-middle-flag)
   "Return the list of active bindings of mouse keys used by Hyperbole.
-If HMOUSE-MIDDLE-FLAG is non-nil, includes the middle mouse key
+If HMOUSE-MIDDLE-FLAG is non-nil, include the middle mouse key
 binding as well.  These may be the bindings prior to initializing
 Hyperbole or the Hyperbole bindings."
   ;; Do nothing when running in batch mode.
