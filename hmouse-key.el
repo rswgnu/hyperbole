@@ -34,8 +34,8 @@
 ;;; ************************************************************************
 
 (defun hmouse-check-action-key ()
-  "After use ensure both depress and release events are assigned to the action key.
-Returns t iff the key is properly bound, else nil."
+  "After Action Mouse Key use, ensure both depress and release events are bound.
+Return t iff the key is properly bound, else nil."
   (and (or (and (eventp action-key-depress-args) (eventp action-key-release-args))
 	   (not (or action-key-depress-args action-key-release-args)))
        (where-is-internal 'action-key-depress-emacs hyperbole-mode-map t)
