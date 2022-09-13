@@ -69,7 +69,7 @@ bindings after Smart Key setup."
   "Initialize Hyperbole mouse buttons.
 Bind the two rightmost shifted mouse keys to the Action and
 Assist Keys.  With optional prefix ARG or under InfoDock, also
-binds the unshifted middle mouse key to the Action Key.
+bind the unshifted middle mouse key to the Action Key.
 
 The standard Hyperbole configuration is Action Key = shift-middle mouse key;
 Assist Key = shift-right mouse key."
