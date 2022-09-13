@@ -51,8 +51,8 @@
 
 (defun hmouse-bind-key-emacs (mouse-key-number depress-cmd release-cmd)
   "Ensure MOUSE-KEY-NUMBER (1-5) is bound to DEPRESS-CMD and RELEASE-CMD.
-This includes depresses and drags.  Mouse key 1 is [mouse-1] etc.
-Use nil as cmd values to unbind a key."
+This includes depresses and drags.  Mouse key 1 is [mouse-1], etc.
+Use nil as cmd value to unbind a key."
   (hmouse-set-key-list
    depress-cmd
    (nth (1- mouse-key-number)
