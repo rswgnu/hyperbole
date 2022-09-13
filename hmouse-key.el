@@ -42,8 +42,8 @@ Return t iff the key is properly bound, else nil."
        (where-is-internal 'action-mouse-key-emacs hyperbole-mode-map t)))
 
 (defun hmouse-check-assist-key ()
-  "After use ensure both depress and release events are assigned to the assist key.
-Returns t iff the key is properly bound, else nil."
+  "After Assist Mouse Key use, ensure both depress and release events are bound.
+Return t iff the key is properly bound, else nil."
   (and (or (and (eventp assist-key-depress-args) (eventp assist-key-release-args))
 	   (not (or assist-key-depress-args assist-key-release-args)))
        (where-is-internal 'assist-key-depress-emacs hyperbole-mode-map t)
