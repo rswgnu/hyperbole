@@ -332,10 +332,9 @@ If on the menu name prefix or the last item, move to the first item."
 	  (select-window owind)))))
 
 (defun hui:menu-item-keys (menu-alist)
-  "Return list of keys used to activate items in Hyperbole minibuffer MENU-ALIST.
-The list of keys is ordered.  For each item, the key is either
-the first capital letter in item or if there are none, then its
-first character."
+  "Return ordered list of keys that activate Hypb minibuffer MENU-ALIST items.
+For each item, the key is either the first capital letter in item or if there are none, 
+then its first character."
   (mapcar (lambda (item)
 	    ;; Return either the first capital letter in item or if
 	    ;; none, then its first character.
