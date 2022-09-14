@@ -306,8 +306,7 @@ If on the menu name prefix or the last item, move to the first item."
 	(setq arg (1- arg))))))
 
 (defun hui:menu-help (help-str)
-  "Displays HELP-STR in a small window at the bottom of the selected frame.
-HELP-STR must be a string."
+  "Display HELP-STR in a small window at the bottom of the selected frame."
   (let* ((window-min-height 2)
 	 (owind (selected-window))
 	 (buf-name (hypb:help-buf-name "Menu")))
