@@ -277,7 +277,7 @@ Default is the current button."
 
 (defun hui:ebut-create (&optional start end)
   "Interactively create an explicit Hyperbole button.
-Start from label between optional START and END region points.
+Use any label between optional START and END region points.
 Indicate button creation by delimiting and adding any necessary
 instance number to the button label.
 
