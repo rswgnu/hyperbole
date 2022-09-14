@@ -94,9 +94,9 @@ Use to remove from hook variables."
   (symbol-value var-symbol))
 
 (defun var:remove-all ()
-  "Remove all hook values added by var:append from their associated hook variables.
-Only affects hook values added by `var:append' in this Emacs session.  Keeps a
-copy of these values for future re-use, see `var:append-all'."
+  "Remove all hook values added by `var:append' from their hook variables.
+Affects only those hook values added by `var:append' in this Emacs session.
+Keep a copy of these values for future re-use; see `var:append-all'."
   (mapc (lambda (elt) (var:remove (car elt) (cdr elt)))
 	var::append-list)
   var::append-list)
