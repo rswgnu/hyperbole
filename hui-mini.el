@@ -191,7 +191,7 @@ Return nil when already in a Hyperbole minibuffer menu."
       (setq hui:menu-p nil))))
 
 (defun hui:menu-get-keys (menu &optional menu-list)
-  "Prompt user with Hyperbole MENU, select an item and return the keys pressed.
+  "Prompt with Hyperbole MENU symbol, select an item and return the keys pressed.
 Optional second argument MENU-LIST is a Hyperbole menu list structure from
 which to extract MENU.  It defaults to `hui:menus'.  See its definition for
 the menu list structure."
