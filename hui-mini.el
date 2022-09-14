@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    15-Oct-91 at 20:13:17
-;; Last-Mod:     14-Sep-22 at 23:07:13 by Mats Lidell
+;; Last-Mod:     14-Sep-22 at 23:12:54 by Mats Lidell
 ;;
 ;; Copyright (C) 1991-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -333,7 +333,7 @@ If on the menu name prefix or the last item, move to the first item."
 
 (defun hui:menu-item-keys (menu-alist)
   "Return ordered list of keys that activate Hypb minibuffer MENU-ALIST items.
-For each item, the key is either the first capital letter in item or if there are none, 
+For each item, the key is either the first capital letter in item or if there are none,
 then its first character."
   (mapcar (lambda (item)
 	    ;; Return either the first capital letter in item or if
@@ -426,7 +426,7 @@ documentation, not the full text."
     (nth (- (length winds) (length (memq bot bot-list))) winds)))
 
 (defun hui:menu-item (key doc-flag help-string-flag &optional menu menu-alist)
-"Return either action or documentation for a Hyperbole minibuffer menu item KEY.
+  "Return either action or documentation for a Hyperbole minibuffer menu item KEY.
 If DOC-FLAG is non-nil, returns the fully formatted documentation unless
 HELP-STRING-FLAG is non-nil, in which case only the first line of
 documentation is returned.  If both are nil, the action form for the
