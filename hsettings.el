@@ -86,8 +86,8 @@
 ;; The Smart Menu system is an attractive in-buffer menu system that
 ;; predates Emacs menu systems; it is included in InfoDock.
 (defvar hkey-always-display-menu nil
-  "*Non-nil means always display the Smart Menu window.
-It is displayed when the Action or Assist Key is pressed and the
+  "*Non-nil means display the Smart Menu window in the following case.
+Display when the Action or Assist Key is pressed and the
 Smart Menu system has been loaded.  If a Smart Menu is already
 displayed, perform another Action or Assist Key function.")
 
