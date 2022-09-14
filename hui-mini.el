@@ -38,7 +38,7 @@ Also exists any active minibuffer menu.")
 
 (defvar hui:menu-keys            ""
   "String of keys pressed for current or last Hyperbole command.
-This does not include the prefix used to invoke the Hyperbole menu.")
+This excludes the prefix used to invoke the Hyperbole menu.")
 
 (defvar hui:menu-p nil
   "Non-nil iff the Hyperbole minibuffer menu is active.")
