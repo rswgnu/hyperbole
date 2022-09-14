@@ -692,7 +692,8 @@ Use `hpath:display-buffer' to show definition or documentation."
 		      (xref-etags-mode 0))))))))
 
 (defun smart-lisp-at-definition-p ()
-  "Non-nil if point is on the first line of a non-alias Lisp definition."
+  "Return non-nil if point is on the first line of a non-alias Lisp definition.
+  Apply only to non-help buffers and return nil in others."
     (unless (derived-mode-p 'help-mode)
       (save-excursion
 	(beginning-of-line)
