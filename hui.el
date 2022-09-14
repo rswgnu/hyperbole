@@ -1405,7 +1405,7 @@ Optional NO-SORT means display in decreasing priority order (natural order)."
     (hui:htype-help htype-sym no-sort)))
 
 (defun hui:ibut-delete-op (interactive but-key key-src)
-  "Delete explicit Hyperbole button given by BUT-KEY in KEY-SRC.
+  "INTERACTIVEly or not, delete explicit button given by BUT-KEY in KEY-SRC.
 KEY-SRC may be a buffer or a pathname; when nil the current buffer is used.
 Return t if button is deleted, signal error otherwise.  If called
 with INTERACTIVE non-nil, derive BUT-KEY from the button that point is
