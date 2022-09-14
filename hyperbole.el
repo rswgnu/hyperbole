@@ -133,7 +133,8 @@
 See `hkey-initialize'.")
 
 (defcustom hyperbole-mode-lighter " Hypb"
-  "String to display in mode line when the Hyperbole mode is enabled, nil for none."
+  "String to display in mode line when the Hyperbole global minor mode is enabled.
+  Use nil for no Hyperbole mode indicator."
   :type 'string
   :group 'hyperbole)
 
