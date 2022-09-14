@@ -180,7 +180,7 @@ documentation, not the full text."
 
 (defun hui:get-keys ()
   "Invoke the Hyperbole minibuffer menu and return menu keys pressed.
-Return nil when already in a Hyperbole mini-menu."
+Return nil when already in a Hyperbole minibuffer menu."
   (if (and hui:menu-p (> (minibuffer-depth) 0))
       (progn (beep) nil)
     (unwind-protect
