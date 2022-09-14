@@ -98,13 +98,12 @@ Action Key."
   :group 'hyperbole-keys)
 
 (defcustom smart-scroll-proportional t
-  "*Non-nil means scroll behavior is relative to current line.
+  "*Non-nil means Smart Key scroll behavior is relative to current line.
 Smart Keys will scroll relative to current line when pressed at
-the end of a line.  Action Key moves current line to top of
-window.  Assist Key moves current line to bottom of window.
+the end of a line.  Action Key moves current line to top of the
+window.  Assist Key moves current line to bottom of the window.
 Repeated presses then scroll up or down a windowful.  Nil value
-instead ignores current line and always scrolls up or down a
-windowful."
+ignores current line and always scrolls up or down a windowful."
   :type 'boolean
   :group 'hyperbole-keys)
 
