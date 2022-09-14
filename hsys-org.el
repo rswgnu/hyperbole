@@ -97,8 +97,8 @@ If LINK is nil, follows any link at point.  Otherwise, triggers an error."
 
 (defact org-internal-link-target (&optional link-target)
   "Follows an optional Org mode LINK-TARGET back to its link definition.
-If LINK-TARGET is nil, follows any link target at point.
-Otherwise, triggers an error."
+If LINK-TARGET is nil, follow any link target at point.
+Otherwise, trigger an error."
   (let (start-end)
     (cond ((stringp link-target)
 	   (setq start-end t)
