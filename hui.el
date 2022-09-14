@@ -159,8 +159,8 @@ visual feedback indicating the extent of the region being copied."
 
 (defun hui:global-bind-key (cmd &optional new-key)
   "Remove existing global key binding for CMD, rebind it to optional NEW-KEY.
-If NEW-KEY is not provided the new key is prompted for.
-The change is confirmed."
+If NEW-KEY is not provided, prompt for it.  Display a message confirming
+the binding."
   (interactive "CCommand to change key binding of: \nKNew key to bind: ")
   (if (not (functionp cmd))
       (error "(hui:global-bind-key): Invalid command, `%s'" cmd))
