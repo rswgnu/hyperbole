@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    10-Sep-22 at 20:43:17
-;; Last-Mod:     14-Sep-22 at 22:17:43 by Mats Lidell
+;; Last-Mod:     14-Sep-22 at 22:24:50 by Mats Lidell
 ;;
 ;; Copyright (C) 2021-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -24,10 +24,10 @@
   (let ((file (make-temp-file "hypb")))
     (unwind-protect
         (find-file file)
-        (insert "<[label]> $HOME")
+        (insert "<[label label]> $HOME")
         (goto-char 5)
         (let ((content (hui-register-struct-at-point)))
-          (should (equal (hui-register-but-label content) "label"))
+          (should (equal (hui-register-but-label content) "label_label"))
           (should (equal (hui-register-but-link content) 'link-to-ibut))
           (should (markerp (hui-register-but-mpos content)))
           (should (equal (marker-buffer (hui-register-but-mpos content)) (current-buffer)))
