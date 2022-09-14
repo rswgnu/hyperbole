@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    15-Oct-91 at 20:13:17
-;; Last-Mod:     14-Sep-22 at 23:12:54 by Mats Lidell
+;; Last-Mod:     15-Sep-22 at 00:01:16 by Mats Lidell
 ;;
 ;; Copyright (C) 1991-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -26,7 +26,8 @@
 ;;; ************************************************************************
 
 (defvar hui:hypb-exit            "X"
-Also exists any active minibuffer menu.")
+  "*Upper case character string which exits from/disables Hyperbole mode.
+Also exits any active minibuffer menu.")
 (defvar hui:menu-select          "\C-m"
   "*Character string which selects the Hyperbole menu item at point.")
 (defvar hui:menu-quit            "Q"
