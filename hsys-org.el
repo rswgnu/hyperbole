@@ -232,7 +232,7 @@ or are looking for an Org link in another buffer type."
 
 ;; Assume caller has already checked that the current buffer is in org-mode.
 (defun hsys-org-target-at-p ()
-  "Non-nil means point is on an Org mode radio target or radio target link.
+  "Return non-nil iff point is on an Org radio target or radio target link.
 The radio target is the definition and the radio target link is
 the referent.  Assume caller has already checked that the current
 buffer is in `org-mode'."
