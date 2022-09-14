@@ -190,7 +190,7 @@ Return the (start . end) buffer positions of the region."
        (org-get-at-bol 'org-marker)))
 
 (defun hsys-org-block-start-at-p ()
-  "Non-nil means point is on the first line of an Org block definition, else nil."
+  "Return non-nil if point is on the first line of an Org block definition, else nil."
   (save-excursion
     (forward-line 0)
     (or (looking-at org-block-regexp)
