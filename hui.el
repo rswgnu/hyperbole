@@ -1282,7 +1282,7 @@ With a prefix argument, also delete the button text between the delimiters."
 		file-name)))
 
 (defun hui:hbut-operate (operation operation-str &optional but)
-  "Execute OPERATION described by OPERATION-STR action on a Hyperbole button.
+  "Execute OPERATION func described by OPERATION-STR action on a Hyperbole button.
 Either the button at point is used or if none, then one is prompted
 for with completion of all labeled buttons within the current buffer."
   (unless (or but (setq but (hbut:at-p)))
