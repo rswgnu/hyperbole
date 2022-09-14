@@ -36,7 +36,7 @@
   (let* ((ebut-label (ebut:label-p))
          (ibut-label (ibut:label-p))
          (label (or ebut-label ibut-label)))
-    (when (null label)
+    (unless label
       (hypb:error "Point must be at a Hyperbole button"))
     (make-hypb-register-but
      :label label
