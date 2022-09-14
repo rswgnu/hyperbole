@@ -698,9 +698,9 @@ The default is the current button."
 
 (defun hui:hbut-delete (&optional but-key key-src)
   "Delete a Hyperbole button given by optional BUT-KEY in optional KEY-SRC.
-Uses current buffer if no KEY-SRC is given.  Return t if button
-is deleted, nil if user chooses not to delete or signal an error
-otherwise.  If called interactively, prompt user whether to
+Use current buffer if no KEY-SRC is given.  Return t if button
+is deleted, nil if user chooses not to delete, or signal an error
+otherwise.  If called interactively, prompt user for whether to
 delete and derive BUT-KEY from the button that point is within.
 Signal an error if point is not within a button."
   (interactive)
