@@ -950,7 +950,7 @@ its buttons, the label is simply inserted at point."
 	  (t (error "(hui:ibut-label-create): To add a label, point must be within the text of an implicit button")))))
 
 (defun hui:ibut-rename (lbl-key)
-  "Rename a label for an implicit button in the current buffer given by LBL-KEY.
+  "Rename a label preceding an implicit button in current buffer given by LBL-KEY.
 Signal an error when no such button is found in the current buffer."
   (interactive (list (save-excursion
 		       (hui:buf-writable-err (current-buffer) "ibut-rename")
