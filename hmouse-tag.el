@@ -1111,9 +1111,8 @@ Look for include file in `smart-c-cpp-include-path' and in directory list
       nil)))
 
 (defun smart-flash-tag (tag start end)
-  "Try to flash TAG at START to END in buffer.
-To indicate that it is serving as a hyperlink button.
-Return TAG."
+  "Try to flash TAG at START to END in current buffer and return TAG.
+This indicates that TAG is serving as a hyperlink button."
   ;; Button flashing code might not yet have been loaded if the whole
   ;; Hyperbole system has not been started.
   (when (and (fboundp 'hui:but-flash)
