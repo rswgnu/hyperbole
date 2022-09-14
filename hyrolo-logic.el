@@ -73,7 +73,7 @@
 ;;;###autoload
 (defun hyrolo-fgrep-logical (expr &optional count-only include-sub-entries no-sub-entries-out)
   "Display rolo entries matching EXPR.
-EXPR is a string which may contain prefix logical operators.
+EXPR is a string that may contain sexpression logical prefix operators.
 If optional COUNT-ONLY is non-nil, don't display entries, return
 count of matching entries only.  If optional INCLUDE-SUB-ENTRIES
 flag is non-nil, SEXP will be applied across all sub-entries at
