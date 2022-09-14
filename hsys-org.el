@@ -37,7 +37,7 @@
 
 ;;;###autoload
 (defun hsys-org-meta-return-shared-p ()
-  "Non-nil means hyperbole-mode is active and shares the org-meta-return binding."
+  "Return non-nil if hyperbole-mode is active and shares the org-meta-return key."
   (let ((org-meta-return-keys (where-is-internal #'org-meta-return org-mode-map)))
     (when (or (set:intersection org-meta-return-keys
 				(where-is-internal #'hkey-either hyperbole-mode-map))
