@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell
 ;;
 ;; Orig-Date:     6-Oct-91 at 03:42:38
-;; Last-Mod:     14-Sep-22 at 20:59:47 by Mats Lidell
+;; Last-Mod:     18-Sep-22 at 00:40:52 by Mats Lidell
 ;;
 ;; Copyright (C) 1991-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -52,6 +52,8 @@
   "Move point to location for Hyperbole button stored in VAL."
   (let ((buf (marker-buffer (hui-register-but-mpos val)))
         (pos (marker-position (hui-register-but-mpos val))))
+    (unless buf
+      (user-error "That Hyperbole button's buffer no longer exists"))
     (switch-to-buffer buf)
     (goto-char pos)))
 
