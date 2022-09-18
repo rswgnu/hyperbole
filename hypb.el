@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     6-Oct-91 at 03:42:38
-;; Last-Mod:     18-Sep-22 at 22:31:31 by Mats Lidell
+;; Last-Mod:     18-Sep-22 at 22:39:36 by Mats Lidell
 ;;
 ;; Copyright (C) 1991-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -572,6 +572,15 @@ WINDOW pixelwise."
 	 (get-text-property 0 'hyperbole object))
 	((symbolp object)
 	 (get object 'hyperbole))))
+
+(defun hypb:readable-directories (&rest dirs)
+  "Flatten rest of DIRS and return or error if any of DIRS are unreadable."
+  (setq dirs (flatten-list dirs))
+  (let ((unreadable-dirs (delq nil (mapcar (lambda (dir) (unless (file-readable-p dir) dir)) dirs))))
+    (when unreadable-dirs
+      (error "(hypb:readable-directories): These directories are not readable:\n%s"
+	     (string-join unreadable-dirs "\n"))))
+  dirs)
 
 ;;;###autoload
 (defun hypb:require-package (package-name)
