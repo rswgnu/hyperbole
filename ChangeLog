@@ -1,15 +1,7 @@
-2022-09-18  Mats Lidell  <matsl@gnu.org>
+2022-09-19  Mats Lidell  <matsl@gnu.org>
 
-* hypb.el (hypb:replace-match-string): Remove function.
-    (hypb:emacs-byte-code-p): Remove obsolete definition.
+* hypb.el (hypb:replace-match-string): Remove unused function.
 
-* kotl/kview.el (kview:map-tree): Remove duplicate call to go to
-    beginning of line.
-
-* hibtypes.el: Use replace-regexp-in-string.
-
-* hypb.el:
-* hargs.el:
 * hact.el: Use byte-code-function-p.
 
 2022-09-14  Mats Lidell  <matsl@gnu.org>
