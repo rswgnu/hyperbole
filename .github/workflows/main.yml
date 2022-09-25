@@ -22,7 +22,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        version: [27.2, 28.1, master]
+        version: [27.2, 28.2, master]
     container: silex/emacs:${{ matrix.version }}-ci
 
     # Steps represent a sequence of tasks that will be executed as part of the job
