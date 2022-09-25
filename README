@@ -1,3 +1,5 @@
+Adding a line to trigger a build to see if the 28.1 requirement is still enforced although the workflow was changed.
+
 # README --- Information GNU Hyperbole users and maintainers should read
 #
 # Author:       Bob Weiner
