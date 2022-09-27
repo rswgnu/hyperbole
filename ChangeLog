@@ -1,3 +1,9 @@
+2022-09-19  Mats Lidell  <matsl@gnu.org>
+
+* hypb.el (hypb:replace-match-string): Remove unused function.
+
+* hact.el: Use byte-code-function-p.
+
 2022-09-14  Mats Lidell  <matsl@gnu.org>
 
 * hywconfig.el:
