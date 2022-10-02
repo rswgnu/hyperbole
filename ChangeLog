@@ -1,10 +1,7 @@
-2022-09-19  Mats Lidell  <matsl@gnu.org>
+2022-10-02  Mats Lidell  <matsl@gnu.org>
 
-* hypb.el (hypb:replace-match-string): Remove unused function.
-
-* hact.el: Use byte-code-function-p.
-
-2022-09-14  Mats Lidell  <matsl@gnu.org>
+* hui.el (hui-copy-to-register): Use hui-register-struct-at-point if on a
+    button.
 
 * test/hui-register-tests.el (hui-register-test--create-register-content)
     (hui-register-test--register-val-jump-to)
@@ -12,6 +9,14 @@
     hui-register.
 
 * Makefile (EL_COMPILE, ELC_COMPILE): Add hui-register.
+
+2022-09-19  Mats Lidell  <matsl@gnu.org>
+
+* hypb.el (hypb:replace-match-string): Remove unused function.
+
+* hact.el: Use byte-code-function-p.
+
+2022-09-14  Mats Lidell  <matsl@gnu.org>
 
 * hywconfig.el:
 * htz.el:
