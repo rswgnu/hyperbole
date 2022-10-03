@@ -1,5 +1,6 @@
 2022-10-03  Mats Lidell  <matsl@gnu.org>
 
+* hui-select.el:
 * hpath.el:
 * hibtypes.el:
 * hyrolo-logic.el:
