@@ -39,7 +39,7 @@
 ;;;###autoload
 (defun var:add-and-run-hook (hook hook-function)
   "Add to mode HOOK the HOOK-FUNCTION; call it in matching major-mode buffers.
-HOOK is a symbol whose name ends with a major-mode name and ends with
+HOOK is a symbol whose name begins with a major-mode name and ends with
 \"-hook\"."
   (add-hook hook hook-function)
   (let* ((hook-name (symbol-name hook))
