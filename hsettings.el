@@ -86,10 +86,9 @@
 ;; The Smart Menu system is an attractive in-buffer menu system that
 ;; predates Emacs menu systems; it is included in InfoDock.
 (defvar hkey-always-display-menu nil
-  "*Non-nil means display the Smart Menu window in the following case.
-Display when the Action or Assist Key is pressed and the
-Smart Menu system has been loaded.  If a Smart Menu is already
-displayed, perform another Action or Assist Key function.")
+  "*Non-nil means a Smart Key press pops up the Smart Menu window.
+The Smart Menu system must have already been loaded.  If a Smart
+Menu is already displayed, perform another Action or Assist Key function.")
 
 (defcustom hmouse-middle-flag (and (boundp 'infodock-version) infodock-version t)
   "*Under InfoDock or when t, additionally bind the middle mouse button as an
