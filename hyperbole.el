@@ -5,7 +5,7 @@
 ;; Author:           Bob Weiner
 ;; Maintainer:       Bob Weiner <rsw@gnu.org>, Mats Lidell <matsl@gnu.org>
 ;; Created:          06-Oct-92 at 11:52:51
-;; Last-Mod:     14-Jun-22 at 21:32:43 by Mats Lidell
+;; Last-Mod:      6-Aug-22 at 21:23:08 by Mats Lidell
 ;; Released:         01-May-22
 ;; Version:          8.0.1pre
 ;; Keywords:         comm, convenience, files, frames, hypermedia, languages, mail, matching, mouse, multimedia, outlines, tools, wp
@@ -133,13 +133,16 @@
 See `hkey-initialize'.")
 
 (defcustom hyperbole-mode-lighter " Hypb"
-  "Text to display in the minor-mode area of the modeline when the Hyperbole global minor mode is active."
+  "String to display in mode line when the Hyperbole global minor mode is enabled.
+  Use nil for no Hyperbole mode indicator."
   :type 'string
   :group 'hyperbole)
 
 ;;;###autoload
 (define-minor-mode hyperbole-mode
-  "Toggle Hyperbole global minor mode, the Everyday Hypertextual Information Manager.
+  "Toggle Hyperbole global minor mode.
+
+Hyperbole is the Everyday Hypertextual Information Manager.
 
 When Hyperbole mode is enabled, the `hyperbole-mode' variable
 is non-nil, Hyperbole menus are enabled, as are Hyperbole keys.
@@ -174,10 +177,13 @@ Info documentation at \"(hyperbole)Top\".
 ;;; ************************************************************************
 
 (defcustom hkey-init t
-  "*A non-nil value (default) at system load time binds the Action and Assist Keyboard Keys, as well as other keys.
-{\\[hkey-either]} invokes the Action Key and {C-u \\[hkey-either]} invokes the Assist Key.
-Additionally, {\\[hkey-help]} shows what the Action Key will do in the current
-context (wherever point is).  {C-u \\[hkey-help]} shows what the Assist Key will do."
+  "*A non-nil value (default) at system load time binds Hyperbole keys.
+Keys bound are the Action and Assist Keyboard Keys, as well as
+other keys.  {\\[hkey-either]} invokes the Action Key and
+{C-u \\[hkey-either]} invokes the Assist Key.  Additionally,
+{\\[hkey-help]} shows what the Action Key will do in the current
+context (wherever point is).  {C-u \\[hkey-help]} shows what the
+Assist Key will do."
   :type 'boolean
   :group 'hyperbole-keys)
 
@@ -197,12 +203,12 @@ context (wherever point is).  {C-u \\[hkey-help]} shows what the Assist Key will
 
 (make-obsolete 'hkey-maybe-global-set-key 'hkey-maybe-set-key "8.0.0")
 (defun hkey-maybe-global-set-key (key command &optional _no-add)
-  "Define a Hyperbole KEY bound to COMMAND if KEY is not bound in `hyperbole-mode-map'.
+  "Define a Hyperbole KEY bound to COMMAND if KEY is not in `hyperbole-mode-map'.
 Third argument NO-ADD is ignored."
   (hkey-maybe-set-key key command))
 
 (defun hkey-maybe-set-key (key command &optional _no-add)
-  "Define a Hyperbole KEY bound to COMMAND if KEY is not bound in `hyperbole-mode-map'.
+  "Define a Hyperbole KEY bound to COMMAND if KEY is not in `hyperbole-mode-map'.
 Third argument NO-ADD is ignored."
   (let ((lookup-result (lookup-key hyperbole-mode-map key)))
     (cond ((integerp lookup-result)
@@ -338,7 +344,7 @@ of the commands."
 (if (boundp 'mouse-position-function)
     (setq mouse-position-function
 	  (lambda (frame-x-dot-y)
-	    "Make `mouse-position' and `mouse-pixel-position' always return the selected frame.
+	    "Make `mouse-position' and `mouse-pixel-position' return the selected frame.
 Under macOS and Windows 7 at least, upon initial selection of a new
 frame, those functions by default still return the prior frame."
 	    (if (consp frame-x-dot-y) (setcar frame-x-dot-y (selected-frame)))
