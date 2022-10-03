@@ -1122,7 +1122,7 @@ This indicates that TAG is serving as a hyperlink button."
   tag)
 
 (defun smart-lisp-at-known-identifier-p ()
-  "Non-nil if point is within a Lisp identifier.
+  "Return non-nil if point is within a known Lisp identifier.
 The Lisp identifier is either listed in a tags table or is a
 known Emacs Lisp identifier."
   (interactive)
