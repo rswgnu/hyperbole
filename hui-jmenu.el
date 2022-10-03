@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     9-Mar-94 at 23:37:28
-;; Last-Mod:     24-Jan-22 at 00:18:47 by Bob Weiner
+;; Last-Mod:      2-Aug-22 at 19:50:39 by Mats Lidell
 ;;
 ;; Copyright (C) 1994-2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -106,7 +106,8 @@
 
 ;;;###autoload
 (defun hui-menu-jump-to-buffer ()
-  "Popup a menu of existing buffers categorized by mode name.  Jump to chosen buffer."
+  "Popup a menu of existing buffers categorized by mode name.
+Jump to chosen buffer."
   (interactive)
   (popup-menu (cons "Jump to Buffer" (cdr (hui-menu-of-buffers)))))
 
@@ -197,7 +198,8 @@
     (error "(Hyperbole): `%s' window no longer exists" (buffer-name (window-buffer window)))))
 
 (defun hui-menu-sort-buffers (buffer-and-mode-name-list)
-  "Reverse sort and return list of (`buffer-name' . `mode-name') elements by `mode-name' and then by `buffer-name'."
+  "Return reverse sort of BUFFER-AND-MODE-NAME-LIST, (`buffer-name' . `mode-name').
+Reverse sort elements by `mode-name' and then by `buffer-name'."
   (with-temp-buffer
     (setq buffer-read-only nil)
     (erase-buffer)
@@ -285,7 +287,7 @@ the minibuffer window even if it is active."
   (or (hui-menu-edit-server-finish) (kill-buffer)))
 
 (defun    hui-menu-delete-buffer-and-window ()
-  "Delete the current buffer and window, handling Emacs edit server frames properly."
+  "Delete current buffer and window, handling Emacs edit server frames properly."
   (interactive)
   (or (hui-menu-edit-server-finish)
       (progn (kill-buffer) (delete-window))))
@@ -296,7 +298,7 @@ the minibuffer window even if it is active."
   (or (hui-menu-edit-server-finish) (delete-frame)))
 
 (defun    hui-menu-move-window-to-new-frame ()
-  "Delete the selected window if possible and display its buffer in a newly selected frame.
+  "Delete the selected window and display its buffer in a newly selected frame.
 The window is deleted only if there are two or more windows in the selected
 frame.  The current buffer is buried in the old frame's buffer list."
   (interactive)

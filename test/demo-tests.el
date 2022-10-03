@@ -578,15 +578,15 @@ enough files with matching mode loaded."
 	 (existing-shell-flag (get-buffer-process shell-buffer-name)))
     (unwind-protect
         (with-temp-buffer
-          (insert "{M-x shell RET M-> (apropos grep) RET}")
+          (insert "{M-x shell RET M-> (apropos grep) RET RET}")
           (goto-char 5)
           (action-key)
           (hy-test-helpers:consume-input-events)
           (with-current-buffer shell-buffer-name
             (with-timeout (5 (ert-fail "Test timed out"))
-              (while (not (string-match-p "\ngrep ?(1).*-" (buffer-substring-no-properties (point-min) (point-max))))
+              (while (not (string-match-p "grep ?(1).*-" (buffer-substring-no-properties (point-min) (point-max))))
                 (accept-process-output (get-buffer-process shell-buffer-name))))
-            (should (string-match-p "\ngrep ?(1).*-" (buffer-substring-no-properties (point-min) (point-max))))))
+            (should (string-match-p "grep ?(1).*-" (buffer-substring-no-properties (point-min) (point-max))))))
       (unless existing-shell-flag
 	(set-process-query-on-exit-flag (get-buffer-process shell-buffer-name) nil)
 	(hy-test-helpers:kill-buffer shell-buffer-name)))))
