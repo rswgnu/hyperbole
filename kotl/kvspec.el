@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Oct-95 at 15:17:07
-;; Last-Mod:     16-Jul-22 at 22:33:26 by Mats Lidell
+;; Last-Mod:     18-Jul-22 at 21:57:01 by Mats Lidell
 ;;
 ;; Copyright (C) 1995-2022  Free Software Foundation, Inc.
 ;; See the "../HY-COPY" file for license information.
@@ -255,8 +255,9 @@ view specs."
       (kview:set-label-type kview type))))
 
 (defun kvspec:show-lines-this-cell (num)
-  "Assume the current cell is fully expanded and collapse to show NUM lines within it.
-If NUM is less than 1 or greater than the number of lines available, the cell remains fully expanded."
+  "Assume current cell is fully expanded and collapse to show NUM lines within it.
+If NUM is less than 1 or greater than the number of lines
+available, the cell remains fully expanded."
   ;; Use free variable kview-label-sep-len bound in kview:map-* for speed.
   (unless (< num 1)
     (let ((_start (goto-char (kcell-view:start (point) kview-label-sep-len)))

@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    04-Apr-89
-;; Last-Mod:     15-Jul-22 at 23:22:20 by Mats Lidell
+;; Last-Mod:     25-Jul-22 at 23:34:19 by Mats Lidell
 ;;
 ;; Copyright (C) 1989-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -98,7 +98,7 @@ or a Menu; otherwise returns nil."
 
 ;;;###autoload
 (defun smart-info-assist ()
-  "Walk through Info documentation networks using one assist-key or mouse assist-key.
+  "Walk through Info documentation using one assist-key or mouse assist-key.
 
 If assist-key is pressed within:
  (1) the first line of an Info Menu Entry or Cross Reference, the desired node
@@ -304,7 +304,8 @@ entry and returns t; otherwise returns nil."
 
 ;;;###autoload
 (defun Info-current-filename-sans-extension ()
-  "Return the filename for the current Info node, if any, without directory or file extension.
+  "Return the filename for the current Info node, if any.
+Filename is returned without directory or file extension.
 This works regardless of the current buffer."
   (save-window-excursion
     (info)

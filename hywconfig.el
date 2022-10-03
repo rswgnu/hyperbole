@@ -3,9 +3,9 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    15-Mar-89
-;; Last-Mod:     24-Jan-22 at 00:23:35 by Bob Weiner
+;; Last-Mod:      6-Aug-22 at 23:12:26 by Mats Lidell
 ;;
-;; Copyright (C) 1989-2021  Free Software Foundation, Inc.
+;; Copyright (C) 1989-2022  Free Software Foundation, Inc.
 ;; See the "../HY-COPY" file for license information.
 ;;
 ;; This file is part of GNU Hyperbole.
@@ -58,7 +58,7 @@
 
 (define-obsolete-variable-alias 'wconfig-ring-max 'hywconfig-ring-max "06.00")
 (defcustom hywconfig-ring-max 10
-  "*Maximum length of Hyperbole window configuration ring before oldest elements are deleted."
+  "*Max length of Hyperbole window config ring before oldest elements are deleted."
   :type `(integer
           :match ,(lambda (_widget value) (and (integerp value) (> value 0))))
   :group 'hyperbole-screen)
@@ -123,7 +123,7 @@ NAME, confirms whether or not to replace it."
 ;;; Window configuration ring management (like text kill ring).
 ;;;###autoload
 (defun hywconfig-delete-pop ()
-  "Replace the current frame's window configuration with the one most recently saved to the ring.
+  "Replace the current frame's window configuration with the most recently saved.
 Then deletes this new configuration from the ring."
   (interactive)
   (let ((ring (hywconfig-get-ring)))
@@ -152,7 +152,7 @@ Use {\\[hywconfig-yank-pop]} to restore it at a later time."
 
 ;;;###autoload
 (defun hywconfig-yank-pop (n)
-  "Replace the current frame's window configuration with the prefix arg Nth prior one in save ring.
+  "Replace current frame's window config with prefix arg Nth prior one in ring.
 Interactively, default value of N = 1, means the last saved window
 configuration is displayed.
 
