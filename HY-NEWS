@@ -12,6 +12,15 @@
     libraries to eliminate all Error-level messages).
 
 
+** HYROLO  (See "(hyperbole)HyRolo").
+
+  *** Koutline Fast Search: Koutlines may now be included in 'rolo-file-list'
+      and individual cells extracted properly with any HyRolo query.  Then
+      the interactive commands to show the top-level matches, an outline of
+      matches or to show, hide or move to matches all work in the match
+      display buffer as well.
+
+
 ** KOUTLINER  (See "(hyperbole)Koutliner").
 
 *** M-S-left and M-S-Right: Org compatibility - Add tree promote and demote 

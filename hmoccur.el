@@ -3,7 +3,7 @@
 ;; Author:       Markus Freericks <Mfx@cs.tu-berlin.de> / Bob Weiner
 ;;
 ;; Orig-Date:     1-Aug-91
-;; Last-Mod:     18-Apr-22 at 00:19:03 by Mats Lidell
+;; Last-Mod:     25-Jul-22 at 20:00:01 by Mats Lidell
 ;;
 ;; Copyright (C) 1991-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -181,8 +181,10 @@ serves as a menu to find any of the occurrences in this buffer.
   (setq mode-name "Moccur"))
 
 (defun moccur-noselect ()
-  "Return (destination-buffer line-number occur-match-text) for the current moccur buffer line.
-Signal an error if not on a valid occurrence line."
+  "Return match data for the current moccur buffer line.
+Match data is returned as a list (destination-buffer line-number
+occur-match-text).  Signal an error if not on a valid occurrence
+line."
   (if (not (eq major-mode 'moccur-mode))
       (error "'moccur-to' must be called within a moccur buffer")
     (let (beg file-path lineno dstbuf occur-match)
