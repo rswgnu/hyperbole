@@ -1,5 +1,6 @@
 2022-10-03  Mats Lidell  <matsl@gnu.org>
 
+* hui-window.el: 
 * hmouse-key.el:
 * hmouse-drv.el:
 * hload-path.el:
