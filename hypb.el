@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     6-Oct-91 at 03:42:38
-;; Last-Mod:     29-Aug-22 at 00:30:34 by Bob Weiner
+;; Last-Mod:     18-Sep-22 at 22:39:36 by Mats Lidell
 ;;
 ;; Copyright (C) 1991-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -573,8 +573,6 @@ WINDOW pixelwise."
 	((symbolp object)
 	 (get object 'hyperbole))))
 
-(make-obsolete 'hypb:replace-match-string 'replace-regexp-in-string "8.0.1")
-
 (defun hypb:readable-directories (&rest dirs)
   "Flatten rest of DIRS and return or error if any of DIRS are unreadable."
   (setq dirs (flatten-list dirs))
@@ -583,34 +581,6 @@ WINDOW pixelwise."
       (error "(hypb:readable-directories): These directories are not readable:\n%s"
 	     (string-join unreadable-dirs "\n"))))
   dirs)
-
-(defun hypb:replace-match-string (regexp str new &optional literal fixedcase)
-  "Replace all matches for REGEXP in STR with NEW string and return the result.
-If NEW is nil, return STR unchanged.
-
-Optional LITERAL non-nil means do a literal replacement.
-Otherwise treat \\ in NEW string as special:
-  \\& means substitute original matched text,
-  \\N means substitute match for \(...\) number N,
-  \\\\ means insert one \\.
-
-If optional fifth arg FIXEDCASE is non-nil, do not alter the case of
-the replacement text.  Otherwise, maybe capitalize the whole text, or
-maybe just word initials, based on the replaced text.  If the replaced
-text has only capital letters and has at least one multiletter word,
-convert NEW to all caps.  Otherwise if all words are capitalized
-in the replaced text, capitalize each word in NEW.
-
-NEW may instead be a function of one argument (the string to replace in)
-that returns a replacement string."
-  (if (null new)
-      str
-    (unless (stringp str)
-      (error "(hypb:replace-match-string): 2nd arg must be a string: %s" str))
-    (unless (or (stringp new) (functionp new))
-      (error "(hypb:replace-match-string): 3rd arg must be a string or function: %s"
-	     new))
-    (replace-regexp-in-string regexp new str fixedcase literal)))
 
 ;;;###autoload
 (defun hypb:require-package (package-name)
