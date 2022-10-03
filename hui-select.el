@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Oct-96 at 02:25:27
-;; Last-Mod:     29-Aug-22 at 21:27:41 by Bob Weiner
+;; Last-Mod:      3-Oct-22 at 20:21:48 by Mats Lidell
 ;;
 ;; Copyright (C) 1996-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -137,13 +137,15 @@
   (append '(altmath-mode asm-mode csh-mode eiffel-mode ksh-mode
                          math-mode miranda-mode python-mode pascal-mode sather-mode)
 	  hui-select-text-modes)
-  "*List of language major modes that use indentation mostly to define syntactic structure."
+  "*List of modes that use indentation mostly to define syntactic structure.
+Use for language major modes."
   :type '(repeat (function :tag "Mode"))
   :group 'hyperbole-commands)
 
 (defcustom hui-select-ignore-quoted-sexp-modes
   '(debugger-mode emacs-lisp-mode lisp-mode lisp-interaction-mode slime-mode cider-mode)
-  "*List of language major modes in which to ignore quoted sexpressions for syntactic matches."
+  "*List of modes in which to ignore quoted sexpressions for syntactic matches.
+Use for language major modes."
   :type '(repeat (function :tag "Mode"))
   :group 'hyperbole-commands)
 
@@ -164,7 +166,8 @@
     (Info-mode "[^ \t\n]")
     (outline-mode "[^*]")
     (text-mode  "[^ \t\n*]"))
-  "List of (major-mode . non-terminator-line-regexp) elements used to avoid early dropoff when marking indented code.")
+  "List of (major-mode . non-terminator-line-regexp) elements.
+Used to avoid early dropoff when marking indented code.")
 
 (defvar hui-select-indent-end-regexp-alist
   '((altmath-mode "[ \t\n]*\n\\S-")
@@ -179,7 +182,8 @@
     (indented-text-mode "[ \t]*$")
     (Info-mode "[ \t]*$")
     (text-mode  "[ \t]*$"))
-  "List of (major-mode . terminator-line-regexp) elements used to include a final line when marking indented code.")
+  "List of (major-mode . terminator-line-regexp) elements.
+Used to include a final line when marking indented code.")
 
 (defcustom hui-select-char-p nil
   "*If t, return single character boundaries when all else fails."
@@ -264,7 +268,8 @@ The function `hui-select-set-region' updates and returns it.")
     (?   . hui-select-whitespace)
     (?\< . hui-select-comment)
     (?\. . hui-select-punctuation))
-  "*Unordered list of pairs of the form (<syntax-char> <function>) used by the function `hui-select-syntactical-region'.
+  "*Unordered list of pairs of the form (<syntax-char> <function>).
+Used by the function `hui-select-syntactical-region'.
 Each <function> takes a single position argument and returns a
 region (start . end) defining the boundaries of the thing at that position."
   :type '(repeat (cons (character :tag "Syntax-Char") function))
@@ -281,8 +286,9 @@ region (start . end) defining the boundaries of the thing at that position."
 
 ;;;###autoload
 (defun hui-select-at-p (&optional pos)
-  "Return non-nil if the character after optional POS (or point) matches a syntax entry in `hui-select-syntax-alist'.
-The non-nil value returned is the function to call to select that syntactic unit."
+  "Non-nil means character matches a syntax entry in `hui-select-syntax-alist'.
+The character is after optional POS or point.  The non-nil value
+returned is the function to call to select that syntactic unit."
   (interactive "d")
   (unless (smart-eobp)
     (or (numberp pos) (setq pos (point)))
@@ -462,10 +468,11 @@ displayed in the minibuffer."
 
 ;;;###autoload
 (defun hui-select-goto-matching-tag ()
-  "If in a major mode listed in `hui-select-markup-modes,' move point to the start of the tag paired with the closest tag that point is within or precedes.
-Returns t if point is moved, else nil.
-Signals an error if no tag is found following point or if the closing tag
-does not have a `>' terminator character."
+  "Move point to start of the tag paired with closest tag point is at or precedes.
+Enabled in major modes in `hui-select-markup-modes.  Returns t if
+point is moved, else nil.  Signals an error if no tag is found
+following point or if the closing tag does not have a `>'
+terminator character."
   (interactive)
   (when (memq major-mode hui-select-markup-modes)
     (let ((result)
@@ -587,7 +594,8 @@ does not have a `>' terminator character."
 ;;
 
 (defun hui-select-boundaries (pos)
-  "Return the (start . end) of a syntactically defined region based upon the last region selected or on position POS.
+  "Return the (start . end) of a syntactically defined region.
+This is based upon the last region selected or on position POS.
 The character at POS is selected if no other thing is matched."
   (interactive)
   (setcar hui-select-old-region (car hui-select-region))
@@ -647,7 +655,7 @@ The character at POS is selected if no other thing is matched."
 
 ;;;###autoload
 (defun hui-select-double-click-hook (event click-count)
-  "Select a region based on the syntax of the character wherever the mouse is double-clicked.
+  "Select region based on the character syntax where the mouse is double-clicked.
 If the double-click occurs at the same point as the last double-click, select
 the next larger syntactic structure.  If `hui-select-display-type' is non-nil,
 the type of selection is displayed in the minibuffer."
@@ -657,7 +665,7 @@ the type of selection is displayed in the minibuffer."
 	(t (hui-select-thing-with-mouse event))))
 
 (defun hui-select-syntactical-region (pos)
-  "Return the (start . end) of a syntactically defined region based upon the buffer position POS.
+  "Return the (start . end) of a syntactically defined region based upon POS.
 Uses `hui-select-syntax-alist' and the current buffer's syntax table to
 determine syntax groups.
 
@@ -689,8 +697,10 @@ If an error occurs during syntax scanning, it returns nil."
 	     (hui-select-set-region pos (1+ pos)))))))
 
 (defun hui-select-at-delimited-thing-p ()
-  "Return non-nil if point is at a markup pair, list, array/vector, set, comment or string, else nil.
-The non-nil value returned is the function to call to select that syntactic unit.
+  "Return non-nil if point is at a delimited thing, else nil.
+A delimited tings is a markup pair, list, array/vector, set,
+comment or string.  The non-nil value returned is the function to
+call to select that syntactic unit.
 
 Ignores any match if on an Emacs button and instead returns nil."
   (unless (button-at (point))
@@ -706,7 +716,8 @@ Ignores any match if on an Emacs button and instead returns nil."
 	  (t hkey-value))))
 
 (defun hui-select-delimited-thing ()
-  "Select a markup pair, list, array/vector, set, comment or string at point and return t, else nil."
+  "Select a markup pair, list, array/vector, set, comment or string at point.
+Return t is selected, else nil."
   (interactive)
   (prog1 (and (hui-select-delimited-thing-call #'hui-select-thing) t)
     ;; If selected region is followed by only whitespace and then a
@@ -730,10 +741,10 @@ Ignores any match if on an Emacs button and instead returns nil."
 	       (/= ?\\ (char-syntax (char-before (1- (point))))))))))
 
 (defun hui-select-mark-delimited-sexp ()
-  "If point is before or after an sexp and not at an end of line, then deactivate the mark and mark the sexp.
-Return t if marked, nil otherwise.  If any error occurs such as
-  unbalanced start and end sexp delimiters, ignore it, and return
-  nil."
+  "When point is before or after an sexp deactivate the mark and mark the sexp.
+Not enabled when point is at an end of line.  Return t if marked,
+nil otherwise.  If any error occurs such as unbalanced start and
+end sexp delimiters, ignore it, and return nil."
   (interactive)
   (let ((mark-sexp-func (lambda ()
 			  (when (region-active-p) (deactivate-mark))
@@ -797,8 +808,10 @@ mail and news reply modes."
     (setq this-command 'select-thing)))
 
 (defun hui-select-delimited-thing-call (func)
-  "Select a markup pair, list, vector/array, set, comment or string at point and return non-nil, else nil.
-The non-nil value returned is the function to call to select that syntactic unit."
+  "Select a delimited thing at point and return a function to select it.
+The delimited thing is a markup pair, list, vector/array, set,
+comment or string.  The non-nil value returned is the function to
+call to select that syntactic unit."
   (unless (and (memq major-mode hui-select-ignore-quoted-sexp-modes)
 	       ;; Ignore quoted identifier sexpressions, like #'function
 	       (char-after) (memq (char-after) '(?# ?\')))
@@ -817,7 +830,9 @@ The non-nil value returned is the function to call to select that syntactic unit
       (funcall func))))
 
 (defun hui-select-region-bigger-p (old-region new-region)
-  "Return t if OLD-REGION is smaller than NEW-REGION and NEW-REGION partially overlaps OLD-REGION, or if OLD-REGION is uninitialized."
+  "Non-nil means the new region is bigger than the old region.
+Return t if OLD-REGION is smaller than NEW-REGION and NEW-REGION
+partially overlaps OLD-REGION, or if OLD-REGION is uninitialized."
   (if (null (car old-region))
       t
     (and (> (abs (- (cdr new-region) (car new-region)))
@@ -856,7 +871,7 @@ Return the updated cons cell."
     hui-select-region))
 
 (defun hui-select-string-p (&optional start-delim end-delim)
-  "Return (start . end) of string whose first line point is within or immediately before.
+  "Return (start . end) of string whose first line point is in or directly before.
 Positions include delimiters.  String is delimited by double quotes unless
 optional START-DELIM and END-DELIM (strings) are given.
 Returns nil if not within a string."
@@ -903,9 +918,11 @@ Returns nil if not within a string."
 ;;;
 
 (defun hui-select-brace-def-or-declaration (pos)
-  "If POS is at the first character, opening brace or closing brace of a brace delimited language definition, return (start . end) region, else nil.
-The major mode for each supported brace language must be included in the
-list, hui-select-brace-modes."
+  "Return (start . end) region of a brace delimited language definition at POS.
+If POS is at the first character, opening brace or closing brace
+of a brace delimited language definition, return (start . end)
+region, else nil.  The major mode for each supported brace
+language must be included in the list, hui-select-brace-modes."
   (interactive)
   (when (and (featurep 'cc-mode) (memq major-mode hui-select-brace-modes))
     (save-excursion
@@ -1142,7 +1159,8 @@ included in the list, hui-select-brace-modes."
 ;; the previous and subsequent sexpression.  Useful in contexts such as
 ;; 'foo.bar'.
 (defun hui-select-punctuation (pos)
-  "Return (start . end) region including sexpressions before and after POS, when at a punctuation character."
+  "Return (start . end) region when at a punctuation character.
+The region includes sexpressions before and after POS"
   (or (hui-select-comment pos)
       (hui-select-preprocessor-def pos)
       (hui-select-brace-def-or-declaration pos) ;; Might be on a C++ destructor ~.
@@ -1279,9 +1297,9 @@ Delimiters may be single, double or open and close quotes."
       (error nil))))
 
 (defun hui-select-whitespace (pos)
-  "Return (start . end) of all but one char of whitespace POS, unless
-there is only one character of whitespace or this is leading whitespace on
-the line.  Then return all of it."
+  "Return (start . end) of all whitespace at POS,
+Return all whitespace, unless there is only one character of
+whitespace or this is leading whitespace on the line."
   (setq hui-select-previous 'whitespace)
   (save-excursion
     (goto-char pos)
@@ -1295,9 +1313,11 @@ the line.  Then return all of it."
 	    (hui-select-set-region (1+ start) end)))))))
 
 (defun hui-select-markup-pair (pos)
-  "Return (start . end) of region between the opening and closing of an HTML, XML or SGML tag pair, one of which is at POS.
-The major mode for each language that uses such tags must be included in the
-list, hui-select-markup-modes."
+  "Return (start . end) of region of markup pair, one of which is at POS.
+The region returned is between the opening and closing tag.
+Markups recognised are HTML, XML or SGML tag pairs.  The major
+mode for each language that uses such tags must be included in
+the list, hui-select-markup-modes."
   (when (memq major-mode hui-select-markup-modes)
     (setq hui-select-previous 'markup-pair)
     (let ((pos-with-space)
@@ -1401,7 +1421,8 @@ list, hui-select-markup-modes."
 ;;;
 
 (defun hui-select-line (pos)
-  "Return (start . end) of the whole line POS is in, with newline unless at end of buffer."
+  "Return (start . end) of the whole line POS is in.
+Includes newline unless at end of buffer."
   (setq hui-select-previous 'line)
   (save-excursion
     (goto-char pos)
