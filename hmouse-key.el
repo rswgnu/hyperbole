@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    30-May-94 at 00:11:57
-;; Last-Mod:     17-Apr-22 at 22:10:08 by Mats Lidell
+;; Last-Mod:     25-Jul-22 at 23:47:01 by Mats Lidell
 ;;
 ;; Copyright (C) 1994-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -34,16 +34,16 @@
 ;;; ************************************************************************
 
 (defun hmouse-check-action-key ()
-  "After use of the Action Mouse Key, ensure both depress and release events are assigned to the key.
-Returns t iff the key is properly bound, else nil."
+  "After Action Mouse Key use, ensure both depress and release events are bound.
+Return t iff the key is properly bound, else nil."
   (and (or (and (eventp action-key-depress-args) (eventp action-key-release-args))
 	   (not (or action-key-depress-args action-key-release-args)))
        (where-is-internal 'action-key-depress-emacs hyperbole-mode-map t)
        (where-is-internal 'action-mouse-key-emacs hyperbole-mode-map t)))
 
 (defun hmouse-check-assist-key ()
-  "After use of the Assist Mouse Key, ensure both depress and release events are assigned to the key.
-Returns t iff the key is properly bound, else nil."
+  "After Assist Mouse Key use, ensure both depress and release events are bound.
+Return t iff the key is properly bound, else nil."
   (and (or (and (eventp assist-key-depress-args) (eventp assist-key-release-args))
 	   (not (or assist-key-depress-args assist-key-release-args)))
        (where-is-internal 'assist-key-depress-emacs hyperbole-mode-map t)
@@ -66,8 +66,10 @@ bindings after Smart Key setup."
        key-binding-list))))
 
 (defun hmouse-install (&optional arg)
-  "Bind the two rightmost shifted mouse keys to the Action and Assist Keys, initializing Hyperbole mouse buttons.
-With optional prefix ARG or under InfoDock, also binds the unshifted middle mouse key to the Action Key.
+  "Initialize Hyperbole mouse buttons.
+Bind the two rightmost shifted mouse keys to the Action and
+Assist Keys.  With optional prefix ARG or under InfoDock, also
+bind the unshifted middle mouse key to the Action Key.
 
 The standard Hyperbole configuration is Action Key = shift-middle mouse key;
 Assist Key = shift-right mouse key."
@@ -120,7 +122,8 @@ mouse key the Paste Key instead of the Action Key."
 
 ;; Define function to reload Smart Key bindings and actions after a source code change.
 (defun hmouse-update-smart-keys ()
-  "Reload the contexts and actions associated with the Smart Keys after any programmatic change is made."
+  "Reload the contexts and actions associated with the Smart Keys.
+Use after any programmatic change is made."
   (interactive)
   (hkey-initialize)
   (makunbound 'hkey-alist)

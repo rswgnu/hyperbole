@@ -3,7 +3,7 @@
 ;; Author:       Masanobu Umeda             / Bob Weiner
 ;;
 ;; Orig-Date:    14-Oct-91 at 07:22:08
-;; Last-Mod:     24-Jan-22 at 00:18:47 by Bob Weiner
+;; Last-Mod:      2-Aug-22 at 15:02:15 by Mats Lidell
 ;;
 ;; Copyright (C) 1991-2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -62,11 +62,13 @@ Optional 2nd argument TIMEZONE specifies a timezone to be represented in."
 
 (defun htz:date-parse (date &optional parsed-current-date)
   "Parse DATE string and return a vector [year month day time timezone].
-If a two-digit year, the first two digits of the current year are prepended.
-Timezone in DATE is optional, it defaults to the value of `htz:local'.
+If a two-digit year, the first two digits of the current year are
+prepended.  Timezone in DATE is optional, it defaults to the
+value of `htz:local'.
 
 Recognizes the following styles:
- (1) \"(1 30 1999)\" or \"(1 30 1999)\"  `calendar-julian-date'  requires PARSED-CURRENT-DATE arg
+ (1) \"(1 30 1999)\" or \"(1 30 1999)\"  `calendar-julian-date'
+     requires PARSED-CURRENT-DATE arg
  (2) \"14 Apr 89 03:20[:12] [GMT]\"
  (3) \"Fri, 17 Mar [19]89 4:01[:33] [GMT]\"
  (4) \"Mon Jan 16 16:12[:37] [GMT] 1989\"
@@ -184,7 +186,7 @@ Optional 2nd argument TIMEZONE specifies an output timezone to use."
 ;;;
 
 (defun htz:date-sortable-gmt (&optional date local)
-  "Convert optional DATE or current date  to a sortable date string in Greenwich Mean Time.
+  "Convert optional DATE or current date to a sortable date string in GMT.
 Optional argument LOCAL specifies the local timezone of the DATE."
   (htz:date-sortable date local "GMT"))
 
