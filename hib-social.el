@@ -190,7 +190,7 @@
   :group 'hyperbole-button)
 
 (defcustom hibtypes-social-display-function #'browse-url
-  "One arg function, url, to display upon activation of a social media reference."
+  "Function of one arg, url, to display when activating a social media reference."
   :type 'function
   :group 'hyperbole-button)
 
