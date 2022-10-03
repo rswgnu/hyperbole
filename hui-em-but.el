@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Aug-92
-;; Last-Mod:     14-Jun-22 at 21:22:39 by Mats Lidell
+;; Last-Mod:      2-Aug-22 at 19:31:16 by Mats Lidell
 ;;
 ;; Copyright (C) 1992-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -228,7 +228,9 @@ highlighted."
 ;;; ************************************************************************
 
 (defun hproperty:cycle-but-color (&optional color)
-  "Switch button color to optional COLOR name or next item referenced by hproperty:color-ptr."
+  "Switch button color.
+Set color to optional COLOR name or next item referenced by
+hproperty:color-ptr."
   (interactive "sHyperbole button color: ")
   (when (display-color-p)
     (when color (setq hproperty:color-ptr nil))
@@ -269,7 +271,7 @@ highlighted."
     (and ibut (not prev) (hproperty:but-delete start))))
 
 (defun hproperty:select-item (&optional pnt)
-  "Select item in current buffer at optional position PNT using hproperty:item-face."
+  "Select item in current buffer at optional position PNT with hproperty:item-face."
   (when pnt (goto-char pnt))
   (skip-chars-forward " \t")
   (skip-chars-backward "^ \t\n\r")
@@ -280,7 +282,7 @@ highlighted."
   (sit-for 0))  ;; Force display update
 
 (defun hproperty:select-line (&optional pnt)
-  "Select line in current buffer at optional position PNT using hproperty:item-face."
+  "Select line in current buffer at optional position PNT with hproperty:item-face."
   (when pnt (goto-char pnt))
   (save-excursion
     (beginning-of-line)

@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Oct-96 at 02:25:27
-;; Last-Mod:     18-Jun-22 at 21:58:08 by Mats Lidell
+;; Last-Mod:     29-Aug-22 at 21:27:41 by Bob Weiner
 ;;
 ;; Copyright (C) 1996-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -305,7 +305,7 @@ The non-nil value returned is the function to call to select that syntactic unit
     (let* ((key (hypb:cmd-key-vector #'hui-select-goto-matching-delimiter
 				     hyperbole-mode-map))
 	   (org-key-cmd (and (derived-mode-p 'org-mode)
-			     (called-interactively-p 'interactive)
+			     (called-interactively-p 'any)
 			     (equal (this-single-command-keys) key)
 			     (lookup-key org-mode-map key))))
       (cond (org-key-cmd
@@ -415,7 +415,7 @@ interactively, the type of selection is displayed in the minibuffer."
 	  nil)))
   (let* ((key (hypb:cmd-key-vector #'hui-select-thing hyperbole-mode-map))
 	 (org-key-cmd (and (derived-mode-p 'org-mode)
-			   (called-interactively-p 'interactive)
+			   (called-interactively-p 'any)
 			   (equal (this-single-command-keys) key)
 			   (lookup-key org-mode-map key))))
     (cond (org-key-cmd

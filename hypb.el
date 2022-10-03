@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     6-Oct-91 at 03:42:38
-;; Last-Mod:     24-Jul-22 at 11:41:00 by Bob Weiner
+;; Last-Mod:     18-Sep-22 at 22:39:36 by Mats Lidell
 ;;
 ;; Copyright (C) 1991-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -224,7 +224,7 @@ If no matching installation type is found, return a list of (\"unknown\" hyperb:
   (or (and (featurep 'hbut)
 	   (let ((func (hypb:indirect-function 'ebut:create)))
 	     (not (or (subrp func)
-		      (hypb:emacs-byte-code-p func)
+		      (byte-code-function-p func)
 		      (eq 'byte-code
 			  (car (car (nthcdr 3 (hypb:indirect-function
 					       'ebut:create)))))))))
@@ -310,10 +310,6 @@ will this install the Emacs devdocs package when needed."
 		       dname))))
       (concat "@" dname))))
 
-;;;###autoload
-(define-obsolete-function-alias 'hypb:emacs-byte-code-p
-  #'byte-code-function-p "2022")
-
 (defun hypb:error (&rest args)
   "Signal an error typically to be caught by `hyperbole'."
   (let ((msg (if (< (length args) 2)
@@ -350,6 +346,13 @@ FILE is temporarily read into a buffer to determine the major mode if necessary.
 				       major-mode)))
       (unless (or existing-flag (null buf))
 	(kill-buffer buf)))))
+
+(defun hypb:filter-directories (file-regexp &rest dirs)
+  "Filter files to those matching FILE-REGEXP from rest of DIRS (recursively).
+Return a flattened list of all matching files."
+  (setq dirs (hypb:readable-directories dirs))
+  (apply #'nconc (mapcar (lambda (dir) (directory-files-recursively dir file-regexp))
+			 dirs)))
 
 (defun hypb:format-quote (arg)
   "Replace all single % with %% in any string ARG so that a call to `format' or `message' ignores them.
@@ -531,7 +534,7 @@ then `locate-post-command-hook'."
 (defun hypb:map-vector (func object)
   "Return list of results of application of FUNC to each element of OBJECT.
 OBJECT should be a vector or `byte-code' object."
-  (unless (or (vectorp object) (hypb:emacs-byte-code-p object))
+  (unless (or (vectorp object) (byte-code-function-p object))
     (error "(hypb:map-vector): Second argument must be a vector or byte-code object"))
   (let ((end (length object))
 	(i 0)
@@ -570,35 +573,14 @@ WINDOW pixelwise."
 	((symbolp object)
 	 (get object 'hyperbole))))
 
-(make-obsolete 'hypb:replace-match-string 'replace-regexp-in-string "8.0.1")
-
-(defun hypb:replace-match-string (regexp str new &optional literal fixedcase)
-  "Replace all matches for REGEXP in STR with NEW string and return the result.
-If NEW is nil, return STR unchanged.
-
-Optional LITERAL non-nil means do a literal replacement.
-Otherwise treat \\ in NEW string as special:
-  \\& means substitute original matched text,
-  \\N means substitute match for \(...\) number N,
-  \\\\ means insert one \\.
-
-If optional fifth arg FIXEDCASE is non-nil, do not alter the case of
-the replacement text.  Otherwise, maybe capitalize the whole text, or
-maybe just word initials, based on the replaced text.  If the replaced
-text has only capital letters and has at least one multiletter word,
-convert NEW to all caps.  Otherwise if all words are capitalized
-in the replaced text, capitalize each word in NEW.
-
-NEW may instead be a function of one argument (the string to replace in)
-that returns a replacement string."
-  (if (null new)
-      str
-    (unless (stringp str)
-      (error "(hypb:replace-match-string): 2nd arg must be a string: %s" str))
-    (unless (or (stringp new) (functionp new))
-      (error "(hypb:replace-match-string): 3rd arg must be a string or function: %s"
-	     new))
-    (replace-regexp-in-string regexp new str fixedcase literal)))
+(defun hypb:readable-directories (&rest dirs)
+  "Flatten rest of DIRS and return or error if any of DIRS are unreadable."
+  (setq dirs (flatten-list dirs))
+  (let ((unreadable-dirs (delq nil (mapcar (lambda (dir) (unless (file-readable-p dir) dir)) dirs))))
+    (when unreadable-dirs
+      (error "(hypb:readable-directories): These directories are not readable:\n%s"
+	     (string-join unreadable-dirs "\n"))))
+  dirs)
 
 ;;;###autoload
 (defun hypb:require-package (package-name)
