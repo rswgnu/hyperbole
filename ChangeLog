@@ -1,6 +1,23 @@
-2022-09-14  Mats Lidell  <matsl@gnu.org>
+2022-10-03  Mats Lidell  <matsl@gnu.org>
 
 * hyrolo-logic.el:
+* hyperbole.el:
+* hversion.el:
+* hui-window.el: 
+* hmouse-key.el:
+* hmouse-drv.el:
+* hload-path.el:
+* hinit.el: Shorten docs strings to be within 80 char limit.
+
+2022-09-19  Mats Lidell  <matsl@gnu.org>
+
+* hypb.el (hypb:replace-match-string): Remove unused function.
+
+* hact.el: Use byte-code-function-p.
+
+2022-09-14  Mats Lidell  <matsl@gnu.org>
+
+* hmouse-sh.el:
 * hywconfig.el:
 * htz.el:
 * hmouse-mod.el:
