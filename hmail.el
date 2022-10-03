@@ -79,7 +79,7 @@ MSG-END."
     (if (search-backward hmail:hbdata-sep msg-start t) (1- (point)) msg-end)))
 
 (defun hmail:hbdata-to-p ()
-  "Move point to the start of embedded button data.
+  "Move point to the start of embedded Hyperbole button data.
 Return t if button data is found, else nil."
   (and (cond ((memq major-mode (list hmail:reader hmail:modifier))
 	      (hmail:msg-narrow) t)
