@@ -1,5 +1,6 @@
 2022-10-03  Mats Lidell  <matsl@gnu.org>
 
+* hmouse-drv.el:
 * hload-path.el:
 * hinit.el: Shorten docs strings to be within 80 char limit.
 
