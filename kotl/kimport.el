@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    15-Nov-93 at 11:57:05
-;; Last-Mod:     18-Jul-22 at 21:50:27 by Mats Lidell
+;; Last-Mod:     28-Aug-22 at 14:07:09 by Bob Weiner
 ;;
 ;; Copyright (C) 1993-2022  Free Software Foundation, Inc.
 ;; See the "../HY-COPY" file for license information.
@@ -630,6 +630,7 @@ in IMPORT-FROM, used to show a running tally of the imported entries."
   (set-buffer import-from)
   (let ((start (point))
 	(hyrolo-entry-regexp kimport:star-heading)
+	(case-fold-search)
 	subtree-p end contents node-level child-label)
     ;; While find cells at import-level or deeper ...
     (while (and (re-search-forward hyrolo-entry-regexp nil t)

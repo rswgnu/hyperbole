@@ -1,6 +1,210 @@
-2022-08-05  Mats Lidell  <matsl@gnu.org>
+2022-10-03  Mats Lidell  <matsl@gnu.org>
 
-* hui-window.el: Shorten docs strings to be within 80 char limit.
+* hui-window.el: 
+* hmouse-key.el:
+* hmouse-drv.el:
+* hload-path.el:
+* hinit.el: Shorten docs strings to be within 80 char limit.
+
+2022-09-19  Mats Lidell  <matsl@gnu.org>
+
+* hypb.el (hypb:replace-match-string): Remove unused function.
+
+* hact.el: Use byte-code-function-p.
+
+2022-09-14  Mats Lidell  <matsl@gnu.org>
+
+* hmouse-sh.el:
+* hywconfig.el:
+* htz.el:
+* hmouse-mod.el:
+* hmoccur.el: Shorten docs strings to be within 80 char limit.
+
+2022-09-13  Mats Lidell  <matsl@gnu.org>
+
+* hmouse-info.el: Shorten docs strings to be within 80 char limit.
+
+2022-09-12  Mats Lidell  <matsl@gnu.org>
+
+* hpath.el (hpath:tramp-file-name-regexp): Handle tramp regexp from
+    different Emacs versions.
+
+* test/hpath-tests.el (hpath:remote-at-p): Add test case for
+    hpath:remote-at-p.
+
+2022-08-29  Bob Weiner  <rsw@gnu.org>
+
+* hbut.el (ebut:key-src): Rename to 'ebut:to-key-src'.
+          (hbut:key-src): Rename to 'hbut:to-key-src'.
+          (ibut:key-src): Rename to 'ibut:to-key-src'.
+
+* hyrolo.el (hyrolo-verify, hyrolo-isearch, hyrolo-next-match,
+             hyrolo-previous-match, hyrolo-isearch-for-regexp):
+    Add support for use in main HyRolo file, not just match buffer.
+
+* hui-select.el (hui-select-goto-matching-delimiter, hui-select-thing):
+  hui-mini.el (hui-search-web): Use Org cmd if matching key binding
+    called from a keyboard macro.
+
+* hui-mini.el (hui-search-web): If in Org mode and uses org-sparse-tree
+    binding call that instead (previously would call hsys-org-todo-occur
+    for more todo filtering functionality but org has a dispatch menu
+    on this key with multiple functions).
+
+2022-08-28  Bob Weiner  <rsw@gnu.org>
+
+* kotl/klink.el (klink:act): Ensure 'hact' value is returned, not
+    the result of the 'klink:update-label' call.
+  hbut.el (hbut:get-key-src): Add to get source of button without
+    setting as current buffer.
+  kotl/klink.el (klink:at-p): Use 'hbut:get-key-src' to resolve
+    relative klink paths properly.
+
+* kotl/kotl-mode.el (kotl-mode:to-start-of-line):
+    Remove and use 'kotl-mode:beginning-of-line' instead.
+
+* hact.el (action:commandp, action:params, actype:eval):
+  hargs.el (hargs:action-get):
+  hypb.el (hypb:debug, hypb:map-vector):
+    Replace use of 'hypb:emacs-byte-code-p' with builtin
+    'byte-code-function-p.
+
+* hibtypes.el (elisp-compiler-msg):
+    Replace 'hypb:replace-match-string' with 'replace-regexp-in-string'.
+
+* hbut.el (ibut:at-p): Fix to returns nil if name and lbl-key are both nil.
+    Also add support for <> and {} ibut delimiters.
+
+* hui-mouse.el (hkey-alist): In HyRolo match buffer, test major-mode
+    rather than buffer name.
+
+* hyrolo.el (hyrolo-mode): Don't reinitialize local variables to default
+    values when already in hyrolo-mode and mode is invoked again.
+
+* kotl/kview.el (kcell-view:to-label-end): Remove check if in a buffer
+    with a kview so can be used in HyRolo match buffer as well.
+                (kcell-view:to-label-end): Handle no kview in in HyRolo
+    match buffer.
+
+* hyrolo.el (hyrolo-kill, hyrolo-toggle-narrow-to-entry,
+             hyrolo-google-contacts-grep, hyrolo-grep-file,
+             hyrolo-display-to-entry-end, hyrolo-name-at):
+  kotl/kimport.el (kimport:star-entries): Don't fold case when searching
+    for 'hyrolo-entry-regexp'.
+    (hyrolo-isearch-for-regexp): Add 2nd parameter, 'fold-search-flag'
+  used to set 'case-fold-search'.
+
+* hyrolo.el (hyrolo-find-file-noselect-function): Add so can customize
+    low-level function used by HyRolo to read in each file searched by
+    HyRolo.
+            (hyrolo-find-file): Add second optional parameter, 'find-function',
+    used to find the file.
+            (hyrolo-find-file-noselect): Add and use 'hyrolo-find-file-noselect-function'.
+	    (hyrolo-add, hyrolo-edit, hyrolo-grep, hyrolo-helm-org-rifle,
+             hyrolo-grep-file, hyrolo-map-level, hyrolo-to): Update to call
+    'hyrolo-find-file-noselect'.
+            (hyrolo-add-match): Retain entry properties in match buffer.
+	    (hyrolo-mode): Make 'outline-regexp' local in match buffer.
+
+2022-08-27  Bob Weiner  <rsw@gnu.org>
+
+* hyrolo.el (hyrolo-file-suffix-regexp): Match only to these
+    file suffixes when searching for HyRolo files in directories.
+            (hyrolo-search-directories, hyrolo-fgrep-directories,
+             hyrolo-grep-directories, hyrolo-helm-org-rifle-directories):
+    Add these functions to do HyRolo searches over filtered filenames
+    in directories.
+            (hyrolo-org): Separate helm-org-rifle behavior into a new
+    command, 'hyrolo-helm-org-directory-rifle'.
+            (hyrolo-helm-org-rifle, hyrolo-helm-org-directory-rifle):
+    Let 'helm-org-rifle-show-full-contents' be true.
+
+* hyrolo.el (hyrolo-helm-org-rifle): Limit to .org and .otl files.
+
+* hypb.el (hypb:filter-directories, hypb:readable-directories):
+    Add and use in "hyrolo.el".
+
+2022-08-21  Bob Weiner  <rsw@gnu.org>
+
+* hyrolo.el (hyrolo-set-date): Don't add a date if in a Koutline
+    buffer.
+* hyrolo.el (hyrolo-add, hyrolo-edit, hyrolo-toggle-narrow-to-entry,
+             hyrolo-grep-file, hyrolo-to):
+  hyrolo-logic.el (hyrolo-map-logic):
+            Replace use of 'widen' with new function, 'hyrolo-widen',
+    which widens only to the textual part of a buffer, leaving
+    Koutline meta-data hidden, for example.
+            (hyrolo-edit, hyrolo-add): If in a Koutline, ensure point is
+    left in a valid, editable position.
+            (hyrolo-narrowed-p): Remove.  Use 'buffer-narrowed-p' instead.
+	    (hyrolo-show-levels): Make argument of NUM-LEVELS relative
+    to first matched level, so some entries are always shown.
+            (hyrolo-min-matched-level): Add and use in 'hyrolo-show-levels'
+            (hyrolo-back-to-visible-point): Add and use in
+    'hyrolo-show-levels'.
+            (hyrolo-display-matches): Move invocation of 'hyrolo-mode'
+    to when the match display buffer is created in 'hyrolo-set-display-buffer'.
+            (hyrolo-set-display-buffer): Add and used above.
+
+2022-08-20  Bob Weiner  <rsw@gnu.org>
+
+* hyrolo.el (hyrolo-grep): Add support for 'outline-regexp' and
+    'outline-level' variables from multiple file types.
+            (hyrolo-mode): Set local value of 'outline-level' to
+    'hyrolo-mode-outline-level' and define that function to support
+    star outlines and Koutlines.  Also, make 'hyrolo-entry-regexp'
+    local and set it to its default value, after which it may be
+    modified.
+            (hyrolo-previous-match): Change so can be used in a
+    predicate when a match is found.
+            (hyrolo-mode-outline-level): Add and use in 'hyrolo-mode'.
+
+* kotl/kotl-mode.el (kotl-mode): Add local settings of:
+    'hyrolo-entry-regexp', 'outline-level', and 'outline-regexp'
+     specific to Koutlines.
+  kotl/kview.el (kview:outline-regexp): Regexp quote
+    use of 'kview:default-label-separator'.
+            (hyrolo-name-at): Change to only go to beginning of
+    the current line to check if at the start of a hyrolo entry;
+    don't do a reverse search any more.
+
+2022-08-14  Mats Lidell  <matsl@gnu.org>
+
+* set.el:
+* hyrolo-demo.el:
+* hui-jmenu.el:
+* hui-em-but.el:
+* hsys-youtube.el: Shorten docs strings to be within 80 char limit.
+
+* hload-path.el (hload-path--make-directory-autoloads): Use
+    loaddefs-generate if available.
+
+2022-08-11  Bob Weiner  <rsw@gnu.org>
+
+* kotl/kview.el (kview:outline-regexp): Add groupings to match
+    to 'hyperbole-entry-regexp' when HyRolo searches kotls.
+
+* kotl/kotl-mode.el (kotl-mode): Set this mode with 'special
+    property since cells are specially formatted and edited.
+  hyrolo.el (hyrolo-grep-file):
+  hyrolo-logic.el (hyrolo-map-logic): Don't widen buffers whose
+    major mode is marked 'special.
+
+2022-08-08  Bob Weiner  <rsw@gnu.org>
+
+* kotl/kview.el (kview:outline-regexp): Add so can be referenced
+    elsewhere.
+  kotl/kotl-mode.el (kotl-mode): Use kview:outline-regexp.
+
+2022-08-07  Bob Weiner  <rsw@gnu.org>
+
+* hyrolo.el (hyrolo-org, hyrolo-org-roam): Remove cddr call to filter
+    . and .. out since match to "\\.org$" already does.  Also add
+    missing arguments to hyrolo-org and complete doc strings.
+
+2022-08-07  Mats Lidell  <matsl@gnu.org>
+
+* kotl/kvspec.el: Shorten docs strings to be within 80 char limit.
 
 2022-07-26  Mats Lidell  <matsl@gnu.org>
 

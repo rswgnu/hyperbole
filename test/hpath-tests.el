@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    28-Feb-21 at 23:26:00
-;; Last-Mod:     24-Jul-22 at 10:31:32 by Bob Weiner
+;; Last-Mod:     12-Sep-22 at 22:11:14 by Mats Lidell
 ;;
 ;; Copyright (C) 2021-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -247,6 +247,14 @@
               (goto-char 4)
               (hy-test-helpers:action-key-should-call-hpath:find (expand-file-name py-file hyperb:dir)))))
       (setenv "PYTHONPATH" old-python-path))))
+
+(ert-deftest hpath:remote-at-p ()
+  "Verify hpath:remote-at-p match a tramp remote file name."
+  (let ((tramp-file "/ssh:user@host.org:/home/username/file"))
+    (with-temp-buffer
+      (insert (concat "\"" tramp-file "\""))
+      (goto-char 5)
+      (should (string= (hpath:remote-at-p) tramp-file)))))
 
 (provide 'hpath-tests)
 ;;; hpath-tests.el ends here

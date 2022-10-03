@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     1-Nov-91 at 00:44:23
-;; Last-Mod:     24-Jul-22 at 01:02:25 by Bob Weiner
+;; Last-Mod:     12-Sep-22 at 23:57:39 by Mats Lidell
 ;;
 ;; Copyright (C) 1991-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -724,7 +724,11 @@ Removes bol anchor and removes match to empty string if present."
 	 (tramp-regexp (car (if (fboundp 'tramp-file-name-structure)
 				(tramp-file-name-structure)
 			      tramp-file-name-structure))))
-    (substring-no-properties (replace-regexp-in-string "\\\\'" "" tramp-regexp) 1)))
+    (replace-regexp-in-string
+     "\\\\'" ""
+     (cond ((string-match-p "\\\\(\\?:^/\\\\)" tramp-regexp)
+            (replace-regexp-in-string  "\\\\(\\?:\\^/\\\\)" "\\(?:/\\)" tramp-regexp nil t))
+           (t (substring tramp-regexp 1))))))
 
 (defun hpath:remote-at-p ()
   "Return a remote pathname that point is within or nil.

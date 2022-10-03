@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    10-Jul-22 at 18:10:56
-;; Last-Mod:     17-Jul-22 at 22:49:58 by Bob Weiner
+;; Last-Mod:      2-Aug-22 at 14:50:45 by Mats Lidell
 ;;
 ;; Copyright (C) 2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -72,7 +72,7 @@ optional.")
 ;;; ************************************************************************
 
 (defun hsys-youtube-get-url (video-id &optional start-time-string end-time-string)
-  "Return the url to play VIDEO-ID from the point specified by optional START-TIME-STRING.
+  "Return url to play VIDEO-ID from point specified by optional START-TIME-STRING.
 Return nil if START-TIME-STRING is given but is invalid.  If not given,
 START-TIME-STRING is set to \"0s\" representing the beginning of the video.
 
@@ -88,7 +88,7 @@ minutes are optional."
     (hsys-youtube-start-url video-id start-time-string)))
 
 (defun hsys-youtube-get-url:help (hbut)
-  "Display in the minibuffer the url from an `hsys-youtube-get-url' action button, HBUT.
+  "Show in minibuffer the url from an `hsys-youtube-get-url' action button, HBUT.
 Called when the Assist Key is pressed on such a button."
   (message (apply #'hsys-youtube-get-url (hattr:get hbut 'args))))
 
@@ -116,7 +116,7 @@ and minutes are optional."
   (hact #'actypes::www-url (hsys-youtube-get-url video-id start-time-string end-time-string)))
 
 (defun hsys-youtube-play:help (hbut)
-  "Display in the minibuffer the url for an `hsys-youtube-play' action button, HBUT.
+  "Show in the minibuffer the url for an `hsys-youtube-play' action button, HBUT.
 Called when the Assist Key is pressed on such a button."
   (message (apply #'hsys-youtube-get-url (hattr:get hbut 'args))))
 
@@ -138,8 +138,9 @@ Called when the Assist Key is pressed on such a button."
 ;;; ************************************************************************
 
 (defun hsys-youtube-end-url (video-id &optional start-time-string end-time-string)
-  "Return a URL to play a youtube VIDEO-ID from optional START-TIME-STRING through END-TIME-STRING.
-VIDEO-ID must be a string and can be a video identifier, e.g. WkwZHSbHmPg, or a full url to the video." 
+  "Return url to play VIDEO-ID from optional START-TIME-STRING to END-TIME-STRING.
+VIDEO-ID must be a string and can be a video identifier,
+e.g. WkwZHSbHmPg, or a full url to the video."
   (if (or (null video-id)
 	  (not (stringp video-id))
 	  (string-empty-p video-id))
@@ -162,9 +163,9 @@ VIDEO-ID must be a string and can be a video identifier, e.g. WkwZHSbHmPg, or a 
 	    (random 10000000))))
 
 (defun hsys-youtube-start-url (video-id &optional start-time-string)
-  "Return a URL to a youtube VIDEO-ID starting at optional START-TIME-STRING or the beginning.
+  "Return url to play VIDEO-ID starting at beginning or optional START-TIME-STRING.
 VIDEO-ID must be a string and can be a video identifier,
-e.g. WkwZHSbHmPg, or a full url to the video." 
+e.g. WkwZHSbHmPg, or a full url to the video."
   (if (or (null video-id)
 	  (not (stringp video-id))
 	  (string-empty-p video-id))
@@ -179,7 +180,8 @@ e.g. WkwZHSbHmPg, or a full url to the video."
       (format hsys-youtube-start-format video-id start-time-string))))
 
 (defun hsys-youtube-time-in-hms (start-time-string)
-  "Return the start time in hours, minutes, seconds for a Youtube url from START-TIME-STRING.
+  "Return the start time for a Youtube url from START-TIME-STRING.
+Start time is returned as hours, minutes and seconds.
 Hours and minutes are optional within the START-TIME-STRING, e.g. 1:2:44 (1
 hour, two minutes, 45 seconds into a video).  If the START-TIME-STRING
 format is invalid, return it unchanged."
@@ -202,9 +204,10 @@ format is invalid, return it unchanged."
 
 (defun hsys-youtube-time-in-seconds (start-time-string)
   "Return the number of seconds time for a Youtube url given a START-TIME-STRING.
-Hours and minutes are optional within the START-TIME-STRING, e.g. 1:2:44 (1
-hour, two minutes, 45 seconds into a video).  The formats 1h2m44s or 1h:2m:44s
-may also be used.  If the START-TIME-STRING format is invalid, return it unchanged."
+Hours and minutes are optional within the START-TIME-STRING,
+e.g. 1:2:44 (1 hour, two minutes, 45 seconds into a video).  The
+formats 1h2m44s or 1h:2m:44s may also be used.  If the
+START-TIME-STRING format is invalid, return it unchanged."
   (if (and (stringp start-time-string)
 	   (string-match-p "[:hmsHMS]" start-time-string))
       (let* ((time-parts (split-string start-time-string "[:hmsHMS]" t))

@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    13-Jun-89 at 22:57:33
-;; Last-Mod:     15-Jul-22 at 23:23:52 by Mats Lidell
+;; Last-Mod:     21-Aug-22 at 14:42:41 by Bob Weiner
 ;;
 ;; Copyright (C) 1989-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -143,13 +143,13 @@ is nil and optional NO-SUB-ENTRIES-OUT flag is non-nil.  SEXP should utilize the
 free variables `start' and `end' as the region on which to operate.
 Return the number of evaluations of SEXP that match entries."
   (let* ((display-buf (unless count-only
-		       (prog1 (set-buffer (get-buffer-create hyrolo-display-buffer))
+		       (prog1 (hyrolo-set-display-buffer)
 			 (setq buffer-read-only nil)
 			 (erase-buffer))))
 	 (result
 	  (mapcar
-	   (lambda (in-bufs)
-	     (hyrolo-map-logic sexp in-bufs count-only include-sub-entries
+	   (lambda (buf)
+	     (hyrolo-map-logic sexp buf count-only include-sub-entries
 			       no-sub-entries-out))
 	   (cond ((null in-bufs) hyrolo-file-list)
 		 ((listp in-bufs) in-bufs)
@@ -173,14 +173,14 @@ to operate.  Return the number of evaluations of SEXP that match entries."
   (if (or (bufferp hyrolo-buf)
 	  (if (file-exists-p hyrolo-buf)
 	      (setq hyrolo-buf (find-file-noselect hyrolo-buf t))))
-      (let* ((display-buf (set-buffer (get-buffer-create hyrolo-display-buffer)))
+      (let* ((display-buf (hyrolo-set-display-buffer))
 	     (buffer-read-only))
 	(let ((hdr-pos) (num-found 0))
 	  (set-buffer hyrolo-buf)
 	  (save-excursion
 	    (save-restriction
-	      (widen)
-	      (goto-char 1)
+	      (hyrolo-widen)
+	      (goto-char (point-min))
 	      ;; Ensure no entries in outline mode are hidden.
 	      (outline-show-all)
 	      (when (re-search-forward hyrolo-hdr-regexp nil t 2)
