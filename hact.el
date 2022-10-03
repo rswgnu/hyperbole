@@ -3,9 +3,9 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    18-Sep-91 at 02:57:09
-;; Last-Mod:     29-Aug-22 at 00:21:24 by Bob Weiner
+;; Last-Mod:     18-Sep-22 at 22:23:21 by Mats Lidell
 ;;
-;; Copyright (C) 1991-2021  Free Software Foundation, Inc.
+;; Copyright (C) 1991-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
 ;;
 ;; This file is part of GNU Hyperbole.
@@ -383,7 +383,7 @@ performing ACTION."
       (let ((hist-elt (hhist:element)))
 	(run-hooks 'action-act-hook)
 	(prog1 (or (if (or (symbolp action) (listp action)
-			   (hypb:emacs-byte-code-p action)
+			   (byte-code-function-p action)
 			   (subrp action)
 			   (and (stringp action) (not (integerp action))
 				(setq action (key-binding action))))
