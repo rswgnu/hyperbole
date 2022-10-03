@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    04-Feb-89
-;; Last-Mod:     18-Jun-22 at 21:57:35 by Mats Lidell
+;; Last-Mod:     28-Aug-22 at 23:15:16 by Bob Weiner
 ;;
 ;; Copyright (C) 1991-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -378,7 +378,9 @@ Its default value is #'smart-scroll-down.  To disable it, set it to
 	  buffer-file-name (smart-asm-at-tag-p)) .
 	  ((smart-asm) . (smart-asm nil 'next-tag)))
     ;;
-    ((or (and (smart-lisp-mode-p) (smart-lisp-at-tag-p))
+    ((or (and (smart-lisp-mode-p)
+	      (or (smart-lisp-at-load-expression-p)
+		  (smart-lisp-at-tag-p)))
 	 ;; Tightly limit Lisp matches in change-log-mode.
 	 (smart-lisp-at-change-log-tag-p)) .
 	 ((smart-lisp) . (smart-lisp 'show-doc)))
@@ -448,7 +450,7 @@ Its default value is #'smart-scroll-down.  To disable it, set it to
     ((eq major-mode 'w3-mode) .
      ((w3-follow-link) . (w3-goto-last-buffer)))
     ;;
-    ((and (boundp 'hyrolo-display-buffer) (equal (buffer-name) hyrolo-display-buffer)) .
+    ((eq major-mode 'hyrolo-mode) .
      ((smart-hyrolo) . (smart-hyrolo-assist)))
     ;;
     ((eq major-mode 'image-dired-thumbnail-mode) .
@@ -1290,10 +1292,10 @@ If assist-key is pressed within:
 ;;; ************************************************************************
 
 (defun smart-hyrolo ()
-  "In hyrolo match buffer, edits current entry.
+  "In hyrolo match buffer, edit current entry.
 Uses one key or mouse key.
 
-Invoked via a key press when in the `hyrolo-display-buffer'.  It assumes that
+Invoked via a key press when in the `hyrolo-display-buffer'.  Assume that
 its caller has already checked that the key was pressed in an appropriate
 buffer and has moved the cursor to the selected buffer."
   (interactive)
@@ -1367,8 +1369,8 @@ NO-RECURSE-FLAG non-nil prevents infinite recursions."
       (when index-item
 	(setq index-position (when (markerp (cdr index-item))
 			       (marker-position (cdr index-item))))
-	(if (eq index-position 1)
-	    ;; If index position is 1, this means the index markers have
+	(if (memq index-position '(1 -99))
+	    ;; If index position is 1 or -99, this means the index markers have
 	    ;; become out of date after buffer edits (likely imenu-auto-rescan
 	    ;; is nil), so do a single rescan to try to fix this.
 	    (unless no-recurse-flag

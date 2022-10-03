@@ -1,11 +1,11 @@
-;;; hact.el --- GNU Hyperbole button action handling  -*- lexical-binding: t; -*-
+;;; hact.el --- GNU Hyperbole button action handling  -*- lexical-binding: t; -let*-
 ;;
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    18-Sep-91 at 02:57:09
-;; Last-Mod:     21-Jul-22 at 08:58:11 by Mats Lidell
+;; Last-Mod:     18-Sep-22 at 22:23:21 by Mats Lidell
 ;;
-;; Copyright (C) 1991-2021  Free Software Foundation, Inc.
+;; Copyright (C) 1991-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
 ;;
 ;; This file is part of GNU Hyperbole.
@@ -266,8 +266,10 @@ When optional SYM is given, returns the name for that symbol only, if any."
 
 (defun   htype:symbol (type type-category)
   "Return possibly new Hyperbole type symbol composed from TYPE and TYPE-CATEGORY.
-TYPE and TYPE-CATEGORY are both symbols."
-  (intern (concat (symbol-name type-category) "::" (symbol-name type))))
+TYPE and TYPE-CATEGORY are both symbols.  TYPE-CATEGORY must be one of
+`actypes' or `ibtypes'; if not, return nil."
+  (when (memq type-category '(actypes ibtypes))
+    (intern (concat (symbol-name type-category) "::" (symbol-name type)))))
 
 ;;; ========================================================================
 ;;; action class
@@ -286,7 +288,7 @@ TYPE and TYPE-CATEGORY are both symbols."
 	       (t function))))
     (cond ((and action (fboundp 'interactive-form))
 	   (interactive-form action))
-	  ((hypb:emacs-byte-code-p action)
+	  ((byte-code-function-p action)
 	   (cond ((fboundp 'compiled-function-interactive)
 		  (compiled-function-interactive action))
 		 ((commandp action)
@@ -332,7 +334,7 @@ Autoloads action function if need be to get the parameter list."
 	       ((eq (car action) 'autoload)
 		(error "(action:params): Autoload not supported: %s" action))
 	       (t (car (cdr action)))))
-	((hypb:emacs-byte-code-p action)
+	((byte-code-function-p action)
 	 (if (fboundp 'compiled-function-arglist)
 	     (compiled-function-arglist action)
 	   (action:params-emacs action)))
@@ -381,7 +383,7 @@ performing ACTION."
       (let ((hist-elt (hhist:element)))
 	(run-hooks 'action-act-hook)
 	(prog1 (or (if (or (symbolp action) (listp action)
-			   (hypb:emacs-byte-code-p action)
+			   (byte-code-function-p action)
 			   (subrp action)
 			   (and (stringp action) (not (integerp action))
 				(setq action (key-binding action))))
@@ -416,7 +418,7 @@ performing ACTION."
       (let ((hist-elt (hhist:element)))
 	(run-hooks 'action-act-hook)
 	(prog1 (if (or (symbolp action) (listp action)
-		       (hypb:emacs-byte-code-p action)
+		       (byte-code-function-p action)
 		       (subrp action)
 		       (and (stringp action) (not (integerp action))
 			    (setq action (key-binding action))))

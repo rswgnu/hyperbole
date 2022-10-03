@@ -57,7 +57,7 @@
 
 ;; Redefine this Org Table function to handle Koutlines as well.
 (defun orgtbl-tab (arg)
-  "Justification and field motion for `orgtbl-mode' with Hyperbole Koutline support."
+  "Justification and field motion for `orgtbl-mode' with Koutline support."
   (interactive "P")
   (cond ((and (derived-mode-p #'kotl-mode) arg)
 	 (kotl-mode:tab-command (if (= (prefix-numeric-value arg) 1) nil arg)))
@@ -83,7 +83,7 @@ If no previous line, exchange current with next line."
   )
 
 (defun orgtbl-meta-return (arg)
-  "Let Action Key handle tables in kotl-mode, otherwise, use standard Org table command."
+  "Let Action Key handle tables in kotl-mode, otherwise, use Org table command."
   (interactive "P")
   (if (derived-mode-p #'kotl-mode)
       (hkey-either arg)

@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    31-Oct-91 at 23:17:35
-;; Last-Mod:     20-Jul-22 at 19:17:13 by Mats Lidell
+;; Last-Mod:     29-Aug-22 at 00:21:40 by Bob Weiner
 ;;
 ;; Copyright (C) 1991-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -56,7 +56,7 @@ Current button is being edited when EDITING-FLAG is t.
 Return nil if ACTION is not a list or `byte-code' object, has no
 interactive form or takes no arguments."
   (save-excursion
-    (and (or (subrp action) (hypb:emacs-byte-code-p action) (listp action))
+    (and (or (subrp action) (byte-code-function-p action) (listp action))
 	 (let ((interactive-form (action:commandp action)))
 	   (when interactive-form
 	     (hpath:relative-arguments

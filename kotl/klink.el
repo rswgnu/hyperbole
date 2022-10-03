@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    15-Nov-93 at 12:15:16
-;; Last-Mod:     15-Jul-22 at 23:24:53 by Mats Lidell
+;; Last-Mod:     29-Aug-22 at 01:12:26 by Bob Weiner
 ;;
 ;; Copyright (C) 1993-2022  Free Software Foundation, Inc.
 ;; See the "../HY-COPY" file for license information.
@@ -85,9 +85,12 @@
 ;;; ************************************************************************
 
 (defun klink:absolute (label-and-pos)
-  "With point in a klink's source buffer and LABEL-AND-POS a list of (klink-label, klink-start, klink-end) including delimiters, return an absolute klink string.
-Klink is of the form: \"<absolute-file-name, cell-ref>\".
-See documentation for `kcell:ref-to-id' for valid cell-ref formats."
+  "Return an absolute klink string from LABEL-AND-POS list.
+With point in a klink's source buffer and LABEL-AND-POS a list
+of (klink-label, klink-start, klink-end) including delimiters,
+return an absolute klink string.  Klink returned is of the form:
+\"<absolute-file-name, cell-ref>\".  See documentation for
+`kcell:ref-to-id' for valid cell-ref formats."
   (when (and (derived-mode-p 'kotl-mode) label-and-pos (listp label-and-pos))
     (let* ((file-and-cell-ref (klink:parse (car label-and-pos)))
 	   (file (or (car file-and-cell-ref) buffer-file-name))
@@ -185,8 +188,8 @@ link-end-position, (including delimiters)."
 	   (or (string-match "^ *[-@|!&]" referent)
 	       (if (string-match "\\s-*," referent)
 		   (progn (setq path (substring referent 0 (match-beginning 0)))
-			  (hpath:is-p path))
-		 (hpath:is-p referent)))
+			  (hpath:is-p (expand-file-name path (file-name-directory (hbut:get-key-src)))))
+		 (hpath:is-p (expand-file-name referent (file-name-directory (hbut:get-key-src))))))
 	   ;; Eliminate matches to e-mail addresses like, <user@domain>
 	   (not (string-match "[^<> \t\n\r\f][!&@]" referent))
 	   ;; Eliminate matches to URLs
@@ -199,8 +202,9 @@ link-end-position, (including delimiters)."
       label-and-pos)))
 
 (defun klink:set-yank-handler (klink)
-  "Add yank-handler to KLINK so link is made relative when yanked into the same koutline or the same directory.
-Return the modified KLINK."
+  "Add yank-handler to KLINK and return the modified KLINK.
+Link is made relative when yanked into the same koutline or the
+same directory."
   (add-text-properties 0 (length klink)
 		       (list 'yank-handler '(klink:yank-handler)
 			     'yank-excluded-properties (cons 'yank-handler (get-text-property 0 'yank-excluded-properties klink)))
@@ -261,11 +265,11 @@ See documentation for `kcell:ref-to-id' for valid cell-ref formats."
 (defun klink:act (link start-pos)
   (let ((obuf (current-buffer)))
     ;; Perform klink's action which is to jump to link referent.
-    (hact 'link-to-kotl link)
-    (save-excursion
-      ;; Update klink label if need be, which might be in a different buffer
-      ;; than the current one.
-      (klink:update-label link start-pos obuf))))
+    (prog1 (hact 'link-to-kotl link)
+      (save-excursion
+	;; Update klink label if need be, which might be in a different buffer
+	;; than the current one.
+	(klink:update-label link start-pos obuf)))))
 
 (defun klink:parse (reference)
   "Return (file-ref cell-ref) list parsed from REFERENCE string.

@@ -4,9 +4,9 @@
 ;; Maintainer:   Bob Weiner, Mats Lidell
 ;;
 ;; Orig-Date:     1-Jan-94
-;; Last-Mod:     11-May-22 at 01:11:22 by Bob Weiner
+;; Last-Mod:      6-Aug-22 at 12:23:16 by Mats Lidell
 ;;
-;; Copyright (C) 1994-2021  Free Software Foundation, Inc.
+;; Copyright (C) 1994-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
 ;;
 ;; This file is part of GNU Hyperbole.
@@ -32,7 +32,8 @@
 	  (memq window-system '(ns dps)))
       2 3)
   "Number of live buttons available on the mouse.
-Override this if the system-computed default is incorrect for your specific mouse.")
+Override this if the system-computed default is incorrect for
+your specific mouse.")
 
 (defvar hyperb:automount-prefixes
   (if (and (boundp 'automount-dir-prefix) (stringp automount-dir-prefix))
@@ -51,9 +52,10 @@ Override this if the system-computed default is incorrect for your specific mous
 
 ;; Called in hyperbole.el.
 (defun hyperb:stack-frame (function-list &optional debug-flag)
-  "Return the nearest Emacs Lisp stack frame which called any function symbol from FUNCTION-LIST or nil if no match.
-If FUNCTION-LIST contains 'load, 'autoload or 'require, detect
-autoloads not visible within the Lisp level stack frames.
+  "Return the nearest Elisp stack frame that called a function from FUNCTION-LIST.
+Return nil if there is no match.  FUNCTION-LIST entries must be symbols.
+If FUNCTION-LIST contains 'load, 'autoload or 'require, detect autoloads
+not visible within the Lisp level stack frames.
 
 With optional DEBUG-FLAG non-nil, if no matching frame is found, return list
 of stack frames (from innermost to outermost)."
@@ -117,7 +119,7 @@ the pathname."
 		     file)))))
 
 (defun hyperb:window-sys-term (&optional frame)
-  "Return the first part of the term-type if running under a window system, else nil.
+  "Return first part of the term-type if running under a window system, else nil.
 Where a part in the term-type is delimited by a `-' or  an `_'."
   (unless frame (setq frame (selected-frame)))
   (let* ((display-type (if (fboundp 'device-type) (device-type) window-system))
@@ -139,8 +141,9 @@ Where a part in the term-type is delimited by a `-' or  an `_'."
     term))
 
 (defun hyperb:window-system (&optional frame)
-  "Return the string name for window system or term type under which the selected FRAME is running.
-If nil after system initialization, no window system or mouse support is available."
+  "Return name of window system or term type where the selected FRAME is running.
+If nil after system initialization, no window system or mouse
+support is available."
   (unless frame (setq frame (selected-frame)))
   (frame-parameter frame 'hyperb:window-system))
 

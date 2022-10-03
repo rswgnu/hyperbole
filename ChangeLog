@@ -1,6 +1,306 @@
-2022-07-24  Mats Lidell  <matsl@gnu.org>
+2022-10-03  Mats Lidell  <matsl@gnu.org>
 
-* hib-social.el: Shorten docs strings to be within 80 char limit.
+* hib-social.el
+* hypb.el:
+* hycontrol.el:
+* hui-select.el:
+* hpath.el:
+* hibtypes.el:
+* hyrolo-logic.el:
+* hyperbole.el:
+* hversion.el:
+* hui-window.el:
+* hmouse-key.el:
+* hmouse-drv.el:
+* hload-path.el:
+* hinit.el: Shorten docs strings to be within 80 char limit.
+
+2022-09-19  Mats Lidell  <matsl@gnu.org>
+
+* hypb.el (hypb:replace-match-string): Remove unused function.
+
+* hact.el: Use byte-code-function-p.
+
+2022-09-14  Mats Lidell  <matsl@gnu.org>
+
+* hmouse-sh.el:
+* hywconfig.el:
+* htz.el:
+* hmouse-mod.el:
+* hmoccur.el: Shorten docs strings to be within 80 char limit.
+
+2022-09-13  Mats Lidell  <matsl@gnu.org>
+
+* hmouse-info.el: Shorten docs strings to be within 80 char limit.
+
+2022-09-12  Mats Lidell  <matsl@gnu.org>
+
+* hpath.el (hpath:tramp-file-name-regexp): Handle tramp regexp from
+    different Emacs versions.
+
+* test/hpath-tests.el (hpath:remote-at-p): Add test case for
+    hpath:remote-at-p.
+
+2022-08-29  Bob Weiner  <rsw@gnu.org>
+
+* hbut.el (ebut:key-src): Rename to 'ebut:to-key-src'.
+          (hbut:key-src): Rename to 'hbut:to-key-src'.
+          (ibut:key-src): Rename to 'ibut:to-key-src'.
+
+* hyrolo.el (hyrolo-verify, hyrolo-isearch, hyrolo-next-match,
+             hyrolo-previous-match, hyrolo-isearch-for-regexp):
+    Add support for use in main HyRolo file, not just match buffer.
+
+* hui-select.el (hui-select-goto-matching-delimiter, hui-select-thing):
+  hui-mini.el (hui-search-web): Use Org cmd if matching key binding
+    called from a keyboard macro.
+
+* hui-mini.el (hui-search-web): If in Org mode and uses org-sparse-tree
+    binding call that instead (previously would call hsys-org-todo-occur
+    for more todo filtering functionality but org has a dispatch menu
+    on this key with multiple functions).
+
+2022-08-28  Bob Weiner  <rsw@gnu.org>
+
+* kotl/klink.el (klink:act): Ensure 'hact' value is returned, not
+    the result of the 'klink:update-label' call.
+  hbut.el (hbut:get-key-src): Add to get source of button without
+    setting as current buffer.
+  kotl/klink.el (klink:at-p): Use 'hbut:get-key-src' to resolve
+    relative klink paths properly.
+
+* kotl/kotl-mode.el (kotl-mode:to-start-of-line):
+    Remove and use 'kotl-mode:beginning-of-line' instead.
+
+* hact.el (action:commandp, action:params, actype:eval):
+  hargs.el (hargs:action-get):
+  hypb.el (hypb:debug, hypb:map-vector):
+    Replace use of 'hypb:emacs-byte-code-p' with builtin
+    'byte-code-function-p.
+
+* hibtypes.el (elisp-compiler-msg):
+    Replace 'hypb:replace-match-string' with 'replace-regexp-in-string'.
+
+* hbut.el (ibut:at-p): Fix to returns nil if name and lbl-key are both nil.
+    Also add support for <> and {} ibut delimiters.
+
+* hui-mouse.el (hkey-alist): In HyRolo match buffer, test major-mode
+    rather than buffer name.
+
+* hyrolo.el (hyrolo-mode): Don't reinitialize local variables to default
+    values when already in hyrolo-mode and mode is invoked again.
+
+* kotl/kview.el (kcell-view:to-label-end): Remove check if in a buffer
+    with a kview so can be used in HyRolo match buffer as well.
+                (kcell-view:to-label-end): Handle no kview in in HyRolo
+    match buffer.
+
+* hyrolo.el (hyrolo-kill, hyrolo-toggle-narrow-to-entry,
+             hyrolo-google-contacts-grep, hyrolo-grep-file,
+             hyrolo-display-to-entry-end, hyrolo-name-at):
+  kotl/kimport.el (kimport:star-entries): Don't fold case when searching
+    for 'hyrolo-entry-regexp'.
+    (hyrolo-isearch-for-regexp): Add 2nd parameter, 'fold-search-flag'
+  used to set 'case-fold-search'.
+
+* hyrolo.el (hyrolo-find-file-noselect-function): Add so can customize
+    low-level function used by HyRolo to read in each file searched by
+    HyRolo.
+            (hyrolo-find-file): Add second optional parameter, 'find-function',
+    used to find the file.
+            (hyrolo-find-file-noselect): Add and use 'hyrolo-find-file-noselect-function'.
+	    (hyrolo-add, hyrolo-edit, hyrolo-grep, hyrolo-helm-org-rifle,
+             hyrolo-grep-file, hyrolo-map-level, hyrolo-to): Update to call
+    'hyrolo-find-file-noselect'.
+            (hyrolo-add-match): Retain entry properties in match buffer.
+	    (hyrolo-mode): Make 'outline-regexp' local in match buffer.
+
+2022-08-27  Bob Weiner  <rsw@gnu.org>
+
+* hyrolo.el (hyrolo-file-suffix-regexp): Match only to these
+    file suffixes when searching for HyRolo files in directories.
+            (hyrolo-search-directories, hyrolo-fgrep-directories,
+             hyrolo-grep-directories, hyrolo-helm-org-rifle-directories):
+    Add these functions to do HyRolo searches over filtered filenames
+    in directories.
+            (hyrolo-org): Separate helm-org-rifle behavior into a new
+    command, 'hyrolo-helm-org-directory-rifle'.
+            (hyrolo-helm-org-rifle, hyrolo-helm-org-directory-rifle):
+    Let 'helm-org-rifle-show-full-contents' be true.
+
+* hyrolo.el (hyrolo-helm-org-rifle): Limit to .org and .otl files.
+
+* hypb.el (hypb:filter-directories, hypb:readable-directories):
+    Add and use in "hyrolo.el".
+
+2022-08-21  Bob Weiner  <rsw@gnu.org>
+
+* hyrolo.el (hyrolo-set-date): Don't add a date if in a Koutline
+    buffer.
+* hyrolo.el (hyrolo-add, hyrolo-edit, hyrolo-toggle-narrow-to-entry,
+             hyrolo-grep-file, hyrolo-to):
+  hyrolo-logic.el (hyrolo-map-logic):
+            Replace use of 'widen' with new function, 'hyrolo-widen',
+    which widens only to the textual part of a buffer, leaving
+    Koutline meta-data hidden, for example.
+            (hyrolo-edit, hyrolo-add): If in a Koutline, ensure point is
+    left in a valid, editable position.
+            (hyrolo-narrowed-p): Remove.  Use 'buffer-narrowed-p' instead.
+	    (hyrolo-show-levels): Make argument of NUM-LEVELS relative
+    to first matched level, so some entries are always shown.
+            (hyrolo-min-matched-level): Add and use in 'hyrolo-show-levels'
+            (hyrolo-back-to-visible-point): Add and use in
+    'hyrolo-show-levels'.
+            (hyrolo-display-matches): Move invocation of 'hyrolo-mode'
+    to when the match display buffer is created in 'hyrolo-set-display-buffer'.
+            (hyrolo-set-display-buffer): Add and used above.
+
+2022-08-20  Bob Weiner  <rsw@gnu.org>
+
+* hyrolo.el (hyrolo-grep): Add support for 'outline-regexp' and
+    'outline-level' variables from multiple file types.
+            (hyrolo-mode): Set local value of 'outline-level' to
+    'hyrolo-mode-outline-level' and define that function to support
+    star outlines and Koutlines.  Also, make 'hyrolo-entry-regexp'
+    local and set it to its default value, after which it may be
+    modified.
+            (hyrolo-previous-match): Change so can be used in a
+    predicate when a match is found.
+            (hyrolo-mode-outline-level): Add and use in 'hyrolo-mode'.
+
+* kotl/kotl-mode.el (kotl-mode): Add local settings of:
+    'hyrolo-entry-regexp', 'outline-level', and 'outline-regexp'
+     specific to Koutlines.
+  kotl/kview.el (kview:outline-regexp): Regexp quote
+    use of 'kview:default-label-separator'.
+            (hyrolo-name-at): Change to only go to beginning of
+    the current line to check if at the start of a hyrolo entry;
+    don't do a reverse search any more.
+
+2022-08-14  Mats Lidell  <matsl@gnu.org>
+
+* set.el:
+* hyrolo-demo.el:
+* hui-jmenu.el:
+* hui-em-but.el:
+* hsys-youtube.el: Shorten docs strings to be within 80 char limit.
+
+* hload-path.el (hload-path--make-directory-autoloads): Use
+    loaddefs-generate if available.
+
+2022-08-11  Bob Weiner  <rsw@gnu.org>
+
+* kotl/kview.el (kview:outline-regexp): Add groupings to match
+    to 'hyperbole-entry-regexp' when HyRolo searches kotls.
+
+* kotl/kotl-mode.el (kotl-mode): Set this mode with 'special
+    property since cells are specially formatted and edited.
+  hyrolo.el (hyrolo-grep-file):
+  hyrolo-logic.el (hyrolo-map-logic): Don't widen buffers whose
+    major mode is marked 'special.
+
+2022-08-08  Bob Weiner  <rsw@gnu.org>
+
+* kotl/kview.el (kview:outline-regexp): Add so can be referenced
+    elsewhere.
+  kotl/kotl-mode.el (kotl-mode): Use kview:outline-regexp.
+
+2022-08-07  Bob Weiner  <rsw@gnu.org>
+
+* hyrolo.el (hyrolo-org, hyrolo-org-roam): Remove cddr call to filter
+    . and .. out since match to "\\.org$" already does.  Also add
+    missing arguments to hyrolo-org and complete doc strings.
+
+2022-08-07  Mats Lidell  <matsl@gnu.org>
+
+* kotl/kvspec.el: Shorten docs strings to be within 80 char limit.
+
+2022-07-26  Mats Lidell  <matsl@gnu.org>
+
+* kotl/kproperty.el:
+* kotl/klink.el:
+* kotl/klabel.el:
+* kotl/kfile.el:
+* hib-kbd.el:
+* hib-doc-id.el:
+* hhist.el:
+* hbut.el:
+* kotl/kotl-orgtbl.el: Shorten docs strings to be within 80 char limit.
+
+2022-07-25  Mats Lidell  <matsl@gnu.org>
+
+* kotl/kimport.el:
+* kotl/kfill.el: Shorten docs strings to be within 80 char limit.
+
+2022-07-24  Bob Weiner  <rsw@gnu.org>
+
+* hypb.el (hypb:require-package): Prompt user with y/n query before
+    installing a package when it is not already installed.
+
+* hbut.el (ibut:at-p, ibut:create): Ensure lbl-key is always set to
+    name, if available, and lbl-start and lbl-end point to the text
+    start and end for an ibut.
+
+* hibtypes.el (action): Ensure actypes:: prefix is added to any action
+    attribute that uses a Hyperbole actype.  Also, set args attribute
+    to exclude the actype.
+
+* hbut.el (ibut:create): Rewrite to prefer values from hbut:current
+    over any passed in individually.
+
+* test/demo-tests.el (fast-demo-key-series-shell-cd-hyperb-dir):
+  FAST-DEMO: Change pushd to cd since /bin/sh does not support pushd.
+
+* hpath.el (hpath:find): Rename filename arg to pathname and trigger
+    an error if not a string.
+
+2022-07-23  Bob Weiner  <rsw@gnu.org>
+
+* hibtypes.el (action): Display the result of evaluating the action
+    in the minibuffer for all types of expressions.
+  hactypes.el (display-value, display-variable): Fix to display
+    Lisp-readable values.
+
+* hui.el (hui:gibut-create): Add (ibut:create) call so 'hbut:current
+    stores the attributes of the newly created global button.
+
+* hbut.el (hbut:action): If action defined, return only first
+    element to match the return when actype is used.
+          (hbut:act): Use action attribute if defined.
+	  (ibut:create): Prevent removal of 1st arg if actype
+    is set.
+
+* hibtypes.el (elisp-compiler-msg): Add support for ERT "Test <symbol>"
+    lines to jump to the def of the symbol and for symbol and pathname
+    references from backtraces in ERT output.
+
+* hib-debbugs.el (debbugs-version-sufficient-p): Handle if version
+    is nil due to edebug mocking of 'find-file-noselect'.
+  test/hui-tests.el (hui-gibut-create-link-to-file,
+    hui-gibut-create-link-to-file-line,
+    hui-gibut-create-link-to-file-line-and-column):
+  test/hbut-tests.el (gbut-program-calls-ebut-program)
+    gbut-program-link-to-directory, gbut-program-eval-elisp,
+    gbut-program-link-to-file, gbut-program-link-to-file-line,
+    gbut-program-link-to-file-line-and-column):
+      Replace mock of 'find-file-noselect' with 'hpath:find-noselect'
+      so tests do not interfere with other calls to 'find-file-noselect'.
+
+* test/hy-test-helpers.el (hy-test-helpers:kill-buffer):
+    Add to kill buffers only when they exist.
+  test/demo-tests.el (fast-demo-key-series-shell-apropos):
+    Use 'hy-test-helpers:kill-buffer'.
+  test/hy-test-dependencies.el (hy-test-ensure-package-installed):
+    Simplified by defining this function.
+
+2022-07-22  Bob Weiner  <rsw@gnu.org>
+
+* hmouse-drv.el (hkey-debug): Use 'action' attribute if set, otherwise,
+    use 'actype' and 'args'.
+
+* hbut.el (ibut:create): Add 'dir' key parameter and set as hbut:current
+    attribute.  Remove '(or args)' as that was preventing set of
+ hbut:current attributes.
 
 2022-07-21  Mats Lidell  <matsl@gnu.org>
 
@@ -48,6 +348,30 @@
     (kcell-view:lines-visible, kview:set-cells-status): Use it.
     (label-sep-len):  Mark variable as obsolete. Use kview-label-sep-len.
 
+2022-07-17  Bob Weiner  <rsw@gnu.org>
+
+* hmouse-drv.el (hkey-debug): Add print of all button properties when on
+    a Hyperbole button.
+
+* hsettings.el (hyperbole-web-search): Add optional 'return-search-expr-flag'
+    to return search expression rather than doing the search.  Use
+    with Assist Key.
+
+* hibtypes.el (action): Call ibut:create to ensure button attributes
+    are set properly.
+  hbut.el (ibut:create): Return nil if at end-of-buffer.
+
+* hui-mouse.el (smart-imenu-item-p): Support -99 position value
+    that Emacs uses to indicate a rescan should be done.
+
+* test/demo-tests.el (fast-demo-key-series-shell-cd-hyperb-dir,
+                      fast-demo-key-series-shell-grep,
+                      fast-demo-key-series-shell-apropos):
+    Use 'sh' instead of 'bash' for wider applicability.
+    Don't kill shell buffer if it exists before the test is invoked.
+
+* hact.el (htype:symbol): Return nil if type-category is invalid.
+
 2022-07-15  Mats Lidell  <matsl@gnu.org>
 
 * test/hypb-tests.el: Remove test cases for hypb:replace-match-string.
@@ -73,6 +397,19 @@
     (hypb:function-symbol-replace, hypb:map-sublists)
     (hypb:constant-vector-symbol-replace): Delete functions.
 
+2022-07-12  Bob Weiner  <rsw@gnu.org>
+
+* hbut.el (ibut:create): Add, extracted from 'ibut:at-p'; define
+    with cl-defun so can optionally use non-positional colon-prefixed
+    keyword args to specify specific args.
+
+* hmouse-drv.el (hkey-help): Set 'assist-flag' so matches Assist Key
+    behavior in edges cases.
+
+* hactypes.el (display-value): Add to display a value when a get or
+    value function returns that value.
+  hibtypes.el (action): Use 'display-value'.
+
 2022-07-12  Mats Lidell  <matsl@gnu.org>
 
 * test/hpath-tests.el (hpath:auto-variable-alist-load-path-test): Simplify
@@ -81,6 +418,12 @@
 * test/hui-tests.el (hui-gbut-edit-link-to-file-button): Remove test file
     after test case is completed.
 
+2022-07-11  Bob Weiner  <rsw@gnu.org>
+
+* hibtypes.el (action:help): Allow for action button assist key :help
+    functions, even if the action button type is not a Hyperbole type,
+    i.e. a regular function.
+
 2022-07-11  Mats Lidell  <matsl@gnu.org>
 
 * test/hy-test-helpers.el (hy-test-helpers:should-last-message): Use
@@ -88,6 +431,60 @@
 
 * test/hui-select-tests.el (hui-select--thing): Limit test case to run in
     interactive mode, i.e. make test-all.
+
+2022-07-10  Bob Weiner  <rsw@gnu.org>
+
+* hsys-youtube.el: Add action button type to play segments of Youtube videos.
+  Makefile (EL_COMPILE, ELc_COMPILE):
+  MANIFEST: Added above file.
+
+2022-07-06  Bob Weiner  <rsw@gnu.org>
+
+* hypb.el (hypb:require-package): Add to install a package, if necessary,
+    and require its library with the same name.
+          (hypb:helm-info): Add to require helm package and call helm-info.
+
+2022-07-04  Bob Weiner  <rsw@gnu.org>
+
+* hypb.el (hypb:devdocs-lookup): Install and load devdocs package and then
+    call its 'devdocs-lookup' function.
+
+2022-07-02  Bob Weiner  <rsw@gnu.org>
+
+* hyrolo.el (hyrolo-org, hyrolo-helm-org-rifle, hyrolo-org-roam): Add HyRolo-
+    based searching of Org files, helm-based searching of HyRolo files and
+    Hyrolo-based searching of Org Roam files.
+
+* hsys-org.el (hsys-org-link-at-p, hsys-org-heading-at-p): Update to use
+    'smart-eolp' and 'smart-eobp'.
+
+2022-06-26  Bob Weiner  <rsw@gnu.org>
+
+* hui-mouse.el (hkey-alist): Fix smart-lisp to jump to load, autoload and
+    require targets.
+  hmouse-tag.el (smart-lisp-at-load-expression-p): Ensure expr ends with
+    whitespace (a full word).
+
+2022-06-25  Bob Weiner  <rsw@gnu.org>
+
+* hui-mini.el (hui:menu-forward-item, hui:menu-backward-item): Update to
+    handle menus without a name> prefix, e.g. a-Z menu.  Also add numeric
+    prefix arg handling.
+
+2022-06-20  Bob Weiner  <rsw@gnu.org>
+
+* hui-mini.el (hui:menu-to-personal-section): Add.
+              (hui:menu-item): Add support for inserting menu item label
+    into the action when the action is 'hui:menu-to-personal-section'.
+              (hui:menu-a-z): Add this customizable menu.
+
+* hyrolo.el (hyrolo-add): Add newline before adding entry if point is not
+    at the beginning of the line for insertion, i.e. when buffer does not
+    end with a newline.
+
+* hui-mini.el (hui:menu-multi-line): Add to change long minibuffer menu lines
+    into multi-line menus.
+              (hui:menu-line): Update to use 'hui:menu-multi-line'.
 
 2022-06-19  Bob Weiner  <rsw@gnu.org>
 
@@ -172,7 +569,7 @@
 
 2022-06-13  Mats Lidell  <matsl@gnu.org>
 
-* test/demo-tests.el (fast-demo-key-series-shell-pushd-hyperb-dir)
+* test/demo-tests.el (fast-demo-key-series-shell-cd-hyperb-dir)
     (fast-demo-key-series-shell-grep, fast-demo-key-series-shell-apropos):
     Tests for shell related key series examples in the fast demo.
 
@@ -292,7 +689,7 @@
 
 * hbut.el (ebut:label-p): Fix handling when point is on final RET and
     have nested lists as in here with braces:
-    { M-x shell RET M-> (pushd ${hyperb:dir}) RET }
+    { M-x shell RET M-> (cd ${hyperb:dir}) RET }
     by adding a (forward-list) call in the first 'while' construct.
 
 2022-05-14  Bob Weiner  <rsw@gnu.org>
@@ -9484,5 +9881,3 @@ V5.06 changes ^^^^:
      Copyright 1991-2021 Free Software Foundation, Inc.
      Copying and distribution of this file, with or without modification, are
      permitted provided the copyright notice and this notice are preserved.
-
-

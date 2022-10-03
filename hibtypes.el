@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 20:45:31
-;; Last-Mod:     14-Jun-22 at 20:06:40 by Mats Lidell
+;; Last-Mod:      3-Oct-22 at 20:01:40 by Mats Lidell
 ;;
 ;; Copyright (C) 1991-2022 Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -38,6 +38,7 @@
 (require 'cl-lib) ;; for cl-count
 (require 'subr-x) ;; For string-trim
 (require 'hactypes)
+(require 'thingatpt)
 
 ;;; ************************************************************************
 ;;; Public variables
@@ -105,7 +106,7 @@
 ;; ibtype priorities.
 
 (defib python-tb-previous-line ()
-  "If no other implicit button type triggered, move to prior line with potential Python line ref.
+  "Move to prior line with potential Python line ref.
 In Python, tracebacks may be on a line just below the source
 reference line so since not on a Hyperbole button, move back a
 line and check for a source reference line again."
@@ -261,7 +262,8 @@ display options."
            (match-string-no-properties 1)))))
 
 (defib mail-address ()
-  "If on an e-mail address in a specific buffer type, compose mail to that address in another window.
+  "If on an e-mail address compose mail to that address in another window.
+
 Applies to any major mode in `mail-address-mode-list', the HyRolo match buffer,
 any buffer attached to a file in `hyrolo-file-list', or any buffer with
 \"mail\" or \"rolo\" (case-insensitive) within its name.
@@ -347,7 +349,7 @@ must have an attached file."
 ;;; ========================================================================
 
 (defun markdown-follow-link-p ()
-  "Jump between reference links and definitions; between footnote markers and footnote text.
+  "Jump between reference links and definitions or footnote markers and text.
 Return t if jump and nil otherwise."
   (cond
    ;; Footnote definition
@@ -368,8 +370,9 @@ Return t if jump and nil otherwise."
     t)))
 
 (defun markdown-follow-inline-link-p (opoint)
-  "Test to see if on an inline link, jump to its referent if it is absolute (not relative within the file) and return non-nil.
-Otherwise, if an internal link, move back to OPOINT and return nil."
+  "If on an inline link, jump to its referent if it is absolute and return non-nil.
+Absolute means not relative within the file.  Otherwise, if an
+internal link, move back to OPOINT and return nil."
   (let (handle-link-flag
         result)
     (skip-chars-forward "^\]\[()")
@@ -702,7 +705,10 @@ Requires the Emacs builtin Tramp library for ftp file retrievals."
 ;;; ========================================================================
 
 (defun hlink (link-actype label-prefix start-delim end-delim)
-  "Call LINK-ACTYPE as the action type and prefix button with LABEL-PREFIX if point is within an implicit button delimited by START-DELIM and END-DELIM."
+  "Call LINK-ACTYPE and use LABEL-PREFIX if point is within an implicit button.
+LINK-ACTYPE is the action type and button is prefixed with
+LABEL-PREFIX.  The button must be delimited by START-DELIM and
+END-DELIM."
   ;; Used by e/g/ilink implicit buttons."
   (let* ((label-start-end (hbut:label-p t start-delim end-delim t t))
          (label-and-file (nth 0 label-start-end))
@@ -719,7 +725,7 @@ Requires the Emacs builtin Tramp library for ftp file retrievals."
       (hact link-actype but-key key-file))))
 
 (defun parse-label-and-file (label-and-file)
-  "Parse a colon-separated string of button label and source file path into a list of label and file."
+  "Parse colon-separated string LABEL-AND-FILE into a list of label and file path."
   ;; Can't use split-string here because file path may contain colons;
   ;; we want to split only on the first colon.
   (let ((i 0)
@@ -790,7 +796,7 @@ e.g. <ilink: my series of keys: ${hyperb:dir}/HYPB>."
 ;;; ========================================================================
 
 (defib pathname-line-and-column ()
-  "Make a valid pathname:line-num[:column-num] pattern display the path at line-num and optional column-num.
+  "Display path at position given by a pathname:line-num[:column-num] pattern.
 Also works for remote pathnames.
 May also contain hash-style link references with the following format:
 \"<path>[#<link-anchor>]:<line-num>[:<column-num>]}\".
@@ -819,9 +825,9 @@ See `hpath:find' function documentation for special file display options."
 
 (defib ipython-stack-frame ()
   "Jump to the line associated with an ipython stack frame line numbered msg.
-ipython outputs each pathname once followed by all matching lines in that pathname.
-Messages are recognized in any buffer (other than a helm completion
-buffer)."
+ipython outputs each pathname once followed by all matching lines
+in that pathname.  Messages are recognized in any buffer (other
+than a helm completion buffer)."
   ;; Locate and parse ipython stack trace messages found in any buffer other than a
   ;; helm completion buffer.
   ;;
@@ -851,7 +857,7 @@ buffer)."
                            (string-empty-p (string-trim file))))
             (let* ((but-label (concat file ":" line-num))
                    (source-loc (unless (file-name-absolute-p file)
-                                 (hbut:key-src t))))
+                                 (hbut:to-key-src t))))
               (when (stringp source-loc)
                 (setq file (expand-file-name file (file-name-directory source-loc))))
               (when (file-readable-p file)
@@ -861,9 +867,9 @@ buffer)."
 
 (defib ripgrep-msg ()
   "Jump to the line associated with a ripgrep (rg) line numbered msg.
-Ripgrep outputs each pathname once followed by all matching lines in that pathname.
-Messages are recognized in any buffer (other than a helm completion
-buffer)."
+Ripgrep outputs each pathname once followed by all matching lines
+in that pathname.  Messages are recognized in any buffer (other
+than a helm completion buffer)."
   ;; Locate and parse ripgrep messages found in any buffer other than a
   ;; helm completion buffer.
   ;;
@@ -896,7 +902,7 @@ buffer)."
 		   ;; RSW 12-05-2021 - Added hpath:expand in next line to
 		   ;; resolve any variables in the path before checking if absolute.
 		   (source-loc (unless (file-name-absolute-p (hpath:expand file))
-                                 (hbut:key-src t))))
+                                 (hbut:to-key-src t))))
               (if (stringp source-loc)
                   (setq file (expand-file-name file (file-name-directory source-loc)))
 		(setq file (or (hpath:prepend-shell-directory file) file)))
@@ -956,7 +962,7 @@ in grep and shell buffers."
 	       ;; RSW 12-05-2021 - Added hpath:expand in next line to
 	       ;; resolve any variables in the path before checking if absolute.
                (source-loc (unless (file-name-absolute-p (hpath:expand file))
-                             (hbut:key-src t))))
+                             (hbut:to-key-src t))))
           (if (stringp source-loc)
               (setq file (expand-file-name file (file-name-directory source-loc)))
 	    (setq file (or (hpath:prepend-shell-directory file) file)))
@@ -982,7 +988,8 @@ in grep and shell buffers."
 
 (defib debugger-source ()
   "Jump to source line associated with stack frame or breakpoint lines.
-This works with JavaScript and Python tracebacks, gdb, dbx, and xdb.  Such lines are recognized in any buffer."
+This works with JavaScript and Python tracebacks, gdb, dbx, and
+xdb.  Such lines are recognized in any buffer."
   (save-excursion
     (beginning-of-line)
     (cond
@@ -1066,25 +1073,44 @@ This works with JavaScript and Python tracebacks, gdb, dbx, and xdb.  Such lines
 ;;; ========================================================================
 
 (defib elisp-compiler-msg ()
-  "Jump to source code for definition associated with an Emacs Lisp error message.
-The error may from the Emacs byte compiler, the Emacs Lisp native
+  "Jump to definition of an Emacs Lisp symbol in an error or test message.
+The message may come from the Emacs byte compiler, the Emacs Lisp native
 compiler or the Emacs regression test system (ERT).
-This works when activated anywhere within the file line references."
+This works when activated anywhere within file line references."
   (when (or (member (buffer-name) '("*Compile-Log-Show*" "*Compile-Log*"
                                     "*compilation*" "*Async-native-compile-log*" "*ert*"))
             (save-excursion
               (and (re-search-backward "^[^ \t\n\r]" nil t)
                    (looking-at "While compiling\\|In \\([^ \n]+\\):$"))))
-    (let (src buffer-p label)
+    (let (src buffer-p label start-end
+	  lbl-start-end)
       (or
        ;; Emacs Regression Test (ERT) output lines
-       (save-excursion
-	 (forward-line 0)
-	 (when (looking-at "\\s-+\\(passed\\|failed\\|skipped\\)\\s-+[0-9]+/[0-9]+\\s-+\\(\\S-+\\)\\s-+(")
-           (setq label (match-string-no-properties 2))
-           (ibut:label-set label (match-beginning 2) (match-end 2))
+       (when (or (save-excursion
+		   (forward-line 0)
+		   (or (looking-at "\\s-+\\(passed\\|failed\\|skipped\\)\\s-+[0-9]+/[0-9]+\\s-+\\(\\S-+\\)\\s-+(")
+		       (looking-at "\\(Test\\)\\s-+\\(\\S-+\\)\\s-+\\(backtrace\\|condition\\):")))
+		 ;; Handle symbols and pathnames in a backtrace from an ERT test exception
+		 (save-match-data
+		   (and (save-excursion
+			  (re-search-backward "^$\\|^Test \\(\\S-+\\)\\s-+\\(backtrace\\|condition\\):" nil t)
+			  (looking-at "Test "))
+			(or
+			 ;; Handle double-quoted pathnames
+			 (and (setq lbl-start-end (hpath:delimited-possible-path nil t)
+				    label (nth 0 lbl-start-end))
+			      (ibut:label-set label (nth 1 lbl-start-end) (nth 2 lbl-start-end)))
+			 ;; Handle symbols
+			 (and (setq label (thing-at-point 'symbol)
+				    start-end (bounds-of-thing-at-point 'symbol))
+			      (ibut:label-set label (car start-end) (cdr start-end)))))))
+         (unless label
+	   (setq label (match-string-no-properties 2))
+	   (ibut:label-set label (match-beginning 2) (match-end 2)))
+	 (if (hpath:is-p label)
+	     (hact 'link-to-file label)
            ;; Remove prefix generated by actype and ibtype definitions.
-           (setq label (hypb:replace-match-string "[^:]+::" label "" t))
+           (setq label (replace-regexp-in-string "[^:]+::" "" label nil t))
            (hact 'smart-tags-display label nil)))
        ;; GNU Emacs Byte Compiler
        (and (save-excursion
@@ -1101,7 +1127,7 @@ This works when activated anywhere within the file line references."
               (setq label (match-string-no-properties 1))
               (ibut:label-set label (match-beginning 1) (match-end 1))
               ;; Remove prefix generated by actype and ibtype definitions.
-              (setq label (hypb:replace-match-string "[^:]+::" label "" t))
+              (setq label (replace-regexp-in-string "[^:]+::" "" label nil t))
               (hact 'link-to-regexp-match
                     (concat "^\(def[a-z \t]+" (regexp-quote label)
                             "[ \t\n\r\(]")
@@ -1118,7 +1144,7 @@ This works when activated anywhere within the file line references."
               (setq label (match-string-no-properties 1))
               (ibut:label-set label (match-beginning 1) (match-end 1))
               ;; Remove prefix generated by actype and ibtype definitions.
-              (setq label (hypb:replace-match-string "[^:]+::" label "" t))
+              (setq label (replace-regexp-in-string "[^:]+::" "" label nil t))
               (hact 'link-to-regexp-match
                     (concat "^\(def[a-z \t]+" (regexp-quote label)
                             "[ \t\n\r\(]")
@@ -1138,7 +1164,7 @@ This works when activated anywhere within the file line references."
               (setq label (match-string-no-properties 1))
               (ibut:label-set label (match-beginning 1) (match-end 1))
               ;; Remove prefix generated by actype and ibtype definitions.
-              (setq label (hypb:replace-match-string "[^:]+::" label "" t))
+              (setq label (replace-regexp-in-string "[^:]+::" "" label nil t))
               (hact 'link-to-regexp-match
                     (concat "^\(def[a-z \t]+" (regexp-quote label)
                             "[ \t\n\r\(]")
@@ -1176,13 +1202,17 @@ Patch applies diffs to source code."
 ;;; ========================================================================
 
 (defib texinfo-ref ()
-  "Display Texinfo, Info node or help associated with Texinfo node, menu item, @xref, @pxref, @ref, @code, @findex, @var or @vindex at point.
+  "Display Texinfo, Info node or help associated with Texinfo constructs at point.
+Supported Texinfo constructs are node, menu item, @xref, @pxref,
+@ref, @code, @findex, @var or @vindex.
+
 If point is within the braces of a cross-reference, the associated
 Info node is shown.  If point is to the left of the braces but after
 the @ symbol and the reference is to a node within the current
 Texinfo file, then the Texinfo node is shown.
 
-For @code, @findex, @var and @vindex references, the associated documentation string is displayed."
+For @code, @findex, @var and @vindex references, the associated
+documentation string is displayed."
   (when (memq major-mode '(texinfo-mode para-mode))
     (let ((opoint (point))
           (bol (save-excursion (beginning-of-line) (point))))
@@ -1298,8 +1328,9 @@ Activates only if point is within the first line of the Info-node name."
 ;;; ========================================================================
 
 (defib hyp-address ()
-  "Within a mail or Usenet news composer window, make a Hyperbole support/discussion e-mail address insert Hyperbole environment and version information.
-See also the documentation for `actypes::hyp-config'.
+  "Within a mail or news composer, make a Hyperbole support/discussion e-mail.
+Hyperbole environment and version information is inserted.  See
+also the documentation for `actypes::hyp-config'.
 
 For example, an Action Mouse Key click on <hyperbole-users@gnu.org> in
 a mail composer window would activate this implicit button type."
@@ -1316,7 +1347,8 @@ a mail composer window would activate this implicit button type."
 ;;; ========================================================================
 
 (defib hyp-source ()
-  "Turn source location entries in Hyperbole reports into buttons that jump to the associated location.
+  "Turn source location entries in Hyperbole reports into buttons.
+The buttons jump to the associated location.
 
 For example, {C-h h d d C-h h e h o} summarizes the properties of
 the explicit buttons in the DEMO file and each button in that
@@ -1348,7 +1380,10 @@ original DEMO file."
   "Regexp matching the end of a Hyperbole Emacs Lisp expression to evaluate.")
 
 (defib action ()
-  "The Action Button type: At point, activate any of: an Elisp variable, a Hyperbole action-type, or an Elisp function call surrounded by <> rather than ().
+  "The Action Button type.
+At point, activate any of: an Elisp variable, a Hyperbole
+action-type, or an Elisp function call surrounded by <> rather
+than ().
 If an Elisp variable, display a message showing its value.
 
 There may not be any <> characters within the expression.  The
@@ -1357,7 +1392,7 @@ action type or a function symbol to call, i.e. '<'actype-or-elisp-symbol
 arg1 ... argN '>'.  For example, <mail nil \"user@somewhere.org\">."
   (let* ((hbut:max-len 0)
          (label-key-start-end (ibut:label-p nil action:start action:end t))
-         (ibut-key (nth 0 label-key-start-end))
+         (lbl-key (nth 0 label-key-start-end))
          (start-pos (nth 1 label-key-start-end))
          (end-pos (nth 2 label-key-start-end))
          actype actype-sym action args lbl var-flag)
@@ -1369,15 +1404,15 @@ arg1 ... argN '>'.  For example, <mail nil \"user@somewhere.org\">."
     ;;   and end-delim is either:
     ;;     at the end of the buffer
     ;;     or is followed by a space, punctuation or grouping character.
-    (when (and ibut-key (or (null (char-before start-pos))
-                            (memq (char-syntax (char-before start-pos)) '(?\  ?\> ?\( ?\))))
+    (when (and lbl-key (or (null (char-before start-pos))
+                           (memq (char-syntax (char-before start-pos)) '(?\  ?\> ?\( ?\))))
                (not (memq (char-syntax (char-after (1+ start-pos))) '(?\  ?\>)))
                (or (null (char-after end-pos))
                    (memq (char-syntax (char-after end-pos)) '(?\  ?\> ?. ?\( ?\)))
                    ;; Some of these characters may have symbol-constituent syntax
                    ;; rather than punctuation, so check them individually.
                    (memq (char-after end-pos) '(?. ?, ?\; ?: ?! ?\' ?\"))))
-      (setq lbl (ibut:key-to-label ibut-key))
+      (setq lbl (ibut:key-to-label lbl-key))
       ;; Handle $ preceding var name in cases where same name is
       ;; bound as a function symbol
       (when (string-match "\\`\\$" lbl)
@@ -1395,21 +1430,37 @@ arg1 ... argN '>'.  For example, <mail nil \"user@somewhere.org\">."
 				(special-form-p actype-sym))
 			    actype-sym)))
       (when actype
-        (ibut:label-set lbl start-pos end-pos)
         (setq action (read (concat "(" lbl ")"))
               args (cdr action))
-        (cond ((and (symbolp actype) (fboundp actype)
-                    (string-match "-p\\'" (symbol-name actype)))
-               ;; Is a function with a boolean result
-               (setq args `(',action)
-		     action `(display-boolean ',action)
-                     actype #'display-boolean))
-              ((and (null args) (symbolp actype) (boundp actype)
-                    (or var-flag (not (fboundp actype))))
-               ;; Is a variable, display its value as the action
-               (setq args `(',actype)
-                     action `(display-variable ',actype)
-                     actype #'display-variable)))
+	;; Ensure action uses an fboundp symbol if executing a
+	;; Hyperbole actype.
+	(when (and (car action) (symbolp (car action)))
+	  (setcar action
+		  (or (intern-soft (concat "actypes::" (symbol-name (car action))))
+		      (car action))))
+	(unless assist-flag
+          (cond ((and (symbolp actype) (fboundp actype)
+                      (string-match "-p\\'" (symbol-name actype)))
+		 ;; Is a function with a boolean result
+		 (setq args `(',args)
+		       action `(display-boolean ',action)
+                       actype #'display-boolean))
+		((and (null args) (symbolp actype) (boundp actype)
+                      (or var-flag (not (fboundp actype))))
+		 ;; Is a variable, display its value as the action
+		 (setq args `(',args)
+                       action `(display-variable ',actype)
+                       actype #'display-variable))
+		(t
+		 ;; All other expressions, display the action result in the minibuffer
+		 (setq args `(',args)
+                       action `(display-value ',action)
+                       actype #'display-value))))
+
+	;; Create implicit button structure
+	(ibut:create :lbl-key lbl-key :lbl-start start-pos :lbl-end end-pos
+		     :categ 'ibtypes::action :actype actype :args args :action action)
+
         ;; Necessary so can return a null value, which actype:act cannot.
         (let ((hrule:action
                (if (eq hrule:action #'actype:identity)
@@ -1429,10 +1480,15 @@ If a boolean function or variable, display its value."
   (when (hbut:is-p hbut)
     (let* ((label (hbut:key-to-label (hattr:get hbut 'lbl-key)))
 	   (actype (hattr:get hbut 'actype))
-	   (args (hattr:get hbut 'args)))
+	   (args (hattr:get hbut 'args))
+	   (type-help-func))
       (setq actype (or (htype:def-symbol actype) actype))
       (if hbut
-	  (progn (hbut:report hbut)
+	  (progn (setq type-help-func (intern-soft (concat (symbol-name actype) ":help")))
+		 (if (functionp type-help-func)
+		     (funcall type-help-func hbut)
+		   (let ((total (hbut:report hbut)))
+		     (when total (hui:help-ebut-highlight))))
 		 (when (memq actype '(display-boolean display-variable))
 		   (apply #'actype:eval actype args)))
 	(error "(action:help): No action button labeled: %s" label)))))

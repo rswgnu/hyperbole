@@ -187,7 +187,7 @@
        don't forget to reset it to your preferred shell when you are ready
        with the demo.
 
-    { M-x shell RET M-> (pushd ${hyperb:dir}) RET }
+    { M-x shell RET M-> (cd ${hyperb:dir}) RET }
 
        Move to a directory in a shell based on a Lisp variable.  Sections
        within key series surrounded by parentheses maintain spaces between
