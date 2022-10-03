@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    29-Jun-16 at 14:39:33
-;; Last-Mod:     14-Jun-22 at 21:14:45 by Mats Lidell
+;; Last-Mod:     25-Jul-22 at 17:50:26 by Mats Lidell
 ;;
 ;; Copyright (C) 1992-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -21,7 +21,8 @@
 ;;;###autoload
 (defvar hyperb:microsoft-os-p
   (memq system-type '(ms-windows windows-nt ms-dos win32))
-  "Non-nil iff Hyperbole is running under a Microsoft OS but not under Windows Subsystem for Linux (WSL).
+  "Non-nil iff Hyperbole is running under a Microsoft OS but not for WSL.
+WSL is Windows Subsystem for Linux.
 Use `hyperb:wsl-os-p' to test if running under WSL.")
 
 ;;;###autoload
