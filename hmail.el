@@ -126,7 +126,7 @@ Optional SUBJECT and HELP message may also be given."
 
 (defun hmail:composing-dir (key-src)
   "If button KEY-SRC is a mail/news composure buffer, return composure directory.
-If not return nil."
+Otherwise, return nil."
   (save-excursion
     (and (bufferp key-src)
 	 (progn (set-buffer key-src)
