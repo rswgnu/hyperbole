@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 20:45:31
-;; Last-Mod:     28-Aug-22 at 23:45:34 by Bob Weiner
+;; Last-Mod:      3-Oct-22 at 20:01:40 by Mats Lidell
 ;;
 ;; Copyright (C) 1991-2022 Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -106,7 +106,7 @@
 ;; ibtype priorities.
 
 (defib python-tb-previous-line ()
-  "If no other implicit button type triggered, move to prior line with potential Python line ref.
+  "Move to prior line with potential Python line ref.
 In Python, tracebacks may be on a line just below the source
 reference line so since not on a Hyperbole button, move back a
 line and check for a source reference line again."
@@ -262,7 +262,8 @@ display options."
            (match-string-no-properties 1)))))
 
 (defib mail-address ()
-  "If on an e-mail address in a specific buffer type, compose mail to that address in another window.
+  "If on an e-mail address compose mail to that address in another window.
+
 Applies to any major mode in `mail-address-mode-list', the HyRolo match buffer,
 any buffer attached to a file in `hyrolo-file-list', or any buffer with
 \"mail\" or \"rolo\" (case-insensitive) within its name.
@@ -348,7 +349,7 @@ must have an attached file."
 ;;; ========================================================================
 
 (defun markdown-follow-link-p ()
-  "Jump between reference links and definitions; between footnote markers and footnote text.
+  "Jump between reference links and definitions or footnote markers and text.
 Return t if jump and nil otherwise."
   (cond
    ;; Footnote definition
@@ -369,8 +370,9 @@ Return t if jump and nil otherwise."
     t)))
 
 (defun markdown-follow-inline-link-p (opoint)
-  "Test to see if on an inline link, jump to its referent if it is absolute (not relative within the file) and return non-nil.
-Otherwise, if an internal link, move back to OPOINT and return nil."
+  "If on an inline link, jump to its referent if it is absolute and return non-nil.
+Absolute means not relative within the file.  Otherwise, if an
+internal link, move back to OPOINT and return nil."
   (let (handle-link-flag
         result)
     (skip-chars-forward "^\]\[()")
@@ -703,7 +705,10 @@ Requires the Emacs builtin Tramp library for ftp file retrievals."
 ;;; ========================================================================
 
 (defun hlink (link-actype label-prefix start-delim end-delim)
-  "Call LINK-ACTYPE as the action type and prefix button with LABEL-PREFIX if point is within an implicit button delimited by START-DELIM and END-DELIM."
+  "Call LINK-ACTYPE and use LABEL-PREFIX if point is within an implicit button.
+LINK-ACTYPE is the action type and button is prefixed with
+LABEL-PREFIX.  The button must be delimited by START-DELIM and
+END-DELIM."
   ;; Used by e/g/ilink implicit buttons."
   (let* ((label-start-end (hbut:label-p t start-delim end-delim t t))
          (label-and-file (nth 0 label-start-end))
@@ -720,7 +725,7 @@ Requires the Emacs builtin Tramp library for ftp file retrievals."
       (hact link-actype but-key key-file))))
 
 (defun parse-label-and-file (label-and-file)
-  "Parse a colon-separated string of button label and source file path into a list of label and file."
+  "Parse colon-separated string LABEL-AND-FILE into a list of label and file path."
   ;; Can't use split-string here because file path may contain colons;
   ;; we want to split only on the first colon.
   (let ((i 0)
@@ -791,7 +796,7 @@ e.g. <ilink: my series of keys: ${hyperb:dir}/HYPB>."
 ;;; ========================================================================
 
 (defib pathname-line-and-column ()
-  "Make a valid pathname:line-num[:column-num] pattern display the path at line-num and optional column-num.
+  "Display path at position given by a pathname:line-num[:column-num] pattern.
 Also works for remote pathnames.
 May also contain hash-style link references with the following format:
 \"<path>[#<link-anchor>]:<line-num>[:<column-num>]}\".
@@ -820,9 +825,9 @@ See `hpath:find' function documentation for special file display options."
 
 (defib ipython-stack-frame ()
   "Jump to the line associated with an ipython stack frame line numbered msg.
-ipython outputs each pathname once followed by all matching lines in that pathname.
-Messages are recognized in any buffer (other than a helm completion
-buffer)."
+ipython outputs each pathname once followed by all matching lines
+in that pathname.  Messages are recognized in any buffer (other
+than a helm completion buffer)."
   ;; Locate and parse ipython stack trace messages found in any buffer other than a
   ;; helm completion buffer.
   ;;
@@ -862,9 +867,9 @@ buffer)."
 
 (defib ripgrep-msg ()
   "Jump to the line associated with a ripgrep (rg) line numbered msg.
-Ripgrep outputs each pathname once followed by all matching lines in that pathname.
-Messages are recognized in any buffer (other than a helm completion
-buffer)."
+Ripgrep outputs each pathname once followed by all matching lines
+in that pathname.  Messages are recognized in any buffer (other
+than a helm completion buffer)."
   ;; Locate and parse ripgrep messages found in any buffer other than a
   ;; helm completion buffer.
   ;;
@@ -983,7 +988,8 @@ in grep and shell buffers."
 
 (defib debugger-source ()
   "Jump to source line associated with stack frame or breakpoint lines.
-This works with JavaScript and Python tracebacks, gdb, dbx, and xdb.  Such lines are recognized in any buffer."
+This works with JavaScript and Python tracebacks, gdb, dbx, and
+xdb.  Such lines are recognized in any buffer."
   (save-excursion
     (beginning-of-line)
     (cond
@@ -1196,13 +1202,17 @@ Patch applies diffs to source code."
 ;;; ========================================================================
 
 (defib texinfo-ref ()
-  "Display Texinfo, Info node or help associated with Texinfo node, menu item, @xref, @pxref, @ref, @code, @findex, @var or @vindex at point.
+  "Display Texinfo, Info node or help associated with Texinfo constructs at point.
+Supported Texinfo constructs are node, menu item, @xref, @pxref,
+@ref, @code, @findex, @var or @vindex.
+
 If point is within the braces of a cross-reference, the associated
 Info node is shown.  If point is to the left of the braces but after
 the @ symbol and the reference is to a node within the current
 Texinfo file, then the Texinfo node is shown.
 
-For @code, @findex, @var and @vindex references, the associated documentation string is displayed."
+For @code, @findex, @var and @vindex references, the associated
+documentation string is displayed."
   (when (memq major-mode '(texinfo-mode para-mode))
     (let ((opoint (point))
           (bol (save-excursion (beginning-of-line) (point))))
@@ -1318,8 +1328,9 @@ Activates only if point is within the first line of the Info-node name."
 ;;; ========================================================================
 
 (defib hyp-address ()
-  "Within a mail or Usenet news composer window, make a Hyperbole support/discussion e-mail address insert Hyperbole environment and version information.
-See also the documentation for `actypes::hyp-config'.
+  "Within a mail or news composer, make a Hyperbole support/discussion e-mail.
+Hyperbole environment and version information is inserted.  See
+also the documentation for `actypes::hyp-config'.
 
 For example, an Action Mouse Key click on <hyperbole-users@gnu.org> in
 a mail composer window would activate this implicit button type."
@@ -1336,7 +1347,8 @@ a mail composer window would activate this implicit button type."
 ;;; ========================================================================
 
 (defib hyp-source ()
-  "Turn source location entries in Hyperbole reports into buttons that jump to the associated location.
+  "Turn source location entries in Hyperbole reports into buttons.
+The buttons jump to the associated location.
 
 For example, {C-h h d d C-h h e h o} summarizes the properties of
 the explicit buttons in the DEMO file and each button in that
@@ -1368,7 +1380,10 @@ original DEMO file."
   "Regexp matching the end of a Hyperbole Emacs Lisp expression to evaluate.")
 
 (defib action ()
-  "The Action Button type: At point, activate any of: an Elisp variable, a Hyperbole action-type, or an Elisp function call surrounded by <> rather than ().
+  "The Action Button type.
+At point, activate any of: an Elisp variable, a Hyperbole
+action-type, or an Elisp function call surrounded by <> rather
+than ().
 If an Elisp variable, display a message showing its value.
 
 There may not be any <> characters within the expression.  The
