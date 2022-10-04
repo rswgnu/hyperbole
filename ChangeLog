@@ -1,6 +1,7 @@
 2022-10-03  Mats Lidell  <matsl@gnu.org>
 
 * hvar.el:
+* hyrolo.el:
 * hypb.el:
 * hycontrol.el:
 * hui-select.el:
