@@ -3,9 +3,9 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     1-Oct-91 at 14:00:24
-;; Last-Mod:     24-Jan-22 at 00:18:52 by Bob Weiner
+;; Last-Mod:      6-Aug-22 at 12:07:16 by Mats Lidell
 ;;
-;; Copyright (C) 1991-2021  Free Software Foundation, Inc.
+;; Copyright (C) 1991-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
 ;;
 ;; This file is part of GNU Hyperbole.
@@ -38,7 +38,9 @@
 
 ;;;###autoload
 (defun var:add-and-run-hook (hook hook-function)
-  "Add to HOOK (a symbol ending with -hook) HOOK-FUNCTION and then call HOOK-FUNCTION in every buffer with the matching major mode based on HOOK's name."
+  "Add to mode HOOK the HOOK-FUNCTION; call it in matching major-mode buffers.
+HOOK is a symbol whose name begins with a major-mode name and ends with
+\"-hook\"."
   (add-hook hook hook-function)
   (let* ((hook-name (symbol-name hook))
 	 (mode (when (string-match "-hooks?\\'" hook-name)
@@ -47,7 +49,7 @@
 
 (defun var:append-all ()
   "Add back all hook values previously added by var:append in this Emacs session.
-The ones that were removed by var:remove-all at some point."
+The ones that were removed by `var:remove-all' at some point."
   (mapc (lambda (elt) (var:append (car elt) (cdr elt)))
 	var::append-list)
   var::append-list)
@@ -92,15 +94,17 @@ Use to remove from hook variables."
   (symbol-value var-symbol))
 
 (defun var:remove-all ()
-  "Remove all hook values added by var:append in this Emacs session from their associated hook variables.
-Keeps a copy of these values for future re-use."
+  "Remove all hook values added by `var:append' from their hook variables.
+Affects only those hook values added by `var:append' in this Emacs session.
+Keep a copy of these values for future re-use; see `var:append-all'."
   (mapc (lambda (elt) (var:remove (car elt) (cdr elt)))
 	var::append-list)
   var::append-list)
 
 (defun var:run-hook-in-matching-buffers (mode hook-function)
-  "For a given major MODE (a symbol) call HOOK-FUNCTION in all existing buffers with that major mode.
-This is used after a hook is changed to affect buffers that existed before the change was made."
+  "Within all buffers with a given major MODE, call HOOK-FUNCTION.
+This is used after a hook is changed to affect buffers that
+existed before the change was made."
   (mapc (lambda (buf) (with-current-buffer buf (funcall hook-function)))
 	(delq nil (mapcar (lambda (buf) (when (eq (buffer-local-value 'major-mode buf) mode)
 					  buf))

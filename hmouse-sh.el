@@ -3,9 +3,9 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     3-Sep-91 at 21:40:58
-;; Last-Mod:     17-Jul-22 at 11:39:09 by Bob Weiner
+;; Last-Mod:     27-Jul-22 at 00:20:49 by Mats Lidell
 ;;
-;; Copyright (C) 1991-2021  Free Software Foundation, Inc.
+;; Copyright (C) 1991-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
 ;;
 ;; This file is part of GNU Hyperbole.
@@ -50,8 +50,9 @@
 ;; (define-key tab-line-tab-map [tab-line mouse-2]      #'action-mouse-key-emacs)
 
 (defun hmouse-bind-key-emacs (mouse-key-number depress-cmd release-cmd)
-  "Ensure MOUSE-KEY-NUMBER (1-5), e.g. 1 for [mouse-1], is bound to DEPRESS-CMD and RELEASE-CMD (includes depresses and drags).
-Use nil as cmd values to unbind a key.  Works under GNU Emacs only."
+  "Ensure MOUSE-KEY-NUMBER (1-5) is bound to DEPRESS-CMD and RELEASE-CMD.
+This includes depresses and drags.  Mouse key 1 is [mouse-1], etc.
+Use nil as cmd value to unbind a key."
   (hmouse-set-key-list
    depress-cmd
    (nth (1- mouse-key-number)
@@ -166,8 +167,9 @@ Use nil as cmd values to unbind a key.  Works under GNU Emacs only."
 	   [mode-line mouse-5])))))
 
 (defun hmouse-bind-shifted-key-emacs (shifted-mouse-key-number depress-cmd release-cmd)
-  "Ensure SHIFTED-MOUSE-KEY-NUMBER (1-5), e.g. 1 for [Smouse-1], is bound to DEPRESS-CMD and RELEASE-CMD (includes depresses and drags).
-Use nil as CMD value to unbind the key.  Works under GNU Emacs only."
+  "Ensure SHIFTED-MOUSE-KEY-NUMBER (1-5) is bound to DEPRESS-CMD and RELEASE-CMD.
+This includes depresses and drags.  Shifted Mouse Key 1 is
+[S-mouse-1], etc.  Use nil as cmd value to unbind the key."
   (hmouse-set-key-list
    depress-cmd
    (nth (1- shifted-mouse-key-number)
@@ -273,8 +275,9 @@ Use nil as CMD value to unbind the key.  Works under GNU Emacs only."
 	   
 (defun hmouse-get-bindings (hmouse-middle-flag)
   "Return the list of active bindings of mouse keys used by Hyperbole.
-If HMOUSE-MIDDLE-FLAG is non-nil, includes the middle mouse key binding as well.
-These may be the bindings prior to initializing Hyperbole or the Hyperbole bindings."
+If HMOUSE-MIDDLE-FLAG is non-nil, include the middle mouse key
+binding as well.  These may be the bindings prior to initializing
+Hyperbole or the Hyperbole bindings."
   ;; Do nothing when running in batch mode.
   (unless noninteractive
     (nconc
@@ -502,7 +505,7 @@ point determined by `mouse-select-region-move-to-beginning'."
 	  hmouse-bindings-flag t)))
 
 (defun hmouse-unshifted-setup (&optional middle-key-only-flag)
-  "Bind the middle mouse key as the Action Key and the right mouse key as the Assist Key.
+  "Bind the middle and right mouse keys as Action and Assist Keys, respectively.
 With optional MIDDLE-KEY-ONLY-FLAG non-nil, bind only the middle mouse key."
   (interactive)
   ;; Globally Emacs uses key-translation-map to link mouse-1 to

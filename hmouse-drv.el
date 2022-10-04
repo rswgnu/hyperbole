@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    04-Feb-90
-;; Last-Mod:     23-Jul-22 at 01:57:43 by Bob Weiner
+;; Last-Mod:     25-Jul-22 at 23:20:53 by Mats Lidell
 ;;
 ;; Copyright (C) 1989-2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -25,7 +25,7 @@
 ;;; ************************************************************************
 
 (defvar hmouse-verify-release-window-flag t
-  "Non-nil means verify whether Smart Mouse Keys are released inside or outside of an Emacs frame.
+  "Non-nil means verify Smart Mouse Keys are released in or out of an Emacs frame.
 Presently, this does nothing unless Emacs is running under the
 macOS window system.  It queries the Mac window manager for the
 name of the owner of the top-most window at the point of release,
@@ -97,13 +97,13 @@ Never set directly.  Bound as a parameter when `hkey-execute' is called
 and then used as a free variable.")
 
 (defcustom hkey-debug nil
-  "If non-nil, displays a message with the context and values from each Smart Key activation.
+  "Non-nil display a message with the context and values from Smart Key activation.
 Default is nil."
   :type 'boolean
   :group 'hyperbole-commands)
 
 (defvar hkey-region nil
-  "Used to pass the value of a selected region between a Smart Key depress and release.
+  "Used to pass the value of a region between a Smart Key depress and release.
 This permits the Smart Keys to behave as paste keys.")
 
 ;;; ************************************************************************
@@ -149,7 +149,7 @@ This permits the Smart Keys to behave as paste keys.")
 ;;; ************************************************************************
 
 (defun hkey-absolute-pixel-position ()
-  "Return the display terminal absolute pixel position of the mouse (if in a mouse event) or the selected window's point."
+  "Return the absolute pixel position of the mouse or the selected window's point."
   (if (mouse-event-p last-input-event)
       (mouse-absolute-pixel-position)
     (window-absolute-pixel-position)))
@@ -225,7 +225,7 @@ EVENT will be passed to 'hmouse-function'."
   (apply #'assist-mouse-key (hmouse-key-release-args-emacs event)))
 
 (defun action-mouse-key (&rest args)
-  "Set point to the current mouse or keyboard cursor position and execute `action-key'.
+  "Set point to the mouse or keyboard cursor position and execute `action-key'.
 Any ARGS will be passed to `hmouse-function'."
   (interactive)
   ;; Make this a no-op if some local mouse key binding overrode the global
@@ -249,7 +249,7 @@ Any ARGS will be passed to `hmouse-function'."
 	    hkey-value nil))))
 
 (defun assist-mouse-key (&rest args)
-  "Set point to the current mouse or keyboard cursor position and execute `assist-key'.
+  "Set point to the mouse or keyboard cursor position and execute `assist-key'.
 Any ARGS will be passed to `hmouse-function'."
   (interactive)
   ;; Make this a no-op if some local mouse key binding overrode the global
@@ -364,11 +364,11 @@ bound to a valid function."
 
 ;;;###autoload
 (defun hkey-ace-window-setup (&optional key)
-  "Bind optional keyboard KEY and setup display of items in windows specified by short ids.
+  "Bind optional keyboard KEY and setup display of items specified by short ids.
 
 The ace-window package, (see \"https://elpa.gnu.org/packages/ace-window.html\"),
 assigns short ids to each Emacs window and lets you jump to or
-operate upqon a specific window by giving its letter.  Hyperbole
+operate upon a specific window by giving its letter.  Hyperbole
 can insert an operation into ace-window that allows you to
 display items such as dired or buffer menu items in a specific
 window.
@@ -408,8 +408,10 @@ magic happen."
 
 ;;;###autoload
 (defun hkey-drag (release-window)
-  "Emulate Smart Mouse Key drag from the selected window to RELEASE-WINDOW, interactively chosen via ace-window.
-The drag action determines the final selected window.
+  "Emulate Smart Mouse Key drag from the selected window to RELEASE-WINDOW.
+When called interactively the RELEASE-WINDOW is chosen via
+ace-window.  The drag action determines the final selected
+window.
 
 Optional prefix arg non-nil means emulate Assist Key rather than the
 Action Key.
@@ -438,9 +440,10 @@ Works only when running under a window system, not from a dumb terminal."
 
 ;;;###autoload
 (defun hkey-drag-stay (release-window)
-  "Emulate Smart Mouse Key drag from selected window to RELEASE-WINDOW, interactively chosen via ace-window.
-After the drag, the selected window remains the same as it was before
-the drag.
+  "Emulate Smart Mouse Key drag from selected window to RELEASE-WINDOW.
+When called interactively the RELEASE-WINDOW is chosen via
+ace-window.  After the drag, the selected window remains the same
+as it was before the drag.
 
 Works only when running under a window system, not from a dumb terminal."
   (let ((start-window (selected-window)))
@@ -452,9 +455,10 @@ Works only when running under a window system, not from a dumb terminal."
 
 ;;;###autoload
 (defun hkey-drag-item (release-window)
-  "Emulate Smart Mouse Key drag from an item in a selected window to RELEASE-WINDOW, interactively chosen via ace-window.
-RELEASE-WINDOW is left selected unless point is not on an item, in
-which case, an error is signalled.
+  "Emulate Smart Mouse Key drag from item in a selected window to RELEASE-WINDOW.
+When called interactively the RELEASE-WINDOW is chosen via
+ace-window.  RELEASE-WINDOW is left selected unless point is not
+on an item, in which case, an error is signalled.
 
 Optional prefix arg non-nil means emulate Assist Key rather than the
 Action Key.
@@ -484,11 +488,13 @@ Works only when running under a window system, not from a dumb terminal."
 
 ;;;###autoload
 (defun hkey-drag-to (release-window)
-  "Emulate Smart Mouse Key drag from a selected window to RELEASE-WINDOW, interactively chosen via ace-window.
-If an item is dragged to RELEASE-WINDOW, then RELEASE-WINDOW is selected;
-otherwise, the drag action determines the selected window.  If no drag
-has taken place, then the selected window's buffer is displayed in
-RELEASE-WINDOW and that becomes the selected window.
+  "Emulate Smart Mouse Key drag from a selected window to RELEASE-WINDOW.
+When called interactively the RELEASE-WINDOW is chosen via
+ace-window.  If an item is dragged to RELEASE-WINDOW, then
+RELEASE-WINDOW is selected; otherwise, the drag action determines
+the selected window.  If no drag has taken place, then the
+selected window's buffer is displayed in RELEASE-WINDOW and that
+becomes the selected window.
 
 Optional prefix arg non-nil means emulate Assist Key rather than the
 Action Key.
@@ -523,8 +529,9 @@ Works only when running under a window system, not from a dumb terminal."
 
 ;;;###autoload
 (defun hkey-replace (release-window)
-  "Grab the buffer from RELEASE-WINDOW, interactively chosen via ace-window, and place it into the current window.
-The selected window does not change."
+  "Grab the buffer from RELEASE-WINDOW and place it into the current window.
+When called interactively the RELEASE-WINDOW is chosen via
+ace-window.  The selected window does not change."
   (interactive
    (list (let ((mode-line-text (concat " Ace - " (nth 2 (assq ?r aw-dispatch-alist)))))
 	   (aw-select mode-line-text))))
@@ -532,8 +539,9 @@ The selected window does not change."
 
 ;;;###autoload
 (defun hkey-swap (to-window)
-  "Swap the buffer from the selected window with that of TO-WINDOW, interactively chosen via ace-window.
-Leave TO-WINDOW as the selected window."
+  "Swap the buffer from the selected window with that of TO-WINDOW.
+When called interactively the TO-WINDOW is chosen via ace-window.  Leave
+TO-WINDOW as the selected window."
   (interactive
    (list (let ((mode-line-text (concat " Ace - Hyperbole: " (nth 2 (assq ?m aw-dispatch-alist)))))
 	   (aw-select mode-line-text))))
@@ -560,7 +568,11 @@ Leave TO-WINDOW as the selected window."
 
 ;;;###autoload
 (defun hkey-throw (release-window &optional throw-region-flag)
-  "Throw one of: the active (highlighted) region, a displayable item at point or the current buffer for display in RELEASE-WINDOW.
+  "Throw for display in RELEASE-WINDOW.
+Throw one of:
+ - the active (highlighted) region,
+ - a displayable item at point or
+ - the current buffer.
 With optional prefix arg THROW-REGION-FLAG, throw the current region
 even if not active.
 The selected window does not change."
@@ -589,7 +601,8 @@ The selected window does not change."
 
 ;;;###autoload
 (defun hkey-window-link (release-window)
-  "Create a new Hyperbole explicit link button in the selected window, linked to point in RELEASE-WINDOW, interactively chosen via ace-window.
+  "Create an ebut in the selected window, linked to point in RELEASE-WINDOW.
+RELEASE-WINDOW is interactively chosen via ace-window.
 The selected window does not change."
   (interactive
    (list (let ((mode-line-text (concat " Ace - Hyperbole: " (nth 2 (assq ?w aw-dispatch-alist)))))
@@ -637,8 +650,9 @@ Return t if thrown, else nil."
 
 ;;;###autoload
 (defun hkey-buffer-to (from-window to-window)
-  "Use ace-window to choose a FROM-WINDOW whose buffer will also be displayed in the chosen TO-WINDOW.
-The selected window does not change."
+  "Display buffer from FROM-WINDOW in TO-WINDOW.
+When interactive use ace-window to choose FROM-WINDOW and
+TO-WINDOW.  The selected window does not change."
   (interactive
    (list (aw-select " Ace - Hyperbole: Buffer to Show")
 	 (aw-select " Ace - Hyperbole: Show in Window")))
@@ -647,8 +661,9 @@ The selected window does not change."
 
 ;;;###autoload
 (defun hkey-swap-buffers (from-window to-window)
-  "Use ace-window to choose a FROM-WINDOW whose buffer is swapped with the buffer of the chosen TO-WINDOW.
-Leave TO-WINDOW as the selected window."
+  "Swap buffer from FROM-WINDOW with buffer of TO-WINDOW.
+When interactive use ace-window to choose FROM-WINDOW and
+TO-WINDOW.  Leave TO-WINDOW as the selected window."
   (interactive
    (list (aw-select " Ace - Hyperbole: Swap from Buffer1...")
 	 (aw-select " Ace - Hyperbole: ...to Buffer2")))
@@ -760,7 +775,7 @@ hkey-swap and hkey-throw."
 
 ;;;###autoload
 (defun hkey-buffer-move-right ()
-  "Swap the current buffer with the one on its right, if any; otherwise, do nothing."
+  "Swap the current buffer with the one on its right, if any; otherwise do nothing."
   (interactive)
   (hkey-buffer-move 'right))
 
@@ -777,7 +792,8 @@ hkey-swap and hkey-throw."
   (hkey-buffer-move 'up))
 
 (defun hkey-buffer-move (direction &optional arg)
-  "Move the current buffer to the next window in DIRECTION, a symbol, one of: up, down, left or right.
+  "Move the current buffer to the next window in DIRECTION.
+DIRECTION is a symbol, one of: up, down, left or right.
 
 When the window-jump package is available and `wj-jump-frames' is
 non-nil, the buffer may be moved across non-overlapping frames in
@@ -806,7 +822,7 @@ the given direction."
 ;; Next function is redefined from Emacs mouse.el.  The standard
 ;; version allows moving frames by dragging a bottommost modeline with
 ;; mouse button1 but only if there is no minibuffer window (a rare
-;; configuration) This limitation is so that the minibuffer window 
+;; configuration) This limitation is so that the minibuffer window
 ;; can be manually resized.
 ;;
 ;; Hyperbole's mouse buttons do not support resizing the minibuffer
@@ -865,9 +881,10 @@ frame instead."
 	   (minibuffer-depth)))
 
 (defun hkey-execute (assisting)
-  "Evaluate Action Key form (or Assist Key form with ASSISTING non-nil) for first non-nil predicate from `hkey-alist'.
-Non-nil ASSISTING means evaluate second form, otherwise evaluate first form.
-Return non-nil iff a non-nil predicate is found."
+  "Evaluate Action Key form for first non-nil predicate from `hkey-alist'.
+Non-nil ASSISTING means evaluate second form (Assist Key form),
+otherwise evaluate first form.  Return non-nil iff a non-nil
+predicate is found."
   ;; Keep in mind that hkey-alist may be set to hmouse-alist here, with additional predicates.
   (let ((hkey-forms hkey-alist)
 	(assist-flag assisting)
@@ -897,8 +914,9 @@ Return non-nil iff a non-nil predicate is found."
 
 (defun hkey-help (&optional assisting)
   "Display help for the Action Key command in current context.
-With optional ASSISTING prefix arg non-nil, display help for the Assist Key command.
-Return non-nil iff associated help documentation is found."
+With optional ASSISTING prefix arg non-nil, display help for the
+Assist Key command.  Return non-nil iff associated help
+documentation is found."
   (interactive "P")
   (let* ((mouse-flag (when (mouse-event-p last-command-event)
 		       (or action-key-depress-position assist-key-depress-position)))
@@ -1094,9 +1112,9 @@ the current window.  By default, it is displayed according to the setting of
 
 (defun hkey-mouse-help (assisting args)
   "If a Smart Key help flag is set and the other Smart Key is not down, show help.
-Takes two args:  ASSISTING should be non-nil iff command applies to the Assist Key.
-ARGS is a list of arguments passed to `hmouse-function'.
-Return t if help is displayed, nil otherwise."
+Takes two args: ASSISTING should be non-nil iff command applies
+to the Assist Key.  ARGS is a list of arguments passed to
+`hmouse-function'.  Return t if help is displayed, nil otherwise."
   (let ((help-shown)
 	(other-key-released (not (if assisting
 				     action-key-depressed-flag
@@ -1169,7 +1187,8 @@ the current window.  By default, it is displayed in another window."
 
 
 (defun hkey-toggle-debug (&optional arg)
-  "Toggle whether Hyperbole logs Smart Key events for later analysis/submission using {C-h h m c}.
+  "Toggle whether Hyperbole logs Smart Key events.
+Key events can be used later for analysis/submission using {C-h h m c}.
 With optional ARG, enable iff ARG is positive."
   (interactive "P")
   (if (or (and arg (<= (prefix-numeric-value arg) 0))
@@ -1181,7 +1200,9 @@ With optional ARG, enable iff ARG is positive."
     (message "Smart Key debugging is on; press a Smart Key to see its context.")))
 
 (defun hmouse-depress-inactive-minibuffer-p (event)
-  "Return the minibuffer window if the last Smart Mouse Key depress EVENT was in it and it was inactive, else nil."
+  "Return buffer if last Smart Mouse Key depress was in an inactive minibuffer.
+If the last Smart Mouse Key depress EVENT was in the minibuffer
+and it was inactive, return it, else nil."
   (let ((window (posn-window (event-start event))))
     (when(framep window)
       (setq window (frame-selected-window window)))
@@ -1203,9 +1224,10 @@ With optional ARG, enable iff ARG is positive."
     spacing))
 
 (defun hmouse-window-at-absolute-pixel-position (&optional position release-flag)
-  "Return the top-most Emacs window at optional POSITION ((x . y) in absolute pixels).
-If POSITION is nil, use mouse position if last input event was a mouse
-event, otherwise, use the position of point in the selected window.
+  "Return the top-most Emacs window at optional POSITION.
+POSTION is ((x . y) in absolute pixels.  If POSITION is nil, use
+mouse position if last input event was a mouse event, otherwise,
+use the position of point in the selected window.
 
 If the position used is not in a window, return nil.  Considers all windows on
 the same display as the selected frame.
@@ -1356,7 +1378,8 @@ window, return nil.  Considers all windows on the selected frame's display."
     (when edges (list window (cons pos-x pos-y)))))
 
 (defun hmouse-key-release-window (release-position)
-  "Return the Emacs window of last Action/Assist Mouse Key RELEASE-POSITION if any, else nil."
+  "Return the window of last Action/Assist Mouse Key RELEASE-POSITION, if any.
+If none return nil."
   (ignore-errors (hmouse-window-at-absolute-pixel-position release-position t)))
 
 (defun hmouse-key-release-args-emacs (event)
@@ -1434,18 +1457,21 @@ and returns nil."
 ;; "hsettings.el" contains documentation for this variable.
 (unless (boundp 'smart-scroll-proportional)
   (defvar smart-scroll-proportional t
-    "*Non-nil means Smart Keys should scroll relative to current line when pressed at the end of a line.
-Action Key moves current line to top of window.  Assist Key moves current
-line to bottom of window.  Repeated presses then scroll up or down a
-windowful.  Nil value instead ignores current line and always scrolls up or
-down a windowful."))
+    "*Non-nil means Smart Keys should scroll relative to current line.
+Smart Keys will scroll relative to current line when pressed at
+the end of a line. Action Key moves current line to top of
+window.  Assist Key moves current line to bottom of window.
+Repeated presses then scroll up or down a windowful.  Nil value
+instead ignores current line and always scrolls up or down a
+windowful."))
 
 (defun hmouse-function (func assisting set-point-arg-list)
-  "Execute FUNC for Action Key (Assist Key with ASSISTING non-nil) and set point from SET-POINT-ARG-LIST.
-FUNC may be nil in which case no function is called.
-SET-POINT-ARG-LIST is passed to the call of the command bound to
-`hmouse-set-point-command'.  Return nil if `hmouse-set-point-command' variable
-is not bound to a valid function."
+  "Execute FUNC for Action Key and set point from SET-POINT-ARG-LIST.
+Use Assist Key with ASSISTING non-nil.  FUNC may be nil in which
+case no function is called.  SET-POINT-ARG-LIST is passed to the
+call of the command bound to `hmouse-set-point-command'.  Return
+nil if `hmouse-set-point-command' variable is not bound to a
+valid function."
   (when (fboundp hmouse-set-point-command)
     (if assisting
 	(setq assist-key-release-window (hmouse-key-release-window assist-key-release-position)
@@ -1481,10 +1507,10 @@ is not bound to a valid function."
 
 (defun smart-scroll-down ()
   "Scroll down according to value of smart-scroll-proportional.
-If smart-scroll-proportional is nil or if point is on the bottom window line,
-scroll down (backward) a windowful.  Otherwise, try to bring current line
-to the bottom of the window.  Leave point at end of line and return t if scrolled,
-nil if not."
+If smart-scroll-proportional is nil or if point is on the bottom
+window line, scroll down (backward) a windowful.  Otherwise, try
+to bring current line to the bottom of the window.  Leave point
+at end of line and return t if scrolled, nil if not."
   (interactive)
   (let ((rtn t))
     (if smart-scroll-proportional
@@ -1506,10 +1532,10 @@ nil if not."
 
 (defun smart-scroll-up ()
   "Scroll up according to value of smart-scroll-proportional.
-If smart-scroll-proportional is nil or if point is on the top window line,
-scroll up (forward) a windowful.  Otherwise, tyr to bring current line to
-the top of the window.  Leave point at end of line and return t if scrolled, nil if
-not."
+If smart-scroll-proportional is nil or if point is on the top
+window line, scroll up (forward) a windowful.  Otherwise, tyr to
+bring current line to the top of the window.  Leave point at end
+of line and return t if scrolled, nil if not."
   (interactive)
   (let ((rtn t))
     (if smart-scroll-proportional
