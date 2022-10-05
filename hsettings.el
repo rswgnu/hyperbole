@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    15-Apr-91 at 00:48:49
-;; Last-Mod:     17-Jul-22 at 16:27:17 by Bob Weiner
+;; Last-Mod:      1-Aug-22 at 21:34:56 by Mats Lidell
 ;;
 ;; Copyright (C) 1991-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -86,9 +86,9 @@
 ;; The Smart Menu system is an attractive in-buffer menu system that
 ;; predates Emacs menu systems; it is included in InfoDock.
 (defvar hkey-always-display-menu nil
-  "*Non-nil means always display the Smart Menu window when the Action or Assist Key is pressed and the Smart Menu system has been loaded.
-If a Smart Menu is already displayed, perform another Action or Assist Key
-function.")
+  "*Non-nil means a Smart Key press pops up the Smart Menu window.
+The Smart Menu system must have already been loaded.  If a Smart
+Menu is already displayed, perform another Action or Assist Key function.")
 
 (defcustom hmouse-middle-flag (and (boundp 'infodock-version) infodock-version t)
   "*Under InfoDock or when t, additionally bind the middle mouse button as an
@@ -97,11 +97,12 @@ Action Key."
   :group 'hyperbole-keys)
 
 (defcustom smart-scroll-proportional t
-  "*Non-nil means Smart Keys should scroll relative to current line when pressed at the end of a line.
-Action Key moves current line to top of window.  Assist Key moves current
-line to bottom of window.  Repeated presses then scroll up or down a
-windowful.  Nil value instead ignores current line and always scrolls up or
-down a windowful."
+  "*Non-nil means Smart Key scroll behavior is relative to current line.
+Smart Keys will scroll relative to current line when pressed at
+the end of a line.  Action Key moves current line to top of the
+window.  Assist Key moves current line to bottom of the window.
+Repeated presses then scroll up or down a windowful.  Nil value
+ignores current line and always scrolls up or down a windowful."
   :type 'boolean
   :group 'hyperbole-keys)
 
@@ -146,7 +147,9 @@ lines"
        (buffer-substring-no-properties (region-beginning) (region-end))))
 
 (defun hyperbole-read-web-search-arguments (&optional service-name search-term)
-  "Read from the keyboard a list of (web-search-service-string search-term-string) if not given as arguments."
+  "Read from the keyboard a list of (web-search-service-string search-term-string).
+With optional non-empty SERVICE-NAME and SEARCH-TERM arguments,
+use those instead of reading from the keyboard."
   (let ((completion-ignore-case t))
     (while (or (not (stringp service-name)) (equal service-name ""))
       (setq service-name (completing-read "Search service: " hyperbole-web-search-alist

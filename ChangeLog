@@ -1,5 +1,6 @@
 2022-10-05  Mats Lidell  <matsl@gnu.org>
 
+* hsettings.el:
 * hsys-org.el:
 * hui-mini.el: Shorten docs strings to be within 80 char limit.
 
