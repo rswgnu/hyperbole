@@ -418,7 +418,7 @@ Return t unless no next cell."
     t))
 
 (defun kcell-view:next-invisible-p (&optional _pos lbl-sep-len)
-  "Return t if next cell is after optional POS or point and it is invisible."
+  "Return t if next cell after optional POS or point exists and is invisible."
   (save-excursion (and (kcell-view:next nil lbl-sep-len)
 		       (kcell-view:invisible-p (point) lbl-sep-len))))
 
