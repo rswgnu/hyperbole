@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     2-Jul-16 at 14:54:14
-;; Last-Mod:      2-Jul-22 at 14:45:35 by Bob Weiner
+;; Last-Mod:      2-Aug-22 at 14:12:40 by Mats Lidell
 ;;
 ;; Copyright (C) 2016-2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -37,7 +37,7 @@
 
 ;;;###autoload
 (defun hsys-org-meta-return-shared-p ()
-  "Return non-nil iff hyperbole-mode is active and it shares the org-meta-return key binding."
+  "Return non-nil if hyperbole-mode is active and shares the org-meta-return key."
   (let ((org-meta-return-keys (where-is-internal #'org-meta-return org-mode-map)))
     (when (or (set:intersection org-meta-return-keys
 				(where-is-internal #'hkey-either hyperbole-mode-map))
@@ -97,7 +97,8 @@ If LINK is nil, follows any link at point.  Otherwise, triggers an error."
 
 (defact org-internal-link-target (&optional link-target)
   "Follows an optional Org mode LINK-TARGET back to its link definition.
-If LINK-TARGET is nil, follows any link target at point.  Otherwise, triggers an error."
+If LINK-TARGET is nil, follow any link target at point.
+Otherwise, trigger an error."
   (let (start-end)
     (cond ((stringp link-target)
 	   (setq start-end t)
@@ -137,27 +138,29 @@ uses that one.  Otherwise, triggers an error."
       (and (boundp 'poporg-mode) poporg-mode)))
 
 (defun hsys-org-cycle ()
-  "Call `org-cycle' and force it to be set as `this-command' to cycle through all states."
+  "Call `org-cycle' and set as `this-command' to cycle through all states."
   (setq this-command 'org-cycle)
   (org-cycle))
 
 (defun hsys-org-global-cycle ()
-  "Call `org-global-cycle' and force it to be set as `this-command' to cycle through all states."
+  "Call `org-global-cycle' and set as `this-command' to cycle through all states."
   (setq this-command 'org-cycle)
   (org-global-cycle nil))
 
 (defun hsys-org-todo-cycle ()
-  "Call `org-todo' and force it to be set as `this-command' to cycle through all states."
+  "Call `org-todo' and set as `this-command' to cycle through all states."
   (setq this-command 'org-todo)
   (org-todo))
 
 (defun hsys-org-todo-set-cycle ()
-  "Call `org-todo' to switch to the next set of keywords and force it to be set as `this-command'."
+  "Call `org-todo' to switch to the next set of keywords.
+Force it to be set as `this-command'."
   (setq this-command 'org-todo)
   (org-call-with-arg 'org-todo 'nextset))
 
 (defun hsys-org-todo-occur (&optional keyword)
-  "Filter to a tree of todos matching optional `keyword' together with all higher headlines above each match.
+  "Filter to a tree of todos matching optional KEYWORD.
+The tree will include all higher headlines above each match.
 Match to all todos if `keyword' is nil or the empty string."
   (interactive
    (list (hargs:read-match "List todos matching keyword: " org-todo-keywords-1)))
@@ -167,7 +170,8 @@ Match to all todos if `keyword' is nil or the empty string."
 	   keyword))
 
 (defun hsys-org-region-with-text-property-value (pos property)
-  "Return (start . end) buffer positions of the region around POS that shares its non-nil text PROPERTY value, else nil."
+  "Return region around POS that shares its text PROPERTY value, else nil.
+Return the (start . end) buffer positions of the region."
   (when (null pos) (setq pos (point)))
   (let ((property-value (get-text-property pos property))
 	(start-point pos))
@@ -228,8 +232,10 @@ or are looking for an Org link in another buffer type."
 
 ;; Assume caller has already checked that the current buffer is in org-mode.
 (defun hsys-org-target-at-p ()
-  "Return non-nil iff point is on an Org mode radio target (definition) or radio target link (referent).
-Assume caller has already checked that the current buffer is in `org-mode'."
+  "Return non-nil iff point is on an Org radio target or radio target link.
+The radio target is the definition and the radio target link is
+the referent.  Assume caller has already checked that the current
+buffer is in `org-mode'."
   (hsys-org-face-at-p 'org-target))
 
 ;; Assume caller has already checked that the current buffer is in org-mode.
@@ -240,13 +246,18 @@ Assume caller has already checked that the current buffer is in `org-mode'."
     t))
 
 (defun hsys-org-radio-target-link-at-p ()
-  "Return (target-start . target-end) positions iff point is on an Org mode radio target link (referent), else nil."
+  "Return target region iff point is on an Org mode radio target referent.
+Target region is (target-start . target-end) iff point is on
+an Org mode radio target link (referent), else nil."
   (and (hsys-org-face-at-p 'org-link)
        (hsys-org-link-at-p)
        (hsys-org-region-with-text-property-value (point) 'face)))
 
 (defun hsys-org-radio-target-def-at-p ()
-  "Return (target-start . target-end) positions iff point is on an Org mode radio target (definition), including any delimiter characters, else nil."
+  "Return target-start region iff point is on an Org mode radio definition.
+Target region is (target-start . target-end) iff point is on
+an Org mode radio target (definition), including any delimiter
+characters, else nil."
   (when (hsys-org-target-at-p)
     (save-excursion
       (unless (looking-at "<<<")
@@ -257,13 +268,19 @@ Assume caller has already checked that the current buffer is in `org-mode'."
 	   (hsys-org-region-with-text-property-value (point) 'face)))))
 
 (defun hsys-org-radio-target-at-p ()
-  "Return (target-start . target-end) positions iff point is on an Org mode <<<radio target definition>>> or radio target link (referent), including any delimiter characters, else nil."
+  "Return target region iff point is on an Org mode definition or referent.
+Target region is (target-start . target-end).  It is returned
+iff point is on an Org mode <<<radio target definition>>> or
+radio target link (referent), including any delimiter characters,
+else nil."
   (and (or (hsys-org-radio-target-def-at-p)
 	   (hsys-org-radio-target-link-at-p))
        (hsys-org-region-with-text-property-value (point) 'face)))
 
 (defun hsys-org-internal-link-target-at-p ()
-  "Return (target-start . target-end) positions iff point is on an Org mode <<link target>>, including any delimiter characters, else nil."
+  "Return target region iff point is on an Org mode <<link target>>.
+This is including any delimiter characters.  Target region
+is (target-start . target-end)."
   (when (hsys-org-target-at-p)
     (save-excursion
       (unless (looking-at "<<")
@@ -274,7 +291,9 @@ Assume caller has already checked that the current buffer is in `org-mode'."
            (hsys-org-region-with-text-property-value (point) 'face)))))
 
 (defun hsys-org-face-at-p (org-face-type)
-  "Return ORG-FACE-TYPE iff point is on a character with face ORG-FACE-TYPE, a symbol, else nil."
+  "Return ORG-FACE-TYPE iff point is on a character with that face, else nil.
+  ORG-FACE-TYPE must be a symbol, not a symbol name."
+  
   (let ((face-prop (get-text-property (point) 'face)))
     (when (or (eq face-prop org-face-type)
 	      (and (listp face-prop) (memq org-face-type face-prop)))
@@ -329,7 +348,8 @@ White spaces are insignificant.  Returns t if a target link is found, else nil."
 
 
 (defun hsys-org-to-next-radio-target-link (target)
-  "Move to the start of the next radio TARGET link if found.  TARGET must be a string."
+  "Move to the start of the next radio TARGET link if found.
+TARGET must be a string."
   (when (string-match "<<<.+>>>" target)
     (setq target (substring target 3 -3)))
   (let ((opoint (point))
