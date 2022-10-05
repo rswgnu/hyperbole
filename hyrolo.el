@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     7-Jun-89 at 22:08:29
-;; Last-Mod:     29-Aug-22 at 02:21:41 by Bob Weiner
+;; Last-Mod:      3-Oct-22 at 22:59:30 by Mats Lidell
 ;;
 ;; Copyright (C) 1991-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -49,15 +49,17 @@
   :group 'hyperbole)
 
 (defcustom hyrolo-date-format "%m/%d/%Y"
-  "*Format of date string used in Rolo automatic date stamps.  Default is American style.
-See documentation of the function `format-time-string' for format options."
+  "*Format of date string used in Rolo automatic date stamps.
+Default is American style.  See documentation of the function
+`format-time-string' for format options."
   :type 'string
   :group 'hyperbole-rolo)
 
 (defvar hyrolo-display-format-function
   (lambda (entry)
     (concat (replace-regexp-in-string "[ \t\n\r]+\\'" "" entry nil t) "\n"))
-  "*Function of one argument, a rolo entry string, which modifies the string for display.")
+  "*Function of one argument which modifies the string for display.
+The argument is a rolo entry string.")
 
 (defcustom hyrolo-email-format "%s\t\t<%s>"
   "*Format string to use when adding an entry with e-mail addr from a mail msg.
@@ -114,7 +116,10 @@ executable must be found as well (for Oauth security)."
 (defvar hproperty:highlight-face)
 
 (defun hyrolo-google-contacts-p ()
-  "Return non-nil if `hyrolo-google-contacts-flag' is non-nil and google-contacts package and gpg executables are available for use."
+  "Non-nil means google contacts package is available and feature is enabled.
+Requires `hyrolo-google-contacts-flag' set as non-nil and
+google-contacts package and gpg executables to be available for
+use."
   (and hyrolo-google-contacts-flag
        (featurep 'google-contacts)
        (boundp 'google-contacts-buffer-name)
@@ -176,7 +181,7 @@ Only unmodified buffers are killed."
 (add-hook 'hyrolo-edit-hook #'hyrolo-set-date)
 
 (defvar hyrolo-yank-reformat-function nil
-  "*Value is a function of two arguments, START and END, invoked after a hyrolo-yank.
+  "*A function of two arguments, START and END, invoked after a hyrolo-yank.
 It should reformat the region given by the arguments to some preferred style.
 Default value is nil, meaning no reformmating is done.")
 
@@ -316,7 +321,8 @@ entry which begins with the parent string."
 (defun hyrolo-display-matches (&optional display-buf return-to-buffer)
   "Display optional DISPLAY-BUF buffer of previously found rolo matches.
 If DISPLAY-BUF is nil, use the value in `hyrolo-display-buffer'.
-Second arg RETURN-TO-BUFFER is the buffer to leave point within after the display."
+Second arg RETURN-TO-BUFFER is the buffer to leave point within
+after the display."
   (interactive)
   (unless display-buf
     (setq display-buf (get-buffer hyrolo-display-buffer)))
@@ -410,7 +416,8 @@ Return entry name if found, else nil."
 
 ;;;###autoload
 (defun hyrolo-fgrep (string &optional max-matches hyrolo-file count-only no-display)
-  "Display rolo entries matching STRING (or a logical sexpression) and return count of matches.
+  "Display rolo entries matching STRING or a logical match expression.
+Return count of matches.
 To a maximum of optional prefix arg MAX-MATCHES, in file(s) from optional
 HYROLO-FILE or `hyrolo-file-list'.  Default is to find all matching entries.
 Each entry is displayed with all of its sub-entries.  Optional COUNT-ONLY
@@ -469,7 +476,8 @@ It uses the setting of `hyrolo-find-file-noselect-function'."
       (hyrolo-find-file file hyrolo-find-file-noselect-function))))
 
 (defun hyrolo-forward-visible-line (&optional arg)
-  "Move forward by optional ARG lines (default = 1), ignoring currently invisible newlines only.
+  "Move forward by optional ARG lines (default = 1).
+Ignore currently invisible newlines only.
 If ARG is negative, move backward -ARG lines.
 If ARG is zero, move to the beginning of the current line."
   (unless arg
@@ -479,11 +487,12 @@ If ARG is zero, move to the beginning of the current line."
 ;;;###autoload
 (defun hyrolo-grep (regexp &optional max-matches hyrolo-file-or-bufs count-only no-display)
   "Display rolo entries matching REGEXP and return count of matches.
-To a maximum of prefix arg MAX-MATCHES, in buffer(s) from optional HYROLO-FILE-OR-BUFS or
-hyrolo-file-list.  Default is to find all matching entries.  Each entry is
-displayed with all of its sub-entries.  Optional COUNT-ONLY non-nil means don't
-retrieve and don't display matching entries.  Optional NO-DISPLAY non-nil
-vmeans retrieve entries but don't display.
+To a maximum of prefix arg MAX-MATCHES, in buffer(s) from
+optional HYROLO-FILE-OR-BUFS or hyrolo-file-list.  Default is to
+find all matching entries.  Each entry is displayed with all of
+its sub-entries.  Optional COUNT-ONLY non-nil means don't
+retrieve and don't display matching entries.  Optional NO-DISPLAY
+non-nil means retrieve entries but don't display.
 
 Nil value of MAX-MATCHES means find all matches, t value means find all matches
 but omit file headers, negative values mean find up to the inverse of that
@@ -558,7 +567,7 @@ With optional prefix ARG, do an fgrep string match instead of a regexp match."
   (call-interactively (if arg 'hyrolo-fgrep 'hyrolo-grep)))
 
 (defun hyrolo-hide-subtree ()
-  "Move back to the start of current subtree if any and hide everything after the heading.
+  "Move back to the start of current subtree and hide everything after the heading.
 
 Necessary, since with reveal-mode active, outline-hide-subtree works
 only if on the heading line of the subtree."
@@ -572,9 +581,10 @@ only if on the heading line of the subtree."
       (goto-char opoint))))
 
 (defun hyrolo-isearch (&optional arg)
-  "Interactively search forward for the next occurrence of the current match string.
-Then add characters to further narrow the search.  With optional prefix ARG non-nil,
-search for the current match regular expression rather than string."
+  "Interactively search forward for the next occurrence of current match string.
+Then add characters to further narrow the search.  With optional
+prefix ARG non-nil, search for the current match regular
+expression rather than string."
   (interactive "P")
   (if arg
       (hyrolo-isearch-regexp)
@@ -587,9 +597,10 @@ search for the current match regular expression rather than string."
       (error (substitute-command-keys "(hyrolo-isearch): Use {\\[hyrolo-grep-or-fgrep]} to do an initial search")))))
 
 (defun hyrolo-isearch-regexp (&optional arg)
-  "Interactively search forward for the next occurrence of the current match regexp.
-Then add characters to further narrow the search.  With optional prefix ARG non-nil,
-search for the current match string rather than regular expression."
+  "Interactively search forward for the next occurrence of current match string.
+Then add characters to further narrow the search.  With optional
+prefix ARG non-nil, search for the current match regular
+expression rather than string."
   (interactive "P")
   (if arg
       (hyrolo-isearch)
@@ -695,7 +706,8 @@ Raise an error if a match is not found."
 
 (defun hyrolo-overview (levels-to-show)
   "Show the first line of all levels of rolo matches.
-With a prefix argument of LEVELS-TO-SHOW > 0, show the first lines of entries only to that depth."
+With a prefix argument of LEVELS-TO-SHOW > 0, show the first
+lines of entries only to that depth."
   (interactive "P")
   (hyrolo-verify)
   ;; Use {t} to display top-level cells only.
@@ -976,7 +988,8 @@ Output looks like so:
     (read-only-mode 1)))
 
 (defun hyrolo-bbdb-grep-file (hyrolo-file-or-buf regexp &optional max-matches count-only)
-  "Retrieve entries in bbdb HYROLO-FILE-OR-BUF matching REGEXP to a maximum of optional MAX-MATCHES.
+  "Retrieve entries in bbdb HYROLO-FILE-OR-BUF matching REGEXP.
+Find a maximum of optional MAX-MATCHES.
 Nil value of MAX-MATCHES means find all matches, t value means find all matches
 but omit file headers, negative values mean find up to the inverse of that
 number of entries and omit file headers.  Optional COUNT-ONLY non-nil
@@ -1031,7 +1044,8 @@ Output looks like so:
     (read-only-mode 1)))
 
 (defun hyrolo-google-contacts-grep-file (hyrolo-file-or-buf regexp &optional max-matches count-only)
-  "Retrieve entries in google-contacts HYROLO-FILE-OR-BUF matching REGEXP to a maximum of optional MAX-MATCHES.
+  "Retrieve entries in google-contacts HYROLO-FILE-OR-BUF matching REGEXP.
+Find a maximum of optional MAX-MATCHES.
 Nil value of MAX-MATCHES means find all matches, t value means find all matches
 but omit file headers, negative values mean find up to the inverse of that
 number of entries and omit file headers.  Optional COUNT-ONLY non-nil
@@ -1177,7 +1191,8 @@ otherwise just use the cdr of the item."
 
 ;;;###autoload
 (defun hyrolo-helm-org-rifle (&optional context-only-flag)
-  "Prompt for a helm search pattern and show all matches from `hyrolo-file-list'.
+  "Search with helm and interactively show all matches from `hyrolo-file-list'.
+Prompt for the search pattern.
 Only readable .org and .otl files are searched.  With optional
 prefix arg CONTEXT-ONLY-FLAG, show only an extra line of context
 around a matching line rather than entire entries."
@@ -1265,7 +1280,8 @@ returned to the number given."
   (hyrolo-search-directories #'hyrolo-fgrep file-regexp dirs))
 
 (defun hyrolo-fgrep-file (hyrolo-file-or-buf string &optional max-matches count-only)
-  "Retrieve entries in HYROLO-FILE-OR-BUF matching STRING to a maximum of optional MAX-MATCHES.
+  "Retrieve entries in HYROLO-FILE-OR-BUF matching STRING.
+Retrieve a maximum of optional MAX-MATCHES.
 Nil value of MAX-MATCHES means find all matches, t value means find all matches
 but omit file headers, negative values mean find up to the inverse of that
 number of entries and omit file headers.  Optional COUNT-ONLY non-nil
@@ -1280,7 +1296,8 @@ Return number of matching entries found."
   (hyrolo-search-directories #'hyrolo-grep file-regexp dirs))
 
 (defun hyrolo-grep-file (hyrolo-file-or-buf regexp &optional max-matches count-only)
-  "Retrieve entries in HYROLO-FILE-OR-BUF matching REGEXP to a maximum of optional MAX-MATCHES.
+  "Retrieve entries in HYROLO-FILE-OR-BUF matching REGEXP.
+Retrieve a maximum of optional MAX-MATCHES.
 Nil value of MAX-MATCHES means find all matches, t value means find all matches
 but omit file headers, negative values mean find up to the inverse of that
 number of entries and omit file headers.  Optional COUNT-ONLY non-nil
@@ -1429,7 +1446,8 @@ Return number of groupings matched."
 ;;; ************************************************************************
 
 (defun hyrolo-add-match (hyrolo-matches-buffer regexp start end)
-  "Insert before point in HYROLO-MATCHES-BUFFER an entry matching REGEXP from the current region between START to END."
+  "Insert in HYROLO-MATCHES-BUFFER an entry matching REGEXP from current region.
+Entry is inserted before point.  The region is between START to END."
   (let ((hyrolo-buf (current-buffer))
 	(hyrolo-entry (buffer-substring start end))
 	opoint)
@@ -1532,7 +1550,7 @@ Name is returned as `last, first-and-middle'."
 	(list name email))))
 
 (defun hyrolo-name-at ()
-  "If point is within an entry in `hyrolo-display-buffer', return the entry name, else nil."
+  "If point is on an entry in `hyrolo-display-buffer', return its name, else nil."
   (when (string-equal (buffer-name) hyrolo-display-buffer)
     (save-excursion
       (beginning-of-line)
@@ -1595,10 +1613,11 @@ a default of MM/DD/YYYY."
     (call-interactively search-cmd)))
 
 (defun hyrolo-show-levels (num-levels)
-  "Show only the first line of up to NUM-LEVELS of rolo matches.  NUM-LEVELS must be 1 or greater.
-NUM-LEVELS is relative to the first level of matches, so if NUM-LEVELS
-is 2 and the first level matched from an outline is level 3, then
-levels 3 and 4 will be shown."
+  "Show only the first line of up to NUM-LEVELS of rolo matches.
+NUM-LEVELS must be 1 or greater and is relative to the first
+level of matches, so if NUM-LEVELS is 2 and the first level
+matched from an outline is level 3, then levels 3 and 4 will be
+shown."
   (outline-show-all)
   (save-excursion
      (goto-char (point-min))
@@ -1700,10 +1719,10 @@ Return point where matching entry begins or nil if not found."
   (pop-to-buffer buffer other-window-flag))
 
 (defun hyrolo-to-entry-end (&optional include-sub-entries curr-entry-level-len)
-  "Move point to the end of the whole entry that point is within if optional INCLUDE-SUB-ENTRIES is non-nil.
+  "Move point to the end of whole entry if optional INCLUDE-SUB-ENTRIES is non-nil.
 CURR-ENTRY-LEVEL-LEN is the integer length of the last entry
-header found.  If INCLUDE-SUB-ENTRIES is nil, CURR-ENTRY-LEVEL-LEN is not needed.
-Return current point."
+header found.  If INCLUDE-SUB-ENTRIES is nil,
+CURR-ENTRY-LEVEL-LEN is not needed.  Return current point."
   ;; Set free variable, next-entry-exists, for speed.
   (while (and (setq next-entry-exists
 		    (re-search-forward hyrolo-entry-regexp nil t))
@@ -1766,7 +1785,8 @@ Calls the functions given by `hyrolo-mode-hook'.
   "Buffer used to display set of last matching rolo entries.")
 
 (defvar hyrolo-entry-group-number 1
-  "Group number within `hyrolo-entry-regexp' whose length represents the level of any entry matched.")
+  "Group number whose length represents the level of any entry matched.
+See `hyrolo-entry-regexp'")
 
 (defvar hyrolo-entry-trailing-space-group-number 2
   "Group number within `hyrolo-entry-regexp; containing trailing space.")
