@@ -60,7 +60,7 @@ Default value is \". \"."
   "Koutline view `outline-regexp' value that handles all label formats.")
 
 (defcustom kview:default-label-type 'alpha
-  "*Default label-type to use for new koutlines.  Default value is `alpha.
+  "*Default label-type to use for new koutlines.  Default value is 'alpha.
 It must be one of the following symbols:
   alpha           for `1b3' full alphanumeric labels
   id              for `027' permanent idstamp labels
