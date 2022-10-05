@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     9-Oct-91 at 18:38:05
-;; Last-Mod:     15-Jul-22 at 23:22:06 by Mats Lidell
+;; Last-Mod:     25-Jul-22 at 17:59:37 by Mats Lidell
 ;;
 ;; Copyright (C) 1991-2022  Free Software Foundation, Inc.
 ;; See the HY-COPY (Hyperbole) or BR-COPY (OO-Browser) file for license
@@ -41,7 +41,7 @@
  "Major mode for reading USENET news with Hyperbole buttons.")
 
 (defcustom hmail:init-function nil
-  "*Function (a symbol) to run to initialize Hyperbole support for a mail reader/composer.
+  "*Function (a symbol) to initialize Hyperbole support for a mail reader/composer.
 Valid values are: nil, Mh-init, Rmail-init or Vm-init."
   :type '(choice (const nil)
 		 (const Mh-init)
@@ -79,7 +79,7 @@ MSG-END."
     (if (search-backward hmail:hbdata-sep msg-start t) (1- (point)) msg-end)))
 
 (defun hmail:hbdata-to-p ()
-  "When in a buffer with embedded Hyperbole button data, move point to the start of the button data.
+  "Move point to the start of embedded Hyperbole button data.
 Return t if button data is found, else nil."
   (and (cond ((memq major-mode (list hmail:reader hmail:modifier))
 	      (hmail:msg-narrow) t)
@@ -125,7 +125,8 @@ Optional SUBJECT and HELP message may also be given."
 	     "Replace subject, compose message, and then mail.")))
 
 (defun hmail:composing-dir (key-src)
-  "If button KEY-SRC is a mail/news composure buffer, return composure directory, else nil."
+  "If button KEY-SRC is a mail/news composure buffer, return composure directory.
+Otherwise, return nil."
   (save-excursion
     (and (bufferp key-src)
 	 (progn (set-buffer key-src)
