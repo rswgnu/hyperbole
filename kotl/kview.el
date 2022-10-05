@@ -51,7 +51,7 @@ Labels are padded with spaces on the left.  Default value is 4."
   :group 'hyperbole-koutliner)
 
 (defcustom kview:default-label-separator ". "
-  "*Characters to insert between label and contents of a koutline cell.
+  "*Default characters to insert between label and contents of a kcell.
 Default value is \". \"."
   :type 'string
   :group 'hyperbole-koutliner)
