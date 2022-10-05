@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 21:42:03
-;; Last-Mod:     23-Jul-22 at 20:11:01 by Bob Weiner
+;; Last-Mod:      2-Oct-22 at 10:21:06 by Mats Lidell
 ;;
 ;; Copyright (C) 1991-2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -72,9 +72,15 @@ point; see `hui:delimited-selectable-thing'."
 	str)
     (prog1 (setq str
 		 ;; If called interactively, transient-mark-mode is
-		 ;; enabled, and no region is active, copy thing 
-		 ;; at point or current kcell ref when in kotl-mode
+		 ;; enabled, and no region is active, copy thing at
+		 ;; point, current kcell ref when in kotl-mode or
+		 ;; button if on an ibut or ebut.
 		 (cond ((and (called-interactively-p 'interactive)
+			     transient-mark-mode
+			     (not (use-region-p))
+                             (or (ebut:label-p) (ibut:label-p)))
+                        (hui-register-struct-at-point))
+                       ((and (called-interactively-p 'interactive)
 			     transient-mark-mode
 			     (not (use-region-p))
 			     (prog1 (setq thing-and-bounds (hui:delimited-selectable-thing-and-bounds)

@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    15-Oct-91 at 20:13:17
-;; Last-Mod:     29-Aug-22 at 21:26:10 by Bob Weiner
+;; Last-Mod:     15-Sep-22 at 00:01:16 by Mats Lidell
 ;;
 ;; Copyright (C) 1991-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -26,7 +26,8 @@
 ;;; ************************************************************************
 
 (defvar hui:hypb-exit            "X"
-  "*Upper case character string which exits from / disables Hyperbole mode and any active minibuffer menu.")
+  "*Upper case character string which exits from/disables Hyperbole mode.
+Also exits any active minibuffer menu.")
 (defvar hui:menu-select          "\C-m"
   "*Character string which selects the Hyperbole menu item at point.")
 (defvar hui:menu-quit            "Q"
@@ -37,7 +38,8 @@
   "*Character string which returns to top Hyperbole menu.")
 
 (defvar hui:menu-keys            ""
-  "String of keys pressed for current or last Hyperbole command not including the prefix used to invoke the Hyperbole menu.")
+  "String of keys pressed for current or last Hyperbole command.
+This excludes the prefix used to invoke the Hyperbole menu.")
 
 (defvar hui:menu-p nil
   "Non-nil iff the Hyperbole minibuffer menu is active.")
@@ -178,8 +180,8 @@ documentation, not the full text."
     rtn))
 
 (defun hui:get-keys ()
-  "Invoke the Hyperbole minibuffer menu when not already active and return menu keys pressed.
-Return nil when already in a Hyperbole mini-menu."
+  "Invoke the Hyperbole minibuffer menu and return menu keys pressed.
+Return nil when already in a Hyperbole minibuffer menu."
   (if (and hui:menu-p (> (minibuffer-depth) 0))
       (progn (beep) nil)
     (unwind-protect
@@ -190,7 +192,7 @@ Return nil when already in a Hyperbole mini-menu."
       (setq hui:menu-p nil))))
 
 (defun hui:menu-get-keys (menu &optional menu-list)
-  "Prompt user with Hyperbole MENU (a symbol), select an item and return the keys pressed for the item.
+  "Prompt with Hyperbole MENU symbol, select an item and return the keys pressed.
 Optional second argument MENU-LIST is a Hyperbole menu list structure from
 which to extract MENU.  It defaults to `hui:menus'.  See its definition for
 the menu list structure."
@@ -218,7 +220,7 @@ the menu list structure."
     hui:menu-keys))
 
 (defun hui:menu-backward-item (&optional arg)
-  "Move point back to the optional ARGth previous start of a selectable minibuffer menu item.
+  "Move point back to optional ARGth start of a selectable minibuffer menu item.
 If on the menu name prefix or the first item, move to the last item."
   (interactive "p")
   (unless arg (setq arg 1))
@@ -242,8 +244,9 @@ If on the menu name prefix or the first item, move to the last item."
 	(setq arg (1- arg))))))
 
 (defun hui:menu-doc (key-sequence &optional help-string-flag)
-  "Return formatted documentation for a normalized Hyperbole minibuffer menu KEY-SEQUENCE.
-With optional HELP-STRING-FLAG, instead returns the one line help string for the key sequence."
+  "Return documentation for a normalized Hyperbole minibuffer menu KEY-SEQUENCE.
+The documentation is formatted.  With optional HELP-STRING-FLAG,
+instead returns the one line help string for the key sequence."
   (when (and (stringp key-sequence)
 	     (not (eq key-sequence ""))
 	     (kbd-key:hyperbole-mini-menu-key-p key-sequence))
@@ -304,7 +307,7 @@ If on the menu name prefix or the last item, move to the first item."
 	(setq arg (1- arg))))))
 
 (defun hui:menu-help (help-str)
-  "Displays HELP-STR in a small window at the bottom of the selected frame.  HELP-STR must be a string."
+  "Display HELP-STR in a small window at the bottom of the selected frame."
   (let* ((window-min-height 2)
 	 (owind (selected-window))
 	 (buf-name (hypb:help-buf-name "Menu")))
@@ -330,9 +333,9 @@ If on the menu name prefix or the last item, move to the first item."
 	  (select-window owind)))))
 
 (defun hui:menu-item-keys (menu-alist)
-  "Return the list of ordered keys used to activate items in Hyperbole minibuffer MENU-ALIST.
-For each item, the key is either the first capital letter in item
-or if there are none, then its first character."
+  "Return ordered list of keys that activate Hypb minibuffer MENU-ALIST items.
+For each item, the key is either the first capital letter in item or if there are none,
+then its first character."
   (mapcar (lambda (item)
 	    ;; Return either the first capital letter in item or if
 	    ;; none, then its first character.
@@ -347,9 +350,10 @@ or if there are none, then its first character."
 	  (mapcar 'car (cdr menu-alist))))
 
 (defun hui:menu-select (menu-alist &optional doc-flag help-string-flag)
-  "Prompts user to choose the first capitalized character of any item from MENU-ALIST.
-The character may be entered in lowercase.  If chosen by direct selection with the Assist Key,
-return any help string for item, else return the action form for the item.
+  "Prompt user to choose the first capitalized char of any item from MENU-ALIST.
+The character may be entered in lowercase.  If chosen by direct
+selection with the Assist Key, return any help string for item,
+else return the action form for the item.
 
 Two additional optional arguments may be given when documentation for
 a menu item should be shown rather than menu display.  DOC-FLAG
@@ -423,7 +427,7 @@ documentation, not the full text."
     (nth (- (length winds) (length (memq bot bot-list))) winds)))
 
 (defun hui:menu-item (key doc-flag help-string-flag &optional menu menu-alist)
-"Return either the action or the documentation for a Hyperbole minibuffer menu item KEY.
+  "Return either action or documentation for a Hyperbole minibuffer menu item KEY.
 If DOC-FLAG is non-nil, returns the fully formatted documentation unless
 HELP-STRING-FLAG is non-nil, in which case only the first line of
 documentation is returned.  If both are nil, the action form for the
@@ -481,7 +485,8 @@ constructs.  If not given, the top level Hyperbole menu is used."
       menu-line)))
 
 (defun hui:menu-multi-line (menu-alist)
-  "Return the formatted text for a multi-line minibuffer window popup menu with a menu of commands from optional MENU-ALIST."
+  "Return the formatted text for a multi-line minibuffer window popup menu.
+The menu is a menu of commands from MENU-ALIST."
   (let* ((items-in-line 0)
 	 (item-start 0)
 	 (menu-strings (mapcar #'car menu-alist))
