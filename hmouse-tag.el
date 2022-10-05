@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    24-Aug-91
-;; Last-Mod:     17-Jul-22 at 09:56:15 by Bob Weiner
+;; Last-Mod:     14-Aug-22 at 19:18:17 by Mats Lidell
 ;;
 ;; Copyright (C) 1991-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -87,7 +87,7 @@ searched by the C/C++ pre-processor should be set instead in
   :group 'hyperbole-commands)
 
 (defcustom smart-c-use-lib-man nil
-  "When non-nil makes `smart-c' and `smart-c++' display man pages for recognized library symbols.
+  "Non-nil means `smart-c' and `smart-c++' display man pages for library symbols.
 When nil, the default, `smart-c' and `smart-c++' look up only symbols defined in
 an etags TAGS file.
 
@@ -96,9 +96,10 @@ line) of all of the C/C++ libraries whose symbols you want to match against.
 Your MANPATH environment variable must include paths for the man pages of
 these libraries also.
 
-Your smart-clib-sym executable script included with Hyperbole must output a 1 if a
-symbol is from a C/C++ library listed in ~/.CLIBS-LIST or 0 if not!  Otherwise,
-don't set this variable to t."
+Your smart-clib-sym executable script included with Hyperbole
+must output a 1 if a symbol is from a C/C++ library listed in
+~/.CLIBS-LIST or 0 if not!  Otherwise, don't set this variable to
+t."
   :type 'boolean
   :group 'hyperbole-commands)
 
@@ -573,12 +574,13 @@ in the current directory or any of its ancestor directories."
 
 ;;;###autoload
 (defconst smart-lisp-identifier-first-char-regexp "[-<>*a-zA-Z]"
-  "Regexp matching the first character of a Lisp identifier, including the square brackets.")
+  "Regexp matching the first character of a Lisp identifier.")
 
 ;;;###autoload
 (defconst smart-lisp-identifier-chars "-_:/*+=%$&?!<>a-zA-Z0-9~^"
-  "Regexp matching a valid character in any part of a Lisp identifier other than the first character.
-Excludes character matching square brackets, so may be used with skip-characters-forward/backward.")
+  "Regexp matching a valid char in a Lisp identifier except the first char.
+Excludes character matching square brackets, so may be used with
+skip-characters-forward/backward.")
 
 ;;;###autoload
 (defconst smart-lisp-identifier (concat smart-lisp-identifier-first-char-regexp
@@ -641,7 +643,9 @@ buffer."
     (smart-lisp-find-tag nil show-doc)))
 
 (defun smart-lisp-find-tag (&optional tag show-doc)
-  "Find the definition of optional Lisp TAG (or identifier at point when TAG is nil) or show its documentation with optional prefix arg SHOW-DOC non-nil.
+  "Find the definition of optional Lisp TAG or show its documentation.
+Use identifier at point when TAG is nil.  With optional prefix
+arg SHOW-DOC non-nil, show its documentation.
 Use `hpath:display-buffer' to show definition or documentation."
   (interactive
    (list (read-string (format "%s Lisp identifier: "
@@ -688,7 +692,8 @@ Use `hpath:display-buffer' to show definition or documentation."
 		      (xref-etags-mode 0))))))))
 
 (defun smart-lisp-at-definition-p ()
-    "Return t when point is in a non-help buffer on the first line of a non-alias Lisp definition, else nil."
+  "Return non-nil if point is on the first line of a non-alias Lisp definition.
+  Apply only to non-help buffers and return nil in others."
     (unless (derived-mode-p 'help-mode)
       (save-excursion
 	(beginning-of-line)
@@ -700,22 +705,23 @@ Use `hpath:display-buffer' to show definition or documentation."
 	     (not (looking-at "\\(;*[ \t]*\\)?(default"))))))
 
 (defun smart-lisp-at-load-expression-p ()
-    "Return t when point is on the first line of a Lisp library load expression, else nil."
+  "Return t if on the first line of a Lisp library load expression, else nil."
     (save-excursion
       (beginning-of-line)
       (looking-at "\\(;*[ \t]*\\)?(\\(autoload\\|load\\|require\\)\\s-")))
 
 (defun smart-lisp-at-change-log-tag-p ()
-  "When in a change-log mode, match to bound Elisp identifiers only and those with a '-' somewhere in the middle.
+  "When in change-log mode, match to bound Elisp identifiers only.
+Also match to identifiers with a '-' in the middle.
 These tight tests help eliminate undesired matches.
-Returns matching ELisp tag name that point is within, else nil."
+Return matching Elisp tag name that point is within, else nil."
   (when (derived-mode-p 'change-log-mode)
     (let ((identifier (smart-lisp-at-tag-p)))
       (and identifier (intern-soft identifier)
 	   (string-match "[^-]-[^-]" identifier)))))
 
 (defun smart-lisp-htype-tag (tag)
-  "Given TAG at point, if it is a Hyperbole type, return the full symbol name, else return the TAG unchanged."
+  "Given TAG at point, if a Hyperbole type, return the full symbol name, else TAG."
   (setq tag (cond ((and tag (string-match-p "::" tag))
 		   tag)
 		  ((and tag
@@ -875,12 +881,13 @@ If key is pressed:
 
 (defun smart-jedi-find-file (file line column other-window)
   "Function that read a source FILE for jedi navigation.
-It takes these arguments: (file-to-read other-window-flag line_number column_number)."
+It takes these arguments: (file-to-read other-window-flag
+line_number column_number)."
   (hpath:display-buffer (find-file file) other-window)
   (jedi:goto--line-column line column))
 
 (defun smart-python-jedi-to-definition-p ()
-  "If the Jedi Python identifier server is running, test and use it to jump to the definition.
+  "If Jedi Python identifier server is running, use it to jump to the definition.
 See https://tkf.github.io/emacs-jedi/latest/."
   ;; Use functions from jedi-core.el only, not from jedi.el, since
   ;; company-jedi.el users will have loaded only jedi-core.el.
@@ -996,7 +1003,8 @@ If key is pressed:
 ;;; ************************************************************************
 
 (defun smart-ancestor-tag-files (&optional path name-of-tags-file)
-  "Walk up PATH tree looking for NAME-OF-TAGS-FILE and return list from furthest to deepest (nearest)."
+  "Walk up PATH tree looking for NAME-OF-TAGS-FILE.
+Return list from furthest to deepest (nearest)."
   (or path (setq path default-directory))
   (let ((tags-table-list)
 	tags-file)
@@ -1103,8 +1111,8 @@ Look for include file in `smart-c-cpp-include-path' and in directory list
       nil)))
 
 (defun smart-flash-tag (tag start end)
-  "Try to flash TAG at START to END in buffer, to indicate that it is serving as a hyperlink button.
-Returns TAG."
+  "Try to flash TAG at START to END in current buffer and return TAG.
+This indicates that TAG is serving as a hyperlink button."
   ;; Button flashing code might not yet have been loaded if the whole
   ;; Hyperbole system has not been started.
   (when (and (fboundp 'hui:but-flash)
@@ -1114,7 +1122,9 @@ Returns TAG."
   tag)
 
 (defun smart-lisp-at-known-identifier-p ()
-  "Return non-nil if point is within a Lisp identifier listed in a tags table or is a known Emacs Lisp identifier, else nil."
+  "Return non-nil if point is within a known Lisp identifier.
+The Lisp identifier is either listed in a tags table or is a
+known Emacs Lisp identifier."
   (interactive)
   (unless (and (fboundp 'find-library)
 	       ;; Handle Emacs Lisp `require', `load', and `autoload' clauses.
@@ -1162,7 +1172,7 @@ TAG-SYM may be a function, variable or face."
       (error nil))))
 
 (defun smart-java-cross-reference ()
-  "If within a Java @see comment, displays the associated definition for editing and return non-nil, else nil.
+  "If within a Java @see comment, edit the def and return non-nil, else nil.
 Non-nil is returned even if the @see referent cannot be found.
 
 Does nothing if the `oo-browser' command is undefined, since it requires that
@@ -1267,7 +1277,7 @@ package for class and feature lookups."
     library-path))
 
 (defun smart-java-packages ()
-  "If point is on a `package' or `import' line, this try to display the associated referent.
+  "If on a `package' or `import' line, try to display the associated referent.
 Returns non-nil iff on such a line, even if the referent is not found.
 Look for packages in `smart-java-package-path'."
   (let ((opoint (point)))
@@ -1410,7 +1420,7 @@ cannot be expanded via a tags file."
 
 ;;;###autoload
 (defun smart-tags-file-list (&optional curr-dir-or-filename name-of-tags-file)
-  "Return appropriate tag files list for optional CURR-DIR-OR-FILENAME or for `default-directory'.
+  "Return tag files list for optional CURR-DIR-OR-FILENAME or `default-directory'.
 Optional NAME-OF-TAGS-FILE is the literal filename (no directory) for which
 to look.  If no tags file is found, an error is signaled."
   (let* ((path (or curr-dir-or-filename default-directory))
