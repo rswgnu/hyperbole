@@ -3,9 +3,9 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    20-Jul-16 at 22:41:34
-;; Last-Mod:     13-Feb-22 at 19:49:11 by Mats Lidell
+;; Last-Mod:     24-Jul-22 at 10:08:17 by Mats Lidell
 ;;
-;; Copyright (C) 2016-2021  Free Software Foundation, Inc.
+;; Copyright (C) 2016-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
 ;;
 ;; This file is part of GNU Hyperbole.
@@ -190,7 +190,7 @@
   :group 'hyperbole-button)
 
 (defcustom hibtypes-social-display-function #'browse-url
-  "Function of one arg, a url, to display upon activation of a social media reference."
+  "Function of one arg, url, to display when activating a social media reference."
   :type 'function
   :group 'hyperbole-button)
 
@@ -200,7 +200,7 @@
   :group 'hyperbole-button)
 
 (defcustom hibtypes-git-use-magit-flag nil
-  "If magit is available, when activating a git directory button, use Magit rather than Dired."
+  "Non-nil means use `magit' rather than `dired' for a git directory button."
   :type 'boolean
   :group 'hyperbole-button)
 
@@ -239,7 +239,7 @@
     ("\\`\\(gt\\|git\\)\\'"       . "(cd %s && git %s %s)")
     ("\\`\\(in\\|instagram\\)\\'" . "https://www.instagram.com/explore/tags/%s/")
     ("\\`\\(tw\\|twitter\\)\\'"   . "https://twitter.com/search?q=%%23%s&src=hashtag"))
-  "Alist of (social-media-service-regexp  . expression-to-display-hashtag-reference) elements.")
+  "Alist of (social-media-service-regexp . to-display-hashtag-reference) elements.")
 
 (defconst hibtypes-social-username-alist
   '(("\\`\\(fb\\|facebook\\)\\'"  . "https://www.facebook.com/%s")
@@ -247,7 +247,7 @@
     ("\\`\\(gl\\|gitlab\\)\\'"    . "https://www.gitlab.com/%s/")
     ("\\`\\(in\\|instagram\\)\\'" . "https://www.instagram.com/%s/")
     ("\\`\\(tw\\|twitter\\)\\'"   . "https://twitter.com/search?q=@%s"))
-  "Alist of (social-media-service-regexp  . url-with-%s-for-username) elements.")
+  "Alist of (social-media-service-regexp . url-with-%s-for-username) elements.")
 
 ;; Assume at least a 2-character project name
 (defconst hibtypes-git-project-regexp "/?[[:alnum:]]+[-=._/[:alnum:]]*[-=_[:alnum:]]")
@@ -256,7 +256,7 @@
 (defconst hibtypes-social-regexp
   (concat "\\([[:alpha:]]*\\)\\([#@]\\)"
 	  "\\(" hibtypes-git-project-regexp "\\|" hibtypes-git-file-regexp "\\)")
-  "Regular expression that matches a social media/git hashtag or username reference.
+  "Regexp that matches a social media/git hashtag or username reference.
 See `ibtypes::social-reference' for format details.")
 
 (defvar hibtypes-social-inhibit-modes '(texinfo-mode para-mode)
@@ -267,7 +267,7 @@ See `ibtypes::social-reference' for format details.")
 ;;; ************************************************************************
 
 (defib social-reference ()
-  "Display the web page associated with a social hashtag or username reference at point.
+  "Display web page associated with a social hashtag/username reference at point.
 Reference format is:
   [facebook|git|github|gitlab|instagram|twitter]?[#@]<reference> or
   [fb|gt|gh|gl|in|tw]?[#@]<reference>.
@@ -321,8 +321,9 @@ listed in `hibtypes-social-inhibit-modes'."
 
 ;; Don't make this a defact or its arguments may be improperly expanded as pathnames.
 (defun social-reference (service ref-kind-str hashtag-or-username)
-  "Display the web page at social media SERVICE for REF-KIND-STR and HASHTAG-OR-USERNAME.
-REF-KIND-STR is either \"#\" for a hashtag reference or \"@\" for a username reference."
+  "Display the web page at media SERVICE for REF-KIND-STR and HASHTAG-OR-USERNAME.
+REF-KIND-STR is either \"#\" for a hashtag reference or \"@\" for
+a username reference."
   (if (or (null service) (equal service "")) (setq service hibtypes-social-default-service))
   (let ((case-fold-search t)
 	expr-to-format)
@@ -341,7 +342,7 @@ REF-KIND-STR is either \"#\" for a hashtag reference or \"@\" for a username ref
 
 ;; Don't make this a defact or its arguments may be improperly expanded as pathnames.
 (defun github-reference (reference &optional user project)
-  "Display the Github entity associated with REFERENCE and optional USER and PROJECT.
+  "Display Github entity associated with REFERENCE and optional USER and PROJECT.
 REFERENCE is a string of one of the following forms:
     <ref-item>
     <user>/<project>/<ref-item>
@@ -349,19 +350,21 @@ REFERENCE is a string of one of the following forms:
 or  /<project>.
 
 <ref-item> is one of these:
-  one of the words: branches, commits, contributors, issues, people or staff,
-  pulls, status or tags; the associated items are listed;
+  one of the words: branches, commits, contributors, issues,
+  people or staff, pulls, status or tags; the associated items
+  are listed;
 
-  one of the words: branch, commit, issue, pull or tag followed by a '/' or '=' and
-  an item-id; the item is shown;
+  one of the words: branch, commit, issue, pull or tag followed
+  by a '/' or '=' and an item-id; the item is shown;
 
-  an issue reference given by a positive integer, e.g. 92 or prefaced with GH-, e.g. GH-92;
-  the issue is displayed;
+  an issue reference given by a positive integer, e.g. 92 or
+  prefaced with GH-, e.g. GH-92; the issue is displayed;
 
-  a commit reference given by a hex number, 55a1f0; the commit diff is displayed;
+  a commit reference given by a hex number, 55a1f0; the commit
+  diff is displayed;
 
-  a branch or tag reference given by an alphanumeric name, e.g. hyper20; the
-  files in the branch are listed.
+  a branch or tag reference given by an alphanumeric name,
+  e.g. hyper20; the files in the branch are listed.
 
 USER defaults to the value of `hibtypes-github-default-user'.
 If given, PROJECT overrides any project value in REFERENCE.  If no
@@ -448,7 +451,7 @@ PROJECT value is provided, it defaults to the value of
 
 ;; Don't make this a defact or its arguments may be improperly expanded as pathnames.
 (defun gitlab-reference (reference &optional user project)
-  "Display the Gitlab entity associated with REFERENCE and optional USER and PROJECT.
+  "Display Gitlab entity associated with REFERENCE and optional USER and PROJECT.
 REFERENCE is a string of one of the following forms:
     <ref-item>
     <user>/<project>/<ref-item>
@@ -457,21 +460,25 @@ REFERENCE is a string of one of the following forms:
 or  /<project-or-group> (where a group is a collection of projects).
 
 <ref-item> is one of these:
-  one of the words: activity, analytics, boards or kanban, branches, commits, contributors,
-  groups, issues or list, jobs, labels, merge_requests, milestones, pages, pipelines,
-  pipeline_charts, members or people or staff, projects, pulls, schedules, snippets,
-  status or tags; the associated items are listed;
+  one of the words: activity, analytics, boards or kanban,
+  branches, commits, contributors, groups, issues or list, jobs,
+  labels, merge_requests, milestones, pages, pipelines,
+  pipeline_charts, members or people or staff, projects, pulls,
+  schedules, snippets, status or tags; the associated items are
+  listed;
 
-  one of the words: branch, commit(s), issue(s), milestone(s), pull(s), snippet(s) or
-  tag(s) followed by a '/' or '=' and an item-id; the item is shown;
+  one of the words: branch, commit(s), issue(s), milestone(s),
+  pull(s), snippet(s) or tag(s) followed by a '/' or '=' and an
+  item-id; the item is shown;
 
-  an issue reference given by a positive integer, e.g. 92 or prefaced with GL-, e.g. GL-92;
-  the issue is displayed;
+  an issue reference given by a positive integer, e.g. 92 or
+  prefaced with GL-, e.g. GL-92; the issue is displayed;
 
-  a commit reference given by a hex number, 55a1f0; the commit diff is displayed;
+  a commit reference given by a hex number, 55a1f0; the commit
+  diff is displayed;
 
-  a branch or tag reference given by an alphanumeric name, e.g. hyper20; the
-  files in the branch are listed.
+  a branch or tag reference given by an alphanumeric name,
+  e.g. hyper20; the files in the branch are listed.
 
 USER defaults to the value of `hibtypes-gitlab-default-user'.
 If given, PROJECT overrides any project value in REFERENCE.  If no
@@ -610,7 +617,9 @@ PROJECT value is provided, it defaults to the value of
 ;;; Local git repository commit references
 
 (defib git-commit-reference ()
-  "Display the changeset for a git commit reference, e.g. \"commit a55e21\", typically produced by git log.
+  "Display the changeset for a commit reference typically produced by git log.
+A git commit reference has the form \"commit a55e21\".
+
 Hyperbole also includes two commands, `hypb:fgrep-git-log' and
 `hypb:grep-git-log' to list git commit references whose changesets
 contain either the string (fgrep) or regular expression (grep) given.
@@ -636,8 +645,8 @@ Then an Action Key displays the associated changeset.
 
 (defun hibtypes-git-build-repos-cache (&optional prompt-flag)
   "Store cache of local git repo directories in `hibtypes-git-repos-cache'.
-With optional PROMPT-FLAG non-nil, prompt user whether to build the cache before building.
-Return t if built, nil otherwise."
+With optional PROMPT-FLAG non-nil, prompt user whether to build
+the cache before building.  Return t if built, nil otherwise."
   (interactive)
   (when (or (not prompt-flag)
 	    (y-or-n-p "Find all local git repositories (will take some time)? "))
@@ -650,7 +659,7 @@ Return t if built, nil otherwise."
     t))
 
 (defun hibtypes-git-add-project-to-repos-cache (project)
-  "Locate PROJECT directory and add to the cache of local git repo directories in `hibtypes-git-repos-cache'.
+  "Locate PROJECT directory and add to directories in `hibtypes-git-repos-cache'.
 Return the project directory found or nil if none."
   (interactive "sProject: ")
   (message "Please wait while %s's local git repository is found..." project)
@@ -670,8 +679,8 @@ Return the project directory found or nil if none."
 
 (defun hibtypes-git-build-or-add-to-repos-cache (project &optional _prompt-flag)
   "Store cache of local git repo directories in `hibtypes-git-repos-cache'.
-With optional PROMPT-FLAG non-nil, prompt user whether to build the cache before building.
-Return t if built, nil otherwise."
+With optional PROMPT-FLAG non-nil, prompt user whether to build
+the cache before building.  Return t if built, nil otherwise."
   (if (and (file-readable-p hibtypes-git-repos-cache)
 	   ;; Non-zero file size
 	   (not (zerop (nth 7 (file-attributes hibtypes-git-repos-cache)))))
@@ -679,7 +688,7 @@ Return t if built, nil otherwise."
     (hibtypes-git-build-repos-cache t)))
 
 (defun hibtypes-git-project-directory (project)
-  "Given git PROJECT name, return local git repository directory or nil if none found."
+  "Return local git repository directory for PROJECT or nil if none found."
   (if (or (and (file-readable-p hibtypes-git-repos-cache)
 	       ;; Non-zero file size
 	       (not (zerop (nth 7 (file-attributes hibtypes-git-repos-cache)))))
@@ -705,17 +714,20 @@ REFERENCE is a string of one of the following forms:
 or  /<project>.
 
 <ref-item> is one of these:
-  one of the words: branches, commits, or tags; the associated items are listed;
+  one of the words: branches, commits, or tags; the associated
+  items are listed;
 
-  one of the words: branch, commit, or tag followed by a '/' and item id; the item is shown;
+  one of the words: branch, commit, or tag followed by a '/' and
+  item id; the item is shown;
 
-  a commit reference given by a hex number, 55a1f0; the commit diff is displayed;
+  a commit reference given by a hex number, 55a1f0; the commit
+  diff is displayed;
 
-  a branch or tag reference given by an alphanumeric name, e.g. hyper20; the
-  files in the branch are listed.
+  a branch or tag reference given by an alphanumeric name,
+  e.g. hyper20; the files in the branch are listed.
 
-If given, PROJECT overrides any project value in REFERENCE.  If no
-PROJECT value is provided, it defaults to the value of
+If given, PROJECT overrides any project value in REFERENCE.  If
+no PROJECT value is provided, it defaults to the value of
 `hibtypes-git-default-project'."
   (cond ((or (null reference) (equal reference ""))
 	 (error "(git-reference): Git commit hashtag must not be empty"))
@@ -850,9 +862,10 @@ Return nil if no matching file is found."
 (defun hibtypes-git-find (file)
   "Return the shortest pathname matching git-versioned FILE name.
 
-Search for matches in this order: (1) the git repository of the current
-directory, if any; (2) the git repository of project `hibtypes-git-default-project'
-if not nil;  (3) the list of locally cached git repositories in `hibtypes-git-repos-cache'.
+Search for matches in this order: (1) the git repository of the
+current directory, if any; (2) the git repository of project
+`hibtypes-git-default-project' if not nil; (3) the list of
+locally cached git repositories in `hibtypes-git-repos-cache'.
 
 Return nil if no match is found."
   (let (root)
@@ -877,8 +890,9 @@ Return nil if no match is found."
 	nil))))
 
 (defun git-find-file (file)
-  "Locate and edit the named FILE with the shortest git-versioned pathname, typically in another window.
-Uses `hpath:find' to display the FILE.  FILE must not have any path component.
+  "Locate FILE with the shortest git-versioned pathname.
+Uses `hpath:find' to display the FILE, typically in another
+window.  FILE must not have any path component.
 
 If the current directory is in a git repository, search only that one;
 otherwise, search all known local repositories.  Signal an error if no match
