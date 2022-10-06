@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     2-Jul-16 at 14:54:14
-;; Last-Mod:      2-Aug-22 at 14:12:40 by Mats Lidell
+;; Last-Mod:      7-Oct-22 at 00:21:15 by Mats Lidell
 ;;
 ;; Copyright (C) 2016-2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -55,7 +55,7 @@
 
 ;;;###autoload
 (defcustom hsys-org-enable-smart-keys 'unset
-  "This option applies only in Org major/minor modes when hyperbole-mode is active.
+  "This applies only in Org major/minor modes when hyperbole-mode is active.
 If set to 'unset prior to loading Hyperbole, then Hyperbole
 initialization will set its value.
 
@@ -82,7 +82,7 @@ with different settings of this option.  For example, a nil value makes
 
 ;;;###autoload
 (defvar hsys-org-mode-function #'hsys-org-mode-p
-  "*Boolean function of no arguments that determines whether point is in an Org mode-related buffer or not.")
+  "*Return non-nil if point is in an Org mode-related buffer.")
 
 ;;; ************************************************************************
 ;;; Public Action Types
@@ -190,7 +190,7 @@ Return the (start . end) buffer positions of the region."
        (org-get-at-bol 'org-marker)))
 
 (defun hsys-org-block-start-at-p ()
-  "Return non-nil if point is on the first line of an Org block definition, else nil."
+  "Return non-nil if point is on the first line of an Org block definition."
   (save-excursion
     (forward-line 0)
     (or (looking-at org-block-regexp)

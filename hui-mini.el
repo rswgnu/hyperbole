@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    15-Oct-91 at 20:13:17
-;; Last-Mod:      6-Oct-22 at 18:56:05 by Bob Weiner
+;; Last-Mod:      7-Oct-22 at 21:57:23 by Mats Lidell
 ;;
 ;; Copyright (C) 1991-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -334,8 +334,8 @@ If on the menu name prefix or the last item, move to the first item."
 
 (defun hui:menu-item-keys (menu-alist)
   "Return ordered list of keys that activate Hypb minibuffer MENU-ALIST items.
-For each item, the key is either the first capital letter in item or if there are none,
-then its first character."
+For each item, the key is either the first capital letter in item
+or if there are none, then its first character."
   (mapcar (lambda (item)
 	    ;; Return either the first capital letter in item or if
 	    ;; none, then its first character.
