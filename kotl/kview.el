@@ -639,11 +639,10 @@ level."
 			 label-type level-indent label-separator
 			 label-min-width blank-lines levels-to-show lines-to-show)
   "Return a new kview for BUFFER-NAME.
-Optional ID-COUNTER is the maximum permanent id previously given
-out in this outline.  Optional LABEL-TYPE, LEVEL-INDENT,
-LABEL-SEPARATOR, LABEL-MIN-WIDTH, BLANK-LINES, LEVELS-TO-SHOW,
-and LINES-TO-SHOW may also be given, otherwise default values are
-used.
+Optional ID-COUNTER is the maximum permanent id previously utilized in this outline.
+Optional LABEL-TYPE, LEVEL-INDENT, LABEL-SEPARATOR, LABEL-MIN-WIDTH,
+BLANK-LINES, LEVELS-TO-SHOW, and LINES-TO-SHOW may also be given;
+otherwise, default values are used.
 
   See documentation of:
  `kview:default-label-type' for LABEL-TYPE,
