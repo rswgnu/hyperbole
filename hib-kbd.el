@@ -477,9 +477,8 @@ Allow for multiple key sequences strung together."
 
 (defun kbd-key:hyperbole-mini-menu-key-p (key-series)
   "Return non-nil if KEY-SERIES invoke a Hyperbole menu item or sequence of keys.
-KEY-SERIES is normalized.  Also, initialize
-`kbd-key:mini-menu-key' to the key sequence that invokes the
-Hyperbole minibuffer menu."
+KEY-SERIES is normalized.  Also, initialize `kbd-key:mini-menu-key' to the
+key sequence that invokes the Hyperbole minibuffer menu."
   (when (stringp key-series)
     (unless (and (stringp kbd-key:mini-menu-key) (not (string-empty-p kbd-key:mini-menu-key)))
       (setq kbd-key:mini-menu-key (regexp-quote (kbd-key:normalize (key-description (car (where-is-internal 'hyperbole)))))))
