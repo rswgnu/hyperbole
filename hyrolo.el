@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     7-Jun-89 at 22:08:29
-;; Last-Mod:      6-Oct-22 at 23:16:06 by Bob Weiner
+;; Last-Mod:      7-Oct-22 at 22:03:04 by Mats Lidell
 ;;
 ;; Copyright (C) 1991-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -1319,7 +1319,7 @@ Return number of matching entries found."
   (hyrolo-search-directories #'hyrolo-grep file-regexp dirs))
 
 (defun hyrolo-next-regexp-match (regexp headline-only)
-  "In a HyRolo source buffer, move past the next occurrence of REGEXP or return nil."
+  "In a HyRolo source buffer, move past next occurrence of REGEXP or return nil."
   (re-search-forward regexp
 		     (when headline-only
 		       (save-excursion (end-of-visible-line) (point)))
