@@ -32,7 +32,7 @@
 
 ;;;###autoload
 (defun hyrolo-demo-fgrep (string &optional max-matches)
-  "Display rolo entries in \"DEMO-ROLO.otl\" matching STRING or a logical sexpr.
+  "Display rolo entries in \"DEMO-ROLO.otl\" matching STRING or a logical sexp.
 Display to a maximum of optional prefix arg MAX-MATCHES.
 Each entry is displayed with all of its sub-entries.
 
