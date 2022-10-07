@@ -497,9 +497,7 @@ KEY-SERIES can have following interactive arguments."
 	 t)))
 
 (defun kbd-key:mark-spaces-to-keep (string start-delim end-delim)
-  "Mark all spaces between START-DELIM and END-DELIM to keep in STRING.
-Return STRING with all spaces between any START-DELIM string and
-END-DELIM string marked for non-replacement."
+  "Return STRING with all spaces between START-DELIM and END-DELIM marked to keep."
   (let ((regexp (format "\\(%s[^ \t\n\r\f]*\\)[ \t\n\r\f]\\(.*%s\\)"
 			start-delim end-delim))
 	(start 0)
