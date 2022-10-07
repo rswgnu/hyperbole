@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    15-Oct-91 at 20:13:17
-;; Last-Mod:      7-Oct-22 at 21:57:23 by Mats Lidell
+;; Last-Mod:     10-Oct-22 at 22:55:17 by Mats Lidell
 ;;
 ;; Copyright (C) 1991-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -33,7 +33,7 @@ Also exits any active minibuffer menu.")
 (defvar hui:menu-quit            "Q"
   "*Upper case character string which quits selecting from a Hyperbole menu item.")
 (defvar hui:menu-abort           "\C-g"
-  "*Same function as 'hui:menu-quit'.")
+  "*Same function as `hui:menu-quit'.")
 (defvar hui:menu-top             "\C-t"
   "*Character string which returns to top Hyperbole menu.")
 
@@ -63,7 +63,7 @@ mini-menu).
 
 Two optional arguments may be given to invoke alternative menus.
 MENU (a symbol) specifies the menu to invoke from MENU-LIST, (a
-Hyperbole menu list structure).  MENU defaults to 'hyperbole and MENU-LIST
+Hyperbole menu list structure).  MENU defaults to \\='hyperbole and MENU-LIST
 to `hui:menus'.  See `hui:menus' definition for the format of the menu list
 structure.
 

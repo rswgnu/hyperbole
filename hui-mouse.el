@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    04-Feb-89
-;; Last-Mod:      3-Oct-22 at 22:15:54 by Mats Lidell
+;; Last-Mod:      7-Oct-22 at 23:42:31 by Mats Lidell
 ;;
 ;; Copyright (C) 1991-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -73,35 +73,35 @@ In other context signal an error."
 
 (defcustom action-key-default-function #'action-key-error
   "*Function run by the Action Key in an unspecified context.
-Set it to #'hyperbole if you want it to display the Hyperbole minibuffer menu."
+Set it to `hyperbole' if you want it to display the Hyperbole minibuffer menu."
   :type 'function
   :group 'hyperbole-keys)
 
 (defcustom assist-key-default-function #'assist-key-error
   "*Function run by the Assist Key in an unspecified context.
-Set it to #'hkey-summarize if you want it to display a summary of
+Set it to `hkey-summarize' if you want it to display a summary of
 Smart Key behavior."
   :type 'function
   :group 'hyperbole-keys)
 
 (defcustom action-key-modeline-buffer-id-function #'dired-jump
   "*Function to call for Action Key clicks on the buffer id portion of a modeline.
-Its default value is #'dired-jump; set it to #'smart-treemacs-modeline
+Its default value is `dired-jump'; set it to `smart-treemacs-modeline'
 to use the Treemacs file manager package instead."
   :type 'function
   :group 'hyperbole-keys)
 
 (defcustom action-key-eol-function #'smart-scroll-up
   "*Function run by the Action Key at the end of a line.
-Its default value is #'smart-scroll-up.  To disable it, set it to
-#'ignore."
+Its default value is `smart-scroll-up'.  To disable it, set it to
+#\\='ignore."
   :type 'function
   :group 'hyperbole-keys)
 
 (defcustom assist-key-eol-function #'smart-scroll-down
   "*Function run by the Assist Key at the end of a line.
-Its default value is #'smart-scroll-down.  To disable it, set it to
-#'ignore."
+Its default value is `smart-scroll-down'.  To disable it, set it to
+#\\='ignore."
   :type 'function
   :group 'hyperbole-keys)
 

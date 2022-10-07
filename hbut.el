@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    18-Sep-91 at 02:57:09
-;; Last-Mod:     29-Aug-22 at 01:35:59 by Bob Weiner
+;; Last-Mod:      7-Oct-22 at 23:28:56 by Mats Lidell
 ;;
 ;; Copyright (C) 1991-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -2166,7 +2166,7 @@ log entries.  The buttons use this format: [<text to match>].
 The following defines the button type called search-git-log which
 calls hypb:fgrep-git-log with the text of the button as an argument:
 
-  (defil search-git-log \"[<\" \">]\" \".*\" #'hypb:fgrep-git-log)
+  (defil search-git-log \"[<\" \">]\" \".*\" #\\='hypb:fgrep-git-log)
 
 Place point after one of the above expressions and evaluate it with
 \\[eval-last-sexp] to define the implicit button type.  Then if you
@@ -2253,7 +2253,7 @@ PYTHONPATH environment variable setup, then pressing
 
    (defal pylib \"${PYTHONPATH}/%s\")
 
-defines a new action button link type called 'pylib' whose buttons
+defines a new action button link type called `pylib' whose buttons
 take the form of:
 
    <pylib PYTHON-LIBRARY-FILENAME>

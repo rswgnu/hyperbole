@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Sep-92
-;; Last-Mod:      5-Aug-22 at 00:02:46 by Mats Lidell
+;; Last-Mod:      7-Oct-22 at 23:39:57 by Mats Lidell
 ;;
 ;; Copyright (C) 1992-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -87,13 +87,13 @@
 
 (defcustom action-key-minibuffer-function #'hyperbole
   "*Function run by the Action Key after a click in an inactive minibuffer.
-Its default value is #'hyperbole, which displays the Hyperbole minibuffer menu."
+Its default value is `hyperbole', which displays the Hyperbole minibuffer menu."
   :type 'function
   :group 'hyperbole-keys)
 
 (defcustom assist-key-minibuffer-function #'hui-menu-screen-commands
   "*Function run by the Assist Key after a click in an inactive minibuffer.
-Its default value is #'hui-menu-screen-commands, which displays a popup menu
+Its default value is `hui-menu-screen-commands', which displays a popup menu
 of screen control commands."
   :type 'function
   :group 'hyperbole-keys)
@@ -605,8 +605,8 @@ southeast, southwest, northwest, northeast."
 (defun hmouse-drag-horizontally ()
   "Return non-nil iff last Action Key use was a horizontal drag in a single window.
 If free variable `assist-flag' is non-nil, use Assist Key.
-Value returned is nil if not a horizontal drag, 'left if drag
-moved left or 'right otherwise."
+Value returned is nil if not a horizontal drag, \\='left if drag
+moved left or \\='right otherwise."
   (when (hmouse-press-release-same-window)
     (let ((last-depress-x) (last-release-x)
 	  (last-depress-y) (last-release-y))
@@ -633,8 +633,8 @@ moved left or 'right otherwise."
 (defun hmouse-drag-vertically-within-emacs ()
   "Return non-nil iff last Action Key use was a vertical drag in the same frame.
 If free variable `assist-flag' is non-nil, use Assist Key.
-Value returned is nil if not a vertical line drag, 'up if drag moved up or
-'down otherwise."
+Value returned is nil if not a vertical line drag, \\='up if drag moved up or
+\\='down otherwise."
   (unless (or (hmouse-drag-between-frames) (hmouse-drag-outside-all-windows))
     (let ((last-depress-x) (last-release-x)
 	  (last-depress-y) (last-release-y))
@@ -662,8 +662,8 @@ Value returned is nil if not a vertical line drag, 'up if drag moved up or
 (defun hmouse-drag-vertically ()
   "Return non-nil iff last Action Key use was a vertical drag in a single window.
 If free variable `assist-flag' is non-nil, uses Assist Key.
-Value returned is nil if not a vertical line drag, 'up if drag moved up or
-'down otherwise."
+Value returned is nil if not a vertical line drag, \\='up if drag moved up or
+\\='down otherwise."
   (when (hmouse-press-release-same-window)
     (hmouse-drag-vertically-within-emacs)))
 

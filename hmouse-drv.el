@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    04-Feb-90
-;; Last-Mod:     25-Jul-22 at 23:20:53 by Mats Lidell
+;; Last-Mod:      7-Oct-22 at 23:30:30 by Mats Lidell
 ;;
 ;; Copyright (C) 1989-2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -213,14 +213,14 @@ This permits the Smart Keys to behave as paste keys.")
 
 ;;; Smart Key Release Functions
 (defun action-mouse-key-emacs (event)
-  "Set point to the current mouse cursor position and execute 'action-key'.
-EVENT will be passed to 'hmouse-function'."
+  "Set point to the current mouse cursor position and execute `action-key'.
+EVENT will be passed to `hmouse-function'."
   (interactive "e")
   (apply #'action-mouse-key (hmouse-key-release-args-emacs event)))
 
 (defun assist-mouse-key-emacs (event)
-  "Set point to the current mouse cursor position and execute 'assist-key'.
-EVENT will be passed to 'hmouse-function'."
+  "Set point to the current mouse cursor position and execute `assist-key'.
+EVENT will be passed to `hmouse-function'."
   (interactive "e")
   (apply #'assist-mouse-key (hmouse-key-release-args-emacs event)))
 
@@ -1446,7 +1446,7 @@ return current point as a marker."
 
 (defun hmouse-set-point-at (set-point-arg-list)
   "Set point to cursor position using SET-POINT-ARG-LIST and return t.
-If 'hmouse-set-point-command' is not bound to a function, this does nothing
+If `hmouse-set-point-command' is not bound to a function, this does nothing
 and returns nil."
   (when (fboundp hmouse-set-point-command)
     (or (if set-point-arg-list
