@@ -727,7 +727,7 @@ this function is called."
 
 (defun kview:first-invisible-point (&optional pos)
   "Return the first point that is followed by an invisible character.
-Start from point or optional POS.  If none are found return the
+Start from point or optional POS.  If none are found, return the
 end point of the cell contents.
 Value may be the character immediately after point."
   (unless pos
