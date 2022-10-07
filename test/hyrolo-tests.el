@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    19-Jun-21 at 22:42:00
-;; Last-Mod:     29-Aug-22 at 02:05:34 by Bob Weiner
+;; Last-Mod:     24-Sep-22 at 12:27:35 by Bob Weiner
 ;;
 ;; Copyright (C) 2021-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -49,7 +49,7 @@
         (load "../hyrolo-demo")
         (should (hact 'kbd-key "C-x 4r work RET"))
         (hy-test-helpers:consume-input-events)
-        (should (string= (buffer-name) "*Hyperbole Rolo*"))
+        (should (string= (buffer-name) hyrolo-display-buffer))
         (should (looking-at "======"))
         (forward-line 5)
         (should (looking-at "\\*.*Work")))
@@ -63,7 +63,7 @@
         (load "../hyrolo-demo")
         (should (hact 'kbd-key "C-x 4r work RET TAB"))
         (hy-test-helpers:consume-input-events)
-        (should (string= (buffer-name) "*Hyperbole Rolo*"))
+        (should (string= (buffer-name) hyrolo-display-buffer))
         (should (looking-at "Work")))
     (hyrolo-demo-quit)))
 
@@ -75,7 +75,7 @@
         (load "../hyrolo-demo")
         (should (hact 'kbd-key "C-x 4r work RET TAB"))
         (hy-test-helpers:consume-input-events)
-        (should (string= (buffer-name) "*Hyperbole Rolo*"))
+        (should (string= (buffer-name) hyrolo-display-buffer))
         (should (looking-at "Work"))
 
         (should (hact 'kbd-key "h"))
@@ -101,7 +101,7 @@
         (load "../hyrolo-demo")
         (should (hact 'kbd-key "C-x 4r work RET TAB"))
         (hy-test-helpers:consume-input-events)
-        (should (string= (buffer-name) "*Hyperbole Rolo*"))
+        (should (string= (buffer-name) hyrolo-display-buffer))
         (should (looking-at "work"))
 
         (should (hact 'kbd-key "o"))
@@ -127,7 +127,7 @@
         (load "../hyrolo-demo")
         (should (hact 'kbd-key "C-x 4r work RET TAB"))
         (hy-test-helpers:consume-input-events)
-        (should (string= (buffer-name) "*Hyperbole Rolo*"))
+        (should (string= (buffer-name) hyrolo-display-buffer))
         (should (looking-at "Work"))
 
         (should (hact 'kbd-key ">"))
@@ -152,7 +152,7 @@ and {b} the previous same level cell."
         (load "../hyrolo-demo")
         (should (hact 'kbd-key "C-x 4r com RET TAB"))
         (hy-test-helpers:consume-input-events)
-        (should (string= (buffer-name) "*Hyperbole Rolo*"))
+        (should (string= (buffer-name) hyrolo-display-buffer))
         (should (hact 'kbd-key "<"))
         (should (equal (point) (point-min)))
 
@@ -176,7 +176,7 @@ and {b} the previous same level cell."
         (should (hact 'kbd-key "C-x 4r com RET TAB"))
         (hy-test-helpers:consume-input-events)
 
-        (should (string= (buffer-name) "*Hyperbole Rolo*"))
+        (should (string= (buffer-name) hyrolo-display-buffer))
         (should (hact 'kbd-key "<"))
         (should (equal (point) (point-min)))
 

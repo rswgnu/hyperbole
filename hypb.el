@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     6-Oct-91 at 03:42:38
-;; Last-Mod:      3-Oct-22 at 20:33:54 by Mats Lidell
+;; Last-Mod:      6-Oct-22 at 18:55:39 by Bob Weiner
 ;;
 ;; Copyright (C) 1991-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -780,6 +780,31 @@ If ARG <= 0, turn search only visible text."
 				(or search-invisible 'open)))
     (message "I-search will %ssearch invisible text"
 	     (if isearch-invisible "" "not "))))
+
+;; Next function originally from `org-id-uuid' sans org dependency.
+(defun hypb:uuid ()
+  "Return string with random (version 4) universally unique id."
+  (let ((rnd (md5 (format "%s%s%s%s%s%s%s"
+			  (random)
+			  (time-convert nil 'list)
+			  (user-uid)
+			  (emacs-pid)
+			  (user-full-name)
+			  user-mail-address
+			  (recent-keys)))))
+    (format "%s-%s-4%s-%s%s-%s"
+	    (substring rnd 0 8)
+	    (substring rnd 8 12)
+	    (substring rnd 13 16)
+	    (format "%x"
+		    (logior
+		     #b10000000
+		     (logand
+		      #b10111111
+		      (string-to-number
+		       (substring rnd 16 18) 16))))
+	    (substring rnd 18 20)
+	    (substring rnd 20 32))))
 
 (defun hypb:user-name ()
   "Return the current user's email or login name (sans any domain name)."

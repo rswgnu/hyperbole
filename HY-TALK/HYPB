@@ -1,3 +1,12 @@
+* Use org-present package to turn Org outline into a presentation
+  you can step through with the space and delete keys.
+
+  Install:    <unless (featurep 'org-present) (package-install 'org-present)>
+
+* Enable all Hyperbole keys including {M-RET} in Org mode
+
+  <setq hsys-org-enable-smart-keys t>
+
 * How to setup button2 and button3 as Action and Assist Mouse Keys
 
 Add to your Emacs init file:
@@ -12,12 +21,12 @@ or interactively after loading Hyperbole:
 
 ** Keypression - overlaying parts of buffer (shows trail of keys)
 
-  Install:    <package-install 'keypression>
+  Install:    <unless (featurep 'keypression) (package-install 'keypression)>
   Activate:   <keypression-mode 1>
   Deactivate: <keypression-mode 0>
 
   Configure:
-    <setq keypression-use-child-frame nil
+    <setq keypression-use-child-frame t
 	  keypression-fade-out-delay 3.0
 	  keypression-frame-justify 'keypression-left-justified
 	  keypression-cast-command-name t

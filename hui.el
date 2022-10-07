@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 21:42:03
-;; Last-Mod:      4-Oct-22 at 23:44:39 by Mats Lidell
+;; Last-Mod:      6-Oct-22 at 18:55:54 by Bob Weiner
 ;;
 ;; Copyright (C) 1991-2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -49,12 +49,11 @@
 
 ;; Derived from copy-to-register of "register.el"
 ;;;###autoload
-(defun hui-copy-to-register (register start end &optional delete-flag region)
-  "Copy region or thing into register REGISTER.
-With prefix arg, delete as well.
+(defun hui-copy-to-register (register start end &optional delete-flag region-flag)
+  "Copy region or thing into REGISTER.  With prefix arg, delete as well.
 Called from program, takes five args: REGISTER, START, END, DELETE-FLAG,
-and REGION.  START and END are buffer positions indicating what to copy.
-The optional argument REGION if non-nil, indicates that we're not just
+and REGION-FLAG.  START and END are buffer positions indicating what to copy.
+The optional argument REGION-FLAG if non-nil, indicates that we're not just
 copying some text between START and END, but we're copying the region.
 
 Interactively, reads the register using `register-read-with-preview'.
@@ -90,7 +89,7 @@ point; see `hui:delimited-selectable-thing'."
 			       (when (and delete-flag start end)
 				 (delete-region start end))))
 			thing)
-		       ((and start end region)
+		       ((and start end region-flag)
 			(funcall region-extract-function delete-flag))
 		       ((and start end)
 			(filter-buffer-substring start end delete-flag))

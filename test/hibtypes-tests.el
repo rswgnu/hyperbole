@@ -146,17 +146,6 @@
     (hy-test-helpers:should-last-message "Loading")
     (hy-test-helpers:should-last-message "hy-test-dependencies.el")))
 
-(ert-deftest ibtypes::pathname-directory-test ()
-  "Pathname with directory opens dired."
-  (unwind-protect
-      (with-temp-buffer
-        (insert "\"/tmp\"")
-        (goto-char 2)
-        (ibtypes::pathname)
-        (should (string= "tmp" (buffer-name)))
-        (should (eq major-mode 'dired-mode)))
-    (kill-buffer "tmp")))
-
 (ert-deftest ibtypes::pathname-dot-slash-in-other-folder-test ()
   "Invalid pathname that starts with ./ triggers an error when resolved."
   (with-temp-buffer
@@ -180,22 +169,23 @@
       (set-buffer help-buffer)
       (should (string-match "actype:.*link-to-file" (buffer-string))))))
 
-(ert-deftest ibtypes::pathname-path-variable-test ()
-  "Goto file at point in path variable."
-  (unwind-protect
-      (with-temp-buffer
-        (insert "\"/var/lib:/bar:/tmp:/foo\"")
-        (goto-char 16)
-        (ibtypes::pathname)
-	;; (when (car (hattr:get 'hbut:current 'args))
-	;; (set-buffer (find-file-noselect (car (hattr:get 'hbut:current 'args)))))
-        (should (string= "tmp" (buffer-name)))
-        (should (eq major-mode 'dired-mode)))
-    (when (and (get-buffer "tmp")
-	       (buffer-live-p (get-buffer "tmp")))
-      (kill-buffer (get-buffer "tmp")))))
+(ert-deftest ibtypes::pathname-directory-test ()
+  "Goto directory at point in path variable and open Dired."
+  (let (visited-buf)
+    (unwind-protect
+	(with-temp-buffer
+          (insert "\"/var/lib:/bar:/tmp:/foo\"")
+          (goto-char 16)
+          (ibtypes::pathname)
+	  (setq visited-buf (current-buffer))
+          (should (string-prefix-p "tmp" (buffer-name)))
+          (should (eq major-mode 'dired-mode)))
+      (when (and visited-buf
+		 (buffer-live-p visited-buf))
+ 	(kill-buffer visited-buf)))))
 
-;; Function in buffer XEmac functionality. Is there somethign similar in Emacs?
+;; !! Todo: XEmacs has a library to jump to a function definition in the current buffer.
+;; What is the equivalent GNU Emacs one?
 
 ;; ibtypes::annot-bib
 (ert-deftest ibtypes::annot-bib-test ()

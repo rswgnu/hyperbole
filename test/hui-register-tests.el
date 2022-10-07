@@ -92,7 +92,7 @@
             (should (ebut:at-p))
             (action-key)
             (should (equal major-mode 'dired-mode))
-            (should (equal default-directory "/tmp/"))))
+            (should (member default-directory '("/tmp/" "/private/tmp/")))))
       (delete-file file1)
       (delete-file file2))))
 

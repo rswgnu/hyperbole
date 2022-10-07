@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    6/30/93
-;; Last-Mod:      3-Oct-22 at 22:25:42 by Mats Lidell
+;; Last-Mod:      6-Oct-22 at 18:30:31 by Bob Weiner
 ;;
 ;; Copyright (C) 1993-2022  Free Software Foundation, Inc.
 ;; See the "../HY-COPY" file for license information.
@@ -1797,12 +1797,12 @@ part of the paragraph, or the end of the buffer."
     (kotl-mode:backward-word (- arg)))
   (point))
 
-(defun kotl-mode:goto-cell (cell-ref &optional error-p)
+(defun kotl-mode:goto-cell (cell-ref &optional error-flag)
   "Move point to start of cell given by CELL-REF (see `kcell:ref-to-id').
 Return point if CELL-REF is found within current view, else nil.
-(See the doc for `kcell:ref-to-id', for valid formats).
+See the doc for `kcell:ref-to-id', for valid formats.
 
-With optional second arg ERROR-P non-nil, or if called
+With optional second arg ERROR-FLAG non-nil, or if called
 interactively, will signal an error if CELL-REF is not found
 within current view.
 
@@ -1818,35 +1818,23 @@ for CELL-REF."
 	(or (kcell:ref-to-id cell-ref t)
 	    (error "(kotl-mode:goto-cell): Invalid cell reference, `%s'" cell-ref)))
   (let* ((opoint (point))
-	 (found)
-	 cell-id kvspec)
+	 (found))
     (if (and (stringp cell-ref) (eq ?| (aref cell-ref 0)))
 	;; This is a standalone view spec, not a cell reference.
 	(progn (kvspec:activate cell-ref) (setq found (point)))
-
-      ;; !! Todo: Remove any relative specs and view specs from
-      ;; cell-ref to form cell-id.  Really should account for Augment-style
-      ;; relative specs here, but we don't yet support them.
-      (if (and (stringp cell-ref)
-	       (string-match "\\(\\.[a-zA-Z]+\\)?\\([|:].*\\)\\|\\.[a-zA-Z]+"
-			     cell-ref))
-	  (setq cell-id (substring cell-ref 0 (match-beginning 0))
-		kvspec  (when (match-beginning 2)
-			  (match-string 2 cell-ref)))
-	(setq cell-id cell-ref kvspec nil))
-
-      (goto-char (point-min))
-      (when (or (integerp cell-id)
-		(eq ?0 (aref cell-id 0)))
-	;; is an idstamp
-	(when (kview:goto-cell-id cell-id)
-	  (setq found (point))))
-      (if found
-	  ;; Activate any viewspec associated with cell-ref.
-	  (when kvspec (kvspec:activate kvspec))
-	(goto-char opoint)
-	(when (or error-p (called-interactively-p 'interactive))
-	  (error "(kotl-mode:goto-cell): No `%s' cell in this view" cell-ref))))
+      (cl-destructuring-bind (cell-id kvspec) (kcell:parse-cell-ref cell-ref)
+	(goto-char (point-min))
+	(when (or (integerp cell-id)
+		  (eq ?0 (aref cell-id 0)))
+	  ;; Is an idstamp
+	  (when (kview:goto-cell-id cell-id)
+	    (setq found (point))))
+	(if found
+	    ;; Activate any viewspec associated with cell-ref.
+	    (when kvspec (kvspec:activate kvspec))
+	  (goto-char opoint)
+	  (when (or error-flag (called-interactively-p 'interactive))
+	    (error "(kotl-mode:goto-cell): No `%s' cell in this view" cell-ref)))))
     found))
 
 (defun kotl-mode:head-cell ()

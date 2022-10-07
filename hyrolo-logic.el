@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    13-Jun-89 at 22:57:33
-;; Last-Mod:     14-Sep-22 at 22:36:25 by Mats Lidell
+;; Last-Mod:      6-Oct-22 at 18:55:17 by Bob Weiner
 ;;
 ;; Copyright (C) 1989-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -87,7 +87,7 @@ A complex example of EXPR might be:
 which means:
   Match neither `time' nor `card'
     or
-  Match exactly one of `french balloons' or `spanish'
+  Match exactly one of (`french' and 'balloons') or (`spanish').
     and
   Match `teacher' and `pet'.
 
@@ -106,6 +106,12 @@ single argument."
       (setq expr (replace-regexp-in-string "\(xor " "\(@ " expr nil t))
       (setq expr (replace-regexp-in-string "\(not " "\(! " expr nil t))
       (setq expr (replace-regexp-in-string "\(and " "\(& " expr nil t))
+
+      (setq expr (replace-regexp-in-string "\(r-or " "\(r-| " expr nil t))
+      (setq expr (replace-regexp-in-string "\(r-xor " "\(r-@ " expr nil t))
+      (setq expr (replace-regexp-in-string "\(r-not " "\(r-! " expr nil t))
+      (setq expr (replace-regexp-in-string "\(r-and " "\(r-& " expr nil t))
+
       (setq expr (replace-regexp-in-string
 		  "\"\\([^\"]*\\)\"" "{\\1}" expr nil nil))
       (setq expr (replace-regexp-in-string
@@ -124,6 +130,12 @@ single argument."
       (setq expr (replace-regexp-in-string "\(@ " "\(hyrolo-xor start end " expr nil t))
       (setq expr (replace-regexp-in-string "\(! " "\(hyrolo-not start end " expr nil t))
       (setq expr (replace-regexp-in-string "\(& " "\(hyrolo-and start end " expr nil t))
+
+      (setq expr (replace-regexp-in-string "\(r-| " "\(hyrolo-r-or start end  " expr nil t))
+      (setq expr (replace-regexp-in-string "\(r-@ " "\(hyrolo-r-xor start end " expr nil t))
+      (setq expr (replace-regexp-in-string "\(r-! " "\(hyrolo-r-not start end " expr nil t))
+      (setq expr (replace-regexp-in-string "\(r-& " "\(hyrolo-r-and start end " expr nil t))
+
       (setq expr (format "(hyrolo-logic (quote %s) nil %s %s %s)"
 			 expr count-only include-sub-entries no-sub-entries-out))
       (setq total-matches (eval (read expr))))
@@ -150,8 +162,10 @@ Return the number of evaluations of SEXP that match entries."
 			 (erase-buffer))))
 	 (result
 	  (mapcar
-	   (lambda (buf)
-	     (hyrolo-map-logic sexp buf count-only include-sub-entries
+	   (lambda (buf-or-file)
+	     (setq buf-or-file (or (get-buffer buf-or-file)
+				   (funcall hyrolo-find-file-noselect-function buf-or-file)))
+	     (hyrolo-map-logic sexp buf-or-file count-only include-sub-entries
 			       no-sub-entries-out))
 	   (cond ((null in-bufs) hyrolo-file-list)
 		 ((listp in-bufs) in-bufs)
@@ -242,114 +256,130 @@ evaluations of SEXP that match entries."
 (defun hyrolo-not (start end &rest pat-list)
   "Logical <not> rolo entry filter.  PAT-LIST is a list of pattern elements.
 Each element may be t, nil, or a string."
-  (let ((pat))
-    (while (and pat-list
-		(or (null (setq pat (car pat-list)))
-		    (and (stringp pat)
-			 (goto-char start)
-			 (not (search-forward pat end t)))))
-      (setq pat-list (cdr pat-list)))
-    (not pat-list)))
+  (save-restriction
+    (narrow-to-region start end)
+    (let ((pat))
+      (while (and pat-list
+		  (or (null (setq pat (car pat-list)))
+		      (and (stringp pat)
+			   (goto-char start)
+			   (not (funcall hyrolo-next-match-function (regexp-quote pat) nil)))))
+	(setq pat-list (cdr pat-list)))
+      (not pat-list))))
 
 (defun hyrolo-or (start end &rest pat-list)
   "Logical <or> rolo entry filter.  PAT-LIST is a list of pattern elements.
 Each element may be t, nil, or a string."
   (if (memq t pat-list)
       t
-    (let ((pat))
-      (while (and pat-list
-		  (or (null (setq pat (car pat-list)))
-		      (and (stringp pat)
-			   (goto-char start)
-			   (not (search-forward pat end t)))))
-	(setq pat-list (cdr pat-list)))
-      (if pat-list t nil))))
+    (save-restriction
+      (narrow-to-region start end)
+      (let ((pat))
+	(while (and pat-list
+		    (or (null (setq pat (car pat-list)))
+			(and (stringp pat)
+			     (goto-char start)
+			     (not (funcall hyrolo-next-match-function (regexp-quote pat) nil)))))
+	  (setq pat-list (cdr pat-list)))
+	(if pat-list t nil)))))
 
 (defun hyrolo-xor (start end &rest pat-list)
   "Logical <xor> rolo entry filter.  PAT-LIST is a list of pattern elements.
 Each element may be t, nil, or a string."
-  (let ((pat)
-	(matches 0))
-    (while (and pat-list
-		(or (not (setq pat (car pat-list)))
-		    (and (or (eq pat t)
-			     (not (goto-char start))
-			     (search-forward pat end t))
-			 (setq matches (1+ matches)))
-		    t)
-		(< matches 2))
-      (setq pat-list (cdr pat-list)))
-    (= matches 1)))
+  (save-restriction
+    (narrow-to-region start end)
+    (let ((pat)
+	  (matches 0))
+      (while (and pat-list
+		  (or (not (setq pat (car pat-list)))
+		      (and (or (eq pat t)
+			       (not (goto-char start))
+			       (funcall hyrolo-next-match-function (regexp-quote pat) nil))
+			   (setq matches (1+ matches)))
+		      t)
+		  (< matches 2))
+	(setq pat-list (cdr pat-list)))
+      (= matches 1))))
 
 (defun hyrolo-and (start end &rest pat-list)
   "Logical <and> rolo entry filter.  PAT-LIST is a list of pattern elements.
 Each element may be t, nil, or a string."
   (unless (memq nil pat-list)
-    (let ((pat))
-      (while (and pat-list
-		  (setq pat (car pat-list))
-		  (or (eq pat t)
-		      (not (goto-char start))
-		      (search-forward pat end t)))
-	(setq pat-list (cdr pat-list)))
-      (not pat-list))))
+    (save-restriction
+      (narrow-to-region start end)
+      (let ((pat))
+	(while (and pat-list
+		    (setq pat (car pat-list))
+		    (or (eq pat t)
+			(not (goto-char start))
+			(funcall hyrolo-next-match-function (regexp-quote pat) nil)))
+	  (setq pat-list (cdr pat-list)))
+	(not pat-list)))))
 
 ;; Work with regular expression patterns rather than strings
 
 (defun hyrolo-r-not (start end &rest pat-list)
   "Logical <not> rolo entry filter.  PAT-LIST is a list of pattern elements.
 Each element may be t, nil, or a regular expression."
-  (let ((pat))
-    (while (and pat-list
-		(or (null (setq pat (car pat-list)))
-		    (and (stringp pat)
-			 (goto-char start)
-			 (not (re-search-forward pat end t)))))
-      (setq pat-list (cdr pat-list)))
-    (not pat-list)))
+  (save-restriction
+    (narrow-to-region start end)
+    (let ((pat))
+      (while (and pat-list
+		  (or (null (setq pat (car pat-list)))
+		      (and (stringp pat)
+			   (goto-char start)
+			   (not (funcall hyrolo-next-match-function pat nil)))))
+	(setq pat-list (cdr pat-list)))
+      (not pat-list))))
 
 (defun hyrolo-r-or (start end &rest pat-list)
   "Logical <or> rolo entry filter.  PAT-LIST is a list of pattern elements.
 Each element may be t, nil, or a regular expression."
   (if (memq t pat-list)
       t
-    (let ((pat))
-      (while (and pat-list
-		  (or (null (setq pat (car pat-list)))
-		      (and (stringp pat)
-			   (goto-char start)
-			   (not (re-search-forward pat end t)))))
-	(setq pat-list (cdr pat-list)))
-      (if pat-list t nil))))
+    (save-restriction
+      (narrow-to-region start end)
+      (let ((pat))
+	(while (and pat-list
+		    (or (null (setq pat (car pat-list)))
+			(and (stringp pat)
+			     (goto-char start)
+			     (not (funcall hyrolo-next-match-function pat nil)))))
+	  (setq pat-list (cdr pat-list)))
+	(if pat-list t nil)))))
 
 (defun hyrolo-r-xor (start end &rest pat-list)
   "Logical <xor> rolo entry filter.  PAT-LIST is a list of pattern elements.
 Each element may be t, nil, or a regular expression."
-  (let ((pat)
-	(matches 0))
-    (while (and pat-list
-		(or (not (setq pat (car pat-list)))
-		    (and (or (eq pat t)
-			     (not (goto-char start))
-			     (re-search-forward pat end t))
-			 (setq matches (1+ matches)))
-		    t)
-		(< matches 2))
-      (setq pat-list (cdr pat-list)))
-    (= matches 1)))
+  (save-restriction
+    (narrow-to-region start end)
+    (let ((pat)
+	  (matches 0))
+      (while (and pat-list
+		  (or (not (setq pat (car pat-list)))
+		      (and (or (eq pat t)
+			       (not (goto-char start))
+			       (funcall hyrolo-next-match-function pat nil))
+			   (setq matches (1+ matches)))
+		      t)
+		  (< matches 2))
+	(setq pat-list (cdr pat-list)))
+      (= matches 1))))
 
 (defun hyrolo-r-and (start end &rest pat-list)
   "Logical <and> rolo entry filter.  PAT-LIST is a list of pattern elements.
 Each element may be t, nil, or a regular expression."
   (unless (memq nil pat-list)
-    (let ((pat))
-      (while (and pat-list
-		  (setq pat (car pat-list))
-		  (or (eq pat t)
-		      (not (goto-char start))
-		      (re-search-forward pat end t)))
-	(setq pat-list (cdr pat-list)))
-      (not pat-list))))
+    (save-restriction
+      (narrow-to-region start end)
+      (let ((pat))
+	(while (and pat-list
+		    (setq pat (car pat-list))
+		    (or (eq pat t)
+			(not (goto-char start))
+			(funcall hyrolo-next-match-function pat nil)))
+	  (setq pat-list (cdr pat-list)))
+	(not pat-list)))))
 
 (provide 'hyrolo-logic)
 

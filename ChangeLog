@@ -1,3 +1,8 @@
+2022-10-06  Bob Weiner  <rsw@gnu.org>
+
+* test/hibtypes-tests.el (ibtypes::pathname-path-variable-test): Remove
+    since is a duplicate of 'ibtypes::pathname-directory-test'.
+
 2022-10-05  Mats Lidell  <matsl@gnu.org>
 
 * hui.el:
@@ -41,11 +46,71 @@
 * hload-path.el:
 * hinit.el: Shorten docs strings to be within 80 char limit.
 
+2022-09-30  Bob Weiner  <rsw@gnu.org>
+
+* hyrolo-logic.el (hyrolo-not, hyrolo-or, hyrolo-xor, hyrolo-and):
+    Use narrow-to-region and 'hyrolo-next-match-function' to find matches.
+    Also, regexp-quote the pattern as it is a string.
+                 (hyrolo-r-not, hyrolo-r-or, hyrolo-r-xor, hyrolo-r-and):
+    Use narrow-to-region and 'hyrolo-next-match-function' to find matches.
+                 (hyrolo-fgrep-logical): Add support for using the regex
+    logical functions by prefacing each function with 'r-' in an expression,
+    e.g. (r-and regex1 (r-not regex2)).
+
+* hyrolo.el (hyrolo-verify): Add support for 'hynote-display-buffer'.
+            (hyrolo-grep-file): Change 'regexp' arg to 'pattern' and update
+    doc to mention use of 'hyrolo-next-match-function'.
+
+* kotl/kcell.el (kcell:parse-cell-ref): Extract this from 'kotl-mode:goto-cell'
+    and make an autoload so may be used externally.
+
+2022-09-27  Bob Weiner  <rsw@gnu.org>
+
+* kotl/kcell.el (kcell:plist): Change from alias to a function so can include
+    a doc string.
+
+2022-09-26  Bob Weiner  <rsw@gnu.org>
+
+* hyrolo.el (hyrolo-next-regexp-match): Add to allow for different
+    hyrolo entry matching functions.
+            (hyrolo-next-match-function): Add.
+            (hyrolo-grep-file): Use above variable.
+
+2022-09-25  Bob Weiner  <rsw@gnu.org>
+
+* hyrolo-logic.el (hyrolo-logic): Fix to handle when filename list is used
+    rather than a buffer list.
+
+* hui.el (hui-copy-to-register): Rename 'region' arg to 'region-flag'.
+
+* hyrolo.el (hyrolo-add): Handle markdown-mode which doesn't have a grouping
+    of only space after pound (#) headings.
+            (markdown-mode-hook): Support hyrolo searches in markdown files.
+	    (hyrolo-fgrep-file, hyrolo-grep-file, hyrolo-fgrep, hyrolo-grep,
+             hyrolo-word):
+    Add optional 'headline-only' argument.
+* hib-doc-id.el (link-to-doc, doc-id:help): Set new 'headline-only' argument
+    to nil.
+
+2022-09-24  Bob Weiner  <rsw@gnu.org>
+
+* hyrolo.el (hyrolo-display-buffer): Change buffer name from "*Hyperbole Rolo*"
+    to "*HyRolo*".
+
+* test/demo-tests.el (demo-hyrolo-test):
+  test/hyrolo-tests.el: Replace all "*Hyperbole Rolo*" with 'hyrolo-display-buffer'.
+
 2022-09-19  Mats Lidell  <matsl@gnu.org>
 
 * hypb.el (hypb:replace-match-string): Remove unused function.
 
 * hact.el: Use byte-code-function-p.
+
+2022-09-17  Bob Weiner  <rsw@gnu.org>
+
+* kotl/klink.el (klink:cell-ref-regexp): Allow for a comma between
+    the cell reference and a viewspec.
+  kotl/kcell.el (kcell:ref-to-id): Remove any comma.
 
 2022-09-14  Mats Lidell  <matsl@gnu.org>
 
@@ -2301,7 +2366,7 @@ V8.0.1 changes ^^^^:
 
 * Makefile (bin): Hide docstring warnings.
 
-2021-09-26  Robert Weiner  <rsw@gnul.org>
+2021-09-26  Bob Weiner  <rsw@gnu.org>
 
 * hbut.el (ebut:operate): Rewrote to handle label modification properly and thereby
     fixed hui-ebut-modify-link-to-www-url-keeping-all-values-should-not-modify-buffer-or-ebut

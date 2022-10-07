@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    15-Nov-93 at 12:15:16
-;; Last-Mod:     29-Aug-22 at 01:12:26 by Bob Weiner
+;; Last-Mod:     18-Sep-22 at 09:55:49 by Bob Weiner
 ;;
 ;; Copyright (C) 1993-2022  Free Software Foundation, Inc.
 ;; See the "../HY-COPY" file for license information.
@@ -349,7 +349,9 @@ Assume point is in klink referent buffer, where the klink points."
 ;;; ************************************************************************
 
 (defvar klink:cell-ref-regexp
-  "[|:0-9a-zA-Z][|:.*~=0-9a-zA-Z \t\n\r]*"
+  (concat "[0-9a-zA-Z][.*~=0-9a-zA-Z \t\n\r]*\\s-*,\\s-*"
+	  "[|:.*~=0-9a-zA-Z \t\n\r]+"
+	  "\\|[|: 0-9a-zA-Z][|:.*~=0-9a-zA-Z \t\n\r]*")
   "Regexp matching a cell reference including relative and view specs.
 Contains no groupings.")
 

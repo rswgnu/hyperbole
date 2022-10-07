@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 20:45:31
-;; Last-Mod:      3-Oct-22 at 20:01:40 by Mats Lidell
+;; Last-Mod:      6-Oct-22 at 18:56:22 by Bob Weiner
 ;;
 ;; Copyright (C) 1991-2022 Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -1430,6 +1430,12 @@ arg1 ... argN '>'.  For example, <mail nil \"user@somewhere.org\">."
 				(special-form-p actype-sym))
 			    actype-sym)))
       (when actype
+	;; For <hynote> buttons, need to double quote each argument so
+	;; 'read' does not change the idstamp 02 to 2.
+	(when (and (memq actype '(hy hynote))
+		   (string-match-p " " lbl))
+	  (setq lbl (replace-regexp-in-string "\"\\(.*\\)\\'" "\\1\""
+					      (combine-and-quote-strings (split-string lbl) "\" \""))))
         (setq action (read (concat "(" lbl ")"))
               args (cdr action))
 	;; Ensure action uses an fboundp symbol if executing a

@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    30-Jan-21 at 12:00:00
-;; Last-Mod:     24-Jul-22 at 09:18:04 by Bob Weiner
+;; Last-Mod:     24-Sep-22 at 12:40:19 by Bob Weiner
 ;;
 ;; Copyright (C) 2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -23,6 +23,7 @@
 (require 'hload-path)
 (require 'hypb)
 (require 'hib-social)
+(require 'hyrolo)
 (require 'eww)
 (require 'compile)
 (require 'el-mock)
@@ -120,7 +121,7 @@
           (should (get-buffer help-buffer))
       (hy-test-helpers:kill-buffer help-buffer)))))
 
-;; Hy-control
+;; HyControl
 (ert-deftest demo-window-grid-22-test ()
   (skip-unless (not noninteractive))
   (unwind-protect
@@ -141,15 +142,15 @@
         (should (eq 9 (length (window-list)))))
     (hy-test-helpers:kill-buffer "DEMO")))
 
-;; Hy-rolo
-(ert-deftest demo-hy-rolo-test ()
+;; HyRolo
+(ert-deftest demo-hyrolo-test ()
   (skip-unless (not noninteractive))
   (unwind-protect
       (with-temp-buffer
         (load (expand-file-name "hyrolo-demo.el" hyperb:dir))
         (should (hact 'kbd-key "C-x 4 r work RET"))
         (hy-test-helpers:consume-input-events)
-        (should (string= "*Hyperbole Rolo*" (buffer-name)))
+        (should (string= (buffer-name) hyrolo-display-buffer))
         (should (search-forward "Dunn, John")))
     (hyrolo-demo-quit)))
 

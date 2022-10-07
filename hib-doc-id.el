@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    30-Sep-92 at 19:39:59
-;; Last-Mod:     21-Jul-22 at 11:21:45 by Mats Lidell
+;; Last-Mod:     25-Sep-22 at 02:39:34 by Bob Weiner
 ;;
 ;; Copyright (C) 1991-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -125,7 +125,7 @@ an error."
 	   (error "(doc-id-index-entry): You must set the `doc-id-indices' variable first"))
 	  ((let ((hyrolo-entry-regexp doc-id-index-entry-regexp))
 	     (zerop (hyrolo-grep (funcall doc-id-match doc-id)
-				 1 doc-id-indices nil 'no-display)))
+				 1 doc-id-indices nil nil 'no-display)))
 	   (error "(doc-id-index-entry): %s not found in document index"
 		  delim-doc-id))
 	  ;; Matching index entry has been put into `hyrolo-display-buffer'.
@@ -179,7 +179,7 @@ Also display standard Hyperbole help for implicit button BUT."
     (cond ((null doc-id-indices)
 	   (error "(doc-id-index-entry): You must set the `doc-id-indices' variable first"))
 	  ((zerop (hyrolo-grep (funcall doc-id-match doc-id) 1 doc-id-indices
-			       nil 'no-display))
+			       nil nil 'no-display))
 	   (error
 	     "(doc-id-index-entry): No document index entry found for %s%s%s"
 		  doc-id-start doc-id doc-id-end)))

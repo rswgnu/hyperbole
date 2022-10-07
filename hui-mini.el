@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    15-Oct-91 at 20:13:17
-;; Last-Mod:     15-Sep-22 at 00:01:16 by Mats Lidell
+;; Last-Mod:      6-Oct-22 at 18:56:05 by Bob Weiner
 ;;
 ;; Copyright (C) 1991-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -407,7 +407,8 @@ documentation, not the full text."
   "Go to top-level SECTION in personal button file; add the section if necessary."
   (let* ((hypb-personal-file (expand-file-name hbmap:filename hbmap:dir-user))
 	 (hyrolo-file-list (list hypb-personal-file))
-	 (hyrolo-add-hook)) ;; Prevent addition of dates when add navigation sections
+	 (hyrolo-add-hook)
+	 (hyrolo-edit-hook)) ;; Prevent addition of dates when add navigation sections
     (if (= 1 (hyrolo-fgrep section 1 nil t t))
 	(hpath:find (concat hypb-personal-file "#" section))
       (hyrolo-add section))))
