@@ -36,7 +36,7 @@
 ;;; ************************************************************************
 
 (defcustom hproperty:but-highlight-flag t
-  "*Non-nil means highlight all explicit buttons with `hproperty:but-face'."
+"*Non-nil (default) applies `hproperty:but-face' highlight to explicit buttons."
   :type 'boolean
   :group 'hyperbole-buttons)
 
