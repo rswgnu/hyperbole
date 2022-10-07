@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     2-Jul-16 at 14:54:14
-;; Last-Mod:      7-Oct-22 at 00:21:15 by Mats Lidell
+;; Last-Mod:      7-Oct-22 at 22:08:03 by Mats Lidell
 ;;
 ;; Copyright (C) 2016-2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -63,13 +63,13 @@ The following table shows what the Smart Keys do in various contexts
 with different settings of this option.  For example, a nil value makes
 {M-RET} operate as it normally does within Org mode contexts.
 
-|---------------------+-------------------+------------------+----------+------------------|
-| This Option Setting | Smart Key Context | Hyperbole Button | Org Link | Fallback Command |
-|---------------------+-------------------+------------------+----------+------------------|
-| buttons             | Ignore            | Activate         | Activate | org-meta-return  |
-| nil                 | Ignore            | Ignore           | Ignore   | org-meta-return  |
-| t                   | Activate          | Activate         | Activate | None             |
-|---------------------+-------------------+------------------+----------+------------------|"
+|---------+-------------------+------------------+----------+------------------|
+| Setting | Smart Key Context | Hyperbole Button | Org Link | Fallback Command |
+|---------+-------------------+------------------+----------+------------------|
+| buttons | Ignore            | Activate         | Activate | org-meta-return  |
+| nil     | Ignore            | Ignore           | Ignore   | org-meta-return  |
+| t       | Activate          | Activate         | Activate | None             |
+|---------+-------------------+------------------+----------+------------------|"
   :type '(choice (const :tag "buttons - In Org, enable Smart Keys within Hyperbole buttons only" buttons)
 		 (const :tag "nil     - In Org, disable Smart Keys entirely" nil)
 		 (const :tag "t       - In Org, enable all Smart Key contexts" t))
