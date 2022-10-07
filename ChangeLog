@@ -1,3 +1,8 @@
+2022-10-08  Mats Lidell  <matsl@gnu.org>
+
+* hibtypes.el (ipython-stack-frame, ripgrep-msg): Use
+    line-beginning-position and line-end-position.
+
 2022-10-06  Bob Weiner  <rsw@gnu.org>
 
 * test/hibtypes-tests.el (ibtypes::pathname-path-variable-test): Remove
