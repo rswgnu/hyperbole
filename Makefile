@@ -3,7 +3,7 @@
 # Author:       Bob Weiner
 #
 # Orig-Date:    15-Jun-94 at 03:42:38
-# Last-Mod:     14-Sep-22 at 22:16:31 by Mats Lidell
+# Last-Mod:      7-Oct-22 at 22:17:00 by Mats Lidell
 #
 # Copyright (C) 1994-2022  Free Software Foundation, Inc.
 # See the file HY-COPY for license information.
@@ -306,8 +306,7 @@ src: autoloads tags
 # which do not yet exist, plus build TAGS file.
 bin: src
 	$(RM) *.elc kotl/*.elc
-	$(EMACS_BATCH) --eval="(setq-default byte-compile-warnings '(not docstrings))" \
-		-f batch-byte-compile $(EL_KOTL) $(EL_COMPILE)
+	$(EMACS_BATCH) -f batch-byte-compile $(EL_KOTL) $(EL_COMPILE)
 
 # Create -l "file.el" load-file command-line args for each Hyperbole .el file for use in
 # eln native compile target below.
@@ -320,7 +319,6 @@ load-hyperbole:
 eln: src
 	$(EMACS_BATCH) \
           $(LOAD_EL) \
-	  --eval="(setq-default byte-compile-warnings '(not docstrings))" \
 	  -f batch-native-compile $(EL_KOTL) $(EL_COMPILE)
 
 # Byte compile files but apply a filter for either including or
