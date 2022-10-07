@@ -55,7 +55,7 @@
 
 ;;;###autoload
 (defcustom hsys-org-enable-smart-keys 'unset
-  "This applies only in Org major/minor modes when hyperbole-mode is active.
+  "This applies in Org major/minor modes only when `hyperbole-mode' is active.
 If set to 'unset prior to loading Hyperbole, then Hyperbole
 initialization will set its value.
 
