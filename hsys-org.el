@@ -82,7 +82,7 @@ with different settings of this option.  For example, a nil value makes
 
 ;;;###autoload
 (defvar hsys-org-mode-function #'hsys-org-mode-p
-  "*Return non-nil if point is in an Org mode-related buffer.")
+"*Zero arg bool func that returns non-nil if point is in an Org-related buffer.")
 
 ;;; ************************************************************************
 ;;; Public Action Types
