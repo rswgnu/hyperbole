@@ -776,7 +776,7 @@ the lines displayed, since it has hidden branches."
 
 (defun kview:goto-cell-id (idstamp-or-string)
   "Move point to start of cell with permanent IDSTAMP-OR-STRING.
-On success return t, else nil."
+On success, return t, else nil."
   (let* ((idstamp (if (integerp idstamp-or-string)
 		      idstamp-or-string
 		    (string-to-number idstamp-or-string)))
