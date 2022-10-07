@@ -742,7 +742,7 @@ Value may be the character immediately after point."
 
 (defun kview:first-visible-point (&optional pos)
   "Return the first point that is followed by a visible character.
-Start from point or optional POS.  If none are found return (point-max)."
+Start from point or optional POS.  If not found, return (point-max)."
   (unless pos
     (setq pos (point)))
   (while (and pos (kview:char-invisible-p pos))
