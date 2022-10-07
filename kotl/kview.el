@@ -1176,7 +1176,7 @@ FILL-P is non-nil.  Leave point at TO-START."
 
 (defun kview:previous-visible-point (&optional pos)
   "Return the first preceding point that is followed by a visible character.
-Start from point or optional POS.  If none are found return (point-min).
+Start from point or optional POS.  If not found, return (point-min).
 Value may be the character immediately after point."
   (unless pos
     (setq pos (point)))
