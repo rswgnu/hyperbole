@@ -1201,8 +1201,8 @@ Value may be the character immediately after point."
     (error "(kview:set-buffer): Invalid kview argument")))
 
 (defun kview:set-cells-status (kview start end cell-status-list)
-  "Use CELL-STATUS-LIST to restore each cell's status.
-Set status in the current buffer's KVIEW, between START and END.
+  "Restore each cell's status in current buffer's KVIEW between START and END.
+Set each cell status from CELL-STATUS-LIST.
 Status is: 0 if all the lines of the cell are visible and it has no
 hidden branches; a positive count of the lines displayed in the cell
 if it has no hidden branches; otherwise, a negative count of the lines
