@@ -1066,7 +1066,7 @@ See also `kview:map-region', `kview:map-branch' and `kview:map-siblings'."
 	  (nreverse results)))))
 
 (defun kview:map-tree (func kview &optional top-p visible-p)
-  "Apply FUNC to the tree starting at point within KVIEW, return results as a list.
+  "Apply FUNC to the tree starting at point within KVIEW; return results as a list.
 With optional TOP-P non-nil, maps over all of kview's cells.
 With optional VISIBLE-P, considers only those cells that are visible in the
 view.
