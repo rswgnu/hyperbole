@@ -1106,7 +1106,7 @@ See also `kview:map-region', `kview:map-branch' and `kview:map-siblings'."
 (defun kview:move (from-start from-end to-start from-indent to-indent
 	           &optional copy-p fill-p)
   "Move tree between FROM-START and FROM-END to TO-START.
-Changes indentation from FROM-INDENT to TO-INDENT.
+Also change indentation from FROM-INDENT to TO-INDENT.
 Copy tree if optional COPY-P is non-nil.  Refill cells if optional
 FILL-P is non-nil.  Leave point at TO-START."
   (let ((region (buffer-substring from-start from-end))
