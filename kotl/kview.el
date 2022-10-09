@@ -122,6 +122,7 @@ Return t unless no such cell."
 
 (defun kcell-view:cell-from-ref (cell-ref)
   "Return a kcell referenced by CELL-REF, a cell label, id string or idstamp.
+  If an idstamp, it must be an integer.
 Trigger an error if CELL-REF is not a string or is not found."
   (if (or (stringp cell-ref)
 	  (integerp cell-ref))
