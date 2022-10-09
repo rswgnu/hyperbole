@@ -1,6 +1,11 @@
-2022-10-07  Mats Lidell  <matsl@gnu.org>
+2022-10-09  Mats Lidell  <matsl@gnu.org>
 
 * kotl/kview.el: Shorten docs strings to be within 80 char limit.
+
+2022-10-08  Mats Lidell  <matsl@gnu.org>
+
+* hibtypes.el (ipython-stack-frame, ripgrep-msg): Use
+    line-beginning-position and line-end-position.
 
 2022-10-06  Bob Weiner  <rsw@gnu.org>
 
