@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    18-Sep-91 at 02:57:09
-;; Last-Mod:     18-Sep-22 at 22:23:21 by Mats Lidell
+;; Last-Mod:      7-Oct-22 at 23:01:56 by Mats Lidell
 ;;
 ;; Copyright (C) 1991-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -38,7 +38,7 @@ e.g. to inhibit actions.")
 
 (defvar symtable:category-plist nil
   "Property list mapping Hyperbole type category symbols to symtables.
-The type categories are either 'actypes or 'ibtypes.")
+The type categories are either `actypes' or `ibtypes'.")
 
 (defsubst symtable:hash-table (symtable)
   "Return the hash-table containing symbol names and values from SYMTABLE."
@@ -193,7 +193,7 @@ Assume PROPERTY is a valid set.  Use `eq' for comparison."
 (defun    htype:category (type-category)
   "Return list of symbols in Hyperbole TYPE-CATEGORY in priority order.
 Symbols contain category component.
-TYPE-CATEGORY should be 'actypes, 'ibtypes or nil for all."
+TYPE-CATEGORY should be `actypes', `ibtypes' or nil for all."
   (let ((def-symbols (symset:get type-category 'symbols))
 	(symtable (symtable:select type-category)))
     ;; Expand def-symbols to Elisp symbols by adding prefix

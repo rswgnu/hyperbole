@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    31-Oct-91 at 23:17:35
-;; Last-Mod:     29-Aug-22 at 00:21:40 by Bob Weiner
+;; Last-Mod:      7-Oct-22 at 22:40:26 by Mats Lidell
 ;;
 ;; Copyright (C) 1991-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -168,7 +168,7 @@ indicates that the following character is a Hyperbole interactive
 extension command character.
 
 May return a single value or a list of values, in which case the first
-element of the list is always the symbol 'args."
+element of the list is always the symbol \\='args."
   (let (func cmd prompt)
     (cond ((or (null interactive-entry) (equal interactive-entry ""))
 	   (error "(hargs:get): Empty interactive-entry arg"))

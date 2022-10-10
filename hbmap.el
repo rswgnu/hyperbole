@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     6-Oct-91 at 06:34:05
-;; Last-Mod:     24-Jan-22 at 00:18:23 by Bob Weiner
+;; Last-Mod:      7-Oct-22 at 23:18:45 by Mats Lidell
 ;;
 ;; Copyright (C) 1991-2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -113,12 +113,12 @@ the error.  Optional NO-SAVE disables saving of the map after operation."
       "c:/_hyperb/" "~/.hyperb/")
   "Per user directory in which to store top level Hyperbole map data.
 Must end with a directory separator.
-Hyperbole will try to create it whenever 'hyperb:init' is called.")
+Hyperbole will try to create it whenever `hyperb:init' is called.")
 
 (defvar hbmap:dir-filename
   (expand-file-name  "HBMAP" hbmap:dir-user)
   "Name of a file that lists all dirs to which a user has written buttons.
-See also 'hbmap:dir-user'.
+See also `hbmap:dir-user'.
 If you change its value, you will be unable to search for buttons created by
 others who use a different value!")
 

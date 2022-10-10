@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    24-Aug-91
-;; Last-Mod:     14-Aug-22 at 19:18:17 by Mats Lidell
+;; Last-Mod:      7-Oct-22 at 23:31:35 by Mats Lidell
 ;;
 ;; Copyright (C) 1991-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -72,7 +72,7 @@ Examples include:
 (defcustom smart-c-cpp-include-path '("/usr/include/")
   "*Ordered list of include directories by default searched by C/C++ preprocessor.
 Each directory must end with a directory separator.  See also
-'smart-c-include-path'."
+`smart-c-include-path'."
   :type '(repeat directory)
   :group 'hyperbole-commands)
 

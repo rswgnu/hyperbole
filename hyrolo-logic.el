@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    13-Jun-89 at 22:57:33
-;; Last-Mod:      6-Oct-22 at 18:55:17 by Bob Weiner
+;; Last-Mod:      7-Oct-22 at 23:33:17 by Mats Lidell
 ;;
 ;; Copyright (C) 1989-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -87,7 +87,7 @@ A complex example of EXPR might be:
 which means:
   Match neither `time' nor `card'
     or
-  Match exactly one of (`french' and 'balloons') or (`spanish').
+  Match exactly one of (`french' and `balloons') or (`spanish').
     and
   Match `teacher' and `pet'.
 

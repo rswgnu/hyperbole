@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 20:45:31
-;; Last-Mod:      8-Oct-22 at 00:20:28 by Mats Lidell
+;; Last-Mod:      9-Oct-22 at 22:38:15 by Mats Lidell
 ;;
 ;; Copyright (C) 1991-2022 Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -136,7 +136,7 @@ PATH-style variable, the path at point is used; empty paths, e.g. ::
 represent the current directory, '.'.
 
 Also works for delimited and non-delimited remote pathnames,
-recursive 'ls' listings, Texinfo @file{} entries, and hash-style
+recursive \\='ls' listings, Texinfo @file{} entries, and hash-style
 link references to HTML, XML, SGML, Markdown or Emacs outline
 headings, shell script comments, and MSWindows paths (see
 \"${hyperb:dir}/DEMO#POSIX and MSWindows Paths\" for details).

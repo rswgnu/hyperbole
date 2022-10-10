@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     2-Jul-16 at 14:54:14
-;; Last-Mod:      7-Oct-22 at 22:08:03 by Mats Lidell
+;; Last-Mod:     10-Oct-22 at 22:55:01 by Mats Lidell
 ;;
 ;; Copyright (C) 2016-2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -56,7 +56,7 @@
 ;;;###autoload
 (defcustom hsys-org-enable-smart-keys 'unset
   "This applies in Org major/minor modes only when `hyperbole-mode' is active.
-If set to 'unset prior to loading Hyperbole, then Hyperbole
+If set to \\='unset prior to loading Hyperbole, then Hyperbole
 initialization will set its value.
 
 The following table shows what the Smart Keys do in various contexts

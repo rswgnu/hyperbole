@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     2-Apr-91
-;; Last-Mod:      8-Jul-22 at 22:47:23 by Mats Lidell
+;; Last-Mod:      7-Oct-22 at 23:17:52 by Mats Lidell
 ;;
 ;; Copyright (C) 1991-2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -149,7 +149,7 @@ Search is case-insensitive.  Return list with elements:
   "Construct button data from optional MOD-LBL-KEY and BUT-SYM.
 Modify BUT-SYM attributes.  MOD-LBL-KEY nil means create a new
 entry, otherwise modify existing one.  Nil BUT-SYM means use
-'hbut:current'.  If successful, return a cons of
+`hbut:current'  If successful, return a cons of
  (button-data . button-instance-str), else nil."
   (let* ((b (hattr:copy (or but-sym 'hbut:current) 'but))
 	 (l (hattr:get b 'loc))
@@ -315,7 +315,7 @@ Hbdata is given by LBL-KEY, KEY-SRC and optional DIRECTORY.
 With optional CREATE-FLAG, if no such line exists, insert a new file entry at
 the beginning of the hbdata file (which is created if necessary).
 INSTANCE-FLAG non-nil means search for any button instance matching LBL-KEY and
-call FUNC with point right after any 'ebut:instance-sep' in match.
+call FUNC with point right after any `ebut:instance-sep' in match.
 Return value of evaluation when a matching entry is found or nil."
   (let (found
 	rtn
@@ -442,7 +442,7 @@ Return non-nil if KEY-SRC is found or created, else nil."
 (defun hbdata:write (&optional orig-lbl-key but-sym)
   "Try to write Hyperbole button data from optional ORIG-LBL-KEY and BUT-SYM.
 ORIG-LBL-KEY nil means create a new entry, otherwise modify existing one.
-BUT-SYM nil means use 'hbut:current'.  If successful, return
+BUT-SYM nil means use `hbut:current'.  If successful, return
 a button instance string to append to button label or t when first instance.
 On failure, return nil."
   (let ((cons (hbdata:build orig-lbl-key but-sym))

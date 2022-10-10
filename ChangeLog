@@ -1,5 +1,7 @@
 2022-10-09  Mats Lidell  <matsl@gnu.org>
 
+* Update docstrings to not use unescaped quotes.
+
 * hyrolo.el:
 * hyrolo-demo.el:
 * hui-mini.el:

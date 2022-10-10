@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    6/30/93
-;; Last-Mod:      3-Oct-22 at 22:22:09 by Mats Lidell
+;; Last-Mod:      9-Oct-22 at 22:38:28 by Mats Lidell
 ;;
 ;; Copyright (C) 1993-2022  Free Software Foundation, Inc.
 ;; See the "../HY-COPY" file for license information.
@@ -60,7 +60,7 @@ Default value is \". \"."
   "Koutline view `outline-regexp' value that handles all label formats.")
 
 (defcustom kview:default-label-type 'alpha
-  "*Default label-type to use for new koutlines.  Default value is 'alpha.
+  "*Default label-type to use for new koutlines.  Default value is \\='alpha.
 It must be one of the following symbols:
   alpha           for `1b3' full alphanumeric labels
   id              for `027' permanent idstamp labels

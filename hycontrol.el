@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     1-Jun-16 at 15:35:36
-;; Last-Mod:      6-Aug-22 at 17:25:25 by Mats Lidell
+;; Last-Mod:      7-Oct-22 at 23:45:01 by Mats Lidell
 ;;
 ;; Copyright (C) 2016-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -146,7 +146,7 @@ the list to display in the windows created by `hycontrol-windows-grid'.
 A predicate may be either a function that takes a single buffer
 argument or a boolean expression, in which case the expression is
 evaluated with the buffer argument as the current buffer, e.g. (eq
-major-mode 'c-mode).")
+major-mode \\='c-mode).")
 
 (defcustom hycontrol-help-flag t
   "*Non-nil means show key binding help in the minibuffer when in a HyControl mode."
@@ -861,7 +861,7 @@ Used after selected buffer list is exhausted.")
 Uses `hycontrol--buffer-list'.
 
 When `hycontrol--invert-display-buffer-predicates' is non-nil and
-not 'ignore, the list of buffers used is further filtered using
+not \\='ignore, the list of buffers used is further filtered using
 the functions and sexpressions in
 `hycontrol-display-buffer-predicate-list', which by default
 filters a frame's buffer-list to just those buffers with attached
