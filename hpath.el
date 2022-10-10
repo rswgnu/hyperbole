@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     1-Nov-91 at 00:44:23
-;; Last-Mod:      3-Oct-22 at 20:09:00 by Mats Lidell
+;; Last-Mod:      7-Oct-22 at 00:19:55 by Mats Lidell
 ;;
 ;; Copyright (C) 1991-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -1790,7 +1790,8 @@ See the documentation of the `hpath:rfc' variable."
   (format hpath:rfc rfc-num))
 
 (defun hpath:start-end (path)
-  "If point is within the first line of PATH, return a list of its start and end positions (sans delimiters), else nil.
+  "Return a list of start and end positions in PATH (sans delimiters), else nil.
+Point must be within the first line of PATH.
 NOTE: This will return nil if the path has been normalized in any way
 \(adjusted for mount points or variables replaced) since the
 in-buffer path will not match."

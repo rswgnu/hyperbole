@@ -1,5 +1,12 @@
 2022-10-09  Mats Lidell  <matsl@gnu.org>
 
+* hyrolo.el:
+* hyrolo-demo.el:
+* hui-mini.el:
+* hui-em-but.el:
+* hsys-org.el:
+* hpath.el:
+* hib-kbd.el:
 * kotl/kview.el: Shorten docs strings to be within 80 char limit.
 
 2022-10-08  Mats Lidell  <matsl@gnu.org>
