@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    6/30/93
-;; Last-Mod:      9-Oct-22 at 22:38:28 by Mats Lidell
+;; Last-Mod:     10-Oct-22 at 23:43:43 by Mats Lidell
 ;;
 ;; Copyright (C) 1993-2022  Free Software Foundation, Inc.
 ;; See the "../HY-COPY" file for license information.
@@ -640,10 +640,11 @@ level."
 			 label-type level-indent label-separator
 			 label-min-width blank-lines levels-to-show lines-to-show)
   "Return a new kview for BUFFER-NAME.
-Optional ID-COUNTER is the maximum permanent id previously utilized in this outline.
-Optional LABEL-TYPE, LEVEL-INDENT, LABEL-SEPARATOR, LABEL-MIN-WIDTH,
-BLANK-LINES, LEVELS-TO-SHOW, and LINES-TO-SHOW may also be given;
-otherwise, default values are used.
+Optional ID-COUNTER is the maximum permanent id previously
+utilized in this outline.  Optional LABEL-TYPE, LEVEL-INDENT,
+LABEL-SEPARATOR, LABEL-MIN-WIDTH, BLANK-LINES, LEVELS-TO-SHOW,
+and LINES-TO-SHOW may also be given; otherwise, default values
+are used.
 
   See documentation of:
  `kview:default-label-type' for LABEL-TYPE,
