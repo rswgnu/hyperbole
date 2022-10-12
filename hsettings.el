@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    15-Apr-91 at 00:48:49
-;; Last-Mod:      1-Aug-22 at 21:34:56 by Mats Lidell
+;; Last-Mod:     12-Oct-22 at 22:46:00 by Mats Lidell
 ;;
 ;; Copyright (C) 1991-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -32,6 +32,8 @@
 ;;; Public declarations
 ;;; ************************************************************************
 (declare-function hproperty:but-create "hui-em-but")
+
+(defvar helm-allow-mouse)
 
 ;;; Read the comments and modify as desired.
 

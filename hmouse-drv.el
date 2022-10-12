@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    04-Feb-90
-;; Last-Mod:      7-Oct-22 at 23:30:30 by Mats Lidell
+;; Last-Mod:     12-Oct-22 at 23:12:43 by Mats Lidell
 ;;
 ;; Copyright (C) 1989-2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -19,6 +19,11 @@
 
 (require 'hui-window)
 (require 'hypb)
+
+;;; ************************************************************************
+;;; Public declarations
+;;; ************************************************************************
+(defvar start-window)
 
 ;;; ************************************************************************
 ;;; Public variables

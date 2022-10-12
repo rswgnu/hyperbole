@@ -4,6 +4,24 @@
 
 2022-10-16  Mats Lidell  <matsl@gnu.org>
 
+* kotl/klink.el (hmouse-tag): Require hmouse-tag.
+* hui-mouse.el (imenu): Require imenu.
+* hmouse-sh.el (kmacro): Require kmacro.
+
+* kotl/kotl-mode.el (cmpl-last-insert-location, cmpl-original-string)
+    (completion-to-accept):
+* hyrolo.el (org-roam-directory, org-roam-db-autosync-mode)
+    (markdown-regex-header):
+* hui-mouse.el (magit-root-section):
+* hsettings.el (helm-allow-mouse):
+* hmouse-info.el (Info-complete-menu-buffer):
+* hmouse-drv.el (start-window):
+* hload-path.el (generated-autoload-file): Declare variable.
+
+* hargs.el (hargs:reading-symbol): Define variable.
+
+2022-10-16  Mats Lidell  <matsl@gnu.org>
+
 * kotl/kview.el (kview:insert-contents): Don't use global name for
     parameter.
     (kview:set-label-separator): Remove unused variable.

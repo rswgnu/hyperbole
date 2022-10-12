@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    04-Feb-89
-;; Last-Mod:      9-Oct-22 at 18:14:25 by Bob Weiner
+;; Last-Mod:     16-Oct-22 at 19:29:34 by Mats Lidell
 ;;
 ;; Copyright (C) 1991-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -45,8 +45,14 @@
   (require 'hmouse-info))
 (unless (fboundp 'smart-c-at-tag-p)
   (require 'hmouse-tag))
+(require 'imenu)
 
 (eval-when-compile (require 'tar-mode))
+
+;;; ************************************************************************
+;;; Public declarations
+;;; ************************************************************************
+(defvar magit-root-section)
 
 ;;; ************************************************************************
 ;;; Public variables

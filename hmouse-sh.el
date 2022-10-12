@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     3-Sep-91 at 21:40:58
-;; Last-Mod:     13-Oct-22 at 22:02:30 by Mats Lidell
+;; Last-Mod:     16-Oct-22 at 19:32:50 by Mats Lidell
 ;;
 ;; Copyright (C) 1991-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -20,6 +20,7 @@
 ;;; ************************************************************************
 
 (require 'hvar)
+(require 'kmacro)
 
 ;;; ************************************************************************
 ;;; Public declarations
