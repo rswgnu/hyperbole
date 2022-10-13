@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     3-Sep-91 at 21:40:58
-;; Last-Mod:     27-Jul-22 at 00:20:49 by Mats Lidell
+;; Last-Mod:     13-Oct-22 at 22:02:30 by Mats Lidell
 ;;
 ;; Copyright (C) 1991-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -273,15 +273,15 @@ This includes depresses and drags.  Shifted Mouse Key 1 is
 	   [mode-line S-drag-mouse-5]
 	   [mode-line S-mouse-5])))))
 	   
-(defun hmouse-get-bindings (hmouse-middle-flag)
+(defun hmouse-get-bindings (middle-flag)
   "Return the list of active bindings of mouse keys used by Hyperbole.
-If HMOUSE-MIDDLE-FLAG is non-nil, include the middle mouse key
+If MIDDLE-FLAG is non-nil, include the middle mouse key
 binding as well.  These may be the bindings prior to initializing
 Hyperbole or the Hyperbole bindings."
   ;; Do nothing when running in batch mode.
   (unless noninteractive
     (nconc
-     (when hmouse-middle-flag (hmouse-get-unshifted-bindings))
+     (when middle-flag (hmouse-get-unshifted-bindings))
      ;; Get mouse bindings under Emacs, even if not under a window
      ;; system, since there can be frames on ttys and windowed
      ;; displays at the same time.
@@ -469,14 +469,14 @@ point determined by `mouse-select-region-move-to-beginning'."
   (mapc (lambda (key) (hkey-set-key key binding)) key-list)
   nil)
 
-(defun hmouse-shifted-setup (hmouse-middle-flag)
+(defun hmouse-shifted-setup (middle-flag)
   "Call `hmouse-install' instead of this and see its documentation."
   (interactive)
   ;; Do nothing when running in batch mode.
   (unless noninteractive
     (or hmouse-bindings-flag hmouse-previous-bindings
-	(setq hmouse-previous-bindings (hmouse-get-bindings hmouse-middle-flag)))
-    (when hmouse-middle-flag (hmouse-unshifted-setup hmouse-middle-flag))
+	(setq hmouse-previous-bindings (hmouse-get-bindings middle-flag)))
+    (when middle-flag (hmouse-unshifted-setup middle-flag))
     ;; Ensure Gillespie's Info mouse support is off since
     ;; Hyperbole handles that.
     (when (boundp 'Info-mouse-support) (setq Info-mouse-support nil))
@@ -501,7 +501,7 @@ point determined by `mouse-select-region-move-to-beginning'."
 	(define-key company-active-map [S-mouse-2] 'smart-company-to-definition)
 	(define-key company-active-map [S-down-mouse-3] 'ignore)
 	(define-key company-active-map [S-mouse-3] 'smart-company-help)))
-    (setq hmouse-bindings (hmouse-get-bindings hmouse-middle-flag)
+    (setq hmouse-bindings (hmouse-get-bindings middle-flag)
 	  hmouse-bindings-flag t)))
 
 (defun hmouse-unshifted-setup (&optional middle-key-only-flag)

@@ -1,3 +1,14 @@
+2022-10-16  Mats Lidell  <matsl@gnu.org>
+
+* kotl/kview.el (kview:insert-contents): Don't use global name for
+    parameter.
+    (kview:set-label-separator): Remove unused variable.
+
+* hpath.el (hpath:is-p): Initialize variable.
+
+* hmouse-sh.el (hmouse-get-bindings, hmouse-shifted-setup): Don't use
+    global name for parameter.
+
 2022-10-15  Bob Weiner  <rsw@gnu.org>
 
 * hui-em-but.el (hproperty:but-flash): Remove 'a' and 'b' internal
