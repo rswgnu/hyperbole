@@ -1,5 +1,7 @@
 2023-01-15 Mats Lidell  <matsl@gnu.org>
 
+* hsmail.el: Remove #-mark for symbol check.
+
 * hui-mouse.el: Merge public declaration sections.
 
 * hypb.el:
