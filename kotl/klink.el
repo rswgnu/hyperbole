@@ -76,7 +76,7 @@
 
 (defcustom klink:c-style-modes
   '(c-mode c++-mode objc-mode java-mode)
-  "Major modes in which to ignore potential klinks to avoid false positives."
+  "C-related major modes with where klinks appear only within comments."
   :type '(list function)
   :group 'hyperbole-koutliner)
 
@@ -154,18 +154,19 @@ link-end-position, (including delimiters)."
 	       (not (br-browser-buffer-p))
 	     t)
 	   ;; If in a programming mode, Klinks can occur only within comments.
-	   (if (derived-mode-p 'prog-mode)
+	   (if (and (derived-mode-p #'prog-mode)
+		    (not (derived-mode-p #'lisp-interaction-mode)))
 	       ;; Next line means point is within a comment
 	       (nth 4 (syntax-ppss))
 	     t)
-	   ;; If in a C-based mode, Klinks can only occur within comments.
+	   ;; If in a C-based mode, Klinks can occur only within comments.
 	   (if (and (memq major-mode klink:c-style-modes)
 		    (fboundp 'c-within-comment-p))
 	       (or (c-within-comment-p)
 		   (save-excursion
 		     (and (re-search-backward "//\\|\n" nil t) (looking-at "//"))))
 	     t)
-	   ;; Don't match to C-style lines like:  #include < path >
+	   ;; Don't match to C-style lines like:  #include < path >,
 	   ;; even if inside a comment.
 	   (if (memq major-mode klink:c-style-modes)
 	       (save-excursion
@@ -188,8 +189,8 @@ link-end-position, (including delimiters)."
 	   (or (string-match "^ *[-@|!&]" referent)
 	       (if (string-match "\\s-*," referent)
 		   (progn (setq path (substring referent 0 (match-beginning 0)))
-			  (hpath:is-p (expand-file-name path (file-name-directory (hbut:get-key-src)))))
-		 (hpath:is-p (expand-file-name referent (file-name-directory (hbut:get-key-src))))))
+			  (hpath:is-p (expand-file-name path (hbut:get-key-src t t))))
+		 (hpath:is-p (expand-file-name referent (hbut:get-key-src t t)))))
 	   ;; Eliminate matches to e-mail addresses like, <user@domain>
 	   (not (string-match "[^<> \t\n\r\f][!&@]" referent))
 	   ;; Eliminate matches to URLs

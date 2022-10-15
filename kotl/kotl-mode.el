@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    6/30/93
-;; Last-Mod:      6-Oct-22 at 18:30:31 by Bob Weiner
+;; Last-Mod:      9-Oct-22 at 16:25:35 by Bob Weiner
 ;;
 ;; Copyright (C) 1993-2022  Free Software Foundation, Inc.
 ;; See the "../HY-COPY" file for license information.
@@ -1798,7 +1798,7 @@ part of the paragraph, or the end of the buffer."
   (point))
 
 (defun kotl-mode:goto-cell (cell-ref &optional error-flag)
-  "Move point to start of cell given by CELL-REF (see `kcell:ref-to-id').
+  "Move point to start of cell text given by CELL-REF (see `kcell:ref-to-id').
 Return point if CELL-REF is found within current view, else nil.
 See the doc for `kcell:ref-to-id', for valid formats.
 
@@ -3254,8 +3254,8 @@ newlines at end of tree."
 
 (defun kotl-mode:tree-start ()
   "Return beginning of line position preceding current cell's start point."
-  (save-excursion (goto-char (kcell-view:start)) (beginning-of-line)
-		  (point)))
+  (save-excursion (goto-char (kcell-view:start))
+		  (line-beginning-position)))
 
 (defun kotl-mode:line-move (arg)
   "Move point ARG visible lines forward within an outline."

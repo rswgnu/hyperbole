@@ -1,3 +1,33 @@
+2022-10-15  Bob Weiner  <rsw@gnu.org>
+
+* hui-em-but.el (hproperty:but-flash): Remove 'a' and 'b' internal
+    variables and replace with 'but-face'.
+
+* hbut.el (defil): Add 'ibut:label-set' call with label start and end
+    positions so implicit buttons defined this way flash when activated.
+
+* hyrolo-menu.el: Align menu entry fields for better readability.
+
+* hbut.el (hbut:get-key-src): Add optional 'dir-flag' arg to return the
+    directory of the 'key-src' and use in 'klink:at-p'.
+
+* kotl/klink.el (klink:c-style-modes): Improve doc string.
+                (klink:at-p): In *scratch* buffer 'lisp-interaction-mode',
+    allow klinks outside of comments (since this is more intuitive).
+
+2022-10-09  Bob Weiner  <rsw@gnu.org>
+
+* hyrolo-logic.el (hyrolo-map-entries, hyrolo-map-kotl): Add and call from
+    'hyrolo-map-logic'.
+
+2022-10-08  Bob Weiner  <rsw@gnu.org>
+
+* kotl/kview.el (kcell-view:contents): Add 'prefix-flag' arg to include
+    autonumber prefix and indent.
+                (kview:map-cells): Add.
+
+* kotl/kotl-mode.el (kotl-mode:tree-start): Use 'line-beginning-position'.
+
 2022-10-06  Bob Weiner  <rsw@gnu.org>
 
 * test/hibtypes-tests.el (ibtypes::pathname-path-variable-test): Remove
@@ -4736,7 +4766,7 @@ V7.1.0 test release changes ^^^^:
     since users may have previously customized values that loading Hyperbole does not override.
     Revert logic to using this to compute number of fractional seconds to flash a button.  Prior
     change caused a mistaken wait of 1000 seconds since user customization value was not replaced
-    by loading Hyperbole
+    by loading Hyperbole.
 
 2020-01-25  Bob Weiner  <rsw@gnu.org>
 

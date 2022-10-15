@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    04-Feb-89
-;; Last-Mod:      3-Oct-22 at 22:15:54 by Mats Lidell
+;; Last-Mod:      9-Oct-22 at 18:14:25 by Bob Weiner
 ;;
 ;; Copyright (C) 1991-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -178,11 +178,13 @@ Its default value is #'smart-scroll-down.  To disable it, set it to
     ((and (boundp 'company-active-map)
 	  (memq company-active-map (current-minor-mode-maps))) .
 	  ((smart-company-to-definition) . (smart-company-help)))
+    ;;
     ;; Handle any Org mode-specific contexts
     ((and (not (hyperb:stack-frame '(smart-org)))
 	  (let ((hrule:action #'actype:identity))
 	    (smart-org))) .
      ((smart-org) . (smart-org)))
+    ;;
     ;; Ivy minibuffer completion mode
     ((and (boundp 'ivy-mode) ivy-mode (minibuffer-window-active-p (selected-window))) .
      ((ivy-done) . (ivy-dispatching-done)))
@@ -452,6 +454,9 @@ Its default value is #'smart-scroll-down.  To disable it, set it to
     ;;
     ((eq major-mode 'w3-mode) .
      ((w3-follow-link) . (w3-goto-last-buffer)))
+    ;;
+    ((eq major-mode 'hynote-mode) .
+     ((smart-hynote) . (smart-hynote-assist)))
     ;;
     ((eq major-mode 'hyrolo-mode) .
      ((smart-hyrolo) . (smart-hyrolo-assist)))

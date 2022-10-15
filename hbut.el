@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    18-Sep-91 at 02:57:09
-;; Last-Mod:     29-Aug-22 at 01:35:59 by Bob Weiner
+;; Last-Mod:     15-Oct-22 at 17:44:04 by Bob Weiner
 ;;
 ;; Copyright (C) 1991-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -1094,51 +1094,62 @@ symbol for the button or button label that point is within or
 nil.  BUFFER defaults to the current buffer."
   (or (ebut:get lbl-key buffer key-src) (ibut:get lbl-key buffer key-src)))
 
-(defun    hbut:get-key-src (&optional full)
+(defun    hbut:get-key-src (&optional full-flag dir-flag)
   "Return key source (usually unqualified) for current Hyperbole button.
-With optional FULL when source is a pathname, return the full pathname."
-  (cond ((hmail:mode-is-p) (current-buffer))
-	;; If buffer represents the output of a document
-	;; formatter, e.g. an Info document produced from a
-	;; Texinfo source, then return the Texinfo source
-	;; file, for example.
-	((hbut:key-src-fmt))
-	;; Handle directory movement within `make' output.
-	((save-excursion
-	   (and (re-search-backward
-		 "^[a-z]*make[^a-z]+\\(Entering\\|Leaving\\) directory `\\([^']+\\)'" nil t)
-		(string-equal "Entering" (match-string 1))))
-	 (let ((limit (match-end 2))
-	       ;; Latest working directory that `make' reported
-	       (wd (match-string 2))
-	       cd)
-	   ;; But another cd or pushd command may have been issued.
-	   ;; Return the closest directory from the make output.
-	   (if (re-search-backward
-		"\\<\\(cd\\|pushd\\)\\s +[\"\']?\\([^;\"\'\n\r\^L\\]+\\)"
-		limit t)
-	       (progn (setq cd (match-string 2))
-		      ;; Eliminate any trailing whitespace.
-		      (setq cd (substring
-				cd 0 (string-match "\\s +\\'" cd)))
-		      (expand-file-name cd wd))
-	     wd)))
-	(buffer-file-name
-	 (if full
-	     buffer-file-name
-	   (file-name-nondirectory buffer-file-name)))
-	;; Handle any preceding @loc hyp-source implicit button location references.
-	;; This is used in report buffers of explicit buttons, i.e. hui:hbut-report
-	;; and the *Hyperbole Rolo* output buffer.
-	((save-excursion
-	   (save-restriction
-	     (widen)
-	     (end-of-visible-line)
-	     (when (and (search-backward hbut:source-prefix nil t)
-			(or (memq (preceding-char) '(?\n ?\r))
-			    (= (point) (point-min))))
-	       (hbut:source full)))))
-	(t (current-buffer))))
+With optional FULL-FLAG when source is a pathname, return the full pathname.
+With optional DIR-FLAG, return the default directory of the key source.
+
+Return value may be a directory, filename or a buffer unless DIR-FLAG
+is given."
+  (let ((key-src (cond ((hmail:mode-is-p) (current-buffer))
+		      ;; If buffer represents the output of a document
+		      ;; formatter, e.g. an Info document produced from a
+		      ;; Texinfo source, then return the Texinfo source
+		      ;; file, for example.
+		      ((hbut:key-src-fmt))
+		      ;; Handle directory movement within `make' output.
+		      ((save-excursion
+			 (and (re-search-backward
+			       "^[a-z]*make[^a-z]+\\(Entering\\|Leaving\\) directory `\\([^']+\\)'" nil t)
+			      (string-equal "Entering" (match-string 1))))
+		       (let ((limit (match-end 2))
+			     ;; Latest working directory that `make' reported
+			     (wd (match-string 2))
+			     cd)
+			 ;; But another cd or pushd command may have been issued.
+			 ;; Return the closest directory from the make output.
+			 (if (re-search-backward
+			      "\\<\\(cd\\|pushd\\)\\s +[\"\']?\\([^;\"\'\n\r\^L\\]+\\)"
+			      limit t)
+			     (progn (setq cd (match-string 2))
+				    ;; Eliminate any trailing whitespace.
+				    (setq cd (substring
+					      cd 0 (string-match "\\s +\\'" cd)))
+				    (expand-file-name cd wd))
+			   wd)))
+		      (buffer-file-name
+		       (if full-flag
+			   buffer-file-name
+			 (file-name-nondirectory buffer-file-name)))
+		      ;; Handle any preceding @loc hyp-source implicit button location references.
+		      ;; This is used in report buffers of explicit buttons, i.e. hui:hbut-report
+		      ;; and the *HyRolo* abd *HyNote* output buffers.
+		      ((save-excursion
+			 (save-restriction
+			   (widen)
+			   (end-of-visible-line)
+			   (when (and (search-backward hbut:source-prefix nil t)
+				      (or (memq (preceding-char) '(?\n ?\r))
+					  (= (point) (point-min))))
+			     (hbut:source full-flag)))))
+		      (t (current-buffer)))))
+    (if dir-flag
+	(if (stringp key-src)
+	    (if (directory-name-p key-src)
+		key-src
+	      (file-name-directory key-src))
+	  (buffer-local-value 'default-directory key-src))
+      key-src)))
 
 (defun    hbut:is-p (object)
   "Return non-nil if OBJECT is a symbol representing a Hyperbole button."
@@ -1152,11 +1163,11 @@ With optional FULL when source is a pathname, return the full pathname."
     (error "(hbut:key): Argument is not a Hyperbole button symbol, `%s'"
 	   hbut)))
 
-(defun    hbut:to-key-src (&optional full)
+(defun    hbut:to-key-src (&optional full-flag)
   "Return key source (usually unqualified) for current Hyperbole button.
 Also set current buffer to key source.
-With optional FULL when source is a pathname, return the full pathname."
-  (let ((src (hbut:get-key-src full)))
+With optional FULL-FLAG when source is a pathname, return the full pathname."
+  (let ((src (hbut:get-key-src full-flag)))
     (hbut:key-src-set-buffer src)))
 
 (defun    hbut:key-src-fmt ()
@@ -1423,9 +1434,9 @@ Return number of buttons reported on or nil if none."
 	 lbl-lst))
       (length lbl-lst))))
 
-(defun    hbut:source (&optional full)
+(defun    hbut:source (&optional full-flag)
   "Return Hyperbole source buffer or file given at point.
-If a file, always return a full path if optional FULL is non-nil."
+If a file, always return a full path if optional FULL-FLAG is non-nil."
   (goto-char (match-end 0))
   (cond ((looking-at "#<buffer \"?\\([^\n\"]+\\)\"?>")
 	 (get-buffer (match-string 1)))
@@ -1434,7 +1445,7 @@ If a file, always return a full path if optional FULL is non-nil."
 		       (1+ (match-beginning 0))
 		       (1- (match-end 0))))
 		(absolute (file-name-absolute-p file)))
-	   (if (and full (not absolute))
+	   (if (and full-flag (not absolute))
 	       (expand-file-name file default-directory)
 	     file)))))
 
@@ -1566,7 +1577,7 @@ associated arguments from the button."
 	(setq ibut-type-symbol (intern-soft (concat "ibtypes::" type-name))))
       (when ibut-type-symbol
 	(let ((types (htype:category 'ibtypes))
-	      ;; Global var used in (hact) function, don't delete.
+	      ;; 'types' is a global var used in (hact) function, don't delete.
 	      (hrule:action 'actype:identity))
 	  (funcall ibut-type-symbol))))))
 
@@ -2186,10 +2197,12 @@ commit changes."
     `(prog1
 	 (defib ,type ()
 	   (interactive)
-	   (let ((button-text (hargs:delimited ,start-delim ,end-delim
-					       ,start-regexp-flag
-					       ,end-regexp-flag))
-		 actype)
+	   (let* ((button-text-start-end (hargs:delimited ,start-delim ,end-delim
+							  ,start-regexp-flag ,end-regexp-flag t))
+		  (button-text (nth 0 button-text-start-end))
+		  (lbl-start   (nth 1 button-text-start-end))
+		  (lbl-end     (nth 2 button-text-start-end))
+		  actype)
 	     (when (and button-text (string-match ,text-regexp button-text))
 	       ;; Get the action type when link-expr is a function
 	       ;; symbol, symbol name or function body
@@ -2202,6 +2215,7 @@ commit changes."
 		       ;; text after the action to link-expr
 		       (hact actype (progn (string-match "\\s-+" button-text)
 					   (substring button-text (match-end 0))))
+		     (ibut:label-set button-text lbl-start lbl-end)
 		     (hact actype button-text))
 		 (when (and (stringp ,link-expr) (string-match ,text-regexp button-text))
 		   ;; Change %s format syntax in link-expr to \\1 regexp replacement syntax

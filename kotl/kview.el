@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    6/30/93
-;; Last-Mod:     29-Aug-22 at 00:15:19 by Bob Weiner
+;; Last-Mod:      8-Oct-22 at 19:46:51 by Bob Weiner
 ;;
 ;; Copyright (C) 1993-2022  Free Software Foundation, Inc.
 ;; See the "../HY-COPY" file for license information.
@@ -208,13 +208,20 @@ Any cell that is invisible is also collapsed as indicated by a call to
 			    (overlays-in start end)))
       t)))
 
-(defun kcell-view:contents (&optional pos)
-  "Return contents of cell at optional POS or point."
+(defun kcell-view:contents (&optional pos prefix-flag)
+  "Return text of cell at optional POS or point.
+Remove indentation from all but first line in the returned text.
+
+With optional PREFIX-FLAG non-nil, include back to the start of the
+first line, i.e. include the autonumber prefix and indent."
   (save-excursion
     (when pos
       (goto-char pos))
     (let ((indent (kcell-view:indent))
-	  (start (kcell-view:start))
+	  (start (if prefix-flag
+		     (progn (goto-char (kcell-view:start))
+			    (line-beginning-position))
+		   (kcell-view:start)))
 	  (end (kcell-view:end-contents)))
       ;; Remove indentation from all but first line.
       (replace-regexp-in-string
@@ -916,6 +923,19 @@ See also `kview:map-region', `kview:map-siblings' and `kview:map-tree'."
 		    (>= (- (kcell-view:indent nil lbl-sep-len) cell-indent)
 			(kview:level-indent kview))))
 	(nreverse results)))))
+
+(defun kview:map-cells (func kview cell-ref-list)
+  "Apply FUNC within KVIEW to each valid cell reference in CELL-REFERENCE-LIST.
+Return a list of the results of calling FUNC, nil for each
+invalid cell reference.
+
+FUNC takes no arguments and operates on the cell at point."
+  (with-current-buffer (kview:buffer kview)
+    (save-excursion
+      (mapcar (lambda (cell-ref)
+		(when (kview:goto-cell-id cell-ref)
+		  (funcall func)))
+	      cell-ref-list))))
 
 (defun kview:map-region (func kview &optional visible-p start end)
   "Apply FUNC to each cell in the region within KVIEW and return results as a list.

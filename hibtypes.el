@@ -1361,7 +1361,7 @@ original DEMO file."
         (when src
           (unless (stringp src)
             (setq src (prin1-to-string src)))
-          (ibut:label-set src (point) (progn (end-of-line) (point)))
+          (ibut:label-set src (point) (line-end-position))
           (hact 'hyp-source src))))))
 
 ;;; ========================================================================

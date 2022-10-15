@@ -255,18 +255,18 @@ hproperty:color-ptr."
   (let ((ibut) (prev)
 	(start (hattr:get 'hbut:current 'lbl-start))
 	(end   (hattr:get 'hbut:current 'lbl-end))
-	(b) (a))
+	but-face)
     (if (and start end (setq prev (hproperty:but-p start)
 			     ibut t))
-	(if (not prev) (hproperty:but-add start end hproperty:but-face))
+	(unless prev
+	  (hproperty:but-add start end hproperty:but-face))
       (setq start (point)))
-    (setq b (and (hproperty:but-p start) hproperty:but-face))
-    (when (setq a b)
+    (when (setq but-face (when (hproperty:but-p start) hproperty:but-face))
       (unwind-protect
 	  (progn
 	    (hproperty:set-but-face start hproperty:flash-face)
 	    (sit-for hproperty:but-flash-time-seconds)) ;; Force display update
-	(hproperty:set-but-face start a)
+	(hproperty:set-but-face start but-face)
 	(redisplay t)))
     (and ibut (not prev) (hproperty:but-delete start))))
 
