@@ -1,5 +1,7 @@
 2023-01-15 Mats Lidell  <matsl@gnu.org>
 
+* hui-mouse.el: Merge public declaration sections.
+
 * hypb.el:
 * hyrolo.el: Declare functions, remove #-mark for symbol checks.
 

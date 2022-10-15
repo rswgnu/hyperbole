@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    04-Feb-89
-;; Last-Mod:     10-Dec-22 at 00:48:55 by Mats Lidell
+;; Last-Mod:     10-Dec-22 at 00:53:10 by Mats Lidell
 ;;
 ;; Copyright (C) 1991-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -48,11 +48,6 @@
 (require 'imenu)
 
 (eval-when-compile (require 'tar-mode))
-
-;;; ************************************************************************
-;;; Public declarations
-;;; ************************************************************************
-(defvar magit-root-section)
 
 ;;; ************************************************************************
 ;;; Public variables
@@ -128,6 +123,8 @@ Its default value is `smart-scroll-down'.  To disable it, set it to
 (declare-function magit-section-cycle-global "etx:magit-selection")
 (declare-function magit-section-hide "etx:magit-selection")
 (declare-function magit-section-show "etx:magit-selection")
+(defvar magit-root-section)
+(defvar magit-display-buffer-function)
 
 (declare-function -flatten "ext:dash")
 
@@ -139,7 +136,7 @@ Its default value is `smart-scroll-down'.  To disable it, set it to
 
 (declare-function helm-action-window "ext:helm-lib")
 (declare-function helm-buffer-get "ext:helm-lib")
-;; (declare-function helm-get-current-action "ext:helm-?")
+(declare-function helm-get-current-action "ext:helm-?") ;; FIXME: Bobs modified version?
 (declare-function helm-get-selection "ext:helm")
 (declare-function helm-mark-current-line "ext:helm")
 (declare-function helm-next-line "ext:helm")
@@ -166,9 +163,10 @@ Its default value is `smart-scroll-down'.  To disable it, set it to
 (declare-function gnus-topic-read-group "gnus-topic")
 
 (declare-function company-show-doc-buffer "ext:company")
-;; (declare-function company-quick-help-manual-begin "ext:company?")
+(declare-function company-quickhelp-manual-begin "ext:company-quickhelp")
 (declare-function company-show-location "ext:company")
 (declare-function company-select-mouse "ext:company")
+
 
 
 ;;; ************************************************************************
@@ -557,7 +555,7 @@ smart keyboard keys.")
       (while (and (< start len) (setq part (string-match "/[^/]*" path start)))
 	(setq part (concat ref
 			   (substring path start (setq start (match-end 0))))
-	      ref (symlink-referent part)))
+	      ref (symlink-referent part))) ;; FIXME - Where is this function defined
       ref)))
 
 ;;; ************************************************************************
@@ -1549,7 +1547,7 @@ If key is pressed:
   (interactive)
   (if (last-line-p)
       (scroll-other-window)
-    (unix-apropos-get-man)))
+    (unix-apropos-get-man)))            ;; FIXME - Deprecated?
 
 (defun smart-apropos-assist ()
   "Move through UNIX man apropos listings by using assist-key or mouse assist-key.
