@@ -15,10 +15,37 @@
                 (klink:at-p): In *scratch* buffer 'lisp-interaction-mode',
     allow klinks outside of comments (since this is more intuitive).
 
+2022-10-11  Mats Lidell  <matsl@gnu.org>
+
+* Makefile (bin, eln): Show docstring warnings again.
+
+2022-10-10  Mats Lidell  <matsl@gnu.org>
+
+* kotl/kview.el (kview:create): Shorten docs strings to be within 80 char
+    limit.
+
 2022-10-09  Bob Weiner  <rsw@gnu.org>
 
 * hyrolo-logic.el (hyrolo-map-entries, hyrolo-map-kotl): Add and call from
     'hyrolo-map-logic'.
+
+2022-10-09  Mats Lidell  <matsl@gnu.org>
+
+* Update docstrings to not use unescaped quotes.
+
+* hyrolo.el:
+* hyrolo-demo.el:
+* hui-mini.el:
+* hui-em-but.el:
+* hsys-org.el:
+* hpath.el:
+* hib-kbd.el:
+* kotl/kview.el: Shorten docs strings to be within 80 char limit.
+
+2022-10-08  Mats Lidell  <matsl@gnu.org>
+
+* hibtypes.el (ipython-stack-frame, ripgrep-msg): Use
+    line-beginning-position and line-end-position.
 
 2022-10-08  Bob Weiner  <rsw@gnu.org>
 

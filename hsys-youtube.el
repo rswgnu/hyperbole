@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    10-Jul-22 at 18:10:56
-;; Last-Mod:      2-Aug-22 at 14:50:45 by Mats Lidell
+;; Last-Mod:      7-Oct-22 at 23:54:20 by Mats Lidell
 ;;
 ;; Copyright (C) 2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -58,7 +58,7 @@ minutes, 45 seconds), where the hours and minutes are optional.")
 
 (defvar hsys-youtube-end-format "https://www.youtube.com/embed/%s?autoplay=1&start=%s&end=%s"
   "Format string used to play a section of a Youtube video.
-This requires use of the 'embed' api.
+This requires use of the `embed' api.
 
 The first %s is where the video id string is inserted; the second %s is
 where the start time string in seconds is inserted; the third %s is

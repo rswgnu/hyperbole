@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 20:45:31
-;; Last-Mod:      6-Oct-22 at 18:56:22 by Bob Weiner
+;; Last-Mod:      9-Oct-22 at 22:38:15 by Mats Lidell
 ;;
 ;; Copyright (C) 1991-2022 Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -136,7 +136,7 @@ PATH-style variable, the path at point is used; empty paths, e.g. ::
 represent the current directory, '.'.
 
 Also works for delimited and non-delimited remote pathnames,
-recursive 'ls' listings, Texinfo @file{} entries, and hash-style
+recursive \\='ls' listings, Texinfo @file{} entries, and hash-style
 link references to HTML, XML, SGML, Markdown or Emacs outline
 headings, shell script comments, and MSWindows paths (see
 \"${hyperb:dir}/DEMO#POSIX and MSWindows Paths\" for details).
@@ -852,8 +852,8 @@ than a helm completion buffer)."
           (while (and (= (forward-line -1) 0)
                       (looking-at line-num-regexp)))
           (unless (or (looking-at line-num-regexp)
-                      (not (re-search-forward " in " nil (point-at-eol)))
-                      (and (setq file (buffer-substring-no-properties (point-at-bol) (match-beginning 0)))
+                      (not (re-search-forward " in " nil (line-end-position)))
+                      (and (setq file (buffer-substring-no-properties (line-beginning-position) (match-beginning 0)))
                            (string-empty-p (string-trim file))))
             (let* ((but-label (concat file ":" line-num))
                    (source-loc (unless (file-name-absolute-p file)
@@ -896,7 +896,7 @@ than a helm completion buffer)."
           (while (and (= (forward-line -1) 0)
                       (looking-at "[1-9][0-9]*[-:]\\|--$")))
           (unless (or (looking-at "[1-9][0-9]*[-:]\\|--$")
-                      (and (setq file (buffer-substring-no-properties (point-at-bol) (point-at-eol)))
+                      (and (setq file (buffer-substring-no-properties (line-beginning-position) (line-end-position)))
                            (string-empty-p (string-trim file))))
             (let* ((but-label (concat file ":" line-num))
 		   ;; RSW 12-05-2021 - Added hpath:expand in next line to

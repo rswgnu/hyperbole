@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     4-Nov-17 at 13:56:47
-;; Last-Mod:     27-Aug-22 at 15:35:52 by Bob Weiner
+;; Last-Mod:      7-Oct-22 at 00:16:24 by Mats Lidell
 ;;
 ;; Copyright (C) 2017-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -32,7 +32,7 @@
 
 ;;;###autoload
 (defun hyrolo-demo-fgrep (string &optional max-matches)
-  "Display rolo entries in \"DEMO-ROLO.otl\" matching STRING or a logical sexpression.
+  "Display rolo entries in \"DEMO-ROLO.otl\" matching STRING or a logical sexp.
 Display to a maximum of optional prefix arg MAX-MATCHES.
 Each entry is displayed with all of its sub-entries.
 

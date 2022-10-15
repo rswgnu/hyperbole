@@ -4,7 +4,7 @@
 ;; Maintainer:   Bob Weiner, Mats Lidell
 ;;
 ;; Orig-Date:     1-Jan-94
-;; Last-Mod:      6-Aug-22 at 12:23:16 by Mats Lidell
+;; Last-Mod:      7-Oct-22 at 23:35:37 by Mats Lidell
 ;;
 ;; Copyright (C) 1994-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -54,7 +54,7 @@ your specific mouse.")
 (defun hyperb:stack-frame (function-list &optional debug-flag)
   "Return the nearest Elisp stack frame that called a function from FUNCTION-LIST.
 Return nil if there is no match.  FUNCTION-LIST entries must be symbols.
-If FUNCTION-LIST contains 'load, 'autoload or 'require, detect autoloads
+If FUNCTION-LIST contains \\='load, \\='autoload or \\='require, detect autoloads
 not visible within the Lisp level stack frames.
 
 With optional DEBUG-FLAG non-nil, if no matching frame is found, return list
@@ -92,7 +92,7 @@ of stack frames (from innermost to outermost)."
 	(if debug-flag (nreverse frame-list)))))
 
 (defun hyperb:path-being-loaded ()
-  "Return the full pathname used by the innermost `load' or 'require' call.
+  "Return the full pathname used by the innermost `load' or `require' call.
 Removes any matches for `hyperb:automount-prefixes' before returning
 the pathname."
   (let* ((frame (hyperb:stack-frame '(load require)))

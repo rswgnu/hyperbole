@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 21:42:03
-;; Last-Mod:      6-Oct-22 at 18:55:54 by Bob Weiner
+;; Last-Mod:      7-Oct-22 at 23:36:14 by Mats Lidell
 ;;
 ;; Copyright (C) 1991-2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -814,7 +814,7 @@ The default is the button at point."
 
 (defun hui:hbut-report (&optional arg)
   "Pretty print attributes of current button, using optional prefix ARG.
-See 'hbut:report'."
+See `hbut:report'."
   (interactive "P")
   (if (and arg (symbolp arg))
       (hui:hbut-help arg)

@@ -88,7 +88,7 @@ A complex example of EXPR might be:
 which means:
   Match neither `time' nor `card'
     or
-  Match exactly one of (`french' and 'balloons') or (`spanish').
+  Match exactly one of (`french' and `balloons') or (`spanish').
     and
   Match `teacher' and `pet'.
 

@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Aug-92
-;; Last-Mod:      2-Aug-22 at 19:31:16 by Mats Lidell
+;; Last-Mod:      7-Oct-22 at 00:17:10 by Mats Lidell
 ;;
 ;; Copyright (C) 1992-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -36,7 +36,7 @@
 ;;; ************************************************************************
 
 (defcustom hproperty:but-highlight-flag t
-  "*Non-nil (default value) means highlight all explict buttons with `hproperty:but-face'."
+"*Non-nil (default) applies `hproperty:but-face' highlight to explicit buttons."
   :type 'boolean
   :group 'hyperbole-buttons)
 

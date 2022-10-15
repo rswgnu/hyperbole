@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     1-Nov-91 at 00:44:23
-;; Last-Mod:      3-Oct-22 at 20:09:00 by Mats Lidell
+;; Last-Mod:     10-Oct-22 at 22:50:52 by Mats Lidell
 ;;
 ;; Copyright (C) 1991-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -102,7 +102,7 @@ path variable values.")
   "\\([^ \t\n\r\f:][^\t\n\r\f:]+\\(:[^0-9\t\n\r\f]*\\)*\\):\\([0-9]+\\)\\(:\\([0-9]+\\)\\)?$"
   "Regexp that matches to a path with optional #section and :line-num:col-num.
 Grouping 1 is path, grouping 3 is line number, grouping 4 is
-column number.  Allow for 'c:' single letter drive prefixes on
+column number.  Allow for \\='c:' single letter drive prefixes on
 MSWindows and Elisp vars with colons in them.")
 
 (defconst hpath:variable-regexp "\\$@?\{\\([^\}]+\\)@?\}"
@@ -136,7 +136,7 @@ The format is ${variable}.  Match grouping 1 is the name of the variable.")
 
 (defvar hpath:posix-mount-points-regexp
   "^\\(Filesystem\\|rootfs\\|none\\) "
-  "Regexp of 'mount' output lines that are not mount points of MSWindows paths.")
+  "Regexp of \\='mount' output lines that are not mount points of MSWindows paths.")
 
 (defvar hpath:mswindows-mount-prefix
   (cond ((eq system-type 'cygwin)
@@ -153,7 +153,7 @@ Must include a trailing directory separator or be nil.")
   "Regular expression matching an MSWindows drive letter.
 Matches at the beginning of a path string.  Grouping 2 is the
 actual letter of the drive.  If the value of
-'hpath:mswindows-mount-prefix' changes, then re-initialize this
+`hpath:mswindows-mount-prefix' changes, then re-initialize this
 constant.")
 
 (defconst hpath:mswindows-path-regexp "\\`.*\\.*[a-zA-Z0-9_.]"
@@ -170,7 +170,7 @@ posix-to-mswindows conversion.")
 (defun hpath:mswindows-to-posix (path)
   "Convert a MSWindows PATH to a Posix-style path or return the path unchanged.
 If path begins with an MSWindows drive letter, prefix the
-converted path with the value of 'hpath:mswindows-mount-prefix'."
+converted path with the value of `hpath:mswindows-mount-prefix'."
   (interactive "sMSWindows path to convert to POSIX: ")
   (when (and (stringp path) (not (equal path "\\\\")))
     (setq path (hpath:mswindows-to-posix-separators path))
@@ -191,7 +191,7 @@ converted path with the value of 'hpath:mswindows-mount-prefix'."
 (defun hpath:mswindows-to-posix-separators (path)
   "Replace backslashes with forward slashes and abbreviate the PATH if possible.
 Path must be a string or an error will be triggered.  See
-'abbreviate-file-name' for how path abbreviation is handled."
+`abbreviate-file-name' for how path abbreviation is handled."
     (setq path (replace-regexp-in-string "\\\\" "/" path)
           ;; Downcase any host and domain for mount-point matching
           path (if (string-match "\\`//[^/:]+" path)
@@ -206,7 +206,7 @@ Path must be a string or an error will be triggered.  See
 (defun hpath:posix-to-mswindows (path)
   "Convert a Posix-style PATH to an MSWindows path or return the path unchanged.
 If path begins with an optional mount prefix,
-'hpath:mswindows-mount-prefix', followed by an MSWindows drive
+`hpath:mswindows-mount-prefix', followed by an MSWindows drive
 letter, remove the mount prefix."
   (interactive "sPOSIX path to convert to MSWindows: ")
   (when (stringp path)
@@ -231,7 +231,7 @@ letter, remove the mount prefix."
 (defun hpath:posix-to-mswindows-separators (path)
   "Replace forward slashes with backslashes and abbreviate the PATH if possible.
 Path must be a string or an error will be triggered.  See
-'abbreviate-file-name' for how path abbreviation is handled."
+`abbreviate-file-name' for how path abbreviation is handled."
   (let ((directory-abbrev-alist hpath:posix-mount-point-to-mswindows-alist))
     (replace-regexp-in-string "/" "\\\\" (hpath:abbreviate-file-name path))))
 
@@ -268,7 +268,7 @@ Path must be a string or an error will be triggered.  See
 ;;;###autoload
 (defun hpath:cache-mswindows-mount-points ()
   "Cache valid MSWindows mounts when under a non-MSWindows OS, e.g. WSL.
-Mount points are cached in 'directory-abbrev-alist'.
+Mount points are cached in `directory-abbrev-alist'.
 Call this function manually if mount points change after Hyperbole is loaded."
   (interactive)
   (when (not hyperb:microsoft-os-p)
@@ -915,8 +915,8 @@ if (hpath:remote-available-p) returns nil."
 Path is expanded and normalized.  World-Wide Web urls are ignored
 and therefore dealt with by other code.  Delimiters may be:
 double quotes, open and close single quote, whitespace, or
-Texinfo file references.  If optional TYPE is the symbol 'file or
-'directory, then only that path type is accepted as a match.
+Texinfo file references.  If optional TYPE is the symbol \\='file or
+\\='directory, then only that path type is accepted as a match.
 Only locally reachable paths are checked for existence.  With
 optional NON-EXIST, nonexistent local paths are allowed.
 Absolute pathnames must begin with a `/' or `~'."
@@ -964,7 +964,7 @@ Absolute pathnames must begin with a `/' or `~'."
   "Call FUNC with a PATH and optional NON-EXIST flag.
 Path is stripped of any prefix operator and suffix location,
 NON-EXIST may be either t (path cannot contain whitespace) or
-'allow-spaces to allow for whitespace.
+\\='allow-spaces to allow for whitespace.
 
 Return the result of calling FUNC, which must be either nil or the
 possibly modified path, but with the prefix and suffix reattached.
@@ -1220,9 +1220,9 @@ PATH unchanged."
 	    (t (expand-file-name substituted-path))))))
 
 (defun hpath:prepend-shell-directory (&optional filename)
-  "Prepend subdir to a filename in an 'ls'-file listing.
-When in a shell buffer and on a filename result of an 'ls *' or
-recursive 'ls -R' or 'dir' command, prepend the subdir to the
+  "Prepend subdir to a filename in an \\='ls'-file listing.
+When in a shell buffer and on a filename result of an \\='ls *' or
+recursive \\='ls -R' or \\='dir' command, prepend the subdir to the
 filename at point, or optional FILENAME, when needed and return
 it, else return nil."
   (when (derived-mode-p #'shell-mode)
@@ -1629,13 +1629,13 @@ See also `hpath:internal-display-alist' for internal,
 
 (defun hpath:is-p (path &optional type non-exist)
   "Return normalized PATH if PATH is a Posix or MSWindows path, else nil.
-If optional TYPE is the symbol 'file or 'directory, then only that path type
+If optional TYPE is the symbol \\='file or \\='directory, then only that path type
 is accepted as a match.  The existence of the path is checked only for
 locally reachable paths (Info paths are not checked).
 
 Single spaces are permitted in the middle of existing pathnames, but not at
 the start or end.  With optional NON-EXIST equal to t, nonexistent local
-paths without spaces are allowed.  Set NON-EXIST to 'allow-spaces to allow
+paths without spaces are allowed.  Set NON-EXIST to \\='allow-spaces to allow
 spaces in non-existent paths.
 
 Before the pathname is checked for existence, sequences of tabs and newlines
@@ -1790,7 +1790,8 @@ See the documentation of the `hpath:rfc' variable."
   (format hpath:rfc rfc-num))
 
 (defun hpath:start-end (path)
-  "If point is within the first line of PATH, return a list of its start and end positions (sans delimiters), else nil.
+  "Return a list of start and end positions in PATH (sans delimiters), else nil.
+Point must be within the first line of PATH.
 NOTE: This will return nil if the path has been normalized in any way
 \(adjusted for mount points or variables replaced) since the
 in-buffer path will not match."

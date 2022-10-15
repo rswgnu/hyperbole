@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    22-Nov-91 at 01:37:57
-;; Last-Mod:     21-Jul-22 at 11:40:53 by Mats Lidell
+;; Last-Mod:      7-Oct-22 at 00:06:09 by Mats Lidell
 ;;
 ;; Copyright (C) 1991-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -58,7 +58,8 @@ Function keys are handled elsewhere.")
   (concat "\\(\\[?\\([ACHMS]-\\|kp-\\)+\\)[ \t\n\r\f]*\\(\\(<?\\<" kbd-key:named-key-regexp "\\>>?"
 	  "\\|<?[fF][0-9][0-9]?>?\\|<[a-zA-Z0-9]+>\\|.\\)\\]?\\)")
   "Regexp matching a single modified keyboard key within a human-readable string.
-Group 1 matches to the set of modifier keys.  Group 3 matches to the unmodified key.")
+Group 1 matches to the set of modifier keys.  Group 3 matches to
+the unmodified key.")
 
 ;;; ************************************************************************
 ;;; Public declarations
@@ -70,7 +71,7 @@ Group 1 matches to the set of modifier keys.  Group 3 matches to the unmodified 
 ;;; ************************************************************************
 
 (defact kbd-key (key-series)
-  "Execute a normalized KEY-SERIES (series of key sequences) without curly braces, {}.
+  "Execute a normalized KEY-SERIES (series of key sequences) without curly braces.
 Each key sequence within KEY-SERIES must be a string of one of the following:
   a Hyperbole minibuffer menu item key sequence,
   a HyControl key sequence,
@@ -475,8 +476,9 @@ Allow for multiple key sequences strung together."
        t))
 
 (defun kbd-key:hyperbole-mini-menu-key-p (key-series)
-  "Return t if normalized KEY-SERIES appears to invoke a Hyperbole menu item or sequence of keys, else nil.
-Also, initialize `kbd-key:mini-menu-key' to the key sequence that invokes the Hyperbole minibuffer menu."
+  "Return non-nil if KEY-SERIES invoke a Hyperbole menu item or sequence of keys.
+KEY-SERIES is normalized.  Also, initialize `kbd-key:mini-menu-key' to the
+key sequence that invokes the Hyperbole minibuffer menu."
   (when (stringp key-series)
     (unless (and (stringp kbd-key:mini-menu-key) (not (string-empty-p kbd-key:mini-menu-key)))
       (setq kbd-key:mini-menu-key (regexp-quote (kbd-key:normalize (key-description (car (where-is-internal 'hyperbole)))))))
@@ -484,7 +486,8 @@ Also, initialize `kbd-key:mini-menu-key' to the key sequence that invokes the Hy
       t)))
 
 (defun kbd-key:key-and-arguments (key-series)
-  "Return t if normalized KEY-SERIES appears to be a bound key sequence possibly with following interactive arguments, else nil."
+  "Return t if normalized KEY-SERIES appears to be a bound key sequence, else nil.
+KEY-SERIES can have following interactive arguments."
   (let ((prefix-binding (and (stringp key-series) (kbd-key:binding (substring key-series 0 (seq-position key-series ?\ ))))))
     ;; Just ensure that 1st character is bound to something that is
     ;; not a self-insert-command or a number.
@@ -494,7 +497,7 @@ Also, initialize `kbd-key:mini-menu-key' to the key sequence that invokes the Hy
 	 t)))
 
 (defun kbd-key:mark-spaces-to-keep (string start-delim end-delim)
-  "Return STRING with all spaces between any START-DELIM string and END-DELIM string marked for non-replacement."
+  "Return STRING with all spaces between START-DELIM and END-DELIM marked to keep."
   (let ((regexp (format "\\(%s[^ \t\n\r\f]*\\)[ \t\n\r\f]\\(.*%s\\)"
 			start-delim end-delim))
 	(start 0)
@@ -529,7 +532,8 @@ a M-x extended command,
 
 (defconst kbd-key:extended-command-prefix
   (format "\\_<%s\\_>" (kbd-key:normalize "M-x"))
-  "Normalized prefix regular expression that invokes an extended command; by default, M-x.")
+  "Normalized prefix regular expression that invokes an extended command.
+Default is M-x.")
 
 (defconst kbd-key:extended-command-binding-list '(execute-extended-command helm-M-x counsel-M-x)
   "List of commands that may be bound to M-x to invoke extended/named commands.")
