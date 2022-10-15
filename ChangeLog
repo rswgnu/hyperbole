@@ -1,5 +1,7 @@
 2023-01-15 Mats Lidell  <matsl@gnu.org>
 
+* hsettings.el (hproperty:but-flash): Declare function.
+
 * hmouse-drv.el (mouse-drag-mode-line): Use mouse-drag-frame-move from
     Emacs 28.
 
