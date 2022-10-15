@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     6-Oct-91 at 03:42:38
-;; Last-Mod:     28-Nov-22 at 00:18:49 by Bob Weiner
+;; Last-Mod:     10-Dec-22 at 00:52:04 by Mats Lidell
 ;;
 ;; Copyright (C) 1991-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -46,6 +46,10 @@ It must end with a space."
 (defvar mh-e-RCS-id)
 (defvar pm-version)
 (defvar vm-version)
+
+(declare-function helm-info "ext:helm")
+(declare-function helm-apropos "ext:helm")
+(declare-function devdocs-lookup "ext:devdocs")
 
 ;;; ************************************************************************
 ;;; Public functions
@@ -823,7 +827,7 @@ descriptors."
 The package info is a property list of package-name,
 package-download-source and package-version for PKG-STRING, else
 return nil.  This is for the straight.el package manager."
-  (when (fboundp #'straight-bug-report-package-info)
+  (when (fboundp 'straight-bug-report-package-info)
     (car (delq nil (mapcar (lambda (pkg-plist)
 			     (when (equal (plist-get pkg-plist :package) pkg-string) pkg-plist))
 			   (straight-bug-report-package-info))))))

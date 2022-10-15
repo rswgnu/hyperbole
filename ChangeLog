@@ -1,5 +1,8 @@
 2023-01-15 Mats Lidell  <matsl@gnu.org>
 
+* hypb.el:
+* hyrolo.el: Declare functions, remove #-mark for symbol checks.
+
 * hsettings.el (hproperty:but-flash): Declare function.
 
 * hmouse-drv.el (mouse-drag-mode-line): Use mouse-drag-frame-move from
