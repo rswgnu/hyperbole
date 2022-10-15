@@ -1,3 +1,8 @@
+2023-01-15 Mats Lidell  <matsl@gnu.org>
+
+* hmouse-drv.el (mouse-drag-mode-line): Use mouse-drag-frame-move from
+    Emacs 28.
+
 2023-01-08  Bob Weiner  <rsw@gnu.org>
 
 * hmouse-tag.el (xref--item-at-point): Fix this function (still broken
@@ -283,7 +288,7 @@
   hyrolo.el (hyrolo-edit-entry): Fix so if point is not on an entry
     (src is a buffer, not a string), then raise an error.
 
-2022-10-20  Mats Lidell  <matsl@gnu.org>
+2022-10-13  Mats Lidell  <matsl@gnu.org>
 
 * hload-path.el (hyperb:dir): Use defvar. Thanks to Stefan Monnier.
 
