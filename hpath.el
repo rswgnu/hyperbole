@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     1-Nov-91 at 00:44:23
-;; Last-Mod:     10-Oct-22 at 22:50:52 by Mats Lidell
+;; Last-Mod:     13-Oct-22 at 21:54:38 by Mats Lidell
 ;;
 ;; Copyright (C) 1991-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -1653,7 +1653,7 @@ form is what is returned for PATH."
 		(file-readable-p path))
       (setq path (hpath:call
 		  (lambda (path non-exist)
-		    (let (modifier
+		    (let ((modifier nil)
 			  suffix)
 		      (and (not (or (string-equal path "")
 				    (string-match-p "\\`\\s-\\|\\s-\\'" path)))

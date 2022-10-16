@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    6/30/93
-;; Last-Mod:      8-Oct-22 at 19:46:51 by Bob Weiner
+;; Last-Mod:     16-Oct-22 at 18:32:03 by Mats Lidell
 ;;
 ;; Copyright (C) 1993-2022  Free Software Foundation, Inc.
 ;; See the "../HY-COPY" file for license information.
@@ -811,10 +811,10 @@ On success, return t, else nil."
     (when (kotl-mode:goto-cell permanent-id)
       (kcell-view:label))))
 
-(defun kview:insert-contents (kcell contents no-fill fill-prefix)
+(defun kview:insert-contents (kcell contents no-fill cell-fill-prefix)
   "Insert KCELL's CONTENTS into view at point and fill resulting paragraphs.
 Do not fill if NO-FILL is non-nil.
-FILL-PREFIX is the indentation string for the current cell.  If
+CELL-FILL-PREFIX is the indentation string for the current cell.  If
 CONTENTS is nil, get contents from the cell at point.  Return contents
 inserted (this value may differ from the value passed in) due to
 filling."
@@ -837,7 +837,7 @@ filling."
 	    (narrow-to-region start end)
 	    (goto-char (point-min))
 	    (while (re-search-forward "[\n\r]" nil t)
-	      (insert fill-prefix))
+	      (insert cell-fill-prefix))
 	    (goto-char (point-max)))
 	;;
 	;; Filling cell will insert proper indent on all lines.
@@ -845,15 +845,15 @@ filling."
 	  (goto-char start)
 	  (beginning-of-line)
 	  (narrow-to-region (point) end)
-	  ;; Add fill-prefix to all but paragraph separator lines, so
+	  ;; Add cell-fill-prefix to all but paragraph separator lines, so
 	  ;; filling is done properly.
 	  (while (re-search-forward "[\n\r][^\n\r]" nil t)
-	    (forward-char -1) (insert fill-prefix))
+	    (forward-char -1) (insert cell-fill-prefix))
 	  (kview:fill-region start end kcell)
 	  (goto-char (point-min))
-	  ;; Now add fill-prefix to paragraph separator lines.
+	  ;; Now add cell-fill-prefix to paragraph separator lines.
 	  (while (re-search-forward "[\n\r][\n\r]" nil t)
-	    (forward-char -1) (insert fill-prefix))
+	    (forward-char -1) (insert cell-fill-prefix))
 	  ;;
 	  (goto-char (point-max))))))
   contents)
@@ -1415,8 +1415,7 @@ new outlines is also set to this new value."
 				  (- sep-len-increase) ?\ )))
 		   (while (re-search-forward indent nil t)
 		     (delete-region
-		      (+ (match-beginning 0) 2) (match-end 0)))))))
-	 pos)
+		      (+ (match-beginning 0) 2) (match-end 0))))))))
     (save-excursion
       (goto-char (point-min))
       (kproperty:replace-separator pos label-separator old-sep-len)
