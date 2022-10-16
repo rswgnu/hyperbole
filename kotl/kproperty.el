@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    7/27/93
-;; Last-Mod:      3-Apr-22 at 18:33:09 by Bob Weiner
+;; Last-Mod:     16-Oct-22 at 10:01:41 by Bob Weiner
 ;;
 ;; Copyright (C) 1993-2021  Free Software Foundation, Inc.
 ;; See the "../HY-COPY" file for license information.
@@ -100,15 +100,16 @@ Return t if any property was changed, nil otherwise."
 	(setq changed t next (1+ next))))
     changed))
 
-(defun kproperty:replace-separator (pos label-separator old-sep-len)
-  "Replace at POS the cell label separator with LABEL-SEPARATOR.
+(defun kproperty:replace-separator (new-label-separator old-sep-len)
+  "Replace from point forward each cell's label separator with NEW-LABEL-SEPARATOR.
 OLD-SEP-LEN is the length of the separator being replaced."
-  (let (properties)
+  (let (pos
+	properties)
     (while (setq pos (kproperty:next-single-change (point) 'kcell))
       (goto-char pos)
       (setq properties (text-properties-at pos))
       ;; Replace label-separator while maintaining cell properties.
-      (insert label-separator)
+      (insert new-label-separator)
       (add-text-properties pos (+ pos 2) properties)
       (delete-region (point) (+ (point) old-sep-len)))))
 

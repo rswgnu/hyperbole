@@ -1418,7 +1418,7 @@ new outlines is also set to this new value."
 		      (+ (match-beginning 0) 2) (match-end 0))))))))
     (save-excursion
       (goto-char (point-min))
-      (kproperty:replace-separator pos label-separator old-sep-len)
+      (kproperty:replace-separator label-separator old-sep-len)
       ;; Reindent all lines in cells except the first line which has already
       ;; been done.
       (funcall reindent-function))

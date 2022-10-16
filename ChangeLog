@@ -9,6 +9,11 @@
 * hmouse-sh.el (hmouse-get-bindings, hmouse-shifted-setup): Don't use
     global name for parameter.
 
+2022-10-16  Bob Weiner  <rsw@gnu.org>
+
+* kotl/kproperty.el (kproperty:replace-separator): Drop unused 'pos' arg.
+  kotl/kview.el (kview:set-label-separator): Update call to above function.
+
 2022-10-15  Bob Weiner  <rsw@gnu.org>
 
 * hui-em-but.el (hproperty:but-flash): Remove 'a' and 'b' internal
