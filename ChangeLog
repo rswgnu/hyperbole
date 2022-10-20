@@ -1,3 +1,7 @@
+2022-10-20  Mats Lidell  <matsl@gnu.org>
+
+* hload-path.el (hyperb:dir): Use defvar. Thanks to Stefan Monnier.
+
 2022-10-16  Mats Lidell  <matsl@gnu.org>
 
 * kotl/kview.el (kview:insert-contents): Don't use global name for

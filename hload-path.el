@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    29-Jun-16 at 14:39:33
-;; Last-Mod:     25-Jul-22 at 17:50:26 by Mats Lidell
+;; Last-Mod:     20-Oct-22 at 23:20:50 by Mats Lidell
 ;;
 ;; Copyright (C) 1992-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -34,13 +34,13 @@ Use `hyperb:wsl-os-p' to test if running under WSL.")
 ;;; Hyperbole Directory Setting (dynamically computed)
 ;;; ************************************************************************
 
-(defconst hyperb:dir (or (file-name-directory
-			  (or (and (stringp load-file-name) load-file-name)
-			      (locate-file "hmouse-tag.el" load-path)
-			      (hyperb:path-being-loaded)
-			      ""))
-			 (error
-			  "(Hyperbole): Failed to set hyperb:dir.  Try setting it manually"))
+(defvar hyperb:dir (or (file-name-directory
+			(or (and (stringp load-file-name) load-file-name)
+			    (locate-file "hmouse-tag.el" load-path)
+			    (hyperb:path-being-loaded)
+			    ""))
+		       (error
+			"(Hyperbole): Failed to set hyperb:dir.  Try setting it manually"))
   "Directory where the Hyperbole executable code is kept.
 Valid values end with a directory separator character.")
 
