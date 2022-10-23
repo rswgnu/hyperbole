@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    6/30/93
-;; Last-Mod:     17-Jul-22 at 16:25:03 by Mats Lidell
+;; Last-Mod:     16-Oct-22 at 19:29:20 by Mats Lidell
 ;;
 ;; Copyright (C) 1993-2022  Free Software Foundation, Inc.
 ;; See the "../HY-COPY" file for license information.
@@ -21,6 +21,14 @@
 				    kvspec kcell outline org org-table kotl-orgtbl)))
 
 ;;; ************************************************************************
+;;; Public declarations
+;;; ************************************************************************
+
+(defvar cmpl-last-insert-location)
+(defvar cmpl-original-string)
+(defvar completion-to-accept)
+
+;;; ************************************************************************
 ;;; Public variables
 ;;; ************************************************************************
 
@@ -31,15 +39,18 @@
   "Default mode of koutline buffers prior to invocation of kotl-mode.")
 
 (defcustom kotl-mode:shrink-region-flag nil
-  "*If non-nil, Koutliner commands automatically shrink the region to within the visible bounds of a single cell before editing it.
-The region then falls within the first visible cell that was part of the
-region or that followed it.  Default value is nil."
+  "*Non-nil means Koutliner commands automatically shrink the region.
+The region is shrinked within the visible bounds of a single cell
+before editing it.  The region then falls within the first
+visible cell that was part of the region or that followed it.
+Default value is nil."
   :type 'boolean
   :group 'hyperbole-koutliner)
 
 (defcustom kotl-mode:refill-flag nil
-  "*Automatically refill cells during move, copy, promotion and demotion operations when non-nil.
-Default value is nil.  Cells with a `no-fill' attribute are never refilled
+  "*Non-nil means automatically refill cells during operations.
+Operations are move, copy, promotion and demotion.  Default value
+is nil.  Cells with a `no-fill' attribute are never refilled
 during such operations, regardless of the value of this flag."
   :type 'boolean
   :group 'hyperbole-koutliner)
@@ -52,22 +63,29 @@ Nil means {\\[kotl-mode:tab-command]} demotes the current tree and
   :group 'hyperbole-koutliner)
 
 (defcustom kotl-mode:indent-tabs-mode t
-  "*Non-nil means {\\[kotl-mode:tab-command]} may insert literal tab characters rather than space characters when `kotl-mode:tab-flag' is non-nil.
-Default value is t.  The value of this variable is local to each Koutline buffer."
+  "*Non-nil means {\\[kotl-mode:tab-command]} may insert literal tab characters.
+Tab characters are inserted rather than space characters when
+`kotl-mode:tab-flag' is non-nil.  Default value is t.  The value
+of this variable is local to each Koutline buffer."
   :type 'boolean
   :group 'hyperbole-koutliner)
 
 ;; Define these newer Emacs variables if Emacs has not already done so.
 (defvar yank-window-start nil)
 (defvar yank-undo-function nil
-  "If non-nil, the function used by `yank-pop' to delete the last stretch of yanked text.
-Function is called with two parameters, START and END corresponding to
-the value of the mark and point; it is guaranteed that START <= END.
-Normally set from the UNDO element of a yank-handler; see `insert-for-yank'.")
+  "If non-nil, the function used by `yank-pop'.
+It is used to delete the last stretch of yanked text.  Function
+is called with two parameters, START and END corresponding to the
+value of the mark and point; it is guaranteed that START <= END.
+Normally set from the UNDO element of a yank-handler; see
+`insert-for-yank'.")
 
 ;;; ************************************************************************
 ;;; Public functions
 ;;; ************************************************************************
+
+;; Koutline mode is suitable only for specially formatted data.
+(put 'kotl-mode 'mode-class 'special)
 
 ;;;###autoload
 (defun kotl-mode ()
@@ -95,15 +113,17 @@ It provides the following keys:
   ;; from save-some-buffers, {C-x s}.
   (add-hook 'write-file-functions #'kotl-mode:update-buffer nil 'local)
   (mapc #'make-local-variable
-	'(kotl-previous-mode indent-line-function indent-region-function
-			     outline-isearch-open-invisible-function
-			     outline-regexp
-			     line-move-ignore-invisible minor-mode-alist
-			     selective-display-ellipses
-			     paragraph-separate paragraph-start))
+	'(hyrolo-entry-regexp kotl-previous-mode
+			      indent-line-function indent-region-function
+			      outline-isearch-open-invisible-function
+			      outline-level outline-regexp
+			      line-move-ignore-invisible minor-mode-alist
+			      selective-display-ellipses
+			      paragraph-separate paragraph-start))
   ;; Used by kimport.el functions.
   (unless (and (boundp 'kotl-previous-mode) kotl-previous-mode)
-    (setq kotl-previous-mode major-mode
+    (setq hyrolo-entry-regexp (concat "^" kview:outline-regexp)
+	  kotl-previous-mode major-mode
 	  ;; Remove outline minor-mode mode-line indication.
 	  minor-mode-alist (copy-sequence minor-mode-alist)
 	  minor-mode-alist (set:remove '(outline-minor-mode " Outl")
@@ -115,7 +135,8 @@ It provides the following keys:
 	  ;; Remove indication that buffer is narrowed.
 	  mode-line-format (copy-sequence mode-line-format)
 	  mode-line-format (set:remove "%n" mode-line-format)
-	  outline-regexp (concat " *[0-9][0-9a-z.]*" kview:default-label-separator)))
+	  outline-level  #'kcell-view:level
+	  outline-regexp kview:outline-regexp))
   ;;
   (when (fboundp 'add-to-invisibility-spec)
     (add-to-invisibility-spec '(outline . t)))
@@ -193,9 +214,10 @@ It provides the following keys:
 
 ;;;###autoload
 (defun kotl-mode:example (&optional example replace-flag)
-  "Display the optional Koutliner EXAMPLE file for demonstration and editing use by a user.
-With optional REPLACE-FLAG non-nil, archive any existing file,
-and replace it with the latest Hyperbole EXAMPLE.
+  "Display the optional Koutliner EXAMPLE file.
+This is for demonstration and editing use by a user.  With
+optional REPLACE-FLAG non-nil, archive any existing file, and
+replace it with the latest Hyperbole EXAMPLE.
 
 EXAMPLE may be a file or directory name (\"EXAMPLE.kotl\" is appended).
 
@@ -326,7 +348,8 @@ See `center-line' for more info."
     (kotl-mode:to-valid-position)))
 
 (defun kotl-mode:copy-kcell-reference-to-register (klink register)
-  "Copy a KLINK at point or if in a kcell, a klink to that kcell, to a REGISTER named by a single character."
+  "Copy a KLINK at point or if in a kcell, a klink to that kcell, to a REGISTER.
+The REGISTER is named by a single character."
   (interactive
    (let ((klink (klink:absolute (klink:at-p))))
      (list
@@ -340,12 +363,15 @@ See `center-line' for more info."
     (user-error "(kotl-mode:copy-kcell-reference-to-register): Point is not within a Koutliner klink or kcell")))
 
 (defun kotl-mode:copy-absolute-kcell-link-to-kill-ring (&optional pos)
-  "Add an absolute kcell reference (from optional POS or point) for use outside the outline as a new kill ring entry."
+  "Add an absolute kcell reference to the kill ring.
+The kcell reference is from optional POS or point.  It is for use
+outside the outline."
   (interactive "d")
   (kill-new (kcell-view:absolute-reference pos)))
 
 (defun kotl-mode:copy-relative-kcell-link-to-kill-ring (&optional pos)
-  "Add a relative kcell reference (from optional POS or point) as a new kill ring entry."
+  "Add a relative kcell reference to the kill ring.
+The kcell reference is from optional POS or point."
   (interactive "d")
   (kill-new (kcell-view:reference pos)))
 
@@ -396,7 +422,7 @@ Do not delete across cell boundaries."
   (kotl-mode:delete-char (- arg) kill-flag))
 
 (defun kotl-mode:delete-blank-lines ()
-  "On blank line within a cell, delete all surrounding blank lines, leaving just one.
+  "On blank line in a cell, delete all surrounding blank lines, leaving just one.
 On isolated blank line, delete that one.
 On nonblank line, delete all blank lines that follow it.
 
@@ -519,7 +545,8 @@ With prefix ARG non-nil, join this line to the following line."
 	 (goto-char opoint))))))
 
 (defun kotl-mode:skip-filling-p (interactive-flag)
-  "Return t if filling is to be skipped due to a no-fill attribute or with point in a table, else return nil."
+  "Return t if filling is to be skipped, or nil.
+This can be due to a no-fill attribute or with point in a table."
   (not (cond ((and (fboundp #'org-at-table-p) (org-at-table-p))
 	      (when interactive-flag
 		(beep)
@@ -681,7 +708,7 @@ With optional prefix argument TOP-P non-nil, refill all cells in the outline."
 
 (defun kotl-mode:kill-region (start end &optional copy-p)
   "Kill region between START and END within a single kcell.
-With optional COPY-P equal to 't, copy region to kill ring but does not
+With optional COPY-P equal to t, copy region to kill ring but does not
 kill it.  With COPY-P any other non-nil value, return region as a
 string without affecting kill ring.
 
@@ -1014,10 +1041,12 @@ or after point and around or after mark are interchanged."
   (transpose-subr 'kotl-mode:forward-word (prefix-numeric-value arg)))
 
 (defun kotl-mode:untab-command (arg)
-  "Delete backwards by ARG tab stops or promote the current tree a maximum of ARG levels.
-Which command is run depends on the value of `kotl-mode:tab-flag'.  Toggle
-its value by sending this command an explicit ARG of 1.  Use nil for ARG to
-run the untab command once.
+  "Delete backwards or promote the current tree.
+Delete backwards by ARG tab stops or promote the current tree a
+maximum of ARG levels.  Which command is run depends on the value
+of `kotl-mode:tab-flag'.  Toggle its value by sending this
+command an explicit ARG of 1.  Use nil for ARG to run the untab
+command once.
 
 See also the documentation strings for `kotl-mode:delete-backward-char' and
 `kotl-mode:promote-tree'."
@@ -1547,7 +1576,6 @@ See `forward-paragraph' for more information."
   (point))
 
 ;;; This ensures that the key bound to `beginning-of-line' is replaced in kotl-mode.
-(define-obsolete-function-alias 'kotl-mode:to-start-of-line #'kotl-mode:beginning-of-line "8.0.1")
 (defalias 'kotl-mode:beginning-of-visual-line 'kotl-mode:beginning-of-line)
 (defalias 'kotl-mode:move-beginning-of-line 'kotl-mode:beginning-of-line)
 
@@ -1777,12 +1805,12 @@ part of the paragraph, or the end of the buffer."
     (kotl-mode:backward-word (- arg)))
   (point))
 
-(defun kotl-mode:goto-cell (cell-ref &optional error-p)
-  "Move point to start of cell given by CELL-REF (see `kcell:ref-to-id').
+(defun kotl-mode:goto-cell (cell-ref &optional error-flag)
+  "Move point to start of cell text given by CELL-REF (see `kcell:ref-to-id').
 Return point if CELL-REF is found within current view, else nil.
-(See the doc for `kcell:ref-to-id', for valid formats).
+See the doc for `kcell:ref-to-id', for valid formats.
 
-With optional second arg ERROR-P non-nil, or if called
+With optional second arg ERROR-FLAG non-nil, or if called
 interactively, will signal an error if CELL-REF is not found
 within current view.
 
@@ -1798,39 +1826,27 @@ for CELL-REF."
 	(or (kcell:ref-to-id cell-ref t)
 	    (error "(kotl-mode:goto-cell): Invalid cell reference, `%s'" cell-ref)))
   (let* ((opoint (point))
-	 (found)
-	 cell-id kvspec)
+	 (found))
     (if (and (stringp cell-ref) (eq ?| (aref cell-ref 0)))
 	;; This is a standalone view spec, not a cell reference.
 	(progn (kvspec:activate cell-ref) (setq found (point)))
-
-      ;; !! Todo: Remove any relative specs and view specs from
-      ;; cell-ref to form cell-id.  Really should account for Augment-style
-      ;; relative specs here, but we don't yet support them.
-      (if (and (stringp cell-ref)
-	       (string-match "\\(\\.[a-zA-Z]+\\)?\\([|:].*\\)\\|\\.[a-zA-Z]+"
-			     cell-ref))
-	  (setq cell-id (substring cell-ref 0 (match-beginning 0))
-		kvspec  (when (match-beginning 2)
-			  (match-string 2 cell-ref)))
-	(setq cell-id cell-ref kvspec nil))
-
-      (goto-char (point-min))
-      (when (or (integerp cell-id)
-		(eq ?0 (aref cell-id 0)))
-	;; is an idstamp
-	(when (kview:goto-cell-id cell-id)
-	  (setq found (point))))
-      (if found
-	  ;; Activate any viewspec associated with cell-ref.
-	  (when kvspec (kvspec:activate kvspec))
-	(goto-char opoint)
-	(when (or error-p (called-interactively-p 'interactive))
-	  (error "(kotl-mode:goto-cell): No `%s' cell in this view" cell-ref))))
+      (cl-destructuring-bind (cell-id kvspec) (kcell:parse-cell-ref cell-ref)
+	(goto-char (point-min))
+	(when (or (integerp cell-id)
+		  (eq ?0 (aref cell-id 0)))
+	  ;; Is an idstamp
+	  (when (kview:goto-cell-id cell-id)
+	    (setq found (point))))
+	(if found
+	    ;; Activate any viewspec associated with cell-ref.
+	    (when kvspec (kvspec:activate kvspec))
+	  (goto-char opoint)
+	  (when (or error-flag (called-interactively-p 'interactive))
+	    (error "(kotl-mode:goto-cell): No `%s' cell in this view" cell-ref)))))
     found))
 
 (defun kotl-mode:head-cell ()
-  "Move point to the start of the first visible cell at the same level as current cell.
+  "Move point to the start of first visible cell at same level as current cell.
 If at head cell already, do nothing and return nil."
   (interactive "p")
   (kotl-mode:maintain-region-highlight)
@@ -1863,7 +1879,7 @@ The paragraph marked is the one that contains point or follows point."
   (kotl-mode:to-valid-position))
 
 (defun kotl-mode:mark-whole-buffer ()
-  "Put point at first editable character in buffer and mark at the last such character."
+  "Put point at first editable character in buffer and mark at last such character."
   (interactive)
   (push-mark (point))
   (kotl-mode:end-of-buffer)
@@ -1910,8 +1926,9 @@ The paragraph marked is the one that contains point or follows point."
   (point))
 
 (defun kotl-mode:next-tree ()
-  "Move past current tree to the start of the next tree, or to the start of the last cell in tree if no next tree.
-Return non-nil iff there is a next tree within the koutline."
+  "Move past current tree to the start of the next tree.
+If no next tree go to the start of the last cell in tree.  Return
+non-nil iff there is a next tree within the koutline."
   (let ((start-indent (kcell-view:indent))
 	(lbl-sep-len (kview:label-separator-length kview))
 	(same-tree t))
@@ -1984,7 +2001,8 @@ Return non-nil iff there is a next tree within the koutline."
     (scroll-up arg)))
 
 (defun kotl-mode:tail-cell ()
-  "Move point to the start of the last visible cell at the same level as current cell and return t.
+  "Move point to start of last visible cell at same level as current cell.
+Return t if successfull.
 If at tail cell already, do nothing and return nil."
   (interactive "p")
   (kotl-mode:maintain-region-highlight)
@@ -2193,12 +2211,15 @@ If assist-key is pressed:
   (kotl-mode:add-cell -1))
 
 (defun kotl-mode:add-cell (&optional relative-level contents plist no-fill)
-  "Add a cell following current cell at optional RELATIVE-LEVEL with CONTENTS string, attributes in PLIST, a property list, and NO-FILL flag to prevent any filling of CONTENTS.
+  "Add a cell.
+Add cell following current cell at optional RELATIVE-LEVEL with
+CONTENTS string, attributes in PLIST, a property list, and
+NO-FILL flag to prevent any filling of CONTENTS.
 
 Optional prefix arg RELATIVE-LEVEL means either:
 
  1. add as the next sibling if nil or >= 0;
- 2. as the first child if equal to '(4), given by the universal argument, {C-u};
+ 2. as the first child if equal to (4), given by the universal argument, {C-u};
  3. otherwise, as the first sibling of the current cell's parent.
 
 If added as the next sibling of the current level, then RELATIVE-LEVEL is
@@ -2629,7 +2650,9 @@ confirmation."
 				 (kcell-view:label pos)))))
 
 (defun kotl-mode:set-or-remove-cell-attribute (arg)
-  "With numeric prefix ARG, interactively run kotl-mode:remove-cell-attribute; otherwise, run kotl-mode:set-cell-attribute.
+  "Run kotl-mode:remove-cell-attribute or kotl-mode:set-cell-attribute.
+With numeric prefix ARG, interactively run kotl-mode:remove-cell-attribute;
+otherwise, run kotl-mode:set-cell-attribute.
 Prefix ARG selects the cells whose attributes are removed or set:
   If =  0, set one of the attributes of the invisible root cell;
   If <  0, remove one of the attributes of the invisible root cell;
@@ -2734,7 +2757,8 @@ ARG visible cells."
 ;;; ------------------------------------------------------------------------
 
 (defun kotl-mode:copy-region-to-buffer (target-buf start end &optional source-buf invisible-flag)
-  "Copy to TARGET-BUF the region between START and END from the current buffer or optional SOURCE-BUF (a buffer or buffer name).
+  "Copy to TARGET-BUF the region between START and END.
+Copy from the current buffer or optional SOURCE-BUF (a buffer or buffer name).
 Invisible text is expanded and included only if INVISIBLE-FLAG is non-nil."
   (interactive
    (hargs:iform-read
@@ -2786,7 +2810,9 @@ included only if INVISIBLE-FLAG is non-nil."
       (kotl-mode:copy-region-to-buffer target-buf start end nil invisible-flag))))
 
 (defun kotl-mode:copy-tree-or-region-to-buffer ()
-  "If no usable active region, prompt for and copy a Koutline tree to a specified buffer, otherwise, copy the active region.
+  "Copy a Koutline tree to a specified buffer.
+If no usable active region, prompt for and copy a Koutline tree
+to a specified buffer, otherwise, copy the active region.
 
 Use 0 to copy the whole outline buffer.  Prompt for whether or not
 to expand and include any hidden/invisible text within the copied text."
@@ -2850,7 +2876,8 @@ the current view."
      kview all-flag t)))
 
 (defun kotl-mode:toggle-tree-expansion (&optional all-flag)
-  "Collapse or expand each cell of tree rooted at point or all visible cells if optional prefix arg ALL-FLAG is given.
+  "Collapse or expand each cell of tree rooted at point.
+Act on all visible cells if optional prefix arg ALL-FLAG is given.
 If current cell is collapsed, cells will be expanded, otherwise they will be
 collapsed."
   (interactive "P")
@@ -3161,7 +3188,9 @@ on when tabs are used for indenting."
      "(kotl-mode:is-p): Command requires a valid Hyperbole koutline")))
 
 (defun kotl-mode:shrink-region ()
-  "If a region is active and outside the visible bounds of a single cell, shrink it to within those bounds.
+  "Shrink region within visible bounds of a single cell.
+If a region is active and outside the visible bounds of a single
+cell, shrink it to within those bounds.
 The region then falls within the first visible cell that was part of
 the region or that followed it.  This prevents editing actions from
 removing Koutline structure."
@@ -3178,7 +3207,7 @@ removing Koutline structure."
     (when exchange-p (kotl-mode:exchange-point-and-mark))))
 
 (defun kotl-mode:valid-region-p ()
-  "Return t if there is no active region or if the region is within the visible bounds of a single cell, else nil."
+  "Return t if no active region or the region is within visible bounds of a cell."
   (if (region-active-p)
       (and (kview:valid-position-p (point))
 	   (kview:valid-position-p (mark))
@@ -3188,8 +3217,10 @@ removing Koutline structure."
     t))
 
 (defun kotl-mode:maybe-shrink-region-p ()
-  "If `kotl-mode:shrink-region-flag' is non-nil, shrink any active region that includes hidden text or crosses cell boundaries.
-The region then falls within the first visible cell that was part of the region or that followed it
+  "Shrink active region if `kotl-mode:shrink-region-flag' is non-nil.
+Shrink any active region that includes hidden text or crosses
+cell boundaries.  The region then falls within the first visible
+cell that was part of the region or that followed it
 
 Return t unless any region problem is left uncorrected, notably in
 cases where `kotl-mode:shrink-region-flag' is nil."
@@ -3231,8 +3262,8 @@ newlines at end of tree."
 
 (defun kotl-mode:tree-start ()
   "Return beginning of line position preceding current cell's start point."
-  (save-excursion (goto-char (kcell-view:start)) (beginning-of-line)
-		  (point)))
+  (save-excursion (goto-char (kcell-view:start))
+		  (line-beginning-position)))
 
 (defun kotl-mode:line-move (arg)
   "Move point ARG visible lines forward within an outline."
@@ -3254,9 +3285,9 @@ newlines at end of tree."
 
 ;; Consult this: (kotl-mode:to-visible-position)
 (defun kotl-mode:pre-self-insert-command ()
-  "If within a Koutline, prior to inserting a character, ensure point is in an editable position.
-Mouse may have moved point outside of an editable area. kotl-mode adds
-this function to `pre-command-hook'."
+  "In a Koutline ensure point is in an editable position before insertion.
+Mouse may have moved point outside of an editable area.
+`kotl-mode' adds this function to `pre-command-hook'."
   (when (and (memq this-command '(self-insert-command orgtbl-self-insert-command))
 	     (eq major-mode 'kotl-mode)
 	     (not (kview:valid-position-p))
@@ -3266,9 +3297,9 @@ this function to `pre-command-hook'."
       (kotl-mode:to-valid-position))))
 
 (defun kotl-mode:print-attributes (_kview)
-  "Print to the `standard-output' stream the attributes of the current visible kcell.
-Takes argument _KVIEW (so it can be used with `kview:map-tree') but always operates
-upon the current view."
+  "Print to `standard-output' the attributes of the current visible kcell.
+Takes argument _KVIEW (so it can be used with `kview:map-tree')
+but always operates upon the current view."
   ;; Move to start of visible cell to avoid printing attributes for an
   ;; invisible kcell which point may be over.
   ;; Print first line of cell for reference.
@@ -3340,7 +3371,7 @@ upon the current view."
 	      (current-column)))))
 
 (defun kotl-mode:to-visible-position (&optional backward-p)
-  "Move point to the nearest visible and editable position within the current koutline view.
+  "Move point to nearest visible and editable position within current koutline.
 With optional BACKWARD-P, move backward if possible to get to valid position."
   ;; Empty, visible cell
   (unless (and (kotl-mode:bocp) (kotl-mode:eocp) (not (kcell-view:invisible-p (point))))

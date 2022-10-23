@@ -26,63 +26,63 @@
 
 (defconst infodock-hyrolo-menu
   '("Rolo"
-    ["Manual"            (id-info "(hyperbole)HyRolo") t]
+    ["Manual"                  (id-info "(hyperbole)HyRolo")            t]
     "----"
      ;; Delete Rolo menu from all menubars.
-    ["Remove-This-Menu"  (hui-menu-remove Rolo hyrolo-mode-map) t]
+    ["Remove-This-Menu"        (hui-menu-remove Rolo hyrolo-mode-map)   t]
     "----"
-    ["Add-Entry"         (id-tool-invoke 'hyrolo-add) t]
-    ["Delete-Entry"      (id-tool-invoke 'hyrolo-kill) t]
-    ["Display-Prior-Matches" (id-tool-invoke 'hyrolo-display-matches) t]
-    ["Edit-Entry"        (id-tool-invoke 'hyrolo-edit) t]
-    ["Find-HyRolo-File"  (id-tool-invoke
-			  (lambda ()
-			    (require 'hyrolo)
-			    (hyrolo-find-file)))
+    ["Add-Entry"               (id-tool-invoke 'hyrolo-add)             t]
+    ["Delete-Entry"            (id-tool-invoke 'hyrolo-kill)            t]
+    ["Display-Prior-Matches"   (id-tool-invoke 'hyrolo-display-matches) t]
+    ["Edit-Entry"              (id-tool-invoke 'hyrolo-edit)            t]
+    ["Find-HyRolo-File"        (id-tool-invoke
+				(lambda ()
+				  (require 'hyrolo)
+				  (hyrolo-find-file)))
      t]
-    ["Insert-Entry-at-Point" (id-tool-invoke 'hyrolo-yank) t]
-    ["Mail-to-Address"   (id-tool-invoke 'hyrolo-mail-to) t]
-    ["Search-for-Regexp" (id-tool-invoke 'hyrolo-grep)  t]
-    ["Search-for-String" (id-tool-invoke 'hyrolo-fgrep) t]
-    ["Search-for-Word"   (id-tool-invoke 'hyrolo-word)  t]
-    ["Sort-Entries"      (id-tool-invoke 'hyrolo-sort)  t]))
+    ["Insert-Entry-at-Point"   (id-tool-invoke 'hyrolo-yank)            t]
+    ["Mail-to-Address"         (id-tool-invoke 'hyrolo-mail-to)         t]
+    ["Search-for-Regexp"       (id-tool-invoke 'hyrolo-grep)            t]
+    ["Search-for-String"       (id-tool-invoke 'hyrolo-fgrep)           t]
+    ["Search-for-Word"         (id-tool-invoke 'hyrolo-word)            t]
+    ["Sort-Entries"            (id-tool-invoke 'hyrolo-sort)            t]))
 
 (defconst hyrolo-menu-common-body
   '(
     ("Move"
-     ["Scroll-Backward"     scroll-down             t]
-     ["Scroll-Forward"      scroll-up               t]
-     ["To-Beginning"        beginning-of-buffer     t]
-     ["To-End"              end-of-buffer           t]
+     ["Scroll-Backward"        scroll-down                              t]
+     ["Scroll-Forward"         scroll-up                                t]
+     ["To-Beginning"           beginning-of-buffer                      t]
+     ["To-End"                 end-of-buffer                            t]
      "----"
-     ["To-Next-Entry"          outline-next-visible-heading     t]
-     ["To-Next-Same-Level"     outline-forward-same-level       t]
-     ["To-Previous-Entry"      outline-previous-visible-heading t]
-     ["To-Previous-Same-Level" outline-backward-same-level      t]
-     ["Up-a-Level"             outline-up-heading               t])
+     ["To-Next-Entry"          outline-next-visible-heading             t]
+     ["To-Next-Same-Level"     outline-forward-same-level               t]
+     ["To-Previous-Entry"      outline-previous-visible-heading         t]
+     ["To-Previous-Same-Level" outline-backward-same-level              t]
+     ["Up-a-Level"             outline-up-heading                       t])
     ("Outline"
-     ["Hide (Collapse)"        outline-hide-subtree             t]
-     ["Show (Expand)"          outline-show-subtree             t]
-     ["Show-All"               outline-show-all                 t]
-     ["Show-Only-First-Line"   outline-hide-body                t]))
+     ["Hide (Collapse)"        outline-hide-subtree                     t]
+     ["Show (Expand)"          outline-show-subtree                     t]
+     ["Show-All"               outline-show-all                         t]
+     ["Show-Only-First-Line"   outline-hide-body                        t]))
   "The middle menu entries common to all HyRolo menus.")
 
 (defconst id-popup-hyrolo-menu
   (append
    '("Rolo"
-     ["Help"                describe-mode           t]
-     ["Manual"              (id-info "(hyperbole)Rolo Keys") t]
+     ["Help"                   describe-mode                            t]
+     ["Manual"                 (id-info "(hyperbole)Rolo Keys")         t]
      "----"
-     ["Edit-Entry-at-Point" hyrolo-edit-entry         t]
+     ["Edit-Entry-at-Point"    hyrolo-edit-entry                        t]
      "----"
-     ["Locate-Entry-Isearch" hyrolo-locate        t]
-     ["Next-Match"          hyrolo-next-match         t]
-     ["Previous-Match"      hyrolo-previous-match     t]
+     ["Locate-Entry-Isearch"   hyrolo-locate                            t]
+     ["Next-Match"             hyrolo-next-match                        t]
+     ["Previous-Match"         hyrolo-previous-match                    t]
      "----")
    `,@hyrolo-menu-common-body
    (list infodock-hyrolo-menu)
    '("----"
-     ["Quit"                (id-tool-quit '(hyrolo-quit)) t])))
+     ["Quit"                   (id-tool-quit '(hyrolo-quit))            t])))
 
 ;;; ************************************************************************
 ;;; Public functions

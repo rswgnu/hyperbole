@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    31-Oct-91 at 23:17:35
-;; Last-Mod:     15-Jul-22 at 22:07:35 by Mats Lidell
+;; Last-Mod:     12-Oct-22 at 22:30:53 by Mats Lidell
 ;;
 ;; Copyright (C) 1991-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -30,6 +30,7 @@
 (require 'hpath)
 (require 'hypb)
 (require 'set)
+(require 'info)
 
 ;;; ************************************************************************
 ;;; Public variables
@@ -56,7 +57,7 @@ Current button is being edited when EDITING-FLAG is t.
 Return nil if ACTION is not a list or `byte-code' object, has no
 interactive form or takes no arguments."
   (save-excursion
-    (and (or (subrp action) (hypb:emacs-byte-code-p action) (listp action))
+    (and (or (subrp action) (byte-code-function-p action) (listp action))
 	 (let ((interactive-form (action:commandp action)))
 	   (when interactive-form
 	     (hpath:relative-arguments
@@ -75,12 +76,14 @@ Convert NUL characters to colons for use with grep lines."
 (defun hargs:delimited (start-delim end-delim
 			&optional start-regexp-flag end-regexp-flag
 			list-positions-flag exclude-regexp)
-  "Return a normalized, single line, delimited string that point is within the first line of, or nil.
+  "Return a delimited string that point is within the first line of, or nil.
+The string is normalized and reduced to a single line.
 START-DELIM and END-DELIM are strings that specify the argument
 delimiters.  With optional START-REGEXP-FLAG non-nil, START-DELIM is
 treated as a regular expression.  END-REGEXP-FLAG is similar.
-With optional LIST-POSITIONS-FLAG, return list of (string-matched start-pos end-pos).
-With optional EXCLUDE-REGEXP, any matched string is ignored if it matches this regexp."
+With optional LIST-POSITIONS-FLAG, return list of (string-matched
+start-pos end-pos).  With optional EXCLUDE-REGEXP, any matched
+string is ignored if it matches this regexp."
   (let* ((opoint (point))
 	 (line-begin (line-beginning-position))
 	 ;; This initial limit if the forward search limit for start delimiters
@@ -166,7 +169,7 @@ indicates that the following character is a Hyperbole interactive
 extension command character.
 
 May return a single value or a list of values, in which case the first
-element of the list is always the symbol 'args."
+element of the list is always the symbol \\='args."
   (let (func cmd prompt)
     (cond ((or (null interactive-entry) (equal interactive-entry ""))
 	   (error "(hargs:get): Empty interactive-entry arg"))
@@ -662,6 +665,9 @@ help when appropriate."
 ;;; ************************************************************************
 ;;; Private variables
 ;;; ************************************************************************
+
+(defvar hargs:reading-symbol nil
+  "Remember what symbol is being read.")
 
 (defconst hargs:iform-vector
   (hargs:make-iform-vector

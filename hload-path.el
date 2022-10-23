@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    29-Jun-16 at 14:39:33
-;; Last-Mod:     14-Jun-22 at 21:14:45 by Mats Lidell
+;; Last-Mod:     23-Oct-22 at 00:38:27 by Mats Lidell
 ;;
 ;; Copyright (C) 1992-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -15,13 +15,19 @@
 ;;; Code:
 
 ;;; ************************************************************************
+;;; Public declarations
+;;; ************************************************************************
+(defvar generated-autoload-file)
+
+;;; ************************************************************************
 ;;; Public variables
 ;;; ************************************************************************
 
 ;;;###autoload
 (defvar hyperb:microsoft-os-p
   (memq system-type '(ms-windows windows-nt ms-dos win32))
-  "Non-nil iff Hyperbole is running under a Microsoft OS but not under Windows Subsystem for Linux (WSL).
+  "Non-nil iff Hyperbole is running under a Microsoft OS but not for WSL.
+WSL is Windows Subsystem for Linux.
 Use `hyperb:wsl-os-p' to test if running under WSL.")
 
 ;;;###autoload
@@ -33,13 +39,13 @@ Use `hyperb:wsl-os-p' to test if running under WSL.")
 ;;; Hyperbole Directory Setting (dynamically computed)
 ;;; ************************************************************************
 
-(defconst hyperb:dir (or (file-name-directory
-			  (or (and (stringp load-file-name) load-file-name)
-			      (locate-file "hmouse-tag.el" load-path)
-			      (hyperb:path-being-loaded)
-			      ""))
-			 (error
-			  "(Hyperbole): Failed to set hyperb:dir.  Try setting it manually"))
+(defvar hyperb:dir (or (file-name-directory
+			(or (and (stringp load-file-name) load-file-name)
+			    (locate-file "hmouse-tag.el" load-path)
+			    (hyperb:path-being-loaded)
+			    ""))
+		       (error
+			"(Hyperbole): Failed to set hyperb:dir.  Try setting it manually"))
   "Directory where the Hyperbole executable code is kept.
 Valid values end with a directory separator character.")
 
@@ -111,9 +117,12 @@ the symbol list.  For `suspicious', only `set-buffer' can be used."
 ;; New autoload generation function defined only in Emacs 28
 
 (defalias 'hload-path--make-directory-autoloads
-  (if (fboundp #'make-directory-autoloads)
-      #'make-directory-autoloads
-    #'hload-path--internal-make-directory-autoloads))
+  (cond ((fboundp 'loaddefs-generate)
+         #'loaddefs-generate)
+        ((fboundp #'make-directory-autoloads)
+         #'make-directory-autoloads)
+        (t
+         #'hload-path--internal-make-directory-autoloads)))
 
 (defun hload-path--internal-make-directory-autoloads (dir output-file)
   "Update autoload definitions for Lisp files in the directories DIRS.

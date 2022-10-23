@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    15-Nov-93 at 12:15:16
-;; Last-Mod:     15-Jul-22 at 23:24:53 by Mats Lidell
+;; Last-Mod:     12-Oct-22 at 21:21:34 by Mats Lidell
 ;;
 ;; Copyright (C) 1993-2022  Free Software Foundation, Inc.
 ;; See the "../HY-COPY" file for license information.
@@ -62,6 +62,7 @@
 ;;; ************************************************************************
 
 (require 'subr-x) ;; For string-trim
+(require 'hmouse-tag) ;; For smart-c-include-regexp
 (eval-when-compile (require 'hbut)) ;; For defib.
 
 ;;; ************************************************************************
@@ -76,7 +77,7 @@
 
 (defcustom klink:c-style-modes
   '(c-mode c++-mode objc-mode java-mode)
-  "Major modes in which to ignore potential klinks to avoid false positives."
+  "C-related major modes with where klinks appear only within comments."
   :type '(list function)
   :group 'hyperbole-koutliner)
 
@@ -85,9 +86,12 @@
 ;;; ************************************************************************
 
 (defun klink:absolute (label-and-pos)
-  "With point in a klink's source buffer and LABEL-AND-POS a list of (klink-label, klink-start, klink-end) including delimiters, return an absolute klink string.
-Klink is of the form: \"<absolute-file-name, cell-ref>\".
-See documentation for `kcell:ref-to-id' for valid cell-ref formats."
+  "Return an absolute klink string from LABEL-AND-POS list.
+With point in a klink's source buffer and LABEL-AND-POS a list
+of (klink-label, klink-start, klink-end) including delimiters,
+return an absolute klink string.  Klink returned is of the form:
+\"<absolute-file-name, cell-ref>\".  See documentation for
+`kcell:ref-to-id' for valid cell-ref formats."
   (when (and (derived-mode-p 'kotl-mode) label-and-pos (listp label-and-pos))
     (let* ((file-and-cell-ref (klink:parse (car label-and-pos)))
 	   (file (or (car file-and-cell-ref) buffer-file-name))
@@ -151,18 +155,19 @@ link-end-position, (including delimiters)."
 	       (not (br-browser-buffer-p))
 	     t)
 	   ;; If in a programming mode, Klinks can occur only within comments.
-	   (if (derived-mode-p 'prog-mode)
+	   (if (and (derived-mode-p #'prog-mode)
+		    (not (derived-mode-p #'lisp-interaction-mode)))
 	       ;; Next line means point is within a comment
 	       (nth 4 (syntax-ppss))
 	     t)
-	   ;; If in a C-based mode, Klinks can only occur within comments.
+	   ;; If in a C-based mode, Klinks can occur only within comments.
 	   (if (and (memq major-mode klink:c-style-modes)
 		    (fboundp 'c-within-comment-p))
 	       (or (c-within-comment-p)
 		   (save-excursion
 		     (and (re-search-backward "//\\|\n" nil t) (looking-at "//"))))
 	     t)
-	   ;; Don't match to C-style lines like:  #include < path >
+	   ;; Don't match to C-style lines like:  #include < path >,
 	   ;; even if inside a comment.
 	   (if (memq major-mode klink:c-style-modes)
 	       (save-excursion
@@ -185,8 +190,8 @@ link-end-position, (including delimiters)."
 	   (or (string-match "^ *[-@|!&]" referent)
 	       (if (string-match "\\s-*," referent)
 		   (progn (setq path (substring referent 0 (match-beginning 0)))
-			  (hpath:is-p path))
-		 (hpath:is-p referent)))
+			  (hpath:is-p (expand-file-name path (hbut:get-key-src t t))))
+		 (hpath:is-p (expand-file-name referent (hbut:get-key-src t t)))))
 	   ;; Eliminate matches to e-mail addresses like, <user@domain>
 	   (not (string-match "[^<> \t\n\r\f][!&@]" referent))
 	   ;; Eliminate matches to URLs
@@ -199,8 +204,9 @@ link-end-position, (including delimiters)."
       label-and-pos)))
 
 (defun klink:set-yank-handler (klink)
-  "Add yank-handler to KLINK so link is made relative when yanked into the same koutline or the same directory.
-Return the modified KLINK."
+  "Add yank-handler to KLINK and return the modified KLINK.
+Link is made relative when yanked into the same koutline or the
+same directory."
   (add-text-properties 0 (length klink)
 		       (list 'yank-handler '(klink:yank-handler)
 			     'yank-excluded-properties (cons 'yank-handler (get-text-property 0 'yank-excluded-properties klink)))
@@ -261,11 +267,11 @@ See documentation for `kcell:ref-to-id' for valid cell-ref formats."
 (defun klink:act (link start-pos)
   (let ((obuf (current-buffer)))
     ;; Perform klink's action which is to jump to link referent.
-    (hact 'link-to-kotl link)
-    (save-excursion
-      ;; Update klink label if need be, which might be in a different buffer
-      ;; than the current one.
-      (klink:update-label link start-pos obuf))))
+    (prog1 (hact 'link-to-kotl link)
+      (save-excursion
+	;; Update klink label if need be, which might be in a different buffer
+	;; than the current one.
+	(klink:update-label link start-pos obuf)))))
 
 (defun klink:parse (reference)
   "Return (file-ref cell-ref) list parsed from REFERENCE string.
@@ -345,7 +351,9 @@ Assume point is in klink referent buffer, where the klink points."
 ;;; ************************************************************************
 
 (defvar klink:cell-ref-regexp
-  "[|:0-9a-zA-Z][|:.*~=0-9a-zA-Z \t\n\r]*"
+  (concat "[0-9a-zA-Z][.*~=0-9a-zA-Z \t\n\r]*\\s-*,\\s-*"
+	  "[|:.*~=0-9a-zA-Z \t\n\r]+"
+	  "\\|[|: 0-9a-zA-Z][|:.*~=0-9a-zA-Z \t\n\r]*")
   "Regexp matching a cell reference including relative and view specs.
 Contains no groupings.")
 

@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    04-Feb-89
-;; Last-Mod:     18-Jun-22 at 21:57:35 by Mats Lidell
+;; Last-Mod:     16-Oct-22 at 19:29:34 by Mats Lidell
 ;;
 ;; Copyright (C) 1991-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -45,8 +45,14 @@
   (require 'hmouse-info))
 (unless (fboundp 'smart-c-at-tag-p)
   (require 'hmouse-tag))
+(require 'imenu)
 
 (eval-when-compile (require 'tar-mode))
+
+;;; ************************************************************************
+;;; Public declarations
+;;; ************************************************************************
+(defvar magit-root-section)
 
 ;;; ************************************************************************
 ;;; Public variables
@@ -56,14 +62,16 @@
   "*Command that sets point to the mouse cursor position.")
 
 (defun action-key-error ()
-  "If in Org mode and Hyperbole shares {M-RET}, run org-meta-return, else signal an error."
+  "If in Org mode and Hyperbole shares {M-RET}, run org-meta-return.
+In other context signal an error."
   (if (and (funcall hsys-org-mode-function)
 	   (hsys-org-meta-return-shared-p))
       (hact 'hsys-org-meta-return)
     (hypb:error "(Hyperbole Action Key): No action defined for this context; try another location")))
 
 (defun assist-key-error ()
-  "If in Org mode and Hyperbole shares {M-RET}, run org-meta-return, else signal an error."
+  "If in Org mode and Hyperbole shares {M-RET}, run org-meta-return.
+In other context signal an error."
   (if (and (funcall hsys-org-mode-function)
 	   (hsys-org-meta-return-shared-p))
       (hact 'hsys-org-meta-return)
@@ -71,34 +79,35 @@
 
 (defcustom action-key-default-function #'action-key-error
   "*Function run by the Action Key in an unspecified context.
-Set it to #'hyperbole if you want it to display the Hyperbole minibuffer menu."
+Set it to `hyperbole' if you want it to display the Hyperbole minibuffer menu."
   :type 'function
   :group 'hyperbole-keys)
 
 (defcustom assist-key-default-function #'assist-key-error
   "*Function run by the Assist Key in an unspecified context.
-Set it to #'hkey-summarize if you want it to display a summary of Smart Key behavior."
+Set it to `hkey-summarize' if you want it to display a summary of
+Smart Key behavior."
   :type 'function
   :group 'hyperbole-keys)
 
 (defcustom action-key-modeline-buffer-id-function #'dired-jump
-  "*Function to call when the Action Mouse Key is clicked on the buffer id portion of a modeline.
-Its default value is #'dired-jump; set it to #'smart-treemacs-modeline
+  "*Function to call for Action Key clicks on the buffer id portion of a modeline.
+Its default value is `dired-jump'; set it to `smart-treemacs-modeline'
 to use the Treemacs file manager package instead."
   :type 'function
   :group 'hyperbole-keys)
 
 (defcustom action-key-eol-function #'smart-scroll-up
   "*Function run by the Action Key at the end of a line.
-Its default value is #'smart-scroll-up.  To disable it, set it to
-#'ignore."
+Its default value is `smart-scroll-up'.  To disable it, set it to
+#\\='ignore."
   :type 'function
   :group 'hyperbole-keys)
 
 (defcustom assist-key-eol-function #'smart-scroll-down
   "*Function run by the Assist Key at the end of a line.
-Its default value is #'smart-scroll-down.  To disable it, set it to
-#'ignore."
+Its default value is `smart-scroll-down'.  To disable it, set it to
+#\\='ignore."
   :type 'function
   :group 'hyperbole-keys)
 
@@ -175,11 +184,13 @@ Its default value is #'smart-scroll-down.  To disable it, set it to
     ((and (boundp 'company-active-map)
 	  (memq company-active-map (current-minor-mode-maps))) .
 	  ((smart-company-to-definition) . (smart-company-help)))
+    ;;
     ;; Handle any Org mode-specific contexts
     ((and (not (hyperb:stack-frame '(smart-org)))
 	  (let ((hrule:action #'actype:identity))
 	    (smart-org))) .
      ((smart-org) . (smart-org)))
+    ;;
     ;; Ivy minibuffer completion mode
     ((and (boundp 'ivy-mode) ivy-mode (minibuffer-window-active-p (selected-window))) .
      ((ivy-done) . (ivy-dispatching-done)))
@@ -378,7 +389,9 @@ Its default value is #'smart-scroll-down.  To disable it, set it to
 	  buffer-file-name (smart-asm-at-tag-p)) .
 	  ((smart-asm) . (smart-asm nil 'next-tag)))
     ;;
-    ((or (and (smart-lisp-mode-p) (smart-lisp-at-tag-p))
+    ((or (and (smart-lisp-mode-p)
+	      (or (smart-lisp-at-load-expression-p)
+		  (smart-lisp-at-tag-p)))
 	 ;; Tightly limit Lisp matches in change-log-mode.
 	 (smart-lisp-at-change-log-tag-p)) .
 	 ((smart-lisp) . (smart-lisp 'show-doc)))
@@ -448,7 +461,10 @@ Its default value is #'smart-scroll-down.  To disable it, set it to
     ((eq major-mode 'w3-mode) .
      ((w3-follow-link) . (w3-goto-last-buffer)))
     ;;
-    ((and (boundp 'hyrolo-display-buffer) (equal (buffer-name) hyrolo-display-buffer)) .
+    ((eq major-mode 'hynote-mode) .
+     ((smart-hynote) . (smart-hynote-assist)))
+    ;;
+    ((eq major-mode 'hyrolo-mode) .
      ((smart-hyrolo) . (smart-hyrolo-assist)))
     ;;
     ((eq major-mode 'image-dired-thumbnail-mode) .
@@ -544,8 +560,9 @@ smart keyboard keys.")
 ;;; ************************************************************************
 
 (defun smart-buffer-menu-no-marks ()
-  "Display this line's buffer in this window and bury the buffer menu unless other buffers are marked.
-If buffer menu items are marked, return nil, else t."
+  "Display this line's buffer in this window.
+Bury the buffer menu unless other buffers are marked.  If buffer
+menu items are marked, return nil, else t."
   (let* ((this-buffer (Buffer-menu-buffer t))
 	 (menu-buffer (current-buffer))
 	 (others (delq this-buffer (Buffer-menu-marked-buffers t))))
@@ -613,8 +630,9 @@ If assist-key is pressed:
 ;;; ************************************************************************
 
 (defun smart-ibuffer-menu-no-marks ()
-  "Display this line's buffer in this window and bury the buffer menu unless other buffers are marked.
-If buffer menu items are marked, return nil, else t."
+  "Display this line's buffer in this window.
+Bury the buffer menu unless other buffers are marked.  If buffer
+menu items are marked, return nil, else t."
   (let* ((this-buffer (ibuffer-current-buffer t))
 	 (menu-buffer (current-buffer))
 	 (others (delq this-buffer (ibuffer-get-marked-buffers))))
@@ -752,7 +770,7 @@ If key is pressed:
 	   (diary-view-entries 1))))
 
 (defun smart-calendar-assist ()
-  "Use a single assist-key or mouse assist-key to manipulate the scrolling calendar.
+  "Use the assist-key or mouse assist-key to manipulate the scrolling calendar.
 
 Invoked via an assist-key press when in calendar-mode.  It assumes that its
 caller has already checked that the assist-key was pressed in an appropriate
@@ -802,8 +820,9 @@ Use left mouse key, RET or TAB key to select a completion and exit."
 ;;; ************************************************************************
 
 (defun smart-dired-pathname-up-to-point ()
-  "Assume point is on the first line of a Dired buffer.  Return the part of the pathname up through point, else the current directory path.
-Use for direct selection of an ancestor directory of this directory."
+  "Return the part of the pathname up through point, else current directory path.
+Assume point is on the first line of a Dired buffer.  Use for
+direct selection of an ancestor directory of this directory."
   (interactive)
   (if (not (looking-at "\\s-*$"))
       (save-excursion
@@ -1017,9 +1036,10 @@ If key is pressed within:
 (defun smart-gnus-article-assist ()
   "Use an assist-key or mouse assist-key to move through Gnus netnews articles.
 
-Invoked via an assist-key press when in gnus-article-mode.
-It assumes that its caller has already checked that the assist-key was pressed in
-an appropriate buffer and has moved the cursor to the selected buffer.
+Invoked via an assist-key press when in gnus-article-mode.  It
+assumes that its caller has already checked that the assist-key
+was pressed in an appropriate buffer and has moved the cursor to
+the selected buffer.
 
 If assist-key is pressed within:
  (1) the first line or end of an article, the previous message is displayed;
@@ -1042,15 +1062,19 @@ If assist-key is pressed within:
 ;;; ************************************************************************
 
 (defun smart-helm-at-header ()
-  "Return t iff Action Key depress was on the first fixed header line or a helm section header of the current buffer."
+  "Return t iff Action Key depress was on a helm header.
+To be precise, if Action Key depress was on the first fixed header or
+a helm section header."
   (or (helm-pos-header-line-p)
       (and (eventp action-key-depress-args)
 	   (eq (posn-area (event-start action-key-depress-args))
 	       'header-line))))
 
 (defun smart-helm-line-has-action ()
-  "Mark and return the actions for the helm selection item at the point of Action Key depress, or nil if line lacks any action.
-Assume Hyperbole has already checked that helm is active."
+  "Mark and return the actions for the helm selection item at the point.
+Point is where Action Key was depress.  Return nil if line lacks
+any action.  Assume Hyperbole has already checked that helm is
+active."
   (let ((helm-buffer (if (equal helm-action-buffer (buffer-name)) helm-buffer (buffer-name))))
     (save-excursion
       (with-helm-buffer
@@ -1082,9 +1106,13 @@ Assume Hyperbole has already checked that helm is active."
     (sit-for 0.2)))
 
 (defun smart-helm-at (depress-event)
-  "Return non-nil iff Smart Mouse DEPRESS-EVENT was on a helm section header, candidate separator or at eob or eol.
-If non-nil, returns a property list of the form: (section-header <bool> separator <bool> eob <bool> or eol <bool>).
-If a section-header or separator, selects the first following candidate line.
+  "Return non-nil iff Smart Mouse DEPRESS-EVENT was on a helm section header.
+This also includes if DEPRESS-EVENT was on a candidate separator
+or at eob or eol.
+If non-nil, returns a property list of the form: (section-header
+<bool> separator <bool> eob <bool> or eol <bool>).  If a
+section-header or separator, selects the first following
+candidate line.
 Assume Hyperbole has already checked that helm is active."
   (and (eventp depress-event)
        ;; Nil means in the buffer text area
@@ -1115,14 +1143,19 @@ Assume Hyperbole has already checked that helm is active."
       (select-window (minibuffer-window))))
 
 (defun smart-helm()
-  "Execute helm actions based on Action Key click locations:
-At the end of the buffer, quits from helm and exits the minibuffer.
-On a candidate line, performs the candidate's first action and remains in the minibuffer;
-On the top, fixed header line, toggles display of the selected candidate's possible actions;
-On an action list line, performs the action after exiting the minibuffer;
-On a source section header, moves to the next source section or first if on last.
-On a candidate separator line, does nothing.
-In the minibuffer window, ends the helm session and performs the selected item's action."
+  "Execute helm actions based on Action Key click locations.
+Locations are:
+- At the end of the buffer, quits from helm and exits the minibuffer.
+- On a candidate line, performs the candidate's first action and
+  remains in the minibuffer;
+- On the top, fixed header line, toggles display of the selected
+  candidate's possible actions;
+- On an action list line, performs the action after exiting the minibuffer;
+- On a source section header, moves to the next source section or
+  first if on last.
+- On a candidate separator line, does nothing.
+- In the minibuffer window, ends the helm session and performs
+  the selected item's action."
   (unless (hmouse-check-action-key)
     (error "(smart-helm): Hyperbole Action Mouse Key - either depress or release event is improperly configured"))
   (let* ((non-text-area-p (and (eventp action-key-depress-args)
@@ -1161,14 +1194,19 @@ In the minibuffer window, ends the helm session and performs the selected item's
 	  (call-interactively binding))))))
 
 (defun smart-helm-assist()
-  "Execute helm actions based on Assist Key click locations:
-At the end of the buffer, quits from helm and exits the minibuffer.
-On a candidate line, display's the candidate's first action and remains in the minibuffer;
-On the top, fixed header line, toggles display of the selected candidate's possible actions;
-On an action list line, performs the action after exiting the minibuffer;
-On a source section header, moves to the previous source section or last if on first.
-On a candidate separator line, does nothing.
-In the minibuffer window, ends the helm session and performs the selected item's action."
+  "Execute helm actions based on Assist Key click locations.
+Locations are:
+- At the end of the buffer, quits from helm and exits the minibuffer.
+- On a candidate line, display's the candidate's first action and
+  remains in the minibuffer;
+- On the top, fixed header line, toggles display of the selected
+  candidate's possible actions;
+- On an action list line, performs the action after exiting the minibuffer;
+- On a source section header, moves to the previous source
+  section or last if on first.
+- On a candidate separator line, does nothing.
+- In the minibuffer window, ends the helm session and performs
+  the selected item's action."
   ;; Hyperbole has checked that this line has an action prior to
   ;; invoking this function.
   (unless (hmouse-check-assist-key)
@@ -1255,16 +1293,17 @@ If key is pressed within:
 (defun smart-hmail-assist ()
   "Use an assist key or mouse key to move through e-mail messages and summaries.
 
-Invoked via an assist key press when in hmail:reader or hmail:lister mode.
-It assumes that its caller has already checked that the assist-key was pressed in
-an appropriate buffer and has moved the cursor to the selected buffer.
+Invoked via an assist key press when in hmail:reader or
+hmail:lister mode.  It assumes that its caller has already
+checked that the assist-key was pressed in an appropriate buffer
+and has moved the cursor to the selected buffer.
 
 If assist-key is pressed within:
  (1) a msg buffer, within the first line or at the end of a message,
      the previous undeleted message is displayed;
  (2) a msg buffer within the first line of an Info cross reference, the
      reference is followed;
- (3) anywhere else in a msg buffer, the window is scrolled down a windowful; 
+ (3) anywhere else in a msg buffer, the window is scrolled down a windowful;
  (4) a msg summary buffer on a header entry, the message corresponding to
      the header is marked as deleted;
  (5) a msg summary buffer, on or after the last line, all messages are
@@ -1290,10 +1329,10 @@ If assist-key is pressed within:
 ;;; ************************************************************************
 
 (defun smart-hyrolo ()
-  "In hyrolo match buffer, edits current entry.
+  "In hyrolo match buffer, edit current entry.
 Uses one key or mouse key.
 
-Invoked via a key press when in the `hyrolo-display-buffer'.  It assumes that
+Invoked via a key press when in the `hyrolo-display-buffer'.  Assume that
 its caller has already checked that the key was pressed in an appropriate
 buffer and has moved the cursor to the selected buffer."
   (interactive)
@@ -1311,7 +1350,8 @@ buffer and has moved the cursor to the selected buffer."
   (image-dired-display-thumbnail-original-image))
 
 (defun smart-image-dired-thumbnail-assist ()
-  "Select thumbnail and use the external viewer named by `image-dired-external-viewer' to display it."
+  "Select thumbnail and use the external viewer to display it.
+External viewer is named by `image-dired-external-viewer'"
   (image-dired-mouse-select-thumbnail assist-key-release-args)
   (image-dired-thumbnail-display-external))
 
@@ -1326,7 +1366,8 @@ Uses the imenu library and the value of `hpath:display-where' to display."
   (funcall imenu-default-goto-function item-name item-pos))
 
 (defun smart-imenu-item-at-p (&optional variable-flag)
-  "If any identifier at point is in the current buffer's imenu, return its marker position, else nil.
+  "Return marker position for identifier at point in current buffer's imenu.
+If no identifier at point is in the current buffer's imenu, return nil.
 With optional VARIABLE-FLAG non-nil, matches to variable definitions only.
 
 Does nothing unless imenu has been loaded and an index has been
@@ -1343,10 +1384,11 @@ sets `hkey-value' to (identifier . identifier-definition-buffer-position)."
 
 ;; Derived from `imenu' function in the imenu library.
 (defun smart-imenu-item-p (index-key &optional variable-flag no-recurse-flag)
-  "If INDEX-KEY is in the current buffer's imenu, return its definition marker position, else nil.
-If INDEX-KEY is both a function and a variable, the function
-definition is used by default; in such a case, when optional
-VARIABLE-FLAG is non-nil, the variable definition is used instead.
+  "Return the definition marker position for INDEX-KEY in current buffer's imenu.
+Return nil if INDEX-KEY is not in the imenu.  If INDEX-KEY is
+both a function and a variable, the function definition is used
+by default; in such a case, when optional VARIABLE-FLAG is
+non-nil, the variable definition is used instead.
 NO-RECURSE-FLAG non-nil prevents infinite recursions."
   (when (stringp index-key)
     (let (index-item
@@ -1367,8 +1409,8 @@ NO-RECURSE-FLAG non-nil prevents infinite recursions."
       (when index-item
 	(setq index-position (when (markerp (cdr index-item))
 			       (marker-position (cdr index-item))))
-	(if (eq index-position 1)
-	    ;; If index position is 1, this means the index markers have
+	(if (memq index-position '(1 -99))
+	    ;; If index position is 1 or -99, this means the index markers have
 	    ;; become out of date after buffer edits (likely imenu-auto-rescan
 	    ;; is nil), so do a single rescan to try to fix this.
 	    (unless no-recurse-flag
@@ -1388,7 +1430,7 @@ NO-RECURSE-FLAG non-nil prevents infinite recursions."
 ;;; ************************************************************************
 
 (defun smart-magit-display-file (return-command)
-  "Execute Magit command bound to return, possibly displaying utilizing hpath:display-buffer setting."
+  "Execute Magit command bound to return, possibly using hpath:display-buffer."
   (cond ((eq return-command #'magit-diff-visit-file)
 	 ;; Use Hyperbole display variable to determine where
 	 ;; to display the file of the diff.
@@ -1505,7 +1547,7 @@ If key is pressed:
     (unix-apropos-get-man)))
 
 (defun smart-apropos-assist ()
-  "Move through UNIX man apropos listings by using one assist-key or mouse assist-key.
+  "Move through UNIX man apropos listings by using assist-key or mouse assist-key.
 
 Invoked via an assist-key press when in unix-apropos-mode.  It assumes that
 its caller has already checked that the assist-key was pressed in an appropriate
@@ -1569,7 +1611,7 @@ local variable containing its pathname."
 	  (t ref))))
 
 (defun smart-man-c-routine-ref ()
-  "Return form to jump to the definition of the C function whose name is at point, if any, or nil
+  "Return form to jump to the definition of the C function whose name is at point.
 Valid sections within the man page are: ROUTINES, MACROS or FUNCTIONS.
 Uses (smart-tags-file-list) function to determine the tags file from which to
 locate the definition."
@@ -1590,7 +1632,8 @@ locate the definition."
 	      (smart-tags-file-list (and (boundp 'man-path) man-path))))))
 
 (defun smart-man-file-ref ()
-  "Return form to eval to display file whose name point is on, within a FILES man page section.
+  "Return form to eval to display file whose name is at point.
+Enabled within a FILES man page section.
 If not on a file name, returns nil."
   (let ((ref)
 	(opoint (point))
@@ -1613,7 +1656,8 @@ If not on a file name, returns nil."
 ;;; ************************************************************************
 
 (defun smart-org ()
-  "If `hsys-org-enable-smart-keys' is non-nil, follow Org mode references, cycles outline visibility and executes code blocks.
+  "Follow Org mode references, cycles outline visibility and executes code blocks.
+Active when `hsys-org-enable-smart-keys' is non-nil,
 
 When the Action Key is pressed:
 
@@ -1641,9 +1685,11 @@ When the Action Key is pressed:
 
 When the Assist Key is pressed:
 
-  First, on an Org mode heading, this cycles through views of the whole buffer outline.
+  First, on an Org mode heading, this cycles through views of the
+  whole buffer outline.
 
-  Second, on an Org mode link or agenda item, this displays standard Hyperbole help.
+  Second, on an Org mode link or agenda item, this displays
+  standard Hyperbole help.
 
   Third, if on an Org todo keyword, moves to the first todo keyword in
   the next set, if any.
@@ -1746,7 +1792,8 @@ handled by the separate implicit button type, `org-link-outside-org-mode'."
 	  '(outline-mode-hook outline-minor-mode-hook)))
 
 (defun smart-outline-level ()
-  "Return current outline level if point is on a line that begins with `outline-regexp', else 0."
+  "Return outline level if point is on a line that begins with `outline-regexp'.
+If on other line return 0."
   (save-excursion
     (beginning-of-line)
     (if (looking-at outline-regexp)
@@ -1799,8 +1846,8 @@ buffer and has moved the cursor to the selected buffer.
 
 If assist-key is pressed:
  (1) after an outline heading has been cut via the action-key, allow multiple
-     pastes throughout the buffer (last paste should be done with the Action Key,
-     not the Assist Key);
+     pastes throughout the buffer (last paste should be done with
+     the Action Key, not the Assist Key);
  (2) at the end of buffer, hide all bodies in buffer;
  (3) at the beginning of a heading line, cut the current heading (sans
      subtree) from the buffer;
@@ -1908,7 +1955,7 @@ If key is pressed:
 
 ;; Emacs push button support
 (defun smart-push-button-help (&optional pos use-mouse-action)
-  "Show help about a push button's action at optional POS or at point in the current buffer."
+  "Show help about a push button's action at optional POS or at point."
   (let* ((button (button-at (or pos (point))))
 	 (action (or (and use-mouse-action (button-get button 'mouse-action))
 		     (button-get button 'action)))

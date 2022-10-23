@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 21:42:03
-;; Last-Mod:     24-Apr-22 at 09:50:01 by Bob Weiner
+;; Last-Mod:      7-Oct-22 at 23:36:14 by Mats Lidell
 ;;
 ;; Copyright (C) 1991-2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -49,12 +49,11 @@
 
 ;; Derived from copy-to-register of "register.el"
 ;;;###autoload
-(defun hui-copy-to-register (register start end &optional delete-flag region)
-  "Copy region or thing into register REGISTER.
-With prefix arg, delete as well.
+(defun hui-copy-to-register (register start end &optional delete-flag region-flag)
+  "Copy region or thing into REGISTER.  With prefix arg, delete as well.
 Called from program, takes five args: REGISTER, START, END, DELETE-FLAG,
-and REGION.  START and END are buffer positions indicating what to copy.
-The optional argument REGION if non-nil, indicates that we're not just
+and REGION-FLAG.  START and END are buffer positions indicating what to copy.
+The optional argument REGION-FLAG if non-nil, indicates that we're not just
 copying some text between START and END, but we're copying the region.
 
 Interactively, reads the register using `register-read-with-preview'.
@@ -72,9 +71,15 @@ point; see `hui:delimited-selectable-thing'."
 	str)
     (prog1 (setq str
 		 ;; If called interactively, transient-mark-mode is
-		 ;; enabled, and no region is active, copy thing 
-		 ;; at point or current kcell ref when in kotl-mode
+		 ;; enabled, and no region is active, copy thing at
+		 ;; point, current kcell ref when in kotl-mode or
+		 ;; button if on an ibut or ebut.
 		 (cond ((and (called-interactively-p 'interactive)
+			     transient-mark-mode
+			     (not (use-region-p))
+                             (or (ebut:label-p) (ibut:label-p)))
+                        (hui-register-struct-at-point))
+                       ((and (called-interactively-p 'interactive)
 			     transient-mark-mode
 			     (not (use-region-p))
 			     (prog1 (setq thing-and-bounds (hui:delimited-selectable-thing-and-bounds)
@@ -84,7 +89,7 @@ point; see `hui:delimited-selectable-thing'."
 			       (when (and delete-flag start end)
 				 (delete-region start end))))
 			thing)
-		       ((and start end region)
+		       ((and start end region-flag)
 			(funcall region-extract-function delete-flag))
 		       ((and start end)
 			(filter-buffer-substring start end delete-flag))
@@ -152,7 +157,9 @@ visual feedback indicating the extent of the region being copied."
 ;;; ************************************************************************
 
 (defun hui:global-bind-key (cmd &optional new-key)
-  "Remove existing global key binding for CMD, rebind it to optional NEW-KEY (prompted for) and confirm the change."
+  "Remove existing global key binding for CMD, rebind it to optional NEW-KEY.
+If NEW-KEY is not provided, prompt for it.  Display a message confirming
+the binding."
   (interactive "CCommand to change key binding of: \nKNew key to bind: ")
   (if (not (functionp cmd))
       (error "(hui:global-bind-key): Invalid command, `%s'" cmd))
@@ -179,7 +186,9 @@ visual feedback indicating the extent of the region being copied."
       (message "{%s} now runs `%s'" new-key-text cmd))))
 
 (defun hui:bind-key (cmd &optional new-key)
-  "Remove existing Hyperbole key binding for CMD, rebind it to optional NEW-KEY (prompted for) and confirm the change."
+  "Remove existing Hyperbole key binding for CMD, rebind it to optional NEW-KEY.
+If NEW-KEY is not provided, prompt for it.  Display a message confirming the
+binding."
   (interactive "CCommand to change key binding of: \nKNew key to bind: ")
   (if (not (functionp cmd))
       (error "(hui:bind-key): Invalid command, `%s'" cmd))
@@ -211,10 +220,11 @@ visual feedback indicating the extent of the region being copied."
 
 With point:
   in a Koutline klink, copy the klink;
-  in a Koutline cell, outside any klink, copy a klink reference to the current cell;
+  in a Koutline cell, outside any klink,
+    copy a klink reference to the current cell;
   on a Hyperbole button, copy the text of the button excluding delimiters;
-  at the start of a paired delimiter, copy the text including the delimiters.
-"
+  at the start of a paired delimiter,
+    copy the text including the delimiters."
   (cond ((klink:absolute (klink:at-p)))
 	((derived-mode-p 'kotl-mode)
 	 (kcell-view:absolute-reference))
@@ -227,8 +237,10 @@ With point:
 	 (hui-select-get-thing))))
 
 (defun hui:delimited-selectable-thing-and-bounds ()
-  "Return a list of any delimited selectable thing at point as: (<string> <start position of thing> <end position of thing>) or nil if none.
-Start and end may be nil if thing was generated rather than extracted from a region."
+  "Return a list of any delimited selectable thing at point.
+The list is (<string> <start position of thing> <end position of thing>)
+or nil if none.  Start and end may be nil if thing was
+generated rather than extracted from a region."
   (let (thing-and-bounds thing start end)
     (cond ((setq thing-and-bounds (klink:at-p))
 	   (when thing-and-bounds
@@ -263,8 +275,10 @@ Default is the current button."
   (hui:hbut-operate #'ebut:act "Activate explicit button: " but))
 
 (defun hui:ebut-create (&optional start end)
-  "Interactively create an explicit Hyperbole button starting from label between optional START and END region points.
-Indicate button creation by delimiting and adding any necessary instance number to the button label.
+  "Interactively create an explicit Hyperbole button.
+Use any label between optional START and END region points.
+Indicate button creation by delimiting and adding any necessary
+instance number to the button label.
 
 For programmatic creation, use `ebut:program' instead."
   (interactive (list (when (use-region-p) (region-beginning))
@@ -643,10 +657,11 @@ When in the global button buffer, the default is the button at point."
 Use `hui:gbut-create' to create a global explicit button."
   (interactive "sCreate global implicit button labeled: \nsButton text (with any delimiters): ")
   (let (but-buf
+	opoint
         delimited-label)
     (save-excursion
       (setq delimited-label (concat ibut:label-start lbl ibut:label-end)
-	    but-buf (find-file-noselect (gbut:file)))
+	    but-buf (hpath:find-noselect (gbut:file)))
       (hui:buf-writable-err but-buf "gibut-create")
       ;; This prevents movement of point which might be useful to user.
       (set-buffer but-buf)
@@ -654,7 +669,11 @@ Use `hui:gbut-create' to create a global explicit button."
 	(goto-char (point-max))
         (unless (bolp)
 	  (insert "\n"))
+	(setq opoint (point))
         (insert delimited-label ": " text "\n")
+	(save-excursion
+	  (goto-char (+ opoint (length ibut:label-start)))
+	  (ibut:create))
 	(save-buffer))
       (message "`%s' global implicit button created." lbl))))
 
@@ -667,7 +686,7 @@ The default is the current button."
   (hui:hbut-operate #'hbut:act "Activate Hyperbole button: " but))
 
 (defun hui:hbut-current-act ()
-  "Activate Hyperbole button at point or signal an error if there is no such button."
+  "Activate Hyperbole button at point or signal an error if there is none."
   (interactive)
   (let ((but (hbut:at-p)))
     (cond ((null but)
@@ -677,10 +696,11 @@ The default is the current button."
 	  (t (hui:but-flash) (hbut:act but)))))
 
 (defun hui:hbut-delete (&optional but-key key-src)
-  "Delete a Hyperbole button given by optional BUT-KEY in optional KEY-SRC (default is current buffer).
-Return t if button is deleted, nil if user chooses not to delete or signal
-an error otherwise.  If called interactively, prompt user whether to delete
-and derive BUT-KEY from the button that point is within.
+  "Delete a Hyperbole button given by optional BUT-KEY in optional KEY-SRC.
+Use current buffer if no KEY-SRC is given.  Return t if button
+is deleted, nil if user chooses not to delete, or signal an error
+otherwise.  If called interactively, prompt user for whether to
+delete and derive BUT-KEY from the button that point is within.
 Signal an error if point is not within a button."
   (interactive)
   (when (and (null but-key) (hbut:at-p))
@@ -794,7 +814,7 @@ The default is the button at point."
 
 (defun hui:hbut-report (&optional arg)
   "Pretty print attributes of current button, using optional prefix ARG.
-See 'hbut:report'."
+See `hbut:report'."
   (interactive "P")
   (if (and arg (symbolp arg))
       (hui:hbut-help arg)
@@ -891,9 +911,11 @@ Signal an error when no such button is found in the current buffer."
 			 ibut:label-end)))))))))
 
 (defun hui:ibut-label-create ()
-  "Create an implicit button label preceding the text of an existing implicit button at point, if any.
-Add the label and delimiters around it plus any necessary label instance number.
-Signal an error if point is not on an implicit button or if the button already has a label.
+  "Create an implicit button label for an existing implicit button at point.
+Add the label, preceding the button, and delimiters around it
+plus any necessary label instance number.  Signal an error if
+point is not on an implicit button or if the button already has a
+label.
 
 If the implicit button type does not specify the starting locations of
 its buttons, the label is simply inserted at point."
@@ -927,7 +949,7 @@ its buttons, the label is simply inserted at point."
 	  (t (error "(hui:ibut-label-create): To add a label, point must be within the text of an implicit button")))))
 
 (defun hui:ibut-rename (lbl-key)
-  "Rename a label preceding a Hyperbole implicit button in the current buffer given by LBL-KEY.
+  "Rename a label preceding an implicit button in current buffer given by LBL-KEY.
 Signal an error when no such button is found in the current buffer."
   (interactive (list (save-excursion
 		       (hui:buf-writable-err (current-buffer) "ibut-rename")
@@ -961,13 +983,14 @@ Signal an error when no such button is found in the current buffer."
 	(hui:ibut-message t)))))
 
 (defun hui:link (release-window)
-  "Given RELEASE-WINDOW, return a list of the selected window (where depressed) and the RELEASE-WINDOW."
+  "Return a list of the selected window (where depressed) and the RELEASE-WINDOW."
   (list (selected-window) release-window))
 
 (defun hui:link-directly (&optional depress-window release-window)
-  "Create a Hyperbole link button at Action Key depress point, linked to release point.
-With optional DEPRESS-WINDOW and RELEASE-WINDOW, use the points from those instead.
-See also documentation for `hui:link-possible-types'."
+  "Create a link button at Action Key depress point, linked to release point.
+With optional DEPRESS-WINDOW and RELEASE-WINDOW, use the points
+from those instead.  See also documentation for
+`hui:link-possible-types'."
   (interactive (hmouse-choose-windows #'hui:link))
   (let ((but-window (or depress-window action-key-depress-window))
 	(referent-window (or release-window action-key-release-window (selected-window)))
@@ -1149,11 +1172,11 @@ DEFAULT-ACTYPE may be a valid symbol or symbol name."
     (get-buffer buf-name)))
 
 (defun hui:ebut-delete-op (interactive but-key key-src)
-  "INTERACTIVEly or not delete explicit Hyperbole button given by BUT-KEY in KEY-SRC.
-KEY-SRC may be a buffer or a pathname; when nil the current buffer is used.
-Return t if button is deleted, signal error otherwise.  If called
-with INTERACTIVE non-nil, derive BUT-KEY from the button that point is
-within."
+  "INTERACTIVEly or not, delete explicit button given by BUT-KEY in KEY-SRC.
+KEY-SRC may be a buffer or a pathname; when nil, the current
+buffer is used.  Return t if button is deleted; signal an error
+otherwise.  If called with INTERACTIVE non-nil, derive BUT-KEY
+from the button that point is within."
   (let ((buf (current-buffer)) (ebut))
     (if (if interactive
 	    (ebut:delete)
@@ -1191,8 +1214,9 @@ within."
 	     (cons actype args))))
 
 (defun hui:ebut-unmark (&optional but-key key-src directory)
-  "Remove delimiters and any instance number from button given by BUT-KEY in KEY-SRC of DIRECTORY.
-All args are optional, the current button and buffer file are the defaults.
+  "Remove delimiters and any instance number from button.
+Button is given by BUT-KEY in KEY-SRC of DIRECTORY.  All args are
+optional, the current button and buffer file are the defaults.
 
 With a prefix argument, also delete the button text between the delimiters."
   (interactive)
@@ -1257,7 +1281,7 @@ With a prefix argument, also delete the button text between the delimiters."
 		file-name)))
 
 (defun hui:hbut-operate (operation operation-str &optional but)
-  "Execute OPERATION (a function) described by OPERATION-STR action on a Hyperbole button.
+  "Execute OPERATION func described by OPERATION-STR action on a Hyperbole button.
 Either the button at point is used or if none, then one is prompted
 for with completion of all labeled buttons within the current buffer."
   (unless (or but (setq but (hbut:at-p)))
@@ -1306,9 +1330,9 @@ for with completion of all labeled buttons within the current buffer."
 
 (defun hui:help-ebut-highlight ()
   "Highlight any explicit buttons in help buffer associated with current buffer."
-  (if (fboundp 'hproperty:but-create)
-      (with-current-buffer (get-buffer (hypb:help-buf-name))
-	(hproperty:but-create))))
+  (when (fboundp 'hproperty:but-create)
+    (with-current-buffer (get-buffer (hypb:help-buf-name))
+      (hproperty:but-create))))
 
 (defun hui:htype-delete (htype-sym)
   "Delete HTYPE-SYM from use in current Hyperbole session.
@@ -1373,14 +1397,14 @@ Optional NO-SORT means display in decreasing priority order (natural order)."
 		   doc-list)))))
 
 (defun hui:htype-help-current-window (htype-sym &optional no-sort)
-  "Display in the current window, documentation for types from HTYPE-SYM which match to a regexp.
+  "Display in the current window output from `hui:htype-help' using HTYPE-SYM.
 Optional NO-SORT means display in decreasing priority order (natural order)."
   (let ((display-buffer-alist
 	 '(("\\`*Help" . ((lambda (buf _alist) (switch-to-buffer buf)))))))
     (hui:htype-help htype-sym no-sort)))
 
 (defun hui:ibut-delete-op (interactive but-key key-src)
-  "INTERACTIVEly or not delete explicit Hyperbole button given by BUT-KEY in KEY-SRC.
+  "INTERACTIVEly or not, delete explicit button given by BUT-KEY in KEY-SRC.
 KEY-SRC may be a buffer or a pathname; when nil the current buffer is used.
 Return t if button is deleted, signal error otherwise.  If called
 with INTERACTIVE non-nil, derive BUT-KEY from the button that point is

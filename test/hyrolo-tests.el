@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    19-Jun-21 at 22:42:00
-;; Last-Mod:      9-Apr-22 at 22:52:56 by Mats Lidell
+;; Last-Mod:     24-Sep-22 at 12:27:35 by Bob Weiner
 ;;
 ;; Copyright (C) 2021-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -49,33 +49,33 @@
         (load "../hyrolo-demo")
         (should (hact 'kbd-key "C-x 4r work RET"))
         (hy-test-helpers:consume-input-events)
-        (should (string= (buffer-name) "*Hyperbole Rolo*"))
+        (should (string= (buffer-name) hyrolo-display-buffer))
         (should (looking-at "======"))
         (forward-line 5)
         (should (looking-at "\\*.*Work")))
     (hyrolo-demo-quit)))
 
 (ert-deftest hyrolo-demo-tab-jump-to-first-match ()
-  "Tab shall jump to first match."
+  "{TAB} shall jump to first match."
   (skip-unless (not noninteractive))
   (unwind-protect
       (progn
         (load "../hyrolo-demo")
         (should (hact 'kbd-key "C-x 4r work RET TAB"))
         (hy-test-helpers:consume-input-events)
-        (should (string= (buffer-name) "*Hyperbole Rolo*"))
+        (should (string= (buffer-name) hyrolo-display-buffer))
         (should (looking-at "Work")))
     (hyrolo-demo-quit)))
 
 (ert-deftest hyrolo-demo-toggle-visibility ()
-  "Keys h and a shall toggle visibility."
+  "Keys {h} and {a} shall toggle visibility."
   (skip-unless (not noninteractive))
   (unwind-protect
       (progn
         (load "../hyrolo-demo")
         (should (hact 'kbd-key "C-x 4r work RET TAB"))
         (hy-test-helpers:consume-input-events)
-        (should (string= (buffer-name) "*Hyperbole Rolo*"))
+        (should (string= (buffer-name) hyrolo-display-buffer))
         (should (looking-at "Work"))
 
         (should (hact 'kbd-key "h"))
@@ -94,45 +94,40 @@
     (hyrolo-demo-quit)))
 
 (ert-deftest hyrolo-demo-show-overview ()
-  "Keys o shall show overview."
+  "Key {o} shall show overview."
   (skip-unless (not noninteractive))
   (unwind-protect
       (progn
         (load "../hyrolo-demo")
         (should (hact 'kbd-key "C-x 4r work RET TAB"))
         (hy-test-helpers:consume-input-events)
-        (should (string= (buffer-name) "*Hyperbole Rolo*"))
-        (should (looking-at "Work"))
+        (should (string= (buffer-name) hyrolo-display-buffer))
+        (should (looking-at "work"))
 
         (should (hact 'kbd-key "o"))
         (hy-test-helpers:consume-input-events)
         (end-of-line)
-        (should-not (get-char-property (point) 'invisible))
+        (should (get-char-property (point) 'invisible))
 
-        ;; Check second line is an outline
-        (should (hact 'kbd-key "n"))
+        ;; Check next match is an outline
+        (should (hact 'kbd-key "TAB"))
         (end-of-line)
         (should (get-char-property (point) 'invisible))
 
-        ;; Check third line is an outline
-        (should (hact 'kbd-key "n"))
-        (end-of-line)
-        (should (get-char-property (point) 'invisible))
-
-        ;; Check fourth line is end of buffer
+        ;; Check next line is end of buffer
         (should (hact 'kbd-key "n"))
         (should (equal (point) (point-max))))
     (hyrolo-demo-quit)))
 
 (ert-deftest hyrolo-demo-move-to-beginning-and-end-of-file ()
-  "Keys '<', '.' and '>', ',' shall move to beginning and end of file respectively."
+  "Keys {<} or {.} and {>} or {,} shall move to beginning and end of file, respectively."
   (skip-unless (not noninteractive))
   (unwind-protect
       (progn
         (load "../hyrolo-demo")
         (should (hact 'kbd-key "C-x 4r work RET TAB"))
         (hy-test-helpers:consume-input-events)
-        (should (string= (buffer-name) "*Hyperbole Rolo*"))
+        (should (string= (buffer-name) hyrolo-display-buffer))
         (should (looking-at "Work"))
 
         (should (hact 'kbd-key ">"))
@@ -149,17 +144,19 @@
     (hyrolo-demo-quit)))
 
 (ert-deftest hyrolo-demo-move-between-entries-on-same-level ()
-  "Keys '<', '.' and '>', ',' shall move to beginning and end of file respectively."
+  "Key {n} shall move to the next cell, {f} the next same level cell,
+and {b} the previous same level cell."
   (skip-unless (not noninteractive))
   (unwind-protect
       (progn
         (load "../hyrolo-demo")
         (should (hact 'kbd-key "C-x 4r com RET TAB"))
         (hy-test-helpers:consume-input-events)
-        (should (string= (buffer-name) "*Hyperbole Rolo*"))
+        (should (string= (buffer-name) hyrolo-display-buffer))
         (should (hact 'kbd-key "<"))
         (should (equal (point) (point-min)))
 
+	(re-search-forward hyrolo-hdr-regexp nil t 2)
         (should (hact 'kbd-key "n"))
         (should (looking-at "\\*\\*\\s-+Strong"))
 
@@ -178,10 +175,12 @@
         (load "../hyrolo-demo")
         (should (hact 'kbd-key "C-x 4r com RET TAB"))
         (hy-test-helpers:consume-input-events)
-        (should (string= (buffer-name) "*Hyperbole Rolo*"))
+
+        (should (string= (buffer-name) hyrolo-display-buffer))
         (should (hact 'kbd-key "<"))
         (should (equal (point) (point-min)))
 
+	(re-search-forward hyrolo-hdr-regexp nil t 2)
         (should (hact 'kbd-key "n"))
         (should (looking-at "\\*\\*\\s-+Strong"))
 
@@ -197,7 +196,7 @@
     (hyrolo-demo-quit)))
 
 (ert-deftest hyrolo-sort-test ()
-  "Rolo files can be sorted."
+  "HyRolo files can be sorted."
   (let ((hyrolo-file (make-temp-file "hypb" nil ".otl")))
     (unwind-protect
         (let ((hyrolo-file-list (list hyrolo-file)))
@@ -228,7 +227,7 @@
       (delete-file hyrolo-file))))
 
 (ert-deftest hyrolo-sort-records-at-different-levels ()
-  "Rolo can sort records at different levels."
+  "HyRolo can sort records at different levels."
   (let ((hyrolo-file (make-temp-file "hypb" nil ".otl"
                                      (concat "* 2\n\t2022-03-20\n"
                                              "** 2\n\t2022-03-20\n"

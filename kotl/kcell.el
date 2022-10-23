@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     1-May-93
-;; Last-Mod:     15-Jul-22 at 23:24:10 by Mats Lidell
+;; Last-Mod:      1-Oct-22 at 15:11:43 by Bob Weiner
 ;;
 ;; Copyright (C) 1993-2022  Free Software Foundation, Inc.
 ;; See the "../HY-COPY" file for license information.
@@ -15,6 +15,10 @@
 ;;   Defines kcells, in-memory, individually addressable elements of Koutlines,
 ;;   along with a persistent representation called kcell-data for writing to
 ;;   files.  Node text content is stored separately in the kview for efficiency.
+;;
+;;   To obtain the kcell at a point in the buffer, use `kcell-view:cell'.
+;;   To move point to a specific cell given a reference string, use
+;;   `kotl-mode:goto-cell' or `kview:goto-cell-id'.
 ;;
 ;;   For compatibility between kcell and kcell-data representations,
 ;;   the unique per Koutline permanent idstamp for each kcell is also stored
@@ -59,8 +63,9 @@ not already there."
    plist))
 
 (defun kcell:create-top (&optional top-cell-attributes)
-  "Return a new koutline top cell with optional property list of TOP-CELL-ATTRIBUTES.
-The idstamp of the top cell is always 0 and this cell stores the idstamp-counter."
+  "Return a new top cell with optional property list of TOP-CELL-ATTRIBUTES.
+The idstamp of the top cell is always 0 and this cell stores the
+idstamp-counter."
   (kcell:create top-cell-attributes))
 
 (defalias 'kcell:get-attr 'plist-get)
@@ -69,11 +74,32 @@ The idstamp of the top cell is always 0 and this cell stores the idstamp-counter
   "Is OBJECT a kcell?"
   (and (listp object) (plist-get object 'creator)))
 
-(defalias 'kcell:plist 'identity)
+;;;###autoload
+(defun kcell:parse-cell-ref (cell-ref)
+  "Parse CELL-REF string and return list of strings (<cell-id> <viewspec>).
+If any item in the list is missing, it is nil."
+  (let (cell-id
+	kvspec)
+    ;; !! Todo: Remove any relative specs and view specs from
+    ;; cell-ref to form cell-id.  Really should account for Augment-style
+    ;; relative specs here, but we don't yet support them.
+    (if (and (stringp cell-ref)
+	     (string-match "\\(\\.[a-zA-Z]+\\)?\\([|:][^|: \t\n\r\f] *\\)\\|\\.[a-zA-Z]+"
+			   cell-ref))
+	(setq cell-id (substring cell-ref 0 (match-beginning 0))
+	      kvspec  (when (match-beginning 2)
+			(match-string 2 cell-ref)))
+      (setq cell-id cell-ref
+	    kvspec nil))
+    (list cell-id kvspec)))
+
+(defun kcell:plist (kcell)
+  "Return the property list of KCELL."
+  (identity kcell))
 
 ;;;###autoload
 (defun kcell:ref-to-id (cell-ref &optional kviewspec-flag)
-  "When CELL-REF is valid, return a CELL-REF string converted to a cell idstamp (integer).
+  "Return a CELL-REF string converted to a cell idstamp (integer).
 If CELL-REF contains both a relative and a permanent id, the permanent id is
 returned.  If CELL-REF is invalid, nil is returned.
 
@@ -94,8 +120,8 @@ or any of the following string forms:
   :viewspec - an augment viewspec, ignored for now.
 
 Optionally, any of these id forms (or the relative form) may be followed by
-zero or more whitespace characters, a | and some view specification
-characters.
+zero or more whitespace characters and optionally a comma, followed by
+the '|' character and some view specification characters.
 
 Augment capabilities not yet implemented and ignored for now:
   1. Augment viewspec characters preceded by a colon
@@ -109,7 +135,8 @@ Augment capabilities not yet implemented and ignored for now:
 	  ((stringp cell-ref)
 	   (let (kviewspec
 		 idstamp-string)
-	     (setq cell-ref (replace-regexp-in-string "\\s-+" "" cell-ref nil t))
+	     ;; Remove whitespace and any comma
+	     (setq cell-ref (replace-regexp-in-string "\\s-*,?\\s-*" "" cell-ref nil t))
 	     (if (string-equal cell-ref "0")
 		 "0"
 	       ;; Ignore Augment :viewspec.
@@ -184,7 +211,7 @@ Augment capabilities not yet implemented and ignored for now:
 ;;;
 
 (defun kcell-data:create (cell idstamp)
-  "Given a kotl CELL and IDSTAMP (an integer), return a kcell-data structure to write to a file.
+  "Given a kotl CELL and IDSTAMP (an integer), return a kcell-data structure.
 If CELL, its idstamp, or its property list are nil, this repairs the cell by
 assuming it is the cell at point and filling in the missing information."
    (let ((plist (kcell:plist cell)))

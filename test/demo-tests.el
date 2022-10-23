@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    30-Jan-21 at 12:00:00
-;; Last-Mod:     16-Jul-22 at 22:39:47 by Mats Lidell
+;; Last-Mod:     24-Sep-22 at 12:40:19 by Bob Weiner
 ;;
 ;; Copyright (C) 2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -23,6 +23,7 @@
 (require 'hload-path)
 (require 'hypb)
 (require 'hib-social)
+(require 'hyrolo)
 (require 'eww)
 (require 'compile)
 (require 'el-mock)
@@ -43,7 +44,7 @@
         (action-key)
         (should (bolp))
         (should (looking-at "^\\* Smart")))
-    (kill-buffer "DEMO")))
+    (hy-test-helpers:kill-buffer "DEMO")))
 
 (ert-deftest demo-smart-mouse-keys-ebut-test ()
   (unwind-protect
@@ -54,7 +55,7 @@
         (action-key)
         (should (bolp))
         (should (looking-at "^ +\\* Smart")))
-    (kill-buffer "DEMO")))
+    (hy-test-helpers:kill-buffer "DEMO")))
 
 (ert-deftest demo-table-of-contents-test ()
   (unwind-protect
@@ -65,7 +66,7 @@
         (action-key)
         (should (bolp))
         (should (looking-at "^* Koutliner")))
-    (kill-buffer "DEMO")))
+    (hy-test-helpers:kill-buffer "DEMO")))
 
 ;; Smart scrolling
 (ert-deftest demo-smart-scrolling-proportional-test ()
@@ -81,7 +82,7 @@
           (end-of-line)
           (action-key)
           (should (= pos (window-start)))))
-    (kill-buffer "DEMO")))
+    (hy-test-helpers:kill-buffer "DEMO")))
 
 (ert-deftest demo-smart-scrolling-non-proportional-test ()
   (unwind-protect
@@ -95,34 +96,32 @@
           (end-of-line)
           (action-key)
           (should (< pos (window-start)))))
-    (kill-buffer "DEMO")))
+    (hy-test-helpers:kill-buffer "DEMO")))
 
 ;; Hyperbole menus
 
 ;; Help Buffer
 (ert-deftest demo-action-key-help ()
   (let ((help-buffer "*Help: Hyperbole Action Key*"))
-    (if (get-buffer help-buffer)
-        (kill-buffer help-buffer))
+    (hy-test-helpers:kill-buffer help-buffer)
     (unwind-protect
         (with-temp-buffer
           (insert "Text")
           (hkey-help)
           (should (get-buffer help-buffer))
-      (kill-buffer help-buffer)))))
+      (hy-test-helpers:kill-buffer help-buffer)))))
 
 (ert-deftest demo-assist-key-help ()
   (let ((help-buffer "*Help: Hyperbole Assist Key*"))
-    (if (get-buffer help-buffer)
-        (kill-buffer help-buffer))
+    (hy-test-helpers:kill-buffer help-buffer)
     (unwind-protect
         (with-temp-buffer
           (insert "Text")
           (hkey-help t)
           (should (get-buffer help-buffer))
-      (kill-buffer help-buffer)))))
+      (hy-test-helpers:kill-buffer help-buffer)))))
 
-;; Hy-control
+;; HyControl
 (ert-deftest demo-window-grid-22-test ()
   (skip-unless (not noninteractive))
   (unwind-protect
@@ -131,7 +130,7 @@
         (should (hact 'kbd-key "C-h h s f @ 22 RET Q"))
         (hy-test-helpers:consume-input-events)
         (should (eq 4 (length (window-list)))))
-    (kill-buffer "DEMO")))
+    (hy-test-helpers:kill-buffer "DEMO")))
 
 (ert-deftest demo-window-grid-33-test ()
   (skip-unless (not noninteractive))
@@ -141,17 +140,17 @@
         (should (hact 'kbd-key "C-h h s f @ 33 RET Q"))
         (hy-test-helpers:consume-input-events)
         (should (eq 9 (length (window-list)))))
-    (kill-buffer "DEMO")))
+    (hy-test-helpers:kill-buffer "DEMO")))
 
-;; Hy-rolo
-(ert-deftest demo-hy-rolo-test ()
+;; HyRolo
+(ert-deftest demo-hyrolo-test ()
   (skip-unless (not noninteractive))
   (unwind-protect
       (with-temp-buffer
         (load (expand-file-name "hyrolo-demo.el" hyperb:dir))
         (should (hact 'kbd-key "C-x 4 r work RET"))
         (hy-test-helpers:consume-input-events)
-        (should (string= "*Hyperbole Rolo*" (buffer-name)))
+        (should (string= (buffer-name) hyrolo-display-buffer))
         (should (search-forward "Dunn, John")))
     (hyrolo-demo-quit)))
 
@@ -163,7 +162,7 @@
         (goto-char 5)
         (action-key)
         (should (string= "*info*" (buffer-name))))
-    (kill-buffer "*info*")))
+    (hy-test-helpers:kill-buffer "*info*")))
 
 ;; History
 (ert-deftest demo-hy-history-test ()
@@ -181,7 +180,7 @@
           (should (string= tmp-buf-name (buffer-name)))
           (should (equal pm (point-marker)))
           ))
-    (kill-buffer "*info*")))
+    (hy-test-helpers:kill-buffer "*info*")))
 
 ;; Implicit Buttons
 (ert-deftest demo-implicit-button-test ()
@@ -191,7 +190,7 @@
         (goto-char 2)
         (action-key)
         (should (string= "DEMO" (buffer-name))))
-    (kill-buffer "DEMO")))
+    (hy-test-helpers:kill-buffer "DEMO")))
 
 (ert-deftest demo-implicit-button-action-button-action-type-invocation-test ()
   (unwind-protect
@@ -201,7 +200,7 @@
         (action-key)
         (should (string= "DEMO" (buffer-name)))
         (should (= 5 (line-number-at-pos (point)))))
-    (kill-buffer "DEMO")))
+    (hy-test-helpers:kill-buffer "DEMO")))
 
 (ert-deftest demo-implicit-button-action-button-function-call-test ()
   (with-temp-buffer
@@ -252,7 +251,7 @@
         (action-key)
         (should (string= "README.md" (buffer-name)))
         (should (looking-at "## Why was Hyperbole developed\\?")))
-    (kill-buffer "README.md")))
+    (hy-test-helpers:kill-buffer "README.md")))
 
 (ert-deftest demo-implicit-button-line-and-column-test ()
   (unwind-protect
@@ -262,7 +261,7 @@
         (action-key)
         (should (string= "HY-ABOUT" (buffer-name)))
         (should (looking-at "hyperbole/")))
-    (kill-buffer "HY-ABOUT")))
+    (hy-test-helpers:kill-buffer "HY-ABOUT")))
 
 ;; org
 (ert-deftest demo-org-hide-header-test ()
@@ -293,8 +292,8 @@
         (should (string= "COPYING" (buffer-name)))
         (should (looking-at ".*GNU GENERAL PUBLIC LICENSE")))
     (progn
-      (kill-buffer "MANIFEST")
-      (kill-buffer "COPYING"))))
+      (hy-test-helpers:kill-buffer "MANIFEST")
+      (hy-test-helpers:kill-buffer "COPYING"))))
 
 ;; Email compose
 (ert-deftest demo-mail-compose-test ()
@@ -304,7 +303,7 @@
         (goto-char 2)
         (action-key)
         (should (string= "*mail*" (buffer-name))))
-    (kill-buffer "*mail*")))
+    (hy-test-helpers:kill-buffer "*mail*")))
 
 
 (defun demo-should-browse-twitter-url (url &optional new-window)
@@ -363,8 +362,8 @@
         (set-buffer "*Occur*")
         (should (looking-at "[0-9]+ matches in [0-9]+ lines for \"Hyperbole\" in buffer: DEMO")))
     (progn
-      (kill-buffer "DEMO")
-      (kill-buffer "*Occur*"))))
+      (hy-test-helpers:kill-buffer "DEMO")
+      (hy-test-helpers:kill-buffer "*Occur*"))))
 
 ;; Annotated references
 (ert-deftest demo-annotated-reference-test ()
@@ -377,7 +376,7 @@
         (should (looking-at "\\[FSF 19\\] Free Software Foundation"))
         (forward-line -2)
         (should (looking-at "\\* References")))
-    (kill-buffer "DEMO")))
+    (hy-test-helpers:kill-buffer "DEMO")))
 
 ;; Man appropos
 (ert-deftest demo-man-appropos-test ()
@@ -397,7 +396,7 @@
         (should (hact 'kbd-key "C-h h a factorial RET"))
         (hy-test-helpers:consume-input-events)
         (hy-test-helpers:should-last-message "Factorial of 5 = 120"))
-    (kill-buffer "DEMO")))
+    (hy-test-helpers:kill-buffer "DEMO")))
 
 (ert-deftest demo-factorial-ebutton-test ()
   (skip-unless (not noninteractive))
@@ -408,7 +407,7 @@
         (forward-char -5)
         (action-key)
         (hy-test-helpers:should-last-message "Factorial of 5 = 120"))
-    (kill-buffer "DEMO")))
+    (hy-test-helpers:kill-buffer "DEMO")))
 
 ;; Fast demo key series
 (ert-deftest fast-demo-key-series-help-buffer ()
@@ -420,7 +419,7 @@
           (goto-char 3)
           (action-key)
           (should (get-buffer help-buffer)))
-      (kill-buffer help-buffer))))
+      (hy-test-helpers:kill-buffer help-buffer))))
 
 (ert-deftest fast-demo-key-series-window-grid-22 ()
   "Action key on window grid key series creates a grid."
@@ -444,7 +443,7 @@ hyberbole folder that starts with kotl."
         (action-key)
         (hy-test-helpers:consume-input-events)
         (should (= 4 (length (window-list)))))
-    (kill-buffer "FAST-DEMO")))
+    (hy-test-helpers:kill-buffer "FAST-DEMO")))
 
 (ert-deftest fast-demo-key-series-emacs-lisp-mode ()
   "Action key brings up `emacs-lisp-mode' files in a grid.
@@ -485,9 +484,9 @@ enough files with matching mode loaded."
           (hy-test-helpers:consume-input-events)
           (with-current-buffer buff
             (should (looking-at-p (concat ".*" tmp)))))
-      (kill-buffer buff)
+      (hy-test-helpers:kill-buffer buff)
       (global-set-key (kbd "C-x C-b") old)
-      (kill-buffer (get-file-buffer tmp))
+      (hy-test-helpers:kill-buffer (get-file-buffer tmp))
       (delete-file tmp))))
 
 (ert-deftest fast-demo-key-series-keep-lines-slash ()
@@ -505,9 +504,9 @@ enough files with matching mode loaded."
           (hy-test-helpers:consume-input-events)
           (with-current-buffer buff
             (should (looking-at-p (concat ".*[\\/]")))))
-      (kill-buffer buff)
+      (hy-test-helpers:kill-buffer buff)
       (global-set-key (kbd "C-x C-b") old)
-      (kill-buffer dir))))
+      (hy-test-helpers:kill-buffer dir))))
 
 (ert-deftest fast-demo-key-series-keep-lines-dired ()
   "Action key opens Ibuffer and keep `dired-mode' lines."
@@ -524,18 +523,19 @@ enough files with matching mode loaded."
           (hy-test-helpers:consume-input-events)
           (with-current-buffer buff
             (should (looking-at-p (concat ".*Dired by name")))))
-      (kill-buffer buff)
+      (hy-test-helpers:kill-buffer buff)
       (global-set-key (kbd "C-x C-b") old)
-      (kill-buffer dir))))
+      (hy-test-helpers:kill-buffer dir))))
 
-(ert-deftest fast-demo-key-series-shell-pushd-hyperb-dir ()
-  "Action key executes pushd shell command."
+(ert-deftest fast-demo-key-series-shell-cd-hyperb-dir ()
+  "Action key executes cd shell command."
   (skip-unless (not noninteractive))
-  (let ((shell-file-name (executable-find "bash"))
-        (shell-buffer-name "*shell*"))
+  (let* ((shell-file-name (executable-find "sh"))
+         (shell-buffer-name "*shell*")
+	 (existing-shell-flag (get-buffer-process shell-buffer-name)))
     (unwind-protect
         (with-temp-buffer
-          (insert "{ M-x shell RET M-> (pushd ${hyperb:dir} && echo \"PWD=$(pwd)\") RET }")
+          (insert "{ M-x shell RET M-> (cd ${hyperb:dir} && echo \"PWD=$(pwd)\") RET }")
           (goto-char 5)
           (action-key)
           (hy-test-helpers:consume-input-events)
@@ -546,14 +546,16 @@ enough files with matching mode loaded."
               (while (not (search-forward "PWD=" nil t))
                 (accept-process-output (get-buffer-process shell-buffer-name))))
             (should (looking-at-p (directory-file-name hyperb:dir)))))
-      (set-process-query-on-exit-flag (get-buffer-process shell-buffer-name) nil)
-      (kill-buffer shell-buffer-name))))
+      (unless existing-shell-flag
+	(set-process-query-on-exit-flag (get-buffer-process shell-buffer-name) nil)
+	(hy-test-helpers:kill-buffer shell-buffer-name)))))
 
 (ert-deftest fast-demo-key-series-shell-grep ()
   "Action key executes grep shell command."
   (skip-unless (not noninteractive))
-  (let ((shell-file-name (executable-find "bash"))
-        (shell-buffer-name "*shell*"))
+  (let* ((shell-file-name (executable-find "sh"))
+         (shell-buffer-name "*shell*")
+	 (existing-shell-flag (get-buffer-process shell-buffer-name)))
     (unwind-protect
         (with-temp-buffer
           (insert "{M-x shell RET M-> (export HYPERBOLE_DIR=${hyperb:dir} && cd $HYPERBOLE_DIR && grep -n gbut:label-list *.el) RET}")
@@ -562,30 +564,33 @@ enough files with matching mode loaded."
           (hy-test-helpers:consume-input-events)
           (with-current-buffer shell-buffer-name
             (with-timeout (5 (ert-fail "Test timed out"))
-              (while (not (string-match-p "\n.*\.el:[0-9]+:.*defun.*gbut:label-list \(\)" (buffer-substring-no-properties (point-min) (point-max))))
+              (while (not (string-match-p "\n.*\\.el:[0-9]+:.*defun.*gbut:label-list ()" (buffer-substring-no-properties (point-min) (point-max))))
                 (accept-process-output (get-buffer-process shell-buffer-name))))
-            (should (string-match-p "\n.*\.el:[0-9]+:.*defun.*gbut:label-list \(\)" (buffer-substring-no-properties (point-min) (point-max))))))
-      (set-process-query-on-exit-flag (get-buffer-process shell-buffer-name) nil)
-      (kill-buffer shell-buffer-name))))
+            (should (string-match-p "\n.*\\.el:[0-9]+:.*defun.*gbut:label-list ()" (buffer-substring-no-properties (point-min) (point-max))))))
+      (unless existing-shell-flag
+	(set-process-query-on-exit-flag (get-buffer-process shell-buffer-name) nil)
+	(hy-test-helpers:kill-buffer shell-buffer-name)))))
 
 (ert-deftest fast-demo-key-series-shell-apropos ()
   "Action key executes apropos shell command."
   (skip-unless (not noninteractive))
-  (let ((shell-file-name (executable-find "bash"))
-        (shell-buffer-name "*shell*"))
+  (let* ((shell-file-name (executable-find "sh"))
+         (shell-buffer-name "*shell*")
+	 (existing-shell-flag (get-buffer-process shell-buffer-name)))
     (unwind-protect
         (with-temp-buffer
-          (insert "{M-x shell RET M-> (apropos grep) RET}")
+          (insert "{M-x shell RET M-> (apropos grep) RET RET}")
           (goto-char 5)
           (action-key)
           (hy-test-helpers:consume-input-events)
           (with-current-buffer shell-buffer-name
             (with-timeout (5 (ert-fail "Test timed out"))
-              (while (not (string-match-p "\ngrep ?\(1\).*-" (buffer-substring-no-properties (point-min) (point-max))))
+              (while (not (string-match-p "grep ?(1).*-" (buffer-substring-no-properties (point-min) (point-max))))
                 (accept-process-output (get-buffer-process shell-buffer-name))))
-            (should (string-match-p "\ngrep ?\(1\).*-" (buffer-substring-no-properties (point-min) (point-max))))))
-      (set-process-query-on-exit-flag (get-buffer-process shell-buffer-name) nil)
-      (kill-buffer shell-buffer-name))))
+            (should (string-match-p "grep ?(1).*-" (buffer-substring-no-properties (point-min) (point-max))))))
+      (unless existing-shell-flag
+	(set-process-query-on-exit-flag (get-buffer-process shell-buffer-name) nil)
+	(hy-test-helpers:kill-buffer shell-buffer-name)))))
 
 ;; This file can't be byte-compiled without the `el-mock' package (because of
 ;; the use of the `with-mock' macro), which is not a dependency of Hyperbole.

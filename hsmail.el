@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     9-May-91 at 04:50:20
-;; Last-Mod:     17-Apr-22 at 11:23:02 by Bob Weiner
+;; Last-Mod:      7-Oct-22 at 23:52:10 by Mats Lidell
 ;;
 ;; Copyright (C) 1991-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -55,7 +55,7 @@ for a comment.")
   "Add a comment to the current outgoing message.
 Only if Hyperbole has been loaded and `inhibit-hyperbole-messaging' is nil.
 Optional COMMENT-FORM is evaluated to obtain the string to add to the
-message.  If not given, 'smail:comment' is evaluated by default."
+message.  If not given, `smail:comment' is evaluated by default."
   (if (and (featurep 'hyperbole) (not inhibit-hyperbole-messaging))
       (let ((comment (eval (or comment-form smail:comment) t)))
 	(if comment
@@ -77,7 +77,7 @@ message.  If not given, 'smail:comment' is evaluated by default."
   "See `message-yank-original'.
 
 If supercite is in use, header fields are never deleted.
-Use (setq sc-nuke-mail-headers 'all) to have them removed."
+Use (setq sc-nuke-mail-headers \\='all) to have them removed."
   (let ((modified (buffer-modified-p))
 	body-text)
 	(when (and message-reply-buffer
@@ -141,7 +141,7 @@ Use (setq sc-nuke-mail-headers 'all) to have them removed."
 Put point before the text and mark after.
 
 Normally indent each nonblank line ARG spaces (default 3).
-However, if ‘mail-yank-prefix’ is non-nil, insert that prefix
+However, if `mail-yank-prefix’ is non-nil, insert that prefix
 on each line when `mail-indent-citation' is called.
 
 Apply `mail-citation-hook', `mail-yank-hook' or `mail-yank-hooks'
@@ -151,7 +151,7 @@ Just \\[universal-argument] as argument means don't indent,
 insert no prefix, and don't delete any header fields.
 
 If supercite is in use, header fields are never deleted.
-Use (setq sc-nuke-mail-headers 'all) to have them removed."
+Use (setq sc-nuke-mail-headers \\='all) to have them removed."
   (interactive "P")
   (if mail-reply-action
       (let ((start (point))

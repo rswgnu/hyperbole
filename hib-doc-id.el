@@ -3,9 +3,9 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    30-Sep-92 at 19:39:59
-;; Last-Mod:     24-Jan-22 at 00:18:32 by Bob Weiner
+;; Last-Mod:     25-Sep-22 at 02:39:34 by Bob Weiner
 ;;
-;; Copyright (C) 1991-2021  Free Software Foundation, Inc.
+;; Copyright (C) 1991-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
 ;;
 ;; This file is part of GNU Hyperbole.
@@ -93,7 +93,7 @@
     (concat "ID:[ \t]*"
 	    (regexp-quote doc-id-start) "[ \t]*" (regexp-quote doc-id)
 	    "[ \t]*" (regexp-quote doc-id-end)))
-  "Function of one argument that returns regexp which matches only within DOC-ID's index entry.")
+  "Single arg function returning regexp matching within DOC-ID's index entry only.")
 
 (defvar doc-id-p (lambda (str)
 		   (and (stringp str)
@@ -103,7 +103,8 @@
   "Value is a function with a boolean result that tests whether `str' is a doc id.")
 
 (defvar doc-id-online-regexp "^Online-Loc:[ \t]*\"\\([^\"\t\r\n\f]+\\)\""
-  "Regexp whose 1st grouping matches a double quoted index entry implicit button that displays an online document.")
+  "Regexp with 1st grouping matching a double quoted index entry implicit button.
+The implicit button displays an online document.")
 
 ;;; ************************************************************************
 ;;; Public implicit button types
@@ -124,7 +125,7 @@ an error."
 	   (error "(doc-id-index-entry): You must set the `doc-id-indices' variable first"))
 	  ((let ((hyrolo-entry-regexp doc-id-index-entry-regexp))
 	     (zerop (hyrolo-grep (funcall doc-id-match doc-id)
-				 1 doc-id-indices nil 'no-display)))
+				 1 doc-id-indices nil nil 'no-display)))
 	   (error "(doc-id-index-entry): %s not found in document index"
 		  delim-doc-id))
 	  ;; Matching index entry has been put into `hyrolo-display-buffer'.
@@ -178,7 +179,7 @@ Also display standard Hyperbole help for implicit button BUT."
     (cond ((null doc-id-indices)
 	   (error "(doc-id-index-entry): You must set the `doc-id-indices' variable first"))
 	  ((zerop (hyrolo-grep (funcall doc-id-match doc-id) 1 doc-id-indices
-			       nil 'no-display))
+			       nil nil 'no-display))
 	   (error
 	     "(doc-id-index-entry): No document index entry found for %s%s%s"
 		  doc-id-start doc-id doc-id-end)))

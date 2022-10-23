@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Aug-92
-;; Last-Mod:     14-Jun-22 at 21:22:39 by Mats Lidell
+;; Last-Mod:      7-Oct-22 at 00:17:10 by Mats Lidell
 ;;
 ;; Copyright (C) 1992-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -36,7 +36,7 @@
 ;;; ************************************************************************
 
 (defcustom hproperty:but-highlight-flag t
-  "*Non-nil (default value) means highlight all explict buttons with `hproperty:but-face'."
+"*Non-nil (default) applies `hproperty:but-face' highlight to explicit buttons."
   :type 'boolean
   :group 'hyperbole-buttons)
 
@@ -228,7 +228,9 @@ highlighted."
 ;;; ************************************************************************
 
 (defun hproperty:cycle-but-color (&optional color)
-  "Switch button color to optional COLOR name or next item referenced by hproperty:color-ptr."
+  "Switch button color.
+Set color to optional COLOR name or next item referenced by
+hproperty:color-ptr."
   (interactive "sHyperbole button color: ")
   (when (display-color-p)
     (when color (setq hproperty:color-ptr nil))
@@ -253,23 +255,23 @@ highlighted."
   (let ((ibut) (prev)
 	(start (hattr:get 'hbut:current 'lbl-start))
 	(end   (hattr:get 'hbut:current 'lbl-end))
-	(b) (a))
+	but-face)
     (if (and start end (setq prev (hproperty:but-p start)
 			     ibut t))
-	(if (not prev) (hproperty:but-add start end hproperty:but-face))
+	(unless prev
+	  (hproperty:but-add start end hproperty:but-face))
       (setq start (point)))
-    (setq b (and (hproperty:but-p start) hproperty:but-face))
-    (when (setq a b)
+    (when (setq but-face (when (hproperty:but-p start) hproperty:but-face))
       (unwind-protect
 	  (progn
 	    (hproperty:set-but-face start hproperty:flash-face)
 	    (sit-for hproperty:but-flash-time-seconds)) ;; Force display update
-	(hproperty:set-but-face start a)
+	(hproperty:set-but-face start but-face)
 	(redisplay t)))
     (and ibut (not prev) (hproperty:but-delete start))))
 
 (defun hproperty:select-item (&optional pnt)
-  "Select item in current buffer at optional position PNT using hproperty:item-face."
+  "Select item in current buffer at optional position PNT with hproperty:item-face."
   (when pnt (goto-char pnt))
   (skip-chars-forward " \t")
   (skip-chars-backward "^ \t\n\r")
@@ -280,7 +282,7 @@ highlighted."
   (sit-for 0))  ;; Force display update
 
 (defun hproperty:select-line (&optional pnt)
-  "Select line in current buffer at optional position PNT using hproperty:item-face."
+  "Select line in current buffer at optional position PNT with hproperty:item-face."
   (when pnt (goto-char pnt))
   (save-excursion
     (beginning-of-line)
