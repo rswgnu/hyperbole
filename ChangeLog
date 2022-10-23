@@ -297,7 +297,7 @@
   hyrolo.el (hyrolo-edit-entry): Fix so if point is not on an entry
     (src is a buffer, not a string), then raise an error.
 
-2022-10-13  Mats Lidell  <matsl@gnu.org>
+2022-10-20  Mats Lidell  <matsl@gnu.org>
 
 * hload-path.el (hyperb:dir): Use defvar. Thanks to Stefan Monnier.
 
