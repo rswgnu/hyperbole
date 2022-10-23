@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    6/30/93
-;; Last-Mod:      9-Oct-22 at 16:25:35 by Bob Weiner
+;; Last-Mod:     16-Oct-22 at 19:29:20 by Mats Lidell
 ;;
 ;; Copyright (C) 1993-2022  Free Software Foundation, Inc.
 ;; See the "../HY-COPY" file for license information.
@@ -19,6 +19,14 @@
 
 (eval-and-compile (mapc #'require '(cl-lib delsel hsettings hmail hypb kfile
 				    kvspec kcell outline org org-table kotl-orgtbl)))
+
+;;; ************************************************************************
+;;; Public declarations
+;;; ************************************************************************
+
+(defvar cmpl-last-insert-location)
+(defvar cmpl-original-string)
+(defvar completion-to-accept)
 
 ;;; ************************************************************************
 ;;; Public variables

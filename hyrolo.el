@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     7-Jun-89 at 22:08:29
-;; Last-Mod:      7-Oct-22 at 22:03:04 by Mats Lidell
+;; Last-Mod:     12-Oct-22 at 22:47:51 by Mats Lidell
 ;;
 ;; Copyright (C) 1991-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -39,6 +39,13 @@
   (unless (require 'google-contacts nil t)
     (defvar google-contacts-buffer-name nil))
   (defvar next-entry-exists nil))
+
+;;; ************************************************************************
+;;; Public declarations
+;;; ************************************************************************
+(defvar org-roam-directory)
+(defvar org-roam-db-autosync-mode)
+(defvar markdown-regex-header)
 
 ;;; ************************************************************************
 ;;; Public variables

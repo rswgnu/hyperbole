@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    04-Apr-89
-;; Last-Mod:     25-Jul-22 at 23:34:19 by Mats Lidell
+;; Last-Mod:     12-Oct-22 at 22:52:44 by Mats Lidell
 ;;
 ;; Copyright (C) 1989-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -22,6 +22,11 @@
 ;;; ************************************************************************
 
 (require 'info)
+
+;;; ************************************************************************
+;;; Public declarations
+;;; ************************************************************************
+(defvar Info-complete-menu-buffer)
 
 ;;; ************************************************************************
 ;;; Public functions

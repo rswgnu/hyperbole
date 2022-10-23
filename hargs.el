@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    31-Oct-91 at 23:17:35
-;; Last-Mod:      7-Oct-22 at 22:40:26 by Mats Lidell
+;; Last-Mod:     12-Oct-22 at 22:30:53 by Mats Lidell
 ;;
 ;; Copyright (C) 1991-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -30,6 +30,7 @@
 (require 'hpath)
 (require 'hypb)
 (require 'set)
+(require 'info)
 
 ;;; ************************************************************************
 ;;; Public variables
@@ -664,6 +665,9 @@ help when appropriate."
 ;;; ************************************************************************
 ;;; Private variables
 ;;; ************************************************************************
+
+(defvar hargs:reading-symbol nil
+  "Remember what symbol is being read.")
 
 (defconst hargs:iform-vector
   (hargs:make-iform-vector

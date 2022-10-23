@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    15-Nov-93 at 12:15:16
-;; Last-Mod:     18-Sep-22 at 09:55:49 by Bob Weiner
+;; Last-Mod:     12-Oct-22 at 21:21:34 by Mats Lidell
 ;;
 ;; Copyright (C) 1993-2022  Free Software Foundation, Inc.
 ;; See the "../HY-COPY" file for license information.
@@ -62,6 +62,7 @@
 ;;; ************************************************************************
 
 (require 'subr-x) ;; For string-trim
+(require 'hmouse-tag) ;; For smart-c-include-regexp
 (eval-when-compile (require 'hbut)) ;; For defib.
 
 ;;; ************************************************************************
