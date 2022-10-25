@@ -1,7 +1,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <!-- This manual is for GNU Hyperbole
-(Edition 8.0.1pre, Published May, 2022).
+(Edition 8.0.1pre, Published October, 2022).
 
 Copyright (C) 1989-2022  Free Software Foundation, Inc.
 
@@ -370,7 +370,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</P>
 
 <PRE>
 Edition 8.0.1pre
-Printed May 15, 2022.
+Printed October 23, 2022.
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -6919,17 +6919,27 @@ hide entry subtree command now moves to the beginning of the entry.
 </p></dd>
 <dt><kbd>{u}</kbd></dt>
 <dd><p>Move to the previous higher entry one level up.
-<span id="index-rolo_002c-_002e"></span>
-<span id="index-rolo_002c-_003c"></span>
-<span id="index-_002e-or-_003c"></span>
-</p></dd>
-<dt><kbd>{. or &lt;}</kbd></dt>
-<dd><p>Move to the beginning of the buffer.
 <span id="index-rolo_002c-_002c"></span>
-<span id="index-rolo_002c-_003e"></span>
-<span id="index-_002c-or-_003e"></span>
+<span id="index-_002c"></span>
 </p></dd>
-<dt><kbd>{, or &gt;}</kbd></dt>
+<dt><kbd>{,}</kbd></dt>
+<dd><p>Move to the beginning of the entry.  With a prefix argument,
+move to the beginning of highest ancestor level.
+<span id="index-rolo_002c-_002e"></span>
+<span id="index-_002e-1"></span>
+</p></dd>
+<dt><kbd>{.}</kbd></dt>
+<dd><p>Move to the end of the entry.  With a prefix argument,
+move to the end of the entire subtree.
+<span id="index-rolo_002c-_003c"></span>
+<span id="index-_003c"></span>
+</p></dd>
+<dt><kbd>{&lt;}</kbd></dt>
+<dd><p>Move to the beginning of the buffer.
+<span id="index-rolo_002c-_003e"></span>
+<span id="index-_003e"></span>
+</p></dd>
+<dt><kbd>{&gt;}</kbd></dt>
 <dd><p>Move to the end of the buffer.
 <span id="index-rolo_002c-DEL"></span>
 <span id="index-DEL"></span>
@@ -12720,17 +12730,21 @@ Next: <a href="#Function" accesskey="n" rel="next">Function</a>, Previous: <a hr
  &nbsp; 
 <a class="summary-letter" href="#Key-Index_ky_symbol-8"><b>0</b></a>
  &nbsp; 
-<a class="summary-letter" href="#Key-Index_ky_symbol-9"><b>=</b></a>
+<a class="summary-letter" href="#Key-Index_ky_symbol-9"><b>&lt;</b></a>
  &nbsp; 
-<a class="summary-letter" href="#Key-Index_ky_symbol-10"><b>?</b></a>
+<a class="summary-letter" href="#Key-Index_ky_symbol-10"><b>=</b></a>
  &nbsp; 
-<a class="summary-letter" href="#Key-Index_ky_symbol-11"><b>@</b></a>
+<a class="summary-letter" href="#Key-Index_ky_symbol-11"><b>&gt;</b></a>
  &nbsp; 
-<a class="summary-letter" href="#Key-Index_ky_symbol-12"><b>[</b></a>
+<a class="summary-letter" href="#Key-Index_ky_symbol-12"><b>?</b></a>
  &nbsp; 
-<a class="summary-letter" href="#Key-Index_ky_symbol-13"><b>]</b></a>
+<a class="summary-letter" href="#Key-Index_ky_symbol-13"><b>@</b></a>
  &nbsp; 
-<a class="summary-letter" href="#Key-Index_ky_symbol-14"><b>~</b></a>
+<a class="summary-letter" href="#Key-Index_ky_symbol-14"><b>[</b></a>
+ &nbsp; 
+<a class="summary-letter" href="#Key-Index_ky_symbol-15"><b>]</b></a>
+ &nbsp; 
+<a class="summary-letter" href="#Key-Index_ky_symbol-16"><b>~</b></a>
  &nbsp; 
 <br>
 <a class="summary-letter" href="#Key-Index_ky_letter-A"><b>A</b></a>
@@ -12792,7 +12806,7 @@ Next: <a href="#Function" accesskey="n" rel="next">Function</a>, Previous: <a hr
 <tr><td></td><td valign="top"><a href="#index-_002b"><code>+</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyControl">HyControl</a></td></tr>
 <tr><td colspan="4"> <hr></td></tr>
 <tr><th id="Key-Index_ky_symbol-5">,</th><td></td><td></td></tr>
-<tr><td></td><td valign="top"><a href="#index-_002c-or-_003e"><code>, or &gt;</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyRolo-Keys">HyRolo Keys</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-_002c"><code>,</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyRolo-Keys">HyRolo Keys</a></td></tr>
 <tr><td colspan="4"> <hr></td></tr>
 <tr><th id="Key-Index_ky_symbol-6">-</th><td></td><td></td></tr>
 <tr><td></td><td valign="top"><a href="#index-_002d"><code>-</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyControl">HyControl</a></td></tr>
@@ -12800,27 +12814,33 @@ Next: <a href="#Function" accesskey="n" rel="next">Function</a>, Previous: <a hr
 <tr><td colspan="4"> <hr></td></tr>
 <tr><th id="Key-Index_ky_symbol-7">.</th><td></td><td></td></tr>
 <tr><td></td><td valign="top"><a href="#index-_002e"><code>.</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyControl">HyControl</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-_002e-or-_003c"><code>. or &lt;</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyRolo-Keys">HyRolo Keys</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-_002e-1"><code>.</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyRolo-Keys">HyRolo Keys</a></td></tr>
 <tr><td colspan="4"> <hr></td></tr>
 <tr><th id="Key-Index_ky_symbol-8">0</th><td></td><td></td></tr>
 <tr><td></td><td valign="top"><a href="#index-0_002d9"><code>0-9</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyControl">HyControl</a></td></tr>
 <tr><td colspan="4"> <hr></td></tr>
-<tr><th id="Key-Index_ky_symbol-9">=</th><td></td><td></td></tr>
+<tr><th id="Key-Index_ky_symbol-9">&lt;</th><td></td><td></td></tr>
+<tr><td></td><td valign="top"><a href="#index-_003c"><code>&lt;</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyRolo-Keys">HyRolo Keys</a></td></tr>
+<tr><td colspan="4"> <hr></td></tr>
+<tr><th id="Key-Index_ky_symbol-10">=</th><td></td><td></td></tr>
 <tr><td></td><td valign="top"><a href="#index-_003d"><code>=</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyControl">HyControl</a></td></tr>
 <tr><td colspan="4"> <hr></td></tr>
-<tr><th id="Key-Index_ky_symbol-10">?</th><td></td><td></td></tr>
+<tr><th id="Key-Index_ky_symbol-11">&gt;</th><td></td><td></td></tr>
+<tr><td></td><td valign="top"><a href="#index-_003e"><code>&gt;</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyRolo-Keys">HyRolo Keys</a></td></tr>
+<tr><td colspan="4"> <hr></td></tr>
+<tr><th id="Key-Index_ky_symbol-12">?</th><td></td><td></td></tr>
 <tr><td></td><td valign="top"><a href="#index-_003f"><code>?</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyControl">HyControl</a></td></tr>
 <tr><td colspan="4"> <hr></td></tr>
-<tr><th id="Key-Index_ky_symbol-11">@</th><td></td><td></td></tr>
+<tr><th id="Key-Index_ky_symbol-13">@</th><td></td><td></td></tr>
 <tr><td></td><td valign="top"><a href="#index-_0040"><code>@</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyControl">HyControl</a></td></tr>
 <tr><td colspan="4"> <hr></td></tr>
-<tr><th id="Key-Index_ky_symbol-12">[</th><td></td><td></td></tr>
+<tr><th id="Key-Index_ky_symbol-14">[</th><td></td><td></td></tr>
 <tr><td></td><td valign="top"><a href="#index-_005b"><code>[</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyControl">HyControl</a></td></tr>
 <tr><td colspan="4"> <hr></td></tr>
-<tr><th id="Key-Index_ky_symbol-13">]</th><td></td><td></td></tr>
+<tr><th id="Key-Index_ky_symbol-15">]</th><td></td><td></td></tr>
 <tr><td></td><td valign="top"><a href="#index-_005d"><code>]</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyControl">HyControl</a></td></tr>
 <tr><td colspan="4"> <hr></td></tr>
-<tr><th id="Key-Index_ky_symbol-14">~</th><td></td><td></td></tr>
+<tr><th id="Key-Index_ky_symbol-16">~</th><td></td><td></td></tr>
 <tr><td></td><td valign="top"><a href="#index-_007e"><code>~</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyControl">HyControl</a></td></tr>
 <tr><td colspan="4"> <hr></td></tr>
 <tr><th id="Key-Index_ky_letter-A">A</th><td></td><td></td></tr>
@@ -13179,17 +13199,21 @@ Next: <a href="#Function" accesskey="n" rel="next">Function</a>, Previous: <a hr
  &nbsp; 
 <a class="summary-letter" href="#Key-Index_ky_symbol-8"><b>0</b></a>
  &nbsp; 
-<a class="summary-letter" href="#Key-Index_ky_symbol-9"><b>=</b></a>
+<a class="summary-letter" href="#Key-Index_ky_symbol-9"><b>&lt;</b></a>
  &nbsp; 
-<a class="summary-letter" href="#Key-Index_ky_symbol-10"><b>?</b></a>
+<a class="summary-letter" href="#Key-Index_ky_symbol-10"><b>=</b></a>
  &nbsp; 
-<a class="summary-letter" href="#Key-Index_ky_symbol-11"><b>@</b></a>
+<a class="summary-letter" href="#Key-Index_ky_symbol-11"><b>&gt;</b></a>
  &nbsp; 
-<a class="summary-letter" href="#Key-Index_ky_symbol-12"><b>[</b></a>
+<a class="summary-letter" href="#Key-Index_ky_symbol-12"><b>?</b></a>
  &nbsp; 
-<a class="summary-letter" href="#Key-Index_ky_symbol-13"><b>]</b></a>
+<a class="summary-letter" href="#Key-Index_ky_symbol-13"><b>@</b></a>
  &nbsp; 
-<a class="summary-letter" href="#Key-Index_ky_symbol-14"><b>~</b></a>
+<a class="summary-letter" href="#Key-Index_ky_symbol-14"><b>[</b></a>
+ &nbsp; 
+<a class="summary-letter" href="#Key-Index_ky_symbol-15"><b>]</b></a>
+ &nbsp; 
+<a class="summary-letter" href="#Key-Index_ky_symbol-16"><b>~</b></a>
  &nbsp; 
 <br>
 <a class="summary-letter" href="#Key-Index_ky_letter-A"><b>A</b></a>

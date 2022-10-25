@@ -7,7 +7,7 @@
 @c Author:       Bob Weiner
 @c
 @c Orig-Date:     6-Nov-91 at 11:18:03
-@c Last-Mod:     15-May-22 at 00:21:56 by Bob Weiner
+@c Last-Mod:     23-Oct-22 at 12:42:30 by Bob Weiner
 
 @c %**start of header (This is for running Texinfo on a region.)
 @setfilename hyperbole.info
@@ -156,7 +156,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</P>
 
 <PRE>
 Edition 8.0.1pre
-Printed May 15, 2022.
+Printed October 23, 2022.
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -198,7 +198,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 @example
 Edition 8.0.1pre
-May 15, 2022
+October 23, 2022
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -5896,13 +5896,19 @@ Move to the previous entry at any level.
 @kindex rolo, u
 @kitem u
 Move to the previous higher entry one level up.
-@kindex rolo, .
-@kindex rolo, <
-@kitem . or <
-Move to the beginning of the buffer.
 @kindex rolo, ,
+@kitem ,
+Move to the beginning of the entry.  With a prefix argument,
+move to the beginning of highest ancestor level.
+@kindex rolo, .
+@kitem .
+Move to the end of the entry.  With a prefix argument,
+move to the end of the entire subtree.
+@kindex rolo, <
+@kitem <
+Move to the beginning of the buffer.
 @kindex rolo, >
-@kitem , or >
+@kitem >
 Move to the end of the buffer.
 @kindex rolo, @key{DEL}
 @kitem @key{DEL}

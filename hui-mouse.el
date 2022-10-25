@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    04-Feb-89
-;; Last-Mod:     16-Oct-22 at 19:29:34 by Mats Lidell
+;; Last-Mod:     24-Oct-22 at 23:09:18 by Bob Weiner
 ;;
 ;; Copyright (C) 1991-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -1828,7 +1828,7 @@ If key is pressed:
 	  (or (outline-get-next-sibling)
 	      ;; Skip past start of current entry
 	      (progn (re-search-forward outline-regexp nil t)
-		     (smart-outline-to-entry-end t (funcall outline-level))))))
+		     (smart-outline-to-entry-end t)))))
 
 	((or (eolp) (zerop (smart-outline-level)))
 	 (funcall action-key-eol-function))
@@ -1864,8 +1864,7 @@ If assist-key is pressed:
 	 (kill-region (point)
 		      ;; Skip past start of current entry
 		      (progn (re-search-forward outline-regexp nil t)
-			     (smart-outline-to-entry-end
-			      nil (funcall outline-level)))))
+			     (smart-outline-to-entry-end))))
 	((or (eolp) (zerop (smart-outline-level)))
 	 (funcall assist-key-eol-function))
 	;; On an outline heading line but not at the start/end of line.
@@ -1873,20 +1872,15 @@ If assist-key is pressed:
 	 (outline-show-entry))
 	(t (outline-hide-entry))))
 
-(defun smart-outline-to-entry-end (&optional include-sub-entries curr-entry-level)
-  "Go to end of whole entry if optional INCLUDE-SUB-ENTRIES is non-nil.
-CURR-ENTRY-LEVEL is an integer representing the length of the current level
-string which matched to `outline-regexp'.  If INCLUDE-SUB-ENTRIES is nil,
-CURR-ENTRY-LEVEL is not needed."
-  (let (next-entry-exists)
-    (while (and (setq next-entry-exists (re-search-forward outline-regexp nil t))
-		include-sub-entries
-		(save-excursion
-		  (beginning-of-line)
-		  (> (funcall outline-level) curr-entry-level))))
-    (if next-entry-exists
-	(progn (beginning-of-line) (point))
-      (goto-char (point-max)))))
+(defun smart-outline-to-entry-end (&optional include-sub-entries)
+  "Move point past the end of the current entry.
+With optional INCLUDE-SUB-ENTRIES non-nil, move to the end of the
+entire subtree.  Return final point."
+  (if include-sub-entries
+      (progn (outline-end-of-subtree)
+	     (goto-char (1+ (point))))
+    (outline-next-heading))
+  (point))
 
 (defun smart-outline-subtree-hidden-p ()
   "Return t if at least initial subtree of heading is hidden, else nil."

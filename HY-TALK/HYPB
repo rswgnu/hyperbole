@@ -19,9 +19,23 @@ or interactively after loading Hyperbole:
 
 * Keystroke Display
 
-** Keypression - overlaying parts of buffer (shows trail of keys)
+** interaction-log Package - font-lock highlighted log of keys and commands
+   Used for EmacsConf 2022
 
-  Install:    <unless (featurep 'keypression) (package-install 'keypression)>
+  Install:    <unless (package-installed-p 'interaction-log) (package-install 'interaction-log)>
+  Activate:   <interaction-log-mode 1>
+  Deactivate: <interaction-log-mode 0>
+
+  Configure:
+    <progn (setq ilog-display-state 'commands)
+           (global-set-key
+	    (kbd "C-h C-l")
+	    (lambda () (interactive) (display-buffer ilog-buffer-name)))>
+
+** Keypression - overlaying parts of buffer (shows trail of keys)
+   Used for EmacsNYC talk
+
+  Install:    <unless (package-installed-p 'keypression) (package-install 'keypression)>
   Activate:   <keypression-mode 1>
   Deactivate: <keypression-mode 0>
 
@@ -33,6 +47,10 @@ or interactively after loading Hyperbole:
 	  keypression-cast-command-name-format "%s  %s"
 	  keypression-combine-same-keystrokes t
 	  keypression-font-face-attribute '(:width normal :height 200 :weight bold)>
+
+* Frame layout
+
+  <burly-open-bookmark "hyperorg">
 
 
 * Pathname Prefixes

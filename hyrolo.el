@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     7-Jun-89 at 22:08:29
-;; Last-Mod:     12-Oct-22 at 22:47:51 by Mats Lidell
+;; Last-Mod:     25-Oct-22 at 01:28:37 by Bob Weiner
 ;;
 ;; Copyright (C) 1991-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -37,8 +37,7 @@
   (unless (require 'bbdb nil t)
     (defvar bbdb-file nil))
   (unless (require 'google-contacts nil t)
-    (defvar google-contacts-buffer-name nil))
-  (defvar next-entry-exists nil))
+    (defvar google-contacts-buffer-name nil)))
 
 ;;; ************************************************************************
 ;;; Public declarations
@@ -257,7 +256,7 @@ entry which begins with the parent string."
 	  (setq level (match-string-no-properties hyrolo-entry-group-number))
 	(error "(hyrolo-add): Insertion failed, `%s' parent entry not found in \"%s\""
 	       parent file)))
-    (narrow-to-region (point) (progn (hyrolo-to-entry-end t (length level)) (point)))
+    (narrow-to-region (point) (progn (hyrolo-to-entry-end t) (point)))
     (let* ((name-level (concat level "*"))
 	   (level-len (length name-level))
 	   (first-char (aref name 0))
@@ -287,7 +286,7 @@ entry which begins with the parent string."
 				  "])")
 			  nil t))
 		(goto-char (match-end 0))
-		(hyrolo-to-entry-end t level-len)
+		(hyrolo-to-entry-end t)
 		;; Now at the insertion point, immediately after
 		;; the last existing entry whose first character
 		;; is less than that of `name'.  Setting `again'
@@ -299,7 +298,7 @@ entry which begins with the parent string."
       (while (and again (re-search-forward entry-regexp nil 'end))
 	(setq entry-level-len (length (match-string-no-properties hyrolo-entry-group-number)))
 	(if (/= entry-level-len level-len)
-	    (hyrolo-to-entry-end t entry-level-len)
+	    (hyrolo-to-entry-end t)
 	  (setq entry-spc (match-string-no-properties hyrolo-entry-trailing-space-group-number)
 		entry (buffer-substring-no-properties (point)
 						      (save-excursion
@@ -309,7 +308,7 @@ entry which begins with the parent string."
 		     (string-match "\\`.*#+" entry-spc))
 	    (setq entry-spc (substring entry-spc (length (match-string 0 entry-spc)))))
 	  (cond ((string-lessp entry name)
-		 (hyrolo-to-entry-end t entry-level-len))
+		 (hyrolo-to-entry-end t))
 		((string-lessp name entry)
 		 (setq again nil) (beginning-of-line))
 		(t ;; found existing entry matching name
@@ -419,16 +418,19 @@ Return entry name if found, else nil."
   (interactive)
   (let ((name (hyrolo-name-at))
 	src)
-    (if name
-	(progn (setq src (hbut:to-key-src))
+    (if name 
+	(progn (setq src (hbut:to-key-src t))
 	       (cond ((and (boundp 'bbdb-file) (stringp bbdb-file) (equal src (expand-file-name bbdb-file)))
 		      ;; For now, can't edit an entry from the bbdb database, signal an error.
 		      (error "(hyrolo-edit-entry): BBDB entries are not editable"))
 		     ((and (hyrolo-google-contacts-p) (equal src (get-buffer google-contacts-buffer-name)))
 		      ;; For now, can't edit an entry from Google Contacts, signal an error.
 		      (error "(hyrolo-edit-entry): Google Contacts entries are not editable"))
-		     (t (hyrolo-edit name src)
-			name)))
+		     ((stringp src)
+		      (hyrolo-edit name src)
+		      name)
+		     (t
+		      (error "(hyrolo-edit-entry): Move to an entry to edit it"))))
       (error "(hyrolo-edit-entry): Move to an entry to edit it"))))
 
 ;;;###autoload
@@ -663,7 +665,7 @@ Return t if entry is killed, nil otherwise."
 	      (let ((kill-op
 		     (lambda (start level-len)
 		       (kill-region
-			start (hyrolo-to-entry-end t level-len))
+			start (hyrolo-to-entry-end t))
 		       (setq killed t)
 		       (hyrolo-save-buffer)
 		       (hyrolo-kill-buffer)))
@@ -1362,7 +1364,7 @@ Return number of matching entries found."
 		   (setq actual-buf (hyrolo-find-file-noselect hyrolo-file-or-buf)
 			 new-buf-p t))))
 	(let ((hdr-pos) (num-found 0) (curr-entry-level-len)
-	      (incl-hdr t) start next-entry-exists)
+	      (incl-hdr t) start)
 	  (when  max-matches
 	    (cond ((eq max-matches t)
 		   (setq incl-hdr nil max-matches nil))
@@ -1386,11 +1388,10 @@ Return number of matching entries found."
 		(while (and (or (null max-matches) (< num-found max-matches))
 			    (funcall hyrolo-next-match-function pattern headline-only))
 		  (re-search-backward hyrolo-entry-regexp nil t)
-		  (setq start (point)
-			next-entry-exists nil)
+		  (setq start (point))
 		  (re-search-forward hyrolo-entry-regexp nil t)
 		  (setq curr-entry-level-len (length (buffer-substring-no-properties start (point))))
-		  (hyrolo-to-entry-end t curr-entry-level-len)
+		  (hyrolo-to-entry-end t)
 		  (or count-only
 		      (if (and (zerop num-found) incl-hdr)
 			  (let* ((src (or (buffer-file-name actual-buf)
@@ -1744,7 +1745,7 @@ Return point where matching entry begins or nil if not found."
 	  (when level
 	    (narrow-to-region (point)
 			      (save-excursion
-				(hyrolo-to-entry-end t (length level)) (point)))))
+				(hyrolo-to-entry-end t) (point)))))
 	(goto-char (point-min))
 	(while (and (search-forward name nil t)
 		    (not (save-excursion
@@ -1761,23 +1762,103 @@ Return point where matching entry begins or nil if not found."
   "Pop to BUFFER."
   (pop-to-buffer buffer other-window-flag))
 
-(defun hyrolo-to-entry-end (&optional include-sub-entries curr-entry-level-len)
-  "Move point to the end of whole entry if optional INCLUDE-SUB-ENTRIES is non-nil.
-CURR-ENTRY-LEVEL-LEN is the integer length of the last entry
-header found.  If INCLUDE-SUB-ENTRIES is nil,
-CURR-ENTRY-LEVEL-LEN is not needed.  Return current point."
-  ;; Set free variable, next-entry-exists, for speed.
-  (while (and (setq next-entry-exists
-		    (re-search-forward hyrolo-entry-regexp nil t))
-	      include-sub-entries
-	      ;; Prevents including trailing whitespace in entry level
-	      ;; length which in turn causes moving to (point-max).
-	      (goto-char (or (match-end hyrolo-entry-group-number) (match-end 0)))
-	      (> (- (point) (line-beginning-position))
-		 curr-entry-level-len)))
-  (if next-entry-exists
-      (progn (beginning-of-line) (point))
-    (goto-char (point-max))))
+
+(defun hyrolo-backward-same-level (arg)
+  "Move backward to the ARG'th subheading at same level as this one.
+Stop at the first and last subheadings of a superior heading."
+  (interactive "p")
+  (hyrolo-move-backward #'outline-backward-same-level arg))
+
+(defun hyrolo-previous-visible-heading (arg)
+  "Move to the previous heading line.
+With ARG, repeats or can move forward if negative.
+A heading line is one that starts with a `*' (or that
+`outline-regexp' matches)."
+  (interactive "p")
+  (hyrolo-move-backward #'outline-previous-visible-heading arg))
+
+(defun hyrolo-up-heading (arg &optional invisible-ok)
+  "Move to the visible heading line of which the present line is a subheading.
+With argument, move up ARG levels.
+If INVISIBLE-OK is non-nil, also consider invisible lines."
+  (interactive "p")
+  (hyrolo-move-backward #'outline-up-heading arg invisible-ok))
+
+(defun hyrolo-move-backward (func &rest args)
+  "Move back past any file header and apply FUNC to ARGS.
+Return final point."
+  ;; Prevent error when calling 'func' when within a file header.
+  (while (and (looking-at hyrolo-hdr-regexp)
+	      (outline-previous-heading)))
+  (apply #'funcall func args)
+  ;; If on a file header, skip to its beginning.
+  (while (and (looking-at hyrolo-hdr-regexp)
+	      (outline-previous-heading)))
+  (point))
+
+(defun hyrolo-to-entry-beginning (&optional include-sub-entries)
+  "Move point to the beginning of the current entry.
+With optional prefix arg INCLUDE-SUB-ENTRIES non-nil, move to the
+beginning of the highest ancestor level.  Return final point."
+  (interactive "P")
+  (hyrolo-move-backward
+   (lambda (include-sub-entries)
+     ;; Prevent error when calling 'outline-back-to-heading' when within
+     ;; a file header.
+     (outline-back-to-heading)
+     (if include-sub-entries
+	 (unless (<= (funcall outline-level) 1)
+	   (outline-up-heading 80))))
+   include-sub-entries))
+
+(defun hyrolo-forward-same-level (arg)
+  "Move forward to the ARG'th subheading at same level as this one.
+Stop at the first and last subheadings of a superior heading."
+  (interactive "p")
+  (hyrolo-move-forward #'outline-forward-same-level arg))
+
+(defun hyrolo-next-visible-heading (arg)
+  "Move to the next visible heading line.
+With ARG, repeats or can move backward if negative.
+A heading line is one that starts with a `*' (or that
+`outline-regexp' matches)."
+  (interactive "p")
+  (hyrolo-move-forward #'outline-next-visible-heading arg))
+
+(defun hyrolo-move-forward (func &rest args)
+  "Move forward past any file header and apply FUNC to ARGS.
+Return final point."
+  (let (in-hdr)
+    (while (looking-at hyrolo-hdr-regexp)
+      (when (outline-next-heading)
+	(setq in-hdr t)))
+    (unless in-hdr
+      (condition-case nil
+	  (apply #'funcall func args)
+	;; Prevent error and move past file header.
+	(error (while (and (outline-next-heading)
+			   (looking-at hyrolo-hdr-regexp)))))))
+  (point))
+
+(defun hyrolo-to-entry-end (&optional include-sub-entries)
+  "Move point past the end of the current entry.
+With optional prefix arg INCLUDE-SUB-ENTRIES non-nil, move past
+the end of the entire subtree.  Return final point.
+
+When called interactively, leave point one character earlier, before
+the final newline of the entry."
+  (interactive "P")
+  (if (not include-sub-entries)
+      (outline-next-heading)
+    (condition-case nil
+	(progn (outline-end-of-subtree)
+	       (goto-char (1+ (point))))
+      ;; Prevent error and move past file header.
+      (error (while (and (outline-next-heading)
+			 (looking-at hyrolo-hdr-regexp))))))
+  (when (called-interactively-p 'any)
+    (goto-char (1- (point))))
+  (point))
 
 (defun hyrolo-mode-outline-level ()
   "Heuristically determine `outline-level' function to use in HyRolo match buffer."
@@ -1894,23 +1975,23 @@ String search expressions are converted to regular expressions.")
   (if (fboundp 'set-keymap-name)
       (set-keymap-name hyrolo-mode-map 'hyrolo-mode-map))
   (suppress-keymap hyrolo-mode-map)
+  (define-key hyrolo-mode-map ","        'hyrolo-to-entry-beginning)
+  (define-key hyrolo-mode-map "."        'hyrolo-to-entry-end)
   (define-key hyrolo-mode-map "<"        'beginning-of-buffer)
   (define-key hyrolo-mode-map ">"        'end-of-buffer)
-  (define-key hyrolo-mode-map "."        'beginning-of-buffer)
-  (define-key hyrolo-mode-map ","        'end-of-buffer)
   (define-key hyrolo-mode-map "?"        'describe-mode)
   (define-key hyrolo-mode-map "\177"     'scroll-down)
   (define-key hyrolo-mode-map " "        'scroll-up)
   (define-key hyrolo-mode-map "a"        'outline-show-all)
-  (define-key hyrolo-mode-map "b"        'outline-backward-same-level)
+  (define-key hyrolo-mode-map "b"        'hyrolo-backward-same-level)
   (define-key hyrolo-mode-map "e"        'hyrolo-edit-entry)
-  (define-key hyrolo-mode-map "f"        'outline-forward-same-level)
+  (define-key hyrolo-mode-map "f"        'hyrolo-forward-same-level)
   (define-key hyrolo-mode-map "h"        'hyrolo-hide-subtree)
   (define-key hyrolo-mode-map "l"        'hyrolo-locate)
   (define-key hyrolo-mode-map "m"        'hyrolo-mail-to)
-  (define-key hyrolo-mode-map "n"        'outline-next-visible-heading)
+  (define-key hyrolo-mode-map "n"        'hyrolo-next-visible-heading)
   (define-key hyrolo-mode-map "o"        'hyrolo-overview)
-  (define-key hyrolo-mode-map "p"        'outline-previous-visible-heading)
+  (define-key hyrolo-mode-map "p"        'hyrolo-previous-visible-heading)
   (define-key hyrolo-mode-map "q"        'hyrolo-quit)
   (define-key hyrolo-mode-map "r"        'hyrolo-grep-or-fgrep)
   (define-key hyrolo-mode-map "s"        'outline-show-subtree)
@@ -1919,7 +2000,7 @@ String search expressions are converted to regular expressions.")
   (define-key hyrolo-mode-map "\C-i"     'hyrolo-next-match)      ;; {TAB}
   (define-key hyrolo-mode-map "\M-\C-i"  'hyrolo-previous-match)  ;; {M-TAB}
   (define-key hyrolo-mode-map [backtab]  'hyrolo-previous-match)  ;; {Shift-TAB}
-  (define-key hyrolo-mode-map "u"        'outline-up-heading))
+  (define-key hyrolo-mode-map "u"        'hyrolo-up-heading))
 
 ;; Prompt user to rename old personal rolo file to new name, if necessary.
 (unless noninteractive

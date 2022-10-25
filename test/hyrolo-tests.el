@@ -120,7 +120,8 @@
     (hyrolo-demo-quit)))
 
 (ert-deftest hyrolo-demo-move-to-beginning-and-end-of-file ()
-  "Keys {<} or {.} and {>} or {,} shall move to beginning and end of file, respectively."
+  "*HyRolo* keys {<} and {>} move to beginning and end of file, respectively.
+{,} and {.} move to beginning and end of current entry, respectively."
   (skip-unless (not noninteractive))
   (unwind-protect
       (progn
@@ -128,19 +129,21 @@
         (should (hact 'kbd-key "C-x 4r work RET TAB"))
         (hy-test-helpers:consume-input-events)
         (should (string= (buffer-name) hyrolo-display-buffer))
-        (should (looking-at "Work"))
-
-        (should (hact 'kbd-key ">"))
-        (should (equal (point) (point-max)))
+        (should (looking-at "work"))
 
         (should (hact 'kbd-key "<"))
         (should (equal (point) (point-min)))
 
-        (should (hact 'kbd-key ","))
+        (should (hact 'kbd-key ">"))
         (should (equal (point) (point-max)))
 
+        (should (hact 'kbd-key "\C-u,n"))
+        (hy-test-helpers:consume-input-events)
+	(should (looking-at "\\*\\*\\s-+Hansen"))
+
         (should (hact 'kbd-key "."))
-        (should (equal (point) (point-min))))
+        (hy-test-helpers:consume-input-events)
+	(should (looking-at "\\s-?\\*\\*\\*\\s-+Dunn")))
     (hyrolo-demo-quit)))
 
 (ert-deftest hyrolo-demo-move-between-entries-on-same-level ()
@@ -212,7 +215,7 @@ and {b} the previous same level cell."
           ; Verify insertion order and following date on separate line
           (goto-char (point-min))
           (should (looking-at "==="))
-          (dolist (insertion-order '("c" "b" "d" "a"))
+          (dolist (insertion-order '("a" "b" "d" "c"))
             (goto-char (1+ (should (search-forward insertion-order))))
             (should (looking-at-p "^\t[0-9/]+$")))
 

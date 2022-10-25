@@ -1,3 +1,40 @@
+2022-10-25  Bob Weiner  <rsw@gnu.org>
+
+* hyrolo.el (hyrolo-backward-same-level):      Add and bind to {b}.
+	    (hyrolo-forward-same-level):       Add and find to {f}.
+            (hyrolo-next-visible-heading):     Add and bind to {n}.
+            (hyrolo-previous-visible-heading): Add and bind to {p}.
+	    (hyrolo-up-heading):               Add and bind to {u}.
+
+2022-10-24  Bob Weiner  <rsw@gnu.org>
+
+* hui-mouse.el (smart-outline-assist, smart-outline,
+    (smart-outline-to-entry-end): Remove 2nd arg 'curr-entry-level'
+    and simplify logic.
+
+* hyrolo.el, hyrolo-logic.el: Remove 'next-entry-exists' and
+    'previous-entry-exists'.
+
+* test/hyrolo-tests.el (hyrolo-demo-move-to-beginning-and-end-of-file):
+    Rewrite to match new {,} and {.} bindings.
+
+* hyrolo.el (hyrolo-to-entry-end): Remove 2nd optional arg
+    curr-entry-level-len.
+
+2022-10-23  Bob Weiner  <rsw@gnu.org>
+
+* man/hyperbole.texi (HyRolo Keys):
+  hyrolo.el (hyrolo-to-entry-end): Make interactive and bind to {.}.
+            (hyrolo-to-entry-beginning): Add and bind to {,}.
+   Previously, these keys were bound to begin and end of buffer but
+   were mistakenly reversed.  Also, simplify these two commands.
+            (previous-entry-exists): Add this free variable and use
+   in 'hyrolo-to-entry-beginning'.
+
+* hbut.el (hbut:get-key-src): Add save-excursion so point does not move.
+  hyrolo.el (hyrolo-edit-entry): Fix so if point is not on an entry
+    (src is a buffer, not a string), then raise an error.
+
 2022-10-20  Mats Lidell  <matsl@gnu.org>
 
 * hload-path.el (hyperb:dir): Use defvar. Thanks to Stefan Monnier.
