@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     7-Jun-89 at 22:08:29
-;; Last-Mod:     25-Oct-22 at 01:28:37 by Bob Weiner
+;; Last-Mod:     25-Oct-22 at 02:06:30 by Bob Weiner
 ;;
 ;; Copyright (C) 1991-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -1303,6 +1303,22 @@ returned to the number given."
 ;;; Public functions
 ;;; ************************************************************************
 
+
+
+(defun hyrolo-back-to-visible-point ()
+  (interactive)
+  (while (and (not (bobp)) (invisible-p (point)))
+    ;; Move back one character at a time here because using this fails
+    ;; and ends up at the beginning of buffer every time under Emacs 27.1:
+    ;; (goto-char (previous-single-char-property-change (point) 'invisible))))
+    (goto-char (1- (point)))))
+
+(defun hyrolo-backward-same-level (arg)
+  "Move backward to the ARG'th subheading at same level as this one.
+Stop at the first and last subheadings of a superior heading."
+  (interactive "p")
+  (hyrolo-move-backward #'outline-backward-same-level arg))
+
 ;;;###autoload
 (defun hyrolo-fgrep-directories (file-regexp &rest dirs)
   "String/logical HyRolo search over files matching FILE-REGEXP in rest of DIRS."
@@ -1321,6 +1337,12 @@ only (first line of entries), rather than entire entries.
 
 Return number of matching entries found."
   (hyrolo-grep-file hyrolo-file-or-buf (regexp-quote string) max-matches count-only headline-only))
+
+(defun hyrolo-forward-same-level (arg)
+  "Move forward to the ARG'th subheading at same level as this one.
+Stop at the first and last subheadings of a superior heading."
+  (interactive "p")
+  (hyrolo-move-forward #'outline-forward-same-level arg))
 
 ;;;###autoload
 (defun hyrolo-grep-directories (file-regexp &rest dirs)
@@ -1485,6 +1507,138 @@ Return number of groupings matched."
 	(funcall func start end)))
     num-found))
 
+(defun hyrolo-mode ()
+  "Major mode for the rolo match buffer.
+Calls the functions given by `hyrolo-mode-hook'.
+\\{hyrolo-mode-map}"
+  (interactive)
+  (unless (eq major-mode 'hyrolo-mode)
+    (make-local-variable 'outline-regexp)
+    (setq outline-regexp (default-value 'outline-regexp))
+    (make-local-variable 'hyrolo-entry-regexp)
+    (setq hyrolo-entry-regexp (default-value 'hyrolo-entry-regexp))
+    (make-local-variable 'outline-level)
+    (setq outline-level #'hyrolo-mode-outline-level)
+    (reveal-mode 1)) ;; Expose hidden text as move into it.
+  (setq major-mode 'hyrolo-mode
+	mode-name "HyRolo")
+  (use-local-map hyrolo-mode-map)
+  ;;
+  (set-syntax-table hyrolo-mode-syntax-table)
+  ;;
+  (when (fboundp 'outline-minor-mode)
+    (outline-minor-mode 1))
+  (run-hooks 'hyrolo-mode-hook))
+
+(defun hyrolo-next-visible-heading (arg)
+  "Move to the next visible heading line.
+With ARG, repeats or can move backward if negative.
+A heading line is one that starts with a `*' (or that
+`outline-regexp' matches)."
+  (interactive "p")
+  (hyrolo-move-forward #'outline-next-visible-heading arg))
+
+(defun hyrolo-previous-visible-heading (arg)
+  "Move to the previous heading line.
+With ARG, repeats or can move forward if negative.
+A heading line is one that starts with a `*' (or that
+`outline-regexp' matches)."
+  (interactive "p")
+  (hyrolo-move-backward #'outline-previous-visible-heading arg))
+
+(defun hyrolo-to (name &optional file-list)
+  "Move point to entry for NAME within optional FILE-LIST.
+`hyrolo-file-list' is used as default when FILE-LIST is nil.
+Leaves point immediately after match for NAME within entry.
+Switches internal current buffer but does not alter the frame.
+Return point where matching entry begins or nil if not found."
+  (or file-list (setq file-list hyrolo-file-list))
+  (let ((found) file)
+    (while (and (not found) file-list)
+      (setq file (car file-list)
+	    file-list (cdr file-list))
+      (cond ((and file (or (not (stringp file)) (string-equal file "")))
+	     (error "(hyrolo-to): Invalid file: `%s'" file))
+	    ((and (file-exists-p file) (not (file-readable-p file)))
+	     (error "(hyrolo-to): File not readable: `%s'" file)))
+      (set-buffer (or (get-file-buffer file) (hyrolo-find-file-noselect file)))
+      (let ((case-fold-search t) (real-name name) (parent "") (level) end)
+	(hyrolo-widen) (goto-char 1)
+	(while (string-match "\\`[^\]\[<>{}\"]*/" name)
+	  (setq end (1- (match-end 0))
+		level nil
+		parent (substring name 0 end)
+		name (substring name (min (1+ end) (length name))))
+	  (cond ((progn
+		   (while (and (not level) (search-forward parent nil t))
+		     (save-excursion
+		       (beginning-of-line)
+		       (if (looking-at (concat hyrolo-entry-regexp (regexp-quote parent)))
+			   (setq level (match-string-no-properties hyrolo-entry-group-number)))))
+		   level))
+		((equal name real-name)) ;; Try next file.
+		(t ;; Found parent but not child
+		 (setq buffer-read-only nil)
+		 (hyrolo-to-buffer (current-buffer))
+		 (error "(hyrolo-to): `%s' part of name not found in \"%s\""
+			parent file)))
+	  (when level
+	    (narrow-to-region (point)
+			      (save-excursion
+				(hyrolo-to-entry-end t) (point)))))
+	(goto-char (point-min))
+	(while (and (search-forward name nil t)
+		    (not (save-excursion
+			   (beginning-of-line)
+			   (setq found
+				 (when (looking-at (concat hyrolo-entry-regexp (regexp-quote name)))
+				   (point))))))))
+      (unless found
+	(hyrolo-kill-buffer))) ;; conditionally kill
+    (hyrolo-widen)
+    found))
+
+(defun hyrolo-to-entry-beginning (&optional include-sub-entries)
+  "Move point to the beginning of the current entry.
+With optional prefix arg INCLUDE-SUB-ENTRIES non-nil, move to the
+beginning of the highest ancestor level.  Return final point."
+  (interactive "P")
+  (hyrolo-move-backward
+   (lambda (include-sub-entries)
+     ;; Prevent error when calling 'outline-back-to-heading' when
+     ;; within a file header.
+     (outline-back-to-heading)
+     (if include-sub-entries
+	 (unless (<= (funcall outline-level) 1)
+	   (outline-up-heading 80))))
+   include-sub-entries))
+
+(defun hyrolo-to-entry-end (&optional include-sub-entries)
+  "Move point past the end of the current entry.
+With optional prefix arg INCLUDE-SUB-ENTRIES non-nil, move past
+the end of the entire subtree.  Return final point.
+
+When called interactively, leave point one character earlier, before
+the final newline of the entry."
+  (interactive "P")
+  (hyrolo-move-forward
+   (lambda (include-sub-entries)
+     (if (not include-sub-entries)
+	 (outline-next-heading)
+       (outline-end-of-subtree)
+       (goto-char (1+ (point)))))
+   include-sub-entries)
+  (when (called-interactively-p 'any)
+    (goto-char (1- (point))))
+  (point))
+
+(defun hyrolo-up-heading (arg &optional invisible-ok)
+  "Move to the visible heading line of which the present line is a subheading.
+With argument, move up ARG levels.
+If INVISIBLE-OK is non-nil, also consider invisible lines."
+  (interactive "p")
+  (hyrolo-move-backward #'outline-up-heading arg invisible-ok))
+
 ;;; ************************************************************************
 ;;; Private functions
 ;;; ************************************************************************
@@ -1641,14 +1795,6 @@ a default of MM/DD/YYYY."
       (setq min-level (min min-level (hyrolo-mode-outline-level))))
     min-level))
 
-(defun hyrolo-back-to-visible-point ()
-  (interactive)
-  (while (and (not (bobp)) (invisible-p (point)))
-    ;; Move back one character at a time here because using this fails
-    ;; and ends up at the beginning of buffer every time under Emacs 27.1:
-    ;; (goto-char (previous-single-char-property-change (point) 'invisible))))
-    (goto-char (1- (point)))))
-
 (defun hyrolo-search-directories (search-cmd file-regexp &rest dirs)
   "Search HyRolo over files matching FILE-REGEXP in rest of DIRS."
   (when (or (null file-regexp) (string-empty-p file-regexp))
@@ -1706,83 +1852,9 @@ shown."
 	      (max desired-shrinkage (- height (/ (frame-height) 2)))
 	    (min desired-shrinkage (- height window-min-height)))))))
 
-(defun hyrolo-to (name &optional file-list)
-  "Move point to entry for NAME within optional FILE-LIST.
-`hyrolo-file-list' is used as default when FILE-LIST is nil.
-Leaves point immediately after match for NAME within entry.
-Switches internal current buffer but does not alter the frame.
-Return point where matching entry begins or nil if not found."
-  (or file-list (setq file-list hyrolo-file-list))
-  (let ((found) file)
-    (while (and (not found) file-list)
-      (setq file (car file-list)
-	    file-list (cdr file-list))
-      (cond ((and file (or (not (stringp file)) (string-equal file "")))
-	     (error "(hyrolo-to): Invalid file: `%s'" file))
-	    ((and (file-exists-p file) (not (file-readable-p file)))
-	     (error "(hyrolo-to): File not readable: `%s'" file)))
-      (set-buffer (or (get-file-buffer file) (hyrolo-find-file-noselect file)))
-      (let ((case-fold-search t) (real-name name) (parent "") (level) end)
-	(hyrolo-widen) (goto-char 1)
-	(while (string-match "\\`[^\]\[<>{}\"]*/" name)
-	  (setq end (1- (match-end 0))
-		level nil
-		parent (substring name 0 end)
-		name (substring name (min (1+ end) (length name))))
-	  (cond ((progn
-		   (while (and (not level) (search-forward parent nil t))
-		     (save-excursion
-		       (beginning-of-line)
-		       (if (looking-at (concat hyrolo-entry-regexp (regexp-quote parent)))
-			   (setq level (match-string-no-properties hyrolo-entry-group-number)))))
-		   level))
-		((equal name real-name)) ;; Try next file.
-		(t ;; Found parent but not child
-		 (setq buffer-read-only nil)
-		 (hyrolo-to-buffer (current-buffer))
-		 (error "(hyrolo-to): `%s' part of name not found in \"%s\""
-			parent file)))
-	  (when level
-	    (narrow-to-region (point)
-			      (save-excursion
-				(hyrolo-to-entry-end t) (point)))))
-	(goto-char (point-min))
-	(while (and (search-forward name nil t)
-		    (not (save-excursion
-			   (beginning-of-line)
-			   (setq found
-				 (when (looking-at (concat hyrolo-entry-regexp (regexp-quote name)))
-				   (point))))))))
-      (unless found
-	(hyrolo-kill-buffer))) ;; conditionally kill
-    (hyrolo-widen)
-    found))
-
 (defun hyrolo-to-buffer (buffer &optional other-window-flag _frame)
   "Pop to BUFFER."
   (pop-to-buffer buffer other-window-flag))
-
-
-(defun hyrolo-backward-same-level (arg)
-  "Move backward to the ARG'th subheading at same level as this one.
-Stop at the first and last subheadings of a superior heading."
-  (interactive "p")
-  (hyrolo-move-backward #'outline-backward-same-level arg))
-
-(defun hyrolo-previous-visible-heading (arg)
-  "Move to the previous heading line.
-With ARG, repeats or can move forward if negative.
-A heading line is one that starts with a `*' (or that
-`outline-regexp' matches)."
-  (interactive "p")
-  (hyrolo-move-backward #'outline-previous-visible-heading arg))
-
-(defun hyrolo-up-heading (arg &optional invisible-ok)
-  "Move to the visible heading line of which the present line is a subheading.
-With argument, move up ARG levels.
-If INVISIBLE-OK is non-nil, also consider invisible lines."
-  (interactive "p")
-  (hyrolo-move-backward #'outline-up-heading arg invisible-ok))
 
 (defun hyrolo-move-backward (func &rest args)
   "Move back past any file header and apply FUNC to ARGS.
@@ -1795,35 +1867,6 @@ Return final point."
   (while (and (looking-at hyrolo-hdr-regexp)
 	      (outline-previous-heading)))
   (point))
-
-(defun hyrolo-to-entry-beginning (&optional include-sub-entries)
-  "Move point to the beginning of the current entry.
-With optional prefix arg INCLUDE-SUB-ENTRIES non-nil, move to the
-beginning of the highest ancestor level.  Return final point."
-  (interactive "P")
-  (hyrolo-move-backward
-   (lambda (include-sub-entries)
-     ;; Prevent error when calling 'outline-back-to-heading' when within
-     ;; a file header.
-     (outline-back-to-heading)
-     (if include-sub-entries
-	 (unless (<= (funcall outline-level) 1)
-	   (outline-up-heading 80))))
-   include-sub-entries))
-
-(defun hyrolo-forward-same-level (arg)
-  "Move forward to the ARG'th subheading at same level as this one.
-Stop at the first and last subheadings of a superior heading."
-  (interactive "p")
-  (hyrolo-move-forward #'outline-forward-same-level arg))
-
-(defun hyrolo-next-visible-heading (arg)
-  "Move to the next visible heading line.
-With ARG, repeats or can move backward if negative.
-A heading line is one that starts with a `*' (or that
-`outline-regexp' matches)."
-  (interactive "p")
-  (hyrolo-move-forward #'outline-next-visible-heading arg))
 
 (defun hyrolo-move-forward (func &rest args)
   "Move forward past any file header and apply FUNC to ARGS.
@@ -1838,26 +1881,6 @@ Return final point."
 	;; Prevent error and move past file header.
 	(error (while (and (outline-next-heading)
 			   (looking-at hyrolo-hdr-regexp)))))))
-  (point))
-
-(defun hyrolo-to-entry-end (&optional include-sub-entries)
-  "Move point past the end of the current entry.
-With optional prefix arg INCLUDE-SUB-ENTRIES non-nil, move past
-the end of the entire subtree.  Return final point.
-
-When called interactively, leave point one character earlier, before
-the final newline of the entry."
-  (interactive "P")
-  (if (not include-sub-entries)
-      (outline-next-heading)
-    (condition-case nil
-	(progn (outline-end-of-subtree)
-	       (goto-char (1+ (point))))
-      ;; Prevent error and move past file header.
-      (error (while (and (outline-next-heading)
-			 (looking-at hyrolo-hdr-regexp))))))
-  (when (called-interactively-p 'any)
-    (goto-char (1- (point))))
   (point))
 
 (defun hyrolo-mode-outline-level ()
@@ -1876,29 +1899,6 @@ the final newline of the entry."
 		     kview:default-level-indent))))
 	;; Just default to top-level if no other outline type is found
 	(t 1)))
-
-(defun hyrolo-mode ()
-  "Major mode for the rolo match buffer.
-Calls the functions given by `hyrolo-mode-hook'.
-\\{hyrolo-mode-map}"
-  (interactive)
-  (unless (eq major-mode 'hyrolo-mode)
-    (make-local-variable 'outline-regexp)
-    (setq outline-regexp (default-value 'outline-regexp))
-    (make-local-variable 'hyrolo-entry-regexp)
-    (setq hyrolo-entry-regexp (default-value 'hyrolo-entry-regexp))
-    (make-local-variable 'outline-level)
-    (setq outline-level #'hyrolo-mode-outline-level)
-    (reveal-mode 1)) ;; Expose hidden text as move into it.
-  (setq major-mode 'hyrolo-mode
-	mode-name "HyRolo")
-  (use-local-map hyrolo-mode-map)
-  ;;
-  (set-syntax-table hyrolo-mode-syntax-table)
-  ;;
-  (when (fboundp 'outline-minor-mode)
-    (outline-minor-mode 1))
-  (run-hooks 'hyrolo-mode-hook))
 
 ;;; ************************************************************************
 ;;; Private variables
