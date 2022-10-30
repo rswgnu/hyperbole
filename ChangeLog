@@ -1,3 +1,10 @@
+2022-10-27  Bob Weiner  <rsw@gnu.org>
+
+* hui-mini.el (hui:menu-item-key): Add and call from 'hui:menu-item-keys'.
+
+* hib-kbd.el (kbd-key:key-series-to-events): Add cons of t to each
+    event to ensure each event is added to this-command-keys.
+
 2022-10-25  Bob Weiner  <rsw@gnu.org>
 
 * hyrolo.el (hyrolo-backward-same-level):      Add and bind to {b}.
