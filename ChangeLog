@@ -1,3 +1,26 @@
+2022-10-30  Bob Weiner  <rsw@gnu.org>
+
+* hypb.el (hypb:activate-interaction-log-mode): Add to configure and
+    enable the interaction-log package for use with Hyperbole.  It
+    displays a font-locked log of Emacs keys and commands executed.
+
+* hui-mini.el (hui:menu-enter): For character input, set 'this-command'
+    to 'self-insert-command'.
+              (hui:menu-mode-map): Rebound these keys to commands by
+    the same name: 'hui:menu-abort', 'hui:menu-quit', 'hui-menu-select',
+    and 'hui:menu-top'.
+              (hui:menu-select): Rename this function to 'hui:menu-choose'
+    to avoid conflict with aliasing above and ensure all the special keys
+    above are displayed in cmd logs.
+
+* hui-mini.el (hui:hypb-exit): Rename to 'hui:menu-exit-hyperbole'.
+
+* hui-mini.el (hui:menu-select): Don't record 'read-from-minibuffer'
+    in command history.
+              (hui:menu-act): Set 'this-command' and command keys to
+    be the full key sequence for a Hyperbole minibuffer menu command.
+    Ensure this single command appears in history for clean logging.
+
 2022-10-27  Bob Weiner  <rsw@gnu.org>
 
 * hui-mini.el (hui:menu-item-key): Add and call from 'hui:menu-item-keys'.

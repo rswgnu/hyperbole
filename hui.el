@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 21:42:03
-;; Last-Mod:      7-Oct-22 at 23:36:14 by Mats Lidell
+;; Last-Mod:     31-Oct-22 at 00:33:29 by Bob Weiner
 ;;
 ;; Copyright (C) 1991-2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -1027,7 +1027,7 @@ from those instead.  See also documentation for
 	   (let ((item)
 		 type)
 	     (setq type-and-args
-		   (hui:menu-select
+		   (hui:menu-choose
 		    (cons '("Link to>")
 			  (mapcar
 			   (lambda (type-and-args)

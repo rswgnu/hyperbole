@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     6-Oct-91 at 03:42:38
-;; Last-Mod:     25-Oct-22 at 19:17:15 by Bob Weiner
+;; Last-Mod:     31-Oct-22 at 03:08:23 by Bob Weiner
 ;;
 ;; Copyright (C) 1991-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -50,6 +50,93 @@ It must end with a space."
 ;;; ************************************************************************
 ;;; Public functions
 ;;; ************************************************************************
+
+(defun hypb:activate-interaction-log-mode ()
+  "Configure and enable the interaction-log package for use with Hyperbole.
+This displays a clean log of Emacs keys used and commands executed."
+  (interactive)
+  ;; Ensure package is installed
+  (unless (package-installed-p 'keypression) (package-install 'keypression))
+
+  ;; Ensure interaction-log-mode is disabled to removes its command
+  ;; hooks which are replaced below.
+  (interaction-log-mode 0)
+
+  ;; Optional binding you can enable to display the ilog buffer
+  ;; (global-set-key
+  ;;          (kbd "C-h C-l")
+  ;;          (lambda () (interactive) (display-buffer ilog-buffer-name)))
+
+  ;; Display source code lambdas only
+  (setq ilog-print-lambdas 'not-compiled)
+
+  ;; Omit display of some lower-level Hyperbole commands for cleaner logs
+  (mapc (lambda (cmd-str) (push (format "^%s$" cmd-str) ilog-self-insert-command-regexps))
+        '("hyperbole" "hui:menu-enter"))
+
+  ;; Redefine the mode to display commands on post-command-hook rather
+  ;; than pre-command-hook since Hyperbole rewrites some command names
+  ;; and key sequences.
+  (define-minor-mode interaction-log-mode
+    "Global minor mode logging keys, commands, file loads and messages.
+	   Logged stuff goes to the *Emacs Log* buffer."
+    :group 'interaction-log
+    :lighter nil
+    :global t
+    :after-hook interaction-log-mode-hook
+    (if interaction-log-mode
+	(progn
+	  (add-hook 'after-change-functions #'ilog-note-buffer-change)
+	  (add-hook 'post-command-hook      #'ilog-record-this-command)
+	  (add-hook 'post-command-hook      #'ilog-post-command)
+	  (setq ilog-truncation-timer (run-at-time 30 30 #'ilog-truncate-log-buffer))
+	  (setq ilog-insertion-timer (run-with-timer ilog-idle-time ilog-idle-time
+						     #'ilog-timer-function))
+	  (message "Interaction Log: started logging in %s" ilog-buffer-name)
+	  (easy-menu-add ilog-minor-mode-menu))
+      (remove-hook 'after-change-functions #'ilog-note-buffer-change)
+      (remove-hook 'post-command-hook      #'ilog-record-this-command)
+      (remove-hook 'post-command-hook      #'ilog-post-command)
+      (when (timerp ilog-truncation-timer) (cancel-timer ilog-truncation-timer))
+      (setq ilog-truncation-timer nil)
+      (when (timerp ilog-insertion-timer) (cancel-timer ilog-insertion-timer))
+      (setq ilog-insertion-timer nil)))
+
+  ;; Define this function to display a 41 character wide ilog frame
+  ;; at the right of the screen with other frame parameters that match
+  ;; the frame selected when this is called.
+  (defun ilog-show-in-other-frame ()
+    "Display ilog in a separate frame of width 41 with parameters of selected frame.
+Raise and reuse any existing single window frame displaying ilog."
+    (interactive)
+    (require 'hycontrol)
+    (with-selected-window (selected-window)
+      (let* ((win (get-buffer-window ilog-buffer-name t))
+	     (frame (when win (window-frame win))))
+	(if (and frame (= (with-selected-frame frame (count-windows)) 1))
+	    (raise-frame frame)
+	  (unless interaction-log-mode (interaction-log-mode 1))
+	  (let ((params (frame-parameters)))
+	    (setcdr (assq 'width params) 41)
+	    (setq win (display-buffer-pop-up-frame
+		       (get-buffer ilog-buffer-name)
+		       (list (cons 'pop-up-frame-parameters params))))
+	    (set-window-dedicated-p win t)
+	    (with-selected-frame (window-frame win)
+	      (hycontrol-frame-to-right-center))
+	    win)))))
+
+  ;; Enable the mode
+  (interaction-log-mode 1)
+
+  ;; Limit display to commands executed
+  (with-current-buffer ilog-buffer-name
+    (setq ilog-display-state 'messages)
+    ;; Changes to command-only mode
+    (ilog-toggle-view)
+    (message ""))
+
+  (ilog-show-in-other-frame))
 
 (defmacro hypb:assert-same-start-and-end-buffer (&rest body)
   "Assert that buffers name does not change during execution of BODY.

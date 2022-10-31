@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    15-Oct-91 at 20:13:17
-;; Last-Mod:     10-Oct-22 at 22:55:17 by Mats Lidell
+;; Last-Mod:     31-Oct-22 at 01:44:19 by Bob Weiner
 ;;
 ;; Copyright (C) 1991-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -25,7 +25,7 @@
 ;;; Public variables
 ;;; ************************************************************************
 
-(defvar hui:hypb-exit            "X"
+(defvar hui:menu-exit-hyperbole  "X"
   "*Upper case character string which exits from/disables Hyperbole mode.
 Also exits any active minibuffer menu.")
 (defvar hui:menu-select          "\C-m"
@@ -33,7 +33,7 @@ Also exits any active minibuffer menu.")
 (defvar hui:menu-quit            "Q"
   "*Upper case character string which quits selecting from a Hyperbole menu item.")
 (defvar hui:menu-abort           "\C-g"
-  "*Same function as `hui:menu-quit'.")
+  "*Beeps and aborts from any Hyperbole menu.")
 (defvar hui:menu-top             "\C-t"
   "*Character string which returns to top Hyperbole menu.")
 
@@ -136,6 +136,10 @@ binding made with this function."
     (when (called-interactively-p 'interactive)
       (message "{%s} set to invoke {%s}" (key-description key) binding))))
 
+(defun hui:menu-hyperbole-prefix ()
+  "Return prefix keys that invoke the Hyperbole minibuffer menu."
+  (kbd (key-description (where-is-internal #'hyperbole (current-global-map) t))))
+
 (defun hui:menu-act (menu &optional menu-list doc-flag help-string-flag)
   "Prompt user with Hyperbole MENU (a symbol) and perform selected item.
 Optional second argument MENU-LIST is a Hyperbole menu list structure from
@@ -147,7 +151,7 @@ a menu item should be shown rather than display of a menu.  DOC-FLAG
 non-nil means show documentation for any item that is selected by the
 user.  HELP-STRING-FLAG non-nil means show only the first line of the
 documentation, not the full text."
-  (setq hui:menu-keys "")
+  (setq hui:menu-keys (hui:menu-hyperbole-prefix))
   (let ((show-menu t)
 	(rtn)
 	menu-alist act-form)
@@ -156,7 +160,7 @@ documentation, not the full text."
 				         (cdr (assq menu (or menu-list hui:menus)))))
 		              (hypb:error "(hui:menu-act): Invalid menu symbol arg: `%s'"
 				          menu)))
-      (cond ((and (consp (setq act-form (hui:menu-select menu-alist doc-flag help-string-flag)))
+      (cond ((and (consp (setq act-form (hui:menu-choose menu-alist doc-flag help-string-flag)))
 		  (cdr act-form)
 		  (symbolp (cdr act-form)))
 	     ;; Display another menu
@@ -165,8 +169,10 @@ documentation, not the full text."
 	     (let ((prefix-arg current-prefix-arg))
 	       (cond ((symbolp act-form)
 		      (unless (eq act-form t)
+			(set--this-command-keys hui:menu-keys)
 			(setq show-menu nil
-			      rtn (call-interactively act-form))))
+			      this-command act-form)
+			      rtn (call-interactively act-form)))
 		     ((stringp act-form)
 		      (if (or doc-flag help-string-flag)
 			  (setq show-menu nil
@@ -174,8 +180,10 @@ documentation, not the full text."
 			(hui:menu-help act-form)
 			;; Loop and show menu again.
 			))
-		     (t (setq show-menu nil
-			      rtn (eval act-form))))))
+		     (t (set--this-command-keys hui:menu-keys)
+			(setq show-menu nil
+			      this-command act-form)
+			      rtn (eval act-form)))))
 	    (t (setq show-menu nil))))
     rtn))
 
@@ -204,7 +212,7 @@ the menu list structure."
 				         (cdr (assq menu (or menu-list hui:menus)))))
 		              (hypb:error "(hui:menu-get-keys): Invalid menu symbol arg: `%s'"
 			                  menu)))
-      (cond ((and (consp (setq act-form (hui:menu-select menu-alist)))
+      (cond ((and (consp (setq act-form (hui:menu-choose menu-alist)))
 		  (cdr act-form)
 		  (symbolp (cdr act-form)))
 	     ;; Display another menu
@@ -261,7 +269,7 @@ instead returns the one line help string for the key sequence."
 	;; Ignore any keys past the first menu item activation.
 	(discard-input)))))
 
-(defun hui:hypb-exit ()
+(defun hui:menu-exit-hyperbole ()
   "Exit any Hyperbole minibuffer menu and disable `hyperbole-mode'."
   (interactive)
   (hyperbole-mode 0)
@@ -279,8 +287,14 @@ instead returns the one line help string for the key sequence."
 	(setq input (hargs:at-p)))
     (erase-buffer)
     (when (or (characterp input) (stringp input))
+      (setq this-command #'self-insert-command)
       (insert input)))
   (exit-minibuffer))
+
+(defalias 'hui:menu-quit   #'hui:menu-enter)
+(defalias 'hui:menu-abort  #'hui:menu-enter)
+(defalias 'hui:menu-top    #'hui:menu-enter)
+(defalias 'hui:menu-select #'hui:menu-enter)
 
 (defun hui:menu-forward-item (&optional arg)
   "Move point to the optional prefix ARGth next selectable minibuffer menu item.
@@ -332,24 +346,29 @@ If on the menu name prefix or the last item, move to the first item."
       (if (eq owind (minibuffer-window))
 	  (select-window owind)))))
 
+(defun hui:menu-item-key (item)
+  "Return ordered list of keys that activate Hypb minibuffer MENU-ALIST items.
+For each item, the key is either the first capital letter in item
+or if there are none, then its first character."
+  ;; Return either the first capital letter in item or if
+  ;; none, then its first character.
+  (or (catch 'capital
+	(progn (mapc (lambda (c) (and (<= ?A c) (>= ?Z c)
+				      (throw 'capital c)))
+		     item)
+	       ;; Ensure nil is returned from catch if no
+	       ;; matching char is found
+	       nil))
+      (aref item 0)))
+
 (defun hui:menu-item-keys (menu-alist)
   "Return ordered list of keys that activate Hypb minibuffer MENU-ALIST items.
 For each item, the key is either the first capital letter in item
 or if there are none, then its first character."
-  (mapcar (lambda (item)
-	    ;; Return either the first capital letter in item or if
-	    ;; none, then its first character.
-	    (or (catch 'capital
-		  (progn (mapc (lambda (c) (and (<= ?A c) (>= ?Z c)
-					 (throw 'capital c)))
-			       item)
-			 ;; Ensure nil is returned from catch if no
-			 ;; matching char is found
-			 nil))
-		(aref item 0)))
+  (mapcar (lambda (item) (hui:menu-item-key item))
 	  (mapcar 'car (cdr menu-alist))))
 
-(defun hui:menu-select (menu-alist &optional doc-flag help-string-flag)
+(defun hui:menu-choose (menu-alist &optional doc-flag help-string-flag)
   "Prompt user to choose the first capitalized char of any item from MENU-ALIST.
 The character may be entered in lowercase.  If chosen by direct
 selection with the Assist Key, return any help string for item,
@@ -363,7 +382,7 @@ documentation, not the full text."
   (let* ((menu-line (hui:menu-line menu-alist))
 	 (set:equal-op 'eq)
 	 (select-char (string-to-char hui:menu-select))
-	 (exit-char (string-to-char hui:hypb-exit))
+	 (exit-char (string-to-char hui:menu-exit-hyperbole))
 	 (quit-char (string-to-char hui:menu-quit))
 	 (abort-char (string-to-char hui:menu-abort))
 	 (top-char  (string-to-char hui:menu-top))
@@ -376,7 +395,7 @@ documentation, not the full text."
     (while (not (memq (setq key (upcase
 				 (string-to-char
 				  (read-from-minibuffer
-				   "" menu-line hui:menu-mode-map))))
+				   "" menu-line hui:menu-mode-map nil t))))
 		      keys))
       (beep)
       (setq hargs:reading-type 'hmenu)
@@ -384,11 +403,26 @@ documentation, not the full text."
     ;; Here, the minibuffer has been exited, and `key' has been set to one of:
     ;;   a menu item first capitalized character code;
     ;;   a menu command character code;
-    ;;   1 for in the menu prefix area;
-    ;;   0 for at the end of the menu.
-    (cond ((memq key (list 0 exit-char quit-char)) nil)
-	  ((eq key abort-char) (beep) nil)
-	  ((memq key (list 1 top-char)) '(menu . hyperbole))
+    ;;   1 for in the menu prefix area (moves to top menu);
+    ;;   0 for at the end of the menu (does nothing).
+    (cond ((eq key exit-char)
+	   (set--this-command-keys (concat hui:menu-keys hui:menu-exit-hyperbole))
+	   (setq this-command #'hui:menu-exit)
+	   nil)
+	  ((eq key quit-char)
+	   (set--this-command-keys (concat hui:menu-keys hui:menu-quit))
+	   (setq this-command #'hui:menu-quit)
+	   nil)
+	  ((eq key 0)
+	   nil)
+	  ((eq key abort-char)
+	   (beep)
+	   (set--this-command-keys (concat hui:menu-keys hui:menu-abort))
+	   (setq this-command #'hui:menu-abort)
+	   nil)
+	  ((memq key (list 1 top-char))
+	   (setq hui:menu-keys (concat hui:menu-keys (char-to-string top-char)))
+	   '(menu . hyperbole))
 	  ((and (eq key select-char)
 		(save-excursion
 		  (if (search-backward " " nil t)
@@ -567,16 +601,16 @@ The menu is a menu of commands from MENU-ALIST."
       (setq i (1+ i))))
   ;;
   ;; Bind any active keys for menu mode
-  (define-key hui:menu-mode-map hui:hypb-exit   #'hui:hypb-exit)
-  (define-key hui:menu-mode-map hui:menu-quit   #'hui:menu-enter)
-  (define-key hui:menu-mode-map hui:menu-abort  #'hui:menu-enter)
-  (define-key hui:menu-mode-map hui:menu-top    #'hui:menu-enter)
-  (define-key hui:menu-mode-map hui:menu-select #'hui:menu-enter)
-  (define-key hui:menu-mode-map "\M-b"          #'hui:menu-backward-item)
-  (define-key hui:menu-mode-map "\M-f"          #'hui:menu-forward-item)
-  (define-key hui:menu-mode-map "\C-i"          #'hui:menu-forward-item) ;; TAB
-  (define-key hui:menu-mode-map [backtab]       #'hui:menu-backward-item) ;; Shift-TAB
-  (define-key hui:menu-mode-map "\M-\C-i"       #'hui:menu-backward-item)) ;; M-TAB
+  (define-key hui:menu-mode-map hui:menu-exit-hyperbole #'hui:menu-exit-hyperbole)
+  (define-key hui:menu-mode-map hui:menu-quit           #'hui:menu-quit)
+  (define-key hui:menu-mode-map hui:menu-abort          #'hui:menu-abort)
+  (define-key hui:menu-mode-map hui:menu-top            #'hui:menu-top)
+  (define-key hui:menu-mode-map hui:menu-select         #'hui:menu-select)
+  (define-key hui:menu-mode-map "\M-b"                  #'hui:menu-backward-item)
+  (define-key hui:menu-mode-map "\M-f"                  #'hui:menu-forward-item)
+  (define-key hui:menu-mode-map "\C-i"                  #'hui:menu-forward-item) ;; TAB
+  (define-key hui:menu-mode-map [backtab]               #'hui:menu-backward-item) ;; Shift-TAB
+  (define-key hui:menu-mode-map "\M-\C-i"               #'hui:menu-backward-item)) ;; M-TAB
 
 ;;; ************************************************************************
 ;;; Hyperbole Minibuffer Menus
