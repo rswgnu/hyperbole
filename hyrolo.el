@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     7-Jun-89 at 22:08:29
-;; Last-Mod:     25-Oct-22 at 02:06:30 by Bob Weiner
+;; Last-Mod:     27-Oct-22 at 18:47:16 by Bob Weiner
 ;;
 ;; Copyright (C) 1991-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -1231,6 +1231,7 @@ around a matching line rather than entire entries."
   (require 'helm-org-rifle)
   (let ((files (seq-filter (lambda (f) (string-match "\\.\\(org\\|otl\\)$" f))
 			   (seq-filter #'file-readable-p hyrolo-file-list)))
+	(helm-org-rifle-show-level-stars t)
 	(helm-org-rifle-show-full-contents (not context-only-flag)))
     (save-excursion
       (mapc (lambda (file)
@@ -1253,7 +1254,8 @@ entries."
   (unless (file-readable-p org-directory)
     (make-directory org-directory))
   (if (file-readable-p org-directory)
-      (let ((helm-org-rifle-show-full-contents (not context-only-flag)))
+      (let ((helm-org-rifle-show-level-stars t)
+	    (helm-org-rifle-show-full-contents (not context-only-flag)))
 	(helm-org-rifle-org-directory))
     (error "(hyrolo-helm-org-directory-rifle): `org-directory', \"%s\", does not exist" org-directory)))
 

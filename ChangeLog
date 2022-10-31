@@ -12,6 +12,8 @@
             (hyrolo-next-visible-heading):     Add and bind to {n}.
             (hyrolo-previous-visible-heading): Add and bind to {p}.
 	    (hyrolo-up-heading):               Add and bind to {u}.
+	    (hyrolo-helm-org-directory-rifle, hyrolo-helm-org-rifle):
+    Let new variable, 'helm-org-rifle-show-level-stars', be t.
 
 2022-10-24  Bob Weiner  <rsw@gnu.org>
 
