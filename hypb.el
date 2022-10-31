@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     6-Oct-91 at 03:42:38
-;; Last-Mod:      6-Oct-22 at 18:55:39 by Bob Weiner
+;; Last-Mod:     25-Oct-22 at 19:17:15 by Bob Weiner
 ;;
 ;; Copyright (C) 1991-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -614,6 +614,12 @@ PACKAGE-NAME may be a symbol or a string."
       (keyboard-quit)))
   (require package-name))
 
+(defun hypb:remove-lines (regexp)
+  "Remove lines containing match for REGEXP.
+Apply within an active region or to the end of buffer."
+    (interactive "sRemove lines with match for regexp: ")
+    (flush-lines regexp nil nil t))
+
 (defun hypb:return-process-output (program &optional infile &rest args)
   "Return as a string the output from external PROGRAM with INFILE for input.
 Rest of ARGS are passed as arguments to PROGRAM.
@@ -632,11 +638,14 @@ Removes any trailing newline at the end of the output."
       (kill-buffer buf))
     output))
 
-(defun hypb:remove-lines (regexp)
-  "Remove lines containing match for REGEXP.
-Apply within an active region or to the end of buffer."
-    (interactive "sRemove lines with match for regexp: ")
-    (flush-lines regexp nil nil t))
+;;;###autoload
+(defun hypb:remove-package (package-name)
+  "If installed, delete Emacs PACKAGE-NAME."
+  (interactive)
+  (if (called-interactively-p 'any)
+      (call-interactively #'package-delete)
+    (when (package-installed-p package-name)
+      (package-delete (cadr (assq package-name (package--alist)))))))
 
 ;;;###autoload
 (defun hypb:rgrep (pattern &optional prefx-arg)
