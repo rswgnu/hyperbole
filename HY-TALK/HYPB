@@ -22,62 +22,10 @@ or interactively after loading Hyperbole:
 ** interaction-log Package - font-lock highlighted log of keys and commands
    Used for EmacsConf 2022
 
-  Install:    <unless (package-installed-p 'interaction-log) (package-install 'interaction-log)>
-  Load:       <load-library "interaction-log">
-
-  Configure:
-    <progn
-  Install:    <unless (package-installed-p 'keypression) (package-install 'keypression)>
-
- (setq ilog-display-state 'commands
-                 ilog-print-lambdas 'not-compiled)
-           (mapc (lambda (cmd-str) (push (format "^%s$" cmd-str) ilog-self-insert-command-regexps))
-                 '("hyperbole" "hui:menu-enter"))
-           (interaction-log-mode 0)
-
-           (global-set-key
-	    (kbd "C-h C-l")
-	    (lambda () (interactive) (display-buffer ilog-buffer-name)))
-
-	   (defun ilog-show-in-new-frame ()
-	     "Display log in a pop up frame of width 41 with parameters of selected frame."
-	     (interactive)
-	     (require 'hycontrol)
-	     (unless interaction-log-mode (interaction-log-mode +1))
-	     (let ((params (frame-parameters)))
-	       (setcdr (assq 'width params) 41)
-	       (let ((win (display-buffer-pop-up-frame
-			   (get-buffer ilog-buffer-name)
-			   (list (cons 'pop-up-frame-parameters params)))))
-		 (set-window-dedicated-p win t)
-		 (select-frame (window-frame win))
-		 (hycontrol-frame-to-right-center)
-		 win)))
-
-	   (define-minor-mode interaction-log-mode
-	     "Global minor mode logging keys, commands, file loads and messages.
-	   Logged stuff goes to the *Emacs Log* buffer."
-	     :group 'interaction-log
-	     :lighter nil
-	     :global t
-	     :after-hook interaction-log-mode-hook
-	     (if interaction-log-mode
-		 (progn
-		   (add-hook 'after-change-functions #'ilog-note-buffer-change)
-		   (add-hook 'post-command-hook      #'ilog-record-this-command)
-		   (add-hook 'post-command-hook      #'ilog-post-command)
-		   (setq ilog-truncation-timer (run-at-time 30 30 #'ilog-truncate-log-buffer))
-		   (setq ilog-insertion-timer (run-with-timer ilog-idle-time ilog-idle-time
-							      #'ilog-timer-function))
-		   (message "Interaction Log: started logging in %s" ilog-buffer-name)
-		   (easy-menu-add ilog-minor-mode-menu))
-	       (remove-hook 'after-change-functions #'ilog-note-buffer-change)
-	       (remove-hook 'post-command-hook      #'ilog-record-this-command)
-	       (remove-hook 'post-command-hook      #'ilog-post-command)
-	       (when (timerp ilog-truncation-timer) (cancel-timer ilog-truncation-timer))
-	       (setq ilog-truncation-timer nil)
-	       (when (timerp ilog-insertion-timer) (cancel-timer ilog-insertion-timer))
-	       (setq ilog-insertion-timer nil)))>
+  Install,
+  Load,
+  Configure,
+  Activate:   <hypb:activate-interaction-log-mode>
 
   Activate:   <interaction-log-mode 1>
   Deactivate: <interaction-log-mode 0>

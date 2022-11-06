@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     6-Oct-91 at 03:42:38
-;; Last-Mod:     31-Oct-22 at 03:08:23 by Bob Weiner
+;; Last-Mod:      5-Nov-22 at 10:36:08 by Bob Weiner
 ;;
 ;; Copyright (C) 1991-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -51,15 +51,18 @@ It must end with a space."
 ;;; Public functions
 ;;; ************************************************************************
 
+;;;###autoload
 (defun hypb:activate-interaction-log-mode ()
   "Configure and enable the interaction-log package for use with Hyperbole.
 This displays a clean log of Emacs keys used and commands executed."
   (interactive)
   ;; Ensure package is installed
-  (unless (package-installed-p 'keypression) (package-install 'keypression))
+  (unless (package-installed-p 'interaction-log)
+    (package-install 'interaction-log))
 
   ;; Ensure interaction-log-mode is disabled to removes its command
   ;; hooks which are replaced below.
+  (require 'interaction-log)
   (interaction-log-mode 0)
 
   ;; Optional binding you can enable to display the ilog buffer
@@ -738,8 +741,8 @@ Removes any trailing newline at the end of the output."
 (defun hypb:rgrep (pattern &optional prefx-arg)
   "Recursively grep with symbol at point or PATTERN.
 Grep over all non-backup and non-autosave files in the current
-directory tree.  If in an Emacs Lisp mode buffer and no PREFX-ARG
-is given, limit search to only .el and .el.gz files."
+directory tree.  If in an Emacs Lisp mode buffer and no optional
+PREFIX-ARG is given, limit search to only .el and .el.gz files."
   (interactive (list (if (and (not current-prefix-arg) (equal (buffer-name) "*Locate*"))
 			 (read-string "Grep files listed here for: ")
 		       (let ((default (symbol-at-point)))
