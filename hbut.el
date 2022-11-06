@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    18-Sep-91 at 02:57:09
-;; Last-Mod:     23-Oct-22 at 12:12:32 by Bob Weiner
+;; Last-Mod:      5-Nov-22 at 14:05:18 by Bob Weiner
 ;;
 ;; Copyright (C) 1991-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -91,7 +91,7 @@ If successful, leave point in button data buffer, so caller should use
 Default is `hbut:current'.
 Return entry deleted (a list of attribute values) or nil."
   (unless but-sym
-    (setq but-sym 'hbut:current))
+    (setq but-sym (ebut:at-p)))
   (when (ebut:is-p but-sym)
     (let* ((but-key (hattr:get but-sym 'lbl-key))
 	   (loc     (hattr:get but-sym 'loc))

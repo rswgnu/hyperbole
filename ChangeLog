@@ -1,3 +1,8 @@
+* hbdata.el (hbdata:to-entry-buf): Fix bug that set 'rtn' non-nil
+    at times when 'key-src' file was not found.  This could lead
+    to the wrong error, 'hui:ebut-delete', saying that you cannot
+    delete buttons in this buffer.
+
 2022-10-31  Bob Weiner  <rsw@gnu.org>
 
 * kotl/kimport.el (kimport:star-heading): Allow for indented headings.

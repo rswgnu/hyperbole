@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     2-Apr-91
-;; Last-Mod:      7-Oct-22 at 23:17:52 by Mats Lidell
+;; Last-Mod:      5-Nov-22 at 14:24:56 by Bob Weiner
 ;;
 ;; Copyright (C) 1991-2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -409,13 +409,14 @@ beginning of the hbdata file (which is created if necessary).
 Return non-nil if KEY-SRC is found or created, else nil."
   (let ((rtn) (ln-dir))
     (if (and (get-buffer key-src)
-	     (setq rtn (set-buffer key-src))
+	     (set-buffer key-src)
 	     (not buffer-file-name))
 	;; Button buffer has no file attached
 	(progn (setq buffer-read-only nil)
 	       (unless (hmail:hbdata-to-p)
 		 (insert "\n" hmail:hbdata-sep "\n"))
-	       (backward-char 1))
+	       (backward-char 1)
+	       (setq rtn t))
       (setq directory (or (file-name-directory key-src) directory))
       (let ((ln-file) (link-p key-src))
 	(while (setq link-p (file-symlink-p link-p))
@@ -424,19 +425,18 @@ Return non-nil if KEY-SRC is found or created, else nil."
 	    (setq ln-dir (file-name-directory ln-file)
 		  key-src (file-name-nondirectory ln-file))
 	  (setq key-src (file-name-nondirectory key-src))))
-      (if (or (hbdata:to-hbdata-buffer directory create)
-	      (and ln-dir (hbdata:to-hbdata-buffer ln-dir nil)
-		   (setq create nil
-			 directory ln-dir)))
-	  (progn
-	    (goto-char 1)
-	    (cond ((search-forward (concat "\^L\n\"" key-src "\"")
-				   nil t)
-		   (setq rtn t))
-		  (create
-		   (setq rtn t)
-		   (insert "\^L\n\"" key-src "\"\n")
-		   (backward-char 1))))))
+      (when (or (hbdata:to-hbdata-buffer directory create)
+		(and ln-dir (hbdata:to-hbdata-buffer ln-dir nil)
+		     (setq create nil
+			   directory ln-dir)))
+	(goto-char 1)
+	(cond ((search-forward (concat "\^L\n\"" key-src "\"")
+			       nil t)
+	       (setq rtn t))
+	      (create
+	       (setq rtn t)
+	       (insert "\^L\n\"" key-src "\"\n")
+	       (backward-char 1)))))
     rtn))
 
 (defun hbdata:write (&optional orig-lbl-key but-sym)
