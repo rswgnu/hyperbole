@@ -1,3 +1,7 @@
+2022-10-31  Bob Weiner  <rsw@gnu.org>
+
+* kotl/kimport.el (kimport:star-heading): Allow for indented headings.
+
 2022-10-30  Bob Weiner  <rsw@gnu.org>
 
 * hypb.el (hypb:activate-interaction-log-mode): Add to configure and

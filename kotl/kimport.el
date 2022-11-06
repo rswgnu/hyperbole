@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    15-Nov-93 at 11:57:05
-;; Last-Mod:     28-Aug-22 at 14:07:09 by Bob Weiner
+;; Last-Mod:      5-Nov-22 at 10:24:36 by Bob Weiner
 ;;
 ;; Copyright (C) 1993-2022  Free Software Foundation, Inc.
 ;; See the "../HY-COPY" file for license information.
@@ -67,9 +67,9 @@ imported cells as the initial set of children of the current cell, if any.
    .aug  - import format is an Augment post-numbered outline
            (see https://dougengelbart.org/content/view/148/).")
 
-(defconst kimport:star-heading "^\\(\\*+\\)"
+(defconst kimport:star-heading "^[ \t]*\\(\\*+\\)"
   "Regular expression matching a star outline heading.
-The number of stars is given by groupoing 1.")
+The number of stars is given by grouping 1.")
 
 ;;; ************************************************************************
 ;;; Public functions
@@ -247,9 +247,10 @@ on."
 ;;;###autoload
 (defun kimport:star-outline (import-from output-to &optional children-p)
   "Insert star outline nodes from IMPORT-FROM into koutline OUTPUT-TO.
-Displays and leaves point in OUTPUT-TO.  See documentation for
-`kimport:initialize' for valid values of IMPORT-FROM and OUTPUT-TO and for
-an explanation of where imported cells are placed.
+Display and leave point in OUTPUT-TO.  See documentation for
+`kimport:initialize' for valid values of IMPORT-FROM and
+OUTPUT-TO and for an explanation of where imported cells are
+placed.
 
 \"* \" = level 1, \"** \" = level 2 in outline and so on."
   (interactive "FImport from star delimited cells buffer/file: \nFBuffer/file to insert cells into: \nP")
