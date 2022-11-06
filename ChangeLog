@@ -1,3 +1,14 @@
+2022-11-05  Bob Weiner  <rsw@gnu.org>
+
+* hycontrol.el (hycontrol-windows-grid-by-file-pattern): Update
+    to use prefix arg as grid size or to autosize when not given
+    or given an invalid valude.
+               (hycontrol-windows-grid): Don't nullify prefix arg
+    when calling above function.
+               (hycontrol-make-windows-grid): Move 'hhist:add' call
+    here and remove from 'hycontrol-windows-grid' so it covers all
+    variants of windows-grid display.
+
 * hbdata.el (hbdata:to-entry-buf): Fix bug that set 'rtn' non-nil
     at times when 'key-src' file was not found.  This could lead
     to the wrong error, 'hui:ebut-delete', saying that you cannot

@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     1-Jun-16 at 15:35:36
-;; Last-Mod:     30-Oct-22 at 09:16:51 by Bob Weiner
+;; Last-Mod:      5-Nov-22 at 17:04:04 by Bob Weiner
 ;;
 ;; Copyright (C) 2016-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -1565,7 +1565,8 @@ If ARG is 0, prompt for a major mode whose buffers should be
 displayed in the grid windows, then prompt for the grid size.
 
 If ARG is < 0, prompt for a glob-type file pattern and display
-files that match the pattern in an auto-sized windows grid.
+files that match the pattern in an abs(ARG) sized windows grid
+or an autosized one if the ARG value is invalid.
 
 Otherwise, prompt for the grid size if ARG is an invalid size
 (positive and more than two digits).
@@ -1603,17 +1604,15 @@ argument."
 	   (call-interactively (lookup-key outline-minor-mode-map key)))
 	  ;;
 	  ;; No key conflicts, display window grid
-	  (t (let ((hist-elt (hhist:element)))
-	       (setq arg (prefix-numeric-value (or arg current-prefix-arg)))
-	       (cond ((> arg 0)
-		      (hycontrol-make-windows-grid arg))
-		     ((< arg 0)
-		      (setq current-prefix-arg nil)
-		      (call-interactively #'hycontrol-windows-grid-by-file-pattern))
-		     (t
-		      (setq current-prefix-arg 0)
-		      (call-interactively #'hycontrol-windows-grid-by-major-mode)))
-	       (hhist:add hist-elt)))))) ;; Save prior frame configuration for easy return
+	  (t (setq arg (prefix-numeric-value (or arg current-prefix-arg)))
+	     (cond ((> arg 0)
+		    (hycontrol-make-windows-grid arg))
+		   ((< arg 0)
+		    (call-interactively #'hycontrol-windows-grid-by-file-pattern))
+		   (t
+		    (setq current-prefix-arg 0)
+		    (call-interactively #'hycontrol-windows-grid-by-major-mode)))))))
+
 
 (defun hycontrol-windows-grid-minimum-size (num-buffers)
   "Return the minimum integer window grid size to display NUM-BUFFERS.
@@ -1644,22 +1643,35 @@ number of columns of windows."
       (hycontrol-make-windows-grid grid-size buffers))))
 
 ;;;###autoload
-(defun hycontrol-windows-grid-by-file-pattern (pattern &optional full)
-  "Display an automatically sized window grid with files found from glob PATTERN.
-Use absolute file paths if called interactively or optional FULL is non-nil."
+(defun hycontrol-windows-grid-by-file-pattern (arg pattern &optional full)
+  "Display a prefix ARG-sized window grid with files found from glob PATTERN.
+Use absolute file paths if called interactively or optional FULL is non-nil.
+
+Left digit of ARG is the number of grid rows and the right digit
+is the number of grid columns.  If ARG is less than 11 or greater
+than 99, then autosize the grid to fit the number of files
+matched by PATTERN."
   (interactive
-   (list (read-string "Pattern of files to display in windows grid: ")
+   (list current-prefix-arg
+	 (read-string "Pattern of files to display in windows grid: ")
 	 t))
   (let* ((find-file-wildcards t)
-	 (files (file-expand-wildcards pattern full)))
+	 (files (file-expand-wildcards pattern full))
+	 (num-files (length files))
+	 (grid-size (abs (prefix-numeric-value current-prefix-arg)))
+	 (max-files (if (or (<= grid-size 10) (> grid-size 99)) 99 grid-size)))
+    (when (zerop num-files)
+      (error "(HyControl): '%s' pattern did not match any files"))
+    (when (> num-files max-files)
+      ;; Cut off list at max-files items
+      (setq files (loop repeat max-files for files in files collect files)))
     (hycontrol-windows-grid-by-file-list files)))
 
 ;;;###autoload
 (defun hycontrol-windows-grid-by-major-mode (arg mode)
-  "Display a grid of windows in the selected frame with buffers of major MODE.
-The grid is sized according to prefix ARG.  Left digit of ARG is
-the number of grid rows and the right digit is the number of grid
-columns.
+  "Display a prefix ARG-sized grid of windows with buffers of major MODE.
+Left digit of ARG is the number of grid rows and the right digit
+is the number of grid columns.
 
 See documentation of `hycontrol-windows-grid' for further details."
   (interactive
@@ -1727,7 +1739,8 @@ See documentation of `hycontrol-windows-grid' for further details."
 	(beep))
       (setq arg (read-number "Display grid of ROW digit by COLUMN digit windows, e.g. 23 for 2R by 3C: "))))
 
-  (let ((wconfig (current-window-configuration)))
+  (let ((wconfig (current-window-configuration))
+	(hist-elt (hhist:element)))
     ;; If an error occurs during a window split because the window is
     ;; too small, then restore prior window configuration.
     (condition-case err
@@ -1782,8 +1795,10 @@ See documentation of `hycontrol-windows-grid' for further details."
       (error (set-window-configuration wconfig)
 	     (if (and hycontrol-help-flag (or hycontrol-frames-mode hycontrol-windows-mode))
 		 (pop-to-buffer "*Messages*"))
-	     (error "(HyDebug): Grid Size: %d; %s" arg err)))))
-
+	     (error "(HyDebug): Grid Size: %d; %s" arg err)))
+    ;; No error, save prior frame configuration for easy return
+    (hhist:add hist-elt)
+    nil))
 
 (defun hycontrol-delete-other-windows ()
   "Confirm and then delete all other windows in the selected frame."
