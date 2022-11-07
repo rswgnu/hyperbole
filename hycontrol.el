@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     1-Jun-16 at 15:35:36
-;; Last-Mod:      5-Nov-22 at 17:04:04 by Bob Weiner
+;; Last-Mod:      7-Nov-22 at 00:22:58 by Bob Weiner
 ;;
 ;; Copyright (C) 2016-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -122,6 +122,7 @@
 ;;; Other required Elisp libraries
 ;;; ************************************************************************
 
+(require 'cl-lib)
 (require 'hhist)     ; To store frame-config when hycontrol-windows-grid is used
 (require 'hypb)
 (require 'set)
@@ -503,6 +504,12 @@ Used on entry to HyControl.")
 ;;; ************************************************************************
 ;;; Private functions
 ;;; ************************************************************************
+
+(defsubst hycontrol-windows-grid-valid-size-p (grid-size)
+  (when grid-size
+    (and (setq grid-size (prefix-numeric-value grid-size))
+	 (integerp grid-size) (>= grid-size 11) (<= grid-size 99)
+	 (not (zerop (% grid-size 10))))))
 
 ;;; HyControl private per keyboard key functions
 
@@ -1088,7 +1095,7 @@ return nil."
 Cycle through the middle of edges and corners of the screen.
 With an optional ARG of 0, just reset the cycle position to 0."
   (interactive)
-  (if (and arg (zerop arg))
+  (if (and arg (eq arg 0))
       (setq hycontrol--screen-edge-position 0)
     (funcall
      (nth hycontrol--screen-edge-position
@@ -1608,64 +1615,112 @@ argument."
 	     (cond ((> arg 0)
 		    (hycontrol-make-windows-grid arg))
 		   ((< arg 0)
+		    (setq current-prefix-arg (abs arg))
 		    (call-interactively #'hycontrol-windows-grid-by-file-pattern))
 		   (t
 		    (setq current-prefix-arg 0)
 		    (call-interactively #'hycontrol-windows-grid-by-major-mode)))))))
 
+(defun hycontrol-windows-grid-validate (arg)
+  "Return the closest valid windows grid size from the two digit numeric abs(ARG).
+The digits of ARG specify the number of rows (leftmost) by
+columns (rightmost) for a grid."
+  (if (integerp arg)
+      (let* ((grid-size (abs arg))
+	     (rows (floor (/ grid-size 10)))
+	     (columns (- grid-size (* rows 10))))
+	(cond ((<= grid-size 10)
+	       (hycontrol-windows-grid-minimum-size grid-size))
+	      ((> grid-size 99)
+	       99)
+	      ((zerop columns)
+	       (hycontrol-windows-grid-minimum-size (* rows columns)))
+	      (t grid-size)))
+    (error "(hycontrol-windows-grid-validate): 'arg' must be an integer, not '%s'" arg)))
+
+(defun hycontrol-windows-grid-number-of-windows (arg)
+  "Return the product of the absolute value of the two digit numeric ARG.
+The digits of ARG specify the number of rows (leftmost) by
+columns (rightmost) for a grid."
+  (if (integerp arg)
+      (let* ((grid-size (abs arg))
+	     (rows (floor (/ grid-size 10)))
+	     (columns (- grid-size (* rows 10))))
+	(cond ((<= grid-size 10)
+	       (hycontrol-windows-grid-number-of-windows
+		(hycontrol-windows-grid-minimum-size grid-size)))
+	      ((> grid-size 99)
+	       81)
+	      (t (* rows columns))))
+    (error "(hycontrol-windows-grid-number-of-windows): 'arg' must be an integer, not '%s'" arg)))
 
 (defun hycontrol-windows-grid-minimum-size (num-buffers)
-  "Return the minimum integer window grid size to display NUM-BUFFERS.
+  "Return the minimum integer window grid size to display abs(NUM-BUFFERS).
 Minimize number of rows rather than columns.  Size is a 2 digit
 whole number with the first digit number of rows and the second,
-number of columns of windows."
-  (let* ((num-cols (ceiling (sqrt num-buffers)))
-	 (num-rows (1- num-cols))
-	 (grid-size (+ (* num-rows 10) num-cols)))
-    (when (< (* num-rows num-cols) num-buffers)
-      (setq grid-size (+ 10 grid-size)))
-    grid-size))
+number of columns of windows.  Return 0 if NUM-BUFFERS is 0."
+  (if (integerp num-buffers)
+      (let* ((num-cols (ceiling (sqrt num-buffers)))
+	     (num-rows (max (1- num-cols) 0))
+	     (grid-size (+ (* num-rows 10) num-cols)))
+	(when (< (* num-rows num-cols) num-buffers)
+	  (setq grid-size (+ 10 grid-size)))
+	grid-size)
+    (error "(hycontrol-windows-grid-minimum-size): 'num-buffers' must be an integer, not '%s'" num-buffers)))
 
-(defun hycontrol-windows-grid-by-buffer-list (buffers)
-  "Display an automatically sized window grid showing list of BUFFERS."
-    (if (null buffers)
-	(error "(hycontrol-windows-grid-by-buffer-list): No matching buffers")
-      (let ((grid-size (hycontrol-windows-grid-minimum-size (length buffers))))
-	(mapc #'switch-to-buffer (reverse buffers))
-	(hycontrol-make-windows-grid grid-size buffers))))
+(defun hycontrol-windows-grid-by-buffer-list (grid-size buffers)
+  "Display an abs(GRID-SIZE) window grid showing a subset of a list of BUFFERS.
+If GRID-SIZE is nil, prompt for grid size.  The digits of
+GRID-SIZE specify the number of rows (leftmost) by
+columns (rightmost) of the grid."
+  (if (null buffers)
+      (error "(hycontrol-windows-grid-by-buffer-list): No matching buffers")
+    (hycontrol-make-windows-grid
+     (when grid-size (hycontrol-windows-grid-validate grid-size))
+     (mapc #'switch-to-buffer (reverse buffers)))))
 
-(defun hycontrol-windows-grid-by-file-list (files)
-  "Display an automatically sized window grid showing list of FILES."
-    (if (null files)
-	(error "(hycontrol-windows-grid-by-file-list): No matching files")
-      (let ((grid-size (hycontrol-windows-grid-minimum-size (length files)))
-	    (buffers (nreverse (mapcar #'find-file (reverse files)))))
-      (hycontrol-make-windows-grid grid-size buffers))))
+(defun hycontrol-windows-grid-by-file-list (grid-size files)
+  "Display an abs(GRID-SIZE) window grid showing a subset of a list of FILES.
+If GRID-SIZE is nil, prompt for grid size.  The digits of
+GRID-SIZE specify the number of rows (leftmost) by
+columns (rightmost) of the grid."
+  (if (null files)
+      (error "(hycontrol-windows-grid-by-file-list): No matching files")
+    (hycontrol-make-windows-grid
+     (when grid-size (hycontrol-windows-grid-validate grid-size))
+     (nreverse (mapcar #'find-file (reverse files))))))
 
 ;;;###autoload
 (defun hycontrol-windows-grid-by-file-pattern (arg pattern &optional full)
-  "Display a prefix ARG-sized window grid with files found from glob PATTERN.
+  "Display up to an abs(prefix ARG)-sized window grid of files matching PATTERN.
 Use absolute file paths if called interactively or optional FULL is non-nil.
+PATTERN is a shell glob pattern.
 
 Left digit of ARG is the number of grid rows and the right digit
-is the number of grid columns.  If ARG is less than 11 or greater
-than 99, then autosize the grid to fit the number of files
-matched by PATTERN."
+is the number of grid columns.  If ARG is nil, 0, 1, less than
+11, greater than 99, then autosize the grid to fit the number of
+files matched by PATTERN. Otherwise, if ARG ends in a 0, adjust the
+grid size to the closest valid size."
   (interactive
    (list current-prefix-arg
 	 (read-string "Pattern of files to display in windows grid: ")
 	 t))
+  (when (memq arg '(0 1))
+    (setq arg nil))
   (let* ((find-file-wildcards t)
 	 (files (file-expand-wildcards pattern full))
 	 (num-files (length files))
-	 (grid-size (abs (prefix-numeric-value current-prefix-arg)))
-	 (max-files (if (or (<= grid-size 10) (> grid-size 99)) 99 grid-size)))
+	 (grid-size (if arg
+			(hycontrol-windows-grid-validate arg)
+		      (hycontrol-windows-grid-minimum-size num-files)))
+	 (num-windows (hycontrol-windows-grid-number-of-windows (or arg grid-size)))
+	 (max-files (min num-files num-windows)))
     (when (zerop num-files)
-      (error "(HyControl): '%s' pattern did not match any files"))
+      (error "(hycontrol-windows-grid-by-file-pattern): '%s' pattern did not match any files" pattern))
     (when (> num-files max-files)
       ;; Cut off list at max-files items
-      (setq files (loop repeat max-files for files in files collect files)))
-    (hycontrol-windows-grid-by-file-list files)))
+      (setq files (cl-loop repeat max-files for files in files collect files)))
+    (hycontrol-windows-grid-by-file-list grid-size files)))
 
 ;;;###autoload
 (defun hycontrol-windows-grid-by-major-mode (arg mode)
@@ -1695,12 +1750,12 @@ See documentation of `hycontrol-windows-grid' for further details."
   (catch 'done
     (let (hycontrol-help-flag)
       (while t
-	(while (not (or (eq arg 0) (and (integerp arg) (>= arg 11) (<= arg 99))))
+	(while (not (or (eq arg 0) (hycontrol-windows-grid-valid-size-p arg)))
 	  (setq arg (read-string "Display grid of ROW digit by COLUMN digit windows, e.g. 23 for 2R by 3C (RET to quit): "))
 	  (setq arg (if (string-equal arg "")
 			(throw 'done t)
 		      (string-to-number arg)))
-	  (unless (or (eq arg 0) (and (integerp arg) (>= arg 11) (<= arg 99)))
+	  (unless (or (eq arg 0) (hycontrol-windows-grid-valid-size-p arg))
 	    (beep)))
 	(hycontrol-windows-grid arg)
 	(setq arg nil)))))
@@ -1719,25 +1774,28 @@ See documentation of `hycontrol-windows-grid' for further details."
   (unless buffer-list
     (setq buffer-list (hycontrol-windows-grid-marked-items)))
 
-  (when buffer-list
-    (setq arg (hycontrol-windows-grid-minimum-size (length buffer-list))))
+  (unless (or arg buffer-list)
+    (error "(hycontrol-make-windows-grid): Both 'arg' and 'buffer-list' cannot both be null"))
 
-  ;; Check ARG, must be 2 digits of [1-9], else read a new ARG or
-  ;; signal an error when in a HyControl mode and help is displayed.
-  (if (and (and hycontrol-help-flag (or hycontrol-frames-mode hycontrol-windows-mode))
-	   (not (and (integerp arg) (>= arg 11) (<= arg 99))))
-      (let ((hyc-mode (if hycontrol-frames-mode #'hycontrol-frames-mode #'hycontrol-windows-mode)))
-	(hycontrol-disable-modes)
-	(setq arg 1)
-	(while (not (and (integerp arg) (and (>= arg 11) (<= arg 99))))
-	  (unless (or (eq arg 0) (eq arg 1))
-	    (beep))
-	  (setq arg (read-number "Display grid of ROW digit by COLUMN digit windows, e.g. 23 for 2R by 3C: ")))
-	(funcall hyc-mode arg))
-    (while (not (and (integerp arg) (and (>= arg 11) (<= arg 99))))
-      (unless (or (eq arg 0) (eq arg 1))
-	(beep))
-      (setq arg (read-number "Display grid of ROW digit by COLUMN digit windows, e.g. 23 for 2R by 3C: "))))
+  (cond (buffer-list
+	 ;; Override `arg' when `buffer-list' is given
+	 (setq arg (hycontrol-windows-grid-minimum-size (length buffer-list))))
+	;; Check `arg': must be 2 digits of [1-9], else read a new `arg' or
+	;; signal an error when in a HyControl mode and help is displayed.
+	((and (and hycontrol-help-flag (or hycontrol-frames-mode hycontrol-windows-mode))
+	      (not (hycontrol-windows-grid-valid-size-p arg)))
+	 (let ((hyc-mode (if hycontrol-frames-mode #'hycontrol-frames-mode #'hycontrol-windows-mode)))
+	   (hycontrol-disable-modes)
+	   (setq arg 1)
+	   (while (not (hycontrol-windows-grid-valid-size-p arg))
+	     (unless (memq arg '(0 1))
+	       (beep))
+	     (setq arg (read-number "Display grid of ROW digit by COLUMN digit windows, e.g. 23 for 2R by 3C: ")))
+	   (funcall hyc-mode arg)))
+	(t (while (not (hycontrol-windows-grid-valid-size-p arg))
+	     (unless (memq arg '(0 1))
+	       (beep))
+	     (setq arg (read-number "Display grid of ROW digit by COLUMN digit windows, e.g. 23 for 2R by 3C: ")))))
 
   (let ((wconfig (current-window-configuration))
 	(hist-elt (hhist:element)))
@@ -1798,6 +1856,7 @@ See documentation of `hycontrol-windows-grid' for further details."
 	     (error "(HyDebug): Grid Size: %d; %s" arg err)))
     ;; No error, save prior frame configuration for easy return
     (hhist:add hist-elt)
+    ;; Return nil so frame config structure is never displayed
     nil))
 
 (defun hycontrol-delete-other-windows ()

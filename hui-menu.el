@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    28-Oct-94 at 10:59:44
-;; Last-Mod:     26-Feb-22 at 17:03:44 by Bob Weiner
+;; Last-Mod:      6-Nov-22 at 12:23:29 by Bob Weiner
 ;;
 ;; Copyright (C) 1994-2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -340,7 +340,7 @@ REBUILD-FLAG is non-nil, in which case the menu is rebuilt."
 		  t]
 		 "----"
 		 ["Activate-Button-in-Buffer" hui:hbut-act t]
-		 ["Back-to-Prior-Location" (hhist:remove current-prefix-arg)
+		 ["Back-to-Prior-Location" hhist:pop
 		  (and (boundp '*hhist*) *hhist*)]
 		 '("Button-File"
 		   ["Manual"  (id-info "(hyperbole)Button Files") t]

@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     1-Nov-91 at 00:44:23
-;; Last-Mod:     13-Oct-22 at 21:54:38 by Mats Lidell
+;; Last-Mod:      6-Nov-22 at 11:43:43 by Bob Weiner
 ;;
 ;; Copyright (C) 1991-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -70,7 +70,7 @@ Path, line number and column are colon separated.
 Group 1 is the line number.  Group 3 is the column number.")
 
 (defconst hpath:markup-link-anchor-regexp
-  "\\`\\(#?[^#]*[^#.]\\)?\\(#\\)\\([^\]\[#^{}<>\"`'\\\n\t\f\r]*\\)"
+  "\\`\\(#?[^#+]*[^#+.]\\)?\\(#\\)\\([^\]\[#+^{}<>\"`'\\\n\t\f\r]*\\)"
   "Regexp matching a filename followed by a hash (#) and an optional anchor name.
 The anchor is an in-file reference.
 # is group 2.  Group 3 is the anchor name.")
@@ -1027,9 +1027,9 @@ Make any existing path within a file buffer absolute before returning."
 			;; ignore HTML color strings
 			(not (string-match "\\`#[0-9A-Fa-f][0-9A-Fa-f][0-9A-Fa-f][0-9A-Fa-f][0-9A-Fa-f][0-9A-Fa-f]\\'" path))
 			;; match to in-file #anchor references
-			(string-match "\\`#[^\'\"<>#]+\\'" path))
+			(string-match "\\`#[^+\'\"<>#]+\\'" path))
 		   (setq path (concat mode-prefix buffer-file-name path)))
-		  ((string-match "\\`\\([^#]+\\)\\(#[^#]*\\)\\'" path)
+		  ((string-match "\\`\\([^#]+\\)\\(#[^#+]*\\)\\'" path)
 		   ;; file and #anchor reference
 		   (setq suffix (match-string 2 path)
 			 path (match-string 1 path))
@@ -1213,7 +1213,7 @@ PATH unchanged."
 	    ;; For compressed Elisp libraries, add any found compressed suffix to the path.
 	    ((string-match-p "\\.el\\(\\.\\|\\'\\)" substituted-path)
 	     (or (locate-library substituted-path t) path))
-	    ((or (string-match-p "\\`\\(#\\|([^\)\\/]+)\\|[^.\\/].*\\.[^.\\/]\\)" substituted-path)
+	    ((or (string-match-p "\\`\\(#[^#+.]\\|([^\)\\/]+)\\|[^.\\/].*\\.[^.\\/]\\)" substituted-path)
 		 (string-match-p "[\\/~]" substituted-path))
 	     ;; Don't expand if an Info path, URL, #anchor or has a directory prefix
 	     substituted-path)

@@ -1,3 +1,29 @@
+2022-11-06  Bob Weiner  <rsw@gnu.org>
+
+* hycontrol.el (cl-lib): Add this require for cl-loop.
+               (hycontrol-windows-grid-number-of-windows,
+                hycontrol-windows-grid-valid-size-p): Add.
+               (hycontrol-windows-grid-by-buffer-list,
+                hycontrol-windows-grid-by-file-list): Add first
+    arg grid-size.
+               (hycontrol-make-windows-grid,
+                hycontrol-windows-grid-validate,
+                hycontrol-windows-grid-minimum-size,
+                hycontrol-windows-grid-repeatedly): Add further
+    input checks.
+
+* hywconfig.el (hywconfig-delete-pop-continue,
+                hywconfig-yank-pop-continue): Add and call
+    interactively in "hui-mini.el".
+
+* hhist.el (hhist:remove): Rename to 'hhist:pop'.
+
+* hycontrol.el (hycontrol-windows-grid-by-file-pattern): Fix
+   missing 'pattern' arg in 'format' call.
+
+* hpath.el (hpath:at-p): Ignore anchor matches to '#+' so does
+    not match to Org markup.
+
 2022-11-05  Bob Weiner  <rsw@gnu.org>
 
 * hycontrol.el (hycontrol-windows-grid-by-file-pattern): Update

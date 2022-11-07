@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    15-Oct-91 at 20:13:17
-;; Last-Mod:     31-Oct-22 at 01:44:19 by Bob Weiner
+;; Last-Mod:      6-Nov-22 at 13:09:42 by Bob Weiner
 ;;
 ;; Copyright (C) 1991-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -637,7 +637,7 @@ The menu is a menu of commands from MENU-ALIST."
 		 ("Ebut/"       (menu . ebut)     "Explicit button commands.")
 		 ("Find/"       (menu . find)     "Find matching line commands.")
 		 ("Gbut/"       (menu . gbut)     "Global button commands.")
-		 ("Hist"        (hhist:remove current-prefix-arg)
+		 ("Hist"        hhist:pop
 		  "Jumps back to location prior to last Hyperbole button follow.")
 		 ("Ibut/"       (menu . ibut)     "Implicit button and button type commands.")
 		 ("Kotl/"       (menu . kotl)     "Autonumbered outlining and hyperlink capabilities.")
@@ -889,13 +889,11 @@ The menu is a menu of commands from MENU-ALIST."
 	  ("AddName"          hywconfig-add-by-name     "Name current window configuration.")
 	  ("DeleteName"       hywconfig-delete-by-name  "Delete named window configuration.")
 	  ("RestoreName"      hywconfig-restore-by-name "Restore frame to window configuration given by name.")
-	  ("PopRing"          (progn (hywconfig-delete-pop)
-				     (hyperbole 'win))
+	  ("PopRing"          hywconfig-delete-pop-continue
 	   "Restores window configuration from ring and removes it from ring.")
 	  ("SaveRing"         (hywconfig-ring-save)
 	   "Saves current window configuration to ring.")
-	  ("YankRing"         (progn (call-interactively 'hywconfig-yank-pop)
-				     (hyperbole 'win))
+	  ("YankRing"         hywconfig-yank-pop-continue
 	   "Restores next window configuration from ring.")))
        (hui:menu-web-search)))))
 

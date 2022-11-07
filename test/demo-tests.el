@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    30-Jan-21 at 12:00:00
-;; Last-Mod:     24-Sep-22 at 12:40:19 by Bob Weiner
+;; Last-Mod:      6-Nov-22 at 12:23:00 by Bob Weiner
 ;;
 ;; Copyright (C) 2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -176,7 +176,7 @@
           (setq pm (point-marker))
           (action-key)
           (should (string= "*info*" (buffer-name)))
-          (hhist:remove)
+          (hhist:pop)
           (should (string= tmp-buf-name (buffer-name)))
           (should (equal pm (point-marker)))
           ))
@@ -433,13 +433,14 @@
 
 (ert-deftest fast-demo-key-series-kotl-files ()
   "Action key brings up kotl files in a grid.
-Note: Depends on ket series in FAST-DEMO and how many files in
+Note: Depends on key series in FAST-DEMO and how many files in
 hyberbole folder that starts with kotl."
   (skip-unless (not noninteractive))
   (unwind-protect
       (progn
         (hypb:display-file-with-logo "FAST-DEMO")
-        (search-forward "{C--1 C-c")
+	(goto-char (point-min))
+        (search-forward "{C--1 C-c @")
         (action-key)
         (hy-test-helpers:consume-input-events)
         (should (= 4 (length (window-list)))))
