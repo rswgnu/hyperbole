@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    04-Feb-89
-;; Last-Mod:     24-Oct-22 at 23:09:18 by Bob Weiner
+;; Last-Mod:     28-Nov-22 at 02:35:34 by Bob Weiner
 ;;
 ;; Copyright (C) 1991-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -71,7 +71,7 @@ In other context signal an error."
 
 (defun assist-key-error ()
   "If in Org mode and Hyperbole shares {M-RET}, run org-meta-return.
-In other context signal an error."
+In other context, signal an error."
   (if (and (funcall hsys-org-mode-function)
 	   (hsys-org-meta-return-shared-p))
       (hact 'hsys-org-meta-return)
@@ -185,7 +185,8 @@ Its default value is `smart-scroll-down'.  To disable it, set it to
 	  (memq company-active-map (current-minor-mode-maps))) .
 	  ((smart-company-to-definition) . (smart-company-help)))
     ;;
-    ;; Handle any Org mode-specific contexts
+    ;; Handle any Org mode-specific contexts but give priority to Hyperbole
+    ;; buttons prior to cycling Org headlines
     ((and (not (hyperb:stack-frame '(smart-org)))
 	  (let ((hrule:action #'actype:identity))
 	    (smart-org))) .
@@ -239,6 +240,8 @@ Its default value is `smart-scroll-down'.  To disable it, set it to
 	  (not (smart-helm-alive-p))) .
 	  ((id-edit-yank) . (id-edit-yank)))
     ;;
+    ;; If in an xref buffer on a listing of matching identifier lines, go to
+    ;; the source line referenced by the current entry.
     ((and (fboundp 'xref--item-at-point) (xref--item-at-point)) .
      ((xref-goto-xref) . (xref-show-location-at-point)))
     ;;
@@ -365,6 +368,8 @@ Its default value is `smart-scroll-down'.  To disable it, set it to
     ;; Python files - ensure this comes before Imenu for more advanced
     ;; definition lookups
     ((and (or (and (derived-mode-p 'python-mode) buffer-file-name)
+	      (and (featurep 'hsys-org) (hsys-org-mode-p)
+		   (equal (hsys-org-get-value :language) "python"))
 	      (let ((case-fold-search))
 		(string-match "\\`\\([ *]?Pydoc[: ]\\|\\*?Python\\)" (buffer-name))))
 	  (setq hkey-value (smart-python-at-tag-p))) .
@@ -1661,42 +1666,48 @@ Active when `hsys-org-enable-smart-keys' is non-nil,
 
 When the Action Key is pressed:
 
-  First, this follows internal links in Org mode files.  When pressed on a
-  link referent/target, the link definition is displayed, allowing two-way
-  navigation between definitions and targets.
+  1. If on an Org todo keyword, cycle through the keywords in
+     that set or if final done keyword, remove it.
 
-  Second, this follows Org mode external links.
+  2. If on an Org agenda item, jump to the item for editing.
 
-  Third, within a radio target definition, this jumps to the first
-  occurrence of an associated radio target.
+  3. Within a radio or internal target or a link to it, jump between
+     the target and the first link to it, allowing two-way navigation.
 
-  Fourth, when point is on an outline heading in Org mode, this
-  cycles the view of the subtree at point.
+  4. Follow other internal links in Org mode files.
 
-  Fifth, with point on the first line of a code block definition, this
-  executes the code block via the Org mode standard binding of {C-c C-c},
-  (org-ctrl-c-ctrl-c).
+  5. Follow Org mode external links.
 
-  Sixth, if on an Org todo keyword, cycles through the keywords in
-  that set or if final done keyword, removes it.
+  6. When on a Hyperbole button, activate the button.
 
-  In any other context besides the end of a line, the Action Key invokes the
-  Org mode standard binding of {M-RET}, (org-meta-return).
+  7. With point on the first line of a code block definition, execute the
+     code block via the Org mode standard binding of {C-c C-c},
+     (org-ctrl-c-ctrl-c).
+  
+  8. When point is on an outline heading in Org mode, cycle the view of the
+     subtree at point.
 
-When the Assist Key is pressed:
+  9. In any other context besides the end of a line, the Action Key invokes
+     the Org mode standard binding of {M-RET}, (org-meta-return).
 
-  First, on an Org mode heading, this cycles through views of the
-  whole buffer outline.
+When the Assist Key is pressed, it behaves just like the Action Key except
+in these contexts:
 
-  Second, on an Org mode link or agenda item, this displays
-  standard Hyperbole help.
+  1. If on an Org todo keyword, move to the first todo keyword in
+     the next set, if any.
 
-  Third, if on an Org todo keyword, moves to the first todo keyword in
-  the next set, if any.
+  2. If on an Org mode link or agenda item, display Hyperbole
+     context-sensitive help.
+
+  3. On a Hyperbole button, performs the Assist Key function, generally
+     showing help for the button.
+
+  4. Not on a Hyperbole button but on an Org mode heading, cycle
+     through views of the whole buffer outline.
 
 To disable ALL Hyperbole support within Org major and minor modes, set the
 custom option `hsys-org-enable-smart-keys' to nil.  Then in Org modes, this
-will simply invoke `org-meta-return'.
+will invoke `org-meta-return'.
 
 Org links may be used outside of Org mode buffers.  Such links are
 handled by the separate implicit button type, `org-link-outside-org-mode'."
@@ -1720,12 +1731,12 @@ handled by the separate implicit button type, `org-link-outside-org-mode'."
 		      (hact 'hkey-help))
 		    ;; Ignore any further Smart Key non-Org contexts
 		    t)
-		   ((setq start-end (hsys-org-internal-link-target-at-p))
-		    (hsys-org-set-ibut-label start-end)
-		    (hact 'org-internal-link-target)
-		    t)
 		   ((hsys-org-radio-target-def-at-p)
-		    (hact 'org-radio-target)
+		    (hact 'org-radio-target-link)
+		    t)
+		   ((setq start-end (hsys-org-internal-target-def-at-p))
+		    (hsys-org-set-ibut-label start-end)
+		    (hact 'org-internal-target-link)
 		    t)
 		   ((setq start-end (hsys-org-link-at-p))
 		    (if (not assist-flag)
@@ -1733,24 +1744,27 @@ handled by the separate implicit button type, `org-link-outside-org-mode'."
 			       (hact 'org-link))
 		      (hact 'hkey-help))
 		    t)
-		   ((hsys-org-block-start-at-p)
-		    (hact 'org-ctrl-c-ctrl-c)
-		    t)
 		   ((hbut:at-p)
 		    ;; Fall through until Hyperbole button context and
 		    ;; activate normally.
 		    nil)
+		   ((hsys-org-block-start-at-p)
+		    (hact 'org-ctrl-c-ctrl-c)
+		    t)
 		   ((hsys-org-heading-at-p)
 		    (if (not assist-flag)
 			(hact 'hsys-org-cycle)
 		      (hact 'hsys-org-global-cycle))
 		    t)
+		   ((equal (hsys-org-get-value :language) "python")
+		    (setq hkey-value (smart-python-at-tag-p))
+		    (hact 'smart-python hkey-value))
 		   (t
 		    ;; Continue with any further Smart Key non-Org contexts
 		    nil)))
 	    ((eq hsys-org-enable-smart-keys 'buttons)
 	     (cond ((hsys-org-radio-target-def-at-p)
-		    (hact 'org-radio-target)
+		    (hact 'org-radio-target-link)
 		    t)
 		   ((setq start-end (hsys-org-link-at-p))
 		    (if (not assist-flag)
@@ -1762,6 +1776,9 @@ handled by the separate implicit button type, `org-link-outside-org-mode'."
 		    ;; Fall through until Hyperbole button context and
 		    ;; activate normally.
 		    nil)
+		   ((equal (hsys-org-get-value :language) "python")
+		    (setq hkey-value (smart-python-at-tag-p))
+		    (hact 'smart-python hkey-value 'next-tag))
 		   (t
 		    (when (hsys-org-meta-return-shared-p)
 		      (hact 'hsys-org-meta-return))

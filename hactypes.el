@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    23-Sep-91 at 20:34:36
-;; Last-Mod:     23-Jul-22 at 22:25:35 by Bob Weiner
+;; Last-Mod:     20-Nov-22 at 21:55:18 by Bob Weiner
 ;;
 ;; Copyright (C) 1991-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -701,15 +701,14 @@ Optional OPOINT is point to return to in BUF-NAME after displaying summary."
 (defact text-toc (section)
   "Jump to the text file SECTION referenced by a table of contents entry at point."
   (interactive "sGo to section named: ")
-  (if (stringp section)
-      (progn
-	(actypes::link-to-regexp-match
-	 (concat "^\\*+[ \t]*" (regexp-quote section))
-	 1 (current-buffer) t)
-	(while (and (= (forward-line -1) 0)
-		    (looking-at "[ \t]*[-=][-=]")))
-	(forward-line 1)
-	(recenter 0))))
+  (when (stringp section)
+    (actypes::link-to-regexp-match
+     (concat "^[-+*o]+[ \t]+" (regexp-quote section))
+     1 (current-buffer) t)
+    (while (and (= (forward-line -1) 0)
+		(looking-at "[ \t]*[-=][-=]")))
+    (forward-line 1)
+    (recenter 0)))
 
 (provide 'hactypes)
 

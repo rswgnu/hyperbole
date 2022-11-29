@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    23-Apr-21 at 20:55:00
-;; Last-Mod:     24-Jan-22 at 00:40:05 by Bob Weiner
+;; Last-Mod:     26-Nov-22 at 14:27:43 by Bob Weiner
 ;;
 ;; Copyright (C) 2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -102,25 +102,23 @@
     (font-lock-ensure)
     (should (equal (hsys-org-radio-target-at-p) '(2 . 12)))))
 
-(ert-deftest hsys-org:org-internal-link-target-at-p ()
-  "Should return (start . end) iff point is within an org radio target definition."
+(ert-deftest hsys-org:org-internal-target-at-p ()
+  "Should return (start . end) iff point is within an org internal target definition."
   (with-temp-buffer
     (org-mode)
-    (insert " <<<link>>>\n")
+    (insert " <<target>>\n")
     (goto-char 6)
-    (org-ctrl-c-ctrl-c)
     (font-lock-ensure)
-    (should (equal (hsys-org-internal-link-target-at-p) '(2 . 12)))))
+    (should (hsys-org-internal-target-def-at-p))))
 
 (ert-deftest hsys-org:org-face-at-p ()
-  "Should return face type iff point is within an org radio target definition."
+  "Should return face type iff point is within an org target definition."
   (with-temp-buffer
     (org-mode)
-    (insert " <<<link>>>\n")
+    (insert " <<target>>\n")
     (goto-char 6)
-    (org-ctrl-c-ctrl-c)
     (font-lock-ensure)
-    (should (equal (hsys-org-face-at-p 'org-target) 'org-target))))
+    (should (hsys-org-face-at-p 'org-target))))
 
 (provide 'hsys-org-tests)
 ;;; hsys-org-tests.el ends here

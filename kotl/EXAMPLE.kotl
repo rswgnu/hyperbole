@@ -372,22 +372,23 @@
 
       3d2. Here are two table examples:
            
-           |----------------------------+-----------------------------|
-           | Promotion Inside Org Table | Demotion Inside Org Table   |
-           |----------------------------+-----------------------------|
-           | M-0 Shift-TAB or M-0 M-TAB | M-0 TAB                     |
-           | C-c C-,                    | C-c C-.                     |
-           | C-c C-<                    | C-c C->                     |
-           |----------------------------+-----------------------------|
-           
+           |--------------------------------+---------------------------|
+           | Promotion Inside Org Table     | Demotion Inside Org Table |
+           |--------------------------------+---------------------------|
+           | {M-0 Shift-TAB} or {M-0 M-TAB} | {M-0 TAB}                 |
+           | {C-c C-,}                      | {C-c C-.}                 |
+           | {C-c C-<}                      | {C-c C->}                 |
+           |--------------------------------+---------------------------|
+                      
            |-----------------------------+----------------------------|
            | Promotion Outside Org Table | Demotion Outside Org Table |
            |-----------------------------+----------------------------|
-           | Shift-TAB or M-TAB          | TAB                        |
-           | M-left                      | M-right                    |
-           | C-c C-,                     | C-c C-.                    |
-           | C-c C-<                     | C-c C->                    |
+           | {Shift-TAB} or {M-TAB}      | {TAB}                      |
+           | {M-left}                    | {M-right}                  |
+           | {C-c C-,}                   | {C-c C-.}                  |
+           | {C-c C-<}                   | {C-c C->}                  |
            |-----------------------------+----------------------------|
+           
            
            To toggle table editing mode on or off, press the Action
            Key on any of the table | symbols and then edit as you

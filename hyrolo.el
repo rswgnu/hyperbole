@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     7-Jun-89 at 22:08:29
-;; Last-Mod:     27-Oct-22 at 18:47:16 by Bob Weiner
+;; Last-Mod:     27-Nov-22 at 23:45:24 by Bob Weiner
 ;;
 ;; Copyright (C) 1991-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -453,6 +453,7 @@ Return number of entries matched.  See also documentation for the variable
 `hyrolo-file-list' and the function `hyrolo-fgrep-logical' for documentation on
 the logical sexpression matching."
   (interactive "sFind rolo string (or logical sexpression): \nP")
+  (setq string (string-trim string "\"" "\""))
   (let ((total-matches 0))
     (if (string-match "\(\\(and\\|or\\|xor\\|not\\)\\>" string)
 	(progn
@@ -462,8 +463,8 @@ the logical sexpression matching."
 	  ;; then match across ancestors and descendants.
 	  (when (zerop (setq total-matches (hyrolo-fgrep-logical string count-only nil t)))
 	    (hyrolo-fgrep-logical string count-only t t)))
-      (setq total-matches (hyrolo-grep (regexp-quote string) max-matches
-				       hyrolo-file count-only headline-only no-display)))
+      (setq total-matches (hyrolo-grep (regexp-quote string)
+				       max-matches hyrolo-file count-only headline-only no-display)))
     (if (called-interactively-p 'interactive)
 	(message "%s matching entr%s found in rolo."
 		 (if (= total-matches 0) "No" total-matches)
@@ -1939,9 +1940,9 @@ the whitespace following the entry hierarchy level.")
 
 (defconst hyrolo-hdr-format
   (concat
-   "======================================================================\n"
+   "===============================================================================\n"
    "%s\n"
-   "======================================================================\n")
+   "===============================================================================\n")
   "Header to insert preceding a file's first rolo entry match when
 file has none of its own.  Used with one argument, the file name.")
 

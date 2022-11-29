@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    04-Feb-90
-;; Last-Mod:     12-Oct-22 at 23:12:43 by Mats Lidell
+;; Last-Mod:     21-Nov-22 at 18:34:46 by Bob Weiner
 ;;
 ;; Copyright (C) 1989-2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -818,7 +818,9 @@ the given direction."
     ;; ... but if not available, use the Emacs builtin windmove package.
     (eval-and-compile
       (require 'windmove))
-    (windmove-do-window-select direction arg)))
+    (condition-case ()
+	(windmove-swap-states-in-direction direction)
+      (error "(hkey-buffer-move): Invalid movement direction, '%s'" direction))))
 
 ;;; ************************************************************************
 ;;; Public support functions

@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     6-Oct-91 at 03:42:38
-;; Last-Mod:      6-Nov-22 at 12:04:10 by Bob Weiner
+;; Last-Mod:     28-Nov-22 at 00:18:49 by Bob Weiner
 ;;
 ;; Copyright (C) 1991-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -74,7 +74,7 @@ This displays a clean log of Emacs keys used and commands executed."
   (setq ilog-print-lambdas 'not-compiled)
 
   ;; Omit display of some lower-level Hyperbole commands for cleaner logs
-  (mapc (lambda (cmd-str) (push (format "^%s$" cmd-str) ilog-self-insert-command-regexps))
+  (mapc (lambda (cmd-str) (pushnew (format "^%s$" cmd-str) ilog-self-insert-command-regexps))
         '("hyperbole" "hui:menu-enter"))
 
   ;; Redefine the mode to display commands on post-command-hook rather
@@ -133,7 +133,7 @@ Raise and reuse any existing single window frame displaying ilog."
   (interaction-log-mode 1)
 
   ;; Limit display to commands executed
-  (with-current-buffer ilog-buffer-name
+  (with-current-buffer (get-buffer-create ilog-buffer-name)
     (setq ilog-display-state 'messages)
     ;; Changes to command-only mode
     (ilog-toggle-view)
@@ -451,10 +451,18 @@ FILE is temporarily read into a buffer to determine the major mode if necessary.
 
 (defun hypb:filter-directories (file-regexp &rest dirs)
   "Filter files to those matching FILE-REGEXP from rest of DIRS (recursively).
+Also filters out any files matching `completion-ignored-extensions' or
+ending with # or ~.
 Return a flattened list of all matching files."
+  (setq file-regexp (hypb:glob-to-regexp file-regexp))
   (setq dirs (hypb:readable-directories dirs))
-  (apply #'nconc (mapcar (lambda (dir) (directory-files-recursively dir file-regexp))
-			 dirs)))
+  (delq nil (mapcar (lambda (f)
+		      (unless (string-match-p
+			       (concat (regexp-opt (append completion-ignored-extensions '("#" "~"))
+						   'paren) "$") f)
+			f))
+		    (apply #'nconc (mapcar (lambda (dir) (directory-files-recursively dir file-regexp))
+					   dirs)))))
 
 (defun hypb:format-quote (arg)
   "Replace all single % with %% in any string ARG.
@@ -497,6 +505,16 @@ If EVENT, use EVENT's position to determine the starting position."
   "Return the raw syntax descriptor for CHAR.
 Use the current syntax table or optional SYNTAX-TABLE."
   (aref (or syntax-table (syntax-table)) char))
+
+(defun hypb:glob-to-regexp (str)
+  "Convert any file glob syntax to Emacs regexp syntax."
+  (when (stringp str)
+    (setq str (replace-regexp-in-string "\\`\\*" ".*" str nil t)
+	  str (replace-regexp-in-string "\\([^\\.]\\)\\*" "\\1.*" str))
+    (when (and (not (string-match-p "\\(\\$\\|\\\\'\\)\\'" str))
+	       (string-match-p "\\.\\S-+\\'" str))
+      (setq str (concat str "$"))))
+    str)
 
 ;; Derived from pop-global-mark of "simple.el" in GNU Emacs.
 (defun hypb:goto-marker (marker)
@@ -727,15 +745,6 @@ Removes any trailing newline at the end of the output."
       (set-buffer-modified-p nil)
       (kill-buffer buf))
     output))
-
-;;;###autoload
-(defun hypb:remove-package (package-name)
-  "If installed, delete Emacs PACKAGE-NAME."
-  (interactive)
-  (if (called-interactively-p 'any)
-      (call-interactively #'package-delete)
-    (when (package-installed-p package-name)
-      (package-delete (cadr (assq package-name (package--alist)))))))
 
 ;;;###autoload
 (defun hypb:rgrep (pattern &optional prefx-arg)

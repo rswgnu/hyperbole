@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     1-Jun-16 at 15:35:36
-;; Last-Mod:      7-Nov-22 at 00:22:58 by Bob Weiner
+;; Last-Mod:     27-Nov-22 at 11:21:28 by Bob Weiner
 ;;
 ;; Copyright (C) 2016-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -126,6 +126,9 @@
 (require 'hhist)     ; To store frame-config when hycontrol-windows-grid is used
 (require 'hypb)
 (require 'set)
+(eval-when-compile
+  (require 'framemove nil t) ;; Elpa package
+  (require 'windmove))
 ;; Frame face enlarging/shrinking (zooming) requires this separately available library.
 ;; Everything else works fine without it, so don't make it a required dependency.
 (require 'zoom-frm nil t)
@@ -241,10 +244,9 @@ The final predicate should always be t, for default values, typically of zero.")
 (defvar ibuffer-mode-map)
 
 ;;; Frame Keys
-
 (defvar hycontrol-frames-mode-map
   (let ((map (make-sparse-keymap)))
-    (suppress-keymap map) ;; Disable self-inserting keys.
+    (suppress-keymap map t) ;; Disable self-inserting keys and prefix keys
 
     (define-key map [up]    (lambda () (interactive) (hycontrol-move-frame 'up hycontrol-arg)))
     (define-key map [down]  (lambda () (interactive) (hycontrol-move-frame 'down hycontrol-arg)))
@@ -279,6 +281,13 @@ The final predicate should always be t, for default values, typically of zero.")
     (define-key map "H"     (lambda () (interactive) (setq hycontrol-arg (hycontrol-frame-height-percentage-of-screen hycontrol-arg))))
     (define-key map "W"     (lambda () (interactive) (setq hycontrol-arg (hycontrol-frame-width-percentage-of-screen hycontrol-arg))))
     (define-key map "h"     (lambda () (interactive) (hycontrol-set-frame-height nil (+ (frame-height) hycontrol-arg))))
+
+    ;; Move directionally among frames
+    (define-key map "I"     'hycontrol-framemove-up)
+    (define-key map "J"     'hycontrol-framemove-left)
+    (define-key map "K"     'hycontrol-framemove-right)
+    (define-key map "M"     'hycontrol-framemove-down)
+
     (define-key map "i"     (lambda () (interactive) (setq hycontrol-arg (hycontrol-frame-resize-to-top hycontrol-arg))))
     (define-key map "j"     (lambda () (interactive) (setq hycontrol-arg (hycontrol-frame-resize-to-left hycontrol-arg))))
     (define-key map "k"     (lambda () (interactive) (setq hycontrol-arg (hycontrol-frame-resize-to-right hycontrol-arg))))
@@ -292,6 +301,7 @@ The final predicate should always be t, for default values, typically of zero.")
     (define-key map "q"     'hycontrol-quit)
     (define-key map "Q"     'hycontrol-quit)
     (define-key map "r"     'raise-frame)
+
     (define-key map "s"     (lambda () (interactive) (hycontrol-set-frame-height nil (- (frame-height) hycontrol-arg))))
     (define-key map "t"     'hycontrol-enable-windows-mode)
     (define-key map "u"     'unbury-buffer)
@@ -329,7 +339,6 @@ The final predicate should always be t, for default values, typically of zero.")
     (define-key map "7"     (lambda () (interactive) (hycontrol-universal-arg-digit 7)))
     (define-key map "8"     (lambda () (interactive) (hycontrol-universal-arg-digit 8)))
     (define-key map "9"     (lambda () (interactive) (hycontrol-universal-arg-digit 9)))
-
     map)
   "Keymap to use when in Hyperbole HyControl frames mode.")
 
@@ -342,9 +351,10 @@ The final predicate should always be t, for default values, typically of zero.")
 ;;;###autoload
 (eval-after-load "dired"     '(define-key dired-mode-map       "@" 'hycontrol-windows-grid))
 
+;;;###autoload
 (defvar hycontrol-windows-mode-map
   (let ((map (make-sparse-keymap)))
-    (suppress-keymap map) ;; Disable self-inserting keys.
+    (suppress-keymap map t) ;; Disable self-inserting keys and prefix keys
 
     (define-key map [up]    (lambda () (interactive) (hycontrol-move-frame 'up hycontrol-arg)))
     (define-key map [down]  (lambda () (interactive) (hycontrol-move-frame 'down hycontrol-arg)))
@@ -376,6 +386,12 @@ The final predicate should always be t, for default values, typically of zero.")
     (define-key map "F"     'hycontrol-window-to-new-frame)
     (define-key map "\C-g"  'hycontrol-abort)
     (define-key map "h"     (lambda () (interactive) (enlarge-window hycontrol-arg)))
+
+    ;; Move directionally among windows within current frame
+    (define-key map "I"     'windmove-up)
+    (define-key map "J"     'windmove-left)
+    (define-key map "K"     'windmove-right)
+    (define-key map "M"     'windmove-down)
 
     ;; Allow frame resizing even when in window control mode because
     ;; it may be used often.
@@ -430,7 +446,6 @@ The final predicate should always be t, for default values, typically of zero.")
     (define-key map "7"     (lambda () (interactive) (hycontrol-universal-arg-digit 7)))
     (define-key map "8"     (lambda () (interactive) (hycontrol-universal-arg-digit 8)))
     (define-key map "9"     (lambda () (interactive) (hycontrol-universal-arg-digit 9)))
-
     map)
   "Keymap to use when in Hyperbole HyControl window mode.")
 
@@ -447,7 +462,7 @@ The final predicate should always be t, for default values, typically of zero.")
 (defvar hycontrol--frames-prompt-format
  (concat "FRAMES: (h=heighten, s=shorten, w=widen, n=narrow, %%/H/W=screen %%age, arrow=move frame) by %d unit%s, .=clear units\n"
 	 ;; d/^/D=delete/iconify frame/others - iconify left out due to some bug on macOS (see comment near ^ below)
-	 "a/A=cycle adjust width/height, d/D=delete frame/others, o/O=other win/frame, [/]=create frame, (/)=save/restore fconfig\n"
+	 "a/A=cycle adjust width/height, d/D=delete frame/others, o/O=other win/frame, I/J/K/M=to frame, [/]=create frame, (/)=save/restore fconfig\n"
 	 "@=grid of wins, f/F=clone/move win to new frame, -/+=minimize/maximize frame, ==frames same size, u/b/~=un/bury/swap bufs\n"
 	 "Frame to edges: c=cycle, i/j/k/m=expand/contract, p/num-keypad=move; z/Z=zoom out/in, t=to WINDOWS mode, Q=quit")
  "HyControl frames-mode minibuffer prompt string to pass to format.
@@ -457,7 +472,7 @@ Format it with 2 arguments: `prefix-arg' and a plural string indicating if
 (defvar hycontrol--windows-prompt-format
   (concat
    "WINDOWS: (h=heighten, s=shorten, w=widen, n=narrow, arrow=move frame) by %d unit%s, .=clear units\n"
-   "a/A=cycle adjust frame width/height, d/D=delete win/others, o/O=other win/frame, [/]=split win atop/sideways, (/)=save/restore wconfig\n"
+   "a/A=cycle adjust frame width/height, d/D=delete win/others, o/O=other win/frame, I/J/K/M=to window, [/]=split win atop/sideways, (/)=save/restore wconfig\n"
    "@=grid of wins, f/F=clone/move win to new frame, -/+=minimize/maximize win, ==wins same size, u/b/~=un/bury/swap bufs\n"
    "Frame to edges: c=cycle, i/j/k/m=expand/contract, p/num-keypad=move; z/Z=zoom out/in, t=to FRAMES mode, Q=quit")
   "HyControl windows-mode minibuffer prompt string to pass to format.
@@ -999,6 +1014,15 @@ instead of quitting HyControl."
       (message "Hyperbole finished controlling frames"))
     (hycontrol-disable-modes)))
 
+;; This just sets the keymap locally and shows the minor mode
+;; indicator in the buffer's mode-line; the separate global minor mode
+;; turns things on and off.
+;;;###autoload
+(define-minor-mode hycontrol-local-frames-mode
+  "Toggle Hyperbole Frames control minor mode in the current buffer."
+  :lighter " HyFrm"
+  :group 'hyperbole-screen)
+
 ;;;###autoload
 (define-global-minor-mode hycontrol-frames-mode hycontrol-local-frames-mode
   (lambda () (hycontrol-local-frames-mode 1))
@@ -1015,11 +1039,10 @@ instead of quitting HyControl."
 ;; indicator in the buffer's mode-line; the separate global minor mode
 ;; turns things on and off.
 ;;;###autoload
-(define-minor-mode hycontrol-local-frames-mode
-  "Toggle Hyperbole Frames control minor mode in the current buffer."
-  :lighter " HyFrm"
-  :group 'hyperbole-screen
-  :global t)
+(define-minor-mode hycontrol-local-windows-mode
+  "Toggle Hyperbole Windows control minor mode in the current buffer."
+  :lighter " HyWin"
+  :group 'hyperbole-screen)
 
 ;;;###autoload
 (define-global-minor-mode hycontrol-windows-mode hycontrol-local-windows-mode
@@ -1032,17 +1055,6 @@ instead of quitting HyControl."
 	  (lambda () (hycontrol-windows current-prefix-arg)))
 
 (add-hook 'hycontrol-windows-mode-off-hook 'hycontrol-end-mode)
-
-;; This just sets the keymap locally and shows the minor mode
-;; indicator in the buffer's mode-line; the separate global minor mode
-;; turns things on and off.
-;;;###autoload
-(define-minor-mode hycontrol-local-windows-mode
-  "Toggle Hyperbole Windows control minor mode in the current buffer."
-  :lighter " HyWin"
-  :group 'hyperbole-screen
-  :global t)
-
 
 ;;; Frame Display Commands
 (defun hycontrol-delete-other-frames ()
@@ -1496,6 +1508,31 @@ Heights are given in screen percentages by the list
 	   100 (* (car hycontrol--frame-heights-pointer) 100.0))
   (setq hycontrol--frame-heights-pointer
 	(cdr hycontrol--frame-heights-pointer)))
+
+;;; Move among frames
+(defun hycontrol-framemove-direction (direction)
+  (hypb:require-package 'framemove)
+  (fm-next-frame direction))
+
+(defun hycontrol-framemove-up ()
+  "Move to any next frame above the selected frame."
+  (interactive)
+  (hycontrol-framemove-direction 'up))
+
+(defun hycontrol-framemove-left ()
+  "Move to any next frame to the left of the selected frame."
+  (interactive)
+  (hycontrol-framemove-direction 'left))
+
+(defun hycontrol-framemove-right ()
+  "Move to any next frame to the right of the selected frame."
+  (interactive)
+  (hycontrol-framemove-direction 'right))
+
+(defun hycontrol-framemove-down ()
+  "Move to any next frame below the selected frame."
+  (interactive)
+  (hycontrol-framemove-direction 'down))
 
 ;;; Frame Configuratons
 

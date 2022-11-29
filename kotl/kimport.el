@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    15-Nov-93 at 11:57:05
-;; Last-Mod:      5-Nov-22 at 10:24:36 by Bob Weiner
+;; Last-Mod:     20-Nov-22 at 23:23:23 by Bob Weiner
 ;;
 ;; Copyright (C) 1993-2022  Free Software Foundation, Inc.
 ;; See the "../HY-COPY" file for license information.
@@ -195,7 +195,7 @@ on."
 	initially-empty-output no-renumber orig-point count total)
     ;; Don't change the order of import-from and output-to inits here.
     (setq import-from (kimport:copy-and-set-buffer import-from)
-	  output-to (kimport:initialize output-to)
+	  output-to (kimport:initialize output-to t)
 	  orig-point (point)
 	  initially-empty-output (zerop (- (point-max) (point-min)))
 	  no-renumber (or initially-empty-output
@@ -253,12 +253,16 @@ OUTPUT-TO and for an explanation of where imported cells are
 placed.
 
 \"* \" = level 1, \"** \" = level 2 in outline and so on."
-  (interactive "FImport from star delimited cells buffer/file: \nFBuffer/file to insert cells into: \nP")
+  (interactive "fImport from star delimited cells buffer/file: \nFBuffer/file to insert cells into: \nP")
+  (when (and buffer-file-name (directory-name-p import-from))
+    (setq import-from buffer-file-name))
+  (when (and buffer-file-name (directory-name-p output-to))
+    (setq output-to (concat (file-name-sans-extension buffer-file-name) ".kotl")))
   (let ((output-level 1) (klabel "1")
 	initially-empty-output no-renumber orig-point count total)
     ;; Don't change the order of import-from and output-to inits here.
     (setq import-from (kimport:copy-and-set-buffer import-from)
-	  output-to (kimport:initialize output-to)
+	  output-to (kimport:initialize output-to t)
 	  orig-point (point)
 	  initially-empty-output (zerop (- (point-max) (point-min)))
 	  no-renumber (or initially-empty-output
@@ -328,7 +332,7 @@ The variable, `paragraph-start,' is used to determine paragraphs."
 	no-renumber orig-point total)
     ;; Don't change the order of import-from and output-to inits here.
     (setq import-from (kimport:copy-and-set-buffer import-from)
-	  output-to (kimport:initialize output-to)
+	  output-to (kimport:initialize output-to t)
 	  orig-point (point)
 	  initially-empty-output (zerop (- (point-max) (point-min)))
 	  no-renumber (or initially-empty-output
@@ -526,10 +530,13 @@ to import it."
       (set-buffer-modified-p nil)
       copy)))
 
-(defun kimport:initialize (output-to)
+(defun kimport:initialize (output-to &optional erase-flag)
   "Setup to import elements into koutline OUTPUT-TO.
 Return OUTPUT-TO buffer and set current buffer for the current command
 to OUTPUT-TO.
+
+With optional ERASE-FLAG non-nil, erase OUTPUT-TO before importing
+elements (don't append them).
 
 OUTPUT-TO may be a buffer, `buffer-name' or file name.  If OUTPUT-TO exists
 already, it must be a koutline or an error will be signaled.  For an existing
@@ -560,19 +567,18 @@ will be added as children of the cell where this function leaves point
 			    (find-file-noselect output-to))
 		      (current-buffer)))
     (set-buffer output-to)
-    (if output-exists-p
+    (if (and output-exists-p (not erase-flag))
 	(if (eq major-mode 'kotl-mode)
-	    (if (kotl-mode:buffer-empty-p)
-		nil
+	    (unless (kotl-mode:buffer-empty-p)
 	      ;; Make imported cells be appended if the output buffer was
 	      ;; just read in.
-	      (if output-existing-buffer-p nil (goto-char (point-max)))
+	      (unless output-existing-buffer-p
+		(goto-char (point-max)))
 	      (kotl-mode:to-valid-position))
 	  (error
 	   "(kimport:initialize): Second arg, %s, must be a koutline file."
 	   (buffer-name output-to)))
-      (if (eq major-mode 'kotl-mode)
-	  nil
+      (unless (eq major-mode 'kotl-mode)
 	(setq kview nil)
 	(kotl-mode))
       (delete-region (point-min) (point-max))))

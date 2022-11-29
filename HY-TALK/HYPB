@@ -70,8 +70,7 @@ Emacs Yank Bug: bug#5320
 <[Bufs]> {C-x C-b}
 
 <[iPython src]>: "/usr/local/Cellar/ipython/7.16.1/libexec/lib/python3.8/site-packages/IPython/"
-
-{C-x 4 t} - Goto <(Hyperbole Todos)>
+- Goto <(Hyperbole Todos)>
 
 <[ib]>   "(hyperbole)Implicit Buttons"
 <[frm]>  "(hyperbole)C-h h s f"

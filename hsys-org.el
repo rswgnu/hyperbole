@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     2-Jul-16 at 14:54:14
-;; Last-Mod:     10-Oct-22 at 22:55:01 by Mats Lidell
+;; Last-Mod:     28-Nov-22 at 02:03:20 by Bob Weiner
 ;;
 ;; Copyright (C) 2016-2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -89,32 +89,31 @@ with different settings of this option.  For example, a nil value makes
 ;;; ************************************************************************
 
 (defact org-link (&optional link)
-  "Follows an optional Org mode LINK to its target.
-If LINK is nil, follows any link at point.  Otherwise, triggers an error."
+  "Follow an optional Org mode LINK to its target.
+If LINK is nil, follow any link at point.  Otherwise, trigger an error."
   (if (stringp link)
       (org-link-open-from-string link)
     (org-open-at-point))) ;; autoloaded
 
-(defact org-internal-link-target (&optional link-target)
-  "Follows an optional Org mode LINK-TARGET back to its link definition.
-If LINK-TARGET is nil, follow any link target at point.
-Otherwise, trigger an error."
+(defact org-internal-target-link (&optional internal-target)
+  "Follow an optional Org mode <<INTERNAL-TARGET>> back to any first link to it.
+If INTERNAL-TARGET is nil, follow any internal target link at point. Otherwise,
+trigger an error."
   (let (start-end)
-    (cond ((stringp link-target)
+    (cond ((stringp internal-target)
 	   (setq start-end t)
-	   (hsys-org-search-internal-link-p link-target))
-	  ((null link-target)
-	   (when (setq start-end (hsys-org-internal-link-target-at-p))
+	   (hsys-org-search-internal-link-p internal-target))
+	  ((null internal-target)
+	   (when (setq start-end (hsys-org-internal-target-def-at-p))
 	     (hsys-org-search-internal-link-p (buffer-substring-no-properties
 					       (car start-end) (cdr start-end))))))
     (unless start-end
-      (error "(org-internal-link-target): Point must be on a link target (not the link itself)"))))
+      (error "(org-internal-target-link): Point must be on a link target (not the link itself)"))))
 
-
-(defact org-radio-target (&optional target)
-  "Jump to the next occurrence of an optional Org mode radio TARGET link.
-If TARGET is nil and point is on a radio target definition or link, it
-uses that one.  Otherwise, triggers an error."
+(defact org-radio-target-link (&optional target)
+  "Follow an optional Org mode radio <<TARGET>> back to any first link to it.
+If TARGET is nil, follow any radio target link at point.  Otherwise, trigger
+an error."
   (let (start-end)
     (cond ((stringp target)
 	   (setq start-end t)
@@ -124,12 +123,13 @@ uses that one.  Otherwise, triggers an error."
 	     (hsys-org-to-next-radio-target-link (buffer-substring-no-properties
 					          (car start-end) (cdr start-end))))))
     (unless start-end
-      (error "(org-radio-target): Point must be on a radio target definition or link"))))
+      (error "(org-radio-target-link): Point must be on a radio target definition or link"))))
 
 ;;; ************************************************************************
 ;;; Public functions
 ;;; ************************************************************************
 
+;;;###autoload
 (defun hsys-org-mode-p ()
   "Return non-nil if point is within an Org major or minor-mode buffer."
   (or (derived-mode-p 'org-mode)
@@ -141,6 +141,15 @@ uses that one.  Otherwise, triggers an error."
   "Call `org-cycle' and set as `this-command' to cycle through all states."
   (setq this-command 'org-cycle)
   (org-cycle))
+
+(defun hsys-org-get-value (attribute)
+  "Within the current Org context, return the ATTRIBUTE value."
+  (let ((src-block-info (org-babel-get-src-block-info)))
+    (when src-block-info
+      (if (memq attribute '(:lang :language))
+	  ;; Return lowercase string of programming language name
+	  (car src-block-info)
+	(cdr (assq attribute (caddr src-block-info)))))))
 
 (defun hsys-org-global-cycle ()
   "Call `org-global-cycle' and set as `this-command' to cycle through all states."
@@ -246,21 +255,19 @@ Assume caller has already checked that the current buffer is in `org-mode'."
     t))
 
 (defun hsys-org-radio-target-link-at-p ()
-  "Return target region iff point is on an Org mode radio target referent.
-Target region is (target-start . target-end) iff point is on
-an Org mode radio target link (referent), else nil."
+  "Return link text region iff point is on an Org mode radio target link.
+Link region is (start . end) and includes delimiters, else nil."
   (and (hsys-org-face-at-p 'org-link)
+       (equal (get-text-property (point) 'help-echo) "Radio target link")
        (hsys-org-link-at-p)
        (hsys-org-region-with-text-property-value (point) 'face)))
 
 (defun hsys-org-radio-target-def-at-p ()
-  "Return target-start region iff point is on an Org mode radio definition.
-Target region is (target-start . target-end) iff point is on
-an Org mode radio target (definition), including any delimiter
-characters, else nil."
+  "Return target region iff point is on a <<<radio target>>> definition.
+Target region is (start . end) and includes any delimiters, else nil."
   (when (hsys-org-target-at-p)
     (save-excursion
-      (unless (looking-at "<<<")
+      (unless (looking-at org-radio-target-regexp)
 	(goto-char (or (previous-single-property-change (point) 'face) (point-min))))
       (when (looking-at "<<<")
 	(goto-char (match-end 0)))
@@ -268,27 +275,38 @@ characters, else nil."
 	   (hsys-org-region-with-text-property-value (point) 'face)))))
 
 (defun hsys-org-radio-target-at-p ()
-  "Return target region iff point is on an Org mode definition or referent.
-Target region is (target-start . target-end).  It is returned
-iff point is on an Org mode <<<radio target definition>>> or
-radio target link (referent), including any delimiter characters,
-else nil."
+  "Return region iff point is on a <<<radio target>>> or a link to one.
+The region is (start . end) and includes any delimiters, else nil."
   (and (or (hsys-org-radio-target-def-at-p)
 	   (hsys-org-radio-target-link-at-p))
        (hsys-org-region-with-text-property-value (point) 'face)))
 
-(defun hsys-org-internal-link-target-at-p ()
-  "Return target region iff point is on an Org mode <<link target>>.
-This is including any delimiter characters.  Target region
-is (target-start . target-end)."
+(defun hsys-org-internal-target-link-at-p ()
+  "Return link text region iff point is on an Org mode internal target link.
+Link region is (start . end) and includes delimiters, else nil."
+  (and (hsys-org-face-at-p 'org-link)
+       (not (equal (get-text-property (point) 'help-echo) "Radio target link"))
+       (hsys-org-link-at-p)
+       (hsys-org-region-with-text-property-value (point) 'face)))
+
+(defun hsys-org-internal-target-def-at-p ()
+  "Return target region iff point is on <<internal target>> definition.
+Target region is (start . end) and includes any delimiters, else nil."
   (when (hsys-org-target-at-p)
     (save-excursion
-      (unless (looking-at "<<")
+      (unless (looking-at org-target-regexp)
 	(goto-char (or (previous-single-property-change (point) 'face) (point-min))))
-      (when (looking-at "<<<?")
+      (when (looking-at "<<")
 	(goto-char (match-end 0)))
-      (and (get-text-property (point) 'org-linked-text)
-           (hsys-org-region-with-text-property-value (point) 'face)))))
+      (and (hsys-org-face-at-p 'org-target)
+	   (hsys-org-region-with-text-property-value (point) 'face)))))
+
+(defun hsys-org-internal-target-at-p ()
+  "Return region iff point is on an <<internal target>> or a link to one.
+The region is (start . end) and includes any delimiters, else nil."
+  (and (or (hsys-org-internal-target-def-at-p)
+	   (hsys-org-internal-target-link-at-p))
+       (hsys-org-region-with-text-property-value (point) 'face)))
 
 (defun hsys-org-face-at-p (org-face-type)
   "Return ORG-FACE-TYPE iff point is on a character with that face, else nil.
@@ -300,8 +318,8 @@ is (target-start . target-end)."
       org-face-type)))
 
 (defun hsys-org-search-internal-link-p (target)
-  "Search from buffer start for an Org internal link definition matching TARGET.
-White spaces are insignificant.  Returns t if a link is found, else nil."
+  "Search buffer start for the first Org internal link to matching <<TARGET>>.
+White spaces are insignificant.  Return t if a link is found, else nil."
   (when (string-match "<<.+>>" target)
     (setq target (substring target 2 -2)))
   (let ((re (format "%s" (mapconcat #'regexp-quote
@@ -315,13 +333,14 @@ White spaces are insignificant.  Returns t if a link is found, else nil."
 	(let ((object (org-element-context)))
 	  (when (eq (org-element-type object) 'link)
 	    (org-show-context 'link-search)
+	    (goto-char (or (previous-single-property-change (point) 'face) (point-min)))
 	    (throw :link-match t))))
       (goto-char origin)
       nil)))
 
 (defun hsys-org-search-radio-target-link-p (target)
   "Search from point for a radio target link matching TARGET.
-White spaces are insignificant.  Returns t if a target link is found, else nil."
+White spaces are insignificant.  Return t if a target link is found, else nil."
   (when (string-match "<<<.+>>>" target)
     (setq target (substring target 3 -3)))
   (let ((re (format "%s" (mapconcat #'regexp-quote

@@ -7,7 +7,7 @@
 @c Author:       Bob Weiner
 @c
 @c Orig-Date:     6-Nov-91 at 11:18:03
-@c Last-Mod:     23-Oct-22 at 12:42:30 by Bob Weiner
+@c Last-Mod:     26-Nov-22 at 18:17:54 by Bob Weiner
 
 @c %**start of header (This is for running Texinfo on a region.)
 @setfilename hyperbole.info
@@ -156,7 +156,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</P>
 
 <PRE>
 Edition 8.0.1pre
-Printed October 23, 2022.
+Printed November 26, 2022.
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -198,7 +198,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 @example
 Edition 8.0.1pre
-October 23, 2022
+November 26, 2022
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -2128,42 +2128,67 @@ implicit button types (they are listed in increasing order of priority).
 Hyperbole recognizes Org mode constructs in any of these modes:
 @code{org-mode}, @code{org-agenda-mode}, @code{outshine-mode}
 or @code{poporg-mode}.  (See the function @code{hsys-org-mode-p}).
-Hyperbole does quite a few things for Org mode users.
 
-First, the Action Key follows internal links in Org-mode files.  When
-pressed on a link referent/target, the link definition is displayed,
-allowing two-way navigation between definitions and targets.
+@noindent
+Hyperbole does quite a few things for Org mode users.  When the Action
+Key is pressed:
 
-Second, the Action Key follows Org-mode external links.  The Assist
-Key displays help when pressed on an Org-mode link.
+@enumerate
+@item
+If on an Org todo keyword, cycle through the keywords in
+that set or if final done keyword, remove it.
 
-Third, within a radio target definition, the Action Key jumps to the
-first occurrence of an associated radio target.
+@item
+If on an Org agenda item, jump to the item for editing.
 
-Fourth, when point is on an outline heading in Org-mode, the Action Key
-cycles the view of the subtree at point and the Assist Key cycles the
-view of all headings in the buffer.
+@item
+Within a radio or internal target or a link to it, jump between
+the target and the first link to it, allowing two-way navigation.
 
-Fifth, with point on the first line of a code block definition, the
-Action Key executes the code block via the Org-mode standard binding
-of @bkbd{C-c C-c}, @code{org-ctrl-c-ctrl-c}.
+@item
+Follow other internal links in Org mode files.
 
-Sixth, if on an Org todo keyword, cycles through the keywords in
-that set or if final done keyword, removes it.
+@item
+Follow Org mode external links.
 
+@item
+When on a Hyperbole button, activate the button.
+
+@item
+With point on the first line of a code block definition, execute the
+code block via the Org mode standard binding of @bkbd{C-c C-c},
+@code{org-ctrl-c-ctrl-c}.
+  
+@item
+When point is on an outline heading in Org mode, cycle the view of the
+subtree at point.
+
+@item
 In any other context besides the end of a line, the Action Key invokes
-the Org-mode standard binding of @bkbd{M-@key{RET}}, @code{org-meta-return}.
+the Org mode standard binding of @bkbd{M-@key{RET}}, @code{org-meta-return}.
+@end enumerate
 
-If the Assist Key is pressed instead of the Action Key:
+@noindent
+When the Assist Key is pressed, it behaves just like the Action Key
+except in these contexts:
 
-First, on an Org mode heading, this cycles through views of the whole buffer outline.
-
-Second, on an Org mode link or agenda item, this displays standard Hyperbole help.
-
-Third, if on an Org todo keyword, moves to the first todo keyword in
+@enumerate
+@item
+If on an Org todo keyword, move to the first todo keyword in
 the next set, if any.
 
-In any other context, it behaves like the Action Key.
+@item
+If on an Org mode link or agenda item, display Hyperbole
+context-sensitive help.
+
+@item
+On a Hyperbole button, performs the Assist Key function, generally
+showing help for the button.
+
+@item
+Not on a Hyperbole button but on an Org mode heading, cycle
+through views of the whole buffer outline.
+@end enumerate
 
 @vindex hsys-org-enable-smart-keys
 @cindex enable org-mode support
@@ -4174,6 +4199,17 @@ Clone the selected window to a new similarly sized frame.
 Clone the selected window to a new similarly sized frame.  Delete the
 original window unless there is only one window in the source frame or
 if @code{hycontrol-keep-window-flag} is non-nil.
+
+@kindex screen, I
+@kindex screen, J
+@kindex screen, K
+@kindex screen, M
+@kitem I
+@kitemx J
+@kitemx K
+@kitemx M
+Select another window or frame in the given direction depending on the
+current HyControl mode.  I=above, J=left, K=right and M=below.
 
 @cindex frame, to edge
 @cindex frame, percentage resize

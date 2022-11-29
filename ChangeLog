@@ -1,3 +1,87 @@
+2022-11-27  Bob Weiner  <rsw@gnu.org>
+
+* hmouse-tag.el (smart-tags-org-src-block-p): Add and use in 'smart-tags-file-list'
+    and 'smart-tags-display'.
+
+* hmouse-tag.el (smart-tags-file-list): Add support for Org code blocks.
+
+* hsys-org.el (hsys-org-get-value): Get attribute values from Org contexts.
+
+* hsys-org.el (hsys-org-mode-p): Made an autoload for use by other parts of Hyperbole.
+
+* hyrolo.el (hyrolo-hdr-format): Extend headers to 79 chars for longer file names.
+            (hyrolo-fgrep): Remove outer double quotes if any used to maintain spaces
+    in strings as they are normalized in key series.
+
+* hypb.el (hypb:activate-interaction-log-mode): Fix so creates log buffer
+    if it doesn't exist.
+          (hypb:glob-to-regexp): Add for use with hyrolo directory file filters.
+  hyrolo.el (hyrolo-filter-directories): Use above function.
+
+2022-11-26  Bob Weiner  <rsw@gnu.org>
+
+* hycontrol.el (hycontrol-frames/windows-mode): Define local modes before
+    global modes so keymap lookups work properly and display properly in
+    *Emacs Log* (interaction-log-mode).
+
+* hui-mouse.el (smart-org): Prioritize Hyperbole buttons over the start line
+    of an Org block so can jump to :dir paths in such lines.
+
+* hbut.el (hbut:fill-prefix-regexps, hbut:fill-prefix-remove): Fix so removes
+    full lines of comments rather than just the prefix.
+
+* hsys-org.el (hsys-org-radio-target-def-at-p): Use 'org-radio-target-regexp'.
+              (hsys-org-radio-target-link-at-p): Ensure has radio target
+    help-echo property for better matching.
+              (hsys-org-internal-target-link-at-p,
+               hsys-org-internal-target-def-at-p,
+               hsys-org-internal-target-at-p): Add to handle internal targets
+    just like radio targets.
+              (hsys-org-internal-link-target-at-p): Delete and replace with
+    'hsys-org-internal-target-def-at-p'.
+              (org-internal-link-target): Rename to 'org-internal-target-link'.
+	      (org-radio-target): Rename to 'org-radio-target-link'.
+
+* test/hsys-org-tests.el (hsys-org:org-internal-link-target-at-p): Change
+    to test a regular Org target, not a radio target.
+
+* hui-mouse.el (smart-org): Correct doc to match the context order processed.
+
+* hact.el (htype:symbol): Add as autoload since used in "hsys-youtube.el"
+    autoloads.
+
+2022-11-21  Bob Weiner  <rsw@gnu.org>
+
+* hycontrol.el (framemove, windmove): Conditionally requires these libs
+    when compiling.  Autoload their move among commands bound to I/J/K/M.
+    (hycontrol-framemove-direction, hycontrol-framemove-up,
+     hycontrol-framemove-left, hycontrol-framemove-right,
+     hycontrol-framemove-down): Add to auto install framemove package
+    and move to directional frames.
+    (hycontrol--frames-prompt-format, hycontrol--windows-prompt-format):
+    Add help for new frame/window selection commands.
+  man/hyperbole.texi (HyControl): Add doc for new frame/window selection
+    commands.
+
+* hmouse-drv.el (hkey-buffer-move): Fix to properly move windows (swapping
+    buffers) when builtin windmove library is used.
+
+* hversion.el (id-info-item): Index may point to indented line immediately
+    after the non-indented item definition line. If so, move back a line.
+
+2022-11-20  Bob Weiner  <rsw@gnu.org>
+
+* kotl/kimport.el (kimport:star-outline): Fix to interactively default
+    first arg to current filename and output arg to the same name as
+    input but with ".kotl" suffix.
+                  (kimport:initialize): Add optional 'erase-flag' arg
+    to erase buffer before importing elements.  And use in all kimport
+    commands.
+
+* hactypes.el (text-toc):
+  hibtypes.el (text-toc): Allow TOCs in any derived text mode.
+    Improve efficiency and generalize section prefix.
+
 2022-11-06  Bob Weiner  <rsw@gnu.org>
 
 * hycontrol.el (cl-lib): Add this require for cl-loop.
@@ -75,8 +159,6 @@
     event to ensure each event is added to this-command-keys.
 
 2022-10-25  Bob Weiner  <rsw@gnu.org>
-
-* hypb.el (hypb:remove-package): Add to remove packages by name.
 
 * hyrolo.el (hyrolo-backward-same-level):      Add and bind to {b}.
 	    (hyrolo-forward-same-level):       Add and find to {f}.

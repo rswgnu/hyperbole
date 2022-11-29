@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    24-Aug-91
-;; Last-Mod:      7-Oct-22 at 23:31:35 by Mats Lidell
+;; Last-Mod:     28-Nov-22 at 02:48:17 by Bob Weiner
 ;;
 ;; Copyright (C) 1991-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -1366,6 +1366,7 @@ See the \"${hyperb:dir}/smart-clib-sym\" script for more information."
   (when  next (setq tag nil))
   (let* ((tags-table-list (or list-of-tags-tables
 			      (and (boundp 'tags-table-list)
+				   (not (smart-tags-org-src-block-p))
 				   (nconc (smart-tags-file-list) tags-table-list))
 			      (smart-tags-file-list)))
 	 ;; Identifier searches should almost always be case-sensitive today
@@ -1418,12 +1419,17 @@ cannot be expanded via a tags file."
 	    (setq tags-table-list (cdr tags-table-list)))))
       file)))
 
+(defun smart-tags-org-src-block-p ()
+  "Return non-nil if point is within an Org mode source block."
+  (and (featurep 'hsys-org) (hsys-org-mode-p) (org-in-src-block-p t)))
+
 ;;;###autoload
 (defun smart-tags-file-list (&optional curr-dir-or-filename name-of-tags-file)
   "Return tag files list for optional CURR-DIR-OR-FILENAME or `default-directory'.
 Optional NAME-OF-TAGS-FILE is the literal filename (no directory) for which
 to look.  If no tags file is found, an error is signaled."
-  (let* ((path (or curr-dir-or-filename default-directory))
+  (let* ((path (or (and (smart-tags-org-src-block-p) (hsys-org-get-value :dir))
+		   curr-dir-or-filename default-directory))
 	 (tags-table-list (smart-ancestor-tag-files path name-of-tags-file)))
     ;; If no tags files were found and the current buffer may contain Emacs Lisp identifiers and
     ;; is in a 'load-path' directory, then use the default Emacs Lisp tag table.
