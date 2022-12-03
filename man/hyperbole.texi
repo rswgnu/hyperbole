@@ -7,7 +7,7 @@
 @c Author:       Bob Weiner
 @c
 @c Orig-Date:     6-Nov-91 at 11:18:03
-@c Last-Mod:     26-Nov-22 at 18:17:54 by Bob Weiner
+@c Last-Mod:      3-Dec-22 at 02:35:10 by Bob Weiner
 
 @c %**start of header (This is for running Texinfo on a region.)
 @setfilename hyperbole.info
@@ -156,7 +156,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</P>
 
 <PRE>
 Edition 8.0.1pre
-Printed November 26, 2022.
+Printed December 3, 2022.
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -198,7 +198,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 @example
 Edition 8.0.1pre
-November 26, 2022
+December 3, 2022
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -2155,17 +2155,21 @@ Follow Org mode external links.
 When on a Hyperbole button, activate the button.
 
 @item
-With point on the first line of a code block definition, execute the
-code block via the Org mode standard binding of @bkbd{C-c C-c},
-@code{org-ctrl-c-ctrl-c}.
-  
-@item
-When point is on an outline heading in Org mode, cycle the view of the
-subtree at point.
+With point on the :dir path of a code block definition, display the
+directory given by the path.
 
 @item
-In any other context besides the end of a line, the Action Key invokes
-the Org mode standard binding of @bkbd{M-@key{RET}}, @code{org-meta-return}.
+With point on any #+BEGIN_SRC, #+END_SRC, #+RESULTS, #+begin_example
+or #+end_example header, execute the code block via the Org mode
+standard binding of @bkbd{C-c C-c}, @code{org-ctrl-c-ctrl-c}.
+
+@item
+When point is on an Org mode heading, cycle the view of the subtree
+at point.
+
+@item
+In any other context besides the end of a line, invoke the Org mode
+standard binding of @bkbd{M-@key{RET}}, @code{org-meta-return}.
 @end enumerate
 
 @noindent
@@ -2184,6 +2188,14 @@ context-sensitive help.
 @item
 On a Hyperbole button, performs the Assist Key function, generally
 showing help for the button.
+
+@item
+With point on the :dir value of a code block definition, display
+a help summary of this implicit directory button.
+
+@item
+With point on any #+BEGIN_SRC, #+END_SRC, #+RESULTS, #+begin_example
+or #+end_example header, remove any associated results.
 
 @item
 Not on a Hyperbole button but on an Org mode heading, cycle

@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     2-Jul-16 at 14:54:14
-;; Last-Mod:     28-Nov-22 at 02:03:20 by Bob Weiner
+;; Last-Mod:      3-Dec-22 at 02:33:37 by Bob Weiner
 ;;
 ;; Copyright (C) 2016-2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -202,8 +202,16 @@ Return the (start . end) buffer positions of the region."
   "Return non-nil if point is on the first line of an Org block definition."
   (save-excursion
     (forward-line 0)
-    (or (looking-at org-block-regexp)
-	(looking-at org-dblock-start-re))))
+    (let ((case-fold-search t))
+      (or (looking-at org-block-regexp)
+	  (looking-at org-dblock-start-re)))))
+
+(defun hsys-org-src-block-start-at-p ()
+  "Return non-nil if point is on the first line of an Org source block definition."
+  (save-excursion
+    (forward-line 0)
+    (let ((case-fold-search t))
+      (looking-at org-babel-src-block-regexp))))
 
 (defun hsys-org-link-at-p ()
   "Return non-nil iff point is on an Org mode link.

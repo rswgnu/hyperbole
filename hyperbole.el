@@ -5,8 +5,8 @@
 ;; Author:           Bob Weiner
 ;; Maintainer:       Bob Weiner <rsw@gnu.org>, Mats Lidell <matsl@gnu.org>
 ;; Created:          06-Oct-92 at 11:52:51
-;; Last-Mod:      6-Aug-22 at 21:23:08 by Mats Lidell
-;; Released:         01-May-22
+;; Last-mod:      3-Dec-22 at 02:37:07 by Bob Weiner
+;; Released:         03-Dec-22
 ;; Version:          8.0.1pre
 ;; Keywords:         comm, convenience, files, frames, hypermedia, languages, mail, matching, mouse, multimedia, outlines, tools, wp
 ;; Package:          hyperbole

@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    23-Apr-21 at 20:55:00
-;; Last-Mod:     26-Nov-22 at 14:27:43 by Bob Weiner
+;; Last-Mod:      3-Dec-22 at 00:12:39 by Bob Weiner
 ;;
 ;; Copyright (C) 2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -52,6 +52,14 @@
     (insert "#+BEGIN_BLK\n text\n#+END_BLK\n")
     (goto-char 1)
     (should (hsys-org-block-start-at-p))))
+
+(ert-deftest hsys-org:src-block-start-at-p ()
+  "Should be t if point is on the start of a source block."
+  (with-temp-buffer
+    (org-mode)
+    (insert "#+BEGIN_SRC python\n text\n#+END_SRC\n")
+    (goto-char 1)
+    (should (hsys-org-src-block-start-at-p))))
 
 (ert-deftest hsys-org:org-link-at-p ()
   "Should be t if point is within an org-link."

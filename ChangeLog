@@ -1,3 +1,20 @@
+2022-12-03  Bob Weiner  <rsw@gnu.org>
+
+* hpath.el (hpath:expand-with-variable): Fix to expand from local dir first
+    before using dirs in hpath:expand-with-variable.
+
+* hibtypes.el (grep-msg): Add support for Ruby traceback stack messages.
+
+* hsys-org.el (hsys-org-src-block-start-at-p): Add.
+  test/hsys-org-tests.el (hsys-org:src-block-start-at-p): Test it.
+
+2022-12-02  Bob Weiner  <rsw@gnu.org>
+
+* man/hyperbole.texi (Implicit Button Types): Update Smart Key Org mode description.
+  hui-mouse.el (smart-org): Add doc for :dir path handling and for removing code
+    block results with the Assist Key.  Also, make the Smart Keys work the same
+    when point is on a #+RESULTS headers as they do when on a code header.
+
 2022-11-27  Bob Weiner  <rsw@gnu.org>
 
 * hmouse-tag.el (smart-tags-org-src-block-p): Add and use in 'smart-tags-file-list'
@@ -49,6 +66,10 @@
 
 * hact.el (htype:symbol): Add as autoload since used in "hsys-youtube.el"
     autoloads.
+
+2022-11-22  Bob Weiner  <rsw@gnu.org>
+
+* hsys-youtube.el: Add all public functions as autoloads.
 
 2022-11-21  Bob Weiner  <rsw@gnu.org>
 

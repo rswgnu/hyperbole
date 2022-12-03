@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 20:45:31
-;; Last-Mod:     26-Nov-22 at 11:44:48 by Bob Weiner
+;; Last-Mod:      3-Dec-22 at 01:08:43 by Bob Weiner
 ;;
 ;; Copyright (C) 1991-2022 Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -928,8 +928,10 @@ in grep and shell buffers."
 	     (looking-at "Compiling \\(\\S-+\\)\\.\\.\\.$")
 	     (looking-at "Loading \\(\\S-+\\) (\\S-+)\\.\\.\\.$")
              ;; Grep matches (allowing for Emacs Lisp vars with : in
-	     ;; name within the pathname), UNIX C compiler and Introl 68HC11 C compiler errors
+	     ;; name within the pathname), Ruby, UNIX C compiler and Introl 68HC11 C compiler errors
              (looking-at "\\([^ \t\n\r\"'`]*[^ \t\n\r:\"'`]\\): ?\\([1-9][0-9]*\\)[ :]")
+	     ;; Ruby tracebacks
+             (looking-at "[ \t]+[1-9][0-9]*: from \\([^ \t\n\r\"'`]*[^ \t\n\r:\"'`]\\):\\([1-9][0-9]*\\):in")
              ;; Grep matches, UNIX C compiler and Introl 68HC11 C
              ;; compiler errors, allowing for file names with
              ;; spaces followed by a null character rather than a :
@@ -1437,7 +1439,8 @@ arg1 ... argN '>'.  For example, <mail nil \"user@somewhere.org\">."
 	(when (and (memq actype '(hy hynote))
 		   (string-match-p " " lbl))
 	  (setq lbl (replace-regexp-in-string "\"\\(.*\\)\\'" "\\1\""
-					      (combine-and-quote-strings (split-string lbl) "\" \""))))
+					      (combine-and-quote-strings
+					       (split-string lbl) "\" \""))))
         (setq action (read (concat "(" lbl ")"))
               args (cdr action))
 	;; Ensure action uses an fboundp symbol if executing a

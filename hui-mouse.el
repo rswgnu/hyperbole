@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    04-Feb-89
-;; Last-Mod:     28-Nov-22 at 02:35:34 by Bob Weiner
+;; Last-Mod:      3-Dec-22 at 00:21:51 by Bob Weiner
 ;;
 ;; Copyright (C) 1991-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -1680,15 +1680,18 @@ When the Action Key is pressed:
 
   6. When on a Hyperbole button, activate the button.
 
-  7. With point on the first line of a code block definition, execute the
-     code block via the Org mode standard binding of {C-c C-c},
-     (org-ctrl-c-ctrl-c).
-  
-  8. When point is on an outline heading in Org mode, cycle the view of the
-     subtree at point.
+  7. With point on the :dir path of a code block definition, display the
+     directory given by the path.
 
-  9. In any other context besides the end of a line, the Action Key invokes
-     the Org mode standard binding of {M-RET}, (org-meta-return).
+  8. With point on any #+BEGIN_SRC, #+END_SRC, #+RESULTS, #+begin_example
+     or #+end_example header, execute the code block via the Org mode
+     standard binding of {C-c C-c}, (org-ctrl-c-ctrl-c).
+  
+  9. When point is on an Org mode heading, cycle the view of the subtree
+     at point.
+
+  10. In any other context besides the end of a line, invoke the Org mode
+      standard binding of {M-RET}, (org-meta-return).
 
 When the Assist Key is pressed, it behaves just like the Action Key except
 in these contexts:
@@ -1699,10 +1702,16 @@ in these contexts:
   2. If on an Org mode link or agenda item, display Hyperbole
      context-sensitive help.
 
-  3. On a Hyperbole button, performs the Assist Key function, generally
+  3. On a Hyperbole button, perform the Assist Key function, generally
      showing help for the button.
 
-  4. Not on a Hyperbole button but on an Org mode heading, cycle
+  4. With point on the :dir value of a code block definition, display
+     a help summary of this implicit directory button.
+
+  5. With point on any #+BEGIN_SRC, #+END_SRC, #+RESULTS, #+begin_example
+     or #+end_example header, remove source block results.
+
+  6. Not on a Hyperbole button but on an Org mode heading, cycle
      through views of the whole buffer outline.
 
 To disable ALL Hyperbole support within Org major and minor modes, set the
@@ -1748,8 +1757,20 @@ handled by the separate implicit button type, `org-link-outside-org-mode'."
 		    ;; Fall through until Hyperbole button context and
 		    ;; activate normally.
 		    nil)
-		   ((hsys-org-block-start-at-p)
-		    (hact 'org-ctrl-c-ctrl-c)
+		   ((or (hsys-org-src-block-start-at-p)
+			(save-excursion (forward-line 0)
+					(or (looking-at org-babel-result-regexp)
+					    (looking-at "^[	 ]*#\\+\\(end_src\\|begin_example\\|end_example\\)"))))
+		    (hact (lambda ()
+			    (save-excursion
+			      (unless (hsys-org-src-block-start-at-p)
+				(re-search-backward org-babel-src-block-regexp nil t))
+			      (cond ((not assist-flag)
+				     (org-ctrl-c-ctrl-c))
+				    ((org-babel-where-is-src-block-result)
+				     (org-babel-remove-result)
+				     (message "Code block results removed."))
+				    (t (message "No results to remove for this code block."))))))
 		    t)
 		   ((hsys-org-heading-at-p)
 		    (if (not assist-flag)
@@ -1778,7 +1799,7 @@ handled by the separate implicit button type, `org-link-outside-org-mode'."
 		    nil)
 		   ((equal (hsys-org-get-value :language) "python")
 		    (setq hkey-value (smart-python-at-tag-p))
-		    (hact 'smart-python hkey-value 'next-tag))
+		    (hact 'smart-python hkey-value ''next-tag))
 		   (t
 		    (when (hsys-org-meta-return-shared-p)
 		      (hact 'hsys-org-meta-return))
