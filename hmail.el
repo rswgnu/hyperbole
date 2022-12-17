@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     9-Oct-91 at 18:38:05
-;; Last-Mod:      3-Oct-23 at 23:30:56 by Mats Lidell
+;; Last-Mod:     31-Oct-23 at 12:24:53 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -51,13 +51,16 @@
 
 (defcustom hmail:init-function nil
   "*Function (a symbol) to initialize Hyperbole support for a mail reader/composer.
-Valid values are: nil, Mh-init, Rmail-init or Vm-init."
+Valid values are: nil, Mh-init, Rmail-init, Vm-init or Gnus-mail-init."
   :type '(choice (const nil)
 		 (const Mh-init)
 		 (const Rmail-init)
-		 (const Vm-init))
+		 (const Vm-init)
+                 (const Gnus-mail-init))
   :group 'hyperbole-commands)
 
+(defvar hmail:compose-mail-other-window 'mail-other-window
+  "Function for starting to compose a mail in the other window.")
 (defvar hmail:composer  'message-mode
  "Major mode for composing mail to be sent with Hyperbole buttons.")
 (defvar hmail:lister    nil

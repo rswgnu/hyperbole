@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 20:45:31
-;; Last-Mod:     21-Oct-23 at 19:50:25 by Bob Weiner
+;; Last-Mod:     31-Oct-23 at 12:24:37 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -332,8 +332,20 @@ in all buffers."
                             (mapcar #'get-file-buffer hyrolo-file-list)))))
     (let ((address (mail-address-at-p)))
       (when address
+
+        ;; FIXME - Shall we not initialize the user preferred mail
+        ;; reader at startup instead? Code below copied from
+        ;; "hactypes.el:576". The only other place the
+        ;; hmail:init-function is used.
+
+        ;; Initialize user-specified mail reader if need be.
+        (if (and (symbolp hmail:init-function)
+	         (fboundp hmail:init-function)
+	         (listp (symbol-function hmail:init-function))
+	         (eq 'autoload (car (symbol-function hmail:init-function))))
+	    (funcall hmail:init-function))
         (ibut:label-set address (match-beginning 1) (match-end 1))
-        (hact 'mail-other-window nil address)))))
+        (hact hmail:compose-mail-other-window nil address)))))
 
 ;;; ========================================================================
 ;;; Follows Org links that are in non-Org mode buffers
