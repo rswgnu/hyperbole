@@ -3774,6 +3774,17 @@ name with 'name' and 'name-key'.
 
 2023-01-22  Mats Lidell  <matsl@gnu.org>
 
+* Makefile (EL_COMPILE, ELC_COMPILE): Add hgnus-mail.
+
+* hmail.el (hmail:init-function): Add Gnus-mail-init as an init option.
+    (hmail:compose-mail-other-window): Add email interface function.
+
+* hibtypes.el (mail-address): Use hmail:compose-mail-other-window.
+
+* hgnus-mail.el: Mail definitions for Gnus as a mail reader.
+
+2023-01-22  Mats Lidell  <matsl@gnu.org>
+
 * hypb.el: Add variable and function declarations for package
     interaction-log to silence byte compilation warnings.
     (hypb:activate-interaction-log-mode): Use cl-pushnew.

@@ -182,7 +182,7 @@ EMACS_PLAIN_BATCH=$(EMACS) $(BATCHFLAGS)
 VPATH = kotl man
 
 EL_COMPILE = hact.el hactypes.el hargs.el hbdata.el hbmap.el hbut.el \
-	     hgnus.el hhist.el hib-debbugs.el hib-doc-id.el hib-kbd.el \
+	     hgnus.el hgnus-mail.el hhist.el hib-debbugs.el hib-doc-id.el hib-kbd.el \
 	     hib-social.el hibtypes.el \
 	     hinit.el hload-path.el hmail.el hmh.el hmoccur.el hmouse-info.el \
 	     hmouse-drv.el hmouse-key.el hmouse-mod.el hmouse-sh.el hmouse-tag.el \
