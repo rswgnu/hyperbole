@@ -3,7 +3,7 @@
 # Author:       Bob Weiner
 #
 # Orig-Date:    15-Jun-94 at 03:42:38
-# Last-Mod:     11-Oct-22 at 22:22:16 by Mats Lidell
+# Last-Mod:     18-Dec-22 at 00:29:07 by Mats Lidell
 #
 # Copyright (C) 1994-2022  Free Software Foundation, Inc.
 # See the file HY-COPY for license information.
@@ -191,20 +191,9 @@ EL_KOTL = kotl/kexport.el kotl/kfile.el kotl/kfill.el kotl/kimport.el kotl/klabe
 	  kotl/klink.el kotl/kmenu.el kotl/kotl-mode.el kotl/kotl-orgtbl.el \
           kotl/kcell.el kotl/kproperty.el kotl/kview.el kotl/kvspec.el
 
-ELC_COMPILE =  hactypes.elc hibtypes.elc hib-debbugs.elc hib-doc-id.elc hib-kbd.elc \
-	     hib-social.elc hact.elc \
-	     hargs.elc hbdata.elc hbmap.elc hbut.elc hgnus.elc hhist.elc \
-	     hinit.elc hload-path.elc hmail.elc hmh.elc hmoccur.elc hmouse-info.elc \
-	     hmouse-drv.elc hmouse-key.elc hmouse-mod.elc hmouse-sh.elc hmouse-tag.elc \
-	     hpath.elc hrmail.elc hsettings.elc hsmail.elc hsys-org.elc hsys-www.elc hsys-youtube.elc htz.elc \
-	     hycontrol.elc hui-jmenu.elc hui-menu.elc hui-mini.elc hui-mouse.elc hui-select.elc \
-	     hui-treemacs.elc hui-window.elc hui.elc hvar.elc hversion.elc hvm.elc hypb.elc hyperbole.elc \
-	     hyrolo-demo.elc hyrolo-logic.elc hyrolo-menu.elc hyrolo.elc hywconfig.elc \
-	     set.elc hypb-ert.elc hui-dired-sidebar.elc hypb-maintenance.elc hui-register.elc
+ELC_COMPILE = $(EL_COMPILE:.el=.elc)
 
-ELC_KOTL = kotl/kexport.elc kotl/kfile.elc kotl/kfill.elc kotl/kimport.elc kotl/klabel.elc \
-	   kotl/klink.elc kotl/kmenu.elc kotl/kotl-mode.elc kotl/kotl-orgtbl.elc \
-           kotl/kcell.elc kotl/kproperty.elc kotl/kview.elc kotl/kvspec.elc
+ELC_KOTL = $(EL_KOTL:.el=.elc)
 
 HY-TALK  = HY-TALK/.hypb HY-TALK/HYPB HY-TALK/HY-TALK.org
 

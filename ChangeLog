@@ -1,3 +1,7 @@
+2022-12-18  Mats Lidell  <matsl@gnu.org>
+
+* Makefile (ELC_COMPILE, ELC_KOTL): Use function to derive elc files.
+
 2022-12-03  Bob Weiner  <rsw@gnu.org>
 
 * hpath.el (hpath:expand-with-variable): Fix to expand from local dir first
