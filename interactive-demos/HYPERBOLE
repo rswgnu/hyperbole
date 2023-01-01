@@ -355,3 +355,7 @@ Call your global buttons with {C-h h g a}, those buttons should look familiar.
 That's because they are the explicit buttons you created in the previous section
 in your default button file. When you get used to using this you will find that
 essentially anywhere you want to go, online or offline, is a global button call away.
++
++/* Local Variables:  */
++/* mode: Text        */
++/* End:              */
