@@ -1,5 +1,8 @@
 2023-01-08  Mats Lidell  <matsl@gnu.org>
 
+* hui.el (hui-kill-ring-save): Call use kotl-mode:copy-region-as-kill when
+    in kotl-mode.
+
 * man/hyperbole.texi (Implicit Button Types): Remove ibtypes::org-mode
     from function index.
 
