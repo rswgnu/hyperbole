@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    30-Jan-21 at 12:00:00
-;; Last-Mod:     23-Jul-22 at 20:06:18 by Bob Weiner
+;; Last-Mod:      1-Jan-23 at 22:36:28 by Mats Lidell
 ;;
 ;; Copyright (C) 2021-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -512,6 +512,33 @@ Ensure modifying the button but keeping the label does not create a double label
       (delete-file kotl-file)
       (delete-file other-file)
       (delete-directory other-dir))))
+
+(ert-deftest hui--kill-ring-save-in-kotl-mode-copies-region ()
+  "Copy region in kotl-mode does not copy left margin."
+  (let ((kotl-file (make-temp-file "hypb" nil ".kotl")))
+    (unwind-protect
+        (progn
+          (find-file kotl-file)
+          (set-mark (point))
+          (insert "a")
+          (kotl-mode:newline 1)
+          (insert "b")
+          (hui-kill-ring-save (region-beginning) (region-end))
+          (should (string= (current-kill 0 t) "a\nb")))
+      (delete-file kotl-file))))
+
+(ert-deftest hui--kill-ring-save-in-kotl-mode-between-cells-fails ()
+  "Copy region in kotl-mode between cells fails."
+  (let ((kotl-file (make-temp-file "hypb" nil ".kotl")))
+    (unwind-protect
+        (progn
+          (find-file kotl-file)
+          (set-mark (point))
+          (insert "a")
+          (kotl-mode:add-cell)
+          (insert "b")
+          (should-error (hui-kill-ring-save (region-beginning) (region-end)) :type 'error))
+      (delete-file kotl-file))))
 
 ;; This file can't be byte-compiled without `with-simulated-input' which
 ;; is not part of the actual dependencies, so:
