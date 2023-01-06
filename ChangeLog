@@ -1,3 +1,7 @@
+2023-01-08  Mats Lidell  <matsl@gnu.org>
+
+* FAST-DEMO: (bug#60596) Do not mention 'function-in-buffer', it's removed.
+
 2023-01-07  Bob Weiner  <rsw@gnu.org>
 
 * TAGS: Add to distribution, as is utilized in the Hyperbole DEMO.
@@ -32,7 +36,6 @@
 2022-12-18  Mats Lidell  <matsl@gnu.org>
 
 * Makefile (ELC_COMPILE, ELC_KOTL): Use function to derive elc files.
-
 
 2022-12-11  Bob Weiner  <rsw@gnu.org>
 
