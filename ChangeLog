@@ -1,6 +1,7 @@
 2023-01-08  Mats Lidell  <matsl@gnu.org>
 
 * FAST-DEMO: (bug#60596) Do not mention 'function-in-buffer', it's removed.
+    (bug#60597) Replace 'org-mode' with 'org-link-outside-org-mode'.
 
 2023-01-07  Bob Weiner  <rsw@gnu.org>
 
