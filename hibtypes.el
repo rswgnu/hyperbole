@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 20:45:31
-;; Last-Mod:      3-Dec-22 at 01:08:43 by Bob Weiner
+;; Last-Mod:      7-Jan-23 at 09:27:34 by Mats Lidell
 ;;
 ;; Copyright (C) 1991-2022 Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -429,20 +429,21 @@ Pathnames and urls are handled elsewhere."
 (defib rfc-toc ()
   "Summarize the contents of an Internet rfc from anywhere within an rfc buffer.
 Each line in the summary may be selected to jump to a section."
-  (let ((case-fold-search t)
-        (toc)
-        (opoint (point)))
-    (if (and (string-match "\\`rfc[-_]?[0-9]" (buffer-name))
-	     (not (string-match "toc" (buffer-name)))
-             (goto-char (point-min))
-             (progn (setq toc (search-forward "Table of Contents" nil t))
-                    (re-search-forward "^[ \t]*1.0?[ \t]+[^ \t\n\r]" nil t
-                                       (and toc 2))))
-        (progn (beginning-of-line)
-               (ibut:label-set (buffer-name))
-               (hact 'rfc-toc (buffer-name) opoint (point)))
-      (goto-char opoint)
-      nil)))
+  (save-excursion
+    (let ((case-fold-search t)
+          (toc)
+          (opoint (point)))
+      (if (and (string-match "\\`rfc[-_]?[0-9]" (buffer-name))
+	       (not (string-match "toc" (buffer-name)))
+               (goto-char (point-min))
+               (progn (setq toc (search-forward "Table of Contents" nil t))
+                      (re-search-forward "^[ \t]*1.0?[ \t]+[^ \t\n\r]" nil t
+                                         (and toc 2))))
+          (progn (beginning-of-line)
+                 (ibut:label-set (buffer-name))
+                 (hact 'rfc-toc (buffer-name) opoint (point)))
+        (goto-char opoint)
+        nil))))
 
 ;;; ========================================================================
 ;;; Expands or collapses C call trees and jumps to code definitions.

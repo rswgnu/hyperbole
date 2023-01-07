@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    23-Sep-91 at 20:34:36
-;; Last-Mod:     20-Nov-22 at 21:55:18 by Bob Weiner
+;; Last-Mod:      7-Jan-23 at 09:44:28 by Mats Lidell
 ;;
 ;; Copyright (C) 1991-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -685,18 +685,22 @@ Optional OPOINT is point to return to in BUF-NAME after displaying summary."
 	       (hypb:error "(rfc-toc): Invalid buffer name: %s" buf-name))))
   (let ((sect-regexp "^[ \t]*[1-9][0-9]*\\.[0-9.]*[ \t]+[^ \t\n\r]")
 	(temp-buffer-show-function 'switch-to-buffer)
-	occur-buffer)
+	occur-buffer
+        (toc-buf-name (format "*%s toc*" buf-name)))
     (hpath:display-buffer (current-buffer))
     (occur sect-regexp nil (list (cons sections-start (point-max))))
+    (and (get-buffer toc-buf-name) (kill-buffer toc-buf-name))
     (setq occur-buffer (set-buffer "*Occur*"))
-    (rename-buffer (format "*%s toc*" buf-name))
+    (rename-buffer toc-buf-name)
     (re-search-forward "^[ ]*[0-9]+:" nil t)
     (beginning-of-line)
-    (delete-region (point-min) (point))
-    (insert "Contents of " (buffer-name occur-buffer) ":\n")
-    (set-buffer-modified-p nil)
+    (let ((inhibit-read-only t))
+      (delete-region (point-min) (point))
+      (insert "Contents of " (buffer-name occur-buffer) ":\n")
+      (set-buffer-modified-p nil))
     (set-buffer buf-name)
-    (if opoint (goto-char opoint))))
+    (if opoint (goto-char opoint))
+    ))
 
 (defact text-toc (section)
   "Jump to the text file SECTION referenced by a table of contents entry at point."
