@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    15-Mar-89
-;; Last-Mod:      6-Nov-22 at 13:04:26 by Bob Weiner
+;; Last-Mod:      7-Jan-23 at 23:59:53 by Mats Lidell
 ;;
 ;; Copyright (C) 1989-2022  Free Software Foundation, Inc.
 ;; See the "../HY-COPY" file for license information.
@@ -77,14 +77,16 @@ NAME, confirms whether or not to replace it."
   (interactive "sName for current window configuration: ")
   (or (stringp name)
       (error "(hywconfig-add-by-name): `name' argument is not a string: %s" name))
-  (let ((set:equal-op  (lambda (key elt) (equal key (car elt))))
-	(wconfig-names (hywconfig-get-names)))
+  (let ((wconfig-names (hywconfig-get-names))
+	(old (assoc name wconfig-names)))
     (if (or (not (called-interactively-p 'interactive))
-	    (not (set:member name wconfig-names))
+	    (not old)
 	    (y-or-n-p
 	     (format "Replace existing `%s' window configuration? " name)))
-	(progn (hywconfig-set-names (set:replace name (current-window-configuration)
-						 wconfig-names))
+	(progn (if old (setcdr old (current-window-configuration))
+		 (hywconfig-set-names
+		  (cons (cons name (current-window-configuration))
+			wconfig-names)))
 	       (if (called-interactively-p 'interactive)
 		   (message
 		    (substitute-command-keys
@@ -99,8 +101,9 @@ NAME, confirms whether or not to replace it."
 	 (message "There is no named window configuration to delete."))
 	((not (stringp name))
 	 (error "(hywconfig-delete-by-name): `name' argument is not a string: %s" name))
-	(t (let ((set:equal-op (lambda (key elt) (equal key (car elt)))))
-	     (hywconfig-set-names (set:remove name (hywconfig-get-names)))
+	(t (let ((confnames (hywconfig-get-names)))
+	     (hywconfig-set-names
+	      (delq (assoc name confnames) confnames))
 	     (if (called-interactively-p 'interactive)
 		 (message "Window configuration `%s' has been deleted." name))))))
 
@@ -113,7 +116,7 @@ NAME, confirms whether or not to replace it."
 	 (message "There is no named window configuration to restore."))
 	((not (stringp name))
 	 (error "(hywconfig-restore-by-name): `name' argument is not a string: %s" name))
-	(t (let ((wconfig (set:get name (hywconfig-get-names))))
+	(t (let ((wconfig (cdr (assoc name (hywconfig-get-names)))))
 	     (if wconfig
 		 (progn (hywconfig-set-window-configuration wconfig)
 			(if (called-interactively-p 'interactive)
@@ -201,7 +204,7 @@ oldest one comes the newest one."
   (let* ((frame (selected-frame))
 	 (names (frame-parameter frame 'hywconfig-names)))
     (if (not names)
-	(set-frame-parameter frame 'hywconfig-names (setq names (set:create))))
+	(set-frame-parameter frame 'hywconfig-names (setq names nil)))
     names))
 
 (defun hywconfig-set-names (names)
