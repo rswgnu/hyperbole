@@ -1,3 +1,10 @@
+2023-01-08  Bob Weiner  <rsw@gnu.org>
+
+* hmouse-tag.el (xref--item-at-point): Fix this function (still broken
+    in Emacs29) to not error when called on a blank line at the beginning
+    of the buffer.  Was triggering an Action Key error.  Fix for 'unrelated
+    issue' reported in Emacs bug#59903.
+
 2023-01-08  Mats Lidell  <matsl@gnu.org>
 
 * test/hui-tests.el (hui--kill-ring-save-in-kotl-mode-copies-region)

@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    24-Aug-91
-;; Last-Mod:     28-Nov-22 at 02:48:17 by Bob Weiner
+;; Last-Mod:      8-Jan-23 at 13:02:53 by Bob Weiner
 ;;
 ;; Copyright (C) 1991-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -29,20 +29,26 @@
 	     (load "tags-fix" t)))))
 
 ;; If etags utilizes the new xref.el library, define some helper
-;; functions to simplify programming.
-(when (and (featurep 'xref) (not (fboundp 'xref-definition)))
-  (defun xref-definition (identifier)
-    "Return the first definition of string IDENTIFIER."
-    (car (xref-backend-definitions (xref-find-backend) identifier)))
-  (defun xref-definitions (identifier)
-    "Return a list of all definitions of string IDENTIFIER."
-    (xref-backend-definitions (xref-find-backend) identifier))
-  (defun xref-item-buffer (item)
-    "Return the buffer in which xref ITEM is defined."
-    (marker-buffer (save-excursion (xref-location-marker (xref-item-location item)))))
-  (defun xref-item-position (item)
-    "Return the buffer position where xref ITEM is defined."
-    (marker-position (save-excursion (xref-location-marker (xref-item-location item))))))
+;; functions to simplify programming and fix one existing function.
+(when (require 'xref nil t)
+  ;; Fix next xref function to handle when called at beginning of buffer
+  (defun xref--item-at-point ()
+    (get-text-property
+     (max (point-min) (if (eolp) (1- (point)) (point)))
+     'xref-item))
+  (when (not (fboundp 'xref-definition))
+    (defun xref-definition (identifier)
+      "Return the first definition of string IDENTIFIER."
+      (car (xref-backend-definitions (xref-find-backend) identifier)))
+    (defun xref-definitions (identifier)
+      "Return a list of all definitions of string IDENTIFIER."
+      (xref-backend-definitions (xref-find-backend) identifier))
+    (defun xref-item-buffer (item)
+      "Return the buffer in which xref ITEM is defined."
+      (marker-buffer (save-excursion (xref-location-marker (xref-item-location item)))))
+    (defun xref-item-position (item)
+      "Return the buffer position where xref ITEM is defined."
+      (marker-position (save-excursion (xref-location-marker (xref-item-location item)))))))
 
 ;;; ************************************************************************
 ;;; Public variables
