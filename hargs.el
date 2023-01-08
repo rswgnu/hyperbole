@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    31-Oct-91 at 23:17:35
-;; Last-Mod:     12-Oct-22 at 22:30:53 by Mats Lidell
+;; Last-Mod:      7-Jan-23 at 14:00:52 by Bob Weiner
 ;;
 ;; Copyright (C) 1991-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -604,12 +604,14 @@ string read or nil."
 			 &optional predicate must-match initial-input val-type)
   "PROMPT with completion for a value in COLLECTION and return it.
 COLLECTION may be a list of strings, an alist, an obarray (for
-`symbol-name' completion) or a hash collection.  COLLECTION may also be
-a function to do the completion itself.  Optional PREDICATE
-limits completion to a subset of COLLECTION.  Optional MUST-MATCH
-means value returned must be from COLLECTION.  Optional INITIAL-INPUT
-is a string inserted after PROMPT as the default value.  Optional
-VAL-TYPE is a symbol indicating the type of value to be read."
+`symbol-name' completion) or a hash collection.  COLLECTION may
+also be a function to do the completion itself.  Optional
+PREDICATE limits completion to a subset of COLLECTION.  Optional
+MUST-MATCH means value returned must be from COLLECTION and not
+blank (unless INITIAL-INPUT is given as an empty string).
+Optional INITIAL-INPUT is a string inserted after PROMPT as the
+default value.  Optional VAL-TYPE is a symbol indicating the type
+of value to be read."
   (unless (and must-match (null collection))
     (let ((prev-reading-p hargs:reading-type)
 	  (completion-ignore-case t)
@@ -618,11 +620,15 @@ VAL-TYPE is a symbol indicating the type of value to be read."
 	  result)
       (unwind-protect
 	  (progn
-	    (setq hargs:reading-type (or val-type t)
-		  result (completing-read prompt collection predicate must-match initial-input))
-	    (if (and (equal result "") initial-input)
-		initial-input
-	      result))
+	    (setq hargs:reading-type (or val-type t))
+	    (while (null result)
+	      (setq result (completing-read prompt collection predicate must-match initial-input))
+	      (when (and must-match (stringp result) (string-blank-p result)
+			 (not (equal initial-input "")))
+		(setq result initial-input)
+		(when (not initial-input)
+		  (beep))))
+	    result)
 	(setq hargs:reading-type prev-reading-p)
 	(select-window owind)
 	(switch-to-buffer obuf)))))

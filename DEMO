@@ -39,10 +39,10 @@ your current Emacs frame.  Press 'q' to quit out of this menu and we can
 begin.  If Hyperbole is not installed, see the "INSTALL" file, in the
 same directory as this file, for instructions on installing it.
 
-This demo illustrates simple usage of the basic Hyperbole button-action types
-and shows how Hyperbole can support a style of self-documenting, interactive
-files.  See the glossary in the Hyperbole Manual, "(hyperbole)Glossary", if
-terms used here are unfamiliar to you.
+This demo illustrates simple usage of the basic Hyperbole button-action-type
+model and shows how Hyperbole can support a style of self-documenting,
+interactive files.  See the glossary in the Hyperbole Manual,
+"(hyperbole)Glossary", if terms used here are unfamiliar to you.
 
 Once you read the next section on "#Smart Keys", you can then browse any
 other sections individually as you like.  Many people initially use Hyperbole
@@ -788,7 +788,7 @@ composes mail to the list that includes your system information.
 
 A new feature of Hyperbole is a universal syntax for creating implicit
 buttons known as Action Buttons.  These buttons execute any existing
-action types or Emacs Lisp functions.  They are delimited by angle
+action types or Emacs Lisp symbols.  They are delimited by angle
 brackets, < >, and come in three types:
 
   1. action type invocations - these begin with an action type name (from the
@@ -1130,8 +1130,8 @@ sites, you can mix their buttons with your own within the same document and
 see one unified view of the modification times on each button.
 
 Every explicit button utilizes an `action type', many of which are predefined
-by Hyperbole.  {C-h h e t RET} lists all action types available to you when
-creating explicit buttons and specifying their types.
+by Hyperbole.  {C-h h e t RET} lists all Hyperbole action types but Emacs Lisp
+commands may be utilized as well.
 
 Hyperbole is pretty forgiving about the format of explicit buttons.  For
 example, all of the following represent the same button, as long as you press
@@ -1214,8 +1214,8 @@ successful button creation.
 
 After Hyperbole has the button label and its target buffer, it will prompt
 you for an action type for the button.  Use the {?} completion list key to
-see the available types.  The type selected determines any following values
-for which you are prompted.
+see all of the available types.  The type selected determines any following
+values for which you are prompted.
 
 If a previous button with the same label exists in the same buffer, Hyperbole
 will add an instance number to the label when it adds the delimiters so that

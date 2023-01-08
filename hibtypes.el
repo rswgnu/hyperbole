@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 20:45:31
-;; Last-Mod:      3-Dec-22 at 01:08:43 by Bob Weiner
+;; Last-Mod:      7-Jan-23 at 19:54:51 by Bob Weiner
 ;;
 ;; Copyright (C) 1991-2022 Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -431,7 +431,8 @@ Pathnames and urls are handled elsewhere."
 Each line in the summary may be selected to jump to a section."
   (let ((case-fold-search t)
         (toc)
-        (opoint (point)))
+        (opoint (point))
+	sections-start)
     (if (and (string-match "\\`rfc[-_]?[0-9]" (buffer-name))
 	     (not (string-match "toc" (buffer-name)))
              (goto-char (point-min))
@@ -439,8 +440,10 @@ Each line in the summary may be selected to jump to a section."
                     (re-search-forward "^[ \t]*1.0?[ \t]+[^ \t\n\r]" nil t
                                        (and toc 2))))
         (progn (beginning-of-line)
+	       (setq sections-start (point))
                (ibut:label-set (buffer-name))
-               (hact 'rfc-toc (buffer-name) opoint (point)))
+	       (goto-char opoint)
+               (hact 'rfc-toc (buffer-name) nil sections-start))
       (goto-char opoint)
       nil)))
 
@@ -603,7 +606,11 @@ more asterisk characters at the very beginning of the line."
                (save-excursion
                  (beginning-of-line)
                  ;; Entry line within a TOC
-                 (when (and (looking-at "[ \t]+[-+*o]+[ \t]+\\(.*\\)$")
+                 (when (and (or 
+			     ;; Next line is typically in RFCs,
+			     ;; e.g. "1.1.  Scope ..... 1"
+			     (looking-at "^[ \t]*\\([0-9.]+\\([ \t]+[^ \t\n\r]+\\)+\\) \\.+")
+			     (looking-at "[ \t]+\\([-+*o]+[ \t]+.*\\)$"))
 			    (setq section (string-trim (match-string-no-properties 1))))
 		   (ibut:label-set section (match-beginning 1) (match-end 1))
                    t)))
