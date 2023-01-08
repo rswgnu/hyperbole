@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    6/30/93
-;; Last-Mod:      8-Jan-23 at 00:06:52 by Mats Lidell
+;; Last-Mod:      8-Jan-23 at 00:12:51 by Mats Lidell
 ;;
 ;; Copyright (C) 1993-2022  Free Software Foundation, Inc.
 ;; See the "../HY-COPY" file for license information.
@@ -2625,7 +2625,7 @@ confirmation."
 					  (if top-cell-flag
 					      "0"
 					    (kcell-view:label)))
-				  (mapcar '#list
+				  (mapcar #'list
 					  (mapcar 'symbol-name
 						  existing-attributes))))))
        (beep))

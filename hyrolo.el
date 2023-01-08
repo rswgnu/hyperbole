@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     7-Jun-89 at 22:08:29
-;; Last-Mod:     27-Nov-22 at 23:45:24 by Bob Weiner
+;; Last-Mod:      8-Jan-23 at 01:13:50 by Mats Lidell
 ;;
 ;; Copyright (C) 1991-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -550,10 +550,10 @@ Return number of entries matched.  See also documentation for the variable
 		(or (not (integerp max-matches))
 		    (< total-matches (max max-matches (- max-matches)))))
       (setq hyrolo-buf (hyrolo-find-file-noselect file)
-	    hyrolo-entry-regexps (set:add (buffer-local-value 'hyrolo-entry-regexp hyrolo-buf)
-					  hyrolo-entry-regexps)
-	    outline-regexps (set:add (buffer-local-value 'outline-regexp hyrolo-buf)
-				     outline-regexps)
+	    hyrolo-entry-regexps (seq-uniq (append (list (buffer-local-value 'hyrolo-entry-regexp hyrolo-buf))
+					           hyrolo-entry-regexps))
+	    outline-regexps (seq-uniq (append (list (buffer-local-value 'outline-regexp hyrolo-buf))
+				              outline-regexps))
 	    hyrolo-file-list (cdr hyrolo-file-list)
 	    num-matched (cond ((and (featurep 'bbdb) (equal file bbdb-file))
 			       (hyrolo-bbdb-grep-file file regexp max-matches count-only))
