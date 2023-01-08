@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 21:42:03
-;; Last-Mod:      7-Jan-23 at 19:58:18 by Bob Weiner
+;; Last-Mod:      8-Jan-23 at 10:22:39 by Mats Lidell
 ;;
 ;; Copyright (C) 1991-2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -28,6 +28,7 @@
 ;;; ************************************************************************
 
 (declare-function texinfo-copy-node-name "texnfo-upd")
+(declare-function kotl-mode:copy-region-as-kill "kotl-mode")
 
 ;;; ************************************************************************
 ;;; Public variables
@@ -139,7 +140,9 @@ visual feedback indicating the extent of the region being copied."
     (if (or (use-region-p)
 	    (null transient-mark-mode)
 	    (not (called-interactively-p 'interactive)))
-	(copy-region-as-kill beg end region)
+        (if (derived-mode-p 'kotl-mode)
+            (kotl-mode:copy-region-as-kill beg end)
+	  (copy-region-as-kill beg end region))
       (setq thing (hui:delimited-selectable-thing))
       (if (stringp thing)
 	  (progn (kill-new thing)

@@ -1,5 +1,12 @@
 2023-01-08  Mats Lidell  <matsl@gnu.org>
 
+* test/hui-tests.el (hui--kill-ring-save-in-kotl-mode-copies-region)
+    (hui--kill-ring-save-in-kotl-mode-between-cells-fails): Add tests for
+    hui-kill-ring-save.
+
+* hui.el (hui-kill-ring-save): Call use kotl-mode:copy-region-as-kill when
+    in kotl-mode.
+
 * man/hyperbole.texi (Implicit Button Types): Remove ibtypes::org-mode
     from function index.
 
