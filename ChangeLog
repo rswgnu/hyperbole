@@ -29,6 +29,11 @@
 * hui.el (hui:actype): Limit action type completions to Hyperbole actypes and
     interactive commands.  Resolve Emacs bug#60469.
 
+2022-12-18  Mats Lidell  <matsl@gnu.org>
+
+* Makefile (ELC_COMPILE, ELC_KOTL): Use function to derive elc files.
+
+
 2022-12-11  Bob Weiner  <rsw@gnu.org>
 
 * hyperbole.el (hkey-initialize): Fix Emacs bug#59903: handle when C-h is
