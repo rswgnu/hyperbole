@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     7-Jun-89 at 22:08:29
-;; Last-Mod:     27-Nov-22 at 23:45:24 by Bob Weiner
+;; Last-Mod:      3-Dec-22 at 17:06:18 by Bob Weiner
 ;;
 ;; Copyright (C) 1991-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -1325,7 +1325,7 @@ Stop at the first and last subheadings of a superior heading."
 ;;;###autoload
 (defun hyrolo-fgrep-directories (file-regexp &rest dirs)
   "String/logical HyRolo search over files matching FILE-REGEXP in rest of DIRS."
-  (hyrolo-search-directories #'hyrolo-fgrep file-regexp dirs))
+  (apply #'hyrolo-search-directories #'hyrolo-fgrep file-regexp dirs))
 
 (defun hyrolo-fgrep-file (hyrolo-file-or-buf string &optional max-matches count-only headline-only)
   "Retrieve entries in HYROLO-FILE-OR-BUF matching STRING.
@@ -1350,7 +1350,7 @@ Stop at the first and last subheadings of a superior heading."
 ;;;###autoload
 (defun hyrolo-grep-directories (file-regexp &rest dirs)
   "Regexp HyRolo search over files matching FILE-REGEXP in rest of DIRS."
-  (hyrolo-search-directories #'hyrolo-grep file-regexp dirs))
+  (apply #'hyrolo-search-directories #'hyrolo-grep file-regexp dirs))
 
 (defun hyrolo-next-regexp-match (regexp headline-only)
   "In a HyRolo source buffer, move past next occurrence of REGEXP or return nil."

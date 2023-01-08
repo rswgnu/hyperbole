@@ -1,6 +1,6 @@
 
 "Hyperbole-and-Org-Mode.org"
-("Make_Your_Text_Fly_with_Hyperbole_and_Org_Mode" nil nil exec-window-cmd ("mpv --loop hbirds.gif") "rsw@gnu.org" "20221128:03:16:57" "rsw" "20221128:03:18:33")
+("Bring_Your_Text_to_Life" nil nil life (1) "rsw@gnu.org" "20221204:08:36:54" nil nil)
 
 "HY-TALK.org"
 ("Make_Your_Text_Come_Alive" nil nil kbd-key ("C-x 1 C-x 2 C-x o M-x hanoi RET") "rsw@gnu.org" "20200803:20:10:07" "rsw" "20200803:20:14:20")
