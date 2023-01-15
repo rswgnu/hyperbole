@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    04-Feb-89
-;; Last-Mod:     15-Jan-23 at 17:11:18 by Mats Lidell
+;; Last-Mod:     15-Jan-23 at 20:35:52 by Mats Lidell
 ;;
 ;; Copyright (C) 1991-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -165,8 +165,6 @@ Its default value is `smart-scroll-down'.  To disable it, set it to
 (declare-function company-quickhelp-manual-begin "ext:company-quickhelp")
 (declare-function company-show-location "ext:company")
 (declare-function company-select-mouse "ext:company")
-
-
 
 ;;; ************************************************************************
 ;;; Hyperbole context-sensitive keys dispatch table
