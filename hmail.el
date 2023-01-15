@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     9-Oct-91 at 18:38:05
-;; Last-Mod:     31-Oct-23 at 12:24:53 by Mats Lidell
+;; Last-Mod:     31-Oct-23 at 12:25:18 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -53,10 +53,10 @@
   "*Function (a symbol) to initialize Hyperbole support for a mail reader/composer.
 Valid values are: nil, Mh-init, Rmail-init, Vm-init or Gnus-mail-init."
   :type '(choice (const nil)
-		 (const Mh-init)
-		 (const Rmail-init)
-		 (const Vm-init)
-                 (const Gnus-mail-init))
+                 (function-item :tag "MH" :value Mh-init)
+		 (function-item :tag "Rmail" :value Rmail-init)
+		 (function-item :tag "Vm" :value Vm-init)
+		 (function-item :tag "Gnus" :value Gnus-mail-init))
   :group 'hyperbole-commands)
 
 (defvar hmail:compose-mail-other-window 'mail-other-window
