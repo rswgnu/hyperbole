@@ -2775,8 +2775,9 @@ Invisible text is expanded and included only if INVISIBLE-FLAG is non-nil."
     (setq source-buf (current-buffer)))
   (when (stringp source-buf)
     (setq source-buf (get-buffer source-buf)))
-  (with-current-buffer source-buf
-    (hypb:insert-region target-buf start end invisible-flag)))
+    (save-excursion
+      (set-buffer source-buf)
+      (hypb:insert-region target-buf start end invisible-flag)))
 
 (defun kotl-mode:copy-tree-to-buffer (target-buf cell-ref invisible-flag)
   "Copy to point in TARGET-BUF the text of the outline tree rooted at CELL-REF.
