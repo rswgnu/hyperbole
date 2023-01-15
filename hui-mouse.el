@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    04-Feb-89
-;; Last-Mod:     10-Dec-22 at 00:53:10 by Mats Lidell
+;; Last-Mod:     15-Jan-23 at 17:11:18 by Mats Lidell
 ;;
 ;; Copyright (C) 1991-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -136,7 +136,6 @@ Its default value is `smart-scroll-down'.  To disable it, set it to
 
 (declare-function helm-action-window "ext:helm-lib")
 (declare-function helm-buffer-get "ext:helm-lib")
-(declare-function helm-get-current-action "ext:helm-?") ;; FIXME: Bobs modified version?
 (declare-function helm-get-selection "ext:helm")
 (declare-function helm-mark-current-line "ext:helm")
 (declare-function helm-next-line "ext:helm")
