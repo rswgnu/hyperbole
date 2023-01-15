@@ -51,11 +51,11 @@
 
 (defcustom hmail:init-function nil
   "*Function (a symbol) to initialize Hyperbole support for a mail reader/composer.
-Valid values are: nil, Mh-init, Rmail-init  or Gnus-mail-init."
+Valid values are: nil, Mh-init, Rmail-init or Gnus-mail-init."
   :type '(choice (const nil)
-		 (const Mh-init)
-		 (const Rmail-init)
-                 (const Gnus-mail-init))
+                 (function-item :tag "MH" :value Mh-init)
+		 (function-item :tag "Rmail" :value Rmail-init)
+		 (function-item :tag "Gnus" :value Gnus-mail-init))
   :group 'hyperbole-commands)
 
 (defvar hmail:compose-mail-other-window 'mail-other-window

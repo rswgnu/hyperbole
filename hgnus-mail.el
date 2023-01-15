@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell
 ;;
 ;; Orig-Date:    17-Dec-22 at 22:04:19
-;; Last-Mod:     17-Dec-22 at 23:45:46 by Mats Lidell
+;; Last-Mod:      8-Jan-23 at 23:50:26 by Mats Lidell
 ;;
 ;; Copyright (C) 2021-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -38,6 +38,9 @@
 ;;   File: hypb-gnus-email.el
 ;;   Function: hypb-gnus-email-init
 
+(require 'gnus-sum)
+(require 'gnus-art)
+
 ;;;###autoload
 (defun Gnus-mail-init ()
   "Initialize Hyperbole support for Gnus mail reading."
@@ -56,10 +59,10 @@
   ;; Setup private abstract interface to mail reader-specific functions
   ;; used in "hmail.el".
   ;;
-  (defalias 'rmail:get-new       'gnus-group-get-new-news)
-  (defalias 'rmail:msg-forward   'gnus-summary-mail-forward)
-  (defalias 'rmail:summ-msg-to   nil)   ;FIXME - What is this for?
-  (defalias 'rmail:summ-new      nil)   ;FIXME - What is this for?
+  (defalias 'rmail:get-new       #'gnus-group-get-new-news)
+  (defalias 'rmail:msg-forward   #'gnus-summary-mail-forward)
+  (defalias 'rmail:summ-msg-to   #'gnus-summary-show-article)
+  (defalias 'rmail:summ-new      #'gnus-summary-rescan-group)
   (if (called-interactively-p 'interactive)
       (message "Hyperbole Gnus mail reader support initialized.")))
 
@@ -73,6 +76,27 @@
 (defun hgnus-mail--message-mail-other-window (_noerase to)
   "Open mail composer in other window with field TO set."
   (gnus-msg-mail to nil nil nil #'switch-to-buffer-other-window))
+
+(defalias 'Gnus-Summ-goto #'gnus-summary-show-article)
+(defalias 'Gnus-msg-next #'gnus-article-goto-next-page)
+
+;; (defun Gnus-Summ-delete ()
+;;   "Delete an article.  No undo for this one I'm afraid."
+;;   (let ((gnus-novice-user t))
+;;     (gnus-summary-delete-article)))
+
+(defun Gnus-Summ-delete ()
+  "Mark article for process so it can be expunged later."
+  (gnus-summary-mark-as-processable 1))
+
+(defun Gnus-Summ-expunge ()
+  "Delete all articles with a process mark."
+  (let ((gnus-novice-user t))
+    (gnus-summary-delete-article)))
+
+(defun Gnus-Summ-undelete-all ()
+  "Undelete all messages."
+  (error "Sorry.  Deleted messages can't be undeleted"))
 
 (provide 'hgnus-mail.el)
 ;;; hgnus-mail.el ends here
