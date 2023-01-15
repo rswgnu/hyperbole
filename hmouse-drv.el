@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    04-Feb-90
-;; Last-Mod:     21-Nov-22 at 18:34:46 by Bob Weiner
+;; Last-Mod:     15-Jan-23 at 17:08:53 by Mats Lidell
 ;;
 ;; Copyright (C) 1989-2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -864,7 +864,9 @@ frame instead."
      ((and (frame-parameter frame 'drag-with-mode-line)
            (window-at-side-p window 'bottom))
       ;; Drag frame when the window is on the bottom of its frame.
-      (mouse-drag-frame start-event 'move)))))
+      (if (fboundp 'mouse-drag-frame-move) ;; From Emacs 28
+          (mouse-drag-frame-move start-event)
+        (mouse-drag-frame start-event 'move))))))
 
 (defun hkey-debug (pred pred-value hkey-action)
   (message "(HyDebug) %sContext: %s; %s: %s; Buf: %s; Mode: %s; MinibufDepth: %s"
