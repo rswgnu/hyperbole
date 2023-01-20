@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    24-Aug-91
-;; Last-Mod:      7-Oct-22 at 23:31:35 by Mats Lidell
+;; Last-Mod:     15-Jan-23 at 16:56:07 by Mats Lidell
 ;;
 ;; Copyright (C) 1991-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -29,20 +29,26 @@
 	     (load "tags-fix" t)))))
 
 ;; If etags utilizes the new xref.el library, define some helper
-;; functions to simplify programming.
-(when (and (featurep 'xref) (not (fboundp 'xref-definition)))
-  (defun xref-definition (identifier)
-    "Return the first definition of string IDENTIFIER."
-    (car (xref-backend-definitions (xref-find-backend) identifier)))
-  (defun xref-definitions (identifier)
-    "Return a list of all definitions of string IDENTIFIER."
-    (xref-backend-definitions (xref-find-backend) identifier))
-  (defun xref-item-buffer (item)
-    "Return the buffer in which xref ITEM is defined."
-    (marker-buffer (save-excursion (xref-location-marker (xref-item-location item)))))
-  (defun xref-item-position (item)
-    "Return the buffer position where xref ITEM is defined."
-    (marker-position (save-excursion (xref-location-marker (xref-item-location item))))))
+;; functions to simplify programming and fix one existing function.
+(when (require 'xref nil t)
+  ;; Fix next xref function to handle when called at beginning of buffer
+  (defun xref--item-at-point ()
+    (get-text-property
+     (max (point-min) (if (eolp) (1- (point)) (point)))
+     'xref-item))
+  (when (not (fboundp 'xref-definition))
+    (defun xref-definition (identifier)
+      "Return the first definition of string IDENTIFIER."
+      (car (xref-backend-definitions (xref-find-backend) identifier)))
+    (defun xref-definitions (identifier)
+      "Return a list of all definitions of string IDENTIFIER."
+      (xref-backend-definitions (xref-find-backend) identifier))
+    (defun xref-item-buffer (item)
+      "Return the buffer in which xref ITEM is defined."
+      (marker-buffer (save-excursion (xref-location-marker (xref-item-location item)))))
+    (defun xref-item-position (item)
+      "Return the buffer position where xref ITEM is defined."
+      (marker-position (save-excursion (xref-location-marker (xref-item-location item)))))))
 
 ;;; ************************************************************************
 ;;; Public variables
@@ -153,6 +159,7 @@ Keyword matched is grouping 1.  Referent is grouping 2.")
 (defvar br-lang-prefix)
 (defvar buffer-tag-table)
 (defvar jedi-mode)
+(defvar jedi:find-file-function) ;; FIXME: RSW customization?
 (defvar java-class-def-name-grpn)
 (defvar java-class-def-regexp)
 
@@ -1366,6 +1373,7 @@ See the \"${hyperb:dir}/smart-clib-sym\" script for more information."
   (when  next (setq tag nil))
   (let* ((tags-table-list (or list-of-tags-tables
 			      (and (boundp 'tags-table-list)
+				   (not (smart-tags-org-src-block-p))
 				   (nconc (smart-tags-file-list) tags-table-list))
 			      (smart-tags-file-list)))
 	 ;; Identifier searches should almost always be case-sensitive today
@@ -1418,12 +1426,17 @@ cannot be expanded via a tags file."
 	    (setq tags-table-list (cdr tags-table-list)))))
       file)))
 
+(defun smart-tags-org-src-block-p ()
+  "Return non-nil if point is within an Org mode source block."
+  (and (featurep 'hsys-org) (hsys-org-mode-p) (org-in-src-block-p t)))
+
 ;;;###autoload
 (defun smart-tags-file-list (&optional curr-dir-or-filename name-of-tags-file)
   "Return tag files list for optional CURR-DIR-OR-FILENAME or `default-directory'.
 Optional NAME-OF-TAGS-FILE is the literal filename (no directory) for which
 to look.  If no tags file is found, an error is signaled."
-  (let* ((path (or curr-dir-or-filename default-directory))
+  (let* ((path (or (and (smart-tags-org-src-block-p) (hsys-org-get-value :dir))
+		   curr-dir-or-filename default-directory))
 	 (tags-table-list (smart-ancestor-tag-files path name-of-tags-file)))
     ;; If no tags files were found and the current buffer may contain Emacs Lisp identifiers and
     ;; is in a 'load-path' directory, then use the default Emacs Lisp tag table.

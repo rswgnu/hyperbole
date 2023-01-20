@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    24-Apr-91 at 03:36:23
-;; Last-Mod:     21-Jul-22 at 11:17:46 by Mats Lidell
+;; Last-Mod:      6-Nov-22 at 12:22:44 by Bob Weiner
 ;;
 ;; Copyright (C) 1991-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -42,8 +42,8 @@ changing the current frame configuration somehow."
   "Return a history element for current point location."
   (current-frame-configuration))
 
-(defun hhist:remove (&optional arg)
-  "Remove optional prefix ARG entries from history, return to ARGth location.
+(defun hhist:pop (&optional arg)
+  "Return to ARGth saved frame config and remove optional prefix ARG entries.
 The command is ignored with ARG < 1."
   (interactive "p")
   (setq arg (cond ((or (null arg)
@@ -57,7 +57,7 @@ The command is ignored with ARG < 1."
   (let ((prev-config))
     (when *hhist*
       (when (< arg 1)
-	(message "(hhist:remove): No previous location to which to return.")
+	(message "(hhist:pop): No previous location to which to return")
 	(beep))
       (while (and (> arg 0) *hhist*)
 	(setq prev-config (car *hhist*)

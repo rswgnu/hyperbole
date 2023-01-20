@@ -4,7 +4,7 @@
 ;; Maintainer:   Bob Weiner, Mats Lidell
 ;;
 ;; Orig-Date:     1-Jan-94
-;; Last-Mod:      7-Oct-22 at 23:35:37 by Mats Lidell
+;; Last-Mod:      4-Dec-22 at 03:57:42 by Bob Weiner
 ;;
 ;; Copyright (C) 1994-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -24,7 +24,7 @@
 ;;; Public variables
 ;;; ************************************************************************
 
-(defconst hyperb:version "8.0.1pre" "GNU Hyperbole revision number.")
+(defconst hyperb:version "9.0.0" "GNU Hyperbole revision number.")
 
 ;;;###autoload
 (defvar hyperb:mouse-buttons
@@ -196,6 +196,12 @@ support is available."
 			      (Info-index item-name))
 		     (Info-goto-node "(hyperbole)")
 		     (Info-index index-item))
+		   ;; Index may point to indented line immediately
+		   ;; after the non-indented item definition line. If
+		   ;; so, move back a line.
+		   (when (and (looking-at "^[ \t]")
+			      (looking-back "^[^ \t].*[\n\r]+"))
+		     (forward-line -1))
 		   (recenter 0))
 	       (error "(id-info-item): Invalid Info index item: `%s'" index-item)))
     (error "(id-info-item): Info index item must be a string: `%s'" index-item))))

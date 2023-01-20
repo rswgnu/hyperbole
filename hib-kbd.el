@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    22-Nov-91 at 01:37:57
-;; Last-Mod:      7-Oct-22 at 00:06:09 by Mats Lidell
+;; Last-Mod:     27-Oct-22 at 18:46:16 by Bob Weiner
 ;;
 ;; Copyright (C) 1991-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -204,8 +204,11 @@ Restore M-x binding to ORIG-M-X-BINDING."
 The events are inserted into Emacs unread input stream.  Emacs
 then executes them when its command-loop regains control."
   (setq unread-command-events (nconc unread-command-events
-				     (listify-key-sequence
-				      (kbd-key:kbd key-series)))))
+				     ;; Cons t here to ensure events
+				     ;; are added to command-keys.
+				     (mapcar (lambda (e) (cons t e))
+					     (listify-key-sequence
+					      (kbd-key:kbd key-series))))))
 
 (defun kbd-key:doc (key-series &optional full)
   "Show first line of doc for binding of keyboard KEY-SERIES in minibuffer.

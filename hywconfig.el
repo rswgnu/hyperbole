@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    15-Mar-89
-;; Last-Mod:      6-Aug-22 at 23:12:26 by Mats Lidell
+;; Last-Mod:      6-Nov-22 at 13:04:26 by Bob Weiner
 ;;
 ;; Copyright (C) 1989-2022  Free Software Foundation, Inc.
 ;; See the "../HY-COPY" file for license information.
@@ -135,6 +135,16 @@ Then deletes this new configuration from the ring."
 	(ring-remove ring 0)))))
 
 ;;;###autoload
+(defun hywconfig-delete-pop-continue ()
+  "Replace the current frame's window configuration with the most recently saved.
+Delete this new configuration from the ring.  If the hywconfig ring is not empty,
+then stay in the hywconfig menu."
+  (interactive)
+  (hywconfig-delete-pop)
+  (unless (hywconfig-ring-empty-p)
+    (hyperbole 'win)))
+
+;;;###autoload
 (defun hywconfig-ring-empty-p ()
   "Return t if the wconfig ring for the current frame is empty; nil otherwise."
   (ring-empty-p (hywconfig-get-ring)))
@@ -166,6 +176,21 @@ oldest one comes the newest one."
       (setq prev (ring-remove ring (- 1 n)))
       (ring-insert-at-beginning ring prev)
       (hywconfig-set-window-configuration (ring-ref ring 0)))))
+
+;;;###autoload
+(defun hywconfig-yank-pop-continue (n)
+  "Replace current frame's window config with prefix arg Nth prior one in ring.
+If there are more than one entries in the ring, then stay in the hywconfig menu.
+
+Interactively, default value of N = 1, means the last saved window
+configuration is displayed.
+
+The sequence of window configurations wraps around, so that after the
+oldest one comes the newest one."
+  (interactive "p")
+  (hywconfig-yank-pop n)
+  (when (> (ring-length (hywconfig-get-ring)) 1)
+    (hyperbole 'win)))
 
 ;;; ************************************************************************
 ;;; Private functions

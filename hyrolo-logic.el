@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    13-Jun-89 at 22:57:33
-;; Last-Mod:      9-Oct-22 at 18:01:03 by Bob Weiner
+;; Last-Mod:     24-Oct-22 at 22:49:42 by Bob Weiner
 ;;
 ;; Copyright (C) 1989-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -61,10 +61,6 @@
 ;;; ************************************************************************
 
 (require 'hyrolo)
-
-;; Quiet byte compiler warnings for these free variables.
-(eval-when-compile
-  (defvar next-entry-exists nil))
 
 ;;; ************************************************************************
 ;;; Public functions
@@ -234,14 +230,11 @@ evaluations of SEXP that match entries."
   (let* ((start)
 	 (end)
 	 (end-entry-hdr)
-	 (curr-entry-level-len)
 	 (num-found 0))
     (while (re-search-forward hyrolo-entry-regexp nil t)
       (setq end-entry-hdr (match-end hyrolo-entry-group-number)
 	    start (match-beginning hyrolo-entry-group-number)
-	    next-entry-exists nil
-	    curr-entry-level-len (length (match-string-no-properties hyrolo-entry-group-number))
-	    end (hyrolo-to-entry-end include-sub-entries curr-entry-level-len))
+	    end (hyrolo-to-entry-end include-sub-entries))
       (let ((result (eval sexp `((start . ,start) (end . ,end)))))
 	(unless count-only
 	  (and result (= num-found 0)
@@ -275,16 +268,13 @@ evaluations of SEXP that match entries."
   (let* ((start)
 	 (end)
 	 (end-entry-hdr)
-	 (curr-entry-level-len)
 	 (num-found 0)
 	 result)
     (mapc (lambda (cell-ref)
 	    (when (setq result (kotl-mode:goto-cell cell-ref))
 	      (setq end-entry-hdr (point)
 		    start (line-beginning-position)
-		    next-entry-exists nil
-		    curr-entry-level-len (- result start)
-		    end (hyrolo-to-entry-end include-sub-entries curr-entry-level-len))
+		    end (hyrolo-to-entry-end include-sub-entries))
 	      (unless count-only
 		(and result (= num-found 0)
 		     (let* ((src (or (buffer-file-name hyrolo-buf)

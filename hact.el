@@ -264,6 +264,7 @@ When optional SYM is given, returns the name for that symbol only, if any."
 
 ;;; ------------------------------------------------------------------------
 
+;;;###autoload
 (defun   htype:symbol (type type-category)
   "Return possibly new Hyperbole type symbol composed from TYPE and TYPE-CATEGORY.
 TYPE and TYPE-CATEGORY are both symbols.  TYPE-CATEGORY must be one of

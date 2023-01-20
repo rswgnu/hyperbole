@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    04-Feb-89
-;; Last-Mod:     16-Oct-22 at 19:29:34 by Mats Lidell
+;; Last-Mod:     15-Jan-23 at 20:35:52 by Mats Lidell
 ;;
 ;; Copyright (C) 1991-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -50,11 +50,6 @@
 (eval-when-compile (require 'tar-mode))
 
 ;;; ************************************************************************
-;;; Public declarations
-;;; ************************************************************************
-(defvar magit-root-section)
-
-;;; ************************************************************************
 ;;; Public variables
 ;;; ************************************************************************
 
@@ -71,7 +66,7 @@ In other context signal an error."
 
 (defun assist-key-error ()
   "If in Org mode and Hyperbole shares {M-RET}, run org-meta-return.
-In other context signal an error."
+In other context, signal an error."
   (if (and (funcall hsys-org-mode-function)
 	   (hsys-org-meta-return-shared-p))
       (hact 'hsys-org-meta-return)
@@ -128,6 +123,8 @@ Its default value is `smart-scroll-down'.  To disable it, set it to
 (declare-function magit-section-cycle-global "etx:magit-selection")
 (declare-function magit-section-hide "etx:magit-selection")
 (declare-function magit-section-show "etx:magit-selection")
+(defvar magit-root-section)
+(defvar magit-display-buffer-function)
 
 (declare-function -flatten "ext:dash")
 
@@ -139,7 +136,6 @@ Its default value is `smart-scroll-down'.  To disable it, set it to
 
 (declare-function helm-action-window "ext:helm-lib")
 (declare-function helm-buffer-get "ext:helm-lib")
-;; (declare-function helm-get-current-action "ext:helm-?")
 (declare-function helm-get-selection "ext:helm")
 (declare-function helm-mark-current-line "ext:helm")
 (declare-function helm-next-line "ext:helm")
@@ -166,10 +162,9 @@ Its default value is `smart-scroll-down'.  To disable it, set it to
 (declare-function gnus-topic-read-group "gnus-topic")
 
 (declare-function company-show-doc-buffer "ext:company")
-;; (declare-function company-quick-help-manual-begin "ext:company?")
+(declare-function company-quickhelp-manual-begin "ext:company-quickhelp")
 (declare-function company-show-location "ext:company")
 (declare-function company-select-mouse "ext:company")
-
 
 ;;; ************************************************************************
 ;;; Hyperbole context-sensitive keys dispatch table
@@ -185,7 +180,8 @@ Its default value is `smart-scroll-down'.  To disable it, set it to
 	  (memq company-active-map (current-minor-mode-maps))) .
 	  ((smart-company-to-definition) . (smart-company-help)))
     ;;
-    ;; Handle any Org mode-specific contexts
+    ;; Handle any Org mode-specific contexts but give priority to Hyperbole
+    ;; buttons prior to cycling Org headlines
     ((and (not (hyperb:stack-frame '(smart-org)))
 	  (let ((hrule:action #'actype:identity))
 	    (smart-org))) .
@@ -239,6 +235,8 @@ Its default value is `smart-scroll-down'.  To disable it, set it to
 	  (not (smart-helm-alive-p))) .
 	  ((id-edit-yank) . (id-edit-yank)))
     ;;
+    ;; If in an xref buffer on a listing of matching identifier lines, go to
+    ;; the source line referenced by the current entry.
     ((and (fboundp 'xref--item-at-point) (xref--item-at-point)) .
      ((xref-goto-xref) . (xref-show-location-at-point)))
     ;;
@@ -365,6 +363,8 @@ Its default value is `smart-scroll-down'.  To disable it, set it to
     ;; Python files - ensure this comes before Imenu for more advanced
     ;; definition lookups
     ((and (or (and (derived-mode-p 'python-mode) buffer-file-name)
+	      (and (featurep 'hsys-org) (hsys-org-mode-p)
+		   (equal (hsys-org-get-value :language) "python"))
 	      (let ((case-fold-search))
 		(string-match "\\`\\([ *]?Pydoc[: ]\\|\\*?Python\\)" (buffer-name))))
 	  (setq hkey-value (smart-python-at-tag-p))) .
@@ -552,7 +552,7 @@ smart keyboard keys.")
       (while (and (< start len) (setq part (string-match "/[^/]*" path start)))
 	(setq part (concat ref
 			   (substring path start (setq start (match-end 0))))
-	      ref (symlink-referent part)))
+	      ref (symlink-referent part))) ;; FIXME - Where is this function defined
       ref)))
 
 ;;; ************************************************************************
@@ -1544,7 +1544,7 @@ If key is pressed:
   (interactive)
   (if (last-line-p)
       (scroll-other-window)
-    (unix-apropos-get-man)))
+    (unix-apropos-get-man)))            ;; FIXME - Deprecated?
 
 (defun smart-apropos-assist ()
   "Move through UNIX man apropos listings by using assist-key or mouse assist-key.
@@ -1661,42 +1661,57 @@ Active when `hsys-org-enable-smart-keys' is non-nil,
 
 When the Action Key is pressed:
 
-  First, this follows internal links in Org mode files.  When pressed on a
-  link referent/target, the link definition is displayed, allowing two-way
-  navigation between definitions and targets.
+  1. If on an Org todo keyword, cycle through the keywords in
+     that set or if final done keyword, remove it.
 
-  Second, this follows Org mode external links.
+  2. If on an Org agenda item, jump to the item for editing.
 
-  Third, within a radio target definition, this jumps to the first
-  occurrence of an associated radio target.
+  3. Within a radio or internal target or a link to it, jump between
+     the target and the first link to it, allowing two-way navigation.
 
-  Fourth, when point is on an outline heading in Org mode, this
-  cycles the view of the subtree at point.
+  4. Follow other internal links in Org mode files.
 
-  Fifth, with point on the first line of a code block definition, this
-  executes the code block via the Org mode standard binding of {C-c C-c},
-  (org-ctrl-c-ctrl-c).
+  5. Follow Org mode external links.
 
-  Sixth, if on an Org todo keyword, cycles through the keywords in
-  that set or if final done keyword, removes it.
+  6. When on a Hyperbole button, activate the button.
 
-  In any other context besides the end of a line, the Action Key invokes the
-  Org mode standard binding of {M-RET}, (org-meta-return).
+  7. With point on the :dir path of a code block definition, display the
+     directory given by the path.
 
-When the Assist Key is pressed:
+  8. With point on any #+BEGIN_SRC, #+END_SRC, #+RESULTS, #+begin_example
+     or #+end_example header, execute the code block via the Org mode
+     standard binding of {C-c C-c}, (org-ctrl-c-ctrl-c).
+  
+  9. When point is on an Org mode heading, cycle the view of the subtree
+     at point.
 
-  First, on an Org mode heading, this cycles through views of the
-  whole buffer outline.
+  10. In any other context besides the end of a line, invoke the Org mode
+      standard binding of {M-RET}, (org-meta-return).
 
-  Second, on an Org mode link or agenda item, this displays
-  standard Hyperbole help.
+When the Assist Key is pressed, it behaves just like the Action Key except
+in these contexts:
 
-  Third, if on an Org todo keyword, moves to the first todo keyword in
-  the next set, if any.
+  1. If on an Org todo keyword, move to the first todo keyword in
+     the next set, if any.
+
+  2. If on an Org mode link or agenda item, display Hyperbole
+     context-sensitive help.
+
+  3. On a Hyperbole button, perform the Assist Key function, generally
+     showing help for the button.
+
+  4. With point on the :dir value of a code block definition, display
+     a help summary of this implicit directory button.
+
+  5. With point on any #+BEGIN_SRC, #+END_SRC, #+RESULTS, #+begin_example
+     or #+end_example header, remove source block results.
+
+  6. Not on a Hyperbole button but on an Org mode heading, cycle
+     through views of the whole buffer outline.
 
 To disable ALL Hyperbole support within Org major and minor modes, set the
 custom option `hsys-org-enable-smart-keys' to nil.  Then in Org modes, this
-will simply invoke `org-meta-return'.
+will invoke `org-meta-return'.
 
 Org links may be used outside of Org mode buffers.  Such links are
 handled by the separate implicit button type, `org-link-outside-org-mode'."
@@ -1720,12 +1735,12 @@ handled by the separate implicit button type, `org-link-outside-org-mode'."
 		      (hact 'hkey-help))
 		    ;; Ignore any further Smart Key non-Org contexts
 		    t)
-		   ((setq start-end (hsys-org-internal-link-target-at-p))
-		    (hsys-org-set-ibut-label start-end)
-		    (hact 'org-internal-link-target)
-		    t)
 		   ((hsys-org-radio-target-def-at-p)
-		    (hact 'org-radio-target)
+		    (hact 'org-radio-target-link)
+		    t)
+		   ((setq start-end (hsys-org-internal-target-def-at-p))
+		    (hsys-org-set-ibut-label start-end)
+		    (hact 'org-internal-target-link)
 		    t)
 		   ((setq start-end (hsys-org-link-at-p))
 		    (if (not assist-flag)
@@ -1733,24 +1748,39 @@ handled by the separate implicit button type, `org-link-outside-org-mode'."
 			       (hact 'org-link))
 		      (hact 'hkey-help))
 		    t)
-		   ((hsys-org-block-start-at-p)
-		    (hact 'org-ctrl-c-ctrl-c)
-		    t)
 		   ((hbut:at-p)
 		    ;; Fall through until Hyperbole button context and
 		    ;; activate normally.
 		    nil)
+		   ((or (hsys-org-src-block-start-at-p)
+			(save-excursion (forward-line 0)
+					(or (looking-at org-babel-result-regexp)
+					    (looking-at "^[	 ]*#\\+\\(end_src\\|begin_example\\|end_example\\)"))))
+		    (hact (lambda ()
+			    (save-excursion
+			      (unless (hsys-org-src-block-start-at-p)
+				(re-search-backward org-babel-src-block-regexp nil t))
+			      (cond ((not assist-flag)
+				     (org-ctrl-c-ctrl-c))
+				    ((org-babel-where-is-src-block-result)
+				     (org-babel-remove-result)
+				     (message "Code block results removed."))
+				    (t (message "No results to remove for this code block."))))))
+		    t)
 		   ((hsys-org-heading-at-p)
 		    (if (not assist-flag)
 			(hact 'hsys-org-cycle)
 		      (hact 'hsys-org-global-cycle))
 		    t)
+		   ((equal (hsys-org-get-value :language) "python")
+		    (setq hkey-value (smart-python-at-tag-p))
+		    (hact 'smart-python hkey-value))
 		   (t
 		    ;; Continue with any further Smart Key non-Org contexts
 		    nil)))
 	    ((eq hsys-org-enable-smart-keys 'buttons)
 	     (cond ((hsys-org-radio-target-def-at-p)
-		    (hact 'org-radio-target)
+		    (hact 'org-radio-target-link)
 		    t)
 		   ((setq start-end (hsys-org-link-at-p))
 		    (if (not assist-flag)
@@ -1762,6 +1792,9 @@ handled by the separate implicit button type, `org-link-outside-org-mode'."
 		    ;; Fall through until Hyperbole button context and
 		    ;; activate normally.
 		    nil)
+		   ((equal (hsys-org-get-value :language) "python")
+		    (setq hkey-value (smart-python-at-tag-p))
+		    (hact 'smart-python hkey-value ''next-tag))
 		   (t
 		    (when (hsys-org-meta-return-shared-p)
 		      (hact 'hsys-org-meta-return))
@@ -1828,7 +1861,7 @@ If key is pressed:
 	  (or (outline-get-next-sibling)
 	      ;; Skip past start of current entry
 	      (progn (re-search-forward outline-regexp nil t)
-		     (smart-outline-to-entry-end t (funcall outline-level))))))
+		     (smart-outline-to-entry-end t)))))
 
 	((or (eolp) (zerop (smart-outline-level)))
 	 (funcall action-key-eol-function))
@@ -1864,8 +1897,7 @@ If assist-key is pressed:
 	 (kill-region (point)
 		      ;; Skip past start of current entry
 		      (progn (re-search-forward outline-regexp nil t)
-			     (smart-outline-to-entry-end
-			      nil (funcall outline-level)))))
+			     (smart-outline-to-entry-end))))
 	((or (eolp) (zerop (smart-outline-level)))
 	 (funcall assist-key-eol-function))
 	;; On an outline heading line but not at the start/end of line.
@@ -1873,20 +1905,15 @@ If assist-key is pressed:
 	 (outline-show-entry))
 	(t (outline-hide-entry))))
 
-(defun smart-outline-to-entry-end (&optional include-sub-entries curr-entry-level)
-  "Go to end of whole entry if optional INCLUDE-SUB-ENTRIES is non-nil.
-CURR-ENTRY-LEVEL is an integer representing the length of the current level
-string which matched to `outline-regexp'.  If INCLUDE-SUB-ENTRIES is nil,
-CURR-ENTRY-LEVEL is not needed."
-  (let (next-entry-exists)
-    (while (and (setq next-entry-exists (re-search-forward outline-regexp nil t))
-		include-sub-entries
-		(save-excursion
-		  (beginning-of-line)
-		  (> (funcall outline-level) curr-entry-level))))
-    (if next-entry-exists
-	(progn (beginning-of-line) (point))
-      (goto-char (point-max)))))
+(defun smart-outline-to-entry-end (&optional include-sub-entries)
+  "Move point past the end of the current entry.
+With optional INCLUDE-SUB-ENTRIES non-nil, move to the end of the
+entire subtree.  Return final point."
+  (if include-sub-entries
+      (progn (outline-end-of-subtree)
+	     (goto-char (1+ (point))))
+    (outline-next-heading))
+  (point))
 
 (defun smart-outline-subtree-hidden-p ()
   "Return t if at least initial subtree of heading is hidden, else nil."

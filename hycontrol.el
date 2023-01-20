@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     1-Jun-16 at 15:35:36
-;; Last-Mod:      7-Oct-22 at 23:45:01 by Mats Lidell
+;; Last-Mod:     27-Nov-22 at 11:21:28 by Bob Weiner
 ;;
 ;; Copyright (C) 2016-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -122,9 +122,13 @@
 ;;; Other required Elisp libraries
 ;;; ************************************************************************
 
+(require 'cl-lib)
 (require 'hhist)     ; To store frame-config when hycontrol-windows-grid is used
 (require 'hypb)
 (require 'set)
+(eval-when-compile
+  (require 'framemove nil t) ;; Elpa package
+  (require 'windmove))
 ;; Frame face enlarging/shrinking (zooming) requires this separately available library.
 ;; Everything else works fine without it, so don't make it a required dependency.
 (require 'zoom-frm nil t)
@@ -240,10 +244,9 @@ The final predicate should always be t, for default values, typically of zero.")
 (defvar ibuffer-mode-map)
 
 ;;; Frame Keys
-
 (defvar hycontrol-frames-mode-map
   (let ((map (make-sparse-keymap)))
-    (suppress-keymap map) ;; Disable self-inserting keys.
+    (suppress-keymap map t) ;; Disable self-inserting keys and prefix keys
 
     (define-key map [up]    (lambda () (interactive) (hycontrol-move-frame 'up hycontrol-arg)))
     (define-key map [down]  (lambda () (interactive) (hycontrol-move-frame 'down hycontrol-arg)))
@@ -278,6 +281,13 @@ The final predicate should always be t, for default values, typically of zero.")
     (define-key map "H"     (lambda () (interactive) (setq hycontrol-arg (hycontrol-frame-height-percentage-of-screen hycontrol-arg))))
     (define-key map "W"     (lambda () (interactive) (setq hycontrol-arg (hycontrol-frame-width-percentage-of-screen hycontrol-arg))))
     (define-key map "h"     (lambda () (interactive) (hycontrol-set-frame-height nil (+ (frame-height) hycontrol-arg))))
+
+    ;; Move directionally among frames
+    (define-key map "I"     'hycontrol-framemove-up)
+    (define-key map "J"     'hycontrol-framemove-left)
+    (define-key map "K"     'hycontrol-framemove-right)
+    (define-key map "M"     'hycontrol-framemove-down)
+
     (define-key map "i"     (lambda () (interactive) (setq hycontrol-arg (hycontrol-frame-resize-to-top hycontrol-arg))))
     (define-key map "j"     (lambda () (interactive) (setq hycontrol-arg (hycontrol-frame-resize-to-left hycontrol-arg))))
     (define-key map "k"     (lambda () (interactive) (setq hycontrol-arg (hycontrol-frame-resize-to-right hycontrol-arg))))
@@ -291,6 +301,7 @@ The final predicate should always be t, for default values, typically of zero.")
     (define-key map "q"     'hycontrol-quit)
     (define-key map "Q"     'hycontrol-quit)
     (define-key map "r"     'raise-frame)
+
     (define-key map "s"     (lambda () (interactive) (hycontrol-set-frame-height nil (- (frame-height) hycontrol-arg))))
     (define-key map "t"     'hycontrol-enable-windows-mode)
     (define-key map "u"     'unbury-buffer)
@@ -328,7 +339,6 @@ The final predicate should always be t, for default values, typically of zero.")
     (define-key map "7"     (lambda () (interactive) (hycontrol-universal-arg-digit 7)))
     (define-key map "8"     (lambda () (interactive) (hycontrol-universal-arg-digit 8)))
     (define-key map "9"     (lambda () (interactive) (hycontrol-universal-arg-digit 9)))
-
     map)
   "Keymap to use when in Hyperbole HyControl frames mode.")
 
@@ -341,9 +351,10 @@ The final predicate should always be t, for default values, typically of zero.")
 ;;;###autoload
 (eval-after-load "dired"     '(define-key dired-mode-map       "@" 'hycontrol-windows-grid))
 
+;;;###autoload
 (defvar hycontrol-windows-mode-map
   (let ((map (make-sparse-keymap)))
-    (suppress-keymap map) ;; Disable self-inserting keys.
+    (suppress-keymap map t) ;; Disable self-inserting keys and prefix keys
 
     (define-key map [up]    (lambda () (interactive) (hycontrol-move-frame 'up hycontrol-arg)))
     (define-key map [down]  (lambda () (interactive) (hycontrol-move-frame 'down hycontrol-arg)))
@@ -375,6 +386,12 @@ The final predicate should always be t, for default values, typically of zero.")
     (define-key map "F"     'hycontrol-window-to-new-frame)
     (define-key map "\C-g"  'hycontrol-abort)
     (define-key map "h"     (lambda () (interactive) (enlarge-window hycontrol-arg)))
+
+    ;; Move directionally among windows within current frame
+    (define-key map "I"     'windmove-up)
+    (define-key map "J"     'windmove-left)
+    (define-key map "K"     'windmove-right)
+    (define-key map "M"     'windmove-down)
 
     ;; Allow frame resizing even when in window control mode because
     ;; it may be used often.
@@ -429,7 +446,6 @@ The final predicate should always be t, for default values, typically of zero.")
     (define-key map "7"     (lambda () (interactive) (hycontrol-universal-arg-digit 7)))
     (define-key map "8"     (lambda () (interactive) (hycontrol-universal-arg-digit 8)))
     (define-key map "9"     (lambda () (interactive) (hycontrol-universal-arg-digit 9)))
-
     map)
   "Keymap to use when in Hyperbole HyControl window mode.")
 
@@ -446,7 +462,7 @@ The final predicate should always be t, for default values, typically of zero.")
 (defvar hycontrol--frames-prompt-format
  (concat "FRAMES: (h=heighten, s=shorten, w=widen, n=narrow, %%/H/W=screen %%age, arrow=move frame) by %d unit%s, .=clear units\n"
 	 ;; d/^/D=delete/iconify frame/others - iconify left out due to some bug on macOS (see comment near ^ below)
-	 "a/A=cycle adjust width/height, d/D=delete frame/others, o/O=other win/frame, [/]=create frame, (/)=save/restore fconfig\n"
+	 "a/A=cycle adjust width/height, d/D=delete frame/others, o/O=other win/frame, I/J/K/M=to frame, [/]=create frame, (/)=save/restore fconfig\n"
 	 "@=grid of wins, f/F=clone/move win to new frame, -/+=minimize/maximize frame, ==frames same size, u/b/~=un/bury/swap bufs\n"
 	 "Frame to edges: c=cycle, i/j/k/m=expand/contract, p/num-keypad=move; z/Z=zoom out/in, t=to WINDOWS mode, Q=quit")
  "HyControl frames-mode minibuffer prompt string to pass to format.
@@ -456,7 +472,7 @@ Format it with 2 arguments: `prefix-arg' and a plural string indicating if
 (defvar hycontrol--windows-prompt-format
   (concat
    "WINDOWS: (h=heighten, s=shorten, w=widen, n=narrow, arrow=move frame) by %d unit%s, .=clear units\n"
-   "a/A=cycle adjust frame width/height, d/D=delete win/others, o/O=other win/frame, [/]=split win atop/sideways, (/)=save/restore wconfig\n"
+   "a/A=cycle adjust frame width/height, d/D=delete win/others, o/O=other win/frame, I/J/K/M=to window, [/]=split win atop/sideways, (/)=save/restore wconfig\n"
    "@=grid of wins, f/F=clone/move win to new frame, -/+=minimize/maximize win, ==wins same size, u/b/~=un/bury/swap bufs\n"
    "Frame to edges: c=cycle, i/j/k/m=expand/contract, p/num-keypad=move; z/Z=zoom out/in, t=to FRAMES mode, Q=quit")
   "HyControl windows-mode minibuffer prompt string to pass to format.
@@ -483,7 +499,7 @@ associated key: quit {q}, abort {C-g}, or toggle {t}.")
 
 
 (defvar hycontrol--quit-function nil
-  "Stores function to remove the transient-map later.
+  "Store function to remove the transient-map later.
 The function is auto-generated by a call to `set-transient-map'")
 
 
@@ -503,6 +519,12 @@ Used on entry to HyControl.")
 ;;; ************************************************************************
 ;;; Private functions
 ;;; ************************************************************************
+
+(defsubst hycontrol-windows-grid-valid-size-p (grid-size)
+  (when grid-size
+    (and (setq grid-size (prefix-numeric-value grid-size))
+	 (integerp grid-size) (>= grid-size 11) (<= grid-size 99)
+	 (not (zerop (% grid-size 10))))))
 
 ;;; HyControl private per keyboard key functions
 
@@ -992,6 +1014,15 @@ instead of quitting HyControl."
       (message "Hyperbole finished controlling frames"))
     (hycontrol-disable-modes)))
 
+;; This just sets the keymap locally and shows the minor mode
+;; indicator in the buffer's mode-line; the separate global minor mode
+;; turns things on and off.
+;;;###autoload
+(define-minor-mode hycontrol-local-frames-mode
+  "Toggle Hyperbole Frames control minor mode in the current buffer."
+  :lighter " HyFrm"
+  :group 'hyperbole-screen)
+
 ;;;###autoload
 (define-global-minor-mode hycontrol-frames-mode hycontrol-local-frames-mode
   (lambda () (hycontrol-local-frames-mode 1))
@@ -1008,11 +1039,10 @@ instead of quitting HyControl."
 ;; indicator in the buffer's mode-line; the separate global minor mode
 ;; turns things on and off.
 ;;;###autoload
-(define-minor-mode hycontrol-local-frames-mode
-  "Toggle Hyperbole Frames control minor mode in the current buffer."
-  :lighter " HyFrm"
-  :group 'hyperbole-screen
-  :global t)
+(define-minor-mode hycontrol-local-windows-mode
+  "Toggle Hyperbole Windows control minor mode in the current buffer."
+  :lighter " HyWin"
+  :group 'hyperbole-screen)
 
 ;;;###autoload
 (define-global-minor-mode hycontrol-windows-mode hycontrol-local-windows-mode
@@ -1025,17 +1055,6 @@ instead of quitting HyControl."
 	  (lambda () (hycontrol-windows current-prefix-arg)))
 
 (add-hook 'hycontrol-windows-mode-off-hook 'hycontrol-end-mode)
-
-;; This just sets the keymap locally and shows the minor mode
-;; indicator in the buffer's mode-line; the separate global minor mode
-;; turns things on and off.
-;;;###autoload
-(define-minor-mode hycontrol-local-windows-mode
-  "Toggle Hyperbole Windows control minor mode in the current buffer."
-  :lighter " HyWin"
-  :group 'hyperbole-screen
-  :global t)
-
 
 ;;; Frame Display Commands
 (defun hycontrol-delete-other-frames ()
@@ -1088,7 +1107,7 @@ return nil."
 Cycle through the middle of edges and corners of the screen.
 With an optional ARG of 0, just reset the cycle position to 0."
   (interactive)
-  (if (and arg (zerop arg))
+  (if (and arg (eq arg 0))
       (setq hycontrol--screen-edge-position 0)
     (funcall
      (nth hycontrol--screen-edge-position
@@ -1490,6 +1509,31 @@ Heights are given in screen percentages by the list
   (setq hycontrol--frame-heights-pointer
 	(cdr hycontrol--frame-heights-pointer)))
 
+;;; Move among frames
+(defun hycontrol-framemove-direction (direction)
+  (hypb:require-package 'framemove)
+  (fm-next-frame direction))
+
+(defun hycontrol-framemove-up ()
+  "Move to any next frame above the selected frame."
+  (interactive)
+  (hycontrol-framemove-direction 'up))
+
+(defun hycontrol-framemove-left ()
+  "Move to any next frame to the left of the selected frame."
+  (interactive)
+  (hycontrol-framemove-direction 'left))
+
+(defun hycontrol-framemove-right ()
+  "Move to any next frame to the right of the selected frame."
+  (interactive)
+  (hycontrol-framemove-direction 'right))
+
+(defun hycontrol-framemove-down ()
+  "Move to any next frame below the selected frame."
+  (interactive)
+  (hycontrol-framemove-direction 'down))
+
 ;;; Frame Configuratons
 
 (defun hycontrol-restore-frame-configuration ()
@@ -1565,7 +1609,8 @@ If ARG is 0, prompt for a major mode whose buffers should be
 displayed in the grid windows, then prompt for the grid size.
 
 If ARG is < 0, prompt for a glob-type file pattern and display
-files that match the pattern in an auto-sized windows grid.
+files that match the pattern in an abs(ARG) sized windows grid
+or an autosized one if the ARG value is invalid.
 
 Otherwise, prompt for the grid size if ARG is an invalid size
 (positive and more than two digits).
@@ -1603,63 +1648,122 @@ argument."
 	   (call-interactively (lookup-key outline-minor-mode-map key)))
 	  ;;
 	  ;; No key conflicts, display window grid
-	  (t (let ((hist-elt (hhist:element)))
-	       (setq arg (prefix-numeric-value (or arg current-prefix-arg)))
-	       (cond ((> arg 0)
-		      (hycontrol-make-windows-grid arg))
-		     ((< arg 0)
-		      (setq current-prefix-arg nil)
-		      (call-interactively #'hycontrol-windows-grid-by-file-pattern))
-		     (t
-		      (setq current-prefix-arg 0)
-		      (call-interactively #'hycontrol-windows-grid-by-major-mode)))
-	       (hhist:add hist-elt)))))) ;; Save prior frame configuration for easy return
+	  (t (setq arg (prefix-numeric-value (or arg current-prefix-arg)))
+	     (cond ((> arg 0)
+		    (hycontrol-make-windows-grid arg))
+		   ((< arg 0)
+		    (setq current-prefix-arg (abs arg))
+		    (call-interactively #'hycontrol-windows-grid-by-file-pattern))
+		   (t
+		    (setq current-prefix-arg 0)
+		    (call-interactively #'hycontrol-windows-grid-by-major-mode)))))))
+
+(defun hycontrol-windows-grid-validate (arg)
+  "Return the closest valid windows grid size from the two digit numeric abs(ARG).
+The digits of ARG specify the number of rows (leftmost) by
+columns (rightmost) for a grid."
+  (if (integerp arg)
+      (let* ((grid-size (abs arg))
+	     (rows (floor (/ grid-size 10)))
+	     (columns (- grid-size (* rows 10))))
+	(cond ((<= grid-size 10)
+	       (hycontrol-windows-grid-minimum-size grid-size))
+	      ((> grid-size 99)
+	       99)
+	      ((zerop columns)
+	       (hycontrol-windows-grid-minimum-size (* rows columns)))
+	      (t grid-size)))
+    (error "(hycontrol-windows-grid-validate): 'arg' must be an integer, not '%s'" arg)))
+
+(defun hycontrol-windows-grid-number-of-windows (arg)
+  "Return the product of the absolute value of the two digit numeric ARG.
+The digits of ARG specify the number of rows (leftmost) by
+columns (rightmost) for a grid."
+  (if (integerp arg)
+      (let* ((grid-size (abs arg))
+	     (rows (floor (/ grid-size 10)))
+	     (columns (- grid-size (* rows 10))))
+	(cond ((<= grid-size 10)
+	       (hycontrol-windows-grid-number-of-windows
+		(hycontrol-windows-grid-minimum-size grid-size)))
+	      ((> grid-size 99)
+	       81)
+	      (t (* rows columns))))
+    (error "(hycontrol-windows-grid-number-of-windows): 'arg' must be an integer, not '%s'" arg)))
 
 (defun hycontrol-windows-grid-minimum-size (num-buffers)
-  "Return the minimum integer window grid size to display NUM-BUFFERS.
+  "Return the minimum integer window grid size to display abs(NUM-BUFFERS).
 Minimize number of rows rather than columns.  Size is a 2 digit
 whole number with the first digit number of rows and the second,
-number of columns of windows."
-  (let* ((num-cols (ceiling (sqrt num-buffers)))
-	 (num-rows (1- num-cols))
-	 (grid-size (+ (* num-rows 10) num-cols)))
-    (when (< (* num-rows num-cols) num-buffers)
-      (setq grid-size (+ 10 grid-size)))
-    grid-size))
+number of columns of windows.  Return 0 if NUM-BUFFERS is 0."
+  (if (integerp num-buffers)
+      (let* ((num-cols (ceiling (sqrt num-buffers)))
+	     (num-rows (max (1- num-cols) 0))
+	     (grid-size (+ (* num-rows 10) num-cols)))
+	(when (< (* num-rows num-cols) num-buffers)
+	  (setq grid-size (+ 10 grid-size)))
+	grid-size)
+    (error "(hycontrol-windows-grid-minimum-size): 'num-buffers' must be an integer, not '%s'" num-buffers)))
 
-(defun hycontrol-windows-grid-by-buffer-list (buffers)
-  "Display an automatically sized window grid showing list of BUFFERS."
-    (if (null buffers)
-	(error "(hycontrol-windows-grid-by-buffer-list): No matching buffers")
-      (let ((grid-size (hycontrol-windows-grid-minimum-size (length buffers))))
-	(mapc #'switch-to-buffer (reverse buffers))
-	(hycontrol-make-windows-grid grid-size buffers))))
+(defun hycontrol-windows-grid-by-buffer-list (grid-size buffers)
+  "Display an abs(GRID-SIZE) window grid showing a subset of a list of BUFFERS.
+If GRID-SIZE is nil, prompt for grid size.  The digits of
+GRID-SIZE specify the number of rows (leftmost) by
+columns (rightmost) of the grid."
+  (if (null buffers)
+      (error "(hycontrol-windows-grid-by-buffer-list): No matching buffers")
+    (hycontrol-make-windows-grid
+     (when grid-size (hycontrol-windows-grid-validate grid-size))
+     (mapc #'switch-to-buffer (reverse buffers)))))
 
-(defun hycontrol-windows-grid-by-file-list (files)
-  "Display an automatically sized window grid showing list of FILES."
-    (if (null files)
-	(error "(hycontrol-windows-grid-by-file-list): No matching files")
-      (let ((grid-size (hycontrol-windows-grid-minimum-size (length files)))
-	    (buffers (nreverse (mapcar #'find-file (reverse files)))))
-      (hycontrol-make-windows-grid grid-size buffers))))
+(defun hycontrol-windows-grid-by-file-list (grid-size files)
+  "Display an abs(GRID-SIZE) window grid showing a subset of a list of FILES.
+If GRID-SIZE is nil, prompt for grid size.  The digits of
+GRID-SIZE specify the number of rows (leftmost) by
+columns (rightmost) of the grid."
+  (if (null files)
+      (error "(hycontrol-windows-grid-by-file-list): No matching files")
+    (hycontrol-make-windows-grid
+     (when grid-size (hycontrol-windows-grid-validate grid-size))
+     (nreverse (mapcar #'find-file (reverse files))))))
 
 ;;;###autoload
-(defun hycontrol-windows-grid-by-file-pattern (pattern &optional full)
-  "Display an automatically sized window grid with files found from glob PATTERN.
-Use absolute file paths if called interactively or optional FULL is non-nil."
+(defun hycontrol-windows-grid-by-file-pattern (arg pattern &optional full)
+  "Display up to an abs(prefix ARG)-sized window grid of files matching PATTERN.
+Use absolute file paths if called interactively or optional FULL is non-nil.
+PATTERN is a shell glob pattern.
+
+Left digit of ARG is the number of grid rows and the right digit
+is the number of grid columns.  If ARG is nil, 0, 1, less than
+11, greater than 99, then autosize the grid to fit the number of
+files matched by PATTERN. Otherwise, if ARG ends in a 0, adjust the
+grid size to the closest valid size."
   (interactive
-   (list (read-string "Pattern of files to display in windows grid: ")
+   (list current-prefix-arg
+	 (read-string "Pattern of files to display in windows grid: ")
 	 t))
+  (when (memq arg '(0 1))
+    (setq arg nil))
   (let* ((find-file-wildcards t)
-	 (files (file-expand-wildcards pattern full)))
-    (hycontrol-windows-grid-by-file-list files)))
+	 (files (file-expand-wildcards pattern full))
+	 (num-files (length files))
+	 (grid-size (if arg
+			(hycontrol-windows-grid-validate arg)
+		      (hycontrol-windows-grid-minimum-size num-files)))
+	 (num-windows (hycontrol-windows-grid-number-of-windows (or arg grid-size)))
+	 (max-files (min num-files num-windows)))
+    (when (zerop num-files)
+      (error "(hycontrol-windows-grid-by-file-pattern): '%s' pattern did not match any files" pattern))
+    (when (> num-files max-files)
+      ;; Cut off list at max-files items
+      (setq files (cl-loop repeat max-files for files in files collect files)))
+    (hycontrol-windows-grid-by-file-list grid-size files)))
 
 ;;;###autoload
 (defun hycontrol-windows-grid-by-major-mode (arg mode)
-  "Display a grid of windows in the selected frame with buffers of major MODE.
-The grid is sized according to prefix ARG.  Left digit of ARG is
-the number of grid rows and the right digit is the number of grid
-columns.
+  "Display a prefix ARG-sized grid of windows with buffers of major MODE.
+Left digit of ARG is the number of grid rows and the right digit
+is the number of grid columns.
 
 See documentation of `hycontrol-windows-grid' for further details."
   (interactive
@@ -1683,12 +1787,12 @@ See documentation of `hycontrol-windows-grid' for further details."
   (catch 'done
     (let (hycontrol-help-flag)
       (while t
-	(while (not (or (eq arg 0) (and (integerp arg) (>= arg 11) (<= arg 99))))
+	(while (not (or (eq arg 0) (hycontrol-windows-grid-valid-size-p arg)))
 	  (setq arg (read-string "Display grid of ROW digit by COLUMN digit windows, e.g. 23 for 2R by 3C (RET to quit): "))
 	  (setq arg (if (string-equal arg "")
 			(throw 'done t)
 		      (string-to-number arg)))
-	  (unless (or (eq arg 0) (and (integerp arg) (>= arg 11) (<= arg 99)))
+	  (unless (or (eq arg 0) (hycontrol-windows-grid-valid-size-p arg))
 	    (beep)))
 	(hycontrol-windows-grid arg)
 	(setq arg nil)))))
@@ -1707,27 +1811,31 @@ See documentation of `hycontrol-windows-grid' for further details."
   (unless buffer-list
     (setq buffer-list (hycontrol-windows-grid-marked-items)))
 
-  (when buffer-list
-    (setq arg (hycontrol-windows-grid-minimum-size (length buffer-list))))
+  (unless (or arg buffer-list)
+    (error "(hycontrol-make-windows-grid): Both 'arg' and 'buffer-list' cannot both be null"))
 
-  ;; Check ARG, must be 2 digits of [1-9], else read a new ARG or
-  ;; signal an error when in a HyControl mode and help is displayed.
-  (if (and (and hycontrol-help-flag (or hycontrol-frames-mode hycontrol-windows-mode))
-	   (not (and (integerp arg) (>= arg 11) (<= arg 99))))
-      (let ((hyc-mode (if hycontrol-frames-mode #'hycontrol-frames-mode #'hycontrol-windows-mode)))
-	(hycontrol-disable-modes)
-	(setq arg 1)
-	(while (not (and (integerp arg) (and (>= arg 11) (<= arg 99))))
-	  (unless (or (eq arg 0) (eq arg 1))
-	    (beep))
-	  (setq arg (read-number "Display grid of ROW digit by COLUMN digit windows, e.g. 23 for 2R by 3C: ")))
-	(funcall hyc-mode arg))
-    (while (not (and (integerp arg) (and (>= arg 11) (<= arg 99))))
-      (unless (or (eq arg 0) (eq arg 1))
-	(beep))
-      (setq arg (read-number "Display grid of ROW digit by COLUMN digit windows, e.g. 23 for 2R by 3C: "))))
+  (cond (buffer-list
+	 ;; Override `arg' when `buffer-list' is given
+	 (setq arg (hycontrol-windows-grid-minimum-size (length buffer-list))))
+	;; Check `arg': must be 2 digits of [1-9], else read a new `arg' or
+	;; signal an error when in a HyControl mode and help is displayed.
+	((and (and hycontrol-help-flag (or hycontrol-frames-mode hycontrol-windows-mode))
+	      (not (hycontrol-windows-grid-valid-size-p arg)))
+	 (let ((hyc-mode (if hycontrol-frames-mode #'hycontrol-frames-mode #'hycontrol-windows-mode)))
+	   (hycontrol-disable-modes)
+	   (setq arg 1)
+	   (while (not (hycontrol-windows-grid-valid-size-p arg))
+	     (unless (memq arg '(0 1))
+	       (beep))
+	     (setq arg (read-number "Display grid of ROW digit by COLUMN digit windows, e.g. 23 for 2R by 3C: ")))
+	   (funcall hyc-mode arg)))
+	(t (while (not (hycontrol-windows-grid-valid-size-p arg))
+	     (unless (memq arg '(0 1))
+	       (beep))
+	     (setq arg (read-number "Display grid of ROW digit by COLUMN digit windows, e.g. 23 for 2R by 3C: ")))))
 
-  (let ((wconfig (current-window-configuration)))
+  (let ((wconfig (current-window-configuration))
+	(hist-elt (hhist:element)))
     ;; If an error occurs during a window split because the window is
     ;; too small, then restore prior window configuration.
     (condition-case err
@@ -1782,8 +1890,11 @@ See documentation of `hycontrol-windows-grid' for further details."
       (error (set-window-configuration wconfig)
 	     (if (and hycontrol-help-flag (or hycontrol-frames-mode hycontrol-windows-mode))
 		 (pop-to-buffer "*Messages*"))
-	     (error "(HyDebug): Grid Size: %d; %s" arg err)))))
-
+	     (error "(HyDebug): Grid Size: %d; %s" arg err)))
+    ;; No error, save prior frame configuration for easy return
+    (hhist:add hist-elt)
+    ;; Return nil so frame config structure is never displayed
+    nil))
 
 (defun hycontrol-delete-other-windows ()
   "Confirm and then delete all other windows in the selected frame."

@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 20:45:31
-;; Last-Mod:      9-Oct-22 at 22:38:15 by Mats Lidell
+;; Last-Mod:      7-Jan-23 at 19:54:51 by Bob Weiner
 ;;
 ;; Copyright (C) 1991-2022 Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -431,7 +431,8 @@ Pathnames and urls are handled elsewhere."
 Each line in the summary may be selected to jump to a section."
   (let ((case-fold-search t)
         (toc)
-        (opoint (point)))
+        (opoint (point))
+	sections-start)
     (if (and (string-match "\\`rfc[-_]?[0-9]" (buffer-name))
 	     (not (string-match "toc" (buffer-name)))
              (goto-char (point-min))
@@ -439,8 +440,10 @@ Each line in the summary may be selected to jump to a section."
                     (re-search-forward "^[ \t]*1.0?[ \t]+[^ \t\n\r]" nil t
                                        (and toc 2))))
         (progn (beginning-of-line)
+	       (setq sections-start (point))
                (ibut:label-set (buffer-name))
-               (hact 'rfc-toc (buffer-name) opoint (point)))
+	       (goto-char opoint)
+               (hact 'rfc-toc (buffer-name) nil sections-start))
       (goto-char opoint)
       nil)))
 
@@ -587,24 +590,30 @@ anything."
 
 (defib text-toc ()
   "Jump to the text file section referenced by a table of contents entry at point.
-File name must contain DEMO, README or TUTORIAL and there must be a `Table
-of Contents' or `Contents' label on a line by itself (it may begin with
-an asterisk), preceding the table of contents.  Each toc entry must begin
-with some whitespace followed by one or more asterisk characters.
-Each section header linked to by the toc must start with one or more
-asterisk characters at the very beginning of the line."
+Buffer must be in a text mode or must contain DEMO, README or
+TUTORIAL and there must be a `Table of Contents' or `Contents'
+label on a line by itself (it may begin with an asterisk),
+preceding the table of contents.  Each toc entry must begin with
+some whitespace followed by one or more asterisk characters.
+Each section header linked to by the toc must start with one or
+more asterisk characters at the very beginning of the line."
   (let (section)
-    (when (and (string-match "DEMO\\|README\\|TUTORIAL" (buffer-name))
+    (when (and (or (derived-mode-p 'text-mode)
+		   (string-match "DEMO\\|README\\|TUTORIAL" (buffer-name)))
+               (save-excursion (re-search-backward
+                                "^\\*?*[ \t]*\\(Table of \\)?Contents[ \t]*$"
+                                nil t))
                (save-excursion
                  (beginning-of-line)
                  ;; Entry line within a TOC
-                 (when (looking-at "[ \t]+\\*+[ \t]+\\(.*\\)$")
-                   (setq section (string-trim (match-string-no-properties 1)))))
-               (progn (ibut:label-set section (match-beginning 1) (match-end 1))
-                      t)
-               (save-excursion (re-search-backward
-                                "^\\*?*[ \t]*\\(Table of \\)?Contents[ \t]*$"
-                                nil t)))
+                 (when (and (or 
+			     ;; Next line is typically in RFCs,
+			     ;; e.g. "1.1.  Scope ..... 1"
+			     (looking-at "^[ \t]*\\([0-9.]+\\([ \t]+[^ \t\n\r]+\\)+\\) \\.+")
+			     (looking-at "[ \t]+\\([-+*o]+[ \t]+.*\\)$"))
+			    (setq section (string-trim (match-string-no-properties 1))))
+		   (ibut:label-set section (match-beginning 1) (match-end 1))
+                   t)))
       (hact 'text-toc section))))
 
 ;;; ========================================================================
@@ -926,8 +935,10 @@ in grep and shell buffers."
 	     (looking-at "Compiling \\(\\S-+\\)\\.\\.\\.$")
 	     (looking-at "Loading \\(\\S-+\\) (\\S-+)\\.\\.\\.$")
              ;; Grep matches (allowing for Emacs Lisp vars with : in
-	     ;; name within the pathname), UNIX C compiler and Introl 68HC11 C compiler errors
+	     ;; name within the pathname), Ruby, UNIX C compiler and Introl 68HC11 C compiler errors
              (looking-at "\\([^ \t\n\r\"'`]*[^ \t\n\r:\"'`]\\): ?\\([1-9][0-9]*\\)[ :]")
+	     ;; Ruby tracebacks
+             (looking-at "[ \t]+[1-9][0-9]*: from \\([^ \t\n\r\"'`]*[^ \t\n\r:\"'`]\\):\\([1-9][0-9]*\\):in")
              ;; Grep matches, UNIX C compiler and Introl 68HC11 C
              ;; compiler errors, allowing for file names with
              ;; spaces followed by a null character rather than a :
@@ -1435,7 +1446,8 @@ arg1 ... argN '>'.  For example, <mail nil \"user@somewhere.org\">."
 	(when (and (memq actype '(hy hynote))
 		   (string-match-p " " lbl))
 	  (setq lbl (replace-regexp-in-string "\"\\(.*\\)\\'" "\\1\""
-					      (combine-and-quote-strings (split-string lbl) "\" \""))))
+					      (combine-and-quote-strings
+					       (split-string lbl) "\" \""))))
         (setq action (read (concat "(" lbl ")"))
               args (cdr action))
 	;; Ensure action uses an fboundp symbol if executing a
@@ -1514,7 +1526,7 @@ If a boolean function or variable, display its value."
 ;;; Follows Org mode links and radio targets and cycles Org heading views
 ;;; ========================================================================
 
-;; See `smart-org' in "hui-mouse.el"; this is higher priority than all ibytpes
+;; See `smart-org' in "hui-mouse.el"; this is higher priority than all ibtypes.
 
 ;; If you want to to disable ALL Hyperbole support within Org major
 ;; and minor modes, set the custom option `hsys-org-enable-smart-keys' to nil.

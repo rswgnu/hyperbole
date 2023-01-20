@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     6-Oct-91 at 03:42:38
-;; Last-Mod:      6-Oct-22 at 18:55:39 by Bob Weiner
+;; Last-Mod:     10-Dec-22 at 00:52:04 by Mats Lidell
 ;;
 ;; Copyright (C) 1991-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -47,9 +47,103 @@ It must end with a space."
 (defvar pm-version)
 (defvar vm-version)
 
+(declare-function helm-info "ext:helm")
+(declare-function helm-apropos "ext:helm")
+(declare-function devdocs-lookup "ext:devdocs")
+
 ;;; ************************************************************************
 ;;; Public functions
 ;;; ************************************************************************
+
+;;;###autoload
+(defun hypb:activate-interaction-log-mode ()
+  "Configure and enable the interaction-log package for use with Hyperbole.
+This displays a clean log of Emacs keys used and commands executed."
+  (interactive)
+  ;; Ensure package is installed
+  (unless (package-installed-p 'interaction-log)
+    (package-install 'interaction-log))
+
+  ;; Ensure interaction-log-mode is disabled to removes its command
+  ;; hooks which are replaced below.
+  (require 'interaction-log)
+  (interaction-log-mode 0)
+
+  ;; Optional binding you can enable to display the ilog buffer
+  ;; (global-set-key
+  ;;          (kbd "C-h C-l")
+  ;;          (lambda () (interactive) (display-buffer ilog-buffer-name)))
+
+  ;; Display source code lambdas only
+  (setq ilog-print-lambdas 'not-compiled)
+
+  ;; Omit display of some lower-level Hyperbole commands for cleaner logs
+  (mapc (lambda (cmd-str) (pushnew (format "^%s$" cmd-str) ilog-self-insert-command-regexps))
+        '("hyperbole" "hui:menu-enter"))
+
+  ;; Redefine the mode to display commands on post-command-hook rather
+  ;; than pre-command-hook since Hyperbole rewrites some command names
+  ;; and key sequences.
+  (define-minor-mode interaction-log-mode
+    "Global minor mode logging keys, commands, file loads and messages.
+	   Logged stuff goes to the *Emacs Log* buffer."
+    :group 'interaction-log
+    :lighter nil
+    :global t
+    :after-hook interaction-log-mode-hook
+    (if interaction-log-mode
+	(progn
+	  (add-hook 'after-change-functions #'ilog-note-buffer-change)
+	  (add-hook 'post-command-hook      #'ilog-record-this-command)
+	  (add-hook 'post-command-hook      #'ilog-post-command)
+	  (setq ilog-truncation-timer (run-at-time 30 30 #'ilog-truncate-log-buffer))
+	  (setq ilog-insertion-timer (run-with-timer ilog-idle-time ilog-idle-time
+						     #'ilog-timer-function))
+	  (message "Interaction Log: started logging in %s" ilog-buffer-name)
+	  (easy-menu-add ilog-minor-mode-menu))
+      (remove-hook 'after-change-functions #'ilog-note-buffer-change)
+      (remove-hook 'post-command-hook      #'ilog-record-this-command)
+      (remove-hook 'post-command-hook      #'ilog-post-command)
+      (when (timerp ilog-truncation-timer) (cancel-timer ilog-truncation-timer))
+      (setq ilog-truncation-timer nil)
+      (when (timerp ilog-insertion-timer) (cancel-timer ilog-insertion-timer))
+      (setq ilog-insertion-timer nil)))
+
+  ;; Define this function to display a 41 character wide ilog frame
+  ;; at the right of the screen with other frame parameters that match
+  ;; the frame selected when this is called.
+  (defun ilog-show-in-other-frame ()
+    "Display ilog in a separate frame of width 41 with parameters of selected frame.
+Raise and reuse any existing single window frame displaying ilog."
+    (interactive)
+    (require 'hycontrol)
+    (with-selected-window (selected-window)
+      (let* ((win (get-buffer-window ilog-buffer-name t))
+	     (frame (when win (window-frame win))))
+	(if (and frame (= (with-selected-frame frame (count-windows)) 1))
+	    (raise-frame frame)
+	  (unless interaction-log-mode (interaction-log-mode 1))
+	  (let ((params (frame-parameters)))
+	    (setcdr (assq 'width params) 41)
+	    (setq win (display-buffer-pop-up-frame
+		       (get-buffer ilog-buffer-name)
+		       (list (cons 'pop-up-frame-parameters params))))
+	    (set-window-dedicated-p win t)
+	    (with-selected-frame (window-frame win)
+	      (hycontrol-frame-to-right-center))
+	    win)))))
+
+  ;; Enable the mode
+  (interaction-log-mode 1)
+
+  ;; Limit display to commands executed
+  (with-current-buffer (get-buffer-create ilog-buffer-name)
+    (setq ilog-display-state 'messages)
+    ;; Changes to command-only mode
+    (ilog-toggle-view)
+    (message ""))
+
+  (ilog-show-in-other-frame))
 
 (defmacro hypb:assert-same-start-and-end-buffer (&rest body)
   "Assert that buffers name does not change during execution of BODY.
@@ -361,10 +455,18 @@ FILE is temporarily read into a buffer to determine the major mode if necessary.
 
 (defun hypb:filter-directories (file-regexp &rest dirs)
   "Filter files to those matching FILE-REGEXP from rest of DIRS (recursively).
+Also filters out any files matching `completion-ignored-extensions' or
+ending with # or ~.
 Return a flattened list of all matching files."
+  (setq file-regexp (hypb:glob-to-regexp file-regexp))
   (setq dirs (hypb:readable-directories dirs))
-  (apply #'nconc (mapcar (lambda (dir) (directory-files-recursively dir file-regexp))
-			 dirs)))
+  (delq nil (mapcar (lambda (f)
+		      (unless (string-match-p
+			       (concat (regexp-opt (append completion-ignored-extensions '("#" "~"))
+						   'paren) "$") f)
+			f))
+		    (apply #'nconc (mapcar (lambda (dir) (directory-files-recursively dir file-regexp))
+					   dirs)))))
 
 (defun hypb:format-quote (arg)
   "Replace all single % with %% in any string ARG.
@@ -407,6 +509,16 @@ If EVENT, use EVENT's position to determine the starting position."
   "Return the raw syntax descriptor for CHAR.
 Use the current syntax table or optional SYNTAX-TABLE."
   (aref (or syntax-table (syntax-table)) char))
+
+(defun hypb:glob-to-regexp (str)
+  "Convert any file glob syntax to Emacs regexp syntax."
+  (when (stringp str)
+    (setq str (replace-regexp-in-string "\\`\\*" ".*" str nil t)
+	  str (replace-regexp-in-string "\\([^\\.]\\)\\*" "\\1.*" str))
+    (when (and (not (string-match-p "\\(\\$\\|\\\\'\\)\\'" str))
+	       (string-match-p "\\.\\S-+\\'" str))
+      (setq str (concat str "$"))))
+    str)
 
 ;; Derived from pop-global-mark of "simple.el" in GNU Emacs.
 (defun hypb:goto-marker (marker)
@@ -614,6 +726,12 @@ PACKAGE-NAME may be a symbol or a string."
       (keyboard-quit)))
   (require package-name))
 
+(defun hypb:remove-lines (regexp)
+  "Remove lines containing match for REGEXP.
+Apply within an active region or to the end of buffer."
+    (interactive "sRemove lines with match for regexp: ")
+    (flush-lines regexp nil nil t))
+
 (defun hypb:return-process-output (program &optional infile &rest args)
   "Return as a string the output from external PROGRAM with INFILE for input.
 Rest of ARGS are passed as arguments to PROGRAM.
@@ -632,18 +750,12 @@ Removes any trailing newline at the end of the output."
       (kill-buffer buf))
     output))
 
-(defun hypb:remove-lines (regexp)
-  "Remove lines containing match for REGEXP.
-Apply within an active region or to the end of buffer."
-    (interactive "sRemove lines with match for regexp: ")
-    (flush-lines regexp nil nil t))
-
 ;;;###autoload
 (defun hypb:rgrep (pattern &optional prefx-arg)
   "Recursively grep with symbol at point or PATTERN.
 Grep over all non-backup and non-autosave files in the current
-directory tree.  If in an Emacs Lisp mode buffer and no PREFX-ARG
-is given, limit search to only .el and .el.gz files."
+directory tree.  If in an Emacs Lisp mode buffer and no optional
+PREFIX-ARG is given, limit search to only .el and .el.gz files."
   (interactive (list (if (and (not current-prefix-arg) (equal (buffer-name) "*Locate*"))
 			 (read-string "Grep files listed here for: ")
 		       (let ((default (symbol-at-point)))
@@ -715,7 +827,7 @@ descriptors."
 The package info is a property list of package-name,
 package-download-source and package-version for PKG-STRING, else
 return nil.  This is for the straight.el package manager."
-  (when (fboundp #'straight-bug-report-package-info)
+  (when (fboundp 'straight-bug-report-package-info)
     (car (delq nil (mapcar (lambda (pkg-plist)
 			     (when (equal (plist-get pkg-plist :package) pkg-string) pkg-plist))
 			   (straight-bug-report-package-info))))))

@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    26-Feb-98
-;; Last-Mod:     18-Jul-22 at 21:50:10 by Mats Lidell
+;; Last-Mod:     21-Nov-22 at 00:21:03 by Bob Weiner
 ;;
 ;; Copyright (C) 1998-2022  Free Software Foundation, Inc.
 ;; See the "../HY-COPY" file for license information.
@@ -471,8 +471,11 @@ used.  Also converts Urls and Klinks into Html hyperlinks.
 	     (setq level (kcell-view:level)
 		   i level
 		   is-parent (kcell-view:child-p)
+		   is-collapsible (save-excursion
+				    (goto-char (kcell-view:start))
+				    (search-forward "\n" (kcell-view:end-contents) t))
 		   is-last-sibling (not (kcell-view:sibling-p)))
-	     (when is-parent
+	     (when (or is-parent is-collapsible)
 	       (push is-last-sibling no-sibling-stack)
 	       (princ "<button type=\"button\" class=\"collapsible\">\n"))
 	     (while (> i 1)
@@ -482,10 +485,10 @@ used.  Also converts Urls and Klinks into Html hyperlinks.
 	     ;; (princ "<td width=1% valign=top>")
 	     (princ "<td width=1%>")
 	     (princ (format "<span class=\"fas fa-chevron-down fa-fw\"%s></span>"
-			    (if is-parent
+			    (if (or is-parent is-collapsible)
 				""
 			      ;; Fill same space for alignment but don't
-			      ;; show collapsible chevron when not a parent
+			      ;; show collapsible chevron when not collapsible
 			      " style=\"visibility:hidden\"")))
 	     (princ "</td>\n")
 	     ;; (princ "<td width=2% valign=top>\n")
@@ -513,7 +516,7 @@ used.  Also converts Urls and Klinks into Html hyperlinks.
 	     (while (> i 1)
 	       (princ "</ul>")
 	       (setq i (1- i)))
-	     (cond (is-parent
+	     (cond ((or is-parent is-collapsible)
 		    (princ "\n</button>\n<div class=\"content\">\n"))
 		   ((and (/= level 1) is-last-sibling)
 		    (princ "\n</div>")

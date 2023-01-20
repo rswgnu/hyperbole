@@ -1,0 +1,2743 @@
+
+hact.el,1868
+(defvar hrule:action 26,811
+(defvar symtable:category-plist 39,1421
+(defsubst symtable:hash-table 43,1586
+(defsubst symtable:name 47,1740
+(defsubst symtable:select 51,1851
+(defun    symtable:operate 56,2052
+(defun    symtable:create 95,3920
+(defvar   symtable:actypes 103,4312
+(defvar   symtable:ibtypes 109,4634
+(defsubst symtable:actype-p 115,4965
+(defsubst symtable:ibtype-p 120,5197
+(defun    symtable:add 125,5438
+(defalias 'symtable:delete symtable:delete131,5700
+(defun    symtable:get 133,5747
+(defun    symtable:remove 138,5978
+(defun    symset:create 149,6439
+(defun    symset:add 159,6853
+(defun    symset:clear 168,7173
+(defalias 'symset:delete symset:delete172,7274
+(defun    symset:get 174,7317
+(defun    symset:remove 178,7416
+(defun    htype:body 189,7921
+(defun    htype:category 193,8074
+(defmacro htype:create 205,8595
+(defun    htype:def-symbol 224,9419
+(defun    htype:delete 234,9809
+(defun    htype:doc 246,10276
+(defun    htype:names 250,10383
+(defun   htype:symbol 268,11206
+(defun action:commandp 279,11745
+(defun action:create 299,12457
+(defun action:kbd-macro 305,12672
+(defun action:params-emacs 309,12854
+(defun action:params 324,13402
+(defun action:param-list 345,14187
+(defun hact 356,14614
+(defun    actype:act 364,15002
+(defalias 'actype:elisp-symbol actype:elisp-symbol397,16521
+(defun    actype:def-symbol 399,16574
+(defun    actype:eval 409,16932
+(defun    actype:action 430,17773
+(defun    actype:action-body 447,18284
+(defmacro defact 459,18755
+(def-edebug-spec defact472,19354
+(def-edebug-spec lambda-list477,19498
+(defalias 'actype:create actype:create482,19619
+(defun    actype:delete 484,19655
+(defun    actype:doc 489,19836
+(defun    actype:identity 510,20578
+(defun    actype:interact 515,20760
+(defun    actype:params 523,21132
+(defun    actype:param-list 527,21268
+
+hactypes.el,1200
+(defact annot-bib 33,1206
+(defact completion 46,1670
+(defact display-boolean 56,1989
+(defact display-value 64,2278
+(defact display-variable 71,2479
+(defact eval-elisp 77,2676
+(defact exec-kbd-macro 82,2840
+(defact exec-shell-cmd 129,4670
+(defact exec-window-cmd 179,6734
+(defact hyp-config 214,7951
+(defact hyp-request 219,8145
+(defact hyp-source 239,9102
+(defact link-to-bookmark 252,9657
+(defact link-to-buffer-tmp 265,10214
+(defact link-to-directory 280,10795
+(defact link-to-ebut 285,10941
+(defact link-to-elisp-doc 322,12466
+(defun  hactypes:link-to-file-interactively 333,12937
+(defact link-to-file 399,15654
+(defact link-to-file-line 415,16285
+(defact link-to-file-line-and-column 429,16857
+(defact link-to-gbut 444,17535
+(defact link-to-Info-index-item 464,18308
+(defact link-to-Info-node 479,19065
+(defact link-to-ibut 494,19791
+(defact link-to-kcell 544,21817
+(defact link-to-mail 564,22517
+(defact link-to-regexp-match 588,23684
+(defact link-to-rfc 615,24755
+(defact link-to-string-match 622,25023
+(defact link-to-texinfo-node 631,25476
+(defact link-to-web-search 656,26529
+(defact man-show 664,26910
+(defact rfc-toc 672,27220
+(defact text-toc 699,28387
+
+hargs.el,961
+(defvar hargs:defaults 39,1392
+(defvar hargs:reading-type 42,1499
+(defalias 'hargs:find-tag-default hargs:find-tag-default52,1927
+(defun hargs:action-get 54,1983
+(defun hargs:buffer-substring 66,2521
+(defun hargs:delimited 76,3074
+(defun hargs:get 163,6770
+(defmacro hargs:make-iform-vector 200,8343
+(defun hargs:prompt 221,9256
+(defun hargs:select-event-window 230,9571
+(defun hargs:set-string-to-complete 240,10012
+(defun hargs:unset-string-to-complete 248,10368
+(defun hargs:sexpression-p 252,10503
+(defun hargs:actype-get 281,11708
+(defun hargs:at-p 288,12013
+(defun hargs:completion 410,16711
+(defun hargs:iform-read 482,19175
+(defun hargs:read 557,22117
+(defun hargs:read-buffer-name 598,23747
+(defun hargs:read-match 603,23934
+(defun hargs:select-p 636,25298
+(defvar hargs:reading-symbol 675,26811
+(defconst hargs:iform-vector678,26886
+(defconst hargs:iform-extensions-vector782,30365
+(defvar hargs:string-to-complete 841,32703
+
+hbdata.el,776
+(defun hbdata:action 64,2730
+(defun hbdata:actype 68,2846
+(defun hbdata:args 82,3379
+(defun hbdata:categ 86,3480
+(defun hbdata:creator 90,3568
+(defun hbdata:create-time 94,3685
+(defun hbdata:key 98,3804
+(defun hbdata:loc-p 102,3899
+(defun hbdata:modifier 107,4087
+(defun hbdata:mod-time 112,4260
+(defun hbdata:referent 117,4430
+(defun hbdata:search 121,4521
+(defun hbdata:build 148,5592
+(defun hbdata:get-entry 222,8825
+(defun hbdata:instance-next 231,9210
+(defun hbdata:instance-last 243,9585
+(defun hbdata:delete-entry 254,9973
+(defun hbdata:delete-entry-at-point 285,11119
+(defun hbdata:to-entry 288,11219
+(defun hbdata:apply-entry 311,12181
+(defun hbdata:to-hbdata-buffer 378,14367
+(defun hbdata:to-entry-buf 403,15392
+(defun hbdata:write 442,16860
+
+hbmap.el,259
+(defvar hbmap:filename 20,594
+(defun hbmap:dir-add 27,852
+(defun hbmap:dir-list 38,1341
+(defun hbmap:dir-remove 54,1801
+(defun hbmap:dir-member 63,2263
+(defun hbmap:dir-operate 84,3090
+(defvar hbmap:dir-user110,4064
+(defvar hbmap:dir-filename118,4357
+
+hbut.el,5042
+(defvar   ebut:hattr-save 39,1326
+(defun    ebut:act 43,1443
+(defun    ebut:alist 54,1845
+(defun    ebut:at-p 60,2066
+(defun    ebut:create 67,2373
+(defun    ebut:delete 89,3361
+(defun    ebut:edit 102,3820
+(defun    ebut:get 115,4327
+(defun    ebut:is-p 184,6850
+(defun    ebut:key 189,7038
+(defun    ebut:key-of-label-p 196,7276
+(defalias 'ebut:to-key-src ebut:to-key-src201,7482
+(defalias 'ebut:key-src-set-buffer ebut:key-src-set-buffer202,7539
+(defalias 'ebut:key-src-fmt ebut:key-src-fmt203,7601
+(defalias 'ebut:key-to-label ebut:key-to-label204,7656
+(defun    ebut:label-p 206,7713
+(defalias 'ebut:label-regexp ebut:label-regexp273,10320
+(defalias 'ebut:label-to-key ebut:label-to-key275,10371
+(defun    ebut:list 277,10422
+(defalias 'map-ebut map-ebut297,11255
+(defun    ebut:map 299,11288
+(defun    ebut:next-occurrence 309,11791
+(defun    ebut:operate 324,12464
+(defun    ebut:program 433,16576
+(defun    ebut:search 463,17979
+(defun    ebut:to 542,20643
+(defun    ebut:delimit 575,21976
+(defun    ebut:match-regexp 602,23011
+(defconst ebut:start 613,23433
+(defconst ebut:end 615,23528
+(defconst ebut:instance-sep 617,23621
+(defun    gbut:act 624,23961
+(defun    gbut:delete 639,24576
+(defun    gbut:ebut-program 644,24799
+(defun    gbut:file 664,25690
+(defun    gbut:get 668,25848
+(defun    gbut:help 680,26262
+(defun    gbut:label-list 691,26684
+(defun    gbut:label-p 695,26803
+(defun    gbut:to 710,27618
+(defun    gbut:key-list 728,28275
+(defun    gbut:ebut-key-list 732,28401
+(defun    gbut:ibut-key-list 746,28851
+(defun    hattr:attributes 759,29362
+(defun    hattr:clear 769,29667
+(defun    hattr:copy 780,30043
+(defun    hattr:get 791,30433
+(defun    hattr:list 795,30567
+(defun    hattr:memq 802,30839
+(defun    hattr:report 814,31270
+(defun    hattr:save 842,32296
+(defun    hattr:set 860,33148
+(defalias 'hattr:summarize hattr:summarize864,33327
+(defvar   hattr:filename866,33371
+(defconst hbut:max-len 876,33804
+(defsubst hbut:max-len 883,34045
+(defun    hbut:act 887,34195
+(defun    hbut:action 950,36889
+(defun    hbut:at-p 962,37350
+(defun    hbut:comment 975,37750
+(defvar   hbut:fill-prefix-regexps1010,38904
+(defun    hbut:fill-prefix-remove 1034,39752
+(defun    hbut:delete 1044,40144
+(defun    hbut:funcall 1059,40777
+(defun    hbut:get 1085,41840
+(defun    hbut:get-key-src 1096,42368
+(defun    hbut:is-p 1154,44655
+(defun    hbut:key 1159,44814
+(defun    hbut:to-key-src 1166,45034
+(defun    hbut:key-src-fmt 1173,45353
+(defun    hbut:key-src-set-buffer 1189,46003
+(defun    hbut:key-to-label 1210,46650
+(defun    hbut:label 1231,47334
+(defun    hbut:label-p 1238,47580
+(defun    hbut:label-regexp 1251,48355
+(defun    hbut:label-to-key 1279,49338
+(defun    hbut:map 1292,49928
+(defvar   hbut:syntax-table 1338,51743
+(defun    hbut:modify-syntax 1344,52013
+(defun    hbut:outside-comment-p 1359,52640
+(defun    hbut:rename 1367,52999
+(defun    hbut:report 1378,53405
+(defun    hbut:source 1437,55327
+(defalias 'hbut:summarize hbut:summarize1452,55900
+(defun    hbut:to 1454,55941
+(defvar   hbut:current 1461,56269
+(defconst hbut:source-prefix 1464,56374
+(defun    hbut:label-list 1469,56627
+(defun    hbut:key-list 1475,56844
+(defun    hbut:ebut-key-list 1479,57009
+(defun    hbut:ibut-key-list 1494,57518
+(defun    ibut:act 1508,58061
+(defun    ibut:alist 1519,58467
+(defun    ibut:at-p 1525,58696
+(defun    ibut:at-type-p 1568,60512
+(cl-defun ibut:create 1584,61236
+(defun    ibut:delete 1698,65089
+(defun    ibut:get 1725,66085
+(defun    ibut:is-p 1747,66902
+(defun    ibut:label-map 1753,67157
+(defun    ibut:rename 1768,67946
+(defun    ibut:label-p 1789,68957
+(defun    ibut:label-regexp 1807,69947
+(defun    ibut:label-set 1813,70238
+(defun    ibut:list 1835,71269
+(defun    ibut:key 1855,72113
+(defalias 'ibut:to-key-src ibut:to-key-src1862,72351
+(defalias 'ibut:key-to-label ibut:key-to-label1863,72398
+(defalias 'ibut:label-to-key ibut:label-to-key1864,72447
+(defalias 'map-ibut map-ibut1865,72496
+(defun    ibut:map 1867,72537
+(defun    ibut:next-occurrence 1878,73061
+(defun    ibut:previous-occurrence 1893,73806
+(defalias 'ibut:summarize ibut:summarize1908,74537
+(defun    ibut:to 1910,74578
+(defun    ibut:at-to-name-p 1957,76219
+(defun    ibut:to-name 1981,77011
+(defun    ibut:to-text 2014,78330
+(defconst ibut:label-start 2063,80360
+(defconst ibut:label-end 2065,80461
+(defvar   ibut:label-separator 2068,80561
+(defvar   ibut:label-separator-regexp 2075,80867
+(defmacro defib 2082,81206
+(def-edebug-spec defib2119,82891
+(def-edebug-spec lambda-list2124,83031
+(defalias 'ibtype:create ibtype:create2129,83149
+(defun ibtype:activate-link 2131,83184
+(defmacro defil 2143,83633
+(defmacro defal 2240,87971
+(defalias 'ibtype:create-action-link-type ibtype:create-action-link-type2296,90140
+(defalias 'ibtype:create-regexp-link-type ibtype:create-regexp-link-type2297,90191
+(defun    ibtype:def-symbol 2299,90243
+(defun    ibtype:delete 2309,90600
+
+hgnus.el,110
+(defun Gnus-init 52,1634
+(defun lnews:to 57,1741
+(defun rnews:to 61,1906
+(defun rnews:summ-msg-to 65,2062
+
+hhist.el,136
+(defun hhist:add 27,1002
+(defun hhist:element 41,1687
+(defun hhist:pop 45,1802
+(defun hhist:init 70,2626
+(defconst *hhist* 79,2887
+
+hib-debbugs.el,467
+(defib debbugs-gnu-query 98,4218
+(defact debbugs-gnu-query 119,5159
+(defun debbugs-gnu-query:help 126,5377
+(defib debbugs-gnu-mode 137,5836
+(defun debbugs-gnu-mode:help 142,6021
+(defun debbugs-gnu-show-discussion 155,6540
+(defun debbugs-gnu-query:string 163,6822
+(defun debbugs-gnu-query:list 186,7976
+(defun smart-debbugs-gnu 201,8563
+(defun debbugs-query:at-p 217,9239
+(defun debbugs-query:status 235,10392
+(defun debbugs-version-sufficient-p 261,11605
+
+hib-doc-id.el,311
+(defvar doc-id-start 83,2975
+(defvar doc-id-end 85,3066
+(defvar doc-id-index-entry-regexp 88,3156
+(defvar doc-id-match91,3286
+(defvar doc-id-p 98,3542
+(defvar doc-id-online-regexp 105,3797
+(defact link-to-doc 117,4404
+(defib doc-id 149,5810
+(defvar doc-id-indices 164,6380
+(defun doc-id:help 173,6781
+
+hib-kbd.el,1074
+(defvar kbd-key:named-key-list42,1620
+(defvar kbd-key:named-key-regexp50,1996
+(defvar kbd-key:modified-key-regexp57,2237
+(defact kbd-key 73,3010
+(defib kbd-key 85,3508
+(defun kbd-key:act 150,6412
+(defun kbd-key:execute 169,7111
+(defun kbd-key:execute-special-series 178,7489
+(defun kbd-key:maybe-enable-helm 196,8258
+(defun kbd-key:key-series-to-events 202,8486
+(defun kbd-key:doc 213,8968
+(defun kbd-key:help 239,9831
+(defun kbd-key:is-p 245,10086
+(defun kbd-key:normalize 279,11583
+(defun kbd-key:remove-delimiters 343,14751
+(defun kbd-key:binding 354,15306
+(defun kbd-key:kbd 361,15624
+(defun kbd-key:parse 369,15980
+(defun kbd-key:extended-command-p 464,19682
+(defun kbd-key:hyperbole-hycontrol-key-p 470,19929
+(defun kbd-key:hyperbole-mini-menu-key-p 481,20429
+(defun kbd-key:key-and-arguments 491,21018
+(defun kbd-key:mark-spaces-to-keep 502,21557
+(defun kbd-key:special-sequence-p 521,22211
+(defconst kbd-key:extended-command-prefix536,22875
+(defconst kbd-key:extended-command-binding-list 541,23060
+(defvar kbd-key:mini-menu-key 544,23240
+
+hib-social.el,1334
+(defcustom hibtypes-social-default-service 182,9075
+(defcustom hibtypes-social-display-function 192,9365
+(defcustom hibtypes-git-default-project 197,9552
+(defcustom hibtypes-git-use-magit-flag 202,9711
+(defcustom hibtypes-github-default-project 207,9878
+(defcustom hibtypes-github-default-user 212,10037
+(defcustom hibtypes-gitlab-default-project 217,10190
+(defcustom hibtypes-gitlab-default-user 222,10349
+(defconst hibtypes-social-hashtag-alist235,10914
+(defconst hibtypes-social-username-alist244,11487
+(defconst hibtypes-git-project-regexp 253,11993
+(defconst hibtypes-git-file-regexp 254,12080
+(defconst hibtypes-social-regexp256,12154
+(defvar hibtypes-social-inhibit-modes 262,12431
+(defib social-reference 269,12760
+(defun social-reference 323,15229
+(defun github-reference 344,16270
+(defun gitlab-reference 453,21536
+(defib git-commit-reference 619,29134
+(defvar hibtypes-git-repos-cache635,29877
+(defun hibtypes-git-get-locate-command 639,30051
+(defun hibtypes-git-build-repos-cache 646,30351
+(defun hibtypes-git-add-project-to-repos-cache 661,31196
+(defun hibtypes-git-build-or-add-to-repos-cache 680,32046
+(defun hibtypes-git-project-directory 690,32578
+(defun git-reference 709,33535
+(defun hibtypes-git-find-execute 849,40358
+(defun hibtypes-git-find 862,40978
+(defun git-find-file 892,42287
+
+hibtypes.el,1610
+(defconst mail-address-tld-regexp47,1462
+(defconst mail-address-regexp75,3321
+(defib python-tb-previous-line 108,4740
+(defib pathname 129,5614
+(defvar mail-address-mode-list249,11557
+(defun mail-address-at-p 253,11707
+(defib mail-address 264,12182
+(defib org-link-outside-org-mode 304,14068
+(defib annot-bib 322,14930
+(defun markdown-follow-link-p 351,16283
+(defun markdown-follow-inline-link-p 372,16948
+(defib markdown-internal-link 399,18232
+(defib rfc-toc 429,19776
+(defib id-cflow 454,20846
+(defib ctags 501,22900
+(defib etags 527,24302
+(defib cscope 564,26207
+(defib text-toc 591,27359
+(defib dir-summary 623,28941
+(defib rfc 659,30511
+(defib man-apropos 691,31923
+(defun hlink 716,32982
+(defun parse-label-and-file 736,33969
+(defconst elink:start 758,34874
+(defconst elink:end 760,34979
+(defib elink 763,35077
+(defconst glink:start 773,35478
+(defconst glink:end 775,35581
+(defib glink 778,35677
+(defconst ilink:start 787,35967
+(defconst ilink:end 789,36072
+(defib ilink 792,36170
+(defib pathname-line-and-column 807,36826
+(defib ipython-stack-frame 835,38419
+(defib ripgrep-msg 877,40581
+(defib grep-msg 923,42722
+(defun hib-python-traceback 989,46448
+(defib debugger-source 1000,47044
+(defib elisp-compiler-msg 1086,51075
+(defib patch-msg 1188,56146
+(defib texinfo-ref 1215,57350
+(defib gnus-push-button 1300,61878
+(defib Info-node 1312,62420
+(defib hyp-address 1341,63979
+(defib hyp-source 1360,64993
+(defconst action:start 1387,66112
+(defconst action:end 1390,66221
+(defib action 1393,66326
+(defun action:help 1491,70903
+(defib completion 1518,71995
+
+hinit.el,145
+(defvar   hyperb:user-email 20,575
+(defun hyperb:init-menubar 42,1477
+(defmacro hui-menu-remove 58,2123
+(defun hyperb:check-dir-user 69,2581
+
+hload-path.el,484
+(defvar hyperb:microsoft-os-p27,824
+(defvar hyperb:wsl-os-p34,1093
+(defvar hyperb:dir 42,1477
+(defmacro hyperb:with-suppressed-warnings 84,3259
+(defalias 'hload-path--make-directory-autoloadshload-path--make-directory-autoloads119,4704
+(defun hload-path--internal-make-directory-autoloads 127,4975
+(defun hyperb:autoloads-exist-p 150,6043
+(defun hyperb:maybe-generate-autoloads 156,6338
+(defun hyperb:generate-autoloads 162,6607
+(defun hyperb:maybe-load-autoloads 177,7390
+
+hmail.el,875
+(defvar hnews:composer 36,1371
+(defvar hnews:lister 38,1488
+(defvar hnews:reader 40,1611
+(defcustom hmail:init-function 43,1718
+(defvar hmail:composer 52,2014
+(defvar hmail:lister 54,2121
+(defvar hmail:modifier 56,2222
+(defvar hmail:reader 58,2315
+(defun hmail:hbdata-start 69,2758
+(defun hmail:hbdata-to-p 81,3244
+(defun hmail:browser-p 96,3783
+(defun hmail:buffer 100,3939
+(defun hmail:compose 112,4491
+(defun hmail:composing-dir 127,5152
+(defun hmail:editor-p 137,5470
+(defun hmail:init 141,5643
+(defun hmail:invoke 157,6278
+(defun hmail:lister-p 171,6775
+(defun hnews:lister-p 175,6904
+(defun hmail:mode-is-p 179,7039
+(defun hmail:msg-narrow 186,7299
+(defun hmail:reader-p 196,7693
+(defun hmail:region 200,7852
+(defun rmail:init 224,8838
+(defvar rmail:msg-hdr-prefix 234,9272
+(defun rmail:msg-id-get 237,9398
+(defvar hmail:hbdata-sep 269,10632
+
+hmh.el,541
+(defun Mh-init 42,1262
+(defun Mh-hbut-highlight 67,2116
+(defun Mh-msg-hdrs-full 71,2288
+(defun Mh-msg-narrow 75,2422
+(defun Mh-msg-next 80,2552
+(defun Mh-msg-num 82,2612
+(defun Mh-msg-prev 87,2730
+(defun Mh-msg-to-p 89,2794
+(defun Mh-msg-widen 99,3069
+(defun Mh-to 103,3187
+(defun Mh-Summ-delete 108,3328
+(defalias 'Mh-Summ-expunge Mh-Summ-expunge110,3397
+(defun Mh-Summ-goto 112,3456
+(defun Mh-Summ-to 117,3576
+(defun Mh-Summ-undelete-all 130,3939
+(defun hmh--run-show-hook 146,4773
+(defun hmh--highlight-buttons 154,5066
+
+hmoccur.el,325
+(defconst moccur-source-prefix 53,2032
+(defun moccur 60,2301
+(defun moccur-to 138,4938
+(defalias 'moccur-mode-goto-occurrence moccur-mode-goto-occurrence151,5329
+(defun moccur-mode-display-occurrence 153,5381
+(define-derived-mode moccur-mode 171,6008
+(defun moccur-noselect 183,6467
+(defvar moccur-mode-map 219,7801
+
+hmouse-info.el,570
+(defun Info-read-index-item-name 36,1084
+(defun smart-info 58,1916
+(defun smart-info-assist 105,3470
+(defun Info-handle-in-node-hdr 154,5287
+(defun Info-handle-in-node-hdr-assist 184,6324
+(defun Info-handle-in-note 209,7143
+(defun Info-handle-in-menu 217,7445
+(defun Info-build-menu-item-completions 241,8277
+(defun Info-complete-menu-item 293,10776
+(defun Info-current-filename-sans-extension 311,11659
+(defun Info-menu-item-at-p 323,12104
+(defun Info-node-has-menu-p 343,12690
+(defun Info-note-at-p 350,12861
+(defun Info-read-index-item-name-1 364,13431
+
+hmouse-drv.el,3741
+(defvar hmouse-verify-release-window-flag 32,988
+(defvar action-key-depressed-flag 43,1546
+(defvar assist-key-depressed-flag 44,1620
+(defvar action-key-depress-args 45,1694
+(defvar assist-key-depress-args 47,1804
+(defvar action-key-release-args 50,1915
+(defvar assist-key-release-args 52,2025
+(defvar action-key-depress-window 55,2136
+(defvar assist-key-depress-window 58,2307
+(defvar action-key-release-window 61,2478
+(defvar assist-key-release-window 63,2582
+(defvar action-key-depress-position 67,2763
+(defvar assist-key-depress-position 69,2885
+(defvar action-key-release-position 71,3007
+(defvar assist-key-release-position 73,3128
+(defvar action-key-depress-prev-point 76,3250
+(defvar assist-key-depress-prev-point 79,3419
+(defvar action-key-release-prev-point 82,3588
+(defvar assist-key-release-prev-point 85,3757
+(defvar action-key-cancelled 89,3927
+(defvar assist-key-cancelled 91,4012
+(defvar action-key-help-flag 94,4098
+(defvar assist-key-help-flag 96,4202
+(defvar assist-flag 99,4307
+(defcustom hkey-debug 104,4517
+(defvar hkey-region 110,4692
+(defvar action-mouse-key-prev-window 142,5751
+(defvar action-mouse-key-prefix-arg 145,5876
+(defvar hkey-help-msg 148,5972
+(defvar hkey--wconfig 149,6035
+(defun hkey-absolute-pixel-position 156,6352
+(defun action-key-depress 163,6624
+(defun assist-key-depress 186,7519
+(defun action-key-depress-emacs 209,8414
+(defun assist-key-depress-emacs 214,8565
+(defun action-mouse-key-emacs 220,8748
+(defun assist-mouse-key-emacs 226,8995
+(defun action-mouse-key 232,9242
+(defun assist-mouse-key 256,10227
+(defun action-key-clear-variables 281,11226
+(defun assist-key-clear-variables 294,11674
+(defun action-key 307,12122
+(defun action-key-internal 318,12557
+(defun assist-key 328,12846
+(defun assist-key-internal 339,13283
+(defun hkey-either 349,13570
+(defun hkey-ace-window-setup 371,14478
+(defun hkey-drag 415,16335
+(defun hkey-drag-stay 447,17705
+(defun hkey-drag-item 462,18272
+(defun hkey-drag-to 495,19662
+(defun hkey-replace 536,21442
+(defun hkey-swap 546,21891
+(defun hkey-throw 575,23248
+(defun hkey-window-link 608,24718
+(defun hkey-insert-region 622,25312
+(defun hkey-buffer-to 657,26949
+(defun hkey-swap-buffers 668,27379
+(defun hmouse-click-to-drag 686,28161
+(defun hmouse-click-to-drag-stay 694,28446
+(defun hmouse-click-to-drag-item 702,28729
+(defun hmouse-click-to-drag-to 710,29017
+(defun hmouse-click-to-replace 718,29312
+(defun hmouse-click-to-swap 729,29714
+(defun hmouse-click-to-throw 737,29977
+(defun hmouse-choose-windows 744,30269
+(defun hkey-buffer-move-left 776,31520
+(defun hkey-buffer-move-right 782,31697
+(defun hkey-buffer-move-down 788,31876
+(defun hkey-buffer-move-up 794,32050
+(defun hkey-buffer-move 799,32208
+(defun mouse-drag-mode-line 841,34021
+(defun hkey-debug 869,35287
+(defun hkey-execute 890,36064
+(defun hkey-help 922,37401
+(defun hkey-assist-help 1032,41309
+(defun hkey-help-hide 1044,41741
+(defalias 'quit-window quit-window1059,42277
+(defun hkey-help-show 1070,42710
+(defun hkey-mouse-help 1120,44984
+(defun hkey-operate 1145,45934
+(defun hkey-summarize 1175,47144
+(defun hkey-toggle-debug 1196,47905
+(defun hmouse-depress-inactive-minibuffer-p 1209,48459
+(defun hmouse-vertical-line-spacing 1221,48953
+(defun hmouse-window-at-absolute-pixel-position 1233,49461
+(defun hmouse-window-coordinates 1345,54745
+(defun hmouse-key-release-window 1387,56626
+(defun hmouse-key-release-args-emacs 1392,56860
+(defun hmouse-use-region-p 1422,58286
+(defun hmouse-save-region 1427,58441
+(defun hmouse-set-point 1444,59240
+(defun hmouse-set-point-at 1454,59703
+(defun hmouse-function 1475,60631
+(defun smart-scroll-down 1515,62442
+(defun smart-scroll-up 1540,63348
+
+hmouse-key.el,393
+(defun hmouse-check-action-key 36,1238
+(defun hmouse-check-assist-key 44,1700
+(defun hmouse-set-bindings 52,2162
+(defun hmouse-install 68,2704
+(defun hmouse-add-unshifted-smart-keys 95,4025
+(defun hmouse-toggle-bindings 101,4203
+(defun hmouse-update-smart-keys 124,5235
+(defvar hmouse-bindings 141,5897
+(defvar hmouse-bindings-flag 144,5987
+(defvar hmouse-previous-bindings 147,6081
+
+hmouse-mod.el,403
+(defvar hmouse-mod--global-map 72,2649
+(defvar hmouse-mod--prior-global-map 77,2894
+(defvar hmouse-mod--prefix 81,3042
+(define-minor-mode hmouse-mod-mode89,3311
+(defun hmouse-mod-disable 117,4644
+(defun hmouse-mod-enable 124,4931
+(defun hmouse-mod-execute-command 138,5584
+(defun hmouse-mod-insert-command 168,6786
+(defun hmouse-mod-keyboard-quit 198,7886
+(defun hmouse-mod-last-char 204,8068
+
+hmouse-sh.el,449
+(defun hmouse-bind-key-emacs 53,1720
+(defun hmouse-bind-shifted-key-emacs 170,5035
+(defun hmouse-get-bindings 277,8346
+(defun hmouse-get-unshifted-bindings 352,11639
+(defun hmouse-posn-set-point 392,13202
+(defun hmouse-drag-region 406,13838
+(defun hmouse-move-point-emacs 428,14872
+(defun hmouse-move-point-eterm 466,16803
+(defun hmouse-set-key-list 469,16884
+(defun hmouse-shifted-setup 473,16998
+(defun hmouse-unshifted-setup 508,18771
+
+hmouse-tag.el,3201
+(define-obsolete-variable-alias 'smart-asm-include-dirssmart-asm-include-dirs51,1953
+(defcustom smart-asm-include-path 53,2044
+(defconst smart-asm-include-regexp59,2273
+(define-obsolete-variable-alias 'smart-c-cpp-include-dirssmart-c-cpp-include-dirs70,2730
+(defcustom smart-c-cpp-include-path 72,2825
+(define-obsolete-variable-alias 'smart-c-include-dirssmart-c-include-dirs79,3109
+(defcustom smart-c-include-path 81,3196
+(defcustom smart-c-use-lib-man 89,3522
+(defconst smart-c-include-regexp106,4236
+(defcustom smart-java-package-path113,4589
+(define-obsolete-variable-alias 'smart-java-include-dirssmart-java-include-dirs120,4938
+(defconst smart-java-package-regexp123,5032
+(defcustom smart-emacs-tags-file 128,5245
+(defun smart-asm 163,6455
+(defun smart-asm-at-tag-p 189,7533
+(defun smart-c++ 203,8056
+(defun smart-c++-tag 231,9313
+(defconst smart-c++-keywords254,10099
+(defun smart-c++-at-tag-p 272,11258
+(defun smart-c 293,12215
+(defconst smart-c-keywords331,13925
+(defun smart-c-at-tag-p 354,15300
+(defun smart-cc-mode-initialize 369,15886
+(defun smart-emacs-lisp-mode-p 377,16096
+(defun smart-fortran 387,16661
+(defconst smart-fortran-keywords408,17540
+(defun smart-fortran-at-tag-p 428,18716
+(defun smart-java 442,19238
+(defun smart-java-tag 467,20410
+(defun smart-java-oo-browser 478,20850
+(defconst smart-java-keywords498,21748
+(defun smart-java-at-tag-p 509,22315
+(defun smart-javascript 525,22939
+(defconst smart-javascript-keywords546,23832
+(defun smart-javascript-at-tag-p 555,24260
+(defconst smart-lisp-identifier-first-char-regexp 576,25141
+(defconst smart-lisp-identifier-chars 580,25285
+(defconst smart-lisp-identifier 586,25544
+(defun smart-lisp 590,25708
+(defun smart-lisp-find-tag 645,27930
+(defun smart-lisp-at-definition-p 694,30038
+(defun smart-lisp-at-load-expression-p 707,30643
+(defun smart-lisp-at-change-log-tag-p 713,30886
+(defun smart-lisp-htype-tag 723,31344
+(defun smart-lisp-at-tag-p 743,32017
+(defun smart-lisp-at-non-htype-tag-p 751,32359
+(defun smart-lisp-mode-p 782,33802
+(defun smart-objc 788,33979
+(defun smart-objc-tag 817,35274
+(defun smart-objc-oo-browser 841,36153
+(defconst smart-objc-keywords862,37046
+(defun smart-objc-at-tag-p 867,37236
+(defun smart-jedi-find-file 882,37908
+(defun smart-python-jedi-to-definition-p 889,38208
+(defun smart-python 914,39407
+(defun smart-python-tag 939,40445
+(defun smart-python-oo-browser 950,40889
+(defconst smart-python-keywords966,41590
+(defun smart-python-at-tag-p 974,41954
+(defun smart-ancestor-tag-files 1005,43141
+(defun smart-asm-include-file 1024,43827
+(defun smart-c-include-file 1068,45368
+(defun smart-flash-tag 1113,46837
+(defun smart-lisp-at-known-identifier-p 1124,47254
+(defun smart-lisp-bound-symbol-def 1151,48258
+(defun smart-tags-find-p 1160,48729
+(defun smart-java-cross-reference 1174,49203
+(defun smart-java-library-path 1262,53081
+(defun smart-java-packages 1279,53742
+(defun smart-library-symbol 1350,56453
+(defun smart-tags-display 1365,57012
+(defun smart-tags-file-path 1399,58553
+(defun smart-tags-org-src-block-p 1422,59404
+(defun smart-tags-file-list 1427,59592
+(defun smart-tags-noselect-function 1464,61316
+
+hpath.el,5600
+(defcustom hpath:auto-completing-read-modes 40,1353
+(defvar hpath:auto-variable-alist47,1658
+(defcustom hpath:find-file-urls-mode 57,2086
+(defconst hpath:line-and-column-regexp66,2490
+(defconst hpath:markup-link-anchor-regexp72,2771
+(defvar hpath:path-variable-regexp 78,3048
+(defvar hpath:path-variable-value-regexp82,3242
+(defconst hpath:section-line-and-column-regexp101,4310
+(defconst hpath:variable-regexp 108,4706
+(defvar hpath:posix-mount-points-regexp137,6084
+(defvar hpath:mswindows-mount-prefix141,6249
+(defconst hpath:mswindows-drive-regexp 151,6524
+(defconst hpath:mswindows-path-regexp 159,6896
+(defvar hpath:posix-mount-point-to-mswindows-alist 164,7087
+(defun hpath:mswindows-to-posix 170,7334
+(defun hpath:mswindows-to-posix-separators 191,8332
+(defun hpath:posix-to-mswindows 206,9112
+(defun hpath:posix-to-mswindows-separators 231,10239
+(defun hpath:posix-path-p 238,10646
+(defun hpath:substitute-posix-or-mswindows-at-point 243,10796
+(defun hpath:substitute-posix-or-mswindows 261,11413
+(defun hpath:cache-mswindows-mount-points 269,11687
+(defcustom hpath:external-open-office-suffixes 327,14784
+(defcustom hpath:external-file-suffixes 338,15257
+(defcustom hpath:external-display-alist-macos 347,15716
+(defcustom hpath:external-display-alist-mswindows 357,16283
+(defcustom hpath:external-display-alist-x 377,17342
+(defvar hpath:info-suffix 387,17797
+(defcustom hpath:internal-display-alist390,17934
+(defvar hpath:display-buffer-alist436,19739
+(defvar hpath:display-where 471,21273
+(defvar hpath:display-where-alist477,21551
+(defcustom hpath:native-image-suffixes 509,22888
+(defcustom hpath:variables529,23852
+(defvar hpath:rfc 541,24423
+(defcustom hpath:suffixes 544,24560
+(defvar hpath:tmp-prefix 550,24777
+(defvar hpath:url-regexp 559,25272
+(defvar hpath:url-hostnames-regexp 571,26060
+(defvar hpath:url-regexp2574,26217
+(defvar hpath:url-regexp3591,27096
+(defconst hpath:url-keyword-grpn 608,27973
+(defconst hpath:url-grpn 611,28108
+(defconst hpath:protocol-grpn 613,28216
+(defconst hpath:username-grpn 615,28331
+(defconst hpath:sitename-grpn 617,28448
+(defconst hpath:hostname-grpn 620,28569
+(defconst hpath:portnumber-grpn 623,28736
+(defconst hpath:pathname-grpn 626,28864
+(defvar hpath:string-url-regexp 630,28991
+(defvar hpath:string-url-regexp2 635,29226
+(defvar hpath:string-url-regexp3 640,29469
+(defconst hpath:html-anchor-id-pattern 649,29889
+(defconst hpath:markdown-anchor-id-pattern 653,30067
+(defconst hpath:markdown-section-pattern 657,30232
+(defconst hpath:markdown-suffix-regexp 661,30435
+(defconst hpath:outline-section-pattern 664,30541
+(defvar hpath:prefix-regexp 668,30768
+(defvar hpath:remote-regexp675,31075
+(defconst hpath:shell-modes 679,31242
+(defconst hpath:texinfo-section-pattern 682,31386
+(defun hpath:abbreviate-file-name 690,31743
+(defun hpath:absolute-arguments 697,31993
+(defun hpath:absolute-to 721,32932
+(defun hpath:tramp-file-name-regexp 760,34314
+(defun hpath:remote-at-p 774,34954
+(defun hpath:remote-p 842,37748
+(defun hpath:at-p 913,40310
+(defun hpath:call 963,42706
+(defun hpath:is-path-variable-p 1057,47117
+(defun hpath:choose-from-path-variable 1064,47417
+(defun hpath:delimited-possible-path 1081,48304
+(defun hpath:display-buffer 1124,50277
+(defun hpath:display-buffer-other-frame 1140,51013
+(defun hpath:display-buffer-function 1161,51808
+(defun hpath:display-path-function 1166,52064
+(defun hpath:resolve 1171,52315
+(defun hpath:expand 1193,53329
+(defun hpath:prepend-shell-directory 1222,54801
+(defvar hpath:compressed-suffix-regexp 1256,56597
+(defun hpath:expand-with-variable 1259,56753
+(defun hpath:file-line-and-column 1297,58472
+(defun hpath:find-noselect 1315,59349
+(defun hpath:find 1324,59698
+(defun hpath:to-markup-anchor 1491,66553
+(defun hpath:find-executable 1555,69292
+(defun hpath:find-line 1570,69796
+(defun hpath:find-other-frame 1590,70566
+(defun hpath:find-other-window 1605,71044
+(defun hpath:get-external-display-alist 1615,71539
+(defun hpath:is-p 1634,72528
+(defun hpath:push-tag-mark 1735,77341
+(defun hpath:relative-arguments 1749,77853
+(defun hpath:relative-to 1759,78283
+(defun hpath:rfc 1791,79571
+(defun hpath:start-end 1796,79744
+(defun hpath:return-one-value 1825,80948
+(defun hpath:substitute-value 1863,82629
+(defun hpath:substitute-var 1907,84284
+(defun hpath:symlink-referent 1945,85750
+(defun hpath:symlink-expand 1960,86345
+(defun hpath:to-line 1995,87984
+(defun hpath:trim 2004,88271
+(defun hpath:normalize 2013,88609
+(defun hpath:validate 2018,88828
+(defun hpath:find-file-urls-p 2041,89735
+(defun hpath:handle-urls 2047,89994
+(defalias 'hyperb:substitute-in-file-namehyperb:substitute-in-file-name2064,90736
+(defun substitute-in-file-name 2067,90827
+(defun hpath:enable-find-file-urls 2080,91469
+(defun hpath:disable-find-file-urls 2111,92599
+(defun hpath:find-file-urls-mode 2140,93634
+(defun hpath:url-at-p 2152,94121
+(defun hpath:url-p 2163,94612
+(defun hpath:www-at-p 2174,95007
+(defun hpath:www-p 2190,95704
+(defun hpath:command-string 2198,96027
+(defun hpath:display-where-function 2207,96434
+(defun hpath:remote-available-p 2217,96904
+(defun hpath:remote-default-user 2236,97751
+(defun hpath:delete-trailer 2250,98207
+(defun hpath:exists-p 2258,98491
+(defun hpath:find-file-mailcap 2289,99488
+(defun hpath:find-program 2305,100004
+(defun hpath:match 2326,100875
+(defun hpath:get-single-string-variable-value 2340,101475
+(defun hpath:substitute-dir 2370,102569
+(defun hpath:substitute-match-value 2436,105652
+(defun hpath:substitute-var-name 2498,107868
+
+hrmail.el,722
+(defun Rmail-init 45,1463
+(defun Rmail-msg-hdrs-full 71,2418
+(defun Rmail-msg-narrow 92,3017
+(defun Rmail-msg-next 99,3262
+(defun Rmail-msg-num 101,3329
+(defun Rmail-msg-prev 114,3673
+(defun Rmail-msg-to-p 116,3744
+(defun Rmail-msg-widen 138,4364
+(defun Rmail-to 150,4701
+(defalias 'Rmail-Summ-delete Rmail-Summ-delete154,4840
+(defalias 'Rmail-Summ-expunge Rmail-Summ-expunge156,4908
+(defalias 'Rmail-Summ-goto Rmail-Summ-goto158,4969
+(defun Rmail-Summ-to 160,5031
+(defalias 'Rmail-Summ-undelete-all Rmail-Summ-undelete-all164,5176
+(defun hrmail--rmail-cease-edit 181,5903
+(defun hrmail--rmail-forward 262,8702
+(defun hrmail--show-msg-and-buttons 333,11252
+(defun hrmail--highlight-buttons 345,11828
+
+hsettings.el,608
+(defvar hkey-always-display-menu 90,3690
+(defcustom hmouse-middle-flag 95,3936
+(defcustom smart-scroll-proportional 101,4153
+(defun hyperbole-update-menus 132,5517
+(defcustom hyperbole-default-web-search-term-max-lines 137,5668
+(defun hyperbole-default-web-search-term 144,5904
+(defun hyperbole-read-web-search-arguments 151,6226
+(defun hyperbole-web-search 164,6943
+(defun hyperbole-toggle-messaging 192,8370
+(defcustom inhibit-hyperbole-messaging 216,9349
+(defcustom hyperbole-web-search-browser-function 234,10156
+(defcustom hyperbole-web-search-alist239,10357
+(defun hui:but-flash 277,12260
+
+hsmail.el,177
+(defvar smail:comment 31,1017
+(defun smail:comment-add 54,1930
+(defun smail:widen 70,2690
+(defun message--yank-original-internal 76,2977
+(defun mail-yank-original 139,5214
+
+hsys-org.el,1408
+(defun hsys-org-meta-return-shared-p 39,1214
+(defun hsys-org-meta-return 49,1662
+(defcustom hsys-org-enable-smart-keys 57,1924
+(defvar hsys-org-mode-function 84,3425
+(defact org-link 91,3736
+(defact org-internal-target-link 98,3995
+(defact org-radio-target-link 113,4703
+(defun hsys-org-mode-p 133,5546
+(defun hsys-org-cycle 140,5817
+(defun hsys-org-get-value 145,5967
+(defun hsys-org-global-cycle 154,6332
+(defun hsys-org-todo-cycle 159,6507
+(defun hsys-org-todo-set-cycle 164,6659
+(defun hsys-org-todo-occur 170,6865
+(defun hsys-org-region-with-text-property-value 181,7355
+(defun hsys-org-agenda-item-at-p 196,8083
+(defun hsys-org-block-start-at-p 201,8268
+(defun hsys-org-src-block-start-at-p 209,8533
+(defun hsys-org-link-at-p 216,8778
+(defun hsys-org-heading-at-p 245,9936
+(defun hsys-org-target-at-p 251,10161
+(defun hsys-org-todo-at-p 259,10538
+(defun hsys-org-radio-target-link-at-p 265,10756
+(defun hsys-org-radio-target-def-at-p 273,11144
+(defun hsys-org-radio-target-at-p 285,11679
+(defun hsys-org-internal-target-link-at-p 292,12006
+(defun hsys-org-internal-target-def-at-p 300,12406
+(defun hsys-org-internal-target-at-p 312,12936
+(defun hsys-org-face-at-p 319,13274
+(defun hsys-org-search-internal-link-p 328,13636
+(defun hsys-org-search-radio-target-link-p 349,14452
+(defun hsys-org-set-ibut-label 368,15156
+(defun hsys-org-to-next-radio-target-link 377,15486
+
+hsys-www.el,135
+(defib www-url 60,2439
+(defact www-url 89,3601
+(defun www-url-expand-file-name 117,4738
+(defun www-url-find-file-noselect 130,5138
+
+hsys-youtube.el,704
+(defvar hsys-youtube-start-format 51,1786
+(defvar hsys-youtube-end-format 59,2214
+(defun hsys-youtube-get-url 75,2955
+(defun hsys-youtube-get-url:help 92,3889
+(defun hsys-youtube-info 98,4151
+(defun hsys-youtube-search 104,4399
+(defun hsys-youtube-search:help 110,4580
+(defun hsys-youtube-play 116,4814
+(defun hsys-youtube-play:help 125,5330
+(defalias (htype:symbol 132,5635
+(defalias (htype:symbol 134,5716
+(defalias (htype:symbol 136,5797
+(defalias (htype:symbol 138,5880
+(defconst hsys-youtube-url-prefix-regexp 144,6127
+(defun hsys-youtube-end-url 151,6451
+(defun hsys-youtube-start-url 176,7608
+(defun hsys-youtube-time-in-hms 193,8398
+(defun hsys-youtube-time-in-seconds 216,9371
+
+htz.el,628
+(defun htz:date-arpa 39,1419
+(defun htz:date-parse 63,2505
+(defun htz:date-sortable 161,6615
+(defun htz:date-sortable-gmt 188,7744
+(defun htz:date-unix 193,7979
+(defun htz:span-in-days 219,9191
+(defun htz:time-parse 240,10194
+(defun htz:date-make-arpa 268,11258
+(defun htz:date-make-unix 278,11634
+(defun htz:date-make-sortable 285,11959
+(defun htz:last-day-of-month 289,12125
+(defun htz:leap-year-p 295,12325
+(defun htz:time-fix 301,12495
+(defun htz:time-make-string 328,13246
+(defun htz:zone-to-hour 332,13402
+(defvar htz:local354,14116
+(defvar htz:world-timezones372,14804
+(defvar htz:months-assoc400,15770
+
+hycontrol.el,7132
+(defvar hycontrol-debug 140,6738
+(defvar hycontrol-display-buffer-predicate-list143,6843
+(defcustom hycontrol-help-flag 155,7373
+(defcustom hycontrol-invert-mode-line-flag 160,7537
+(defcustom hycontrol-keep-window-flag 165,7713
+(defcustom hycontrol-maximum-units 170,7881
+(defcustom hycontrol-frame-offset 179,8232
+(defvar hycontrol-screen-offset-alist185,8473
+(defcustom hycontrol-screen-top-offset 202,9249
+(defcustom hycontrol-screen-right-offset 208,9521
+(defcustom hycontrol-screen-bottom-offset 214,9796
+(defcustom hycontrol-screen-left-offset 220,10074
+(defvar hycontrol-frame-widths227,10348
+(defvar hycontrol-frame-heights232,10545
+(defvar hycontrol-arg 237,10743
+(defvar hycontrol-frames-mode-map247,11123
+(defvar hycontrol-windows-mode-map355,18653
+(defvar hycontrol--frames-prompt-format462,25674
+(defvar hycontrol--windows-prompt-format472,26522
+(defvar hycontrol--prompt-format 482,27261
+(defvar hycontrol--exit-status 485,27372
+(defvar hycontrol--fconfig 491,27597
+(defvar hycontrol--wconfig 494,27690
+(defvar hycontrol--invert-display-buffer-predicates 498,27785
+(defvar hycontrol--quit-function 501,27844
+(defvar hycontrol--screen-edge-position 506,28002
+(defvar hycontrol--frame-widths-pointer 510,28176
+(defvar hycontrol--frame-heights-pointer 511,28221
+(defvar hycontrol--buffer-list 512,28267
+(defvar hycontrol--buffer-list-pointer 513,28303
+(defvar hycontrol--initial-which-key-inhibit 515,28348
+(defsubst hycontrol-windows-grid-valid-size-p 523,28684
+(defun hycontrol-pre-command-hook 531,28965
+(defun hycontrol-post-command-hook 536,29152
+(defun hycontrol-end-mode 549,29784
+(defun hycontrol-stay-in-mode 569,30471
+(defun hycontrol-invert-prefix-arg 574,30598
+(defun hycontrol-minus-key 581,30866
+(defun hycontrol-multiply-universal-arg 592,31305
+(defun hycontrol-reset-prefix-arg 601,31668
+(defun hycontrol-universal-arg-digit 607,31823
+(defun hycontrol-setup 627,32400
+(defun hycontrol-frames-setup 653,33459
+(defun hycontrol-frames 662,33838
+(defun hycontrol-windows-setup 673,34358
+(defun hycontrol-windows 682,34741
+(defsubst hycontrol-frame-edges 696,35308
+(defsubst hycontrol-frame-x-origin 705,35767
+(defsubst hycontrol-frame-y-origin 712,36129
+(defun hycontrol-frame-height 719,36491
+(defun hycontrol-frame-width 726,36774
+(defconst hycontrol-screen-offset-sensitivity 734,37080
+(defun hycontrol-frame-at-left-p 739,37283
+(defun hycontrol-frame-at-top-p 745,37582
+(defun hycontrol-frame-at-right-p 754,38024
+(defun hycontrol-frame-at-bottom-p 760,38351
+(defun hycontrol-frame-zoom 770,38859
+(defun hycontrol-make-frame 780,39298
+(defun hycontrol-move-frame 789,39786
+(defun hycontrol-numeric-keypad 798,40134
+(defun hycontrol-set-frame-height 809,40675
+(defun hycontrol-set-frame-position 823,41375
+(defun hycontrol-set-frame-size 835,41997
+(defun hycontrol-set-frame-width 850,42715
+(defun hycontrol-display-buffer-predicate-results 867,43505
+(defvar hycontrol--blank-buffer 877,43868
+(defun hycontrol-window-display-buffer 881,44034
+(defun hycontrol-window-display-buffer-with-repeats 910,45474
+(defun hycontrol-message 944,47341
+(defun hycontrol-user-error 949,47521
+(defun hycontrol-enable-frames-mode 963,47965
+(defun hycontrol-enable-windows-mode 975,48482
+(defun hycontrol-disable-modes 987,49029
+(defun hycontrol-abort 995,49292
+(defun hycontrol-quit 1001,49434
+(define-minor-mode hycontrol-local-frames-mode1021,50262
+(define-global-minor-mode hycontrol-frames-mode 1027,50443
+(define-minor-mode hycontrol-local-windows-mode1042,51053
+(define-global-minor-mode hycontrol-windows-mode 1048,51236
+(defun hycontrol-delete-other-frames 1060,51704
+(defun hycontrol-frame-swap-buffers 1066,51918
+(defconst hycontrol--vnk-string1090,52713
+(defun hycontrol-virtual-numeric-keypad 1096,52939
+(defun hycontrol-frame-to-screen-edges 1105,53235
+(defun hycontrol-frame-to-bottom 1122,54073
+(defun hycontrol-frame-to-left 1131,54377
+(defun hycontrol-frame-to-right 1137,54611
+(defun hycontrol-frame-fit-to-screen 1146,54907
+(defun hycontrol-frame-to-top 1177,56955
+(defun hycontrol-frame-to-bottom-center 1183,57186
+(defun hycontrol-frame-to-center 1192,57552
+(defun hycontrol-frame-to-left-center 1201,57840
+(defun hycontrol-frame-to-right-center 1208,58141
+(defun hycontrol-frame-to-top-center 1217,58501
+(defun hycontrol-frame-to-bottom-left 1223,58794
+(defun hycontrol-frame-to-bottom-right 1232,59117
+(defun hycontrol-frame-to-top-left 1243,59506
+(defun hycontrol-frame-to-top-right 1249,59753
+(defun hycontrol-frame-resize-percentage 1259,60090
+(defun hycontrol-frame-resize-arg 1275,60754
+(defun hycontrol-frame-resize-to-bottom 1286,61074
+(defun hycontrol-frame-resize-to-left 1305,61972
+(defun hycontrol-frame-resize-to-right 1324,62875
+(defun hycontrol-frame-resize-to-top 1344,63783
+(defun hycontrol-frame-minimize-lines 1362,64621
+(defun hycontrol-frame-percentage-of-screen 1374,65045
+(defun hycontrol-frame-height-percentage-of-screen 1427,67339
+(defun hycontrol-frame-width-percentage-of-screen 1432,67623
+(defun hycontrol-set-width-percentage-full-height 1439,67933
+(defun hycontrol-set-height-percentage-full-width 1443,68118
+(defun hycontrol-frame-adjust-widths 1448,68320
+(defun hycontrol-frame-adjust-widths-full-height 1465,69124
+(defun hycontrol-frame-adjust-heights 1480,69810
+(defun hycontrol-frame-adjust-heights-full-width 1498,70629
+(defun hycontrol-framemove-direction 1513,71336
+(defun hycontrol-framemove-up 1517,71451
+(defun hycontrol-framemove-left 1522,71593
+(defun hycontrol-framemove-right 1527,71748
+(defun hycontrol-framemove-down 1532,71906
+(defun hycontrol-restore-frame-configuration 1539,72077
+(defun hycontrol-save-frame-configuration 1545,72323
+(defun hycontrol-save-configurations 1551,72565
+(defun hycontrol-invert-mode-line 1559,72724
+(defun hycontrol-windows-grid-marked-items 1569,73142
+(defun hycontrol-windows-grid-buffer-list 1586,73895
+(defun hycontrol-windows-grid 1602,74618
+(defun hycontrol-windows-grid-validate 1661,77366
+(defun hycontrol-windows-grid-number-of-windows 1678,78045
+(defun hycontrol-windows-grid-minimum-size 1694,78697
+(defun hycontrol-windows-grid-by-buffer-list 1708,79396
+(defun hycontrol-windows-grid-by-file-list 1719,79934
+(defun hycontrol-windows-grid-by-file-pattern 1731,80479
+(defun hycontrol-windows-grid-by-major-mode 1763,81917
+(defun hycontrol-windows-grid-repeatedly 1780,82768
+(defun hycontrol-make-windows-grid 1800,83595
+(defun hycontrol-delete-other-windows 1899,87874
+(defun hycontrol-window-maximize-lines 1905,88113
+(defun hycontrol-window-minimize-lines 1910,88275
+(defun hycontrol-window-swap-buffers 1924,88922
+(defun hycontrol-window-to-new-frame 1942,89554
+(defun hycontrol-clone-window-to-new-frame 1970,90727
+(defun hycontrol-restore-window-configuration 1976,90948
+(defun hycontrol-save-window-configuration 1982,91193
+(defun hycontrol-display-screen-offsets 1989,91545
+(defun hycontrol-get-screen-offsets 1998,91902
+(defun hycontrol-set-screen-offsets 2031,93200
+(defun hycontrol-help-key-description 2046,93811
+(defun hycontrol-toggle-help 2050,94004
+
+hui-jmenu.el,1043
+(defun hui-menu-of-buffers 44,1669
+(defun hui-menu-screen-commands 94,3555
+(defun hui-menu-jump-to 99,3760
+(defun hui-menu-jump-to-buffer 108,4015
+(defun hui-menu-jump-to-frame 115,4235
+(defun hui-menu-jump-to-window 121,4426
+(defconst hui-menu-hywconfig126,4605
+(defun hui-menu-buffer-mode-name 144,5396
+(defun hui-menu-frame-name 153,5785
+(defun hui-menu-modeline 157,5884
+(defun hui-menu-to-frame 188,7443
+(defun hui-menu-to-window 192,7546
+(defun hui-menu-sort-buffers 200,7838
+(defun hui-menu-of-frames 224,8817
+(defun hui-menu-of-windows 237,9187
+(defun hui-menu-program-path 251,9618
+(defun hui-menu-window-list-all-frames 268,10176
+(defun    hui-menu-delete-buffer 284,10854
+(defun    hui-menu-delete-buffer-and-window 289,11034
+(defun    hui-menu-delete-frame 295,11262
+(defun    hui-menu-move-window-to-new-frame 300,11442
+(defun hui-menu-server-buffer-p 312,11901
+(defun hui-menu-edit-server-finish 318,12151
+(defvar hui-menu-buffer-and-mode-list-cache 332,12667
+(defvar hui-menu-of-buffers-cache 335,12791
+
+hui-menu.el,637
+(defmacro hui-menu-browser 27,852
+(defun hui-menu-explicit-buttons 70,2380
+(defun hui-menu-cutoff-list 98,3185
+(defun hui-menu-global-buttons 107,3511
+(defun hui-menu-key-binding-item 125,4014
+(defun hui-menu-key-bindings 130,4283
+(defun hui-menu-screen 146,6096
+(defun hui-menu-web-search 157,6393
+(defconst hui-menu-about178,6970
+(defconst hui-menu-options186,7185
+(defvar infodock-hyperbole-menu 274,10692
+(defun hyperbole-menubar-menu 281,10940
+(defun hyperbole-popup-menu 304,11961
+(defun infodock-hyperbole-menu 311,12229
+(defvar hui-menu-max-list-length 473,18468
+(defvar hui-menu-order-explicit-buttons 476,18583
+
+hui-mini.el,1412
+(defvar hui:menu-exit-hyperbole 28,881
+(defvar hui:menu-select 31,1033
+(defvar hui:menu-quit 33,1144
+(defvar hui:menu-abort 35,1265
+(defvar hui:menu-top 37,1353
+(defvar hui:menu-keys 40,1454
+(defvar hui:menu-p 44,1618
+(defvar hui:menus 47,1700
+(defun hyperbole 58,2150
+(defun hyperbole-demo 89,3380
+(defun hyperbole-set-key 96,3616
+(defun hui:menu-hyperbole-prefix 139,5545
+(defun hui:menu-act 143,5730
+(defun hui:get-keys 190,7548
+(defun hui:menu-get-keys 202,7914
+(defun hui:menu-backward-item 230,9002
+(defun hui:menu-doc 254,9882
+(defun hui:menu-exit-hyperbole 272,10772
+(defun hui:menu-enter 278,10947
+(defalias 'hui:menu-quit hui:menu-quit294,11502
+(defalias 'hui:menu-abort hui:menu-abort295,11547
+(defalias 'hui:menu-top hui:menu-top296,11592
+(defalias 'hui:menu-select hui:menu-select297,11637
+(defun hui:menu-forward-item 299,11683
+(defun hui:menu-help 323,12557
+(defun hui:menu-item-key 349,13537
+(defun hui:menu-item-keys 364,14097
+(defun hui:menu-choose 371,14418
+(defun hui:menu-to-personal-section 440,17164
+(defun hui:bottom-window 454,17828
+(defun hui:menu-item 464,18157
+(defun hui:menu-line 507,20165
+(defun hui:menu-multi-line 522,20800
+(defun hui:menu-web-search 548,21668
+(defun hui-search-web 569,22285
+(defvar hui:menu-mode-map 591,23144
+(defun hyperbole-minibuffer-menu 619,24583
+(defcustom hui:menu-to904,40951
+(defcustom hui:doc-a-z943,42454
+
+hui-mouse.el,3064
+(defvar hmouse-set-point-command 61,2277
+(defun action-key-error 64,2375
+(defun assist-key-error 72,2725
+(defcustom action-key-default-function 80,3076
+(defcustom assist-key-default-function 86,3321
+(defcustom action-key-modeline-buffer-id-function 93,3573
+(defcustom action-key-eol-function 100,3886
+(defcustom assist-key-eol-function 107,4121
+(defvar hkey-value 178,7149
+(defvar hkey-alist181,7246
+(defvar hmouse-alist 508,20341
+(defun first-line-p 539,21574
+(defun last-line-p 543,21706
+(defun smart-completion-help 547,21836
+(defun smart-symlink-expand 552,22047
+(defun smart-buffer-menu-no-marks 567,22640
+(defun smart-buffer-menu 580,23112
+(defun smart-buffer-menu-assist 609,24182
+(defun smart-ibuffer-menu-no-marks 637,25276
+(defun smart-ibuffer-menu 650,25751
+(defun smart-ibuffer-menu-assist 677,26762
+(defun smart-custom 707,27935
+(defun smart-custom-assist 728,28780
+(defun smart-calendar 756,29830
+(defun smart-calendar-assist 777,30653
+(defun smart-company-to-definition 806,31856
+(defun smart-company-help 814,32175
+(defun smart-dired-pathname-up-to-point 827,32671
+(defun smart-dired 844,33237
+(defun smart-dired-assist 889,35155
+(defun smart-gnus-group 922,36434
+(defun smart-gnus-group-assist 944,37353
+(defun smart-gnus-summary 966,38331
+(defun smart-gnus-summary-assist 996,39588
+(defun smart-gnus-article 1018,40534
+(defun smart-gnus-article-assist 1041,41538
+(defun smart-helm-at-header 1069,42758
+(defun smart-helm-line-has-action 1078,43099
+(defun smart-helm-alive-p 1096,43884
+(defun smart-helm-resume-helm 1104,44190
+(defun smart-helm-at 1113,44525
+(defun smart-helm-to-minibuffer 1145,45642
+(defun smart-helm(1150,45801
+(defun smart-helm-assist(1201,48050
+(defun smart-hmail 1265,50835
+(defun smart-hmail-assist 1298,52045
+(defun smart-hyrolo 1336,53467
+(defalias 'smart-hyrolo-assist smart-hyrolo-assist1346,53810
+(defun smart-image-dired-thumbnail 1352,54045
+(defun smart-image-dired-thumbnail-assist 1357,54275
+(defun smart-imenu-display-item-where 1367,54731
+(defun smart-imenu-item-at-p 1373,55039
+(defun smart-imenu-item-p 1391,56013
+(defun smart-magit-display-file 1437,58098
+(defun smart-magit 1446,58510
+(defun smart-magit-assist 1471,59494
+(defun smart-magit-tab 1502,60804
+(defun smart-apropos 1536,62271
+(defun smart-apropos-assist 1554,62878
+(defun smart-man-display 1572,63548
+(defun smart-man-entry-ref 1576,63688
+(defun smart-man-c-routine-ref 1618,65206
+(defun smart-man-file-ref 1639,66065
+(defun smart-org 1663,66848
+(defvar smart-outline-cut 1820,72562
+(defun smart-outline-level 1832,72993
+(defun smart-outline 1841,73247
+(defun smart-outline-assist 1879,74624
+(defun smart-outline-to-entry-end 1913,76056
+(defun smart-outline-subtree-hidden-p 1923,76411
+(defun smart-outline-char-invisible-p 1929,76666
+(defun smart-todotxt 1945,77346
+(defun smart-todotxt-assist 1955,77625
+(defun smart-eobp 1966,77921
+(defun smart-eolp 1976,78285
+(defun smart-push-button-help 1989,78872
+(defun smart-tar 2005,79607
+(defun smart-tar-assist 2030,80421
+
+hui-select.el,2783
+(defcustom hui-select-brace-modes118,5600
+(defcustom hui-select-markup-modes124,5843
+(defcustom hui-select-text-modes130,6069
+(defcustom hui-select-indent-modes136,6332
+(defcustom hui-select-ignore-quoted-sexp-modes145,6722
+(defvar hui-select-indent-non-end-regexp-alist152,7041
+(defvar hui-select-indent-end-regexp-alist172,7824
+(defcustom hui-select-char-p 188,8340
+(defcustom hui-select-display-type 193,8488
+(defcustom hui-select-whitespace 198,8634
+(defvar hui-select-previous 203,8775
+(defvar hui-select-prior-point 204,8808
+(defvar hui-select-prior-buffer 205,8844
+(defconst hui-select-syntax-table211,9059
+(defvar hui-select-bigger-alist219,9356
+(defvar hui-select-prior-buffer 247,10449
+(defvar hui-select-prior-point 248,10486
+(defvar hui-select-previous 250,10523
+(defvar hui-select-region 253,10636
+(defvar hui-select-old-region 257,10800
+(defcustom hui-select-syntax-alist260,10907
+(defun hui-select-at-p 288,11834
+(defun hui-select-goto-matching-delimiter 306,12634
+(defun hui-select-initialize 328,13541
+(defun hui-select-get-region-boundaries 394,17945
+(defun hui-select-get-thing 401,18196
+(defun hui-select-thing 408,18477
+(defun hui-select-thing-with-mouse 447,19895
+(defun hui-select-goto-matching-tag 470,20902
+(defun hui-select-and-copy-thing 576,24452
+(defun hui-select-and-kill-thing 584,24724
+(defun hui-select-boundaries 596,24981
+(defun hui-select-double-click-hook 657,27204
+(defun hui-select-syntactical-region 667,27683
+(defun hui-select-at-delimited-thing-p 699,28977
+(defun hui-select-delimited-thing 718,29807
+(defun hui-select-at-delimited-sexp-p 735,30424
+(defun hui-select-mark-delimited-sexp 743,30814
+(defun hui-select-at-blank-line-or-comment 772,31826
+(defun hui-select-back-to-indentation 794,32595
+(defun hui-select-bigger-thing 804,33024
+(defun hui-select-delimited-thing-call 810,33196
+(defun hui-select-region-bigger-p 832,34146
+(defun hui-select-reset 850,34991
+(defun hui-select-set-region 857,35195
+(defun hui-select-string-p 873,35850
+(defun hui-select-brace-def-or-declaration 920,37648
+(defun hui-select-indent-def 1023,41417
+(defun hui-select-symbol 1078,43536
+(defun hui-select-sexp-start 1094,44147
+(defun hui-select-sexp-end 1104,44469
+(defun hui-select-sexp 1113,44761
+(defun hui-select-sexp-up 1123,45070
+(defun hui-select-preprocessor-def 1136,45588
+(defun hui-select-punctuation 1161,46804
+(defun hui-select-comment 1181,47641
+(defun hui-select-word 1256,49937
+(defun hui-select-string 1268,50301
+(defun hui-select-sentence 1289,51031
+(defun hui-select-whitespace 1299,51341
+(defun hui-select-markup-pair 1315,51955
+(defun hui-select-line 1423,55993
+(defun hui-select-paragraph 1433,56336
+(defun hui-select-page 1443,56674
+(defun hui-select-buffer 1451,56928
+
+hui-treemacs.el,72
+(defun smart-treemacs 60,2292
+(defun smart-treemacs-modeline 101,3984
+
+hui-window.el,3322
+(defcustom action-key-minibuffer-function 88,4250
+(defcustom assist-key-minibuffer-function 94,4506
+(defcustom action-key-modeline-function 102,4879
+(defcustom assist-key-modeline-function 107,5069
+(defun hmouse-map-modes-to-form 112,5264
+(defvar hmouse-drag-item-mode-forms123,5683
+(defcustom hmouse-pulse-flag 149,6882
+(defvar hmouse-edge-sensitivity 158,7207
+(defvar hmouse-side-sensitivity 161,7326
+(defvar hmouse-x-drag-sensitivity 165,7492
+(defvar hmouse-y-drag-sensitivity 170,7727
+(defvar hmouse-x-diagonal-sensitivity 175,7950
+(defvar hmouse-y-diagonal-sensitivity 179,8188
+(defun hmouse-alist-add-window-handlers 195,8777
+(defun hmouse-at-item-p 275,12773
+(defun hmouse-context-menu 287,13221
+(defun hmouse-context-ibuffer-menu 306,13853
+(defun hmouse-prior-active-region 325,14493
+(defun hmouse-dired-readin-hook 337,15043
+(define-minor-mode hmouse-dired-display-here-mode342,15241
+(defun hmouse-drag-region-active 362,16277
+(defun hmouse-drag-thing 372,16677
+(defun hmouse-kill-region 426,19363
+(defun hmouse-kill-and-yank-region 439,19999
+(defun hmouse-yank-region 479,21960
+(defun hmouse-drag-between-frames 503,23046
+(defun hmouse-drag-between-windows 516,23646
+(defun hmouse-press-release-same-window 528,24184
+(defun hmouse-drag-outside-all-windows 539,24706
+(defun hmouse-drag-item-to-display 546,25077
+(defun hmouse-drag-same-window 568,25939
+(defun hmouse-drag-diagonally 573,26192
+(defun hmouse-drag-horizontally 605,27697
+(defun hmouse-drag-vertically-within-emacs 633,29127
+(defun hmouse-drag-vertically 662,30623
+(defun hmouse-drag-window-side 670,30985
+(defun hmouse-read-only-toggle-key 689,31930
+(defun hmouse-vertical-action-drag 693,32111
+(defun hmouse-vertical-assist-drag 703,32483
+(defun hmouse-horizontal-action-drag 711,32814
+(defun hmouse-horizontal-assist-drag 723,33248
+(defun smart-coords-in-window-p 731,33584
+(defun smart-point-of-coords 753,34297
+(defun smart-window-of-coords 761,34542
+(defun hmouse-split-window 784,35356
+(defun hmouse-buffer-to-window 792,35617
+(defun hmouse-drag-not-allowed 803,36137
+(defun hmouse-set-buffer-and-point 809,36489
+(defun hmouse-goto-region-prev-point 814,36616
+(defun hmouse-goto-depress-point 824,37066
+(defun hmouse-goto-release-point 830,37412
+(defun hmouse-inactive-minibuffer-p 836,37757
+(defun hmouse-insert-region 844,38123
+(defun hmouse-pulse-buffer 857,38625
+(defun hmouse-pulse-line 862,38822
+(defun hmouse-pulse-region 867,38999
+(defun hmouse-item-to-window 871,39172
+(defun action-key-modeline 930,41781
+(defun assist-key-modeline 965,43497
+(defun hmouse-drag-p 1004,45358
+(defun hmouse-modeline-click 1017,45885
+(defun hmouse-emacs-modeline-event-p 1026,46281
+(defun hmouse-modeline-event-p 1040,47113
+(defun hmouse-modeline-depress 1047,47371
+(defun hmouse-modeline-release 1055,47660
+(defun hmouse-emacs-at-modeline-buffer-id-p 1062,47887
+(defun hmouse-modeline-resize-window 1073,48469
+(defun hmouse-clone-window-to-frame 1089,49067
+(defun hmouse-move-window-to-frame 1094,49244
+(defun hmouse-release-left-edge 1127,50655
+(defun hmouse-release-right-edge 1145,51473
+(defun hmouse-resize-window-side 1158,52020
+(defun hmouse-swap-buffers 1194,53412
+(defun hmouse-swap-windows 1209,54038
+(defun hmouse-x-coord 1237,55130
+(defun hmouse-y-coord 1261,55927
+
+hui.el,2199
+(defcustom hui:hbut-delete-confirm-flag 36,1110
+(defcustom hui:ebut-prompt-for-action 41,1273
+(defun hui-copy-to-register 52,1695
+(defun hui-kill-ring-save 109,4088
+(defun hui:global-bind-key 159,6171
+(defun hui:bind-key 188,7426
+(defun hui:delimited-selectable-thing 218,8709
+(defun hui:delimited-selectable-thing-and-bounds 239,9489
+(defun hui:ebut-act 262,10533
+(defun hui:ebut-create 277,11057
+(defun hui:ebut-delete 309,12401
+(defun hui:ebut-edit-region 334,13529
+(defun hui:ebut-edit 354,14427
+(defun hui:ebut-rename 403,16226
+(defun hui:ebut-search 462,18607
+(defun hui:gbut-create 496,20031
+(defun hui:gbut-delete 538,21744
+(defun hui:gbut-edit 553,22394
+(defun hui:gbut-rename 642,25835
+(defun hui:gibut-create 654,26298
+(defun hui:hbut-act 680,27227
+(defun hui:hbut-current-act 688,27600
+(defun hui:hbut-delete 698,27974
+(defun hui:hbut-help 738,29735
+(defun hui:hbut-label 779,31221
+(defun hui:hbut-label-default 790,31718
+(defun hui:hbut-rename 805,32453
+(defun hui:hbut-report 815,32809
+(defalias 'hui:hbut-summarize hui:hbut-summarize826,33161
+(defun hui:ibut-act 828,33211
+(defun hui:ibut-edit 843,33777
+(defun hui:ibut-label-create 913,36454
+(defun hui:ibut-rename 951,38329
+(defun hui:link 985,39486
+(defun hui:link-directly 989,39646
+(defun hui:action 1056,42246
+(defun hui:actype 1109,43979
+(defun hui:buf-writable-err 1128,44972
+(defvar hui:ignore-buffers-regexp 1148,45835
+(defun hui:ebut-buf 1151,46005
+(defun hui:ebut-delete-op 1176,46767
+(defun hui:ebut-message 1207,48020
+(defun hui:ebut-unmark 1218,48412
+(defun hui:file-find 1278,50853
+(defun hui:hbut-operate 1285,51123
+(defun hui:hbut-term-highlight 1310,52238
+(defun hui:hbut-term-unhighlight 1324,52640
+(defun hui:help-ebut-highlight 1333,52926
+(defun hui:htype-delete 1339,53174
+(defun hui:htype-help 1350,53581
+(defun hui:htype-help-current-window 1401,55349
+(defun hui:ibut-delete-op 1408,55714
+(defun hui:ibut-message 1432,56817
+(defun hui:key-dir 1443,57221
+(defun hui:key-src 1452,57569
+(defun hui:link-create 1461,57940
+(defun hui:link-possible-types 1478,58818
+(defun hui:list-remove-text-properties 1591,63340
+(defvar hui:ebut-label-prev 1601,63730
+
+hvar.el,272
+(defvar var::append-list 32,1047
+(defun var:add-and-run-hook 40,1350
+(defun var:append-all 50,1818
+(defun var:append 58,2099
+(defun var:remove 82,3147
+(defun var:remove-all 96,3836
+(defun var:run-hook-in-matching-buffers 104,4178
+(defvar var::append-list 117,4776
+
+hversion.el,450
+(defconst hyperb:version 27,827
+(defvar hyperb:mouse-buttons30,910
+(defvar hyperb:automount-prefixes38,1199
+(defun hyperb:stack-frame 54,1843
+(defun hyperb:path-being-loaded 94,3383
+(defun hyperb:window-sys-term 121,4324
+(defun hyperb:window-system 143,5342
+(defalias 'id-browse-file id-browse-file163,6252
+(defun id-info 166,6319
+(defun id-info-item 182,6933
+(defalias 'id-tool-quit id-tool-quit210,8180
+(defun id-tool-invoke 213,8250
+
+hvm.el,874
+(defvar vm-edit-message-mode 53,1646
+(defun vm-edit-mode 64,2074
+(defun Vm-init 80,2588
+(defun Vm-msg-hdrs-full 103,3373
+(defun Vm-msg-narrow 114,3710
+(defun Vm-msg-next 121,3921
+(defun Vm-msg-num 123,3975
+(defun Vm-msg-prev 135,4288
+(defun Vm-msg-to-p 137,4346
+(defun Vm-msg-widen 154,4867
+(defun Vm-to 160,5064
+(defun Vm-Summ-delete 164,5199
+(defalias 'Vm-Summ-expunge Vm-Summ-expunge168,5279
+(defalias 'Vm-Summ-goto Vm-Summ-goto170,5336
+(defun Vm-Summ-to 172,5400
+(defun Vm-Summ-undelete-all 176,5536
+(defun Vm-msg-end 184,5833
+(defun vm-show-current-message 197,6294
+(defun vm-scroll-forward-internal 227,7409
+(defun vm-widen-page 265,8531
+(defun vm-edit-message-end 281,9311
+(defun vm-goto-message-at-point 377,13083
+(defun vm-assimilate-new-messages 404,14129
+(defun vm-force-mode-line-update 523,18988
+(defvar Vm-msg-start-regexp 537,19544
+
+hypb.el,2528
+(defconst hypb:help-buf-prefix 26,834
+(defcustom hypb:rgrep-command30,980
+(defun hypb:activate-interaction-log-mode 55,1940
+(defmacro hypb:assert-same-start-and-end-buffer 144,5680
+(defun hypb:call-process-p 161,6482
+(defun hypb:char-count 183,7317
+(defun hypb:chmod 191,7547
+(defun hypb:cmd-key-series 201,7981
+(defun hypb:cmd-key-vector 219,8715
+(defun hypb:installation-type 228,9090
+(defun hypb:configuration 270,11213
+(defun hypb:debug 317,13625
+(defun hypb:decode-url 332,14142
+(defun hypb:def-to-buffer 359,15298
+(defun hypb:devdocs-lookup 375,15889
+(defun hypb:domain-name 382,16116
+(defun hypb:error 412,17374
+(defun hypb:fgrep-git-log 421,17663
+(defun hypb:fgrep-git-log-activate 429,18070
+(define-derived-mode hypb:fgrep-git-log-mode 436,18347
+(defun hypb:file-major-mode 442,18694
+(defun hypb:filter-directories 452,19086
+(defun hypb:format-quote 467,19747
+(defun hypb:get-completion 481,20221
+(defun hypb:get-raw-syntax-descriptor 504,21261
+(defun hypb:glob-to-regexp 509,21480
+(defun hypb:goto-marker 520,21938
+(defun hypb:grep-git-log 538,22579
+(defun hypb:help-buf-name 545,22954
+(defun hypb:helm-apropos 554,23325
+(defun hypb:helm-info 563,23669
+(defun hypb:hkey-help-file 571,23988
+(defun hypb:indirect-function 585,24541
+(defun hypb:insert-region 604,25208
+(defun hypb:locate 621,25979
+(defun hypb:map-plist 653,27362
+(defun hypb:map-vector 659,27581
+(defun hypb:mark-object 672,28067
+(defun hypb:maximize-window-height 682,28456
+(defun hypb:object-p 695,28937
+(defun hypb:readable-directories 702,29187
+(defun hypb:require-package 712,29623
+(defun hypb:remove-lines 725,30217
+(defun hypb:return-process-output 731,30447
+(defun hypb:rgrep 750,31154
+(defun hypb:save-lines 787,32867
+(defmacro hypb:save-selected-window-and-input-focus 793,33095
+(defun hypb:select-window-frame 800,33424
+(defun hypb:set-raw-syntax-descriptor 807,33740
+(defun hypb:straight-package-plist 821,34341
+(defun hypb:string-count-matches 831,34866
+(defun hypb:supercite-p 859,35874
+(defun hypb:toggle-isearch-invisible 873,36325
+(defun hypb:uuid 893,37249
+(defun hypb:user-name 917,37838
+(defun hypb:window-list 923,38063
+(defvar hypb:home-page 934,38635
+(defvar hypb:hyperbole-banner-keymap937,38739
+(defun hypb:display-file-with-logo 946,39055
+(defun hypb:browse-home-page 968,40051
+(defun hypb:insert-hyperbole-banner 978,40376
+(defun hypb:locate-pathnames 1009,41794
+(defun hypb:oct-to-int 1016,42028
+(define-button-type 'hyperbole-banner)hyperbole-banner1033,42616
+
+hyperbole.el,821
+(defconst hyperbole-loading 79,3516
+(defgroup hyperbole 85,3715
+(defgroup hyperbole-buttons 89,3803
+(defgroup hyperbole-commands 93,3924
+(defgroup hyperbole-keys 97,4017
+(defgroup hyperbole-screen 103,4168
+(defgroup hyperbole-koutliner 127,5161
+(defvar hyperbole-mode-map 131,5281
+(defcustom hyperbole-mode-lighter 135,5406
+(define-minor-mode hyperbole-mode142,5628
+(defvar hyperbole--mark-even-if-inactive162,6206
+(defcustom hkey-init 179,6945
+(defun hkey-get-bindings 194,7596
+(defun hkey-global-set-key 200,7828
+(defun hkey-maybe-global-set-key 205,8091
+(defun hkey-maybe-set-key 210,8310
+(defun hkey-set-key 219,8744
+(defun hkey-initialize 238,9472
+(defconst hyperb:cygdrive 448,18706
+(defun hyperb:init 450,18759
+(defun hyperbole--enable-mode 490,20135
+(defun hyperbole--disable-mode 514,21042
+
+hyrolo-demo.el,146
+(defvar hyrolo-demo-save-key 27,780
+(defun hyrolo-demo-fgrep 34,1006
+(defun hyrolo-demo-fgrep-logical 51,1813
+(defun hyrolo-demo-quit 79,3080
+
+hyrolo-logic.el,409
+(defun hyrolo-fgrep-logical 70,2776
+(defun hyrolo-logic 153,6632
+(defun hyrolo-map-logic 184,8105
+(defun hyrolo-map-entries 229,9847
+(defun hyrolo-map-kotl 267,11070
+(defun hyrolo-not 310,12376
+(defun hyrolo-or 324,12862
+(defun hyrolo-xor 340,13383
+(defun hyrolo-and 358,13954
+(defun hyrolo-r-not 375,14509
+(defun hyrolo-r-or 389,14994
+(defun hyrolo-r-xor 405,15514
+(defun hyrolo-r-and 423,16084
+
+hyrolo-menu.el,190
+(defconst infodock-hyrolo-menu27,811
+(defconst hyrolo-menu-common-body50,1943
+(defconst id-popup-hyrolo-menu70,3057
+(defun hyrolo-menubar-menu 91,3925
+(defun hyrolo-popup-menu 100,4320
+
+hyrolo.el,4778
+(defgroup hyperbole-rolo 53,1831
+(defcustom hyrolo-date-format 57,1946
+(defvar hyrolo-display-format-function64,2196
+(defcustom hyrolo-email-format 70,2438
+(defvar hyrolo-entry-name-regexp 77,2726
+(defcustom hyrolo-file-suffix-regexp 80,2890
+(defcustom hyrolo-find-file-function 85,3071
+(defcustom hyrolo-find-file-noselect-function 91,3315
+(defcustom hyrolo-google-contacts-flag 96,3501
+(defvar hyrolo-next-match-function 103,3768
+(defun hyrolo-google-contacts-p 131,5038
+(defun hyrolo-initialize-file-list 145,5584
+(define-obsolete-variable-alias 'rolo-file-list rolo-file-list161,6233
+(defcustom hyrolo-file-list 162,6308
+(defcustom hyrolo-highlight-face 175,6777
+(defcustom hyrolo-kill-buffers-after-use 181,6949
+(defcustom hyrolo-save-buffers-after-use 187,7150
+(defvar hyrolo-yank-reformat-function 196,7466
+(defun hyrolo-add 206,7904
+(defun hyrolo-display-matches 337,13004
+(defun hyrolo-edit 369,14306
+(defun hyrolo-edit-entry 415,16224
+(defun hyrolo-fgrep 437,17202
+(defun hyrolo-find-file 475,19140
+(defun hyrolo-find-file-noselect 491,19784
+(defun hyrolo-forward-visible-line 500,20184
+(defun hyrolo-grep 510,20514
+(defun hyrolo-grep-or-fgrep 588,24165
+(defun hyrolo-hide-subtree 594,24442
+(defun hyrolo-isearch 608,24907
+(defun hyrolo-isearch-regexp 624,25593
+(defun hyrolo-verify 634,25983
+(defun hyrolo-kill 647,26543
+(defun hyrolo-locate 700,28526
+(defun hyrolo-mail-to 705,28703
+(defun hyrolo-next-match 718,29171
+(defun hyrolo-overview 736,29914
+(defun hyrolo-previous-match 752,30565
+(defun hyrolo-prompt 765,31146
+(defun hyrolo-quit 769,31290
+(defun hyrolo-rename 777,31552
+(defun hyrolo-set-display-buffer 804,32671
+(defun hyrolo-sort 811,32883
+(defun hyrolo-sort-level 853,34512
+(defun hyrolo-sort-lines 876,35694
+(defun hyrolo-toggle-datestamps 893,36418
+(defun hyrolo-toggle-narrow-to-entry 908,37147
+(defun hyrolo-top-level 922,37626
+(defun hyrolo-widen 931,37885
+(defun hyrolo-word 937,38071
+(defun hyrolo-yank 963,39391
+(defun hyrolo-bbdb-fgrep 985,40232
+(defun hyrolo-bbdb-grep 992,40488
+(defun hyrolo-bbdb-grep-file 1020,41637
+(defun hyrolo-bbdb-entry-format 1035,42466
+(defun hyrolo-google-contacts-fgrep 1044,42805
+(defun hyrolo-google-contacts-grep 1051,43095
+(defun hyrolo-google-contacts-grep-file 1076,44090
+(defun hyrolo-google-contacts-insert-data 1089,44887
+(defun hyrolo-google-contacts-insert-generic-list 1184,50676
+(defun hyrolo-retrieve-google-contacts 1199,51277
+(defun hyrolo-helm-org-rifle 1223,52350
+(defun hyrolo-helm-org-directory-rifle 1245,53252
+(defun hyrolo-helm-org-rifle-directories 1264,54030
+(defun hyrolo-org 1274,54530
+(defun hyrolo-org-roam 1288,55160
+(defun hyrolo-back-to-visible-point 1311,56151
+(defun hyrolo-backward-same-level 1319,56513
+(defun hyrolo-fgrep-directories 1326,56781
+(defun hyrolo-fgrep-file 1330,56992
+(defun hyrolo-forward-same-level 1344,57704
+(defun hyrolo-grep-directories 1351,57968
+(defun hyrolo-next-regexp-match 1355,58169
+(defun hyrolo-grep-file 1362,58430
+(defun hyrolo-map-level 1447,61758
+(defun hyrolo-map-single-subtree 1484,63536
+(defun hyrolo-mode 1513,64571
+(defun hyrolo-next-visible-heading 1536,65371
+(defun hyrolo-previous-visible-heading 1544,65669
+(defun hyrolo-to 1552,65971
+(defun hyrolo-to-entry-beginning 1604,68079
+(defun hyrolo-to-entry-end 1619,68657
+(defun hyrolo-up-heading 1638,69290
+(defun hyrolo-add-match 1649,69780
+(defun hyrolo-buffer-exists-p 1661,70324
+(defun hyrolo-current-date 1669,70606
+(defun hyrolo-display-to-entry-end 1673,70760
+(defun hyrolo-format-name 1682,71044
+(defun hyrolo-highlight-matches 1689,71358
+(defun hyrolo-isearch-for-regexp 1700,71761
+(defun hyrolo-kill-buffer 1711,72253
+(defun hyrolo-name-and-email 1718,72575
+(defun hyrolo-name-at 1753,73770
+(defun hyrolo-save-buffer 1766,74254
+(defun hyrolo-set-date 1774,74639
+(defun hyrolo-min-matched-level 1793,75358
+(defun hyrolo-search-directories 1801,75656
+(defun hyrolo-show-levels 1808,76013
+(defun hyrolo-shrink-window 1845,77417
+(defun hyrolo-to-buffer 1858,77862
+(defun hyrolo-move-backward 1862,77994
+(defun hyrolo-move-forward 1874,78438
+(defun hyrolo-mode-outline-level 1889,78896
+(define-obsolete-variable-alias 'rolo-display-buffer rolo-display-buffer1910,79770
+(defvar hyrolo-display-buffer 1911,79855
+(defvar hyrolo-entry-group-number 1914,79960
+(defvar hyrolo-entry-trailing-space-group-number 1918,80097
+(define-obsolete-variable-alias 'rolo-entry-regexp rolo-entry-regexp1921,80223
+(defvar hyrolo-entry-regexp 1922,80304
+(defconst hyrolo-hdr-format1941,81142
+(defconst hyrolo-hdr-regexp 1949,81501
+(defconst hyrolo-match-regexp 1954,81712
+(defvar hyrolo--wconfig 1959,81936
+(defvar hyrolo-mode-syntax-table 1962,82029
+(defvar hyrolo-mode-map 1972,82415
+
+hywconfig.el,642
+(define-obsolete-variable-alias 'wconfig-ring-max wconfig-ring-max59,2046
+(defcustom hywconfig-ring-max 60,2125
+(defun hywconfig-add-by-name 73,2633
+(defun hywconfig-delete-by-name 94,3628
+(defun hywconfig-restore-by-name 108,4311
+(defun hywconfig-delete-pop 125,5160
+(defun hywconfig-delete-pop-continue 138,5669
+(defun hywconfig-ring-empty-p 148,6022
+(defun hywconfig-ring-save 153,6190
+(defun hywconfig-yank-pop 164,6618
+(defun hywconfig-yank-pop-continue 181,7260
+(defun hywconfig-get-names 199,7956
+(defun hywconfig-set-names 207,8246
+(defun hywconfig-get-ring 211,8412
+(defun hywconfig-set-window-configuration 219,8703
+
+set.el,574
+(defvar set:equal-op 28,983
+(defun set:member 37,1331
+(defmacro set:add 45,1595
+(defmacro set:remove 53,1901
+(defun set:combinations 71,2580
+(defun set:create 95,3322
+(defalias 'set:delete set:delete104,3627
+(defun set:difference 105,3662
+(defalias 'set:size set:size116,4058
+(defun set:empty 118,4088
+(defun set:equal 122,4156
+(defun set:get 129,4407
+(defun set:intersection 135,4650
+(defun set:is 145,4988
+(defalias 'set:map set:map154,5252
+(defun set:members 156,5281
+(defun set:replace 164,5522
+(defun set:subset 179,6044
+(defun set:union 189,6386
+
+hypb-ert.el,266
+(defun hypb-ert-run-test 35,898
+(defun hypb-ert-run-tests 43,1142
+(defun hypb-ert-get-require-symbols 48,1308
+(defun hypb-ert-require-libraries 54,1555
+(defal hyperbole-run-test 57,1644
+(defal hyperbole-run-tests 58,1692
+(defun hypb-ert-run-all-tests 60,1742
+
+hui-dired-sidebar.el,36
+(defun smart-dired-sidebar 33,1140
+
+hypb-maintenance.el,149
+(defvar hypb:web-repo-location 19,484
+(defconst hypb:hy-news-header22,593
+(defconst hypb:hy-news-footer35,880
+(defun hypb:web-repo-update 43,968
+
+hui-em-but.el,1154
+(defcustom hproperty:but-highlight-flag 38,1081
+(defcustom hproperty:but-emphasize-flag 43,1251
+(defcustom hproperty:but-flash-time 48,1426
+(defcustom hproperty:but-flash-time-seconds 54,1720
+(defface hbut-flash59,1845
+(defcustom hproperty:flash-face 74,2355
+(defcustom hproperty:highlight-face 80,2532
+(defface hbut-face86,2693
+(defcustom hproperty:but-face 94,2983
+(defface hbut-item-face100,3148
+(defcustom hproperty:item-face 115,3673
+(defun hproperty:but-add 130,4188
+(defun hproperty:but-clear 138,4605
+(defun hproperty:but-create 149,4962
+(defun hproperty:but-create-all 163,5613
+(defun hproperty:but-create-on-yank 175,6226
+(defun hproperty:but-delete 182,6466
+(defun hproperty:but-get 190,6765
+(defsubst hproperty:list-cycle 199,7019
+(defconst hproperty:color-list208,7400
+(defvar hproperty:color-ptr 212,7493
+(defconst hproperty:good-colors215,7597
+(defun hproperty:cycle-but-color 230,8215
+(defun hproperty:but-p 242,8649
+(defun hproperty:set-but-face 248,8900
+(defun hproperty:but-flash 252,9025
+(defun hproperty:select-item 273,9787
+(defun hproperty:select-line 284,10196
+(defvar hproperty:item-button 296,10698
+
+hui-register.el,214
+(cl-defstruct hui-register-but29,736
+(defun hui-register-struct-at-point 34,835
+(cl-defmethod register-val-jump-to 51,1479
+(cl-defmethod register-val-describe 60,1862
+(cl-defmethod register-val-insert 67,2180
+
+kotl/kexport.el,856
+(defvar kexport:input-filename 38,1269
+(defvar kexport:output-filename 41,1379
+(defcustom kexport:html-body-attributes44,1490
+(defcustom kexport:html-description51,1721
+(defcustom kexport:html-keywords 58,2004
+(defcustom kexport:label-html-font-attributes65,2223
+(defvar kexport:kcell-reference-regexp72,2428
+(defvar kexport:kcell-partial-reference-regexp75,2518
+(defvar kexport:html-replacement-alist78,2603
+(defconst kexport:font-awesome-css-url122,4390
+(defconst kexport:font-awesome-css-include127,4616
+(defconst kexport:font-awesome-css-include-with-menus167,5134
+(defconst kexport:font-awesome-collapsible-javascript301,7714
+(defun kexport:koutline 334,8724
+(defun kexport:display 348,9327
+(defun kexport:html 362,9921
+(defun kexport:html-file-klink 543,17036
+(defun kexport:html-markup 557,17585
+(defun kexport:html-url 565,17848
+
+kotl/kfile.el,623
+(defconst kfile:version 26,812
+(defvar kfile:escape-newlines 36,1230
+(defun kfile:find 44,1530
+(defun kfile:is-p 68,2299
+(defun kfile:view 85,2788
+(defun kfile:create 104,3487
+(defun kfile:read 160,5595
+(defun kfile:read-v2 186,6614
+(defun kfile:read-v4-or-v3 222,7825
+(defun kfile:update 259,9063
+(defun kfile:write 339,12381
+(defun kfile:build-structure-v2 362,13378
+(defun kfile:insert-attributes-v2 391,14349
+(defun kfile:insert-attributes-v3 416,15322
+(defun kfile:narrow-to-kcells 442,16349
+(defun kfile:print-to-string 462,16993
+(defun kfile:pretty-print 527,19110
+(defun kfile:read-name 534,19483
+
+kotl/kfill.el,762
+(defvar kfill:prefix-table22,621
+(defconst kfill:hanging-expression66,2582
+(defvar prior-fill-prefix 74,2874
+(defun kfill:forward-line 83,3284
+(defun kfill:do-auto-fill 93,3597
+(defun kfill:fill-paragraph 106,3953
+(defun set-fill-prefix 144,5650
+(defun kfill:adapt 173,6869
+(defun kfill:c++-comment 186,7191
+(defun kfill:fallback-fill-paragraph 191,7364
+(defun kfill:hanging-list 223,8564
+(defun kfill:lisp-comment 247,9376
+(defun kfill:negate-string 254,9615
+(defun kfill:normal 270,10083
+(defun kfill:normal-included-text 275,10218
+(defun kfill:postscript-comment 282,10465
+(defun kfill:remove-paragraph-prefix 289,10710
+(defun kfill:replace-string 309,11428
+(defun kfill:sh-comment 344,12491
+(defun kfill:supercite-included-text 351,12734
+
+kotl/kimport.el,784
+(defvar kimport:mode-alist29,859
+(defvar kimport:suffix-alist52,1887
+(defconst kimport:star-heading 70,2820
+(defun kimport:file 79,3164
+(defun kimport:insert-buffer 116,4723
+(defun kimport:insert-file 125,5007
+(defun kimport:insert-file-contents 144,5747
+(defun kimport:insert-register 153,6074
+(defun kimport:aug-post-outline 181,7112
+(defun kimport:star-outline 248,9802
+(defun kimport:text 320,12694
+(defun kimport:count-paragraphs 405,16004
+(defun kimport:aug-label-lessp 429,16945
+(defun kimport:aug-post-statements 437,17226
+(defun kimport:copy-and-set-buffer 493,19358
+(defun kimport:initialize 533,20939
+(defun kimport:kcells 587,23214
+(defun kimport:star-entries 626,24797
+(defun kimport:text-paragraphs 680,26816
+(defun kimport:unindent-region 719,28375
+
+kotl/klabel.el,1805
+(defvar klabel-type:changing-flag 20,561
+(defun klabel:child 31,899
+(defun klabel:idstamp-p 35,1020
+(defun klabel:increment 42,1215
+(defun klabel:format 46,1341
+(defun klabel:level 57,1827
+(defun klabel:parent 71,2331
+(defun klabel-type:child 78,2512
+(defun klabel-type:increment 93,3042
+(defun klabel-type:parent 109,3728
+(defun klabel:child-alpha 140,4711
+(defun klabel:increment-alpha 148,4950
+(defun klabel:level-alpha 156,5262
+(defun klabel:parent-alpha 177,5793
+(defalias 'klabel:child-partial-alpha klabel:child-partial-alpha190,6167
+(defun klabel:increment-partial-alpha 192,6225
+(defun klabel:child-legal 202,6430
+(defun klabel:increment-legal 209,6613
+(defun klabel:level-legal 219,6982
+(defun klabel:parent-legal 233,7324
+(defun klabel-type:function 259,8309
+(defun klabel-type:alpha-label 284,9237
+(defun klabel-type:legal-label 291,9543
+(defun klabel-type:star-label 305,10173
+(defun klabel-type:set-labels 317,10545
+(defun klabel-type:set-alpha 335,11191
+(defun klabel-type:set-id 376,12927
+(defun klabel-type:set-legal 386,13463
+(defun klabel-type:set-no 421,14962
+(defun klabel-type:set-partial-alpha 431,15480
+(defun klabel-type:set-star 471,17132
+(defun klabel-type:update-labels 485,17818
+(defun klabel-type:update-tree-labels 498,18426
+(defun kotl-label:alpha-to-int 517,19203
+(defun kotl-label:alpha-p 529,19565
+(defun kotl-label:child 533,19738
+(defun kotl-label:create 541,19941
+(defun kotl-label:increment 547,20148
+(defun kotl-label:increment-alpha 572,21274
+(defun kotl-label:increment-int 577,21506
+(defun kotl-label:integer-p 582,21693
+(defun kotl-label:int-to-alpha 590,22073
+(defun kotl-label:is-p 612,22768
+(defun klabel:set 622,23046
+(defun klabel:to-kotl-label 640,23706
+(defun klabel-type:update-labels-from-point 647,24061
+
+kotl/klink.el,470
+(defcustom klink:ignore-modes72,2412
+(defcustom klink:c-style-modes78,2660
+(defun klink:absolute 88,3038
+(defun klink:create 103,3785
+(defun klink:at-p 143,5522
+(defun klink:set-yank-handler 206,8250
+(defib klink 221,8843
+(defact link-to-kotl 231,9183
+(defun klink:act 267,10604
+(defun klink:parse 276,10940
+(defun klink:replace-label 307,12050
+(defun klink:update-label 321,12532
+(defun klink:yank-handler 334,13086
+(defvar klink:cell-ref-regexp353,13906
+
+kotl/kmenu.el,236
+(defconst kotl-menu-common-body26,805
+(defconst kotl-menu-common-preamble135,5969
+(defconst kotl-menu-common-postamble147,6449
+(defconst id-popup-kotl-menu167,7277
+(defun kotl-menubar-menu 177,7598
+(defun kotl-popup-menu 186,7998
+
+kotl/kotl-mode.el,9250
+(defvar kotl-mode-map 35,1183
+(defvar kotl-previous-mode 38,1273
+(defcustom kotl-mode:shrink-region-flag 41,1377
+(defcustom kotl-mode:refill-flag 50,1750
+(defcustom kotl-mode:tab-flag 58,2090
+(defcustom kotl-mode:indent-tabs-mode 65,2441
+(defvar yank-window-start 74,2862
+(defvar yank-undo-function 75,2893
+(defun kotl-mode 91,3541
+(defun kotl-mode:example 216,8781
+(defalias 'kotl-mode:backward-delete-char-untabifykotl-mode:backward-delete-char-untabify272,11197
+(defalias 'kotl-mode:backward-delete-charkotl-mode:backward-delete-char274,11283
+(defalias 'kotl-mode:delete-forward-charkotl-mode:delete-forward-char276,11360
+(defalias 'kotl-mode:left-char kotl-mode:left-char278,11427
+(defalias 'kotl-mode:right-char kotl-mode:right-char279,11484
+(defun kotl-mode:backward-kill-word 281,11542
+(defun kotl-mode:backward-or-forward-delete-char 297,12062
+(defun kotl-mode:center-line 305,12477
+(defun kotl-mode:center-paragraph 328,13325
+(defun kotl-mode:copy-kcell-reference-to-register 350,14124
+(defun kotl-mode:copy-absolute-kcell-link-to-kill-ring 365,14778
+(defun kotl-mode:copy-relative-kcell-link-to-kill-ring 372,15061
+(defun kotl-mode:copy-absolute-kcell-link-to-register 378,15298
+(defun kotl-mode:copy-relative-kcell-link-to-register 385,15628
+(defun kotl-mode:copy-region-as-kill 392,15948
+(defun kotl-mode:copy-to-register 397,16131
+(defun kotl-mode:delete-backward-char 410,16595
+(defun kotl-mode:delete-blank-lines 424,17112
+(defun kotl-mode:delete-char 447,17978
+(defun kotl-mode:delete-horizontal-space 511,20222
+(defun kotl-mode:delete-indentation 522,20522
+(defun kotl-mode:skip-filling-p 547,21414
+(defun kotl-mode:fill-cell 562,21895
+(defun kotl-mode:fill-paragraph 618,24175
+(defun kotl-mode:fill-tree 651,25579
+(defun kotl-mode:just-one-space 659,25979
+(defun kotl-mode:kill-line 668,26266
+(defalias 'kotl-mode:kill-visual-line kotl-mode:kill-visual-line701,27391
+(defun kotl-mode:kill-whole-line 703,27452
+(defun kotl-mode:kill-region 709,27615
+(defun kotl-mode:kill-or-copy-region 765,29959
+(defalias 'kotl-mode:completion-kill-region kotl-mode:completion-kill-region800,31137
+(defalias 'kotl-mode:kill-ring-save kotl-mode:kill-ring-save803,31224
+(defun kotl-mode:kill-sentence 805,31293
+(defun kotl-mode:kill-word 821,31795
+(defun kotl-mode:newline 837,32279
+(defalias 'kotl-mode:electric-indent-just-newline kotl-mode:electric-indent-just-newline857,32833
+(defalias 'kotl-mode:electric-newline-and-maybe-indent kotl-mode:electric-newline-and-maybe-indent858,32903
+(defalias 'kotl-mode:newline-and-indent kotl-mode:newline-and-indent859,32978
+(defalias 'kotl-mode:reindent-then-newline-and-indent kotl-mode:reindent-then-newline-and-indent860,33038
+(defun kotl-mode:open-line 862,33113
+(defun kotl-mode:quoted-insert 881,33698
+(defun kotl-mode:set-fill-prefix 920,35311
+(defun kotl-mode:tab-command 926,35538
+(defun kotl-mode:toggle-indent-tabs-mode 941,36157
+(defun kotl-mode:toggle-tab-flag 950,36564
+(defun kotl-mode:transpose-chars 961,37103
+(defun kotl-mode:transpose-lines 974,37792
+(defun kotl-mode:transpose-paragraphs 1025,39720
+(defun kotl-mode:transpose-sentences 1030,39922
+(defun kotl-mode:transpose-words 1035,40113
+(defun kotl-mode:untab-command 1043,40524
+(defun kotl-mode:zap-to-char 1060,41223
+(defun kotl-mode:append-cell 1071,41685
+(defun kotl-mode:clipboard-yank 1096,42730
+(defun kotl-mode:copy-after 1102,42917
+(defun kotl-mode:copy-before 1127,43888
+(defun kotl-mode:move-after 1152,44914
+(defun kotl-mode:move-before 1249,48870
+(defun kotl-mode:yank 1343,52807
+(defun kotl-mode:yank-pop 1378,54302
+(defalias 'kotl-mode:scroll-down-command kotl-mode:scroll-down-command1424,56225
+(defalias 'kotl-mode:scroll-up-command kotl-mode:scroll-up-command1425,56290
+(defun kotl-mode:back-to-indentation 1427,56353
+(defun kotl-mode:backward-cell 1434,56588
+(defun kotl-mode:backward-char 1455,57378
+(defun kotl-mode:backward-paragraph 1476,58016
+(defalias 'kotl-mode:backward-para kotl-mode:backward-para1490,58498
+(defun kotl-mode:backward-sentence 1492,58565
+(defun kotl-mode:backward-word 1521,59600
+(defun kotl-mode:beginning-of-buffer 1540,60118
+(defun kotl-mode:beginning-of-cell 1551,60472
+(defun kotl-mode:beginning-of-line 1564,60927
+(defalias 'kotl-mode:beginning-of-visual-line kotl-mode:beginning-of-visual-line1579,61491
+(defalias 'kotl-mode:move-beginning-of-line kotl-mode:move-beginning-of-line1580,61567
+(defun kotl-mode:beginning-of-tree 1582,61642
+(defun kotl-mode:down-level 1595,62184
+(defun kotl-mode:end-of-buffer 1615,62822
+(defun kotl-mode:end-of-cell 1627,63187
+(defun kotl-mode:to-end-of-line 1643,63850
+(defalias 'kotl-mode:end-of-line kotl-mode:end-of-line1658,64419
+(defalias 'kotl-mode:end-of-visual-line kotl-mode:end-of-visual-line1659,64479
+(defalias 'kotl-mode:move-end-of-line kotl-mode:move-end-of-line1660,64546
+(defun kotl-mode:end-of-tree 1662,64612
+(defun kotl-mode:first-sibling 1685,65602
+(defun kotl-mode:forward-cell 1697,66134
+(defun kotl-mode:forward-char 1712,66722
+(defun kotl-mode:forward-paragraph 1732,67320
+(defalias 'kotl-mode:forward-para kotl-mode:forward-para1755,68143
+(defun kotl-mode:forward-sentence 1757,68208
+(defun kotl-mode:forward-word 1785,69180
+(defun kotl-mode:goto-cell 1808,69929
+(defun kotl-mode:head-cell 1848,71551
+(defun kotl-mode:last-sibling 1859,71925
+(defun kotl-mode:mark-paragraph 1871,72457
+(defun kotl-mode:mark-whole-buffer 1881,72776
+(defun kotl-mode:next-cell 1889,73029
+(defun kotl-mode:next-line 1903,73494
+(defun kotl-mode:next-tree 1928,74376
+(defun kotl-mode:previous-line 1940,74890
+(defun kotl-mode:previous-cell 1964,75753
+(defun kotl-mode:scroll-down 1985,76449
+(defun kotl-mode:scroll-up 1994,76766
+(defun kotl-mode:tail-cell 2003,77073
+(defun kotl-mode:up-level 2015,77466
+(defun kotl-mode:bobp 2041,78418
+(defun kotl-mode:bocp 2048,78638
+(defun kotl-mode:bolp 2061,79072
+(defun kotl-mode:buffer-empty-p 2066,79221
+(defun kotl-mode:eobp 2072,79408
+(defun kotl-mode:eocp 2077,79566
+(defun kotl-mode:eolp 2088,79877
+(defun kotl-mode:first-cell-p 2099,80292
+(defalias 'kotl-mode:first-line-p kotl-mode:first-line-p2103,80434
+(defun kotl-mode:last-cell-p 2105,80484
+(defun kotl-mode:last-line-p 2109,80620
+(defun kotl-mode:action-key 2120,80967
+(defun kotl-mode:assist-key 2162,82863
+(defun kotl-mode:add-child 2203,84748
+(defun kotl-mode:add-parent 2208,84896
+(defun kotl-mode:add-cell 2213,85048
+(defun kotl-mode:demote-tree 2296,88262
+(defun kotl-mode:exchange-cells 2358,90442
+(defun kotl-mode:kill-contents 2436,93287
+(defun kotl-mode:kill-tree 2444,93535
+(defun kotl-mode:move-tree-backward 2472,94547
+(defun kotl-mode:move-tree-forward 2481,94911
+(defun kotl-mode:promote-tree 2505,95869
+(defun kotl-mode:remove-cell-attribute 2549,97373
+(defun kotl-mode:set-cell-attribute 2594,99047
+(defun kotl-mode:set-or-remove-cell-attribute 2652,101314
+(defun kotl-mode:split-cell 2674,102327
+(defun kotl-mode:transpose-cells 2705,103526
+(defun kotl-mode:copy-region-to-buffer 2759,105622
+(defun kotl-mode:copy-tree-to-buffer 2782,106613
+(defun kotl-mode:copy-tree-or-region-to-buffer 2812,107951
+(defun kotl-mode:mail-tree 2825,108454
+(defun kotl-mode:collapse-tree 2852,109396
+(defun kotl-mode:expand-tree 2864,109879
+(defun kotl-mode:toggle-tree-expansion 2878,110426
+(defun kotl-mode:overview 2891,110874
+(defun kotl-mode:show-all 2901,111160
+(defun kotl-mode:top-cells 2915,111650
+(defun kotl-mode:hide-sublevels 2930,112138
+(defun kotl-mode:hide-subtree 2941,112648
+(defun kotl-mode:show-subtree 2958,113280
+(defun kotl-mode:hide-tree 2964,113485
+(defun kotl-mode:show-tree 2984,114212
+(defun kotl-mode:cell-attributes 2989,114365
+(defun kotl-mode:cell-help 3004,114938
+(defun kotl-mode:get-cell-attribute 3051,116711
+(defun kotl-mode:org-delete-backward-char 3077,117781
+(defun kotl-mode:org-delete-char 3087,118282
+(defun kotl-mode:org-force-self-insert 3097,118761
+(defun kotl-mode:orgtbl-ctrl-c-ctrl-c 3103,118941
+(defun kotl-mode:orgtbl-create-or-convert-from-region 3111,119219
+(defun kotl-mode:orgtbl-self-insert-command 3119,119572
+(defun kotl-mode:add-indent-to-region 3132,120102
+(defun kotl-mode:delete-line 3144,120606
+(defun kotl-mode:exchange-point-and-mark 3158,121094
+(defun kotl-mode:indent-line 3164,121372
+(defun kotl-mode:indent-region 3178,121862
+(defun kotl-mode:is-p 3183,121990
+(defun kotl-mode:shrink-region 3190,122218
+(defun kotl-mode:valid-region-p 3209,123094
+(defun kotl-mode:maybe-shrink-region-p 3219,123488
+(defun kotl-mode:tree-end 3244,124474
+(defun kotl-mode:tree-start 3263,125221
+(defun kotl-mode:line-move 3268,125410
+(defun kotl-mode:pre-self-insert-command 3287,126083
+(defun kotl-mode:print-attributes 3299,126685
+(defun kotl-mode:isearch-open-invisible 3318,127434
+(defun kotl-mode:reveal-toggle-invisible 3321,127578
+(defun kotl-mode:set-temp-goal-column 3362,129283
+(defun kotl-mode:to-visible-position 3373,129685
+(defun kotl-mode:to-valid-position 3386,130266
+(defun kotl-mode:transpose-lines-internal 3403,130968
+(defun kotl-mode:update-buffer 3426,131743
+(defun kotl-mode:maintain-region-highlight 3437,132066
+(defun delete-selection-pre-hook 3658,141637
+
+kotl/kotl-orgtbl.el,154
+(defun orgtbl-tab 59,2571
+(defun kotl-mode:transpose-lines-up 70,2976
+(defun kotl-mode:transpose-lines-down 80,3300
+(defun orgtbl-meta-return 85,3382
+
+kotl/kcell.el,692
+(defvar kcell:read-only-attributes38,1471
+(defun kcell:copy 51,1928
+(defun kcell:create 55,2004
+(defun kcell:create-top 65,2331
+(defalias 'kcell:get-attr kcell:get-attr71,2586
+(defun kcell:is-p 73,2625
+(defun kcell:parse-cell-ref 78,2743
+(defun kcell:plist 96,3464
+(defun kcell:ref-to-id 101,3566
+(defun kcell:remove-attr 179,6779
+(defalias 'kcell:set-attr kcell:set-attr199,7260
+(defun kcell:set-create-time 201,7299
+(defun kcell:set-creator 205,7441
+(defun kcell-data:create 213,7674
+(defun kcell-data:idstamp 224,8133
+(defun kcell-data:plist-v2 227,8196
+(defun kcell-data:plist-v3 230,8260
+(defun kcell-data:to-kcell-v2 233,8324
+(defun kcell-data:to-kcell-v3 238,8470
+
+kotl/kproperty.el,602
+(defun kproperty:add-properties 29,926
+(defun kproperty:remove-properties 34,1103
+(defun kproperty:all-positions 39,1289
+(defalias 'kproperty:get kproperty:get46,1637
+(defun kproperty:map 48,1683
+(defalias 'kproperty:next-single-change kproperty:next-single-change64,2314
+(defun kproperty:position 66,2385
+(defalias 'kproperty:previous-single-change kproperty:previous-single-change73,2730
+(defalias 'kproperty:properties kproperty:properties75,2809
+(defun kproperty:put 77,2863
+(defun kproperty:remove 85,3246
+(defun kproperty:replace-separator 103,4072
+(defun kproperty:set 116,4663
+
+kotl/kview.el,3724
+(define-obsolete-variable-alias 'label-sep-len label-sep-len23,689
+(defvar kview-label-sep-len 24,766
+(defcustom kview:default-blank-lines 33,1079
+(defvar kview:default-levels-to-show 40,1321
+(defvar kview:default-lines-to-show 43,1440
+(defcustom kview:default-label-min-width 46,1560
+(defcustom kview:default-label-separator 53,1863
+(defconst kview:outline-regexp 59,2055
+(defcustom kview:default-label-type 62,2235
+(defcustom kview:default-level-indent 76,2816
+(defun kcell-view:backward 91,3322
+(defun kcell-view:cell 119,4295
+(defun kcell-view:cell-from-ref 123,4433
+(defun kcell-view:child 138,5132
+(defun kcell-view:child-p 158,5971
+(defun kcell-view:collapse 168,6361
+(defun kcell-view:collapsed-p 177,6773
+(defun kcell-view:hide 190,7363
+(defun kcell-view:invisible-p 196,7637
+(defun kcell-view:contents 212,8313
+(defun kcell-view:create 232,9060
+(defun kcell-view:end 289,11259
+(defun kcell-view:end-contents 298,11525
+(defun kcell-view:expand 308,11823
+(defun kcell-view:forward 314,12088
+(defun kcell-view:get-attr 342,13093
+(defun kcell-view:idstamp-integer 355,13567
+(defun kcell-view:idstamp 361,13791
+(defun kcell-view:indent 367,14024
+(defun kcell-view:label 377,14440
+(defun kcell-view:level 390,14896
+(defun kcell-view:line 401,15457
+(defun kcell-view:lines-visible 410,15802
+(defun kcell-view:next 420,16257
+(defun kcell-view:next-invisible-p 428,16564
+(defun kcell-view:operate 433,16822
+(defun kcell-view:parent 441,17151
+(defun kcell-view:previous 463,18037
+(defun kcell-view:plist 471,18360
+(defun kcell-view:plist-point 475,18509
+(defun kcell-view:to-label-end 480,18708
+(defun kcell-view:absolute-reference 501,19687
+(defun kcell-view:reference 512,20194
+(defun kcell-view:remove-attr 524,20818
+(defun kcell-view:set-attr 539,21434
+(defun kcell-view:set-cell 555,22111
+(defun kcell-view:sibling-p 562,22349
+(defun kcell-view:start 570,22640
+(defun kcell-view:to-visible-label-end 576,22891
+(defun kcell-view:visible-label 591,23541
+(defun kview:add-cell 604,23977
+(defun kview:beginning-of-actual-line 617,24630
+(defun kview:buffer 622,24813
+(defun kview:char-invisible-p 628,24987
+(defun kview:char-visible-p 637,25309
+(defun kview:create 645,25615
+(defun kview:delete-region 702,27891
+(defun kview:end-of-actual-line 706,28025
+(defun kview:fill-region 711,28196
+(defun kview:first-invisible-point 736,29139
+(defun kview:first-visible-point 752,29865
+(defun kview:get-cells-status 765,30421
+(defun kview:goto-cell-id 786,31327
+(defun kview:id-counter 798,31746
+(defun kview:id-increment 802,31911
+(defun kview:idstamp-to-label 808,32131
+(defun kview:insert-contents 814,32343
+(defun kview:is-p 861,33977
+(defun kview:kotl 866,34082
+(defun kview:label 871,34237
+(defun kview:label-function 876,34459
+(defun kview:label-min-width 883,34826
+(defun kview:label-separator 889,35068
+(defun kview:label-separator-length 895,35310
+(defun kview:label-type 900,35535
+(defun kview:level-indent 906,35757
+(defun kview:map-branch 912,35991
+(defun kview:map-cells 944,37417
+(defun kview:map-region 957,37873
+(defun kview:map-siblings 997,39423
+(defun kview:map-expanded-tree 1031,40831
+(defun kview:map-tree 1089,43246
+(defun kview:move 1127,44938
+(defun kview:previous-visible-point 1199,47372
+(defun kview:set-buffer 1215,48073
+(defun kview:set-cells-status 1224,48368
+(defun kview:set-label-type 1252,49669
+(defun kview:top-cell 1284,50814
+(defun kview:valid-position-p 1289,50987
+(defun kview:get-attr 1314,52006
+(defun kcell-view:next-kcell 1318,52138
+(defun kcell-view:previous-kcell 1331,52748
+(defun kview:set-attr 1350,53675
+(defun kview:set-functions 1361,53997
+(defun kview:set-label-separator 1368,54403
+
+kotl/kvspec.el,700
+(defvar kvspec:current 63,2476
+(defun kvspec:activate 71,2803
+(defun kvspec:initialize 84,3328
+(defun kvspec:levels-to-show 90,3576
+(defun kvspec:show-lines-per-cell 114,4521
+(defun kvspec:toggle-blank-lines 124,4966
+(defun kvspec:update 134,5273
+(defun kvspec:blank-lines 162,6457
+(defun kvspec:compute 180,7086
+(defun kvspec:elide 215,8139
+(defun kvspec:hide-levels 219,8284
+(defun kvspec:lines-to-show 230,8729
+(defun kvspec:numbering 240,9170
+(defun kvspec:show-lines-this-cell 257,9859
+(defun kvspec:update-modeline 269,10433
+(defun kvspec:update-view 282,10968
+(defconst kvspec:label-type-alist328,12130
+(defvar kvspec:string 338,12339
+(defvar kvspec:string-format 343,12545
+
+test/demo-tests.el,2485
+(ert-deftest demo-smart-mouse-keys-ref-test 37,988
+(ert-deftest demo-smart-mouse-keys-ebut-test 49,1352
+(ert-deftest demo-table-of-contents-test 60,1681
+(ert-deftest demo-smart-scrolling-proportional-test 72,2028
+(ert-deftest demo-smart-scrolling-non-proportional-test 87,2512
+(ert-deftest demo-action-key-help 104,3007
+(ert-deftest demo-assist-key-help 114,3335
+(ert-deftest demo-window-grid-22-test 125,3678
+(ert-deftest demo-window-grid-33-test 135,4027
+(ert-deftest demo-hyrolo-test 146,4386
+(ert-deftest demo-hy-info-test 158,4804
+(ert-deftest demo-hy-history-test 168,5077
+(ert-deftest demo-implicit-button-test 186,5626
+(ert-deftest demo-implicit-button-action-button-action-type-invocation-test 195,5918
+(ert-deftest demo-implicit-button-action-button-function-call-test 205,6291
+(ert-deftest demo-implicit-button-action-button-sexp-test 212,6512
+(ert-deftest demo-implicit-button-action-button-boolean-function-call-test 232,7406
+(ert-deftest demo-implicit-button-action-button-variable-display-test 239,7657
+(ert-deftest demo-implicit-button-hash-link-test 246,7909
+(ert-deftest demo-implicit-button-line-and-column-test 256,8325
+(ert-deftest demo-org-hide-header-test 267,8705
+(ert-deftest demo-manifest-test 284,9272
+(ert-deftest demo-mail-compose-test 299,9753
+(defun demo-should-browse-twitter-url 309,10012
+(ert-deftest demo-social-twitter-test 315,10239
+(defun demo-should-browse-github-url 323,10437
+(ert-deftest demo-www-test 329,10662
+(ert-deftest demo-github-user-default-test 338,10936
+(ert-deftest demo-github-ignore-default-test 346,11194
+(ert-deftest demo-occur-test 355,11472
+(ert-deftest demo-annotated-reference-test 369,11980
+(ert-deftest demo-man-appropos-test 382,12396
+(ert-deftest demo-factorial-test 391,12596
+(ert-deftest demo-factorial-ebutton-test 401,12963
+(ert-deftest fast-demo-key-series-help-buffer 413,13349
+(ert-deftest fast-demo-key-series-window-grid-22 424,13732
+(ert-deftest fast-demo-key-series-kotl-files 434,14051
+(ert-deftest fast-demo-key-series-emacs-lisp-mode 449,14595
+(ert-deftest fast-demo-key-series-hyperbole-dir 461,15050
+(ert-deftest fast-demo-key-series-keep-lines-ext 472,15452
+(ert-deftest fast-demo-key-series-keep-lines-slash 493,16308
+(ert-deftest fast-demo-key-series-keep-lines-dired 512,17070
+(ert-deftest fast-demo-key-series-shell-cd-hyperb-dir 531,17806
+(ert-deftest fast-demo-key-series-shell-grep 554,18869
+(ert-deftest fast-demo-key-series-shell-apropos 575,20073
+
+test/hactypes-tests.el,95
+(ert-deftest display-boolean-true-test 25,568
+(ert-deftest display-boolean-false-test 29,720
+
+test/hargs-tests.el,122
+(ert-deftest hargs-get-verify-extension-characters 23,503
+(ert-deftest hargs-get-verify-extension-characters-+K 42,1345
+
+test/hbut-tests.el,737
+(defun hbut-tests:should-match-tmp-folder 25,504
+(ert-deftest ebut-program-link-to-directory 31,802
+(ert-deftest ebut-program-link-to-directory-2 44,1398
+(ert-deftest ebut-program-shell-cmd 54,1904
+(ert-deftest ebut-delete-removes-ebut-and-returns-button-data 64,2326
+(ert-deftest gbut-program-calls-ebut-program 77,2774
+(ert-deftest gbut-program-link-to-directory 88,3290
+(ert-deftest gbut-program-eval-elisp 104,4101
+(ert-deftest gbut-program-link-to-file 117,4707
+(ert-deftest gbut-program-link-to-file-line 130,5335
+(ert-deftest gbut-program-link-to-file-line-and-column 143,5984
+(ert-deftest hypb:program-create-ebut-in-buffer 156,6671
+(ert-deftest hypb:program-create-link-to-file-line-and-column-but-in-file 164,7056
+
+test/hib-kbd-tests.el,95
+(ert-deftest kbd-key-hy-about-test 26,657
+(ert-deftest kbd-key-hy-demo-factorial-test 35,958
+
+test/hib-social-tests.el,252
+(defun hib-social-should-browse-twitter-url 23,512
+(ert-deftest hib-social-twitter-test 28,735
+(defun hib-social-should-browse-github-url 36,962
+(ert-deftest hib-github-user-default-test 41,1186
+(ert-deftest hib-github-ignore-default-test 49,1464
+
+test/hibtypes-tests.el,1254
+(ert-deftest mail-address-at-p-test 31,759
+(ert-deftest mail-address-at-p-no-mail-should-fail-test 37,907
+(ert-deftest ibtypes::mail-address-test 43,1082
+(ert-deftest ibtypes::pathname-test 53,1352
+(ert-deftest ibtypes::pathname-lisp-variable-test 62,1632
+(ert-deftest ibtypes::pathname-env-variable-test 71,1896
+(ert-deftest ibtypes::pathname-emacs-lisp-file-test 83,2278
+(ert-deftest ibtypes::pathname-anchor-test 93,2605
+(ert-deftest ibtypes::pathname-anchor-line-test 104,2945
+(ert-deftest ibtypes::pathname-line-column-test 116,3341
+(ert-deftest ibtypes::pathname-load-path-line-column-test 128,3760
+(ert-deftest ibtypes::pathname-with-dash-loads-file-test 140,4197
+(ert-deftest ibtypes::pathname-dot-slash-in-other-folder-test 149,4540
+(ert-deftest ibtypes::pathname-dot-slash-in-same-folder-test 161,4931
+(ert-deftest ibtypes::pathname-directory-test 172,5366
+(ert-deftest ibtypes::annot-bib-test 191,6031
+(ert-deftest ibtypes::ctags-vgrind-test 215,6728
+(ert-deftest ibtypes::etags-test 229,7278
+(ert-deftest ibtypes::text-toc-test 248,7921
+(ert-deftest ibtypes::dir-summary-test 260,8249
+(ert-deftest ibtypes::rfc-test 279,8729
+(ert-deftest ibtypes::man-apropos-test 289,8990
+(ert-deftest ibtypes::info-node-test 324,9399
+
+test/hmouse-drv-tests.el,2403
+(ert-deftest hbut-defal 26,626
+(defun hbut-defal-url 37,1007
+(ert-deftest hbut-defal-url 42,1218
+(ert-deftest hbut-defal-url-%s 52,1543
+(ert-deftest hbut-defal-key-sequence 63,1906
+(defun hbut-verify-defal 76,2318
+(ert-deftest hbut-defal-function 80,2441
+(ert-deftest hbut-defal-fails-on-file-missing 91,2754
+(ert-deftest hbut-defil-it 105,3223
+(ert-deftest hbut-defil 117,3599
+(ert-deftest hbut-defil-url 127,3918
+(ert-deftest hbut-defil-key-sequence 137,4254
+(ert-deftest hbut-ib-link-to-file-with-label 151,4687
+(ert-deftest hbut-ib-link-to-file-with-label-variants 157,4918
+(ert-deftest hbut-ib-url-with-label 165,5329
+(ert-deftest hbut-ib-create-label 173,5586
+(ert-deftest hbut-ib-create-label-fails-if-label-exists 182,5861
+(ert-deftest hbut-pathname-path-variable-test 195,6330
+(ert-deftest hbut-pathname-path-variable-with-two-colons-a-path-test 202,6565
+(ert-deftest hbut-pathname-path-variable-with-three-colons-is-a-path-test 209,6823
+(ert-deftest hbut-pathname-path-variable-with-short-first-element-is-not-tramp-url-test 216,7147
+(ert-deftest hbut-mail-address-test 224,7460
+(ert-deftest hbut-pathname-test 235,7748
+(ert-deftest hbut-pathname-lisp-variable-test 244,8017
+(ert-deftest hbut-pathname-env-variable-test 253,8270
+(ert-deftest hbut-pathname-emacs-lisp-file-test 264,8598
+(ert-deftest hbut-pathname-anchor-test 275,8950
+(ert-deftest hbut-pathname-anchor-line-test 286,9279
+(ert-deftest hbut-pathname-line-column-test 298,9664
+(ert-deftest hbut-pathname-load-path-line-column-test 310,10056
+(ert-deftest hbut-pathname-with-dash-loads-file-test 322,10479
+(ert-deftest hbut-pathname-directory-test 331,10811
+(ert-deftest hbut-pathname-dot-slash-in-other-folder-should-fail-test 342,11130
+(ert-deftest hbut-annot-bib-test 359,11775
+(ert-deftest hbut-ctags-vgrind-test 374,12261
+(ert-deftest hbut-etags-test 388,12803
+(ert-deftest hbut-text-toc-test 405,13427
+(ert-deftest hbut-dir-summary-test 417,13744
+(ert-deftest hbut-rfc-test 432,14184
+(ert-deftest hbut-man-apropos-test 442,14439
+(ert-deftest hbut-info-node-test 451,14629
+(ert-deftest hbut-find-exec-shell-cmd-test 462,14908
+(ert-deftest hbut-find-exec-window-cmd-test 475,15358
+(ert-deftest hbut-load-modifier-loads-file 487,15787
+(ert-deftest hbut-load-modifier-with-plain-file-loads-file-from-load-path 499,16202
+(ert-deftest hbut-key-press-on-hyphen-in-elisp-symbol 508,16519
+
+test/hmouse-info-tests.el,189
+(ert-deftest hmouse-info-read-index-with-completion 23,513
+(ert-deftest hmouse-info-build-completions-no-match 28,734
+(ert-deftest hmouse-info-build-completions-multiple-matches 37,1040
+
+test/hpath-tests.el,1193
+(defconst hpath--should-exist-paths25,610
+(defconst hpath--should-not-exist-paths50,1429
+(defun hpath--should-exist-p 73,2017
+(defun hpath--should-not-exist-p 82,2251
+(ert-deftest hpath:should-exist-paths 91,2484
+(ert-deftest hpath:should-not-exist-paths 99,2900
+(ert-deftest hpath:find-report-lisp-variable-path-name-when-not-exists 106,3306
+(ert-deftest hpath:path-at-point-in-path-variable-test 112,3612
+(ert-deftest hpath:path-at-point-in-path-variable-shorter-than-three-colons-returns-nil-test 119,3853
+(ert-deftest hpath:find-exec-shell-cmd-test 126,4118
+(ert-deftest hpath:find-exec-window-cmd-test 135,4482
+(ert-deftest hpath:load-modifier-loads-file 144,4844
+(ert-deftest hpath:load-modifier-with-plain-file-loads-file-from-load-path 153,5192
+(ert-deftest hpath:substitute-value-test 159,5454
+(defun hypb-run-shell-test-command 185,7199
+(ert-deftest hpath:prepend-shell-directory-test 192,7420
+(ert-deftest hpath:auto-variable-alist-load-path-test 214,8392
+(defun hpath-tests--insert 223,8797
+(ert-deftest hpath:auto-variable-alist-org-folder-test 227,8971
+(ert-deftest hpath:auto-variable-alist-pythonpath-test 237,9433
+(ert-deftest hpath:remote-at-p 251,10024
+
+test/hsys-org-tests.el,590
+(ert-deftest hsys-org:cycle-on-header-cycles-visibility 23,493
+(ert-deftest hsys-org:region-with-text-property-value 37,969
+(ert-deftest hsys-org:block-start-at-p 48,1310
+(ert-deftest hsys-org:src-block-start-at-p 56,1549
+(ert-deftest hsys-org:org-link-at-p 64,1810
+(ert-deftest hsys-org:org-target-at-p 72,2013
+(ert-deftest hsys-org:org-radio-target-link-at-p 82,2283
+(ert-deftest hsys-org:org-radio-target-def-at-p 93,2629
+(ert-deftest hsys-org:org-radio-target-at-p 103,2960
+(ert-deftest hsys-org:org-internal-target-at-p 113,3289
+(ert-deftest hsys-org:org-face-at-p 122,3583
+
+test/hui-register-tests.el,192
+(ert-deftest hui-register-test--create-register-content 22,481
+(ert-deftest hui-register-test--register-val-jump-to 38,1228
+(ert-deftest hui-register-test--register-val-insert-ebut 77,2661
+
+test/hui-select-tests.el,286
+(ert-deftest hui-select--at-delimited-thing-p 30,766
+(ert-deftest hui-select--delimited-thing 55,1475
+(ert-deftest hui-select--delimited-thing-ending-in-newline 71,1980
+(ert-deftest hui-select--thing 81,2364
+(ert-deftest hui-select--thing-interactive-prints-type-of-match 111,3576
+
+test/hui-tests.el,1863
+(ert-deftest hui-gbut-edit-link-to-file-button 28,662
+(ert-deftest hui-ibut-label-create 79,2865
+(ert-deftest hui-ibut-label-create-fails-if-label-exists 88,3142
+(ert-deftest hui-ebut-create-link-to-directory 101,3612
+(ert-deftest hui-ebut-create-link-to-www-url 113,4145
+(ert-deftest hui-ebut-edit-link-to-www-url-keeping-all-values-should-not-modify-buffer-or-ebut 123,4587
+(ert-deftest hui-ebut-use-region-as-label 138,5459
+(ert-deftest hui-ebut-www-link 152,6038
+(ert-deftest hui-ebut-create-exec-shell-cmd 164,6554
+(ert-deftest hui-ebut-create-link-to-info-index-using-completion 176,7114
+(ert-deftest hui-gibut-create-link-to-file 190,7821
+(ert-deftest hui-gibut-create-link-to-file-line 203,8409
+(ert-deftest hui-gibut-create-link-to-file-line-and-column 216,9034
+(ert-deftest hui-gibut-create-info-node 229,9695
+(ert-deftest hui--delimited-selectable-thing--in-cell-return-ref 243,10358
+(ert-deftest hui--delimited-selectable-thing--in-ibut-return-ibut-text 254,10795
+(ert-deftest hui--delimited-selectable-thing--ibut-label-return-ibut-text 265,11155
+(ert-deftest hui--delimited-selectable-thing--in-ebut-return-ebut-text 276,11563
+(ert-deftest hui--delimited-selectable-thing--start-of-paired-delimiter 287,11974
+(ert-deftest hui--delimited-selectable-thing--in-kcell-link-return-link 299,12411
+(ert-deftest hui--kill-ring-save--yank-in-same-kotl 322,13229
+(ert-deftest hui--kill-ring-save--yank-in-other-kotl 343,13899
+(ert-deftest hui--kill-ring-save--yank-in-other-file 366,14708
+(ert-deftest hui--kill-ring-save--yank-in-other-file-other-dir 389,15503
+(ert-deftest hui--copy-to-register--yank-in-same-kotl 415,16425
+(ert-deftest hui--copy-to-register--yank-in-other-kotl 438,17219
+(ert-deftest hui--copy-to-register--yank-in-other-file 463,18152
+(ert-deftest hui--copy-to-register--yank-in-other-file-other-dir 488,19072
+
+test/hypb-tests.el,49
+(ert-deftest hypb:installation-type-test 24,495
+
+test/hyperbole-tests.el,197
+(defun hyperbole-key-bindings 26,686
+(ert-deftest hyperbole-keymap-tests 52,2091
+(ert-deftest hyperbole-hkey-init-controls-tests 56,2198
+(ert-deftest hyperbole-global-key-binding-tests 60,2319
+
+test/hyrolo-tests.el,570
+(ert-deftest hyrolo-add-items-at-multiple-levels 28,700
+(ert-deftest hyrolo-demo-search-work 44,1279
+(ert-deftest hyrolo-demo-tab-jump-to-first-match 58,1773
+(ert-deftest hyrolo-demo-toggle-visibility 70,2191
+(ert-deftest hyrolo-demo-show-overview 96,3040
+(ert-deftest hyrolo-demo-move-to-beginning-and-end-of-file 122,3894
+(ert-deftest hyrolo-demo-move-between-entries-on-same-level 149,4867
+(ert-deftest hyrolo-demo-no-following-same-level-heading 173,5723
+(ert-deftest hyrolo-sort-test 201,6685
+(ert-deftest hyrolo-sort-records-at-different-levels 232,7829
+
+test/kcell-tests.el,136
+(defconst kcell-tests--ref-to-id-tests28,675
+(defun kcell-tests--check-ref-to-id 68,1605
+(ert-deftest kcell-tests--ref-to-id 78,1958
+
+test/kexport-tests.el,348
+(ert-deftest kexport:html-creates-html-file 23,519
+(ert-deftest kexport:html-sets-title-and-header 40,1089
+(ert-deftest kexport:html-contains-each-cell 61,1910
+(ert-deftest kexport:html-creates-hierarchy 81,2593
+(ert-deftest kexport:display-creates-html-file-and-displays-it 107,3555
+(ert-deftest kexport:koutline-calls-kexport:html 126,4293
+
+test/kotl-mode-tests.el,1704
+(defmacro setup-kotl-mode-example-test 25,640
+(ert-deftest smart-menu-loads-kotl-example 34,968
+(ert-deftest kotl-mode-example-loads-kotl-example 43,1308
+(ert-deftest kotl-mode-move-between-cells 48,1467
+(ert-deftest kotl-mode-indent-cell-changes-level 69,2119
+(ert-deftest kotl-mode-extension-open-buffer-in-kotl-mode 84,2650
+(ert-deftest kotl-mode-set-view-with-kbd 93,2993
+(ert-deftest kotl-mode-idstamp-saved-with-file 107,3567
+(ert-deftest kotl-mode-demote-keeps-idstamp 133,4522
+(ert-deftest kotl-mode-demote-change-label 156,5364
+(ert-deftest kotl-mode-label-type-activation 172,5880
+(ert-deftest kotl-mode-move-cell-before-cell 190,6453
+(ert-deftest kotl-mode-move-cell-after-cell 207,6966
+(ert-deftest kotl-mode-copy-cell-after-cell 224,7475
+(ert-deftest kotl-mode-copy-cell-before-cell 241,7984
+(ert-deftest kotl-mode-jump-to-cell 257,8454
+(ert-deftest kotl-mode-goto-child-and-parent 272,8905
+(ert-deftest kotl-mode-kill-cell 289,9439
+(ert-deftest kotl-mode-split-cell 309,10072
+(ert-deftest kotl-mode-previous-cell-from-invalid-position 324,10602
+(ert-deftest kotl-mode-backward-cell-from-invalid-position 345,11295
+(ert-deftest kotl-mode-backward-cell-from-invalid-pos-leave-point-in-valid-pos 366,11993
+(ert-deftest kotl-mode-transpose-cell 393,13028
+(ert-deftest kotl-mode-transpose-cell-with-mark 412,13636
+(ert-deftest kotl-mode-transpose-cell-past-multiple-cells 435,14397
+(ert-deftest kotl-mode-copy-kotl-file-updates-root-id-attributes 463,15335
+(ert-deftest kotl-mode-hide-cell 481,16148
+(ert-deftest kotl-mode-move-tree-forward 498,16744
+(ert-deftest kotl-mode-move-tree-backward 524,17634
+(ert-deftest kotl-mode--add-cell-set-fill-attribute 549,18516
+
+test/kotl-orgtbl-tests.el,237
+(ert-deftest kotl-orgtbl-enabled-uses-kotl-mode-delete-char-outside-of-table 25,645
+(ert-deftest kotl-orgtbl-action-key-on-vertical-bar-toggles-orgtbl-mode 50,1649
+(ert-deftest kotl-orgtbl-shift-tab-demotes-tree-outside-table 69,2247
+
+test/smart-org-tests.el,851
+(ert-deftest smart-org-mode-on-header-cycles-visibility 27,668
+(ert-deftest smart-org-mode-with-smart-keys-on-delimited-thing-activates 45,1327
+(ert-deftest smart-org-mode-with-smart-keys-on-hypb-button-activates 56,1673
+(ert-deftest smart-org-mode-with-smart-keys-buttons-on-hypb-button-activates 66,2034
+(ert-deftest smart-org-mode-with-smart-keys-on-org-link-activates 76,2406
+(ert-deftest smart-org-mode-with-smart-keys-buttons-on-delimited-thing-calls-org-meta-return 88,2762
+(ert-deftest smart-org-mode-with-smart-keys-buttons-on-org-link-activates 100,3171
+(ert-deftest smart-org-mode-with-no-smart-keys-on-delimited-thing-calls-org-meta-return 112,3553
+(ert-deftest smart-org-mode-with-no-smart-keys-on-hypb-button-calls-org-meta-return 125,3993
+(ert-deftest smart-org-mode-with-no-smart-keys-on-org-link-is-org-meta-return 137,4354
+
+test/hy-test-dependencies.el,48
+(defun hy-test-ensure-package-installed 22,561
+
+test/hy-test-helpers.el,334
+(defun hy-test-helpers:consume-input-events 23,523
+(defun hy-test-helpers:should-last-message 28,744
+(defun hy-test-helpers:action-key-should-call-hpath:find 35,993
+(defun hy-test-helpers:hypb-function-should-call-hpath:find 46,1507
+(defun hy-test-helpers:kill-buffer 55,1924
+(cl-defun hy-test-helpers-verify-hattr-at-p 60,2054

@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    04-Feb-90
-;; Last-Mod:     12-Oct-22 at 23:12:43 by Mats Lidell
+;; Last-Mod:     15-Jan-23 at 17:08:53 by Mats Lidell
 ;;
 ;; Copyright (C) 1989-2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -818,7 +818,9 @@ the given direction."
     ;; ... but if not available, use the Emacs builtin windmove package.
     (eval-and-compile
       (require 'windmove))
-    (windmove-do-window-select direction arg)))
+    (condition-case ()
+	(windmove-swap-states-in-direction direction)
+      (error "(hkey-buffer-move): Invalid movement direction, '%s'" direction))))
 
 ;;; ************************************************************************
 ;;; Public support functions
@@ -862,7 +864,9 @@ frame instead."
      ((and (frame-parameter frame 'drag-with-mode-line)
            (window-at-side-p window 'bottom))
       ;; Drag frame when the window is on the bottom of its frame.
-      (mouse-drag-frame start-event 'move)))))
+      (if (fboundp 'mouse-drag-frame-move) ;; From Emacs 28
+          (mouse-drag-frame-move start-event)
+        (mouse-drag-frame start-event 'move))))))
 
 (defun hkey-debug (pred pred-value hkey-action)
   (message "(HyDebug) %sContext: %s; %s: %s; Buf: %s; Mode: %s; MinibufDepth: %s"

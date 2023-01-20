@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     9-May-91 at 04:50:20
-;; Last-Mod:      7-Oct-22 at 23:52:10 by Mats Lidell
+;; Last-Mod:     16-Oct-22 at 00:30:39 by Mats Lidell
 ;;
 ;; Copyright (C) 1991-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -69,7 +69,7 @@ message.  If not given, `smail:comment' is evaluated by default."
 
 (defun smail:widen ()
   "Widens outgoing mail buffer to include Hyperbole button data."
-  (if (fboundp #'mail+narrow) (mail+narrow) (widen)))
+  (if (fboundp 'mail+narrow) (mail+narrow) (widen)))
 
 ;; Redefine this function from "message.el" to include Hyperbole button
 ;; data when yanking in a message and to highlight buttons if possible.

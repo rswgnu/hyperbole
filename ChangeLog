@@ -1,3 +1,302 @@
+2023-01-15 Mats Lidell  <matsl@gnu.org>
+
+* hsmail.el: Remove #-mark for symbol check.
+
+* hui-mouse.el: Merge public declaration sections.
+
+* hypb.el:
+* hyrolo.el: Declare functions, remove #-mark for symbol checks.
+
+* hsettings.el (hproperty:but-flash): Declare function.
+
+* hmouse-drv.el (mouse-drag-mode-line): Use mouse-drag-frame-move from
+    Emacs 28.
+
+2023-01-08  Bob Weiner  <rsw@gnu.org>
+
+* hmouse-tag.el (xref--item-at-point): Fix this function (still broken
+    in Emacs29) to not error when called on a blank line at the beginning
+    of the buffer.  Was triggering an Action Key error.  Fix for 'unrelated
+    issue' reported in Emacs bug#59903.
+
+2023-01-08  Mats Lidell  <matsl@gnu.org>
+
+* test/hui-tests.el (hui--kill-ring-save-in-kotl-mode-copies-region)
+    (hui--kill-ring-save-in-kotl-mode-between-cells-fails): Add tests for
+    hui-kill-ring-save.
+
+* hui.el (hui-kill-ring-save): Call use kotl-mode:copy-region-as-kill when
+    in kotl-mode.
+
+* man/hyperbole.texi (Implicit Button Types): Remove ibtypes::org-mode
+    from function index.
+
+* FAST-DEMO: (bug#60596) Do not mention 'function-in-buffer', it's removed.
+    (bug#60597) Replace 'org-mode' with 'org-link-outside-org-mode'.
+
+2023-01-07  Bob Weiner  <rsw@gnu.org>
+
+* TAGS: Add to distribution, as is utilized in the Hyperbole DEMO.
+    Remove from .gitignore.  Resolve Emacs bug#60594.
+  Makefile (packageclean): Stop removing TAGS here.
+           (package): Add tags target dependency.
+           (HYPERBOLE_FILES): Add TAGS file.
+
+* hibtypes.el (text-toc):
+  hactypes.el (text-toc): Fix to jump to RFC table of contents sections.
+              (rfc-toc): Simplify and fix display so source window does not move
+    and full list of sections is included in toc.  Resolve Emacs bug#60595.
+
+* man/hyperbole.texi: (git-reference, github-reference, gitlab-reference): Move
+    to Action Types section since now are regular Elisp functions, not ibtypes.
+
+* hargs.el (hargs:read-match): Vary from completing-read a bit by disallowing
+    any blank result when arg, MUST-MATCH, is given (unless INITIAL-INPUT is given
+    as "").  This prevents blank button names, for example.
+  hui.el (hui:htype-help): Send blank INITIAL-INPUT to hargs:read-match call.
+  FAST-DEMO, DEMO: Update text to clarify that action types include Emacs commands.
+
+* man/hyperbole.texi (Explicit Buttons, Action Buttons, Glossary): Expand action
+    type descriptions to include Emacs Lisp commands.
+                     (Action Types): Add newer types that were missing and update
+    some doc strings.
+                     (Smart Key - Org Mode): Update to latest operation.
+
+* hui.el (hui:actype): Limit action type completions to Hyperbole actypes and
+    interactive commands.  Resolve Emacs bug#60469.
+
+2022-12-18  Mats Lidell  <matsl@gnu.org>
+
+* Makefile (ELC_COMPILE, ELC_KOTL): Use function to derive elc files.
+
+2022-12-11  Bob Weiner  <rsw@gnu.org>
+
+* hyperbole.el (hkey-initialize): Fix Emacs bug#59903: handle when C-h is
+    rebound globally to a command rather than as a prefix keymap.
+
+2022-12-03  Bob Weiner  <rsw@gnu.org>
+
+* hyrolo.el (hyrolo-fgrep-directories, hyrolo-grep-directories): Use 'apply'
+    to prevent double nesting of &rest 'dirs'.
+
+* hpath.el (hpath:expand-with-variable): Fix to expand from local dir first
+    before using dirs in hpath:expand-with-variable.
+
+* hibtypes.el (grep-msg): Add support for Ruby traceback stack messages.
+
+* hsys-org.el (hsys-org-src-block-start-at-p): Add.
+  test/hsys-org-tests.el (hsys-org:src-block-start-at-p): Test it.
+
+2022-12-02  Bob Weiner  <rsw@gnu.org>
+
+* man/hyperbole.texi (Implicit Button Types): Update Smart Key Org mode description.
+  hui-mouse.el (smart-org): Add doc for :dir path handling and for removing code
+    block results with the Assist Key.  Also, make the Smart Keys work the same
+    when point is on a #+RESULTS headers as they do when on a code header.
+
+2022-11-27  Bob Weiner  <rsw@gnu.org>
+
+* hmouse-tag.el (smart-tags-org-src-block-p): Add and use in 'smart-tags-file-list'
+    and 'smart-tags-display'.
+
+* hmouse-tag.el (smart-tags-file-list): Add support for Org code blocks.
+
+* hsys-org.el (hsys-org-get-value): Get attribute values from Org contexts.
+
+* hsys-org.el (hsys-org-mode-p): Made an autoload for use by other parts of Hyperbole.
+
+* hyrolo.el (hyrolo-hdr-format): Extend headers to 79 chars for longer file names.
+            (hyrolo-fgrep): Remove outer double quotes if any used to maintain spaces
+    in strings as they are normalized in key series.
+
+* hypb.el (hypb:activate-interaction-log-mode): Fix so creates log buffer
+    if it doesn't exist.
+          (hypb:glob-to-regexp): Add for use with hyrolo directory file filters.
+  hyrolo.el (hyrolo-filter-directories): Use above function.
+
+2022-11-26  Bob Weiner  <rsw@gnu.org>
+
+* hycontrol.el (hycontrol-frames/windows-mode): Define local modes before
+    global modes so keymap lookups work properly and display properly in
+    *Emacs Log* (interaction-log-mode).
+
+* hui-mouse.el (smart-org): Prioritize Hyperbole buttons over the start line
+    of an Org block so can jump to :dir paths in such lines.
+
+* hbut.el (hbut:fill-prefix-regexps, hbut:fill-prefix-remove): Fix so removes
+    full lines of comments rather than just the prefix.
+
+* hsys-org.el (hsys-org-radio-target-def-at-p): Use 'org-radio-target-regexp'.
+              (hsys-org-radio-target-link-at-p): Ensure has radio target
+    help-echo property for better matching.
+              (hsys-org-internal-target-link-at-p,
+               hsys-org-internal-target-def-at-p,
+               hsys-org-internal-target-at-p): Add to handle internal targets
+    just like radio targets.
+              (hsys-org-internal-link-target-at-p): Delete and replace with
+    'hsys-org-internal-target-def-at-p'.
+              (org-internal-link-target): Rename to 'org-internal-target-link'.
+	      (org-radio-target): Rename to 'org-radio-target-link'.
+
+* test/hsys-org-tests.el (hsys-org:org-internal-link-target-at-p): Change
+    to test a regular Org target, not a radio target.
+
+* hui-mouse.el (smart-org): Correct doc to match the context order processed.
+
+* hact.el (htype:symbol): Add as autoload since used in "hsys-youtube.el"
+    autoloads.
+
+2022-11-22  Bob Weiner  <rsw@gnu.org>
+
+* hsys-youtube.el: Add all public functions as autoloads.
+
+2022-11-21  Bob Weiner  <rsw@gnu.org>
+
+* hycontrol.el (framemove, windmove): Conditionally requires these libs
+    when compiling.  Autoload their move among commands bound to I/J/K/M.
+    (hycontrol-framemove-direction, hycontrol-framemove-up,
+     hycontrol-framemove-left, hycontrol-framemove-right,
+     hycontrol-framemove-down): Add to auto install framemove package
+    and move to directional frames.
+    (hycontrol--frames-prompt-format, hycontrol--windows-prompt-format):
+    Add help for new frame/window selection commands.
+  man/hyperbole.texi (HyControl): Add doc for new frame/window selection
+    commands.
+
+* hmouse-drv.el (hkey-buffer-move): Fix to properly move windows (swapping
+    buffers) when builtin windmove library is used.
+
+* hversion.el (id-info-item): Index may point to indented line immediately
+    after the non-indented item definition line. If so, move back a line.
+
+2022-11-20  Bob Weiner  <rsw@gnu.org>
+
+* kotl/kimport.el (kimport:star-outline): Fix to interactively default
+    first arg to current filename and output arg to the same name as
+    input but with ".kotl" suffix.
+                  (kimport:initialize): Add optional 'erase-flag' arg
+    to erase buffer before importing elements.  And use in all kimport
+    commands.
+
+* hactypes.el (text-toc):
+  hibtypes.el (text-toc): Allow TOCs in any derived text mode.
+    Improve efficiency and generalize section prefix.
+
+2022-11-06  Bob Weiner  <rsw@gnu.org>
+
+* hycontrol.el (cl-lib): Add this require for cl-loop.
+               (hycontrol-windows-grid-number-of-windows,
+                hycontrol-windows-grid-valid-size-p): Add.
+               (hycontrol-windows-grid-by-buffer-list,
+                hycontrol-windows-grid-by-file-list): Add first
+    arg grid-size.
+               (hycontrol-make-windows-grid,
+                hycontrol-windows-grid-validate,
+                hycontrol-windows-grid-minimum-size,
+                hycontrol-windows-grid-repeatedly): Add further
+    input checks.
+
+* hywconfig.el (hywconfig-delete-pop-continue,
+                hywconfig-yank-pop-continue): Add and call
+    interactively in "hui-mini.el".
+
+* hhist.el (hhist:remove): Rename to 'hhist:pop'.
+
+* hycontrol.el (hycontrol-windows-grid-by-file-pattern): Fix
+   missing 'pattern' arg in 'format' call.
+
+* hpath.el (hpath:at-p): Ignore anchor matches to '#+' so does
+    not match to Org markup.
+
+2022-11-05  Bob Weiner  <rsw@gnu.org>
+
+* hycontrol.el (hycontrol-windows-grid-by-file-pattern): Update
+    to use prefix arg as grid size or to autosize when not given
+    or given an invalid valude.
+               (hycontrol-windows-grid): Don't nullify prefix arg
+    when calling above function.
+               (hycontrol-make-windows-grid): Move 'hhist:add' call
+    here and remove from 'hycontrol-windows-grid' so it covers all
+    variants of windows-grid display.
+
+* hbdata.el (hbdata:to-entry-buf): Fix bug that set 'rtn' non-nil
+    at times when 'key-src' file was not found.  This could lead
+    to the wrong error, 'hui:ebut-delete', saying that you cannot
+    delete buttons in this buffer.
+
+2022-10-31  Bob Weiner  <rsw@gnu.org>
+
+* kotl/kimport.el (kimport:star-heading): Allow for indented headings.
+
+2022-10-30  Bob Weiner  <rsw@gnu.org>
+
+* hypb.el (hypb:activate-interaction-log-mode): Add to configure and
+    enable the interaction-log package for use with Hyperbole.  It
+    displays a font-locked log of Emacs keys and commands executed.
+
+* hui-mini.el (hui:menu-enter): For character input, set 'this-command'
+    to 'self-insert-command'.
+              (hui:menu-mode-map): Rebound these keys to commands by
+    the same name: 'hui:menu-abort', 'hui:menu-quit', 'hui-menu-select',
+    and 'hui:menu-top'.
+              (hui:menu-select): Rename this function to 'hui:menu-choose'
+    to avoid conflict with aliasing above and ensure all the special keys
+    above are displayed in cmd logs.
+
+* hui-mini.el (hui:hypb-exit): Rename to 'hui:menu-exit-hyperbole'.
+
+* hui-mini.el (hui:menu-select): Don't record 'read-from-minibuffer'
+    in command history.
+              (hui:menu-act): Set 'this-command' and command keys to
+    be the full key sequence for a Hyperbole minibuffer menu command.
+    Ensure this single command appears in history for clean logging.
+
+2022-10-27  Bob Weiner  <rsw@gnu.org>
+
+* hui-mini.el (hui:menu-item-key): Add and call from 'hui:menu-item-keys'.
+
+* hib-kbd.el (kbd-key:key-series-to-events): Add cons of t to each
+    event to ensure each event is added to this-command-keys.
+
+2022-10-25  Bob Weiner  <rsw@gnu.org>
+
+* hyrolo.el (hyrolo-backward-same-level):      Add and bind to {b}.
+	    (hyrolo-forward-same-level):       Add and find to {f}.
+            (hyrolo-next-visible-heading):     Add and bind to {n}.
+            (hyrolo-previous-visible-heading): Add and bind to {p}.
+	    (hyrolo-up-heading):               Add and bind to {u}.
+	    (hyrolo-helm-org-directory-rifle, hyrolo-helm-org-rifle):
+    Let new variable, 'helm-org-rifle-show-level-stars', be t.
+
+2022-10-24  Bob Weiner  <rsw@gnu.org>
+
+* hui-mouse.el (smart-outline-assist, smart-outline,
+    (smart-outline-to-entry-end): Remove 2nd arg 'curr-entry-level'
+    and simplify logic.
+
+* hyrolo.el, hyrolo-logic.el: Remove 'next-entry-exists' and
+    'previous-entry-exists'.
+
+* test/hyrolo-tests.el (hyrolo-demo-move-to-beginning-and-end-of-file):
+    Rewrite to match new {,} and {.} bindings.
+
+* hyrolo.el (hyrolo-to-entry-end): Remove 2nd optional arg
+    curr-entry-level-len.
+
+2022-10-23  Bob Weiner  <rsw@gnu.org>
+
+* man/hyperbole.texi (HyRolo Keys):
+  hyrolo.el (hyrolo-to-entry-end): Make interactive and bind to {.}.
+            (hyrolo-to-entry-beginning): Add and bind to {,}.
+   Previously, these keys were bound to begin and end of buffer but
+   were mistakenly reversed.  Also, simplify these two commands.
+            (previous-entry-exists): Add this free variable and use
+   in 'hyrolo-to-entry-beginning'.
+
+* hbut.el (hbut:get-key-src): Add save-excursion so point does not move.
+  hyrolo.el (hyrolo-edit-entry): Fix so if point is not on an entry
+    (src is a buffer, not a string), then raise an error.
+
 2022-10-20  Mats Lidell  <matsl@gnu.org>
 
 * hload-path.el (hyperb:dir): Use defvar. Thanks to Stefan Monnier.
@@ -982,7 +1281,7 @@
 * Makefile (website-local): Add dependency on README.md.html.
 
 ==============================================================================
-V8.0.1 changes ^^^^:
+V9.0.0 changes ^^^^:
 ==============================================================================
 
 * Update release number to 8.0.0.

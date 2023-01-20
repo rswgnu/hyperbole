@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     1-Nov-91 at 00:44:23
-;; Last-Mod:     13-Oct-22 at 21:54:38 by Mats Lidell
+;; Last-Mod:      3-Dec-22 at 02:20:47 by Bob Weiner
 ;;
 ;; Copyright (C) 1991-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -70,7 +70,7 @@ Path, line number and column are colon separated.
 Group 1 is the line number.  Group 3 is the column number.")
 
 (defconst hpath:markup-link-anchor-regexp
-  "\\`\\(#?[^#]*[^#.]\\)?\\(#\\)\\([^\]\[#^{}<>\"`'\\\n\t\f\r]*\\)"
+  "\\`\\(#?[^#+]*[^#+.]\\)?\\(#\\)\\([^\]\[#+^{}<>\"`'\\\n\t\f\r]*\\)"
   "Regexp matching a filename followed by a hash (#) and an optional anchor name.
 The anchor is an in-file reference.
 # is group 2.  Group 3 is the anchor name.")
@@ -1027,9 +1027,9 @@ Make any existing path within a file buffer absolute before returning."
 			;; ignore HTML color strings
 			(not (string-match "\\`#[0-9A-Fa-f][0-9A-Fa-f][0-9A-Fa-f][0-9A-Fa-f][0-9A-Fa-f][0-9A-Fa-f]\\'" path))
 			;; match to in-file #anchor references
-			(string-match "\\`#[^\'\"<>#]+\\'" path))
+			(string-match "\\`#[^+\'\"<>#]+\\'" path))
 		   (setq path (concat mode-prefix buffer-file-name path)))
-		  ((string-match "\\`\\([^#]+\\)\\(#[^#]*\\)\\'" path)
+		  ((string-match "\\`\\([^#]+\\)\\(#[^#+]*\\)\\'" path)
 		   ;; file and #anchor reference
 		   (setq suffix (match-string 2 path)
 			 path (match-string 1 path))
@@ -1213,7 +1213,7 @@ PATH unchanged."
 	    ;; For compressed Elisp libraries, add any found compressed suffix to the path.
 	    ((string-match-p "\\.el\\(\\.\\|\\'\\)" substituted-path)
 	     (or (locate-library substituted-path t) path))
-	    ((or (string-match-p "\\`\\(#\\|([^\)\\/]+)\\|[^.\\/].*\\.[^.\\/]\\)" substituted-path)
+	    ((or (string-match-p "\\`\\(#[^#+.]\\|([^\)\\/]+)\\|[^.\\/].*\\.[^.\\/]\\)" substituted-path)
 		 (string-match-p "[\\/~]" substituted-path))
 	     ;; Don't expand if an Info path, URL, #anchor or has a directory prefix
 	     substituted-path)
@@ -1258,9 +1258,9 @@ it, else return nil."
 
 (defun hpath:expand-with-variable (path)
   "Prepend to relative PATH the ${load var name} from `hpath:auto-variable-alist'.
-When PATH is relative, prepend to it the first file matching regexp in
-`hpath:auto-variable-alist' sans any compression suffix in
-`hpath:compressed-suffix-regexp'.
+When PATH is relative, try to expand in local directory first.  If that fails,
+prepend to it the first file matching regexp in `hpath:auto-variable-alist' sans
+any compression suffix in `hpath:compressed-suffix-regexp'.
 If PATH is absolute, return it unchanged."
   (when (stringp path)
     (let ((auto-variable-alist hpath:auto-variable-alist)
@@ -1270,24 +1270,28 @@ If PATH is absolute, return it unchanged."
 	  regexp
 	  variable
 	  variable-name)
-      (unless (or (file-name-absolute-p path)
-		  (hpath:url-p path)
-		  (string-match-p hpath:variable-regexp path))
-	(while auto-variable-alist
-	  (setq regexp (caar auto-variable-alist)
-		variable (cdar auto-variable-alist)
-		auto-variable-alist (cdr auto-variable-alist)
-		variable-name (if (and variable (symbolp variable))
-				  (symbol-name variable)
-				variable))
-	  (when (and path variable (string-match regexp path))
-	    (when (and (not (string-match (regexp-quote variable-name) path))
-		       (or (and (stringp variable) (getenv variable))
-			   (and (symbolp variable) (boundp variable))))
-	      (when (string-match "\\`\\.[\\/]" path)
-		(setq path (substring path (match-end 0))))
-	      (setq path (format "${%s}/%s" variable path)))
-	    (setq auto-variable-alist nil))))
+      (if (file-exists-p path)
+	  ;; Path is either absolute or relative to current directory
+	  ;; so don't expand into hpath:auto-variable-alist paths.
+	  (setq path (expand-file-name path))
+	(unless (or (file-name-absolute-p path)
+		    (hpath:url-p path)
+		    (string-match-p hpath:variable-regexp path))
+	  (while auto-variable-alist
+	    (setq regexp (caar auto-variable-alist)
+		  variable (cdar auto-variable-alist)
+		  auto-variable-alist (cdr auto-variable-alist)
+		  variable-name (if (and variable (symbolp variable))
+				    (symbol-name variable)
+				  variable))
+	    (when (and path variable (string-match regexp path))
+	      (when (and (not (string-match (regexp-quote variable-name) path))
+			 (or (and (stringp variable) (getenv variable))
+			     (and (symbolp variable) (boundp variable))))
+		(when (string-match "\\`\\.[\\/]" path)
+		  (setq path (substring path (match-end 0))))
+		(setq path (format "${%s}/%s" variable path)))
+	      (setq auto-variable-alist nil)))))
       (concat path compression-suffix))))
 
 (defun hpath:file-line-and-column (path-line-and-col)

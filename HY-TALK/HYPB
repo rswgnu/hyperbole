@@ -3,6 +3,24 @@
 
   Install:    <unless (featurep 'org-present) (package-install 'org-present)>
 
+(defun rsw-org-present-setup (buffer-name heading)
+  ;; Don't hide headline stars
+  (setq org-present-hide-stars-in-headings nil
+        ;; org-present-startup-folded nil
+	org-hide-emphasis-markers nil)
+
+  ;; Show only top-level headlines
+  (org-overview)
+
+  ;; Unfold the current entry
+  (org-show-entry)
+
+  ;; Show only direct subheadings of the slide but don't expand them
+  (org-show-children))
+
+(add-hook 'org-present-after-navigate-functions 'rsw-org-present-setup)
+
+
 * Enable all Hyperbole keys including {M-RET} in Org mode
 
   <setq hsys-org-enable-smart-keys t>
@@ -19,9 +37,19 @@ or interactively after loading Hyperbole:
 
 * Keystroke Display
 
-** Keypression - overlaying parts of buffer (shows trail of keys)
+** interaction-log Package - font-lock highlighted log of keys and commands
+   Used for EmacsConf 2022
 
-  Install:    <unless (featurep 'keypression) (package-install 'keypression)>
+  Install,
+  Load,
+  Configure,
+  Activate:   <hypb:activate-interaction-log-mode>
+  Deactivate: <interaction-log-mode 0>
+
+** ALTERNATIVE: Keypression - overlaying parts of buffer (shows trail of keys)
+   Used for EmacsNYC talk
+
+  Install:    <unless (package-installed-p 'keypression) (package-install 'keypression)>
   Activate:   <keypression-mode 1>
   Deactivate: <keypression-mode 0>
 
@@ -33,6 +61,10 @@ or interactively after loading Hyperbole:
 	  keypression-cast-command-name-format "%s  %s"
 	  keypression-combine-same-keystrokes t
 	  keypression-font-face-attribute '(:width normal :height 200 :weight bold)>
+
+* Frame layout
+
+  <burly-open-bookmark "hyperorg">
 
 
 * Pathname Prefixes
@@ -54,8 +86,7 @@ Emacs Yank Bug: bug#5320
 <[Bufs]> {C-x C-b}
 
 <[iPython src]>: "/usr/local/Cellar/ipython/7.16.1/libexec/lib/python3.8/site-packages/IPython/"
-
-{C-x 4 t} - Goto <(Hyperbole Todos)>
+- Goto <(Hyperbole Todos)>
 
 <[ib]>   "(hyperbole)Implicit Buttons"
 <[frm]>  "(hyperbole)C-h h s f"
