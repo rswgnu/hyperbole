@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     6-Oct-91 at 03:42:38
-;; Last-Mod:     10-Dec-22 at 00:52:04 by Mats Lidell
+;; Last-Mod:     21-Jan-23 at 00:38:07 by Mats Lidell
 ;;
 ;; Copyright (C) 1991-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -50,6 +50,28 @@ It must end with a space."
 (declare-function helm-info "ext:helm")
 (declare-function helm-apropos "ext:helm")
 (declare-function devdocs-lookup "ext:devdocs")
+
+;; interaction-log
+(defvar ilog-buffer-name)
+(defvar ilog-display-state)
+(defvar ilog-idle-time)
+(defvar ilog-insertion-timer)
+(defvar ilog-print-lambdas)
+(defvar ilog-self-insert-command-regexps)
+(defvar ilog-truncation-timer)
+(defvar interaction-log-mode)
+(defvar interaction-log-mode-hook)
+
+(declare-function ilog-note-buffer-change "ext:interaction-log")
+(declare-function ilog-post-command "ext:interaction-log")
+(declare-function ilog-record-this-command "ext:interaction-log")
+(declare-function ilog-show-in-other-frame "ext:interaction-log")
+(declare-function ilog-timer-function "ext:interaction-log")
+(declare-function ilog-toggle-view "ext:interaction-log")
+(declare-function ilog-truncate-log-buffer "ext:interaction-log")
+(declare-function interaction-log-mode "ext:interaction-log")
+
+(declare-function pushnew "ext:???") ;; FIXME - Unknown function
 
 ;;; ************************************************************************
 ;;; Public functions
@@ -99,8 +121,7 @@ This displays a clean log of Emacs keys used and commands executed."
 	  (setq ilog-truncation-timer (run-at-time 30 30 #'ilog-truncate-log-buffer))
 	  (setq ilog-insertion-timer (run-with-timer ilog-idle-time ilog-idle-time
 						     #'ilog-timer-function))
-	  (message "Interaction Log: started logging in %s" ilog-buffer-name)
-	  (easy-menu-add ilog-minor-mode-menu))
+	  (message "Interaction Log: started logging in %s" ilog-buffer-name))
       (remove-hook 'after-change-functions #'ilog-note-buffer-change)
       (remove-hook 'post-command-hook      #'ilog-record-this-command)
       (remove-hook 'post-command-hook      #'ilog-post-command)
