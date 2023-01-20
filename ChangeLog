@@ -1,3 +1,7 @@
+2023-01-20  Mats Lidell  <matsl@gnu.org>
+
+* Remove docstring warnings.
+
 2023-01-15 Mats Lidell  <matsl@gnu.org>
 
 * hsmail.el: Remove #-mark for symbol check.
