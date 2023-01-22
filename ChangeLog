@@ -2,6 +2,7 @@
 
 * hypb.el: Add variable and function declarations for package
     interaction-log to silence byte compilation warnings.
+    (hypb:activate-interaction-log-mode): Use cl-pushnew.
 
 2023-01-20  Mats Lidell  <matsl@gnu.org>
 

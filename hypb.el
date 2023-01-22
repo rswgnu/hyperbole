@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     6-Oct-91 at 03:42:38
-;; Last-Mod:     21-Jan-23 at 00:38:07 by Mats Lidell
+;; Last-Mod:     22-Jan-23 at 16:57:36 by Mats Lidell
 ;;
 ;; Copyright (C) 1991-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -17,7 +17,7 @@
 ;;; Other required Elisp libraries
 ;;; ************************************************************************
 
-(eval-and-compile (mapc #'require '(compile hversion hact locate)))
+(eval-and-compile (mapc #'require '(compile hversion hact locate cl-lib)))
 
 ;;; ************************************************************************
 ;;; Public variables
@@ -71,8 +71,6 @@ It must end with a space."
 (declare-function ilog-truncate-log-buffer "ext:interaction-log")
 (declare-function interaction-log-mode "ext:interaction-log")
 
-(declare-function pushnew "ext:???") ;; FIXME - Unknown function
-
 ;;; ************************************************************************
 ;;; Public functions
 ;;; ************************************************************************
@@ -100,7 +98,7 @@ This displays a clean log of Emacs keys used and commands executed."
   (setq ilog-print-lambdas 'not-compiled)
 
   ;; Omit display of some lower-level Hyperbole commands for cleaner logs
-  (mapc (lambda (cmd-str) (pushnew (format "^%s$" cmd-str) ilog-self-insert-command-regexps))
+  (mapc (lambda (cmd-str) (cl-pushnew (format "^%s$" cmd-str) ilog-self-insert-command-regexps))
         '("hyperbole" "hui:menu-enter"))
 
   ;; Redefine the mode to display commands on post-command-hook rather
