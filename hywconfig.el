@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    15-Mar-89
-;; Last-Mod:      6-Nov-22 at 13:04:26 by Bob Weiner
+;; Last-Mod:     20-Jan-23 at 22:20:55 by Mats Lidell
 ;;
 ;; Copyright (C) 1989-2022  Free Software Foundation, Inc.
 ;; See the "../HY-COPY" file for license information.
@@ -136,9 +136,9 @@ Then deletes this new configuration from the ring."
 
 ;;;###autoload
 (defun hywconfig-delete-pop-continue ()
-  "Replace the current frame's window configuration with the most recently saved.
-Delete this new configuration from the ring.  If the hywconfig ring is not empty,
-then stay in the hywconfig menu."
+  "Replace current frame's window configuration with the most recently saved.
+Delete this new configuration from the ring.  If the hywconfig
+ring is not empty, then stay in the hywconfig menu."
   (interactive)
   (hywconfig-delete-pop)
   (unless (hywconfig-ring-empty-p)

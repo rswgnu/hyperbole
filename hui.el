@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 21:42:03
-;; Last-Mod:      8-Jan-23 at 10:22:39 by Mats Lidell
+;; Last-Mod:     20-Jan-23 at 23:16:41 by Mats Lidell
 ;;
 ;; Copyright (C) 1991-2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -781,7 +781,7 @@ BUT defaults to the button whose label point is within."
 
 (defun hui:hbut-label (default-label func-name &optional prompt)
   "Read button label from user using DEFAULT-LABEL and caller's FUNC-NAME.
-Optional PROMPT string replaces the standard prompt of 'Button label: '."
+Optional PROMPT string replaces the standard prompt of `Button label: '."
   (hargs:read (if (stringp prompt) prompt "Button label: ")
 	      (lambda (lbl)
 		(and (not (string-equal lbl "")) (<= (length lbl) (hbut:max-len))))

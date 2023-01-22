@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     2-Apr-91
-;; Last-Mod:      5-Nov-22 at 14:24:56 by Bob Weiner
+;; Last-Mod:     20-Jan-23 at 23:17:59 by Mats Lidell
 ;;
 ;; Copyright (C) 1991-2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -100,8 +100,8 @@
   (car hbdata))
 
 (defun hbdata:loc-p (hbdata)
-  "[Hyp V1] Return 'L iff HBDATA referent is within a local file system.
-Return 'R if remote and nil if irrelevant for button action type."
+  "[Hyp V1] Return \\='L iff HBDATA referent is within a local file system.
+Return \\='R if remote and nil if irrelevant for button action type."
   (nth 1 hbdata))
 
 (defun hbdata:modifier (hbdata)
