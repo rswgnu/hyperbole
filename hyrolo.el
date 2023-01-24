@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     7-Jun-89 at 22:08:29
-;; Last-Mod:     27-Nov-22 at 23:45:24 by Bob Weiner
+;; Last-Mod:     15-Jan-23 at 16:55:37 by Mats Lidell
 ;;
 ;; Copyright (C) 1991-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -45,6 +45,10 @@
 (defvar org-roam-directory)
 (defvar org-roam-db-autosync-mode)
 (defvar markdown-regex-header)
+(declare-function org-roam-db-autosync-mode "ext:org-roam")
+(declare-function helm-org-rifle-show-full-contents "ext:helm-org-rifle")
+(declare-function helm-org-rifle-org-directory "ext:helm-org-rifle")
+(declare-function helm-org-rifle-files "ext:helm-org-rifle")
 
 ;;; ************************************************************************
 ;;; Public variables
@@ -304,7 +308,7 @@ entry which begins with the parent string."
 						      (save-excursion
 							(re-search-forward hyrolo-entry-name-regexp nil t)
 							(point))))
-	  (when (and (eq major-mode #'markdown-mode)
+	  (when (and (eq major-mode 'markdown-mode)
 		     (string-match "\\`.*#+" entry-spc))
 	    (setq entry-spc (substring entry-spc (length (match-string 0 entry-spc)))))
 	  (cond ((string-lessp entry name)
@@ -1291,7 +1295,7 @@ OPTIONAL prefix arg, MAX-MATCHES, limits the number of matches
 returned to the number given."
   (interactive "sFind Org Roam directory string (or logical sexpression): \nP")
   (unless (package-installed-p 'org-roam)
-    (package-install #'org-roam))
+    (package-install 'org-roam))
   (require 'org-roam)
   (unless (file-readable-p org-roam-directory)
     (make-directory org-roam-directory))
@@ -1325,7 +1329,7 @@ Stop at the first and last subheadings of a superior heading."
 ;;;###autoload
 (defun hyrolo-fgrep-directories (file-regexp &rest dirs)
   "String/logical HyRolo search over files matching FILE-REGEXP in rest of DIRS."
-  (hyrolo-search-directories #'hyrolo-fgrep file-regexp dirs))
+  (apply #'hyrolo-search-directories #'hyrolo-fgrep file-regexp dirs))
 
 (defun hyrolo-fgrep-file (hyrolo-file-or-buf string &optional max-matches count-only headline-only)
   "Retrieve entries in HYROLO-FILE-OR-BUF matching STRING.
@@ -1350,7 +1354,7 @@ Stop at the first and last subheadings of a superior heading."
 ;;;###autoload
 (defun hyrolo-grep-directories (file-regexp &rest dirs)
   "Regexp HyRolo search over files matching FILE-REGEXP in rest of DIRS."
-  (hyrolo-search-directories #'hyrolo-grep file-regexp dirs))
+  (apply #'hyrolo-search-directories #'hyrolo-grep file-regexp dirs))
 
 (defun hyrolo-next-regexp-match (regexp headline-only)
   "In a HyRolo source buffer, move past next occurrence of REGEXP or return nil."

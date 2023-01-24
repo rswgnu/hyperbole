@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 21:42:03
-;; Last-Mod:     31-Oct-22 at 00:33:29 by Bob Weiner
+;; Last-Mod:     20-Jan-23 at 23:16:41 by Mats Lidell
 ;;
 ;; Copyright (C) 1991-2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -28,6 +28,7 @@
 ;;; ************************************************************************
 
 (declare-function texinfo-copy-node-name "texnfo-upd")
+(declare-function kotl-mode:copy-region-as-kill "kotl-mode")
 
 ;;; ************************************************************************
 ;;; Public variables
@@ -139,7 +140,9 @@ visual feedback indicating the extent of the region being copied."
     (if (or (use-region-p)
 	    (null transient-mark-mode)
 	    (not (called-interactively-p 'interactive)))
-	(copy-region-as-kill beg end region)
+        (if (derived-mode-p 'kotl-mode)
+            (kotl-mode:copy-region-as-kill beg end)
+	  (copy-region-as-kill beg end region))
       (setq thing (hui:delimited-selectable-thing))
       (if (stringp thing)
 	  (progn (kill-new thing)
@@ -778,7 +781,7 @@ BUT defaults to the button whose label point is within."
 
 (defun hui:hbut-label (default-label func-name &optional prompt)
   "Read button label from user using DEFAULT-LABEL and caller's FUNC-NAME.
-Optional PROMPT string replaces the standard prompt of 'Button label: '."
+Optional PROMPT string replaces the standard prompt of `Button label: '."
   (hargs:read (if (stringp prompt) prompt "Button label: ")
 	      (lambda (lbl)
 		(and (not (string-equal lbl "")) (<= (length lbl) (hbut:max-len))))
@@ -1107,8 +1110,9 @@ from those instead.  See also documentation for
 	 act)))
 
 (defun hui:actype (&optional default-actype prompt)
-  "Using optional DEFAULT-ACTYPE, PROMPT for and return a button action type.
-DEFAULT-ACTYPE may be a valid symbol or symbol name."
+  "Using optional DEFAULT-ACTYPE, PROMPT for and return a valid button action type.
+DEFAULT-ACTYPE may be any valid, interactive command symbol or name.
+Trigger an error if DEFAULT-ACTYPE is invalid."
   (when (and default-actype (symbolp default-actype))
     (setq default-actype (symbol-name default-actype)
 	  default-actype (actype:def-symbol default-actype)
@@ -1118,10 +1122,11 @@ DEFAULT-ACTYPE may be a valid symbol or symbol name."
 	     (hargs:read-match (or prompt "Button's action type: ")
 			       (nconc
 				(mapcar #'list (htype:names 'actypes))
-				(mapcar #'list (all-completions "" obarray)))
+				(mapcar #'list (all-completions "" obarray
+								(lambda (sym) (commandp sym t)))))
 			       nil t default-actype 'actype)))
-	(or (actype:def-symbol actype-name) (intern actype-name)))
-    (hypb:error "(actype): Invalid default action type received")))
+	(or (actype:def-symbol actype-name) (intern-soft actype-name)))
+    (hypb:error "(actype): Default action type must be an interactive command, not: %s" default-actype)))
 
 (defun hui:buf-writable-err (but-buf func-name)
   "If BUT-BUF is read-only, signal an error from FUNC-NAME."
@@ -1372,7 +1377,7 @@ Optional NO-SORT means display in decreasing priority order (natural order)."
 					 " in priority order"
 				       "")))
 		     (mapcar 'list (append '("" "*") names))
-		     nil t nil htype-sym))
+		     nil t "" htype-sym))
 	      nm-list
 	      doc-list)
 	 (setq nm-list

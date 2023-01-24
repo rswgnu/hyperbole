@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    23-Sep-91 at 20:34:36
-;; Last-Mod:     20-Nov-22 at 21:55:18 by Bob Weiner
+;; Last-Mod:      7-Jan-23 at 19:59:13 by Bob Weiner
 ;;
 ;; Copyright (C) 1991-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -672,43 +672,39 @@ Uses `hpath:display-where' setting to control where the man page is displayed."
 (defact rfc-toc (&optional buf-name opoint sections-start)
   "Compute and display summary of an Internet rfc in BUF-NAME.
 Assume point has already been moved to start of region to summarize.
-Optional OPOINT is point to return to in BUF-NAME after displaying summary."
+Optional OPOINT is point to return to in BUF-NAME after displaying
+summary; otherwise, point remains in the toc occurrence buffer.
+Optional SECTIONS-START limits toc entries to those after that point."
   (interactive)
-  (if buf-name
-      (cond ((get-buffer buf-name)
-	     (switch-to-buffer buf-name))
-	    ((let ((buf (get-file-buffer buf-name)))
-	       (when buf
-		 (switch-to-buffer (setq buf-name buf))
-		 t)))
-	    (t (if opoint (goto-char opoint))
-	       (hypb:error "(rfc-toc): Invalid buffer name: %s" buf-name))))
   (let ((sect-regexp "^[ \t]*[1-9][0-9]*\\.[0-9.]*[ \t]+[^ \t\n\r]")
-	(temp-buffer-show-function 'switch-to-buffer)
-	occur-buffer)
-    (hpath:display-buffer (current-buffer))
+	(rfc-buf-name (buffer-name))
+	(toc-buf-name (format "*toc %s*" buf-name)))
+    (when (get-buffer toc-buf-name)
+      (kill-buffer toc-buf-name))
     (occur sect-regexp nil (list (cons sections-start (point-max))))
-    (setq occur-buffer (set-buffer "*Occur*"))
-    (rename-buffer (format "*%s toc*" buf-name))
+    (select-window (get-buffer-window "*Occur*"))
+    (rename-buffer toc-buf-name)
     (re-search-forward "^[ ]*[0-9]+:" nil t)
     (beginning-of-line)
-    (delete-region (point-min) (point))
-    (insert "Contents of " (buffer-name occur-buffer) ":\n")
-    (set-buffer-modified-p nil)
-    (set-buffer buf-name)
-    (if opoint (goto-char opoint))))
+    (let ((inhibit-read-only t)
+	  (buffer-read-only))
+      (remove-text-properties (point-min) (point) '(read-only))
+      (delete-region (point-min) (point))
+      (insert "Sections of " rfc-buf-name ":\n")
+      (set-buffer-modified-p nil))
+    (when opoint
+      (select-buffer buf-name)
+      (goto-char opoint))))
 
 (defact text-toc (section)
   "Jump to the text file SECTION referenced by a table of contents entry at point."
   (interactive "sGo to section named: ")
   (when (stringp section)
-    (actypes::link-to-regexp-match
-     (concat "^[-+*o]+[ \t]+" (regexp-quote section))
-     1 (current-buffer) t)
-    (while (and (= (forward-line -1) 0)
-		(looking-at "[ \t]*[-=][-=]")))
-    (forward-line 1)
-    (recenter 0)))
+    (actypes::link-to-regexp-match section 2 (current-buffer) t))
+  (while (and (= (forward-line -1) 0)
+	      (looking-at "[ \t]*[-=][-=]")))
+  (forward-line 1)
+  (recenter 0))
 
 (provide 'hactypes)
 

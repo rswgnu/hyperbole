@@ -1,8 +1,93 @@
+2023-01-22  Mats Lidell  <matsl@gnu.org>
+
+* hypb.el: Add variable and function declarations for package
+    interaction-log to silence byte compilation warnings.
+    (hypb:activate-interaction-log-mode): Use cl-pushnew.
+
+2023-01-20  Mats Lidell  <matsl@gnu.org>
+
+* Remove docstring warnings.
+
+2023-01-15 Mats Lidell  <matsl@gnu.org>
+
+* hsmail.el: Remove #-mark for symbol check.
+
+* hui-mouse.el: Merge public declaration sections.
+
+* hypb.el:
+* hyrolo.el: Declare functions, remove #-mark for symbol checks.
+
+* hsettings.el (hproperty:but-flash): Declare function.
+
+* hmouse-drv.el (mouse-drag-mode-line): Use mouse-drag-frame-move from
+    Emacs 28.
+
+2023-01-08  Bob Weiner  <rsw@gnu.org>
+
+* hmouse-tag.el (xref--item-at-point): Fix this function (still broken
+    in Emacs29) to not error when called on a blank line at the beginning
+    of the buffer.  Was triggering an Action Key error.  Fix for 'unrelated
+    issue' reported in Emacs bug#59903.
+
+2023-01-08  Mats Lidell  <matsl@gnu.org>
+
+* test/hui-tests.el (hui--kill-ring-save-in-kotl-mode-copies-region)
+    (hui--kill-ring-save-in-kotl-mode-between-cells-fails): Add tests for
+    hui-kill-ring-save.
+
+* hui.el (hui-kill-ring-save): Call use kotl-mode:copy-region-as-kill when
+    in kotl-mode.
+
+* man/hyperbole.texi (Implicit Button Types): Remove ibtypes::org-mode
+    from function index.
+
+* FAST-DEMO: (bug#60596) Do not mention 'function-in-buffer', it's removed.
+    (bug#60597) Replace 'org-mode' with 'org-link-outside-org-mode'.
+
+2023-01-07  Bob Weiner  <rsw@gnu.org>
+
+* TAGS: Add to distribution, as is utilized in the Hyperbole DEMO.
+    Remove from .gitignore.  Resolve Emacs bug#60594.
+  Makefile (packageclean): Stop removing TAGS here.
+           (package): Add tags target dependency.
+           (HYPERBOLE_FILES): Add TAGS file.
+
+* hibtypes.el (text-toc):
+  hactypes.el (text-toc): Fix to jump to RFC table of contents sections.
+              (rfc-toc): Simplify and fix display so source window does not move
+    and full list of sections is included in toc.  Resolve Emacs bug#60595.
+
+* man/hyperbole.texi: (git-reference, github-reference, gitlab-reference): Move
+    to Action Types section since now are regular Elisp functions, not ibtypes.
+
+* hargs.el (hargs:read-match): Vary from completing-read a bit by disallowing
+    any blank result when arg, MUST-MATCH, is given (unless INITIAL-INPUT is given
+    as "").  This prevents blank button names, for example.
+  hui.el (hui:htype-help): Send blank INITIAL-INPUT to hargs:read-match call.
+  FAST-DEMO, DEMO: Update text to clarify that action types include Emacs commands.
+
+* man/hyperbole.texi (Explicit Buttons, Action Buttons, Glossary): Expand action
+    type descriptions to include Emacs Lisp commands.
+                     (Action Types): Add newer types that were missing and update
+    some doc strings.
+                     (Smart Key - Org Mode): Update to latest operation.
+
+* hui.el (hui:actype): Limit action type completions to Hyperbole actypes and
+    interactive commands.  Resolve Emacs bug#60469.
+
 2022-12-18  Mats Lidell  <matsl@gnu.org>
 
 * Makefile (ELC_COMPILE, ELC_KOTL): Use function to derive elc files.
 
+2022-12-11  Bob Weiner  <rsw@gnu.org>
+
+* hyperbole.el (hkey-initialize): Fix Emacs bug#59903: handle when C-h is
+    rebound globally to a command rather than as a prefix keymap.
+
 2022-12-03  Bob Weiner  <rsw@gnu.org>
+
+* hyrolo.el (hyrolo-fgrep-directories, hyrolo-grep-directories): Use 'apply'
+    to prevent double nesting of &rest 'dirs'.
 
 * hpath.el (hpath:expand-with-variable): Fix to expand from local dir first
     before using dirs in hpath:expand-with-variable.
@@ -1206,7 +1291,7 @@
 * Makefile (website-local): Add dependency on README.md.html.
 
 ==============================================================================
-V8.0.1 changes ^^^^:
+V9.0.0 changes ^^^^:
 ==============================================================================
 
 * Update release number to 8.0.0.

@@ -3,7 +3,7 @@
 # Author:       Bob Weiner
 #
 # Orig-Date:    15-Jun-94 at 03:42:38
-# Last-Mod:     18-Dec-22 at 00:29:07 by Mats Lidell
+# Last-Mod:      7-Jan-23 at 20:45:26 by Bob Weiner
 #
 # Copyright (C) 1994-2022  Free Software Foundation, Inc.
 # See the file HY-COPY for license information.
@@ -199,7 +199,7 @@ HY-TALK  = HY-TALK/.hypb HY-TALK/HYPB HY-TALK/HY-TALK.org
 
 HYPERBOLE_FILES = dir info html $(EL_COMPILE) $(EL_KOTL) \
 	$(ELC_COMPILE) $(HY-TALK) ChangeLog COPYING Makefile HY-ABOUT HY-ANNOUNCE HY-NEWS \
-	HY-WHY.kotl INSTALL DEMO DEMO-ROLO.otl FAST-DEMO MANIFEST README README.md _hypb \
+	HY-WHY.kotl INSTALL DEMO DEMO-ROLO.otl FAST-DEMO MANIFEST README README.md TAGS _hypb \
         .hypb smart-clib-sym topwin.py hyperbole-banner.png $(man_dir)/hkey-help.txt \
 	$(man_dir)/hyperbole.texi $(man_dir)/hyperbole.css $(man_dir)/version.texi
 
@@ -393,7 +393,7 @@ website: website-local
 
 # Generate a Hyperbole package suitable for distribution via the Emacs package manager.
 pkg: package
-package: doc $(pkg_parent)/hyperbole-$(HYPB_VERSION).tar.sig
+package: tags doc $(pkg_parent)/hyperbole-$(HYPB_VERSION).tar.sig
 
 # Generate and distribute a Hyperbole release to ftp.gnu.org.
 # One step in this is to generate an autoloads file for the Koutliner, kotl/kotl-autoloads.el.
@@ -448,11 +448,11 @@ $(pkg_parent)/hyperbole-$(HYPB_VERSION).tar: version $(HYPERBOLE_FILES)
 pkgclean: packageclean
 packageclean:
 	if [ -d $(pkg_hyperbole) ]; then \
-	  cd $(pkg_hyperbole) && $(RM) -r .git* videos ChangeLog.* *autoloads.* *.elc TAGS TODO* HY-ANNOUNCE-* .DS_Store \
+	  cd $(pkg_hyperbole) && $(RM) -r .git* videos ChangeLog.* *autoloads.* *.elc TODO* HY-ANNOUNCE-* .DS_Store \
 	    core .place* ._* .*~ *~ *\# *- *.orig *.rej .nfs* CVS .cvsignore GNUmakefile.id \
 	    && gsed '/\f/,/\f/{/\f/!d}' .hypb | tail +2 > .hypb2 && rm -f .hypb && mv .hypb2 .hypb; fi # Filter out unneeded TODO file hbut data from .hypb
 	if [ -d $(pkg_hyperbole)/kotl ]; then \
-	  cd $(pkg_hyperbole)/kotl && $(RM) -r *autoloads.* *.elc TAGS TODO* .DS_Store \
+	  cd $(pkg_hyperbole)/kotl && $(RM) -r *autoloads.* *.elc TODO* .DS_Store \
 	    core .place* ._* .*~ *~ *\# *- *.orig *.rej .nfs* CVS .cvsignore; fi
 	if [ -d $(pkg_hyperbole)/man ]; then \
 	  cd $(pkg_hyperbole)/man && $(RM) -r .DS_Store core .place* hyperbole.{log,aux,cp*,fn*,ky*,toc,vr*} \

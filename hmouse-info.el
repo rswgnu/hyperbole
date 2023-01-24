@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    04-Apr-89
-;; Last-Mod:     12-Oct-22 at 22:52:44 by Mats Lidell
+;; Last-Mod:     20-Jan-23 at 22:19:33 by Mats Lidell
 ;;
 ;; Copyright (C) 1989-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -113,7 +113,7 @@ If assist-key is pressed within:
  (3) the File entry of a Node Header (first line),
        the `DIR' root-level node is found;
  (4) at the end of the current node, the Previous node is found (this will
-       return from subtrees if the function 'Info-global-prev is bound);
+       return from subtrees if the function `Info-global-prev' is bound);
  (5) anywhere else (e.g. at the end of a line), the current node entry is
        scrolled down one windowful.
 

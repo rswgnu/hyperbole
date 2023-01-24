@@ -7,7 +7,7 @@
 @c Author:       Bob Weiner
 @c
 @c Orig-Date:     6-Nov-91 at 11:18:03
-@c Last-Mod:      3-Dec-22 at 02:35:10 by Bob Weiner
+@c Last-Mod:      8-Jan-23 at 10:13:37 by Mats Lidell
 
 @c %**start of header (This is for running Texinfo on a region.)
 @setfilename hyperbole.info
@@ -156,7 +156,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</P>
 
 <PRE>
 Edition 8.0.1pre
-Printed December 3, 2022.
+Printed January 7, 2023.
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -198,7 +198,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 @example
 Edition 8.0.1pre
-December 3, 2022
+January 7, 2023
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -1951,12 +1951,15 @@ buttons, @pxref{Utilizing Explicit Buttons}.
 
 @cindex link button
 @cindex referent
-Each explicit button is assigned an action type that determines the actions
-it performs.  @dfn{Link action types} connect buttons to particular types
-of @dfn{referents}, the targets of their links.  Link action type names all
-begin with @code{link-}.  Link action button referents are displayed when
-such buttons are activated with a press or a click.  @xref{Action Types},
-for a list of standard action types including link types.
+Each explicit button is assigned an action type that determines the
+actions it performs.  Hyperbole includes its own set of useful action
+types but any named, interactive Emacs Lisp command may be used.  For
+example, @dfn{Link action types} connect buttons to particular types
+of @dfn{referents}, the targets of their links.  Link action type
+names all begin with @code{link-}.  Link action button referents are
+displayed when such buttons are activated with a press or a click.
+@xref{Action Types}, for a list of Hyperbole action types, including
+link types.
 
 @cindex linking, in-place
 @cindex Hyperbole data model
@@ -2032,23 +2035,23 @@ Manual}, for details on bookmarks.
 @cindex button, implicit
 @cindex implicit button
 @findex link-to-file
-@dfn{Implicit buttons} are virtual buttons recognized within the
-natural structure of a document.  For example, a web URL button that
-displays its link or an email address button that starts a mail
-message to the associated address.  Implicit buttons are identified by
-contextual patterns found within documents.
+@dfn{Implicit buttons} are virtual buttons recognized within the natural
+structure of a document.  For example, a web URL button that displays its link
+or an email address button that starts a mail message to the associated
+address.  Implicit buttons are identified by implicit button type contextual
+pattern matchers that identify appropriate textual patterns at point.
 
-An @dfn{implicit button type} identifies a pattern or state that when
-matched triggers an @emph{action} associated with the implicit button
-type.  The action is specified by either a Hyperbole action type
-(@pxref{Action Types}) or an Emacs Lisp function.  Implicit button
-types may use the same action types that explicit buttons use.  As an
-example, the pathname implicit button type matches to any existing
-local filename or directory name and its action
-type, @code{link-to-file}, displays the associated file or directory,
-typically in another window.  An explicit button could do the same
-thing but has to be created manually, rather than recognized as part
-of the buffer text.
+@cindex implicit button type
+An @dfn{implicit button type} utilizes Emacs Lisp to identify a pattern or
+state that when matched triggers an @emph{action} associated with the implicit
+button type.  The action is specified by either a Hyperbole action type
+(@pxref{Action Types}) or an Emacs Lisp command.  Implicit button types may use
+the same action types that explicit buttons use.  As an example, the pathname
+implicit button type matches to any existing local filename or directory name
+and its action type, @code{link-to-file}, displays the associated file or
+directory, typically in another window.  An explicit button could do the same
+thing but has to be created manually, rather than recognized as part of the
+buffer text.
 
 @vindex file, hibtypes.el
 @cindex context
@@ -2113,7 +2116,6 @@ implicit button types (they are listed in increasing order of priority).
 
 @table @code
 
-@findex ibtypes org-mode
 @cindex org-mode
 @cindex radio target
 @cindex code block
@@ -2124,7 +2126,10 @@ implicit button types (they are listed in increasing order of priority).
 @findex org-meta-return
 @findex hsys-org-mode-p
 @vindex file, hsys-org.el
-@item org-mode
+@item smart-org
+@code{smart-org} is not an actual implicit button type, just an Elisp function,
+but it behaves similarly, so it is documented here.
+
 Hyperbole recognizes Org mode constructs in any of these modes:
 @code{org-mode}, @code{org-agenda-mode}, @code{outshine-mode}
 or @code{poporg-mode}.  (See the function @code{hsys-org-mode-p}).
@@ -2245,6 +2250,16 @@ at the top of that file for more information.
 Insert the completion at point (from a completions buffer) into the
 minibuffer or the other window.
 
+@findex ibtypes action
+@cindex action button
+@cindex action implicit button
+@cindex function call implicit button
+@cindex variable display implicit button
+@item action
+The Action Button type.  At point, activate any of: an Elisp variable, a
+Hyperbole action-type, or an Elisp function call surrounded by <> rather than
+().  If an Elisp variable, display a message showing its value.
+
 @findex ibtypes hyp-source
 @cindex Hyperbole report
 @vindex file, DEMO
@@ -2325,6 +2340,14 @@ Jump to the source line associated with a debugger stack frame or
 breakpoint line.  This works with gdb, dbx, and xdb.  Such lines are
 recognized in any buffer.
 
+@findex ibtypes grep-msg
+@cindex grep
+@cindex compiler error
+@cindex match lines
+@item grep-msg
+Jump to the line associated with a grep or compilation error message.
+Messages are recognized in any buffer.
+
 @findex ibtypes ripgrep-msg
 @cindex grep
 @cindex ripgrep
@@ -2344,13 +2367,15 @@ msg.  ipython outputs each pathname once followed by all matching
 lines in that pathname.  Messages are recognized in any buffer (other
 than a helm completion buffer).
 
-@findex ibtypes grep-msg
-@cindex grep
-@cindex compiler error
-@cindex match lines
-@item grep-msg
-Jump to the line associated with a grep or compilation error message.
-Messages are recognized in any buffer.
+@cindex link, pathname line and column
+@cindex line and column
+@cindex pathname, line and column
+@findex ibtypes pathname-line-and-column
+@item pathname-line-and-column
+Make a valid @file{pathname:line-num[:column-num]} pattern display the
+path at @emph{line-num} and optional @emph{column-num}.  Also works
+for remote pathnames.  May also contain hash-style link references
+with the following format: @file{<path>[#<link-anchor>]:<line-num>[:<column-num>]}.
 
 @findex ibtypes ilink
 @cindex implicit button link
@@ -2437,6 +2462,40 @@ Any key sequence must be a string of one of the following:
 @item or a valid key sequence together with its interactive arguments.
 @end itemize
 
+@findex ibtypes debbugs-gnu-mode
+@cindex bug tracking
+@cindex issue tracking
+@item debbugs-gnu-mode
+Debbugs is a client-server issue tracker used by GNU free software
+projects, including Hyperbole, to manage issues and maintain threads
+of discussion around them.  You issue queries to a Debbugs server and
+it returns a listing entry for each matching issue.  When on a GNU
+Debbugs listing entry in @code{debbugs-gnu-mode}, an Action Key press
+displays the discussion of the selected issue; an Assist Key press
+pretty prints the status of the issue to a window below the listing
+window.
+
+@findex ibtypes debbugs-gnu-query
+@item debbugs-gnu-query
+Display the results of a Debbugs query based on a bug reference string
+around point.  This works in most types of buffers.  If the query
+includes a single id number, it displays the original message
+submission for that id and allows browsing of the followup discussion.
+The following buffer text formats are accepted (with point prior to
+any attribute):
+
+@smallexample
+bug#id-number, bug# id-number, bug #id-number or bug id-number
+bug?attr1=val1&attr2=val2&attr3=val3
+bug#id-number?attr1=val1&attr2=val2&attr3=val3
+@end smallexample
+
+@vindex file, hib-debbugs.el
+@noindent
+Note that @emph{issue} or @emph{debbugs} may also be used in place
+of @emph{bug}.  See the documentation at the top of
+the @file{hib-debbugs.el} file for detailed query format information.
+
 @findex ibtypes dir-summary
 @vindex file, MANIFEST
 @vindex file, DIR
@@ -2505,51 +2564,12 @@ program.
 Summarize contents of an Internet rfc from anywhere within an rfc buffer.
 Each line of the summary may be selected to jump to the associated section.
 
-@findex ibtypes actions
-@cindex action implicit button
-@cindex function call implicit button
-@cindex variable display implicit button
-@item action
-Execute an angle bracket delimited Hyperbole action, Elisp function call or
-display of an Elisp variable and its value.
-
 @findex ibtypes markdown-internal-link
 @cindex markdown link
 @item markdown-internal-link
 Display any in-file Markdown link referent.  Pathnames and urls are
 handled elsewhere.
-
-@findex ibtypes git-reference
-@cindex git reference
-@cindex version control
-@vindex hibtypes-git-default-project
-@item git-reference
-Display the git entity associated with REFERENCE and optional PROJECT.
-See @file{$@{hyperb:dir@}/DEMO#Git (Local) References} for examples.
-
-REFERENCE is a string of one of the following forms:
-@itemize @bullet
-@item <ref-item>
-@item /?<project>/<ref-item>
-@item /<project>.
-@end itemize
-
-<ref-item> is one of these:
-@table @asis
-@item one of the words: branches, commits, or tags
-the associated items are listed
-@item one of the words: branch, commit, or tag followed by a '/' and item id
-the item is shown
-@item a commit reference given by a hex number, 55a1f0
-the commit diff is displayed
-@item a branch or tag reference given by an alphanumeric name, e.g. hyper20
-the files in the branch are listed.
-@end table
-
-@vindex hibtypes-git-default-project
-If given, PROJECT overrides any project value in REFERENCE.  If no PROJECT
-value is provided, it defaults to the value of @code{hibtypes-git-default-project}. 
-
+  
 @findex ibtypes git-commit-reference
 @findex hypb:fgrep-git-log
 @findex hypb:grep-git-log
@@ -2563,82 +2583,6 @@ produced by git log.  Hyperbole also includes two commands, @code{hypb:fgrep-git
 and @code{hypb:grep-git-log} to list git commit references whose changesets contain
 either the string (fgrep) or regular expression (grep) given.  Then an Action Key
 press displays the associated changeset.
-
-@findex ibtypes github-reference
-@cindex github reference
-@cindex version control
-@vindex hibtypes-github-default-project
-@vindex hibtypes-github-default-user
-@item github-reference
-Display the Github entity associated with REFERENCE and optional USER and PROJECT.
-See @file{$@{hyperb:dir@}/DEMO#Github (Remote) References} for examples.
-
-REFERENCE is a string of one of the following forms:
-@itemize @bullet
-@item <ref-item>
-@item <user>/<project>/<ref-item>
-@item <project>/<ref-item>
-@item /<project>.
-@end itemize
-
-<ref-item> is one of these:
-@table @asis
-@item @bullet{} one of the words: branches, commits, issues, pulls, or tags
-the associated items are listed
-@item @bullet{} one of the words: branch, commit, issue, pull or tag followed by a '/' and item id
-the item is shown
-@item @bullet{} an issue reference given by a positive integer, e.g. @emph{92} or prefaced with @emph{GH-}, like GH-92
-the issue is displayed
-@item @bullet{} a commit reference given by a hex number, 55a1f0
-the commit diff is displayed
-@item @bullet{} a branch or tag reference given by an alphanumeric name, e.g. hyper20
-the files in the branch are listed.
-@end table
-
-@vindex hibtypes-github-default-user
-USER defaults to the value of @code{hibtypes-github-default-user}.
-If given, PROJECT overrides any project value in REFERENCE.  If no
-PROJECT value is provided, it defaults to the value of
-@code{hibtypes-github-default-project}.
-
-@findex ibtypes gitlab-reference
-@cindex gitlab reference
-@cindex version control
-@vindex hibtypes-gitlab-default-project
-@vindex hibtypes-gitlab-default-user
-@item gitlab-reference
-Display the Gitlab entity associated with REFERENCE and optional USER and PROJECT.
-See @file{../DEMO#Gitlab (Remote) References} for examples.
-
-REFERENCE is a string of one of the following forms:
-@itemize @bullet
-@item <ref-item>
-@item <user>/<project>/<ref-item>
-@item <project>/<ref-item>
-@item /<group>/<project>.
-or
-@item /<project-or-group> (where a group is a collection of projects)
-@end itemize
-
-<ref-item> is one of these:
-@table @asis
-@item @bullet{} one of the words: activity, analytics, boards or kanban, branches, commits, contributors, groups, issues or list, jobs, labels, merge_requests, milestones, pages, pipelines, pipeline_charts, members or people or staff, projects, pulls, schedules, snippets, status or tags
-the associated items are listed
-@item @bullet{} one of the words: branch, commit(s), issue(s), milestone(s), pull(s), snippet(s) or tag(s) followed by a '/' or '=' and an item-id
-the item is shown
-@item @bullet{} an issue reference given by a positive integer, e.g. @emph{92} or prefaced with @emph{GL-}, like GL-92
-the issue is displayed
-@item @bullet{} a commit reference given by a hex number, 55a1f0
-the commit diff is displayed
-@item @bullet{} a branch or tag reference given by an alphanumeric name, e.g. hyper20
-the files in the branch are listed.
-@end table
-
-@vindex hibtypes-gitlab-default-user
-USER defaults to the value of @code{hibtypes-gitlab-default-user}.
-If given, PROJECT overrides any project value in REFERENCE.  If no
-PROJECT value is provided, it defaults to the value of
-@code{hibtypes-gitlab-default-project}.
 
 @findex ibtypes social-reference
 @cindex hashtag
@@ -2665,40 +2609,6 @@ value of @code{hibtypes-social-default-service} (default value of
 ``twitter'') when not given, so #hashtag would be the same as
 twitter#hashtag.
 
-@findex ibtypes debbugs-gnu-mode
-@cindex bug tracking
-@cindex issue tracking
-@item debbugs-gnu-mode
-Debbugs is a client-server issue tracker used by GNU free software
-projects, including Hyperbole, to manage issues and maintain threads
-of discussion around them.  You issue queries to a Debbugs server and
-it returns a listing entry for each matching issue.  When on a GNU
-Debbugs listing entry in @code{debbugs-gnu-mode}, an Action Key press
-displays the discussion of the selected issue; an Assist Key press
-pretty prints the status of the issue to a window below the listing
-window.
-
-@findex ibtypes debbugs-gnu-query
-@item debbugs-gnu-query
-Display the results of a Debbugs query based on a bug reference string
-around point.  This works in most types of buffers.  If the query
-includes a single id number, it displays the original message
-submission for that id and allows browsing of the followup discussion.
-The following buffer text formats are accepted (with point prior to
-any attribute):
-
-@smallexample
-bug#id-number, bug# id-number, bug #id-number or bug id-number
-bug?attr1=val1&attr2=val2&attr3=val3
-bug#id-number?attr1=val1&attr2=val2&attr3=val3
-@end smallexample
-
-@vindex file, hib-debbugs.el
-@noindent
-Note that @emph{issue} or @emph{debbugs} may also be used in place
-of @emph{bug}.  See the documentation at the top of
-the @file{hib-debbugs.el} file for detailed query format information.
-
 @findex ibtypes annot-bib
 @cindex bibliography
 @cindex reference
@@ -2716,16 +2626,6 @@ whose names begin with a ` ' or `*' character.
 @c @item imenu-item
 @c Display the in-buffer definition of an identifier that point is within or after, else nil.
 @c This triggers only when imenu has already been used to generate an in-buffer item index.
-
-@cindex link, pathname line and column
-@cindex line and column
-@cindex pathname, line and column
-@findex ibtypes pathname-line-and-column
-@item pathname-line-and-column
-Make a valid @file{pathname:line-num[:column-num]} pattern display the
-path at @emph{line-num} and optional @emph{column-num}.  Also works
-for remote pathnames.  May also contain hash-style link references
-with the following format: @file{<path>[#<link-anchor>]:<line-num>[:<column-num>]}.
 
 @findex ibtypes mail-address
 @cindex e-mail address
@@ -2838,8 +2738,9 @@ button syntax and all button data stored in the button source file,
 there are @emph{action buttons}.
 
 @dfn{Action Buttons} are a form of implicit buttons that can execute
-any existing action types or Emacs Lisp functions.  Such buttons are
-delimited by angle brackets, < >, and come in three types:
+any existing action types, Emacs Lisp functions or display the values
+of Emacs Lisp variables and constants.  Such buttons are delimited by
+angle brackets, < >, and come in three types:
 
 @table @dfn
 @item action type invocations
@@ -2949,10 +2850,15 @@ such resources.
 @cindex argument, use
 @cindex action
 @cindex button action
-@dfn{Action types} are special functions that specify Hyperbole button
-behaviors.  Each action type may be used by any category of button:
-global, explicit, or implicit.  The arguments needed by an action type
-are prompted for at button creation time or in the case of an implicit
+@dfn{Action types} are Emacs Lisp commands that specify Hyperbole
+button behaviors.  Hyperbole includes a useful set of action types
+defined within their own namespace and created with the @code{defact}
+macro.  See the Hyperbole file, @file{hactypes.el}, for examples of
+how to define your own Hyperbole action types.
+
+Each action type may be used by any category of button: global,
+explicit, or implicit.  The arguments needed by an action type are
+prompted for at button creation time or in the case of an implicit
 button, computed when the button is activated.  During button
 activation, the arguments are fed to the action type's body to achieve
 the desired result.  This body is called the button @dfn{action}.
@@ -2963,8 +2869,7 @@ creating explicit or global buttons.
 
 @cindex actypes, list of
 @noindent
-The standard action types included with Hyperbole in alphabetical order
-are:
+Hyperbole action types in alphabetical order are:
 
 @table @code
 @findex actypes annot-bib
@@ -2977,6 +2882,20 @@ delimiters = [ ].
 Insert a completion at point into the minibuffer or a buffer.
 Unless point is at the end of buffer or if a completion has already been 
 inserted, in which case, delete the completions window.
+
+@findex actypes debbugs-gnu-query
+@item debbugs-gnu-query
+Display the discussion of Gnu debbugs ID (a positive integer).
+
+@findex actypes display-boolean
+@item display-boolean
+Display a message showing the result value of a BOOL-EXPR.
+Return any non-@samp{nil} value or @samp{t}.
+
+@findex actypes display-value
+@item display-value
+Display a message showing VALUE (a symbol) and its value.
+Return any non-@samp{nil} value or @samp{t}.
 
 @findex actypes display-variable
 @item display-variable-value
@@ -3005,6 +2924,113 @@ output to the shell buffer before executing SHELL-CMD.
 @item exec-window-cmd
 Asynchronously execute an external window-based SHELL-CMD string.
 
+@findex actypes git-reference
+@cindex git reference
+@cindex version control
+@vindex hibtypes-git-default-project
+@item git-reference
+Display the git entity associated with REFERENCE and optional PROJECT.
+See @file{$@{hyperb:dir@}/DEMO#Git (Local) References} for examples.
+
+REFERENCE is a string of one of the following forms:
+@itemize @bullet
+@item <ref-item>
+@item /?<project>/<ref-item>
+@item /<project>.
+@end itemize
+
+<ref-item> is one of these:
+@table @asis
+@item one of the words: branches, commits, or tags
+the associated items are listed
+@item one of the words: branch, commit, or tag followed by a '/' and item id
+the item is shown
+@item a commit reference given by a hex number, 55a1f0
+the commit diff is displayed
+@item a branch or tag reference given by an alphanumeric name, e.g. hyper20
+the files in the branch are listed.
+@end table
+
+@vindex hibtypes-git-default-project
+If given, PROJECT overrides any project value in REFERENCE.  If no PROJECT
+value is provided, it defaults to the value of @code{hibtypes-git-default-project}. 
+
+@findex actypes github-reference
+@cindex github reference
+@cindex version control
+@vindex hibtypes-github-default-project
+@vindex hibtypes-github-default-user
+@item github-reference
+Display the Github entity associated with REFERENCE and optional USER and PROJECT.
+See @file{$@{hyperb:dir@}/DEMO#Github (Remote) References} for examples.
+
+REFERENCE is a string of one of the following forms:
+@itemize @bullet
+@item <ref-item>
+@item <user>/<project>/<ref-item>
+@item <project>/<ref-item>
+@item /<project>.
+@end itemize
+
+<ref-item> is one of these:
+@table @asis
+@item @bullet{} one of the words: branches, commits, issues, pulls, or tags
+the associated items are listed
+@item @bullet{} one of the words: branch, commit, issue, pull or tag followed by a '/' and item id
+the item is shown
+@item @bullet{} an issue reference given by a positive integer, e.g. @emph{92} or prefaced with @emph{GH-}, like GH-92
+the issue is displayed
+@item @bullet{} a commit reference given by a hex number, 55a1f0
+the commit diff is displayed
+@item @bullet{} a branch or tag reference given by an alphanumeric name, e.g. hyper20
+the files in the branch are listed.
+@end table
+
+@vindex hibtypes-github-default-user
+USER defaults to the value of @code{hibtypes-github-default-user}.
+If given, PROJECT overrides any project value in REFERENCE.  If no
+PROJECT value is provided, it defaults to the value of
+@code{hibtypes-github-default-project}.
+
+@findex actypes gitlab-reference
+@cindex gitlab reference
+@cindex version control
+@vindex hibtypes-gitlab-default-project
+@vindex hibtypes-gitlab-default-user
+@item gitlab-reference
+Display the Gitlab entity associated with REFERENCE and optional USER and PROJECT.
+See @file{../DEMO#Gitlab (Remote) References} for examples.
+
+REFERENCE is a string of one of the following forms:
+@itemize @bullet
+@item <ref-item>
+@item <user>/<project>/<ref-item>
+@item <project>/<ref-item>
+@item /<group>/<project>.
+or
+@item /<project-or-group> (where a group is a collection of projects)
+@end itemize
+
+<ref-item> is one of these:
+@table @asis
+@item @bullet{} one of the words: activity, analytics, boards or kanban, branches, commits, contributors, groups, issues or list, jobs, labels, merge_requests, milestones, pages, pipelines, pipeline_charts, members or people or staff, projects, pulls, schedules, snippets, status or tags
+the associated items are listed
+@item @bullet{} one of the words: branch, commit(s), issue(s), milestone(s), pull(s), snippet(s) or tag(s) followed by a '/' or '=' and an item-id
+the item is shown
+@item @bullet{} an issue reference given by a positive integer, e.g. @emph{92} or prefaced with @emph{GL-}, like GL-92
+the issue is displayed
+@item @bullet{} a commit reference given by a hex number, 55a1f0
+the commit diff is displayed
+@item @bullet{} a branch or tag reference given by an alphanumeric name, e.g. hyper20
+the files in the branch are listed.
+@end table
+
+@vindex hibtypes-gitlab-default-user
+USER defaults to the value of @code{hibtypes-gitlab-default-user}.
+If given, PROJECT overrides any project value in REFERENCE.  If no
+PROJECT value is provided, it defaults to the value of
+@code{hibtypes-gitlab-default-project}.
+
 @findex actypes hyp-config
 @item hyp-config
 Insert Hyperbole configuration and debugging information at the end
@@ -3021,8 +3047,16 @@ Display a buffer or file from a line beginning with @code{hbut:source-prefix}.
 
 @findex actypes kbd-key
 @item kbd-key
-Execute the function binding for KEY-SEQUENCE, delimited by @{@}.
-Return @samp{t} if a KEY-SEQUENCE has a binding, else @samp{nil}.
+Execute a normalized KEY-SERIES (series of key sequences) without curly braces.
+Each key sequence within KEY-SERIES must be a string of one of the following:
+@itemize @bullet
+@item a Hyperbole minibuffer menu item key sequence,
+@item a HyControl key sequence,
+@item a M-x extended command,
+@item or a valid key sequence together with its interactive arguments.
+@end itemize
+
+Return @samp{t} if the sequence appears to be valid, else @samp{nil}.
 
 @cindex link action types
 @findex actypes link-to-bookmark
@@ -3084,7 +3118,13 @@ filename and nodename is available.  Filename may be given without the
 
 @findex actypes link-to-ibut
 @item link-to-ibut
-Perform an action given by an implicit button, specified by KEY, optional KEY-FILE and POINT.
+Perform implicit button action specified by KEY, optional BUT-SRC and
+POINT.  BUT-SRC defaults to the current buffer’s file or if there is
+no attached file, then to its buffer name.  POINT defaults to the
+current point.
+
+When the button with this action type is created, point must be on the
+implicit button to which to link.
 
 @findex actypes link-to-kcell
 @findex kcell:ref-to-id
@@ -3155,12 +3195,28 @@ and the @code{browse-url} package to display search results.
 Display a man page on TOPIC, which may be of the form @samp{<command>(<section>}).
 Use @code{hpath:display-where} setting to control where the man page is displayed.
 
+@findex actypes org-internal-target-link
+@item org-internal-target-link
+Follow an optional Org mode <<INTERNAL-TARGET>> back to any first link to it.
+If INTERNAL-TARGET is nil, follow any internal target link at point. Otherwise,
+trigger an error.
+
+@findex actypes org-link
+@item org-link
+Follow an optional Org mode LINK to its target.  If LINK is nil, follow any
+link at point.  Otherwise, trigger an error.
+
+@findex actypes org-radio-target-link
+@item org-radio-target-link
+Follow an optional Org mode radio <<TARGET>> back to any first link to it.  If
+TARGET is nil, follow any radio target link at point.  Otherwise, trigger an
+error.
+
 @findex actypes rfc-toc
 @item rfc-toc
-Compute and display a summary of an Internet rfc in BUF-NAME.  Assume
-point has already been moved to the start of the region to summarize.
-Optional OPOINT is the point to return to in BUF-NAME after displaying
-the summary.
+Compute and display a summary of an Internet rfc in BUF-NAME.  Assume point has
+already been moved to the start of the region to summarize.  Optional OPOINT is
+the point to return to in BUF-NAME after displaying the summary.
 
 @findex actypes text-toc
 @cindex table of contents
@@ -6973,11 +7029,16 @@ if it is an Emacs Lisp variable name, its action is to display the variable valu
 See @b{Smart Key}.
 
 @item Action Type
-A behavioral specification for use within Hyperbole buttons.  Action
-types usually contain a set of parameters which must be given values for
+Emacs Lisp commands that specify Hyperbole button behaviors.  Action
+types contain zero or more arguments which must be given values for
 each button with which they are associated.  An action type together
-with a set of values, called arguments, is an @dfn{action}.
-@dfn{Actype} is a synonym for action type.
+with a set of values is an @dfn{action}.  @dfn{Actype} is a synonym
+for action type.
+
+Internally, Hyperbole defines its own namespace for action types
+defined with its @code{defact} macro by prefixing them with
+@code{ibtypes::}.  Symbols with this prefix are regular Emacs Lisp
+commands.
 
 @item Activation
 A request to a Hyperbole button to perform its action.
@@ -7214,6 +7275,10 @@ specific kind.  Implicit button types often utilize structure internal
 to documents created and managed by tools other than Hyperbole, for
 example, programming documentation.  @b{Ibtype} is a synonym for
 implicit button type.  See also @b{system encapsulation}.
+
+Internally, Hyperbole defines its own namespace for ibtypes defined
+with its @code{defib} macro by prefixing them with @code{ibtypes::}.
+Symbols with this prefix are invokable Emacs Lisp functions.
 
 @cindex InfoDock
 @item InfoDock
@@ -9358,35 +9423,53 @@ When company-mode is active:
 @group
 When in an Org mode context and @code{hsys-org-enable-smart-keys} is non-nil:
   ACTION KEY
-     (1) follows internal links in Org mode files.  When pressed on a link
-         referent/target, the link definition is displayed, allowing two-way
-         navigation between definitions and targets.
+     (1) If on an Org todo keyword, cycle through the keywords in
+         that set or if final done keyword, remove it.
 
-     (2) follows Org mode external links.
+     (2) If on an Org agenda item, jump to the item for editing.
 
-     (3) within a radio target definition, this jumps to the first occurrence
-         of an associated radio target.
+     (3) Within a radio or internal target or a link to it, jump between
+         the target and the first link to it, allowing two-way navigation.
 
-     (4) when point is on an outline heading in Org mode, this cycles the view
-         of the subtree at point.
+     (4) Follow other internal links in Org mode files.
 
-     (5) with point on the first line of a code block definition, this executes
-         the code block via the Org mode standard binding of @bkbd{C-c C-c},
-         @code{(org-ctrl-c-ctrl-c)}.
+     (5) Follow Org mode external links.
 
-     (6) if on an Org todo keyword, cycles through the keywords in that set or
-         if final done keyword, removes it.
+     (6) When on a Hyperbole button, activate the button.
 
-     (7) In any other context besides the end of a line, the Action Key invokes the
-         Org mode standard binding of @bkbd{M-@key{RET}}, @code{(org-meta-return)}.
+     (7) With point on the :dir path of a code block definition, display the
+         directory given by the path.
 
-  ASSIST KEY
-     (1) on an Org mode heading, this cycles through views of the whole buffer outline.
+     (8) With point on any #+BEGIN_SRC, #+END_SRC, #+RESULTS, #+begin_example
+         or #+end_example header, execute the code block via the Org mode
+         standard binding of @bkbd{C-c C-c}, @code{org-ctrl-c-ctrl-c}.
 
-     (2) on an Org mode link or agenda item, this displays standard Hyperbole help.
+     (9) When point is on an Org mode heading, cycle the view of the subtree
+         at point.
 
-     (3) if on an Org todo keyword, moves to the first todo keyword in the next set, if
-         any.
+     (10) In any other context besides the end of a line, invoke the Org mode
+          standard binding of @bkbd{M-@key{RET}}, @code{org-meta-return}.
+
+   When the ASSIST KEY is pressed, it behaves just like the Action Key except
+   in these contexts:
+
+     (1) If on an Org todo keyword, move to the first todo keyword in
+         the next set, if any.
+
+     (2) If on an Org mode link or agenda item, display Hyperbole
+         context-sensitive help.
+
+     (3) On a Hyperbole button, perform the Assist Key function, generally
+         showing help for the button.
+
+     (4) With point on the :dir value of a code block definition, display
+         a help summary of this implicit directory button.
+
+     (5) With point on any #+BEGIN_SRC, #+END_SRC, #+RESULTS, #+begin_example
+         or #+end_example header, remove source block results.
+
+     (6) Not on a Hyperbole button but on an Org mode heading, cycle
+         through views of the whole buffer outline.
 @end group
 @end format
 
@@ -10938,7 +11021,7 @@ media.
 
 @item Why are action types defined apart from implicit button types?
 
-Any category of button can make use of an action type.  Some action
+Any category of button can make use of any action type.  Some action
 types are useful as behavior definitions for a variety of button
 categories, so all action types are defined separately to give them
 independence from those types which apply them.

@@ -3,6 +3,24 @@
 
   Install:    <unless (featurep 'org-present) (package-install 'org-present)>
 
+(defun rsw-org-present-setup (buffer-name heading)
+  ;; Don't hide headline stars
+  (setq org-present-hide-stars-in-headings nil
+        ;; org-present-startup-folded nil
+	org-hide-emphasis-markers nil)
+
+  ;; Show only top-level headlines
+  (org-overview)
+
+  ;; Unfold the current entry
+  (org-show-entry)
+
+  ;; Show only direct subheadings of the slide but don't expand them
+  (org-show-children))
+
+(add-hook 'org-present-after-navigate-functions 'rsw-org-present-setup)
+
+
 * Enable all Hyperbole keys including {M-RET} in Org mode
 
   <setq hsys-org-enable-smart-keys t>
@@ -26,11 +44,9 @@ or interactively after loading Hyperbole:
   Load,
   Configure,
   Activate:   <hypb:activate-interaction-log-mode>
-
-  Activate:   <interaction-log-mode 1>
   Deactivate: <interaction-log-mode 0>
 
-** Keypression - overlaying parts of buffer (shows trail of keys)
+** ALTERNATIVE: Keypression - overlaying parts of buffer (shows trail of keys)
    Used for EmacsNYC talk
 
   Install:    <unless (package-installed-p 'keypression) (package-install 'keypression)>
