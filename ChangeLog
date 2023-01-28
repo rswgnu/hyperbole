@@ -33,6 +33,7 @@
 2023-01-29  Mats Lidell  <matsl@gnu.org>
 
 * kotl/kexport.el: Remove XEmacs font-lock variables
+    Remove hm--html-mode-hook, XEmacs specific package
 
 2023-01-29  Bob Weiner  <rsw@gnu.org>
 

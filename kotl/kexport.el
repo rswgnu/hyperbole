@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    26-Feb-98
-;; Last-Mod:      5-Feb-23 at 22:44:05 by Mats Lidell
+;; Last-Mod:      5-Feb-23 at 22:44:49 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
