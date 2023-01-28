@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    15-Oct-91 at 20:13:17
-;; Last-Mod:      6-Nov-22 at 13:09:42 by Bob Weiner
+;; Last-Mod:     28-Jan-23 at 23:43:41 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -258,7 +258,7 @@ If on the menu name prefix or the first item, move to the last item."
 The documentation is formatted.  With optional HELP-STRING-FLAG,
 instead returns the one line help string for the key sequence."
   (when (and (stringp key-sequence)
-	     (not (eq key-sequence ""))
+	     (not (equal key-sequence ""))
 	     (kbd-key:hyperbole-mini-menu-key-p key-sequence))
     (let ((hargs:reading-type 'hmenu-help)
 	  (hmenu-key-seq (car (where-is-internal #'hyperbole))))

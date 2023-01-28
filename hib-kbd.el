@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    22-Nov-91 at 01:37:57
-;; Last-Mod:     29-Jan-23 at 10:11:10 by Bob Weiner
+;; Last-Mod:     29-Jan-23 at 22:45:45 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -129,7 +129,7 @@ Any key sequence within the series must be a string of one of the following:
 		   ;; match to things like ${variable}.
 		   (when (memq (char-before start) '(nil ?\ ?\t ?\n ?\r ?\f ?\"))
 		     (when (and (stringp key-series)
-				(not (eq key-series "")))
+				(not (equal key-series "")))
 		       ;; Replace any ${} internal or env vars; leave
 		       ;; $VAR untouched for the shell to evaluate.
 		       (let ((hpath:variable-regexp "\\${\\([^}]+\\)}"))
@@ -270,7 +270,7 @@ Any key sequence within the series must be a string of one of the following:
 			 (kbd-key:remove-delimiters str "‘" "’")))
 	 binding)
     (when (and (stringp key-series)
-	       (not (eq key-series "")))
+	       (not (equal key-series "")))
       (setq key-series (kbd-key:normalize key-series)
 	    binding (kbd-key:binding key-series)))
     (and (stringp key-series)
