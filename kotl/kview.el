@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    6/30/93
-;; Last-Mod:     29-Jan-23 at 22:44:24 by Mats Lidell
+;; Last-Mod:     29-Jan-23 at 22:44:55 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1016,7 +1016,6 @@ See also `kview:map-branch' and `kview:map-tree'."
   (with-current-buffer (kview:buffer kview)
     (save-excursion
       (let ((lbl-sep-len (kview:label-separator-length kview))
-	    cell-indent
 	    results)
 	;; Next line ensures point is in the root of the current tree if
 	;; the tree is at all hidden.
@@ -1025,7 +1024,7 @@ See also `kview:map-branch' and `kview:map-tree'."
 	(when first-p
 	  ;; Move back to first predecessor at same level.
 	  (while (kcell-view:backward t lbl-sep-len)))
-	(setq cell-indent (kcell-view:indent nil lbl-sep-len))
+	(kcell-view:indent nil lbl-sep-len)
 	;; Terminate when no further cells at same level.
 	(while (progn (setq results (cons (funcall func kview) results))
 		      (kcell-view:forward visible-p lbl-sep-len)))

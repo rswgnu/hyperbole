@@ -33,6 +33,7 @@
 2023-01-29  Mats Lidell  <matsl@gnu.org>
 
 * kotl/kview.el (kcell-view:to-label-end): Remove unused free variable.
+    (kview:map-siblings): Remove unused lexical variable cell-indent
 
 * kotl/kexport.el: Remove XEmacs font-lock variables
     Remove hm--html-mode-hook, XEmacs specific package
