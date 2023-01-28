@@ -32,6 +32,10 @@
 
 2023-01-29  Mats Lidell  <matsl@gnu.org>
 
+* hsys-org.el (hsys-org-search-internal-link-p):
+    (hsys-org-search-radio-target-link-p): Use org-fold-show-context when
+    available.
+
 * hmouse-tag.el (smart-tags-find-p): Remove unused lexical variable
     find-tag-result
 
