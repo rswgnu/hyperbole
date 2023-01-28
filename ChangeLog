@@ -34,6 +34,7 @@
 
 * kotl/kexport.el: Remove XEmacs font-lock variables
     Remove hm--html-mode-hook, XEmacs specific package
+    (kexport:html): Bind lexical var is-collapsible
 
 2023-01-29  Bob Weiner  <rsw@gnu.org>
 
