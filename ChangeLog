@@ -32,6 +32,8 @@
 
 2023-01-29  Mats Lidell  <matsl@gnu.org>
 
+* hui-mini.el (hui:menu-choose): Use hui:menu-exit-hyperbole
+
 * hsys-org.el (hsys-org-search-internal-link-p):
     (hsys-org-search-radio-target-link-p): Use org-fold-show-context when
     available.

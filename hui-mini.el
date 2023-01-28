@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    15-Oct-91 at 20:13:17
-;; Last-Mod:     28-Jan-23 at 23:43:41 by Mats Lidell
+;; Last-Mod:     29-Jan-23 at 00:46:22 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -409,7 +409,7 @@ documentation, not the full text."
     ;;   0 for at the end of the menu (does nothing).
     (cond ((eq key exit-char)
 	   (set--this-command-keys (concat hui:menu-keys hui:menu-exit-hyperbole))
-	   (setq this-command #'hui:menu-exit)
+	   (setq this-command #'hui:menu-exit-hyperbole)
 	   nil)
 	  ((eq key quit-char)
 	   (set--this-command-keys (concat hui:menu-keys hui:menu-quit))
