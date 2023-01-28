@@ -32,6 +32,9 @@
 
 2023-01-29  Mats Lidell  <matsl@gnu.org>
 
+* hmouse-drv.el (hkey-buffer-move): Silence warning by naming unused
+    lexical argument _arg
+
 * hui-mini.el (hui:menu-doc):
 * hibtypes.el (debugger-source):
 * hib-kbd.el (kbd-key): Use equal with string literal.

@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    04-Feb-90
-;; Last-Mod:     15-Jan-23 at 17:08:53 by Mats Lidell
+;; Last-Mod:     29-Jan-23 at 00:15:24 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -798,7 +798,7 @@ hkey-swap and hkey-throw."
   (interactive)
   (hkey-buffer-move 'up))
 
-(defun hkey-buffer-move (direction &optional arg)
+(defun hkey-buffer-move (direction &optional _arg)
   "Move the current buffer to the next window in DIRECTION.
 DIRECTION is a symbol, one of: up, down, left or right.
 
