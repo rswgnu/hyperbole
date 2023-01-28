@@ -3,9 +3,9 @@
 ;; Author:       Mats Lidell
 ;;
 ;; Orig-Date:    17-Dec-22 at 22:04:19
-;; Last-Mod:      8-Jan-23 at 23:50:26 by Mats Lidell
+;; Last-Mod:     28-Jan-23 at 10:12:32 by Mats Lidell
 ;;
-;; Copyright (C) 2021-2022  Free Software Foundation, Inc.
+;; Copyright (C) 2023  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
 ;;
 ;; This file is part of GNU Hyperbole.
@@ -16,30 +16,15 @@
 ;;; Code:
 
 ;;; ************************************************************************
-;;; Requirements
+;;; Other required Elisp libraries
 ;;; ************************************************************************
 
-;;; ************************************************************************
-;;; Public variables
-;;; ************************************************************************
-
-;;; ************************************************************************
-;;; Private variables
-;;; ************************************************************************
+(require 'gnus-sum)
+(require 'gnus-art)
 
 ;;; ************************************************************************
 ;;; Public functions
 ;;; ************************************************************************
-
-;; FIXME - Start to use common prefix such as hypb for file name and
-;; functions?
-;;
-;; Would be:
-;;   File: hypb-gnus-email.el
-;;   Function: hypb-gnus-email-init
-
-(require 'gnus-sum)
-(require 'gnus-art)
 
 ;;;###autoload
 (defun Gnus-mail-init ()
@@ -71,7 +56,7 @@
 ;;; ************************************************************************
 
 ;; FIXME - noerase arg is nil in the other invocation so really not
-;; needed. We can use a local defun in the other case as well and so
+;; needed. We could use a local defun in the other case as well and so
 ;; the noerase can go away.
 (defun hgnus-mail--message-mail-other-window (_noerase to)
   "Open mail composer in other window with field TO set."
@@ -79,11 +64,6 @@
 
 (defalias 'Gnus-Summ-goto #'gnus-summary-show-article)
 (defalias 'Gnus-msg-next #'gnus-article-goto-next-page)
-
-;; (defun Gnus-Summ-delete ()
-;;   "Delete an article.  No undo for this one I'm afraid."
-;;   (let ((gnus-novice-user t))
-;;     (gnus-summary-delete-article)))
 
 (defun Gnus-Summ-delete ()
   "Mark article for process so it can be expunged later."
