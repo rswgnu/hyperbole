@@ -32,6 +32,8 @@
 
 2023-01-29  Mats Lidell  <matsl@gnu.org>
 
+* hactypes.el: Require man for Man-notify-method. 
+
 * kotl/kview.el (kcell-view:to-label-end): Remove unused free variable.
     (kview:map-siblings): Remove unused lexical variable cell-indent
 
