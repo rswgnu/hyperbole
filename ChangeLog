@@ -30,6 +30,10 @@
     Remove refs to old XEmacs variables and add call to disable font-lock-mode
     in the html buffer, to speed export.
 
+2023-01-29  Mats Lidell  <matsl@gnu.org>
+
+* kotl/kexport.el: Remove XEmacs font-lock variables
+
 2023-01-29  Bob Weiner  <rsw@gnu.org>
 
 * kotl/kimport.el: Replace 'children-p' arg with 'children-flag'.
