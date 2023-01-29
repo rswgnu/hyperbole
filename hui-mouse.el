@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    04-Feb-89
-;; Last-Mod:     15-Jan-23 at 20:35:52 by Mats Lidell
+;; Last-Mod:     29-Jan-23 at 01:03:45 by Bob Weiner
 ;;
 ;; Copyright (C) 1991-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -543,17 +543,6 @@ smart keyboard keys.")
   "Offer completion help for current minibuffer argument, if any."
   (if (where-is-internal 'minibuffer-completion-help (current-local-map))
       (minibuffer-completion-help)))
-
-(defun smart-symlink-expand (path)
-  "Return referent for possible symbolic link, PATH."
-  (if (not (fboundp 'symlink-referent))
-      path
-    (let ((start 0) (len (length path)) (ref) (part))
-      (while (and (< start len) (setq part (string-match "/[^/]*" path start)))
-	(setq part (concat ref
-			   (substring path start (setq start (match-end 0))))
-	      ref (symlink-referent part))) ;; FIXME - Where is this function defined
-      ref)))
 
 ;;; ************************************************************************
 ;;; smart-buffer-menu functions
@@ -1581,10 +1570,10 @@ local variable containing its pathname."
     (if (not (or (if (string-match "Manual Entry\\|\\*man "
 				   (buffer-name (current-buffer)))
 		     (progn (and (boundp 'man-path) man-path
-				 (setq ref (smart-symlink-expand man-path)))
+				 (setq ref (hpath:symlink-referent man-path)))
 			    t))
 		 (if buffer-file-name
-		     (string-match "/man/" (setq ref (smart-symlink-expand
+		     (string-match "/man/" (setq ref (hpath:symlink-referent
 						      buffer-file-name))))))
 	(setq ref nil)
       (or (setq ref (or (smart-man-file-ref)

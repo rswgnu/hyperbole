@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     9-Oct-91 at 18:38:05
-;; Last-Mod:     25-Jul-22 at 17:59:37 by Mats Lidell
+;; Last-Mod:     29-Jan-23 at 02:03:03 by Bob Weiner
 ;;
 ;; Copyright (C) 1991-2022  Free Software Foundation, Inc.
 ;; See the HY-COPY (Hyperbole) or BR-COPY (OO-Browser) file for license
@@ -73,7 +73,8 @@ Has side-effect of widening buffer.
 Message's displayable part begins at optional MSG-START and ends at or before
 MSG-END."
   (widen)
-  (or msg-end (setq msg-end (point-max)))
+  (unless msg-end
+    (setq msg-end (point-max)))
   (save-excursion
     (goto-char msg-end)
     (if (search-backward hmail:hbdata-sep msg-start t) (1- (point)) msg-end)))
@@ -81,17 +82,19 @@ MSG-END."
 (defun hmail:hbdata-to-p ()
   "Move point to the start of embedded Hyperbole button data.
 Return t if button data is found, else nil."
-  (and (cond ((memq major-mode (list hmail:reader hmail:modifier))
-	      (hmail:msg-narrow) t)
-	     ((or (hmail:lister-p) (hnews:lister-p)) t)
-	     ((memq major-mode (list hmail:composer hnews:reader
-				     hnews:composer))
-	      (widen) t)
-	     ((not buffer-file-name)))
-       (progn
-	 (goto-char (point-max))
-	 (if (search-backward hmail:hbdata-sep nil t)
-	     (progn (forward-line 1) t)))))
+  (when (cond ((memq major-mode (list hmail:reader hmail:modifier))
+	       (hmail:msg-narrow)
+	       t)
+	      ((or (hmail:lister-p) (hnews:lister-p)) t)
+	      ((memq major-mode (list hmail:composer hnews:reader
+				      hnews:composer))
+	       (widen)
+	       t)
+	      ((not buffer-file-name)))
+    (goto-char (point-max))
+    (when (search-backward hmail:hbdata-sep nil t)
+      (forward-line 1)
+      t)))
 
 (defun hmail:browser-p ()
   "Return t iff current major mode helps browse received e-mail messages."
@@ -103,8 +106,10 @@ Invisible text is expanded and included in the mail only if INVISIBLE-FLAG is
 non-nil.  BUF defaults to the current buffer and may be a buffer or buffer
 name."
   (interactive (list (current-buffer) (y-or-n-p "Include invisible text? ")))
-  (or buf (setq buf (current-buffer)))
-  (if (stringp buf) (setq buf (get-buffer buf)))
+  (unless buf
+    (setq buf (current-buffer)))
+  (when (stringp buf)
+    (setq buf (get-buffer buf)))
   (set-buffer buf)
   (hmail:region (point-min) (point-max) buf invisible-flag))
 
@@ -240,17 +245,16 @@ Signals error when current mail reader is not supported."
   (let* ((reader (symbol-name hmail:reader))
 	 ;; (toggled)
 	 )
-    (or (fboundp 'rmail:msg-hdrs-full)
-	(error "(rmail:msg-id-get): Invalid mail reader: %s" reader))
+    (unless (fboundp 'rmail:msg-hdrs-full)
+      (error "(rmail:msg-id-get): Invalid mail reader: %s" reader))
     (save-excursion
       (unwind-protect
 	  (progn
 	    ;; (setq toggled (rmail:msg-hdrs-full nil))
 	    (goto-char (point-min))
-	    (if (re-search-forward (concat rmail:msg-hdr-prefix
-					   "\\(.+\\)"))
-		;; Found matching msg
-		(buffer-substring (match-beginning 2) (match-end 2))))
+	    (when (re-search-forward (concat rmail:msg-hdr-prefix "\\(.+\\)"))
+	      ;; Found matching msg
+	      (buffer-substring (match-beginning 2) (match-end 2))))
 	;; (rmail:msg-hdrs-full toggled)
 	()))))
 

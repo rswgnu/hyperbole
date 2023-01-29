@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     2-Apr-91
-;; Last-Mod:     20-Jan-23 at 23:17:59 by Mats Lidell
+;; Last-Mod:     29-Jan-23 at 02:34:21 by Bob Weiner
 ;;
 ;; Copyright (C) 1991-2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -407,13 +407,20 @@ Use hbdata file in KEY-SRC's directory, or optional DIRECTORY or if nil, use
 With optional CREATE, if no such line exists, insert a new file entry at the
 beginning of the hbdata file (which is created if necessary).
 Return non-nil if KEY-SRC is found or created, else nil."
-  (let ((rtn) (ln-dir))
-    (if (and (get-buffer key-src)
-	     (set-buffer key-src)
-	     (not buffer-file-name))
+  (let (rtn
+	ln-dir)
+    ;; Drafts of mail messages now have a buffer-file-name since they
+    ;; are temporarily saved to a file until sent.  But but-data still
+    ;; should be stored in the mail buffer itself, so check explicitly
+    ;; whether is a mail composition buffer in such cases.
+    (if (or (hmail:mode-is-p)
+	    (and (get-buffer key-src)
+		 (set-buffer key-src)
+		 (not buffer-file-name)))
 	;; Button buffer has no file attached
-	(progn (setq buffer-read-only nil)
-	       (unless (hmail:hbdata-to-p)
+	(progn (if (hmail:hbdata-to-p) ;; Might change the buffer
+		   (setq buffer-read-only nil)
+		 (setq buffer-read-only nil)
 		 (insert "\n" hmail:hbdata-sep "\n"))
 	       (backward-char 1)
 	       (setq rtn t))

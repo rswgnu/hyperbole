@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    18-Sep-91 at 02:57:09
-;; Last-Mod:     26-Nov-22 at 17:21:53 by Bob Weiner
+;; Last-Mod:     29-Jan-23 at 02:39:52 by Bob Weiner
 ;;
 ;; Copyright (C) 1991-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -1605,95 +1605,98 @@ Return nil if no implicit button at point."
 	   (itype)
 	   (is-type categ))
 
-      (hattr:clear 'hbut:current)
-      (unless is-type
-	(while (and (not is-type) types)
-	  (setq itype (car types))
-	  (when (and itype (setq args (funcall itype)))
-	    (setq is-type itype)
-	    ;; Any implicit button type check should leave point
-	    ;; unchanged.  Trigger an error if not.
-	    (unless (equal (point-marker) ibpoint)
-	      (hypb:error "(Hyperbole): `%s' at-p test improperly moved point from %s to %s"
-			  is-type ibpoint (point-marker))))
-	  (setq types (cdr types))))
+      (unwind-protect
+	  (progn
+	    (hattr:clear 'hbut:current)
+	    (unless is-type
+	      (while (and (not is-type) types)
+		(setq itype (car types))
+		(when (and itype (setq args (funcall itype)))
+		  (setq is-type itype)
+		  ;; Any implicit button type check should leave point
+		  ;; unchanged.  Trigger an error if not.
+		  (unless (equal (point-marker) ibpoint)
+		    (hypb:error "(Hyperbole): `%s' at-p test improperly moved point from %s to %s"
+				is-type ibpoint (point-marker))))
+		(setq types (cdr types))))
 
-      (set-marker ibpoint nil)
+	    (set-marker ibpoint nil)
 
-      (when is-type
-	(let ((current-name      (hattr:get 'hbut:current 'name))
-	      ;; (current-lbl-key   (hattr:get 'hbut:current 'lbl-key))
-	      (current-lbl-start (hattr:get 'hbut:current 'lbl-start))
-	      (current-lbl-end   (hattr:get 'hbut:current 'lbl-end))
-	      ;; (current-categ     (hattr:get 'hbut:current 'categ))
-	      (current-loc       (hattr:get 'hbut:current 'loc))
-	      (current-dir       (hattr:get 'hbut:current 'dir))
-	      (current-action    (hattr:get 'hbut:current 'action))
-	      ;; (current-actype    (hattr:get 'hbut:current 'actype))
-	      (current-args      (hattr:get 'hbut:current 'args)))
+	    (when is-type
+	      (let ((current-name      (hattr:get 'hbut:current 'name))
+		    ;; (current-lbl-key   (hattr:get 'hbut:current 'lbl-key))
+		    (current-lbl-start (hattr:get 'hbut:current 'lbl-start))
+		    (current-lbl-end   (hattr:get 'hbut:current 'lbl-end))
+		    ;; (current-categ     (hattr:get 'hbut:current 'categ))
+		    (current-loc       (hattr:get 'hbut:current 'loc))
+		    (current-dir       (hattr:get 'hbut:current 'dir))
+		    (current-action    (hattr:get 'hbut:current 'action))
+		    ;; (current-actype    (hattr:get 'hbut:current 'actype))
+		    (current-args      (hattr:get 'hbut:current 'args)))
 
-	  (if current-name
-	      (setq name current-name)
-	    (unless name
-	      (setq name (ibut:label-p t nil nil nil t)))
-	    (when name
-	      (hattr:set 'hbut:current 'name name)))
+		(if current-name
+		    (setq name current-name)
+		  (unless name
+		    (setq name (ibut:label-p t nil nil nil t)))
+		  (when name
+		    (hattr:set 'hbut:current 'name name)))
 
-	  ;; Need to ignore current-lbl-key and use name if any
-	  (setq lbl-key (or (ibut:label-to-key name)
-			    lbl-key
-			    (ibut:label-p nil "\"" "\"" nil t)))
-	  (when lbl-key
-	    (hattr:set 'hbut:current 'lbl-key lbl-key))
+		;; Need to ignore current-lbl-key and use name if any
+		(setq lbl-key (or (ibut:label-to-key name)
+				  lbl-key
+				  (ibut:label-p nil "\"" "\"" nil t)))
+		(when lbl-key
+		  (hattr:set 'hbut:current 'lbl-key lbl-key))
 
-	  (if current-lbl-start
-	      (setq lbl-start current-lbl-start)
-	    (when lbl-start
-	      (hattr:set 'hbut:current 'lbl-start lbl-start)))
+		(if current-lbl-start
+		    (setq lbl-start current-lbl-start)
+		  (when lbl-start
+		    (hattr:set 'hbut:current 'lbl-start lbl-start)))
 
-	  (if current-lbl-end
-	      (setq lbl-end current-lbl-end)
-	    (when lbl-end
-	      (hattr:set 'hbut:current 'lbl-end lbl-end)))
+		(if current-lbl-end
+		    (setq lbl-end current-lbl-end)
+		  (when lbl-end
+		    (hattr:set 'hbut:current 'lbl-end lbl-end)))
 
-	  (hattr:set 'hbut:current 'categ is-type)
+		(hattr:set 'hbut:current 'categ is-type)
 
-	  (if current-loc
-	      (setq loc current-loc)
-	    (unless loc
-	      (setq loc (save-excursion (hbut:to-key-src 'full))))
-	    (when loc
-	      (hattr:set 'hbut:current 'loc loc)))
+		(if current-loc
+		    (setq loc current-loc)
+		  (unless loc
+		    (setq loc (save-excursion (hbut:to-key-src 'full))))
+		  (when loc
+		    (hattr:set 'hbut:current 'loc loc)))
 
-	  (if current-dir
-	      (setq dir current-dir)
-	    (unless dir
-	      (setq dir (hui:key-dir (current-buffer))))
-	    (when dir
-	      (hattr:set 'hbut:current 'dir dir)))
+		(if current-dir
+		    (setq dir current-dir)
+		  (unless dir
+		    (setq dir (hui:key-dir (current-buffer))))
+		  (when dir
+		    (hattr:set 'hbut:current 'dir dir)))
 
-	  (if current-action
-	      (setq action current-action)
-	    (when action
-	      (hattr:set 'hbut:current 'action action)))
-	  (when action
-	    (unless args (setq args action)))
+		(if current-action
+		    (setq action current-action)
+		  (when action
+		    (hattr:set 'hbut:current 'action action)))
+		(when action
+		  (unless args (setq args action)))
 
-	  (or current-args
-	      (not (listp args))
-	      (progn
-		(setq args (copy-sequence args))
-		(when (eq (car args) #'hact)
-		  (setq args (cdr args)))
-		(hattr:set 'hbut:current 'actype
-			   (or
-			    actype
-			    ;; Hyperbole action type
-			    (symtable:actype-p (car args))
-			    ;; Regular Emacs Lisp function symbol
-			    (car args)))
-		(hattr:set 'hbut:current 'args (if actype args (cdr args))))))
-	'hbut:current))))
+		(or current-args
+		    (not (listp args))
+		    (progn
+		      (setq args (copy-sequence args))
+		      (when (eq (car args) #'hact)
+			(setq args (cdr args)))
+		      (hattr:set 'hbut:current 'actype
+				 (or
+				  actype
+				  ;; Hyperbole action type
+				  (symtable:actype-p (car args))
+				  ;; Regular Emacs Lisp function symbol
+				  (car args)))
+		      (hattr:set 'hbut:current 'args (if actype args (cdr args))))))
+	      'hbut:current))
+	(set-marker ibpoint nil)))))
 
 (defun    ibut:delete (&optional but-sym)
   "Delete Hyperbole implicit button based on optional BUT-SYM.
@@ -2023,41 +2026,42 @@ implicit buttons.
 Return the symbol for the button if found, else nil."
   (unless lbl-key
     (setq lbl-key (ibut:label-p nil nil nil nil t)))
-  (hbut:funcall
-   (lambda (lbl-key _buffer _key-src)
-     (let* ((name-start-end (ibut:label-p t nil nil t t))
-	    (name-end (nth 2 name-start-end))
-	    (at-name (car name-start-end))
-	    (at-lbl-key (ibut:label-p nil "\"" "\"" nil t))
-	    (opoint (point))
-	    move-flag
-	    start
-	    ibut)
-       ;; Do not move point if it is already in the text of an
-       ;; implicit button matching LBL-KEY.  If on the name of
-       ;; the same button, move into the text of the button.
-       (cond ((and lbl-key (equal at-lbl-key lbl-key))
-	      (setq ibut 'hbut:current))
-	     ((and at-name (equal (ibut:label-to-key at-name) lbl-key))
-	      (setq ibut 'hbut:current
-		    move-flag t))
-	     ((and lbl-key (setq ibut (ibut:to lbl-key)))
-	      (setq move-flag t)))
-       (when (and move-flag ibut (not (hbut:outside-comment-p)))
-	 ;; Skip past any optional name and separators
-	 (if (setq start (hattr:get ibut 'lbl-start))
-	     (goto-char start)
-	   (when name-end
-	     (goto-char name-end)
-	     (if (looking-at ibut:label-separator-regexp)
-		 ;; Move past up to 2 possible characters of ibut
-		 ;; delimiters to ensure are inside the ibut name; this
-		 ;; prevents recognizing labeled, delimited ibuts of a
-		 ;; single character since no one should need that.
-		 (goto-char (min (+ 2 (match-end 0)) (point-max)))
-	       (goto-char opoint)))))
-       ibut))
-   lbl-key))
+  (when lbl-key
+    (hbut:funcall
+     (lambda (lbl-key _buffer _key-src)
+       (let* ((name-start-end (ibut:label-p t nil nil t t))
+	      (name-end (nth 2 name-start-end))
+	      (at-name (car name-start-end))
+	      (at-lbl-key (ibut:label-p nil "\"" "\"" nil t))
+	      (opoint (point))
+	      move-flag
+	      start
+	      ibut)
+	 ;; Do not move point if it is already in the text of an
+	 ;; implicit button matching LBL-KEY.  If on the name of
+	 ;; the same button, move into the text of the button.
+	 (cond ((and lbl-key (equal at-lbl-key lbl-key))
+		(setq ibut 'hbut:current))
+	       ((and at-name (equal (ibut:label-to-key at-name) lbl-key))
+		(setq ibut 'hbut:current
+		      move-flag t))
+	       ((and lbl-key (setq ibut (ibut:to lbl-key)))
+		(setq move-flag t)))
+	 (when (and move-flag ibut (not (hbut:outside-comment-p)))
+	   ;; Skip past any optional name and separators
+	   (if (setq start (hattr:get ibut 'lbl-start))
+	       (goto-char start)
+	     (when name-end
+	       (goto-char name-end)
+	       (if (looking-at ibut:label-separator-regexp)
+		   ;; Move past up to 2 possible characters of ibut
+		   ;; delimiters to ensure are inside the ibut name; this
+		   ;; prevents recognizing labeled, delimited ibuts of a
+		   ;; single character since no one should need that.
+		   (goto-char (min (+ 2 (match-end 0)) (point-max)))
+		 (goto-char opoint)))))
+	 ibut))
+     lbl-key)))
 
 ;;; ------------------------------------------------------------------------
 (defconst ibut:label-start "<["

@@ -1,3 +1,22 @@
+2023-01-29  Bob Weiner  <rsw@gnu.org>
+
+* hbdata.el (hbdata:to-entry-buf): Fix error when creating an ebut in an
+    unsent message-compose buffer.  Had assumed buffer-file-name there
+    would be nil but now Emacs saves unsent drafts to a file, so have to
+    check if is a mail or news buffer instead.
+
+* hui-mouse.el (smart-man-entry-ref): Replace 'smart-symlink-expand' call
+    with 'hpath:symlink-referent'.
+               (smart-symlink-expand): Remove this function.
+
+* hbut.el (ibut:to-text): Fix so does not move point if lbl-key end up nil.
+
+2023-01-28  Bob Weiner  <rsw@gnu.org>
+
+* hmouse-tag.el (smart-lisp-htype-tag): Fix so expands shortened htype tags
+    whose symbols have been interned when defined.  This fixes jumping to
+    the definition of htypes in Help buffers.
+
 2023-01-22  Mats Lidell  <matsl@gnu.org>
 
 * hypb.el: Add variable and function declarations for package
@@ -8163,7 +8182,6 @@ V6.0.0 changes ^^^^:
 
 * man/hyperbole.texi (Smart Key - Identifier Menu Mode ): Renamed and updated with imenu support.
   hui-mouse.el (smart-imenu-display-item-where, smart-item-menu-p, smart-imenu-item-at-p): Added
-
     these functions and to use the Emacs imenu library to display programming identifiers defined
     within the same file in which they are referenced.  This works without a TAGS file and on files
     that have not yet been evaluated within the current Emacs session.
