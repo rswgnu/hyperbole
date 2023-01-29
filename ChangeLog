@@ -46,7 +46,7 @@
 
 * hui-mini.el (hui:menu-doc):
 * hibtypes.el (debugger-source):
-* hib-kbd.el (kbd-key): Use equal with string literal.
+* hib-kbd.el (kbd-key): Use string-equal with string literal.
 
 * hactypes.el: Require man for Man-notify-method.
 
