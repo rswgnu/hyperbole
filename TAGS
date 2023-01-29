@@ -327,33 +327,33 @@ hib-doc-id.el,311
 (defun doc-id:help 173,6781
 
 hib-kbd.el,1074
-(defvar kbd-key:named-key-list42,1621
-(defvar kbd-key:named-key-regexp50,1997
-(defvar kbd-key:modified-key-regexp57,2238
-(defact kbd-key 73,3011
-(defib kbd-key 85,3509
-(defun kbd-key:act 150,6413
-(defun kbd-key:execute 169,7112
-(defun kbd-key:execute-special-series 178,7490
-(defun kbd-key:maybe-enable-helm 196,8259
-(defun kbd-key:key-series-to-events 202,8487
-(defun kbd-key:doc 213,8969
-(defun kbd-key:help 239,9832
-(defun kbd-key:is-p 245,10087
-(defun kbd-key:normalize 279,11584
-(defun kbd-key:remove-delimiters 343,14752
-(defun kbd-key:binding 354,15307
-(defun kbd-key:kbd 361,15625
-(defun kbd-key:parse 369,15981
-(defun kbd-key:extended-command-p 464,19683
-(defun kbd-key:hyperbole-hycontrol-key-p 470,19930
-(defun kbd-key:hyperbole-mini-menu-key-p 481,20430
-(defun kbd-key:key-and-arguments 491,21019
-(defun kbd-key:mark-spaces-to-keep 502,21558
-(defun kbd-key:special-sequence-p 521,22212
-(defconst kbd-key:extended-command-prefix536,22876
-(defconst kbd-key:extended-command-binding-list 541,23061
-(defvar kbd-key:mini-menu-key 544,23241
+(defvar kbd-key:named-key-list42,1620
+(defvar kbd-key:named-key-regexp50,1996
+(defvar kbd-key:modified-key-regexp57,2237
+(defact kbd-key 73,3010
+(defib kbd-key 85,3508
+(defun kbd-key:act 150,6412
+(defun kbd-key:execute 169,7111
+(defun kbd-key:execute-special-series 178,7489
+(defun kbd-key:maybe-enable-helm 196,8258
+(defun kbd-key:key-series-to-events 202,8486
+(defun kbd-key:doc 213,8968
+(defun kbd-key:help 239,9831
+(defun kbd-key:is-p 245,10086
+(defun kbd-key:normalize 279,11583
+(defun kbd-key:remove-delimiters 343,14751
+(defun kbd-key:binding 354,15306
+(defun kbd-key:kbd 361,15624
+(defun kbd-key:parse 369,15980
+(defun kbd-key:extended-command-p 464,19682
+(defun kbd-key:hyperbole-hycontrol-key-p 470,19929
+(defun kbd-key:hyperbole-mini-menu-key-p 481,20429
+(defun kbd-key:key-and-arguments 491,21018
+(defun kbd-key:mark-spaces-to-keep 502,21557
+(defun kbd-key:special-sequence-p 521,22211
+(defconst kbd-key:extended-command-prefix536,22875
+(defconst kbd-key:extended-command-binding-list 541,23060
+(defvar kbd-key:mini-menu-key 544,23240
 
 hib-social.el,1334
 (defcustom hibtypes-social-default-service 182,9075
@@ -1574,7 +1574,6 @@ hvm.el,874
 (defvar Vm-msg-start-regexp 537,19544
 
 hypb.el,2529
-<<<<<<< HEAD
 (defconst hypb:help-buf-prefix 26,841
 (defcustom hypb:rgrep-command30,987
 (defun hypb:activate-interaction-log-mode 79,2877
@@ -1639,72 +1638,6 @@ hypb.el,2529
 (defun hypb:locate-pathnames 1033,42746
 (defun hypb:oct-to-int 1040,42980
 (define-button-type 'hyperbole-banner)hyperbole-banner1057,43568
-=======
-(defconst hypb:help-buf-prefix 26,842
-(defcustom hypb:rgrep-command30,988
-(defun hypb:activate-interaction-log-mode 79,2878
-(defmacro hypb:assert-same-start-and-end-buffer 167,6581
-(defun hypb:call-process-p 184,7383
-(defun hypb:char-count 206,8218
-(defun hypb:chmod 214,8448
-(defun hypb:cmd-key-series 224,8882
-(defun hypb:cmd-key-vector 242,9616
-(defun hypb:installation-type 251,9991
-(defun hypb:configuration 293,12114
-(defun hypb:debug 340,14526
-(defun hypb:decode-url 355,15043
-(defun hypb:def-to-buffer 382,16199
-(defun hypb:devdocs-lookup 398,16790
-(defun hypb:domain-name 405,17017
-(defun hypb:error 435,18275
-(defun hypb:fgrep-git-log 444,18564
-(defun hypb:fgrep-git-log-activate 452,18971
-(define-derived-mode hypb:fgrep-git-log-mode 459,19248
-(defun hypb:file-major-mode 465,19595
-(defun hypb:filter-directories 475,19987
-(defun hypb:format-quote 490,20648
-(defun hypb:get-completion 504,21122
-(defun hypb:get-raw-syntax-descriptor 527,22162
-(defun hypb:glob-to-regexp 532,22381
-(defun hypb:goto-marker 543,22839
-(defun hypb:grep-git-log 561,23480
-(defun hypb:help-buf-name 568,23855
-(defun hypb:helm-apropos 577,24226
-(defun hypb:helm-info 586,24570
-(defun hypb:hkey-help-file 594,24889
-(defun hypb:indirect-function 608,25442
-(defun hypb:insert-region 627,26109
-(defun hypb:locate 644,26880
-(defun hypb:map-plist 676,28263
-(defun hypb:map-vector 682,28482
-(defun hypb:mark-object 695,28968
-(defun hypb:maximize-window-height 705,29357
-(defun hypb:object-p 718,29838
-(defun hypb:readable-directories 725,30088
-(defun hypb:require-package 735,30524
-(defun hypb:remove-lines 748,31118
-(defun hypb:return-process-output 754,31348
-(defun hypb:rgrep 773,32055
-(defun hypb:save-lines 810,33768
-(defmacro hypb:save-selected-window-and-input-focus 816,33996
-(defun hypb:select-window-frame 823,34325
-(defun hypb:set-raw-syntax-descriptor 830,34641
-(defun hypb:straight-package-plist 844,35242
-(defun hypb:string-count-matches 854,35766
-(defun hypb:supercite-p 882,36774
-(defun hypb:toggle-isearch-invisible 896,37225
-(defun hypb:uuid 916,38149
-(defun hypb:user-name 940,38738
-(defun hypb:window-list 946,38963
-(defvar hypb:home-page 957,39535
-(defvar hypb:hyperbole-banner-keymap960,39639
-(defun hypb:display-file-with-logo 969,39955
-(defun hypb:browse-home-page 991,40951
-(defun hypb:insert-hyperbole-banner 1001,41276
-(defun hypb:locate-pathnames 1032,42694
-(defun hypb:oct-to-int 1039,42928
-(define-button-type 'hyperbole-banner)hyperbole-banner1056,43516
->>>>>>> e95326fd2f (Use string-equal)
 
 hyperbole.el,821
 (defconst hyperbole-loading 79,3516
@@ -2787,11 +2720,6 @@ test/kotl-orgtbl-tests.el,237
 (ert-deftest kotl-orgtbl-enabled-uses-kotl-mode-delete-char-outside-of-table 25,645
 (ert-deftest kotl-orgtbl-action-key-on-vertical-bar-toggles-orgtbl-mode 50,1649
 (ert-deftest kotl-orgtbl-shift-tab-demotes-tree-outside-table 69,2247
-
-test/lexical-tests.el,106
-(defvar lexical-tests-variable 5,89
-(defun lexical-tests-func1 8,152
-(defun lexical-tests-func2 12,328
 
 test/smart-org-tests.el,851
 (ert-deftest smart-org-mode-on-header-cycles-visibility 27,668
