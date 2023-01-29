@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    24-Aug-91
-;; Last-Mod:      8-Jan-23 at 13:02:53 by Bob Weiner
+;; Last-Mod:     15-Jan-23 at 16:56:07 by Mats Lidell
 ;;
 ;; Copyright (C) 1991-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -159,6 +159,7 @@ Keyword matched is grouping 1.  Referent is grouping 2.")
 (defvar br-lang-prefix)
 (defvar buffer-tag-table)
 (defvar jedi-mode)
+(defvar jedi:find-file-function) ;; FIXME: RSW customization?
 (defvar java-class-def-name-grpn)
 (defvar java-class-def-regexp)
 

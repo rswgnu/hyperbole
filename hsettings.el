@@ -32,6 +32,7 @@
 ;;; Public declarations
 ;;; ************************************************************************
 (declare-function hproperty:but-create "hui-em-but")
+(declare-function hproperty:but-flash "hui-em-but")
 
 (defvar helm-allow-mouse)
 

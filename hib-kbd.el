@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    22-Nov-91 at 01:37:57
-;; Last-Mod:     27-Oct-22 at 18:46:16 by Bob Weiner
+;; Last-Mod:     20-Jan-23 at 22:19:34 by Mats Lidell
 ;;
 ;; Copyright (C) 1991-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -463,7 +463,7 @@ For an approximate inverse of this, see `key-description'."
 
 (defun kbd-key:extended-command-p (key-series)
   "Return non-nil if the KEY-SERIES is a normalized extended command invocation.
-That is, 'M-x command'."
+That is, `M-x command'."
   (when (stringp key-series)
     (string-match kbd-key:extended-command-prefix key-series)))
 

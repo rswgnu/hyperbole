@@ -1,3 +1,27 @@
+2023-01-22  Mats Lidell  <matsl@gnu.org>
+
+* hypb.el: Add variable and function declarations for package
+    interaction-log to silence byte compilation warnings.
+    (hypb:activate-interaction-log-mode): Use cl-pushnew.
+
+2023-01-20  Mats Lidell  <matsl@gnu.org>
+
+* Remove docstring warnings.
+
+2023-01-15 Mats Lidell  <matsl@gnu.org>
+
+* hsmail.el: Remove #-mark for symbol check.
+
+* hui-mouse.el: Merge public declaration sections.
+
+* hypb.el:
+* hyrolo.el: Declare functions, remove #-mark for symbol checks.
+
+* hsettings.el (hproperty:but-flash): Declare function.
+
+* hmouse-drv.el (mouse-drag-mode-line): Use mouse-drag-frame-move from
+    Emacs 28.
+
 2023-01-08  Bob Weiner  <rsw@gnu.org>
 
 * hmouse-tag.el (xref--item-at-point): Fix this function (still broken
