@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     6-Oct-91 at 03:42:38
-;; Last-Mod:     22-Jan-23 at 16:57:36 by Mats Lidell
+;; Last-Mod:     29-Jan-23 at 10:30:14 by Bob Weiner
 ;;
 ;; Copyright (C) 1991-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -397,9 +397,10 @@ point at the start of the inserted text."
 ;;;###autoload
 (defun hypb:devdocs-lookup ()
   "Prompt for and display a devdocs.io docset section within Emacs.
-will this install the Emacs devdocs package when needed."
+This will install the Emacs devdocs package if not yet installed."
   (interactive)
   (hypb:require-package 'devdocs)
+  ;; (call-interactively #'devdocs-install)
   (devdocs-lookup))
 
 (defun hypb:domain-name ()

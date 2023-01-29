@@ -76,7 +76,7 @@ The number of stars is given by grouping 1.")
 ;;; ************************************************************************
 
 ;;;###autoload
-(defun kimport:file (import-from output-to &optional children-p)
+(defun kimport:file (import-from output-to &optional children-flag)
   "Import a buffer or file IMPORT-FROM into a koutline in buffer or file OUTPUT-TO.
 
 Any suffix in IMPORT-FROM's buffer name is used to determine the type of
@@ -107,11 +107,11 @@ information on specific importation formats."
 	  (setq suffix-regexp (car (car suffix-alist))
 		function (cdr (car suffix-alist))
 		suffix-alist (cdr suffix-alist))
-	  (if (string-match suffix-regexp import-suffix)
-	      nil
+	  (unless (string-match suffix-regexp import-suffix)
 	    (setq function nil)))
-	(if function nil (setq function (cdr (assq t kimport:mode-alist))))))
-    (funcall function import-from output-to children-p)))
+	(unless function
+	  (setq function (cdr (assq t kimport:mode-alist))))))
+    (funcall function import-from output-to children-flag)))
 
 (defun kimport:insert-buffer (buffer)
   "Insert after point the contents of BUFFER.
@@ -122,7 +122,7 @@ BUFFER may be a buffer or a buffer name."
   (kotl-mode:add-indent-to-region))
 
 ;;;###autoload
-(defun kimport:insert-file (import-from children-p)
+(defun kimport:insert-file (import-from children-flag)
   "Insert each element in IMPORT-FROM as a separate cell in the current view.
 Insert as sibling cells following the current cell unless prefix arg,
 CHILDREN-P is non-nil, then insert as the initial children of the current
@@ -139,7 +139,7 @@ importation is determined."
 	      "Buffer or file to insert as children of current cell: "
 	    "Buffer or file to insert as siblings of current cell: "))
 	 current-prefix-arg))
-  (kimport:file import-from (current-buffer) children-p))
+  (kimport:file import-from (current-buffer) children-flag))
 
 (defun kimport:insert-file-contents (filename)
   "Insert contents of file FILENAME into current cell after point.
@@ -178,7 +178,7 @@ Interactively, second arg is non-nil if prefix ARG is supplied."
 ;;;
 
 ;;;###autoload
-(defun kimport:aug-post-outline (import-from output-to &optional children-p)
+(defun kimport:aug-post-outline (import-from output-to &optional children-flag)
   "Insert Augment outline statements from IMPORT-FROM into koutline OUTPUT-TO.
 Displays and leaves point in OUTPUT-TO.  See documentation for
 `kimport:initialize' for valid values of IMPORT-FROM and OUTPUT-TO and for
@@ -199,7 +199,7 @@ on."
 	  orig-point (point)
 	  initially-empty-output (zerop (- (point-max) (point-min)))
 	  no-renumber (or initially-empty-output
-			  (not (if children-p
+			  (not (if children-flag
 				   (kcell-view:child-p)
 				 (kcell-view:sibling-p)))))
 
@@ -216,7 +216,7 @@ on."
 	  nil
 	;; Insert first cell as sibling of current cell.
 	(set-buffer output-to)
-	(if children-p
+	(if children-flag
 	    ;; Insert as children.
 	    (progn (setq klabel (klabel:child (kcell-view:label))
 			 output-level (klabel:level klabel))
@@ -245,7 +245,7 @@ on."
 ;;;
 
 ;;;###autoload
-(defun kimport:star-outline (import-from output-to &optional children-p)
+(defun kimport:star-outline (import-from output-to &optional children-flag)
   "Insert star outline nodes from IMPORT-FROM into koutline OUTPUT-TO.
 Display and leave point in OUTPUT-TO.  See documentation for
 `kimport:initialize' for valid values of IMPORT-FROM and
@@ -266,7 +266,7 @@ placed.
 	  orig-point (point)
 	  initially-empty-output (zerop (- (point-max) (point-min)))
 	  no-renumber (or initially-empty-output
-			  (not (if children-p
+			  (not (if children-flag
 				   (kcell-view:child-p)
 				 (kcell-view:sibling-p)))))
 
@@ -288,7 +288,7 @@ placed.
 	  nil
 	;; Insert first cell as sibling of current cell.
 	(set-buffer output-to)
-	(if children-p
+	(if children-flag
 	    ;; Insert as children.
 	    (progn (setq klabel (klabel:child (kcell-view:label))
 			 output-level (klabel:level klabel))
@@ -317,7 +317,7 @@ placed.
 ;;;
 
 ;;;###autoload
-(defun kimport:text (import-from output-to &optional children-p)
+(defun kimport:text (import-from output-to &optional children-flag)
   "Insert text paragraphs from IMPORT-FROM into koutline OUTPUT-TO.
 Displays and leaves point in OUTPUT-TO.  See documentation for
 `kimport:initialize' for valid values of IMPORT-FROM and OUTPUT-TO and for
@@ -336,7 +336,7 @@ The variable, `paragraph-start,' is used to determine paragraphs."
 	  orig-point (point)
 	  initially-empty-output (zerop (- (point-max) (point-min)))
 	  no-renumber (or initially-empty-output
-			  (not (if children-p
+			  (not (if children-flag
 				   (kcell-view:child-p)
 				 (kcell-view:sibling-p)))))
 
@@ -351,7 +351,7 @@ The variable, `paragraph-start,' is used to determine paragraphs."
 	    nil
 	  ;; Insert first cell as sibling of current cell.
 	  (set-buffer output-to)
-	  (if children-p
+	  (if children-flag
 	      ;; Insert as children.
 	      (progn (setq klabel (klabel:child (kcell-view:label))
 			   output-level (klabel:level klabel))

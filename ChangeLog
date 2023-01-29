@@ -1,5 +1,12 @@
 2023-01-29  Bob Weiner  <rsw@gnu.org>
 
+* kotl/kimport.el: Replace 'children-p' arg with 'children-flag'.
+
+* kotl/kview.el (kcell-view:to-label-end): Remove unused 'found' var.
+
+* hui-mouse.el (smart-helm-get-current-action): Add, was missing.
+    (smart-helm-line-has-action, smart-helm-assist): Use.
+
 * hbdata.el (hbdata:to-entry-buf): Fix error when creating an ebut in an
     unsent message-compose buffer.  Had assumed buffer-file-name there
     would be nil but now Emacs saves unsent drafts to a file, so have to

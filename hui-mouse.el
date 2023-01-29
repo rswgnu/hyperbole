@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    04-Feb-89
-;; Last-Mod:     29-Jan-23 at 01:03:45 by Bob Weiner
+;; Last-Mod:     29-Jan-23 at 03:47:20 by Bob Weiner
 ;;
 ;; Copyright (C) 1991-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -147,6 +147,7 @@ Its default value is `smart-scroll-down'.  To disable it, set it to
 (defvar helm-action-buffer)
 (defvar helm-alive-p)
 (defvar helm-buffer)
+(defvar helm-saved-action)
 
 (declare-function ibuffer-mark-for-delete "ibuffer")
 (declare-function ibuffer-unmark-forward "ibuffer")
@@ -1059,6 +1060,15 @@ a helm section header."
 	   (eq (posn-area (event-start action-key-depress-args))
 	       'header-line))))
 
+(defun smart-helm-get-current-action (&optional action)
+  "Return the helm default action.
+Get it from optional ACTION, the helm saved action or from the selected helm item."
+  (helm-get-default-action (or action
+                               helm-saved-action
+                               (if (get-buffer helm-action-buffer)
+                                   (helm-get-selection helm-action-buffer)
+                                 (helm-get-actions-from-current-source)))))
+
 (defun smart-helm-line-has-action ()
   "Mark and return the actions for the helm selection item at the point.
 Point is where Action Key was depress.  Return nil if line lacks
@@ -1075,7 +1085,7 @@ active."
 		       (helm-pos-candidate-separator-p)))
 	  (let ((helm-selection-point (point)))
 	    (helm-mark-current-line)
-	    (helm-get-current-action)))))))
+	    (smart-helm-get-current-action)))))))
 
 (defun smart-helm-alive-p ()
   ;; Handles case where helm-action-buffer is visible but helm-buffer
@@ -1233,7 +1243,7 @@ Locations are:
 				 (princ "The current helm selection item is:\n\t")
 				 (princ (helm-get-selection (helm-buffer-get)))
 				 (princ "\nwith an action of:\n\t")
-				 (princ (helm-get-current-action)))
+				 (princ (smart-helm-get-current-action)))
 			       nil)))))
 	     (if hkey-debug
 		 (message "(HyDebug): In smart-helm-assist, key to execute is: {%s}; binding is: %s"

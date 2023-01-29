@@ -485,7 +485,8 @@ If between kcells, move to the previous one.  The current cell may be hidden."
   (if (save-excursion
 	(goto-char (line-beginning-position))
 	(looking-at kview:outline-regexp))
-      (setq found (goto-char (- (match-end 0) 2)))
+      ;; found, return match-end 0 point
+      (goto-char (- (match-end 0) 2))
     (kview:end-of-actual-line)
     (let (found)
       (unless (setq found (kproperty:get (1- (point)) 'kcell))
