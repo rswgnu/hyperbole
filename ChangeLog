@@ -1,6 +1,8 @@
 2023-01-29  Bob Weiner  <rsw@gnu.org>
 
 * kotl/kimport.el: Replace 'children-p' arg with 'children-flag'.
+                   (kimport:file): Fix that 'function' was not properly
+    set after a suffix match.
 
 * kotl/kview.el (kcell-view:to-label-end): Remove unused 'found' var.
 
