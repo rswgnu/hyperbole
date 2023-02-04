@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    26-Feb-98
-;; Last-Mod:     28-Jan-23 at 23:11:25 by Bob Weiner
+;; Last-Mod:      4-Feb-23 at 17:02:23 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -386,27 +386,22 @@ used.  Also converts Urls and Klinks into Html hyperlinks.
 		 (buffer-name (find-file-noselect export-from)))
 		(t (error
 		    "(kexport:html): `%s' is an invalid `export-from' argument" export-from))))
-	 (font-lock-auto-fontify) ;; Prevent syntax highlighting
-	 (font-lock-mode-disable-list '(html-mode))
-	 (font-lock-mode-enable-list)
-	 (html-mode-hook)
-	 (hm--html-mode-hook)
-	 (psgml-mode-hook)
-	 (output-to-buf-name
+	 (output-to-buf
 	  (cond ((or (bufferp output-to)
 		     (get-buffer output-to))
-		 (buffer-name (get-buffer output-to)))
+		 (get-buffer output-to))
 		((get-file-buffer output-to)
-		 (buffer-name (get-file-buffer output-to)))
+		 (get-file-buffer output-to))
 		((stringp output-to)
-		 (buffer-name (find-file-noselect output-to)))
+		 (find-file-noselect output-to))
 		(t (error
 		    "(kexport:html): `%s' is an invalid `output-to' argument" output-to))))
-	 (standard-output (get-buffer output-to-buf-name))
+	 (standard-output output-to-buf)
 	 ;; Get any title attribute from cell 0, invisible root of the outline
 	 (title (kcell:get-attr (kcell-view:cell-from-ref 0) 'title)))
 
     (with-current-buffer standard-output
+      (font-lock-mode 0) ;; Prevent syntax highlighting
       (setq buffer-read-only nil
 	    kexport:output-filename buffer-file-name)
       (erase-buffer))
@@ -417,7 +412,7 @@ used.  Also converts Urls and Klinks into Html hyperlinks.
 
 	;; If called interactively, prompt user for the title to use.
 	(if (called-interactively-p 'interactive)
-	    (setq title (read-string (format "Title for %s: " output-to-buf-name)
+	    (setq title (read-string (format "Title for %s: " (buffer-name output-to-buf))
 				     title))
 	  ;; Otherwise, use any previously retrieved title attribute or if
 	  ;; none, then the name of the current file sans the .kotl suffix.
