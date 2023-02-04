@@ -1,5 +1,7 @@
 ;;; hyperbole.el --- GNU Hyperbole: The Everyday Hypertextual Information Manager  -*- lexical-binding: t; -*-
 
+;; SPDX-License-Identifier: GPL-3.0-or-later
+;;
 ;; Copyright (C) 1992-2022  Free Software Foundation, Inc.
 
 ;; Author:           Bob Weiner
