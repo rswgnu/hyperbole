@@ -376,7 +376,7 @@
 (ert-deftest hbut-ctags-vgrind-test ()
   (unwind-protect
       (with-temp-buffer
-        (insert "hy-test-helpers:consume-input-events hy-test-helpers.el 23\n")
+        (insert "hy-test-helpers:consume-input-events hy-test-helpers.el 25\n")
         (goto-char (point-min))
         (forward-char 4)
         (let ((default-directory (expand-file-name "test" hyperb:dir)))
@@ -392,7 +392,7 @@
       (with-temp-buffer
         (insert "\n")
         (insert "hy-test-helpers.el,237\n")
-        (insert "(defun hy-test-helpers:consume-input-events 23,518\n")
+        (insert "(defun hy-test-helpers:consume-input-events 25,518\n")
         (rename-buffer (concat "TAGS" (buffer-name)))
         (goto-char (point-min))
         (forward-line 2)
