@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     6-Oct-91 at 03:42:38
-;; Last-Mod:     29-Jan-23 at 10:30:14 by Bob Weiner
+;; Last-Mod:      5-Feb-23 at 23:44:24 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -611,12 +611,7 @@ This will this install the Emacs helm package when needed."
 (defun hypb:indirect-function (obj)
   "Return the function at the end of OBJ's function chain.
 Resolves autoloadable function symbols properly."
-  (let ((func
-	 (if (fboundp 'indirect-function)
-	     (indirect-function obj)
-	   (while (symbolp obj)
-	     (setq obj (symbol-function obj)))
-	   obj)))
+  (let ((func (indirect-function obj)))
     ;; Handle functions with autoload bodies.
     (if (and (symbolp obj) (listp func) (eq (car func) 'autoload))
 	(let ((load-file (car (cdr func))))
