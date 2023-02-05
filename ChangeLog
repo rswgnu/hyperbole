@@ -13,7 +13,7 @@
          (set:members): Keep members in stable order; previously returned in
     reverse order.
 
-2023-02-05  Mats Lidell  <matsl@gnu.org>-02-05  Bob Weiner  <rsw@gnu.org>
+2023-02-05  Bob Weiner  <rsw@gnu.org>
 
 * hsys-org.el (hsys-org-mode-function): Improve doc string.
 
@@ -51,11 +51,22 @@
 * hactypes.el: Require man for Man-notify-method.
 
 * kotl/kview.el (kview:map-siblings): Remove unused lexical variable
-    cell-indent
+    cell-indent.
 
 * kotl/kexport.el: Remove XEmacs font-lock variables
     Remove hm--html-mode-hook, XEmacs specific package
     (kexport:html): Bind lexical var is-collapsible
+
+2023-02-05  Bob Weiner  <rsw@gnu.org>
+
+* hyrolo.el (hyrolo-initialize-file-list): Fix to not overwrite any user customized
+    value, if already initialized.
+
+2023-02-04  Bob Weiner  <rsw@gnu.org>
+
+* kotl/kexport.el (kexport:html): Change 'output-to-buf-name' to 'output-to-buf'.
+    Remove refs to old XEmacs variables and add call to disable font-lock-mode
+    in the html buffer, to speed export.
 
 2023-01-29  Bob Weiner  <rsw@gnu.org>
 
