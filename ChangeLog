@@ -1,3 +1,16 @@
+2024-04-05  Mats Lidell  <matsl@gnu.org>
+
+* Makefile (EL_COMPILE, ELC_COMPILE): Add hgnus-mail.
+
+* hmail.el (hmail:init-function): Add Gnus-mail-init as an init option.
+    (hmail:compose-mail-func): Add email interface function.
+
+* hibtypes.el (mail-address): Use hmail:compose-mail-func.
+
+* hgnus-mail.el: Mail definitions for Gnus as a mail reader.
+
+* hui-mini.el (hui:menu-choose): Use hui:menu-exit-hyperbole
+
 2024-04-01  Mats Lidell  <matsl@gnu.org>
 
 * test/hpath-tests.el (hpath:prepend-shell-directory-test):
@@ -3771,17 +3784,6 @@ name with 'name' and 'name-key'.
 * hmouse-tag.el (smart-lisp-htype-tag): Fix so expands shortened htype tags
     whose symbols have been interned when defined.  This fixes jumping to
     the definition of htypes in Help buffers.
-
-2023-01-22  Mats Lidell  <matsl@gnu.org>
-
-* Makefile (EL_COMPILE, ELC_COMPILE): Add hgnus-mail.
-
-* hmail.el (hmail:init-function): Add Gnus-mail-init as an init option.
-    (hmail:compose-mail-other-window): Add email interface function.
-
-* hibtypes.el (mail-address): Use hmail:compose-mail-other-window.
-
-* hgnus-mail.el: Mail definitions for Gnus as a mail reader.
 
 2023-01-22  Mats Lidell  <matsl@gnu.org>
 

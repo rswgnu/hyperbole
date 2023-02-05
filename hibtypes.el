@@ -400,7 +400,7 @@ in all buffers."
 	         (eq 'autoload (car (symbol-function hmail:init-function))))
 	    (funcall hmail:init-function))
         (ibut:label-set address (match-beginning 1) (match-end 1))
-        (hact hmail:compose-mail-other-window nil address)))))
+        (hact hmail:compose-mail-func nil address)))))
 
 ;;; ========================================================================
 ;;; Handles internal references within an annotated bibliography, delimiters=[]
