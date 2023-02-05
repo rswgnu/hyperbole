@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell
 ;;
 ;; Orig-Date:    17-Dec-22 at 22:04:19
-;; Last-Mod:     28-Jan-23 at 10:12:32 by Mats Lidell
+;; Last-Mod:      5-Feb-23 at 23:08:54 by Mats Lidell
 ;;
 ;; Copyright (C) 2023  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -30,7 +30,7 @@
 (defun Gnus-mail-init ()
   "Initialize Hyperbole support for Gnus mail reading."
   (interactive)
-  (setq hmail:compose-mail-other-window 'hgnus-mail--message-mail-other-window
+  (setq hmail:compose-mail-func 'hgnus-mail--message-mail-other-window
         hmail:composer  'message-mode
 	hmail:lister    'gnus-summary-mode
 	hmail:modifier  'message-mode
@@ -55,11 +55,10 @@
 ;;; Private functions
 ;;; ************************************************************************
 
-;; FIXME - noerase arg is nil in the other invocation so really not
-;; needed. We could use a local defun in the other case as well and so
-;; the noerase can go away.
 (defun hgnus-mail--message-mail-other-window (_noerase to)
-  "Open mail composer in other window with field TO set."
+  "Open mail composer in other window with field TO set.
+_NOERASE is for compatibility with `mail-other-window' type of
+mail functions."
   (gnus-msg-mail to nil nil nil #'switch-to-buffer-other-window))
 
 (defalias 'Gnus-Summ-goto #'gnus-summary-show-article)
@@ -78,5 +77,5 @@
   "Undelete all messages."
   (error "Sorry.  Deleted messages can't be undeleted"))
 
-(provide 'hgnus-mail.el)
+(provide 'hgnus-mail)
 ;;; hgnus-mail.el ends here
