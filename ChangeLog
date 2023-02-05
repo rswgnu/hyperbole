@@ -53,9 +53,7 @@
 * kotl/kview.el (kview:map-siblings): Remove unused lexical variable
     cell-indent.
 
-* kotl/kexport.el: Remove XEmacs font-lock variables
-    Remove hm--html-mode-hook, XEmacs specific package
-    (kexport:html): Bind lexical var is-collapsible
+* kotl/kexport.el (kexport:html): Bind lexical var is-collapsible
 
 2023-02-05  Bob Weiner  <rsw@gnu.org>
 
