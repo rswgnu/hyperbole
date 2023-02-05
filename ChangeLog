@@ -1,3 +1,8 @@
+2023-02-05  Bob Weiner  <rsw@gnu.org>
+
+* hyrolo.el (hyrolo-initialize-file-list): Fix to not overwrite any user customized
+    value, if already initialized.
+
 2023-02-04  Bob Weiner  <rsw@gnu.org>
 
 * kotl/kexport.el (kexport:html): Change 'output-to-buf-name' to 'output-to-buf'.

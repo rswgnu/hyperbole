@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     7-Jun-89 at 22:08:29
-;; Last-Mod:     15-Jan-23 at 16:55:37 by Mats Lidell
+;; Last-Mod:      5-Feb-23 at 15:23:10 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -148,21 +148,24 @@ use."
 ;; '("~/.rolo.otl" "~/.rolo.org")
 
 ;;;###autoload
-(defun hyrolo-initialize-file-list ()
-  "Initialize the list of files used for HyRolo search."
+(defun hyrolo-initialize-file-list (&optional force-init-flag)
+  "Initialize the list of files used for HyRolo search if not already initialized."
   (interactive)
-  (let* ((gcontacts (when (hyrolo-google-contacts-p) google-contacts-buffer-name))
-	 (ms "~/.rolo.otl")
-	 (posix "~/.rolo.otl")
-	 (list (delq nil (if (and (boundp 'bbdb-file) (stringp bbdb-file))
+  (when (or force-init-flag (not (boundp 'hyrolo-file-list)) (not hyrolo-file-list))
+    (let* ((gcontacts (when (hyrolo-google-contacts-p) google-contacts-buffer-name))
+	   (ms "~/.rolo.otl")
+	   (posix "~/.rolo.otl")
+	   (list (delq nil (if (and (boundp 'bbdb-file) (stringp bbdb-file))
+			       (if hyperb:microsoft-os-p
+				   (list ms bbdb-file gcontacts)
+				 (list  "~/.rolo.otl" bbdb-file gcontacts))
 			     (if hyperb:microsoft-os-p
-				 (list ms bbdb-file gcontacts)
-			       (list  "~/.rolo.otl" bbdb-file gcontacts))
-			   (if hyperb:microsoft-os-p (list ms gcontacts) (list posix gcontacts))))))
-    (setq hyrolo-file-list list)
-    (when (called-interactively-p 'interactive)
-      (message "HyRolo Search List: %S" list))
-    list))
+				 (list ms gcontacts)
+			       (list posix gcontacts))))))
+      (setq hyrolo-file-list list)
+      (when (called-interactively-p 'interactive)
+	(message "HyRolo Search List: %S" list))
+      list)))
 
 (define-obsolete-variable-alias 'rolo-file-list 'hyrolo-file-list "06.00")
 (defcustom hyrolo-file-list (hyrolo-initialize-file-list)
