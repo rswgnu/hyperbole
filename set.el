@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    26-Sep-91 at 19:24:19
-;; Last-Mod:      6-Feb-23 at 01:57:00 by Bob Weiner
+;; Last-Mod:      6-Feb-23 at 20:05:30 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -186,13 +186,7 @@ Return the set.  Use (setq set (set:replace elt set)) to assure set is
 always properly modified. 
 
 Use `set:equal-op' for element comparisons."
-  (let ((elt-set (set:member old-elt set)))
-    (if elt-set
-	;; replace element
-	(progn (setcar elt-set new-elt)
-	       set)
-      ;; add new element
-      (cons new-elt set))))
+  (set:add new-elt (set:remove old-elt set)))
 
 (defun set:replace-key-value (key value set)
   "Replace or add element whose car matches KEY with a cdr of VALUE in SET.
@@ -201,13 +195,7 @@ always properly modified.
 
 Use `set:equal-op' to match against KEY.  Assume each element in the set has a
 car and a cdr."
-  (let ((elt-set (set:member key set)))
-    (if elt-set
-	;; replace element
-	(progn (setcar elt-set (cons key value))
-	       set)
-      ;; add new element
-      (cons (cons key value) set))))
+  (set:add (cons key value) (set:remove-key-value key set)))
 
 (defun set:subset (sub set)
   "Return t iff set SUB is a subset of SET.
