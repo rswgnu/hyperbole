@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     2-Jul-16 at 14:54:14
-;; Last-Mod:      3-Dec-22 at 02:33:37 by Bob Weiner
+;; Last-Mod:      5-Feb-23 at 17:18:47 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -84,7 +84,7 @@ with different settings of this option.  For example, a nil value makes
 
 ;;;###autoload
 (defvar hsys-org-mode-function #'hsys-org-mode-p
-"*Zero arg bool func that returns non-nil if point is in an Org-related buffer.")
+  "*Boolean function that returns non-nil when point is in an Org-related buffer.")
 
 ;;; ************************************************************************
 ;;; Public Action Types

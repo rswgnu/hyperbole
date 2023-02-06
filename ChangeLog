@@ -9,6 +9,12 @@
 
 2023-02-05  Bob Weiner  <rsw@gnu.org>
 
+* hsys-org.el (hsys-org-mode-function): Improve doc string.
+
+* set.el (set:replace): Fix doc to say always returns the set.
+         (set:replace-member): Add this new function to replace an existing set
+    member or add a new one if no matching existing member.
+
 * hyrolo.el (hyrolo-initialize-file-list): Fix to not overwrite any user customized
     value, if already initialized.
 
