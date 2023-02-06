@@ -1,37 +1,5 @@
 2023-02-06  Mats Lidell  <matsl@gnu.org>
 
-* Cleanup from Stefan Monnier. Thanks Stefan.
-* hypb.el (hypb:indirect-function): Use indirect-function directly.
-* hgnus.el: Use add-hook directly.
-
-2023-02-06  Bob Weiner  <rsw@gnu.org>
-
-* set.el (set:member): Optimize for common equality operators.
-         (set:add, set:remove): Convert from a macro to a function and optimize.
-	 (set:replace): Rename to 'set:replace-key-value' and use 'set:replace'
-    to replace a non-keyed old-value with a new value.
-         (set:members): Keep members in stable order; previously returned in
-    reverse order.
-
-2023-02-05  Bob Weiner  <rsw@gnu.org>
-
-* hsys-org.el (hsys-org-mode-function): Improve doc string.
-
-* set.el (set:replace): Fix doc to say always returns the set.
-         (set:replace-member): Add this new function to replace an existing set
-    member or add a new one if no matching existing member.
-
-* hyrolo.el (hyrolo-initialize-file-list): Fix to not overwrite any user customized
-    value, if already initialized.
-
-2023-02-04  Bob Weiner  <rsw@gnu.org>
-
-* kotl/kexport.el (kexport:html): Change 'output-to-buf-name' to 'output-to-buf'.
-    Remove refs to old XEmacs variables and add call to disable font-lock-mode
-    in the html buffer, to speed export.
-
-2023-01-29  Mats Lidell  <matsl@gnu.org>
-
 * hui-mini.el (hui:menu-choose): Use hui:menu-exit-hyperbole
 
 * hsys-org.el (hsys-org-search-internal-link-p):
@@ -55,7 +23,26 @@
 
 * kotl/kexport.el (kexport:html): Bind lexical var is-collapsible
 
+* Cleanup from Stefan Monnier. Thanks Stefan.
+* hypb.el (hypb:indirect-function): Use indirect-function directly.
+* hgnus.el: Use add-hook directly.
+
+2023-02-06  Bob Weiner  <rsw@gnu.org>
+
+* set.el (set:member): Optimize for common equality operators.
+         (set:add, set:remove): Convert from a macro to a function and optimize.
+	 (set:replace): Rename to 'set:replace-key-value' and use 'set:replace'
+    to replace a non-keyed old-value with a new value.
+         (set:members): Keep members in stable order; previously returned in
+    reverse order.
+
 2023-02-05  Bob Weiner  <rsw@gnu.org>
+
+* hsys-org.el (hsys-org-mode-function): Improve doc string.
+
+* set.el (set:replace): Fix doc to say always returns the set.
+         (set:replace-member): Add this new function to replace an existing set
+    member or add a new one if no matching existing member.
 
 * hyrolo.el (hyrolo-initialize-file-list): Fix to not overwrite any user customized
     value, if already initialized.
