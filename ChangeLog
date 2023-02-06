@@ -1,3 +1,9 @@
+2023-02-06  Mats Lidell  <matsl@gnu.org>
+
+* Cleanup from Stefan Monnier. Thanks Stefan.
+* hypb.el (hypb:indirect-function): Use indirect-function directly.
+* hgnus.el: Use add-hook directly.
+
 2023-02-06  Bob Weiner  <rsw@gnu.org>
 
 * set.el (set:member): Optimize for common equality operators.
@@ -7,7 +13,7 @@
          (set:members): Keep members in stable order; previously returned in
     reverse order.
 
-2023-02-05  Bob Weiner  <rsw@gnu.org>
+2023-02-05  Mats Lidell  <matsl@gnu.org>-02-05  Bob Weiner  <rsw@gnu.org>
 
 * hsys-org.el (hsys-org-mode-function): Improve doc string.
 
