@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 20:45:31
-;; Last-Mod:      7-Jan-23 at 19:54:51 by Bob Weiner
+;; Last-Mod:     29-Jan-23 at 17:17:39 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1023,7 +1023,7 @@ xdb.  Such lines are recognized in any buffer."
         ;; For Meteor app errors, remove the "app/" prefix which
         ;; is part of the build subdirectory and not part of the
         ;; source tree.
-        (when (and (not (eq col-num "")) (string-match "^app/" file))
+        (when (and (not (string-equal col-num "")) (string-match "^app/" file))
           (setq file (substring file (match-end 0))))
 
         (setq but-label (concat file ":" line-num)

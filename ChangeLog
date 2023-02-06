@@ -1,5 +1,28 @@
 2023-02-06  Mats Lidell  <matsl@gnu.org>
 
+* hui-mini.el (hui:menu-choose): Use hui:menu-exit-hyperbole
+
+* hsys-org.el (hsys-org-search-internal-link-p):
+    (hsys-org-search-radio-target-link-p): Use org-fold-show-context when
+    available.
+
+* hmouse-tag.el (smart-tags-find-p): Remove unused lexical variable
+    find-tag-result
+
+* hmouse-drv.el (hkey-buffer-move): Silence warning by naming unused
+    lexical argument _arg
+
+* hui-mini.el (hui:menu-doc):
+* hibtypes.el (debugger-source):
+* hib-kbd.el (kbd-key): Use string-equal with string literal.
+
+* hactypes.el: Require man for Man-notify-method.
+
+* kotl/kview.el (kview:map-siblings): Remove unused lexical variable
+    cell-indent.
+
+* kotl/kexport.el (kexport:html): Bind lexical var is-collapsible
+
 * Cleanup from Stefan Monnier. Thanks Stefan.
 * hypb.el (hypb:indirect-function): Use indirect-function directly.
 * hgnus.el: Use add-hook directly.
@@ -13,7 +36,7 @@
          (set:members): Keep members in stable order; previously returned in
     reverse order.
 
-2023-02-05  Mats Lidell  <matsl@gnu.org>-02-05  Bob Weiner  <rsw@gnu.org>
+2023-02-05  Bob Weiner  <rsw@gnu.org>
 
 * hsys-org.el (hsys-org-mode-function): Improve doc string.
 

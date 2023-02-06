@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    24-Aug-91
-;; Last-Mod:     28-Jan-23 at 23:51:50 by Bob Weiner
+;; Last-Mod:     29-Jan-23 at 16:34:52 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1177,7 +1177,6 @@ TAG-SYM may be a function, variable or face."
 	 (tags-file-name (if tags-table-list
 			     nil
 			   (and (boundp 'tags-file-name) tags-file-name)))
-	 find-tag-result
 	 (tags-add-tables nil))
     (condition-case ()
 	(and func (funcall func tag) t)

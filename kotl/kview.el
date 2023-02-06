@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    6/30/93
-;; Last-Mod:     16-Oct-22 at 18:32:03 by Mats Lidell
+;; Last-Mod:      5-Feb-23 at 22:36:46 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1007,16 +1007,12 @@ in the view.
 FUNC should take one argument, the kview local variable of the current
 buffer or some other kview, and should operate upon the cell at point.
 
-The variable `cell-indent' contains the indentation value of the
-first cell mapped when FUNC is called so that it may be tested
-against this value.  The variable `lbl-sep-len' contains the label
-separator length.
+The variable `lbl-sep-len' contains the label separator length.
 
 See also `kview:map-branch' and `kview:map-tree'."
   (with-current-buffer (kview:buffer kview)
     (save-excursion
       (let ((lbl-sep-len (kview:label-separator-length kview))
-	    cell-indent
 	    results)
 	;; Next line ensures point is in the root of the current tree if
 	;; the tree is at all hidden.
@@ -1025,7 +1021,6 @@ See also `kview:map-branch' and `kview:map-tree'."
 	(when first-p
 	  ;; Move back to first predecessor at same level.
 	  (while (kcell-view:backward t lbl-sep-len)))
-	(setq cell-indent (kcell-view:indent nil lbl-sep-len))
 	;; Terminate when no further cells at same level.
 	(while (progn (setq results (cons (funcall func kview) results))
 		      (kcell-view:forward visible-p lbl-sep-len)))
