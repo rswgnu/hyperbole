@@ -19,4 +19,5 @@ hy-test-helpers.el      - unit test helpers
 kexport-tests.el        - kexport tests
 kotl-mode-tests.el      - kotl-mode-el tests
 kotl-orgtbl-tests.el    - kotl orgtbl tests
+set-tests.el            - mathematical set library tests
 smart-org-tests.el      - smart-org-el tests

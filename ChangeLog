@@ -1,3 +1,12 @@
+2023-02-06  Bob Weiner  <rsw@gnu.org>
+
+* set.el (set:member): Optimize for common equality operators.
+         (set:add, set:remove): Convert from a macro to a function and optimize.
+	 (set:replace): Rename to 'set:replace-key-value' and use 'set:replace'
+    to replace a non-keyed old-value with a new value.
+         (set:members): Keep members in stable order; previously returned in
+    reverse order.
+
 2023-02-05  Bob Weiner  <rsw@gnu.org>
 
 * hyrolo.el (hyrolo-initialize-file-list): Fix to not overwrite any user customized
