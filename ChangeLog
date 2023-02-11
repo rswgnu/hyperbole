@@ -1,3 +1,9 @@
+2023-02-20  Mats Lidell  <matsl@gnu.org>
+
+* test/demo-tests.el (fast-demo-key-series-shell-cd-hyperb-dir-help-mode)
+    (fast-demo-key-series-shell-grep-help-mode): Add tests for acting on
+    key series in help-mode.
+
 2023-02-19  Mats Lidell  <matsl@gnu.org>
 
 * hypb.el (hypb:display-file-with-logo): Use view-mode for fast demo.
