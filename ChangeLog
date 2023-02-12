@@ -1,6 +1,8 @@
 2023-02-13  Mats Lidell  <matsl@gnu.org>
 
 * hyrolo.el (hyrolo-kill): Set unused lexical var to _level-len
+    (hyrolo-grep-file): Remove lexical var curr-entry-level-len set but
+    not used.
 
 * kotl/kexport.el (kexport:html): Remove unused lexical var is-collapsible.
 
