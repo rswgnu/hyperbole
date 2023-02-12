@@ -1,5 +1,7 @@
 2023-02-06  Mats Lidell  <matsl@gnu.org>
 
+* test/set-tests.el: Add tests for Hyperbole set library.
+
 * hui-mini.el (hui:menu-choose): Use hui:menu-exit-hyperbole
 
 * hsys-org.el (hsys-org-search-internal-link-p):
