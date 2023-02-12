@@ -1,3 +1,7 @@
+2023-02-13  Mats Lidell  <matsl@gnu.org>
+
+* kotl/kexport.el (kexport:html): Remove unused lexical var is-collapsible.
+
 2023-02-12  Bob Weiner  <rsw@gnu.org>
 
 * hibtypes.el (grep-msg): Fix problem where filename match includes trailing line
