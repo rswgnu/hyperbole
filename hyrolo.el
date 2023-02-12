@@ -675,7 +675,7 @@ Return t if entry is killed, nil otherwise."
 	  (setq file buffer-file-name)
 	  (if (file-writable-p file)
 	      (let ((kill-op
-		     (lambda (start level-len)
+		     (lambda (start _level-len)
 		       (kill-region
 			start (hyrolo-to-entry-end t))
 		       (setq killed t)
