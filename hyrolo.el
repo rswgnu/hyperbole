@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     7-Jun-89 at 22:08:29
-;; Last-Mod:     12-Feb-23 at 23:13:31 by Bob Weiner
+;; Last-Mod:     14-Feb-23 at 00:01:58 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -675,7 +675,7 @@ Return t if entry is killed, nil otherwise."
 	  (setq file buffer-file-name)
 	  (if (file-writable-p file)
 	      (let ((kill-op
-		     (lambda (start level-len)
+		     (lambda (start _level-len)
 		       (kill-region
 			start (hyrolo-to-entry-end t))
 		       (setq killed t)

@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    26-Feb-98
-;; Last-Mod:      5-Feb-23 at 22:45:12 by Mats Lidell
+;; Last-Mod:     12-Feb-23 at 22:15:49 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -462,7 +462,7 @@ used.  Also converts Urls and Klinks into Html hyperlinks.
 		 ">" "&gt;"
 		 (replace-regexp-in-string
 		      "<" "&lt;" (kview:label-separator kview))))
-	       i is-parent is-collapsible is-last-sibling no-sibling-stack level label contents)
+	       i is-parent is-last-sibling no-sibling-stack level label contents)
 	  (kview:map-tree
 	   (lambda (_kview)
 	     (setq level (kcell-view:level)

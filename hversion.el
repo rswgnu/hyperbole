@@ -4,7 +4,7 @@
 ;; Maintainer:   Bob Weiner, Mats Lidell
 ;;
 ;; Orig-Date:     1-Jan-94
-;; Last-Mod:      4-Dec-22 at 03:57:42 by Bob Weiner
+;; Last-Mod:     12-Feb-23 at 22:40:12 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -202,7 +202,7 @@ support is available."
 		   ;; after the non-indented item definition line. If
 		   ;; so, move back a line.
 		   (when (and (looking-at "^[ \t]")
-			      (looking-back "^[^ \t].*[\n\r]+"))
+			      (looking-back "^[^ \t].*[\n\r]+" nil))
 		     (forward-line -1))
 		   (recenter 0))
 	       (error "(id-info-item): Invalid Info index item: `%s'" index-item)))
