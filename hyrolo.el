@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     7-Jun-89 at 22:08:29
-;; Last-Mod:     14-Feb-23 at 00:00:57 by Mats Lidell
+;; Last-Mod:     14-Feb-23 at 00:01:58 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1400,7 +1400,7 @@ Return number of matching entries found."
 		 (when (file-exists-p hyrolo-file-or-buf)
 		   (setq actual-buf (hyrolo-find-file-noselect hyrolo-file-or-buf)
 			 new-buf-p t))))
-	(let ((hdr-pos) (num-found 0)
+	(let ((hdr-pos) (num-found 0) (curr-entry-level-len)
 	      (incl-hdr t) start)
 	  (when  max-matches
 	    (cond ((eq max-matches t)
