@@ -1,3 +1,23 @@
+2023-02-12  Bob Weiner  <rsw@gnu.org>
+
+* hibtypes.el (grep-msg): Fix problem where filename match includes trailing line
+    number because of allowing for Lisp variables with colons in their name.  Fix
+    by disallowing a digit as the final file name character.  Below is a sample
+    of the type of grep line that was resolved improperly:
+              (display-boolean, display-variable, display-value): Declare these actypes
+    as functions to silence the byte-compiler.  These still are not fboundp.
+
+    hibtypes.el:1540:1:Warning: the following functions are not known to be defined:
+
+* hyrolo.el (hyrolo-to-entry-end): Add 2nd _curr-entry-level-len optional parameter
+    for future use.
+
+2023-02-11  Bob Weiner  <rsw@gnu.org>
+
+* hmouse-drv.el (hkey-operate): Typically bound to {M-o} which avy transient minor
+    mode also binds, so defer to other minor-modes that bind the same key rather
+    than performing Hyperbole command.
+
 2023-02-06  Mats Lidell  <matsl@gnu.org>
 
 * test/set-tests.el: Add tests for Hyperbole set library.

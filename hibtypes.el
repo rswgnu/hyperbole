@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 20:45:31
-;; Last-Mod:     29-Jan-23 at 17:17:39 by Mats Lidell
+;; Last-Mod:     13-Feb-23 at 00:23:50 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -938,7 +938,7 @@ in grep and shell buffers."
 	     (looking-at "Loading \\(\\S-+\\) (\\S-+)\\.\\.\\.$")
              ;; Grep matches (allowing for Emacs Lisp vars with : in
 	     ;; name within the pathname), Ruby, UNIX C compiler and Introl 68HC11 C compiler errors
-             (looking-at "\\([^ \t\n\r\"'`]*[^ \t\n\r:\"'`]\\): ?\\([1-9][0-9]*\\)[ :]")
+             (looking-at "\\([^ \t\n\r\"'`]*[^ \t\n\r:\"'`0-9]\\): ?\\([1-9][0-9]*\\)[ :]")
 	     ;; Ruby tracebacks
              (looking-at "[ \t]+[1-9][0-9]*: from \\([^ \t\n\r\"'`]*[^ \t\n\r:\"'`]\\):\\([1-9][0-9]*\\):in")
              ;; Grep matches, UNIX C compiler and Introl 68HC11 C
@@ -1391,6 +1391,12 @@ original DEMO file."
 
 (defconst action:end ">"
   "Regexp matching the end of a Hyperbole Emacs Lisp expression to evaluate.")
+
+;; Silence the byte-compiler that thinks these actype references
+;; should be regular functions.
+(declare-function display-boolean  "ext:ignore")
+(declare-function display-variable "ext:ignore")
+(declare-function display-value    "ext:ignore")
 
 (defib action ()
   "The Action Button type.

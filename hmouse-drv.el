@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    04-Feb-90
-;; Last-Mod:     29-Jan-23 at 00:15:24 by Mats Lidell
+;; Last-Mod:     13-Feb-23 at 00:23:43 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1152,29 +1152,43 @@ Each invocation alternates between starting a drag and ending it.
 Optional prefix ARG non-nil means emulate Assist Key rather than the
 Action Key.
 
-Only works when running under a window system, not from a dumb terminal."
+Only works when running under a window system, not from a dumb terminal.
+
+If a non-Hyperbole minor mode, e.g. ivy, has a different binding for the
+key to which this command is bound, then defer to that binding."
   (interactive "P")
-  (unless (hyperb:window-system)
-    (hypb:error "(hkey-operate): Drag actions require mouse support"))
-  (if arg
-      (if assist-key-depressed-flag
-	  (progn (assist-mouse-key)
+  (catch 'other-binding
+    ;; If a non-Hyperbole minor mode has a different binding for the
+    ;; key to which this command is bound, then defer to that binding
+    (let* ((hyperbole-mode)
+	   (key (car (where-is-internal #'hkey-operate (list hyperbole-mode-map))))
+	   (binding (when key (cdar (minor-mode-key-binding key)))))
+      (when binding
+	(throw 'other-binding (call-interactively binding))))
+
+    (unless (hyperb:window-system)
+      (hypb:error "(hkey-operate): Drag actions require mouse support"))
+
+    ;; Otherwise, handle the drag command
+    (if arg
+	(if assist-key-depressed-flag
+	    (progn (assist-mouse-key)
+		   (when (called-interactively-p 'interactive)
+		     (message "Assist Key released.")))
+	  (assist-key-depress)
+	  (when (called-interactively-p 'interactive)
+	    (message
+	     "Assist Key depressed; go to release point and press {%s %s}."
+	     (substitute-command-keys "\\[universal-argument]")
+	     (substitute-command-keys "\\[hkey-operate]"))))
+      (if action-key-depressed-flag
+	  (progn (action-mouse-key)
 		 (when (called-interactively-p 'interactive)
-		   (message "Assist Key released.")))
-	(assist-key-depress)
+		   (message "Action Key released.")))
+	(action-key-depress)
 	(when (called-interactively-p 'interactive)
-	  (message
-	   "Assist Key depressed; go to release point and press {%s %s}."
-	   (substitute-command-keys "\\[universal-argument]")
-	   (substitute-command-keys "\\[hkey-operate]"))))
-    (if action-key-depressed-flag
-	(progn (action-mouse-key)
-	       (when (called-interactively-p 'interactive)
-		 (message "Action Key released.")))
-      (action-key-depress)
-      (when (called-interactively-p 'interactive)
-	(message "Action Key depressed; go to release point and press {%s}."
-		 (substitute-command-keys "\\[hkey-operate]"))))))
+	  (message "Action Key depressed; go to release point and press {%s}."
+		   (substitute-command-keys "\\[hkey-operate]")))))))
 
 (defun hkey-summarize (&optional current-window)
   "Display smart key operation summary in help buffer.

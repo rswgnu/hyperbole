@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     7-Jun-89 at 22:08:29
-;; Last-Mod:      5-Feb-23 at 15:23:10 by Bob Weiner
+;; Last-Mod:     12-Feb-23 at 23:13:31 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -33,6 +33,7 @@
 (require 'set)
 (require 'sort)
 (require 'xml)
+(declare-function kotl-mode:to-valid-position "kotl/kotl-mode")
 
 ;; Quiet byte compiler warnings for these free variables.
 (eval-when-compile
@@ -44,6 +45,7 @@
 ;;; ************************************************************************
 ;;; Public declarations
 ;;; ************************************************************************
+(defvar helm-org-rifle-show-level-stars)
 (defvar org-roam-directory)
 (defvar org-roam-db-autosync-mode)
 (defvar markdown-regex-header)
@@ -1241,6 +1243,7 @@ around a matching line rather than entire entries."
   (require 'helm-org-rifle)
   (let ((files (seq-filter (lambda (f) (string-match "\\.\\(org\\|otl\\)$" f))
 			   (seq-filter #'file-readable-p hyrolo-file-list)))
+	;; Next 2 local settings used by helm-org-rifle-files call below
 	(helm-org-rifle-show-level-stars t)
 	(helm-org-rifle-show-full-contents (not context-only-flag)))
     (save-excursion
@@ -1425,7 +1428,7 @@ Return number of matching entries found."
 		  (setq start (point))
 		  (re-search-forward hyrolo-entry-regexp nil t)
 		  (setq curr-entry-level-len (length (buffer-substring-no-properties start (point))))
-		  (hyrolo-to-entry-end t)
+		  (hyrolo-to-entry-end t curr-entry-level-len)
 		  (or count-only
 		      (if (and (zerop num-found) incl-hdr)
 			  (let* ((src (or (buffer-file-name actual-buf)
@@ -1625,13 +1628,19 @@ beginning of the highest ancestor level.  Return final point."
 	   (outline-up-heading 80))))
    include-sub-entries))
 
-(defun hyrolo-to-entry-end (&optional include-sub-entries)
+(defun hyrolo-to-entry-end (&optional include-sub-entries _curr-entry-level-len)
   "Move point past the end of the current entry.
 With optional prefix arg INCLUDE-SUB-ENTRIES non-nil, move past
 the end of the entire subtree.  Return final point.
 
+CURR-ENTRY-LEVEL-LEN is the integer length of the last entry
+header found.  If INCLUDE-SUB-ENTRIES is nil,
+CURR-ENTRY-LEVEL-LEN is not needed.
+
 When called interactively, leave point one character earlier, before
-the final newline of the entry."
+the final newline of the entry.
+
+Return current point."
   (interactive "P")
   (hyrolo-move-forward
    (lambda (include-sub-entries)

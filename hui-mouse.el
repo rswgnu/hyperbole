@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    04-Feb-89
-;; Last-Mod:     29-Jan-23 at 03:47:20 by Bob Weiner
+;; Last-Mod:     11-Feb-23 at 17:39:40 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -168,6 +168,8 @@ Its default value is `smart-scroll-down'.  To disable it, set it to
 (declare-function company-quickhelp-manual-begin "ext:company-quickhelp")
 (declare-function company-show-location "ext:company")
 (declare-function company-select-mouse "ext:company")
+
+(declare-function unix-apropos-get-man "ext:man-apropos")
 
 ;;; ************************************************************************
 ;;; Hyperbole context-sensitive keys dispatch table
@@ -425,6 +427,7 @@ Its default value is `smart-scroll-down'.  To disable it, set it to
     ((eq major-mode 'calendar-mode) .
      ((smart-calendar) . (smart-calendar-assist)))
     ;;
+    ;; Part of InfoDock
     ((eq major-mode 'unix-apropos-mode) .
      ((smart-apropos) . (smart-apropos-assist)))
     ;;
@@ -1522,17 +1525,19 @@ If assist-key is pressed:
 ;;; smart-man functions
 ;;; ************************************************************************
 
-;; "unix-apropos.el" is a publicly available Emacs Lisp package that
-;; allows man page browsing from apropos listings.  "superman.el" is a
-;; newer, much more complete package that you would probably prefer at
-;; this point, but there is no Smart Key apropos support for it.  There
-;; is smart key support within the man page buffers it produces, however.
+;; "man-apropos.el" which contains the unix-apropos functions below is a
+;; part of InfoDock; these functions are not called unless this
+;; library has been loaded and is in use.  It generates a buffer of apropos
+;; listing and allows selection and associated man page display.
+;;
+;; Man page cross-references in Emacs man buffers are handled
+;; separately via the 'man-apropos' implicit button type.
 ;;
 
 (defun smart-apropos ()
   "Move through UNIX man apropos listings by using one key or mouse key.
 
-Invoked via a key press when in unix-apropos-mode.  It assumes that
+Invoked via a key press when in `unix-apropos-mode'.  It assumes that
 its caller has already checked that the key was pressed in an appropriate
 buffer and has moved the cursor to the selected buffer.
 
@@ -1545,12 +1550,14 @@ If key is pressed:
   (interactive)
   (if (last-line-p)
       (scroll-other-window)
-    (unix-apropos-get-man)))            ;; FIXME - Deprecated?
+    ;; Called only if man-apropos.el of InfoDock is loaded
+    (when (fboundp #'unix-apropos-get-man)
+      (unix-apropos-get-man))))
 
 (defun smart-apropos-assist ()
   "Move through UNIX man apropos listings by using assist-key or mouse assist-key.
 
-Invoked via an assist-key press when in unix-apropos-mode.  It assumes that
+Invoked via an assist-key press when in `unix-apropos-mode'.  It assumes that
 its caller has already checked that the assist-key was pressed in an appropriate
 buffer and has moved the cursor to the selected buffer.
 
@@ -1563,7 +1570,9 @@ If assist-key is pressed:
   (interactive)
   (if (last-line-p)
       (scroll-other-window (- 3 (window-height)))
-    (unix-apropos-get-man)))
+    ;; Called only if man-apropos.el of InfoDock is loaded
+    (when (fboundp #'unix-apropos-get-man)
+      (unix-apropos-get-man))))
 
 (defun smart-man-display (lisp-form)
   "Evaluate LISP-FORM returned from `smart-man-entry-ref' to display a man page."
