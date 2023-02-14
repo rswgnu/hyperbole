@@ -3,9 +3,9 @@
 # Author:       Bob Weiner
 #
 # Orig-Date:    15-Jun-94 at 03:42:38
-# Last-Mod:      7-Jan-23 at 20:45:26 by Bob Weiner
+# Last-Mod:     15-Feb-23 at 00:32:24 by Mats Lidell
 #
-# Copyright (C) 1994-2022  Free Software Foundation, Inc.
+# Copyright (C) 1994-2023  Free Software Foundation, Inc.
 # See the file HY-COPY for license information.
 #
 # This file is part of GNU Hyperbole.
@@ -170,6 +170,7 @@ BATCHFLAGS = -batch -Q --eval "(progn (setq debug-on-error t) (setq backtrace-li
                                  (message \"  emacs-version = %s\n  system-configuration = %s\n  emacs = %s%s\" emacs-version system-configuration invocation-directory invocation-name))"
 
 EMACS_BATCH=$(EMACS) $(BATCHFLAGS) $(PRELOADS)
+EMACS_PLAIN_BATCH=$(EMACS) $(BATCHFLAGS)
 
 # Directories other than the current directory in which to find files.
 # This doesn't seem to work in all versions of make, so we also add kotl/
@@ -426,7 +427,7 @@ hyperbole-autoloads.el: $(EL_COMPILE)
 	$(EMACS_BATCH) --debug --eval "(progn (setq generated-autoload-file (expand-file-name \"hyperbole-autoloads.el\") backup-inhibited t) (let (find-file-hooks) (hload-path--make-directory-autoloads \".\" generated-autoload-file)))"
 
 kotl/kotl-autoloads.el: $(EL_KOTL)
-	$(EMACS_BATCH) --debug --eval "(progn (setq generated-autoload-file (expand-file-name \"kotl/kotl-autoloads.el\") backup-inhibited t) (let (find-file-hooks) (hload-path--make-directory-autoloads \"kotl/\" generated-autoload-file)))"
+	$(EMACS_PLAIN_BATCH) --debug --eval "(progn (setq generated-autoload-file (expand-file-name \"kotl/kotl-autoloads.el\") backup-inhibited t) (let (find-file-hooks) (make-directory-autoloads \"kotl/\" generated-autoload-file)))"
 
 # Used for ftp.gnu.org tarball distributions.
 $(pkg_parent)/hyperbole-$(HYPB_VERSION).tar.gz:
