@@ -2,7 +2,7 @@
 
 * Makefile (EMACS_PLAIN_BATCH, kotl/kotl-autoloads.el): Use
     EMACS_PLAIN_BATCH macro in autoloads target to avoid triggering
-    building huperbole-autoloads. Patch from Stefan Monnier. Thanks Stefan.
+    building hyperbole-autoloads. Patch from Stefan Monnier. Thanks Stefan.
 
 2023-02-13  Mats Lidell  <matsl@gnu.org>
 

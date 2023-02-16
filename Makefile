@@ -3,7 +3,7 @@
 # Author:       Bob Weiner
 #
 # Orig-Date:    15-Jun-94 at 03:42:38
-# Last-Mod:     16-Feb-23 at 00:51:09 by Mats Lidell
+# Last-Mod:     17-Feb-23 at 00:32:14 by Mats Lidell
 #
 # Copyright (C) 1994-2023  Free Software Foundation, Inc.
 # See the file HY-COPY for license information.
@@ -424,16 +424,10 @@ ftp: package $(pkg_parent)/hyperbole-$(HYPB_VERSION).tar.gz
 autoloads: kotl/kotl-autoloads.el hyperbole-autoloads.el
 
 hyperbole-autoloads.el: $(EL_COMPILE)
-	@echo "DEBUG: Scraping autloads using this command"
-	@echo $(EMACS_BATCH) --debug --eval "(progn (setq generated-autoload-file (expand-file-name \"hyperbole-autoloads.el\") backup-inhibited t) (let (find-file-hooks) (hload-path--make-directory-autoloads \".\" generated-autoload-file)))"
 	$(EMACS_BATCH) --debug --eval "(progn (setq generated-autoload-file (expand-file-name \"hyperbole-autoloads.el\") backup-inhibited t) (let (find-file-hooks) (hload-path--make-directory-autoloads \".\" generated-autoload-file)))"
-	@echo "DEBUG: Scarping done"
 
 kotl/kotl-autoloads.el: $(EL_KOTL)
-	@echo "DEBUG: Scraping autloads using this command"
-	@echo $(EMACS_PLAIN_BATCH) --debug --eval "(progn (setq generated-autoload-file (expand-file-name \"kotl/kotl-autoloads.el\") backup-inhibited t) (let (find-file-hooks) (make-directory-autoloads \"kotl/\" generated-autoload-file)))"
-	$(EMACS_PLAIN_BATCH) --debug --eval "(progn (setq generated-autoload-file (expand-file-name \"kotl/kotl-autoloads.el\") backup-inhibited t) (let (find-file-hooks) (make-directory-autoloads \"kotl/\" generated-autoload-file)))"
-	@echo "DEBUG: Scarping done"
+	$(EMACS_PLAIN_BATCH) --debug --eval "(let ((autoload-file (expand-file-name \"kotl/kotl-autoloads.el\")) (backup-inhibited t) (find-file-hooks)) (if (functionp (quote make-directory-autoloads)) (make-directory-autoloads \"kotl/\" autoload-file) (progn (setq generated-autoload-file autoload-file) (update-directory-autoloads \"kotl/\"))))"
 
 # Used for ftp.gnu.org tarball distributions.
 $(pkg_parent)/hyperbole-$(HYPB_VERSION).tar.gz:
