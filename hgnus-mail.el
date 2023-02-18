@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell
 ;;
 ;; Orig-Date:    17-Dec-22 at 22:04:19
-;; Last-Mod:      5-Feb-23 at 23:08:54 by Mats Lidell
+;; Last-Mod:     18-Feb-23 at 10:31:45 by Mats Lidell
 ;;
 ;; Copyright (C) 2023  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -48,7 +48,7 @@
   (defalias 'rmail:msg-forward   #'gnus-summary-mail-forward)
   (defalias 'rmail:summ-msg-to   #'gnus-summary-show-article)
   (defalias 'rmail:summ-new      #'gnus-summary-rescan-group)
-  (if (called-interactively-p 'interactive)
+  (when (called-interactively-p 'interactive)
       (message "Hyperbole Gnus mail reader support initialized.")))
 
 ;;; ************************************************************************
