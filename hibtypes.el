@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 20:45:31
-;; Last-Mod:     31-Oct-23 at 13:17:38 by Mats Lidell
+;; Last-Mod:     31-Oct-23 at 13:18:01 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -345,7 +345,7 @@ in all buffers."
 	         (eq 'autoload (car (symbol-function hmail:init-function))))
 	    (funcall hmail:init-function))
         (ibut:label-set address (match-beginning 1) (match-end 1))
-        (hact hmail:compose-mail-func nil address)))))
+        (hact hmail:compose-mail-function nil address)))))
 
 ;;; ========================================================================
 ;;; Follows Org links that are in non-Org mode buffers

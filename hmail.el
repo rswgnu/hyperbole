@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     9-Oct-91 at 18:38:05
-;; Last-Mod:     31-Oct-23 at 13:17:15 by Mats Lidell
+;; Last-Mod:     31-Oct-23 at 13:18:09 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -59,7 +59,7 @@ Valid values are: nil, Mh-init, Rmail-init, Vm-init or Gnus-mail-init."
 		 (function-item :tag "Gnus" :value Gnus-mail-init))
   :group 'hyperbole-commands)
 
-(defvar hmail:compose-mail-func 'mail-other-window
+(defvar hmail:compose-mail-function 'mail-other-window
   "Function for starting to compose a mail.")
 (defvar hmail:composer  'message-mode
  "Major mode for composing mail to be sent with Hyperbole buttons.")
