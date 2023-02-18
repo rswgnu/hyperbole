@@ -58,7 +58,7 @@ Valid values are: nil, Mh-init, Rmail-init or Gnus-mail-init."
 		 (function-item :tag "Gnus" :value Gnus-mail-init))
   :group 'hyperbole-commands)
 
-(defvar hmail:compose-mail-func 'mail-other-window
+(defvar hmail:compose-mail-function 'mail-other-window
   "Function for starting to compose a mail.")
 (defvar hmail:composer  'message-mode
  "Major mode for composing mail to be sent with Hyperbole buttons.")

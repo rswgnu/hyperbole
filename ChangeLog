@@ -3,7 +3,7 @@
 * Makefile (EL_COMPILE, ELC_COMPILE): Add hgnus-mail.
 
 * hmail.el (hmail:init-function): Add Gnus-mail-init as an init option.
-    (hmail:compose-mail-func): Add email interface function.
+    (hmail:compose-mail-function): Add email interface function.
 
 * hibtypes.el (mail-address): Use hmail:compose-mail-func.
 
