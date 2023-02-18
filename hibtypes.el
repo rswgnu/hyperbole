@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 20:45:31
-;; Last-Mod:     31-Oct-23 at 13:18:01 by Mats Lidell
+;; Last-Mod:     31-Oct-23 at 13:19:09 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -332,12 +332,6 @@ in all buffers."
                             (mapcar #'get-file-buffer hyrolo-file-list)))))
     (let ((address (mail-address-at-p)))
       (when address
-
-        ;; FIXME - Shall we not initialize the user preferred mail
-        ;; reader at startup instead? Code below copied from
-        ;; "hactypes.el:576". The only other place the
-        ;; hmail:init-function is used.
-
         ;; Initialize user-specified mail reader if need be.
         (if (and (symbolp hmail:init-function)
 	         (fboundp hmail:init-function)
