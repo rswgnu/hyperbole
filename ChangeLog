@@ -1,6 +1,6 @@
 2024-04-05  Mats Lidell  <matsl@gnu.org>
 
-* Makefile (EL_COMPILE, ELC_COMPILE): Add hgnus-mail.
+* Makefile (EL_COMPILE, ELC_COMPILE, MANIFEST): Add hgnus-mail.
 
 * hmail.el (hmail:init-function): Add Gnus-mail-init as an init option.
     (hmail:compose-mail-function): Add email interface function.

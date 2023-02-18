@@ -70,6 +70,7 @@ set.el               - General mathematical operators for unordered sets
 hmh.el               - GNU Hyperbole buttons in mail reader:   Mh
 hrmail.el            - GNU Hyperbole buttons in mail reader:   Rmail
 hsmail.el            - GNU Hyperbole buttons in mail composer: mail
+hgnus-mail.el        - GNU Hyperbole buttons in mail reader/composer:   GNUS
 
 * --- HYPERBOLE KOUTLINER ---
 kotl/MANIFEST        - Summary of Koutliner files
