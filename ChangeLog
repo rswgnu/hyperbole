@@ -1,3 +1,11 @@
+2023-02-18  Mats Lidell  <matsl@gnu.org>
+
+* test/hmouse-drv-tests.el (hbut-defil-it): Do not follow symbolic
+    links to make path check work.
+
+* install-test/local-install-test.sh: Add normal Emacs start to verify
+    Hyperbole is installed.
+
 2023-02-15  Mats Lidell  <matsl@gnu.org>
 
 * Makefile (EMACS_PLAIN_BATCH, kotl/kotl-autoloads.el): Use
