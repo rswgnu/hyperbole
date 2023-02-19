@@ -1,8 +1,8 @@
 2023-02-20  Mats Lidell  <matsl@gnu.org>
 
-* test/demo-tests.el (fast-demo-key-series-shell-cd-hyperb-dir-help-mode)
-    (fast-demo-key-series-shell-grep-help-mode): Add tests for acting on
-    key series in help-mode.
+* test/demo-tests.el (fast-demo-key-series-shell-cd-hyperb-dir-view-mode)
+    (fast-demo-key-series-shell-grep-view-mode): Add tests for acting on
+    key series in view-mode.
 
 2023-02-19  Mats Lidell  <matsl@gnu.org>
 

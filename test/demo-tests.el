@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    30-Jan-21 at 12:00:00
-;; Last-Mod:     11-Feb-23 at 23:33:49 by Mats Lidell
+;; Last-Mod:     19-Feb-23 at 23:16:00 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -595,8 +595,8 @@ enough files with matching mode loaded."
 	(set-process-query-on-exit-flag (get-buffer-process shell-buffer-name) nil)
 	(hy-test-helpers:kill-buffer shell-buffer-name)))))
 
-(ert-deftest fast-demo-key-series-shell-cd-hyperb-dir-help-mode ()
-  "Action key executes cd shell command from buffer in `help-mode`."
+(ert-deftest fast-demo-key-series-shell-cd-hyperb-dir-view-mode ()
+  "Action key executes cd shell command from buffer in `view-mode`."
   (skip-unless (not noninteractive))
   (let* ((shell-file-name (executable-find "sh"))
          (shell-buffer-name "*shell*")
@@ -605,7 +605,7 @@ enough files with matching mode loaded."
         (with-temp-buffer
           (insert "{ M-x shell RET M-> (cd ${hyperb:dir} && echo \"PWD=$(pwd)\") RET }")
           (goto-char 5)
-          (help-mode)
+          (view-mode)
           (action-key)
           (hy-test-helpers:consume-input-events)
           (with-current-buffer shell-buffer-name
@@ -619,8 +619,8 @@ enough files with matching mode loaded."
 	(set-process-query-on-exit-flag (get-buffer-process shell-buffer-name) nil)
 	(hy-test-helpers:kill-buffer shell-buffer-name)))))
 
-(ert-deftest fast-demo-key-series-shell-grep-help-mode ()
-  "Action key executes grep shell command from buffer in `help-mode`."
+(ert-deftest fast-demo-key-series-shell-grep-view-mode ()
+  "Action key executes grep shell command from buffer in `view-mode`."
   (skip-unless (not noninteractive))
   (let* ((shell-file-name (executable-find "sh"))
          (shell-buffer-name "*shell*")
@@ -629,7 +629,7 @@ enough files with matching mode loaded."
         (with-temp-buffer
           (insert "{M-x shell RET M-> (export HYPERBOLE_DIR=${hyperb:dir} && cd $HYPERBOLE_DIR && grep -n gbut:label-list *.el) RET}")
           (goto-char 5)
-          (help-mode)
+          (view-mode)
           (action-key)
           (hy-test-helpers:consume-input-events)
           (with-current-buffer shell-buffer-name
