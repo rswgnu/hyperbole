@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     6-Oct-91 at 03:42:38
-;; Last-Mod:      5-Feb-23 at 23:44:24 by Mats Lidell
+;; Last-Mod:     19-Feb-23 at 22:43:13 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -980,7 +980,7 @@ If FILE is not an absolute path, expand it relative to `hyperb:dir'."
       (skip-syntax-forward "-")
       (set-window-start (selected-window) 1)
       (set-buffer-modified-p nil)
-      (help-mode)
+      (view-mode)
       ;; On some versions of Emacs like Emacs28, need a slight delay
       ;; for file loading before searches will work properly.
       ;; Otherwise, "test/demo-tests.el" may fail.

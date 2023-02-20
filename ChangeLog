@@ -1,3 +1,7 @@
+2023-02-19  Mats Lidell  <matsl@gnu.org>
+
+* hypb.el (hypb:display-file-with-logo): Use view-mode for fast demo.
+
 2023-02-18  Mats Lidell  <matsl@gnu.org>
 
 * test/hmouse-drv-tests.el (hbut-defil-it): Do not follow symbolic
