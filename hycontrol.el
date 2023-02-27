@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     1-Jun-16 at 15:35:36
-;; Last-Mod:     27-Nov-22 at 11:21:28 by Bob Weiner
+;; Last-Mod:     21-Feb-23 at 21:27:15 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1730,9 +1730,9 @@ columns (rightmost) of the grid."
      (nreverse (mapcar #'find-file (reverse files))))))
 
 ;;;###autoload
-(defun hycontrol-windows-grid-by-file-pattern (arg pattern &optional full)
+(defun hycontrol-windows-grid-by-file-pattern (arg pattern &optional full-flag)
   "Display up to an abs(prefix ARG)-sized window grid of files matching PATTERN.
-Use absolute file paths if called interactively or optional FULL is non-nil.
+Use absolute file paths if called interactively or optional FULL-FLAG is non-nil.
 PATTERN is a shell glob pattern.
 
 Left digit of ARG is the number of grid rows and the right digit
@@ -1747,7 +1747,7 @@ grid size to the closest valid size."
   (when (memq arg '(0 1))
     (setq arg nil))
   (let* ((find-file-wildcards t)
-	 (files (file-expand-wildcards pattern full))
+	 (files (file-expand-wildcards pattern full-flag))
 	 (num-files (length files))
 	 (grid-size (if arg
 			(hycontrol-windows-grid-validate arg)

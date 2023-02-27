@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    04-Feb-90
-;; Last-Mod:     13-Feb-23 at 00:23:43 by Bob Weiner
+;; Last-Mod:     26-Feb-23 at 22:19:19 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1018,15 +1018,16 @@ documentation is found."
 			  calls)
 
 		    (when (memq cmd-sym '(hui:hbut-act hui:hbut-help))
-		      (princ (format "%s BUTTON SPECIFICS:\n\n%s\n"
+		      (princ (format "%s BUTTON SPECIFICS:\n"
 				     (htype:def-symbol
 				      (if (eq (hattr:get 'hbut:current 'categ)
 					      'explicit)
 					  (hattr:get 'hbut:current 'actype)
-					(hattr:get 'hbut:current 'categ)))
-				     (actype:doc 'hbut:current t)))
+					(hattr:get 'hbut:current 'categ)))))
 		      (hattr:report
-		       (nthcdr 2 (hattr:list 'hbut:current))))
+		       (nthcdr 2 (hattr:list 'hbut:current)))
+		      (princ (format "\n%s\n"
+				     (actype:doc 'hbut:current t))))
 		    (terpri)))
 		"")
 	    (message "No %s Key command for current context."

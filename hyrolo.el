@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     7-Jun-89 at 22:08:29
-;; Last-Mod:     14-Feb-23 at 00:01:58 by Mats Lidell
+;; Last-Mod:     27-Feb-23 at 00:11:31 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -46,13 +46,15 @@
 ;;; Public declarations
 ;;; ************************************************************************
 (defvar helm-org-rifle-show-level-stars)
+(defvar markdown-regex-header)
 (defvar org-roam-directory)
 (defvar org-roam-db-autosync-mode)
-(defvar markdown-regex-header)
-(declare-function org-roam-db-autosync-mode "ext:org-roam")
+(declare-function consult-grep "ext:consult")
+(declare-function consult-ripgrep "ext:consult")
+(declare-function helm-org-rifle-files "ext:helm-org-rifle")
 (declare-function helm-org-rifle-show-full-contents "ext:helm-org-rifle")
 (declare-function helm-org-rifle-org-directory "ext:helm-org-rifle")
-(declare-function helm-org-rifle-files "ext:helm-org-rifle")
+(declare-function org-roam-db-autosync-mode "ext:org-roam")
 
 ;;; ************************************************************************
 ;;; Public variables
@@ -1229,6 +1231,22 @@ otherwise just use the cdr of the item."
 ;;; ************************************************************************
 ;;; Org Package Integrations
 ;;; ************************************************************************
+
+;;;###autoload
+(defun hyrolo-consult-grep ()
+  "Search with a consult package grep command.
+Use ripgrep (rg) if found, otherwise, plain grep.
+Interactively show all matches from `hyrolo-file-list'.
+Prompt for the search pattern."
+  (interactive)
+  (unless (package-installed-p 'consult)
+    (package-install 'consult))
+  (require 'consult)
+  (let ((files (seq-filter #'file-readable-p hyrolo-file-list))
+	(grep-func (cond ((executable-find "rg")
+			  #'consult-ripgrep)
+			 (t #'consult-grep))))
+    (funcall grep-func files)))
 
 ;;;###autoload
 (defun hyrolo-helm-org-rifle (&optional context-only-flag)

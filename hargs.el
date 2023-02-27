@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    31-Oct-91 at 23:17:35
-;; Last-Mod:      7-Jan-23 at 14:00:52 by Bob Weiner
+;; Last-Mod:     26-Feb-23 at 10:31:04 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -721,6 +721,8 @@ help when appropriate."
 				   nil 'existing))))
    ;; Get possibly nonexistent file name.
    (?F . (file . (read-file-name prompt default default nil)))
+   ;; Ignore this argument
+   (?i . nil)
    ;; Get key sequence.
    (?k . (key .
 	      (key-description (read-key-sequence

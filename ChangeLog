@@ -1,3 +1,33 @@
+2023-02-26  Bob Weiner  <rsw@gnu.org>
+
+* hpath.el (hpath:prepend-shell-directory): Fix issue that was grabbing
+    first filename after command line since multi-line whitespace was
+    used rather than limiting search to find current directory to the
+    same line as the command.
+
+* hmouse-drv.el (hkey-help): Move button attributes earlier in help doc,
+    {C-h A} output.
+
+* hui-select.el (hui-select-markup-modes): Add Emacs builtin mhtml-mode.
+
+* hactypes.el (display-boolean, display-value, display-variable): Add
+    interactive specs, so can be used as button actypes.
+
+* hargs.el (hargs:iform-vector): Add 'i' interactive spec (ignored arg).
+
+* MANIFEST:
+  Makefile (EL_COMPILE): Add hsys-org-roam.el.
+* hsys-org-roam.el (hsys-org-roam-consult-grep): Add this library and
+    function to interactively grep over org-roam files with live
+    in-buffer display using the automatically installed consult package.
+
+2023-02-22  Bob Weiner  <rsw@gnu.org>
+
+* hyrolo.el (consult-org-roam-grep-func): Declare.
+            (hyrolo-consult-grep): Add to interactively grep or ripgrep
+    with live in-buffer display using the automatically installed consult
+    package.
+
 2023-02-20  Mats Lidell  <matsl@gnu.org>
 
 * test/demo-tests.el (fast-demo-key-series-shell-cd-hyperb-dir-view-mode)
@@ -33,57 +63,7 @@
 2023-02-12  Bob Weiner  <rsw@gnu.org>
 
 * hibtypes.el (grep-msg): Fix problem where filename match includes trailing line
-    number because of allowing for Lisp variables with colons in their name.  Fix
-    by disallowing a digit as the final file name character.  Below is a sample
-    of the type of grep line that was resolved improperly:
-              (display-boolean, display-variable, display-value): Declare these actypes
-    as functions to silence the byte-compiler.  These still are not fboundp.
-
-    hibtypes.el:1540:1:Warning: the following functions are not known to be defined:
-
-* hyrolo.el (hyrolo-to-entry-end): Add 2nd _curr-entry-level-len optional parameter
-    for future use.
-
-2023-02-11  Bob Weiner  <rsw@gnu.org>
-
-* hmouse-drv.el (hkey-operate): Typically bound to {M-o} which avy transient minor
-    mode also binds, so defer to other minor-modes that bind the same key rather
-    than performing Hyperbole command.
-
-2023-02-06  Mats Lidell  <matsl@gnu.org>
-
-* test/set-tests.el: Add tests for Hyperbole set library.
-
-* hui-mini.el (hui:menu-choose): Use hui:menu-exit-hyperbole
-
-* hsys-org.el (hsys-org-search-internal-link-p):
-    (hsys-org-search-radio-target-link-p): Use org-fold-show-context when
-    available.
-
-* hmouse-tag.el (smart-tags-find-p): Remove unused lexical variable
-    find-tag-result
-
-* hmouse-drv.el (hkey-buffer-move): Silence warning by naming unused
-    lexical argument _arg
-
-* hui-mini.el (hui:menu-doc):
-* hibtypes.el (debugger-source):
-* hib-kbd.el (kbd-key): Use string-equal with string literal.
-
-* hactypes.el: Require man for Man-notify-method.
-
-* kotl/kview.el (kview:map-siblings): Remove unused lexical variable
-    cell-indent.
-
-* kotl/kexport.el (kexport:html): Bind lexical var is-collapsible
-
-* Cleanup from Stefan Monnier. Thanks Stefan.
-* hypb.el (hypb:indirect-function): Use indirect-function directly.
-* hgnus.el: Use add-hook directly.
-
-2023-02-06  Bob Weiner  <rsw@gnu.org>
-
-* set.el (set:member): Optimize for common equality operators.
+    number because of allowing for Lisp variables with colons in their names.
          (set:add, set:remove): Convert from a macro to a function and optimize.
 	 (set:replace): Rename to 'set:replace-key-value' and use 'set:replace'
     to replace a non-keyed old-value with a new value.
@@ -1105,10 +1085,11 @@
 
 2022-06-20  Bob Weiner  <rsw@gnu.org>
 
-* hui-mini.el (hui:menu-to-personal-section): Add.
+* hui-mini.el (hui:doc-a-z): Add.
               (hui:menu-item): Add support for inserting menu item label
     into the action when the action is 'hui:menu-to-personal-section'.
-              (hui:menu-a-z): Add this customizable menu.
+              (hui:menu-to): Add this customizable menu but don't activate
+    it until design work is finished.
 
 * hyrolo.el (hyrolo-add): Add newline before adding entry if point is not
     at the beginning of the line for insertion, i.e. when buffer does not
@@ -1132,7 +1113,8 @@
            (load-hyperbole): Add to allow testing of loading all of Hyperbole.
            (eln): Use LOAD_EL and remove autoloads loading prior to native compiling.
 
-* test/demo-tests.el (fast-demo-key-series-shell-apropos): Fix to handle shell startup delay.
+* test/demo-tests.el (fast-demo-key-series-shell-apropos): Fix to handle
+    shell startup delay.
 
 * hypb.el (hypb:function-copy): Since many functions may become primitives
     when using the native compiler, return the primitive function in such
@@ -1155,7 +1137,7 @@
     compatibility code.
 
 * kotl/kmenu.el (id-menubar-set): Remove declared unused function.
-    (id-menubar-kotl): Remove unsued InfoDock menu.
+    (id-menubar-kotl): Remove unused InfoDock menu.
     (kotl-menubar-menu): Remove XEmacs compatibility code.
     (kotl-mode-hook): Set hook unconditionally.
 
@@ -1166,7 +1148,7 @@
 
 * hmouse-tag.el (smart-emacs-tags-file): Remove XEmacs, Infodock from doc.
     (smart-tags-find-p, smart-tags-display, smart-tags-file-list):
-    Remove XEmacs and Infodock compatibility code.
+    Remove XEmacs and InfoDock compatibility code.
 
 * hmouse-mod.el (hmouse-mod-last-char): Remove XEmacs compatibility code.
 
@@ -1293,7 +1275,7 @@
 * test/kexport-tests.el:
   test/hmouse-info-tests.el:
   test/hmouse-drv-tests.el:
-  test/hbut-tests.el: Don't byte compile of test files that depend on
+  test/hbut-tests.el: Don't byte compile any test files that depend on
     external test support packages.
 
 2022-05-16  Bob Weiner  <rsw@gnu.org>

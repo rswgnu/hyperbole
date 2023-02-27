@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     1-Nov-91 at 00:44:23
-;; Last-Mod:      3-Dec-22 at 02:20:47 by Bob Weiner
+;; Last-Mod:     26-Feb-23 at 22:30:14 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1241,7 +1241,7 @@ it, else return nil."
 		     ;; POSIX
 		     (or (and (re-search-backward "^$\\|\\`\\|^\\(.+\\):$" prior-prompt-pos t)
 			      (setq dir (match-string-no-properties 1)))
-			 (and (re-search-backward "\\(^\\| \\)\\(cd\\|pushd\\|ls\\)\\(\\s-+-[-a-zA-Z0-9]*\\)*\\s-+[\'\"]?\\([^&!;,\'\"\t\n\r\f]+[^&!;,\'\" \t\n\r\f]\\)[\'\"]?" prior-prompt-pos t)
+			 (and (re-search-backward "\\(^\\| \\)\\(cd\\|pushd\\|ls\\)\\([ \t]+-[-a-zA-Z0-9]*\\)*[ \t]+[\'\"]?\\([^&!;,\'\"\t\n\r\f]+[^&!;,\'\" \t\n\r\f]\\)[\'\"]?" prior-prompt-pos t)
 			      (setq dir (match-string-no-properties 4)))))
 		   (and dir (not (string-empty-p dir))))
 	  (unless (file-name-absolute-p filename)

@@ -7,7 +7,7 @@
 @c Author:       Bob Weiner
 @c
 @c Orig-Date:     6-Nov-91 at 11:18:03
-@c Last-Mod:      8-Jan-23 at 10:13:37 by Mats Lidell
+@c Last-Mod:     26-Feb-23 at 22:42:29 by Bob Weiner
 
 @c %**start of header (This is for running Texinfo on a region.)
 @setfilename hyperbole.info
@@ -53,7 +53,7 @@
 This manual is for GNU Hyperbole
 (Edition @value{EDITION}, Published @value{UPDATED}).
 
-Copyright @copyright{} 1989-2022  Free Software Foundation, Inc.
+Copyright @copyright{} 1989-2023  Free Software Foundation, Inc.
 
 @quotation
 Permission is granted to copy, distribute and/or modify this document
@@ -143,7 +143,7 @@ Texinfo markup language.
 <CENTER><H3><A HREF="mailto:rsw@@gnu.org">Say thanks or send a testimonial if you like Hyperbole.</A></H3></CENTER>
 
 
-<P>Copyright &copy; 1989-2022  Free Software Foundation, Inc.</P>
+<P>Copyright &copy; 1989-2023  Free Software Foundation, Inc.</P>
 
 <P>GNU Hyperbole is available for use, modification, and distribution under
 the terms of the GNU General Public License (GPL) Version 3 or later,
@@ -156,7 +156,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</P>
 
 <PRE>
 Edition 8.0.1pre
-Printed January 7, 2023.
+Printed February 26, 2023.
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -184,7 +184,7 @@ Printed January 7, 2023.
 
 @sp 2
 @noindent
-Copyright @copyright{} 1989-2022  Free Software Foundation, Inc.
+Copyright @copyright{} 1989-2023  Free Software Foundation, Inc.
 
 GNU Hyperbole is available for use, modification, and distribution
 under the terms of the GNU General Public License (GPL) Version 3 or
@@ -198,7 +198,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 @example
 Edition 8.0.1pre
-January 7, 2023
+February 26, 2023
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -2898,7 +2898,7 @@ Display a message showing VALUE (a symbol) and its value.
 Return any non-@samp{nil} value or @samp{t}.
 
 @findex actypes display-variable
-@item display-variable-value
+@item display-variable
 Display a message showing the given variable name and its value.
 
 @findex actypes eval-elisp

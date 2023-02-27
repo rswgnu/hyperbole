@@ -7,10 +7,13 @@
 
 ** HYPERBOLE SYSTEM
 
-*** Native Comp Autoloads: Work around Emacs bug where async native comp of
-    a package being installed does not load hyperbole-autoloads.el (require
-    libraries to eliminate all Error-level messages).
+  *** Native Compilation Autoloads: Work around Emacs bug where async native
+      comp of a package being installed does not load hyperbole-autoloads.el
+      (require libraries to eliminate all Error-level messages).
 
+  *** Large number of byte-compiler warnings eliminated when building the
+      Hyperbole package.  None of these warnings should affect use of
+      Hyperbole.
 
 ** HYROLO  (See "(hyperbole)HyRolo").
 
@@ -23,9 +26,17 @@
 
 ** KOUTLINER  (See "(hyperbole)Koutliner").
 
-*** M-S-left and M-S-Right: Org compatibility - Add tree promote and demote 
-    commands to these keys (same as existing M-left and M-right keys).
+  *** M-S-left and M-S-Right: Org compatibility - Add tree promote and demote
+      commands to these keys (same as existing M-left and M-right keys).
 
+** MENUS
+
+  *** Minibuffer Menu Changes:
+        - Multi-line Menus:  When a menu line is too long for the screen,
+          it is automatically split into multiple lines and aligned by column
+	  for ease of access.
+
+  *** Move Prefix Arg Number of Items: 
 
 ** ORG MODE
 
@@ -40,14 +51,32 @@
 
 ** SMART (ACTION AND ASSIST) KEYS  (See "(hyperbole)Smart Keys").
 
-*** Smart Dired: Action Key subdirectory selection at point now works on
-    any dired header line, not just the first one.  Use {i} to insert
-    multiple subdirectories in Dired mode.
+  *** Smart Dired: Action Key subdirectory selection at point now works on
+      any dired header line, not just the first one.  Use {i} to insert
+      multiple subdirectories in Dired mode.
 
-*** Compilation and Grep Error Lines: Error lines in the Emacs Regression
-    Test buffer, *ert*, are now supported, as well as the 'Compiling <file>',
-    'Loading <file>' and 'In <function>' lines from Emacs Lisp native
-    compilation.
+  *** Compilation and Grep Error Lines: Error lines in the Emacs Regression
+      Test buffer, *ert*, are now supported, as well as the 'Compiling
+      <file>', 'Loading <file>' and 'In <function>' lines as well as source
+      line references from Emacs Lisp native compilation within the
+      *Async-native-compile-log* buffer.
+
+  *** Path Implicit Buttons: Much improved relative path handling, including
+      expanding into executable paths when pathname is prefixed by ! or &,
+      handling info paths outside `Info-directory-list', like
+      "man/hyperbole.info".
+
+** TEST CASES
+
+  *** Hyperbole Automated Testing: Increased automated test cases to over
+      265.  Simply run 'make test-all' or 'make test' from the command-line
+      when in the Hyperbole source directory and you should see all tests
+      pass.  If any fail, you can press the Action Key to see the source of
+      the failure.  Full testing is supported under POSIX systems only.  See
+      "Makefile" and "test/MANIFEST".
+
+
+*** Greatly expanded 
 
 ===========================================================================
 *                                   V8.0.0

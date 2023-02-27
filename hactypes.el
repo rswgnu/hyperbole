@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    23-Sep-91 at 20:34:36
-;; Last-Mod:     28-Jan-23 at 23:27:48 by Mats Lidell
+;; Last-Mod:     26-Feb-23 at 22:35:30 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -58,6 +58,7 @@ inserted, delete the completions window."
 (defact display-boolean (bool-expr)
   "Display a message showing the result value of a BOOL-EXPR.
 Return any non-nil value or t."
+  (interactive "xDisplay bool expr value: ")
   (let ((result (eval bool-expr t)))
     (message "Boolean result (%s) = %S; Expr: %S"
 	     (if result "True" "False") result bool-expr)
@@ -66,6 +67,7 @@ Return any non-nil value or t."
 (defact display-value (value)
   "Display a message showing VALUE (a symbol) and its value.
 Return any non-nil value or t."
+  (interactive "SDisplay symbol's value: ")
   (let ((result (eval value)))
     (message "%S" result)
     (or result t)))
@@ -73,6 +75,7 @@ Return any non-nil value or t."
 (defact display-variable (var)
   "Display a message showing VAR (a symbol) and its value.
 Return any non-nil value or t."
+  (interactive "vDisplay variable's value: ")
   (message "%s = %S" var (symbol-value var))
   (or (symbol-value var) t))
 
