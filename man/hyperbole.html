@@ -4,9 +4,9 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <!-- This manual is for GNU Hyperbole
-(Edition 8.0.1pre, Published January, 2022).
+(Edition 8.0.1pre, Published February, 2023).
 
-Copyright © 1989-2022  Free Software Foundation, Inc.
+Copyright © 1989-2023  Free Software Foundation, Inc.
 
 Permission is granted to copy, distribute and/or modify this document
 under the terms of the GNU Free Documentation License, Version 1.3 or
@@ -94,7 +94,7 @@ Next: <a href="#Introduction" accesskey="n" rel="next">Introduction</a>, Previou
 <CENTER><H3><A HREF="mailto:rsw@gnu.org">Say thanks or send a testimonial if you like Hyperbole.</A></H3></CENTER>
 
 
-<P>Copyright &copy; 1989-2022  Free Software Foundation, Inc.</P>
+<P>Copyright &copy; 1989-2023  Free Software Foundation, Inc.</P>
 
 <P>GNU Hyperbole is available for use, modification, and distribution under
 the terms of the GNU General Public License (GPL) Version 3 or later,
@@ -107,7 +107,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</P>
 
 <PRE>
 Edition 8.0.1pre
-Printed January 7, 2023.
+Printed February 26, 2023.
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -2026,7 +2026,6 @@ implicit button types (they are listed in increasing order of priority).
 </p>
 <dl class="table">
 <dd>
-<a class="index-entry-id" id="index-ibtypes-smart_002dorg"></a>
 <a class="index-entry-id" id="index-org_002dmode"></a>
 <a class="index-entry-id" id="index-radio-target"></a>
 <a class="index-entry-id" id="index-code-block"></a>
@@ -2848,7 +2847,7 @@ Return any non-&lsquo;<samp class="samp">nil</samp>&rsquo; value or &lsquo;<samp
 </p>
 <a class="index-entry-id" id="index-actypes-display_002dvariable"></a>
 </dd>
-<dt><code class="code">display-variable-value</code></dt>
+<dt><code class="code">display-variable</code></dt>
 <dd><p>Display a message showing the given variable name and its value.
 </p>
 <a class="index-entry-id" id="index-actypes-eval_002delisp"></a>
@@ -8332,10 +8331,12 @@ mirror of the GNU ftp site and show it to you.
 
 <p>Then decompress and unpack the archive to a directory of your
 choosing.  Move into the <samp class="file">hyperbole-&lt;version&gt;/</samp> directory and execute
-the following Posix shell command, <code class="code">make bin</code>, to
-byte-compile the Hyperbole lisp files.  Then add the following
-lines to your personal Emacs initialization file,
-<samp class="file">~/.emacs</samp>:
+the following Posix shell command:
+</p>
+<p><code class="code">make bin</code>
+</p>
+<p>to byte-compile the Hyperbole lisp files.  Then add the following
+lines to your personal Emacs initialization file, <samp class="file">~/.emacs</samp>:
 </p>
 <div class="example lisp">
 <div class="group"><pre class="lisp-preformatted">(unless (and (featurep 'hyperbole) hyperbole-mode)
@@ -13212,7 +13213,6 @@ Next: <a href="#Concept-Index" accesskey="n" rel="next">Concept Index</a>, Previ
 <tr><td></td><td class="printindex-index-entry"><a href="#index-ibtypes-rfc"><code>ibtypes rfc</code></a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-ibtypes-rfc_002dtoc"><code>ibtypes rfc-toc</code></a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-ibtypes-ripgrep_002dmsg"><code>ibtypes ripgrep-msg</code></a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
-<tr><td></td><td class="printindex-index-entry"><a href="#index-ibtypes-smart_002dorg"><code>ibtypes smart-org</code></a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-ibtypes-social_002dreference"><code>ibtypes social-reference</code></a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-ibtypes-texinfo_002dref"><code>ibtypes texinfo-ref</code></a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-ibtypes-text_002dtoc"><code>ibtypes text-toc</code></a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
