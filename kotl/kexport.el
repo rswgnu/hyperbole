@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    26-Feb-98
-;; Last-Mod:      3-Mar-23 at 15:32:29 by Mats Lidell
+;; Last-Mod:      4-Mar-23 at 00:30:38 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -154,18 +154,18 @@ li {
   background-color: inherit;
   cursor: pointer;
   display: block;
-  font-size: 0;
+  font-size: 12;
   outline: inherit;
 }
 
 .collapsible:hover {
   background-color: #FAFAD2;
-  font-size: 0;
+  font-size: 12;
 }
 
 .content {
   display: block;
-  font-size: 0;
+  font-size: 12;
 }
 </style>\n"
   "CSS that styles collapsible HTML-exported Koutline parent cells.")
@@ -431,6 +431,8 @@ used.  Also converts Urls and Klinks into Html hyperlinks.
 	;; (princ "<a id=\"top\"></a><a id=\"k0\"></a>\n")
         ;;; FIXME make configurable or dynamic!?
 	(princ "<html lang=\"en\">\n")
+
+        ;; HEAD
         (princ "<head>\n")
         (princ (format "<title>%s</title>\n" title))
         (princ "<meta charset=\"utf-8\">\n\n")
@@ -446,6 +448,8 @@ used.  Also converts Urls and Klinks into Html hyperlinks.
 	(princ kexport:font-awesome-css-include)
 	;; HTML
 	(princ "</head>\n\n")
+
+        ;; BODY
 	(princ (format "<body %s>\n\n" kexport:html-body-attributes))
 	(princ (format "<h1>%s</h1>\n\n" title))
 	;; (princ (format "<label for=\"show-menu\" class=\"show-menu\"><h1>%s</h1></label>\n\n" title))
@@ -484,7 +488,8 @@ used.  Also converts Urls and Klinks into Html hyperlinks.
 	     (while (> i 1)
 	       (princ "<ul>")
 	       (setq i (1- i)))
-	     (princ "<li list-style-type=none>\n<table><tr valign=text-bottom>\n")
+             ;; FIXME - removed list-style-type. Not allowed here!?
+	     (princ "<li>\n<table><tr valign=text-bottom>\n")
 	     ;; (princ "<td width=1% valign=top>")
 	     (princ "<td width=1%>")
 	     (princ (format "<span class=\"fas fa-chevron-down fa-fw\"%s></span>"
@@ -497,8 +502,8 @@ used.  Also converts Urls and Klinks into Html hyperlinks.
 	     ;; (princ "<td width=2% valign=top>\n")
 	     (princ "<td width=2%>\n")
 	     (setq label (kcell-view:label))
-	     (princ (format "<a id=\"k%s\"></a>" label))
-	     (princ (format "<a id=\"k%s\"></a>\n" (kcell-view:idstamp)))
+	     (princ (format "<div id=\"k%s\"></div>" label))
+	     (princ (format "<div id=\"k%s\"></div>\n" (kcell-view:idstamp)))
 	     (princ (format
 		     "<pre><font %s>%s%s</font></pre>\n"
 		     kexport:label-html-font-attributes
@@ -507,7 +512,7 @@ used.  Also converts Urls and Klinks into Html hyperlinks.
 	     (setq contents (kcell-view:contents))
 	     (when (string-match "\\`\\([-_$%#@~^&*=+|/A-Za-z0-9 ]+\\):.*\\S-"
 				 contents)
-	       (princ (format "<a id=\"%s\"></a>"
+	       (princ (format "<div id=\"%s\"></div>"
 			      (substring contents 0 (match-end 1)))))
 	     (setq contents (kexport:html-markup contents))
 	     (if soft-newlines-flag
