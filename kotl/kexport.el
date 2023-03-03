@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    26-Feb-98
-;; Last-Mod:     12-Feb-23 at 22:15:49 by Mats Lidell
+;; Last-Mod:      3-Mar-23 at 15:32:29 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -50,8 +50,12 @@ Part of an HTML exported koutline file."
   :type 'string
   :group 'hyperbole-koutliner)
 
+;; FIXME - We can't have quotes in the description field if we have
+;; the intent that users should be able to use the button from the
+;; generated html. In the generated html they must be inserted like
+;; this '&quot'
 (defcustom kexport:html-description
-  "Created by Hyperbole's outliner.\nSee \"(hyperbole)Koutliner\" for more information."
+  "Created by Hyperbole's outliner.\nSee &quot;(hyperbole)Koutliner&quot; for more information."
   "*String to insert as the HTML-exported document's description, or nil for none."
   :type '(choice (const nil)
 		 (string))
@@ -422,11 +426,16 @@ used.  Also converts Urls and Klinks into Html hyperlinks.
 	  (when (string-match "\n" title)
 	    (setq title (substring title 0 (match-beginning 0)))))
 
-	(princ "<html><head>\n\n")
-	(princ "<a id=\"top\"></a><a id=\"k0\"></a>\n")
-	(princ (format "<title>%s</title>\n" title))
+	(princ "<!DOCTYPE html>\n")
+        ;; FIXME Malformed - Check why this is there!?
+	;; (princ "<a id=\"top\"></a><a id=\"k0\"></a>\n")
+        ;;; FIXME make configurable or dynamic!?
+	(princ "<html lang=\"en\">\n")
+        (princ "<head>\n")
+        (princ (format "<title>%s</title>\n" title))
+        (princ "<meta charset=\"utf-8\">\n\n")
 	(if kexport:html-description
-	    (princ (format "<meta id=\"description\" content=\"%s\">\n"
+	    (princ (format "<meta name=\"description\" content=\"%s\">\n"
 			   kexport:html-description)))
 	(if kexport:html-keywords
 	    (princ (format "<meta id=\"keywords\" content=\"%s\">\n"
