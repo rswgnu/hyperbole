@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    26-Feb-98
-;; Last-Mod:      4-Mar-23 at 15:26:57 by Mats Lidell
+;; Last-Mod:      4-Mar-23 at 15:40:35 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -431,13 +431,16 @@ used.  Also converts Urls and Klinks into Html hyperlinks.
 	    (setq title (substring title 0 (match-beginning 0)))))
 
 	(princ "<!DOCTYPE html>\n")
-        ;;; FIXME make configurable or dynamic!?
+        ;;; FIXME make configurable!?
 	(princ "<html lang=\"en\">\n")
 
         ;; HEAD
         (princ "<head>\n")
         (princ (format "<title>%s</title>\n" title))
+
+        ;;; FIXME make configurable or dynamic - use originating kotl buffer encoding!?
         (princ "<meta charset=\"utf-8\">\n\n")
+
 	(if kexport:html-description
 	    (princ (format "<meta name=\"description\" content=\"%s\">\n"
 			   kexport:html-description)))
@@ -496,7 +499,6 @@ used.  Also converts Urls and Klinks into Html hyperlinks.
 	     (while (> i 1)
 	       (princ "<ul>")
 	       (setq i (1- i)))
-             ;; FIXME - removed list-style-type. Not allowed here!?
 	     (princ "<li>\n<table><tr valign=text-bottom>\n")
 	     ;; (princ "<td width=1% valign=top>")
 	     (princ "<td width=1%>")
