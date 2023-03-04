@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    26-Feb-98
-;; Last-Mod:      4-Mar-23 at 01:11:53 by Mats Lidell
+;; Last-Mod:      4-Mar-23 at 15:26:57 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -158,18 +158,18 @@ ul, tr, td {
   background-color: inherit;
   cursor: pointer;
   display: block;
-  font-size: 12;
+  font-size: 12px;
   outline: inherit;
 }
 
 .collapsible:hover {
   background-color: #FAFAD2;
-  font-size: 12;
+  font-size: 12px;
 }
 
 .content {
   display: block;
-  font-size: 12;
+  font-size: 12px;
 }
 </style>\n"
   "CSS that styles collapsible HTML-exported Koutline parent cells.")
@@ -431,8 +431,6 @@ used.  Also converts Urls and Klinks into Html hyperlinks.
 	    (setq title (substring title 0 (match-beginning 0)))))
 
 	(princ "<!DOCTYPE html>\n")
-        ;; FIXME Malformed - Check why this is there!?
-	;; (princ "<a id=\"top\"></a><a id=\"k0\"></a>\n")
         ;;; FIXME make configurable or dynamic!?
 	(princ "<html lang=\"en\">\n")
 
@@ -450,12 +448,18 @@ used.  Also converts Urls and Klinks into Html hyperlinks.
 	;; CSS
 	(princ (format "<link rel=\"stylesheet\" href=\"%s\">\n" kexport:font-awesome-css-url))
 	(princ kexport:font-awesome-css-include)
+
 	;; HTML
 	(princ "</head>\n\n")
 
         ;; BODY
 	(princ (format "<body %s>\n\n" kexport:html-body-attributes))
-	(princ (format "<h1>%s</h1>\n\n" title))
+
+        ;; FIXME: Moved there due to being malformed but do we need
+        ;; it? Does k0 mean anything?
+	(princ "<div id=\"top\"></div><div id=\"k0\"></div>\n")
+
+        (princ (format "<h1>%s</h1>\n\n" title))
 	;; (princ (format "<label for=\"show-menu\" class=\"show-menu\"><h1>%s</h1></label>\n\n" title))
 	;; (princ "<input type=\"checkbox\" id=\"show-menu\" role=\"button\">")
 	;; (princ "<nav>
