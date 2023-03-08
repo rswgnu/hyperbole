@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 20:45:31
-;; Last-Mod:      7-Mar-23 at 23:13:44 by Bob Weiner
+;; Last-Mod:      8-Mar-23 at 08:48:10 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -149,7 +149,7 @@ If the id location is found, return non-nil."
 						  (line-end-position) t)))
 	  (hact #'message "On ID definition; use {C-u M-RET} to copy a link to an ID.")
 	(when (and id
-		   (let ((inhibit-message)) ;; Inhibit org-id-find status msgs
+		   (let ((inhibit-message t)) ;; Inhibit org-id-find status msgs
 		     (setq m (or (and (featurep 'org-roam) (org-roam-id-find id 'marker))
 				 (org-id-find id 'marker)))))
 	  (hact #'org-id-marker-display m))))))
@@ -164,7 +164,7 @@ If the id location is found, return non-nil."
 	  mpos)
       ;; Ignore ID definitions or when not on a possible ID
       (when (and id
-		 (let ((inhibit-message)) ;; Inhibit org-id-find status msgs
+		 (let ((inhibit-message t)) ;; Inhibit org-id-find status msgs
 		   (setq m (or (and (featurep 'org-roam) (org-roam-id-find id 'marker))
 			       (org-id-find id 'marker)))))
 	(save-excursion
