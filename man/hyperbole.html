@@ -4,7 +4,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <!-- This manual is for GNU Hyperbole
-(Edition 8.0.1pre, Published February, 2023).
+(Edition 8.0.1pre, Published March, 2023).
 
 Copyright © 1989-2023  Free Software Foundation, Inc.
 
@@ -107,7 +107,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</P>
 
 <PRE>
 Edition 8.0.1pre
-Printed February 26, 2023.
+Printed March 7, 2023.
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -961,6 +961,7 @@ Hyperbole Key Press/Click in Special Modes
     Include file                Jumps to Texinfo referent  Button help
     code/var reference          Displays doc for referent  Button help
   Org Mode                      Follows links and cycles outline views
+  Org/Roam ID                   Jumps to ID referent       Button help
   Magit Modes                   Collapses, expands and jumps to things
   Outline Major/Minor Modes     Collapses, expands, and moves outline entries
   Man Apropos                   Displays man page entry    &lt;- same
@@ -2057,7 +2058,7 @@ that set or if final done keyword, remove it.
 </li><li> Within a radio or internal target or a link to it, jump between
 the target and the first link to it, allowing two-way navigation.
 
-</li><li> Follow other internal links in Org mode files.
+</li><li> Follow other internal links and ID references in Org mode files.
 
 </li><li> Follow Org mode external links.
 
@@ -10270,7 +10271,7 @@ Next: <a href="#Smart-Key-_002d-Ivy" accesskey="n" rel="next">Smart Key - Ivy</a
      (3) Within a radio or internal target or a link to it, jump between
          the target and the first link to it, allowing two-way navigation.
 
-     (4) Follow other internal links in Org mode files.
+     (4) Follow other internal links and ID references in Org mode files.
 
      (5) Follow Org mode external links.
 
@@ -10295,7 +10296,7 @@ Next: <a href="#Smart-Key-_002d-Ivy" accesskey="n" rel="next">Smart Key - Ivy</a
      (1) If on an Org todo keyword, move to the first todo keyword in
          the next set, if any.
 
-     (2) If on an Org mode link or agenda item, display Hyperbole
+     (2) If on an Org mode link, ID reference or agenda item, display Hyperbole
          context-sensitive help.
 
      (3) On a Hyperbole button, perform the Assist Key function, generally
@@ -10311,11 +10312,15 @@ Next: <a href="#Smart-Key-_002d-Ivy" accesskey="n" rel="next">Smart Key - Ivy</a
          through views of the whole buffer outline.
 </pre></div></div>
 
+<a class="index-entry-id" id="index-Org-ID"></a>
+<a class="index-entry-id" id="index-Org-link_002c-outside-Org"></a>
+<a class="index-entry-id" id="index-org_002did"></a>
 <a class="index-entry-id" id="index-org_002dlink_002doutside_002dorg_002dmode"></a>
 <p>Org links may be used outside of Org mode buffers.  Such links are
 handled by the separate implicit button type, <code class="code">org-link-outside-org-mode</code>.
+Org and Org Roam IDs may be activated as hyperbuttons outside of Org mode buffers.
+They are handled by the separate implicit button type, <code class="code">org-id</code>.
 </p>
-
 <hr>
 </div>
 <div class="subsection-level-extent" id="Smart-Key-_002d-Ivy">
@@ -11276,8 +11281,8 @@ and outline-minor-mode is enabled:
      (4) on a header line but not at the beginning or end of the line,
          if the headings subtree is hidden, shows it, otherwise hides
          it;
-     (5) anywhere else, invokes <code class="code">action-key-eol-function</code>, typically
-         to scroll up a windowful.
+     (5) at the end of a line, invokes <code class="code">action-key-eol-function</code>,
+         typically to scroll up a windowful.
   ASSIST KEY
      (1) after an outline heading has been cut via the Action Key,
          allows multiple pastes throughout the buffer (the last paste
@@ -11287,8 +11292,8 @@ and outline-minor-mode is enabled:
          (sans subtree) from the buffer;
      (4) on a header line but not at the beginning or end, if the
          heading body is hidden, shows it, otherwise hides it;
-     (5) anywhere else, invokes <code class="code">assist-key-eol-function</code>, typically
-         to scroll down a windowful.
+     (5) at the end of a line, invokes <code class="code">assist-key-eol-function</code>,
+         typically to scroll down a windowful.
 </pre></div></div>
 
 <hr>
@@ -13377,6 +13382,7 @@ Next: <a href="#Concept-Index" accesskey="n" rel="next">Concept Index</a>, Previ
 <tr><td></td><td class="printindex-index-entry"><a href="#index-objc_002dcpp_002dinclude_002dpath">objc-cpp-include-path</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Smart-Key-_002d-Objective_002dC-Source-Code">Smart Key - Objective-C Source Code</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-objc_002dinclude_002dpath">objc-include-path</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Smart-Key-_002d-Objective_002dC-Source-Code">Smart Key - Objective-C Source Code</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-org_002dctrl_002dc_002dctrl_002dc"><code>org-ctrl-c-ctrl-c</code></a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-org_002did">org-id</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Smart-Key-_002d-Org-Mode">Smart Key - Org Mode</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-org_002dlink_002doutside_002dorg_002dmode">org-link-outside-org-mode</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Smart-Key-_002d-Org-Mode">Smart Key - Org Mode</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-org_002dmeta_002dreturn"><code>org-meta-return</code></a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-outline_002dminor_002dmode-1"><code>outline-minor-mode</code></a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Smart-Key-_002d-Emacs-Outline-Mode">Smart Key - Emacs Outline Mode</a></td></tr>
@@ -14366,6 +14372,8 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function, Variable and Fi
 <tr><td></td><td class="printindex-index-entry"><a href="#index-OO_002dBrowser">OO-Browser</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Smart-Key-_002d-The-OO_002dBrowser">Smart Key - The OO-Browser</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-option-setting">option setting</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Customization">Customization</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-option-settings">option settings</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Menus">Menus</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-Org-ID">Org ID</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Smart-Key-_002d-Org-Mode">Smart Key - Org Mode</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-Org-link_002c-outside-Org">Org link, outside Org</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Smart-Key-_002d-Org-Mode">Smart Key - Org Mode</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-Org-mode">Org mode</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Smart-Key-_002d-Org-Mode">Smart Key - Org Mode</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-Org-tables">Org tables</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Promoting-and-Demoting">Promoting and Demoting</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-org_002dmode">org-mode</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>

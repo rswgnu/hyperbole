@@ -2,12 +2,12 @@
 
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
-;; Copyright (C) 1992-2022  Free Software Foundation, Inc.
+;; Copyright (C) 1992-2023  Free Software Foundation, Inc.
 
 ;; Author:           Bob Weiner
 ;; Maintainer:       Bob Weiner <rsw@gnu.org>, Mats Lidell <matsl@gnu.org>
 ;; Created:          06-Oct-92 at 11:52:51
-;; Last-mod:     11-Dec-22 at 13:32:34 by Bob Weiner
+;; Last-mod:      7-Mar-23 at 22:10:54 by Bob Weiner
 ;; Released:         03-Dec-22
 ;; Version:          8.0.1pre
 ;; Keywords:         comm, convenience, files, frames, hypermedia, languages, mail, matching, mouse, multimedia, outlines, tools, wp
@@ -491,6 +491,12 @@ frame, those functions by default still return the prior frame."
 
 (defun hyperbole--enable-mode ()
   "Enable Hyperbole global minor mode."
+  ;; If Hyperbole is loaded without the user's init being run,
+  ;; then force execution of (hyperb:init) when the mode is enabled.
+  (unless (and hkey-init (where-is-internal #'hkey-help))
+    (hyperb:init)
+    (remove-hook 'after-init-hook #'hyperb:init))
+
   ;; Store the current value and set `mark-even-if-inactive' to nil so
   ;; can select delimited things if the region is not active when
   ;; hyperbole-mode is enabled.

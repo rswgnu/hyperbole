@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 20:45:31
-;; Last-Mod:     13-Feb-23 at 00:23:50 by Bob Weiner
+;; Last-Mod:      6-Mar-23 at 00:30:09 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -90,6 +90,7 @@
 (declare-function markdown-reference-goto-link "ext:markdown")
 (declare-function markdown-wiki-link-p "ext:markdown")
 (declare-function markdown-footnote-text-positions "ext:markdown")
+(declare-function org-roam-id-find "ext:org-roam")
 (defvar markdown-regex-link-reference)
 (defvar markdown-regex-reference-definition)
 
@@ -123,6 +124,52 @@ line and check for a source reference line again."
 ;;; ========================================================================
 
 (load "hypb-ert")
+
+;;; ========================================================================
+;;; Handles social media hashtag and username references, e.g. twitter#myhashtag
+;;; ========================================================================
+
+(load "hib-social")
+
+;;; ========================================================================
+;;; Displays Org Roam and Org IDs
+;;; ========================================================================
+
+(defib org-id ()
+  "Display Org roam or Org node referenced by id at point, if any.
+If on the :ID: definition line, do nothing and return nil.
+If the id location is found, return non-nil."
+  (when (featurep 'org-id)
+    (let ((id (thing-at-point 'symbol t)) ;; Could be a uuid or some other form of id
+	  m)
+      ;; Ignore ID definitions or when not on a possible ID
+      (when (and id (setq m (or (and (featurep 'org-roam) (org-roam-id-find id 'marker))
+				(org-id-find id 'marker))))
+	(cond ((save-excursion (beginning-of-line)
+			       (re-search-forward ":\\(CUSTOM_\\)?ID:[ \t]+"
+						  (line-end-position) t))
+	       (message "On ID definition; use {C-u M-RET} to copy a link to ID."))
+	      (m
+	       (hact 'org-id-marker-display m)))))))
+
+(defun org-id:help (hbut)
+  "Copy link to kill ring of an Org roam or Org node referenced by id at point.
+If on the :ID: definition line, do nothing and return nil.
+If the id location is found, return non-nil."
+  (when (featurep 'org-id)
+    (let ((id (thing-at-point 'symbol t)) ;; Could be a uuid or some other form of id
+	  m
+	  mpos)
+      ;; Ignore ID definitions or when not on a possible ID
+      (when (and id (setq m (or (and (featurep 'org-roam) (org-roam-id-find id 'marker))
+				(org-id-find id 'marker))))
+	(save-excursion
+	  (setq mpos (marker-position m))
+	  (set-buffer (marker-buffer m))
+	  (save-restriction
+	    (widen)
+	    (goto-char mpos)
+	    (kill-new (org-id-store-link))))))))
 
 ;;; ========================================================================
 ;;; Displays files and directories when a valid pathname is activated.
@@ -339,12 +386,6 @@ must have an attached file."
               (not (string-match "[#@]" ref))
               (progn (ibut:label-set ref-and-pos)
                      (hact 'annot-bib ref))))))
-
-;;; ========================================================================
-;;; Handles social media hashtag and username references, e.g. twitter#myhashtag
-;;; ========================================================================
-
-(load "hib-social")
 
 ;;; ========================================================================
 ;;; Displays in-file Markdown link referents.

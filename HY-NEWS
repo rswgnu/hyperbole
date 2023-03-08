@@ -5,15 +5,19 @@
 *                                   V9.0.0
 ===========================================================================
 
-** HYPERBOLE SYSTEM
+** HYPERBOLE SYSTEM  (See "(hyperbole)").
 
   *** Native Compilation Autoloads: Work around Emacs bug where async native
-      comp of a package being installed does not load hyperbole-autoloads.el
+      comp of a package being installed does not load "hyperbole-autoloads.el"
       (require libraries to eliminate all Error-level messages).
+
+  *** Natively Compiled Functions as Action Types: Now may be used as Hyperbole
+      button action types.
 
   *** Large number of byte-compiler warnings eliminated when building the
       Hyperbole package.  None of these warnings should affect use of
       Hyperbole.
+
 
 ** HYROLO  (See "(hyperbole)HyRolo").
 
@@ -29,16 +33,19 @@
   *** M-S-left and M-S-Right: Org compatibility - Add tree promote and demote
       commands to these keys (same as existing M-left and M-right keys).
 
-** MENUS
+
+** MENUS  (See "(hyperbole)Menus").
 
   *** Minibuffer Menu Changes:
         - Multi-line Menus:  When a menu line is too long for the screen,
           it is automatically split into multiple lines and aligned by column
 	  for ease of access.
 
-  *** Move Prefix Arg Number of Items: 
+  *** Move Prefix Arg Number of Items: {M-b} and {M-f} move backward and
+      forward by the number of items specified in any prefix argument given.
 
-** ORG MODE
+
+** ORG MODE  (See "(hyperbole)Smart Key - Org Mode").
 
   *** Todo Cycling: An Action Key press on an Org mode todo state keyword,
       cycles to the next state.  An Assist Key press in the same place 
@@ -66,9 +73,10 @@
       handling info paths outside `Info-directory-list', like
       "man/hyperbole.info".
 
+
 ** TEST CASES
 
-  *** Hyperbole Automated Testing: Increased automated test cases to over
+  *** Hyperbole Automated Testing: Automated test cases increased to over
       265.  Simply run 'make test-all' or 'make test' from the command-line
       when in the Hyperbole source directory and you should see all tests
       pass.  If any fail, you can press the Action Key to see the source of
@@ -76,7 +84,11 @@
       "Makefile" and "test/MANIFEST".
 
 
-*** Greatly expanded 
+** WINDOWS GRIDS (See "(hyperbole)grid of windows").
+
+  *** Grid by File Pattern: Fix so prompt for a string pattern rather than
+      a file name and force use of full pathnames to avoid improper relative
+      path resolution.  See "(hyperbole)hycontrol-windows-grid-by-file-pattern".
 
 ===========================================================================
 *                                   V8.0.0
@@ -109,7 +121,7 @@
       quality and debugability.
 
 
-** ORG MODE
+** ORG MODE (See "hui-mouse.el#defun smart-org").
 
   *** M-RET: Reworked M-RET interface so can control how much or little of
       Hyperbole works in Org mode when Hyperbole minor mode is enabled.
@@ -143,7 +155,7 @@
       non-programmers to create their own implicit action button link
       types that execute key series, display URLs, display the contents
       of pathnames or invoke functions.  See "(hyperbole)Action Button
-      Link Types" or the "DEMO2#Defining New Action Button Types"
+      Link Types" or the "DEMO#Defining New Action Button Types"
       section.
 
   *** Easy Implicit Link Button Type Creation: `defil' is a new
@@ -502,7 +514,7 @@
   *** Fast Window Links: The hkey-window-link command bound to {M-o w}
       rapidly creates a link button at point in the selected window,
       linking to point in the window chosen when prompted.
-      See "DEMO2#Displaying File and Buffer Items and Moving Buffers".
+      See "DEMO#Displaying File and Buffer Items and Moving Buffers".
 
   *** Throw A Region Elsewhere Within the Same Buffer: {M-o t <window-id>}
       when used with a selected region can now throw to the source buffer
@@ -620,7 +632,7 @@
 *                                   V7.1.1
 ===========================================================================
 
-  DEMO2
+  DEMO
 
     - Global Buttons: Added a new example of a labeled global implicit button
       displaying a todo file maintained in Koutliner format.  See
@@ -885,7 +897,7 @@
 
   DOCUMENTATION
 
-    - DEMO2: New sections on Button Files and Global Buttons.
+    - DEMO: New sections on Button Files and Global Buttons.
 
     - Action Types: link-to-gbut, link-to-ibut - Added.
 
@@ -897,7 +909,7 @@
       ilink (link to implicit button), glink (link to global button), and
       elink (link to explicit button).
 
-    - DEMO2 (Action Buttons): Added description and examples.
+    - DEMO (Action Buttons): Added description and examples.
 
     - Path Variables: Better documented how these are handled.
 

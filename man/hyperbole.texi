@@ -7,7 +7,7 @@
 @c Author:       Bob Weiner
 @c
 @c Orig-Date:     6-Nov-91 at 11:18:03
-@c Last-Mod:     27-Feb-23 at 00:26:49 by Bob Weiner
+@c Last-Mod:      7-Mar-23 at 22:08:27 by Bob Weiner
 
 @c %**start of header (This is for running Texinfo on a region.)
 @setfilename hyperbole.info
@@ -156,7 +156,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</P>
 
 <PRE>
 Edition 8.0.1pre
-Printed February 26, 2023.
+Printed March 7, 2023.
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -198,7 +198,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 @example
 Edition 8.0.1pre
-February 26, 2023
+March 7, 2023
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -2151,7 +2151,7 @@ Within a radio or internal target or a link to it, jump between
 the target and the first link to it, allowing two-way navigation.
 
 @item
-Follow other internal links in Org mode files.
+Follow other internal links and ID references in Org mode files.
 
 @item
 Follow Org mode external links.
@@ -9433,7 +9433,7 @@ When in an Org mode context and @code{hsys-org-enable-smart-keys} is non-nil:
      (3) Within a radio or internal target or a link to it, jump between
          the target and the first link to it, allowing two-way navigation.
 
-     (4) Follow other internal links in Org mode files.
+     (4) Follow other internal links and ID references in Org mode files.
 
      (5) Follow Org mode external links.
 
@@ -9458,7 +9458,7 @@ When in an Org mode context and @code{hsys-org-enable-smart-keys} is non-nil:
      (1) If on an Org todo keyword, move to the first todo keyword in
          the next set, if any.
 
-     (2) If on an Org mode link or agenda item, display Hyperbole
+     (2) If on an Org mode link, ID reference or agenda item, display Hyperbole
          context-sensitive help.
 
      (3) On a Hyperbole button, perform the Assist Key function, generally
@@ -9475,11 +9475,15 @@ When in an Org mode context and @code{hsys-org-enable-smart-keys} is non-nil:
 @end group
 @end format
 
+@cindex Org ID
+@cindex Org link, outside Org
+@vindex org-id
 @vindex org-link-outside-org-mode
 @noindent
 Org links may be used outside of Org mode buffers.  Such links are
 handled by the separate implicit button type, @code{org-link-outside-org-mode}.
-
+Org and Org Roam IDs may be activated as hyperbuttons outside of Org mode buffers.
+They are handled by the separate implicit button type, @code{org-id}.
 
 @node Smart Key - Ivy, Smart Key - Treemacs, Smart Key - Org Mode, Smart Keyboard Keys
 @subsection Smart Key - Ivy
@@ -10343,8 +10347,8 @@ and outline-minor-mode is enabled:
      (4) on a header line but not at the beginning or end of the line,
          if the headings subtree is hidden, shows it, otherwise hides
          it;
-     (5) anywhere else, invokes @code{action-key-eol-function}, typically
-         to scroll up a windowful.
+     (5) at the end of a line, invokes @code{action-key-eol-function},
+         typically to scroll up a windowful.
   ASSIST KEY
      (1) after an outline heading has been cut via the Action Key,
          allows multiple pastes throughout the buffer (the last paste
@@ -10354,8 +10358,8 @@ and outline-minor-mode is enabled:
          (sans subtree) from the buffer;
      (4) on a header line but not at the beginning or end, if the
          heading body is hidden, shows it, otherwise hides it;
-     (5) anywhere else, invokes @code{assist-key-eol-function}, typically
-         to scroll down a windowful.
+     (5) at the end of a line, invokes @code{assist-key-eol-function},
+         typically to scroll down a windowful.
 @end group
 @end format
 

@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    23-Sep-91 at 20:34:36
-;; Last-Mod:     26-Feb-23 at 22:35:30 by Bob Weiner
+;; Last-Mod:      1-Mar-23 at 22:13:03 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -673,6 +673,16 @@ Uses `hpath:display-where' setting to control where the man page is displayed."
   (require 'man)
   (let ((Man-notify-method 'meek))
     (hpath:display-buffer (man topic))))
+
+(defact org-id-marker-display (marker)
+  "Display the Org entry, if any, at MARKER.
+See doc of `ibtypes::org-id' for usage."
+    (unless (markerp marker)
+      (error "(org-id-marker-display): Argument must be a marker, not %s" marker))
+    (org-mark-ring-push)
+    (hact #'link-to-buffer-tmp (marker-buffer marker) marker)
+    (move-marker marker nil)
+    (org-show-context))
 
 (defact rfc-toc (&optional buf-name opoint sections-start)
   "Compute and display summary of an Internet rfc in BUF-NAME.

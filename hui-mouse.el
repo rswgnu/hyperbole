@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    04-Feb-89
-;; Last-Mod:     11-Feb-23 at 17:39:40 by Bob Weiner
+;; Last-Mod:      1-Mar-23 at 21:45:58 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1857,8 +1857,8 @@ If key is pressed:
      buffer;
  (4) on a heading line but not at the beginning or end, if headings subtree is
      hidden then show it, otherwise hide it;
- (5) anywhere else, invoke `action-key-eol-function', typically to scroll up
-     a windowful."
+ (5) at the end of a line, invoke `action-key-eol-function', typically to
+     scroll up a windowful."
 
   (interactive)
   (cond (smart-outline-cut
@@ -1872,9 +1872,10 @@ If key is pressed:
 	      ;; Skip past start of current entry
 	      (progn (re-search-forward outline-regexp nil t)
 		     (smart-outline-to-entry-end t)))))
-
-	((or (eolp) (zerop (smart-outline-level)))
+	((eolp)
 	 (funcall action-key-eol-function))
+	((zerop (smart-outline-level))
+	 nil)
 	;; On an outline heading line but not at the start/end of line.
 	((smart-outline-subtree-hidden-p)
 	 (outline-show-subtree))
@@ -1896,8 +1897,8 @@ If assist-key is pressed:
      subtree) from the buffer;
  (4) on a heading line but not at the beginning or end, if heading body is
      hidden then show it, otherwise hide it;
- (5) anywhere else, invoke `assist-key-eol-function', typically to scroll down
-     a windowful."
+ (5) at the end of a line, invoke `assist-key-eol-function', typically to
+     scroll down a windowful."
 
   (interactive)
   (cond (smart-outline-cut (yank))
@@ -1908,8 +1909,10 @@ If assist-key is pressed:
 		      ;; Skip past start of current entry
 		      (progn (re-search-forward outline-regexp nil t)
 			     (smart-outline-to-entry-end))))
-	((or (eolp) (zerop (smart-outline-level)))
+	((eolp)
 	 (funcall assist-key-eol-function))
+	((zerop (smart-outline-level))
+	 nil)
 	;; On an outline heading line but not at the start/end of line.
 	((smart-outline-subtree-hidden-p)
 	 (outline-show-entry))
