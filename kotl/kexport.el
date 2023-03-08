@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    26-Feb-98
-;; Last-Mod:      8-Mar-23 at 01:28:07 by Mats Lidell
+;; Last-Mod:     10-Mar-23 at 00:46:54 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -402,6 +402,34 @@ used.  Also converts Urls and Klinks into Html hyperlinks."
     (hact 'www-url (concat "file://" html-file))
     html-file))
 
+(defun kexport:princ-cell (is-parent separator soft-newlines-flag)
+  "Export a cell."
+  (let (contents label)
+    (setq contents
+          (let ((cnt1 (kcell-view:contents)))
+            (concat
+	     (when (string-match "\\`\\([-_$%#@~^&*=+|/A-Za-z0-9 ]+\\):.*\\S-" cnt1)
+	       (format "<div id=\"%s\"></div>"
+                       ;; FIXME: No whitespace in ids - can be done better!?
+                       (replace-regexp-in-string "[ \t]" "_" (substring cnt1 0 (match-end 1)))))
+	     (let ((cnt2 (kexport:html-markup cnt1)))
+	       (if soft-newlines-flag
+		   cnt2
+	         (concat "<pre>" cnt2 "</pre>"))))))
+    (setq label (kcell-view:label))
+    (setq contents
+          (concat "<table><tr>\n<td class=\"tdone\">\n"
+                  (format "<span class=\"fas fa-chevron-down fa-fw\"%s></span>\n"
+                          (if is-parent " " " style=\"visibility:hidden\""))
+                  "</td>\n<td class=\"tdtwo\">"
+                  (format "<span id=\"k%s\"></span>" label)
+                  (format "<span id=\"k%s\"></span>" (kcell-view:idstamp))
+                  (format "<pre class=\"label\">%s%s</pre>" label separator)
+                  "</td>\n<td>"
+                  contents
+                  "</td>\n</tr>\n</table>\n"))
+    (princ (format "<div class=\"%scontent\">\n%s</div>\n" (if is-parent "btn " "") contents))))
+
 ;;;###autoload
 (defun kexport:html (export-from output-to &optional soft-newlines-flag)
   "Export a koutline buffer or file in EXPORT-FROM to html format in OUTPUT-TO.
@@ -492,8 +520,7 @@ used.  Also converts Urls and Klinks into Html hyperlinks.
         ;; BODY
 	(princ "<body>\n\n")
 
-        ;; FIXME: Moved there due to being malformed but do we need
-        ;; it? Does k0 mean anything?
+        ;; FIXME: Is this needed?? Does k0 mean anything?
 	;; (princ "<div id=\"top\"></div><div id=\"k0\"></div>\n")
 
         (princ (format "<h1>%s</h1>\n\n" title))
@@ -501,67 +528,34 @@ used.  Also converts Urls and Klinks into Html hyperlinks.
 		(replace-regexp-in-string
 		 ">" "&gt;"
 		 (replace-regexp-in-string
-		      "<" "&lt;" (kview:label-separator kview))))
-	       is-parent is-last-sibling no-sibling-stack level label contents)
+		  "<" "&lt;" (kview:label-separator kview))))
+               no-sibling-stack)
 
           (princ "<ul>\n")
 
 	  (kview:map-tree
 	   (lambda (_kview)
-	     (setq level (kcell-view:level)
-		   is-parent (kcell-view:child-p)
-		   is-last-sibling (not (kcell-view:sibling-p)))
+	     (let ((is-parent (kcell-view:child-p))
+	           (is-last-sibling (not (kcell-view:sibling-p))))
 
-             (princ (format "<!-- Level: %s, is-parent: %s, is-last-sibling: %s -->\n"
-                            level is-parent is-last-sibling))
+               (princ (format "<!-- Level: %s, is-parent: %s, is-last-sibling: %s -->\n"
+                              (kcell-view:level) is-parent is-last-sibling))
+               (princ "<li>\n")
 
-             (princ "<li>\n")
-             (setq contents
-                   (let ((cnt1 (kcell-view:contents)))
-                     (concat
-	              (when (string-match "\\`\\([-_$%#@~^&*=+|/A-Za-z0-9 ]+\\):.*\\S-"
-				          cnt1)
-	                (format "<div id=\"%s\"></div>"
-                                ;; FIXME: No whitespace in ids - can be done better!?
-                                (replace-regexp-in-string "[ \t]" "_" (substring cnt1 0 (match-end 1)))))
-	              (let ((cnt2 (kexport:html-markup cnt1)))
-	                (if soft-newlines-flag
-		            cnt2
-	                  (concat "<pre>" cnt2 "</pre>"))))))
-             (setq label (kcell-view:label))
-             (setq contents
-                   (concat "<table><tr>\n<td class=\"tdone\">\n"
-                           (format "<span class=\"fas fa-chevron-down fa-fw\"%s></span>\n"
-                                   (if is-parent " " " style=\"visibility:hidden\""))
-                           "</td>\n<td class=\"tdtwo\">"
-                           (format "<span id=\"k%s\"></span>" label)
-                           (format "<span id=\"k%s\"></span>" (kcell-view:idstamp))
-                           (format "<pre class=\"label\">%s%s</pre>" label separator)
-                           "</td>\n<td>"
-                           contents
-                           "</td>\n</tr>\n</table>\n"))
-             (princ (format "<div class=\"%scontent\">\n%s</div>\n" (if is-parent "btn " "") contents))
-             (if is-parent
-                 (progn
-                   (princ "<ul>\n")
-                   (push is-last-sibling no-sibling-stack))
-               (princ "</li>\n")
-               (when is-last-sibling
-                 (princ "</ul>\n</li>\n")
-                 (pop no-sibling-stack)
-                 (while (pop no-sibling-stack)
-                   (princ "</ul>\n</li>\n")
-                 )))
+               (kexport:princ-cell is-parent separator soft-newlines-flag)
 
-             ;; (cond (is-parent
-	     ;;        (princ "<ul>\n")
-             ;;        (push is-last-sibling no-sibling-stack))
-	     ;;       ((and (/= level 1) is-last-sibling)
-	     ;;        (princ "<li>\n")
-	     ;;        (while (pop no-sibling-stack)
-	     ;;          (princ "</ul>\n"))))
-
-             )
+               (if is-parent
+                   (progn
+                     (princ "<ul>\n")
+                     (push is-last-sibling no-sibling-stack))
+                 (princ "</li>\n")
+                 (when is-last-sibling
+                   (princ "</ul>\n")
+                   (princ "</li>\n")
+                   (pop no-sibling-stack)
+                   (while (pop no-sibling-stack)
+                     (princ "</ul>\n")
+                     (princ "</li>\n"))))))
 	   kview t)
 
           (princ "</ul>\n")
