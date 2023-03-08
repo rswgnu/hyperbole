@@ -1,5 +1,11 @@
 2023-03-07  Bob Weiner  <rsw@gnu.org>
 
+* hibtypes.el (org-id, org-id:help): Fix logic and inhibit-messages from
+    org-id-find calls.
+
+* hibtypes.el (hib-python-traceback): Tighten matches by requiring final
+    file char to not be a whitespace char.
+
 * hpath.el (hpath:find, hpath:call): If 'path' exists, don't treat
     its # hash marks as section markers, notably for #autosave# files.
            (hpath:delimited-possible-path): Allow for unquoted filenames

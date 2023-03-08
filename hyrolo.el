@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     7-Jun-89 at 22:08:29
-;; Last-Mod:     27-Feb-23 at 00:11:31 by Bob Weiner
+;; Last-Mod:      8-Mar-23 at 01:15:53 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1448,25 +1448,25 @@ Return number of matching entries found."
 		  (setq curr-entry-level-len (length (buffer-substring-no-properties start (point))))
 		  (hyrolo-to-entry-end t curr-entry-level-len)
 		  (or count-only
-		      (if (and (zerop num-found) incl-hdr)
-			  (let* ((src (or (buffer-file-name actual-buf)
-					  actual-buf))
-				 (src-line
-				  (format
-				   (concat (if (boundp 'hbut:source-prefix)
-					       hbut:source-prefix
-					     "@loc> ")
-					   "%s")
-				   (prin1-to-string src))))
-			    (set-buffer hyrolo-display-buffer)
-			    (goto-char (point-max))
-			    (if hdr-pos
-				(progn
-				  (insert-buffer-substring-no-properties
-				   actual-buf (car hdr-pos) (cdr hdr-pos))
-				  (insert src-line "\n\n"))
-			      (insert (format hyrolo-hdr-format src-line)))
-			    (set-buffer actual-buf))))
+		      (when (and (zerop num-found) incl-hdr)
+			(let* ((src (or (buffer-file-name actual-buf)
+					actual-buf))
+			       (src-line
+				(format
+				 (concat (if (boundp 'hbut:source-prefix)
+					     hbut:source-prefix
+					   "@loc> ")
+					 "%s")
+				 (prin1-to-string src))))
+			  (set-buffer hyrolo-display-buffer)
+			  (goto-char (point-max))
+			  (if hdr-pos
+			      (progn
+				(insert-buffer-substring-no-properties
+				 actual-buf (car hdr-pos) (cdr hdr-pos))
+				(insert src-line "\n\n"))
+			    (insert (format hyrolo-hdr-format src-line)))
+			  (set-buffer actual-buf))))
 		  (setq num-found (1+ num-found))
 		  (or count-only
 		      (hyrolo-add-match hyrolo-display-buffer pattern start (point)))))))

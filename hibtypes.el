@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 20:45:31
-;; Last-Mod:      6-Mar-23 at 00:30:09 by Bob Weiner
+;; Last-Mod:      7-Mar-23 at 23:13:44 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -143,14 +143,16 @@ If the id location is found, return non-nil."
     (let ((id (thing-at-point 'symbol t)) ;; Could be a uuid or some other form of id
 	  m)
       ;; Ignore ID definitions or when not on a possible ID
-      (when (and id (setq m (or (and (featurep 'org-roam) (org-roam-id-find id 'marker))
-				(org-id-find id 'marker))))
-	(cond ((save-excursion (beginning-of-line)
+      (if (and (not assist-flag)
+	       (save-excursion (beginning-of-line)
 			       (re-search-forward ":\\(CUSTOM_\\)?ID:[ \t]+"
-						  (line-end-position) t))
-	       (message "On ID definition; use {C-u M-RET} to copy a link to ID."))
-	      (m
-	       (hact 'org-id-marker-display m)))))))
+						  (line-end-position) t)))
+	  (hact #'message "On ID definition; use {C-u M-RET} to copy a link to an ID.")
+	(when (and id
+		   (let ((inhibit-message)) ;; Inhibit org-id-find status msgs
+		     (setq m (or (and (featurep 'org-roam) (org-roam-id-find id 'marker))
+				 (org-id-find id 'marker)))))
+	  (hact #'org-id-marker-display m))))))
 
 (defun org-id:help (hbut)
   "Copy link to kill ring of an Org roam or Org node referenced by id at point.
@@ -161,15 +163,17 @@ If the id location is found, return non-nil."
 	  m
 	  mpos)
       ;; Ignore ID definitions or when not on a possible ID
-      (when (and id (setq m (or (and (featurep 'org-roam) (org-roam-id-find id 'marker))
-				(org-id-find id 'marker))))
+      (when (and id
+		 (let ((inhibit-message)) ;; Inhibit org-id-find status msgs
+		   (setq m (or (and (featurep 'org-roam) (org-roam-id-find id 'marker))
+			       (org-id-find id 'marker)))))
 	(save-excursion
 	  (setq mpos (marker-position m))
 	  (set-buffer (marker-buffer m))
 	  (save-restriction
 	    (widen)
 	    (goto-char mpos)
-	    (kill-new (org-id-store-link))))))))
+	    (kill-new (message (org-id-store-link)))))))))
 
 ;;; ========================================================================
 ;;; Displays files and directories when a valid pathname is activated.
@@ -1031,8 +1035,8 @@ in grep and shell buffers."
 
 (defun hib-python-traceback ()
 "Test for and jump to line referenced in Python pdb, traceback, or pytype error."
-  (when (or (looking-at "\\(^\\|.+ \\)File \"\\([^\"\n\r]+\\)\", line \\([0-9]+\\)")
-            (looking-at ">?\\(\\s-+\\)\\([^\"()\n\r]+\\)(\\([0-9]+\\))\\S-"))
+  (when (or (looking-at "\\(^\\|.+ \\)File \"\\([^\"\t\f\n\r]+\\S-\\)\", line \\([0-9]+\\)")
+            (looking-at ">?\\(\\s-+\\)\\([^\"()\t\f\n\r]+\\S-\\)(\\([0-9]+\\))\\S-"))
     (let* ((file (match-string-no-properties 2))
            (line-num (match-string-no-properties 3))
            (but-label (concat file ":" line-num)))
