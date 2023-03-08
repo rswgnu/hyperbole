@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    26-Feb-98
-;; Last-Mod:      7-Mar-23 at 00:14:42 by Mats Lidell
+;; Last-Mod:      8-Mar-23 at 01:28:07 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -74,7 +74,6 @@ If nil, use no keywords."
   "*String of HTML font attributes attached to kcell labels when exported."
   :type 'string
   :group 'hyperbole-koutliner)
-
 
 (defvar kexport:kcell-reference-regexp
   "[0-9a-zA-Z][.0-9a-zA-Z]*=\\([.0-9a-zA-Z]+\\)")
@@ -333,34 +332,6 @@ menuitem > menu > menuitem.hover > menu > menuitem{
 </style>\n"
   "CSS that styles collapsible HTML-exported Koutline parent cells and menus.")
 
-(defconst kexport:font-awesome-collapsible-javascript
-  "<script>
-var coll = document.getElementsByClassName('collapsible');
-var i;
-
-function childElt(elt, tag)
-{
-    return elt.getElementsByTagName(tag)[0];
-}
-
-for (i = 0; i < coll.length; i++) {
-  coll[i].addEventListener('click', function() {
-    var icon = childElt(this, 'span');
-    var content = this.nextElementSibling;
-    if (content.style.display === 'none') {
-      content.style.display = 'block';
-      icon.classList.add('fas', 'fa-chevron-down');
-      icon.classList.remove('fa-chevron-right');
-    } else {
-      content.style.display = 'none';
-      icon.classList.add('fas', 'fa-chevron-right');
-      icon.classList.remove('fa-chevron-down');
-    }
-  });
-}
-</script>\n"
-  "JavaScript which expands/collapses HTML-exported Koutline parent cells.")
-
 (defconst kexport:font-awesome-collapsible-javascript-btn
   "<script>
 var allSpan = document.getElementsByClassName('btn');
@@ -432,208 +403,6 @@ used.  Also converts Urls and Klinks into Html hyperlinks."
     html-file))
 
 ;;;###autoload
-(defun kexport:html-old (export-from output-to &optional soft-newlines-flag)
-  "Export a koutline buffer or file in EXPORT-FROM to html format in OUTPUT-TO.
-By default, this retains newlines within cells as they are.  With
-optional prefix arg, SOFT-NEWLINES-FLAG, hard newlines are not
-used.  Also converts Urls and Klinks into Html hyperlinks.
-!! STILL TODO:
-  Make delimited pathnames into file links (but not if within klinks).
-  Copy attributes stored in cell 0 and attributes from each cell."
-  (interactive (list (read-file-name
-		      "Koutline buffer/file to export: " nil buffer-file-name t)
-		     (read-file-name "HTML buffer/file to save to: ")
-		     current-prefix-arg))
-  (let* ((export-buf-name
-	  (cond ((get-file-buffer export-from)
-		 (buffer-name (get-file-buffer export-from)))
-		((and (or (bufferp export-from)
-			  (get-buffer export-from))
-		      (kotl-mode:is-p))
-		 (buffer-name (get-buffer export-from)))
-		((and (stringp export-from)
-		      (string-match "\\.kotl$" export-from)
-		      (file-readable-p export-from))
-		 (buffer-name (find-file-noselect export-from)))
-		(t (error
-		    "(kexport:html): `%s' is an invalid `export-from' argument" export-from))))
-	 (output-to-buf
-	  (cond ((or (bufferp output-to)
-		     (get-buffer output-to))
-		 (get-buffer output-to))
-		((get-file-buffer output-to)
-		 (get-file-buffer output-to))
-		((stringp output-to)
-		 (find-file-noselect output-to))
-		(t (error
-		    "(kexport:html): `%s' is an invalid `output-to' argument" output-to))))
-	 (standard-output output-to-buf)
-	 ;; Get any title attribute from cell 0, invisible root of the outline
-	 (title (kcell:get-attr (kcell-view:cell-from-ref 0) 'title)))
-
-    (with-current-buffer standard-output
-      (font-lock-mode 0) ;; Prevent syntax highlighting
-      (setq buffer-read-only nil
-	    kexport:output-filename buffer-file-name)
-      (erase-buffer))
-    (with-current-buffer export-buf-name
-      (save-excursion
-	(kotl-mode:beginning-of-buffer)
-	(setq kexport:input-filename buffer-file-name)
-
-	;; If called interactively, prompt user for the title to use.
-	(if (called-interactively-p 'interactive)
-	    (setq title (read-string (format "Title for %s: " (buffer-name output-to-buf))
-				     title))
-	  ;; Otherwise, use any previously retrieved title attribute or if
-	  ;; none, then the name of the current file sans the .kotl suffix.
-	  (unless title
-	    (setq title (file-name-sans-extension (file-name-nondirectory
-						   buffer-file-name))))
-	  (when (string-match "\n" title)
-	    (setq title (substring title 0 (match-beginning 0)))))
-
-	(princ "<!DOCTYPE html>\n")
-        ;;; FIXME make configurable!?
-	(princ "<html lang=\"en\">\n")
-
-        ;; HEAD
-        (princ "<head>\n")
-        (princ (format "<title>%s</title>\n" title))
-
-        ;;; FIXME make configurable or dynamic - use originating kotl buffer encoding!?
-        (princ "<meta charset=\"utf-8\">\n\n")
-
-	(if kexport:html-description
-	    (princ (format "<meta name=\"description\" content=\"%s\">\n"
-			   kexport:html-description)))
-	(if kexport:html-keywords
-	    (princ (format "<meta id=\"keywords\" content=\"%s\">\n"
-			   kexport:html-keywords)))
-	(princ "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">")
-	;; CSS
-	(princ (format "<link rel=\"stylesheet\" href=\"%s\">\n" kexport:font-awesome-css-url))
-	(princ kexport:font-awesome-css-include)
-
-	;; HTML
-	(princ "</head>\n\n")
-
-        ;; BODY
-	(princ "<body>\n\n")
-
-        ;; FIXME: Moved there due to being malformed but do we need
-        ;; it? Does k0 mean anything?
-	(princ "<div id=\"top\"></div><div id=\"k0\"></div>\n")
-
-        (princ (format "<h1>%s</h1>\n\n" title))
-	;; (princ (format "<label for=\"show-menu\" class=\"show-menu\"><h1>%s</h1></label>\n\n" title))
-	;; (princ "<input type=\"checkbox\" id=\"show-menu\" role=\"button\">")
-	;; (princ "<nav>
-	;; 	<menu>
-	;; 		<menuitem id=\"title-menu\">
-	;; 			<a>Dropdown</a>
-	;; 			<menu>")
-	;; (let (text)
-	;;   (kview:map-siblings (lambda (kv)
-	;; 			(setq text (kcell-view:contents))
-	;; 			(princ (format "<menuitem><a href=\"#k%s\">%s</a></menuitem>\n"
-	;; 				       (kcell-view:label)
-	;; 				       (substring text 0 (string-match "\n" text)))))
-	;; 		      kview t))
-	;; (princ "         		</menu>
-	;; 		</menuitem>
-	;; 	</menu>
-   	;;     </nav>\n")
-	(let* ((separator
-		(replace-regexp-in-string
-		 ">" "&gt;"
-		 (replace-regexp-in-string
-		      "<" "&lt;" (kview:label-separator kview))))
-	       i is-parent is-last-sibling no-sibling-stack level label contents)
-	  (kview:map-tree
-	   (lambda (_kview)
-	     (setq level (kcell-view:level)
-		   i level
-		   is-parent (kcell-view:child-p)
-		   is-last-sibling (not (kcell-view:sibling-p)))
-	     (when is-parent
-	       (push is-last-sibling no-sibling-stack)
-	       ;(princ "<button type=\"button\" class=\"collapsible\">Button</button>\n")
-               )
-
-	     ;; (while (>= i 1)
-	     ;;   (princ "<ul style=\"list-style-type:none;\">")
-	     ;;   (setq i (1- i)))
-             (princ "<ul style=\"list-style-type:none;\">")
-
-
-	     (princ "<li>\n<table><tr>\n")
-	     ;; (princ "<td width=1% valign=top>")
-	     ;; ORIG (princ "<td width=1%>")
-             (princ "<td class=tdone>")
-	     (princ (format "<span class=\"fas fa-chevron-down fa-fw\"%s></span>"
-			    (if is-parent
-				""
-			      ;; Fill same space for alignment but don't
-			      ;; show collapsible chevron when not collapsible
-			      " style=\"visibility:hidden\"")))
-	     (princ "</td>\n")
-	     ;; (princ "<td width=2% valign=top>\n")
-	     ;; ORIG (princ "<td width=2%>\n")
-	     (princ "<td class=tdtwo>\n")
-	     (setq label (kcell-view:label))
-	     (princ (format "<div id=\"k%s\"></div>" label))
-	     (princ (format "<div id=\"k%s\"></div>\n" (kcell-view:idstamp)))
-	     ;; (princ (format
-	     ;;         "<pre><font %s>%s%s</font></pre>\n"
-	     ;;         kexport:label-html-font-attributes
-	     ;;         label separator))
-	     (princ (format
-		     "<pre class=label>%s%s</pre>\n"
-		     label separator))
-	     (princ "</td>\n<td>\n")
-	     (setq contents (kcell-view:contents))
-	     (when (string-match "\\`\\([-_$%#@~^&*=+|/A-Za-z0-9 ]+\\):.*\\S-"
-				 contents)
-	       (princ (format "<div id=\"%s\"></div>"
-			      (substring contents 0 (match-end 1)))))
-	     (setq contents (kexport:html-markup contents))
-	     (if soft-newlines-flag
-		 (princ contents)
-	       (princ "<pre>") (princ contents) (princ "</pre>"))
-	     (princ "</td>\n")
-	     (princ "</tr></table></li>")
-	     (setq i level)
-
-	     ;; (while (>= i 1)
-	     ;;   (princ "</ul>")
-	     ;;   (setq i (1- i)))
-             (princ "</ul>")
-
-
-
-	     (cond (is-parent
-		    ;; (princ "\n</button>\n")
-                    (princ "<div class=\"content\">\n"))
-		   ((and (/= level 1) is-last-sibling)
-		    (princ "\n</div>")
-		    (while (pop no-sibling-stack)
-		      (princ "</div>"))))
-	     (when (not is-parent)
-	       (terpri) (terpri)))
-	   kview t)
-	  ;; Remove any extra newline at the end of any <pre> text
-	  (save-excursion
-	    (goto-char (point-min))
-	    (when (re-search-forward "\r?\n\\'" nil t)
-	      (replace-match "" nil nil))))
-	;; JavaScript
-	(princ kexport:font-awesome-collapsible-javascript)
-	(princ "</body></html>\n")))
-    (with-current-buffer standard-output
-      (save-buffer))))
-
-;;;###autoload
 (defun kexport:html (export-from output-to &optional soft-newlines-flag)
   "Export a koutline buffer or file in EXPORT-FROM to html format in OUTPUT-TO.
 By default, this retains newlines within cells as they are.  With
@@ -696,7 +465,7 @@ used.  Also converts Urls and Klinks into Html hyperlinks.
 	    (setq title (substring title 0 (match-beginning 0)))))
 
 	(princ "<!DOCTYPE html>\n")
-        ;;; FIXME make configurable!?
+        ;;; FIXME make lang configurable!?
 	(princ "<html lang=\"en\">\n")
 
         ;; HEAD
@@ -713,11 +482,11 @@ used.  Also converts Urls and Klinks into Html hyperlinks.
 	    (princ (format "<meta id=\"keywords\" content=\"%s\">\n"
 			   kexport:html-keywords)))
 	(princ "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">")
+
 	;; CSS
 	(princ (format "<link rel=\"stylesheet\" href=\"%s\">\n" kexport:font-awesome-css-url))
 	(princ kexport:font-awesome-css-include)
 
-	;; HTML
 	(princ "</head>\n\n")
 
         ;; BODY
@@ -725,40 +494,21 @@ used.  Also converts Urls and Klinks into Html hyperlinks.
 
         ;; FIXME: Moved there due to being malformed but do we need
         ;; it? Does k0 mean anything?
-	(princ "<div id=\"top\"></div><div id=\"k0\"></div>\n")
+	;; (princ "<div id=\"top\"></div><div id=\"k0\"></div>\n")
 
         (princ (format "<h1>%s</h1>\n\n" title))
-	;; (princ (format "<label for=\"show-menu\" class=\"show-menu\"><h1>%s</h1></label>\n\n" title))
-	;; (princ "<input type=\"checkbox\" id=\"show-menu\" role=\"button\">")
-	;; (princ "<nav>
-	;; 	<menu>
-	;; 		<menuitem id=\"title-menu\">
-	;; 			<a>Dropdown</a>
-	;; 			<menu>")
-	;; (let (text)
-	;;   (kview:map-siblings (lambda (kv)
-	;; 			(setq text (kcell-view:contents))
-	;; 			(princ (format "<menuitem><a href=\"#k%s\">%s</a></menuitem>\n"
-	;; 				       (kcell-view:label)
-	;; 				       (substring text 0 (string-match "\n" text)))))
-	;; 		      kview t))
-	;; (princ "         		</menu>
-	;; 		</menuitem>
-	;; 	</menu>
-   	;;     </nav>\n")
 	(let* ((separator
 		(replace-regexp-in-string
 		 ">" "&gt;"
 		 (replace-regexp-in-string
 		      "<" "&lt;" (kview:label-separator kview))))
-	       i is-parent is-last-sibling no-sibling-stack level label contents)
+	       is-parent is-last-sibling no-sibling-stack level label contents)
 
           (princ "<ul>\n")
 
 	  (kview:map-tree
 	   (lambda (_kview)
 	     (setq level (kcell-view:level)
-		   i level
 		   is-parent (kcell-view:child-p)
 		   is-last-sibling (not (kcell-view:sibling-p)))
 
@@ -766,7 +516,6 @@ used.  Also converts Urls and Klinks into Html hyperlinks.
                             level is-parent is-last-sibling))
 
              (princ "<li>\n")
-
              (setq contents
                    (let ((cnt1 (kcell-view:contents)))
                      (concat
@@ -779,53 +528,40 @@ used.  Also converts Urls and Klinks into Html hyperlinks.
 	                (if soft-newlines-flag
 		            cnt2
 	                  (concat "<pre>" cnt2 "</pre>"))))))
-
-             ;; <table><tr valign=text-bottom>
-             ;; <td width=1%>
-             ;; <span class="fas fa-chevron-down fa-fw" style="visibility:hidden">
-             ;; </span>
-             ;; </td>
-             ;; <td width=2%>
-             ;; <div id="k2a"></div><div id="k034"></div>
-             ;; <pre><font COLOR="#C100C1" SIZE="-1">2a. </font></pre>
-             ;; </td>
-             ;; <td>
-             ;; <pre>A cell is an element of the outline which has its own display label
-             ;; and unique, permanent identifier (idstamp).</pre>
-             ;; </td>
-             ;; </tr></table>
-
-             ;; (setq label (kcell-view:label))
-	     ;; (princ (format "<div id=\"k%s\"></div>" label))
-	     ;; (princ (format "<div id=\"k%s\"></div>\n" (kcell-view:idstamp)))
-	     ;; (princ (format "<pre class=label>%s%s</pre>\n" label separator))
              (setq label (kcell-view:label))
              (setq contents
-                   (concat (format "<table><tr>\n<td class=\"tdone\">\n<span class=\"fas fa-chevron-down fa-fw\"%s></span>\n</td>\n" (if is-parent "" " style=\"visibility:hidden\""))
-                           "<td class=\"tdtwo\">"
+                   (concat "<table><tr>\n<td class=\"tdone\">\n"
+                           (format "<span class=\"fas fa-chevron-down fa-fw\"%s></span>\n"
+                                   (if is-parent " " " style=\"visibility:hidden\""))
+                           "</td>\n<td class=\"tdtwo\">"
                            (format "<span id=\"k%s\"></span>" label)
                            (format "<span id=\"k%s\"></span>" (kcell-view:idstamp))
                            (format "<pre class=\"label\">%s%s</pre>" label separator)
                            "</td>\n<td>"
                            contents
                            "</td>\n</tr>\n</table>\n"))
-             ;; (setq contents (kcell-view:contents))
-             (if is-parent
-                 (princ (format "<div class=\"btn content\">\n%s</div>\n" contents))
-               (princ (format "<div class=\"content\">\n%s\n</div>\n" contents)))
-
+             (princ (format "<div class=\"%scontent\">\n%s</div>\n" (if is-parent "btn " "") contents))
              (if is-parent
                  (progn
                    (princ "<ul>\n")
                    (push is-last-sibling no-sibling-stack))
                (princ "</li>\n")
                (when is-last-sibling
-                 (princ "</ul>\n")
-                 (when (pop no-sibling-stack)
-                   (princ "</ul>\n"))
-                 (princ "</li>\n"))
-               ))
+                 (princ "</ul>\n</li>\n")
+                 (pop no-sibling-stack)
+                 (while (pop no-sibling-stack)
+                   (princ "</ul>\n</li>\n")
+                 )))
 
+             ;; (cond (is-parent
+	     ;;        (princ "<ul>\n")
+             ;;        (push is-last-sibling no-sibling-stack))
+	     ;;       ((and (/= level 1) is-last-sibling)
+	     ;;        (princ "<li>\n")
+	     ;;        (while (pop no-sibling-stack)
+	     ;;          (princ "</ul>\n"))))
+
+             )
 	   kview t)
 
           (princ "</ul>\n")
