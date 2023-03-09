@@ -1,3 +1,8 @@
+2023-03-08  Bob Weiner  <rsw@gnu.org>
+
+* hibtypes.el (grep-msg): Trigger only if filename exists.  Prevents matching
+    to parts of filenames, e.g. from grep -A.
+
 2023-03-07  Bob Weiner  <rsw@gnu.org>
 
 * hibtypes.el (org-id, org-id:help): Fix logic and inhibit-messages from

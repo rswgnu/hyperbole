@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 20:45:31
-;; Last-Mod:      8-Mar-23 at 08:48:10 by Bob Weiner
+;; Last-Mod:      8-Mar-23 at 22:12:06 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1024,9 +1024,10 @@ in grep and shell buffers."
           (if (stringp source-loc)
               (setq file (expand-file-name file (file-name-directory source-loc)))
 	    (setq file (or (hpath:prepend-shell-directory file) file)))
-          (setq line-num (string-to-number line-num))
-          (ibut:label-set but-label)
-          (hact 'link-to-file-line file line-num))))))
+	  (when (file-exists-p file)
+            (setq line-num (string-to-number line-num))
+            (ibut:label-set but-label)
+            (hact 'link-to-file-line file line-num)))))))
 
 ;;; ========================================================================
 ;;; Jumps to source line associated with debugger stack frame or breakpoint
