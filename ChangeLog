@@ -1,5 +1,7 @@
 2023-03-11  Mats Lidell  <matsl@gnu.org>
 
+* kotl/kexport.el (kexport:princ-cell): Export contents from a cell.
+
 * test/kexport-tests.el (kexport:html-creates-list-hierarchy): Check that
     exported lists format has equal start and stop tags.
 

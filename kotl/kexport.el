@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    26-Feb-98
-;; Last-Mod:     10-Mar-23 at 00:46:54 by Mats Lidell
+;; Last-Mod:     11-Mar-23 at 00:23:00 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -402,34 +402,6 @@ used.  Also converts Urls and Klinks into Html hyperlinks."
     (hact 'www-url (concat "file://" html-file))
     html-file))
 
-(defun kexport:princ-cell (is-parent separator soft-newlines-flag)
-  "Export a cell."
-  (let (contents label)
-    (setq contents
-          (let ((cnt1 (kcell-view:contents)))
-            (concat
-	     (when (string-match "\\`\\([-_$%#@~^&*=+|/A-Za-z0-9 ]+\\):.*\\S-" cnt1)
-	       (format "<div id=\"%s\"></div>"
-                       ;; FIXME: No whitespace in ids - can be done better!?
-                       (replace-regexp-in-string "[ \t]" "_" (substring cnt1 0 (match-end 1)))))
-	     (let ((cnt2 (kexport:html-markup cnt1)))
-	       (if soft-newlines-flag
-		   cnt2
-	         (concat "<pre>" cnt2 "</pre>"))))))
-    (setq label (kcell-view:label))
-    (setq contents
-          (concat "<table><tr>\n<td class=\"tdone\">\n"
-                  (format "<span class=\"fas fa-chevron-down fa-fw\"%s></span>\n"
-                          (if is-parent " " " style=\"visibility:hidden\""))
-                  "</td>\n<td class=\"tdtwo\">"
-                  (format "<span id=\"k%s\"></span>" label)
-                  (format "<span id=\"k%s\"></span>" (kcell-view:idstamp))
-                  (format "<pre class=\"label\">%s%s</pre>" label separator)
-                  "</td>\n<td>"
-                  contents
-                  "</td>\n</tr>\n</table>\n"))
-    (princ (format "<div class=\"%scontent\">\n%s</div>\n" (if is-parent "btn " "") contents))))
-
 ;;;###autoload
 (defun kexport:html (export-from output-to &optional soft-newlines-flag)
   "Export a koutline buffer or file in EXPORT-FROM to html format in OUTPUT-TO.
@@ -571,10 +543,37 @@ used.  Also converts Urls and Klinks into Html hyperlinks.
     (with-current-buffer standard-output
       (save-buffer))))
 
-
 ;;; ************************************************************************
 ;;; Private functions
 ;;; ************************************************************************
+
+(defun kexport:princ-cell (is-parent separator soft-newlines-flag)
+  "Export the contents of a cell."
+  (let (contents label)
+    (setq contents
+          (let ((cnt1 (kcell-view:contents)))
+            (concat
+	     (when (string-match "\\`\\([-_$%#@~^&*=+|/A-Za-z0-9 ]+\\):.*\\S-" cnt1)
+	       (format "<div id=\"%s\"></div>"
+                       ;; FIXME: No whitespace in ids - can be done better!?
+                       (replace-regexp-in-string "[ \t]" "_" (substring cnt1 0 (match-end 1)))))
+	     (let ((cnt2 (kexport:html-markup cnt1)))
+	       (if soft-newlines-flag
+		   cnt2
+	         (concat "<pre>" cnt2 "</pre>"))))))
+    (setq label (kcell-view:label))
+    (setq contents
+          (concat "<table><tr>\n<td class=\"tdone\">\n"
+                  (format "<span class=\"fas fa-chevron-down fa-fw\"%s></span>\n"
+                          (if is-parent " " " style=\"visibility:hidden\""))
+                  "</td>\n<td class=\"tdtwo\">"
+                  (format "<span id=\"k%s\"></span>" label)
+                  (format "<span id=\"k%s\"></span>" (kcell-view:idstamp))
+                  (format "<pre class=\"label\">%s%s</pre>" label separator)
+                  "</td>\n<td>"
+                  contents
+                  "</td>\n</tr>\n</table>\n"))
+    (princ (format "<div class=\"%scontent\">\n%s</div>\n" (if is-parent "btn " "") contents))))
 
 (defun kexport:html-file-klink (string)
   "Convert STRING containing a klink with a file reference to Html format.
