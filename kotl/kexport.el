@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    26-Feb-98
-;; Last-Mod:     11-Mar-23 at 00:23:00 by Mats Lidell
+;; Last-Mod:     12-Mar-23 at 00:18:27 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -51,10 +51,6 @@ Part of an HTML exported koutline file."
   :type 'string
   :group 'hyperbole-koutliner)
 
-;; FIXME - We can't have quotes in the description field if we have
-;; the intent that users should be able to use the button from the
-;; generated html. In the generated html they must be inserted like
-;; this '&quot'
 (defcustom kexport:html-description
   "Created by Hyperbole's outliner.\nSee &quot;(hyperbole)Koutliner&quot; for more information."
   "*String to insert as the HTML-exported document's description, or nil for none."
@@ -340,20 +336,21 @@ function childElt(elt, tag)
 {
     return elt.getElementsByTagName(tag)[0];
 }
-for(var x = 0; x < allSpan.length; x++)
+
+for (var x = 0; x < allSpan.length; x++)
 {
-  allSpan[x].onclick=function()
+  allSpan[x].onclick = function()
   {
-    if(this.parentNode)
+    if (this.parentNode)
     {
       var icon = childElt(this, 'span');
       var childList = this.parentNode.getElementsByTagName('li');
-      for(var y = 0; y < childList.length; y++)
+      for (var y = 0; y < childList.length; y++)
       {
         var currentState = childList[y].style.display;
-        if(currentState=='none')
+        if (currentState == 'none')
         {
-          childList[y].style.display='block';
+          childList[y].style.display = 'block';
           icon.classList.add('fas', 'fa-chevron-down');
           icon.classList.remove('fa-chevron-right');
         }
@@ -465,7 +462,6 @@ used.  Also converts Urls and Klinks into Html hyperlinks.
 	    (setq title (substring title 0 (match-beginning 0)))))
 
 	(princ "<!DOCTYPE html>\n")
-        ;;; FIXME make lang configurable!?
 	(princ "<html lang=\"en\">\n")
 
         ;; HEAD
@@ -491,11 +487,8 @@ used.  Also converts Urls and Klinks into Html hyperlinks.
 
         ;; BODY
 	(princ "<body>\n\n")
-
-        ;; FIXME: Is this needed?? Does k0 mean anything?
-	;; (princ "<div id=\"top\"></div><div id=\"k0\"></div>\n")
-
         (princ (format "<h1>%s</h1>\n\n" title))
+
 	(let* ((separator
 		(replace-regexp-in-string
 		 ">" "&gt;"
