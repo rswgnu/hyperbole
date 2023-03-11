@@ -3,7 +3,9 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 20:45:31
-;; Last-Mod:      7-Jan-23 at 19:54:51 by Bob Weiner
+;; Last-Mod:      8-Mar-23 at 22:12:06 by Bob Weiner
+;;
+;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
 ;; Copyright (C) 1991-2022 Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -88,6 +90,7 @@
 (declare-function markdown-reference-goto-link "ext:markdown")
 (declare-function markdown-wiki-link-p "ext:markdown")
 (declare-function markdown-footnote-text-positions "ext:markdown")
+(declare-function org-roam-id-find "ext:org-roam")
 (defvar markdown-regex-link-reference)
 (defvar markdown-regex-reference-definition)
 
@@ -121,6 +124,56 @@ line and check for a source reference line again."
 ;;; ========================================================================
 
 (load "hypb-ert")
+
+;;; ========================================================================
+;;; Handles social media hashtag and username references, e.g. twitter#myhashtag
+;;; ========================================================================
+
+(load "hib-social")
+
+;;; ========================================================================
+;;; Displays Org Roam and Org IDs
+;;; ========================================================================
+
+(defib org-id ()
+  "Display Org roam or Org node referenced by id at point, if any.
+If on the :ID: definition line, do nothing and return nil.
+If the id location is found, return non-nil."
+  (when (featurep 'org-id)
+    (let ((id (thing-at-point 'symbol t)) ;; Could be a uuid or some other form of id
+	  m)
+      ;; Ignore ID definitions or when not on a possible ID
+      (if (and (not assist-flag)
+	       (save-excursion (beginning-of-line)
+			       (re-search-forward ":\\(CUSTOM_\\)?ID:[ \t]+"
+						  (line-end-position) t)))
+	  (hact #'message "On ID definition; use {C-u M-RET} to copy a link to an ID.")
+	(when (and id
+		   (let ((inhibit-message t)) ;; Inhibit org-id-find status msgs
+		     (setq m (or (and (featurep 'org-roam) (org-roam-id-find id 'marker))
+				 (org-id-find id 'marker)))))
+	  (hact #'org-id-marker-display m))))))
+
+(defun org-id:help (hbut)
+  "Copy link to kill ring of an Org roam or Org node referenced by id at point.
+If on the :ID: definition line, do nothing and return nil.
+If the id location is found, return non-nil."
+  (when (featurep 'org-id)
+    (let ((id (thing-at-point 'symbol t)) ;; Could be a uuid or some other form of id
+	  m
+	  mpos)
+      ;; Ignore ID definitions or when not on a possible ID
+      (when (and id
+		 (let ((inhibit-message t)) ;; Inhibit org-id-find status msgs
+		   (setq m (or (and (featurep 'org-roam) (org-roam-id-find id 'marker))
+			       (org-id-find id 'marker)))))
+	(save-excursion
+	  (setq mpos (marker-position m))
+	  (set-buffer (marker-buffer m))
+	  (save-restriction
+	    (widen)
+	    (goto-char mpos)
+	    (kill-new (message (org-id-store-link)))))))))
 
 ;;; ========================================================================
 ;;; Displays files and directories when a valid pathname is activated.
@@ -337,12 +390,6 @@ must have an attached file."
               (not (string-match "[#@]" ref))
               (progn (ibut:label-set ref-and-pos)
                      (hact 'annot-bib ref))))))
-
-;;; ========================================================================
-;;; Handles social media hashtag and username references, e.g. twitter#myhashtag
-;;; ========================================================================
-
-(load "hib-social")
 
 ;;; ========================================================================
 ;;; Displays in-file Markdown link referents.
@@ -936,7 +983,7 @@ in grep and shell buffers."
 	     (looking-at "Loading \\(\\S-+\\) (\\S-+)\\.\\.\\.$")
              ;; Grep matches (allowing for Emacs Lisp vars with : in
 	     ;; name within the pathname), Ruby, UNIX C compiler and Introl 68HC11 C compiler errors
-             (looking-at "\\([^ \t\n\r\"'`]*[^ \t\n\r:\"'`]\\): ?\\([1-9][0-9]*\\)[ :]")
+             (looking-at "\\([^ \t\n\r\"'`]*[^ \t\n\r:\"'`0-9]\\): ?\\([1-9][0-9]*\\)[ :]")
 	     ;; Ruby tracebacks
              (looking-at "[ \t]+[1-9][0-9]*: from \\([^ \t\n\r\"'`]*[^ \t\n\r:\"'`]\\):\\([1-9][0-9]*\\):in")
              ;; Grep matches, UNIX C compiler and Introl 68HC11 C
@@ -977,9 +1024,10 @@ in grep and shell buffers."
           (if (stringp source-loc)
               (setq file (expand-file-name file (file-name-directory source-loc)))
 	    (setq file (or (hpath:prepend-shell-directory file) file)))
-          (setq line-num (string-to-number line-num))
-          (ibut:label-set but-label)
-          (hact 'link-to-file-line file line-num))))))
+	  (when (file-exists-p file)
+            (setq line-num (string-to-number line-num))
+            (ibut:label-set but-label)
+            (hact 'link-to-file-line file line-num)))))))
 
 ;;; ========================================================================
 ;;; Jumps to source line associated with debugger stack frame or breakpoint
@@ -988,8 +1036,8 @@ in grep and shell buffers."
 
 (defun hib-python-traceback ()
 "Test for and jump to line referenced in Python pdb, traceback, or pytype error."
-  (when (or (looking-at "\\(^\\|.+ \\)File \"\\([^\"\n\r]+\\)\", line \\([0-9]+\\)")
-            (looking-at ">?\\(\\s-+\\)\\([^\"()\n\r]+\\)(\\([0-9]+\\))\\S-"))
+  (when (or (looking-at "\\(^\\|.+ \\)File \"\\([^\"\t\f\n\r]+\\S-\\)\", line \\([0-9]+\\)")
+            (looking-at ">?\\(\\s-+\\)\\([^\"()\t\f\n\r]+\\S-\\)(\\([0-9]+\\))\\S-"))
     (let* ((file (match-string-no-properties 2))
            (line-num (match-string-no-properties 3))
            (but-label (concat file ":" line-num)))
@@ -1021,7 +1069,7 @@ xdb.  Such lines are recognized in any buffer."
         ;; For Meteor app errors, remove the "app/" prefix which
         ;; is part of the build subdirectory and not part of the
         ;; source tree.
-        (when (and (not (eq col-num "")) (string-match "^app/" file))
+        (when (and (not (string-equal col-num "")) (string-match "^app/" file))
           (setq file (substring file (match-end 0))))
 
         (setq but-label (concat file ":" line-num)
@@ -1389,6 +1437,12 @@ original DEMO file."
 
 (defconst action:end ">"
   "Regexp matching the end of a Hyperbole Emacs Lisp expression to evaluate.")
+
+;; Silence the byte-compiler that thinks these actype references
+;; should be regular functions.
+(declare-function display-boolean  "ext:ignore")
+(declare-function display-variable "ext:ignore")
+(declare-function display-value    "ext:ignore")
 
 (defib action ()
   "The Action Button type.

@@ -3,7 +3,9 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     6-Oct-91 at 03:42:38
-;; Last-Mod:     22-Jan-23 at 16:57:36 by Mats Lidell
+;; Last-Mod:     27-Feb-23 at 18:11:15 by Bob Weiner
+;;
+;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
 ;; Copyright (C) 1991-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -397,9 +399,10 @@ point at the start of the inserted text."
 ;;;###autoload
 (defun hypb:devdocs-lookup ()
   "Prompt for and display a devdocs.io docset section within Emacs.
-will this install the Emacs devdocs package when needed."
+This will install the Emacs devdocs package if not yet installed."
   (interactive)
   (hypb:require-package 'devdocs)
+  ;; (call-interactively #'devdocs-install)
   (devdocs-lookup))
 
 (defun hypb:domain-name ()
@@ -608,12 +611,7 @@ This will this install the Emacs helm package when needed."
 (defun hypb:indirect-function (obj)
   "Return the function at the end of OBJ's function chain.
 Resolves autoloadable function symbols properly."
-  (let ((func
-	 (if (fboundp 'indirect-function)
-	     (indirect-function obj)
-	   (while (symbolp obj)
-	     (setq obj (symbol-function obj)))
-	   obj)))
+  (let ((func (indirect-function obj)))
     ;; Handle functions with autoload bodies.
     (if (and (symbolp obj) (listp func) (eq (car func) 'autoload))
 	(let ((load-file (car (cdr func))))
@@ -967,7 +965,7 @@ nor nil it means to not count the minibuffer window even if it is active."
 
 ;;;###autoload
 (defun hypb:display-file-with-logo (file)
-  "Display a text FILE in help mode with the Hyperbole banner prepended.
+  "Display a text FILE in view mode with the Hyperbole banner prepended.
 If FILE is not an absolute path, expand it relative to `hyperb:dir'."
   (unless (stringp file)
     (error "(hypb:display-file-with-logo): 'file' must be a string, not '%s'" file))
@@ -982,7 +980,7 @@ If FILE is not an absolute path, expand it relative to `hyperb:dir'."
       (skip-syntax-forward "-")
       (set-window-start (selected-window) 1)
       (set-buffer-modified-p nil)
-      (help-mode)
+      (view-mode)
       ;; On some versions of Emacs like Emacs28, need a slight delay
       ;; for file loading before searches will work properly.
       ;; Otherwise, "test/demo-tests.el" may fail.

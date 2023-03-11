@@ -3,7 +3,9 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    23-Sep-91 at 20:34:36
-;; Last-Mod:      7-Jan-23 at 19:59:13 by Bob Weiner
+;; Last-Mod:      1-Mar-23 at 22:13:03 by Bob Weiner
+;;
+;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
 ;; Copyright (C) 1991-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -16,7 +18,7 @@
 ;;; Other required Elisp libraries
 ;;; ************************************************************************
 
-(eval-and-compile (mapc #'require '(bookmark hvar hsettings comint hbut hpath hargs hmail)))
+(eval-and-compile (mapc #'require '(bookmark hvar hsettings comint hbut hpath hargs hmail man)))
 
 ;;; ************************************************************************
 ;;; Public declarations
@@ -56,6 +58,7 @@ inserted, delete the completions window."
 (defact display-boolean (bool-expr)
   "Display a message showing the result value of a BOOL-EXPR.
 Return any non-nil value or t."
+  (interactive "xDisplay bool expr value: ")
   (let ((result (eval bool-expr t)))
     (message "Boolean result (%s) = %S; Expr: %S"
 	     (if result "True" "False") result bool-expr)
@@ -64,6 +67,7 @@ Return any non-nil value or t."
 (defact display-value (value)
   "Display a message showing VALUE (a symbol) and its value.
 Return any non-nil value or t."
+  (interactive "SDisplay symbol's value: ")
   (let ((result (eval value)))
     (message "%S" result)
     (or result t)))
@@ -71,6 +75,7 @@ Return any non-nil value or t."
 (defact display-variable (var)
   "Display a message showing VAR (a symbol) and its value.
 Return any non-nil value or t."
+  (interactive "vDisplay variable's value: ")
   (message "%s = %S" var (symbol-value var))
   (or (symbol-value var) t))
 
@@ -668,6 +673,16 @@ Uses `hpath:display-where' setting to control where the man page is displayed."
   (require 'man)
   (let ((Man-notify-method 'meek))
     (hpath:display-buffer (man topic))))
+
+(defact org-id-marker-display (marker)
+  "Display the Org entry, if any, at MARKER.
+See doc of `ibtypes::org-id' for usage."
+    (unless (markerp marker)
+      (error "(org-id-marker-display): Argument must be a marker, not %s" marker))
+    (org-mark-ring-push)
+    (hact #'link-to-buffer-tmp (marker-buffer marker) marker)
+    (move-marker marker nil)
+    (org-show-context))
 
 (defact rfc-toc (&optional buf-name opoint sections-start)
   "Compute and display summary of an Internet rfc in BUF-NAME.

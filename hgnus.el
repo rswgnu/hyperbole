@@ -3,7 +3,9 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    24-Dec-91 at 22:29:28
-;; Last-Mod:      9-May-22 at 00:01:49 by Bob Weiner
+;; Last-Mod:      5-Feb-23 at 23:40:25 by Mats Lidell
+;;
+;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
 ;; Copyright (C) 1991-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -105,17 +107,13 @@ as ARG means don't indent and don't delete any header fields."
 (if (fboundp 'hproperty:but-create)
     (var:append 'gnus-summary-prepare-hook '(hproperty:but-create)))
 
-;;; Try to setup comment addition as the first element of these hooks.
-(if (fboundp 'add-hook)
-    ;; Called from 'news-post-news' if prev unsent article exists and user
-    ;; says erase it.  Add a comment on Hyperbole button support.
-    (progn
-      (add-hook 'news-setup-hook #'smail:comment-add)
-      ;; Called from 'news-post-news' if no prev unsent article exists.
-      ;; Add a comment on Hyperbole button support.
-      (add-hook 'news-reply-mode-hook #'smail:comment-add))
-  (var:append 'news-setup-hook '(smail:comment-add))
-  (var:append 'news-reply-mode-hook '(smail:comment-add)))
+;; Try to setup comment addition as the first element of these hooks.
+;; Called from 'news-post-news' if prev unsent article exists and user
+;; says erase it.  Add a comment on Hyperbole button support.
+(add-hook 'news-setup-hook #'smail:comment-add)
+;; Called from 'news-post-news' if no prev unsent article exists.
+;; Add a comment on Hyperbole button support.
+(add-hook 'news-reply-mode-hook #'smail:comment-add)
 
 (provide 'hgnus)
 
