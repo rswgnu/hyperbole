@@ -1277,20 +1277,21 @@ function childElt(elt, tag)
 {
     return elt.getElementsByTagName(tag)[0];
 }
-for(var x = 0; x < allSpan.length; x++)
+
+for (var x = 0; x < allSpan.length; x++)
 {
-  allSpan[x].onclick=function()
+  allSpan[x].onclick = function()
   {
-    if(this.parentNode)
+    if (this.parentNode)
     {
       var icon = childElt(this, 'span');
       var childList = this.parentNode.getElementsByTagName('li');
-      for(var y = 0; y < childList.length; y++)
+      for (var y = 0; y < childList.length; y++)
       {
         var currentState = childList[y].style.display;
-        if(currentState=='none')
+        if (currentState == 'none')
         {
-          childList[y].style.display='block';
+          childList[y].style.display = 'block';
           icon.classList.add('fas', 'fa-chevron-down');
           icon.classList.remove('fa-chevron-right');
         }
