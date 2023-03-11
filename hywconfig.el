@@ -3,7 +3,9 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    15-Mar-89
-;; Last-Mod:     20-Jan-23 at 22:20:55 by Mats Lidell
+;; Last-Mod:      5-Feb-23 at 16:51:16 by Bob Weiner
+;;
+;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
 ;; Copyright (C) 1989-2022  Free Software Foundation, Inc.
 ;; See the "../HY-COPY" file for license information.
@@ -75,20 +77,20 @@
 When called interactively and a window configuration already exists under
 NAME, confirms whether or not to replace it."
   (interactive "sName for current window configuration: ")
-  (or (stringp name)
-      (error "(hywconfig-add-by-name): `name' argument is not a string: %s" name))
+  (unless (stringp name)
+    (error "(hywconfig-add-by-name): `name' argument is not a string: %s" name))
   (let ((set:equal-op  (lambda (key elt) (equal key (car elt))))
 	(wconfig-names (hywconfig-get-names)))
-    (if (or (not (called-interactively-p 'interactive))
-	    (not (set:member name wconfig-names))
-	    (y-or-n-p
-	     (format "Replace existing `%s' window configuration? " name)))
-	(progn (hywconfig-set-names (set:replace name (current-window-configuration)
-						 wconfig-names))
-	       (if (called-interactively-p 'interactive)
-		   (message
-		    (substitute-command-keys
-		     (format "Window configuration `%s' saved.  Use {\\[hywconfig-restore-by-name]} to restore." name))))))))
+    (when (or (not (called-interactively-p 'interactive))
+	      (not (set:member name wconfig-names))
+	      (y-or-n-p
+	       (format "Replace existing `%s' window configuration? " name)))
+      (hywconfig-set-names (set:replace name (current-window-configuration)
+					wconfig-names))
+      (when (called-interactively-p 'interactive)
+	(message
+	 (substitute-command-keys
+	  (format "Window configuration `%s' saved.  Use {\\[hywconfig-restore-by-name]} to restore." name)))))))
 
 ;;;###autoload
 (defun hywconfig-delete-by-name (name)
@@ -101,8 +103,8 @@ NAME, confirms whether or not to replace it."
 	 (error "(hywconfig-delete-by-name): `name' argument is not a string: %s" name))
 	(t (let ((set:equal-op (lambda (key elt) (equal key (car elt)))))
 	     (hywconfig-set-names (set:remove name (hywconfig-get-names)))
-	     (if (called-interactively-p 'interactive)
-		 (message "Window configuration `%s' has been deleted." name))))))
+	     (when (called-interactively-p 'interactive)
+	       (message "Window configuration `%s' has been deleted." name))))))
 
 ;;;###autoload
 (defun hywconfig-restore-by-name (name)
@@ -116,8 +118,8 @@ NAME, confirms whether or not to replace it."
 	(t (let ((wconfig (set:get name (hywconfig-get-names))))
 	     (if wconfig
 		 (progn (hywconfig-set-window-configuration wconfig)
-			(if (called-interactively-p 'interactive)
-			    (message "Window configuration `%s' is now active." name)))
+			(when (called-interactively-p 'interactive)
+			  (message "Window configuration `%s' is now active." name)))
 	       (error "(hywconfig-restore-by-name): No window configuration for this frame named `%s'" name))))))
 
 ;;; Window configuration ring management (like text kill ring).
@@ -155,10 +157,10 @@ ring is not empty, then stay in the hywconfig menu."
 Use {\\[hywconfig-yank-pop]} to restore it at a later time."
   (interactive)
   (ring-insert (hywconfig-get-ring) (current-window-configuration))
-  (if (called-interactively-p 'interactive)
-      (message
-       (substitute-command-keys
-	"Window configuration saved.  Use {\\[hywconfig-yank-pop]} to restore."))))
+  (when (called-interactively-p 'interactive)
+    (message
+     (substitute-command-keys
+      "Window configuration saved.  Use {\\[hywconfig-yank-pop]} to restore."))))
 
 ;;;###autoload
 (defun hywconfig-yank-pop (n)
@@ -200,8 +202,8 @@ oldest one comes the newest one."
   "Return the current frame's list of named window configurations."
   (let* ((frame (selected-frame))
 	 (names (frame-parameter frame 'hywconfig-names)))
-    (if (not names)
-	(set-frame-parameter frame 'hywconfig-names (setq names (set:create))))
+    (unless names
+      (set-frame-parameter frame 'hywconfig-names (setq names (set:create))))
     names))
 
 (defun hywconfig-set-names (names)
@@ -212,18 +214,18 @@ oldest one comes the newest one."
   "Return the current frame's window configuration ring."
   (let* ((frame (selected-frame))
 	 (ring (frame-parameter frame 'hywconfig-ring)))
-    (if (not ring)
-	(set-frame-parameter frame 'hywconfig-ring (setq ring (make-ring hywconfig-ring-max))))
+    (unless ring
+      (set-frame-parameter frame 'hywconfig-ring (setq ring (make-ring hywconfig-ring-max))))
     ring))
 
 (defun hywconfig-set-window-configuration (wconfig)
-  (if (window-configuration-p wconfig)
-      (condition-case nil
-	  (progn (set-window-configuration wconfig) t)
-	(error (message "(HyWconfig): Invalid window configuration, `%s'" wconfig)
-	       (beep)
-	       (sit-for 2)
-	       nil))))
+  (when (window-configuration-p wconfig)
+    (condition-case nil
+	(progn (set-window-configuration wconfig) t)
+      (error (message "(HyWconfig): Invalid window configuration, `%s'" wconfig)
+	     (beep)
+	     (sit-for 2)
+	     nil))))
 
 (run-hooks 'hywconfig-load-hook)
 

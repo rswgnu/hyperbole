@@ -3,7 +3,9 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     2-Jul-16 at 14:54:14
-;; Last-Mod:      3-Dec-22 at 02:33:37 by Bob Weiner
+;; Last-Mod:      6-Feb-23 at 09:53:31 by Mats Lidell
+;;
+;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
 ;; Copyright (C) 2016-2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -82,7 +84,7 @@ with different settings of this option.  For example, a nil value makes
 
 ;;;###autoload
 (defvar hsys-org-mode-function #'hsys-org-mode-p
-"*Zero arg bool func that returns non-nil if point is in an Org-related buffer.")
+  "*Boolean function that returns non-nil when point is in an Org-related buffer.")
 
 ;;; ************************************************************************
 ;;; Public Action Types
@@ -340,7 +342,9 @@ White spaces are insignificant.  Return t if a link is found, else nil."
 	(backward-char)
 	(let ((object (org-element-context)))
 	  (when (eq (org-element-type object) 'link)
-	    (org-show-context 'link-search)
+	    (if (fboundp 'org-fold-show-context) ;; From Org 9.6
+                (org-fold-show-context 'link-search)
+              (org-show-context 'link-search))
 	    (goto-char (or (previous-single-property-change (point) 'face) (point-min)))
 	    (throw :link-match t))))
       (goto-char origin)
@@ -360,7 +364,9 @@ White spaces are insignificant.  Return t if a target link is found, else nil."
 	(backward-char)
 	(let ((object (org-element-context)))
 	  (when (eq (org-element-type object) 'link)
-	    (org-show-context 'link-search)
+	    (if (fboundp 'org-fold-show-context) ;; From Org 9.6
+                (org-fold-show-context 'link-search)
+              (org-show-context 'link-search))
 	    (throw :radio-match t))))
       (goto-char origin)
       nil)))

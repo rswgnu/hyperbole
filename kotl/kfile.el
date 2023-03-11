@@ -5,6 +5,8 @@
 ;; Orig-Date:    10/31/93
 ;; Last-Mod:     22-Jul-22 at 15:17:31 by Mats Lidell
 ;;
+;; SPDX-License-Identifier: GPL-3.0-or-later
+;;
 ;; Copyright (C) 1993-2022  Free Software Foundation, Inc.
 ;; See the "../HY-COPY" file for license information.
 ;;
@@ -112,10 +114,10 @@ File is created with a single empty level 1 kotl cell."
     (error "(kfile:create): %s is read-only" buffer))
   (widen)
 
-  (let ((empty-p (zerop (buffer-size)))
+  (let ((empty-flag (zerop (buffer-size)))
 	import-from view standard-output)
 
-    (unless empty-p
+    (unless empty-flag
       ;; This is a foreign file whose elements must be converted into
       ;; koutline cells.
       (setq import-from (kimport:copy-and-set-buffer buffer))
@@ -136,7 +138,7 @@ File is created with a single empty level 1 kotl cell."
     ;; Ensure that display is narrowed to cell region only.
     (kfile:narrow-to-kcells)
     (goto-char (point-min))
-    (if empty-p
+    (if empty-flag
 	;; This is a new koutline file.  Always need at least one visible
 	;; cell within a view. Insert initial empty cell.
 	(progn (kview:add-cell "1" 1)
@@ -157,7 +159,7 @@ File is created with a single empty level 1 kotl cell."
 
     view))
 
-(defun kfile:read (buffer existing-file-p &optional ver-string)
+(defun kfile:read (buffer existing-file-flag &optional ver-string)
   "Create a new kotl view by reading BUFFER.
 Create an empty view when EXISTING-FILE-P is nil.  Optional
 VER-STRING is the outline format version number for the BUFFER
@@ -166,7 +168,7 @@ that was previously read by calling `kfile:is-p'.
 Return the new view."
   (cond ((not (bufferp buffer))
 	 (error "(kfile:read): Argument must be a buffer, `%s'" buffer))
-	((and (zerop (buffer-size)) (not existing-file-p))
+	((and (zerop (buffer-size)) (not existing-file-flag))
 	 (kfile:create buffer))
 	((progn
 	   (set-buffer buffer)

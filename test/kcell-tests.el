@@ -9,6 +9,8 @@
 ;; orig-date:    16-Feb-22 at 23:28:49
 ;; last-mod:     18-Feb-22 at 19:03:54 by Mats Lidell
 ;;
+;; SPDX-License-Identifier: GPL-3.0-or-later
+;;
 ;; Copyright (C) 2021  Free Software Foundation, Inc.
 ;; Licensed under the GNU General Public License, version 3.
 ;;

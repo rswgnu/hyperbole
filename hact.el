@@ -3,7 +3,9 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    18-Sep-91 at 02:57:09
-;; Last-Mod:      7-Oct-22 at 23:01:56 by Mats Lidell
+;; Last-Mod:      6-Feb-23 at 00:05:26 by Bob Weiner
+;;
+;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
 ;; Copyright (C) 1991-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -158,12 +160,13 @@ If no SYMBOLS are given, set it to the empty set.  Return the symset.  Uses
 
 (defun    symset:add (elt symbol property)
   "Add ELT to SYMBOL's PROPERTY set.
-Return nil iff ELT is already in SET; otherwise, return PROPERTY's value.
+Return PROPERTY's value unless ELT is already in the set, then return nil.
 Use `eq' for comparison."
   (let* ((set (get symbol property))
 	 (set:equal-op 'eq)
 	 (new-set (set:add elt set)))
-    (and new-set (put symbol property new-set))))
+    (when new-set
+      (put symbol property new-set))))
 
 (defun    symset:clear (symbol)
   "Set SYMBOL's symset to nil."

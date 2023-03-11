@@ -5,6 +5,8 @@
 ;; Orig-Date:    20-Feb-21 at 23:45:00
 ;; Last-Mod:     12-Feb-22 at 13:33:53 by Bob Weiner
 ;;
+;; SPDX-License-Identifier: GPL-3.0-or-later
+;;
 ;; Copyright (C) 2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
 ;;
@@ -215,7 +217,7 @@
 (ert-deftest ibtypes::ctags-vgrind-test ()
   (unwind-protect
       (with-temp-buffer
-        (insert "hy-test-helpers:consume-input-events hy-test-helpers.el 23\n")
+        (insert "hy-test-helpers:consume-input-events hy-test-helpers.el 25\n")
         (goto-char (point-min))
         (forward-char 4)
         (let ((default-directory (expand-file-name "test" hyperb:dir)))
@@ -231,7 +233,7 @@
       (with-temp-buffer
         (insert "\n")
         (insert "hy-test-helpers.el,237\n")
-        (insert "(defun hy-test-helpers:consume-input-events 23,518\n")
+        (insert "(defun hy-test-helpers:consume-input-events 25,518\n")
         (rename-buffer (concat "TAGS" (buffer-name)))
         (goto-char (point-min))
         (forward-line 2)

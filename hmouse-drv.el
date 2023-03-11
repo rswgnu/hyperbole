@@ -3,7 +3,9 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    04-Feb-90
-;; Last-Mod:     15-Jan-23 at 17:08:53 by Mats Lidell
+;; Last-Mod:     26-Feb-23 at 22:19:19 by Bob Weiner
+;;
+;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
 ;; Copyright (C) 1989-2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -796,7 +798,7 @@ hkey-swap and hkey-throw."
   (interactive)
   (hkey-buffer-move 'up))
 
-(defun hkey-buffer-move (direction &optional arg)
+(defun hkey-buffer-move (direction &optional _arg)
   "Move the current buffer to the next window in DIRECTION.
 DIRECTION is a symbol, one of: up, down, left or right.
 
@@ -1016,15 +1018,16 @@ documentation is found."
 			  calls)
 
 		    (when (memq cmd-sym '(hui:hbut-act hui:hbut-help))
-		      (princ (format "%s BUTTON SPECIFICS:\n\n%s\n"
+		      (princ (format "%s BUTTON SPECIFICS:\n"
 				     (htype:def-symbol
 				      (if (eq (hattr:get 'hbut:current 'categ)
 					      'explicit)
 					  (hattr:get 'hbut:current 'actype)
-					(hattr:get 'hbut:current 'categ)))
-				     (actype:doc 'hbut:current t)))
+					(hattr:get 'hbut:current 'categ)))))
 		      (hattr:report
-		       (nthcdr 2 (hattr:list 'hbut:current))))
+		       (nthcdr 2 (hattr:list 'hbut:current)))
+		      (princ (format "\n%s\n"
+				     (actype:doc 'hbut:current t))))
 		    (terpri)))
 		"")
 	    (message "No %s Key command for current context."
@@ -1150,29 +1153,43 @@ Each invocation alternates between starting a drag and ending it.
 Optional prefix ARG non-nil means emulate Assist Key rather than the
 Action Key.
 
-Only works when running under a window system, not from a dumb terminal."
+Only works when running under a window system, not from a dumb terminal.
+
+If a non-Hyperbole minor mode, e.g. ivy, has a different binding for the
+key to which this command is bound, then defer to that binding."
   (interactive "P")
-  (unless (hyperb:window-system)
-    (hypb:error "(hkey-operate): Drag actions require mouse support"))
-  (if arg
-      (if assist-key-depressed-flag
-	  (progn (assist-mouse-key)
+  (catch 'other-binding
+    ;; If a non-Hyperbole minor mode has a different binding for the
+    ;; key to which this command is bound, then defer to that binding
+    (let* ((hyperbole-mode)
+	   (key (car (where-is-internal #'hkey-operate (list hyperbole-mode-map))))
+	   (binding (when key (cdar (minor-mode-key-binding key)))))
+      (when binding
+	(throw 'other-binding (call-interactively binding))))
+
+    (unless (hyperb:window-system)
+      (hypb:error "(hkey-operate): Drag actions require mouse support"))
+
+    ;; Otherwise, handle the drag command
+    (if arg
+	(if assist-key-depressed-flag
+	    (progn (assist-mouse-key)
+		   (when (called-interactively-p 'interactive)
+		     (message "Assist Key released.")))
+	  (assist-key-depress)
+	  (when (called-interactively-p 'interactive)
+	    (message
+	     "Assist Key depressed; go to release point and press {%s %s}."
+	     (substitute-command-keys "\\[universal-argument]")
+	     (substitute-command-keys "\\[hkey-operate]"))))
+      (if action-key-depressed-flag
+	  (progn (action-mouse-key)
 		 (when (called-interactively-p 'interactive)
-		   (message "Assist Key released.")))
-	(assist-key-depress)
+		   (message "Action Key released.")))
+	(action-key-depress)
 	(when (called-interactively-p 'interactive)
-	  (message
-	   "Assist Key depressed; go to release point and press {%s %s}."
-	   (substitute-command-keys "\\[universal-argument]")
-	   (substitute-command-keys "\\[hkey-operate]"))))
-    (if action-key-depressed-flag
-	(progn (action-mouse-key)
-	       (when (called-interactively-p 'interactive)
-		 (message "Action Key released.")))
-      (action-key-depress)
-      (when (called-interactively-p 'interactive)
-	(message "Action Key depressed; go to release point and press {%s}."
-		 (substitute-command-keys "\\[hkey-operate]"))))))
+	  (message "Action Key depressed; go to release point and press {%s}."
+		   (substitute-command-keys "\\[hkey-operate]")))))))
 
 (defun hkey-summarize (&optional current-window)
   "Display smart key operation summary in help buffer.

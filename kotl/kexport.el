@@ -3,7 +3,9 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    26-Feb-98
-;; Last-Mod:     21-Nov-22 at 00:21:03 by Bob Weiner
+;; Last-Mod:     12-Feb-23 at 22:15:49 by Mats Lidell
+;;
+;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
 ;; Copyright (C) 1998-2022  Free Software Foundation, Inc.
 ;; See the "../HY-COPY" file for license information.
@@ -384,27 +386,22 @@ used.  Also converts Urls and Klinks into Html hyperlinks.
 		 (buffer-name (find-file-noselect export-from)))
 		(t (error
 		    "(kexport:html): `%s' is an invalid `export-from' argument" export-from))))
-	 (font-lock-auto-fontify) ;; Prevent syntax highlighting
-	 (font-lock-mode-disable-list '(html-mode))
-	 (font-lock-mode-enable-list)
-	 (html-mode-hook)
-	 (hm--html-mode-hook)
-	 (psgml-mode-hook)
-	 (output-to-buf-name
+	 (output-to-buf
 	  (cond ((or (bufferp output-to)
 		     (get-buffer output-to))
-		 (buffer-name (get-buffer output-to)))
+		 (get-buffer output-to))
 		((get-file-buffer output-to)
-		 (buffer-name (get-file-buffer output-to)))
+		 (get-file-buffer output-to))
 		((stringp output-to)
-		 (buffer-name (find-file-noselect output-to)))
+		 (find-file-noselect output-to))
 		(t (error
 		    "(kexport:html): `%s' is an invalid `output-to' argument" output-to))))
-	 (standard-output (get-buffer output-to-buf-name))
+	 (standard-output output-to-buf)
 	 ;; Get any title attribute from cell 0, invisible root of the outline
 	 (title (kcell:get-attr (kcell-view:cell-from-ref 0) 'title)))
 
     (with-current-buffer standard-output
+      (font-lock-mode 0) ;; Prevent syntax highlighting
       (setq buffer-read-only nil
 	    kexport:output-filename buffer-file-name)
       (erase-buffer))
@@ -415,7 +412,7 @@ used.  Also converts Urls and Klinks into Html hyperlinks.
 
 	;; If called interactively, prompt user for the title to use.
 	(if (called-interactively-p 'interactive)
-	    (setq title (read-string (format "Title for %s: " output-to-buf-name)
+	    (setq title (read-string (format "Title for %s: " (buffer-name output-to-buf))
 				     title))
 	  ;; Otherwise, use any previously retrieved title attribute or if
 	  ;; none, then the name of the current file sans the .kotl suffix.
@@ -471,11 +468,8 @@ used.  Also converts Urls and Klinks into Html hyperlinks.
 	     (setq level (kcell-view:level)
 		   i level
 		   is-parent (kcell-view:child-p)
-		   is-collapsible (save-excursion
-				    (goto-char (kcell-view:start))
-				    (search-forward "\n" (kcell-view:end-contents) t))
 		   is-last-sibling (not (kcell-view:sibling-p)))
-	     (when (or is-parent is-collapsible)
+	     (when is-parent
 	       (push is-last-sibling no-sibling-stack)
 	       (princ "<button type=\"button\" class=\"collapsible\">\n"))
 	     (while (> i 1)
@@ -485,7 +479,7 @@ used.  Also converts Urls and Klinks into Html hyperlinks.
 	     ;; (princ "<td width=1% valign=top>")
 	     (princ "<td width=1%>")
 	     (princ (format "<span class=\"fas fa-chevron-down fa-fw\"%s></span>"
-			    (if (or is-parent is-collapsible)
+			    (if is-parent
 				""
 			      ;; Fill same space for alignment but don't
 			      ;; show collapsible chevron when not collapsible
@@ -516,7 +510,7 @@ used.  Also converts Urls and Klinks into Html hyperlinks.
 	     (while (> i 1)
 	       (princ "</ul>")
 	       (setq i (1- i)))
-	     (cond ((or is-parent is-collapsible)
+	     (cond (is-parent
 		    (princ "\n</button>\n<div class=\"content\">\n"))
 		   ((and (/= level 1) is-last-sibling)
 		    (princ "\n</div>")
