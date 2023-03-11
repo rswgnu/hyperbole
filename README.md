@@ -26,6 +26,8 @@ otherwise, skip to the next section.
    - [HyControl, fast Emacs frame and window manager](https://youtu.be/M3-aMh1ccJk)
 
    - [Find/Web Search](https://youtu.be/8lMlJed0-OM)
+   
+   - [Linking personal info with implicit buttons](https://youtu.be/TQ_fG7b1iHI)
 
 ## Summary
 
