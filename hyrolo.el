@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     7-Jun-89 at 22:08:29
-;; Last-Mod:      8-Mar-23 at 01:15:53 by Bob Weiner
+;; Last-Mod:     11-Mar-23 at 01:33:01 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -486,8 +486,10 @@ the logical sexpression matching."
 
 ;;;###autoload
 (defun hyrolo-find-file (&optional file find-function &rest args)
-  "Select and edit a FILE in `hyrolo-file-list' with FIND-FUNCTION.
-Default to the first listed file when not given a prefix arg."
+  "Find an optional FILE in `hyrolo-file-list' with FIND-FUNCTION.
+Default to the first listed file when not given a prefix arg.
+FIND-FUNCTION must return the buffer of the file found but need not
+select it."
   (interactive "P")
   (when (or (called-interactively-p 'interactive)
 	    (null file))
@@ -497,8 +499,14 @@ Default to the first listed file when not given a prefix arg."
       (setq file (completing-read "Edit HyRolo file: "
 				  (mapcar #'list hyrolo-file-list)))))
   (when (stringp file)
-    (prog1 (apply (or find-function hyrolo-find-file-function) file args)
-      (setq buffer-read-only nil))))
+    (let (buf)
+      (prog1 (setq buf (apply (or find-function hyrolo-find-file-function) file args))
+	(when buf
+	  (with-current-buffer buf
+	    (when (equal outline-regexp "[*]+")
+	      ;; Prevent matching to *word* at the beginning of lines
+	      (setq-local outline-regexp "\\*+[ \t]\\|+"))
+	    (setq buffer-read-only nil)))))))
 
 ;;;###autoload
 (defun hyrolo-find-file-noselect (&optional file)
@@ -1419,7 +1427,9 @@ Return number of matching entries found."
 		   (setq actual-buf (hyrolo-find-file-noselect hyrolo-file-or-buf)
 			 new-buf-p t))))
 	(let ((hdr-pos) (num-found 0) (curr-entry-level-len)
-	      (incl-hdr t) start)
+	      (incl-hdr t)
+	      (stuck-negative-point 0)
+	      start)
 	  (when  max-matches
 	    (cond ((eq max-matches t)
 		   (setq incl-hdr nil max-matches nil))
@@ -1429,47 +1439,60 @@ Return number of matching entries found."
 	  (set-buffer actual-buf)
 	  (when new-buf-p
 	    (setq buffer-read-only t))
-	  (save-excursion
-	    (save-restriction
-	      (hyrolo-widen)
-	      ;; Ensure no entries in outline mode are hidden.
-	      (outline-show-all)
-	      (goto-char (point-min))
-	      (when (re-search-forward hyrolo-hdr-regexp nil t 2)
-		(forward-line)
-		(setq hdr-pos (cons (point-min) (point))))
-	      (let (case-fold-search)
-		(re-search-forward hyrolo-entry-regexp nil t)
-		(while (and (or (null max-matches) (< num-found max-matches))
-			    (funcall hyrolo-next-match-function pattern headline-only))
-		  (re-search-backward hyrolo-entry-regexp nil t)
-		  (setq start (point))
-		  (re-search-forward hyrolo-entry-regexp nil t)
-		  (setq curr-entry-level-len (length (buffer-substring-no-properties start (point))))
-		  (hyrolo-to-entry-end t curr-entry-level-len)
-		  (or count-only
-		      (when (and (zerop num-found) incl-hdr)
-			(let* ((src (or (buffer-file-name actual-buf)
-					actual-buf))
-			       (src-line
-				(format
-				 (concat (if (boundp 'hbut:source-prefix)
-					     hbut:source-prefix
-					   "@loc> ")
-					 "%s")
-				 (prin1-to-string src))))
-			  (set-buffer hyrolo-display-buffer)
-			  (goto-char (point-max))
-			  (if hdr-pos
-			      (progn
-				(insert-buffer-substring-no-properties
-				 actual-buf (car hdr-pos) (cdr hdr-pos))
-				(insert src-line "\n\n"))
-			    (insert (format hyrolo-hdr-format src-line)))
-			  (set-buffer actual-buf))))
-		  (setq num-found (1+ num-found))
-		  (or count-only
-		      (hyrolo-add-match hyrolo-display-buffer pattern start (point)))))))
+	  (setq stuck-negative-point
+		(catch 'stuck
+		  (save-excursion
+		    (save-restriction
+		      (hyrolo-widen)
+		      ;; Ensure no entries in outline mode are hidden.
+		      (outline-show-all)
+		      (goto-char (point-min))
+		      (when (re-search-forward hyrolo-hdr-regexp nil t 2)
+			(forward-line)
+			(setq hdr-pos (cons (point-min) (point))))
+		      (let (case-fold-search
+			    opoint)
+			(re-search-forward hyrolo-entry-regexp nil t)
+			(while (and (or (null max-matches) (< num-found max-matches))
+				    (funcall hyrolo-next-match-function pattern headline-only))
+			  (setq opoint (point))
+			  (re-search-backward hyrolo-entry-regexp nil t)
+			  (setq start (point))
+			  (re-search-forward hyrolo-entry-regexp nil t)
+			  (setq curr-entry-level-len (length (buffer-substring-no-properties start (point))))
+			  (hyrolo-to-entry-end t curr-entry-level-len)
+			  (when (<= (point) opoint)
+			    ;; Stuck looping without moving to next entry,
+			    ;; probably *word* at beginning of a line.
+			    (throw 'stuck (- (point))))
+			  (or count-only
+			      (when (and (zerop num-found) incl-hdr)
+				(let* ((src (or (buffer-file-name actual-buf)
+						actual-buf))
+				       (src-line
+					(format
+					 (concat (if (boundp 'hbut:source-prefix)
+						     hbut:source-prefix
+						   "@loc> ")
+						 "%s")
+					 (prin1-to-string src))))
+				  (set-buffer hyrolo-display-buffer)
+				  (goto-char (point-max))
+				  (if hdr-pos
+				      (progn
+					(insert-buffer-substring-no-properties
+					 actual-buf (car hdr-pos) (cdr hdr-pos))
+					(insert src-line "\n\n"))
+				    (insert (format hyrolo-hdr-format src-line)))
+				  (set-buffer actual-buf))))
+			  (setq num-found (1+ num-found))
+			  (or count-only
+			      (hyrolo-add-match hyrolo-display-buffer pattern start (point)))))))
+		  num-found))
+	  (when (< stuck-negative-point 0)
+	    (pop-to-buffer (current-buffer))
+	    (goto-char (- stuck-negative-point))
+	    (error "(hyrolo-grep-file): Stuck looping at position %d in buffer \"%s\"" (point) (buffer-name)))
 	  (hyrolo-kill-buffer actual-buf)
 	  num-found)
       0)))

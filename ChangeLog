@@ -1,3 +1,11 @@
+2023-03-10  Bob Weiner  <rsw@gnu.org>
+
+* hyrolo.el (hyrolo-find-file): Prevent 'outline-regexp' getting stuck
+    matching to *word* at the beginning of lines and hanging hyrolo-fgrep
+    because keeps moving to within an entry rather than past it.
+            (hyrolo-grep-file): If above happens, trigger an error and
+    display the problematic file with point at the errant entry.
+
 2023-03-08  Bob Weiner  <rsw@gnu.org>
 
 * hibtypes.el (grep-msg): Trigger only if filename exists.  Prevents matching
