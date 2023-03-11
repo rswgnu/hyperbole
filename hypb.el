@@ -3,7 +3,9 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     6-Oct-91 at 03:42:38
-;; Last-Mod:      6-Nov-22 at 12:04:10 by Bob Weiner
+;; Last-Mod:     27-Feb-23 at 18:11:15 by Bob Weiner
+;;
+;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
 ;; Copyright (C) 1991-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -17,7 +19,7 @@
 ;;; Other required Elisp libraries
 ;;; ************************************************************************
 
-(eval-and-compile (mapc #'require '(compile hversion hact locate)))
+(eval-and-compile (mapc #'require '(compile hversion hact locate cl-lib)))
 
 ;;; ************************************************************************
 ;;; Public variables
@@ -47,6 +49,30 @@ It must end with a space."
 (defvar pm-version)
 (defvar vm-version)
 
+(declare-function helm-info "ext:helm")
+(declare-function helm-apropos "ext:helm")
+(declare-function devdocs-lookup "ext:devdocs")
+
+;; interaction-log
+(defvar ilog-buffer-name)
+(defvar ilog-display-state)
+(defvar ilog-idle-time)
+(defvar ilog-insertion-timer)
+(defvar ilog-print-lambdas)
+(defvar ilog-self-insert-command-regexps)
+(defvar ilog-truncation-timer)
+(defvar interaction-log-mode)
+(defvar interaction-log-mode-hook)
+
+(declare-function ilog-note-buffer-change "ext:interaction-log")
+(declare-function ilog-post-command "ext:interaction-log")
+(declare-function ilog-record-this-command "ext:interaction-log")
+(declare-function ilog-show-in-other-frame "ext:interaction-log")
+(declare-function ilog-timer-function "ext:interaction-log")
+(declare-function ilog-toggle-view "ext:interaction-log")
+(declare-function ilog-truncate-log-buffer "ext:interaction-log")
+(declare-function interaction-log-mode "ext:interaction-log")
+
 ;;; ************************************************************************
 ;;; Public functions
 ;;; ************************************************************************
@@ -74,7 +100,7 @@ This displays a clean log of Emacs keys used and commands executed."
   (setq ilog-print-lambdas 'not-compiled)
 
   ;; Omit display of some lower-level Hyperbole commands for cleaner logs
-  (mapc (lambda (cmd-str) (push (format "^%s$" cmd-str) ilog-self-insert-command-regexps))
+  (mapc (lambda (cmd-str) (cl-pushnew (format "^%s$" cmd-str) ilog-self-insert-command-regexps))
         '("hyperbole" "hui:menu-enter"))
 
   ;; Redefine the mode to display commands on post-command-hook rather
@@ -95,8 +121,7 @@ This displays a clean log of Emacs keys used and commands executed."
 	  (setq ilog-truncation-timer (run-at-time 30 30 #'ilog-truncate-log-buffer))
 	  (setq ilog-insertion-timer (run-with-timer ilog-idle-time ilog-idle-time
 						     #'ilog-timer-function))
-	  (message "Interaction Log: started logging in %s" ilog-buffer-name)
-	  (easy-menu-add ilog-minor-mode-menu))
+	  (message "Interaction Log: started logging in %s" ilog-buffer-name))
       (remove-hook 'after-change-functions #'ilog-note-buffer-change)
       (remove-hook 'post-command-hook      #'ilog-record-this-command)
       (remove-hook 'post-command-hook      #'ilog-post-command)
@@ -133,7 +158,7 @@ Raise and reuse any existing single window frame displaying ilog."
   (interaction-log-mode 1)
 
   ;; Limit display to commands executed
-  (with-current-buffer ilog-buffer-name
+  (with-current-buffer (get-buffer-create ilog-buffer-name)
     (setq ilog-display-state 'messages)
     ;; Changes to command-only mode
     (ilog-toggle-view)
@@ -374,9 +399,10 @@ point at the start of the inserted text."
 ;;;###autoload
 (defun hypb:devdocs-lookup ()
   "Prompt for and display a devdocs.io docset section within Emacs.
-will this install the Emacs devdocs package when needed."
+This will install the Emacs devdocs package if not yet installed."
   (interactive)
   (hypb:require-package 'devdocs)
+  ;; (call-interactively #'devdocs-install)
   (devdocs-lookup))
 
 (defun hypb:domain-name ()
@@ -451,10 +477,18 @@ FILE is temporarily read into a buffer to determine the major mode if necessary.
 
 (defun hypb:filter-directories (file-regexp &rest dirs)
   "Filter files to those matching FILE-REGEXP from rest of DIRS (recursively).
+Also filters out any files matching `completion-ignored-extensions' or
+ending with # or ~.
 Return a flattened list of all matching files."
+  (setq file-regexp (hypb:glob-to-regexp file-regexp))
   (setq dirs (hypb:readable-directories dirs))
-  (apply #'nconc (mapcar (lambda (dir) (directory-files-recursively dir file-regexp))
-			 dirs)))
+  (delq nil (mapcar (lambda (f)
+		      (unless (string-match-p
+			       (concat (regexp-opt (append completion-ignored-extensions '("#" "~"))
+						   'paren) "$") f)
+			f))
+		    (apply #'nconc (mapcar (lambda (dir) (directory-files-recursively dir file-regexp))
+					   dirs)))))
 
 (defun hypb:format-quote (arg)
   "Replace all single % with %% in any string ARG.
@@ -497,6 +531,16 @@ If EVENT, use EVENT's position to determine the starting position."
   "Return the raw syntax descriptor for CHAR.
 Use the current syntax table or optional SYNTAX-TABLE."
   (aref (or syntax-table (syntax-table)) char))
+
+(defun hypb:glob-to-regexp (str)
+  "Convert any file glob syntax to Emacs regexp syntax."
+  (when (stringp str)
+    (setq str (replace-regexp-in-string "\\`\\*" ".*" str nil t)
+	  str (replace-regexp-in-string "\\([^\\.]\\)\\*" "\\1.*" str))
+    (when (and (not (string-match-p "\\(\\$\\|\\\\'\\)\\'" str))
+	       (string-match-p "\\.\\S-+\\'" str))
+      (setq str (concat str "$"))))
+    str)
 
 ;; Derived from pop-global-mark of "simple.el" in GNU Emacs.
 (defun hypb:goto-marker (marker)
@@ -567,12 +611,7 @@ This will this install the Emacs helm package when needed."
 (defun hypb:indirect-function (obj)
   "Return the function at the end of OBJ's function chain.
 Resolves autoloadable function symbols properly."
-  (let ((func
-	 (if (fboundp 'indirect-function)
-	     (indirect-function obj)
-	   (while (symbolp obj)
-	     (setq obj (symbol-function obj)))
-	   obj)))
+  (let ((func (indirect-function obj)))
     ;; Handle functions with autoload bodies.
     (if (and (symbolp obj) (listp func) (eq (car func) 'autoload))
 	(let ((load-file (car (cdr func))))
@@ -729,15 +768,6 @@ Removes any trailing newline at the end of the output."
     output))
 
 ;;;###autoload
-(defun hypb:remove-package (package-name)
-  "If installed, delete Emacs PACKAGE-NAME."
-  (interactive)
-  (if (called-interactively-p 'any)
-      (call-interactively #'package-delete)
-    (when (package-installed-p package-name)
-      (package-delete (cadr (assq package-name (package--alist)))))))
-
-;;;###autoload
 (defun hypb:rgrep (pattern &optional prefx-arg)
   "Recursively grep with symbol at point or PATTERN.
 Grep over all non-backup and non-autosave files in the current
@@ -814,7 +844,7 @@ descriptors."
 The package info is a property list of package-name,
 package-download-source and package-version for PKG-STRING, else
 return nil.  This is for the straight.el package manager."
-  (when (fboundp #'straight-bug-report-package-info)
+  (when (fboundp 'straight-bug-report-package-info)
     (car (delq nil (mapcar (lambda (pkg-plist)
 			     (when (equal (plist-get pkg-plist :package) pkg-string) pkg-plist))
 			   (straight-bug-report-package-info))))))
@@ -935,7 +965,7 @@ nor nil it means to not count the minibuffer window even if it is active."
 
 ;;;###autoload
 (defun hypb:display-file-with-logo (file)
-  "Display a text FILE in help mode with the Hyperbole banner prepended.
+  "Display a text FILE in view mode with the Hyperbole banner prepended.
 If FILE is not an absolute path, expand it relative to `hyperb:dir'."
   (unless (stringp file)
     (error "(hypb:display-file-with-logo): 'file' must be a string, not '%s'" file))
@@ -950,7 +980,7 @@ If FILE is not an absolute path, expand it relative to `hyperb:dir'."
       (skip-syntax-forward "-")
       (set-window-start (selected-window) 1)
       (set-buffer-modified-p nil)
-      (help-mode)
+      (view-mode)
       ;; On some versions of Emacs like Emacs28, need a slight delay
       ;; for file loading before searches will work properly.
       ;; Otherwise, "test/demo-tests.el" may fail.

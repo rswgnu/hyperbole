@@ -1,12 +1,14 @@
 ;;; hyperbole.el --- GNU Hyperbole: The Everyday Hypertextual Information Manager  -*- lexical-binding: t; -*-
 
-;; Copyright (C) 1992-2022  Free Software Foundation, Inc.
+;; SPDX-License-Identifier: GPL-3.0-or-later
+;;
+;; Copyright (C) 1992-2023  Free Software Foundation, Inc.
 
 ;; Author:           Bob Weiner
 ;; Maintainer:       Bob Weiner <rsw@gnu.org>, Mats Lidell <matsl@gnu.org>
 ;; Created:          06-Oct-92 at 11:52:51
-;; Last-Mod:      6-Aug-22 at 21:23:08 by Mats Lidell
-;; Released:         01-May-22
+;; Last-mod:      7-Mar-23 at 22:10:54 by Bob Weiner
+;; Released:         03-Dec-22
 ;; Version:          8.0.1pre
 ;; Keywords:         comm, convenience, files, frames, hypermedia, languages, mail, matching, mouse, multimedia, outlines, tools, wp
 ;; Package:          hyperbole
@@ -244,7 +246,9 @@ of the commands."
     ;; Setup so Hyperbole menus can be accessed from a key.  If not
     ;; already bound to a key, this typically binds the command `hyperbole'
     ;; globally to {C-h h} and activates Hyperbole minor mode.
-    (unless (where-is-internal #'hyperbole (current-global-map))
+    (unless (or (where-is-internal #'hyperbole (current-global-map))
+		(null help-char)
+		(not (keymapp (lookup-key (current-global-map) (char-to-string help-char)))))
       ;; In GNU Emacs, this binding replaces a command that shows
       ;; the word hello in foreign languages; this binding makes this
       ;; key much more useful.
@@ -487,6 +491,12 @@ frame, those functions by default still return the prior frame."
 
 (defun hyperbole--enable-mode ()
   "Enable Hyperbole global minor mode."
+  ;; If Hyperbole is loaded without the user's init being run,
+  ;; then force execution of (hyperb:init) when the mode is enabled.
+  (unless (and hkey-init (where-is-internal #'hkey-help))
+    (hyperb:init)
+    (remove-hook 'after-init-hook #'hyperb:init))
+
   ;; Store the current value and set `mark-even-if-inactive' to nil so
   ;; can select delimited things if the region is not active when
   ;; hyperbole-mode is enabled.

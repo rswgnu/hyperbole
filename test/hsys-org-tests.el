@@ -3,7 +3,9 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    23-Apr-21 at 20:55:00
-;; Last-Mod:     24-Jan-22 at 00:40:05 by Bob Weiner
+;; Last-Mod:      3-Dec-22 at 00:12:39 by Bob Weiner
+;;
+;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
 ;; Copyright (C) 2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -52,6 +54,14 @@
     (insert "#+BEGIN_BLK\n text\n#+END_BLK\n")
     (goto-char 1)
     (should (hsys-org-block-start-at-p))))
+
+(ert-deftest hsys-org:src-block-start-at-p ()
+  "Should be t if point is on the start of a source block."
+  (with-temp-buffer
+    (org-mode)
+    (insert "#+BEGIN_SRC python\n text\n#+END_SRC\n")
+    (goto-char 1)
+    (should (hsys-org-src-block-start-at-p))))
 
 (ert-deftest hsys-org:org-link-at-p ()
   "Should be t if point is within an org-link."
@@ -102,25 +112,23 @@
     (font-lock-ensure)
     (should (equal (hsys-org-radio-target-at-p) '(2 . 12)))))
 
-(ert-deftest hsys-org:org-internal-link-target-at-p ()
-  "Should return (start . end) iff point is within an org radio target definition."
+(ert-deftest hsys-org:org-internal-target-at-p ()
+  "Should return (start . end) iff point is within an org internal target definition."
   (with-temp-buffer
     (org-mode)
-    (insert " <<<link>>>\n")
+    (insert " <<target>>\n")
     (goto-char 6)
-    (org-ctrl-c-ctrl-c)
     (font-lock-ensure)
-    (should (equal (hsys-org-internal-link-target-at-p) '(2 . 12)))))
+    (should (hsys-org-internal-target-def-at-p))))
 
 (ert-deftest hsys-org:org-face-at-p ()
-  "Should return face type iff point is within an org radio target definition."
+  "Should return face type iff point is within an org target definition."
   (with-temp-buffer
     (org-mode)
-    (insert " <<<link>>>\n")
+    (insert " <<target>>\n")
     (goto-char 6)
-    (org-ctrl-c-ctrl-c)
     (font-lock-ensure)
-    (should (equal (hsys-org-face-at-p 'org-target) 'org-target))))
+    (should (hsys-org-face-at-p 'org-target))))
 
 (provide 'hsys-org-tests)
 ;;; hsys-org-tests.el ends here

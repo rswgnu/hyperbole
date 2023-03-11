@@ -3,7 +3,9 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     7-Jun-89 at 22:08:29
-;; Last-Mod:     27-Oct-22 at 18:47:16 by Bob Weiner
+;; Last-Mod:      8-Mar-23 at 01:15:53 by Bob Weiner
+;;
+;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
 ;; Copyright (C) 1991-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -31,6 +33,7 @@
 (require 'set)
 (require 'sort)
 (require 'xml)
+(declare-function kotl-mode:to-valid-position "kotl/kotl-mode")
 
 ;; Quiet byte compiler warnings for these free variables.
 (eval-when-compile
@@ -42,9 +45,16 @@
 ;;; ************************************************************************
 ;;; Public declarations
 ;;; ************************************************************************
+(defvar helm-org-rifle-show-level-stars)
+(defvar markdown-regex-header)
 (defvar org-roam-directory)
 (defvar org-roam-db-autosync-mode)
-(defvar markdown-regex-header)
+(declare-function consult-grep "ext:consult")
+(declare-function consult-ripgrep "ext:consult")
+(declare-function helm-org-rifle-files "ext:helm-org-rifle")
+(declare-function helm-org-rifle-show-full-contents "ext:helm-org-rifle")
+(declare-function helm-org-rifle-org-directory "ext:helm-org-rifle")
+(declare-function org-roam-db-autosync-mode "ext:org-roam")
 
 ;;; ************************************************************************
 ;;; Public variables
@@ -142,21 +152,24 @@ use."
 ;; '("~/.rolo.otl" "~/.rolo.org")
 
 ;;;###autoload
-(defun hyrolo-initialize-file-list ()
-  "Initialize the list of files used for HyRolo search."
+(defun hyrolo-initialize-file-list (&optional force-init-flag)
+  "Initialize the list of files used for HyRolo search if not already initialized."
   (interactive)
-  (let* ((gcontacts (when (hyrolo-google-contacts-p) google-contacts-buffer-name))
-	 (ms "~/.rolo.otl")
-	 (posix "~/.rolo.otl")
-	 (list (delq nil (if (and (boundp 'bbdb-file) (stringp bbdb-file))
+  (when (or force-init-flag (not (boundp 'hyrolo-file-list)) (not hyrolo-file-list))
+    (let* ((gcontacts (when (hyrolo-google-contacts-p) google-contacts-buffer-name))
+	   (ms "~/.rolo.otl")
+	   (posix "~/.rolo.otl")
+	   (list (delq nil (if (and (boundp 'bbdb-file) (stringp bbdb-file))
+			       (if hyperb:microsoft-os-p
+				   (list ms bbdb-file gcontacts)
+				 (list  "~/.rolo.otl" bbdb-file gcontacts))
 			     (if hyperb:microsoft-os-p
-				 (list ms bbdb-file gcontacts)
-			       (list  "~/.rolo.otl" bbdb-file gcontacts))
-			   (if hyperb:microsoft-os-p (list ms gcontacts) (list posix gcontacts))))))
-    (setq hyrolo-file-list list)
-    (when (called-interactively-p 'interactive)
-      (message "HyRolo Search List: %S" list))
-    list))
+				 (list ms gcontacts)
+			       (list posix gcontacts))))))
+      (setq hyrolo-file-list list)
+      (when (called-interactively-p 'interactive)
+	(message "HyRolo Search List: %S" list))
+      list)))
 
 (define-obsolete-variable-alias 'rolo-file-list 'hyrolo-file-list "06.00")
 (defcustom hyrolo-file-list (hyrolo-initialize-file-list)
@@ -304,7 +317,7 @@ entry which begins with the parent string."
 						      (save-excursion
 							(re-search-forward hyrolo-entry-name-regexp nil t)
 							(point))))
-	  (when (and (eq major-mode #'markdown-mode)
+	  (when (and (eq major-mode 'markdown-mode)
 		     (string-match "\\`.*#+" entry-spc))
 	    (setq entry-spc (substring entry-spc (length (match-string 0 entry-spc)))))
 	  (cond ((string-lessp entry name)
@@ -453,6 +466,7 @@ Return number of entries matched.  See also documentation for the variable
 `hyrolo-file-list' and the function `hyrolo-fgrep-logical' for documentation on
 the logical sexpression matching."
   (interactive "sFind rolo string (or logical sexpression): \nP")
+  (setq string (string-trim string "\"" "\""))
   (let ((total-matches 0))
     (if (string-match "\(\\(and\\|or\\|xor\\|not\\)\\>" string)
 	(progn
@@ -462,8 +476,8 @@ the logical sexpression matching."
 	  ;; then match across ancestors and descendants.
 	  (when (zerop (setq total-matches (hyrolo-fgrep-logical string count-only nil t)))
 	    (hyrolo-fgrep-logical string count-only t t)))
-      (setq total-matches (hyrolo-grep (regexp-quote string) max-matches
-				       hyrolo-file count-only headline-only no-display)))
+      (setq total-matches (hyrolo-grep (regexp-quote string)
+				       max-matches hyrolo-file count-only headline-only no-display)))
     (if (called-interactively-p 'interactive)
 	(message "%s matching entr%s found in rolo."
 		 (if (= total-matches 0) "No" total-matches)
@@ -663,7 +677,7 @@ Return t if entry is killed, nil otherwise."
 	  (setq file buffer-file-name)
 	  (if (file-writable-p file)
 	      (let ((kill-op
-		     (lambda (start level-len)
+		     (lambda (start _level-len)
 		       (kill-region
 			start (hyrolo-to-entry-end t))
 		       (setq killed t)
@@ -1219,6 +1233,22 @@ otherwise just use the cdr of the item."
 ;;; ************************************************************************
 
 ;;;###autoload
+(defun hyrolo-consult-grep ()
+  "Search with a consult package grep command.
+Use ripgrep (rg) if found, otherwise, plain grep.
+Interactively show all matches from `hyrolo-file-list'.
+Prompt for the search pattern."
+  (interactive)
+  (unless (package-installed-p 'consult)
+    (package-install 'consult))
+  (require 'consult)
+  (let ((files (seq-filter #'file-readable-p hyrolo-file-list))
+	(grep-func (cond ((executable-find "rg")
+			  #'consult-ripgrep)
+			 (t #'consult-grep))))
+    (funcall grep-func files)))
+
+;;;###autoload
 (defun hyrolo-helm-org-rifle (&optional context-only-flag)
   "Search with helm and interactively show all matches from `hyrolo-file-list'.
 Prompt for the search pattern.
@@ -1231,6 +1261,7 @@ around a matching line rather than entire entries."
   (require 'helm-org-rifle)
   (let ((files (seq-filter (lambda (f) (string-match "\\.\\(org\\|otl\\)$" f))
 			   (seq-filter #'file-readable-p hyrolo-file-list)))
+	;; Next 2 local settings used by helm-org-rifle-files call below
 	(helm-org-rifle-show-level-stars t)
 	(helm-org-rifle-show-full-contents (not context-only-flag)))
     (save-excursion
@@ -1290,7 +1321,7 @@ OPTIONAL prefix arg, MAX-MATCHES, limits the number of matches
 returned to the number given."
   (interactive "sFind Org Roam directory string (or logical sexpression): \nP")
   (unless (package-installed-p 'org-roam)
-    (package-install #'org-roam))
+    (package-install 'org-roam))
   (require 'org-roam)
   (unless (file-readable-p org-roam-directory)
     (make-directory org-roam-directory))
@@ -1324,7 +1355,7 @@ Stop at the first and last subheadings of a superior heading."
 ;;;###autoload
 (defun hyrolo-fgrep-directories (file-regexp &rest dirs)
   "String/logical HyRolo search over files matching FILE-REGEXP in rest of DIRS."
-  (hyrolo-search-directories #'hyrolo-fgrep file-regexp dirs))
+  (apply #'hyrolo-search-directories #'hyrolo-fgrep file-regexp dirs))
 
 (defun hyrolo-fgrep-file (hyrolo-file-or-buf string &optional max-matches count-only headline-only)
   "Retrieve entries in HYROLO-FILE-OR-BUF matching STRING.
@@ -1349,7 +1380,7 @@ Stop at the first and last subheadings of a superior heading."
 ;;;###autoload
 (defun hyrolo-grep-directories (file-regexp &rest dirs)
   "Regexp HyRolo search over files matching FILE-REGEXP in rest of DIRS."
-  (hyrolo-search-directories #'hyrolo-grep file-regexp dirs))
+  (apply #'hyrolo-search-directories #'hyrolo-grep file-regexp dirs))
 
 (defun hyrolo-next-regexp-match (regexp headline-only)
   "In a HyRolo source buffer, move past next occurrence of REGEXP or return nil."
@@ -1415,27 +1446,27 @@ Return number of matching entries found."
 		  (setq start (point))
 		  (re-search-forward hyrolo-entry-regexp nil t)
 		  (setq curr-entry-level-len (length (buffer-substring-no-properties start (point))))
-		  (hyrolo-to-entry-end t)
+		  (hyrolo-to-entry-end t curr-entry-level-len)
 		  (or count-only
-		      (if (and (zerop num-found) incl-hdr)
-			  (let* ((src (or (buffer-file-name actual-buf)
-					  actual-buf))
-				 (src-line
-				  (format
-				   (concat (if (boundp 'hbut:source-prefix)
-					       hbut:source-prefix
-					     "@loc> ")
-					   "%s")
-				   (prin1-to-string src))))
-			    (set-buffer hyrolo-display-buffer)
-			    (goto-char (point-max))
-			    (if hdr-pos
-				(progn
-				  (insert-buffer-substring-no-properties
-				   actual-buf (car hdr-pos) (cdr hdr-pos))
-				  (insert src-line "\n\n"))
-			      (insert (format hyrolo-hdr-format src-line)))
-			    (set-buffer actual-buf))))
+		      (when (and (zerop num-found) incl-hdr)
+			(let* ((src (or (buffer-file-name actual-buf)
+					actual-buf))
+			       (src-line
+				(format
+				 (concat (if (boundp 'hbut:source-prefix)
+					     hbut:source-prefix
+					   "@loc> ")
+					 "%s")
+				 (prin1-to-string src))))
+			  (set-buffer hyrolo-display-buffer)
+			  (goto-char (point-max))
+			  (if hdr-pos
+			      (progn
+				(insert-buffer-substring-no-properties
+				 actual-buf (car hdr-pos) (cdr hdr-pos))
+				(insert src-line "\n\n"))
+			    (insert (format hyrolo-hdr-format src-line)))
+			  (set-buffer actual-buf))))
 		  (setq num-found (1+ num-found))
 		  (or count-only
 		      (hyrolo-add-match hyrolo-display-buffer pattern start (point)))))))
@@ -1615,13 +1646,19 @@ beginning of the highest ancestor level.  Return final point."
 	   (outline-up-heading 80))))
    include-sub-entries))
 
-(defun hyrolo-to-entry-end (&optional include-sub-entries)
+(defun hyrolo-to-entry-end (&optional include-sub-entries _curr-entry-level-len)
   "Move point past the end of the current entry.
 With optional prefix arg INCLUDE-SUB-ENTRIES non-nil, move past
 the end of the entire subtree.  Return final point.
 
+CURR-ENTRY-LEVEL-LEN is the integer length of the last entry
+header found.  If INCLUDE-SUB-ENTRIES is nil,
+CURR-ENTRY-LEVEL-LEN is not needed.
+
 When called interactively, leave point one character earlier, before
-the final newline of the entry."
+the final newline of the entry.
+
+Return current point."
   (interactive "P")
   (hyrolo-move-forward
    (lambda (include-sub-entries)
@@ -1939,9 +1976,9 @@ the whitespace following the entry hierarchy level.")
 
 (defconst hyrolo-hdr-format
   (concat
-   "======================================================================\n"
+   "===============================================================================\n"
    "%s\n"
-   "======================================================================\n")
+   "===============================================================================\n")
   "Header to insert preceding a file's first rolo entry match when
 file has none of its own.  Used with one argument, the file name.")
 

@@ -3,7 +3,9 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     1-Nov-91 at 00:44:23
-;; Last-Mod:      6-Nov-22 at 11:43:43 by Bob Weiner
+;; Last-Mod:      7-Mar-23 at 21:55:28 by Bob Weiner
+;;
+;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
 ;; Copyright (C) 1991-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -997,9 +999,10 @@ Make any existing path within a file buffer absolute before returning."
 						       (when (string-match "[ \t\n\r]*[#,]" path)
 							 (prog1 (substring path (1- (match-end 0)))
 							   (setq path (substring path 0 (match-beginning 0)))))
-						     (when (string-match hpath:markup-link-anchor-regexp path)
-						       (prog1 (concat "#" (match-string 3 path))
-							 (setq path (substring path 0 (match-beginning 2))))))))))))
+						     (unless (file-exists-p path) ;; might be #autosave-file#
+						       (when (string-match hpath:markup-link-anchor-regexp path)
+							 (prog1 (concat "#" (match-string 3 path))
+							   (setq path (substring path 0 (match-beginning 2)))))))))))))
     (if (or (null path) (string-empty-p path))
 	(setq expanded-path ""
 	      path "")
@@ -1097,13 +1100,18 @@ end-pos) or nil."
 	(hargs:delimited "[`'‘]" "[`'’]" t t include-positions "\"")
 	;; Filenames in TexInfo docs
 	(hargs:delimited "@file{" "}" nil nil include-positions)
-	;; Any existing whitespace delimited filename at point.
-	;; If match consists of only punctuation, like
-	;; . or .., don't treat it as a pathname.  Only look for
-	;; whitespace delimited filenames if non-exist is nil.
+	;; if `non-exist' is nil, look for any existing whitespace
+	;; delimited filename at point.  If match consists of only
+	;; punctuation, like . or .., don't treat it as a pathname.
+	;; It shell modes, it must be tab delimited.
 	(unless non-exist
-	  (let* ((triplet (hargs:delimited "^\\|\\(\\s-\\|[\]\[()<>\;&,@]\\)+"
-					   "\\([\]\[()<>\;&,@]\\|:*\\s-\\)+\\|$"
+	  (let* ((space-delimiter (if (derived-mode-p #'shell-mode)
+				      "\t"
+				    "[ \t]"))
+		 (triplet (hargs:delimited (format "^\\|\\(%s\\|[\]\[()<>\;&,@]\\)+"
+						   space-delimiter)
+					   (format "\\([\]\[()<>\;&,@]\\|:*\\s-\\)+\\|$"
+						   space-delimiter)
 					   t t t))
 		 (p (car triplet))
 		 (punc (char-syntax ?.)))
@@ -1239,7 +1247,7 @@ it, else return nil."
 		     ;; POSIX
 		     (or (and (re-search-backward "^$\\|\\`\\|^\\(.+\\):$" prior-prompt-pos t)
 			      (setq dir (match-string-no-properties 1)))
-			 (and (re-search-backward "\\(^\\| \\)\\(cd\\|pushd\\|ls\\)\\(\\s-+-[-a-zA-Z0-9]*\\)*\\s-+[\'\"]?\\([^&!;,\'\"\t\n\r\f]+[^&!;,\'\" \t\n\r\f]\\)[\'\"]?" prior-prompt-pos t)
+			 (and (re-search-backward "\\(^\\| \\)\\(cd\\|pushd\\|ls\\)\\([ \t]+-[-a-zA-Z0-9]*\\)*[ \t]+[\'\"]?\\([^&!;,\'\"\t\n\r\f]+[^&!;,\'\" \t\n\r\f]\\)[\'\"]?" prior-prompt-pos t)
 			      (setq dir (match-string-no-properties 4)))))
 		   (and dir (not (string-empty-p dir))))
 	  (unless (file-name-absolute-p filename)
@@ -1258,9 +1266,9 @@ it, else return nil."
 
 (defun hpath:expand-with-variable (path)
   "Prepend to relative PATH the ${load var name} from `hpath:auto-variable-alist'.
-When PATH is relative, prepend to it the first file matching regexp in
-`hpath:auto-variable-alist' sans any compression suffix in
-`hpath:compressed-suffix-regexp'.
+When PATH is relative, try to expand in local directory first.  If that fails,
+prepend to it the first file matching regexp in `hpath:auto-variable-alist' sans
+any compression suffix in `hpath:compressed-suffix-regexp'.
 If PATH is absolute, return it unchanged."
   (when (stringp path)
     (let ((auto-variable-alist hpath:auto-variable-alist)
@@ -1270,24 +1278,28 @@ If PATH is absolute, return it unchanged."
 	  regexp
 	  variable
 	  variable-name)
-      (unless (or (file-name-absolute-p path)
-		  (hpath:url-p path)
-		  (string-match-p hpath:variable-regexp path))
-	(while auto-variable-alist
-	  (setq regexp (caar auto-variable-alist)
-		variable (cdar auto-variable-alist)
-		auto-variable-alist (cdr auto-variable-alist)
-		variable-name (if (and variable (symbolp variable))
-				  (symbol-name variable)
-				variable))
-	  (when (and path variable (string-match regexp path))
-	    (when (and (not (string-match (regexp-quote variable-name) path))
-		       (or (and (stringp variable) (getenv variable))
-			   (and (symbolp variable) (boundp variable))))
-	      (when (string-match "\\`\\.[\\/]" path)
-		(setq path (substring path (match-end 0))))
-	      (setq path (format "${%s}/%s" variable path)))
-	    (setq auto-variable-alist nil))))
+      (if (file-exists-p path)
+	  ;; Path is either absolute or relative to current directory
+	  ;; so don't expand into hpath:auto-variable-alist paths.
+	  (setq path (expand-file-name path))
+	(unless (or (file-name-absolute-p path)
+		    (hpath:url-p path)
+		    (string-match-p hpath:variable-regexp path))
+	  (while auto-variable-alist
+	    (setq regexp (caar auto-variable-alist)
+		  variable (cdar auto-variable-alist)
+		  auto-variable-alist (cdr auto-variable-alist)
+		  variable-name (if (and variable (symbolp variable))
+				    (symbol-name variable)
+				  variable))
+	    (when (and path variable (string-match regexp path))
+	      (when (and (not (string-match (regexp-quote variable-name) path))
+			 (or (and (stringp variable) (getenv variable))
+			     (and (symbolp variable) (boundp variable))))
+		(when (string-match "\\`\\.[\\/]" path)
+		  (setq path (substring path (match-end 0))))
+		(setq path (format "${%s}/%s" variable path)))
+	      (setq auto-variable-alist nil)))))
       (concat path compression-suffix))))
 
 (defun hpath:file-line-and-column (path-line-and-col)
@@ -1379,16 +1391,17 @@ buffer but don't display it."
 	    col-num (when (match-string 3 path)
 		      (string-to-number (match-string 3 path)))
 	    path (substring path 0 (match-beginning 0))))
-    (when (string-match hpath:markup-link-anchor-regexp path)
-      (setq hash t
-	    anchor (match-string 3 path)
-	    path (if (match-end 1)
-		     (substring path 0 (match-end 1))
-		   (or buffer-file-name "")))
-      ;; 'anchor' may improproperly include trailing punctuation;
-      ;; remove it if so.
-      (when (string-match "\\s.+\\'" anchor)
-	(setq anchor (substring anchor 0 (match-beginning 0)))))
+    (unless (file-exists-p path) ;; might be #autosave-file#
+      (when (string-match hpath:markup-link-anchor-regexp path)
+	(setq hash t
+	      anchor (match-string 3 path)
+	      path (if (match-end 1)
+		       (substring path 0 (match-end 1))
+		     (or buffer-file-name "")))
+	;; 'anchor' may improproperly include trailing punctuation;
+	;; remove it if so.
+	(when (string-match "\\s.+\\'" anchor)
+	  (setq anchor (substring anchor 0 (match-beginning 0))))))
     (if (string-empty-p path)
 	(setq path ""
 	      pathname "")

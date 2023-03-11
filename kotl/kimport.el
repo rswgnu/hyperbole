@@ -3,7 +3,9 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    15-Nov-93 at 11:57:05
-;; Last-Mod:      5-Nov-22 at 10:24:36 by Bob Weiner
+;; Last-Mod:      4-Feb-23 at 15:14:30 by Bob Weiner
+;;
+;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
 ;; Copyright (C) 1993-2022  Free Software Foundation, Inc.
 ;; See the "../HY-COPY" file for license information.
@@ -76,7 +78,7 @@ The number of stars is given by grouping 1.")
 ;;; ************************************************************************
 
 ;;;###autoload
-(defun kimport:file (import-from output-to &optional children-p)
+(defun kimport:file (import-from output-to &optional children-flag)
   "Import a buffer or file IMPORT-FROM into a koutline in buffer or file OUTPUT-TO.
 
 Any suffix in IMPORT-FROM's buffer name is used to determine the type of
@@ -97,21 +99,20 @@ information on specific importation formats."
 			 import-from))))
 	(function))
     (set-buffer import-buf-name)
-    (if (setq function (cdr (assq major-mode kimport:mode-alist)))
-	nil
+    (unless (setq function (cdr (assq major-mode kimport:mode-alist)))
       (let ((import-suffix (if (string-match "\\..+\\'" import-buf-name)
 			       (match-string 0 import-buf-name)))
 	    (suffix-alist kimport:suffix-alist)
 	    suffix-regexp)
 	(while (and import-suffix suffix-alist)
 	  (setq suffix-regexp (car (car suffix-alist))
-		function (cdr (car suffix-alist))
 		suffix-alist (cdr suffix-alist))
-	  (if (string-match suffix-regexp import-suffix)
-	      nil
-	    (setq function nil)))
-	(if function nil (setq function (cdr (assq t kimport:mode-alist))))))
-    (funcall function import-from output-to children-p)))
+	  (when (string-match suffix-regexp import-suffix)
+	    (setq function (cdr (car suffix-alist))
+		  suffix-alist nil)))
+	(unless function
+	  (setq function (cdr (assq t kimport:mode-alist))))))
+    (funcall function import-from output-to children-flag)))
 
 (defun kimport:insert-buffer (buffer)
   "Insert after point the contents of BUFFER.
@@ -122,7 +123,7 @@ BUFFER may be a buffer or a buffer name."
   (kotl-mode:add-indent-to-region))
 
 ;;;###autoload
-(defun kimport:insert-file (import-from children-p)
+(defun kimport:insert-file (import-from children-flag)
   "Insert each element in IMPORT-FROM as a separate cell in the current view.
 Insert as sibling cells following the current cell unless prefix arg,
 CHILDREN-P is non-nil, then insert as the initial children of the current
@@ -139,7 +140,7 @@ importation is determined."
 	      "Buffer or file to insert as children of current cell: "
 	    "Buffer or file to insert as siblings of current cell: "))
 	 current-prefix-arg))
-  (kimport:file import-from (current-buffer) children-p))
+  (kimport:file import-from (current-buffer) children-flag))
 
 (defun kimport:insert-file-contents (filename)
   "Insert contents of file FILENAME into current cell after point.
@@ -178,7 +179,7 @@ Interactively, second arg is non-nil if prefix ARG is supplied."
 ;;;
 
 ;;;###autoload
-(defun kimport:aug-post-outline (import-from output-to &optional children-p)
+(defun kimport:aug-post-outline (import-from output-to &optional children-flag)
   "Insert Augment outline statements from IMPORT-FROM into koutline OUTPUT-TO.
 Displays and leaves point in OUTPUT-TO.  See documentation for
 `kimport:initialize' for valid values of IMPORT-FROM and OUTPUT-TO and for
@@ -195,16 +196,16 @@ on."
 	initially-empty-output no-renumber orig-point count total)
     ;; Don't change the order of import-from and output-to inits here.
     (setq import-from (kimport:copy-and-set-buffer import-from)
-	  output-to (kimport:initialize output-to)
+	  output-to (kimport:initialize output-to t)
 	  orig-point (point)
 	  initially-empty-output (zerop (- (point-max) (point-min)))
 	  no-renumber (or initially-empty-output
-			  (not (if children-p
+			  (not (if children-flag
 				   (kcell-view:child-p)
 				 (kcell-view:sibling-p)))))
 
-    (if (eq import-from output-to)
-	(error "(kimport:aug-post-outline): Import and output buffers may not be the same."))
+    (when (eq import-from output-to)
+      (error "(kimport:aug-post-outline): Import and output buffers may not be the same."))
 
     (set-buffer import-from)
     (outline-show-all)
@@ -212,31 +213,30 @@ on."
       (goto-char (point-min))
       ;; Total number of Augment statements.
       (setq total (count-matches " +\\([0-9][0-9a-z]*\\)\n\\(\n\\|\\'\\)"))
-      (if initially-empty-output
-	  nil
+      (unless initially-empty-output
 	;; Insert first cell as sibling of current cell.
 	(set-buffer output-to)
-	(if children-p
+	(if children-flag
 	    ;; Insert as children.
 	    (progn (setq klabel (klabel:child (kcell-view:label))
 			 output-level (klabel:level klabel))
 		   ;; Move to end of this cell since cell insertion will
 		   ;; occur at point.
 		   (goto-char (kcell-view:end)))
-	;; Insert as successors.
-	(setq klabel (klabel:increment (kcell-view:label))
-	      output-level (klabel:level klabel))
-	;; Move to start of line of next tree since cell insertion will occur
-	;; at point.
-	(goto-char (kotl-mode:tree-end))))
+	  ;; Insert as successors.
+	  (setq klabel (klabel:increment (kcell-view:label))
+		output-level (klabel:level klabel))
+	  ;; Move to start of line of next tree since cell insertion will occur
+	  ;; at point.
+	  (goto-char (kotl-mode:tree-end))))
       (setq count (kimport:aug-post-statements
 		   import-from output-to klabel output-level 1 0 total)))
     (pop-to-buffer output-to)
     (kfile:narrow-to-kcells)
-    (if no-renumber nil (klabel-type:update-labels klabel))
+    (unless no-renumber
+      (klabel-type:update-labels klabel))
     (goto-char orig-point)
-    (if (kotl-mode:buffer-empty-p)
-	nil
+    (unless (kotl-mode:buffer-empty-p)
       (kotl-mode:to-valid-position))
     (message "Imported %d of %d Augment statements." count total)))
 
@@ -245,7 +245,7 @@ on."
 ;;;
 
 ;;;###autoload
-(defun kimport:star-outline (import-from output-to &optional children-p)
+(defun kimport:star-outline (import-from output-to &optional children-flag)
   "Insert star outline nodes from IMPORT-FROM into koutline OUTPUT-TO.
 Display and leave point in OUTPUT-TO.  See documentation for
 `kimport:initialize' for valid values of IMPORT-FROM and
@@ -253,21 +253,25 @@ OUTPUT-TO and for an explanation of where imported cells are
 placed.
 
 \"* \" = level 1, \"** \" = level 2 in outline and so on."
-  (interactive "FImport from star delimited cells buffer/file: \nFBuffer/file to insert cells into: \nP")
+  (interactive "fImport from star delimited cells buffer/file: \nFBuffer/file to insert cells into: \nP")
+  (when (and buffer-file-name (directory-name-p import-from))
+    (setq import-from buffer-file-name))
+  (when (and buffer-file-name (directory-name-p output-to))
+    (setq output-to (concat (file-name-sans-extension buffer-file-name) ".kotl")))
   (let ((output-level 1) (klabel "1")
 	initially-empty-output no-renumber orig-point count total)
     ;; Don't change the order of import-from and output-to inits here.
     (setq import-from (kimport:copy-and-set-buffer import-from)
-	  output-to (kimport:initialize output-to)
+	  output-to (kimport:initialize output-to t)
 	  orig-point (point)
 	  initially-empty-output (zerop (- (point-max) (point-min)))
 	  no-renumber (or initially-empty-output
-			  (not (if children-p
+			  (not (if children-flag
 				   (kcell-view:child-p)
 				 (kcell-view:sibling-p)))))
 
-    (if (eq import-from output-to)
-	(error "(kimport:star-outline): Import and output buffers may not be the same."))
+    (when (eq import-from output-to)
+      (error "(kimport:star-outline): Import and output buffers may not be the same."))
 
     (set-buffer import-from)
     (outline-show-all)
@@ -276,35 +280,34 @@ placed.
       ;; If initial text in buffer is not a star outline node, add a star to
       ;; make it one, so it is not deleted from the import.
       (unless (looking-at kimport:star-heading)
-	  (insert "* "))
+	(insert "* "))
       (goto-char (point-min))
       ;; Total number of top-level cells.
       (setq total (count-matches (concat kimport:star-heading "[ \t\n\r]")))
-      (if initially-empty-output
-	  nil
+      (unless initially-empty-output
 	;; Insert first cell as sibling of current cell.
 	(set-buffer output-to)
-	(if children-p
+	(if children-flag
 	    ;; Insert as children.
 	    (progn (setq klabel (klabel:child (kcell-view:label))
 			 output-level (klabel:level klabel))
 		   ;; Move to end of this cell since cell insertion will
 		   ;; occur at point.
 		   (goto-char (kcell-view:end)))
-	;; Insert as successors.
-	(setq klabel (klabel:increment (kcell-view:label))
-	      output-level (klabel:level klabel))
-	;; Move to start of line of next tree since cell insertion will occur
-	;; at point.
-	(goto-char (kotl-mode:tree-end))))
+	  ;; Insert as successors.
+	  (setq klabel (klabel:increment (kcell-view:label))
+		output-level (klabel:level klabel))
+	  ;; Move to start of line of next tree since cell insertion will occur
+	  ;; at point.
+	  (goto-char (kotl-mode:tree-end))))
       (setq count (kimport:star-entries
 		   import-from output-to klabel output-level 1 0 total)))
     (pop-to-buffer output-to)
     (kfile:narrow-to-kcells)
-    (if no-renumber nil (klabel-type:update-labels klabel))
+    (unless no-renumber
+      (klabel-type:update-labels klabel))
     (goto-char orig-point)
-    (if (kotl-mode:buffer-empty-p)
-	nil
+    (unless (kotl-mode:buffer-empty-p)
       (kotl-mode:to-valid-position))
     (message "Imported %d of %d star outline trees." count total)))
 
@@ -313,31 +316,31 @@ placed.
 ;;;
 
 ;;;###autoload
-(defun kimport:text (import-from output-to &optional children-p)
+(defun kimport:text (import-from output-to &optional children-flag)
   "Insert text paragraphs from IMPORT-FROM into koutline OUTPUT-TO.
-Displays and leaves point in OUTPUT-TO.  See documentation for
-`kimport:initialize' for valid values of IMPORT-FROM and OUTPUT-TO and for
-an explanation of where imported cells are placed.
+Display and leave point in OUTPUT-TO.  See documentation for
+`kimport:initialize' for valid values of IMPORT-FROM and
+OUTPUT-TO and for an explanation of where imported cells are
+placed.
 
-Text paragraphs are imported as a sequence of same level cells.  Koutlines
-are imported with their structure intact.
-
-The variable, `paragraph-start,' is used to determine paragraphs."
+Import Koutlines with their structure intact.  Import text
+paragraphs as a sequence of same level cells.  The variable,
+`paragraph-start,' is used to determine paragraphs."
   (interactive "FImport from text/koutline buffer/file: \nFInsert cells into koutline buffer/file: \nP")
   (let ((klabel "1") (output-level 1) (count 0) initially-empty-output
 	no-renumber orig-point total)
     ;; Don't change the order of import-from and output-to inits here.
     (setq import-from (kimport:copy-and-set-buffer import-from)
-	  output-to (kimport:initialize output-to)
+	  output-to (kimport:initialize output-to t)
 	  orig-point (point)
 	  initially-empty-output (zerop (- (point-max) (point-min)))
 	  no-renumber (or initially-empty-output
-			  (not (if children-p
+			  (not (if children-flag
 				   (kcell-view:child-p)
 				 (kcell-view:sibling-p)))))
 
-    (if (eq import-from output-to)
-	(error "(kimport:text): Import and output buffers may not be the same."))
+    (when (eq import-from output-to)
+      (error "(kimport:text): Import and output buffers may not be the same."))
 
     (set-buffer import-from)
     (let ((kotl-import (eq major-mode 'kotl-mode))
@@ -347,7 +350,7 @@ The variable, `paragraph-start,' is used to determine paragraphs."
 	    nil
 	  ;; Insert first cell as sibling of current cell.
 	  (set-buffer output-to)
-	  (if children-p
+	  (if children-flag
 	      ;; Insert as children.
 	      (progn (setq klabel (klabel:child (kcell-view:label))
 			   output-level (klabel:level klabel))
@@ -384,7 +387,8 @@ The variable, `paragraph-start,' is used to determine paragraphs."
 					       output-level count total))))
       (pop-to-buffer output-to)
       (kfile:narrow-to-kcells)
-      (if no-renumber nil (klabel-type:update-labels klabel))
+      (unless no-renumber
+	(klabel-type:update-labels klabel))
       (goto-char orig-point)
       (if (kotl-mode:buffer-empty-p)
 	  nil
@@ -476,12 +480,12 @@ in IMPORT-FROM, used to show a running tally of the imported statements."
       ;;
       ;; Current buffer returns to `import-from' here.
       ;; Handle each sub-level through recursion.
-      (if subtree-p
-	  ;; Subtree exists so insert its cells.
-	  (setq count
-		(kimport:aug-post-statements
-		 import-from output-to child-label (1+ output-level)
-		 (1+ import-level) count total))))
+      (when subtree-p
+	;; Subtree exists so insert its cells.
+	(setq count
+	      (kimport:aug-post-statements
+	       import-from output-to child-label (1+ output-level)
+	       (1+ import-level) count total))))
     (goto-char start))
   count)
 
@@ -522,14 +526,18 @@ to import it."
       ;; Ensure buffer ends with a newline so that we don't miss the last
       ;; element during the import.
       (goto-char (point-max))
-      (if (not (eq (preceding-char) ?\n)) (insert "\n"))
+      (unless (eq (preceding-char) ?\n)
+	(insert "\n"))
       (set-buffer-modified-p nil)
       copy)))
 
-(defun kimport:initialize (output-to)
+(defun kimport:initialize (output-to &optional erase-flag)
   "Setup to import elements into koutline OUTPUT-TO.
 Return OUTPUT-TO buffer and set current buffer for the current command
 to OUTPUT-TO.
+
+With optional ERASE-FLAG non-nil, erase OUTPUT-TO before importing
+elements (don't append them).
 
 OUTPUT-TO may be a buffer, `buffer-name' or file name.  If OUTPUT-TO exists
 already, it must be a koutline or an error will be signaled.  For an existing
@@ -548,11 +556,11 @@ function and OUTPUT-TO contains at least one cell, then the imported cells
 will be added as children of the cell where this function leaves point
 \(either the current cell or for a newly read in outline, the last cell)."
   (let* ((output-existing-buffer-p
-	  (if output-to
-	     (or (get-buffer output-to) (get-file-buffer output-to))))
+	  (when output-to
+	    (or (get-buffer output-to) (get-file-buffer output-to))))
 	 (output-exists-p
-	  (if output-to
-	     (or output-existing-buffer-p (file-exists-p output-to))
+	  (when output-to
+	    (or output-existing-buffer-p (file-exists-p output-to))
 	   ;; current buffer will be used for output and it exists.
 	   t)))
     (setq output-to (if output-to
@@ -560,19 +568,18 @@ will be added as children of the cell where this function leaves point
 			    (find-file-noselect output-to))
 		      (current-buffer)))
     (set-buffer output-to)
-    (if output-exists-p
+    (if (and output-exists-p (not erase-flag))
 	(if (eq major-mode 'kotl-mode)
-	    (if (kotl-mode:buffer-empty-p)
-		nil
+	    (unless (kotl-mode:buffer-empty-p)
 	      ;; Make imported cells be appended if the output buffer was
 	      ;; just read in.
-	      (if output-existing-buffer-p nil (goto-char (point-max)))
+	      (unless output-existing-buffer-p
+		(goto-char (point-max)))
 	      (kotl-mode:to-valid-position))
 	  (error
 	   "(kimport:initialize): Second arg, %s, must be a koutline file."
 	   (buffer-name output-to)))
-      (if (eq major-mode 'kotl-mode)
-	  nil
+      (unless (eq major-mode 'kotl-mode)
 	(setq kview nil)
 	(kotl-mode))
       (delete-region (point-min) (point-max))))
@@ -608,13 +615,14 @@ in IMPORT-FROM, used to show a running tally of the imported cells."
       ;;
       ;; Current buffer returns to `import-from' here.
       ;; Handle each sub-level through recursion.
-      (if (and (setq again (kcell-view:next t)) subtree-p)
-	  ;; Subtree exists so insert its cells.
-	  (setq count
-		(kimport:kcells
-		 import-from output-to child-label (1+ output-level)
-		 (1+ import-level) count total)))
-      (if again nil (throw 'end count))))
+      (when (and (setq again (kcell-view:next t)) subtree-p)
+	;; Subtree exists so insert its cells.
+	(setq count
+	      (kimport:kcells
+	       import-from output-to child-label (1+ output-level)
+	       (1+ import-level) count total)))
+      (unless again
+	(throw 'end count))))
   count)
 
 (defun kimport:star-entries (import-from output-to klabel output-level
@@ -662,12 +670,12 @@ in IMPORT-FROM, used to show a running tally of the imported entries."
       (goto-char end)
       ;;
       ;; Handle each sub-level through recursion.
-      (if subtree-p
-	  ;; Subtree exists so insert its cells.
-	  (setq count
-		(kimport:star-entries import-from output-to child-label
-				      (1+ output-level) (1+ import-level)
-				      count total))))
+      (when subtree-p
+	;; Subtree exists so insert its cells.
+	(setq count
+	      (kimport:star-entries import-from output-to child-label
+				    (1+ output-level) (1+ import-level)
+				    count total))))
     (goto-char start))
   count)
 

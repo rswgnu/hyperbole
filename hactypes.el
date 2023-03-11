@@ -3,7 +3,9 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    23-Sep-91 at 20:34:36
-;; Last-Mod:     23-Jul-22 at 22:25:35 by Bob Weiner
+;; Last-Mod:      1-Mar-23 at 22:13:03 by Bob Weiner
+;;
+;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
 ;; Copyright (C) 1991-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -16,7 +18,7 @@
 ;;; Other required Elisp libraries
 ;;; ************************************************************************
 
-(eval-and-compile (mapc #'require '(bookmark hvar hsettings comint hbut hpath hargs hmail)))
+(eval-and-compile (mapc #'require '(bookmark hvar hsettings comint hbut hpath hargs hmail man)))
 
 ;;; ************************************************************************
 ;;; Public declarations
@@ -56,6 +58,7 @@ inserted, delete the completions window."
 (defact display-boolean (bool-expr)
   "Display a message showing the result value of a BOOL-EXPR.
 Return any non-nil value or t."
+  (interactive "xDisplay bool expr value: ")
   (let ((result (eval bool-expr t)))
     (message "Boolean result (%s) = %S; Expr: %S"
 	     (if result "True" "False") result bool-expr)
@@ -64,6 +67,7 @@ Return any non-nil value or t."
 (defact display-value (value)
   "Display a message showing VALUE (a symbol) and its value.
 Return any non-nil value or t."
+  (interactive "SDisplay symbol's value: ")
   (let ((result (eval value)))
     (message "%S" result)
     (or result t)))
@@ -71,6 +75,7 @@ Return any non-nil value or t."
 (defact display-variable (var)
   "Display a message showing VAR (a symbol) and its value.
 Return any non-nil value or t."
+  (interactive "vDisplay variable's value: ")
   (message "%s = %S" var (symbol-value var))
   (or (symbol-value var) t))
 
@@ -669,47 +674,52 @@ Uses `hpath:display-where' setting to control where the man page is displayed."
   (let ((Man-notify-method 'meek))
     (hpath:display-buffer (man topic))))
 
+(defact org-id-marker-display (marker)
+  "Display the Org entry, if any, at MARKER.
+See doc of `ibtypes::org-id' for usage."
+    (unless (markerp marker)
+      (error "(org-id-marker-display): Argument must be a marker, not %s" marker))
+    (org-mark-ring-push)
+    (hact #'link-to-buffer-tmp (marker-buffer marker) marker)
+    (move-marker marker nil)
+    (org-show-context))
+
 (defact rfc-toc (&optional buf-name opoint sections-start)
   "Compute and display summary of an Internet rfc in BUF-NAME.
 Assume point has already been moved to start of region to summarize.
-Optional OPOINT is point to return to in BUF-NAME after displaying summary."
+Optional OPOINT is point to return to in BUF-NAME after displaying
+summary; otherwise, point remains in the toc occurrence buffer.
+Optional SECTIONS-START limits toc entries to those after that point."
   (interactive)
-  (if buf-name
-      (cond ((get-buffer buf-name)
-	     (switch-to-buffer buf-name))
-	    ((let ((buf (get-file-buffer buf-name)))
-	       (when buf
-		 (switch-to-buffer (setq buf-name buf))
-		 t)))
-	    (t (if opoint (goto-char opoint))
-	       (hypb:error "(rfc-toc): Invalid buffer name: %s" buf-name))))
   (let ((sect-regexp "^[ \t]*[1-9][0-9]*\\.[0-9.]*[ \t]+[^ \t\n\r]")
-	(temp-buffer-show-function 'switch-to-buffer)
-	occur-buffer)
-    (hpath:display-buffer (current-buffer))
+	(rfc-buf-name (buffer-name))
+	(toc-buf-name (format "*toc %s*" buf-name)))
+    (when (get-buffer toc-buf-name)
+      (kill-buffer toc-buf-name))
     (occur sect-regexp nil (list (cons sections-start (point-max))))
-    (setq occur-buffer (set-buffer "*Occur*"))
-    (rename-buffer (format "*%s toc*" buf-name))
+    (select-window (get-buffer-window "*Occur*"))
+    (rename-buffer toc-buf-name)
     (re-search-forward "^[ ]*[0-9]+:" nil t)
     (beginning-of-line)
-    (delete-region (point-min) (point))
-    (insert "Contents of " (buffer-name occur-buffer) ":\n")
-    (set-buffer-modified-p nil)
-    (set-buffer buf-name)
-    (if opoint (goto-char opoint))))
+    (let ((inhibit-read-only t)
+	  (buffer-read-only))
+      (remove-text-properties (point-min) (point) '(read-only))
+      (delete-region (point-min) (point))
+      (insert "Sections of " rfc-buf-name ":\n")
+      (set-buffer-modified-p nil))
+    (when opoint
+      (select-buffer buf-name)
+      (goto-char opoint))))
 
 (defact text-toc (section)
   "Jump to the text file SECTION referenced by a table of contents entry at point."
   (interactive "sGo to section named: ")
-  (if (stringp section)
-      (progn
-	(actypes::link-to-regexp-match
-	 (concat "^\\*+[ \t]*" (regexp-quote section))
-	 1 (current-buffer) t)
-	(while (and (= (forward-line -1) 0)
-		    (looking-at "[ \t]*[-=][-=]")))
-	(forward-line 1)
-	(recenter 0))))
+  (when (stringp section)
+    (actypes::link-to-regexp-match section 2 (current-buffer) t))
+  (while (and (= (forward-line -1) 0)
+	      (looking-at "[ \t]*[-=][-=]")))
+  (forward-line 1)
+  (recenter 0))
 
 (provide 'hactypes)
 

@@ -163,10 +163,12 @@ https://elpa.gnu.org/devel/hyperbole.html.
 
 Then decompress and unpack the archive to a directory of your
 choosing.  Move into the "hyperbole/" directory and execute
-the following Posix shell command, "make bin", to
-byte-compile the Hyperbole lisp files.  Then add the following
-lines to your personal Emacs initialization file,
-"~/.emacs":
+the following Posix shell command:
+
+  make bin
+
+to byte-compile the Hyperbole lisp files.  Then add the following
+lines to your personal Emacs initialization file, "~/.emacs":
 
 (unless (and (featurep 'hyperbole) hyperbole-mode)
   (when (< emacs-major-version 27)

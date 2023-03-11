@@ -274,24 +274,23 @@ pspell-config(1)         - prints information about a libpspell installation
   will jump to its Lisp definition.  Use this if you want to see what each
   type can do.  <normal-mode> reverts to the standard mode.
 
-|-----------------------+------------------------+--------------------------|
-|                          Implicit Button Types                            |
-|-----------------------+------------------------+--------------------------|
-| action                | annot-bib              | completion               |
-| cscope                | ctags                  | debbugs-gnu-mode         |
-| debbugs-gnu-query     | debugger-source        | dir-summary              |
-| doc-id                | elink                  | elisp-compiler-msg       |
-| etags                 | function-in-buffer     | git-commit-reference     |
-| glink                 | gnus-push-button       | grep-msg                 |
-| hyp-address           | hyp-source             | id-cflow                 |
-| ilink                 | Info-node              | ipython-stack-frame      |
-| kbd-key               | klink                  | mail-address             |
-| man-apropos           | markdown-internal-link | org-mode                 |
-| patch-msg             | pathname               | pathname-line-and-column |
-| rfc                   | rfc-toc                | ripgrep-msg              |
-| social-reference      | texinfo-ref            | text-toc                 |
-| www-url               |                        |                          |
-|---------------------------------------------------------------------------|
+|------------------------+---------------------------+-----------------------|
+|                          Implicit Button Types                             |
+|------------------------+---------------------------+-----------------------|
+| action                 | annot-bib                 | completion            |
+| cscope                 | ctags                     | debbugs-gnu-mode      |
+| debbugs-gnu-query      | debugger-source           | dir-summary           |
+| doc-id                 | elink                     | elisp-compiler-msg    |
+| etags                  | git-commit-reference      | glink                 |
+| gnus-push-button       | grep-msg                  | hyp-address           |
+| hyp-source             | id-cflow                  | ilink                 |
+| Info-node              | ipython-stack-frame       | kbd-key               |
+| klink                  | mail-address              | man-apropos           |
+| markdown-internal-link | org-link-outside-org-mode | patch-msg             |
+| pathname               | pathname-line-and-column  | rfc                   |
+| rfc-toc                | ripgrep-msg               | social-reference      |
+| texinfo-ref            | text-toc                  | www-url               |
+|----------------------------------------------------------------------------|
 
 Implicit button types are stored in their own namespace, 'ibtypes::', so to
 see the doc on the 'pathname' ibtype, use {C-h f ibtypes::pathname RET}.  To
@@ -305,8 +304,8 @@ learn how to create new kinds of implicit button and action types, see:
   has two other categories of buttons:
 
     `Explicit buttons' are manually created and embedded within buffers and
-    explicitly assigned any of many action types that Hyperbole includes.
-    These contrast with implicit buttons which Hyperbole generates
+    explicitly assigned any of many action types that Hyperbole and Emacs
+    include.  These contrast with implicit buttons which Hyperbole generates
     automatically by recognizing text patterns in buffers.  Explicit buttons
     look like this: <(fake button)>.  They are quickly recognizable, yet
     relatively non-distracting as one scans the text in which they are
