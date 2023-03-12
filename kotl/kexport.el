@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    26-Feb-98
-;; Last-Mod:     12-Mar-23 at 11:51:29 by Mats Lidell
+;; Last-Mod:     12-Mar-23 at 11:59:49 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -181,6 +181,9 @@ body {
 </style>\n"
   "CSS that styles collapsible HTML-exported Koutline parent cells.")
 
+;; FIXME - Unused css. It needs to be updated with css settings from
+;; above and its use made configurable or is it just an experiment
+;; that we can remove from production code?
 (defconst kexport:font-awesome-css-include-with-menus
   "<style>
 
