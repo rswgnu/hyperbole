@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    23-Sep-91 at 20:34:36
-;; Last-Mod:      1-Mar-23 at 22:13:03 by Bob Weiner
+;; Last-Mod:     11-Mar-23 at 13:04:56 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -590,6 +590,25 @@ information on how to specify a mail reader to use."
 	(hypb:error "(link-to-mail): No msg `%s' in file \"%s\""
 		    mail-msg-id mail-file)))))
 
+(defact link-to-org-id (id)
+  "Display the Org entry, if any, for ID."
+  (when (stringp id)
+    (let (m
+	  (inhibit-message t)) ;; Inhibit org-id-find status msgs
+      (when (setq m (or (and (featurep 'org-roam) (org-roam-id-find id 'marker))
+			(org-id-find id 'marker)))
+	(hact #'link-to-org-id-marker m)))))
+
+(defact link-to-org-id-marker (marker)
+  "Display the Org entry, if any, at MARKER.
+See doc of `ibtypes::org-id' for usage."
+    (unless (markerp marker)
+      (error "(link-to-org-id-marker): Argument must be a marker, not %s" marker))
+    (org-mark-ring-push)
+    (hact #'link-to-buffer-tmp (marker-buffer marker) marker)
+    (move-marker marker nil)
+    (org-show-context))
+
 (defact link-to-regexp-match (regexp n source &optional buffer-p)
   "Find REGEXP's Nth occurrence in SOURCE and display location at window top.
 SOURCE is a pathname unless optional BUFFER-P is non-nil, then SOURCE must be
@@ -673,16 +692,6 @@ Uses `hpath:display-where' setting to control where the man page is displayed."
   (require 'man)
   (let ((Man-notify-method 'meek))
     (hpath:display-buffer (man topic))))
-
-(defact org-id-marker-display (marker)
-  "Display the Org entry, if any, at MARKER.
-See doc of `ibtypes::org-id' for usage."
-    (unless (markerp marker)
-      (error "(org-id-marker-display): Argument must be a marker, not %s" marker))
-    (org-mark-ring-push)
-    (hact #'link-to-buffer-tmp (marker-buffer marker) marker)
-    (move-marker marker nil)
-    (org-show-context))
 
 (defact rfc-toc (&optional buf-name opoint sections-start)
   "Compute and display summary of an Internet rfc in BUF-NAME.

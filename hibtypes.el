@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 20:45:31
-;; Last-Mod:      8-Mar-23 at 22:12:06 by Bob Weiner
+;; Last-Mod:     11-Mar-23 at 17:42:25 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -138,26 +138,33 @@ line and check for a source reference line again."
 (defib org-id ()
   "Display Org roam or Org node referenced by id at point, if any.
 If on the :ID: definition line, do nothing and return nil.
-If the id location is found, return non-nil."
+If the referenced location is found, return non-nil."
   (when (featurep 'org-id)
-    (let ((id (thing-at-point 'symbol t)) ;; Could be a uuid or some other form of id
-	  m)
+    (let* ((id (thing-at-point 'symbol t)) ;; Could be a uuid or some other form of id
+           (bounds (when id (bounds-of-thing-at-point 'symbol)))
+	   (start (when bounds (car bounds)))
+	   (end   (when bounds (cdr bounds)))
+	   m)
       ;; Ignore ID definitions or when not on a possible ID
-      (if (and (not assist-flag)
-	       (save-excursion (beginning-of-line)
-			       (re-search-forward ":\\(CUSTOM_\\)?ID:[ \t]+"
-						  (line-end-position) t)))
-	  (hact #'message "On ID definition; use {C-u M-RET} to copy a link to an ID.")
-	(when (and id
-		   (let ((inhibit-message t)) ;; Inhibit org-id-find status msgs
-		     (setq m (or (and (featurep 'org-roam) (org-roam-id-find id 'marker))
-				 (org-id-find id 'marker)))))
-	  (hact #'org-id-marker-display m))))))
+      (when id
+	(when (and start end)
+	  (ibut:label-set id start end))
+	(if (and (not assist-flag)
+		 (save-excursion (beginning-of-line)
+				 (re-search-forward ":\\(CUSTOM_\\)?ID:[ \t]+"
+						    (line-end-position) t)))
+	    (progn
+	      (hact #'message "On ID definition; use {C-u M-RET} to copy a link to an ID.")
+	      (hact #'identity id))
+	  (when (let ((inhibit-message t)) ;; Inhibit org-id-find status msgs
+		  (setq m (or (and (featurep 'org-roam) (org-roam-id-find id 'marker))
+			      (org-id-find id 'marker))))
+	    (hact #'link-to-org-id-marker m)))))))
 
 (defun org-id:help (hbut)
   "Copy link to kill ring of an Org roam or Org node referenced by id at point.
 If on the :ID: definition line, do nothing and return nil.
-If the id location is found, return non-nil."
+If the referenced location is found, return non-nil."
   (when (featurep 'org-id)
     (let ((id (thing-at-point 'symbol t)) ;; Could be a uuid or some other form of id
 	  m
@@ -1363,8 +1370,12 @@ Also make a \"(filename)itemname\" button display the associated Info index item
 Examples are \"(hyperbole)Implicit Buttons\" and ``(hyperbole)C-c /''.
 
 Activates only if point is within the first line of the Info-node name."
-  (let* ((node-ref-and-pos (or (hbut:label-p t "\"" "\"" t t)
+  (let* ((node-ref-and-pos (or ;; HTML
+			       (hbut:label-p t "&quot;" "&quot;" t t)
+			       ;; Embedded double quotes
 			       (hbut:label-p t "\\\"" "\\\"" t t)
+			       ;; Double quotes
+			       (hbut:label-p t "\"" "\"" t t)
                                ;; Typical GNU Info references; note
                                ;; these are special quote marks, not the
                                ;; standard ASCII characters.

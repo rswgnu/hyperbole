@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    18-Sep-91 at 02:57:09
-;; Last-Mod:     29-Jan-23 at 02:39:52 by Bob Weiner
+;; Last-Mod:     11-Mar-23 at 17:16:43 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1967,9 +1967,9 @@ and lbl-key properties of IBUT.  Return t if name is found, else nil."
 	move-flag
 	name
 	start)
-    (when (or (ibut:is-p ibut)
-	      (setq ibut (ibut:at-p)))
-      (setq start (hattr:get ibut 'lbl-start))
+    (when (and (or (ibut:is-p ibut)
+		   (setq ibut (ibut:at-p)))
+	       (setq start (hattr:get ibut 'lbl-start)))
       (goto-char start)
       (forward-line 0)
       (while (search-forward ibut:label-start start t)

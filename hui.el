@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 21:42:03
-;; Last-Mod:     20-Jan-23 at 23:16:41 by Mats Lidell
+;; Last-Mod:     11-Mar-23 at 15:38:26 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1522,9 +1522,14 @@ Buffer without File      link-to-buffer-tmp"
 		       (list 'link-to-ebut lbl-key))
 		      (hbut-sym
 		       (list 'link-to-ibut lbl-key (or buffer-file-name (buffer-name)))))
-		(cond ((and (require 'bookmark)
-                            (derived-mode-p #'bookmark-bmenu-mode))
-                       (list 'link-to-bookmark (bookmark-bmenu-bookmark))))
+		(when (and (featurep 'org-id) (derived-mode-p 'org-mode 'hyrolo-mode))
+		  (save-excursion
+		    (beginning-of-line)
+		    (when (looking-at "[ \t]*:ID:[ \t]+\\([^ \t\r\n\f]+\\)")
+		      (list 'link-to-org-id (match-string 1)))))
+		(and (require 'bookmark)
+                     (derived-mode-p #'bookmark-bmenu-mode)
+                     (list 'link-to-bookmark (bookmark-bmenu-bookmark)))
 		(cond ((derived-mode-p #'Info-mode)
 		       (if (and Info-current-node
 				(member Info-current-node
@@ -1571,7 +1576,7 @@ Buffer without File      link-to-buffer-tmp"
 		    (end-of-line)
 		    (let ((heading (buffer-substring-no-properties
 				    (point)
-				    (progn (beginning-of-line) (point))))
+				    (line-end-position)))
 			  (occur 1))
 		      (while (search-backward heading nil t)
 			(setq occur (1+ occur)))

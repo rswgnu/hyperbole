@@ -1,3 +1,21 @@
+2023-03-11  Bob Weiner  <rsw@gnu.org>
+
+* hibtypes.el (org-id): Set ibut label and return id when at id def so
+    can drag to direct link to an org id definition (or reference).
+
+* hbut.el (ibut:at-to-name-p): Fix to handle when 'start' of name is not
+    found.
+
+* hibtypes.el (org-id):
+  hactypes.el (org-id-marker-display): Rename to 'link-to-org-id-marker'.
+              (link-to-org-id): Add to jump to an org id referent location.
+  hui.el (hui:link-possible-types): Add 'link-to-org-id' support.
+
+* hpath.el (hpath:delimited-possible-path): Add support for HTML &quot;
+    quoting and embedded double quotes.
+  hibtypes.el (Info-node): Better handle embedded double quotes and add
+    support for HTML &quot; quoting.
+
 2023-03-10  Bob Weiner  <rsw@gnu.org>
 
 * hyrolo.el (hyrolo-find-file): Prevent 'outline-regexp' getting stuck
@@ -40,7 +58,7 @@
   hactypes.el (org-id-marker-display): Add to display Org Roam and Org
    ID referents.  Set this context to one of the lowest priorities.
 
-* hui-mouse.el (smart-outline, smart-outline-
+* hui-mouse.el (smart-outline, smart-outline-assist):
   man/hyperbole.texi (Smart Key - Emacs Outline Mode): Remove calling
     of eol functions when not at the end of line, e.g. when on a
     non-heading line.  This was just too unexpected a behavior in
