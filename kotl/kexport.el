@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    26-Feb-98
-;; Last-Mod:     12-Mar-23 at 11:04:35 by Mats Lidell
+;; Last-Mod:     12-Mar-23 at 11:27:48 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -129,10 +129,6 @@ Font Awesome Free is free and GPL friendly.")
 (defconst kexport:font-awesome-css-include
   "<style>
 
-button {
- display: inline;
-}
-
 span.nobreak {
   white-space: nowrap;
 }
@@ -145,8 +141,7 @@ li {
  list-style-type: none;
 }
 
-ul, tr {
-  vertical-align: text-bottom;
+ul {
   margin-top: 0px;
   margin-bottom: 0px;
   padding-left: 30px;
@@ -167,7 +162,6 @@ ul, tr {
   background-color: inherit;
   cursor: pointer;
   display: block;
-  font-size: 12px;
   outline: inherit;
 }
 
@@ -185,10 +179,7 @@ ul, tr {
 
 .label {
   display: block;
-  font-size: 12px;
   color: #C100C1;
-  margin-top: 0px;
-  margin-bottom: 0px;
 }
 
 h1, pre {
