@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    26-Feb-98
-;; Last-Mod:     12-Mar-23 at 00:18:27 by Mats Lidell
+;; Last-Mod:     12-Mar-23 at 11:04:35 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -146,23 +146,23 @@ li {
 }
 
 ul, tr {
-  margin: 0px;
   vertical-align: text-bottom;
+  margin-top: 0px;
+  margin-bottom: 0px;
+  padding-left: 30px;
 }
 
 .tdone {
-  margin: 0px;
   vertical-align: text-bottom;
   width: 1%;
 }
 
 .tdtwo {
-  margin: 0px;
   vertical-align: text-bottom;
   width: 2%;
 }
 
-.collapsible {
+.btn {
   all: unset;
   background-color: inherit;
   cursor: pointer;
@@ -171,7 +171,7 @@ ul, tr {
   outline: inherit;
 }
 
-.collapsible:hover {
+.btn:hover {
   background-color: #FAFAD2;
   font-size: 12px;
 }
@@ -179,12 +179,21 @@ ul, tr {
 .content {
   display: block;
   font-size: 12px;
+  margin-top: 0px;
+  margin-bottom: 0px;
 }
 
 .label {
   display: block;
-  font-size: 16px;
+  font-size: 12px;
   color: #C100C1;
+  margin-top: 0px;
+  margin-bottom: 0px;
+}
+
+h1, pre {
+  margin-top: 0px;
+  margin-bottom: 0px;
 }
 
 body {
