@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    26-Feb-98
-;; Last-Mod:     12-Mar-23 at 11:44:31 by Mats Lidell
+;; Last-Mod:     12-Mar-23 at 11:51:29 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -57,11 +57,6 @@ If nil, use no keywords."
 		 (string))
   :group 'hyperbole-koutliner)
 
-(defcustom kexport:label-html-font-attributes
-  "COLOR=\"#C100C1\" SIZE=\"-1\""
-  "*String of HTML font attributes attached to kcell labels when exported."
-  :type 'string
-  :group 'hyperbole-koutliner)
 
 (defvar kexport:kcell-reference-regexp
   "[0-9a-zA-Z][.0-9a-zA-Z]*=\\([.0-9a-zA-Z]+\\)")

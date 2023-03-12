@@ -1,4 +1,7 @@
-2023-03-11  Mats Lidell  <matsl@gnu.org>
+2023-03-12  Mats Lidell  <matsl@gnu.org>
+
+* kotl/kexport.el (kexport:label-html-font-attributes): Don't use font
+    attributes in HTML export.
 
 * kotl/kexport.el (kexport:princ-cell): Export contents from a cell.
 
