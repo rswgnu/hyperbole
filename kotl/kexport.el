@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    26-Feb-98
-;; Last-Mod:     12-Mar-23 at 11:27:48 by Mats Lidell
+;; Last-Mod:     12-Mar-23 at 11:44:31 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -42,14 +42,6 @@
 
 (defvar kexport:output-filename nil
   "This is automatically set to the full pathname of the exported file.")
-
-;; FIXME - set in css
-(defcustom kexport:html-body-attributes
-  "BGCOLOR=\"#FFFFFF\"" ;; white background
-  "*String of HTML attributes attached to the <BODY> tag.
-Part of an HTML exported koutline file."
-  :type 'string
-  :group 'hyperbole-koutliner)
 
 (defcustom kexport:html-description
   "Created by Hyperbole's outliner.\nSee &quot;(hyperbole)Koutliner&quot; for more information."
@@ -468,9 +460,7 @@ used.  Also converts Urls and Klinks into Html hyperlinks.
         (princ "<head>\n")
         (princ (format "<title>%s</title>\n" title))
 
-        ;;; FIXME make configurable or dynamic - use originating kotl buffer encoding!?
         (princ "<meta charset=\"utf-8\">\n\n")
-
 	(if kexport:html-description
 	    (princ (format "<meta name=\"description\" content=\"%s\">\n"
 			   kexport:html-description)))
@@ -548,7 +538,6 @@ used.  Also converts Urls and Klinks into Html hyperlinks.
             (concat
 	     (when (string-match "\\`\\([-_$%#@~^&*=+|/A-Za-z0-9 ]+\\):.*\\S-" cnt1)
 	       (format "<div id=\"%s\"></div>"
-                       ;; FIXME: No whitespace in ids - can be done better!?
                        (replace-regexp-in-string "[ \t]" "_" (substring cnt1 0 (match-end 1)))))
 	     (let ((cnt2 (kexport:html-markup cnt1)))
 	       (if soft-newlines-flag
