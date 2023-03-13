@@ -7,7 +7,7 @@
 @c Author:       Bob Weiner
 @c
 @c Orig-Date:     6-Nov-91 at 11:18:03
-@c Last-Mod:      7-Mar-23 at 22:08:27 by Bob Weiner
+@c Last-Mod:     12-Mar-23 at 20:46:34 by Bob Weiner
 
 @c %**start of header (This is for running Texinfo on a region.)
 @setfilename hyperbole.info
@@ -3359,6 +3359,7 @@ upon the referent context in which the Action Key is released.
 @example
 Referent Context         Link Type
 ----------------------------------------------------
+Org Roam or Org Id       link-to-org-id
 Global Button            link-to-gbut
 Explicit Button          link-to-ebut
 Implicit Button          link-to-ibut
@@ -7015,6 +7016,12 @@ if any emacs-related terms are unfamiliar to you.
 
 @table @b
 
+@item Ace Window
+Emacs extension package that labels windows with letters and allows
+quick selection or other operations on a specific window.  Hyperbole
+extends this with a number of additional commands like throw a buffer
+to a window or replace a windows's contents.  @xref{Keyboard Drags}.
+
 @item Action
 An executable behavior associated with a Hyperbole button.  @dfn{Links}
 are a specific class of actions which display existing entities, such as
@@ -7153,6 +7160,14 @@ level deeper than the parent.
 A group of functions and variables with the same prefix in their names,
 used to provide an interface to an internal or external Hyperbole
 abstraction.
+
+@cindex consult package
+@cindex consult-org-roam package
+@item Consult
+An Emacs extension package that provides asynchronous search and narrow
+wrappers around common search commands like grep, ripgrep, find and locate.
+Hyperbole optionally utilizes this to search the HyRolo.  Use the
+@code{consult-org-roam} package to search Org Roam notes similarly.
 
 @item Context
 A programmatic or positional state recognized by Hyperbole.
@@ -7400,6 +7415,21 @@ Smalltalk.
 Hyperbole provides the mouse support for the OO-Browser, providing Smart
 Keys that utilize the OO-Browser's capabilities both when it is displayed
 on screen and when editing code.
+
+@item Org Mode
+A built-in Emacs mode for outlining, note taking and scientific
+publishing.  Hyperbole simplifies access to a number of its features
+and integrates its own hypermedia capabilities with those of Org mode.
+Hyperbole can display the referent of any Org Id.
+@xref{Smart Key - Org Mode}.
+
+@cindex org-roam package
+@item Org Roam
+An Emacs extension package that inserts ids into Org mode files and
+indexes them within a Sqlite database for rapid note taking and lookup
+by title.  Hyperbole can display the referent of any Org Roam Id and
+provides full-text searching of Org Roam nodes utilzing the interactive
+grep commands from the Consult extension package.
 
 @item Outline
 See @b{Koutline}.
@@ -9482,7 +9512,7 @@ When in an Org mode context and @code{hsys-org-enable-smart-keys} is non-nil:
 @noindent
 Org links may be used outside of Org mode buffers.  Such links are
 handled by the separate implicit button type, @code{org-link-outside-org-mode}.
-Org and Org Roam IDs may be activated as hyperbuttons outside of Org mode buffers.
+Org Roam and Org IDs may be activated as hyperbuttons outside of Org mode buffers.
 They are handled by the separate implicit button type, @code{org-id}.
 
 @node Smart Key - Ivy, Smart Key - Treemacs, Smart Key - Org Mode, Smart Keyboard Keys

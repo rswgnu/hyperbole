@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 20:45:31
-;; Last-Mod:     11-Mar-23 at 17:42:25 by Bob Weiner
+;; Last-Mod:     12-Mar-23 at 21:41:30 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -137,7 +137,7 @@ line and check for a source reference line again."
 
 (defib org-id ()
   "Display Org roam or Org node referenced by id at point, if any.
-If on the :ID: definition line, do nothing and return nil.
+If on the :ID: definition line, display a message about how to copy the id.
 If the referenced location is found, return non-nil."
   (when (featurep 'org-id)
     (let* ((id (thing-at-point 'symbol t)) ;; Could be a uuid or some other form of id
@@ -153,9 +153,7 @@ If the referenced location is found, return non-nil."
 		 (save-excursion (beginning-of-line)
 				 (re-search-forward ":\\(CUSTOM_\\)?ID:[ \t]+"
 						    (line-end-position) t)))
-	    (progn
-	      (hact #'message "On ID definition; use {C-u M-RET} to copy a link to an ID.")
-	      (hact #'identity id))
+	    (hact #'message "On ID definition; use {C-u M-RET} to copy a link to an ID.")
 	  (when (let ((inhibit-message t)) ;; Inhibit org-id-find status msgs
 		  (setq m (or (and (featurep 'org-roam) (org-roam-id-find id 'marker))
 			      (org-id-find id 'marker))))

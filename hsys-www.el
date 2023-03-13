@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     7-Apr-94 at 17:17:39 by Bob Weiner
-;; Last-Mod:     11-May-22 at 00:01:48 by Bob Weiner
+;; Last-Mod:     12-Mar-23 at 15:12:24 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -117,7 +117,7 @@ is used.  Valid values of this variable include `browse-url-default-browser' and
 
 ;;;###autoload
 (defun www-url-expand-file-name (path &optional dir)
-  "Expand and return  non-url and non-remote PATH in DIR.
+  "Expand and return non-url and non-remote PATH in DIR.
 Return http urls unchanged.  Normalize remote paths."
   (when (listp path)
     (setq path (car path)

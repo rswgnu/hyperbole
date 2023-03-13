@@ -1,3 +1,17 @@
+2023-03-12  Bob Weiner  <rsw@gnu.org>
+
+* hyrolo.el (hyrolo-get-consult-version): Add.
+            (require 'package): Add.
+            (hyrolo-consult-grep): Add optional parameters to specify
+    initial regexp and max-matches per file.  Also ensure necessary
+    version of consult package is installed.  Update doc.
+
+* man/hyperbole.texi (By Dragging): Add doc for link-to-org-id.
+                     (Glossary): Add Ace Window, Consult, Org Mode,
+    and Org Roam entries.
+  hui.el (hui:link-possible-types): If an Org ID, use it exclusively
+    and handle IDs in any mode.
+
 2023-03-12  Mats Lidell  <matsl@gnu.org>
 
 * kotl/kexport.el (kexport:label-html-font-attributes): Don't use font

@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 21:42:03
-;; Last-Mod:     11-Mar-23 at 15:38:26 by Bob Weiner
+;; Last-Mod:     12-Mar-23 at 20:46:57 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1491,6 +1491,7 @@ possible types.
 
 Referent Context         Possible Link Type Returned
 ----------------------------------------------------
+Org Roam or Org Id       link-to-org-id
 Global Button            link-to-gbut
 Explicit Button          link-to-ebut
 Implicit Button          link-to-ibut
@@ -1512,91 +1513,103 @@ Buffer without File      link-to-buffer-tmp"
 	hbut-sym
 	lbl-key)
     (delq nil
-	  (list (cond ((and (prog1 (setq hbut-sym (hbut:at-p))
-			      ;; Next line forces use of any ibut name in the link.
-			      (save-excursion (ibut:at-to-name-p hbut-sym)))
-			    (setq lbl-key (hattr:get hbut-sym 'lbl-key))
-			    (eq (current-buffer) (get-file-buffer (gbut:file))))
-		       (list 'link-to-gbut lbl-key))
-		      ((and hbut-sym (eq (hattr:get hbut-sym 'categ) 'explicit))
-		       (list 'link-to-ebut lbl-key))
-		      (hbut-sym
-		       (list 'link-to-ibut lbl-key (or buffer-file-name (buffer-name)))))
-		(when (and (featurep 'org-id) (derived-mode-p 'org-mode 'hyrolo-mode))
-		  (save-excursion
-		    (beginning-of-line)
-		    (when (looking-at "[ \t]*:ID:[ \t]+\\([^ \t\r\n\f]+\\)")
-		      (list 'link-to-org-id (match-string 1)))))
-		(and (require 'bookmark)
-                     (derived-mode-p #'bookmark-bmenu-mode)
-                     (list 'link-to-bookmark (bookmark-bmenu-bookmark)))
-		(cond ((derived-mode-p #'Info-mode)
-		       (if (and Info-current-node
-				(member Info-current-node
-					(Info-index-nodes Info-current-file))
-				(Info-menu-item-at-p))
-			   (let ((hargs:reading-type 'Info-index-item))
-			     (list 'link-to-Info-index-item (hargs:at-p)))
-			 (let ((hargs:reading-type 'Info-node))
-			   (list 'link-to-Info-node (hargs:at-p)))))
-                      ((derived-mode-p #'texinfo-mode)
-                       (let (node)
-                         (save-excursion
-                           (beginning-of-line)
-                           (when (and (not (looking-at "@node "))
-                                      (not (re-search-backward "^@node " nil t)))
-                             (hypb:error "(hui:link-possible-types): Not within a texinfo node"))
-			   (require 'texnfo-upd)
-                           (setq node (texinfo-copy-node-name)))
-                         (list 'link-to-texinfo-node buffer-file-name node)))
-		      ((hmail:reader-p)
-		       (list 'link-to-mail
-			     (list (rmail:msg-id-get) buffer-file-name))))
-		(cond
-		 ((let ((hargs:reading-type 'directory))
-		    (setq val (hargs:at-p t)))
-		  (list 'link-to-directory val))
-		 ((let ((hargs:reading-type 'file))
-		    (setq val (hargs:at-p t)))
-		  (list 'link-to-file val (point)))
-		 ((derived-mode-p #'kotl-mode)
-		  (list 'link-to-kcell buffer-file-name (kcell-view:idstamp)))
-		 ;; If link is within an outline-regexp prefix, use
-		 ;; a link-to-string-match.
-		 ((and (boundp 'outline-regexp)
-		       (stringp outline-regexp)
-		       (save-excursion
-			 (<= (point)
-			     (progn
-			       (beginning-of-line)
-			       (if (looking-at outline-regexp)
-				   (match-end 0)
-				 0)))))
-		  (save-excursion
-		    (end-of-line)
-		    (let ((heading (buffer-substring-no-properties
-				    (point)
-				    (line-end-position)))
-			  (occur 1))
-		      (while (search-backward heading nil t)
-			(setq occur (1+ occur)))
-		      (list 'link-to-string-match
-			    heading occur buffer-file-name))))
-		 (buffer-file-name
-		  (list 'link-to-file buffer-file-name (point)))
-		 (t (list 'link-to-buffer-tmp (buffer-name))))
-		;;
-		;; Deleted link to elisp possibility as it can embed
-		;; long elisp functions in the button data file and
-		;; possibly not parse them correctly.
-		;;
-		;; (and (fboundp 'smart-emacs-lisp-mode-p)
-		;;      (smart-emacs-lisp-mode-p)
-		;;      (or (eq (char-syntax (following-char)) ?\()
-		;; 	 (eq (char-syntax (preceding-char)) ?\)))
-		;;      (setq val (hargs:sexpression-p))
-		;;      (list 'eval-elisp val))
-		))))
+	  (list (cond ((and (featurep 'org-id)
+			    (cond ((save-excursion
+				     (beginning-of-line)
+				     (when (looking-at "[ \t]*:ID:[ \t]+\\([^ \t\r\n\f]+\\)")
+				       ;; Org ID definition
+				       (list 'link-to-org-id (match-string 1)))))
+				  (t (let* ((id (thing-at-point 'symbol t)) ;; Could be a uuid or some other form of id
+					    (bounds (when id (bounds-of-thing-at-point 'symbol)))
+					    (start (when bounds (car bounds)))
+					    (case-fold-search t))
+				       ;; Org ID link - must have id: prefix or is ignored.
+				       (when start
+					 (save-excursion
+					   (goto-char (max (- start 3) (point-min)))
+					   (when (looking-at "\\bid:")
+					     (list 'link-to-org-id id)))))))))
+
+		      (t (cond ((and (prog1 (setq hbut-sym (hbut:at-p))
+				       ;; Next line forces use of any ibut name in the link.
+				       (save-excursion (ibut:at-to-name-p hbut-sym)))
+				     (setq lbl-key (hattr:get hbut-sym 'lbl-key))
+				     (eq (current-buffer) (get-file-buffer (gbut:file))))
+				(list 'link-to-gbut lbl-key))
+			       ((and hbut-sym (eq (hattr:get hbut-sym 'categ) 'explicit))
+				(list 'link-to-ebut lbl-key))
+			       (hbut-sym
+				(list 'link-to-ibut lbl-key (or buffer-file-name (buffer-name))))
+			       ((and (require 'bookmark)
+				     (derived-mode-p 'bookmark-bmenu-mode)
+				     (list 'link-to-bookmark (bookmark-bmenu-bookmark))))
+			       ((cond ((derived-mode-p 'Info-mode)
+				       (if (and Info-current-node
+						(member Info-current-node
+							(Info-index-nodes Info-current-file))
+						(Info-menu-item-at-p))
+					   (let ((hargs:reading-type 'Info-index-item))
+					     (list 'link-to-Info-index-item (hargs:at-p)))
+					 (let ((hargs:reading-type 'Info-node))
+					   (list 'link-to-Info-node (hargs:at-p)))))
+				      ((derived-mode-p #'texinfo-mode)
+				       (let (node)
+					 (save-excursion
+					   (beginning-of-line)
+					   (when (and (not (looking-at "@node "))
+						      (not (re-search-backward "^@node " nil t)))
+					     (hypb:error "(hui:link-possible-types): Not within a texinfo node"))
+					   (require 'texnfo-upd)
+					   (setq node (texinfo-copy-node-name)))
+					 (list 'link-to-texinfo-node buffer-file-name node)))
+				      ((hmail:reader-p)
+				       (list 'link-to-mail
+					     (list (rmail:msg-id-get) buffer-file-name)))))
+			       (t (cond
+				   ((let ((hargs:reading-type 'directory))
+				      (setq val (hargs:at-p t)))
+				    (list 'link-to-directory val))
+				   ((let ((hargs:reading-type 'file))
+				      (setq val (hargs:at-p t)))
+				    (list 'link-to-file val (point)))
+				   ((derived-mode-p #'kotl-mode)
+				    (list 'link-to-kcell buffer-file-name (kcell-view:idstamp)))
+				   ;; If link is within an outline-regexp prefix, use
+				   ;; a link-to-string-match.
+				   ((and (boundp 'outline-regexp)
+					 (stringp outline-regexp)
+					 (save-excursion
+					   (<= (point)
+					       (progn
+						 (beginning-of-line)
+						 (if (looking-at outline-regexp)
+						     (match-end 0)
+						   0)))))
+				    (save-excursion
+				      (end-of-line)
+				      (let ((heading (buffer-substring-no-properties
+						      (point)
+						      (line-end-position)))
+					    (occur 1))
+					(while (search-backward heading nil t)
+					  (setq occur (1+ occur)))
+					(list 'link-to-string-match
+					      heading occur buffer-file-name))))
+				   (buffer-file-name
+				    (list 'link-to-file buffer-file-name (point)))
+				   (t (list 'link-to-buffer-tmp (buffer-name)))))
+			       ;;
+			       ;; Deleted link to elisp possibility as it can embed
+			       ;; long elisp functions in the button data file and
+			       ;; possibly not parse them correctly.
+			       ;;
+			       ;; (and (fboundp 'smart-emacs-lisp-mode-p)
+			       ;;      (smart-emacs-lisp-mode-p)
+			       ;;      (or (eq (char-syntax (following-char)) ?\()
+			       ;; 	 (eq (char-syntax (preceding-char)) ?\)))
+			       ;;      (setq val (hargs:sexpression-p))
+			       ;;      (list 'eval-elisp val))
+			       )))))))
 
 (defun hui:list-remove-text-properties (lst)
   "Return LST, a list, with text properties removed from any string elements."

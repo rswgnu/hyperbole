@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     7-Jun-89 at 22:08:29
-;; Last-Mod:     11-Mar-23 at 01:33:01 by Bob Weiner
+;; Last-Mod:     12-Mar-23 at 17:40:43 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -30,6 +30,7 @@
 (require 'custom) ;; For defface.
 (require 'hversion)
 (require 'hmail)
+(require 'package)
 (require 'set)
 (require 'sort)
 (require 'xml)
@@ -40,11 +41,15 @@
   (unless (require 'bbdb nil t)
     (defvar bbdb-file nil))
   (unless (require 'google-contacts nil t)
-    (defvar google-contacts-buffer-name nil)))
+    (defvar google-contacts-buffer-name nil))
+  (require 'kview nil t))
 
 ;;; ************************************************************************
 ;;; Public declarations
 ;;; ************************************************************************
+(defvar consult-grep-args)
+(defvar consult-ripgrep-args)
+(defvar helm-org-rifle-show-full-contents)
 (defvar helm-org-rifle-show-level-stars)
 (defvar markdown-regex-header)
 (defvar org-roam-directory)
@@ -1241,22 +1246,6 @@ otherwise just use the cdr of the item."
 ;;; ************************************************************************
 
 ;;;###autoload
-(defun hyrolo-consult-grep ()
-  "Search with a consult package grep command.
-Use ripgrep (rg) if found, otherwise, plain grep.
-Interactively show all matches from `hyrolo-file-list'.
-Prompt for the search pattern."
-  (interactive)
-  (unless (package-installed-p 'consult)
-    (package-install 'consult))
-  (require 'consult)
-  (let ((files (seq-filter #'file-readable-p hyrolo-file-list))
-	(grep-func (cond ((executable-find "rg")
-			  #'consult-ripgrep)
-			 (t #'consult-grep))))
-    (funcall grep-func files)))
-
-;;;###autoload
 (defun hyrolo-helm-org-rifle (&optional context-only-flag)
   "Search with helm and interactively show all matches from `hyrolo-file-list'.
 Prompt for the search pattern.
@@ -1359,6 +1348,42 @@ returned to the number given."
 Stop at the first and last subheadings of a superior heading."
   (interactive "p")
   (hyrolo-move-backward #'outline-backward-same-level arg))
+
+;;;###autoload
+(defun hyrolo-consult-grep (&optional regexp max-matches)
+  "Interactively search `hyrolo-file-list' with a consult package grep command.
+Use ripgrep (rg) if found, otherwise, plain grep.  Interactively
+show all matches from `hyrolo-file-list'.  Initialize search with
+optional REGEXP and interactively prompt for changes.  Limit matches
+per file to the absolute value of MAX-MATCHES if given."
+  (interactive "i\nP")
+  (unless (package-installed-p 'consult)
+    (package-install 'consult))
+  (require 'consult)
+  (let ((consult-version (hyrolo-get-consult-version)))
+    ;; Multi-file support added after consult version "0.32"
+    (when (not (and consult-version (string-greaterp consult-version "0.32")))
+      (error "(hyrolo-consult-grep): consult package version is %s; update required"
+	     consult-version)))
+  (let ((files (seq-filter #'file-readable-p hyrolo-file-list))
+	(consult-grep-args (if (integerp max-matches)
+			       (if (listp consult-grep-args)
+				   (append consult-grep-args
+					   (list (format "-m %d" (abs max-matches))))
+				 (concat consult-grep-args
+					 (format " -m %d" (abs max-matches))))
+			     consult-grep-args))
+	(consult-ripgrep-args (if (integerp max-matches)
+				  (if (listp consult-ripgrep-args)
+				      (append consult-ripgrep-args
+					      (list (format "-m %d" (abs max-matches))))
+				    (concat consult-ripgrep-args
+					    (format " -m %d" (abs max-matches))))
+				consult-ripgrep-args))
+	(grep-func (cond ((executable-find "rg")
+			  #'consult-ripgrep)
+			 (t #'consult-grep))))
+    (funcall grep-func files regexp)))
 
 ;;;###autoload
 (defun hyrolo-fgrep-directories (file-regexp &rest dirs)
@@ -1744,6 +1769,17 @@ HYROLO-BUF may be a file-name, `buffer-name', or buffer."
     (concat (substring name-str (match-beginning last) (match-end last))
 	    ", "
 	    (substring name-str (match-beginning first) (match-end first)))))
+
+(defun hyrolo-get-consult-version ()
+  "Return the string version of the installed consult package or nil."
+  (let* ((consult-file (find-library-name "consult"))
+	 (buffer-existed (get-file-buffer consult-file))
+	 (buffer-modified (when buffer-existed (buffer-modified-p buffer-existed)))
+	 (buf (or buffer-existed (find-file-noselect consult-file))))
+    (with-current-buffer buf
+      (prog1 (package-get-version)
+	(unless buffer-modified
+	  (kill-buffer buf))))))
 
 (defun hyrolo-highlight-matches (regexp start _end)
   "Highlight matches for REGEXP in region from START to END."
