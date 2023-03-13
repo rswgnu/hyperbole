@@ -3,11 +3,11 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    30-Jan-21 at 12:00:00
-;; Last-Mod:      1-Jan-23 at 22:36:28 by Mats Lidell
+;; Last-Mod:     13-Mar-23 at 19:22:30 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
-;; Copyright (C) 2021-2022  Free Software Foundation, Inc.
+;; Copyright (C) 2021-2023  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
 ;;
 ;; This file is part of GNU Hyperbole.
@@ -22,8 +22,14 @@
 (require 'with-simulated-input)
 (require 'el-mock)
 (require 'hy-test-helpers "test/hy-test-helpers")
+(require 'hibtypes)
 (require 'hib-kbd)
 (require 'hui)
+(require 'hact)
+;; Remove klink actype and reload below to ensure klink priority is
+;; higher than pathname (won't be if loaded before hibtypes).
+(ibtype:delete 'klink)
+(load "klink")
 
 (declare-function hy-test-helpers:consume-input-events "hy-test-helpers")
 
@@ -446,8 +452,9 @@ Ensure modifying the button but keeping the label does not create a double label
         (progn
           (find-file kotl-file)
           (klink:create "1")
-          (kotl-mode:beginning-of-cell)
+	  (save-buffer)
 
+          (kotl-mode:beginning-of-cell)
           (forward-char 1)
           (with-mock
             (mock (register-read-with-preview  "Copy to register: ") => ?a)

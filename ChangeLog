@@ -1,3 +1,9 @@
+2023-03-13  Bob Weiner  <rsw@gnu.org>
+
+* test/hui-tests.el (require 'hibtypes 'klink): Force defib loads so
+    klinks have a higher priority than pathname links and tests always
+    pass.
+
 2023-03-12  Bob Weiner  <rsw@gnu.org>
 
 * hmouse-drv.el (action-mouse-key, assist-mouse-key, hmouse-release,
