@@ -1,5 +1,11 @@
 2023-03-12  Bob Weiner  <rsw@gnu.org>
 
+* hmouse-drv.el (action-mouse-key, assist-mouse-key, hmouse-release,
+                 hmouse-function): Add 'hmouse-release' and separate
+    from hmouse-function so release args are set in all cases of
+    release.  Should fix issue where 'hmouse-drag-outside-all-windows'
+    triggers when simply pressing the Action Key without any mouse press.
+
 * hyrolo.el (hyrolo-get-consult-version): Add.
             (require 'package): Add.
             (hyrolo-consult-grep): Add optional parameters to specify
