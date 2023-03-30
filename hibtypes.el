@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 20:45:31
-;; Last-Mod:     12-Mar-23 at 21:41:30 by Bob Weiner
+;; Last-Mod:     27-Mar-23 at 23:35:16 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1538,7 +1538,7 @@ arg1 ... argN '>'.  For example, <mail nil \"user@somewhere.org\">."
                        action `(display-value ',action)
                        actype #'display-value))))
 
-	;; Create implicit button structure
+	;; Create implicit button object and store in symbol hbut:current.
 	(ibut:create :lbl-key lbl-key :lbl-start start-pos :lbl-end end-pos
 		     :categ 'ibtypes::action :actype actype :args args :action action)
 

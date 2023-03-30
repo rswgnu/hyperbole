@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Aug-92
-;; Last-Mod:      7-Oct-22 at 00:17:10 by Mats Lidell
+;; Last-Mod:     16-Mar-23 at 22:25:03 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -90,11 +90,11 @@
     (((background dark)) (:background "red" :foreground "black"))
     (((min-colors 88)) (:foreground "salmon4"))
     (t (:background "red")))
-  "Face for hyperbole buttons."
+  "Face for explicit Hyperbole buttons."
   :group 'hyperbole-buttons)
 
 (defcustom hproperty:but-face 'hbut-face
-  "Hyperbole face for hyper-buttons."
+  "Hyperbole face for explicit buttons."
   :type 'face
   :initialize #'custom-initialize-default
   :group 'hyperbole-buttons)
@@ -111,11 +111,25 @@
     (((class color) (min-colors 8))
      :background "yellow" :foreground "black")
     (t :inverse-video t))
-  "Face for hyperbole buttons."
+  "Face for Hyperbole list buttons."
   :group 'hyperbole-buttons)
 
 (defcustom hproperty:item-face 'hbut-item-face
-  "Hyperbole face for hyper-buttons."
+  "Hyperbole face for list hyper-buttons."
+  :type 'face
+  :initialize #'custom-initialize-default
+  :group 'hyperbole-buttons)
+
+(defface ibut-face
+  '((((min-colors 88) (background dark)) (:foreground "salmon2"))
+    (((background dark)) (:background "red2" :foreground "black"))
+    (((min-colors 88)) (:foreground "salmon3"))
+    (t (:background "red2")))
+  "Face for implicit Hyperbole buttons."
+  :group 'hyperbole-buttons)
+
+(defcustom hproperty:ibut-face 'ibut-face
+  "Hyperbole face for implicit buttons."
   :type 'face
   :initialize #'custom-initialize-default
   :group 'hyperbole-buttons)

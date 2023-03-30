@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    15-Oct-91 at 20:13:17
-;; Last-Mod:     29-Jan-23 at 17:17:22 by Mats Lidell
+;; Last-Mod:     29-Mar-23 at 22:03:59 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -790,6 +790,8 @@ The menu is a menu of commands from MENU-ALIST."
 	 (("IButton>")
 	  ("Act"            hui:ibut-act
 	    "Activates implicit button at point or prompts for labeled implicit button to activate.")
+	  ("Create"         hui:ibut-create
+	    "Labels and creates an implicit button of any type.")
 	  ("DeleteIButType" (hui:htype-delete 'ibtypes)
 	   "Deletes specified button type.")
 	  ("Edit"           hui:ibut-edit "Edits/modifies named implicit button attributes.")

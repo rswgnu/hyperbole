@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     2-Apr-91
-;; Last-Mod:     29-Jan-23 at 02:34:21 by Bob Weiner
+;; Last-Mod:     29-Mar-23 at 21:04:06 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -147,11 +147,11 @@ Search is case-insensitive.  Return list with elements:
 ;;; Button data operators
 ;;; ------------------------------------------------------------------------
 
-(defun hbdata:build (&optional mod-lbl-key but-sym)
+(defun hbdata:ebut-build (&optional mod-lbl-key but-sym)
   "Construct button data from optional MOD-LBL-KEY and BUT-SYM.
 Modify BUT-SYM attributes.  MOD-LBL-KEY nil means create a new
 entry, otherwise modify existing one.  Nil BUT-SYM means use
-`hbut:current'  If successful, return a cons of
+`hbut:current'.  If successful, return a cons of
  (button-data . button-instance-str), else nil."
   (let* ((b (hattr:copy (or but-sym 'hbut:current) 'but))
 	 (l (hattr:get b 'loc))
@@ -174,19 +174,19 @@ entry, otherwise modify existing one.  Nil BUT-SYM means use
 		    mod-time    (htz:date-sortable-gmt)
 		    entry       (cons new-key (cdr entry)))
 	      (hbdata:delete-entry-at-point)
-	      (when (setq lbl-instance (hbdata:instance-last new-key loc dir))
-		(setq lbl-instance (concat ebut:instance-sep
+	      (when (setq lbl-instance (hbdata:ebut-instance-last new-key loc dir))
+		(setq lbl-instance (concat hbut:instance-sep
 					   (int-to-string (1+ lbl-instance))))
 		;; This expression is needed to ensure that the highest
 		;; numbered instance of a label appears before
-		;; other instances, so 'hbdata:instance-last' will work.
+		;; other instances, so 'hbdata:ebut-instance-last' will work.
 		(when (hbdata:to-entry-buf loc dir)
 		  (forward-line 1))))
-	  (let ((inst-num (hbdata:instance-last new-key loc dir)))
-	    (setq lbl-instance (if inst-num
-				   (hbdata:instance-next
-				    (concat new-key ebut:instance-sep
-					    (int-to-string inst-num))))))))
+	  (let ((inst-num (hbdata:ebut-instance-last new-key loc dir)))
+	    (setq lbl-instance (when inst-num
+				 (hbdata:instance-next
+				  (concat new-key hbut:instance-sep
+					  (int-to-string inst-num))))))))
       (when (or entry (not mod-lbl-key))
 	(hattr:set b 'lbl-key (concat new-key lbl-instance))
 	(hattr:set b 'loc loc)
@@ -230,20 +230,47 @@ class `hbdata' to operate on the entry."
    (lambda () (read (current-buffer)))
    lbl-key key-src directory))
 
+(defun hbdata:ibut-instance (&optional orig-lbl-key but-sym)
+  "Return ibutton instance number string from optional ORIG-LBL-KEY and BUT-SYM.
+ORIG-LBL-KEY nil means create a new ibutton; otherwise modify an
+existing one.  BUT-SYM nil means use `hbut:current'.  If
+successful, return a button instance string to append to button
+label or t when first instance."
+  (let* ((b (hattr:copy (or but-sym 'hbut:current) 'but))
+	 (l (hattr:get b 'loc))
+	 (key (or orig-lbl-key (hattr:get b 'lbl-key)))
+	 (new-key (if orig-lbl-key (hattr:get b 'lbl-key) key))
+	 (lbl-instance)
+	 loc dir)
+    (or (when l
+	  (setq loc (if (bufferp l) l (file-name-nondirectory l))
+		dir (if (bufferp l) nil (file-name-directory l)))
+	  (if orig-lbl-key
+	      (when (setq lbl-instance (hbdata:ibut-instance-last new-key loc dir))
+		(setq lbl-instance (concat hbut:instance-sep
+					   (int-to-string (1+ lbl-instance)))))
+	    (let ((inst-num (hbdata:ibut-instance-last new-key loc dir)))
+	      (setq lbl-instance (when inst-num
+				   (hbdata:instance-next
+				    (concat new-key hbut:instance-sep
+					    (int-to-string inst-num)))))))
+	  lbl-instance)
+	t)))
+
 (defun hbdata:instance-next (lbl-key)
   "Return string for button instance number following LBL-KEY's.
 Nil if LBL-KEY is nil."
   (and lbl-key
        (if (string-match
-	    (concat (regexp-quote ebut:instance-sep) "[0-9]+$") lbl-key)
-	   (concat ebut:instance-sep
+	    (concat (regexp-quote hbut:instance-sep) "[0-9]+$") lbl-key)
+	   (concat hbut:instance-sep
 		   (int-to-string
 		    (1+ (string-to-number
 			 (substring lbl-key (1+ (match-beginning 0)))))))
 	 ":2")))
 
-(defun hbdata:instance-last (lbl-key key-src &optional directory)
-  "Return highest instance number for repeated button label.
+(defun hbdata:ebut-instance-last (lbl-key key-src &optional directory)
+  "Return highest instance number for repeated explicit button label.
 1 if not repeated, nil if no instance.
 Utilize arguments LBL-KEY, KEY-SRC and optional DIRECTORY."
   (hbdata:apply-entry
@@ -287,6 +314,18 @@ If the hbdata buffer is blank/empty, kill it and remove the associated file."
 (defun hbdata:delete-entry-at-point ()
   (delete-region (point) (progn (forward-line 1) (point))))
 
+(defun hbdata:ibut-instance-last (lbl-key key-src &optional directory)
+  "Return highest instance number for repeated implicit button label.
+1 if not repeated, nil if no instance.
+Utilize arguments LBL-KEY, KEY-SRC and optional DIRECTORY."
+  (let ((key (car (ibut:label-sort-keys (ibut:label-key-match lbl-key)))))
+    (cond ((null key) nil)
+	  ((string-match (concat (regexp-quote hbut:instance-sep)
+				 "\\([0-9]+\\)\\'")
+			 key)
+	   (string-to-number (match-string 1 key)))
+	  (t 1))))
+
 (defun hbdata:to-entry (but-key key-src &optional directory instance)
   "Return button data entry indexed by BUT-KEY, KEY-SRC, optional DIRECTORY.
 Return nil if entry is not found.  Leave point at start of entry when
@@ -317,7 +356,7 @@ Hbdata is given by LBL-KEY, KEY-SRC and optional DIRECTORY.
 With optional CREATE-FLAG, if no such line exists, insert a new file entry at
 the beginning of the hbdata file (which is created if necessary).
 INSTANCE-FLAG non-nil means search for any button instance matching LBL-KEY and
-call FUNC with point right after any `ebut:instance-sep' in match.
+call FUNC with point right after any `hbut:instance-sep' in match.
 Return value of evaluation when a matching entry is found or nil."
   (let (found
 	rtn
@@ -367,7 +406,7 @@ Return value of evaluation when a matching entry is found or nil."
 	      (if (if instance-flag
 		      (re-search-forward
 		       (concat "\n(\"" qkey "["
-			       ebut:instance-sep "\"]") end t)
+			       hbut:instance-sep "\"]") end t)
 		    (search-forward (concat "\n(\"" lbl-key "\"") end t))
 		  (progn
 		    (unless instance-flag
@@ -400,7 +439,6 @@ one and return buffer, otherwise return nil."
       (unless existing-file
 	(hbmap:dir-add (file-name-directory file)))
       buf)))
-
 
 (defun hbdata:to-entry-buf (key-src &optional directory create)
   "Move point to end of line in but data buffer matching KEY-SRC.
@@ -454,7 +492,7 @@ ORIG-LBL-KEY nil means create a new entry, otherwise modify existing one.
 BUT-SYM nil means use `hbut:current'.  If successful, return
 a button instance string to append to button label or t when first instance.
 On failure, return nil."
-  (let ((cons (hbdata:build orig-lbl-key but-sym))
+  (let ((cons (hbdata:ebut-build orig-lbl-key but-sym))
 	entry lbl-instance)
     (unless (or (and buffer-file-name (not (file-writable-p buffer-file-name)))
 		(null cons))

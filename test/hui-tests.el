@@ -91,7 +91,7 @@
     (goto-char 3)
     (with-simulated-input "TMP RET"
       (hui:ibut-label-create)
-      (should (string= "<[TMP]> \"/tmp\"\n" (buffer-string))))))
+      (should (string= "<[TMP]> - \"/tmp\"\n" (buffer-string))))))
 
 (ert-deftest hui-ibut-label-create-fails-if-label-exists ()
   "Creation of a label for an implicit button fails if a label exists."
@@ -123,7 +123,7 @@
   (let ((file (make-temp-file "hypb_" nil ".txt")))
     (unwind-protect
         (find-file file)
-        (with-simulated-input "label RET RET www-url RET www.hypb.org RET"
+        (with-simulated-input "label RET www-url RET www.hypb.org RET"
           (hui:ebut-create)
           (hy-test-helpers-verify-hattr-at-p :actype 'actypes::www-url :args '("www.hypb.org") :loc file :lbl-key "label"))
       (delete-file file))))
@@ -134,7 +134,7 @@ Ensure modifying the button but keeping the label does not create a double label
   (let ((file (make-temp-file "hypb_" nil ".txt")))
     (unwind-protect
         (find-file file)
-        (with-simulated-input "label RET RET www-url RET www.hypb.org RET"
+        (with-simulated-input "label RET www-url RET www.hypb.org RET"
           (hui:ebut-create)
           (hy-test-helpers-verify-hattr-at-p :actype 'actypes::www-url :args '("www.hypb.org") :loc file :lbl-key "label"))
         (with-simulated-input "RET RET RET RET"

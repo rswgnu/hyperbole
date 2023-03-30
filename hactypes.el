@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    23-Sep-91 at 20:34:36
-;; Last-Mod:     11-Mar-23 at 13:04:56 by Bob Weiner
+;; Last-Mod:     29-Mar-23 at 18:14:35 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -561,7 +561,7 @@ If CELL-REF is nil, show the first cell in the view."
 	     (kotl-mode:goto-cell cell-ref)
 	   (kotl-mode:beginning-of-buffer))
 	 (recenter 0))
-	((and (stringp cell-ref) (> (length cell-ref) 0)
+ 	((and (stringp cell-ref) (> (length cell-ref) 0)
 	      (eq ?| (aref cell-ref 0)))
 	 ;; Activate view spec in current window.
 	 (kotl-mode:goto-cell cell-ref))))

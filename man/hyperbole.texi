@@ -7,7 +7,7 @@
 @c Author:       Bob Weiner
 @c
 @c Orig-Date:     6-Nov-91 at 11:18:03
-@c Last-Mod:     12-Mar-23 at 20:46:34 by Bob Weiner
+@c Last-Mod:     29-Mar-23 at 23:11:38 by Bob Weiner
 
 @c %**start of header (This is for running Texinfo on a region.)
 @setfilename hyperbole.info
@@ -156,7 +156,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</P>
 
 <PRE>
 Edition 8.0.1pre
-Printed March 7, 2023.
+Printed March 29, 2023.
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -198,7 +198,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 @example
 Edition 8.0.1pre
-March 7, 2023
+March 29, 2023
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -2035,23 +2035,27 @@ Manual}, for details on bookmarks.
 @cindex button, implicit
 @cindex implicit button
 @findex link-to-file
-@dfn{Implicit buttons} are virtual buttons recognized within the natural
-structure of a document.  For example, a web URL button that displays its link
-or an email address button that starts a mail message to the associated
-address.  Implicit buttons are identified by implicit button type contextual
-pattern matchers that identify appropriate textual patterns at point.
+Hyperbole can recognize and activate @dfn{implicit buttons} within
+documents that require no special markup, e.g. pathnames or URLs, and
+many other types.  For example, an Action Key press on a web URL will
+display its link in a browser, regardless of the format of the
+document.  Similarly, an Action Key press on an email address starts
+composing mail to that address.
 
 @cindex implicit button type
-An @dfn{implicit button type} utilizes Emacs Lisp to identify a pattern or
-state that when matched triggers an @emph{action} associated with the implicit
-button type.  The action is specified by either a Hyperbole action type
-(@pxref{Action Types}) or an Emacs Lisp command.  Implicit button types may use
-the same action types that explicit buttons use.  As an example, the pathname
-implicit button type matches to any existing local filename or directory name
-and its action type, @code{link-to-file}, displays the associated file or
-directory, typically in another window.  An explicit button could do the same
-thing but has to be created manually, rather than recognized as part of the
-buffer text.
+Implicit buttons are identified by implicit button type contextual
+pattern matchers that identify appropriate textual patterns at point.
+An @dfn{implicit button type} utilizes Emacs Lisp to identify a
+pattern or state that when matched triggers an @emph{action}
+associated with the implicit button type.  The action is specified by
+either a Hyperbole action type (@pxref{Action Types}) or an Emacs Lisp
+command.  Implicit button types may use the same action types that
+explicit buttons use.  As an example, the pathname implicit button
+type matches to any existing local filename or directory name and its
+action type, @code{link-to-file}, displays the associated file or
+directory, typically in another window.  An explicit button could do
+the same thing but has to be created manually, rather than recognized
+as part of the buffer text.
 
 @vindex file, hibtypes.el
 @cindex context
@@ -2087,16 +2091,27 @@ button with a label of 'My Emacs Files':
 <[My Emacs Files]>: "~/.emacs.d"
 @end example
 
+The label is delimited by @samp{<[} and @samp{]>} and can be followed
+by any number of :, - or = separator characters, including none.
+
+@kindex C-h h i
+@cindex menu, Ibut
+@cindex menu, Implicit-Button
+@kindex C-h h i a
+@kindex C-h h i c
 @kindex C-h h i e
 @kindex C-h h i l
-The label is delimited by @samp{<[} and @samp{]>} and can be followed
-by any number of :, - or = separator characters, including none.  You
-can activate the button either from its label or its text.  With point
-on the text of an implicit button, @bkbd{C-h h i l} will label it.  Or
-you may simply type the label and delimiters manually.  You can also
-simply edit any implicit button manually but for a little more help in
-editing named implicit buttons, use @bkbd{C-h h i e} which prompts
-you to rename the button and to change its text (the button itself).
+Implicit buttons are managed with the Hyperbole Ibut/ menu accessed
+with @bkbd{C-h h i}.  The Create item, @bkbd{C-h h i c}, prompts for
+an implicit button label, an action type, and the action's associated
+arguments, such as a file to which to link.  It then creates the
+button at point.  To activate the button with point on its label or
+button text, use the Act menu item, @bkbd{C-h h i a} or press the
+Action Key.  You can use @bkbd{C-h h i e} to edit an implicit button
+(or simply edit it manually).  If you want to add a label to an
+existing implicit button without one, use @bkbd{C-h h i l} to label
+it.
+
 
 @menu
 * Implicit Button Types::

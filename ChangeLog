@@ -1,3 +1,64 @@
+2023-03-29  Bob Weiner  <rsw@gnu.org>
+
+* man/hyperbole.texi (Implicit Buttons): Add paragraph on the use of Ibut/
+    menu.
+
+* hui.el (hui:ebut-create, hui:ibut-create): Remove prompting for button
+    buffer and always use current buffer.
+
+* hui-menu.el (infodock-hyperbole-menu): Add item Implicit-Button/Create.
+  hui-mini.el (hui:menus): Add minibuffer item Ibut/Create.
+
+2023-03-28  Bob Weiner  <rsw@gnu.org>
+
+* hbut.el (def-edebug-spec cl-defun): Add to make 'cl-defun' edebuggable.
+
+2023-03-27  Bob Weiner  <rsw@gnu.org>
+
+* hbut.el (ibut:label-separator): Change from " " to " - " for better
+    separation visibility.
+          (ibut:insert-text): Add.
+  hypb.el (hypb:format-args): Add and use in 'ibut:insert-text'.
+
+2023-03-26  Bob Weiner  <rsw@gnu.org>
+
+* hbdata.el (hbdata:ibut-instance-last): Add.
+            (hbdata:ibut-instance): Add.
+  hbut.el (ibut:create): Improve doc and add but-sym arg which can supply
+    all other arguments in its properties.
+          (hbut:map): Rewrite handling of 'regexp-match' arg so it always
+    applies to the button label and not its text, to accomodate named
+    implicit button filtering.
+          (hbut:label-regexp): Ensure label is wrapped as grouping 1 and
+    an optional instance number is matched.
+          (ibut:map): Utilize 'start-delim' and 'end-delim' when non-nil.
+	  (hbut:map): Remove properties from 'lbl' as not needed.
+	  (ibut:label-key-match): Add to return filtered list of ibut labels.
+          (ibut:label-sort-instances): Add to sort label key instance numbers.
+
+2023-03-16  Bob Weiner  <rsw@gnu.org>
+
+* hbdata.el (hbdata:build): Rename to hbdata:ebut-build and call in
+    hbdata:write.
+	    (hbdata:instance-last): Rename to hbdata:ebut-instance-last.
+
+* hbut.el (hbut:label-list): Use in ibut:edit.
+  hui-em-but.el (ibut-face, hproperty:ibut-face): Add and use in
+    ibut:delimit.
+
+* hbut.el (ebut:instance-sep): Rename to 'hbut:instance-sep'.
+
+* hui.el (hui:ibut-create):
+  hbut.el (ibut:create, ibut:delimit, ibut:edit, ibut:operate): Add
+    interactive, labeled implicit button creation.
+
+* ebut:start, ebut:end: Rename to ebut:label-start and ebut:label-end.
+
+2023-03-15  Bob Weiner  <rsw@gnu.org>
+
+* hui.el (hui:ebut-buf): Rename to 'hui:hbut-buf' since not ebut-specific.
+	 (hui:ebut-create, hui:ibut-create): Update call to above function.
+
 2023-03-13  Bob Weiner  <rsw@gnu.org>
 
 * test/hui-tests.el (require 'hibtypes 'klink): Force defib loads so

@@ -80,17 +80,17 @@ hactypes.el,1275
 (defact link-to-Info-node 484,19252
 (defact link-to-ibut 499,19978
 (defact link-to-kcell 549,22004
-(defact link-to-mail 569,22704
-(defact link-to-org-id 593,23871
-(defact link-to-org-id-marker 602,24184
-(defact link-to-regexp-match 612,24562
-(defact link-to-rfc 639,25633
-(defact link-to-string-match 646,25901
-(defact link-to-texinfo-node 655,26354
-(defact link-to-web-search 680,27407
-(defact man-show 688,27788
-(defact rfc-toc 696,28098
-(defact text-toc 723,29265
+(defact link-to-mail 569,22705
+(defact link-to-org-id 593,23872
+(defact link-to-org-id-marker 602,24185
+(defact link-to-regexp-match 612,24563
+(defact link-to-rfc 639,25634
+(defact link-to-string-match 646,25902
+(defact link-to-texinfo-node 655,26355
+(defact link-to-web-search 680,27408
+(defact man-show 688,27789
+(defact rfc-toc 696,28099
+(defact text-toc 723,29266
 
 hargs.el,961
 (defvar hargs:defaults 41,1440
@@ -108,18 +108,18 @@ hargs.el,961
 (defun hargs:sexpression-p 254,10551
 (defun hargs:actype-get 283,11756
 (defun hargs:at-p 290,12061
-(defun hargs:completion 412,16759
-(defun hargs:iform-read 484,19223
-(defun hargs:read 559,22165
-(defun hargs:read-buffer-name 600,23795
-(defun hargs:read-match 605,23982
-(defun hargs:select-p 638,25346
-(defvar hargs:reading-symbol 677,26859
-(defconst hargs:iform-vector680,26934
-(defconst hargs:iform-extensions-vector786,30454
-(defvar hargs:string-to-complete 845,32792
+(defun hargs:completion 410,16695
+(defun hargs:iform-read 482,19159
+(defun hargs:read 557,22101
+(defun hargs:read-buffer-name 598,23731
+(defun hargs:read-match 603,23918
+(defun hargs:select-p 636,25282
+(defvar hargs:reading-symbol 675,26795
+(defconst hargs:iform-vector678,26870
+(defconst hargs:iform-extensions-vector784,30390
+(defvar hargs:string-to-complete 843,32728
 
-hbdata.el,778
+hbdata.el,872
 (defun hbdata:action 66,2778
 (defun hbdata:actype 70,2894
 (defun hbdata:args 84,3427
@@ -132,17 +132,19 @@ hbdata.el,778
 (defun hbdata:mod-time 114,4314
 (defun hbdata:referent 119,4484
 (defun hbdata:search 123,4575
-(defun hbdata:build 150,5646
-(defun hbdata:get-entry 224,8879
-(defun hbdata:instance-next 233,9264
-(defun hbdata:instance-last 245,9639
-(defun hbdata:delete-entry 256,10027
-(defun hbdata:delete-entry-at-point 287,11173
-(defun hbdata:to-entry 290,11273
-(defun hbdata:apply-entry 313,12235
-(defun hbdata:to-hbdata-buffer 380,14421
-(defun hbdata:to-entry-buf 405,15446
-(defun hbdata:write 451,17255
+(defun hbdata:ebut-build 150,5646
+(defun hbdata:get-entry 224,8896
+(defun hbdata:ibut-instance 233,9281
+(defun hbdata:instance-next 260,10418
+(defun hbdata:ebut-instance-last 272,10793
+(defun hbdata:delete-entry 283,11195
+(defun hbdata:delete-entry-at-point 314,12341
+(defun hbdata:ibut-instance-last 317,12441
+(defun hbdata:to-entry 329,12933
+(defun hbdata:apply-entry 352,13895
+(defun hbdata:to-hbdata-buffer 419,16081
+(defun hbdata:to-entry-buf 443,17105
+(defun hbdata:write 489,18914
 
 hbmap.el,259
 (defvar hbmap:filename 22,642
@@ -154,140 +156,149 @@ hbmap.el,259
 (defvar hbmap:dir-user112,4112
 (defvar hbmap:dir-filename120,4405
 
-hbut.el,5042
+hbut.el,5401
 (defvar   ebut:hattr-save 41,1374
 (defun    ebut:act 45,1491
 (defun    ebut:alist 56,1893
 (defun    ebut:at-p 62,2114
 (defun    ebut:create 69,2421
-(defun    ebut:delete 91,3409
-(defun    ebut:edit 104,3868
-(defun    ebut:get 117,4375
-(defun    ebut:is-p 186,6898
-(defun    ebut:key 191,7086
-(defun    ebut:key-of-label-p 198,7324
-(defalias 'ebut:to-key-src ebut:to-key-src203,7530
-(defalias 'ebut:key-src-set-buffer ebut:key-src-set-buffer204,7587
-(defalias 'ebut:key-src-fmt ebut:key-src-fmt205,7649
-(defalias 'ebut:key-to-label ebut:key-to-label206,7704
-(defun    ebut:label-p 208,7761
-(defalias 'ebut:label-regexp ebut:label-regexp275,10368
-(defalias 'ebut:label-to-key ebut:label-to-key277,10419
-(defun    ebut:list 279,10470
-(defalias 'map-ebut map-ebut299,11303
-(defun    ebut:map 301,11336
-(defun    ebut:next-occurrence 311,11839
-(defun    ebut:operate 326,12512
-(defun    ebut:program 435,16624
-(defun    ebut:search 465,18027
-(defun    ebut:to 544,20691
-(defun    ebut:delimit 577,22024
-(defun    ebut:match-regexp 604,23059
-(defconst ebut:start 615,23481
-(defconst ebut:end 617,23576
-(defconst ebut:instance-sep 619,23669
-(defun    gbut:act 626,24009
-(defun    gbut:delete 641,24624
-(defun    gbut:ebut-program 646,24847
-(defun    gbut:file 666,25738
-(defun    gbut:get 670,25896
-(defun    gbut:help 682,26310
-(defun    gbut:label-list 693,26732
-(defun    gbut:label-p 697,26851
-(defun    gbut:to 712,27666
-(defun    gbut:key-list 730,28323
-(defun    gbut:ebut-key-list 734,28449
-(defun    gbut:ibut-key-list 748,28899
-(defun    hattr:attributes 761,29410
-(defun    hattr:clear 771,29715
-(defun    hattr:copy 782,30091
-(defun    hattr:get 793,30481
-(defun    hattr:list 797,30615
-(defun    hattr:memq 804,30887
-(defun    hattr:report 816,31318
-(defun    hattr:save 844,32344
-(defun    hattr:set 862,33196
-(defalias 'hattr:summarize hattr:summarize866,33375
-(defvar   hattr:filename868,33419
-(defconst hbut:max-len 878,33852
-(defsubst hbut:max-len 885,34093
-(defun    hbut:act 889,34243
-(defun    hbut:action 952,36937
-(defun    hbut:at-p 964,37398
-(defun    hbut:comment 977,37798
-(defvar   hbut:fill-prefix-regexps1012,38952
-(defun    hbut:fill-prefix-remove 1036,39800
-(defun    hbut:delete 1046,40192
-(defun    hbut:funcall 1061,40825
-(defun    hbut:get 1087,41888
-(defun    hbut:get-key-src 1098,42416
-(defun    hbut:is-p 1156,44703
-(defun    hbut:key 1161,44862
-(defun    hbut:to-key-src 1168,45082
-(defun    hbut:key-src-fmt 1175,45401
-(defun    hbut:key-src-set-buffer 1191,46051
-(defun    hbut:key-to-label 1212,46698
-(defun    hbut:label 1233,47382
-(defun    hbut:label-p 1240,47628
-(defun    hbut:label-regexp 1253,48403
-(defun    hbut:label-to-key 1281,49386
-(defun    hbut:map 1294,49976
-(defvar   hbut:syntax-table 1340,51791
-(defun    hbut:modify-syntax 1346,52061
-(defun    hbut:outside-comment-p 1361,52688
-(defun    hbut:rename 1369,53047
-(defun    hbut:report 1380,53453
-(defun    hbut:source 1439,55375
-(defalias 'hbut:summarize hbut:summarize1454,55948
-(defun    hbut:to 1456,55989
-(defvar   hbut:current 1463,56317
-(defconst hbut:source-prefix 1466,56422
-(defun    hbut:label-list 1471,56675
-(defun    hbut:key-list 1477,56892
-(defun    hbut:ebut-key-list 1481,57057
-(defun    hbut:ibut-key-list 1496,57566
-(defun    ibut:act 1510,58109
-(defun    ibut:alist 1521,58515
-(defun    ibut:at-p 1527,58744
-(defun    ibut:at-type-p 1570,60560
-(cl-defun ibut:create 1586,61284
-(defun    ibut:delete 1703,65168
-(defun    ibut:get 1730,66164
-(defun    ibut:is-p 1752,66981
-(defun    ibut:label-map 1758,67236
-(defun    ibut:rename 1773,68025
-(defun    ibut:label-p 1794,69036
-(defun    ibut:label-regexp 1812,70026
-(defun    ibut:label-set 1818,70317
-(defun    ibut:list 1840,71348
-(defun    ibut:key 1860,72192
-(defalias 'ibut:to-key-src ibut:to-key-src1867,72430
-(defalias 'ibut:key-to-label ibut:key-to-label1868,72477
-(defalias 'ibut:label-to-key ibut:label-to-key1869,72526
-(defalias 'map-ibut map-ibut1870,72575
-(defun    ibut:map 1872,72616
-(defun    ibut:next-occurrence 1883,73140
-(defun    ibut:previous-occurrence 1898,73885
-(defalias 'ibut:summarize ibut:summarize1913,74616
-(defun    ibut:to 1915,74657
-(defun    ibut:at-to-name-p 1962,76298
-(defun    ibut:to-name 1986,77096
-(defun    ibut:to-text 2019,78415
-(defconst ibut:label-start 2069,80462
-(defconst ibut:label-end 2071,80563
-(defvar   ibut:label-separator 2074,80663
-(defvar   ibut:label-separator-regexp 2081,80969
-(defmacro defib 2088,81308
-(def-edebug-spec defib2125,82993
-(def-edebug-spec lambda-list2130,83133
-(defalias 'ibtype:create ibtype:create2135,83251
-(defun ibtype:activate-link 2137,83286
-(defmacro defil 2149,83735
-(defmacro defal 2246,88073
-(defalias 'ibtype:create-action-link-type ibtype:create-action-link-type2302,90242
-(defalias 'ibtype:create-regexp-link-type ibtype:create-regexp-link-type2303,90293
-(defun    ibtype:def-symbol 2305,90345
-(defun    ibtype:delete 2315,90702
+(defun    ebut:delete 91,3422
+(defun    ebut:edit 104,3890
+(defun    ebut:get 117,4397
+(defun    ebut:is-p 186,6920
+(defun    ebut:key 191,7108
+(defun    ebut:key-of-label-p 198,7346
+(defalias 'ebut:to-key-src ebut:to-key-src203,7552
+(defalias 'ebut:key-src-set-buffer ebut:key-src-set-buffer204,7609
+(defalias 'ebut:key-src-fmt ebut:key-src-fmt205,7671
+(defalias 'ebut:key-to-label ebut:key-to-label206,7726
+(defun    ebut:label-p 208,7783
+(defalias 'ebut:label-regexp ebut:label-regexp275,10402
+(defalias 'ebut:label-to-key ebut:label-to-key277,10453
+(defun    ebut:list 279,10504
+(defalias 'map-ebut map-ebut301,11346
+(defun    ebut:map 303,11379
+(defun    ebut:next-occurrence 313,11894
+(defun    ebut:operate 328,12573
+(defun    ebut:program 436,16609
+(defun    ebut:search 466,18012
+(defun    ebut:to 545,20676
+(defun    ebut:delimit 578,22009
+(defun    ebut:match-regexp 605,23077
+(defconst ebut:label-start 616,23517
+(defconst ebut:label-end 618,23618
+(defconst hbut:instance-sep 620,23717
+(defun    gbut:act 627,24057
+(defun    gbut:delete 642,24672
+(defun    gbut:ebut-program 647,24895
+(defun    gbut:file 667,25786
+(defun    gbut:get 671,25944
+(defun    gbut:help 683,26358
+(defun    gbut:label-list 694,26780
+(defun    gbut:label-p 698,26899
+(defun    gbut:to 713,27714
+(defun    gbut:key-list 731,28371
+(defun    gbut:ebut-key-list 735,28497
+(defun    gbut:ibut-key-list 749,28947
+(defun    hattr:attributes 762,29456
+(defun    hattr:clear 772,29761
+(defun    hattr:copy 783,30137
+(defun    hattr:get 794,30527
+(defun    hattr:list 798,30661
+(defun    hattr:memq 805,30933
+(defun    hattr:report 817,31364
+(defun    hattr:save 845,32390
+(defun    hattr:set 863,33242
+(defalias 'hattr:summarize hattr:summarize867,33421
+(defvar   hattr:filename869,33465
+(defconst hbut:max-len 879,33898
+(defsubst hbut:max-len 886,34139
+(defun    hbut:act 890,34289
+(defun    hbut:action 953,36992
+(defun    hbut:at-p 965,37453
+(defun    hbut:comment 978,37853
+(defvar   hbut:fill-prefix-regexps1013,39007
+(defun    hbut:fill-prefix-remove 1037,39855
+(defun    hbut:delete 1047,40247
+(defun    hbut:funcall 1062,40880
+(defun    hbut:get 1088,41943
+(defun    hbut:get-key-src 1099,42471
+(defun    hbut:is-p 1157,44758
+(defun    hbut:key 1162,44917
+(defun    hbut:to-key-src 1169,45137
+(defun    hbut:key-src-fmt 1176,45456
+(defun    hbut:key-src-set-buffer 1192,46106
+(defun    hbut:key-to-label 1213,46753
+(defun    hbut:label 1234,47437
+(defun    hbut:label-list 1250,48051
+(defun    hbut:label-p 1254,48205
+(defun    hbut:label-regexp 1267,48980
+(defun    hbut:label-to-key 1301,50198
+(defun    hbut:map 1314,50788
+(defvar   hbut:syntax-table 1370,52975
+(defun    hbut:modify-syntax 1376,53245
+(defun    hbut:outside-comment-p 1391,53872
+(defun    hbut:rename 1399,54231
+(defun    hbut:report 1410,54637
+(defun    hbut:source 1469,56571
+(defalias 'hbut:summarize hbut:summarize1484,57144
+(defun    hbut:to 1486,57185
+(defvar   hbut:current 1493,57513
+(defconst hbut:source-prefix 1496,57618
+(defun    hbut:key-list 1503,57949
+(defun    hbut:ebut-key-list 1507,58114
+(defun    hbut:ibut-key-list 1522,58623
+(defun    ibut:act 1536,59166
+(defun    ibut:alist 1547,59572
+(defun    ibut:at-p 1553,59801
+(defun    ibut:at-type-p 1597,61640
+(cl-defun ibut:create 1613,62364
+(def-edebug-spec cl-defun1737,66643
+(def-edebug-spec lambda-key-list1742,66790
+(defun    ibut:delete 1748,66962
+(defun    ibut:delimit 1775,67968
+(defun    ibut:edit 1802,69037
+(defun    ibut:get 1813,69511
+(defun    ibut:is-p 1835,70328
+(defun    ibut:label-map 1841,70583
+(defun    ibut:label-key-match 1856,71372
+(defun    ibut:label-p 1866,71760
+(defun    ibut:label-regexp 1884,72750
+(defun    ibut:label-set 1890,73041
+(defun    ibut:label-sort-keys 1912,74072
+(defun    ibut:list 1931,74702
+(defun    ibut:key 1953,75553
+(defalias 'ibut:to-key-src ibut:to-key-src1960,75791
+(defalias 'ibut:key-to-label ibut:key-to-label1961,75838
+(defalias 'ibut:label-to-key ibut:label-to-key1962,75887
+(defalias 'map-ibut map-ibut1963,75936
+(defun    ibut:map 1965,75977
+(defun    ibut:next-occurrence 1983,76656
+(defun    ibut:operate 1998,77401
+(defun    ibut:insert-text 2110,81604
+(defun    ibut:previous-occurrence 2139,83041
+(defun    ibut:program 2154,83772
+(defun    ibut:rename 2184,85175
+(defalias 'ibut:summarize ibut:summarize2205,86186
+(defun    ibut:to 2207,86227
+(defun    ibut:at-to-name-p 2254,87868
+(defun    ibut:to-name 2278,88666
+(defun    ibut:to-text 2311,89985
+(defconst ibut:label-start 2361,92032
+(defconst ibut:label-end 2363,92133
+(defvar   ibut:label-separator 2366,92233
+(defvar   ibut:label-separator-regexp 2374,92550
+(defmacro defib 2381,92889
+(def-edebug-spec defib2418,94574
+(def-edebug-spec lambda-list2423,94714
+(defalias 'ibtype:create ibtype:create2428,94832
+(defun ibtype:activate-link 2430,94867
+(defmacro defil 2442,95316
+(defmacro defal 2539,99654
+(defalias 'ibtype:create-action-link-type ibtype:create-action-link-type2595,101823
+(defalias 'ibtype:create-regexp-link-type ibtype:create-regexp-link-type2596,101874
+(defun    ibtype:def-symbol 2598,101926
+(defun    ibtype:delete 2608,102283
 
 hgnus.el,110
 (defun Gnus-init 54,1683
@@ -439,8 +450,8 @@ hibtypes.el,1664
 (defconst action:start 1444,68467
 (defconst action:end 1447,68576
 (defib action 1456,68926
-(defun action:help 1554,73503
-(defib completion 1581,74595
+(defun action:help 1554,73534
+(defib completion 1581,74626
 
 hinit.el,145
 (defvar   hyperb:user-email 22,623
@@ -1196,49 +1207,49 @@ hui-menu.el,638
 (defun hyperbole-menubar-menu 283,10988
 (defun hyperbole-popup-menu 306,12009
 (defun infodock-hyperbole-menu 313,12277
-(defvar hui-menu-max-list-length 475,18516
-(defvar hui-menu-order-explicit-buttons 478,18631
+(defvar hui-menu-max-list-length 476,18552
+(defvar hui-menu-order-explicit-buttons 479,18667
 
 hui-mini.el,1412
-(defvar hui:menu-exit-hyperbole 30,930
-(defvar hui:menu-select 33,1082
-(defvar hui:menu-quit 35,1193
-(defvar hui:menu-abort 37,1314
-(defvar hui:menu-top 39,1402
-(defvar hui:menu-keys 42,1503
-(defvar hui:menu-p 46,1667
-(defvar hui:menus 49,1749
-(defun hyperbole 60,2199
-(defun hyperbole-demo 91,3429
-(defun hyperbole-set-key 98,3665
-(defun hui:menu-hyperbole-prefix 141,5594
-(defun hui:menu-act 145,5779
-(defun hui:get-keys 192,7597
-(defun hui:menu-get-keys 204,7963
-(defun hui:menu-backward-item 232,9051
-(defun hui:menu-doc 256,9931
-(defun hui:menu-exit-hyperbole 274,10831
-(defun hui:menu-enter 280,11006
-(defalias 'hui:menu-quit hui:menu-quit296,11561
-(defalias 'hui:menu-abort hui:menu-abort297,11606
-(defalias 'hui:menu-top hui:menu-top298,11651
-(defalias 'hui:menu-select hui:menu-select299,11696
-(defun hui:menu-forward-item 301,11742
-(defun hui:menu-help 325,12616
-(defun hui:menu-item-key 351,13596
-(defun hui:menu-item-keys 366,14156
-(defun hui:menu-choose 373,14477
-(defun hui:menu-to-personal-section 442,17233
-(defun hui:bottom-window 456,17897
-(defun hui:menu-item 466,18226
-(defun hui:menu-line 509,20234
-(defun hui:menu-multi-line 524,20869
-(defun hui:menu-web-search 550,21737
-(defun hui-search-web 571,22354
-(defvar hui:menu-mode-map 593,23213
-(defun hyperbole-minibuffer-menu 621,24652
-(defcustom hui:menu-to906,41020
-(defcustom hui:doc-a-z945,42523
+(defvar hui:menu-exit-hyperbole 30,929
+(defvar hui:menu-select 33,1081
+(defvar hui:menu-quit 35,1192
+(defvar hui:menu-abort 37,1313
+(defvar hui:menu-top 39,1401
+(defvar hui:menu-keys 42,1502
+(defvar hui:menu-p 46,1666
+(defvar hui:menus 49,1748
+(defun hyperbole 60,2198
+(defun hyperbole-demo 91,3428
+(defun hyperbole-set-key 98,3664
+(defun hui:menu-hyperbole-prefix 141,5593
+(defun hui:menu-act 145,5778
+(defun hui:get-keys 192,7596
+(defun hui:menu-get-keys 204,7962
+(defun hui:menu-backward-item 232,9050
+(defun hui:menu-doc 256,9930
+(defun hui:menu-exit-hyperbole 274,10830
+(defun hui:menu-enter 280,11005
+(defalias 'hui:menu-quit hui:menu-quit296,11560
+(defalias 'hui:menu-abort hui:menu-abort297,11605
+(defalias 'hui:menu-top hui:menu-top298,11650
+(defalias 'hui:menu-select hui:menu-select299,11695
+(defun hui:menu-forward-item 301,11741
+(defun hui:menu-help 325,12615
+(defun hui:menu-item-key 351,13595
+(defun hui:menu-item-keys 366,14155
+(defun hui:menu-choose 373,14476
+(defun hui:menu-to-personal-section 442,17232
+(defun hui:bottom-window 456,17896
+(defun hui:menu-item 466,18225
+(defun hui:menu-line 509,20233
+(defun hui:menu-multi-line 524,20868
+(defun hui:menu-web-search 550,21736
+(defun hui-search-web 571,22353
+(defvar hui:menu-mode-map 593,23212
+(defun hyperbole-minibuffer-menu 621,24651
+(defcustom hui:menu-to908,41115
+(defcustom hui:doc-a-z947,42618
 
 hui-mouse.el,3073
 (defvar hmouse-set-point-command 58,2118
@@ -1469,7 +1480,7 @@ hui-window.el,3322
 (defun hmouse-x-coord 1239,55178
 (defun hmouse-y-coord 1263,55975
 
-hui.el,2199
+hui.el,2235
 (defcustom hui:hbut-delete-confirm-flag 39,1219
 (defcustom hui:ebut-prompt-for-action 44,1382
 (defun hui-copy-to-register 55,1804
@@ -1480,55 +1491,56 @@ hui.el,2199
 (defun hui:delimited-selectable-thing-and-bounds 244,9693
 (defun hui:ebut-act 267,10737
 (defun hui:ebut-create 282,11261
-(defun hui:ebut-delete 314,12605
-(defun hui:ebut-edit-region 339,13733
-(defun hui:ebut-edit 359,14631
-(defun hui:ebut-rename 408,16430
-(defun hui:ebut-search 467,18811
-(defun hui:gbut-create 501,20235
-(defun hui:gbut-delete 543,21948
-(defun hui:gbut-edit 558,22598
-(defun hui:gbut-rename 647,26039
-(defun hui:gibut-create 659,26502
-(defun hui:hbut-act 685,27431
-(defun hui:hbut-current-act 693,27804
-(defun hui:hbut-delete 703,28178
-(defun hui:hbut-help 743,29939
-(defun hui:hbut-label 784,31425
-(defun hui:hbut-label-default 795,31922
-(defun hui:hbut-rename 810,32657
-(defun hui:hbut-report 820,33013
-(defalias 'hui:hbut-summarize hui:hbut-summarize831,33365
-(defun hui:ibut-act 833,33415
-(defun hui:ibut-edit 848,33981
-(defun hui:ibut-label-create 918,36658
-(defun hui:ibut-rename 956,38533
-(defun hui:link 990,39690
-(defun hui:link-directly 994,39850
-(defun hui:action 1061,42450
-(defun hui:actype 1114,44183
-(defun hui:buf-writable-err 1133,45176
-(defvar hui:ignore-buffers-regexp 1153,46039
-(defun hui:ebut-buf 1156,46209
-(defun hui:ebut-delete-op 1181,46971
-(defun hui:ebut-message 1212,48224
-(defun hui:ebut-unmark 1223,48616
-(defun hui:file-find 1283,51057
-(defun hui:hbut-operate 1290,51327
-(defun hui:hbut-term-highlight 1315,52442
-(defun hui:hbut-term-unhighlight 1329,52844
-(defun hui:help-ebut-highlight 1338,53130
-(defun hui:htype-delete 1344,53378
-(defun hui:htype-help 1355,53785
-(defun hui:htype-help-current-window 1406,55553
-(defun hui:ibut-delete-op 1413,55918
-(defun hui:ibut-message 1437,57021
-(defun hui:key-dir 1448,57425
-(defun hui:key-src 1457,57773
-(defun hui:link-create 1466,58144
-(defun hui:link-possible-types 1483,59022
-(defun hui:list-remove-text-properties 1614,64320
-(defvar hui:ebut-label-prev 1624,64710
+(defun hui:ebut-delete 314,12573
+(defun hui:ebut-edit-region 339,13713
+(defun hui:ebut-edit 359,14611
+(defun hui:ebut-rename 408,16410
+(defun hui:ebut-search 467,18791
+(defun hui:gbut-create 501,20227
+(defun hui:gbut-delete 543,21940
+(defun hui:gbut-edit 558,22590
+(defun hui:gbut-rename 647,26031
+(defun hui:gibut-create 659,26494
+(defun hui:hbut-act 687,27534
+(defun hui:hbut-buf 695,27907
+(defun hui:hbut-current-act 720,28669
+(defun hui:hbut-delete 730,29043
+(defun hui:hbut-help 770,30816
+(defun hui:hbut-label 811,32302
+(defun hui:hbut-label-default 822,32799
+(defun hui:hbut-rename 837,33534
+(defun hui:hbut-report 847,33890
+(defalias 'hui:hbut-summarize hui:hbut-summarize858,34242
+(defun hui:ibut-act 860,34292
+(defun hui:ibut-create 875,34858
+(defun hui:ibut-edit 906,36153
+(defun hui:ibut-label-create 976,38830
+(defun hui:ibut-rename 1014,40705
+(defun hui:link 1048,41862
+(defun hui:link-directly 1052,42022
+(defun hui:action 1119,44622
+(defun hui:actype 1172,46355
+(defun hui:buf-writable-err 1191,47348
+(defvar hui:ignore-buffers-regexp 1211,48211
+(defun hui:ebut-delete-op 1214,48381
+(defun hui:ebut-message 1245,49634
+(defun hui:ebut-unmark 1256,50038
+(defun hui:file-find 1316,52503
+(defun hui:hbut-operate 1323,52773
+(defun hui:hbut-term-highlight 1348,53888
+(defun hui:hbut-term-unhighlight 1362,54290
+(defun hui:help-ebut-highlight 1371,54576
+(defun hui:htype-delete 1377,54824
+(defun hui:htype-help 1388,55231
+(defun hui:htype-help-current-window 1439,56999
+(defun hui:ibut-delete-op 1446,57364
+(defun hui:ibut-message 1470,58467
+(defun hui:key-dir 1481,58871
+(defun hui:key-src 1490,59219
+(defun hui:link-create 1499,59590
+(defun hui:link-possible-types 1516,60468
+(defun hui:list-remove-text-properties 1647,65766
+(defvar hui:ebut-label-prev 1657,66156
 
 hvar.el,272
 (defvar var::append-list 34,1095
@@ -1581,7 +1593,7 @@ hvm.el,874
 (defun vm-force-mode-line-update 525,19036
 (defvar Vm-msg-start-regexp 539,19592
 
-hypb.el,2530
+hypb.el,2566
 (defconst hypb:help-buf-prefix 28,889
 (defcustom hypb:rgrep-command32,1035
 (defun hypb:activate-interaction-log-mode 81,2925
@@ -1604,48 +1616,49 @@ hypb.el,2530
 (define-derived-mode hypb:fgrep-git-log-mode 462,19348
 (defun hypb:file-major-mode 468,19695
 (defun hypb:filter-directories 478,20087
-(defun hypb:format-quote 493,20748
-(defun hypb:get-completion 507,21222
-(defun hypb:get-raw-syntax-descriptor 530,22262
-(defun hypb:glob-to-regexp 535,22481
-(defun hypb:goto-marker 546,22939
-(defun hypb:grep-git-log 564,23580
-(defun hypb:help-buf-name 571,23955
-(defun hypb:helm-apropos 580,24326
-(defun hypb:helm-info 589,24670
-(defun hypb:hkey-help-file 597,24989
-(defun hypb:indirect-function 611,25542
-(defun hypb:insert-region 625,26094
-(defun hypb:locate 642,26865
-(defun hypb:map-plist 674,28248
-(defun hypb:map-vector 680,28467
-(defun hypb:mark-object 693,28953
-(defun hypb:maximize-window-height 703,29342
-(defun hypb:object-p 716,29823
-(defun hypb:readable-directories 723,30073
-(defun hypb:require-package 733,30509
-(defun hypb:remove-lines 746,31103
-(defun hypb:return-process-output 752,31333
-(defun hypb:rgrep 771,32040
-(defun hypb:save-lines 808,33753
-(defmacro hypb:save-selected-window-and-input-focus 814,33981
-(defun hypb:select-window-frame 821,34310
-(defun hypb:set-raw-syntax-descriptor 828,34626
-(defun hypb:straight-package-plist 842,35227
-(defun hypb:string-count-matches 852,35751
-(defun hypb:supercite-p 880,36759
-(defun hypb:toggle-isearch-invisible 894,37210
-(defun hypb:uuid 914,38134
-(defun hypb:user-name 938,38723
-(defun hypb:window-list 944,38948
-(defvar hypb:home-page 955,39520
-(defvar hypb:hyperbole-banner-keymap958,39624
-(defun hypb:display-file-with-logo 967,39940
-(defun hypb:browse-home-page 989,40936
-(defun hypb:insert-hyperbole-banner 999,41261
-(defun hypb:locate-pathnames 1030,42679
-(defun hypb:oct-to-int 1037,42913
-(define-button-type 'hyperbole-banner)hyperbole-banner1054,43501
+(defun hypb:format-args 493,20748
+(defun hypb:format-quote 497,20930
+(defun hypb:get-completion 511,21404
+(defun hypb:get-raw-syntax-descriptor 534,22444
+(defun hypb:glob-to-regexp 539,22663
+(defun hypb:goto-marker 550,23121
+(defun hypb:grep-git-log 568,23762
+(defun hypb:help-buf-name 575,24137
+(defun hypb:helm-apropos 584,24508
+(defun hypb:helm-info 593,24852
+(defun hypb:hkey-help-file 601,25171
+(defun hypb:indirect-function 615,25724
+(defun hypb:insert-region 629,26276
+(defun hypb:locate 646,27047
+(defun hypb:map-plist 678,28430
+(defun hypb:map-vector 684,28649
+(defun hypb:mark-object 697,29135
+(defun hypb:maximize-window-height 707,29524
+(defun hypb:object-p 720,30005
+(defun hypb:readable-directories 727,30255
+(defun hypb:require-package 737,30691
+(defun hypb:remove-lines 750,31285
+(defun hypb:return-process-output 756,31515
+(defun hypb:rgrep 775,32222
+(defun hypb:save-lines 812,33935
+(defmacro hypb:save-selected-window-and-input-focus 818,34163
+(defun hypb:select-window-frame 825,34492
+(defun hypb:set-raw-syntax-descriptor 832,34808
+(defun hypb:straight-package-plist 846,35409
+(defun hypb:string-count-matches 856,35933
+(defun hypb:supercite-p 884,36941
+(defun hypb:toggle-isearch-invisible 898,37392
+(defun hypb:uuid 918,38316
+(defun hypb:user-name 942,38905
+(defun hypb:window-list 948,39130
+(defvar hypb:home-page 959,39702
+(defvar hypb:hyperbole-banner-keymap962,39806
+(defun hypb:display-file-with-logo 971,40122
+(defun hypb:browse-home-page 993,41118
+(defun hypb:insert-hyperbole-banner 1003,41443
+(defun hypb:locate-pathnames 1034,42861
+(defun hypb:oct-to-int 1041,43095
+(define-button-type 'hyperbole-banner)hyperbole-banner1058,43683
 
 hyperbole.el,821
 (defconst hyperbole-loading 81,3564
@@ -1876,36 +1889,38 @@ hypb-maintenance.el,150
 (defconst hypb:hy-news-footer37,928
 (defun hypb:web-repo-update 45,1016
 
-hui-em-but.el,1154
-(defcustom hproperty:but-highlight-flag 40,1129
-(defcustom hproperty:but-emphasize-flag 45,1299
-(defcustom hproperty:but-flash-time 50,1474
-(defcustom hproperty:but-flash-time-seconds 56,1768
-(defface hbut-flash61,1893
-(defcustom hproperty:flash-face 76,2403
-(defcustom hproperty:highlight-face 82,2580
-(defface hbut-face88,2741
-(defcustom hproperty:but-face 96,3031
-(defface hbut-item-face102,3196
-(defcustom hproperty:item-face 117,3721
-(defun hproperty:but-add 132,4236
-(defun hproperty:but-clear 140,4653
-(defun hproperty:but-create 151,5010
-(defun hproperty:but-create-all 165,5661
-(defun hproperty:but-create-on-yank 177,6274
-(defun hproperty:but-delete 184,6514
-(defun hproperty:but-get 192,6813
-(defsubst hproperty:list-cycle 201,7067
-(defconst hproperty:color-list210,7448
-(defvar hproperty:color-ptr 214,7541
-(defconst hproperty:good-colors217,7645
-(defun hproperty:cycle-but-color 232,8263
-(defun hproperty:but-p 244,8697
-(defun hproperty:set-but-face 250,8948
-(defun hproperty:but-flash 254,9073
-(defun hproperty:select-item 275,9835
-(defun hproperty:select-line 286,10244
-(defvar hproperty:item-button 298,10746
+hui-em-but.el,1224
+(defcustom hproperty:but-highlight-flag 40,1128
+(defcustom hproperty:but-emphasize-flag 45,1298
+(defcustom hproperty:but-flash-time 50,1473
+(defcustom hproperty:but-flash-time-seconds 56,1767
+(defface hbut-flash61,1892
+(defcustom hproperty:flash-face 76,2402
+(defcustom hproperty:highlight-face 82,2579
+(defface hbut-face88,2740
+(defcustom hproperty:but-face 96,3039
+(defface hbut-item-face102,3207
+(defcustom hproperty:item-face 117,3737
+(defface ibut-face123,3913
+(defcustom hproperty:ibut-face 131,4214
+(defun hproperty:but-add 146,4727
+(defun hproperty:but-clear 154,5144
+(defun hproperty:but-create 165,5501
+(defun hproperty:but-create-all 179,6152
+(defun hproperty:but-create-on-yank 191,6765
+(defun hproperty:but-delete 198,7005
+(defun hproperty:but-get 206,7304
+(defsubst hproperty:list-cycle 215,7558
+(defconst hproperty:color-list224,7939
+(defvar hproperty:color-ptr 228,8032
+(defconst hproperty:good-colors231,8136
+(defun hproperty:cycle-but-color 246,8754
+(defun hproperty:but-p 258,9188
+(defun hproperty:set-but-face 264,9439
+(defun hproperty:but-flash 268,9564
+(defun hproperty:select-item 289,10326
+(defun hproperty:select-line 300,10735
+(defvar hproperty:item-button 312,11237
 
 hui-register.el,214
 (cl-defstruct hui-register-but31,784
