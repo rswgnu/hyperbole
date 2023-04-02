@@ -5,6 +5,8 @@
 ;; Orig-Date:     6-Oct-91 at 06:34:05
 ;; Last-Mod:      7-Oct-22 at 23:18:45 by Mats Lidell
 ;;
+;; SPDX-License-Identifier: GPL-3.0-or-later
+;;
 ;; Copyright (C) 1991-2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
 ;;

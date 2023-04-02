@@ -3,7 +3,9 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 21:42:03
-;; Last-Mod:      8-Jan-23 at 10:22:39 by Mats Lidell
+;; Last-Mod:     29-Mar-23 at 22:13:40 by Bob Weiner
+;;
+;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
 ;; Copyright (C) 1991-2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -294,7 +296,7 @@ For programmatic creation, use `ebut:program' instead."
 	(unless (equal lbl default-lbl)
 	  (setq default-lbl nil))
 
-	(setq but-buf (if default-lbl (current-buffer) (hui:ebut-buf)))
+	(setq but-buf (current-buffer))
 	(hui:buf-writable-err but-buf "ebut-create")
 
 	(hattr:set 'hbut:current 'loc (hui:key-src but-buf))
@@ -327,8 +329,8 @@ Signal an error if point is not within a button."
   (let ((interactive (called-interactively-p 'interactive)))
     (if (and hui:hbut-delete-confirm-flag interactive)
 	(if (y-or-n-p (format "Delete button %s%s%s? "
-			      ebut:start
-			      (hbut:key-to-label but-key) ebut:end))
+			      ebut:label-start
+			      (hbut:key-to-label but-key) ebut:label-end))
 	    (hui:ebut-delete-op interactive but-key key-src)
 	  (message "")
 	  nil)
@@ -487,7 +489,7 @@ a menu to find any of the occurrences."
 	  (if (fboundp 'hproperty:but-create)
 	      (hproperty:but-create nil nil (regexp-quote
 					     (if match-part string
-					       (concat ebut:start string ebut:end)))))
+					       (concat ebut:label-start string ebut:label-end)))))
 	  (goto-char (point-min))
 	  (pop-to-buffer out-buf)
 	  (if (called-interactively-p 'interactive) (message "%d match%s." total
@@ -656,6 +658,7 @@ When in the global button buffer, the default is the button at point."
 
 (defun hui:gibut-create (lbl text)
   "Create a Hyperbole global implicit button with LBL and button TEXT.
+Button is stored as the properties of the symbol, 'hbut:current.
 
 Use `hui:gbut-create' to create a global explicit button."
   (interactive "sCreate global implicit button labeled: \nsButton text (with any delimiters): ")
@@ -676,6 +679,7 @@ Use `hui:gbut-create' to create a global explicit button."
         (insert delimited-label ": " text "\n")
 	(save-excursion
 	  (goto-char (+ opoint (length ibut:label-start)))
+	  ;; Create button object from ibut at point
 	  (ibut:create))
 	(save-buffer))
       (message "`%s' global implicit button created." lbl))))
@@ -687,6 +691,31 @@ The default is the current button."
 						 (nconc (ebut:alist) (ibut:alist))
 						 nil t nil 'hbut))))
   (hui:hbut-operate #'hbut:act "Activate Hyperbole button: " but))
+
+(defun hui:hbut-buf (&optional prompt)
+  "Prompt for and return a buffer in which to place a button."
+  (let ((buf-name))
+    (while
+	(progn
+	  (setq buf-name
+		(hargs:read-match
+		 (or prompt "Button's buffer: ")
+		 (delq nil
+		       (mapcar
+			;; Filter only buffer whose names start with a
+			;; space, are read-only or are known not to be
+			;; editable, since buttons can be
+			;; in buffers without attached files now.
+		        (lambda (buf)
+			  (let ((b (buffer-name buf)))
+			    (unless (or (string-match-p hui:ignore-buffers-regexp b)
+					(buffer-local-value 'buffer-read-only buf))
+			      (cons b nil))))
+			(buffer-list)))
+		 nil t (buffer-name) 'buffer))
+	  (or (null buf-name) (equal buf-name "")))
+      (beep))
+    (get-buffer buf-name)))
 
 (defun hui:hbut-current-act ()
   "Activate Hyperbole button at point or signal an error if there is none."
@@ -723,7 +752,7 @@ Signal an error if point is not within a button."
 	(cond ((ebut:to but-key)
 	       (if (and hui:hbut-delete-confirm-flag interactive)
 		   (if (y-or-n-p (format "Delete button %s%s%s? "
-					 ebut:start label ebut:end))
+					 ebut:label-start label ebut:label-end))
 		       (hui:ebut-delete-op interactive but-key key-src)
 		     (message "")
 		     nil)
@@ -781,7 +810,7 @@ BUT defaults to the button whose label point is within."
 
 (defun hui:hbut-label (default-label func-name &optional prompt)
   "Read button label from user using DEFAULT-LABEL and caller's FUNC-NAME.
-Optional PROMPT string replaces the standard prompt of 'Button label: '."
+Optional PROMPT string replaces the standard prompt of `Button label: '."
   (hargs:read (if (stringp prompt) prompt "Button label: ")
 	      (lambda (lbl)
 		(and (not (string-equal lbl "")) (<= (length lbl) (hbut:max-len))))
@@ -842,6 +871,37 @@ Default is any implicit button at point."
 	    (t
 	     (hypb:error "(ibut-act): No labeled implicit buttons in buffer."))))))
   (hui:hbut-operate #'ibut:act "Activate labeled implicit button: " but))
+
+(defun hui:ibut-create (&optional start end)
+  "Interactively create an implicit Hyperbole button at point.
+Use any label between optional START and END (when interactive,
+active) region points.  Indicate button creation by delimiting
+and adding any necessary instance number to the button label.
+
+For programmatic creation, use `ibut:program' instead."
+  (interactive (list (when (use-region-p) (region-beginning))
+		     (when (use-region-p) (region-end))))
+  (hypb:assert-same-start-and-end-buffer
+    (let ((default-lbl) lbl but-buf actype)
+      (save-excursion
+	(setq default-lbl (hui:hbut-label-default start end (not (called-interactively-p 'interactive)))
+	      lbl (hui:hbut-label default-lbl "ibut-create"))
+	(unless (equal lbl default-lbl)
+	  (setq default-lbl nil))
+
+	(setq but-buf (current-buffer))
+	(hui:buf-writable-err but-buf "ibut-create")
+
+	(hattr:set 'hbut:current 'loc (hui:key-src but-buf))
+	(hattr:set 'hbut:current 'dir (hui:key-dir but-buf))
+	(setq actype (hui:actype))
+	(hattr:set 'hbut:current 'actype actype)
+	(hattr:set 'hbut:current 'args (hargs:actype-get actype))
+	(hattr:set 'hbut:current 'action nil)
+	;; Adds instance number to in-buffer label if necessary
+	(ibut:operate lbl nil)
+	(when (called-interactively-p 'interactive)
+	  (hui:ibut-message nil))))))
 
 (defun hui:ibut-edit (lbl-key)
   "Edit a named implicit Hyperbole button given by LBL-KEY.
@@ -1151,31 +1211,6 @@ Trigger an error if DEFAULT-ACTYPE is invalid."
 (defvar hui:ignore-buffers-regexp "\\`\\( \\|BLANK\\'\\|\\*Pp \\|TAGS\\|*quelpa\\)"
   "When prompting for a buffer name, ignore any buffers whose names match to this.")
 
-(defun hui:ebut-buf (&optional prompt)
-  "Prompt for and return a buffer in which to place a button."
-  (let ((buf-name))
-    (while
-	(progn
-	  (setq buf-name
-		(hargs:read-match
-		 (or prompt "Button's buffer: ")
-		 (delq nil
-		       (mapcar
-			;; Filter only buffer whose names start with a
-			;; space, are read-only or are known not to be
-			;; editable, since buttons can be
-			;; in buffers without attached files now.
-		        (lambda (buf)
-			  (let ((b (buffer-name buf)))
-			    (unless (or (string-match-p hui:ignore-buffers-regexp b)
-					(buffer-local-value 'buffer-read-only buf))
-			      (cons b nil))))
-			(buffer-list)))
-		 nil t (buffer-name) 'buffer))
-	  (or (null buf-name) (equal buf-name "")))
-      (beep))
-    (get-buffer buf-name)))
-
 (defun hui:ebut-delete-op (interactive but-key key-src)
   "INTERACTIVEly or not, delete explicit button given by BUT-KEY in KEY-SRC.
 KEY-SRC may be a buffer or a pathname; when nil, the current
@@ -1212,9 +1247,9 @@ from the button that point is within."
 	(args (hattr:get 'hbut:current 'args)))
     (setq actype (actype:def-symbol actype))
     (message "%s%s%s %s %S"
-	     ebut:start
+	     ebut:label-start
 	     (hbut:key-to-label (hattr:get 'hbut:current 'lbl-key))
-	     ebut:end
+	     ebut:label-end
 	     (if but-edit-flag "now executes" "executes")
 	     (cons actype args))))
 
@@ -1231,7 +1266,7 @@ With a prefix argument, also delete the button text between the delimiters."
 			end-delim-pos (match-end 0))
 		  (when (fboundp 'hproperty:but-delete)
 		    (hproperty:but-delete start-delim-pos))
-		  (goto-char (- (point) (length ebut:end)))
+		  (goto-char (- (point) (length ebut:label-end)))
 		  (skip-chars-backward " \t\n\r")
 		  (setq text-end (point))
 		  ;; Limit instance number removal to single digit 2-9
@@ -1239,12 +1274,12 @@ With a prefix argument, also delete the button text between the delimiters."
 		  ;; number that is part of the text and  should not
 		  ;; be removed.
 		  (skip-chars-backward "2-9")
-		  (skip-chars-backward ebut:instance-sep)
-		  (when (looking-at (concat (regexp-quote ebut:instance-sep)
+		  (skip-chars-backward hbut:instance-sep)
+		  (when (looking-at (concat (regexp-quote hbut:instance-sep)
 					    "[2-9]"
-					    (regexp-quote ebut:end)))
+					    (regexp-quote ebut:label-end)))
 		    (setq text-end (point)))
-		  (when (search-backward ebut:start (- (point) (hbut:max-len)) t)
+		  (when (search-backward ebut:label-start (- (point) (hbut:max-len)) t)
 		    (if current-prefix-arg
 			;; Remove button text, delimiters and preceding space, if any.
 			(delete-region (max (point-min)
@@ -1259,7 +1294,7 @@ With a prefix argument, also delete the button text between the delimiters."
 		      (delete-region (match-beginning 0) (match-end 0))))))))
     (if (called-interactively-p 'interactive)
 	(save-excursion
-	  (when (search-forward ebut:end nil t) (funcall form)))
+	  (when (search-forward ebut:label-end nil t) (funcall form)))
       ;; Non-interactive invocation.
       (let (cur-flag)
 	(if (and (or (null key-src) (eq key-src buffer-file-name))
@@ -1489,6 +1524,7 @@ possible types.
 
 Referent Context         Possible Link Type Returned
 ----------------------------------------------------
+Org Roam or Org Id       link-to-org-id
 Global Button            link-to-gbut
 Explicit Button          link-to-ebut
 Implicit Button          link-to-ibut
@@ -1510,86 +1546,103 @@ Buffer without File      link-to-buffer-tmp"
 	hbut-sym
 	lbl-key)
     (delq nil
-	  (list (cond ((and (prog1 (setq hbut-sym (hbut:at-p))
-			      ;; Next line forces use of any ibut name in the link.
-			      (save-excursion (ibut:at-to-name-p hbut-sym)))
-			    (setq lbl-key (hattr:get hbut-sym 'lbl-key))
-			    (eq (current-buffer) (get-file-buffer (gbut:file))))
-		       (list 'link-to-gbut lbl-key))
-		      ((and hbut-sym (eq (hattr:get hbut-sym 'categ) 'explicit))
-		       (list 'link-to-ebut lbl-key))
-		      (hbut-sym
-		       (list 'link-to-ibut lbl-key (or buffer-file-name (buffer-name)))))
-		(cond ((and (require 'bookmark)
-                            (derived-mode-p #'bookmark-bmenu-mode))
-                       (list 'link-to-bookmark (bookmark-bmenu-bookmark))))
-		(cond ((derived-mode-p #'Info-mode)
-		       (if (and Info-current-node
-				(member Info-current-node
-					(Info-index-nodes Info-current-file))
-				(Info-menu-item-at-p))
-			   (let ((hargs:reading-type 'Info-index-item))
-			     (list 'link-to-Info-index-item (hargs:at-p)))
-			 (let ((hargs:reading-type 'Info-node))
-			   (list 'link-to-Info-node (hargs:at-p)))))
-                      ((derived-mode-p #'texinfo-mode)
-                       (let (node)
-                         (save-excursion
-                           (beginning-of-line)
-                           (when (and (not (looking-at "@node "))
-                                      (not (re-search-backward "^@node " nil t)))
-                             (hypb:error "(hui:link-possible-types): Not within a texinfo node"))
-			   (require 'texnfo-upd)
-                           (setq node (texinfo-copy-node-name)))
-                         (list 'link-to-texinfo-node buffer-file-name node)))
-		      ((hmail:reader-p)
-		       (list 'link-to-mail
-			     (list (rmail:msg-id-get) buffer-file-name))))
-		(cond
-		 ((let ((hargs:reading-type 'directory))
-		    (setq val (hargs:at-p t)))
-		  (list 'link-to-directory val))
-		 ((let ((hargs:reading-type 'file))
-		    (setq val (hargs:at-p t)))
-		  (list 'link-to-file val (point)))
-		 ((derived-mode-p #'kotl-mode)
-		  (list 'link-to-kcell buffer-file-name (kcell-view:idstamp)))
-		 ;; If link is within an outline-regexp prefix, use
-		 ;; a link-to-string-match.
-		 ((and (boundp 'outline-regexp)
-		       (stringp outline-regexp)
-		       (save-excursion
-			 (<= (point)
-			     (progn
-			       (beginning-of-line)
-			       (if (looking-at outline-regexp)
-				   (match-end 0)
-				 0)))))
-		  (save-excursion
-		    (end-of-line)
-		    (let ((heading (buffer-substring-no-properties
-				    (point)
-				    (progn (beginning-of-line) (point))))
-			  (occur 1))
-		      (while (search-backward heading nil t)
-			(setq occur (1+ occur)))
-		      (list 'link-to-string-match
-			    heading occur buffer-file-name))))
-		 (buffer-file-name
-		  (list 'link-to-file buffer-file-name (point)))
-		 (t (list 'link-to-buffer-tmp (buffer-name))))
-		;;
-		;; Deleted link to elisp possibility as it can embed
-		;; long elisp functions in the button data file and
-		;; possibly not parse them correctly.
-		;;
-		;; (and (fboundp 'smart-emacs-lisp-mode-p)
-		;;      (smart-emacs-lisp-mode-p)
-		;;      (or (eq (char-syntax (following-char)) ?\()
-		;; 	 (eq (char-syntax (preceding-char)) ?\)))
-		;;      (setq val (hargs:sexpression-p))
-		;;      (list 'eval-elisp val))
-		))))
+	  (list (cond ((and (featurep 'org-id)
+			    (cond ((save-excursion
+				     (beginning-of-line)
+				     (when (looking-at "[ \t]*:ID:[ \t]+\\([^ \t\r\n\f]+\\)")
+				       ;; Org ID definition
+				       (list 'link-to-org-id (match-string 1)))))
+				  (t (let* ((id (thing-at-point 'symbol t)) ;; Could be a uuid or some other form of id
+					    (bounds (when id (bounds-of-thing-at-point 'symbol)))
+					    (start (when bounds (car bounds)))
+					    (case-fold-search t))
+				       ;; Org ID link - must have id: prefix or is ignored.
+				       (when start
+					 (save-excursion
+					   (goto-char (max (- start 3) (point-min)))
+					   (when (looking-at "\\bid:")
+					     (list 'link-to-org-id id)))))))))
+
+		      (t (cond ((and (prog1 (setq hbut-sym (hbut:at-p))
+				       ;; Next line forces use of any ibut name in the link.
+				       (save-excursion (ibut:at-to-name-p hbut-sym)))
+				     (setq lbl-key (hattr:get hbut-sym 'lbl-key))
+				     (eq (current-buffer) (get-file-buffer (gbut:file))))
+				(list 'link-to-gbut lbl-key))
+			       ((and hbut-sym (eq (hattr:get hbut-sym 'categ) 'explicit))
+				(list 'link-to-ebut lbl-key))
+			       (hbut-sym
+				(list 'link-to-ibut lbl-key (or buffer-file-name (buffer-name))))
+			       ((and (require 'bookmark)
+				     (derived-mode-p 'bookmark-bmenu-mode)
+				     (list 'link-to-bookmark (bookmark-bmenu-bookmark))))
+			       ((cond ((derived-mode-p 'Info-mode)
+				       (if (and Info-current-node
+						(member Info-current-node
+							(Info-index-nodes Info-current-file))
+						(Info-menu-item-at-p))
+					   (let ((hargs:reading-type 'Info-index-item))
+					     (list 'link-to-Info-index-item (hargs:at-p)))
+					 (let ((hargs:reading-type 'Info-node))
+					   (list 'link-to-Info-node (hargs:at-p)))))
+				      ((derived-mode-p #'texinfo-mode)
+				       (let (node)
+					 (save-excursion
+					   (beginning-of-line)
+					   (when (and (not (looking-at "@node "))
+						      (not (re-search-backward "^@node " nil t)))
+					     (hypb:error "(hui:link-possible-types): Not within a texinfo node"))
+					   (require 'texnfo-upd)
+					   (setq node (texinfo-copy-node-name)))
+					 (list 'link-to-texinfo-node buffer-file-name node)))
+				      ((hmail:reader-p)
+				       (list 'link-to-mail
+					     (list (rmail:msg-id-get) buffer-file-name)))))
+			       (t (cond
+				   ((let ((hargs:reading-type 'directory))
+				      (setq val (hargs:at-p t)))
+				    (list 'link-to-directory val))
+				   ((let ((hargs:reading-type 'file))
+				      (setq val (hargs:at-p t)))
+				    (list 'link-to-file val (point)))
+				   ((derived-mode-p #'kotl-mode)
+				    (list 'link-to-kcell buffer-file-name (kcell-view:idstamp)))
+				   ;; If link is within an outline-regexp prefix, use
+				   ;; a link-to-string-match.
+				   ((and (boundp 'outline-regexp)
+					 (stringp outline-regexp)
+					 (save-excursion
+					   (<= (point)
+					       (progn
+						 (beginning-of-line)
+						 (if (looking-at outline-regexp)
+						     (match-end 0)
+						   0)))))
+				    (save-excursion
+				      (end-of-line)
+				      (let ((heading (buffer-substring-no-properties
+						      (point)
+						      (line-end-position)))
+					    (occur 1))
+					(while (search-backward heading nil t)
+					  (setq occur (1+ occur)))
+					(list 'link-to-string-match
+					      heading occur buffer-file-name))))
+				   (buffer-file-name
+				    (list 'link-to-file buffer-file-name (point)))
+				   (t (list 'link-to-buffer-tmp (buffer-name)))))
+			       ;;
+			       ;; Deleted link to elisp possibility as it can embed
+			       ;; long elisp functions in the button data file and
+			       ;; possibly not parse them correctly.
+			       ;;
+			       ;; (and (fboundp 'smart-emacs-lisp-mode-p)
+			       ;;      (smart-emacs-lisp-mode-p)
+			       ;;      (or (eq (char-syntax (following-char)) ?\()
+			       ;; 	 (eq (char-syntax (preceding-char)) ?\)))
+			       ;;      (setq val (hargs:sexpression-p))
+			       ;;      (list 'eval-elisp val))
+			       )))))))
 
 (defun hui:list-remove-text-properties (lst)
   "Return LST, a list, with text properties removed from any string elements."

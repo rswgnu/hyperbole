@@ -3,7 +3,9 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     6-Oct-91 at 03:42:38
-;; Last-Mod:     10-Dec-22 at 00:52:04 by Mats Lidell
+;; Last-Mod:     28-Mar-23 at 00:02:25 by Bob Weiner
+;;
+;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
 ;; Copyright (C) 1991-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -17,7 +19,7 @@
 ;;; Other required Elisp libraries
 ;;; ************************************************************************
 
-(eval-and-compile (mapc #'require '(compile hversion hact locate)))
+(eval-and-compile (mapc #'require '(compile hversion hact locate cl-lib)))
 
 ;;; ************************************************************************
 ;;; Public variables
@@ -51,6 +53,26 @@ It must end with a space."
 (declare-function helm-apropos "ext:helm")
 (declare-function devdocs-lookup "ext:devdocs")
 
+;; interaction-log
+(defvar ilog-buffer-name)
+(defvar ilog-display-state)
+(defvar ilog-idle-time)
+(defvar ilog-insertion-timer)
+(defvar ilog-print-lambdas)
+(defvar ilog-self-insert-command-regexps)
+(defvar ilog-truncation-timer)
+(defvar interaction-log-mode)
+(defvar interaction-log-mode-hook)
+
+(declare-function ilog-note-buffer-change "ext:interaction-log")
+(declare-function ilog-post-command "ext:interaction-log")
+(declare-function ilog-record-this-command "ext:interaction-log")
+(declare-function ilog-show-in-other-frame "ext:interaction-log")
+(declare-function ilog-timer-function "ext:interaction-log")
+(declare-function ilog-toggle-view "ext:interaction-log")
+(declare-function ilog-truncate-log-buffer "ext:interaction-log")
+(declare-function interaction-log-mode "ext:interaction-log")
+
 ;;; ************************************************************************
 ;;; Public functions
 ;;; ************************************************************************
@@ -78,7 +100,7 @@ This displays a clean log of Emacs keys used and commands executed."
   (setq ilog-print-lambdas 'not-compiled)
 
   ;; Omit display of some lower-level Hyperbole commands for cleaner logs
-  (mapc (lambda (cmd-str) (pushnew (format "^%s$" cmd-str) ilog-self-insert-command-regexps))
+  (mapc (lambda (cmd-str) (cl-pushnew (format "^%s$" cmd-str) ilog-self-insert-command-regexps))
         '("hyperbole" "hui:menu-enter"))
 
   ;; Redefine the mode to display commands on post-command-hook rather
@@ -99,8 +121,7 @@ This displays a clean log of Emacs keys used and commands executed."
 	  (setq ilog-truncation-timer (run-at-time 30 30 #'ilog-truncate-log-buffer))
 	  (setq ilog-insertion-timer (run-with-timer ilog-idle-time ilog-idle-time
 						     #'ilog-timer-function))
-	  (message "Interaction Log: started logging in %s" ilog-buffer-name)
-	  (easy-menu-add ilog-minor-mode-menu))
+	  (message "Interaction Log: started logging in %s" ilog-buffer-name))
       (remove-hook 'after-change-functions #'ilog-note-buffer-change)
       (remove-hook 'post-command-hook      #'ilog-record-this-command)
       (remove-hook 'post-command-hook      #'ilog-post-command)
@@ -378,9 +399,10 @@ point at the start of the inserted text."
 ;;;###autoload
 (defun hypb:devdocs-lookup ()
   "Prompt for and display a devdocs.io docset section within Emacs.
-will this install the Emacs devdocs package when needed."
+This will install the Emacs devdocs package if not yet installed."
   (interactive)
   (hypb:require-package 'devdocs)
+  ;; (call-interactively #'devdocs-install)
   (devdocs-lookup))
 
 (defun hypb:domain-name ()
@@ -467,6 +489,10 @@ Return a flattened list of all matching files."
 			f))
 		    (apply #'nconc (mapcar (lambda (dir) (directory-files-recursively dir file-regexp))
 					   dirs)))))
+
+(defun hypb:format-args (args)
+  "Return a space-separated string of quoted ARGS without surrounding parentheses."
+  (if args (mapconcat (lambda (a) (format "%S" a)) args " ") ""))
 
 (defun hypb:format-quote (arg)
   "Replace all single % with %% in any string ARG.
@@ -589,12 +615,7 @@ This will this install the Emacs helm package when needed."
 (defun hypb:indirect-function (obj)
   "Return the function at the end of OBJ's function chain.
 Resolves autoloadable function symbols properly."
-  (let ((func
-	 (if (fboundp 'indirect-function)
-	     (indirect-function obj)
-	   (while (symbolp obj)
-	     (setq obj (symbol-function obj)))
-	   obj)))
+  (let ((func (indirect-function obj)))
     ;; Handle functions with autoload bodies.
     (if (and (symbolp obj) (listp func) (eq (car func) 'autoload))
 	(let ((load-file (car (cdr func))))
@@ -948,7 +969,7 @@ nor nil it means to not count the minibuffer window even if it is active."
 
 ;;;###autoload
 (defun hypb:display-file-with-logo (file)
-  "Display a text FILE in help mode with the Hyperbole banner prepended.
+  "Display a text FILE in view mode with the Hyperbole banner prepended.
 If FILE is not an absolute path, expand it relative to `hyperb:dir'."
   (unless (stringp file)
     (error "(hypb:display-file-with-logo): 'file' must be a string, not '%s'" file))
@@ -963,7 +984,7 @@ If FILE is not an absolute path, expand it relative to `hyperb:dir'."
       (skip-syntax-forward "-")
       (set-window-start (selected-window) 1)
       (set-buffer-modified-p nil)
-      (help-mode)
+      (view-mode)
       ;; On some versions of Emacs like Emacs28, need a slight delay
       ;; for file loading before searches will work properly.
       ;; Otherwise, "test/demo-tests.el" may fail.

@@ -7,7 +7,7 @@
 @c Author:       Bob Weiner
 @c
 @c Orig-Date:     6-Nov-91 at 11:18:03
-@c Last-Mod:      8-Jan-23 at 10:13:37 by Mats Lidell
+@c Last-Mod:     29-Mar-23 at 23:11:38 by Bob Weiner
 
 @c %**start of header (This is for running Texinfo on a region.)
 @setfilename hyperbole.info
@@ -53,7 +53,7 @@
 This manual is for GNU Hyperbole
 (Edition @value{EDITION}, Published @value{UPDATED}).
 
-Copyright @copyright{} 1989-2022  Free Software Foundation, Inc.
+Copyright @copyright{} 1989-2023  Free Software Foundation, Inc.
 
 @quotation
 Permission is granted to copy, distribute and/or modify this document
@@ -143,7 +143,7 @@ Texinfo markup language.
 <CENTER><H3><A HREF="mailto:rsw@@gnu.org">Say thanks or send a testimonial if you like Hyperbole.</A></H3></CENTER>
 
 
-<P>Copyright &copy; 1989-2022  Free Software Foundation, Inc.</P>
+<P>Copyright &copy; 1989-2023  Free Software Foundation, Inc.</P>
 
 <P>GNU Hyperbole is available for use, modification, and distribution under
 the terms of the GNU General Public License (GPL) Version 3 or later,
@@ -156,7 +156,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</P>
 
 <PRE>
 Edition 8.0.1pre
-Printed January 7, 2023.
+Printed March 29, 2023.
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -184,7 +184,7 @@ Printed January 7, 2023.
 
 @sp 2
 @noindent
-Copyright @copyright{} 1989-2022  Free Software Foundation, Inc.
+Copyright @copyright{} 1989-2023  Free Software Foundation, Inc.
 
 GNU Hyperbole is available for use, modification, and distribution
 under the terms of the GNU General Public License (GPL) Version 3 or
@@ -198,7 +198,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 @example
 Edition 8.0.1pre
-January 7, 2023
+March 29, 2023
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -2035,23 +2035,27 @@ Manual}, for details on bookmarks.
 @cindex button, implicit
 @cindex implicit button
 @findex link-to-file
-@dfn{Implicit buttons} are virtual buttons recognized within the natural
-structure of a document.  For example, a web URL button that displays its link
-or an email address button that starts a mail message to the associated
-address.  Implicit buttons are identified by implicit button type contextual
-pattern matchers that identify appropriate textual patterns at point.
+Hyperbole can recognize and activate @dfn{implicit buttons} within
+documents that require no special markup, e.g. pathnames or URLs, and
+many other types.  For example, an Action Key press on a web URL will
+display its link in a browser, regardless of the format of the
+document.  Similarly, an Action Key press on an email address starts
+composing mail to that address.
 
 @cindex implicit button type
-An @dfn{implicit button type} utilizes Emacs Lisp to identify a pattern or
-state that when matched triggers an @emph{action} associated with the implicit
-button type.  The action is specified by either a Hyperbole action type
-(@pxref{Action Types}) or an Emacs Lisp command.  Implicit button types may use
-the same action types that explicit buttons use.  As an example, the pathname
-implicit button type matches to any existing local filename or directory name
-and its action type, @code{link-to-file}, displays the associated file or
-directory, typically in another window.  An explicit button could do the same
-thing but has to be created manually, rather than recognized as part of the
-buffer text.
+Implicit buttons are identified by implicit button type contextual
+pattern matchers that identify appropriate textual patterns at point.
+An @dfn{implicit button type} utilizes Emacs Lisp to identify a
+pattern or state that when matched triggers an @emph{action}
+associated with the implicit button type.  The action is specified by
+either a Hyperbole action type (@pxref{Action Types}) or an Emacs Lisp
+command.  Implicit button types may use the same action types that
+explicit buttons use.  As an example, the pathname implicit button
+type matches to any existing local filename or directory name and its
+action type, @code{link-to-file}, displays the associated file or
+directory, typically in another window.  An explicit button could do
+the same thing but has to be created manually, rather than recognized
+as part of the buffer text.
 
 @vindex file, hibtypes.el
 @cindex context
@@ -2087,16 +2091,27 @@ button with a label of 'My Emacs Files':
 <[My Emacs Files]>: "~/.emacs.d"
 @end example
 
+The label is delimited by @samp{<[} and @samp{]>} and can be followed
+by any number of :, - or = separator characters, including none.
+
+@kindex C-h h i
+@cindex menu, Ibut
+@cindex menu, Implicit-Button
+@kindex C-h h i a
+@kindex C-h h i c
 @kindex C-h h i e
 @kindex C-h h i l
-The label is delimited by @samp{<[} and @samp{]>} and can be followed
-by any number of :, - or = separator characters, including none.  You
-can activate the button either from its label or its text.  With point
-on the text of an implicit button, @bkbd{C-h h i l} will label it.  Or
-you may simply type the label and delimiters manually.  You can also
-simply edit any implicit button manually but for a little more help in
-editing named implicit buttons, use @bkbd{C-h h i e} which prompts
-you to rename the button and to change its text (the button itself).
+Implicit buttons are managed with the Hyperbole Ibut/ menu accessed
+with @bkbd{C-h h i}.  The Create item, @bkbd{C-h h i c}, prompts for
+an implicit button label, an action type, and the action's associated
+arguments, such as a file to which to link.  It then creates the
+button at point.  To activate the button with point on its label or
+button text, use the Act menu item, @bkbd{C-h h i a} or press the
+Action Key.  You can use @bkbd{C-h h i e} to edit an implicit button
+(or simply edit it manually).  If you want to add a label to an
+existing implicit button without one, use @bkbd{C-h h i l} to label
+it.
+
 
 @menu
 * Implicit Button Types::
@@ -2151,7 +2166,7 @@ Within a radio or internal target or a link to it, jump between
 the target and the first link to it, allowing two-way navigation.
 
 @item
-Follow other internal links in Org mode files.
+Follow other internal links and ID references in Org mode files.
 
 @item
 Follow Org mode external links.
@@ -2898,7 +2913,7 @@ Display a message showing VALUE (a symbol) and its value.
 Return any non-@samp{nil} value or @samp{t}.
 
 @findex actypes display-variable
-@item display-variable-value
+@item display-variable
 Display a message showing the given variable name and its value.
 
 @findex actypes eval-elisp
@@ -3359,6 +3374,7 @@ upon the referent context in which the Action Key is released.
 @example
 Referent Context         Link Type
 ----------------------------------------------------
+Org Roam or Org Id       link-to-org-id
 Global Button            link-to-gbut
 Explicit Button          link-to-ebut
 Implicit Button          link-to-ibut
@@ -7015,6 +7031,12 @@ if any emacs-related terms are unfamiliar to you.
 
 @table @b
 
+@item Ace Window
+Emacs extension package that labels windows with letters and allows
+quick selection or other operations on a specific window.  Hyperbole
+extends this with a number of additional commands like throw a buffer
+to a window or replace a windows's contents.  @xref{Keyboard Drags}.
+
 @item Action
 An executable behavior associated with a Hyperbole button.  @dfn{Links}
 are a specific class of actions which display existing entities, such as
@@ -7153,6 +7175,14 @@ level deeper than the parent.
 A group of functions and variables with the same prefix in their names,
 used to provide an interface to an internal or external Hyperbole
 abstraction.
+
+@cindex consult package
+@cindex consult-org-roam package
+@item Consult
+An Emacs extension package that provides asynchronous search and narrow
+wrappers around common search commands like grep, ripgrep, find and locate.
+Hyperbole optionally utilizes this to search the HyRolo.  Use the
+@code{consult-org-roam} package to search Org Roam notes similarly.
 
 @item Context
 A programmatic or positional state recognized by Hyperbole.
@@ -7400,6 +7430,21 @@ Smalltalk.
 Hyperbole provides the mouse support for the OO-Browser, providing Smart
 Keys that utilize the OO-Browser's capabilities both when it is displayed
 on screen and when editing code.
+
+@item Org Mode
+A built-in Emacs mode for outlining, note taking and scientific
+publishing.  Hyperbole simplifies access to a number of its features
+and integrates its own hypermedia capabilities with those of Org mode.
+Hyperbole can display the referent of any Org Id.
+@xref{Smart Key - Org Mode}.
+
+@cindex org-roam package
+@item Org Roam
+An Emacs extension package that inserts ids into Org mode files and
+indexes them within a Sqlite database for rapid note taking and lookup
+by title.  Hyperbole can display the referent of any Org Roam Id and
+provides full-text searching of Org Roam nodes utilzing the interactive
+grep commands from the Consult extension package.
 
 @item Outline
 See @b{Koutline}.
@@ -7726,10 +7771,12 @@ mirror of the GNU ftp site and show it to you.
 
 Then decompress and unpack the archive to a directory of your
 choosing.  Move into the @file{hyperbole-<version>/} directory and execute
-the following Posix shell command, @code{make bin}, to
-byte-compile the Hyperbole lisp files.  Then add the following
-lines to your personal Emacs initialization file,
-@file{~/.emacs}:
+the following Posix shell command:
+
+  @code{make bin}
+
+to byte-compile the Hyperbole lisp files.  Then add the following
+lines to your personal Emacs initialization file, @file{~/.emacs}:
 
 @lisp
 @group
@@ -9431,7 +9478,7 @@ When in an Org mode context and @code{hsys-org-enable-smart-keys} is non-nil:
      (3) Within a radio or internal target or a link to it, jump between
          the target and the first link to it, allowing two-way navigation.
 
-     (4) Follow other internal links in Org mode files.
+     (4) Follow other internal links and ID references in Org mode files.
 
      (5) Follow Org mode external links.
 
@@ -9456,7 +9503,7 @@ When in an Org mode context and @code{hsys-org-enable-smart-keys} is non-nil:
      (1) If on an Org todo keyword, move to the first todo keyword in
          the next set, if any.
 
-     (2) If on an Org mode link or agenda item, display Hyperbole
+     (2) If on an Org mode link, ID reference or agenda item, display Hyperbole
          context-sensitive help.
 
      (3) On a Hyperbole button, perform the Assist Key function, generally
@@ -9473,11 +9520,15 @@ When in an Org mode context and @code{hsys-org-enable-smart-keys} is non-nil:
 @end group
 @end format
 
+@cindex Org ID
+@cindex Org link, outside Org
+@vindex org-id
 @vindex org-link-outside-org-mode
 @noindent
 Org links may be used outside of Org mode buffers.  Such links are
 handled by the separate implicit button type, @code{org-link-outside-org-mode}.
-
+Org Roam and Org IDs may be activated as hyperbuttons outside of Org mode buffers.
+They are handled by the separate implicit button type, @code{org-id}.
 
 @node Smart Key - Ivy, Smart Key - Treemacs, Smart Key - Org Mode, Smart Keyboard Keys
 @subsection Smart Key - Ivy
@@ -10341,8 +10392,8 @@ and outline-minor-mode is enabled:
      (4) on a header line but not at the beginning or end of the line,
          if the headings subtree is hidden, shows it, otherwise hides
          it;
-     (5) anywhere else, invokes @code{action-key-eol-function}, typically
-         to scroll up a windowful.
+     (5) at the end of a line, invokes @code{action-key-eol-function},
+         typically to scroll up a windowful.
   ASSIST KEY
      (1) after an outline heading has been cut via the Action Key,
          allows multiple pastes throughout the buffer (the last paste
@@ -10352,8 +10403,8 @@ and outline-minor-mode is enabled:
          (sans subtree) from the buffer;
      (4) on a header line but not at the beginning or end, if the
          heading body is hidden, shows it, otherwise hides it;
-     (5) anywhere else, invokes @code{assist-key-eol-function}, typically
-         to scroll down a windowful.
+     (5) at the end of a line, invokes @code{assist-key-eol-function},
+         typically to scroll down a windowful.
 @end group
 @end format
 

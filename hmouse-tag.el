@@ -3,7 +3,9 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    24-Aug-91
-;; Last-Mod:     15-Jan-23 at 16:56:07 by Mats Lidell
+;; Last-Mod:     29-Jan-23 at 16:34:52 by Mats Lidell
+;;
+;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
 ;; Copyright (C) 1991-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -739,9 +741,12 @@ Return matching Elisp tag name that point is within, else nil."
 		   ;; If tag is preceded by an 'hact' call, then treat as a Hyperbole actype.
 		   (or (symtable:actype-p tag) tag))
 		  (tag
-		   (if (intern-soft tag)
-		       tag
-		     (or (symtable:ibtype-p tag) (symtable:actype-p tag) tag)))))
+		   (let ((tag-sym (intern-soft tag)))
+		     ;; The partial names of htypes will be interned
+		     ;; but not fboundp or boundp.
+		     (if (and tag-sym (or (fboundp tag-sym) (boundp 'tag-sym)))
+			 tag
+		       (or (symtable:ibtype-p tag) (symtable:actype-p tag) tag))))))
   (cond ((or (null tag) (stringp tag))
 	 tag)
 	((symbolp tag)
@@ -1172,7 +1177,6 @@ TAG-SYM may be a function, variable or face."
 	 (tags-file-name (if tags-table-list
 			     nil
 			   (and (boundp 'tags-file-name) tags-file-name)))
-	 find-tag-result
 	 (tags-add-tables nil))
     (condition-case ()
 	(and func (funcall func tag) t)

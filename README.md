@@ -27,6 +27,8 @@ otherwise, skip to the next section.
 
    - [Find/Web Search](https://youtu.be/8lMlJed0-OM)
 
+   - [Linking personal info with implicit buttons](https://youtu.be/TQ_fG7b1iHI)
+
 ## Summary
 
 `GNU Hyperbole` (pronounced Ga-new Hi-per-bo-lee), or just `Hyperbole`, is

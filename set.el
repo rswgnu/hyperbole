@@ -3,7 +3,9 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    26-Sep-91 at 19:24:19
-;; Last-Mod:      6-Aug-22 at 23:23:08 by Mats Lidell
+;; Last-Mod:      6-Feb-23 at 20:05:30 by Mats Lidell
+;;
+;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
 ;; Copyright (C) 1991-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -21,6 +23,7 @@
 ;;   a new set with the single member, 'element.
 
 ;;; Code:
+
 ;; ************************************************************************
 ;; Public variables
 ;; ************************************************************************
@@ -31,42 +34,54 @@ It must be a function of two arguments which returns non-nil only when
 the arguments are equivalent.")
 
 ;; ************************************************************************
-;; Public macros
+;; Public functions
 ;; ************************************************************************
+
+(defun set:add (elt set)
+  "Add element ELT to SET and then return SET.
+Uses `set:equal-op' for comparison.
+Use (setq set (set:add elt set)) to assure set is always properly modified."
+  (cond ((set:member elt set) set)
+	 ((listp set) (setq set (cons elt set)))
+	 (t (list elt))))
 
 (defun set:member (elt set)
   "Return non-nil if ELT is an element of SET.
 The value is actually the tail of SET whose car is ELT.
 Uses `set:equal-op' for comparison."
-  (while (and set (not (funcall set:equal-op elt (car set))))
-    (setq set (cdr set)))
-  set)
+  (pcase set:equal-op
+    ('equal (member elt set))
+    ('eq    (memq elt set))
+    ('eql   (memql elt set))
+    (_      (while (and set (not (funcall set:equal-op elt (car set))))
+	      (setq set (cdr set)))
+	    set)))
 
-(defmacro set:add (elt set)
-  "Add element ELT to SET and then return SET, even if SET is nil.
-Uses `set:equal-op' for comparison.
-Use (setq set (set:add elt set)) to assure set is always properly modified."
-  `(cond ((set:member ,elt ,set) ,set)
-	 (,set (setq ,set (cons ,elt ,set)))
-	 (t (list ,elt))))
-
-(defmacro set:remove (elt set)
+(defun set:remove (elt set)
   "Remove element ELT from SET and return new set.
 Assume SET is a valid set.  Uses `set:equal-op' for comparison.
 Use (setq set (set:remove elt set)) to assure set is always properly modified."
-  `(let ((rest (set:member ,elt ,set))
-	 (rtn ,set))
-     (if rest
-	 (cond ((= (length rtn) 1) (setq rtn nil))
-	       ((= (length rest) 1)
-		(setcdr (nthcdr (- (length rtn) 2) rtn) nil))
-	       (t (setcar rest (car (cdr rest)))
-		  (setcdr rest (cdr (cdr rest))))))
-     rtn))
+  (pcase set:equal-op
+    ('equal (delete elt set))
+    ((or 'eq 'eql) (delq elt set))
+    (_  (let ((rest (set:member elt set))
+	      (rtn set))
+	  (when rest
+	    (cond ((= (length rtn) 1) (setq rtn nil))
+		  ((= (length rest) 1)
+		   (setcdr (nthcdr (- (length rtn) 2) rtn) nil))
+		  (t (setcar rest (cadr rest))
+		     (setcdr rest (cddr rest)))))
+	  rtn))))
 
-;; ************************************************************************
-;; Public functions
-;; ************************************************************************
+(defun set:remove-key-value (key set)
+  "Remove element whose car matches KEY in SET.
+Return the set.  Use (setq set (set:remove-key-value key set)) to assure set is
+always properly modified. 
+
+Use `set:equal-op' to match against KEY.  Assume each element in the set has a
+car and a cdr."
+  (assoc-delete-all key set set:equal-op))
 
 (defun set:combinations (set &optional arity)
   "Return all possible combinations (subsets) of SET.
@@ -86,7 +101,8 @@ members."
 			(setq rest (nthcdr ctr set)
 			      ctr (1+ ctr))
 			(mapcar (lambda (elt)
-				  (if (listp elt) (cons first elt)
+				  (if (listp elt)
+				      (cons first elt)
 				    (list first elt)))
 				(set:combinations rest (1- arity))))
 		      set))))))
@@ -96,10 +112,13 @@ members."
   "Return a new set created from any number of ELEMENTS.
 If no ELEMENTS are given, return the empty set.  Uses `set:equal-op'
 for comparison."
-  (let ((set))
-    (mapc (lambda (elt) (or (set:member elt set) (setq set (cons elt set))))
-	  elements)
-    (nreverse set)))
+  (pcase set:equal-op
+    ('equal (delete-dups elements))
+    (_ (let ((set))
+	 (mapc (lambda (elt) (unless (set:member elt set)
+			       (setq set (cons elt set))))
+	       elements)
+	 (nreverse set)))))
 
 (defalias 'set:delete 'set:remove)
 (defun set:difference (&rest sets)
@@ -111,7 +130,7 @@ other sets.  Uses `set:equal-op' for comparison."
 	    (mapc (lambda (elem) (setq rtn-set (set:remove elem rtn-set)))
 		  set))
      (cdr sets))
-    (nreverse rtn-set)))
+    rtn-set))
 
 (defalias 'set:size 'length)
 
@@ -159,22 +178,24 @@ Uses `set:equal-op' for comparison.  See also `set:create'."
   (let ((set))
     (mapc (lambda (elt) (or (set:member elt set) (setq set (cons elt set))))
 	  list)
-    set))
+    (nreverse set)))
 
-(defun set:replace (key value set)
-  "Replace or add element whose car matches KEY with element (KEY . VALUE) in SET.
-Return set if modified, else nil.
-Use (setq set (set:replace elt set)) to assure set is always properly modified.
+(defun set:replace (old-elt new-elt set)
+  "Replace OLD-ELT with NEW-ELT in SET.  Add NEW-ELT if OLD-ELT is not in SET.
+Return the set.  Use (setq set (set:replace elt set)) to assure set is
+always properly modified. 
+
+Use `set:equal-op' for element comparisons."
+  (set:add new-elt (set:remove old-elt set)))
+
+(defun set:replace-key-value (key value set)
+  "Replace or add element whose car matches KEY with a cdr of VALUE in SET.
+Return the set.  Use (setq set (set:replace elt set)) to assure set is
+always properly modified. 
 
 Use `set:equal-op' to match against KEY.  Assume each element in the set has a
 car and a cdr."
-  (let ((elt-set (set:member key set)))
-    (if elt-set
-	;; replace element
-	(progn (setcar elt-set (cons key value))
-	       set)
-      ;; add new element
-      (cons (cons key value) set))))
+  (set:add (cons key value) (set:remove-key-value key set)))
 
 (defun set:subset (sub set)
   "Return t iff set SUB is a subset of SET.

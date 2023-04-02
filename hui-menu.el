@@ -3,7 +3,9 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    28-Oct-94 at 10:59:44
-;; Last-Mod:      6-Nov-22 at 12:23:29 by Bob Weiner
+;; Last-Mod:     29-Mar-23 at 22:05:18 by Bob Weiner
+;;
+;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
 ;; Copyright (C) 1994-2021  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -413,6 +415,7 @@ REBUILD-FLAG is non-nil, in which case the menu is rebuilt."
 		   ["Manual"   (id-info "(hyperbole)Implicit Buttons") t]
 		   "----"
 		   ["Activate" hui:ibut-act t]
+		   ["Create"   hui:ibut-create t]
 		   ["Delete-Type" (hui:htype-delete 'ibtypes) t]
 		   ["Edit"   hui:ibut-edit t]
 		   ["Help"   hui:hbut-help t]

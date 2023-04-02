@@ -3,7 +3,9 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    04-Feb-89
-;; Last-Mod:     15-Jan-23 at 20:35:52 by Mats Lidell
+;; Last-Mod:      1-Mar-23 at 21:45:58 by Bob Weiner
+;;
+;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
 ;; Copyright (C) 1991-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -147,6 +149,7 @@ Its default value is `smart-scroll-down'.  To disable it, set it to
 (defvar helm-action-buffer)
 (defvar helm-alive-p)
 (defvar helm-buffer)
+(defvar helm-saved-action)
 
 (declare-function ibuffer-mark-for-delete "ibuffer")
 (declare-function ibuffer-unmark-forward "ibuffer")
@@ -165,6 +168,8 @@ Its default value is `smart-scroll-down'.  To disable it, set it to
 (declare-function company-quickhelp-manual-begin "ext:company-quickhelp")
 (declare-function company-show-location "ext:company")
 (declare-function company-select-mouse "ext:company")
+
+(declare-function unix-apropos-get-man "ext:man-apropos")
 
 ;;; ************************************************************************
 ;;; Hyperbole context-sensitive keys dispatch table
@@ -422,6 +427,7 @@ Its default value is `smart-scroll-down'.  To disable it, set it to
     ((eq major-mode 'calendar-mode) .
      ((smart-calendar) . (smart-calendar-assist)))
     ;;
+    ;; Part of InfoDock
     ((eq major-mode 'unix-apropos-mode) .
      ((smart-apropos) . (smart-apropos-assist)))
     ;;
@@ -543,17 +549,6 @@ smart keyboard keys.")
   "Offer completion help for current minibuffer argument, if any."
   (if (where-is-internal 'minibuffer-completion-help (current-local-map))
       (minibuffer-completion-help)))
-
-(defun smart-symlink-expand (path)
-  "Return referent for possible symbolic link, PATH."
-  (if (not (fboundp 'symlink-referent))
-      path
-    (let ((start 0) (len (length path)) (ref) (part))
-      (while (and (< start len) (setq part (string-match "/[^/]*" path start)))
-	(setq part (concat ref
-			   (substring path start (setq start (match-end 0))))
-	      ref (symlink-referent part))) ;; FIXME - Where is this function defined
-      ref)))
 
 ;;; ************************************************************************
 ;;; smart-buffer-menu functions
@@ -1070,6 +1065,15 @@ a helm section header."
 	   (eq (posn-area (event-start action-key-depress-args))
 	       'header-line))))
 
+(defun smart-helm-get-current-action (&optional action)
+  "Return the helm default action.
+Get it from optional ACTION, the helm saved action or from the selected helm item."
+  (helm-get-default-action (or action
+                               helm-saved-action
+                               (if (get-buffer helm-action-buffer)
+                                   (helm-get-selection helm-action-buffer)
+                                 (helm-get-actions-from-current-source)))))
+
 (defun smart-helm-line-has-action ()
   "Mark and return the actions for the helm selection item at the point.
 Point is where Action Key was depress.  Return nil if line lacks
@@ -1086,7 +1090,7 @@ active."
 		       (helm-pos-candidate-separator-p)))
 	  (let ((helm-selection-point (point)))
 	    (helm-mark-current-line)
-	    (helm-get-current-action)))))))
+	    (smart-helm-get-current-action)))))))
 
 (defun smart-helm-alive-p ()
   ;; Handles case where helm-action-buffer is visible but helm-buffer
@@ -1244,7 +1248,7 @@ Locations are:
 				 (princ "The current helm selection item is:\n\t")
 				 (princ (helm-get-selection (helm-buffer-get)))
 				 (princ "\nwith an action of:\n\t")
-				 (princ (helm-get-current-action)))
+				 (princ (smart-helm-get-current-action)))
 			       nil)))))
 	     (if hkey-debug
 		 (message "(HyDebug): In smart-helm-assist, key to execute is: {%s}; binding is: %s"
@@ -1521,17 +1525,19 @@ If assist-key is pressed:
 ;;; smart-man functions
 ;;; ************************************************************************
 
-;; "unix-apropos.el" is a publicly available Emacs Lisp package that
-;; allows man page browsing from apropos listings.  "superman.el" is a
-;; newer, much more complete package that you would probably prefer at
-;; this point, but there is no Smart Key apropos support for it.  There
-;; is smart key support within the man page buffers it produces, however.
+;; "man-apropos.el" which contains the unix-apropos functions below is a
+;; part of InfoDock; these functions are not called unless this
+;; library has been loaded and is in use.  It generates a buffer of apropos
+;; listing and allows selection and associated man page display.
+;;
+;; Man page cross-references in Emacs man buffers are handled
+;; separately via the 'man-apropos' implicit button type.
 ;;
 
 (defun smart-apropos ()
   "Move through UNIX man apropos listings by using one key or mouse key.
 
-Invoked via a key press when in unix-apropos-mode.  It assumes that
+Invoked via a key press when in `unix-apropos-mode'.  It assumes that
 its caller has already checked that the key was pressed in an appropriate
 buffer and has moved the cursor to the selected buffer.
 
@@ -1544,12 +1550,14 @@ If key is pressed:
   (interactive)
   (if (last-line-p)
       (scroll-other-window)
-    (unix-apropos-get-man)))            ;; FIXME - Deprecated?
+    ;; Called only if man-apropos.el of InfoDock is loaded
+    (when (fboundp #'unix-apropos-get-man)
+      (unix-apropos-get-man))))
 
 (defun smart-apropos-assist ()
   "Move through UNIX man apropos listings by using assist-key or mouse assist-key.
 
-Invoked via an assist-key press when in unix-apropos-mode.  It assumes that
+Invoked via an assist-key press when in `unix-apropos-mode'.  It assumes that
 its caller has already checked that the assist-key was pressed in an appropriate
 buffer and has moved the cursor to the selected buffer.
 
@@ -1562,7 +1570,9 @@ If assist-key is pressed:
   (interactive)
   (if (last-line-p)
       (scroll-other-window (- 3 (window-height)))
-    (unix-apropos-get-man)))
+    ;; Called only if man-apropos.el of InfoDock is loaded
+    (when (fboundp #'unix-apropos-get-man)
+      (unix-apropos-get-man))))
 
 (defun smart-man-display (lisp-form)
   "Evaluate LISP-FORM returned from `smart-man-entry-ref' to display a man page."
@@ -1581,10 +1591,10 @@ local variable containing its pathname."
     (if (not (or (if (string-match "Manual Entry\\|\\*man "
 				   (buffer-name (current-buffer)))
 		     (progn (and (boundp 'man-path) man-path
-				 (setq ref (smart-symlink-expand man-path)))
+				 (setq ref (hpath:symlink-referent man-path)))
 			    t))
 		 (if buffer-file-name
-		     (string-match "/man/" (setq ref (smart-symlink-expand
+		     (string-match "/man/" (setq ref (hpath:symlink-referent
 						      buffer-file-name))))))
 	(setq ref nil)
       (or (setq ref (or (smart-man-file-ref)
@@ -1847,8 +1857,8 @@ If key is pressed:
      buffer;
  (4) on a heading line but not at the beginning or end, if headings subtree is
      hidden then show it, otherwise hide it;
- (5) anywhere else, invoke `action-key-eol-function', typically to scroll up
-     a windowful."
+ (5) at the end of a line, invoke `action-key-eol-function', typically to
+     scroll up a windowful."
 
   (interactive)
   (cond (smart-outline-cut
@@ -1862,9 +1872,10 @@ If key is pressed:
 	      ;; Skip past start of current entry
 	      (progn (re-search-forward outline-regexp nil t)
 		     (smart-outline-to-entry-end t)))))
-
-	((or (eolp) (zerop (smart-outline-level)))
+	((eolp)
 	 (funcall action-key-eol-function))
+	((zerop (smart-outline-level))
+	 nil)
 	;; On an outline heading line but not at the start/end of line.
 	((smart-outline-subtree-hidden-p)
 	 (outline-show-subtree))
@@ -1886,8 +1897,8 @@ If assist-key is pressed:
      subtree) from the buffer;
  (4) on a heading line but not at the beginning or end, if heading body is
      hidden then show it, otherwise hide it;
- (5) anywhere else, invoke `assist-key-eol-function', typically to scroll down
-     a windowful."
+ (5) at the end of a line, invoke `assist-key-eol-function', typically to
+     scroll down a windowful."
 
   (interactive)
   (cond (smart-outline-cut (yank))
@@ -1898,8 +1909,10 @@ If assist-key is pressed:
 		      ;; Skip past start of current entry
 		      (progn (re-search-forward outline-regexp nil t)
 			     (smart-outline-to-entry-end))))
-	((or (eolp) (zerop (smart-outline-level)))
+	((eolp)
 	 (funcall assist-key-eol-function))
+	((zerop (smart-outline-level))
+	 nil)
 	;; On an outline heading line but not at the start/end of line.
 	((smart-outline-subtree-hidden-p)
 	 (outline-show-entry))

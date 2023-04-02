@@ -3,7 +3,9 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    28-Feb-21 at 22:52:00
-;; Last-Mod:     22-May-22 at 11:13:48 by Mats Lidell
+;; Last-Mod:     19-Feb-23 at 15:49:31 by Mats Lidell
+;;
+;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
 ;; Copyright (C) 2021-2022  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -104,13 +106,13 @@
 
 (ert-deftest hbut-defil-it ()
   (defil defil-path-it "<<<" ">>>" ".*" "${hyperb:dir}/\\&")
-  (unwind-protect
-      (with-temp-buffer
-        (insert "<<<DEMO>>>")
-        (goto-char 4)
-        (action-key)
-        (should (string= (expand-file-name "DEMO" hyperb:dir) buffer-file-name)))
-    (progn
+  (let ((vc-follow-symlinks nil))
+    (unwind-protect
+	(with-temp-buffer
+          (insert "<<<DEMO>>>")
+          (goto-char 4)
+          (action-key)
+          (should (string= (expand-file-name "DEMO" hyperb:dir) buffer-file-name)))
       (kill-buffer "DEMO")
       (ibtype:delete 'ibtypes::defil-path-it))))
 
@@ -177,7 +179,7 @@
     (goto-char 3)
     (with-simulated-input "TMP RET"
       (hui:ibut-label-create)
-      (should (string= "<[TMP]> \"/tmp\"\n" (buffer-string))))))
+      (should (string= "<[TMP]> - \"/tmp\"\n" (buffer-string))))))
 
 (ert-deftest hbut-ib-create-label-fails-if-label-exists ()
   "Creation of a label for an implicit button fails if a label exists."
@@ -374,7 +376,7 @@
 (ert-deftest hbut-ctags-vgrind-test ()
   (unwind-protect
       (with-temp-buffer
-        (insert "hy-test-helpers:consume-input-events hy-test-helpers.el 23\n")
+        (insert "hy-test-helpers:consume-input-events hy-test-helpers.el 25\n")
         (goto-char (point-min))
         (forward-char 4)
         (let ((default-directory (expand-file-name "test" hyperb:dir)))
@@ -390,7 +392,7 @@
       (with-temp-buffer
         (insert "\n")
         (insert "hy-test-helpers.el,237\n")
-        (insert "(defun hy-test-helpers:consume-input-events 23,518\n")
+        (insert "(defun hy-test-helpers:consume-input-events 25,518\n")
         (rename-buffer (concat "TAGS" (buffer-name)))
         (goto-char (point-min))
         (forward-line 2)
