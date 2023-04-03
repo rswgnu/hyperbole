@@ -24,7 +24,7 @@
 
 ;;; Code:
 
-(require 'kcell)
+(require 'kcell "kotl/kcell")
 (require 'kotl-mode)
 
 (defconst kcell-tests--ref-to-id-tests
