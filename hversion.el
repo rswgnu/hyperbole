@@ -4,7 +4,7 @@
 ;; Maintainer:   Bob Weiner, Mats Lidell
 ;;
 ;; Orig-Date:     1-Jan-94
-;; Last-Mod:     27-May-23 at 12:17:40 by Bob Weiner
+;; Last-Mod:     28-May-23 at 15:52:28 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -92,33 +92,6 @@ of stack frames (from innermost to outermost)."
 		   (throw 'hyperb:stack-frame frame))))
 	  nil)
 	(when debug-flag (nreverse frame-list)))))
-
-(defun hyperb:path-being-loaded ()
-  "Return the full pathname used by the innermost `load' or `require' call.
-Removes any matches for `hyperb:automount-prefixes' before returning
-the pathname."
-  (let* ((frame (hyperb:stack-frame '(load require)))
-	 (function (nth 1 frame))
-	 file nosuffix)
-    (cond ((eq function 'load)
-	   (setq file (nth 2 frame)
-		 nosuffix (nth 5 frame)))
-	  ((eq function 'require)
-	   (setq file (or (nth 3 frame) (symbol-name (nth 2 frame))))))
-    (when (stringp file)
-      (setq nosuffix (or nosuffix
-			 (string-match
-			  "\\.\\(elc?\\|elc?\\.gz\\|elc?\\.Z\\)$"
-			  file))
-	    file (substitute-in-file-name file)
-	    file (locate-file file load-path
-			      (when (null nosuffix) '(".elc" ".el" ".el.gz" ".el.Z"))
-			      ;; accept any existing file
-			      nil)
-	    file (if (and (stringp file)
-			  (string-match hyperb:automount-prefixes file))
-		     (substring file (1- (match-end 0)))
-		   file)))))
 
 (defun hyperb:window-sys-term (&optional frame)
   "Return first part of the term-type if running under a window system, else nil.
