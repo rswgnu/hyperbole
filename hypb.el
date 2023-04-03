@@ -172,8 +172,8 @@ Trigger an error with traceback if the buffer is not live or its
 name differs at the start and end of BODY."
   (declare (indent 0) (debug t))
   `(let ((debug-on-error t)
-	 (start-buffer (current-buffer)))
-     (unless (buffer-live-p start-buffer)
+	 (start-buffer (current-buffer))) ;FIXME: Name capture.
+     (unless (buffer-live-p start-buffer) ;FIXME: Impossible?
        (error "Start buffer, '%s', is not live" (current-buffer)))
      ;; `kill-buffer' can change current-buffer in some odd cases.
      (unwind-protect

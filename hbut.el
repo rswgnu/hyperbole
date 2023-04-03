@@ -385,19 +385,16 @@ button is found in the current buffer."
 		    (insert new-label)
 		    (setq end (point)))
 		   ((and (hmouse-use-region-p)
-			 (if (hyperb:stack-frame
-			      '(hui:ebut-create hui:ebut-edit hui:ebut-edit-region
-						hui:ebut-link-create hui:gbut-create
-                       				hui:gbut-edit hui:link-create ebut:program
-						hui:ibut-create hui:ibut-edit
-						hui:ibut-link-create ibut:program))
+			 (if hui--ignore-action-key-depress-prev-point
 			     ;; Ignore action-key-depress-prev-point
 			     (progn (setq mark (marker-position (mark-marker))
 					  start (region-beginning)
 					  end (region-end)
 					  buf-lbl (buffer-substring-no-properties start end))
 				    (equal buf-lbl curr-label))
-			   ;; Utilize any action-key-depress-prev-point
+			   ;; Utilize any action-key-depress-prev-point.
+			   ;; FIXME: Can't `action-key-depress-prev-point'
+			   ;; be nil at this point?
 			   (setq mark (marker-position (mark-marker)))
 			   (setq prev-point (and action-key-depress-prev-point
 						 (marker-position action-key-depress-prev-point)))
@@ -455,8 +452,9 @@ the button LABEL which is automatically provided as the first argument.
 
 For interactive creation, use `hui:ebut-create' instead."
   (save-excursion
-     (let ((but-buf (current-buffer))
-	   (actype-sym (actype:action actype)))
+    (let ((but-buf (current-buffer))
+	  (hui--ignore-action-key-depress-prev-point t)
+	  (actype-sym (actype:action actype)))
       (hui:buf-writable-err but-buf "ebut-create")
       (condition-case err
 	  (progn
@@ -1929,6 +1927,7 @@ Return symbol for button deleted or nil."
   "Delimit implicit button name spanning region START to END in current buffer.
 If button is already delimited or delimit fails, return nil, else t.
 Insert INSTANCE-FLAG after END, before ending delimiter."
+  ;; FIXME: Merge with `ebut:delimit'!
   (goto-char start)
   (when (looking-at (regexp-quote ibut:label-start))
     (forward-char (length ibut:label-start)))
@@ -2264,12 +2263,7 @@ Summary of operations based on inputs:
 		    ;; No name to insert, just insert ibutton text below
 		    )
 		   ((and region-flag
-			 (if (hyperb:stack-frame
-			      '(hui:ebut-create hui:ebut-edit hui:ebut-edit-region
-						hui:ebut-link-create hui:gbut-create
-                       				hui:gbut-edit hui:link-create ebut:program
-						hui:ibut-create hui:ibut-edit
-						hui:ibut-link-create ibut:program))
+			 (if hui--ignore-action-key-depress-prev-point
 			     ;; Ignore action-key-depress-prev-point
 			     (progn (setq mark (marker-position (mark-marker))
 					  start (region-beginning)
@@ -2441,8 +2435,10 @@ function, followed by a list of arguments for the actype, aside from
 the button NAME which is automatically provided as the first argument.
 
 For interactive creation, use `hui:ibut-create' instead."
+  ;; FIXME: This code duplication between ibut:* and ebut:* is awful.
   (save-excursion
     (let ((but-buf (current-buffer))
+	  (hui--ignore-action-key-depress-prev-point t)
 	  (actype-sym (actype:action actype)))
       (hui:buf-writable-err but-buf "ibut-create")
       (hattr:clear 'hbut:current)
