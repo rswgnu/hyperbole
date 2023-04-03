@@ -46,7 +46,6 @@ Use `hyperb:wsl-os-p' to test if running under WSL.")
 			        (macroexp-file-name)
 			      (and (stringp load-file-name) load-file-name))
 			    (locate-file "hmouse-tag.el" load-path)
-			    (hyperb:path-being-loaded)
 			    ""))
 		       (error
 			"(Hyperbole): Failed to set hyperb:dir.  Try setting it manually"))

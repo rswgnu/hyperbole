@@ -113,9 +113,9 @@
     (setq features (delq 'hload-path features)
 	  features (delq 'hversion features)))
 
-  ;; Defines hyperb:path-being-loaded, hyperb:stack-frame,
-  ;; (hyperb:window-system) and hyperb:dir, which are used later in
-  ;; this file.  Also adds Hyperbole to the load-path if need be.
+  ;; Defines hyperb:stack-frame, (hyperb:window-system), and hyperb:dir,
+  ;; which are used later in this file.
+  ;; Also adds Hyperbole to the load-path if need be.
   ;;
   ;; This handles the case when the Hyperbole package directory is not yet in load-path.
   (unless (or (require 'hversion nil t)
