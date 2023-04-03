@@ -128,6 +128,9 @@ Its default value is `smart-scroll-down'.  To disable it, set it to
 ;;; Public declarations
 ;;; ************************************************************************
 
+;; FIXME: What makes us think these functions will be available when we
+;; call them?
+
 (declare-function todotxt-archive "ext:todotxt")
 (declare-function todotxt-bury "ext:todotxt")
 (declare-function todotxt-complete-toggle "ext:todotxt")
@@ -144,8 +147,6 @@ Its default value is `smart-scroll-down'.  To disable it, set it to
 (defvar magit-root-section)
 (defvar magit-display-buffer-function)
 
-(declare-function -flatten "ext:dash")
-
 (declare-function imenu--make-index-alist "imenu")
 
 (declare-function image-dired-thumbnail-display-external "image-dired")
@@ -161,7 +162,7 @@ Its default value is `smart-scroll-down'.  To disable it, set it to
 (declare-function helm-pos-header-line-p "ext:helm")
 (declare-function helm-resume "ext:helm")
 (declare-function helm-window "ext:helm-lib")
-(declare-function with-helm-buffer "ext:helm-lib")
+;;(declare-function with-helm-buffer "ext:helm-lib")
 (defvar helm-action-buffer)
 (defvar helm-alive-p)
 (defvar helm-buffer)
@@ -188,6 +189,12 @@ Its default value is `smart-scroll-down'.  To disable it, set it to
 (declare-function unix-apropos-get-man "ext:man-apropos")
 
 ;;; ************************************************************************
+;;; Private variables
+;;; ************************************************************************
+
+(defvar hyp--within-smart-org nil)
+
+;;; ************************************************************************
 ;;; Hyperbole context-sensitive keys dispatch table
 ;;; ************************************************************************
 
@@ -203,7 +210,7 @@ Its default value is `smart-scroll-down'.  To disable it, set it to
     ;;
     ;; Handle any Org mode-specific contexts but give priority to Hyperbole
     ;; buttons prior to cycling Org headlines
-    ((and (not (hyperb:stack-frame '(smart-org)))
+    ((and (not hyp--within-smart-org)
 	  (let ((hrule:action #'actype:identity))
 	    (smart-org)))
      . ((smart-org) . (smart-org)))
@@ -1429,7 +1436,10 @@ NO-RECURSE-FLAG non-nil prevents infinite recursions."
 			       ;; Does nothing unless the dash Emacs Lisp
 			       ;; library is available for the -flatten function.
 			       (and (require 'dash nil t)
-				    (assoc index-key (-flatten alist)))))))
+			            ;; FIXME: Use Emacs-27's `flatten-tree'?
+			            (progn
+			              (declare-function -flatten "ext:dash")
+				      (assoc index-key (-flatten alist))))))))
       (when index-item
 	(setq index-position (when (markerp (cdr index-item))
 			       (marker-position (cdr index-item))))
@@ -1745,8 +1755,9 @@ will invoke `org-meta-return'.
 
 Org links may be used outside of Org mode buffers.  Such links are
 handled by the separate implicit button type, `org-link-outside-org-mode'."
-  (when (funcall hsys-org-mode-function)
-    (let (start-end)
+  (let ((hyp--within-smart-org t)
+        start-end)
+    (when (funcall hsys-org-mode-function)
       (cond ((not hsys-org-enable-smart-keys)
 	     (when (hsys-org-meta-return-shared-p)
 	       (hact 'hsys-org-meta-return))

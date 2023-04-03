@@ -110,7 +110,7 @@ Note that this may be a buffer different than where the release occurs.")
 (defvar assist-key-help-flag nil
   "When non-nil, forces display of help for next Assist Key release.")
 
-(defvar assist-flag nil
+(defvar assist-flag nil                ;FIXME: Don't eat up others's namespace!
   "Non-nil when Hyperbole's Assist Key is in use rather than the Action Key.
 Never set directly.  Bound as a parameter when `hkey-execute' is called
 and then used as a free variable.")
@@ -946,13 +946,16 @@ predicate is found."
 	(setq hkey-forms (cdr hkey-forms))))
     pred-value))
 
+(defvar hkey--within-help nil)
+
 (defun hkey-help (&optional assisting)
   "Display help for the Action Key command in current context.
 With optional ASSISTING prefix arg non-nil, display help for the
 Assist Key command.  Return non-nil iff associated help
 documentation is found."
   (interactive "P")
-  (let* ((mouse-flag (when (mouse-event-p last-command-event)
+  (let* ((hkey--within-help t)
+	 (mouse-flag (when (mouse-event-p last-command-event)
 		       (or action-key-depress-position assist-key-depress-position)))
 	 (mouse-drag-flag (hmouse-drag-p))
 	 (hkey-forms (if mouse-flag hmouse-alist hkey-alist))

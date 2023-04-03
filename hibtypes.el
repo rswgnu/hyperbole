@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 20:45:31
-;; Last-Mod:     28-May-23 at 10:45:16 by Mats Lidell
+;; Last-Mod:     28-May-23 at 15:53:29 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -186,6 +186,7 @@ If the referenced location is found, return non-nil."
 ;;; ========================================================================
 
 (defib pathname ()
+  ;; FIXME: GNU convention calls these *file* names.
   "Make a valid pathname at point display the path entry.
 
 If instead is a PATH-style variable name, .e.g. MANPATH, will prompt
@@ -255,7 +256,8 @@ display options."
           (cond ((and (string-match hpath:path-variable-regexp path)
 		      (setq path (match-string 1 path))
 		      (hpath:is-path-variable-p path))
-		 (setq path (if (or assist-flag (hyperb:stack-frame '(hkey-help)))
+		 (setq path (if (or assist-flag
+				    (bound-and-true-p hkey--within-help))
 				path
 			      (hpath:choose-from-path-variable path "Display")))
 		 (unless (or (null path) (string-blank-p path)
@@ -359,21 +361,22 @@ in all buffers."
 
 ;; Org links in Org mode are handled at the highest priority; see the last
 ;; section at the end of this file.
+(defvar hibtypes--within-org-link-outside-org-mode nil)
 
 (defib org-link-outside-org-mode ()
   "Follow an Org link in a non-Org mode buffer.
 This should be a very low priority so other Hyperbole types
 handle any links they recognize first."
-  (with-no-warnings
-    (when (and (eq hsys-org-enable-smart-keys t)
-	       (not (funcall hsys-org-mode-function))
-	       ;; Prevent infinite recursion if ever called via org-metareturn-hook
-	       ;; from org-meta-return invocation.
-	       (not (hyperb:stack-frame '(ibtypes::debugger-source org-meta-return))))
-      (let ((start-end (hsys-org-link-at-p)))
-	(when start-end
-          (hsys-org-set-ibut-label start-end)
-          (hact 'org-open-at-point-global))))))
+  (when (and (eq hsys-org-enable-smart-keys t)
+	     (not (funcall hsys-org-mode-function))
+	     ;; Prevent infinite recursion, e.g. if called via
+	     ;; `org-metareturn-hook' from `org-meta-return' invocation.
+	     (not hibtypes--within-org-link-outside-org-mode))
+    (let* ((hibtypes--within-org-link-outside-org-mode t)
+           (start-end (hsys-org-link-at-p)))
+      (when start-end
+        (hsys-org-set-ibut-label start-end)
+        (hact 'org-open-at-point-global)))))
 
 ;;; ========================================================================
 ;;; Handles internal references within an annotated bibliography, delimiters=[]
@@ -1553,6 +1556,55 @@ arg1 ... argN '>'.  For example, <mail nil \"user@somewhere.org\">."
           (if (eq hrule:action #'actype:identity)
               `(hact ,actype ,@args)
             `(hact ,actype ,@(mapcar #'eval args))))))))
+
+(defun action:help (hbut)
+  "Display documentation for action button at point.
+If a boolean function or variable, display its value."
+  (interactive
+   (list
+    (when (hbut:at-p)
+      (hbut:label 'hbut:current))))
+  (when (hbut:is-p hbut)
+    (let* ((label (hbut:key-to-label (hattr:get hbut 'lbl-key)))
+	   (actype (hattr:get hbut 'actype))
+	   (args (hattr:get hbut 'args))
+	   (type-help-func))
+      (setq actype (or (htype:def-symbol actype) actype))
+      (if hbut
+	  (progn (setq type-help-func (intern-soft (concat (symbol-name actype) ":help")))
+		 (if (functionp type-help-func)
+		     (funcall type-help-func hbut)
+		   (let ((total (hbut:report hbut)))
+		     (when total (hui:help-ebut-highlight))))
+		 (when (memq actype '(display-boolean display-variable))
+		   (apply #'actype:eval actype args)))
+	(error "(action:help): No action button labeled: %s" label)))))
+
+;;; ========================================================================
+;;; Inserts completion into minibuffer or other window.
+;;; ========================================================================
+
+(defib completion ()
+  "Insert completion at point into minibuffer or other window."
+  (let ((completion (hargs:completion t)))
+    (and completion
+         (ibut:label-set completion)
+         (hact 'completion))))
+
+;;; ========================================================================
+;;; Follows Org mode links and radio targets and cycles Org heading views
+;;; ========================================================================
+
+;; See `smart-org' in "hui-mouse.el"; this is higher priority than all ibtypes.
+
+;; If you want to to disable ALL Hyperbole support within Org major
+;; and minor modes, set the custom option `hsys-org-enable-smart-keys' to nil.
+
+(run-hooks 'hibtypes-end-load-hook)
+(provide 'hibtypes)
+
+;;; hibtypes.el ends here
+args))))))))
 
 (defun action:help (hbut)
   "Display documentation for action button at point.
