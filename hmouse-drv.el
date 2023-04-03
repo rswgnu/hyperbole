@@ -43,6 +43,7 @@ that the release point was in its frame.
 
 See function `hmouse-window-at-absolute-pixel-position' for more details.")
 
+;; FIXME: `action-' and `assist-' do not belong to Hyperbole namespace!
 (defvar action-key-depressed-flag nil "t while Action Key is depressed.")
 (defvar assist-key-depressed-flag nil "t while Assist Key is depressed.")
 (defvar action-key-depress-args nil
@@ -86,6 +87,10 @@ This is set to nil when the depress is on an inactive minibuffer.")
   "The last mouse screen position at which the Action Key was released or nil.")
 (defvar assist-key-release-position nil
   "The last mouse screen position at which the Assist Key was released or nil.")
+
+(defvar hui--ignore-action-key-depress-prev-point nil
+  "Don't use `action-key-depress-prev-point'.
+Currently only affects `*but:operate'.")
 
 (defvar action-key-depress-prev-point nil
   "Marker at point prior to last Action Key depress.

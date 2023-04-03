@@ -4,7 +4,7 @@
 ;; Maintainer:   Bob Weiner, Mats Lidell
 ;;
 ;; Orig-Date:     1-Jan-94
-;; Last-Mod:     28-May-23 at 15:52:28 by Mats Lidell
+;; Last-Mod:     28-May-23 at 15:56:34 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -51,47 +51,6 @@ your specific mouse.")
 ;;; ************************************************************************
 ;;; Support functions
 ;;; ************************************************************************
-
-;; Called in hyperbole.el.
-(defun hyperb:stack-frame (function-list &optional debug-flag)
-  "Return the nearest Elisp stack frame that called a function from FUNCTION-LIST.
-Return nil if there is no match.  FUNCTION-LIST entries must be symbols.
-If FUNCTION-LIST contains \\='load, \\='autoload or \\='require, detect autoloads
-not visible within the Lisp level stack frames.
-
-With optional DEBUG-FLAG non-nil, if no matching frame is found, return list
-of stack frames (from innermost to outermost)."
-  (let ((count 0)
-	(frame-list)
-	(load-flag (or (memq 'load function-list)
-		       (memq 'autoload function-list)
-		       (memq 'require function-list)))
-	fsymbol
-	fbody
-	frame)
-    (or (catch 'hyperb:stack-frame
-	  (while (setq frame (backtrace-frame count))
-	    (when debug-flag (setq frame-list (cons frame frame-list)))
-	    (setq count (1+ count)
-		  fsymbol (nth 1 frame))
-	    (and (eq fsymbol 'command-execute)
-		 (not (memq 'command-execute function-list))
-		 ;; Use command being executed instead because it might not
-		 ;; show up in the stack anywhere else, e.g. if it is an
-		 ;; autoload under Emacs.
-		 (setq fsymbol (nth 2 frame)))
-	    (cond ((and load-flag (symbolp fsymbol)
-			(fboundp fsymbol)
-			(listp (setq fbody (symbol-function fsymbol)))
-			(eq (car fbody) 'autoload))
-		   (setq frame (list (car frame) 'load
-				     (car (cdr fbody))
-				     nil noninteractive nil))
-		   (throw 'hyperb:stack-frame frame))
-		  ((memq fsymbol function-list)
-		   (throw 'hyperb:stack-frame frame))))
-	  nil)
-	(when debug-flag (nreverse frame-list)))))
 
 (defun hyperb:window-sys-term (&optional frame)
   "Return first part of the term-type if running under a window system, else nil.

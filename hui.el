@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 21:42:03
-;; Last-Mod:     20-May-23 at 17:31:58 by Bob Weiner
+;; Last-Mod:     28-May-23 at 15:56:21 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -289,7 +289,9 @@ For programmatic creation, use `ebut:program' instead."
   (interactive (list (when (use-region-p) (region-beginning))
 		     (when (use-region-p) (region-end))))
   (hypb:assert-same-start-and-end-buffer
-    (let ((default-lbl) lbl but-buf actype)
+    (let ((default-lbl)
+          (hui--ignore-action-key-depress-prev-point t)
+          lbl but-buf actype)
       (save-excursion
 	(setq default-lbl (hui:hbut-label-default start end (not (called-interactively-p 'interactive)))
 	      lbl (hui:hbut-label default-lbl "ebut-create"))
@@ -347,6 +349,9 @@ region is within the button, the button is interactively edited.  Otherwise,
 a new button is created interactively with the region as the default label."
   (interactive)
   (let ((m (mark))
+        ;; FIXME: Seems redundant: don't both `hui:ebut-edit' and
+        ;; `hui:ebut-create' already bind this var?
+        (hui--ignore-action-key-depress-prev-point t)
 	(op action-key-depress-prev-point) (p (point)) (lbl-key))
     (if (and m (eq (marker-buffer m) (marker-buffer op))
 	     (< op m) (<= (- m op) (hbut:max-len))
@@ -373,6 +378,7 @@ Signal an error when no such button is found in the current buffer."
 
   (hypb:assert-same-start-and-end-buffer
     (let ((lbl (ebut:key-to-label lbl-key))
+	  (hui--ignore-action-key-depress-prev-point t)
 	  (but-buf (current-buffer))
 	  actype but new-lbl)
       (hattr:set 'hbut:current 'loc (hui:key-src but-buf))
@@ -515,7 +521,8 @@ See `hui:gibut-create' for details."
   (if ibut-flag
       (call-interactively #'hui:gibut-create)
     (hypb:assert-same-start-and-end-buffer
-      (let (actype
+      (let ((hui--ignore-action-key-depress-prev-point t)
+            actype
             but-buf
             src-dir)
 	(save-excursion
@@ -581,6 +588,7 @@ modification   Signal an error when no such button is found."
 
   (hypb:assert-same-start-and-end-buffer
     (let ((lbl (hbut:key-to-label lbl-key))
+          (hui--ignore-action-key-depress-prev-point t)
           (interactive-flag (called-interactively-p 'interactive))
 	  (but-buf (find-file-noselect (gbut:file)))
 	  (src-dir (file-name-directory (gbut:file)))
@@ -888,7 +896,9 @@ For programmatic creation, use `ibut:program' instead."
   (interactive (list (when (use-region-p) (region-beginning))
 		     (when (use-region-p) (region-end))))
   (hypb:assert-same-start-and-end-buffer
-    (let ((default-lbl) lbl but-buf actype)
+    (let ((default-lbl)
+          (hui--ignore-action-key-depress-prev-point t)
+          lbl but-buf actype)
       (save-excursion
 	(setq default-lbl (hui:hbut-label-default start end (not (called-interactively-p 'interactive)))
 	      lbl (hui:hbut-label default-lbl "ibut-create"))
@@ -922,11 +932,13 @@ Signal an error when no such button is found in the current buffer."
 					  (ibut:label-p t) 'ibut)))))
   (unless (stringp lbl-key)
     (if (called-interactively-p 'interactive)
+	;; FIXME: Move this error to the `interactive' spec?
 	(error "(hui:ibut-edit): No named implicit button to edit")
       (error "(hui:ibut-edit): 'lbl-key' argument must be a string, not '%s'" lbl-key)))
 
   (hypb:assert-same-start-and-end-buffer
     (let ((lbl (ibut:key-to-label lbl-key))
+          (hui--ignore-action-key-depress-prev-point t)
           (interactive-flag (called-interactively-p 'interactive))
 	  (but-buf (current-buffer))
 	  new-lbl)
@@ -1601,12 +1613,8 @@ arguments."
   (hattr:set 'hbut:current 'actype (actype:elisp-symbol (car type-and-args)))
   (hattr:set 'hbut:current 'args (cdr type-and-args))
   (select-window but-window)
-  ;; It is rarely possible that a *Warnings* buffer popup might have
-  ;; displaced `but-loc' in the window, so switch to it to be safe.
-  (unless (and but-loc (or (equal (buffer-name) but-loc)
-			   (eq (current-buffer) but-loc)))
-    (hbut:key-src-set-buffer but-loc))
-  (let ((label (hbut:key-to-label lbl-key)))
+  (let ((label (ebut:key-to-label lbl-key))
+        (hui--ignore-action-key-depress-prev-point t))
     (ebut:operate label (when edit-flag label))))
 
 (defun hui:ibut-link-create (edit-flag but-window lbl-key but-loc but-dir type-and-args)
