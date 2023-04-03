@@ -630,20 +630,12 @@ level."
 ;;;###autoload
 (defun kview:char-invisible-p (&optional pos)
   "Return t if the character after point is invisible/hidden, else nil."
+  ;; FIXME: A.k.a (invisible-p (or pos (point)))
   (or pos (setq pos (point)))
   (when (or (kproperty:get pos 'invisible)
 	    (delq nil (mapcar (lambda (o) (overlay-get o 'invisible))
 			      (overlays-at (or pos (point))))))
     t))
-
-;;;###autoload
-(defun kview:char-visible-p (&optional pos)
-  "Return t if the character after point is visible, else nil."
-  (unless pos
-    (setq pos (point)))
-  (and (not (kproperty:get pos 'invisible))
-       (not (delq nil (mapcar (lambda (o) (overlay-get o 'invisible))
-			      (overlays-at (or pos (point))))))))
 
 (defun kview:create (buffer-name
 			 &optional id-counter top-cell-attributes
@@ -708,6 +700,8 @@ are used.
 
 (defun kview:end-of-actual-line ()
   "Go to the end of the current line whether collapsed or not."
+  ;; FIXME: This "[\n\r]" is a leftover from when kotl was using
+  ;; `selective-display'.  We should use `end-of-line' nowadays.
   (when (re-search-forward "[\n\r]" nil 'move)
     (backward-char 1)))
 
@@ -744,7 +738,7 @@ Value may be the character immediately after point."
   (unless pos
     (setq pos (point)))
   (let ((end (kcell-view:end-contents pos)))
-    (while (and pos (< pos end) (kview:char-visible-p pos))
+    (while (and pos (< pos end) (not (kview:char-invisible-p pos)))
       (if (kproperty:get pos 'invisible)
 	  (setq pos (kproperty:next-single-change pos 'invisible nil end))
 	(let ((overlay (car (delq nil (mapcar (lambda (o) (when (overlay-get o 'invisible) o))
