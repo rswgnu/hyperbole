@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    6/30/93
-;; Last-Mod:     27-May-23 at 23:53:04 by Bob Weiner
+;; Last-Mod:     28-May-23 at 15:54:37 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -131,7 +131,7 @@ It provides the following keys:
   ;;
   ;; Prevent insertion of characters outside of editable bounds,
   ;; e.g. after the mouse sets point to a non-editable position
-  (add-hook 'pre-command-hook #'kotl-mode:pre-self-insert-command)
+  (add-hook 'pre-command-hook #'kotl-mode:pre-self-insert-command nil t)
   ;;
   ;; Ensure that outline structure data is saved when save-buffer is called
   ;; from save-some-buffers, {C-x s}.
@@ -3313,16 +3313,17 @@ newlines at end of tree."
   "In a Koutline, ensure point is in an editable position before insertion.
 Mouse may have moved point outside of an editable area.
 `kotl-mode' adds this function to `pre-command-hook'."
-  (when (and
-	 (memq this-command '(kotl-mode:orgtbl-self-insert-command
-			      kotl-mode:self-insert-command
-			      orgtbl-self-insert-command
-			      self-insert-command))
-	 (eq major-mode 'kotl-mode)
-	 (not (kview:valid-position-p))
-	 ;; Prevent repeatedly moving point to valid position when moving trees
-	 (not (hyperb:stack-frame '(kcell-view:to-label-end))))
-    (kotl-mode:to-valid-position)))
+  (when (and (memq this-command '(self-insert-command orgtbl-self-insert-command))
+	     (not (kview:valid-position-p))
+	     ;; Prevent repeatedly moving point to valid position when moving trees
+	     ;; FIXME: This may have been useful in some older version of
+	     ;; the code but now that it runs from a `pre-command-hook',
+	     ;; `kcell-view:to-label-end' can never be in the call
+	     ;; stack (except of course during debugging and such).
+	     ;;(not (hyperb:stack-frame '(kcell-view:to-label-end)))
+	     )
+    (when (not (kview:valid-position-p))
+      (kotl-mode:to-valid-position))))
 
 (defun kotl-mode:print-attributes (_kview)
   "Print to `standard-output' the attributes of the current visible kcell.
