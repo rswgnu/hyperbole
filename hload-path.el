@@ -42,7 +42,9 @@ Use `hyperb:wsl-os-p' to test if running under WSL.")
 ;;; ************************************************************************
 
 (defvar hyperb:dir (or (file-name-directory
-			(or (and (stringp load-file-name) load-file-name)
+			(or (if (fboundp 'macroexp-file-name) ;Emacs≥28
+			        (macroexp-file-name)
+			      (and (stringp load-file-name) load-file-name))
 			    (locate-file "hmouse-tag.el" load-path)
 			    (hyperb:path-being-loaded)
 			    ""))
