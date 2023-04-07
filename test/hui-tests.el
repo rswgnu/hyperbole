@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    30-Jan-21 at 12:00:00
-;; Last-Mod:     13-Mar-23 at 19:22:30 by Bob Weiner
+;; Last-Mod:      7-Apr-23 at 12:19:58 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -548,6 +548,96 @@ Ensure modifying the button but keeping the label does not create a double label
           (insert "b")
           (should-error (hui-kill-ring-save (region-beginning) (region-end)) :type 'error))
       (delete-file kotl-file))))
+
+(ert-deftest hui--ibut-create-interactive ()
+  "Create an implicit button interactively."
+  (let ((file (make-temp-file "hypb" nil ".txt")))
+    (unwind-protect
+        (progn
+          (find-file file)
+	  (with-simulated-input "ibut RET link-to-rfc RET 123 RET"
+	    (hact (lambda () (call-interactively 'hui:ibut-create))))
+          (should (string= "<[ibut]> - rfc123" (buffer-string))))
+      (delete-file file))))
+
+(ert-deftest hui--ibut-create-interactive-label-using-region ()
+  "Create an implicit button interactively with label from region."
+  (let ((file (make-temp-file "hypb" nil ".txt")))
+    (unwind-protect
+        (progn
+          (find-file file)
+          (insert "ibut")
+          (set-mark (point-min))
+          (goto-char (point-max))
+	  (with-simulated-input "RET link-to-rfc RET 123 RET"
+	    (hact (lambda () (call-interactively 'hui:ibut-create))))
+          (should (string= "<[ibut]> - rfc123" (buffer-string))))
+      (delete-file file))))
+
+(ert-deftest hui--ibut-create-interactive-add-comment-char ()
+  "Create an implicit button interactively in program mode adds comment char."
+  (let ((file (make-temp-file "hypb" nil ".el"))
+        (auto-insert nil))
+    (unwind-protect
+        (progn
+          (find-file file)
+          (insert "(sexp)")
+	  (with-simulated-input "ibut RET link-to-rfc RET 123 RET"
+	    (hact (lambda () (call-interactively 'hui:ibut-create))))
+          (should (string= "(sexp); <[ibut]> - rfc123" (buffer-string))))
+      (delete-file file))))
+
+(ert-deftest hui--ibut-create-interactive-create-label ()
+  "Create a label for an implicit button interactively."
+  (let ((file (make-temp-file "hypb" nil ".txt")))
+    (unwind-protect
+        (progn
+          (find-file file)
+          (insert "\"/tmp\"")
+          (goto-char 3)
+	  (with-simulated-input "label RET"
+	    (hact (lambda () (call-interactively 'hui:ibut-label-create))))
+          (should (string= "<[label]> - \"/tmp\"" (buffer-string))))
+      (delete-file file))))
+
+(ert-deftest hui--ibut-rename-label-at-point ()
+  "Rename a label for an implicit button interactively.
+With point on label suggest that ibut for rename."
+  (let ((file (make-temp-file "hypb" nil ".txt")))
+    (unwind-protect
+        (progn
+          (find-file file)
+          (insert "<[label]> - rfc123")
+          (goto-char 3)
+	  (with-simulated-input "M-DEL renamed RET"
+	    (hact (lambda () (call-interactively 'hui:ibut-rename))))
+          (should (string= "<[renamed]> - rfc123" (buffer-string))))
+      (delete-file file))))
+
+(ert-deftest hui--ibut-rename-label ()
+  "Rename a label for an implicit button interactively."
+  (let ((file (make-temp-file "hypb" nil ".txt")))
+    (unwind-protect
+        (progn
+          (find-file file)
+          (insert "<[label]> - rfc123")
+          (goto-char (point-max))
+	  (with-simulated-input "label RET M-DEL renamed RET"
+	    (hact (lambda () (call-interactively 'hui:ibut-rename))))
+          (should (string= "<[renamed]> - rfc123" (buffer-string))))
+      (delete-file file))))
+
+(ert-deftest hui--ibut-rename-label-not-in-buffer-errors ()
+  "Rename a label not in buffer should error."
+  (let ((file (make-temp-file "hypb" nil ".txt")))
+    (unwind-protect
+        (progn
+          (find-file file)
+          (insert "<[label]> - rfc123")
+          (goto-char (point-max))
+          (with-simulated-input "RET"
+	    (should-error (hui:ibut-rename "notalabel") :type 'error)))
+      (delete-file file))))
 
 ;; This file can't be byte-compiled without `with-simulated-input' which
 ;; is not part of the actual dependencies, so:
