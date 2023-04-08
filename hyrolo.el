@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     7-Jun-89 at 22:08:29
-;; Last-Mod:     12-Mar-23 at 17:40:43 by Bob Weiner
+;; Last-Mod:      8-Apr-23 at 11:28:26 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -638,7 +638,7 @@ prefix ARG non-nil, search for the current match regular
 expression rather than string."
   (interactive "P")
   (if arg
-      (hyrolo-isearch-regexp)
+      (hyrolo-isearch-for-regexp hyrolo-match-regexp t)
     (hyrolo-verify)
     (if hyrolo-match-regexp
 	(progn (setq unread-command-events
@@ -654,8 +654,8 @@ prefix ARG non-nil, search for the current match regular
 expression rather than string."
   (interactive "P")
   (if arg
-      (hyrolo-isearch)
-    (hyrolo-isearch-for-regexp hyrolo-match-regexp t)))
+      (hyrolo-isearch-for-regexp hyrolo-match-regexp t)
+    (hyrolo-isearch)))
 
 (defun hyrolo-verify ()
   "Verify point is in a HyRolo or HyNote match buffer."
