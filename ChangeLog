@@ -1,3 +1,20 @@
+2023-04-07  Bob Weiner  <rsw@gnu.org>
+
+* kotl/kimport.el (kimport:suffix-alist): Change car of alist items from
+    a regexp to a string to simplify lookups.
+                  (kimport:file): Simplify kimport:suffix-alist handling.
+		  (kimport:star-outline): Fix 'total' matching expr to
+    match top-level entries only.
+    This fixes kimport:file infinite loop, kfile:narrow-to-kcells error
+    and broken cell counts.
+
+2023-04-02  Bob Weiner  <rsw@gnu.org>
+
+* HY-NEWS (9.0.0): Add EmacsConf 2022 videos.
+  INSTALL: (Invocation):
+  README.md (Videos):
+  man/hyperbole.texi (Invocation): Add link to Hyperbole videos in README.
+
 2023-03-29  Bob Weiner  <rsw@gnu.org>
 
 * man/hyperbole.texi (Implicit Buttons): Add paragraph on the use of Ibut/
@@ -1573,8 +1590,8 @@
 
 2022-05-01  Bob Weiner  <rsw@gnu.org>
 
-* hypb-maintenance.el (hypb:web-repo-update): Add hui.el, hbut.el, hbdata.el and hmail.el
-    referenced in hyperbole.html.
+* hypb-maintenance.el (hypb:web-repo-update): Add hui.el, hbut.el, hbdata.el
+     and hmail.el referenced in hyperbole.html.
 
 * HY-ANNOUNCE: Shrink width of videos table to prevent wrapping.
 

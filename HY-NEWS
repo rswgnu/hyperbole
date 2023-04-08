@@ -5,6 +5,20 @@
 *                                   V9.0.0
 ===========================================================================
 
+** DOCUMENTATION
+
+  *** Emacs 2022 Talks:
+
+        - Hyperbole and Org Mode: Org slide file is included in
+          "HY-TALK/Hyperbole-and-Org-Mode.org" with the video at
+          "https://emacsconf.org/2022/talks/hyperorg/".
+
+        - Linking Personal Info with Implicit Buttons: The video is at
+          "https://emacsconf.org/2022/talks/buttons/".
+
+        - Build a Zettelkasten with HyRolo: The video is at
+          "https://emacsconf.org/2022/talks/rolodex/".
+
 ** HYPERBOLE SYSTEM  (See "(hyperbole)").
 
   *** Native Compilation Autoloads: Work around Emacs bug where async native

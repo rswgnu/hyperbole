@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    15-Nov-93 at 11:57:05
-;; Last-Mod:      4-Feb-23 at 15:14:30 by Bob Weiner
+;; Last-Mod:      7-Apr-23 at 21:55:10 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -52,10 +52,10 @@ as the initial set of children of the current cell, if any.
 
 ;;;###autoload
 (defvar kimport:suffix-alist
-  '(("\\.org$" . kimport:star-outline)
-    ("\\.otl$" . kimport:star-outline)
-    ("\\.aug$" . kimport:aug-post-outline))
-  "Alist of (buffer-name-suffix-regexp . importation-function) elements.
+  '((".org" . kimport:star-outline)
+    (".otl" . kimport:star-outline)
+    (".aug" . kimport:aug-post-outline))
+  "Alist of (buffer-name-suffix . importation-function) elements.
 This determines the type of importation done on a file when `kimport:file' is
 called.  Each importation-function must take two arguments, a buffer/file to
 import and a buffer/file into which to insert the imported elements.
@@ -65,7 +65,7 @@ imported cells as the initial set of children of the current cell, if any.
    .org  - import format is an Emacs outline whose entries begin with asterisks;
    .otl  - import format is an Emacs outline whose entries begin with asterisks;
    .kot
-   .kotl - import format is a Koutline
+   .kotl - import format is a Koutline;
    .aug  - import format is an Augment post-numbered outline
            (see https://dougengelbart.org/content/view/148/).")
 
@@ -100,18 +100,10 @@ information on specific importation formats."
 	(function))
     (set-buffer import-buf-name)
     (unless (setq function (cdr (assq major-mode kimport:mode-alist)))
-      (let ((import-suffix (if (string-match "\\..+\\'" import-buf-name)
-			       (match-string 0 import-buf-name)))
-	    (suffix-alist kimport:suffix-alist)
-	    suffix-regexp)
-	(while (and import-suffix suffix-alist)
-	  (setq suffix-regexp (car (car suffix-alist))
-		suffix-alist (cdr suffix-alist))
-	  (when (string-match suffix-regexp import-suffix)
-	    (setq function (cdr (car suffix-alist))
-		  suffix-alist nil)))
-	(unless function
-	  (setq function (cdr (assq t kimport:mode-alist))))))
+      (let ((import-suffix (when (string-match "\\.[^.]+\\'" import-buf-name)
+			     (match-string 0 import-buf-name))))
+	(setq function (or (cdr (assoc import-suffix kimport:suffix-alist))
+			   (cdr (assq t kimport:mode-alist))))))
     (funcall function import-from output-to children-flag)))
 
 (defun kimport:insert-buffer (buffer)
@@ -283,7 +275,7 @@ placed.
 	(insert "* "))
       (goto-char (point-min))
       ;; Total number of top-level cells.
-      (setq total (count-matches (concat kimport:star-heading "[ \t\n\r]")))
+      (setq total (count-matches "^[ \t]*\\*\\s-"))
       (unless initially-empty-output
 	;; Insert first cell as sibling of current cell.
 	(set-buffer output-to)
@@ -551,7 +543,7 @@ OUTPUT-TO within this function, point is left at the end of this buffer so
 that imported cells will be appended to the buffer.  For a new file, this
 means the first cell imported will become the first outline cell.
 
-If a non-nil third argument, CHILDREN-P, is given to the caller of this
+If a non-nil third argument, CHILDREN-FLAG, is given to the caller of this
 function and OUTPUT-TO contains at least one cell, then the imported cells
 will be added as children of the cell where this function leaves point
 \(either the current cell or for a newly read in outline, the last cell)."
@@ -559,10 +551,10 @@ will be added as children of the cell where this function leaves point
 	  (when output-to
 	    (or (get-buffer output-to) (get-file-buffer output-to))))
 	 (output-exists-p
-	  (when output-to
-	    (or output-existing-buffer-p (file-exists-p output-to))
-	   ;; current buffer will be used for output and it exists.
-	   t)))
+	  (if output-to
+	      (or output-existing-buffer-p (file-exists-p output-to))
+	    ;; current buffer will be used for output and it exists.
+	    t)))
     (setq output-to (if output-to
 			(or (get-buffer output-to)
 			    (find-file-noselect output-to))
@@ -579,10 +571,10 @@ will be added as children of the cell where this function leaves point
 	  (error
 	   "(kimport:initialize): Second arg, %s, must be a koutline file."
 	   (buffer-name output-to)))
+      (when erase-flag (delete-region (point-min) (point-max)))
       (unless (eq major-mode 'kotl-mode)
 	(setq kview nil)
-	(kotl-mode))
-      (delete-region (point-min) (point-max))))
+	(kotl-mode))))
   output-to)
 
 (defun kimport:kcells (import-from output-to klabel output-level

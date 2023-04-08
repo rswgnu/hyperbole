@@ -7,7 +7,7 @@
 @c Author:       Bob Weiner
 @c
 @c Orig-Date:     6-Nov-91 at 11:18:03
-@c Last-Mod:     29-Mar-23 at 23:11:38 by Bob Weiner
+@c Last-Mod:      2-Apr-23 at 09:57:29 by Bob Weiner
 
 @c %**start of header (This is for running Texinfo on a region.)
 @setfilename hyperbole.info
@@ -961,8 +961,8 @@ control once in HyControl.  Hyperbole also binds @bkbd{C-c \\} for quick
 access to HyControl's window control menu if it was not already bound
 prior to Hyperbole's initialization.
 
-A long video demonstrating most of HyControl's features is available at
-@url{https://youtu.be/M3-aMh1ccJk}.
+Videos demonstrating Hyperbole's features are listed at
+@url{https://gnu.org/s/hyperbole}.
 
 The above are the best interactive ways to learn about Hyperbole.
 
