@@ -1,3 +1,9 @@
+2023-04-08  Mats Lidell  <matsl@gnu.org>
+
+* test/hpath-tests.el (hpath--at-p-checks-files-with-hash-in-name-exists)
+    (hpath--at-p-checks-file-that-with-hash-that-does-not-exist-returns-nil):
+    Add tests for pathnames with hash characters.
+
 2023-04-07  Mats Lidell  <matsl@gnu.org>
 
 * test/hui-tests.el (hui--ibut-create-interactive)

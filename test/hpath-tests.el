@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    28-Feb-21 at 23:26:00
-;; Last-Mod:     12-Sep-22 at 22:11:14 by Mats Lidell
+;; Last-Mod:      8-Apr-23 at 10:16:31 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -257,6 +257,32 @@
       (insert (concat "\"" tramp-file "\""))
       (goto-char 5)
       (should (string= (hpath:remote-at-p) tramp-file)))))
+
+(ert-deftest hpath--at-p-checks-files-with-hash-in-name-exists ()
+  "Verify that file existence is checked for filenames containing a hash character."
+  (let ((dir (make-temp-file "hypb" t)))
+    (unwind-protect
+        (dolist (fn '("#file#" "#.file#" "#file path#" "path#section" "#path#section"))
+          (let ((filename (expand-file-name fn dir)))
+            (unwind-protect
+                (progn
+                  (find-file filename)
+                  (insert "\"" fn "\"")
+                  (save-buffer)
+                  (goto-char 3)
+                  (should (string= (hpath:at-p) fn))
+                  (should (string= (hpath:is-p fn) fn)))
+              (delete-file filename))))
+      (delete-directory dir))))
+
+(ert-deftest hpath--at-p-checks-file-that-with-hash-that-does-not-exist-returns-nil ()
+  "Verify that file existence is checked for filenames containing a hash character."
+  (dolist (fn '("#file#" "#.file#" "#file path#" "path#section" "#path#section"))
+    (with-temp-buffer
+      (insert "\"" fn "\"")
+      (goto-char 3)
+      (should-not (hpath:at-p))
+      (should-not (hpath:is-p fn)))))
 
 (provide 'hpath-tests)
 ;;; hpath-tests.el ends here
