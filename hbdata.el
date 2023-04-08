@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     2-Apr-91
-;; Last-Mod:     29-Mar-23 at 21:04:06 by Bob Weiner
+;; Last-Mod:      9-Apr-23 at 01:22:24 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -460,8 +460,9 @@ Return non-nil if KEY-SRC is found or created, else nil."
 	;; Button buffer has no file attached
 	(progn (if (hmail:hbdata-to-p) ;; Might change the buffer
 		   (setq buffer-read-only nil)
-		 (setq buffer-read-only nil)
-		 (insert "\n" hmail:hbdata-sep "\n"))
+		 (when create
+		   (setq buffer-read-only nil)
+		   (insert "\n" hmail:hbdata-sep "\n")))
 	       (backward-char 1)
 	       (setq rtn t))
       (setq directory (or (file-name-directory key-src) directory))

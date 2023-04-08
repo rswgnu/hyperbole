@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    30-may-21 at 09:33:00
-;; Last-Mod:     23-Jul-22 at 20:04:45 by Bob Weiner
+;; Last-Mod:      9-Apr-23 at 00:55:07 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -172,6 +172,15 @@ Needed since hyperbole expands all links to absolute paths and
           (ebut:program "label" 'link-to-file-line-and-column test-file 2 3)
           (hy-test-helpers-verify-hattr-at-p :actype 'actypes::link-to-file-line-and-column :args (list test-file 2 3) :loc test-file :lbl-key "label"))
       (delete-file test-file))))
+
+(ert-deftest hypb--ebut-at-p-should-not-insert-hbdata-section-in-non-file-buffers ()
+  "Verify that ebut:at-p does not insert a hbdata section in a non file buffer."
+  (with-temp-buffer
+    (let ((button "<(unknown)>"))
+      (insert button)
+      (goto-char 3)
+      (should-not (ebut:at-p))
+      (should (string= button (buffer-string))))))
 
 ;; This file can't be byte-compiled without the `el-mock' package (because of
 ;; the use of the `with-mock' macro), which is not a dependency of Hyperbole.

@@ -1,3 +1,9 @@
+2023-04-22  Mats Lidell  <matsl@gnu.org>
+
+* test/hbut-tests.el
+    (hypb--ebut-at-p-should-not-insert-hbdata-section-in-non-file-buffers):
+    Add test to verify that no but data section is inserted.
+
 2023-04-16  Bob Weiner  <rsw@gnu.org>
 
 * hui.el (hui:link-possible-types): Fix link to outline heading where
