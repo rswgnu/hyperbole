@@ -1,3 +1,13 @@
+2023-04-08  Bob Weiner  <rsw@gnu.org>
+
+* hbut.el (hattr:emacs-button-attributes, hattr:emacs-button-is-p): Add
+          (hattr:list): Return Emacs push-button attributes.
+  hact.el (actype:doc): Add support for Emacs push-buttons.
+  hmouse-drv.el (hkey-help): Print attributes of Emacs push-buttons and
+    doc for button's action, just as with Hyperbole buttons.
+    Display whether a Hyperbole button is EXPLICIT or IMPLICIT.
+    Also, for implicit buttons, add display of both ibtype doc and its
+    actype doc.
 
 * hyrolo.el (hyrolo-isearch-regexp): Fix 'arg' conditions were reversed.
 

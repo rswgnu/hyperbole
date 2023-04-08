@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    04-Feb-90
-;; Last-Mod:     12-Mar-23 at 23:59:11 by Bob Weiner
+;; Last-Mod:      8-Apr-23 at 15:15:47 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1015,17 +1015,49 @@ documentation is found."
 			      (terpri) (terpri)))
 			  calls)
 
+		    ;; Print Hyperbole button attributes
 		    (when (memq cmd-sym '(hui:hbut-act hui:hbut-help))
-		      (princ (format "%s BUTTON SPECIFICS:\n"
-				     (htype:def-symbol
-				      (if (eq (hattr:get 'hbut:current 'categ)
-					      'explicit)
-					  (hattr:get 'hbut:current 'actype)
-					(hattr:get 'hbut:current 'categ)))))
-		      (hattr:report
-		       (nthcdr 2 (hattr:list 'hbut:current)))
-		      (princ (format "\n%s\n"
-				     (actype:doc 'hbut:current t))))
+		      (let ((actype (or (actype:elisp-symbol (hattr:get 'hbut:current 'actype))
+					(hattr:get 'hbut:current 'actype)))
+			    (categ (hattr:get 'hbut:current 'categ))
+			    (attributes (nthcdr 2 (hattr:list 'hbut:current))))
+			(princ (format "%s %s BUTTON SPECIFICS:\n"
+				       (htype:def-symbol
+					(if (eq categ 'explicit)
+					    actype
+					  categ))
+				       (if (eq categ 'explicit)
+					   "EXPLICIT" "IMPLICIT")))
+			(hattr:report attributes)
+			(unless (or (eq categ 'explicit)
+				    (null categ)
+				    (not (fboundp categ))
+				    (null (documentation categ)))
+			  ;; Include implicit button's ibtype doc
+			  (princ (format "\n%s\n"
+					 (replace-regexp-in-string "^" "  " (documentation categ)
+								   nil t))))
+			(when (and (symbolp actype)
+				   (fboundp actype)
+				   (documentation actype))
+			  (princ (format "\n%s ACTION SPECIFICS:\n%s\n"
+					 (or (actype:def-symbol actype) actype)
+					 (replace-regexp-in-string "^" "  " (documentation actype)
+								   nil t))))))
+
+		    ;; Print Emacs push-button attributes
+		    (when (eq cmd-sym 'push-button)
+		      (let* ((button (button-at (point)))
+			     (attributes (when button (hattr:list button))))
+			(when attributes
+			  (princ (format "%s BUTTON SPECIFICS:\n"
+					 (button-label button)))
+			  (hattr:report attributes)
+			  (princ (format "\n%s ACTION SPECIFICS:\n%s\n"
+					 (plist-get attributes 'action)
+					 (replace-regexp-in-string "^" "  " (actype:doc button t)
+								   nil t))))))
+
 		    (terpri)))
 		"")
 	    (message "No %s Key command for current context."

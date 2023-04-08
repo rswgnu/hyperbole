@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    18-Sep-91 at 02:57:09
-;; Last-Mod:      6-Feb-23 at 00:05:26 by Bob Weiner
+;; Last-Mod:      8-Apr-23 at 13:33:01 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -489,19 +489,23 @@ Return symbol created when successful, else nil."
   (symtable:delete type symtable:actypes)
   (htype:delete type 'actypes))
 
-(defun    actype:doc (hbut &optional full)
-  "Return first line of act doc for HBUT (a Hyperbole button symbol).
+(defun    actype:doc (but &optional full)
+  "Return first line of action doc for BUT.
+BUT should be a Hyperbole button symbol or an Emacs push-button.
 With optional FULL, returns full documentation string.
 Return nil when no documentation."
-  (let* ((act (and (hbut:is-p hbut) (or (hattr:get hbut 'action)
-					(hattr:get hbut 'actype))))
-	 (but-type (hattr:get hbut 'categ))
-	 (sym-p (and act (symbolp act)))
+  (let* ((is-hbut (hbut:is-p but))
+	 (act (if is-hbut
+		  (and (hbut:is-p but) (or (hattr:get but 'action)
+					   (hattr:get but 'actype)))
+		(plist-get (hattr:list but) 'action)))
+	 (but-type (if is-hbut
+		       (hattr:get but 'categ)
+		     act))
+	 (sym-p (when act (symbolp act)))
 	 (end-line) (doc))
     (cond ((and (functionp but-type)
-		(setq doc (htype:doc but-type)))
-	   ;; Is an implicit button, so use its doc string if any.
-	   )
+		(setq doc (htype:doc but-type)))) ;; Is an implicit button, use its doc string.
 	  (sym-p
 	   (setq doc (htype:doc act))))
     (when doc
