@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 21:42:03
-;; Last-Mod:     29-Mar-23 at 22:13:40 by Bob Weiner
+;; Last-Mod:      8-Apr-23 at 23:25:21 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -482,20 +482,22 @@ a menu to find any of the occurrences."
 	(progn
 	  (set-buffer out-buf)
 	  (moccur-mode)
-	  (if (fboundp 'outline-minor-mode)
-	      (and (progn (goto-char 1)
-			  (search-forward "\C-m" nil t))
-		   (outline-minor-mode 1)))
-	  (if (fboundp 'hproperty:but-create)
-	      (hproperty:but-create nil nil (regexp-quote
-					     (if match-part string
-					       (concat ebut:label-start string ebut:label-end)))))
+	  (when (fboundp 'outline-minor-mode)
+	    (and (progn (goto-char 1)
+			(search-forward "\C-m" nil t))
+		 (outline-minor-mode 1)))
+	  (when (fboundp 'hproperty:but-create)
+	    (hproperty:but-create (regexp-quote
+				   (if match-part
+				       string
+				     (concat ebut:label-start string ebut:label-end)))))
 	  (goto-char (point-min))
 	  (pop-to-buffer out-buf)
-	  (if (called-interactively-p 'interactive) (message "%d match%s." total
-							     (if (> total 1) "es" ""))
+	  (if (called-interactively-p 'interactive)
+	      (message "%d match%s." total (if (> total 1) "es" ""))
 	    total))
-      (if (called-interactively-p 'interactive) (message "No matches.")
+      (if (called-interactively-p 'interactive)
+	  (message "No matches.")
 	total))))
 
 (defun hui:gbut-create (lbl ibut-flag)

@@ -1,4 +1,35 @@
+2023-04-09  Bob Weiner  <rsw@gnu.org>
+
+* hui-mini.el (hui:menu-backward-item, hui:menu-forward-item):
+    Fix skip past menu name search to be regexp search, not string search,
+    since pattern is a regexp.
+    (hui:menu-name-at-p): Add and use in above functions.
+
 2023-04-08  Bob Weiner  <rsw@gnu.org>
+
+* hui-em-but.el (hproperty:color-list, hproperty:good-colors):
+    Fix to work on all types of color frames rather than just X.
+                (ibut-face): Change color for more contrast with
+    color of ebut labels.
+                (hproperty:but-clear, hproperty:but-create-all,
+                 hproperty:but-create): Add hproperty:ibut-face support
+    and remove delimiter override parameters which were never used.
+                (hproperty:but-p, hproperty:but-flash): Add
+    hproperty:ibut-face support.
+
+* FAST-DEMO: Add EmacsConf 2022 videos.
+
+* hmouse-tag.el (smart-emacs-lisp-mode-p): Add support for "*Warnings*",
+    "*Flymake log*" and "*Flymake diagnostics..." buffers.
+
+* hui-mini.el (hui:menu-rolo): Make HyRolo menu a customizable list
+    and conditionally add ConsultFind and HelmFind when requisite
+    packages are installed.
+
+* hsettings.el (hyperbole-update-menus): Make a command/interactive.
+
+* hyrolo.el (hyrolo-helm-org-directory-rifle): Rename to
+    'hyrolo-helm-org-rifle-directory' for consistency.
 
 * hbut.el (hattr:emacs-button-attributes, hattr:emacs-button-is-p): Add
           (hattr:list): Return Emacs push-button attributes.

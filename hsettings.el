@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    15-Apr-91 at 00:48:49
-;; Last-Mod:     12-Oct-22 at 22:46:00 by Mats Lidell
+;; Last-Mod:      8-Apr-23 at 18:24:29 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -134,6 +134,7 @@ ignores current line and always scrolls up or down a windowful."
 
 (defun hyperbole-update-menus ()
   "Rebuild all Hyperbole menus with any updated settings."
+  (interactive)
   (hyperbole-menubar-menu)
   (hyperbole-minibuffer-menu))
 

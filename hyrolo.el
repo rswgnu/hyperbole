@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     7-Jun-89 at 22:08:29
-;; Last-Mod:      8-Apr-23 at 11:28:26 by Bob Weiner
+;; Last-Mod:      8-Apr-23 at 16:13:51 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1249,9 +1249,9 @@ otherwise just use the cdr of the item."
 (defun hyrolo-helm-org-rifle (&optional context-only-flag)
   "Search with helm and interactively show all matches from `hyrolo-file-list'.
 Prompt for the search pattern.
-Only readable .org and .otl files are searched.  With optional
-prefix arg CONTEXT-ONLY-FLAG, show only an extra line of context
-around a matching line rather than entire entries."
+Search only readable .org and .otl files.  With optional prefix
+arg CONTEXT-ONLY-FLAG, show one extra line only of context around
+a matching line, rather than entire entries."
   (interactive "P")
   (unless (package-installed-p 'helm-org-rifle)
     (package-install 'helm-org-rifle))
@@ -1269,10 +1269,10 @@ around a matching line rather than entire entries."
     (helm-org-rifle-files files)))
 
 ;;;###autoload
-(defun hyrolo-helm-org-directory-rifle (&optional context-only-flag)
+(defun hyrolo-helm-org-rifle-directory (&optional context-only-flag)
   "Interactively search over `org-directory'.
-With optional prefix arg CONTEXT-ONLY-FLAG, show only an extra
-line of context around a matching line rather than entire
+With optional prefix arg CONTEXT-ONLY-FLAG, show one extra line
+only of context around a matching line, rather than entire
 entries."
   (interactive)
   (unless (package-installed-p 'helm-org-rifle)
@@ -1285,14 +1285,14 @@ entries."
       (let ((helm-org-rifle-show-level-stars t)
 	    (helm-org-rifle-show-full-contents (not context-only-flag)))
 	(helm-org-rifle-org-directory))
-    (error "(hyrolo-helm-org-directory-rifle): `org-directory', \"%s\", does not exist" org-directory)))
+    (error "(hyrolo-helm-org-rifle-directory): `org-directory', \"%s\", does not exist" org-directory)))
 
 ;;;###autoload
 (defun hyrolo-helm-org-rifle-directories (&optional context-only-flag &rest dirs)
   "Interactively search over Emacs outline format files in rest of DIRS.
 Only readable .org and .otl files are searched.  With optional
-prefix arg CONTEXT-ONLY-FLAG, show only an extra line of context
-around a matching line rather than entire entries."
+prefix arg CONTEXT-ONLY-FLAG, show one extra line only of context
+around a matching line, rather than entire entries."
   (interactive "P")
   (let ((hyrolo-file-list (hypb:filter-directories "\\.\\(org\\|otl\\)$" dirs)))
     (hyrolo-helm-org-rifle context-only-flag)))

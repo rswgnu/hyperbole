@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    15-Oct-91 at 20:13:17
-;; Last-Mod:     29-Mar-23 at 22:03:59 by Bob Weiner
+;; Last-Mod:      9-Apr-23 at 02:52:29 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -239,7 +239,7 @@ If on the menu name prefix or the first item, move to the last item."
     (let (opoint)
       (while (> arg 0)
 	;; First skip back past menu name/description prompt, if within it.
-	(when (save-excursion (not (search-backward "\\(^\\|[ \t]\\)[^< \t\n\r]+>" nil t)))
+	(when (hui:menu-name-at-p)
 	  (setq opoint (point))
 	  (skip-chars-backward "^ \t\n\r")
 	  (skip-chars-forward " \t")
@@ -308,7 +308,7 @@ If on the menu name prefix or the last item, move to the first item."
     (let (opoint)
       (while (> arg 0)
 	;; First skip past menu name/description prompt, if within it.
-	(when (save-excursion (not (search-backward "\\(^\\|[ \t]\\)[^< \t\n\r]+>" nil t)))
+	(when (hui:menu-name-at-p)
 	  (setq opoint (point))
 	  (skip-chars-backward "^ \t\n\r")
 	  (skip-chars-forward " \t")
@@ -546,6 +546,11 @@ The menu is a menu of commands from MENU-ALIST."
 	   (setq items-in-line (1+ items-in-line)))
 	 menu-strings)
 	(buffer-string)))))
+
+(defun hui:menu-name-at-p ()
+  "Return non-nil if point is within a Hyperbole minibuffer menu name."
+  (when (and hui:menu-p (eq (minibuffer-window) (selected-window)))
+    (save-excursion (not (re-search-backward "\\(^\\|[ \t]\\)[^< \t\n\r]+>" nil t)))))
 
 (defun hui:menu-web-search ()
   "Hyperbole minibuffer menu of web search engines."
@@ -861,27 +866,14 @@ The menu is a menu of commands from MENU-ALIST."
 	   (hmail:compose "bug-hyperbole-leave@gnu.org" nil
 			  "Just send the message; subject and body are ignored.")
 	   "Unsubscribe from the Hyperbole bug reporting list.")))
-       '(hyrolo .
-	 (("Rolo>")
-	  ("Add"              hyrolo-add	            "Add a new rolo entry.")
-	  ("Display"          hyrolo-display-matches        "Display last found rolo matches again.")
-	  ("Edit"             hyrolo-edit                   "Edit an existing rolo entry.")
-	  ("File"             hyrolo-find-file              "Edit an existing rolo file.")
-	  ("Info"             (id-info "(hyperbole)HyRolo") "Displays manual section on Hyperbole rolo.")
-	  ("Kill"             hyrolo-kill                   "Kill an existing rolo entry.")
-	  ("Mail"             hyrolo-mail-to                "Mail to address following point.")
-	  ("Order"            hyrolo-sort                   "Order rolo entries in a file.")
-	  ("RegexFind"        hyrolo-grep                   "Find entries containing a regexp.")
-	  ("StringFind"       hyrolo-fgrep                  "Find entries containing a string.")
-	  ("WordFind"         hyrolo-word                   "Find entries containing words.")
-	  ("Yank"             hyrolo-yank                   "Find an entry containing a string and insert it at point.")))
+       (cons 'hyrolo hui:menu-rolo)
        '(screen .
 	 (("Screen>")
 	  ("FramesControl"    hycontrol-enable-frames-mode
 	   "Interactively delete, jump to, move, replicate, and resize frames.")
 	  ("WindowsControl"   hycontrol-enable-windows-mode
 	   "Interactively delete, jump to, rebalance, resize, and split windows.")))
-       (cons 'to hui:menu-to)
+       ;; (cons 'to hui:menu-to)
        '(types .
 	 (("Types>")
 	  ("ActionTypes"      (hui:htype-help-current-window 'actypes)
@@ -904,6 +896,36 @@ The menu is a menu of commands from MENU-ALIST."
 ;;; ************************************************************************
 ;;; Public Customizations - must come after menus are defined
 ;;; ************************************************************************
+
+(defcustom hui:menu-rolo
+  (delq nil
+	(list
+	 '("Rolo>")
+	 '("Add"              hyrolo-add	            "Add a new rolo entry.")
+	 (when (fboundp 'consult-grep) ;; allow for autoloading
+           '("ConsultFind"      hyrolo-consult-grep           "Interactively narrow HyRolo matches using Consult/Vertico."))
+	 '("Display"          hyrolo-display-matches        "Display last found rolo matches again.")
+	 '("Edit"             hyrolo-edit                   "Edit an existing rolo entry.")
+	 '("File"             hyrolo-find-file              "Edit an existing rolo file.")
+	 (when (fboundp 'helm-org-rifle-files) ;; allow for autoloading
+           '("HelmFind"         hyrolo-helm-org-rifle         "Interactively narrow HyRolo matches using Helm."))
+	 '("Info"             (id-info "(hyperbole)HyRolo") "Display manual section on HyRolo.")
+	 '("Kill"             hyrolo-kill                   "Kill an existing rolo entry.")
+	 '("Mail"             hyrolo-mail-to                "Mail to address following point.")
+	 '("Order"            hyrolo-sort                   "Order rolo entries in a file.")
+	 '("RegexFind"        hyrolo-grep                   "Find entries containing a regexp.")
+	 '("StringFind"       hyrolo-fgrep                  "Find entries containing a string.")
+	 '("WordFind"         hyrolo-word                   "Find entries containing words.")
+	 '("Yank"             hyrolo-yank                   "Find an entry containing a string and insert it at point.")))
+  "*Hyperbole minibuffer Rolo menu items of the form:
+\(LABEL-STRING ACTION-SEXP DOC-STR)."
+  :set  (lambda (var value)
+	  (if (fboundp #'hyperbole-minibuffer-menu)
+	      (progn (set-default var value)
+		     (hyperbole-minibuffer-menu))
+	    (set-default var value)))
+  :type '(list string sexp (set string nil))
+  :group 'hyperbole-buttons)
 
 (defcustom hui:menu-to
       '(("To>")

@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    18-Sep-91 at 02:57:09
-;; Last-Mod:      8-Apr-23 at 12:50:22 by Bob Weiner
+;; Last-Mod:      8-Apr-23 at 23:10:43 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1875,7 +1875,7 @@ first encountered."
   (apply #'set:create
 	 (ibut:map
 	  (lambda (lbl _start _end) (ibut:label-to-key lbl))
-	  nil nil (ibut:label-regexp lbl-key))))
+	  (ibut:label-regexp lbl-key))))
 
 (defun    ibut:label-p (&optional as-label start-delim end-delim pos-flag two-lines-flag)
   "Return key for the implicit button label that point is within, else nil.
@@ -1976,12 +1976,8 @@ positions at which the button label delimiter begins and ends."
 (defalias 'ibut:label-to-key 'hbut:label-to-key)
 (defalias 'map-ibut          'ibut:map)
 
-(defun    ibut:map (but-func &optional start-delim end-delim
-			     regexp-match include-delims)
+(defun    ibut:map (but-func &optional regexp-match include-delims)
   "Apply BUT-FUNC to the visible, named implicit buttons.
-
-Optional START-DELIM and END-DELIM override the default `ibut:label-start'
-and `ibut:label-end' delimiters.
 
 If REGEXP-MATCH is non-nil, only buttons which match this argument
 are considered.
@@ -1989,10 +1985,7 @@ are considered.
 BUT-FUNC must take precisely three arguments: the button label, the
 start position of the delimited button label and its end position (positions
 include delimiters when INCLUDE-DELIMS is non-nil)."
-  (hbut:map but-func
-	    (or start-delim ibut:label-start)
-	    (or end-delim ibut:label-end)
-	    regexp-match include-delims))
+  (hbut:map but-func ibut:label-start ibut:label-end regexp-match include-delims))
 
 (defun    ibut:next-occurrence (lbl-key &optional buffer)
   "Move point to next occurrence of an implicit button with LBL-KEY.

@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Aug-92
-;; Last-Mod:     16-Mar-23 at 22:25:03 by Bob Weiner
+;; Last-Mod:      9-Apr-23 at 03:22:01 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -38,7 +38,7 @@
 ;;; ************************************************************************
 
 (defcustom hproperty:but-highlight-flag t
-"*Non-nil (default) applies `hproperty:but-face' highlight to explicit buttons."
+"*Non-nil (default) applies `hproperty:but-face' highlight to labeled Hyperbole buttons."
   :type 'boolean
   :group 'hyperbole-buttons)
 
@@ -121,10 +121,10 @@
   :group 'hyperbole-buttons)
 
 (defface ibut-face
-  '((((min-colors 88) (background dark)) (:foreground "salmon2"))
-    (((background dark)) (:background "red2" :foreground "black"))
-    (((min-colors 88)) (:foreground "salmon3"))
-    (t (:background "red2")))
+  '((((min-colors 88) (background dark)) (:foreground "rosybrown"))
+    (((background dark)) (:background "rosybrown" :foreground "black"))
+    (((min-colors 88)) (:foreground "rosybrown"))
+    (t (:background "rosybrown")))
   "Face for implicit Hyperbole buttons."
   :group 'hyperbole-buttons)
 
@@ -151,42 +151,41 @@ that button is selectable whenever the mouse cursor moves over it."
     (overlay-put but 'face face)
     (when hproperty:but-emphasize-flag (overlay-put but 'mouse-face 'highlight))))
 
-(defun hproperty:but-clear ()
-  "Delete all Hyperbole buttons from current buffer."
+(defun hproperty:but-clear (&optional face)
+  "Remove optional Hyperbole button FACE from current buffer.
+If FACE is nil, remove the explicit butotn face."
   (interactive)
   (let ((start (point-min)))
     (while (< start (point-max))
       (mapc (lambda (props)
-	      (when (eq (overlay-get props 'face) hproperty:but-face)
+	      (when (eq (overlay-get props 'face) (or face hproperty:but-face))
 		(delete-overlay props)))
 	    (overlays-at start))
       (setq start (next-overlay-change start)))))
 
-(defun hproperty:but-create (&optional start-delim end-delim regexp-match)
-  "Highlight all hyper-buttons in buffer.
-Will use optional strings START-DELIM and END-DELIM instead of default values.
-If END-DELIM is a symbol, e.g. t, then START-DELIM is taken as a regular
-expression which matches an entire button string.
+(defun hproperty:but-create (&optional regexp-match)
+  "Highlight all named Hyperbole buttons in buffer.
 If REGEXP-MATCH is non-nil, only buttons matching this argument are
-highlighted.
+highlighted (all others are unhighlighted).
 
 If `hproperty:but-emphasize-flag' is non-nil when this is called, emphasize
 that button is selectable whenever the mouse cursor moves over it."
   (interactive)
-  (hproperty:but-clear)
-  (hproperty:but-create-all start-delim end-delim regexp-match))
+  (hproperty:but-clear hproperty:but-face)
+  (hproperty:but-clear hproperty:ibut-face)
+  (hproperty:but-create-all regexp-match))
 
-(defun hproperty:but-create-all (&optional start-delim end-delim regexp-match)
-  "Mark all hyper-buttons in buffer for later highlighting.
-Will use optional strings START-DELIM and END-DELIM instead of default values.
-If END-DELIM is a symbol, e.g. t, then START-DELIM is taken as a regular
-expression which matches an entire button string.
+(defun hproperty:but-create-all (&optional regexp-match)
+  "Mark all labeled Hyperbole buttons in buffer for later highlighting.
 If REGEXP-MATCH is non-nil, only buttons matching this argument are
 highlighted."
   (when hproperty:but-highlight-flag
-    (hbut:map (lambda (_lbl start end)
+    (ebut:map (lambda (_lbl start end)
 		(hproperty:but-add start end hproperty:but-face))
-	      start-delim end-delim regexp-match 'include-delims)))
+	      regexp-match 'include-delims)
+    (ibut:map (lambda (_lbl start end)
+		(hproperty:but-add start end hproperty:ibut-face))
+	      regexp-match 'include-delims)))
 
 (defun hproperty:but-create-on-yank (_prop-value start end)
   (save-restriction
@@ -222,14 +221,14 @@ highlighted."
 ;;; ************************************************************************
 
 (defconst hproperty:color-list
-  (if (memq window-system '(x gtk))
-      (defined-colors)))
+  (when (display-color-p)
+    (defined-colors)))
 
 (defvar hproperty:color-ptr nil
   "Pointer to current color name table to use for Hyperbole buttons.")
 
 (defconst hproperty:good-colors
-  (if (memq window-system '(x gtk))
+  (if (display-color-p)
       '(
 	"medium violet red" "indianred4" "firebrick1" "DarkGoldenrod"
 	"NavyBlue" "darkorchid" "tomato3" "mediumseagreen" "deeppink"
@@ -256,28 +255,35 @@ hproperty:color-ptr."
     t))
 
 (defun hproperty:but-p (&optional pos)
-  "Return non-nil at point or optional POS iff face is eq to hproperty:but-face."
+  "Return non-nil at point or optional POS iff on a highlighted Hyperbole button."
   (memq t (mapcar (lambda (props)
-		    (eq (overlay-get props 'face) hproperty:but-face))
+		    (when (memq (overlay-get props 'face)
+				(list hproperty:but-face hproperty:ibut-face))
+		      t))
 		  (overlays-at (or pos (point))))))
 
 (defun hproperty:set-but-face (pos face)
   (let ((but (hproperty:but-get pos)))
-    (if but (overlay-put but 'face face))))
+    (when but (overlay-put but 'face face))))
 
 (defun hproperty:but-flash ()
   "Flash a Hyperbole button at or near point to indicate selection."
   (interactive)
-  (let ((ibut) (prev)
-	(start (hattr:get 'hbut:current 'lbl-start))
-	(end   (hattr:get 'hbut:current 'lbl-end))
-	but-face)
+  (let* ((categ (hattr:get 'hbut:current 'categ))
+	 (start (hattr:get 'hbut:current 'lbl-start))
+	 (end   (hattr:get 'hbut:current 'lbl-end))
+	 (categ-face (if (eq categ 'explicit)
+			 hproperty:but-face
+		       hproperty:ibut-face))
+	 but-face
+	 ibut
+	 prev)
     (if (and start end (setq prev (hproperty:but-p start)
 			     ibut t))
 	(unless prev
-	  (hproperty:but-add start end hproperty:but-face))
+	  (hproperty:but-add start end categ-face))
       (setq start (point)))
-    (when (setq but-face (when (hproperty:but-p start) hproperty:but-face))
+    (when (setq but-face (when (hproperty:but-p start) categ-face))
       (unwind-protect
 	  (progn
 	    (hproperty:set-but-face start hproperty:flash-face)
