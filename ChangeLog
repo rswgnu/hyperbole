@@ -1,5 +1,30 @@
 2023-04-09  Bob Weiner  <rsw@gnu.org>
 
+* kotl/kimport.el (kimport:initialize): Change test from 'kview:is-p'
+    to 'kfile-is-p' as view may get set before file is fully formatted.
+                  (kimport:aug-post-statements, kimport:star-entries):
+    Remove (goto-char start) after each entry is imported as this was
+    causing a duplicate at the end of the import.
+                  (kimport:star-entries): Add 'max-pos' arg at end and
+    change to return a cons of (max-position . count-of-top-level-imports).
+    Add support for reusing initial, empty cell in Koutline.
+                  (kimport:star-outline): Update to new return protocol
+    for above function.
+
+* hui-em-but.el (hproperty:but-get): Add hproperty:ibut-face support.
+                (hproperty:but-clear): Replace with new, more efficient
+    'hproperty:but-clear-all' to clear all button colorized faces in
+    in current buffer.
+                (hproperty:but-delete): Rename to 'hproperty:but-clear'.
+		(hproperty:but-flash): Fix ibut flashing where text of
+    ibut is not highlighted prior to flashing.
+
+* man/hyperbole.texi (Menus): Add doc for minibuffer menu X and Q keys.
+
+* hyrolo-menu.el (infodock-hyrolo-menu): Make HyRolo menu a customizable
+    list and conditionally add Consult-Find and Helm-Find when requisite
+    packages are installed.
+
 * hui-mini.el (hui:menu-backward-item, hui:menu-forward-item):
     Fix skip past menu name search to be regexp search, not string search,
     since pattern is a regexp.

@@ -170,24 +170,22 @@ It provides the following keys:
 
   ;; If buffer has not yet been formatted for editing, format it.
   (let (version)
-    (cond
-     ;; Koutline file that has been loaded and formatted for editing.
-     ((kview:is-p kview)
-      ;; The buffer might have been widened for inspection, so narrow to cells
-      ;; only.
-      (kfile:narrow-to-kcells))
      ;; Koutline file that has been loaded but not yet formatted for editing.
-     ((setq version (kfile:is-p))
-      (kfile:read
-       (current-buffer)
-       (and buffer-file-name (file-exists-p buffer-file-name))
-       version)
-      (kvspec:activate))
-     ;; New koutline buffer or a foreign text buffer that must be converted to
-     ;; koutline format.
-     (t
+    (if (setq version (kfile:is-p))
+        ;; Koutline file that has been loaded and formatted for editing.
+	(if (kview:is-p kview)
+	    ;; The buffer might have been widened for inspection, so narrow to cells
+	    ;; only.
+	    (kfile:narrow-to-kcells)
+	  (kfile:read
+	   (current-buffer)
+	   (and buffer-file-name (file-exists-p buffer-file-name))
+	   version)
+	  (kvspec:activate))
+      ;; New koutline buffer or a foreign text buffer that must be converted to
+      ;; koutline format.
       (kfile:create (current-buffer))
-      (kvspec:activate))))
+      (kvspec:activate)))
   ;; We have been converting a buffer from a foreign format to a koutline.
   ;; Now that it is converted, ensure that `kotl-previous-mode' is set to
   ;; koutline.

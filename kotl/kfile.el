@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    10/31/93
-;; Last-Mod:     22-Jul-22 at 15:17:31 by Mats Lidell
+;; Last-Mod:      9-Apr-23 at 18:48:17 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -161,7 +161,7 @@ File is created with a single empty level 1 kotl cell."
 
 (defun kfile:read (buffer existing-file-flag &optional ver-string)
   "Create a new kotl view by reading BUFFER.
-Create an empty view when EXISTING-FILE-P is nil.  Optional
+Create an empty view when EXISTING-FILE-FLAG is nil.  Optional
 VER-STRING is the outline format version number for the BUFFER
 that was previously read by calling `kfile:is-p'.
 

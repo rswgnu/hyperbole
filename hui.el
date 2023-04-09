@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 21:42:03
-;; Last-Mod:      8-Apr-23 at 23:25:21 by Bob Weiner
+;; Last-Mod:      9-Apr-23 at 13:26:59 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1266,8 +1266,8 @@ With a prefix argument, also delete the button text between the delimiters."
 		(let ((buffer-read-only) start-delim-pos end-delim-pos text-end)
 		  (setq start-delim-pos (match-beginning 0)
 			end-delim-pos (match-end 0))
-		  (when (fboundp 'hproperty:but-delete)
-		    (hproperty:but-delete start-delim-pos))
+		  (when (fboundp 'hproperty:but-clear)
+		    (hproperty:but-clear start-delim-pos))
 		  (goto-char (- (point) (length ebut:label-end)))
 		  (skip-chars-backward " \t\n\r")
 		  (setq text-end (point))

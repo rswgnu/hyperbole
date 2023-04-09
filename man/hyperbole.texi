@@ -7,7 +7,7 @@
 @c Author:       Bob Weiner
 @c
 @c Orig-Date:     6-Nov-91 at 11:18:03
-@c Last-Mod:      2-Apr-23 at 09:57:29 by Bob Weiner
+@c Last-Mod:      9-Apr-23 at 12:18:31 by Bob Weiner
 
 @c %**start of header (This is for running Texinfo on a region.)
 @setfilename hyperbole.info
@@ -77,7 +77,7 @@ See the GNU General Public License for more details in the file,
 @dircategory Emacs
 @direntry
 * Hyperbole: (hyperbole).      The Everyday Hypertextual Information Manager.
-     Use @{C-h h d d@} for a demonstration.  GNU Hyperbole
+     Use @bkbd{C-h h d d@} for a demonstration.  GNU Hyperbole
      offers context-sensitive mouse and keyboard keys that do the
      right thing, a powerful contact manager, an advanced, auto-
      numbered outliner with hyperlink anchors for each outline
@@ -519,7 +519,7 @@ describes Hyperbole, lists some of its potential applications, and
 explains how to subscribe to its mail lists.
 
 Throughout this manual, sequences of keystrokes are delimited by curly
-braces @kbd{@{ @}}, function and variable names use this @code{typeface}.
+braces @bkbd{@{ @}}, function and variable names use this @code{typeface}.
 
 @noindent
 In brief, Hyperbole lets you:
@@ -2465,7 +2465,7 @@ the location from which to retrieve RFCs via HTTP.
 @item kbd-key
 Execute a key series (series of key sequences) around point,
 delimited by curly braces, @{@}.  Key series should be in
-human readable form, e.g.@: @bkbd{C-x C-b}.  Formats such as @{^x^b@}
+human readable form, e.g.@: @bkbd{C-x C-b}.  Formats such as @bkbd{^x^b@}
 will not be recognized.  The string within @code{(kbd "string")} also
 acts as a key series button.
 
@@ -3729,6 +3729,7 @@ similar to key bindings.  In fact, any menu item can be bound to a
 global key sequence.  @xref{Binding Minibuffer Menu Items}.
 
 @kindex C-h h
+@cindex enable Hyperbole mode
 @cindex minibuffer menu
 @vindex file, hyperbole.el
 @cindex invoking Hyperbole
@@ -3746,7 +3747,11 @@ Hy>  Act Butfile/ Cust/ Doc/ Ebut/ Find/ Gbut/ Hist Ibut/ Kotl/ Msg/ Rolo/ Scree
 @end smallexample
 
 @cindex submenus
+@cindex menu exit
 @cindex menu help
+@cindex menu quit
+@cindex disable Hyperbole mode
+@cindex quit menus
 @cindex help, menu items
 @cindex menu item selection
 @cindex selection, menu items
@@ -3756,14 +3761,15 @@ Hy>  Act Butfile/ Cust/ Doc/ Ebut/ Find/ Gbut/ Hist Ibut/ Kotl/ Msg/ Rolo/ Scree
 @kindex M-b
 All menu items are selected via the first character of their names (letter
 case does not matter), with presses of the Action Key or by using
-@{@key{TAB}@} or @bkbd{M-f} to move forward an item, @bkbd{Shift-@key{TAB}}
-or @bkbd{M-b} to move backward an item and @{@key{RET}@} to select the
+@bkbd{@key{TAB}@} or @bkbd{M-f} to move forward an item, @bkbd{Shift-@key{TAB}}
+or @bkbd{M-b} to move backward an item and @bkbd{@key{RET}@} to select the
 current item.  A press of the Assist Key on an item displays help for the
 item, including the action that it performs.  "/" at the end of an item name
 indicates that it brings up a submenu.
 
 @kindex C-t
-@kindex q
+@kindex Q
+@kindex X
 @kindex C-g
 @cindex menu, top-level
 @cindex top-level menu
@@ -3771,10 +3777,13 @@ indicates that it brings up a submenu.
 While a menu is active, to re-activate the top-level Hyperbole menu,
 use @bkbd{C-t} or press the Action Key while on the menu prefix
 (before the @samp{>} character).  This allows you to browse the
-submenus and then return to the top menu.  You can quit without
-selecting an item by using @bkbd{q} or pressing @{@key{RET}@} when at
-the end of a menu.  @bkbd{C-g} aborts from the minibuffer whether you
-are at a menu prompt or any other Hyperbole prompt.
+submenus and then return to the top menu.  You can quit from the
+minibuffer menus without selecting an item by using @bkbd{Q}, or by
+pressing @bkbd{@key{RET}@} or @bkbd{M-@key{RET}@} when at the end of a
+menu.  @bkbd{C-g} aborts from the minibuffer whether you are at a menu
+prompt or any other Hyperbole prompt.  @bkbd{X} both quits the menus
+and disables the Hyperbole global minor mode; @bkbd{C-h h} restores
+the menus and re-enables Hyperbole minor mode.
 
 @noindent
 The top-level Hyperbole minibuffer menu items serve the following purposes:
@@ -5246,7 +5255,7 @@ editing it.  Some of these commands affect the current view spec.
 @c @cindex outline, multiple views
 @c @kindex koutliner, C-x 4 c
 @c If you want to see multiple perspectives of the same Koutline, use
-@c @{@{C-x 4 c}@} to create a clone of any current Koutline.  Any edits
+@c @bkbd{@{C-x 4 c}@} to create a clone of any current Koutline.  Any edits
 @c made to the original buffer or the clone are shared but when you alter
 @c the view in one, it does not affect the other, so you can expand and
 @c collapse or change viewspecs to create different perspectives.
@@ -5942,7 +5951,7 @@ displayed.
 @cindex rolo, finding matches
 @cindex rolo, moving through matches
 If your emacs version supports textual highlighting, each search match
-is highlighted for quick, visual location.  @{@key{TAB}@} moves point
+is highlighted for quick, visual location.  @bkbd{@key{TAB}@} moves point
 forward to successive spans of text which match the search expression.
 @bkbd{M-@key{TAB}} or @bkbd{@key{SHIFT}-@key{TAB}} move point backward
 to earlier matches.  These keys allow you to quickly find the matching
@@ -8585,7 +8594,7 @@ Copy into REGISTER the region START to END.
 With optional prefix arg DELETE-FLAG, delete region.
 
 @findex kotl-mode:delete-backward-char
-@item kotl-mode:delete-backward-char  @{@key{DEL}@}
+@item kotl-mode:delete-backward-char  @bkbd{@key{DEL}@}
 Delete up to the preceding prefix ARG characters.
 Return number of characters deleted.
 Optional KILL-FLAG non-nil means save in kill ring instead of deleting.
@@ -8614,7 +8623,7 @@ If there is a fill prefix, delete it from the beginning of this line.
 With argument, join this line to the following line.
 
 @findex kotl-mode:demote-tree
-@item kotl-mode:demote-tree  @{@key{TAB}@}
+@item kotl-mode:demote-tree  @bkbd{@key{TAB}@}
 Move current tree a maximum of prefix ARG levels lower in current view.
 Each cell is refilled iff its @emph{no-fill} attribute is nil and
 @code{kotl-mode:refill-flag} is non-nil.  With prefix ARG = 0, cells are
@@ -8740,7 +8749,7 @@ point).
 Collapse tree rooted at optional CELL-REF (defaults to cell at point).
 
 @findex kotl-mode:indent-line
-@item kotl-mode:indent-line  @{@key{TAB}@}
+@item kotl-mode:indent-line  @bkdb{@key{TAB}@}
 Indent line relative to the previous one.
 With optional prefix ARG greater than 1, tab forward ARG times.
 See the documentation string of `kotl-mode:indent-tabs-mode' for details
@@ -8843,7 +8852,7 @@ TO-CELL-REF.  With optional COPY-P, copy tree rather than moving it.
 Leave point at original location but return the tree's new start point.
 
 @findex kotl-mode:newline
-@item kotl-mode:newline  @{@key{RET}@}
+@item kotl-mode:newline  @bkbd{@key{RET}@}
 Insert a newline.  With ARG, insert ARG newlines.
 In Auto Fill mode, if no numeric arg, break the preceding line if it is
 too long.
