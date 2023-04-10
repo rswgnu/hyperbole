@@ -1,3 +1,10 @@
+2023-04-15  Mats Lidell  <matsl@gnu.org>
+
+* test/kimport-tests.el (kimport--text-file)
+    (kimport--text-file-two-lines-per-paragraph, kimport--star-outline)
+    (kimport--star-outline-two-lines-per-star-heading)
+    (kimport--star-outline-with-siblings): Test cases for kimport.
+
 2023-04-15  Bob Weiner  <rsw@gnu.org>
 
 * kotl/kotl-mode.el (kotl-mode:cell-help): Fix to keep current buffer
