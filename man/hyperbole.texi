@@ -7,7 +7,7 @@
 @c Author:       Bob Weiner
 @c
 @c Orig-Date:     6-Nov-91 at 11:18:03
-@c Last-Mod:      9-Apr-23 at 12:18:31 by Bob Weiner
+@c Last-Mod:     10-Apr-23 at 18:41:25 by Bob Weiner
 
 @c %**start of header (This is for running Texinfo on a region.)
 @setfilename hyperbole.info
@@ -6844,7 +6844,7 @@ Assist Key is pressed, to respond to requests for help on buttons of
 that type.  Any such function should take a single argument of an
 implicit button construct.  (This is what
 @code{(ibut:at-p)} returns when point is within an implicit button
-context.)  The button may be queried for its attributes using
+context).  The button may be queried for its attributes using
 functions from the @samp{hbut} and @samp{hattr} classes.  See
 the @file{hib-kbd.el} file for an example of a custom help function.
 

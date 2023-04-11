@@ -21,16 +21,19 @@
 
 ** HYPERBOLE SYSTEM  (See "(hyperbole)").
 
-  *** Native Compilation Autoloads: Work around Emacs bug where async native
-      comp of a package being installed does not load "hyperbole-autoloads.el"
-      (require libraries to eliminate all Error-level messages).
+  *** Native Compilation: Hyperbole now may be natively compiled (.eln files).
+      It works around an Emacs bug where async native comp of a package being
+      installed does not load "hyperbole-autoloads.el".  When building Hyperbole
+      without a package manager, 'make eln' now builds it natively.
 
   *** Natively Compiled Functions as Action Types: Now may be used as Hyperbole
       button action types.
 
-  *** Large number of byte-compiler warnings eliminated when building the
-      Hyperbole package.  None of these warnings should affect use of
-      Hyperbole.
+  *** Warnings Reduced: Large number of byte-compiler warnings eliminated when
+      building the Hyperbole package.  None of these warnings should affect use
+      of Hyperbole.
+
+  *** XEmacs: Removed old XEmacs-compatibility code.
 
 
 ** HYROLO  (See "(hyperbole)HyRolo").
@@ -40,6 +43,12 @@
       the interactive commands to show the top-level matches, an outline of
       matches or to show, hide or move to matches all work in the match
       display buffer as well.
+
+
+** IMPLICIT BUTTONS
+
+  *** Relative Info Paths: Info files with relative pathnames outside of the
+      'Info-directory-list' now resolve properly, e.g. "man/hyperbole.info".
 
 
 ** KOUTLINER  (See "(hyperbole)Koutliner").
@@ -59,7 +68,23 @@
       forward by the number of items specified in any prefix argument given.
 
 
-** ORG MODE  (See "(hyperbole)Smart Key - Org Mode").
+** PROGRAMMING INTERFACE ADDITIONS TO HYPERBOLE
+
+  *** (hpath:resolve): Add to resolve path variables without doing a path expand.
+
+  *** (hsys-org-meta-return): Centralize sharing of M-RET key with Org mode.
+
+  *** (hypb:require-package): Add to install a package, if necessary,
+      and require its library with the same name.
+  
+  *** (hypb:helm-info): Add to require helm package and call helm-info.
+
+  *** (action:help): Allow for Action Button Assist Key :help
+      functions, even if the action button type is not a Hyperbole type,
+      i.e. is a regular function.
+
+
+** ORG MODE INTEGRATION (See "(hyperbole)Smart Key - Org Mode").
 
   *** Todo Cycling: An Action Key press on an Org mode todo state keyword,
       cycles to the next state.  An Assist Key press in the same place 
@@ -82,16 +107,28 @@
       line references from Emacs Lisp native compilation within the
       *Async-native-compile-log* buffer.
 
+  *** Lisp Load, Autoload and Require Expressions: Action Key press on any
+      named target in such expressions displays the associated library.
+
   *** Path Implicit Buttons: Much improved relative path handling, including
       expanding into executable paths when pathname is prefixed by ! or &,
       handling info paths outside `Info-directory-list', like
       "man/hyperbole.info".
 
+  *** Youtube Snippet Links: Compact Action Buttons to play parts or whole
+      Youtube videos and to search for videos by keyword.  See
+      "hsys-youtube.el".
+
+  *** Lisp Action Button Help: Action Buttons that utilize regular Lisp
+      functions (rather than Hyperbole Action Types) can now have :help
+      functions run with a press of the Assist Key on such buttons.  See
+      "(hyperbole)Action Buttons".
+
 
 ** TEST CASES
 
   *** Hyperbole Automated Testing: Automated test cases increased to over
-      265.  Simply run 'make test-all' or 'make test' from the command-line
+      275.  Simply run 'make test-all' or 'make test' from the command-line
       when in the Hyperbole source directory and you should see all tests
       pass.  If any fail, you can press the Action Key to see the source of
       the failure.  Full testing is supported under POSIX systems only.  See
