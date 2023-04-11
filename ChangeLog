@@ -25,6 +25,12 @@
     list and conditionally add Consult-Find and Helm-Find when requisite
     packages are installed.
 
+* hbut.el (gbut:ebut-key-list, hbut:ebut-key-list): Move 'save-restriction'
+
+    before call to 'hbdata:to-entry-ref' to capture all restriction
+    changes.  Fixes a bug that could leave the in-buffer hbdata separator
+    exposed.
+
 * hui-mini.el (hui:menu-backward-item, hui:menu-forward-item):
     Fix skip past menu name search to be regexp search, not string search,
     since pattern is a regexp.

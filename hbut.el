@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    18-Sep-91 at 02:57:09
-;; Last-Mod:      8-Apr-23 at 23:10:43 by Bob Weiner
+;; Last-Mod:     10-Apr-23 at 23:39:18 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -735,16 +735,17 @@ Return the symbol for the button when found, else nil."
 (defun    gbut:ebut-key-list ()
   "Return a list of explicit button label keys from the global button file."
   (save-excursion
-    (when (hbdata:to-entry-buf (gbut:file))
-      (let (gbuts)
-	(save-restriction
-	  (narrow-to-region (point) (if (search-forward "\f" nil t)
-					(point) (point-max)))
-	  (goto-char (point-min))
-	  (condition-case ()
-	      (while (setq gbuts (cons (car (read (current-buffer))) gbuts)))
-	    (error nil))
-	  gbuts)))))
+    (save-restriction
+      (when (hbdata:to-entry-buf (gbut:file))
+	(let (gbuts)
+	  (save-restriction
+	    (narrow-to-region (point) (if (search-forward "\f" nil t)
+					  (point) (point-max)))
+	    (goto-char (point-min))
+	    (condition-case ()
+		(while (setq gbuts (cons (car (read (current-buffer))) gbuts)))
+	      (error nil))
+	    gbuts))))))
 
 (defun    gbut:ibut-key-list ()
   "Return a list of implicit button label keys from the global button file."
@@ -1522,16 +1523,17 @@ source file for the buttons in the menu, if any.")
   "Return a list of explicit button label keys.
 Keys in optional KEY-SRC or the current buffer."
   (save-excursion
-    (if (hbdata:to-entry-buf (or key-src (buffer-file-name)))
-	(let (hbuts)
-	  (save-restriction
-	    (narrow-to-region (point) (if (search-forward "\f" nil t)
-					  (point) (point-max)))
-	    (goto-char (point-min))
-	    (condition-case ()
-		(while (setq hbuts (cons (car (read (current-buffer))) hbuts)))
-	      (error nil))
-	    hbuts)))))
+    (save-restriction
+      (if (hbdata:to-entry-buf (or key-src (buffer-file-name)))
+	  (let (hbuts)
+	    (save-restriction
+	      (narrow-to-region (point) (if (search-forward "\f" nil t)
+					    (point) (point-max)))
+	      (goto-char (point-min))
+	      (condition-case ()
+		  (while (setq hbuts (cons (car (read (current-buffer))) hbuts)))
+		(error nil))
+	      hbuts))))))
 
 (defun    hbut:ibut-key-list (&optional key-src)
   "Return a list of implicit button label keys.
