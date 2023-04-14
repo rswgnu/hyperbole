@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    18-May-21 at 22:14:10
-;; Last-Mod:     11-Apr-23 at 01:04:55 by Mats Lidell
+;; Last-Mod:     15-Apr-23 at 00:25:21 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -559,7 +559,6 @@
           (should (looking-at "2")))
       (delete-file kotl-file))))
 
-
 (ert-deftest kotl-mode-move-tree-backward ()
   "Should move tree backward."
   (let ((kotl-file (make-temp-file "hypb" nil ".kotl")))
@@ -595,6 +594,61 @@
           (should-not (kcell-view:get-attr 'no-fill))
           (kotl-mode:add-cell)
           (should-not (kcell-view:get-attr 'no-fill)))
+      (delete-file kotl-file))))
+
+(ert-deftest kotl-mode-cell-help-displays-help-in-temp-buffer ()
+  "Verify that kotl-mode:cell-help shows help in a temp buffer."
+  (let ((kotl-file (make-temp-file "hypb" nil ".kotl")))
+    (unwind-protect
+        (progn
+          (find-file kotl-file)
+          (insert kotl-file)
+          (kotl-mode:add-child)
+          (insert "1a")
+          (kotl-mode:add-child)
+          (insert "1a1")
+          (kotl-mode:beginning-of-buffer)
+          (kotl-mode:cell-help "1" nil)
+          (with-current-buffer "*Help: Hyperbole Koutliner*"
+            (should (looking-at-p (concat "\\W+1\\. " kotl-file)))))
+      (delete-file kotl-file))))
+
+(ert-deftest kotl-mode-cell-help-displays-help-from-root ()
+  "Verify that kotl-mode:cell-help shows help from root cell."
+  (let ((kotl-file (make-temp-file "hypb" nil ".kotl")))
+    (unwind-protect
+        (progn
+          (find-file kotl-file)
+          (insert "1")
+          (kotl-mode:add-child)
+          (insert kotl-file)
+          (kotl-mode:add-child)
+          (insert "1a1")
+          (kotl-mode:beginning-of-buffer)
+          (kotl-mode:cell-help "1a" 2)
+          (with-current-buffer "*Help: Hyperbole Koutliner*"
+            (should (looking-at-p (concat "\\W+1a\\. " kotl-file)))
+            (should (= (count-matches "idstamp") 2))))
+      (delete-file kotl-file))))
+
+(ert-deftest kotl-mode-cell-help-displays-help-for-all-cells ()
+  "Verify that kotl-mode:cell-help shows help for all cells."
+  (let ((kotl-file (make-temp-file "hypb" nil ".kotl")))
+    (unwind-protect
+        (progn
+          (find-file kotl-file)
+          (insert kotl-file)
+          (kotl-mode:add-child)
+          (insert "1a")
+          (kotl-mode:add-child)
+          (insert "1a1")
+          (kotl-mode:beginning-of-buffer)
+          (kotl-mode:cell-help "1a" -1)
+          (with-current-buffer "*Help: Hyperbole Koutliner*"
+            (should (looking-at-p "\\W+idstamp:\\W+0"))
+            (should (= (count-matches "idstamp") 4))
+            (forward-line 5)
+            (should (looking-at-p (concat "\\W+1\\. " kotl-file)))))
       (delete-file kotl-file))))
 
 (provide 'kotl-mode-tests)

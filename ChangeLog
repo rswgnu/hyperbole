@@ -1,7 +1,10 @@
-2023-04-11  Mats Lidell  <matsl@gnu.org>
+2023-04-15  Mats Lidell  <matsl@gnu.org>
 
-* test/kotl-mode-tests.el (kotl-mode-kill-tree-and-reopen)
-     (kotl-mode-kill-tree-on-empty-file-creates-new-cell): kotl-mode test
+* test/kotl-mode-tests.el (kotl-mode-cell-help-displays-help-in-temp-buffer)
+    (kotl-mode-cell-help-displays-help-from-root)
+    (kotl-mode-cell-help-displays-help-for-all-cells)
+    (kotl-mode-kill-tree-and-reopen)
+    (kotl-mode-kill-tree-on-empty-file-creates-new-cell): kotl-mode test
     cases.
 
 2023-04-09  Bob Weiner  <rsw@gnu.org>
