@@ -1,3 +1,13 @@
+2023-04-15  Bob Weiner  <rsw@gnu.org>
+
+* kotl/kotl-mode.el (kotl-mode:cell-help): Fix to keep current buffer
+    as Koutline buffer and only set standard-output to the help buffer.
+                    (kotl-mode:is-p): Update to show buffer that is
+    not a Koutline.
+
+* kotl/kfile.el (kfile:create): Fix to handle when 'inhibit-read-only'
+    is set rather than just testing the 'buffer-read-only' flag.
+
 2023-04-15  Mats Lidell  <matsl@gnu.org>
 
 * test/kotl-mode-tests.el (kotl-mode-cell-help-displays-help-in-temp-buffer)

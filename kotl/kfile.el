@@ -110,8 +110,7 @@ File is created with a single empty level 1 kotl cell."
   (unless (bufferp buffer)
     (error "(kfile:create): Invalid buffer argument, %s" buffer))
   (set-buffer buffer)
-  (when buffer-read-only
-    (error "(kfile:create): %s is read-only" buffer))
+  (barf-if-buffer-read-only)
   (widen)
 
   (let ((empty-flag (zerop (buffer-size)))
