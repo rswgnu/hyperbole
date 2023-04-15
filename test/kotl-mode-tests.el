@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    18-May-21 at 22:14:10
-;; Last-Mod:     18-Apr-22 at 22:40:33 by Mats Lidell
+;; Last-Mod:     15-Apr-23 at 00:25:21 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -295,6 +295,7 @@
         (progn
           (find-file kotl-file)
           (insert "first")
+          (should (string= (kcell-view:idstamp) "01"))
           (kotl-mode:add-child)
           (should (string= (kcell-view:label (point)) "1a"))
 
@@ -302,10 +303,46 @@
           (should (string= (kcell-view:label (point)) "1"))
           (kotl-mode:beginning-of-cell)
           (should (looking-at-p "first"))
+          (should (string= (kcell-view:idstamp) "01"))
 
           (kotl-mode:kill-tree)
           (kotl-mode:beginning-of-cell)
+          (should (string= (kcell-view:idstamp) "04"))
           (should (looking-at-p "$")))
+      (delete-file kotl-file))))
+
+(ert-deftest kotl-mode-kill-tree-and-reopen ()
+  "Remove first cell, reopen file, verify idstamp of first cell."
+  (let ((kotl-file (make-temp-file "hypb" nil ".kotl")))
+    (unwind-protect
+        (progn
+          (find-file kotl-file)
+          (insert "first")
+          (kotl-mode:add-cell)
+          (insert "second")
+          (should (string= (kcell-view:idstamp) "02"))
+          (kotl-mode:beginning-of-buffer)
+          (kotl-mode:kill-tree)
+          (should (string= (kcell-view:idstamp) "02"))
+          (save-buffer)
+          (kill-buffer)
+          (find-file kotl-file)
+          (should (looking-at-p "second"))
+          (should (string= (kcell-view:idstamp) "02")))
+      (delete-file kotl-file))))
+
+(ert-deftest kotl-mode-kill-tree-on-empty-file-creates-new-cell ()
+  "Kill tree on empty kotl file creates new cell."
+  (let ((kotl-file (make-temp-file "hypb" nil ".kotl")))
+    (unwind-protect
+        (progn
+          (find-file kotl-file)
+          (insert "first")
+          (should (string= (kcell-view:idstamp) "01"))
+          (kotl-mode:kill-tree)
+          (should (string= (kcell-view:idstamp) "02"))
+          (kotl-mode:kill-tree)
+          (should (string= (kcell-view:idstamp) "03")))
       (delete-file kotl-file))))
 
 (ert-deftest kotl-mode-split-cell ()
@@ -522,7 +559,6 @@
           (should (looking-at "2")))
       (delete-file kotl-file))))
 
-
 (ert-deftest kotl-mode-move-tree-backward ()
   "Should move tree backward."
   (let ((kotl-file (make-temp-file "hypb" nil ".kotl")))
@@ -558,6 +594,61 @@
           (should-not (kcell-view:get-attr 'no-fill))
           (kotl-mode:add-cell)
           (should-not (kcell-view:get-attr 'no-fill)))
+      (delete-file kotl-file))))
+
+(ert-deftest kotl-mode-cell-help-displays-help-in-temp-buffer ()
+  "Verify that kotl-mode:cell-help shows help in a temp buffer."
+  (let ((kotl-file (make-temp-file "hypb" nil ".kotl")))
+    (unwind-protect
+        (progn
+          (find-file kotl-file)
+          (insert kotl-file)
+          (kotl-mode:add-child)
+          (insert "1a")
+          (kotl-mode:add-child)
+          (insert "1a1")
+          (kotl-mode:beginning-of-buffer)
+          (kotl-mode:cell-help "1" nil)
+          (with-current-buffer "*Help: Hyperbole Koutliner*"
+            (should (looking-at-p (concat "\\W+1\\. " kotl-file)))))
+      (delete-file kotl-file))))
+
+(ert-deftest kotl-mode-cell-help-displays-help-from-root ()
+  "Verify that kotl-mode:cell-help shows help from root cell."
+  (let ((kotl-file (make-temp-file "hypb" nil ".kotl")))
+    (unwind-protect
+        (progn
+          (find-file kotl-file)
+          (insert "1")
+          (kotl-mode:add-child)
+          (insert kotl-file)
+          (kotl-mode:add-child)
+          (insert "1a1")
+          (kotl-mode:beginning-of-buffer)
+          (kotl-mode:cell-help "1a" 2)
+          (with-current-buffer "*Help: Hyperbole Koutliner*"
+            (should (looking-at-p (concat "\\W+1a\\. " kotl-file)))
+            (should (= (count-matches "idstamp") 2))))
+      (delete-file kotl-file))))
+
+(ert-deftest kotl-mode-cell-help-displays-help-for-all-cells ()
+  "Verify that kotl-mode:cell-help shows help for all cells."
+  (let ((kotl-file (make-temp-file "hypb" nil ".kotl")))
+    (unwind-protect
+        (progn
+          (find-file kotl-file)
+          (insert kotl-file)
+          (kotl-mode:add-child)
+          (insert "1a")
+          (kotl-mode:add-child)
+          (insert "1a1")
+          (kotl-mode:beginning-of-buffer)
+          (kotl-mode:cell-help "1a" -1)
+          (with-current-buffer "*Help: Hyperbole Koutliner*"
+            (should (looking-at-p "\\W+idstamp:\\W+0"))
+            (should (= (count-matches "idstamp") 4))
+            (forward-line 5)
+            (should (looking-at-p (concat "\\W+1\\. " kotl-file)))))
       (delete-file kotl-file))))
 
 (provide 'kotl-mode-tests)

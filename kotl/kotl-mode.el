@@ -170,7 +170,7 @@ It provides the following keys:
 
   ;; If buffer has not yet been formatted for editing, format it.
   (let (version)
-     ;; Koutline file that has been loaded but not yet formatted for editing.
+    ;; Koutline file that has been loaded but not yet formatted for editing.
     (if (setq version (kfile:is-p))
         ;; Koutline file that has been loaded and formatted for editing.
 	(if (kview:is-p kview)
@@ -2987,9 +2987,9 @@ With optional SHOW-FLAG, expand the tree instead."
   (kotl-mode:hide-tree cell-ref t))
 
 (defun kotl-mode:cell-attributes (all-flag)
-  "Print attributes of the current kcell to standard output.
+  "Print attributes of the current kcell to `standard-output'.
 With prefix arg ALL-FLAG non-nil, print the attributes of all visible
-kcells from the current buffer to standard output.
+kcells from the current buffer to `standard-output'.
 
 See also the documentation for `kotl-mode:cell-help'."
   (interactive "P")
@@ -3027,26 +3027,33 @@ See also the documentation for `kotl-mode:cell-attributes'."
     (setq cell-ref (kcell-view:label)))
   ;; Ensure these do not invoke with-output-to-temp-buffer a second time.
   (let ((temp-buffer-show-hook)
-	(temp-buffer-show-function))
-    (with-help-window (hypb:help-buf-name "Koutliner")
-      (save-excursion
-	(if (or (member cell-ref '("0" 0))
-		(<= cells-flag 0))
-	    (progn
-	      (hattr:report (append '(idstamp 0)
-				    (kcell:plist (kview:top-cell kview))))
-	      (terpri)
-	      (cond ((= cells-flag 1) nil)
-		    ((> cells-flag 1)
-		     (kview:map-tree #'kotl-mode:print-attributes kview t t))
-		    ;; (<= cells-flag 0)
-		    (t (kotl-mode:cell-attributes t))))
-	  (cond ((= cells-flag 1)
-		 (kotl-mode:goto-cell cell-ref)
-		 (kotl-mode:print-attributes kview))
-		((> cells-flag 1)
-		 (kotl-mode:goto-cell cell-ref)
-		 (kview:map-tree #'kotl-mode:print-attributes kview nil t))))))))
+	(temp-buffer-show-function)
+	(standard-output (get-buffer-create (hypb:help-buf-name "Koutliner"))))
+    (with-current-buffer standard-output
+      (setq buffer-read-only nil)
+      (erase-buffer))
+    (save-excursion
+      (if (or (member cell-ref '("0" 0))
+	      (<= cells-flag 0))
+	  (progn
+	    (hattr:report (append '(idstamp 0)
+				  (kcell:plist (kview:top-cell kview))))
+	    (terpri)
+	    (cond ((= cells-flag 1) nil)
+		  ((> cells-flag 1)
+		   (kview:map-tree #'kotl-mode:print-attributes kview t t))
+		  ;; (<= cells-flag 0)
+		  (t (kotl-mode:cell-attributes t))))
+	(cond ((= cells-flag 1)
+	       (kotl-mode:goto-cell cell-ref)
+	       (kotl-mode:print-attributes kview))
+	      ((> cells-flag 1)
+	       (kotl-mode:goto-cell cell-ref)
+	       (kview:map-tree #'kotl-mode:print-attributes kview nil t)))))
+    (with-current-buffer standard-output
+      (goto-char (point-min))
+      (set-buffer-modified-p nil)
+      (hkey-help-show standard-output))))
 
 (defun kotl-mode:get-cell-attribute (attribute &optional pos top-cell-flag)
   "Return ATTRIBUTE's value for the current cell or the cell at optional POS.
@@ -3185,7 +3192,7 @@ on when tabs are used for indenting."
   (if (kview:is-p kview)
       t
     (hypb:error
-     "(kotl-mode:is-p): Command requires a valid Hyperbole koutline")))
+     "(kotl-mode:is-p): '%s' is not a valid Hyperbole koutline" (current-buffer))))
 
 (defun kotl-mode:shrink-region ()
   "Shrink region within visible bounds of a single cell.
