@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 21:42:03
-;; Last-Mod:      9-Apr-23 at 13:26:59 by Bob Weiner
+;; Last-Mod:     16-Apr-23 at 12:49:48 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1621,12 +1621,14 @@ Buffer without File      link-to-buffer-tmp"
 						     (match-end 0)
 						   0)))))
 				    (save-excursion
-				      (end-of-line)
-				      (let ((heading (buffer-substring-no-properties
-						      (point)
-						      (line-end-position)))
-					    (occur 1))
-					(while (search-backward heading nil t)
+				      (let ((heading (string-trim
+						      (buffer-substring-no-properties
+						       (point)
+						       (line-end-position))))
+					    (occur 0))
+					(end-of-line)
+					(while (and (not (string-empty-p heading))
+						    (search-backward heading nil t))
 					  (setq occur (1+ occur)))
 					(list 'link-to-string-match
 					      heading occur buffer-file-name))))

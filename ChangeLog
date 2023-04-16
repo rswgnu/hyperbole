@@ -1,3 +1,10 @@
+2023-04-16  Bob Weiner  <rsw@gnu.org>
+
+* hui.el (hui:link-possible-types): Fix link to outline heading where
+    search-backward was given an empty string argument and would loop
+    infinitely without moving.  This was because movement to eol was
+    done in the wrong place.
+
 2023-04-15  Mats Lidell  <matsl@gnu.org>
 
 * test/kimport-tests.el (kimport--text-file)
