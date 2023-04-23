@@ -7,7 +7,7 @@
 @c Author:       Bob Weiner
 @c
 @c Orig-Date:     6-Nov-91 at 11:18:03
-@c Last-Mod:     10-Apr-23 at 18:41:25 by Bob Weiner
+@c Last-Mod:     22-Apr-23 at 18:54:55 by Bob Weiner
 
 @c %**start of header (This is for running Texinfo on a region.)
 @setfilename hyperbole.info
@@ -10192,8 +10192,9 @@ When pressed within an assembly source code file:
 @cindex lisp identifier
 @cindex elisp identifier
 When pressed on a Lisp symbol within any of these types of buffers
-(Lisp code, debugger, compilation, or help) or in change-log-mode
-on an Emacs Lisp bound identifier:
+(Lisp code, debugger, compilation, *Warnings*, *Flymake log* and *Flymake
+diagnostics, help or change-log-mode buffers) on an Emacs Lisp bound
+identifier:
   ACTION KEY
      Jumps to the definition of any selected Lisp construct.  This includes
      Hyperbole implicit button type and action type references.  If on an

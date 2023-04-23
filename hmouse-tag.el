@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    24-Aug-91
-;; Last-Mod:      8-Apr-23 at 20:34:35 by Bob Weiner
+;; Last-Mod:     22-Apr-23 at 18:52:52 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -386,7 +386,8 @@ If:
 (defun smart-emacs-lisp-mode-p ()
   "Return t if in a mode which uses Emacs Lisp symbols."
   ;; Beyond Lisp files, Emacs Lisp symbols appear frequently in Byte-Compiled
-  ;; buffers, debugger buffers, program ChangeLog buffers, and Help buffers.
+  ;; buffers, debugger buffers, program ChangeLog buffers, Help buffers,
+  ;; *Warnings*, *Flymake log* and *Flymake diagnostics... buffers.
   (or (memq major-mode #'(emacs-lisp-mode lisp-interaction-mode debugger-mode))
       (string-match (concat "\\`\\*\\(Warnings\\|Flymake log\\|Compile-Log\\(-Show\\)?\\)\\*"
 			    "\\|\\`\\*Flymake diagnostics")

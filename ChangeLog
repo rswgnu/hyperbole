@@ -34,7 +34,7 @@
 2023-04-09  Bob Weiner  <rsw@gnu.org>
 
 * kotl/kimport.el (kimport:initialize): Change test from 'kview:is-p'
-    to 'kfile-is-p' as view may get set before file is fully formatted.
+    to 'kfile:is-p' as view may get set before file is fully formatted.
                   (kimport:aug-post-statements, kimport:star-entries):
     Remove (goto-char start) after each entry is imported as this was
     causing a duplicate at the end of the import.
@@ -59,7 +59,6 @@
     packages are installed.
 
 * hbut.el (gbut:ebut-key-list, hbut:ebut-key-list): Move 'save-restriction'
-
     before call to 'hbdata:to-entry-ref' to capture all restriction
     changes.  Fixes a bug that could leave the in-buffer hbdata separator
     exposed.
@@ -83,7 +82,8 @@
 
 * FAST-DEMO: Add EmacsConf 2022 videos.
 
-* hmouse-tag.el (smart-emacs-lisp-mode-p): Add support for "*Warnings*",
+* man/hyperbole.texi (Smart Key - Lisp Source Code):
+  hmouse-tag.el (smart-emacs-lisp-mode-p): Add support for "*Warnings*",
     "*Flymake log*" and "*Flymake diagnostics..." buffers.
 
 * hui-mini.el (hui:menu-rolo): Make HyRolo menu a customizable list
@@ -1227,7 +1227,7 @@
 
 * hbut.el (ibut:create): Add 'dir' key parameter and set as hbut:current
     attribute.  Remove '(or args)' as that was preventing set of
- hbut:current attributes.
+    hbut:current attributes.
 
 2022-07-21  Mats Lidell  <matsl@gnu.org>
 
