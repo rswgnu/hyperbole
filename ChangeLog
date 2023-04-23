@@ -1,3 +1,7 @@
+2023-04-23  Mats Lidell  <matsl@gnu.org>
+
+* Silence various byte compiler warnings.
+
 2023-04-22  Mats Lidell  <matsl@gnu.org>
 
 * test/hbut-tests.el

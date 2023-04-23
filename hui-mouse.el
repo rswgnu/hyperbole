@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    04-Feb-89
-;; Last-Mod:      1-Mar-23 at 21:45:58 by Bob Weiner
+;; Last-Mod:     23-Apr-23 at 22:31:26 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -50,6 +50,22 @@
 (require 'imenu)
 
 (eval-when-compile (require 'tar-mode))
+
+;;; ************************************************************************
+;;; Public declarations
+;;; ************************************************************************
+
+;; Functions from abstract mail and news interface. See "hmail.el"
+(declare-function lmail:delete nil)
+(declare-function lmail:undelete nil)
+(declare-function rmail:msg-prev nil)
+(declare-function lmail:goto nil)
+(declare-function lmail:expunge nil)
+(declare-function rmail:msg-next nil)
+(declare-function lmail:undelete-all nil)
+
+(declare-function helm-get-actions-from-current-source "ext:helm-core")
+(declare-function helm-get-default-action "ext:helm-core")
 
 ;;; ************************************************************************
 ;;; Public variables
@@ -1067,7 +1083,8 @@ a helm section header."
 
 (defun smart-helm-get-current-action (&optional action)
   "Return the helm default action.
-Get it from optional ACTION, the helm saved action or from the selected helm item."
+Get it from optional ACTION, the helm saved action or from the
+selected helm item."
   (helm-get-default-action (or action
                                helm-saved-action
                                (if (get-buffer helm-action-buffer)
