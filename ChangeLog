@@ -1,3 +1,17 @@
+2023-04-23  Bob Weiner  <rsw@gnu.org>
+
+* Makefile (version): Fix so this outputs the list of files whose
+    versions are wrong, shows the proper version number and
+    prints a clearer message.  If no problem, generates no output.
+
+* hpath.el (hpath:delimited-possible-path): Remove unneeded 'format'
+    call for end delim of space-delimited matches since now use "\\s-".
+
+* README.md: Add Action Key animated gif.
+  man/im/action-key-animation.gif: Add.
+
+* hui-mini.el (hui:menus): Disable "To/" menu; not yet ready.
+
 2023-04-16  Bob Weiner  <rsw@gnu.org>
 
 * hui.el (hui:link-possible-types): Fix link to outline heading where

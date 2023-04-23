@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 20:45:31
-;; Last-Mod:     16-Apr-23 at 23:56:47 by Bob Weiner
+;; Last-Mod:     23-Apr-23 at 14:45:44 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -153,13 +153,13 @@ If the referenced location is found, return non-nil."
 		 (save-excursion (beginning-of-line)
 				 (re-search-forward ":\\(CUSTOM_\\)?ID:[ \t]+"
 						    (line-end-position) t)))
-	    (hact #'message "On ID definition; use {C-u M-RET} to copy a link to an ID.")
+	    (hact 'message "On ID definition; use {C-u M-RET} to copy a link to an ID.")
 	  (when (let ((inhibit-message t)) ;; Inhibit org-id-find status msgs
 		  (setq m (or (and (featurep 'org-roam) (org-roam-id-find id 'marker))
 			      (org-id-find id 'marker))))
-	    (hact #'link-to-org-id-marker m)))))))
+	    (hact 'link-to-org-id-marker m)))))))
 
-(defun org-id:help (hbut)
+(defun org-id:help (_hbut)
   "Copy link to kill ring of an Org roam or Org node referenced by id at point.
 If on the :ID: definition line, do nothing and return nil.
 If the referenced location is found, return non-nil."

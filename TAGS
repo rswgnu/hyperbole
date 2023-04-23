@@ -156,7 +156,7 @@ hbmap.el,259
 (defvar hbmap:dir-user112,4112
 (defvar hbmap:dir-filename120,4405
 
-hbut.el,5491
+hbut.el,5492
 (defvar   ebut:hattr-save 41,1374
 (defun    ebut:act 45,1491
 (defun    ebut:alist 56,1893
@@ -199,108 +199,108 @@ hbut.el,5491
 (defun    gbut:to 713,27714
 (defun    gbut:key-list 731,28371
 (defun    gbut:ebut-key-list 735,28497
-(defun    gbut:ibut-key-list 749,28947
-(defun    hattr:attributes 762,29456
-(defun    hattr:clear 772,29761
-(defun    hattr:copy 783,30137
-(defun hattr:emacs-button-attributes 794,30527
-(defun hattr:emacs-button-is-p 800,30726
-(defun    hattr:get 807,31012
-(defun    hattr:list 811,31146
-(defun    hattr:memq 819,31465
-(defun    hattr:report 831,31896
-(defun    hattr:save 859,32922
-(defun    hattr:set 877,33774
-(defalias 'hattr:summarize hattr:summarize881,33953
-(defvar   hattr:filename883,33997
-(defconst hbut:max-len 893,34430
-(defsubst hbut:max-len 900,34671
-(defun    hbut:act 904,34821
-(defun    hbut:action 967,37524
-(defun    hbut:at-p 979,37985
-(defun    hbut:comment 992,38385
-(defvar   hbut:fill-prefix-regexps1027,39539
-(defun    hbut:fill-prefix-remove 1051,40387
-(defun    hbut:delete 1061,40779
-(defun    hbut:funcall 1076,41412
-(defun    hbut:get 1102,42475
-(defun    hbut:get-key-src 1113,43003
-(defun    hbut:is-p 1171,45290
-(defun    hbut:key 1176,45449
-(defun    hbut:to-key-src 1183,45669
-(defun    hbut:key-src-fmt 1190,45988
-(defun    hbut:key-src-set-buffer 1206,46638
-(defun    hbut:key-to-label 1227,47285
-(defun    hbut:label 1248,47969
-(defun    hbut:label-list 1264,48583
-(defun    hbut:label-p 1268,48737
-(defun    hbut:label-regexp 1281,49512
-(defun    hbut:label-to-key 1315,50730
-(defun    hbut:map 1328,51320
-(defvar   hbut:syntax-table 1384,53507
-(defun    hbut:modify-syntax 1390,53777
-(defun    hbut:outside-comment-p 1405,54404
-(defun    hbut:rename 1413,54763
-(defun    hbut:report 1424,55169
-(defun    hbut:source 1483,57103
-(defalias 'hbut:summarize hbut:summarize1498,57676
-(defun    hbut:to 1500,57717
-(defvar   hbut:current 1507,58045
-(defconst hbut:source-prefix 1510,58150
-(defun    hbut:key-list 1517,58481
-(defun    hbut:ebut-key-list 1521,58646
-(defun    hbut:ibut-key-list 1536,59155
-(defun    ibut:act 1550,59698
-(defun    ibut:alist 1561,60104
-(defun    ibut:at-p 1567,60333
-(defun    ibut:at-type-p 1611,62172
-(cl-defun ibut:create 1627,62896
-(def-edebug-spec cl-defun1751,67175
-(def-edebug-spec lambda-key-list1756,67322
-(defun    ibut:delete 1762,67494
-(defun    ibut:delimit 1789,68500
-(defun    ibut:edit 1816,69569
-(defun    ibut:get 1827,70043
-(defun    ibut:is-p 1849,70860
-(defun    ibut:label-map 1855,71115
-(defun    ibut:label-key-match 1870,71904
-(defun    ibut:label-p 1880,72284
-(defun    ibut:label-regexp 1898,73274
-(defun    ibut:label-set 1904,73565
-(defun    ibut:label-sort-keys 1926,74596
-(defun    ibut:list 1945,75226
-(defun    ibut:key 1967,76077
-(defalias 'ibut:to-key-src ibut:to-key-src1974,76315
-(defalias 'ibut:key-to-label ibut:key-to-label1975,76362
-(defalias 'ibut:label-to-key ibut:label-to-key1976,76411
-(defalias 'map-ibut map-ibut1977,76460
-(defun    ibut:map 1979,76501
-(defun    ibut:next-occurrence 1990,76994
-(defun    ibut:operate 2005,77739
-(defun    ibut:insert-text 2117,81942
-(defun    ibut:previous-occurrence 2146,83379
-(defun    ibut:program 2161,84110
-(defun    ibut:rename 2191,85513
-(defalias 'ibut:summarize ibut:summarize2212,86524
-(defun    ibut:to 2214,86565
-(defun    ibut:at-to-name-p 2261,88206
-(defun    ibut:to-name 2285,89004
-(defun    ibut:to-text 2318,90323
-(defconst ibut:label-start 2368,92370
-(defconst ibut:label-end 2370,92471
-(defvar   ibut:label-separator 2373,92571
-(defvar   ibut:label-separator-regexp 2381,92888
-(defmacro defib 2388,93227
-(def-edebug-spec defib2425,94912
-(def-edebug-spec lambda-list2430,95052
-(defalias 'ibtype:create ibtype:create2435,95170
-(defun ibtype:activate-link 2437,95205
-(defmacro defil 2449,95654
-(defmacro defal 2546,99992
-(defalias 'ibtype:create-action-link-type ibtype:create-action-link-type2602,102161
-(defalias 'ibtype:create-regexp-link-type ibtype:create-regexp-link-type2603,102212
-(defun    ibtype:def-symbol 2605,102264
-(defun    ibtype:delete 2615,102621
+(defun    gbut:ibut-key-list 750,28976
+(defun    hattr:attributes 763,29485
+(defun    hattr:clear 773,29790
+(defun    hattr:copy 784,30166
+(defun hattr:emacs-button-attributes 795,30556
+(defun hattr:emacs-button-is-p 801,30755
+(defun    hattr:get 808,31041
+(defun    hattr:list 812,31175
+(defun    hattr:memq 820,31494
+(defun    hattr:report 832,31925
+(defun    hattr:save 860,32951
+(defun    hattr:set 878,33803
+(defalias 'hattr:summarize hattr:summarize882,33982
+(defvar   hattr:filename884,34026
+(defconst hbut:max-len 894,34459
+(defsubst hbut:max-len 901,34700
+(defun    hbut:act 905,34850
+(defun    hbut:action 968,37553
+(defun    hbut:at-p 980,38014
+(defun    hbut:comment 993,38414
+(defvar   hbut:fill-prefix-regexps1028,39568
+(defun    hbut:fill-prefix-remove 1052,40416
+(defun    hbut:delete 1062,40808
+(defun    hbut:funcall 1077,41441
+(defun    hbut:get 1103,42504
+(defun    hbut:get-key-src 1114,43032
+(defun    hbut:is-p 1172,45319
+(defun    hbut:key 1177,45478
+(defun    hbut:to-key-src 1184,45698
+(defun    hbut:key-src-fmt 1191,46017
+(defun    hbut:key-src-set-buffer 1207,46667
+(defun    hbut:key-to-label 1228,47314
+(defun    hbut:label 1249,47998
+(defun    hbut:label-list 1265,48612
+(defun    hbut:label-p 1269,48766
+(defun    hbut:label-regexp 1282,49541
+(defun    hbut:label-to-key 1316,50759
+(defun    hbut:map 1329,51349
+(defvar   hbut:syntax-table 1385,53536
+(defun    hbut:modify-syntax 1391,53806
+(defun    hbut:outside-comment-p 1406,54433
+(defun    hbut:rename 1414,54792
+(defun    hbut:report 1425,55198
+(defun    hbut:source 1484,57132
+(defalias 'hbut:summarize hbut:summarize1499,57705
+(defun    hbut:to 1501,57746
+(defvar   hbut:current 1508,58074
+(defconst hbut:source-prefix 1511,58179
+(defun    hbut:key-list 1518,58510
+(defun    hbut:ebut-key-list 1522,58675
+(defun    hbut:ibut-key-list 1538,59220
+(defun    ibut:act 1552,59763
+(defun    ibut:alist 1563,60169
+(defun    ibut:at-p 1569,60398
+(defun    ibut:at-type-p 1613,62237
+(cl-defun ibut:create 1629,62961
+(def-edebug-spec cl-defun1753,67240
+(def-edebug-spec lambda-key-list1758,67387
+(defun    ibut:delete 1764,67559
+(defun    ibut:delimit 1791,68565
+(defun    ibut:edit 1818,69634
+(defun    ibut:get 1829,70108
+(defun    ibut:is-p 1851,70925
+(defun    ibut:label-map 1857,71180
+(defun    ibut:label-key-match 1872,71969
+(defun    ibut:label-p 1882,72349
+(defun    ibut:label-regexp 1900,73339
+(defun    ibut:label-set 1906,73630
+(defun    ibut:label-sort-keys 1928,74661
+(defun    ibut:list 1947,75291
+(defun    ibut:key 1969,76142
+(defalias 'ibut:to-key-src ibut:to-key-src1976,76380
+(defalias 'ibut:key-to-label ibut:key-to-label1977,76427
+(defalias 'ibut:label-to-key ibut:label-to-key1978,76476
+(defalias 'map-ibut map-ibut1979,76525
+(defun    ibut:map 1981,76566
+(defun    ibut:next-occurrence 1992,77059
+(defun    ibut:operate 2007,77804
+(defun    ibut:insert-text 2119,82007
+(defun    ibut:previous-occurrence 2148,83444
+(defun    ibut:program 2163,84175
+(defun    ibut:rename 2193,85578
+(defalias 'ibut:summarize ibut:summarize2214,86589
+(defun    ibut:to 2216,86630
+(defun    ibut:at-to-name-p 2263,88271
+(defun    ibut:to-name 2287,89069
+(defun    ibut:to-text 2320,90388
+(defconst ibut:label-start 2370,92435
+(defconst ibut:label-end 2372,92536
+(defvar   ibut:label-separator 2375,92636
+(defvar   ibut:label-separator-regexp 2383,92953
+(defmacro defib 2390,93292
+(def-edebug-spec defib2427,94977
+(def-edebug-spec lambda-list2432,95117
+(defalias 'ibtype:create ibtype:create2437,95235
+(defun ibtype:activate-link 2439,95270
+(defmacro defil 2451,95719
+(defmacro defal 2548,100057
+(defalias 'ibtype:create-action-link-type ibtype:create-action-link-type2604,102226
+(defalias 'ibtype:create-regexp-link-type ibtype:create-regexp-link-type2605,102277
+(defun    ibtype:def-symbol 2607,102329
+(defun    ibtype:delete 2617,102686
 
 hgnus.el,110
 (defun Gnus-init 54,1683
@@ -406,54 +406,54 @@ hibtypes.el,1664
 (defconst mail-address-regexp77,3369
 (defib python-tb-previous-line 111,4839
 (defib org-id 138,5933
-(defun org-id:help 162,7005
-(defib pathname 187,8030
-(defvar mail-address-mode-list307,13973
-(defun mail-address-at-p 311,14123
-(defib mail-address 322,14598
-(defib org-link-outside-org-mode 362,16484
-(defib annot-bib 380,17346
-(defun markdown-follow-link-p 403,18442
-(defun markdown-follow-inline-link-p 424,19107
-(defib markdown-internal-link 451,20391
-(defib rfc-toc 481,21935
-(defib id-cflow 506,23005
-(defib ctags 553,25059
-(defib etags 579,26461
-(defib cscope 616,28366
-(defib text-toc 643,29518
-(defib dir-summary 675,31100
-(defib rfc 711,32670
-(defib man-apropos 743,34082
-(defun hlink 768,35141
-(defun parse-label-and-file 788,36128
-(defconst elink:start 810,37033
-(defconst elink:end 812,37138
-(defib elink 815,37236
-(defconst glink:start 825,37637
-(defconst glink:end 827,37740
-(defib glink 830,37836
-(defconst ilink:start 839,38126
-(defconst ilink:end 841,38231
-(defib ilink 844,38329
-(defib pathname-line-and-column 859,38985
-(defib ipython-stack-frame 887,40578
-(defib ripgrep-msg 929,42740
-(defib grep-msg 975,44881
-(defun hib-python-traceback 1042,48647
-(defib debugger-source 1053,49259
-(defib elisp-compiler-msg 1139,53300
-(defib patch-msg 1241,58371
-(defib texinfo-ref 1268,59575
-(defib gnus-push-button 1353,64103
-(defib Info-node 1365,64645
-(defib hyp-address 1398,66334
-(defib hyp-source 1417,67348
-(defconst action:start 1444,68467
-(defconst action:end 1447,68576
-(defib action 1456,68926
-(defun action:help 1554,73534
-(defib completion 1581,74626
+(defun org-id:help 162,7003
+(defib pathname 187,8028
+(defvar mail-address-mode-list307,13971
+(defun mail-address-at-p 311,14121
+(defib mail-address 322,14596
+(defib org-link-outside-org-mode 362,16482
+(defib annot-bib 381,17376
+(defun markdown-follow-link-p 404,18472
+(defun markdown-follow-inline-link-p 425,19137
+(defib markdown-internal-link 452,20421
+(defib rfc-toc 482,21965
+(defib id-cflow 507,23035
+(defib ctags 554,25089
+(defib etags 580,26491
+(defib cscope 617,28396
+(defib text-toc 644,29548
+(defib dir-summary 676,31130
+(defib rfc 712,32700
+(defib man-apropos 744,34112
+(defun hlink 769,35171
+(defun parse-label-and-file 789,36158
+(defconst elink:start 811,37063
+(defconst elink:end 813,37168
+(defib elink 816,37266
+(defconst glink:start 826,37667
+(defconst glink:end 828,37770
+(defib glink 831,37866
+(defconst ilink:start 840,38156
+(defconst ilink:end 842,38261
+(defib ilink 845,38359
+(defib pathname-line-and-column 860,39015
+(defib ipython-stack-frame 888,40608
+(defib ripgrep-msg 930,42770
+(defib grep-msg 976,44911
+(defun hib-python-traceback 1043,48677
+(defib debugger-source 1054,49289
+(defib elisp-compiler-msg 1140,53330
+(defib patch-msg 1242,58401
+(defib texinfo-ref 1269,59605
+(defib gnus-push-button 1354,64133
+(defib Info-node 1366,64675
+(defib hyp-address 1399,66364
+(defib hyp-source 1418,67378
+(defconst action:start 1445,68497
+(defconst action:end 1448,68606
+(defib action 1457,68956
+(defun action:help 1555,73564
+(defib completion 1582,74656
 
 hinit.el,145
 (defvar   hyperb:user-email 22,623
@@ -708,57 +708,57 @@ hmouse-tag.el,3201
 (defun smart-c-at-tag-p 363,15674
 (defun smart-cc-mode-initialize 378,16260
 (defun smart-emacs-lisp-mode-p 386,16470
-(defun smart-fortran 398,17121
-(defconst smart-fortran-keywords419,18000
-(defun smart-fortran-at-tag-p 439,19176
-(defun smart-java 453,19698
-(defun smart-java-tag 478,20870
-(defun smart-java-oo-browser 489,21310
-(defconst smart-java-keywords509,22208
-(defun smart-java-at-tag-p 520,22775
-(defun smart-javascript 536,23399
-(defconst smart-javascript-keywords557,24292
-(defun smart-javascript-at-tag-p 566,24720
-(defconst smart-lisp-identifier-first-char-regexp 587,25601
-(defconst smart-lisp-identifier-chars 591,25745
-(defconst smart-lisp-identifier 597,26004
-(defun smart-lisp 601,26168
-(defun smart-lisp-find-tag 656,28390
-(defun smart-lisp-at-definition-p 705,30498
-(defun smart-lisp-at-load-expression-p 718,31103
-(defun smart-lisp-at-change-log-tag-p 724,31346
-(defun smart-lisp-htype-tag 734,31804
-(defun smart-lisp-at-tag-p 757,32646
-(defun smart-lisp-at-non-htype-tag-p 765,32988
-(defun smart-lisp-mode-p 796,34431
-(defun smart-objc 802,34608
-(defun smart-objc-tag 831,35903
-(defun smart-objc-oo-browser 855,36782
-(defconst smart-objc-keywords876,37675
-(defun smart-objc-at-tag-p 881,37865
-(defun smart-jedi-find-file 896,38537
-(defun smart-python-jedi-to-definition-p 903,38837
-(defun smart-python 928,40036
-(defun smart-python-tag 953,41074
-(defun smart-python-oo-browser 964,41518
-(defconst smart-python-keywords980,42219
-(defun smart-python-at-tag-p 988,42583
-(defun smart-ancestor-tag-files 1019,43770
-(defun smart-asm-include-file 1038,44456
-(defun smart-c-include-file 1082,45997
-(defun smart-flash-tag 1127,47466
-(defun smart-lisp-at-known-identifier-p 1138,47883
-(defun smart-lisp-bound-symbol-def 1165,48887
-(defun smart-tags-find-p 1174,49358
-(defun smart-java-cross-reference 1187,49814
-(defun smart-java-library-path 1275,53692
-(defun smart-java-packages 1292,54353
-(defun smart-library-symbol 1363,57064
-(defun smart-tags-display 1378,57623
-(defun smart-tags-file-path 1412,59164
-(defun smart-tags-org-src-block-p 1435,60015
-(defun smart-tags-file-list 1440,60203
-(defun smart-tags-noselect-function 1477,61927
+(defun smart-fortran 399,17185
+(defconst smart-fortran-keywords420,18064
+(defun smart-fortran-at-tag-p 440,19240
+(defun smart-java 454,19762
+(defun smart-java-tag 479,20934
+(defun smart-java-oo-browser 490,21374
+(defconst smart-java-keywords510,22272
+(defun smart-java-at-tag-p 521,22839
+(defun smart-javascript 537,23463
+(defconst smart-javascript-keywords558,24356
+(defun smart-javascript-at-tag-p 567,24784
+(defconst smart-lisp-identifier-first-char-regexp 588,25665
+(defconst smart-lisp-identifier-chars 592,25809
+(defconst smart-lisp-identifier 598,26068
+(defun smart-lisp 602,26232
+(defun smart-lisp-find-tag 657,28454
+(defun smart-lisp-at-definition-p 706,30562
+(defun smart-lisp-at-load-expression-p 719,31167
+(defun smart-lisp-at-change-log-tag-p 725,31410
+(defun smart-lisp-htype-tag 735,31868
+(defun smart-lisp-at-tag-p 758,32710
+(defun smart-lisp-at-non-htype-tag-p 766,33052
+(defun smart-lisp-mode-p 797,34495
+(defun smart-objc 803,34672
+(defun smart-objc-tag 832,35967
+(defun smart-objc-oo-browser 856,36846
+(defconst smart-objc-keywords877,37739
+(defun smart-objc-at-tag-p 882,37929
+(defun smart-jedi-find-file 897,38601
+(defun smart-python-jedi-to-definition-p 904,38901
+(defun smart-python 929,40100
+(defun smart-python-tag 954,41138
+(defun smart-python-oo-browser 965,41582
+(defconst smart-python-keywords981,42283
+(defun smart-python-at-tag-p 989,42647
+(defun smart-ancestor-tag-files 1020,43834
+(defun smart-asm-include-file 1039,44520
+(defun smart-c-include-file 1083,46061
+(defun smart-flash-tag 1128,47530
+(defun smart-lisp-at-known-identifier-p 1139,47947
+(defun smart-lisp-bound-symbol-def 1166,48951
+(defun smart-tags-find-p 1175,49422
+(defun smart-java-cross-reference 1188,49878
+(defun smart-java-library-path 1276,53756
+(defun smart-java-packages 1293,54417
+(defun smart-library-symbol 1364,57128
+(defun smart-tags-display 1379,57687
+(defun smart-tags-file-path 1413,59228
+(defun smart-tags-org-src-block-p 1436,60079
+(defun smart-tags-file-list 1441,60267
+(defun smart-tags-noselect-function 1478,61991
 
 hpath.el,5601
 (defcustom hpath:auto-completing-read-modes 42,1401
@@ -833,63 +833,63 @@ hpath.el,5601
 (defun hpath:is-path-variable-p 1060,47233
 (defun hpath:choose-from-path-variable 1067,47533
 (defun hpath:delimited-possible-path 1084,48421
-(defun hpath:display-buffer 1137,50784
-(defun hpath:display-buffer-other-frame 1153,51520
-(defun hpath:display-buffer-function 1174,52315
-(defun hpath:display-path-function 1179,52571
-(defun hpath:resolve 1184,52822
-(defun hpath:expand 1206,53836
-(defun hpath:prepend-shell-directory 1235,55308
-(defvar hpath:compressed-suffix-regexp 1269,57106
-(defun hpath:expand-with-variable 1272,57262
-(defun hpath:file-line-and-column 1310,58981
-(defun hpath:find-noselect 1328,59858
-(defun hpath:find 1337,60207
-(defun hpath:to-markup-anchor 1505,67116
-(defun hpath:find-executable 1569,69855
-(defun hpath:find-line 1584,70359
-(defun hpath:find-other-frame 1604,71129
-(defun hpath:find-other-window 1619,71607
-(defun hpath:get-external-display-alist 1629,72102
-(defun hpath:is-p 1648,73091
-(defun hpath:push-tag-mark 1749,77904
-(defun hpath:relative-arguments 1763,78416
-(defun hpath:relative-to 1773,78846
-(defun hpath:rfc 1805,80134
-(defun hpath:start-end 1810,80307
-(defun hpath:return-one-value 1839,81511
-(defun hpath:substitute-value 1877,83192
-(defun hpath:substitute-var 1921,84847
-(defun hpath:symlink-referent 1959,86313
-(defun hpath:symlink-expand 1974,86908
-(defun hpath:to-line 2009,88547
-(defun hpath:trim 2018,88834
-(defun hpath:normalize 2027,89172
-(defun hpath:validate 2032,89391
-(defun hpath:find-file-urls-p 2055,90298
-(defun hpath:handle-urls 2061,90557
-(defalias 'hyperb:substitute-in-file-namehyperb:substitute-in-file-name2078,91299
-(defun substitute-in-file-name 2081,91390
-(defun hpath:enable-find-file-urls 2094,92032
-(defun hpath:disable-find-file-urls 2125,93162
-(defun hpath:find-file-urls-mode 2154,94197
-(defun hpath:url-at-p 2166,94684
-(defun hpath:url-p 2177,95175
-(defun hpath:www-at-p 2188,95570
-(defun hpath:www-p 2204,96267
-(defun hpath:command-string 2212,96590
-(defun hpath:display-where-function 2221,96997
-(defun hpath:remote-available-p 2231,97467
-(defun hpath:remote-default-user 2250,98314
-(defun hpath:delete-trailer 2264,98770
-(defun hpath:exists-p 2272,99054
-(defun hpath:find-file-mailcap 2303,100051
-(defun hpath:find-program 2319,100567
-(defun hpath:match 2340,101438
-(defun hpath:get-single-string-variable-value 2354,102038
-(defun hpath:substitute-dir 2384,103132
-(defun hpath:substitute-match-value 2450,106215
-(defun hpath:substitute-var-name 2512,108431
+(defun hpath:display-buffer 1136,50750
+(defun hpath:display-buffer-other-frame 1152,51486
+(defun hpath:display-buffer-function 1173,52281
+(defun hpath:display-path-function 1178,52537
+(defun hpath:resolve 1183,52788
+(defun hpath:expand 1205,53802
+(defun hpath:prepend-shell-directory 1234,55274
+(defvar hpath:compressed-suffix-regexp 1268,57072
+(defun hpath:expand-with-variable 1271,57228
+(defun hpath:file-line-and-column 1309,58947
+(defun hpath:find-noselect 1327,59824
+(defun hpath:find 1336,60173
+(defun hpath:to-markup-anchor 1504,67082
+(defun hpath:find-executable 1568,69821
+(defun hpath:find-line 1583,70325
+(defun hpath:find-other-frame 1603,71095
+(defun hpath:find-other-window 1618,71573
+(defun hpath:get-external-display-alist 1628,72068
+(defun hpath:is-p 1647,73057
+(defun hpath:push-tag-mark 1748,77870
+(defun hpath:relative-arguments 1762,78382
+(defun hpath:relative-to 1772,78812
+(defun hpath:rfc 1804,80100
+(defun hpath:start-end 1809,80273
+(defun hpath:return-one-value 1838,81477
+(defun hpath:substitute-value 1876,83158
+(defun hpath:substitute-var 1920,84813
+(defun hpath:symlink-referent 1958,86279
+(defun hpath:symlink-expand 1973,86874
+(defun hpath:to-line 2008,88513
+(defun hpath:trim 2017,88800
+(defun hpath:normalize 2026,89138
+(defun hpath:validate 2031,89357
+(defun hpath:find-file-urls-p 2054,90264
+(defun hpath:handle-urls 2060,90523
+(defalias 'hyperb:substitute-in-file-namehyperb:substitute-in-file-name2077,91265
+(defun substitute-in-file-name 2080,91356
+(defun hpath:enable-find-file-urls 2093,91998
+(defun hpath:disable-find-file-urls 2124,93128
+(defun hpath:find-file-urls-mode 2153,94163
+(defun hpath:url-at-p 2165,94650
+(defun hpath:url-p 2176,95141
+(defun hpath:www-at-p 2187,95536
+(defun hpath:www-p 2203,96233
+(defun hpath:command-string 2211,96556
+(defun hpath:display-where-function 2220,96963
+(defun hpath:remote-available-p 2230,97433
+(defun hpath:remote-default-user 2249,98280
+(defun hpath:delete-trailer 2263,98736
+(defun hpath:exists-p 2271,99020
+(defun hpath:find-file-mailcap 2302,100017
+(defun hpath:find-program 2318,100533
+(defun hpath:match 2339,101404
+(defun hpath:get-single-string-variable-value 2353,102004
+(defun hpath:substitute-dir 2383,103098
+(defun hpath:substitute-match-value 2449,106181
+(defun hpath:substitute-var-name 2511,108397
 
 hrmail.el,723
 (defun Rmail-init 47,1511
@@ -916,15 +916,15 @@ hsettings.el,608
 (defcustom hmouse-middle-flag 98,4035
 (defcustom smart-scroll-proportional 104,4252
 (defun hyperbole-update-menus 135,5616
-(defcustom hyperbole-default-web-search-term-max-lines 141,5783
-(defun hyperbole-default-web-search-term 148,6019
-(defun hyperbole-read-web-search-arguments 155,6341
-(defun hyperbole-web-search 168,7058
-(defun hyperbole-toggle-messaging 196,8485
-(defcustom inhibit-hyperbole-messaging 220,9464
-(defcustom hyperbole-web-search-browser-function 238,10271
-(defcustom hyperbole-web-search-alist243,10472
-(defun hui:but-flash 281,12375
+(defcustom hyperbole-default-web-search-term-max-lines 143,5823
+(defun hyperbole-default-web-search-term 150,6059
+(defun hyperbole-read-web-search-arguments 157,6381
+(defun hyperbole-web-search 170,7098
+(defun hyperbole-toggle-messaging 198,8525
+(defcustom inhibit-hyperbole-messaging 222,9504
+(defcustom hyperbole-web-search-browser-function 240,10311
+(defcustom hyperbole-web-search-alist245,10512
+(defun hui:but-flash 283,12415
 
 hsmail.el,177
 (defvar smail:comment 33,1065
@@ -1251,9 +1251,9 @@ hui-mini.el,1484
 (defun hui-search-web 576,22496
 (defvar hui:menu-mode-map 598,23355
 (defun hyperbole-minibuffer-menu 626,24794
-(defcustom hui:menu-rolo900,40189
-(defcustom hui:menu-to930,42020
-(defcustom hui:doc-a-z969,43523
+(defcustom hui:menu-rolo900,40192
+(defcustom hui:menu-to930,42023
+(defcustom hui:doc-a-z969,43526
 
 hui-mouse.el,3073
 (defvar hmouse-set-point-command 58,2118
@@ -1543,8 +1543,8 @@ hui.el,2235
 (defun hui:key-src 1492,59208
 (defun hui:link-create 1501,59579
 (defun hui:link-possible-types 1518,60457
-(defun hui:list-remove-text-properties 1649,65755
-(defvar hui:ebut-label-prev 1659,66145
+(defun hui:list-remove-text-properties 1651,65825
+(defvar hui:ebut-label-prev 1661,66215
 
 hvar.el,272
 (defvar var::append-list 34,1095
@@ -1557,18 +1557,18 @@ hvar.el,272
 (defvar var::append-list 119,4824
 
 hversion.el,450
-(defconst hyperb:version 29,876
-(defvar hyperb:mouse-buttons32,959
-(defvar hyperb:automount-prefixes40,1248
-(defun hyperb:stack-frame 56,1892
-(defun hyperb:path-being-loaded 96,3432
-(defun hyperb:window-sys-term 123,4373
-(defun hyperb:window-system 145,5391
-(defalias 'id-browse-file id-browse-file165,6301
-(defun id-info 168,6368
-(defun id-info-item 184,6982
-(defalias 'id-tool-quit id-tool-quit212,8233
-(defun id-tool-invoke 215,8303
+(defconst hyperb:version 29,875
+(defvar hyperb:mouse-buttons32,961
+(defvar hyperb:automount-prefixes40,1250
+(defun hyperb:stack-frame 56,1894
+(defun hyperb:path-being-loaded 96,3434
+(defun hyperb:window-sys-term 123,4375
+(defun hyperb:window-system 145,5393
+(defalias 'id-browse-file id-browse-file165,6303
+(defun id-info 168,6370
+(defun id-info-item 184,6984
+(defalias 'id-tool-quit id-tool-quit212,8235
+(defun id-tool-invoke 215,8305
 
 hvm.el,874
 (defvar vm-edit-message-mode 55,1694
@@ -1661,8 +1661,8 @@ hypb.el,2566
 (defun hypb:browse-home-page 993,41118
 (defun hypb:insert-hyperbole-banner 1003,41443
 (defun hypb:locate-pathnames 1034,42861
-(defun hypb:oct-to-int 1041,43095
-(define-button-type 'hyperbole-banner)hyperbole-banner1058,43683
+(defun hypb:oct-to-int 1042,43166
+(define-button-type 'hyperbole-banner)hyperbole-banner1059,43754
 
 hyperbole.el,821
 (defconst hyperbole-loading 81,3564
@@ -1960,18 +1960,18 @@ kotl/kfile.el,623
 (defun kfile:is-p 70,2346
 (defun kfile:view 87,2835
 (defun kfile:create 106,3534
-(defun kfile:read 162,5651
-(defun kfile:read-v2 188,6679
-(defun kfile:read-v4-or-v3 224,7890
-(defun kfile:update 261,9128
-(defun kfile:write 341,12446
-(defun kfile:build-structure-v2 364,13443
-(defun kfile:insert-attributes-v2 393,14414
-(defun kfile:insert-attributes-v3 418,15387
-(defun kfile:narrow-to-kcells 444,16414
-(defun kfile:print-to-string 464,17058
-(defun kfile:pretty-print 529,19175
-(defun kfile:read-name 536,19548
+(defun kfile:read 161,5601
+(defun kfile:read-v2 187,6629
+(defun kfile:read-v4-or-v3 223,7840
+(defun kfile:update 260,9078
+(defun kfile:write 340,12396
+(defun kfile:build-structure-v2 363,13393
+(defun kfile:insert-attributes-v2 392,14364
+(defun kfile:insert-attributes-v3 417,15337
+(defun kfile:narrow-to-kcells 443,16364
+(defun kfile:print-to-string 463,17008
+(defun kfile:pretty-print 528,19125
+(defun kfile:read-name 535,19498
 
 kotl/kfill.el,762
 (defvar kfill:prefix-table24,669
@@ -2099,187 +2099,187 @@ kotl/kotl-mode.el,9250
 (defvar yank-window-start 76,2910
 (defvar yank-undo-function 77,2941
 (defun kotl-mode 93,3589
-(defun kotl-mode:example 216,8797
-(defalias 'kotl-mode:backward-delete-char-untabifykotl-mode:backward-delete-char-untabify272,11213
-(defalias 'kotl-mode:backward-delete-charkotl-mode:backward-delete-char274,11299
-(defalias 'kotl-mode:delete-forward-charkotl-mode:delete-forward-char276,11376
-(defalias 'kotl-mode:left-char kotl-mode:left-char278,11443
-(defalias 'kotl-mode:right-char kotl-mode:right-char279,11500
-(defun kotl-mode:backward-kill-word 281,11558
-(defun kotl-mode:backward-or-forward-delete-char 297,12078
-(defun kotl-mode:center-line 305,12493
-(defun kotl-mode:center-paragraph 328,13341
-(defun kotl-mode:copy-kcell-reference-to-register 350,14140
-(defun kotl-mode:copy-absolute-kcell-link-to-kill-ring 365,14794
-(defun kotl-mode:copy-relative-kcell-link-to-kill-ring 372,15077
-(defun kotl-mode:copy-absolute-kcell-link-to-register 378,15314
-(defun kotl-mode:copy-relative-kcell-link-to-register 385,15644
-(defun kotl-mode:copy-region-as-kill 392,15964
-(defun kotl-mode:copy-to-register 397,16147
-(defun kotl-mode:delete-backward-char 410,16611
-(defun kotl-mode:delete-blank-lines 424,17128
-(defun kotl-mode:delete-char 447,17994
-(defun kotl-mode:delete-horizontal-space 511,20238
-(defun kotl-mode:delete-indentation 522,20538
-(defun kotl-mode:skip-filling-p 547,21430
-(defun kotl-mode:fill-cell 562,21911
-(defun kotl-mode:fill-paragraph 618,24191
-(defun kotl-mode:fill-tree 651,25595
-(defun kotl-mode:just-one-space 659,25995
-(defun kotl-mode:kill-line 668,26282
-(defalias 'kotl-mode:kill-visual-line kotl-mode:kill-visual-line701,27407
-(defun kotl-mode:kill-whole-line 703,27468
-(defun kotl-mode:kill-region 709,27631
-(defun kotl-mode:kill-or-copy-region 765,29975
-(defalias 'kotl-mode:completion-kill-region kotl-mode:completion-kill-region800,31153
-(defalias 'kotl-mode:kill-ring-save kotl-mode:kill-ring-save803,31240
-(defun kotl-mode:kill-sentence 805,31309
-(defun kotl-mode:kill-word 821,31811
-(defun kotl-mode:newline 837,32295
-(defalias 'kotl-mode:electric-indent-just-newline kotl-mode:electric-indent-just-newline857,32849
-(defalias 'kotl-mode:electric-newline-and-maybe-indent kotl-mode:electric-newline-and-maybe-indent858,32919
-(defalias 'kotl-mode:newline-and-indent kotl-mode:newline-and-indent859,32994
-(defalias 'kotl-mode:reindent-then-newline-and-indent kotl-mode:reindent-then-newline-and-indent860,33054
-(defun kotl-mode:open-line 862,33129
-(defun kotl-mode:quoted-insert 881,33714
-(defun kotl-mode:set-fill-prefix 920,35327
-(defun kotl-mode:tab-command 926,35554
-(defun kotl-mode:toggle-indent-tabs-mode 941,36173
-(defun kotl-mode:toggle-tab-flag 950,36580
-(defun kotl-mode:transpose-chars 961,37119
-(defun kotl-mode:transpose-lines 974,37808
-(defun kotl-mode:transpose-paragraphs 1025,39736
-(defun kotl-mode:transpose-sentences 1030,39938
-(defun kotl-mode:transpose-words 1035,40129
-(defun kotl-mode:untab-command 1043,40540
-(defun kotl-mode:zap-to-char 1060,41239
-(defun kotl-mode:append-cell 1071,41701
-(defun kotl-mode:clipboard-yank 1096,42746
-(defun kotl-mode:copy-after 1102,42933
-(defun kotl-mode:copy-before 1127,43904
-(defun kotl-mode:move-after 1152,44930
-(defun kotl-mode:move-before 1249,48886
-(defun kotl-mode:yank 1343,52823
-(defun kotl-mode:yank-pop 1378,54318
-(defalias 'kotl-mode:scroll-down-command kotl-mode:scroll-down-command1424,56241
-(defalias 'kotl-mode:scroll-up-command kotl-mode:scroll-up-command1425,56306
-(defun kotl-mode:back-to-indentation 1427,56369
-(defun kotl-mode:backward-cell 1434,56604
-(defun kotl-mode:backward-char 1455,57394
-(defun kotl-mode:backward-paragraph 1476,58032
-(defalias 'kotl-mode:backward-para kotl-mode:backward-para1490,58514
-(defun kotl-mode:backward-sentence 1492,58581
-(defun kotl-mode:backward-word 1521,59616
-(defun kotl-mode:beginning-of-buffer 1540,60134
-(defun kotl-mode:beginning-of-cell 1551,60488
-(defun kotl-mode:beginning-of-line 1564,60943
-(defalias 'kotl-mode:beginning-of-visual-line kotl-mode:beginning-of-visual-line1579,61507
-(defalias 'kotl-mode:move-beginning-of-line kotl-mode:move-beginning-of-line1580,61583
-(defun kotl-mode:beginning-of-tree 1582,61658
-(defun kotl-mode:down-level 1595,62200
-(defun kotl-mode:end-of-buffer 1615,62838
-(defun kotl-mode:end-of-cell 1627,63203
-(defun kotl-mode:to-end-of-line 1643,63866
-(defalias 'kotl-mode:end-of-line kotl-mode:end-of-line1658,64435
-(defalias 'kotl-mode:end-of-visual-line kotl-mode:end-of-visual-line1659,64495
-(defalias 'kotl-mode:move-end-of-line kotl-mode:move-end-of-line1660,64562
-(defun kotl-mode:end-of-tree 1662,64628
-(defun kotl-mode:first-sibling 1685,65618
-(defun kotl-mode:forward-cell 1697,66150
-(defun kotl-mode:forward-char 1712,66738
-(defun kotl-mode:forward-paragraph 1732,67336
-(defalias 'kotl-mode:forward-para kotl-mode:forward-para1755,68159
-(defun kotl-mode:forward-sentence 1757,68224
-(defun kotl-mode:forward-word 1785,69196
-(defun kotl-mode:goto-cell 1808,69945
-(defun kotl-mode:head-cell 1848,71567
-(defun kotl-mode:last-sibling 1859,71941
-(defun kotl-mode:mark-paragraph 1871,72473
-(defun kotl-mode:mark-whole-buffer 1881,72792
-(defun kotl-mode:next-cell 1889,73045
-(defun kotl-mode:next-line 1903,73510
-(defun kotl-mode:next-tree 1928,74392
-(defun kotl-mode:previous-line 1940,74906
-(defun kotl-mode:previous-cell 1964,75769
-(defun kotl-mode:scroll-down 1985,76465
-(defun kotl-mode:scroll-up 1994,76782
-(defun kotl-mode:tail-cell 2003,77089
-(defun kotl-mode:up-level 2015,77482
-(defun kotl-mode:bobp 2041,78434
-(defun kotl-mode:bocp 2048,78654
-(defun kotl-mode:bolp 2061,79088
-(defun kotl-mode:buffer-empty-p 2066,79237
-(defun kotl-mode:eobp 2072,79424
-(defun kotl-mode:eocp 2077,79582
-(defun kotl-mode:eolp 2088,79893
-(defun kotl-mode:first-cell-p 2099,80308
-(defalias 'kotl-mode:first-line-p kotl-mode:first-line-p2103,80450
-(defun kotl-mode:last-cell-p 2105,80500
-(defun kotl-mode:last-line-p 2109,80636
-(defun kotl-mode:action-key 2120,80983
-(defun kotl-mode:assist-key 2162,82879
-(defun kotl-mode:add-child 2203,84764
-(defun kotl-mode:add-parent 2208,84912
-(defun kotl-mode:add-cell 2213,85064
-(defun kotl-mode:demote-tree 2296,88278
-(defun kotl-mode:exchange-cells 2358,90458
-(defun kotl-mode:kill-contents 2436,93303
-(defun kotl-mode:kill-tree 2444,93551
-(defun kotl-mode:move-tree-backward 2472,94563
-(defun kotl-mode:move-tree-forward 2481,94927
-(defun kotl-mode:promote-tree 2505,95885
-(defun kotl-mode:remove-cell-attribute 2549,97389
-(defun kotl-mode:set-cell-attribute 2594,99063
-(defun kotl-mode:set-or-remove-cell-attribute 2652,101330
-(defun kotl-mode:split-cell 2674,102343
-(defun kotl-mode:transpose-cells 2705,103542
-(defun kotl-mode:copy-region-to-buffer 2759,105638
-(defun kotl-mode:copy-tree-to-buffer 2782,106629
-(defun kotl-mode:copy-tree-or-region-to-buffer 2812,107967
-(defun kotl-mode:mail-tree 2825,108470
-(defun kotl-mode:collapse-tree 2852,109412
-(defun kotl-mode:expand-tree 2864,109895
-(defun kotl-mode:toggle-tree-expansion 2878,110442
-(defun kotl-mode:overview 2891,110890
-(defun kotl-mode:show-all 2901,111176
-(defun kotl-mode:top-cells 2915,111666
-(defun kotl-mode:hide-sublevels 2930,112154
-(defun kotl-mode:hide-subtree 2941,112664
-(defun kotl-mode:show-subtree 2958,113296
-(defun kotl-mode:hide-tree 2964,113501
-(defun kotl-mode:show-tree 2984,114228
-(defun kotl-mode:cell-attributes 2989,114381
-(defun kotl-mode:cell-help 3004,114954
-(defun kotl-mode:get-cell-attribute 3051,116727
-(defun kotl-mode:org-delete-backward-char 3077,117797
-(defun kotl-mode:org-delete-char 3087,118298
-(defun kotl-mode:org-force-self-insert 3097,118777
-(defun kotl-mode:orgtbl-ctrl-c-ctrl-c 3103,118957
-(defun kotl-mode:orgtbl-create-or-convert-from-region 3111,119235
-(defun kotl-mode:orgtbl-self-insert-command 3119,119588
-(defun kotl-mode:add-indent-to-region 3132,120118
-(defun kotl-mode:delete-line 3144,120622
-(defun kotl-mode:exchange-point-and-mark 3158,121110
-(defun kotl-mode:indent-line 3164,121388
-(defun kotl-mode:indent-region 3178,121878
-(defun kotl-mode:is-p 3183,122006
-(defun kotl-mode:shrink-region 3190,122234
-(defun kotl-mode:valid-region-p 3209,123110
-(defun kotl-mode:maybe-shrink-region-p 3219,123504
-(defun kotl-mode:tree-end 3244,124490
-(defun kotl-mode:tree-start 3263,125237
-(defun kotl-mode:line-move 3268,125426
-(defun kotl-mode:pre-self-insert-command 3287,126099
-(defun kotl-mode:print-attributes 3299,126701
-(defun kotl-mode:isearch-open-invisible 3318,127450
-(defun kotl-mode:reveal-toggle-invisible 3321,127594
-(defun kotl-mode:set-temp-goal-column 3362,129299
-(defun kotl-mode:to-visible-position 3373,129701
-(defun kotl-mode:to-valid-position 3386,130282
-(defun kotl-mode:transpose-lines-internal 3403,130984
-(defun kotl-mode:update-buffer 3426,131759
-(defun kotl-mode:maintain-region-highlight 3437,132082
-(defun delete-selection-pre-hook 3658,141653
+(defun kotl-mode:example 216,8796
+(defalias 'kotl-mode:backward-delete-char-untabifykotl-mode:backward-delete-char-untabify272,11212
+(defalias 'kotl-mode:backward-delete-charkotl-mode:backward-delete-char274,11298
+(defalias 'kotl-mode:delete-forward-charkotl-mode:delete-forward-char276,11375
+(defalias 'kotl-mode:left-char kotl-mode:left-char278,11442
+(defalias 'kotl-mode:right-char kotl-mode:right-char279,11499
+(defun kotl-mode:backward-kill-word 281,11557
+(defun kotl-mode:backward-or-forward-delete-char 297,12077
+(defun kotl-mode:center-line 305,12492
+(defun kotl-mode:center-paragraph 328,13340
+(defun kotl-mode:copy-kcell-reference-to-register 350,14139
+(defun kotl-mode:copy-absolute-kcell-link-to-kill-ring 365,14793
+(defun kotl-mode:copy-relative-kcell-link-to-kill-ring 372,15076
+(defun kotl-mode:copy-absolute-kcell-link-to-register 378,15313
+(defun kotl-mode:copy-relative-kcell-link-to-register 385,15643
+(defun kotl-mode:copy-region-as-kill 392,15963
+(defun kotl-mode:copy-to-register 397,16146
+(defun kotl-mode:delete-backward-char 410,16610
+(defun kotl-mode:delete-blank-lines 424,17127
+(defun kotl-mode:delete-char 447,17993
+(defun kotl-mode:delete-horizontal-space 511,20237
+(defun kotl-mode:delete-indentation 522,20537
+(defun kotl-mode:skip-filling-p 547,21429
+(defun kotl-mode:fill-cell 562,21910
+(defun kotl-mode:fill-paragraph 618,24190
+(defun kotl-mode:fill-tree 651,25594
+(defun kotl-mode:just-one-space 659,25994
+(defun kotl-mode:kill-line 668,26281
+(defalias 'kotl-mode:kill-visual-line kotl-mode:kill-visual-line701,27406
+(defun kotl-mode:kill-whole-line 703,27467
+(defun kotl-mode:kill-region 709,27630
+(defun kotl-mode:kill-or-copy-region 765,29974
+(defalias 'kotl-mode:completion-kill-region kotl-mode:completion-kill-region800,31152
+(defalias 'kotl-mode:kill-ring-save kotl-mode:kill-ring-save803,31239
+(defun kotl-mode:kill-sentence 805,31308
+(defun kotl-mode:kill-word 821,31810
+(defun kotl-mode:newline 837,32294
+(defalias 'kotl-mode:electric-indent-just-newline kotl-mode:electric-indent-just-newline857,32848
+(defalias 'kotl-mode:electric-newline-and-maybe-indent kotl-mode:electric-newline-and-maybe-indent858,32918
+(defalias 'kotl-mode:newline-and-indent kotl-mode:newline-and-indent859,32993
+(defalias 'kotl-mode:reindent-then-newline-and-indent kotl-mode:reindent-then-newline-and-indent860,33053
+(defun kotl-mode:open-line 862,33128
+(defun kotl-mode:quoted-insert 881,33713
+(defun kotl-mode:set-fill-prefix 920,35326
+(defun kotl-mode:tab-command 926,35553
+(defun kotl-mode:toggle-indent-tabs-mode 941,36172
+(defun kotl-mode:toggle-tab-flag 950,36579
+(defun kotl-mode:transpose-chars 961,37118
+(defun kotl-mode:transpose-lines 974,37807
+(defun kotl-mode:transpose-paragraphs 1025,39735
+(defun kotl-mode:transpose-sentences 1030,39937
+(defun kotl-mode:transpose-words 1035,40128
+(defun kotl-mode:untab-command 1043,40539
+(defun kotl-mode:zap-to-char 1060,41238
+(defun kotl-mode:append-cell 1071,41700
+(defun kotl-mode:clipboard-yank 1096,42745
+(defun kotl-mode:copy-after 1102,42932
+(defun kotl-mode:copy-before 1127,43903
+(defun kotl-mode:move-after 1152,44929
+(defun kotl-mode:move-before 1249,48885
+(defun kotl-mode:yank 1343,52822
+(defun kotl-mode:yank-pop 1378,54317
+(defalias 'kotl-mode:scroll-down-command kotl-mode:scroll-down-command1424,56240
+(defalias 'kotl-mode:scroll-up-command kotl-mode:scroll-up-command1425,56305
+(defun kotl-mode:back-to-indentation 1427,56368
+(defun kotl-mode:backward-cell 1434,56603
+(defun kotl-mode:backward-char 1455,57393
+(defun kotl-mode:backward-paragraph 1476,58031
+(defalias 'kotl-mode:backward-para kotl-mode:backward-para1490,58513
+(defun kotl-mode:backward-sentence 1492,58580
+(defun kotl-mode:backward-word 1521,59615
+(defun kotl-mode:beginning-of-buffer 1540,60133
+(defun kotl-mode:beginning-of-cell 1551,60487
+(defun kotl-mode:beginning-of-line 1564,60942
+(defalias 'kotl-mode:beginning-of-visual-line kotl-mode:beginning-of-visual-line1579,61506
+(defalias 'kotl-mode:move-beginning-of-line kotl-mode:move-beginning-of-line1580,61582
+(defun kotl-mode:beginning-of-tree 1582,61657
+(defun kotl-mode:down-level 1595,62199
+(defun kotl-mode:end-of-buffer 1615,62837
+(defun kotl-mode:end-of-cell 1627,63202
+(defun kotl-mode:to-end-of-line 1643,63865
+(defalias 'kotl-mode:end-of-line kotl-mode:end-of-line1658,64434
+(defalias 'kotl-mode:end-of-visual-line kotl-mode:end-of-visual-line1659,64494
+(defalias 'kotl-mode:move-end-of-line kotl-mode:move-end-of-line1660,64561
+(defun kotl-mode:end-of-tree 1662,64627
+(defun kotl-mode:first-sibling 1685,65617
+(defun kotl-mode:forward-cell 1697,66149
+(defun kotl-mode:forward-char 1712,66737
+(defun kotl-mode:forward-paragraph 1732,67335
+(defalias 'kotl-mode:forward-para kotl-mode:forward-para1755,68158
+(defun kotl-mode:forward-sentence 1757,68223
+(defun kotl-mode:forward-word 1785,69195
+(defun kotl-mode:goto-cell 1808,69944
+(defun kotl-mode:head-cell 1848,71566
+(defun kotl-mode:last-sibling 1859,71940
+(defun kotl-mode:mark-paragraph 1871,72472
+(defun kotl-mode:mark-whole-buffer 1881,72791
+(defun kotl-mode:next-cell 1889,73044
+(defun kotl-mode:next-line 1903,73509
+(defun kotl-mode:next-tree 1928,74391
+(defun kotl-mode:previous-line 1940,74905
+(defun kotl-mode:previous-cell 1964,75768
+(defun kotl-mode:scroll-down 1985,76464
+(defun kotl-mode:scroll-up 1994,76781
+(defun kotl-mode:tail-cell 2003,77088
+(defun kotl-mode:up-level 2015,77481
+(defun kotl-mode:bobp 2041,78433
+(defun kotl-mode:bocp 2048,78653
+(defun kotl-mode:bolp 2061,79087
+(defun kotl-mode:buffer-empty-p 2066,79236
+(defun kotl-mode:eobp 2072,79423
+(defun kotl-mode:eocp 2077,79581
+(defun kotl-mode:eolp 2088,79892
+(defun kotl-mode:first-cell-p 2099,80307
+(defalias 'kotl-mode:first-line-p kotl-mode:first-line-p2103,80449
+(defun kotl-mode:last-cell-p 2105,80499
+(defun kotl-mode:last-line-p 2109,80635
+(defun kotl-mode:action-key 2120,80982
+(defun kotl-mode:assist-key 2162,82878
+(defun kotl-mode:add-child 2203,84763
+(defun kotl-mode:add-parent 2208,84911
+(defun kotl-mode:add-cell 2213,85063
+(defun kotl-mode:demote-tree 2296,88277
+(defun kotl-mode:exchange-cells 2358,90457
+(defun kotl-mode:kill-contents 2436,93302
+(defun kotl-mode:kill-tree 2444,93550
+(defun kotl-mode:move-tree-backward 2472,94562
+(defun kotl-mode:move-tree-forward 2481,94926
+(defun kotl-mode:promote-tree 2505,95884
+(defun kotl-mode:remove-cell-attribute 2549,97388
+(defun kotl-mode:set-cell-attribute 2594,99062
+(defun kotl-mode:set-or-remove-cell-attribute 2652,101329
+(defun kotl-mode:split-cell 2674,102342
+(defun kotl-mode:transpose-cells 2705,103541
+(defun kotl-mode:copy-region-to-buffer 2759,105637
+(defun kotl-mode:copy-tree-to-buffer 2782,106628
+(defun kotl-mode:copy-tree-or-region-to-buffer 2812,107966
+(defun kotl-mode:mail-tree 2825,108469
+(defun kotl-mode:collapse-tree 2852,109411
+(defun kotl-mode:expand-tree 2864,109894
+(defun kotl-mode:toggle-tree-expansion 2878,110441
+(defun kotl-mode:overview 2891,110889
+(defun kotl-mode:show-all 2901,111175
+(defun kotl-mode:top-cells 2915,111665
+(defun kotl-mode:hide-sublevels 2930,112153
+(defun kotl-mode:hide-subtree 2941,112663
+(defun kotl-mode:show-subtree 2958,113295
+(defun kotl-mode:hide-tree 2964,113500
+(defun kotl-mode:show-tree 2984,114227
+(defun kotl-mode:cell-attributes 2989,114380
+(defun kotl-mode:cell-help 3004,114957
+(defun kotl-mode:get-cell-attribute 3058,117001
+(defun kotl-mode:org-delete-backward-char 3084,118071
+(defun kotl-mode:org-delete-char 3094,118572
+(defun kotl-mode:org-force-self-insert 3104,119051
+(defun kotl-mode:orgtbl-ctrl-c-ctrl-c 3110,119231
+(defun kotl-mode:orgtbl-create-or-convert-from-region 3118,119509
+(defun kotl-mode:orgtbl-self-insert-command 3126,119862
+(defun kotl-mode:add-indent-to-region 3139,120392
+(defun kotl-mode:delete-line 3151,120896
+(defun kotl-mode:exchange-point-and-mark 3165,121384
+(defun kotl-mode:indent-line 3171,121662
+(defun kotl-mode:indent-region 3185,122152
+(defun kotl-mode:is-p 3190,122280
+(defun kotl-mode:shrink-region 3197,122520
+(defun kotl-mode:valid-region-p 3216,123396
+(defun kotl-mode:maybe-shrink-region-p 3226,123790
+(defun kotl-mode:tree-end 3251,124776
+(defun kotl-mode:tree-start 3270,125523
+(defun kotl-mode:line-move 3275,125712
+(defun kotl-mode:pre-self-insert-command 3294,126385
+(defun kotl-mode:print-attributes 3306,126987
+(defun kotl-mode:isearch-open-invisible 3325,127736
+(defun kotl-mode:reveal-toggle-invisible 3328,127880
+(defun kotl-mode:set-temp-goal-column 3369,129585
+(defun kotl-mode:to-visible-position 3380,129987
+(defun kotl-mode:to-valid-position 3393,130568
+(defun kotl-mode:transpose-lines-internal 3410,131270
+(defun kotl-mode:update-buffer 3433,132045
+(defun kotl-mode:maintain-region-highlight 3444,132368
+(defun delete-selection-pre-hook 3665,141939
 
 kotl/kotl-orgtbl.el,154
 (defun orgtbl-tab 61,2619
@@ -2726,7 +2726,14 @@ test/kexport-tests.el,407
 (ert-deftest kexport:display-creates-html-file-and-displays-it 132,4537
 (ert-deftest kexport:koutline-calls-kexport:html 151,5275
 
-test/kotl-mode-tests.el,1705
+test/kimport-tests.el,278
+(ert-deftest kimport--text-file 23,483
+(ert-deftest kimport--text-file-two-lines-per-paragraph 39,1073
+(ert-deftest kimport--star-outline 55,1715
+(ert-deftest kimport--star-outline-two-lines-per-star-heading 70,2246
+(ert-deftest kimport--star-outline-with-siblings 85,2832
+
+test/kotl-mode-tests.el,2048
 (defmacro setup-kotl-mode-example-test 27,688
 (ert-deftest smart-menu-loads-kotl-example 36,1016
 (ert-deftest kotl-mode-example-loads-kotl-example 45,1356
@@ -2745,18 +2752,23 @@ test/kotl-mode-tests.el,1705
 (ert-deftest kotl-mode-jump-to-cell 259,8502
 (ert-deftest kotl-mode-goto-child-and-parent 274,8953
 (ert-deftest kotl-mode-kill-cell 291,9487
-(ert-deftest kotl-mode-split-cell 311,10120
-(ert-deftest kotl-mode-previous-cell-from-invalid-position 326,10650
-(ert-deftest kotl-mode-backward-cell-from-invalid-position 347,11343
-(ert-deftest kotl-mode-backward-cell-from-invalid-pos-leave-point-in-valid-pos 368,12041
-(ert-deftest kotl-mode-transpose-cell 395,13076
-(ert-deftest kotl-mode-transpose-cell-with-mark 414,13684
-(ert-deftest kotl-mode-transpose-cell-past-multiple-cells 437,14445
-(ert-deftest kotl-mode-copy-kotl-file-updates-root-id-attributes 465,15383
-(ert-deftest kotl-mode-hide-cell 483,16196
-(ert-deftest kotl-mode-move-tree-forward 500,16792
-(ert-deftest kotl-mode-move-tree-backward 526,17682
-(ert-deftest kotl-mode--add-cell-set-fill-attribute 551,18564
+(ert-deftest kotl-mode-kill-tree-and-reopen 314,10285
+(ert-deftest kotl-mode-kill-tree-on-empty-file-creates-new-cell 334,11005
+(ert-deftest kotl-mode-split-cell 348,11538
+(ert-deftest kotl-mode-previous-cell-from-invalid-position 363,12068
+(ert-deftest kotl-mode-backward-cell-from-invalid-position 384,12761
+(ert-deftest kotl-mode-backward-cell-from-invalid-pos-leave-point-in-valid-pos 405,13459
+(ert-deftest kotl-mode-transpose-cell 432,14494
+(ert-deftest kotl-mode-transpose-cell-with-mark 451,15102
+(ert-deftest kotl-mode-transpose-cell-past-multiple-cells 474,15863
+(ert-deftest kotl-mode-copy-kotl-file-updates-root-id-attributes 502,16801
+(ert-deftest kotl-mode-hide-cell 520,17614
+(ert-deftest kotl-mode-move-tree-forward 537,18210
+(ert-deftest kotl-mode-move-tree-backward 562,19099
+(ert-deftest kotl-mode--add-cell-set-fill-attribute 587,19981
+(ert-deftest kotl-mode-cell-help-displays-help-in-temp-buffer 599,20400
+(ert-deftest kotl-mode-cell-help-displays-help-from-root 616,21042
+(ert-deftest kotl-mode-cell-help-displays-help-for-all-cells 634,21729
 
 test/kotl-orgtbl-tests.el,237
 (ert-deftest kotl-orgtbl-enabled-uses-kotl-mode-delete-char-outside-of-table 27,693

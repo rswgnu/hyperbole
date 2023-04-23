@@ -7,7 +7,7 @@
 @c Author:       Bob Weiner
 @c
 @c Orig-Date:     6-Nov-91 at 11:18:03
-@c Last-Mod:     22-Apr-23 at 18:54:55 by Bob Weiner
+@c Last-Mod:     23-Apr-23 at 11:41:49 by Bob Weiner
 
 @c %**start of header (This is for running Texinfo on a region.)
 @setfilename hyperbole.info
@@ -77,7 +77,7 @@ See the GNU General Public License for more details in the file,
 @dircategory Emacs
 @direntry
 * Hyperbole: (hyperbole).      The Everyday Hypertextual Information Manager.
-     Use @bkbd{C-h h d d@} for a demonstration.  GNU Hyperbole
+     Use @bkbd{C-h h d d} for a demonstration.  GNU Hyperbole
      offers context-sensitive mouse and keyboard keys that do the
      right thing, a powerful contact manager, an advanced, auto-
      numbered outliner with hyperlink anchors for each outline
@@ -2465,7 +2465,7 @@ the location from which to retrieve RFCs via HTTP.
 @item kbd-key
 Execute a key series (series of key sequences) around point,
 delimited by curly braces, @{@}.  Key series should be in
-human readable form, e.g.@: @bkbd{C-x C-b}.  Formats such as @bkbd{^x^b@}
+human readable form, e.g.@: @bkbd{C-x C-b}.  Formats such as @bkbd{^x^b}
 will not be recognized.  The string within @code{(kbd "string")} also
 acts as a key series button.
 
@@ -3761,8 +3761,8 @@ Hy>  Act Butfile/ Cust/ Doc/ Ebut/ Find/ Gbut/ Hist Ibut/ Kotl/ Msg/ Rolo/ Scree
 @kindex M-b
 All menu items are selected via the first character of their names (letter
 case does not matter), with presses of the Action Key or by using
-@bkbd{@key{TAB}@} or @bkbd{M-f} to move forward an item, @bkbd{Shift-@key{TAB}}
-or @bkbd{M-b} to move backward an item and @bkbd{@key{RET}@} to select the
+@bkbd{@key{TAB}} or @bkbd{M-f} to move forward an item, @bkbd{Shift-@key{TAB}}
+or @bkbd{M-b} to move backward an item and @bkbd{@key{RET}} to select the
 current item.  A press of the Assist Key on an item displays help for the
 item, including the action that it performs.  "/" at the end of an item name
 indicates that it brings up a submenu.
@@ -3779,7 +3779,7 @@ use @bkbd{C-t} or press the Action Key while on the menu prefix
 (before the @samp{>} character).  This allows you to browse the
 submenus and then return to the top menu.  You can quit from the
 minibuffer menus without selecting an item by using @bkbd{Q}, or by
-pressing @bkbd{@key{RET}@} or @bkbd{M-@key{RET}@} when at the end of a
+pressing @bkbd{@key{RET}} or @bkbd{M-@key{RET}} when at the end of a
 menu.  @bkbd{C-g} aborts from the minibuffer whether you are at a menu
 prompt or any other Hyperbole prompt.  @bkbd{X} both quits the menus
 and disables the Hyperbole global minor mode; @bkbd{C-h h} restores
@@ -5951,7 +5951,7 @@ displayed.
 @cindex rolo, finding matches
 @cindex rolo, moving through matches
 If your emacs version supports textual highlighting, each search match
-is highlighted for quick, visual location.  @bkbd{@key{TAB}@} moves point
+is highlighted for quick, visual location.  @bkbd{@key{TAB}} moves point
 forward to successive spans of text which match the search expression.
 @bkbd{M-@key{TAB}} or @bkbd{@key{SHIFT}-@key{TAB}} move point backward
 to earlier matches.  These keys allow you to quickly find the matching
@@ -8594,7 +8594,7 @@ Copy into REGISTER the region START to END.
 With optional prefix arg DELETE-FLAG, delete region.
 
 @findex kotl-mode:delete-backward-char
-@item kotl-mode:delete-backward-char  @bkbd{@key{DEL}@}
+@item kotl-mode:delete-backward-char  @bkbd{@key{DEL}}
 Delete up to the preceding prefix ARG characters.
 Return number of characters deleted.
 Optional KILL-FLAG non-nil means save in kill ring instead of deleting.
@@ -8623,7 +8623,7 @@ If there is a fill prefix, delete it from the beginning of this line.
 With argument, join this line to the following line.
 
 @findex kotl-mode:demote-tree
-@item kotl-mode:demote-tree  @bkbd{@key{TAB}@}
+@item kotl-mode:demote-tree  @bkbd{@key{TAB}}
 Move current tree a maximum of prefix ARG levels lower in current view.
 Each cell is refilled iff its @emph{no-fill} attribute is nil and
 @code{kotl-mode:refill-flag} is non-nil.  With prefix ARG = 0, cells are
@@ -8749,7 +8749,7 @@ point).
 Collapse tree rooted at optional CELL-REF (defaults to cell at point).
 
 @findex kotl-mode:indent-line
-@item kotl-mode:indent-line  @bkdb{@key{TAB}@}
+@item kotl-mode:indent-line  @bkbd{@key{TAB}}
 Indent line relative to the previous one.
 With optional prefix ARG greater than 1, tab forward ARG times.
 See the documentation string of `kotl-mode:indent-tabs-mode' for details
@@ -8852,7 +8852,7 @@ TO-CELL-REF.  With optional COPY-P, copy tree rather than moving it.
 Leave point at original location but return the tree's new start point.
 
 @findex kotl-mode:newline
-@item kotl-mode:newline  @bkbd{@key{RET}@}
+@item kotl-mode:newline  @bkbd{@key{RET}}
 Insert a newline.  With ARG, insert ARG newlines.
 In Auto Fill mode, if no numeric arg, break the preceding line if it is
 too long.

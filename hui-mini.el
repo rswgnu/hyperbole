@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    15-Oct-91 at 20:13:17
-;; Last-Mod:      9-Apr-23 at 02:52:29 by Bob Weiner
+;; Last-Mod:     23-Apr-23 at 10:22:53 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -651,7 +651,7 @@ The menu is a menu of commands from MENU-ALIST."
 		 ("Msg/"        (menu . msg)      "Mail and News messaging capabilities.")
 		 ("Rolo/"       (menu . hyrolo)   "Hierarchical, multi-file rolo lookup and edit commands.")
 		 ("Screen/"     (menu . screen)   "Screen display management commands.")
-		 ("To/"         (menu . to)       "A-Z menu to search and add Emacs artifacts")
+		 ;; ("To/"         (menu . to)       "A-Z menu to search and add Emacs artifacts")
 		 ("Win/"        (menu . win)      "Window configuration management commands.")
 		 ))))
        '(butfile .

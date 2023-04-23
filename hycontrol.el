@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     1-Jun-16 at 15:35:36
-;; Last-Mod:     21-Feb-23 at 21:27:15 by Bob Weiner
+;; Last-Mod:     23-Apr-23 at 14:50:59 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -128,7 +128,7 @@
 (require 'hhist)     ; To store frame-config when hycontrol-windows-grid is used
 (require 'hypb)
 (require 'set)
-(eval-when-compile
+(eval-and-compile
   (require 'framemove nil t) ;; Elpa package
   (require 'windmove))
 ;; Frame face enlarging/shrinking (zooming) requires this separately available library.
