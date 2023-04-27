@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Aug-92
-;; Last-Mod:      9-Apr-23 at 13:37:38 by Bob Weiner
+;; Last-Mod:     23-Apr-23 at 18:53:36 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -38,12 +38,13 @@
 ;;; ************************************************************************
 
 (defcustom hproperty:but-highlight-flag t
-"*Non-nil (default) applies `hproperty:but-face' highlight to labeled Hyperbole buttons."
+  "*Non-nil applies `hproperty:but-face' highlight to labeled Hyperbole buttons."
   :type 'boolean
   :group 'hyperbole-buttons)
 
 (defcustom hproperty:but-emphasize-flag nil
-  "*Non-nil means emphasize selectability of Hyperbole button labels when hovering with the mouse."
+  "*Non-nil means emphasize selectability of Hyperbole button labels.
+This is shown when hovering over the button with the mouse."
   :type 'boolean
   :group 'hyperbole-buttons)
 

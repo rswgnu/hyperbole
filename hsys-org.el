@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     2-Jul-16 at 14:54:14
-;; Last-Mod:      6-Feb-23 at 09:53:31 by Mats Lidell
+;; Last-Mod:     23-Apr-23 at 22:37:07 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -77,6 +77,12 @@ with different settings of this option.  For example, a nil value makes
 		 (const :tag "t       - In Org, enable all Smart Key contexts" t))
   :initialize #'custom-initialize-default
   :group 'hyperbole-buttons)
+
+;;; ************************************************************************
+;;; Public declarations
+;;; ************************************************************************
+
+(declare-function org-show-context nil) ;; Obsolete as of Org 9.6
 
 ;;; ************************************************************************
 ;;; Public variables

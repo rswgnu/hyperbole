@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    18-Sep-91 at 02:57:09
-;; Last-Mod:     10-Apr-23 at 23:39:18 by Bob Weiner
+;; Last-Mod:     23-Apr-23 at 20:12:05 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -29,6 +29,7 @@
 (declare-function www-url "hsys-www" (url))
 
 (defvar hproperty:but-face)
+(defvar hproperty:ibut-face)
 
 ;;; ************************************************************************
 ;;; Public definitions

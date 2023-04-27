@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 20:45:31
-;; Last-Mod:     27-Mar-23 at 23:35:16 by Bob Weiner
+;; Last-Mod:     23-Apr-23 at 20:04:58 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -159,7 +159,7 @@ If the referenced location is found, return non-nil."
 			      (org-id-find id 'marker))))
 	    (hact #'link-to-org-id-marker m)))))))
 
-(defun org-id:help (hbut)
+(defun org-id:help (_hbut)
   "Copy link to kill ring of an Org roam or Org node referenced by id at point.
 If on the :ID: definition line, do nothing and return nil.
 If the referenced location is found, return non-nil."

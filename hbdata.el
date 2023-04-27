@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     2-Apr-91
-;; Last-Mod:      9-Apr-23 at 01:22:24 by Mats Lidell
+;; Last-Mod:     26-Apr-23 at 00:11:40 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -55,6 +55,15 @@
 (require 'hversion) ;; For hyperb:microsoft-os-p
 (require 'hbmap)
 (require 'hgnus)
+
+;;; ************************************************************************
+;;; Public declarations
+;;; ************************************************************************
+
+;; Functions from abstract mail and news interface. See "hmail.el"
+(declare-function lmail:to nil)
+(declare-function rmail:to nil)
+(declare-function rmail:summ-msg-to nil)
 
 ;;; ************************************************************************
 ;;; Public functions
@@ -314,10 +323,9 @@ If the hbdata buffer is blank/empty, kill it and remove the associated file."
 (defun hbdata:delete-entry-at-point ()
   (delete-region (point) (progn (forward-line 1) (point))))
 
-(defun hbdata:ibut-instance-last (lbl-key key-src &optional directory)
+(defun hbdata:ibut-instance-last (lbl-key _key-src &optional _directory)
   "Return highest instance number for repeated implicit button label.
-1 if not repeated, nil if no instance.
-Utilize arguments LBL-KEY, KEY-SRC and optional DIRECTORY."
+1 if not repeated, nil if no instance.  Utilize argument LBL-KEY."
   (let ((key (car (ibut:label-sort-keys (ibut:label-key-match lbl-key)))))
     (cond ((null key) nil)
 	  ((string-match (concat (regexp-quote hbut:instance-sep)

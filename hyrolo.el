@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     7-Jun-89 at 22:08:29
-;; Last-Mod:      8-Apr-23 at 16:13:51 by Bob Weiner
+;; Last-Mod:     23-Apr-23 at 22:20:14 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -54,6 +54,7 @@
 (defvar markdown-regex-header)
 (defvar org-roam-directory)
 (defvar org-roam-db-autosync-mode)
+(defvar hproperty:but-emphasize-flag)
 (declare-function consult-grep "ext:consult")
 (declare-function consult-ripgrep "ext:consult")
 (declare-function helm-org-rifle-files "ext:helm-org-rifle")
