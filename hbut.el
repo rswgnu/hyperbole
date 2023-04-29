@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    18-Sep-91 at 02:57:09
-;; Last-Mod:     23-Apr-23 at 16:34:54 by Bob Weiner
+;; Last-Mod:     29-Apr-23 at 14:01:52 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -20,7 +20,8 @@
 ;;; ************************************************************************
 
 (eval-and-compile (mapc #'require '(cl-lib elisp-mode help-mode hversion
-				    hmoccur hbmap htz hbdata hact view)))
+				    hmoccur hbmap htz hbdata hact
+				    hui-select view)))
 
 ;;; ************************************************************************
 ;;; Public declarations
@@ -1407,7 +1408,7 @@ with implicit button activations."
 (defun    hbut:outside-comment-p ()
   "True if in a programming mode and regexp match is outside a comment, else nil."
   (when (and (derived-mode-p 'prog-mode)
-	     (not (eq major-mode 'lisp-interaction-mode))
+	     (not (derived-mode-p 'lisp-interaction-mode))
 	     (not (memq major-mode hui-select-markup-modes)))
     ;; Match is outside of a programming language comment
     (not (nth 4 (syntax-ppss)))))
