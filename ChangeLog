@@ -1,5 +1,9 @@
 2023-04-23  Bob Weiner  <rsw@gnu.org>
 
+* kotl/klink.el (klink:at-p):
+  hbut.el (hbut:outside-comment-p): Make the inside a comment prog
+    mode tests in each of these use the same conditional tests.
+
 * Makefile (version): Fix so this outputs the list of files whose
     versions are wrong, shows the proper version number and
     prints a clearer message.  If no problem, generates no output.
@@ -668,7 +672,7 @@
 
 * hycontrol.el (hycontrol-windows-grid-by-file-pattern): Update
     to use prefix arg as grid size or to autosize when not given
-    or given an invalid valude.
+    or given an invalid value.
                (hycontrol-windows-grid): Don't nullify prefix arg
     when calling above function.
                (hycontrol-make-windows-grid): Move 'hhist:add' call
@@ -805,8 +809,9 @@
     directory of the 'key-src' and use in 'klink:at-p'.
 
 * kotl/klink.el (klink:c-style-modes): Improve doc string.
-                (klink:at-p): In *scratch* buffer 'lisp-interaction-mode',
-    allow klinks outside of comments (since this is more intuitive).
+                (klink:at-p): In *scratch* buffer (lisp-interaction-mode)
+    and 'hui-select-markup-modes', allow klinks outside of comments
+    (since this is more intuitive).
 
 2022-10-11  Mats Lidell  <matsl@gnu.org>
 
@@ -937,8 +942,7 @@
     of only space after pound (#) headings.
             (markdown-mode-hook): Support hyrolo searches in markdown files.
 	    (hyrolo-fgrep-file, hyrolo-grep-file, hyrolo-fgrep, hyrolo-grep,
-             hyrolo-word):
-    Add optional 'headline-only' argument.
+             hyrolo-word): Add optional 'headline-only' argument.
 * hib-doc-id.el (link-to-doc, doc-id:help): Set new 'headline-only' argument
     to nil.
 
@@ -1022,7 +1026,7 @@
 * hibtypes.el (elisp-compiler-msg):
     Replace 'hypb:replace-match-string' with 'replace-regexp-in-string'.
 
-* hbut.el (ibut:at-p): Fix to returns nil if name and lbl-key are both nil.
+* hbut.el (ibut:at-p): Fix to return nil if name and lbl-key are both nil.
     Also add support for <> and {} ibut delimiters.
 
 * hui-mouse.el (hkey-alist): In HyRolo match buffer, test major-mode
@@ -1045,8 +1049,7 @@
   used to set 'case-fold-search'.
 
 * hyrolo.el (hyrolo-find-file-noselect-function): Add so can customize
-    low-level function used by HyRolo to read in each file searched by
-    HyRolo.
+    low-level function used to read in each file searched by HyRolo.
             (hyrolo-find-file): Add second optional parameter, 'find-function',
     used to find the file.
             (hyrolo-find-file-noselect): Add and use 'hyrolo-find-file-noselect-function'.
@@ -1857,7 +1860,7 @@ V9.0.0 changes ^^^^:
     parameter; use this and kotl-mode:refill-flag in addition to no-fill parameter
     to determine whether to fill cell contents on creation.  Only the no-fill
     parameter sets the same named attribute on the cell.
-* kotl/kotl-mode.el (kotl-mode:add-cell): Send sibling-p valude to kview:add-cell.
+* kotl/kotl-mode.el (kotl-mode:add-cell): Send sibling-p value to kview:add-cell.
 
 * kotl/kotl-mode.el (kotl-mode:add-cell): Fix to not use sibling-p or
     `kotl-mode:refill-flag' to determine no-fill attribute of new cell.
