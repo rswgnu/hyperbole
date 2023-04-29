@@ -136,6 +136,12 @@
 (require 'zoom-frm nil t)
 
 ;;; ************************************************************************
+;;; Public declarations
+;;; ************************************************************************
+
+(declare-function fm-next-frame "ext:framemove")
+
+;;; ************************************************************************
 ;;; Public variables
 ;;; ************************************************************************
 
@@ -1732,13 +1738,13 @@ columns (rightmost) of the grid."
 ;;;###autoload
 (defun hycontrol-windows-grid-by-file-pattern (arg pattern &optional full-flag)
   "Display up to an abs(prefix ARG)-sized window grid of files matching PATTERN.
-Use absolute file paths if called interactively or optional FULL-FLAG is non-nil.
-PATTERN is a shell glob pattern.
+Use absolute file paths if called interactively or optional
+FULL-FLAG is non-nil.  PATTERN is a shell glob pattern.
 
 Left digit of ARG is the number of grid rows and the right digit
 is the number of grid columns.  If ARG is nil, 0, 1, less than
 11, greater than 99, then autosize the grid to fit the number of
-files matched by PATTERN. Otherwise, if ARG ends in a 0, adjust the
+files matched by PATTERN.  Otherwise, if ARG ends in a 0, adjust the
 grid size to the closest valid size."
   (interactive
    (list current-prefix-arg

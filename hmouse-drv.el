@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    04-Feb-90
-;; Last-Mod:      8-Apr-23 at 15:15:47 by Bob Weiner
+;; Last-Mod:     23-Apr-23 at 22:36:29 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -26,6 +26,7 @@
 ;;; Public declarations
 ;;; ************************************************************************
 (defvar start-window)
+(declare-function mouse-drag-frame nil) ;; Obsolete from Emacs 28
 
 ;;; ************************************************************************
 ;;; Public variables

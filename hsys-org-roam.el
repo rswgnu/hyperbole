@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    26-Feb-23 at 11:20:15 by Bob Weiner
-;; Last-Mod:     23-Apr-23 at 12:05:54 by Bob Weiner
+;; Last-Mod:     23-Apr-23 at 22:05:38 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -28,6 +28,7 @@
 ;;; ************************************************************************
 
 (defvar consult-org-roam-grep-func)
+(defvar org-roam-directory)
 (declare-function org-roam-db-autosync-mode "ext:org-roam")
 
 ;;; ************************************************************************
@@ -54,8 +55,11 @@ Prompt for the search pattern."
 (provide 'hsys-org-roam)
 
 ;;  Don't byte-compile since may not have org-roam package and then
-;;  will get an 'org-roma-directory' undefined error.
+;;  will get an 'org-roam-directory' undefined error.
 
 ;;  Local Variables:
 ;;  no-byte-compile: t
 ;;  End:
+
+;;; hsys-org-roam.el ends here
+

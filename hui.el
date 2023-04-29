@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 21:42:03
-;; Last-Mod:     16-Apr-23 at 12:49:48 by Bob Weiner
+;; Last-Mod:     29-Apr-23 at 16:26:39 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -456,12 +456,15 @@ Signal an error if any problem occurs."
 	(hypb:error "(ebut-rename): Can't rename %s since no button data"
 		    curr-label)))
   (cond (new-label
-	 (ebut:operate curr-label new-label)
-	 (setq hui:ebut-label-prev nil)
-	 (message "Renamed from '%s' to '%s'." curr-label new-label))
+	 (if (equal curr-label new-label)
+	     (message "Current and new label are the same; '%s' unchanged."
+		      curr-label)
+	   (ebut:operate curr-label new-label)
+	   (setq hui:ebut-label-prev nil)
+	   (message "Renamed from '%s' to '%s'." curr-label new-label)))
 	(curr-label
 	 (setq hui:ebut-label-prev curr-label)
-	 (message "Edit button label and use same command to finish rename."))
+	 (message "Edit button label and use the same command to finish rename."))
 	(t (hypb:error "(ebut-rename): Move point to within a button label"))))
 
 (defun hui:ebut-search (string &optional match-part)
