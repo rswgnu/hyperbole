@@ -26,21 +26,24 @@
           "https://emacsconf.org/2022/talks/rolodex/".
 
   *** Action Types: Added newer types and updated existing doc summaries
-      in the Hyperbole manual.
+      in the Hyperbole manual.  See "(hyperbole)Action Types".
 
   *** Documented these Hyperbole minibuffer menu keys:
 
         - {Q} always quits from the menu without selecting anything
 
         - {X} both quits from the menu and disables Hyperbole minor
-          mode; {C-h h} re-enables it.
+          mode; {C-h h} re-enables it.  See "(hyperbole)menu,
+          entry/exit commands".
 
   *** Ibut Menu: Documented in the manual, notably the new Ibut/Create
-      menu item.
+      menu item.  See "(hyperbole)menu, Ibut/Create".
 
   *** Smart Key - Org Mode: Expanded with doc for more extensive behavior.
+      See "(hyperbole)Smart Key - Org Mode".
 
   *** Manual Glossary: Added Ace Window, Consult, Org Mode, and Org Roam entries.
+      See "(hyperbole)Glossary".
 
 
 ** HYCONTROL  (See "(hyperbole)HyControl").
@@ -49,7 +52,7 @@
       on QUERTY keyboard layout) among windows in the selected frame.  In Frame
       Control mode, move directionally among active frames.  These keys utilize
       and prompt to install the windmove and framemove packages if not installed.
-
+      See "(hyperbole)I/J/K/M".
 
 ** HYPERBOLE SYSTEM  (See "(hyperbole)").
 
@@ -59,7 +62,7 @@
       without a package manager, 'make eln' now builds it natively.
 
   *** Natively Compiled Functions as Action Types: Now may be used as Hyperbole
-      button action types.
+      button action types.  See "(hyperbole)Action Types".
 
   *** Reduced Warnings: Large number of byte-compiler warnings eliminated when
       building the Hyperbole package.  None of these warnings should affect use
@@ -70,47 +73,53 @@
       implicit button type and its associated action type.
 
       {C-h A} now also works on Emacs push-buttons, displaying their attributes
-      and associated action.
+      and associated action.  See "(hyperbole)Smart Key help".
 
-  *** Improved Smart Key Debugging: {C-h h c d} enables Hyperbole Smart Key Action
-      debugging.  If an explicit button has an action that overrides its default
-      action type action, then the debug messages will now show that action.  Debug
-      messages now also show all of the attributes of the current button.
+  *** Improved Smart Key Debugging: {C-h h c d} enables Hyperbole Smart Key
+      Action debugging.  If an explicit button has an action that overrides its
+      default action type action, then the debug messages will now show that
+      action.  Debug messages now also show all of the attributes of the current
+      button.  See "(hyperbole)Smart Key Debugging".
 
-  *** Any Colorized Display: Face display and colorization of Hyperbole buttons
-      now works on any display capable of displaying colors.
+  *** Any Colorized Display: Face display and colorization of Hyperbole buttons now
+      works on any display capable of displaying colors.  See "(hyperbole)Button
+      Colors".
 
   *** Create Buttons in Current Buffer: Stopped prompting for a source buffer
-      when creating a Hyperbole button. Always use the current buffer and point.
+      when creating a Hyperbole button.  Always use the current buffer and point.
+      See "(hyperbole)Creation".
 
   *** Interactive Org-Roam DB Consult Grep: {M-x hsys-org-roam-consult-grep RET}
-      Interactively greps org-roam files with live in-buffer display.  It uses
-      the automatically installed consult-org-roam package when invoked.
+      Interactively greps org-roam files with live in-buffer display as you move
+      through matching lines.  It uses the automatically installed consult-org-roam
+      package when invoked.  See "(hyperbole)hsys-org-roam-consult-grep".
 
   *** mhtml-mode Markup Selection: Hyperbole's matching markup pair selection,
-      copying and movement now works with Emacs' builtin mhtml-mode.
+      copying and movement now works with Emacs' builtin mhtml-mode.  See
+      "(hyperbole)HTML tag pair".
 
   *** XEmacs: Removed old XEmacs-compatibility code.
 
 
 ** HYROLO  (See "(hyperbole)HyRolo").
 
-  *** Koutline and Markdown File Support:  The 'hyrolo-file-list' can now contain
-      Koutline or Markdown files and will search their outline entries just like it
-      does for Org and Emacs outline files.
+  *** Koutline and Markdown File Support: The `hyrolo-file-list' can now contain
+      Koutline or Markdown files and will search their outline entries just like
+      it does for Org and Emacs outline files.  See "(hyperbole)HyRolo Concepts".
+
+  *** Koutline Fast Search: Koutlines may now be included in `hyrolo-file-list'
+      and individual cells extracted properly with any HyRolo query.  Then the
+      interactive commands to show the top-level matches, an outline of matches
+      or to show, hide or move to matches, all work in the match display buffer
+      as well.
 
   *** Match Buffer Name Change: Changed match buffer name from "*Hyperbole Rolo*"
       to "*HyRolo*".
 
-  *** Koutline Fast Search: Koutlines may now be included in 'rolo-file-list'
-      and individual cells extracted properly with any HyRolo query.  Then
-      the interactive commands to show the top-level matches, an outline of
-      matches or to show, hide or move to matches all work in the match
-      display buffer as well.
-
   *** New HyRolo menu items ConsultFind and HelmFind:  These appear when you
       independently load consult or helm.  These menu items then use the
       related interactive search functions to search over the HyRolo file list.
+      See "(hyperbole)Consult" and "(hyperbole)Helm".
 
       ConsultFind utilizes `consult-grep' or `consult-ripgrep'.
       HelmFind uses the helm-org-rifle package and searches over .org and
@@ -158,11 +167,11 @@
       type.  Separates the name and the implicit button with " - ".
 
   *** Relative Info Paths: Info files with relative pathnames outside of the
-      'Info-directory-list' now resolve properly, e.g. "man/hyperbole.info".
+      `Info-directory-list' now resolve properly, e.g. "man/hyperbole.info".
 
-  *** Highlighting of Ibut Names: New 'hproperty:ibut-face' used to highlight
+  *** Highlighting of Ibut Names: New `property:ibut-face' used to highlight
       any <[name]> prefixing an implicit button.  All hproperty functions
-      now support this face as well as the 'hproperty:but-face' used for
+      now support this face as well as the `hproperty:but-face' used for
       explicit buttons.
 
   *** Jump to Lisp Identifier Definition in More Buffers: Lisp identifiers
@@ -210,11 +219,11 @@
 ** HYPERBOLE PROGRAMMING INTERFACE CHANGES
 
   *** (hypb:devdocs-lookup): Install and load devdocs package and then
-      call its 'devdocs-lookup' function.
+      call its `devdocs-lookup' function.
 
   *** (hpath:resolve): Add to resolve path variables without doing a path expand.
 
-  *** (hsys-org-meta-return): Centralize sharing of M-RET key with Org mode.
+  *** (hsys-org-meta-return): Centralize sharing of {M-RET} key with Org mode.
 
   *** (hypb:require-package): Add to install a package, if necessary,
       and require its library with the same name.
@@ -283,21 +292,21 @@
       hycontrol-framemove-right, and hycontrol-framemove-down to move among
       active frames.
 
-  *** (kimport:initialize): Add optional 'erase-flag' arg to erase buffer
+  *** (kimport:initialize): Add optional `erase-flag' arg to erase buffer
       before importing elements.  And use in all kimport commands.
 
-  *** (hhist:pop): Renamed from 'hhist:remove'.
+  *** (hhist:pop): Renamed from `hhist:remove'.
 
   *** (hypb:activate-interaction-log-mode): Add to configure and enable the
       interaction-log package for use with Hyperbole.  It displays a
       font-locked log of Emacs keys, commands and Hyperbole minibuffer menu
       items executed.  Useful in demo videos or presentations.
 
-  *** (hui:menu-exit-hyperbole): Renamed from 'hui:hypb-exit'.
+  *** (hui:menu-exit-hyperbole): Renamed from `hui:hypb-exit'.
 
-  *** (hui:menu-choose): Renamed from 'hui:menu-select'.
+  *** (hui:menu-choose): Renamed from `hui:menu-select'.
 
-  *** (hyperbole-web-search): Added optional 'return-search-expr-flag'
+  *** (hyperbole-web-search): Added optional `return-search-expr-flag'
       to return search expression rather than doing the search, to build up
       more involved search commands.
 
@@ -316,19 +325,19 @@
   *** (hyrolo-previous-match): Changed so this can be used in a
       predicate when a match is found.
 
-  *** (hyrolo-grep): Added support for 'outline-regexp' and 'outline-level'
+  *** (hyrolo-grep): Added support for `outline-regexp' and `outline-level'
       variables from multiple file types.
 
-      (hyrolo-mode-outline-level): Added and used in 'hyrolo-mode'.
+      (hyrolo-mode-outline-level): Added and used in `hyrolo-mode'.
 
-      (hyrolo-mode): Set the local value of 'outline-level' to
-      'hyrolo-mode-outline-level' and define that function to support
-      star outlines and Koutlines.  Also, made 'hyrolo-entry-regexp'
+      (hyrolo-mode): Set the local value of `outline-level' to
+      `hyrolo-mode-outline-level' and define that function to support
+      star outlines and Koutlines.  Also, made `hyrolo-entry-regexp'
       local and set it to its default value, after which it may be
       modified.
 
   *** (hyrolo-fgrep-file, hyrolo-grep-file, hyrolo-fgrep, hyrolo-grep,
-      hyrolo-word): Added optional 'headline-only' argument to limit
+      hyrolo-word): Added optional `headline-only' argument to limit
       searches to headlines.
 
   *** (hyrolo-next-regexp-match, hyrolo-next-match-function): Added to
@@ -357,8 +366,8 @@
       cycles to the next set of states, if any.
 
   *** {C-c /}: Hyperbole {C-c /} web search binding defers to org-mode
-      binding, 'org-show-todo-tree' but uses the improved Hyperbole version,
-      'hsys-org-todo-occur' which allows filtering to specific todo states.
+      binding, `org-show-todo-tree' but uses the improved Hyperbole version,
+      `hsys-org-todo-occur' which allows filtering to specific todo states.
 
 
 ** SMART (ACTION AND ASSIST) KEYS  (See "(hyperbole)Smart Keys").
@@ -446,7 +455,7 @@
       See "(hyperbole)enable org-mode support" and "hsys-org.el".
 
   *** hsys-org-enable-smart-keys: New customization to replace
-      'inhibit-hsys-org'.  This applies only in Org major/minor modes when
+      `inhibit-hsys-org'.  This applies only in Org major/minor modes when
       hyperbole-mode is active.  t means enable Smart Key support
       everywhere.  The symbol, buttons, is the default; it means the Smart
       Keys are active only when point is within a Hyperbole button.  A nil

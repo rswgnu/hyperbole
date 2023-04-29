@@ -1,3 +1,16 @@
+2023-04-29  Bob Weiner  <rsw@gnu.org>
+
+* man/hyperbole.texi (HyRolo Concepts): Document all supported types of
+  rolo files.
+                     (Glossary): Add entry for Helm and Org Rifle packages.
+  Mention 'hyrolo-helm-org-rifle'.
+
+* hui.el (hui:ebut-rename): Do nothing if curr and new labels are the same.
+
+* man/hyperbole.texi (HyControl): Add I/J/K/M key documentation.
+
+* HY-NEWS: Update for V9 release.
+
 2023-04-23  Bob Weiner  <rsw@gnu.org>
 
 * kotl/klink.el (klink:at-p):

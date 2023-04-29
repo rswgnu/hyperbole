@@ -7,7 +7,7 @@
 @c Author:       Bob Weiner
 @c
 @c Orig-Date:     6-Nov-91 at 11:18:03
-@c Last-Mod:     23-Apr-23 at 11:41:49 by Bob Weiner
+@c Last-Mod:     29-Apr-23 at 17:20:22 by Bob Weiner
 
 @c %**start of header (This is for running Texinfo on a region.)
 @setfilename hyperbole.info
@@ -156,7 +156,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</P>
 
 <PRE>
 Edition 8.0.1pre
-Printed March 29, 2023.
+Printed April 29, 2023.
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -198,7 +198,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 @example
 Edition 8.0.1pre
-March 29, 2023
+April 29, 2023
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -940,16 +940,17 @@ on a pathname to display the associated file or directory.
 @cindex Hyperbole minibuffer menu
 @kindex C-h h
 @kindex C-h h X
-@kindex C-h h q
+@kindex C-h h Q
 @bkbd{C-h h} enables Hyperbole if it has been disabled and displays a
-Hyperbole menu in the minibuffer for quick keyboard or mouse-based selection.
-Select an item from this menu by typing the item's first capital letter.
-Use @bkbd{q} to quit from the minibuffer menu while leaving Hyperbole enabled.
-Use@bkbd{X} (note this is capitalized) to quit from the minibuffer menu
-and disable Hyperbole minor mode.
+Hyperbole menu in the minibuffer for quick keyboard or mouse-based
+selection.  Select an item from this menu by typing the item's first
+capital letter.  Use @bkbd{Q} (note this is capitalized) to quit from
+the minibuffer menu while leaving Hyperbole enabled.  Use @bkbd{X}
+(note this is capitalized) to quit from the minibuffer menu and
+disable Hyperbole's minor mode.
 
-Use @bkbd{C-h h d d} for an interactive demonstration of standard Hyperbole
-button capabilities.
+Use @bkbd{C-h h d d} for an interactive demonstration of standard
+Hyperbole button capabilities.
 
 Type @bkbd{C-h h k e} for an interactive demonstration of the Koutliner,
 Hyperbole's multi-level autonumbered hypertextual outliner.
@@ -1188,10 +1189,10 @@ the behavior of the Smart Keys within default contexts.
 When you use a mouse and you want to find out what either of the Smart
 Keys does within a context, depress the one you want to check on and
 hold it down, then press the other and release as you please.  A help
-buffer will pop up explaining the actions that will be performed in that
-context, if any.  A press of either Smart Key at the end of that
-help buffer will restore your display to its configuration prior to
-invoking help.
+buffer will pop up explaining the action that will be performed in that
+context and attributes of the button, if any.  A press of either Smart
+Key at the end of that help buffer will restore your display to its
+configuration prior to invoking help.
 
 @kindex C-h A
 @kindex C-u C-h A
@@ -1988,14 +1989,14 @@ asking for help on a button.
 @cindex button, global
 @cindex button label
 @cindex label, button
-Sometimes it is
-useful to activate buttons without regard to the information with which
-you are working.  In such instances, you use @dfn{global buttons}, which
-are buttons that may be activated or otherwise operated upon by typing
-their labels/names when they are prompted for, rather than selecting the
-buttons within a buffer.  In contrast, activation of explicit buttons
-depends upon the information on your screen since they are accessible
-only from within their particular buffers.
+Sometimes it is useful to activate buttons without regard to the
+information with which you are working.  In such instances, you use
+@dfn{global buttons}, which are buttons that may be activated or
+otherwise operated upon by typing their labels/names when they are
+prompted for, rather than selecting the buttons within a buffer.  In
+contrast, activation of explicit buttons depends upon the information on
+your screen since they are accessible only from within their particular
+buffers.
 
 If you want a permanent link to a file section that you can follow at
 any time, you can use a global button.  Or what about an Emacs keyboard
@@ -2057,12 +2058,33 @@ directory, typically in another window.  An explicit button could do
 the same thing but has to be created manually, rather than recognized
 as part of the buffer text.
 
+@kindex C-h h i
+@cindex activating implicit button
+@cindex menu item, Ibut/Act
+@cindex menu, Ibut
+@cindex menu, Implicit-Button
+@cindex menu, Ibut/Activate
+@cindex menu, Ibut/Create
+@cindex menu, Ibut/Edit
+@cindex menu, Ibut/Label
+@kindex C-h h i a
+@kindex C-h h i c
+@kindex C-h h i e
+@kindex C-h h i l
+Implicit buttons are managed with the Hyperbole Ibut/ menu accessed
+with @bkbd{C-h h i}.  The Create item, @bkbd{C-h h i c}, prompts for
+an implicit button label, an action type, and the action's associated
+arguments, such as a file to which to link.  It then creates the
+button at point.  To activate the button with point on its label or
+button text, use the Act menu item, @bkbd{C-h h i a} or press the
+Action Key.  You can use @bkbd{C-h h i e} to edit an implicit button
+(or simply edit it manually).  If you want to add a label to an
+existing implicit button without one, use @bkbd{C-h h i l} to label
+it.
+
 @vindex file, hibtypes.el
 @cindex context
 @cindex boolean expressions
-@cindex activating implicit button
-@cindex menu item, Ibut/Act
-@kindex C-h h i a
 Unlike explicit buttons, implicit buttons have no individual button
 data other than their text and optional labels.  You use implicit
 button types which include boolean expressions (predicates) that match
@@ -2070,9 +2092,7 @@ to both the label and the context required of any button of the type.
 Each time a Smart Key is pressed at a location, Hyperbole evaluates
 the predicates from the list of implicit button types and the first
 one that evaluates true is selected and its associated action is
-triggered.  Alternatively, you can use the Ibut/Act menu
-item, @bkbd{C-h h i a}, to activate any implicit button found at the
-current point.
+triggered.
 
 All of this happens transparently and is easy to use once you try it.
 The Hyperbole Smart Keys offer additional extensive context-sensitive
@@ -2093,24 +2113,6 @@ button with a label of 'My Emacs Files':
 
 The label is delimited by @samp{<[} and @samp{]>} and can be followed
 by any number of :, - or = separator characters, including none.
-
-@kindex C-h h i
-@cindex menu, Ibut
-@cindex menu, Implicit-Button
-@kindex C-h h i a
-@kindex C-h h i c
-@kindex C-h h i e
-@kindex C-h h i l
-Implicit buttons are managed with the Hyperbole Ibut/ menu accessed
-with @bkbd{C-h h i}.  The Create item, @bkbd{C-h h i c}, prompts for
-an implicit button label, an action type, and the action's associated
-arguments, such as a file to which to link.  It then creates the
-button at point.  To activate the button with point on its label or
-button text, use the Act menu item, @bkbd{C-h h i a} or press the
-Action Key.  You can use @bkbd{C-h h i e} to edit an implicit button
-(or simply edit it manually).  If you want to add a label to an
-existing implicit button without one, use @bkbd{C-h h i l} to label
-it.
 
 
 @menu
@@ -3767,13 +3769,14 @@ current item.  A press of the Assist Key on an item displays help for the
 item, including the action that it performs.  "/" at the end of an item name
 indicates that it brings up a submenu.
 
-@kindex C-t
-@kindex Q
-@kindex X
-@kindex C-g
+@kindex C-h h C-t
+@kindex C-h h Q
+@kindex C-h h X
+@kindex C-h h C-g
 @cindex menu, top-level
 @cindex top-level menu
 @cindex menu prefix
+@cindex menu, entry/exit commands
 While a menu is active, to re-activate the top-level Hyperbole menu,
 use @bkbd{C-t} or press the Action Key while on the menu prefix
 (before the @samp{>} character).  This allows you to browse the
@@ -4182,6 +4185,13 @@ of the screen size.
 @kitem H
 In FRAMES mode, resize frame's height to about argument percent of the
 screen size.
+
+@kindex screen, I/J/K/M
+@kitem I/J/K/M
+In WINDOWS mode, the keys @bkbd{I}@bkbd{J}/@bkbd{K}/@bkbd{M} move
+directionally (based on QUERTY key layout) between windows in the
+selected frame.  In FRAMES mode, they move directionally through visible
+frames.  These use the @file{windmove} and @file{framemove} libraries.
 
 @kindex screen, W
 @kitem W
@@ -5697,10 +5707,42 @@ tool.
 @cindex rolo file
 @cindex rolo entry
 HyRolo manages and searches rolo files.  A @dfn{rolo file} consists of
-an optional header that starts and ends with a line of equal signs
-(at least three equal signs starting at the beginning of a line),
-followed by zero or more rolo records.  You must manually add a header
-to any rolo file if you want it to have one.
+an optional header that starts and ends with a line of equal signs (at
+least three equal signs starting at the beginning of a line), followed
+by zero or more rolo records which we call entries.  You must manually
+add a header to any rolo file if you want it to have one.  Rolo files
+may be regular text files, Emacs outline files, Org files, Markdown
+files or Koutline files.
+
+Rolo @dfn{entries} begin with optional space, followed by a delimiter of
+one or more special characters followed by another space.  Delimiters
+vary based on the type of file:
+
+@table @asis
+@item Emacs Outline Mode
+*
+@item Koutline Mode
+1b3 or 1.2.3
+@item Markdown Mode
+#
+@item Org Mode
+*
+@item Text Mode
+*
+@end table
+
+Entries may be arranged in a hierarchy, where child entries start with
+at least one more delimiter characters than do their parents.  Top-level
+level entries use either a single delimiter character or a sequence of
+digits in the case of Koutlines.
+
+Beyond this initial delimiter, entries are completely free-form text.
+It is best to use a "lastname, firstname" format, however, when adding
+contact entries into a rolo.  Then HyRolo will automatically keep your
+entries alphabetized as you enter them.  Then you can sort the entries
+if you ever need.  This ordering is what the rolo will use if you
+accept the default entry with which it prompts you when adding a new
+entry.
 
 @noindent
 Here is an example of a simple rolo file.  The date at the end is
@@ -5717,20 +5759,6 @@ automatically added by HyRolo whenever a new record is added.
         05/24/2020
 @end group
 @end example
-
-We call rolo records, @dfn{entries}.  Entries begin with a delimiter
-of one or more `*' characters at the beginning of a line.  Entries may
-be arranged in a hierarchy, where child entries start with one more `*'
-character than do their parents.  Top-level entries begin with a single
-`*'.
-
-Beyond this initial delimiter, entries are completely free-form text.
-It is best to use a "lastname, firstname" format, however, when adding
-contact entries into a rolo.  Then HyRolo will automatically keep your
-entries alphabetized as you enter them.  Then you can sort the entries
-if you ever need.  This ordering is what the rolo will use if you
-accept the default entry with which it prompts you when adding a new
-entry.
 
 Any search done on the rolo scans the full text of each entry.  During
 a search, the rolo file header separator lines and anything in between
@@ -7187,11 +7215,13 @@ abstraction.
 
 @cindex consult package
 @cindex consult-org-roam package
+@findex hsys-org-roam-consult-grep
 @item Consult
 An Emacs extension package that provides asynchronous search and narrow
-wrappers around common search commands like grep, ripgrep, find and locate.
-Hyperbole optionally utilizes this to search the HyRolo.  Use the
-@code{consult-org-roam} package to search Org Roam notes similarly.
+wrappers around common search commands like grep, ripgrep, find and
+locate.  Hyperbole optionally utilizes this to search the HyRolo.  Use
+@code{M-x hsys-org-roam-consult-grep RET} to search Org Roam notes
+similarly.
 
 @item Context
 A programmatic or positional state recognized by Hyperbole.
@@ -7261,6 +7291,16 @@ The maximum length of a button label is limited by the variable
 @code{hbut:max-len}.  If 0, there is no limit and searches for button
 end delimiters can go as far as the end of the buffer.  Use the
 function, @code{(hbut:max-len)}, to read the proper value.
+
+@cindex helm package
+@cindex org-rifle package
+@findex hyrolo-helm-org-rifle
+@item Helm
+An Emacs extension package that provides asynchronous search and narrow
+wrappers around many Emacs commands.  Hyperbole optionally utilizes this
+together with the @file{org-rifle} package to interactively search the
+HyRolo.  Use @code{M-x hyrolo-helm-org-rifle} to search your HyRolo file
+list with these packages.
 
 @findex run-hooks
 @item Hook Variable
@@ -9825,7 +9865,7 @@ helm for these Smart Key actions to work.  Try them in your own
 version and if there are any issues, install helm from
 @file{github.com/rswgnu/helm}. 
 
-@cindex helm mode
+@cindex helm-mode
 @cindex completion
 @format
 @group
