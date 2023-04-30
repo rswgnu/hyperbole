@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    30-Jan-21 at 12:00:00
-;; Last-Mod:     30-Apr-23 at 11:15:21 by Mats Lidell
+;; Last-Mod:     30-Apr-23 at 16:43:06 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -662,7 +662,6 @@ With point on label suggest that ibut for rename."
 
 (ert-deftest hui--ebut-rename-nonumbered-label ()
   "Rename an ebut shall rename the label with no number."
-  (skip-unless false) ;; Skip until label rename bug is fixed
   (with-temp-buffer
     (ebut:program "label" 'link-to-directory "/tmp")
     (goto-char (point-max))
