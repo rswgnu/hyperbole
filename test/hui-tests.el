@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    30-Jan-21 at 12:00:00
-;; Last-Mod:     30-Apr-23 at 16:43:06 by Mats Lidell
+;; Last-Mod:     30-Apr-23 at 17:51:22 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -685,6 +685,19 @@ With point on label suggest that ibut for rename."
     (should (equal (hattr:get (hbut:at-p) 'lbl-key) "new"))
     (goto-char (point-min))
     (should (equal (hattr:get (hbut:at-p) 'lbl-key) "label"))))
+
+(ert-deftest hui--ebut-rename-all-copies ()
+  "Rename an ebut shall rename all copies."
+  (with-temp-buffer
+    (ebut:program "label" 'link-to-directory "/tmp")
+    (end-of-line)
+    (hui-kill-ring-save (point-min) (point))
+    (yank)
+    (goto-char (point-min))
+    (should (looking-at-p "<(label)><(label)>"))
+    (hui:ebut-rename "label" "new")
+    (goto-char (point-min))
+    (should (looking-at-p "<(new)><(new)>"))))
 
 ;; This file can't be byte-compiled without `with-simulated-input' which
 ;; is not part of the actual dependencies, so:

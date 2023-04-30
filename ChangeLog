@@ -3,6 +3,7 @@
 * test/hui-tests.el (hui--ebut-rename)
     (hui--ebut-rename-only-button-with-that-label)
     (hui--ebut-rename-nonumbered-label, hui--ebut-rename-numbered-label)
+    (hui--ebut-rename-all-copies)
   test/hbut-tests.el (hypb:program-create-ebut-in-buffer-with-same-label):
     Tests for ebut label rename.
 
