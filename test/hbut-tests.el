@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    30-may-21 at 09:33:00
-;; Last-Mod:      9-Apr-23 at 00:55:07 by Mats Lidell
+;; Last-Mod:     30-Apr-23 at 11:04:33 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -162,6 +162,14 @@ Needed since hyperbole expands all links to absolute paths and
     (should (eq (hattr:get (hbut:at-p) 'actype) 'actypes::link-to-directory))
     (hbut-tests:should-match-tmp-folder (hattr:get (hbut:at-p) 'args))
     (should (equal (hattr:get (hbut:at-p) 'lbl-key) "label"))))
+
+(ert-deftest hypb:program-create-ebut-in-buffer-with-same-label ()
+  "Create button with same label shall add number so it is unique."
+  (with-temp-buffer
+    (ebut:program "label" 'link-to-directory "/tmp")
+    (should (equal (hattr:get (hbut:at-p) 'lbl-key) "label"))
+    (ebut:program "label" 'link-to-directory "/tmp")
+    (should (equal (hattr:get (hbut:at-p) 'lbl-key) "label:2"))))
 
 (ert-deftest hypb:program-create-link-to-file-line-and-column-but-in-file ()
   "Create button that links to file with line and column with hypb:program in buffer."

@@ -1,3 +1,11 @@
+2023-04-30  Mats Lidell  <matsl@gnu.org>
+
+* test/hui-tests.el (hui--ebut-rename)
+    (hui--ebut-rename-only-button-with-that-label)
+    (hui--ebut-rename-nonumbered-label, hui--ebut-rename-numbered-label)
+  test/hbut-tests.el (hypb:program-create-ebut-in-buffer-with-same-label):
+    Tests for ebut label rename.
+
 2023-04-30  Bob Weiner  <rsw@gnu.org>
 
 * hbut.el (hbut:label-regexp): If label does not contain an instance number
