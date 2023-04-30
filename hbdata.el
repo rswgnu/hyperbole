@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     2-Apr-91
-;; Last-Mod:     26-Apr-23 at 00:11:40 by Mats Lidell
+;; Last-Mod:     30-Apr-23 at 09:58:26 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -156,7 +156,7 @@ Search is case-insensitive.  Return list with elements:
 ;;; Button data operators
 ;;; ------------------------------------------------------------------------
 
-(defun hbdata:ebut-build (&optional mod-lbl-key but-sym)
+(defun hbdata:ebut-build (&optional mod-lbl-key but-sym new-lbl-key)
   "Construct button data from optional MOD-LBL-KEY and BUT-SYM.
 Modify BUT-SYM attributes.  MOD-LBL-KEY nil means create a new
 entry, otherwise modify existing one.  Nil BUT-SYM means use
@@ -165,7 +165,7 @@ entry, otherwise modify existing one.  Nil BUT-SYM means use
   (let* ((b (hattr:copy (or but-sym 'hbut:current) 'but))
 	 (l (hattr:get b 'loc))
 	 (key (or mod-lbl-key (hattr:get b 'lbl-key)))
-	 (new-key (if mod-lbl-key (hattr:get b 'lbl-key) key))
+	 (new-key (or new-lbl-key (if mod-lbl-key (hattr:get b 'lbl-key) key)))
 	 (lbl-instance) (creator) (create-time) (modifier) (mod-time)
 	 (entry) loc dir)
     (when l
@@ -495,13 +495,13 @@ Return non-nil if KEY-SRC is found or created, else nil."
 	       (backward-char 1)))))
     rtn))
 
-(defun hbdata:write (&optional orig-lbl-key but-sym)
+(defun hbdata:write (&optional orig-lbl-key but-sym new-lbl-key)
   "Try to write Hyperbole button data from optional ORIG-LBL-KEY and BUT-SYM.
 ORIG-LBL-KEY nil means create a new entry, otherwise modify existing one.
 BUT-SYM nil means use `hbut:current'.  If successful, return
 a button instance string to append to button label or t when first instance.
 On failure, return nil."
-  (let ((cons (hbdata:ebut-build orig-lbl-key but-sym))
+  (let ((cons (hbdata:ebut-build orig-lbl-key but-sym new-lbl-key))
 	entry lbl-instance)
     (unless (or (and buffer-file-name (not (file-writable-p buffer-file-name)))
 		(null cons))

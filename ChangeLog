@@ -1,3 +1,17 @@
+2023-04-30  Bob Weiner  <rsw@gnu.org>
+
+* hbut.el (hbut:label-regexp): If label does not contain an instance number
+    and 'no-delim' arg is nil, don't add a regexp matching to instance numbers,
+    use exact label match only.
+  hbdata.el (hbdata:write, hbdata:ebut-build): Add third arg, 'new-lbl-key'
+    for use when doing ebut renames.
+  hbut.el (ebut:edit, ebut:operate): Call above with third arg.
+
+* hbut.el (ebut:operate): Fix bug that caused hui:ebut-rename to rename
+    all numbered instances of a given label rather than just the particular
+    instance of a label because was using instance-flag from 'curr-label'
+    instead of 'new-label'.
+
 2023-04-29  Bob Weiner  <rsw@gnu.org>
 
 * man/hyperbole.texi (HyRolo Concepts): Document all supported types of

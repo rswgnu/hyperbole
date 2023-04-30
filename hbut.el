@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    18-Sep-91 at 02:57:09
-;; Last-Mod:     29-Apr-23 at 14:18:09 by Bob Weiner
+;; Last-Mod:     30-Apr-23 at 10:29:17 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -103,7 +103,7 @@ Return entry deleted (a list of attribute values) or nil."
       (run-hooks 'ebut-delete-hook)
       entry)))
 
-(defun    ebut:edit (&optional lbl-key but-sym)
+(defun    ebut:edit (&optional lbl-key but-sym new-lbl-key)
   "Edit explicit Hyperbole button from optional LBL-KEY and BUT-SYM.
 Defaults are the key for any button label at point and `hbut:current'.
 If successful, return button's instance number, except when instance
@@ -112,7 +112,7 @@ return nil.
 
 Do not save button data buffer."
   (save-excursion
-    (let ((lbl-instance (hbdata:write lbl-key but-sym)))
+    (let ((lbl-instance (hbdata:write lbl-key but-sym new-lbl-key)))
       (run-hooks 'ebut-edit-hook)
       lbl-instance)))
 
@@ -338,14 +338,15 @@ label; nil if label is already unique.  Signal an error when no such
 button is found in the current buffer."
   (let* ((lbl-key (ebut:label-to-key curr-label))
 	 (lbl-regexp (ebut:label-regexp lbl-key))
+	 (new-lbl-key (ebut:label-to-key new-label))
 	 (modify new-label)
-	 (instance-flag))
+	 (new-instance-flag))
     (unless new-label
       (setq new-label curr-label))
     (hattr:set 'hbut:current 'lbl-key (ebut:label-to-key new-label))
     (save-excursion
-      (when (setq instance-flag
-		  (if modify (ebut:edit lbl-key) (ebut:create)))
+      (when (setq new-instance-flag
+		  (if modify (ebut:edit lbl-key nil new-lbl-key) (ebut:create)))
 	(when (hmail:editor-p)
 	  (hmail:msg-narrow))))
     (cond (modify
@@ -356,19 +357,19 @@ button is found in the current buffer."
 	      (when at-but
 		(ebut:delimit (nth 1 but-key-and-pos)
 			      (nth 2 but-key-and-pos)
-			      instance-flag))
+			      new-instance-flag))
 	      (cond ((ebut:map
 		      (lambda (_lbl start end)
 			(delete-region start end)
 			(ebut:delimit
 			 (point)
 			 (progn (insert new-label) (point))
-			 instance-flag))
+			 new-instance-flag))
 		      lbl-regexp 'include-delims))
 		    (at-but)
 		    ((hypb:error "(ebut:operate): No button matching: %s" curr-label)))))
 
-	  (instance-flag
+	  (new-instance-flag
 	   ;; Add a new button recording its start and end positions
 	   (let (start end mark prev-point buf-lbl)
 	     (cond ((not curr-label)
@@ -406,16 +407,16 @@ button is found in the current buffer."
 		   (t (setq start (point))
 		      (insert curr-label)
 		      (setq end (point))))
-	     (ebut:delimit start end instance-flag)
+	     (ebut:delimit start end new-instance-flag)
 	     (goto-char start)))
 
 	  (t (hypb:error
 	      "(ebut:operate): Operation failed.  Check button attribute permissions: %s"
 	      hattr:filename)))
 
-    ;; Append any instance-flag string to the button label
-    (when (stringp instance-flag)
-      (setq new-label (concat new-label instance-flag))
+    ;; Append any new-instance-flag string to the button label
+    (when (stringp new-instance-flag)
+      (setq new-label (concat new-label new-instance-flag))
       (hattr:set 'hbut:current 'lbl-key (ebut:label-to-key new-label)))
 
     ;; Position point
@@ -430,8 +431,8 @@ button is found in the current buffer."
 		   (re-search-backward regexp nil t)))
 	     (goto-char (+ (match-beginning 0) (length ebut:label-start))))))
 
-    ;; instance-flag might be 't which we don't want to return.
-    (when (stringp instance-flag) instance-flag)))
+    ;; new-instance-flag might be 't which we don't want to return.
+    (when (stringp new-instance-flag) new-instance-flag)))
 
 
 
@@ -1309,10 +1310,10 @@ label; these default to `ebut:label-start' and `ebut:label-end'."
       (if no-delim
 	  regexp
 	(setq regexp (concat regexp
-			     (if (string-match (format "%s[0-9]+\\'" (regexp-quote hbut:instance-sep))
-					       lbl-key)
-				 ""
-			       (concat "\\(" (regexp-quote hbut:instance-sep) "[0-9]+\\)?"))
+;;			      (if (string-match (format "%s[0-9]+\\'" (regexp-quote hbut:instance-sep))
+;;					       lbl-key)
+;;				 ""
+;;			       (concat "\\(" (regexp-quote hbut:instance-sep) "[0-9]+\\)?"))
 			     "\\)" sep0 (regexp-quote (or end-delim ebut:label-end))))))))
 
 (defun    hbut:label-to-key (label)
