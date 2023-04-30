@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     7-Apr-94 at 17:17:39 by Bob Weiner
-;; Last-Mod:     12-Mar-23 at 15:12:24 by Bob Weiner
+;; Last-Mod:     30-Apr-23 at 16:07:52 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -33,6 +33,7 @@
 (require 'hload-path)
 ;;; This does not require any particular web browser.
 (require 'browse-url)
+(require 'eww) ;; Must load to override it's function `eww-browse-url' below.
 (require 'hbut)
 
 ;;; ************************************************************************
@@ -151,6 +152,37 @@ Return http urls unchanged.  Normalize remote paths."
 	       ;; return same buffer
 	       (current-buffer))
       (apply #'find-file-noselect path args))))
+
+;;;###autoload
+(defun eww-browse-url (url &optional new-window)
+  "Ask the EWW browser to load URL.
+
+Interactively, if the variable `browse-url-new-window-flag' is non-nil,
+loads the document in a new buffer tab on the window tab-line.  A non-nil
+prefix argument reverses the effect of `browse-url-new-window-flag'.
+
+If `tab-bar-mode' is enabled, then whenever a document would
+otherwise be loaded in a new buffer, it is loaded in a new tab
+in the tab-bar on an existing frame.  See more options in
+`eww-browse-url-new-window-is-tab'.
+
+Non-interactively, this uses the optional second argument NEW-WINDOW
+instead of `browse-url-new-window-flag'."
+  (when (or (eq eww-browse-url-new-window-is-tab t)
+            (and (eq eww-browse-url-new-window-is-tab 'tab-bar)
+                 tab-bar-mode))
+    (let ((tab-bar-new-tab-choice t))
+      (tab-new)))
+  (let ((hpath:display-where-alist
+	 (if new-window 'other-window hpath:display-where-alist)))
+    (hpath:display-buffer
+     (generate-new-buffer
+      (format "*eww-%s*" (url-host (url-generic-parse-url
+                                    (eww--dwim-expand-url url)))))))
+  (eww-mode)
+  (let ((url-allow-non-local-files t))
+    (eww url)))
+
 
 (provide 'hsys-www)
 

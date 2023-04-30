@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    04-Feb-90
-;; Last-Mod:     23-Apr-23 at 22:36:29 by Mats Lidell
+;; Last-Mod:     30-Apr-23 at 15:49:20 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1047,17 +1047,19 @@ documentation is found."
 								   nil t))))))
 
 		    ;; Print Emacs push-button attributes
-		    (when (eq cmd-sym 'push-button)
+		    (when (memq cmd-sym '(smart-push-button smart-push-button-help))
 		      (let* ((button (button-at (point)))
 			     (attributes (when button (hattr:list button))))
 			(when attributes
 			  (princ (format "%s BUTTON SPECIFICS:\n"
 					 (button-label button)))
 			  (hattr:report attributes)
-			  (princ (format "\n%s ACTION SPECIFICS:\n%s\n"
-					 (plist-get attributes 'action)
-					 (replace-regexp-in-string "^" "  " (actype:doc button t)
-								   nil t))))))
+			  ;; text-property buttons are represented as markers
+			  (unless (markerp button)
+			    (princ (format "\n%s ACTION SPECIFICS:\n%s\n"
+					   (plist-get attributes 'action)
+					   (replace-regexp-in-string "^" "  " (actype:doc button t)
+								     nil t)))))))
 
 		    (terpri)))
 		"")

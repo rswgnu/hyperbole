@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    04-Feb-89
-;; Last-Mod:     23-Apr-23 at 22:31:26 by Mats Lidell
+;; Last-Mod:     30-Apr-23 at 15:50:57 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -222,7 +222,7 @@ Its default value is `smart-scroll-down'.  To disable it, set it to
     ;;
     ;; Handle Emacs push buttons in buffers
     ((and (fboundp 'button-at) (button-at (point))) .
-     ((push-button nil (mouse-event-p last-command-event))
+     ((smart-push-button nil (mouse-event-p last-command-event))
       . (smart-push-button-help nil (mouse-event-p last-command-event))))
     ;;
     ;; If click in the minibuffer and reading an argument,
@@ -2011,8 +2011,22 @@ If key is pressed:
 ;;; ************************************************************************
 
 ;; Emacs push button support
+(defun smart-push-button (&optional pos use-mouse-action)
+  "Activate an Emacs push-button, including text-property follow-link buttons.
+Button is at optional POS or at point.  USE-MOUSE-ACTION prefers
+mouse-action to action property."
+  (or 
+   ;; Handle Emacs text-property buttons which don't work with 'button-activate'.
+   ;; Use whatever command is bound to RET within the button's keymap.
+   (call-interactively (or (lookup-key (get-text-property (point) 'keymap) (kbd "RET"))
+			   (lambda () (interactive) nil)))
+   ;; non-text-property push-buttons
+   (push-button nil (mouse-event-p last-command-event))))
+
 (defun smart-push-button-help (&optional pos use-mouse-action)
-  "Show help about a push button's action at optional POS or at point."
+  "Show help about a push button's action.
+Button is at optional POS or at point.  USE-MOUSE-ACTION prefers
+mouse-action to action property."
   (let* ((button (button-at (or pos (point))))
 	 (action (or (and use-mouse-action (button-get button 'mouse-action))
 		     (button-get button 'action)))
@@ -2021,7 +2035,7 @@ If key is pressed:
 	 (temp-buffer-show-function))
     (if (functionp action)
 	(describe-function action)
-      (with-help-window (print (format "Button's action is: '%s'" action))))))
+      (hkey-help t))))
 
 ;;; ************************************************************************
 ;;; smart-tar functions

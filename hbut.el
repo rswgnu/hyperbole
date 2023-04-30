@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    18-Sep-91 at 02:57:09
-;; Last-Mod:     30-Apr-23 at 10:29:17 by Bob Weiner
+;; Last-Mod:     30-Apr-23 at 14:43:05 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -797,9 +797,16 @@ Return TO-HBUT."
 
 (defun hattr:emacs-button-attributes (button)
   "Return a property list of an Emacs BUTTON."
-  (let ((category (hattr:emacs-button-is-p button)))
-    (when category
-      (symbol-plist category))))
+  (if (markerp button)
+      ;; If on a text property button, button-at will
+      ;; return a marker pointing to the button, not a
+      ;; button with attributes.
+      (with-current-buffer (marker-buffer button)
+	(when (get-text-property button 'button)
+	  (text-properties-at (point))))
+    (let ((category (hattr:emacs-button-is-p button)))
+      (when category
+	(symbol-plist category)))))
 
 (defun hattr:emacs-button-is-p (button)
   "If BUTTON is a valid Emacs button, return its category, else return nil."
@@ -812,13 +819,13 @@ Return TO-HBUT."
   "Return value of OBJ-SYMBOL's attribute ATTR-SYMBOL."
   (get obj-symbol attr-symbol))
 
-(defun    hattr:list (obj-symbol)
-  "Return a property list of OBJ-SYMBOL's attributes.
+(defun    hattr:list (obj)
+  "Return a property list of OBJ's attributes.
 Each pair of elements is: <attrib-name> <attrib-value>."
-  (cond ((hattr:emacs-button-attributes obj-symbol))
-	((symbolp obj-symbol)
-	 (symbol-plist obj-symbol))
-	(t (error "(hattr:list): Argument not a symbol: %s" obj-symbol))))
+  (cond ((hattr:emacs-button-attributes obj))
+	((symbolp obj)
+	 (symbol-plist obj))
+	(t (error "(hattr:list): Argument not a symbol: %s" obj))))
 
 (defun    hattr:memq (attr-symbol obj-symbol)
   "Return t if ATTR-SYMBOL is in OBJ-SYMBOL's attribute list, else nil."

@@ -1,5 +1,18 @@
 2023-04-30  Bob Weiner  <rsw@gnu.org>
 
+* hsys-www.el (require 'eww): Add.
+              (eww-browse-url): Override this function so it utilizes
+    Hyperbole's choice of where to display the browser.
+
+* hui-mouse.el (smart-push-button-help, hkey-alist): Update to handle Emacs
+    text-property push-buttons, for which button-activate does not work.
+  hbut.el (hattr:emacs-button-attributes): Fix to handle Emacs
+    text-property push-button attributes.
+  hmouse-drv.el (hkey-help): Fix to handle text property push-buttons that
+    return a buffer marker object (no attributes to print then).
+               (smart-push-button): Add and reference in hkey-help to trigger
+    push-button-specific help output.
+
 * hbut.el (hbut:label-regexp): If label does not contain an instance number
     and 'no-delim' arg is nil, don't add a regexp matching to instance numbers,
     use exact label match only.

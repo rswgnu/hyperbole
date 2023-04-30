@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    18-Sep-91 at 02:57:09
-;; Last-Mod:      8-Apr-23 at 13:33:01 by Bob Weiner
+;; Last-Mod:     30-Apr-23 at 14:40:46 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -498,13 +498,18 @@ Return nil when no documentation."
 	 (act (if is-hbut
 		  (and (hbut:is-p but) (or (hattr:get but 'action)
 					   (hattr:get but 'actype)))
-		(plist-get (hattr:list but) 'action)))
+		(let ((attrs (hattr:list but)))
+		  (or (plist-get attrs 'action)
+		      (when (plist-get attrs 'follow-link)
+			(plist-get attrs 'help-echo))))))
 	 (but-type (if is-hbut
 		       (hattr:get but 'categ)
 		     act))
 	 (sym-p (when act (symbolp act)))
 	 (end-line) (doc))
-    (cond ((and (functionp but-type)
+    (cond ((stringp but-type)
+	   (setq doc but-type))
+	  ((and (functionp but-type)
 		(setq doc (htype:doc but-type)))) ;; Is an implicit button, use its doc string.
 	  (sym-p
 	   (setq doc (htype:doc act))))

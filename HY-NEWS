@@ -396,7 +396,7 @@
 ** TEST CASES
 
   *** Hyperbole Automated Testing: Automated test cases increased to over
-      275.  Simply run 'make test-all' or 'make test' from the command-line
+      285.  Simply run 'make test-all' or 'make test' from the command-line
       when in the Hyperbole source directory and you should see all tests
       pass.  If any fail, you can press the Action Key to see the source of
       the failure.  Full testing is supported under POSIX systems only.  See
