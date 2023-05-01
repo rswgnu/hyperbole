@@ -78,6 +78,9 @@
 ;;; Start Initializations
 ;;; ************************************************************************
 
+;; FIXME: Just loading `hyperbole-autoloads.el' eagerly loads `hhist.el',
+;; `set.el', and `hact.el'.
+
 (defconst hyperbole-loading t
   "Temporary constant available for testing while Hyperbole is loading.")
 
@@ -154,9 +157,7 @@ Info documentation at \"(hyperbole)Top\".
 
 \\{hyperbole-mode-map}"
   :global t
-  :keymap 'hyperbole-mode-map
   :lighter hyperbole-mode-lighter
-  :require 'hyperbole
   (if hyperbole-mode
       (hyperbole--enable-mode)
     (hyperbole--disable-mode)))
@@ -561,6 +562,19 @@ frame, those functions by default still return the prior frame."
 (hyperbole-mode 1)
 
 (makunbound 'hyperbole-loading)
+
+;; Autoload this form so that when `package.el' activates Hyperbole's autoloads
+;; it also sets up Kotl's autoloads.
+;;;###autoload
+(let ((us (if (fboundp 'macroexp-file-name)
+              (macroexp-file-name) load-file-name)))
+  (when us
+    ;; FIXME: Contrary to the usual ELPA autoloads files, `kotl-autoloads'
+    ;; does not add its directory to `load-path', so let's do it here by
+    ;; hand.
+    (add-to-list 'load-path
+                 (expand-file-name "kotl" (file-name-directory us)))
+    (require 'kotl-autoloads nil t)))
 
 (provide 'hyperbole)
 
