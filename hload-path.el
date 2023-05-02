@@ -25,14 +25,14 @@
 ;;; Public variables
 ;;; ************************************************************************
 
-;;;###autoload
+
 (defvar hyperb:microsoft-os-p
   (memq system-type '(ms-windows windows-nt ms-dos win32))
   "Non-nil iff Hyperbole is running under a Microsoft OS but not for WSL.
 WSL is Windows Subsystem for Linux.
 Use `hyperb:wsl-os-p' to test if running under WSL.")
 
-;;;###autoload
+
 (defvar hyperb:wsl-os-p
   (and (eq system-type 'gnu/linux) (executable-find "wsl.exe") t)
   "T iff Hyperbole is running under Microsoft Windows Subsystem for Linux (WSL).")
@@ -72,7 +72,9 @@ Valid values end with a directory separator character.")
 ;;; Hyperbole test importation settings
 ;;; ************************************************************************
 
-(add-to-list 'load-path (expand-file-name "test" hyperb:dir))
+;; FIXME: This should be done only when running the tests, not in
+;; normal sessions.
+;;(add-to-list 'load-path (expand-file-name "test" hyperb:dir))
 
 ;; Ensure final name (after resolving all links) of hyperb:dir is
 ;; used after setting up load-path; otherwise, Hyperbole may fail

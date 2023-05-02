@@ -28,7 +28,7 @@
 
 (defconst hyperb:version "8.0.1pre" "GNU Hyperbole revision number.")
 
-;;;###autoload
+
 (defvar hyperb:mouse-buttons
   (if (or (and hyperb:microsoft-os-p (not (memq window-system '(w32 w64 x))))
 	  (memq window-system '(ns dps)))
