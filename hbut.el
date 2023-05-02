@@ -22,6 +22,7 @@
 (eval-and-compile (mapc #'require '(cl-lib elisp-mode help-mode hversion
 				    hmoccur hbmap htz hbdata hact
 				    hui-select view)))
+(require 'hmouse-drv) ;For `hui--ignore-action-key-depress-prev-point'.
 
 ;;; ************************************************************************
 ;;; Public declarations
@@ -217,6 +218,8 @@ Return nil if no matching button is found."
 (defalias 'ebut:key-src-set-buffer #'hbut:key-src-set-buffer)
 (defalias 'ebut:key-src-fmt        #'hbut:key-src-fmt)
 (defalias 'ebut:key-to-label       #'hbut:key-to-label)
+
+(defvar hbut:max-len)
 
 (defun    ebut:label-p (&optional as-label start-delim end-delim pos-flag two-lines-flag)
   "Return key for the explicit button label that point is within, else nil.
@@ -694,7 +697,7 @@ Return nil if no matching button is found."
 (defun    gbut:help (label)
   "Display help for Hyperbole global button with LABEL."
   (interactive (list (hargs:read-match "Report on global button labeled: "
-				       (mapcar 'list (gbut:label-list))
+				       (mapcar #'list (gbut:label-list))
 				       nil t nil 'hbut)))
   (let* ((lbl-key (hbut:label-to-key label))
 	 (but (hbut:get lbl-key nil (gbut:file))))
@@ -1523,7 +1526,7 @@ If a file, always return a full path if optional FULL-FLAG is non-nil."
 	       (expand-file-name file default-directory)
 	     file)))))
 
-(defalias 'hbut:summarize 'hbut:report)
+(defalias 'hbut:summarize #'hbut:report)
 
 (defun    hbut:to (lbl-key)
   "Find the nearest explicit button or labeled/named implicit button.
@@ -1622,8 +1625,12 @@ associated arguments from the button."
       (unless (string-match "::" type-name)
 	(setq ibut-type-symbol (intern-soft (concat "ibtypes::" type-name))))
       (when ibut-type-symbol
-	(let ((types (htype:category 'ibtypes))
+	(let (;; (types (htype:category 'ibtypes))
 	      ;; 'types' is a global var used in (hact) function, don't delete.
+	      ;; FIXME: I can't see where `types' is used as a global var
+	      ;; "in (hact) function", and the above binding was treated
+	      ;; by Emacs as lexically-scoped so it wasn't affecting any
+	      ;; other global `types' definition anyway.
 	      (hrule:action 'actype:identity))
 	  (funcall ibut-type-symbol))))))
 
@@ -1896,6 +1903,9 @@ Store new button attributes in the symbol, 'hbut:current."
    [&optional ["&optional" arg &rest arg]]
    &optional ["&rest" arg])))
 
+(defvar ibut:label-start)
+(defvar ibut:label-end)
+
 (defun    ibut:delete (&optional but-sym)
   "Delete Hyperbole implicit button based on optional BUT-SYM.
 Default is the symbol hbut:current'.
@@ -2132,10 +2142,10 @@ positions at which the button label delimiter begins and ends."
     (error "(ibut:key): Argument is not a Hyperbole implicit button symbol, `%s'"
 	   ibut)))
 
-(defalias 'ibut:to-key-src   'hbut:to-key-src)
-(defalias 'ibut:key-to-label 'hbut:key-to-label)
-(defalias 'ibut:label-to-key 'hbut:label-to-key)
-(defalias 'map-ibut          'ibut:map)
+(defalias 'ibut:to-key-src   #'hbut:to-key-src)
+(defalias 'ibut:key-to-label #'hbut:key-to-label)
+(defalias 'ibut:label-to-key #'hbut:label-to-key)
+(defalias 'map-ibut          #'ibut:map)
 
 (defun    ibut:map (but-func &optional regexp-match include-delims)
   "Apply BUT-FUNC to the visible, named implicit buttons.
@@ -2475,7 +2485,7 @@ current."
            t))
 	(t (error "(ibut:rename): Button '%s' not found in visible portion of buffer." old-lbl))))
 
-(defalias 'ibut:summarize 'hbut:report)
+(defalias 'ibut:summarize #'hbut:report)
 
 (defun    ibut:to (name-key)
   "Find the nearest implicit button with NAME-KEY (a name or name key).
@@ -2689,8 +2699,6 @@ type for ibtype is presently undefined."
       `(progn (symtable:add ',type symtable:ibtypes)
 	      (htype:create ,type ibtypes ,doc nil ,at-func
 			    '(to-p ,to-func style ,style))))))
-
-(put      'defib 'lisp-indent-function 'defun)
 
 ;; Support edebug-defun for interactive debugging of ibtypes
 (def-edebug-spec defib
