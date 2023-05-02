@@ -169,7 +169,7 @@ Use for language major modes."
     (Info-mode "[^ \t\n]")
     (outline-mode "[^*]")
     (text-mode  "[^ \t\n*]"))
-  "List of (major-mode . non-terminator-line-regexp) elements.
+  "List of (MAJOR-MODE . NON-TERMINATOR-LINE-REGEXP) elements.
 Used to avoid early dropoff when marking indented code.")
 
 (defvar hui-select-indent-end-regexp-alist
@@ -185,7 +185,7 @@ Used to avoid early dropoff when marking indented code.")
     (indented-text-mode "[ \t]*$")
     (Info-mode "[ \t]*$")
     (text-mode  "[ \t]*$"))
-  "List of (major-mode . terminator-line-regexp) elements.
+  "List of (MAJOR-MODE . TERMINATOR-LINE-REGEXP) elements.
 Used to include a final line when marking indented code.")
 
 (defcustom hui-select-char-p nil
@@ -366,33 +366,35 @@ Also, add language-specific syntax setups to aid in thing selection."
   ;;
   ;; Make tag begin and end delimiters act like grouping characters,
   ;; for easy syntactical selection of tags.
-  (let (hook-sym mode-str)
-    (mapc (lambda (mode)
-            (setq mode-str (symbol-name mode)
-                  hook-sym (intern (concat mode-str "-hook"))
-                  syntax-table-sym (intern (concat mode-str "-syntax-table"))
-                  keymap-sym (intern (concat mode-str "-map")))
-            (var:add-and-run-hook hook-sym
-			          `(lambda ()
-                                     (let ((syntax-table (symbol-value ',syntax-table-sym))
-                                           (keymap (symbol-value ',keymap-sym)))
-			               (modify-syntax-entry ?\< "(>" syntax-table)
-			               (modify-syntax-entry ?\> ")<" syntax-table)
-			               (modify-syntax-entry ?\{ "(}" syntax-table)
-			               (modify-syntax-entry ?\} "){" syntax-table)
-			               (modify-syntax-entry ?\" "\"" syntax-table)
-			               (modify-syntax-entry ?=  "."  syntax-table)
-			               (modify-syntax-entry ?.  "_"  syntax-table)
-			               (setq sentence-end "\\([^ \t\n\r>]<\\|>\\(<[^>]*>\\)*\\|[.?!][]\"')}]*\\($\\| $\\|\t\\|  \\)\\)[ \t\n]*")
-			               (define-key keymap "\C-c." 'hui-select-goto-matching-tag))))
-            (unless (eq mode 'web-mode)
-              (var:add-and-run-hook
-               hook-sym (lambda ()
-			  (make-local-variable 'comment-start)
-			  (make-local-variable 'comment-end)
-			  (setq comment-start "<!--" comment-end "-->")
-			  (make-local-variable 'sentence-end)))))
-          hui-select-markup-modes)))
+  (dolist (mode hui-select-markup-modes)
+    (let* ((mode-str (symbol-name mode))
+           (hook-sym (intern (concat mode-str "-hook")))
+           (syntax-table-sym (intern (concat mode-str "-syntax-table")))
+           (keymap-sym (intern (concat mode-str "-map"))))
+      ;; FIXME: Don't add lambdas to hooks.  Instead give names to
+      ;; those functions and add the symbol to the hook.  Makes it
+      ;; easier/possible to remove/update the function on the hook.
+      (var:add-and-run-hook hook-sym
+			    (lambda ()
+                              (let ((syntax-table (symbol-value syntax-table-sym))
+                                    (keymap (symbol-value keymap-sym)))
+			        (modify-syntax-entry ?\< "(>" syntax-table)
+			        (modify-syntax-entry ?\> ")<" syntax-table)
+			        (modify-syntax-entry ?\{ "(}" syntax-table)
+			        (modify-syntax-entry ?\} "){" syntax-table)
+			        (modify-syntax-entry ?\" "\"" syntax-table)
+			        (modify-syntax-entry ?=  "."  syntax-table)
+			        (modify-syntax-entry ?.  "_"  syntax-table)
+			        (setq sentence-end "\\([^ \t\n\r>]<\\|>\\(<[^>]*>\\)*\\|[.?!][]\"')}]*\\($\\| $\\|\t\\|  \\)\\)[ \t\n]*")
+			        (define-key keymap "\C-c." #'hui-select-goto-matching-tag))))
+      (unless (eq mode 'web-mode)
+        (var:add-and-run-hook
+         hook-sym (lambda ()
+		    ;; FIXME: Why not rely on the major mode's own settings?
+		    (make-local-variable 'comment-end) ;FIXME: Why?
+		    (setq-local comment-start "<!--" comment-end "-->")
+		    (make-local-variable 'sentence-end) ;FIXME: Why?
+		    ))))))
 
 (defun hui-select-get-region-boundaries ()
   "Return the (START . END) boundaries of region for `hui-select-thing'."
@@ -472,7 +474,7 @@ displayed in the minibuffer."
 ;;;###autoload
 (defun hui-select-goto-matching-tag ()
   "Move point to start of the tag paired with closest tag point is at or precedes.
-Enabled in major modes in `hui-select-markup-modes.  Returns t if
+Enabled in major modes in `hui-select-markup-modes'.  Returns t if
 point is moved, else nil.  Signals an error if no tag is found
 following point or if the closing tag does not have a `>'
 terminator character."
