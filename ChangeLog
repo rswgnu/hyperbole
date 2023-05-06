@@ -1,3 +1,7 @@
+2023-05-06  Bob Weiner  <rsw@gnu.org>
+
+* man/im/action-key-animation.gif: Update this animated gif.
+
 2023-04-30  Mats Lidell  <matsl@gnu.org>
 
 * test/hui-tests.el (hui--ebut-rename)
@@ -50,7 +54,7 @@
 2023-04-23  Bob Weiner  <rsw@gnu.org>
 
 * kotl/klink.el (klink:at-p):
-  hbut.el (hbut:outside-comment-p): Make the inside a comment prog
+  hbut.el (hbut:outside-comment-p): Make the inside of comment prog
     mode tests in each of these use the same conditional tests.
 
 * Makefile (version): Fix so this outputs the list of files whose
