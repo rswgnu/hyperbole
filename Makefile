@@ -3,7 +3,7 @@
 # Author:       Bob Weiner
 #
 # Orig-Date:    15-Jun-94 at 03:42:38
-# Last-Mod:     27-Feb-23 at 16:59:49 by Bob Weiner
+# Last-Mod:     23-Apr-23 at 14:36:37 by Bob Weiner
 #
 # Copyright (C) 1994-2023  Free Software Foundation, Inc.
 # See the file HY-COPY for license information.
@@ -166,8 +166,8 @@ PRELOADS = $(SITE_PRELOADS) -l ./hload-path.el -l ./hversion.el -l ./hyperbole.e
 
 # Compile in batch mode.  Load site-lisp/site-start.el, which may set load-path.
 # Show complete expression; do not abbreviate any exprs in batch logs with ...
-BATCHFLAGS = -batch -Q --eval "(progn (setq debug-on-error t) (setq backtrace-line-length 0) \
-                                 (message \"  emacs-version = %s\n  system-configuration = %s\n  emacs = %s%s\" emacs-version system-configuration invocation-directory invocation-name))"
+BATCHFLAGS = --batch --quick --eval "(progn (setq debug-on-error t) (setq backtrace-line-length 0) \
+                                 (message \"  emacs-version = %s\n  system-configuration = %s\n  emacs = %s%s\n  load-path = %s\" emacs-version system-configuration invocation-directory invocation-name load-path))"
 
 EMACS_BATCH=$(EMACS) $(BATCHFLAGS) $(PRELOADS)
 EMACS_PLAIN_BATCH=$(EMACS) $(BATCHFLAGS)
@@ -349,8 +349,14 @@ clean:
 
 version: doc
 	@ echo ""
-	@ echo "Any fgrep output means the version number has not been updated in that file."
-	test 0 -eq $$(fgrep -L $(HYPB_VERSION) hyperbole-pkg.el Makefile HY-ABOUT HY-NEWS README.md hversion.el hyperbole.el man/hyperbole.texi man/version.texi | wc -c) || exit 1
+	@ fgrep -L $(HYPB_VERSION) hyperbole-pkg.el Makefile HY-ABOUT HY-NEWS README.md hversion.el hyperbole.el man/hyperbole.texi man/version.texi > WRONG-VERSIONS
+	@ # If any file(s) have wrong version number, print them and exit with code 1
+	@ if [ -s WRONG-VERSIONS ]; then \
+	  echo "The following files do not have the proper Hyperbole version number, $(HYPB_VERSION):"; \
+	  cat WRONG-VERSIONS; rm -f WRONG-VERSIONS; exit 1; \
+	else \
+	  rm -f WRONG-VERSIONS; \
+	fi
 	@ echo ""
 
 # Build the Info, HTML and Postscript versions of the user manual and README.md.html.

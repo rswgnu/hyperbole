@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     1-Nov-91 at 00:44:23
-;; Last-Mod:     11-Mar-23 at 12:36:49 by Bob Weiner
+;; Last-Mod:     23-Apr-23 at 11:58:33 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1108,15 +1108,14 @@ end-pos) or nil."
 	;; if `non-exist' is nil, look for any existing whitespace
 	;; delimited filename at point.  If match consists of only
 	;; punctuation, like . or .., don't treat it as a pathname.
-	;; It shell modes, it must be tab delimited.
+	;; In shell modes, it must be tab delimited.
 	(unless non-exist
 	  (let* ((space-delimiter (if (derived-mode-p #'shell-mode)
 				      "\t"
 				    "[ \t]"))
 		 (triplet (hargs:delimited (format "^\\|\\(%s\\|[\]\[()<>\;&,@]\\)+"
 						   space-delimiter)
-					   (format "\\([\]\[()<>\;&,@]\\|:*\\s-\\)+\\|$"
-						   space-delimiter)
+					   "\\([\]\[()<>\;&,@]\\|:*\\s-\\)+\\|$"
 					   t t t))
 		 (p (car triplet))
 		 (punc (char-syntax ?.)))

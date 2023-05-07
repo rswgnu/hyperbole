@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 21:42:03
-;; Last-Mod:     29-Mar-23 at 22:13:40 by Bob Weiner
+;; Last-Mod:     29-Apr-23 at 16:26:39 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -456,12 +456,15 @@ Signal an error if any problem occurs."
 	(hypb:error "(ebut-rename): Can't rename %s since no button data"
 		    curr-label)))
   (cond (new-label
-	 (ebut:operate curr-label new-label)
-	 (setq hui:ebut-label-prev nil)
-	 (message "Renamed from '%s' to '%s'." curr-label new-label))
+	 (if (equal curr-label new-label)
+	     (message "Current and new label are the same; '%s' unchanged."
+		      curr-label)
+	   (ebut:operate curr-label new-label)
+	   (setq hui:ebut-label-prev nil)
+	   (message "Renamed from '%s' to '%s'." curr-label new-label)))
 	(curr-label
 	 (setq hui:ebut-label-prev curr-label)
-	 (message "Edit button label and use same command to finish rename."))
+	 (message "Edit button label and use the same command to finish rename."))
 	(t (hypb:error "(ebut-rename): Move point to within a button label"))))
 
 (defun hui:ebut-search (string &optional match-part)
@@ -482,20 +485,22 @@ a menu to find any of the occurrences."
 	(progn
 	  (set-buffer out-buf)
 	  (moccur-mode)
-	  (if (fboundp 'outline-minor-mode)
-	      (and (progn (goto-char 1)
-			  (search-forward "\C-m" nil t))
-		   (outline-minor-mode 1)))
-	  (if (fboundp 'hproperty:but-create)
-	      (hproperty:but-create nil nil (regexp-quote
-					     (if match-part string
-					       (concat ebut:label-start string ebut:label-end)))))
+	  (when (fboundp 'outline-minor-mode)
+	    (and (progn (goto-char 1)
+			(search-forward "\C-m" nil t))
+		 (outline-minor-mode 1)))
+	  (when (fboundp 'hproperty:but-create)
+	    (hproperty:but-create (regexp-quote
+				   (if match-part
+				       string
+				     (concat ebut:label-start string ebut:label-end)))))
 	  (goto-char (point-min))
 	  (pop-to-buffer out-buf)
-	  (if (called-interactively-p 'interactive) (message "%d match%s." total
-							     (if (> total 1) "es" ""))
+	  (if (called-interactively-p 'interactive)
+	      (message "%d match%s." total (if (> total 1) "es" ""))
 	    total))
-      (if (called-interactively-p 'interactive) (message "No matches.")
+      (if (called-interactively-p 'interactive)
+	  (message "No matches.")
 	total))))
 
 (defun hui:gbut-create (lbl ibut-flag)
@@ -1264,8 +1269,8 @@ With a prefix argument, also delete the button text between the delimiters."
 		(let ((buffer-read-only) start-delim-pos end-delim-pos text-end)
 		  (setq start-delim-pos (match-beginning 0)
 			end-delim-pos (match-end 0))
-		  (when (fboundp 'hproperty:but-delete)
-		    (hproperty:but-delete start-delim-pos))
+		  (when (fboundp 'hproperty:but-clear)
+		    (hproperty:but-clear start-delim-pos))
 		  (goto-char (- (point) (length ebut:label-end)))
 		  (skip-chars-backward " \t\n\r")
 		  (setq text-end (point))
@@ -1619,12 +1624,14 @@ Buffer without File      link-to-buffer-tmp"
 						     (match-end 0)
 						   0)))))
 				    (save-excursion
-				      (end-of-line)
-				      (let ((heading (buffer-substring-no-properties
-						      (point)
-						      (line-end-position)))
-					    (occur 1))
-					(while (search-backward heading nil t)
+				      (let ((heading (string-trim
+						      (buffer-substring-no-properties
+						       (point)
+						       (line-end-position))))
+					    (occur 0))
+					(end-of-line)
+					(while (and (not (string-empty-p heading))
+						    (search-backward heading nil t))
 					  (setq occur (1+ occur)))
 					(list 'link-to-string-match
 					      heading occur buffer-file-name))))

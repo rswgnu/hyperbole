@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    04-Feb-89
-;; Last-Mod:      1-Mar-23 at 21:45:58 by Bob Weiner
+;; Last-Mod:     30-Apr-23 at 15:50:57 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -50,6 +50,22 @@
 (require 'imenu)
 
 (eval-when-compile (require 'tar-mode))
+
+;;; ************************************************************************
+;;; Public declarations
+;;; ************************************************************************
+
+;; Functions from abstract mail and news interface. See "hmail.el"
+(declare-function lmail:delete nil)
+(declare-function lmail:undelete nil)
+(declare-function rmail:msg-prev nil)
+(declare-function lmail:goto nil)
+(declare-function lmail:expunge nil)
+(declare-function rmail:msg-next nil)
+(declare-function lmail:undelete-all nil)
+
+(declare-function helm-get-actions-from-current-source "ext:helm-core")
+(declare-function helm-get-default-action "ext:helm-core")
 
 ;;; ************************************************************************
 ;;; Public variables
@@ -206,7 +222,7 @@ Its default value is `smart-scroll-down'.  To disable it, set it to
     ;;
     ;; Handle Emacs push buttons in buffers
     ((and (fboundp 'button-at) (button-at (point))) .
-     ((push-button nil (mouse-event-p last-command-event))
+     ((smart-push-button nil (mouse-event-p last-command-event))
       . (smart-push-button-help nil (mouse-event-p last-command-event))))
     ;;
     ;; If click in the minibuffer and reading an argument,
@@ -1067,7 +1083,8 @@ a helm section header."
 
 (defun smart-helm-get-current-action (&optional action)
   "Return the helm default action.
-Get it from optional ACTION, the helm saved action or from the selected helm item."
+Get it from optional ACTION, the helm saved action or from the
+selected helm item."
   (helm-get-default-action (or action
                                helm-saved-action
                                (if (get-buffer helm-action-buffer)
@@ -1994,8 +2011,22 @@ If key is pressed:
 ;;; ************************************************************************
 
 ;; Emacs push button support
+(defun smart-push-button (&optional pos use-mouse-action)
+  "Activate an Emacs push-button, including text-property follow-link buttons.
+Button is at optional POS or at point.  USE-MOUSE-ACTION prefers
+mouse-action to action property."
+  (or 
+   ;; Handle Emacs text-property buttons which don't work with 'button-activate'.
+   ;; Use whatever command is bound to RET within the button's keymap.
+   (call-interactively (or (lookup-key (get-text-property (point) 'keymap) (kbd "RET"))
+			   (lambda () (interactive) nil)))
+   ;; non-text-property push-buttons
+   (push-button nil (mouse-event-p last-command-event))))
+
 (defun smart-push-button-help (&optional pos use-mouse-action)
-  "Show help about a push button's action at optional POS or at point."
+  "Show help about a push button's action.
+Button is at optional POS or at point.  USE-MOUSE-ACTION prefers
+mouse-action to action property."
   (let* ((button (button-at (or pos (point))))
 	 (action (or (and use-mouse-action (button-get button 'mouse-action))
 		     (button-get button 'action)))
@@ -2004,7 +2035,7 @@ If key is pressed:
 	 (temp-buffer-show-function))
     (if (functionp action)
 	(describe-function action)
-      (with-help-window (print (format "Button's action is: '%s'" action))))))
+      (hkey-help t))))
 
 ;;; ************************************************************************
 ;;; smart-tar functions

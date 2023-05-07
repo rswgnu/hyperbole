@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    15-Nov-93 at 11:57:05
-;; Last-Mod:      4-Feb-23 at 15:14:30 by Bob Weiner
+;; Last-Mod:      9-Apr-23 at 18:42:50 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -21,7 +21,6 @@
 
 (require 'kfile)
 (require 'hyrolo)
-(require 'kotl-mode)
 
 ;;; ************************************************************************
 ;;; Public variables
@@ -52,10 +51,10 @@ as the initial set of children of the current cell, if any.
 
 ;;;###autoload
 (defvar kimport:suffix-alist
-  '(("\\.org$" . kimport:star-outline)
-    ("\\.otl$" . kimport:star-outline)
-    ("\\.aug$" . kimport:aug-post-outline))
-  "Alist of (buffer-name-suffix-regexp . importation-function) elements.
+  '((".org" . kimport:star-outline)
+    (".otl" . kimport:star-outline)
+    (".aug" . kimport:aug-post-outline))
+  "Alist of (buffer-name-suffix . importation-function) elements.
 This determines the type of importation done on a file when `kimport:file' is
 called.  Each importation-function must take two arguments, a buffer/file to
 import and a buffer/file into which to insert the imported elements.
@@ -65,7 +64,7 @@ imported cells as the initial set of children of the current cell, if any.
    .org  - import format is an Emacs outline whose entries begin with asterisks;
    .otl  - import format is an Emacs outline whose entries begin with asterisks;
    .kot
-   .kotl - import format is a Koutline
+   .kotl - import format is a Koutline;
    .aug  - import format is an Augment post-numbered outline
            (see https://dougengelbart.org/content/view/148/).")
 
@@ -100,18 +99,10 @@ information on specific importation formats."
 	(function))
     (set-buffer import-buf-name)
     (unless (setq function (cdr (assq major-mode kimport:mode-alist)))
-      (let ((import-suffix (if (string-match "\\..+\\'" import-buf-name)
-			       (match-string 0 import-buf-name)))
-	    (suffix-alist kimport:suffix-alist)
-	    suffix-regexp)
-	(while (and import-suffix suffix-alist)
-	  (setq suffix-regexp (car (car suffix-alist))
-		suffix-alist (cdr suffix-alist))
-	  (when (string-match suffix-regexp import-suffix)
-	    (setq function (cdr (car suffix-alist))
-		  suffix-alist nil)))
-	(unless function
-	  (setq function (cdr (assq t kimport:mode-alist))))))
+      (let ((import-suffix (when (string-match "\\.[^.]+\\'" import-buf-name)
+			     (match-string 0 import-buf-name))))
+	(setq function (or (cdr (assoc import-suffix kimport:suffix-alist))
+			   (cdr (assq t kimport:mode-alist))))))
     (funcall function import-from output-to children-flag)))
 
 (defun kimport:insert-buffer (buffer)
@@ -259,9 +250,10 @@ placed.
   (when (and buffer-file-name (directory-name-p output-to))
     (setq output-to (concat (file-name-sans-extension buffer-file-name) ".kotl")))
   (let ((output-level 1) (klabel "1")
-	initially-empty-output no-renumber orig-point count total)
+	max-pos-and-count initially-empty-output no-renumber orig-point count total)
     ;; Don't change the order of import-from and output-to inits here.
     (setq import-from (kimport:copy-and-set-buffer import-from)
+	  ;; Set current buffer to output-to
 	  output-to (kimport:initialize output-to t)
 	  orig-point (point)
 	  initially-empty-output (zerop (- (point-max) (point-min)))
@@ -283,25 +275,31 @@ placed.
 	(insert "* "))
       (goto-char (point-min))
       ;; Total number of top-level cells.
-      (setq total (count-matches (concat kimport:star-heading "[ \t\n\r]")))
+      (setq total (count-matches "^[ \t]*\\*\\s-"))
       (unless initially-empty-output
 	;; Insert first cell as sibling of current cell.
 	(set-buffer output-to)
-	(if children-flag
-	    ;; Insert as children.
-	    (progn (setq klabel (klabel:child (kcell-view:label))
-			 output-level (klabel:level klabel))
-		   ;; Move to end of this cell since cell insertion will
-		   ;; occur at point.
-		   (goto-char (kcell-view:end)))
-	  ;; Insert as successors.
-	  (setq klabel (klabel:increment (kcell-view:label))
-		output-level (klabel:level klabel))
-	  ;; Move to start of line of next tree since cell insertion will occur
-	  ;; at point.
-	  (goto-char (kotl-mode:tree-end))))
-      (setq count (kimport:star-entries
-		   import-from output-to klabel output-level 1 0 total)))
+	(cond (children-flag
+	       ;; Insert as children.
+	       (setq klabel (klabel:child (kcell-view:label))
+		     output-level (klabel:level klabel))
+	       ;; Move to end of this cell since cell insertion will
+	       ;; occur at point.
+	       (goto-char (kcell-view:end)))
+	      ((string-empty-p (kcell-view:contents))
+	       ;; This is an unused cell, fill in from here.
+	       (setq klabel (kcell-view:label)
+		     output-level (klabel:level klabel))
+	       (goto-char (kcell-view:start)))
+	      (t ;; Insert as successors.
+	       (setq klabel (klabel:increment (kcell-view:label))
+		     output-level (klabel:level klabel))
+	       ;; Move to start of line of next tree since cell insertion will occur
+	       ;; at point.
+	       (goto-char (kotl-mode:tree-end)))))
+      (setq max-pos-and-count (kimport:star-entries
+			       import-from output-to klabel output-level 1 0 total 0)
+	    count (cdr max-pos-and-count)))
     (pop-to-buffer output-to)
     (kfile:narrow-to-kcells)
     (unless no-renumber
@@ -455,9 +453,7 @@ in IMPORT-FROM, used to show a running tally of the imported statements."
 		(re-search-forward cell-end-regexp nil t)
 		(<= import-level
 		   (setq statement-level
-			 (klabel:level-alpha
-			  (buffer-substring
-			   (match-beginning 1) (match-end 1))))))
+			 (klabel:level-alpha (match-string 1)))))
       (setq end-contents (match-beginning 0)
 	    end (match-end 0))
       (goto-char start)
@@ -467,9 +463,7 @@ in IMPORT-FROM, used to show a running tally of the imported statements."
       (setq subtree-p (save-excursion
 			(if (re-search-forward cell-end-regexp nil t)
 			    (< statement-level
-			       (klabel:level-alpha
-				(buffer-substring
-				 (match-beginning 1) (match-end 1)))))))
+			       (klabel:level-alpha (match-string 1))))))
       (with-current-buffer output-to
 	;; Add the cell starting at point.
 	(kview:add-cell klabel output-level contents nil t)
@@ -551,7 +545,7 @@ OUTPUT-TO within this function, point is left at the end of this buffer so
 that imported cells will be appended to the buffer.  For a new file, this
 means the first cell imported will become the first outline cell.
 
-If a non-nil third argument, CHILDREN-P, is given to the caller of this
+If a non-nil third argument, CHILDREN-FLAG, is given to the caller of this
 function and OUTPUT-TO contains at least one cell, then the imported cells
 will be added as children of the cell where this function leaves point
 \(either the current cell or for a newly read in outline, the last cell)."
@@ -559,10 +553,10 @@ will be added as children of the cell where this function leaves point
 	  (when output-to
 	    (or (get-buffer output-to) (get-file-buffer output-to))))
 	 (output-exists-p
-	  (when output-to
-	    (or output-existing-buffer-p (file-exists-p output-to))
-	   ;; current buffer will be used for output and it exists.
-	   t)))
+	  (if output-to
+	      (or output-existing-buffer-p (file-exists-p output-to))
+	    ;; current buffer will be used for output and it exists.
+	    t)))
     (setq output-to (if output-to
 			(or (get-buffer output-to)
 			    (find-file-noselect output-to))
@@ -579,10 +573,12 @@ will be added as children of the cell where this function leaves point
 	  (error
 	   "(kimport:initialize): Second arg, %s, must be a koutline file."
 	   (buffer-name output-to)))
-      (unless (eq major-mode 'kotl-mode)
+      (when erase-flag
+	(widen)
+	(delete-region (point-min) (point-max)))
+      (unless (kfile:is-p)
 	(setq kview nil)
-	(kotl-mode))
-      (delete-region (point-min) (point-max))))
+	(kotl-mode))))
   output-to)
 
 (defun kimport:kcells (import-from output-to klabel output-level
@@ -626,7 +622,7 @@ in IMPORT-FROM, used to show a running tally of the imported cells."
   count)
 
 (defun kimport:star-entries (import-from output-to klabel output-level
-                             import-level count total)
+                             import-level count total max-pos)
   "Insert visible star outline entries from IMPORT-FROM into existing OUTPUT-TO.
 
 KLABEL is the label to use for the first imported entry.
@@ -635,31 +631,36 @@ IMPORT-LEVEL is the depth of the current entry in the import file,
 \(initially 1).
 
 COUNT of inserted entries starts at 0.  TOTAL is the total number of entries
-in IMPORT-FROM, used to show a running tally of the imported entries."
+in IMPORT-FROM, used to show a running tally of the imported entries.
+
+Return a cons of MAX-POS and COUNT."
   (set-buffer import-from)
   (let ((start (point))
 	(hyrolo-entry-regexp kimport:star-heading)
 	(case-fold-search)
+	max-pos-and-count
 	subtree-p end contents node-level child-label)
     ;; While find cells at import-level or deeper ...
     (while (and (re-search-forward hyrolo-entry-regexp nil t)
 		(<= import-level
 		    (setq node-level
-			  (length
-			   (buffer-substring
-			    (match-beginning 1) (match-end 1))))))
+			  (length (match-string 1)))))
       (skip-chars-forward " \t")
       (setq start (point)
 	    end (hyrolo-to-entry-end)
 	    subtree-p (if (looking-at hyrolo-entry-regexp)
 			  (< node-level
-			     (length (buffer-substring
-				      (match-beginning 1) (match-end 1))))))
+			     (length (match-string 1)))))
       (skip-chars-backward "\n\r")
       (setq contents (kimport:unindent-region start (point)))
       (with-current-buffer output-to
-	;; Add the cell starting at point.
-	(kview:add-cell klabel output-level contents nil t)
+	(if (and (zerop count) (string-empty-p (kcell-view:contents)))
+	    ;; Reuse this initial empty cell in outline
+	    (progn (kview:insert-contents (kcell-view:cell) contents 'no-fill
+					  (make-string (kcell-view:indent) ?\ ))
+		   (goto-char (kcell-view:end)))
+	  ;; Add the cell starting at point.
+	  (kview:add-cell klabel output-level contents nil t))
 	(if subtree-p (setq child-label (klabel:child klabel)))
 	(message "%d of %d trees converted..."
 		 (if (= node-level 1) (setq count (1+ count)) count)
@@ -668,16 +669,19 @@ in IMPORT-FROM, used to show a running tally of the imported entries."
       ;;
       ;; Current buffer returns to `import-from' here.
       (goto-char end)
+      
       ;;
       ;; Handle each sub-level through recursion.
       (when subtree-p
 	;; Subtree exists so insert its cells.
-	(setq count
+	(setq max-pos-and-count
 	      (kimport:star-entries import-from output-to child-label
 				    (1+ output-level) (1+ import-level)
-				    count total))))
-    (goto-char start))
-  count)
+				    count total max-pos)
+	      max-pos (car max-pos-and-count)
+	      count (cdr max-pos-and-count))))
+    (goto-char (setq max-pos (max end max-pos))))
+  (cons max-pos count))
 
 (defun kimport:text-paragraphs (import-from output-to klabel
 			        output-level _count total)

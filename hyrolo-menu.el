@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    28-Oct-94 at 10:59:44
-;; Last-Mod:     18-Apr-22 at 00:29:31 by Mats Lidell
+;; Last-Mod:      9-Apr-23 at 11:44:06 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -27,27 +27,35 @@
 ;;; ************************************************************************
 
 (defconst infodock-hyrolo-menu
-  '("Rolo"
-    ["Manual"                  (id-info "(hyperbole)HyRolo")            t]
-    "----"
-     ;; Delete Rolo menu from all menubars.
-    ["Remove-This-Menu"        (hui-menu-remove Rolo hyrolo-mode-map)   t]
-    "----"
-    ["Add-Entry"               (id-tool-invoke 'hyrolo-add)             t]
-    ["Delete-Entry"            (id-tool-invoke 'hyrolo-kill)            t]
-    ["Display-Prior-Matches"   (id-tool-invoke 'hyrolo-display-matches) t]
-    ["Edit-Entry"              (id-tool-invoke 'hyrolo-edit)            t]
-    ["Find-HyRolo-File"        (id-tool-invoke
-				(lambda ()
-				  (require 'hyrolo)
-				  (hyrolo-find-file)))
-     t]
-    ["Insert-Entry-at-Point"   (id-tool-invoke 'hyrolo-yank)            t]
-    ["Mail-to-Address"         (id-tool-invoke 'hyrolo-mail-to)         t]
-    ["Search-for-Regexp"       (id-tool-invoke 'hyrolo-grep)            t]
-    ["Search-for-String"       (id-tool-invoke 'hyrolo-fgrep)           t]
-    ["Search-for-Word"         (id-tool-invoke 'hyrolo-word)            t]
-    ["Sort-Entries"            (id-tool-invoke 'hyrolo-sort)            t]))
+  (delq nil
+	(list
+	 "Rolo"
+	 ["Manual"                  (id-info "(hyperbole)HyRolo")            t]
+	 "----"
+	 ;; Delete Rolo menu from all menubars.
+	 ["Remove-This-Menu"        (hui-menu-remove Rolo hyrolo-mode-map)   t]
+	 "----"
+	 ["Add-Entry"               (id-tool-invoke 'hyrolo-add)             t]
+	 (when (fboundp 'consult-grep) ;; allow for autoloading
+	   ;; Interactively narrow HyRolo matches using Consult/Vertico.
+           ["Consult-Find"          (id-tool-invoke 'hyrolo-consult-grep)    t])
+	 ["Delete-Entry"            (id-tool-invoke 'hyrolo-kill)            t]
+	 ["Display-Prior-Matches"   (id-tool-invoke 'hyrolo-display-matches) t]
+	 ["Edit-Entry"              (id-tool-invoke 'hyrolo-edit)            t]
+	 ["Find-HyRolo-File"        (id-tool-invoke
+				     (lambda ()
+				       (require 'hyrolo)
+				       (hyrolo-find-file)))
+	  t]
+	 (when (fboundp 'helm-org-rifle-files) ;; allow for autoloading
+	   ;; Interactively narrow HyRolo matches using Helm.
+           ["Helm-Find"             (id-tool-invoke 'hyrolo-helm-org-rifle)  t])
+	 ["Insert-Entry-at-Point"   (id-tool-invoke 'hyrolo-yank)            t]
+	 ["Mail-to-Address"         (id-tool-invoke 'hyrolo-mail-to)         t]
+	 ["Search-for-Regexp"       (id-tool-invoke 'hyrolo-grep)            t]
+	 ["Search-for-String"       (id-tool-invoke 'hyrolo-fgrep)           t]
+	 ["Search-for-Word"         (id-tool-invoke 'hyrolo-word)            t]
+	 ["Sort-Entries"            (id-tool-invoke 'hyrolo-sort)            t])))
 
 (defconst hyrolo-menu-common-body
   '(

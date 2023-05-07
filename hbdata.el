@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     2-Apr-91
-;; Last-Mod:     29-Mar-23 at 21:04:06 by Bob Weiner
+;; Last-Mod:     30-Apr-23 at 09:58:26 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -55,6 +55,15 @@
 (require 'hversion) ;; For hyperb:microsoft-os-p
 (require 'hbmap)
 (require 'hgnus)
+
+;;; ************************************************************************
+;;; Public declarations
+;;; ************************************************************************
+
+;; Functions from abstract mail and news interface. See "hmail.el"
+(declare-function lmail:to nil)
+(declare-function rmail:to nil)
+(declare-function rmail:summ-msg-to nil)
 
 ;;; ************************************************************************
 ;;; Public functions
@@ -147,7 +156,7 @@ Search is case-insensitive.  Return list with elements:
 ;;; Button data operators
 ;;; ------------------------------------------------------------------------
 
-(defun hbdata:ebut-build (&optional mod-lbl-key but-sym)
+(defun hbdata:ebut-build (&optional mod-lbl-key but-sym new-lbl-key)
   "Construct button data from optional MOD-LBL-KEY and BUT-SYM.
 Modify BUT-SYM attributes.  MOD-LBL-KEY nil means create a new
 entry, otherwise modify existing one.  Nil BUT-SYM means use
@@ -156,7 +165,7 @@ entry, otherwise modify existing one.  Nil BUT-SYM means use
   (let* ((b (hattr:copy (or but-sym 'hbut:current) 'but))
 	 (l (hattr:get b 'loc))
 	 (key (or mod-lbl-key (hattr:get b 'lbl-key)))
-	 (new-key (if mod-lbl-key (hattr:get b 'lbl-key) key))
+	 (new-key (or new-lbl-key (if mod-lbl-key (hattr:get b 'lbl-key) key)))
 	 (lbl-instance) (creator) (create-time) (modifier) (mod-time)
 	 (entry) loc dir)
     (when l
@@ -314,10 +323,9 @@ If the hbdata buffer is blank/empty, kill it and remove the associated file."
 (defun hbdata:delete-entry-at-point ()
   (delete-region (point) (progn (forward-line 1) (point))))
 
-(defun hbdata:ibut-instance-last (lbl-key key-src &optional directory)
+(defun hbdata:ibut-instance-last (lbl-key _key-src &optional _directory)
   "Return highest instance number for repeated implicit button label.
-1 if not repeated, nil if no instance.
-Utilize arguments LBL-KEY, KEY-SRC and optional DIRECTORY."
+1 if not repeated, nil if no instance.  Utilize argument LBL-KEY."
   (let ((key (car (ibut:label-sort-keys (ibut:label-key-match lbl-key)))))
     (cond ((null key) nil)
 	  ((string-match (concat (regexp-quote hbut:instance-sep)
@@ -460,8 +468,9 @@ Return non-nil if KEY-SRC is found or created, else nil."
 	;; Button buffer has no file attached
 	(progn (if (hmail:hbdata-to-p) ;; Might change the buffer
 		   (setq buffer-read-only nil)
-		 (setq buffer-read-only nil)
-		 (insert "\n" hmail:hbdata-sep "\n"))
+		 (when create
+		   (setq buffer-read-only nil)
+		   (insert "\n" hmail:hbdata-sep "\n")))
 	       (backward-char 1)
 	       (setq rtn t))
       (setq directory (or (file-name-directory key-src) directory))
@@ -486,13 +495,13 @@ Return non-nil if KEY-SRC is found or created, else nil."
 	       (backward-char 1)))))
     rtn))
 
-(defun hbdata:write (&optional orig-lbl-key but-sym)
+(defun hbdata:write (&optional orig-lbl-key but-sym new-lbl-key)
   "Try to write Hyperbole button data from optional ORIG-LBL-KEY and BUT-SYM.
 ORIG-LBL-KEY nil means create a new entry, otherwise modify existing one.
 BUT-SYM nil means use `hbut:current'.  If successful, return
 a button instance string to append to button label or t when first instance.
 On failure, return nil."
-  (let ((cons (hbdata:ebut-build orig-lbl-key but-sym))
+  (let ((cons (hbdata:ebut-build orig-lbl-key but-sym new-lbl-key))
 	entry lbl-instance)
     (unless (or (and buffer-file-name (not (file-writable-p buffer-file-name)))
 		(null cons))

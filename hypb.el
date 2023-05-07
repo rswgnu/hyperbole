@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     6-Oct-91 at 03:42:38
-;; Last-Mod:     28-Mar-23 at 00:02:25 by Bob Weiner
+;; Last-Mod:     19-Apr-23 at 22:27:32 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1032,6 +1032,7 @@ Without file, the banner is prepended to the current buffer."
 	(button-put button 'keymap hypb:hyperbole-banner-keymap)))))
 
 (defun hypb:locate-pathnames ()
+  "Return a space-separated string of pathnames in a *Locate* buffer."
   (save-excursion
     (goto-char (point-min))
     (search-forward "\n" nil t 3)
