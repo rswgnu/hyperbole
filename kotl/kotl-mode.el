@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    6/30/93
-;; Last-Mod:     16-Oct-22 at 19:29:20 by Mats Lidell
+;; Last-Mod:      6-May-23 at 12:39:55 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -204,11 +204,10 @@ It provides the following keys:
               (orgtbl-make-binding 'orgtbl-meta-return 106
         			   [(meta return)] "\M-\C-m"))
   (org-defkey orgtbl-mode-map "\C-d"
-              (orgtbl-make-binding 'kotl-mode:delete-char 201
-        			   "\C-d"))
-  (org-defkey orgtbl-mode-map [(shift iso-lefttab)]
-              (orgtbl-make-binding 'org-shifttab 202
-        			   [(shift iso-lefttab)] [backtab] [(shift tab)]))
+              (orgtbl-make-binding 'kotl-mode:delete-char 201 "\C-d"))
+  (org-defkey orgtbl-mode-map [S-iso-lefttab]
+              (orgtbl-make-binding 'org-shifttab 107
+        			   [S-iso-lefttab] [backtab] [(shift tab)]))
   (run-hooks 'kotl-mode-hook)
   (add-hook 'change-major-mode-hook #'kotl-mode:show-all nil t))
 

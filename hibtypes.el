@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 20:45:31
-;; Last-Mod:     23-Apr-23 at 20:04:58 by Mats Lidell
+;; Last-Mod:      7-May-23 at 13:23:19 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -120,7 +120,8 @@ line and check for a source reference line again."
       (hib-python-traceback))))
 
 ;;; ========================================================================
-;;; Runs Hyperbole tests
+;;; Action Button Types that run Hyperbole tests;
+;;; ert-deftest ibtype executes current ert test when on first line of def.
 ;;; ========================================================================
 
 (load "hypb-ert")
@@ -132,7 +133,7 @@ line and check for a source reference line again."
 (load "hib-social")
 
 ;;; ========================================================================
-;;; Displays Org Roam and Org IDs
+;;; Displays Org Roam and Org IDs.
 ;;; ========================================================================
 
 (defib org-id ()
