@@ -3,7 +3,7 @@
 # Author:       Bob Weiner
 #
 # Orig-Date:    15-Jun-94 at 03:42:38
-# Last-Mod:     23-Apr-23 at 14:36:37 by Bob Weiner
+# Last-Mod:      7-May-23 at 20:33:02 by Bob Weiner
 #
 # Copyright (C) 1994-2023  Free Software Foundation, Inc.
 # See the file HY-COPY for license information.
@@ -359,8 +359,11 @@ version: doc
 	fi
 	@ echo ""
 
-# Build the Info, HTML and Postscript versions of the user manual and README.md.html.
-doc: README.md.html info html pdf
+# Build the README.md.html and Info, HTML and Postscript versions of the user manual
+doc: README.md.html manual
+
+# Build the Info, HTML and Postscript versions of the user manual
+manual: info html pdf
 
 TEXINFO_SRC = $(man_dir)/hyperbole.texi $(man_dir)/version.texi $(man_dir)/hkey-help.txt $(man_dir)/im/*.png
 

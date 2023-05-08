@@ -7,7 +7,7 @@
 @c Author:       Bob Weiner
 @c
 @c Orig-Date:     6-Nov-91 at 11:18:03
-@c Last-Mod:     29-Apr-23 at 17:20:22 by Bob Weiner
+@c Last-Mod:      7-May-23 at 20:35:03 by Bob Weiner
 
 @c %**start of header (This is for running Texinfo on a region.)
 @setfilename hyperbole.info
@@ -156,7 +156,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</P>
 
 <PRE>
 Edition 8.0.1pre
-Printed April 29, 2023.
+Printed May 7, 2023.
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -198,7 +198,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 @example
 Edition 8.0.1pre
-April 29, 2023
+May 7, 2023
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -2125,11 +2125,13 @@ by any number of :, - or = separator characters, including none.
 
 @cindex ibtypes, list of
 @cindex implicit button types
-Below is a list of standard implicit button types in the order in which
-Hyperbole tries to match to the types when looking for an implicit
-button; @bkbd{C-h h i t @key{RET}} provides similar information.  See
-the Hyperbole file, @file{hibtypes.el}, for examples of how to define
-implicit button types (they are listed in increasing order of priority).
+Below is a list of standard implicit button types in the order in
+which Hyperbole tries to match to the types when looking for an
+implicit button (decreasing priority order).  @bkbd{C-h h i t
+@key{RET}} provides similar information.  See the Hyperbole file,
+@file{hibtypes.el}, for examples of how to define implicit button
+types (in the file, they are listed in reverse order, increasing in
+priority).
 
 @table @code
 
@@ -2720,23 +2722,31 @@ PATH-style variable, the path at point is displayed; empty paths,
 e.g. @file{::} represent the current directory, @file{.}.  Must have at
 least four paths within the variable value for this to work.
 
-
-@findex ibtypes hyperbole-run-tests
+@findex ibtypes hyperbole-run-test-definition
+@cindex edebug a test
+@cindex debugging tests
 @cindex running tests
 @cindex testing
 @cindex ert
 @cindex Emacs Regression Test framework
+@item hyperbole-run-test-definition
+With an Action Key press on the name in the first line of an ert test
+def, evaluate and run the ERT test.  With an Assist Key press instead,
+edebug the test and step through it.
+
+@findex ibtypes hyperbole-run-tests
 @item hyperbole-run-tests
-Recognize buttons of the form @code{<hyperbole-run-tests test-selector>}
-which when activated run Hyperbole tests using the ERT framework.  The
-@code{test-selector} argument is as described in @code{ert-select-tests}.
+Recognize Action Buttons of the form @code{<hyperbole-run-tests
+test-selector>} which when activated run Hyperbole tests using the ERT
+framework.  The @code{test-selector} argument is as described in
+@code{ert-select-tests}.
 
 
 @findex ibtypes hyperbole-run-test
 @item hyperbole-run-test
-Recognize buttons of the form @code{<hyperbole-run-test test-name>}
-which when activated run individual Hyperbole tests, each given
-by the @code{<test-name>} argument, an unquoted name.
+Recognize Action Buttons of the form @code{<hyperbole-run-test
+test-name>} which when activated run individual Hyperbole tests, each
+given by the @code{<test-name>} argument, an unquoted name.
 @end table
 
 
@@ -3721,14 +3731,14 @@ Action or Assist Key action to use when no matching context is found.
 
 @cindex minibuffer menus
 @cindex menu item key bindings
-The rest of this section discusses only the
-specialized @dfn{minibuffer menus} which appear in the minibuffer
-window and work with all emacs versions on all display devices.  They
-provide similar capabilities to those of the Hyperbole menubar but
-additionally allow for fast menu item selection via the keyboard or
-mouse.  When used with the keyboard, they provide command access
-similar to key bindings.  In fact, any menu item can be bound to a
-global key sequence.  @xref{Binding Minibuffer Menu Items}.
+The rest of this section discusses only the specialized
+@dfn{minibuffer menus} which appear in the minibuffer window and work
+with all emacs versions on all display devices.  They provide similar
+capabilities to those of the Hyperbole menubar but additionally allow
+for fast menu item selection via the keyboard or mouse.  When used
+with the keyboard, they provide command access similar to key
+bindings.  In fact, any menu item can be bound to a global key
+sequence.  @xref{Binding Minibuffer Menu Items}.
 
 @kindex C-h h
 @cindex enable Hyperbole mode
@@ -3761,13 +3771,19 @@ Hy>  Act Butfile/ Cust/ Doc/ Ebut/ Find/ Gbut/ Hist Ibut/ Kotl/ Msg/ Rolo/ Scree
 @kindex M-f
 @kindex Shift-@key{TAB}
 @kindex M-b
-All menu items are selected via the first character of their names (letter
-case does not matter), with presses of the Action Key or by using
-@bkbd{@key{TAB}} or @bkbd{M-f} to move forward an item, @bkbd{Shift-@key{TAB}}
-or @bkbd{M-b} to move backward an item and @bkbd{@key{RET}} to select the
-current item.  A press of the Assist Key on an item displays help for the
-item, including the action that it performs.  "/" at the end of an item name
-indicates that it brings up a submenu.
+A menu item can be selected in a number of ways:
+@itemize @bullet
+@item from the keyboard, by typing the first capitalized character of its name,
+@item with a press of @bkbd{@key{RET}} or the Action Key or Action Mouse Key on the name,
+@item by pressing @bkbd{@key{TAB}} or @bkbd{M-f} to move forward an item,
+@item or by pressing @bkbd{Shift-@key{TAB}} or @bkbd{M-b} to move backward an item.
+@end itemize
+
+@noindent
+A prefix argument given to one of the movement commands, moves by tht
+number of items within the menu.  A press of the Assist Key on an item
+displays help for the item, including the action that it performs.
+"/" at the end of an item name indicates that it brings up a submenu.
 
 @kindex C-h h C-t
 @kindex C-h h Q
@@ -4802,10 +4818,10 @@ substructure) are promoted and demoted, not individual cells.
 @kindex koutliner, @key{TAB}
 @kindex koutliner, M-@key{TAB}
 @kindex koutliner, Shift-@key{TAB}
-@kindex koutliner, M-left
-@kindex koutliner, M-right
-@kindex koutliner, M-Shift-left
-@kindex koutliner, M-Shift-right
+@kindex koutliner, M-<left>
+@kindex koutliner, M-<right>
+@kindex koutliner, M-Shift-<left>
+@kindex koutliner, M-Shift-<right>
 @kindex koutliner, C-c C-,
 @kindex koutliner, C-c C-.
 @kindex koutliner, C-c C->
@@ -4816,9 +4832,9 @@ substructure) are promoted and demoted, not individual cells.
 |-----------------------------+----------------------------|
 | Promotion Outside Org Table | Demotion Outside Org Table |
 |-----------------------------+----------------------------|
-| Shift-TAB or M-TAB          | TAB                        |
-| M-left                      | M-right                    |
-| M-Shift-left                | M-Shift-right              |
+| M-TAB or Shift-TAB          | TAB                        |
+| M-<left>                    | M-<right>                  |
+| M-Shift-<left>              | M-Shift-<right>            |
 | C-c C-,                     | C-c C-.                    |
 | C-c C-<                     | C-c C->                    |
 |-----------------------------+----------------------------|
@@ -4826,15 +4842,14 @@ substructure) are promoted and demoted, not individual cells.
 
 
 Trees may be demoted or promoted by pressing @key{TAB} or
-@bkbd{M-@key{TAB}} (or @bkbd{@key{SHIFT}-@key{TAB}}) respectively, as
-in most outliners today.  @bkbd{M-0 @key{TAB}} and @bkbd{M-0
-M-@key{TAB}} demote and promote trees and additionally refill each
-cell that is not specially marked to prevent refilling.
-@xref{Filling}.  A positive or negative prefix argument to these
-commands promotes or demotes the tree up to a maximum of the number of
-levels given by the argument.  The outline may not support movement of
-the tree by the number of levels requested, however, in which case the
-maximal possible adjustment is made.
+@bkbd{M-@key{TAB}}.  @bkbd{M-0 @key{TAB}} and @bkbd{M-0 M-@key{TAB}}
+demote and promote trees and additionally refill each cell that is not
+specially marked to prevent refilling.  @xref{Filling}.  A positive or
+negative prefix argument to these commands promotes or demotes the
+tree up to a maximum of the number of levels given by the argument.
+The outline may not support movement of the tree by the number of
+levels requested, however, in which case the maximal possible
+adjustment is made.
 
 @kindex koutliner, M-1 @key{TAB}
 @cindex inserting tabs
@@ -4853,10 +4868,11 @@ Use @bkbd{M-1 @key{TAB}} to toggle the @key{TAB} and
 
 
 @cindex Org tables
-The Koutliner also supports Org Table editing, @pxref{Tables,,, org, the Org
-Mode Manual}, via Org table minor mode.  Use @bkbd{M-x orgtbl-mode @key{RET}}
-to toggle this on and off.  A press of the Action Key on a @code{|} symbol,
-also toggles this minor mode on or off.
+The Koutliner also supports Org Table editing, @pxref{Tables,,, org,
+the Org Mode Manual}, via Org table minor mode.  Use @bkbd{M-x
+orgtbl-mode @key{RET}} to toggle this on and off.  A press of the
+Action Key on a @code{|} symbol, also toggles this minor mode on or
+off.
 
 @cindex outline mode
 @kindex M-0 @key{TAB}
@@ -4865,16 +4881,16 @@ Tree demotion and promotion keys match the defaults in Org mode and
 Outline mode, plus some easier to type ones.  The tables below
 summarize which keys work whether inside an Org table or outside.
 
-Note that you must use @bkbd{M-0 @key{TAB}} and @bkbd{M-0 M-@key{TAB}} to
-demote/promote Koutline trees when in a table since @key{TAB} by itself
-moves between fields within a table.
+Note that you must use @bkbd{M-0 @key{TAB}} and @bkbd{M-0 M-@key{TAB}}
+to demote/promote Koutline trees when in a table since @key{TAB} and
+@bkbd{M-@key{TAB}} move between fields within a table.
 
 @example
 @noindent
 |----------------------------+-----------------------------|
 | Promotion Inside Org Table | Demotion Inside Org Table   |
 |----------------------------+-----------------------------|
-| M-0 Shift-TAB or M-0 M-TAB | M-0 TAB                     |
+| M-0 M-TAB                  | M-0 TAB                     |
 | C-c C-,                    | C-c C-.                     |
 | C-c C-<                    | C-c C->                     |
 |----------------------------+-----------------------------|
@@ -4888,9 +4904,9 @@ moves between fields within a table.
 @cindex Action Key, cell argument
 @kindex koutliner, Action Key, cell argument
 Like Org mode, you can move the tree rooted at point past trees rooted
-at the same level with @bkbd{M-down} and before trees with @bkbd{M-up}.
-Give a prefix argument to move past that many other trees.  (A 0 valued
-argument is automatically changed to 1).
+at the same level with @bkbd{M-<down>} and before trees with
+@bkbd{M-<up>}.  Give a prefix argument to move past that many other
+trees.  (A 0 valued argument is automatically changed to 1).
 
 For maximum flexibility in rearranging outlines, there are commands
 that move or copy entire trees anywhere within the outline as
@@ -4908,9 +4924,9 @@ arguments changes each command's behavior from insertion at the sibling
 level to insertion at the child level.
 
 @table @asis
-@kitem M-down
+@kitem M-<down>
 Move current tree past prefix arg same level trees.
-@kitem M-up
+@kitem M-<up>
 Move current tree back prefix arg same level trees.
 
 @kitem C-c c
@@ -5815,14 +5831,16 @@ set of commands as the menubar and popup menus, with more concise labels.
 @bkbd{C-mouse-3} pops up the mode-specific menu in Emacs.  Experiment with
 the menu or read the following sections explaining commands.
 
-The minibuffer Rolo/ menu offers the following commands:
-
 @cindex Rolo commands
 @cindex HyRolo commands
+@cindex ConsultFind
+@cindex HelmFind
 @findex hyrolo-add
+@findex hyrolo-consult-grep
 @findex hyrolo-display-matches
 @findex hyrolo-edit
 @findex hyrolo-find-file
+@findex hyrolo-helm-org-rifle
 @findex hyrolo-kill
 @findex hyrolo-mail-to
 @findex hyrolo-sort
@@ -5830,14 +5848,19 @@ The minibuffer Rolo/ menu offers the following commands:
 @findex hyrolo-fgrep
 @findex hyrolo-word
 @findex hyrolo-yank
+The minibuffer Rolo/ menu offers the following commands (ConsultFind
+and HelmFind appear only when associated packages are loaded):
+
 @example
 @group
 Menu Item       Command                 Description
 =====================================================================
 Add             hyrolo-add              Adds a hyrolo entry
+ConsultFind     hyrolo-consult-grep     Interactively narrow grep matches
 Display         hyrolo-display-matches  Displays last matches again
 Edit            hyrolo-edit             Edits an existing hyrolo entry
 File            hyrolo-find-file        Edits a @code{hyrolo-file-list} file
+HelmFind        hyrolo-helm-org-rifle   Interactively narrow entry matches
 Info            id-info                 Displays a hyrolo manual entry
 Kill            hyrolo-kill             Deletes a hyrolo entry
 Mail            hyrolo-mail             Mails to an address at point
@@ -9571,8 +9594,8 @@ When in an Org mode context and @code{hsys-org-enable-smart-keys} is non-nil:
 
 @cindex Org ID
 @cindex Org link, outside Org
-@vindex org-id
-@vindex org-link-outside-org-mode
+@findex ibtypes org-id
+@findex ibtypes org-link-outside-org-mode
 @noindent
 Org links may be used outside of Org mode buffers.  Such links are
 handled by the separate implicit button type, @code{org-link-outside-org-mode}.

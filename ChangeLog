@@ -1,3 +1,35 @@
+2023-05-07  Bob Weiner  <rsw@gnu.org>
+
+* Makefile (manual): Add manual target to build manual without building other
+    doc outputs.
+
+* test/kimport-tests.el: Improve all these tests and add
+    `kimport--aug-post-outline'.
+
+* hypb-ert.el (hyperbole-run-test-definition): Add ibtype that when on the
+    first line of an `ert-deftest' and not at eol nor on a grouping symbol,
+    evaluates the current version of the test and then runs it.  Assist Key
+    press in the same spot steps through the test with edebug.
+              (hyperbole-run-test-definition:help, hypb-ert-def-at-p,
+               hypb-ert-run-test-at-definition):
+    Support functions.
+
+2023-05-06  Bob Weiner  <rsw@gnu.org>
+
+* kotl/kimport.el (kimport:aug-post-outline, kimport:text):
+    Update to match `kimport:star-outline'.
+                  (kimport:aug-post-statements):
+    Update to match `kimport:star-entries'.
+
+* kotl/EXAMPLE.kotl:
+  kotl/kotl-mode.el (kotl-mode):
+  man/hyperbole.texi (Promoting and Demoting): Update so {Shift-TAB} within
+    an Org table in a Koutline moves to the previous field to complement
+    the behavior of {TAB}.  This leaves {M-TAB} as the only consistent way
+    to promote trees.
+
+* man/im/action-key-animation.gif: Update this animated gif.
+
 2023-04-30  Mats Lidell  <matsl@gnu.org>
 
 * test/hui-tests.el (hui--ebut-rename)
@@ -5,7 +37,7 @@
     (hui--ebut-rename-nonumbered-label, hui--ebut-rename-numbered-label)
     (hui--ebut-rename-all-copies)
   test/hbut-tests.el (hypb:program-create-ebut-in-buffer-with-same-label):
-    Tests for ebut label rename.
+    Test for ebut label rename.
 
 2023-04-30  Bob Weiner  <rsw@gnu.org>
 
@@ -50,7 +82,7 @@
 2023-04-23  Bob Weiner  <rsw@gnu.org>
 
 * kotl/klink.el (klink:at-p):
-  hbut.el (hbut:outside-comment-p): Make the inside a comment prog
+  hbut.el (hbut:outside-comment-p): Make the inside of comment prog
     mode tests in each of these use the same conditional tests.
 
 * Makefile (version): Fix so this outputs the list of files whose
