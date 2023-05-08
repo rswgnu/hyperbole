@@ -7,7 +7,7 @@
 @c Author:       Bob Weiner
 @c
 @c Orig-Date:     6-Nov-91 at 11:18:03
-@c Last-Mod:      7-May-23 at 18:53:57 by Bob Weiner
+@c Last-Mod:      7-May-23 at 20:35:03 by Bob Weiner
 
 @c %**start of header (This is for running Texinfo on a region.)
 @setfilename hyperbole.info
@@ -156,7 +156,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</P>
 
 <PRE>
 Edition 8.0.1pre
-Printed April 29, 2023.
+Printed May 7, 2023.
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -198,7 +198,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 @example
 Edition 8.0.1pre
-April 29, 2023
+May 7, 2023
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -2736,16 +2736,17 @@ edebug the test and step through it.
 
 @findex ibtypes hyperbole-run-tests
 @item hyperbole-run-tests
-Recognize buttons of the form @code{<hyperbole-run-tests test-selector>}
-which when activated run Hyperbole tests using the ERT framework.  The
-@code{test-selector} argument is as described in @code{ert-select-tests}.
+Recognize Action Buttons of the form @code{<hyperbole-run-tests
+test-selector>} which when activated run Hyperbole tests using the ERT
+framework.  The @code{test-selector} argument is as described in
+@code{ert-select-tests}.
 
 
 @findex ibtypes hyperbole-run-test
 @item hyperbole-run-test
-Recognize buttons of the form @code{<hyperbole-run-test test-name>}
-which when activated run individual Hyperbole tests, each given
-by the @code{<test-name>} argument, an unquoted name.
+Recognize Action Buttons of the form @code{<hyperbole-run-test
+test-name>} which when activated run individual Hyperbole tests, each
+given by the @code{<test-name>} argument, an unquoted name.
 @end table
 
 
@@ -4882,7 +4883,7 @@ summarize which keys work whether inside an Org table or outside.
 
 Note that you must use @bkbd{M-0 @key{TAB}} and @bkbd{M-0 M-@key{TAB}}
 to demote/promote Koutline trees when in a table since @key{TAB} and
-@bkdb{M-@key{TAB}} move between fields within a table.
+@bkbd{M-@key{TAB}} move between fields within a table.
 
 @example
 @noindent

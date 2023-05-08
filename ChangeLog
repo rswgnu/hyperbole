@@ -1,5 +1,8 @@
 2023-05-07  Bob Weiner  <rsw@gnu.org>
 
+* Makefile (manual): Add manual target to build manual without building other
+    doc outputs.
+
 * test/kimport-tests.el: Improve all these tests and add
     `kimport--aug-post-outline'.
 

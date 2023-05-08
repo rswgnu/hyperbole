@@ -4,7 +4,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <!-- This manual is for GNU Hyperbole
-(Edition 8.0.1pre, Published March, 2023).
+(Edition 8.0.1pre, Published May, 2023).
 
 Copyright © 1989-2023  Free Software Foundation, Inc.
 
@@ -107,7 +107,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</P>
 
 <PRE>
 Edition 8.0.1pre
-Printed March 29, 2023.
+Printed May 7, 2023.
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -624,16 +624,17 @@ on a pathname to display the associated file or directory.
 <a class="index-entry-id" id="index-Hyperbole-minibuffer-menu"></a>
 <a class="index-entry-id" id="index-C_002dh-h"></a>
 <a class="index-entry-id" id="index-C_002dh-h-X"></a>
-<a class="index-entry-id" id="index-C_002dh-h-q"></a>
+<a class="index-entry-id" id="index-C_002dh-h-Q"></a>
 <p><kbd class="kbd">{C-h h}</kbd> enables Hyperbole if it has been disabled and displays a
-Hyperbole menu in the minibuffer for quick keyboard or mouse-based selection.
-Select an item from this menu by typing the item&rsquo;s first capital letter.
-Use <kbd class="kbd">{q}</kbd> to quit from the minibuffer menu while leaving Hyperbole enabled.
-Use<kbd class="kbd">{X}</kbd> (note this is capitalized) to quit from the minibuffer menu
-and disable Hyperbole minor mode.
+Hyperbole menu in the minibuffer for quick keyboard or mouse-based
+selection.  Select an item from this menu by typing the item&rsquo;s first
+capital letter.  Use <kbd class="kbd">{Q}</kbd> (note this is capitalized) to quit from
+the minibuffer menu while leaving Hyperbole enabled.  Use <kbd class="kbd">{X}</kbd>
+(note this is capitalized) to quit from the minibuffer menu and
+disable Hyperbole&rsquo;s minor mode.
 </p>
-<p>Use <kbd class="kbd">{C-h h d d}</kbd> for an interactive demonstration of standard Hyperbole
-button capabilities.
+<p>Use <kbd class="kbd">{C-h h d d}</kbd> for an interactive demonstration of standard
+Hyperbole button capabilities.
 </p>
 <p>Type <kbd class="kbd">{C-h h k e}</kbd> for an interactive demonstration of the Koutliner,
 Hyperbole&rsquo;s multi-level autonumbered hypertextual outliner.
@@ -938,6 +939,7 @@ Hyperbole Key Press/Click in Special Modes
   Treemacs                      Displays item              Displays item
   Dired Sidebar                 Displays item              Displays item
   Emacs Push Button             Activates button           Button help
+  Emacs Regression Test Def     Eval and run test          Edebug and run test
   Thing Begin or End            Mark thing region          Mark &amp; kill thing region
   Page Directory Listing        Jumps to page              &lt;- same
   Imenu Programming Identifier  Jumps to in-buffer def     Prompts for id to jump to
@@ -1011,10 +1013,10 @@ the behavior of the Smart Keys within default contexts.
 <p>When you use a mouse and you want to find out what either of the Smart
 Keys does within a context, depress the one you want to check on and
 hold it down, then press the other and release as you please.  A help
-buffer will pop up explaining the actions that will be performed in that
-context, if any.  A press of either Smart Key at the end of that
-help buffer will restore your display to its configuration prior to
-invoking help.
+buffer will pop up explaining the action that will be performed in that
+context and attributes of the button, if any.  A press of either Smart
+Key at the end of that help buffer will restore your display to its
+configuration prior to invoking help.
 </p>
 <a class="index-entry-id" id="index-C_002dh-A"></a>
 <a class="index-entry-id" id="index-C_002du-C_002dh-A"></a>
@@ -1889,14 +1891,14 @@ Next: <a href="#Implicit-Buttons" accesskey="n" rel="next">Implicit Buttons</a>,
 <a class="index-entry-id" id="index-button_002c-global-1"></a>
 <a class="index-entry-id" id="index-button-label-1"></a>
 <a class="index-entry-id" id="index-label_002c-button-1"></a>
-<p>Sometimes it is
-useful to activate buttons without regard to the information with which
-you are working.  In such instances, you use <em class="dfn">global buttons</em>, which
-are buttons that may be activated or otherwise operated upon by typing
-their labels/names when they are prompted for, rather than selecting the
-buttons within a buffer.  In contrast, activation of explicit buttons
-depends upon the information on your screen since they are accessible
-only from within their particular buffers.
+<p>Sometimes it is useful to activate buttons without regard to the
+information with which you are working.  In such instances, you use
+<em class="dfn">global buttons</em>, which are buttons that may be activated or
+otherwise operated upon by typing their labels/names when they are
+prompted for, rather than selecting the buttons within a buffer.  In
+contrast, activation of explicit buttons depends upon the information on
+your screen since they are accessible only from within their particular
+buffers.
 </p>
 <p>If you want a permanent link to a file section that you can follow at
 any time, you can use a global button.  Or what about an Emacs keyboard
@@ -1964,12 +1966,33 @@ directory, typically in another window.  An explicit button could do
 the same thing but has to be created manually, rather than recognized
 as part of the buffer text.
 </p>
+<a class="index-entry-id" id="index-C_002dh-h-i"></a>
+<a class="index-entry-id" id="index-activating-implicit-button"></a>
+<a class="index-entry-id" id="index-menu-item_002c-Ibut_002fAct"></a>
+<a class="index-entry-id" id="index-menu_002c-Ibut"></a>
+<a class="index-entry-id" id="index-menu_002c-Implicit_002dButton"></a>
+<a class="index-entry-id" id="index-menu_002c-Ibut_002fActivate"></a>
+<a class="index-entry-id" id="index-menu_002c-Ibut_002fCreate"></a>
+<a class="index-entry-id" id="index-menu_002c-Ibut_002fEdit"></a>
+<a class="index-entry-id" id="index-menu_002c-Ibut_002fLabel"></a>
+<a class="index-entry-id" id="index-C_002dh-h-i-a"></a>
+<a class="index-entry-id" id="index-C_002dh-h-i-c"></a>
+<a class="index-entry-id" id="index-C_002dh-h-i-e"></a>
+<a class="index-entry-id" id="index-C_002dh-h-i-l"></a>
+<p>Implicit buttons are managed with the Hyperbole Ibut/ menu accessed
+with <kbd class="kbd">{C-h h i}</kbd>.  The Create item, <kbd class="kbd">{C-h h i c}</kbd>, prompts for
+an implicit button label, an action type, and the action&rsquo;s associated
+arguments, such as a file to which to link.  It then creates the
+button at point.  To activate the button with point on its label or
+button text, use the Act menu item, <kbd class="kbd">{C-h h i a}</kbd> or press the
+Action Key.  You can use <kbd class="kbd">{C-h h i e}</kbd> to edit an implicit button
+(or simply edit it manually).  If you want to add a label to an
+existing implicit button without one, use <kbd class="kbd">{C-h h i l}</kbd> to label
+it.
+</p>
 <a class="index-entry-id" id="index-file_002c-hibtypes_002eel"></a>
 <a class="index-entry-id" id="index-context"></a>
 <a class="index-entry-id" id="index-boolean-expressions"></a>
-<a class="index-entry-id" id="index-activating-implicit-button"></a>
-<a class="index-entry-id" id="index-menu-item_002c-Ibut_002fAct"></a>
-<a class="index-entry-id" id="index-C_002dh-h-i-a"></a>
 <p>Unlike explicit buttons, implicit buttons have no individual button
 data other than their text and optional labels.  You use implicit
 button types which include boolean expressions (predicates) that match
@@ -1977,9 +2000,7 @@ to both the label and the context required of any button of the type.
 Each time a Smart Key is pressed at a location, Hyperbole evaluates
 the predicates from the list of implicit button types and the first
 one that evaluates true is selected and its associated action is
-triggered.  Alternatively, you can use the Ibut/Act menu
-item, <kbd class="kbd">{C-h h i a}</kbd>, to activate any implicit button found at the
-current point.
+triggered.
 </p>
 <p>All of this happens transparently and is easy to use once you try it.
 The Hyperbole Smart Keys offer additional extensive context-sensitive
@@ -2000,24 +2021,6 @@ button with a label of &rsquo;My Emacs Files&rsquo;:
 <p>The label is delimited by &lsquo;<samp class="samp">&lt;[</samp>&rsquo; and &lsquo;<samp class="samp">]&gt;</samp>&rsquo; and can be followed
 by any number of :, - or = separator characters, including none.
 </p>
-<a class="index-entry-id" id="index-C_002dh-h-i"></a>
-<a class="index-entry-id" id="index-menu_002c-Ibut"></a>
-<a class="index-entry-id" id="index-menu_002c-Implicit_002dButton"></a>
-<a class="index-entry-id" id="index-C_002dh-h-i-a-1"></a>
-<a class="index-entry-id" id="index-C_002dh-h-i-c"></a>
-<a class="index-entry-id" id="index-C_002dh-h-i-e"></a>
-<a class="index-entry-id" id="index-C_002dh-h-i-l"></a>
-<p>Implicit buttons are managed with the Hyperbole Ibut/ menu accessed
-with <kbd class="kbd">{C-h h i}</kbd>.  The Create item, <kbd class="kbd">{C-h h i c}</kbd>, prompts for
-an implicit button label, an action type, and the action&rsquo;s associated
-arguments, such as a file to which to link.  It then creates the
-button at point.  To activate the button with point on its label or
-button text, use the Act menu item, <kbd class="kbd">{C-h h i a}</kbd> or press the
-Action Key.  You can use <kbd class="kbd">{C-h h i e}</kbd> to edit an implicit button
-(or simply edit it manually).  If you want to add a label to an
-existing implicit button without one, use <kbd class="kbd">{C-h h i l}</kbd> to label
-it.
-</p>
 
 
 <ul class="mini-toc">
@@ -2034,11 +2037,13 @@ Next: <a href="#Action-Buttons" accesskey="n" rel="next">Action Buttons</a>, Pre
 
 <a class="index-entry-id" id="index-ibtypes_002c-list-of"></a>
 <a class="index-entry-id" id="index-implicit-button-types"></a>
-<p>Below is a list of standard implicit button types in the order in which
-Hyperbole tries to match to the types when looking for an implicit
-button; <kbd class="kbd">{C-h h i t <kbd class="key">RET</kbd>}</kbd> provides similar information.  See
-the Hyperbole file, <samp class="file">hibtypes.el</samp>, for examples of how to define
-implicit button types (they are listed in increasing order of priority).
+<p>Below is a list of standard implicit button types in the order in
+which Hyperbole tries to match to the types when looking for an
+implicit button (decreasing priority order).  <kbd class="kbd">{C-h h i t
+<kbd class="key">RET</kbd>}</kbd> provides similar information.  See the Hyperbole file,
+<samp class="file">hibtypes.el</samp>, for examples of how to define implicit button
+types (in the file, they are listed in reverse order, increasing in
+priority).
 </p>
 <dl class="table">
 <dd>
@@ -2638,25 +2643,34 @@ PATH-style variable, the path at point is displayed; empty paths,
 e.g. <samp class="file">::</samp> represent the current directory, <samp class="file">.</samp>.  Must have at
 least four paths within the variable value for this to work.
 </p>
-
-<a class="index-entry-id" id="index-ibtypes-hyperbole_002drun_002dtests"></a>
+<a class="index-entry-id" id="index-ibtypes-hyperbole_002drun_002dtest_002ddefinition"></a>
+<a class="index-entry-id" id="index-edebug-a-test"></a>
+<a class="index-entry-id" id="index-debugging-tests"></a>
 <a class="index-entry-id" id="index-running-tests"></a>
 <a class="index-entry-id" id="index-testing"></a>
 <a class="index-entry-id" id="index-ert"></a>
 <a class="index-entry-id" id="index-Emacs-Regression-Test-framework"></a>
 </dd>
+<dt><code class="code">hyperbole-run-test-definition</code></dt>
+<dd><p>With an Action Key press on the name in the first line of an ert test
+def, evaluate and run the ERT test.  With an Assist Key press instead,
+edebug the test and step through it.
+</p>
+<a class="index-entry-id" id="index-ibtypes-hyperbole_002drun_002dtests"></a>
+</dd>
 <dt><code class="code">hyperbole-run-tests</code></dt>
-<dd><p>Recognize buttons of the form <code class="code">&lt;hyperbole-run-tests test-selector&gt;</code>
-which when activated run Hyperbole tests using the ERT framework.  The
-<code class="code">test-selector</code> argument is as described in <code class="code">ert-select-tests</code>.
+<dd><p>Recognize Action Buttons of the form <code class="code">&lt;hyperbole-run-tests
+test-selector&gt;</code> which when activated run Hyperbole tests using the ERT
+framework.  The <code class="code">test-selector</code> argument is as described in
+<code class="code">ert-select-tests</code>.
 </p>
 
 <a class="index-entry-id" id="index-ibtypes-hyperbole_002drun_002dtest"></a>
 </dd>
 <dt><code class="code">hyperbole-run-test</code></dt>
-<dd><p>Recognize buttons of the form <code class="code">&lt;hyperbole-run-test test-name&gt;</code>
-which when activated run individual Hyperbole tests, each given
-by the <code class="code">&lt;test-name&gt;</code> argument, an unquoted name.
+<dd><p>Recognize Action Buttons of the form <code class="code">&lt;hyperbole-run-test
+test-name&gt;</code> which when activated run individual Hyperbole tests, each
+given by the <code class="code">&lt;test-name&gt;</code> argument, an unquoted name.
 </p></dd>
 </dl>
 
@@ -3786,14 +3800,14 @@ See <a class="xref" href="#Smart-Key-_002d-Default-Context">Smart Key - Default 
 </p>
 <a class="index-entry-id" id="index-minibuffer-menus"></a>
 <a class="index-entry-id" id="index-menu-item-key-bindings"></a>
-<p>The rest of this section discusses only the
-specialized <em class="dfn">minibuffer menus</em> which appear in the minibuffer
-window and work with all emacs versions on all display devices.  They
-provide similar capabilities to those of the Hyperbole menubar but
-additionally allow for fast menu item selection via the keyboard or
-mouse.  When used with the keyboard, they provide command access
-similar to key bindings.  In fact, any menu item can be bound to a
-global key sequence.  See <a class="xref" href="#Binding-Minibuffer-Menu-Items">Binding Minibuffer Menu Items</a>.
+<p>The rest of this section discusses only the specialized
+<em class="dfn">minibuffer menus</em> which appear in the minibuffer window and work
+with all emacs versions on all display devices.  They provide similar
+capabilities to those of the Hyperbole menubar but additionally allow
+for fast menu item selection via the keyboard or mouse.  When used
+with the keyboard, they provide command access similar to key
+bindings.  In fact, any menu item can be bound to a global key
+sequence.  See <a class="xref" href="#Binding-Minibuffer-Menu-Items">Binding Minibuffer Menu Items</a>.
 </p>
 <a class="index-entry-id" id="index-C_002dh-h-1"></a>
 <a class="index-entry-id" id="index-enable-Hyperbole-mode"></a>
@@ -3825,21 +3839,27 @@ look like this:
 <a class="index-entry-id" id="index-M_002df"></a>
 <a class="index-entry-id" id="index-Shift_002dTAB"></a>
 <a class="index-entry-id" id="index-M_002db"></a>
-<p>All menu items are selected via the first character of their names (letter
-case does not matter), with presses of the Action Key or by using
-<kbd class="kbd">{<kbd class="key">TAB</kbd>}</kbd> or <kbd class="kbd">{M-f}</kbd> to move forward an item, <kbd class="kbd">{Shift-<kbd class="key">TAB</kbd>}</kbd>
-or <kbd class="kbd">{M-b}</kbd> to move backward an item and <kbd class="kbd">{<kbd class="key">RET</kbd>}</kbd> to select the
-current item.  A press of the Assist Key on an item displays help for the
-item, including the action that it performs.  &quot;/&quot; at the end of an item name
-indicates that it brings up a submenu.
+<p>A menu item can be selected in a number of ways:
+</p><ul class="itemize mark-bullet">
+<li>from the keyboard, by typing the first capitalized character of its name,
+</li><li>with a press of <kbd class="kbd">{<kbd class="key">RET</kbd>}</kbd> or the Action Key or Action Mouse Key on the name,
+</li><li>by pressing <kbd class="kbd">{<kbd class="key">TAB</kbd>}</kbd> or <kbd class="kbd">{M-f}</kbd> to move forward an item,
+</li><li>or by pressing <kbd class="kbd">{Shift-<kbd class="key">TAB</kbd>}</kbd> or <kbd class="kbd">{M-b}</kbd> to move backward an item.
+</li></ul>
+
+<p>A prefix argument given to one of the movement commands, moves by tht
+number of items within the menu.  A press of the Assist Key on an item
+displays help for the item, including the action that it performs.
+&quot;/&quot; at the end of an item name indicates that it brings up a submenu.
 </p>
-<a class="index-entry-id" id="index-C_002dt"></a>
-<a class="index-entry-id" id="index-Q"></a>
-<a class="index-entry-id" id="index-X"></a>
-<a class="index-entry-id" id="index-C_002dg"></a>
+<a class="index-entry-id" id="index-C_002dh-h-C_002dt"></a>
+<a class="index-entry-id" id="index-C_002dh-h-Q-1"></a>
+<a class="index-entry-id" id="index-C_002dh-h-X-1"></a>
+<a class="index-entry-id" id="index-C_002dh-h-C_002dg"></a>
 <a class="index-entry-id" id="index-menu_002c-top_002dlevel"></a>
 <a class="index-entry-id" id="index-top_002dlevel-menu"></a>
 <a class="index-entry-id" id="index-menu-prefix"></a>
+<a class="index-entry-id" id="index-menu_002c-entry_002fexit-commands"></a>
 <p>While a menu is active, to re-activate the top-level Hyperbole menu,
 use <kbd class="kbd">{C-t}</kbd> or press the Action Key while on the menu prefix
 (before the &lsquo;<samp class="samp">&gt;</samp>&rsquo; character).  This allows you to browse the
@@ -4273,6 +4293,15 @@ of the screen size.
 <dd><p>In FRAMES mode, resize frame&rsquo;s height to about argument percent of the
 screen size.
 </p>
+<a class="index-entry-id" id="index-screen_002c-I_002fJ_002fK_002fM"></a>
+<a class="index-entry-id" id="index-I_002fJ_002fK_002fM"></a>
+</dd>
+<dt><kbd class="kbd">{I/J/K/M}</kbd></dt>
+<dd><p>In WINDOWS mode, the keys <kbd class="kbd">{I}</kbd><kbd class="kbd">{J}</kbd>/<kbd class="kbd">{K}</kbd>/<kbd class="kbd">{M}</kbd> move
+directionally (based on QUERTY key layout) between windows in the
+selected frame.  In FRAMES mode, they move directionally through visible
+frames.  These use the <samp class="file">windmove</samp> and <samp class="file">framemove</samp> libraries.
+</p>
 <a class="index-entry-id" id="index-screen_002c-W"></a>
 <a class="index-entry-id" id="index-W"></a>
 </dd>
@@ -4572,7 +4601,7 @@ sizes by which to zoom.
 <a class="index-entry-id" id="index-exit-HyControl"></a>
 <a class="index-entry-id" id="index-screen_002c-Q-1"></a>
 <a class="index-entry-id" id="index-screen_002c-q-1"></a>
-<a class="index-entry-id" id="index-Q-1"></a>
+<a class="index-entry-id" id="index-Q"></a>
 </dd>
 <dt id='index-q'><span><kbd class="kbd">{Q}</kbd><a class="copiable-link" href='#index-q'> &para;</a></span></dt>
 <dt><kbd class="kbd">{q}</kbd></dt>
@@ -5000,10 +5029,10 @@ substructure) are promoted and demoted, not individual cells.
 <a class="index-entry-id" id="index-koutliner_002c-TAB"></a>
 <a class="index-entry-id" id="index-koutliner_002c-M_002dTAB"></a>
 <a class="index-entry-id" id="index-koutliner_002c-Shift_002dTAB"></a>
-<a class="index-entry-id" id="index-koutliner_002c-M_002dleft"></a>
-<a class="index-entry-id" id="index-koutliner_002c-M_002dright"></a>
-<a class="index-entry-id" id="index-koutliner_002c-M_002dShift_002dleft"></a>
-<a class="index-entry-id" id="index-koutliner_002c-M_002dShift_002dright"></a>
+<a class="index-entry-id" id="index-koutliner_002c-M_002d_003cleft_003e"></a>
+<a class="index-entry-id" id="index-koutliner_002c-M_002d_003cright_003e"></a>
+<a class="index-entry-id" id="index-koutliner_002c-M_002dShift_002d_003cleft_003e"></a>
+<a class="index-entry-id" id="index-koutliner_002c-M_002dShift_002d_003cright_003e"></a>
 <a class="index-entry-id" id="index-koutliner_002c-C_002dc-C_002d_002c"></a>
 <a class="index-entry-id" id="index-koutliner_002c-C_002dc-C_002d_002e"></a>
 <a class="index-entry-id" id="index-koutliner_002c-C_002dc-C_002d_003e"></a>
@@ -5013,9 +5042,9 @@ substructure) are promoted and demoted, not individual cells.
 <pre class="example-preformatted">|-----------------------------+----------------------------|
 | Promotion Outside Org Table | Demotion Outside Org Table |
 |-----------------------------+----------------------------|
-| Shift-TAB or M-TAB          | TAB                        |
-| M-left                      | M-right                    |
-| M-Shift-left                | M-Shift-right              |
+| M-TAB or Shift-TAB          | TAB                        |
+| M-&lt;left&gt;                    | M-&lt;right&gt;                  |
+| M-Shift-&lt;left&gt;              | M-Shift-&lt;right&gt;            |
 | C-c C-,                     | C-c C-.                    |
 | C-c C-&lt;                     | C-c C-&gt;                    |
 |-----------------------------+----------------------------|
@@ -5023,15 +5052,14 @@ substructure) are promoted and demoted, not individual cells.
 
 
 <p>Trees may be demoted or promoted by pressing <kbd class="key">TAB</kbd> or
-<kbd class="kbd">{M-<kbd class="key">TAB</kbd>}</kbd> (or <kbd class="kbd">{<kbd class="key">SHIFT</kbd>-<kbd class="key">TAB</kbd>}</kbd>) respectively, as
-in most outliners today.  <kbd class="kbd">{M-0 <kbd class="key">TAB</kbd>}</kbd> and <kbd class="kbd">{M-0
-M-<kbd class="key">TAB</kbd>}</kbd> demote and promote trees and additionally refill each
-cell that is not specially marked to prevent refilling.
-See <a class="xref" href="#Filling">Filling</a>.  A positive or negative prefix argument to these
-commands promotes or demotes the tree up to a maximum of the number of
-levels given by the argument.  The outline may not support movement of
-the tree by the number of levels requested, however, in which case the
-maximal possible adjustment is made.
+<kbd class="kbd">{M-<kbd class="key">TAB</kbd>}</kbd>.  <kbd class="kbd">{M-0 <kbd class="key">TAB</kbd>}</kbd> and <kbd class="kbd">{M-0 M-<kbd class="key">TAB</kbd>}</kbd>
+demote and promote trees and additionally refill each cell that is not
+specially marked to prevent refilling.  See <a class="xref" href="#Filling">Filling</a>.  A positive or
+negative prefix argument to these commands promotes or demotes the
+tree up to a maximum of the number of levels given by the argument.
+The outline may not support movement of the tree by the number of
+levels requested, however, in which case the maximal possible
+adjustment is made.
 </p>
 <a class="index-entry-id" id="index-koutliner_002c-M_002d1-TAB"></a>
 <a class="index-entry-id" id="index-inserting-tabs"></a>
@@ -5050,10 +5078,10 @@ Use <kbd class="kbd">{M-1 <kbd class="key">TAB</kbd>}</kbd> to toggle the <kbd c
 </p>
 
 <a class="index-entry-id" id="index-Org-tables"></a>
-<p>The Koutliner also supports Org Table editing, see <a data-manual="org" href="https://www.gnu.org/software/emacs/manual/html_mono/org.html#Tables">Tables</a> in <cite class="cite">the Org
-Mode Manual</cite>, via Org table minor mode.  Use <kbd class="kbd">{M-x orgtbl-mode <kbd class="key">RET</kbd>}</kbd>
-to toggle this on and off.  A press of the Action Key on a <code class="code">|</code> symbol,
-also toggles this minor mode on or off.
+<p>The Koutliner also supports Org Table editing, see <a data-manual="org" href="https://www.gnu.org/software/emacs/manual/html_mono/org.html#Tables">Tables</a> in <cite class="cite">the Org Mode Manual</cite>, via Org table minor mode.  Use <kbd class="kbd">{M-x
+orgtbl-mode <kbd class="key">RET</kbd>}</kbd> to toggle this on and off.  A press of the
+Action Key on a <code class="code">|</code> symbol, also toggles this minor mode on or
+off.
 </p>
 <a class="index-entry-id" id="index-outline-mode"></a>
 <a class="index-entry-id" id="index-M_002d0-TAB"></a>
@@ -5062,15 +5090,15 @@ also toggles this minor mode on or off.
 Outline mode, plus some easier to type ones.  The tables below
 summarize which keys work whether inside an Org table or outside.
 </p>
-<p>Note that you must use <kbd class="kbd">{M-0 <kbd class="key">TAB</kbd>}</kbd> and <kbd class="kbd">{M-0 M-<kbd class="key">TAB</kbd>}</kbd> to
-demote/promote Koutline trees when in a table since <kbd class="key">TAB</kbd> by itself
-moves between fields within a table.
+<p>Note that you must use <kbd class="kbd">{M-0 <kbd class="key">TAB</kbd>}</kbd> and <kbd class="kbd">{M-0 M-<kbd class="key">TAB</kbd>}</kbd>
+to demote/promote Koutline trees when in a table since <kbd class="key">TAB</kbd> and
+<kbd class="kbd">{M-<kbd class="key">TAB</kbd>}</kbd> move between fields within a table.
 </p>
 <div class="example">
 <pre class="example-preformatted">|----------------------------+-----------------------------|
 | Promotion Inside Org Table | Demotion Inside Org Table   |
 |----------------------------+-----------------------------|
-| M-0 Shift-TAB or M-0 M-TAB | M-0 TAB                     |
+| M-0 M-TAB                  | M-0 TAB                     |
 | C-c C-,                    | C-c C-.                     |
 | C-c C-&lt;                    | C-c C-&gt;                     |
 |----------------------------+-----------------------------|
@@ -5090,9 +5118,9 @@ Next: <a href="#Moving-Around" accesskey="n" rel="next">Moving Around</a>, Previ
 <a class="index-entry-id" id="index-Action-Key_002c-cell-argument"></a>
 <a class="index-entry-id" id="index-koutliner_002c-Action-Key_002c-cell-argument"></a>
 <p>Like Org mode, you can move the tree rooted at point past trees rooted
-at the same level with <kbd class="kbd">{M-down}</kbd> and before trees with <kbd class="kbd">{M-up}</kbd>.
-Give a prefix argument to move past that many other trees.  (A 0 valued
-argument is automatically changed to 1).
+at the same level with <kbd class="kbd">{M-&lt;down&gt;}</kbd> and before trees with
+<kbd class="kbd">{M-&lt;up&gt;}</kbd>.  Give a prefix argument to move past that many other
+trees.  (A 0 valued argument is automatically changed to 1).
 </p>
 <p>For maximum flexibility in rearranging outlines, there are commands
 that move or copy entire trees anywhere within the outline as
@@ -5110,13 +5138,13 @@ arguments changes each command&rsquo;s behavior from insertion at the sibling
 level to insertion at the child level.
 </p>
 <dl class="table">
-<dd><a class="index-entry-id" id="index-M_002ddown"></a>
+<dd><a class="index-entry-id" id="index-M_002d_003cdown_003e"></a>
 </dd>
-<dt><kbd class="kbd">{M-down}</kbd></dt>
+<dt><kbd class="kbd">{M-&lt;down&gt;}</kbd></dt>
 <dd><p>Move current tree past prefix arg same level trees.
-<a class="index-entry-id" id="index-M_002dup"></a>
+<a class="index-entry-id" id="index-M_002d_003cup_003e"></a>
 </p></dd>
-<dt><kbd class="kbd">{M-up}</kbd></dt>
+<dt><kbd class="kbd">{M-&lt;up&gt;}</kbd></dt>
 <dd><p>Move current tree back prefix arg same level trees.
 </p>
 <a class="index-entry-id" id="index-C_002dc-c"></a>
@@ -6066,10 +6094,47 @@ Next: <a href="#HyRolo-Menu" accesskey="n" rel="next">Rolo Menu</a>, Previous: <
 <a class="index-entry-id" id="index-rolo-file"></a>
 <a class="index-entry-id" id="index-rolo-entry"></a>
 <p>HyRolo manages and searches rolo files.  A <em class="dfn">rolo file</em> consists of
-an optional header that starts and ends with a line of equal signs
-(at least three equal signs starting at the beginning of a line),
-followed by zero or more rolo records.  You must manually add a header
-to any rolo file if you want it to have one.
+an optional header that starts and ends with a line of equal signs (at
+least three equal signs starting at the beginning of a line), followed
+by zero or more rolo records which we call entries.  You must manually
+add a header to any rolo file if you want it to have one.  Rolo files
+may be regular text files, Emacs outline files, Org files, Markdown
+files or Koutline files.
+</p>
+<p>Rolo <em class="dfn">entries</em> begin with optional space, followed by a delimiter of
+one or more special characters followed by another space.  Delimiters
+vary based on the type of file:
+</p>
+<dl class="table">
+<dt>Emacs Outline Mode</dt>
+<dd><p>*
+</p></dd>
+<dt>Koutline Mode</dt>
+<dd><p>1b3 or 1.2.3
+</p></dd>
+<dt>Markdown Mode</dt>
+<dd><p>#
+</p></dd>
+<dt>Org Mode</dt>
+<dd><p>*
+</p></dd>
+<dt>Text Mode</dt>
+<dd><p>*
+</p></dd>
+</dl>
+
+<p>Entries may be arranged in a hierarchy, where child entries start with
+at least one more delimiter characters than do their parents.  Top-level
+level entries use either a single delimiter character or a sequence of
+digits in the case of Koutlines.
+</p>
+<p>Beyond this initial delimiter, entries are completely free-form text.
+It is best to use a &quot;lastname, firstname&quot; format, however, when adding
+contact entries into a rolo.  Then HyRolo will automatically keep your
+entries alphabetized as you enter them.  Then you can sort the entries
+if you ever need.  This ordering is what the rolo will use if you
+accept the default entry with which it prompts you when adding a new
+entry.
 </p>
 <p>Here is an example of a simple rolo file.  The date at the end is
 automatically added by HyRolo whenever a new record is added.
@@ -6084,20 +6149,6 @@ automatically added by HyRolo whenever a new record is added.
         05/24/2020
 </pre></div></div>
 
-<p>We call rolo records, <em class="dfn">entries</em>.  Entries begin with a delimiter
-of one or more &lsquo;*&rsquo; characters at the beginning of a line.  Entries may
-be arranged in a hierarchy, where child entries start with one more &lsquo;*&rsquo;
-character than do their parents.  Top-level entries begin with a single
-&lsquo;*&rsquo;.
-</p>
-<p>Beyond this initial delimiter, entries are completely free-form text.
-It is best to use a &quot;lastname, firstname&quot; format, however, when adding
-contact entries into a rolo.  Then HyRolo will automatically keep your
-entries alphabetized as you enter them.  Then you can sort the entries
-if you ever need.  This ordering is what the rolo will use if you
-accept the default entry with which it prompts you when adding a new
-entry.
-</p>
 <p>Any search done on the rolo scans the full text of each entry.  During
 a search, the rolo file header separator lines and anything in between
 are appended to the buffer of matched entries before any entries are
@@ -6152,14 +6203,16 @@ set of commands as the menubar and popup menus, with more concise labels.
 <kbd class="kbd">{C-mouse-3}</kbd> pops up the mode-specific menu in Emacs.  Experiment with
 the menu or read the following sections explaining commands.
 </p>
-<p>The minibuffer Rolo/ menu offers the following commands:
-</p>
 <a class="index-entry-id" id="index-Rolo-commands"></a>
 <a class="index-entry-id" id="index-HyRolo-commands"></a>
+<a class="index-entry-id" id="index-ConsultFind"></a>
+<a class="index-entry-id" id="index-HelmFind"></a>
 <a class="index-entry-id" id="index-hyrolo_002dadd"></a>
+<a class="index-entry-id" id="index-hyrolo_002dconsult_002dgrep"></a>
 <a class="index-entry-id" id="index-hyrolo_002ddisplay_002dmatches"></a>
 <a class="index-entry-id" id="index-hyrolo_002dedit"></a>
 <a class="index-entry-id" id="index-hyrolo_002dfind_002dfile"></a>
+<a class="index-entry-id" id="index-hyrolo_002dhelm_002dorg_002drifle"></a>
 <a class="index-entry-id" id="index-hyrolo_002dkill"></a>
 <a class="index-entry-id" id="index-hyrolo_002dmail_002dto"></a>
 <a class="index-entry-id" id="index-hyrolo_002dsort"></a>
@@ -6167,13 +6220,18 @@ the menu or read the following sections explaining commands.
 <a class="index-entry-id" id="index-hyrolo_002dfgrep"></a>
 <a class="index-entry-id" id="index-hyrolo_002dword"></a>
 <a class="index-entry-id" id="index-hyrolo_002dyank"></a>
+<p>The minibuffer Rolo/ menu offers the following commands (ConsultFind
+and HelmFind appear only when associated packages are loaded):
+</p>
 <div class="example">
 <div class="group"><pre class="example-preformatted">Menu Item       Command                 Description
 =====================================================================
 Add             hyrolo-add              Adds a hyrolo entry
+ConsultFind     hyrolo-consult-grep     Interactively narrow grep matches
 Display         hyrolo-display-matches  Displays last matches again
 Edit            hyrolo-edit             Edits an existing hyrolo entry
 File            hyrolo-find-file        Edits a <code class="code">hyrolo-file-list</code> file
+HelmFind        hyrolo-helm-org-rifle   Interactively narrow entry matches
 Info            id-info                 Displays a hyrolo manual entry
 Kill            hyrolo-kill             Deletes a hyrolo entry
 Mail            hyrolo-mail             Mails to an address at point
@@ -7707,12 +7765,14 @@ abstraction.
 </p>
 <a class="index-entry-id" id="index-consult-package"></a>
 <a class="index-entry-id" id="index-consult_002dorg_002droam-package"></a>
+<a class="index-entry-id" id="index-hsys_002dorg_002droam_002dconsult_002dgrep"></a>
 </dd>
 <dt><b class="b">Consult</b></dt>
 <dd><p>An Emacs extension package that provides asynchronous search and narrow
-wrappers around common search commands like grep, ripgrep, find and locate.
-Hyperbole optionally utilizes this to search the HyRolo.  Use the
-<code class="code">consult-org-roam</code> package to search Org Roam notes similarly.
+wrappers around common search commands like grep, ripgrep, find and
+locate.  Hyperbole optionally utilizes this to search the HyRolo.  Use
+<code class="code">M-x hsys-org-roam-consult-grep RET</code> to search Org Roam notes
+similarly.
 </p>
 </dd>
 <dt><b class="b">Context</b></dt>
@@ -7794,6 +7854,17 @@ followed by a global button label and then a closing &gt;.
 <code class="code">hbut:max-len</code>.  If 0, there is no limit and searches for button
 end delimiters can go as far as the end of the buffer.  Use the
 function, <code class="code">(hbut:max-len)</code>, to read the proper value.
+</p>
+<a class="index-entry-id" id="index-helm-package"></a>
+<a class="index-entry-id" id="index-org_002drifle-package"></a>
+<a class="index-entry-id" id="index-hyrolo_002dhelm_002dorg_002drifle-1"></a>
+</dd>
+<dt><b class="b">Helm</b></dt>
+<dd><p>An Emacs extension package that provides asynchronous search and narrow
+wrappers around many Emacs commands.  Hyperbole optionally utilizes this
+together with the <samp class="file">org-rifle</samp> package to interactively search the
+HyRolo.  Use <code class="code">M-x hyrolo-helm-org-rifle</code> to search your HyRolo file
+list with these packages.
 </p>
 <a class="index-entry-id" id="index-run_002dhooks"></a>
 </dd>
@@ -9014,7 +9085,7 @@ that links to any other window chosen via the Ace Window prompt.
 <a class="index-entry-id" id="index-key-binding_002c-C_002dh-h"></a>
 <a class="index-entry-id" id="index-C_002dh-h-2"></a>
 </dd>
-<dt id='index-C_002dh-h-X-1'><span><kbd class="kbd">{C-h h}</kbd><a class="copiable-link" href='#index-C_002dh-h-X-1'> &para;</a></span></dt>
+<dt id='index-C_002dh-h-X-2'><span><kbd class="kbd">{C-h h}</kbd><a class="copiable-link" href='#index-C_002dh-h-X-2'> &para;</a></span></dt>
 <dt id='index-Hyperbole-minibuffer-menu-1'><span><kbd class="kbd">{C-h h X}</kbd><a class="copiable-link" href='#index-Hyperbole-minibuffer-menu-1'> &para;</a></span></dt>
 <dd><a class="index-entry-id" id="index-enable-Hyperbole-1"></a>
 <a class="index-entry-id" id="index-disable-Hyperbole-1"></a>
@@ -10372,8 +10443,8 @@ Next: <a href="#Smart-Key-_002d-Ivy" accesskey="n" rel="next">Smart Key - Ivy</a
 
 <a class="index-entry-id" id="index-Org-ID"></a>
 <a class="index-entry-id" id="index-Org-link_002c-outside-Org"></a>
-<a class="index-entry-id" id="index-org_002did"></a>
-<a class="index-entry-id" id="index-org_002dlink_002doutside_002dorg_002dmode"></a>
+<a class="index-entry-id" id="index-ibtypes-org_002did"></a>
+<a class="index-entry-id" id="index-ibtypes-org_002dlink_002doutside_002dorg_002dmode"></a>
 <p>Org links may be used outside of Org mode buffers.  Such links are
 handled by the separate implicit button type, <code class="code">org-link-outside-org-mode</code>.
 Org Roam and Org IDs may be activated as hyperbuttons outside of Org mode buffers.
@@ -10710,7 +10781,7 @@ helm for these Smart Key actions to work.  Try them in your own
 version and if there are any issues, install helm from
 <samp class="file">github.com/rswgnu/helm</samp>. 
 </p>
-<a class="index-entry-id" id="index-helm-mode"></a>
+<a class="index-entry-id" id="index-helm_002dmode"></a>
 <a class="index-entry-id" id="index-completion-4"></a>
 <div class="format">
 <div class="group"><pre class="format-preformatted">If pressed within a buffer in helm major mode:
@@ -12393,8 +12464,6 @@ Next: <a href="#Function" accesskey="n" rel="next">Function, Variable and File I
  &nbsp; 
 <a class="summary-letter-printindex" href="#Key-Index_ky_letter-W"><b>W</b></a>
  &nbsp; 
-<a class="summary-letter-printindex" href="#Key-Index_ky_letter-X"><b>X</b></a>
- &nbsp; 
 <a class="summary-letter-printindex" href="#Key-Index_ky_letter-Z"><b>Z</b></a>
  &nbsp; 
 </td></tr></table>
@@ -12500,7 +12569,6 @@ Next: <a href="#Function" accesskey="n" rel="next">Function, Variable and File I
 <tr><td></td><td class="printindex-index-entry"><a href="#index-C_002dc-_005c"><code>C-c \</code></a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#HyControl">HyControl</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-C_002dc-_005c-1"><code>C-c \</code></a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Default-Hyperbole-Bindings">Default Hyperbole Bindings</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-C_002dc-_005e"><code>C-c ^</code></a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Moving-Around">Moving Around</a></td></tr>
-<tr><td></td><td class="printindex-index-entry"><a href="#index-C_002dg"><code>C-g</code></a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Menus">Menus</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-C_002dh-A"><code>C-h A</code></a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Smart-Key-Operations">Smart Key Operations</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-C_002dh-A-1"><code>C-h A</code></a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Default-Hyperbole-Bindings">Default Hyperbole Bindings</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-C_002dh-h"><code>C-h h</code></a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Invocation">Invocation</a></td></tr>
@@ -12513,6 +12581,8 @@ Next: <a href="#Function" accesskey="n" rel="next">Function, Variable and File I
 <tr><td></td><td class="printindex-index-entry"><a href="#index-C_002dh-h-c-u"><code>C-h h c u</code></a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Using-URLs-with-Find_002dFile">Using URLs with Find-File</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-C_002dh-h-c-u-1"><code>C-h h c u</code></a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Smart-Key-_002d-WWW-URLs">Smart Key - WWW URLs</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-C_002dh-h-c-w"><code>C-h h c w</code></a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Web-Search-Engines">Web Search Engines</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-C_002dh-h-C_002dg"><code>C-h h C-g</code></a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Menus">Menus</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-C_002dh-h-C_002dt"><code>C-h h C-t</code></a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Menus">Menus</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-C_002dh-h-d-d"><code>C-h h d d</code></a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Hyperbole-Overview">Hyperbole Overview</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-C_002dh-h-d-i"><code>C-h h d i</code></a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Documentation">Documentation</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-C_002dh-h-f-w"><code>C-h h f w</code></a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Web-Search-Engines">Web Search Engines</a></td></tr>
@@ -12521,7 +12591,6 @@ Next: <a href="#Function" accesskey="n" rel="next">Function, Variable and File I
 <tr><td></td><td class="printindex-index-entry"><a href="#index-C_002dh-h-h"><code>C-h h h</code></a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Default-Hyperbole-Bindings">Default Hyperbole Bindings</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-C_002dh-h-i"><code>C-h h i</code></a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-C_002dh-h-i-a"><code>C-h h i a</code></a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
-<tr><td></td><td class="printindex-index-entry"><a href="#index-C_002dh-h-i-a-1"><code>C-h h i a</code></a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-C_002dh-h-i-c"><code>C-h h i c</code></a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-C_002dh-h-i-e"><code>C-h h i e</code></a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-C_002dh-h-i-l"><code>C-h h i l</code></a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
@@ -12532,17 +12601,18 @@ Next: <a href="#Function" accesskey="n" rel="next">Function, Variable and File I
 <tr><td></td><td class="printindex-index-entry"><a href="#index-C_002dh-h-k-f-k"><code>C-h h k f k</code></a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Exporting">Exporting</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-C_002dh-h-m-c"><code>C-h h m c</code></a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Smart-Key-Debugging">Smart Key Debugging</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-C_002dh-h-m-r"><code>C-h h m r</code></a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Smart-Key-Debugging">Smart Key Debugging</a></td></tr>
-<tr><td></td><td class="printindex-index-entry"><a href="#index-C_002dh-h-q"><code>C-h h q</code></a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Invocation">Invocation</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-C_002dh-h-Q"><code>C-h h Q</code></a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Invocation">Invocation</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-C_002dh-h-Q-1"><code>C-h h Q</code></a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Menus">Menus</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-C_002dh-h-s-f"><code>C-h h s f</code></a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#HyControl">HyControl</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-C_002dh-h-s-w"><code>C-h h s w</code></a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#HyControl">HyControl</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-C_002dh-h-X"><code>C-h h X</code></a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Invocation">Invocation</a></td></tr>
-<tr><td></td><td class="printindex-index-entry"><a href="#index-C_002dh-h-X-1"><code>C-h h X</code></a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Default-Hyperbole-Bindings">Default Hyperbole Bindings</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-C_002dh-h-X-1"><code>C-h h X</code></a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Menus">Menus</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-C_002dh-h-X-2"><code>C-h h X</code></a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Default-Hyperbole-Bindings">Default Hyperbole Bindings</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-C_002dh-t"><code>C-h t</code></a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Hyperbole-Overview">Hyperbole Overview</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-C_002dM_002dh"><code>C-M-h</code></a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Hiding-and-Showing">Hiding and Showing</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-C_002dM_002dx"><code>C-M-x</code></a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Creating-Types">Creating Types</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-C_002dmouse_002d3"><code>C-mouse-3</code></a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Menu-Commands">Menu Commands</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-C_002dmouse_002d3-1"><code>C-mouse-3</code></a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#HyRolo-Menu">HyRolo Menu</a></td></tr>
-<tr><td></td><td class="printindex-index-entry"><a href="#index-C_002dt"><code>C-t</code></a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Menus">Menus</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-C_002du"><code>C-u</code></a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#HyControl">HyControl</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-C_002du-1"><code>C-u</code></a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#HyControl">HyControl</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-C_002du-C_002dc-c"><code>C-u C-c c</code></a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Relocating-and-Copying">Relocating and Copying</a></td></tr>
@@ -12585,6 +12655,7 @@ Next: <a href="#Function" accesskey="n" rel="next">Function, Variable and File I
 <tr><th id="Key-Index_ky_letter-I">I</th><td></td><td></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-I"><code>I</code></a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#HyControl">HyControl</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-i"><code>i</code></a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#HyControl">HyControl</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-I_002fJ_002fK_002fM"><code>I/J/K/M</code></a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#HyControl">HyControl</a></td></tr>
 <tr><td colspan="4"> <hr></td></tr>
 <tr><th id="Key-Index_ky_letter-J">J</th><td></td><td></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-J"><code>J</code></a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#HyControl">HyControl</a></td></tr>
@@ -12632,13 +12703,13 @@ Next: <a href="#Function" accesskey="n" rel="next">Function, Variable and File I
 <tr><td></td><td class="printindex-index-entry"><a href="#index-koutliner_002c-C_002dy"><code>koutliner, C-y</code></a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Adding-and-Killing">Adding and Killing</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-koutliner_002c-M_002d0-C_002dc-t"><code>koutliner, M-0 C-c t</code></a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Transposing">Transposing</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-koutliner_002c-M_002d1-TAB"><code>koutliner, M-1 <kbd class="key">TAB</kbd></code></a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Promoting-and-Demoting">Promoting and Demoting</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-koutliner_002c-M_002d_003cleft_003e"><code>koutliner, M-&lt;left&gt;</code></a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Promoting-and-Demoting">Promoting and Demoting</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-koutliner_002c-M_002d_003cright_003e"><code>koutliner, M-&lt;right&gt;</code></a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Promoting-and-Demoting">Promoting and Demoting</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-koutliner_002c-M_002dj"><code>koutliner, M-j</code></a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Filling">Filling</a></td></tr>
-<tr><td></td><td class="printindex-index-entry"><a href="#index-koutliner_002c-M_002dleft"><code>koutliner, M-left</code></a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Promoting-and-Demoting">Promoting and Demoting</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-koutliner_002c-M_002dq"><code>koutliner, M-q</code></a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Filling">Filling</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-koutliner_002c-M_002dRET"><code>koutliner, M-<kbd class="key">RET</kbd></code></a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Hiding-and-Showing">Hiding and Showing</a></td></tr>
-<tr><td></td><td class="printindex-index-entry"><a href="#index-koutliner_002c-M_002dright"><code>koutliner, M-right</code></a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Promoting-and-Demoting">Promoting and Demoting</a></td></tr>
-<tr><td></td><td class="printindex-index-entry"><a href="#index-koutliner_002c-M_002dShift_002dleft"><code>koutliner, M-Shift-left</code></a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Promoting-and-Demoting">Promoting and Demoting</a></td></tr>
-<tr><td></td><td class="printindex-index-entry"><a href="#index-koutliner_002c-M_002dShift_002dright"><code>koutliner, M-Shift-right</code></a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Promoting-and-Demoting">Promoting and Demoting</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-koutliner_002c-M_002dShift_002d_003cleft_003e"><code>koutliner, M-Shift-&lt;left&gt;</code></a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Promoting-and-Demoting">Promoting and Demoting</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-koutliner_002c-M_002dShift_002d_003cright_003e"><code>koutliner, M-Shift-&lt;right&gt;</code></a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Promoting-and-Demoting">Promoting and Demoting</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-koutliner_002c-M_002dTAB"><code>koutliner, M-<kbd class="key">TAB</kbd></code></a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Promoting-and-Demoting">Promoting and Demoting</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-koutliner_002c-Shift_002dTAB"><code>koutliner, Shift-<kbd class="key">TAB</kbd></code></a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Promoting-and-Demoting">Promoting and Demoting</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-koutliner_002c-TAB"><code>koutliner, <kbd class="key">TAB</kbd></code></a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Promoting-and-Demoting">Promoting and Demoting</a></td></tr>
@@ -12652,8 +12723,9 @@ Next: <a href="#Function" accesskey="n" rel="next">Function, Variable and File I
 <tr><td></td><td class="printindex-index-entry"><a href="#index-m"><code>m</code></a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#HyControl">HyControl</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-M_002d0-M_002dTAB"><code>M-0 M-<kbd class="key">TAB</kbd></code></a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Promoting-and-Demoting">Promoting and Demoting</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-M_002d0-TAB"><code>M-0 <kbd class="key">TAB</kbd></code></a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Promoting-and-Demoting">Promoting and Demoting</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-M_002d_003cdown_003e"><code>M-&lt;down&gt;</code></a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Relocating-and-Copying">Relocating and Copying</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-M_002d_003cup_003e"><code>M-&lt;up&gt;</code></a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Relocating-and-Copying">Relocating and Copying</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-M_002db"><code>M-b</code></a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Menus">Menus</a></td></tr>
-<tr><td></td><td class="printindex-index-entry"><a href="#index-M_002ddown"><code>M-down</code></a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Relocating-and-Copying">Relocating and Copying</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-M_002df"><code>M-f</code></a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Menus">Menus</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-M_002do"><code>M-o</code></a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Keyboard-Drags">Keyboard Drags</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-M_002do-1"><code>M-o</code></a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Default-Hyperbole-Bindings">Default Hyperbole Bindings</a></td></tr>
@@ -12665,7 +12737,6 @@ Next: <a href="#Function" accesskey="n" rel="next">Function, Variable and File I
 <tr><td></td><td class="printindex-index-entry"><a href="#index-M_002dRET"><code>M-<kbd class="key">RET</kbd></code></a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Smart-Key-Bindings">Smart Key Bindings</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-M_002dRET-1"><code>M-<kbd class="key">RET</kbd></code></a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-M_002dRET-2"><code>M-<kbd class="key">RET</kbd></code></a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Default-Hyperbole-Bindings">Default Hyperbole Bindings</a></td></tr>
-<tr><td></td><td class="printindex-index-entry"><a href="#index-M_002dup"><code>M-up</code></a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Relocating-and-Copying">Relocating and Copying</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-M_002dw"><code>M-w</code></a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Klinks">Klinks</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-M_002dw-1"><code>M-w</code></a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Default-Hyperbole-Bindings">Default Hyperbole Bindings</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-M_002dx-kotl_002dmode_003ashow_002dsubtree"><code>M-x kotl-mode:show-subtree</code></a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Hiding-and-Showing">Hiding and Showing</a></td></tr>
@@ -12684,8 +12755,7 @@ Next: <a href="#Function" accesskey="n" rel="next">Function, Variable and File I
 <tr><td></td><td class="printindex-index-entry"><a href="#index-p-1"><code>p</code></a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#HyRolo-Keys">HyRolo Keys</a></td></tr>
 <tr><td colspan="4"> <hr></td></tr>
 <tr><th id="Key-Index_ky_letter-Q">Q</th><td></td><td></td></tr>
-<tr><td></td><td class="printindex-index-entry"><a href="#index-Q"><code>Q</code></a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Menus">Menus</a></td></tr>
-<tr><td></td><td class="printindex-index-entry"><a href="#index-Q-1"><code>Q</code></a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#HyControl">HyControl</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-Q"><code>Q</code></a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#HyControl">HyControl</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-q"><code>q</code></a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#HyControl">HyControl</a></td></tr>
 <tr><td colspan="4"> <hr></td></tr>
 <tr><th id="Key-Index_ky_letter-R">R</th><td></td><td></td></tr>
@@ -12747,6 +12817,7 @@ Next: <a href="#Function" accesskey="n" rel="next">Function, Variable and File I
 <tr><td></td><td class="printindex-index-entry"><a href="#index-screen_002c-H"><code>screen, H</code></a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#HyControl">HyControl</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-screen_002c-I"><code>screen, I</code></a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#HyControl">HyControl</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-screen_002c-i"><code>screen, i</code></a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#HyControl">HyControl</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-screen_002c-I_002fJ_002fK_002fM"><code>screen, I/J/K/M</code></a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#HyControl">HyControl</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-screen_002c-J"><code>screen, J</code></a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#HyControl">HyControl</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-screen_002c-j"><code>screen, j</code></a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#HyControl">HyControl</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-screen_002c-K"><code>screen, K</code></a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#HyControl">HyControl</a></td></tr>
@@ -12796,9 +12867,6 @@ Next: <a href="#Function" accesskey="n" rel="next">Function, Variable and File I
 <tr><th id="Key-Index_ky_letter-W">W</th><td></td><td></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-w"><code>w</code></a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#HyControl">HyControl</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-W"><code>W</code></a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#HyControl">HyControl</a></td></tr>
-<tr><td colspan="4"> <hr></td></tr>
-<tr><th id="Key-Index_ky_letter-X">X</th><td></td><td></td></tr>
-<tr><td></td><td class="printindex-index-entry"><a href="#index-X"><code>X</code></a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Menus">Menus</a></td></tr>
 <tr><td colspan="4"> <hr></td></tr>
 <tr><th id="Key-Index_ky_letter-Z">Z</th><td></td><td></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-Z"><code>Z</code></a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#HyControl">HyControl</a></td></tr>
@@ -12877,8 +12945,6 @@ Next: <a href="#Function" accesskey="n" rel="next">Function, Variable and File I
 <a class="summary-letter-printindex" href="#Key-Index_ky_letter-U"><b>U</b></a>
  &nbsp; 
 <a class="summary-letter-printindex" href="#Key-Index_ky_letter-W"><b>W</b></a>
- &nbsp; 
-<a class="summary-letter-printindex" href="#Key-Index_ky_letter-X"><b>X</b></a>
  &nbsp; 
 <a class="summary-letter-printindex" href="#Key-Index_ky_letter-Z"><b>Z</b></a>
  &nbsp; 
@@ -13164,6 +13230,7 @@ Next: <a href="#Concept-Index" accesskey="n" rel="next">Concept Index</a>, Previ
 <tr><td></td><td class="printindex-index-entry"><a href="#index-hsys_002dorg_002denable_002dsmart_002dkeys-1">hsys-org-enable-smart-keys</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Smart-Key-_002d-Org-Mode">Smart Key - Org Mode</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-hsys_002dorg_002denable_002dsmart_002dkeys-2">hsys-org-enable-smart-keys</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Questions-and-Answers">Questions and Answers</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-hsys_002dorg_002dmode_002dp"><code>hsys-org-mode-p</code></a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-hsys_002dorg_002droam_002dconsult_002dgrep"><code>hsys-org-roam-consult-grep</code></a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Glossary">Glossary</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-htype_002dcreate_002dhook">htype-create-hook</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Hook-Variables">Hook Variables</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-htype_002ddelete_002dhook">htype-delete-hook</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Hook-Variables">Hook Variables</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-hui_002dkill_002dring_002dsave"><code>hui-kill-ring-save</code></a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Default-Hyperbole-Bindings">Default Hyperbole Bindings</a></td></tr>
@@ -13211,6 +13278,7 @@ Next: <a href="#Concept-Index" accesskey="n" rel="next">Concept Index</a>, Previ
 <tr><td></td><td class="printindex-index-entry"><a href="#index-hyrolo_002dadd"><code>hyrolo-add</code></a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#HyRolo-Menu">HyRolo Menu</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-hyrolo_002dadd_002dhook">hyrolo-add-hook</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#HyRolo-Keys">HyRolo Keys</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-hyrolo_002dadd_002dhook-1">hyrolo-add-hook</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Hook-Variables">Hook Variables</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-hyrolo_002dconsult_002dgrep"><code>hyrolo-consult-grep</code></a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#HyRolo-Menu">HyRolo Menu</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-hyrolo_002ddisplay_002dformat_002dfunction">hyrolo-display-format-function</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#HyRolo-Settings">HyRolo Settings</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-hyrolo_002ddisplay_002dhook">hyrolo-display-hook</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Hook-Variables">Hook Variables</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-hyrolo_002ddisplay_002dmatches"><code>hyrolo-display-matches</code></a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#HyRolo-Menu">HyRolo Menu</a></td></tr>
@@ -13227,6 +13295,8 @@ Next: <a href="#Concept-Index" accesskey="n" rel="next">Concept Index</a>, Previ
 <tr><td></td><td class="printindex-index-entry"><a href="#index-hyrolo_002dgoogle_002dcontacts_002dgrep"><code>hyrolo-google-contacts-grep</code></a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#HyRolo-Settings">HyRolo Settings</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-hyrolo_002dgrep"><code>hyrolo-grep</code></a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#HyRolo-Menu">HyRolo Menu</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-hyrolo_002dhdr_002dregexp">hyrolo-hdr-regexp</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#HyRolo-Settings">HyRolo Settings</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-hyrolo_002dhelm_002dorg_002drifle"><code>hyrolo-helm-org-rifle</code></a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#HyRolo-Menu">HyRolo Menu</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-hyrolo_002dhelm_002dorg_002drifle-1"><code>hyrolo-helm-org-rifle</code></a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Glossary">Glossary</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-hyrolo_002dhighlight_002dface">hyrolo-highlight-face</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#HyRolo-Settings">HyRolo Settings</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-hyrolo_002dkill"><code>hyrolo-kill</code></a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#HyRolo-Menu">HyRolo Menu</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-hyrolo_002dkill_002dbuffers_002dafter_002duse">hyrolo-kill-buffers-after-use</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#HyRolo-Settings">HyRolo Settings</a></td></tr>
@@ -13271,6 +13341,7 @@ Next: <a href="#Concept-Index" accesskey="n" rel="next">Concept Index</a>, Previ
 <tr><td></td><td class="printindex-index-entry"><a href="#index-ibtypes-hyp_002daddress"><code>ibtypes hyp-address</code></a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-ibtypes-hyp_002dsource"><code>ibtypes hyp-source</code></a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-ibtypes-hyperbole_002drun_002dtest"><code>ibtypes hyperbole-run-test</code></a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-ibtypes-hyperbole_002drun_002dtest_002ddefinition"><code>ibtypes hyperbole-run-test-definition</code></a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-ibtypes-hyperbole_002drun_002dtests"><code>ibtypes hyperbole-run-tests</code></a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-ibtypes-id_002dcflow"><code>ibtypes id-cflow</code></a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-ibtypes-ilink"><code>ibtypes ilink</code></a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
@@ -13281,6 +13352,8 @@ Next: <a href="#Concept-Index" accesskey="n" rel="next">Concept Index</a>, Previ
 <tr><td></td><td class="printindex-index-entry"><a href="#index-ibtypes-mail_002daddress"><code>ibtypes mail-address</code></a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-ibtypes-man_002dapropos"><code>ibtypes man-apropos</code></a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-ibtypes-markdown_002dinternal_002dlink"><code>ibtypes markdown-internal-link</code></a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-ibtypes-org_002did"><code>ibtypes org-id</code></a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Smart-Key-_002d-Org-Mode">Smart Key - Org Mode</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-ibtypes-org_002dlink_002doutside_002dorg_002dmode"><code>ibtypes org-link-outside-org-mode</code></a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Smart-Key-_002d-Org-Mode">Smart Key - Org Mode</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-ibtypes-patch_002dmsg"><code>ibtypes patch-msg</code></a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-ibtypes-pathname"><code>ibtypes pathname</code></a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-ibtypes-pathname_002dline_002dand_002dcolumn"><code>ibtypes pathname-line-and-column</code></a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
@@ -13451,8 +13524,6 @@ Next: <a href="#Concept-Index" accesskey="n" rel="next">Concept Index</a>, Previ
 <tr><td></td><td class="printindex-index-entry"><a href="#index-objc_002dcpp_002dinclude_002dpath">objc-cpp-include-path</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Smart-Key-_002d-Objective_002dC-Source-Code">Smart Key - Objective-C Source Code</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-objc_002dinclude_002dpath">objc-include-path</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Smart-Key-_002d-Objective_002dC-Source-Code">Smart Key - Objective-C Source Code</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-org_002dctrl_002dc_002dctrl_002dc"><code>org-ctrl-c-ctrl-c</code></a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
-<tr><td></td><td class="printindex-index-entry"><a href="#index-org_002did">org-id</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Smart-Key-_002d-Org-Mode">Smart Key - Org Mode</a></td></tr>
-<tr><td></td><td class="printindex-index-entry"><a href="#index-org_002dlink_002doutside_002dorg_002dmode">org-link-outside-org-mode</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Smart-Key-_002d-Org-Mode">Smart Key - Org Mode</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-org_002dmeta_002dreturn"><code>org-meta-return</code></a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-outline_002dminor_002dmode-1"><code>outline-minor-mode</code></a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Smart-Key-_002d-Emacs-Outline-Mode">Smart Key - Emacs Outline Mode</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-outline_002dmode-1"><code>outline-mode</code></a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Smart-Key-_002d-Emacs-Outline-Mode">Smart Key - Emacs Outline Mode</a></td></tr>
@@ -13807,6 +13878,7 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function, Variable and Fi
 <tr><td></td><td class="printindex-index-entry"><a href="#index-configuration">configuration</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Customization">Customization</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-consult-package">consult package</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Glossary">Glossary</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-consult_002dorg_002droam-package">consult-org-roam package</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Glossary">Glossary</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-ConsultFind">ConsultFind</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#HyRolo-Menu">HyRolo Menu</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-contacts_002c-Google">contacts, Google</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#HyRolo-Settings">HyRolo Settings</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-context">context</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-context_002dsensitive-help">context-sensitive help</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Smart-Key-Operations">Smart Key Operations</a></td></tr>
@@ -13844,6 +13916,7 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function, Variable and Fi
 <tr><td></td><td class="printindex-index-entry"><a href="#index-datestamps">datestamps</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#HyRolo-Keys">HyRolo Keys</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-dbx">dbx</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-debugging-Smart-Keys">debugging Smart Keys</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Smart-Key-Debugging">Smart Key Debugging</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-debugging-tests">debugging tests</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-default-label-type">default label type</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#View-Specs">View Specs</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-default-Smart-Key-context">default Smart Key context</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Smart-Key-Operations">Smart Key Operations</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-definitions">definitions</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Glossary">Glossary</a></td></tr>
@@ -13911,6 +13984,7 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function, Variable and Fi
 <tr><th id="Concept-Index_cp_letter-E">E</th><td></td><td></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-e_002dmail-address">e-mail address</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-e_002dmail-address-1">e-mail address</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Cell-Attributes">Cell Attributes</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-edebug-a-test">edebug a test</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-elink">elink</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-elisp-identifier">elisp identifier</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Smart-Key-_002d-Lisp-Source-Code">Smart Key - Lisp Source Code</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-ellipses">ellipses</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#View-Specs">View Specs</a></td></tr>
@@ -14035,7 +14109,9 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function, Variable and Fi
 <tr><td colspan="4"> <hr></td></tr>
 <tr><th id="Concept-Index_cp_letter-H">H</th><td></td><td></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-hashtag">hashtag</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
-<tr><td></td><td class="printindex-index-entry"><a href="#index-helm-mode">helm mode</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Smart-Key-_002d-Helm-Mode">Smart Key - Helm Mode</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-helm-package">helm package</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Glossary">Glossary</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-helm_002dmode">helm-mode</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Smart-Key-_002d-Helm-Mode">Smart Key - Helm Mode</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-HelmFind">HelmFind</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#HyRolo-Menu">HyRolo Menu</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-help-buffer">help buffer</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Smart-Key-_002d-Help-Buffers">Smart Key - Help Buffers</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-help_002c-button">help, button</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Smart-Key-Operations">Smart Key Operations</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-help_002c-menu-items">help, menu items</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Menus">Menus</a></td></tr>
@@ -14347,6 +14423,7 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function, Variable and Fi
 <tr><td></td><td class="printindex-index-entry"><a href="#index-menu_002c-Doc">menu, Doc</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Menus">Menus</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-menu_002c-Documentation">menu, Documentation</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Menus">Menus</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-menu_002c-EBut">menu, EBut</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Menus">Menus</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-menu_002c-entry_002fexit-commands">menu, entry/exit commands</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Menus">Menus</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-menu_002c-Explicit_002dButton">menu, Explicit-Button</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Menus">Menus</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-menu_002c-Find">menu, Find</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Menus">Menus</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-menu_002c-Find_002fWeb">menu, Find/Web</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Menus">Menus</a></td></tr>
@@ -14359,6 +14436,10 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function, Variable and Fi
 <tr><td></td><td class="printindex-index-entry"><a href="#index-menu_002c-HyRolo">menu, HyRolo</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#HyRolo-Menu">HyRolo Menu</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-menu_002c-Ibut">menu, Ibut</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-menu_002c-Ibut-1">menu, Ibut</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Menus">Menus</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-menu_002c-Ibut_002fActivate">menu, Ibut/Activate</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-menu_002c-Ibut_002fCreate">menu, Ibut/Create</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-menu_002c-Ibut_002fEdit">menu, Ibut/Edit</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-menu_002c-Ibut_002fLabel">menu, Ibut/Label</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-menu_002c-Implicit_002dButton">menu, Implicit-Button</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-menu_002c-Implicit_002dButton-1">menu, Implicit-Button</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Menus">Menus</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-menu_002c-KeyBindings">menu, KeyBindings</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Menus">Menus</a></td></tr>
@@ -14455,6 +14536,7 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function, Variable and Fi
 <tr><td></td><td class="printindex-index-entry"><a href="#index-Org-tables">Org tables</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Promoting-and-Demoting">Promoting and Demoting</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-org_002dmode">org-mode</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-Org_002dmode">Org-mode</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Questions-and-Answers">Questions and Answers</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-org_002drifle-package">org-rifle package</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Glossary">Glossary</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-org_002droam-package">org-roam package</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Glossary">Glossary</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-other-frame">other frame</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#HyControl">HyControl</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-other-window">other window</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#HyControl">HyControl</a></td></tr>
