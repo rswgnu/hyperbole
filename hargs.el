@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    31-Oct-91 at 23:17:35
-;; Last-Mod:     26-Feb-23 at 10:31:04 by Bob Weiner
+;; Last-Mod:     16-Mar-23 at 21:41:09 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -363,12 +363,10 @@ Handles all of the interactive argument types that `hargs:iform-read' does."
 	((eq hargs:reading-type 'string)
 	 (or (hargs:delimited "\"" "\"") (hargs:delimited "'" "'")
 	     (hargs:delimited "`" "'")))
-	((or (eq hargs:reading-type 'actype)
-	     (eq hargs:reading-type 'actypes))
+	((memq hargs:reading-type '(actype actypes))
 	 (let ((name (hargs:find-tag-default)))
 	   (car (set:member name (htype:names 'actypes)))))
-	((or (eq hargs:reading-type 'ibtype)
-	     (eq hargs:reading-type 'ibtypes))
+	((memq hargs:reading-type '(ibtype ibtypes))
 	 (let ((name (hargs:find-tag-default)))
 	   (car (set:member name (htype:names 'ibtypes)))))
 	((eq hargs:reading-type 'sexpression) (hargs:sexpression-p))

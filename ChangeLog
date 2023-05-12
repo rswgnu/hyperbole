@@ -1,3 +1,376 @@
+2023-05-07  Bob Weiner  <rsw@gnu.org>
+
+* Makefile (manual): Add manual target to build manual without building other
+    doc outputs.
+
+* test/kimport-tests.el: Improve all these tests and add
+    `kimport--aug-post-outline'.
+
+* hypb-ert.el (hyperbole-run-test-definition): Add ibtype that when on the
+    first line of an `ert-deftest' and not at eol nor on a grouping symbol,
+    evaluates the current version of the test and then runs it.  Assist Key
+    press in the same spot steps through the test with edebug.
+              (hyperbole-run-test-definition:help, hypb-ert-def-at-p,
+               hypb-ert-run-test-at-definition):
+    Support functions.
+
+2023-05-06  Bob Weiner  <rsw@gnu.org>
+
+* kotl/kimport.el (kimport:aug-post-outline, kimport:text):
+    Update to match `kimport:star-outline'.
+                  (kimport:aug-post-statements):
+    Update to match `kimport:star-entries'.
+
+* kotl/EXAMPLE.kotl:
+  kotl/kotl-mode.el (kotl-mode):
+  man/hyperbole.texi (Promoting and Demoting): Update so {Shift-TAB} within
+    an Org table in a Koutline moves to the previous field to complement
+    the behavior of {TAB}.  This leaves {M-TAB} as the only consistent way
+    to promote trees.
+
+* man/im/action-key-animation.gif: Update this animated gif.
+
+2023-04-30  Mats Lidell  <matsl@gnu.org>
+
+* test/hui-tests.el (hui--ebut-rename)
+    (hui--ebut-rename-only-button-with-that-label)
+    (hui--ebut-rename-nonumbered-label, hui--ebut-rename-numbered-label)
+    (hui--ebut-rename-all-copies)
+  test/hbut-tests.el (hypb:program-create-ebut-in-buffer-with-same-label):
+    Test for ebut label rename.
+
+2023-04-30  Bob Weiner  <rsw@gnu.org>
+
+* hsys-www.el (require 'eww): Add.
+              (eww-browse-url): Override this function so it utilizes
+    Hyperbole's choice of where to display the browser.
+
+* hui-mouse.el (smart-push-button-help, hkey-alist): Update to handle Emacs
+    text-property push-buttons, for which button-activate does not work.
+  hbut.el (hattr:emacs-button-attributes): Fix to handle Emacs
+    text-property push-button attributes.
+  hmouse-drv.el (hkey-help): Fix to handle text property push-buttons that
+    return a buffer marker object (no attributes to print then).
+               (smart-push-button): Add and reference in hkey-help to trigger
+    push-button-specific help output.
+
+* hbut.el (hbut:label-regexp): If label does not contain an instance number
+    and 'no-delim' arg is nil, don't add a regexp matching to instance numbers,
+    use exact label match only.
+  hbdata.el (hbdata:write, hbdata:ebut-build): Add third arg, 'new-lbl-key'
+    for use when doing ebut renames.
+  hbut.el (ebut:edit, ebut:operate): Call above with third arg.
+
+* hbut.el (ebut:operate): Fix bug that caused hui:ebut-rename to rename
+    all numbered instances of a given label rather than just the particular
+    instance of a label because was using instance-flag from 'curr-label'
+    instead of 'new-label'.
+
+2023-04-29  Bob Weiner  <rsw@gnu.org>
+
+* man/hyperbole.texi (HyRolo Concepts): Document all supported types of
+  rolo files.
+                     (Glossary): Add entry for Helm and Org Rifle packages.
+  Mention 'hyrolo-helm-org-rifle'.
+
+* hui.el (hui:ebut-rename): Do nothing if curr and new labels are the same.
+
+* man/hyperbole.texi (HyControl): Add I/J/K/M key documentation.
+
+* HY-NEWS: Update for V9 release.
+
+2023-04-23  Bob Weiner  <rsw@gnu.org>
+
+* kotl/klink.el (klink:at-p):
+  hbut.el (hbut:outside-comment-p): Make the inside of comment prog
+    mode tests in each of these use the same conditional tests.
+
+* Makefile (version): Fix so this outputs the list of files whose
+    versions are wrong, shows the proper version number and
+    prints a clearer message.  If no problem, generates no output.
+
+* hpath.el (hpath:delimited-possible-path): Remove unneeded 'format'
+    call for end delim of space-delimited matches since now use "\\s-".
+
+* README.md: Add Action Key animated gif.
+  man/im/action-key-animation.gif: Add.
+
+* hui-mini.el (hui:menus): Disable "To/" menu; not yet ready.
+
+2023-04-23  Mats Lidell  <matsl@gnu.org>
+
+* Silence various byte compiler warnings.
+
+2023-04-22  Mats Lidell  <matsl@gnu.org>
+
+* test/hbut-tests.el
+    (hypb--ebut-at-p-should-not-insert-hbdata-section-in-non-file-buffers):
+    Add test to verify that no but data section is inserted.
+
+2023-04-16  Bob Weiner  <rsw@gnu.org>
+
+* hui.el (hui:link-possible-types): Fix link to outline heading where
+    search-backward was given an empty string argument and would loop
+    infinitely without moving.  This was because movement to eol was
+    done in the wrong place.
+
+2023-04-15  Mats Lidell  <matsl@gnu.org>
+
+* test/kimport-tests.el (kimport--text-file)
+    (kimport--text-file-two-lines-per-paragraph, kimport--star-outline)
+    (kimport--star-outline-two-lines-per-star-heading)
+    (kimport--star-outline-with-siblings): Test cases for kimport.
+
+2023-04-15  Bob Weiner  <rsw@gnu.org>
+
+* kotl/kotl-mode.el (kotl-mode:cell-help): Fix to keep current buffer
+    as Koutline buffer and only set standard-output to the help buffer.
+                    (kotl-mode:is-p): Update to show buffer that is
+    not a Koutline.
+
+* kotl/kfile.el (kfile:create): Fix to handle when 'inhibit-read-only'
+    is set rather than just testing the 'buffer-read-only' flag.
+
+2023-04-15  Mats Lidell  <matsl@gnu.org>
+
+* test/kotl-mode-tests.el (kotl-mode-cell-help-displays-help-in-temp-buffer)
+    (kotl-mode-cell-help-displays-help-from-root)
+    (kotl-mode-cell-help-displays-help-for-all-cells)
+    (kotl-mode-kill-tree-and-reopen)
+    (kotl-mode-kill-tree-on-empty-file-creates-new-cell): kotl-mode test
+    cases.
+
+2023-04-09  Bob Weiner  <rsw@gnu.org>
+
+* kotl/kimport.el (kimport:initialize): Change test from 'kview:is-p'
+    to 'kfile:is-p' as view may get set before file is fully formatted.
+                  (kimport:aug-post-statements, kimport:star-entries):
+    Remove (goto-char start) after each entry is imported as this was
+    causing a duplicate at the end of the import.
+                  (kimport:star-entries): Add 'max-pos' arg at end and
+    change to return a cons of (max-position . count-of-top-level-imports).
+    Add support for reusing initial, empty cell in Koutline.
+                  (kimport:star-outline): Update to new return protocol
+    for above function.
+
+* hui-em-but.el (hproperty:but-get): Add hproperty:ibut-face support.
+                (hproperty:but-clear): Replace with new, more efficient
+    'hproperty:but-clear-all' to clear all button colorized faces in
+    in current buffer.
+                (hproperty:but-delete): Rename to 'hproperty:but-clear'.
+		(hproperty:but-flash): Fix ibut flashing where text of
+    ibut is not highlighted prior to flashing.
+
+* man/hyperbole.texi (Menus): Add doc for minibuffer menu X and Q keys.
+
+* hyrolo-menu.el (infodock-hyrolo-menu): Make HyRolo menu a customizable
+    list and conditionally add Consult-Find and Helm-Find when requisite
+    packages are installed.
+
+* hbut.el (gbut:ebut-key-list, hbut:ebut-key-list): Move 'save-restriction'
+    before call to 'hbdata:to-entry-ref' to capture all restriction
+    changes.  Fixes a bug that could leave the in-buffer hbdata separator
+    exposed.
+
+* hui-mini.el (hui:menu-backward-item, hui:menu-forward-item):
+    Fix skip past menu name search to be regexp search, not string search,
+    since pattern is a regexp.
+    (hui:menu-name-at-p): Add and use in above functions.
+
+2023-04-08  Bob Weiner  <rsw@gnu.org>
+
+* hui-em-but.el (hproperty:color-list, hproperty:good-colors):
+    Fix to work on all types of color frames rather than just X.
+                (ibut-face): Change color for more contrast with
+    color of ebut labels.
+                (hproperty:but-clear, hproperty:but-create-all,
+                 hproperty:but-create): Add hproperty:ibut-face support
+    and remove delimiter override parameters which were never used.
+                (hproperty:but-p, hproperty:but-flash): Add
+    hproperty:ibut-face support.
+
+* FAST-DEMO: Add EmacsConf 2022 videos.
+
+* man/hyperbole.texi (Smart Key - Lisp Source Code):
+  hmouse-tag.el (smart-emacs-lisp-mode-p): Add support for "*Warnings*",
+    "*Flymake log*" and "*Flymake diagnostics..." buffers.
+
+* hui-mini.el (hui:menu-rolo): Make HyRolo menu a customizable list
+    and conditionally add ConsultFind and HelmFind when requisite
+    packages are installed.
+
+* hsettings.el (hyperbole-update-menus): Make a command/interactive.
+
+* hyrolo.el (hyrolo-helm-org-directory-rifle): Rename to
+    'hyrolo-helm-org-rifle-directory' for consistency.
+
+* hbut.el (hattr:emacs-button-attributes, hattr:emacs-button-is-p): Add
+          (hattr:list): Return Emacs push-button attributes.
+  hact.el (actype:doc): Add support for Emacs push-buttons.
+  hmouse-drv.el (hkey-help): Print attributes of Emacs push-buttons and
+    doc for button's action, just as with Hyperbole buttons.
+    Display whether a Hyperbole button is EXPLICIT or IMPLICIT.
+    Also, for implicit buttons, add display of both ibtype doc and its
+    actype doc.
+
+* hyrolo.el (hyrolo-isearch-regexp): Fix 'arg' conditions were reversed.
+
+2023-04-08  Mats Lidell  <matsl@gnu.org>
+
+* test/hpath-tests.el (hpath--at-p-checks-files-with-hash-in-name-exists)
+    (hpath--at-p-checks-file-that-with-hash-that-does-not-exist-returns-nil):
+    Add tests for pathnames with hash characters.
+
+2023-04-07  Mats Lidell  <matsl@gnu.org>
+
+* test/hui-tests.el (hui--ibut-create-interactive)
+    (hui--ibut-create-interactive-label-using-region)
+    (hui--ibut-create-interactive-add-comment-char)
+    (hui--ibut-create-interactive-create-label)
+    (hui--ibut-rename-label-at-point, hui--ibut-rename-label)
+    (hui--ibut-rename-label-not-in-buffer-errors): Add tests for ibut with
+    labels.
+
+2023-04-07  Bob Weiner  <rsw@gnu.org>
+
+* kotl/kimport.el (kimport:suffix-alist): Change car of alist items from
+    a regexp to a string to simplify lookups.
+                  (kimport:file): Simplify kimport:suffix-alist handling.
+		  (kimport:star-outline): Fix 'total' matching expr to
+    match top-level entries only.
+    This fixes kimport:file infinite loop, kfile:narrow-to-kcells error
+    and broken cell counts.
+
+2023-04-02  Bob Weiner  <rsw@gnu.org>
+
+* HY-NEWS (9.0.0): Add EmacsConf 2022 videos.
+  INSTALL: (Invocation):
+  README.md (Videos):
+  man/hyperbole.texi (Invocation): Add link to Hyperbole videos in README.
+
+2023-03-29  Bob Weiner  <rsw@gnu.org>
+
+* man/hyperbole.texi (Implicit Buttons): Add paragraph on the use of Ibut/
+    menu.
+
+* hui.el (hui:ebut-create, hui:ibut-create): Remove prompting for button
+    buffer and always use current buffer.
+
+* hui-menu.el (infodock-hyperbole-menu): Add item Implicit-Button/Create.
+  hui-mini.el (hui:menus): Add minibuffer item Ibut/Create.
+
+2023-03-28  Bob Weiner  <rsw@gnu.org>
+
+* hbut.el (def-edebug-spec cl-defun): Add to make 'cl-defun' edebuggable.
+
+2023-03-27  Bob Weiner  <rsw@gnu.org>
+
+* hbut.el (ibut:label-separator): Change from " " to " - " for better
+    separation visibility.
+          (ibut:insert-text): Add.
+  hypb.el (hypb:format-args): Add and use in 'ibut:insert-text'.
+
+2023-03-26  Bob Weiner  <rsw@gnu.org>
+
+* hbdata.el (hbdata:ibut-instance-last): Add.
+            (hbdata:ibut-instance): Add.
+  hbut.el (ibut:create): Improve doc and add but-sym arg which can supply
+    all other arguments in its properties.
+          (hbut:map): Rewrite handling of 'regexp-match' arg so it always
+    applies to the button label and not its text, to accomodate named
+    implicit button filtering.
+          (hbut:label-regexp): Ensure label is wrapped as grouping 1 and
+    an optional instance number is matched.
+          (ibut:map): Utilize 'start-delim' and 'end-delim' when non-nil.
+	  (hbut:map): Remove properties from 'lbl' as not needed.
+	  (ibut:label-key-match): Add to return filtered list of ibut labels.
+          (ibut:label-sort-instances): Add to sort label key instance numbers.
+
+2023-03-16  Bob Weiner  <rsw@gnu.org>
+
+* hbdata.el (hbdata:build): Rename to hbdata:ebut-build and call in
+    hbdata:write.
+	    (hbdata:instance-last): Rename to hbdata:ebut-instance-last.
+
+* hbut.el (hbut:label-list): Use in ibut:edit.
+  hui-em-but.el (ibut-face, hproperty:ibut-face): Add and use in
+    ibut:delimit.
+
+* hbut.el (ebut:instance-sep): Rename to 'hbut:instance-sep'.
+
+* hui.el (hui:ibut-create):
+  hbut.el (ibut:create, ibut:delimit, ibut:edit, ibut:operate): Add
+    interactive, labeled implicit button creation.
+
+* ebut:start, ebut:end: Rename to ebut:label-start and ebut:label-end.
+
+2023-03-15  Bob Weiner  <rsw@gnu.org>
+
+* hui.el (hui:ebut-buf): Rename to 'hui:hbut-buf' since not ebut-specific.
+	 (hui:ebut-create, hui:ibut-create): Update call to above function.
+
+2023-03-13  Bob Weiner  <rsw@gnu.org>
+
+* test/hui-tests.el (require 'hibtypes 'klink): Force defib loads so
+    klinks have a higher priority than pathname links and tests always
+    pass.
+
+2023-03-12  Bob Weiner  <rsw@gnu.org>
+
+* hmouse-drv.el (action-mouse-key, assist-mouse-key, hmouse-release,
+                 hmouse-function): Add 'hmouse-release' and separate
+    from hmouse-function so release args are set in all cases of
+    release.  Should fix issue where 'hmouse-drag-outside-all-windows'
+    triggers when simply pressing the Action Key without any mouse press.
+
+* hyrolo.el (hyrolo-get-consult-version): Add.
+            (require 'package): Add.
+            (hyrolo-consult-grep): Add optional parameters to specify
+    initial regexp and max-matches per file.  Also ensure necessary
+    version of consult package is installed.  Update doc.
+
+* man/hyperbole.texi (By Dragging): Add doc for link-to-org-id.
+                     (Glossary): Add Ace Window, Consult, Org Mode,
+    and Org Roam entries.
+  hui.el (hui:link-possible-types): If an Org ID, use it exclusively
+    and handle IDs in any mode.
+
+2023-03-12  Mats Lidell  <matsl@gnu.org>
+
+* kotl/kexport.el (kexport:label-html-font-attributes): Don't use font
+    attributes in HTML export.
+
+* kotl/kexport.el (kexport:princ-cell): Export contents from a cell.
+
+* test/kexport-tests.el (kexport:html-creates-list-hierarchy): Check that
+    exported lists format has equal start and stop tags.
+
+2023-03-11  Bob Weiner  <rsw@gnu.org>
+
+* hibtypes.el (org-id): Set ibut label and return id when at id def so
+    can drag to direct link to an org id definition (or reference).
+
+* hbut.el (ibut:at-to-name-p): Fix to handle when 'start' of name is not
+    found.
+
+* hibtypes.el (org-id):
+  hactypes.el (org-id-marker-display): Rename to 'link-to-org-id-marker'.
+              (link-to-org-id): Add to jump to an org id referent location.
+  hui.el (hui:link-possible-types): Add 'link-to-org-id' support.
+
+* hpath.el (hpath:delimited-possible-path): Add support for HTML &quot;
+    quoting and embedded double quotes.
+  hibtypes.el (Info-node): Better handle embedded double quotes and add
+    support for HTML &quot; quoting.
+
+2023-03-10  Bob Weiner  <rsw@gnu.org>
+
+* hyrolo.el (hyrolo-find-file): Prevent 'outline-regexp' getting stuck
+    matching to *word* at the beginning of lines and hanging hyrolo-fgrep
+    because keeps moving to within an entry rather than past it.
+            (hyrolo-grep-file): If above happens, trigger an error and
+    display the problematic file with point at the errant entry.
+
 2023-03-08  Bob Weiner  <rsw@gnu.org>
 
 * hibtypes.el (grep-msg): Trigger only if filename exists.  Prevents matching
@@ -32,7 +405,7 @@
   hactypes.el (org-id-marker-display): Add to display Org Roam and Org
    ID referents.  Set this context to one of the lowest priorities.
 
-* hui-mouse.el (smart-outline, smart-outline-
+* hui-mouse.el (smart-outline, smart-outline-assist):
   man/hyperbole.texi (Smart Key - Emacs Outline Mode): Remove calling
     of eol functions when not at the end of line, e.g. when on a
     non-heading line.  This was just too unexpected a behavior in
@@ -390,7 +763,7 @@
 
 * hycontrol.el (hycontrol-windows-grid-by-file-pattern): Update
     to use prefix arg as grid size or to autosize when not given
-    or given an invalid valude.
+    or given an invalid value.
                (hycontrol-windows-grid): Don't nullify prefix arg
     when calling above function.
                (hycontrol-make-windows-grid): Move 'hhist:add' call
@@ -527,8 +900,9 @@
     directory of the 'key-src' and use in 'klink:at-p'.
 
 * kotl/klink.el (klink:c-style-modes): Improve doc string.
-                (klink:at-p): In *scratch* buffer 'lisp-interaction-mode',
-    allow klinks outside of comments (since this is more intuitive).
+                (klink:at-p): In *scratch* buffer (lisp-interaction-mode)
+    and 'hui-select-markup-modes', allow klinks outside of comments
+    (since this is more intuitive).
 
 2022-10-11  Mats Lidell  <matsl@gnu.org>
 
@@ -659,8 +1033,7 @@
     of only space after pound (#) headings.
             (markdown-mode-hook): Support hyrolo searches in markdown files.
 	    (hyrolo-fgrep-file, hyrolo-grep-file, hyrolo-fgrep, hyrolo-grep,
-             hyrolo-word):
-    Add optional 'headline-only' argument.
+             hyrolo-word): Add optional 'headline-only' argument.
 * hib-doc-id.el (link-to-doc, doc-id:help): Set new 'headline-only' argument
     to nil.
 
@@ -744,7 +1117,7 @@
 * hibtypes.el (elisp-compiler-msg):
     Replace 'hypb:replace-match-string' with 'replace-regexp-in-string'.
 
-* hbut.el (ibut:at-p): Fix to returns nil if name and lbl-key are both nil.
+* hbut.el (ibut:at-p): Fix to return nil if name and lbl-key are both nil.
     Also add support for <> and {} ibut delimiters.
 
 * hui-mouse.el (hkey-alist): In HyRolo match buffer, test major-mode
@@ -767,8 +1140,7 @@
   used to set 'case-fold-search'.
 
 * hyrolo.el (hyrolo-find-file-noselect-function): Add so can customize
-    low-level function used by HyRolo to read in each file searched by
-    HyRolo.
+    low-level function used to read in each file searched by HyRolo.
             (hyrolo-find-file): Add second optional parameter, 'find-function',
     used to find the file.
             (hyrolo-find-file-noselect): Add and use 'hyrolo-find-file-noselect-function'.
@@ -963,7 +1335,7 @@
 
 * hbut.el (ibut:create): Add 'dir' key parameter and set as hbut:current
     attribute.  Remove '(or args)' as that was preventing set of
- hbut:current attributes.
+    hbut:current attributes.
 
 2022-07-21  Mats Lidell  <matsl@gnu.org>
 
@@ -1450,8 +1822,8 @@
 
 2022-05-01  Bob Weiner  <rsw@gnu.org>
 
-* hypb-maintenance.el (hypb:web-repo-update): Add hui.el, hbut.el, hbdata.el and hmail.el
-    referenced in hyperbole.html.
+* hypb-maintenance.el (hypb:web-repo-update): Add hui.el, hbut.el, hbdata.el
+     and hmail.el referenced in hyperbole.html.
 
 * HY-ANNOUNCE: Shrink width of videos table to prevent wrapping.
 
@@ -1579,7 +1951,7 @@ V9.0.0 changes ^^^^:
     parameter; use this and kotl-mode:refill-flag in addition to no-fill parameter
     to determine whether to fill cell contents on creation.  Only the no-fill
     parameter sets the same named attribute on the cell.
-* kotl/kotl-mode.el (kotl-mode:add-cell): Send sibling-p valude to kview:add-cell.
+* kotl/kotl-mode.el (kotl-mode:add-cell): Send sibling-p value to kview:add-cell.
 
 * kotl/kotl-mode.el (kotl-mode:add-cell): Fix to not use sibling-p or
     `kotl-mode:refill-flag' to determine no-fill attribute of new cell.

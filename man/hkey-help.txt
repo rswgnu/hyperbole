@@ -82,6 +82,7 @@ Hyperbole Key Press/Click in Special Modes
   Treemacs                      Displays item              Displays item
   Dired Sidebar                 Displays item              Displays item
   Emacs Push Button             Activates button           Button help
+  Emacs Regression Test Def     Eval and run test          Edebug and run test
   Thing Begin or End            Mark thing region          Mark & kill thing region
   Page Directory Listing        Jumps to page              <- same
   Imenu Programming Identifier  Jumps to in-buffer def     Prompts for id to jump to

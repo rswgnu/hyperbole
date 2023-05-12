@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     6-Oct-91 at 03:42:38
-;; Last-Mod:     27-Feb-23 at 18:11:15 by Bob Weiner
+;; Last-Mod:     19-Apr-23 at 22:27:32 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -489,6 +489,10 @@ Return a flattened list of all matching files."
 			f))
 		    (apply #'nconc (mapcar (lambda (dir) (directory-files-recursively dir file-regexp))
 					   dirs)))))
+
+(defun hypb:format-args (args)
+  "Return a space-separated string of quoted ARGS without surrounding parentheses."
+  (if args (mapconcat (lambda (a) (format "%S" a)) args " ") ""))
 
 (defun hypb:format-quote (arg)
   "Replace all single % with %% in any string ARG.
@@ -1028,6 +1032,7 @@ Without file, the banner is prepended to the current buffer."
 	(button-put button 'keymap hypb:hyperbole-banner-keymap)))))
 
 (defun hypb:locate-pathnames ()
+  "Return a space-separated string of pathnames in a *Locate* buffer."
   (save-excursion
     (goto-char (point-min))
     (search-forward "\n" nil t 3)

@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     9-Oct-91 at 18:38:05
-;; Last-Mod:     29-Jan-23 at 02:03:03 by Bob Weiner
+;; Last-Mod:     23-Apr-23 at 20:08:38 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -59,6 +59,12 @@ Valid values are: nil, Mh-init, Rmail-init or Vm-init."
  "Major mode for editing received mail with Hyperbole buttons.")
 (defvar hmail:reader    nil
  "Major mode for reading mail with Hyperbole buttons.")
+
+;;; ************************************************************************
+;;; Public declarations
+;;; ************************************************************************
+
+(declare-function rmail:msg-widen nil)
 
 ;;; ************************************************************************
 ;;; Public functions

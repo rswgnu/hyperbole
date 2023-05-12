@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    26-Feb-98
-;; Last-Mod:     12-Feb-23 at 22:15:49 by Mats Lidell
+;; Last-Mod:     12-Mar-23 at 17:14:19 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -43,15 +43,8 @@
 (defvar kexport:output-filename nil
   "This is automatically set to the full pathname of the exported file.")
 
-(defcustom kexport:html-body-attributes
-  "BGCOLOR=\"#FFFFFF\"" ;; white background
-  "*String of HTML attributes attached to the <BODY> tag.
-Part of an HTML exported koutline file."
-  :type 'string
-  :group 'hyperbole-koutliner)
-
 (defcustom kexport:html-description
-  "Created by Hyperbole's outliner.\nSee \"(hyperbole)Koutliner\" for more information."
+  "Created by Hyperbole's outliner.\nSee &quot;(hyperbole)Koutliner&quot; for more information."
   "*String to insert as the HTML-exported document's description, or nil for none."
   :type '(choice (const nil)
 		 (string))
@@ -62,12 +55,6 @@ Part of an HTML exported koutline file."
 If nil, use no keywords."
   :type '(choice (const nil)
 		 (string))
-  :group 'hyperbole-koutliner)
-
-(defcustom kexport:label-html-font-attributes
-  "COLOR=\"#C100C1\" SIZE=\"-1\""
-  "*String of HTML font attributes attached to kcell labels when exported."
-  :type 'string
   :group 'hyperbole-koutliner)
 
 
@@ -129,10 +116,6 @@ Font Awesome Free is free and GPL friendly.")
 (defconst kexport:font-awesome-css-include
   "<style>
 
-button {
- display: inline;
-}
-
 span.nobreak {
   white-space: nowrap;
 }
@@ -145,24 +128,56 @@ li {
  list-style-type: none;
 }
 
-.collapsible {
+ul {
+  margin-top: 0px;
+  margin-bottom: 0px;
+  padding-left: 30px;
+}
+
+.tdone {
+  vertical-align: text-bottom;
+  width: 1%;
+}
+
+.tdtwo {
+  vertical-align: text-bottom;
+  width: 2%;
+}
+
+.btn {
   all: unset;
   background-color: inherit;
   cursor: pointer;
   display: block;
-  font-size: 0;
   outline: inherit;
 }
 
-.collapsible:hover {
+.btn:hover {
   background-color: #FAFAD2;
-  font-size: 0;
+  font-size: 12px;
 }
 
 .content {
   display: block;
-  font-size: 0;
+  font-size: 12px;
+  margin-top: 0px;
+  margin-bottom: 0px;
 }
+
+.label {
+  display: block;
+  color: #C100C1;
+}
+
+h1, pre {
+  margin-top: 0px;
+  margin-bottom: 0px;
+}
+
+body {
+  background-color: white;
+}
+
 </style>\n"
   "CSS that styles collapsible HTML-exported Koutline parent cells.")
 
@@ -300,30 +315,41 @@ menuitem > menu > menuitem.hover > menu > menuitem{
 </style>\n"
   "CSS that styles collapsible HTML-exported Koutline parent cells and menus.")
 
-(defconst kexport:font-awesome-collapsible-javascript
+(defconst kexport:font-awesome-collapsible-javascript-btn
   "<script>
-var coll = document.getElementsByClassName('collapsible');
-var i;
+var allSpan = document.getElementsByClassName('btn');
 
 function childElt(elt, tag)
 {
     return elt.getElementsByTagName(tag)[0];
 }
 
-for (i = 0; i < coll.length; i++) {
-  coll[i].addEventListener('click', function() {
-    var icon = childElt(this, 'span');
-    var content = this.nextElementSibling;
-    if (content.style.display === 'none') {
-      content.style.display = 'block';
-      icon.classList.add('fas', 'fa-chevron-down');
-      icon.classList.remove('fa-chevron-right');
-    } else {
-      content.style.display = 'none';
-      icon.classList.add('fas', 'fa-chevron-right');
-      icon.classList.remove('fa-chevron-down');
+for (var x = 0; x < allSpan.length; x++)
+{
+  allSpan[x].onclick = function()
+  {
+    if (this.parentNode)
+    {
+      var icon = childElt(this, 'span');
+      var childList = this.parentNode.getElementsByTagName('li');
+      for (var y = 0; y < childList.length; y++)
+      {
+        var currentState = childList[y].style.display;
+        if (currentState == 'none')
+        {
+          childList[y].style.display = 'block';
+          icon.classList.add('fas', 'fa-chevron-down');
+          icon.classList.remove('fa-chevron-right');
+        }
+        else
+        {
+          childList[y].style.display='none';
+          icon.classList.add('fas', 'fa-chevron-right');
+          icon.classList.remove('fa-chevron-down');
+        }
+      }
     }
-  });
+  }
 }
 </script>\n"
   "JavaScript which expands/collapses HTML-exported Koutline parent cells.")
@@ -422,110 +448,75 @@ used.  Also converts Urls and Klinks into Html hyperlinks.
 	  (when (string-match "\n" title)
 	    (setq title (substring title 0 (match-beginning 0)))))
 
-	(princ "<html><head>\n\n")
-	(princ "<a id=\"top\"></a><a id=\"k0\"></a>\n")
-	(princ (format "<title>%s</title>\n" title))
+	(princ "<!DOCTYPE html>\n")
+	(princ "<html lang=\"en\">\n")
+
+        ;; HEAD
+        (princ "<head>\n")
+        (princ (format "<title>%s</title>\n" title))
+
+        (princ "<meta charset=\"utf-8\">\n\n")
 	(if kexport:html-description
-	    (princ (format "<meta id=\"description\" content=\"%s\">\n"
+	    (princ (format "<meta name=\"description\" content=\"%s\">\n"
 			   kexport:html-description)))
 	(if kexport:html-keywords
 	    (princ (format "<meta id=\"keywords\" content=\"%s\">\n"
 			   kexport:html-keywords)))
 	(princ "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">")
+
 	;; CSS
 	(princ (format "<link rel=\"stylesheet\" href=\"%s\">\n" kexport:font-awesome-css-url))
 	(princ kexport:font-awesome-css-include)
-	;; HTML
+
 	(princ "</head>\n\n")
-	(princ (format "<body %s>\n\n" kexport:html-body-attributes))
-	(princ (format "<h1>%s</h1>\n\n" title))
-	;; (princ (format "<label for=\"show-menu\" class=\"show-menu\"><h1>%s</h1></label>\n\n" title))
-	;; (princ "<input type=\"checkbox\" id=\"show-menu\" role=\"button\">")
-	;; (princ "<nav>
-	;; 	<menu>
-	;; 		<menuitem id=\"title-menu\">
-	;; 			<a>Dropdown</a>
-	;; 			<menu>")
-	;; (let (text)
-	;;   (kview:map-siblings (lambda (kv)
-	;; 			(setq text (kcell-view:contents))
-	;; 			(princ (format "<menuitem><a href=\"#k%s\">%s</a></menuitem>\n"
-	;; 				       (kcell-view:label)
-	;; 				       (substring text 0 (string-match "\n" text)))))
-	;; 		      kview t))
-	;; (princ "         		</menu>
-	;; 		</menuitem>
-	;; 	</menu>
-   	;;     </nav>\n")
+
+        ;; BODY
+	(princ "<body>\n\n")
+        (princ (format "<h1>%s</h1>\n\n" title))
+
 	(let* ((separator
 		(replace-regexp-in-string
 		 ">" "&gt;"
 		 (replace-regexp-in-string
-		      "<" "&lt;" (kview:label-separator kview))))
-	       i is-parent is-last-sibling no-sibling-stack level label contents)
+		  "<" "&lt;" (kview:label-separator kview))))
+               no-sibling-stack)
+
+          (princ "<ul>\n")
+
 	  (kview:map-tree
 	   (lambda (_kview)
-	     (setq level (kcell-view:level)
-		   i level
-		   is-parent (kcell-view:child-p)
-		   is-last-sibling (not (kcell-view:sibling-p)))
-	     (when is-parent
-	       (push is-last-sibling no-sibling-stack)
-	       (princ "<button type=\"button\" class=\"collapsible\">\n"))
-	     (while (> i 1)
-	       (princ "<ul>")
-	       (setq i (1- i)))
-	     (princ "<li list-style-type=none>\n<table><tr valign=text-bottom>\n")
-	     ;; (princ "<td width=1% valign=top>")
-	     (princ "<td width=1%>")
-	     (princ (format "<span class=\"fas fa-chevron-down fa-fw\"%s></span>"
-			    (if is-parent
-				""
-			      ;; Fill same space for alignment but don't
-			      ;; show collapsible chevron when not collapsible
-			      " style=\"visibility:hidden\"")))
-	     (princ "</td>\n")
-	     ;; (princ "<td width=2% valign=top>\n")
-	     (princ "<td width=2%>\n")
-	     (setq label (kcell-view:label))
-	     (princ (format "<a id=\"k%s\"></a>" label))
-	     (princ (format "<a id=\"k%s\"></a>\n" (kcell-view:idstamp)))
-	     (princ (format
-		     "<pre><font %s>%s%s</font></pre>\n"
-		     kexport:label-html-font-attributes
-		     label separator))
-	     (princ "</td>\n<td>\n")
-	     (setq contents (kcell-view:contents))
-	     (when (string-match "\\`\\([-_$%#@~^&*=+|/A-Za-z0-9 ]+\\):.*\\S-"
-				 contents)
-	       (princ (format "<a id=\"%s\"></a>"
-			      (substring contents 0 (match-end 1)))))
-	     (setq contents (kexport:html-markup contents))
-	     (if soft-newlines-flag
-		 (princ contents)
-	       (princ "<pre>") (princ contents) (princ "</pre>"))
-	     (princ "</td>\n")
-	     (princ "</tr></table></li>")
-	     (setq i level)
-	     (while (> i 1)
-	       (princ "</ul>")
-	       (setq i (1- i)))
-	     (cond (is-parent
-		    (princ "\n</button>\n<div class=\"content\">\n"))
-		   ((and (/= level 1) is-last-sibling)
-		    (princ "\n</div>")
-		    (while (pop no-sibling-stack)
-		      (princ "</div>"))))
-	     (when (not is-parent)
-	       (terpri) (terpri)))
+	     (let ((is-parent (kcell-view:child-p))
+	           (is-last-sibling (not (kcell-view:sibling-p))))
+
+               (princ (format "<!-- Level: %s, is-parent: %s, is-last-sibling: %s -->\n"
+                              (kcell-view:level) is-parent is-last-sibling))
+               (princ "<li>\n")
+
+               (kexport:princ-cell is-parent separator soft-newlines-flag)
+
+               (if is-parent
+                   (progn
+                     (princ "<ul>\n")
+                     (push is-last-sibling no-sibling-stack))
+                 (princ "</li>\n")
+                 (when is-last-sibling
+                   (princ "</ul>\n")
+                   (princ "</li>\n")
+                   (pop no-sibling-stack)
+                   (while (pop no-sibling-stack)
+                     (princ "</ul>\n")
+                     (princ "</li>\n"))))))
 	   kview t)
+
+          (princ "</ul>\n")
+
 	  ;; Remove any extra newline at the end of any <pre> text
 	  (save-excursion
 	    (goto-char (point-min))
 	    (when (re-search-forward "\r?\n\\'" nil t)
 	      (replace-match "" nil nil))))
 	;; JavaScript
-	(princ kexport:font-awesome-collapsible-javascript)
+	(princ kexport:font-awesome-collapsible-javascript-btn)
 	(princ "</body></html>\n")))
     (with-current-buffer standard-output
       (save-buffer))))
@@ -533,6 +524,33 @@ used.  Also converts Urls and Klinks into Html hyperlinks.
 ;;; ************************************************************************
 ;;; Private functions
 ;;; ************************************************************************
+
+(defun kexport:princ-cell (is-parent separator soft-newlines-flag)
+  "Export the contents of a cell."
+  (let (contents label)
+    (setq contents
+          (let ((cnt1 (kcell-view:contents)))
+            (concat
+	     (when (string-match "\\`\\([-_$%#@~^&*=+|/A-Za-z0-9 ]+\\):.*\\S-" cnt1)
+	       (format "<div id=\"%s\"></div>"
+                       (replace-regexp-in-string "[ \t]" "_" (substring cnt1 0 (match-end 1)))))
+	     (let ((cnt2 (kexport:html-markup cnt1)))
+	       (if soft-newlines-flag
+		   cnt2
+	         (concat "<pre>" cnt2 "</pre>"))))))
+    (setq label (kcell-view:label))
+    (setq contents
+          (concat "<table><tr>\n<td class=\"tdone\">\n"
+                  (format "<span class=\"fas fa-chevron-down fa-fw\"%s></span>\n"
+                          (if is-parent " " " style=\"visibility:hidden\""))
+                  "</td>\n<td class=\"tdtwo\">"
+                  (format "<span id=\"k%s\"></span>" label)
+                  (format "<span id=\"k%s\"></span>" (kcell-view:idstamp))
+                  (format "<pre class=\"label\">%s%s</pre>" label separator)
+                  "</td>\n<td>"
+                  contents
+                  "</td>\n</tr>\n</table>\n"))
+    (princ (format "<div class=\"%scontent\">\n%s</div>\n" (if is-parent "btn " "") contents))))
 
 (defun kexport:html-file-klink (string)
   "Convert STRING containing a klink with a file reference to Html format.

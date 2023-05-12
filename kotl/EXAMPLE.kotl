@@ -49,11 +49,9 @@
            then yank the contents into another cell with {C-y}.
 
       3b5. Tree Demotion and Promotion: Trees may be demoted pressing {TAB}
-           or promoted by pressing {M-TAB} or {SHIFT-TAB}, as in most
-           outliners today. Sub-levels move with their parents.  {M-0 TAB}
-           and {M-0 M-TAB} will demote and promote trees and will
-           additionally refill each cell that has not been specially marked
-           to prevent refilling.
+           or promoted by pressing {M-TAB}.  {M-0 TAB} and {M-0 M-TAB} will
+           demote and promote trees and will additionally refill each cell
+           that has not been specially marked to prevent refilling.
            
            {M-1 TAB} behaves specially.  It toggles the function of {TAB} and
            {M-TAB} so that they insert a tab character and remove the
@@ -102,8 +100,8 @@
            Copying and moving only work within a single outline right now, so
            don't try to move or copy trees to another Koutline file.
            
-            {[M-down]}    - Move current tree past prefix arg same level trees.
-            {[M-up]}      - Move current tree back prefix arg same level trees.
+            {M-<down>}    - Move current tree past prefix arg same level trees.
+            {M-<up>}      - Move current tree back prefix arg same level trees.
            
             {C-c c}       - Copy <tree> to follow as sibling of <cell>.
             {C-u C-c c}   - Copy <tree> to follow as first child of <cell>.
@@ -372,29 +370,30 @@
 
       3d2. Here are two table examples:
            
-           |--------------------------------+---------------------------|
-           | Promotion Inside Org Table     | Demotion Inside Org Table |
-           |--------------------------------+---------------------------|
-           | {M-0 Shift-TAB} or {M-0 M-TAB} | {M-0 TAB}                 |
-           | {C-c C-,}                      | {C-c C-.}                 |
-           | {C-c C-<}                      | {C-c C->}                 |
-           |--------------------------------+---------------------------|
+           |----------------------------+---------------------------|
+           | Promotion Inside Org Table | Demotion Inside Org Table |
+           |----------------------------+---------------------------|
+           | {M-0 M-TAB}                | {M-0 TAB}                 |
+           | {C-c C-,}                  | {C-c C-.}                 |
+           | {C-c C-<}                  | {C-c C->}                 |
+           |----------------------------+---------------------------|
                       
            |-----------------------------+----------------------------|
            | Promotion Outside Org Table | Demotion Outside Org Table |
            |-----------------------------+----------------------------|
-           | {Shift-TAB} or {M-TAB}      | {TAB}                      |
-           | {M-left}                    | {M-right}                  |
+           | {M-TAB} or {Shift-TAB}      | {TAB}                      |
+           | {M-<left>}                  | {M-<right>}                |
            | {C-c C-,}                   | {C-c C-.}                  |
            | {C-c C-<}                   | {C-c C->}                  |
            |-----------------------------+----------------------------|
-           
            
            To toggle table editing mode on or off, press the Action
            Key on any of the table | symbols and then edit as you
            would any Org table.  Note how the above tables show how
            TAB and Shift-TAB behave differently in and outside of
-           tables.  See "(Org)Tables" for help on utilizing tables.
+           tables; use M-TAB rather than Shift-TAB for tree promotion
+           consistency anywhere.  See "(Org)Tables" for help on utilizing
+           tables.
 
     3e. The Koutliner code runs on any system that supports Emacs,
         whether under a window system or from a dumb terminal display.

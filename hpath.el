@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     1-Nov-91 at 00:44:23
-;; Last-Mod:      7-Mar-23 at 21:55:28 by Bob Weiner
+;; Last-Mod:     23-Apr-23 at 11:58:33 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1074,7 +1074,7 @@ ACTION-STR is used at the start of a prompt to choose the path."
 		paths (and path-value
 			   (split-string path-value (if (string-match ";" path-value) ";" ":") nil "\\s-")))
       (setq paths (sort (mapcar (lambda (path) (if (string-empty-p path) "." path)) paths) #'string-lessp))
-      (unless (memq t (mapcar (lambda (mode) (and (fboundp mode) (symbol-value mode))) hpath:auto-completing-read-modes))
+      (unless (memq t (mapcar (lambda (mode) (when (fboundp mode) (symbol-value mode))) hpath:auto-completing-read-modes))
 	(kbd-key:key-series-to-events "?"))
       (completing-read (format "%s path from ${%s}: "
 			       (if (stringp action-str) action-str "Choose")
@@ -1095,6 +1095,11 @@ end-pos) or nil."
   ;; Prevents MSWindows to Posix path substitution
   (let ((hyperb:microsoft-os-p t))
     (or (hargs:delimited "file://" "\\s-" nil t include-positions)
+	;; Filenames in HTML
+	(hargs:delimited "&quot;" "&quot;" nil nil include-positions "[`'’]")
+	;; Embedded double quoted filenames
+	(hargs:delimited "\\\"" "\\\"" nil nil include-positions "[`'’]")
+	;; Double quoted filenames
 	(hargs:delimited "\"" "\"" nil nil include-positions "[`'’]")
 	;; Filenames in Info docs or Python files
 	(hargs:delimited "[`'‘]" "[`'’]" t t include-positions "\"")
@@ -1103,15 +1108,14 @@ end-pos) or nil."
 	;; if `non-exist' is nil, look for any existing whitespace
 	;; delimited filename at point.  If match consists of only
 	;; punctuation, like . or .., don't treat it as a pathname.
-	;; It shell modes, it must be tab delimited.
+	;; In shell modes, it must be tab delimited.
 	(unless non-exist
 	  (let* ((space-delimiter (if (derived-mode-p #'shell-mode)
 				      "\t"
 				    "[ \t]"))
 		 (triplet (hargs:delimited (format "^\\|\\(%s\\|[\]\[()<>\;&,@]\\)+"
 						   space-delimiter)
-					   (format "\\([\]\[()<>\;&,@]\\|:*\\s-\\)+\\|$"
-						   space-delimiter)
+					   "\\([\]\[()<>\;&,@]\\|:*\\s-\\)+\\|$"
 					   t t t))
 		 (p (car triplet))
 		 (punc (char-syntax ?.)))

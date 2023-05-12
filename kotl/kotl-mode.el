@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    6/30/93
-;; Last-Mod:     16-Oct-22 at 19:29:20 by Mats Lidell
+;; Last-Mod:      6-May-23 at 12:39:55 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -170,24 +170,22 @@ It provides the following keys:
 
   ;; If buffer has not yet been formatted for editing, format it.
   (let (version)
-    (cond
-     ;; Koutline file that has been loaded and formatted for editing.
-     ((kview:is-p kview)
-      ;; The buffer might have been widened for inspection, so narrow to cells
-      ;; only.
-      (kfile:narrow-to-kcells))
-     ;; Koutline file that has been loaded but not yet formatted for editing.
-     ((setq version (kfile:is-p))
-      (kfile:read
-       (current-buffer)
-       (and buffer-file-name (file-exists-p buffer-file-name))
-       version)
-      (kvspec:activate))
-     ;; New koutline buffer or a foreign text buffer that must be converted to
-     ;; koutline format.
-     (t
+    ;; Koutline file that has been loaded but not yet formatted for editing.
+    (if (setq version (kfile:is-p))
+        ;; Koutline file that has been loaded and formatted for editing.
+	(if (kview:is-p kview)
+	    ;; The buffer might have been widened for inspection, so narrow to cells
+	    ;; only.
+	    (kfile:narrow-to-kcells)
+	  (kfile:read
+	   (current-buffer)
+	   (and buffer-file-name (file-exists-p buffer-file-name))
+	   version)
+	  (kvspec:activate))
+      ;; New koutline buffer or a foreign text buffer that must be converted to
+      ;; koutline format.
       (kfile:create (current-buffer))
-      (kvspec:activate))))
+      (kvspec:activate)))
   ;; We have been converting a buffer from a foreign format to a koutline.
   ;; Now that it is converted, ensure that `kotl-previous-mode' is set to
   ;; koutline.
@@ -206,11 +204,10 @@ It provides the following keys:
               (orgtbl-make-binding 'orgtbl-meta-return 106
         			   [(meta return)] "\M-\C-m"))
   (org-defkey orgtbl-mode-map "\C-d"
-              (orgtbl-make-binding 'kotl-mode:delete-char 201
-        			   "\C-d"))
-  (org-defkey orgtbl-mode-map [(shift iso-lefttab)]
-              (orgtbl-make-binding 'org-shifttab 202
-        			   [(shift iso-lefttab)] [backtab] [(shift tab)]))
+              (orgtbl-make-binding 'kotl-mode:delete-char 201 "\C-d"))
+  (org-defkey orgtbl-mode-map [S-iso-lefttab]
+              (orgtbl-make-binding 'org-shifttab 107
+        			   [S-iso-lefttab] [backtab] [(shift tab)]))
   (run-hooks 'kotl-mode-hook)
   (add-hook 'change-major-mode-hook #'kotl-mode:show-all nil t))
 
@@ -2989,9 +2986,9 @@ With optional SHOW-FLAG, expand the tree instead."
   (kotl-mode:hide-tree cell-ref t))
 
 (defun kotl-mode:cell-attributes (all-flag)
-  "Print attributes of the current kcell to standard output.
+  "Print attributes of the current kcell to `standard-output'.
 With prefix arg ALL-FLAG non-nil, print the attributes of all visible
-kcells from the current buffer to standard output.
+kcells from the current buffer to `standard-output'.
 
 See also the documentation for `kotl-mode:cell-help'."
   (interactive "P")
@@ -3029,26 +3026,33 @@ See also the documentation for `kotl-mode:cell-attributes'."
     (setq cell-ref (kcell-view:label)))
   ;; Ensure these do not invoke with-output-to-temp-buffer a second time.
   (let ((temp-buffer-show-hook)
-	(temp-buffer-show-function))
-    (with-help-window (hypb:help-buf-name "Koutliner")
-      (save-excursion
-	(if (or (member cell-ref '("0" 0))
-		(<= cells-flag 0))
-	    (progn
-	      (hattr:report (append '(idstamp 0)
-				    (kcell:plist (kview:top-cell kview))))
-	      (terpri)
-	      (cond ((= cells-flag 1) nil)
-		    ((> cells-flag 1)
-		     (kview:map-tree #'kotl-mode:print-attributes kview t t))
-		    ;; (<= cells-flag 0)
-		    (t (kotl-mode:cell-attributes t))))
-	  (cond ((= cells-flag 1)
-		 (kotl-mode:goto-cell cell-ref)
-		 (kotl-mode:print-attributes kview))
-		((> cells-flag 1)
-		 (kotl-mode:goto-cell cell-ref)
-		 (kview:map-tree #'kotl-mode:print-attributes kview nil t))))))))
+	(temp-buffer-show-function)
+	(standard-output (get-buffer-create (hypb:help-buf-name "Koutliner"))))
+    (with-current-buffer standard-output
+      (setq buffer-read-only nil)
+      (erase-buffer))
+    (save-excursion
+      (if (or (member cell-ref '("0" 0))
+	      (<= cells-flag 0))
+	  (progn
+	    (hattr:report (append '(idstamp 0)
+				  (kcell:plist (kview:top-cell kview))))
+	    (terpri)
+	    (cond ((= cells-flag 1) nil)
+		  ((> cells-flag 1)
+		   (kview:map-tree #'kotl-mode:print-attributes kview t t))
+		  ;; (<= cells-flag 0)
+		  (t (kotl-mode:cell-attributes t))))
+	(cond ((= cells-flag 1)
+	       (kotl-mode:goto-cell cell-ref)
+	       (kotl-mode:print-attributes kview))
+	      ((> cells-flag 1)
+	       (kotl-mode:goto-cell cell-ref)
+	       (kview:map-tree #'kotl-mode:print-attributes kview nil t)))))
+    (with-current-buffer standard-output
+      (goto-char (point-min))
+      (set-buffer-modified-p nil)
+      (hkey-help-show standard-output))))
 
 (defun kotl-mode:get-cell-attribute (attribute &optional pos top-cell-flag)
   "Return ATTRIBUTE's value for the current cell or the cell at optional POS.
@@ -3187,7 +3191,7 @@ on when tabs are used for indenting."
   (if (kview:is-p kview)
       t
     (hypb:error
-     "(kotl-mode:is-p): Command requires a valid Hyperbole koutline")))
+     "(kotl-mode:is-p): '%s' is not a valid Hyperbole koutline" (current-buffer))))
 
 (defun kotl-mode:shrink-region ()
   "Shrink region within visible bounds of a single cell.
