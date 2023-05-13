@@ -182,8 +182,8 @@
       now recognized as programming etags in the *Warnings* byte-compilation
       buffer and in Flymake log and diagnostics buffers.
 
-  *** Info Nodes: Better handle embedded double quotes and add support for
-      HTML &quot; quoting.
+  *** Info Nodes: Better handling of embedded double quotes and added support
+      for HTML &quot; quoting.
 
   *** Improved # and Embedded Space Path Handling: If a path exists, don't
       treat its # hash marks as section markers, notably for #autosave# files.
@@ -198,7 +198,7 @@
 
   *** Path Implicit Buttons: Much improved relative path handling, including
       expanding into executable paths when pathname is prefixed by ! or &,
-      handling info paths outside `Info-directory-list', like
+      and handling info paths outside `Info-directory-list', like
       "man/hyperbole.info".
 
   *** Table of Contents Sections: Hyperbole now recognizes TOCs in any text

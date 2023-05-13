@@ -1,5 +1,11 @@
 2023-05-13  Bob Weiner  <rsw@gnu.org>
 
+* hpath.el (hpath:cache-mswindows-mount-points): Catch and ignore any shell command
+    error.  Can be triggered when default-directory is set to a URL, as in RFC
+    display buffers.  This in turn would lead hyperbole-mode activation to fail.
+
+* man/hyperbole.texi (HyRolo Keys): Updates to match HY-NEWS.
+
 * DEMO (Org Mode): Update Action Key handling writeup.
 
 * hui-menu.el (infodock-hyperbole-menu): Sync Documentation menu to minibuffer Doc/
