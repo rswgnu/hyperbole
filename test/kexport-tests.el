@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    10-Oct-21 at 17:30:00
-;; Last-Mod:     22-May-22 at 10:57:14 by Mats Lidell
+;; Last-Mod:     10-Mar-23 at 01:10:09 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -96,15 +96,38 @@
             (kexport:html kotl-file html-file))
           (find-file html-file)
           (goto-char (point-min))
-          (re-search-forward "<pre>.*1\\. .*</pre>")
+          (re-search-forward "<pre.*1\\. .*</pre>")
           (re-search-forward "<pre>first</pre>")
-          (re-search-forward "<pre>.*1a\\. .*</pre>")
+          (re-search-forward "<pre.*1a\\. .*</pre>")
           (re-search-forward "<pre>second</pre>")
-          (re-search-forward "<pre>.*1a1\\. .*</pre>")
+          (re-search-forward "<pre.*1a1\\. .*</pre>")
           (re-search-forward "<pre>third</pre>"))
       (progn
         (delete-file kotl-file)
         (delete-file html-file)))))
+
+(ert-deftest kexport:html-creates-list-hierarchy ()
+  "kexport:html exports cells in a hierachy using lists."
+  (let ((kotl-file (make-temp-file "hypb" nil ".kotl"))
+        (html-file  (make-temp-file "hypb" nil ".html")))
+    (unwind-protect
+        (progn
+          (find-file kotl-file)
+          (insert "first")
+          (kotl-mode:add-child)
+          (insert "second")
+          (kotl-mode:add-child)
+          (insert "third")
+          (let ((auto-insert nil))
+            (kexport:html kotl-file html-file))
+          (find-file html-file)
+          (goto-char (point-min))
+          (should (= (count-matches "<ul\\b" (point-min) (point-max))
+                     (count-matches "</ul\\b" (point-min) (point-max))))
+          (should (= (count-matches "<li\\b" (point-min) (point-max))
+                     (count-matches "</li\\b" (point-min) (point-max)))))
+      (delete-file kotl-file)
+      (delete-file html-file))))
 
 (ert-deftest kexport:display-creates-html-file-and-displays-it ()
   "kexport:display creates html file and displays it in external browser."

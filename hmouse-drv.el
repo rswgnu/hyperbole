@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    04-Feb-90
-;; Last-Mod:     29-Jan-23 at 00:15:24 by Mats Lidell
+;; Last-Mod:     30-Apr-23 at 15:49:20 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -26,6 +26,7 @@
 ;;; Public declarations
 ;;; ************************************************************************
 (defvar start-window)
+(declare-function mouse-drag-frame nil) ;; Obsolete from Emacs 28
 
 ;;; ************************************************************************
 ;;; Public variables
@@ -221,26 +222,25 @@ This permits the Smart Keys to behave as paste keys.")
 ;;; Smart Key Release Functions
 (defun action-mouse-key-emacs (event)
   "Set point to the current mouse cursor position and execute `action-key'.
-EVENT will be passed to `hmouse-function'."
+EVENT will be passed to `hmouse-release'."
   (interactive "e")
   (apply #'action-mouse-key (hmouse-key-release-args-emacs event)))
 
 (defun assist-mouse-key-emacs (event)
   "Set point to the current mouse cursor position and execute `assist-key'.
-EVENT will be passed to `hmouse-function'."
+EVENT will be passed to `hmouse-release'."
   (interactive "e")
   (apply #'assist-mouse-key (hmouse-key-release-args-emacs event)))
 
 (defun action-mouse-key (&rest args)
   "Set point to the mouse or keyboard cursor position and execute `action-key'.
-Any ARGS will be passed to `hmouse-function'."
+Any ARGS will be passed to `hmouse-release'."
   (interactive)
   ;; Make this a no-op if some local mouse key binding overrode the global
   ;; action-key-depress command invocation.
   (when action-key-depressed-flag
-    (setq action-key-release-position (hkey-absolute-pixel-position))
+    (hmouse-release nil)
     (let ((hkey-alist hmouse-alist))
-      (setq action-key-depressed-flag nil)
       (cond (action-key-cancelled
 	     (setq action-key-cancelled nil
 		   assist-key-depressed-flag nil))
@@ -257,14 +257,13 @@ Any ARGS will be passed to `hmouse-function'."
 
 (defun assist-mouse-key (&rest args)
   "Set point to the mouse or keyboard cursor position and execute `assist-key'.
-Any ARGS will be passed to `hmouse-function'."
+Any ARGS will be passed to `hmouse-release'."
   (interactive)
   ;; Make this a no-op if some local mouse key binding overrode the global
   ;; assist-key-depress command invocation.
   (when assist-key-depressed-flag
-    (setq assist-key-release-position (hkey-absolute-pixel-position))
+    (hmouse-release t)
     (let ((hkey-alist hmouse-alist))
-      (setq assist-key-depressed-flag nil)
       (cond (assist-key-cancelled
 	     (setq assist-key-cancelled nil
 		   action-key-depressed-flag nil))
@@ -1017,16 +1016,51 @@ documentation is found."
 			      (terpri) (terpri)))
 			  calls)
 
+		    ;; Print Hyperbole button attributes
 		    (when (memq cmd-sym '(hui:hbut-act hui:hbut-help))
-		      (princ (format "%s BUTTON SPECIFICS:\n\n%s\n"
-				     (htype:def-symbol
-				      (if (eq (hattr:get 'hbut:current 'categ)
-					      'explicit)
-					  (hattr:get 'hbut:current 'actype)
-					(hattr:get 'hbut:current 'categ)))
-				     (actype:doc 'hbut:current t)))
-		      (hattr:report
-		       (nthcdr 2 (hattr:list 'hbut:current))))
+		      (let ((actype (or (actype:elisp-symbol (hattr:get 'hbut:current 'actype))
+					(hattr:get 'hbut:current 'actype)))
+			    (categ (hattr:get 'hbut:current 'categ))
+			    (attributes (nthcdr 2 (hattr:list 'hbut:current))))
+			(princ (format "%s %s BUTTON SPECIFICS:\n"
+				       (htype:def-symbol
+					(if (eq categ 'explicit)
+					    actype
+					  categ))
+				       (if (eq categ 'explicit)
+					   "EXPLICIT" "IMPLICIT")))
+			(hattr:report attributes)
+			(unless (or (eq categ 'explicit)
+				    (null categ)
+				    (not (fboundp categ))
+				    (null (documentation categ)))
+			  ;; Include implicit button's ibtype doc
+			  (princ (format "\n%s\n"
+					 (replace-regexp-in-string "^" "  " (documentation categ)
+								   nil t))))
+			(when (and (symbolp actype)
+				   (fboundp actype)
+				   (documentation actype))
+			  (princ (format "\n%s ACTION SPECIFICS:\n%s\n"
+					 (or (actype:def-symbol actype) actype)
+					 (replace-regexp-in-string "^" "  " (documentation actype)
+								   nil t))))))
+
+		    ;; Print Emacs push-button attributes
+		    (when (memq cmd-sym '(smart-push-button smart-push-button-help))
+		      (let* ((button (button-at (point)))
+			     (attributes (when button (hattr:list button))))
+			(when attributes
+			  (princ (format "%s BUTTON SPECIFICS:\n"
+					 (button-label button)))
+			  (hattr:report attributes)
+			  ;; text-property buttons are represented as markers
+			  (unless (markerp button)
+			    (princ (format "\n%s ACTION SPECIFICS:\n%s\n"
+					   (plist-get attributes 'action)
+					   (replace-regexp-in-string "^" "  " (actype:doc button t)
+								     nil t)))))))
+
 		    (terpri)))
 		"")
 	    (message "No %s Key command for current context."
@@ -1125,7 +1159,7 @@ the current window.  By default, it is displayed according to the setting of
   "If a Smart Key help flag is set and the other Smart Key is not down, show help.
 Takes two args: ASSISTING should be non-nil iff command applies
 to the Assist Key.  ARGS is a list of arguments passed to
-`hmouse-function'.  Return t if help is displayed, nil otherwise."
+`hmouse-release'.  Return t if help is displayed, nil otherwise."
   (let ((help-shown)
 	(other-key-released (not (if assisting
 				     action-key-depressed-flag
@@ -1134,10 +1168,12 @@ to the Assist Key.  ARGS is a list of arguments passed to
 	(setq help-shown
 	      (cond ((and  action-key-help-flag other-key-released)
 		     (setq action-key-help-flag nil)
+		     (hmouse-release assisting)
 		     (hmouse-function #'hkey-help assisting args)
 		     t)
 		    ((and  assist-key-help-flag other-key-released)
 		     (setq assist-key-help-flag nil)
+		     (hmouse-release assisting)
 		     (hmouse-function #'hkey-assist-help assisting args)
 		     t)))
       (when help-shown
@@ -1152,29 +1188,43 @@ Each invocation alternates between starting a drag and ending it.
 Optional prefix ARG non-nil means emulate Assist Key rather than the
 Action Key.
 
-Only works when running under a window system, not from a dumb terminal."
+Only works when running under a window system, not from a dumb terminal.
+
+If a non-Hyperbole minor mode, e.g. ivy, has a different binding for the
+key to which this command is bound, then defer to that binding."
   (interactive "P")
-  (unless (hyperb:window-system)
-    (hypb:error "(hkey-operate): Drag actions require mouse support"))
-  (if arg
-      (if assist-key-depressed-flag
-	  (progn (assist-mouse-key)
+  (catch 'other-binding
+    ;; If a non-Hyperbole minor mode has a different binding for the
+    ;; key to which this command is bound, then defer to that binding
+    (let* ((hyperbole-mode)
+	   (key (car (where-is-internal #'hkey-operate (list hyperbole-mode-map))))
+	   (binding (when key (cdar (minor-mode-key-binding key)))))
+      (when binding
+	(throw 'other-binding (call-interactively binding))))
+
+    (unless (hyperb:window-system)
+      (hypb:error "(hkey-operate): Drag actions require mouse support"))
+
+    ;; Otherwise, handle the drag command
+    (if arg
+	(if assist-key-depressed-flag
+	    (progn (assist-mouse-key)
+		   (when (called-interactively-p 'interactive)
+		     (message "Assist Key released.")))
+	  (assist-key-depress)
+	  (when (called-interactively-p 'interactive)
+	    (message
+	     "Assist Key depressed; go to release point and press {%s %s}."
+	     (substitute-command-keys "\\[universal-argument]")
+	     (substitute-command-keys "\\[hkey-operate]"))))
+      (if action-key-depressed-flag
+	  (progn (action-mouse-key)
 		 (when (called-interactively-p 'interactive)
-		   (message "Assist Key released.")))
-	(assist-key-depress)
+		   (message "Action Key released.")))
+	(action-key-depress)
 	(when (called-interactively-p 'interactive)
-	  (message
-	   "Assist Key depressed; go to release point and press {%s %s}."
-	   (substitute-command-keys "\\[universal-argument]")
-	   (substitute-command-keys "\\[hkey-operate]"))))
-    (if action-key-depressed-flag
-	(progn (action-mouse-key)
-	       (when (called-interactively-p 'interactive)
-		 (message "Action Key released.")))
-      (action-key-depress)
-      (when (called-interactively-p 'interactive)
-	(message "Action Key depressed; go to release point and press {%s}."
-		 (substitute-command-keys "\\[hkey-operate]"))))))
+	  (message "Action Key depressed; go to release point and press {%s}."
+		   (substitute-command-keys "\\[hkey-operate]")))))))
 
 (defun hkey-summarize (&optional current-window)
   "Display smart key operation summary in help buffer.
@@ -1476,18 +1526,17 @@ Repeated presses then scroll up or down a windowful.  Nil value
 instead ignores current line and always scrolls up or down a
 windowful."))
 
-(defun hmouse-function (func assisting set-point-arg-list)
-  "Execute FUNC for Action Key and set point from SET-POINT-ARG-LIST.
-Use Assist Key with ASSISTING non-nil.  FUNC may be nil in which
-case no function is called.  SET-POINT-ARG-LIST is passed to the
-call of the command bound to `hmouse-set-point-command'.  Return
-nil if `hmouse-set-point-command' variable is not bound to a
-valid function."
+(defun hmouse-release (assisting)
+  "Set most Smart Key release values.  Use Assist Key with ASSISTING non-nil."
   (when (fboundp hmouse-set-point-command)
     (if assisting
-	(setq assist-key-release-window (hmouse-key-release-window assist-key-release-position)
+	(setq assist-key-release-position (hkey-absolute-pixel-position)
+	      assist-key-depressed-flag nil
+	      assist-key-release-window (hmouse-key-release-window assist-key-release-position)
 	      assist-key-release-prev-point (point-marker))
-      (setq action-key-release-window (hmouse-key-release-window action-key-release-position)
+      (setq action-key-release-position (hkey-absolute-pixel-position)
+	    action-key-depressed-flag nil
+	    action-key-release-window (hmouse-key-release-window action-key-release-position)
 	    action-key-release-prev-point (point-marker)))
     (and (eq major-mode 'br-mode)
 	 (setq action-mouse-key-prev-window
@@ -1495,7 +1544,17 @@ valid function."
 		   (save-window-excursion
 		     (br-next-listing-window)
 		     (selected-window))
-		 (selected-window))))
+		 (selected-window))))))
+
+(defun hmouse-function (func assisting set-point-arg-list)
+  "Execute FUNC for Action Key, or for Assist Key when ASSISTING is non-nil.
+Set point from SET-POINT-ARG-LIST.  Use Assist Key with ASSISTING
+non-nil.  FUNC may be nil in which case no function is called.
+SET-POINT-ARG-LIST is passed to the call of the command bound to
+`hmouse-set-point-command'.  Return nil if
+`hmouse-set-point-command' variable is not bound to a valid
+function."
+  (when (fboundp hmouse-set-point-command)
     (setq action-mouse-key-prefix-arg current-prefix-arg)
     (let ((release-args (hmouse-set-point set-point-arg-list)))
       (if assisting

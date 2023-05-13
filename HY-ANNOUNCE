@@ -1,12 +1,12 @@
 From: Bob Weiner <rsw@gnu.org>
 To: gnu-emacs-sources@gnu.org, emacs-tangents@gnu.org, hyperbole-users@gnu.org, hyperbole-announce@gnu.org
-Subject: GNU Hyperbole Major Release 8
+Subject: GNU Hyperbole Major Release 9
 --text follows this line--
 ========================================================================
 * Overview
 ========================================================================
 
-GNU Hyperbole 8.0.0, the Epiphany release, is now available on GNU ELPA.
+GNU Hyperbole 9.0.0, the Rhapsody release, is now available on GNU ELPA.
 Hyperbole is a unique hypertextual information management Emacs package
 that works across all Emacs modes, letting the computer do the hard work
 while you benefit from its sophisticated context-sensitive linking and
@@ -18,8 +18,8 @@ What's new in this release is described here:
 
   www.gnu.org/s/hyperbole/HY-NEWS.html
 
-  Everything back until release 7.1.3 is new since the last major
-  release announcement (over a year ago), so updates are extensive.
+  Everything back until release 8.0.0 is new since the last major
+  release announcement (almost a year ago), so updates are extensive.
 
 If you prefer video introductions, visit the videos linked to below; otherwise,
 skip to the next section.
@@ -36,7 +36,13 @@ skip to the next section.
   |--------------------------------------------------+------------------------------|
   | Introduction to Buttons                          | https://youtu.be/zoEht66N2PI |
   |--------------------------------------------------+------------------------------|
+  | Linking Personal Info with Implicit Buttons      | https://youtu.be/TQ_fG7b1iHI |
+  |--------------------------------------------------+------------------------------|
+  | Powerful Productivity with Hyperbole and Org     | https://youtu.be/BrTpTNEXMyY |
+  |--------------------------------------------------+------------------------------|
   | HyRolo, fast contact/hierarchical record viewer  | https://youtu.be/xdJGFdgKPFY |
+  |--------------------------------------------------+------------------------------|
+  | Build a Zettelkasten with HyRolo                 | https://youtu.be/HdlCK9w-LyQ |
   |--------------------------------------------------+------------------------------|
   | HyControl, fast Emacs frame and window manager   | https://youtu.be/M3-aMh1ccJk |
   |--------------------------------------------------+------------------------------|

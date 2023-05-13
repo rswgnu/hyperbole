@@ -4,7 +4,7 @@
 ;; Maintainer:   Bob Weiner, Mats Lidell
 ;;
 ;; Orig-Date:     1-Jan-94
-;; Last-Mod:      4-Dec-22 at 03:57:42 by Bob Weiner
+;; Last-Mod:     23-Apr-23 at 11:43:54 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -26,7 +26,7 @@
 ;;; Public variables
 ;;; ************************************************************************
 
-(defconst hyperb:version "9.0.0" "GNU Hyperbole revision number.")
+(defconst hyperb:version "8.0.1pre" "GNU Hyperbole revision number.")
 
 ;;;###autoload
 (defvar hyperb:mouse-buttons
@@ -202,7 +202,7 @@ support is available."
 		   ;; after the non-indented item definition line. If
 		   ;; so, move back a line.
 		   (when (and (looking-at "^[ \t]")
-			      (looking-back "^[^ \t].*[\n\r]+"))
+			      (looking-back "^[^ \t].*[\n\r]+" nil))
 		     (forward-line -1))
 		   (recenter 0))
 	       (error "(id-info-item): Invalid Info index item: `%s'" index-item)))

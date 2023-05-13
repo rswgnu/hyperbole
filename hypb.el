@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     6-Oct-91 at 03:42:38
-;; Last-Mod:      5-Feb-23 at 23:44:24 by Mats Lidell
+;; Last-Mod:     19-Apr-23 at 22:27:32 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -490,6 +490,10 @@ Return a flattened list of all matching files."
 		    (apply #'nconc (mapcar (lambda (dir) (directory-files-recursively dir file-regexp))
 					   dirs)))))
 
+(defun hypb:format-args (args)
+  "Return a space-separated string of quoted ARGS without surrounding parentheses."
+  (if args (mapconcat (lambda (a) (format "%S" a)) args " ") ""))
+
 (defun hypb:format-quote (arg)
   "Replace all single % with %% in any string ARG.
 This is so that a call to `format' or `message' ignores them.
@@ -965,7 +969,7 @@ nor nil it means to not count the minibuffer window even if it is active."
 
 ;;;###autoload
 (defun hypb:display-file-with-logo (file)
-  "Display a text FILE in help mode with the Hyperbole banner prepended.
+  "Display a text FILE in view mode with the Hyperbole banner prepended.
 If FILE is not an absolute path, expand it relative to `hyperb:dir'."
   (unless (stringp file)
     (error "(hypb:display-file-with-logo): 'file' must be a string, not '%s'" file))
@@ -980,7 +984,7 @@ If FILE is not an absolute path, expand it relative to `hyperb:dir'."
       (skip-syntax-forward "-")
       (set-window-start (selected-window) 1)
       (set-buffer-modified-p nil)
-      (help-mode)
+      (view-mode)
       ;; On some versions of Emacs like Emacs28, need a slight delay
       ;; for file loading before searches will work properly.
       ;; Otherwise, "test/demo-tests.el" may fail.
@@ -1028,6 +1032,7 @@ Without file, the banner is prepended to the current buffer."
 	(button-put button 'keymap hypb:hyperbole-banner-keymap)))))
 
 (defun hypb:locate-pathnames ()
+  "Return a space-separated string of pathnames in a *Locate* buffer."
   (save-excursion
     (goto-char (point-min))
     (search-forward "\n" nil t 3)

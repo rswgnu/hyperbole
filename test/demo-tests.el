@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    30-Jan-21 at 12:00:00
-;; Last-Mod:      6-Nov-22 at 12:23:00 by Bob Weiner
+;; Last-Mod:     19-Feb-23 at 23:16:00 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -591,6 +591,52 @@ enough files with matching mode loaded."
               (while (not (string-match-p "grep ?(1).*-" (buffer-substring-no-properties (point-min) (point-max))))
                 (accept-process-output (get-buffer-process shell-buffer-name))))
             (should (string-match-p "grep ?(1).*-" (buffer-substring-no-properties (point-min) (point-max))))))
+      (unless existing-shell-flag
+	(set-process-query-on-exit-flag (get-buffer-process shell-buffer-name) nil)
+	(hy-test-helpers:kill-buffer shell-buffer-name)))))
+
+(ert-deftest fast-demo-key-series-shell-cd-hyperb-dir-view-mode ()
+  "Action key executes cd shell command from buffer in `view-mode`."
+  (skip-unless (not noninteractive))
+  (let* ((shell-file-name (executable-find "sh"))
+         (shell-buffer-name "*shell*")
+	 (existing-shell-flag (get-buffer-process shell-buffer-name)))
+    (unwind-protect
+        (with-temp-buffer
+          (insert "{ M-x shell RET M-> (cd ${hyperb:dir} && echo \"PWD=$(pwd)\") RET }")
+          (goto-char 5)
+          (view-mode)
+          (action-key)
+          (hy-test-helpers:consume-input-events)
+          (with-current-buffer shell-buffer-name
+            (goto-char (point-min))
+            (end-of-line)
+            (with-timeout (5 (ert-fail "Test timed out"))
+              (while (not (search-forward "PWD=" nil t))
+                (accept-process-output (get-buffer-process shell-buffer-name))))
+            (should (looking-at-p (directory-file-name hyperb:dir)))))
+      (unless existing-shell-flag
+	(set-process-query-on-exit-flag (get-buffer-process shell-buffer-name) nil)
+	(hy-test-helpers:kill-buffer shell-buffer-name)))))
+
+(ert-deftest fast-demo-key-series-shell-grep-view-mode ()
+  "Action key executes grep shell command from buffer in `view-mode`."
+  (skip-unless (not noninteractive))
+  (let* ((shell-file-name (executable-find "sh"))
+         (shell-buffer-name "*shell*")
+	 (existing-shell-flag (get-buffer-process shell-buffer-name)))
+    (unwind-protect
+        (with-temp-buffer
+          (insert "{M-x shell RET M-> (export HYPERBOLE_DIR=${hyperb:dir} && cd $HYPERBOLE_DIR && grep -n gbut:label-list *.el) RET}")
+          (goto-char 5)
+          (view-mode)
+          (action-key)
+          (hy-test-helpers:consume-input-events)
+          (with-current-buffer shell-buffer-name
+            (with-timeout (5 (ert-fail "Test timed out"))
+              (while (not (string-match-p "\n.*\\.el:[0-9]+:.*defun.*gbut:label-list ()" (buffer-substring-no-properties (point-min) (point-max))))
+                (accept-process-output (get-buffer-process shell-buffer-name))))
+            (should (string-match-p "\n.*\\.el:[0-9]+:.*defun.*gbut:label-list ()" (buffer-substring-no-properties (point-min) (point-max))))))
       (unless existing-shell-flag
 	(set-process-query-on-exit-flag (get-buffer-process shell-buffer-name) nil)
 	(hy-test-helpers:kill-buffer shell-buffer-name)))))

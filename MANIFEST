@@ -96,6 +96,7 @@ topwin.py            - Python script to find the topmost macOS app window at a s
 
 --- EXTERNAL SYSTEM ENCAPSULATIONS ---
 hsys-org.el          - GNU Hyperbole support functions for Org mode
+hsys-org-roam.el     - GNU Hyperbole support functions for Org Roam
 hsys-www.el          - GNU Hyperbole support for Emacs W3 World-Wide Web (WWW) browsing
 hsys-youtube.el      - Action buttons to play timestamped segments of Youtube videos
 

@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Aug-92
-;; Last-Mod:      7-Oct-22 at 00:17:10 by Mats Lidell
+;; Last-Mod:     23-Apr-23 at 18:53:36 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -38,12 +38,13 @@
 ;;; ************************************************************************
 
 (defcustom hproperty:but-highlight-flag t
-"*Non-nil (default) applies `hproperty:but-face' highlight to explicit buttons."
+  "*Non-nil applies `hproperty:but-face' highlight to labeled Hyperbole buttons."
   :type 'boolean
   :group 'hyperbole-buttons)
 
 (defcustom hproperty:but-emphasize-flag nil
-  "*Non-nil means visually emphasize that button under mouse cursor is selectable."
+  "*Non-nil means emphasize selectability of Hyperbole button labels.
+This is shown when hovering over the button with the mouse."
   :type 'boolean
   :group 'hyperbole-buttons)
 
@@ -90,11 +91,11 @@
     (((background dark)) (:background "red" :foreground "black"))
     (((min-colors 88)) (:foreground "salmon4"))
     (t (:background "red")))
-  "Face for hyperbole buttons."
+  "Face for explicit Hyperbole buttons."
   :group 'hyperbole-buttons)
 
 (defcustom hproperty:but-face 'hbut-face
-  "Hyperbole face for hyper-buttons."
+  "Hyperbole face for explicit buttons."
   :type 'face
   :initialize #'custom-initialize-default
   :group 'hyperbole-buttons)
@@ -111,11 +112,25 @@
     (((class color) (min-colors 8))
      :background "yellow" :foreground "black")
     (t :inverse-video t))
-  "Face for hyperbole buttons."
+  "Face for Hyperbole list buttons."
   :group 'hyperbole-buttons)
 
 (defcustom hproperty:item-face 'hbut-item-face
-  "Hyperbole face for hyper-buttons."
+  "Hyperbole face for list hyper-buttons."
+  :type 'face
+  :initialize #'custom-initialize-default
+  :group 'hyperbole-buttons)
+
+(defface ibut-face
+  '((((min-colors 88) (background dark)) (:foreground "rosybrown"))
+    (((background dark)) (:background "rosybrown" :foreground "black"))
+    (((min-colors 88)) (:foreground "rosybrown"))
+    (t (:background "rosybrown")))
+  "Face for implicit Hyperbole buttons."
+  :group 'hyperbole-buttons)
+
+(defcustom hproperty:ibut-face 'ibut-face
+  "Hyperbole face for implicit buttons."
   :type 'face
   :initialize #'custom-initialize-default
   :group 'hyperbole-buttons)
@@ -131,48 +146,66 @@
 
 (defun hproperty:but-add (start end face)
   "Add between START and END a button using FACE in current buffer.
-If `hproperty:but-emphasize-flag' is non-nil when this is called, emphasize
-that button is selectable whenever the mouse cursor moves over it."
+
+If `hproperty:but-emphasize-flag' is non-nil when this is called,
+emphasize that button is selectable whenever the mouse cursor
+moves over it."
   (let ((but (make-overlay start end nil t)))
     (overlay-put but 'face face)
-    (when hproperty:but-emphasize-flag (overlay-put but 'mouse-face 'highlight))))
+    (when hproperty:but-emphasize-flag
+      (overlay-put but 'mouse-face 'highlight))))
 
-(defun hproperty:but-clear ()
-  "Delete all Hyperbole buttons from current buffer."
+(defun hproperty:but-clear (&optional pos)
+  "Remove highlighting from any named Hyperbole button at point or POS."
+  (let ((but (hproperty:but-get pos)))
+    (when but (delete-overlay but))))
+
+(defun hproperty:but-clear-all (&optional regexp-match)
+  "Remove highlighting from all named Hyperbole buttons in buffer.
+If REGEXP-MATCH is non-nil, only buttons matching this argument are
+de-highlighted."
+  (if regexp-match
+      (progn (ebut:map (lambda (_lbl start end)
+			 (remove-overlays start end 'face hproperty:but-face))
+		       regexp-match 'include-delims)
+	     (ibut:map (lambda (_lbl start end)
+			 (remove-overlays start end 'face hproperty:ibut-face))
+		       regexp-match 'include-delims))
+    ;; Do across whole buffer
+    (remove-overlays nil nil 'face hproperty:but-face)
+    (remove-overlays nil nil 'face hproperty:ibut-face)))
+
+(defun hproperty:but-create (&optional regexp-match)
+  "Highlight all named Hyperbole buttons in buffer.
+De-highlight buttons unless `hproperty:but-highlight-flag' is set.
+
+If REGEXP-MATCH is non-nil, only buttons matching this argument are
+highlighted (all others are unhighlighted).
+
+If `hproperty:but-emphasize-flag' is non-nil when this is called,
+emphasize that button is selectable whenever the mouse cursor
+moves over it."
   (interactive)
-  (let ((start (point-min)))
-    (while (< start (point-max))
-      (mapc (lambda (props)
-	      (when (eq (overlay-get props 'face) hproperty:but-face)
-		(delete-overlay props)))
-	    (overlays-at start))
-      (setq start (next-overlay-change start)))))
+  (hproperty:but-clear-all regexp-match)
+  (hproperty:but-create-all regexp-match))
 
-(defun hproperty:but-create (&optional start-delim end-delim regexp-match)
-  "Highlight all hyper-buttons in buffer.
-Will use optional strings START-DELIM and END-DELIM instead of default values.
-If END-DELIM is a symbol, e.g. t, then START-DELIM is taken as a regular
-expression which matches an entire button string.
+(defun hproperty:but-create-all (&optional regexp-match)
+  "Highlight all named Hyperbole buttons in buffer.
+De-highlight buttons unless `hproperty:but-highlight-flag' is set.
+
 If REGEXP-MATCH is non-nil, only buttons matching this argument are
 highlighted.
 
-If `hproperty:but-emphasize-flag' is non-nil when this is called, emphasize
-that button is selectable whenever the mouse cursor moves over it."
-  (interactive)
-  (hproperty:but-clear)
-  (hproperty:but-create-all start-delim end-delim regexp-match))
-
-(defun hproperty:but-create-all (&optional start-delim end-delim regexp-match)
-  "Mark all hyper-buttons in buffer for later highlighting.
-Will use optional strings START-DELIM and END-DELIM instead of default values.
-If END-DELIM is a symbol, e.g. t, then START-DELIM is taken as a regular
-expression which matches an entire button string.
-If REGEXP-MATCH is non-nil, only buttons matching this argument are
-highlighted."
+If `hproperty:but-emphasize-flag' is non-nil when this is called,
+emphasize that button is selectable whenever the mouse cursor
+moves over it."
   (when hproperty:but-highlight-flag
-    (hbut:map (lambda (_lbl start end)
+    (ebut:map (lambda (_lbl start end)
 		(hproperty:but-add start end hproperty:but-face))
-	      start-delim end-delim regexp-match 'include-delims)))
+	      regexp-match 'include-delims)
+    (ibut:map (lambda (_lbl start end)
+		(hproperty:but-add start end hproperty:ibut-face))
+	      regexp-match 'include-delims)))
 
 (defun hproperty:but-create-on-yank (_prop-value start end)
   (save-restriction
@@ -180,10 +213,6 @@ highlighted."
     (hproperty:but-create-all)))
 
 (add-to-list 'yank-handled-properties '(hproperty:but-face . hproperty:but-create-on-yank))
-
-(defun hproperty:but-delete (&optional pos)
-  (let ((but (hproperty:but-get pos)))
-    (when but (delete-overlay but))))
 
 ;;; ************************************************************************
 ;;; Private functions
@@ -194,6 +223,7 @@ highlighted."
 	     (mapcar (lambda (props)
 		       (if (memq (overlay-get props 'face)
 				 (list hproperty:but-face
+				       hproperty:ibut-face
 				       hproperty:flash-face))
 			   props))
 		     (overlays-at (or pos (point)))))))
@@ -208,14 +238,14 @@ highlighted."
 ;;; ************************************************************************
 
 (defconst hproperty:color-list
-  (if (memq window-system '(x gtk))
-      (defined-colors)))
+  (when (display-color-p)
+    (defined-colors)))
 
 (defvar hproperty:color-ptr nil
   "Pointer to current color name table to use for Hyperbole buttons.")
 
 (defconst hproperty:good-colors
-  (if (memq window-system '(x gtk))
+  (if (display-color-p)
       '(
 	"medium violet red" "indianred4" "firebrick1" "DarkGoldenrod"
 	"NavyBlue" "darkorchid" "tomato3" "mediumseagreen" "deeppink"
@@ -242,35 +272,43 @@ hproperty:color-ptr."
     t))
 
 (defun hproperty:but-p (&optional pos)
-  "Return non-nil at point or optional POS iff face is eq to hproperty:but-face."
+  "Return non-nil at point or optional POS iff on a highlighted Hyperbole button."
   (memq t (mapcar (lambda (props)
-		    (eq (overlay-get props 'face) hproperty:but-face))
+		    (when (memq (overlay-get props 'face)
+				(list hproperty:but-face hproperty:ibut-face))
+		      t))
 		  (overlays-at (or pos (point))))))
 
 (defun hproperty:set-but-face (pos face)
   (let ((but (hproperty:but-get pos)))
-    (if but (overlay-put but 'face face))))
+    (when but (overlay-put but 'face face))))
 
 (defun hproperty:but-flash ()
   "Flash a Hyperbole button at or near point to indicate selection."
   (interactive)
-  (let ((ibut) (prev)
-	(start (hattr:get 'hbut:current 'lbl-start))
-	(end   (hattr:get 'hbut:current 'lbl-end))
-	but-face)
-    (if (and start end (setq prev (hproperty:but-p start)
-			     ibut t))
-	(unless prev
-	  (hproperty:but-add start end hproperty:but-face))
+  (let* ((categ (hattr:get 'hbut:current 'categ))
+	 (start (hattr:get 'hbut:current 'lbl-start))
+	 (end   (hattr:get 'hbut:current 'lbl-end))
+	 (ibut)
+	 (prev)
+	 (categ-face)) 
+    (if (eq categ 'explicit)
+	(setq categ-face hproperty:but-face)
+      (setq categ-face hproperty:ibut-face
+	    ibut t))
+    (if (and start end)
+	(unless (setq prev (hproperty:but-p start))
+	  (hproperty:but-add start end categ-face))
       (setq start (point)))
-    (when (setq but-face (when (hproperty:but-p start) hproperty:but-face))
+    (when (hproperty:but-p start)
       (unwind-protect
 	  (progn
 	    (hproperty:set-but-face start hproperty:flash-face)
 	    (sit-for hproperty:but-flash-time-seconds)) ;; Force display update
-	(hproperty:set-but-face start but-face)
+	(hproperty:set-but-face start categ-face)
 	(redisplay t)))
-    (and ibut (not prev) (hproperty:but-delete start))))
+    (and ibut (not prev) (hproperty:but-clear start))
+    ))
 
 (defun hproperty:select-item (&optional pnt)
   "Select item in current buffer at optional position PNT with hproperty:item-face."

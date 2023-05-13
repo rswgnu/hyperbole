@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    23-Sep-91 at 20:34:36
-;; Last-Mod:     28-Jan-23 at 23:27:48 by Mats Lidell
+;; Last-Mod:     29-Mar-23 at 18:14:35 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -58,6 +58,7 @@ inserted, delete the completions window."
 (defact display-boolean (bool-expr)
   "Display a message showing the result value of a BOOL-EXPR.
 Return any non-nil value or t."
+  (interactive "xDisplay bool expr value: ")
   (let ((result (eval bool-expr t)))
     (message "Boolean result (%s) = %S; Expr: %S"
 	     (if result "True" "False") result bool-expr)
@@ -66,6 +67,7 @@ Return any non-nil value or t."
 (defact display-value (value)
   "Display a message showing VALUE (a symbol) and its value.
 Return any non-nil value or t."
+  (interactive "SDisplay symbol's value: ")
   (let ((result (eval value)))
     (message "%S" result)
     (or result t)))
@@ -73,6 +75,7 @@ Return any non-nil value or t."
 (defact display-variable (var)
   "Display a message showing VAR (a symbol) and its value.
 Return any non-nil value or t."
+  (interactive "vDisplay variable's value: ")
   (message "%s = %S" var (symbol-value var))
   (or (symbol-value var) t))
 
@@ -558,7 +561,7 @@ If CELL-REF is nil, show the first cell in the view."
 	     (kotl-mode:goto-cell cell-ref)
 	   (kotl-mode:beginning-of-buffer))
 	 (recenter 0))
-	((and (stringp cell-ref) (> (length cell-ref) 0)
+ 	((and (stringp cell-ref) (> (length cell-ref) 0)
 	      (eq ?| (aref cell-ref 0)))
 	 ;; Activate view spec in current window.
 	 (kotl-mode:goto-cell cell-ref))))
@@ -586,6 +589,25 @@ information on how to specify a mail reader to use."
 	(set-window-configuration wconfig)
 	(hypb:error "(link-to-mail): No msg `%s' in file \"%s\""
 		    mail-msg-id mail-file)))))
+
+(defact link-to-org-id (id)
+  "Display the Org entry, if any, for ID."
+  (when (stringp id)
+    (let (m
+	  (inhibit-message t)) ;; Inhibit org-id-find status msgs
+      (when (setq m (or (and (featurep 'org-roam) (org-roam-id-find id 'marker))
+			(org-id-find id 'marker)))
+	(hact #'link-to-org-id-marker m)))))
+
+(defact link-to-org-id-marker (marker)
+  "Display the Org entry, if any, at MARKER.
+See doc of `ibtypes::org-id' for usage."
+    (unless (markerp marker)
+      (error "(link-to-org-id-marker): Argument must be a marker, not %s" marker))
+    (org-mark-ring-push)
+    (hact #'link-to-buffer-tmp (marker-buffer marker) marker)
+    (move-marker marker nil)
+    (org-show-context))
 
 (defact link-to-regexp-match (regexp n source &optional buffer-p)
   "Find REGEXP's Nth occurrence in SOURCE and display location at window top.

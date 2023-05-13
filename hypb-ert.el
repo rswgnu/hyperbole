@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org> and Bob Weiner <rsw@gnu.org>
 ;;
 ;; Orig-Date:    31-Mar-21 at 21:11:00
-;; Last-Mod:     11-May-22 at 00:00:42 by Bob Weiner
+;; Last-Mod:      7-May-23 at 20:23:27 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -29,6 +29,7 @@
 
 ;;; Code:
 
+(require 'lisp-mode)
 (require 'hload-path)
 (require 'ert)
 (require 'hbut)
@@ -64,6 +65,53 @@
   (interactive)
   (hypb-ert-require-libraries)
   (ert t))
+
+;; The following expression is true only when an ert-deftest has been
+;; instrumented by edebug:
+;; (memq 'edebug-enter (flatten-tree (ert-test-body (ert-get-test test-sym))))
+
+(defun hypb-ert-def-at-p ()
+  "Return test name if on the name in the first line of an ert test def."
+  (unless (or (eolp)
+	      (memq (char-after (point))
+		    '(?\( ?\) ?\[ ?\] ?{ ?} ?< ?>)))
+    (save-excursion
+      (forward-line 0)
+      (when (looking-at (concat "(ert-deftest[ \t]+\\("
+				lisp-mode-symbol-regexp
+				"\\)[ \t]+("))
+	(match-string-no-properties 1)))))
+
+(defun hypb-ert-run-test-at-definition (test-name &optional debug-it)
+  "Assume on the name in the first line of an ert test def, eval and run the test.
+With optional DEBUG-IT non-nil (when the assist-key is pressed), edebug the
+test when it is run."
+  (let (test-sym)
+    (setq test-sym (intern-soft test-name))
+    ;; Ensure run the latest version of the test, either with the
+    ;; edebugger if already instrumented for it; otherwise, with the
+    ;; normal evaluator.
+    (if (and test-sym debug-it)
+	(edebug-defun)
+      (eval-defun nil))
+    (setq test-sym (intern-soft test-name))
+    (when (and test-sym (ert-test-boundp test-sym))
+      (when (and buffer-file-name (string-prefix-p hyperb:dir buffer-file-name))
+	(hypb-ert-require-libraries))
+      (ert test-sym))))
+
+(defib hyperbole-run-test-definition ()
+  "If on the name in the first line of an ert test def, eval and run the test.
+With an Assist Key press instead, edebug the test and step through it."
+  (let ((test-name (hypb-ert-def-at-p)))
+    (when test-name
+      (hact 'hypb-ert-run-test-at-definition test-name))))
+
+(defun hyperbole-run-test-definition:help (_hbut)
+  "If on the name in the first line of an ert test def, edebug the test."
+  (let ((test-name (hypb-ert-def-at-p)))
+    (when test-name
+      (hypb-ert-run-test-at-definition test-name t))))
 
 (provide 'hypb-ert)
 ;;; hypb-ert.el ends here

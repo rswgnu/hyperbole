@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     1-Jun-16 at 15:35:36
-;; Last-Mod:     27-Nov-22 at 11:21:28 by Bob Weiner
+;; Last-Mod:     23-Apr-23 at 14:50:59 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -128,12 +128,18 @@
 (require 'hhist)     ; To store frame-config when hycontrol-windows-grid is used
 (require 'hypb)
 (require 'set)
-(eval-when-compile
+(eval-and-compile
   (require 'framemove nil t) ;; Elpa package
   (require 'windmove))
 ;; Frame face enlarging/shrinking (zooming) requires this separately available library.
 ;; Everything else works fine without it, so don't make it a required dependency.
 (require 'zoom-frm nil t)
+
+;;; ************************************************************************
+;;; Public declarations
+;;; ************************************************************************
+
+(declare-function fm-next-frame "ext:framemove")
 
 ;;; ************************************************************************
 ;;; Public variables
@@ -1730,15 +1736,15 @@ columns (rightmost) of the grid."
      (nreverse (mapcar #'find-file (reverse files))))))
 
 ;;;###autoload
-(defun hycontrol-windows-grid-by-file-pattern (arg pattern &optional full)
+(defun hycontrol-windows-grid-by-file-pattern (arg pattern &optional full-flag)
   "Display up to an abs(prefix ARG)-sized window grid of files matching PATTERN.
-Use absolute file paths if called interactively or optional FULL is non-nil.
-PATTERN is a shell glob pattern.
+Use absolute file paths if called interactively or optional
+FULL-FLAG is non-nil.  PATTERN is a shell glob pattern.
 
 Left digit of ARG is the number of grid rows and the right digit
 is the number of grid columns.  If ARG is nil, 0, 1, less than
 11, greater than 99, then autosize the grid to fit the number of
-files matched by PATTERN. Otherwise, if ARG ends in a 0, adjust the
+files matched by PATTERN.  Otherwise, if ARG ends in a 0, adjust the
 grid size to the closest valid size."
   (interactive
    (list current-prefix-arg
@@ -1747,7 +1753,7 @@ grid size to the closest valid size."
   (when (memq arg '(0 1))
     (setq arg nil))
   (let* ((find-file-wildcards t)
-	 (files (file-expand-wildcards pattern full))
+	 (files (file-expand-wildcards pattern full-flag))
 	 (num-files (length files))
 	 (grid-size (if arg
 			(hycontrol-windows-grid-validate arg)

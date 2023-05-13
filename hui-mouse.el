@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    04-Feb-89
-;; Last-Mod:     29-Jan-23 at 03:47:20 by Bob Weiner
+;; Last-Mod:     30-Apr-23 at 15:50:57 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -50,6 +50,22 @@
 (require 'imenu)
 
 (eval-when-compile (require 'tar-mode))
+
+;;; ************************************************************************
+;;; Public declarations
+;;; ************************************************************************
+
+;; Functions from abstract mail and news interface. See "hmail.el"
+(declare-function lmail:delete nil)
+(declare-function lmail:undelete nil)
+(declare-function rmail:msg-prev nil)
+(declare-function lmail:goto nil)
+(declare-function lmail:expunge nil)
+(declare-function rmail:msg-next nil)
+(declare-function lmail:undelete-all nil)
+
+(declare-function helm-get-actions-from-current-source "ext:helm-core")
+(declare-function helm-get-default-action "ext:helm-core")
 
 ;;; ************************************************************************
 ;;; Public variables
@@ -169,6 +185,8 @@ Its default value is `smart-scroll-down'.  To disable it, set it to
 (declare-function company-show-location "ext:company")
 (declare-function company-select-mouse "ext:company")
 
+(declare-function unix-apropos-get-man "ext:man-apropos")
+
 ;;; ************************************************************************
 ;;; Hyperbole context-sensitive keys dispatch table
 ;;; ************************************************************************
@@ -204,7 +222,7 @@ Its default value is `smart-scroll-down'.  To disable it, set it to
     ;;
     ;; Handle Emacs push buttons in buffers
     ((and (fboundp 'button-at) (button-at (point))) .
-     ((push-button nil (mouse-event-p last-command-event))
+     ((smart-push-button nil (mouse-event-p last-command-event))
       . (smart-push-button-help nil (mouse-event-p last-command-event))))
     ;;
     ;; If click in the minibuffer and reading an argument,
@@ -425,6 +443,7 @@ Its default value is `smart-scroll-down'.  To disable it, set it to
     ((eq major-mode 'calendar-mode) .
      ((smart-calendar) . (smart-calendar-assist)))
     ;;
+    ;; Part of InfoDock
     ((eq major-mode 'unix-apropos-mode) .
      ((smart-apropos) . (smart-apropos-assist)))
     ;;
@@ -1064,7 +1083,8 @@ a helm section header."
 
 (defun smart-helm-get-current-action (&optional action)
   "Return the helm default action.
-Get it from optional ACTION, the helm saved action or from the selected helm item."
+Get it from optional ACTION, the helm saved action or from the
+selected helm item."
   (helm-get-default-action (or action
                                helm-saved-action
                                (if (get-buffer helm-action-buffer)
@@ -1522,17 +1542,19 @@ If assist-key is pressed:
 ;;; smart-man functions
 ;;; ************************************************************************
 
-;; "unix-apropos.el" is a publicly available Emacs Lisp package that
-;; allows man page browsing from apropos listings.  "superman.el" is a
-;; newer, much more complete package that you would probably prefer at
-;; this point, but there is no Smart Key apropos support for it.  There
-;; is smart key support within the man page buffers it produces, however.
+;; "man-apropos.el" which contains the unix-apropos functions below is a
+;; part of InfoDock; these functions are not called unless this
+;; library has been loaded and is in use.  It generates a buffer of apropos
+;; listing and allows selection and associated man page display.
+;;
+;; Man page cross-references in Emacs man buffers are handled
+;; separately via the 'man-apropos' implicit button type.
 ;;
 
 (defun smart-apropos ()
   "Move through UNIX man apropos listings by using one key or mouse key.
 
-Invoked via a key press when in unix-apropos-mode.  It assumes that
+Invoked via a key press when in `unix-apropos-mode'.  It assumes that
 its caller has already checked that the key was pressed in an appropriate
 buffer and has moved the cursor to the selected buffer.
 
@@ -1545,12 +1567,14 @@ If key is pressed:
   (interactive)
   (if (last-line-p)
       (scroll-other-window)
-    (unix-apropos-get-man)))            ;; FIXME - Deprecated?
+    ;; Called only if man-apropos.el of InfoDock is loaded
+    (when (fboundp #'unix-apropos-get-man)
+      (unix-apropos-get-man))))
 
 (defun smart-apropos-assist ()
   "Move through UNIX man apropos listings by using assist-key or mouse assist-key.
 
-Invoked via an assist-key press when in unix-apropos-mode.  It assumes that
+Invoked via an assist-key press when in `unix-apropos-mode'.  It assumes that
 its caller has already checked that the assist-key was pressed in an appropriate
 buffer and has moved the cursor to the selected buffer.
 
@@ -1563,7 +1587,9 @@ If assist-key is pressed:
   (interactive)
   (if (last-line-p)
       (scroll-other-window (- 3 (window-height)))
-    (unix-apropos-get-man)))
+    ;; Called only if man-apropos.el of InfoDock is loaded
+    (when (fboundp #'unix-apropos-get-man)
+      (unix-apropos-get-man))))
 
 (defun smart-man-display (lisp-form)
   "Evaluate LISP-FORM returned from `smart-man-entry-ref' to display a man page."
@@ -1848,8 +1874,8 @@ If key is pressed:
      buffer;
  (4) on a heading line but not at the beginning or end, if headings subtree is
      hidden then show it, otherwise hide it;
- (5) anywhere else, invoke `action-key-eol-function', typically to scroll up
-     a windowful."
+ (5) at the end of a line, invoke `action-key-eol-function', typically to
+     scroll up a windowful."
 
   (interactive)
   (cond (smart-outline-cut
@@ -1863,9 +1889,10 @@ If key is pressed:
 	      ;; Skip past start of current entry
 	      (progn (re-search-forward outline-regexp nil t)
 		     (smart-outline-to-entry-end t)))))
-
-	((or (eolp) (zerop (smart-outline-level)))
+	((eolp)
 	 (funcall action-key-eol-function))
+	((zerop (smart-outline-level))
+	 nil)
 	;; On an outline heading line but not at the start/end of line.
 	((smart-outline-subtree-hidden-p)
 	 (outline-show-subtree))
@@ -1887,8 +1914,8 @@ If assist-key is pressed:
      subtree) from the buffer;
  (4) on a heading line but not at the beginning or end, if heading body is
      hidden then show it, otherwise hide it;
- (5) anywhere else, invoke `assist-key-eol-function', typically to scroll down
-     a windowful."
+ (5) at the end of a line, invoke `assist-key-eol-function', typically to
+     scroll down a windowful."
 
   (interactive)
   (cond (smart-outline-cut (yank))
@@ -1899,8 +1926,10 @@ If assist-key is pressed:
 		      ;; Skip past start of current entry
 		      (progn (re-search-forward outline-regexp nil t)
 			     (smart-outline-to-entry-end))))
-	((or (eolp) (zerop (smart-outline-level)))
+	((eolp)
 	 (funcall assist-key-eol-function))
+	((zerop (smart-outline-level))
+	 nil)
 	;; On an outline heading line but not at the start/end of line.
 	((smart-outline-subtree-hidden-p)
 	 (outline-show-entry))
@@ -1982,8 +2011,22 @@ If key is pressed:
 ;;; ************************************************************************
 
 ;; Emacs push button support
+(defun smart-push-button (&optional pos use-mouse-action)
+  "Activate an Emacs push-button, including text-property follow-link buttons.
+Button is at optional POS or at point.  USE-MOUSE-ACTION prefers
+mouse-action to action property."
+  (or 
+   ;; Handle Emacs text-property buttons which don't work with 'button-activate'.
+   ;; Use whatever command is bound to RET within the button's keymap.
+   (call-interactively (or (lookup-key (get-text-property (point) 'keymap) (kbd "RET"))
+			   (lambda () (interactive) nil)))
+   ;; non-text-property push-buttons
+   (push-button nil (mouse-event-p last-command-event))))
+
 (defun smart-push-button-help (&optional pos use-mouse-action)
-  "Show help about a push button's action at optional POS or at point."
+  "Show help about a push button's action.
+Button is at optional POS or at point.  USE-MOUSE-ACTION prefers
+mouse-action to action property."
   (let* ((button (button-at (or pos (point))))
 	 (action (or (and use-mouse-action (button-get button 'mouse-action))
 		     (button-get button 'action)))
@@ -1992,7 +2035,7 @@ If key is pressed:
 	 (temp-buffer-show-function))
     (if (functionp action)
 	(describe-function action)
-      (with-help-window (print (format "Button's action is: '%s'" action))))))
+      (hkey-help t))))
 
 ;;; ************************************************************************
 ;;; smart-tar functions

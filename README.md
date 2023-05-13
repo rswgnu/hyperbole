@@ -14,18 +14,26 @@ If you prefer video introductions, visit the videos linked to below;
 otherwise, skip to the next section.
 
    - [Overview and Demo](https://youtu.be/WKwZHSbHmPg)
-      Covers all of Hyperbole
+      Long video that covers most of Hyperbole;
       Hyperlink timestamps to watch each section
 
    - [Quick Introduction](https://youtu.be/K1MNUctggwI)
 
    - [Introduction to Buttons](https://youtu.be/zoEht66N2PI)
 
+   - [Linking Personal Info with Implicit Buttons](https://emacsconf.org/2022/talks/buttons/)
+
+   - [Powerful Productivity with Hyperbole and Org Mode](https://emacsconf.org/2022/talks/hyperorg/)
+
    - [HyRolo, fast contact/hierarchical record viewer](https://youtu.be/xdJGFdgKPFY)
+
+   - [Build a Zettelkasten with HyRolo](https://emacsconf.org/2022/talks/rolodex/)
 
    - [HyControl, fast Emacs frame and window manager](https://youtu.be/M3-aMh1ccJk)
 
    - [Find/Web Search](https://youtu.be/8lMlJed0-OM)
+
+   - [Linking personal info with implicit buttons](https://youtu.be/TQ_fG7b1iHI)
 
 ## Summary
 
@@ -83,6 +91,8 @@ In short, Hyperbole lets you:
       within text buffers, e.g. URLs, grep output lines, and git commits.
       A single key or mouse button automatically does the right thing in
       dozens of contexts; just press and go.
+
+<img src="man/im/action-key-animation.gif" alt="Hyperbole Animation of Action Key Contexts">
 
    3. Build outlines with multi-level numbered outline nodes, e.g. 1.4.8.6,
       that all renumber automatically as any node or tree is moved in the

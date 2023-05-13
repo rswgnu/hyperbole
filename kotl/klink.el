@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    15-Nov-93 at 12:15:16
-;; Last-Mod:     12-Oct-22 at 21:21:34 by Mats Lidell
+;; Last-Mod:     29-Apr-23 at 14:02:57 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -158,7 +158,8 @@ link-end-position, (including delimiters)."
 	     t)
 	   ;; If in a programming mode, Klinks can occur only within comments.
 	   (if (and (derived-mode-p #'prog-mode)
-		    (not (derived-mode-p #'lisp-interaction-mode)))
+		    (not (derived-mode-p 'lisp-interaction-mode))
+		    (not (memq major-mode hui-select-markup-modes)))
 	       ;; Next line means point is within a comment
 	       (nth 4 (syntax-ppss))
 	     t)

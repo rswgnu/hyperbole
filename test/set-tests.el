@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell
 ;;
 ;; Orig-Date:     5-Feb-23 at 09:12:52
-;; Last-Mod:      6-Feb-23 at 02:06:27 by Bob Weiner
+;; Last-Mod:      6-Feb-23 at 21:33:27 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -18,7 +18,7 @@
 
 (require 'set)
 
-(ert-deftest set-tests--function-tests ()
+(ert-deftest set-tests--function-tests-equal ()
   "Test Hyperbole set library functions."
   (should (set:equal (set:create) nil))
   (should (set:empty (set:create)))
@@ -50,6 +50,10 @@
   (should (set:equal (set:combinations (set:create 'a 'b)) '(nil a b (a b))))
   (should (set:equal (set:combinations (set:create 'a 'b 'c))
                      '(nil a b c (a b) (a c) (b c) (a b c))))
+
+  (should (set:equal (set:combinations (set:create 'a 'b 'c) 1) (set:create 'a 'b 'c)))
+  (should (set:equal (set:combinations (set:create 'a 'b 'c) 2) (set:create '(a b) '(b c) '(a c))))
+  (should (set:equal (set:combinations (set:create 'a 'b 'c) 3) (set:create '(a b c))))
 
   (should (set:empty (set:intersection (set:create) (set:create))))
   (should (set:empty (set:intersection (set:create) (set:create 'a))))
@@ -100,37 +104,39 @@
   (should (set:equal (set:add 'a (set:create)) (set:create 'a)))
   (should (set:equal (set:add 'a (set:create 'a)) (set:create 'a)))
   ;; Adding a list as an element in a set
-  (should (set:equal (set:add '(b c) (set:create 'a)) (set:create 'a '(b c))))
+  (should (set:equal (set:add '(b c) (set:create 'a)) (set:create '(b c) 'a)))
 
   (should (set:empty (set:remove 'a (set:create 'a))))
   (should (set:equal (set:remove 'a (set:create 'b)) (set:create 'b)))
   (should (set:equal (set:remove 'a (set:create 'a 'b)) (set:create 'b)))
   (should-not (set:equal (set:remove 'a (set:create 'a 'b)) (set:create 'a 'b)))
 
-  ;; FIXME: Need to add tests for (set:remove-key-value key set)
+  (should (set:empty (set:remove-key-value 'a (set:create (cons 'a 'value-a)))))
+  (should (set:equal (set:remove-key-value 'b (set:create (cons 'a 'value-a)))
+                     (set:create (cons 'a 'value-a))))
+  (should (set:equal (set:remove-key-value 'b (set:create (cons 'a 'value-a) (cons 'b 'value-b)))
+                     (set:create (cons 'a 'value-a))))
 
   ;; set:get - requires elements to be of type (key . value)
   (should (equal (set:get 'a (set:create (cons 'a 'value-a))) 'value-a))
   (should (equal (set:get 'b (set:create (cons 'a 'value-a))) nil))
 
-  ;; FIXME: Need to add tests for (set:replace old-val new-val set)
+  (should (set:equal (set:replace 'a 'c (set:create 'a)) (set:create 'c)))
+  (should (set:equal (set:replace 'a 'c (set:create)) (set:create 'c)))
+  (should (set:equal (set:replace 'b 'c (set:create 'a 'b)) (set:create 'a 'c)))
 
   ;; set:replace-key-value - requires elements to be of type (key . value)
   (should (set:equal (set:replace-key-value 'a 'new-value-a (set:create (cons 'a 'value-a)))
-                     (set:create '(a . new-value-a) '(a . value-a))))
+                     (set:create '(a . new-value-a))))
   (should (set:equal (set:replace-key-value 'b 'new-value-b (set:create (cons 'a 'value-a)))
                      (set:create '(b . new-value-b) '(a . value-a))))
-  (let ((set (set:create (cons 'a 'value-a))))
-    (setq set (set:replace-key-value 'a 'new-value-a set))
-    (should (set:equal set (set:create '(a . new-value-a) '(a . value-a)))))
-  
-  ;; set:members works on lists!?
-  ;; FIXME: Use verification that list contains elements rather than checking
-  ;; a specific order
-  (should (equal (set:members '(1)) '(1)))
-  (should (equal (set:members '(1 2)) '(1 2)))
-  (should (equal (set:members '(1 1)) '(1)))
-  (should (equal (set:members '(1 1 2 2)) '(1 2))))
+  (should (set:equal (set:replace-key-value 'b 'new-value-b (set:create (cons 'a 'value-a) (cons 'b 'value-b)))
+                     (set:create '(b . new-value-b) '(a . value-a))))
+
+  (should (set:equal (set:members '(1)) '(1)))
+  (should (set:equal (set:members '(1 2)) '(1 2)))
+  (should (set:equal (set:members '(1 1)) '(1)))
+  (should (set:equal (set:members '(1 1 2 2)) '(1 2))))
 
 (ert-deftest set-tests--equal-op-tests ()
   "Test Hyperbole set library functions with equal op always true."

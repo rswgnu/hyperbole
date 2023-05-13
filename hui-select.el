@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Oct-96 at 02:25:27
-;; Last-Mod:      3-Oct-22 at 20:21:48 by Mats Lidell
+;; Last-Mod:     27-Feb-23 at 00:22:58 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -109,8 +109,9 @@
 
 (require 'hvar)
 (eval-when-compile
-  (require 'sgml-mode) ;; for HTML mode
-  (require 'nxml-mode) ;; for XML mode
+  (require 'mhtml-mode) ;; for MHTML mode
+  (require 'sgml-mode)  ;; for HTML mode
+  (require 'nxml-mode)  ;; for XML mode
   (require 'web-mode nil t))
 
 ;;; ************************************************************************
@@ -124,7 +125,7 @@
   :group 'hyperbole-commands)
 
 (defcustom hui-select-markup-modes
-  '(html-mode sgml-mode nxml-mode web-mode)
+  '(html-mode mhtml-mode nxml-mode sgml-mode web-mode)
   "*List of markup language modes that use SGML-style <tag> </tag> pairs."
   :type '(repeat (function :tag "Mode"))
   :group 'hyperbole-commands)
