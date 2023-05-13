@@ -9,6 +9,22 @@
   HY-CONCEPTS.kotl: Add to explain how Hyperbole concepts connect to one
     another and Emacs.  Add to minibuffer menu on {C-h h d c}.
 
+* hbut.el (hbut:comment): Remove nil-valued if clauses.
+
+2023-05-12  Bob Weiner  <rsw@gnu.org>
+
+* hui-mouse.el (smart-dired): Fix 'dired-get-filename' so works on . and ..
+    entries.
+
+* hui-mini.el (hui:menu-choose): Action Key press on the top-level menu
+    prefix reloads Hyperbole minibuffer menus and Smart Key handlers to
+    reflect any recent changes.
+  man/hyperbole.texi (Menus): Add doc for above update.
+
+2023-05-11  Bob Weiner  <rsw@gnu.org>
+
+* hui-mini.el (hui:menus): Rename DeleteIbutType to DeleteType.
+
 2023-05-07  Bob Weiner  <rsw@gnu.org>
 
 * Makefile (manual): Add manual target to build manual without building other

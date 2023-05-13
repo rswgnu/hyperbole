@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    18-Sep-91 at 02:57:09
-;; Last-Mod:     30-Apr-23 at 14:43:05 by Bob Weiner
+;; Last-Mod:     13-May-23 at 12:18:37 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1005,33 +1005,31 @@ Then use (hbut:act) to activate the button."
 Use buffer commenting grammar, if any, otherwise don't comment.
 Ignore email-related buffers."
   (save-excursion
-    (if (and comment-start (not (hmail:mode-is-p))
-	     (not (memq major-mode '(mail-mode message-mode))))
-	(if (or (equal comment-end "")
-		(null comment-end))
-	    (progn
-	      (beginning-of-line)
-	      (if (search-forward comment-start start t)
-		  nil
-		(goto-char start)
-		(insert comment-start)
-		(if (not (eq (preceding-char) ?\ ))
-		    (insert ?\ ))))
-	  ;; Comments have both start and end delimiters
-  	  (if (and (re-search-backward
-		    (concat (regexp-quote comment-start) "\\|"
-			    (regexp-quote comment-end))
-		    nil t)
-		   (looking-at (regexp-quote comment-start)))
-	      nil
-	    (goto-char start)
-	    (insert comment-start)
-	    (unless (eq (preceding-char) ?\ )
-	      (insert ?\ ))
-	    (goto-char (+ (point) (- end start)))
-	    (unless (eq (following-char) ?\ )
-	      (insert ?\ ))
-	    (insert comment-end))))))
+    (when (and comment-start (not (hmail:mode-is-p))
+	       (not (memq major-mode '(mail-mode message-mode))))
+      (if (or (equal comment-end "")
+	      (null comment-end))
+	  (progn
+	    (beginning-of-line)
+	    (unless (search-forward comment-start start t)
+	      (goto-char start)
+	      (insert comment-start)
+	      (unless (eq (preceding-char) ?\ )
+		(insert ?\ ))))
+	;; Comments have both start and end delimiters
+  	(unless (and (re-search-backward
+		      (concat (regexp-quote comment-start) "\\|"
+			      (regexp-quote comment-end))
+		      nil t)
+		     (looking-at (regexp-quote comment-start)))
+	  (goto-char start)
+	  (insert comment-start)
+	  (unless (eq (preceding-char) ?\ )
+	    (insert ?\ ))
+	  (goto-char (+ (point) (- end start)))
+	  (unless (eq (following-char) ?\ )
+	    (insert ?\ ))
+	  (insert comment-end))))))
 
 ;;; Regexps derived in part from "filladapt.el" by Kyle E. Jones under
 ;;; the GPL.
@@ -2209,7 +2207,6 @@ Signal an error when no such button is found in the current buffer.
 Leave point at the start of the button label which may be elsewhere
 than the current point; callers should use `save-excursion` to retain
 current."
-  ;; !! Need to handle adding instances to labels, similar to ebut:operate.
   (cond ((or (not (stringp new-lbl)) (< (length new-lbl) 1))
 	 (error "(ibut:rename): Invalid 'new-lbl' argument: \"%s\"" new-lbl))
 	((or (not (stringp old-lbl)) (< (length old-lbl) 1))

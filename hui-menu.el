@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    28-Oct-94 at 10:59:44
-;; Last-Mod:     13-May-23 at 15:37:30 by Bob Weiner
+;; Last-Mod:     13-May-23 at 17:03:00 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -356,11 +356,12 @@ REBUILD-FLAG is non-nil, in which case the menu is rebuilt."
 		   ["Manual"      (id-info "(hyperbole)Top") t]
 		   "----"
 		   ["About"       (hypb:display-file-with-logo "HY-ABOUT") t]
-		   ["Concepts"    (find-file (expand-file-name "HY-CONCEPTS.kotl" hyperb:dir)) t]
+		   ["Concepts"    (find-file (expand-file-name
+					      "HY-CONCEPTS.kotl" hyperb:dir)) t]
 		   ["Demonstration"  hyperbole-demo t]
 		   ["Files"       (hypb:display-file-with-logo "MANIFEST") t]
 		   ["Glossary"    (id-info "(hyperbole)Glossary") t]
-		   ("New-Features" (hypb:display-file-with-logo "HY-NEWS") t]
+		   ["New-Features" (hypb:display-file-with-logo "HY-NEWS") t]
 		   ["Smart-Key-Summary" (id-browse-file (hypb:hkey-help-file)) t]
 		   ("Types"
 		    ["Action-Types-Manual"
@@ -372,7 +373,7 @@ REBUILD-FLAG is non-nil, in which case the menu is rebuilt."
 		     (hui:htype-help-current-window 'actypes) t]
 		    ["Show-Implicit-Button-Types"
 		     (hui:htype-help-current-window 'ibtypes 'no-sort) t])
-		    ["WhyUse"     (find-file (expand-file-name "HY-WHY.kotl" hyperb:dir)) t])
+		   ["WhyUse"     (find-file (expand-file-name "HY-WHY.kotl" hyperb:dir)) t])
 		 '("Explicit-Button"
 		   :filter hui-menu-explicit-buttons
 		   ["Activate" hui:ebut-act t]

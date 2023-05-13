@@ -107,7 +107,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</P>
 
 <PRE>
 Edition 8.0.1pre
-Printed May 7, 2023.
+Printed May 13, 2023.
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -3847,7 +3847,7 @@ look like this:
 </li><li>or by pressing <kbd class="kbd">{Shift-<kbd class="key">TAB</kbd>}</kbd> or <kbd class="kbd">{M-b}</kbd> to move backward an item.
 </li></ul>
 
-<p>A prefix argument given to one of the movement commands, moves by tht
+<p>A prefix argument given to one of the movement commands, moves by that
 number of items within the menu.  A press of the Assist Key on an item
 displays help for the item, including the action that it performs.
 &quot;/&quot; at the end of an item name indicates that it brings up a submenu.
@@ -3863,13 +3863,25 @@ displays help for the item, including the action that it performs.
 <p>While a menu is active, to re-activate the top-level Hyperbole menu,
 use <kbd class="kbd">{C-t}</kbd> or press the Action Key while on the menu prefix
 (before the &lsquo;<samp class="samp">&gt;</samp>&rsquo; character).  This allows you to browse the
-submenus and then return to the top menu.  You can quit from the
-minibuffer menus without selecting an item by using <kbd class="kbd">{Q}</kbd>, or by
-pressing <kbd class="kbd">{<kbd class="key">RET</kbd>}</kbd> or <kbd class="kbd">{M-<kbd class="key">RET</kbd>}</kbd> when at the end of a
-menu.  <kbd class="kbd">{C-g}</kbd> aborts from the minibuffer whether you are at a menu
-prompt or any other Hyperbole prompt.  <kbd class="kbd">{X}</kbd> both quits the menus
-and disables the Hyperbole global minor mode; <kbd class="kbd">{C-h h}</kbd> restores
-the menus and re-enables Hyperbole minor mode.
+submenus and then return to the top menu.
+</p>
+<a class="index-entry-id" id="index-menu_002c-reload"></a>
+<a class="index-entry-id" id="index-Smart-Key_002c-reload"></a>
+<a class="index-entry-id" id="index-reload-minibuffer-menus"></a>
+<a class="index-entry-id" id="index-reload-Smart-Key-handlers"></a>
+
+<p>You can reload the Hyperbole minibuffer menus and Smart Key handlers
+to reflect any recent edits when on the top-level Hyperbole menu by
+pressing the Action Key on the menu name (first item that ends with
+&rsquo;&gt;&rsquo;).
+</p>
+<p>You can quit from the minibuffer menus without selecting an item by
+using <kbd class="kbd">{Q}</kbd>, or by pressing <kbd class="kbd">{<kbd class="key">RET</kbd>}</kbd> or <kbd class="kbd">{M-<kbd class="key">RET</kbd>}</kbd>
+when at the end of a menu.  <kbd class="kbd">{C-g}</kbd> aborts from the minibuffer
+whether you are at a menu prompt or any other Hyperbole prompt.
+<kbd class="kbd">{X}</kbd> both quits the menus and disables the Hyperbole global minor
+mode; <kbd class="kbd">{C-h h}</kbd> restores the menus and re-enables Hyperbole minor
+mode.
 </p>
 <p>The top-level Hyperbole minibuffer menu items serve the following purposes:
 </p>
@@ -4297,10 +4309,12 @@ screen size.
 <a class="index-entry-id" id="index-I_002fJ_002fK_002fM"></a>
 </dd>
 <dt><kbd class="kbd">{I/J/K/M}</kbd></dt>
-<dd><p>In WINDOWS mode, the keys <kbd class="kbd">{I}</kbd><kbd class="kbd">{J}</kbd>/<kbd class="kbd">{K}</kbd>/<kbd class="kbd">{M}</kbd> move
-directionally (based on QUERTY key layout) between windows in the
-selected frame.  In FRAMES mode, they move directionally through visible
-frames.  These use the <samp class="file">windmove</samp> and <samp class="file">framemove</samp> libraries.
+<dd><p>In WINDOWS mode, the keys I, J, K, M move directionally (based on
+QUERTY key layout) between windows in the selected frame.  In FRAMES
+mode, they move directionally through visible frames.  These use the
+<samp class="file">windmove</samp> and <samp class="file">framemove</samp> libraries.  When any of these
+keys are pressed, Hyperbole will prompt to install the needed library
+if not already installed.
 </p>
 <a class="index-entry-id" id="index-screen_002c-W"></a>
 <a class="index-entry-id" id="index-W"></a>
@@ -6103,30 +6117,21 @@ files or Koutline files.
 </p>
 <p>Rolo <em class="dfn">entries</em> begin with optional space, followed by a delimiter of
 one or more special characters followed by another space.  Delimiters
-vary based on the type of file:
+vary based on the type of file, for example level 3 entry delimiters
+look like this:
 </p>
-<dl class="table">
-<dt>Emacs Outline Mode</dt>
-<dd><p>*
-</p></dd>
-<dt>Koutline Mode</dt>
-<dd><p>1b3 or 1.2.3
-</p></dd>
-<dt>Markdown Mode</dt>
-<dd><p>#
-</p></dd>
-<dt>Org Mode</dt>
-<dd><p>*
-</p></dd>
-<dt>Text Mode</dt>
-<dd><p>*
-</p></dd>
-</dl>
+<div class="example">
+<div class="group"><pre class="example-preformatted">Emacs Outline Mode: ***
+Koutline Mode:      1b3 or 1.2.3
+Markdown Mode:      ###
+Org Mode:           ***
+Text Mode:          ***
+</pre></div></div>
 
 <p>Entries may be arranged in a hierarchy, where child entries start with
-at least one more delimiter characters than do their parents.  Top-level
-level entries use either a single delimiter character or a sequence of
-digits in the case of Koutlines.
+at least one more delimiter characters than do their parents. Top-level
+entries use either a single delimiter character or a sequence of digits
+in the case of Koutlines.
 </p>
 <p>Beyond this initial delimiter, entries are completely free-form text.
 It is best to use a &quot;lastname, firstname&quot; format, however, when adding
@@ -7549,9 +7554,6 @@ Previous: <a href="#Encapsulating-Systems" accesskey="p" rel="prev">Encapsulatin
 </div>
 <h3 class="section" id="Embedding-Hyperbole-1">10.5 Embedding Hyperbole</h3>
 
-<p>[NOTE: We have never done this ourselves, though we have done similar
-things which leads us to infer that the task should not be difficult.]
-</p>
 <a class="index-entry-id" id="index-Hyperbole-API"></a>
 <a class="index-entry-id" id="index-API"></a>
 <a class="index-entry-id" id="index-programming-interface"></a>
@@ -14450,6 +14452,7 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function, Variable and Fi
 <tr><td></td><td class="printindex-index-entry"><a href="#index-menu_002c-Msg">menu, Msg</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Menus">Menus</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-menu_002c-Outline_002fExample">menu, Outline/Example</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Koutliner">Koutliner</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-menu_002c-Outliner">menu, Outliner</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Menus">Menus</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-menu_002c-reload">menu, reload</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Menus">Menus</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-menu_002c-Rolo">menu, Rolo</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Menus">Menus</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-menu_002c-Rolo-1">menu, Rolo</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#HyRolo-Menu">HyRolo Menu</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-menu_002c-Screen">menu, Screen</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Menus">Menus</a></td></tr>
@@ -14624,6 +14627,8 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function, Variable and Fi
 <tr><td></td><td class="printindex-index-entry"><a href="#index-register_002c-klinks">register, klinks</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Klinks">Klinks</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-relative-autonumber">relative autonumber</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Koutliner">Koutliner</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-relative-identifier">relative identifier</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Autonumbering">Autonumbering</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-reload-minibuffer-menus">reload minibuffer menus</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Menus">Menus</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-reload-Smart-Key-handlers">reload Smart Key handlers</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Menus">Menus</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-remote-file">remote file</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-remote-path">remote path</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-remote-pathnames">remote pathnames</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Using-URLs-with-Find_002dFile">Using URLs with Find-File</a></td></tr>
@@ -14713,6 +14718,7 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function, Variable and Fi
 <tr><td></td><td class="printindex-index-entry"><a href="#index-Smart-Key-summary">Smart Key summary</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Smart-Key-Operations">Smart Key Operations</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-Smart-Key_002c-default-context">Smart Key, default context</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Smart-Key-Operations">Smart Key Operations</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-Smart-Key_002c-default-context-1">Smart Key, default context</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Smart-Key-_002d-Default-Context">Smart Key - Default Context</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-Smart-Key_002c-reload">Smart Key, reload</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Menus">Menus</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-Smart-Keyboard-Keys">Smart Keyboard Keys</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Smart-Key-_002d-Argument-Completion">Smart Key - Argument Completion</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-smart-keys_002c-unshifted">smart keys, unshifted</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Smart-Key-Bindings">Smart Key Bindings</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-smart-marking">smart marking</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Smart-Key-Thing-Selection">Smart Key Thing Selection</a></td></tr>
