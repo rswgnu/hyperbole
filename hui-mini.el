@@ -744,6 +744,8 @@ The menu is a menu of commands from MENU-ALIST."
        '(doc .
 	 (("Doc>")
 	  ("About"       (hypb:display-file-with-logo "HY-ABOUT") "Overview of Hyperbole.")
+	  ("Concepts"    (find-file (expand-file-name "HY-CONCEPTS.kotl" hyperb:dir))
+	   "Explains connections among Hyperbole concepts.")
 	  ("Demo"        hyperbole-demo                           "Demonstrates Hyperbole features.")
 	  ("Files"       (hypb:display-file-with-logo "MANIFEST")
 	   "Summarizes Hyperbole system files.  Click on an entry to view it.")

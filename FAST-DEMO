@@ -244,7 +244,9 @@ pspell-config(1)         - prints information about a libpspell installation
        the associated man documentation page.
 
 
-* Action Buttons (generalized form of implicit buttons)
+* Action Buttons
+
+  These are a generalized form of implicit buttons.
 
   If you know your way around Emacs Lisp and want to quickly turn snippets of
   Lisp code or Lisp variables into Hyperbole buttons, just remove any outer

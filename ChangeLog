@@ -1,3 +1,14 @@
+2023-05-13  Bob Weiner  <rsw@gnu.org>
+
+* DEMO (Org Mode): Update Action Key handling writeup.
+
+* hui-menu.el (infodock-hyperbole-menu): Sync Documentation menu to minibuffer Doc/
+  Makefile (HYPERBOLE_FILES):
+  MANIFEST (HY-CONCEPTS.kotl):
+  hui-mini.el (Doc/Concepts):
+  HY-CONCEPTS.kotl: Add to explain how Hyperbole concepts connect to one
+    another and Emacs.  Add to minibuffer menu on {C-h h d c}.
+
 2023-05-07  Bob Weiner  <rsw@gnu.org>
 
 * Makefile (manual): Add manual target to build manual without building other

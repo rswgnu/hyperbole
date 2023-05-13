@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    31-Oct-91 at 23:17:35
-;; Last-Mod:     16-Mar-23 at 21:41:09 by Bob Weiner
+;; Last-Mod:     11-May-23 at 23:00:00 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -651,7 +651,7 @@ help when appropriate."
 	      (set-buffer (window-buffer (minibuffer-window)))
 	      (cond
 	       ;;
-	       ;; Selecting a menu item
+	       ;; Selecting a Hyperbole minibuffer menu item
 	       ((eq hargs:reading-type 'hmenu)
 		(when assist-bool
 		  (setq hargs:reading-type 'hmenu-help))
