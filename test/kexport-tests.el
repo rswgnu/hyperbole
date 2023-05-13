@@ -1,9 +1,9 @@
-;;; kexport-tests.el --- kexport tests            -*- lexical-binding: t; -*-
+;;; kexport-tests.el --- test exporting Koutlines to file types   -*- lexical-binding: t; -*-
 
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    10-Oct-21 at 17:30:00
-;; Last-Mod:     10-Mar-23 at 01:10:09 by Mats Lidell
+;; Last-Mod:     13-May-23 at 12:38:06 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;

@@ -1,9 +1,9 @@
-;;; hyperbole-tests.el --- Tests for hyperbole.el  -*- lexical-binding: t; -*-
+;;; hyperbole-tests.el --- tests for hyperbole.el  -*- lexical-binding: t; -*-
 ;;
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:     8-Jan-22 at 23:40:00
-;; Last-Mod:     24-Jan-22 at 00:41:15 by Bob Weiner
+;; Last-Mod:     13-May-23 at 10:10:52 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;

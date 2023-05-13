@@ -1,9 +1,9 @@
-;;; hui-tests.el --- Tests for hui.el                -*- lexical-binding: t; -*-
+;;; hui-tests.el --- tests for hui.el Hyperbole UI          -*- lexical-binding: t; -*-
 ;;
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    30-Jan-21 at 12:00:00
-;; Last-Mod:     30-Apr-23 at 17:51:22 by Mats Lidell
+;; Last-Mod:     13-May-23 at 10:12:12 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;

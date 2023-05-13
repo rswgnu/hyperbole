@@ -9,14 +9,17 @@ hmouse-drv-tests.el     - hmouse-drv unit tests
 hmouse-info-tests.el    - hmouse-info unit tests
 hpath-tests.el          - unit tests for hpath
 hsys-org-tests.el       - hsys-org tests
+hui-register-tests.el   - test for hui-register
 hui-select-tests.el     - hui-select tests
-hui-tests.el            - Tests for hui.el
-hypb-tests.el           - test for hypb.el
-hyperbole-tests.el      - Tests for hyperbole.el
-hyrolo-tests.el         - unit tests for hyrolo.el
-hy-test-dependencies.el - Dependencies for running the tests
+hui-tests.el            - tests for hui.el Hyperbole UI
+hy-test-dependencies.el - Hyperbole test dependencies
 hy-test-helpers.el      - unit test helpers
-kexport-tests.el        - kexport tests
+hypb-tests.el           - tests for hypb.el utility functions
+hyperbole-tests.el      - tests for hyperbole.el
+hyrolo-tests.el         - unit tests for hyrolo.el
+kcell-tests.el          - test for kcells in Koutlines
+kexport-tests.el        - test exporting Koutlines to file types
+kimport-tests.el        - test importing file types to Koutlines
 kotl-mode-tests.el      - kotl-mode-el tests
 kotl-orgtbl-tests.el    - kotl orgtbl tests
 set-tests.el            - mathematical set library tests

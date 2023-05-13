@@ -1,9 +1,9 @@
-;;; kimport-tests.el --- one line summary                -*- lexical-binding: t; -*-
+;;; kimport-tests.el --- test importing file types to Koutlines    -*- lexical-binding: t; -*-
 ;;
 ;; Author:       Mats Lidell
 ;;
 ;; Orig-Date:     9-Apr-23 at 23:31:48
-;; Last-Mod:      7-May-23 at 17:11:53 by Bob Weiner
+;; Last-Mod:     13-May-23 at 10:08:37 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;

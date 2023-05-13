@@ -1,9 +1,9 @@
-;;; hypb-tests.el --- test for hypb.el         -*- lexical-binding: t; -*-
+;;; hypb-tests.el --- tests for hypb.el utility functions         -*- lexical-binding: t; -*-
 
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:     5-Apr-21 at 18:53:10
-;; Last-Mod:     15-Jul-22 at 23:26:35 by Mats Lidell
+;; Last-Mod:     13-May-23 at 10:10:25 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;

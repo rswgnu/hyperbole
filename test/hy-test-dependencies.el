@@ -1,9 +1,9 @@
-;;; hy-test-dependencies.el --- Dependencies for running the tests  -*- lexical-binding: t; -*-
+;;; hy-test-dependencies.el --- Hyperbole test dependencies      -*- lexical-binding: t; -*-
 
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    20-Feb-21 at 23:16:00
-;; Last-Mod:     23-Jul-22 at 18:37:43 by Bob Weiner
+;; Last-Mod:     13-May-23 at 10:12:36 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
