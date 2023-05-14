@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    18-May-21 at 22:14:10
-;; Last-Mod:     15-Apr-23 at 00:25:21 by Mats Lidell
+;; Last-Mod:     23-Apr-23 at 23:42:34 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -358,6 +358,22 @@
           (kotl-mode:demote-tree 0)
           (should (string= (kcell-view:label (point)) "1a"))
           (should (string= (kcell-view:idstamp) "02")))
+      (delete-file kotl-file))))
+
+(ert-deftest kotl-mode-append-cell ()
+  "Kotl-mode append cell to cell."
+  (let ((kotl-file (make-temp-file "hypb" nil ".kotl")))
+    (unwind-protect
+        (progn
+          (find-file kotl-file)
+          (insert "1")
+          (let ((ids (kcell-view:idstamp)))
+            (kotl-mode:add-cell)
+            (kotl-mode:append-cell ids (kcell-view:idstamp))
+            (should (looking-at-p "1"))
+            (insert "2")
+            (kotl-mode:append-cell ids (kcell-view:idstamp))
+            (should (string= "21\n1" (substring-no-properties (kcell-view:contents))))))
       (delete-file kotl-file))))
 
 (ert-deftest kotl-mode-previous-cell-from-invalid-position ()

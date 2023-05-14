@@ -72,6 +72,10 @@
 
 * hui-mini.el (hui:menus): Rename DeleteIbutType to DeleteType.
 
+2023-05-11  Mats Lidell  <matsl@gnu.org>
+
+* test/kotl-mode-tests.el (kotl-mode-append-cell): Add kotl-mode test.
+
 2023-05-07  Bob Weiner  <rsw@gnu.org>
 
 * Makefile (manual): Add manual target to build manual without building other
