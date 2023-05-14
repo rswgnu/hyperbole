@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     6-Oct-91 at 03:42:38
-;; Last-Mod:     14-May-23 at 10:51:09 by Bob Weiner
+;; Last-Mod:     14-May-23 at 22:54:11 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1049,7 +1049,7 @@ Without file, the banner is prepended to the current buffer."
 	    (setq dec-num (+ (* dec-num 8)
 			     (when (and (>= o ?0) (<= o ?7))
 			       (- o ?0)))))
-	  oct-str "")
+	  oct-str)
     dec-num))
 
 ;;; ************************************************************************
