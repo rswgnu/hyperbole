@@ -3,7 +3,7 @@
 # Author:       Bob Weiner
 #
 # Orig-Date:    15-Jun-94 at 03:42:38
-# Last-Mod:      7-May-23 at 20:33:02 by Bob Weiner
+# Last-Mod:     13-May-23 at 14:57:28 by Bob Weiner
 #
 # Copyright (C) 1994-2023  Free Software Foundation, Inc.
 # See the file HY-COPY for license information.
@@ -200,7 +200,8 @@ ELC_KOTL = $(EL_KOTL:.el=.elc)
 HY-TALK  = HY-TALK/.hypb HY-TALK/HYPB HY-TALK/HY-TALK.org
 
 HYPERBOLE_FILES = dir info html $(EL_COMPILE) $(EL_KOTL) \
-	$(ELC_COMPILE) $(HY-TALK) ChangeLog COPYING Makefile HY-ABOUT HY-ANNOUNCE HY-NEWS \
+	$(ELC_COMPILE) $(HY-TALK) ChangeLog COPYING Makefile HY-ABOUT HY-ANNOUNCE \
+        HY-CONCEPTS.kotl HY-NEWS \
 	HY-WHY.kotl INSTALL DEMO DEMO-ROLO.otl FAST-DEMO MANIFEST README README.md TAGS _hypb \
         .hypb smart-clib-sym topwin.py hyperbole-banner.png $(man_dir)/hkey-help.txt \
 	$(man_dir)/hyperbole.texi $(man_dir)/hyperbole.css $(man_dir)/version.texi
@@ -347,7 +348,7 @@ TAGS: $(EL_TAGS)
 clean:
 	$(RM) hyperbole-autoloads.el kotl/kotl-autoloads.el $(ELC_COMPILE) $(ELC_KOTL) TAGS
 
-version: doc
+version:
 	@ echo ""
 	@ fgrep -L $(HYPB_VERSION) hyperbole-pkg.el Makefile HY-ABOUT HY-NEWS README.md hversion.el hyperbole.el man/hyperbole.texi man/version.texi > WRONG-VERSIONS
 	@ # If any file(s) have wrong version number, print them and exit with code 1
@@ -360,7 +361,7 @@ version: doc
 	@ echo ""
 
 # Build the README.md.html and Info, HTML and Postscript versions of the user manual
-doc: README.md.html manual
+doc: version README.md.html manual
 
 # Build the Info, HTML and Postscript versions of the user manual
 manual: info html pdf

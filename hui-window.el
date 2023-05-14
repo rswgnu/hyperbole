@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Sep-92
-;; Last-Mod:      7-Oct-22 at 23:39:57 by Mats Lidell
+;; Last-Mod:     14-May-23 at 02:03:27 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -474,9 +474,7 @@ Signals an error if either depress or release buffer is read-only."
 	  (select-window release-window)
 	  (goto-char release-point)
 	  ;; Protect from indentation errors
-	  (condition-case ()
-	      (hmouse-insert-region)
-	    (error nil)))))))
+	  (ignore-errors (hmouse-insert-region)))))))
 
 (defun hmouse-yank-region ()
   "Yank the region of text saved in `hkey-region' into the current buffer.
@@ -498,9 +496,7 @@ Signals an error if the buffer is read-only."
 	(select-frame-set-input-focus (window-frame release-window))
 	(select-window release-window))
       ;; Protect from indentation errors
-      (condition-case ()
-	  (hmouse-insert-region)
-	(error nil)))))
+      (ignore-errors (hmouse-insert-region)))))
 
 (defun hmouse-drag-between-frames ()
   "Return non-nil if last Action Key depress and release were in different frames.

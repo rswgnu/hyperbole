@@ -890,7 +890,7 @@ If key is pressed:
 		     (t (error "(smart-dired): No Dired expunge function")))))
 	       (t (hpath:find (smart-dired-pathname-up-to-point)))))
 	((last-line-p) (quit-window))
-	(t (hpath:find (dired-get-filename)))))
+	(t (hpath:find (dired-get-filename nil t)))))
 
 (defun smart-dired-assist ()
   "Use a single assist-key or mouse assist-key to manipulate directory entries.

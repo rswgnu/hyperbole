@@ -1,3 +1,77 @@
+2023-05-14  Bob Weiner  <rsw@gnu.org>
+
+* hib-debbugs.el (debbugs-gnu-mode:help):
+  hui-window.el (hmouse-kill-and-yank-region, hmouse-yank-region):
+  hargs.el (hargs:sexpression-p):
+  hpath.el (hpath:cache-mswindows-mount-points):
+  hvm.el (vm-edit-message-end):
+  kotl/kotl-mode.el (kotl-mode:transpose-lines):
+  kotl/kfile.el (kfile:is-p, kfile:print-to-string):
+  hsys-org.el (hsys-org-link-at-p):
+  hbut.el (ebut:label-p, gbut:ebut-key-list, hbut:ebut-key-list):
+  hui-select.el (hui-select-mark-delimited-sexp,
+                 hui-select-brace-def-or-declaration, hui-select-sexp-start,
+                 hui-select-sexp-end, hui-select-sexp, hui-select-sexp-up):
+                 hui-select-punctuation, hui-select-sentence):
+  hmouse-tag.el (smart-cc-mode-initialize, smart-lisp-find-tag,
+                 smart-lisp-at-known-identifier-p, smart-lisp-bound-symbol-def,
+                 smart-tags-find-p):
+    Replace nil error handler condition-case with ignore-errors macro.
+
+2023-05-13  Bob Weiner  <rsw@gnu.org>
+
+* hmouse-drv.el (hmouse-depress-inactive-minibuffer-p): Fix doc to say window
+    is returned rather than buffer.
+
+* hui.el (hui:link-create, hui:link-directly): It is rarely possible that a
+    *Warnings* buffer popup might have displaced `but-loc' in the window, so
+    switch to it to be safe.
+  hmouse-drv.el (action-key-depress-buffer, assist-key-depress-buffer)
+                 action-key-release-buffer, assist-key-release-buffer): Add to
+    handle when a buffer popup changes the buffer associated with a window between
+    depress and release.
+                (action-key-depress, assist-key-depress, action-key-clear-variables,
+                 assist-key-clear-variables): Set depress-buffer and release-buffer
+    variables.
+                (hmouse-key-release-buffer): Add to return any buffer of Smart Mouse
+    Key release.
+
+* hsys-youtube.el (require 'hact): Autoload for defact macro.
+                  (yt-info, yt-play, yt-search, yt-url): Change from aliases to
+    defact, so are properly registered as actypes.
+  man/hyperbole.texi (Action Types): Add yt-* actypes.
+
+* hpath.el (hpath:cache-mswindows-mount-points): Catch and ignore any shell command
+    error.  Can be triggered when default-directory is set to a URL, as in RFC
+    display buffers.  This in turn would lead hyperbole-mode activation to fail.
+
+* man/hyperbole.texi (HyRolo Keys): Updates to match HY-NEWS.
+
+* DEMO (Org Mode): Update Action Key handling writeup.
+
+* hui-menu.el (infodock-hyperbole-menu): Sync Documentation menu to minibuffer Doc/
+  Makefile (HYPERBOLE_FILES):
+  MANIFEST (HY-CONCEPTS.kotl):
+  hui-mini.el (Doc/Concepts):
+  HY-CONCEPTS.kotl: Add to explain how Hyperbole concepts connect to one
+    another and Emacs.  Add to minibuffer menu on {C-h h d c}.
+
+* hbut.el (hbut:comment): Remove nil-valued if clauses.
+
+2023-05-12  Bob Weiner  <rsw@gnu.org>
+
+* hui-mouse.el (smart-dired): Fix 'dired-get-filename' so works on . and ..
+    entries.
+
+* hui-mini.el (hui:menu-choose): Action Key press on the top-level menu
+    prefix reloads Hyperbole minibuffer menus and Smart Key handlers to
+    reflect any recent changes.
+  man/hyperbole.texi (Menus): Add doc for above update.
+
+2023-05-11  Bob Weiner  <rsw@gnu.org>
+
+* hui-mini.el (hui:menus): Rename DeleteIbutType to DeleteType.
+
 2023-05-11  Mats Lidell  <matsl@gnu.org>
 
 * test/kotl-mode-tests.el (kotl-mode-append-cell): Add kotl-mode test.

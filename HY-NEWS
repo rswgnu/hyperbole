@@ -5,7 +5,7 @@
 *                                   V8.0.1pre
 ===========================================================================
 
-** ACTION TYPES
+** ACTION TYPES  (See "(hyperbole)Action Types").
 
   *** display-boolean, display-value, display-variable: Made all of these
       interactive, so can be used as button actypes.  See "(hyperbole)
@@ -25,10 +25,14 @@
         - Build a Zettelkasten with HyRolo: The video is at
           "https://emacsconf.org/2022/talks/rolodex/".
 
+  *** Hyperbole Concepts: New writeup in Koutline format for those who
+      want a quick read about how Hyperbole concepts all interrelate.
+      View it with {C-h h d c}.
+
   *** Action Types: Added newer types and updated existing doc summaries
       in the Hyperbole manual.  See "(hyperbole)Action Types".
 
-  *** Documented these Hyperbole minibuffer menu keys:
+  *** New Menu Key Doc: Documented these Hyperbole minibuffer menu keys:
 
         - {Q} always quits from the menu without selecting anything
 
@@ -110,7 +114,12 @@
         - {,} Move to the beginning of the current entry
         - {.} Move to the end of the current entry
 
-      See "(hyperbole)Hyrolo Keys".
+      See "(hyperbole)HyRolo Keys".
+
+  *** Koutline and Markdown File Support: The `hyrolo-file-list' can now
+      contain Koutline or Markdown files and will search their outline entries
+      just like it does for Org and Emacs outline files.  See
+      "(hyperbole)HyRolo Concepts".
 
   *** Koutline Fast Search: Koutlines may now be included in
       `hyrolo-file-list' and individual cells extracted properly with any
@@ -123,11 +132,6 @@
 	{f/b/n/p} move to another match
 
       all work on Koutline cells displayed in the match buffer.  See
-      "(hyperbole) HyRolo Concepts".
-
-  *** Koutline and Markdown File Support: The `hyrolo-file-list' can now
-      contain Koutline or Markdown files and will search their outline entries
-      just like it does for Org and Emacs outline files.  See
       "(hyperbole)HyRolo Concepts".
 
   *** Match Buffer Name Change: Changed match buffer name from "*Hyperbole
@@ -143,7 +147,7 @@
       exclusively.  See "(hyperbole)ConsultFind".
 
 
-** IMPLICIT BUTTONS
+** IMPLICIT BUTTONS  (See "(hyperbole)Implicit Buttons").
 
   *** Action Button Result Display: Action buttons now display in the
       minibuffer the result of evaluating any type of action expression,
@@ -178,8 +182,8 @@
       now recognized as programming etags in the *Warnings* byte-compilation
       buffer and in Flymake log and diagnostics buffers.
 
-  *** Info Nodes: Better handle embedded double quotes and add support for
-      HTML &quot; quoting.
+  *** Info Nodes: Better handling of embedded double quotes and added support
+      for HTML &quot; quoting.
 
   *** Improved # and Embedded Space Path Handling: If a path exists, don't
       treat its # hash marks as section markers, notably for #autosave# files.
@@ -194,7 +198,7 @@
 
   *** Path Implicit Buttons: Much improved relative path handling, including
       expanding into executable paths when pathname is prefixed by ! or &,
-      handling info paths outside `Info-directory-list', like
+      and handling info paths outside `Info-directory-list', like
       "man/hyperbole.info".
 
   *** Table of Contents Sections: Hyperbole now recognizes TOCs in any text
@@ -224,6 +228,10 @@
 
   *** Minibuffer Menu Changes:
 
+        - Reload Menus and Smart Keys: Action Key press on top-level menu prefix
+          reloads Hyperbole minibuffer menus and Smart Key handlers to reflect
+          any recent edits.
+
         - Multi-line Menus: When a menu line is too long for the screen, it is
           automatically split into multiple lines and aligned by column for
           ease of access.
@@ -233,7 +241,7 @@
       as do {TAB} and {Shift-TAB}.  See "(hyperbole)minibuffer menu".
 
 
-** PROGRAMMING INTERFACE CHANGES
+** PROGRAMMING INTERFACE CHANGES  (See "(hyperbole)Embedding Hyperbole").
 
   *** (hypb:devdocs-lookup): Install and load devdocs package and then
       call its `devdocs-lookup' function.
@@ -414,7 +422,7 @@
       across modes.  See "(hyperbole)Smart Key - Dired Mode".
 
 
-** TEST CASES
+** TEST CASES  (See "${hyperb:dir}/test").
 
   *** Hyperbole Automated Testing: Automated test cases increased to over 285.
       Simply run 'make test-all' or 'make test' from the command-line when in

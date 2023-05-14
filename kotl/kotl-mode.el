@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    6/30/93
-;; Last-Mod:      6-May-23 at 12:39:55 by Bob Weiner
+;; Last-Mod:     14-May-23 at 01:47:03 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1009,10 +1009,8 @@ that contains mark."
     (let* ((mark (set-marker (make-marker)
 			     (save-excursion (kotl-mode:next-line arg))))
 	   (line-to-move (kotl-mode:delete-line)))
-      (condition-case ()
-	  ;; Delete trailing newline if any, ignoring error.
-	  (kotl-mode:delete-char 1)
-	(error nil))
+      ;; Delete trailing newline if any, ignoring error.
+      (ignore-errors (kotl-mode:delete-char 1))
       (goto-char mark)
       (set-marker mark nil)
       (kotl-mode:to-end-of-line)

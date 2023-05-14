@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    18-Sep-91 at 02:57:09
-;; Last-Mod:     30-Apr-23 at 14:43:05 by Bob Weiner
+;; Last-Mod:     14-May-23 at 01:41:33 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -240,11 +240,7 @@ to two lines."
 		  ;; { M-x shell RET M-> (cd ${hyperb:dir}) RET }
 		  (save-excursion
 		    (when (eq ?\( (char-syntax (preceding-char)))
-		      (condition-case ()
-			  (progn
-			    (forward-char -1)
-			    (forward-list))
-			(error nil)))
+		      (ignore-errors (forward-char -1) (forward-list)))
 		    (< (point) opoint))
 		  (re-search-forward (concat "[^\\{]" end-regexp) opoint t))
 	(setq start nil))
@@ -433,8 +429,6 @@ button is found in the current buffer."
 
     ;; new-instance-flag might be 't which we don't want to return.
     (when (stringp new-instance-flag) new-instance-flag)))
-
-
 
 (defun    ebut:program (label actype &rest args)
   "Programmatically create an explicit Hyperbole button at point.
@@ -745,9 +739,8 @@ Return the symbol for the button when found, else nil."
 	    (narrow-to-region (point) (if (search-forward "\f" nil t)
 					  (point) (point-max)))
 	    (goto-char (point-min))
-	    (condition-case ()
-		(while (setq gbuts (cons (car (read (current-buffer))) gbuts)))
-	      (error nil))
+	    (ignore-errors
+	      (while (setq gbuts (cons (car (read (current-buffer))) gbuts))))
 	    gbuts))))))
 
 (defun    gbut:ibut-key-list ()
@@ -1005,33 +998,31 @@ Then use (hbut:act) to activate the button."
 Use buffer commenting grammar, if any, otherwise don't comment.
 Ignore email-related buffers."
   (save-excursion
-    (if (and comment-start (not (hmail:mode-is-p))
-	     (not (memq major-mode '(mail-mode message-mode))))
-	(if (or (equal comment-end "")
-		(null comment-end))
-	    (progn
-	      (beginning-of-line)
-	      (if (search-forward comment-start start t)
-		  nil
-		(goto-char start)
-		(insert comment-start)
-		(if (not (eq (preceding-char) ?\ ))
-		    (insert ?\ ))))
-	  ;; Comments have both start and end delimiters
-  	  (if (and (re-search-backward
-		    (concat (regexp-quote comment-start) "\\|"
-			    (regexp-quote comment-end))
-		    nil t)
-		   (looking-at (regexp-quote comment-start)))
-	      nil
-	    (goto-char start)
-	    (insert comment-start)
-	    (unless (eq (preceding-char) ?\ )
-	      (insert ?\ ))
-	    (goto-char (+ (point) (- end start)))
-	    (unless (eq (following-char) ?\ )
-	      (insert ?\ ))
-	    (insert comment-end))))))
+    (when (and comment-start (not (hmail:mode-is-p))
+	       (not (memq major-mode '(mail-mode message-mode))))
+      (if (or (equal comment-end "")
+	      (null comment-end))
+	  (progn
+	    (beginning-of-line)
+	    (unless (search-forward comment-start start t)
+	      (goto-char start)
+	      (insert comment-start)
+	      (unless (eq (preceding-char) ?\ )
+		(insert ?\ ))))
+	;; Comments have both start and end delimiters
+  	(unless (and (re-search-backward
+		      (concat (regexp-quote comment-start) "\\|"
+			      (regexp-quote comment-end))
+		      nil t)
+		     (looking-at (regexp-quote comment-start)))
+	  (goto-char start)
+	  (insert comment-start)
+	  (unless (eq (preceding-char) ?\ )
+	    (insert ?\ ))
+	  (goto-char (+ (point) (- end start)))
+	  (unless (eq (following-char) ?\ )
+	    (insert ?\ ))
+	  (insert comment-end))))))
 
 ;;; Regexps derived in part from "filladapt.el" by Kyle E. Jones under
 ;;; the GPL.
@@ -1216,7 +1207,8 @@ represent the output of particular document formatters."
 
 (defun    hbut:key-src-set-buffer (src)
   "Set buffer to SRC, a buffer, buffer name, file, directory or symlink.
-Return SRC or nil if invalid."
+If SRC is a directory, simply return it; otherwise, return SRC or
+nil if invalid."
   (cond ((null src) nil)
 	((or (bufferp src) (get-buffer src))
 	 (set-buffer src)
@@ -1540,9 +1532,8 @@ Keys in optional KEY-SRC or the current buffer."
 	      (narrow-to-region (point) (if (search-forward "\f" nil t)
 					    (point) (point-max)))
 	      (goto-char (point-min))
-	      (condition-case ()
-		  (while (setq hbuts (cons (car (read (current-buffer))) hbuts)))
-		(error nil))
+	      (ignore-errors
+		(while (setq hbuts (cons (car (read (current-buffer))) hbuts))))
 	      hbuts))))))
 
 (defun    hbut:ibut-key-list (&optional key-src)
@@ -2209,7 +2200,6 @@ Signal an error when no such button is found in the current buffer.
 Leave point at the start of the button label which may be elsewhere
 than the current point; callers should use `save-excursion` to retain
 current."
-  ;; !! Need to handle adding instances to labels, similar to ebut:operate.
   (cond ((or (not (stringp new-lbl)) (< (length new-lbl) 1))
 	 (error "(ibut:rename): Invalid 'new-lbl' argument: \"%s\"" new-lbl))
 	((or (not (stringp old-lbl)) (< (length old-lbl) 1))

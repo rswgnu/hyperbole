@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    10/31/93
-;; Last-Mod:      9-Apr-23 at 18:48:17 by Bob Weiner
+;; Last-Mod:     14-May-23 at 02:03:43 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -76,12 +76,10 @@ and formatted koutlines."
       (save-restriction
 	(widen)
 	(goto-char (point-min))
-	(condition-case ()
-	    (progn
-	      (setq ver-string (read (current-buffer)))
-	      (and (stringp ver-string) (string-match "^Kotl-" ver-string)
-		   ver-string))
-	  (error nil))))))
+	(ignore-errors
+	  (setq ver-string (read (current-buffer)))
+	  (and (stringp ver-string) (string-match "^Kotl-" ver-string)
+	       ver-string))))))
 
 ;;;###autoload
 (defun kfile:view (file-name)
@@ -498,9 +496,7 @@ handle, whenever this is possible."
 		    (delete-region (match-beginning 0) (match-end 0))
 		  (error "Malformed quote"))
 		(backward-sexp 1))
-	       ((condition-case ()
-		    (prog1 t (down-list 1))
-		  (error nil))
+	       ((ignore-errors (prog1 t (down-list 1)))
 		(backward-char 1)
 		(skip-chars-backward " \t")
 		(delete-region
@@ -508,9 +504,7 @@ handle, whenever this is possible."
 		 (progn (skip-chars-forward " \t") (point)))
 		(when (not (eq ?' (char-after (1- (point)))))
 		  (insert ?\n)))
-	       ((condition-case ()
-		    (prog1 t (up-list 1))
-		  (error nil))
+	       ((ignore-errors (prog1 t (up-list 1)))
 		(while (looking-at "\\s)")
 		  (forward-char 1))
 		(skip-chars-backward " \t")

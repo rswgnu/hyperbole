@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    24-Aug-91
-;; Last-Mod:     22-Apr-23 at 18:52:52 by Bob Weiner
+;; Last-Mod:     14-May-23 at 01:29:38 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -377,10 +377,7 @@ If:
 ;;;###autoload
 (defun smart-cc-mode-initialize ()
   "Load and initialize cc-mode if possible and always return nil."
-  (condition-case ()
-      (progn (require 'cc-mode)
-	     (c-initialize-cc-mode))
-    (error nil))
+  (ignore-errors (require 'cc-mode) (c-initialize-cc-mode))
   nil)
 
 (defun smart-emacs-lisp-mode-p ()
@@ -695,10 +692,9 @@ Use `hpath:display-buffer' to show definition or documentation."
 			 (when (featurep 'etags)
 			   (smart-tags-display tag show-doc))
 		       (error (unless (and elisp-flag (stringp smart-emacs-tags-file)
-					   (condition-case ()
-					       (smart-tags-display
-						tag show-doc (list smart-emacs-tags-file))
-					     (error nil)))
+					   (ignore-errors
+					     (smart-tags-display
+					      tag show-doc (list smart-emacs-tags-file))))
 				(error "(smart-lisp): No definition found for `%s'" tag)))))
 		 (and (not etags-mode) elisp-flag (fboundp 'xref-etags-mode)
 		      (xref-etags-mode 0))))))))
@@ -1151,10 +1147,8 @@ known Emacs Lisp identifier."
 					     "[ \t]+.*['\"]"
 					     "\\([^][() \t\n\r`'\"]+\\)"))))
 		 (goto-char opoint)
-		 (if lib
-		     (condition-case ()
-			 (and (find-library-name lib) t)
-		       (error nil)))))
+		 (when lib
+		   (ignore-errors (and (find-library-name lib) t)))))
     (let* ((tag (smart-lisp-at-tag-p t))
 	   (tag-sym (intern-soft tag)))
       (cond ((if (fboundp 'find-function-noselect)
@@ -1168,9 +1162,9 @@ known Emacs Lisp identifier."
 TAG-SYM may be a function, variable or face."
   (save-excursion
     ;; Bound Emacs Lisp function, variable and face definition display.
-    (or (condition-case () (find-function-noselect tag-sym) (error nil))
-	(condition-case () (find-variable-noselect tag-sym) (error nil))
-	(condition-case () (find-definition-noselect tag-sym 'defface) (error nil)))))
+    (ignore-errors (or (find-function-noselect tag-sym)
+		       (find-variable-noselect tag-sym)
+		       (find-definition-noselect tag-sym 'defface)))))
 
 (defun smart-tags-find-p (tag)
   "Return non-nil if TAG is found within a tags table, else nil."
@@ -1181,9 +1175,7 @@ TAG-SYM may be a function, variable or face."
 			     nil
 			   (and (boundp 'tags-file-name) tags-file-name)))
 	 (tags-add-tables nil))
-    (condition-case ()
-	(and func (funcall func tag) t)
-      (error nil))))
+    (ignore-errors (and func (funcall func tag) t))))
 
 (defun smart-java-cross-reference ()
   "If within a Java @see comment, edit the def and return non-nil, else nil.

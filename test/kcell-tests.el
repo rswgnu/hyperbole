@@ -1,4 +1,4 @@
-;;; kcell-tests.el --- Test for kcell        -*- lexical-binding: t; -*-
+;;; kcell-tests.el --- Test for kcells in Koutliner        -*- lexical-binding: t; -*-
 ;; usage:        GNU Emacs Lisp Library
 ;; keywords:     test
 ;;
@@ -7,7 +7,7 @@
 ;; e-mail:       matsl@gnu.org
 ;;
 ;; orig-date:    16-Feb-22 at 23:28:49
-;; last-mod:     18-Feb-22 at 19:03:54 by Mats Lidell
+;; last-mod:     13-May-23 at 10:06:42 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;

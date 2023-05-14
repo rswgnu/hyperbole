@@ -526,31 +526,35 @@ demonstrations and tours with this and other implicit button types.
 
 ** Org Mode
 
-For users of Emacs Org mode, Hyperbole does quite a few things.
+For users of Emacs Org mode, Hyperbole does quite a few things when
+the Action Key is pressed.
 
-First, the Action Key follows internal links in Org mode files.  When
-pressed on a link referent/target, the link definition is displayed,
-allowing two-way navigation between definitions and targets.
+  1. If on an Org todo keyword, cycle through the keywords in
+     that set or if final done keyword, remove it.
 
-Second, the Action Key follows Org mode external links.  The Assist Key
-displays help when pressed on an Org mode link.
+  2. If on an Org agenda item, jump to the item for editing.
 
-Third, within a radio target definition, the Action Key jumps to the first
-occurrence of an associated radio target.
+  3. Within a radio or internal target or a link to it, jump between
+     the target and the first link to it, allowing two-way navigation.
 
-Fourth, when point is on an outline heading in Org mode, the Action Key
-cycles the view of the subtree at point and the Assist Key cycles the view
-of all headings in the buffer.
+  4. Follow other internal links in Org mode files.
 
-Fifth, with point on the first line of a code block definition, the Action
-Key executes the code block via the Org mode standard binding of {C-c C-c},
-(org-ctrl-c-ctrl-c).
+  5. Follow Org mode external links.
 
-Sixth, the Action and Assist keys work on Hyperbole explicit and implicit
-buttons.
+  6. When on a Hyperbole button, activate the button.
 
-In any other context besides the end of a line, the Action Key invokes
-the Org mode standard binding of {M-RET}, (org-meta-return).
+  7. With point on the :dir path of a code block definition, display the
+     directory given by the path.
+
+  8. With point on any #+BEGIN_SRC, #+END_SRC, #+RESULTS, #+begin_example
+     or #+end_example header, execute the code block via the Org mode
+     standard binding of {C-c C-c}, (org-ctrl-c-ctrl-c).
+  
+  9. When point is on an Org mode heading, cycle the view of the subtree
+     at point.
+
+  10. In any other context besides the end of a line, invoke the Org mode
+      standard binding of {M-RET}, (org-meta-return).
 
 To disable ALL Hyperbole support within Org major and minor modes, set
 the custom option `hsys-org-enable-smart-keys' to nil.  Then the

@@ -107,7 +107,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</P>
 
 <PRE>
 Edition 8.0.1pre
-Printed May 7, 2023.
+Printed May 13, 2023.
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -2011,14 +2011,15 @@ point-and-click type behavior beyond implicit button types.  See <a class="xref"
 <a class="index-entry-id" id="index-labeling-implicit-buttons"></a>
 <a class="index-entry-id" id="index-naming-implicit-buttons"></a>
 <p>Individual implicit buttons may be labeled/named, allowing activation
-by name or use as a link target by other buttons.  Here is a pathname
+by name or use as a link target by other buttons.  Such names are
+highlighted similarly to explicit button names.  Here is a pathname
 button with a label of &rsquo;My Emacs Files&rsquo;:
 </p>
 <div class="example">
 <pre class="example-preformatted">&lt;[My Emacs Files]&gt;: &quot;~/.emacs.d&quot;
 </pre></div>
 
-<p>The label is delimited by &lsquo;<samp class="samp">&lt;[</samp>&rsquo; and &lsquo;<samp class="samp">]&gt;</samp>&rsquo; and can be followed
+<p>The name is delimited by &lsquo;<samp class="samp">&lt;[</samp>&rsquo; and &lsquo;<samp class="samp">]&gt;</samp>&rsquo; and can be followed
 by any number of :, - or = separator characters, including none.
 </p>
 
@@ -2450,13 +2451,15 @@ non-brace character.
 </dd>
 <dt><code class="code">text-toc</code></dt>
 <dd><p>Jump to the text file section referenced by a table of contents (toc)
-entry at point.  The filename of the current buffer must contain
-<samp class="file">README</samp> and there must be a &lsquo;Table of Contents&rsquo; or &lsquo;Contents&rsquo;
-label on a line by itself (it may begin with an asterisk), preceding
-the table of contents.  Each toc entry must begin with some whitespace
-followed by one or more asterisk characters.  Each section header
-linked to by the toc must start with one or more asterisk characters
-at the very beginning of the line.
+entry at point.  This works in any text derived major mode buffer with
+a &lsquo;Table of Contents&rsquo; or &lsquo;Contents&rsquo; label on a line by itself (it may
+begin with an asterisk), preceding the table of contents.  Each TOC
+entry must begin with some whitespace followed by one or more asterisk
+characters.  Each section header linked to by the toc must start with
+one or more asterisk characters at the very beginning of the line.
+TOCs in Internet RFCs work as well.  For example, display this RFC,
+&lt;link-to-rfc 822&gt;, and Action Key press on any TOC line to jump to the
+associated section.  Or try it in the Hyperbole <samp class="file">DEMO</samp> file.
 </p>
 <a class="index-entry-id" id="index-ibtypes-cscope"></a>
 <a class="index-entry-id" id="index-C_002fC_002b_002b-call-trees"></a>
@@ -3264,6 +3267,38 @@ the point to return to in BUF-NAME after displaying the summary.
 that is used.  Valid values of this variable include
 <code class="code">browse-url-default-browser</code> and <code class="code">browse-url-generic</code>.
 See its documentation string for details.
+</p>
+<a class="index-entry-id" id="index-actypes-yt_002dinfo"></a>
+<a class="index-entry-id" id="index-youtube"></a>
+<a class="index-entry-id" id="index-video"></a>
+</dd>
+<dt><code class="code">yt-info</code></dt>
+<dd><p>Display a web page with the metadata information about VIDEO-ID.
+</p>
+<a class="index-entry-id" id="index-actypes-yt_002dplay"></a>
+</dd>
+<dt><code class="code">yt-play</code></dt>
+<dd><p>Play a VIDEO-ID from the point specified by optional START-TIME-STRING.
+If not given, START-TIME-STRING is set to &quot;0s&quot; representing the beginning
+of the video.  START-TIME-STRING is a colon-separated hours:minutes:seconds
+string, e.g. 1:2:44 (1 hour, two minutes, 45 seconds), where the hours
+and minutes are optional.
+</p>
+<a class="index-entry-id" id="index-actypes-yt_002dsearch"></a>
+</dd>
+<dt><code class="code">yt-search</code></dt>
+<dd><p>Search Youtube for SEARCH-TERM.
+</p>
+<a class="index-entry-id" id="index-actypes-yt_002durl"></a>
+</dd>
+<dt><code class="code">yt-url</code></dt>
+<dd><p>Return url to play VIDEO-ID from point specified by optional START-TIME-STRING.
+Return nil if START-TIME-STRING is given but is invalid.  If not given,
+START-TIME-STRING is set to &quot;0s&quot; representing the beginning of the video.
+</p>
+<p>START-TIME-STRING is a colon-separated hours:minutes:seconds string,
+e.g. 1:2:44 (1 hour, two minutes, 45 seconds), where the hours and
+minutes are optional.
 </p></dd>
 </dl>
 
@@ -3847,7 +3882,7 @@ look like this:
 </li><li>or by pressing <kbd class="kbd">{Shift-<kbd class="key">TAB</kbd>}</kbd> or <kbd class="kbd">{M-b}</kbd> to move backward an item.
 </li></ul>
 
-<p>A prefix argument given to one of the movement commands, moves by tht
+<p>A prefix argument given to one of the movement commands, moves by that
 number of items within the menu.  A press of the Assist Key on an item
 displays help for the item, including the action that it performs.
 &quot;/&quot; at the end of an item name indicates that it brings up a submenu.
@@ -3863,13 +3898,25 @@ displays help for the item, including the action that it performs.
 <p>While a menu is active, to re-activate the top-level Hyperbole menu,
 use <kbd class="kbd">{C-t}</kbd> or press the Action Key while on the menu prefix
 (before the &lsquo;<samp class="samp">&gt;</samp>&rsquo; character).  This allows you to browse the
-submenus and then return to the top menu.  You can quit from the
-minibuffer menus without selecting an item by using <kbd class="kbd">{Q}</kbd>, or by
-pressing <kbd class="kbd">{<kbd class="key">RET</kbd>}</kbd> or <kbd class="kbd">{M-<kbd class="key">RET</kbd>}</kbd> when at the end of a
-menu.  <kbd class="kbd">{C-g}</kbd> aborts from the minibuffer whether you are at a menu
-prompt or any other Hyperbole prompt.  <kbd class="kbd">{X}</kbd> both quits the menus
-and disables the Hyperbole global minor mode; <kbd class="kbd">{C-h h}</kbd> restores
-the menus and re-enables Hyperbole minor mode.
+submenus and then return to the top menu.
+</p>
+<a class="index-entry-id" id="index-menu_002c-reload"></a>
+<a class="index-entry-id" id="index-Smart-Key_002c-reload"></a>
+<a class="index-entry-id" id="index-reload-minibuffer-menus"></a>
+<a class="index-entry-id" id="index-reload-Smart-Key-handlers"></a>
+
+<p>You can reload the Hyperbole minibuffer menus and Smart Key handlers
+to reflect any recent edits when on the top-level Hyperbole menu by
+pressing the Action Key on the menu name (first item that ends with
+&rsquo;&gt;&rsquo;).
+</p>
+<p>You can quit from the minibuffer menus without selecting an item by
+using <kbd class="kbd">{Q}</kbd>, or by pressing <kbd class="kbd">{<kbd class="key">RET</kbd>}</kbd> or <kbd class="kbd">{M-<kbd class="key">RET</kbd>}</kbd>
+when at the end of a menu.  <kbd class="kbd">{C-g}</kbd> aborts from the minibuffer
+whether you are at a menu prompt or any other Hyperbole prompt.
+<kbd class="kbd">{X}</kbd> both quits the menus and disables the Hyperbole global minor
+mode; <kbd class="kbd">{C-h h}</kbd> restores the menus and re-enables Hyperbole minor
+mode.
 </p>
 <p>The top-level Hyperbole minibuffer menu items serve the following purposes:
 </p>
@@ -3927,12 +3974,17 @@ in the current buffer.
 <a class="index-entry-id" id="index-menu_002c-Documentation"></a>
 <a class="index-entry-id" id="index-menu_002c-Doc"></a>
 <a class="index-entry-id" id="index-menu_002c-Types"></a>
+<a class="index-entry-id" id="index-concepts"></a>
+<a class="index-entry-id" id="index-use-cases"></a>
 </dd>
 <dt><strong class="strong">Doc/</strong></dt>
-<dd><p>Hyperbole documentation quick access.  This menu contains an About item
-which describes Hyperbole and a Demo item which demonstrates a number of
-interactive Hyperbole features.  It also contains the Types/ submenu for
-documentation on Hyperbole implicit button and action types.
+<dd><p>Hyperbole documentation quick access.  This menu contains an About
+item which describes Hyperbole; a Concepts item that discusses how
+Hyperbole features all interrelate; a Demo item which demonstrates a
+number of interactive Hyperbole features; a New item that details new
+Hyperbole features, as well as a WhyUse item with use cases.  It also
+contains the Types/ submenu for documentation on Hyperbole implicit
+button and action types.
 </p>
 <a class="index-entry-id" id="index-Find"></a>
 <a class="index-entry-id" id="index-Grep"></a>
@@ -4297,10 +4349,12 @@ screen size.
 <a class="index-entry-id" id="index-I_002fJ_002fK_002fM"></a>
 </dd>
 <dt><kbd class="kbd">{I/J/K/M}</kbd></dt>
-<dd><p>In WINDOWS mode, the keys <kbd class="kbd">{I}</kbd><kbd class="kbd">{J}</kbd>/<kbd class="kbd">{K}</kbd>/<kbd class="kbd">{M}</kbd> move
-directionally (based on QUERTY key layout) between windows in the
-selected frame.  In FRAMES mode, they move directionally through visible
-frames.  These use the <samp class="file">windmove</samp> and <samp class="file">framemove</samp> libraries.
+<dd><p>In WINDOWS mode, the keys I, J, K, M move directionally (based on
+QUERTY key layout) between windows in the selected frame.  In FRAMES
+mode, they move directionally through visible frames.  These use the
+<samp class="file">windmove</samp> and <samp class="file">framemove</samp> libraries.  When any of these
+keys are pressed, Hyperbole will prompt to install the needed library
+if not already installed.
 </p>
 <a class="index-entry-id" id="index-screen_002c-W"></a>
 <a class="index-entry-id" id="index-W"></a>
@@ -6098,35 +6152,24 @@ an optional header that starts and ends with a line of equal signs (at
 least three equal signs starting at the beginning of a line), followed
 by zero or more rolo records which we call entries.  You must manually
 add a header to any rolo file if you want it to have one.  Rolo files
-may be regular text files, Emacs outline files, Org files, Markdown
-files or Koutline files.
+may be Emacs outline files, Org files, Markdown files or Koutline files.
 </p>
 <p>Rolo <em class="dfn">entries</em> begin with optional space, followed by a delimiter of
 one or more special characters followed by another space.  Delimiters
-vary based on the type of file:
+vary based on the type of file, for example level 3 entry delimiters
+look like this:
 </p>
-<dl class="table">
-<dt>Emacs Outline Mode</dt>
-<dd><p>*
-</p></dd>
-<dt>Koutline Mode</dt>
-<dd><p>1b3 or 1.2.3
-</p></dd>
-<dt>Markdown Mode</dt>
-<dd><p>#
-</p></dd>
-<dt>Org Mode</dt>
-<dd><p>*
-</p></dd>
-<dt>Text Mode</dt>
-<dd><p>*
-</p></dd>
-</dl>
+<div class="example">
+<div class="group"><pre class="example-preformatted">Emacs Outline Mode: ***
+Koutline Mode:      1b3 or 1.2.3
+Markdown Mode:      ###
+Org Mode:           ***
+</pre></div></div>
 
 <p>Entries may be arranged in a hierarchy, where child entries start with
-at least one more delimiter characters than do their parents.  Top-level
-level entries use either a single delimiter character or a sequence of
-digits in the case of Koutlines.
+at least one more delimiter characters than do their parents. Top-level
+entries use either a single delimiter character or a sequence of digits
+in the case of Koutlines.
 </p>
 <p>Beyond this initial delimiter, entries are completely free-form text.
 It is best to use a &quot;lastname, firstname&quot; format, however, when adding
@@ -6357,7 +6400,7 @@ Next: <a href="#HyRolo-Settings" accesskey="n" rel="next">HyRolo Settings</a>, P
 <a class="index-entry-id" id="index-hyrolo-menu"></a>
 <a class="index-entry-id" id="index-rolo-keys"></a>
 <p>After a rolo search is performed, point is left in the <em class="dfn">rolo
-match buffer</em>, <samp class="file">*Hyperbole Rolo*</samp>, which uses <code class="code">hyrolo-mode</code> to
+match buffer</em>, <samp class="file">*HyRolo*</samp>, which uses <code class="code">hyrolo-mode</code> to
 simplify browsing many HyRolo matches.  Press <kbd class="kbd">{?}</kbd> when in the
 match buffer for a summary of available keys, all of which are
 documented in this section.
@@ -6533,13 +6576,16 @@ Previous: <a href="#HyRolo-Keys" accesskey="p" rel="prev">HyRolo Keys</a>, Up: <
 <a class="index-entry-id" id="index-rolo_002c-personal"></a>
 <p>The files used in any rolo search are given by the
 <code class="code">hyrolo-file-list</code> variable, whose default value is typically
-<code class="code">&quot;~/.rolo.otl&quot;</code>.  Searches scan only your personal rolo file.
-Any entries added to this list should be absolute filenames.  If a
-file in the list does not exist or is not readable, it is skipped.
-Files are searched in the order in which they appear in the list.  In
-general, you should leave your personal rolo file as the first entry
-in the list, since this is the only file to which the Add command on
-the rolo menu adds entries.
+<code class="code">&quot;~/.rolo.otl&quot;</code>, in which case, searches scan only your personal
+rolo file.  Any entries added to this list should be absolute
+filenames and can be any of the following formats: Emacs outlines
+(.otl), Koutlines (.kotl), Markdown files (.md), or Org files (.org).
+</p>
+<p>If a file in the list does not exist or is not readable, it is
+skipped.  Files are searched in the order in which they appear in the
+list.  You should leave your personal rolo file as the first entry in
+the list, since this is the only file to which the Add command on the
+rolo menu adds entries.
 </p>
 <p>Hyperbole releases earlier than 4.17 used a different filename for the
 personal rolo.  If such a file exists, you will be prompted to rename
@@ -7549,9 +7595,6 @@ Previous: <a href="#Encapsulating-Systems" accesskey="p" rel="prev">Encapsulatin
 </div>
 <h3 class="section" id="Embedding-Hyperbole-1">10.5 Embedding Hyperbole</h3>
 
-<p>[NOTE: We have never done this ourselves, though we have done similar
-things which leads us to infer that the task should not be difficult.]
-</p>
 <a class="index-entry-id" id="index-Hyperbole-API"></a>
 <a class="index-entry-id" id="index-API"></a>
 <a class="index-entry-id" id="index-programming-interface"></a>
@@ -13060,6 +13103,10 @@ Next: <a href="#Concept-Index" accesskey="n" rel="next">Concept Index</a>, Previ
 <tr><td></td><td class="printindex-index-entry"><a href="#index-actypes-rfc_002dtoc"><code>actypes rfc-toc</code></a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Action-Types">Action Types</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-actypes-text_002dtoc"><code>actypes text-toc</code></a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Action-Types">Action Types</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-actypes-www_002durl"><code>actypes www-url</code></a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Action-Types">Action Types</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-actypes-yt_002dinfo"><code>actypes yt-info</code></a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Action-Types">Action Types</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-actypes-yt_002dplay"><code>actypes yt-play</code></a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Action-Types">Action Types</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-actypes-yt_002dsearch"><code>actypes yt-search</code></a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Action-Types">Action Types</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-actypes-yt_002durl"><code>actypes yt-url</code></a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Action-Types">Action Types</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-add_002dhook"><code>add-hook</code></a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Hook-Variables">Hook Variables</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-assist_002dkey"><code>assist-key</code></a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Smart-Key-Bindings">Smart Key Bindings</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-assist_002dkey_002ddefault_002dfunction">assist-key-default-function</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Smart-Key-Operations">Smart Key Operations</a></td></tr>
@@ -13875,6 +13922,7 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function, Variable and Fi
 <tr><td></td><td class="printindex-index-entry"><a href="#index-completion-3">completion</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Smart-Key-_002d-Argument-Completion">Smart Key - Argument Completion</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-completion-4">completion</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Smart-Key-_002d-Helm-Mode">Smart Key - Helm Mode</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-completion_002c-Ivy">completion, Ivy</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Smart-Key-_002d-Ivy">Smart Key - Ivy</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-concepts">concepts</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Menus">Menus</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-configuration">configuration</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Customization">Customization</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-consult-package">consult package</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Glossary">Glossary</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-consult_002dorg_002droam-package">consult-org-roam package</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Glossary">Glossary</a></td></tr>
@@ -14450,6 +14498,7 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function, Variable and Fi
 <tr><td></td><td class="printindex-index-entry"><a href="#index-menu_002c-Msg">menu, Msg</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Menus">Menus</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-menu_002c-Outline_002fExample">menu, Outline/Example</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Koutliner">Koutliner</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-menu_002c-Outliner">menu, Outliner</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Menus">Menus</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-menu_002c-reload">menu, reload</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Menus">Menus</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-menu_002c-Rolo">menu, Rolo</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Menus">Menus</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-menu_002c-Rolo-1">menu, Rolo</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#HyRolo-Menu">HyRolo Menu</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-menu_002c-Screen">menu, Screen</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Menus">Menus</a></td></tr>
@@ -14624,6 +14673,8 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function, Variable and Fi
 <tr><td></td><td class="printindex-index-entry"><a href="#index-register_002c-klinks">register, klinks</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Klinks">Klinks</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-relative-autonumber">relative autonumber</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Koutliner">Koutliner</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-relative-identifier">relative identifier</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Autonumbering">Autonumbering</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-reload-minibuffer-menus">reload minibuffer menus</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Menus">Menus</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-reload-Smart-Key-handlers">reload Smart Key handlers</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Menus">Menus</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-remote-file">remote file</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-remote-path">remote path</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-remote-pathnames">remote pathnames</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Using-URLs-with-Find_002dFile">Using URLs with Find-File</a></td></tr>
@@ -14713,6 +14764,7 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function, Variable and Fi
 <tr><td></td><td class="printindex-index-entry"><a href="#index-Smart-Key-summary">Smart Key summary</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Smart-Key-Operations">Smart Key Operations</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-Smart-Key_002c-default-context">Smart Key, default context</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Smart-Key-Operations">Smart Key Operations</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-Smart-Key_002c-default-context-1">Smart Key, default context</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Smart-Key-_002d-Default-Context">Smart Key - Default Context</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-Smart-Key_002c-reload">Smart Key, reload</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Menus">Menus</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-Smart-Keyboard-Keys">Smart Keyboard Keys</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Smart-Key-_002d-Argument-Completion">Smart Key - Argument Completion</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-smart-keys_002c-unshifted">smart keys, unshifted</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Smart-Key-Bindings">Smart Key Bindings</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-smart-marking">smart marking</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Smart-Key-Thing-Selection">Smart Key Thing Selection</a></td></tr>
@@ -14812,6 +14864,7 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function, Variable and Fi
 <tr><td></td><td class="printindex-index-entry"><a href="#index-URL-2">URL</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Smart-Key-_002d-WWW-URLs">Smart Key - WWW URLs</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-URLs_002c-abbreviated">URLs, abbreviated</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Using-URLs-with-Find_002dFile">Using URLs with Find-File</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-URLs_002c-using-with-find_002dfile">URLs, using with find-file</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Using-URLs-with-Find_002dFile">Using URLs with Find-File</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-use-cases">use cases</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Menus">Menus</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-USENET">USENET</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Buttons-in-Mail">Buttons in Mail</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-USENET-1">USENET</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Buttons-in-News">Buttons in News</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-username">username</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
@@ -14830,6 +14883,7 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function, Variable and Fi
 <tr><td></td><td class="printindex-index-entry"><a href="#index-version-description">version description</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Suggestion-or-Bug-Reporting">Suggestion or Bug Reporting</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-vertical-drag">vertical drag</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Creating-and-Deleting-Windows">Creating and Deleting Windows</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-vertical-drag-1">vertical drag</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Smart-Mouse-Drags-within-a-Window">Smart Mouse Drags within a Window</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-video">video</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Action-Types">Action Types</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-view">view</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Viewing-Outlines">Viewing Outlines</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-view-mode">view mode</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Smart-Key-_002d-View-Mode">Smart Key - View Mode</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-view-spec">view spec</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#View-Specs">View Specs</a></td></tr>
@@ -14900,6 +14954,7 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function, Variable and Fi
 <tr><td></td><td class="printindex-index-entry"><a href="#index-yanking">yanking</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Thing-Selection">Thing Selection</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-yanking-1">yanking</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Smart-Mouse-Drags-between-Windows">Smart Mouse Drags between Windows</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-yanking-2">yanking</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Smart-Key-_002d-Delimited-Things">Smart Key - Delimited Things</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-youtube">youtube</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Action-Types">Action Types</a></td></tr>
 <tr><td colspan="4"> <hr></td></tr>
 <tr><th id="Concept-Index_cp_letter-Z">Z</th><td></td><td></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-zooming">zooming</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#HyControl">HyControl</a></td></tr>

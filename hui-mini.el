@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    15-Oct-91 at 20:13:17
-;; Last-Mod:     30-Apr-23 at 15:52:41 by Bob Weiner
+;; Last-Mod:     13-May-23 at 14:52:29 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -41,7 +41,8 @@ Also exits any active minibuffer menu.")
 
 (defvar hui:menu-keys            ""
   "String of keys pressed for current or last Hyperbole command.
-This excludes the prefix used to invoke the Hyperbole menu.")
+This excludes the prefix used to invoke the Hyperbole menu, except
+when on the top-level menu.")
 
 (defvar hui:menu-p nil
   "Non-nil iff the Hyperbole minibuffer menu is active.")
@@ -286,6 +287,10 @@ instead returns the one line help string for the key sequence."
 	 (setq input (event-basic-type input)))
     (if (or (symbolp input)
 	    (and (integerp input) (= input ?\r)))
+	;; If no item selected, when on the menu name (ending with
+	;; '>', input will be set to 1.  If at the end of the menu,
+	;; input will be set to 0.  See `hui:menu-choose' for how
+	;; these are handled.
 	(setq input (hargs:at-p)))
     (erase-buffer)
     (when (or (characterp input) (stringp input))
@@ -372,6 +377,9 @@ or if there are none, then its first character."
 
 (defun hui:menu-choose (menu-alist &optional doc-flag help-string-flag)
   "Prompt user to choose the first capitalized char of any item from MENU-ALIST.
+Return the Lisp form associated with the selected item, which may be
+another menu.
+
 The character may be entered in lowercase.  If chosen by direct
 selection with the Assist Key, return any help string for item,
 else return the action form for the item.
@@ -422,6 +430,17 @@ documentation, not the full text."
 	   (set--this-command-keys (concat hui:menu-keys hui:menu-abort))
 	   (setq this-command #'hui:menu-abort)
 	   nil)
+	  ((and (eq key 1) (listp (car menu-alist))
+		(stringp (caar menu-alist))
+		(string-match "^Hy[.0-9]*[a-zA-Z0-9]*>$" (caar menu-alist)))
+	   ;; RET pressed on Hyperbole top-level menu prefix, reload
+	   ;; Smart Key handlers and minibuffer menus to reflect any updates.
+	   (load "hui-mini")
+	   (hmouse-update-smart-keys)
+	   (hyperbole-minibuffer-menu)
+	   (sit-for 2)
+	   (message "Minibuffer menus and Smart Key actions reloaded.")
+	   '(menu . hyperbole))
 	  ((memq key (list 1 top-char))
 	   (setq hui:menu-keys (concat hui:menu-keys (char-to-string top-char)))
 	   '(menu . hyperbole))
@@ -744,6 +763,8 @@ The menu is a menu of commands from MENU-ALIST."
        '(doc .
 	 (("Doc>")
 	  ("About"       (hypb:display-file-with-logo "HY-ABOUT") "Overview of Hyperbole.")
+	  ("Concepts"    (find-file (expand-file-name "HY-CONCEPTS.kotl" hyperb:dir))
+	   "Explains connections among Hyperbole concepts.")
 	  ("Demo"        hyperbole-demo                           "Demonstrates Hyperbole features.")
 	  ("Files"       (hypb:display-file-with-logo "MANIFEST")
 	   "Summarizes Hyperbole system files.  Click on an entry to view it.")
@@ -753,7 +774,7 @@ The menu is a menu of commands from MENU-ALIST."
 	  ("SmartKeys"   (hkey-summarize 'current-window)         "Summarizes Smart Key mouse or keyboard handling.")
 	  ("Types/"      (menu . types)                           "Provides documentation on Hyperbole types.")
 	  ("WhyUse"      (find-file (expand-file-name "HY-WHY.kotl" hyperb:dir))
-	   "Lists use cases for Hyperbole Hyperbole.")))
+	   "Lists use cases for Hyperbole.")))
        '(ebut .
 	 (("EButton>")
 	  ("Act"         hui:ebut-act
@@ -797,8 +818,8 @@ The menu is a menu of commands from MENU-ALIST."
 	    "Activates implicit button at point or prompts for labeled implicit button to activate.")
 	  ("Create"         hui:ibut-create
 	    "Labels and creates an implicit button of any type.")
-	  ("DeleteIButType" (hui:htype-delete 'ibtypes)
-	   "Deletes specified button type.")
+	  ("DeleteType"     (hui:htype-delete 'ibtypes)
+	   "Deletes specified implicit button type.")
 	  ("Edit"           hui:ibut-edit "Edits/modifies named implicit button attributes.")
 	  ("Help"           hui:hbut-help "Reports on button's attributes.")
 	  ("Info"           (id-info "(hyperbole)Implicit Buttons")
