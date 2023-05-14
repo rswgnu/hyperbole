@@ -1,5 +1,10 @@
 2023-05-13  Bob Weiner  <rsw@gnu.org>
 
+* hsys-youtube.el (require 'hact): Autoload for defact macro.
+                  (yt-info, yt-play, yt-search, yt-url): Change from aliases to
+    defact, so are properly registered as actypes.
+  man/hyperbole.texi (Action Types): Add yt-* actypes.
+
 * hpath.el (hpath:cache-mswindows-mount-points): Catch and ignore any shell command
     error.  Can be triggered when default-directory is set to a URL, as in RFC
     display buffers.  This in turn would lead hyperbole-mode activation to fail.

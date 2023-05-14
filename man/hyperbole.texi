@@ -7,7 +7,7 @@
 @c Author:       Bob Weiner
 @c
 @c Orig-Date:     6-Nov-91 at 11:18:03
-@c Last-Mod:     13-May-23 at 10:01:36 by Bob Weiner
+@c Last-Mod:     13-May-23 at 22:34:55 by Bob Weiner
 
 @c %**start of header (This is for running Texinfo on a region.)
 @setfilename hyperbole.info
@@ -2104,14 +2104,15 @@ Key Operations}.
 @cindex labeling implicit buttons
 @cindex naming implicit buttons
 Individual implicit buttons may be labeled/named, allowing activation
-by name or use as a link target by other buttons.  Here is a pathname
+by name or use as a link target by other buttons.  Such names are
+highlighted similarly to explicit button names.  Here is a pathname
 button with a label of 'My Emacs Files':
 
 @example
 <[My Emacs Files]>: "~/.emacs.d"
 @end example
 
-The label is delimited by @samp{<[} and @samp{]>} and can be followed
+The name is delimited by @samp{<[} and @samp{]>} and can be followed
 by any number of :, - or = separator characters, including none.
 
 
@@ -2529,13 +2530,15 @@ non-brace character.
 @cindex toc implicit button type
 @item text-toc
 Jump to the text file section referenced by a table of contents (toc)
-entry at point.  The filename of the current buffer must contain
-@file{README} and there must be a `Table of Contents' or `Contents'
-label on a line by itself (it may begin with an asterisk), preceding
-the table of contents.  Each toc entry must begin with some whitespace
-followed by one or more asterisk characters.  Each section header
-linked to by the toc must start with one or more asterisk characters
-at the very beginning of the line.
+entry at point.  This works in any text derived major mode buffer with
+a `Table of Contents' or `Contents' label on a line by itself (it may
+begin with an asterisk), preceding the table of contents.  Each TOC
+entry must begin with some whitespace followed by one or more asterisk
+characters.  Each section header linked to by the toc must start with
+one or more asterisk characters at the very beginning of the line.
+TOCs in Internet RFCs work as well.  For example, display this RFC,
+<link-to-rfc 822>, and Action Key press on any TOC line to jump to the
+associated section.  Or try it in the Hyperbole @file{DEMO} file.
 
 @findex ibtypes cscope
 @cindex C/C++ call trees
@@ -3262,6 +3265,34 @@ Follow a link given by a URL.  The variable,
 that is used.  Valid values of this variable include
 @code{browse-url-default-browser} and @code{browse-url-generic}.
 See its documentation string for details.
+
+@findex actypes yt-info
+@cindex youtube
+@cindex video
+@item yt-info
+Display a web page with the metadata information about VIDEO-ID.
+
+@findex actypes yt-play
+@item yt-play
+Play a VIDEO-ID from the point specified by optional START-TIME-STRING.
+If not given, START-TIME-STRING is set to "0s" representing the beginning
+of the video.  START-TIME-STRING is a colon-separated hours:minutes:seconds
+string, e.g. 1:2:44 (1 hour, two minutes, 45 seconds), where the hours
+and minutes are optional.
+
+@findex actypes yt-search
+@item yt-search
+Search Youtube for SEARCH-TERM.
+
+@findex actypes yt-url
+@item yt-url
+Return url to play VIDEO-ID from point specified by optional START-TIME-STRING.
+Return nil if START-TIME-STRING is given but is invalid.  If not given,
+START-TIME-STRING is set to "0s" representing the beginning of the video.
+
+START-TIME-STRING is a colon-separated hours:minutes:seconds string,
+e.g. 1:2:44 (1 hour, two minutes, 45 seconds), where the hours and
+minutes are optional.
 @end table
 
 
@@ -3869,11 +3900,16 @@ in the current buffer.
 @cindex menu, Documentation
 @cindex menu, Doc
 @cindex menu, Types
+@cindex concepts
+@cindex use cases
 @item Doc/
-Hyperbole documentation quick access.  This menu contains an About item
-which describes Hyperbole and a Demo item which demonstrates a number of
-interactive Hyperbole features.  It also contains the Types/ submenu for
-documentation on Hyperbole implicit button and action types.
+Hyperbole documentation quick access.  This menu contains an About
+item which describes Hyperbole; a Concepts item that discusses how
+Hyperbole features all interrelate; a Demo item which demonstrates a
+number of interactive Hyperbole features; a New item that details new
+Hyperbole features, as well as a WhyUse item with use cases.  It also
+contains the Types/ submenu for documentation on Hyperbole implicit
+button and action types.
 
 @cindex Find
 @cindex Grep
@@ -5741,8 +5777,7 @@ an optional header that starts and ends with a line of equal signs (at
 least three equal signs starting at the beginning of a line), followed
 by zero or more rolo records which we call entries.  You must manually
 add a header to any rolo file if you want it to have one.  Rolo files
-may be regular text files, Emacs outline files, Org files, Markdown
-files or Koutline files.
+may be Emacs outline files, Org files, Markdown files or Koutline files.
 
 Rolo @dfn{entries} begin with optional space, followed by a delimiter of
 one or more special characters followed by another space.  Delimiters
@@ -5755,7 +5790,6 @@ Emacs Outline Mode: ***
 Koutline Mode:      1b3 or 1.2.3
 Markdown Mode:      ###
 Org Mode:           ***
-Text Mode:          ***
 @end group
 @end example
 
@@ -5994,7 +6028,7 @@ you should contact.
 @cindex hyrolo menu
 @cindex rolo keys
 After a rolo search is performed, point is left in the @dfn{rolo
-match buffer}, @file{*Hyperbole Rolo*}, which uses @code{hyrolo-mode} to
+match buffer}, @file{*HyRolo*}, which uses @code{hyrolo-mode} to
 simplify browsing many HyRolo matches.  Press @bkbd{?} when in the
 match buffer for a summary of available keys, all of which are
 documented in this section.
@@ -6142,13 +6176,16 @@ current frame to its state prior to the rolo search.
 @cindex rolo, personal
 The files used in any rolo search are given by the
 @code{hyrolo-file-list} variable, whose default value is typically
-@code{"~/.rolo.otl"}.  Searches scan only your personal rolo file.
-Any entries added to this list should be absolute filenames.  If a
-file in the list does not exist or is not readable, it is skipped.
-Files are searched in the order in which they appear in the list.  In
-general, you should leave your personal rolo file as the first entry
-in the list, since this is the only file to which the Add command on
-the rolo menu adds entries.
+@code{"~/.rolo.otl"}, in which case, searches scan only your personal
+rolo file.  Any entries added to this list should be absolute
+filenames and can be any of the following formats: Emacs outlines
+(.otl), Koutlines (.kotl), Markdown files (.md), or Org files (.org).
+
+If a file in the list does not exist or is not readable, it is
+skipped.  Files are searched in the order in which they appear in the
+list.  You should leave your personal rolo file as the first entry in
+the list, since this is the only file to which the Add command on the
+rolo menu adds entries.
 
 Hyperbole releases earlier than 4.17 used a different filename for the
 personal rolo.  If such a file exists, you will be prompted to rename
