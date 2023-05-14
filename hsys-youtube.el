@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    10-Jul-22 at 18:10:56
-;; Last-Mod:     14-May-23 at 02:09:33 by Bob Weiner
+;; Last-Mod:     14-May-23 at 11:27:53 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -150,6 +150,7 @@ Called when the Assist Key is pressed on such a button."
 ;;; Private functions
 ;;; ************************************************************************
 
+;;;###autoload
 (defun hsys-youtube-end-url (video-id &optional start-time-string end-time-string)
   "Return url to play VIDEO-ID from optional START-TIME-STRING to END-TIME-STRING.
 VIDEO-ID must be a string and can be a video identifier,
@@ -175,6 +176,7 @@ e.g. WkwZHSbHmPg, or a full url to the video."
 	    ;; replay, so add unused random parameter.
 	    (random 10000000))))
 
+;;;###autoload
 (defun hsys-youtube-start-url (video-id &optional start-time-string)
   "Return url to play VIDEO-ID starting at beginning or optional START-TIME-STRING.
 VIDEO-ID must be a string and can be a video identifier,
@@ -192,6 +194,7 @@ e.g. WkwZHSbHmPg, or a full url to the video."
 	  (format (concat video-id "&t=%s") start-time-string))
       (format hsys-youtube-start-format video-id start-time-string))))
 
+;;;###autoload
 (defun hsys-youtube-time-in-hms (start-time-string)
   "Return the start time for a Youtube url from START-TIME-STRING.
 Start time is returned as hours, minutes and seconds.
@@ -215,6 +218,7 @@ format is invalid, return it unchanged."
 	       (concat part1 "h" part2 "m" part3 "s"))))
     start-time-string))
 
+;;;###autoload
 (defun hsys-youtube-time-in-seconds (start-time-string)
   "Return the number of seconds time for a Youtube url given a START-TIME-STRING.
 Hours and minutes are optional within the START-TIME-STRING,

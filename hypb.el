@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     6-Oct-91 at 03:42:38
-;; Last-Mod:     19-Apr-23 at 22:27:32 by Bob Weiner
+;; Last-Mod:     14-May-23 at 10:51:09 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1045,11 +1045,11 @@ Without file, the banner is prepended to the current buffer."
 	(dec-num 0))
     (and (string-match "[^0-7]" oct-str)
 	 (error "(hypb:oct-to-int): Bad octal number: %s" oct-str))
-    (mapconcat (lambda (o)
-		 (setq dec-num (+ (* dec-num 8)
-				  (when (and (>= o ?0) (<= o ?7))
-				    (- o ?0)))))
-	       oct-str "")
+    (mapc (lambda (o)
+	    (setq dec-num (+ (* dec-num 8)
+			     (when (and (>= o ?0) (<= o ?7))
+			       (- o ?0)))))
+	  oct-str "")
     dec-num))
 
 ;;; ************************************************************************

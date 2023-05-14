@@ -1,5 +1,15 @@
 2023-05-14  Bob Weiner  <rsw@gnu.org>
 
+* hibtypes.el (action): Remove unneeded comma before args that triggered
+    byte compilation error.
+
+* hsys-youtube.el: Add magic autoload comments for internal functions
+    since defact and defalias autoloads do not actually load the library
+    but simply define themselves.
+
+* hypb.el (hypb:oct-to-int): Change mapconcat to mapc since don't use result.
+    Silences byte-compiler warning.
+
 * kotl/kexport.el (kexport:font-awesome-css-include-with-menus): Fix font size
     at 20px for all elements, so is large enough by default.
 

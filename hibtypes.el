@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 20:45:31
-;; Last-Mod:      7-May-23 at 13:23:19 by Bob Weiner
+;; Last-Mod:     14-May-23 at 10:57:23 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1551,7 +1551,7 @@ arg1 ... argN '>'.  For example, <mail nil \"user@somewhere.org\">."
                  #'actype:eval)))
           (if (eq hrule:action #'actype:identity)
               `(hact ,actype ,@args)
-            `(hact ,actype ,@(mapcar #'eval ,args))))))))
+            `(hact ,actype ,@(mapcar #'eval args))))))))
 
 (defun action:help (hbut)
   "Display documentation for action button at point.
