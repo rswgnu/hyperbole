@@ -1,3 +1,9 @@
+2023-05-14  Mats Lidell  <matsl@gnu.org>
+
+* hypb.el (hypb:oct-to-int): mapc takes two args.
+
+* test/hypb-tests.el: Add tests for hypb:oct-to-int.
+
 2023-05-14  Bob Weiner  <rsw@gnu.org>
 
 * hibtypes.el (action): Remove unneeded comma before args that triggered
