@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    18-Sep-91 at 02:57:09
-;; Last-Mod:     13-May-23 at 12:18:37 by Bob Weiner
+;; Last-Mod:     14-May-23 at 01:41:33 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -240,11 +240,7 @@ to two lines."
 		  ;; { M-x shell RET M-> (cd ${hyperb:dir}) RET }
 		  (save-excursion
 		    (when (eq ?\( (char-syntax (preceding-char)))
-		      (condition-case ()
-			  (progn
-			    (forward-char -1)
-			    (forward-list))
-			(error nil)))
+		      (ignore-errors (forward-char -1) (forward-list)))
 		    (< (point) opoint))
 		  (re-search-forward (concat "[^\\{]" end-regexp) opoint t))
 	(setq start nil))
@@ -433,8 +429,6 @@ button is found in the current buffer."
 
     ;; new-instance-flag might be 't which we don't want to return.
     (when (stringp new-instance-flag) new-instance-flag)))
-
-
 
 (defun    ebut:program (label actype &rest args)
   "Programmatically create an explicit Hyperbole button at point.
@@ -745,9 +739,8 @@ Return the symbol for the button when found, else nil."
 	    (narrow-to-region (point) (if (search-forward "\f" nil t)
 					  (point) (point-max)))
 	    (goto-char (point-min))
-	    (condition-case ()
-		(while (setq gbuts (cons (car (read (current-buffer))) gbuts)))
-	      (error nil))
+	    (ignore-errors
+	      (while (setq gbuts (cons (car (read (current-buffer))) gbuts))))
 	    gbuts))))))
 
 (defun    gbut:ibut-key-list ()
@@ -1214,7 +1207,8 @@ represent the output of particular document formatters."
 
 (defun    hbut:key-src-set-buffer (src)
   "Set buffer to SRC, a buffer, buffer name, file, directory or symlink.
-Return SRC or nil if invalid."
+If SRC is a directory, simply return it; otherwise, return SRC or
+nil if invalid."
   (cond ((null src) nil)
 	((or (bufferp src) (get-buffer src))
 	 (set-buffer src)
@@ -1538,9 +1532,8 @@ Keys in optional KEY-SRC or the current buffer."
 	      (narrow-to-region (point) (if (search-forward "\f" nil t)
 					    (point) (point-max)))
 	      (goto-char (point-min))
-	      (condition-case ()
-		  (while (setq hbuts (cons (car (read (current-buffer))) hbuts)))
-		(error nil))
+	      (ignore-errors
+		(while (setq hbuts (cons (car (read (current-buffer))) hbuts))))
 	      hbuts))))))
 
 (defun    hbut:ibut-key-list (&optional key-src)

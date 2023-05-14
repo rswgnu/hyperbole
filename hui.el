@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 21:42:03
-;; Last-Mod:     29-Apr-23 at 16:26:39 by Bob Weiner
+;; Last-Mod:     14-May-23 at 02:02:53 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1064,6 +1064,13 @@ from those instead.  See also documentation for
 	(referent-window (or release-window action-key-release-window (selected-window)))
 	but-name but-edit link-types num-types type-and-args lbl-key but-loc but-dir)
     (select-window but-window)
+    ;; It is rarely possible that a *Warnings* buffer popup might have
+    ;; displaced the button src buffer in the depress window, so switch
+    ;; to it to be safe.
+    (when (and action-key-depress-buffer
+	       (not (eq (current-buffer) action-key-depress-buffer))
+	       (buffer-live-p action-key-depress-buffer))
+      (switch-to-buffer action-key-depress-buffer))
     (hui:buf-writable-err (current-buffer) "link-directly")
     (if (ebut:at-p)
 	(setq but-edit t
@@ -1515,6 +1522,11 @@ arguments."
   (hattr:set 'hbut:current 'actype (actype:elisp-symbol (car type-and-args)))
   (hattr:set 'hbut:current 'args (cdr type-and-args))
   (select-window but-window)
+  ;; It is rarely possible that a *Warnings* buffer popup might have
+  ;; displaced `but-loc' in the window, so switch to it to be safe.
+  (unless (and but-loc (or (equal (buffer-name) but-loc)
+			   (eq (current-buffer) but-loc)))
+    (hbut:key-src-set-buffer but-loc))
   (let ((label (ebut:key-to-label lbl-key)))
     (ebut:operate label (when edit-flag label))))
 

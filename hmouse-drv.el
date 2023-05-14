@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    04-Feb-90
-;; Last-Mod:     30-Apr-23 at 15:49:20 by Bob Weiner
+;; Last-Mod:     14-May-23 at 01:21:42 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -55,6 +55,17 @@ See function `hmouse-window-at-absolute-pixel-position' for more details.")
 (defvar assist-key-release-args nil
   "List of mouse event args from most recent release of the Assist Key.")
 
+(defvar action-key-depress-buffer nil
+  "The last buffer in which the Action Key was depressed or nil.
+This is set to nil when the depress is on an inactive minibuffer.")
+(defvar assist-key-depress-buffer nil
+  "The last buffer in which the Assist Key was depressed or nil.
+This is set to nil when the depress is on an inactive minibuffer.")
+(defvar action-key-release-buffer nil
+  "The last buffer in which the Action Key was released or nil.")
+(defvar assist-key-release-buffer nil
+  "The last buffer in which the Assist Key was released or nil.")
+
 (defvar action-key-depress-window nil
   "The last window in which the Action Key was depressed or nil.
 This is set to nil when the depress is on an inactive minibuffer.")
@@ -66,7 +77,7 @@ This is set to nil when the depress is on an inactive minibuffer.")
 (defvar assist-key-release-window nil
   "The last window in which the Assist Key was released or nil.")
 
-;; These store mouse positions and are used only when a mouse is available.
+;; These store mouse positions when a Smart Mouse key is pressed.
 (defvar action-key-depress-position nil
   "The last mouse screen position at which the Action Key was depressed or nil.")
 (defvar assist-key-depress-position nil
@@ -173,10 +184,12 @@ This permits the Smart Keys to behave as paste keys.")
   (setq action-key-depress-prev-point (point-marker)
 	action-key-depressed-flag t
 	action-key-depress-args (hmouse-set-point args)
+	action-key-depress-buffer (window-buffer (hmouse-depress-inactive-minibuffer-p args))
 	action-key-depress-window (or (hmouse-depress-inactive-minibuffer-p args)
 				      (selected-window))
 	action-key-depress-position (hkey-absolute-pixel-position)
 	action-key-release-args nil
+	action-key-release-buffer nil
 	action-key-release-window nil
 	action-key-release-prev-point nil)
   (when (and (not assist-key-depressed-flag)
@@ -196,10 +209,12 @@ This permits the Smart Keys to behave as paste keys.")
   (setq assist-key-depress-prev-point (point-marker)
 	assist-key-depressed-flag t
 	assist-key-depress-args (hmouse-set-point args)
+	assist-key-depress-buffer (window-buffer (hmouse-depress-inactive-minibuffer-p args))
 	assist-key-depress-window (or (hmouse-depress-inactive-minibuffer-p args)
 				      (selected-window))
 	assist-key-depress-position (hkey-absolute-pixel-position)
 	assist-key-release-args nil
+	assist-key-release-buffer nil
 	assist-key-release-window nil
 	assist-key-release-prev-point nil)
   (when (and (not action-key-depressed-flag)
@@ -286,9 +301,11 @@ Any ARGS will be passed to `hmouse-release'."
   (setq action-key-depress-prev-point nil
 	action-key-depress-position nil
 	action-key-depress-args nil
+	action-key-depress-buffer nil
 	action-key-depress-window nil
 	action-key-release-position nil
 	action-key-release-args nil
+	action-key-release-buffer nil
 	action-key-release-window nil
 	action-key-release-prev-point nil))
 
@@ -299,9 +316,11 @@ Any ARGS will be passed to `hmouse-release'."
   (setq assist-key-depress-prev-point nil
 	assist-key-depress-position nil
 	assist-key-depress-args nil
+	assist-key-depress-buffer nil
 	assist-key-depress-window nil
 	assist-key-release-position nil
 	assist-key-release-args nil
+	assist-key-release-buffer nil
 	assist-key-release-window nil
 	assist-key-release-prev-point nil))
 
@@ -522,16 +541,7 @@ Works only when running under a window system, not from a dumb terminal."
 	       (when (window-live-p release-window)
 		 (hypb:select-window-frame release-window)))
       ;; Leave hkey-drag to choose final selected window
-      (hkey-drag release-window)
-      ;; (if (eq start-window release-window)
-      ;; 	  ;; Leave hkey-drag to choose final selected window
-      ;; 	  (hkey-drag release-window)
-      ;; 	;; Replace release window's buffer with selected
-      ;; 	;; window's buffer.
-      ;; 	(hkey-buffer-to start-window release-window)
-      ;; 	(when (window-live-p release-window)
-      ;; 	  (hypb:select-window-frame release-window)))
-      )))
+      (hkey-drag release-window))))
 
 ;;;###autoload
 (defun hkey-replace (release-window)
@@ -1261,11 +1271,11 @@ With optional ARG, enable iff ARG is positive."
     (message "Smart Key debugging is on; press a Smart Key to see its context.")))
 
 (defun hmouse-depress-inactive-minibuffer-p (event)
-  "Return buffer if last Smart Mouse Key depress was in an inactive minibuffer.
+  "Return inactive minibuffer window if last Smart Mouse Key depress was in it.
 If the last Smart Mouse Key depress EVENT was in the minibuffer
-and it was inactive, return it, else nil."
+and it was inactive, return its window, else nil."
   (let ((window (posn-window (event-start event))))
-    (when(framep window)
+    (when (framep window)
       (setq window (frame-selected-window window)))
     (and (window-minibuffer-p window)
 	 (not (minibuffer-window-active-p window))
@@ -1438,6 +1448,13 @@ window, return nil.  Considers all windows on the selected frame's display."
 	       pos-x pos-y))
     (when edges (list window (cons pos-x pos-y)))))
 
+(defun hmouse-key-release-buffer (release-position)
+  "Return the buffer of last Action/Assist Mouse Key RELEASE-POSITION, if any.
+If none return nil."
+  (let ((window (ignore-errors (hmouse-window-at-absolute-pixel-position release-position t))))
+    (when window
+      (window-buffer window))))
+
 (defun hmouse-key-release-window (release-position)
   "Return the window of last Action/Assist Mouse Key RELEASE-POSITION, if any.
 If none return nil."
@@ -1532,10 +1549,12 @@ windowful."))
     (if assisting
 	(setq assist-key-release-position (hkey-absolute-pixel-position)
 	      assist-key-depressed-flag nil
+	      assist-key-release-buffer (hmouse-key-release-buffer assist-key-release-position)
 	      assist-key-release-window (hmouse-key-release-window assist-key-release-position)
 	      assist-key-release-prev-point (point-marker))
       (setq action-key-release-position (hkey-absolute-pixel-position)
 	    action-key-depressed-flag nil
+	    action-key-release-buffer (hmouse-key-release-buffer action-key-release-position)
 	    action-key-release-window (hmouse-key-release-window action-key-release-position)
 	    action-key-release-prev-point (point-marker)))
     (and (eq major-mode 'br-mode)

@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Jun-16 at 14:24:53
-;; Last-Mod:     24-Jul-22 at 10:41:16 by Bob Weiner
+;; Last-Mod:     14-May-23 at 01:54:35 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -143,12 +143,11 @@ Ignore other types of GNU debbugs query strings."
 
 (defun debbugs-gnu-mode:help (&optional _but)
   "Make a Gnu debbugs listing at point pretty-print its status to a window below."
-  (condition-case ()
-      (let ((display-buffer-overriding-action
-	     '(display-buffer-below-selected . nil)))
-	(debbugs-query:status (debbugs-gnu-current-id))
-	(hypb:maximize-window-height))
-    (error nil)))
+  (ignore-errors
+    (let ((display-buffer-overriding-action
+	   '(display-buffer-below-selected . nil)))
+      (debbugs-query:status (debbugs-gnu-current-id))
+      (hypb:maximize-window-height))))
 
 ;;; ************************************************************************
 ;;; Public functions

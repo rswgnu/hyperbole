@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    31-Oct-91 at 23:17:35
-;; Last-Mod:     11-May-23 at 23:00:00 by Bob Weiner
+;; Last-Mod:     14-May-23 at 01:52:22 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -258,7 +258,7 @@ is returned.  If point precedes an sexpression start character, the
 following sexpression is returned.  Otherwise, the innermost sexpression
 that point is within is returned or nil if none."
   (save-excursion
-    (condition-case ()
+    (ignore-errors
 	(let ((not-quoted
 	       '(not (and (eq (char-syntax (char-after (- (point) 2))) ?\\)
 			  (not (eq (char-syntax (char-after (- (point) 3))) ?\\))))))
@@ -273,8 +273,7 @@ that point is within is returned or nil if none."
 		 (buffer-substring (point)
 				   (progn (forward-sexp) (point))))
 		(no-recurse nil)
-		(t (save-excursion (up-list 1) (hargs:sexpression-p t)))))
-      (error nil))))
+		(t (save-excursion (up-list 1) (hargs:sexpression-p t))))))))
 
 ;;; ************************************************************************
 ;;; Public functions

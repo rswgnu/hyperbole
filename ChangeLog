@@ -1,4 +1,40 @@
+2023-05-14  Bob Weiner  <rsw@gnu.org>
+
+* hib-debbugs.el (debbugs-gnu-mode:help):
+  hui-window.el (hmouse-kill-and-yank-region, hmouse-yank-region):
+  hargs.el (hargs:sexpression-p):
+  hpath.el (hpath:cache-mswindows-mount-points):
+  hvm.el (vm-edit-message-end):
+  kotl/kotl-mode.el (kotl-mode:transpose-lines):
+  kotl/kfile.el (kfile:is-p, kfile:print-to-string):
+  hsys-org.el (hsys-org-link-at-p):
+  hbut.el (ebut:label-p, gbut:ebut-key-list, hbut:ebut-key-list):
+  hui-select.el (hui-select-mark-delimited-sexp,
+                 hui-select-brace-def-or-declaration, hui-select-sexp-start,
+                 hui-select-sexp-end, hui-select-sexp, hui-select-sexp-up):
+                 hui-select-punctuation, hui-select-sentence):
+  hmouse-tag.el (smart-cc-mode-initialize, smart-lisp-find-tag,
+                 smart-lisp-at-known-identifier-p, smart-lisp-bound-symbol-def,
+                 smart-tags-find-p):
+    Replace nil error handler condition-case with ignore-errors macro.
+
 2023-05-13  Bob Weiner  <rsw@gnu.org>
+
+* hmouse-drv.el (hmouse-depress-inactive-minibuffer-p): Fix doc to say window
+    is returned rather than buffer.
+
+* hui.el (hui:link-create, hui:link-directly): It is rarely possible that a
+    *Warnings* buffer popup might have displaced `but-loc' in the window, so
+    switch to it to be safe.
+  hmouse-drv.el (action-key-depress-buffer, assist-key-depress-buffer)
+                 action-key-release-buffer, assist-key-release-buffer): Add to
+    handle when a buffer popup changes the buffer associated with a window between
+    depress and release.
+                (action-key-depress, assist-key-depress, action-key-clear-variables,
+                 assist-key-clear-variables): Set depress-buffer and release-buffer
+    variables.
+                (hmouse-key-release-buffer): Add to return any buffer of Smart Mouse
+    Key release.
 
 * hsys-youtube.el (require 'hact): Autoload for defact macro.
                   (yt-info, yt-play, yt-search, yt-url): Change from aliases to
