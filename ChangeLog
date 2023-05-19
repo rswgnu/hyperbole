@@ -1,3 +1,7 @@
+2023-05-20  Mats Lidell  <matsl@gnu.org>
+
+* test/MANIFEST: Add missing hargs-tests.el.
+
 2023-05-14  Mats Lidell  <matsl@gnu.org>
 
 * hypb.el (hypb:oct-to-int): mapc takes two args.
