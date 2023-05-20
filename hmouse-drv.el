@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    04-Feb-90
-;; Last-Mod:     14-May-23 at 01:21:42 by Bob Weiner
+;; Last-Mod:     19-May-23 at 08:03:36 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -506,7 +506,7 @@ Works only when running under a window system, not from a dumb terminal."
 	   ;; Leave release-window selected
 	   (when (window-live-p release-window)
 	     (hypb:select-window-frame release-window)))
-	  (at-item-flag
+	  ((not at-item-flag)
 	   (error "(hkey-drag-item): No listing item at point"))
 	  (t ;; No item at point or selected release is invalid
 	   (error "(hkey-drag-item): No item at point or invalid final window, %s" release-window)))))
@@ -584,7 +584,7 @@ TO-WINDOW as the selected window."
 
 ;;;###autoload
 (defun hkey-throw (release-window &optional throw-region-flag)
-  "Throw for display in RELEASE-WINDOW.
+  "Throw a thing to display in RELEASE-WINDOW.
 Throw one of:
  - the active (highlighted) region,
  - a displayable item at point or
@@ -618,14 +618,28 @@ The selected window does not change."
 ;;;###autoload
 (defun hkey-window-link (release-window)
   "Create an ebut in the selected window, linked to point in RELEASE-WINDOW.
-RELEASE-WINDOW is interactively chosen via ace-window.
-The selected window does not change."
+RELEASE-WINDOW is interactively selected via the `ace-window' command.
+The selected window does not change.
+
+With a prefix argument, create an unnamed implicit button instead."
   (interactive
    (list (let ((mode-line-text (concat " Ace - Hyperbole: " (nth 2 (assq ?w aw-dispatch-alist)))))
 	   (aw-select mode-line-text))))
+  (unless (window-live-p release-window)
+    (error "(hkey-window-link): Invalid release window: %s" release-window))
   (let ((start-window (selected-window)))
     (unwind-protect
-	(hui:link-directly start-window release-window)
+	(progn
+	  ;; Clear Smart Key variables so `hui:ibut-link-directly' does not
+	  ;; improperly reference values left over from a prior drag or
+	  ;; click.  This command does not utilize the Smart Keys.
+	  (action-key-clear-variables)
+	  (assist-key-clear-variables)
+	  (funcall (if current-prefix-arg
+		       #'hui:ibut-link-directly
+		     #'hui:ebut-link-directly)
+		   start-window release-window)
+	  release-window)
       ;; Leave start-window selected
       (when (window-live-p start-window)
 	(hypb:select-window-frame start-window)))))

@@ -7,7 +7,7 @@
 @c Author:       Bob Weiner
 @c
 @c Orig-Date:     6-Nov-91 at 11:18:03
-@c Last-Mod:     13-May-23 at 22:34:55 by Bob Weiner
+@c Last-Mod:     19-May-23 at 06:49:37 by Bob Weiner
 
 @c %**start of header (This is for running Texinfo on a region.)
 @setfilename hyperbole.info
@@ -156,7 +156,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</P>
 
 <PRE>
 Edition 8.0.1pre
-Printed May 13, 2023.
+Printed May 16, 2023.
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -198,7 +198,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 @example
 Edition 8.0.1pre
-May 13, 2023
+May 16, 2023
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -1789,10 +1789,12 @@ replace the selected (current) window's buffer with that of <window>
 @item M-o t <window>
 throw region, listing item at point, or current buffer to <window>
 
+@findex hui:ebut-link-directly
 @item M-o w <window>
 window link, create a new explicit button in the selected (current)
-window, linking to point in the referent <window>, with the link type
-determined by the referent context via @code{hui:link-directly}.
+window, linking to point in the referent <window>.
+@code{hui:ebut-link-directly} determines the link type by using the
+referent context.
 @end table
 
 @c -------

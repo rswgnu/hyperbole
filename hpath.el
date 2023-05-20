@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     1-Nov-91 at 00:44:23
-;; Last-Mod:     14-May-23 at 01:51:54 by Bob Weiner
+;; Last-Mod:     20-May-23 at 14:05:35 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -459,8 +459,8 @@ display program settings."
 			  (switch-to-buffer b)))
    (list 'other-frame   #'hpath:display-buffer-other-frame)
    (list 'other-frame-one-window   (lambda (b)
-				     (hpath:display-buffer-other-frame b)
-				     (delete-other-windows))))
+				     (prog1 (hpath:display-buffer-other-frame b)
+				       (delete-other-windows)))))
   "*Alist of (DISPLAY-WHERE-SYMBOL  DISPLAY-BUFFER-FUNCTION) elements.
 This permits fine-grained control of where Hyperbole displays linked to buffers.
 
@@ -498,8 +498,8 @@ See Info node `(elisp)Choosing Window Options' for where Emacs displays buffers.
 			   (hpath:find-other-frame f))))
    (list 'other-frame  #'hpath:find-other-frame)
    (list 'other-frame-one-window (lambda (f)
-				   (hpath:find-other-frame f)
-				   (delete-other-windows))))
+				   (prog1 (hpath:find-other-frame f)
+				     (delete-other-windows)))))
   "*Alist of (DISPLAY-WHERE-SYMBOL DISPLAY-FILE-FUNCTION) elements.
 This permits fine-grained control of where Hyperbole displays
 linked to files.  The default value of DISPLAY-WHERE-SYMBOL is
@@ -1377,10 +1377,15 @@ If PATHNAME does not start with a prefix character:
   matching display function.
 
 Optional third argument, NOSELECT, means simply find the file and return its
-buffer but don't display it."
+buffer but don't display it.  Any modifier prefix is ignored in such cases
+but locational suffixes within the file are utilized."
   (interactive "FFind file: ")
   (unless (stringp pathname)
     (error "(hpath:find): pathname arg must be a string, not, %S" pathname))
+  ;; `pathname' ends as the whole argument sent in except for any
+  ;; initial modifier character.
+  ;; `path' has extra location info (section, line num, col num)
+  ;; stripped off, so it is just a findable path.
   (let ((case-fold-search t)
 	(default-directory default-directory)
 	modifier loc anchor hash path line-num col-num)
@@ -1427,11 +1432,7 @@ buffer but don't display it."
 	  (file-readable-p pathname)
 	  (error "(hpath:find): \"%s\" is not readable"
 		 (concat modifier pathname (when hash "#") anchor)))
-      (if noselect
-	  (let ((buf (find-file-noselect pathname)))
-	    (with-current-buffer buf
-	      (when (or hash anchor) (hpath:to-markup-anchor hash anchor))
-	      buf))
+      (unless noselect
 	;; If pathname is a remote file (not a directory), we have to copy it to
 	;; a temporary local file and then display that.
 	(when (and remote-pathname (not (file-directory-p remote-pathname)))
@@ -1442,32 +1443,18 @@ buffer but don't display it."
 	  (setq pathname (cond (anchor (concat remote-pathname "#" anchor))
 			       (hash   (concat remote-pathname "#"))
 			       (t path))))))
-    (cond (modifier (cond ((= modifier ?!)
-			   (hact 'exec-shell-cmd pathname))
-			  ((= modifier ?&)
-			   (hact 'exec-window-cmd pathname))
-			  ((= modifier ?-)
-			   (hact 'load pathname)))
-		    nil)
-
-	  ;; If no path, e.g. just an anchor link in a non-file buffer,
-	  ;; then must display within Emacs, ignoring any external programs.
-	  ((string-empty-p path)
-	   (hpath:display-buffer (current-buffer) display-where)
-	   (when (or hash anchor)
-	     (hpath:to-markup-anchor hash anchor))
-	   (when line-num
-	     ;; With an anchor, goto line relative to anchor
-	     ;; location, otherwise use absolute line number
-	     ;; within the visible buffer portion.
-	     (if (or hash anchor)
-		 (forward-line line-num)
-	       (hpath:to-line line-num)))
-	   (when col-num (move-to-column col-num))
-	   (current-buffer))
+    (cond ((and modifier (not noselect))
+	   (cond ((= modifier ?!)
+		  (hact 'exec-shell-cmd pathname))
+		 ((= modifier ?&)
+		  (hact 'exec-window-cmd pathname))
+		 ((= modifier ?-)
+		  (hact 'load pathname)))
+	   nil)
 
 	  ;; Display paths either internally or externally.
-	  (t (let ((display-executables (hpath:find-program path))
+	  (t (let ((display-executables (unless (or noselect (string-empty-p path))
+					  (hpath:find-program path)))
 		   executable)
 	       (cond ((stringp display-executables)
 		      (hact 'exec-window-cmd
@@ -1483,27 +1470,37 @@ buffer but don't display it."
 				(hpath:command-string executable pathname))
 			(error "(hpath:find): No available executable from: %s"
 			       display-executables)))
-		     (t (setq path (hpath:validate path))
-			(funcall (hpath:display-path-function display-where) path)
-			;; Perform a loose test that the current buffer
-			;; file name matches the path file name since exact
-			;; matching of path is likely to be wrong in
-			;; certain cases, e.g. with mount point or os path
-			;; alterations.
-			(when (and buffer-file-name
-				   (equal (file-name-nondirectory path)
-					  (file-name-nondirectory buffer-file-name)))
-			  (when (or hash anchor)
-			    (hpath:to-markup-anchor hash anchor))
-			  (when line-num
-			    ;; With an anchor, goto line relative to anchor
-			    ;; location, otherwise use absolute line number
-			    ;; within the visible buffer portion.
-			    (if (or hash anchor)
-				(forward-line line-num)
-			      (hpath:to-line line-num)))
-			  (when col-num (move-to-column col-num))
-			  (current-buffer)))))))))
+		     (t (setq path (hpath:validate path)) ;; signals error when invalid
+			(let ((buf (cond
+				    ;; If no path, e.g. just an anchor link in a non-file buffer,
+				    ;; then must display within Emacs, ignoring any external programs.
+				    ((string-empty-p path)
+				     (if noselect
+					 (current-buffer)
+				       (hpath:display-buffer (current-buffer) display-where)))
+				    (noselect
+				     (find-file-noselect path))
+				    (t (funcall (hpath:display-path-function display-where) path)))))
+			  (with-current-buffer buf
+			    ;; Perform a loose test that the current buffer
+			    ;; file name matches the path file name since exact
+			    ;; matching of path is likely to be wrong in
+			    ;; certain cases, e.g. with mount point or os path
+			    ;; alterations.
+			    (when (and buffer-file-name
+				       (equal (file-name-nondirectory path)
+					      (file-name-nondirectory buffer-file-name)))
+			      (when (or hash anchor)
+				(hpath:to-markup-anchor hash anchor))
+			      (when line-num
+				;; With an anchor, goto line relative to anchor
+				;; location, otherwise use absolute line number
+				;; within the visible buffer portion.
+				(if (or hash anchor)
+				    (forward-line line-num)
+				  (hpath:to-line line-num)))
+			      (when col-num (move-to-column col-num))
+			      (current-buffer)))))))))))
 
 (defun hpath:to-markup-anchor (hash anchor)
   "Move point to ANCHOR if found or, if null, to the beginning of the buffer."

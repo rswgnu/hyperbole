@@ -86,7 +86,7 @@
    9. "HYPB" files serve as convenient home pages for embedding Hyperbole
       buttons.  Each user has a personal button file accessed with {C-h h b
       p} and each directory can have a local button file accessed with {C-h
-      h b d}.  See "DEMO#Buton Files".
+      h b d}.  See "DEMO#Button Files".
 
   10. Global buttons are either explicit or named implicit buttons that are
       activated by choosing from a list of names, without the need to have

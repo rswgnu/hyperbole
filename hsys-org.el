@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     2-Jul-16 at 14:54:14
-;; Last-Mod:     14-May-23 at 01:43:07 by Bob Weiner
+;; Last-Mod:     20-May-23 at 16:28:08 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -225,28 +225,8 @@ Return the (start . end) buffer positions of the region."
   "Return non-nil iff point is on an Org mode link.
 Assume caller has already checked that the current buffer is in `org-mode'
 or are looking for an Org link in another buffer type."
-  ;; If any Org test fails, just return nil
   (unless (or (smart-eolp) (smart-eobp))
-    (ignore-errors
-      (let* ((context
-	      ;; Only consider supported types, even if they are not
-	      ;; the closest one.
-	      (org-element-lineage
-	       ;; Next line can trigger an error when `looking-at' is called
-	       ;; with a `nil' value of `org-complex-heading-regexp'.
-	       (ignore-errors (org-element-context))
-	       '(clock footnote-definition footnote-reference headline
-		       inlinetask link timestamp)
-	       t))
-	     (type (org-element-type context)))
-	(or (eq type 'link)
-	    (and (boundp 'org-link-bracket-re)
-		 (org-in-regexp org-link-bracket-re))
-	    (and (boundp 'org-bracket-link-regexp)
-		 (org-in-regexp org-bracket-link-regexp))
-	    (and (boundp 'org-target-link-regexp)
-		 (not (null org-target-link-regexp))
-		 (org-in-regexp org-target-link-regexp)))))))
+    (eq (org-element-type (org-element-context)) 'link)))
 
 ;; Assume caller has already checked that the current buffer is in org-mode.
 (defun hsys-org-heading-at-p (&optional _)
@@ -332,8 +312,9 @@ The region is (start . end) and includes any delimiters, else nil."
 	      (and (listp face-prop) (memq org-face-type face-prop)))
       org-face-type)))
 
+;; Adapted from Org code
 (defun hsys-org-search-internal-link-p (target)
-  "Search buffer start for the first Org internal link to matching <<TARGET>>.
+  "Search buffer start for the first Org internal link matching <<TARGET>>.
 White spaces are insignificant.  Return t if a link is found, else nil."
   (when (string-match "<<.+>>" target)
     (setq target (substring target 2 -2)))
@@ -355,6 +336,7 @@ White spaces are insignificant.  Return t if a link is found, else nil."
       (goto-char origin)
       nil)))
 
+;; Adapted from Org code
 (defun hsys-org-search-radio-target-link-p (target)
   "Search from point for a radio target link matching TARGET.
 White spaces are insignificant.  Return t if a target link is found, else nil."

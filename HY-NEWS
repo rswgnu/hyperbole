@@ -401,6 +401,20 @@
 
 ** SMART (ACTION AND ASSIST) KEYS  (See "(hyperbole)Smart Keys").
 
+  *** Drag Button Referents to Specific Windows: Just as you previously could
+      drag Dired or Buffer Menu items to display in a specific window, you can
+      now do the same with Hyperbole Buttons.  Action Key drag from on a
+      Hyperbole button and release in another window where you want the
+      button's referent (or the result of its action) displayed.  If you
+      release the Action Key outside of an Emacs window, the referent is
+      displayed in a new frame.
+
+      Visual pulsing of the source line and the destination buffer highlights
+      the transfer taking place (hmouse-pulse-flag controls this).
+
+      Dragging a button to a modeline splits the window of the modeline and
+      displays the referent in the leftmost or uppermost of the split windows.
+
   *** Hyperbole Symbol Tags: Hyperbole now includes a pre-built TAGS file so
       that an Action Key press on any Hyperbole symbol jumps to its definition
       without the need for any additional support.  This also works on
