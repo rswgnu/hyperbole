@@ -1,4 +1,53 @@
+2023-05-19  Bob Weiner  <rsw@gnu.org>
+
+* hui.el (hui:ebut-link-directly, hui:ibut-link-directly): Display msg at
+    the end only when called interactively.
+
+* hmouse-drv.el (hkey-window-link): With prefix arg, create an ibut link
+    rather than an ebut link.
+
+* hui.el (hui:ibut-link-directly): Add.
+
+2023-05-18  Bob Weiner  <rsw@gnu.org>
+
+* man/hyperbole.texi (Keyboard Drags): Rename 'hui:link-directly'
+    to 'hui:ebut-link-directly'.
+          (ibut:insert-text): Add 'hpath:substitute-var' calls to
+    substitute variables into link paths.
+  hmouse-drv.el (hkey-window-link): Call 'hui:ebut-link-directly'.
+
+2023-05-17  Bob Weiner  <rsw@gnu.org>
+
+* hui-window.el (hmouse-alist-add-window-handlers): Move cons . operators
+    to start of line to avoid syntax highlighting errors when at eol.
+
+* hbut.el (ibut:insert-text): Fix to match to long form of actype
+  symbol name since short form is not part of obarray and so will not
+  match.  Also, add link-to-file handler with position mapping to line:col.
+          (ibut:operate): Fix to increment ibut instance number properly.
+
+2023-05-15  Bob Weiner  <rsw@gnu.org>
+
+* hbut.el (hbut:action): Fix to handle ibuts properly (no diff than ebuts).
+
+* hui-window.el (hmouse-at-item-p): Make two changes:
+    1. Return non-nil if on a Hyperbole button
+    2. Switch back to start-window rather than just the buffer; so always utilize
+       correct point.
+                (hmouse-item-to-window): Make change to long-time ebut behavior.
+    Previously, a drag from an ebut across windows links it to the new location;
+    now such a drag executes the button's action in the drag release window; ibuts
+    behave the same.
+  DEMO:
+  HY-NEWS:
+  man/hkey-help.txt: Document above change.
+
+* hsys-org.el (hsys-org-link-at-p): Simplify to use org-link-any-re and require
+    an Org version with this.
+
 2023-05-14  Bob Weiner  <rsw@gnu.org>
+
+* hui-window.el: Change context-specific commentary to refer to "man/hkey-help.txt".
 
 * hibtypes.el (action): Remove unneeded comma before args that triggered
     byte compilation error.

@@ -1164,17 +1164,19 @@ with the Action Mouse Key or by using the Hyperbole menus.
 
 *** Creation via Dragging
 
-An efficient way to create an explicit button interactively is
-to use the Action Mouse Key to drag from a button source window to a
-window showing its link referent.  More specifically, you should split
-your current Emacs frame into two windows: one which contains the
-point at which you want a button to be inserted and another which
-shows the point to which you want to link, the referent.  Depress the
-Action Mouse Key at the source point for the button (anywhere but on a
-paired delimiter such as double quotes or parentheses).  Then drag to
-the other window and release the Action Mouse Key at the start point
-of the link referent.  The process becomes quite simple with a little
-practice.
+An efficient way to create an explicit button interactively is to use
+the Action Mouse Key to drag from a window where you want the button
+created (button source window) to a window showing its link referent.
+The drag must start outside of an existing Hyperbole button.
+
+More specifically, you should split your current Emacs frame into two
+windows: one which contains the point at which you want a button to be
+inserted and another which shows the point to which you want to link,
+the referent.  Depress the Action Mouse Key at the source point for
+the button (anywhere but on a paired delimiter such as double quotes
+or parentheses).  Then drag to the other window and release the Action
+Mouse Key at the start point of the link referent.  The process
+becomes quite simple with a little practice.
 
 Hyperbole uses the link referent context to determine the type of link
 to make.  If there are a few different types of links which are
@@ -1541,16 +1543,16 @@ If you want a new window where you release (so the original destination window's
 buffer stays onscreen), just drag to a window's modeline; that window will be
 split before the buffer is displayed.
 
-*** Displaying File and Buffer Items and Moving Buffers
+*** Displaying File and Buffer Items, Button Referents and Moving Buffers
 
 You can do the same thing with items in dired, buffer menu and ibuffer menu
-listing buffers rather than buffers themselves.  Drag with the Action Mouse Key
-and the selected item will be displayed in any Emacs window in which you
-release.  To display the last item you want, press the Action Key on it and it
-will display within the listing window itself.  (If you use the Treemacs file
-viewer package, item dragging works there as well).  Under the MacOS window
-manager, you can also drag outside of an Emacs frame and the item will be
-displayed in a newly created and selected frame.
+listing buffers and Hyperbole button referents.  Drag with the Action Mouse Key
+from the item and the selected item/referent will be displayed in the Emacs
+window in which you release.  To display the last item you want, press the
+Action Key on it and it will display within the listing window itself.  (If you
+use the Treemacs file viewer package, item dragging works there as well).  Under
+the MacOS window manager, you can also drag outside of an Emacs frame and the
+item will be displayed in a newly created and selected frame.
 
 So now you can rapidly put a bunch of buffers and files on your screen wherever
 you like.  Typically, a brief visual pulse is shown first at the source item and

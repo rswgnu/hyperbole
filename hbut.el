@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    18-Sep-91 at 02:57:09
-;; Last-Mod:     14-May-23 at 01:41:33 by Bob Weiner
+;; Last-Mod:     20-May-23 at 09:58:56 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -374,9 +374,11 @@ button is found in the current buffer."
 		    (setq end (point)))
 		   ((and (hmouse-use-region-p)
 			 (if (hyperb:stack-frame
-			      '(hui:ebut-create hui:ebut-edit hui:ebut-edit-region hui:gbut-create
+			      '(hui:ebut-create hui:ebut-edit hui:ebut-edit-region
+						hui:ebut-link-create hui:gbut-create
                        				hui:gbut-edit hui:link-create ebut:program
-						hui:ibut-create hui:ibut-edit ibut:program))
+						hui:ibut-create hui:ibut-edit
+						hui:ibut-link-create ibut:program))
 			     ;; Ignore action-key-depress-prev-point
 			     (progn (setq mark (marker-position (mark-marker))
 					  start (region-beginning)
@@ -970,15 +972,13 @@ Default is the symbol hbut:current."
 
 (defun    hbut:action (hbut)
   "Return appropriate action name/function for Hyperbole button symbol HBUT."
-  (let ((categ (hattr:get hbut 'categ)) (atype) (action))
-    (if (eq categ 'explicit)
-	(progn (setq action (car (hattr:get hbut 'action))
-		     atype  (hattr:get hbut 'actype))
-	       (if (= (length (symbol-name atype)) 2)
-		   atype
-		 (or action (actype:action atype))))
-      ;; Must be an implicit button.
-      (when (functionp atype) atype))))
+  (let (atype
+	action)
+    (setq action (car (hattr:get hbut 'action))
+	  atype  (hattr:get hbut 'actype))
+    (if (= (length (symbol-name atype)) 2)
+	atype
+      (or action (actype:action atype)))))
 
 (defun    hbut:at-p ()
   "Return symbol for explicit or implicit Hyperbole button at point or nil.
@@ -2008,8 +2008,8 @@ move to the first occurrence of the button."
 (defun    ibut:operate (curr-label new-label)
   "Create an in-buffer ibutton named CURR-LABEL.  Modify if NEW-LABEL is given.
 
-If CURR-LABEL is nil, the text in the active region is used as the
-button label, if any, otherwise, an error is signaled.
+If CURR-LABEL is nil, the active region text is used as the button
+label, if any; otherwise, an error is signaled.
 
 Return instance string appended to label to form a per-buffer unique
 label; nil if label is already unique.  Signal an error when no such
@@ -2052,17 +2052,25 @@ button is found in the current buffer."
 		    ((hypb:error "(ibut:operate): No button matching: %s" curr-label)))))
 
 	  (instance-flag
+	   ;; Above flag is 't when only one instance of the label
+	   ;;
 	   ;; Add a new button recording its start and end positions
 	   (let (start end mark prev-point buf-lbl)
-	     (cond ((not curr-label)
+	     (cond ((not (and curr-label new-label))
+		    ;; No label/name to insert, just insert ibutton
+		    ;; text below
+		    )
+		   ((not curr-label)
 		    (setq start (point))
 		    (insert new-label)
 		    (setq end (point)))
 		   ((and (hmouse-use-region-p)
 			 (if (hyperb:stack-frame
-			      '(hui:ebut-create hui:ebut-edit hui:ebut-edit-region hui:gbut-create
+			      '(hui:ebut-create hui:ebut-edit hui:ebut-edit-region
+						hui:ebut-link-create hui:gbut-create
                        				hui:gbut-edit hui:link-create ebut:program
-						hui:ibut-create hui:ibut-edit ibut:program))
+						hui:ibut-create hui:ibut-edit
+						hui:ibut-link-create ibut:program))
 			     ;; Ignore action-key-depress-prev-point
 			     (progn (setq mark (marker-position (mark-marker))
 					  start (region-beginning)
@@ -2089,9 +2097,11 @@ button is found in the current buffer."
 		   (t (setq start (point))
 		      (insert curr-label)
 		      (setq end (point))))
-	     (ibut:delimit start end instance-flag)
+	     (when (and start end)
+	       (ibut:delimit start end instance-flag))
 	     (ibut:insert-text 'hbut:current)
-	     (goto-char start)))
+	     (when start
+	       (goto-char start))))
 
 	  (t (hypb:error
 	      "(ibut:operate): Operation failed.  Check button attribute permissions: %s"
@@ -2119,29 +2129,46 @@ button is found in the current buffer."
 
 (defun    ibut:insert-text (ibut)
   "Space, delimit and insert the activatable text of IBUT."
-  (insert ibut:label-separator)
-  (let ((actype (hattr:get ibut 'actype))
-	(args   (hattr:get ibut 'args)))
+  (when (hattr:get ibut 'name)
+    (insert ibut:label-separator))
+  (let* ((actype (hattr:get ibut 'actype))
+	 (args   (hattr:get ibut 'args))
+	 (arg1   (nth 0 args))
+	 (arg2   (nth 1 args))
+	 (arg3   (nth 2 args)))
     (pcase actype
-      ('kbd-key (insert "{" (car args) "}" ))
-      ((or 'link-to-directory 'link-to-file
-	   'link-to-Info-node 'link-to-Info-index-item)
-       (insert "\"" (car args) "\""))
-      ('link-to-file-line (insert (apply #'format "\"%s:%d\"" args)))
-      ('link-to-file-line-and-column (insert (apply #'format "\"%s:%d:%d\"" args)))
-      ('annot-bib (insert "[" (car args) "]"))
-      ('exec-shell-cmd (insert "\"!" (car args) "\""))
-      ('exec-window-cmd (insert "\"&" (car args) "\""))
-      ('link-to-ebut (progn (insert "<elink:" (car args))
-			    (when (cadr args) (insert ": " (cadr args)))))
-      ('link-to-ibut (progn (insert "<ilink:" (car args))
-			    (when (cadr args) (insert ": " (cadr args)))))
-      ('link-to-gbut (insert "<elink:" (car args)))
-      ('link-to-kcell (progn (insert "<") (when (car args) (insert (car args)))
-			     (when (cadr args) (insert ", " (cadr args)))))
-      ('link-to-org-id (insert (format "\"id:%s\"" (car args))))
-      ('link-to-rfc (insert (format "rfc%d" (car args))))
-      ('man-show (insert (car args)))
+      ('actypes::kbd-key (insert "{" arg1 "}" ))
+      ((or 'actypes::link-to-directory 'actypes::link-to-Info-node 'actypes::link-to-Info-index-item)
+       (insert "\"" arg1 "\""))
+      ('actypes::annot-bib (insert "[" arg1 "]"))
+      ('actypes::exec-shell-cmd (insert "\"!" arg1 "\""))
+      ('actypes::exec-window-cmd (insert "\"&" arg1 "\""))
+      ('actypes::link-to-gbut (insert "<glink:" arg1 ">"))
+      ('actypes::link-to-ebut (progn (insert "<elink:" arg1)
+				     (when arg2 (insert ": " arg2)) ">"))
+      ('actypes::link-to-ibut (progn (insert "<ilink:" arg1)
+				     (when arg2 (insert ": " arg2)) ">"))
+      ('actypes::link-to-kcell (progn (insert "<") (when arg1 (insert arg1))
+				      (when arg2 (insert ", " arg2)) ">"))
+      ('actypes::link-to-org-id (insert (format "\"id:%s\"" arg1)))
+      ('actypes::link-to-rfc (insert (format "rfc%d" arg1)))
+      ('actypes::man-show (insert arg1))
+      ('actypes::link-to-file-line (insert (format "\"%s:%d\""
+						   (hpath:substitute-var arg1) arg2)))
+      ('actypes::link-to-file-line-and-column
+       (insert (format "\"%s:%d:%d\"" (hpath:substitute-var arg1) arg2 arg3)))
+      ('actypes::link-to-file (insert
+			       (if (/= (length args) 2)
+				   ;; filename only
+				   (format "\"%s\"" (hpath:substitute-var arg1))
+				 ;; includes buffer pos that we translate to line:col
+				 (with-current-buffer (find-file-noselect arg1)
+				   (save-excursion
+				     (goto-char arg2)
+				     (format "\"%s:%d:%d\""
+					     (hpath:substitute-var arg1)
+					     (line-number-at-pos (point) t)
+					     (current-column)))))))
       ;; Generic action button type						      
       (_ (insert (format "<%s%s%s>" actype (if args " " "")
 			 (if args (hypb:format-args args) "")))))))

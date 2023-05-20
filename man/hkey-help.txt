@@ -41,22 +41,22 @@ Mouse-only Control
     another window                with source buffer
 
   Drag to a Modeline from:
-    buffer/file menu item       Displays buffer/file in    Swaps window buffers
-                                  new window by release
+    but/buffer/file menu item   Displays ref/buffer/file   Swaps window buffers
+                                  in new window by release
     buffer/file menu 1st line   Moves buffer/file menu to  Swaps window buffers
                                   new window by release
     anywhere else               Displays buffer in         Swaps window buffers
                                   new window by release
 
   Drag between windows from:
-    buffer/file menu item       Displays buffer/file in    Swaps window buffers
-                                  window of button release 
+    but/buffer/file menu item   Displays ref/buffer/file   Swaps window buffers
+                                  in window of button release 
     buffer/file menu 1st line   Moves buffer/file menu     Swaps window buffers
     anywhere else               Creates/modifies a link    Swaps window buffers
 
   Drag outside of Emacs from:
-    buffer/file menu item       Displays buffer/file in    Moves window to new frame
-                                  a new frame
+    but/buffer/file menu item   Displays ref/buffer/file   Moves window to new frame
+                                  in a new frame
     Modeline or other window    Clones window to new frame Moves window to new frame
 
   Modeline Click

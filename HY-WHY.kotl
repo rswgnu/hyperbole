@@ -65,11 +65,11 @@
       with mouse drags and the Hyperbole HyControl system.  See
       "DEMO#HyControl".
 
-    12a. Drag Buffer Menu, Dired or Treemacs items to other windows to
-         display them wherever you want.  Integrate with the Ace
-         Window package to `throw' items to specific windows with
-         quick key sequences.  See "DEMO#Displaying File and Buffer
-         Items and Moving Buffers".
+    12a. Drag Button Referents, Buffer Menu, Dired or Treemacs items
+         to other windows to display them wherever you want.
+         Integrate with the Ace Window package to `throw' items to
+         specific windows with quick key sequences.  See
+         "DEMO#Displaying File and Buffer Items and Moving Buffers".
 
     12b. Drag-and-drop text regions across Emacs frames.  See
          "DEMO#Thing Selection".
