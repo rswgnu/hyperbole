@@ -1,5 +1,16 @@
 2023-05-20  Bob Weiner  <rsw@gnu.org>
 
+* hui.el (hui:ibut-create, hui:ebut-create,
+          hui:ibut-link-create, hui:ebut-link-create):
+  hbut.el (ebut:program, ibut:program):
+    Set categ property, needed for 'ebut:is-p' and 'ibut:is-p' tests.
+          (ibut:is-p): Update to handle (eq categ 'implicit).
+          (ibut:create): If categ arg is not given and ibtype is found
+    from the given button, use that.  Otherwise, set to 'implicit.
+
+* kotl/klink.el (klink:at-p): Ignore <[ibut name]> and msg attachments like
+    <#part ...>.
+
 * hsys-org.el (hsys-org-link-at-p): Stop using (org-in-regexp org-link-any-re nil t)
     to avoid rx warnings.  Use (eq (org-element-type (org-element-context)) 'link)
     instead.
