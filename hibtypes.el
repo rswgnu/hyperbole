@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 20:45:31
-;; Last-Mod:     14-May-23 at 10:57:23 by Bob Weiner
+;; Last-Mod:     20-May-23 at 16:10:20 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -988,6 +988,7 @@ in grep and shell buffers."
 	     ;; Emacs native compiler file lines
 	     (looking-at "Compiling \\(\\S-+\\)\\.\\.\\.$")
 	     (looking-at "Loading \\(\\S-+\\) (\\S-+)\\.\\.\\.$")
+ 	     (looking-at "[a-zA-Z0-9]+ ([-a-zA-Z0-9]+): \\([^:\"'`]+\\):\\([0-9]+\\):")
              ;; Grep matches (allowing for Emacs Lisp vars with : in
 	     ;; name within the pathname), Ruby, UNIX C compiler and Introl 68HC11 C compiler errors
              (looking-at "\\([^ \t\n\r\"'`]*[^ \t\n\r:\"'`0-9]\\): ?\\([1-9][0-9]*\\)[ :]")

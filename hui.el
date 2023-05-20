@@ -897,6 +897,7 @@ For programmatic creation, use `ibut:program' instead."
 	(setq but-buf (current-buffer))
 	(hui:buf-writable-err but-buf "ibut-create")
 
+	(hattr:set 'hbut:current 'name lbl)
 	(hattr:set 'hbut:current 'loc (hui:key-src but-buf))
 	(hattr:set 'hbut:current 'dir (hui:key-dir but-buf))
 	(setq actype (hui:actype))

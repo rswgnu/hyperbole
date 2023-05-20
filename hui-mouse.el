@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    04-Feb-89
-;; Last-Mod:     30-Apr-23 at 15:50:57 by Bob Weiner
+;; Last-Mod:     20-May-23 at 10:52:22 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1399,8 +1399,8 @@ sets `hkey-value' to (identifier . identifier-definition-buffer-position)."
        (not (and (smart-lisp-mode-p) (smart-lisp-at-definition-p)))
        ;; Ignore Lisp loading expressions
        (not (smart-lisp-at-load-expression-p))
-       (setq hkey-value (hargs:find-tag-default)
-	     hkey-value (cons hkey-value (smart-imenu-item-p hkey-value variable-flag)))
+       (setq hkey-value (smart-imenu-item-p hkey-value variable-flag))
+       (setq hkey-value (cons (hargs:find-tag-default) hkey-value))
        (cdr hkey-value)))
 
 ;; Derived from `imenu' function in the imenu library.

@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Sep-92
-;; Last-Mod:     19-May-23 at 06:53:58 by Bob Weiner
+;; Last-Mod:     20-May-23 at 10:37:04 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -182,7 +182,7 @@ and release to register a diagonal drag.")
 	      ;; Note that `hui:ebut-link-directly' uses any active
 	      ;; region as the label of the button to create.
 	      . ((or (hmouse-drag-item-to-display) (hui:ebut-link-directly))
-		 . (hmouse-swap-buffers)))
+		 . (hui:ibut-link-directly)))
 	     ((hmouse-drag-region-active)
 	      . ((hmouse-drag-not-allowed) . (hmouse-drag-not-allowed)))
 	     ((setq hkey-value (hmouse-drag-horizontally))

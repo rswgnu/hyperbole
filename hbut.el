@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    18-Sep-91 at 02:57:09
-;; Last-Mod:     20-May-23 at 09:58:56 by Bob Weiner
+;; Last-Mod:     20-May-23 at 15:39:10 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -571,7 +571,8 @@ else nil."
 		    (when found
 		      (goto-char pos)
 		      (ebut:at-p))))
-		lbl-key))
+		lbl-key
+		(current-buffer)))
 
 ;;; ------------------------------------------------------------------------
 (defun    ebut:delimit (start end instance-flag)
@@ -1077,29 +1078,30 @@ BUFFER defaults to the current buffer."
 
 (defun    hbut:funcall (func &optional lbl-key buffer key-src)
   "Move to an implicit button and return the result of calling FUNC.
-Call FUNC with optional argument values of LBL-KEY, BUFFER and KEY-SRC.
-The implicit button used is given by LBL-KEY (a label or label key)
-within BUFFER or KEY-SRC (full path to global button file).  Use
-`save-excursion' around this call to prevent permanent movement of
-point when desired."
-  (when buffer
-    (if (bufferp buffer)
-	(set-buffer buffer)
-      (error "(ibut:get): Invalid buffer argument: %s" buffer)))
-  (when (null key-src)
-    (let ((loc (hattr:get 'hbut:current 'loc)))
-      (when loc
-	(set-buffer (or (get-buffer loc) (find-file-noselect loc)))))
-    (setq key-src (hbut:to-key-src 'full)
-	  ;; `hbut:to-key-src' sets current buffer to key-src buffer.
-	  buffer (or buffer (current-buffer))))
-  (when (stringp lbl-key)
-    (when key-src
-      (set-buffer (if (bufferp key-src)
-		      key-src
-		    (find-file-noselect key-src))))
-    (when (or buffer key-src)
-      (funcall func lbl-key buffer key-src))))
+Call FUNC with optional argument values of LBL-KEY, BUFFER and
+KEY-SRC.  The implicit button used is given by LBL-KEY (a label
+or label key) within BUFFER or KEY-SRC (full path to global
+button file) or within the current buffer if both are null.  Use
+`save-excursion' around this call to prevent permanent movement
+of point when desired."
+  (if buffer
+      (if (bufferp buffer)
+	  (set-buffer buffer)
+	(error "(ibut:get): Invalid buffer argument: %s" buffer))
+    (when (null key-src)
+      (let ((loc (hattr:get 'hbut:current 'loc)))
+	(when loc
+	  (set-buffer (or (get-buffer loc) (find-file-noselect loc)))))
+      (setq key-src (hbut:to-key-src 'full)
+	    ;; `hbut:to-key-src' sets current buffer to key-src buffer.
+	    buffer (or buffer (current-buffer))))
+    (when (stringp lbl-key)
+      (when key-src
+	(set-buffer (if (bufferp key-src)
+			key-src
+		      (find-file-noselect key-src))))))
+  (when (and (stringp lbl-key) (or buffer key-src))
+      (funcall func lbl-key buffer key-src)))
 
 (defun    hbut:get (&optional lbl-key buffer key-src)
   "Return explicit or labeled implicit button symbol given by LBL-KEY and BUFFER.
@@ -2129,9 +2131,9 @@ button is found in the current buffer."
 
 (defun    ibut:insert-text (ibut)
   "Space, delimit and insert the activatable text of IBUT."
-  (when (hattr:get ibut 'name)
+  (when (not (string-empty-p (or (hattr:get ibut 'name) "")))
     (insert ibut:label-separator))
-  (let* ((actype (hattr:get ibut 'actype))
+  (let* ((actype (actype:elisp-symbol (hattr:get ibut 'actype)))
 	 (args   (hattr:get ibut 'args))
 	 (arg1   (nth 0 args))
 	 (arg2   (nth 1 args))
@@ -2145,11 +2147,14 @@ button is found in the current buffer."
       ('actypes::exec-window-cmd (insert "\"&" arg1 "\""))
       ('actypes::link-to-gbut (insert "<glink:" arg1 ">"))
       ('actypes::link-to-ebut (progn (insert "<elink:" arg1)
-				     (when arg2 (insert ": " arg2)) ">"))
+				     (when arg2 (insert ": " arg2))
+				     (insert ">")))
       ('actypes::link-to-ibut (progn (insert "<ilink:" arg1)
-				     (when arg2 (insert ": " arg2)) ">"))
+				     (when arg2 (insert ": " arg2))
+				     (insert ">")))
       ('actypes::link-to-kcell (progn (insert "<") (when arg1 (insert arg1))
-				      (when arg2 (insert ", " arg2)) ">"))
+				      (when arg2 (insert ", " arg2))
+				      (insert ">")))
       ('actypes::link-to-org-id (insert (format "\"id:%s\"" arg1)))
       ('actypes::link-to-rfc (insert (format "rfc%d" arg1)))
       ('actypes::man-show (insert arg1))
@@ -2285,7 +2290,8 @@ Return the symbol for the button, else nil."
 		      (when found
 			(goto-char pos)
 			ibut))))
-		lbl-key))
+		lbl-key
+		(current-buffer)))
 
 (defun    ibut:at-to-name-p (&optional ibut)
   "If point is on an implicit button, optional IBUT, move to the start of its name.
@@ -2342,7 +2348,8 @@ Return the symbol for the button if found, else nil."
 		(skip-chars-forward (regexp-quote ibut:label-start)))
 	       ((ibut:at-to-name-p ibut))))
        ibut))
-   lbl-key))
+   lbl-key
+   (current-buffer)))
 
 (defun    ibut:to-text (lbl-key)
   "Move to the text of the nearest implicit button matching LBL-KEY.
@@ -2391,7 +2398,8 @@ Return the symbol for the button if found, else nil."
 		   (goto-char (min (+ 2 (match-end 0)) (point-max)))
 		 (goto-char opoint)))))
 	 ibut))
-     lbl-key)))
+     lbl-key
+     (current-buffer))))
 
 ;;; ------------------------------------------------------------------------
 (defconst ibut:label-start "<["

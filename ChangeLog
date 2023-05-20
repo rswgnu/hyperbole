@@ -1,3 +1,34 @@
+2023-05-20  Bob Weiner  <rsw@gnu.org>
+
+* hsys-org.el (hsys-org-link-at-p): Stop using (org-in-regexp org-link-any-re nil t)
+    to avoid rx warnings.  Use (eq (org-element-type (org-element-context)) 'link)
+    instead.
+
+* hibtypes.el (grep-msg): Add support for *Warning* buffer entries like:
+    Warning (comp): hbut.el:224:10: Warning: reference to free variable...
+
+* hbut.el (ibut:insert-text): Add actype:elisp-symbol call to ensure all actype symbols
+    are expanded to Hyperbole internal namespace.  This fixes some link-to-rfc tests.
+
+* hui.el (hui:ibut-create): Add name property from label to ibut.
+
+* hpath.el (hpath:find): Simplify and fix so noselect argument is always handled
+    properly and findable path is used in places instead of pathname.
+    This fixes an issue with ilinks that include a pathname where hpath:find
+    was switching the current buffer improperly.
+           (hpath:display-buffer-alist, hpath:display-where-alist): Fix
+    'other-frame-one-window' option to return found buffer by adding a 'prog1'
+    call.
+  hbut.el (hbut:funcall): Update to use '(current-buffer)' when both buffer
+    and key-src args are null.
+  hbut.el (ebut:to, ibut:to, ibut:to-name, ibut:to-text):
+    Send (current-buffer) as _buffer arg to hbut:funcall so does not try to use
+     _key-src arg and end up in the wrong buffer.
+
+* hui-mouse.el (smart-imenu-item-at-p): Fix so only returns non-nil
+    when smart-menu-item-p call is non-nil.  Stops from triggering
+    when not on an imenu item.
+
 2023-05-20  Mats Lidell  <matsl@gnu.org>
 
 * test/MANIFEST: Add missing hargs-tests.el.
