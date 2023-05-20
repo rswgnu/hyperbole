@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    15-Nov-93 at 12:15:16
-;; Last-Mod:     29-Apr-23 at 14:02:57 by Bob Weiner
+;; Last-Mod:     20-May-23 at 16:52:28 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -184,8 +184,9 @@ link-end-position, (including delimiters)."
 	     ;; even if inside a comment
 	     (and (search-backward "<" bol t)
 		  (not (eq (preceding-char) ?#))
-		  ;; Don't match to \<(explicit)> Hyperbole buttons
-		  (not (eq (char-after (1+ (point))) ?\())))
+		  ;; Don't match to \<(explicit)> or <[implicit]> Hyperbole
+                  ;; buttons or message attachments such as <#part ...>
+		  (not (memq (char-after (1+ (point))) '(?\( ?\[ ?#)))))
 	   (setq label-and-pos (hbut:label-p t "<" ">" t))
 	   (stringp (setq referent (car label-and-pos)))
 	   (setq referent (string-trim referent))

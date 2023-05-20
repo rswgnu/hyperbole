@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    18-Sep-91 at 02:57:09
-;; Last-Mod:     20-May-23 at 15:39:10 by Bob Weiner
+;; Last-Mod:     20-May-23 at 17:53:22 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -449,6 +449,7 @@ For interactive creation, use `hui:ebut-create' instead."
       (condition-case err
 	  (progn
 	    (hattr:clear 'hbut:current)
+	    (hattr:set 'hbut:current 'categ 'explicit)
 	    (hattr:set 'hbut:current 'loc (hui:key-src but-buf))
 	    (hattr:set 'hbut:current 'dir (hui:key-dir but-buf))
             (if (or (and actype-sym (fboundp actype-sym))
@@ -1678,11 +1679,11 @@ return nil if no implicit button is found at point."
 	  (when (or is-type but-sym)
 	    (unless but-sym
 	      (setq but-sym 'hbut:current))
-	    (let ((current-name      (hattr:get but-sym 'name))
+	    (let ((current-categ     (hattr:get but-sym 'categ))
+		  (current-name      (hattr:get but-sym 'name))
 		  ;; (current-lbl-key   (hattr:get but-sym 'lbl-key))
 		  (current-lbl-start (hattr:get but-sym 'lbl-start))
 		  (current-lbl-end   (hattr:get but-sym 'lbl-end))
-		  ;; (current-categ     (hattr:get but-sym 'categ))
 		  (current-loc       (hattr:get but-sym 'loc))
 		  (current-dir       (hattr:get but-sym 'dir))
 		  (current-action    (hattr:get but-sym 'action))
@@ -1713,7 +1714,8 @@ return nil if no implicit button is found at point."
 		(when lbl-end
 		  (hattr:set 'hbut:current 'lbl-end lbl-end)))
 
-	      (hattr:set 'hbut:current 'categ is-type)
+	      (hattr:set 'hbut:current 'categ
+			 (or is-type current-categ 'implicit))
 
 	      (if current-loc
 		  (setq loc current-loc)
@@ -1855,7 +1857,9 @@ Return nil if no matching button is found."
   "Return non-nil if OBJECT is a symbol representing an implicit Hyperbole button."
   (when (symbolp object)
     (let ((categ (hattr:get object 'categ)))
-      (and categ (string-match "\\`ibtypes::" (symbol-name categ))))))
+      (and categ
+	   (or (eq categ 'implicit)
+	       (string-match "\\`ibtypes::" (symbol-name categ)))))))
 
 (defun    ibut:label-map (but-func &optional _start-delim _end-delim
 				   _regexp-match _include-delims)
@@ -2210,6 +2214,7 @@ For interactive creation, use `hui:ibut-create' instead."
       (condition-case err
 	  (progn
 	    (hattr:clear 'hbut:current)
+	    (hattr:set 'hbut:current 'categ 'implicit)
 	    (hattr:set 'hbut:current 'loc (hui:key-src but-buf))
 	    (hattr:set 'hbut:current 'dir (hui:key-dir but-buf))
             (if (or (and actype-sym (fboundp actype-sym))

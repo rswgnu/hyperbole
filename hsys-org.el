@@ -226,7 +226,11 @@ Return the (start . end) buffer positions of the region."
 Assume caller has already checked that the current buffer is in `org-mode'
 or are looking for an Org link in another buffer type."
   (unless (or (smart-eolp) (smart-eobp))
-    (eq (org-element-type (org-element-context)) 'link)))
+    (condition-case ()
+	;; org-element-context may call looking-at with a nil value,
+	;; triggering an error, so catch it.
+	(eq (org-element-type (org-element-context)) 'link)
+      (error nil))))
 
 ;; Assume caller has already checked that the current buffer is in org-mode.
 (defun hsys-org-heading-at-p (&optional _)

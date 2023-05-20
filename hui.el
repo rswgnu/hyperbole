@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 21:42:03
-;; Last-Mod:     19-May-23 at 08:07:13 by Bob Weiner
+;; Last-Mod:     20-May-23 at 17:31:58 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -299,6 +299,7 @@ For programmatic creation, use `ebut:program' instead."
 	(setq but-buf (current-buffer))
 	(hui:buf-writable-err but-buf "ebut-create")
 
+	(hattr:set 'hbut:current 'categ 'explicit)
 	(hattr:set 'hbut:current 'loc (hui:key-src but-buf))
 	(hattr:set 'hbut:current 'dir (hui:key-dir but-buf))
 	(setq actype (hui:actype))
@@ -898,6 +899,7 @@ For programmatic creation, use `ibut:program' instead."
 	(hui:buf-writable-err but-buf "ibut-create")
 
 	(hattr:set 'hbut:current 'name lbl)
+	(hattr:set 'hbut:current 'categ 'implicit)
 	(hattr:set 'hbut:current 'loc (hui:key-src but-buf))
 	(hattr:set 'hbut:current 'dir (hui:key-dir but-buf))
 	(setq actype (hui:actype))
@@ -1593,6 +1595,7 @@ in which to create button.  BUT-DIR is the directory of BUT-LOC.
 TYPE-AND-ARGS is the action type for the button followed by any
 arguments it requires.  Any text properties are removed from string
 arguments."
+  (hattr:set 'hbut:current 'categ 'explicit)
   (hattr:set 'hbut:current 'loc but-loc)
   (hattr:set 'hbut:current 'dir but-dir)
   (hattr:set 'hbut:current 'actype (actype:elisp-symbol (car type-and-args)))
@@ -1615,6 +1618,7 @@ in which to create button.  BUT-DIR is the directory of BUT-LOC.
 TYPE-AND-ARGS is the action type for the button followed by any
 arguments it requires.  Any text properties are removed from string
 arguments."
+  (hattr:set 'hbut:current 'categ 'implicit)
   (hattr:set 'hbut:current 'loc but-loc)
   (hattr:set 'hbut:current 'dir but-dir)
   (hattr:set 'hbut:current 'actype (actype:elisp-symbol (car type-and-args)))
