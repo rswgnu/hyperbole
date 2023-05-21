@@ -1,9 +1,15 @@
 2023-05-28  Mats Lidell  <matsl@gnu.org>
 
+* test/hbut-tests.el (hbut-tests-ibut-program-link-to-directory)
+    (hbut-tests-ibut-program-link-to-file)
+    (hbut-tests-ibut-insert-text-link-to-dir): Add ibut tests.
+
+2023-05-28  Mats Lidell  <matsl@gnu.org>
+
 * hibtypes.el (hypb-mail-address-tld-regexp)
     (hypb-mail-address-regexp): Use hypb prefix.
 
-2023-05-27  Bob Weiner  <rsw@gnu.org>
+2023-05-23  Bob Weiner  <rsw@gnu.org>
 
 * kotl/kotl-mode.el (kotl-mode:setup-keymap): Create this function instead
     of setting up keymap at library load time so that key rebindings occur

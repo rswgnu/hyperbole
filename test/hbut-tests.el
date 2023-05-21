@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    30-may-21 at 09:33:00
-;; Last-Mod:     30-Apr-23 at 11:04:33 by Mats Lidell
+;; Last-Mod:     21-May-23 at 09:41:08 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -189,6 +189,35 @@ Needed since hyperbole expands all links to absolute paths and
       (goto-char 3)
       (should-not (ebut:at-p))
       (should (string= button (buffer-string))))))
+
+(ert-deftest hbut-tests-ibut-program-link-to-directory ()
+  "Programmatically create ibut link-to-directory."
+  (with-temp-buffer
+    (ibut:program "label" 'link-to-directory "/tmp")
+    (should (string= "<[label]> - \"/tmp\"" (buffer-string)))))
+
+(ert-deftest hbut-tests-ibut-program-link-to-file ()
+  "Programatically create ibut link to file."
+  (let ((test-file (make-temp-file "ibut" nil ".txt")))
+    (unwind-protect
+        (with-temp-buffer
+          (ibut:program "label" 'link-to-file test-file)
+          (should (string=
+                   (concat "<[label]> - \"" test-file "\"")
+                   (buffer-string))))
+      (delete-file test-file))))
+
+(ert-deftest hbut-tests-ibut-insert-text-link-to-dir ()
+  "Insert the link to dir.
+But does also insert the delimiter string!?"
+  (with-temp-buffer
+    (ibut:program "label" 'link-to-directory "/tmp")
+    (should (string= "<[label]> - \"/tmp\"" (buffer-string)))
+    (goto-char 3)
+    (let ((but (ibut:at-p)))
+      (with-temp-buffer
+        (ibut:insert-text but)
+        (should (string= " - \"/tmp\"" (buffer-string)))))))
 
 ;; This file can't be byte-compiled without the `el-mock' package (because of
 ;; the use of the `with-mock' macro), which is not a dependency of Hyperbole.
