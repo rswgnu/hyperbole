@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     1-Nov-91 at 00:44:23
-;; Last-Mod:     20-May-23 at 14:05:35 by Bob Weiner
+;; Last-Mod:     20-May-23 at 23:20:22 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -2025,7 +2025,10 @@ Return LINKNAME unchanged if it is not a symbolic link but is a pathname."
   path)
 
 (defun hpath:normalize (filename)
-  "Normalize and return PATH if PATH is a valid, readable path, else signal error."
+  "Normalize and return PATH if PATH is a valid, readable path, else signal error.
+Replace Emacs Lisp variables and environment variables (format of
+${var}) with their values in PATH.  The first matching value for
+  variables like `${PATH}' is used."
   (hpath:validate (hpath:substitute-value
 		   (buffer-file-name (hpath:find-noselect filename)))))
 
