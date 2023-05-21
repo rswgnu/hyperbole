@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    04-Feb-89
-;; Last-Mod:     20-May-23 at 10:52:22 by Bob Weiner
+;; Last-Mod:     21-May-23 at 12:06:23 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -198,46 +198,46 @@ Its default value is `smart-scroll-down'.  To disable it, set it to
   '(
     ;; Company completion mode
     ((and (boundp 'company-active-map)
-	  (memq company-active-map (current-minor-mode-maps))) .
-	  ((smart-company-to-definition) . (smart-company-help)))
+	  (memq company-active-map (current-minor-mode-maps)))
+     . ((smart-company-to-definition) . (smart-company-help)))
     ;;
     ;; Handle any Org mode-specific contexts but give priority to Hyperbole
     ;; buttons prior to cycling Org headlines
     ((and (not (hyperb:stack-frame '(smart-org)))
 	  (let ((hrule:action #'actype:identity))
-	    (smart-org))) .
-     ((smart-org) . (smart-org)))
+	    (smart-org)))
+     . ((smart-org) . (smart-org)))
     ;;
     ;; Ivy minibuffer completion mode
-    ((and (boundp 'ivy-mode) ivy-mode (minibuffer-window-active-p (selected-window))) .
-     ((ivy-done) . (ivy-dispatching-done)))
+    ((and (boundp 'ivy-mode) ivy-mode (minibuffer-window-active-p (selected-window)))
+     . ((ivy-done) . (ivy-dispatching-done)))
     ;;
     ;; Treemacs hierarchical file manager
-    ((eq major-mode 'treemacs-mode) .
-     ((smart-treemacs) . (smart-treemacs)))
+    ((eq major-mode 'treemacs-mode)
+     . ((smart-treemacs) . (smart-treemacs)))
     ;;
     ;; dired-sidebar-mode
-    ((eq major-mode 'dired-sidebar-mode) .
-     ((smart-dired-sidebar) . (smart-dired-sidebar)))
+    ((eq major-mode 'dired-sidebar-mode)
+     . ((smart-dired-sidebar) . (smart-dired-sidebar)))
     ;;
     ;; Handle Emacs push buttons in buffers
-    ((and (fboundp 'button-at) (button-at (point))) .
-     ((smart-push-button nil (mouse-event-p last-command-event))
-      . (smart-push-button-help nil (mouse-event-p last-command-event))))
+    ((and (fboundp 'button-at) (button-at (point)))
+     . ((smart-push-button nil (mouse-event-p last-command-event))
+	. (smart-push-button-help nil (mouse-event-p last-command-event))))
     ;;
     ;; If click in the minibuffer and reading an argument,
     ;; accept argument or give completion help.
     ((and (> (minibuffer-depth) 0)
 	  (eq (selected-window) (minibuffer-window))
 	  (not (eq hargs:reading-type 'hmenu))
-	  (not (smart-helm-alive-p))) .
-	  ((funcall (key-binding (kbd "RET"))) . (smart-completion-help)))
+	  (not (smart-helm-alive-p)))
+     . ((funcall (key-binding (kbd "RET"))) . (smart-completion-help)))
     ;;
     ;; If reading a Hyperbole menu item or a Hyperbole completion-based
     ;; argument, allow selection of an item at point.
-    ((and (> (minibuffer-depth) 0) (setq hkey-value (hargs:at-p))) .
-     ((hargs:select-p hkey-value) .
-      (hargs:select-p hkey-value 'assist)))
+    ((and (> (minibuffer-depth) 0) (setq hkey-value (hargs:at-p)))
+     . ((hargs:select-p hkey-value)
+	. (hargs:select-p hkey-value 'assist)))
     ;;
     ;; If reading a Hyperbole menu item and nothing is selected, just return.
     ;; Or if in a helm session with point in the minibuffer, quit the
@@ -245,27 +245,27 @@ Its default value is `smart-scroll-down'.  To disable it, set it to
     ((and (> (minibuffer-depth) 0)
 	  (eq (selected-window) (minibuffer-window))
 	  (or (eq hargs:reading-type 'hmenu)
-	      (smart-helm-alive-p))) .
-	  ((funcall (key-binding (kbd "RET"))) . (funcall (key-binding (kbd "RET")))))
+	      (smart-helm-alive-p)))
+     . ((funcall (key-binding (kbd "RET"))) . (funcall (key-binding (kbd "RET")))))
     ;;
     ;; The ID-edit package supports rapid killing, copying, yanking and
     ;; display management. It is available only as a part of InfoDock.
     ;; It is not included with Hyperbole.
     ((and (boundp 'id-edit-mode) id-edit-mode
 	  (not buffer-read-only)
-	  (not (smart-helm-alive-p))) .
-	  ((id-edit-yank) . (id-edit-yank)))
+	  (not (smart-helm-alive-p)))
+     . ((id-edit-yank) . (id-edit-yank)))
     ;;
     ;; If in an xref buffer on a listing of matching identifier lines, go to
     ;; the source line referenced by the current entry.
-    ((and (fboundp 'xref--item-at-point) (xref--item-at-point)) .
-     ((xref-goto-xref) . (xref-show-location-at-point)))
+    ((and (fboundp 'xref--item-at-point) (xref--item-at-point))
+     . ((xref-goto-xref) . (xref-show-location-at-point)))
     ;;
     ;; If at the end of a line (eol), invoke the associated Smart Key handler EOL handler.
     ((if (eq major-mode 'kotl-mode)
 	 (and (not (kotl-mode:eobp)) (kotl-mode:eolp t))
-       (smart-eolp)) .
-       ((funcall action-key-eol-function) . (funcall assist-key-eol-function)))
+       (smart-eolp))
+     . ((funcall action-key-eol-function) . (funcall assist-key-eol-function)))
     ;;
     ;; The Smart Menu system is an attractive in-buffer menu system
     ;; that works on any display system that supports Emacs.  It
@@ -274,44 +274,44 @@ Its default value is `smart-scroll-down'.  To disable it, set it to
     ;; Smart Keys.
     ;;
     ;; This selects or gives help for a menu item.
-    ((eq major-mode 'smart-menu-mode) .
-     ((smart-menu-select) . (smart-menu-help)))
+    ((eq major-mode 'smart-menu-mode)
+     . ((smart-menu-select) . (smart-menu-help)))
     ;;
-    ((derived-mode-p 'dired-mode) .
-     ((smart-dired) . (smart-dired-assist)))
+    ((derived-mode-p 'dired-mode)
+     . ((smart-dired) . (smart-dired-assist)))
     ;;
-    ((string-prefix-p "magit-" (symbol-name major-mode)) .
-     ((smart-magit) . (smart-magit-assist)))
+    ((string-prefix-p "magit-" (symbol-name major-mode))
+     . ((smart-magit) . (smart-magit-assist)))
     ;;
     ;; If on a Hyperbole button, perform action or give help.
-    ((hbut:at-p) .
-     ((hui:hbut-act 'hbut:current) . (hui:hbut-help 'hbut:current)))
+    ((hbut:at-p)
+     . ((hui:hbut-act 'hbut:current) . (hui:hbut-help 'hbut:current)))
     ;;
     ;; This potentially displays a Smart Menu.
     ((and (fboundp 'smart-menu-choose-menu)
 	  (setq hkey-value (and hkey-always-display-menu
 				(smart-menu-choose-menu)))
 	  (not (and (get-buffer-window *smart-menu-buffer*)
-		    (eq hkey-value *smart-menu-curr*)))) .
-		    ((smart-menu hkey-value) .
-		     (smart-menu hkey-value)))
+		    (eq hkey-value *smart-menu-curr*))))
+     . ((smart-menu hkey-value)
+	. (smart-menu hkey-value)))
     ;;
     ;; View minor mode
-    ((if (boundp 'view-minor-mode) view-minor-mode) .
-     ((cond ((last-line-p)
-	     (view-quit))
-	    ((pos-visible-in-window-p (point-max))
-	     (goto-char (point-max)))
-	    (t (scroll-up))) .
-	    (scroll-down)))
+    ((if (boundp 'view-minor-mode) view-minor-mode)
+     . ((cond ((last-line-p)
+	       (view-quit))
+	      ((pos-visible-in-window-p (point-max))
+	       (goto-char (point-max)))
+	      (t (scroll-up)))
+	. (scroll-down)))
     ;;
     ;; Direct access selection of helm-major-mode completions
     ((setq hkey-value (and (or (eq major-mode 'helm-major-mode)
 			       (and (featurep 'helm) (equal helm-action-buffer (buffer-name))))
 			   (or (eolp)
 			       (smart-helm-at-header)
-			       (smart-helm-line-has-action)))) .
-     ((smart-helm) . (smart-helm-assist)))
+			       (smart-helm-line-has-action))))
+     . ((smart-helm) . (smart-helm-assist)))
     ;;
     ;; Support the OO-Browser when available.  It is a separate Emacs
     ;; package not included with Hyperbole.  Within an OO-Browser
@@ -322,8 +322,8 @@ Its default value is `smart-scroll-down'.  To disable it, set it to
 	 (string-match "-Elements\\'" (buffer-name))
 	 (and (boundp 'br-feature-tags-file)
 	      (stringp br-feature-tags-file)
-	      (equal br-feature-tags-file buffer-file-name))) .
-	      ((smart-element) . (hkey-help)))
+	      (equal br-feature-tags-file buffer-file-name)))
+     . ((smart-element) . (hkey-help)))
     ;;
     ;; View major mode
     ((eq major-mode 'view-mode) .
@@ -333,53 +333,55 @@ Its default value is `smart-scroll-down'.  To disable it, set it to
     ;; array/vector, set, function, comment or string that begins or
     ;; ends at point.  For markup pairs, point must be at the first
     ;; character of the opening or closing tag.
-    ((hui-select-at-delimited-thing-p) .
-     ((hui-select-delimited-thing) . (progn (hui-select-delimited-thing)
-					    (hmouse-kill-region))))
+    ((hui-select-at-delimited-thing-p)
+     . ((hui-select-delimited-thing) . (progn (hui-select-delimited-thing)
+					      (hmouse-kill-region))))
     ;;
     ;; If the prior test failed and point is at the start or end of an
     ;; sexpression, mark it for editing or kill it (assist key).  This
     ;; only handles the special case where point is just after the
     ;; closing delimiter and not at an end-of-line, so this may be
     ;; removed someday.
-    ((hui-select-at-delimited-sexp-p) .
-     ((hui-select-mark-delimited-sexp) .
-      (progn (hui-select-mark-delimited-sexp) (hmouse-kill-region))))
+    ((hui-select-at-delimited-sexp-p)
+     . ((hui-select-mark-delimited-sexp)
+	. (progn (hui-select-mark-delimited-sexp) (hmouse-kill-region))))
     ;;
-    ((eq major-mode 'occur-mode) .
-     ((occur-mode-goto-occurrence) . (occur-mode-goto-occurrence)))
+    ((eq major-mode 'occur-mode)
+     . ((occur-mode-goto-occurrence) . (occur-mode-goto-occurrence)))
     ;;
-    ((eq major-mode 'moccur-mode) .
-     ((moccur-mode-goto-occurrence) . (moccur-mode-goto-occurrence)))
-    ((eq major-mode 'amoccur-mode) .
-     ((amoccur-mode-goto-occurrence) . (amoccur-mode-goto-occurrence)))
+    ((eq major-mode 'moccur-mode)
+     . ((moccur-mode-goto-occurrence) . (moccur-mode-goto-occurrence)))
+    ((eq major-mode 'amoccur-mode)
+     . ((amoccur-mode-goto-occurrence) . (amoccur-mode-goto-occurrence)))
     ;;
-    ((eq major-mode 'kotl-mode) .
-     ((kotl-mode:action-key) . (kotl-mode:assist-key)))
+    ((eq major-mode 'kotl-mode)
+     . ((kotl-mode:action-key) . (kotl-mode:assist-key)))
     ;;
     ;; Rdb-mode supports direct selection and viewing of in-memory relational
     ;; databases.  Rdb-mode is available as a part of InfoDock.
     ;; It is not included with Hyperbole.
-    ((eq major-mode 'rdb-mode) . ((rdb:action-key) . (rdb:assist-key)))
+    ((eq major-mode 'rdb-mode)
+     . ((rdb:action-key) . (rdb:assist-key)))
     ;;
     ;; Restore window config and hide help buffer when click at buffer end.
     ((if (= (point) (point-max))
-	 (string-match "^\\*Help\\|Help\\*$" (buffer-name))) .
-	 ((hkey-help-hide) . (hkey-help-hide)))
+	 (string-match "^\\*Help\\|Help\\*$" (buffer-name)))
+     . ((hkey-help-hide) . (hkey-help-hide)))
     ;;
     ;; Handle widgets in Custom-mode
-    ((eq major-mode 'Custom-mode) .
-     ((smart-custom) . (smart-custom-assist)))
+    ((eq major-mode 'Custom-mode)
+     . ((smart-custom) . (smart-custom-assist)))
     ;;
     ;; Emacs bookmarks menu (bookmark.el)
-    ((eq major-mode 'bookmark-bmenu-mode) .
-     ((bookmark-jump (bookmark-bmenu-bookmark) (hpath:display-buffer-function)) .
-      ;; Below we want the Assist Key to show what the Action Key does.
-      (hkey-help)))
+    ((eq major-mode 'bookmark-bmenu-mode)
+     . ((bookmark-jump (bookmark-bmenu-bookmark) (hpath:display-buffer-function))
+	.
+	;; Below we want the Assist Key to show what the Action Key does.
+	(hkey-help)))
     ;;
     ;; Pages directory listing mode (page-ext.el)
-    ((eq major-mode 'pages-directory-mode) .
-     ((pages-directory-goto) . (pages-directory-goto)))
+    ((eq major-mode 'pages-directory-mode)
+     . ((pages-directory-goto) . (pages-directory-goto)))
     ;;
     ;; Python files - ensure this comes before Imenu for more advanced
     ;; definition lookups
@@ -388,8 +390,8 @@ Its default value is `smart-scroll-down'.  To disable it, set it to
 		   (equal (hsys-org-get-value :language) "python"))
 	      (let ((case-fold-search))
 		(string-match "\\`\\([ *]?Pydoc[: ]\\|\\*?Python\\)" (buffer-name))))
-	  (setq hkey-value (smart-python-at-tag-p))) .
-	  ((smart-python hkey-value) . (smart-python hkey-value 'next-tag)))
+	  (setq hkey-value (smart-python-at-tag-p)))
+     . ((smart-python hkey-value) . (smart-python hkey-value 'next-tag)))
     ;;
     ;; Imenu listing in GNU Emacs
     ((smart-imenu-item-at-p)
@@ -397,25 +399,25 @@ Its default value is `smart-scroll-down'.  To disable it, set it to
 	(imenu-choose-buffer-index)))
     ;;
     ((and (eq major-mode 'c-mode)
-	  buffer-file-name (smart-c-at-tag-p)) .
-	  ((smart-c) . (smart-c nil 'next-tag)))
+	  buffer-file-name (smart-c-at-tag-p))
+     . ((smart-c) . (smart-c nil 'next-tag)))
     ;;
     ((and (eq major-mode 'c++-mode) buffer-file-name
 	  ;; Don't use smart-c++-at-tag-p here since it will prevent #include
 	  ;; lines from matching.
-	  (smart-c-at-tag-p)) .
-	  ((smart-c++) . (smart-c++ nil 'next-tag)))
+	  (smart-c-at-tag-p))
+     . ((smart-c++) . (smart-c++ nil 'next-tag)))
     ;;
     ((and (eq major-mode 'asm-mode)
-	  buffer-file-name (smart-asm-at-tag-p)) .
-	  ((smart-asm) . (smart-asm nil 'next-tag)))
+	  buffer-file-name (smart-asm-at-tag-p))
+     . ((smart-asm) . (smart-asm nil 'next-tag)))
     ;;
     ((or (and (smart-lisp-mode-p)
 	      (or (smart-lisp-at-load-expression-p)
 		  (smart-lisp-at-tag-p)))
 	 ;; Tightly limit Lisp matches in change-log-mode.
-	 (smart-lisp-at-change-log-tag-p)) .
-	 ((smart-lisp) . (smart-lisp 'show-doc)))
+	 (smart-lisp-at-change-log-tag-p))
+     . ((smart-lisp) . (smart-lisp 'show-doc)))
     ;;
     ;;
     ((and (eq major-mode 'java-mode) buffer-file-name
@@ -424,91 +426,92 @@ Its default value is `smart-scroll-down'.  To disable it, set it to
 	      (looking-at "@see[ \t]+")
 	      (save-excursion
 		(and (re-search-backward "[@\n\r\f]" nil t)
-		     (looking-at "@see[ \t]+"))))) .
-		     ((smart-java) . (smart-java nil 'next-tag)))
+		     (looking-at "@see[ \t]+")))))
+     . ((smart-java) . (smart-java nil 'next-tag)))
     ;;
     ((and (memq major-mode '(js2-mode js-mode js3-mode javascript-mode html-mode web-mode))
 	  buffer-file-name
-	  (smart-javascript-at-tag-p)) .
-	  ((smart-javascript) . (smart-javascript nil 'next-tag)))
+	  (smart-javascript-at-tag-p))
+     . ((smart-javascript) . (smart-javascript nil 'next-tag)))
     ;;
     ((and (eq major-mode 'objc-mode) buffer-file-name
-	  (smart-objc-at-tag-p)) .
-	  ((smart-objc) . (smart-objc nil 'next-tag)))
+	  (smart-objc-at-tag-p))
+     . ((smart-objc) . (smart-objc nil 'next-tag)))
     ;;
     ((and (memq major-mode '(fortran-mode f90-mode))
-	  buffer-file-name (smart-fortran-at-tag-p)) .
-	  ((smart-fortran) . (smart-fortran nil 'next-tag)))
+	  buffer-file-name (smart-fortran-at-tag-p))
+     . ((smart-fortran) . (smart-fortran nil 'next-tag)))
     ;;
-    ((eq major-mode 'calendar-mode) .
-     ((smart-calendar) . (smart-calendar-assist)))
+    ((eq major-mode 'calendar-mode)
+     . ((smart-calendar) . (smart-calendar-assist)))
     ;;
     ;; Part of InfoDock
-    ((eq major-mode 'unix-apropos-mode) .
-     ((smart-apropos) . (smart-apropos-assist)))
+    ((eq major-mode 'unix-apropos-mode)
+     . ((smart-apropos) . (smart-apropos-assist)))
     ;;
-    ((eq major-mode 'outline-mode) .
-     ((smart-outline) . (smart-outline-assist)))
+    ((eq major-mode 'outline-mode)
+     . ((smart-outline) . (smart-outline-assist)))
     ;;
-    ((eq major-mode 'Info-mode) .
-     ((smart-info) .  (smart-info-assist)))
+    ((eq major-mode 'Info-mode)
+     . ((smart-info) .  (smart-info-assist)))
     ;;
     ((if (boundp 'hmail:reader)
 	 (or (eq major-mode hmail:reader)
-	     (eq major-mode hmail:lister))) .
-	     ((smart-hmail) . (smart-hmail-assist)))
+	     (eq major-mode hmail:lister)))
+     . ((smart-hmail) . (smart-hmail-assist)))
     ;;
     ((eq major-mode 'gnus-group-mode)
      (smart-gnus-group) . (smart-gnus-group-assist))
     ;;
     ((eq major-mode 'gnus-summary-mode)
-     (smart-gnus-summary) . (smart-gnus-summary-assist))
+     . ((smart-gnus-summary) . (smart-gnus-summary-assist)))
     ;;
     ((eq major-mode 'gnus-article-mode)
-     (smart-gnus-article) . (smart-gnus-article-assist))
+     . ((smart-gnus-article) . (smart-gnus-article-assist)))
     ;;
-    ((eq major-mode 'Buffer-menu-mode) .
-     ((smart-buffer-menu) . (smart-buffer-menu-assist)))
+    ((eq major-mode 'Buffer-menu-mode)
+     . ((smart-buffer-menu) . (smart-buffer-menu-assist)))
     ;;
-    ((eq major-mode 'ibuffer-mode) .
-     ((smart-ibuffer-menu) . (smart-ibuffer-menu-assist)))
+    ((eq major-mode 'ibuffer-mode)
+     . ((smart-ibuffer-menu) . (smart-ibuffer-menu-assist)))
     ;;
-    ((eq major-mode 'tar-mode) .
-     ((smart-tar) . (smart-tar-assist)))
+    ((eq major-mode 'tar-mode)
+     . ((smart-tar) . (smart-tar-assist)))
     ;;
     ;; Follow references in man pages.
-    ((setq hkey-value (smart-man-entry-ref)) .
-     ((smart-man-display hkey-value) . (smart-man-display hkey-value)))
+    ((setq hkey-value (smart-man-entry-ref))
+     . ((smart-man-display hkey-value) . (smart-man-display hkey-value)))
     ;;
-    ((eq major-mode 'w3-mode) .
-     ((w3-follow-link) . (w3-goto-last-buffer)))
+    ((eq major-mode 'w3-mode)
+     . ((w3-follow-link) . (w3-goto-last-buffer)))
     ;;
-    ((eq major-mode 'hynote-mode) .
-     ((smart-hynote) . (smart-hynote-assist)))
+    ;; Future Hyperbole mode, not yet released
+    ((eq major-mode 'hynote-mode)
+     . ((smart-hynote) . (smart-hynote-assist)))
     ;;
-    ((eq major-mode 'hyrolo-mode) .
-     ((smart-hyrolo) . (smart-hyrolo-assist)))
+    ((eq major-mode 'hyrolo-mode)
+     . ((smart-hyrolo) . (smart-hyrolo-assist)))
     ;;
-    ((eq major-mode 'image-dired-thumbnail-mode) .
-     ((smart-image-dired-thumbnail) . (smart-image-dired-thumbnail-assist)))
+    ((eq major-mode 'image-dired-thumbnail-mode)
+     . ((smart-image-dired-thumbnail) . (smart-image-dired-thumbnail-assist)))
     ;;
     ;; Gomoku game
-    ((eq major-mode 'gomoku-mode) .
-     ((gomoku-human-plays) . (gomoku-human-takes-back)))
+    ((eq major-mode 'gomoku-mode)
+     . ((gomoku-human-plays) . (gomoku-human-takes-back)))
     ;;
     ;; Support the OO-Browser when available.  It is a separate Emacs
     ;; package not included with Hyperbole.  Hyperbole supplies a stub
     ;; `br-in-browser' test for use here.
-    ((or (br-in-browser) (eq major-mode 'br-mode)) .
-     ((smart-br-dispatch) . (smart-br-assist-dispatch)))
+    ((or (br-in-browser) (eq major-mode 'br-mode))
+     . ((smart-br-dispatch) . (smart-br-assist-dispatch)))
     ;;
     ;; Outline minor mode is on and usable.
-    ((and (boundp 'outline-minor-mode) outline-minor-mode) .
-     ((smart-outline) . (smart-outline-assist)))
+    ((and (boundp 'outline-minor-mode) outline-minor-mode)
+     . ((smart-outline) . (smart-outline-assist)))
     ;;
     ;; Todotxt
-    ((eq major-mode 'todotxt-mode) .
-     ((smart-todotxt) . (smart-todotxt-assist))))
+    ((eq major-mode 'todotxt-mode)
+     . ((smart-todotxt) . (smart-todotxt-assist))))
   "Alist of predicates and form-conses for the Action and Assist Keyboard Keys.
 Each element is: (PREDICATE-FORM . (ACTION-KEY-FORM . ASSIST-KEY-FORM)).
 When the Action or Assist Key is pressed, the first or second form,

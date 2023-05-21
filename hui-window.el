@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Sep-92
-;; Last-Mod:     20-May-23 at 10:37:04 by Bob Weiner
+;; Last-Mod:     21-May-23 at 12:09:22 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -100,8 +100,8 @@ drag release window.")
 (defcustom hmouse-pulse-flag t
   "Non-nil means pulse visually if supported.
 When display supports visual pulsing, then pulse lines and
-buffers when an Action Key drag is used to place a buffer or file
-in a window."
+buffers when an Action Key drag is used to place a buffer, file
+ofr button referent in a window."
   :type 'boolean
   :group 'hyperbole-keys)
 
@@ -178,11 +178,16 @@ and release to register a diagonal drag.")
 	     ;; Other Modeline click or drag
 	     ((hmouse-modeline-depress)
 	      . ((action-key-modeline) . (assist-key-modeline)))
+	     ;; Drag between windows and on an item (buffer-name, file-name or Hyperbole button)
+	     ((and (hmouse-drag-between-windows)
+		   (hmouse-at-item-p (if assist-flag assist-key-depress-window
+				       action-key-depress-window)))
+	      . ((hmouse-drag-item-to-display) . (hmouse-drag-item-to-display)))
+	     ;; Drag between windows not on an item
 	     ((hmouse-drag-between-windows)
 	      ;; Note that `hui:ebut-link-directly' uses any active
 	      ;; region as the label of the button to create.
-	      . ((or (hmouse-drag-item-to-display) (hui:ebut-link-directly))
-		 . (hui:ibut-link-directly)))
+	      . ((hui:ebut-link-directly) . (hui:ibut-link-directly)))
 	     ((hmouse-drag-region-active)
 	      . ((hmouse-drag-not-allowed) . (hmouse-drag-not-allowed)))
 	     ((setq hkey-value (hmouse-drag-horizontally))
@@ -196,9 +201,10 @@ and release to register a diagonal drag.")
 	     ((hmouse-drag-outside-all-windows)
 	      . ((or (hmouse-drag-item-to-display)
 		     (hycontrol-clone-window-to-new-frame))
-		     . (hycontrol-window-to-new-frame)))
+		 . (hycontrol-window-to-new-frame)))
 	     ;; If click in the minibuffer when it is not active (blank),
-	     ;; display the Hyperbole minibuffer menu or popup the jump menu.
+	     ;; Action Key displays the Hyperbole minibuffer menu and
+	     ;; the Assist Key popups the jump menu.
 	     ((hmouse-inactive-minibuffer-p)
 	      . ((funcall action-key-minibuffer-function)
 		 . (funcall assist-key-minibuffer-function)))
@@ -226,7 +232,9 @@ and release to register a diagonal drag.")
 ;;; ************************************************************************
 
 (defun hmouse-at-item-p (start-window)
-  "Return t if point is on an item draggable by Hyperbole, otherwise nil."
+  "Return t if point is on an item draggable by Hyperbole, otherwise nil.
+Draggable items include Hyperbole buttons, dired items, buffer/ibuffer
+menu items."
   (let* ((buf (when (window-live-p start-window)
 		(window-buffer start-window)))
 	 (mode (when buf
@@ -470,8 +478,7 @@ If free variable `assist-flag' is non-nil, uses Assist Key."
   (if assist-flag
       (and (window-live-p assist-key-depress-window)
 	   (window-live-p assist-key-release-window)
-	   (not (eq assist-key-depress-window
-		    assist-key-release-window)))
+	   (not (eq assist-key-depress-window assist-key-release-window)))
     (and (window-live-p action-key-depress-window)
 	 (window-live-p action-key-release-window)
 	 (not (eq action-key-depress-window action-key-release-window)))))
@@ -496,9 +503,10 @@ If free variable `assist-flag' is non-nil, uses Assist Key."
 
 (defun hmouse-drag-item-to-display (&optional new-window-flag)
   "Drag an item and release where it is to be displayed.
-Depress on a buffer name in Buffer-menu/ibuffer mode or on a
-file/directory in dired mode and release where the item is to be
-displayed.
+Draggable items include Hyperbole buttons, dired items, buffer/ibuffer
+menu items.
+
+Depress on the item and release where the item is to be displayed.
 
 If depress is on an item and release is outside of Emacs, the
 item is displayed in a new frame with a single window.  If the

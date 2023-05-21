@@ -475,6 +475,14 @@ because an implicit button type of 'pathname' is recognized and it has
 an associated action type of 'hpath:find' which displays the path in a
 window specified by the setting of 'hpath:display-where').
 
+You can simply type implicit buttons into a buffer or you can use {C-h h i
+c} to create them and give them names.  To create an implicit link button
+from a buffer in one window to another, simply depress the Assist Mouse Key
+where you want the new button (but not within a draggable item), drag to a
+point in another Emacs window and release.  An implicit link button of an
+appropriate type for the release context will be inserted at the original
+depress point.
+
 Hyperbole has many built-in implicit button types, a number of which you
 will see here.  You may also create your own types through the use of
 regular expressions or via Emacs Lisp, see "(hyperbole)Creating Implicit
@@ -1120,7 +1128,8 @@ or to a section within a document; they can calculate things or query
 databases or show different views of bodies of information.  Unlike HTML
 hyperbuttons, there is no markup language to learn nor specific document
 format required.  You can create explicit buttons with simple keyboard
-presses or mouse drags from one window to another.
+presses or mouse drags from one window to another (when not depressed on
+a draggable item).
 
 This button prints the <(factorial)> of 5 in the minibuffer when activated
 with the Action Key.  If you instead press the Assist Key, you get help for
@@ -1167,7 +1176,8 @@ with the Action Mouse Key or by using the Hyperbole menus.
 An efficient way to create an explicit button interactively is to use
 the Action Mouse Key to drag from a window where you want the button
 created (button source window) to a window showing its link referent.
-The drag must start outside of an existing Hyperbole button.
+The drag must start outside of a draggable item which includes Hyperbole
+button, dired items and buffer menu items.
 
 More specifically, you should split your current Emacs frame into two
 windows: one which contains the point at which you want a button to be
@@ -1194,13 +1204,19 @@ the variable with a matching value when the link is later resolved.  This
 allows the sharing of links over wide areas, where links contain variables
 whose values differ between link creator and link activator.
 
+If you do the same think with the Assist Mouse Key instead of the Action
+Mouse Key, Hyperbole will create an implicit link button instead of an
+explicit one.  Such buttons are created without names but you can add
+a name preceding such buttons with {C-h h i l} to label them.
+
 *** Creation via Ace Window
 
 For the fastest link button creation, use the Emacs package
 'ace-window' (see "(hyperbole)Keyboard Drags" for setup).  Once this
 is configured, then {M-o w <window id>} may be used to quickly create
 an explicit link button in the selected window that links to any other
-window chosen via the Ace Window.
+window chosen via the Ace Window.  Use a prefix argument to create an
+implicit link button instead.
 
 *** Creation via Menu
 
