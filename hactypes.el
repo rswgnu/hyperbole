@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    23-Sep-91 at 20:34:36
-;; Last-Mod:     29-Mar-23 at 18:14:35 by Bob Weiner
+;; Last-Mod:     21-May-23 at 03:15:30 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -522,21 +522,19 @@ on the implicit button to which to link."
     (hypb:error "(link-to-ibut): Point must be on an implicit button to create a link-to-ibut"))
   (let (but
 	normalized-file)
-    (cond (but-src
-	   (unless (and (get-buffer but-src)
-			(not (buffer-file-name (get-buffer but-src))))
-	     (setq normalized-file (hpath:normalize but-src))))
-	  (t (setq normalized-file buffer-file-name)))
-    (save-excursion
-      (save-restriction
-	(when but-src
-	  (set-buffer (or (get-buffer but-src) (get-file-buffer normalized-file))))
-	(widen)
-	(when (or (not normalized-file) (hmail:editor-p) (hmail:reader-p))
-	  (hmail:msg-narrow))
-	(when (integerp point)
-	  (goto-char (min point (point-max))))
-	(setq but (ibut:to key))))
+    (if but-src
+	(unless (and (get-buffer but-src)
+		     (not (buffer-file-name (get-buffer but-src))))
+	  (setq normalized-file (hpath:normalize but-src)))
+      (setq normalized-file (hpath:normalize buffer-file-name)))
+    (when but-src
+      (set-buffer (or (get-buffer but-src) (get-file-buffer normalized-file))))
+    (widen)
+    (when (or (not normalized-file) (hmail:editor-p) (hmail:reader-p))
+      (hmail:msg-narrow))
+    (when (integerp point)
+      (goto-char (min point (point-max))))
+    (setq but (ibut:to key))
     (cond (but
 	   (hbut:act but))
 	  (key

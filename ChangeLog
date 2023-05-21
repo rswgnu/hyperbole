@@ -1,4 +1,21 @@
+2023-05-21  Bob Weiner  <rsw@gnu.org>
+
+* hsys-org.el (hsys-org-search-internal-link-p)
+               hsys-org-search-radio-target-link-p): Replace 'org-show-context'
+    with newer 'org-fold-show-context' and alias this when necessary.
+              (hsys-org-radio-target-link-at-p): Remove test of
+    (hsys-org-link-at-p) since does not have link delimiters and already verified
+    uses link-face.
+
+* hactypes.el (link-to-ibut): Remove save-excursion and save-restriction calls
+    so if ilink refers to an ibut in a different file, point is left there
+    before the action is invoked.  Fixes ilinks like: <ilink:bs: /tmp/a.org>
+
+* hsys-org.el (hsys-org-link-at-p): Suppress display of *Warnings* backtrace.
+
 2023-05-20  Bob Weiner  <rsw@gnu.org>
+
+* hpath.el (hpath:normalize): Improve doc.
 
 * hui.el (hui:ibut-create, hui:ebut-create,
           hui:ibut-link-create, hui:ebut-link-create):

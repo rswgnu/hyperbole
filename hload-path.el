@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    29-Jun-16 at 14:39:33
-;; Last-Mod:     23-Oct-22 at 00:38:27 by Mats Lidell
+;; Last-Mod:     21-May-23 at 03:55:58 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -116,8 +116,8 @@ the symbol list.  For `suspicious', only `set-buffer' can be used."
   (if (fboundp 'with-suppressed-warnings)
       `(with-suppressed-warnings ,warnings ,@body)
     `(with-no-warnings ,@body)))
-;; New autoload generation function defined only in Emacs 28
 
+;; New autoload generation function defined only in Emacs 28
 (defalias 'hload-path--make-directory-autoloads
   (cond ((fboundp 'loaddefs-generate)
          #'loaddefs-generate)
