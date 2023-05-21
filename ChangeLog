@@ -1,5 +1,23 @@
 2023-05-21  Bob Weiner  <rsw@gnu.org>
 
+* hui-mouse.el (hkey-alist): Move . operator to beginning of line for font lock
+    support and add missing . in gnus modes.
+
+* hmouse-drv.el (hkey-mouse-help): Ensure call to hkey-help clears both Action
+    and Assist Key variables, so mouse key help always works.
+
+* man/hkey-help.txt:
+  FAST-DEMO (Implicit Buttons):
+  DEMO (Implicit Buttons, Creation via Dragging, Creation via Ace Window): Update
+    to describe implicit button creation via drags.
+  hui-window.el (hmouse-alist): Make change to long-time Assist Mouse Key drag
+    between windows behavior.  Assist Mouse Key drag from an item to another
+    window now displays the item in the release window, just as the Action Key
+    does.  Prior to Hyperbole V9, this would swap window buffers.
+
+* hmouse-key.el (hmouse-update-smart-keys): Ensure reload "hui-window" library
+    so 'hmouse-alist' is redefined.
+
 * hsys-org.el (hsys-org-search-internal-link-p)
                hsys-org-search-radio-target-link-p): Replace 'org-show-context'
     with newer 'org-fold-show-context' and alias this when necessary.

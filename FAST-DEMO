@@ -78,6 +78,13 @@
   {C-h A} (the A must be capitalized) on any Hyperbole button to see exactly
   what it does prior to activating it.
 
+  You can simply type implicit buttons into a buffer or you can use {C-h h i
+  c} to create them and give them names.  To create an implicit link button
+  from a buffer in one window to another, simply depress the Assist Mouse
+  Key where you want the new button (but not within a draggable item), drag
+  to a point in another Emacs window and release.  An implicit link button
+  of an appropriate type for the release context will be inserted at the
+  original depress point.
 
 * Pathname Implicit Buttons
 
@@ -322,9 +329,9 @@ learn how to create new kinds of implicit button and action types, see:
     or show different views of bodies of information.  Unlike HTML
     hyperbuttons, there is no markup language to learn nor specific document
     format required.  You can create explicit buttons with simple keyboard
-    presses or mouse drags from one window to another; See the {C-h h e} menu
-    for explicit button commands.  See "DEMO#Explicit Buttons" or
-    "(hyperbole)Explicit Buttons" for more detail.
+    presses or mouse drags from one window to another (when not on a draggable
+    item).  See the {C-h h e} menu for explicit button commands.  See
+    "DEMO#Explicit Buttons" or "(hyperbole)Explicit Buttons" for more detail.
 
     `Global buttons' are labeled Hyperbole buttons in your personal button
     file, {C-h h b p}.  All global buttons are activated by name with

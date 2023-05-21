@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    04-Feb-90
-;; Last-Mod:     19-May-23 at 08:03:36 by Bob Weiner
+;; Last-Mod:     21-May-23 at 11:48:16 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1193,11 +1193,23 @@ to the Assist Key.  ARGS is a list of arguments passed to
 	      (cond ((and  action-key-help-flag other-key-released)
 		     (setq action-key-help-flag nil)
 		     (hmouse-release assisting)
+		     ;; Ensure next call to hkey-help clears both Action
+		     ;; and Assist Key variables.
+		     (setq action-key-depressed-flag nil
+			   action-key-help-flag nil
+			   assist-key-depressed-flag nil
+			   assist-key-help-flag nil)
 		     (hmouse-function #'hkey-help assisting args)
 		     t)
 		    ((and  assist-key-help-flag other-key-released)
 		     (setq assist-key-help-flag nil)
 		     (hmouse-release assisting)
+		     ;; Ensure next call to hkey-help clears both Action
+		     ;; and Assist Key variables.
+		     (setq action-key-depressed-flag nil
+			   action-key-help-flag nil
+			   assist-key-depressed-flag nil
+			   assist-key-help-flag nil)
 		     (hmouse-function #'hkey-assist-help assisting args)
 		     t)))
       (when help-shown

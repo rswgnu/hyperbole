@@ -6,8 +6,8 @@ Hyperbole
   On a minibuffer menu item     Activates item             Item help
   On an explicit button         Activates button           Button help
   Reading argument
-    1st press at an arg value   Value copied to minibuffer <- same
-    2nd press at an arg value   Value used as argument     <- same
+    1st press at an arg value   Copies value to minibuffer <- same
+    2nd press at an arg value   Uses value as argument     <- same
     In minibuffer               Accepts minibuffer arg     Completion help
   On an implicit button/path    Activates button           Button help
   Within a koutline cell        Collapses and expands      Shows tree props
@@ -29,7 +29,7 @@ Mouse-only Control
     string, list or markup
     language tag pair
 
-  Drag from bottom Modeline     Reposition frame as        <- same
+  Drag from bottom Modeline     Repositions frame as       <- same
   in frame with non-nil         drag happens
   drag-with-mode-line param
 
@@ -49,10 +49,10 @@ Mouse-only Control
                                   new window by release
 
   Drag between windows from:
-    but/buffer/file menu item   Displays ref/buffer/file   Swaps window buffers
+    but/buffer/file menu item   Displays ref/buffer/file   <- same
                                   in window of button release 
-    buffer/file menu 1st line   Moves buffer/file menu     Swaps window buffers
-    anywhere else               Creates/modifies a link    Swaps window buffers
+    buffer/file menu 1st line   Moves buffer/file menu     <- same
+    anywhere else               Creates an ebut link       Creates an ibut link
 
   Drag outside of Emacs from:
     but/buffer/file menu item   Displays ref/buffer/file   Moves window to new frame
@@ -61,11 +61,11 @@ Mouse-only Control
 
   Modeline Click
     Left modeline edge          Buries current buffer      Unburies bottom buffer
-    Right modeline edge         Info manual browser        Smart Key summary
-    Buffer ID                   Dired on buffer's dir      Next buffer
+    Right modeline edge         Displays GNU Info manuals  Displays Smart Key summary
+    Buffer ID                   Dired on buffer's dir      Displays next buffer
                                   or on parent when a dir
     Other blank area            Action Key modeline hook   Assist Key modeline hook
-                                  Shows/Hides Buffer Menu    Popup Jump & Manage Menu
+                                  Shows/Hides Buffer Menu    Popups Jump & Manage Menu
 
   Drag in window, region active Error, not allowed         Error, not allowed
   Horizontal drag in a window   Splits window below        Deletes window
@@ -82,8 +82,8 @@ Hyperbole Key Press/Click in Special Modes
   Treemacs                      Displays item              Displays item
   Dired Sidebar                 Displays item              Displays item
   Emacs Push Button             Activates button           Button help
-  Emacs Regression Test Def     Eval and run test          Edebug and run test
-  Thing Begin or End            Mark thing region          Mark & kill thing region
+  Emacs Regression Test Def     Evals and runs test        Edebugs and runs test
+  Thing Begin or End            Marks thing region         Marks & kills thing region
   Page Directory Listing        Jumps to page              <- same
   Imenu Programming Identifier  Jumps to in-buffer def     Prompts for id to jump to
   C,C++,Objective-C,Java Modes  Jumps to id/include def    Jumps to next def
@@ -112,14 +112,14 @@ Hyperbole Key Press/Click in Special Modes
   Man Apropos                   Displays man page entry    <- same
   Man Pages                     Follows cross refs, file refs and C code refs
   I/Buffer Menu                 Saves, deletes and displays buffers
-  Todotxt Mode                  Toggle item completion     Edit and archive items
+  Todotxt Mode                  Toggles item completion    Edit and archive items
 
 Emacs Info Reader
-  Menu Entry or Cross Ref       To referent                <- same
-  Up, Next or Prev Header       To referent                To prior node
-  File entry of Header          To top node                To (DIR) node
-  End of current node           To next node               To previous node
-  Anywhere else                 Scrolls up a windowful     Scrolls wind down
+  Menu Entry or Cross Ref       Jumps to referent          <- same
+  Up, Next or Prev Header       Jumps to referent          Jumps to prior node
+  File entry of Header          Jumps to top node          Jumps to (DIR) node
+  End of current node           Jumps to next node         Jumps to previous node
+  Anywhere else                 Scrolls up a windowful     Scrolls down a windowful
 
 Subsystems
   Calendar                      Scrolls or shows appts     Scrolls/marks date
