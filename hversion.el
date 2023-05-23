@@ -4,7 +4,7 @@
 ;; Maintainer:   Bob Weiner, Mats Lidell
 ;;
 ;; Orig-Date:     1-Jan-94
-;; Last-Mod:     23-Apr-23 at 11:43:54 by Bob Weiner
+;; Last-Mod:     23-May-23 at 00:06:52 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -71,7 +71,7 @@ of stack frames (from innermost to outermost)."
 	frame)
     (or (catch 'hyperb:stack-frame
 	  (while (setq frame (backtrace-frame count))
-	    (if debug-flag (setq frame-list (cons frame frame-list)))
+	    (when debug-flag (setq frame-list (cons frame frame-list)))
 	    (setq count (1+ count)
 		  fsymbol (nth 1 frame))
 	    (and (eq fsymbol 'command-execute)
@@ -91,7 +91,7 @@ of stack frames (from innermost to outermost)."
 		  ((memq fsymbol function-list)
 		   (throw 'hyperb:stack-frame frame))))
 	  nil)
-	(if debug-flag (nreverse frame-list)))))
+	(when debug-flag (nreverse frame-list)))))
 
 (defun hyperb:path-being-loaded ()
   "Return the full pathname used by the innermost `load' or `require' call.
@@ -105,20 +105,20 @@ the pathname."
 		 nosuffix (nth 5 frame)))
 	  ((eq function 'require)
 	   (setq file (or (nth 3 frame) (symbol-name (nth 2 frame))))))
-    (if (stringp file)
-	(setq nosuffix (or nosuffix
-			   (string-match
-			    "\\.\\(elc?\\|elc?\\.gz\\|elc?\\.Z\\)$"
-			    file))
-	      file (substitute-in-file-name file)
-	      file (locate-file file load-path
-				(if (null nosuffix) '(".elc" ".el" ".el.gz" ".el.Z"))
-				;; accept any existing file
-				nil)
-	      file (if (and (stringp file)
-			    (string-match hyperb:automount-prefixes file))
-		       (substring file (1- (match-end 0)))
-		     file)))))
+    (when (stringp file)
+      (setq nosuffix (or nosuffix
+			 (string-match
+			  "\\.\\(elc?\\|elc?\\.gz\\|elc?\\.Z\\)$"
+			  file))
+	    file (substitute-in-file-name file)
+	    file (locate-file file load-path
+			      (when (null nosuffix) '(".eln" ".elc" ".el" ".el.gz" ".el.Z"))
+			      ;; accept any existing file
+			      nil)
+	    file (if (and (stringp file)
+			  (string-match hyperb:automount-prefixes file))
+		     (substring file (1- (match-end 0)))
+		   file)))))
 
 (defun hyperb:window-sys-term (&optional frame)
   "Return first part of the term-type if running under a window system, else nil.

@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    6/30/93
-;; Last-Mod:     14-May-23 at 01:47:03 by Bob Weiner
+;; Last-Mod:     21-May-23 at 14:37:14 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1407,7 +1407,7 @@ doc string for `insert-for-yank-1', which see."
       ;; Convert all occurrences of newline to newline + cell indent.
       ;; Then insert into buffer.
       (insert-for-yank (replace-regexp-in-string
-			"[\n\r]" (concat "\\0" indent-str) yank-text)))
+			"[\n\r]" (concat "\\&" indent-str) yank-text)))
     ;; Set the window start back where it was in the yank command,
     ;; if possible.
     (set-window-start (selected-window) yank-window-start t)
@@ -3142,7 +3142,7 @@ Optionally, INDENT and region START and END may be given."
       (narrow-to-region (or start (point)) (or end (mark t)))
       (goto-char (point-min))
       (let ((indent-str (concat "\n" (make-string indent ?\ ))))
-	(while (search-forward "\n" t t)
+	(while (search-forward "\n" nil t)
 	  (replace-match indent-str t t))))))
 
 (defun kotl-mode:delete-line (&optional pos)

@@ -69,7 +69,7 @@
          to other windows to display them wherever you want.
          Integrate with the Ace Window package to `throw' items to
          specific windows with quick key sequences.  See
-         "DEMO#Displaying File and Buffer Items and Moving Buffers".
+         "DEMO#Displaying Items via Drags and Moving Buffers".
 
     12b. Drag-and-drop text regions across Emacs frames.  See
          "DEMO#Thing Selection".
