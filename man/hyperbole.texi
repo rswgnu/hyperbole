@@ -7,7 +7,7 @@
 @c Author:       Bob Weiner
 @c
 @c Orig-Date:     6-Nov-91 at 11:18:03
-@c Last-Mod:     19-May-23 at 06:49:37 by Bob Weiner
+@c Last-Mod:     23-May-23 at 00:35:49 by Bob Weiner
 
 @c %**start of header (This is for running Texinfo on a region.)
 @setfilename hyperbole.info
@@ -156,7 +156,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</P>
 
 <PRE>
 Edition 8.0.1pre
-Printed May 16, 2023.
+Printed May 23, 2023.
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -198,7 +198,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 @example
 Edition 8.0.1pre
-May 16, 2023
+May 23, 2023
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -312,7 +312,7 @@ Dragging Buffers, Windows and Items
 * Swapping Buffers::
 * Displaying Buffers::
 * Cloning Windows::
-* Displaying File and Buffer Items::
+* Displaying Items::
 * Keyboard Drags::
 
 Buttons
@@ -1603,14 +1603,15 @@ the desired frame first and then depress to drag.
 @subsection  Dragging Buffers, Windows and Items
 
 Smart Mouse Key drags let you display buffers and windows however you want
-them.  Dired and buffer-menu items may also be displayed in specific
-locations with drags.  Below we explore these drag actions.
+them.  Dired, Treemacs and buffer-menu items as well as Hyperbole button
+referents may be displayed in specific locations with drags.  Below
+we explore these drag actions.
 
 @menu
 * Swapping Buffers::
 * Displaying Buffers::
 * Cloning Windows::
-* Displaying File and Buffer Items::
+* Displaying Items::
 * Keyboard Drags::
 @end menu
 
@@ -1622,15 +1623,16 @@ locations with drags.  Below we explore these drag actions.
 @cindex buffer, swap
 @cindex drag, buffer swap
 Swapping buffer locations is quick and easy with Hyperbole.  Simply drag
-from one window to another with the Assist Key (not the Action Key).  This
-works across frames as well.
+the Assist Mouse Key (not the Action Key) from the open area of one
+window's modeline to the text area of another.  This works across frames
+as well.
 
-If you have just two windows in an Emacs frame, you can swap their
-buffers from the keyboard.  Use this Hyperbole minibuffer menu key
-sequence involving the tilde key to swap the buffers and quit from the
-Hyperbole minibuffer menu: @bkbd{C-h h s w ~ Q}.  Similarly, if you
-have two single window frames, you can swap buffers between them with
-@bkbd{C-h h s f ~ Q}.
+If you have just two windows in an Emacs frame, you can swap their buffers
+from the keyboard.  Use this Hyperbole minibuffer menu key sequence
+involving the tilde key to swap the buffers and quit from the Hyperbole
+minibuffer menu: @bkbd{C-h h s w ~ Q}.  Similarly, if you have two single
+window frames, you can swap buffers between them with @bkbd{C-h h s f ~
+Q}.
 
 @node Displaying Buffers, Cloning Windows, Swapping Buffers, Dragging Buffers
 @subsubsection Displaying Buffers
@@ -1643,11 +1645,12 @@ buffers?  Depress the Action Mouse Key in the open area of the modeline of
 the source window and drag to the text area of the destination window.
 Voila, the buffer appears in the new location as well as the old one.
 
-If you want a new window where you release (so the original destination
-window's buffer stays onscreen), just drag to a window's modeline; that
-window will be split before the buffer is displayed.
+If you want a new window where you release (so the original
+destination window's buffer stays onscreen), just drag to the release
+window's modeline; that window will be split before the buffer is
+displayed.
 
-@node Cloning Windows, Displaying File and Buffer Items, Displaying Buffers, Dragging Buffers
+@node Cloning Windows, Displaying Items, Displaying Buffers, Dragging Buffers
 @subsubsection Cloning Windows
 
 @cindex clone window
@@ -1659,32 +1662,37 @@ be created, selected and sized according to the original window.  Do the same
 thing with the Assist Mouse Key and the original window will be deleted as well,
 unless it is the only window in that frame.
 
-@node Displaying File and Buffer Items, Keyboard Drags, Cloning Windows, Dragging Buffers
-@subsubsection Displaying File and Buffer Items
+@node Displaying Items, Keyboard Drags, Cloning Windows, Dragging Buffers
+@subsubsection Displaying Items
 
 @cindex dired item drag
 @cindex buffer menu item drag
 @cindex Treemacs item drag
+@cindex Hyperbole button drag
+@cindex drag, Hyperbole button referent
 @cindex drag, dired item
 @cindex drag, buffer menu item
 @cindex drag, Treemacs item
-You can also drag items to other windows with the Action Key in Dired,
-Buffer Menu, Ibuffer and Treemacs listing buffers, rather than the
-buffers themselves.  Drag with the Action Mouse Key and the selected
-item will be displayed in any Emacs window in which you release.  Drag
-outside Emacs and it will be displayed in a new frame.  To display the
-last item you want within the listing window itself, press and release
-the Action Key on that item after dragging your other items to their
-respective windows.  Remember that you can emulate these drags from
-the keyboard when needed, @pxref{Keyboard Drags}.
+You can also drag items to other windows with the Action or Assist Mouse
+Keys in Dired, Buffer Menu, Ibuffer and Treemacs listing buffers, rather
+than the buffers themselves.  Dragging Hyperbole buttons to display their
+referents in another window works too.
+
+Drag with the Action or Assist Mouse Key and the selected item's referent
+will be displayed in any Emacs window in which you release.  Drag outside
+Emacs and it will be displayed in a new frame.  To display the last item
+you want within the listing window itself, press and release the Action
+Key on that item after dragging your other items to their respective
+windows.  Remember that you can emulate these drags from the keyboard when
+needed, @pxref{Keyboard Drags}.
 
 So now you can put a bunch of buffers and files on your screen wherever
-you like.  Typically, a brief visual pulse is shown first at the source item and
-then in the destination window, to help you see that the transfer has been
-made.  An Assist Key Drag will move the the item list buffer to the
-destination (swapping buffers), just as it does with other buffers.
+you like.  Typically, a brief visual pulse is shown first at the source
+item and then in the destination window, to help you see that the transfer
+has been made.  An Assist Key Drag will move the the item list buffer to
+the destination (swapping buffers), just as it does with other buffers.
 
-@node Keyboard Drags,  , Displaying File and Buffer Items, Dragging Buffers
+@node Keyboard Drags,  , Displaying Items, Dragging Buffers
 @subsubsection Keyboard Drags
 
 @kindex M-o
@@ -1932,22 +1940,20 @@ Spacing between words within a button label is irrelevant to Hyperbole.
 Button labels may wrap across several lines without causing a problem;
 just be sure to select the first line of the button to activate it.
 
-Explicit buttons may be added to any editable buffer including
-temporary buffers without any attached files (such buttons will
-last only the length of a single Emacs session).  For source code
-files, simply place Hyperbole explicit buttons within comments.
-Buttons that you use for quick navigation to websites or other things
-you do often should be added to your personal button file.
-@xref{Button Files}.
+Explicit buttons may be added to any editable buffer including temporary
+buffers without any attached files (such buttons will last only the
+length of a single Emacs session).  For source code files, simply place
+Hyperbole explicit buttons within comments.  Buttons that you use for
+quick navigation to websites or other things you do often should be
+added to your personal button file.  @xref{Button Files}.
 
 @cindex button, moving
 @cindex moving buttons
 Explicit buttons may be freely moved about within the buffer in which
 they are created.  (No present support exists for moving buttons between
-buffers; support the Hyperbole project if you would like to help make
-this happen).  A single button may also appear multiple times within the
-same buffer; simply copy the button label with its delimiters
-to a new location if you need another copy of it.
+buffers).  A single button may also appear multiple times within the
+same buffer; simply copy the button label with its delimiters to a new
+location if you need another copy of it.
 
 For details on how to create, activate, delete or edit explicit
 buttons, @pxref{Utilizing Explicit Buttons}.
@@ -2061,6 +2067,7 @@ the same thing but has to be created manually, rather than recognized
 as part of the buffer text.
 
 @kindex C-h h i
+@cindex implicit button creation
 @cindex activating implicit button
 @cindex menu item, Ibut/Act
 @cindex menu, Ibut
@@ -2069,20 +2076,37 @@ as part of the buffer text.
 @cindex menu, Ibut/Create
 @cindex menu, Ibut/Edit
 @cindex menu, Ibut/Label
+@cindex menu, Ibut/Rename
 @kindex C-h h i a
 @kindex C-h h i c
 @kindex C-h h i e
 @kindex C-h h i l
-Implicit buttons are managed with the Hyperbole Ibut/ menu accessed
-with @bkbd{C-h h i}.  The Create item, @bkbd{C-h h i c}, prompts for
-an implicit button label, an action type, and the action's associated
-arguments, such as a file to which to link.  It then creates the
-button at point.  To activate the button with point on its label or
-button text, use the Act menu item, @bkbd{C-h h i a} or press the
-Action Key.  You can use @bkbd{C-h h i e} to edit an implicit button
-(or simply edit it manually).  If you want to add a label to an
-existing implicit button without one, use @bkbd{C-h h i l} to label
-it.
+@kindex C-h h i r
+Implicit buttons are managed with the Hyperbole Ibut/ menu accessed with
+@bkbd{C-h h i}.  The Create item, @bkbd{C-h h i c}, prompts for an
+implicit button label (default is any selected region), an action type,
+and the action's associated arguments, such as a file to which to link.
+It then creates the button at point.
+
+@cindex link creation
+@cindex creating implicit links
+@cindex mouse drag, link creation
+@cindex drag
+@cindex Assist Key drag
+Alternatively, to create an implicit link button to something displayed
+within an Emacs window, simply drag with the Assist (not the Action) Mouse
+Key from an editable source window to another window with the desired link
+referent.  The drag must start outside of a draggable item,
+@pxref{Displaying Items}.  Hyperbole will either automatically select the
+button action type based on the referent context or will prompt you to
+select from one of a few possible link types.
+
+To activate the button with point on its label or button text, use the Act
+menu item, @bkbd{C-h h i a} or press the Action Key.  You can use
+@bkbd{C-h h i e} to edit an implicit button (or simply edit it manually).
+If you want to add a label to an existing implicit button without one, use
+@bkbd{C-h h i l} to label it.  Rename an existing named implicit button
+with @bkbd{C-h h i r}.
 
 @vindex file, hibtypes.el
 @cindex context
@@ -3364,11 +3388,16 @@ buttons.
 @node Creation, Renaming, Utilizing Explicit Buttons, Utilizing Explicit Buttons
 @subsection  Creation
 
-Creating explicit buttons is fun and easy.  You can always try them
-out immediately after creating them or can utilize the Assist Key to
-verify what buttons do.  There are two ways to create them: by
-dragging between windows with the Action Mouse Key or by using the
-Hyperbole menus.
+Creating explicit buttons is fun and easy.  You can always try them out
+immediately after creating them or can utilize the Assist Key to verify
+what buttons do.
+
+If you want to create an explicit link button to somewhere within an Emacs
+window, then simply drag with the Action Mouse Key from an editable buffer
+to the target buffer.
+
+Alternatively, the Hyperbole minibuffer menu item, Ebut/Create, will
+create any type of explicit button, but requires a few steps.
 
 @menu
 * By Dragging::                 Creation Via Action Key Drags
@@ -3379,27 +3408,28 @@ Hyperbole menus.
 @subsubsection Creation Via Action Key Drags
 
 @cindex explicit button creation
-@cindex button creation
-@cindex creating buttons
 @cindex link creation
-@cindex creating links
-@cindex direct link creation
+@cindex creating explicit links
 @cindex mouse drag, link creation
 @cindex drag
 @cindex Action Key drag
-The most efficient way to create an explicit link button interactively
-is to use the Action Mouse Key to drag from a non-read-only button
-source window to a window showing its desired link referent.  More
-specifically, you should split your current Emacs frame into two
+The most efficient way to create an explicit link button to something
+within an Emacs window is to use the Action Mouse Key to drag from an
+editable source window to another window with the desired link referent.
+The drag must start outside of a draggable item, @pxref{Displaying Items}.
+Hyperbole will either automatically select the button action type based on
+the referent context or will prompt you to select from one of a few
+possible link types.
+
+In detail, you should split your current Emacs frame into two
 windows: one which contains the point at which you want a button to be
 inserted and another which shows the point to which you want to link.
-Depress the Action Mouse Key at the source point for the button
-(anywhere but on a paired delimiter such as double quotes or
-parentheses).  Then drag to the other window and release the Action
-Mouse Key at the start point of the link referent.  The process
-becomes quite simple with a little practice. (@xref{By Menu, Creation
-Via Menus}, for a more detailed explanation of the explicit button
-creation process).
+Depress the Action Mouse Key at the source point for the button (anywhere
+but on a paired delimiter such as double quotes or parentheses).  Then
+drag to the other window and release the Action Mouse Key at the start
+point of the link referent.  The process becomes quite simple with a
+little practice. (@xref{By Menu, Creation Via Menus}, for a more detailed
+explanation of the explicit button creation process).
 
 If a region was selected prior to the start of the drag, it is used as
 the button label, otherwise, you are prompted for the label.  Then
@@ -3441,13 +3471,13 @@ Buffer without File      link-to-buffer-tmp
 @node By Menu,  , By Dragging, Creation
 @subsubsection Creation Via Menus
 
-You may instead use the Hyperbole menus to create explicit buttons.
-First, mark a short region of text in any fashion allowed by Emacs
-and then select the Hyperbole menu item sequence, Ebut/Create.  You will
-be prompted for the button's label with the marked region as the
-default.  If you accept the default and enter the rest of the
-information you are prompted for, the button will be created within the
-current buffer and Hyperbole will surround the marked region with
+Use the Hyperbole minibuffer menu to create any type of explicit button.
+First, mark a short region of text for the button label in any fashion
+allowed by Emacs; then select the Hyperbole menu item sequence,
+Ebut/Create.  You will be prompted for the button's label with the marked
+region as the default.  If you accept the default and enter the rest of
+the information you are prompted for, the button will be created within
+the current buffer and Hyperbole will surround the marked region with
 explicit button delimiters to indicate success.
 
 If you do not mark a region before invoking the button create command,
@@ -9669,7 +9699,7 @@ then invoke it with @bkbd{M-x treemacs @key{RET}} and quit with @bkbd{q}.
 
 @noindent
 Treemacs items may be dragged with the Action Key to other windows for display.
-@xref{Displaying File and Buffer Items}.
+@xref{Displaying Items}.
 
 @format
 @group

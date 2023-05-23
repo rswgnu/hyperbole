@@ -11,6 +11,7 @@
       interactive, so can be used as button actypes.  See "(hyperbole)
       actypes display-boolean".
 
+
 ** DOCUMENTATION
 
   *** Emacs 2022 Talk Videos:
@@ -403,17 +404,27 @@
 
   *** Drag Button Referents to Specific Windows: Just as you previously could
       drag Dired or Buffer Menu items to display in a specific window, you can
-      now do the same with Hyperbole Buttons.  Action Key drag from on a
-      Hyperbole button and release in another window where you want the
+      now do the same with Hyperbole Buttons.  Action or Assist Key drag from
+      on a Hyperbole button and release in another window where you want the
       button's referent (or the result of its action) displayed.  If you
-      release the Action Key outside of an Emacs window, the referent is
-      displayed in a new frame.
+      release the Smart Key outside of an Emacs window, the referent is
+      displayed in a new frame.  See "(hyperbole)Displaying Items".
 
       Visual pulsing of the source line and the destination buffer highlights
       the transfer taking place (hmouse-pulse-flag controls this).
 
       Dragging a button to a modeline splits the window of the modeline and
       displays the referent in the leftmost or uppermost of the split windows.
+
+  *** Create Implicit Link Buttons: An Assist Mouse Key drag across windows
+      (when not starting from a draggable item) creates an implicit link
+      button with an action type determined by the referent at the point of
+      button release.  This parallels the same Action Mouse Key drag which
+      creates explicit link buttons.  See "(hyperbole)creating implicit links".
+
+      Previously this drag would swap buffers in windows.  Now you must drag
+      from open space in a modeline of the depress window to the buffer text
+      in the release window to swap buffers in windows.
 
   *** Hyperbole Symbol Tags: Hyperbole now includes a pre-built TAGS file so
       that an Action Key press on any Hyperbole symbol jumps to its definition
@@ -911,7 +922,7 @@
   *** Fast Window Links: The hkey-window-link command bound to {M-o w}
       rapidly creates a link button at point in the selected window,
       linking to point in the window chosen when prompted.
-      See "DEMO#Displaying File and Buffer Items and Moving Buffers".
+      See "DEMO#Displaying Items via Drags and Moving Buffers".
 
   *** Throw A Region Elsewhere Within the Same Buffer: {M-o t <window-id>}
       when used with a selected region can now throw to the source buffer
@@ -1111,7 +1122,7 @@
       {C-u M-o t} for the same effect.  The buffer in the target window
       must differ from the one in the source window.  With no region
       active, this command still throws the source buffer to the target
-      window.  See "DEMO#Displaying File and Buffer Items and Moving Buffers".
+      window.  See "DEMO#Displaying Items via Drags and Moving Buffers".
 
   SMART (ACTION AND ASSIST) KEYS
 

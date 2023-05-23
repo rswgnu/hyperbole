@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    18-Sep-91 at 02:57:09
-;; Last-Mod:     20-May-23 at 17:53:22 by Bob Weiner
+;; Last-Mod:     22-May-23 at 23:06:54 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -997,11 +997,11 @@ Then use (hbut:act) to activate the button."
 
 (defun    hbut:comment (start end)
   "Comment button label spanning region START to END in current buffer.
-Use buffer commenting grammar, if any, otherwise don't comment.
-Ignore email-related buffers."
-  (save-excursion
-    (when (and comment-start (not (hmail:mode-is-p))
-	       (not (memq major-mode '(mail-mode message-mode))))
+Comment only when major mode is derived from `prog-mode' or `sgml-mode' and
+`comment-start' is non-nil.  Ignore email-related buffers."
+  (when (and comment-start (not (memq major-mode '(mail-mode message-mode)))
+	     (derived-mode-p 'prog-mode 'sgml-mode) (not (hmail:mode-is-p)) )
+    (save-excursion
       (if (or (equal comment-end "")
 	      (null comment-end))
 	  (progn

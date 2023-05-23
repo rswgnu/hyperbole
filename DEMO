@@ -1559,16 +1559,17 @@ If you want a new window where you release (so the original destination window's
 buffer stays onscreen), just drag to a window's modeline; that window will be
 split before the buffer is displayed.
 
-*** Displaying File and Buffer Items, Button Referents and Moving Buffers
+*** Displaying Items via Drags and Moving Buffers
 
 You can do the same thing with items in dired, buffer menu and ibuffer menu
-listing buffers and Hyperbole button referents.  Drag with the Action Mouse Key
-from the item and the selected item/referent will be displayed in the Emacs
-window in which you release.  To display the last item you want, press the
-Action Key on it and it will display within the listing window itself.  (If you
-use the Treemacs file viewer package, item dragging works there as well).  Under
-the MacOS window manager, you can also drag outside of an Emacs frame and the
-item will be displayed in a newly created and selected frame.
+listing buffers as well as with Hyperbole button referents.  Drag with the
+Action Mouse Key from the item and the selected item/referent will be
+displayed in the Emacs window in which you release.  To display the last
+item you want, press the Action Key on it and it will display within the
+listing window itself.  (If you use the Treemacs file viewer package, item
+dragging works there as well).  Under the MacOS window manager, you can also
+drag outside of an Emacs frame and the item will be displayed in a newly
+created and selected frame.
 
 So now you can rapidly put a bunch of buffers and files on your screen wherever
 you like.  Typically, a brief visual pulse is shown first at the source item and

@@ -1,4 +1,30 @@
+2023-05-23  Bob Weiner  <rsw@gnu.org>
+
+* hversion.el (hyperb:path-being-loaded): Add support for .eln natively compiled
+    files.
+
+2023-05-22  Bob Weiner  <rsw@gnu.org>
+
+* hbut.el (hbut:comment): Comment only when major mode is derived from `prog-mode'
+    or `sgml-mode'.
+
+* man/hyperbole.texi (By Dragging, Swapping Buffers, Displaying Items): Update to
+    the new Smart Mouse Key handling.
+                     (Creation): Update and clarify that dragging creates only
+    explicit link buttons whereas the Ebut/Create menu item creates any type.
+                     (Implicit Buttons): Add doc for Ibut/Rename and document
+    implicit link creation via an Assist Mouse Key drag between windows.
+
 2023-05-21  Bob Weiner  <rsw@gnu.org>
+
+* kotl/kotl-mode.el (kotl-mode:yank-pop): Fix: change "\\0" to proper "\\&".
+                    (kotl-mode:add-indent-to-region): Fix 'search-forward' bound
+    arg that was given as t but should be nil.
+
+* DEMO (Displaying File and Buffer Items and Moving Buffers): Rename this section
+    to "Displaying Items via Drags and Moving Buffers".
+  man/hyperbole.texi (Displaying File and Buffer Items): Rename to "Displaying
+    Items".
 
 * hui-mouse.el (hkey-alist): Move . operator to beginning of line for font lock
     support and add missing . in gnus modes.
