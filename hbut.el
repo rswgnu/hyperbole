@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    18-Sep-91 at 02:57:09
-;; Last-Mod:     22-May-23 at 23:06:54 by Bob Weiner
+;; Last-Mod:     26-May-23 at 23:38:08 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -2160,7 +2160,7 @@ button is found in the current buffer."
 				      (when arg2 (insert ", " arg2))
 				      (insert ">")))
       ('actypes::link-to-org-id (insert (format "\"id:%s\"" arg1)))
-      ('actypes::link-to-rfc (insert (format "rfc%d" arg1)))
+      ('actypes::link-to-rfc (insert (format "rfc%s" arg1)))
       ('actypes::man-show (insert arg1))
       ('actypes::link-to-file-line (insert (format "\"%s:%d\""
 						   (hpath:substitute-var arg1) arg2)))

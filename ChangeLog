@@ -1,8 +1,12 @@
 2023-05-28  Mats Lidell  <matsl@gnu.org>
 
-* test/hbut-tests.el (hbut-tests-ibut-program-link-to-directory)
+* test/hbut-tests.el (hbut-tests-ibut-insert-text-temp-buffer)
+    (hbut-tests-ibut-insert-text-temp-file)
+    (hbut-tests-ibut-insert-annot-bib, hbut-tests-ibut-insert-kbd-key)
+    (hbut-tests-ibut-program-link-to-directory)
     (hbut-tests-ibut-program-link-to-file)
     (hbut-tests-ibut-insert-text-link-to-dir): Add ibut tests.
+* hbut.el (ibut:insert-text): Use %s for rfc arg.
 
 2023-05-28  Mats Lidell  <matsl@gnu.org>
 
