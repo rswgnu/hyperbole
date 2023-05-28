@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    6/30/93
-;; Last-Mod:      5-Feb-23 at 22:36:46 by Mats Lidell
+;; Last-Mod:     28-May-23 at 11:21:42 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -630,20 +630,12 @@ level."
 ;;;###autoload
 (defun kview:char-invisible-p (&optional pos)
   "Return t if the character after point is invisible/hidden, else nil."
-  (or pos (setq pos (point)))
-  (when (or (kproperty:get pos 'invisible)
-	    (delq nil (mapcar (lambda (o) (overlay-get o 'invisible))
-			      (overlays-at (or pos (point))))))
-    t))
+  (invisible-p (or pos (point))))
 
 ;;;###autoload
 (defun kview:char-visible-p (&optional pos)
   "Return t if the character after point is visible, else nil."
-  (unless pos
-    (setq pos (point)))
-  (and (not (kproperty:get pos 'invisible))
-       (not (delq nil (mapcar (lambda (o) (overlay-get o 'invisible))
-			      (overlays-at (or pos (point))))))))
+  (not (invisible-p (or pos (point)))))
 
 (defun kview:create (buffer-name
 			 &optional id-counter top-cell-attributes
