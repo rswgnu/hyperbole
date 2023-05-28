@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    30-may-21 at 09:33:00
-;; Last-Mod:     30-Apr-23 at 11:04:33 by Mats Lidell
+;; Last-Mod:     28-May-23 at 23:14:35 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -23,6 +23,7 @@
 (require 'hactypes)
 (require 'hpath)
 (require 'el-mock)
+(require 'hy-test-helpers "test/hy-test-helpers")
 
 (defun hbut-tests:should-match-tmp-folder (tmp)
   "Check that TMP matches either a list of a single element of \"/tmp\" or \"private/tmp\".
@@ -41,7 +42,7 @@ Needed since hyperbole expands all links to absolute paths and
           (hbut-tests:should-match-tmp-folder (hattr:get (hbut:at-p) 'args))
           (should (equal (hattr:get (hbut:at-p) 'loc) file))
           (should (equal (hattr:get (hbut:at-p) 'lbl-key) "label")))
-      (delete-file file))))
+      (hy-delete-file-and-buffer file))))
 
 (ert-deftest ebut-program-link-to-directory-2 ()
   "Programatically create ebut with link-to-directory using `temporary-file-directory`."
@@ -51,7 +52,7 @@ Needed since hyperbole expands all links to absolute paths and
           (find-file file)
           (ebut:program "label" 'link-to-directory temporary-file-directory)
           (hy-test-helpers-verify-hattr-at-p :actype 'actypes::link-to-directory :args (list temporary-file-directory) :loc file :lbl-key "label"))
-      (delete-file file))))
+      (hy-delete-file-and-buffer file))))
 
 (ert-deftest ebut-program-shell-cmd ()
   "Programatically create ebut running shell command."
@@ -61,7 +62,7 @@ Needed since hyperbole expands all links to absolute paths and
           (find-file file)
           (ebut:program "label" 'exec-shell-cmd "ls /tmp")
           (hy-test-helpers-verify-hattr-at-p :actype 'actypes::exec-shell-cmd :args '("ls /tmp") :loc file :lbl-key "label"))
-      (delete-file file))))
+      (hy-delete-file-and-buffer file))))
 
 (ert-deftest ebut-delete-removes-ebut-and-returns-button-data ()
   "Remove an ebut."
@@ -74,7 +75,7 @@ Needed since hyperbole expands all links to absolute paths and
           (let ((success-flag (hui:hbut-delete)))
             (should-not (hbut:at-p))
             (should (eq success-flag t))))
-      (delete-file file))))
+      (hy-delete-file-and-buffer file))))
 
 (ert-deftest gbut-program-calls-ebut-program ()
   "Programatically create gbut calls ebut:program."
@@ -85,7 +86,7 @@ Needed since hyperbole expands all links to absolute paths and
           (mock (hpath:find-noselect (expand-file-name hbmap:filename hbmap:dir-user)) => test-buffer)
           (mock (ebut:program "label" 'link-to-directory "/tmp") => t)
           (gbut:ebut-program "label" 'link-to-directory "/tmp"))
-      (delete-file test-file))))
+      (hy-delete-file-and-buffer test-file))))
 
 (ert-deftest gbut-program-link-to-directory ()
   "Programatically create gbut with link-to-directory."
@@ -101,7 +102,7 @@ Needed since hyperbole expands all links to absolute paths and
             (hbut-tests:should-match-tmp-folder (hattr:get (hbut:at-p) 'args))
             (should (equal (hattr:get (hbut:at-p) 'loc) test-file))
             (should (equal (hattr:get (hbut:at-p) 'lbl-key) "global"))))
-      (delete-file test-file))))
+      (hy-delete-file-and-buffer test-file))))
 
 (ert-deftest gbut-program-eval-elisp ()
   "Programatically create gbut with eval-elisp."
@@ -114,7 +115,7 @@ Needed since hyperbole expands all links to absolute paths and
             (gbut:ebut-program "global" 'eval-elisp '()))
 	  (with-current-buffer test-buffer
             (hy-test-helpers-verify-hattr-at-p :actype 'actypes::eval-elisp :args  '(()) :loc test-file :lbl-key "global")))
-      (delete-file test-file))))
+      (hy-delete-file-and-buffer test-file))))
 
 (ert-deftest gbut-program-link-to-file ()
   "Programatically create gbut with eval-elisp."
@@ -127,7 +128,7 @@ Needed since hyperbole expands all links to absolute paths and
             (gbut:ebut-program "global" 'link-to-file test-file))
 	  (with-current-buffer test-buffer
             (hy-test-helpers-verify-hattr-at-p :actype 'actypes::link-to-file :args (list test-file) :loc test-file :lbl-key "global")))
-      (delete-file test-file))))
+      (hy-delete-file-and-buffer test-file))))
 
 (ert-deftest gbut-program-link-to-file-line ()
   "Programatically create gbut with eval-elisp."
@@ -140,7 +141,7 @@ Needed since hyperbole expands all links to absolute paths and
             (gbut:ebut-program "global" 'link-to-file-line test-file 10))
 	  (with-current-buffer test-buffer
             (hy-test-helpers-verify-hattr-at-p :actype 'actypes::link-to-file-line :args (list test-file 10) :loc test-file :lbl-key "global")))
-      (delete-file test-file))))
+      (hy-delete-file-and-buffer test-file))))
 
 (ert-deftest gbut-program-link-to-file-line-and-column ()
   "Programatically create gbut with eval-elisp."
@@ -153,7 +154,7 @@ Needed since hyperbole expands all links to absolute paths and
             (gbut:ebut-program "global" 'link-to-file-line-and-column test-file 10 20))
 	  (with-current-buffer test-buffer
             (hy-test-helpers-verify-hattr-at-p :actype 'actypes::link-to-file-line-and-column :args (list test-file 10 20) :loc test-file :lbl-key"global")))
-      (delete-file test-file))))
+      (hy-delete-file-and-buffer test-file))))
 
 (ert-deftest hypb:program-create-ebut-in-buffer ()
   "Create button with hypb:program in buffer."
@@ -179,7 +180,7 @@ Needed since hyperbole expands all links to absolute paths and
           (find-file test-file)
           (ebut:program "label" 'link-to-file-line-and-column test-file 2 3)
           (hy-test-helpers-verify-hattr-at-p :actype 'actypes::link-to-file-line-and-column :args (list test-file 2 3) :loc test-file :lbl-key "label"))
-      (delete-file test-file))))
+      (hy-delete-file-and-buffer test-file))))
 
 (ert-deftest hypb--ebut-at-p-should-not-insert-hbdata-section-in-non-file-buffers ()
   "Verify that ebut:at-p does not insert a hbdata section in a non file buffer."

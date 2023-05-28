@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    04-Feb-22 at 23:00:00
-;; Last-Mod:     04-Feb-22 at 23:00:00 by Mats Lidell
+;; Last-Mod:     28-May-23 at 23:14:18 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -21,6 +21,7 @@
 (require 'ert)
 (require 'with-simulated-input)
 (require 'hargs)
+(require 'hy-test-helpers "test/hy-test-helpers")
 
 (ert-deftest hargs-get-verify-extension-characters ()
   "Verify hyperbole extension characters are indentified."
@@ -39,7 +40,7 @@
           (with-simulated-input "xyz RET"
             (should (string= (hargs:get "+X: ") "(dir)xyz")))
           (should-error (hargs:get "+A: ") :type 'error))
-      (delete-file file))))
+      (hy-delete-file-and-buffer file))))
 
 (ert-deftest hargs-get-verify-extension-characters-+K ()
   "Verify hyperbole extension character +K is indentified."

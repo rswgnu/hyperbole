@@ -37,8 +37,8 @@
 	    (unless (kotl-mode:last-cell-p)
               (kotl-mode:next-cell 1)))
 	  (should (kotl-mode:last-cell-p)))
-      (delete-file file)
-      (delete-file kotl-file))))
+      (hy-delete-file-and-buffer file)
+      (hy-delete-file-and-buffer kotl-file))))
 
 (ert-deftest kimport--text-file ()
   "Import .txt text file into a Koutline, as one cell per paragraph."
@@ -54,8 +54,8 @@
 	    (unless (kotl-mode:last-cell-p)
               (kotl-mode:forward-cell 1)))
 	  (should (kotl-mode:last-cell-p)))
-      (delete-file file)
-      (delete-file kotl-file))))
+      (hy-delete-file-and-buffer file)
+      (hy-delete-file-and-buffer kotl-file))))
 
 (ert-deftest kimport--text-file-two-lines-per-paragraph ()
   "Import .txt text file into a Koutline, as one cell per paragraph.
@@ -75,8 +75,8 @@ Each paragraph is two lines."
 	    (unless (kotl-mode:last-cell-p)
               (kotl-mode:forward-cell 1)))
 	  (should (kotl-mode:last-cell-p)))
-      (delete-file file)
-      (delete-file kotl-file))))
+      (hy-delete-file-and-buffer file)
+      (hy-delete-file-and-buffer kotl-file))))
 
 (ert-deftest kimport--star-outline ()
   "Import .otl star outline as one cell per entry beginning with one or more stars."
@@ -93,8 +93,8 @@ Each paragraph is two lines."
 	    (unless (kotl-mode:last-cell-p)
               (kotl-mode:next-cell 1)))
 	  (should (kotl-mode:last-cell-p)))
-      (delete-file file)
-      (delete-file kotl-file))))
+      (hy-delete-file-and-buffer file)
+      (hy-delete-file-and-buffer kotl-file))))
 
 (ert-deftest kimport--star-outline-two-lines-per-star-heading ()
   "Import .org star outline as one cell per paragraph, each two lines."
@@ -110,8 +110,8 @@ Each paragraph is two lines."
 	    (unless (kotl-mode:last-cell-p)
               (kotl-mode:forward-cell 1)))
 	  (should (kotl-mode:last-cell-p)))
-      (delete-file file)
-      (delete-file kotl-file))))
+      (hy-delete-file-and-buffer file)
+      (hy-delete-file-and-buffer kotl-file))))
 
 (ert-deftest kimport--star-outline-with-siblings ()
   "Import .org star outline as one cell per entry beginning with one or more stars."
@@ -130,8 +130,8 @@ Each paragraph is two lines."
 	  (should (kotl-mode:last-cell-p))
           (kotl-mode:end-of-buffer)
           (should (= (kcell-view:level) 3)))
-      (delete-file file)
-      (delete-file kotl-file))))
+      (hy-delete-file-and-buffer file)
+      (hy-delete-file-and-buffer kotl-file))))
 
 (provide 'kimport-tests)
 ;;; kimport-tests.el ends here

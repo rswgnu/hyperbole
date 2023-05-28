@@ -7,7 +7,7 @@
 ;; e-mail:       matsl@gnu.org
 ;;
 ;; orig-date:    16-Feb-22 at 23:28:49
-;; last-mod:     13-May-23 at 10:06:42 by Bob Weiner
+;; last-mod:     28-May-23 at 23:15:30 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -26,6 +26,7 @@
 
 (require 'kcell)
 (require 'kotl-mode)
+(require 'hy-test-helpers "test/hy-test-helpers")
 
 (defconst kcell-tests--ref-to-id-tests
   ;  ref flag kvspec expected
@@ -88,7 +89,7 @@ Return t if is does else return the SPEC."
             (if failures
                 (ert-fail (cons "These refs were not correctly converted to ids:" failures))
               t)))
-      (delete-file kotl-file))))
+      (hy-delete-file-and-buffer kotl-file))))
 
 (provide 'kcell-tests)
 ;;; kcell-tests.el ends here

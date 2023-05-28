@@ -490,7 +490,7 @@ enough files with matching mode loaded."
       (hy-test-helpers:kill-buffer buff)
       (global-set-key (kbd "C-x C-b") old)
       (hy-test-helpers:kill-buffer (get-file-buffer tmp))
-      (delete-file tmp))))
+      (hy-delete-file-and-buffer tmp))))
 
 (ert-deftest fast-demo-key-series-keep-lines-slash ()
   "Action key opens Ibuffer and keep lines that contains a slash."
