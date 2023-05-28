@@ -1,5 +1,8 @@
 2023-05-28  Mats Lidell  <matsl@gnu.org>
 
+* test/hy-test-helpers.el (hy-delete-file-and-buffer): Add helper that
+    removes file and buffer even if in modified state.
+
 * hibtypes.el (hypb-mail-address-tld-regexp)
     (hypb-mail-address-regexp): Use hypb prefix.
 
