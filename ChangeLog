@@ -1,7 +1,26 @@
-2023-05-23  Bob Weiner  <rsw@gnu.org>
+2023-05-27  Bob Weiner  <rsw@gnu.org>
 
-* hversion.el (hyperb:path-being-loaded): Add support for .eln natively compiled
-    files.
+* kotl/kotl-mode.el (kotl-mode:setup-keymap): Create this function instead
+    of setting up keymap at library load time so that key rebindings occur
+    when in kotl-mode with orgtbl-mode active, for example, so keys from it
+    that need rebinding are active when kotl-mode-map is setup.  Call from
+    'kotl-mode' but runs only when kotl-mode-map is nil.
+                    (kotl-mode) Replace local binding of 'minor-mode-alist'
+    with 'minor-mode-overriding-map-alist'.
+  kotl/kotl-orgtbl.el (orgtbl-meta-return): Rename to
+    'kotl-mode:orgtbl-meta-return' and use only in 'kotl-mode'.
+                      (kotl-mode:org-self-insert-command,
+                       kotl-mode:self-insert-command,
+                       kotl-mode:setup-overriding-orgtbl-keymap): Add to
+    fix overriding keys in 'orgtbl-mode-map' within 'kotl-mode'.
+                      (kotl-mode:backward-char,
+                       kotl-mode:forward-char): Fix to handle when point
+    is outside of a valid outline position.
+                      (kotl-mode:eocp): Change to call (kotl-mode:eolp t)
+    so does not trigger eoc when at eol but cell is collapsed.
+                      (kotl-mode:pre-self-insert-command): Remove unneeded
+    second check of whether point is in a valid koutline position and run
+    during kotl-mode:*self-insert-command calls.
 
 2023-05-22  Bob Weiner  <rsw@gnu.org>
 

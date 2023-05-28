@@ -4,7 +4,7 @@
 ;; Maintainer:   Bob Weiner, Mats Lidell
 ;;
 ;; Orig-Date:     1-Jan-94
-;; Last-Mod:     23-May-23 at 00:06:52 by Bob Weiner
+;; Last-Mod:     27-May-23 at 12:17:40 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -112,7 +112,7 @@ the pathname."
 			  file))
 	    file (substitute-in-file-name file)
 	    file (locate-file file load-path
-			      (when (null nosuffix) '(".eln" ".elc" ".el" ".el.gz" ".el.Z"))
+			      (when (null nosuffix) '(".elc" ".el" ".el.gz" ".el.Z"))
 			      ;; accept any existing file
 			      nil)
 	    file (if (and (stringp file)

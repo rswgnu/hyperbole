@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    6/30/93
-;; Last-Mod:     21-May-23 at 14:37:14 by Bob Weiner
+;; Last-Mod:     27-May-23 at 23:53:04 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -95,6 +95,28 @@ Normally set from the UNDO element of a yank-handler; see
 It provides the following keys:
 \\{kotl-mode-map}"
   (interactive)
+  (mapc #'make-local-variable
+	'(hyrolo-entry-regexp
+	  indent-line-function
+	  indent-region-function
+	  kotl-previous-mode
+	  line-move-ignore-invisible
+	  minor-mode-alist
+	  minor-mode-overriding-map-alist
+	  outline-isearch-open-invisible-function
+	  outline-level
+	  outline-regexp
+	  paragraph-separate
+	  paragraph-start
+	  selective-display-ellipses))
+  ;; Enable Org Table editing minor mode so that necessary key binding
+  ;; overrides are made.  If not desired, the user can disable it via
+  ;; `kotl-mode-hook'.
+  (orgtbl-mode 1)
+  (unless kotl-mode-map
+    (kotl-mode:setup-keymap))
+  (unless kotl-mode-overriding-orgtbl-mode-map
+    (kotl-mode:setup-overriding-orgtbl-keymap))
   (use-local-map kotl-mode-map)
   (set-syntax-table text-mode-syntax-table)
   ;; Turn off filladapt minor mode if on, so that it does not interfere with
@@ -114,26 +136,20 @@ It provides the following keys:
   ;; Ensure that outline structure data is saved when save-buffer is called
   ;; from save-some-buffers, {C-x s}.
   (add-hook 'write-file-functions #'kotl-mode:update-buffer nil 'local)
-  (mapc #'make-local-variable
-	'(hyrolo-entry-regexp kotl-previous-mode
-			      indent-line-function indent-region-function
-			      outline-isearch-open-invisible-function
-			      outline-level outline-regexp
-			      line-move-ignore-invisible minor-mode-alist
-			      selective-display-ellipses
-			      paragraph-separate paragraph-start))
   ;; Used by kimport.el functions.
   (unless (and (boundp 'kotl-previous-mode) kotl-previous-mode)
     (setq hyrolo-entry-regexp (concat "^" kview:outline-regexp)
 	  kotl-previous-mode major-mode
+	  ;; Override orgtbl-mode keys with kotl-mode-specific ones.
+	  minor-mode-overriding-map-alist (list (cons 'orgtbl-mode
+						      kotl-mode-overriding-orgtbl-mode-map))
 	  ;; Remove outline minor-mode mode-line indication.
-	  minor-mode-alist (copy-sequence minor-mode-alist)
 	  minor-mode-alist (set:remove '(outline-minor-mode " Outl")
-				       minor-mode-alist)
+						      minor-mode-alist)
  	  minor-mode-alist (set:remove '(selective-display " Outline")
-				       minor-mode-alist)
+						      minor-mode-alist)
 	  minor-mode-alist (set:remove '(selective-display " Otl")
-				       minor-mode-alist)
+						      minor-mode-alist)
 	  ;; Remove indication that buffer is narrowed.
 	  mode-line-format (copy-sequence mode-line-format)
 	  mode-line-format (set:remove "%n" mode-line-format)
@@ -191,23 +207,6 @@ It provides the following keys:
   ;; koutline.
   (hyperb:with-suppressed-warnings ((free-vars kotl-previous-mode))
     (setq kotl-previous-mode 'kotl-mode))
-  ;; Enable Org Table editing minor mode (user can disable via kotl-mode-hook
-  ;; if desired).
-  (orgtbl-mode 1)
-  ;; Override org-tbl {M-RET} binding since Action Key provides the
-  ;; same funcitonality when in a table, but may also be invoked from
-  ;; a mouse button.
-  (org-defkey orgtbl-mode-map "\M-\C-m"
-              (orgtbl-make-binding 'orgtbl-meta-return 105
-        			   "\M-\C-m" [(meta return)]))
-  (org-defkey orgtbl-mode-map [(meta return)]
-              (orgtbl-make-binding 'orgtbl-meta-return 106
-        			   [(meta return)] "\M-\C-m"))
-  (org-defkey orgtbl-mode-map "\C-d"
-              (orgtbl-make-binding 'kotl-mode:delete-char 201 "\C-d"))
-  (org-defkey orgtbl-mode-map [S-iso-lefttab]
-              (orgtbl-make-binding 'org-shifttab 107
-        			   [S-iso-lefttab] [backtab] [(shift tab)]))
   (run-hooks 'kotl-mode-hook)
   (add-hook 'change-major-mode-hook #'kotl-mode:show-all nil t))
 
@@ -1465,7 +1464,8 @@ Return number of cells left to move."
 	      ((kotl-mode:bolp)
 	       (when (re-search-backward "[\n\r]" nil t)
 		 (kotl-mode:to-valid-position t)))
-	      (t (backward-char)))
+	      (t (backward-char)
+		 (kotl-mode:to-valid-position t)))
 	(setq arg (1- arg)))
     (kotl-mode:forward-char (- arg)))
   (point))
@@ -1718,10 +1718,8 @@ Return number of cells left to move."
 	       (error "(kotl-mode:forward-char): End of buffer"))
 	      ((kotl-mode:eocp)
 	       (kcell-view:next t))
-	      ((kotl-mode:eolp)
-	       (forward-char)
-	       (kotl-mode:to-visible-position))
-	      (t (forward-char)))
+	      (t (forward-char)
+		 (kotl-mode:to-valid-position)))
 	(setq arg (1- arg)))
     (kotl-mode:backward-char (- arg)))
   (point))
@@ -2075,7 +2073,7 @@ If at tail cell already, do nothing and return nil."
   "Return point if in a visible position at the end of a kview cell, else nil."
   (when (or (smart-eobp)
 	    (looking-at "[\n\r]+\\'")
-	    (when (kotl-mode:eolp)
+	    (when (kotl-mode:eolp t)
 	      (save-excursion
 		(skip-chars-forward "\n\r")
 		(kotl-mode:beginning-of-line)
@@ -3076,6 +3074,7 @@ When called interactively, it displays the value in the minibuffer."
 
 ;;; ------------------------------------------------------------------------
 ;;; Org mode and Org Table overrides to limit editing to a cell
+;;; (used in "kotl-orgtbl.el").
 ;;; ------------------------------------------------------------------------
 
 (defun kotl-mode:org-delete-backward-char (n)
@@ -3104,6 +3103,14 @@ because, in this case the deletion might narrow the column."
   (kcell-view:operate
    (lambda () (org-force-self-insert n))))
 
+(defun kotl-mode:org-self-insert-command (n)
+  "Like `self-insert-command’, use overwrite-mode for whitespace in tables.
+If the cursor is in a table looking at whitespace, the whitespace is
+overwritten, and the table is not marked as requiring realignment."
+  (interactive "p")
+  (kcell-view:operate
+   (lambda () (org-self-insert-command n))))
+
 (defun kotl-mode:orgtbl-ctrl-c-ctrl-c (arg)
   "If the cursor is inside a table, realign the table.
 If it is a table to be sent away to a receiver, do it.
@@ -3128,6 +3135,20 @@ overwritten, and the table is not marked as requiring realignment."
   (kcell-view:operate
    (lambda () (orgtbl-self-insert-command n))))
 
+
+(defun kotl-mode:self-insert-command (n &optional c)
+  "Insert the character you type.
+Whichever character C you type to run this command is inserted.
+The numeric prefix argument N says how many times to repeat the insertion.
+Before insertion, `expand-abbrev’ is executed if the inserted character does
+not have word syntax and the previous character in the buffer does.
+After insertion, `internal-auto-fill’ is called if
+`auto-fill-function’ is non-nil and if the `auto-fill-chars’ table has
+a non-nil value for the inserted character.  At the end, it runs
+`post-self-insert-hook’."
+  (interactive (list (prefix-numeric-value current-prefix-arg) last-command-event))
+  (kcell-view:operate
+   (lambda () (self-insert-command n c))))
 
 ;;; ************************************************************************
 ;;; Private functions
@@ -3289,16 +3310,19 @@ newlines at end of tree."
 
 ;; Consult this: (kotl-mode:to-visible-position)
 (defun kotl-mode:pre-self-insert-command ()
-  "In a Koutline ensure point is in an editable position before insertion.
+  "In a Koutline, ensure point is in an editable position before insertion.
 Mouse may have moved point outside of an editable area.
 `kotl-mode' adds this function to `pre-command-hook'."
-  (when (and (memq this-command '(self-insert-command orgtbl-self-insert-command))
-	     (eq major-mode 'kotl-mode)
-	     (not (kview:valid-position-p))
-	     ;; Prevent repeatedly moving point to valid position when moving trees
-	     (not (hyperb:stack-frame '(kcell-view:to-label-end))))
-    (when (not (kview:valid-position-p))
-      (kotl-mode:to-valid-position))))
+  (when (and
+	 (memq this-command '(kotl-mode:orgtbl-self-insert-command
+			      kotl-mode:self-insert-command
+			      orgtbl-self-insert-command
+			      self-insert-command))
+	 (eq major-mode 'kotl-mode)
+	 (not (kview:valid-position-p))
+	 ;; Prevent repeatedly moving point to valid position when moving trees
+	 (not (hyperb:stack-frame '(kcell-view:to-label-end))))
+    (kotl-mode:to-valid-position)))
 
 (defun kotl-mode:print-attributes (_kview)
   "Print to `standard-output' the attributes of the current visible kcell.
@@ -3443,221 +3467,218 @@ Leave point at end of line now residing at START."
 
 ;;; ------------------------------------------------------------------------
 
-(unless kotl-mode-map
-  (setq kotl-mode-map
-	(cond ((fboundp 'copy-keymap)
-	       (if (boundp 'indented-text-mode-map)
-		   (copy-keymap indented-text-mode-map)
-		 (copy-keymap text-mode-map)))
-	      (t (make-keymap))))
-  ;; Ensure mouse wheel scrolling leaves point in a valid Koutline position
-  (when (and (boundp 'mwheel-scroll-up-function)
-	     (eq (symbol-value 'mwheel-scroll-up-function) 'scroll-up))
-    (setq mwheel-scroll-up-function 'kotl-mode:scroll-up
-	  mwheel-scroll-down-function 'kotl-mode:scroll-down))
-  ;; Overload edit keys to deal with structure and labels.
-  (let (local-cmd)
-    (mapc
-     (lambda (cmd)
-       (setq local-cmd (intern-soft
-			(concat "kotl-mode:" (symbol-name cmd))))
-       ;; Only bind key locally if kotl-mode local-cmd has already
-       ;; been defined and cmd is a valid function.
-       (when (and local-cmd (fboundp cmd))
-	 ;; Make local-cmd have the same property list as cmd,
-	 ;; e.g. so pending-delete property is the same, but delete
-	 ;; interactive-only property to suppress byte-compiler warnings.
-	 (setplist local-cmd (copy-sequence (symbol-plist cmd)))
-	 (cl-remprop local-cmd 'interactive-only)
-	 (substitute-key-definition
-	  cmd local-cmd kotl-mode-map global-map)))
-     '(
-       back-to-indentation
-       backward-char
-       backward-delete-char
-       backward-delete-char-untabify
-       backward-kill-word
-       backward-or-forward-delete-char
-       backward-para
-       backward-paragraph
-       backward-sentence
-       backward-word
-       beginning-of-buffer
-       beginning-of-line
-       beginning-of-visual-line
-       completion-kill-region
-       copy-region-as-kill
-       copy-to-register
-       delete-blank-lines
-       delete-backward-char
-       delete-char
-       delete-forward-char
-       delete-horizontal-space
-       delete-indentation
-       end-of-buffer
-       end-of-line
-       end-of-visual-line
-       fill-paragraph
-       fill-paragraph-or-region
-       ;; cursor keys
-       fkey-backward-char
-       fkey-forward-char
-       fkey-next-line
-       fkey-previous-line
-       backward-char-command
-       forward-char-command
-       ;;
-       forward-char
-       forward-word
-       forward-para
-       forward-paragraph
-       forward-sentence
-       just-one-space
-       kill-word
-       kill-line
-       kill-visual-line
-       kill-whole-line
-       kill-region
-       kill-ring-save
-       kill-sentence
-       left-char
-       mark-paragraph
-       mark-whole-buffer
-       move-beginning-of-line
-       move-end-of-line
-       newline
-       newline-and-indent
-       next-line
-       open-line
-       previous-line
-       right-char
-       scroll-down
-       scroll-up
-       scroll-down-command
-       scroll-up-command
-       set-fill-prefix
-       transpose-chars
-       transpose-lines
-       transpose-paragraphs
-       transpose-sentences
-       transpose-words
-       yank
-       yank-pop
-       zap-to-char
-       ;;
-       org-delete-backward-char
-       org-delete-char
-       org-force-self-insert
-       orgtbl-ctrl-c-ctrl-c
-       orgtbl-create-or-convert-from-region
-       orgtbl-self-insert-command)))
-
-
-  ;; kotl-mode keys
-  (define-key kotl-mode-map "\C-c\C-@"  'kotl-mode:mail-tree)
-  (define-key kotl-mode-map "\C-c+"     'kotl-mode:append-cell)
-  (define-key kotl-mode-map "\C-c,"     'kotl-mode:beginning-of-cell)
-  (define-key kotl-mode-map "\C-c."     'kotl-mode:end-of-cell)
-  (define-key kotl-mode-map "\C-c<"     'kotl-mode:first-sibling)
-  (define-key kotl-mode-map "\C-c>"     'kotl-mode:last-sibling)
-  (define-key kotl-mode-map "\C-c^"     'kotl-mode:beginning-of-tree)
-  (define-key kotl-mode-map "\C-c$"     'kotl-mode:end-of-tree)
-  (define-key kotl-mode-map "\C-ca"     'kotl-mode:add-child)
-  (define-key kotl-mode-map "\C-c\C-a"  'kotl-mode:show-all)
-  (define-key kotl-mode-map "\C-cb"     'kvspec:toggle-blank-lines)
-  (define-key kotl-mode-map "\C-c\C-b"  'kotl-mode:backward-cell)
-  (define-key kotl-mode-map "\C-cc"     'kotl-mode:copy-after)
-  (define-key kotl-mode-map "\C-c\C-c"  'kotl-mode:copy-before)
-  (define-key kotl-mode-map "\C-c\M-c"  'kotl-mode:copy-tree-or-region-to-buffer)
-  (define-key kotl-mode-map "\C-cd"     'kotl-mode:down-level)
-  (define-key kotl-mode-map "\C-c\C-d"  'kotl-mode:down-level)
-  (define-key kotl-mode-map "\C-ce"     'kotl-mode:exchange-cells)
-  (define-key kotl-mode-map "\C-c\C-f"  'kotl-mode:forward-cell)
-  (define-key kotl-mode-map "\C-cg"     'kotl-mode:goto-cell)
-  (define-key kotl-mode-map "\C-ch"     'kotl-mode:cell-help)
-  (define-key kotl-mode-map "\C-c\C-h"  'kotl-mode:hide-tree)
-  ;; Since the next key binds M-BS, it may already have a local binding,
-  ;; in which case we don't want to bind it here.
-  (unless (lookup-key kotl-mode-map "\M-\C-h")
-    (define-key kotl-mode-map "\M-\C-h"   'kotl-mode:hide-subtree))
-  ;; Override this global binding for set-selective-display with a similar
-  ;; function appropriate for kotl-mode.
-  (define-key kotl-mode-map "\C-x$"     'kotl-mode:hide-sublevels)
-  (define-key kotl-mode-map [(tab)]     'kotl-mode:tab-command) ;; TAB
-  (define-key kotl-mode-map "\C-i"      'kotl-mode:tab-command) ;; TAB
-  (define-key kotl-mode-map [(shift tab)] 'kotl-mode:untab-command) ;; Shift-TAB
-  (define-key kotl-mode-map [S-iso-lefttab] 'kotl-mode:untab-command) ;; Shift-TAB
-  (define-key kotl-mode-map [backtab]   'kotl-mode:untab-command) ;; Shift-TAB
-  (define-key kotl-mode-map [(meta tab)] 'kotl-mode:untab-command) ;; M-TAB
-  (define-key kotl-mode-map "\M-\C-i"   'kotl-mode:untab-command) ;; M-TAB
-  (define-key kotl-mode-map "\C-c\C-i"  'kotl-mode:set-or-remove-cell-attribute)
-  (define-key kotl-mode-map "\C-j"      'kotl-mode:add-cell)
-  (define-key kotl-mode-map "\M-j"      'kotl-mode:fill-paragraph)
-  (define-key kotl-mode-map "\C-c\M-j"  'kotl-mode:fill-cell)
-  (define-key kotl-mode-map "\M-\C-j"   'kotl-mode:fill-tree)
-  (define-key kotl-mode-map "\C-c\C-k"  'kotl-mode:kill-tree)
-  (define-key kotl-mode-map "\C-ck"     'kotl-mode:kill-contents)
-  ;; Force an override of the global {C-x i} insert-file binding
-  (define-key kotl-mode-map "\C-xi"     'kimport:insert-file)
-  ;; Force an override of the global {C-x r i} insert-register binding
-  (define-key kotl-mode-map "\C-xri"    'kimport:insert-register)
-  (define-key kotl-mode-map "\C-ck"     'kotl-mode:kill-contents)
-  (define-key kotl-mode-map "\C-cl"     'klink:create)
-  (define-key kotl-mode-map "\C-c\C-l"  'kview:set-label-type)
-  (define-key kotl-mode-map "\C-c\M-l"  'kview:set-label-separator)
-  (define-key kotl-mode-map "\C-m"      'kotl-mode:newline)
-  (define-key kotl-mode-map "\C-cm"     'kotl-mode:move-after)
-  (define-key kotl-mode-map "\C-c\C-m"  'kotl-mode:move-before)
-  (define-key kotl-mode-map "\C-c\C-n"  'kotl-mode:next-cell)
-  (define-key kotl-mode-map "\C-c\C-o"  'kotl-mode:overview)
-  (define-key kotl-mode-map "\C-c\C-p"  'kotl-mode:previous-cell)
-  (define-key kotl-mode-map "\C-cp"     'kotl-mode:add-parent)
-  (if (memq (global-key-binding "\M-q") '(fill-paragraph
-					  fill-paragraph-or-region))
+(defun kotl-mode:setup-keymap ()
+  (condition-case err
       (progn
-	(define-key kotl-mode-map "\C-c\M-q" 'kotl-mode:fill-cell)
-	(define-key kotl-mode-map "\M-\C-q"  'kotl-mode:fill-tree)))
-  (define-key kotl-mode-map "\C-cs"     'kotl-mode:split-cell)
-  (define-key kotl-mode-map "\C-c\C-s"  'kotl-mode:show-tree)
-  (define-key kotl-mode-map "\C-c\C-\\" 'kotl-mode:show-tree)
-  (define-key kotl-mode-map "\M-s"      'kotl-mode:center-line)
-  (define-key kotl-mode-map "\M-S"      'kotl-mode:center-paragraph)
-  (define-key kotl-mode-map "\C-ct"     'kotl-mode:transpose-cells)
-  (define-key kotl-mode-map "\C-c\C-t"  'kotl-mode:top-cells)
-  (define-key kotl-mode-map "\C-cu"     'kotl-mode:up-level)
-  (define-key kotl-mode-map "\C-c\C-u"  'kotl-mode:up-level)
-  (define-key kotl-mode-map "\C-c\C-v"  'kvspec:activate)
-  (define-key kotl-mode-map "\C-x\C-w"  'kfile:write)
-  (define-key kotl-mode-map [M-up]              'kotl-mode:move-tree-backward)
-  (define-key kotl-mode-map (kbd "ESC <up>")    'kotl-mode:move-tree-backward)
-  (define-key kotl-mode-map [M-down]            'kotl-mode:move-tree-forward)
-  (define-key kotl-mode-map (kbd "ESC <down>")  'kotl-mode:move-tree-forward)
-  (mapc (lambda (key)
-	  (define-key kotl-mode-map key         'kotl-mode:promote-tree))
-	(list (kbd "M-<left>") (kbd "M-S-<left>") (kbd "ESC <left>")
-	      (kbd "ESC S-<left>") (kbd "C-c C-<") (kbd "C-c C-,")))
-  (mapc (lambda (key)
-	  (define-key kotl-mode-map key         'kotl-mode:demote-tree))
-	(list (kbd "M-<right>") (kbd "M-S-<right>") (kbd "ESC <right>")
-	      (kbd "ESC S-<right>") (kbd "C-c C->") (kbd "C-c C-."))))
+	(setq kotl-mode-map
+	      (cond ((fboundp 'copy-keymap)
+		     (if (boundp 'indented-text-mode-map)
+			 (copy-keymap indented-text-mode-map)
+		       (copy-keymap text-mode-map)))
+		    (t (make-keymap))))
+	;; Ensure mouse wheel scrolling leaves point in a valid Koutline position
+	(when (and (boundp 'mwheel-scroll-up-function)
+		   (eq (symbol-value 'mwheel-scroll-up-function) 'scroll-up))
+	  (setq mwheel-scroll-up-function 'kotl-mode:scroll-up
+		mwheel-scroll-down-function 'kotl-mode:scroll-down))
+	;; Overload edit keys to deal with structure and labels.
+	(let (local-cmd)
+	  (mapc
+	   (lambda (cmd)
+	     (setq local-cmd (intern-soft
+			      (concat "kotl-mode:" (symbol-name cmd))))
+	     ;; Only bind key locally if kotl-mode local-cmd has already
+	     ;; been defined and cmd is a valid function.
+	     (when (and local-cmd (fboundp cmd))
+	       ;; Make local-cmd have the same property list as cmd,
+	       ;; e.g. so pending-delete property is the same, but delete
+	       ;; interactive-only property to suppress byte-compiler warnings.
+	       (setplist local-cmd (copy-sequence (symbol-plist cmd)))
+	       (cl-remprop local-cmd 'interactive-only)
+	       ;; `(define-key ,kotl-mode-map [remap ,cmd] ',local-cmd)
+	       (substitute-key-definition cmd local-cmd kotl-mode-map global-map)))
+	   '(
+	     back-to-indentation
+	     backward-char
+	     backward-delete-char
+	     backward-delete-char-untabify
+	     backward-kill-word
+	     backward-or-forward-delete-char
+	     backward-para
+	     backward-paragraph
+	     backward-sentence
+	     backward-word
+	     beginning-of-buffer
+	     beginning-of-line
+	     beginning-of-visual-line
+	     completion-kill-region
+	     copy-region-as-kill
+	     copy-to-register
+	     delete-blank-lines
+	     delete-backward-char
+	     delete-char
+	     delete-forward-char
+	     delete-horizontal-space
+	     delete-indentation
+	     end-of-buffer
+	     end-of-line
+	     end-of-visual-line
+	     fill-paragraph
+	     fill-paragraph-or-region
+	     ;; cursor keys
+	     fkey-backward-char
+	     fkey-forward-char
+	     fkey-next-line
+	     fkey-previous-line
+	     backward-char-command
+	     forward-char-command
+	     ;;
+	     forward-char
+	     forward-word
+	     forward-para
+	     forward-paragraph
+	     forward-sentence
+	     just-one-space
+	     kill-word
+	     kill-line
+	     kill-visual-line
+	     kill-whole-line
+	     kill-region
+	     kill-ring-save
+	     kill-sentence
+	     left-char
+	     mark-paragraph
+	     mark-whole-buffer
+	     move-beginning-of-line
+	     move-end-of-line
+	     newline
+	     newline-and-indent
+	     next-line
+	     open-line
+	     previous-line
+	     right-char
+	     scroll-down
+	     scroll-up
+	     scroll-down-command
+	     scroll-up-command
+	     set-fill-prefix
+	     transpose-chars
+	     transpose-lines
+	     transpose-paragraphs
+	     transpose-sentences
+	     transpose-words
+	     yank
+	     yank-pop
+	     zap-to-char)))
+	
+	;; kotl-mode keys
+	(define-key kotl-mode-map "\C-c\C-@"  'kotl-mode:mail-tree)
+	(define-key kotl-mode-map "\C-c+"     'kotl-mode:append-cell)
+	(define-key kotl-mode-map "\C-c,"     'kotl-mode:beginning-of-cell)
+	(define-key kotl-mode-map "\C-c."     'kotl-mode:end-of-cell)
+	(define-key kotl-mode-map "\C-c<"     'kotl-mode:first-sibling)
+	(define-key kotl-mode-map "\C-c>"     'kotl-mode:last-sibling)
+	(define-key kotl-mode-map "\C-c^"     'kotl-mode:beginning-of-tree)
+	(define-key kotl-mode-map "\C-c$"     'kotl-mode:end-of-tree)
+	(define-key kotl-mode-map "\C-ca"     'kotl-mode:add-child)
+	(define-key kotl-mode-map "\C-c\C-a"  'kotl-mode:show-all)
+	(define-key kotl-mode-map "\C-cb"     'kvspec:toggle-blank-lines)
+	(define-key kotl-mode-map "\C-c\C-b"  'kotl-mode:backward-cell)
+	(define-key kotl-mode-map "\C-cc"     'kotl-mode:copy-after)
+	(define-key kotl-mode-map "\C-c\C-c"  'kotl-mode:copy-before)
+	(define-key kotl-mode-map "\C-c\M-c"  'kotl-mode:copy-tree-or-region-to-buffer)
+	(define-key kotl-mode-map "\C-cd"     'kotl-mode:down-level)
+	(define-key kotl-mode-map "\C-c\C-d"  'kotl-mode:down-level)
+	(define-key kotl-mode-map "\C-ce"     'kotl-mode:exchange-cells)
+	(define-key kotl-mode-map "\C-c\C-f"  'kotl-mode:forward-cell)
+	(define-key kotl-mode-map "\C-cg"     'kotl-mode:goto-cell)
+	(define-key kotl-mode-map "\C-ch"     'kotl-mode:cell-help)
+	(define-key kotl-mode-map "\C-c\C-h"  'kotl-mode:hide-tree)
+	;; Since the next key binds M-BS, it may already have a local binding,
+	;; in which case we don't want to bind it here.
+	(unless (lookup-key kotl-mode-map "\M-\C-h")
+	  (define-key kotl-mode-map "\M-\C-h"   'kotl-mode:hide-subtree))
+	;; Override this global binding for set-selective-display with a similar
+	;; function appropriate for kotl-mode.
+	(define-key kotl-mode-map "\C-x$"     'kotl-mode:hide-sublevels)
+	(define-key kotl-mode-map [(tab)]     'kotl-mode:tab-command) ;; TAB
+	(define-key kotl-mode-map "\C-i"      'kotl-mode:tab-command) ;; TAB
+	(define-key kotl-mode-map [(shift tab)] 'kotl-mode:untab-command) ;; Shift-TAB
+	(define-key kotl-mode-map [S-iso-lefttab] 'kotl-mode:untab-command) ;; Shift-TAB
+	(define-key kotl-mode-map [backtab]   'kotl-mode:untab-command) ;; Shift-TAB
+	(define-key kotl-mode-map [(meta tab)] 'kotl-mode:untab-command) ;; M-TAB
+	(define-key kotl-mode-map "\M-\C-i"   'kotl-mode:untab-command) ;; M-TAB
+	(define-key kotl-mode-map "\C-c\C-i"  'kotl-mode:set-or-remove-cell-attribute)
+	(define-key kotl-mode-map "\C-j"      'kotl-mode:add-cell)
+	(define-key kotl-mode-map "\M-j"      'kotl-mode:fill-paragraph)
+	(define-key kotl-mode-map "\C-c\M-j"  'kotl-mode:fill-cell)
+	(define-key kotl-mode-map "\M-\C-j"   'kotl-mode:fill-tree)
+	(define-key kotl-mode-map "\C-c\C-k"  'kotl-mode:kill-tree)
+	(define-key kotl-mode-map "\C-ck"     'kotl-mode:kill-contents)
+	;; Force an override of the global {C-x i} insert-file binding
+	(define-key kotl-mode-map "\C-xi"     'kimport:insert-file)
+	;; Force an override of the global {C-x r i} insert-register binding
+	(define-key kotl-mode-map "\C-xri"    'kimport:insert-register)
+	(define-key kotl-mode-map "\C-ck"     'kotl-mode:kill-contents)
+	(define-key kotl-mode-map "\C-cl"     'klink:create)
+	(define-key kotl-mode-map "\C-c\C-l"  'kview:set-label-type)
+	(define-key kotl-mode-map "\C-c\M-l"  'kview:set-label-separator)
+	(define-key kotl-mode-map "\C-m"      'kotl-mode:newline)
+	(define-key kotl-mode-map "\C-cm"     'kotl-mode:move-after)
+	(define-key kotl-mode-map "\C-c\C-m"  'kotl-mode:move-before)
+	(define-key kotl-mode-map "\C-c\C-n"  'kotl-mode:next-cell)
+	(define-key kotl-mode-map "\C-c\C-o"  'kotl-mode:overview)
+	(define-key kotl-mode-map "\C-c\C-p"  'kotl-mode:previous-cell)
+	(define-key kotl-mode-map "\C-cp"     'kotl-mode:add-parent)
+	(if (memq (global-key-binding "\M-q") '(fill-paragraph
+						fill-paragraph-or-region))
+	    (progn
+	      (define-key kotl-mode-map "\C-c\M-q" 'kotl-mode:fill-cell)
+	      (define-key kotl-mode-map "\M-\C-q"  'kotl-mode:fill-tree)))
+	(define-key kotl-mode-map "\C-cs"     'kotl-mode:split-cell)
+	(define-key kotl-mode-map "\C-c\C-s"  'kotl-mode:show-tree)
+	(define-key kotl-mode-map "\C-c\C-\\" 'kotl-mode:show-tree)
+	(define-key kotl-mode-map "\M-s"      'kotl-mode:center-line)
+	(define-key kotl-mode-map "\M-S"      'kotl-mode:center-paragraph)
+	(define-key kotl-mode-map "\C-ct"     'kotl-mode:transpose-cells)
+	(define-key kotl-mode-map "\C-c\C-t"  'kotl-mode:top-cells)
+	(define-key kotl-mode-map "\C-cu"     'kotl-mode:up-level)
+	(define-key kotl-mode-map "\C-c\C-u"  'kotl-mode:up-level)
+	(define-key kotl-mode-map "\C-c\C-v"  'kvspec:activate)
+	(define-key kotl-mode-map "\C-x\C-w"  'kfile:write)
+	(define-key kotl-mode-map [M-up]              'kotl-mode:move-tree-backward)
+	(define-key kotl-mode-map (kbd "ESC <up>")    'kotl-mode:move-tree-backward)
+	(define-key kotl-mode-map [M-down]            'kotl-mode:move-tree-forward)
+	(define-key kotl-mode-map (kbd "ESC <down>")  'kotl-mode:move-tree-forward)
+	(mapc (lambda (key)
+		(define-key kotl-mode-map key         'kotl-mode:promote-tree))
+	      (list (kbd "M-<left>") (kbd "M-S-<left>") (kbd "ESC <left>")
+		    (kbd "ESC S-<left>") (kbd "C-c C-<") (kbd "C-c C-,")))
+	(mapc (lambda (key)
+		(define-key kotl-mode-map key         'kotl-mode:demote-tree))
+	      (list (kbd "M-<right>") (kbd "M-S-<right>") (kbd "ESC <right>")
+		    (kbd "ESC S-<right>") (kbd "C-c C->") (kbd "C-c C-.")))
 
-;; When delete-selection-mode (pending-delete-mode) is enabled, make
-;; these commands delete the region.
-(put 'kotl-mode:quoted-insert 'delete-selection t)
+	;; When delete-selection-mode (pending-delete-mode) is enabled, make
+	;; these commands delete the region.
+	(put 'kotl-mode:quoted-insert 'delete-selection t)
 
-(put 'kotl-mode:yank 'delete-selection 'yank)
-(put 'kotl-mode:clipboard-yank 'delete-selection 'yank)
-(put 'kimport:insert-register 'delete-selection t)
+	(put 'kotl-mode:yank 'delete-selection 'yank)
+	(put 'kotl-mode:clipboard-yank 'delete-selection 'yank)
+	(put 'kimport:insert-register 'delete-selection t)
 
-(put 'kotl-mode:delete-backward-char 'delete-selection 'supersede)
-(put 'kotl-mode:delete-forward-char 'delete-selection 'supersede)
-(put 'kotl-mode:delete-char 'delete-selection 'supersede)
+	(put 'kotl-mode:delete-backward-char 'delete-selection 'supersede)
+	(put 'kotl-mode:delete-forward-char 'delete-selection 'supersede)
+	(put 'kotl-mode:delete-char 'delete-selection 'supersede)
 
-(put 'kotl-mode:reindent-then-newline-and-indent 'delete-selection t)
-(put 'kotl-mode:newline-and-indent 'delete-selection t)
-(put 'kotl-mode:newline 'delete-selection t)
-(put 'kotl-mode:electric-newline-and-maybe-indent 'delete-selection t)
-(put 'kotl-mode:open-line 'delete-selection t)
+	(put 'kotl-mode:reindent-then-newline-and-indent 'delete-selection t)
+	(put 'kotl-mode:newline-and-indent 'delete-selection t)
+	(put 'kotl-mode:newline 'delete-selection t)
+	(put 'kotl-mode:electric-newline-and-maybe-indent 'delete-selection t)
+	(put 'kotl-mode:open-line 'delete-selection t))
+    (error
+     (setq kotl-mode-map nil)
+     (error "(kotl-mode:setup-keymap): Setup error: %s" err))))
 
 (defun delete-selection-pre-hook ()
   "Function run before commands that delete selections are executed.
