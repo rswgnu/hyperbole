@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     7-Jun-89 at 22:08:29
-;; Last-Mod:     23-Apr-23 at 22:20:14 by Mats Lidell
+;; Last-Mod:     28-May-23 at 10:06:20 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -734,7 +734,7 @@ Return t if entry is killed, nil otherwise."
   (interactive)
   (let ((opoint (point)) button)
     (skip-chars-backward "^ \t\n\r<>")
-    (if (and (re-search-forward mail-address-regexp nil t)
+    (if (and (re-search-forward hypb-mail-address-regexp nil t)
 	     (goto-char (match-beginning 1))
 	     (setq button (ibut:at-p)))
 	(hui:hbut-act button)

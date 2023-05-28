@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 20:45:31
-;; Last-Mod:     20-May-23 at 16:10:20 by Bob Weiner
+;; Last-Mod:     28-May-23 at 10:45:16 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -46,7 +46,7 @@
 ;;; Public variables
 ;;; ************************************************************************
 
-(defconst mail-address-tld-regexp
+(defconst hypb-mail-address-tld-regexp
   (format "\\.%s\\'"
           (regexp-opt
            '("aero" "arpa" "asia" "biz" "cat" "com" "coop" "edu" "gov" "info"
@@ -74,7 +74,7 @@
            t))
   "Regular expression of most common Internet top level domain names.")
 
-(defconst mail-address-regexp
+(defconst hypb-mail-address-regexp
   "\\([_a-zA-Z0-9][-_a-zA-Z0-9.!@+%]*@[-_a-zA-Z0-9.!@+%]+\\.[a-zA-Z0-9][-_a-zA-Z0-9]+\\)\\($\\|[^a-zA-Z0-9@%]\\)"
   "Regexp with group 1 matching an Internet email address.")
 
@@ -314,10 +314,10 @@ display options."
   (let ((case-fold-search t))
     (save-excursion
       (skip-chars-backward "^ \t\n\r\f\"\'(){}[];:<>|")
-      (and (or (looking-at mail-address-regexp)
-               (looking-at (concat "mailto:" mail-address-regexp)))
+      (and (or (looking-at hypb-mail-address-regexp)
+               (looking-at (concat "mailto:" hypb-mail-address-regexp)))
            (save-match-data
-             (string-match mail-address-tld-regexp (match-string-no-properties 1)))
+             (string-match hypb-mail-address-tld-regexp (match-string-no-properties 1)))
            (match-string-no-properties 1)))))
 
 (defib mail-address ()
