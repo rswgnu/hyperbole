@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    30-may-21 at 09:33:00
-;; Last-Mod:     27-May-23 at 00:58:54 by Mats Lidell
+;; Last-Mod:     28-May-23 at 17:20:12 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -25,7 +25,7 @@
 (require 'el-mock)
 
 (defun hbut-tests:should-match-tmp-folder (tmp)
-  "Check that TMP matches either a list of a single element of \"/tmp\" or \"private/tmp\".
+  "Check that TMP matches either of \"/tmp\" or \"private/tmp\".
 Needed since hyperbole expands all links to absolute paths and
 /tmp can be a symbolic link."
   (should (member tmp '(("/tmp") ("./tmp") ("/private/tmp")))))
@@ -194,11 +194,7 @@ Needed since hyperbole expands all links to absolute paths and
   "Programmatically create ibut link-to-directory."
   (with-temp-buffer
     (ibut:program "label" 'link-to-directory "/tmp")
-
-    ;; Expected result.
-    ;; (should (string= "<[label]> - \"/tmp\"" (buffer-string)))
-
-    (should (string= "<[label]>\"/tmp\"" (buffer-string)))))
+    (should (string= "<[label]> - \"/tmp\"" (buffer-string)))))
 
 (ert-deftest hbut-tests-ibut-program-link-to-file ()
   "Programatically create ibut link to file."
@@ -206,14 +202,8 @@ Needed since hyperbole expands all links to absolute paths and
     (unwind-protect
         (with-temp-buffer
           (ibut:program "label" 'link-to-file test-file)
-
-          ;; Expected result.
-          ;; (should (string=
-          ;;          (concat "<[label]> - \"" test-file "\"")
-          ;;          (buffer-string))))
-
           (should (string=
-                   (concat "<[label]>\"" test-file "\"")
+                   (concat "<[label]> - \"" test-file "\"")
                    (buffer-string))))
       (delete-file test-file))))
 
@@ -221,56 +211,35 @@ Needed since hyperbole expands all links to absolute paths and
   "Insert link to dir."
   (with-temp-buffer
     (ibut:program "label" 'link-to-directory "/tmp")
-
-    ;; Expected result.
-    ;; (should (string= "<[label]> - \"/tmp\"" (buffer-string)))
-
-    (should (string= "<[label]>\"/tmp\"" (buffer-string)))
-
-    ;; Picking up ibut with ibut:at-p and inserting it again.
-    ;; (goto-char 3)
-    ;; (let ((but (ibut:at-p)))
-    ;;   (with-temp-buffer
-    ;;     (ibut:insert-text but)
-    ;;     (should (string= "\"/tmp\"" (buffer-string)))))
-    ))
+    (should (string= "<[label]> - \"/tmp\"" (buffer-string)))
+    (goto-char 3)
+    (let ((but (ibut:at-p)))
+      (with-temp-buffer
+        (ibut:insert-text but)
+        (should (string= "\"/tmp\"" (buffer-string)))))))
 
 (ert-deftest hbut-tests-ibut-insert-annot-bib ()
   "Insert ibut to annot-bib."
   (with-temp-buffer
     (ibut:program "label" 'annot-bib "arg")
-
-    ;; Expected result.
-    ;; (should (string= "<[label]> - [arg]" (buffer-string)))
-
-    (should (string= "<[label]>[arg]" (buffer-string)))
-
-    ;; Picking up ibut with ibut:at-p and inserting it again.
-    ;; (goto-char 3)
-    ;; (let ((but (ibut:at-p)))
-    ;;   (with-temp-buffer
-    ;;     (ibut:insert-text but)
-    ;;     (should (string= "[arg]" (buffer-string)))))
+    (should (string= "<[label]> - [arg]" (buffer-string)))
+    (goto-char 3)
+    (let ((but (ibut:at-p)))
+      (with-temp-buffer
+        (ibut:insert-text but)
+        (should (string= "[arg]" (buffer-string)))))
     ))
 
 (ert-deftest hbut-tests-ibut-insert-kbd-key ()
   "Insert ibut to kbd-key."
   (with-temp-buffer
     (ibut:program "label" 'kbd-key "{ C-h h }")
-
-    ;; Expected result.
-    ;; (should (string= "<[label]> - { C-h h }" (buffer-string)))
-
-    (should (string= "<[label]>{{ C-h h }}" (buffer-string)))
-
-    ;; Picking up ibut with ibut:at-p and inserting it again.
-    ;; (goto-char 3)
-    ;; (let ((but (ibut:at-p)))
-    ;;   (with-temp-buffer
-    ;;     (ibut:insert-text but)
-    ;;     (should (string= "" (buffer-string)))))
-    ))
-
+    (should (string= "<[label]> - { C-h h }" (buffer-string)))
+    (goto-char 3)
+    (let ((but (ibut:at-p)))
+      (with-temp-buffer
+        (ibut:insert-text but)
+        (should (string= "" (buffer-string)))))))
 
 (ert-deftest hbut-tests-ibut-insert-text-temp-buffer ()
   "Insert ibut text using an ibut in a temp buffer as source."
@@ -301,15 +270,13 @@ Needed since hyperbole expands all links to absolute paths and
              ('actypes::link-to-file-line "/etc/passwd:10" "\"/etc/passwd:10\"")
              ('actypes::link-to-file "/etc/passwd" "\"/etc/passwd\"")))
     (with-temp-buffer
-      ; (ibut:program "label" (car but) (cdar but))
-      ; (should (string= (concat "<[label]> - " (cdar but)) (buffer-string)))
       (insert (format "<[label]> - %s" (cadr bd)))
       (goto-char 3)
       (let ((but (ibut:at-p))
             (match (or (caddr bd) (cadr bd))))
         (with-temp-buffer
           (ibut:insert-text but)
-          (should (string= (concat " - " match) (buffer-string))))))))
+          (should (string= match (buffer-string))))))))
 
 (ert-deftest hbut-tests-ibut-insert-text-temp-file ()
   "Insert ibut text using an ibut in a temp file as source."
@@ -349,7 +316,7 @@ Needed since hyperbole expands all links to absolute paths and
                   (match (or (caddr bd) (cadr bd))))
               (with-temp-buffer
                 (ibut:insert-text but)
-                (should (string= (concat " - " match) (buffer-string))))))
+                (should (string= match (buffer-string))))))
         (delete-file file)))))
 
 ;; This file can't be byte-compiled without the `el-mock' package (because of
