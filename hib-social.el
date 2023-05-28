@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    20-Jul-16 at 22:41:34
-;; Last-Mod:     24-Jul-22 at 10:08:17 by Mats Lidell
+;; Last-Mod:     28-May-23 at 10:06:20 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -302,9 +302,9 @@ listed in `hibtypes-social-inhibit-modes'."
 					      (mapcar #'car hibtypes-social-hashtag-alist))))))
 		    ;; Heuristic to ensure this is not an email address
 		    (save-match-data
-		      (not (and (looking-at mail-address-regexp)
+		      (not (and (looking-at hypb-mail-address-regexp)
 				(let ((case-fold-search t))
-				  (string-match mail-address-tld-regexp
+				  (string-match hypb-mail-address-tld-regexp
 						(match-string-no-properties 1)))))))))
 
     (save-match-data
