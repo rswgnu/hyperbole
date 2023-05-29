@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    30-Jan-21 at 12:00:00
-;; Last-Mod:     23-Jul-22 at 18:39:05 by Bob Weiner
+;; Last-Mod:     28-May-23 at 22:52:40 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -67,6 +67,15 @@ Checks ACTYPE, ARGS, LOC and LBL-KEY."
     (should (equal (hattr:get hbut-at-p 'args) args))
     (should (equal (hattr:get hbut-at-p 'loc) loc))
     (should (equal (hattr:get hbut-at-p 'lbl-key) lbl-key))))
+
+(defun hy-delete-file-and-buffer (file)
+  "Delete file and buffer vistinng file."
+  (delete-file file)
+  (let ((buf (find-buffer-visiting file)))
+    (when buf
+      (with-current-buffer buf
+        (set-buffer-modified-p nil)
+        (kill-buffer)))))
 
 (provide 'hy-test-helpers)
 ;;; hy-test-helpers.el ends here

@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    10-Oct-21 at 17:30:00
-;; Last-Mod:     13-May-23 at 12:38:06 by Bob Weiner
+;; Last-Mod:     28-May-23 at 23:15:39 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -21,6 +21,7 @@
 (require 'ert)
 (require 'el-mock)
 (require 'kexport "kotl/kexport")
+(require 'hy-test-helpers "test/hy-test-helpers")
 
 (ert-deftest kexport:html-creates-html-file ()
   "kexport:html creates an output html file."
@@ -36,8 +37,8 @@
             (kexport:html kotl-file html-file))
           (should (file-exists-p html-file)))
       (progn
-        (delete-file kotl-file)
-        (delete-file html-file)))))
+        (hy-delete-file-and-buffer kotl-file)
+        (hy-delete-file-and-buffer html-file)))))
 
 (ert-deftest kexport:html-sets-title-and-header ()
   "kexport:html set title and header from kotl filename without suffix."
@@ -57,8 +58,8 @@
           (re-search-forward (format "<title>%s</title>" title))
           (re-search-forward (format "<h1>%s</h1>" title)))
       (progn
-        (delete-file kotl-file)
-        (delete-file html-file)))))
+        (hy-delete-file-and-buffer kotl-file)
+        (hy-delete-file-and-buffer html-file)))))
 
 (ert-deftest kexport:html-contains-each-cell ()
   "kexport:html contains each cell."
@@ -77,8 +78,8 @@
           (re-search-forward "<pre>first</pre>")
           (re-search-forward "<pre>second</pre>"))
       (progn
-        (delete-file kotl-file)
-        (delete-file html-file)))))
+        (hy-delete-file-and-buffer kotl-file)
+        (hy-delete-file-and-buffer html-file)))))
 
 (ert-deftest kexport:html-creates-hierarchy ()
   "kexport:html exports cells in a hierachy."
@@ -103,8 +104,8 @@
           (re-search-forward "<pre.*1a1\\. .*</pre>")
           (re-search-forward "<pre>third</pre>"))
       (progn
-        (delete-file kotl-file)
-        (delete-file html-file)))))
+        (hy-delete-file-and-buffer kotl-file)
+        (hy-delete-file-and-buffer html-file)))))
 
 (ert-deftest kexport:html-creates-list-hierarchy ()
   "kexport:html exports cells in a hierachy using lists."
@@ -126,8 +127,8 @@
                      (count-matches "</ul\\b" (point-min) (point-max))))
           (should (= (count-matches "<li\\b" (point-min) (point-max))
                      (count-matches "</li\\b" (point-min) (point-max)))))
-      (delete-file kotl-file)
-      (delete-file html-file))))
+      (hy-delete-file-and-buffer kotl-file)
+      (hy-delete-file-and-buffer html-file))))
 
 (ert-deftest kexport:display-creates-html-file-and-displays-it ()
   "kexport:display creates html file and displays it in external browser."
@@ -145,8 +146,8 @@
           (insert "second")
           (should (string= (kexport:display) html-file)))
       (progn
-        (delete-file kotl-file)
-        (delete-file html-file)))))
+        (hy-delete-file-and-buffer kotl-file)
+        (hy-delete-file-and-buffer html-file)))))
 
 (ert-deftest kexport:koutline-calls-kexport:html ()
   "kexport:koutline calls kexport:html and returns html buffer name."
@@ -162,7 +163,7 @@
           (find-file kotl-file)
           (should (string= (kexport:koutline) html-file)))
       (progn
-        (delete-file kotl-file)))))
+        (hy-delete-file-and-buffer kotl-file)))))
 
 ;; This file can't be byte-compiled without the `el-mock' package (because of
 ;; the use of the `with-mock' macro), which is not a dependency of Hyperbole.

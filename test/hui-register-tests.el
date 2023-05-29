@@ -35,7 +35,7 @@
             (should (markerp (hui-register-but-mpos content)))
             (should (equal (marker-buffer (hui-register-but-mpos content)) (current-buffer)))
             (should (equal (hui-register-but-file content) (buffer-file-name)))))
-      (delete-file file))))
+      (hy-delete-file-and-buffer file))))
 
 (ert-deftest hui-register-test--register-val-jump-to ()
   "Verify register val jumps to right file."
@@ -52,7 +52,7 @@
             (register-val-jump-to content nil)
             (should (equal (buffer-file-name) file))
             (should (equal pos (point)))))
-      (delete-file file))))
+      (hy-delete-file-and-buffer file))))
 
 ;; TODO - Problem with link to ebut
 ;; (ert-deftest hui-register-test--register-val-insert-ibut ()
@@ -73,8 +73,8 @@
 ;;             (should (ebut:at-p))
 ;;             (action-key)
 ;;             (should (equal (buffer-file-name) file1))))
-;;       (delete-file file1)
-;;       (delete-file file2))))
+;;       (hy-delete-file-and-buffer file1)
+;;       (hy-delete-file-and-buffer file2))))
 
 (ert-deftest hui-register-test--register-val-insert-ebut ()
   "Verify register val inserts link to ebut."
@@ -95,8 +95,8 @@
             (action-key)
             (should (equal major-mode 'dired-mode))
             (should (member default-directory '("/tmp/" "/private/tmp/")))))
-      (delete-file file1)
-      (delete-file file2))))
+      (hy-delete-file-and-buffer file1)
+      (hy-delete-file-and-buffer file2))))
 
 (provide 'hui-register-tests)
 ;;; hui-register-tests.el ends here
