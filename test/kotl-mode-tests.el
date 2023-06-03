@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    18-May-21 at 22:14:10
-;; Last-Mod:     23-Apr-23 at 23:42:34 by Mats Lidell
+;; Last-Mod:      3-Jun-23 at 23:33:58 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -667,5 +667,63 @@
             (should (looking-at-p (concat "\\W+1\\. " kotl-file)))))
       (hy-delete-file-and-buffer kotl-file))))
 
+(ert-deftest kotl-mode-move-cursor-forward-over-ellipsis ()
+  "Moving cursor forward over hidden cell shall move passed ellipsis."
+  (let ((kotl-file (make-temp-file "hypb" nil ".kotl")))
+    (unwind-protect
+        (progn
+          (find-file kotl-file)
+          (insert "1")
+          (kotl-mode:newline 1)
+          (insert "1")
+          (kotl-mode:hide-tree)
+          (kotl-mode:add-cell)
+          (insert "2")
+          (kotl-mode:beginning-of-buffer)
+          (kotl-mode:forward-char)
+          (should (outline-invisible-p))
+          (kotl-mode:forward-char)
+          (should (outline-invisible-p))
+          (kotl-mode:forward-char)
+          (should (looking-at-p "2")))
+      (hy-delete-file-and-buffer kotl-file))))
+
+(ert-deftest kotl-mode-move-cursor-backward-over-ellipsis ()
+  "Moving cursor over backwards hidden cell shall move passed ellipsis."
+  (let ((kotl-file (make-temp-file "hypb" nil ".kotl")))
+    (unwind-protect
+        (progn
+          (find-file kotl-file)
+          (insert "1")
+          (kotl-mode:newline 1)
+          (insert "1")
+          (kotl-mode:hide-tree)
+          (kotl-mode:add-cell)
+          (insert "2")
+          (kotl-mode:beginning-of-cell)
+          (kotl-mode:backward-char)
+          (should-not (outline-invisible-p))
+          (kotl-mode:backward-char)
+          (should (outline-invisible-p))
+          (kotl-mode:backward-char)
+          (should-not (outline-invisible-p))
+          (should (looking-at-p "1")))
+      (hy-delete-file-and-buffer kotl-file))))
+
+(ert-deftest kotl-mode-end-of-visible-portion ()
+  "Return point if at end of visible kview cell."
+  (let ((kotl-file (make-temp-file "hypb" nil ".kotl")))
+    (unwind-protect
+        (progn
+          (find-file kotl-file)
+          (insert "1")
+          (should (kotl-mode:eocp))
+          (kotl-mode:newline 1)
+          (insert "1")
+          (should (kotl-mode:eocp))
+          (kotl-mode:hide-tree)
+          (should-not (kotl-mode:eocp)))
+      (hy-delete-file-and-buffer kotl-file))))
+  
 (provide 'kotl-mode-tests)
 ;;; kotl-mode-tests.el ends here
