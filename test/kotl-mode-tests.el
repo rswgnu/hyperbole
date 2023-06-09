@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    18-May-21 at 22:14:10
-;; Last-Mod:      3-Jun-23 at 23:33:58 by Mats Lidell
+;; Last-Mod:      8-Jun-23 at 00:10:45 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -668,7 +668,10 @@
       (hy-delete-file-and-buffer kotl-file))))
 
 (ert-deftest kotl-mode-move-cursor-forward-over-ellipsis ()
-  "Moving cursor forward over hidden cell shall move passed ellipsis."
+  "Moving cursor forward over hidden cell shall move passed ellipsis.
+There is no way in a test to move past the ellipsis like a user
+does when using the keyboard.  This is because the point movement
+actually depends on the point adjustment heuristics."
   (let ((kotl-file (make-temp-file "hypb" nil ".kotl")))
     (unwind-protect
         (progn
@@ -682,14 +685,17 @@
           (kotl-mode:beginning-of-buffer)
           (kotl-mode:forward-char)
           (should (outline-invisible-p))
-          (kotl-mode:forward-char)
-          (should (outline-invisible-p))
+          (kotl-mode:end-of-line)
+          (should-not (outline-invisible-p))
           (kotl-mode:forward-char)
           (should (looking-at-p "2")))
       (hy-delete-file-and-buffer kotl-file))))
 
 (ert-deftest kotl-mode-move-cursor-backward-over-ellipsis ()
-  "Moving cursor over backwards hidden cell shall move passed ellipsis."
+  "Moving cursor over backwards hidden cell shall move passed ellipsis.
+There is no way in a test to move past the ellipsis like a user
+does when using the keyboard.  This is because the point movement
+actually depends on the point adjustment heuristics."
   (let ((kotl-file (make-temp-file "hypb" nil ".kotl")))
     (unwind-protect
         (progn
@@ -705,7 +711,7 @@
           (should-not (outline-invisible-p))
           (kotl-mode:backward-char)
           (should (outline-invisible-p))
-          (kotl-mode:backward-char)
+          (kotl-mode:beginning-of-line)
           (should-not (outline-invisible-p))
           (should (looking-at-p "1")))
       (hy-delete-file-and-buffer kotl-file))))
@@ -722,8 +728,10 @@
           (insert "1")
           (should (kotl-mode:eocp))
           (kotl-mode:hide-tree)
+          (should (kotl-mode:eocp))
+          (kotl-mode:backward-char)
           (should-not (kotl-mode:eocp)))
       (hy-delete-file-and-buffer kotl-file))))
-  
+
 (provide 'kotl-mode-tests)
 ;;; kotl-mode-tests.el ends here
