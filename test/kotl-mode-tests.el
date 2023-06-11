@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    18-May-21 at 22:14:10
-;; Last-Mod:     23-Apr-23 at 23:42:34 by Mats Lidell
+;; Last-Mod:     10-Jun-23 at 00:22:07 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -19,6 +19,7 @@
 ;;; Code:
 
 (require 'ert)
+(require 'el-mock)
 (require 'kotl-mode "kotl/kotl-mode")
 (require 'hy-test-helpers "test/hy-test-helpers")
 
@@ -420,7 +421,8 @@
 
 (ert-deftest kotl-mode-backward-cell-from-invalid-pos-leave-point-in-valid-pos ()
   "From invalid pos backward cell leaves point in valid pos on error."
-    (let ((kotl-file (make-temp-file "hypb" nil ".kotl")))
+  (skip-unless (not noninteractive))
+  (let ((kotl-file (make-temp-file "hypb" nil ".kotl")))
     (unwind-protect
         (progn
           (find-file kotl-file)
@@ -665,6 +667,168 @@
             (should (= (count-matches "idstamp") 4))
             (forward-line 5)
             (should (looking-at-p (concat "\\W+1\\. " kotl-file)))))
+      (hy-delete-file-and-buffer kotl-file))))
+
+(ert-deftest kotl-mode-move-between-lines ()
+  "Verify movements between lines and cells."
+  (let ((kotl-file (make-temp-file "hypb" nil ".kotl")))
+    (unwind-protect
+        (progn
+          (find-file kotl-file)
+          (insert "12")
+          (kotl-mode:newline 1)
+          (insert "34")
+          (kotl-mode:add-cell)
+          (insert "56")
+          (kotl-mode:beginning-of-buffer)
+          (should (looking-at-p "1"))
+          (kotl-mode:previous-line 1)
+          (should (looking-at-p "1"))
+          (kotl-mode:next-line 1)
+          (should (looking-at-p "3"))
+          (kotl-mode:next-line 1)
+          (should (looking-at-p "5"))
+          (kotl-mode:next-line 1)
+          (should (looking-at-p "5"))
+          (kotl-mode:previous-line 2)
+          (should (looking-at-p "1"))
+          (kotl-mode:forward-char 1)
+          (should (looking-at-p "2"))
+          (kotl-mode:next-line 1)
+          (should (looking-at-p "4"))
+          (kotl-mode:next-line 1)
+          (should (looking-at-p "6"))
+          (kotl-mode:previous-line 1)
+          (should (looking-at-p "4")))
+      (hy-delete-file-and-buffer kotl-file))))
+
+(ert-deftest kotl-mode-move-up-to-first-line-shall-message-and-beep ()
+  "Trying to move up to first line shall beep and output a message.
+In non interactive mode there shall be no beep (nor message)"
+  (skip-unless (not noninteractive))
+  (let ((kotl-file (make-temp-file "hypb" nil ".kotl")))
+    (unwind-protect
+        (progn
+          (find-file kotl-file)
+          (insert "1")
+          (with-mock
+            (mock (message "(kotl-mode:previous-line): Beginning of buffer") => t)
+            (mock (beep) => t)
+            (funcall-interactively 'kotl-mode:previous-line 1))
+          ;; Non interactive does not call neither message nor beep so the mock fails.
+          (should-error
+           (with-mock
+             (mock (beep) => t)
+             (kotl-mode:previous-line 1))))
+      (hy-delete-file-and-buffer kotl-file))))
+
+;; TODO: Add test for moving up to first line with no error.
+
+(ert-deftest kotl-mode-trying-to-move-down-from-last-line-shall-message-and-beep ()
+  "Trying to move down from last line shall beep and output a message.
+In non interactive mode there shall be no beep (nor message)"
+  (skip-unless (not noninteractive))
+  (let ((kotl-file (make-temp-file "hypb" nil ".kotl")))
+    (unwind-protect
+        (progn
+          (find-file kotl-file)
+          (insert "1")
+          (with-mock
+            (mock (message "(kotl-mode:next-line): End of buffer") => t)
+            (mock (beep) => t)
+            (funcall-interactively 'kotl-mode:next-line 1))
+          ;; Non interactive does not call neither message nor beep so
+          ;; the mock will fails.
+          (should-error
+           (with-mock
+             (mock (beep) => t)
+             (kotl-mode:next-line 1))))
+      (hy-delete-file-and-buffer kotl-file))))
+
+(ert-deftest kotl-mode-move-down-to-last-line-shall-not-beep ()
+  "Moving down to last line shall not beep."
+  (skip-unless (not noninteractive))
+  (let ((kotl-file (make-temp-file "hypb" nil ".kotl")))
+    (unwind-protect
+        (progn
+          (find-file kotl-file)
+          (insert "1")
+          (kotl-mode:newline 1)
+          (insert "2")
+          (kotl-mode:beginning-of-buffer)
+          ;; Non interactive does not call neither message nor beep so
+          ;; the mock will fails.
+          (should-error
+           (with-mock
+             (mock (beep) => t)
+             (funcall-interactively 'kotl-mode:next-line 1)))
+          (should (kotl-mode:last-line-p)))
+      (hy-delete-file-and-buffer kotl-file))))
+
+(ert-deftest kotl-mode-move-cursor-forward-over-ellipsis ()
+  "Moving cursor forward over hidden cell shall move passed ellipsis.
+There is no way in a test to move past the ellipsis like a user
+does when using the keyboard.  This is because the point movement
+actually depends on the point adjustment heuristics."
+  (let ((kotl-file (make-temp-file "hypb" nil ".kotl")))
+    (unwind-protect
+        (progn
+          (find-file kotl-file)
+          (insert "1")
+          (kotl-mode:newline 1)
+          (insert "1")
+          (kotl-mode:hide-tree)
+          (kotl-mode:add-cell)
+          (insert "2")
+          (kotl-mode:beginning-of-buffer)
+          (kotl-mode:forward-char)
+          (should (outline-invisible-p))
+          (kotl-mode:end-of-line)
+          (should-not (outline-invisible-p))
+          (kotl-mode:forward-char)
+          (should (looking-at-p "2")))
+      (hy-delete-file-and-buffer kotl-file))))
+
+(ert-deftest kotl-mode-move-cursor-backward-over-ellipsis ()
+  "Moving cursor over backwards hidden cell shall move passed ellipsis.
+There is no way in a test to move past the ellipsis like a user
+does when using the keyboard.  This is because the point movement
+actually depends on the point adjustment heuristics."
+  (let ((kotl-file (make-temp-file "hypb" nil ".kotl")))
+    (unwind-protect
+        (progn
+          (find-file kotl-file)
+          (insert "1")
+          (kotl-mode:newline 1)
+          (insert "1")
+          (kotl-mode:hide-tree)
+          (kotl-mode:add-cell)
+          (insert "2")
+          (kotl-mode:beginning-of-cell)
+          (kotl-mode:backward-char)
+          (should-not (outline-invisible-p))
+          (kotl-mode:backward-char)
+          (should (outline-invisible-p))
+          (kotl-mode:beginning-of-line)
+          (should-not (outline-invisible-p))
+          (should (looking-at-p "1")))
+      (hy-delete-file-and-buffer kotl-file))))
+
+(ert-deftest kotl-mode-end-of-visible-portion ()
+  "Return point if at end of visible kview cell."
+  (let ((kotl-file (make-temp-file "hypb" nil ".kotl")))
+    (unwind-protect
+        (progn
+          (find-file kotl-file)
+          (insert "1")
+          (should (kotl-mode:eocp))
+          (kotl-mode:newline 1)
+          (insert "1")
+          (should (kotl-mode:eocp))
+          (kotl-mode:hide-tree)
+          (should (kotl-mode:eocp))
+          (kotl-mode:backward-char)
+          (should-not (kotl-mode:eocp)))
       (hy-delete-file-and-buffer kotl-file))))
 
 (provide 'kotl-mode-tests)

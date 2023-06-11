@@ -1,3 +1,13 @@
+2023-06-10  Mats Lidell  <matsl@gnu.org>
+
+* test/kotl-mode-tests.el (kotl-mode-move-between-lines)
+    (kotl-mode-move-up-to-first-line-shall-message-and-beep)
+    (kotl-mode-trying-to-move-down-from-last-line-shall-message-and-beep)
+    (kotl-mode-move-down-to-last-line-shall-not-beep)
+    (kotl-mode-move-cursor-forward-over-ellipsis)
+    (kotl-mode-move-cursor-backward-over-ellipsis)
+    (kotl-mode-end-of-visible-portion): Add cursor movement tests for kotl-mode.
+
 2023-05-28  Mats Lidell  <matsl@gnu.org>
 
 * test/hy-test-helpers.el (hy-delete-file-and-buffer): Add helper that
