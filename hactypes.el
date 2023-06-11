@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    23-Sep-91 at 20:34:36
-;; Last-Mod:     21-May-23 at 03:15:30 by Bob Weiner
+;; Last-Mod:     10-Jun-23 at 21:13:02 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -496,8 +496,9 @@ available.  Filename may be given without the .info suffix."
       (id-info string)
     (hypb:error "(link-to-Info-node): Invalid Info node: `%s'" string)))
 
-(defact link-to-ibut (key &optional but-src point)
-  "Perform implicit button action specified by KEY, optional BUT-SRC and POINT.
+(defact link-to-ibut (name-key &optional but-src point)
+  "Perform implicit button action specified by NAME-KEY, optional BUT-SRC and POINT.
+NAME-KEY must be a normalized key for an ibut <[name]>.
 BUT-SRC defaults to the current buffer's file or if there is no
 attached file, then to its buffer name.  POINT defaults to the
 current point.
@@ -505,10 +506,10 @@ current point.
 When the button with this action type is created, point must be
 on the implicit button to which to link."
   (interactive
-   (let ((ibut-key (ibut:at-p t)))
-     (cond (ibut-key
-	    (list ibut-key (or buffer-file-name (buffer-name)) (point)))
-	   ;; TODO: If default is null below and are creating, rather than editing
+   (let ((ibut-name-key (ibut:at-p t)))
+     (cond (ibut-name-key
+	    (list ibut-name-key (or buffer-file-name (buffer-name)) (point)))
+	   ;; !! TODO: If default is null below and are creating, rather than editing
 	   ;; the link, it would be better to throw an error than create
 	   ;; an invalid link, but it is difficult to tell which operation
 	   ;; is in progress, so ignore this for now.  -- RSW, 01-25-2020
@@ -518,7 +519,7 @@ on the implicit button to which to link."
 	    hargs:defaults)
 	   (t
 	    (hypb:error "(link-to-ibut): Point must be on an implicit button to create a link-to-ibut")))))
-  (when (null key)
+  (when (null name-key)
     (hypb:error "(link-to-ibut): Point must be on an implicit button to create a link-to-ibut"))
   (let (but
 	normalized-file)
@@ -534,12 +535,12 @@ on the implicit button to which to link."
       (hmail:msg-narrow))
     (when (integerp point)
       (goto-char (min point (point-max))))
-    (setq but (ibut:to key))
+    (setq but (ibut:to name-key))
     (cond (but
 	   (hbut:act but))
-	  (key
-	   (hypb:error "(link-to-ibut): No implicit button `%s' found in `%s'"
-		       (ibut:key-to-label key)
+	  (name-key
+	   (hypb:error "(link-to-ibut): No implicit button named `%s' found in `%s'"
+		       (ibut:key-to-label name-key)
 		       (or but-src (buffer-name))))
 	  (t
 	   (hypb:error "(link-to-ibut): Link reference is null/empty")))))

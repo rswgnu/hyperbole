@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    15-Nov-93 at 12:15:16
-;; Last-Mod:     20-May-23 at 16:52:28 by Bob Weiner
+;; Last-Mod:     10-Jun-23 at 20:48:59 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -221,7 +221,6 @@ same directory."
 ;;; Hyperbole type definitions
 ;;; ************************************************************************
 
-
 (defib klink ()
   "Follow a link delimited by <> to a koutline cell.
 See documentation for the `link-to-kotl' function for valid klink formats."
@@ -229,7 +228,6 @@ See documentation for the `link-to-kotl' function for valid klink formats."
 	 (link (car link-and-pos))
 	 (start-pos (nth 1 link-and-pos)))
     (when link
-      (ibut:label-set link-and-pos)
       (hact 'klink:act link start-pos))))
 
 (defact link-to-kotl (link)
@@ -269,6 +267,8 @@ See documentation for `kcell:ref-to-id' for valid cell-ref formats."
 ;;; ************************************************************************
 
 (defun klink:act (link start-pos)
+  "Jump to klink LINK's referent.
+Update relative part of klink if referent has moved."
   (let ((obuf (current-buffer)))
     ;; Perform klink's action which is to jump to link referent.
     (prog1 (hact 'link-to-kotl link)

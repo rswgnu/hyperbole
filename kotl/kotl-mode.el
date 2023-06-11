@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    6/30/93
-;; Last-Mod:     27-May-23 at 23:53:04 by Bob Weiner
+;; Last-Mod:     28-May-23 at 10:19:56 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -130,8 +130,9 @@ It provides the following keys:
   (setq-local fill-paragraph-function #'kfill:fill-paragraph)
   ;;
   ;; Prevent insertion of characters outside of editable bounds,
-  ;; e.g. after the mouse sets point to a non-editable position
-  (add-hook 'pre-command-hook #'kotl-mode:pre-self-insert-command)
+  ;; e.g. after the mouse sets point to a non-editable position.  Add hook
+  ;; only in this major mode.
+  (add-hook 'pre-command-hook #'kotl-mode:pre-self-insert-command nil t)
   ;;
   ;; Ensure that outline structure data is saved when save-buffer is called
   ;; from save-some-buffers, {C-x s}.
@@ -3318,10 +3319,10 @@ Mouse may have moved point outside of an editable area.
 			      kotl-mode:self-insert-command
 			      orgtbl-self-insert-command
 			      self-insert-command))
-	 (eq major-mode 'kotl-mode)
 	 (not (kview:valid-position-p))
 	 ;; Prevent repeatedly moving point to valid position when moving trees
-	 (not (hyperb:stack-frame '(kcell-view:to-label-end))))
+	 ;; (not (hyperb:stack-frame '(kcell-view:to-label-end)))
+	 )
     (kotl-mode:to-valid-position)))
 
 (defun kotl-mode:print-attributes (_kview)

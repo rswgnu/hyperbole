@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     1-Nov-91 at 00:44:23
-;; Last-Mod:     20-May-23 at 23:20:22 by Bob Weiner
+;; Last-Mod:     28-May-23 at 16:53:34 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1411,7 +1411,7 @@ but locational suffixes within the file are utilized."
 	      path (if (match-end 1)
 		       (substring path 0 (match-end 1))
 		     (or buffer-file-name "")))
-	;; 'anchor' may improproperly include trailing punctuation;
+	;; 'anchor' may improperly include trailing punctuation;
 	;; remove it if so.
 	(when (string-match "\\s.+\\'" anchor)
 	  (setq anchor (substring anchor 0 (match-beginning 0))))))

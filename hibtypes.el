@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 20:45:31
-;; Last-Mod:     20-May-23 at 16:10:20 by Bob Weiner
+;; Last-Mod:     10-Jun-23 at 20:47:06 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -391,12 +391,10 @@ must have an attached file."
          (not (or (eq chr ?\ ) (eq chr ?*))))
        (not (or (derived-mode-p 'prog-mode)
                 (apply #'derived-mode-p '(c-mode objc-mode c++-mode java-mode markdown-mode org-mode))))
-       (let* ((ref-and-pos (hbut:label-p t "[" "]" t))
-              (ref (car ref-and-pos)))
+       (let ((ref (hattr:get 'hbut:current 'lbl-key)))
          (and ref (eq ?w (char-syntax (aref ref 0)))
               (not (string-match "[#@]" ref))
-              (progn (ibut:label-set ref-and-pos)
-                     (hact 'annot-bib ref))))))
+              (hact 'annot-bib ref)))))
 
 ;;; ========================================================================
 ;;; Displays in-file Markdown link referents.
@@ -1467,12 +1465,12 @@ There may not be any <> characters within the expression.  The
 first identifier in the expression must be an Elisp variable,
 action type or a function symbol to call, i.e. '<'actype-or-elisp-symbol
 arg1 ... argN '>'.  For example, <mail nil \"user@somewhere.org\">."
-  (let* ((hbut:max-len 0)
-         (label-key-start-end (ibut:label-p nil action:start action:end t))
-         (lbl-key (nth 0 label-key-start-end))
-         (start-pos (nth 1 label-key-start-end))
-         (end-pos (nth 2 label-key-start-end))
-         actype actype-sym action args lbl var-flag)
+  (let ((hbut:max-len 0)
+	(lbl-key (hattr:get 'hbut:current 'lbl-key))
+	(start-pos (hattr:get 'hbut:current 'lbl-start))
+	(end-pos  (hattr:get 'hbut:current 'lbl-end))
+        actype actype-sym action args lbl var-flag)
+
     ;; Continue only if start-delim is either:
     ;;     at the beginning of the buffer
     ;;     or preceded by a space character or a grouping character
@@ -1483,8 +1481,8 @@ arg1 ... argN '>'.  For example, <mail nil \"user@somewhere.org\">."
     ;;     or is followed by a space, punctuation or grouping character.
     (when (and lbl-key (or (null (char-before start-pos))
                            (memq (char-syntax (char-before start-pos)) '(?\  ?\> ?\( ?\))))
-               (not (memq (char-syntax (char-after (1+ start-pos))) '(?\  ?\>)))
-               (or (null (char-after end-pos))
+	       (not (memq (char-syntax (char-after (1+ start-pos))) '(?\  ?\>)))
+	       (or (null (char-after end-pos))
                    (memq (char-syntax (char-after end-pos)) '(?\  ?\> ?. ?\( ?\)))
                    ;; Some of these characters may have symbol-constituent syntax
                    ;; rather than punctuation, so check them individually.
@@ -1494,7 +1492,7 @@ arg1 ... argN '>'.  For example, <mail nil \"user@somewhere.org\">."
       ;; bound as a function symbol
       (when (string-match "\\`\\$" lbl)
         (setq var-flag t
-              lbl (substring lbl 1)))
+	      lbl (substring lbl 1)))
       (setq actype (if (string-match-p " " lbl) (car (split-string lbl)) lbl)
             actype-sym (intern-soft (concat "actypes::" actype))
 	    ;; Must ignore that (boundp nil) would be t here.
@@ -1502,7 +1500,7 @@ arg1 ... argN '>'.  For example, <mail nil \"user@somewhere.org\">."
 			    (or (fboundp actype-sym) (boundp actype-sym)
 				(special-form-p actype-sym))
 			    actype-sym)
-                       (and (setq actype-sym (intern-soft actype))
+		       (and (setq actype-sym (intern-soft actype))
 			    (or (fboundp actype-sym) (boundp actype-sym)
 				(special-form-p actype-sym))
 			    actype-sym)))
@@ -1515,7 +1513,7 @@ arg1 ... argN '>'.  For example, <mail nil \"user@somewhere.org\">."
 					      (combine-and-quote-strings
 					       (split-string lbl) "\" \""))))
         (setq action (read (concat "(" lbl ")"))
-              args (cdr action))
+	      args (cdr action))
 	;; Ensure action uses an fboundp symbol if executing a
 	;; Hyperbole actype.
 	(when (and (car action) (symbolp (car action)))
@@ -1524,22 +1522,22 @@ arg1 ... argN '>'.  For example, <mail nil \"user@somewhere.org\">."
 		      (car action))))
 	(unless assist-flag
           (cond ((and (symbolp actype) (fboundp actype)
-                      (string-match "-p\\'" (symbol-name actype)))
+		      (string-match "-p\\'" (symbol-name actype)))
 		 ;; Is a function with a boolean result
 		 (setq args `(',args)
 		       action `(display-boolean ',action)
-                       actype #'display-boolean))
+		       actype #'display-boolean))
 		((and (null args) (symbolp actype) (boundp actype)
-                      (or var-flag (not (fboundp actype))))
+		      (or var-flag (not (fboundp actype))))
 		 ;; Is a variable, display its value as the action
 		 (setq args `(',args)
-                       action `(display-variable ',actype)
-                       actype #'display-variable))
+		       action `(display-variable ',actype)
+		       actype #'display-variable))
 		(t
 		 ;; All other expressions, display the action result in the minibuffer
 		 (setq args `(',args)
-                       action `(display-value ',action)
-                       actype #'display-value))))
+		       action `(display-value ',action)
+		       actype #'display-value))))
 
 	;; Create implicit button object and store in symbol hbut:current.
 	(ibut:create :lbl-key lbl-key :lbl-start start-pos :lbl-end end-pos
@@ -1547,11 +1545,11 @@ arg1 ... argN '>'.  For example, <mail nil \"user@somewhere.org\">."
 
         ;; Necessary so can return a null value, which actype:act cannot.
         (let ((hrule:action
-               (if (eq hrule:action #'actype:identity)
+	       (if (eq hrule:action #'actype:identity)
                    #'actype:identity
                  #'actype:eval)))
           (if (eq hrule:action #'actype:identity)
-              `(hact ,actype ,@args)
+	      `(hact ,actype ,@args)
             `(hact ,actype ,@(mapcar #'eval args))))))))
 
 (defun action:help (hbut)

@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    30-may-21 at 09:33:00
-;; Last-Mod:     30-Apr-23 at 11:04:33 by Mats Lidell
+;; Last-Mod:     11-Jun-23 at 11:29:30 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -23,9 +23,10 @@
 (require 'hactypes)
 (require 'hpath)
 (require 'el-mock)
+(require 'hy-test-helpers "test/hy-test-helpers")
 
 (defun hbut-tests:should-match-tmp-folder (tmp)
-  "Check that TMP matches either a list of a single element of \"/tmp\" or \"private/tmp\".
+  "Check that TMP matches either of \"/tmp\" or \"private/tmp\".
 Needed since hyperbole expands all links to absolute paths and
 /tmp can be a symbolic link."
   (should (member tmp '(("/tmp") ("./tmp") ("/private/tmp")))))
@@ -189,6 +190,148 @@ Needed since hyperbole expands all links to absolute paths and
       (goto-char 3)
       (should-not (ebut:at-p))
       (should (string= button (buffer-string))))))
+
+(ert-deftest hbut-tests-ibut-program-link-to-directory ()
+  "Programmatically create ibut link-to-directory."
+  (with-temp-buffer
+    (ibut:program "label" 'link-to-directory "/tmp")
+    (should (string= "<[label]> - \"/tmp\"" (buffer-string)))))
+
+(ert-deftest hbut-tests-ibut-program-link-to-file ()
+  "Programatically create ibut link to file."
+  (let ((test-file (make-temp-file "ibut" nil ".txt")))
+    (unwind-protect
+        (with-temp-buffer
+          (ibut:program "label" 'link-to-file test-file)
+          (should (string=
+                   (concat "<[label]> - \"" test-file "\"")
+                   (buffer-string))))
+      (delete-file test-file))))
+
+(ert-deftest hbut-tests-ibut-insert-text-link-to-dir ()
+  "Insert link to dir."
+  (with-temp-buffer
+    (ibut:program "label" 'link-to-directory "/tmp")
+    (should (string= "<[label]> - \"/tmp\"" (buffer-string)))
+    (goto-char 3)
+    (let ((but (ibut:at-p)))
+      (with-temp-buffer
+        (ibut:insert-text but)
+	;; Allow for /tmp being a link to /private/tmp on Macos
+        (should (string-match "\"\\(/private\\)?/tmp\"" (buffer-string)))))))
+
+(ert-deftest hbut-tests-ibut-insert-annot-bib ()
+  "Insert ibut to annot-bib, which must be attached to a file."
+  (let ((annot-bib-file (make-temp-file "annot-bib" nil ".txt"))
+	annot-bib-buf
+	but)
+    (unwind-protect
+        (progn
+	  ;; Test with name
+          (setq annot-bib-buf (find-file annot-bib-file))
+	  (ibut:program "label" 'annot-bib "arg")
+	  (save-buffer)
+	  (should (string-match (concat (regexp-quote "<[label]> - [arg]")
+					"\\s-*")
+				(buffer-string)))
+	  ;; Test without name
+	  (erase-buffer)
+	  (ibut:program nil 'annot-bib "arg")
+	  (save-buffer)
+	  (should (string-match (concat (regexp-quote "[arg]")
+					"\\s-*")
+				(buffer-string))))
+      (kill-buffer annot-bib-buf)
+      (hy-test-helpers:kill-buffer annot-bib-file))))
+
+(ert-deftest hbut-tests-ibut-insert-kbd-key ()
+  "Insert ibut to kbd-key."
+  (with-temp-buffer
+    (ibut:program "label" 'kbd-key "{ C-h h }")
+    (should (string= "<[label]> - { C-h h }" (buffer-string)))
+    (goto-char 3)
+    (let ((but (ibut:at-p)))
+      (with-temp-buffer
+        (ibut:insert-text but)
+        (should (string= "" (buffer-string)))))))
+
+(ert-deftest hbut-tests-ibut-insert-text-temp-buffer ()
+  "Insert ibut text using an ibut in a temp buffer as source."
+  (dolist (bd
+           ;; Test data is in the format:
+           ;;  - action-type implicit-button-text resulting-button-text
+           ;; The third parameter is optional and if missing the
+           ;; implicit-button-text is used as the result as
+           ;; well. i.e. Works when the input string is preserved.
+           '(
+             ('actypes::kbd-key "{C-h h}")
+             ; ('actypes::annotate-bib "[FSF 12]") ;; Requires a file!?
+             ; ('actypes::exec-shell-cmd "!/bin/bash") ;; Not identified as an ibut
+             ; ('actypes::exec-window-cmd "&/bin/bash") ;; Not identified as an ibut
+             ('actypes::link-to-gbut "<glink:arg1>")
+             ('actypes::link-to-ebut "<elink:arg1>")
+             ('actypes::link-to-ebut "<elink:arg1:arg2>" "<elink:arg1: arg2>")
+             ('actypes::link-to-ibut "<ilink:arg1>")
+             ('actypes::link-to-ibut "<ilink:arg1:arg2>" "<ilink:arg1: arg2>")
+             ('actypes::link-to-kcell "<@ 3b=06>" "<nil \"@ 3b=06\" 13>")
+
+             ;; Verified manually. Produces nil when run by ert!?
+             ; ('actypes::link-to-kcell "<EXAMPLE.kotl, 4=012>" "<nil EXAMPLE.kotl, 4=012 13>")
+
+             ; ('actypes::link-to-org-id "id:arg1") ;; Can links to org id be created using text only?
+             ('actypes::link-to-rfc "rfc123")
+             ; ('actypes::man-show "rm(1)	- remove")
+             ('actypes::link-to-file-line "/etc/passwd:10" "\"/etc/passwd:10\"")
+             ('actypes::link-to-file "/etc/passwd" "\"/etc/passwd\"")))
+    (with-temp-buffer
+      (insert (format "<[label]> - %s" (cadr bd)))
+      (goto-char 3)
+      (let ((but (ibut:at-p))
+            (match (or (caddr bd) (cadr bd))))
+        (with-temp-buffer
+          (ibut:insert-text but)
+          (should (string= match (buffer-string))))))))
+
+(ert-deftest hbut-tests-ibut-insert-text-temp-file ()
+  "Insert ibut text using an ibut in a temp file as source."
+  (dolist (bd
+           ;; Test data is in the format:
+           ;;  - action-type implicit-button-text resulting-button-text
+           ;; The third parameter is optional and if missing the
+           ;; implicit-button-text is used as the result as
+           ;; well. i.e. Work when the input string is preserved.
+           '(
+             ('actypes::kbd-key "{C-h h}")
+             ('actypes::annotate-bib "[FSF 12]") ;; Requires a file!
+             ; ('actypes::exec-shell-cmd "!/bin/bash") ;; Not identified as an ibut
+             ; ('actypes::exec-window-cmd "&/bin/bash") ;; Not identified as an ibut
+             ('actypes::link-to-gbut "<glink:arg1>")
+             ('actypes::link-to-ebut "<elink:arg1>")
+             ('actypes::link-to-ebut "<elink:arg1:arg2>" "<elink:arg1: arg2>")
+             ('actypes::link-to-ibut "<ilink:arg1>")
+             ('actypes::link-to-ibut "<ilink:arg1:arg2>" "<ilink:arg1: arg2>")
+             ('actypes::link-to-kcell "<@ 3b=06>" "<nil \"@ 3b=06\" 13>")
+
+             ;; Verified manually. Produces nil when run by ert!?
+             ; ('actypes::link-to-kcell "<EXAMPLE.kotl, 4=012>" "<nil EXAMPLE.kotl, 4=012 13>")
+
+             ; ('actypes::link-to-org-id "id:arg1") ;; Can links to org id be created using text only?
+             ('actypes::link-to-rfc "rfc123")
+             ; ('actypes::man-show "rm(1)	- remove")
+             ('actypes::link-to-file-line "/etc/passwd:10" "\"/etc/passwd:10\"")
+             ('actypes::link-to-file "/etc/passwd" "\"/etc/passwd\"")))
+    (let ((file (make-temp-file "hypb" nil ".txt"
+                                (format "<[label]> - %s" (cadr bd)))))
+      (unwind-protect
+          (progn
+            (find-file file)
+            (goto-char 3)
+            (let ((but (ibut:at-p))
+                  (match (or (caddr bd) (cadr bd))))
+              (with-temp-buffer
+                (ibut:insert-text but)
+                (should (string= match (buffer-string))))))
+        (delete-file file)))))
 
 ;; This file can't be byte-compiled without the `el-mock' package (because of
 ;; the use of the `with-mock' macro), which is not a dependency of Hyperbole.
