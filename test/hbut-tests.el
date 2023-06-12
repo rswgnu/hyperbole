@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    30-may-21 at 09:33:00
-;; Last-Mod:     11-Jun-23 at 11:29:30 by Bob Weiner
+;; Last-Mod:     11-Jun-23 at 21:39:38 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -246,14 +246,27 @@ Needed since hyperbole expands all links to absolute paths and
 
 (ert-deftest hbut-tests-ibut-insert-kbd-key ()
   "Insert ibut to kbd-key."
-  (with-temp-buffer
-    (ibut:program "label" 'kbd-key "{ C-h h }")
-    (should (string= "<[label]> - { C-h h }" (buffer-string)))
-    (goto-char 3)
-    (let ((but (ibut:at-p)))
-      (with-temp-buffer
-        (ibut:insert-text but)
-        (should (string= "" (buffer-string)))))))
+  (let ((kbd-key-file (make-temp-file "kbd-key" nil ".txt"))
+	kbd-key-buf
+	but)
+    (unwind-protect
+        (progn
+	  ;; Test with name
+          (setq kbd-key-buf (find-file kbd-key-file))
+	  (ibut:program "label" 'kbd-key "{ C-f C-f }")
+	  (save-buffer)
+	  (should (string-match (concat (regexp-quote "<[label]> - { C-f C-f }")
+					"\\s-*")
+				(buffer-string)))
+	  ;; Test without name
+	  (erase-buffer)
+	  (ibut:program nil 'kbd-key "{ C-f C-f }")
+	  (save-buffer)
+	  (should (string-match (concat (regexp-quote "{ C-f C-f }")
+					"\\s-*")
+				(buffer-string))))
+      (kill-buffer kbd-key-buf)
+      (hy-test-helpers:kill-buffer kbd-key-file))))
 
 (ert-deftest hbut-tests-ibut-insert-text-temp-buffer ()
   "Insert ibut text using an ibut in a temp buffer as source."

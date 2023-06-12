@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 21:42:03
-;; Last-Mod:     11-Jun-23 at 12:04:31 by Bob Weiner
+;; Last-Mod:     11-Jun-23 at 21:13:08 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1035,7 +1035,7 @@ Signal an error when no such button is found in the current buffer."
       (hui:buf-writable-err but-buf "ibut-rename"))
 
     (unless (ibut:get lbl-key but-buf)
-      (hypb:error "(ibut-rename): Invalid button: '%s'." lbl))
+      (hypb:error "(ibut-rename): Invalid button: '%s'" lbl))
 
     (setq new-lbl
 	  (hargs:read
@@ -1043,7 +1043,7 @@ Signal an error when no such button is found in the current buffer."
 	   (lambda (lbl)
 	     (and (not (string-equal lbl "")) (<= (length lbl) (hbut:max-len))))
 	   lbl
-	   (format "(ibut-rename): Enter a string of at most %s chars."
+	   (format "(ibut-rename): Enter a string of at most %s chars"
 		   (hbut:max-len))
 	   'string))
 

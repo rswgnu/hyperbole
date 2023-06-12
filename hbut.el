@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    18-Sep-91 at 02:57:09
-;; Last-Mod:     11-Jun-23 at 13:42:14 by Bob Weiner
+;; Last-Mod:     11-Jun-23 at 21:32:08 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1652,13 +1652,17 @@ excluding delimiters, not just one."
 	  ;; Skip past any optional name and separators
 	  (when name-end
 	    (goto-char name-end)
-	    (if (looking-at ibut:label-separator-regexp)
-		;; Move past up to 2 possible characters of ibut
-		;; delimiters; this prevents recognizing named,
-		;; delimited ibuts of a single character since no one
-		;; should need that.
-		(goto-char (min (+ 2 (match-end 0)) (point-max)))
-	      (goto-char opoint)))
+	    (hattr:set 'hbut:current 'lbl-start
+		       (if (looking-at ibut:label-separator-regexp)
+			   (progn
+			     ;; Move past up to 2 possible characters of ibut
+			     ;; delimiters; this prevents recognizing named,
+			     ;; delimited ibuts of a single character since no one
+			     ;; should need that.
+			     (goto-char (min (+ 2 (match-end 0)) (point-max)))
+			     (match-end 0))
+			 (prog1 (point)
+			   (goto-char opoint)))))
 
 	  (setq lbl-start-end (if (and start-delim end-delim)
 				  (ibut:label-p nil start-delim end-delim t t)
@@ -1743,9 +1747,9 @@ Store new button attributes in the symbol, 'hbut:current."
 	      (unwind-protect
 		  (progn (setq text-start (or (hattr:get 'hbut:current 'lbl-start)
 					      (point))
-			       text-end (or (hattr:get 'hbut:current 'lbl-end)
-					    (point)))
+			       text-end (hattr:get 'hbut:current 'lbl-end))
 			 (unless (and (<= text-start (point))
+				      text-end
 				      (>= text-end (point)))
 			   ;; Move to text of ibut before trying to activate it
 			   ;; (may be on name)
@@ -2167,17 +2171,13 @@ Summary of operations based on inputs:
 | nil   | newname  | region | mod: add newname to lbl-key ibut (skip region) |
 |-------+----------+--------+------------------------------------------------|"
   ;; !! TODO: Code does not yet fully match what is in docstring table
-  (let* ((lbl-key (hattr:get 'hbut:current 'lbl-key))
-	 (actype (hattr:get 'hbut:current 'actype))
+  (let* ((actype (hattr:get 'hbut:current 'actype))
 	 (name (hattr:get 'hbut:current 'name))
 	 (name-regexp (ibut:label-regexp (ibut:label-to-key name)))
 	 (modify new-name)
 	 (region-flag (hmouse-use-region-p))
 	 ;; (new-name-key)
 	 (instance-flag))
-    (unless (and (stringp lbl-key) (not (string-empty-p lbl-key)))
-      (hypb:error "(ibut:operate): hbut:current ibut lbl-key (%s) must be non-nil"
-		  lbl-key))
     (unless actype
       (hypb:error "(ibut:operate): hbut:current ibut actype (%s) must be non-nil"
 		  actype))
@@ -2239,7 +2239,7 @@ Summary of operations based on inputs:
 	     (cond ((not (and name new-name))
 		    ;; No name to insert, just insert ibutton text below
 		    )
-		   ((not name)
+		   ((and (not name) new-name)
 		    (setq start (point))
 		    (insert new-name)
 		    (setq end (point)))
@@ -2270,17 +2270,20 @@ Summary of operations based on inputs:
 			   (equal buf-lbl name)))
 		    nil)
 		   ((progn (when start (goto-char start))
-			   (looking-at (regexp-quote name)))
+			   (when name  (looking-at (regexp-quote name))))
 		    (setq start (point)
 			  end (match-end 0)))
-		   (t (setq start (point))
-		      (insert name)
-		      (setq end (point))))
+		   (name
+		    (setq start (point))
+		    (insert name)
+		    (setq end (point))))
+
 	     (when (and start end)
 	       (ibut:delimit start end instance-flag))
 	     (ibut:insert-text 'hbut:current)
-	     (when start
-	       (goto-char start))))
+	     (if start
+		 (goto-char start)
+	       (goto-char (max (- (point) 2) (point-min))))))
 
 	  (t (hypb:error
 	      "(ibut:operate): Operation failed.  Check button attribute permissions: %s"
@@ -2294,15 +2297,25 @@ Summary of operations based on inputs:
 
     ;; Position point
     (let ((new-key (ibut:label-to-key new-name)))
-      (cond ((equal (ibut:label-p) new-key)
+      (cond ((and new-key (equal (ibut:label-p) new-key))
 	     ;; In case right before the start of the desired
 	     ;; button's delimiters.
-	     (forward-char 2) (search-backward ibut:label-start nil t)
-	     (goto-char (match-end 0)))
-	    ((let ((regexp (ibut:label-regexp new-key)))
+	     (goto-char (min (+ (point) 2) (point-max)))
+	     (when (search-backward ibut:label-start nil t)
+	       (goto-char (match-end 0))))
+	    (new-key
+	     (let ((regexp (ibut:label-regexp new-key)))
 	       (or (re-search-forward  regexp nil t)
 		   (re-search-backward regexp nil t)))
 	     (goto-char (+ (match-beginning 0) (length ibut:label-start))))))
+
+    (let ((lbl-key (hattr:get 'hbut:current 'lbl-key)))
+      (unless lbl-key
+	(when (ibut:set-name-and-label-key-p)
+	  (setq lbl-key (hattr:get 'hbut:current 'lbl-key))))
+      (unless (and (stringp lbl-key) (not (string-empty-p lbl-key)))
+	(hypb:error "(ibut:operate): hbut:current ibut lbl-key (%s) must be non-nil"
+		    lbl-key)))
 
     ;; instance-flag might be 't which we don't want to return.
     (when (stringp instance-flag) instance-flag)))
@@ -2318,7 +2331,10 @@ Summary of operations based on inputs:
 	 (arg2   (nth 1 args))
 	 (arg3   (nth 2 args)))
     (pcase actype
-      ('actypes::kbd-key (insert "{" arg1 "}" ))
+      ('actypes::kbd-key
+       (if (and (stringp arg1) (string-match "\\s-*{.+}\\s-*" arg1))
+	   (insert arg1)
+	 (insert "{" arg1 "}")))
       ((or 'actypes::link-to-directory 'actypes::link-to-Info-node 'actypes::link-to-Info-index-item)
        (insert "\"" arg1 "\""))
       ('actypes::annot-bib (insert "[" arg1 "]"))
