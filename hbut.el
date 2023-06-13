@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    18-Sep-91 at 02:57:09
-;; Last-Mod:     11-Jun-23 at 21:32:08 by Bob Weiner
+;; Last-Mod:     12-Jun-23 at 22:56:47 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1875,7 +1875,7 @@ Store new button attributes in the symbol, 'hbut:current."
 	      (when args
 		(hattr:set 'hbut:current 'args (if actype (cdr args) args))))
 
-	    (hbdata:ibut-instance)))
+	    (hbdata:ibut-instance-next (ibut:label-to-key name))))
       (set-marker ibpoint nil))))
 
 (def-edebug-spec cl-defun
@@ -2176,7 +2176,6 @@ Summary of operations based on inputs:
 	 (name-regexp (ibut:label-regexp (ibut:label-to-key name)))
 	 (modify new-name)
 	 (region-flag (hmouse-use-region-p))
-	 ;; (new-name-key)
 	 (instance-flag))
     (unless actype
       (hypb:error "(ibut:operate): hbut:current ibut actype (%s) must be non-nil"
@@ -2187,8 +2186,6 @@ Summary of operations based on inputs:
 
     (unless new-name
       (setq new-name name))
-    ;; (setq new-name-key (ibut:label-to-key new-name))
-    ;; (hattr:set 'hbut:current 'lbl-key new-name-key)
     (when (stringp new-name)
       (hattr:set 'hbut:current 'name new-name))
     (save-excursion
@@ -2292,7 +2289,6 @@ Summary of operations based on inputs:
     ;; Append any instance-flag string to the button name
     (when (stringp instance-flag)
       (setq new-name (concat new-name instance-flag))
-      ;; (hattr:set 'hbut:current 'lbl-key (ibut:label-to-key new-name))
       (hattr:set 'hbut:current 'name new-name))
 
     ;; Position point
@@ -2311,10 +2307,11 @@ Summary of operations based on inputs:
 
     (let ((lbl-key (hattr:get 'hbut:current 'lbl-key)))
       (unless lbl-key
-	(when (ibut:set-name-and-label-key-p)
+	(when (or (ibut:set-name-and-label-key-p)
+		  (ibut:at-p)) ;; Sets lbl-key for non-delimited ibtypes
 	  (setq lbl-key (hattr:get 'hbut:current 'lbl-key))))
       (unless (and (stringp lbl-key) (not (string-empty-p lbl-key)))
-	(hypb:error "(ibut:operate): hbut:current ibut lbl-key (%s) must be non-nil"
+	(hypb:error "(ibut:operate): hbut:current ibut lbl-key '%s' must be non-nil"
 		    lbl-key)))
 
     ;; instance-flag might be 't which we don't want to return.
@@ -2332,9 +2329,11 @@ Summary of operations based on inputs:
 	 (arg3   (nth 2 args)))
     (pcase actype
       ('actypes::kbd-key
-       (if (and (stringp arg1) (string-match "\\s-*{.+}\\s-*" arg1))
-	   (insert arg1)
-	 (insert "{" arg1 "}")))
+       (cond ((and (stringp arg1) (string-match "\\s-*{.+}\\s-*" arg1))
+	      (insert arg1))
+	     ((stringp arg1)
+	      (insert "{" arg1 "}"))
+	     (t (insert "{}"))))
       ((or 'actypes::link-to-directory 'actypes::link-to-Info-node 'actypes::link-to-Info-index-item)
        (insert "\"" arg1 "\""))
       ('actypes::annot-bib (insert "[" arg1 "]"))
@@ -2347,7 +2346,7 @@ Summary of operations based on inputs:
       ('actypes::link-to-ibut (progn (insert "<ilink:" arg1)
 				     (when arg2 (insert ": " arg2))
 				     (insert ">")))
-      ('actypes::link-to-kcell (progn (insert "<") (when arg1 (insert arg1))
+      ('actypes::link-to-kcell (progn (insert "<@ ") (when arg1 (insert arg1))
 				      (when arg2 (insert ", " arg2))
 				      (insert ">")))
       ('actypes::link-to-org-id (insert (format "\"id:%s\"" arg1)))
@@ -2416,7 +2415,7 @@ For interactive creation, use `hui:ibut-create' instead."
 	    (hattr:set 'hbut:current 'args args)
 	    (ibut:operate))
 	(error (hattr:clear 'hbut:current)
-	       (error "(ibut:program): %S" err))))))
+	       (error "(ibut:program): name: %S actype: %S args: %S - %S" name actype args err))))))
 
 (defun    ibut:rename (old-lbl new-lbl)
   "Change an implicit button name in the current buffer from OLD-LBL to NEW-LBL.
