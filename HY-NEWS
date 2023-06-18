@@ -397,7 +397,7 @@
   *** {C-c /}: The Hyperbole {C-c /} web search binding defers to the org-mode
       binding, `org-show-todo-tree', when in Org mode, but uses the improved
       Hyperbole command version, `hsys-org-todo-occur', which allows filtering
-      to specific todo states.
+      to spec"ific todo states.
 
 
 ** SMART (ACTION AND ASSIST) KEYS  (See "(hyperbole)Smart Keys").
@@ -405,7 +405,7 @@
   *** Drag Button Referents to Specific Windows: Just as you previously could
       drag Dired or Buffer Menu items to display in a specific window, you can
       now do the same with Hyperbole Buttons.  Action or Assist Key drag from
-      on a Hyperbole button and release in another window where you want the
+      a Hyperbole button and release in another window where you want the
       button's referent (or the result of its action) displayed.  If you
       release the Smart Key outside of an Emacs window, the referent is
       displayed in a new frame.  See "(hyperbole)Displaying Items".
@@ -449,16 +449,16 @@
 
 ** TEST CASES  (See "${hyperb:dir}/test").
 
-  *** Hyperbole Automated Testing: Automated test cases increased to almost 300.
-      Simply run 'make test-all' or 'make test' from the command-line when in
-      the Hyperbole source directory and you should see all tests pass.  If
-      any fail, you can press the Action Key to see the source of the failure.
+  *** Hyperbole Automated Testing: Over 300 automated test cases.  Simply run
+      'make test-all' or 'make test' from the command-line when in the
+      Hyperbole source directory and you should see all tests pass.  If any
+      fail, you can press the Action Key to see the source of the failure.
       Full testing is supported under POSIX systems only.  See "Makefile" and
       "test/MANIFEST".
 
   *** The Hyperbole team's CI/CD process automatically runs all test cases
-      against Emacs major versions 27, 28 and 29 whenever a code change is
-      checked in against git.
+      against Emacs major versions 27, 28 and 29 and the current master branch
+      tip whenever a Hyperbole code change is checked in against git.
 
   *** QA: Many quality improvements across Hyperbole and integration with
       Emacs updates with backward compatibility from Emacs 27 through Emacs 29

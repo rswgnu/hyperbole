@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    04-Feb-89
-;; Last-Mod:     10-Jun-23 at 18:38:57 by Bob Weiner
+;; Last-Mod:     17-Jun-23 at 21:14:33 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -535,6 +535,9 @@ Action and Assist Mouse Keys.")
 When the Action Mouse Key or Assist Mouse Key is pressed, the first or second
 form, respectively, associated with the first non-nil predicate is
 evaluated.
+
+The function `hmouse-alist-add-window-handlers' adds the mouse context
+handlers to this variable.
 
 The `hkey-alist' variable is the subset of this alist used by the
 smart keyboard keys.")

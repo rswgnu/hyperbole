@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    30-may-21 at 09:33:00
-;; Last-Mod:     11-Jun-23 at 21:39:38 by Bob Weiner
+;; Last-Mod:     17-Jun-23 at 20:45:39 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -79,8 +79,8 @@ Needed since hyperbole expands all links to absolute paths and
 
 (ert-deftest gbut-program-calls-ebut-program ()
   "Programatically create gbut calls ebut:program."
-  (let ((test-file (make-temp-file "test-file")))
-    (setq test-buffer (find-file-noselect test-file))
+  (let* ((test-file (make-temp-file "test-file"))
+	 (test-buffer (find-file-noselect test-file)))
     (unwind-protect
         (with-mock
           (mock (hpath:find-noselect (expand-file-name hbmap:filename hbmap:dir-user)) => test-buffer)
@@ -90,8 +90,8 @@ Needed since hyperbole expands all links to absolute paths and
 
 (ert-deftest gbut-program-link-to-directory ()
   "Programatically create gbut with link-to-directory."
-  (let ((test-file (make-temp-file "gbut" nil ".txt")))
-    (setq test-buffer (find-file-noselect test-file))
+  (let* ((test-file (make-temp-file "gbut" nil ".txt"))
+	 (test-buffer (find-file-noselect test-file)))
     (unwind-protect
 	(progn
           (with-mock
@@ -106,8 +106,8 @@ Needed since hyperbole expands all links to absolute paths and
 
 (ert-deftest gbut-program-eval-elisp ()
   "Programatically create gbut with eval-elisp."
-  (let ((test-file (make-temp-file "gbut" nil ".txt")))
-    (setq test-buffer (find-file-noselect test-file))
+  (let* ((test-file (make-temp-file "gbut" nil ".txt"))
+	 (test-buffer (find-file-noselect test-file)))
     (unwind-protect
 	(progn
           (with-mock
@@ -119,8 +119,8 @@ Needed since hyperbole expands all links to absolute paths and
 
 (ert-deftest gbut-program-link-to-file ()
   "Programatically create gbut with eval-elisp."
-  (let ((test-file (make-temp-file "gbut" nil ".txt")))
-    (setq test-buffer (find-file-noselect test-file))
+  (let* ((test-file (make-temp-file "gbut" nil ".txt"))
+	 (test-buffer (find-file-noselect test-file)))
     (unwind-protect
 	(progn
           (with-mock
@@ -132,8 +132,8 @@ Needed since hyperbole expands all links to absolute paths and
 
 (ert-deftest gbut-program-link-to-file-line ()
   "Programatically create gbut with eval-elisp."
-  (let ((test-file (make-temp-file "gbut" nil ".txt")))
-    (setq test-buffer (find-file-noselect test-file))
+  (let* ((test-file (make-temp-file "gbut" nil ".txt"))
+	 (test-buffer (find-file-noselect test-file)))
     (unwind-protect
 	(progn
           (with-mock
@@ -145,8 +145,8 @@ Needed since hyperbole expands all links to absolute paths and
 
 (ert-deftest gbut-program-link-to-file-line-and-column ()
   "Programatically create gbut with eval-elisp."
-  (let ((test-file (make-temp-file "gbut" nil ".txt")))
-    (setq test-buffer (find-file-noselect test-file))
+  (let* ((test-file (make-temp-file "gbut" nil ".txt"))
+	 (test-buffer (find-file-noselect test-file)))
     (unwind-protect
 	(progn
           (with-mock
@@ -223,8 +223,7 @@ Needed since hyperbole expands all links to absolute paths and
 (ert-deftest hbut-tests-ibut-insert-annot-bib ()
   "Insert ibut to annot-bib, which must be attached to a file."
   (let ((annot-bib-file (make-temp-file "annot-bib" nil ".txt"))
-	annot-bib-buf
-	but)
+	annot-bib-buf)
     (unwind-protect
         (progn
 	  ;; Test with name
@@ -247,8 +246,7 @@ Needed since hyperbole expands all links to absolute paths and
 (ert-deftest hbut-tests-ibut-insert-kbd-key ()
   "Insert ibut to kbd-key."
   (let ((kbd-key-file (make-temp-file "kbd-key" nil ".txt"))
-	kbd-key-buf
-	but)
+	kbd-key-buf)
     (unwind-protect
         (progn
 	  ;; Test with name
@@ -268,65 +266,76 @@ Needed since hyperbole expands all links to absolute paths and
       (kill-buffer kbd-key-buf)
       (hy-test-helpers:kill-buffer kbd-key-file))))
 
-(ert-deftest hbut-tests-ibut-insert-text-temp-buffer ()
-  "Insert ibut text using an ibut in a temp buffer as source."
-  (dolist (bd
-           ;; Test data is in the format:
-           ;;  (action-type expected-implicit-button-text &rest implicit-button-args)
-           '(
-             (actypes::kbd-key "{C-h h}" "C-h h")
-             ; (actypes::annotate-bib "[FSF 12]" nil) ;; Requires a file!?
-             ; (actypes::exec-shell-cmd "!/bin/bash" nil) ;; Not identified as an ibut
-             ; (actypes::exec-window-cmd "&/bin/bash" nil) ;; Not identified as an ibut
-             (actypes::link-to-gbut "<glink:arg1>" "arg1")
-             (actypes::link-to-ebut "<elink:arg1>" "arg1")
-             (actypes::link-to-ebut "<elink:arg1: arg2>" "arg1" "arg2")
-             (actypes::link-to-ibut "<ilink:arg1>" "arg1")
-             (actypes::link-to-ibut "<ilink:arg1: arg2>" "arg1" "arg2")
-             (actypes::link-to-kcell "<@ 3b=06>" "3b=06")
+(defconst hbut-tests-actypes-list
+  '(
+    ;; Would have to create a file with a valid Org ID in it to test this:
+    ;; (actypes::link-to-org-id "id:arg1")
+    ;;
+    ;; Use the DEMO file to test this, as it requires a file
+    ;; (actypes::annotate-bib "[FSF 12]" nil)
+    ;;
+    (ibtypes::klink actypes::link-to-kotl "<~/EXAMPLE.kotl, 3b=06>" "<~/EXAMPLE.kotl, 3b=06>")
+    (ibtypes::man-apropos man "rm(1) - remove" "rm(1) - remove")
+    (ibtypes::pathname actypes::exec-shell-cmd "\"!/bin/bash\"" "/bin/bash")
+    (ibtypes::pathname actypes::exec-window-cmd "\"&/bin/bash\"" "/bin/bash")
+    (ibtypes::kbd-key actypes::kbd-key "{C-h h}" "C-h h")
+    (ibtypes::glink actypes::link-to-gbut "<glink:arg1>" "arg1")
+    (ibtypes::elink actypes::link-to-ebut "<elink:arg1>" "arg1")
+    (ibtypes::elink actypes::link-to-ebut "<elink:arg1: arg2>" "arg1" "arg2")
+    (ibtypes::ilink actypes::link-to-ibut "<ilink:arg1>" "arg1")
+    (ibtypes::ilink actypes::link-to-ibut "<ilink:arg1: arg2>" "arg1" "arg2")
+    (ibtypes::pathname actypes::link-to-file "\"/etc/passwd\"" "/etc/passwd")
+    (ibtypes::pathname-line-and-column actypes::link-to-file-line "\"/etc/passwd:10\"" "/etc/passwd" 10)
+    (ibtypes::rfc actypes::link-to-rfc "rfc123" 123))
+  "hbut actypes test list is in the format:
+     (implicit-button-type action-type expected-implicit-button-text &rest implicit-button-args)")
 
-             ;; Verified manually. Produces nil when run by ert!?
-             ; (actypes::link-to-kcell "<EXAMPLE.kotl, 4=012>" "<nil EXAMPLE.kotl, 4=012 13>")
+(ert-deftest hbut-tests-ibut-insert-links ()
+  "Test that `ibut:program' correctly inserts many types of link ibuttons."
 
-             ; (actypes::link-to-org-id "id:arg1") ;; Can links to org id be created using text only?
-             ; (actypes::man-show "rm(1)	- remove")
-             (actypes::link-to-file "\"/etc/passwd\"" "/etc/passwd")
-             (actypes::link-to-file-line "\"/etc/passwd:10\"" "/etc/passwd" 10)
-             (actypes::link-to-rfc "rfc123" 123)))
-    (with-temp-buffer
-      (apply #'ibut:program nil (car bd) (cddr bd))
-      (goto-char 3)
-      (should (string= (cadr bd) (buffer-string))))))
+  ;; Needed for actypes::link-to-kotl test below
+  (save-window-excursion
+    (kotl-mode:example)
+    (bury-buffer))
 
-(ert-deftest hbut-tests-ibut-insert-text-temp-file ()
-  "Insert ibut text using an ibut in a temp file as source."
-  (dolist (bd
-           ;; Test data is in the format:
-           ;;  (action-type expected-implicit-button-text &rest implicit-button-args)
-           '(
-             (actypes::kbd-key "<[label]> - {C-h h}" "C-h h")
-             ; (actypes::annotate-bib "<[label]> - [FSF 12]" nil) ;; Requires a file!?
-             ; (actypes::exec-shell-cmd "<[label]> - !/bin/bash" "!/bin/bash") ;; Not identified as an ibut
-             ; (actypes::exec-window-cmd "<[label]> - &/bin/bash" "&/bin/bash") ;; Not identified as an ibut
-             (actypes::link-to-gbut "<[label]> - <glink:arg1>" "arg1")
-             (actypes::link-to-ebut "<[label]> - <elink:arg1>" "arg1")
-             (actypes::link-to-ebut "<[label]> - <elink:arg1: arg2>" "arg1" "arg2")
-             (actypes::link-to-ibut "<[label]> - <ilink:arg1>" "arg1")
-             (actypes::link-to-ibut "<[label]> - <ilink:arg1: arg2>" "arg1" "arg2")
-             (actypes::link-to-kcell "<[label]> - <@ 3b=06>" "3b=06")
+  (let ((name)
+	(body '(let ((expected-ibut-string))
+		 (apply #'ibut:program name (nth 1 bd) (cdddr bd))
+		 (goto-char 3)
+		 (setq expected-ibut-string (nth 2 bd))
+		 (when name
+		   (setq expected-ibut-string (format "<[%s]> - %s" name expected-ibut-string)))
+		 (should (string-equal expected-ibut-string (buffer-string)))
+		 (should (ibut:at-p))
+		 (let ((ibtype (hattr:get 'hbut:current 'categ))
+		       (actype (hattr:get 'hbut:current 'actype))
+		       (expected-ibtype (nth 0 bd))
+		       (expected-actype (nth 1 bd))
+		       (args (hattr:get 'hbut:current 'args))
+		       (hrule:action #'actype:identity))
+		   ;; Certain actypes call hact with a different actype within
+		   ;; their bodies; this captures the final actype executed,
+		   ;; which is the one we compare against.
+		   (when (memq actype '(actypes::link-to-file klink:act))
+		     (save-excursion
+		       (apply #'actype:act actype args)
+		       (setq actype (hattr:get 'hbut:current 'actype))))
+		   ;; These shoulds show the value of these variables when you
+		   ;; use the {l} command on failure, allowing quick debugging.
+		   (should expected-ibtype)
+		   (should expected-actype)
+		   (should actype)
+		   (should (or args t))
+		   (should (eq ibtype expected-ibtype)
+			   (should (or (eq actype expected-actype)
+				       (eq (actype:elisp-symbol actype) expected-actype))))))))
 
-             ;; Verified manually. Produces nil when run by ert!?
-             ; (actypes::link-to-kcell "<[label]> - <EXAMPLE.kotl, 4=012>" "<nil EXAMPLE.kotl, 4=012 13>")
+    `(dolist (bd ,hbut-tests-actypes-list)
+       (with-temp-buffer ,@body))
 
-             ; (actypes::link-to-org-id "<[label]> - id:arg1") ;; Can links to org id be created using text only?
-             ; (actypes::man-show "<[label]> - rm(1)	- remove")
-             (actypes::link-to-file "<[label]> - \"/etc/passwd\"" "/etc/passwd")
-             (actypes::link-to-file-line "<[label]> - \"/etc/passwd:10\"" "/etc/passwd" 10)
-             (actypes::link-to-rfc "<[label]> - rfc123" 123)))
-    (with-temp-file "hypb.txt"
-      (apply #'ibut:program "label" (car bd) (cddr bd))
-      (goto-char 3)
-      (should (string= (cadr bd) (buffer-string))))))
+    (setq name "name")
+    `(dolist (bd ,hbut-tests-actypes-list)
+       (with-temp-file "hypb.txt" ,@body))))
 
 ;; This file can't be byte-compiled without the `el-mock' package (because of
 ;; the use of the `with-mock' macro), which is not a dependency of Hyperbole.

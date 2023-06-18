@@ -1,14 +1,82 @@
+2023-06-17  Bob Weiner  <rsw@gnu.org>
+
+* hui.el (hui:ibut-link-directly): Document new inter-window Assist Mouse
+    Key handling.
+
+* hui-window.el (hmouse-alist-add-window-handlers): Separate checks of
+    dragging items to modeline from dragging within a window when not
+    on a modeline with a release on a modeline.  This clarifies the
+    context when {C-h A} is used.
+
+* kotl/klink.el (klink:act): Improve doc; update link node label only
+    if point is within a koutline.
+
+* hpath.el (hpath:delimited-possible-path): Skip if at end of line since
+    paths cannot span lines and therefore cannot be within one.
+
+* hibtypes.el (rfc): Set lbl-start and lbl-end attributes.
+
+* hbut.el (ibut:set-name-and-label-key-p): Improve doc and return 't when
+    just lbl-start is found for named, non-delimited ibuts.
+          (ibut:label-p): Ensure match does not contain delimiters, as it
+    may have run past the beginning of another button.
+          (ibut:label-set): Improve doc.
+	  (ibut:operate): Improve instance handling.
+	  (ibut:insert-text): Fully handle klinks, add 'man' actype support,
+    and handle error when actype is nil.
+          (ibut:program): Remove condition-case around whole function so that
+    errors can be seen with tracebacks.
+
+* hargs.el (hargs:delimited): Update to handle regexps with match to bol that
+    does not move point forward; move forward a char each iteration
+
+* test/hui-tests.el (hui-gibut-create-link-to-file-line,
+                     hui-gibut-create-link-to-file-line-and-column): Improve
+    readability and add check of 'name attribute.
+  test/hy-test-helpers.el (hy-test-helpers-verify-hattr-at-p): Add support
+    for 'name attribute.
+  test/hibtypes-tests.el (ibtypes::annot-bib-test): Fix.
+  test/hbut-tests.el: Fix some free variable scoping issues; remove unused
+    local variables
+  (hbut-tests-actypes-list): Separate out ibutton test data
+    and add data to test ibtype is correct.
+                     (hbut-tests-ibut-insert-text-temp-buffer): Rename to
+    'hbut-tests-ibut-insert-links'; rewrite to simplify and make more reusable.
+                     (hbut-tests-ibut-insert-text-temp-file): Deleted this and
+    merged into 'hbut-tests-ibut-insert-links'.
+
+* kotl/klink.el (klink:act): Improve doc.  Fix to not try to update link label
+    if 'link-to-kotl' fails to display a koutline.
+
+* hbut.el (ibut:insert-text): Add clear error when no matching actype is found.
+    Update klink handling.
+
+2023-06-13  Bob Weiner  <rsw@gnu.org>
+
+* hbut.el (ibut:operate): Update to handle more scenarios from the doc table.
+
+* hbdata.el (hbdata:ibut-instance): Replace with 'hbdata:ibut-instance-next'.
+            (hbdata:ibut-instance-last): Improve doc.
+
 2023-06-11  Bob Weiner  <rsw@gnu.org>
 
 * man/hyperbole.texi (Smart Mouse Drags between Windows): Update appendix doc
     to latest behavior.
 
 * hbut.el (ibut:operate): Drop 'name' arg and get it from 'hbut:current attrs.
+    Improve name handling and buffer insertion.  Use 'ibut:set-name-and-label-key-p'
+    to set 'lbl-key.
+          (ibut:set-name-and-label-key-p): Set 'lbl-start attribute.
+          (ibut:insert-text): With kbd-key actypes, allow for whitespace inside of
+    braces.
           (ibut:program):
-  hui.el (hui:ibut-create, hui:ibut-link-create): Change calls to 'ibut:operate'.
+  hui.el (hui:ibut-create, hui:ibut-link-create): Change calls to 'ibut:operate'
+    and improve moving to button text.
 
 * test/hbut-tests.el (hbut-tests-ibut-insert-annot-bib): Allow for 0 or more
     whitespace at end of buffer.
+                     (hbut-tests-ibut-insert-kbd-key): Independently test
+    without and without a name.
 
 * hbdata.el (hbdata:instance-next): Improve doc.
             (hbdata:ibut-instance): Fix inverted logic when orig-name-key
@@ -32,7 +100,7 @@
 
 * kotl/klink.el (klink:act): Document.
                 (klink): Remove 'ibut:set-label' as replaced with global
-    invocation of 'ibut:set-name-and-label-key-p'.
+    invocation of 'ibut:set-name-and-label-key-p' in 'ibut:create' call.
 
 * hbdata.el (hbdata:ibut-instance-last): Remove unused 2nd and 3rd params.
 

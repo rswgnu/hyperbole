@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 20:45:31
-;; Last-Mod:     10-Jun-23 at 20:47:06 by Bob Weiner
+;; Last-Mod:     17-Jun-23 at 14:07:11 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -725,7 +725,9 @@ Requires the Emacs builtin Tramp library for ftp file retrievals."
                (skip-chars-backward "rRfFcC")
                (looking-at " *\\(rfc[- ]?\\([0-9]+\\)\\)")))
          (progn (setq rfc-num (match-string-no-properties 2))
-                (ibut:label-set (match-string-no-properties 1))
+                (ibut:label-set (match-string-no-properties 1)
+				(match-beginning 1)
+				(match-end 1))
                 t)
          ;; Ensure remote file access is available for retrieving a remote
          ;; RFC, if need be.
@@ -753,6 +755,9 @@ Requires the Emacs builtin Tramp library for ftp file retrievals."
            (setq topic (concat (match-string-no-properties 3)
                                (match-string-no-properties 4)))
            (ibut:label-set topic (match-beginning 3) (match-end 4))
+	   ;; Use 'man' instead of 'actypes::man-show' in next line so
+	   ;; can follow cross-references within the same window when
+	   ;; Hyperbole is set to display other referents in another window.
            (hact 'man topic)))))
 
 ;;; ========================================================================

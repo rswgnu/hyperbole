@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 21:42:03
-;; Last-Mod:     11-Jun-23 at 21:13:08 by Bob Weiner
+;; Last-Mod:     17-Jun-23 at 21:37:51 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1134,7 +1134,11 @@ If ibutton exists at point, replace it with the new link button.
 
 With optional DEPRESS-WINDOW and RELEASE-WINDOW, use the points
 from those instead.  See also documentation for
-`hui:link-possible-types'."
+`hui:link-possible-types'.
+
+An Assist Mouse Key drag between windows runs this command.
+Alternatively, to swap buffers between two windows, Assist Mouse Key
+drag from a window to another window's modeline."
   (interactive (hmouse-choose-windows #'hui:link))
   (let ((but-window (or depress-window action-key-depress-window))
 	(referent-window (or release-window action-key-release-window (selected-window)))

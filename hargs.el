@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    31-Oct-91 at 23:17:35
-;; Last-Mod:     29-May-23 at 02:22:19 by Bob Weiner
+;; Last-Mod:     17-Jun-23 at 13:05:33 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -90,14 +90,17 @@ EXCLUDE-REGEXP is compared against the match string with its delimiters
 included; any string that matches this regexp is ignored."
   (let* ((opoint (point))
 	 ;; This initial limit if the forward search limit for start delimiters
-	 (limit (if start-regexp-flag opoint
-		  (+ opoint (1- (length start-delim)))))
+	 (limit (if start-regexp-flag
+		    opoint
+		  (min (+ opoint (1- (length start-delim)))
+		       (point-max))))
 	 (start-search-func (if start-regexp-flag 're-search-forward 'search-forward))
 	 (end-search-func   (if end-regexp-flag   're-search-forward 'search-forward))
 	 (count 0)
 	 first
 	 start
 	 end
+	 start-pos
 	 end-pos
 	 start-with-delim
 	 end-with-delim)
@@ -139,12 +142,19 @@ included; any string that matches this regexp is ignored."
       ;; searches when optional matches within a regexp.
       (save-excursion
 	(beginning-of-line)
-	(while (and (setq end-pos (funcall start-search-func start-delim limit t))
+	(while (and (<= (point) limit)
+		    (setq start-pos (point)
+			  end-pos (funcall start-search-func start-delim limit t))
 		    ;; Prevent infinite loop where regexp match does not
 		    ;; move end-pos forward, e.g. match to bol.
 		    (not (eq start end-pos)))
 	  (setq start-with-delim (match-beginning 0)
-		start (match-end 0)))))
+		start (match-end 0))
+	  (when (eq start-pos end-pos)
+	    ;; start-delim contains a match for bol, so move point
+	    ;; forward a char to prevent loop exit even though start
+	    ;; delim matched.
+	    (goto-char (min (1+ (point)) (point-max)))))))
 
     (when start
       (save-excursion

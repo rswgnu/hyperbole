@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    15-Nov-93 at 12:15:16
-;; Last-Mod:     10-Jun-23 at 20:48:59 by Bob Weiner
+;; Last-Mod:     17-Jun-23 at 16:50:34 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -267,15 +267,18 @@ See documentation for `kcell:ref-to-id' for valid cell-ref formats."
 ;;; ************************************************************************
 
 (defun klink:act (link start-pos)
-  "Jump to klink LINK's referent.
-Update relative part of klink if referent has moved."
+  "Jump to klink LINK's referent at START-POS.
+Update relative part of klink if its referent has moved.
+
+See `actypes::link-to-kotl' for valid LINK formats."
   (let ((obuf (current-buffer)))
     ;; Perform klink's action which is to jump to link referent.
     (prog1 (hact 'link-to-kotl link)
-      (save-excursion
-	;; Update klink label if need be, which might be in a different buffer
-	;; than the current one.
-	(klink:update-label link start-pos obuf)))))
+      (when (derived-mode-p #'kotl-mode)
+	(save-excursion
+	  ;; Update klink label if need be, which might be in a different buffer
+	  ;; than the current one.
+	  (klink:update-label link start-pos obuf))))))
 
 (defun klink:parse (reference)
   "Return (file-ref cell-ref) list parsed from REFERENCE string.
@@ -325,14 +328,13 @@ See documentation for `kcell:ref-to-id' for valid cell-ref formats."
 (defun klink:update-label (klink start link-buf)
   "Update label of KLINK if its relative cell id has changed.
 Assume point is in klink referent buffer, where the klink points."
-  (if (and (stringp klink)
-	   (string-match
-	    "[@,]\\s-*\\([*0-9][*.0-9a-zA-Z]*\\)\\s-*=\\s-*0[0-9]*"
-	    klink))
-      ;; Then klink has both relative and permanent ids.
-      (let* ((label (match-string 1 klink))
-	     (new-label (kcell-view:label)))
-	  (if (and new-label (not (equal label new-label)))
+  (and (stringp klink)
+       (string-match "[@,]\\s-*\\([*0-9][*.0-9a-zA-Z]*\\)\\s-*=\\s-*0[0-9]*"
+		     klink)
+       ;; Then klink has both relative and permanent ids.
+       (let* ((label (match-string 1 klink))
+	      (new-label (kcell-view:label)))
+	 (and new-label (not (equal label new-label))
 	      (klink:replace-label klink link-buf start new-label)))))
 
 (defun klink:yank-handler (klink)
