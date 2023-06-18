@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    15-Nov-93 at 12:15:16
-;; Last-Mod:     20-May-23 at 16:52:28 by Bob Weiner
+;; Last-Mod:     17-Jun-23 at 16:50:34 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -221,7 +221,6 @@ same directory."
 ;;; Hyperbole type definitions
 ;;; ************************************************************************
 
-
 (defib klink ()
   "Follow a link delimited by <> to a koutline cell.
 See documentation for the `link-to-kotl' function for valid klink formats."
@@ -229,7 +228,6 @@ See documentation for the `link-to-kotl' function for valid klink formats."
 	 (link (car link-and-pos))
 	 (start-pos (nth 1 link-and-pos)))
     (when link
-      (ibut:label-set link-and-pos)
       (hact 'klink:act link start-pos))))
 
 (defact link-to-kotl (link)
@@ -269,13 +267,18 @@ See documentation for `kcell:ref-to-id' for valid cell-ref formats."
 ;;; ************************************************************************
 
 (defun klink:act (link start-pos)
+  "Jump to klink LINK's referent at START-POS.
+Update relative part of klink if its referent has moved.
+
+See `actypes::link-to-kotl' for valid LINK formats."
   (let ((obuf (current-buffer)))
     ;; Perform klink's action which is to jump to link referent.
     (prog1 (hact 'link-to-kotl link)
-      (save-excursion
-	;; Update klink label if need be, which might be in a different buffer
-	;; than the current one.
-	(klink:update-label link start-pos obuf)))))
+      (when (derived-mode-p #'kotl-mode)
+	(save-excursion
+	  ;; Update klink label if need be, which might be in a different buffer
+	  ;; than the current one.
+	  (klink:update-label link start-pos obuf))))))
 
 (defun klink:parse (reference)
   "Return (file-ref cell-ref) list parsed from REFERENCE string.
@@ -325,14 +328,13 @@ See documentation for `kcell:ref-to-id' for valid cell-ref formats."
 (defun klink:update-label (klink start link-buf)
   "Update label of KLINK if its relative cell id has changed.
 Assume point is in klink referent buffer, where the klink points."
-  (if (and (stringp klink)
-	   (string-match
-	    "[@,]\\s-*\\([*0-9][*.0-9a-zA-Z]*\\)\\s-*=\\s-*0[0-9]*"
-	    klink))
-      ;; Then klink has both relative and permanent ids.
-      (let* ((label (match-string 1 klink))
-	     (new-label (kcell-view:label)))
-	  (if (and new-label (not (equal label new-label)))
+  (and (stringp klink)
+       (string-match "[@,]\\s-*\\([*0-9][*.0-9a-zA-Z]*\\)\\s-*=\\s-*0[0-9]*"
+		     klink)
+       ;; Then klink has both relative and permanent ids.
+       (let* ((label (match-string 1 klink))
+	      (new-label (kcell-view:label)))
+	 (and new-label (not (equal label new-label))
 	      (klink:replace-label klink link-buf start new-label)))))
 
 (defun klink:yank-handler (klink)

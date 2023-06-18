@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    24-Aug-91
-;; Last-Mod:     14-May-23 at 01:29:38 by Bob Weiner
+;; Last-Mod:     10-Jun-23 at 18:00:52 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -381,7 +381,7 @@ If:
   nil)
 
 (defun smart-emacs-lisp-mode-p ()
-  "Return t if in a mode which uses Emacs Lisp symbols."
+  "Return non-nil if in a mode which uses Emacs Lisp symbols."
   ;; Beyond Lisp files, Emacs Lisp symbols appear frequently in Byte-Compiled
   ;; buffers, debugger buffers, program ChangeLog buffers, Help buffers,
   ;; *Warnings*, *Flymake log* and *Flymake diagnostics... buffers.
@@ -662,7 +662,7 @@ Use `hpath:display-buffer' to show definition or documentation."
 				  "Show doc for" "Find")))
 	 current-prefix-arg))
   (unless (stringp tag)
-    (setq tag (smart-lisp-at-tag-p t)))
+    (setq tag (or hkey-value (smart-lisp-at-tag-p t))))
   (let* ((elisp-flag (smart-emacs-lisp-mode-p))
 	 (tag-sym (intern-soft tag)))
     (cond ((and show-doc elisp-flag)
@@ -675,8 +675,9 @@ Use `hpath:display-buffer' to show definition or documentation."
 		 (t nil)))
 	  ((and elisp-flag (fboundp 'find-function-noselect)
 		(let ((result (smart-lisp-bound-symbol-def tag-sym)))
-		  (when (cdr result)
-		    (hpath:display-buffer (car result))
+		  (when (and (cdr result)
+			     (hpath:display-buffer (car result)))
+		    (widen)
 		    (goto-char (cdr result))
 		    t))))
 	  ;; If elisp-flag is true, then make xref use tags tables to
@@ -701,7 +702,7 @@ Use `hpath:display-buffer' to show definition or documentation."
 
 (defun smart-lisp-at-definition-p ()
   "Return non-nil if point is on the first line of a non-alias Lisp definition.
-  Apply only to non-help buffers and return nil in others."
+Apply only to non-help buffers and return nil in others."
     (unless (derived-mode-p 'help-mode)
       (save-excursion
 	(beginning-of-line)
@@ -726,7 +727,8 @@ Return matching Elisp tag name that point is within, else nil."
   (when (derived-mode-p 'change-log-mode)
     (let ((identifier (smart-lisp-at-tag-p)))
       (and identifier (intern-soft identifier)
-	   (string-match "[^-]-[^-]" identifier)))))
+	   (string-match "[^-]-[^-]" identifier)
+	   identifier))))
 
 (defun smart-lisp-htype-tag (tag)
   "Given TAG at point, if a Hyperbole type, return the full symbol name, else TAG."
@@ -1133,7 +1135,7 @@ This indicates that TAG is serving as a hyperlink button."
   tag)
 
 (defun smart-lisp-at-known-identifier-p ()
-  "Return non-nil if point is within a known Lisp identifier.
+  "Return identifier if point is within a known Lisp identifier, else nil.
 The Lisp identifier is either listed in a tags table or is a
 known Emacs Lisp identifier."
   (interactive)
@@ -1149,17 +1151,21 @@ known Emacs Lisp identifier."
 		 (goto-char opoint)
 		 (when lib
 		   (ignore-errors (and (find-library-name lib) t)))))
-    (let* ((tag (smart-lisp-at-tag-p t))
+    ;; Cache tag value
+    (setq hkey-value (smart-lisp-at-tag-p t))
+    (let* ((tag hkey-value)
 	   (tag-sym (intern-soft tag)))
-      (cond ((if (fboundp 'find-function-noselect)
-		 (let ((result (smart-lisp-bound-symbol-def tag-sym)))
-		   (if (cdr result) t))))
+      (cond ((when (and (fboundp 'find-function-noselect) tag-sym)
+	       (let ((result (smart-lisp-bound-symbol-def tag-sym)))
+		 (when (cdr result)
+		   tag))))
 	    ;; This part only works properly for Emacs Lisp, so is conditionalized.
-	    (tag (smart-tags-find-p tag))))))
+	    (and tag (smart-tags-find-p tag) tag)))))
 
 (defun smart-lisp-bound-symbol-def (tag-sym)
-  "Return the file where TAG-SYM is defined which may be a .elc file.
-TAG-SYM may be a function, variable or face."
+  "Return a pair (buffer . point) where TAG-SYM is defined, else nil.
+The buffer may be attached to a .elc file.  TAG-SYM may be a function,
+variable or face."
   (save-excursion
     ;; Bound Emacs Lisp function, variable and face definition display.
     (ignore-errors (or (find-function-noselect tag-sym)

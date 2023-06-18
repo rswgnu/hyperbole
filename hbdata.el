@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     2-Apr-91
-;; Last-Mod:     17-May-23 at 02:31:18 by Bob Weiner
+;; Last-Mod:     13-Jun-23 at 01:27:25 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -36,9 +36,9 @@
 ;;    (Key            Placeholders  LinkType      <arg-list>             creator and modifier with times)
 ;;    ("alt.mouse.el" nil nil       link-to-file  ("./ell/alt-mouse.el") "zzz@gnu.org" "19991027:09:19:26" "zzz@gnu.org" "19991027:09:31:36")
 ;;
-;;  which means:  button \<(alt.mouse.el)> found in file "TO-DO" in the current
-;;  directory provides a link to the local file "./ell/alt-mouse.el".  It was
-;;  created and last modified by zzz@gnu.org.
+;;  which means: button \<(alt.mouse.el)> found in file "TO-DO" in the
+;;  current directory provides a link to the local file "./ell/alt-mouse.el".
+;;  It was created and last modified by zzz@gnu.org.
 ;;
 ;;  All link entries that originate from the same source file are stored
 ;;  contiguously, one per line, in reverse order of creation.
@@ -265,7 +265,7 @@ entry, otherwise modify existing one.  Nil BUT-SYM means use
 	  (cons hbdata lbl-instance))))))
 
 (defun hbdata:ebut-instance-last (lbl-key key-src &optional directory)
-  "Return highest instance number for repeated explicit button label.
+  "Return highest instance number for explicit button label.
 1 if not repeated, nil if no instance.
 Utilize arguments LBL-KEY, KEY-SRC and optional DIRECTORY."
   (hbdata:apply-entry
@@ -284,37 +284,30 @@ class `hbdata' to operate on the entry."
    (lambda () (read (current-buffer)))
    lbl-key key-src directory))
 
-(defun hbdata:ibut-instance (&optional orig-lbl-key but-sym)
-  "Return ibutton instance number string from optional ORIG-LBL-KEY and BUT-SYM.
-ORIG-LBL-KEY nil means create a new ibutton; otherwise modify an
-existing one.  BUT-SYM nil means use `hbut:current'.  If
-successful, return a button instance string to append to button
-label or t when first instance."
-  (let* ((b (hattr:copy (or but-sym 'hbut:current) 'but))
-	 (l (hattr:get b 'loc))
-	 (key (or orig-lbl-key (hattr:get b 'lbl-key)))
-	 (new-key (if orig-lbl-key (hattr:get b 'lbl-key) key))
-	 (lbl-instance)
-	 loc dir)
-    (or (when l
-	  (setq loc (if (bufferp l) l (file-name-nondirectory l))
-		dir (if (bufferp l) nil (file-name-directory l)))
-	  (if orig-lbl-key
-	      (when (setq lbl-instance (hbdata:ibut-instance-last new-key loc dir))
-		(setq lbl-instance (concat hbut:instance-sep
-					   (int-to-string (1+ lbl-instance)))))
-	    (let ((inst-num (hbdata:ibut-instance-last new-key loc dir)))
-	      (setq lbl-instance (when inst-num
-				   (hbdata:instance-next
-				    (concat new-key hbut:instance-sep
-					    (int-to-string inst-num)))))))
-	  lbl-instance)
-	t)))
+(defun hbdata:ibut-instance-next (name-key)
+  "Given NAME-KEY, return next ibutton instance number string for current buffer.
+If there is no existing ibutton with NAME-KEY, return t.
 
-(defun hbdata:ibut-instance-last (lbl-key _key-src &optional _directory)
-  "Return highest instance number for repeated implicit button label.
-1 if not repeated, nil if no instance.  Utilize argument LBL-KEY."
-  (let ((key (car (ibut:label-sort-keys (ibut:label-key-match lbl-key)))))
+With NAME-KEY nil or NAME-KEY 'name' and no existing in-buffer ibutton
+with that name, return t.
+With NAME-KEY 'name' and highest in-buffer ibutton 'name:3',
+return ':4'."
+  (if (null name-key)
+      t
+    (let ((lbl-instance (hbdata:ibut-instance-last name-key)))
+      (if lbl-instance
+	  (concat hbut:instance-sep (int-to-string (1+ lbl-instance)))
+	t))))
+
+(defun hbdata:ibut-instance-last (name-key)
+  "Return highest instance number for implicit button NAME-KEY in current buffer.
+Instance number is returned as an integer.  Return 1 if NAME-KEY exists
+in the buffer but no other instances do; nil if no instance.
+
+With no match, return nil.
+With only 'name' found, return 1.
+With 'name' and 'name:2' found, return 2."
+  (let ((key (car (ibut:label-sort-keys (ibut:label-key-match name-key)))))
     (cond ((null key) nil)
 	  ((string-match (concat (regexp-quote hbut:instance-sep)
 				 "\\([0-9]+\\)\\'")
@@ -322,16 +315,22 @@ label or t when first instance."
 	   (string-to-number (match-string 1 key)))
 	  (t 1))))
 
-(defun hbdata:instance-next (lbl-key)
-  "Return string for button instance number following LBL-KEY's.
-Nil if LBL-KEY is nil."
-  (and lbl-key
+(defun hbdata:instance-next (name-key)
+  "Return string for the next higher button instance number after NAME-KEY's.
+Return nil if NAME-KEY is nil.
+
+Given 'name', return ':2'.  Given 'name:2', return ':3'.
+
+This does not search any buffer for other instances; it uses the
+NAME-KEY string literally, so it must include any instance number
+to increment."
+  (and name-key
        (if (string-match
-	    (concat (regexp-quote hbut:instance-sep) "[0-9]+$") lbl-key)
+	    (concat (regexp-quote hbut:instance-sep) "[0-9]+$") name-key)
 	   (concat hbut:instance-sep
 		   (int-to-string
 		    (1+ (string-to-number
-			 (substring lbl-key (1+ (match-beginning 0)))))))
+			 (substring name-key (1+ (match-beginning 0)))))))
 	 ":2")))
 
 (defun hbdata:to-entry (but-key key-src &optional directory instance)

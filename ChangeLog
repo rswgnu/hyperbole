@@ -1,3 +1,92 @@
+2023-06-17  Bob Weiner  <rsw@gnu.org>
+
+* hui.el (hui:ibut-link-directly): Document new inter-window Assist Mouse
+    Key handling.
+
+* hui-window.el (hmouse-alist-add-window-handlers): Separate checks of
+    dragging items to modeline from dragging within a window when not
+    on a modeline with a release on a modeline.  This clarifies the
+    context when {C-h A} is used.
+
+* kotl/klink.el (klink:act): Improve doc; update link node label only
+    if point is within a koutline.
+
+* hpath.el (hpath:delimited-possible-path): Skip if at end of line since
+    paths cannot span lines and therefore cannot be within one.
+
+* hibtypes.el (rfc): Set lbl-start and lbl-end attributes.
+
+* hbut.el (ibut:set-name-and-label-key-p): Improve doc and return 't when
+    just lbl-start is found for named, non-delimited ibuts.
+          (ibut:label-p): Ensure match does not contain delimiters, as it
+    may have run past the beginning of another button.
+          (ibut:label-set): Improve doc.
+	  (ibut:operate): Improve instance handling.
+	  (ibut:insert-text): Fully handle klinks, add 'man' actype support,
+    and handle error when actype is nil.
+          (ibut:program): Remove condition-case around whole function so that
+    errors can be seen with tracebacks.
+
+* hargs.el (hargs:delimited): Update to handle regexps with match to bol that
+    does not move point forward; move forward a char each iteration
+
+* test/hui-tests.el (hui-gibut-create-link-to-file-line,
+                     hui-gibut-create-link-to-file-line-and-column): Improve
+    readability and add check of 'name attribute.
+  test/hy-test-helpers.el (hy-test-helpers-verify-hattr-at-p): Add support
+    for 'name attribute.
+  test/hibtypes-tests.el (ibtypes::annot-bib-test): Fix.
+  test/hbut-tests.el: Fix some free variable scoping issues; remove unused
+    local variables
+  (hbut-tests-actypes-list): Separate out ibutton test data
+    and add data to test ibtype is correct.
+                     (hbut-tests-ibut-insert-text-temp-buffer): Rename to
+    'hbut-tests-ibut-insert-links'; rewrite to simplify and make more reusable.
+                     (hbut-tests-ibut-insert-text-temp-file): Deleted this and
+    merged into 'hbut-tests-ibut-insert-links'.
+
+* kotl/klink.el (klink:act): Improve doc.  Fix to not try to update link label
+    if 'link-to-kotl' fails to display a koutline.
+
+* hbut.el (ibut:insert-text): Add clear error when no matching actype is found.
+    Update klink handling.
+
+2023-06-13  Bob Weiner  <rsw@gnu.org>
+
+* hbut.el (ibut:operate): Update to handle more scenarios from the doc table.
+
+* hbdata.el (hbdata:ibut-instance): Replace with 'hbdata:ibut-instance-next'.
+            (hbdata:ibut-instance-last): Improve doc.
+
+2023-06-11  Bob Weiner  <rsw@gnu.org>
+
+* man/hyperbole.texi (Smart Mouse Drags between Windows): Update appendix doc
+    to latest behavior.
+
+* hbut.el (ibut:operate): Drop 'name' arg and get it from 'hbut:current attrs.
+    Improve name handling and buffer insertion.  Use 'ibut:set-name-and-label-key-p'
+    to set 'lbl-key.
+          (ibut:set-name-and-label-key-p): Set 'lbl-start attribute.
+          (ibut:insert-text): With kbd-key actypes, allow for whitespace inside of
+    braces.
+          (ibut:program):
+  hui.el (hui:ibut-create, hui:ibut-link-create): Change calls to 'ibut:operate'
+    and improve moving to button text.
+
+* test/hbut-tests.el (hbut-tests-ibut-insert-annot-bib): Allow for 0 or more
+    whitespace at end of buffer.
+                     (hbut-tests-ibut-insert-kbd-key): Independently test
+    without and without a name.
+
+* hbdata.el (hbdata:instance-next): Improve doc.
+            (hbdata:ibut-instance): Fix inverted logic when orig-name-key
+    is given.
+
+* hbut.el (ibut:label-instances-regexp, ebut:label-instances-regexp,
+           hbut:label-instances-regexp): Add to search for hbut label
+    matches of all numbered instances.
+          (ibut:label-key-match): Call 'ibut:label-instances-regexp'.
+
 2023-06-10  Mats Lidell  <matsl@gnu.org>
 
 * test/kotl-mode-tests.el (kotl-mode-move-between-lines)
@@ -8,6 +97,67 @@
     (kotl-mode-move-cursor-backward-over-ellipsis)
     (kotl-mode-end-of-visible-portion): Add cursor movement tests for kotl-mode.
 
+2023-06-10  Bob Weiner  <rsw@gnu.org>
+
+* hbut.el (ibut:create): Invoke 'ibut:set-name-and-label-key-p' prior to
+    finding ibtype when 'but-sym' is not given.
+  man/hyperbole.texi (Programmatic Implicit Button Types): Note that above
+    call automatically sets up to flash delimited implicit buttons when
+    activated.
+          (ibut:edit): Embed this whole function into 'ibut:operate'.
+	  (ebut:map): Use defaults for start and end delims.
+          (ibut:label-map): Remove unused delim args and use two optional args.
+
+* kotl/klink.el (klink:act): Document.
+                (klink): Remove 'ibut:set-label' as replaced with global
+    invocation of 'ibut:set-name-and-label-key-p' in 'ibut:create' call.
+
+* hbdata.el (hbdata:ibut-instance-last): Remove unused 2nd and 3rd params.
+
+* hui-mouse.el (hkey-alist): Save found smart-lisp identifier to 'hkey-value'
+    for use in 'smart-lisp-find-tag' call.
+  hmouse-tag.el (smart-lisp-at-change-log-tag-p): Fix to return identifier.
+                (smart-lisp): Optimize to send any previously found tag
+    stored in 'hkey-value' to 'smart-lisp-find-tag' call.
+                (smart-lisp-at-known-identifier-p): Caches and return any
+    identifier found.
+
+* man/hyperbole.texi (Smart Key - Identifier Menu Mode):
+  hui-mouse.el (smart-imenu-item-at-p): Move to after programming mode
+    handlers so don't have to test for any such modes here and so it does
+    not override their behaviors.
+
+* hmouse-tag.el (smart-lisp-find-tag): Widen buffer, goto tag location
+    and return t only when 'hpath:display-buffer' returns non-nil.
+
+* hbut.el (ibut:operate): Improve doc.
+
+2023-05-29  Bob Weiner  <rsw@gnu.org>
+
+* hact.el (hact): Set 'hbut:current 'actype property from first arg.
+
+* hbut.el (ibut:operate): Improve create/modify error message.
+          (ibut:at-p): Change so when given name-key-only arg, returns name
+    field as a key, not the text field, lbl-key.  If no name, return nil.
+
+* hactypes.el (link-to-ibut):
+  hui.el (hui:ibut-create, hui:ibut-link-create, hui:gibut-create):
+  hbut.el (ibut:program, ibut:operate, ibut:to, ibut:to-text): Start
+    replacing args named 'label' and 'lbl-key' which represent an ibut
+name with 'name' and 'name-key'.
+          (ibut:to): Change to use 'hbut:current attr 'name' instead of
+    'lbl-key'.
+
+* hbut.el (ibut:program): Fix/generalize error handling.
+          (ibut:create): Fix doc string to reflect return of button
+  instance num string or t for first instance or nil for failure, rather
+  than returning the button symbol.  See 'hbdata:ibut-instance' for details.
+
+* hibtypes.el (action, annot-bib): Call 'ibut:set-name-and-label-key-p)'
+    instead of 'ibut:label-p' so can tell name from label text.
+
+* hbut.el (ibut:operate): Make 2nd arg optional when creating new buttons.
+
 2023-05-28  Mats Lidell  <matsl@gnu.org>
 
 * test/hy-test-helpers.el (hy-delete-file-and-buffer): Add helper that
@@ -15,6 +165,35 @@
 
 * hibtypes.el (hypb-mail-address-tld-regexp)
     (hypb-mail-address-regexp): Use hypb prefix.
+
+2023-05-28  Bob Weiner  <rsw@gnu.org>
+
+* hbut.el (ibut:operate): Fix to set ibut name property from 'new-lbl-key'.
+          (ibut:create): Fix logic to match doc when but-sym is not given;
+    then prefer args given over any ibut at point (hbut:current); add new
+    internal 'but-sym-flag' to achieve this.
+          (ibut:label-p): Fix doc to indicate can be used to find either
+    the optional name or the text of an implicit button.
+          (ibut:at-p): If in a prog mode and outside of a comment, don't
+    look for button at all, just return nil.  Also, greatly simplify
+    with most functionality left in the 'ibut:create' call.
+          (ibut:set-name-and-label-key-p): Add; extracted from prior
+    'ibut:at-p'.  Use in 'ibut:create'.
+  hargs.el (hargs:delimited): Update to include delims when testing with
+    'exclude-regexp' flag but return the string without delimiters.  This
+    allows ignoring matches to <[str]> when just looking for [str].
+    Also, Add optional arg at end, as-key; when non-nil return string as
+    a Hyperbole label key (no spaces).  Use in 'ibut:label-p'.
+
+* kotl/kview.el (kview:char-invisible-p, kview:char-visible-p): Simplify by
+    using 'get-char-property' which handles text properties and overlays.
+
+* kotl/kotl-mode.el (kotl-mode:pre-self-insert-command): Remove this test
+    since know we are in kotl-mode now that this is added as a mode-specific
+    pre-command hook: (eq major-mode 'kotl-mode).  Also, comment this test
+    out since call should not be on the stack since this is a pre-command
+    hook: (not (hyperb:stack-frame '(kcell-view:to-label-end))).
+>>>>>>> rsw
 
 2023-05-27  Bob Weiner  <rsw@gnu.org>
 

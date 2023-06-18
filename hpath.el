@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     1-Nov-91 at 00:44:23
-;; Last-Mod:     20-May-23 at 23:20:22 by Bob Weiner
+;; Last-Mod:     17-Jun-23 at 13:03:28 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1096,45 +1096,46 @@ Absolute pathnames must begin with a `/' or `~'.
 
 With optional INCLUDE-POSITIONS, return a triplet list of (path start-pos
 end-pos) or nil."
-  ;; Prevents MSWindows to Posix path substitution
-  (let ((hyperb:microsoft-os-p t))
-    (or (hargs:delimited "file://" "\\s-" nil t include-positions)
-	;; Filenames in HTML
-	(hargs:delimited "&quot;" "&quot;" nil nil include-positions "[`'’]")
-	;; Embedded double quoted filenames
-	(hargs:delimited "\\\"" "\\\"" nil nil include-positions "[`'’]")
-	;; Double quoted filenames
-	(hargs:delimited "\"" "\"" nil nil include-positions "[`'’]")
-	;; Filenames in Info docs or Python files
-	(hargs:delimited "[`'‘]" "[`'’]" t t include-positions "\"")
-	;; Filenames in TexInfo docs
-	(hargs:delimited "@file{" "}" nil nil include-positions)
-	;; if `non-exist' is nil, look for any existing whitespace
-	;; delimited filename at point.  If match consists of only
-	;; punctuation, like . or .., don't treat it as a pathname.
-	;; In shell modes, it must be tab delimited.
-	(unless non-exist
-	  (let* ((space-delimiter (if (derived-mode-p #'shell-mode)
-				      "\t"
-				    "[ \t]"))
-		 (triplet (hargs:delimited (format "^\\|\\(%s\\|[\]\[()<>\;&,@]\\)+"
-						   space-delimiter)
-					   "\\([\]\[()<>\;&,@]\\|:*\\s-\\)+\\|$"
-					   t t t))
-		 (p (car triplet))
-		 (punc (char-syntax ?.)))
-	    ;; May have matched to a string with an embedded double
-	    ;; quote or surrounded by braces; if so, don't consider it a path.
-            ;; Also ignore whitespace delimited root dirs, e.g. " / ".
-	    (when (and (stringp p) (not (string-match-p "\\`{.*}\\'\\|\"\\|\\`[/\\]+\\'" p))
-		       (delq nil (mapcar (lambda (c) (/= punc (char-syntax c))) p)))
-	      ;; Prepend proper directory from cd, ls *, recursive ls or dir file
-	      ;; listings when needed.
-	      (setq p (or (hpath:prepend-shell-directory p) p))
-	      (setcar triplet p)
-	      (if include-positions
-		  triplet
-		p)))))))
+  (unless (eolp)
+    ;; Prevents MSWindows to Posix path substitution
+    (let ((hyperb:microsoft-os-p t))
+      (or (hargs:delimited "file://" "\\s-" nil t include-positions)
+	  ;; Filenames in HTML
+	  (hargs:delimited "&quot;" "&quot;" nil nil include-positions "[`'’]")
+	  ;; Embedded double quoted filenames
+	  (hargs:delimited "\\\"" "\\\"" nil nil include-positions "[`'’]")
+	  ;; Double quoted filenames
+	  (hargs:delimited "\"" "\"" nil nil include-positions "[`'’]")
+	  ;; Filenames in Info docs or Python files
+	  (hargs:delimited "[`'‘]" "[`'’]" t t include-positions "\"")
+	  ;; Filenames in TexInfo docs
+	  (hargs:delimited "@file{" "}" nil nil include-positions)
+	  ;; if `non-exist' is nil, look for any existing whitespace
+	  ;; delimited filename at point.  If match consists of punctuation
+	  ;; only, like . or .., don't treat it as a pathname.
+	  ;; In shell modes, it must be tab delimited.
+	  (unless non-exist
+	    (let* ((space-delimiter (if (derived-mode-p #'shell-mode)
+					"\t"
+				      "[ \t]"))
+		   (triplet (hargs:delimited (format "^\\|\\(%s\\|[\]\[()<>\;&,@]\\)+"
+						     space-delimiter)
+					     "\\([\]\[()<>\;&,@]\\|:*\\s-\\)+\\|$"
+					     t t t))
+		   (p (car triplet))
+		   (punc (char-syntax ?.)))
+	      ;; May have matched to a string with an embedded double
+	      ;; quote or surrounded by braces; if so, don't consider it a path.
+              ;; Also ignore whitespace delimited root dirs, e.g. " / ".
+	      (when (and (stringp p) (not (string-match-p "\\`{.*}\\'\\|\"\\|\\`[/\\]+\\'" p))
+			 (delq nil (mapcar (lambda (c) (/= punc (char-syntax c))) p)))
+		;; Prepend proper directory from cd, ls *, recursive ls or dir file
+		;; listings when needed.
+		(setq p (or (hpath:prepend-shell-directory p) p))
+		(setcar triplet p)
+		(if include-positions
+		    triplet
+		  p))))))))
 
 ;;;###autoload
 (defun hpath:display-buffer (buffer &optional display-where)
@@ -1411,7 +1412,7 @@ but locational suffixes within the file are utilized."
 	      path (if (match-end 1)
 		       (substring path 0 (match-end 1))
 		     (or buffer-file-name "")))
-	;; 'anchor' may improproperly include trailing punctuation;
+	;; 'anchor' may improperly include trailing punctuation;
 	;; remove it if so.
 	(when (string-match "\\s.+\\'" anchor)
 	  (setq anchor (substring anchor 0 (match-beginning 0))))))

@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    30-Jan-21 at 12:00:00
-;; Last-Mod:     13-May-23 at 10:12:12 by Bob Weiner
+;; Last-Mod:     17-Jun-23 at 23:02:12 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -205,33 +205,42 @@ Ensure modifying the button but keeping the label does not create a double label
             (mock (hpath:find-noselect (gbut:file)) => test-buffer)
             (hui:gibut-create "global" test-file))
 	  (with-current-buffer test-buffer
-            (hy-test-helpers-verify-hattr-at-p :actype 'actypes::link-to-file :args (list test-file) :loc test-file :lbl-key "global")))
+            (hy-test-helpers-verify-hattr-at-p :actype 'actypes::link-to-file :args (list test-file) :loc test-file
+					       :lbl-key (ibut:label-to-key test-file)
+					       :name "global")))
       (hy-delete-file-and-buffer test-file))))
 
 (ert-deftest hui-gibut-create-link-to-file-line ()
   "Programatically create implicit button link to file and line."
-  (let ((test-file (make-temp-file "gbut" nil ".txt")))
+  (let* ((test-file (make-temp-file "gbut" nil ".txt"))
+	 (file-and-line-num (concat test-file ":10")))
     (setq test-buffer (find-file-noselect test-file))
     (unwind-protect
 	(progn
           (with-mock
             (mock (hpath:find-noselect (gbut:file)) => test-buffer)
-            (hui:gibut-create "global" (concat test-file ":10")))
+            (hui:gibut-create "global" file-and-line-num))
 	  (with-current-buffer test-buffer
-            (hy-test-helpers-verify-hattr-at-p :actype 'actypes::link-to-file-line :args (list test-file 10) :loc test-file :lbl-key "global")))
+            (hy-test-helpers-verify-hattr-at-p :actype 'actypes::link-to-file-line :args (list test-file 10) :loc test-file
+					       :lbl-key (ibut:label-to-key test-file)
+					       :name "global")))
       (hy-delete-file-and-buffer test-file))))
 
 (ert-deftest hui-gibut-create-link-to-file-line-and-column ()
   "Programatically create implicit button link to file, line and column."
-  (let ((test-file (make-temp-file "gbut" nil ".txt")))
+  (let* ((test-file (make-temp-file "gbut" nil ".txt"))
+	 (file-and-line-num-col-num (concat test-file ":10:20")))
     (setq test-buffer (find-file-noselect test-file))
     (unwind-protect
 	(progn
           (with-mock
             (mock (hpath:find-noselect (gbut:file)) => test-buffer)
-            (hui:gibut-create "global" (concat test-file ":10:20")))
+            (hui:gibut-create "global" file-and-line-num-col-num))
 	  (with-current-buffer test-buffer
-            (hy-test-helpers-verify-hattr-at-p :actype 'actypes::link-to-file-line-and-column :args (list test-file 10 20) :loc test-file :lbl-key "global")))
+            (hy-test-helpers-verify-hattr-at-p :actype 'actypes::link-to-file-line-and-column
+					       :args (list test-file 10 20) :loc test-file
+					       :lbl-key (ibut:label-to-key test-file)
+					       :name "global")))
       (hy-delete-file-and-buffer test-file))))
 
 (ert-deftest hui-gibut-create-info-node ()
@@ -245,7 +254,8 @@ Ensure modifying the button but keeping the label does not create a double label
             (mock (hpath:find-noselect (gbut:file)) => test-buffer)
             (hui:gibut-create "global" (concat "\"" info-node "\"")))
 	  (with-current-buffer test-buffer
-            (hy-test-helpers-verify-hattr-at-p :actype 'actypes::link-to-Info-node :args (list info-node) :loc test-file :lbl-key "global")))
+            (hy-test-helpers-verify-hattr-at-p :actype 'actypes::link-to-Info-node :args (list info-node) :loc test-file
+					       :lbl-key (ibut:label-to-key info-node) :name "global")))
       (hy-delete-file-and-buffer test-file))))
 
 (ert-deftest hui--delimited-selectable-thing--in-cell-return-ref ()
@@ -397,9 +407,9 @@ Ensure modifying the button but keeping the label does not create a double label
 (ert-deftest hui--kill-ring-save--yank-in-other-file-other-dir ()
   "Yank saved klink into other file in other dir."
   (skip-unless (not noninteractive))
-  (let ((kotl-file (make-temp-file "hypb" nil ".kotl"))
-        (other-dir (make-temp-file "hypb" t))
-        (other-file "other-file"))
+  (let* ((kotl-file (make-temp-file "hypb" nil ".kotl"))
+         (other-dir (make-temp-file "hypb" t))
+         (other-file (expand-file-name "other-file" other-dir)))
     (unwind-protect
         (progn
           (find-file kotl-file)
@@ -409,7 +419,7 @@ Ensure modifying the button but keeping the label does not create a double label
           (forward-char 1)
           (call-interactively #'hui-kill-ring-save)
 
-          (find-file (concat (file-name-as-directory other-dir) other-file))
+          (find-file other-file)
           (yank)
           (save-buffer 0)
           (beginning-of-buffer)
@@ -497,9 +507,9 @@ Ensure modifying the button but keeping the label does not create a double label
 (ert-deftest hui--copy-to-register--yank-in-other-file-other-dir ()
   "Yank klink in register into other file in other dir."
   (skip-unless (not noninteractive))
-  (let ((kotl-file (make-temp-file "hypb" nil ".kotl"))
-        (other-dir (make-temp-file "hypb" t))
-        (other-file "other-file"))
+  (let* ((kotl-file (make-temp-file "hypb" nil ".kotl"))
+         (other-dir (make-temp-file "hypb" t))
+         (other-file (expand-file-name "other-file" other-dir)))
     (unwind-protect
         (progn
           (find-file kotl-file)
@@ -511,7 +521,7 @@ Ensure modifying the button but keeping the label does not create a double label
             (mock (register-read-with-preview  "Copy to register: ") => ?a)
             (call-interactively #'hui-copy-to-register))
 
-          (find-file (concat (file-name-as-directory other-dir) other-file))
+          (find-file other-file)
           (insert-register ?a)
           (save-buffer 0)
           (beginning-of-buffer)

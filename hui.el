@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 21:42:03
-;; Last-Mod:     20-May-23 at 17:31:58 by Bob Weiner
+;; Last-Mod:     17-Jun-23 at 21:37:51 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -662,17 +662,17 @@ When in the global button buffer, the default is the button at point."
 					  nil t nil 'gbut)))))
   (hbut:rename (gbut:to label)))
 
-(defun hui:gibut-create (lbl text)
-  "Create a Hyperbole global implicit button with LBL and button TEXT.
+(defun hui:gibut-create (name text)
+  "Create a Hyperbole global implicit button with NAME and button TEXT at point.
 Button is stored as the properties of the symbol, 'hbut:current.
 
 Use `hui:gbut-create' to create a global explicit button."
-  (interactive "sCreate global implicit button labeled: \nsButton text (with any delimiters): ")
+  (interactive "sCreate global implicit button named: \nsButton text (with any delimiters): ")
   (let (but-buf
 	opoint
         delimited-label)
     (save-excursion
-      (setq delimited-label (concat ibut:label-start lbl ibut:label-end)
+      (setq delimited-label (concat ibut:label-start name ibut:label-end)
 	    but-buf (hpath:find-noselect (gbut:file)))
       (hui:buf-writable-err but-buf "gibut-create")
       ;; This prevents movement of point which might be useful to user.
@@ -688,7 +688,7 @@ Use `hui:gbut-create' to create a global explicit button."
 	  ;; Create button object from ibut at point
 	  (ibut:create))
 	(save-buffer))
-      (message "`%s' global implicit button created." lbl))))
+      (message "`%s' global implicit button created." name))))
 
 (defun hui:hbut-act (&optional but)
   "Execute action for optional Hyperbole button symbol BUT in current buffer.
@@ -863,20 +863,20 @@ See `hbut:report'."
 
 (defalias 'hui:hbut-summarize #'hui:hbut-report)
 
-(defun hui:ibut-act (&optional but)
-  "Activate optional labeled implicit button symbol BUT in current buffer.
+(defun hui:ibut-act (&optional ibut)
+  "Activate optional labeled implicit button symbol IBUT in current buffer.
 Default is any implicit button at point."
   (interactive
-   (let ((but (ibut:at-p)) (lst))
+   (let ((ibut (ibut:at-p)) (lst))
      (list
-      (cond (but)
+      (cond (ibut)
 	    ((setq lst (ibut:alist))
 	     (ibut:get (ibut:label-to-key
 			(hargs:read-match "Activate labeled implicit button: " lst nil t
 					  (ibut:label-p 'as-label) 'ibut))))
 	    (t
 	     (hypb:error "(ibut-act): No labeled implicit buttons in buffer."))))))
-  (hui:hbut-operate #'ibut:act "Activate labeled implicit button: " but))
+  (hui:hbut-operate #'ibut:act "Activate labeled implicit button: " ibut))
 
 (defun hui:ibut-create (&optional start end)
   "Interactively create an implicit Hyperbole button at point.
@@ -888,17 +888,17 @@ For programmatic creation, use `ibut:program' instead."
   (interactive (list (when (use-region-p) (region-beginning))
 		     (when (use-region-p) (region-end))))
   (hypb:assert-same-start-and-end-buffer
-    (let ((default-lbl) lbl but-buf actype)
+    (let ((default-name) name but-buf actype)
       (save-excursion
-	(setq default-lbl (hui:hbut-label-default start end (not (called-interactively-p 'interactive)))
-	      lbl (hui:hbut-label default-lbl "ibut-create"))
-	(unless (equal lbl default-lbl)
-	  (setq default-lbl nil))
+	(setq default-name (hui:hbut-label-default start end (not (called-interactively-p 'interactive)))
+	      name (hui:hbut-label default-name "ibut-create"))
+	(unless (equal name default-name)
+	  (setq default-name nil))
 
 	(setq but-buf (current-buffer))
 	(hui:buf-writable-err but-buf "ibut-create")
 
-	(hattr:set 'hbut:current 'name lbl)
+	(hattr:set 'hbut:current 'name name)
 	(hattr:set 'hbut:current 'categ 'implicit)
 	(hattr:set 'hbut:current 'loc (hui:key-src but-buf))
 	(hattr:set 'hbut:current 'dir (hui:key-dir but-buf))
@@ -907,7 +907,7 @@ For programmatic creation, use `ibut:program' instead."
 	(hattr:set 'hbut:current 'args (hargs:actype-get actype))
 	(hattr:set 'hbut:current 'action nil)
 	;; Adds instance number to in-buffer label if necessary
-	(ibut:operate lbl nil)
+	(ibut:operate)
 	(when (called-interactively-p 'interactive)
 	  (hui:ibut-message nil))))))
 
@@ -1035,7 +1035,7 @@ Signal an error when no such button is found in the current buffer."
       (hui:buf-writable-err but-buf "ibut-rename"))
 
     (unless (ibut:get lbl-key but-buf)
-      (hypb:error "(ibut-rename): Invalid button: '%s'." lbl))
+      (hypb:error "(ibut-rename): Invalid button: '%s'" lbl))
 
     (setq new-lbl
 	  (hargs:read
@@ -1043,7 +1043,7 @@ Signal an error when no such button is found in the current buffer."
 	   (lambda (lbl)
 	     (and (not (string-equal lbl "")) (<= (length lbl) (hbut:max-len))))
 	   lbl
-	   (format "(ibut-rename): Enter a string of at most %s chars."
+	   (format "(ibut-rename): Enter a string of at most %s chars"
 		   (hbut:max-len))
 	   'string))
 
@@ -1130,9 +1130,15 @@ from those instead.  See also documentation for
 
 (defun hui:ibut-link-directly (&optional depress-window release-window)
   "Create a link ibutton at Action Key depress point, linked to release point.
+If ibutton exists at point, replace it with the new link button.
+
 With optional DEPRESS-WINDOW and RELEASE-WINDOW, use the points
 from those instead.  See also documentation for
-`hui:link-possible-types'."
+`hui:link-possible-types'.
+
+An Assist Mouse Key drag between windows runs this command.
+Alternatively, to swap buffers between two windows, Assist Mouse Key
+drag from a window to another window's modeline."
   (interactive (hmouse-choose-windows #'hui:link))
   (let ((but-window (or depress-window action-key-depress-window))
 	(referent-window (or release-window action-key-release-window (selected-window)))
@@ -1429,7 +1435,7 @@ for with completion of all labeled buttons within the current buffer."
 	 (hui:but-flash)
 	 (apply hrule:action
 		operation
-		(list but)))
+		`(',but)))
 	((and but (symbolp but))
 	 (hypb:error "(hbut-operate): Symbol, %s, has invalid Hyperbole button attributes:\n  %S" but (hattr:list but)))
 	(t
@@ -1609,11 +1615,11 @@ arguments."
   (let ((label (hbut:key-to-label lbl-key)))
     (ebut:operate label (when edit-flag label))))
 
-(defun hui:ibut-link-create (edit-flag but-window lbl-key but-loc but-dir type-and-args)
+(defun hui:ibut-link-create (edit-flag but-window name-key but-loc but-dir type-and-args)
   "Create or edit a new Hyperbole implicit link button.
 If EDIT-FLAG is non-nil, edit button at point in BUT-WINDOW,
-otherwise, prompt for button label and create a button.
-LBL-KEY is internal form of button label.  BUT-LOC is the file or buffer
+otherwise, prompt for button name and create a button.
+NAME-KEY is internal form of button name.  BUT-LOC is the file or buffer
 in which to create button.  BUT-DIR is the directory of BUT-LOC.
 TYPE-AND-ARGS is the action type for the button followed by any
 arguments it requires.  Any text properties are removed from string
@@ -1629,8 +1635,8 @@ arguments."
   (unless (and but-loc (or (equal (buffer-name) but-loc)
 			   (eq (current-buffer) but-loc)))
     (hbut:key-src-set-buffer but-loc))
-  (let ((label (hbut:key-to-label lbl-key)))
-    (ibut:operate label (when edit-flag label))))
+  (let ((name (hbut:key-to-label name-key)))
+    (ibut:operate (when edit-flag name))))
 
 (defun hui:link-possible-types ()
   "Return list of possible link action types during editing of a Hyperbole button.

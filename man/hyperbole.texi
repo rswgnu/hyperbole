@@ -7,7 +7,7 @@
 @c Author:       Bob Weiner
 @c
 @c Orig-Date:     6-Nov-91 at 11:18:03
-@c Last-Mod:     23-May-23 at 00:35:49 by Bob Weiner
+@c Last-Mod:     11-Jun-23 at 13:21:00 by Bob Weiner
 
 @c %**start of header (This is for running Texinfo on a region.)
 @setfilename hyperbole.info
@@ -156,7 +156,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</P>
 
 <PRE>
 Edition 8.0.1pre
-Printed May 23, 2023.
+Printed June 11, 2023.
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -198,7 +198,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 @example
 Edition 8.0.1pre
-May 23, 2023
+June 11, 2023
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -476,7 +476,6 @@ Smart Keyboard Keys
 * Smart Key - Bookmark Mode::
 * Smart Key - Pages Directory Mode::
 * Smart Key - Python Source Code::
-* Smart Key - Identifier Menu Mode ::
 * Smart Key - C Source Code::
 * Smart Key - C++ Source Code::
 * Smart Key - Assembly Source Code::
@@ -485,6 +484,7 @@ Smart Keyboard Keys
 * Smart Key - JavaScript Source Code::
 * Smart Key - Objective-C Source Code::
 * Smart Key - Fortran Source Code::
+* Smart Key - Identifier Menu Mode ::
 * Smart Key - Occurrence Matches::
 * Smart Key - Calendar Mode::
 * Smart Key - Man Page Apropos::
@@ -2665,15 +2665,6 @@ Display annotated bibliography entries defined within the same buffer
 as the reference.  References must be delimited by square brackets, must
 begin with a word constituent character, and must not be in buffers
 whose names begin with a ` ' or `*' character.
-
-@c Handled instead by @pxref{Smart Key - Identifier Menu Mode}.
-@c @findex ibtypes imenu-item
-@c @vindex file, imenu.el
-@c @cindex identifier menu
-@c @cindex imenu
-@c @item imenu-item
-@c Display the in-buffer definition of an identifier that point is within or after, else nil.
-@c This triggers only when imenu has already been used to generate an in-buffer item index.
 
 @findex ibtypes mail-address
 @cindex e-mail address
@@ -6925,14 +6916,12 @@ type.
 @cindex ibtype, return val
 @cindex ibtype, actype
 The body of an implicit button type is a predicate which determines
-whether or not point is within an implicit button of the type.  If not,
-the predicate returns @samp{nil}.  If so, it may optionally setup to
-flash the button and then to perform one or more actions.  A call of the
-form: @code{(ibut:label-set label start-pos end-pos)} is used to setup
-the button flashing, if desired.  This is then typically immediately
-followed by an action invocation of the form:
-@code{(hact 'actype &rest actype-arguments)} where @code{actype} is a
-Hyperbole action type symbol or an Emacs Lisp function name or lambda;
+whether or not point is within an implicit button of the type.  If
+not, the predicate returns @samp{nil}.  If the type is delimited,
+Hyperbole automatically sets up to flash the button when activated.
+Action invocations have the form: @code{(hact 'actype &rest
+actype-arguments)} where @code{actype} is a Hyperbole action type
+symbol or an Emacs Lisp function name or lambda;
 @code{actype-arguments} are the arguments fed to the action invocation
 when an implicit button of the type is activated.
 
@@ -9429,6 +9418,46 @@ If an active (highlighted) region exists within the editor:
 @format
 @group
 Otherwise, if dragged from inside one window to another:
+  ACTION AND ASSIST KEYS
+     (1) If depress was on a buffer name in Buffer-menu/ibuffer mode or on
+         a file/directory in dired mode, displays the item in window of release.
+         If the drag start position is within a button, displays the button
+         referent in window of release.
+         See @code{hmouse-drag-item-mode-forms} for how to allow for draggable
+         items in other modes.
+     (2) Otherwise, creates a new link button at the drag start location,
+         linked to the drag end location.  Action Key creates an explicit button;
+         Assist Key creates an implicit button.
+
+         In Hyperbole versions prior to 9, Assist Key drags between windows would
+         swap buffers.  In version 9 and above, start or end the between window
+         drag on a modeline to get this same behavior.
+@end group
+@end format
+
+@node Smart Mouse Drags within a Window, Smart Mouse Drags outside a Window, Smart Mouse Drags between Windows, Smart Mouse Keys
+@subsection Smart Mouse Drags between Windows
+
+@cindex active region
+@cindex copy and yank
+@cindex kill and yank
+@cindex yanking
+@cindex pasting a region
+@format
+@group
+If an active (highlighted) region exists within the editor:
+  ACTION KEY
+     Copies and yanks (pastes) the region to the release point in a
+     different window.
+  ASSIST KEY
+     Kills (cuts) and yanks (pastes) the region to the release point
+     in a different window.
+@end group
+@end format
+
+@format
+@group
+Otherwise, if dragged from inside one window to another:
   ACTION KEY
      (1) If depress was on a buffer name in Buffer-menu/ibuffer mode or on
          a file/directory in dired mode, displays the item in window of release.
@@ -9564,7 +9593,6 @@ If dragged from an Emacs window to outside of Emacs:
 * Smart Key - Bookmark Mode::
 * Smart Key - Pages Directory Mode::
 * Smart Key - Python Source Code::
-* Smart Key - Identifier Menu Mode ::
 * Smart Key - C Source Code::
 * Smart Key - C++ Source Code::
 * Smart Key - Assembly Source Code::
@@ -9573,6 +9601,7 @@ If dragged from an Emacs window to outside of Emacs:
 * Smart Key - JavaScript Source Code::
 * Smart Key - Objective-C Source Code::
 * Smart Key - Fortran Source Code::
+* Smart Key - Identifier Menu Mode ::
 * Smart Key - Occurrence Matches::
 * Smart Key - Calendar Mode::
 * Smart Key - Man Page Apropos::
@@ -10172,7 +10201,7 @@ When pressed on a pages-directory-mode entry line:
 @end group
 @end format
 
-@node Smart Key - Python Source Code, Smart Key - Identifier Menu Mode , Smart Key - Pages Directory Mode, Smart Keyboard Keys
+@node Smart Key - Python Source Code, Smart Key - C Source Code, Smart Key - Pages Directory Mode, Smart Keyboard Keys
 @subsection Smart Key - Python Source Code
 @format
 @group
@@ -10201,29 +10230,8 @@ When pressed within a Python source code file (without the OO-Browser):
 @end group
 @end format
 
-@node Smart Key - Identifier Menu Mode , Smart Key - C Source Code, Smart Key - Python Source Code, Smart Keyboard Keys
-@subsection Smart Key - Identifier Menu Mode 
-
-@format
-@group
-This works only for identifiers defined within the same source file in
-which they are referenced.  It requires either Emacs' imenu library
-and it requires that an index of identifiers has been built for the
-current buffer.  Other handlers handle identifier references and
-definitions across multiple files.
-
-@noindent
-When pressed on an identifier name after an identifier index has been generated:
-  ACTION KEY
-     Jumps to the source definition within the current buffer of the identifier at point.
-  ASSIST KEY
-     Prompts with completion for an identifier defined within the buffer and then jumps
-     to the its source definition.
-@end group
-@end format
-
 @page
-@node Smart Key - C Source Code, Smart Key - C++ Source Code, Smart Key - Identifier Menu Mode , Smart Keyboard Keys
+@node Smart Key - C Source Code, Smart Key - C++ Source Code, Smart Key - Python Source Code, Smart Keyboard Keys
 @subsection Smart Key - C Source Code
 
 @vindex smart-c-cpp-include-path
@@ -10455,7 +10463,7 @@ OO-Browser):
 @end group
 @end format
 
-@node Smart Key - Fortran Source Code, Smart Key - Occurrence Matches, Smart Key - Objective-C Source Code, Smart Keyboard Keys
+@node Smart Key - Fortran Source Code, Smart Key - Identifier Menu Mode , Smart Key - Objective-C Source Code, Smart Keyboard Keys
 @subsection Smart Key - Fortran Source Code
 
 @format
@@ -10469,7 +10477,28 @@ When pressed within a Fortran source code file:
 @end group
 @end format
 
-@node Smart Key - Occurrence Matches, Smart Key - Calendar Mode, Smart Key - Fortran Source Code, Smart Keyboard Keys
+@node Smart Key - Identifier Menu Mode , Smart Key - Occurrence Matches, Smart Key - Fortran Source Code, Smart Keyboard Keys
+@subsection Smart Key - Identifier Menu Mode 
+
+@format
+@group
+This works only for identifiers defined within the same source file in
+which they are referenced.  It requires either Emacs' imenu library
+and it requires that an index of identifiers has been built for the
+current buffer.  Other handlers handle identifier references and
+definitions across multiple files.
+
+@noindent
+When pressed on an identifier name after an identifier index has been generated:
+  ACTION KEY
+     Jumps to the source definition within the current buffer of the identifier at point.
+  ASSIST KEY
+     Prompts with completion for an identifier defined within the buffer and then jumps
+     to the its source definition.
+@end group
+@end format
+
+@node Smart Key - Occurrence Matches, Smart Key - Calendar Mode, Smart Key - Identifier Menu Mode , Smart Keyboard Keys
 @subsection Smart Key - Occurrence Matches
 
 @format

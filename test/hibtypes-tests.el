@@ -186,18 +186,15 @@
 		 (buffer-live-p visited-buf))
  	(kill-buffer visited-buf)))))
 
-;; !! Todo: XEmacs has a library to jump to a function definition in the current buffer.
-;; What is the equivalent GNU Emacs one?
-
 ;; ibtypes::annot-bib
 (ert-deftest ibtypes::annot-bib-test ()
   (unwind-protect
       (progn
         (hypb:display-file-with-logo "DEMO")
-        (re-search-forward "\\[FSF 19\\]")
+        (re-search-forward "\\[FSF 19\\]" nil t 2)
         (backward-char 1)
-        (ibtypes::annot-bib)
-        (should (looking-at "\\[FSF 19\\] Free Software Foundation"))
+	(should (ibut:at-p))
+        (should (looking-at "\\] Free Software Foundation"))
         (forward-line -2)
         (should (looking-at "\\* References")))
     (kill-buffer "DEMO")))

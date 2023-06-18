@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     7-Jun-89 at 22:08:29
-;; Last-Mod:     28-May-23 at 10:06:20 by Mats Lidell
+;; Last-Mod:     17-Jun-23 at 23:03:56 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -732,12 +732,12 @@ Return t if entry is killed, nil otherwise."
 (defun hyrolo-mail-to ()
   "Start composing mail addressed to the first e-mail address at or after point."
   (interactive)
-  (let ((opoint (point)) button)
+  (let ((opoint (point)) ibut)
     (skip-chars-backward "^ \t\n\r<>")
     (if (and (re-search-forward hypb-mail-address-regexp nil t)
 	     (goto-char (match-beginning 1))
-	     (setq button (ibut:at-p)))
-	(hui:hbut-act button)
+	     (setq ibut (ibut:at-p)))
+	(hui:hbut-act ibut)
       (goto-char opoint)
       (beep)
       (message "(hyrolo-mail-to): Invalid buffer or no e-mail address found"))))

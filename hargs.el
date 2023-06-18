@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    31-Oct-91 at 23:17:35
-;; Last-Mod:     14-May-23 at 01:52:22 by Bob Weiner
+;; Last-Mod:     17-Jun-23 at 13:05:33 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -77,39 +77,49 @@ Convert NUL characters to colons for use with grep lines."
 
 (defun hargs:delimited (start-delim end-delim
 			&optional start-regexp-flag end-regexp-flag
-			list-positions-flag exclude-regexp)
+			list-positions-flag exclude-regexp as-key)
   "Return a delimited string that point is within the first line of, or nil.
-The string is normalized and reduced to a single line.
-START-DELIM and END-DELIM are strings that specify the argument
-delimiters.  With optional START-REGEXP-FLAG non-nil, START-DELIM is
-treated as a regular expression.  END-REGEXP-FLAG is similar.
-With optional LIST-POSITIONS-FLAG, return list of (string-matched
-start-pos end-pos).  With optional EXCLUDE-REGEXP, any matched
-string is ignored if it matches this regexp."
+The string matched may be up to two lines long.  The delimiters
+are removed, the string is normalized and reduced to a single
+line.  START-DELIM and END-DELIM are strings that specify the
+argument delimiters.  With optional START-REGEXP-FLAG non-nil,
+START-DELIM is treated as a regular expression.  END-REGEXP-FLAG
+is similar.  With optional LIST-POSITIONS-FLAG, return list
+of (string-matched start-pos end-pos).  Optional
+EXCLUDE-REGEXP is compared against the match string with its delimiters
+included; any string that matches this regexp is ignored."
   (let* ((opoint (point))
-	 (line-begin (line-beginning-position))
 	 ;; This initial limit if the forward search limit for start delimiters
-	 (limit (if start-regexp-flag opoint
-		  (+ opoint (1- (length start-delim)))))
-	 (forward-search-func (if start-regexp-flag 're-search-forward
-				'search-forward))
-	 (reverse-search-func (if end-regexp-flag 're-search-backward
-				'search-backward))
+	 (limit (if start-regexp-flag
+		    opoint
+		  (min (+ opoint (1- (length start-delim)))
+		       (point-max))))
+	 (start-search-func (if start-regexp-flag 're-search-forward 'search-forward))
+	 (end-search-func   (if end-regexp-flag   're-search-forward 'search-forward))
 	 (count 0)
 	 first
 	 start
-	 end)
+	 end
+	 start-pos
+	 end-pos
+	 start-with-delim
+	 end-with-delim)
     (if (string-equal start-delim end-delim)
 	(save-excursion
 	  (beginning-of-line)
-	  (while (and (setq start (funcall forward-search-func start-delim limit t))
+	  (while (and (setq end-pos (funcall start-search-func start-delim limit t))
+		      (setq start-with-delim (match-beginning 0))
+		      ;; Prevent infinite loop where regexp match does not
+		      ;; move end-pos forward, e.g. match to bol.
+		      (not (eq first end-pos))
+		      (setq start end-pos)
 		      (setq count (1+ count))
 		      (< (point) opoint)
 		      ;; This is not to find the real end delimiter but to find
 		      ;; end delimiters that precede the current argument and are
 		      ;; therefore false matches, hence the search is limited to
 		      ;; prior to the original point.
-		      (funcall forward-search-func end-delim opoint t)
+		      (funcall end-search-func end-delim opoint t)
 		      (setq count (1+ count)))
 	    (setq first (or first start)
 		  start nil))
@@ -128,17 +138,33 @@ string is ignored if it matches this regexp."
       ;; Start and end delims are different, so don't have to worry
       ;; about whether in or outside two of the same delimiters and
       ;; can match much more simply.
+      ;; Use forward rather than reverse search here to perform greedy
+      ;; searches when optional matches within a regexp.
       (save-excursion
-	(setq start (when (funcall reverse-search-func start-delim line-begin t)
-		      (match-end 0)))))
+	(beginning-of-line)
+	(while (and (<= (point) limit)
+		    (setq start-pos (point)
+			  end-pos (funcall start-search-func start-delim limit t))
+		    ;; Prevent infinite loop where regexp match does not
+		    ;; move end-pos forward, e.g. match to bol.
+		    (not (eq start end-pos)))
+	  (setq start-with-delim (match-beginning 0)
+		start (match-end 0))
+	  (when (eq start-pos end-pos)
+	    ;; start-delim contains a match for bol, so move point
+	    ;; forward a char to prevent loop exit even though start
+	    ;; delim matched.
+	    (goto-char (min (1+ (point)) (point-max)))))))
 
     (when start
       (save-excursion
 	(forward-line 2)
 	(setq limit (point))
 	(goto-char opoint)
-	(and (funcall forward-search-func end-delim limit t)
-	     (setq end (match-beginning 0))
+	(and (funcall end-search-func end-delim limit t)
+	     (setq end (match-beginning 0)
+		   end-with-delim (match-end 0))
+
 	     ;; Ignore any preceding backslash, e.g. when a double-quoted
 	     ;; string is embedded within a doc string, except when
 	     ;; the string starts with 2 backslashes or an MSWindows
@@ -153,9 +179,18 @@ string is ignored if it matches this regexp."
 	       t)
 	     (< start end)
 	     (>= end opoint)
-	     (let ((string (hargs:buffer-substring start end)))
-	       (unless (and (stringp exclude-regexp) (string-match exclude-regexp string) )
-		 (setq string (replace-regexp-in-string "[\n\r\f]\\s-*" " " string nil t))
+	     (let ((string (hargs:buffer-substring start end))
+		   (string-with-delims (when (stringp exclude-regexp)
+					 (hargs:buffer-substring start-with-delim
+								 end-with-delim))))
+	       (unless (and string-with-delims
+			    (string-match exclude-regexp string-with-delims))
+		 ;; Normalize the string
+		 (setq string
+		       (if as-key
+			   (hbut:label-to-key string)
+			 (replace-regexp-in-string "[\n\r\f]\\s-*"
+						   " " string nil t)))
 		 (unless hyperb:microsoft-os-p
 		   (setq string (hpath:mswindows-to-posix string)))
 		 (if list-positions-flag

@@ -59,23 +59,24 @@
   (when (get-buffer buffer)
     (kill-buffer buffer)))
 
-(cl-defun hy-test-helpers-verify-hattr-at-p (&key actype args loc lbl-key)
+(cl-defun hy-test-helpers-verify-hattr-at-p (&key actype args loc lbl-key name)
   "Verify the attribute of hbut at point.
 Checks ACTYPE, ARGS, LOC and LBL-KEY."
   (let ((hbut-at-p (hbut:at-p)))
     (should (eq (hattr:get hbut-at-p 'actype) actype))
     (should (equal (hattr:get hbut-at-p 'args) args))
     (should (equal (hattr:get hbut-at-p 'loc) loc))
-    (should (equal (hattr:get hbut-at-p 'lbl-key) lbl-key))))
+    (should (equal (hattr:get hbut-at-p 'lbl-key) lbl-key))
+    (should (equal (hattr:get hbut-at-p 'name) name))))
 
 (defun hy-delete-file-and-buffer (file)
   "Delete file and buffer vistinng file."
-  (delete-file file)
   (let ((buf (find-buffer-visiting file)))
     (when buf
       (with-current-buffer buf
         (set-buffer-modified-p nil)
-        (kill-buffer)))))
+        (kill-buffer))))
+  (delete-file file))
 
 (provide 'hy-test-helpers)
 ;;; hy-test-helpers.el ends here

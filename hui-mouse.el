@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    04-Feb-89
-;; Last-Mod:     21-May-23 at 12:06:23 by Bob Weiner
+;; Last-Mod:     17-Jun-23 at 21:14:33 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -393,11 +393,6 @@ Its default value is `smart-scroll-down'.  To disable it, set it to
 	  (setq hkey-value (smart-python-at-tag-p)))
      . ((smart-python hkey-value) . (smart-python hkey-value 'next-tag)))
     ;;
-    ;; Imenu listing in GNU Emacs
-    ((smart-imenu-item-at-p)
-     . ((smart-imenu-display-item-where (car hkey-value) (cdr hkey-value)) .
-	(imenu-choose-buffer-index)))
-    ;;
     ((and (eq major-mode 'c-mode)
 	  buffer-file-name (smart-c-at-tag-p))
      . ((smart-c) . (smart-c nil 'next-tag)))
@@ -412,11 +407,16 @@ Its default value is `smart-scroll-down'.  To disable it, set it to
 	  buffer-file-name (smart-asm-at-tag-p))
      . ((smart-asm) . (smart-asm nil 'next-tag)))
     ;;
-    ((or (and (smart-lisp-mode-p)
-	      (or (smart-lisp-at-load-expression-p)
-		  (smart-lisp-at-tag-p)))
-	 ;; Tightly limit Lisp matches in change-log-mode.
-	 (smart-lisp-at-change-log-tag-p))
+    ((setq hkey-value nil
+	   hkey-value
+	   (or (when (smart-lisp-mode-p)
+		 (or (setq hkey-value (smart-lisp-at-load-expression-p))
+		     (smart-lisp-at-tag-p)))
+	       ;; Tightly limit Lisp matches in change-log-mode but
+	       ;; only call this if hkey-value is true since
+	       ;; otherwise, already know there is no tag at point.
+	       (when hkey-value
+	         (smart-lisp-at-change-log-tag-p))))
      . ((smart-lisp) . (smart-lisp 'show-doc)))
     ;;
     ;;
@@ -437,6 +437,11 @@ Its default value is `smart-scroll-down'.  To disable it, set it to
     ((and (eq major-mode 'objc-mode) buffer-file-name
 	  (smart-objc-at-tag-p))
      . ((smart-objc) . (smart-objc nil 'next-tag)))
+    ;;
+    ;; Imenu listing in GNU Emacs
+    ((smart-imenu-item-at-p)
+     . ((smart-imenu-display-item-where (car hkey-value) (cdr hkey-value)) .
+	(imenu-choose-buffer-index)))
     ;;
     ((and (memq major-mode '(fortran-mode f90-mode))
 	  buffer-file-name (smart-fortran-at-tag-p))
@@ -530,6 +535,9 @@ Action and Assist Mouse Keys.")
 When the Action Mouse Key or Assist Mouse Key is pressed, the first or second
 form, respectively, associated with the first non-nil predicate is
 evaluated.
+
+The function `hmouse-alist-add-window-handlers' adds the mouse context
+handlers to this variable.
 
 The `hkey-alist' variable is the subset of this alist used by the
 smart keyboard keys.")
@@ -1398,10 +1406,6 @@ Does nothing unless imenu has been loaded and an index has been
 created for the current buffer.  When return value is non-nil, also
 sets `hkey-value' to (identifier . identifier-definition-buffer-position)."
   (and (featurep 'imenu) imenu--index-alist
-       ;; Ignore non-alias identifiers on the first line of a Lisp def.
-       (not (and (smart-lisp-mode-p) (smart-lisp-at-definition-p)))
-       ;; Ignore Lisp loading expressions
-       (not (smart-lisp-at-load-expression-p))
        (setq hkey-value (smart-imenu-item-p hkey-value variable-flag))
        (setq hkey-value (cons (hargs:find-tag-default) hkey-value))
        (cdr hkey-value)))

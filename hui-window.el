@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Sep-92
-;; Last-Mod:     21-May-23 at 12:09:22 by Bob Weiner
+;; Last-Mod:     17-Jun-23 at 21:42:39 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -144,6 +144,7 @@ and release to register a diagonal drag.")
 
 (defvar hmouse-alist)
 (defun hmouse-alist-add-window-handlers ()
+  "Add Smart Mouse Key drag actions to `hmouse-alist'."
   (unless (assoc #'(hmouse-inactive-minibuffer-p) hmouse-alist)
     (setq hmouse-alist
 	  (append
@@ -162,11 +163,15 @@ and release to register a diagonal drag.")
 	     ;;   ((and (hmouse-modeline-depress) (hmouse-drag-between-frames)) .
 	     ;;    ((hmouse-clone-window-to-frame) . (hmouse-move-window-to-frame)))
 	     ;;
-	     ;; Drag from within a window (not a Modeline) with release on a Modeline
-	     ((and (not (hmouse-modeline-depress)) (hmouse-modeline-release)
-		   (not (hmouse-modeline-click)))
-	      . ((or (hmouse-drag-item-to-display t) (hmouse-buffer-to-window t))
-		 . (hmouse-swap-buffers)))
+	     ;; Drag from an item to display (not a Modeline) with release on a Modeline
+	     ((and (setq hkey-value (and (not (hmouse-modeline-depress))
+					 (hmouse-modeline-release)
+					 (not (hmouse-modeline-click))))
+		   (hmouse-at-item-p action-key-depress-window))
+	      . ((hmouse-item-to-window t) . (hmouse-swap-buffers)))
+	     ;; Drag from within a window (not a Modeline and not an item) with release on a Modeline
+	     (hkey-value
+	      . ((hmouse-buffer-to-window t) . (hmouse-swap-buffers)))
 	     ;; Non-vertical Modeline drag between windows
 	     ((and (hmouse-modeline-depress) (hmouse-drag-between-windows)
 		   (not (hmouse-drag-vertically-within-emacs)))
@@ -899,7 +904,7 @@ item, this moves the menu buffer itself to the release location."
 	  (smart-helm-to-minibuffer)))))
 
 (defun action-key-modeline ()
-  "Handles Action Key depresses on a window mode line.
+  "Handle Action Key depresses on a window mode line.
 If the Action Key is:
  (1) clicked on the first blank character of a window's modeline,
      the window's buffer is buried (placed at bottom of buffer list);
@@ -934,7 +939,7 @@ If the Action Key is:
 	    (t (funcall action-key-modeline-function))))))
 
 (defun assist-key-modeline ()
-  "Handles Assist Key depresses on a window mode line.
+  "Handle Assist Key depresses on a window mode line.
 If the Assist Key is:
  (1) clicked on the first blank character of a window's modeline,
      bottom buffer in buffer list is unburied and placed in window;
@@ -1127,7 +1132,7 @@ release must be."
 	 (>= (- window-right last-release-x) 0))))
 
 (defun hmouse-resize-window-side ()
-  "Resizes window whose side was depressed on by the last Smart Key.
+  "Resize window whose side was depressed on by the last Smart Key.
 Resize amount depends upon the horizontal difference between press and release
 of the Smart Key."
   (cond ((hyperb:window-system)
@@ -1163,7 +1168,7 @@ of the Smart Key."
 		 (select-window owind))))))))
 
 (defun hmouse-swap-buffers ()
-  "Swaps buffers in windows selected with the last Smart Key depress and release."
+  "Swap buffers in windows selected with the last Smart Key depress and release."
   (let* ((w1 (if assist-flag assist-key-depress-window
 	       action-key-depress-window))
 	 (w2 (if assist-flag assist-key-release-window
@@ -1214,17 +1219,17 @@ of the Smart Key."
 	     (funcall (cdr (assoc (hyperb:window-system)
 				  '(("emacs" . (lambda (args)
 						 (when (eventp args) (setq args (event-start args)))
-						   (cond
-						    ((posnp args)
-						     (let ((w-or-f (posn-window args)))
-						       (when (framep w-or-f)
-							 (setq w-or-f (frame-selected-window w-or-f)))
-						       (+ (condition-case ()
-							      (car (posn-col-row args))
-							    (error 0))
-							  (nth 0 (window-edges w-or-f)))))
-						    (t (car args)))))
-				 ("next"   .  (lambda (args) (nth 1 args))))))
+						 (cond
+						  ((posnp args)
+						   (let ((w-or-f (posn-window args)))
+						     (when (framep w-or-f)
+						       (setq w-or-f (frame-selected-window w-or-f)))
+						     (+ (condition-case ()
+							    (car (posn-col-row args))
+							  (error 0))
+							(nth 0 (window-edges w-or-f)))))
+						  (t (car args)))))
+				    ("next"   .  (lambda (args) (nth 1 args))))))
 		      args))))
     (when (integerp x)
       x)))
@@ -1234,15 +1239,15 @@ of the Smart Key."
   (let ((y (funcall (cdr (assoc (hyperb:window-system)
 				'(("emacs" . (lambda (args)
 					       (when (eventp args) (setq args (event-start args)))
-						    (cond ((posnp args)
-							   (let ((w-or-f (posn-window args)))
-							     (when (framep w-or-f)
-							       (setq w-or-f (frame-selected-window w-or-f)))
-							     (+ (condition-case ()
-								    (cdr (posn-col-row args))
-								  (error 0))
-								(nth 1 (window-edges w-or-f)))))
-							  (t (cdr args)))))
+					       (cond ((posnp args)
+						      (let ((w-or-f (posn-window args)))
+							(when (framep w-or-f)
+							  (setq w-or-f (frame-selected-window w-or-f)))
+							(+ (condition-case ()
+							       (cdr (posn-col-row args))
+							     (error 0))
+							   (nth 1 (window-edges w-or-f)))))
+						     (t (cdr args)))))
 				  ("next"   .  (lambda (args) (nth 2 args))))))
 		    args)))
     (when (integerp y)
