@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    6/30/93
-;; Last-Mod:     28-May-23 at 10:38:17 by Bob Weiner
+;; Last-Mod:     19-Jun-23 at 10:27:35 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -53,12 +53,14 @@ Labels are padded with spaces on the left.  Default value is 4."
   :group 'hyperbole-koutliner)
 
 (defcustom kview:default-label-separator ". "
-  "*Default characters to insert between label and contents of a kcell.
+  "*Default string to insert between label and contents of a kcell.
 Default value is \". \"."
   :type 'string
   :group 'hyperbole-koutliner)
 
-(defconst kview:outline-regexp (concat "\\( *\\)[0-9][0-9a-z.]*\\(" kview:default-label-separator "\\)")
+(defconst kview:outline-regexp (concat "\\( *\\)[0-9][0-9a-z.]*\\("
+				       (regexp-quote kview:default-label-separator)
+				       "\\)")
   "Koutline view `outline-regexp' value that handles all label formats.")
 
 (defcustom kview:default-label-type 'alpha
@@ -484,22 +486,28 @@ Cell is at optional POS or point."
 Point is set at end of cell's label but before the label separator.
 If between kcells, move to the previous one.  The current cell may be hidden."
   (when pos (goto-char pos))
-  (if (save-excursion
-	(goto-char (line-beginning-position))
-	(looking-at kview:outline-regexp))
-      ;; found, return match-end 0 point
-      (goto-char (- (match-end 0) 2))
-    (kview:end-of-actual-line)
-    (let (found)
-      (unless (setq found (kproperty:get (1- (point)) 'kcell))
-	;; If not at beginning of cell contents, move there.
-	(goto-char (kproperty:previous-single-change (point) 'kcell)))
-      ;; Then move to the end of the label (prior to label
-      ;; separator) via embedded kcell property.
-      (goto-char (setq found (kproperty:previous-single-change (point) 'kcell)))
+  (kview:end-of-actual-line)
+  (let (found)
+    (unless (setq found (kproperty:get (1- (point)) 'kcell))
+      ;; If not at beginning of cell contents, move there.
+      (setq found (kproperty:previous-single-change (point) 'kcell))
       (if found
-	  (point)
-	(error "(kcell-view:to-label-end): Can't find end of current cell's label")))))
+	  (goto-char found)
+	(error "(kcell-view:to-label-end): In cell at pos %d, can't find beginning of cell"
+	       (or pos (point)))))
+    ;; Then move to the end of the label (prior to label separator)
+    ;; via embedded kcell property.
+    (setq found (kproperty:previous-single-change (point) 'kcell))
+    (cond (found
+	   (goto-char found))
+	  ((save-excursion
+	     (goto-char (line-beginning-position))
+	     (looking-at kview:outline-regexp))
+	   ;; kview:outline-regexp may produce false matches, so use this
+	   ;; only in cases where no 'kcell property is found in cells,
+	   ;; e.g. before in-memory representation is created.
+	   (goto-char (- (match-end 0) 2)))
+	  (t (error "(kcell-view:to-label-end): In cell at pos %d, can't find end of cell's label")))))
 
 (defun kcell-view:absolute-reference (&optional pos)
   "Return a klink to kcell at optional POS or point; return nil if not in a kcell.

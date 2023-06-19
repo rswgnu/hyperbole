@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 21:42:03
-;; Last-Mod:     17-Jun-23 at 21:37:51 by Bob Weiner
+;; Last-Mod:     19-Jun-23 at 00:05:29 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1062,74 +1062,78 @@ Signal an error when no such button is found in the current buffer."
 With optional DEPRESS-WINDOW and RELEASE-WINDOW, use the points
 from those instead.  See also documentation for
 `hui:link-possible-types'."
-  (interactive (hmouse-choose-windows #'hui:link))
-  (let ((but-window (or depress-window action-key-depress-window))
-	(referent-window (or release-window action-key-release-window (selected-window)))
-	but-name but-edit link-types num-types type-and-args lbl-key but-loc but-dir)
-    (select-window but-window)
-    ;; It is rarely possible that a *Warnings* buffer popup might have
-    ;; displaced the button src buffer in the depress window, so switch
-    ;; to it to be safe.
-    (when (and action-key-depress-buffer
-	       (not (eq (current-buffer) action-key-depress-buffer))
-	       (buffer-live-p action-key-depress-buffer))
-      (switch-to-buffer action-key-depress-buffer))
-    (hui:buf-writable-err (current-buffer) "link-directly")
-    (if (ebut:at-p)
-	(setq but-edit t
-	      but-loc (hattr:get 'hbut:current 'loc)
-	      but-dir (hattr:get 'hbut:current 'dir)
-	      lbl-key (hattr:get 'hbut:current 'lbl-key))
-      (setq but-loc (hui:key-src (current-buffer))
-	    but-dir (hui:key-dir (current-buffer))
-	    but-name (hui:hbut-label
-		      (cond ((hmouse-prior-active-region)
-			     hkey-region)
-			    ((use-region-p)
-			     (hui:hbut-label-default
-			      (region-beginning) (region-end))))
-		      "link-directly"
-		      "Create button named: ")
-	    lbl-key (hbut:label-to-key but-name)))
-    (select-window referent-window)
-    (setq link-types (hui:link-possible-types)
-	  num-types (length link-types))
+  (interactive (hmouse-choose-link-and-referent-windows))
 
-    ;; num-types is the number of possible link types to choose among
-    (cond ((= num-types 0)
-	   (error "(link-directly): No possible link type to create"))
-	  ((= num-types 1)
-	   (setq type-and-args (hui:list-remove-text-properties (car link-types)))
-	   (hui:ebut-link-create but-edit but-window lbl-key but-loc but-dir type-and-args))
-	  (t ;; more than 1
-	   (let ((item)
-		 type)
-	     (setq type-and-args
-		   (hui:menu-choose
-		    (cons '("Link to>")
-			  (mapcar
-			   (lambda (type-and-args)
-			     (setq type (car type-and-args))
-			     (list
-			      (capitalize
-			       (if (string-match
-				    "^\\(link-to\\|eval\\)-"
-				    (setq item (symbol-name type)))
-				   (setq item (substring
-					       item (match-end 0)))
-				 item))
-			      type-and-args
-			      (documentation (symtable:actype-p type))))
-			   link-types)))
-		   type-and-args (hui:list-remove-text-properties type-and-args))
-	     (hui:ebut-link-create
-	      but-edit but-window
-	      lbl-key but-loc but-dir type-and-args))))
-    (when (called-interactively-p 'interactive)
-      (hui:ebut-message but-edit))))
+  (let (but-name but-edit link-types num-types type-and-args lbl-key but-loc but-dir)
+    (multiple-value-bind (link-but-window referent-window)
+	(if (and depress-window release-window)
+	    (list depress-window release-window)
+	  (hmouse-choose-link-and-referent-windows))
+
+      (select-window link-but-window)
+      ;; It is rarely possible that a *Warnings* buffer popup might have
+      ;; displaced the button src buffer in the depress window, so switch
+      ;; to it to be safe.
+      (when (and action-key-depress-buffer
+		 (not (eq (current-buffer) action-key-depress-buffer))
+		 (buffer-live-p action-key-depress-buffer))
+	(switch-to-buffer action-key-depress-buffer))
+      (hui:buf-writable-err (current-buffer) "link-directly")
+      (if (ebut:at-p)
+	  (setq but-edit t
+		but-loc (hattr:get 'hbut:current 'loc)
+		but-dir (hattr:get 'hbut:current 'dir)
+		lbl-key (hattr:get 'hbut:current 'lbl-key))
+	(setq but-loc (hui:key-src (current-buffer))
+	      but-dir (hui:key-dir (current-buffer))
+	      but-name (hui:hbut-label
+			(cond ((hmouse-prior-active-region)
+			       hkey-region)
+			      ((use-region-p)
+			       (hui:hbut-label-default
+				(region-beginning) (region-end))))
+			"link-directly"
+			"Create button named: ")
+	      lbl-key (hbut:label-to-key but-name)))
+      (select-window referent-window)
+      (setq link-types (hui:link-possible-types)
+	    num-types (length link-types))
+
+      ;; num-types is the number of possible link types to choose among
+      (cond ((= num-types 0)
+	     (error "(link-directly): No possible link type to create"))
+	    ((= num-types 1)
+	     (setq type-and-args (hui:list-remove-text-properties (car link-types)))
+	     (hui:ebut-link-create but-edit link-but-window lbl-key but-loc but-dir type-and-args))
+	    (t ;; more than 1
+	     (let ((item)
+		   type)
+	       (setq type-and-args
+		     (hui:menu-choose
+		      (cons '("Link to>")
+			    (mapcar
+			     (lambda (type-and-args)
+			       (setq type (car type-and-args))
+			       (list
+				(capitalize
+				 (if (string-match
+				      "^\\(link-to\\|eval\\)-"
+				      (setq item (symbol-name type)))
+				     (setq item (substring
+						 item (match-end 0)))
+				   item))
+				type-and-args
+				(documentation (symtable:actype-p type))))
+			     link-types)))
+		     type-and-args (hui:list-remove-text-properties type-and-args))
+	       (hui:ebut-link-create
+		but-edit link-but-window
+		lbl-key but-loc but-dir type-and-args))))
+      (when (called-interactively-p 'interactive)
+	(hui:ebut-message but-edit)))))
 
 (defun hui:ibut-link-directly (&optional depress-window release-window)
-  "Create a link ibutton at Action Key depress point, linked to release point.
+  "Create a link ibutton at Assist Key depress point, linked to release point.
 If ibutton exists at point, replace it with the new link button.
 
 With optional DEPRESS-WINDOW and RELEASE-WINDOW, use the points
@@ -1139,73 +1143,77 @@ from those instead.  See also documentation for
 An Assist Mouse Key drag between windows runs this command.
 Alternatively, to swap buffers between two windows, Assist Mouse Key
 drag from a window to another window's modeline."
-  (interactive (hmouse-choose-windows #'hui:link))
-  (let ((but-window (or depress-window action-key-depress-window))
-	(referent-window (or release-window action-key-release-window (selected-window)))
-	but-name but-edit link-types num-types type-and-args lbl-key but-loc but-dir)
-    (select-window but-window)
-    ;; It is rarely possible that a *Warnings* buffer popup might have
-    ;; displaced the button src buffer in the depress window, so switch
-    ;; to it to be safe.
-    (when (and action-key-depress-buffer
-	       (not (eq (current-buffer) action-key-depress-buffer))
-	       (buffer-live-p action-key-depress-buffer))
-      (switch-to-buffer action-key-depress-buffer))
-    (hui:buf-writable-err (current-buffer) "link-directly")
-    (if (ibut:at-p)
-	(setq but-edit t
-	      but-loc (hattr:get 'hbut:current 'loc)
-	      but-dir (hattr:get 'hbut:current 'dir)
-	      lbl-key (hattr:get 'hbut:current 'lbl-key))
-      (setq but-loc (hui:key-src (current-buffer))
-	    but-dir (hui:key-dir (current-buffer))
-	    ;; Don't prompt to name implicit button
-	    ;; but-name (hui:hbut-label
-	    ;; 	      (cond ((hmouse-prior-active-region)
-	    ;; 		     hkey-region)
-	    ;; 		    ((use-region-p)
-	    ;; 		     (hui:hbut-label-default
-	    ;; 		      (region-beginning) (region-end))))
-	    ;; 	      "link-directly"
-	    ;; 	      "Create button named: ")
-	    ;; lbl-key (hbut:label-to-key but-name)
-	    ))
-    (select-window referent-window)
-    (setq link-types (hui:link-possible-types)
-	  num-types (length link-types))
+  (interactive (hmouse-choose-link-and-referent-windows))
 
-    ;; num-types is the number of possible link types to choose among
-    (cond ((= num-types 0)
-	   (error "(link-directly): No possible link type to create"))
-	  ((= num-types 1)
-	   (setq type-and-args (hui:list-remove-text-properties (car link-types)))
-	   (hui:ibut-link-create but-edit but-window lbl-key but-loc but-dir type-and-args))
-	  (t ;; more than 1
-	   (let ((item)
-		 type)
-	     (setq type-and-args
-		   (hui:menu-choose
-		    (cons '("Link to>")
-			  (mapcar
-			   (lambda (type-and-args)
-			     (setq type (car type-and-args))
-			     (list
-			      (capitalize
-			       (if (string-match
-				    "^\\(link-to\\|eval\\)-"
-				    (setq item (symbol-name type)))
-				   (setq item (substring
-					       item (match-end 0)))
-				 item))
-			      type-and-args
-			      (documentation (symtable:actype-p type))))
-			   link-types)))
-		   type-and-args (hui:list-remove-text-properties type-and-args))
-	     (hui:ibut-link-create
-	      but-edit but-window
-	      lbl-key but-loc but-dir type-and-args))))
-    (when (called-interactively-p 'interactive)
-      (hui:ibut-message but-edit))))
+  (let (but-name but-edit link-types num-types type-and-args lbl-key but-loc but-dir)
+    (multiple-value-bind (link-but-window referent-window)
+	(if (and depress-window release-window)
+	    (list depress-window release-window)
+	  (hmouse-choose-link-and-referent-windows))
+
+      (select-window link-but-window)
+      ;; It is rarely possible that a *Warnings* buffer popup might have
+      ;; displaced the button src buffer in the depress window, so switch
+      ;; to it to be safe.
+      (when (and assist-key-depress-buffer
+		 (not (eq (current-buffer) assist-key-depress-buffer))
+		 (buffer-live-p assist-key-depress-buffer))
+	(switch-to-buffer assist-key-depress-buffer))
+      (hui:buf-writable-err (current-buffer) "link-directly")
+      (if (ibut:at-p)
+	  (setq but-edit t
+		but-loc (hattr:get 'hbut:current 'loc)
+		but-dir (hattr:get 'hbut:current 'dir)
+		lbl-key (hattr:get 'hbut:current 'lbl-key))
+	(setq but-loc (hui:key-src (current-buffer))
+	      but-dir (hui:key-dir (current-buffer))
+	      ;; Don't prompt to name implicit button
+	      ;; but-name (hui:hbut-label
+	      ;; 	      (cond ((hmouse-prior-active-region)
+	      ;; 		     hkey-region)
+	      ;; 		    ((use-region-p)
+	      ;; 		     (hui:hbut-label-default
+	      ;; 		      (region-beginning) (region-end))))
+	      ;; 	      "link-directly"
+	      ;; 	      "Create button named: ")
+	      ;; lbl-key (hbut:label-to-key but-name)
+	      ))
+      (select-window referent-window)
+      (setq link-types (hui:link-possible-types)
+	    num-types (length link-types))
+
+      ;; num-types is the number of possible link types to choose among
+      (cond ((= num-types 0)
+	     (error "(link-directly): No possible link type to create"))
+	    ((= num-types 1)
+	     (setq type-and-args (hui:list-remove-text-properties (car link-types)))
+	     (hui:ibut-link-create but-edit link-but-window lbl-key but-loc but-dir type-and-args))
+	    (t ;; more than 1
+	     (let ((item)
+		   type)
+	       (setq type-and-args
+		     (hui:menu-choose
+		      (cons '("Link to>")
+			    (mapcar
+			     (lambda (type-and-args)
+			       (setq type (car type-and-args))
+			       (list
+				(capitalize
+				 (if (string-match
+				      "^\\(link-to\\|eval\\)-"
+				      (setq item (symbol-name type)))
+				     (setq item (substring
+						 item (match-end 0)))
+				   item))
+				type-and-args
+				(documentation (symtable:actype-p type))))
+			     link-types)))
+		     type-and-args (hui:list-remove-text-properties type-and-args))
+	       (hui:ibut-link-create
+		but-edit link-but-window
+		lbl-key but-loc but-dir type-and-args))))
+      (when (called-interactively-p 'interactive)
+	(hui:ibut-message but-edit)))))
 
 
 ;;; ************************************************************************

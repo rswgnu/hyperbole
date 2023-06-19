@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     6-Oct-91 at 03:42:38
-;; Last-Mod:     14-May-23 at 22:54:11 by Mats Lidell
+;; Last-Mod:     18-Jun-23 at 14:53:11 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -250,47 +250,11 @@ The returned value may be compared with `equal' to `this-single-command-keys'.
 Use `key-description' to make it human readable."
   (where-is-internal cmd-sym keymap t))
 
-(defun hypb:installation-type ()
-  "Return type of installation and version number.
-Is a list of (hyperbole-installation-type-string
-hyperbole-install-version-number-string).  If no matching
-installation type is found, return a list of (\"unknown\"
-`hyperb:dir')."
-  (let ((hypb-dir-name (file-name-nondirectory (directory-file-name hyperb:dir)))
-	(dir-sep-string (substring (file-name-as-directory ".") -1)))
-    (cond
-     ;; straight.el package install -- hyperbole gnu-elpa-mirror master 56cd3d8 2022-02-05
-     ((string-match (concat dir-sep-string "straight" dir-sep-string
-			    "build" dir-sep-string "hyperbole") hyperb:dir)
-      (let* ((plist (hypb:straight-package-plist "hyperbole"))
-	     (pkg-version (plist-get plist :version))
-	     (git-commit (when (string-match " \\([a-f0-9]+\\) " pkg-version)
-			   (match-string 1 pkg-version))))
-	(list "straight" git-commit)))
-     ;; elpa-devel package install -- hyperbole-7.0.0pre0.20220126.1138
-     ((string-match "hyperbole-\\([.[:digit:]]+pre[.[:digit:]]+\\)" hypb-dir-name)
-      (list "elpa-devel" (match-string 1 hypb-dir-name)))
-     ;; melpa/quelpa package install -- hyperbole-20220205.1429
-     ((string-match "hyperbole-\\([1-9][0-9][0-9][0-9][0-1][0-9][0-3][0-9]\\.[0-9]+\\)"
-		    hypb-dir-name)
-      (list "melpa" (match-string 1 hypb-dir-name)))
-     ;; git install -- hyperbole d27f4c5197
-     ((file-exists-p (expand-file-name ".git" hyperb:dir))
-      (ignore-errors
-        (let ((default-directory hyperb:dir))
-          (list
-           "git"
-           (substring (shell-command-to-string "git rev-parse HEAD") 0 10)))))
-     ;; elpa package install -- /elpa/hyperbole-8.0.0"
-     ((and (string-match-p (concat dir-sep-string "elpa" dir-sep-string) hyperb:dir)
-	   (string-match "hyperbole-\\([.[:digit:]]+\\)" hypb-dir-name))
-      (list "elpa" (match-string 1 hypb-dir-name)))
-     ;; tarball archive install -- hyperbole-8.0.0
-     ((string-match "hyperbole-\\([.[:digit:]]+\\)" hypb-dir-name)
-      (list "archive" (match-string 1 hypb-dir-name)))
-     ;; unknown -- hyperbole
-     (t (list "unknown" hyperb:dir)))))
-
+;;;###autoload
+(defun hypb:count-visible-windows ()
+  "Return the number of visible, non-minibuffer windows across all frames."
+  (apply '+ (mapcar (lambda (frm) (length (window-list frm)))
+		    (visible-frame-list))))
 ;;;###autoload
 (defun hypb:configuration (&optional out-buf)
   "Insert Emacs configuration information at the end of a buffer.
@@ -641,6 +605,47 @@ region is copied, otherwise, it is omitted."
     (while (< start end)
       (or (kview:char-invisible-p start) (append-to-buffer buffer start (1+ start)))
       (setq start (1+ start)))))
+
+(defun hypb:installation-type ()
+  "Return type of installation and version number.
+Is a list of (hyperbole-installation-type-string
+hyperbole-install-version-number-string).  If no matching
+installation type is found, return a list of (\"unknown\"
+`hyperb:dir')."
+  (let ((hypb-dir-name (file-name-nondirectory (directory-file-name hyperb:dir)))
+	(dir-sep-string (substring (file-name-as-directory ".") -1)))
+    (cond
+     ;; straight.el package install -- hyperbole gnu-elpa-mirror master 56cd3d8 2022-02-05
+     ((string-match (concat dir-sep-string "straight" dir-sep-string
+			    "build" dir-sep-string "hyperbole") hyperb:dir)
+      (let* ((plist (hypb:straight-package-plist "hyperbole"))
+	     (pkg-version (plist-get plist :version))
+	     (git-commit (when (string-match " \\([a-f0-9]+\\) " pkg-version)
+			   (match-string 1 pkg-version))))
+	(list "straight" git-commit)))
+     ;; elpa-devel package install -- hyperbole-7.0.0pre0.20220126.1138
+     ((string-match "hyperbole-\\([.[:digit:]]+pre[.[:digit:]]+\\)" hypb-dir-name)
+      (list "elpa-devel" (match-string 1 hypb-dir-name)))
+     ;; melpa/quelpa package install -- hyperbole-20220205.1429
+     ((string-match "hyperbole-\\([1-9][0-9][0-9][0-9][0-1][0-9][0-3][0-9]\\.[0-9]+\\)"
+		    hypb-dir-name)
+      (list "melpa" (match-string 1 hypb-dir-name)))
+     ;; git install -- hyperbole d27f4c5197
+     ((file-exists-p (expand-file-name ".git" hyperb:dir))
+      (ignore-errors
+        (let ((default-directory hyperb:dir))
+          (list
+           "git"
+           (substring (shell-command-to-string "git rev-parse HEAD") 0 10)))))
+     ;; elpa package install -- /elpa/hyperbole-8.0.0"
+     ((and (string-match-p (concat dir-sep-string "elpa" dir-sep-string) hyperb:dir)
+	   (string-match "hyperbole-\\([.[:digit:]]+\\)" hypb-dir-name))
+      (list "elpa" (match-string 1 hypb-dir-name)))
+     ;; tarball archive install -- hyperbole-8.0.0
+     ((string-match "hyperbole-\\([.[:digit:]]+\\)" hypb-dir-name)
+      (list "archive" (match-string 1 hypb-dir-name)))
+     ;; unknown -- hyperbole
+     (t (list "unknown" hyperb:dir)))))
 
 ;;;###autoload
 (defun hypb:locate (search-string &optional filter arg)

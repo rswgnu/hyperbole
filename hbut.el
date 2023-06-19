@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    18-Sep-91 at 02:57:09
-;; Last-Mod:     17-Jun-23 at 20:24:44 by Bob Weiner
+;; Last-Mod:     19-Jun-23 at 00:17:03 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -2301,9 +2301,8 @@ Summary of operations based on inputs:
 	     (when (and start end)
 	       (ibut:delimit start end instance-flag))
 	     (ibut:insert-text 'hbut:current)
-	     (if start
-		 (goto-char start)
-	       (goto-char (max (- (point) 2) (point-min))))))
+	     (when start
+	       (goto-char start))))
 
 	  (t (hypb:error
 	      "(ibut:operate): Operation failed.  Check button attribute permissions: %s"
@@ -2393,7 +2392,9 @@ Summary of operations based on inputs:
       ('actypes::link-to-file-line (insert (format "\"%s:%d\""
 						   (hpath:substitute-var arg1) arg2)))
       ('actypes::link-to-file-line-and-column
-       (insert (format "\"%s:%d:%d\"" (hpath:substitute-var arg1) arg2 arg3)))
+       (if (eq arg3 0)
+	   (insert (format "\"%s:%d\"" (hpath:substitute-var arg1) arg2))
+	 (insert (format "\"%s:%d:%d\"" (hpath:substitute-var arg1) arg2 arg3))))
       ('actypes::link-to-file (insert
 			       (if (/= (length args) 2)
 				   ;; filename only
@@ -2402,10 +2403,14 @@ Summary of operations based on inputs:
 				 (with-current-buffer (find-file-noselect arg1)
 				   (save-excursion
 				     (goto-char arg2)
-				     (format "\"%s:%d:%d\""
-					     (hpath:substitute-var arg1)
-					     (line-number-at-pos (point) t)
-					     (current-column)))))))
+				     (if (zerop (current-column))
+					 (format "\"%s:%d\""
+						 (hpath:substitute-var arg1)
+						 (line-number-at-pos (point) t))
+				       (format "\"%s:%d:%d\""
+					       (hpath:substitute-var arg1)
+					       (line-number-at-pos (point) t)
+					       (current-column))))))))
       ('nil (error "(ibut:insert-text): actype must be a Hyperbole actype or Lisp function symbol, not '%s'" orig-actype))
       ;; Generic action button type						      
       (_ (insert (format "<%s%s%s>" actype (if args " " "")
@@ -2648,7 +2653,7 @@ This separates it from the implicit button text.  See also
 manually inserted to separate an implicit button label from its
 text.")
 
-(defvar   ibut:label-separator-regexp "\\s-*[-:=]*\\s-+"
+(defvar   ibut:label-separator-regexp "\\s-*[-:=|]*\\s-+"
   "Regular expression that separates an implicit button name from its button text.")
 
 ;;; ========================================================================
