@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    6/30/93
-;; Last-Mod:     28-May-23 at 10:19:56 by Bob Weiner
+;; Last-Mod:     19-Jun-23 at 10:54:07 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -2279,7 +2279,7 @@ Return last newly added cell."
     ;; sibling if any.
     (kotl-mode:to-valid-position t)
     (save-excursion
-      (when (kcell-view:forward t lbl-sep-len)
+      (when (kcell-view:forward nil lbl-sep-len)
 	(let ((label-type (kview:label-type kview)))
 	  (when (memq label-type '(alpha legal partial-alpha))
 	    ;; Update the labels of these siblings and their subtrees.

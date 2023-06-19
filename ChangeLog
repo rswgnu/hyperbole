@@ -1,3 +1,53 @@
+2023-06-19  Bob Weiner  <rsw@gnu.org>
+
+* kotl/kotl-mode.el (kotl-mode:add-cell): Fix that when inserting a child cell in
+    a tree with hidden/collapsed cells, 'kcell-view:forward' was called
+    with a 't arg that skipped over invisible cells, moving to the end of a tree
+    rather than just the next invisible cell.  This made 'klabel-type:update-labels'
+    miss updating all the invisible cells after the insertion point.
+
+* kotl/kview.el (kview:outline-regexp): Fix that 'kview:default-label-separator'
+    was not regexp-quoted here, leading to false label matches at the beginnings
+    of lines and wrong computation of the location of the start of cells.  Somehow
+    this fix was lost from when applied before on 2022-08-20.
+                (kcell-view:to-label-end): Fix to use 'kview:outline-regexp' only
+    after failing to find a 'kcell property to mark end of label since this can
+    lead to false matches that move cursor improperly at times, i.e. when a line
+    of text starts with a label-matching pattern, e.g. '3a.'
+
+* hpath.el (hpath:to-markup-anchor): Fix doc.
+
+2023-06-18  Bob Weiner  <rsw@gnu.org>
+
+* hpath.el (hpath:at-p): If path at point is just an hpath:prefix-regexp
+   char, then don't set non-exist to t.
+
+* hibtypes.el (pathname): Don't match to a path of a single "-".
+
+* hmouse-drv.el (hmouse-choose-link-and-referent-windows): Add to choose
+    link and referent windows for hui:*but-link-directly commands.
+                (hmouse-keyboard-choose-windows): Add to choose start and
+    end windows from the keyboard. NOT YET WORKING.
+
+* hypb.el (hypb:count-visible-windows): Add.
+
+* hui.el (hui:ebut-link-directly, hui:ibut-link-directly):
+    Trigger an error if there is only one visible window.  Use
+    ace-window package to select referent window when available; otherwise
+    select the referent window by clicking the mouse.
+         (hui:ibut-link-directly): Fix was using Action windows instead of
+    Assist.
+
+* FAST-DEMO (Introductory Videos): Add video snippets of Hyperbole Overview
+    talk in first table so users can see and hear about Hyperbole in couple
+    minute bursts.
+
+* hbut.el (ibut:label-separator-regexp): Add '|' as a separator character
+    so can have ibut names and text in separate Org table columns.
+
+* hmouse-drv.el (hkey-debug): Add Action and Assist Key depress and release
+    window information.
+
 2023-06-17  Bob Weiner  <rsw@gnu.org>
 
 * hui.el (hui:ibut-link-directly): Document new inter-window Assist Mouse

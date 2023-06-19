@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    04-Feb-90
-;; Last-Mod:     21-May-23 at 11:48:16 by Bob Weiner
+;; Last-Mod:     18-Jun-23 at 20:42:44 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -766,13 +766,49 @@ buffer to the end window.  The selected window does not change."
   (interactive)
   (hmouse-choose-windows #'hkey-throw))
 
-(defun hmouse-choose-windows (func)
-  "Mouse click on start and end windows for FUNC.
-Then with the start window temporarily selected, run FUNC with the
-end window as an argument.
+(defun hmouse-choose-link-and-referent-windows ()
+  "Select and return a list of (link-button-window referent-window)."
+  (let ((link-but-window (or (and (window-live-p assist-key-depress-window)
+				  assist-key-depress-window)
+			     (selected-window)))
+	(referent-window (and (window-live-p assist-key-release-window)
+			      assist-key-release-window)))
+    (unless (and link-but-window referent-window)
+      (cond ((or (= (count-windows) 2)
+		 (= (hypb:count-visible-windows) 2))
+	     (setq link-but-window (selected-window)
+		   referent-window (next-window nil nil 'visible)))
+	    ((= (hypb:count-visible-windows) 1)
+	     ;; Fall through to error below
+	     )
+	    (t
+	     ;; Either this frame has more than two windows or other frames exist
+	     ;; that together have more than one window; choose which to use.
+	     (setq referent-window
+		   (if (fboundp #'aw-select) ;; ace-window selection
+		       (let ((aw-scope 'global))
+			 (aw-select "Select link referent window"))
+		     (message "Now click on the %s end window..." func)
+		     (prog1 (cl-loop do (setq end-event (read-event))
+				     until (and (mouse-event-p end-event)
+						(not (string-match "\\`down-" (symbol-name (car end-event)))))
+				     finally return (posn-window (event-start end-event)))
+		       (message "Done")))))))
+    (when (eq link-but-window referent-window)
+      (error "(hmouse-choose-link-and-referent-windows): No other visible window with a link referent"))
+    (unless (window-live-p link-but-window)
+      (error "(hmouse-choose-link-and-referent-windows): Invalid link button window '%s'" link-but-window))
+    (unless (window-live-p referent-window)
+      (error "(hmouse-choose-link-and-referent-windows): Invalid link button window '%s'" referent-window))
+    (list link-but-window referent-window)))
 
-Appropriate FUNCs include: hkey-drag, hkey-drag-to, hkey-replace,
-hkey-swap and hkey-throw."
+(defun hmouse-choose-windows (func)
+  "Mouse click on start and end windows which are then applied to FUNC.
+With the start window temporarily selected, run FUNC with the end
+window as an argument.
+
+Appropriate FUNCs include: hui:link, hkey-drag, hkey-drag-to,
+hkey-replace, hkey-swap and hkey-throw."
   (let* (start-event
 	 end-event
 	 start-window
@@ -788,6 +824,31 @@ hkey-swap and hkey-throw."
 	  (cl-loop do (setq end-event (read-event))
 		   until (and (mouse-event-p end-event)
 			      (not (string-match "\\`down-" (symbol-name (car end-event)))))
+		   finally return (posn-window (event-start end-event))))
+    (message "Done")
+    (with-selected-window start-window
+      (funcall func end-window))))
+
+(defun hmouse-keyboard-choose-windows (func)
+  "Press Return in start and end windows which are then applied to FUNC.
+With the start window temporarily selected, run FUNC with the end
+window as an argument. 
+
+Appropriate FUNCs include: hui:link, hkey-drag, hkey-drag-to,
+hkey-replace, hkey-swap and hkey-throw."
+  (let* (start-event
+	 end-event
+	 start-window
+	 end-window)
+    (message "Move to the %s start window and press RETURN..." func)
+    (setq start-window
+	  (cl-loop do (setq start-event (read-event))
+		   until (eq (event-basic-type start-event) 'return)
+		   finally return (posn-window (event-start start-event))))
+    (message "Now move to the %s end window and press RETURN..." func)
+    (setq end-window
+	  (cl-loop do (setq end-event (read-event))
+		   until (eq (event-basic-type end-event) 'return)
 		   finally return (posn-window (event-start end-event))))
     (message "Done")
     (with-selected-window start-window
@@ -894,7 +955,9 @@ frame instead."
         (mouse-drag-frame start-event 'move))))))
 
 (defun hkey-debug (pred pred-value hkey-action)
-  (message "(HyDebug) %sContext: %s; %s: %s; Buf: %s; Mode: %s; MinibufDepth: %s"
+  (message (concat "(HyDebug) %sContext: %s; %s: %s; Buf: %s; Mode: %s; MinibufDepth: %s\n"
+		   "  action-depress: %s; action-release: %s\n"
+		   "  assist-depress: %s; assist-release: %s")
 	   (cond ((eq pred-value 'hbut:current)
 		  (format "ButProps: %S\nButType: %s; ButLabel: %s; "
 			  (symbol-plist 'hbut:current)
@@ -912,7 +975,12 @@ frame instead."
 	     (hypb:format-quote (format "%s" hkey-action)))
 	   (current-buffer)
 	   major-mode
-	   (minibuffer-depth)))
+	   (minibuffer-depth)
+
+	   action-key-depress-window
+	   action-key-release-window
+	   assist-key-depress-window
+	   assist-key-release-window))
 
 (defun hkey-execute (assisting)
   "Evaluate Action Key form for first non-nil predicate from `hkey-alist'.

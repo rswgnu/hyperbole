@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     1-Nov-91 at 00:44:23
-;; Last-Mod:     17-Jun-23 at 13:03:28 by Bob Weiner
+;; Last-Mod:     19-Jun-23 at 00:15:54 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -928,7 +928,8 @@ optional NON-EXIST, nonexistent local paths are allowed.
 Absolute pathnames must begin with a `/' or `~'."
   (let ((path (hpath:delimited-possible-path non-exist))
 	subpath)
-    (when (and path (not non-exist) (string-match-p hpath:prefix-regexp path))
+    (when (and path (not non-exist) (string-match hpath:prefix-regexp path)
+	       (not (string-equal (match-string 0 path) path)))
       (setq non-exist t))
     (cond ((and path (file-readable-p path))
 	   path)
@@ -1504,7 +1505,8 @@ but locational suffixes within the file are utilized."
 			      (current-buffer)))))))))))
 
 (defun hpath:to-markup-anchor (hash anchor)
-  "Move point to ANCHOR if found or, if null, to the beginning of the buffer."
+  "Ignore HASH when ANCHOR is non-null and move point to ANCHOR string if found.
+Move point to beginning of buffer if HASH is non-nil and ANCHOR is null."
   (cond ((and (stringp anchor) (not (equal anchor "")))
 	 (cond ((memq major-mode hui-select-markup-modes)
 		;; In HTML-like mode where link ids are case-sensitive.
@@ -1738,6 +1740,7 @@ form is what is returned for PATH."
 		  path non-exist)))
      (unless (or (null path)
 		 (string-empty-p path)
+		 (string-equal "-" path)
 		 (string-match-p "#['`\"]" path)
 		 ;; If a single character in length, must be a word or
 		 ;; symbol character other than [.~ /].
