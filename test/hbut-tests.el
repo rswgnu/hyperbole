@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    30-may-21 at 09:33:00
-;; Last-Mod:     17-Jun-23 at 23:02:50 by Bob Weiner
+;; Last-Mod:     20-Jun-23 at 23:48:40 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -336,6 +336,103 @@ Needed since hyperbole expands all links to absolute paths and
     (setq name "name")
     `(dolist (bd ,hbut-tests-actypes-list)
        (with-temp-file "hypb.txt" ,@body))))
+
+;; ibut:operate tests
+
+(ert-deftest hbut-tests--ibut-operate--none ()
+  "Create unnamed ibut."
+  (with-temp-buffer
+    (insert "/tmp")
+    (goto-char 2)
+    (should (hbut:at-p))
+    (end-of-buffer)
+    (should-not (ibut:operate))
+    ; Creates pathname with quotes!?
+    (should (string= "/tmp\"/tmp\"" (buffer-string)))))
+
+(ert-deftest hbut-tests--ibut-operate--aname ()
+  "Create aname ibut."
+  (with-temp-buffer
+    (insert "<[aname]> - /tmp")
+    (goto-char 2)
+    (hbut:at-p)
+    (end-of-buffer)
+    (should-not (ibut:operate))
+    ;; Creates pathname with quotes!?
+    (should (string= "<[aname]> - /tmp<[aname]> - \"/tmp\"" (buffer-string)))))
+
+(ert-deftest hbut-tests--ibut-operate--aname-region-skip-region ()
+  "Create aname ibut and ignore region."
+  (with-temp-buffer
+    (insert "<[aname]> - /tmp")
+    (goto-char 2)
+    (hbut:at-p)
+    (end-of-buffer)
+    (insert "\n")
+    (set-mark (point))
+    (insert "abcd")
+    (should (region-active-p))
+    (should-not (ibut:operate))
+    ;; Creates pathname with quotes!?
+    ;; Inserted just before region which is kept
+    (should (string= "<[aname]> - /tmp\n<[aname]> - \"/tmp\"abcd" (buffer-string)))))
+
+(ert-deftest hbut-tests--ibut-operate--region ()
+  "Create ibut with aname, ignore region."
+  (with-temp-buffer
+    (insert "/tmp")
+    (goto-char 2)
+    (hbut:at-p)
+    (end-of-buffer)
+    (insert "\n")
+    (set-mark (point))
+    (insert "name")
+    (should (region-active-p))
+    (should-not (ibut:operate))
+    ;; Creates pathname with quotes!?
+    (should (string= "/tmp\n<[name]>\"/tmp\"" (buffer-string)))))
+
+(ert-deftest hbut-tests--ibut-operate--modify-named ()
+  "Add new-name to named ibut."
+  (with-temp-buffer
+    (insert "<[name]> /tmp")
+    (goto-char 2)
+    (hbut:at-p)
+    (should-not (ibut:operate "new-name"))
+    (should (string= "<[new-name]> /tmp" (buffer-string)))))
+
+(ert-deftest hbut-tests--ibut-operate--modify-named-skip-region ()
+  "Add new-name to named ibut and ignore region."
+  (with-temp-buffer
+    (insert "<[name]> /tmp")
+    (goto-char 2)
+    (hbut:at-p)
+    (set-mark (point-max))
+    (should (region-active-p))
+    (should-not (ibut:operate "new-name"))
+    (should (string= "<[new-name]> /tmp" (buffer-string)))))
+
+(ert-deftest hbut-tests--ibut-operate--add-new-name ()
+  "Add new-name to unnamed ibut."
+  (with-temp-buffer
+    (insert "/tmp")
+    (goto-char 2)
+    (hbut:at-p)
+    (should-not (ibut:operate "new-name"))
+    ;; Missing delimiter
+    (should (string= "<[new-name]>/tmp" (buffer-string)))))
+
+(ert-deftest hbut-tests--ibut-operate--add-new-name-skip-region ()
+  "Add new-name to unnamed ibut, skip active region."
+  (with-temp-buffer
+    (insert "/tmp")
+    (goto-char 2)
+    (hbut:at-p)
+    (set-mark (point-max))
+    (should (region-active-p))
+    (should-not (ibut:operate "new-name"))
+    ;; Missing delimiter
+    (should (string= "<[new-name]>/tmp" (buffer-string)))))
 
 ;; This file can't be byte-compiled without the `el-mock' package (because of
 ;; the use of the `with-mock' macro), which is not a dependency of Hyperbole.

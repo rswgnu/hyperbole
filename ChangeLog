@@ -1,3 +1,15 @@
+2023-06-27  Mats Lidell  <matsl@gnu.org>
+
+* test/hbut-tests.el (hbut-tests--ibut-operate--none)
+    (hbut-tests--ibut-operate--aname)
+    (hbut-tests--ibut-operate--aname-region-skip-region)
+    (hbut-tests--ibut-operate--region)
+    (hbut-tests--ibut-operate--modify-named)
+    (hbut-tests--ibut-operate--modify-named-skip-region)
+    (hbut-tests--ibut-operate--add-new-name)
+    (hbut-tests--ibut-operate--add-new-name-skip-region): Add ibut:operate
+    tests.
+
 2023-06-25  Bob Weiner  <rsw@gnu.org>
 * hbut.el (ibut:to-name, ibut:at-p, ibut:to-text): Remove test call to
     'hbut:outside-comment-p' since ibuts don't have to be within programming
