@@ -1622,6 +1622,7 @@ return current point as a marker."
   (and (car args) (listp (car args)) (setq args (car args)))
   (if (and args (hyperb:window-system))
       (progn (hmouse-set-point-at args) args)
+    ;; FIXME: This doesn't "Set point to ..."!?
     (list 'keyboard-drag (posn-at-point))))
 
 (defun hmouse-set-point-at (set-point-arg-list)

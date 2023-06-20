@@ -37,12 +37,6 @@
 Override this if the system-computed default is incorrect for
 your specific mouse.")
 
-(defvar hyperb:automount-prefixes
-  (if (and (boundp 'automount-dir-prefix) (stringp automount-dir-prefix))
-      automount-dir-prefix
-    "^/tmp_mnt/"
-    "Regexp to match any automounter prefix in a pathname."))
-
 ;;; ************************************************************************
 ;;; Public declarations
 ;;; ************************************************************************
@@ -56,6 +50,7 @@ your specific mouse.")
   "Return first part of the term-type if running under a window system, else nil.
 Where a part in the term-type is delimited by a `-' or  an `_'."
   (unless frame (setq frame (selected-frame)))
+  ;; FIXME: Do we still care about XEmacs's `device-type'?
   (let* ((display-type (if (fboundp 'device-type) (device-type) window-system))
 	 (term (cond ((or (memq display-type '(x gtk mswindows win32 w32 ns dps pm))
 			  ;; May be a graphical client spawned from a
@@ -65,20 +60,25 @@ Where a part in the term-type is delimited by a `-' or  an `_'."
 			  (display-mouse-p))
 		      ;; X11, macOS, NEXTSTEP (DPS), or OS/2 Presentation Manager (PM)
 		      "emacs")
+		     ;; FIXME: Do we still care about NeXT?
 		     ((or (featurep 'eterm-fns)
 			  (equal (getenv "TERM") "NeXT")
 			  (equal (getenv "TERM") "eterm"))
 		      ;; NEXTSTEP add-on support to Emacs
 		      "next"))))
-    (set-frame-parameter frame 'hyperb:window-system
-			 (and term (setq term (substring term 0 (string-match "[-_]" term)))))
+    (set-frame-parameter frame 'hyperb:window-system term)
     term))
 
 (defun hyperb:window-system (&optional frame)
+  ;; FIXME: This apparently can return only "emacs", "next", or nil.
+  ;; What do these things mean?  What does "window system available" mean?
+  ;; What does "mouse available mean"?
   "Return name of window system or term type where the selected FRAME is running.
 If nil after system initialization, no window system or mouse
 support is available."
   (unless frame (setq frame (selected-frame)))
+  ;; FIXME: Why not compute it on the fly rather than precomputing it
+  ;; via a hook and then saving it as a frame property?
   (frame-parameter frame 'hyperb:window-system))
 
 ;; Each frame could be on a different window system when under a
@@ -122,7 +122,7 @@ support is available."
 	     ;; Force execution of Info-mode-hook which adds the
 	     ;; Hyperbole man directory to Info-directory-list.
 	     (info)
-	     (if (string-match "^(\\([^\)]+\\))\\(.*\\)" index-item)
+	     (if (string-match "^(\\([^)]+\\))\\(.*\\)" index-item)
 		 (let ((file (match-string-no-properties 1 index-item))
 		       (item-name (match-string-no-properties 2 index-item)))
 		   (if (and file (setq file (hpath:substitute-value file)))
