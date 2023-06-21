@@ -1,3 +1,7 @@
+2023-06-21  Mats Lidell  <matsl@gnu.org>
+
+* Makefile (LOAD_EL): Use gnu make pattern substitution.
+
 2023-06-19  Bob Weiner  <rsw@gnu.org>
 
 * kotl/kotl-mode.el (kotl-mode:add-cell): Fix that when inserting a child cell in
