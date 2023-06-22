@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    6/30/93
-;; Last-Mod:     19-Jun-23 at 10:54:07 by Bob Weiner
+;; Last-Mod:     21-Jun-23 at 21:03:59 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -2087,9 +2087,9 @@ With optional NEXT-CHAR-VISIBLE, return t only if the following char is visible.
   (or (smart-eobp)
       (and (eolp)
 	   (if next-char-visible
-	       (not (kview:char-invisible-p))
-	     (or (not (kview:char-invisible-p))
-		 (not (kview:char-invisible-p (1- (point))))))
+	       (not (invisible-p (point)))
+	     (or (not (invisible-p (point)))
+		 (not (invisible-p (1- (point))))))
 	   t)))
 
 (defun kotl-mode:first-cell-p ()
@@ -3405,8 +3405,8 @@ With optional BACKWARD-P, move backward if possible to get to valid position."
   ;; Empty, visible cell
   (unless (and (kotl-mode:bocp) (kotl-mode:eocp) (not (kcell-view:invisible-p (point))))
     (if (if backward-p
-	    (kview:char-invisible-p (1- (point)))
-	  (kview:char-invisible-p))
+	    (invisible-p (1- (point)))
+	  (invisible-p (point)))
 	(goto-char (if backward-p
 		       (kview:previous-visible-point)
 		     (kview:first-visible-point))))

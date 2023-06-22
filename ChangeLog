@@ -1,4 +1,66 @@
+2023-06-22  Bob Weiner  <rsw@gnu.org>
+
+* man/hyperbole.texi (By Menu): Add section similar to that of Ibuts, documenting
+    new Ebut/Link command.
+                     (By Dragging): Move to after By Menu and add paragraph similar
+    to Ibut one.
+                     (By Link): Add this as a separate subsection.
+
+2023-06-21  Bob Weiner  <rsw@gnu.org>
+
+* hibtypes.el (texinfo-ref): Replace 'match-string' with 'match-string-no-properties'.
+
+* hbut.el (ibut:at-type-p): Remove dynamic binding of 'types' for 'hact' which no
+    longer uses it.
+
+* test/hy-test-dependencies.el: Require hyperb:dir def and add test/ dir to load-path.
+
+* kotl/kview.el (kview:char-invisible-p): Remove and use '(invisible-p (point))'.
+                (kview:char-visible-p): Remove and use '(not (invisible-p (point)))'.
+                (kview:first-invisible-point, kview:first-visible-point,
+                 kview:previous-visible-point):
+  kotl/kotl-mode.el (kotl-mode:eolp, kotl-mode:eolp, kotl-mode:to-visible-position):
+    Make the above updated calls in these functions.
+
+2023-06-20  Bob Weiner  <rsw@gnu.org>
+
+* hui-window.el (hmouse-pulse-iterations): Add to temporarily override
+    `pulse-iterations' with this for hmouse operations and use in hmouse-pulse-*
+    functions.
+  hui.el (hui:ebut-link-directly, hui:ibut-link-directly): Add hmouse-pulse-line
+    to highlight referent line linked to.
+
 2023-06-19  Bob Weiner  <rsw@gnu.org>
+
+* hactypes.el: (link-to-regexp-match): Replace 'find-file-noselect' with
+    'hpath:find-noselect' so relative Elisp paths are resolved properly.
+
+* hbut.el (ibut:insert-text): Add 'actypes::link-to-string-match' support.
+
+* hpath.el (hpath:substitute-var-name): Remove matching path rather than adding the
+     variable to the path when the variable is one for Elisp files.  These can be
+     resolved without the variable being included in the path.
+
+* hui.el (hui:ebut-link-directly, hui:ibut-link-directly): Fix so does not use
+    Smart Key depress/release windows when called interactively.
+         (hui.el (hui:ibut-link-directly): With prefix arg, name-arg-flag, prompt
+    for a name for the ibut and insert it.
+
+* man/hyperbole.texi (Implicit Buttons): Document the Ibut menu changes below.
+  hui-mini.el (hui:menus): In Ibut menu, add Link which runs 'hui:ebut-link-directly'.
+                           In Ibut menu, rename Label to Name and add Link which
+    runs 'hui:ibut-link-directly'.
+                           Change all doc string tense from 'Displays' to 'Display'.
+  hui-menu.el (infodock-hyperbole-menu): Do the same as above for pulldown Explicit-Button
+    and Implicit-Button menus.
+
+* hui.el (hui:link): Rename to 'hkey-link' and move to "hmouse-drv.el" since only
+    ever used in 'hmouse-choose-windows' call.  Make an autoload.
+
+* hmouse-tag.el (smart-emacs-lisp-mode-p): Change 'string-match' to 'string-match-p'
+    since don't use match groupings.
+                (smart-lisp-at-known-identifier-p): Fix missing open paren pair in
+    last cond clause.
 
 * kotl/kotl-mode.el (kotl-mode:add-cell): Fix that when inserting a child cell in
     a tree with hidden/collapsed cells, 'kcell-view:forward' was called

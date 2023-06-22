@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Sep-92
-;; Last-Mod:     17-Jun-23 at 21:42:39 by Bob Weiner
+;; Last-Mod:     20-Jun-23 at 23:08:18 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -101,11 +101,15 @@ drag release window.")
   "Non-nil means pulse visually if supported.
 When display supports visual pulsing, then pulse lines and
 buffers when an Action Key drag is used to place a buffer, file
-ofr button referent in a window."
+or button referent in a window."
   :type 'boolean
   :group 'hyperbole-keys)
 
- ;; Mats Lidell says this should be 10 characters for GNU Emacs.
+(defvar hmouse-pulse-iterations 40
+  "Number of iterations in an hmouse-pulse operation when `pulse-flag' is active.
+Temporarily override `pulse-iterations' with this for hmouse operations.")
+
+
 (defvar hmouse-edge-sensitivity 10
   "*Number of chars from window edges in which a click is considered at an edge.")
 
@@ -819,18 +823,24 @@ Return t if such a point is saved, else nil."
   )
 
 (defun hmouse-pulse-buffer ()
-  (when (and hmouse-pulse-flag (featurep 'pulse) (pulse-available-p))
-    (recenter)
-    (pulse-momentary-highlight-region (window-start) (window-end) 'next-error)))
+  "When `hmouse-pulse-flag' is non-nil, display can pulse, pulse the buffer."
+  (when (and hmouse-pulse-flag (featurep 'pulse) pulse-flag (pulse-available-p))
+    (let ((pulse-iterations hmouse-pulse-iterations))
+      (recenter)
+      (pulse-momentary-highlight-region (window-start) (window-end) 'next-error))))
 
 (defun hmouse-pulse-line ()
-  (when (and hmouse-pulse-flag (featurep 'pulse) (pulse-available-p))
-    (recenter)
-    (pulse-momentary-highlight-one-line (point) 'next-error)))
+  "When `hmouse-pulse-flag' is non-nil, display can pulse, pulse the line."
+  (when (and hmouse-pulse-flag (featurep 'pulse) pulse-flag (pulse-available-p))
+    (let ((pulse-iterations hmouse-pulse-iterations))
+      (recenter)
+      (pulse-momentary-highlight-one-line (point) 'next-error))))
 
 (defun hmouse-pulse-region (start end)
-  (when (and hmouse-pulse-flag (featurep 'pulse) (pulse-available-p))
-    (pulse-momentary-highlight-region start end 'next-error)))
+  "When `hmouse-pulse-flag' is non-nil, display can pulse, pulse the region."
+  (when (and hmouse-pulse-flag (featurep 'pulse) pulse-flag (pulse-available-p))
+    (let ((pulse-iterations hmouse-pulse-iterations))
+      (pulse-momentary-highlight-region start end 'next-error))))
 
 (defun hmouse-item-to-window (&optional new-window-flag)
   "Display item/action of Action Key depress at the release location.

@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 21:42:03
-;; Last-Mod:     19-Jun-23 at 00:05:29 by Bob Weiner
+;; Last-Mod:     21-Jun-23 at 00:12:35 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1053,16 +1053,18 @@ Signal an error when no such button is found in the current buffer."
 		 (ibut:at-p))
 	(hui:ibut-message t)))))
 
-(defun hui:link (release-window)
-  "Return a list of the selected window (where depressed) and the RELEASE-WINDOW."
-  (list (selected-window) release-window))
-
 (defun hui:ebut-link-directly (&optional depress-window release-window)
   "Create a link ebutton at Action Key depress point, linked to release point.
 With optional DEPRESS-WINDOW and RELEASE-WINDOW, use the points
 from those instead.  See also documentation for
 `hui:link-possible-types'."
-  (interactive (hmouse-choose-link-and-referent-windows))
+  (interactive (progn
+		 ;; Clear smart key variables so this does not
+		 ;; improperly reference values left over from a prior
+		 ;; drag or click.
+		 (action-key-clear-variables)
+		 (assist-key-clear-variables)
+		 (hmouse-choose-link-and-referent-windows)))
 
   (let (but-name but-edit link-types num-types type-and-args lbl-key but-loc but-dir)
     (multiple-value-bind (link-but-window referent-window)
@@ -1129,10 +1131,12 @@ from those instead.  See also documentation for
 	       (hui:ebut-link-create
 		but-edit link-but-window
 		lbl-key but-loc but-dir type-and-args))))
+      (with-selected-window referent-window
+	(hmouse-pulse-line))
       (when (called-interactively-p 'interactive)
 	(hui:ebut-message but-edit)))))
 
-(defun hui:ibut-link-directly (&optional depress-window release-window)
+(defun hui:ibut-link-directly (&optional depress-window release-window name-arg-flag)
   "Create a link ibutton at Assist Key depress point, linked to release point.
 If ibutton exists at point, replace it with the new link button.
 
@@ -1140,12 +1144,22 @@ With optional DEPRESS-WINDOW and RELEASE-WINDOW, use the points
 from those instead.  See also documentation for
 `hui:link-possible-types'.
 
+With optional NAME-ARG-FLAG (interactively, the prefix argument),
+prompt for a name to precede the implicit button.
+
 An Assist Mouse Key drag between windows runs this command.
 Alternatively, to swap buffers between two windows, Assist Mouse Key
 drag from a window to another window's modeline."
-  (interactive (hmouse-choose-link-and-referent-windows))
+  (interactive (progn
+		 ;; Clear smart key variables so this does not
+		 ;; improperly reference values left over from a prior
+		 ;; drag or click.
+		 (action-key-clear-variables)
+		 (assist-key-clear-variables)
+		 (append (hmouse-choose-link-and-referent-windows)
+			 current-prefix-arg)))
 
-  (let (but-name but-edit link-types num-types type-and-args lbl-key but-loc but-dir)
+  (let (but-name but-edit link-types num-types type-and-args name-key but-loc but-dir)
     (multiple-value-bind (link-but-window referent-window)
 	(if (and depress-window release-window)
 	    (list depress-window release-window)
@@ -1164,7 +1178,7 @@ drag from a window to another window's modeline."
 	  (setq but-edit t
 		but-loc (hattr:get 'hbut:current 'loc)
 		but-dir (hattr:get 'hbut:current 'dir)
-		lbl-key (hattr:get 'hbut:current 'lbl-key))
+		name-key (ibut:label-to-key (hattr:get 'hbut:current 'name)))
 	(setq but-loc (hui:key-src (current-buffer))
 	      but-dir (hui:key-dir (current-buffer))
 	      ;; Don't prompt to name implicit button
@@ -1176,8 +1190,11 @@ drag from a window to another window's modeline."
 	      ;; 		      (region-beginning) (region-end))))
 	      ;; 	      "link-directly"
 	      ;; 	      "Create button named: ")
-	      ;; lbl-key (hbut:label-to-key but-name)
+	      ;; name-key (hbut:label-to-key but-name)
 	      ))
+      (when name-arg-flag
+	(setq name-key (ibut:label-to-key (hui:hbut-label nil "hui:ibut-link-directly"
+							  "Name for implicit button: "))))
       (select-window referent-window)
       (setq link-types (hui:link-possible-types)
 	    num-types (length link-types))
@@ -1187,7 +1204,7 @@ drag from a window to another window's modeline."
 	     (error "(link-directly): No possible link type to create"))
 	    ((= num-types 1)
 	     (setq type-and-args (hui:list-remove-text-properties (car link-types)))
-	     (hui:ibut-link-create but-edit link-but-window lbl-key but-loc but-dir type-and-args))
+	     (hui:ibut-link-create but-edit link-but-window name-key but-loc but-dir type-and-args))
 	    (t ;; more than 1
 	     (let ((item)
 		   type)
@@ -1211,7 +1228,9 @@ drag from a window to another window's modeline."
 		     type-and-args (hui:list-remove-text-properties type-and-args))
 	       (hui:ibut-link-create
 		but-edit link-but-window
-		lbl-key but-loc but-dir type-and-args))))
+		name-key but-loc but-dir type-and-args))))
+      (with-selected-window referent-window
+	(hmouse-pulse-line))
       (when (called-interactively-p 'interactive)
 	(hui:ibut-message but-edit)))))
 

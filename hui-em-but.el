@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Aug-92
-;; Last-Mod:     23-Apr-23 at 18:53:36 by Mats Lidell
+;; Last-Mod:     21-Jun-23 at 00:22:22 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -307,8 +307,7 @@ hproperty:color-ptr."
 	    (sit-for hproperty:but-flash-time-seconds)) ;; Force display update
 	(hproperty:set-but-face start categ-face)
 	(redisplay t)))
-    (and ibut (not prev) (hproperty:but-clear start))
-    ))
+    (and ibut (not prev) (hproperty:but-clear start))))
 
 (defun hproperty:select-item (&optional pnt)
   "Select item in current buffer at optional position PNT with hproperty:item-face."
@@ -324,10 +323,9 @@ hproperty:color-ptr."
 (defun hproperty:select-line (&optional pnt)
   "Select line in current buffer at optional position PNT with hproperty:item-face."
   (when pnt (goto-char pnt))
-  (save-excursion
-    (beginning-of-line)
-    (hproperty:but-add (point) (progn (end-of-line) (point)) hproperty:item-face))
-  (sit-for 0))  ;; Force display update
+  (hproperty:but-add (line-beginning-position) (line-end-position) hproperty:item-face)
+  ;; Force display update
+  (sit-for 0))
 
 ;;; ************************************************************************
 ;;; Private variables

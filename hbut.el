@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    18-Sep-91 at 02:57:09
-;; Last-Mod:     19-Jun-23 at 00:17:03 by Bob Weiner
+;; Last-Mod:     21-Jun-23 at 21:42:00 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -536,10 +536,10 @@ labels only; optional MATCH-PART enables partial matches."
 							     (point)))
 				       (tag (format "\n%4d:" linenum))
 				       lns start end)
-				  (setq end (progn (end-of-line) (point))
+				  (setq end (line-end-position)
 					start (progn
 						(goto-char (match-beginning 0))
-						(beginning-of-line) (point))
+						(line-beginning-position))
 					lns (buffer-substring start end))
 				  (goto-char end)
 				  (with-current-buffer out-buf
@@ -1624,12 +1624,10 @@ associated arguments from the button."
       (unless (string-match "::" type-name)
 	(setq ibut-type-symbol (intern-soft (concat "ibtypes::" type-name))))
       (when ibut-type-symbol
-	(let ((types (htype:category 'ibtypes))
-	      ;; 'types' is a global var used in (hact) function, don't delete.
-	      (hrule:action 'actype:identity))
+	(let ((hrule:action #'actype:identity))
 	  (funcall ibut-type-symbol))))))
 
-(defun  ibut:set-name-and-label-key-p (&optional start-delim end-delim)
+(defun    ibut:set-name-and-label-key-p (&optional start-delim end-delim)
   "Set ibut name, lbl-key, lbl-start/end attributes in 'hbut:current.
 Point may be on the implicit button text or its optional preceding
 name.  Return t if on a named or delimited text implicit button;
@@ -2301,8 +2299,9 @@ Summary of operations based on inputs:
 	     (when (and start end)
 	       (ibut:delimit start end instance-flag))
 	     (ibut:insert-text 'hbut:current)
-	     (when start
-	       (goto-char start))))
+	     (if start
+		 (goto-char start)
+	       (goto-char (max (- (point) 2) (point-min))))))
 
 	  (t (hypb:error
 	      "(ibut:operate): Operation failed.  Check button attribute permissions: %s"
@@ -2352,7 +2351,8 @@ Summary of operations based on inputs:
 	 (args   (hattr:get ibut 'args))
 	 (arg1   (nth 0 args))
 	 (arg2   (nth 1 args))
-	 (arg3   (nth 2 args)))
+	 (arg3   (nth 2 args))
+	 (arg4   (nth 3 args)))
     (pcase actype
       ('actypes::kbd-key
        (cond ((and (stringp arg1) (string-match "\\s-*{.+}\\s-*" arg1))
@@ -2411,9 +2411,12 @@ Summary of operations based on inputs:
 					       (hpath:substitute-var arg1)
 					       (line-number-at-pos (point) t)
 					       (current-column))))))))
+      ('actypes::link-to-string-match
+       (insert (format "<%s \"%s\" %d \"%s\">" (actype:def-symbol actype) arg1 arg2
+		       (hpath:substitute-var arg3))))
       ('nil (error "(ibut:insert-text): actype must be a Hyperbole actype or Lisp function symbol, not '%s'" orig-actype))
       ;; Generic action button type						      
-      (_ (insert (format "<%s%s%s>" actype (if args " " "")
+      (_ (insert (format "<%s%s%s>" (actype:def-symbol actype) (if args " " "")
 			 (if args (hypb:format-args args) "")))))))
 
 (defun    ibut:previous-occurrence (lbl-key &optional buffer)

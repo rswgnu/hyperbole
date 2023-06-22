@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Oct-96 at 02:25:27
-;; Last-Mod:     14-May-23 at 02:03:53 by Bob Weiner
+;; Last-Mod:     21-Jun-23 at 00:25:45 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -798,7 +798,7 @@ Assume point is before any non-whitespace character on the line."
 This respects the current syntax table definition of whitespace, whereas
 `back-to-indentation' does not.  This is relevant in literate programming and
 mail and news reply modes."
-  (goto-char (min (progn (end-of-line) (point))
+  (goto-char (min (line-end-position)
 		  (progn (beginning-of-line)
 			 (skip-syntax-forward " ")
 			 (point)))))
