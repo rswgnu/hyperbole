@@ -3,7 +3,7 @@
 # Author:       Bob Weiner
 #
 # Orig-Date:    15-Jun-94 at 03:42:38
-# Last-Mod:     13-May-23 at 14:57:28 by Bob Weiner
+# Last-Mod:     22-Jun-23 at 19:23:14 by Mats Lidell
 #
 # Copyright (C) 1994-2023  Free Software Foundation, Inc.
 # See the file HY-COPY for license information.
@@ -304,9 +304,9 @@ bin: src
 	$(RM) *.elc kotl/*.elc
 	$(EMACS_BATCH) -f batch-byte-compile $(EL_KOTL) $(EL_COMPILE)
 
-# Create -l "file.el" load-file command-line args for each Hyperbole .el file for use in
+# Create -l file.el load-file command-line args for each Hyperbole .el file for use in
 # eln native compile target below.
-LOAD_EL = $(shell echo "$(EL_KOTL) $(EL_COMPILE)" | sed - -e 's+ +" -l "./+g' -e 's+^+-l "+')"
+LOAD_EL = $(shell echo "$(EL_KOTL) $(EL_COMPILE)" | sed -e 's+^+./+' -e 's+ + -l ./+g' -e 's+^+-l +')
 
 load-hyperbole:
 	$(EMACS_BATCH) \
