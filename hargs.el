@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    31-Oct-91 at 23:17:35
-;; Last-Mod:     10-Jul-23 at 18:26:29 by Mats Lidell
+;; Last-Mod:     11-Jul-23 at 10:36:27 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -33,6 +33,7 @@
 (require 'hypb)
 (require 'set)
 (require 'info)
+(require 'hmouse-drv)
 
 ;;; ************************************************************************
 ;;; Public variables
