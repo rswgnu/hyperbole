@@ -1625,12 +1625,8 @@ associated arguments from the button."
       (unless (string-match "::" type-name)
 	(setq ibut-type-symbol (intern-soft (concat "ibtypes::" type-name))))
       (when ibut-type-symbol
-	(let (;; (types (htype:category 'ibtypes))
+	(let ((types (htype:category 'ibtypes))
 	      ;; 'types' is a global var used in (hact) function, don't delete.
-	      ;; FIXME: I can't see where `types' is used as a global var
-	      ;; "in (hact) function", and the above binding was treated
-	      ;; by Emacs as lexically-scoped so it wasn't affecting any
-	      ;; other global `types' definition anyway.
 	      (hrule:action 'actype:identity))
 	  (funcall ibut-type-symbol))))))
 
