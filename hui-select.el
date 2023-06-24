@@ -366,35 +366,33 @@ Also, add language-specific syntax setups to aid in thing selection."
   ;;
   ;; Make tag begin and end delimiters act like grouping characters,
   ;; for easy syntactical selection of tags.
-  (dolist (mode hui-select-markup-modes)
-    (let* ((mode-str (symbol-name mode))
-           (hook-sym (intern (concat mode-str "-hook")))
-           (syntax-table-sym (intern (concat mode-str "-syntax-table")))
-           (keymap-sym (intern (concat mode-str "-map"))))
-      ;; FIXME: Don't add lambdas to hooks.  Instead give names to
-      ;; those functions and add the symbol to the hook.  Makes it
-      ;; easier/possible to remove/update the function on the hook.
-      (var:add-and-run-hook hook-sym
-			    (lambda ()
-                              (let ((syntax-table (symbol-value syntax-table-sym))
-                                    (keymap (symbol-value keymap-sym)))
-			        (modify-syntax-entry ?\< "(>" syntax-table)
-			        (modify-syntax-entry ?\> ")<" syntax-table)
-			        (modify-syntax-entry ?\{ "(}" syntax-table)
-			        (modify-syntax-entry ?\} "){" syntax-table)
-			        (modify-syntax-entry ?\" "\"" syntax-table)
-			        (modify-syntax-entry ?=  "."  syntax-table)
-			        (modify-syntax-entry ?.  "_"  syntax-table)
-			        (setq sentence-end "\\([^ \t\n\r>]<\\|>\\(<[^>]*>\\)*\\|[.?!][]\"')}]*\\($\\| $\\|\t\\|  \\)\\)[ \t\n]*")
-			        (define-key keymap "\C-c." #'hui-select-goto-matching-tag))))
-      (unless (eq mode 'web-mode)
-        (var:add-and-run-hook
-         hook-sym (lambda ()
-		    ;; FIXME: Why not rely on the major mode's own settings?
-		    (make-local-variable 'comment-end) ;FIXME: Why?
-		    (setq-local comment-start "<!--" comment-end "-->")
-		    (make-local-variable 'sentence-end) ;FIXME: Why?
-		    ))))))
+  (let (hook-sym mode-str)
+    (mapc (lambda (mode)
+            (setq mode-str (symbol-name mode)
+                  hook-sym (intern (concat mode-str "-hook"))
+                  syntax-table-sym (intern (concat mode-str "-syntax-table"))
+                  keymap-sym (intern (concat mode-str "-map")))
+            (var:add-and-run-hook hook-sym
+			          `(lambda ()
+                                     (let ((syntax-table (symbol-value ',syntax-table-sym))
+                                           (keymap (symbol-value ',keymap-sym)))
+			               (modify-syntax-entry ?\< "(>" syntax-table)
+			               (modify-syntax-entry ?\> ")<" syntax-table)
+			               (modify-syntax-entry ?\{ "(}" syntax-table)
+			               (modify-syntax-entry ?\} "){" syntax-table)
+			               (modify-syntax-entry ?\" "\"" syntax-table)
+			               (modify-syntax-entry ?=  "."  syntax-table)
+			               (modify-syntax-entry ?.  "_"  syntax-table)
+			               (setq sentence-end "\\([^ \t\n\r>]<\\|>\\(<[^>]*>\\)*\\|[.?!][]\"')}]*\\($\\| $\\|\t\\|  \\)\\)[ \t\n]*")
+			               (define-key keymap "\C-c." 'hui-select-goto-matching-tag))))
+            (unless (eq mode 'web-mode)
+              (var:add-and-run-hook
+               hook-sym (lambda ()
+			  (make-local-variable 'comment-start)
+			  (make-local-variable 'comment-end)
+			  (setq comment-start "<!--" comment-end "-->")
+			  (make-local-variable 'sentence-end)))))
+          hui-select-markup-modes)))
 
 (defun hui-select-get-region-boundaries ()
   "Return the (START . END) boundaries of region for `hui-select-thing'."
