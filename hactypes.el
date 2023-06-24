@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    23-Sep-91 at 20:34:36
-;; Last-Mod:     10-Jun-23 at 21:13:02 by Bob Weiner
+;; Last-Mod:     24-Jun-23 at 09:44:22 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -32,7 +32,7 @@
 ;;; Standard Hyperbole action types
 ;;; ************************************************************************
 
-(defact annot-bib (key) ;; FIXME: Clean up namespace use!
+(defact annot-bib (key)
   "Follow internal ref KEY within an annotated bibliography, delimiters=[]."
   (interactive "sReference key (no []): ")
   (let* ((key-regexp (concat "^[*]*[ \t]*\\[" (ebut:key-to-label key) "\\]"))
