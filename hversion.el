@@ -4,7 +4,7 @@
 ;; Maintainer:   Bob Weiner, Mats Lidell
 ;;
 ;; Orig-Date:     1-Jan-94
-;; Last-Mod:     27-May-23 at 12:17:40 by Bob Weiner
+;; Last-Mod:     24-Jun-23 at 13:10:56 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -50,8 +50,7 @@ your specific mouse.")
   "Return first part of the term-type if running under a window system, else nil.
 Where a part in the term-type is delimited by a `-' or  an `_'."
   (unless frame (setq frame (selected-frame)))
-  ;; FIXME: Do we still care about XEmacs's `device-type'?
-  (let* ((display-type (if (fboundp 'device-type) (device-type) window-system))
+  (let* ((display-type window-system)
 	 (term (cond ((or (memq display-type '(x gtk mswindows win32 w32 ns dps pm))
 			  ;; May be a graphical client spawned from a
 			  ;; dumb terminal Emacs, e.g. under X, so if
@@ -60,7 +59,7 @@ Where a part in the term-type is delimited by a `-' or  an `_'."
 			  (display-mouse-p))
 		      ;; X11, macOS, NEXTSTEP (DPS), or OS/2 Presentation Manager (PM)
 		      "emacs")
-		     ;; FIXME: Do we still care about NeXT?
+		     ;; Keep NeXT as basis for 2-button mouse support
 		     ((or (featurep 'eterm-fns)
 			  (equal (getenv "TERM") "NeXT")
 			  (equal (getenv "TERM") "eterm"))
