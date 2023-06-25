@@ -25,6 +25,12 @@
 
 * Makefile (LOAD_EL): Avoid the trailing quotation mark.
 
+2023-06-22  Mats Lidell  <matsl@gnu.org>
+
+* test/demo-tests.el (hypb-should-browse-demo-was-called) Add check that
+    url was called.
+    (demo-www-test-with-quotes): Test for url in quotes.
+
 2023-06-22  Bob Weiner  <rsw@gnu.org>
 
 * man/hyperbole.texi (By Menu): Add section similar to that of Ibuts, documenting

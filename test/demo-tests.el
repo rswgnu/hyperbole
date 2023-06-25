@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    30-Jan-21 at 12:00:00
-;; Last-Mod:     19-Feb-23 at 23:16:00 by Mats Lidell
+;; Last-Mod:     22-Jun-23 at 20:35:55 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -307,9 +307,12 @@
         (should (string= "*mail*" (buffer-name))))
     (hy-test-helpers:kill-buffer "*mail*")))
 
+(defvar hypb-should-browse-demo-was-called nil
+  "If non nil if the should-browse function was called.")
 
 (defun demo-should-browse-twitter-url (url &optional new-window)
   "Verify call with proper URL and optional NEW-WINDOW."
+  (setq hypb-should-browse-demo-was-called t)
   (should (equal url "https://twitter.com/search?q=@fsf"))
   (should (equal new-window nil)))
 
@@ -318,12 +321,14 @@
   (with-temp-buffer
     (insert "tw@fsf")
     (goto-char 2)
-    (let ((browse-url-browser-function 'demo-should-browse-twitter-url))
-      (action-key))))
-
+    (let ((browse-url-browser-function 'demo-should-browse-twitter-url)
+          (hypb-should-browse-demo-was-called nil))
+      (action-key)
+      (should hypb-should-browse-demo-was-called))))
 
 (defun demo-should-browse-github-url (url &optional new-window)
   "Verify call with proper URL and optional NEW-WINDOW."
+  (setq hypb-should-browse-demo-was-called t)
   (should (equal url "https://github.com/rswgnu/hyperbole"))
   (should (equal new-window nil)))
 
@@ -333,8 +338,24 @@
     (insert "https://github.com/rswgnu/hyperbole")
     (goto-char 4)
     (let ((browse-url-browser-function 'demo-should-browse-github-url)
-          (hibtypes-github-default-user "rswgnu"))
-      (action-key))))
+          (hibtypes-github-default-user "rswgnu")
+          (hypb-should-browse-demo-was-called nil))
+      (action-key)
+      (should hypb-should-browse-demo-was-called))))
+
+(ert-deftest demo-www-test-with-quotes ()
+  (let ((file (make-temp-file "hypb_" nil)))
+    (unwind-protect
+        (progn
+          (find-file file)
+          (insert "\"https://github.com/rswgnu/hyperbole\"")
+          (goto-char 4)
+          (let ((browse-url-browser-function 'demo-should-browse-github-url)
+                (hibtypes-github-default-user "rswgnu")
+                (hypb-should-browse-demo-was-called nil))
+            (action-key)
+            (should hypb-should-browse-demo-was-called)))
+      (hy-delete-file-and-buffer file))))
 
 ;; Github
 (ert-deftest demo-github-user-default-test ()
@@ -342,16 +363,20 @@
     (insert "gh#/hyperbole")
     (goto-char 4)
     (let ((browse-url-browser-function 'demo-should-browse-github-url)
-          (hibtypes-github-default-user "rswgnu"))
-      (action-key))))
+          (hibtypes-github-default-user "rswgnu")
+          (hypb-should-browse-demo-was-called nil))
+      (action-key)
+      (should hypb-should-browse-demo-was-called))))
 
 (ert-deftest demo-github-ignore-default-test ()
   (with-temp-buffer
     (insert "gh#/rswgnu/hyperbole")
     (goto-char 4)
     (let ((browse-url-browser-function 'demo-should-browse-github-url)
-          (hibtypes-github-default-user "whatever"))
-      (action-key))))
+          (hibtypes-github-default-user "whatever")
+          (hypb-should-browse-demo-was-called nil))
+      (action-key)
+      (should hypb-should-browse-demo-was-called))))
 
 ;; Occur
 (ert-deftest demo-occur-test ()
