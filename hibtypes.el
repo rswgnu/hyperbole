@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 20:45:31
-;; Last-Mod:     25-Jun-23 at 10:09:04 by Mats Lidell
+;; Last-Mod:     25-Jun-23 at 16:36:20 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -255,8 +255,7 @@ display options."
           (cond ((and (string-match hpath:path-variable-regexp path)
 		      (setq path (match-string 1 path))
 		      (hpath:is-path-variable-p path))
-		 (setq path (if (or assist-flag
-				    (bound-and-true-p hkey--within-help))
+		 (setq path (if (or assist-flag (hyperb:stack-frame '(hkey-help)))
 				path
 			      (hpath:choose-from-path-variable path "Display")))
 		 (unless (or (null path) (string-blank-p path)
@@ -360,7 +359,6 @@ in all buffers."
 
 ;; Org links in Org mode are handled at the highest priority; see the last
 ;; section at the end of this file.
-(defvar hibtypes--within-org-link-outside-org-mode nil)
 
 (defib org-link-outside-org-mode ()
   "Follow an Org link in a non-Org mode buffer.

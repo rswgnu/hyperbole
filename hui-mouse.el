@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    04-Feb-89
-;; Last-Mod:     25-Jun-23 at 10:10:02 by Mats Lidell
+;; Last-Mod:     25-Jun-23 at 16:36:39 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -144,6 +144,8 @@ Its default value is `smart-scroll-down'.  To disable it, set it to
 (defvar magit-root-section)
 (defvar magit-display-buffer-function)
 
+(declare-function -flatten "ext:dash")
+
 (declare-function imenu--make-index-alist "imenu")
 
 (declare-function image-dired-thumbnail-display-external "image-dired")
@@ -159,7 +161,7 @@ Its default value is `smart-scroll-down'.  To disable it, set it to
 (declare-function helm-pos-header-line-p "ext:helm")
 (declare-function helm-resume "ext:helm")
 (declare-function helm-window "ext:helm-lib")
-;;(declare-function with-helm-buffer "ext:helm-lib")
+(declare-function with-helm-buffer "ext:helm-lib")
 (defvar helm-action-buffer)
 (defvar helm-alive-p)
 (defvar helm-buffer)
@@ -186,12 +188,6 @@ Its default value is `smart-scroll-down'.  To disable it, set it to
 (declare-function unix-apropos-get-man "ext:man-apropos")
 
 ;;; ************************************************************************
-;;; Private variables
-;;; ************************************************************************
-
-(defvar hyp--within-smart-org nil)
-
-;;; ************************************************************************
 ;;; Hyperbole context-sensitive keys dispatch table
 ;;; ************************************************************************
 
@@ -207,7 +203,7 @@ Its default value is `smart-scroll-down'.  To disable it, set it to
     ;;
     ;; Handle any Org mode-specific contexts but give priority to Hyperbole
     ;; buttons prior to cycling Org headlines
-    ((and (not hyp--within-smart-org)
+    ((and (not (hyperb:stack-frame '(smart-org)))
 	  (let ((hrule:action #'actype:identity))
 	    (smart-org)))
      . ((smart-org) . (smart-org)))
@@ -1755,9 +1751,8 @@ will invoke `org-meta-return'.
 
 Org links may be used outside of Org mode buffers.  Such links are
 handled by the separate implicit button type, `org-link-outside-org-mode'."
-  (let ((hyp--within-smart-org t)
-        start-end)
-    (when (funcall hsys-org-mode-function)
+  (when (funcall hsys-org-mode-function)
+    (let (start-end)
       (cond ((not hsys-org-enable-smart-keys)
 	     (when (hsys-org-meta-return-shared-p)
 	       (hact 'hsys-org-meta-return))

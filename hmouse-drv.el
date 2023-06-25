@@ -87,10 +87,6 @@ This is set to nil when the depress is on an inactive minibuffer.")
 (defvar assist-key-release-position nil
   "The last mouse screen position at which the Assist Key was released or nil.")
 
-(defvar hui--ignore-action-key-depress-prev-point nil
-  "Don't use `action-key-depress-prev-point'.
-Currently only affects `*but:operate'.")
-
 (defvar action-key-depress-prev-point nil
   "Marker at point prior to last Action Key depress.
 Note that this may be a buffer different than where the depress occurs.")
@@ -1018,16 +1014,13 @@ predicate is found."
 	(setq hkey-forms (cdr hkey-forms))))
     pred-value))
 
-(defvar hkey--within-help nil)
-
 (defun hkey-help (&optional assisting)
   "Display help for the Action Key command in current context.
 With optional ASSISTING prefix arg non-nil, display help for the
 Assist Key command.  Return non-nil iff associated help
 documentation is found."
   (interactive "P")
-  (let* ((hkey--within-help t)
-	 (mouse-flag (when (mouse-event-p last-command-event)
+  (let* ((mouse-flag (when (mouse-event-p last-command-event)
 		       (or action-key-depress-position assist-key-depress-position)))
 	 (mouse-drag-flag (hmouse-drag-p))
 	 (hkey-forms (if mouse-flag hmouse-alist hkey-alist))
