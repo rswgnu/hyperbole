@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    24-Aug-91
-;; Last-Mod:     10-Jun-23 at 18:00:52 by Bob Weiner
+;; Last-Mod:     19-Jun-23 at 12:54:03 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -386,11 +386,11 @@ If:
   ;; buffers, debugger buffers, program ChangeLog buffers, Help buffers,
   ;; *Warnings*, *Flymake log* and *Flymake diagnostics... buffers.
   (or (memq major-mode #'(emacs-lisp-mode lisp-interaction-mode debugger-mode))
-      (string-match (concat "\\`\\*\\(Warnings\\|Flymake log\\|Compile-Log\\(-Show\\)?\\)\\*"
-			    "\\|\\`\\*Flymake diagnostics")
-			    (buffer-name))
+      (string-match-p (concat "\\`\\*\\(Warnings\\|Flymake log\\|Compile-Log\\(-Show\\)?\\)\\*"
+			      "\\|\\`\\*Flymake diagnostics")
+		      (buffer-name))
       (and (or (memq major-mode #'(help-mode change-log-mode))
-	       (string-match "\\`\\*Help\\|Help\\*\\'" (buffer-name)))
+	       (string-match-p "\\`\\*Help\\|Help\\*\\'" (buffer-name)))
 	   (smart-lisp-at-known-identifier-p))))
 
 (defun smart-fortran (&optional identifier next)
@@ -1160,7 +1160,7 @@ known Emacs Lisp identifier."
 		 (when (cdr result)
 		   tag))))
 	    ;; This part only works properly for Emacs Lisp, so is conditionalized.
-	    (and tag (smart-tags-find-p tag) tag)))))
+	    ((and tag (smart-tags-find-p tag) tag))))))
 
 (defun smart-lisp-bound-symbol-def (tag-sym)
   "Return a pair (buffer . point) where TAG-SYM is defined, else nil.

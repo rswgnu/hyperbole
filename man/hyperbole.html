@@ -4,7 +4,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <!-- This manual is for GNU Hyperbole
-(Edition 8.0.1pre, Published May, 2023).
+(Edition 8.0.1pre, Published June, 2023).
 
 Copyright © 1989-2023  Free Software Foundation, Inc.
 
@@ -107,7 +107,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</P>
 
 <PRE>
 Edition 8.0.1pre
-Printed May 13, 2023.
+Printed June 22, 2023.
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -863,8 +863,8 @@ Hyperbole
   On a minibuffer menu item     Activates item             Item help
   On an explicit button         Activates button           Button help
   Reading argument
-    1st press at an arg value   Value copied to minibuffer &lt;- same
-    2nd press at an arg value   Value used as argument     &lt;- same
+    1st press at an arg value   Copies value to minibuffer &lt;- same
+    2nd press at an arg value   Uses value as argument     &lt;- same
     In minibuffer               Accepts minibuffer arg     Completion help
   On an implicit button/path    Activates button           Button help
   Within a koutline cell        Collapses and expands      Shows tree props
@@ -886,7 +886,7 @@ Mouse-only Control
     string, list or markup
     language tag pair
 
-  Drag from bottom Modeline     Reposition frame as        &lt;- same
+  Drag from bottom Modeline     Repositions frame as       &lt;- same
   in frame with non-nil         drag happens
   drag-with-mode-line param
 
@@ -898,31 +898,31 @@ Mouse-only Control
     another window                with source buffer
 
   Drag to a Modeline from:
-    buffer/file menu item       Displays buffer/file in    Swaps window buffers
-                                  new window by release
+    but/buffer/file menu item   Displays ref/buffer/file   Swaps window buffers
+                                  in new window by release
     buffer/file menu 1st line   Moves buffer/file menu to  Swaps window buffers
                                   new window by release
     anywhere else               Displays buffer in         Swaps window buffers
                                   new window by release
 
   Drag between windows from:
-    buffer/file menu item       Displays buffer/file in    Swaps window buffers
-                                  window of button release 
-    buffer/file menu 1st line   Moves buffer/file menu     Swaps window buffers
-    anywhere else               Creates/modifies a link    Swaps window buffers
+    but/buffer/file menu item   Displays ref/buffer/file   &lt;- same
+                                  in window of button release 
+    buffer/file menu 1st line   Moves buffer/file menu     &lt;- same
+    anywhere else               Creates an ebut link       Creates an ibut link
 
   Drag outside of Emacs from:
-    buffer/file menu item       Displays buffer/file in    Moves window to new frame
-                                  a new frame
+    but/buffer/file menu item   Displays ref/buffer/file   Moves window to new frame
+                                  in a new frame
     Modeline or other window    Clones window to new frame Moves window to new frame
 
   Modeline Click
     Left modeline edge          Buries current buffer      Unburies bottom buffer
-    Right modeline edge         Info manual browser        Smart Key summary
-    Buffer ID                   Dired on buffer's dir      Next buffer
+    Right modeline edge         Displays GNU Info manuals  Displays Smart Key summary
+    Buffer ID                   Dired on buffer's dir      Displays next buffer
                                   or on parent when a dir
     Other blank area            Action Key modeline hook   Assist Key modeline hook
-                                  Shows/Hides Buffer Menu    Popup Jump &amp; Manage Menu
+                                  Shows/Hides Buffer Menu    Popups Jump &amp; Manage Menu
 
   Drag in window, region active Error, not allowed         Error, not allowed
   Horizontal drag in a window   Splits window below        Deletes window
@@ -939,16 +939,16 @@ Hyperbole Key Press/Click in Special Modes
   Treemacs                      Displays item              Displays item
   Dired Sidebar                 Displays item              Displays item
   Emacs Push Button             Activates button           Button help
-  Emacs Regression Test Def     Eval and run test          Edebug and run test
-  Thing Begin or End            Mark thing region          Mark &amp; kill thing region
+  Emacs Regression Test Def     Evals and runs test        Edebugs and runs test
+  Thing Begin or End            Marks thing region         Marks &amp; kills thing region
   Page Directory Listing        Jumps to page              &lt;- same
-  Imenu Programming Identifier  Jumps to in-buffer def     Prompts for id to jump to
   C,C++,Objective-C,Java Modes  Jumps to id/include def    Jumps to next def
   Assembly Language Mode        Jumps to id/include def    Jumps to next def
   Java Cross-reference Tag      Jumps to identifier def    Jumps to next def
   JavaScript and Python Modes   Jumps to identifier def    Jumps to next def
   Any Known Lisp or ChangeLog   Jumps to identifier def    Referent Doc
   Fortran Mode                  Jumps to identifier def    Jumps to next def
+  Imenu Programming Identifier  Jumps to in-buffer def     Prompts for id to jump to
   Emacs Lisp Compiler Error     Jumps to def with error    &lt;- same
   Emacs Regression Test (ERT)   Jumps to def with error    &lt;- same
   Other Compiler Error          Jumps to src error line    &lt;- same
@@ -969,14 +969,14 @@ Hyperbole Key Press/Click in Special Modes
   Man Apropos                   Displays man page entry    &lt;- same
   Man Pages                     Follows cross refs, file refs and C code refs
   I/Buffer Menu                 Saves, deletes and displays buffers
-  Todotxt Mode                  Toggle item completion     Edit and archive items
+  Todotxt Mode                  Toggles item completion    Edit and archive items
 
 Emacs Info Reader
-  Menu Entry or Cross Ref       To referent                &lt;- same
-  Up, Next or Prev Header       To referent                To prior node
-  File entry of Header          To top node                To (DIR) node
-  End of current node           To next node               To previous node
-  Anywhere else                 Scrolls up a windowful     Scrolls wind down
+  Menu Entry or Cross Ref       Jumps to referent          &lt;- same
+  Up, Next or Prev Header       Jumps to referent          Jumps to prior node
+  File entry of Header          Jumps to top node          Jumps to (DIR) node
+  End of current node           Jumps to next node         Jumps to previous node
+  Anywhere else                 Scrolls up a windowful     Scrolls down a windowful
 
 Subsystems
   Calendar                      Scrolls or shows appts     Scrolls/marks date
@@ -1482,15 +1482,16 @@ Previous: <a href="#Moving-Frames" accesskey="p" rel="prev">Moving Frames</a>, U
 <h4 class="subsection" id="Dragging-Buffers_002c-Windows-and-Items">3.7.5 Dragging Buffers, Windows and Items</h4>
 
 <p>Smart Mouse Key drags let you display buffers and windows however you want
-them.  Dired and buffer-menu items may also be displayed in specific
-locations with drags.  Below we explore these drag actions.
+them.  Dired, Treemacs and buffer-menu items as well as Hyperbole button
+referents may be displayed in specific locations with drags.  Below
+we explore these drag actions.
 </p>
 
 <ul class="mini-toc">
 <li><a href="#Swapping-Buffers" accesskey="1">Swapping Buffers</a></li>
 <li><a href="#Displaying-Buffers" accesskey="2">Displaying Buffers</a></li>
 <li><a href="#Cloning-Windows" accesskey="3">Cloning Windows</a></li>
-<li><a href="#Displaying-File-and-Buffer-Items" accesskey="4">Displaying File and Buffer Items</a></li>
+<li><a href="#Displaying-Items" accesskey="4">Displaying Items</a></li>
 <li><a href="#Keyboard-Drags" accesskey="5">Keyboard Drags</a></li>
 </ul>
 <hr>
@@ -1506,15 +1507,16 @@ Next: <a href="#Displaying-Buffers" accesskey="n" rel="next">Displaying Buffers<
 <a class="index-entry-id" id="index-buffer_002c-swap"></a>
 <a class="index-entry-id" id="index-drag_002c-buffer-swap"></a>
 <p>Swapping buffer locations is quick and easy with Hyperbole.  Simply drag
-from one window to another with the Assist Key (not the Action Key).  This
-works across frames as well.
+the Assist Mouse Key (not the Action Key) from the open area of one
+window&rsquo;s modeline to the text area of another.  This works across frames
+as well.
 </p>
-<p>If you have just two windows in an Emacs frame, you can swap their
-buffers from the keyboard.  Use this Hyperbole minibuffer menu key
-sequence involving the tilde key to swap the buffers and quit from the
-Hyperbole minibuffer menu: <kbd class="kbd">{C-h h s w ~ Q}</kbd>.  Similarly, if you
-have two single window frames, you can swap buffers between them with
-<kbd class="kbd">{C-h h s f ~ Q}</kbd>.
+<p>If you have just two windows in an Emacs frame, you can swap their buffers
+from the keyboard.  Use this Hyperbole minibuffer menu key sequence
+involving the tilde key to swap the buffers and quit from the Hyperbole
+minibuffer menu: <kbd class="kbd">{C-h h s w ~ Q}</kbd>.  Similarly, if you have two single
+window frames, you can swap buffers between them with <kbd class="kbd">{C-h h s f ~
+Q}</kbd>.
 </p>
 <hr>
 </div>
@@ -1533,16 +1535,17 @@ buffers?  Depress the Action Mouse Key in the open area of the modeline of
 the source window and drag to the text area of the destination window.
 Voila, the buffer appears in the new location as well as the old one.
 </p>
-<p>If you want a new window where you release (so the original destination
-window&rsquo;s buffer stays onscreen), just drag to a window&rsquo;s modeline; that
-window will be split before the buffer is displayed.
+<p>If you want a new window where you release (so the original
+destination window&rsquo;s buffer stays onscreen), just drag to the release
+window&rsquo;s modeline; that window will be split before the buffer is
+displayed.
 </p>
 <hr>
 </div>
 <div class="subsubsection-level-extent" id="Cloning-Windows">
 <div class="nav-panel">
 <p>
-Next: <a href="#Displaying-File-and-Buffer-Items" accesskey="n" rel="next">Displaying File and Buffer Items</a>, Previous: <a href="#Displaying-Buffers" accesskey="p" rel="prev">Displaying Buffers</a>, Up: <a href="#Dragging-Buffers" accesskey="u" rel="up">Dragging Buffers, Windows and Items</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Key-Index" title="Index" rel="index">Index</a>]</p>
+Next: <a href="#Displaying-Items" accesskey="n" rel="next">Displaying Items</a>, Previous: <a href="#Displaying-Buffers" accesskey="p" rel="prev">Displaying Buffers</a>, Up: <a href="#Dragging-Buffers" accesskey="u" rel="up">Dragging Buffers, Windows and Items</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Key-Index" title="Index" rel="index">Index</a>]</p>
 </div>
 <h4 class="subsubsection" id="Cloning-Windows-1">3.7.5.3 Cloning Windows</h4>
 
@@ -1557,41 +1560,46 @@ unless it is the only window in that frame.
 </p>
 <hr>
 </div>
-<div class="subsubsection-level-extent" id="Displaying-File-and-Buffer-Items">
+<div class="subsubsection-level-extent" id="Displaying-Items">
 <div class="nav-panel">
 <p>
 Next: <a href="#Keyboard-Drags" accesskey="n" rel="next">Keyboard Drags</a>, Previous: <a href="#Cloning-Windows" accesskey="p" rel="prev">Cloning Windows</a>, Up: <a href="#Dragging-Buffers" accesskey="u" rel="up">Dragging Buffers, Windows and Items</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Key-Index" title="Index" rel="index">Index</a>]</p>
 </div>
-<h4 class="subsubsection" id="Displaying-File-and-Buffer-Items-1">3.7.5.4 Displaying File and Buffer Items</h4>
+<h4 class="subsubsection" id="Displaying-Items-1">3.7.5.4 Displaying Items</h4>
 
 <a class="index-entry-id" id="index-dired-item-drag"></a>
 <a class="index-entry-id" id="index-buffer-menu-item-drag"></a>
 <a class="index-entry-id" id="index-Treemacs-item-drag"></a>
+<a class="index-entry-id" id="index-Hyperbole-button-drag"></a>
+<a class="index-entry-id" id="index-drag_002c-Hyperbole-button-referent"></a>
 <a class="index-entry-id" id="index-drag_002c-dired-item"></a>
 <a class="index-entry-id" id="index-drag_002c-buffer-menu-item"></a>
 <a class="index-entry-id" id="index-drag_002c-Treemacs-item"></a>
-<p>You can also drag items to other windows with the Action Key in Dired,
-Buffer Menu, Ibuffer and Treemacs listing buffers, rather than the
-buffers themselves.  Drag with the Action Mouse Key and the selected
-item will be displayed in any Emacs window in which you release.  Drag
-outside Emacs and it will be displayed in a new frame.  To display the
-last item you want within the listing window itself, press and release
-the Action Key on that item after dragging your other items to their
-respective windows.  Remember that you can emulate these drags from
-the keyboard when needed, see <a class="pxref" href="#Keyboard-Drags">Keyboard Drags</a>.
+<p>You can also drag items to other windows with the Action or Assist Mouse
+Keys in Dired, Buffer Menu, Ibuffer and Treemacs listing buffers, rather
+than the buffers themselves.  Dragging Hyperbole buttons to display their
+referents in another window works too.
+</p>
+<p>Drag with the Action or Assist Mouse Key and the selected item&rsquo;s referent
+will be displayed in any Emacs window in which you release.  Drag outside
+Emacs and it will be displayed in a new frame.  To display the last item
+you want within the listing window itself, press and release the Action
+Key on that item after dragging your other items to their respective
+windows.  Remember that you can emulate these drags from the keyboard when
+needed, see <a class="pxref" href="#Keyboard-Drags">Keyboard Drags</a>.
 </p>
 <p>So now you can put a bunch of buffers and files on your screen wherever
-you like.  Typically, a brief visual pulse is shown first at the source item and
-then in the destination window, to help you see that the transfer has been
-made.  An Assist Key Drag will move the the item list buffer to the
-destination (swapping buffers), just as it does with other buffers.
+you like.  Typically, a brief visual pulse is shown first at the source
+item and then in the destination window, to help you see that the transfer
+has been made.  An Assist Key Drag will move the the item list buffer to
+the destination (swapping buffers), just as it does with other buffers.
 </p>
 <hr>
 </div>
 <div class="subsubsection-level-extent" id="Keyboard-Drags">
 <div class="nav-panel">
 <p>
-Previous: <a href="#Displaying-File-and-Buffer-Items" accesskey="p" rel="prev">Displaying File and Buffer Items</a>, Up: <a href="#Dragging-Buffers" accesskey="u" rel="up">Dragging Buffers, Windows and Items</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Key-Index" title="Index" rel="index">Index</a>]</p>
+Previous: <a href="#Displaying-Items" accesskey="p" rel="prev">Displaying Items</a>, Up: <a href="#Dragging-Buffers" accesskey="u" rel="up">Dragging Buffers, Windows and Items</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Key-Index" title="Index" rel="index">Index</a>]</p>
 </div>
 <h4 class="subsubsection" id="Keyboard-Drags-1">3.7.5.5 Keyboard Drags</h4>
 
@@ -1699,11 +1707,13 @@ trigger an error
 <dt>M-o t &lt;window&gt;</dt>
 <dd><p>throw region, listing item at point, or current buffer to &lt;window&gt;
 </p>
+<a class="index-entry-id" id="index-hui_003aebut_002dlink_002ddirectly"></a>
 </dd>
 <dt>M-o w &lt;window&gt;</dt>
 <dd><p>window link, create a new explicit button in the selected (current)
-window, linking to point in the referent &lt;window&gt;, with the link type
-determined by the referent context via <code class="code">hui:link-directly</code>.
+window, linking to point in the referent &lt;window&gt;.
+<code class="code">hui:ebut-link-directly</code> determines the link type by using the
+referent context.
 </p></dd>
 </dl>
 
@@ -1826,22 +1836,20 @@ Spacing between words within a button label is irrelevant to Hyperbole.
 Button labels may wrap across several lines without causing a problem;
 just be sure to select the first line of the button to activate it.
 </p>
-<p>Explicit buttons may be added to any editable buffer including
-temporary buffers without any attached files (such buttons will
-last only the length of a single Emacs session).  For source code
-files, simply place Hyperbole explicit buttons within comments.
-Buttons that you use for quick navigation to websites or other things
-you do often should be added to your personal button file.
-See <a class="xref" href="#Button-Files">Button Files</a>.
+<p>Explicit buttons may be added to any editable buffer including temporary
+buffers without any attached files (such buttons will last only the
+length of a single Emacs session).  For source code files, simply place
+Hyperbole explicit buttons within comments.  Buttons that you use for
+quick navigation to websites or other things you do often should be
+added to your personal button file.  See <a class="xref" href="#Button-Files">Button Files</a>.
 </p>
 <a class="index-entry-id" id="index-button_002c-moving"></a>
 <a class="index-entry-id" id="index-moving-buttons"></a>
 <p>Explicit buttons may be freely moved about within the buffer in which
 they are created.  (No present support exists for moving buttons between
-buffers; support the Hyperbole project if you would like to help make
-this happen).  A single button may also appear multiple times within the
-same buffer; simply copy the button label with its delimiters
-to a new location if you need another copy of it.
+buffers).  A single button may also appear multiple times within the
+same buffer; simply copy the button label with its delimiters to a new
+location if you need another copy of it.
 </p>
 <p>For details on how to create, activate, delete or edit explicit
 buttons, see <a class="pxref" href="#Utilizing-Explicit-Buttons">Utilizing Explicit Buttons</a>.
@@ -1966,29 +1974,63 @@ directory, typically in another window.  An explicit button could do
 the same thing but has to be created manually, rather than recognized
 as part of the buffer text.
 </p>
-<a class="index-entry-id" id="index-C_002dh-h-i"></a>
-<a class="index-entry-id" id="index-activating-implicit-button"></a>
-<a class="index-entry-id" id="index-menu-item_002c-Ibut_002fAct"></a>
+<a class="index-entry-id" id="index-link-creation"></a>
+<a class="index-entry-id" id="index-creating-implicit-links"></a>
+<a class="index-entry-id" id="index-implicit-button-creation"></a>
 <a class="index-entry-id" id="index-menu_002c-Ibut"></a>
 <a class="index-entry-id" id="index-menu_002c-Implicit_002dButton"></a>
-<a class="index-entry-id" id="index-menu_002c-Ibut_002fActivate"></a>
-<a class="index-entry-id" id="index-menu_002c-Ibut_002fCreate"></a>
-<a class="index-entry-id" id="index-menu_002c-Ibut_002fEdit"></a>
-<a class="index-entry-id" id="index-menu_002c-Ibut_002fLabel"></a>
-<a class="index-entry-id" id="index-C_002dh-h-i-a"></a>
+<a class="index-entry-id" id="index-menu-item_002c-Ibut_002fCreate"></a>
+<a class="index-entry-id" id="index-menu-item_002c-Ibut_002fEdit"></a>
+<a class="index-entry-id" id="index-C_002dh-h-i"></a>
 <a class="index-entry-id" id="index-C_002dh-h-i-c"></a>
 <a class="index-entry-id" id="index-C_002dh-h-i-e"></a>
-<a class="index-entry-id" id="index-C_002dh-h-i-l"></a>
 <p>Implicit buttons are managed with the Hyperbole Ibut/ menu accessed
 with <kbd class="kbd">{C-h h i}</kbd>.  The Create item, <kbd class="kbd">{C-h h i c}</kbd>, prompts for
-an implicit button label, an action type, and the action&rsquo;s associated
-arguments, such as a file to which to link.  It then creates the
-button at point.  To activate the button with point on its label or
-button text, use the Act menu item, <kbd class="kbd">{C-h h i a}</kbd> or press the
-Action Key.  You can use <kbd class="kbd">{C-h h i e}</kbd> to edit an implicit button
-(or simply edit it manually).  If you want to add a label to an
-existing implicit button without one, use <kbd class="kbd">{C-h h i l}</kbd> to label
-it.
+an implicit button name (default is any selected region), an action
+type, and the action&rsquo;s associated arguments.  It then creates the
+button at point.  Use this to create a button with any implicit button
+type, not just links.
+</p>
+<a class="index-entry-id" id="index-mouse-drag_002c-implicit-link-creation"></a>
+<a class="index-entry-id" id="index-drag"></a>
+<a class="index-entry-id" id="index-Assist-Key-drag"></a>
+<p>Alternatively, to create an implicit link button to something
+displayed within an Emacs window (the referent), simply drag with the
+Assist (not the Action) Mouse Key depressed from an editable source
+window to another window with the desired link referent and then
+release.  The drag must start outside of a draggable item,
+see <a class="pxref" href="#Displaying-Items">Displaying Items</a>.  Hyperbole will either automatically select
+the button type based on the referent context or will prompt you to
+select from one of a few possible link types.
+</p>
+<a class="index-entry-id" id="index-implicit-link-creation"></a>
+<a class="index-entry-id" id="index-menu_002c-Ibut_002fLink"></a>
+<a class="index-entry-id" id="index-C_002dh-h-i-l"></a>
+<p>If you have exactly two Emacs windows in your current frame or exactly
+two windows visible across two Emacs frames, this is even easier.
+Simply use the Link menu item, <kbd class="kbd">{C-h h i l}</kbd>, to create a new
+unnamed implicit link button or to edit the one at point.  <kbd class="kbd">{C-u
+C-h h i l}</kbd> will additionally prompt to add a name or rename the button
+at point.  With more than two windows, Hyperbole will prompt you to
+choose the referent window and its associated point to which to link.
+If the Ace Window package is installed and active, this will be used
+to choose the window; otherwise, you will be prompted to select it by
+mouse.
+</p>
+<a class="index-entry-id" id="index-activating-implicit-button"></a>
+<a class="index-entry-id" id="index-menu-item_002c-Ibut_002fAct"></a>
+<a class="index-entry-id" id="index-menu-item_002c-Ibut_002fActivate"></a>
+<a class="index-entry-id" id="index-menu-item_002c-Ibut_002fName"></a>
+<a class="index-entry-id" id="index-menu-item_002c-Ibut_002fRename"></a>
+<a class="index-entry-id" id="index-C_002dh-h-i-a"></a>
+<a class="index-entry-id" id="index-C_002dh-h-i-n"></a>
+<a class="index-entry-id" id="index-C_002dh-h-i-r"></a>
+<p>To activate an implicit button with point on its name or button text,
+use the Act menu item, <kbd class="kbd">{C-h h i a}</kbd> or press the Action Key.  You
+can use <kbd class="kbd">{C-h h i e}</kbd> to edit an implicit button (or simply edit it
+manually).  If you want to add a name to an existing implicit button
+without one, use <kbd class="kbd">{C-h h i n}</kbd> to name it.  Rename an existing
+named implicit button with <kbd class="kbd">{C-h h i r}</kbd>.
 </p>
 <a class="index-entry-id" id="index-file_002c-hibtypes_002eel"></a>
 <a class="index-entry-id" id="index-context"></a>
@@ -2569,7 +2611,6 @@ as the reference.  References must be delimited by square brackets, must
 begin with a word constituent character, and must not be in buffers
 whose names begin with a &lsquo; &rsquo; or &lsquo;*&rsquo; character.
 </p>
-
 <a class="index-entry-id" id="index-ibtypes-mail_002daddress"></a>
 <a class="index-entry-id" id="index-e_002dmail-address"></a>
 <a class="index-entry-id" id="index-rolo-address"></a>
@@ -3386,47 +3427,141 @@ Next: <a href="#Renaming" accesskey="n" rel="next">Renaming</a>, Previous: <a hr
 </div>
 <h4 class="subsection" id="Creation-1">4.7.1 Creation</h4>
 
-<p>Creating explicit buttons is fun and easy.  You can always try them
-out immediately after creating them or can utilize the Assist Key to
-verify what buttons do.  There are two ways to create them: by
-dragging between windows with the Action Mouse Key or by using the
-Hyperbole menus.
+<p>Creating explicit buttons is fun and easy.  You can always try them out
+immediately after creating them or can utilize the Assist Key to verify
+what buttons do.
+</p>
+<p>If you want to create an explicit link button to somewhere within an Emacs
+window, then simply drag with the Action Mouse Key from an editable buffer
+(outside of a draggable item) to the target buffer.
+</p>
+<p>Alternatively, the Hyperbole minibuffer menu item, Ebut/Create, will
+create any type of explicit button, but requires a few steps.
+</p>
+<p>The next two subsections examine explicit button creation and
+modification in detail.
 </p>
 
 <ul class="mini-toc">
-<li><a href="#By-Dragging" accesskey="1">Creation Via Action Key Drags</a></li>
-<li><a href="#By-Menu" accesskey="2">Creation Via Menus</a></li>
+<li><a href="#By-Menu" accesskey="1">Creation Via Menus</a></li>
+<li><a href="#By-Link" accesskey="2">Creation Via Buffer Link</a></li>
+<li><a href="#By-Dragging" accesskey="3">Creation Via Action Key Drags</a></li>
 </ul>
 <hr>
+<div class="subsubsection-level-extent" id="By-Menu">
+<div class="nav-panel">
+<p>
+Next: <a href="#By-Link" accesskey="n" rel="next">Creation Via Buffer Link</a>, Previous: <a href="#Creation" accesskey="p" rel="prev">Creation</a>, Up: <a href="#Creation" accesskey="u" rel="up">Creation</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Key-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<h4 class="subsubsection" id="Creation-Via-Menus">4.7.1.1 Creation Via Menus</h4>
+
+<a class="index-entry-id" id="index-link-creation-1"></a>
+<a class="index-entry-id" id="index-creating-explicit-links"></a>
+<a class="index-entry-id" id="index-explicit-button-creation"></a>
+<a class="index-entry-id" id="index-menu_002c-Ebut"></a>
+<a class="index-entry-id" id="index-menu-item_002c-Explicit_002dButton"></a>
+<a class="index-entry-id" id="index-menu-item_002c-Ebut_002fCreate"></a>
+<a class="index-entry-id" id="index-menu-item_002c-Ebut_002fEdit"></a>
+<a class="index-entry-id" id="index-C_002dh-h-e"></a>
+<a class="index-entry-id" id="index-C_002dh-h-e-c"></a>
+<a class="index-entry-id" id="index-C_002dh-h-e-e"></a>
+<p>Explicit buttons are managed with the Hyperbole Ebut/ menu accessed with
+<kbd class="kbd">{C-h h e}</kbd>.  The Create item, <kbd class="kbd">{C-h h e c}</kbd>, creates any type of
+explicit button.  It prompts for an explicit button label (default is any
+selected region), an action type, and the action&rsquo;s associated arguments.
+It then creates the button at point and surrounds the label with
+&lt;(explicit button delimiters)&gt; like so, to indicate success.
+</p>
+<p>You can use the direct selection techniques mentioned in <a class="ref" href="#Smart-Key-Argument-Selection">Smart Key Argument Selection</a>, to select any completion-based arguments.  If you do
+not mark a region before invoking the button create command, you will be
+prompted for both a label and a target buffer for the button and the
+delimited label text will be inserted into the target buffer after a
+successful button creation.
+</p>
+<a class="index-entry-id" id="index-button-instance"></a>
+<a class="index-entry-id" id="index-instance-number"></a>
+<p>If a previous button with the same label exists in the same buffer,
+Hyperbole will add an <em class="dfn">instance number</em> to the label when it adds
+the delimiters so that the name is unique.  Thus, you don&rsquo;t have to
+worry about accidental button name conflicts.  If you want the same
+button to appear in multiple places within the buffer, just enter the
+label again and delimit it yourself or copy and paste the button with
+its delimiters.  Hyperbole will interpret all occurrences of the same
+delimited label within a buffer as the same button.
+</p>
+<hr>
+</div>
+<div class="subsubsection-level-extent" id="By-Link">
+<div class="nav-panel">
+<p>
+Next: <a href="#By-Dragging" accesskey="n" rel="next">Creation Via Action Key Drags</a>, Previous: <a href="#By-Menu" accesskey="p" rel="prev">Creation Via Menus</a>, Up: <a href="#Creation" accesskey="u" rel="up">Creation</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Key-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<h4 class="subsubsection" id="Creation-Via-Buffer-Link">4.7.1.2 Creation Via Buffer Link</h4>
+
+<a class="index-entry-id" id="index-explicit-link-creation"></a>
+<a class="index-entry-id" id="index-menu-item_002c-Ebut_002fLink"></a>
+<a class="index-entry-id" id="index-source-point"></a>
+<a class="index-entry-id" id="index-referent-point"></a>
+<a class="index-entry-id" id="index-C_002dh-h-e-l"></a>
+<p>If you have exactly two Emacs windows in your current frame or exactly
+two windows visible across two Emacs frames, you can quickly create
+explicit link buttons from your current point (source) to the point in
+the other window (referent).  Simply use the Link menu item, <kbd class="kbd">{C-h h
+e l}</kbd>, to create a new explicit link button or to rename the one at point.
+Hyperbole will either use the selected region as the new button label or
+will prompt you for it.  It will then automatically choose the link type
+based on the referent location and will either update the button at point
+or create a new one.
+</p>
+<p>With more than two windows on screen, Hyperbole will prompt you to choose
+the referent window and its associated point to which to link.  If the
+Ace Window package is installed and active, this will be used to choose
+the window; otherwise, you will be prompted to select it by mouse.
+</p>
+<hr>
+</div>
 <div class="subsubsection-level-extent" id="By-Dragging">
 <div class="nav-panel">
 <p>
-Next: <a href="#By-Menu" accesskey="n" rel="next">Creation Via Menus</a>, Previous: <a href="#Creation" accesskey="p" rel="prev">Creation</a>, Up: <a href="#Creation" accesskey="u" rel="up">Creation</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Key-Index" title="Index" rel="index">Index</a>]</p>
+Previous: <a href="#By-Link" accesskey="p" rel="prev">Creation Via Buffer Link</a>, Up: <a href="#Creation" accesskey="u" rel="up">Creation</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Key-Index" title="Index" rel="index">Index</a>]</p>
 </div>
-<h4 class="subsubsection" id="Creation-Via-Action-Key-Drags">4.7.1.1 Creation Via Action Key Drags</h4>
+<h4 class="subsubsection" id="Creation-Via-Action-Key-Drags">4.7.1.3 Creation Via Action Key Drags</h4>
 
-<a class="index-entry-id" id="index-explicit-button-creation"></a>
-<a class="index-entry-id" id="index-button-creation"></a>
-<a class="index-entry-id" id="index-creating-buttons"></a>
-<a class="index-entry-id" id="index-link-creation"></a>
-<a class="index-entry-id" id="index-creating-links"></a>
-<a class="index-entry-id" id="index-direct-link-creation"></a>
+<a class="index-entry-id" id="index-mouse-drag_002c-explicit-link-creation"></a>
+<a class="index-entry-id" id="index-drag-1"></a>
+<a class="index-entry-id" id="index-Assist-Key-drag-1"></a>
+<p>Alternatively, to create an explicit link button to something
+displayed within an Emacs window (the referent), simply drag with the
+Assist (not the Action) Mouse Key depressed from an editable source
+window to another window with the desired link referent and then
+release.  The drag must start outside of a draggable item,
+see <a class="pxref" href="#Displaying-Items">Displaying Items</a>.  Hyperbole will either automatically select
+the button type based on the referent context or will prompt you to
+select from one of a few possible link types.
+</p>
+<a class="index-entry-id" id="index-explicit-button-creation-1"></a>
+<a class="index-entry-id" id="index-link-creation-2"></a>
+<a class="index-entry-id" id="index-creating-explicit-links-1"></a>
 <a class="index-entry-id" id="index-mouse-drag_002c-link-creation"></a>
-<a class="index-entry-id" id="index-drag"></a>
+<a class="index-entry-id" id="index-drag-2"></a>
 <a class="index-entry-id" id="index-Action-Key-drag"></a>
-<p>The most efficient way to create an explicit link button interactively
-is to use the Action Mouse Key to drag from a non-read-only button
-source window to a window showing its desired link referent.  More
-specifically, you should split your current Emacs frame into two
+<p>The most efficient way to create an explicit link button to something
+within an Emacs window is to use the Action Mouse Key to drag from an
+editable source window to another window with the desired link referent.
+The drag must start outside of a draggable item, see <a class="pxref" href="#Displaying-Items">Displaying Items</a>.  Hyperbole will prompt for the button text label and then will
+either automatically select the button action type based on the referent
+context or will prompt you to select from one of a few possible link
+types.
+</p>
+<p>In detail, you should split your current Emacs frame into two
 windows: one which contains the point at which you want a button to be
 inserted and another which shows the point to which you want to link.
-Depress the Action Mouse Key at the source point for the button
-(anywhere but on a paired delimiter such as double quotes or
-parentheses).  Then drag to the other window and release the Action
-Mouse Key at the start point of the link referent.  The process
-becomes quite simple with a little practice. (See <a class="xref" href="#By-Menu">Creation
-Via Menus</a>, for a more detailed explanation of the explicit button
-creation process).
+Depress the Action Mouse Key at the source point for the button (anywhere
+but on a paired delimiter such as double quotes or parentheses).  Then
+drag to the other window and release the Action Mouse Key at the start
+point of the link referent.  The process becomes quite simple with a
+little practice. (See <a class="xref" href="#By-Menu">Creation Via Menus</a>, for a more detailed
+explanation of the explicit button creation process).
 </p>
 <p>If a region was selected prior to the start of the drag, it is used as
 the button label, otherwise, you are prompted for the label.  Then
@@ -3464,54 +3599,6 @@ Buffer without File      link-to-buffer-tmp
 </pre></div>
 </div>
 
-
-<hr>
-</div>
-<div class="subsubsection-level-extent" id="By-Menu">
-<div class="nav-panel">
-<p>
-Previous: <a href="#By-Dragging" accesskey="p" rel="prev">Creation Via Action Key Drags</a>, Up: <a href="#Creation" accesskey="u" rel="up">Creation</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Key-Index" title="Index" rel="index">Index</a>]</p>
-</div>
-<h4 class="subsubsection" id="Creation-Via-Menus">4.7.1.2 Creation Via Menus</h4>
-
-<p>You may instead use the Hyperbole menus to create explicit buttons.
-First, mark a short region of text in any fashion allowed by Emacs
-and then select the Hyperbole menu item sequence, Ebut/Create.  You will
-be prompted for the button&rsquo;s label with the marked region as the
-default.  If you accept the default and enter the rest of the
-information you are prompted for, the button will be created within the
-current buffer and Hyperbole will surround the marked region with
-explicit button delimiters to indicate success.
-</p>
-<p>If you do not mark a region before invoking the button create command,
-you will be prompted for both a label and a target buffer for the button
-and the delimited label text will be inserted into the target buffer
-after a successful button creation.
-</p>
-<p>After Hyperbole has the button label and its target buffer, it will
-prompt you for an action type for the button.  Use the <kbd class="kbd">{?}</kbd>
-completion list key to see the available types.  The type selected
-determines any following values for which you are prompted.
-</p>
-<a class="index-entry-id" id="index-button-instance"></a>
-<a class="index-entry-id" id="index-instance-number"></a>
-<p>If a previous button with the same label exists in the same buffer,
-Hyperbole will add an <em class="dfn">instance number</em> to the label when it adds
-the delimiters so that the name is unique.  Thus, you don&rsquo;t have to
-worry about accidental button name conflicts.  If you want the same
-button to appear in multiple places within the buffer, just enter the
-label again and delimit it yourself or copy and paste the button with
-its delimiters.  Hyperbole will interpret all occurrences of the same
-delimited label within a buffer as the same button.
-</p>
-<a class="index-entry-id" id="index-link_002c-creation"></a>
-<p>If you create link buttons using the Hyperbole menus, the best
-technique is to place on screen both the source buffer for the button
-and the buffer to which it will link.  Mark the region of text to use
-as your button label, invoke the button create command from the menu,
-choose an action type which begins with <code class="code">link-to-</code> and then use
-the direct selection techniques mentioned in <a class="ref" href="#Smart-Key-Argument-Selection">Smart Key Argument Selection</a>, to select the link referent.
-</p>
 
 <hr>
 </div>
@@ -4038,7 +4125,7 @@ access to popular web search engines.
 </li><li>RemoveLines -      Following point, remove all lines that match regexp.
 
 </li><li>SaveLines -        Following point, keep only lines that match regexp.
-<a class="index-entry-id" id="index-menu_002c-Find_002fWeb"></a>
+<a class="index-entry-id" id="index-menu-item_002c-Find_002fWeb"></a>
 <a class="index-entry-id" id="index-menu_002c-Web"></a>
 <a class="index-entry-id" id="index-searching-the-web"></a>
 <a class="index-entry-id" id="index-web-search"></a>
@@ -4743,7 +4830,7 @@ See <a class="xref" href="#Autonumbering">Autonumbering</a>.
 cell.  User-defined attributes may also be added to cells.  See <a class="xref" href="#Cell-Attributes">Cell Attributes</a>.
 </p>
 <a class="index-entry-id" id="index-file_002c-EXAMPLE_002ekotl"></a>
-<a class="index-entry-id" id="index-menu_002c-Outline_002fExample"></a>
+<a class="index-entry-id" id="index-menu-item_002c-Kotl_002fExample"></a>
 <a class="index-entry-id" id="index-C_002dh-h-k-e"></a>
 <p>This chapter expands on the information given in the <samp class="file">EXAMPLE.kotl</samp>
 file included with Hyperbole.  Use <kbd class="kbd">{C-h h k e}</kbd> to display that
@@ -6543,7 +6630,7 @@ move to the end of the entire subtree.
 <a class="index-entry-id" id="index-datestamps"></a>
 <a class="index-entry-id" id="index-rolo_002c-datestamps"></a>
 <a class="index-entry-id" id="index-customize_002c-rolo-datestamps"></a>
-<a class="index-entry-id" id="index-menu_002c-Toggle_002dRolo_002dDates"></a>
+<a class="index-entry-id" id="index-menu-item_002c-Rolo_002fToggle_002dRolo_002dDates"></a>
 <a class="index-entry-id" id="index-customize_002c-rolo-edits"></a>
 <a class="index-entry-id" id="index-customize_002c-rolo-additions"></a>
 <a class="index-entry-id" id="index-hyrolo_002dedit_002dhook"></a>
@@ -7358,14 +7445,12 @@ type.
 <a class="index-entry-id" id="index-ibtype_002c-return-val"></a>
 <a class="index-entry-id" id="index-ibtype_002c-actype"></a>
 <p>The body of an implicit button type is a predicate which determines
-whether or not point is within an implicit button of the type.  If not,
-the predicate returns &lsquo;<samp class="samp">nil</samp>&rsquo;.  If so, it may optionally setup to
-flash the button and then to perform one or more actions.  A call of the
-form: <code class="code">(ibut:label-set label start-pos end-pos)</code> is used to setup
-the button flashing, if desired.  This is then typically immediately
-followed by an action invocation of the form:
-<code class="code">(hact 'actype &amp;rest actype-arguments)</code> where <code class="code">actype</code> is a
-Hyperbole action type symbol or an Emacs Lisp function name or lambda;
+whether or not point is within an implicit button of the type.  If
+not, the predicate returns &lsquo;<samp class="samp">nil</samp>&rsquo;.  If the type is delimited,
+Hyperbole automatically sets up to flash the button when activated.
+Action invocations have the form: <code class="code">(hact 'actype &amp;rest
+actype-arguments)</code> where <code class="code">actype</code> is a Hyperbole action type
+symbol or an Emacs Lisp function name or lambda;
 <code class="code">actype-arguments</code> are the arguments fed to the action invocation
 when an implicit button of the type is activated.
 </p>
@@ -8807,7 +8892,7 @@ Next: <a href="#Using-URLs-with-Find_002dFile" accesskey="n" rel="next">Using UR
 </div>
 <h4 class="subsection" id="Web-Search-Engines-1">B.2.5 Web Search Engines</h4>
 
-<a class="index-entry-id" id="index-menu_002c-Find_002fWeb-1"></a>
+<a class="index-entry-id" id="index-menu_002c-Find_002fWeb"></a>
 <a class="index-entry-id" id="index-menu_002c-Web-1"></a>
 <a class="index-entry-id" id="index-menu_002c-Cust_002fWeb_002dSearch"></a>
 <a class="index-entry-id" id="index-C_002dh-h-c-w"></a>
@@ -9072,7 +9157,7 @@ is made only if the key is not bound prior to initializing Hyperbole.
 </p>
 <a class="index-entry-id" id="index-C_002dc-_002f-1"></a>
 <a class="index-entry-id" id="index-C_002dh-h-f-w-1"></a>
-<a class="index-entry-id" id="index-menu_002c-Find_002fWeb-2"></a>
+<a class="index-entry-id" id="index-menu_002c-Find_002fWeb-1"></a>
 <a class="index-entry-id" id="index-menu_002c-Web-2"></a>
 <a class="index-entry-id" id="index-searching-the-web-1"></a>
 <a class="index-entry-id" id="index-web-search-menu-1"></a>
@@ -10072,7 +10157,7 @@ the thing.
 <a class="index-entry-id" id="index-Smart-Mouse-Key"></a>
 <a class="index-entry-id" id="index-Action-Mouse-Key"></a>
 <a class="index-entry-id" id="index-Assist-Mouse-Key"></a>
-<a class="index-entry-id" id="index-drag-1"></a>
+<a class="index-entry-id" id="index-drag-3"></a>
 <a class="index-entry-id" id="index-copy-and-yank"></a>
 <a class="index-entry-id" id="index-kill-and-yank"></a>
 <a class="index-entry-id" id="index-yanking"></a>
@@ -10229,16 +10314,20 @@ Next: <a href="#Smart-Mouse-Drags-within-a-Window" accesskey="n" rel="next">Smar
 
 <div class="format">
 <div class="group"><pre class="format-preformatted">Otherwise, if dragged from inside one window to another:
-  ACTION KEY
+  ACTION AND ASSIST KEYS
      (1) If depress was on a buffer name in Buffer-menu/ibuffer mode or on
          a file/directory in dired mode, displays the item in window of release.
+         If the drag start position is within a button, displays the button
+         referent in window of release.
          See <code class="code">hmouse-drag-item-mode-forms</code> for how to allow for draggable
          items in other modes.
-     (2) Otherwise, creates a new link button at the drag start location, linked
-         to the drag end location.  If the drag start position is within a button,
-         this modifies the button to link to the drag end location.
-  ASSIST KEY
-     Swap buffers in the two windows.
+     (2) Otherwise, creates a new link button at the drag start location,
+         linked to the drag end location.  Action Key creates an explicit button;
+         Assist Key creates an implicit button.
+
+         In Hyperbole versions prior to 9, Assist Key drags between windows would
+         swap buffers.  In version 9 and above, start or end the drag between
+         windows on a modeline to get this same behavior.
 </pre></div></div>
 
 <hr>
@@ -10373,7 +10462,6 @@ Previous: <a href="#Smart-Mouse-Keys" accesskey="p" rel="prev">Smart Mouse Keys<
 <li><a href="#Smart-Key-_002d-Bookmark-Mode">Smart Key - Bookmark Mode</a></li>
 <li><a href="#Smart-Key-_002d-Pages-Directory-Mode">Smart Key - Pages Directory Mode</a></li>
 <li><a href="#Smart-Key-_002d-Python-Source-Code">Smart Key - Python Source Code</a></li>
-<li><a href="#Smart-Key-_002d-Identifier-Menu-Mode">Smart Key - Identifier Menu Mode</a></li>
 <li><a href="#Smart-Key-_002d-C-Source-Code">Smart Key - C Source Code</a></li>
 <li><a href="#Smart-Key-_002d-C_002b_002b-Source-Code">Smart Key - C++ Source Code</a></li>
 <li><a href="#Smart-Key-_002d-Assembly-Source-Code">Smart Key - Assembly Source Code</a></li>
@@ -10382,6 +10470,7 @@ Previous: <a href="#Smart-Mouse-Keys" accesskey="p" rel="prev">Smart Mouse Keys<
 <li><a href="#Smart-Key-_002d-JavaScript-Source-Code">Smart Key - JavaScript Source Code</a></li>
 <li><a href="#Smart-Key-_002d-Objective_002dC-Source-Code">Smart Key - Objective-C Source Code</a></li>
 <li><a href="#Smart-Key-_002d-Fortran-Source-Code">Smart Key - Fortran Source Code</a></li>
+<li><a href="#Smart-Key-_002d-Identifier-Menu-Mode">Smart Key - Identifier Menu Mode</a></li>
 <li><a href="#Smart-Key-_002d-Occurrence-Matches">Smart Key - Occurrence Matches</a></li>
 <li><a href="#Smart-Key-_002d-Calendar-Mode">Smart Key - Calendar Mode</a></li>
 <li><a href="#Smart-Key-_002d-Man-Page-Apropos">Smart Key - Man Page Apropos</a></li>
@@ -10461,8 +10550,10 @@ Next: <a href="#Smart-Key-_002d-Ivy" accesskey="n" rel="next">Smart Key - Ivy</a
 
      (10) In any other context besides the end of a line, invoke the Org mode
           standard binding of <kbd class="kbd">{M-<kbd class="key">RET</kbd>}</kbd>, <code class="code">org-meta-return</code>.
+</pre></div></div>
 
-   When the ASSIST KEY is pressed, it behaves just like the Action Key except
+<div class="format">
+<div class="group"><pre class="format-preformatted">   When the ASSIST KEY is pressed, it behaves just like the Action Key except
    in these contexts:
 
      (1) If on an Org todo keyword, move to the first todo keyword in
@@ -10523,7 +10614,7 @@ programming tags within files.  Use the Emacs package manager to install it and
 then invoke it with <kbd class="kbd">{M-x treemacs <kbd class="key">RET</kbd>}</kbd> and quit with <kbd class="kbd">{q}</kbd>.
 </p>
 <p>Treemacs items may be dragged with the Action Key to other windows for display.
-See <a class="xref" href="#Displaying-File-and-Buffer-Items">Displaying File and Buffer Items</a>.
+See <a class="xref" href="#Displaying-Items">Displaying Items</a>.
 </p>
 <div class="format">
 <div class="group"><pre class="format-preformatted">When in a Treemacs file browser buffer:
@@ -10886,7 +10977,7 @@ markup language), and not at the end of a line:
 Note that the press must be on the first character of the delimiter of
 the thing.
 
-<a class="index-entry-id" id="index-Smart-Mouse-Key-1"></a><a class="index-entry-id" id="index-Action-Mouse-Key-1"></a><a class="index-entry-id" id="index-Assist-Mouse-Key-1"></a><a class="index-entry-id" id="index-drag-2"></a><a class="index-entry-id" id="index-copy-and-yank-2"></a><a class="index-entry-id" id="index-kill-and-yank-2"></a><a class="index-entry-id" id="index-yanking-2"></a><a class="index-entry-id" id="index-pasting-a-region-2"></a>There are also drag actions that work on delimited things.  If no
+<a class="index-entry-id" id="index-Smart-Mouse-Key-1"></a><a class="index-entry-id" id="index-Action-Mouse-Key-1"></a><a class="index-entry-id" id="index-Assist-Mouse-Key-1"></a><a class="index-entry-id" id="index-drag-4"></a><a class="index-entry-id" id="index-copy-and-yank-2"></a><a class="index-entry-id" id="index-kill-and-yank-2"></a><a class="index-entry-id" id="index-yanking-2"></a><a class="index-entry-id" id="index-pasting-a-region-2"></a>There are also drag actions that work on delimited things.  If no
 region is selected, when the Action Mouse Key is dragged from a thing
 delimiter to another location, it copies the thing and yanks it at the
 new location.  Similarly, the Assist Mouse Key kills the thing at its
@@ -11046,7 +11137,7 @@ When pressed on a pages-directory-mode entry line:
 <div class="subsection-level-extent" id="Smart-Key-_002d-Python-Source-Code">
 <div class="nav-panel">
 <p>
-Next: <a href="#Smart-Key-_002d-Identifier-Menu-Mode" accesskey="n" rel="next">Smart Key - Identifier Menu Mode</a>, Previous: <a href="#Smart-Key-_002d-Pages-Directory-Mode" accesskey="p" rel="prev">Smart Key - Pages Directory Mode</a>, Up: <a href="#Smart-Keyboard-Keys" accesskey="u" rel="up">Smart Keyboard Keys</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Key-Index" title="Index" rel="index">Index</a>]</p>
+Next: <a href="#Smart-Key-_002d-C-Source-Code" accesskey="n" rel="next">Smart Key - C Source Code</a>, Previous: <a href="#Smart-Key-_002d-Pages-Directory-Mode" accesskey="p" rel="prev">Smart Key - Pages Directory Mode</a>, Up: <a href="#Smart-Keyboard-Keys" accesskey="u" rel="up">Smart Keyboard Keys</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Key-Index" title="Index" rel="index">Index</a>]</p>
 </div>
 <h4 class="subsection" id="Smart-Key-_002d-Python-Source-Code-1">E.2.23 Smart Key - Python Source Code</h4>
 <div class="format">
@@ -11074,36 +11165,12 @@ within a Python buffer:
 
 <hr>
 </div>
-<div class="subsection-level-extent" id="Smart-Key-_002d-Identifier-Menu-Mode">
-<div class="nav-panel">
-<p>
-Next: <a href="#Smart-Key-_002d-C-Source-Code" accesskey="n" rel="next">Smart Key - C Source Code</a>, Previous: <a href="#Smart-Key-_002d-Python-Source-Code" accesskey="p" rel="prev">Smart Key - Python Source Code</a>, Up: <a href="#Smart-Keyboard-Keys" accesskey="u" rel="up">Smart Keyboard Keys</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Key-Index" title="Index" rel="index">Index</a>]</p>
-</div>
-<h4 class="subsection" id="Smart-Key-_002d-Identifier-Menu-Mode-1">E.2.24 Smart Key - Identifier Menu Mode</h4>
-
-<div class="format">
-<div class="group"><pre class="format-preformatted">This works only for identifiers defined within the same source file in
-which they are referenced.  It requires either Emacs&rsquo; imenu library
-and it requires that an index of identifiers has been built for the
-current buffer.  Other handlers handle identifier references and
-definitions across multiple files.
-
-When pressed on an identifier name after an identifier index has been generated:
-  ACTION KEY
-     Jumps to the source definition within the current buffer of the identifier at point.
-  ASSIST KEY
-     Prompts with completion for an identifier defined within the buffer and then jumps
-     to the its source definition.
-</pre></div></div>
-
-<hr>
-</div>
 <div class="subsection-level-extent" id="Smart-Key-_002d-C-Source-Code">
 <div class="nav-panel">
 <p>
-Next: <a href="#Smart-Key-_002d-C_002b_002b-Source-Code" accesskey="n" rel="next">Smart Key - C++ Source Code</a>, Previous: <a href="#Smart-Key-_002d-Identifier-Menu-Mode" accesskey="p" rel="prev">Smart Key - Identifier Menu Mode</a>, Up: <a href="#Smart-Keyboard-Keys" accesskey="u" rel="up">Smart Keyboard Keys</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Key-Index" title="Index" rel="index">Index</a>]</p>
+Next: <a href="#Smart-Key-_002d-C_002b_002b-Source-Code" accesskey="n" rel="next">Smart Key - C++ Source Code</a>, Previous: <a href="#Smart-Key-_002d-Python-Source-Code" accesskey="p" rel="prev">Smart Key - Python Source Code</a>, Up: <a href="#Smart-Keyboard-Keys" accesskey="u" rel="up">Smart Keyboard Keys</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Key-Index" title="Index" rel="index">Index</a>]</p>
 </div>
-<h4 class="subsection" id="Smart-Key-_002d-C-Source-Code-1">E.2.25 Smart Key - C Source Code</h4>
+<h4 class="subsection" id="Smart-Key-_002d-C-Source-Code-1">E.2.24 Smart Key - C Source Code</h4>
 
 <a class="index-entry-id" id="index-smart_002dc_002dcpp_002dinclude_002dpath"></a>
 <a class="index-entry-id" id="index-smart_002dc_002dinclude_002dpath"></a>
@@ -11135,7 +11202,7 @@ Next: <a href="#Smart-Key-_002d-C_002b_002b-Source-Code" accesskey="n" rel="next
 <p>
 Next: <a href="#Smart-Key-_002d-Assembly-Source-Code" accesskey="n" rel="next">Smart Key - Assembly Source Code</a>, Previous: <a href="#Smart-Key-_002d-C-Source-Code" accesskey="p" rel="prev">Smart Key - C Source Code</a>, Up: <a href="#Smart-Keyboard-Keys" accesskey="u" rel="up">Smart Keyboard Keys</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Key-Index" title="Index" rel="index">Index</a>]</p>
 </div>
-<h4 class="subsection" id="Smart-Key-_002d-C_002b_002b-Source-Code-1">E.2.26 Smart Key - C++ Source Code</h4>
+<h4 class="subsection" id="Smart-Key-_002d-C_002b_002b-Source-Code-1">E.2.25 Smart Key - C++ Source Code</h4>
 
 <a class="index-entry-id" id="index-c_002b_002b_002dcpp_002dinclude_002dpath"></a>
 <a class="index-entry-id" id="index-c_002b_002b_002dinclude_002dpath"></a>
@@ -11188,7 +11255,7 @@ buffer:
 <p>
 Next: <a href="#Smart-Key-_002d-Lisp-Source-Code" accesskey="n" rel="next">Smart Key - Lisp Source Code</a>, Previous: <a href="#Smart-Key-_002d-C_002b_002b-Source-Code" accesskey="p" rel="prev">Smart Key - C++ Source Code</a>, Up: <a href="#Smart-Keyboard-Keys" accesskey="u" rel="up">Smart Keyboard Keys</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Key-Index" title="Index" rel="index">Index</a>]</p>
 </div>
-<h4 class="subsection" id="Smart-Key-_002d-Assembly-Source-Code-1">E.2.27 Smart Key - Assembly Source Code</h4>
+<h4 class="subsection" id="Smart-Key-_002d-Assembly-Source-Code-1">E.2.26 Smart Key - Assembly Source Code</h4>
 
 <a class="index-entry-id" id="index-smart_002dasm_002dinclude_002dpath"></a>
 <div class="format">
@@ -11213,7 +11280,7 @@ Next: <a href="#Smart-Key-_002d-Lisp-Source-Code" accesskey="n" rel="next">Smart
 <p>
 Next: <a href="#Smart-Key-_002d-Java-Source-Code" accesskey="n" rel="next">Smart Key - Java Source Code</a>, Previous: <a href="#Smart-Key-_002d-Assembly-Source-Code" accesskey="p" rel="prev">Smart Key - Assembly Source Code</a>, Up: <a href="#Smart-Keyboard-Keys" accesskey="u" rel="up">Smart Keyboard Keys</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Key-Index" title="Index" rel="index">Index</a>]</p>
 </div>
-<h4 class="subsection" id="Smart-Key-_002d-Lisp-Source-Code-1">E.2.28 Smart Key - Lisp Source Code</h4>
+<h4 class="subsection" id="Smart-Key-_002d-Lisp-Source-Code-1">E.2.27 Smart Key - Lisp Source Code</h4>
 
 <div class="format">
 <div class="group"><pre class="format-preformatted"><a class="index-entry-id" id="index-change_002dlog_002dmode"></a><a class="index-entry-id" id="index-lisp-identifier"></a><a class="index-entry-id" id="index-elisp-identifier"></a>When pressed on a Lisp symbol within any of these types of buffers
@@ -11238,7 +11305,7 @@ identifier:
 <p>
 Next: <a href="#Smart-Key-_002d-JavaScript-Source-Code" accesskey="n" rel="next">Smart Key - JavaScript Source Code</a>, Previous: <a href="#Smart-Key-_002d-Lisp-Source-Code" accesskey="p" rel="prev">Smart Key - Lisp Source Code</a>, Up: <a href="#Smart-Keyboard-Keys" accesskey="u" rel="up">Smart Keyboard Keys</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Key-Index" title="Index" rel="index">Index</a>]</p>
 </div>
-<h4 class="subsection" id="Smart-Key-_002d-Java-Source-Code-1">E.2.29 Smart Key - Java Source Code</h4>
+<h4 class="subsection" id="Smart-Key-_002d-Java-Source-Code-1">E.2.28 Smart Key - Java Source Code</h4>
 
 <a class="index-entry-id" id="index-smart_002djava_002dpackage_002dpath"></a>
 <div class="format">
@@ -11281,7 +11348,7 @@ buffer:
 <p>
 Next: <a href="#Smart-Key-_002d-Objective_002dC-Source-Code" accesskey="n" rel="next">Smart Key - Objective-C Source Code</a>, Previous: <a href="#Smart-Key-_002d-Java-Source-Code" accesskey="p" rel="prev">Smart Key - Java Source Code</a>, Up: <a href="#Smart-Keyboard-Keys" accesskey="u" rel="up">Smart Keyboard Keys</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Key-Index" title="Index" rel="index">Index</a>]</p>
 </div>
-<h4 class="subsection" id="Smart-Key-_002d-JavaScript-Source-Code-1">E.2.30 Smart Key - JavaScript Source Code</h4>
+<h4 class="subsection" id="Smart-Key-_002d-JavaScript-Source-Code-1">E.2.29 Smart Key - JavaScript Source Code</h4>
 
 <div class="format">
 <div class="group"><pre class="format-preformatted">When pressed within a JavaScript source code file:
@@ -11302,7 +11369,7 @@ Next: <a href="#Smart-Key-_002d-Objective_002dC-Source-Code" accesskey="n" rel="
 <p>
 Next: <a href="#Smart-Key-_002d-Fortran-Source-Code" accesskey="n" rel="next">Smart Key - Fortran Source Code</a>, Previous: <a href="#Smart-Key-_002d-JavaScript-Source-Code" accesskey="p" rel="prev">Smart Key - JavaScript Source Code</a>, Up: <a href="#Smart-Keyboard-Keys" accesskey="u" rel="up">Smart Keyboard Keys</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Key-Index" title="Index" rel="index">Index</a>]</p>
 </div>
-<h4 class="subsection" id="Smart-Key-_002d-Objective_002dC-Source-Code-1">E.2.31 Smart Key - Objective-C Source Code</h4>
+<h4 class="subsection" id="Smart-Key-_002d-Objective_002dC-Source-Code-1">E.2.30 Smart Key - Objective-C Source Code</h4>
 
 <a class="index-entry-id" id="index-objc_002dcpp_002dinclude_002dpath"></a>
 <a class="index-entry-id" id="index-objc_002dinclude_002dpath"></a>
@@ -11351,9 +11418,9 @@ OO-Browser):
 <div class="subsection-level-extent" id="Smart-Key-_002d-Fortran-Source-Code">
 <div class="nav-panel">
 <p>
-Next: <a href="#Smart-Key-_002d-Occurrence-Matches" accesskey="n" rel="next">Smart Key - Occurrence Matches</a>, Previous: <a href="#Smart-Key-_002d-Objective_002dC-Source-Code" accesskey="p" rel="prev">Smart Key - Objective-C Source Code</a>, Up: <a href="#Smart-Keyboard-Keys" accesskey="u" rel="up">Smart Keyboard Keys</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Key-Index" title="Index" rel="index">Index</a>]</p>
+Next: <a href="#Smart-Key-_002d-Identifier-Menu-Mode" accesskey="n" rel="next">Smart Key - Identifier Menu Mode</a>, Previous: <a href="#Smart-Key-_002d-Objective_002dC-Source-Code" accesskey="p" rel="prev">Smart Key - Objective-C Source Code</a>, Up: <a href="#Smart-Keyboard-Keys" accesskey="u" rel="up">Smart Keyboard Keys</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Key-Index" title="Index" rel="index">Index</a>]</p>
 </div>
-<h4 class="subsection" id="Smart-Key-_002d-Fortran-Source-Code-1">E.2.32 Smart Key - Fortran Source Code</h4>
+<h4 class="subsection" id="Smart-Key-_002d-Fortran-Source-Code-1">E.2.31 Smart Key - Fortran Source Code</h4>
 
 <div class="format">
 <div class="group"><pre class="format-preformatted">When pressed within a Fortran source code file:
@@ -11366,10 +11433,34 @@ Next: <a href="#Smart-Key-_002d-Occurrence-Matches" accesskey="n" rel="next">Sma
 
 <hr>
 </div>
+<div class="subsection-level-extent" id="Smart-Key-_002d-Identifier-Menu-Mode">
+<div class="nav-panel">
+<p>
+Next: <a href="#Smart-Key-_002d-Occurrence-Matches" accesskey="n" rel="next">Smart Key - Occurrence Matches</a>, Previous: <a href="#Smart-Key-_002d-Fortran-Source-Code" accesskey="p" rel="prev">Smart Key - Fortran Source Code</a>, Up: <a href="#Smart-Keyboard-Keys" accesskey="u" rel="up">Smart Keyboard Keys</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Key-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<h4 class="subsection" id="Smart-Key-_002d-Identifier-Menu-Mode-1">E.2.32 Smart Key - Identifier Menu Mode</h4>
+
+<div class="format">
+<div class="group"><pre class="format-preformatted">This works only for identifiers defined within the same source file in
+which they are referenced.  It requires either Emacs&rsquo; imenu library
+and it requires that an index of identifiers has been built for the
+current buffer.  Other handlers handle identifier references and
+definitions across multiple files.
+
+When pressed on an identifier name after an identifier index has been generated:
+  ACTION KEY
+     Jumps to the source definition within the current buffer of the identifier at point.
+  ASSIST KEY
+     Prompts with completion for an identifier defined within the buffer and then jumps
+     to the its source definition.
+</pre></div></div>
+
+<hr>
+</div>
 <div class="subsection-level-extent" id="Smart-Key-_002d-Occurrence-Matches">
 <div class="nav-panel">
 <p>
-Next: <a href="#Smart-Key-_002d-Calendar-Mode" accesskey="n" rel="next">Smart Key - Calendar Mode</a>, Previous: <a href="#Smart-Key-_002d-Fortran-Source-Code" accesskey="p" rel="prev">Smart Key - Fortran Source Code</a>, Up: <a href="#Smart-Keyboard-Keys" accesskey="u" rel="up">Smart Keyboard Keys</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Key-Index" title="Index" rel="index">Index</a>]</p>
+Next: <a href="#Smart-Key-_002d-Calendar-Mode" accesskey="n" rel="next">Smart Key - Calendar Mode</a>, Previous: <a href="#Smart-Key-_002d-Identifier-Menu-Mode" accesskey="p" rel="prev">Smart Key - Identifier Menu Mode</a>, Up: <a href="#Smart-Keyboard-Keys" accesskey="u" rel="up">Smart Keyboard Keys</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Key-Index" title="Index" rel="index">Index</a>]</p>
 </div>
 <h4 class="subsection" id="Smart-Key-_002d-Occurrence-Matches-1">E.2.33 Smart Key - Occurrence Matches</h4>
 
@@ -12628,6 +12719,10 @@ Next: <a href="#Function" accesskey="n" rel="next">Function, Variable and File I
 <tr><td></td><td class="printindex-index-entry"><a href="#index-C_002dh-h-C_002dt"><code>C-h h C-t</code></a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Menus">Menus</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-C_002dh-h-d-d"><code>C-h h d d</code></a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Hyperbole-Overview">Hyperbole Overview</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-C_002dh-h-d-i"><code>C-h h d i</code></a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Documentation">Documentation</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-C_002dh-h-e"><code>C-h h e</code></a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#By-Menu">By Menu</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-C_002dh-h-e-c"><code>C-h h e c</code></a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#By-Menu">By Menu</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-C_002dh-h-e-e"><code>C-h h e e</code></a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#By-Menu">By Menu</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-C_002dh-h-e-l"><code>C-h h e l</code></a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#By-Link">By Link</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-C_002dh-h-f-w"><code>C-h h f w</code></a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Web-Search-Engines">Web Search Engines</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-C_002dh-h-f-w-1"><code>C-h h f w</code></a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Default-Hyperbole-Bindings">Default Hyperbole Bindings</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-C_002dh-h-g"><code>C-h h g</code></a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Global-Buttons">Global Buttons</a></td></tr>
@@ -12637,6 +12732,8 @@ Next: <a href="#Function" accesskey="n" rel="next">Function, Variable and File I
 <tr><td></td><td class="printindex-index-entry"><a href="#index-C_002dh-h-i-c"><code>C-h h i c</code></a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-C_002dh-h-i-e"><code>C-h h i e</code></a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-C_002dh-h-i-l"><code>C-h h i l</code></a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-C_002dh-h-i-n"><code>C-h h i n</code></a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-C_002dh-h-i-r"><code>C-h h i r</code></a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-C_002dh-h-k-e"><code>C-h h k e</code></a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Koutliner">Koutliner</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-C_002dh-h-k-f-d"><code>C-h h k f d</code></a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Exporting">Exporting</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-C_002dh-h-k-f-f"><code>C-h h k f f</code></a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Inserting-and-Importing">Inserting and Importing</a></td></tr>
@@ -13285,6 +13382,7 @@ Next: <a href="#Concept-Index" accesskey="n" rel="next">Concept Index</a>, Previ
 <tr><td></td><td class="printindex-index-entry"><a href="#index-hui_002dselect_002dgoto_002dmatching_002dtag"><code>hui-select-goto-matching-tag</code></a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Smart-Key-Thing-Selection">Smart Key Thing Selection</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-hui_002dselect_002dthing"><code>hui-select-thing</code></a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Smart-Key-Thing-Selection">Smart Key Thing Selection</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-hui_002dselect_002dthing_002dwith_002dmouse"><code>hui-select-thing-with-mouse</code></a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Smart-Key-Thing-Selection">Smart Key Thing Selection</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-hui_003aebut_002dlink_002ddirectly"><code>hui:ebut-link-directly</code></a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Keyboard-Drags">Keyboard Drags</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-hui_003aebut_002dprompt_002dfor_002daction">hui:ebut-prompt-for-action</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Action-Types">Action Types</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-hui_003aebut_002drename"><code>hui:ebut-rename</code></a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Renaming">Renaming</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-hui_003ahbut_002ddelete_002dconfirm_002dflag">hui:hbut-delete-confirm-flag</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Deletion">Deletion</a></td></tr>
@@ -13755,6 +13853,8 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function, Variable and Fi
 <tr><td></td><td class="printindex-index-entry"><a href="#index-array">array</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Thing-Selection">Thing Selection</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-array-1">array</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Smart-Key-_002d-Delimited-Things">Smart Key - Delimited Things</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-Assist-Key">Assist Key</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Smart-Keys">Smart Keys</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-Assist-Key-drag">Assist Key drag</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-Assist-Key-drag-1">Assist Key drag</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#By-Dragging">By Dragging</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-Assist-Key_002c-listing-attributes">Assist Key, listing attributes</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Cell-Attributes">Cell Attributes</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-Assist-Mouse-Key">Assist Mouse Key</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Thing-Selection">Thing Selection</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-Assist-Mouse-Key-1">Assist Mouse Key</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Smart-Key-_002d-Delimited-Things">Smart Key - Delimited Things</a></td></tr>
@@ -13790,7 +13890,7 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function, Variable and Fi
 <tr><td></td><td class="printindex-index-entry"><a href="#index-buffer-menu">buffer menu</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Smart-Mouse-Key-Modeline-Clicks">Smart Mouse Key Modeline Clicks</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-buffer-menu-1">buffer menu</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Minibuffer-Menu-Activation">Minibuffer Menu Activation</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-buffer-menu-2">buffer menu</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Smart-Key-_002d-Buffer-Menus">Smart Key - Buffer Menus</a></td></tr>
-<tr><td></td><td class="printindex-index-entry"><a href="#index-buffer-menu-item-drag">buffer menu item drag</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Displaying-File-and-Buffer-Items">Displaying File and Buffer Items</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-buffer-menu-item-drag">buffer menu item drag</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Displaying-Items">Displaying Items</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-buffer-replace">buffer replace</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Keyboard-Drags">Keyboard Drags</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-buffer_002c-bury">buffer, bury</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#HyControl">HyControl</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-buffer_002c-copy">buffer, copy</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Displaying-Buffers">Displaying Buffers</a></td></tr>
@@ -13809,7 +13909,6 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function, Variable and Fi
 <tr><td></td><td class="printindex-index-entry"><a href="#index-button-attributes-1">button attributes</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Operational-and-Storage-Formats">Operational and Storage Formats</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-button-category">button category</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Buttons">Buttons</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-button-click">button click</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Smart-Key-_002d-Hyperbole-Buttons">Smart Key - Hyperbole Buttons</a></td></tr>
-<tr><td></td><td class="printindex-index-entry"><a href="#index-button-creation">button creation</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#By-Dragging">By Dragging</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-button-data">button data</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Explicit-Buttons">Explicit Buttons</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-button-data-saving">button data saving</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Hook-Variables">Hook Variables</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-button-deletion">button deletion</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Deletion">Deletion</a></td></tr>
@@ -13940,8 +14039,9 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function, Variable and Fi
 <tr><td></td><td class="printindex-index-entry"><a href="#index-copying-things-to-registers">copying things to registers</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Default-Hyperbole-Bindings">Default Hyperbole Bindings</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-create-link-button">create link button</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Keyboard-Drags">Keyboard Drags</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-create_002dtime-attribute">create-time attribute</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Cell-Attributes">Cell Attributes</a></td></tr>
-<tr><td></td><td class="printindex-index-entry"><a href="#index-creating-buttons">creating buttons</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#By-Dragging">By Dragging</a></td></tr>
-<tr><td></td><td class="printindex-index-entry"><a href="#index-creating-links">creating links</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#By-Dragging">By Dragging</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-creating-explicit-links">creating explicit links</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#By-Menu">By Menu</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-creating-explicit-links-1">creating explicit links</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#By-Dragging">By Dragging</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-creating-implicit-links">creating implicit links</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-creator-attribute">creator attribute</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Cell-Attributes">Cell Attributes</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-credits">credits</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Top">Top</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-cross-referencing">cross referencing</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Koutliner-History">Koutliner History</a></td></tr>
@@ -13976,12 +14076,11 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function, Variable and Fi
 <tr><td></td><td class="printindex-index-entry"><a href="#index-diagonal-drag">diagonal drag</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Saving-and-Restoring-Window-Configurations">Saving and Restoring Window Configurations</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-diagonal-drag-1">diagonal drag</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Smart-Mouse-Drags-within-a-Window">Smart Mouse Drags within a Window</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-digital-signature">digital signature</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Glossary">Glossary</a></td></tr>
-<tr><td></td><td class="printindex-index-entry"><a href="#index-direct-link-creation">direct link creation</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#By-Dragging">By Dragging</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-direct-selection">direct selection</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Smart-Key-Argument-Selection">Smart Key Argument Selection</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-directory-editor">directory editor</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Smart-Mouse-Key-Modeline-Clicks">Smart Mouse Key Modeline Clicks</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-dired">dired</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Smart-Mouse-Key-Modeline-Clicks">Smart Mouse Key Modeline Clicks</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-dired-browsing">dired browsing</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Smart-Key-_002d-Dired-Mode">Smart Key - Dired Mode</a></td></tr>
-<tr><td></td><td class="printindex-index-entry"><a href="#index-dired-item-drag">dired item drag</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Displaying-File-and-Buffer-Items">Displaying File and Buffer Items</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-dired-item-drag">dired item drag</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Displaying-Items">Displaying Items</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-dired_002c-images">dired, images</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Smart-Key-_002d-Image-Thumbnails">Smart Key - Image Thumbnails</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-dired_002dsidebar_002dmode">dired-sidebar-mode</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Smart-Key-_002d-Dired-Sidebar-Mode">Smart Key - Dired Sidebar Mode</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-disable-Hyperbole">disable Hyperbole</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Invocation">Invocation</a></td></tr>
@@ -13998,26 +14097,29 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function, Variable and Fi
 <tr><td></td><td class="printindex-index-entry"><a href="#index-distributed-collaboration">distributed collaboration</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Koutliner-History">Koutliner History</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-document-identifier">document identifier</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-double-click">double click</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Smart-Key-Argument-Selection">Smart Key Argument Selection</a></td></tr>
-<tr><td></td><td class="printindex-index-entry"><a href="#index-drag">drag</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#By-Dragging">By Dragging</a></td></tr>
-<tr><td></td><td class="printindex-index-entry"><a href="#index-drag-1">drag</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Thing-Selection">Thing Selection</a></td></tr>
-<tr><td></td><td class="printindex-index-entry"><a href="#index-drag-2">drag</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Smart-Key-_002d-Delimited-Things">Smart Key - Delimited Things</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-drag">drag</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-drag-1">drag</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#By-Dragging">By Dragging</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-drag-2">drag</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#By-Dragging">By Dragging</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-drag-3">drag</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Thing-Selection">Thing Selection</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-drag-4">drag</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Smart-Key-_002d-Delimited-Things">Smart Key - Delimited Things</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-drag-emulation">drag emulation</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Keyboard-Drags">Keyboard Drags</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-drag-item">drag item</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Keyboard-Drags">Keyboard Drags</a></td></tr>
-<tr><td></td><td class="printindex-index-entry"><a href="#index-drag_002c-buffer-menu-item">drag, buffer menu item</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Displaying-File-and-Buffer-Items">Displaying File and Buffer Items</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-drag_002c-buffer-menu-item">drag, buffer menu item</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Displaying-Items">Displaying Items</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-drag_002c-buffer-swap">drag, buffer swap</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Swapping-Buffers">Swapping Buffers</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-drag_002c-clone-window">drag, clone window</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Cloning-Windows">Cloning Windows</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-drag_002c-copy-buffer">drag, copy buffer</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Displaying-Buffers">Displaying Buffers</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-drag_002c-diagonal">drag, diagonal</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Saving-and-Restoring-Window-Configurations">Saving and Restoring Window Configurations</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-drag_002c-diagonal-1">drag, diagonal</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Smart-Mouse-Drags-within-a-Window">Smart Mouse Drags within a Window</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-drag_002c-dired">drag, dired</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Smart-Key-_002d-Dired-Mode">Smart Key - Dired Mode</a></td></tr>
-<tr><td></td><td class="printindex-index-entry"><a href="#index-drag_002c-dired-item">drag, dired item</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Displaying-File-and-Buffer-Items">Displaying File and Buffer Items</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-drag_002c-dired-item">drag, dired item</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Displaying-Items">Displaying Items</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-drag_002c-horizontal">drag, horizontal</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Creating-and-Deleting-Windows">Creating and Deleting Windows</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-drag_002c-horizontal-1">drag, horizontal</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Smart-Mouse-Drags-within-a-Window">Smart Mouse Drags within a Window</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-drag_002c-Hyperbole-button-referent">drag, Hyperbole button referent</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Displaying-Items">Displaying Items</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-drag_002c-move-frame">drag, move frame</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Moving-Frames">Moving Frames</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-drag_002c-resize-window">drag, resize window</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Resizing-Windows">Resizing Windows</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-drag_002c-side-edge">drag, side edge</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Side_002dby_002dSide-Window-Resizing">Side-by-Side Window Resizing</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-drag_002c-Smart-Mouse-Key">drag, Smart Mouse Key</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Smart-Mouse-Key-Drags">Smart Mouse Key Drags</a></td></tr>
-<tr><td></td><td class="printindex-index-entry"><a href="#index-drag_002c-Treemacs-item">drag, Treemacs item</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Displaying-File-and-Buffer-Items">Displaying File and Buffer Items</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-drag_002c-Treemacs-item">drag, Treemacs item</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Displaying-Items">Displaying Items</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-drag_002c-vertical">drag, vertical</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Creating-and-Deleting-Windows">Creating and Deleting Windows</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-drag_002c-vertical-1">drag, vertical</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Smart-Mouse-Drags-within-a-Window">Smart Mouse Drags within a Window</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-drag_002c-window-configuration">drag, window configuration</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Saving-and-Restoring-Window-Configurations">Saving and Restoring Window Configurations</a></td></tr>
@@ -14068,7 +14170,8 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function, Variable and Fi
 <tr><td></td><td class="printindex-index-entry"><a href="#index-expanding">expanding</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Hiding-and-Showing">Hiding and Showing</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-explicit-button">explicit button</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Buttons">Buttons</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-explicit-button-1">explicit button</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Explicit-Buttons">Explicit Buttons</a></td></tr>
-<tr><td></td><td class="printindex-index-entry"><a href="#index-explicit-button-creation">explicit button creation</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#By-Dragging">By Dragging</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-explicit-button-creation">explicit button creation</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#By-Menu">By Menu</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-explicit-button-creation-1">explicit button creation</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#By-Dragging">By Dragging</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-explicit-button-deletion">explicit button deletion</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Deletion">Deletion</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-explicit-button-editing">explicit button editing</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Editing">Editing</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-explicit-button-formats">explicit button formats</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Operational-and-Storage-Formats">Operational and Storage Formats</a></td></tr>
@@ -14078,6 +14181,7 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function, Variable and Fi
 <tr><td></td><td class="printindex-index-entry"><a href="#index-explicit-button-storage">explicit button storage</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Operational-and-Storage-Formats">Operational and Storage Formats</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-explicit-button-summary">explicit button summary</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Searching-and-Summarizing">Searching and Summarizing</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-explicit-button_002c-programmatic-creation">explicit button, programmatic creation</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Programmatic-Button-Creation">Programmatic Button Creation</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-explicit-link-creation">explicit link creation</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#By-Link">By Link</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-exporting">exporting</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Exporting">Exporting</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-exporting-an-outline">exporting an outline</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Relocating-and-Copying">Relocating and Copying</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-exporting_002c-Koutliner">exporting, Koutliner</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Menu-Commands">Menu Commands</a></td></tr>
@@ -14191,6 +14295,7 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function, Variable and Fi
 <tr><td></td><td class="printindex-index-entry"><a href="#index-Hyperbole">Hyperbole</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Hyperbole-Overview">Hyperbole Overview</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-Hyperbole-API">Hyperbole API</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Embedding-Hyperbole">Embedding Hyperbole</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-Hyperbole-applications">Hyperbole applications</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Hyperbole-Overview">Hyperbole Overview</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-Hyperbole-button-drag">Hyperbole button drag</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Displaying-Items">Displaying Items</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-Hyperbole-data-model">Hyperbole data model</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Explicit-Buttons">Explicit Buttons</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-Hyperbole-demo">Hyperbole demo</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Manual-Overview">Manual Overview</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-Hyperbole-features">Hyperbole features</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Hyperbole-Overview">Hyperbole Overview</a></td></tr>
@@ -14248,12 +14353,14 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function, Variable and Fi
 <tr><td></td><td class="printindex-index-entry"><a href="#index-implicit-action-button">implicit action button</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Action-Buttons">Action Buttons</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-implicit-button">implicit button</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Buttons">Buttons</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-implicit-button-1">implicit button</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-implicit-button-creation">implicit button creation</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-implicit-button-labels">implicit button labels</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-implicit-button-link">implicit button link</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-implicit-button-names">implicit button names</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-implicit-button-type">implicit button type</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-implicit-button-type-1">implicit button type</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Programmatic-Implicit-Button-Types">Programmatic Implicit Button Types</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-implicit-button-types">implicit button types</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-implicit-link-creation">implicit link creation</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-importing">importing</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Inserting-and-Importing">Inserting and Importing</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-importing-a-file">importing a file</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Inserting-and-Importing">Inserting and Importing</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-importing_002c-Koutliner">importing, Koutliner</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Menu-Commands">Menu Commands</a></td></tr>
@@ -14378,12 +14485,13 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function, Variable and Fi
 <tr><td></td><td class="printindex-index-entry"><a href="#index-link-action-types">link action types</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Action-Types">Action Types</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-link-button">link button</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Keyboard-Drags">Keyboard Drags</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-link-button-1">link button</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Explicit-Buttons">Explicit Buttons</a></td></tr>
-<tr><td></td><td class="printindex-index-entry"><a href="#index-link-creation">link creation</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#By-Dragging">By Dragging</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-link-creation">link creation</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-link-creation-1">link creation</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#By-Menu">By Menu</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-link-creation-2">link creation</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#By-Dragging">By Dragging</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-link-display">link display</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Referent-Display">Referent Display</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-link-to-explicit-button">link to explicit button</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-link-to-global-button">link to global button</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-link-to-implicit-button">link to implicit button</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
-<tr><td></td><td class="printindex-index-entry"><a href="#index-link_002c-creation">link, creation</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#By-Menu">By Menu</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-link_002c-display-function">link, display function</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Internal-Viewers">Internal Viewers</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-link_002c-pathname">link, pathname</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-link_002c-pathname-line-and-column">link, pathname line and column</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
@@ -14438,19 +14546,31 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function, Variable and Fi
 <tr><td></td><td class="printindex-index-entry"><a href="#index-menu-item_002c-Cust_002fMsg_002dToggle_002dEbuts">menu item, Cust/Msg-Toggle-Ebuts</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Buttons-in-Mail">Buttons in Mail</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-menu-item_002c-Cust_002fMsg_002dToggle_002dEbuts-1">menu item, Cust/Msg-Toggle-Ebuts</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Buttons-in-News">Buttons in News</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-menu-item_002c-Doc_002fSmartKeys">menu item, Doc/SmartKeys</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Smart-Key-Operations">Smart Key Operations</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-menu-item_002c-Ebut_002fCreate">menu item, Ebut/Create</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#By-Menu">By Menu</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-menu-item_002c-Ebut_002fEdit">menu item, Ebut/Edit</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#By-Menu">By Menu</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-menu-item_002c-Ebut_002fLink">menu item, Ebut/Link</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#By-Link">By Link</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-menu-item_002c-Explicit_002dButton">menu item, Explicit-Button</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#By-Menu">By Menu</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-menu-item_002c-Find_002dFile_002dAccepts_002dURLs">menu item, Find-File-Accepts-URLs</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Using-URLs-with-Find_002dFile">Using URLs with Find-File</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-menu-item_002c-Find_002dFile_002dURLs">menu item, Find-File-URLs</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Using-URLs-with-Find_002dFile">Using URLs with Find-File</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-menu-item_002c-Find_002fWeb">menu item, Find/Web</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Menus">Menus</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-menu-item_002c-FramesControl">menu item, FramesControl</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#HyControl">HyControl</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-menu-item_002c-GrepFile">menu item, GrepFile</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Menus">Menus</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-menu-item_002c-Hist">menu item, Hist</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Menus">Menus</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-menu-item_002c-Ibut_002fAct">menu item, Ibut/Act</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-menu-item_002c-Ibut_002fActivate">menu item, Ibut/Activate</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-menu-item_002c-Ibut_002fCreate">menu item, Ibut/Create</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-menu-item_002c-Ibut_002fEdit">menu item, Ibut/Edit</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-menu-item_002c-Ibut_002fName">menu item, Ibut/Name</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-menu-item_002c-Ibut_002fRename">menu item, Ibut/Rename</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-menu-item_002c-Isearch_002dInvisible">menu item, Isearch-Invisible</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Invisible-Text-Searches">Invisible Text Searches</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-menu-item_002c-Kotl_002fExample">menu item, Kotl/Example</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Koutliner">Koutliner</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-menu-item_002c-LocateFiles">menu item, LocateFiles</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Menus">Menus</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-menu-item_002c-MatchFileBuffers">menu item, MatchFileBuffers</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Menus">Menus</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-menu-item_002c-OccurHere">menu item, OccurHere</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Menus">Menus</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-menu-item_002c-RegexFind">menu item, RegexFind</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#HyRolo-Searching">HyRolo Searching</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-menu-item_002c-Remove_002dThis_002dMenu">menu item, Remove-This-Menu</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Menus">Menus</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-menu-item_002c-RemoveLines">menu item, RemoveLines</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Menus">Menus</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-menu-item_002c-Rolo_002fToggle_002dRolo_002dDates">menu item, Rolo/Toggle-Rolo-Dates</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#HyRolo-Keys">HyRolo Keys</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-menu-item_002c-SaveLines">menu item, SaveLines</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Menus">Menus</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-menu-item_002c-StringFind">menu item, StringFind</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#HyRolo-Searching">HyRolo Searching</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-menu-item_002c-Toggle_002dIsearch_002dInvisible">menu item, Toggle-Isearch-Invisible</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Invisible-Text-Searches">Invisible Text Searches</a></td></tr>
@@ -14470,13 +14590,13 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function, Variable and Fi
 <tr><td></td><td class="printindex-index-entry"><a href="#index-menu_002c-Customize">menu, Customize</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Menus">Menus</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-menu_002c-Doc">menu, Doc</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Menus">Menus</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-menu_002c-Documentation">menu, Documentation</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Menus">Menus</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-menu_002c-Ebut">menu, Ebut</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#By-Menu">By Menu</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-menu_002c-EBut">menu, EBut</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Menus">Menus</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-menu_002c-entry_002fexit-commands">menu, entry/exit commands</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Menus">Menus</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-menu_002c-Explicit_002dButton">menu, Explicit-Button</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Menus">Menus</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-menu_002c-Find">menu, Find</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Menus">Menus</a></td></tr>
-<tr><td></td><td class="printindex-index-entry"><a href="#index-menu_002c-Find_002fWeb">menu, Find/Web</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Menus">Menus</a></td></tr>
-<tr><td></td><td class="printindex-index-entry"><a href="#index-menu_002c-Find_002fWeb-1">menu, Find/Web</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Web-Search-Engines">Web Search Engines</a></td></tr>
-<tr><td></td><td class="printindex-index-entry"><a href="#index-menu_002c-Find_002fWeb-2">menu, Find/Web</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Default-Hyperbole-Bindings">Default Hyperbole Bindings</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-menu_002c-Find_002fWeb">menu, Find/Web</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Web-Search-Engines">Web Search Engines</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-menu_002c-Find_002fWeb-1">menu, Find/Web</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Default-Hyperbole-Bindings">Default Hyperbole Bindings</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-menu_002c-Gbut">menu, Gbut</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Global-Buttons">Global Buttons</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-menu_002c-Gbut-1">menu, Gbut</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Menus">Menus</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-menu_002c-Global_002dButton">menu, Global-Button</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Global-Buttons">Global Buttons</a></td></tr>
@@ -14484,10 +14604,7 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function, Variable and Fi
 <tr><td></td><td class="printindex-index-entry"><a href="#index-menu_002c-HyRolo">menu, HyRolo</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#HyRolo-Menu">HyRolo Menu</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-menu_002c-Ibut">menu, Ibut</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-menu_002c-Ibut-1">menu, Ibut</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Menus">Menus</a></td></tr>
-<tr><td></td><td class="printindex-index-entry"><a href="#index-menu_002c-Ibut_002fActivate">menu, Ibut/Activate</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
-<tr><td></td><td class="printindex-index-entry"><a href="#index-menu_002c-Ibut_002fCreate">menu, Ibut/Create</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
-<tr><td></td><td class="printindex-index-entry"><a href="#index-menu_002c-Ibut_002fEdit">menu, Ibut/Edit</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
-<tr><td></td><td class="printindex-index-entry"><a href="#index-menu_002c-Ibut_002fLabel">menu, Ibut/Label</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-menu_002c-Ibut_002fLink">menu, Ibut/Link</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-menu_002c-Implicit_002dButton">menu, Implicit-Button</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-menu_002c-Implicit_002dButton-1">menu, Implicit-Button</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Menus">Menus</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-menu_002c-KeyBindings">menu, KeyBindings</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Menus">Menus</a></td></tr>
@@ -14496,13 +14613,11 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function, Variable and Fi
 <tr><td></td><td class="printindex-index-entry"><a href="#index-menu_002c-Koutliner">menu, Koutliner</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Menu-Commands">Menu Commands</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-menu_002c-Mail_002dLists">menu, Mail-Lists</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Menus">Menus</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-menu_002c-Msg">menu, Msg</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Menus">Menus</a></td></tr>
-<tr><td></td><td class="printindex-index-entry"><a href="#index-menu_002c-Outline_002fExample">menu, Outline/Example</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Koutliner">Koutliner</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-menu_002c-Outliner">menu, Outliner</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Menus">Menus</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-menu_002c-reload">menu, reload</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Menus">Menus</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-menu_002c-Rolo">menu, Rolo</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Menus">Menus</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-menu_002c-Rolo-1">menu, Rolo</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#HyRolo-Menu">HyRolo Menu</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-menu_002c-Screen">menu, Screen</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Menus">Menus</a></td></tr>
-<tr><td></td><td class="printindex-index-entry"><a href="#index-menu_002c-Toggle_002dRolo_002dDates">menu, Toggle-Rolo-Dates</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#HyRolo-Keys">HyRolo Keys</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-menu_002c-top_002dlevel">menu, top-level</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Menus">Menus</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-menu_002c-top_002dlevel-1">menu, top-level</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Minibuffer-Menu-Activation">Minibuffer Menu Activation</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-menu_002c-Types">menu, Types</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Menus">Menus</a></td></tr>
@@ -14547,6 +14662,8 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function, Variable and Fi
 <tr><td></td><td class="printindex-index-entry"><a href="#index-modes-to-ignore-klinks">modes to ignore klinks</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Klinks">Klinks</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-mouse">mouse</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Glossary">Glossary</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-mouse-bindings">mouse bindings</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Menus">Menus</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-mouse-drag_002c-explicit-link-creation">mouse drag, explicit link creation</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#By-Dragging">By Dragging</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-mouse-drag_002c-implicit-link-creation">mouse drag, implicit link creation</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-mouse-drag_002c-link-creation">mouse drag, link creation</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#By-Dragging">By Dragging</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-mouse-key-bindings">mouse key bindings</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Questions-and-Answers">Questions and Answers</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-mouse-key-toggle">mouse key toggle</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Default-Hyperbole-Bindings">Default Hyperbole Bindings</a></td></tr>
@@ -14666,6 +14783,7 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function, Variable and Fi
 <tr><td></td><td class="printindex-index-entry"><a href="#index-reference">reference</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-referent">referent</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Explicit-Buttons">Explicit Buttons</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-referent-display">referent display</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Referent-Display">Referent Display</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-referent-point">referent point</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#By-Link">By Link</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-refilling">refilling</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Filling">Filling</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-region-selection">region selection</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Smart-Key-Thing-Selection">Smart Key Thing Selection</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-region-throw">region throw</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Keyboard-Drags">Keyboard Drags</a></td></tr>
@@ -14779,6 +14897,7 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function, Variable and Fi
 <tr><td></td><td class="printindex-index-entry"><a href="#index-social-media">social media</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-social-reference">social reference</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-source-line">source line</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-source-point">source point</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#By-Link">By Link</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-splitting-a-cell">splitting a cell</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Splitting-and-Appending">Splitting and Appending</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-stable-release-installation">stable release installation</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Elpa-Stable-Package-Installation">Elpa Stable Package Installation</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-stack-frame">stack frame</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
@@ -14846,7 +14965,7 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function, Variable and Fi
 <tr><td></td><td class="printindex-index-entry"><a href="#index-tree_002c-show-subtree">tree, show subtree</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Hiding-and-Showing">Hiding and Showing</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-Treemacs">Treemacs</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Smart-Mouse-Key-Modeline-Clicks">Smart Mouse Key Modeline Clicks</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-Treemacs-1">Treemacs</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Smart-Key-_002d-Treemacs">Smart Key - Treemacs</a></td></tr>
-<tr><td></td><td class="printindex-index-entry"><a href="#index-Treemacs-item-drag">Treemacs item drag</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Displaying-File-and-Buffer-Items">Displaying File and Buffer Items</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-Treemacs-item-drag">Treemacs item drag</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Displaying-Items">Displaying Items</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-troubleshooting-Smart-Keys">troubleshooting Smart Keys</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Smart-Key-Debugging">Smart Key Debugging</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-tutorial">tutorial</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Manual-Overview">Manual Overview</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-type-definition">type definition</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Creating-Types">Creating Types</a></td></tr>

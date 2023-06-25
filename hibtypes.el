@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 20:45:31
-;; Last-Mod:     25-Jun-23 at 16:36:20 by Mats Lidell
+;; Last-Mod:     21-Jun-23 at 23:33:28 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -253,7 +253,7 @@ display options."
 	;; Emacs Lisp and Info files without any directory component.
         (when (setq path orig-path)
           (cond ((and (string-match hpath:path-variable-regexp path)
-		      (setq path (match-string 1 path))
+		      (setq path (match-string-no-properties 1 path))
 		      (hpath:is-path-variable-p path))
 		 (setq path (if (or assist-flag (hyperb:stack-frame '(hkey-help)))
 				path
@@ -262,7 +262,7 @@ display options."
 			     ;; Could be a shell command from a semicolon
 			     ;; separated list; ignore if so.
 			     (and (string-match "\\`\\s-*\\([^; 	]+\\)" path)
-				  (executable-find (match-string 1 path))))
+				  (executable-find (match-string-no-properties 1 path))))
                    (apply #'ibut:label-set path (hpath:start-end path))
 		   (hact 'link-to-file path)))
 		((setq elisp-suffix (string-match "\\`[^\\\\/~]+\\.el[cn]?\\(\\.gz\\)?\\'" path))
@@ -285,7 +285,7 @@ display options."
                 ((and (not (looking-at "[\"()]"))
                       (string-match "\\`(\\([^ \t\n\r\f]+\\))\\'" path)
                       (save-match-data (require 'info))
-                      (Info-find-file (match-string 1 path) t))
+                      (Info-find-file (match-string-no-properties 1 path) t))
                  (apply #'ibut:label-set orig-path (hpath:start-end orig-path))
                  (hact 'link-to-Info-node (format "%sTop" path)))
                 ((string-match hpath:info-suffix path)
@@ -1295,7 +1295,7 @@ documentation string is displayed."
                (looking-at "*\\s-+\\([^:\t\n\r]+\\)::"))
              (hact 'link-to-texinfo-node
                    nil
-                   (ibut:label-set (match-string 1) (match-beginning 1) (match-end 1))))
+                   (ibut:label-set (match-string-no-properties 1) (match-beginning 1) (match-end 1))))
             ;; Show doc for any Emacs Lisp identifier references,
             ;; marked with @code{} or @var{}.
             ((save-excursion
@@ -1303,8 +1303,8 @@ documentation string is displayed."
                     (or (looking-at "@\\(code\\|var\\){\\([^\} \t\n\r]+\\)}")
                         (looking-at "@\\(findex\\|vindex\\)[ ]+\\([^\} \t\n\r]+\\)"))
                     (>= (match-end 2) opoint)))
-             (let ((type-str (match-string 1))
-                   (symbol (intern-soft (ibut:label-set (match-string 2) (match-beginning 2) (match-end 2)))))
+             (let ((type-str (match-string-no-properties 1))
+                   (symbol (intern-soft (ibut:label-set (match-string-no-properties 2) (match-beginning 2) (match-end 2)))))
                (when (and symbol (pcase type-str
                                    ((or "code" "findex") (fboundp symbol))
                                    ((or "var" "vindex") (boundp symbol))))
@@ -1317,7 +1317,7 @@ documentation string is displayed."
                     (looking-at ",\\s-*\\([^,\n\r]*[^, \t\n\r]\\)[,\n\r]")))
              (hact 'link-to-texinfo-node
                    nil
-                   (ibut:label-set (match-string 1) (match-beginning 1) (match-end 1))))
+                   (ibut:label-set (match-string-no-properties 1) (match-beginning 1) (match-end 1))))
             ((save-excursion
                (and (search-backward "@" bol t)
                     (looking-at
@@ -1350,7 +1350,7 @@ documentation string is displayed."
                                                     (match-beginning 0))
                                        "unspecified file")
                                      nodename)))))))
-               (ibut:label-set (match-string 0) (match-beginning 0) (match-end 0))
+               (ibut:label-set (match-string-no-properties 0) (match-beginning 0) (match-end 0))
                (if show-texinfo-node
                    (hact 'link-to-texinfo-node nil node)
                  (hact 'link-to-Info-node node))))))))

@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    15-Oct-91 at 20:13:17
-;; Last-Mod:     13-May-23 at 14:52:29 by Bob Weiner
+;; Last-Mod:     19-Jun-23 at 13:26:26 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -658,7 +658,7 @@ The menu is a menu of commands from MENU-ALIST."
 	       '(
 		 ("Act"         hui:hbut-act      "Activate button at point or prompt for a labeled button in buffer.")
 		 ("Butfile/"    (menu . butfile)  "Quick access button files menus.")
-		 ("Cust/"       (menu . cust)     "Customizes Hyperbole by setting major options.")
+		 ("Cust/"       (menu . cust)     "Customize Hyperbole by setting major options.")
 		 ("Doc/"        (menu . doc)      "Quick access to Hyperbole documentation.")
 		 ("Ebut/"       (menu . ebut)     "Explicit button commands.")
 		 ("Find/"       (menu . find)     "Find matching line commands.")
@@ -676,13 +676,13 @@ The menu is a menu of commands from MENU-ALIST."
        '(butfile .
 	 (("Butfile>")
 	  ("DirFile"      (find-file hbmap:filename)
-	   "Edits directory-specific button file.")
+	   "Edit directory-specific button file.")
 	  ("Info"
 	   (id-info "(hyperbole)Button Files")
-	   "Displays manual section on button files.")
+	   "Display manual section on button files.")
 	  ("PersonalFile" (find-file
 			    (expand-file-name hbmap:filename hbmap:dir-user))
-	   "Edits user-specific button file.")))
+	   "Edit user-specific button file.")))
        '(cust .
          (("Cust>")
 	  ("All-Options"       (customize-browse 'hyperbole)
@@ -697,16 +697,16 @@ The menu is a menu of commands from MENU-ALIST."
 	  ("Msg-Toggle-Ebuts"  hyperbole-toggle-messaging
 	   "Toggle Hyperbole support for explicit buttons in mail and news buffers.")
 	  ("Org-M-RET/"        (menu . cust-org)
-	   "Sets how much of Hyperbole Smart Key behavior is enabled in Org mode.")
+	   "Ses how much of Hyperbole Smart Key behavior is enabled in Org mode.")
 
 	  ("Referents/"        (menu . cust-referents)
-	   "Sets where Hyperbole button referents are displayed.")
+	   "Set where Hyperbole button referents are displayed.")
 	  ("Smart-Key-at-Eol/" (menu . cust-eol)
-	   "Sets how scrolling via end of line presses works.")
+	   "Set how scrolling via end of line presses works.")
 	  ("Toggle-Rolo-Dates" hyrolo-toggle-datestamps
 	   "Toggle whether date stamps are updated when rolo entries are edited.")
-	  ("URL-Display/"      (menu . cust-urls) "Sets where URLs are displayed.")
-	  ("Web-Search/"       (menu . cust-web) "Sets where Web Searches are displayed.")))
+	  ("URL-Display/"      (menu . cust-urls) "Set where URLs are displayed.")
+	  ("Web-Search/"       (menu . cust-web) "Set where Web Searches are displayed.")))
        '(cust-eol .
          (("Smart Key press at eol scrolls>")
 	  ("Proportionally" (setq smart-scroll-proportional t))
@@ -765,34 +765,35 @@ The menu is a menu of commands from MENU-ALIST."
 	  ("About"       (hypb:display-file-with-logo "HY-ABOUT") "Overview of Hyperbole.")
 	  ("Concepts"    (find-file (expand-file-name "HY-CONCEPTS.kotl" hyperb:dir))
 	   "Explains connections among Hyperbole concepts.")
-	  ("Demo"        hyperbole-demo                           "Demonstrates Hyperbole features.")
+	  ("Demo"        hyperbole-demo                           "Demonstrate Hyperbole features.")
 	  ("Files"       (hypb:display-file-with-logo "MANIFEST")
 	   "Summarizes Hyperbole system files.  Click on an entry to view it.")
 	  ("Glossary"    (id-info "(hyperbole)Glossary")          "Glossary of Hyperbole terms.")
 	  ("Info"        (id-info "(hyperbole)Top")               "Online Info version of Hyperbole manual.")
 	  ("New"         (hypb:display-file-with-logo "HY-NEWS")  "Recent changes to Hyperbole.")
-	  ("SmartKeys"   (hkey-summarize 'current-window)         "Summarizes Smart Key mouse or keyboard handling.")
-	  ("Types/"      (menu . types)                           "Provides documentation on Hyperbole types.")
+	  ("SmartKeys"   (hkey-summarize 'current-window)         "Summarize Smart Key mouse or keyboard handling.")
+	  ("Types/"      (menu . types)                           "Provide documentation on Hyperbole types.")
 	  ("WhyUse"      (find-file (expand-file-name "HY-WHY.kotl" hyperb:dir))
 	   "Lists use cases for Hyperbole.")))
        '(ebut .
 	 (("EButton>")
 	  ("Act"         hui:ebut-act
 	    "Activates explicit button at point or prompts for explicit button to activate.")
-	  ("Create"      hui:ebut-create                        "Adds an explicit button to the current buffer.")
-	  ("Delete"      hui:ebut-delete                        "Removes an explicit button from the current buffer.")
-	  ("Edit"        hui:ebut-edit                          "Modifies any desired button attributes.")
-	  ("Help/"       (menu . ebut-help)                     "Summarizes button attributes.")
-	  ("Info"        (id-info "(hyperbole)Explicit Buttons") "Displays manual section on explicit buttons.")
-	  ("Rename"      hui:ebut-rename                         "Relabels an explicit button.")
-	  ("Search"      hui:ebut-search                         "Locates and displays personally created buttons in context.")
+	  ("Create"      hui:ebut-create                         "Add an explicit button to the current buffer.")
+	  ("Delete"      hui:ebut-delete                         "Remove an explicit button from the current buffer.")
+	  ("Edit"        hui:ebut-edit                           "Modify any desired button attributes.")
+	  ("Help/"       (menu . ebut-help)                      "Summarize button attributes.")
+	  ("Info"        (id-info "(hyperbole)Explicit Buttons") "Display manual section on explicit buttons.")
+	  ("Link"        hui:ebut-link-directly                  "Insert an ebut link at point to other/another window.")
+	  ("Rename"      hui:ebut-rename                         "Relabel an explicit button.")
+	  ("Search"      hui:ebut-search                         "Locate and displays personally created buttons in context.")
 	  ("Types"       (hui:htype-help-current-window 'actypes)
 	   "Displays documentation for one or all action types used by explicit buttons.")))
        '(ebut-help .
 	 (("Help on>")
-	  ("BufferButs"  (hui:hbut-report -1) "Summarizes all explicit buttons in buffer.")
-	  ("CurrentBut"  (hui:hbut-report)    "Summarizes only current button in buffer.")
-	  ("OrderedButs" (hui:hbut-report 1)  "Summarizes explicit buttons in lexicographically order.")))
+	  ("BufferButs"  (hui:hbut-report -1) "Summarize all explicit buttons in buffer.")
+	  ("CurrentBut"  (hui:hbut-report)    "Summarize only current button in buffer.")
+	  ("OrderedButs" (hui:hbut-report 1)  "Summarize explicit buttons in lexicographically order.")))
        '(find .
          (("Find>")
 	  ("GrepFiles"           hypb:rgrep        "Show numbered line matches in all specified files.")
@@ -801,35 +802,36 @@ The menu is a menu of commands from MENU-ALIST."
 	  ("OccurHere"           occur             "Show numbered line matches for regexp from this buffer.")
 	  ("RemoveLines"         hypb:remove-lines "Following point, remove all lines that match regexp.")
 	  ("SaveLines"           hypb:save-lines   "Following point, keep only lines that match regexp.")
-	  ("Web/"                (menu . web)      "Searches major web sites.")))
+	  ("Web/"                (menu . web)      "Search major web sites.")))
        '(gbut .
 	 (("GButton>")
-	  ("Act"    gbut:act        "Activates global button by name.")
-	  ("Create" hui:gbut-create "Adds a global button to (gbut:file).")
-	  ("Delete" hui:gbut-delete "Removes a global button from (gbut:file).")
-	  ("Edit"   hui:gbut-edit   "Modifies global button attributes.")
-	  ("Help"   gbut:help       "Reports on a global button by name.")
+	  ("Act"    gbut:act        "Activate global button by name.")
+	  ("Create" hui:gbut-create "Add a global button to (gbut:file).")
+	  ("Delete" hui:gbut-delete "Remove a global button from (gbut:file).")
+	  ("Edit"   hui:gbut-edit   "Modify global button attributes.")
+	  ("Help"   gbut:help       "Report on a global button by name.")
 	  ("Info"   (id-info        "(hyperbole)Global Buttons")
-	   "Displays manual section on global buttons.")
-	  ("Rename" hui:gbut-rename "Renames a global button.")))
+	   "Display manual section on global buttons.")
+	  ("Rename" hui:gbut-rename "Rename a global button.")))
        '(ibut .
 	 (("IButton>")
 	  ("Act"            hui:ibut-act
-	    "Activates implicit button at point or prompts for labeled implicit button to activate.")
+	    "Activate implicit button at point or prompts for labeled implicit button to activate.")
 	  ("Create"         hui:ibut-create
-	    "Labels and creates an implicit button of any type.")
+	    "Label and create an implicit button of any type.")
 	  ("DeleteType"     (hui:htype-delete 'ibtypes)
-	   "Deletes specified implicit button type.")
+	   "Delete specified implicit button type.")
 	  ("Edit"           hui:ibut-edit "Edits/modifies named implicit button attributes.")
 	  ("Help"           hui:hbut-help "Reports on button's attributes.")
 	  ("Info"           (id-info "(hyperbole)Implicit Buttons")
-	   "Displays manual section on implicit buttons.")
-	  ("Label"          hui:ibut-label-create
-	   "Creates an implicit button label preceding an existing implicit button at point, if any.")
+	   "Display manual section on implicit buttons.")
+	  ("Link"           hui:ibut-link-directly "Insert an ibut link at point to other/another window.")
+	  ("Name"           hui:ibut-label-create
+	   "Create an implicit button label preceding an existing implicit button at point, if any.")
 	  ("Rename"         hui:ibut-rename
-	   "Modifies a label preceding an implicit button in the current buffer.")
+	   "Modify a label preceding an implicit button in the current buffer.")
 	  ("Types"          (hui:htype-help 'ibtypes 'no-sort)
-	   "Displays documentation for one or all implicit button types.")))
+	   "Display documentation for one or all implicit button types.")))
        '(kotl
 	 . (("Kotl>")
 	    ("All"       kotl-mode:show-all        "Expand all collapsed cells.")
@@ -837,7 +839,7 @@ The menu is a menu of commands from MENU-ALIST."
 	    ("Create"    kfile:find                "Create or edit an outline file.")
 	    ("Downto"    kotl-mode:hide-sublevels  "Hide all cells in outline deeper than a particular level.")
 	    ("Examp"     kotl-mode:example         "Display a self-descriptive example outline file.")
-	    ("Format/"   (menu . kotl-format)      "Imports/Exports Koutlines.")
+	    ("Format/"   (menu . kotl-format)      "Import/Export Koutlines.")
 	    ("Hide"      (progn (kotl-mode:is-p)
 				(kotl-mode:hide-tree (kcell-view:label)))
 	     "Collapse tree rooted at point.")
@@ -899,19 +901,19 @@ The menu is a menu of commands from MENU-ALIST."
 	 (("Types>")
 	  ("ActionTypes"      (hui:htype-help-current-window 'actypes)
 	   "Displays documentation for one or all action types.")
-	  ("IButTypes"        (hui:htype-help-current-window 'ibtypes 'no-sort)
-	   "Displays documentation for one or all implicit button types.")))
+	  ("IButType"        (hui:htype-help-current-window 'ibtypes 'no-sort)
+	   "Display documentation for one or all implicit button types.")))
        '(win .
 	 (("WinConfig>")
 	  ("AddName"          hywconfig-add-by-name     "Name current window configuration.")
 	  ("DeleteName"       hywconfig-delete-by-name  "Delete named window configuration.")
 	  ("RestoreName"      hywconfig-restore-by-name "Restore frame to window configuration given by name.")
 	  ("PopRing"          hywconfig-delete-pop-continue
-	   "Restores window configuration from ring and removes it from ring.")
+	   "Restore window configuration from ring and removes it from ring.")
 	  ("SaveRing"         (hywconfig-ring-save)
-	   "Saves current window configuration to ring.")
+	   "Save current window configuration to ring.")
 	  ("YankRing"         hywconfig-yank-pop-continue
-	   "Restores next window configuration from ring.")))
+	   "Restore next window configuration from ring.")))
        (hui:menu-web-search)))))
 
 ;;; ************************************************************************

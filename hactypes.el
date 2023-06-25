@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    23-Sep-91 at 20:34:36
-;; Last-Mod:     25-Jun-23 at 09:52:16 by Bob Weiner
+;; Last-Mod:     25-Jun-23 at 09:38:34 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -616,14 +616,14 @@ Return t if found, signal an error if not."
   (interactive "sRegexp to match: \nnOccurrence number: \nfFile to search: ")
   (let ((orig-src source))
     (if buffer-p
-	(if (stringp source)
-	    (setq source (get-buffer source)))
+	(when (stringp source)
+	  (setq source (get-buffer source)))
       ;; Source is a pathname.
       (if (not (stringp source))
 	  (hypb:error
 	   "(link-to-regexp-match): Source parameter is not a filename: `%s'"
 	   orig-src)
-	(setq source (find-file-noselect (hpath:substitute-value source)))))
+	(setq source (hpath:find-noselect source))))
     (if (not (bufferp source))
 	(hypb:error
 	 "(link-to-regexp-match): Invalid source parameter: `%s'" orig-src)
@@ -717,7 +717,7 @@ Optional SECTIONS-START limits toc entries to those after that point."
       (insert "Sections of " rfc-buf-name ":\n")
       (set-buffer-modified-p nil))
     (when opoint
-      (select-buffer buf-name)
+      (switch-to-buffer buf-name)
       (goto-char opoint))))
 
 (defact text-toc (section)
