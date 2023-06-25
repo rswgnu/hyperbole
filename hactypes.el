@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    23-Sep-91 at 20:34:36
-;; Last-Mod:     25-Jun-23 at 09:38:34 by Bob Weiner
+;; Last-Mod:     25-Jun-23 at 13:48:01 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -36,9 +36,15 @@
   "Follow internal ref KEY within an annotated bibliography, delimiters=[]."
   (interactive "sReference key (no []): ")
   (let* ((key-regexp (concat "^[*]*[ \t]*\\[" (ebut:key-to-label key) "\\]"))
-	 (citation (save-excursion
-	             (goto-char (point-max))
-	             (re-search-backward key-regexp nil t))))
+	 (lbl-start (hattr:get 'hbut:current 'lbl-start))
+	 (lbl-end (hattr:get 'hbut:current 'lbl-end))
+	 (citation (when (and lbl-start lbl-end)
+		     (save-excursion
+		       (goto-char (point-max))
+	               (and (re-search-backward key-regexp nil t)
+			    (or (< (point) (1- lbl-start))
+				(> (point) (1+ lbl-end)))
+			    (point))))))
     (if citation
 	(progn (hpath:display-buffer (current-buffer))
 	       (goto-char citation)

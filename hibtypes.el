@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 20:45:31
-;; Last-Mod:     21-Jun-23 at 23:33:28 by Bob Weiner
+;; Last-Mod:     25-Jun-23 at 13:27:34 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -368,12 +368,11 @@ handle any links they recognize first."
 	     (not (funcall hsys-org-mode-function))
 	     ;; Prevent infinite recursion, e.g. if called via
 	     ;; `org-metareturn-hook' from `org-meta-return' invocation.
-	     (not hibtypes--within-org-link-outside-org-mode))
+	     (not (hyperb:stack-frame '(ibtypes::debugger-source org-meta-return))))
     (require 'hsys-org)
     (declare-function hsys-org-link-at-p      "hsys-org" ())
     (declare-function hsys-org-set-ibut-label "hsys-org" (start-end))
-    (let* ((hibtypes--within-org-link-outside-org-mode t)
-           (start-end (hsys-org-link-at-p)))
+    (let ((start-end (hsys-org-link-at-p)))
       (when start-end
         (hsys-org-set-ibut-label start-end)
         (hact #'org-open-at-point-global)))))
@@ -394,9 +393,14 @@ must have an attached file."
          (not (or (eq chr ?\ ) (eq chr ?*))))
        (not (or (derived-mode-p 'prog-mode)
                 (apply #'derived-mode-p '(c-mode objc-mode c++-mode java-mode markdown-mode org-mode))))
-       (let ((ref (hattr:get 'hbut:current 'lbl-key)))
+       (let ((ref (hattr:get 'hbut:current 'lbl-key))
+	     (lbl-start (hattr:get 'hbut:current 'lbl-start)))
          (and ref (eq ?w (char-syntax (aref ref 0)))
               (not (string-match "[#@]" ref))
+	      lbl-start
+	      (save-excursion
+		(goto-char lbl-start)
+		(ibut:label-p t "[" "]" t))
               (hact 'annot-bib ref)))))
 
 ;;; ========================================================================
