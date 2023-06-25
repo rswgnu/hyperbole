@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    04-Feb-89
-;; Last-Mod:     17-Jun-23 at 21:14:33 by Bob Weiner
+;; Last-Mod:     25-Jun-23 at 16:36:39 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1433,7 +1433,9 @@ NO-RECURSE-FLAG non-nil prevents infinite recursions."
 			       ;; Does nothing unless the dash Emacs Lisp
 			       ;; library is available for the -flatten function.
 			       (and (require 'dash nil t)
-				    (assoc index-key (-flatten alist)))))))
+			            (progn
+			              (declare-function -flatten "ext:dash")
+				      (assoc index-key (-flatten alist))))))))
       (when index-item
 	(setq index-position (when (markerp (cdr index-item))
 			       (marker-position (cdr index-item))))

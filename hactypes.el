@@ -35,11 +35,11 @@
 (defact annot-bib (key)
   "Follow internal ref KEY within an annotated bibliography, delimiters=[]."
   (interactive "sReference key (no []): ")
-  (let ((key-regexp (concat "^[*]*[ \t]*\\[" (ebut:key-to-label key) "\\]"))
-	citation)
-    (if (save-excursion
-	  (goto-char (point-max))
-	  (setq citation (re-search-backward key-regexp nil t)))
+  (let* ((key-regexp (concat "^[*]*[ \t]*\\[" (ebut:key-to-label key) "\\]"))
+	 (citation (save-excursion
+	             (goto-char (point-max))
+	             (re-search-backward key-regexp nil t))))
+    (if citation
 	(progn (hpath:display-buffer (current-buffer))
 	       (goto-char citation)
 	       (beginning-of-line))
@@ -689,6 +689,7 @@ package to display search results."
 Uses `hpath:display-where' setting to control where the man page is displayed."
   (interactive "sManual topic: ")
   (require 'man)
+  (defvar Man-notify-method)
   (let ((Man-notify-method 'meek))
     (hpath:display-buffer (man topic))))
 

@@ -45,6 +45,10 @@
   hui.el (hui:ebut-link-directly, hui:ibut-link-directly): Add hmouse-pulse-line
     to highlight referent line linked to.
 
+2023-06-21  Mats Lidell  <matsl@gnu.org>
+
+* Makefile (LOAD_EL): Use gnu make pattern substitution.
+
 2023-06-19  Bob Weiner  <rsw@gnu.org>
 
 * hactypes.el: (link-to-regexp-match): Replace 'find-file-noselect' with
@@ -320,7 +324,6 @@ name with 'name' and 'name-key'.
     pre-command hook: (eq major-mode 'kotl-mode).  Also, comment this test
     out since call should not be on the stack since this is a pre-command
     hook: (not (hyperb:stack-frame '(kcell-view:to-label-end))).
->>>>>>> rsw
 
 2023-05-27  Bob Weiner  <rsw@gnu.org>
 

@@ -276,8 +276,7 @@ Optional DEFAULT-PROMPT is used to describe default value."
 
 (defun hargs:set-string-to-complete ()
   "Store the current minibuffer contents into `hargs:string-to-complete'."
-  (save-window-excursion
-    (set-buffer (window-buffer (minibuffer-window)))
+  (with-current-buffer (window-buffer (minibuffer-window))
     (setq hargs:string-to-complete (minibuffer-contents-no-properties))
     (when (equal hargs:string-to-complete "")
       (setq hargs:string-to-complete nil))))

@@ -347,7 +347,7 @@ in all buffers."
            (and buffer-file-name
                 (boundp 'hyrolo-file-list)
                 (set:member (current-buffer)
-                            (mapcar 'get-file-buffer hyrolo-file-list)))))
+                            (mapcar #'get-file-buffer hyrolo-file-list)))))
     (let ((address (mail-address-at-p)))
       (when address
         (ibut:label-set address (match-beginning 1) (match-end 1))
@@ -364,16 +364,19 @@ in all buffers."
   "Follow an Org link in a non-Org mode buffer.
 This should be a very low priority so other Hyperbole types
 handle any links they recognize first."
-  (with-no-warnings
-    (when (and (eq hsys-org-enable-smart-keys t)
-	       (not (funcall hsys-org-mode-function))
-	       ;; Prevent infinite recursion if ever called via org-metareturn-hook
-	       ;; from org-meta-return invocation.
-	       (not (hyperb:stack-frame '(ibtypes::debugger-source org-meta-return))))
-      (let ((start-end (hsys-org-link-at-p)))
-	(when start-end
-          (hsys-org-set-ibut-label start-end)
-          (hact 'org-open-at-point-global))))))
+  (when (and (eq hsys-org-enable-smart-keys t)
+	     (not (funcall hsys-org-mode-function))
+	     ;; Prevent infinite recursion, e.g. if called via
+	     ;; `org-metareturn-hook' from `org-meta-return' invocation.
+	     (not hibtypes--within-org-link-outside-org-mode))
+    (require 'hsys-org)
+    (declare-function hsys-org-link-at-p      "hsys-org" ())
+    (declare-function hsys-org-set-ibut-label "hsys-org" (start-end))
+    (let* ((hibtypes--within-org-link-outside-org-mode t)
+           (start-end (hsys-org-link-at-p)))
+      (when start-end
+        (hsys-org-set-ibut-label start-end)
+        (hact #'org-open-at-point-global)))))
 
 ;;; ========================================================================
 ;;; Handles internal references within an annotated bibliography, delimiters=[]
@@ -1000,7 +1003,7 @@ in grep and shell buffers."
              ;; Grep matches, UNIX C compiler and Introl 68HC11 C
              ;; compiler errors, allowing for file names with
              ;; spaces followed by a null character rather than a :
-             (looking-at "\\([^\t\n\r\"'`]+\\)  ?\\([1-9][0-9]*\\)[ :]")
+             (looking-at "\\([^\t\n\r\"'`]+\\)\0 ?\\([1-9][0-9]*\\)[ :]")
              ;; HP C compiler errors
              (looking-at "[a-zA-Z0-9]+: \"\\([^\t\n\r\",]+\\)\", line \\([0-9]+\\):")
              ;; BSO/Tasking 68HC08 C compiler errors

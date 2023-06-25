@@ -169,7 +169,7 @@ Use for language major modes."
     (Info-mode "[^ \t\n]")
     (outline-mode "[^*]")
     (text-mode  "[^ \t\n*]"))
-  "List of (major-mode . non-terminator-line-regexp) elements.
+  "List of (MAJOR-MODE . NON-TERMINATOR-LINE-REGEXP) elements.
 Used to avoid early dropoff when marking indented code.")
 
 (defvar hui-select-indent-end-regexp-alist
@@ -185,7 +185,7 @@ Used to avoid early dropoff when marking indented code.")
     (indented-text-mode "[ \t]*$")
     (Info-mode "[ \t]*$")
     (text-mode  "[ \t]*$"))
-  "List of (major-mode . terminator-line-regexp) elements.
+  "List of (MAJOR-MODE . TERMINATOR-LINE-REGEXP) elements.
 Used to include a final line when marking indented code.")
 
 (defcustom hui-select-char-p nil
@@ -472,7 +472,7 @@ displayed in the minibuffer."
 ;;;###autoload
 (defun hui-select-goto-matching-tag ()
   "Move point to start of the tag paired with closest tag point is at or precedes.
-Enabled in major modes in `hui-select-markup-modes.  Returns t if
+Enabled in major modes in `hui-select-markup-modes'.  Returns t if
 point is moved, else nil.  Signals an error if no tag is found
 following point or if the closing tag does not have a `>'
 terminator character."
