@@ -7,7 +7,7 @@
 ;; Author:           Bob Weiner
 ;; Maintainer:       Bob Weiner <rsw@gnu.org>, Mats Lidell <matsl@gnu.org>
 ;; Created:          06-Oct-92 at 11:52:51
-;; Last-mod:      7-Mar-23 at 22:10:54 by Bob Weiner
+;; Last-mod:     25-Jun-23 at 10:12:04 by Mats Lidell
 ;; Released:         03-Dec-22
 ;; Version:          8.0.1pre
 ;; Keywords:         comm, convenience, files, frames, hypermedia, languages, mail, matching, mouse, multimedia, outlines, tools, wp
@@ -77,9 +77,6 @@
 ;;; ************************************************************************
 ;;; Start Initializations
 ;;; ************************************************************************
-
-;; FIXME: Just loading `hyperbole-autoloads.el' eagerly loads `hhist.el',
-;; `set.el', and `hact.el'.
 
 (defconst hyperbole-loading t
   "Temporary constant available for testing while Hyperbole is loading.")

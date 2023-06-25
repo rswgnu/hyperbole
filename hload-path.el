@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    29-Jun-16 at 14:39:33
-;; Last-Mod:     21-May-23 at 03:55:58 by Bob Weiner
+;; Last-Mod:     25-Jun-23 at 10:09:17 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -72,9 +72,7 @@ Valid values end with a directory separator character.")
 ;;; Hyperbole test importation settings
 ;;; ************************************************************************
 
-;; FIXME: This should be done only when running the tests, not in
-;; normal sessions.
-;;(add-to-list 'load-path (expand-file-name "test" hyperb:dir))
+(add-to-list 'load-path (expand-file-name "test" hyperb:dir))
 
 ;; Ensure final name (after resolving all links) of hyperb:dir is
 ;; used after setting up load-path; otherwise, Hyperbole may fail

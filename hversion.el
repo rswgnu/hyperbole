@@ -4,7 +4,7 @@
 ;; Maintainer:   Bob Weiner, Mats Lidell
 ;;
 ;; Orig-Date:     1-Jan-94
-;; Last-Mod:     24-Jun-23 at 13:10:56 by Mats Lidell
+;; Last-Mod:     25-Jun-23 at 10:11:43 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -69,15 +69,10 @@ Where a part in the term-type is delimited by a `-' or  an `_'."
     term))
 
 (defun hyperb:window-system (&optional frame)
-  ;; FIXME: This apparently can return only "emacs", "next", or nil.
-  ;; What do these things mean?  What does "window system available" mean?
-  ;; What does "mouse available mean"?
   "Return name of window system or term type where the selected FRAME is running.
 If nil after system initialization, no window system or mouse
 support is available."
   (unless frame (setq frame (selected-frame)))
-  ;; FIXME: Why not compute it on the fly rather than precomputing it
-  ;; via a hook and then saving it as a frame property?
   (frame-parameter frame 'hyperb:window-system))
 
 ;; Each frame could be on a different window system when under a

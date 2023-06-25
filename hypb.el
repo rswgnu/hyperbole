@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     6-Oct-91 at 03:42:38
-;; Last-Mod:     18-Jun-23 at 14:53:11 by Bob Weiner
+;; Last-Mod:     25-Jun-23 at 10:11:57 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -172,8 +172,8 @@ Trigger an error with traceback if the buffer is not live or its
 name differs at the start and end of BODY."
   (declare (indent 0) (debug t))
   `(let ((debug-on-error t)
-	 (start-buffer (current-buffer))) ;FIXME: Name capture.
-     (unless (buffer-live-p start-buffer) ;FIXME: Impossible?
+	 (start-buffer (current-buffer)))
+     (unless (buffer-live-p start-buffer)
        (error "Start buffer, '%s', is not live" (current-buffer)))
      ;; `kill-buffer' can change current-buffer in some odd cases.
      (unwind-protect

@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    04-Feb-90
-;; Last-Mod:     18-Jun-23 at 20:42:44 by Bob Weiner
+;; Last-Mod:     25-Jun-23 at 10:09:45 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -43,7 +43,6 @@ that the release point was in its frame.
 
 See function `hmouse-window-at-absolute-pixel-position' for more details.")
 
-;; FIXME: `action-' and `assist-' do not belong to Hyperbole namespace!
 (defvar action-key-depressed-flag nil "t while Action Key is depressed.")
 (defvar assist-key-depressed-flag nil "t while Assist Key is depressed.")
 (defvar action-key-depress-args nil
@@ -115,7 +114,7 @@ Note that this may be a buffer different than where the release occurs.")
 (defvar assist-key-help-flag nil
   "When non-nil, forces display of help for next Assist Key release.")
 
-(defvar assist-flag nil                ;FIXME: Don't eat up others's namespace!
+(defvar assist-flag nil
   "Non-nil when Hyperbole's Assist Key is in use rather than the Action Key.
 Never set directly.  Bound as a parameter when `hkey-execute' is called
 and then used as a free variable.")
@@ -1622,7 +1621,6 @@ return current point as a marker."
   (and (car args) (listp (car args)) (setq args (car args)))
   (if (and args (hyperb:window-system))
       (progn (hmouse-set-point-at args) args)
-    ;; FIXME: This doesn't "Set point to ..."!?
     (list 'keyboard-drag (posn-at-point))))
 
 (defun hmouse-set-point-at (set-point-arg-list)

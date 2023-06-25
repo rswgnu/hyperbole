@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    18-Sep-91 at 02:57:09
-;; Last-Mod:     19-Jun-23 at 00:17:03 by Bob Weiner
+;; Last-Mod:     25-Jun-23 at 10:08:54 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -396,8 +396,6 @@ button is found in the current buffer."
 					  buf-lbl (buffer-substring-no-properties start end))
 				    (equal buf-lbl curr-label))
 			   ;; Utilize any action-key-depress-prev-point.
-			   ;; FIXME: Can't `action-key-depress-prev-point'
-			   ;; be nil at this point?
 			   (setq mark (marker-position (mark-marker)))
 			   (setq prev-point (and action-key-depress-prev-point
 						 (marker-position action-key-depress-prev-point)))
@@ -1933,7 +1931,6 @@ Return symbol for button deleted or nil."
   "Delimit implicit button name spanning region START to END in current buffer.
 If button is already delimited or delimit fails, return nil, else t.
 Insert INSTANCE-FLAG after END, before ending delimiter."
-  ;; FIXME: Merge with `ebut:delimit'!
   (goto-char start)
   (when (looking-at (regexp-quote ibut:label-start))
     (forward-char (length ibut:label-start)))
@@ -2441,7 +2438,6 @@ function, followed by a list of arguments for the actype, aside from
 the button NAME which is automatically provided as the first argument.
 
 For interactive creation, use `hui:ibut-create' instead."
-  ;; FIXME: This code duplication between ibut:* and ebut:* is awful.
   (save-excursion
     (let ((but-buf (current-buffer))
 	  (hui--ignore-action-key-depress-prev-point t)
@@ -2482,6 +2478,423 @@ current."
 	(t (error "(ibut:rename): Button '%s' not found in visible portion of buffer." old-lbl))))
 
 (defalias 'ibut:summarize #'hbut:report)
+
+(defun    ibut:to (name-key)
+  "Find the nearest implicit button with NAME-KEY (a name or name key).
+Find within the visible portion of the current buffer.
+Leave point inside the button text or its optional name, if it has one.
+Return the symbol for the button, else nil."
+  (unless name-key
+    (setq name-key (ibut:label-p nil nil nil nil t)))
+  (hbut:funcall (lambda (name-key _buffer _key-src)
+		  (when name-key
+		    ;; Handle a name given rather than a name key
+		    (when (string-match-p "\\s-" name-key)
+		      (setq name-key (ibut:label-to-key name-key)))
+		    (let ((regexp (hbut:label-regexp name-key t))
+			  (start (point))
+			  at-name-key
+			  ibut
+			  pos
+			  found)
+		      (save-excursion
+			;; Since point might be in the middle of the matching button,
+			;; move to the start of line to ensure don't miss it when
+			;; searching forward.
+			(forward-line 0)
+			;; re-search forward
+			(while (and (not found) (re-search-forward regexp nil t))
+			  (setq pos (match-beginning 0)
+				;; Point might be on closing delimiter of ibut in which
+				;; case ibut:label-p returns nil; move back one
+				;; character to prevent this.
+				found (save-excursion
+					(goto-char (1- (point)))
+					(setq ibut (ibut:at-p)
+					      at-name-key (ibut:label-to-key
+							   (hattr:get ibut 'name)))
+					(equal at-name-key name-key))))
+			(unless found
+			  (goto-char start))
+			;; re-search backward
+			(while (and (not found) (re-search-backward regexp nil t))
+			  (setq pos (match-beginning 0)
+				ibut (ibut:at-p)
+				at-name-key (ibut:label-to-key
+					     (hattr:get ibut 'name))
+				found (equal at-name-key name-key))))
+		      (when found
+			(goto-char pos)
+			ibut))))
+		name-key
+		(current-buffer)))
+
+(defun    ibut:at-to-name-p (&optional ibut)
+  "If point is on an implicit button, optional IBUT, move to the start of its name.
+If name is found, leave point after its opening delimiter and set the name
+and lbl-key properties of IBUT.  Return t if name is found, else nil."
+  (let ((opoint (point))
+	move-flag
+	name
+	start)
+    (when (and (or (ibut:is-p ibut)
+		   (setq ibut (ibut:at-p)))
+	       (setq start (hattr:get ibut 'lbl-start)))
+      (goto-char start)
+      (forward-line 0)
+      (while (search-forward ibut:label-start start t)
+	(setq move-flag t))
+      (if move-flag
+	  (progn (setq name (ibut:label-p t nil nil nil t))
+		 (when name
+		   (hattr:set ibut 'name name)
+		   (hattr:set ibut 'lbl-key (ibut:label-to-key name))))
+	(setq ibut nil)
+	(goto-char opoint)))
+    move-flag))
+
+(defun    ibut:to-name (lbl-key)
+  "Move to the name of the nearest named implicit button matching LBL-KEY.
+Find the nearest implicit button with LBL-KEY (a label or label
+key), within the visible portion of the current buffer and move
+to the start of its delimited button name (after opening
+delimiter).  This will find an implicit button if point is within
+its name or text or if LBL-KEY is a name/name-key of an existing
+implicit button.  It will not find other unnamed implicit
+buttons.
+
+Return the symbol for the button if found, else nil."
+  (unless lbl-key
+    (setq lbl-key (ibut:label-p nil nil nil nil t)))
+  (hbut:funcall
+   (lambda (lbl-key _buffer _key-src)
+     (let* ((name-start-end (ibut:label-p nil nil nil t t))
+	    (name-start (nth 1 name-start-end))
+	    (at-name (car name-start-end))
+	    (at-lbl-key (ibut:label-p nil "\"" "\"" nil t))
+	    ibut)
+       (cond ((or (and at-name (equal at-name lbl-key))
+		  (and lbl-key (equal at-lbl-key lbl-key)))
+	      (setq ibut 'hbut:current))
+	     ((and lbl-key (setq ibut (ibut:to lbl-key)))))
+       (when (not (hbut:outside-comment-p))
+	 ;; Skip past any optional name and separators
+	 (cond (name-start
+		(goto-char name-start)
+		(skip-chars-forward (regexp-quote ibut:label-start)))
+	       ((ibut:at-to-name-p ibut))))
+       ibut))
+   lbl-key
+   (current-buffer)))
+
+(defun    ibut:to-text (name-key)
+  "Move to the text of the nearest implicit button matching NAME-KEY.
+Find the nearest implicit button with NAME-KEY (a name or name key)
+within the visible portion of the current buffer and move to within
+its button text.  This will find an implicit button if point is
+within its name or text or if NAME-KEY is a name/name-key of an
+existing implicit button.  It will not find other unnamed
+implicit buttons.
+
+Return the symbol for the button if found, else nil."
+  (unless name-key
+    (setq name-key (ibut:label-p nil nil nil nil t)))
+  (when name-key
+    (hbut:funcall
+     (lambda (name-key _buffer _key-src)
+       (let* ((name-start-end (ibut:label-p t nil nil t t))
+	      (name-end (nth 2 name-start-end))
+	      (at-name (car name-start-end))
+	      (at-name-key (ibut:label-p nil "\"" "\"" nil t))
+	      (opoint (point))
+	      move-flag
+	      start
+	      ibut)
+	 ;; Do not move point if it is already in the text of an
+	 ;; implicit button matching NAME-KEY.  If on the name of
+	 ;; the same button, move into the text of the button.
+	 (cond ((and name-key (equal at-name-key name-key))
+		(setq ibut 'hbut:current))
+	       ((and at-name (equal (ibut:label-to-key at-name) name-key))
+		(setq ibut 'hbut:current
+		      move-flag t))
+	       ((and name-key (setq ibut (ibut:to name-key)))
+		(setq move-flag t)))
+	 (when (and move-flag ibut (not (hbut:outside-comment-p)))
+	   ;; Skip past any optional name and separators
+	   (if (setq start (hattr:get ibut 'lbl-start))
+	       (goto-char start)
+	     (when name-end
+	       (goto-char name-end)
+	       (if (looking-at ibut:label-separator-regexp)
+		   ;; Move past up to 2 possible characters of ibut
+		   ;; delimiters to ensure are inside the ibut name; this
+		   ;; prevents recognizing labeled, delimited ibuts of a
+		   ;; single character since no one should need that.
+		   (goto-char (min (+ 2 (match-end 0)) (point-max)))
+		 (goto-char opoint)))))
+	 ibut))
+     name-key
+     (current-buffer))))
+
+;;; ------------------------------------------------------------------------
+(defconst ibut:label-start "<["
+  "String matching the start of a Hyperbole implicit button label.")
+(defconst ibut:label-end   "]>"
+  "String matching the end of a Hyperbole implicit button label.")
+
+(defvar   ibut:label-separator " - "
+  "Default separator string inserted between implicit button name and its text.
+
+This separates it from the implicit button text.  See also
+`ibut:label-separator-regexp' for all valid characters that may be
+manually inserted to separate an implicit button label from its
+text.")
+
+(defvar   ibut:label-separator-regexp "\\s-*[-:=|]*\\s-+"
+  "Regular expression that separates an implicit button name from its button text.")
+
+;;; ========================================================================
+;;; ibtype class - Implicit button types
+;;; ========================================================================
+
+(defmacro defib (type _params doc at-p &optional to-p style)
+  "Create Hyperbole implicit button TYPE with PARAMS, described by DOC.
+TYPE is an unquoted symbol.  PARAMS are presently ignored.
+
+AT-P is a boolean form of no arguments which determines whether or not point
+is within a button of this type and if it is, calls `hact' with an
+action to be performed whenever a button of this type is activated.
+
+The action may be a regular Emacs Lisp function or a Hyperbole action
+type created with `defact' but may not return nil since any nil value
+returned is converted to t to ensure the implicit button checker
+recognizes that the action has been executed.
+
+Optional TO-P is a boolean form which moves point immediately after the next
+button of this type within the current buffer and returns a list of (button-
+label start-pos end-pos), or nil when none is found.
+
+Optional STYLE is a display style specification to use when highlighting
+buttons of this type; most useful when TO-P is also given.
+
+Return symbol created when successful, else nil.  Nil indicates that action
+type for ibtype is presently undefined."
+  (declare (indent defun)
+           (doc-string 3)
+           (debug (&define name lambda-list
+                           [&optional stringp] ; Doc string, if present.
+                           def-body)))
+  (when type
+    (let ((to-func (when to-p (action:create nil (list to-p))))
+	  (at-func (list at-p)))
+      `(progn (symtable:add ',type symtable:ibtypes)
+	      (htype:create ,type ibtypes ,doc nil ,at-func
+			    '(to-p ,to-func style ,style))))))
+
+(put      'defib 'lisp-indent-function 'defun)
+
+;; Support edebug-defun for interactive debugging of ibtypes
+(def-edebug-spec defib
+ (&define name lambda-list
+          [&optional stringp]   ; Match the doc string, if present.
+          def-body))
+
+(def-edebug-spec lambda-list
+ (([&rest arg]
+   [&optional ["&optional" arg &rest arg]]
+   &optional ["&rest" arg])))
+
+(defalias 'ibtype:create #'defib)
+
+(defun ibtype:activate-link (referent)
+  "Activate an implicit link REFERENT, either a key series, a url or a path."
+  (when referent
+    (let ((key-series (kbd-key:is-p referent)))
+      (if key-series
+	  (hact #'kbd-key:act key-series)
+	(let ((encoded-path-to-display (when referent (url-encode-url referent))))
+	  (if (hpath:www-p encoded-path-to-display)
+	      (hact #'www-url encoded-path-to-display)
+	    (hact #'hpath:find referent)))))))
+
+
+(defmacro defil (type start-delim end-delim text-regexp link-expr
+		 &optional start-regexp-flag end-regexp-flag doc)
+  "Create an implicit button link type.
+Use: TYPE (an unquoted symbol), START-DELIM and END-DELIM (strings),
+TEXT-REGEXP and LINK-EXPR.
+
+With optional START-REGEXP-FLAG non-nil, START-DELIM is treated
+as a regular expression.  END-REGEXP-FLAG treats END-DELIM as a
+regular expression.  Hyperbole automatically creates a doc string
+for the type but you can override this by providing an optional
+DOC string.
+
+TEXT-REGEXP must match to the text found between a button's delimiters
+in order for this type to activate.  The matched text is applied
+to LINK-EXPR to produce the link's referent, which is then displayed.
+
+LINK-EXPR may be:
+  (1) a brace-delimited key series;
+  (2) a URL;
+  (3) a path (possibly with trailing colon-separated line and column numbers);
+  (4) or a function or action type of one argument, the button text (sans the
+      function name if an Action Button), to display it.
+
+Prior to button activation, for the first three kinds of
+LINK-EXPR, a `replace-match' is done on the expression to
+generate the button-specific referent to display.  Thus, either
+the whole button text (\\\\&) or any numbered grouping from
+TEXT-REGEXP, e.g. \\\\1, may be referenced in the LINK-EXPR to
+form the link referent.
+
+Here is a sample use case.  Create a button type whose buttons
+perform a grep-like function over a current repository's git
+log entries.  The buttons use this format: [<text to match>].
+
+The following defines the button type called search-git-log which
+calls hypb:fgrep-git-log with the text of the button as an argument:
+
+  (defil search-git-log \"[<\" \">]\" \".*\" #\\='hypb:fgrep-git-log)
+
+Place point after one of the above expressions and evaluate it with
+\\[eval-last-sexp] to define the implicit button type.  Then if you
+have cloned the Hyperbole repo and are in a Hyperbole source buffer,
+an Action Key press on a button of the form:
+
+  ;; [<test release>]
+
+will display one line per commit whose change set matches \"test
+release\".  An Action Key press on any such line will then display the
+commit changes."
+  (declare (debug
+            (&define name stringp stringp stringp [&or stringp lambda-list]
+                     [&optional arg arg stringp]   ; Doc string, if present.
+                     def-body)))
+  (when type
+    `(prog1
+	 (defib ,type ()
+	   (interactive)
+	   (let* ((button-text-start-end (hargs:delimited ,start-delim ,end-delim
+							  ,start-regexp-flag ,end-regexp-flag t))
+		  (button-text (nth 0 button-text-start-end))
+		  (lbl-start   (nth 1 button-text-start-end))
+		  (lbl-end     (nth 2 button-text-start-end))
+		  actype)
+	     (when (and button-text (string-match ,text-regexp button-text))
+	       ;; Get the action type when link-expr is a function
+	       ;; symbol, symbol name or function body
+	       (setq actype (cond ((or (functionp ,link-expr) (subrp ,link-expr))
+				   ,link-expr)
+				  (t (actype:action ,link-expr))))
+	       (if actype
+		   (if (and (equal ,start-delim "<") (equal ,end-delim ">"))
+		       ;; Is an Action Button; send only the non-space
+		       ;; text after the action to link-expr
+		       (hact actype (progn (string-match "\\s-+" button-text)
+					   (substring button-text (match-end 0))))
+		     (ibut:label-set button-text lbl-start lbl-end)
+		     (hact actype button-text))
+		 (when (and (stringp ,link-expr) (string-match ,text-regexp button-text))
+		   ;; Change %s format syntax in link-expr to \\1 regexp replacement syntax
+		   (let ((referent (replace-match (save-match-data
+						    (if (string-match "\\(\\`\\|[^%]\\)\\(%s\\)" ,link-expr)
+							(replace-match "\\1\\\\1" t nil ,link-expr)
+						      ,link-expr))
+						  t nil button-text)))
+		     ;; link-expr is a string
+		     (ibtype:activate-link referent)))))))
+       (put (intern (format "ibtypes::%s" ',type))
+	    'function-documentation
+	    (or ,doc
+		(format "%s - %s\n\n%s %s%s%s\n%s %s" ',type "Hyperbole implicit button type"
+			"  Recognizes buttons of the form:\n    "
+			(if ,start-regexp-flag (regexp-quote ,start-delim) ,start-delim)
+			,text-regexp
+			(if ,end-regexp-flag (regexp-quote ,end-delim) ,end-delim)
+			"  which display links with:\n    "
+			(if (stringp ,link-expr) (regexp-quote ,link-expr) ,link-expr)))))))
+
+(defmacro defal (type link-expr &optional doc)
+  "Create an action button link TYPE (an unquoted symbol).
+The buttons look like: <TYPE link-text> where link-text is
+substituted into LINK-EXPR as grouping 1 (specified either as %s
+or \\\\1).  Hyperbole automatically creates a doc string for the
+type but you can override this by providing an optional DOC
+string.
+
+LINK-EXPR may be:
+  (1) a brace-delimited key series;
+  (2) a URL;
+  (3) a path (possibly with trailing colon-separated line and column numbers);
+  (4) or a function or action type of one argument, the button text sans the
+      function name.
+
+Prior to button activation, for the first three kinds of
+LINK-EXPR, a `replace-match' is done on the expression to
+generate the button-specific referent to display, substituting
+%s or \\\\1 in the LINK-EXPR for the text/label from the button.
+
+For the fourth kind, LINK-EXPR is a function of one argument which is
+either the full button text or in the case of an Action Button, the
+text following the function name at the start of the button.
+
+Here is a sample use case.  If you use Python and have a
+PYTHONPATH environment variable setup, then pressing
+\\[eval-last-sexp] after this expression:
+
+   (defal pylib \"${PYTHONPATH}/%s\")
+
+defines a new action button link type called `pylib' whose buttons
+take the form of:
+
+   <pylib PYTHON-LIBRARY-FILENAME>
+
+and display the associated Python libraries (typically Python source
+files).  Optional colon separated line and column numbers may be given
+as well.
+
+Therefore an Action Key press on:
+
+   <pylib string.py:5:7>
+
+would display the source for \"string.py\" (wherever it is installed
+on your system) from the Python standard library with point on the
+fifth line at the seventh character.
+
+For more flexible regular expression-based link type creation, see
+`defil'.  For the most general implicit button type creation,
+use `defib'."
+  (declare (debug (&define name [&or stringp lambda-list]
+                           [&optional stringp])))
+  (when type
+    `(defil ,type "<" ">" (format "%s\\s-+\"?\\([^\t\n\r\f'`\"]+\\)\"?" ',type)
+       ,link-expr nil nil ,doc)))   ; Match the doc string, if present.
+
+(defalias 'ibtype:create-action-link-type #'defal)
+(defalias 'ibtype:create-regexp-link-type #'defil)
+
+(defun    ibtype:def-symbol (ibtype)
+  "Return the abbreviated symbol for IBTYPE used in its `defib'.
+IBTYPE must be a symbol or string that begins with `ibtype::' or nil
+is returned."
+  (let ((name (if (stringp ibtype)
+		  ibtype
+		(symbol-name ibtype))))
+    (when (string-match "\\`ibtypes::" name)
+      (make-symbol (substring name (match-end 0))))))
+
+(defun    ibtype:delete (type)
+  "Delete an implicit button TYPE (a symbol).
+Return TYPE's symbol if it existed, else nil."
+  (symtable:delete type symtable:ibtypes)
+  (htype:delete type 'ibtypes))
+
+(provide 'hbut)
+
+;;; hbut.el ends here
+'hbut:report)
 
 (defun    ibut:to (name-key)
   "Find the nearest implicit button with NAME-KEY (a name or name key).

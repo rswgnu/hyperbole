@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    04-Feb-89
-;; Last-Mod:     17-Jun-23 at 21:14:33 by Bob Weiner
+;; Last-Mod:     25-Jun-23 at 10:10:02 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -127,9 +127,6 @@ Its default value is `smart-scroll-down'.  To disable it, set it to
 ;;; ************************************************************************
 ;;; Public declarations
 ;;; ************************************************************************
-
-;; FIXME: What makes us think these functions will be available when we
-;; call them?
 
 (declare-function todotxt-archive "ext:todotxt")
 (declare-function todotxt-bury "ext:todotxt")
@@ -1440,7 +1437,6 @@ NO-RECURSE-FLAG non-nil prevents infinite recursions."
 			       ;; Does nothing unless the dash Emacs Lisp
 			       ;; library is available for the -flatten function.
 			       (and (require 'dash nil t)
-			            ;; FIXME: Use Emacs-27's `flatten-tree'?
 			            (progn
 			              (declare-function -flatten "ext:dash")
 				      (assoc index-key (-flatten alist))))))))

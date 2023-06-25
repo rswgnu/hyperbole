@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 20:45:31
-;; Last-Mod:     18-Jun-23 at 23:15:20 by Bob Weiner
+;; Last-Mod:     25-Jun-23 at 10:09:04 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -186,7 +186,6 @@ If the referenced location is found, return non-nil."
 ;;; ========================================================================
 
 (defib pathname ()
-  ;; FIXME: GNU convention calls these *file* names.
   "Make a valid pathname at point display the path entry.
 
 If instead is a PATH-style variable name, .e.g. MANPATH, will prompt

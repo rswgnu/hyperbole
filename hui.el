@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 21:42:03
-;; Last-Mod:     19-Jun-23 at 00:05:29 by Bob Weiner
+;; Last-Mod:     25-Jun-23 at 10:11:04 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -349,8 +349,6 @@ region is within the button, the button is interactively edited.  Otherwise,
 a new button is created interactively with the region as the default label."
   (interactive)
   (let ((m (mark))
-        ;; FIXME: Seems redundant: don't both `hui:ebut-edit' and
-        ;; `hui:ebut-create' already bind this var?
         (hui--ignore-action-key-depress-prev-point t)
 	(op action-key-depress-prev-point) (p (point)) (lbl-key))
     (if (and m (eq (marker-buffer m) (marker-buffer op))
@@ -932,7 +930,6 @@ Signal an error when no such button is found in the current buffer."
 					  (ibut:label-p t) 'ibut)))))
   (unless (stringp lbl-key)
     (if (called-interactively-p 'interactive)
-	;; FIXME: Move this error to the `interactive' spec?
 	(error "(hui:ibut-edit): No named implicit button to edit")
       (error "(hui:ibut-edit): 'lbl-key' argument must be a string, not '%s'" lbl-key)))
 
