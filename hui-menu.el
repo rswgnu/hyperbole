@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    28-Oct-94 at 10:59:44
-;; Last-Mod:     13-May-23 at 17:03:00 by Bob Weiner
+;; Last-Mod:     19-Jun-23 at 13:28:35 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -386,6 +386,7 @@ REBUILD-FLAG is non-nil, in which case the menu is rebuilt."
 		    ["Buffer-Buttons"   (hui:hbut-report -1) t]
 		    ["Current-Button"   (hui:hbut-report)    t]
 		    ["Ordered-Buttons"  (hui:hbut-report 1)  t])
+		   ["Link"   hui:ebut-link-directly t]
 		   ["Rename" hui:ebut-rename t]
 		   ["Search" hui:ebut-search t]
 		   ["Types"
@@ -424,7 +425,8 @@ REBUILD-FLAG is non-nil, in which case the menu is rebuilt."
 		   ["Delete-Type" (hui:htype-delete 'ibtypes) t]
 		   ["Edit"   hui:ibut-edit t]
 		   ["Help"   hui:hbut-help t]
-		   ["Label"  hui:ibut-label-create t]
+		   ["Link"   hui:ibut-link-directly t]
+		   ["Name"  hui:ibut-label-create t]
 		   ["Rename" hui:ibut-rename t]
 		   ["Types"  (hui:htype-help 'ibtypes 'no-sort) t])
 		 '("Koutliner"

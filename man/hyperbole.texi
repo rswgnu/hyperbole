@@ -7,7 +7,7 @@
 @c Author:       Bob Weiner
 @c
 @c Orig-Date:     6-Nov-91 at 11:18:03
-@c Last-Mod:     11-Jun-23 at 13:21:00 by Bob Weiner
+@c Last-Mod:     22-Jun-23 at 17:39:17 by Bob Weiner
 
 @c %**start of header (This is for running Texinfo on a region.)
 @setfilename hyperbole.info
@@ -156,7 +156,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</P>
 
 <PRE>
 Edition 8.0.1pre
-Printed June 11, 2023.
+Printed June 22, 2023.
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -198,7 +198,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 @example
 Edition 8.0.1pre
-June 11, 2023
+June 22, 2023
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -342,8 +342,9 @@ Utilizing Explicit Buttons
 
 Creation
 
-* By Dragging::                 Creation Via Action Key Drags
 * By Menu::                     Creation Via Menus
+* By Link::                     Creation Via Buffer Link
+* By Dragging::                 Creation Via Action Key Drags
 
 Koutliner
 
@@ -2066,47 +2067,63 @@ directory, typically in another window.  An explicit button could do
 the same thing but has to be created manually, rather than recognized
 as part of the buffer text.
 
-@kindex C-h h i
-@cindex implicit button creation
-@cindex activating implicit button
-@cindex menu item, Ibut/Act
-@cindex menu, Ibut
-@cindex menu, Implicit-Button
-@cindex menu, Ibut/Activate
-@cindex menu, Ibut/Create
-@cindex menu, Ibut/Edit
-@cindex menu, Ibut/Label
-@cindex menu, Ibut/Rename
-@kindex C-h h i a
-@kindex C-h h i c
-@kindex C-h h i e
-@kindex C-h h i l
-@kindex C-h h i r
-Implicit buttons are managed with the Hyperbole Ibut/ menu accessed with
-@bkbd{C-h h i}.  The Create item, @bkbd{C-h h i c}, prompts for an
-implicit button label (default is any selected region), an action type,
-and the action's associated arguments, such as a file to which to link.
-It then creates the button at point.
-
 @cindex link creation
 @cindex creating implicit links
-@cindex mouse drag, link creation
+@cindex implicit button creation
+@cindex menu, Ibut
+@cindex menu, Implicit-Button
+@cindex menu item, Ibut/Create
+@cindex menu item, Ibut/Edit
+@kindex C-h h i
+@kindex C-h h i c
+@kindex C-h h i e
+Implicit buttons are managed with the Hyperbole Ibut/ menu accessed
+with @bkbd{C-h h i}.  The Create item, @bkbd{C-h h i c}, prompts for
+an implicit button name (default is any selected region), an action
+type, and the action's associated arguments.  It then creates the
+button at point.  Use this to create a button with any implicit button
+type, not just links.
+
+@cindex mouse drag, implicit link creation
 @cindex drag
 @cindex Assist Key drag
-Alternatively, to create an implicit link button to something displayed
-within an Emacs window, simply drag with the Assist (not the Action) Mouse
-Key from an editable source window to another window with the desired link
-referent.  The drag must start outside of a draggable item,
-@pxref{Displaying Items}.  Hyperbole will either automatically select the
-button action type based on the referent context or will prompt you to
+Alternatively, to create an implicit link button to something
+displayed within an Emacs window (the referent), simply drag with the
+Assist (not the Action) Mouse Key depressed from an editable source
+window to another window with the desired link referent and then
+release.  The drag must start outside of a draggable item,
+@pxref{Displaying Items}.  Hyperbole will either automatically select
+the button type based on the referent context or will prompt you to
 select from one of a few possible link types.
 
-To activate the button with point on its label or button text, use the Act
-menu item, @bkbd{C-h h i a} or press the Action Key.  You can use
-@bkbd{C-h h i e} to edit an implicit button (or simply edit it manually).
-If you want to add a label to an existing implicit button without one, use
-@bkbd{C-h h i l} to label it.  Rename an existing named implicit button
-with @bkbd{C-h h i r}.
+@cindex implicit link creation
+@cindex menu, Ibut/Link
+@kindex C-h h i l
+If you have exactly two Emacs windows in your current frame or exactly
+two windows visible across two Emacs frames, this is even easier.
+Simply use the Link menu item, @bkbd{C-h h i l}, to create a new
+unnamed implicit link button or to edit the one at point.  @bkbd{C-u
+C-h h i l} will additionally prompt to add a name or rename the button
+at point.  With more than two windows, Hyperbole will prompt you to
+choose the referent window and its associated point to which to link.
+If the Ace Window package is installed and active, this will be used
+to choose the window; otherwise, you will be prompted to select it by
+mouse.
+
+@cindex activating implicit button
+@cindex menu item, Ibut/Act
+@cindex menu item, Ibut/Activate
+@cindex menu item, Ibut/Name
+@cindex menu item, Ibut/Rename
+@kindex C-h h i a
+@kindex C-h h i n
+@kindex C-h h i r
+To activate an implicit button with point on its name or button text,
+use the Act menu item, @bkbd{C-h h i a} or press the Action Key.  You
+can use @bkbd{C-h h i e} to edit an implicit button (or simply edit it
+manually).  If you want to add a name to an existing implicit button
+without one, use @bkbd{C-h h i n} to name it.  Rename an existing
+named implicit button with @bkbd{C-h h i r}.
 
 @vindex file, hibtypes.el
 @cindex context
@@ -3385,18 +3402,95 @@ what buttons do.
 
 If you want to create an explicit link button to somewhere within an Emacs
 window, then simply drag with the Action Mouse Key from an editable buffer
-to the target buffer.
+(outside of a draggable item) to the target buffer.
 
 Alternatively, the Hyperbole minibuffer menu item, Ebut/Create, will
 create any type of explicit button, but requires a few steps.
 
+The next two subsections examine explicit button creation and
+modification in detail.
+
 @menu
-* By Dragging::                 Creation Via Action Key Drags
 * By Menu::                     Creation Via Menus
+* By Link::                     Creation Via Buffer Link
+* By Dragging::                 Creation Via Action Key Drags
 @end menu
 
-@node By Dragging, By Menu, Creation, Creation
+@node By Menu, By Link, Creation, Creation
+@subsubsection Creation Via Menus
+
+@cindex link creation
+@cindex creating explicit links
+@cindex explicit button creation
+@cindex menu, Ebut
+@cindex menu item, Explicit-Button
+@cindex menu item, Ebut/Create
+@cindex menu item, Ebut/Edit
+@kindex C-h h e
+@kindex C-h h e c
+@kindex C-h h e e
+Explicit buttons are managed with the Hyperbole Ebut/ menu accessed with
+@bkbd{C-h h e}.  The Create item, @bkbd{C-h h e c}, creates any type of
+explicit button.  It prompts for an explicit button label (default is any
+selected region), an action type, and the action's associated arguments.
+It then creates the button at point and surrounds the label with
+<(explicit button delimiters)> like so, to indicate success.
+
+You can use the direct selection techniques mentioned in @ref{Smart Key
+Argument Selection}, to select any completion-based arguments.  If you do
+not mark a region before invoking the button create command, you will be
+prompted for both a label and a target buffer for the button and the
+delimited label text will be inserted into the target buffer after a
+successful button creation.
+
+@cindex button instance
+@cindex instance number
+If a previous button with the same label exists in the same buffer,
+Hyperbole will add an @dfn{instance number} to the label when it adds
+the delimiters so that the name is unique.  Thus, you don't have to
+worry about accidental button name conflicts.  If you want the same
+button to appear in multiple places within the buffer, just enter the
+label again and delimit it yourself or copy and paste the button with
+its delimiters.  Hyperbole will interpret all occurrences of the same
+delimited label within a buffer as the same button.
+
+@node By Link, By Dragging, By Menu, Creation
+@subsubsection Creation Via Buffer Link
+
+@cindex explicit link creation
+@cindex menu item, Ebut/Link
+@cindex source point
+@cindex referent point
+@kindex C-h h e l
+If you have exactly two Emacs windows in your current frame or exactly
+two windows visible across two Emacs frames, you can quickly create
+explicit link buttons from your current point (source) to the point in
+the other window (referent).  Simply use the Link menu item, @bkbd{C-h h
+e l}, to create a new explicit link button or to rename the one at point.
+Hyperbole will either use the selected region as the new button label or
+will prompt you for it.  It will then automatically choose the link type
+based on the referent location and will either update the button at point
+or create a new one.
+
+With more than two windows on screen, Hyperbole will prompt you to choose
+the referent window and its associated point to which to link.  If the
+Ace Window package is installed and active, this will be used to choose
+the window; otherwise, you will be prompted to select it by mouse.
+
+@node By Dragging,  , By Link, Creation
 @subsubsection Creation Via Action Key Drags
+
+@cindex mouse drag, explicit link creation
+@cindex drag
+@cindex Assist Key drag
+Alternatively, to create an explicit link button to something
+displayed within an Emacs window (the referent), simply drag with the
+Assist (not the Action) Mouse Key depressed from an editable source
+window to another window with the desired link referent and then
+release.  The drag must start outside of a draggable item,
+@pxref{Displaying Items}.  Hyperbole will either automatically select
+the button type based on the referent context or will prompt you to
+select from one of a few possible link types.
 
 @cindex explicit button creation
 @cindex link creation
@@ -3407,10 +3501,11 @@ create any type of explicit button, but requires a few steps.
 The most efficient way to create an explicit link button to something
 within an Emacs window is to use the Action Mouse Key to drag from an
 editable source window to another window with the desired link referent.
-The drag must start outside of a draggable item, @pxref{Displaying Items}.
-Hyperbole will either automatically select the button action type based on
-the referent context or will prompt you to select from one of a few
-possible link types.
+The drag must start outside of a draggable item, @pxref{Displaying
+Items}.  Hyperbole will prompt for the button text label and then will
+either automatically select the button action type based on the referent
+context or will prompt you to select from one of a few possible link
+types.
 
 In detail, you should split your current Emacs frame into two
 windows: one which contains the point at which you want a button to be
@@ -3457,49 +3552,6 @@ Buffer attached to File  link-to-file
 Buffer without File      link-to-buffer-tmp
 @end example
 @end format
-
-
-@node By Menu,  , By Dragging, Creation
-@subsubsection Creation Via Menus
-
-Use the Hyperbole minibuffer menu to create any type of explicit button.
-First, mark a short region of text for the button label in any fashion
-allowed by Emacs; then select the Hyperbole menu item sequence,
-Ebut/Create.  You will be prompted for the button's label with the marked
-region as the default.  If you accept the default and enter the rest of
-the information you are prompted for, the button will be created within
-the current buffer and Hyperbole will surround the marked region with
-explicit button delimiters to indicate success.
-
-If you do not mark a region before invoking the button create command,
-you will be prompted for both a label and a target buffer for the button
-and the delimited label text will be inserted into the target buffer
-after a successful button creation.
-
-After Hyperbole has the button label and its target buffer, it will
-prompt you for an action type for the button.  Use the @bkbd{?}
-completion list key to see the available types.  The type selected
-determines any following values for which you are prompted.
-
-@cindex button instance
-@cindex instance number
-If a previous button with the same label exists in the same buffer,
-Hyperbole will add an @dfn{instance number} to the label when it adds
-the delimiters so that the name is unique.  Thus, you don't have to
-worry about accidental button name conflicts.  If you want the same
-button to appear in multiple places within the buffer, just enter the
-label again and delimit it yourself or copy and paste the button with
-its delimiters.  Hyperbole will interpret all occurrences of the same
-delimited label within a buffer as the same button.
-
-@cindex link, creation
-If you create link buttons using the Hyperbole menus, the best
-technique is to place on screen both the source buffer for the button
-and the buffer to which it will link.  Mark the region of text to use
-as your button label, invoke the button create command from the menu,
-choose an action type which begins with @code{link-to-} and then use
-the direct selection techniques mentioned in @ref{Smart Key Argument
-Selection}, to select the link referent.
 
 
 @node Renaming, Deletion, Creation, Utilizing Explicit Buttons
@@ -3991,7 +4043,7 @@ RemoveLines -      Following point, remove all lines that match regexp.
 
 @item
 SaveLines -        Following point, keep only lines that match regexp.
-@cindex menu, Find/Web
+@cindex menu item, Find/Web
 @cindex menu, Web
 @cindex searching the web
 @cindex web search
@@ -4587,7 +4639,7 @@ cell.  User-defined attributes may also be added to cells.  @xref{Cell
 Attributes}.
 
 @vindex file, EXAMPLE.kotl
-@cindex menu, Outline/Example
+@cindex menu item, Kotl/Example
 @kindex C-h h k e
 This chapter expands on the information given in the @file{EXAMPLE.kotl}
 file included with Hyperbole.  Use @bkbd{C-h h k e} to display that
@@ -6172,7 +6224,7 @@ Scroll forward a windowful.
 @cindex datestamps
 @cindex rolo, datestamps
 @cindex customize, rolo datestamps
-@cindex menu, Toggle-Rolo-Dates
+@cindex menu item, Rolo/Toggle-Rolo-Dates
 @cindex customize, rolo edits
 @cindex customize, rolo additions
 @vindex hyrolo-edit-hook
@@ -9430,44 +9482,8 @@ Otherwise, if dragged from inside one window to another:
          Assist Key creates an implicit button.
 
          In Hyperbole versions prior to 9, Assist Key drags between windows would
-         swap buffers.  In version 9 and above, start or end the between window
-         drag on a modeline to get this same behavior.
-@end group
-@end format
-
-@node Smart Mouse Drags within a Window, Smart Mouse Drags outside a Window, Smart Mouse Drags between Windows, Smart Mouse Keys
-@subsection Smart Mouse Drags between Windows
-
-@cindex active region
-@cindex copy and yank
-@cindex kill and yank
-@cindex yanking
-@cindex pasting a region
-@format
-@group
-If an active (highlighted) region exists within the editor:
-  ACTION KEY
-     Copies and yanks (pastes) the region to the release point in a
-     different window.
-  ASSIST KEY
-     Kills (cuts) and yanks (pastes) the region to the release point
-     in a different window.
-@end group
-@end format
-
-@format
-@group
-Otherwise, if dragged from inside one window to another:
-  ACTION KEY
-     (1) If depress was on a buffer name in Buffer-menu/ibuffer mode or on
-         a file/directory in dired mode, displays the item in window of release.
-         See @code{hmouse-drag-item-mode-forms} for how to allow for draggable
-         items in other modes.
-     (2) Otherwise, creates a new link button at the drag start location, linked
-         to the drag end location.  If the drag start position is within a button,
-         this modifies the button to link to the drag end location.
-  ASSIST KEY
-     Swap buffers in the two windows.
+         swap buffers.  In version 9 and above, start or end the drag between
+         windows on a modeline to get this same behavior.
 @end group
 @end format
 
@@ -9639,7 +9655,6 @@ When company-mode is active:
 @end group
 @end format
 
-@page
 @node Smart Key - Org Mode, Smart Key - Ivy, Smart Key - Company Mode, Smart Keyboard Keys
 @subsection Smart Key - Org Mode
 
@@ -9675,7 +9690,11 @@ When in an Org mode context and @code{hsys-org-enable-smart-keys} is non-nil:
 
      (10) In any other context besides the end of a line, invoke the Org mode
           standard binding of @bkbd{M-@key{RET}}, @code{org-meta-return}.
+@end group
+@end format
 
+@format
+@group
    When the ASSIST KEY is pressed, it behaves just like the Action Key except
    in these contexts:
 
@@ -9917,7 +9936,6 @@ If the Smart Menu package (part of InfoDock) has been loaded and
 @end group
 @end format
 
-@page
 @node Smart Key - Dired Mode, Smart Key - Hyperbole Buttons, Smart Key - Smart Menus, Smart Keyboard Keys
 @subsection Smart Key - Dired Mode
 @cindex click, dired
@@ -9986,7 +10004,6 @@ If pressed within a buffer in View major or minor mode:
 @end group
 @end format
 
-@page
 @node Smart Key - Helm Mode, Smart Key - Delimited Things, Smart Key - View Mode, Smart Keyboard Keys
 @subsection Smart Key - Helm Mode
 
@@ -10029,7 +10046,6 @@ If pressed within a buffer in helm major mode:
 @end group
 @end format
 
-@page
 @node Smart Key - Delimited Things, Smart Key - The Koutliner, Smart Key - Helm Mode, Smart Keyboard Keys
 @subsection Smart Key - Delimited Things
 
@@ -10105,7 +10121,6 @@ When pressed within a Hyperbole Koutliner buffer (kotl-mode):
 @end group
 @end format
 
-@page
 @node Smart Key - RDB Mode, Smart Key - Help Buffers, Smart Key - The Koutliner, Smart Keyboard Keys
 @subsection Smart Key - RDB Mode
 @cindex rdb-mode
@@ -10184,7 +10199,6 @@ When pressed on a bookmark-bmenu-mode entry line:
 @end group
 @end format
 
-@page
 @node Smart Key - Pages Directory Mode, Smart Key - Python Source Code, Smart Key - Bookmark Mode, Smart Keyboard Keys
 @subsection Smart Key - Pages Directory Mode
 
@@ -10230,7 +10244,6 @@ When pressed within a Python source code file (without the OO-Browser):
 @end group
 @end format
 
-@page
 @node Smart Key - C Source Code, Smart Key - C++ Source Code, Smart Key - Python Source Code, Smart Keyboard Keys
 @subsection Smart Key - C Source Code
 
@@ -10288,7 +10301,6 @@ buffer:
 @end group
 @end format
 
-@page
 @format
 @group
 When pressed within a C++ source code file (without the OO-Browser):
@@ -10550,7 +10562,6 @@ When pressed within a man page apropos buffer or listing:
 @end group
 @end format
 
-@page
 @node Smart Key - Emacs Outline Mode, Smart Key - Info Manuals, Smart Key - Man Page Apropos, Smart Keyboard Keys
 @subsection Smart Key - Emacs Outline Mode
 @vindex selective-display
@@ -10969,7 +10980,6 @@ When pressed within an OO-Browser listing window:
 @end group
 @end format
 
-@page
 @format
 @group
   ASSIST KEY

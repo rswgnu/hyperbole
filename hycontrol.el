@@ -359,7 +359,7 @@ The final predicate should always be t, for default values, typically of zero.")
 ;;;###autoload
 (eval-after-load "dired"     '(define-key dired-mode-map       "@" 'hycontrol-windows-grid))
 
-;;;###autoload
+
 (defvar hycontrol-windows-mode-map
   (let ((map (make-sparse-keymap)))
     (suppress-keymap map t) ;; Disable self-inserting keys and prefix keys
@@ -428,11 +428,11 @@ The final predicate should always be t, for default values, typically of zero.")
 
     ;; Don't call these interactively because a prefix arg of 1 tries
     ;; to make one window 1 line tall.
-    (define-key map "\["    (lambda () (interactive) (split-window-vertically)))
-    (define-key map "\]"    (lambda () (interactive) (split-window-horizontally)))
+    (define-key map "["    (lambda () (interactive) (split-window-vertically)))
+    (define-key map "]"    (lambda () (interactive) (split-window-horizontally)))
 
-    (define-key map "\("    'hycontrol-save-frame-configuration)
-    (define-key map "\)"    'hycontrol-restore-frame-configuration)
+    (define-key map "("    'hycontrol-save-frame-configuration)
+    (define-key map ")"    'hycontrol-restore-frame-configuration)
 
     (define-key map "~"     (lambda () (interactive)
 			      (unless (hycontrol-window-swap-buffers)

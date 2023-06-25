@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Oct-96 at 02:25:27
-;; Last-Mod:     14-May-23 at 02:03:53 by Bob Weiner
+;; Last-Mod:     21-Jun-23 at 00:25:45 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -169,7 +169,7 @@ Use for language major modes."
     (Info-mode "[^ \t\n]")
     (outline-mode "[^*]")
     (text-mode  "[^ \t\n*]"))
-  "List of (major-mode . non-terminator-line-regexp) elements.
+  "List of (MAJOR-MODE . NON-TERMINATOR-LINE-REGEXP) elements.
 Used to avoid early dropoff when marking indented code.")
 
 (defvar hui-select-indent-end-regexp-alist
@@ -185,7 +185,7 @@ Used to avoid early dropoff when marking indented code.")
     (indented-text-mode "[ \t]*$")
     (Info-mode "[ \t]*$")
     (text-mode  "[ \t]*$"))
-  "List of (major-mode . terminator-line-regexp) elements.
+  "List of (MAJOR-MODE . TERMINATOR-LINE-REGEXP) elements.
 Used to include a final line when marking indented code.")
 
 (defcustom hui-select-char-p nil
@@ -472,7 +472,7 @@ displayed in the minibuffer."
 ;;;###autoload
 (defun hui-select-goto-matching-tag ()
   "Move point to start of the tag paired with closest tag point is at or precedes.
-Enabled in major modes in `hui-select-markup-modes.  Returns t if
+Enabled in major modes in `hui-select-markup-modes'.  Returns t if
 point is moved, else nil.  Signals an error if no tag is found
 following point or if the closing tag does not have a `>'
 terminator character."
@@ -798,7 +798,7 @@ Assume point is before any non-whitespace character on the line."
 This respects the current syntax table definition of whitespace, whereas
 `back-to-indentation' does not.  This is relevant in literate programming and
 mail and news reply modes."
-  (goto-char (min (progn (end-of-line) (point))
+  (goto-char (min (line-end-position)
 		  (progn (beginning-of-line)
 			 (skip-syntax-forward " ")
 			 (point)))))

@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    18-Sep-91 at 02:57:09
-;; Last-Mod:     19-Jun-23 at 00:17:03 by Bob Weiner
+;; Last-Mod:     24-Jun-23 at 13:09:26 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -22,6 +22,7 @@
 (eval-and-compile (mapc #'require '(cl-lib elisp-mode help-mode hversion
 				    hmoccur hbmap htz hbdata hact
 				    hui-select view)))
+(require 'hmouse-drv) ;For `hui--ignore-action-key-depress-prev-point'.
 
 ;;; ************************************************************************
 ;;; Public declarations
@@ -217,6 +218,8 @@ Return nil if no matching button is found."
 (defalias 'ebut:key-src-set-buffer #'hbut:key-src-set-buffer)
 (defalias 'ebut:key-src-fmt        #'hbut:key-src-fmt)
 (defalias 'ebut:key-to-label       #'hbut:key-to-label)
+
+(defvar hbut:max-len)
 
 (defun    ebut:label-p (&optional as-label start-delim end-delim pos-flag two-lines-flag)
   "Return key for the explicit button label that point is within, else nil.
@@ -536,10 +539,10 @@ labels only; optional MATCH-PART enables partial matches."
 							     (point)))
 				       (tag (format "\n%4d:" linenum))
 				       lns start end)
-				  (setq end (progn (end-of-line) (point))
+				  (setq end (line-end-position)
 					start (progn
 						(goto-char (match-beginning 0))
-						(beginning-of-line) (point))
+						(line-beginning-position))
 					lns (buffer-substring start end))
 				  (goto-char end)
 				  (with-current-buffer out-buf
@@ -696,7 +699,7 @@ Return nil if no matching button is found."
 (defun    gbut:help (label)
   "Display help for Hyperbole global button with LABEL."
   (interactive (list (hargs:read-match "Report on global button labeled: "
-				       (mapcar 'list (gbut:label-list))
+				       (mapcar #'list (gbut:label-list))
 				       nil t nil 'hbut)))
   (let* ((lbl-key (hbut:label-to-key label))
 	 (but (hbut:get lbl-key nil (gbut:file))))
@@ -1525,7 +1528,7 @@ If a file, always return a full path if optional FULL-FLAG is non-nil."
 	       (expand-file-name file default-directory)
 	     file)))))
 
-(defalias 'hbut:summarize 'hbut:report)
+(defalias 'hbut:summarize #'hbut:report)
 
 (defun    hbut:to (lbl-key)
   "Find the nearest explicit button or labeled/named implicit button.
@@ -1624,12 +1627,10 @@ associated arguments from the button."
       (unless (string-match "::" type-name)
 	(setq ibut-type-symbol (intern-soft (concat "ibtypes::" type-name))))
       (when ibut-type-symbol
-	(let ((types (htype:category 'ibtypes))
-	      ;; 'types' is a global var used in (hact) function, don't delete.
-	      (hrule:action 'actype:identity))
+	(let ((hrule:action #'actype:identity))
 	  (funcall ibut-type-symbol))))))
 
-(defun  ibut:set-name-and-label-key-p (&optional start-delim end-delim)
+(defun    ibut:set-name-and-label-key-p (&optional start-delim end-delim)
   "Set ibut name, lbl-key, lbl-start/end attributes in 'hbut:current.
 Point may be on the implicit button text or its optional preceding
 name.  Return t if on a named or delimited text implicit button;
@@ -1898,6 +1899,9 @@ Store new button attributes in the symbol, 'hbut:current."
    [&optional ["&optional" arg &rest arg]]
    &optional ["&rest" arg])))
 
+(defvar ibut:label-start)
+(defvar ibut:label-end)
+
 (defun    ibut:delete (&optional but-sym)
   "Delete Hyperbole implicit button based on optional BUT-SYM.
 Default is the symbol hbut:current'.
@@ -2133,10 +2137,10 @@ positions at which the button label delimiter begins and ends."
     (error "(ibut:key): Argument is not a Hyperbole implicit button symbol, `%s'"
 	   ibut)))
 
-(defalias 'ibut:to-key-src   'hbut:to-key-src)
-(defalias 'ibut:key-to-label 'hbut:key-to-label)
-(defalias 'ibut:label-to-key 'hbut:label-to-key)
-(defalias 'map-ibut          'ibut:map)
+(defalias 'ibut:to-key-src   #'hbut:to-key-src)
+(defalias 'ibut:key-to-label #'hbut:key-to-label)
+(defalias 'ibut:label-to-key #'hbut:label-to-key)
+(defalias 'map-ibut          #'ibut:map)
 
 (defun    ibut:map (but-func &optional regexp-match include-delims)
   "Apply BUT-FUNC to the visible, named implicit buttons.
@@ -2165,13 +2169,14 @@ move to the first occurrence of the button."
 	    (re-search-forward (ibut:label-regexp lbl-key t) nil t))
     (goto-char (+ (match-beginning 0) (length ibut:label-start)))))
 
-(defun    ibut:operate (&optional new-name)
+(defun    ibut:operate (&optional new-name edit-flag)
   "Insert/modify an ibutton based on `hbut:current' in current buffer.
-If optional NEW-NAME is non-nil, modify an existing ibutton with 'name'
-attribute in `hbut:current'.
+Optional non-nil NEW-NAME is name to give button.  With optional
+EDIT-FLAG non-nil, modify an existing in-buffer ibutton rather
+than creating a new one.
 
-If NAME is nil, use the active region text as the button name, if any;
-if no such region, then create an unnamed implicit button.
+If NEW-NAME is nil, use the active region text as the button name, if any;
+if no such region, then create/modify an unnamed implicit button.
 
 Return instance string appended to name to form a per-buffer unique
 name; nil if name is already unique or no name.  Signal an error when no
@@ -2194,7 +2199,6 @@ Summary of operations based on inputs:
   (let* ((actype (hattr:get 'hbut:current 'actype))
 	 (name (hattr:get 'hbut:current 'name))
 	 (name-regexp (ibut:label-regexp (ibut:label-to-key name)))
-	 (modify new-name)
 	 (region-flag (hmouse-use-region-p))
 	 (instance-flag))
     (unless actype
@@ -2210,7 +2214,7 @@ Summary of operations based on inputs:
       (hattr:set 'hbut:current 'name new-name))
     (save-excursion
       (if (progn
-	    (if modify
+	    (if edit-flag
 		(progn
 		  (setq instance-flag
 			(hbdata:ibut-instance-last (ibut:label-to-key new-name)))
@@ -2224,10 +2228,10 @@ Summary of operations based on inputs:
 	  (when (hmail:editor-p)
 	    (hmail:msg-narrow))
 	(hypb:error "(ibut:operate): Failed to %s button %s%s%s in buffer %s"
-		    (if modify "modify" "create")
+		    (if edit-flag "modify" "create")
 		    ibut:label-start name ibut:label-end
 		    (buffer-name))))
-    (cond (modify
+    (cond (edit-flag
 	   (if name
 	       ;; Rename all occurrences of button - those with same name
 	       (let* ((but-key-and-pos (ibut:label-p nil nil nil 'pos))
@@ -2301,8 +2305,9 @@ Summary of operations based on inputs:
 	     (when (and start end)
 	       (ibut:delimit start end instance-flag))
 	     (ibut:insert-text 'hbut:current)
-	     (when start
-	       (goto-char start))))
+	     (if start
+		 (goto-char start)
+	       (goto-char (max (- (point) 2) (point-min))))))
 
 	  (t (hypb:error
 	      "(ibut:operate): Operation failed.  Check button attribute permissions: %s"
@@ -2352,7 +2357,8 @@ Summary of operations based on inputs:
 	 (args   (hattr:get ibut 'args))
 	 (arg1   (nth 0 args))
 	 (arg2   (nth 1 args))
-	 (arg3   (nth 2 args)))
+	 (arg3   (nth 2 args))
+	 (arg4   (nth 3 args)))
     (pcase actype
       ('actypes::kbd-key
        (cond ((and (stringp arg1) (string-match "\\s-*{.+}\\s-*" arg1))
@@ -2411,9 +2417,12 @@ Summary of operations based on inputs:
 					       (hpath:substitute-var arg1)
 					       (line-number-at-pos (point) t)
 					       (current-column))))))))
+      ('actypes::link-to-string-match
+       (insert (format "<%s \"%s\" %d \"%s\">" (actype:def-symbol actype) arg1 arg2
+		       (hpath:substitute-var arg3))))
       ('nil (error "(ibut:insert-text): actype must be a Hyperbole actype or Lisp function symbol, not '%s'" orig-actype))
       ;; Generic action button type						      
-      (_ (insert (format "<%s%s%s>" actype (if args " " "")
+      (_ (insert (format "<%s%s%s>" (actype:def-symbol actype) (if args " " "")
 			 (if args (hypb:format-args args) "")))))))
 
 (defun    ibut:previous-occurrence (lbl-key &optional buffer)
@@ -2479,7 +2488,7 @@ current."
            t))
 	(t (error "(ibut:rename): Button '%s' not found in visible portion of buffer." old-lbl))))
 
-(defalias 'ibut:summarize 'hbut:report)
+(defalias 'ibut:summarize #'hbut:report)
 
 (defun    ibut:to (name-key)
   "Find the nearest implicit button with NAME-KEY (a name or name key).

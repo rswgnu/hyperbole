@@ -41,14 +41,24 @@
           mode; {C-h h} re-enables it.  See "(hyperbole)menu,
           entry/exit commands".
 
-  *** Ibut Menu: Documented in the manual, notably the new Ibut/Create
-      menu item.  See "(hyperbole)menu, Ibut/Create".
+  *** Extensive 150-page Reference Manual: Includes multiple indexes
+      for easy cross-referencing, Info viewer version and PDF for printing.
+      Some of the updates include:
 
-  *** Manual Glossary: Added Ace Window, Consult, Org Mode, and Org Roam
-      entries.  See "(hyperbole)Glossary".
+  **** Ebut/Link Menu Item:  With two windows on screen, link from source
+       window point to referent window point.  Do a similar thing when
+       more windows are on screen via an Action Mouse Key drag between
+       windows.  See "(hyperbole)Smart Mouse Drags between Windows".
 
-  *** Smart Key - Org Mode: Expanded with doc for more extensive behavior.
-      See "(hyperbole)Smart Key - Org Mode".
+  **** Ibut Menu: Documented in the manual, notably the new Ibut/Create
+       menu item.  See "(hyperbole)menu, Ibut/Create".  For the Ibut/Link
+       menu item, see "(hyperbole)menu, Ibut/Link".
+
+  **** Manual Glossary: Added Ace Window, Consult, Org Mode, and Org Roam
+       entries.  See "(hyperbole)Glossary".
+
+  **** Smart Key - Org Mode: Expanded with doc for more extensive behavior.
+       See "(hyperbole)Smart Key - Org Mode".
 
 
 ** HYCONTROL  (See "(hyperbole)HyControl").
@@ -286,7 +296,7 @@
        using `hattr:emacs-button-attributes', as recognized by
        `hattr:emacs-button-is-p'.
 
-  *** (hui:ibut-create, ibut:create, ibut:delimit, ibut:edit, ibut:operate):
+  *** (hui:ibut-create, ibut:create, ibut:delimit, ibut:operate):
       Add interactive, named/labeled implicit button creation.  For
       `ibut:create', improve doc and add but-sym arg which can supply all
       other arguments in its properties.
