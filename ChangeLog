@@ -1,5 +1,13 @@
 2023-06-25  Bob Weiner  <rsw@gnu.org>
 
+* hibtypes.el (annot-bib): Fix missing check that annot-bib is between square
+    brackets.
+  hactypes.el (annot-bib): Beep/fail if when search for citation, point ends up
+    within the ibut reference rather than the citation itself.
+
+* hibtypes.el (org-link-outside-org-mode): Revert to pre-Stefan changes since not
+    yet integrating variable check instead of 'hyperb:stack-frame' calls.
+
 * hactypes.el (rfc-toc): Fix wrong 'select-buffer' call by replacing with
     'switch-to-buffer' for permanent return to original buffer.
 
