@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    18-Sep-91 at 02:57:09
-;; Last-Mod:     25-Jun-23 at 10:35:23 by Mats Lidell
+;; Last-Mod:     25-Jun-23 at 16:43:45 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -388,14 +388,19 @@ button is found in the current buffer."
 		    (insert new-label)
 		    (setq end (point)))
 		   ((and (hmouse-use-region-p)
-			 (if hui--ignore-action-key-depress-prev-point
+			 (if (hyperb:stack-frame
+			      '(hui:ebut-create hui:ebut-edit hui:ebut-edit-region
+						hui:ebut-link-create hui:gbut-create
+                       				hui:gbut-edit hui:link-create ebut:program
+						hui:ibut-create hui:ibut-edit
+						hui:ibut-link-create ibut:program))
 			     ;; Ignore action-key-depress-prev-point
 			     (progn (setq mark (marker-position (mark-marker))
 					  start (region-beginning)
 					  end (region-end)
 					  buf-lbl (buffer-substring-no-properties start end))
 				    (equal buf-lbl curr-label))
-			   ;; Utilize any action-key-depress-prev-point.
+			   ;; Utilize any action-key-depress-prev-point
 			   (setq mark (marker-position (mark-marker)))
 			   (setq prev-point (and action-key-depress-prev-point
 						 (marker-position action-key-depress-prev-point)))
@@ -453,9 +458,8 @@ the button LABEL which is automatically provided as the first argument.
 
 For interactive creation, use `hui:ebut-create' instead."
   (save-excursion
-    (let ((but-buf (current-buffer))
-	  (hui--ignore-action-key-depress-prev-point t)
-	  (actype-sym (actype:action actype)))
+     (let ((but-buf (current-buffer))
+	   (actype-sym (actype:action actype)))
       (hui:buf-writable-err but-buf "ebut-create")
       (condition-case err
 	  (progn
@@ -2266,7 +2270,12 @@ Summary of operations based on inputs:
 		    ;; No name to insert, just insert ibutton text below
 		    )
 		   ((and region-flag
-			 (if hui--ignore-action-key-depress-prev-point
+			 (if (hyperb:stack-frame
+			      '(hui:ebut-create hui:ebut-edit hui:ebut-edit-region
+						hui:ebut-link-create hui:gbut-create
+                       				hui:gbut-edit hui:link-create ebut:program
+						hui:ibut-create hui:ibut-edit
+						hui:ibut-link-create ibut:program))
 			     ;; Ignore action-key-depress-prev-point
 			     (progn (setq mark (marker-position (mark-marker))
 					  start (region-beginning)
@@ -2440,7 +2449,6 @@ the button NAME which is automatically provided as the first argument.
 For interactive creation, use `hui:ibut-create' instead."
   (save-excursion
     (let ((but-buf (current-buffer))
-	  (hui--ignore-action-key-depress-prev-point t)
 	  (actype-sym (actype:action actype)))
       (hui:buf-writable-err but-buf "ibut-create")
       (hattr:clear 'hbut:current)

@@ -113,7 +113,7 @@
     (setq features (delq 'hload-path features)
 	  features (delq 'hversion features)))
 
-  ;; Defines (hyperb:window-system), and hyperb:dir,
+  ;; Defines hyperb:stack-frame, (hyperb:window-system), and hyperb:dir,
   ;; which are used later in this file.
   ;; Also adds Hyperbole to the load-path if need be.
   ;;

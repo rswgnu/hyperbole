@@ -87,10 +87,6 @@ This is set to nil when the depress is on an inactive minibuffer.")
 (defvar assist-key-release-position nil
   "The last mouse screen position at which the Assist Key was released or nil.")
 
-(defvar hui--ignore-action-key-depress-prev-point nil
-  "Don't use `action-key-depress-prev-point'.
-Currently only affects `*but:operate'.")
-
 (defvar action-key-depress-prev-point nil
   "Marker at point prior to last Action Key depress.
 Note that this may be a buffer different than where the depress occurs.")
