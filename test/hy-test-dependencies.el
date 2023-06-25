@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    20-Feb-21 at 23:16:00
-;; Last-Mod:     13-May-23 at 10:12:36 by Bob Weiner
+;; Last-Mod:     21-Jun-23 at 21:19:45 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -17,6 +17,9 @@
 ;; Load prerequisites for running the tests.
 
 ;;; Code:
+
+(require 'hload-path)
+(add-to-list 'load-path (expand-file-name "test" hyperb:dir))
 
 (package-initialize)
 (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/"))

@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    6/30/93
-;; Last-Mod:     19-Jun-23 at 10:27:35 by Bob Weiner
+;; Last-Mod:     21-Jun-23 at 21:00:17 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -641,11 +641,6 @@ level."
   (when (get-char-property (or pos (point)) 'invisible)
     t))
 
-;;;###autoload
-(defun kview:char-visible-p (&optional pos)
-  "Return t if the character after point is visible, else nil."
-  (not (get-char-property (or pos (point)) 'invisible)))
-
 (defun kview:create (buffer-name
 			 &optional id-counter top-cell-attributes
 			 label-type level-indent label-separator
@@ -745,7 +740,7 @@ Value may be the character immediately after point."
   (unless pos
     (setq pos (point)))
   (let ((end (kcell-view:end-contents pos)))
-    (while (and pos (< pos end) (kview:char-visible-p pos))
+    (while (and pos (< pos end) (not (invisible-p pos)))
       (if (kproperty:get pos 'invisible)
 	  (setq pos (kproperty:next-single-change pos 'invisible nil end))
 	(let ((overlay (car (delq nil (mapcar (lambda (o) (when (overlay-get o 'invisible) o))
@@ -758,7 +753,7 @@ Value may be the character immediately after point."
 Start from point or optional POS.  If not found, return (point-max)."
   (unless pos
     (setq pos (point)))
-  (while (and pos (kview:char-invisible-p pos))
+  (while (and pos (invisible-p pos))
     (if (kproperty:get pos 'invisible)
 	(setq pos (kproperty:next-single-change pos 'invisible))
       (let ((overlay (car (delq nil (mapcar (lambda (o) (when (overlay-get o 'invisible) o))
@@ -1202,7 +1197,7 @@ Value may be the character immediately after point."
   (unless pos
     (setq pos (point)))
   (setq pos (1- pos))
-  (while (and pos (kview:char-invisible-p pos))
+  (while (and pos (invisible-p pos))
     (if (kproperty:get pos 'invisible)
 	(progn (setq pos (kproperty:previous-single-change pos 'invisible))
 	       (when pos (setq pos (1- pos))))

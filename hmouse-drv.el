@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    04-Feb-90
-;; Last-Mod:     18-Jun-23 at 20:42:44 by Bob Weiner
+;; Last-Mod:     19-Jun-23 at 15:56:40 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -544,6 +544,11 @@ Works only when running under a window system, not from a dumb terminal."
       (hkey-drag release-window))))
 
 ;;;###autoload
+(defun hkey-link (release-window)
+  "Return a list of the selected window (where depressed) and the RELEASE-WINDOW."
+  (list (selected-window) release-window))
+
+;;;###autoload
 (defun hkey-replace (release-window)
   "Grab the buffer from RELEASE-WINDOW and place it into the current window.
 When called interactively the RELEASE-WINDOW is chosen via
@@ -630,7 +635,7 @@ With a prefix argument, create an unnamed implicit button instead."
   (let ((start-window (selected-window)))
     (unwind-protect
 	(progn
-	  ;; Clear Smart Key variables so `hui:ibut-link-directly' does not
+	  ;; Clear Smart Key variables so `hui:*but-link-directly' does not
 	  ;; improperly reference values left over from a prior drag or
 	  ;; click.  This command does not utilize the Smart Keys.
 	  (action-key-clear-variables)
@@ -807,7 +812,7 @@ buffer to the end window.  The selected window does not change."
 With the start window temporarily selected, run FUNC with the end
 window as an argument.
 
-Appropriate FUNCs include: hui:link, hkey-drag, hkey-drag-to,
+Appropriate FUNCs include: hkey-drag, hkey-drag-to, hkey-link,
 hkey-replace, hkey-swap and hkey-throw."
   (let* (start-event
 	 end-event
@@ -834,7 +839,7 @@ hkey-replace, hkey-swap and hkey-throw."
 With the start window temporarily selected, run FUNC with the end
 window as an argument. 
 
-Appropriate FUNCs include: hui:link, hkey-drag, hkey-drag-to,
+Appropriate FUNCs include: hkey-drag, hkey-drag-to, hkey-link,
 hkey-replace, hkey-swap and hkey-throw."
   (let* (start-event
 	 end-event
@@ -1024,7 +1029,7 @@ documentation is found."
 		       (or action-key-depress-position assist-key-depress-position)))
 	 (mouse-drag-flag (hmouse-drag-p))
 	 (hkey-forms (if mouse-flag hmouse-alist hkey-alist))
-	 (hrule:action 'actype:identity)
+	 (hrule:action #'actype:identity)
 	 (assist-flag assisting)
 	 hkey-form pred-value call calls cmd-sym doc)
     (while (and (null pred-value) (setq hkey-form (car hkey-forms)))

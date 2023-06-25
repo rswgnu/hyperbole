@@ -4,7 +4,7 @@
 ;; Maintainer:   Bob Weiner, Mats Lidell
 ;;
 ;; Orig-Date:     1-Jan-94
-;; Last-Mod:     27-May-23 at 12:17:40 by Bob Weiner
+;; Last-Mod:     25-Jun-23 at 11:59:46 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -28,7 +28,7 @@
 
 (defconst hyperb:version "8.0.1pre" "GNU Hyperbole revision number.")
 
-;;;###autoload
+
 (defvar hyperb:mouse-buttons
   (if (or (and hyperb:microsoft-os-p (not (memq window-system '(w32 w64 x))))
 	  (memq window-system '(ns dps)))
@@ -51,6 +51,33 @@ your specific mouse.")
 ;;; ************************************************************************
 ;;; Support functions
 ;;; ************************************************************************
+
+(defun hyperb:path-being-loaded ()
+  "Return the full pathname used by the innermost `load' or `require' call.
+Removes any matches for `hyperb:automount-prefixes' before returning
+the pathname."
+  (let* ((frame (hyperb:stack-frame '(load require)))
+	 (function (nth 1 frame))
+	 file nosuffix)
+    (cond ((eq function 'load)
+	   (setq file (nth 2 frame)
+		 nosuffix (nth 5 frame)))
+	  ((eq function 'require)
+	   (setq file (or (nth 3 frame) (symbol-name (nth 2 frame))))))
+    (when (stringp file)
+      (setq nosuffix (or nosuffix
+			 (string-match
+			  "\\.\\(elc?\\|elc?\\.gz\\|elc?\\.Z\\)$"
+			  file))
+	    file (substitute-in-file-name file)
+	    file (locate-file file load-path
+			      (when (null nosuffix) '(".elc" ".el" ".el.gz" ".el.Z"))
+			      ;; accept any existing file
+			      nil)
+	    file (if (and (stringp file)
+			  (string-match hyperb:automount-prefixes file))
+		     (substring file (1- (match-end 0)))
+		   file)))))
 
 ;; Called in hyperbole.el.
 (defun hyperb:stack-frame (function-list &optional debug-flag)
@@ -93,38 +120,11 @@ of stack frames (from innermost to outermost)."
 	  nil)
 	(when debug-flag (nreverse frame-list)))))
 
-(defun hyperb:path-being-loaded ()
-  "Return the full pathname used by the innermost `load' or `require' call.
-Removes any matches for `hyperb:automount-prefixes' before returning
-the pathname."
-  (let* ((frame (hyperb:stack-frame '(load require)))
-	 (function (nth 1 frame))
-	 file nosuffix)
-    (cond ((eq function 'load)
-	   (setq file (nth 2 frame)
-		 nosuffix (nth 5 frame)))
-	  ((eq function 'require)
-	   (setq file (or (nth 3 frame) (symbol-name (nth 2 frame))))))
-    (when (stringp file)
-      (setq nosuffix (or nosuffix
-			 (string-match
-			  "\\.\\(elc?\\|elc?\\.gz\\|elc?\\.Z\\)$"
-			  file))
-	    file (substitute-in-file-name file)
-	    file (locate-file file load-path
-			      (when (null nosuffix) '(".elc" ".el" ".el.gz" ".el.Z"))
-			      ;; accept any existing file
-			      nil)
-	    file (if (and (stringp file)
-			  (string-match hyperb:automount-prefixes file))
-		     (substring file (1- (match-end 0)))
-		   file)))))
-
 (defun hyperb:window-sys-term (&optional frame)
   "Return first part of the term-type if running under a window system, else nil.
 Where a part in the term-type is delimited by a `-' or  an `_'."
   (unless frame (setq frame (selected-frame)))
-  (let* ((display-type (if (fboundp 'device-type) (device-type) window-system))
+  (let* ((display-type window-system)
 	 (term (cond ((or (memq display-type '(x gtk mswindows win32 w32 ns dps pm))
 			  ;; May be a graphical client spawned from a
 			  ;; dumb terminal Emacs, e.g. under X, so if
@@ -133,13 +133,13 @@ Where a part in the term-type is delimited by a `-' or  an `_'."
 			  (display-mouse-p))
 		      ;; X11, macOS, NEXTSTEP (DPS), or OS/2 Presentation Manager (PM)
 		      "emacs")
+		     ;; Keep NeXT as basis for 2-button mouse support
 		     ((or (featurep 'eterm-fns)
 			  (equal (getenv "TERM") "NeXT")
 			  (equal (getenv "TERM") "eterm"))
 		      ;; NEXTSTEP add-on support to Emacs
 		      "next"))))
-    (set-frame-parameter frame 'hyperb:window-system
-			 (and term (setq term (substring term 0 (string-match "[-_]" term)))))
+    (set-frame-parameter frame 'hyperb:window-system term)
     term))
 
 (defun hyperb:window-system (&optional frame)
@@ -190,7 +190,7 @@ support is available."
 	     ;; Force execution of Info-mode-hook which adds the
 	     ;; Hyperbole man directory to Info-directory-list.
 	     (info)
-	     (if (string-match "^(\\([^\)]+\\))\\(.*\\)" index-item)
+	     (if (string-match "^(\\([^)]+\\))\\(.*\\)" index-item)
 		 (let ((file (match-string-no-properties 1 index-item))
 		       (item-name (match-string-no-properties 2 index-item)))
 		   (if (and file (setq file (hpath:substitute-value file)))

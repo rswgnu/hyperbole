@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     1-Nov-91 at 00:44:23
-;; Last-Mod:     19-Jun-23 at 00:15:54 by Bob Weiner
+;; Last-Mod:     19-Jun-23 at 14:29:44 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -2519,13 +2519,25 @@ that returns a replacement string."
 (defun hpath:substitute-var-name (var-symbol var-dir-val path)
   "Replace with VAR-SYMBOL any occurrences of VAR-DIR-VAL in PATH.
 Replacement is done iff VAR-DIR-VAL is an absolute path.
+
+If VAR-SYMBOL is 'hyperb:dir or 'load-path, remove the matching PATH
+part rather than replacing it with the variable since it can be
+resolved without attaching the variable name.
+
 If PATH is modified, return PATH, otherwise return nil."
   (when (and (stringp var-dir-val) (file-name-absolute-p var-dir-val))
     (let ((new-path (replace-regexp-in-string
 		     (regexp-quote (file-name-as-directory
 				    (or var-dir-val default-directory)))
-		     (concat "$\{" (symbol-name var-symbol) "\}/") path
-		     t t)))
+		     ;; Remove matching path rather than adding the
+		     ;; variable to the path when the variable is one
+		     ;; for Elisp files.  These can be resolved
+		     ;; without the variable being included in the
+		     ;; path.
+		     (if (memq var-symbol '(hyperb:dir load-path))
+			 ""
+		       (concat "$\{" (symbol-name var-symbol) "\}/"))
+		     path t t)))
       (if (equal new-path path) nil new-path))))
 
 

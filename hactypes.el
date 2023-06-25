@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    23-Sep-91 at 20:34:36
-;; Last-Mod:     10-Jun-23 at 21:13:02 by Bob Weiner
+;; Last-Mod:     25-Jun-23 at 13:48:01 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -35,11 +35,17 @@
 (defact annot-bib (key)
   "Follow internal ref KEY within an annotated bibliography, delimiters=[]."
   (interactive "sReference key (no []): ")
-  (let ((key-regexp (concat "^[*]*[ \t]*\\[" (ebut:key-to-label key) "\\]"))
-	citation)
-    (if (save-excursion
-	  (goto-char (point-max))
-	  (setq citation (re-search-backward key-regexp nil t)))
+  (let* ((key-regexp (concat "^[*]*[ \t]*\\[" (ebut:key-to-label key) "\\]"))
+	 (lbl-start (hattr:get 'hbut:current 'lbl-start))
+	 (lbl-end (hattr:get 'hbut:current 'lbl-end))
+	 (citation (when (and lbl-start lbl-end)
+		     (save-excursion
+		       (goto-char (point-max))
+	               (and (re-search-backward key-regexp nil t)
+			    (or (< (point) (1- lbl-start))
+				(> (point) (1+ lbl-end)))
+			    (point))))))
+    (if citation
 	(progn (hpath:display-buffer (current-buffer))
 	       (goto-char citation)
 	       (beginning-of-line))
@@ -616,14 +622,14 @@ Return t if found, signal an error if not."
   (interactive "sRegexp to match: \nnOccurrence number: \nfFile to search: ")
   (let ((orig-src source))
     (if buffer-p
-	(if (stringp source)
-	    (setq source (get-buffer source)))
+	(when (stringp source)
+	  (setq source (get-buffer source)))
       ;; Source is a pathname.
       (if (not (stringp source))
 	  (hypb:error
 	   "(link-to-regexp-match): Source parameter is not a filename: `%s'"
 	   orig-src)
-	(setq source (find-file-noselect (hpath:substitute-value source)))))
+	(setq source (hpath:find-noselect source))))
     (if (not (bufferp source))
 	(hypb:error
 	 "(link-to-regexp-match): Invalid source parameter: `%s'" orig-src)
@@ -689,6 +695,7 @@ package to display search results."
 Uses `hpath:display-where' setting to control where the man page is displayed."
   (interactive "sManual topic: ")
   (require 'man)
+  (defvar Man-notify-method)
   (let ((Man-notify-method 'meek))
     (hpath:display-buffer (man topic))))
 
@@ -716,7 +723,7 @@ Optional SECTIONS-START limits toc entries to those after that point."
       (insert "Sections of " rfc-buf-name ":\n")
       (set-buffer-modified-p nil))
     (when opoint
-      (select-buffer buf-name)
+      (switch-to-buffer buf-name)
       (goto-char opoint))))
 
 (defact text-toc (section)
