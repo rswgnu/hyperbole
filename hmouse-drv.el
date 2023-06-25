@@ -1018,16 +1018,13 @@ predicate is found."
 	(setq hkey-forms (cdr hkey-forms))))
     pred-value))
 
-(defvar hkey--within-help nil)
-
 (defun hkey-help (&optional assisting)
   "Display help for the Action Key command in current context.
 With optional ASSISTING prefix arg non-nil, display help for the
 Assist Key command.  Return non-nil iff associated help
 documentation is found."
   (interactive "P")
-  (let* ((hkey--within-help t)
-	 (mouse-flag (when (mouse-event-p last-command-event)
+  (let* ((mouse-flag (when (mouse-event-p last-command-event)
 		       (or action-key-depress-position assist-key-depress-position)))
 	 (mouse-drag-flag (hmouse-drag-p))
 	 (hkey-forms (if mouse-flag hmouse-alist hkey-alist))
