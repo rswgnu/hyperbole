@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    18-Sep-91 at 02:57:09
-;; Last-Mod:     21-Jun-23 at 21:42:00 by Bob Weiner
+;; Last-Mod:     24-Jun-23 at 13:09:26 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -2163,13 +2163,14 @@ move to the first occurrence of the button."
 	    (re-search-forward (ibut:label-regexp lbl-key t) nil t))
     (goto-char (+ (match-beginning 0) (length ibut:label-start)))))
 
-(defun    ibut:operate (&optional new-name)
+(defun    ibut:operate (&optional new-name edit-flag)
   "Insert/modify an ibutton based on `hbut:current' in current buffer.
-If optional NEW-NAME is non-nil, modify an existing ibutton with 'name'
-attribute in `hbut:current'.
+Optional non-nil NEW-NAME is name to give button.  With optional
+EDIT-FLAG non-nil, modify an existing in-buffer ibutton rather
+than creating a new one.
 
-If NAME is nil, use the active region text as the button name, if any;
-if no such region, then create an unnamed implicit button.
+If NEW-NAME is nil, use the active region text as the button name, if any;
+if no such region, then create/modify an unnamed implicit button.
 
 Return instance string appended to name to form a per-buffer unique
 name; nil if name is already unique or no name.  Signal an error when no
@@ -2192,7 +2193,6 @@ Summary of operations based on inputs:
   (let* ((actype (hattr:get 'hbut:current 'actype))
 	 (name (hattr:get 'hbut:current 'name))
 	 (name-regexp (ibut:label-regexp (ibut:label-to-key name)))
-	 (modify new-name)
 	 (region-flag (hmouse-use-region-p))
 	 (instance-flag))
     (unless actype
@@ -2208,7 +2208,7 @@ Summary of operations based on inputs:
       (hattr:set 'hbut:current 'name new-name))
     (save-excursion
       (if (progn
-	    (if modify
+	    (if edit-flag
 		(progn
 		  (setq instance-flag
 			(hbdata:ibut-instance-last (ibut:label-to-key new-name)))
@@ -2222,10 +2222,10 @@ Summary of operations based on inputs:
 	  (when (hmail:editor-p)
 	    (hmail:msg-narrow))
 	(hypb:error "(ibut:operate): Failed to %s button %s%s%s in buffer %s"
-		    (if modify "modify" "create")
+		    (if edit-flag "modify" "create")
 		    ibut:label-start name ibut:label-end
 		    (buffer-name))))
-    (cond (modify
+    (cond (edit-flag
 	   (if name
 	       ;; Rename all occurrences of button - those with same name
 	       (let* ((but-key-and-pos (ibut:label-p nil nil nil 'pos))

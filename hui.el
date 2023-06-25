@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 21:42:03
-;; Last-Mod:     21-Jun-23 at 00:12:35 by Bob Weiner
+;; Last-Mod:     25-Jun-23 at 09:41:45 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1066,7 +1066,7 @@ from those instead.  See also documentation for
 		 (assist-key-clear-variables)
 		 (hmouse-choose-link-and-referent-windows)))
 
-  (let (but-name but-edit link-types num-types type-and-args lbl-key but-loc but-dir)
+  (let (but-name edit-flag link-types num-types type-and-args lbl-key but-loc but-dir)
     (multiple-value-bind (link-but-window referent-window)
 	(if (and depress-window release-window)
 	    (list depress-window release-window)
@@ -1082,7 +1082,7 @@ from those instead.  See also documentation for
 	(switch-to-buffer action-key-depress-buffer))
       (hui:buf-writable-err (current-buffer) "link-directly")
       (if (ebut:at-p)
-	  (setq but-edit t
+	  (setq edit-flag t
 		but-loc (hattr:get 'hbut:current 'loc)
 		but-dir (hattr:get 'hbut:current 'dir)
 		lbl-key (hattr:get 'hbut:current 'lbl-key))
@@ -1106,7 +1106,7 @@ from those instead.  See also documentation for
 	     (error "(link-directly): No possible link type to create"))
 	    ((= num-types 1)
 	     (setq type-and-args (hui:list-remove-text-properties (car link-types)))
-	     (hui:ebut-link-create but-edit link-but-window lbl-key but-loc but-dir type-and-args))
+	     (hui:ebut-link-create edit-flag link-but-window lbl-key but-loc but-dir type-and-args))
 	    (t ;; more than 1
 	     (let ((item)
 		   type)
@@ -1129,12 +1129,12 @@ from those instead.  See also documentation for
 			     link-types)))
 		     type-and-args (hui:list-remove-text-properties type-and-args))
 	       (hui:ebut-link-create
-		but-edit link-but-window
+		edit-flag link-but-window
 		lbl-key but-loc but-dir type-and-args))))
       (with-selected-window referent-window
 	(hmouse-pulse-line))
       (when (called-interactively-p 'interactive)
-	(hui:ebut-message but-edit)))))
+	(hui:ebut-message edit-flag)))))
 
 (defun hui:ibut-link-directly (&optional depress-window release-window name-arg-flag)
   "Create a link ibutton at Assist Key depress point, linked to release point.
@@ -1159,7 +1159,8 @@ drag from a window to another window's modeline."
 		 (append (hmouse-choose-link-and-referent-windows)
 			 current-prefix-arg)))
 
-  (let (but-name but-edit link-types num-types type-and-args name-key but-loc but-dir)
+  (let (but-name edit-flag link-types num-types type-and-args name-key but-loc but-dir)
+    ;; edit-flag when set non-nil means are editing an existing ibut at point
     (multiple-value-bind (link-but-window referent-window)
 	(if (and depress-window release-window)
 	    (list depress-window release-window)
@@ -1175,7 +1176,7 @@ drag from a window to another window's modeline."
 	(switch-to-buffer assist-key-depress-buffer))
       (hui:buf-writable-err (current-buffer) "link-directly")
       (if (ibut:at-p)
-	  (setq but-edit t
+	  (setq edit-flag t
 		but-loc (hattr:get 'hbut:current 'loc)
 		but-dir (hattr:get 'hbut:current 'dir)
 		name-key (ibut:label-to-key (hattr:get 'hbut:current 'name)))
@@ -1204,7 +1205,7 @@ drag from a window to another window's modeline."
 	     (error "(link-directly): No possible link type to create"))
 	    ((= num-types 1)
 	     (setq type-and-args (hui:list-remove-text-properties (car link-types)))
-	     (hui:ibut-link-create but-edit link-but-window name-key but-loc but-dir type-and-args))
+	     (hui:ibut-link-create edit-flag link-but-window name-key but-loc but-dir type-and-args))
 	    (t ;; more than 1
 	     (let ((item)
 		   type)
@@ -1227,12 +1228,11 @@ drag from a window to another window's modeline."
 			     link-types)))
 		     type-and-args (hui:list-remove-text-properties type-and-args))
 	       (hui:ibut-link-create
-		but-edit link-but-window
-		name-key but-loc but-dir type-and-args))))
+		edit-flag link-but-window name-key but-loc but-dir type-and-args))))
       (with-selected-window referent-window
 	(hmouse-pulse-line))
       (when (called-interactively-p 'interactive)
-	(hui:ibut-message but-edit)))))
+	(hui:ibut-message edit-flag)))))
 
 
 ;;; ************************************************************************
@@ -1644,13 +1644,15 @@ arguments."
 
 (defun hui:ibut-link-create (edit-flag but-window name-key but-loc but-dir type-and-args)
   "Create or edit a new Hyperbole implicit link button.
-If EDIT-FLAG is non-nil, edit button at point in BUT-WINDOW,
-otherwise, prompt for button name and create a button.
-NAME-KEY is internal form of button name.  BUT-LOC is the file or buffer
-in which to create button.  BUT-DIR is the directory of BUT-LOC.
+With EDIT-FLAG non-nil, edit an existing ibutton at point in
+BUT-WINDOW; otherwise, create a new one.
+
+NAME-KEY is the internal form of the button name; when nil,
+prompt for new button name.  BUT-LOC is the file or buffer in
+which to create button.  BUT-DIR is the directory of BUT-LOC.
 TYPE-AND-ARGS is the action type for the button followed by any
-arguments it requires.  Any text properties are removed from string
-arguments."
+arguments it requires.  Any text properties are removed from
+string arguments."
   (hattr:set 'hbut:current 'categ 'implicit)
   (hattr:set 'hbut:current 'loc but-loc)
   (hattr:set 'hbut:current 'dir but-dir)
@@ -1662,8 +1664,7 @@ arguments."
   (unless (and but-loc (or (equal (buffer-name) but-loc)
 			   (eq (current-buffer) but-loc)))
     (hbut:key-src-set-buffer but-loc))
-  (let ((name (hbut:key-to-label name-key)))
-    (ibut:operate (when edit-flag name))))
+  (ibut:operate (ibut:key-to-label name-key) edit-flag))
 
 (defun hui:link-possible-types ()
   "Return list of possible link action types during editing of a Hyperbole button.

@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    23-Sep-91 at 20:34:36
-;; Last-Mod:     19-Jun-23 at 15:24:25 by Bob Weiner
+;; Last-Mod:     25-Jun-23 at 09:38:34 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -716,7 +716,7 @@ Optional SECTIONS-START limits toc entries to those after that point."
       (insert "Sections of " rfc-buf-name ":\n")
       (set-buffer-modified-p nil))
     (when opoint
-      (select-buffer buf-name)
+      (switch-to-buffer buf-name)
       (goto-char opoint))))
 
 (defact text-toc (section)

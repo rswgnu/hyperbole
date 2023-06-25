@@ -1,3 +1,18 @@
+2023-06-25  Bob Weiner  <rsw@gnu.org>
+
+* hactypes.el (rfc-toc): Fix wrong 'select-buffer' call by replacing with
+    'switch-to-buffer' for permanent return to original buffer.
+
+2023-06-24  Bob Weiner  <rsw@gnu.org>
+
+* hui.el (hui:ibut-link-create): Fix name attribute not getting set when creating a
+    new ibutton.  Rename 'but-edit' to 'edit-flag' and always send name arg to
+    'ibut:operate' call so that button name attribute is always set when given.
+         (hui:ebut-link-directly, hui:ibut-link-directly): Change 'but-edit' to
+    'edit-flag'.
+  hbut.el (ibut:operate): Add 2nd edit-flag parameter; when non-nil, means modifying
+    an existing ibut at point.
+
 2023-06-22  Bob Weiner  <rsw@gnu.org>
 
 * man/hyperbole.texi (By Menu): Add section similar to that of Ibuts, documenting
