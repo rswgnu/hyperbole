@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    29-Jun-16 at 14:39:33
-;; Last-Mod:     25-Jun-23 at 10:09:17 by Mats Lidell
+;; Last-Mod:     25-Jun-23 at 09:58:19 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -42,9 +42,7 @@ Use `hyperb:wsl-os-p' to test if running under WSL.")
 ;;; ************************************************************************
 
 (defvar hyperb:dir (or (file-name-directory
-			(or (if (fboundp 'macroexp-file-name) ;Emacs≥28
-			        (macroexp-file-name)
-			      (and (stringp load-file-name) load-file-name))
+			(or (and (stringp load-file-name) load-file-name)
 			    (locate-file "hmouse-tag.el" load-path)
 			    ""))
 		       (error
