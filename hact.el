@@ -1,4 +1,4 @@
-;;; hact.el --- GNU Hyperbole button action handling  -*- lexical-binding: t; -let*-
+;;; hact.el --- GNU Hyperbole button action handling  -*- lexical-binding: t; -*-
 ;;
 ;; Author:       Bob Weiner
 ;;
@@ -467,6 +467,7 @@ The type uses PARAMS to perform DEFAULT-ACTION (list of the rest of the
 arguments).  A call to this function is syntactically the same as for
 `defun',  but a doc string is required.
 Return symbol created when successful, else nil."
+  (declare (doc-string 3))
   `(progn
      (symtable:add ',type symtable:actypes)
      (htype:create ,type actypes ,doc ,params ,default-action nil)))

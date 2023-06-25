@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    23-Sep-91 at 20:34:36
-;; Last-Mod:     10-Jun-23 at 21:13:02 by Bob Weiner
+;; Last-Mod:     25-Jun-23 at 09:52:16 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -35,11 +35,11 @@
 (defact annot-bib (key)
   "Follow internal ref KEY within an annotated bibliography, delimiters=[]."
   (interactive "sReference key (no []): ")
-  (let ((key-regexp (concat "^[*]*[ \t]*\\[" (ebut:key-to-label key) "\\]"))
-	citation)
-    (if (save-excursion
-	  (goto-char (point-max))
-	  (setq citation (re-search-backward key-regexp nil t)))
+  (let* ((key-regexp (concat "^[*]*[ \t]*\\[" (ebut:key-to-label key) "\\]"))
+	 (citation (save-excursion
+	             (goto-char (point-max))
+	             (re-search-backward key-regexp nil t))))
+    (if citation
 	(progn (hpath:display-buffer (current-buffer))
 	       (goto-char citation)
 	       (beginning-of-line))
@@ -689,6 +689,7 @@ package to display search results."
 Uses `hpath:display-where' setting to control where the man page is displayed."
   (interactive "sManual topic: ")
   (require 'man)
+  (defvar Man-notify-method)
   (let ((Man-notify-method 'meek))
     (hpath:display-buffer (man topic))))
 

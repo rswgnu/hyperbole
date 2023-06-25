@@ -24,7 +24,7 @@
 
 ;;; Code:
 
-(require 'kcell)
+(require 'kcell "kotl/kcell")
 (require 'kotl-mode)
 (require 'hy-test-helpers "test/hy-test-helpers")
 

@@ -157,29 +157,26 @@ use."
 
 ;; '("~/.rolo.otl" "~/.rolo.org")
 
+(defun hyrolo--initialize-file-list ()
+  (delq nil
+        (list "~/.rolo.otl"
+              (if (and (boundp 'bbdb-file) (stringp bbdb-file)) bbdb-file)
+              (when (hyrolo-google-contacts-p) google-contacts-buffer-name))))
+
 ;;;###autoload
 (defun hyrolo-initialize-file-list (&optional force-init-flag)
   "Initialize the list of files used for HyRolo search if not already initialized."
+  (declare (obsolete nil "8.0.1"))
   (interactive)
   (when (or force-init-flag (not (boundp 'hyrolo-file-list)) (not hyrolo-file-list))
-    (let* ((gcontacts (when (hyrolo-google-contacts-p) google-contacts-buffer-name))
-	   (ms "~/.rolo.otl")
-	   (posix "~/.rolo.otl")
-	   (list (delq nil (if (and (boundp 'bbdb-file) (stringp bbdb-file))
-			       (if hyperb:microsoft-os-p
-				   (list ms bbdb-file gcontacts)
-				 (list  "~/.rolo.otl" bbdb-file gcontacts))
-			     (if hyperb:microsoft-os-p
-				 (list ms gcontacts)
-			       (list posix gcontacts))))))
-      (setq hyrolo-file-list list)
-      (when (called-interactively-p 'interactive)
-	(message "HyRolo Search List: %S" list))
-      list)))
+    (setq hyrolo-file-list (hyrolo--initialize-file-list))
+    (when (called-interactively-p 'interactive)
+      (message "HyRolo Search List: %S" hyrolo-file-list))
+    hyrolo-file-list))
 
 (define-obsolete-variable-alias 'rolo-file-list 'hyrolo-file-list "06.00")
-(defcustom hyrolo-file-list (hyrolo-initialize-file-list)
-  "*List of files containing rolo entries.
+(defcustom hyrolo-file-list (hyrolo--initialize-file-list)
+  "List of files containing rolo entries.
 The first file should be a user-specific rolo file, typically in the home
 directory.
 
@@ -925,8 +922,8 @@ With optional ARG, turn them on iff ARG is positive."
 	  (and (not (and arg (> (prefix-numeric-value arg) 0)))
 	       (boundp 'hyrolo-add-hook) (listp hyrolo-add-hook)
 	       (memq 'hyrolo-set-date hyrolo-add-hook)))
-      (progn (remove-hook 'hyrolo-add-hook 'hyrolo-set-date)
-	     (remove-hook 'hyrolo-edit-hook 'hyrolo-set-date)
+      (progn (remove-hook 'hyrolo-add-hook #'hyrolo-set-date)
+	     (remove-hook 'hyrolo-edit-hook #'hyrolo-set-date)
 	     (message "Rolo date stamps are now off."))
     (add-hook 'hyrolo-add-hook  #'hyrolo-set-date)
     (add-hook 'hyrolo-edit-hook #'hyrolo-set-date)
@@ -1000,7 +997,7 @@ of a string."
 		      (hyrolo-grep name -1)
 		    (hyrolo-grep (regexp-quote name) -1))))
     ;; Let user reformat the region just yanked.
-    (if (and (= found 1) (fboundp hyrolo-yank-reformat-function))
+    (if (= found 1)
 	(funcall hyrolo-yank-reformat-function start (point)))
     found))
 

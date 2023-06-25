@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    18-Sep-91 at 02:57:09
-;; Last-Mod:     19-Jun-23 at 00:17:03 by Bob Weiner
+;; Last-Mod:     25-Jun-23 at 16:43:45 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -22,6 +22,7 @@
 (eval-and-compile (mapc #'require '(cl-lib elisp-mode help-mode hversion
 				    hmoccur hbmap htz hbdata hact
 				    hui-select view)))
+(require 'hmouse-drv) ;For `hui--ignore-action-key-depress-prev-point'.
 
 ;;; ************************************************************************
 ;;; Public declarations
@@ -217,6 +218,8 @@ Return nil if no matching button is found."
 (defalias 'ebut:key-src-set-buffer #'hbut:key-src-set-buffer)
 (defalias 'ebut:key-src-fmt        #'hbut:key-src-fmt)
 (defalias 'ebut:key-to-label       #'hbut:key-to-label)
+
+(defvar hbut:max-len)
 
 (defun    ebut:label-p (&optional as-label start-delim end-delim pos-flag two-lines-flag)
   "Return key for the explicit button label that point is within, else nil.
@@ -696,7 +699,7 @@ Return nil if no matching button is found."
 (defun    gbut:help (label)
   "Display help for Hyperbole global button with LABEL."
   (interactive (list (hargs:read-match "Report on global button labeled: "
-				       (mapcar 'list (gbut:label-list))
+				       (mapcar #'list (gbut:label-list))
 				       nil t nil 'hbut)))
   (let* ((lbl-key (hbut:label-to-key label))
 	 (but (hbut:get lbl-key nil (gbut:file))))
@@ -1525,7 +1528,7 @@ If a file, always return a full path if optional FULL-FLAG is non-nil."
 	       (expand-file-name file default-directory)
 	     file)))))
 
-(defalias 'hbut:summarize 'hbut:report)
+(defalias 'hbut:summarize #'hbut:report)
 
 (defun    hbut:to (lbl-key)
   "Find the nearest explicit button or labeled/named implicit button.
@@ -1898,6 +1901,9 @@ Store new button attributes in the symbol, 'hbut:current."
    [&optional ["&optional" arg &rest arg]]
    &optional ["&rest" arg])))
 
+(defvar ibut:label-start)
+(defvar ibut:label-end)
+
 (defun    ibut:delete (&optional but-sym)
   "Delete Hyperbole implicit button based on optional BUT-SYM.
 Default is the symbol hbut:current'.
@@ -2133,10 +2139,10 @@ positions at which the button label delimiter begins and ends."
     (error "(ibut:key): Argument is not a Hyperbole implicit button symbol, `%s'"
 	   ibut)))
 
-(defalias 'ibut:to-key-src   'hbut:to-key-src)
-(defalias 'ibut:key-to-label 'hbut:key-to-label)
-(defalias 'ibut:label-to-key 'hbut:label-to-key)
-(defalias 'map-ibut          'ibut:map)
+(defalias 'ibut:to-key-src   #'hbut:to-key-src)
+(defalias 'ibut:key-to-label #'hbut:key-to-label)
+(defalias 'ibut:label-to-key #'hbut:label-to-key)
+(defalias 'map-ibut          #'ibut:map)
 
 (defun    ibut:map (but-func &optional regexp-match include-delims)
   "Apply BUT-FUNC to the visible, named implicit buttons.
@@ -2479,7 +2485,7 @@ current."
            t))
 	(t (error "(ibut:rename): Button '%s' not found in visible portion of buffer." old-lbl))))
 
-(defalias 'ibut:summarize 'hbut:report)
+(defalias 'ibut:summarize #'hbut:report)
 
 (defun    ibut:to (name-key)
   "Find the nearest implicit button with NAME-KEY (a name or name key).

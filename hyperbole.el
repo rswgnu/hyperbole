@@ -7,7 +7,7 @@
 ;; Author:           Bob Weiner
 ;; Maintainer:       Bob Weiner <rsw@gnu.org>, Mats Lidell <matsl@gnu.org>
 ;; Created:          06-Oct-92 at 11:52:51
-;; Last-mod:      7-Mar-23 at 22:10:54 by Bob Weiner
+;; Last-mod:     25-Jun-23 at 12:01:04 by Bob Weiner
 ;; Released:         03-Dec-22
 ;; Version:          8.0.1pre
 ;; Keywords:         comm, convenience, files, frames, hypermedia, languages, mail, matching, mouse, multimedia, outlines, tools, wp
@@ -154,9 +154,7 @@ Info documentation at \"(hyperbole)Top\".
 
 \\{hyperbole-mode-map}"
   :global t
-  :keymap 'hyperbole-mode-map
   :lighter hyperbole-mode-lighter
-  :require 'hyperbole
   (if hyperbole-mode
       (hyperbole--enable-mode)
     (hyperbole--disable-mode)))
