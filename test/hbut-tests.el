@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    30-may-21 at 09:33:00
-;; Last-Mod:     20-Jun-23 at 23:48:40 by Mats Lidell
+;; Last-Mod:     27-Jun-23 at 10:01:46 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -345,8 +345,11 @@ Needed since hyperbole expands all links to absolute paths and
     (insert "/tmp")
     (goto-char 2)
     (should (hbut:at-p))
+    (should (eq (hattr:get 'hbut:current 'actype) 'actypes::link-to-file))
     (end-of-buffer)
     (should-not (ibut:operate))
+    (should (hbut:at-p))
+    (should (eq (hattr:get 'hbut:current 'actype) 'actypes::link-to-file))
     ; Creates pathname with quotes!?
     (should (string= "/tmp\"/tmp\"" (buffer-string)))))
 
@@ -355,9 +358,11 @@ Needed since hyperbole expands all links to absolute paths and
   (with-temp-buffer
     (insert "<[aname]> - /tmp")
     (goto-char 2)
-    (hbut:at-p)
+    (should (hbut:at-p))
     (end-of-buffer)
     (should-not (ibut:operate))
+    (should (hbut:at-p))
+    (should (eq (hattr:get 'hbut:current 'actype) 'actypes::link-to-file))
     ;; Creates pathname with quotes!?
     (should (string= "<[aname]> - /tmp<[aname]> - \"/tmp\"" (buffer-string)))))
 
@@ -366,7 +371,7 @@ Needed since hyperbole expands all links to absolute paths and
   (with-temp-buffer
     (insert "<[aname]> - /tmp")
     (goto-char 2)
-    (hbut:at-p)
+    (should (hbut:at-p))
     (end-of-buffer)
     (insert "\n")
     (set-mark (point))
@@ -382,7 +387,7 @@ Needed since hyperbole expands all links to absolute paths and
   (with-temp-buffer
     (insert "/tmp")
     (goto-char 2)
-    (hbut:at-p)
+    (should (hbut:at-p))
     (end-of-buffer)
     (insert "\n")
     (set-mark (point))
@@ -397,8 +402,11 @@ Needed since hyperbole expands all links to absolute paths and
   (with-temp-buffer
     (insert "<[name]> /tmp")
     (goto-char 2)
-    (hbut:at-p)
-    (should-not (ibut:operate "new-name"))
+    (should (hbut:at-p))
+    (should (eq (hattr:get 'hbut:current 'actype) 'actypes::link-to-file))
+    (should-not (ibut:operate "new-name" t))
+    (should (hbut:at-p))
+    (should (eq (hattr:get 'hbut:current 'actype) 'actypes::link-to-file))
     (should (string= "<[new-name]> /tmp" (buffer-string)))))
 
 (ert-deftest hbut-tests--ibut-operate--modify-named-skip-region ()
@@ -406,10 +414,12 @@ Needed since hyperbole expands all links to absolute paths and
   (with-temp-buffer
     (insert "<[name]> /tmp")
     (goto-char 2)
-    (hbut:at-p)
+    (should (hbut:at-p))
     (set-mark (point-max))
     (should (region-active-p))
-    (should-not (ibut:operate "new-name"))
+    (should-not (ibut:operate "new-name" t))
+    (should (hbut:at-p))
+    (should (eq (hattr:get 'hbut:current 'actype) 'actypes::link-to-file))
     (should (string= "<[new-name]> /tmp" (buffer-string)))))
 
 (ert-deftest hbut-tests--ibut-operate--add-new-name ()
@@ -417,8 +427,12 @@ Needed since hyperbole expands all links to absolute paths and
   (with-temp-buffer
     (insert "/tmp")
     (goto-char 2)
-    (hbut:at-p)
-    (should-not (ibut:operate "new-name"))
+    (should (hbut:at-p))
+    (should (eq (hattr:get 'hbut:current 'actype) 'actypes::link-to-file))
+    (should-not (ibut:operate "new-name" t))
+    ;; Missing delimiter -- Not identified as a ibut after name is inserted
+    ;; (should (hbut:at-p))
+    ;; (should (eq (hattr:get 'hbut:current 'actype) 'actypes::link-to-file))
     ;; Missing delimiter
     (should (string= "<[new-name]>/tmp" (buffer-string)))))
 
@@ -427,10 +441,13 @@ Needed since hyperbole expands all links to absolute paths and
   (with-temp-buffer
     (insert "/tmp")
     (goto-char 2)
-    (hbut:at-p)
+    (should (hbut:at-p))
     (set-mark (point-max))
     (should (region-active-p))
-    (should-not (ibut:operate "new-name"))
+    (should-not (ibut:operate "new-name" t))
+    ;; Missing delimiter -- Not identified as a ibut after name is inserted
+    ;; (should (hbut:at-p))
+    ;; (should (eq (hattr:get 'hbut:current 'actype) 'actypes::link-to-file))
     ;; Missing delimiter
     (should (string= "<[new-name]>/tmp" (buffer-string)))))
 
