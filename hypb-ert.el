@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org> and Bob Weiner <rsw@gnu.org>
 ;;
 ;; Orig-Date:    31-Mar-21 at 21:11:00
-;; Last-Mod:      7-May-23 at 20:23:27 by Bob Weiner
+;; Last-Mod:     25-Jun-23 at 23:20:29 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -29,11 +29,7 @@
 
 ;;; Code:
 
-(require 'lisp-mode)
-(require 'hload-path)
-(require 'ert)
-(require 'hbut)
-(require 'hargs)
+(mapc #'require '(lisp-mode hload-path ert hbut hargs))
 
 (defun hypb-ert-run-test (test-name)
   "Run the specified TEST-NAME ert test."

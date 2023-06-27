@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 20:45:31
-;; Last-Mod:     25-Jun-23 at 13:27:34 by Bob Weiner
+;; Last-Mod:     25-Jun-23 at 23:04:09 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -395,9 +395,10 @@ must have an attached file."
                 (apply #'derived-mode-p '(c-mode objc-mode c++-mode java-mode markdown-mode org-mode))))
        (let ((ref (hattr:get 'hbut:current 'lbl-key))
 	     (lbl-start (hattr:get 'hbut:current 'lbl-start)))
-         (and ref (eq ?w (char-syntax (aref ref 0)))
-              (not (string-match "[#@]" ref))
+         (and ref
 	      lbl-start
+	      (eq ?w (char-syntax (aref ref 0)))
+              (not (string-match "[#@]" ref))
 	      (save-excursion
 		(goto-char lbl-start)
 		(ibut:label-p t "[" "]" t))

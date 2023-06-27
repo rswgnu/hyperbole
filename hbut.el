@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    18-Sep-91 at 02:57:09
-;; Last-Mod:     24-Jun-23 at 13:09:26 by Bob Weiner
+;; Last-Mod:     26-Jun-23 at 00:04:54 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1608,7 +1608,7 @@ excluding delimiters, not just one."
   ;; Since the Smart Keys handle end-of-line separately from whether
   ;; point is within an implicit button, always report not within one
   ;; when point is at the end of a line.  -- RSW, 02-16-2020
-  (unless (or (eolp) (hbut:outside-comment-p))
+  (unless (eolp)
     ;; Check for an implicit button at current point, record its
     ;; attributes in memory and return a button symbol for it.
     (when (ibut:create)
@@ -2588,12 +2588,11 @@ Return the symbol for the button if found, else nil."
 		  (and lbl-key (equal at-lbl-key lbl-key)))
 	      (setq ibut 'hbut:current))
 	     ((and lbl-key (setq ibut (ibut:to lbl-key)))))
-       (when (not (hbut:outside-comment-p))
-	 ;; Skip past any optional name and separators
-	 (cond (name-start
-		(goto-char name-start)
-		(skip-chars-forward (regexp-quote ibut:label-start)))
-	       ((ibut:at-to-name-p ibut))))
+       ;; Skip past any optional name and separators
+       (cond (name-start
+	      (goto-char name-start)
+	      (skip-chars-forward (regexp-quote ibut:label-start)))
+	     ((ibut:at-to-name-p ibut)))
        ibut))
    lbl-key
    (current-buffer)))
@@ -2631,7 +2630,7 @@ Return the symbol for the button if found, else nil."
 		      move-flag t))
 	       ((and name-key (setq ibut (ibut:to name-key)))
 		(setq move-flag t)))
-	 (when (and move-flag ibut (not (hbut:outside-comment-p)))
+	 (when (and move-flag ibut)
 	   ;; Skip past any optional name and separators
 	   (if (setq start (hattr:get ibut 'lbl-start))
 	       (goto-char start)
