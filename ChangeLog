@@ -1,4 +1,8 @@
 2023-06-25  Bob Weiner  <rsw@gnu.org>
+* hbut.el (ibut:to-name, ibut:at-p, ibut:to-text): Remove test call to
+    'hbut:outside-comment-p' since ibuts don't have to be within programming
+comments.  This fixes ibtype 'hyperbole-run-test-definition' failing to match
+and thus action-key not running an ert def when pressed within a test def.
 
 * hibtypes.el (annot-bib): Fix missing check that annot-bib is between square
     brackets.
@@ -20,7 +24,7 @@
     'edit-flag'.
   hbut.el (ibut:operate): Add 2nd edit-flag parameter; when non-nil, means modifying
     an existing ibut at point.
-    
+
 2023-06-23  Mats Lidell  <matsl@gnu.org>
 
 * Makefile (LOAD_EL): Avoid the trailing quotation mark.
