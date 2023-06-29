@@ -1,3 +1,8 @@
+2023-06-29  Mats Lidell  <matsl@gnu.org>
+
+* hbut.el (defib): Remove redundant indent property. Change by Stefan
+    Monnier.
+
 2023-06-25  Bob Weiner  <rsw@gnu.org>
 * hbut.el (ibut:to-name, ibut:at-p, ibut:to-text): Remove test call to
     'hbut:outside-comment-p' since ibuts don't have to be within programming
