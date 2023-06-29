@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    18-Sep-91 at 02:57:09
-;; Last-Mod:     26-Jun-23 at 00:04:54 by Bob Weiner
+;; Last-Mod:     29-Jun-23 at 17:12:36 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -2701,8 +2701,6 @@ type for ibtype is presently undefined."
       `(progn (symtable:add ',type symtable:ibtypes)
 	      (htype:create ,type ibtypes ,doc nil ,at-func
 			    '(to-p ,to-func style ,style))))))
-
-(put      'defib 'lisp-indent-function 'defun)
 
 ;; Support edebug-defun for interactive debugging of ibtypes
 (def-edebug-spec defib
