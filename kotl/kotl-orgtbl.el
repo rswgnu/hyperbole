@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    10/18/2020
-;; Last-Mod:     24-Jan-22 at 00:25:29 by Bob Weiner
+;; Last-Mod:     27-May-23 at 22:52:47 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -54,6 +54,13 @@
 (require 'org-table)
 
 ;;; ************************************************************************
+;;; Public variables
+;;; ************************************************************************
+
+(defvar kotl-mode-overriding-orgtbl-mode-map nil
+  "Keymap to override Org Table minor mode keys within kotl-mode major mode.")
+
+;;; ************************************************************************
 ;;; Public functions
 ;;; ************************************************************************
 
@@ -84,12 +91,66 @@ If no previous line, exchange current with next line."
   ;; !! TODO: Write
   )
 
-(defun orgtbl-meta-return (arg)
-  "Let Action Key handle tables in kotl-mode, otherwise, use Org table command."
+(defun kotl-mode:orgtbl-meta-return (arg)
+  "Let Action Key handle tables in kotl-mode."
   (interactive "P")
-  (if (derived-mode-p #'kotl-mode)
-      (hkey-either arg)
-    (org-table-wrap-region arg)))
+  (hkey-either arg))
+
+(defun kotl-mode:setup-overriding-orgtbl-keymap ()
+  (condition-case err
+      (progn
+	(setq kotl-mode-overriding-orgtbl-mode-map
+	      (if (fboundp 'copy-keymap)
+		  (copy-keymap orgtbl-mode-map)
+		(make-sparse-keymap)))
+
+	;; Override org-tbl {M-RET} binding since Action Key provides the
+	;; same functionality when in a table, but may also be invoked from
+	;; a mouse button.
+	(org-defkey kotl-mode-overriding-orgtbl-mode-map "\M-\C-m"
+		    (orgtbl-make-binding 'kotl-mode:orgtbl-meta-return 105
+        				 "\M-\C-m" [(meta return)]))
+	(org-defkey kotl-mode-overriding-orgtbl-mode-map [(meta return)]
+		    (orgtbl-make-binding 'kotl-mode:orgtbl-meta-return 106
+        				 [(meta return)] "\M-\C-m"))
+	(org-defkey kotl-mode-overriding-orgtbl-mode-map "\C-d"
+		    (orgtbl-make-binding 'kotl-mode:delete-char 201 "\C-d"))
+	(org-defkey kotl-mode-overriding-orgtbl-mode-map [S-iso-lefttab]
+		    (orgtbl-make-binding 'org-shifttab 107
+        				 [S-iso-lefttab] [backtab] [(shift tab)]))
+	
+	;; Overload edit keys to deal with structure and labels.
+	(let ((local-cmd)
+	      (cmds '(org-delete-char
+		      org-delete-backward-char
+		      org-force-self-insert
+		      orgtbl-create-or-convert-from-region
+		      orgtbl-ctrl-c-ctrl-c
+		      orgtbl-self-insert-command)))
+	  (mapc
+	   (lambda (cmd)
+	     (setq local-cmd (intern-soft
+			      (concat "kotl-mode:" (symbol-name cmd))))
+	     ;; Only bind key locally if kotl-mode local-cmd has already
+	     ;; been defined and cmd is a valid function.
+	     (when (and local-cmd (fboundp cmd))
+	       ;; Make local-cmd have the same property list as cmd,
+	       ;; e.g. so pending-delete property is the same, but delete
+	       ;; interactive-only property to suppress byte-compiler warnings.
+	       (setplist local-cmd (copy-sequence (symbol-plist cmd)))
+	       (cl-remprop local-cmd 'interactive-only)
+	       (org-remap kotl-mode-overriding-orgtbl-mode-map cmd local-cmd)))
+	   (setq cmds
+		 (if orgtbl-optimized
+		     (nconc '(delete-backward-char
+			      delete-char
+			      delete-forward-char
+			      self-insert-command)
+			    cmds)
+		   cmds)))))
+    (error
+     (setq kotl-mode-overriding-orgtbl-mode-map nil)
+     (error "(kotl-mode:setup-overriding-orgtbl-keymap): Setup error: %s" err))))
 
 (provide 'kotl-orgtbl)
 

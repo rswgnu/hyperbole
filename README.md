@@ -92,7 +92,7 @@ In short, Hyperbole lets you:
       A single key or mouse button automatically does the right thing in
       dozens of contexts; just press and go.
 
-![Hyperbole Animation of Action Key Contexts](man/im/action-key-animation.gif)
+<img src="man/im/action-key-animation.gif" alt="Hyperbole Animation of Action Key Contexts">
 
    3. Build outlines with multi-level numbered outline nodes, e.g. 1.4.8.6,
       that all renumber automatically as any node or tree is moved in the

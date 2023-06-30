@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 20:45:31
-;; Last-Mod:     23-Apr-23 at 20:04:58 by Mats Lidell
+;; Last-Mod:     25-Jun-23 at 23:04:09 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -46,7 +46,7 @@
 ;;; Public variables
 ;;; ************************************************************************
 
-(defconst mail-address-tld-regexp
+(defconst hypb-mail-address-tld-regexp
   (format "\\.%s\\'"
           (regexp-opt
            '("aero" "arpa" "asia" "biz" "cat" "com" "coop" "edu" "gov" "info"
@@ -74,7 +74,7 @@
            t))
   "Regular expression of most common Internet top level domain names.")
 
-(defconst mail-address-regexp
+(defconst hypb-mail-address-regexp
   "\\([_a-zA-Z0-9][-_a-zA-Z0-9.!@+%]*@[-_a-zA-Z0-9.!@+%]+\\.[a-zA-Z0-9][-_a-zA-Z0-9]+\\)\\($\\|[^a-zA-Z0-9@%]\\)"
   "Regexp with group 1 matching an Internet email address.")
 
@@ -120,7 +120,8 @@ line and check for a source reference line again."
       (hib-python-traceback))))
 
 ;;; ========================================================================
-;;; Runs Hyperbole tests
+;;; Action Button Types that run Hyperbole tests;
+;;; ert-deftest ibtype executes current ert test when on first line of def.
 ;;; ========================================================================
 
 (load "hypb-ert")
@@ -132,7 +133,7 @@ line and check for a source reference line again."
 (load "hib-social")
 
 ;;; ========================================================================
-;;; Displays Org Roam and Org IDs
+;;; Displays Org Roam and Org IDs.
 ;;; ========================================================================
 
 (defib org-id ()
@@ -252,7 +253,7 @@ display options."
 	;; Emacs Lisp and Info files without any directory component.
         (when (setq path orig-path)
           (cond ((and (string-match hpath:path-variable-regexp path)
-		      (setq path (match-string 1 path))
+		      (setq path (match-string-no-properties 1 path))
 		      (hpath:is-path-variable-p path))
 		 (setq path (if (or assist-flag (hyperb:stack-frame '(hkey-help)))
 				path
@@ -261,7 +262,7 @@ display options."
 			     ;; Could be a shell command from a semicolon
 			     ;; separated list; ignore if so.
 			     (and (string-match "\\`\\s-*\\([^; 	]+\\)" path)
-				  (executable-find (match-string 1 path))))
+				  (executable-find (match-string-no-properties 1 path))))
                    (apply #'ibut:label-set path (hpath:start-end path))
 		   (hact 'link-to-file path)))
 		((setq elisp-suffix (string-match "\\`[^\\\\/~]+\\.el[cn]?\\(\\.gz\\)?\\'" path))
@@ -284,7 +285,7 @@ display options."
                 ((and (not (looking-at "[\"()]"))
                       (string-match "\\`(\\([^ \t\n\r\f]+\\))\\'" path)
                       (save-match-data (require 'info))
-                      (Info-find-file (match-string 1 path) t))
+                      (Info-find-file (match-string-no-properties 1 path) t))
                  (apply #'ibut:label-set orig-path (hpath:start-end orig-path))
                  (hact 'link-to-Info-node (format "%sTop" path)))
                 ((string-match hpath:info-suffix path)
@@ -313,10 +314,10 @@ display options."
   (let ((case-fold-search t))
     (save-excursion
       (skip-chars-backward "^ \t\n\r\f\"\'(){}[];:<>|")
-      (and (or (looking-at mail-address-regexp)
-               (looking-at (concat "mailto:" mail-address-regexp)))
+      (and (or (looking-at hypb-mail-address-regexp)
+               (looking-at (concat "mailto:" hypb-mail-address-regexp)))
            (save-match-data
-             (string-match mail-address-tld-regexp (match-string-no-properties 1)))
+             (string-match hypb-mail-address-tld-regexp (match-string-no-properties 1)))
            (match-string-no-properties 1)))))
 
 (defib mail-address ()
@@ -346,7 +347,7 @@ in all buffers."
            (and buffer-file-name
                 (boundp 'hyrolo-file-list)
                 (set:member (current-buffer)
-                            (mapcar 'get-file-buffer hyrolo-file-list)))))
+                            (mapcar #'get-file-buffer hyrolo-file-list)))))
     (let ((address (mail-address-at-p)))
       (when address
         (ibut:label-set address (match-beginning 1) (match-end 1))
@@ -363,16 +364,18 @@ in all buffers."
   "Follow an Org link in a non-Org mode buffer.
 This should be a very low priority so other Hyperbole types
 handle any links they recognize first."
-  (with-no-warnings
-    (when (and (eq hsys-org-enable-smart-keys t)
-	       (not (funcall hsys-org-mode-function))
-	       ;; Prevent infinite recursion if ever called via org-metareturn-hook
-	       ;; from org-meta-return invocation.
-	       (not (hyperb:stack-frame '(ibtypes::debugger-source org-meta-return))))
-      (let ((start-end (hsys-org-link-at-p)))
-	(when start-end
-          (hsys-org-set-ibut-label start-end)
-          (hact 'org-open-at-point-global))))))
+  (when (and (eq hsys-org-enable-smart-keys t)
+	     (not (funcall hsys-org-mode-function))
+	     ;; Prevent infinite recursion, e.g. if called via
+	     ;; `org-metareturn-hook' from `org-meta-return' invocation.
+	     (not (hyperb:stack-frame '(ibtypes::debugger-source org-meta-return))))
+    (require 'hsys-org)
+    (declare-function hsys-org-link-at-p      "hsys-org" ())
+    (declare-function hsys-org-set-ibut-label "hsys-org" (start-end))
+    (let ((start-end (hsys-org-link-at-p)))
+      (when start-end
+        (hsys-org-set-ibut-label start-end)
+        (hact #'org-open-at-point-global)))))
 
 ;;; ========================================================================
 ;;; Handles internal references within an annotated bibliography, delimiters=[]
@@ -390,12 +393,16 @@ must have an attached file."
          (not (or (eq chr ?\ ) (eq chr ?*))))
        (not (or (derived-mode-p 'prog-mode)
                 (apply #'derived-mode-p '(c-mode objc-mode c++-mode java-mode markdown-mode org-mode))))
-       (let* ((ref-and-pos (hbut:label-p t "[" "]" t))
-              (ref (car ref-and-pos)))
-         (and ref (eq ?w (char-syntax (aref ref 0)))
+       (let ((ref (hattr:get 'hbut:current 'lbl-key))
+	     (lbl-start (hattr:get 'hbut:current 'lbl-start)))
+         (and ref
+	      lbl-start
+	      (eq ?w (char-syntax (aref ref 0)))
               (not (string-match "[#@]" ref))
-              (progn (ibut:label-set ref-and-pos)
-                     (hact 'annot-bib ref))))))
+	      (save-excursion
+		(goto-char lbl-start)
+		(ibut:label-p t "[" "]" t))
+              (hact 'annot-bib ref)))))
 
 ;;; ========================================================================
 ;;; Displays in-file Markdown link referents.
@@ -726,7 +733,9 @@ Requires the Emacs builtin Tramp library for ftp file retrievals."
                (skip-chars-backward "rRfFcC")
                (looking-at " *\\(rfc[- ]?\\([0-9]+\\)\\)")))
          (progn (setq rfc-num (match-string-no-properties 2))
-                (ibut:label-set (match-string-no-properties 1))
+                (ibut:label-set (match-string-no-properties 1)
+				(match-beginning 1)
+				(match-end 1))
                 t)
          ;; Ensure remote file access is available for retrieving a remote
          ;; RFC, if need be.
@@ -754,6 +763,9 @@ Requires the Emacs builtin Tramp library for ftp file retrievals."
            (setq topic (concat (match-string-no-properties 3)
                                (match-string-no-properties 4)))
            (ibut:label-set topic (match-beginning 3) (match-end 4))
+	   ;; Use 'man' instead of 'actypes::man-show' in next line so
+	   ;; can follow cross-references within the same window when
+	   ;; Hyperbole is set to display other referents in another window.
            (hact 'man topic)))))
 
 ;;; ========================================================================
@@ -987,6 +999,7 @@ in grep and shell buffers."
 	     ;; Emacs native compiler file lines
 	     (looking-at "Compiling \\(\\S-+\\)\\.\\.\\.$")
 	     (looking-at "Loading \\(\\S-+\\) (\\S-+)\\.\\.\\.$")
+ 	     (looking-at "[a-zA-Z0-9]+ ([-a-zA-Z0-9]+): \\([^:\"'`]+\\):\\([0-9]+\\):")
              ;; Grep matches (allowing for Emacs Lisp vars with : in
 	     ;; name within the pathname), Ruby, UNIX C compiler and Introl 68HC11 C compiler errors
              (looking-at "\\([^ \t\n\r\"'`]*[^ \t\n\r:\"'`0-9]\\): ?\\([1-9][0-9]*\\)[ :]")
@@ -995,7 +1008,7 @@ in grep and shell buffers."
              ;; Grep matches, UNIX C compiler and Introl 68HC11 C
              ;; compiler errors, allowing for file names with
              ;; spaces followed by a null character rather than a :
-             (looking-at "\\([^\t\n\r\"'`]+\\)  ?\\([1-9][0-9]*\\)[ :]")
+             (looking-at "\\([^\t\n\r\"'`]+\\)\0 ?\\([1-9][0-9]*\\)[ :]")
              ;; HP C compiler errors
              (looking-at "[a-zA-Z0-9]+: \"\\([^\t\n\r\",]+\\)\", line \\([0-9]+\\):")
              ;; BSO/Tasking 68HC08 C compiler errors
@@ -1287,7 +1300,7 @@ documentation string is displayed."
                (looking-at "*\\s-+\\([^:\t\n\r]+\\)::"))
              (hact 'link-to-texinfo-node
                    nil
-                   (ibut:label-set (match-string 1) (match-beginning 1) (match-end 1))))
+                   (ibut:label-set (match-string-no-properties 1) (match-beginning 1) (match-end 1))))
             ;; Show doc for any Emacs Lisp identifier references,
             ;; marked with @code{} or @var{}.
             ((save-excursion
@@ -1295,8 +1308,8 @@ documentation string is displayed."
                     (or (looking-at "@\\(code\\|var\\){\\([^\} \t\n\r]+\\)}")
                         (looking-at "@\\(findex\\|vindex\\)[ ]+\\([^\} \t\n\r]+\\)"))
                     (>= (match-end 2) opoint)))
-             (let ((type-str (match-string 1))
-                   (symbol (intern-soft (ibut:label-set (match-string 2) (match-beginning 2) (match-end 2)))))
+             (let ((type-str (match-string-no-properties 1))
+                   (symbol (intern-soft (ibut:label-set (match-string-no-properties 2) (match-beginning 2) (match-end 2)))))
                (when (and symbol (pcase type-str
                                    ((or "code" "findex") (fboundp symbol))
                                    ((or "var" "vindex") (boundp symbol))))
@@ -1309,7 +1322,7 @@ documentation string is displayed."
                     (looking-at ",\\s-*\\([^,\n\r]*[^, \t\n\r]\\)[,\n\r]")))
              (hact 'link-to-texinfo-node
                    nil
-                   (ibut:label-set (match-string 1) (match-beginning 1) (match-end 1))))
+                   (ibut:label-set (match-string-no-properties 1) (match-beginning 1) (match-end 1))))
             ((save-excursion
                (and (search-backward "@" bol t)
                     (looking-at
@@ -1342,7 +1355,7 @@ documentation string is displayed."
                                                     (match-beginning 0))
                                        "unspecified file")
                                      nodename)))))))
-               (ibut:label-set (match-string 0) (match-beginning 0) (match-end 0))
+               (ibut:label-set (match-string-no-properties 0) (match-beginning 0) (match-end 0))
                (if show-texinfo-node
                    (hact 'link-to-texinfo-node nil node)
                  (hact 'link-to-Info-node node))))))))
@@ -1465,12 +1478,12 @@ There may not be any <> characters within the expression.  The
 first identifier in the expression must be an Elisp variable,
 action type or a function symbol to call, i.e. '<'actype-or-elisp-symbol
 arg1 ... argN '>'.  For example, <mail nil \"user@somewhere.org\">."
-  (let* ((hbut:max-len 0)
-         (label-key-start-end (ibut:label-p nil action:start action:end t))
-         (lbl-key (nth 0 label-key-start-end))
-         (start-pos (nth 1 label-key-start-end))
-         (end-pos (nth 2 label-key-start-end))
-         actype actype-sym action args lbl var-flag)
+  (let ((hbut:max-len 0)
+	(lbl-key (hattr:get 'hbut:current 'lbl-key))
+	(start-pos (hattr:get 'hbut:current 'lbl-start))
+	(end-pos  (hattr:get 'hbut:current 'lbl-end))
+        actype actype-sym action args lbl var-flag)
+
     ;; Continue only if start-delim is either:
     ;;     at the beginning of the buffer
     ;;     or preceded by a space character or a grouping character
@@ -1481,8 +1494,8 @@ arg1 ... argN '>'.  For example, <mail nil \"user@somewhere.org\">."
     ;;     or is followed by a space, punctuation or grouping character.
     (when (and lbl-key (or (null (char-before start-pos))
                            (memq (char-syntax (char-before start-pos)) '(?\  ?\> ?\( ?\))))
-               (not (memq (char-syntax (char-after (1+ start-pos))) '(?\  ?\>)))
-               (or (null (char-after end-pos))
+	       (not (memq (char-syntax (char-after (1+ start-pos))) '(?\  ?\>)))
+	       (or (null (char-after end-pos))
                    (memq (char-syntax (char-after end-pos)) '(?\  ?\> ?. ?\( ?\)))
                    ;; Some of these characters may have symbol-constituent syntax
                    ;; rather than punctuation, so check them individually.
@@ -1492,7 +1505,7 @@ arg1 ... argN '>'.  For example, <mail nil \"user@somewhere.org\">."
       ;; bound as a function symbol
       (when (string-match "\\`\\$" lbl)
         (setq var-flag t
-              lbl (substring lbl 1)))
+	      lbl (substring lbl 1)))
       (setq actype (if (string-match-p " " lbl) (car (split-string lbl)) lbl)
             actype-sym (intern-soft (concat "actypes::" actype))
 	    ;; Must ignore that (boundp nil) would be t here.
@@ -1500,7 +1513,7 @@ arg1 ... argN '>'.  For example, <mail nil \"user@somewhere.org\">."
 			    (or (fboundp actype-sym) (boundp actype-sym)
 				(special-form-p actype-sym))
 			    actype-sym)
-                       (and (setq actype-sym (intern-soft actype))
+		       (and (setq actype-sym (intern-soft actype))
 			    (or (fboundp actype-sym) (boundp actype-sym)
 				(special-form-p actype-sym))
 			    actype-sym)))
@@ -1513,7 +1526,7 @@ arg1 ... argN '>'.  For example, <mail nil \"user@somewhere.org\">."
 					      (combine-and-quote-strings
 					       (split-string lbl) "\" \""))))
         (setq action (read (concat "(" lbl ")"))
-              args (cdr action))
+	      args (cdr action))
 	;; Ensure action uses an fboundp symbol if executing a
 	;; Hyperbole actype.
 	(when (and (car action) (symbolp (car action)))
@@ -1522,22 +1535,22 @@ arg1 ... argN '>'.  For example, <mail nil \"user@somewhere.org\">."
 		      (car action))))
 	(unless assist-flag
           (cond ((and (symbolp actype) (fboundp actype)
-                      (string-match "-p\\'" (symbol-name actype)))
+		      (string-match "-p\\'" (symbol-name actype)))
 		 ;; Is a function with a boolean result
 		 (setq args `(',args)
 		       action `(display-boolean ',action)
-                       actype #'display-boolean))
+		       actype #'display-boolean))
 		((and (null args) (symbolp actype) (boundp actype)
-                      (or var-flag (not (fboundp actype))))
+		      (or var-flag (not (fboundp actype))))
 		 ;; Is a variable, display its value as the action
 		 (setq args `(',args)
-                       action `(display-variable ',actype)
-                       actype #'display-variable))
+		       action `(display-variable ',actype)
+		       actype #'display-variable))
 		(t
 		 ;; All other expressions, display the action result in the minibuffer
 		 (setq args `(',args)
-                       action `(display-value ',action)
-                       actype #'display-value))))
+		       action `(display-value ',action)
+		       actype #'display-value))))
 
 	;; Create implicit button object and store in symbol hbut:current.
 	(ibut:create :lbl-key lbl-key :lbl-start start-pos :lbl-end end-pos
@@ -1545,12 +1558,12 @@ arg1 ... argN '>'.  For example, <mail nil \"user@somewhere.org\">."
 
         ;; Necessary so can return a null value, which actype:act cannot.
         (let ((hrule:action
-               (if (eq hrule:action #'actype:identity)
+	       (if (eq hrule:action #'actype:identity)
                    #'actype:identity
                  #'actype:eval)))
           (if (eq hrule:action #'actype:identity)
-              `(hact ,actype ,@args)
-            `(hact ,actype ,@(mapcar #'eval ,args))))))))
+	      `(hact ,actype ,@args)
+            `(hact ,actype ,@(mapcar #'eval args))))))))
 
 (defun action:help (hbut)
   "Display documentation for action button at point.

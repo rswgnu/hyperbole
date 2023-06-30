@@ -475,6 +475,14 @@ because an implicit button type of 'pathname' is recognized and it has
 an associated action type of 'hpath:find' which displays the path in a
 window specified by the setting of 'hpath:display-where').
 
+You can simply type implicit buttons into a buffer or you can use {C-h h i
+c} to create them and give them names.  To create an implicit link button
+from a buffer in one window to another, simply depress the Assist Mouse Key
+where you want the new button (but not within a draggable item), drag to a
+point in another Emacs window and release.  An implicit link button of an
+appropriate type for the release context will be inserted at the original
+depress point.
+
 Hyperbole has many built-in implicit button types, a number of which you
 will see here.  You may also create your own types through the use of
 regular expressions or via Emacs Lisp, see "(hyperbole)Creating Implicit
@@ -526,31 +534,35 @@ demonstrations and tours with this and other implicit button types.
 
 ** Org Mode
 
-For users of Emacs Org mode, Hyperbole does quite a few things.
+For users of Emacs Org mode, Hyperbole does quite a few things when
+the Action Key is pressed.
 
-First, the Action Key follows internal links in Org mode files.  When
-pressed on a link referent/target, the link definition is displayed,
-allowing two-way navigation between definitions and targets.
+  1. If on an Org todo keyword, cycle through the keywords in
+     that set or if final done keyword, remove it.
 
-Second, the Action Key follows Org mode external links.  The Assist Key
-displays help when pressed on an Org mode link.
+  2. If on an Org agenda item, jump to the item for editing.
 
-Third, within a radio target definition, the Action Key jumps to the first
-occurrence of an associated radio target.
+  3. Within a radio or internal target or a link to it, jump between
+     the target and the first link to it, allowing two-way navigation.
 
-Fourth, when point is on an outline heading in Org mode, the Action Key
-cycles the view of the subtree at point and the Assist Key cycles the view
-of all headings in the buffer.
+  4. Follow other internal links in Org mode files.
 
-Fifth, with point on the first line of a code block definition, the Action
-Key executes the code block via the Org mode standard binding of {C-c C-c},
-(org-ctrl-c-ctrl-c).
+  5. Follow Org mode external links.
 
-Sixth, the Action and Assist keys work on Hyperbole explicit and implicit
-buttons.
+  6. When on a Hyperbole button, activate the button.
 
-In any other context besides the end of a line, the Action Key invokes
-the Org mode standard binding of {M-RET}, (org-meta-return).
+  7. With point on the :dir path of a code block definition, display the
+     directory given by the path.
+
+  8. With point on any #+BEGIN_SRC, #+END_SRC, #+RESULTS, #+begin_example
+     or #+end_example header, execute the code block via the Org mode
+     standard binding of {C-c C-c}, (org-ctrl-c-ctrl-c).
+  
+  9. When point is on an Org mode heading, cycle the view of the subtree
+     at point.
+
+  10. In any other context besides the end of a line, invoke the Org mode
+      standard binding of {M-RET}, (org-meta-return).
 
 To disable ALL Hyperbole support within Org major and minor modes, set
 the custom option `hsys-org-enable-smart-keys' to nil.  Then the
@@ -1116,7 +1128,8 @@ or to a section within a document; they can calculate things or query
 databases or show different views of bodies of information.  Unlike HTML
 hyperbuttons, there is no markup language to learn nor specific document
 format required.  You can create explicit buttons with simple keyboard
-presses or mouse drags from one window to another.
+presses or mouse drags from one window to another (when not depressed on
+a draggable item).
 
 This button prints the <(factorial)> of 5 in the minibuffer when activated
 with the Action Key.  If you instead press the Assist Key, you get help for
@@ -1160,17 +1173,20 @@ with the Action Mouse Key or by using the Hyperbole menus.
 
 *** Creation via Dragging
 
-An efficient way to create an explicit button interactively is
-to use the Action Mouse Key to drag from a button source window to a
-window showing its link referent.  More specifically, you should split
-your current Emacs frame into two windows: one which contains the
-point at which you want a button to be inserted and another which
-shows the point to which you want to link, the referent.  Depress the
-Action Mouse Key at the source point for the button (anywhere but on a
-paired delimiter such as double quotes or parentheses).  Then drag to
-the other window and release the Action Mouse Key at the start point
-of the link referent.  The process becomes quite simple with a little
-practice.
+An efficient way to create an explicit button interactively is to use
+the Action Mouse Key to drag from a window where you want the button
+created (button source window) to a window showing its link referent.
+The drag must start outside of a draggable item which includes Hyperbole
+button, dired items and buffer menu items.
+
+More specifically, you should split your current Emacs frame into two
+windows: one which contains the point at which you want a button to be
+inserted and another which shows the point to which you want to link,
+the referent.  Depress the Action Mouse Key at the source point for
+the button (anywhere but on a paired delimiter such as double quotes
+or parentheses).  Then drag to the other window and release the Action
+Mouse Key at the start point of the link referent.  The process
+becomes quite simple with a little practice.
 
 Hyperbole uses the link referent context to determine the type of link
 to make.  If there are a few different types of links which are
@@ -1188,13 +1204,19 @@ the variable with a matching value when the link is later resolved.  This
 allows the sharing of links over wide areas, where links contain variables
 whose values differ between link creator and link activator.
 
+If you do the same think with the Assist Mouse Key instead of the Action
+Mouse Key, Hyperbole will create an implicit link button instead of an
+explicit one.  Such buttons are created without names but you can add
+a name preceding such buttons with {C-h h i l} to label them.
+
 *** Creation via Ace Window
 
 For the fastest link button creation, use the Emacs package
 'ace-window' (see "(hyperbole)Keyboard Drags" for setup).  Once this
 is configured, then {M-o w <window id>} may be used to quickly create
 an explicit link button in the selected window that links to any other
-window chosen via the Ace Window.
+window chosen via the Ace Window.  Use a prefix argument to create an
+implicit link button instead.
 
 *** Creation via Menu
 
@@ -1537,16 +1559,17 @@ If you want a new window where you release (so the original destination window's
 buffer stays onscreen), just drag to a window's modeline; that window will be
 split before the buffer is displayed.
 
-*** Displaying File and Buffer Items and Moving Buffers
+*** Displaying Items via Drags and Moving Buffers
 
 You can do the same thing with items in dired, buffer menu and ibuffer menu
-listing buffers rather than buffers themselves.  Drag with the Action Mouse Key
-and the selected item will be displayed in any Emacs window in which you
-release.  To display the last item you want, press the Action Key on it and it
-will display within the listing window itself.  (If you use the Treemacs file
-viewer package, item dragging works there as well).  Under the MacOS window
-manager, you can also drag outside of an Emacs frame and the item will be
-displayed in a newly created and selected frame.
+listing buffers as well as with Hyperbole button referents.  Drag with the
+Action Mouse Key from the item and the selected item/referent will be
+displayed in the Emacs window in which you release.  To display the last
+item you want, press the Action Key on it and it will display within the
+listing window itself.  (If you use the Treemacs file viewer package, item
+dragging works there as well).  Under the MacOS window manager, you can also
+drag outside of an Emacs frame and the item will be displayed in a newly
+created and selected frame.
 
 So now you can rapidly put a bunch of buffers and files on your screen wherever
 you like.  Typically, a brief visual pulse is shown first at the source item and

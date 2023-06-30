@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    23-Sep-91 at 20:34:36
-;; Last-Mod:     29-Mar-23 at 18:14:35 by Bob Weiner
+;; Last-Mod:     25-Jun-23 at 13:48:01 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -35,11 +35,17 @@
 (defact annot-bib (key)
   "Follow internal ref KEY within an annotated bibliography, delimiters=[]."
   (interactive "sReference key (no []): ")
-  (let ((key-regexp (concat "^[*]*[ \t]*\\[" (ebut:key-to-label key) "\\]"))
-	citation)
-    (if (save-excursion
-	  (goto-char (point-max))
-	  (setq citation (re-search-backward key-regexp nil t)))
+  (let* ((key-regexp (concat "^[*]*[ \t]*\\[" (ebut:key-to-label key) "\\]"))
+	 (lbl-start (hattr:get 'hbut:current 'lbl-start))
+	 (lbl-end (hattr:get 'hbut:current 'lbl-end))
+	 (citation (when (and lbl-start lbl-end)
+		     (save-excursion
+		       (goto-char (point-max))
+	               (and (re-search-backward key-regexp nil t)
+			    (or (< (point) (1- lbl-start))
+				(> (point) (1+ lbl-end)))
+			    (point))))))
+    (if citation
 	(progn (hpath:display-buffer (current-buffer))
 	       (goto-char citation)
 	       (beginning-of-line))
@@ -496,8 +502,9 @@ available.  Filename may be given without the .info suffix."
       (id-info string)
     (hypb:error "(link-to-Info-node): Invalid Info node: `%s'" string)))
 
-(defact link-to-ibut (key &optional but-src point)
-  "Perform implicit button action specified by KEY, optional BUT-SRC and POINT.
+(defact link-to-ibut (name-key &optional but-src point)
+  "Perform implicit button action specified by NAME-KEY, optional BUT-SRC and POINT.
+NAME-KEY must be a normalized key for an ibut <[name]>.
 BUT-SRC defaults to the current buffer's file or if there is no
 attached file, then to its buffer name.  POINT defaults to the
 current point.
@@ -505,10 +512,10 @@ current point.
 When the button with this action type is created, point must be
 on the implicit button to which to link."
   (interactive
-   (let ((ibut-key (ibut:at-p t)))
-     (cond (ibut-key
-	    (list ibut-key (or buffer-file-name (buffer-name)) (point)))
-	   ;; TODO: If default is null below and are creating, rather than editing
+   (let ((ibut-name-key (ibut:at-p t)))
+     (cond (ibut-name-key
+	    (list ibut-name-key (or buffer-file-name (buffer-name)) (point)))
+	   ;; !! TODO: If default is null below and are creating, rather than editing
 	   ;; the link, it would be better to throw an error than create
 	   ;; an invalid link, but it is difficult to tell which operation
 	   ;; is in progress, so ignore this for now.  -- RSW, 01-25-2020
@@ -518,30 +525,28 @@ on the implicit button to which to link."
 	    hargs:defaults)
 	   (t
 	    (hypb:error "(link-to-ibut): Point must be on an implicit button to create a link-to-ibut")))))
-  (when (null key)
+  (when (null name-key)
     (hypb:error "(link-to-ibut): Point must be on an implicit button to create a link-to-ibut"))
   (let (but
 	normalized-file)
-    (cond (but-src
-	   (unless (and (get-buffer but-src)
-			(not (buffer-file-name (get-buffer but-src))))
-	     (setq normalized-file (hpath:normalize but-src))))
-	  (t (setq normalized-file buffer-file-name)))
-    (save-excursion
-      (save-restriction
-	(when but-src
-	  (set-buffer (or (get-buffer but-src) (get-file-buffer normalized-file))))
-	(widen)
-	(when (or (not normalized-file) (hmail:editor-p) (hmail:reader-p))
-	  (hmail:msg-narrow))
-	(when (integerp point)
-	  (goto-char (min point (point-max))))
-	(setq but (ibut:to key))))
+    (if but-src
+	(unless (and (get-buffer but-src)
+		     (not (buffer-file-name (get-buffer but-src))))
+	  (setq normalized-file (hpath:normalize but-src)))
+      (setq normalized-file (hpath:normalize buffer-file-name)))
+    (when but-src
+      (set-buffer (or (get-buffer but-src) (get-file-buffer normalized-file))))
+    (widen)
+    (when (or (not normalized-file) (hmail:editor-p) (hmail:reader-p))
+      (hmail:msg-narrow))
+    (when (integerp point)
+      (goto-char (min point (point-max))))
+    (setq but (ibut:to name-key))
     (cond (but
 	   (hbut:act but))
-	  (key
-	   (hypb:error "(link-to-ibut): No implicit button `%s' found in `%s'"
-		       (ibut:key-to-label key)
+	  (name-key
+	   (hypb:error "(link-to-ibut): No implicit button named `%s' found in `%s'"
+		       (ibut:key-to-label name-key)
 		       (or but-src (buffer-name))))
 	  (t
 	   (hypb:error "(link-to-ibut): Link reference is null/empty")))))
@@ -617,14 +622,14 @@ Return t if found, signal an error if not."
   (interactive "sRegexp to match: \nnOccurrence number: \nfFile to search: ")
   (let ((orig-src source))
     (if buffer-p
-	(if (stringp source)
-	    (setq source (get-buffer source)))
+	(when (stringp source)
+	  (setq source (get-buffer source)))
       ;; Source is a pathname.
       (if (not (stringp source))
 	  (hypb:error
 	   "(link-to-regexp-match): Source parameter is not a filename: `%s'"
 	   orig-src)
-	(setq source (find-file-noselect (hpath:substitute-value source)))))
+	(setq source (hpath:find-noselect source))))
     (if (not (bufferp source))
 	(hypb:error
 	 "(link-to-regexp-match): Invalid source parameter: `%s'" orig-src)
@@ -690,6 +695,7 @@ package to display search results."
 Uses `hpath:display-where' setting to control where the man page is displayed."
   (interactive "sManual topic: ")
   (require 'man)
+  (defvar Man-notify-method)
   (let ((Man-notify-method 'meek))
     (hpath:display-buffer (man topic))))
 
@@ -717,7 +723,7 @@ Optional SECTIONS-START limits toc entries to those after that point."
       (insert "Sections of " rfc-buf-name ":\n")
       (set-buffer-modified-p nil))
     (when opoint
-      (select-buffer buf-name)
+      (switch-to-buffer buf-name)
       (goto-char opoint))))
 
 (defact text-toc (section)

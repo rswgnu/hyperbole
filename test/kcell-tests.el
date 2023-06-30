@@ -1,4 +1,4 @@
-;;; kcell-tests.el --- Test for kcell        -*- lexical-binding: t; -*-
+;;; kcell-tests.el --- Test for kcells in Koutliner        -*- lexical-binding: t; -*-
 ;; usage:        GNU Emacs Lisp Library
 ;; keywords:     test
 ;;
@@ -7,7 +7,7 @@
 ;; e-mail:       matsl@gnu.org
 ;;
 ;; orig-date:    16-Feb-22 at 23:28:49
-;; last-mod:     18-Feb-22 at 19:03:54 by Mats Lidell
+;; last-mod:     28-May-23 at 23:15:30 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -24,8 +24,9 @@
 
 ;;; Code:
 
-(require 'kcell)
+(require 'kcell "kotl/kcell")
 (require 'kotl-mode)
+(require 'hy-test-helpers "test/hy-test-helpers")
 
 (defconst kcell-tests--ref-to-id-tests
   ;  ref flag kvspec expected
@@ -88,7 +89,7 @@ Return t if is does else return the SPEC."
             (if failures
                 (ert-fail (cons "These refs were not correctly converted to ids:" failures))
               t)))
-      (delete-file kotl-file))))
+      (hy-delete-file-and-buffer kotl-file))))
 
 (provide 'kcell-tests)
 ;;; kcell-tests.el ends here

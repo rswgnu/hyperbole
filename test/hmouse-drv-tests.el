@@ -520,7 +520,7 @@ Regression: Looked up path name '-narrow'."
           (with-mock
             (mock (smart-lisp-find-tag nil nil) => t)
             (action-key)))
-      (delete-file el-file))))
+      (hy-delete-file-and-buffer el-file))))
 
 ;; This file can't be byte-compiled without the `el-mock' and
 ;; `with-simulated-input' package (because of the use of the

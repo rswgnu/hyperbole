@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     2-Apr-91
-;; Last-Mod:     30-Apr-23 at 09:58:26 by Bob Weiner
+;; Last-Mod:     13-Jun-23 at 01:27:25 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -36,9 +36,9 @@
 ;;    (Key            Placeholders  LinkType      <arg-list>             creator and modifier with times)
 ;;    ("alt.mouse.el" nil nil       link-to-file  ("./ell/alt-mouse.el") "zzz@gnu.org" "19991027:09:19:26" "zzz@gnu.org" "19991027:09:31:36")
 ;;
-;;  which means:  button \<(alt.mouse.el)> found in file "TO-DO" in the current
-;;  directory provides a link to the local file "./ell/alt-mouse.el".  It was
-;;  created and last modified by zzz@gnu.org.
+;;  which means: button \<(alt.mouse.el)> found in file "TO-DO" in the
+;;  current directory provides a link to the local file "./ell/alt-mouse.el".
+;;  It was created and last modified by zzz@gnu.org.
 ;;
 ;;  All link entries that originate from the same source file are stored
 ;;  contiguously, one per line, in reverse order of creation.
@@ -156,6 +156,40 @@ Search is case-insensitive.  Return list with elements:
 ;;; Button data operators
 ;;; ------------------------------------------------------------------------
 
+(defun hbdata:delete-entry (lbl-key key-src &optional directory)
+  "Delete button data entry given by LBL-KEY, KEY-SRC and optional DIRECTORY.
+Return entry deleted (a list of attribute values) or nil.
+Use methods from class `hbdata' to operate on the entry.
+If the hbdata buffer is blank/empty, kill it and remove the associated file."
+  (hbdata:apply-entry
+   (lambda ()
+     (prog1 (read (current-buffer))
+       (let ((empty-file-entry "[ \t\n\r]*\\(\^L\\|\\'\\)")
+	     (kill))
+	 (beginning-of-line)
+	 (hbdata:delete-entry-at-point)
+	 (when (looking-at empty-file-entry)
+	   (let ((end (point))
+		 (empty-hbdata-file "[ \t\n\r]*\\'"))
+	     (forward-line -1)
+	     (when (eq (following-char) ?\")
+		 ;; Last button entry for filename, so del filename.
+		 (forward-line -1)
+		 (delete-region (point) end))
+	     (save-excursion
+	       (goto-char (point-min))
+	       (when (looking-at empty-hbdata-file)
+		 (setq kill t)))
+	     (when kill
+	       (let ((fname buffer-file-name))
+		 (erase-buffer) (save-buffer) (kill-buffer nil)
+		 (hbmap:dir-remove (file-name-directory fname))
+		 (delete-file fname))))))))
+   lbl-key key-src directory))
+
+(defun hbdata:delete-entry-at-point ()
+  (delete-region (point) (progn (forward-line 1) (point))))
+
 (defun hbdata:ebut-build (&optional mod-lbl-key but-sym new-lbl-key)
   "Construct button data from optional MOD-LBL-KEY and BUT-SYM.
 Modify BUT-SYM attributes.  MOD-LBL-KEY nil means create a new
@@ -230,56 +264,8 @@ entry, otherwise modify existing one.  Nil BUT-SYM means use
 	  (hattr:copy b (or but-sym 'hbut:current))
 	  (cons hbdata lbl-instance))))))
 
-(defun hbdata:get-entry (lbl-key key-src &optional directory)
-  "Return button data entry given by LBL-KEY, KEY-SRC and optional DIRECTORY.
-Return nil if no matching entry is found.
-A button data entry is a list of attribute values.  Use methods from
-class `hbdata' to operate on the entry."
-  (hbdata:apply-entry
-   (lambda () (read (current-buffer)))
-   lbl-key key-src directory))
-
-(defun hbdata:ibut-instance (&optional orig-lbl-key but-sym)
-  "Return ibutton instance number string from optional ORIG-LBL-KEY and BUT-SYM.
-ORIG-LBL-KEY nil means create a new ibutton; otherwise modify an
-existing one.  BUT-SYM nil means use `hbut:current'.  If
-successful, return a button instance string to append to button
-label or t when first instance."
-  (let* ((b (hattr:copy (or but-sym 'hbut:current) 'but))
-	 (l (hattr:get b 'loc))
-	 (key (or orig-lbl-key (hattr:get b 'lbl-key)))
-	 (new-key (if orig-lbl-key (hattr:get b 'lbl-key) key))
-	 (lbl-instance)
-	 loc dir)
-    (or (when l
-	  (setq loc (if (bufferp l) l (file-name-nondirectory l))
-		dir (if (bufferp l) nil (file-name-directory l)))
-	  (if orig-lbl-key
-	      (when (setq lbl-instance (hbdata:ibut-instance-last new-key loc dir))
-		(setq lbl-instance (concat hbut:instance-sep
-					   (int-to-string (1+ lbl-instance)))))
-	    (let ((inst-num (hbdata:ibut-instance-last new-key loc dir)))
-	      (setq lbl-instance (when inst-num
-				   (hbdata:instance-next
-				    (concat new-key hbut:instance-sep
-					    (int-to-string inst-num)))))))
-	  lbl-instance)
-	t)))
-
-(defun hbdata:instance-next (lbl-key)
-  "Return string for button instance number following LBL-KEY's.
-Nil if LBL-KEY is nil."
-  (and lbl-key
-       (if (string-match
-	    (concat (regexp-quote hbut:instance-sep) "[0-9]+$") lbl-key)
-	   (concat hbut:instance-sep
-		   (int-to-string
-		    (1+ (string-to-number
-			 (substring lbl-key (1+ (match-beginning 0)))))))
-	 ":2")))
-
 (defun hbdata:ebut-instance-last (lbl-key key-src &optional directory)
-  "Return highest instance number for repeated explicit button label.
+  "Return highest instance number for explicit button label.
 1 if not repeated, nil if no instance.
 Utilize arguments LBL-KEY, KEY-SRC and optional DIRECTORY."
   (hbdata:apply-entry
@@ -289,50 +275,63 @@ Utilize arguments LBL-KEY, KEY-SRC and optional DIRECTORY."
        1))
    lbl-key key-src directory nil 'instance))
 
-(defun hbdata:delete-entry (lbl-key key-src &optional directory)
-  "Delete button data entry given by LBL-KEY, KEY-SRC and optional DIRECTORY.
-Return entry deleted (a list of attribute values) or nil.
-Use methods from class `hbdata' to operate on the entry.
-If the hbdata buffer is blank/empty, kill it and remove the associated file."
+(defun hbdata:get-entry (lbl-key key-src &optional directory)
+  "Return button data entry given by LBL-KEY, KEY-SRC and optional DIRECTORY.
+Return nil if no matching entry is found.
+A button data entry is a list of attribute values.  Use methods from
+class `hbdata' to operate on the entry."
   (hbdata:apply-entry
-   (lambda ()
-     (prog1 (read (current-buffer))
-       (let ((empty-file-entry "[ \t\n\r]*\\(\^L\\|\\'\\)")
-	     (kill))
-	 (beginning-of-line)
-	 (hbdata:delete-entry-at-point)
-	 (when (looking-at empty-file-entry)
-	   (let ((end (point))
-		 (empty-hbdata-file "[ \t\n\r]*\\'"))
-	     (forward-line -1)
-	     (when (eq (following-char) ?\")
-		 ;; Last button entry for filename, so del filename.
-		 (forward-line -1)
-		 (delete-region (point) end))
-	     (save-excursion
-	       (goto-char (point-min))
-	       (when (looking-at empty-hbdata-file)
-		 (setq kill t)))
-	     (when kill
-	       (let ((fname buffer-file-name))
-		 (erase-buffer) (save-buffer) (kill-buffer nil)
-		 (hbmap:dir-remove (file-name-directory fname))
-		 (delete-file fname))))))))
+   (lambda () (read (current-buffer)))
    lbl-key key-src directory))
 
-(defun hbdata:delete-entry-at-point ()
-  (delete-region (point) (progn (forward-line 1) (point))))
+(defun hbdata:ibut-instance-next (name-key)
+  "Given NAME-KEY, return next ibutton instance number string for current buffer.
+If there is no existing ibutton with NAME-KEY, return t.
 
-(defun hbdata:ibut-instance-last (lbl-key _key-src &optional _directory)
-  "Return highest instance number for repeated implicit button label.
-1 if not repeated, nil if no instance.  Utilize argument LBL-KEY."
-  (let ((key (car (ibut:label-sort-keys (ibut:label-key-match lbl-key)))))
+With NAME-KEY nil or NAME-KEY 'name' and no existing in-buffer ibutton
+with that name, return t.
+With NAME-KEY 'name' and highest in-buffer ibutton 'name:3',
+return ':4'."
+  (if (null name-key)
+      t
+    (let ((lbl-instance (hbdata:ibut-instance-last name-key)))
+      (if lbl-instance
+	  (concat hbut:instance-sep (int-to-string (1+ lbl-instance)))
+	t))))
+
+(defun hbdata:ibut-instance-last (name-key)
+  "Return highest instance number for implicit button NAME-KEY in current buffer.
+Instance number is returned as an integer.  Return 1 if NAME-KEY exists
+in the buffer but no other instances do; nil if no instance.
+
+With no match, return nil.
+With only 'name' found, return 1.
+With 'name' and 'name:2' found, return 2."
+  (let ((key (car (ibut:label-sort-keys (ibut:label-key-match name-key)))))
     (cond ((null key) nil)
 	  ((string-match (concat (regexp-quote hbut:instance-sep)
 				 "\\([0-9]+\\)\\'")
 			 key)
 	   (string-to-number (match-string 1 key)))
 	  (t 1))))
+
+(defun hbdata:instance-next (name-key)
+  "Return string for the next higher button instance number after NAME-KEY's.
+Return nil if NAME-KEY is nil.
+
+Given 'name', return ':2'.  Given 'name:2', return ':3'.
+
+This does not search any buffer for other instances; it uses the
+NAME-KEY string literally, so it must include any instance number
+to increment."
+  (and name-key
+       (if (string-match
+	    (concat (regexp-quote hbut:instance-sep) "[0-9]+$") name-key)
+	   (concat hbut:instance-sep
+		   (int-to-string
+		    (1+ (string-to-number
+			 (substring name-key (1+ (match-beginning 0)))))))
+	 ":2")))
 
 (defun hbdata:to-entry (but-key key-src &optional directory instance)
   "Return button data entry indexed by BUT-KEY, KEY-SRC, optional DIRECTORY.
@@ -424,30 +423,6 @@ Return value of evaluation when a matching entry is found or nil."
 	  (when end-func (funcall end-func)))))
     rtn))
 
-(defun hbdata:to-hbdata-buffer (dir &optional create)
-  "Read in the file containing DIR's button data, if any, and return buffer.
-If it does not exist and optional CREATE is non-nil, create a new
-one and return buffer, otherwise return nil."
-  (let* ((file (expand-file-name hattr:filename (or dir default-directory)))
-	 (existing-file (or (file-exists-p file) (get-file-buffer file)))
-	 (buf (or (get-file-buffer file)
-		  (and (or create existing-file)
-		       (find-file-noselect file)))))
-    (when buf
-      (set-buffer buf)
-      (unless (verify-visited-file-modtime (get-file-buffer file))
-	(cond ((yes-or-no-p
-		"Hyperbole button data file has changed, read new contents? ")
-	       (revert-buffer t t))))
-      (or (= (point-max) 1) (eq (char-after 1) ?\^L)
-	  (error "File %s is not a valid Hyperbole button data table" file))
-      (unless (equal (buffer-name) file)
-	(rename-buffer file))
-      (setq buffer-read-only nil)
-      (unless existing-file
-	(hbmap:dir-add (file-name-directory file)))
-      buf)))
-
 (defun hbdata:to-entry-buf (key-src &optional directory create)
   "Move point to end of line in but data buffer matching KEY-SRC.
 Use hbdata file in KEY-SRC's directory, or optional DIRECTORY or if nil, use
@@ -494,6 +469,30 @@ Return non-nil if KEY-SRC is found or created, else nil."
 	       (insert "\^L\n\"" key-src "\"\n")
 	       (backward-char 1)))))
     rtn))
+
+(defun hbdata:to-hbdata-buffer (dir &optional create)
+  "Read in the file containing DIR's button data, if any, and return buffer.
+If it does not exist and optional CREATE is non-nil, create a new
+one and return buffer, otherwise return nil."
+  (let* ((file (expand-file-name hattr:filename (or dir default-directory)))
+	 (existing-file (or (file-exists-p file) (get-file-buffer file)))
+	 (buf (or (get-file-buffer file)
+		  (and (or create existing-file)
+		       (find-file-noselect file)))))
+    (when buf
+      (set-buffer buf)
+      (unless (verify-visited-file-modtime (get-file-buffer file))
+	(cond ((yes-or-no-p
+		"Hyperbole button data file has changed, read new contents? ")
+	       (revert-buffer t t))))
+      (or (= (point-max) 1) (eq (char-after 1) ?\^L)
+	  (error "File %s is not a valid Hyperbole button data table" file))
+      (unless (equal (buffer-name) file)
+	(rename-buffer file))
+      (setq buffer-read-only nil)
+      (unless existing-file
+	(hbmap:dir-add (file-name-directory file)))
+      buf)))
 
 (defun hbdata:write (&optional orig-lbl-key but-sym new-lbl-key)
   "Try to write Hyperbole button data from optional ORIG-LBL-KEY and BUT-SYM.

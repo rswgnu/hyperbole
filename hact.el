@@ -1,9 +1,9 @@
-;;; hact.el --- GNU Hyperbole button action handling  -*- lexical-binding: t; -let*-
+;;; hact.el --- GNU Hyperbole button action handling  -*- lexical-binding: t; -*-
 ;;
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    18-Sep-91 at 02:57:09
-;; Last-Mod:     30-Apr-23 at 14:40:46 by Bob Weiner
+;; Last-Mod:     29-May-23 at 21:50:42 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -362,6 +362,8 @@ The value of `hrule:action' determines what effect this has.
 Alternatively act as a no-op when testing implicit button type contexts.
 First arg may be a symbol or symbol name for either an action type or a
 function.  Runs `action-act-hook' before performing action."
+  ;; (message "hact args: %S" args)
+  (hattr:set 'hbut:current 'actype (actype:elisp-symbol (car args)))
   (apply hrule:action args))
 
 (defun    actype:act (actype &rest args)
@@ -431,7 +433,7 @@ performing ACTION."
 	  (hhist:add hist-elt))))))
 
 (defun    actype:action (actype)
-  "Return action part of ACTYPE.
+  "Return action part (body) of ACTYPE.
 ACTYPE is a bound function symbol, symbol name or function body.
 ACTYPE may be a Hyperbole actype or Emacs Lisp function."
   (let (actname
@@ -465,6 +467,7 @@ The type uses PARAMS to perform DEFAULT-ACTION (list of the rest of the
 arguments).  A call to this function is syntactically the same as for
 `defun',  but a doc string is required.
 Return symbol created when successful, else nil."
+  (declare (doc-string 3))
   `(progn
      (symtable:add ',type symtable:actypes)
      (htype:create ,type actypes ,doc ,params ,default-action nil)))

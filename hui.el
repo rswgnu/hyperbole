@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 21:42:03
-;; Last-Mod:     29-Apr-23 at 16:26:39 by Bob Weiner
+;; Last-Mod:     25-Jun-23 at 09:41:45 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -299,6 +299,7 @@ For programmatic creation, use `ebut:program' instead."
 	(setq but-buf (current-buffer))
 	(hui:buf-writable-err but-buf "ebut-create")
 
+	(hattr:set 'hbut:current 'categ 'explicit)
 	(hattr:set 'hbut:current 'loc (hui:key-src but-buf))
 	(hattr:set 'hbut:current 'dir (hui:key-dir but-buf))
 	(setq actype (hui:actype))
@@ -661,17 +662,17 @@ When in the global button buffer, the default is the button at point."
 					  nil t nil 'gbut)))))
   (hbut:rename (gbut:to label)))
 
-(defun hui:gibut-create (lbl text)
-  "Create a Hyperbole global implicit button with LBL and button TEXT.
+(defun hui:gibut-create (name text)
+  "Create a Hyperbole global implicit button with NAME and button TEXT at point.
 Button is stored as the properties of the symbol, 'hbut:current.
 
 Use `hui:gbut-create' to create a global explicit button."
-  (interactive "sCreate global implicit button labeled: \nsButton text (with any delimiters): ")
+  (interactive "sCreate global implicit button named: \nsButton text (with any delimiters): ")
   (let (but-buf
 	opoint
         delimited-label)
     (save-excursion
-      (setq delimited-label (concat ibut:label-start lbl ibut:label-end)
+      (setq delimited-label (concat ibut:label-start name ibut:label-end)
 	    but-buf (hpath:find-noselect (gbut:file)))
       (hui:buf-writable-err but-buf "gibut-create")
       ;; This prevents movement of point which might be useful to user.
@@ -687,7 +688,7 @@ Use `hui:gbut-create' to create a global explicit button."
 	  ;; Create button object from ibut at point
 	  (ibut:create))
 	(save-buffer))
-      (message "`%s' global implicit button created." lbl))))
+      (message "`%s' global implicit button created." name))))
 
 (defun hui:hbut-act (&optional but)
   "Execute action for optional Hyperbole button symbol BUT in current buffer.
@@ -862,20 +863,20 @@ See `hbut:report'."
 
 (defalias 'hui:hbut-summarize #'hui:hbut-report)
 
-(defun hui:ibut-act (&optional but)
-  "Activate optional labeled implicit button symbol BUT in current buffer.
+(defun hui:ibut-act (&optional ibut)
+  "Activate optional labeled implicit button symbol IBUT in current buffer.
 Default is any implicit button at point."
   (interactive
-   (let ((but (ibut:at-p)) (lst))
+   (let ((ibut (ibut:at-p)) (lst))
      (list
-      (cond (but)
+      (cond (ibut)
 	    ((setq lst (ibut:alist))
 	     (ibut:get (ibut:label-to-key
 			(hargs:read-match "Activate labeled implicit button: " lst nil t
 					  (ibut:label-p 'as-label) 'ibut))))
 	    (t
 	     (hypb:error "(ibut-act): No labeled implicit buttons in buffer."))))))
-  (hui:hbut-operate #'ibut:act "Activate labeled implicit button: " but))
+  (hui:hbut-operate #'ibut:act "Activate labeled implicit button: " ibut))
 
 (defun hui:ibut-create (&optional start end)
   "Interactively create an implicit Hyperbole button at point.
@@ -887,16 +888,18 @@ For programmatic creation, use `ibut:program' instead."
   (interactive (list (when (use-region-p) (region-beginning))
 		     (when (use-region-p) (region-end))))
   (hypb:assert-same-start-and-end-buffer
-    (let ((default-lbl) lbl but-buf actype)
+    (let ((default-name) name but-buf actype)
       (save-excursion
-	(setq default-lbl (hui:hbut-label-default start end (not (called-interactively-p 'interactive)))
-	      lbl (hui:hbut-label default-lbl "ibut-create"))
-	(unless (equal lbl default-lbl)
-	  (setq default-lbl nil))
+	(setq default-name (hui:hbut-label-default start end (not (called-interactively-p 'interactive)))
+	      name (hui:hbut-label default-name "ibut-create"))
+	(unless (equal name default-name)
+	  (setq default-name nil))
 
 	(setq but-buf (current-buffer))
 	(hui:buf-writable-err but-buf "ibut-create")
 
+	(hattr:set 'hbut:current 'name name)
+	(hattr:set 'hbut:current 'categ 'implicit)
 	(hattr:set 'hbut:current 'loc (hui:key-src but-buf))
 	(hattr:set 'hbut:current 'dir (hui:key-dir but-buf))
 	(setq actype (hui:actype))
@@ -904,7 +907,7 @@ For programmatic creation, use `ibut:program' instead."
 	(hattr:set 'hbut:current 'args (hargs:actype-get actype))
 	(hattr:set 'hbut:current 'action nil)
 	;; Adds instance number to in-buffer label if necessary
-	(ibut:operate lbl nil)
+	(ibut:operate)
 	(when (called-interactively-p 'interactive)
 	  (hui:ibut-message nil))))))
 
@@ -1032,7 +1035,7 @@ Signal an error when no such button is found in the current buffer."
       (hui:buf-writable-err but-buf "ibut-rename"))
 
     (unless (ibut:get lbl-key but-buf)
-      (hypb:error "(ibut-rename): Invalid button: '%s'." lbl))
+      (hypb:error "(ibut-rename): Invalid button: '%s'" lbl))
 
     (setq new-lbl
 	  (hargs:read
@@ -1040,7 +1043,7 @@ Signal an error when no such button is found in the current buffer."
 	   (lambda (lbl)
 	     (and (not (string-equal lbl "")) (<= (length lbl) (hbut:max-len))))
 	   lbl
-	   (format "(ibut-rename): Enter a string of at most %s chars."
+	   (format "(ibut-rename): Enter a string of at most %s chars"
 		   (hbut:max-len))
 	   'string))
 
@@ -1050,72 +1053,187 @@ Signal an error when no such button is found in the current buffer."
 		 (ibut:at-p))
 	(hui:ibut-message t)))))
 
-(defun hui:link (release-window)
-  "Return a list of the selected window (where depressed) and the RELEASE-WINDOW."
-  (list (selected-window) release-window))
-
-(defun hui:link-directly (&optional depress-window release-window)
-  "Create a link button at Action Key depress point, linked to release point.
+(defun hui:ebut-link-directly (&optional depress-window release-window)
+  "Create a link ebutton at Action Key depress point, linked to release point.
 With optional DEPRESS-WINDOW and RELEASE-WINDOW, use the points
 from those instead.  See also documentation for
 `hui:link-possible-types'."
-  (interactive (hmouse-choose-windows #'hui:link))
-  (let ((but-window (or depress-window action-key-depress-window))
-	(referent-window (or release-window action-key-release-window (selected-window)))
-	but-name but-edit link-types num-types type-and-args lbl-key but-loc but-dir)
-    (select-window but-window)
-    (hui:buf-writable-err (current-buffer) "link-directly")
-    (if (ebut:at-p)
-	(setq but-edit t
-	      but-loc (hattr:get 'hbut:current 'loc)
-	      but-dir (hattr:get 'hbut:current 'dir)
-	      lbl-key (hattr:get 'hbut:current 'lbl-key))
-      (setq but-loc (hui:key-src (current-buffer))
-	    but-dir (hui:key-dir (current-buffer))
-	    but-name (hui:hbut-label
-		      (cond ((hmouse-prior-active-region)
-			     hkey-region)
-			    ((use-region-p)
-			     (hui:hbut-label-default
-			      (region-beginning) (region-end))))
-		      "link-directly"
-		      "Create button named: ")
-	    lbl-key (hbut:label-to-key but-name)))
-    (select-window referent-window)
-    (setq link-types (hui:link-possible-types)
-	  num-types (length link-types))
+  (interactive (progn
+		 ;; Clear smart key variables so this does not
+		 ;; improperly reference values left over from a prior
+		 ;; drag or click.
+		 (action-key-clear-variables)
+		 (assist-key-clear-variables)
+		 (hmouse-choose-link-and-referent-windows)))
 
-    ;; num-types is the number of possible link types to choose among
-    (cond ((= num-types 0)
-	   (error "(link-directly): No possible link type to create"))
-	  ((= num-types 1)
-	   (setq type-and-args (hui:list-remove-text-properties (car link-types)))
-	   (hui:link-create but-edit but-window lbl-key but-loc but-dir type-and-args))
-	  (t ;; more than 1
-	   (let ((item)
-		 type)
-	     (setq type-and-args
-		   (hui:menu-choose
-		    (cons '("Link to>")
-			  (mapcar
-			   (lambda (type-and-args)
-			     (setq type (car type-and-args))
-			     (list
-			      (capitalize
-			       (if (string-match
-				    "^\\(link-to\\|eval\\)-"
-				    (setq item (symbol-name type)))
-				   (setq item (substring
-					       item (match-end 0)))
-				 item))
-			      type-and-args
-			      (documentation (symtable:actype-p type))))
-			   link-types)))
-		   type-and-args (hui:list-remove-text-properties type-and-args))
-	     (hui:link-create
-	      but-edit but-window
-	      lbl-key but-loc but-dir type-and-args))))
-    (hui:ebut-message but-edit)))
+  (let (but-name edit-flag link-types num-types type-and-args lbl-key but-loc but-dir)
+    (multiple-value-bind (link-but-window referent-window)
+	(if (and depress-window release-window)
+	    (list depress-window release-window)
+	  (hmouse-choose-link-and-referent-windows))
+
+      (select-window link-but-window)
+      ;; It is rarely possible that a *Warnings* buffer popup might have
+      ;; displaced the button src buffer in the depress window, so switch
+      ;; to it to be safe.
+      (when (and action-key-depress-buffer
+		 (not (eq (current-buffer) action-key-depress-buffer))
+		 (buffer-live-p action-key-depress-buffer))
+	(switch-to-buffer action-key-depress-buffer))
+      (hui:buf-writable-err (current-buffer) "link-directly")
+      (if (ebut:at-p)
+	  (setq edit-flag t
+		but-loc (hattr:get 'hbut:current 'loc)
+		but-dir (hattr:get 'hbut:current 'dir)
+		lbl-key (hattr:get 'hbut:current 'lbl-key))
+	(setq but-loc (hui:key-src (current-buffer))
+	      but-dir (hui:key-dir (current-buffer))
+	      but-name (hui:hbut-label
+			(cond ((hmouse-prior-active-region)
+			       hkey-region)
+			      ((use-region-p)
+			       (hui:hbut-label-default
+				(region-beginning) (region-end))))
+			"link-directly"
+			"Create button named: ")
+	      lbl-key (hbut:label-to-key but-name)))
+      (select-window referent-window)
+      (setq link-types (hui:link-possible-types)
+	    num-types (length link-types))
+
+      ;; num-types is the number of possible link types to choose among
+      (cond ((= num-types 0)
+	     (error "(link-directly): No possible link type to create"))
+	    ((= num-types 1)
+	     (setq type-and-args (hui:list-remove-text-properties (car link-types)))
+	     (hui:ebut-link-create edit-flag link-but-window lbl-key but-loc but-dir type-and-args))
+	    (t ;; more than 1
+	     (let ((item)
+		   type)
+	       (setq type-and-args
+		     (hui:menu-choose
+		      (cons '("Link to>")
+			    (mapcar
+			     (lambda (type-and-args)
+			       (setq type (car type-and-args))
+			       (list
+				(capitalize
+				 (if (string-match
+				      "^\\(link-to\\|eval\\)-"
+				      (setq item (symbol-name type)))
+				     (setq item (substring
+						 item (match-end 0)))
+				   item))
+				type-and-args
+				(documentation (symtable:actype-p type))))
+			     link-types)))
+		     type-and-args (hui:list-remove-text-properties type-and-args))
+	       (hui:ebut-link-create
+		edit-flag link-but-window
+		lbl-key but-loc but-dir type-and-args))))
+      (with-selected-window referent-window
+	(hmouse-pulse-line))
+      (when (called-interactively-p 'interactive)
+	(hui:ebut-message edit-flag)))))
+
+(defun hui:ibut-link-directly (&optional depress-window release-window name-arg-flag)
+  "Create a link ibutton at Assist Key depress point, linked to release point.
+If ibutton exists at point, replace it with the new link button.
+
+With optional DEPRESS-WINDOW and RELEASE-WINDOW, use the points
+from those instead.  See also documentation for
+`hui:link-possible-types'.
+
+With optional NAME-ARG-FLAG (interactively, the prefix argument),
+prompt for a name to precede the implicit button.
+
+An Assist Mouse Key drag between windows runs this command.
+Alternatively, to swap buffers between two windows, Assist Mouse Key
+drag from a window to another window's modeline."
+  (interactive (progn
+		 ;; Clear smart key variables so this does not
+		 ;; improperly reference values left over from a prior
+		 ;; drag or click.
+		 (action-key-clear-variables)
+		 (assist-key-clear-variables)
+		 (append (hmouse-choose-link-and-referent-windows)
+			 current-prefix-arg)))
+
+  (let (but-name edit-flag link-types num-types type-and-args name-key but-loc but-dir)
+    ;; edit-flag when set non-nil means are editing an existing ibut at point
+    (multiple-value-bind (link-but-window referent-window)
+	(if (and depress-window release-window)
+	    (list depress-window release-window)
+	  (hmouse-choose-link-and-referent-windows))
+
+      (select-window link-but-window)
+      ;; It is rarely possible that a *Warnings* buffer popup might have
+      ;; displaced the button src buffer in the depress window, so switch
+      ;; to it to be safe.
+      (when (and assist-key-depress-buffer
+		 (not (eq (current-buffer) assist-key-depress-buffer))
+		 (buffer-live-p assist-key-depress-buffer))
+	(switch-to-buffer assist-key-depress-buffer))
+      (hui:buf-writable-err (current-buffer) "link-directly")
+      (if (ibut:at-p)
+	  (setq edit-flag t
+		but-loc (hattr:get 'hbut:current 'loc)
+		but-dir (hattr:get 'hbut:current 'dir)
+		name-key (ibut:label-to-key (hattr:get 'hbut:current 'name)))
+	(setq but-loc (hui:key-src (current-buffer))
+	      but-dir (hui:key-dir (current-buffer))
+	      ;; Don't prompt to name implicit button
+	      ;; but-name (hui:hbut-label
+	      ;; 	      (cond ((hmouse-prior-active-region)
+	      ;; 		     hkey-region)
+	      ;; 		    ((use-region-p)
+	      ;; 		     (hui:hbut-label-default
+	      ;; 		      (region-beginning) (region-end))))
+	      ;; 	      "link-directly"
+	      ;; 	      "Create button named: ")
+	      ;; name-key (hbut:label-to-key but-name)
+	      ))
+      (when name-arg-flag
+	(setq name-key (ibut:label-to-key (hui:hbut-label nil "hui:ibut-link-directly"
+							  "Name for implicit button: "))))
+      (select-window referent-window)
+      (setq link-types (hui:link-possible-types)
+	    num-types (length link-types))
+
+      ;; num-types is the number of possible link types to choose among
+      (cond ((= num-types 0)
+	     (error "(link-directly): No possible link type to create"))
+	    ((= num-types 1)
+	     (setq type-and-args (hui:list-remove-text-properties (car link-types)))
+	     (hui:ibut-link-create edit-flag link-but-window name-key but-loc but-dir type-and-args))
+	    (t ;; more than 1
+	     (let ((item)
+		   type)
+	       (setq type-and-args
+		     (hui:menu-choose
+		      (cons '("Link to>")
+			    (mapcar
+			     (lambda (type-and-args)
+			       (setq type (car type-and-args))
+			       (list
+				(capitalize
+				 (if (string-match
+				      "^\\(link-to\\|eval\\)-"
+				      (setq item (symbol-name type)))
+				     (setq item (substring
+						 item (match-end 0)))
+				   item))
+				type-and-args
+				(documentation (symtable:actype-p type))))
+			     link-types)))
+		     type-and-args (hui:list-remove-text-properties type-and-args))
+	       (hui:ibut-link-create
+		edit-flag link-but-window name-key but-loc but-dir type-and-args))))
+      (with-selected-window referent-window
+	(hmouse-pulse-line))
+      (when (called-interactively-p 'interactive)
+	(hui:ibut-message edit-flag)))))
+
 
 ;;; ************************************************************************
 ;;; Private functions - used only within Hyperbole
@@ -1344,7 +1462,7 @@ for with completion of all labeled buttons within the current buffer."
 	 (hui:but-flash)
 	 (apply hrule:action
 		operation
-		(list but)))
+		`(',but)))
 	((and but (symbolp but))
 	 (hypb:error "(hbut-operate): Symbol, %s, has invalid Hyperbole button attributes:\n  %S" but (hattr:list but)))
 	(t
@@ -1501,7 +1619,7 @@ button's source file name when the button data is stored externally."
 	  ((hpath:symlink-referent (buffer-file-name but-buf)))
 	  (t but-buf))))
 
-(defun hui:link-create (edit-flag but-window lbl-key but-loc but-dir type-and-args)
+(defun hui:ebut-link-create (edit-flag but-window lbl-key but-loc but-dir type-and-args)
   "Create or edit a new Hyperbole explicit link button.
 If EDIT-FLAG is non-nil, edit button at point in BUT-WINDOW,
 otherwise, prompt for button label and create a button.
@@ -1510,13 +1628,43 @@ in which to create button.  BUT-DIR is the directory of BUT-LOC.
 TYPE-AND-ARGS is the action type for the button followed by any
 arguments it requires.  Any text properties are removed from string
 arguments."
+  (hattr:set 'hbut:current 'categ 'explicit)
   (hattr:set 'hbut:current 'loc but-loc)
   (hattr:set 'hbut:current 'dir but-dir)
   (hattr:set 'hbut:current 'actype (actype:elisp-symbol (car type-and-args)))
   (hattr:set 'hbut:current 'args (cdr type-and-args))
   (select-window but-window)
-  (let ((label (ebut:key-to-label lbl-key)))
+  ;; It is rarely possible that a *Warnings* buffer popup might have
+  ;; displaced `but-loc' in the window, so switch to it to be safe.
+  (unless (and but-loc (or (equal (buffer-name) but-loc)
+			   (eq (current-buffer) but-loc)))
+    (hbut:key-src-set-buffer but-loc))
+  (let ((label (hbut:key-to-label lbl-key)))
     (ebut:operate label (when edit-flag label))))
+
+(defun hui:ibut-link-create (edit-flag but-window name-key but-loc but-dir type-and-args)
+  "Create or edit a new Hyperbole implicit link button.
+With EDIT-FLAG non-nil, edit an existing ibutton at point in
+BUT-WINDOW; otherwise, create a new one.
+
+NAME-KEY is the internal form of the button name; when nil,
+prompt for new button name.  BUT-LOC is the file or buffer in
+which to create button.  BUT-DIR is the directory of BUT-LOC.
+TYPE-AND-ARGS is the action type for the button followed by any
+arguments it requires.  Any text properties are removed from
+string arguments."
+  (hattr:set 'hbut:current 'categ 'implicit)
+  (hattr:set 'hbut:current 'loc but-loc)
+  (hattr:set 'hbut:current 'dir but-dir)
+  (hattr:set 'hbut:current 'actype (actype:elisp-symbol (car type-and-args)))
+  (hattr:set 'hbut:current 'args (cdr type-and-args))
+  (select-window but-window)
+  ;; It is rarely possible that a *Warnings* buffer popup might have
+  ;; displaced `but-loc' in the window, so switch to it to be safe.
+  (unless (and but-loc (or (equal (buffer-name) but-loc)
+			   (eq (current-buffer) but-loc)))
+    (hbut:key-src-set-buffer but-loc))
+  (ibut:operate (ibut:key-to-label name-key) edit-flag))
 
 (defun hui:link-possible-types ()
   "Return list of possible link action types during editing of a Hyperbole button.

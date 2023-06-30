@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Oct-96 at 02:25:27
-;; Last-Mod:     27-Feb-23 at 00:22:58 by Bob Weiner
+;; Last-Mod:     21-Jun-23 at 00:25:45 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -169,7 +169,7 @@ Use for language major modes."
     (Info-mode "[^ \t\n]")
     (outline-mode "[^*]")
     (text-mode  "[^ \t\n*]"))
-  "List of (major-mode . non-terminator-line-regexp) elements.
+  "List of (MAJOR-MODE . NON-TERMINATOR-LINE-REGEXP) elements.
 Used to avoid early dropoff when marking indented code.")
 
 (defvar hui-select-indent-end-regexp-alist
@@ -185,7 +185,7 @@ Used to avoid early dropoff when marking indented code.")
     (indented-text-mode "[ \t]*$")
     (Info-mode "[ \t]*$")
     (text-mode  "[ \t]*$"))
-  "List of (major-mode . terminator-line-regexp) elements.
+  "List of (MAJOR-MODE . TERMINATOR-LINE-REGEXP) elements.
 Used to include a final line when marking indented code.")
 
 (defcustom hui-select-char-p nil
@@ -472,7 +472,7 @@ displayed in the minibuffer."
 ;;;###autoload
 (defun hui-select-goto-matching-tag ()
   "Move point to start of the tag paired with closest tag point is at or precedes.
-Enabled in major modes in `hui-select-markup-modes.  Returns t if
+Enabled in major modes in `hui-select-markup-modes'.  Returns t if
 point is moved, else nil.  Signals an error if no tag is found
 following point or if the closing tag does not have a `>'
 terminator character."
@@ -752,21 +752,20 @@ end sexp delimiters, ignore it, and return nil."
   (let ((mark-sexp-func (lambda ()
 			  (when (region-active-p) (deactivate-mark))
 			  (mark-sexp) t)))
-    (condition-case nil
-	(let ((syn-after (char-syntax (char-after)))
-	      syn-before)
-	  (cond ((eq syn-after ?\()
-		 (funcall mark-sexp-func))
-		((eq syn-after ?\))
-		 (forward-char 1)
-		 (backward-sexp)
-		 (funcall mark-sexp-func))
-		((and (not (eolp))
-		      (setq syn-before (char-syntax (char-before)))
-		      (eq syn-before ?\)))
-		 (backward-sexp)
-		 (funcall mark-sexp-func))))
-      (error nil))))
+    (ignore-errors
+      (let ((syn-after (char-syntax (char-after)))
+	    syn-before)
+	(cond ((eq syn-after ?\()
+	       (funcall mark-sexp-func))
+	      ((eq syn-after ?\))
+	       (forward-char 1)
+	       (backward-sexp)
+	       (funcall mark-sexp-func))
+	      ((and (not (eolp))
+		    (setq syn-before (char-syntax (char-before)))
+		    (eq syn-before ?\)))
+	       (backward-sexp)
+	       (funcall mark-sexp-func)))))))
 
 ;;; ************************************************************************
 ;;; Private functions
@@ -799,7 +798,7 @@ Assume point is before any non-whitespace character on the line."
 This respects the current syntax table definition of whitespace, whereas
 `back-to-indentation' does not.  This is relevant in literate programming and
 mail and news reply modes."
-  (goto-char (min (progn (end-of-line) (point))
+  (goto-char (min (line-end-position)
 		  (progn (beginning-of-line)
 			 (skip-syntax-forward " ")
 			 (point)))))
@@ -942,16 +941,14 @@ language must be included in the list, hui-select-brace-modes."
 			(looking-at defun-prompt-regexp)))
 		 (and (= (following-char) ?\})
 		      (stringp defun-prompt-regexp)
-		      (condition-case ()
-			  (progn
-			    ;; Leave point at opening brace.
-			    (goto-char
-			     (scan-sexps (1+ (point)) -1))
-			    ;; Test if these are defun braces.
-			    (save-excursion
-			      (beginning-of-line)
-			      (looking-at defun-prompt-regexp)))
-			(error nil)))))
+		      (ignore-errors
+			;; Leave point at opening brace.
+			(goto-char
+			 (scan-sexps (1+ (point)) -1))
+			;; Test if these are defun braces.
+			(save-excursion
+			  (beginning-of-line)
+			  (looking-at defun-prompt-regexp))))))
 	    eod)
 	(when (or at-def-brace
 		  ;; At the start of a definition:
@@ -1100,28 +1097,23 @@ list, hui-select-indent-modes."
       (hui-select-brace-def-or-declaration pos)
       (save-excursion
 	(setq hui-select-previous 'sexp-start)
-	(condition-case ()
-	    (hui-select-set-region pos (scan-sexps pos 1))
-	  (error nil)))))
+	(ignore-errors (hui-select-set-region pos (scan-sexps pos 1))))))
 
 (defun hui-select-sexp-end (pos)
   "Return (start . end) of sexp ending at POS."
   (or (hui-select-brace-def-or-declaration pos)
       (save-excursion
 	(setq hui-select-previous 'sexp-end)
-	(condition-case ()
-	    (hui-select-set-region (scan-sexps (1+ pos) -1) (1+ pos))
-	  (error nil)))))
+	(ignore-errors (hui-select-set-region (scan-sexps (1+ pos) -1) (1+ pos))))))
 
 (defun hui-select-sexp (pos)
   "Return (start . end) of the sexp that POS is within."
   (setq hui-select-previous 'sexp)
   (save-excursion
     (goto-char pos)
-    (condition-case ()
-	(hui-select-set-region (progn (backward-up-list 1) (point))
-			       (progn (forward-list 1) (point)))
-      (error nil))))
+    (ignore-errors
+      (hui-select-set-region (progn (backward-up-list 1) (point))
+			     (progn (forward-list 1) (point))))))
 
 (defun hui-select-sexp-up (pos)
   "Return (start . end) of the sexp enclosing the selected area or nil."
@@ -1131,10 +1123,9 @@ list, hui-select-indent-modes."
   (setq pos (or (car hui-select-region) pos))
   (save-excursion
     (goto-char pos)
-    (condition-case ()
-	(hui-select-set-region (progn (backward-up-list 1) (point))
-			       (progn (forward-list 1) (point)))
-      (error nil))))
+    (ignore-errors
+      (hui-select-set-region (progn (backward-up-list 1) (point))
+			     (progn (forward-list 1) (point))))))
 
 (defun hui-select-preprocessor-def (pos)
   "Return (start . end) of a preprocessor #definition starting at POS, if any.
@@ -1175,11 +1166,9 @@ The region includes sexpressions before and after POS"
 	      ((and (char-before pos) (= ?\  (char-syntax (char-before pos))))
 	       (hui-select-set-region (1- pos) pos))
 	      (t (goto-char pos)
-		 (condition-case ()
-		     (hui-select-set-region
-		      (save-excursion (backward-sexp) (point))
-		      (progn (forward-sexp) (point)))
-		   (error nil)))))))
+		 (ignore-errors (hui-select-set-region
+				 (save-excursion (backward-sexp) (point))
+				 (progn (forward-sexp) (point)))))))))
 
 (defun hui-select-comment (pos)
   "Return rest of line from POS to newline."
@@ -1294,10 +1283,9 @@ Delimiters may be single, double or open and close quotes."
   (setq hui-select-previous 'sentence)
   (save-excursion
     (goto-char pos)
-    (condition-case ()
-	(hui-select-set-region (progn (backward-sentence) (point))
-			       (progn (forward-sentence) (point)))
-      (error nil))))
+    (ignore-errors
+      (hui-select-set-region (progn (backward-sentence) (point))
+			     (progn (forward-sentence) (point))))))
 
 (defun hui-select-whitespace (pos)
   "Return (start . end) of all whitespace at POS,
