@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     2-Apr-91
-;; Last-Mod:     13-Jun-23 at 01:27:25 by Bob Weiner
+;; Last-Mod:     30-Jun-23 at 22:36:04 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -288,9 +288,9 @@ class `hbdata' to operate on the entry."
   "Given NAME-KEY, return next ibutton instance number string for current buffer.
 If there is no existing ibutton with NAME-KEY, return t.
 
-With NAME-KEY nil or NAME-KEY 'name' and no existing in-buffer ibutton
+With NAME-KEY nil or NAME-KEY `name' and no existing in-buffer ibutton
 with that name, return t.
-With NAME-KEY 'name' and highest in-buffer ibutton 'name:3',
+With NAME-KEY `name' and highest in-buffer ibutton `name:3',
 return ':4'."
   (if (null name-key)
       t
@@ -305,8 +305,8 @@ Instance number is returned as an integer.  Return 1 if NAME-KEY exists
 in the buffer but no other instances do; nil if no instance.
 
 With no match, return nil.
-With only 'name' found, return 1.
-With 'name' and 'name:2' found, return 2."
+With only `name' found, return 1.
+With `name' and `name:2' found, return 2."
   (let ((key (car (ibut:label-sort-keys (ibut:label-key-match name-key)))))
     (cond ((null key) nil)
 	  ((string-match (concat (regexp-quote hbut:instance-sep)
@@ -319,7 +319,7 @@ With 'name' and 'name:2' found, return 2."
   "Return string for the next higher button instance number after NAME-KEY's.
 Return nil if NAME-KEY is nil.
 
-Given 'name', return ':2'.  Given 'name:2', return ':3'.
+Given `name', return ':2'.  Given `name:2', return ':3'.
 
 This does not search any buffer for other instances; it uses the
 NAME-KEY string literally, so it must include any instance number

@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    23-Sep-91 at 20:34:36
-;; Last-Mod:     25-Jun-23 at 13:48:01 by Bob Weiner
+;; Last-Mod:     30-Jun-23 at 22:44:36 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -18,7 +18,7 @@
 ;;; Other required Elisp libraries
 ;;; ************************************************************************
 
-(eval-and-compile (mapc #'require '(bookmark hvar hsettings comint hbut hpath hargs hmail man)))
+(eval-and-compile (mapc #'require '(bookmark hvar hsettings comint hbut hpath hargs hmail man hsys-org)))
 
 ;;; ************************************************************************
 ;;; Public declarations
@@ -503,7 +503,7 @@ available.  Filename may be given without the .info suffix."
     (hypb:error "(link-to-Info-node): Invalid Info node: `%s'" string)))
 
 (defact link-to-ibut (name-key &optional but-src point)
-  "Perform implicit button action specified by NAME-KEY, optional BUT-SRC and POINT.
+  "Do implicit button action specified by NAME-KEY, optional BUT-SRC and POINT.
 NAME-KEY must be a normalized key for an ibut <[name]>.
 BUT-SRC defaults to the current buffer's file or if there is no
 attached file, then to its buffer name.  POINT defaults to the
@@ -600,7 +600,9 @@ information on how to specify a mail reader to use."
   (when (stringp id)
     (let (m
 	  (inhibit-message t)) ;; Inhibit org-id-find status msgs
-      (when (setq m (or (and (featurep 'org-roam) (org-roam-id-find id 'marker))
+      (when (setq m (or (and (featurep 'org-roam)
+                             (with-no-warnings
+                               (org-roam-id-find id 'marker)))
 			(org-id-find id 'marker)))
 	(hact #'link-to-org-id-marker m)))))
 
@@ -612,7 +614,7 @@ See doc of `ibtypes::org-id' for usage."
     (org-mark-ring-push)
     (hact #'link-to-buffer-tmp (marker-buffer marker) marker)
     (move-marker marker nil)
-    (org-show-context))
+    (org-fold-show-context))
 
 (defact link-to-regexp-match (regexp n source &optional buffer-p)
   "Find REGEXP's Nth occurrence in SOURCE and display location at window top.

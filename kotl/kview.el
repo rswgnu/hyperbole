@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    6/30/93
-;; Last-Mod:     21-Jun-23 at 21:00:17 by Bob Weiner
+;; Last-Mod:     30-Jun-23 at 21:43:29 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -507,7 +507,7 @@ If between kcells, move to the previous one.  The current cell may be hidden."
 	   ;; only in cases where no 'kcell property is found in cells,
 	   ;; e.g. before in-memory representation is created.
 	   (goto-char (- (match-end 0) 2)))
-	  (t (error "(kcell-view:to-label-end): In cell at pos %d, can't find end of cell's label")))))
+	  (t (error "(kcell-view:to-label-end): In cell at pos %d, can't find end of cell's label" (or pos (point)))))))
 
 (defun kcell-view:absolute-reference (&optional pos)
   "Return a klink to kcell at optional POS or point; return nil if not in a kcell.
