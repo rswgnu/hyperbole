@@ -1,3 +1,8 @@
+2023-07-01  Mats Lidell  <matsl@gnu.org>
+
+* hyperbole.el: Preload `kotl-autoloads`.  Submitted by Stefan
+    Monnier. Thanks Stefan.
+
 2023-06-29  Mats Lidell  <matsl@gnu.org>
 
 * hbut.el (defib): Remove redundant indent property. Change by Stefan
