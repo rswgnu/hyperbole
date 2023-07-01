@@ -7,7 +7,7 @@
 ;; Author:           Bob Weiner
 ;; Maintainer:       Bob Weiner <rsw@gnu.org>, Mats Lidell <matsl@gnu.org>
 ;; Created:          06-Oct-92 at 11:52:51
-;; Last-mod:     25-Jun-23 at 12:01:04 by Bob Weiner
+;; Last-Mod:      1-Jul-23 at 10:33:45 by Mats Lidell
 ;; Released:         03-Dec-22
 ;; Version:          8.0.1pre
 ;; Keywords:         comm, convenience, files, frames, hypermedia, languages, mail, matching, mouse, multimedia, outlines, tools, wp
@@ -566,9 +566,9 @@ frame, those functions by default still return the prior frame."
 (let ((us (if (fboundp 'macroexp-file-name)
               (macroexp-file-name) load-file-name)))
   (when us
-    ;; FIXME: Contrary to the usual ELPA autoloads files, `kotl-autoloads'
-    ;; does not add its directory to `load-path', so let's do it here by
-    ;; hand.
+    ;; Contrary to the usual ELPA autoloads files, `kotl-autoloads'
+    ;; does not add its directory to `load-path', so let's do it here
+    ;; by hand.
     (add-to-list 'load-path
                  (expand-file-name "kotl" (file-name-directory us)))
     (require 'kotl-autoloads nil t)))
