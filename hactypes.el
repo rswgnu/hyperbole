@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    23-Sep-91 at 20:34:36
-;; Last-Mod:     30-Jun-23 at 22:44:36 by Mats Lidell
+;; Last-Mod:      1-Jul-23 at 23:06:38 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -27,6 +27,7 @@
 (declare-function kotl-mode:goto-cell "kotl-mode")
 (declare-function kotl-mode:beginning-of-buffer "kotl-mode")
 (declare-function rmail:msg-to-p "hrmail")
+(declare-function org-roam-id-find "‎ext:org-roam-id")
 
 ;;; ************************************************************************
 ;;; Standard Hyperbole action types
@@ -503,7 +504,7 @@ available.  Filename may be given without the .info suffix."
     (hypb:error "(link-to-Info-node): Invalid Info node: `%s'" string)))
 
 (defact link-to-ibut (name-key &optional but-src point)
-  "Do implicit button action specified by NAME-KEY, optional BUT-SRC and POINT.
+  "Activate implicit button given by NAME-KEY, optional BUT-SRC and POINT.
 NAME-KEY must be a normalized key for an ibut <[name]>.
 BUT-SRC defaults to the current buffer's file or if there is no
 attached file, then to its buffer name.  POINT defaults to the
@@ -600,9 +601,7 @@ information on how to specify a mail reader to use."
   (when (stringp id)
     (let (m
 	  (inhibit-message t)) ;; Inhibit org-id-find status msgs
-      (when (setq m (or (and (featurep 'org-roam)
-                             (with-no-warnings
-                               (org-roam-id-find id 'marker)))
+      (when (setq m (or (and (featurep 'org-roam) (org-roam-id-find id 'marker))
 			(org-id-find id 'marker)))
 	(hact #'link-to-org-id-marker m)))))
 
@@ -741,4 +740,3 @@ Optional SECTIONS-START limits toc entries to those after that point."
 (provide 'hactypes)
 
 ;;; hactypes.el ends here
-

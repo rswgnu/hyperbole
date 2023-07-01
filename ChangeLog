@@ -1,4 +1,4 @@
-2023-06-30  Mats Lidell  <matsl@gnu.org>
+2023-07-01  Mats Lidell  <matsl@gnu.org>
 
 * hui.el:
   hpath.el:
@@ -10,7 +10,7 @@
 
 * hactypes.el (require): Load hsys-org for org-fold-show-context.
     (link-to-org-id-marker): Use org-fold-show-context.
-    (link-to-org-id): Silence byte compile warnings when org-roam not loaded.
+    (org-roam-id-find): declare-function.
 
 2023-06-29  Mats Lidell  <matsl@gnu.org>
 
