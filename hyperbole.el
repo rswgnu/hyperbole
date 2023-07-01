@@ -4,16 +4,16 @@
 ;;
 ;; Copyright (C) 1992-2023  Free Software Foundation, Inc.
 
-;; Author:           Bob Weiner
-;; Maintainer:       Bob Weiner <rsw@gnu.org>, Mats Lidell <matsl@gnu.org>
-;; Created:          06-Oct-92 at 11:52:51
-;; Last-Mod:      1-Jul-23 at 10:33:45 by Mats Lidell
-;; Released:         03-Dec-22
-;; Version:          8.0.1pre
-;; Keywords:         comm, convenience, files, frames, hypermedia, languages, mail, matching, mouse, multimedia, outlines, tools, wp
-;; Package:          hyperbole
+;; Author:       Bob Weiner
+;; Maintainer:   Bob Weiner <rsw@gnu.org>, Mats Lidell <matsl@gnu.org>
+;; Created:      06-Oct-92 at 11:52:51
+;; Last-Mod:      1-Jul-23 at 23:42:43 by Mats Lidell
+;; Released:     03-Dec-22
+;; Version:      8.0.1pre
+;; Keywords:     comm, convenience, files, frames, hypermedia, languages, mail, matching, mouse, multimedia, outlines, tools, wp
+;; Package:      hyperbole
 ;; Package-Requires: ((emacs "27.0"))
-;; URL:              http://www.gnu.org/software/hyperbole
+;; URL:          http://www.gnu.org/software/hyperbole
 
 ;; See the "HY-COPY" file for license information.
 
