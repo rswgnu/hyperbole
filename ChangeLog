@@ -12,6 +12,9 @@
     (link-to-org-id-marker): Use org-fold-show-context.
     (org-roam-id-find): declare-function.
 
+* hyperbole.el: Preload `kotl-autoloads`.  Submitted by Stefan
+    Monnier. Thanks Stefan.
+
 2023-06-29  Mats Lidell  <matsl@gnu.org>
 
 * hbut.el (defib): Remove redundant indent property. Change by Stefan
