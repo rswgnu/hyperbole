@@ -1,3 +1,9 @@
+2023-07-02  Bob Weiner  <rsw@gnu.org>
+
+* hib-social.el (hibtypes-social-default-service): Pluralize defgroup name to
+    'hyperbole-buttons' to match other files.  Remove duplicate unneeded
+    :group from each defcustom.
+
 2023-07-01  Bob Weiner  <rsw@gnu.org>
 
 * hui.el (hui:link-possible-types): If in a .texi but not within a node, don't
