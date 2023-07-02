@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 21:42:03
-;; Last-Mod:     25-Jun-23 at 09:41:45 by Bob Weiner
+;; Last-Mod:     30-Jun-23 at 22:50:57 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -664,7 +664,7 @@ When in the global button buffer, the default is the button at point."
 
 (defun hui:gibut-create (name text)
   "Create a Hyperbole global implicit button with NAME and button TEXT at point.
-Button is stored as the properties of the symbol, 'hbut:current.
+Button is stored as the properties of the symbol, \\='hbut:current.
 
 Use `hui:gbut-create' to create a global explicit button."
   (interactive "sCreate global implicit button named: \nsButton text (with any delimiters): ")

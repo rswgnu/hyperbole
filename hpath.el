@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     1-Nov-91 at 00:44:23
-;; Last-Mod:     19-Jun-23 at 14:29:44 by Bob Weiner
+;; Last-Mod:     30-Jun-23 at 22:38:18 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -2520,7 +2520,7 @@ that returns a replacement string."
   "Replace with VAR-SYMBOL any occurrences of VAR-DIR-VAL in PATH.
 Replacement is done iff VAR-DIR-VAL is an absolute path.
 
-If VAR-SYMBOL is 'hyperb:dir or 'load-path, remove the matching PATH
+If VAR-SYMBOL is \\='hyperb:dir or \\='load-path, remove the matching PATH
 part rather than replacing it with the variable since it can be
 resolved without attaching the variable name.
 

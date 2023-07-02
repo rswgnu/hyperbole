@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    18-Sep-91 at 02:57:09
-;; Last-Mod:     29-Jun-23 at 17:12:36 by Mats Lidell
+;; Last-Mod:     30-Jun-23 at 22:39:57 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1631,7 +1631,7 @@ associated arguments from the button."
 	  (funcall ibut-type-symbol))))))
 
 (defun    ibut:set-name-and-label-key-p (&optional start-delim end-delim)
-  "Set ibut name, lbl-key, lbl-start/end attributes in 'hbut:current.
+  "Set ibut name, lbl-key, lbl-start/end attributes in \\='hbut:current.
 Point may be on the implicit button text or its optional preceding
 name.  Return t if on a named or delimited text implicit button;
 return nil otherwise.
@@ -1641,8 +1641,8 @@ button text (not name); without these, try a series of matching
 delimiters (double quotes, angle brackets, braces and square
 brackets).
 
-This will not set the 'name attribute unless there is a <[name]>
-prefix.  This will not set the 'lbl-key or the 'lbl-end location
+This will not set the \\='name attribute unless there is a <[name]>
+prefix.  This will not set the \\='lbl-key or the \\='lbl-end location
 attribute unless the button text is delimited.
 
 Any implicit button name must contain at least two characters,
@@ -1721,7 +1721,7 @@ if CATEG and following arguments are not given, create the button
 object from the implicit button at point, if any; in which case,
 return nil if no implicit button is found at point.
 
-Store new button attributes in the symbol, 'hbut:current."
+Store new button attributes in the symbol, \\='hbut:current."
   ;; :args is ignored unless :categ or :action is also given.
 
   ;; `lbl-key' attribute will be set from `but-sym' if any, the button
