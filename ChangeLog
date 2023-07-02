@@ -17,6 +17,9 @@
 
 2023-06-29  Mats Lidell  <matsl@gnu.org>
 
+* hyrolo.el: Remove redundant `:group` args.  Remove obsolete `*` in
+    `defcustom` docstrings. Contribution from Stefan Monnier. Thanks Stefan.
+
 * hbut.el (defib): Remove redundant indent property. Change by Stefan
     Monnier.
 
