@@ -14,6 +14,7 @@
 
 * hyperbole.el: Preload `kotl-autoloads`.  Submitted by Stefan
     Monnier. Thanks Stefan.
+    Align header fields consistently with other files.
 
 2023-06-29  Mats Lidell  <matsl@gnu.org>
 
