@@ -1,3 +1,40 @@
+2023-07-01  Bob Weiner  <rsw@gnu.org>
+
+* hui.el (hui:link-possible-types): If in a .texi but not within a node, don't
+    raise error, just use a link-to-file-line instead.
+
+* hui-menu.el (infodock-hyperbole-menu):
+  hui-mini.el (hui:menus): Add Link item calling 'hui:gbut-link-directly'.
+  man/hyperbole.texi (Global Buttons): Add doc for new Gbut/Link item.
+  hui.el (hui:gbut-link-directly): Add to create named global link buttons based on
+    current windows.
+         (hui:gbut-create): Update to prompt for ibut name when called interactively.
+    Also, prompt if 'lbl' arg is nil and prompt for ibut text when called with a
+    prefix argument, 'ibut-flag'.  Also check that start and end buffers are the same
+    when creating an ibut.
+         (hui:ebut-edit, hui:gbut-edit, hui:hbut-label): Fix to not allow blank labels.
+         (hui:ebut-link-directly, hui:ibut-link-directly): In body, clear Smart Key
+    variables if not called interactively (since interactive clause also clears these
+    variables).  Also, if a button already exists at point, return t else nil.  This
+    lets the caller know what type of create/edit msg to display.  If not editing
+    an existing button, when prompting for a name or label, use any active and
+    highlighted region as the name or label.
+
+2023-06-30  Bob Weiner  <rsw@gnu.org>
+
+* hmouse-drv.el (hkey-window-link): Move action/assist-key-clear-varriables
+    calls into hui:*but-link-directly calls so happens every time they are
+    called.
+
+* man/hyperbole.texi (Glossary): Fix to note gbut:file is a function, not
+    a variable.
+
+2023-06-27  Bob Weiner  <rsw@gnu.org>
+
+* test/hbut-tests.el (hbut-tests:should-match-tmp-folder): Change to use
+    a regexp 'string-match-p' to a string input rather than a 'member' test
+    to a list of lists.
+
 2023-06-25  Bob Weiner  <rsw@gnu.org>
 * hbut.el (ibut:to-name, ibut:at-p, ibut:to-text): Remove test call to
     'hbut:outside-comment-p' since ibuts don't have to be within programming

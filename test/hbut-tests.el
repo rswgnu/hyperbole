@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    30-may-21 at 09:33:00
-;; Last-Mod:     17-Jun-23 at 23:02:50 by Bob Weiner
+;; Last-Mod:      1-Jul-23 at 13:41:36 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -29,7 +29,7 @@
   "Check that TMP matches either of \"/tmp\" or \"private/tmp\".
 Needed since hyperbole expands all links to absolute paths and
 /tmp can be a symbolic link."
-  (should (member tmp '(("/tmp") ("./tmp") ("/private/tmp")))))
+  (should (and (stringp tmp) (string-match-p "\\`\"?\\(/\\|./\\|/private/\\)tmp\"?\\'" tmp) t)))
 
 (ert-deftest ebut-program-link-to-directory ()
   "Programatically create ebut with link-to-directory."
@@ -39,7 +39,7 @@ Needed since hyperbole expands all links to absolute paths and
           (find-file file)
           (ebut:program "label" 'link-to-directory "/tmp")
           (should (eq (hattr:get (hbut:at-p) 'actype) 'actypes::link-to-directory))
-          (hbut-tests:should-match-tmp-folder (hattr:get (hbut:at-p) 'args))
+          (hbut-tests:should-match-tmp-folder (car (hattr:get (hbut:at-p) 'args)))
           (should (equal (hattr:get (hbut:at-p) 'loc) file))
           (should (equal (hattr:get (hbut:at-p) 'lbl-key) "label")))
       (hy-delete-file-and-buffer file))))
@@ -99,7 +99,7 @@ Needed since hyperbole expands all links to absolute paths and
             (gbut:ebut-program "global" 'link-to-directory "/tmp"))
 	  (with-current-buffer test-buffer
             (should (eq (hattr:get (hbut:at-p) 'actype) 'actypes::link-to-directory))
-            (hbut-tests:should-match-tmp-folder (hattr:get (hbut:at-p) 'args))
+            (hbut-tests:should-match-tmp-folder (car (hattr:get (hbut:at-p) 'args)))
             (should (equal (hattr:get (hbut:at-p) 'loc) test-file))
             (should (equal (hattr:get (hbut:at-p) 'lbl-key) "global"))))
       (hy-delete-file-and-buffer test-file))))
@@ -161,7 +161,7 @@ Needed since hyperbole expands all links to absolute paths and
   (with-temp-buffer
     (ebut:program "label" 'link-to-directory "/tmp")
     (should (eq (hattr:get (hbut:at-p) 'actype) 'actypes::link-to-directory))
-    (hbut-tests:should-match-tmp-folder (hattr:get (hbut:at-p) 'args))
+    (hbut-tests:should-match-tmp-folder (car (hattr:get (hbut:at-p) 'args)))
     (should (equal (hattr:get (hbut:at-p) 'lbl-key) "label"))))
 
 (ert-deftest hypb:program-create-ebut-in-buffer-with-same-label ()

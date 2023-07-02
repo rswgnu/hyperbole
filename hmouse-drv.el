@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    04-Feb-90
-;; Last-Mod:     19-Jun-23 at 15:56:40 by Bob Weiner
+;; Last-Mod:      1-Jul-23 at 13:08:22 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -635,11 +635,6 @@ With a prefix argument, create an unnamed implicit button instead."
   (let ((start-window (selected-window)))
     (unwind-protect
 	(progn
-	  ;; Clear Smart Key variables so `hui:*but-link-directly' does not
-	  ;; improperly reference values left over from a prior drag or
-	  ;; click.  This command does not utilize the Smart Keys.
-	  (action-key-clear-variables)
-	  (assist-key-clear-variables)
 	  (funcall (if current-prefix-arg
 		       #'hui:ibut-link-directly
 		     #'hui:ebut-link-directly)
@@ -787,8 +782,9 @@ buffer to the end window.  The selected window does not change."
 	     ;; Fall through to error below
 	     )
 	    (t
-	     ;; Either this frame has more than two windows or other frames exist
-	     ;; that together have more than one window; choose which to use.
+	     ;; Either this frame has more than two windows or other
+	     ;; frames exist that together have more than one window;
+	     ;; choose which to use as the referent window.
 	     (setq referent-window
 		   (if (fboundp #'aw-select) ;; ace-window selection
 		       (let ((aw-scope 'global))

@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    18-Sep-91 at 02:57:09
-;; Last-Mod:     26-Jun-23 at 00:04:54 by Bob Weiner
+;; Last-Mod:      2-Jul-23 at 00:22:53 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -219,7 +219,7 @@ Return nil if no matching button is found."
 (defalias 'ebut:key-src-fmt        #'hbut:key-src-fmt)
 (defalias 'ebut:key-to-label       #'hbut:key-to-label)
 
-(defvar hbut:max-len)
+(defvar   hbut:max-len)
 
 (defun    ebut:label-p (&optional as-label start-delim end-delim pos-flag two-lines-flag)
   "Return key for the explicit button label that point is within, else nil.
@@ -807,7 +807,7 @@ Return TO-HBUT."
   (setplist to-hbut (copy-sequence (symbol-plist from-hbut)))
   to-hbut)
 
-(defun hattr:emacs-button-attributes (button)
+(defun    hattr:emacs-button-attributes (button)
   "Return a property list of an Emacs BUTTON."
   (if (markerp button)
       ;; If on a text property button, button-at will
@@ -820,7 +820,7 @@ Return TO-HBUT."
       (when category
 	(symbol-plist category)))))
 
-(defun hattr:emacs-button-is-p (button)
+(defun    hattr:emacs-button-is-p (button)
   "If BUTTON is a valid Emacs button, return its category, else return nil."
   (let* ((type (when (or (overlayp button) (markerp button))
 		 (button-get button 'type)))
@@ -2357,8 +2357,7 @@ Summary of operations based on inputs:
 	 (args   (hattr:get ibut 'args))
 	 (arg1   (nth 0 args))
 	 (arg2   (nth 1 args))
-	 (arg3   (nth 2 args))
-	 (arg4   (nth 3 args)))
+	 (arg3   (nth 2 args)))
     (pcase actype
       ('actypes::kbd-key
        (cond ((and (stringp arg1) (string-match "\\s-*{.+}\\s-*" arg1))
@@ -2717,7 +2716,7 @@ type for ibtype is presently undefined."
 
 (defalias 'ibtype:create #'defib)
 
-(defun ibtype:activate-link (referent)
+(defun    ibtype:activate-link (referent)
   "Activate an implicit link REFERENT, either a key series, a url or a path."
   (when referent
     (let ((key-series (kbd-key:is-p referent)))

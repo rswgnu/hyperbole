@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    29-Jun-16 at 14:39:33
-;; Last-Mod:     25-Jun-23 at 09:58:19 by Bob Weiner
+;; Last-Mod:     29-Jun-23 at 18:46:17 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -25,13 +25,11 @@
 ;;; Public variables
 ;;; ************************************************************************
 
-
 (defvar hyperb:microsoft-os-p
   (memq system-type '(ms-windows windows-nt ms-dos win32))
   "Non-nil iff Hyperbole is running under a Microsoft OS but not for WSL.
 WSL is Windows Subsystem for Linux.
 Use `hyperb:wsl-os-p' to test if running under WSL.")
-
 
 (defvar hyperb:wsl-os-p
   (and (eq system-type 'gnu/linux) (executable-find "wsl.exe") t)

@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    15-Oct-91 at 20:13:17
-;; Last-Mod:     19-Jun-23 at 13:26:26 by Bob Weiner
+;; Last-Mod:      1-Jul-23 at 10:57:39 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -812,6 +812,7 @@ The menu is a menu of commands from MENU-ALIST."
 	  ("Help"   gbut:help       "Report on a global button by name.")
 	  ("Info"   (id-info        "(hyperbole)Global Buttons")
 	   "Display manual section on global buttons.")
+	  ("Link"   hui:gbut-link-directly "Add a named global button link to point in other/another window.")
 	  ("Rename" hui:gbut-rename "Rename a global button.")))
        '(ibut .
 	 (("IButton>")
