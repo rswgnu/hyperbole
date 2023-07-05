@@ -3,7 +3,7 @@
 # Author:       Bob Weiner
 #
 # Orig-Date:    15-Jun-94 at 03:42:38
-# Last-Mod:      9-Jul-23 at 20:35:56 by Mats Lidell
+# Last-Mod:     11-Jul-23 at 10:48:40 by Mats Lidell
 #
 # Copyright (C) 1994-2023  Free Software Foundation, Inc.
 # See the file HY-COPY for license information.
@@ -349,7 +349,7 @@ clean:
 
 version:
 	@ echo ""
-	@ fgrep -L $(HYPB_VERSION) hyperbole-pkg.el Makefile HY-ABOUT HY-NEWS README.md hversion.el hyperbole.el man/hyperbole.texi man/version.texi > WRONG-VERSIONS
+	@ fgrep -L $(HYPB_VERSION) Makefile HY-ABOUT HY-NEWS README.md hversion.el hyperbole.el man/hyperbole.texi man/version.texi > WRONG-VERSIONS
 	@ # If any file(s) have wrong version number, print them and exit with code 1
 	@ if [ -s WRONG-VERSIONS ]; then \
 	  echo "The following files do not have the proper Hyperbole version number, $(HYPB_VERSION):"; \
@@ -453,7 +453,7 @@ $(pkg_parent)/hyperbole-$(HYPB_VERSION).tar: version $(HYPERBOLE_FILES)
 	$(RM) -fr $(pkg_hyperbole) $(pkg_hyperbole).tar
 	# git archive --format=tar --prefix=hyperbole-$(HYPB_VERSION)/ HEAD | (cd $(pkg_parent) && tar xf -)
 	(mkdir -p $(pkg_hyperbole) && git ls-files | tar Tzcf - - | (cd $(pkg_hyperbole) && tar zxf -)) && \
-	$(CP) hyperbole-pkg.el $(pkg_hyperbole) && cd $(pkg_hyperbole) && make autoloads && chmod 755 topwin.py && \
+	cd $(pkg_hyperbole) && make autoloads && chmod 755 topwin.py && \
 	COPYFILE_DISABLE=1 $(TAR) -C $(pkg_parent) -clf $(pkg_hyperbole).tar hyperbole-$(HYPB_VERSION)
 
 pkgclean: packageclean
