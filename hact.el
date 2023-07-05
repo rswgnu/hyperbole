@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    18-Sep-91 at 02:57:09
-;; Last-Mod:     29-May-23 at 21:50:42 by Bob Weiner
+;; Last-Mod:      3-Jul-23 at 18:43:27 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -388,11 +388,12 @@ performing ACTION."
 	   (setq args (hpath:absolute-arguments actype args)))
       (let ((hist-elt (hhist:element)))
 	(run-hooks 'action-act-hook)
-	(prog1 (or (if (or (symbolp action) (listp action)
-			   (byte-code-function-p action)
-			   (subrp action)
-			   (and (stringp action) (not (integerp action))
-				(setq action (key-binding action))))
+	(prog1 (or (if (and args
+			    (or (symbolp action) (listp action)
+				(byte-code-function-p action)
+				(subrp action)
+				(and (stringp action) (not (integerp action))
+				     (setq action (key-binding action)))))
 		       (eval (cons action args))
 		     (eval action))
 		   t)

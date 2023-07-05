@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    04-Feb-90
-;; Last-Mod:      1-Jul-23 at 13:08:22 by Bob Weiner
+;; Last-Mod:      4-Jul-23 at 15:36:51 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1068,12 +1068,10 @@ documentation is found."
 				  (select-window (previous-window))
 				  (display-buffer buf 'other-win))
 			      (display-buffer buf 'other-win))
-			    (if (or (and (boundp 'help-window-select)
-					 help-window-select)
-				    (and (boundp 'help-selects-help-window)
-					 help-selects-help-window))
-				(select-window (get-buffer-window buf))
-			      (select-window owind)))))
+			    (select-window
+			     (if (bound-and-true-p help-window-select)
+				 (get-buffer-window buf)
+			       owind)))))
 		       (temp-buffer-show-function temp-buffer-show-hook))
 		  (with-output-to-temp-buffer
 		      (hypb:help-buf-name
@@ -1372,9 +1370,9 @@ and it was inactive, return its window, else nil."
   (let ((window (posn-window (event-start event))))
     (when (framep window)
       (setq window (frame-selected-window window)))
-    (and (window-minibuffer-p window)
-	 (not (minibuffer-window-active-p window))
-	 window)))
+    (and window
+	 (window-minibuffer-p window)
+	 (not (minibuffer-window-active-p window)))))
 
 ;; Based on code from subr.el.
 (defun hmouse-vertical-line-spacing (frame)

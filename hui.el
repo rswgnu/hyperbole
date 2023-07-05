@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 21:42:03
-;; Last-Mod:      2-Jul-23 at 00:23:11 by Bob Weiner
+;; Last-Mod:      2-Jul-23 at 15:18:06 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -920,23 +920,35 @@ Default is any implicit button at point."
 
 (defun hui:ibut-create (&optional start end)
   "Interactively create an implicit Hyperbole button at point.
-Use any label between optional START and END (when interactive,
-active) region points.  Indicate button creation by delimiting
+Use any label between optional START and END points (when interactive,
+any active region).  Indicate button creation by delimiting
 and adding any necessary instance number to the button label.
 
 For programmatic creation, use `ibut:program' instead."
   (interactive (list (when (use-region-p) (region-beginning))
 		     (when (use-region-p) (region-end))))
   (hypb:assert-same-start-and-end-buffer
-    (let ((default-name) name but-buf actype)
+    (let (default-name name but-buf actype)
+      (setq but-buf (current-buffer))
+      (hui:buf-writable-err but-buf "ibut-create")
+      (hattr:clear 'hbut:current)
+
+      ;; Throw an error if on a named or delimited Hyperbole button since
+      ;; cannot create another button within such contexts.
+      (when (hbut:at-p)
+	(let ((name (hattr:get 'hbut:current 'name))
+	      (lbl (hbut:key-to-label (hattr:get 'hbut:current 'lbl-key)))
+	      (lbl-start (hattr:get 'hbut:current 'lbl-start))
+	      (lbl-end (hattr:get 'hbut:current 'lbl-end)))
+	  (when (or name lbl (and lbl-start lbl-end))
+	    (error "(ibut-create): Cannot nest an ibut within the existing button: '%s'"
+		   (or name lbl (buffer-substring-no-properties lbl-start lbl-end))))))
+
       (save-excursion
 	(setq default-name (hui:hbut-label-default start end (not (called-interactively-p 'interactive)))
 	      name (hui:hbut-label default-name "ibut-create"))
 	(unless (equal name default-name)
 	  (setq default-name nil))
-
-	(setq but-buf (current-buffer))
-	(hui:buf-writable-err but-buf "ibut-create")
 
 	(hattr:set 'hbut:current 'name name)
 	(hattr:set 'hbut:current 'categ 'implicit)
@@ -1301,10 +1313,8 @@ drag from a window to another window's modeline."
 	      (params-str (and params (concat " " (prin1-to-string params)))))
 	 (while (progn
 		  (while (and (setq act-str
-				    (hargs:read
-				     (or prompt (concat "Action" params-str
-							": ")) nil nil
-				     nil 'string))
+				    (hargs:read (or prompt (concat "Action" params-str ": "))
+						nil nil nil 'string))
 			      (not (string-equal act-str ""))
 			      (condition-case ()
 				  (progn (setq act (read act-str)) nil)
@@ -1324,7 +1334,7 @@ drag from a window to another window's modeline."
 				     (and (string-match
 					   (concat "[\( \t\n\r,']"
 						   (regexp-quote param)
-						   "[\(\) \t\n\r\"]")
+						   "[() \t\n\r\"]")
 					   act-str)
 					  t))
 				   params-no-keywords)))))
@@ -1707,7 +1717,7 @@ TYPE-AND-ARGS is the action type for the button followed by any
 arguments it requires.  Any text properties are removed from
 string arguments."
   ;; Don't set 'name attribute here since this may be a rename where
-  ;; we need to get use the existing name attribute before renaming to
+  ;; we need to use the existing name attribute before renaming to
   ;; label version of `name-key'.
   (hattr:set 'hbut:current 'categ 'implicit)
   (hattr:set 'hbut:current 'loc but-loc)

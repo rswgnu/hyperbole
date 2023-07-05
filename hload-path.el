@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    29-Jun-16 at 14:39:33
-;; Last-Mod:     29-Jun-23 at 18:46:17 by Bob Weiner
+;; Last-Mod:      2-Jul-23 at 12:25:01 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -171,7 +171,7 @@ This is used only when running from git source and not a package release."
     (with-current-buffer (find-file-noselect al-file)
       (hload-path--make-directory-autoloads "." al-file)))
   (unless (hyperb:autoloads-exist-p)
-    (error (format "Hyperbole failed to generate autoload files; try running 'make src' in a shell in %s" hyperb:dir))))
+    (error "Hyperbole failed to generate autoload files; try running 'make src' in a shell in %s" hyperb:dir)))
 
 (defun hyperb:maybe-load-autoloads ()
   "Load Hyperbole autoload files that have not already been loaded."
