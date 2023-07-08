@@ -7,7 +7,7 @@
 @c Author:       Bob Weiner
 @c
 @c Orig-Date:     6-Nov-91 at 11:18:03
-@c Last-Mod:      1-Jul-23 at 16:32:29 by Bob Weiner
+@c Last-Mod:      8-Jul-23 at 10:31:40 by Bob Weiner
 
 @c %**start of header (This is for running Texinfo on a region.)
 @setfilename hyperbole.info
@@ -156,7 +156,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</P>
 
 <PRE>
 Edition 8.0.1pre
-Printed July 1, 2023.
+Printed July 8, 2023.
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -198,7 +198,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 @example
 Edition 8.0.1pre
-July 1, 2023
+July 8, 2023
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -1223,24 +1223,45 @@ Hyperbole user interface has an extensive core of argument types that
 it recognizes.  Whenever Hyperbole is prompting you for an argument,
 it knows the type that it needs and provides some error checking to
 help you get it right.  More importantly, it allows you to press the
-Action Key within an entity that you want to use as an argument and it
-will grab the appropriate thing and show it to you at the input prompt
-within the minibuffer.  If you press (click with a mouse) the Action
-Key on the same thing again, it accepts the entity as the argument
-and moves on.  Thus, a double click registers a desired argument.
-Double-quoted strings, pathnames, mail messages, Info nodes, dired
-listings, buffers, numbers, completion items and so forth are all
-recognized at appropriate times.  All of the argument types mentioned
-in the documentation for the Emacs Lisp @code{interactive} function
-are recognized.  Experiment a little and you will quickly get used to
-this direct selection technique.
+Action Key within an entity that you want to use as an argument.
+Hyperbole will copy the appropriate thing to the minibuffer as the
+argument.  If you press (click with a mouse) the Action Key on the
+same thing again, e.g. within a list of possible completions,
+Hyperbole exits the minibuffer and uses the current argument.  Thus, a
+double click registers a desired argument.  Double-quoted strings,
+pathnames, mail messages, Info nodes, dired listings, buffers,
+numbers, completion items and so forth are all recognized at
+appropriate times.  All of the argument types mentioned in the
+documentation for the Emacs Lisp @code{interactive} function are
+recognized.  Experiment a little and you will quickly get used to this
+direct selection technique.
 
 @cindex completion
-Wherever possible, standard Emacs completion is offered, as described in
-@ref{Completion,,,emacs,the GNU Emacs Manual}.  Remember to use @bkbd{?}
-to see what your possibilities for an argument are.  Once you have a
-list of possible completions on screen, press the Action Key twice on
-any item to enter it as the argument.
+@cindex Vertico completion
+Wherever possible, standard Emacs completion is offered, as described
+in @ref{Completion,,,emacs,the GNU Emacs Manual}.  Remember to use
+@bkbd{?}  to see what your possibilities for an argument are if
+completions are not automatically shown to you.  Once you have a list
+of possible completions on screen, press the Action Key twice on any
+item to enter it as the argument.  If you are using the Vertico
+completion library with completions displayed in the minibuffer,
+selection of completions works the same as if they were displayed in a
+separate buffer as in standard Emacs.
+
+@cindex minibuffer completion
+@cindex minibuffer arguments
+@cindex Smart Keys in minibuffer
+@cindex Action Key in minibuffer
+@cindex Assist Key in minibuffer
+Within the minibuffer itself, the Smart Keys are also
+context-sensitive.  A press of the Action Key at the end of the
+argument line tries to accept the argument and when successful, exits
+the minibuffer.  A press of the Assist Key at the end of the argument
+line displays matching completions for times when they are not
+automatically displayed or need updating.  A press of the Action or
+Assist Key on part of the argument, deletes from point to the end of
+the line, expanding the set of available completions and redisplaying
+them.
 
 @node Smart Key Debugging, Smart Key Thing Selection, Smart Key Argument Selection, Smart Keys
 @section   Smart Key Debugging

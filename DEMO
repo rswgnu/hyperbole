@@ -1060,12 +1060,23 @@ Try that one by pressing between the square brackets.
 
 ** Completion Selection
 
-Often when Emacs or Hyperbole prompts for an argument in the minibuffer, a
-list of possible argument completions is available by pressing {?}.  A single
-Action Key press on any of these completions inserts it into the minibuffer
-for your inspection.  A second press on the same completion causes it to be
-used as the argument value and any succeeding argument prompt is then
-displayed.  Test this technique with a {C-x C-f} (find-file) and then a {?}.
+Often when Emacs or Hyperbole prompts for an argument in the
+minibuffer, a list of possible argument completions is available by
+pressing {?} or automatically displayed.  A single Action Key press on
+any of these completions inserts it into the minibuffer for your
+inspection.  A second press on the same completion uses it as the
+argument value and moves on to any next minibuffer argument prompt.
+Test this technique with a {C-x C-f} (find-file) and then a {?}.
+
+Within the minibuffer itself, the Smart Keys are also
+context-sensitive.  A press of the Action Key at the end of the
+argument line tries to accept the argument and when successful, exits
+the minibuffer.  A press of the Assist Key at the end of the argument
+line displays matching completions for times when they are not
+automatically displayed or need updating.  A press of the Action or
+Assist Key on part of the argument, deletes from point to the end of
+the line, expanding the set of available completions and redisplaying
+them.
 
 ** Hyperbole Source Buttons
 

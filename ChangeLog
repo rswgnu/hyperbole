@@ -1,3 +1,8 @@
+* DEMO (Completion Selection):
+  man/hkey-help.txt:
+  man/hyperbole.texi (Smart Key Argument Selection): Update to new minibuffer
+    argument handling including Vertico support.
+
 2023-07-05  Bob Weiner  <rsw@gnu.org>
 
 * hpath.el (hpath:markdown-section-pattern, hpath:outline-section-pattern): Fix
@@ -8,7 +13,9 @@
 
 * hyperbole.el (hyperb:init): Activate 'vertico-mouse-mode' when
     'vertico-mode' is used so that the Action Key properly selects completions
-    from the candidate list.
+    from the candidate list.  Since Vertico displays completions automatically,
+    must initialize this before Vertico is invoked so cannot wait until a Smart
+    Mouse Key is first pressed.
   hargs.el (hargs:select-p):
            (hargs:at-p): When 'hargs:reading-type' is nil, rather than a
     string, return a list of (completion-so-far exact-completion-match),
