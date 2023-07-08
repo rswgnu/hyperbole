@@ -1,3 +1,9 @@
+2023-07-05  Bob Weiner  <rsw@gnu.org>
+
+* hpath.el (hpath:markdown-section-pattern, hpath:outline-section-pattern): Fix
+    to allow for opening pair chars after matching anchor (previously had to be a
+    :punct: character only).
+
 2023-07-04  Bob Weiner  <rsw@gnu.org>
 
 * hyperbole.el (hyperb:init): Activate 'vertico-mouse-mode' when

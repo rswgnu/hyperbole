@@ -660,14 +660,14 @@ Contains a %s for replacement of a specific anchor id.")
   "Regexp matching a Markdown anchor id definition.
 Contains a %s for replacement of a specific anchor id.")
 
-(defconst hpath:markdown-section-pattern "^[ \t]*\\(#+\\|\\*+\\)[ \t]+%s\\([ \t[:punct:]]*\\)$"
+(defconst hpath:markdown-section-pattern "^[ \t]*\\(#+\\|\\*+\\)[ \t]+%s\\([\[<\({ \t[:punct:]]*\\)$"
   "Regexp matching a Markdown section header.
 Contains a %s for replacement of a specific section name.")
 
 (defconst hpath:markdown-suffix-regexp "\\.[mM][dD]"
   "Regexp that matches to a Markdown file suffix.")
 
-(defconst hpath:outline-section-pattern "^\\*+[ \t]+%s[ \t]*\\([:punct:]+\\|$\\)"
+(defconst hpath:outline-section-pattern "^\\*+[ \t]+%s[ \t]*\\([\[<\({[:punct:]]+\\|$\\)"
   "Bol-anchored, no leading spaces regexp matching an Emacs outline section header.
 Contains a %s for replacement of a specific section name.")
 
