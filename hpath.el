@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     1-Nov-91 at 00:44:23
-;; Last-Mod:     30-Jun-23 at 22:38:18 by Mats Lidell
+;; Last-Mod:      8-Jul-23 at 16:01:35 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -660,14 +660,14 @@ Contains a %s for replacement of a specific anchor id.")
   "Regexp matching a Markdown anchor id definition.
 Contains a %s for replacement of a specific anchor id.")
 
-(defconst hpath:markdown-section-pattern "^[ \t]*\\(#+\\|\\*+\\)[ \t]+%s\\([ \t[:punct:]]*\\)$"
+(defconst hpath:markdown-section-pattern "^[ \t]*\\(#+\\|\\*+\\)[ \t]+%s\\([\[<\({ \t[:punct:]]*\\)$"
   "Regexp matching a Markdown section header.
 Contains a %s for replacement of a specific section name.")
 
 (defconst hpath:markdown-suffix-regexp "\\.[mM][dD]"
   "Regexp that matches to a Markdown file suffix.")
 
-(defconst hpath:outline-section-pattern "^\\*+[ \t]+%s[ \t]*\\([:punct:]+\\|$\\)"
+(defconst hpath:outline-section-pattern "^\\*+[ \t]+%s[ \t]*\\([\[<\({[:punct:]]+\\|$\\)"
   "Bol-anchored, no leading spaces regexp matching an Emacs outline section header.
 Contains a %s for replacement of a specific section name.")
 
@@ -716,7 +716,7 @@ Uses optional DEFAULT-DIRS (a list of dirs or a single dir) or
 		 (make-list (max 0 (- (length arg-list) (length param-list)))
 			    (last param-list))))
     (cl-mapcar (lambda (param arg)
-		 (if (and arg
+		 (if (and (stringp param)
 			  (or (string-match-p "file" param)
 			      (string-match-p "dir" param)
 			      (string-match-p "path" param)))

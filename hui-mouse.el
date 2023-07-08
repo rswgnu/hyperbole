@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    04-Feb-89
-;; Last-Mod:     25-Jun-23 at 16:36:39 by Mats Lidell
+;; Last-Mod:      4-Jul-23 at 19:51:04 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -208,10 +208,6 @@ Its default value is `smart-scroll-down'.  To disable it, set it to
 	    (smart-org)))
      . ((smart-org) . (smart-org)))
     ;;
-    ;; Ivy minibuffer completion mode
-    ((and (boundp 'ivy-mode) ivy-mode (minibuffer-window-active-p (selected-window)))
-     . ((ivy-done) . (ivy-dispatching-done)))
-    ;;
     ;; Treemacs hierarchical file manager
     ((eq major-mode 'treemacs-mode)
      . ((smart-treemacs) . (smart-treemacs)))
@@ -225,10 +221,15 @@ Its default value is `smart-scroll-down'.  To disable it, set it to
      . ((smart-push-button nil (mouse-event-p last-command-event))
 	. (smart-push-button-help nil (mouse-event-p last-command-event))))
     ;;
-    ;; If click in the minibuffer and reading an argument,
-    ;; accept argument or give completion help.
-    ((and (> (minibuffer-depth) 0)
+    ;; If click in the minibuffer and reading an argument (aside from
+    ;; with vertico or ivy), accept argument or give completion help.
+    ((and hargs:reading-type
+	  (> (minibuffer-depth) 0)
 	  (eq (selected-window) (minibuffer-window))
+	  (not (bound-and-true-p ivy-mode))
+	  (not (and (bound-and-true-p vertico-mode)
+		    ;; Ensure vertico is prompting for an argument
+		    (vertico--command-p nil (current-buffer))))
 	  (not (eq hargs:reading-type 'hmenu))
 	  (not (smart-helm-alive-p)))
      . ((funcall (key-binding (kbd "RET"))) . (smart-completion-help)))
@@ -236,8 +237,7 @@ Its default value is `smart-scroll-down'.  To disable it, set it to
     ;; If reading a Hyperbole menu item or a Hyperbole completion-based
     ;; argument, allow selection of an item at point.
     ((and (> (minibuffer-depth) 0) (setq hkey-value (hargs:at-p)))
-     . ((hargs:select-p hkey-value)
-	. (hargs:select-p hkey-value 'assist)))
+     . ((hargs:select-p hkey-value) . (hargs:select-p hkey-value 'assist)))
     ;;
     ;; If reading a Hyperbole menu item and nothing is selected, just return.
     ;; Or if in a helm session with point in the minibuffer, quit the
@@ -574,8 +574,8 @@ smart keyboard keys.")
 
 (defun smart-completion-help ()
   "Offer completion help for current minibuffer argument, if any."
-  (if (where-is-internal 'minibuffer-completion-help (current-local-map))
-      (minibuffer-completion-help)))
+  (when (where-is-internal 'minibuffer-completion-help (current-local-map))
+    (minibuffer-completion-help)))
 
 ;;; ************************************************************************
 ;;; smart-buffer-menu functions

@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    30-Jan-21 at 12:00:00
-;; Last-Mod:     22-Jun-23 at 20:35:55 by Mats Lidell
+;; Last-Mod:      8-Jul-23 at 14:16:51 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -231,12 +231,12 @@
 		   (string-match-p "hactypes\\.el"  hactypes-buf)
 		   (string-match-p "hibtypes\\.el"  hibtypes-buf))))))
 
-(ert-deftest demo-implicit-button-action-button-boolean-function-call-test ()
+(ert-deftest demo-implicit-button-action-button-display-boolean-test ()
   (with-temp-buffer
     (insert "<string-empty-p \"False\">")
     (goto-char 2)
     (action-key)
-    (hy-test-helpers:should-last-message "Boolean result (False) = nil")))
+    (hy-test-helpers:should-last-message "Result = nil; Boolean value = False")))
 
 (ert-deftest demo-implicit-button-action-button-variable-display-test ()
   (with-temp-buffer

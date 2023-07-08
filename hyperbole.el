@@ -7,7 +7,7 @@
 ;; Author:       Bob Weiner
 ;; Maintainer:   Bob Weiner <rsw@gnu.org>, Mats Lidell <matsl@gnu.org>
 ;; Created:      06-Oct-92 at 11:52:51
-;; Last-Mod:      1-Jul-23 at 23:42:43 by Mats Lidell
+;; Last-Mod:      8-Jul-23 at 16:00:21 by Bob Weiner
 ;; Released:     03-Dec-22
 ;; Version:      8.0.1pre
 ;; Keywords:     comm, convenience, files, frames, hypermedia, languages, mail, matching, mouse, multimedia, outlines, tools, wp
@@ -196,6 +196,7 @@ Assist Key will do."
 `hkey-initialize' must have already been called or the list will be empty."
   hyperbole-mode-map)
 
+;; Use `hkey-set-key' instead.
 (make-obsolete 'hkey-global-set-key 'hkey-set-key "8.0.0")
 (defun hkey-global-set-key (key command &optional _no-add)
   "Define a Hyperbole KEY bound to COMMAND.  Optional third arg, NO-ADD is ignored."
@@ -480,6 +481,12 @@ frame, those functions by default still return the prior frame."
 			    (if (hsys-org-meta-return-shared-p)
 				'buttons
 			      t)))
+  ;;
+  ;; When vertico-mode is used, vertico-mouse-mode is needed for the
+  ;; Action Key to properly select completions from the candidate list.
+  (if (bound-and-true-p vertico-mode)
+      (vertico-mouse-mode 1)
+    (add-hook 'vertico-mode-hook (lambda () (vertico-mouse-mode 1))))
   ;;
   ;; Hyperbole initialization is complete.
   (message "Initializing Hyperbole...done"))
