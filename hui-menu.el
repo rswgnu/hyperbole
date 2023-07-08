@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    28-Oct-94 at 10:59:44
-;; Last-Mod:     19-Jun-23 at 13:28:35 by Bob Weiner
+;; Last-Mod:      2-Jul-23 at 04:01:16 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -416,6 +416,7 @@ REBUILD-FLAG is non-nil, in which case the menu is rebuilt."
 		   ["Delete" hui:gbut-delete t]
 		   ["Edit"   hui:gbut-edit t]
 		   ["Help"   gbut:help t]
+		   ["Link"   hui:gbut-link-directly t]
                    ["Rename" hui:gbut-rename t])
 		 '("Implicit-Button"
 		   ["Manual"   (id-info "(hyperbole)Implicit Buttons") t]
@@ -426,7 +427,7 @@ REBUILD-FLAG is non-nil, in which case the menu is rebuilt."
 		   ["Edit"   hui:ibut-edit t]
 		   ["Help"   hui:hbut-help t]
 		   ["Link"   hui:ibut-link-directly t]
-		   ["Name"  hui:ibut-label-create t]
+		   ["Name"   hui:ibut-label-create t]
 		   ["Rename" hui:ibut-rename t]
 		   ["Types"  (hui:htype-help 'ibtypes 'no-sort) t])
 		 '("Koutliner"

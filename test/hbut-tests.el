@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    30-may-21 at 09:33:00
-;; Last-Mod:     17-Jun-23 at 23:02:50 by Bob Weiner
+;; Last-Mod:      5-Jul-23 at 00:29:02 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -26,10 +26,10 @@
 (require 'hy-test-helpers "test/hy-test-helpers")
 
 (defun hbut-tests:should-match-tmp-folder (tmp)
-  "Check that TMP matches either of \"/tmp\" or \"private/tmp\".
+  "Check that TMP matches either of \"/tmp\" or \"/private/tmp\".
 Needed since hyperbole expands all links to absolute paths and
 /tmp can be a symbolic link."
-  (should (member tmp '(("/tmp") ("./tmp") ("/private/tmp")))))
+  (should (and (stringp tmp) (string-match-p "\\`\"?\\(/\\|./\\|/private/\\)tmp\"?\\'" tmp) t)))
 
 (ert-deftest ebut-program-link-to-directory ()
   "Programatically create ebut with link-to-directory."
@@ -39,7 +39,7 @@ Needed since hyperbole expands all links to absolute paths and
           (find-file file)
           (ebut:program "label" 'link-to-directory "/tmp")
           (should (eq (hattr:get (hbut:at-p) 'actype) 'actypes::link-to-directory))
-          (hbut-tests:should-match-tmp-folder (hattr:get (hbut:at-p) 'args))
+          (hbut-tests:should-match-tmp-folder (car (hattr:get (hbut:at-p) 'args)))
           (should (equal (hattr:get (hbut:at-p) 'loc) file))
           (should (equal (hattr:get (hbut:at-p) 'lbl-key) "label")))
       (hy-delete-file-and-buffer file))))
@@ -99,7 +99,7 @@ Needed since hyperbole expands all links to absolute paths and
             (gbut:ebut-program "global" 'link-to-directory "/tmp"))
 	  (with-current-buffer test-buffer
             (should (eq (hattr:get (hbut:at-p) 'actype) 'actypes::link-to-directory))
-            (hbut-tests:should-match-tmp-folder (hattr:get (hbut:at-p) 'args))
+            (hbut-tests:should-match-tmp-folder (car (hattr:get (hbut:at-p) 'args)))
             (should (equal (hattr:get (hbut:at-p) 'loc) test-file))
             (should (equal (hattr:get (hbut:at-p) 'lbl-key) "global"))))
       (hy-delete-file-and-buffer test-file))))
@@ -161,7 +161,7 @@ Needed since hyperbole expands all links to absolute paths and
   (with-temp-buffer
     (ebut:program "label" 'link-to-directory "/tmp")
     (should (eq (hattr:get (hbut:at-p) 'actype) 'actypes::link-to-directory))
-    (hbut-tests:should-match-tmp-folder (hattr:get (hbut:at-p) 'args))
+    (hbut-tests:should-match-tmp-folder (car (hattr:get (hbut:at-p) 'args)))
     (should (equal (hattr:get (hbut:at-p) 'lbl-key) "label"))))
 
 (ert-deftest hypb:program-create-ebut-in-buffer-with-same-label ()
@@ -336,6 +336,134 @@ Needed since hyperbole expands all links to absolute paths and
     (setq name "name")
     `(dolist (bd ,hbut-tests-actypes-list)
        (with-temp-file "hypb.txt" ,@body))))
+
+;; ibut:operate tests
+
+(ert-deftest hbut-tests--ibut-operate--none ()
+  "Create unnamed ibut.
+  |------+----------+--------+-----------+-----------------------------------------------|
+  | name | new-name | region | edit-flag | operation                                     |
+  |------+----------+--------+-----------+-----------------------------------------------|
+  | nil  | nil      | nil    | nil       | create: unnamed ibut from hbut:current attrs  |
+  |------+----------+--------+-----------+-----------------------------------------------|"
+  (with-temp-buffer
+    (insert "/tmp")
+    (goto-char 2)
+    (should (hbut:at-p))
+    (should (eq (hattr:get 'hbut:current 'actype) 'actypes::link-to-file))
+    (hbut-tests:should-match-tmp-folder (buffer-substring-no-properties (point-min) (point-max)))
+    (erase-buffer)
+    (should-not (ibut:operate))
+    (should (hbut:at-p))
+    (should (eq (hattr:get 'hbut:current 'actype) 'actypes::link-to-file))
+    (hbut-tests:should-match-tmp-folder (buffer-substring-no-properties (point-min) (point-max)))))
+
+(ert-deftest hbut-tests--ibut-operate--aname ()
+  "Create aname ibut."
+  (with-temp-buffer
+    (insert "<[aname]> - /tmp")
+    (goto-char 2)
+    (should (hbut:at-p))
+    (should (eq (hattr:get 'hbut:current 'actype) 'actypes::link-to-file))
+    (hbut-tests:should-match-tmp-folder (buffer-substring-no-properties (point-min) (point-max)))
+    (erase-buffer)
+    (
+     (hattr:set 'hbut:current 'name "aname")
+     (hattr:set 'hbut:current 'name "")
+    (should-not (ibut:operate))
+    (should (hbut:at-p))
+    (should (eq (hattr:get 'hbut:current 'actype) 'actypes::link-to-file))
+    (should (string= "<[aname]> - /tmp<[aname]> - \"/tmp\""
+		     (buffer-substring-no-properties (point-min) (point-max)))))))
+
+(ert-deftest hbut-tests--ibut-operate--aname-region-skip-region ()
+  "Create aname ibut and ignore region."
+  (with-temp-buffer
+    (insert "<[aname]> - /tmp")
+    (goto-char 2)
+    (should (hbut:at-p))
+    (end-of-buffer)
+    (insert "\n")
+    (set-mark (point))
+    (insert "abcd")
+    (should (region-active-p))
+    (should-not (ibut:operate))
+    ;; Inserted just before region which is kept
+    (should (string= "<[aname]> - /tmp\n<[aname]> - \"/tmp\"abcd"
+		     (buffer-substring-no-properties (point-min) (point-max))))))
+
+(ert-deftest hbut-tests--ibut-operate--region ()
+  "Create ibut with aname, ignore region."
+  (with-temp-buffer
+    (insert "/tmp")
+    (goto-char 2)
+    (should (hbut:at-p))
+    (end-of-buffer)
+    (insert "\n")
+    (set-mark (point))
+    (insert "name")
+    (should (region-active-p))
+    (should-not (ibut:operate))
+    (should (string= "/tmp\n<[name]>\"/tmp\""
+		     (buffer-substring-no-properties (point-min) (point-max))))))
+
+(ert-deftest hbut-tests--ibut-operate--modify-named ()
+  "Add new-name to named ibut."
+  (with-temp-buffer
+    (insert "<[name]> /tmp")
+    (goto-char 2)
+    (should (hbut:at-p))
+    (should (eq (hattr:get 'hbut:current 'actype) 'actypes::link-to-file))
+    (should-not (ibut:operate "new-name" t))
+    (should (hbut:at-p))
+    (should (eq (hattr:get 'hbut:current 'actype) 'actypes::link-to-file))
+    (should (string= "<[new-name]> /tmp"
+		     (buffer-substring-no-properties (point-min) (point-max))))))
+
+(ert-deftest hbut-tests--ibut-operate--modify-named-skip-region ()
+  "Add new-name to named ibut and ignore region."
+  (with-temp-buffer
+    (insert "<[name]> /tmp")
+    (goto-char 2)
+    (should (hbut:at-p))
+    (set-mark (point-max))
+    (should (region-active-p))
+    (should-not (ibut:operate "new-name" t))
+    (should (hbut:at-p))
+    (should (eq (hattr:get 'hbut:current 'actype) 'actypes::link-to-file))
+    (should (string= "<[new-name]> /tmp"
+		     (buffer-substring-no-properties (point-min) (point-max))))))
+
+(ert-deftest hbut-tests--ibut-operate--add-new-name ()
+  "Add new-name to unnamed ibut."
+  (with-temp-buffer
+    (insert "/tmp")
+    (goto-char 2)
+    (should (hbut:at-p))
+    (should (eq (hattr:get 'hbut:current 'actype) 'actypes::link-to-file))
+    (should-not (ibut:operate "new-name" t))
+    ;; Missing delimiter -- Not identified as a ibut after name is inserted
+    ;; (should (hbut:at-p))
+    ;; (should (eq (hattr:get 'hbut:current 'actype) 'actypes::link-to-file))
+    ;; delimiter
+    (should (string= "<[new-name]>/tmp"
+		     (buffer-substring-no-properties (point-min) (point-max))))))
+
+(ert-deftest hbut-tests--ibut-operate--add-new-name-skip-region ()
+  "Add new-name to unnamed ibut, skip active region."
+  (with-temp-buffer
+    (insert "/tmp")
+    (goto-char 2)
+    (should (hbut:at-p))
+    (set-mark (point-max))
+    (should (region-active-p))
+    (should-not (ibut:operate "new-name" t))
+    ;; Missing delimiter -- Not identified as a ibut after name is inserted
+    ;; (should (hbut:at-p))
+    ;; (should (eq (hattr:get 'hbut:current 'actype) 'actypes::link-to-file))
+    ;; Missing delimiter
+    (should (string= "<[new-name]>/tmp"
+		     ))))
 
 ;; This file can't be byte-compiled without the `el-mock' package (because of
 ;; the use of the `with-mock' macro), which is not a dependency of Hyperbole.

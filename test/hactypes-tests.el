@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    30-Jan-21 at 12:00:00
-;; Last-Mod:      6-Feb-22 at 00:56:35 by Bob Weiner
+;; Last-Mod:      8-Jul-23 at 14:11:49 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -26,11 +26,11 @@
 
 (ert-deftest display-boolean-true-test ()
   (should (actypes::display-boolean t))
-  (hy-test-helpers:should-last-message "Boolean result (True) = t"))
+  (hy-test-helpers:should-last-message "Result = t; Boolean value = True"))
 
 (ert-deftest display-boolean-false-test ()
   (should (actypes::display-boolean nil))
-    (hy-test-helpers:should-last-message "Boolean result (False) = nil"))
+    (hy-test-helpers:should-last-message "Result = nil; Boolean value = False"))
 
 (provide 'hactypes-tests)
 ;;; hactypes-tests.el ends here

@@ -1,3 +1,104 @@
+2023-07-08  Bob Weiner  <rsw@gnu.org>
+
+* test/demo-tests.el (demo-implicit-button-action-button-boolean-function-call-test):
+    Rename to 'demo-implicit-button-action-button-display-boolean-test' so can
+    find when search for use of 'display-boolean'.
+
+* hactypes.el (display-boolean): Improve clarity of output message.
+  test/hactypes-tests.el (display-boolean-true-test, display-boolean-false-test):
+    Update to new output message format.
+
+* hpath.el (hpath:absolute-arguments): Fix to process only string arguments.
+
+* hibtypes.el (action): Fix 'args' not being set right after add display-* actypes.
+    Stop storing unneeded ibutton 'action attribute.
+
+* hact.el (actype:action): Fix doc to say may return actype's fboundp symbol.
+    Use 'actype:action-body' if always need the body of the function.
+          (symtable:actype-p): Fix to return Elisp function symbols as well
+    since 'actype:elisp-symbol' is an alias to this defsubst.
+          (symtable:hyperbole-actype-p): Add to exclude Elisp function symbols.
+          (actype:act): Use above new function.
+
+* DEMO (Completion Selection):
+  man/hkey-help.txt:
+  man/hyperbole.texi (Smart Key Argument Selection): Update to new minibuffer
+    argument handling including Vertico support.
+
+2023-07-05  Bob Weiner  <rsw@gnu.org>
+
+* hpath.el (hpath:markdown-section-pattern, hpath:outline-section-pattern): Fix
+    to allow for opening pair chars after matching anchor (previously had to be a
+    :punct: character only).
+
+2023-07-04  Bob Weiner  <rsw@gnu.org>
+
+* hyperbole.el (hyperb:init): Activate 'vertico-mouse-mode' when
+    'vertico-mode' is used so that the Action Key properly selects completions
+    from the candidate list.  Since Vertico displays completions automatically,
+    must initialize this before Vertico is invoked so cannot wait until a Smart
+    Mouse Key is first pressed.
+  hargs.el (hargs:select-p):
+           (hargs:at-p): When 'hargs:reading-type' is nil, rather than a
+    string, return a list of (completion-so-far exact-completion-match),
+    for consumption by 'hargs:select-p'.  Add feature to kill to end of
+    minibuffer line and refresh completions when not inserting a fully
+    matching completion (works for regular and vertico completions if
+    'vertico-mouse-mode' has been enabled prior to using).
+
+* hmouse-sh.el (hmouse-posn-set-point): Avoid setting point to a read-only
+    location when vertico-mode is active.
+
+2023-07-03  Bob Weiner  <rsw@gnu.org>
+
+* hmouse-drv.el (hkey-help): Remove ref to XEmacs 'help-selects-help-window'.
+
+* hargs.el (hargs:select-p): Add vertico and ivy completion support.
+           (hargs:at-p): Add vertico support.
+  hui-mouse.el (hkey-alist): Remove ivy support; move above.
+
+* hact.el (actype:act): Fix error when 'args' are null.
+
+* hbut.el (hbut:action): Fix error when 'atype' is not a symbol.
+
+* hmouse-sh.el (hmouse-drag-region): Disable Hyperbole-specific functionality
+    when hyperbole-mode is nil.
+
+2023-07-02  Bob Weiner  <rsw@gnu.org>
+
+* hui.el (hui:ibut-create):
+  hbut.el (ibut:program): Prevent from creating a new ibut within a named
+    or labeled Hyperbole button.
+
+* hui.el (hui:ibut-create): Call (hattr:clear 'hbut:current) before creating
+    in-memory button.
+
+* hib-social.el (hibtypes-social-default-service): Pluralize defgroup name to
+    'hyperbole-buttons' to match other files.  Remove duplicate unneeded
+    :group from each defcustom.
+
+2023-07-01  Bob Weiner  <rsw@gnu.org>
+
+* hui.el (hui:link-possible-types): If in a .texi but not within a node, don't
+    raise error, just use a link-to-file-line instead.
+
+* hui-menu.el (infodock-hyperbole-menu):
+  hui-mini.el (hui:menus): Add Link item calling 'hui:gbut-link-directly'.
+  man/hyperbole.texi (Global Buttons): Add doc for new Gbut/Link item.
+  hui.el (hui:gbut-link-directly): Add to create named global link buttons based on
+    current windows.
+         (hui:gbut-create): Update to prompt for ibut name when called interactively.
+    Also, prompt if 'lbl' arg is nil and prompt for ibut text when called with a
+    prefix argument, 'ibut-flag'.  Also check that start and end buffers are the same
+    when creating an ibut.
+         (hui:ebut-edit, hui:gbut-edit, hui:hbut-label): Fix to not allow blank labels.
+         (hui:ebut-link-directly, hui:ibut-link-directly): In body, clear Smart Key
+    variables if not called interactively (since interactive clause also clears these
+    variables).  Also, if a button already exists at point, return t else nil.  This
+    lets the caller know what type of create/edit msg to display.  If not editing
+    an existing button, when prompting for a name or label, use any active and
+    highlighted region as the name or label.
+
 2023-07-01  Mats Lidell  <matsl@gnu.org>
 
 * hui.el:
@@ -16,6 +117,15 @@
     Monnier. Thanks Stefan.
     Align header fields consistently with other files.
 
+2023-06-30  Bob Weiner  <rsw@gnu.org>
+
+* hmouse-drv.el (hkey-window-link): Move action/assist-key-clear-varriables
+    calls into hui:*but-link-directly calls so happens every time they are
+    called.
+
+* man/hyperbole.texi (Glossary): Fix to note gbut:file is a function, not
+    a variable.
+
 2023-06-29  Mats Lidell  <matsl@gnu.org>
 
 * hyrolo.el: Remove redundant `:group` args.  Remove obsolete `*` in
@@ -23,6 +133,12 @@
 
 * hbut.el (defib): Remove redundant indent property. Change by Stefan
     Monnier.
+
+2023-06-27  Bob Weiner  <rsw@gnu.org>
+
+* test/hbut-tests.el (hbut-tests:should-match-tmp-folder): Change to use
+    a regexp 'string-match-p' to a string input rather than a 'member' test
+    to a list of lists.
 
 2023-06-25  Bob Weiner  <rsw@gnu.org>
 * hbut.el (ibut:to-name, ibut:at-p, ibut:to-text): Remove test call to

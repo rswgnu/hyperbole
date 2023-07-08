@@ -7,7 +7,7 @@
 @c Author:       Bob Weiner
 @c
 @c Orig-Date:     6-Nov-91 at 11:18:03
-@c Last-Mod:     22-Jun-23 at 17:39:17 by Bob Weiner
+@c Last-Mod:      8-Jul-23 at 10:31:40 by Bob Weiner
 
 @c %**start of header (This is for running Texinfo on a region.)
 @setfilename hyperbole.info
@@ -156,7 +156,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</P>
 
 <PRE>
 Edition 8.0.1pre
-Printed June 22, 2023.
+Printed July 8, 2023.
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -198,7 +198,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 @example
 Edition 8.0.1pre
-June 22, 2023
+July 8, 2023
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -1223,24 +1223,45 @@ Hyperbole user interface has an extensive core of argument types that
 it recognizes.  Whenever Hyperbole is prompting you for an argument,
 it knows the type that it needs and provides some error checking to
 help you get it right.  More importantly, it allows you to press the
-Action Key within an entity that you want to use as an argument and it
-will grab the appropriate thing and show it to you at the input prompt
-within the minibuffer.  If you press (click with a mouse) the Action
-Key on the same thing again, it accepts the entity as the argument
-and moves on.  Thus, a double click registers a desired argument.
-Double-quoted strings, pathnames, mail messages, Info nodes, dired
-listings, buffers, numbers, completion items and so forth are all
-recognized at appropriate times.  All of the argument types mentioned
-in the documentation for the Emacs Lisp @code{interactive} function
-are recognized.  Experiment a little and you will quickly get used to
-this direct selection technique.
+Action Key within an entity that you want to use as an argument.
+Hyperbole will copy the appropriate thing to the minibuffer as the
+argument.  If you press (click with a mouse) the Action Key on the
+same thing again, e.g. within a list of possible completions,
+Hyperbole exits the minibuffer and uses the current argument.  Thus, a
+double click registers a desired argument.  Double-quoted strings,
+pathnames, mail messages, Info nodes, dired listings, buffers,
+numbers, completion items and so forth are all recognized at
+appropriate times.  All of the argument types mentioned in the
+documentation for the Emacs Lisp @code{interactive} function are
+recognized.  Experiment a little and you will quickly get used to this
+direct selection technique.
 
 @cindex completion
-Wherever possible, standard Emacs completion is offered, as described in
-@ref{Completion,,,emacs,the GNU Emacs Manual}.  Remember to use @bkbd{?}
-to see what your possibilities for an argument are.  Once you have a
-list of possible completions on screen, press the Action Key twice on
-any item to enter it as the argument.
+@cindex Vertico completion
+Wherever possible, standard Emacs completion is offered, as described
+in @ref{Completion,,,emacs,the GNU Emacs Manual}.  Remember to use
+@bkbd{?}  to see what your possibilities for an argument are if
+completions are not automatically shown to you.  Once you have a list
+of possible completions on screen, press the Action Key twice on any
+item to enter it as the argument.  If you are using the Vertico
+completion library with completions displayed in the minibuffer,
+selection of completions works the same as if they were displayed in a
+separate buffer as in standard Emacs.
+
+@cindex minibuffer completion
+@cindex minibuffer arguments
+@cindex Smart Keys in minibuffer
+@cindex Action Key in minibuffer
+@cindex Assist Key in minibuffer
+Within the minibuffer itself, the Smart Keys are also
+context-sensitive.  A press of the Action Key at the end of the
+argument line tries to accept the argument and when successful, exits
+the minibuffer.  A press of the Assist Key at the end of the argument
+line displays matching completions for times when they are not
+automatically displayed or need updating.  A press of the Action or
+Assist Key on part of the argument, deletes from point to the end of
+the line, expanding the set of available completions and redisplaying
+them.
 
 @node Smart Key Debugging, Smart Key Thing Selection, Smart Key Argument Selection, Smart Keys
 @section   Smart Key Debugging
@@ -2001,7 +2022,7 @@ asking for help on a button.
 Sometimes it is useful to activate buttons without regard to the
 information with which you are working.  In such instances, you use
 @dfn{global buttons}, which are buttons that may be activated or
-otherwise operated upon by typing their labels/names when they are
+otherwise operated upon by typing their names/labels when they are
 prompted for, rather than selecting the buttons within a buffer.  In
 contrast, activation of explicit buttons depends upon the information on
 your screen since they are accessible only from within their particular
@@ -2025,6 +2046,30 @@ the button's name, press @bkbd{@key{RET}}, and then Hyperbole prompts
 you for its action type and associated arguments.  @bkbd{C-h h g e} to
 edit an existing global button.  To remove a button, use the Delete menu
 item, @bkbd{C-h h g d}; @pxref{Deletion}.
+
+@cindex global link creation
+@cindex creating global links
+@cindex menu item, Gbut/Link
+@kindex C-h h g l
+To create a global button that links to point in one of your Emacs
+windows, use the Link menu item, @bkbd{C-h h g l}.
+
+By default this will create a global explicit link button.  Give it a
+prefix argument to create a global implicit link button.
+
+With a single window visible on-screen or a single window within your
+current frame, this will prompt you for a button name or label
+(temporarily showing you your global/personal button file) and then
+will insert a button that links to the current point within that window.
+
+If you have exactly two Emacs windows in your current frame or exactly
+two windows visible across two Emacs frames, then the link referent will
+be to the point in the other, non-selected window.
+
+With more than two windows on screen, Hyperbole will prompt you to choose
+the referent window and its associated point to which to link.  If the
+Ace Window package is installed and active, this will be used to choose
+the window; otherwise, you will be prompted to select it by mouse.
 
 Global buttons are actually explicit buttons stored at the end of your
 personal button file, @pxref{Button Files}.  You can always go into that
@@ -7405,16 +7450,17 @@ frame is visible at a time as each frame generally fills the whole
 terminal display, providing a virtual screen capability.  Emacs
 windows exist within a frame.
 
-@vindex gbut:file
+@findex gbut:file
 @item Global Button
 A Hyperbole button which is accessed by name rather than direct
 selection.  Global buttons are useful when one wants quick access to
 actions such as jumping to common file locations or for performing
 sequences of operations.  One need not locate them since they are
 always available by name, with full completion offered.  All global
-buttons are stored in the file given by the variable @code{gbut:file}
-and may be activated with the Action Key when editing this file.  By
-default, this is the same as the user's personal button file.
+buttons are stored in the file returned by the function call,
+@code{(gbut:file)}, and may be activated with the Action Key when
+editing this file.  By default, this is the same as the user's
+personal button file.
 
 @item Glink
 @itemx link-to-gbut

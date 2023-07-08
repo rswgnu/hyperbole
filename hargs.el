@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    31-Oct-91 at 23:17:35
-;; Last-Mod:     17-Jun-23 at 13:05:33 by Bob Weiner
+;; Last-Mod:      5-Jul-23 at 00:45:15 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -328,7 +328,47 @@ default values.
 Caller should have checked whether an argument is presently being read
 and has set `hargs:reading-type' to an appropriate argument type.
 Handles all of the interactive argument types that `hargs:iform-read' does."
-  (cond ((and (eq hargs:reading-type 'kcell)
+  (cond ;; vertico-mode
+	((and (null hargs:reading-type)
+	      (bound-and-true-p vertico-mode)
+	      ;; Ensure vertico is prompting for an argument
+	      (vertico--command-p nil (current-buffer))
+	      (active-minibuffer-window))
+	 (if (and action-key-release-args
+		  (fboundp #'vertico-mouse--index)
+		  (eq (posn-window (event-end action-key-release-args))
+		      (active-minibuffer-window)))
+	     (with-selected-window (active-minibuffer-window)
+	       (let ((index (vertico-mouse--index action-key-release-args))
+		     mini)
+		 (if index
+		     (save-excursion
+		       (vertico--goto index)
+		       (vertico--update t)
+		       (vertico--candidate))
+		   ;; Assume event occurred within the
+		   ;; minibufer-contents and return just the contents
+		   ;; before point so that those after are deleted and
+		   ;; more completions are shown.
+		   (setq mini (minibuffer-contents-no-properties))
+		   ;; The minibuffer may have some read-only contents
+		   ;; at the beginning, e.g. M-x, not included in the 'mini'
+		   ;; string, so we have to offset the max index into
+		   ;; the string in such cases and protect against
+		   ;; when point is set into this read-only area with
+		   ;; the 'max' call below.
+		   (list (substring mini 0 (max (- (point) (point-max)) (- (length mini)))) nil))))
+	   (list (vertico--candidate) t)))
+	((and (null hargs:reading-type)
+	      action-key-release-args
+	      (eq (posn-window (event-end action-key-release-args))
+		  (active-minibuffer-window)))
+	 ;; Event occurred within the minibufer-contents and return
+	 ;; just the contents before point so that those after are
+	 ;; deleted and more completions are shown.
+	 (setq mini (minibuffer-contents-no-properties))
+	 (list (substring mini 0 (max (- (point) (point-max)) (- (length mini)))) nil))
+	((and (eq hargs:reading-type 'kcell)
 	      (eq major-mode 'kotl-mode)
 	      (not (looking-at "^$")))
 	 (kcell-view:label))
@@ -360,7 +400,9 @@ Handles all of the interactive argument types that `hargs:iform-read' does."
 			 (following-char))))
 		    ;; At the end of the menu
 		    (t 0)))))
-	((hargs:completion t))
+	((let ((completion (hargs:completion t)))
+	   (when completion
+	     (list completion t))))
 	((eq hargs:reading-type 'ebut) (ebut:label-p 'as-label))
 	((eq hargs:reading-type 'ibut) (ibut:label-p 'as-label))
 	((eq hargs:reading-type 'gbut)
@@ -495,7 +537,9 @@ Insert in minibuffer if active or in other window if minibuffer is inactive."
 			      entry))))
 		(or no-insert
 		    (when entry
-		      (erase-buffer)
+		      (if (eq insert-window (minibuffer-window))
+			  (delete-minibuffer-contents)
+			(erase-buffer))
 		      (insert entry))))
 	       ;; In buffer, non-minibuffer completion.
 	       ;; Only insert entry if last buffer line does
@@ -558,7 +602,7 @@ See also documentation for `interactive'."
 		  (while (cond
 			  ((eq (aref iform i) ?*))
 			  ((eq (aref iform i) ?@)
-			   (hargs:select-event-window)
+			   (hargs:selectevent-window)
 			   t)
 			  ((eq (aref iform i) ?^)
 			   (handle-shift-selection))
@@ -663,8 +707,9 @@ of value to be read."
 		  (beep))))
 	    result)
 	(setq hargs:reading-type prev-reading-p)
-	(select-window owind)
-	(switch-to-buffer obuf)))))
+	(when (window-live-p owind)
+	  (select-window owind)
+	  (switch-to-buffer obuf))))))
 
 (defun hargs:select-p (&optional value assist-bool)
   "Return optional VALUE or value selected at point if any, else nil.
@@ -673,33 +718,69 @@ the current minibuffer argument, otherwise, the minibuffer is erased
 and value is inserted there.
 Optional ASSIST-BOOL non-nil triggers display of Hyperbole menu item
 help when appropriate."
-    (when (and (> (minibuffer-depth) 0) (or value (setq value (hargs:at-p))))
-      (let ((owind (selected-window)) (back-to)
-	    (str-value (and value (format "%s" value)))
-	    ;; This command requires recursive minibuffers.
-	    (enable-recursive-minibuffers t))
-	(unwind-protect
-	    (progn
-	      (select-window (minibuffer-window))
-	      (set-buffer (window-buffer (minibuffer-window)))
+  (when (and (> (minibuffer-depth) 0) (or value (setq value (hargs:at-p))))
+    (let ((owind (selected-window)) (back-to)
+	  ;; This command requires recursive minibuffers.
+	  (enable-recursive-minibuffers t))
+      (when (stringp value)
+	(setq value (list value nil)))
+      (unwind-protect
+	  (cl-destructuring-bind (str-value exact-completion-flag) value
+	    (setq str-value (and str-value (format "%s" str-value)))
+	    (select-window (minibuffer-window))
+	    (set-buffer (window-buffer (minibuffer-window)))
+	    (cond
+	     ;;
+	     ;; Selecting a Hyperbole minibuffer menu item
+	     ((eq hargs:reading-type 'hmenu)
+	      (when assist-bool
+		(setq hargs:reading-type 'hmenu-help))
+	      (hui:menu-enter str-value))
+	     ;;
+	     ;; Exit minibuffer and use its existing value as the desired parameter.
+	     ((string-equal str-value (minibuffer-contents))
+	      (goto-char (point-max))
 	      (cond
-	       ;;
-	       ;; Selecting a Hyperbole minibuffer menu item
-	       ((eq hargs:reading-type 'hmenu)
-		(when assist-bool
-		  (setq hargs:reading-type 'hmenu-help))
-		(hui:menu-enter str-value))
-	       ;;
-	       ;; Enter existing value into the minibuffer as the desired parameter.
-	       ((string-equal str-value (minibuffer-contents))
-		(exit-minibuffer))
-	       ;;
-	       ;; Clear minibuffer and insert value.
-	       (t (delete-minibuffer-contents)
-		  (insert str-value)
-		  (setq back-to t)))
-	      value)
-	  (when back-to (select-window owind))))))
+	       ;; vertico-mode
+	       ((and (bound-and-true-p vertico-mode)
+		     ;; Ensure vertico is prompting for an argument
+		     (vertico--command-p nil (current-buffer)))
+		(vertico-exit))
+	       ;; ivy-mode
+	       ((bound-and-true-p ivy-mode)
+		(if assist-bool
+		    (ivy-dispatching-done)
+		  (ivy-done)))
+	       ;; standard minibuffer completion
+	       (t (exit-minibuffer))))
+	     ;;
+	     ;; Clear minibuffer and insert value.
+	     (t
+	      (delete-minibuffer-contents)
+	      (goto-char (point-max))
+	      (cond
+	       ;; ivy-mode
+	       ((bound-and-true-p ivy-mode)
+		(if assist-bool
+		    (ivy-dispatching-done)
+		  (ivy-done)))
+	       ;; standard minibuffer completion
+	       ;; vertico-mode
+	       ((and (bound-and-true-p vertico-mode)
+		     ;; Ensure vertico is prompting for an argument
+		     (vertico--command-p nil (current-buffer)))
+                (if str-value
+		    (insert str-value)
+		  (vertico-insert))
+		(vertico--update t))
+	       (t
+		(insert str-value)
+		(unless exact-completion-flag
+		  (minibuffer-completion-help))
+		(setq back-to t)))
+	      value)))
+	(when (and back-to (window-live-p owind))
+	  (select-window owind))))))
 
 ;;; ************************************************************************
 ;;; Private variables

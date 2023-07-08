@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     6-Oct-91 at 03:42:38
-;; Last-Mod:     25-Jun-23 at 10:11:57 by Mats Lidell
+;; Last-Mod:      1-Jul-23 at 10:15:54 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -167,7 +167,7 @@ Raise and reuse any existing single window frame displaying ilog."
   (ilog-show-in-other-frame))
 
 (defmacro hypb:assert-same-start-and-end-buffer (&rest body)
-  "Assert that buffers name does not change during execution of BODY.
+  "Assert that current buffer does not change following execution of BODY.
 Trigger an error with traceback if the buffer is not live or its
 name differs at the start and end of BODY."
   (declare (indent 0) (debug t))

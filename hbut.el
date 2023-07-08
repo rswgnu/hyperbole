@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    18-Sep-91 at 02:57:09
-;; Last-Mod:     30-Jun-23 at 22:39:57 by Mats Lidell
+;; Last-Mod:      8-Jul-23 at 16:02:16 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -219,7 +219,7 @@ Return nil if no matching button is found."
 (defalias 'ebut:key-src-fmt        #'hbut:key-src-fmt)
 (defalias 'ebut:key-to-label       #'hbut:key-to-label)
 
-(defvar hbut:max-len)
+(defvar   hbut:max-len)
 
 (defun    ebut:label-p (&optional as-label start-delim end-delim pos-flag two-lines-flag)
   "Return key for the explicit button label that point is within, else nil.
@@ -470,12 +470,12 @@ For interactive creation, use `hui:ebut-create' instead."
             (if (or (and actype-sym (fboundp actype-sym))
 		    (functionp actype))
 		(hattr:set 'hbut:current 'actype actype)
-	      (error (format "(%s)" actype)))
+	      (error "(%s)" actype))
 	    (hattr:set 'hbut:current 'args args)
 	    (ebut:operate label nil))
 	(error (hattr:clear 'hbut:current)
 	       (if (and (listp (cdr err)) (= (length (cdr err)) 1))
-		   (error (format "(ebut:program): actype arg must be a bound symbol (not a string): %S" actype))
+		   (error "(ebut:program): actype arg must be a bound symbol (not a string): %S" actype)
 		 (error "(ebut:program): %S" err)))))))
 
 (defun    ebut:search (string out-buf &optional match-part)
@@ -807,7 +807,7 @@ Return TO-HBUT."
   (setplist to-hbut (copy-sequence (symbol-plist from-hbut)))
   to-hbut)
 
-(defun hattr:emacs-button-attributes (button)
+(defun    hattr:emacs-button-attributes (button)
   "Return a property list of an Emacs BUTTON."
   (if (markerp button)
       ;; If on a text property button, button-at will
@@ -820,7 +820,7 @@ Return TO-HBUT."
       (when category
 	(symbol-plist category)))))
 
-(defun hattr:emacs-button-is-p (button)
+(defun    hattr:emacs-button-is-p (button)
   "If BUTTON is a valid Emacs button, return its category, else return nil."
   (let* ((type (when (or (overlayp button) (markerp button))
 		 (button-get button 'type)))
@@ -982,7 +982,8 @@ Default is the symbol hbut:current."
 	action)
     (setq action (car (hattr:get hbut 'action))
 	  atype  (hattr:get hbut 'actype))
-    (if (= (length (symbol-name atype)) 2)
+    (if (and (symbolp atype)
+	     (= (length (symbol-name atype)) 2))
 	atype
       (or action (actype:action atype)))))
 
@@ -2171,7 +2172,7 @@ move to the first occurrence of the button."
 
 (defun    ibut:operate (&optional new-name edit-flag)
   "Insert/modify an ibutton based on `hbut:current' in current buffer.
-Optional non-nil NEW-NAME is name to give button.  With optional
+Optional non-nil NEW-NAME is new name to give button.  With optional
 EDIT-FLAG non-nil, modify an existing in-buffer ibutton rather
 than creating a new one.
 
@@ -2182,20 +2183,28 @@ Return instance string appended to name to form a per-buffer unique
 name; nil if name is already unique or no name.  Signal an error when no
 such button is found in the current buffer.
 
-Summary of operations based on inputs:
-|-------+----------+--------+------------------------------------------------|
-| name  | new-name | region | operation                                      |
-|-------+----------+--------+------------------------------------------------|
-| nil   | nil      | nil    | create: unnamed ibut                           |
-| aname | nil      | nil    | create/update: aname named ibut                |
-| aname | nil      | region | create/update: aname named ibut (skip region)  |
-| nil   | nil      | region | create/update: region named ibut               |
-| aname | newname  | nil    | mod: rename aname to newname                   |
-| aname | newname  | region | mod: rename aname to newname (skip region)     |
-| nil   | newname  | nil    | mod: add newname to lbl-key ibut at point      |
-| nil   | newname  | region | mod: add newname to lbl-key ibut (skip region) |
-|-------+----------+--------+------------------------------------------------|"
-  ;; !! TODO: Code does not yet fully match what is in docstring table
+Summary of operations based on inputs (name arg comes from \\='hbut:current attrs):
+|----+------+----------+--------+------+-----------------------------------------------|
+|  # | name | new-name | region | edit | operation                                     |
+|----+------+----------+--------+------+-----------------------------------------------|
+|  1 | nil  | nil      | nil    | nil  | create: unnamed ibut from hbut:current attrs  |
+|  2 | nil  | new-name | nil    | nil  | create: new-name named ibut                   |
+|  3 | name | nil      | nil    | nil  | create: aname named ibut                      |
+|  4 | name | new-name | nil    | nil  | ERROR: create can't have name and new-name    |
+|  5 | name | new-name | region | nil  | ERROR: create can't have name and new-name    |
+|  6 | name | nil      | region | nil  | create: aname named ibut (skip region)        |
+|  7 | nil  | nil      | region | nil  | create: region named ibut                     |
+|  8 | nil  | new-name | region | nil  | create: new-name named ibut (skip region)     |
+|----+------+----------+--------+------+-----------------------------------------------|
+|  9 | nil  | nil      | nil    | t    | mod: unnamed ibut from hbut:current attrs     |
+| 10 | nil  | new-name | nil    | t    | mod: add new-name to lbl-key ibut at point    |
+| 11 | name | nil      | nil    | t    | mod: aname named ibut from hbut:current attrs |
+| 12 | name | new-name | nil    | t    | mod: rename aname to new-name                 |
+| 13 | name | new-name | region | t    | ERROR: Can't use region to mod existing ibut  |
+| 14 | name | nil      | region | t    | ERROR: Can't use region to mod existing ibut  |
+| 15 | nil  | nil      | region | t    | ERROR: Can't use region to mod existing ibut  |
+| 16 | nil  | new-name | region | t    | ERROR: Can't use region to mod existing ibut  |
+|----+------+----------+--------+------+-----------------------------------------------|"
   (let* ((actype (hattr:get 'hbut:current 'actype))
 	 (name (hattr:get 'hbut:current 'name))
 	 (name-regexp (ibut:label-regexp (ibut:label-to-key name)))
@@ -2207,6 +2216,10 @@ Summary of operations based on inputs:
     (when (and new-name (or (not (stringp new-name)) (string-empty-p new-name)))
       (hypb:error "(ibut:operate): 'new-name' value must be a non-empty string, not: '%s'"
 		  new-name))
+    (when (and name new-name (not edit-flag))
+      (hypb:error "(ibut:operate): 'edit-flag' must be t to rename a button (hbut:current name and new-name both given)"))
+    (when (and region-flag edit-flag)
+      (hypb:error "(ibut:operate): 'edit-flag' must be nil when region is highlighted to use region as new button name"))
 
     (unless new-name
       (setq new-name name))
@@ -2214,14 +2227,8 @@ Summary of operations based on inputs:
       (hattr:set 'hbut:current 'name new-name))
     (save-excursion
       (if (progn
-	    (if edit-flag
-		(progn
-		  (setq instance-flag
-			(hbdata:ibut-instance-last (ibut:label-to-key new-name)))
-		  (run-hooks 'ibut-edit-hook))
-	      (setq instance-flag
-		    (hbdata:ibut-instance-last (ibut:label-to-key name)))
-	      (run-hooks 'ibut-create-hook))
+	    (setq instance-flag (hbdata:ibut-instance-last (ibut:label-to-key
+							    (if edit-flag new-name name))))
 	    (when (null instance-flag)
 	      (setq instance-flag t))
 	    instance-flag)
@@ -2231,43 +2238,47 @@ Summary of operations based on inputs:
 		    (if edit-flag "modify" "create")
 		    ibut:label-start name ibut:label-end
 		    (buffer-name))))
-    (cond (edit-flag
-	   (if name
-	       ;; Rename all occurrences of button - those with same name
-	       (let* ((but-key-and-pos (ibut:label-p nil nil nil 'pos))
-		      (at-but (equal (car but-key-and-pos)
-				     (ibut:label-to-key new-name))))
-		 (when at-but
-		   (ibut:delimit (nth 1 but-key-and-pos)
-				 (nth 2 but-key-and-pos)
+    (let (start end mark prev-point)
+      (cond (edit-flag
+	     (cond (name
+		    ;; Rename all occurrences of button - those with same name
+		    (let* ((but-key-and-pos (ibut:label-p nil nil nil 'pos))
+			   (at-but (equal (car but-key-and-pos)
+					  (ibut:label-to-key new-name))))
+		      (when at-but
+			(ibut:delimit (nth 1 but-key-and-pos)
+				      (nth 2 but-key-and-pos)
+				      instance-flag))
+		      (cond ((ibut:map
+			      (lambda (_lbl start end)
+				(delete-region start end)
+				(ibut:delimit
+				 (point)
+				 (progn (insert new-name) (point))
 				 instance-flag))
-		 (cond ((ibut:map
-			 (lambda (_lbl start end)
-			   (delete-region start end)
-			   (ibut:delimit
-			    (point)
-			    (progn (insert new-name) (point))
-			    instance-flag))
-			 name-regexp 'include-delims))
-		       (at-but)
-		       ((hypb:error "(ibut:operate): No button matching: %s" name))))
-	     ;; Add new-name to nameless button at point
-	     (goto-char (or (hattr:get 'hbut:current 'lbl-start) (point)))
-	     (ibut:delimit (point)
-			   (progn (insert new-name) (point))
-			   instance-flag)))
+			      name-regexp 'include-delims))
+			    (at-but)
+			    ((hypb:error "(ibut:operate): No button matching: %s" name)))))
+		   (new-name
+		    ;; Add new-name to nameless button at point
+		    (goto-char (or (hattr:get 'hbut:current 'lbl-start) (point)))
+		    (ibut:delimit (point)
+				  (progn (insert new-name) (point))
+				  instance-flag))))
 
-	  (instance-flag
-	   ;; Above flag is 't when there is exactly one existing
-	   ;; instance of the button name
-	   ;;
-	   ;; Add a new implicit button in the buffer, recording its
-	   ;; start and end positions; new-name is always nil here
-	   (let (start end mark prev-point buf-lbl)
+	    (instance-flag
+	     ;; Above flag is 't when there is exactly one existing
+	     ;; instance of the button name
+	     ;;
+	     ;; Add a new implicit button in the buffer, recording its
+	     ;; start and end positions; new-name is always nil here
 	     (cond ((not (or name region-flag))
 		    ;; No name to insert, just insert ibutton text below
 		    )
 		   ((and region-flag
+			 ;; ignore region when name or new-name are set
+			 (not (or name new-name))
+			 ;; new-name is always nil here
 			 (if (hyperb:stack-frame
 			      '(hui:ebut-create hui:ebut-edit hui:ebut-edit-region
 						hui:ebut-link-create hui:gbut-create
@@ -2275,43 +2286,45 @@ Summary of operations based on inputs:
 						hui:ibut-create hui:ibut-edit
 						hui:ibut-link-create ibut:program))
 			     ;; Ignore action-key-depress-prev-point
-			     (progn (setq mark (marker-position (mark-marker))
-					  start (region-beginning)
-					  end (region-end)
-					  buf-lbl (buffer-substring-no-properties start end))
-				    (equal buf-lbl name))
+			     (setq start (region-beginning)
+				   end (region-end)
+				   name (buffer-substring-no-properties start end))
 			   ;; Utilize any action-key-depress-prev-point
-			   (setq mark (marker-position (mark-marker)))
-			   (setq prev-point (and action-key-depress-prev-point
-						 (marker-position action-key-depress-prev-point)))
-			   (setq start (if (and prev-point mark (<= prev-point mark))
+			   (setq mark (marker-position (mark-marker))
+				 prev-point (and action-key-depress-prev-point
+						 (marker-position action-key-depress-prev-point))
+				 start (if (and prev-point mark (<= prev-point mark))
 					   prev-point
 					 (region-beginning))
 				 end (if (and prev-point mark (> prev-point mark))
 					 prev-point
 				       (region-end))
-				 buf-lbl (buffer-substring-no-properties start end))
-			   (equal buf-lbl name)))
+				 name (buffer-substring-no-properties start end))))
 		    nil)
 		   ((progn (when start (goto-char start))
-			   (when name  (looking-at (regexp-quote name))))
+			   (or (when name  (looking-at (regexp-quote name)))
+			       (when new-name  (looking-at (regexp-quote new-name)))))
 		    (setq start (point)
 			  end (match-end 0)))
 		   (name
 		    (setq start (point))
 		    (insert name)
-		    (setq end (point))))
+		    (setq end (point)))
+		   (new-name
+		    (setq start (point))
+		    (insert new-name)
+		    (setq end (point)))))
+	    (t (hypb:error
+		"(ibut:operate): Operation failed.  Check button attribute permissions: %s"
+		hattr:filename)))
 
-	     (when (and start end)
-	       (ibut:delimit start end instance-flag))
-	     (ibut:insert-text 'hbut:current)
-	     (if start
-		 (goto-char start)
-	       (goto-char (max (- (point) 2) (point-min))))))
-
-	  (t (hypb:error
-	      "(ibut:operate): Operation failed.  Check button attribute permissions: %s"
-	      hattr:filename)))
+      (unless edit-flag
+	(when (and start end)
+	  (ibut:delimit start end instance-flag))
+	(ibut:insert-text 'hbut:current)
+	(if start
+	    (goto-char start)
+	  (goto-char (max (- (point) 2) (point-min))))))
 
     ;; Append any instance-flag string to the button name
     (when (stringp instance-flag)
@@ -2342,6 +2355,8 @@ Summary of operations based on inputs:
 	(hypb:error "(ibut:operate): hbut:current ibut lbl-key '%s' must be non-nil"
 		    lbl-key)))
 
+    (run-hooks (if edit-flag 'ibut-edit-hook 'ibut-create-hook))
+
     ;; instance-flag might be 't which we don't want to return.
     (when (stringp instance-flag) instance-flag)))
 
@@ -2357,8 +2372,7 @@ Summary of operations based on inputs:
 	 (args   (hattr:get ibut 'args))
 	 (arg1   (nth 0 args))
 	 (arg2   (nth 1 args))
-	 (arg3   (nth 2 args))
-	 (arg4   (nth 3 args)))
+	 (arg3   (nth 2 args)))
     (pcase actype
       ('actypes::kbd-key
        (cond ((and (stringp arg1) (string-match "\\s-*{.+}\\s-*" arg1))
@@ -2450,10 +2464,20 @@ function, followed by a list of arguments for the actype, aside from
 the button NAME which is automatically provided as the first argument.
 
 For interactive creation, use `hui:ibut-create' instead."
+  ;; Throw an error if on a named or delimited Hyperbole button since
+  ;; cannot create another button within such contexts.
+  (when (hbut:at-p)
+    (let ((name (hattr:get 'hbut:current 'name))
+	  (lbl (hbut:key-to-label (hattr:get 'hbut:current 'lbl-key)))
+	  (lbl-start (hattr:get 'hbut:current 'lbl-start))
+	  (lbl-end (hattr:get 'hbut:current 'lbl-end)))
+      (when (or name lbl (and lbl-start lbl-end))
+	(error "(ibut:program): Cannot nest an ibut within the existing button: %s"
+	       (or name lbl (buffer-substring-no-properties lbl-start lbl-end))))))
   (save-excursion
     (let ((but-buf (current-buffer))
 	  (actype-sym (actype:action actype)))
-      (hui:buf-writable-err but-buf "ibut-create")
+      (hui:buf-writable-err but-buf "ibut:program")
       (hattr:clear 'hbut:current)
       (hattr:set 'hbut:current 'name name)
       (hattr:set 'hbut:current 'categ 'implicit)
@@ -2462,7 +2486,7 @@ For interactive creation, use `hui:ibut-create' instead."
       (if (or (and actype-sym (fboundp actype-sym))
 	      (functionp actype))
 	  (hattr:set 'hbut:current 'actype actype)
-	(error (format "actype arg must be a bound symbol (not a string): %S" actype)))
+	(error "actype arg must be a bound symbol (not a string): %S" actype))
       (hattr:set 'hbut:current 'args args)
       (condition-case err
 	  (ibut:operate)
@@ -2715,7 +2739,7 @@ type for ibtype is presently undefined."
 
 (defalias 'ibtype:create #'defib)
 
-(defun ibtype:activate-link (referent)
+(defun    ibtype:activate-link (referent)
   "Activate an implicit link REFERENT, either a key series, a url or a path."
   (when referent
     (let ((key-series (kbd-key:is-p referent)))

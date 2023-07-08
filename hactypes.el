@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    23-Sep-91 at 20:34:36
-;; Last-Mod:      1-Jul-23 at 23:06:38 by Mats Lidell
+;; Last-Mod:      8-Jul-23 at 16:02:44 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -67,8 +67,8 @@ inserted, delete the completions window."
 Return any non-nil value or t."
   (interactive "xDisplay bool expr value: ")
   (let ((result (eval bool-expr t)))
-    (message "Boolean result (%s) = %S; Expr: %S"
-	     (if result "True" "False") result bool-expr)
+    (message "Result = %S; Boolean value = %s; Expr = %S"
+	     result (if result "True" "False") bool-expr)
     (or result t)))
 
 (defact display-value (value)

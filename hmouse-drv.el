@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    04-Feb-90
-;; Last-Mod:     19-Jun-23 at 15:56:40 by Bob Weiner
+;; Last-Mod:      4-Jul-23 at 15:36:51 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -635,11 +635,6 @@ With a prefix argument, create an unnamed implicit button instead."
   (let ((start-window (selected-window)))
     (unwind-protect
 	(progn
-	  ;; Clear Smart Key variables so `hui:*but-link-directly' does not
-	  ;; improperly reference values left over from a prior drag or
-	  ;; click.  This command does not utilize the Smart Keys.
-	  (action-key-clear-variables)
-	  (assist-key-clear-variables)
 	  (funcall (if current-prefix-arg
 		       #'hui:ibut-link-directly
 		     #'hui:ebut-link-directly)
@@ -787,8 +782,9 @@ buffer to the end window.  The selected window does not change."
 	     ;; Fall through to error below
 	     )
 	    (t
-	     ;; Either this frame has more than two windows or other frames exist
-	     ;; that together have more than one window; choose which to use.
+	     ;; Either this frame has more than two windows or other
+	     ;; frames exist that together have more than one window;
+	     ;; choose which to use as the referent window.
 	     (setq referent-window
 		   (if (fboundp #'aw-select) ;; ace-window selection
 		       (let ((aw-scope 'global))
@@ -1072,12 +1068,10 @@ documentation is found."
 				  (select-window (previous-window))
 				  (display-buffer buf 'other-win))
 			      (display-buffer buf 'other-win))
-			    (if (or (and (boundp 'help-window-select)
-					 help-window-select)
-				    (and (boundp 'help-selects-help-window)
-					 help-selects-help-window))
-				(select-window (get-buffer-window buf))
-			      (select-window owind)))))
+			    (select-window
+			     (if (bound-and-true-p help-window-select)
+				 (get-buffer-window buf)
+			       owind)))))
 		       (temp-buffer-show-function temp-buffer-show-hook))
 		  (with-output-to-temp-buffer
 		      (hypb:help-buf-name
@@ -1376,9 +1370,9 @@ and it was inactive, return its window, else nil."
   (let ((window (posn-window (event-start event))))
     (when (framep window)
       (setq window (frame-selected-window window)))
-    (and (window-minibuffer-p window)
-	 (not (minibuffer-window-active-p window))
-	 window)))
+    (and window
+	 (window-minibuffer-p window)
+	 (not (minibuffer-window-active-p window)))))
 
 ;; Based on code from subr.el.
 (defun hmouse-vertical-line-spacing (frame)
