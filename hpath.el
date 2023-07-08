@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     1-Nov-91 at 00:44:23
-;; Last-Mod:     19-Jun-23 at 14:29:44 by Bob Weiner
+;; Last-Mod:      8-Jul-23 at 14:00:39 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -716,7 +716,7 @@ Uses optional DEFAULT-DIRS (a list of dirs or a single dir) or
 		 (make-list (max 0 (- (length arg-list) (length param-list)))
 			    (last param-list))))
     (cl-mapcar (lambda (param arg)
-		 (if (and arg
+		 (if (and (stringp param)
 			  (or (string-match-p "file" param)
 			      (string-match-p "dir" param)
 			      (string-match-p "path" param)))

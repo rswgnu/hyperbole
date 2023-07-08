@@ -1,3 +1,25 @@
+2023-07-08  Bob Weiner  <rsw@gnu.org>
+
+* test/demo-tests.el (demo-implicit-button-action-button-boolean-function-call-test):
+    Rename to 'demo-implicit-button-action-button-display-boolean-test' so can
+    find when search for use of 'display-boolean'.
+
+* hactypes.el (display-boolean): Improve clarity of output message.
+  test/hactypes-tests.el (display-boolean-true-test, display-boolean-false-test):
+    Update to new output message format.
+
+* hpath.el (hpath:absolute-arguments): Fix to process only string arguments.
+
+* hibtypes.el (action): Fix 'args' not being set right after add display-* actypes.
+    Stop storing unneeded ibutton 'action attribute.
+
+* hact.el (actype:action): Fix doc to say may return actype's fboundp symbol.
+    Use 'actype:action-body' if always need the body of the function.
+          (symtable:actype-p): Fix to return Elisp function symbols as well
+    since 'actype:elisp-symbol' is an alias to this defsubst.
+          (symtable:hyperbole-actype-p): Add to exclude Elisp function symbols.
+          (actype:act): Use above new function.
+
 * DEMO (Completion Selection):
   man/hkey-help.txt:
   man/hyperbole.texi (Smart Key Argument Selection): Update to new minibuffer
