@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    18-Sep-91 at 02:57:09
-;; Last-Mod:      8-Jul-23 at 16:02:16 by Bob Weiner
+;; Last-Mod:      8-Jul-23 at 16:58:20 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -2188,8 +2188,8 @@ Summary of operations based on inputs (name arg comes from \\='hbut:current attr
 |  # | name | new-name | region | edit | operation                                     |
 |----+------+----------+--------+------+-----------------------------------------------|
 |  1 | nil  | nil      | nil    | nil  | create: unnamed ibut from hbut:current attrs  |
-|  2 | nil  | new-name | nil    | nil  | create: new-name named ibut                   |
-|  3 | name | nil      | nil    | nil  | create: aname named ibut                      |
+|  2 | nil  | new-name | nil    | nil  | ERROR: create can't rename without edit flag  |
+|  3 | name | nil      | nil    | nil  | create: ibut with name                        |
 |  4 | name | new-name | nil    | nil  | ERROR: create can't have name and new-name    |
 |  5 | name | new-name | region | nil  | ERROR: create can't have name and new-name    |
 |  6 | name | nil      | region | nil  | create: aname named ibut (skip region)        |
