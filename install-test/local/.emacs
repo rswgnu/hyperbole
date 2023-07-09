@@ -20,11 +20,11 @@
 
 (straight-use-package
  (list
-  ('hyperbole
-   :host nil
-   :repo (getenv "LOCAL_HYPB_REPO")
-   :branch (getenv "LOCAL_HYPB_BRANCH")
-   :config '(hyperbole-mode 1))))
+  'hyperbole
+  :host nil
+  :repo (getenv "LOCAL_HYPB_REPO")
+  :branch (getenv "LOCAL_HYPB_BRANCH")
+  :config '(hyperbole-mode 1)))
 
 (hyperbole-mode 1)
 
