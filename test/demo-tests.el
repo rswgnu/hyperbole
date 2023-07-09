@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    30-Jan-21 at 12:00:00
-;; Last-Mod:      8-Jul-23 at 14:16:51 by Bob Weiner
+;; Last-Mod:      9-Jul-23 at 01:21:53 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -397,6 +397,8 @@
   (unwind-protect
       (progn
         (hypb:display-file-with-logo "DEMO")
+	(widen)
+	(goto-char (point-min))
         (re-search-forward "\\[FSF 19\\]")
         (backward-char 1)
         (action-key)
