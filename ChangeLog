@@ -2,6 +2,9 @@
 
 * hypb-ert.el (hypb-ert-*): Change all calls of 'ert' to disable ert's messages
     so that any test's message is displayed after an hypb-ert test case run.
+              (hypb-ert): Change 'ert' calls to use 'hypb-ert' and centralize
+    'message' function override when possible to deal with different 'ert'
+    calling conventions in different Emacs versions.
 
 * hbut.el (ibut:operate): Update doc of each state.
 
