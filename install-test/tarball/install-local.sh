@@ -3,4 +3,5 @@ tar -xf hyperbole.tar
 rm hyperbole.tar
 ln -s hyperbole* hyperbole
 cd hyperbole
-make bin
+make bin eln
+
