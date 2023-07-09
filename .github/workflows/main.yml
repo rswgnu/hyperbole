@@ -24,7 +24,12 @@ jobs:
         run: make clean
 
       - name: Compile
-        run: make bin
+        run: |
+          make bin 2>&1 | tee MAKE_BIN_OUTPUT
+          echo "Number of warnings: $(grep "Warning:" MAKE_BIN_OUTPUT | wc -l)" >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
+          grep "Warning:" MAKE_BIN_OUTPUT >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
 
       - name: Test
         run: make test
