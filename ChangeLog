@@ -1,3 +1,16 @@
+2023-07-09  Bob Weiner  <rsw@gnu.org>
+
+* hypb-ert.el (hypb-ert-*): Change all calls of 'ert' to disable ert's messages
+    so that any test's message is displayed after an hypb-ert test case run.
+
+* hbut.el (ibut:operate): Update doc of each state.
+
+* test/hbut-tests.el: Finish adding all ibut:operate tests; still need to update
+    ibut:operate to conform to all tests.
+
+* test/demo-tests.el (demo-annotated-reference-test): Fix to always search from
+    buffer start.
+
 2023-07-08  Bob Weiner  <rsw@gnu.org>
 
 * test/demo-tests.el (demo-implicit-button-action-button-boolean-function-call-test):

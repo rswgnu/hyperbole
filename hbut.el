@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    18-Sep-91 at 02:57:09
-;; Last-Mod:      8-Jul-23 at 16:02:16 by Bob Weiner
+;; Last-Mod:      9-Jul-23 at 02:09:54 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -2188,18 +2188,18 @@ Summary of operations based on inputs (name arg comes from \\='hbut:current attr
 |  # | name | new-name | region | edit | operation                                     |
 |----+------+----------+--------+------+-----------------------------------------------|
 |  1 | nil  | nil      | nil    | nil  | create: unnamed ibut from hbut:current attrs  |
-|  2 | nil  | new-name | nil    | nil  | create: new-name named ibut                   |
-|  3 | name | nil      | nil    | nil  | create: aname named ibut                      |
+|  2 | nil  | new-name | nil    | nil  | ERROR: create can't rename without edit flag  |
+|  3 | name | nil      | nil    | nil  | create: ibut with name                        |
 |  4 | name | new-name | nil    | nil  | ERROR: create can't have name and new-name    |
 |  5 | name | new-name | region | nil  | ERROR: create can't have name and new-name    |
-|  6 | name | nil      | region | nil  | create: aname named ibut (skip region)        |
+|  6 | name | nil      | region | nil  | create: ibut with name (ignore region)        |
 |  7 | nil  | nil      | region | nil  | create: region named ibut                     |
-|  8 | nil  | new-name | region | nil  | create: new-name named ibut (skip region)     |
+|  8 | nil  | new-name | region | nil  | create: ibut with new-name (ignore region)    |
 |----+------+----------+--------+------+-----------------------------------------------|
-|  9 | nil  | nil      | nil    | t    | mod: unnamed ibut from hbut:current attrs     |
-| 10 | nil  | new-name | nil    | t    | mod: add new-name to lbl-key ibut at point    |
-| 11 | name | nil      | nil    | t    | mod: aname named ibut from hbut:current attrs |
-| 12 | name | new-name | nil    | t    | mod: rename aname to new-name                 |
+|  9 | nil  | nil      | nil    | t    | mod: remove any name from ibut                |
+| 10 | nil  | new-name | nil    | t    | mod: set ibut's name to new-name              |
+| 11 | name | nil      | nil    | t    | mod: name of ibut from hbut:current attrs     |
+| 12 | name | new-name | nil    | t    | mod: rename ibut with name to new-name        |
 | 13 | name | new-name | region | t    | ERROR: Can't use region to mod existing ibut  |
 | 14 | name | nil      | region | t    | ERROR: Can't use region to mod existing ibut  |
 | 15 | nil  | nil      | region | t    | ERROR: Can't use region to mod existing ibut  |
