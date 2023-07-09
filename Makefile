@@ -3,7 +3,7 @@
 # Author:       Bob Weiner
 #
 # Orig-Date:    15-Jun-94 at 03:42:38
-# Last-Mod:      9-Jul-23 at 20:35:17 by Mats Lidell
+# Last-Mod:      9-Jul-23 at 20:35:37 by Mats Lidell
 #
 # Copyright (C) 1994-2023  Free Software Foundation, Inc.
 # See the file HY-COPY for license information.
@@ -509,9 +509,14 @@ test-all-output:
 .PHONY: install-elpa install-elpa-devel install-tarball install-straight install-all install-local
 install-all: install-elpa install-elpa-devel install-tarball install-straight install-local
 
-install-elpa install-elpa-devel install-tarball install-straight install-local:
+install-elpa install-elpa-devel install-tarball install-straight:
 	@echo "Install Hyperbole using $@"
 	(cd ./install-test/ && ./local-install-test.sh $(subst install-,,$@))
+
+install-local:
+	@echo "Install Hyperbole using $@"
+	(cd ./install-test/ && \
+	./local-install-test.sh $(subst install-,,$@)) $(pwd) $(git rev-parse --abbrev-ref HEAD 2>/dev/null)
 
 package-lint:
 	$(EMACS_BATCH) \

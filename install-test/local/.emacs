@@ -18,21 +18,13 @@
 
 (setq package-native-compile t)
 
-;; Then use this to install Hyperbole
 (straight-use-package
  (list
-  'hyperbole
-  :host nil
-  :repo (string-trim-right (shell-command-to-string "git rev-parse --show-toplevel"))
-  :branch (string-trim-right (shell-command-to-string "git rev-parse --abbrev-ref HEAD 2>/dev/null"))
-  :config '(hyperbole-mode 1)))
-
-;; (straight-use-package
-;;  '(hyperbole
-;;   :host nil
-;;   :repo "/home/matslidell/src/hyperbole"
-;;   :branch "local-straight"
-;;   :config (hyperbole-mode 1)))
+  ('hyperbole
+   :host nil
+   :repo (getenv "LOCAL_HYPB_REPO")
+   :branch (getenv "LOCAL_HYPB_BRANCH")
+   :config '(hyperbole-mode 1))))
 
 (hyperbole-mode 1)
 
