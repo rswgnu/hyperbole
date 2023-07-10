@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 21:42:03
-;; Last-Mod:      8-Jul-23 at 16:04:59 by Bob Weiner
+;; Last-Mod:     10-Jul-23 at 18:31:05 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -672,7 +672,7 @@ implicit button.  See also documentation for
       (split-window-vertically))
     (find-file (gbut:file))
     (hui:buf-writable-err (current-buffer) "gbut-link-directly")
-    (multiple-value-bind (link-but-window referent-window)
+    (cl-multiple-value-bind (link-but-window referent-window)
 	(hmouse-choose-link-and-referent-windows)
       (goto-char (point-max))
       (beginning-of-line)
@@ -1127,7 +1127,7 @@ from those instead.  See also documentation for
     (action-key-clear-variables)
     (assist-key-clear-variables))
   (let (but-lbl edit-flag link-types num-types type-and-args lbl-key but-loc but-dir)
-    (multiple-value-bind (link-but-window referent-window)
+    (cl-multiple-value-bind (link-but-window referent-window)
 	(if (and depress-window release-window)
 	    (list depress-window release-window)
 	  (hmouse-choose-link-and-referent-windows))
@@ -1229,7 +1229,7 @@ drag from a window to another window's modeline."
     (assist-key-clear-variables))
   (let (but-name edit-flag link-types num-types type-and-args name-key but-loc but-dir)
     ;; edit-flag when set non-nil means are editing an existing ibut at point
-    (multiple-value-bind (link-but-window referent-window)
+    (cl-multiple-value-bind (link-but-window referent-window)
 	(if (and depress-window release-window)
 	    (list depress-window release-window)
 	  (hmouse-choose-link-and-referent-windows))
