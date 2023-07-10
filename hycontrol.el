@@ -141,6 +141,8 @@
 
 (declare-function fm-next-frame "ext:framemove")
 
+(defvar frame-zoom-font-difference)
+
 ;;; ************************************************************************
 ;;; Public variables
 ;;; ************************************************************************

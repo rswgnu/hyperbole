@@ -1,5 +1,10 @@
 2023-07-10  Mats Lidell  <matsl@gnu.org>
 
+* hycontrol.el:
+  hui-mouse.el:
+  hmouse-drv.el:
+  hyrolo.el: Public declarations added for multiple packages.
+
 * hargs.el: Add public declarations for vertico and ivy.
 
 * hactypes.el (link-to-org-id, link-to-org-id-marker): Do not quote as

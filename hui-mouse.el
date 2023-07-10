@@ -67,6 +67,8 @@
 (declare-function helm-get-actions-from-current-source "ext:helm-core")
 (declare-function helm-get-default-action "ext:helm-core")
 
+(defvar helm-selection-point)
+
 ;;; ************************************************************************
 ;;; Public variables
 ;;; ************************************************************************
