@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    15-Nov-93 at 12:15:16
-;; Last-Mod:     17-Jun-23 at 16:50:34 by Bob Weiner
+;; Last-Mod:     10-Jul-23 at 23:09:59 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -83,6 +83,9 @@
   :type '(list function)
   :group 'hyperbole-koutliner)
 
+(defvar hypb--klink-default-dir nil
+  "Default dir used in hargs.el for argument getting.")
+
 ;;; ************************************************************************
 ;;; Public functions
 ;;; ************************************************************************
@@ -107,9 +110,7 @@ return an absolute klink string.  Klink returned is of the form:
 REFERENCE should be a cell-ref or a string containing \"filename, cell-ref\".
 See documentation for `kcell:ref-to-id' for valid cell-ref formats."
   (interactive
-   ;; Don't change the name or delete default-dir used here.  It is referenced
-   ;; in "hargs.el" for argument getting.
-   (let ((default-dir default-directory))
+   (let ((hypb--klink-default-dir default-directory))
      (barf-if-buffer-read-only)
      (save-excursion
        (hargs:iform-read
@@ -121,7 +122,7 @@ See documentation for `kcell:ref-to-id' for valid cell-ref formats."
   (and (stringp reference) (> (length reference) 0)
        (eq (aref reference 0) ?\()
        (setq reference (replace-regexp-in-string "\\\"" "" reference nil t)))
-  (let ((default-dir default-directory)
+  (let ((hypb--klink-default-dir default-directory)
 	file-ref cell-ref)
     (setq reference (klink:parse reference)
 	  file-ref  (car reference)
