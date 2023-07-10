@@ -163,6 +163,12 @@ Info documentation at \"(hyperbole)Top\".
   "Stores value of `mark-even-if-inactive' prior to enabling `hyperbole-mode'.")
 
 ;;; ************************************************************************
+;;; Public declarations
+;;; ************************************************************************
+
+(declare-function vertico-mouse-mode "ext:vertico")
+
+;;; ************************************************************************
 ;;; Other required Elisp libraries
 ;;; ************************************************************************
 

@@ -48,6 +48,20 @@
 (add-hook 'minibuffer-exit-hook  #'hargs:unset-string-to-complete)
 
 ;;; ************************************************************************
+;;; Public declarations
+;;; ************************************************************************
+
+(declare-function ivy-dispatching-done "ext:ivy")
+(declare-function ivy-done "ext:ivy")
+(declare-function vertico--candidate "ext:vertico")
+(declare-function vertico--command-p "ext:vertico")
+(declare-function vertico--goto "ext:vertico")
+(declare-function vertico--update "ext:vertico")
+(declare-function vertico-exit "ext:vertico")
+(declare-function vertico-insert "ext:vertico")
+(declare-function vertico-mouse--index "ext:vertico")
+
+;;; ************************************************************************
 ;;; Private functions
 ;;; ************************************************************************
 

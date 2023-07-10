@@ -1,5 +1,7 @@
 2023-07-10  Mats Lidell  <matsl@gnu.org>
 
+* hargs.el: Add public declarations for vertico and ivy.
+
 * hactypes.el (link-to-org-id, link-to-org-id-marker): Do not quote as
     functions they are defact and not understood as functions by the byte
     compiler.
