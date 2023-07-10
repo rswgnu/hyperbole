@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    31-Oct-91 at 23:17:35
-;; Last-Mod:      5-Jul-23 at 00:45:15 by Bob Weiner
+;; Last-Mod:     10-Jul-23 at 18:26:29 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -380,8 +380,9 @@ Handles all of the interactive argument types that `hargs:iform-read' does."
 	 ;; Event occurred within the minibufer-contents and return
 	 ;; just the contents before point so that those after are
 	 ;; deleted and more completions are shown.
-	 (setq mini (minibuffer-contents-no-properties))
-	 (list (substring mini 0 (max (- (point) (point-max)) (- (length mini)))) nil))
+         (let (mini)
+	   (setq mini (minibuffer-contents-no-properties))
+	   (list (substring mini 0 (max (- (point) (point-max)) (- (length mini)))) nil)))
 	((and (eq hargs:reading-type 'kcell)
 	      (eq major-mode 'kotl-mode)
 	      (not (looking-at "^$")))

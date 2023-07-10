@@ -1,5 +1,9 @@
 2023-07-10  Mats Lidell  <matsl@gnu.org>
 
+* hargs.el (hargs:at-p):
+  hmouse-drv.el (hmouse-choose-link-and-referent-windows): Use let to
+    define free vars.
+
 * hyrolo.el (hyrolo-add-hook, hyrolo-edit-hook): Defvar the hooks.
 
 * hycontrol.el:
