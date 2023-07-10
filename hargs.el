@@ -616,7 +616,7 @@ See also documentation for `interactive'."
 		  (while (cond
 			  ((eq (aref iform i) ?*))
 			  ((eq (aref iform i) ?@)
-			   (hargs:selectevent-window)
+			   (hargs:select-event-window)
 			   t)
 			  ((eq (aref iform i) ?^)
 			   (handle-shift-selection))
