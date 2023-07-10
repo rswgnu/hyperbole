@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     7-Jun-89 at 22:08:29
-;; Last-Mod:     17-Jun-23 at 23:03:56 by Bob Weiner
+;; Last-Mod:     10-Jul-23 at 17:55:02 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -131,7 +131,11 @@ Must take two arguments, `match-pattern' and `headline-only-flag'.
 Must leave point within any matched entry or return nil when no
 match is found.")
 
+(defvar hyrolo-add-hook nil
+  "Hook run when a HyRolo item is added.")
 
+(defvar hyrolo-edit-hook nil
+  "Hook run when a HyRolo item is edited.")
 
 (declare-function hyrolo-fgrep-logical "hyrolo-logic")
 

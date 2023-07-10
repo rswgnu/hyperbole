@@ -1,5 +1,7 @@
 2023-07-10  Mats Lidell  <matsl@gnu.org>
 
+* hyrolo.el (hyrolo-add-hook, hyrolo-edit-hook): Defvar the hooks.
+
 * hycontrol.el:
   hui-mouse.el:
   hmouse-drv.el:
