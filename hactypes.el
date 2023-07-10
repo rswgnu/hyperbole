@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    23-Sep-91 at 20:34:36
-;; Last-Mod:      8-Jul-23 at 16:02:44 by Bob Weiner
+;; Last-Mod:     10-Jul-23 at 17:39:13 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -603,7 +603,7 @@ information on how to specify a mail reader to use."
 	  (inhibit-message t)) ;; Inhibit org-id-find status msgs
       (when (setq m (or (and (featurep 'org-roam) (org-roam-id-find id 'marker))
 			(org-id-find id 'marker)))
-	(hact #'link-to-org-id-marker m)))))
+	(hact 'link-to-org-id-marker m)))))
 
 (defact link-to-org-id-marker (marker)
   "Display the Org entry, if any, at MARKER.
@@ -611,7 +611,7 @@ See doc of `ibtypes::org-id' for usage."
     (unless (markerp marker)
       (error "(link-to-org-id-marker): Argument must be a marker, not %s" marker))
     (org-mark-ring-push)
-    (hact #'link-to-buffer-tmp (marker-buffer marker) marker)
+    (hact 'link-to-buffer-tmp (marker-buffer marker) marker)
     (move-marker marker nil)
     (org-fold-show-context))
 
