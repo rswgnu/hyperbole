@@ -3,7 +3,7 @@
 # Author:       Bob Weiner
 #
 # Orig-Date:    15-Jun-94 at 03:42:38
-# Last-Mod:     24-Jun-23 at 00:31:35 by Mats Lidell
+# Last-Mod:      9-Jul-23 at 20:35:56 by Mats Lidell
 #
 # Copyright (C) 1994-2023  Free Software Foundation, Inc.
 # See the file HY-COPY for license information.
@@ -319,7 +319,6 @@ load-hyperbole:
 # 	    -f batch-native-compile $(EL_KOTL) $(EL_COMPILE)
 eln: src
 	$(EMACS_BATCH) \
-          $(LOAD_EL) \
 	  -f batch-native-compile $(EL_KOTL) $(EL_COMPILE)
 
 # Byte compile files but apply a filter for either including or
@@ -507,12 +506,17 @@ test-all-output:
 
 # Hyperbole install tests - Verify that hyperbole can be installed
 # using different sources. See folder "install-test"
-.PHONY: install-elpa install-elpa-devel install-tarball install-straight install-all
-install-all: install-elpa install-elpa-devel install-tarball install-straight
+.PHONY: install-elpa install-elpa-devel install-tarball install-straight install-all install-local
+install-all: install-elpa install-elpa-devel install-tarball install-straight install-local
 
 install-elpa install-elpa-devel install-tarball install-straight:
 	@echo "Install Hyperbole using $@"
 	(cd ./install-test/ && ./local-install-test.sh $(subst install-,,$@))
+
+install-local:
+	@echo "Install Hyperbole using $@"
+	(cd ./install-test/ && \
+	./local-install-test.sh $(subst install-,,$@) $(shell pwd) $(shell git rev-parse --abbrev-ref HEAD 2>/dev/null))
 
 package-lint:
 	$(EMACS_BATCH) \
