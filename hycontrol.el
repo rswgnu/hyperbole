@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     1-Jun-16 at 15:35:36
-;; Last-Mod:     23-Apr-23 at 14:50:59 by Bob Weiner
+;; Last-Mod:     10-Jul-23 at 17:42:24 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -140,6 +140,8 @@
 ;;; ************************************************************************
 
 (declare-function fm-next-frame "ext:framemove")
+
+(defvar frame-zoom-font-difference)
 
 ;;; ************************************************************************
 ;;; Public variables

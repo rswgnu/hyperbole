@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    04-Feb-90
-;; Last-Mod:      4-Jul-23 at 15:36:51 by Bob Weiner
+;; Last-Mod:     10-Jul-23 at 12:24:50 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -25,7 +25,9 @@
 ;;; ************************************************************************
 ;;; Public declarations
 ;;; ************************************************************************
+
 (defvar start-window)
+(defvar aw-scope)
 (declare-function mouse-drag-frame nil) ;; Obsolete from Emacs 28
 
 ;;; ************************************************************************
@@ -790,11 +792,12 @@ buffer to the end window.  The selected window does not change."
 		       (let ((aw-scope 'global))
 			 (aw-select "Select link referent window"))
 		     (message "Now click on the %s end window..." func)
-		     (prog1 (cl-loop do (setq end-event (read-event))
-				     until (and (mouse-event-p end-event)
-						(not (string-match "\\`down-" (symbol-name (car end-event)))))
-				     finally return (posn-window (event-start end-event)))
-		       (message "Done")))))))
+                     (let (end-event)
+		       (prog1 (cl-loop do (setq end-event (read-event))
+				       until (and (mouse-event-p end-event)
+						  (not (string-match "\\`down-" (symbol-name (car end-event)))))
+				       finally return (posn-window (event-start end-event)))
+		         (message "Done"))))))))
     (when (eq link-but-window referent-window)
       (error "(hmouse-choose-link-and-referent-windows): No other visible window with a link referent"))
     (unless (window-live-p link-but-window)
