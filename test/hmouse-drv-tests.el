@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    28-Feb-21 at 22:52:00
-;; Last-Mod:     13-Jul-23 at 00:21:07 by Mats Lidell
+;; Last-Mod:     13-Jul-23 at 00:45:55 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -306,11 +306,11 @@
         (insert (concat "\"" file "#Anchor Plus\""))
         (goto-char 2)
         (let ((err (should-error (action-key) :type 'error)))
-          (should (string=
-                   (cadr err)
-                   (concat "(hpath:to-markup-anchor): "
+          (should (string-match-p
+                   (concat "\(hpath:to-markup-anchor\): "
                            (buffer-name)
-                           " - Section ‘Anchor Plus’ not found in the visible buffer portion")))))
+                           " - Section .Anchor Plus. not found in the visible buffer portion")
+                   (cadr err)))))
     (hy-delete-file-and-buffer file))))
 
 (ert-deftest hbut-pathname-anchor-line-test ()
