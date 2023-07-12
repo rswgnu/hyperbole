@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    28-Feb-21 at 22:52:00
-;; Last-Mod:      7-Jul-23 at 20:52:38 by Mats Lidell
+;; Last-Mod:     13-Jul-23 at 00:21:07 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -285,16 +285,32 @@
       (hy-delete-file-and-buffer file))))
 
 (ert-deftest hbut-pathname-anchor-trailing-text ()
-  "Pathname with anchor and trailing text."
+  "Pathname with anchor and trailing parenthesised text."
   (let ((file (make-temp-file "hypb" nil nil
-                              "Text\n* Anchor Plus More\n")))
+                              "Text\n* Anchor Plus (Parenthesised text follows)\n")))
   (unwind-protect
       (with-temp-buffer
         (insert (concat "\"" file "#Anchor Plus\""))
         (goto-char 2)
         (action-key)
         (should (string= file (buffer-file-name)))
-        (should (looking-at "\* Anchor Plus More")))
+        (should (looking-at "\* Anchor Plus \(Parenthesised text follows\)")))
+    (hy-delete-file-and-buffer file))))
+
+(ert-deftest hbut-pathname-anchor-must-match-all ()
+  "Verify that the whole anchor must match."
+  (let ((file (make-temp-file "hypb" nil nil
+                              "Text\n* Anchor Plus non parenthesised text\n")))
+  (unwind-protect
+      (with-temp-buffer
+        (insert (concat "\"" file "#Anchor Plus\""))
+        (goto-char 2)
+        (let ((err (should-error (action-key) :type 'error)))
+          (should (string=
+                   (cadr err)
+                   (concat "(hpath:to-markup-anchor): "
+                           (buffer-name)
+                           " - Section ‘Anchor Plus’ not found in the visible buffer portion")))))
     (hy-delete-file-and-buffer file))))
 
 (ert-deftest hbut-pathname-anchor-line-test ()
