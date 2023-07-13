@@ -1,3 +1,9 @@
+2023-07-13  Mats Lidell  <matsl@gnu.org>
+
+* test/hmouse-drv-tests.el (hbut-pathname-anchor-must-match-all)
+    (hbut-pathname-anchor-trailing-text): Add tests for pathname with
+    anchor.
+
 2023-07-11  Mats Lidell  <matsl@gnu.org>
 
 * Makefile (version, $(pkg_parent)/hyperbole-$(HYPB_VERSION).tar): Do not
