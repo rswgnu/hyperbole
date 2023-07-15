@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    31-Oct-91 at 23:17:35
-;; Last-Mod:     16-Mar-23 at 21:41:09 by Bob Weiner
+;; Last-Mod:     11-Jul-23 at 10:36:27 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -33,6 +33,7 @@
 (require 'hypb)
 (require 'set)
 (require 'info)
+(require 'hmouse-drv)
 
 ;;; ************************************************************************
 ;;; Public variables
@@ -46,6 +47,20 @@
 
 (add-hook 'completion-setup-hook #'hargs:set-string-to-complete)
 (add-hook 'minibuffer-exit-hook  #'hargs:unset-string-to-complete)
+
+;;; ************************************************************************
+;;; Public declarations
+;;; ************************************************************************
+
+(declare-function ivy-dispatching-done "ext:ivy")
+(declare-function ivy-done "ext:ivy")
+(declare-function vertico--candidate "ext:vertico")
+(declare-function vertico--command-p "ext:vertico")
+(declare-function vertico--goto "ext:vertico")
+(declare-function vertico--update "ext:vertico")
+(declare-function vertico-exit "ext:vertico")
+(declare-function vertico-insert "ext:vertico")
+(declare-function vertico-mouse--index "ext:vertico")
 
 ;;; ************************************************************************
 ;;; Private functions
@@ -77,39 +92,49 @@ Convert NUL characters to colons for use with grep lines."
 
 (defun hargs:delimited (start-delim end-delim
 			&optional start-regexp-flag end-regexp-flag
-			list-positions-flag exclude-regexp)
+			list-positions-flag exclude-regexp as-key)
   "Return a delimited string that point is within the first line of, or nil.
-The string is normalized and reduced to a single line.
-START-DELIM and END-DELIM are strings that specify the argument
-delimiters.  With optional START-REGEXP-FLAG non-nil, START-DELIM is
-treated as a regular expression.  END-REGEXP-FLAG is similar.
-With optional LIST-POSITIONS-FLAG, return list of (string-matched
-start-pos end-pos).  With optional EXCLUDE-REGEXP, any matched
-string is ignored if it matches this regexp."
+The string matched may be up to two lines long.  The delimiters
+are removed, the string is normalized and reduced to a single
+line.  START-DELIM and END-DELIM are strings that specify the
+argument delimiters.  With optional START-REGEXP-FLAG non-nil,
+START-DELIM is treated as a regular expression.  END-REGEXP-FLAG
+is similar.  With optional LIST-POSITIONS-FLAG, return list
+of (string-matched start-pos end-pos).  Optional
+EXCLUDE-REGEXP is compared against the match string with its delimiters
+included; any string that matches this regexp is ignored."
   (let* ((opoint (point))
-	 (line-begin (line-beginning-position))
 	 ;; This initial limit if the forward search limit for start delimiters
-	 (limit (if start-regexp-flag opoint
-		  (+ opoint (1- (length start-delim)))))
-	 (forward-search-func (if start-regexp-flag 're-search-forward
-				'search-forward))
-	 (reverse-search-func (if end-regexp-flag 're-search-backward
-				'search-backward))
+	 (limit (if start-regexp-flag
+		    opoint
+		  (min (+ opoint (1- (length start-delim)))
+		       (point-max))))
+	 (start-search-func (if start-regexp-flag 're-search-forward 'search-forward))
+	 (end-search-func   (if end-regexp-flag   're-search-forward 'search-forward))
 	 (count 0)
 	 first
 	 start
-	 end)
+	 end
+	 start-pos
+	 end-pos
+	 start-with-delim
+	 end-with-delim)
     (if (string-equal start-delim end-delim)
 	(save-excursion
 	  (beginning-of-line)
-	  (while (and (setq start (funcall forward-search-func start-delim limit t))
+	  (while (and (setq end-pos (funcall start-search-func start-delim limit t))
+		      (setq start-with-delim (match-beginning 0))
+		      ;; Prevent infinite loop where regexp match does not
+		      ;; move end-pos forward, e.g. match to bol.
+		      (not (eq first end-pos))
+		      (setq start end-pos)
 		      (setq count (1+ count))
 		      (< (point) opoint)
 		      ;; This is not to find the real end delimiter but to find
 		      ;; end delimiters that precede the current argument and are
 		      ;; therefore false matches, hence the search is limited to
 		      ;; prior to the original point.
-		      (funcall forward-search-func end-delim opoint t)
+		      (funcall end-search-func end-delim opoint t)
 		      (setq count (1+ count)))
 	    (setq first (or first start)
 		  start nil))
@@ -128,17 +153,33 @@ string is ignored if it matches this regexp."
       ;; Start and end delims are different, so don't have to worry
       ;; about whether in or outside two of the same delimiters and
       ;; can match much more simply.
+      ;; Use forward rather than reverse search here to perform greedy
+      ;; searches when optional matches within a regexp.
       (save-excursion
-	(setq start (when (funcall reverse-search-func start-delim line-begin t)
-		      (match-end 0)))))
+	(beginning-of-line)
+	(while (and (<= (point) limit)
+		    (setq start-pos (point)
+			  end-pos (funcall start-search-func start-delim limit t))
+		    ;; Prevent infinite loop where regexp match does not
+		    ;; move end-pos forward, e.g. match to bol.
+		    (not (eq start end-pos)))
+	  (setq start-with-delim (match-beginning 0)
+		start (match-end 0))
+	  (when (eq start-pos end-pos)
+	    ;; start-delim contains a match for bol, so move point
+	    ;; forward a char to prevent loop exit even though start
+	    ;; delim matched.
+	    (goto-char (min (1+ (point)) (point-max)))))))
 
     (when start
       (save-excursion
 	(forward-line 2)
 	(setq limit (point))
 	(goto-char opoint)
-	(and (funcall forward-search-func end-delim limit t)
-	     (setq end (match-beginning 0))
+	(and (funcall end-search-func end-delim limit t)
+	     (setq end (match-beginning 0)
+		   end-with-delim (match-end 0))
+
 	     ;; Ignore any preceding backslash, e.g. when a double-quoted
 	     ;; string is embedded within a doc string, except when
 	     ;; the string starts with 2 backslashes or an MSWindows
@@ -153,9 +194,18 @@ string is ignored if it matches this regexp."
 	       t)
 	     (< start end)
 	     (>= end opoint)
-	     (let ((string (hargs:buffer-substring start end)))
-	       (unless (and (stringp exclude-regexp) (string-match exclude-regexp string) )
-		 (setq string (replace-regexp-in-string "[\n\r\f]\\s-*" " " string nil t))
+	     (let ((string (hargs:buffer-substring start end))
+		   (string-with-delims (when (stringp exclude-regexp)
+					 (hargs:buffer-substring start-with-delim
+								 end-with-delim))))
+	       (unless (and string-with-delims
+			    (string-match exclude-regexp string-with-delims))
+		 ;; Normalize the string
+		 (setq string
+		       (if as-key
+			   (hbut:label-to-key string)
+			 (replace-regexp-in-string "[\n\r\f]\\s-*"
+						   " " string nil t)))
 		 (unless hyperb:microsoft-os-p
 		   (setq string (hpath:mswindows-to-posix string)))
 		 (if list-positions-flag
@@ -241,8 +291,7 @@ Optional DEFAULT-PROMPT is used to describe default value."
 
 (defun hargs:set-string-to-complete ()
   "Store the current minibuffer contents into `hargs:string-to-complete'."
-  (save-window-excursion
-    (set-buffer (window-buffer (minibuffer-window)))
+  (with-current-buffer (window-buffer (minibuffer-window))
     (setq hargs:string-to-complete (minibuffer-contents-no-properties))
     (when (equal hargs:string-to-complete "")
       (setq hargs:string-to-complete nil))))
@@ -258,7 +307,7 @@ is returned.  If point precedes an sexpression start character, the
 following sexpression is returned.  Otherwise, the innermost sexpression
 that point is within is returned or nil if none."
   (save-excursion
-    (condition-case ()
+    (ignore-errors
 	(let ((not-quoted
 	       '(not (and (eq (char-syntax (char-after (- (point) 2))) ?\\)
 			  (not (eq (char-syntax (char-after (- (point) 3))) ?\\))))))
@@ -273,8 +322,7 @@ that point is within is returned or nil if none."
 		 (buffer-substring (point)
 				   (progn (forward-sexp) (point))))
 		(no-recurse nil)
-		(t (save-excursion (up-list 1) (hargs:sexpression-p t)))))
-      (error nil))))
+		(t (save-excursion (up-list 1) (hargs:sexpression-p t))))))))
 
 ;;; ************************************************************************
 ;;; Public functions
@@ -295,7 +343,48 @@ default values.
 Caller should have checked whether an argument is presently being read
 and has set `hargs:reading-type' to an appropriate argument type.
 Handles all of the interactive argument types that `hargs:iform-read' does."
-  (cond ((and (eq hargs:reading-type 'kcell)
+  (cond ;; vertico-mode
+	((and (null hargs:reading-type)
+	      (bound-and-true-p vertico-mode)
+	      ;; Ensure vertico is prompting for an argument
+	      (vertico--command-p nil (current-buffer))
+	      (active-minibuffer-window))
+	 (if (and action-key-release-args
+		  (fboundp #'vertico-mouse--index)
+		  (eq (posn-window (event-end action-key-release-args))
+		      (active-minibuffer-window)))
+	     (with-selected-window (active-minibuffer-window)
+	       (let ((index (vertico-mouse--index action-key-release-args))
+		     mini)
+		 (if index
+		     (save-excursion
+		       (vertico--goto index)
+		       (vertico--update t)
+		       (vertico--candidate))
+		   ;; Assume event occurred within the
+		   ;; minibufer-contents and return just the contents
+		   ;; before point so that those after are deleted and
+		   ;; more completions are shown.
+		   (setq mini (minibuffer-contents-no-properties))
+		   ;; The minibuffer may have some read-only contents
+		   ;; at the beginning, e.g. M-x, not included in the 'mini'
+		   ;; string, so we have to offset the max index into
+		   ;; the string in such cases and protect against
+		   ;; when point is set into this read-only area with
+		   ;; the 'max' call below.
+		   (list (substring mini 0 (max (- (point) (point-max)) (- (length mini)))) nil))))
+	   (list (vertico--candidate) t)))
+	((and (null hargs:reading-type)
+	      action-key-release-args
+	      (eq (posn-window (event-end action-key-release-args))
+		  (active-minibuffer-window)))
+	 ;; Event occurred within the minibufer-contents and return
+	 ;; just the contents before point so that those after are
+	 ;; deleted and more completions are shown.
+         (let (mini)
+	   (setq mini (minibuffer-contents-no-properties))
+	   (list (substring mini 0 (max (- (point) (point-max)) (- (length mini)))) nil)))
+	((and (eq hargs:reading-type 'kcell)
 	      (eq major-mode 'kotl-mode)
 	      (not (looking-at "^$")))
 	 (kcell-view:label))
@@ -327,7 +416,9 @@ Handles all of the interactive argument types that `hargs:iform-read' does."
 			 (following-char))))
 		    ;; At the end of the menu
 		    (t 0)))))
-	((hargs:completion t))
+	((let ((completion (hargs:completion t)))
+	   (when completion
+	     (list completion t))))
 	((eq hargs:reading-type 'ebut) (ebut:label-p 'as-label))
 	((eq hargs:reading-type 'ibut) (ibut:label-p 'as-label))
 	((eq hargs:reading-type 'gbut)
@@ -462,7 +553,9 @@ Insert in minibuffer if active or in other window if minibuffer is inactive."
 			      entry))))
 		(or no-insert
 		    (when entry
-		      (erase-buffer)
+		      (if (eq insert-window (minibuffer-window))
+			  (delete-minibuffer-contents)
+			(erase-buffer))
 		      (insert entry))))
 	       ;; In buffer, non-minibuffer completion.
 	       ;; Only insert entry if last buffer line does
@@ -630,8 +723,9 @@ of value to be read."
 		  (beep))))
 	    result)
 	(setq hargs:reading-type prev-reading-p)
-	(select-window owind)
-	(switch-to-buffer obuf)))))
+	(when (window-live-p owind)
+	  (select-window owind)
+	  (switch-to-buffer obuf))))))
 
 (defun hargs:select-p (&optional value assist-bool)
   "Return optional VALUE or value selected at point if any, else nil.
@@ -640,33 +734,69 @@ the current minibuffer argument, otherwise, the minibuffer is erased
 and value is inserted there.
 Optional ASSIST-BOOL non-nil triggers display of Hyperbole menu item
 help when appropriate."
-    (when (and (> (minibuffer-depth) 0) (or value (setq value (hargs:at-p))))
-      (let ((owind (selected-window)) (back-to)
-	    (str-value (and value (format "%s" value)))
-	    ;; This command requires recursive minibuffers.
-	    (enable-recursive-minibuffers t))
-	(unwind-protect
-	    (progn
-	      (select-window (minibuffer-window))
-	      (set-buffer (window-buffer (minibuffer-window)))
+  (when (and (> (minibuffer-depth) 0) (or value (setq value (hargs:at-p))))
+    (let ((owind (selected-window)) (back-to)
+	  ;; This command requires recursive minibuffers.
+	  (enable-recursive-minibuffers t))
+      (when (stringp value)
+	(setq value (list value nil)))
+      (unwind-protect
+	  (cl-destructuring-bind (str-value exact-completion-flag) value
+	    (setq str-value (and str-value (format "%s" str-value)))
+	    (select-window (minibuffer-window))
+	    (set-buffer (window-buffer (minibuffer-window)))
+	    (cond
+	     ;;
+	     ;; Selecting a Hyperbole minibuffer menu item
+	     ((eq hargs:reading-type 'hmenu)
+	      (when assist-bool
+		(setq hargs:reading-type 'hmenu-help))
+	      (hui:menu-enter str-value))
+	     ;;
+	     ;; Exit minibuffer and use its existing value as the desired parameter.
+	     ((string-equal str-value (minibuffer-contents))
+	      (goto-char (point-max))
 	      (cond
-	       ;;
-	       ;; Selecting a menu item
-	       ((eq hargs:reading-type 'hmenu)
-		(when assist-bool
-		  (setq hargs:reading-type 'hmenu-help))
-		(hui:menu-enter str-value))
-	       ;;
-	       ;; Enter existing value into the minibuffer as the desired parameter.
-	       ((string-equal str-value (minibuffer-contents))
-		(exit-minibuffer))
-	       ;;
-	       ;; Clear minibuffer and insert value.
-	       (t (delete-minibuffer-contents)
-		  (insert str-value)
-		  (setq back-to t)))
-	      value)
-	  (when back-to (select-window owind))))))
+	       ;; vertico-mode
+	       ((and (bound-and-true-p vertico-mode)
+		     ;; Ensure vertico is prompting for an argument
+		     (vertico--command-p nil (current-buffer)))
+		(vertico-exit))
+	       ;; ivy-mode
+	       ((bound-and-true-p ivy-mode)
+		(if assist-bool
+		    (ivy-dispatching-done)
+		  (ivy-done)))
+	       ;; standard minibuffer completion
+	       (t (exit-minibuffer))))
+	     ;;
+	     ;; Clear minibuffer and insert value.
+	     (t
+	      (delete-minibuffer-contents)
+	      (goto-char (point-max))
+	      (cond
+	       ;; ivy-mode
+	       ((bound-and-true-p ivy-mode)
+		(if assist-bool
+		    (ivy-dispatching-done)
+		  (ivy-done)))
+	       ;; standard minibuffer completion
+	       ;; vertico-mode
+	       ((and (bound-and-true-p vertico-mode)
+		     ;; Ensure vertico is prompting for an argument
+		     (vertico--command-p nil (current-buffer)))
+                (if str-value
+		    (insert str-value)
+		  (vertico-insert))
+		(vertico--update t))
+	       (t
+		(insert str-value)
+		(unless exact-completion-flag
+		  (minibuffer-completion-help))
+		(setq back-to t)))
+	      value)))
+	(when (and back-to (window-live-p owind))
+	  (select-window owind))))))
 
 ;;; ************************************************************************
 ;;; Private variables

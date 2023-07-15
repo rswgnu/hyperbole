@@ -4,16 +4,16 @@
 ;;
 ;; Copyright (C) 1992-2023  Free Software Foundation, Inc.
 
-;; Author:           Bob Weiner
-;; Maintainer:       Bob Weiner <rsw@gnu.org>, Mats Lidell <matsl@gnu.org>
-;; Created:          06-Oct-92 at 11:52:51
-;; Last-mod:      7-Mar-23 at 22:10:54 by Bob Weiner
-;; Released:         03-Dec-22
-;; Version:          8.0.1pre
-;; Keywords:         comm, convenience, files, frames, hypermedia, languages, mail, matching, mouse, multimedia, outlines, tools, wp
-;; Package:          hyperbole
+;; Author:       Bob Weiner
+;; Maintainer:   Bob Weiner <rsw@gnu.org>, Mats Lidell <matsl@gnu.org>
+;; Created:      06-Oct-92 at 11:52:51
+;; Last-Mod:     10-Jul-23 at 12:08:06 by Mats Lidell
+;; Released:     03-Dec-22
+;; Version:      8.0.1pre
+;; Keywords:     comm, convenience, files, frames, hypermedia, languages, mail, matching, mouse, multimedia, outlines, tools, wp
+;; Package:      hyperbole
 ;; Package-Requires: ((emacs "27.0"))
-;; URL:              http://www.gnu.org/software/hyperbole
+;; URL:          http://www.gnu.org/software/hyperbole
 
 ;; See the "HY-COPY" file for license information.
 
@@ -88,9 +88,7 @@
   "Hyperbole customizations category."
   :group 'applications)
 
-(defgroup hyperbole-buttons nil
-  "Hyperbole explicit, global and implicit button customizations."
-  :group 'hyperbole)
+;; defgroup hyperbole-buttons is in "hib-social.el"
 
 (defgroup hyperbole-commands nil
   "Hyperbole command customizations."
@@ -154,15 +152,19 @@ Info documentation at \"(hyperbole)Top\".
 
 \\{hyperbole-mode-map}"
   :global t
-  :keymap 'hyperbole-mode-map
   :lighter hyperbole-mode-lighter
-  :require 'hyperbole
   (if hyperbole-mode
       (hyperbole--enable-mode)
     (hyperbole--disable-mode)))
 
 (defvar hyperbole--mark-even-if-inactive
   "Stores value of `mark-even-if-inactive' prior to enabling `hyperbole-mode'.")
+
+;;; ************************************************************************
+;;; Public declarations
+;;; ************************************************************************
+
+(declare-function vertico-mouse-mode "ext:vertico")
 
 ;;; ************************************************************************
 ;;; Other required Elisp libraries
@@ -198,6 +200,7 @@ Assist Key will do."
 `hkey-initialize' must have already been called or the list will be empty."
   hyperbole-mode-map)
 
+;; Use `hkey-set-key' instead.
 (make-obsolete 'hkey-global-set-key 'hkey-set-key "8.0.0")
 (defun hkey-global-set-key (key command &optional _no-add)
   "Define a Hyperbole KEY bound to COMMAND.  Optional third arg, NO-ADD is ignored."
@@ -483,6 +486,12 @@ frame, those functions by default still return the prior frame."
 				'buttons
 			      t)))
   ;;
+  ;; When vertico-mode is used, vertico-mouse-mode is needed for the
+  ;; Action Key to properly select completions from the candidate list.
+  (if (bound-and-true-p vertico-mode)
+      (vertico-mouse-mode 1)
+    (add-hook 'vertico-mode-hook (lambda () (vertico-mouse-mode 1))))
+  ;;
   ;; Hyperbole initialization is complete.
   (message "Initializing Hyperbole...done"))
 
@@ -561,6 +570,19 @@ frame, those functions by default still return the prior frame."
 (hyperbole-mode 1)
 
 (makunbound 'hyperbole-loading)
+
+;; Autoload this form so that when `package.el' activates Hyperbole's autoloads
+;; it also sets up Kotl's autoloads.
+;;;###autoload
+(let ((us (if (fboundp 'macroexp-file-name)
+              (macroexp-file-name) load-file-name)))
+  (when us
+    ;; Contrary to the usual ELPA autoloads files, `kotl-autoloads'
+    ;; does not add its directory to `load-path', so let's do it here
+    ;; by hand.
+    (add-to-list 'load-path
+                 (expand-file-name "kotl" (file-name-directory us)))
+    (require 'kotl-autoloads nil t)))
 
 (provide 'hyperbole)
 

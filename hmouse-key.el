@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    30-May-94 at 00:11:57
-;; Last-Mod:     25-Jul-22 at 23:47:01 by Mats Lidell
+;; Last-Mod:     21-May-23 at 10:17:38 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -131,8 +131,7 @@ Use after any programmatic change is made."
   (makunbound 'hkey-alist)
   (makunbound 'hmouse-alist)
   (let ((load-prefer-newer t))
-    ;; This also reloads "hui-window" where mouse-only actions are defined.
-    (mapc #'load '("hui-mouse" "hibtypes" "hactypes")))
+    (mapc #'load '("hui-mouse" "hui-window" "hibtypes" "hactypes")))
   (message "Hyperbole Smart Key and Smart Mouse Key actions have been updated."))
 
 

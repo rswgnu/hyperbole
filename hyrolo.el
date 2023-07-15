@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     7-Jun-89 at 22:08:29
-;; Last-Mod:     23-Apr-23 at 22:20:14 by Mats Lidell
+;; Last-Mod:     10-Jul-23 at 17:55:02 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -47,20 +47,35 @@
 ;;; ************************************************************************
 ;;; Public declarations
 ;;; ************************************************************************
+
 (defvar consult-grep-args)
 (defvar consult-ripgrep-args)
+(defvar google-contacts-expire-time)
+(defvar google-contacts-history)
+(defvar google-contacts-query-string)
 (defvar helm-org-rifle-show-full-contents)
 (defvar helm-org-rifle-show-level-stars)
-(defvar markdown-regex-header)
-(defvar org-roam-directory)
-(defvar org-roam-db-autosync-mode)
 (defvar hproperty:but-emphasize-flag)
+(defvar markdown-regex-header)
+(defvar org-roam-db-autosync-mode)
+(defvar org-roam-directory)
+(defvar plstore-cache-passphrase-for-symmetric-encryption)
+
 (declare-function consult-grep "ext:consult")
 (declare-function consult-ripgrep "ext:consult")
+(declare-function google-contacts  "ext:google-contacts")
+(declare-function google-contacts-add-margin-to-text "ext:google-contacts")
+(declare-function google-contacts-build-node-list "ext:google-contacts")
+(declare-function google-contacts-data  "ext:google-contacts")
+(declare-function google-contacts-make-buffer "ext:google-contacts")
+(declare-function google-contacts-margin-element "ext:google-contacts")
+(declare-function google-contacts-oauth-token "ext:google-contacts")
 (declare-function helm-org-rifle-files "ext:helm-org-rifle")
-(declare-function helm-org-rifle-show-full-contents "ext:helm-org-rifle")
 (declare-function helm-org-rifle-org-directory "ext:helm-org-rifle")
+(declare-function helm-org-rifle-show-full-contents "ext:helm-org-rifle")
 (declare-function org-roam-db-autosync-mode "ext:org-roam")
+(declare-function xml-node-child-string "ext:google-contacts")
+(declare-function xml-node-get-attribute-type "ext:google-contacts")
 
 ;;; ************************************************************************
 ;;; Public variables
@@ -71,11 +86,10 @@
   :group 'hyperbole)
 
 (defcustom hyrolo-date-format "%m/%d/%Y"
-  "*Format of date string used in Rolo automatic date stamps.
+  "Format of date string used in Rolo automatic date stamps.
 Default is American style.  See documentation of the function
 `format-time-string' for format options."
-  :type 'string
-  :group 'hyperbole-rolo)
+  :type 'string)
 
 (defvar hyrolo-display-format-function
   (lambda (entry)
@@ -84,37 +98,32 @@ Default is American style.  See documentation of the function
 The argument is a rolo entry string.")
 
 (defcustom hyrolo-email-format "%s\t\t<%s>"
-  "*Format string to use when adding an entry with e-mail addr from a mail msg.
+  "Format string to use when adding an entry with e-mail addr from a mail msg.
 It must contain a %s indicating where to put the entry name and a second
 %s indicating where to put the e-mail address."
-  :type 'string
-  :group 'hyperbole-rolo)
+  :type 'string)
 
 (defvar hyrolo-entry-name-regexp "[-_a-zA-Z0-9@.]+\\( ?, ?[-_a-zA-Z0-9@.]+\\)?"
   "*Regexp matching a hyrolo entry name after matching to `hyrolo-entry-regexp'.")
 
 (defcustom hyrolo-file-suffix-regexp "\\.\\(kotl\\|md\\|org\\|otl\\)$"
   "File suffix regexp used to select files to search with HyRolo."
-  :type 'string
-  :group 'hyperbole-rolo)
+  :type 'string)
 
 (defcustom hyrolo-find-file-function #'find-file
-  "*Function to interactively display a `hyrolo-file-list' file for editing.
+  "Function to interactively display a `hyrolo-file-list' file for editing.
 Use the `hyrolo-edit' function instead to edit a new or existing entry."
-  :type 'function
-  :group 'hyperbole-rolo)
+  :type 'function)
 
 (defcustom hyrolo-find-file-noselect-function #'find-file-noselect
-  "*Function used by HyRolo to read `hyrolo-file-list' files into Emacs."
-  :type 'function
-  :group 'hyperbole-rolo)
+  "Function used by HyRolo to read `hyrolo-file-list' files into Emacs."
+  :type 'function)
 
 (defcustom hyrolo-google-contacts-flag t
-  "*Non-nil means search Google Contacts on each hyrolo query.
+  "Non-nil means search Google Contacts on each hyrolo query.
 The google-contact package must be loaded and a gpg encryption
 executable must be found as well (for Oauth security)."
-  :type 'boolean
-  :group 'hyperbole-rolo)
+  :type 'boolean)
 
 (defvar hyrolo-next-match-function #'hyrolo-next-regexp-match
   "Value is the function to find next match within a HyRolo file.
@@ -122,23 +131,11 @@ Must take two arguments, `match-pattern' and `headline-only-flag'.
 Must leave point within any matched entry or return nil when no
 match is found.")
 
+(defvar hyrolo-add-hook nil
+  "Hook run when a HyRolo item is added.")
 
-;;; ************************************************************************
-;;; Public declarations
-;;; ************************************************************************
-
-(declare-function google-contacts  "ext:google-contacts")
-(declare-function google-contacts-add-margin-to-text "ext:google-contacts")
-(declare-function google-contacts-build-node-list "ext:google-contacts")
-(declare-function google-contacts-data  "ext:google-contacts")
-(declare-function google-contacts-make-buffer "ext:google-contacts")
-(declare-function google-contacts-margin-element "ext:google-contacts")
-(declare-function google-contacts-oauth-token "ext:google-contacts")
-(declare-function xml-node-child-string "ext:google-contacts")
-(declare-function xml-node-get-attribute-type "ext:google-contacts")
-(defvar google-contacts-history)
-(defvar google-contacts-expire-time)
-(defvar google-contacts-query-string)
+(defvar hyrolo-edit-hook nil
+  "Hook run when a HyRolo item is edited.")
 
 (declare-function hyrolo-fgrep-logical "hyrolo-logic")
 
@@ -157,29 +154,26 @@ use."
 
 ;; '("~/.rolo.otl" "~/.rolo.org")
 
+(defun hyrolo--initialize-file-list ()
+  (delq nil
+        (list "~/.rolo.otl"
+              (if (and (boundp 'bbdb-file) (stringp bbdb-file)) bbdb-file)
+              (when (hyrolo-google-contacts-p) google-contacts-buffer-name))))
+
 ;;;###autoload
 (defun hyrolo-initialize-file-list (&optional force-init-flag)
   "Initialize the list of files used for HyRolo search if not already initialized."
+  (declare (obsolete nil "8.0.1"))
   (interactive)
   (when (or force-init-flag (not (boundp 'hyrolo-file-list)) (not hyrolo-file-list))
-    (let* ((gcontacts (when (hyrolo-google-contacts-p) google-contacts-buffer-name))
-	   (ms "~/.rolo.otl")
-	   (posix "~/.rolo.otl")
-	   (list (delq nil (if (and (boundp 'bbdb-file) (stringp bbdb-file))
-			       (if hyperb:microsoft-os-p
-				   (list ms bbdb-file gcontacts)
-				 (list  "~/.rolo.otl" bbdb-file gcontacts))
-			     (if hyperb:microsoft-os-p
-				 (list ms gcontacts)
-			       (list posix gcontacts))))))
-      (setq hyrolo-file-list list)
-      (when (called-interactively-p 'interactive)
-	(message "HyRolo Search List: %S" list))
-      list)))
+    (setq hyrolo-file-list (hyrolo--initialize-file-list))
+    (when (called-interactively-p 'interactive)
+      (message "HyRolo Search List: %S" hyrolo-file-list))
+    hyrolo-file-list))
 
 (define-obsolete-variable-alias 'rolo-file-list 'hyrolo-file-list "06.00")
-(defcustom hyrolo-file-list (hyrolo-initialize-file-list)
-  "*List of files containing rolo entries.
+(defcustom hyrolo-file-list (hyrolo--initialize-file-list)
+  "List of files containing rolo entries.
 The first file should be a user-specific rolo file, typically in the home
 directory.
 
@@ -188,34 +182,30 @@ A hyrolo-file consists of:
        hyrolo-hdr-regexp;
    (2) one or more rolo entries which each begin with
        hyrolo-entry-regexp and may be nested."
-  :group 'hyperbole-rolo
   :type '(repeat file))
 
 (defcustom hyrolo-highlight-face 'match
-  "*Face used to highlight rolo search matches."
+  "Face used to highlight rolo search matches."
   :type 'face
-  :initialize #'custom-initialize-default
-  :group 'hyperbole-rolo)
+  :initialize #'custom-initialize-default)
 
 (defcustom hyrolo-kill-buffers-after-use nil
-  "*Non-nil means kill rolo file buffers after searching them for entries.
+  "Non-nil means kill rolo file buffers after searching them for entries.
 Only unmodified buffers are killed."
-  :type 'boolean
-  :group 'hyperbole-rolo)
+  :type 'boolean)
 
 (defcustom hyrolo-save-buffers-after-use t
-  "*Non-nil means save rolo file after an entry is killed."
-  :type 'boolean
-  :group 'hyperbole-rolo)
+  "Non-nil means save rolo file after an entry is killed."
+  :type 'boolean)
 
 ;; Insert or update the entry date each time an entry is added or edited.
 (add-hook 'hyrolo-add-hook  #'hyrolo-set-date)
 (add-hook 'hyrolo-edit-hook #'hyrolo-set-date)
 
-(defvar hyrolo-yank-reformat-function nil
-  "*A function of two arguments, START and END, invoked after a hyrolo-yank.
+(defvar hyrolo-yank-reformat-function #'ignore
+  "*A function of two arguments, START and END, invoked after a `hyrolo-yank'.
 It should reformat the region given by the arguments to some preferred style.
-Default value is nil, meaning no reformmating is done.")
+Default value is to perform no reformatting.")
 
 ;;; ************************************************************************
 ;;; Commands
@@ -732,12 +722,12 @@ Return t if entry is killed, nil otherwise."
 (defun hyrolo-mail-to ()
   "Start composing mail addressed to the first e-mail address at or after point."
   (interactive)
-  (let ((opoint (point)) button)
+  (let ((opoint (point)) ibut)
     (skip-chars-backward "^ \t\n\r<>")
-    (if (and (re-search-forward mail-address-regexp nil t)
+    (if (and (re-search-forward hypb-mail-address-regexp nil t)
 	     (goto-char (match-beginning 1))
-	     (setq button (ibut:at-p)))
-	(hui:hbut-act button)
+	     (setq ibut (ibut:at-p)))
+	(hui:hbut-act ibut)
       (goto-char opoint)
       (beep)
       (message "(hyrolo-mail-to): Invalid buffer or no e-mail address found"))))
@@ -925,8 +915,8 @@ With optional ARG, turn them on iff ARG is positive."
 	  (and (not (and arg (> (prefix-numeric-value arg) 0)))
 	       (boundp 'hyrolo-add-hook) (listp hyrolo-add-hook)
 	       (memq 'hyrolo-set-date hyrolo-add-hook)))
-      (progn (remove-hook 'hyrolo-add-hook 'hyrolo-set-date)
-	     (remove-hook 'hyrolo-edit-hook 'hyrolo-set-date)
+      (progn (remove-hook 'hyrolo-add-hook #'hyrolo-set-date)
+	     (remove-hook 'hyrolo-edit-hook #'hyrolo-set-date)
 	     (message "Rolo date stamps are now off."))
     (add-hook 'hyrolo-add-hook  #'hyrolo-set-date)
     (add-hook 'hyrolo-edit-hook #'hyrolo-set-date)
@@ -1000,7 +990,7 @@ of a string."
 		      (hyrolo-grep name -1)
 		    (hyrolo-grep (regexp-quote name) -1))))
     ;; Let user reformat the region just yanked.
-    (if (and (= found 1) (fboundp hyrolo-yank-reformat-function))
+    (if (= found 1)
 	(funcall hyrolo-yank-reformat-function start (point)))
     found))
 

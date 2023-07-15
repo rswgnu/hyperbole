@@ -1,9 +1,9 @@
-;;; hypb-tests.el --- test for hypb.el         -*- lexical-binding: t; -*-
+;;; hypb-tests.el --- tests for hypb.el utility functions         -*- lexical-binding: t; -*-
 
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:     5-Apr-21 at 18:53:10
-;; Last-Mod:     15-Jul-22 at 23:26:35 by Mats Lidell
+;; Last-Mod:     14-May-23 at 23:12:39 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -64,6 +64,15 @@
     (with-mock
       (mock (file-exists-p "/home/user/hyperbole/.git") => nil)
       (should (equal (car (hypb:installation-type)) "unknown")))))
+
+(ert-deftest hypb--oct-to-int ()
+  "Verify oct to int conversion."
+  (should (= (hypb:oct-to-int 0) 0))
+  (should (= (hypb:oct-to-int 1) 1))
+  (should (= (hypb:oct-to-int 7) 7))
+  (should (= (hypb:oct-to-int 10) 8))
+  (should (= (hypb:oct-to-int 2000) 1024))
+  (should-error (hypb:oct-to-int 8) :type 'error))
 
 ;; This file can't be byte-compiled without the `el-mock' package (because of
 ;; the use of the `with-mock' macro), which is not a dependency of Hyperbole.

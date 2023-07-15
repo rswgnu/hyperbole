@@ -90,7 +90,7 @@ valid set.  With optional ARITY, return only subsets with ARITY
 members."
   (cond ((null arity) 
 	 (setq arity 0)
-	 (cons nil (apply 'nconc (mapcar (lambda (_elt) (setq arity (1+ arity)) (set:combinations set arity))
+	 (cons nil (apply #'nconc (mapcar (lambda (_elt) (setq arity (1+ arity)) (set:combinations set arity))
 					 set))))
 	((= arity 1) set)
 	((<= arity 0) '(nil))
@@ -120,7 +120,7 @@ for comparison."
 	       elements)
 	 (nreverse set)))))
 
-(defalias 'set:delete 'set:remove)
+(defalias 'set:delete #'set:remove)
 (defun set:difference (&rest sets)
   "Return difference of any number of SETS.
 Difference is the set of elements in the first set that are not in any of the
@@ -132,7 +132,7 @@ other sets.  Uses `set:equal-op' for comparison."
      (cdr sets))
     rtn-set))
 
-(defalias 'set:size 'length)
+(defalias 'set:size #'length)
 
 (defun set:empty (set)
   "Return t if SET is empty."
@@ -170,7 +170,7 @@ Uses `set:equal-op' for comparison."
 		     (setq lst (cdr lst))))
 	 (null lst))))
 
-(defalias 'set:map 'mapcar)
+(defalias 'set:map #'mapcar)
 
 (defun set:members (list)
   "Return set of unique elements of LIST.

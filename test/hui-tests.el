@@ -1,9 +1,9 @@
-;;; hui-tests.el --- Tests for hui.el                -*- lexical-binding: t; -*-
+;;; hui-tests.el --- tests for hui.el Hyperbole UI          -*- lexical-binding: t; -*-
 ;;
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    30-Jan-21 at 12:00:00
-;; Last-Mod:     30-Apr-23 at 17:51:22 by Mats Lidell
+;; Last-Mod:     17-Jun-23 at 23:02:12 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -80,7 +80,7 @@
       (save-excursion
 	(set-buffer gbut-file-buffer)
 	(save-buffer))
-      (delete-file linked-file)
+      (hy-delete-file-and-buffer linked-file)
       (when (file-writable-p hbmap:dir-user)
 	(delete-directory hbmap:dir-user t)))))
 
@@ -116,7 +116,7 @@
           (should (hact 'kbd-key "C-h h e c label RET RET link-to-directory RET RET"))
           (hy-test-helpers:consume-input-events)
           (hy-test-helpers-verify-hattr-at-p :actype 'actypes::link-to-directory :args '("./") :loc file :lbl-key "label"))
-      (delete-file file))))
+      (hy-delete-file-and-buffer file))))
 
 (ert-deftest hui-ebut-create-link-to-www-url ()
   "Create an ebut with link to www-url."
@@ -126,7 +126,7 @@
         (with-simulated-input "label RET www-url RET www.hypb.org RET"
           (hui:ebut-create)
           (hy-test-helpers-verify-hattr-at-p :actype 'actypes::www-url :args '("www.hypb.org") :loc file :lbl-key "label"))
-      (delete-file file))))
+      (hy-delete-file-and-buffer file))))
 
 (ert-deftest hui-ebut-edit-link-to-www-url-keeping-all-values-should-not-modify-buffer-or-ebut ()
   "Edit an ebut keeping all initial values should not modify buffer or ebut.
@@ -141,7 +141,7 @@ Ensure modifying the button but keeping the label does not create a double label
           (hui:ebut-edit "label")
           (hy-test-helpers-verify-hattr-at-p :actype 'actypes::www-url :args '("www.hypb.org") :loc file :lbl-key "label")
           (should (string= "<(label)>" (buffer-string)))))
-    (delete-file file)))
+    (hy-delete-file-and-buffer file)))
 
 (ert-deftest hui-ebut-use-region-as-label ()
   "Create an ebut using region as label."
@@ -155,7 +155,7 @@ Ensure modifying the button but keeping the label does not create a double label
           (should (hact 'kbd-key "C-h h e c RET link-to-directory RET RET"))
           (hy-test-helpers:consume-input-events)
           (hy-test-helpers-verify-hattr-at-p :actype 'actypes::link-to-directory :args '("./") :loc file :lbl-key "label"))
-      (delete-file file))))
+      (hy-delete-file-and-buffer file))))
 
 (ert-deftest hui-ebut-www-link ()
   "Create an ebut with an url."
@@ -167,7 +167,7 @@ Ensure modifying the button but keeping the label does not create a double label
           (should (hact 'kbd-key "C-h h e c label RET RET www-url RET www.example.com RET"))
           (hy-test-helpers:consume-input-events)
           (hy-test-helpers-verify-hattr-at-p :actype 'actypes::www-url  :args '("www.example.com") :loc file :lbl-key "label"))
-      (delete-file file))))
+      (hy-delete-file-and-buffer file))))
 
 (ert-deftest hui-ebut-create-exec-shell-cmd ()
   "Create an ebut that executes a command."
@@ -179,7 +179,7 @@ Ensure modifying the button but keeping the label does not create a double label
           (should (hact 'kbd-key "C-h h e c label RET RET exec-shell-cmd RET ls SPC /tmp RET y n C-x C-s"))
           (hy-test-helpers:consume-input-events)
           (hy-test-helpers-verify-hattr-at-p :actype 'actypes::exec-shell-cmd :args '("ls /tmp" t nil) :loc file :lbl-key "label"))
-      (delete-file file))))
+      (hy-delete-file-and-buffer file))))
 
 (ert-deftest hui-ebut-create-link-to-info-index-using-completion ()
   "Create an ebut with link to Info index using completion for the index item."
@@ -193,7 +193,7 @@ Ensure modifying the button but keeping the label does not create a double label
           (hy-test-helpers-verify-hattr-at-p :actype 'actypes::link-to-Info-index-item :args '("(emacs)Package") :loc file :lbl-key "emacs-package-button"))
       (progn
         (kill-buffer "*info*")
-        (delete-file file)))))
+        (hy-delete-file-and-buffer file)))))
 
 (ert-deftest hui-gibut-create-link-to-file ()
   "Programatically create implicit button link to file."
@@ -205,34 +205,43 @@ Ensure modifying the button but keeping the label does not create a double label
             (mock (hpath:find-noselect (gbut:file)) => test-buffer)
             (hui:gibut-create "global" test-file))
 	  (with-current-buffer test-buffer
-            (hy-test-helpers-verify-hattr-at-p :actype 'actypes::link-to-file :args (list test-file) :loc test-file :lbl-key "global")))
-      (delete-file test-file))))
+            (hy-test-helpers-verify-hattr-at-p :actype 'actypes::link-to-file :args (list test-file) :loc test-file
+					       :lbl-key (ibut:label-to-key test-file)
+					       :name "global")))
+      (hy-delete-file-and-buffer test-file))))
 
 (ert-deftest hui-gibut-create-link-to-file-line ()
   "Programatically create implicit button link to file and line."
-  (let ((test-file (make-temp-file "gbut" nil ".txt")))
+  (let* ((test-file (make-temp-file "gbut" nil ".txt"))
+	 (file-and-line-num (concat test-file ":10")))
     (setq test-buffer (find-file-noselect test-file))
     (unwind-protect
 	(progn
           (with-mock
             (mock (hpath:find-noselect (gbut:file)) => test-buffer)
-            (hui:gibut-create "global" (concat test-file ":10")))
+            (hui:gibut-create "global" file-and-line-num))
 	  (with-current-buffer test-buffer
-            (hy-test-helpers-verify-hattr-at-p :actype 'actypes::link-to-file-line :args (list test-file 10) :loc test-file :lbl-key "global")))
-      (delete-file test-file))))
+            (hy-test-helpers-verify-hattr-at-p :actype 'actypes::link-to-file-line :args (list test-file 10) :loc test-file
+					       :lbl-key (ibut:label-to-key test-file)
+					       :name "global")))
+      (hy-delete-file-and-buffer test-file))))
 
 (ert-deftest hui-gibut-create-link-to-file-line-and-column ()
   "Programatically create implicit button link to file, line and column."
-  (let ((test-file (make-temp-file "gbut" nil ".txt")))
+  (let* ((test-file (make-temp-file "gbut" nil ".txt"))
+	 (file-and-line-num-col-num (concat test-file ":10:20")))
     (setq test-buffer (find-file-noselect test-file))
     (unwind-protect
 	(progn
           (with-mock
             (mock (hpath:find-noselect (gbut:file)) => test-buffer)
-            (hui:gibut-create "global" (concat test-file ":10:20")))
+            (hui:gibut-create "global" file-and-line-num-col-num))
 	  (with-current-buffer test-buffer
-            (hy-test-helpers-verify-hattr-at-p :actype 'actypes::link-to-file-line-and-column :args (list test-file 10 20) :loc test-file :lbl-key "global")))
-      (delete-file test-file))))
+            (hy-test-helpers-verify-hattr-at-p :actype 'actypes::link-to-file-line-and-column
+					       :args (list test-file 10 20) :loc test-file
+					       :lbl-key (ibut:label-to-key test-file)
+					       :name "global")))
+      (hy-delete-file-and-buffer test-file))))
 
 (ert-deftest hui-gibut-create-info-node ()
   "Programatically create implicit button link to info node."
@@ -245,8 +254,9 @@ Ensure modifying the button but keeping the label does not create a double label
             (mock (hpath:find-noselect (gbut:file)) => test-buffer)
             (hui:gibut-create "global" (concat "\"" info-node "\"")))
 	  (with-current-buffer test-buffer
-            (hy-test-helpers-verify-hattr-at-p :actype 'actypes::link-to-Info-node :args (list info-node) :loc test-file :lbl-key "global")))
-      (delete-file test-file))))
+            (hy-test-helpers-verify-hattr-at-p :actype 'actypes::link-to-Info-node :args (list info-node) :loc test-file
+					       :lbl-key (ibut:label-to-key info-node) :name "global")))
+      (hy-delete-file-and-buffer test-file))))
 
 (ert-deftest hui--delimited-selectable-thing--in-cell-return-ref ()
   "In kotl cell return klink ref."
@@ -257,7 +267,7 @@ Ensure modifying the button but keeping the label does not create a double label
           (setq klink (klink:parse (hui:delimited-selectable-thing)))
           (should (string-match kotl-file (car klink)))
           (should (string= (cadr klink) "1=01")))
-      (delete-file kotl-file))))
+      (hy-delete-file-and-buffer kotl-file))))
 
 (ert-deftest hui--delimited-selectable-thing--in-ibut-return-ibut-text ()
   "In ibut return ibut text."
@@ -268,7 +278,7 @@ Ensure modifying the button but keeping the label does not create a double label
           (insert file)
           (goto-char 2)
           (should (equal (hui:delimited-selectable-thing) file)))
-      (delete-file file))))
+      (hy-delete-file-and-buffer file))))
 
 (ert-deftest hui--delimited-selectable-thing--ibut-label-return-ibut-text ()
   "In ibut label return ibut text without label."
@@ -279,7 +289,7 @@ Ensure modifying the button but keeping the label does not create a double label
           (insert "<[lnk]>: " file "\n")
           (beginning-of-buffer)
           (should (equal (hui:delimited-selectable-thing) file)))
-      (delete-file file))))
+      (hy-delete-file-and-buffer file))))
 
 (ert-deftest hui--delimited-selectable-thing--in-ebut-return-ebut-text ()
   "In ebut return ebut text."
@@ -290,7 +300,7 @@ Ensure modifying the button but keeping the label does not create a double label
           (ebut:program "label" 'exec-shell-cmd "echo abc")
           (beginning-of-buffer)
           (should (equal (hui:delimited-selectable-thing) "<(label)>")))
-      (delete-file file))))
+      (hy-delete-file-and-buffer file))))
 
 (ert-deftest hui--delimited-selectable-thing--start-of-paired-delimiter ()
   "At start of paired delimiter return text with delimiters."
@@ -302,7 +312,7 @@ Ensure modifying the button but keeping the label does not create a double label
           (beginning-of-buffer)
           (emacs-lisp-mode)
           (should (equal (hui:delimited-selectable-thing) "(xyz)")))
-      (delete-file file))))
+      (hy-delete-file-and-buffer file))))
 
 (ert-deftest hui--delimited-selectable-thing--in-kcell-link-return-link ()
   "In kcell link return link."
@@ -325,7 +335,7 @@ Ensure modifying the button but keeping the label does not create a double label
           (setq klink (klink:parse (hui:delimited-selectable-thing)))
           (should (string= (cadr klink) "1"))
           (should (string-match kotl-file (car klink))))
-      (delete-file kotl-file))))
+      (hy-delete-file-and-buffer kotl-file))))
 
 (ert-deftest hui--kill-ring-save--yank-in-same-kotl ()
   "Yank saved klink into same kotl file."
@@ -346,7 +356,7 @@ Ensure modifying the button but keeping the label does not create a double label
           (should (looking-at-p "<@ 1>"))
           (forward-char 1)
           (should (equal (hattr:get (hbut:at-p) 'actype) 'klink:act)))
-      (delete-file kotl-file))))
+      (hy-delete-file-and-buffer kotl-file))))
 
 (ert-deftest hui--kill-ring-save--yank-in-other-kotl ()
   "Yank saved klink into other kotl file."
@@ -368,8 +378,8 @@ Ensure modifying the button but keeping the label does not create a double label
           (should (looking-at-p (concat "<" (file-name-nondirectory kotl-file) ", 1>")))
           (forward-char 1)
           (should (equal (hattr:get (hbut:at-p) 'actype) 'klink:act)))
-      (delete-file kotl-file)
-      (delete-file other-file))))
+      (hy-delete-file-and-buffer kotl-file)
+      (hy-delete-file-and-buffer other-file))))
 
 (ert-deftest hui--kill-ring-save--yank-in-other-file ()
   "Yank saved klink into other file."
@@ -391,15 +401,15 @@ Ensure modifying the button but keeping the label does not create a double label
           (should (looking-at-p (concat "<" (file-name-nondirectory kotl-file) ", 1>")))
           (forward-char 1)
           (should (equal (hattr:get (hbut:at-p) 'actype) 'klink:act)))
-      (delete-file kotl-file)
-      (delete-file other-file))))
+      (hy-delete-file-and-buffer kotl-file)
+      (hy-delete-file-and-buffer other-file))))
 
 (ert-deftest hui--kill-ring-save--yank-in-other-file-other-dir ()
   "Yank saved klink into other file in other dir."
   (skip-unless (not noninteractive))
-  (let ((kotl-file (make-temp-file "hypb" nil ".kotl"))
-        (other-dir (make-temp-file "hypb" t))
-        (other-file "other-file"))
+  (let* ((kotl-file (make-temp-file "hypb" nil ".kotl"))
+         (other-dir (make-temp-file "hypb" t))
+         (other-file (expand-file-name "other-file" other-dir)))
     (unwind-protect
         (progn
           (find-file kotl-file)
@@ -409,15 +419,15 @@ Ensure modifying the button but keeping the label does not create a double label
           (forward-char 1)
           (call-interactively #'hui-kill-ring-save)
 
-          (find-file (concat (file-name-as-directory other-dir) other-file))
+          (find-file other-file)
           (yank)
           (save-buffer 0)
           (beginning-of-buffer)
           (should (looking-at-p (concat "<" kotl-file ", 1>")))
           (forward-char 1)
           (should (equal (hattr:get (hbut:at-p) 'actype) 'klink:act)))
-      (delete-file kotl-file)
-      (delete-file other-file)
+      (hy-delete-file-and-buffer kotl-file)
+      (hy-delete-file-and-buffer other-file)
       (delete-directory other-dir))))
 
 (ert-deftest hui--copy-to-register--yank-in-same-kotl ()
@@ -441,7 +451,7 @@ Ensure modifying the button but keeping the label does not create a double label
           (should (looking-at-p "<@ 1>"))
           (forward-char 1)
           (should (equal (hattr:get (hbut:at-p) 'actype) 'klink:act)))
-      (delete-file kotl-file))))
+      (hy-delete-file-and-buffer kotl-file))))
 
 (ert-deftest hui--copy-to-register--yank-in-other-kotl ()
   "Yank klink in register into other kotl file."
@@ -466,8 +476,8 @@ Ensure modifying the button but keeping the label does not create a double label
           (should (looking-at-p (concat "<" (file-name-nondirectory kotl-file) ", 1>")))
           (forward-char 1)
           (should (equal (hattr:get (hbut:at-p) 'actype) 'klink:act)))
-      (delete-file kotl-file)
-      (delete-file other-file))))
+      (hy-delete-file-and-buffer kotl-file)
+      (hy-delete-file-and-buffer other-file))))
 
 (ert-deftest hui--copy-to-register--yank-in-other-file ()
   "Yank klink in regiuster into other file."
@@ -491,15 +501,15 @@ Ensure modifying the button but keeping the label does not create a double label
           (should (looking-at-p (concat "<" (file-name-nondirectory kotl-file) ", 1>")))
           (forward-char 1)
           (should (equal (hattr:get (hbut:at-p) 'actype) 'klink:act)))
-      (delete-file kotl-file)
-      (delete-file other-file))))
+      (hy-delete-file-and-buffer kotl-file)
+      (hy-delete-file-and-buffer other-file))))
 
 (ert-deftest hui--copy-to-register--yank-in-other-file-other-dir ()
   "Yank klink in register into other file in other dir."
   (skip-unless (not noninteractive))
-  (let ((kotl-file (make-temp-file "hypb" nil ".kotl"))
-        (other-dir (make-temp-file "hypb" t))
-        (other-file "other-file"))
+  (let* ((kotl-file (make-temp-file "hypb" nil ".kotl"))
+         (other-dir (make-temp-file "hypb" t))
+         (other-file (expand-file-name "other-file" other-dir)))
     (unwind-protect
         (progn
           (find-file kotl-file)
@@ -511,15 +521,15 @@ Ensure modifying the button but keeping the label does not create a double label
             (mock (register-read-with-preview  "Copy to register: ") => ?a)
             (call-interactively #'hui-copy-to-register))
 
-          (find-file (concat (file-name-as-directory other-dir) other-file))
+          (find-file other-file)
           (insert-register ?a)
           (save-buffer 0)
           (beginning-of-buffer)
           (should (looking-at-p (concat "<" kotl-file ", 1>")))
           (forward-char 1)
           (should (equal (hattr:get (hbut:at-p) 'actype) 'klink:act)))
-      (delete-file kotl-file)
-      (delete-file other-file)
+      (hy-delete-file-and-buffer kotl-file)
+      (hy-delete-file-and-buffer other-file)
       (delete-directory other-dir))))
 
 (ert-deftest hui--kill-ring-save-in-kotl-mode-copies-region ()
@@ -534,7 +544,7 @@ Ensure modifying the button but keeping the label does not create a double label
           (insert "b")
           (hui-kill-ring-save (region-beginning) (region-end))
           (should (string= (current-kill 0 t) "a\nb")))
-      (delete-file kotl-file))))
+      (hy-delete-file-and-buffer kotl-file))))
 
 (ert-deftest hui--kill-ring-save-in-kotl-mode-between-cells-fails ()
   "Copy region in kotl-mode between cells fails."
@@ -547,7 +557,7 @@ Ensure modifying the button but keeping the label does not create a double label
           (kotl-mode:add-cell)
           (insert "b")
           (should-error (hui-kill-ring-save (region-beginning) (region-end)) :type 'error))
-      (delete-file kotl-file))))
+      (hy-delete-file-and-buffer kotl-file))))
 
 (ert-deftest hui--ibut-create-interactive ()
   "Create an implicit button interactively."
@@ -558,7 +568,7 @@ Ensure modifying the button but keeping the label does not create a double label
 	  (with-simulated-input "ibut RET link-to-rfc RET 123 RET"
 	    (hact (lambda () (call-interactively 'hui:ibut-create))))
           (should (string= "<[ibut]> - rfc123" (buffer-string))))
-      (delete-file file))))
+      (hy-delete-file-and-buffer file))))
 
 (ert-deftest hui--ibut-create-interactive-label-using-region ()
   "Create an implicit button interactively with label from region."
@@ -572,7 +582,7 @@ Ensure modifying the button but keeping the label does not create a double label
 	  (with-simulated-input "RET link-to-rfc RET 123 RET"
 	    (hact (lambda () (call-interactively 'hui:ibut-create))))
           (should (string= "<[ibut]> - rfc123" (buffer-string))))
-      (delete-file file))))
+      (hy-delete-file-and-buffer file))))
 
 (ert-deftest hui--ibut-create-interactive-add-comment-char ()
   "Create an implicit button interactively in program mode adds comment char."
@@ -585,7 +595,7 @@ Ensure modifying the button but keeping the label does not create a double label
 	  (with-simulated-input "ibut RET link-to-rfc RET 123 RET"
 	    (hact (lambda () (call-interactively 'hui:ibut-create))))
           (should (string= "(sexp); <[ibut]> - rfc123" (buffer-string))))
-      (delete-file file))))
+      (hy-delete-file-and-buffer file))))
 
 (ert-deftest hui--ibut-create-interactive-create-label ()
   "Create a label for an implicit button interactively."
@@ -598,7 +608,7 @@ Ensure modifying the button but keeping the label does not create a double label
 	  (with-simulated-input "label RET"
 	    (hact (lambda () (call-interactively 'hui:ibut-label-create))))
           (should (string= "<[label]> - \"/tmp\"" (buffer-string))))
-      (delete-file file))))
+      (hy-delete-file-and-buffer file))))
 
 (ert-deftest hui--ibut-rename-label-at-point ()
   "Rename a label for an implicit button interactively.
@@ -612,7 +622,7 @@ With point on label suggest that ibut for rename."
 	  (with-simulated-input "M-DEL renamed RET"
 	    (hact (lambda () (call-interactively 'hui:ibut-rename))))
           (should (string= "<[renamed]> - rfc123" (buffer-string))))
-      (delete-file file))))
+      (hy-delete-file-and-buffer file))))
 
 (ert-deftest hui--ibut-rename-label ()
   "Rename a label for an implicit button interactively."
@@ -625,7 +635,7 @@ With point on label suggest that ibut for rename."
 	  (with-simulated-input "label RET M-DEL renamed RET"
 	    (hact (lambda () (call-interactively 'hui:ibut-rename))))
           (should (string= "<[renamed]> - rfc123" (buffer-string))))
-      (delete-file file))))
+      (hy-delete-file-and-buffer file))))
 
 (ert-deftest hui--ibut-rename-label-not-in-buffer-errors ()
   "Rename a label not in buffer should error."
@@ -637,7 +647,7 @@ With point on label suggest that ibut for rename."
           (goto-char (point-max))
           (with-simulated-input "RET"
 	    (should-error (hui:ibut-rename "notalabel") :type 'error)))
-      (delete-file file))))
+      (hy-delete-file-and-buffer file))))
 
 (ert-deftest hui--ebut-rename ()
   "Rename an ebut shall change the name."

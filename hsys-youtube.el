@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    10-Jul-22 at 18:10:56
-;; Last-Mod:     22-Nov-22 at 18:11:43 by Bob Weiner
+;; Last-Mod:     14-May-23 at 11:27:53 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -43,6 +43,7 @@
 ;;; Requirements
 ;;; ************************************************************************
 
+;;;###autoload
 (require 'hact) ;; For htype:symbol
 (require 'hsys-www)
 
@@ -74,7 +75,27 @@ optional.")
 ;;; ************************************************************************
 
 ;;;###autoload
-(defun hsys-youtube-get-url (video-id &optional start-time-string end-time-string)
+(defact yt-info (video-id)
+  "Display a web page with the metadata information about VIDEO-ID."
+  (hact #'actypes::www-url (format "https://mattw.io/youtube-metadata/?url=https://youtu.be/%s&submit=true"
+				   video-id)))
+;;;###autoload
+(defact yt-play (video-id &optional start-time-string end-time-string)
+  "Play a VIDEO-ID from the point specified by optional START-TIME-STRING.
+If not given, START-TIME-STRING is set to \"0s\" representing the beginning
+of the video.  START-TIME-STRING is a colon-separated hours:minutes:seconds
+string, e.g. 1:2:44 (1 hour, two minutes, 45 seconds), where the hours
+and minutes are optional."
+  (hact #'actypes::www-url (hsys-youtube-get-url video-id start-time-string end-time-string)))
+
+;;;###autoload
+(defact yt-search (search-term)
+  "Search Youtube for SEARCH-TERM."
+  (interactive "sSearch Youtube for: ")
+  (hyperbole-web-search "Youtube" search-term))
+
+;;;###autoload
+(defact yt-url (video-id &optional start-time-string end-time-string)
   "Return url to play VIDEO-ID from point specified by optional START-TIME-STRING.
 Return nil if START-TIME-STRING is given but is invalid.  If not given,
 START-TIME-STRING is set to \"0s\" representing the beginning of the video.
@@ -91,39 +112,6 @@ minutes are optional."
     (hsys-youtube-start-url video-id start-time-string)))
 
 ;;;###autoload
-(defun hsys-youtube-get-url:help (hbut)
-  "Show in minibuffer the url from an `hsys-youtube-get-url' action button, HBUT.
-Called when the Assist Key is pressed on such a button."
-  (message (apply #'hsys-youtube-get-url (hattr:get hbut 'args))))
-
-;;;###autoload
-(defun hsys-youtube-info (video-id)
-  "Display a web page with the metadata information about VIDEO-ID."
-  (hact #'actypes::www-url (format "https://mattw.io/youtube-metadata/?url=https://youtu.be/%s&submit=true"
-				   video-id)))
-
-;;;###autoload
-(defun hsys-youtube-search (search-term)
-  "Search Youtube for SEARCH-TERM."
-  (interactive "sSearch Youtube for: ")
-  (hyperbole-web-search "Youtube" search-term))
-
-;;;###autoload
-(defun hsys-youtube-search:help (search-term)
-  "Display in the minibuffer the Youtube url to search for SEARCH-TERM."
-  (interactive "sShow Youtube search url for: ")
-  (hyperbole-web-search "Youtube" search-term t))
-
-;;;###autoload
-(defun hsys-youtube-play (video-id &optional start-time-string end-time-string)
-  "Play a VIDEO-ID from the point specified by optional START-TIME-STRING.
-If not given, START-TIME-STRING is set to \"0s\" representing the beginning
-of the video.  START-TIME-STRING is a colon-separated hours:minutes:seconds
-string, e.g. 1:2:44 (1 hour, two minutes, 45 seconds), where the hours
-and minutes are optional."
-  (hact #'actypes::www-url (hsys-youtube-get-url video-id start-time-string end-time-string)))
-
-;;;###autoload
 (defun hsys-youtube-play:help (hbut)
   "Show in the minibuffer the url for an `hsys-youtube-play' action button, HBUT.
 Called when the Assist Key is pressed on such a button."
@@ -131,13 +119,25 @@ Called when the Assist Key is pressed on such a button."
 
 ;; Create easy to type Action Button aliases.
 ;;;###autoload
-(defalias (htype:symbol 'yt-info   'actypes) #'hsys-youtube-info)
+(defalias 'hsys-youtube-info    (htype:symbol 'yt-info   'actypes))
 ;;;###autoload
-(defalias (htype:symbol 'yt-play   'actypes) #'hsys-youtube-play)
+(defalias 'hsys-youtube-play    (htype:symbol 'yt-play   'actypes))
 ;;;###autoload
-(defalias (htype:symbol 'yt-search 'actypes) #'hsys-youtube-search)
+(defalias 'hsys-youtube-search  (htype:symbol 'yt-search 'actypes))
 ;;;###autoload
-(defalias (htype:symbol 'yt-url    'actypes) #'hsys-youtube-get-url)
+(defun hsys-youtube-search:help (search-term)
+  "Display in the minibuffer the Youtube url to search for SEARCH-TERM."
+  (interactive "sShow Youtube search url for: ")
+  (hyperbole-web-search "Youtube" search-term t))
+
+;;;###autoload
+(defalias 'hsys-youtube-get-url (htype:symbol 'yt-url    'actypes))
+
+;;;###autoload
+(defun hsys-youtube-get-url:help (hbut)
+  "Show in minibuffer the url from an `hsys-youtube-get-url' action button, HBUT.
+Called when the Assist Key is pressed on such a button."
+  (message (apply #'hsys-youtube-get-url (hattr:get hbut 'args))))
 
 ;;; ************************************************************************
 ;;; Private variables
@@ -150,6 +150,7 @@ Called when the Assist Key is pressed on such a button."
 ;;; Private functions
 ;;; ************************************************************************
 
+;;;###autoload
 (defun hsys-youtube-end-url (video-id &optional start-time-string end-time-string)
   "Return url to play VIDEO-ID from optional START-TIME-STRING to END-TIME-STRING.
 VIDEO-ID must be a string and can be a video identifier,
@@ -175,6 +176,7 @@ e.g. WkwZHSbHmPg, or a full url to the video."
 	    ;; replay, so add unused random parameter.
 	    (random 10000000))))
 
+;;;###autoload
 (defun hsys-youtube-start-url (video-id &optional start-time-string)
   "Return url to play VIDEO-ID starting at beginning or optional START-TIME-STRING.
 VIDEO-ID must be a string and can be a video identifier,
@@ -192,6 +194,7 @@ e.g. WkwZHSbHmPg, or a full url to the video."
 	  (format (concat video-id "&t=%s") start-time-string))
       (format hsys-youtube-start-format video-id start-time-string))))
 
+;;;###autoload
 (defun hsys-youtube-time-in-hms (start-time-string)
   "Return the start time for a Youtube url from START-TIME-STRING.
 Start time is returned as hours, minutes and seconds.
@@ -215,6 +218,7 @@ format is invalid, return it unchanged."
 	       (concat part1 "h" part2 "m" part3 "s"))))
     start-time-string))
 
+;;;###autoload
 (defun hsys-youtube-time-in-seconds (start-time-string)
   "Return the number of seconds time for a Youtube url given a START-TIME-STRING.
 Hours and minutes are optional within the START-TIME-STRING,

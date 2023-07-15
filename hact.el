@@ -1,9 +1,9 @@
-;;; hact.el --- GNU Hyperbole button action handling  -*- lexical-binding: t; -let*-
+;;; hact.el --- GNU Hyperbole button action handling  -*- lexical-binding: t; -*-
 ;;
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    18-Sep-91 at 02:57:09
-;; Last-Mod:     30-Apr-23 at 14:40:46 by Bob Weiner
+;; Last-Mod:      8-Jul-23 at 13:19:37 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -115,9 +115,19 @@ with the `ibtypes::' prefix and one without.  The value for both
 keys is the Elisp symbol for the type, which includes the prefix.")
 
 (defsubst symtable:actype-p (symbol-or-name)
-  "Return SYMBOL-OR-NAME if it is a Hyperbole action type, else nil."
+  "Return SYMBOL-OR-NAME if a Hyperbole action type or Elisp function, else nil."
   (when (or (symbolp symbol-or-name) (stringp symbol-or-name))
-    (symtable:get symbol-or-name symtable:actypes)))
+    (or (symtable:get symbol-or-name symtable:actypes)
+	(and (stringp symbol-or-name) (fboundp (intern-soft symbol-or-name))
+	     (intern-soft symbol-or-name))
+	(and (functionp symbol-or-name) symbol-or-name))))
+
+(defsubst symtable:hyperbole-actype-p (symbol-or-name)
+  "Return SYMBOL-OR-NAME if a Hyperbole action type, else nil.
+This excludes Emacs Lisp functions which may be used as action types.
+Use `actype:elisp-symbol' to include these."
+  (when (or (symbolp symbol-or-name) (stringp symbol-or-name))
+    (or (symtable:get symbol-or-name symtable:actypes))))
 
 (defsubst symtable:ibtype-p (symbol-or-name)
   "Return SYMBOL-OR-NAME if it is a Hyperbole implicit button type, else nil."
@@ -362,6 +372,8 @@ The value of `hrule:action' determines what effect this has.
 Alternatively act as a no-op when testing implicit button type contexts.
 First arg may be a symbol or symbol name for either an action type or a
 function.  Runs `action-act-hook' before performing action."
+  ;; (message "hact args: %S" args)
+  (hattr:set 'hbut:current 'actype (actype:elisp-symbol (car args)))
   (apply hrule:action args))
 
 (defun    actype:act (actype &rest args)
@@ -382,7 +394,7 @@ performing ACTION."
       ;; being used as a path.  So do this only if actype is a defact
       ;; and not a defun to limit any potential impact. RSW - 9/22/2017
       (and (symbolp action)
-	   (symtable:actype-p action)
+	   (symtable:hyperbole-actype-p action)
 	   (setq args (hpath:absolute-arguments actype args)))
       (let ((hist-elt (hhist:element)))
 	(run-hooks 'action-act-hook)
@@ -411,6 +423,9 @@ is returned."
 
 (defun    actype:eval (actype &rest args)
   "Perform action formed from ACTYPE and rest of ARGS and return value.
+This differs from `actype:act' in that it can return nil and does not
+expand relative pathname ARGS.
+
 ACTYPE may be a string containing a Lisp expression from which ACTYPE
 and ARGS are extracted.  ACTYPE may be a symbol or symbol name for
 either an action type or a function.  Run `action-act-hook' before
@@ -422,18 +437,19 @@ performing ACTION."
       (let ((hist-elt (hhist:element)))
 	(run-hooks 'action-act-hook)
 	(prog1 (if (or (symbolp action) (listp action)
-		       (byte-code-function-p action)
-		       (subrp action)
-		       (and (stringp action) (not (integerp action))
-			    (setq action (key-binding action))))
+			  (byte-code-function-p action)
+			  (subrp action)
+			  (and (stringp action) (not (integerp action))
+			       (setq action (key-binding action))))
 		   (apply action args)
 		 (eval action))
 	  (hhist:add hist-elt))))))
 
 (defun    actype:action (actype)
-  "Return action part of ACTYPE.
-ACTYPE is a bound function symbol, symbol name or function body.
-ACTYPE may be a Hyperbole actype or Emacs Lisp function."
+  "If ACTYPE is a bound function symbol, return it.
+Otherwise, return its body.  ACTYPE must be a bound function
+symbol, symbol name or function body.  ACTYPE may be a Hyperbole
+actype or Emacs Lisp function."
   (let (actname
 	action)
     (cond ((stringp actype)
@@ -465,6 +481,7 @@ The type uses PARAMS to perform DEFAULT-ACTION (list of the rest of the
 arguments).  A call to this function is syntactically the same as for
 `defun',  but a doc string is required.
 Return symbol created when successful, else nil."
+  (declare (doc-string 3))
   `(progn
      (symtable:add ',type symtable:actypes)
      (htype:create ,type actypes ,doc ,params ,default-action nil)))

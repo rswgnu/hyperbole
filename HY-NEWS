@@ -5,11 +5,12 @@
 *                                   V8.0.1pre
 ===========================================================================
 
-** ACTION TYPES
+** ACTION TYPES  (See "(hyperbole)Action Types").
 
   *** display-boolean, display-value, display-variable: Made all of these
       interactive, so can be used as button actypes.  See "(hyperbole)
       actypes display-boolean".
+
 
 ** DOCUMENTATION
 
@@ -25,10 +26,14 @@
         - Build a Zettelkasten with HyRolo: The video is at
           "https://emacsconf.org/2022/talks/rolodex/".
 
+  *** Hyperbole Concepts: New writeup in Koutline format for those who
+      want a quick read about how Hyperbole concepts all interrelate.
+      View it with {C-h h d c}.
+
   *** Action Types: Added newer types and updated existing doc summaries
       in the Hyperbole manual.  See "(hyperbole)Action Types".
 
-  *** Documented these Hyperbole minibuffer menu keys:
+  *** New Menu Key Doc: Documented these Hyperbole minibuffer menu keys:
 
         - {Q} always quits from the menu without selecting anything
 
@@ -36,14 +41,24 @@
           mode; {C-h h} re-enables it.  See "(hyperbole)menu,
           entry/exit commands".
 
-  *** Ibut Menu: Documented in the manual, notably the new Ibut/Create
-      menu item.  See "(hyperbole)menu, Ibut/Create".
+  *** Extensive 150-page Reference Manual: Includes multiple indexes
+      for easy cross-referencing, Info viewer version and PDF for printing.
+      Some of the updates include:
 
-  *** Manual Glossary: Added Ace Window, Consult, Org Mode, and Org Roam
-      entries.  See "(hyperbole)Glossary".
+  **** Ebut/Link Menu Item:  With two windows on screen, link from source
+       window point to referent window point.  Do a similar thing when
+       more windows are on screen via an Action Mouse Key drag between
+       windows.  See "(hyperbole)Smart Mouse Drags between Windows".
 
-  *** Smart Key - Org Mode: Expanded with doc for more extensive behavior.
-      See "(hyperbole)Smart Key - Org Mode".
+  **** Ibut Menu: Documented in the manual, notably the new Ibut/Create
+       menu item.  See "(hyperbole)menu, Ibut/Create".  For the Ibut/Link
+       menu item, see "(hyperbole)menu, Ibut/Link".
+
+  **** Manual Glossary: Added Ace Window, Consult, Org Mode, and Org Roam
+       entries.  See "(hyperbole)Glossary".
+
+  **** Smart Key - Org Mode: Expanded with doc for more extensive behavior.
+       See "(hyperbole)Smart Key - Org Mode".
 
 
 ** HYCONTROL  (See "(hyperbole)HyControl").
@@ -110,7 +125,12 @@
         - {,} Move to the beginning of the current entry
         - {.} Move to the end of the current entry
 
-      See "(hyperbole)Hyrolo Keys".
+      See "(hyperbole)HyRolo Keys".
+
+  *** Koutline and Markdown File Support: The `hyrolo-file-list' can now
+      contain Koutline or Markdown files and will search their outline entries
+      just like it does for Org and Emacs outline files.  See
+      "(hyperbole)HyRolo Concepts".
 
   *** Koutline Fast Search: Koutlines may now be included in
       `hyrolo-file-list' and individual cells extracted properly with any
@@ -123,11 +143,6 @@
 	{f/b/n/p} move to another match
 
       all work on Koutline cells displayed in the match buffer.  See
-      "(hyperbole) HyRolo Concepts".
-
-  *** Koutline and Markdown File Support: The `hyrolo-file-list' can now
-      contain Koutline or Markdown files and will search their outline entries
-      just like it does for Org and Emacs outline files.  See
       "(hyperbole)HyRolo Concepts".
 
   *** Match Buffer Name Change: Changed match buffer name from "*Hyperbole
@@ -143,7 +158,7 @@
       exclusively.  See "(hyperbole)ConsultFind".
 
 
-** IMPLICIT BUTTONS
+** IMPLICIT BUTTONS  (See "(hyperbole)Implicit Buttons").
 
   *** Action Button Result Display: Action buttons now display in the
       minibuffer the result of evaluating any type of action expression,
@@ -178,8 +193,8 @@
       now recognized as programming etags in the *Warnings* byte-compilation
       buffer and in Flymake log and diagnostics buffers.
 
-  *** Info Nodes: Better handle embedded double quotes and add support for
-      HTML &quot; quoting.
+  *** Info Nodes: Better handling of embedded double quotes and added support
+      for HTML &quot; quoting.
 
   *** Improved # and Embedded Space Path Handling: If a path exists, don't
       treat its # hash marks as section markers, notably for #autosave# files.
@@ -194,7 +209,7 @@
 
   *** Path Implicit Buttons: Much improved relative path handling, including
       expanding into executable paths when pathname is prefixed by ! or &,
-      handling info paths outside `Info-directory-list', like
+      and handling info paths outside `Info-directory-list', like
       "man/hyperbole.info".
 
   *** Table of Contents Sections: Hyperbole now recognizes TOCs in any text
@@ -224,6 +239,10 @@
 
   *** Minibuffer Menu Changes:
 
+        - Reload Menus and Smart Keys: Action Key press on top-level menu prefix
+          reloads Hyperbole minibuffer menus and Smart Key handlers to reflect
+          any recent edits.
+
         - Multi-line Menus: When a menu line is too long for the screen, it is
           automatically split into multiple lines and aligned by column for
           ease of access.
@@ -233,7 +252,7 @@
       as do {TAB} and {Shift-TAB}.  See "(hyperbole)minibuffer menu".
 
 
-** PROGRAMMING INTERFACE CHANGES
+** PROGRAMMING INTERFACE CHANGES  (See "(hyperbole)Embedding Hyperbole").
 
   *** (hypb:devdocs-lookup): Install and load devdocs package and then
       call its `devdocs-lookup' function.
@@ -277,7 +296,7 @@
        using `hattr:emacs-button-attributes', as recognized by
        `hattr:emacs-button-is-p'.
 
-  *** (hui:ibut-create, ibut:create, ibut:delimit, ibut:edit, ibut:operate):
+  *** (hui:ibut-create, ibut:create, ibut:delimit, ibut:operate):
       Add interactive, named/labeled implicit button creation.  For
       `ibut:create', improve doc and add but-sym arg which can supply all
       other arguments in its properties.
@@ -388,10 +407,34 @@
   *** {C-c /}: The Hyperbole {C-c /} web search binding defers to the org-mode
       binding, `org-show-todo-tree', when in Org mode, but uses the improved
       Hyperbole command version, `hsys-org-todo-occur', which allows filtering
-      to specific todo states.
+      to spec"ific todo states.
 
 
 ** SMART (ACTION AND ASSIST) KEYS  (See "(hyperbole)Smart Keys").
+
+  *** Drag Button Referents to Specific Windows: Just as you previously could
+      drag Dired or Buffer Menu items to display in a specific window, you can
+      now do the same with Hyperbole Buttons.  Action or Assist Key drag from
+      a Hyperbole button and release in another window where you want the
+      button's referent (or the result of its action) displayed.  If you
+      release the Smart Key outside of an Emacs window, the referent is
+      displayed in a new frame.  See "(hyperbole)Displaying Items".
+
+      Visual pulsing of the source line and the destination buffer highlights
+      the transfer taking place (hmouse-pulse-flag controls this).
+
+      Dragging a button to a modeline splits the window of the modeline and
+      displays the referent in the leftmost or uppermost of the split windows.
+
+  *** Create Implicit Link Buttons: An Assist Mouse Key drag across windows
+      (when not starting from a draggable item) creates an implicit link
+      button with an action type determined by the referent at the point of
+      button release.  This parallels the same Action Mouse Key drag which
+      creates explicit link buttons.  See "(hyperbole)creating implicit links".
+
+      Previously this drag would swap buffers in windows.  Now you must drag
+      from open space in a modeline of the depress window to the buffer text
+      in the release window to swap buffers in windows.
 
   *** Hyperbole Symbol Tags: Hyperbole now includes a pre-built TAGS file so
       that an Action Key press on any Hyperbole symbol jumps to its definition
@@ -414,18 +457,18 @@
       across modes.  See "(hyperbole)Smart Key - Dired Mode".
 
 
-** TEST CASES
+** TEST CASES  (See "${hyperb:dir}/test").
 
-  *** Hyperbole Automated Testing: Automated test cases increased to over 285.
-      Simply run 'make test-all' or 'make test' from the command-line when in
-      the Hyperbole source directory and you should see all tests pass.  If
-      any fail, you can press the Action Key to see the source of the failure.
+  *** Hyperbole Automated Testing: Over 300 automated test cases.  Simply run
+      'make test-all' or 'make test' from the command-line when in the
+      Hyperbole source directory and you should see all tests pass.  If any
+      fail, you can press the Action Key to see the source of the failure.
       Full testing is supported under POSIX systems only.  See "Makefile" and
       "test/MANIFEST".
 
   *** The Hyperbole team's CI/CD process automatically runs all test cases
-      against Emacs major versions 27, 28 and 29 whenever a code change is
-      checked in against git.
+      against Emacs major versions 27, 28 and 29 and the current master branch
+      tip whenever a Hyperbole code change is checked in against git.
 
   *** QA: Many quality improvements across Hyperbole and integration with
       Emacs updates with backward compatibility from Emacs 27 through Emacs 29
@@ -889,7 +932,7 @@
   *** Fast Window Links: The hkey-window-link command bound to {M-o w}
       rapidly creates a link button at point in the selected window,
       linking to point in the window chosen when prompted.
-      See "DEMO#Displaying File and Buffer Items and Moving Buffers".
+      See "DEMO#Displaying Items via Drags and Moving Buffers".
 
   *** Throw A Region Elsewhere Within the Same Buffer: {M-o t <window-id>}
       when used with a selected region can now throw to the source buffer
@@ -1089,7 +1132,7 @@
       {C-u M-o t} for the same effect.  The buffer in the target window
       must differ from the one in the source window.  With no region
       active, this command still throws the source buffer to the target
-      window.  See "DEMO#Displaying File and Buffer Items and Moving Buffers".
+      window.  See "DEMO#Displaying Items via Drags and Moving Buffers".
 
   SMART (ACTION AND ASSIST) KEYS
 

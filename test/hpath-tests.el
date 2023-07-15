@@ -272,7 +272,7 @@
                   (goto-char 3)
                   (should (string= (hpath:at-p) fn))
                   (should (string= (hpath:is-p fn) fn)))
-              (delete-file filename))))
+              (hy-delete-file-and-buffer filename))))
       (delete-directory dir))))
 
 (ert-deftest hpath--at-p-checks-file-that-with-hash-that-does-not-exist-returns-nil ()
