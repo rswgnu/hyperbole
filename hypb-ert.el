@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org> and Bob Weiner <rsw@gnu.org>
 ;;
 ;; Orig-Date:    31-Mar-21 at 21:11:00
-;; Last-Mod:      9-Jul-23 at 11:59:05 by Bob Weiner
+;; Last-Mod:     16-Jul-23 at 23:47:09 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -29,7 +29,7 @@
 
 ;;; Code:
 
-(mapc #'require '(lisp-mode hload-path ert hact hbut hargs))
+(eval-and-compile (mapc #'require '(lisp-mode hload-path ert hact hbut hargs)))
 
 (defun hypb-ert-message-function (_msg-pat &rest _args)
   "Ignore messages ert outputs so can display messages from tests run."
