@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 21:42:03
-;; Last-Mod:     10-Jul-23 at 18:31:05 by Mats Lidell
+;; Last-Mod:     17-Jul-23 at 00:21:28 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -927,15 +927,17 @@ and adding any necessary instance number to the button label.
 For programmatic creation, use `ibut:program' instead."
   (interactive (list (when (use-region-p) (region-beginning))
 		     (when (use-region-p) (region-end))))
+  (hui:buf-writable-err (current-buffer) "ibut-create")
+  (when (ebut:at-p)
+    (error "(ibut:program): Move off explicit button at point to create an implicit button"))
   (hypb:assert-same-start-and-end-buffer
     (let (default-name name but-buf actype)
       (setq but-buf (current-buffer))
-      (hui:buf-writable-err but-buf "ibut-create")
       (hattr:clear 'hbut:current)
 
       ;; Throw an error if on a named or delimited Hyperbole button since
       ;; cannot create another button within such contexts.
-      (when (hbut:at-p)
+      (when (ibut:at-p)
 	(let ((name (hattr:get 'hbut:current 'name))
 	      (lbl (hbut:key-to-label (hattr:get 'hbut:current 'lbl-key)))
 	      (lbl-start (hattr:get 'hbut:current 'lbl-start))
@@ -1706,7 +1708,7 @@ arguments."
     (ebut:operate label (when edit-flag label))))
 
 (defun hui:ibut-link-create (edit-flag but-window name-key but-loc but-dir type-and-args)
-  "Create or edit a new Hyperbole implicit link button.
+  "Edit or create a new Hyperbole implicit link button.
 With EDIT-FLAG non-nil, edit an existing ibutton at point in
 BUT-WINDOW; otherwise, create a new one.
 

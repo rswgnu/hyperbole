@@ -1,3 +1,9 @@
+2023-07-17  Bob Weiner  <rsw@gnu.org>
+
+* hypb-ert.el (require): Wrap 'eval-and-compile' call around this to force require
+    of "hbut" which defines 'defal' and prevents compilation error when "hibtypes"
+    tries to load this.
+
 2023-07-13  Mats Lidell  <matsl@gnu.org>
 
 * test/hmouse-drv-tests.el (hbut-pathname-anchor-must-match-all)
@@ -31,8 +37,21 @@
 
 2023-07-09  Bob Weiner  <rsw@gnu.org>
 
+* hbut.el (ibut:delimit): Add name separator after delimiting name if not already
+    there but ensure point stays at end of the delimited name.
+          (ibut:operate): Update doc string with caller responsibilities.
+	  (ibut:program): Fix to send 'edit-flag' to 'ibut:operate' call when point
+    is on an existing ibutton.  Remove 'cannot nest error' since 'ibut:operate' will
+    now modify the existing ibutton.
+          (ibut:insert-text): Don't insert name separator if looking at one in the buffer.
+	  (ibut:operate): Fix to not trigger an error when adding a name to an ibut
+    that does not have one.
+
 * hypb-ert.el (hypb-ert-*): Change all calls of 'ert' to disable ert's messages
     so that any test's message is displayed after an hypb-ert test case run.
+              (hypb-ert): Change 'ert' calls to use 'hypb-ert' and centralize
+    'message' function override when possible to deal with different 'ert'
+    calling conventions in different Emacs versions.
 
 * hbut.el (ibut:operate): Update doc of each state.
 
