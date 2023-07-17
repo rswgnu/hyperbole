@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    04-Feb-89
-;; Last-Mod:      4-Jul-23 at 19:51:04 by Bob Weiner
+;; Last-Mod:     10-Jul-23 at 18:27:44 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -66,6 +66,8 @@
 
 (declare-function helm-get-actions-from-current-source "ext:helm-core")
 (declare-function helm-get-default-action "ext:helm-core")
+
+(defvar helm-selection-point)
 
 ;;; ************************************************************************
 ;;; Public variables
@@ -1525,7 +1527,7 @@ If assist-key is pressed:
 ;; next function.
 ;; Usage: (define-key magit-section-mode-map "TAB" 'smart-magit-tab)
 (defun smart-magit-tab (section)
-  "Toggle visibility of the body of the current section."
+  "Toggle visibility of the body of the current SECTION."
   (interactive (list (magit-current-section)))
   (require 'magit)
   (let* ((magit-display-buffer-function #'hpath:display-buffer)
@@ -2020,7 +2022,7 @@ If key is pressed:
 ;;; ************************************************************************
 
 ;; Emacs push button support
-(defun smart-push-button (&optional pos use-mouse-action)
+(defun smart-push-button (&optional _pos _use-mouse-action)
   "Activate an Emacs push-button, including text-property follow-link buttons.
 Button is at optional POS or at point.  USE-MOUSE-ACTION prefers
 mouse-action to action property."

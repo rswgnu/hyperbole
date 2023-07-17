@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    20-Jul-16 at 22:41:34
-;; Last-Mod:     16-Jul-23 at 23:24:13 by Bob Weiner
+;; Last-Mod:     17-Jul-23 at 00:22:44 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -180,6 +180,10 @@
 ;;; ************************************************************************
 ;;; Public variables
 ;;; ************************************************************************
+
+(defgroup hyperbole-buttons nil
+  "Hyperbole explicit, global and implicit button customizations."
+  :group 'hyperbole)
 
 (defcustom hibtypes-social-default-service "twitter"
   "Lowercase string matching the social media service to use as a default."

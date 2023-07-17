@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     7-Jun-89 at 22:08:29
-;; Last-Mod:     17-Jun-23 at 23:03:56 by Bob Weiner
+;; Last-Mod:     10-Jul-23 at 17:55:02 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -47,20 +47,35 @@
 ;;; ************************************************************************
 ;;; Public declarations
 ;;; ************************************************************************
+
 (defvar consult-grep-args)
 (defvar consult-ripgrep-args)
+(defvar google-contacts-expire-time)
+(defvar google-contacts-history)
+(defvar google-contacts-query-string)
 (defvar helm-org-rifle-show-full-contents)
 (defvar helm-org-rifle-show-level-stars)
-(defvar markdown-regex-header)
-(defvar org-roam-directory)
-(defvar org-roam-db-autosync-mode)
 (defvar hproperty:but-emphasize-flag)
+(defvar markdown-regex-header)
+(defvar org-roam-db-autosync-mode)
+(defvar org-roam-directory)
+(defvar plstore-cache-passphrase-for-symmetric-encryption)
+
 (declare-function consult-grep "ext:consult")
 (declare-function consult-ripgrep "ext:consult")
+(declare-function google-contacts  "ext:google-contacts")
+(declare-function google-contacts-add-margin-to-text "ext:google-contacts")
+(declare-function google-contacts-build-node-list "ext:google-contacts")
+(declare-function google-contacts-data  "ext:google-contacts")
+(declare-function google-contacts-make-buffer "ext:google-contacts")
+(declare-function google-contacts-margin-element "ext:google-contacts")
+(declare-function google-contacts-oauth-token "ext:google-contacts")
 (declare-function helm-org-rifle-files "ext:helm-org-rifle")
-(declare-function helm-org-rifle-show-full-contents "ext:helm-org-rifle")
 (declare-function helm-org-rifle-org-directory "ext:helm-org-rifle")
+(declare-function helm-org-rifle-show-full-contents "ext:helm-org-rifle")
 (declare-function org-roam-db-autosync-mode "ext:org-roam")
+(declare-function xml-node-child-string "ext:google-contacts")
+(declare-function xml-node-get-attribute-type "ext:google-contacts")
 
 ;;; ************************************************************************
 ;;; Public variables
@@ -116,23 +131,11 @@ Must take two arguments, `match-pattern' and `headline-only-flag'.
 Must leave point within any matched entry or return nil when no
 match is found.")
 
+(defvar hyrolo-add-hook nil
+  "Hook run when a HyRolo item is added.")
 
-;;; ************************************************************************
-;;; Public declarations
-;;; ************************************************************************
-
-(declare-function google-contacts  "ext:google-contacts")
-(declare-function google-contacts-add-margin-to-text "ext:google-contacts")
-(declare-function google-contacts-build-node-list "ext:google-contacts")
-(declare-function google-contacts-data  "ext:google-contacts")
-(declare-function google-contacts-make-buffer "ext:google-contacts")
-(declare-function google-contacts-margin-element "ext:google-contacts")
-(declare-function google-contacts-oauth-token "ext:google-contacts")
-(declare-function xml-node-child-string "ext:google-contacts")
-(declare-function xml-node-get-attribute-type "ext:google-contacts")
-(defvar google-contacts-history)
-(defvar google-contacts-expire-time)
-(defvar google-contacts-query-string)
+(defvar hyrolo-edit-hook nil
+  "Hook run when a HyRolo item is edited.")
 
 (declare-function hyrolo-fgrep-logical "hyrolo-logic")
 
