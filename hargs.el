@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    31-Oct-91 at 23:17:35
-;; Last-Mod:      5-Jul-23 at 00:45:15 by Bob Weiner
+;; Last-Mod:     11-Jul-23 at 10:36:27 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -33,6 +33,7 @@
 (require 'hypb)
 (require 'set)
 (require 'info)
+(require 'hmouse-drv)
 
 ;;; ************************************************************************
 ;;; Public variables
@@ -46,6 +47,20 @@
 
 (add-hook 'completion-setup-hook #'hargs:set-string-to-complete)
 (add-hook 'minibuffer-exit-hook  #'hargs:unset-string-to-complete)
+
+;;; ************************************************************************
+;;; Public declarations
+;;; ************************************************************************
+
+(declare-function ivy-dispatching-done "ext:ivy")
+(declare-function ivy-done "ext:ivy")
+(declare-function vertico--candidate "ext:vertico")
+(declare-function vertico--command-p "ext:vertico")
+(declare-function vertico--goto "ext:vertico")
+(declare-function vertico--update "ext:vertico")
+(declare-function vertico-exit "ext:vertico")
+(declare-function vertico-insert "ext:vertico")
+(declare-function vertico-mouse--index "ext:vertico")
 
 ;;; ************************************************************************
 ;;; Private functions
@@ -366,8 +381,9 @@ Handles all of the interactive argument types that `hargs:iform-read' does."
 	 ;; Event occurred within the minibufer-contents and return
 	 ;; just the contents before point so that those after are
 	 ;; deleted and more completions are shown.
-	 (setq mini (minibuffer-contents-no-properties))
-	 (list (substring mini 0 (max (- (point) (point-max)) (- (length mini)))) nil))
+         (let (mini)
+	   (setq mini (minibuffer-contents-no-properties))
+	   (list (substring mini 0 (max (- (point) (point-max)) (- (length mini)))) nil)))
 	((and (eq hargs:reading-type 'kcell)
 	      (eq major-mode 'kotl-mode)
 	      (not (looking-at "^$")))
@@ -602,7 +618,7 @@ See also documentation for `interactive'."
 		  (while (cond
 			  ((eq (aref iform i) ?*))
 			  ((eq (aref iform i) ?@)
-			   (hargs:selectevent-window)
+			   (hargs:select-event-window)
 			   t)
 			  ((eq (aref iform i) ?^)
 			   (handle-shift-selection))

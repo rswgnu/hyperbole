@@ -7,7 +7,7 @@
 ;; Author:       Bob Weiner
 ;; Maintainer:   Bob Weiner <rsw@gnu.org>, Mats Lidell <matsl@gnu.org>
 ;; Created:      06-Oct-92 at 11:52:51
-;; Last-Mod:      8-Jul-23 at 16:00:21 by Bob Weiner
+;; Last-Mod:     10-Jul-23 at 12:08:06 by Mats Lidell
 ;; Released:     03-Dec-22
 ;; Version:      8.0.1pre
 ;; Keywords:     comm, convenience, files, frames, hypermedia, languages, mail, matching, mouse, multimedia, outlines, tools, wp
@@ -88,9 +88,7 @@
   "Hyperbole customizations category."
   :group 'applications)
 
-(defgroup hyperbole-buttons nil
-  "Hyperbole explicit, global and implicit button customizations."
-  :group 'hyperbole)
+;; defgroup hyperbole-buttons is in "hib-social.el"
 
 (defgroup hyperbole-commands nil
   "Hyperbole command customizations."
@@ -161,6 +159,12 @@ Info documentation at \"(hyperbole)Top\".
 
 (defvar hyperbole--mark-even-if-inactive
   "Stores value of `mark-even-if-inactive' prior to enabling `hyperbole-mode'.")
+
+;;; ************************************************************************
+;;; Public declarations
+;;; ************************************************************************
+
+(declare-function vertico-mouse-mode "ext:vertico")
 
 ;;; ************************************************************************
 ;;; Other required Elisp libraries
