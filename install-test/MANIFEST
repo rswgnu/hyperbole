@@ -6,3 +6,4 @@ straight/.emacs              - Straight git package personal configuration
 tarball/.emacs               - Manual tarball personal configuration
 tarball/install-local.sh     - Manual tarball download and build script
 local/.emacs                 - Straight git package from local repo and branch
+elpaca/.emacs                - Elpaca package configuration (elpa-devel install)

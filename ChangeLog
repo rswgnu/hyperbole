@@ -1,3 +1,9 @@
+2023-07-24  Mats Lidell  <matsl@gnu.org>
+
+* Makefile (install-elpaca):
+  install-test/MANIFEST:
+  install-test/elpaca/.emacs: Add elpaca install test.
+
 2023-07-17  Bob Weiner  <rsw@gnu.org>
 
 * hypb-ert.el (require): Wrap 'eval-and-compile' call around this to force require
