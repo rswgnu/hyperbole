@@ -46,6 +46,12 @@
     of "hbut" which defines 'defal' and prevents compilation error when "hibtypes"
     tries to load this.
 
+2023-07-14  Mats Lidell  <matsl@gnu.org>
+
+* test/hmouse-drv-tests.el (hbut-pathname-line-test)
+    (hbut-pathname-line-test-duplicate):  Add tests for pathname with line
+    number specification.
+
 2023-07-13  Mats Lidell  <matsl@gnu.org>
 
 * test/hmouse-drv-tests.el (hbut-pathname-anchor-must-match-all)
