@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    23-Jan-94
-;; Last-Mod:      4-Jul-22 at 23:34:12 by Mats Lidell
+;; Last-Mod:     30-Jul-23 at 20:32:16 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -84,13 +84,21 @@ Setting this variable automatically makes it local to the current buffer.")
 
 (defun kfill:forward-line (&optional n)
   "Move N lines forward (backward if N is negative) to the start of line.
-If there isn’t room, go as far as possible (no error).  Always return 0."
+If there isn’t room, go as far as possible (no error).
+
+Return the count of lines left to move.  If moving forward, that is N minus
+the number of lines moved; if backward, N plus the number moved.
+
+  Always return 0."
   (unless (integerp n)
     (setq n 1))
-  (forward-visible-line n)
-  (unless (< n 0)
-    (skip-chars-forward "\n\r"))
-  0)
+  (let ((start-line (line-number-at-pos)))
+    (forward-visible-line n)
+    (unless (< n 0)
+      (skip-chars-forward "\n\r"))
+    (if (>= n 0)
+	(- n (min n (- (line-number-at-pos) start-line)))
+      (- n (max n (- (line-number-at-pos) start-line))))))
 
 (defun kfill:do-auto-fill ()
   (save-restriction
