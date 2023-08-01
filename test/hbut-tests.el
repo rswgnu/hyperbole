@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    30-may-21 at 09:33:00
-;; Last-Mod:     10-Jul-23 at 22:12:16 by Mats Lidell
+;; Last-Mod:     17-Jul-23 at 00:29:14 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -354,7 +354,7 @@ Needed since hyperbole expands all links to absolute paths and
       (should (hbut:at-p))
       (should (eq (hattr:get 'hbut:current 'actype) 'actypes::link-to-file))
       (hbut-tests:should-match-tmp-folder (buffer-substring-no-properties (point-min) (point-max)))
-      ;; Test that ibut:operate properly creates an in-buffer ibut from its in-memory form
+      ;; Test that ibut:operate produces an error and leaves in-buffer button unchanged
       (erase-buffer)
       (ibut:operate)
       (setq buf-str (buffer-substring-no-properties (point-min) (point-max)))
@@ -363,27 +363,27 @@ Needed since hyperbole expands all links to absolute paths and
       (should (eq (hattr:get 'hbut:current 'actype) 'actypes::link-to-file))
       (hbut-tests:should-match-tmp-folder (buffer-substring-no-properties (point-min) (point-max))))))
 
-(ert-deftest hbut-tests--ibut-operate--rename ()
-  "Test that unnamed ibut rename to `new-name' fails when `edit-flag' is nil.
+(ert-deftest hbut-tests--ibut-operate--fail-create-add-name ()
+  "Test that trying to add `new-name' to an unnamed ibutton fails when `edit-flag' is nil.
+See #10 for the proper way to add an ibutton name.
    |----+------+----------+--------+------+-----------------------------------------------|
    |  # | name | new-name | region | edit | operation                                     |
    |----+------+----------+--------+------+-----------------------------------------------|
-   |  2 | nil  | new-name | nil    | nil  | ERROR: Can't rename without edit flag         |
+   |  2 | nil  | new-name | nil    | nil  | ERROR: edit-flag must be t to set new-name    |
    |----+------+----------+--------+------+-----------------------------------------------|"
   (with-temp-buffer
     ;; Create in-buffer and in-memory ibut
-    (let ((ibut-str "<[name]> - /tmp")
-	  buf-str)
-      (insert ibut-str)
+    (let (buf-str)
+      (insert "/tmp")
       (goto-char 2)
       (should (hbut:at-p))
-      (should (eq (hattr:get 'hbut:current 'actype) 'actypes::link-to-file))
-      (hbut-tests:should-match-tmp-folder (buffer-substring-no-properties (point-min) (point-max)))
-      ;; Test that ibut:operate properly creates an in-buffer ibut from its in-memory form
-      (erase-buffer)
+      ;; Test that ibut:operate errors and leaves in-buffer button unchanged
+      (goto-char (point-min))
       (should-error (ibut:operate "new-name"))
       (setq buf-str (buffer-substring-no-properties (point-min) (point-max)))
-      (message buf-str))))
+      (message buf-str)
+      (should (hbut:at-p))
+      (hbut-tests:should-match-tmp-folder buf-str))))
 
 (ert-deftest hbut-tests--ibut-operate--name ()
   "Test that ibut get created with `name' from button attributes.
@@ -425,11 +425,12 @@ Needed since hyperbole expands all links to absolute paths and
       (should (hbut:at-p))
       (should (eq (hattr:get 'hbut:current 'actype) 'actypes::link-to-file))
       (hbut-tests:should-match-tmp-folder (buffer-substring-no-properties (point-min) (point-max)))
-      ;; Test that ibut:operate properly creates an in-buffer ibut from its in-memory form
-      (erase-buffer)
+      ;; Test that ibut:operate produces an error and leaves in-buffer button unchanged
       (should-error (ibut:operate "new-name"))
       (setq buf-str (buffer-substring-no-properties (point-min) (point-max)))
-      (message buf-str))))
+      (message buf-str)
+      (should (hbut:at-p))
+      (hbut-tests:should-match-tmp-folder buf-str))))
 
 (ert-deftest hbut-tests--ibut-operate--fail-rename-from-name-ignore-region ()
   "Test that named ibut rename to `new-name' fails; region active, `edit-flag' nil.
@@ -440,20 +441,23 @@ Needed since hyperbole expands all links to absolute paths and
    |----+------+----------+--------+------+-----------------------------------------------|"
   (with-temp-buffer
     ;; Create in-buffer and in-memory ibut
-    (let ((ibut-str "<[name]> - /tmp")
+    (let ((ibut-str "<[name]> - \"/tmp\"")
 	  buf-str)
       (insert ibut-str)
       (goto-char 2)
       (should (hbut:at-p))
       (should (eq (hattr:get 'hbut:current 'actype) 'actypes::link-to-file))
       (hbut-tests:should-match-tmp-folder (buffer-substring-no-properties (point-min) (point-max)))
-      ;; Test that ibut:operate properly creates an in-buffer ibut from its in-memory form
-      (erase-buffer)
-      (insert "words in buffer\n")
+      ;; Test that ibut:operate produces an error and leaves in-buffer button unchanged
+      (goto-char (point-min))
+      (insert "words in buffer ")
       (mark-whole-buffer)
       (should-error (ibut:operate "new-name"))
       (setq buf-str (buffer-substring-no-properties (point-min) (point-max)))
-      (message buf-str))))
+      (message buf-str)
+      (goto-char (- (point-max) 2))
+      (should (hbut:at-p))
+      (hbut-tests:should-match-tmp-folder buf-str))))
 
 (ert-deftest hbut-tests--ibut-operate--name-ignore-region ()
   "Test creation of a named ibut and ignore region.
@@ -506,32 +510,31 @@ Needed since hyperbole expands all links to absolute paths and
       (hbut-tests:should-match-tmp-folder buf-str)
       (should (equal "region" (hattr:get 'hbut:current 'name))))))
 
-(ert-deftest hbut-tests--ibut-operate--new-name-ignore-region ()
+(ert-deftest hbut-tests--ibut-operate--fail-new-name-ignore-region ()
   "Test creation of a named ibut and ignore region.
    |----+------+----------+--------+------+-----------------------------------------------|
    |  # | name | new-name | region | edit | operation                                     |
    |----+------+----------+--------+------+-----------------------------------------------|
-   |  8 | nil  | new-name | region | nil  | create: ibut with new-name (ignore region)    |
+   |  8 | nil  | new-name | region | nil  | ERROR: edit-flag must be t to set new-name    |
    |----+------+----------+--------+------+-----------------------------------------------|"
   (skip-unless nil) ;; TODO: Disabled until ibut:operate is fixed
   (with-temp-buffer
     ;; Create in-buffer and in-memory ibut
     (let ((ibut-str "/tmp")
 	  buf-str)
-      (insert ibut-str "\nabcd")
+      (insert "abcd " ibut-str)
       (mark-whole-buffer)
-      (goto-char 2)
+      (goto-char (- (point-max) 2))
       (should (hbut:at-p))
       (should (region-active-p))
       (should (eq (hattr:get 'hbut:current 'actype) 'actypes::link-to-file))
       ;; Test that ibut:operate properly creates an in-buffer ibut from its in-memory form
-      (erase-buffer)
-      (ibut:operate "new-name"))
+      (should-error (ibut:operate "new-name"))
       (setq buf-str (buffer-substring-no-properties (point-min) (point-max)))
       (message buf-str)
       (should (hbut:at-p))
       (should (eq (hattr:get 'hbut:current 'actype) 'actypes::link-to-file))
-      (hbut-tests:should-match-tmp-folder (buffer-substring-no-properties (point-min) (point-max)))))
+      (hbut-tests:should-match-tmp-folder (buffer-substring-no-properties (point-min) (point-max))))))
 
 (ert-deftest hbut-tests--ibut-operate--remove-name ()
   "Test removal of any name from ibut at point.
@@ -563,7 +566,7 @@ Needed since hyperbole expands all links to absolute paths and
    |----+------+----------+--------+------+-----------------------------------------------|
    |  # | name | new-name | region | edit | operation                                     |
    |----+------+----------+--------+------+-----------------------------------------------|
-   | 10 | nil  | new-name | nil    | t    | mod: set ibut's name to new-name              |
+   | 10 | nil  | new-name | nil    | t    | mod: add new-name as ibut's name attribute    |
    |----+------+----------+--------+------+-----------------------------------------------|"
   (skip-unless nil) ;; TODO: Disabled until ibut:operate is fixed
   (with-temp-buffer
@@ -579,12 +582,12 @@ Needed since hyperbole expands all links to absolute paths and
       (message buf-str)
       (goto-char 2)
       (should (hbut:at-p))
+      (should (equal "new-name" (hattr:get 'hbut:current 'name)))
       (should (eq (hattr:get 'hbut:current 'actype) 'actypes::link-to-file))
-      (hbut-tests:should-match-tmp-folder (buffer-substring-no-properties (point-min) (point-max)))
-      (should (equal "new-name" (hattr:get 'hbut:current 'name))))))
+      (hbut-tests:should-match-tmp-folder (buffer-substring-no-properties (point-min) (point-max))))))
 
 (ert-deftest hbut-tests--ibut-operate--add-name ()
-  "Test addition of `name' to ibut at point.
+  "Test addition of `name' to ibut at point and any in-buffer copies.
    |----+------+----------+--------+------+-----------------------------------------------|
    |  # | name | new-name | region | edit | operation                                     |
    |----+------+----------+--------+------+-----------------------------------------------|
