@@ -1,5 +1,7 @@
 2023-07-30  Bob Weiner  <rsw@gnu.org>
 
+* hyperbole.el (hyperb:init): Fix potential unbound use of vertico-mouse-mode.
+
 * kotl/kotl-mode.el (kotl-mode:next-line, kotl-mode:previous-line): Fix that moving from
     2nd line to first triggers a begin-of-buffer error and the same at the end of the
     buffer.
