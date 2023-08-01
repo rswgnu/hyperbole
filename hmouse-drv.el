@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    04-Feb-90
-;; Last-Mod:     10-Jul-23 at 12:24:50 by Mats Lidell
+;; Last-Mod:     30-Jul-23 at 10:06:29 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -48,14 +48,14 @@ See function `hmouse-window-at-absolute-pixel-position' for more details.")
 (defvar action-key-depressed-flag nil "t while Action Key is depressed.")
 (defvar assist-key-depressed-flag nil "t while Assist Key is depressed.")
 (defvar action-key-depress-args nil
-  "List of mouse event args from most recent depress of the Action Key.")
+  "List of event args from most recent depress of the Action Mouse Key.")
 (defvar assist-key-depress-args nil
-  "List of mouse event args from most recent depress of the Assist Key.")
+  "List of event args from most recent depress of the Assist Mouse Key.")
 
 (defvar action-key-release-args nil
-  "List of mouse event args from most recent release of the Action Key.")
+  "List of event args from most recent release of the Action Mouse Key.")
 (defvar assist-key-release-args nil
-  "List of mouse event args from most recent release of the Assist Key.")
+  "List of event args from most recent release of the Assist Mouse Key.")
 
 (defvar action-key-depress-buffer nil
   "The last buffer in which the Action Key was depressed or nil.
@@ -334,11 +334,13 @@ unless the `action-key-default-function' variable is not bound to
 a valid function."
   (interactive)
   (action-key-clear-variables)
-  (prog1 (action-key-internal)
-    (run-hooks 'action-key-depress-hook 'action-key-release-hook)))
+  (unwind-protect
+      (prog1 (action-key-internal)
+	(run-hooks 'action-key-depress-hook 'action-key-release-hook))
+    (setq action-key-depressed-flag nil)))
 
 (defun action-key-internal ()
-  (setq action-key-depressed-flag nil)
+  (setq action-key-depressed-flag t)
   (when action-key-cancelled
     (setq action-key-cancelled nil
 	  assist-key-depressed-flag nil))
@@ -355,11 +357,13 @@ non-nil unless `assist-key-default-function' variable is not
 bound to a valid function."
   (interactive)
   (assist-key-clear-variables)
-  (prog1 (assist-key-internal)
-    (run-hooks 'assist-key-depress-hook 'assist-key-release-hook)))
+  (unwind-protect
+      (prog1 (assist-key-internal)
+	(run-hooks 'assist-key-depress-hook 'assist-key-release-hook))
+    (setq assist-key-depressed-flag nil)))
 
 (defun assist-key-internal ()
-  (setq assist-key-depressed-flag nil)
+  (setq assist-key-depressed-flag t)
   (when assist-key-cancelled
     (setq assist-key-cancelled nil
 	  action-key-depressed-flag nil))
@@ -791,13 +795,13 @@ buffer to the end window.  The selected window does not change."
 		   (if (fboundp #'aw-select) ;; ace-window selection
 		       (let ((aw-scope 'global))
 			 (aw-select "Select link referent window"))
-		     (message "Now click on the %s end window..." func)
-                     (let (end-event)
+		     (message "Now click on the end window...")
+		     (let (end-event)
 		       (prog1 (cl-loop do (setq end-event (read-event))
 				       until (and (mouse-event-p end-event)
 						  (not (string-match "\\`down-" (symbol-name (car end-event)))))
 				       finally return (posn-window (event-start end-event)))
-		         (message "Done"))))))))
+			 (message "Done"))))))))
     (when (eq link-but-window referent-window)
       (error "(hmouse-choose-link-and-referent-windows): No other visible window with a link referent"))
     (unless (window-live-p link-but-window)

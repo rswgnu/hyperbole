@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org> and Bob Weiner <rsw@gnu.org>
 ;;
 ;; Orig-Date:    31-Mar-21 at 21:11:00
-;; Last-Mod:      8-Jul-23 at 22:22:22 by Bob Weiner
+;; Last-Mod:     16-Jul-23 at 23:47:09 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -29,20 +29,32 @@
 
 ;;; Code:
 
-(mapc #'require '(lisp-mode hload-path ert hbut hargs))
+(eval-and-compile (mapc #'require '(lisp-mode hload-path ert hact hbut hargs)))
+
+(defun hypb-ert-message-function (_msg-pat &rest _args)
+  "Ignore messages ert outputs so can display messages from tests run."
+  ;; (identity (apply #'format msg-pat args)))))))
+  nil)
+
+(defun hypb-ert (selector)
+  (if (memq 'message-fn (actype:params #'ert-run-tests-interactively))
+      ;; Suppress ert messages so last test case message stays in the minibuffer;
+      ;; 3rd arg message-fn available only in Emacs 27 and earlier
+      (ert selector nil #'hypb-ert-message-function)
+    (ert selector)))
 
 (defun hypb-ert-run-test (test-name)
   "Run the specified TEST-NAME ert test."
   (hypb-ert-require-libraries)
   (let ((test-sym (intern-soft test-name)))
     (if test-sym
-	(ert test-sym nil #'hypb-ert-message-function)
+	(hypb-ert test-sym)
       (user-error "Invalid test name: %s" test-name))))
 
 (defun hypb-ert-run-tests (test-selector)
   "Run the specified TEST-SELECTOR defined ert test."
   (hypb-ert-require-libraries)
-  (ert (regexp-quote test-selector) nil #'hypb-ert-message-function))
+  (hypb-ert (regexp-quote test-selector)))
 
 (defun hypb-ert-get-require-symbols ()
   "Return the list of test Lisp library symbols to require."
@@ -60,7 +72,7 @@
   "Run every ert test."
   (interactive)
   (hypb-ert-require-libraries)
-  (ert t nil #'hypb-ert-message-function))
+  (hypb-ert t))
 
 ;; The following expression is true only when an ert-deftest has been
 ;; instrumented by edebug:
@@ -94,7 +106,7 @@ test when it is run."
     (when (and test-sym (ert-test-boundp test-sym))
       (when (and buffer-file-name (string-prefix-p hyperb:dir buffer-file-name))
 	(hypb-ert-require-libraries))
-      (ert test-sym nil #'hypb-ert-message-function))))
+      (hypb-ert test-sym))))
 
 (defib hyperbole-run-test-definition ()
   "If on the name in the first line of an ert test def, eval and run the test.
@@ -108,11 +120,6 @@ With an Assist Key press instead, edebug the test and step through it."
   (let ((test-name (hypb-ert-def-at-p)))
     (when test-name
       (hypb-ert-run-test-at-definition test-name t))))
-
-(defun hypb-ert-message-function (_msg-pat &rest _args)
-  "Ignore messages ert outputs so can display messages from tests run."
-  ;; (identity (apply #'format msg-pat args)))))))
-  nil)
 
 (provide 'hypb-ert)
 ;;; hypb-ert.el ends here

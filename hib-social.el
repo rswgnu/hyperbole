@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    20-Jul-16 at 22:41:34
-;; Last-Mod:     10-Jul-23 at 12:03:12 by Mats Lidell
+;; Last-Mod:     17-Jul-23 at 00:22:44 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -197,31 +197,38 @@
 
 (defcustom hibtypes-social-display-function #'browse-url
   "Function of one arg, url, to display when activating a social media reference."
-  :type 'function)
+  :type 'function
+  :group 'hyperbole-buttons)
 
 (defcustom hibtypes-git-default-project nil
   "Default project name to associate with any local git commit link."
-  :type 'string)
+  :type 'string
+  :group 'hyperbole-buttons)
 
 (defcustom hibtypes-git-use-magit-flag nil
   "Non-nil means use `magit' rather than `dired' for a git directory button."
-  :type 'boolean)
+  :type 'boolean
+  :group 'hyperbole-buttons)
 
 (defcustom hibtypes-github-default-project nil
   "Default project name to associate with any Github commit link."
-  :type 'string)
+  :type 'string
+  :group 'hyperbole-buttons)
 
 (defcustom hibtypes-github-default-user nil
   "Default user name to associate with any Github commit link."
-  :type 'string)
+  :type 'string
+  :group 'hyperbole-buttons)
 
 (defcustom hibtypes-gitlab-default-project nil
   "Default project name to associate with any Github commit link."
-  :type 'string)
+  :type 'string
+  :group 'hyperbole-buttons)
 
 (defcustom hibtypes-gitlab-default-user nil
   "Default user name to associate with any Github commit link."
-  :type 'string)
+  :type 'string
+  :group 'hyperbole-buttons)
 
 ;;; ************************************************************************
 ;;; Public declarations

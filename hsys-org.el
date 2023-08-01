@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     2-Jul-16 at 14:54:14
-;; Last-Mod:     21-May-23 at 04:32:45 by Bob Weiner
+;; Last-Mod:     30-Jul-23 at 09:18:01 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -153,7 +153,9 @@ an error."
 (defun hsys-org-cycle ()
   "Call `org-cycle' and set as `this-command' to cycle through all states."
   (setq this-command 'org-cycle)
-  (org-cycle))
+  (save-excursion
+    (org-back-to-heading)
+    (org-cycle)))
 
 (defun hsys-org-get-value (attribute)
   "Within the current Org context, return the ATTRIBUTE value."
@@ -167,7 +169,9 @@ an error."
 (defun hsys-org-global-cycle ()
   "Call `org-global-cycle' and set as `this-command' to cycle through all states."
   (setq this-command 'org-cycle)
-  (org-global-cycle nil))
+  (save-excursion
+    (org-back-to-heading)
+    (org-global-cycle nil)))
 
 (defun hsys-org-todo-cycle ()
   "Call `org-todo' and set as `this-command' to cycle through all states."

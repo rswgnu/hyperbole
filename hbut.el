@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    18-Sep-91 at 02:57:09
-;; Last-Mod:      9-Jul-23 at 02:09:54 by Bob Weiner
+;; Last-Mod:     15-Jul-23 at 23:22:28 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1950,9 +1950,12 @@ Insert INSTANCE-FLAG after END, before ending delimiter."
     ;; Insert any comment delimiter before the start marker.
     (set-marker-insertion-type start t)
     (hbut:comment start end)
-    (when (fboundp 'hproperty:but-add)
-      (hproperty:but-add start end hproperty:ibut-face))
-    (goto-char end)
+    (let ((delim-end (point)))
+      (unless (looking-at ibut:label-separator-regexp)
+	(insert ibut:label-separator))
+      (when (fboundp 'hproperty:but-add)
+	(hproperty:but-add start end hproperty:ibut-face))
+      (goto-char delim-end))
     (move-marker start nil)
     (move-marker end nil)
     t))
@@ -2018,8 +2021,8 @@ arguments).  If delimiters are given as arguments, return the key form
 of the implicit button text at point between those delimiters.
 
 Use `ibut:at-p' instead to test if point is on either the
-implicit button text itself or the label. Assume point is within the
-first line of any button label.
+implicit button text itself or the name. Assume point is within the
+first line of any button.
 
 All following arguments are optional.  If AS-LABEL is non-nil, label is
 returned rather than the key derived from the label.  START-DELIM and
@@ -2172,6 +2175,12 @@ move to the first occurrence of the button."
 
 (defun    ibut:operate (&optional new-name edit-flag)
   "Insert/modify an ibutton based on `hbut:current' in current buffer.
+
+Caller must either call `hbut:at-p' or manually set the attributes of
+`hbut:current' prior to invoking this function.  If point is on an existing
+Hyperbole button, `edit-flag' must be set to t; otherwise, this may create
+a new ibutton inserted within the prior one, making the prior one unusable.
+
 Optional non-nil NEW-NAME is new name to give button.  With optional
 EDIT-FLAG non-nil, modify an existing in-buffer ibutton rather
 than creating a new one.
@@ -2187,19 +2196,19 @@ Summary of operations based on inputs (name arg comes from \\='hbut:current attr
 |----+------+----------+--------+------+-----------------------------------------------|
 |  # | name | new-name | region | edit | operation                                     |
 |----+------+----------+--------+------+-----------------------------------------------|
-|  1 | nil  | nil      | nil    | nil  | create: unnamed ibut from hbut:current attrs  |
-|  2 | nil  | new-name | nil    | nil  | ERROR: create can't rename without edit flag  |
-|  3 | name | nil      | nil    | nil  | create: ibut with name                        |
-|  4 | name | new-name | nil    | nil  | ERROR: create can't have name and new-name    |
-|  5 | name | new-name | region | nil  | ERROR: create can't have name and new-name    |
+|* 1 | nil  | nil      | nil    | nil  | create: unnamed ibut from hbut:current attrs  |
+|  2 | nil  | new-name | nil    | nil  | ERROR: edit-flag must be t to set new-name    |
+|* 3 | name | nil      | nil    | nil  | create: ibut with name                        |
+|* 4 | name | new-name | nil    | nil  | ERROR: create can't have name and new-name    |
+|* 5 | name | new-name | region | nil  | ERROR: create can't have name and new-name    |
 |  6 | name | nil      | region | nil  | create: ibut with name (ignore region)        |
-|  7 | nil  | nil      | region | nil  | create: region named ibut                     |
-|  8 | nil  | new-name | region | nil  | create: ibut with new-name (ignore region)    |
+|* 7 | nil  | nil      | region | nil  | create: region named ibut                     |
+|  8 | nil  | new-name | region | nil  | ERROR: edit-flag must be t to set new-name    |
 |----+------+----------+--------+------+-----------------------------------------------|
-|  9 | nil  | nil      | nil    | t    | mod: remove any name from ibut                |
-| 10 | nil  | new-name | nil    | t    | mod: set ibut's name to new-name              |
-| 11 | name | nil      | nil    | t    | mod: name of ibut from hbut:current attrs     |
-| 12 | name | new-name | nil    | t    | mod: rename ibut with name to new-name        |
+|* 9 | nil  | nil      | nil    | t    | mod: remove any name from ibut                |
+|*10 | nil  | new-name | nil    | t    | mod: add new-name as ibut's name attribute    |
+|*11 | name | nil      | nil    | t    | mod: name of ibut from hbut:current attrs     |
+|*12 | name | new-name | nil    | t    | mod: rename ibut with name to new-name        |
 | 13 | name | new-name | region | t    | ERROR: Can't use region to mod existing ibut  |
 | 14 | name | nil      | region | t    | ERROR: Can't use region to mod existing ibut  |
 | 15 | nil  | nil      | region | t    | ERROR: Can't use region to mod existing ibut  |
@@ -2211,13 +2220,14 @@ Summary of operations based on inputs (name arg comes from \\='hbut:current attr
 	 (region-flag (hmouse-use-region-p))
 	 (instance-flag))
     (unless actype
-      (hypb:error "(ibut:operate): hbut:current ibut actype (%s) must be non-nil"
-		  actype))
+      (hypb:error "(ibut:operate): hbut:current actype must be non-nil"))
     (when (and new-name (or (not (stringp new-name)) (string-empty-p new-name)))
       (hypb:error "(ibut:operate): 'new-name' value must be a non-empty string, not: '%s'"
 		  new-name))
     (when (and name new-name (not edit-flag))
       (hypb:error "(ibut:operate): 'edit-flag' must be t to rename a button (hbut:current name and new-name both given)"))
+    (when (and new-name (not edit-flag))
+      (hypb:error "(ibut:operate): 'edit-flag' must be t to rename a button"))
     (when (and region-flag edit-flag)
       (hypb:error "(ibut:operate): 'edit-flag' must be nil when region is highlighted to use region as new button name"))
 
@@ -2257,8 +2267,7 @@ Summary of operations based on inputs (name arg comes from \\='hbut:current attr
 				 (progn (insert new-name) (point))
 				 instance-flag))
 			      name-regexp 'include-delims))
-			    (at-but)
-			    ((hypb:error "(ibut:operate): No button matching: %s" name)))))
+			    (at-but))))
 		   (new-name
 		    ;; Add new-name to nameless button at point
 		    (goto-char (or (hattr:get 'hbut:current 'lbl-start) (point)))
@@ -2352,8 +2361,7 @@ Summary of operations based on inputs (name arg comes from \\='hbut:current attr
 		  (ibut:at-p)) ;; Sets lbl-key for non-delimited ibtypes
 	  (setq lbl-key (hattr:get 'hbut:current 'lbl-key))))
       (unless (and (stringp lbl-key) (not (string-empty-p lbl-key)))
-	(hypb:error "(ibut:operate): hbut:current ibut lbl-key '%s' must be non-nil"
-		    lbl-key)))
+	(hypb:error "(ibut:operate): hbut:current lbl-key must be non-nil")))
 
     (run-hooks (if edit-flag 'ibut-edit-hook 'ibut-create-hook))
 
@@ -2362,8 +2370,10 @@ Summary of operations based on inputs (name arg comes from \\='hbut:current attr
 
 (defun    ibut:insert-text (ibut)
   "Space, delimit and insert the activatable text of IBUT."
-  (when (not (string-empty-p (or (hattr:get ibut 'name) "")))
-    (insert ibut:label-separator))
+  (cond ((looking-at ibut:label-separator-regexp)
+	 (goto-char (match-end 0)))
+	((not (or (string-empty-p (or (hattr:get ibut 'name) ""))))
+	 (insert ibut:label-separator)))
   (let* ((orig-actype (or (hattr:get ibut 'actype)
 			  (hattr:get ibut 'categ)))
 	 (actype (or (actype:elisp-symbol orig-actype)
@@ -2464,33 +2474,38 @@ function, followed by a list of arguments for the actype, aside from
 the button NAME which is automatically provided as the first argument.
 
 For interactive creation, use `hui:ibut-create' instead."
-  ;; Throw an error if on a named or delimited Hyperbole button since
-  ;; cannot create another button within such contexts.
-  (when (hbut:at-p)
-    (let ((name (hattr:get 'hbut:current 'name))
-	  (lbl (hbut:key-to-label (hattr:get 'hbut:current 'lbl-key)))
-	  (lbl-start (hattr:get 'hbut:current 'lbl-start))
-	  (lbl-end (hattr:get 'hbut:current 'lbl-end)))
-      (when (or name lbl (and lbl-start lbl-end))
-	(error "(ibut:program): Cannot nest an ibut within the existing button: %s"
-	       (or name lbl (buffer-substring-no-properties lbl-start lbl-end))))))
-  (save-excursion
-    (let ((but-buf (current-buffer))
-	  (actype-sym (actype:action actype)))
-      (hui:buf-writable-err but-buf "ibut:program")
-      (hattr:clear 'hbut:current)
-      (hattr:set 'hbut:current 'name name)
-      (hattr:set 'hbut:current 'categ 'implicit)
-      (hattr:set 'hbut:current 'loc (hui:key-src but-buf))
-      (hattr:set 'hbut:current 'dir (hui:key-dir but-buf))
-      (if (or (and actype-sym (fboundp actype-sym))
-	      (functionp actype))
-	  (hattr:set 'hbut:current 'actype actype)
-	(error "actype arg must be a bound symbol (not a string): %S" actype))
-      (hattr:set 'hbut:current 'args args)
-      (condition-case err
-	  (ibut:operate)
-	(error "(ibut:program): name: %S actype: %S args: %S - %S" name actype args err)))))
+  (hui:buf-writable-err (current-buffer) "ibut:program")
+  (when (ebut:at-p)
+    (error "(ibut:program): Move off explicit button at point to create an implicit button"))
+  (let ((ibut (ibut:at-p)))
+    ;; Throw an error if on a named or delimited Hyperbole button since
+    ;; cannot create another button within such contexts.
+    (when ibut
+      (let ((name (hattr:get ibut 'name))
+	    (lbl (hbut:key-to-label (hattr:get ibut 'lbl-key)))
+	    (lbl-start (hattr:get ibut 'lbl-start))
+	    (lbl-end (hattr:get ibut 'lbl-end)))
+	(when (or name lbl (and lbl-start lbl-end))
+	  (error "(ibut:program): Cannot nest an ibut within the existing button: '%s'"
+		 (or name lbl (buffer-substring-no-properties lbl-start lbl-end))))))
+
+    (save-excursion
+      (let ((but-buf (current-buffer))
+	    (actype-sym (actype:action actype)))
+	(hui:buf-writable-err but-buf "ibut:program")
+	(hattr:clear 'hbut:current)
+	(hattr:set 'hbut:current 'name name)
+	(hattr:set 'hbut:current 'categ 'implicit)
+	(hattr:set 'hbut:current 'loc (hui:key-src but-buf))
+	(hattr:set 'hbut:current 'dir (hui:key-dir but-buf))
+	(if (or (and actype-sym (fboundp actype-sym))
+		(functionp actype))
+	    (hattr:set 'hbut:current 'actype actype)
+	  (error "actype arg must be a bound symbol (not a string): %S" actype))
+	(hattr:set 'hbut:current 'args args)
+	(condition-case err
+	    (ibut:operate)
+	  (error "(ibut:program): name: %S actype: %S args: %S - %S" name actype args err))))))
 
 (defun    ibut:rename (old-lbl new-lbl)
   "Change an implicit button name in the current buffer from OLD-LBL to NEW-LBL.

@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    6/30/93
-;; Last-Mod:     21-Jun-23 at 21:03:59 by Bob Weiner
+;; Last-Mod:     30-Jul-23 at 20:26:19 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1901,19 +1901,25 @@ The paragraph marked is the one that contains point or follows point."
   (interactive "p")
   (kotl-mode:maintain-region-highlight)
   (kotl-mode:set-temp-goal-column)
-  (let ((orig-arg arg))
+  (let ((lines-left 0))
     (cond ((> arg 0)
-	   (while (and (> arg 0) (= 0 (kfill:forward-line 1)))
+	   (while (and (> arg 0)
+		       (= 0 (setq lines-left (+ lines-left (kfill:forward-line 1)))))
 	     (cond ((kotl-mode:eobp)
-		    (kfill:forward-line -1)
-		    (goto-char (kcell-view:end-contents))
-		    (and (called-interactively-p 'interactive) (= orig-arg arg)
-			 (message "(kotl-mode:next-line): End of buffer") (beep))
 		    (setq arg 0))
 		   ;; Visible blank line between cells
 		   ((and (looking-at "^$") (not (eq (kproperty:get (point) 'invisible) t)))
 		    nil) ;; Don't count this line.
-		   (t (setq arg (1- arg)))))
+		   (t
+		    (setq arg (1- arg)))))
+	   (when (kotl-mode:eobp)
+	     (when (zerop lines-left)
+	       (setq lines-left 1))
+	     (kfill:forward-line -1)
+	     (goto-char (kcell-view:end-contents)))
+	   (when (/= lines-left 0)
+	     (and (called-interactively-p 'interactive)
+		  (message "(kotl-mode:next-line): End of buffer") (beep)))
 	   (kotl-mode:line-move 0)
 	   (kotl-mode:to-valid-position))
 	  ((< arg 0)
@@ -1938,22 +1944,21 @@ non-nil iff there is a next tree within the koutline."
   (interactive "p")
   (kotl-mode:maintain-region-highlight)
   (kotl-mode:set-temp-goal-column)
-  (let ((orig-arg arg))
-    (cond ((> arg 0)
-	   (while (and (> arg 0) (= 0 (kfill:forward-line -1)))
-	     (cond ((kotl-mode:bobp)
-		    (kotl-mode:beginning-of-cell)
-		    (and (called-interactively-p 'interactive) (= orig-arg arg)
-			 (message "(kotl-mode:previous-line): Beginning of buffer") (beep))
-		    (setq arg 0))
-		   ;; Visible blank line between cells
-		   ((and (looking-at "^$") (not (eq (kproperty:get (point) 'invisible) t)))
-		    nil) ;; Don't count this line.
-		   (t (setq arg (1- arg)))))
-	   (kotl-mode:line-move 0)
-	   (kotl-mode:to-valid-position))
-	  ((< arg 0)
-	   (kotl-mode:next-line (- arg)))))
+  (cond ((> arg 0)
+	 (while (and (> arg 0)
+		     (not (kotl-mode:bobp))
+		     (= 0 (kfill:forward-line -1)))
+	   ;; Skip any visible blank line between cells
+	   (unless (and (looking-at "^$") (not (eq (kproperty:get (point) 'invisible) t)))
+	     (setq arg (1- arg))))
+	 (when (/= arg 0)
+	   (kotl-mode:beginning-of-cell)
+	   (and (called-interactively-p 'interactive)
+		(message "(kotl-mode:previous-line): Beginning of buffer") (beep)))
+	 (kotl-mode:line-move 0)
+	 (kotl-mode:to-valid-position))
+	((< arg 0)
+	 (kotl-mode:next-line (- arg))))
   (setq this-command 'previous-line)
   (point))
 
@@ -1998,7 +2003,7 @@ non-nil iff there is a next tree within the koutline."
 
 (defun kotl-mode:tail-cell ()
   "Move point to start of last visible cell at same level as current cell.
-Return t if successfull.
+Return t if successful.
 If at tail cell already, do nothing and return nil."
   (interactive "p")
   (kotl-mode:maintain-region-highlight)
@@ -3305,7 +3310,8 @@ newlines at end of tree."
       (vertical-motion -1)
       (beginning-of-line)
       (setq arg (1+ arg))))
-  (let ((col (or goal-column (if (consp temporary-goal-column) (car temporary-goal-column)
+  (let ((col (or goal-column (if (consp temporary-goal-column)
+				 (car temporary-goal-column)
 			       temporary-goal-column))))
     (move-to-column (if (numberp col) (round col) 0) nil)))
 
