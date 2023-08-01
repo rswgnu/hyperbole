@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    24-Aug-91
-;; Last-Mod:     19-Jun-23 at 12:54:03 by Bob Weiner
+;; Last-Mod:     30-Jul-23 at 13:50:59 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1398,12 +1398,12 @@ See the \"${hyperb:dir}/smart-clib-sym\" script for more information."
 		  ;; Signals an error if tag is not found which is caught by
 		  ;; many callers of this function.
 		  ;; Find exact identifier matches only.
-		  (with-no-warnings (find-tag (concat "\\`" (regexp-quote tag) "\\'") nil t)))))
+		  (with-no-warnings (xref-find-definitions tag)))))
 	  ((or tags-table-list tags-file-name)
 	   ;; Signals an error if tag is not found which is caught by
 	   ;; many callers of this function.
 	   ;; Find exact identifier matches only.
-	   (with-no-warnings (find-tag (concat "\\`" (regexp-quote tag) "\\'") nil t)))
+	   (with-no-warnings (xref-find-definitions tag)))
 	  (t
 	   (error "No existing tag tables in which to find `%s'" tag)))))
 

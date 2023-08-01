@@ -7,7 +7,7 @@
 ;; Author:       Bob Weiner
 ;; Maintainer:   Bob Weiner <rsw@gnu.org>, Mats Lidell <matsl@gnu.org>
 ;; Created:      06-Oct-92 at 11:52:51
-;; Last-Mod:     10-Jul-23 at 12:08:06 by Mats Lidell
+;; Last-Mod:     30-Jul-23 at 10:18:28 by Bob Weiner
 ;; Released:     03-Dec-22
 ;; Version:      8.0.1pre
 ;; Keywords:     comm, convenience, files, frames, hypermedia, languages, mail, matching, mouse, multimedia, outlines, tools, wp
@@ -488,8 +488,7 @@ frame, those functions by default still return the prior frame."
   ;;
   ;; When vertico-mode is used, vertico-mouse-mode is needed for the
   ;; Action Key to properly select completions from the candidate list.
-  (if (bound-and-true-p vertico-mode)
-      (vertico-mouse-mode 1)
+  (when (fboundp #'vertico-mode)
     (add-hook 'vertico-mode-hook (lambda () (vertico-mouse-mode 1))))
   ;;
   ;; Hyperbole initialization is complete.

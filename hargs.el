@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    31-Oct-91 at 23:17:35
-;; Last-Mod:     17-Jul-23 at 00:23:46 by Bob Weiner
+;; Last-Mod:     30-Jul-23 at 13:15:34 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -270,6 +270,18 @@ two variables `prompt' and `default'."
 		 iform-alist)
        ,vecsym)))
 
+;; Replicated from `vertico--match-p' in "vertico.el"
+(defun hargs:match-p (str)
+  "Return t if STR is a valid completion match."
+  (let ((rm minibuffer--require-match))
+    (or (memq rm '(nil confirm-after-completion))
+        (equal "" str) ;; Null completion, returns default value
+        (and (functionp rm) (funcall rm str)) ;; Emacs 29 supports functions
+        (test-completion str minibuffer-completion-table minibuffer-completion-predicate)
+        (if (eq rm 'confirm)
+	    (eq (ignore-errors (read-char "Confirm")) 13)
+          (minibuffer-message "Match required") nil))))
+
 (defun hargs:prompt (prompt default &optional default-prompt)
   "Return string of PROMPT including DEFAULT.
 Optional DEFAULT-PROMPT is used to describe default value."
@@ -349,40 +361,62 @@ Handles all of the interactive argument types that `hargs:iform-read' does."
 	      ;; Ensure vertico is prompting for an argument
 	      (vertico--command-p nil (current-buffer))
 	      (active-minibuffer-window))
-	 (if (and action-key-release-args
-		  (fboundp #'vertico-mouse--index)
-		  (eq (posn-window (event-end action-key-release-args))
-		      (active-minibuffer-window)))
-	     (with-selected-window (active-minibuffer-window)
-	       (let ((index (vertico-mouse--index action-key-release-args))
-		     mini)
-		 (if index
-		     (save-excursion
-		       (vertico--goto index)
-		       (vertico--update t)
-		       (vertico--candidate))
-		   ;; Assume event occurred within the
-		   ;; minibufer-contents and return just the contents
-		   ;; before point so that those after are deleted and
-		   ;; more completions are shown.
-		   (setq mini (minibuffer-contents-no-properties))
-		   ;; The minibuffer may have some read-only contents
-		   ;; at the beginning, e.g. M-x, not included in the 'mini'
-		   ;; string, so we have to offset the max index into
-		   ;; the string in such cases and protect against
-		   ;; when point is set into this read-only area with
-		   ;; the 'max' call below.
-		   (list (substring mini 0 (max (- (point) (point-max)) (- (length mini)))) nil))))
-	   (list (vertico--candidate) t)))
+	 (cond
+	  ((or
+	    ;; Action Key press
+	    (and action-key-depressed-flag
+		 (eq (selected-window) (active-minibuffer-window)))
+	    ;; Action Mouse Key press
+	    (and action-key-release-args
+		 (fboundp #'vertico-mouse--index)
+		 (eq (posn-window (event-end action-key-release-args))
+		     (active-minibuffer-window))))
+	   (with-selected-window (active-minibuffer-window)
+	     (let ((index (when (and action-key-release-args
+				     (fboundp #'vertico-mouse--index))
+			    (vertico-mouse--index action-key-release-args)))
+		   mini
+		   mini-to-point)
+	       (if index
+		   (save-excursion
+		     (vertico--goto index)
+		     (vertico--update t)
+		     (vertico--candidate))
+		 ;; Assume event occurred within the minibufer-contents
+		 ;; and return just the contents before point so
+		 ;; that those after are deleted and more
+		 ;; completions are shown.
+		 (setq mini (minibuffer-contents-no-properties))
+		 ;; The minibuffer may have some read-only contents
+		 ;; at the beginning, e.g. M-x, not included in the 'mini'
+		 ;; string, so we have to offset the max index into
+		 ;; the string in such cases and protect against
+		 ;; when point is set into this read-only area with
+		 ;; the 'max' call below.
+		 (setq mini-to-point (substring mini 0 (max (- (point) (point-max)) (- (length mini)))))
+		 (list (if (and (= (point) (point-max)) (string-empty-p mini-to-point))
+			   mini
+			 mini-to-point)
+		       nil)))))
+	  (t (list (vertico--candidate) t))))
 	((and (null hargs:reading-type)
-	      action-key-release-args
-	      (eq (posn-window (event-end action-key-release-args))
-		  (active-minibuffer-window)))
-	 ;; Event occurred within the minibufer-contents and return
+	      (or
+	       ;; Action Key press
+	       (and action-key-depressed-flag
+		    (eq (selected-window) (active-minibuffer-window)))
+	       ;; Action Mouse Key press
+	       (and action-key-release-args
+		    (eq (posn-window (event-end action-key-release-args))
+			(active-minibuffer-window)))))
+	 ;; Event occurred within the minibufer-contents.  Return
 	 ;; just the contents before point so that those after are
 	 ;; deleted and more completions are shown.
-	 (let ((mini (minibuffer-contents-no-properties)))
-	   (list (substring mini 0 (max (- (point) (point-max)) (- (length mini)))) nil)))
+	 (let* ((mini (minibuffer-contents-no-properties))
+		(mini-to-point (substring mini 0 (max (- (point) (point-max)) (- (length mini))))))
+	   (list (if (and (= (point) (point-max)) (string-empty-p mini-to-point))
+		     mini
+		   mini-to-point)
+		 nil)))
 	((and (eq hargs:reading-type 'kcell)
 	      (eq major-mode 'kotl-mode)
 	      (not (looking-at "^$")))
@@ -727,16 +761,23 @@ of value to be read."
 	  (switch-to-buffer obuf))))))
 
 (defun hargs:select-p (&optional value assist-bool)
-  "Return optional VALUE or value selected at point if any, else nil.
-If value is the same as the contents of the minibuffer, it is used as
-the current minibuffer argument, otherwise, the minibuffer is erased
-and value is inserted there.
-Optional ASSIST-BOOL non-nil triggers display of Hyperbole menu item
-help when appropriate."
+  "Return optional VALUE or value in the minibuffer if any, else nil.
+If VALUE is a list, it must be of the form:
+\(<str-to-compare-against-minibuffer-contents> <is-exact-completion-flag>).
+The first argument is then set to VALUE.  If
+<is-exact-completion-flag> is non-null, then Hyperbole will not try to
+show completions for VALUE when standard completion is used.
+
+If VALUE is the same as the contents of the minibuffer, it is
+used as the desired minibuffer argument and the minibuffer is
+exited; otherwise, the minibuffer is erased and VALUE is inserted
+there.  Optional ASSIST-BOOL non-nil triggers display of
+Hyperbole menu item help when appropriate."
   (when (and (> (minibuffer-depth) 0) (or value (setq value (hargs:at-p))))
     (let ((owind (selected-window)) (back-to)
 	  ;; This command requires recursive minibuffers.
-	  (enable-recursive-minibuffers t))
+	  (enable-recursive-minibuffers t)
+	  mini)
       (when (stringp value)
 	(setq value (list value nil)))
       (unwind-protect
@@ -744,6 +785,7 @@ help when appropriate."
 	    (setq str-value (and str-value (format "%s" str-value)))
 	    (select-window (minibuffer-window))
 	    (set-buffer (window-buffer (minibuffer-window)))
+	    (setq mini (minibuffer-contents-no-properties))
 	    (cond
 	     ;;
 	     ;; Selecting a Hyperbole minibuffer menu item
@@ -752,35 +794,38 @@ help when appropriate."
 		(setq hargs:reading-type 'hmenu-help))
 	      (hui:menu-enter str-value))
 	     ;;
-	     ;; Exit minibuffer and use its existing value as the desired parameter.
-	     ((string-equal str-value (minibuffer-contents))
-	      (goto-char (point-max))
-	      (cond
-	       ;; vertico-mode
-	       ((and (bound-and-true-p vertico-mode)
-		     ;; Ensure vertico is prompting for an argument
-		     (vertico--command-p nil (current-buffer)))
-		(vertico-exit))
-	       ;; ivy-mode
-	       ((bound-and-true-p ivy-mode)
-		(if assist-bool
-		    (ivy-dispatching-done)
-		  (ivy-done)))
-	       ;; standard minibuffer completion
-	       (t (exit-minibuffer))))
+	     ;; Exit minibuffer and use its existing value as the desired parameter
+	     ;; if value matches a completion and the minibuffer contents.
 	     ;;
-	     ;; Clear minibuffer and insert value.
+	     ;; with vertico-mode
+	     ((and (bound-and-true-p vertico-mode)
+		   ;; Ensure vertico is prompting for an argument
+		   (vertico--command-p nil (current-buffer))
+		   (string-equal str-value mini)
+		   (vertico--match-p str-value))
+	      (goto-char (point-max))
+	      (vertico-exit))
+	     ;; with ivy-mode
+	     ((and (bound-and-true-p ivy-mode)
+		   (string-equal str-value mini)
+		   (hargs:match-p str-value))
+	      (goto-char (point-max))
+	      (if assist-bool
+		  (ivy-dispatching-done)
+		(ivy-done)))
+	     ;; with standard minibuffer completion
+	     ((and (string-equal str-value mini)
+		   (hargs:match-p str-value))
+	      (goto-char (point-max))
+	      (exit-minibuffer))
+	     ;;
+	     ;; Value is different than minibuffer contents; clear
+	     ;; minibuffer and insert value.
 	     (t
 	      (delete-minibuffer-contents)
 	      (goto-char (point-max))
 	      (cond
-	       ;; ivy-mode
-	       ((bound-and-true-p ivy-mode)
-		(if assist-bool
-		    (ivy-dispatching-done)
-		  (ivy-done)))
-	       ;; standard minibuffer completion
-	       ;; vertico-mode
+	       ;; with vertico-mode
 	       ((and (bound-and-true-p vertico-mode)
 		     ;; Ensure vertico is prompting for an argument
 		     (vertico--command-p nil (current-buffer)))
@@ -788,6 +833,13 @@ help when appropriate."
 		    (insert str-value)
 		  (vertico-insert))
 		(vertico--update t))
+	       ;; with ivy-mode
+	       ((bound-and-true-p ivy-mode)
+		(insert str-value)
+		(if assist-bool
+		    (ivy-dispatching-done)
+		  (ivy-done)))
+	       ;; with standard minibuffer completion
 	       (t
 		(insert str-value)
 		(unless exact-completion-flag

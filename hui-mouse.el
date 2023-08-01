@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    04-Feb-89
-;; Last-Mod:     10-Jul-23 at 18:27:44 by Mats Lidell
+;; Last-Mod:     23-Jul-23 at 10:03:27 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -230,7 +230,7 @@ Its default value is `smart-scroll-down'.  To disable it, set it to
 	  (eq (selected-window) (minibuffer-window))
 	  (not (bound-and-true-p ivy-mode))
 	  (not (and (bound-and-true-p vertico-mode)
-		    ;; Ensure vertico is prompting for an argument
+		    ;; Is vertico is prompting for an argument?
 		    (vertico--command-p nil (current-buffer))))
 	  (not (eq hargs:reading-type 'hmenu))
 	  (not (smart-helm-alive-p)))
