@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    28-Feb-21 at 22:52:00
-;; Last-Mod:     13-Jul-23 at 00:45:55 by Mats Lidell
+;; Last-Mod:     14-Jul-23 at 23:40:55 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -270,6 +270,43 @@
         (should (buffer-file-name))
         (should (string= "hyperbole.el" (buffer-name))))
     (kill-buffer "hyperbole.el")))
+
+(ert-deftest hbut-pathname-line-test ()
+  "Pathname with line number specification."
+  (let ((file (make-temp-file "hypb" nil nil
+                              "Line1\nLine2\n")))
+    (unwind-protect
+        (with-temp-buffer
+          (insert (concat "\"" file ":1\""))
+          (goto-char 2)
+          (action-key)
+          (should (string= file (buffer-file-name)))
+          (should (looking-at "Line1")))
+      (hy-delete-file-and-buffer file))))
+
+(ert-deftest hbut-pathname-line-test-duplicate ()
+  "Pathname with line number specification, duplicate ibut to same file.
+
+BUG: See FIXME: The ibut link goes to the wrong line.  Is there a
+problem with a mix up when there are multiple ibuts to the same
+file but with different lines specifications?"
+  (let* ((file
+          (make-temp-file "hypb" nil nil
+                          "Line1\nLine2\n"))
+         (ibutfile
+           (make-temp-file "hypb" nil nil
+                           (concat "\"" file ":1\"" "\n" "\"" file ":2\"\n"))))
+    (unwind-protect
+        (progn
+          (find-file ibutfile)
+          (forward-line)
+          (should (looking-at-p (concat "\"" file ":2\"")))
+          (forward-char 2)
+          (action-key)
+          (should (string= file (buffer-file-name)))
+          (should (looking-at "Line1"))) ; FIXME: Should be looking a Line2
+      (hy-delete-file-and-buffer file)
+      (hy-delete-file-and-buffer ibutfile))))
 
 (ert-deftest hbut-pathname-anchor-test ()
   "Pathname with anchor."
