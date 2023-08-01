@@ -26,12 +26,17 @@
 
 * hsys-org.el (hsys-org-global-cycle, hsys-org-cycle): FIX: Temp move point to beginning
     of heading so TAB invocations cycle through all states properly.
+    
+2023-07-24  Mats Lidell  <matsl@gnu.org>
+
+* Makefile (install-elpaca):
+  install-test/MANIFEST:
+  install-test/elpaca/.emacs: Add elpaca install test.    
 
 2023-07-22  Bob Weiner  <rsw@gnu.org>
 
 * hargs.el (hargs:at-p): Make Action Keyboard Key behave the same as the Action Mouse
     Key when in the minibuffer, deleting any characters to the right of point to
-    increase the number of completions, if any are available.
 
 2023-07-17  Bob Weiner  <rsw@gnu.org>
 
