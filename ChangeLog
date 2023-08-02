@@ -1,3 +1,7 @@
+2023-08-02  Mats Lidell  <matsl@gnu.org>
+
+* .github/workflows/main.yml (jobs): Add version 29.1 to CI workflow.
+
 2023-07-30  Bob Weiner  <rsw@gnu.org>
 
 * hyperbole.el (hyperb:init): Fix potential unbound use of vertico-mouse-mode.
