@@ -71,7 +71,7 @@
     (let ((hsys-org-enable-smart-keys 'buttons))
       (org-mode)
       (insert "/tmp")
-      (goto-char 1)
+      (goto-char 2)
       (hy-test-helpers:hypb-function-should-call-hpath:find 'action-key "/tmp"))))
 
 ;; Org Link

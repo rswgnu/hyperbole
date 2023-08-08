@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    15-Oct-91 at 20:13:17
-;; Last-Mod:      1-Jul-23 at 10:57:39 by Bob Weiner
+;; Last-Mod:      6-Aug-23 at 14:13:50 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -435,7 +435,6 @@ documentation, not the full text."
 		(string-match "^Hy[.0-9]*[a-zA-Z0-9]*>$" (caar menu-alist)))
 	   ;; RET pressed on Hyperbole top-level menu prefix, reload
 	   ;; Smart Key handlers and minibuffer menus to reflect any updates.
-	   (load "hui-mini")
 	   (hmouse-update-smart-keys)
 	   (hyperbole-minibuffer-menu)
 	   (sit-for 2)

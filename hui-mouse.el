@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    04-Feb-89
-;; Last-Mod:     23-Jul-23 at 10:03:27 by Bob Weiner
+;; Last-Mod:      6-Aug-23 at 16:34:18 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -203,13 +203,6 @@ Its default value is `smart-scroll-down'.  To disable it, set it to
 	  (memq company-active-map (current-minor-mode-maps)))
      . ((smart-company-to-definition) . (smart-company-help)))
     ;;
-    ;; Handle any Org mode-specific contexts but give priority to Hyperbole
-    ;; buttons prior to cycling Org headlines
-    ((and (not (hyperb:stack-frame '(smart-org)))
-	  (let ((hrule:action #'actype:identity))
-	    (smart-org)))
-     . ((smart-org) . (smart-org)))
-    ;;
     ;; Treemacs hierarchical file manager
     ((eq major-mode 'treemacs-mode)
      . ((smart-treemacs) . (smart-treemacs)))
@@ -249,6 +242,13 @@ Its default value is `smart-scroll-down'.  To disable it, set it to
 	  (or (eq hargs:reading-type 'hmenu)
 	      (smart-helm-alive-p)))
      . ((funcall (key-binding (kbd "RET"))) . (funcall (key-binding (kbd "RET")))))
+    ;;
+    ;; Handle any Org mode-specific contexts but give priority to Hyperbole
+    ;; buttons prior to cycling Org headlines
+    ((and (not (hyperb:stack-frame '(smart-org)))
+	  (let ((hrule:action #'actype:identity))
+	    (smart-org)))
+     . ((smart-org) . (smart-org)))
     ;;
     ;; The ID-edit package supports rapid killing, copying, yanking and
     ;; display management. It is available only as a part of InfoDock.

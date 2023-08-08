@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    15-Nov-93 at 12:15:16
-;; Last-Mod:     17-Jun-23 at 16:50:34 by Bob Weiner
+;; Last-Mod:      7-Aug-23 at 22:29:59 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -107,13 +107,12 @@ return an absolute klink string.  Klink returned is of the form:
 REFERENCE should be a cell-ref or a string containing \"filename, cell-ref\".
 See documentation for `kcell:ref-to-id' for valid cell-ref formats."
   (interactive
-   ;; Don't change the name or delete default-dir used here.  It is referenced
-   ;; in "hargs.el" for argument getting.
-   (let ((default-dir default-directory))
-     (barf-if-buffer-read-only)
-     (save-excursion
-       (hargs:iform-read
-	(list 'interactive "*+LInsert link to <[file,] cell-id [|vspecs]>: ")))))
+   (barf-if-buffer-read-only)
+   ;; This `default-directory' setting is referenced in "hargs.el" for argument getting.
+   (hattr:set 'hbut:current 'dir default-directory)
+   (save-excursion
+     (hargs:iform-read
+      '(interactive "*+LInsert link to <[file,] cell-id [|vspecs]>: "))))
   (barf-if-buffer-read-only)
   ;; Reference generally is a string.  It may be a list as a string, e.g.
   ;; "(\"file\" \"cell\")", in which case, we remove the unneeded internal
@@ -121,8 +120,9 @@ See documentation for `kcell:ref-to-id' for valid cell-ref formats."
   (and (stringp reference) (> (length reference) 0)
        (eq (aref reference 0) ?\()
        (setq reference (replace-regexp-in-string "\\\"" "" reference nil t)))
-  (let ((default-dir default-directory)
-	file-ref cell-ref)
+  ;; This `default-directory' setting is referenced in "hargs.el" for getting arguments.
+  (hattr:set 'hbut:current 'dir default-directory)
+  (let (file-ref cell-ref)
     (setq reference (klink:parse reference)
 	  file-ref  (car reference)
 	  cell-ref  (nth 1 reference))
