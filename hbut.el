@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    18-Sep-91 at 02:57:09
-;; Last-Mod:     15-Jul-23 at 23:22:28 by Bob Weiner
+;; Last-Mod:      7-Aug-23 at 22:31:45 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1648,7 +1648,8 @@ attribute unless the button text is delimited.
 
 Any implicit button name must contain at least two characters,
 excluding delimiters, not just one."
-  (let* ((opoint (point))
+  (interactive)
+  (let* ((opoint (point-marker))
 	 (name-start-end (ibut:label-p t nil nil t t))
 	 (name       (nth 0 name-start-end))
 	 (name-end   (nth 2 name-start-end))
@@ -1705,8 +1706,12 @@ excluding delimiters, not just one."
 	    (hattr:set 'hbut:current 'name name))
 
 	  (when lbl-start
+	    (when (called-interactively-p 'any)
+	      (let (help-window-select)
+		(hbut:report)))
 	    t))
-      (goto-char opoint))))
+      (goto-char opoint)
+      (setq opoint nil))))
 
 (cl-defun ibut:create (&optional &key but-sym name lbl-key lbl-start lbl-end
 				 loc dir categ actype args action)
@@ -1764,7 +1769,7 @@ Store new button attributes in the symbol, \\='hbut:current."
 				      (>= text-end (point)))
 			   ;; Move to text of ibut before trying to activate it
 			   ;; (may be on name)
-			   (goto-char text-start))
+			   (goto-char (+ text-start 2)))
 			 (setq ibtype-point (point))
 			 (while (and (not is-type) types)
 			   (setq itype (car types))

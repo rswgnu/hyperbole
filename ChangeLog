@@ -1,3 +1,43 @@
+2023-08-06  Bob Weiner  <rsw@gnu.org>
+
+* hbut.el (ibut:create): Fix to move point inside the delimited text of an ibut rather than just
+    outside.
+          (ibut:set-name-and-label-key-p): Make interactive so can call and have 'hbut:current
+    attributes displayed.
+
+* hargs.el (hargs:iform-extensions-vector): Fix kcell read to not use a completion collection
+    but just a type.
+
+* hargs.el (hargs:reading-symbol): Remove, not needed, use 'hargs:reading-type'.
+
+* hyperbole.el: Remove '(hyperbole-mode 1)' call upon loading this file; was for compatibility
+    with prior Hyperbole versions but since V8, instructions have been to add that to personal
+    init.  Remove it as loading an Elisp file should not enable a minor mode.
+
+* hargs.el (hargs:make-iform-vector): Move saving of prev `hargs:reading-type' to here so does
+    not have to be done in multiple places elsewhere.
+           (hargs:iform-extensions-vector, hargs:iform-extensions-vector, hargs:iform-read):
+    Remove saving of prev `hargs:reading-type' here.
+
+* hargs.el (hargs:iform-extensions-vector): Remove setting of 'prev-reading-p' used to
+    restore 'hargs:reading-symbol' value after 'unwind-protect' code block runs for Info-node
+    and Info-index-item.  Should be 'hargs:reading-type' instead and this is handled
+    automatically by 'hargs:iform-read'.
+
+* hui-mouse.el (hkey-alist): Deprioritize `smart-org' to after hargs argument or minibuffer
+    menu reading.
+
+* hactypes.el (link-to-kcell, link-to-mail): Fix interactive call with Hyperbole extension
+    format to use `hargs:iform-read'.
+
+* hargs.el (hargs:at-p):
+  kotl/klink.el (klink:create): Fix storage of button source buffer default-directory since
+    dynamically bound let was not working due to shift to lexically-bound code.  Instead
+    store this value in the 'hbut:current 'dir property.
+
+* kotl/kfill.el (kfill:fallback-fill-paragraph): Add '(not (eq fill-paragraph-function t))'
+    to fix no function, basic fill case.
+
 2023-08-02  Mats Lidell  <matsl@gnu.org>
 
 * .github/workflows/main.yml (jobs): Add version 29.1 to CI workflow.
@@ -32,12 +72,12 @@
 
 * hsys-org.el (hsys-org-global-cycle, hsys-org-cycle): FIX: Temp move point to beginning
     of heading so TAB invocations cycle through all states properly.
-    
+
 2023-07-24  Mats Lidell  <matsl@gnu.org>
 
 * Makefile (install-elpaca):
   install-test/MANIFEST:
-  install-test/elpaca/.emacs: Add elpaca install test.    
+  install-test/elpaca/.emacs: Add elpaca install test.
 
 2023-07-22  Bob Weiner  <rsw@gnu.org>
 

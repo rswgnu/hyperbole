@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    23-Jan-94
-;; Last-Mod:     30-Jul-23 at 20:32:16 by Bob Weiner
+;; Last-Mod:      6-Aug-23 at 09:51:20 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -202,33 +202,36 @@ then adds the fill prefix at the beginning of each line."
   (save-excursion
     (end-of-line)
     ;; Backward to para begin
-    (re-search-backward (concat "\\`\\|" paragraph-separate))
-    (kfill:forward-line 1)
-    (let* ((region-start (point))
-	   (filladapt-mode
-	    (if prior-fill-prefix
-		;; filladapt-mode must be disabled for this command or it
-		;; will override the removal of prior-fill-prefix.
-		nil
-	      (or (if (boundp 'filladapt-mode) filladapt-mode)
-		  adaptive-fill-mode)))
-	   (adaptive-fill-mode filladapt-mode)
-	   from)
-      (kfill:forward-line -1)
-      (setq from (point))
-      (forward-paragraph)
-      ;; Forward to real paragraph end
-      (re-search-forward (concat "\\'\\|" paragraph-separate))
-      (or (= (point) (point-max)) (beginning-of-line))
-      (or leave-prefix
-	;; Remove any leading occurrences of `prior-fill-prefix'.
-	(kfill:replace-string prior-fill-prefix "" nil region-start (point)))
-      (or (and fill-paragraph-function
-	       (let ((function fill-paragraph-function)
-		     fill-paragraph-function)
-		 (goto-char region-start)
-		 (funcall function justify-flag)))
-	  (fill-region-as-paragraph from (point) justify-flag)))))
+    (when (re-search-backward (concat "\\`\\|" paragraph-separate) nil t)
+      (kfill:forward-line 1)
+      (let* ((region-start (point))
+	     (filladapt-mode
+	      (if prior-fill-prefix
+		  ;; filladapt-mode must be disabled for this command or it
+		  ;; will override the removal of prior-fill-prefix.
+		  nil
+		(or (when (boundp 'filladapt-mode)
+		      filladapt-mode)
+		    adaptive-fill-mode)))
+	     (adaptive-fill-mode filladapt-mode)
+	     from)
+	(kfill:forward-line -1)
+	(setq from (point))
+	(forward-paragraph)
+	;; Forward to real paragraph end
+	(when (re-search-forward (concat "\\'\\|" paragraph-separate) nil t)
+	  (unless (= (point) (point-max))
+	    (beginning-of-line))
+	  (unless leave-prefix
+	    ;; Remove any leading occurrences of `prior-fill-prefix'.
+	    (kfill:replace-string prior-fill-prefix "" nil region-start (point)))
+	  (or (and fill-paragraph-function
+		   (not (eq fill-paragraph-function t))
+		   (let ((func fill-paragraph-function)
+			 fill-paragraph-function)
+		     (goto-char region-start)
+		     (funcall func justify-flag)))
+	      (fill-region-as-paragraph from (point) justify-flag)))))))
 
 (defun kfill:hanging-list (paragraph)
   (let (prefix match beg end)

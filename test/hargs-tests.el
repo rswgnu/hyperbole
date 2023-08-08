@@ -44,9 +44,7 @@
 
 (ert-deftest hargs-get-verify-extension-characters-+K ()
   "Verify hyperbole extension character +K is indentified."
-  (cl-letf (((symbol-function 'hargs:read-match) (lambda (prompt a &optional b c d e) "xyz"))
-	    ((symbol-function 'kview:map-tree) (lambda (a b c d) nil))
-	    ((symbol-function 'kcell-view:visible-label) (lambda () nil)))
+  (cl-letf (((symbol-function 'hargs:read) (lambda (prompt &optional a b c d) "xyz")))
     (should (string= (hargs:get "+K: ") "xyz"))))
 
 ;; This file can't be byte-compiled without `with-simulated-input' which

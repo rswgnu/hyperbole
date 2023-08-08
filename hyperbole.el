@@ -7,7 +7,7 @@
 ;; Author:       Bob Weiner
 ;; Maintainer:   Bob Weiner <rsw@gnu.org>, Mats Lidell <matsl@gnu.org>
 ;; Created:      06-Oct-92 at 11:52:51
-;; Last-Mod:     31-Jul-23 at 23:47:17 by Bob Weiner
+;; Last-Mod:      6-Aug-23 at 20:10:00 by Bob Weiner
 ;; Released:     03-Dec-22
 ;; Version:      8.0.1pre
 ;; Keywords:     comm, convenience, files, frames, hypermedia, languages, mail, matching, mouse, multimedia, outlines, tools, wp
@@ -562,13 +562,6 @@ frame, those functions by default still return the prior frame."
     (hyperb:init)
   ;; Initialize after other key bindings are loaded at startup.
   (add-hook 'after-init-hook #'hyperb:init t))
-
-;; !! FIXME: This next expression activates Hyperbole for compatibility
-;; with prior releases where (require 'hyperbole) was enough to
-;; activate its key bindings.  However, loading a file should not
-;; change Emacs's behavior, so after educating users to add this
-;; next line to their Emacs initializations, it should be removed.
-(hyperbole-mode 1)
 
 (makunbound 'hyperbole-loading)
 

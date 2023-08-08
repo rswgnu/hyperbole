@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    23-Sep-91 at 20:34:36
-;; Last-Mod:     10-Jul-23 at 17:39:13 by Mats Lidell
+;; Last-Mod:      6-Aug-23 at 16:22:54 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -558,7 +558,7 @@ See documentation for `kcell:ref-to-id' for valid cell-ref formats.
 
 If FILE is nil, use the current buffer.
 If CELL-REF is nil, show the first cell in the view."
-  (interactive "fKotl file to link to: \n+KKcell to link to: ")
+  (interactive (hargs:iform-read '(interactive "fKotl file to link to: \n+KKcell to link to: ")))
   (require 'kfile)
   (cond	((if file
 	     (hpath:find file)
@@ -576,7 +576,7 @@ If CELL-REF is nil, show the first cell in the view."
   "Display mail msg with MAIL-MSG-ID from optional MAIL-FILE.
 See documentation for the variable `hmail:init-function' for
 information on how to specify a mail reader to use."
-  (interactive "+MMail Msg: ")
+  (interactive (hargs:iform-read '(interactive "+MMail Msg: ")))
   (if (not (fboundp 'rmail:msg-to-p))
       (hypb:error "(link-to-mail): Invoke mail reader before trying to follow a mail link")
     (if (and (listp mail-msg-id) (null mail-file))
@@ -599,10 +599,10 @@ information on how to specify a mail reader to use."
 (defact link-to-org-id (id)
   "Display the Org entry, if any, for ID."
   (when (stringp id)
-    (let (m
-	  (inhibit-message t)) ;; Inhibit org-id-find status msgs
-      (when (setq m (or (and (featurep 'org-roam) (org-roam-id-find id 'marker))
-			(org-id-find id 'marker)))
+    (let* ((inhibit-message t) ;; Inhibit org-id-find status msgs
+	   (m (or (and (featurep 'org-roam) (org-roam-id-find id 'marker))
+		  (org-id-find id 'marker))))
+      (when m
 	(hact 'link-to-org-id-marker m)))))
 
 (defact link-to-org-id-marker (marker)

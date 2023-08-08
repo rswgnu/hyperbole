@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    30-May-94 at 00:11:57
-;; Last-Mod:     21-May-23 at 10:17:38 by Bob Weiner
+;; Last-Mod:      6-Aug-23 at 12:31:42 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -127,6 +127,7 @@ mouse key the Paste Key instead of the Action Key."
   "Reload the contexts and actions associated with the Smart Keys.
 Use after any programmatic change is made."
   (interactive)
+  (load "hui-mini")
   (hkey-initialize)
   (makunbound 'hkey-alist)
   (makunbound 'hmouse-alist)
