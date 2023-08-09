@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    31-Oct-91 at 23:17:35
-;; Last-Mod:      6-Aug-23 at 22:14:05 by Bob Weiner
+;; Last-Mod:      9-Aug-23 at 00:16:24 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -61,6 +61,7 @@
 (declare-function vertico-exit "ext:vertico")
 (declare-function vertico-insert "ext:vertico")
 (declare-function vertico-mouse--index "ext:vertico")
+(declare-function vertico--match-p "ext:vertico")
 
 ;;; ************************************************************************
 ;;; Private functions
