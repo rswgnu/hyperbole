@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    30-Jan-21 at 12:00:00
-;; Last-Mod:      9-Aug-23 at 00:44:54 by Bob Weiner
+;; Last-Mod:      9-Aug-23 at 00:52:32 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -447,7 +447,6 @@
           (insert "{C-h A}")
           (goto-char 3)
           (action-key)
-	  (hy-test-helpers:consume-input-events)
 	  (if (get-buffer help-buffer)
               (should (get-buffer help-buffer))
 	    (print (current-buffer))
