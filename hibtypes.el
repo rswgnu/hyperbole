@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 20:45:31
-;; Last-Mod:      8-Jul-23 at 14:02:33 by Bob Weiner
+;; Last-Mod:      9-Aug-23 at 00:04:58 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -790,7 +790,7 @@ END-DELIM."
          (end-pos (nth 2 label-start-end))
          but-key lbl-key key-file partial-lbl)
     (when label-and-file
-      (setq label-and-file (parse-label-and-file label-and-file)
+      (setq label-and-file (hlink:parse-label-and-file label-and-file)
             partial-lbl (nth 0 label-and-file)
             but-key (hbut:label-to-key partial-lbl)
             key-file (nth 1 label-and-file)
@@ -798,7 +798,7 @@ END-DELIM."
       (ibut:label-set (hbut:key-to-label lbl-key) start-pos end-pos)
       (hact link-actype but-key key-file))))
 
-(defun parse-label-and-file (label-and-file)
+(defun hlink:parse-label-and-file (label-and-file)
   "Parse colon-separated string LABEL-AND-FILE into a list of label and file path."
   ;; Can't use split-string here because file path may contain colons;
   ;; we want to split only on the first colon.
@@ -809,7 +809,7 @@ END-DELIM."
     (while (< i len)
       (when (= ?: (aref label-and-file i))
         (when (zerop i)
-          (error "(parse-label-and-file): Missing label: '%s'" label-and-file))
+          (error "(hlink:parse-label-and-file): Missing label: '%s'" label-and-file))
         (setq label (hpath:trim (substring label-and-file 0 i))
               file (hpath:trim (substring label-and-file (1+ i))))
         (when (string-empty-p label) (setq label nil))

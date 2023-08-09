@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    10/18/2020
-;; Last-Mod:      8-Aug-23 at 23:09:41 by Bob Weiner
+;; Last-Mod:      9-Aug-23 at 00:07:51 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -142,12 +142,12 @@ If no previous line, exchange current with next line."
 	       (org-remap kotl-mode-overriding-orgtbl-mode-map cmd local-cmd)))
 	   (setq cmds
 		 (if orgtbl-optimized
-		     (nconc '(delete-backward-char
-			      delete-char
-			      delete-forward-char
-			      ;; self-insert-command
-			      )
-			    cmds)
+		     (append '(delete-backward-char
+			       delete-char
+			       delete-forward-char
+			       ;; self-insert-command
+			       )
+			     cmds)
 		   cmds)))))
     (error
      (setq kotl-mode-overriding-orgtbl-mode-map nil)

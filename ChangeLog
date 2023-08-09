@@ -1,5 +1,13 @@
 2023-08-08  Bob Weiner  <rsw@gnu.org>
 
+* hui-mini.el (hui:menus): Remove delq from top-level menu where never
+    dynamically delete entries.
+
+* hibtypes.el (parse-label-and-file): Rename to 'hlink:parse-label-and-file' to
+    prevent prefix byte-compiler warning.
+
+* kotl/klink.el (klink:create): Fix interactive spec.
+
 * test/hmouse-drv-tests.el (hbut-ib-create-label): Fix by allowing recursive minibuffers.
 
 * kotl/kotl-mode.el (kotl-mode:self-insert-command): Remove special kotl-mode auto-filling
