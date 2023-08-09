@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    23-Jan-94
-;; Last-Mod:      6-Aug-23 at 09:51:20 by Bob Weiner
+;; Last-Mod:      8-Aug-23 at 23:10:00 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -101,6 +101,7 @@ the number of lines moved; if backward, N plus the number moved.
       (- n (max n (- (line-number-at-pos) start-line))))))
 
 (defun kfill:do-auto-fill ()
+  "Kotl-mode auto-fill function.  Return t if any filling is done."
   (save-restriction
     (if (null fill-prefix)
 	(let ((paragraph-ignore-fill-prefix nil)

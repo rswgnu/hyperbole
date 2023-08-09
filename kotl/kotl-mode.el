@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    6/30/93
-;; Last-Mod:     30-Jul-23 at 20:26:19 by Bob Weiner
+;; Last-Mod:      8-Aug-23 at 22:52:40 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -3142,19 +3142,19 @@ overwritten, and the table is not marked as requiring realignment."
    (lambda () (orgtbl-self-insert-command n))))
 
 
-(defun kotl-mode:self-insert-command (n &optional c)
-  "Insert the character you type.
-Whichever character C you type to run this command is inserted.
-The numeric prefix argument N says how many times to repeat the insertion.
-Before insertion, `expand-abbrev’ is executed if the inserted character does
-not have word syntax and the previous character in the buffer does.
-After insertion, `internal-auto-fill’ is called if
-`auto-fill-function’ is non-nil and if the `auto-fill-chars’ table has
-a non-nil value for the inserted character.  At the end, it runs
-`post-self-insert-hook’."
-  (interactive (list (prefix-numeric-value current-prefix-arg) last-command-event))
-  (kcell-view:operate
-   (lambda () (self-insert-command n c))))
+;; (defun kotl-mode:self-insert-command (n &optional c)
+;;   "Insert the character you type.
+;; Whichever character C you type to run this command is inserted.
+;; The numeric prefix argument N says how many times to repeat the insertion.
+;; Before insertion, `expand-abbrev’ is executed if the inserted character does
+;; not have word syntax and the previous character in the buffer does.
+;; After insertion, `internal-auto-fill’ is called if
+;; `auto-fill-function’ is non-nil and if the `auto-fill-chars’ table has
+;; a non-nil value for the inserted character.  At the end, it runs
+;; `post-self-insert-hook’."
+;;   (interactive (list (prefix-numeric-value current-prefix-arg) last-command-event))
+;;   (kcell-view:operate
+;;    (lambda () (self-insert-command n c))))
 
 ;;; ************************************************************************
 ;;; Private functions
@@ -3322,7 +3322,7 @@ Mouse may have moved point outside of an editable area.
 `kotl-mode' adds this function to `pre-command-hook'."
   (when (and
 	 (memq this-command '(kotl-mode:orgtbl-self-insert-command
-			      kotl-mode:self-insert-command
+			      ;; kotl-mode:self-insert-command
 			      orgtbl-self-insert-command
 			      self-insert-command))
 	 (not (kview:valid-position-p))

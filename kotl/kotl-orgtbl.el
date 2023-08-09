@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    10/18/2020
-;; Last-Mod:     27-May-23 at 22:52:47 by Bob Weiner
+;; Last-Mod:      8-Aug-23 at 23:09:41 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -145,7 +145,8 @@ If no previous line, exchange current with next line."
 		     (nconc '(delete-backward-char
 			      delete-char
 			      delete-forward-char
-			      self-insert-command)
+			      ;; self-insert-command
+			      )
 			    cmds)
 		   cmds)))))
     (error

@@ -1,3 +1,14 @@
+2023-08-08  Bob Weiner  <rsw@gnu.org>
+
+* test/hmouse-drv-tests.el (hbut-ib-create-label): Fix by allowing recursive minibuffers.
+
+* kotl/kotl-mode.el (kotl-mode:self-insert-command): Remove special kotl-mode auto-filling
+    is handled by regular 'self-insert-command'.  This fixes improper hanging indent auto-
+    filling in kcells due to narrowing kcell to text contens only, hiding the cell prefix.
+                    (kotl-mode:pre-self-insert-command):
+  kotl/kotl-orgtbl.el (kotl-mode:setup-overriding-orgtbl-keymap): Remove reference to
+    'kotl-mode:self-insert-command'.
+
 2023-08-06  Bob Weiner  <rsw@gnu.org>
 
 * hbut.el (ibut:create): Fix to move point inside the delimited text of an ibut rather than just
