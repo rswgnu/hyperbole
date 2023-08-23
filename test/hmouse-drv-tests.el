@@ -112,7 +112,7 @@
           (goto-char 4)
           (action-key)
           (should (string= (expand-file-name "DEMO" hyperb:dir) buffer-file-name)))
-      (kill-buffer "DEMO")
+      (hy-test-helpers:kill-buffer "DEMO")
       (ibtype:delete 'ibtypes::defil-path-it))))
 
 (ert-deftest hbut-defil ()
@@ -213,7 +213,7 @@
   (with-temp-buffer
     (insert "\"/var/lib:/bar:/tmp:/foo\"")
     (goto-char 16)
-    (hy-test-helpers:action-key-should-call-hpath:find "/tmp")))
+    (hy-test-helpers:action-key-should-call-hpath:find (expand-file-name "tmp" "/"))))
 
 (ert-deftest hbut-pathname-path-variable-with-short-first-element-is-not-tramp-url-test ()
   "Path variable with three colons is not seen as a tramp url."
@@ -231,7 +231,7 @@
         (goto-char 2)
         (action-key)
         (should (string= "*mail*" (buffer-name))))
-    (kill-buffer "*mail*")))
+    (hy-test-helpers:kill-buffer "*mail*")))
 
 ;; Path name
 (ert-deftest hbut-pathname-test ()
@@ -241,7 +241,7 @@
         (goto-char 2)
         (action-key)
         (should (string= "DEMO" (buffer-name))))
-    (kill-buffer "DEMO")))
+    (hy-test-helpers:kill-buffer "DEMO")))
 
 (ert-deftest hbut-pathname-lisp-variable-test ()
   (unwind-protect
@@ -250,7 +250,7 @@
         (goto-char 2)
         (action-key)
         (should (string= "DEMO" (buffer-name))))
-    (kill-buffer "DEMO")))
+    (hy-test-helpers:kill-buffer "DEMO")))
 
 (ert-deftest hbut-pathname-env-variable-test ()
   (with-temp-buffer
@@ -270,7 +270,7 @@
         (should (equal major-mode 'emacs-lisp-mode))
         (should (buffer-file-name))
         (should (string= "hyperbole.el" (buffer-name))))
-    (kill-buffer "hyperbole.el")))
+    (hy-test-helpers:kill-buffer "hyperbole.el")))
 
 (ert-deftest hbut-pathname-line-test ()
   "Pathname with line number specification."
@@ -286,11 +286,7 @@
       (hy-delete-file-and-buffer file))))
 
 (ert-deftest hbut-pathname-line-test-duplicate ()
-  "Pathname with line number specification, duplicate ibut to same file.
-
-BUG: See FIXME: The ibut link goes to the wrong line.  Is there a
-problem with a mix up when there are multiple ibuts to the same
-file but with different lines specifications?"
+  "Pathname with line number specification, duplicate ibut to same file."
   (let* ((file
           (make-temp-file "hypb" nil nil
                           "Line1\nLine2\n"))
@@ -305,7 +301,7 @@ file but with different lines specifications?"
           (forward-char 2)
           (action-key)
           (should (string= file (buffer-file-name)))
-          (should (looking-at "Line1"))) ; FIXME: Should be looking a Line2
+          (should (looking-at "Line2")))
       (hy-delete-file-and-buffer file)
       (hy-delete-file-and-buffer ibutfile))))
 
@@ -389,7 +385,7 @@ file but with different lines specifications?"
         (should (string= "hypb.el" (buffer-name)))
         (should (= (line-number-at-pos) 11))
         (should (= (current-column) 5)))
-    (kill-buffer "hypb.el")))
+    (hy-test-helpers:kill-buffer "hypb.el")))
 
 (ert-deftest hbut-pathname-with-dash-loads-file-test ()
   "Pathname with dash loads file."
@@ -409,7 +405,7 @@ file but with different lines specifications?"
         (action-key)
         (should (string= "tmp" (buffer-name)))
         (should (eq major-mode 'dired-mode)))
-    (kill-buffer "tmp")))
+    (hy-test-helpers:kill-buffer "tmp")))
 
 (ert-deftest hbut-pathname-dot-slash-in-other-folder-should-fail-test ()
   "Pathname that starts with ./ only works if in same folder."
@@ -438,7 +434,7 @@ file but with different lines specifications?"
         (should (looking-at "\\[FSF 19\\] Free Software Foundation"))
         (forward-line -2)
         (should (looking-at "\\* References")))
-    (kill-buffer "DEMO")))
+    (hy-test-helpers:kill-buffer "DEMO")))
 
 ;; ctags
 ; Seems ctags -v does not give the proper answer
@@ -451,9 +447,8 @@ file but with different lines specifications?"
         (forward-char 4)
         (let ((default-directory (expand-file-name "test" hyperb:dir)))
           (action-key)
-          (set-buffer "hy-test-helpers.el")
           (should (looking-at "(defun hy-test-helpers:consume-input-events"))))
-    (kill-buffer "hy-test-helpers.el")))
+    (hy-test-helpers:kill-buffer "hy-test-helpers.el")))
 
 ;; etags
 ;; FIXME: Rewrite to not depend on hy-test-helpers.el
@@ -471,7 +466,7 @@ file but with different lines specifications?"
           (action-key)
           (set-buffer "hy-test-helpers.el")
           (should (looking-at "(defun hy-test-helpers:consume-input-events"))))
-    (kill-buffer "hy-test-helpers.el")))
+    (hy-test-helpers:kill-buffer "hy-test-helpers.el")))
 
 ;; text-toc
 (ert-deftest hbut-text-toc-test ()
@@ -483,7 +478,7 @@ file but with different lines specifications?"
         (action-key)
         (should (bolp))
         (should (looking-at "^* Koutliner")))
-    (kill-buffer "DEMO")))
+    (hy-test-helpers:kill-buffer "DEMO")))
 
 ;; dir-summary
 (ert-deftest hbut-dir-summary-test ()
@@ -496,8 +491,8 @@ file but with different lines specifications?"
         (let ((hpath:display-where 'this-window))
           (action-key)
           (should (string= "HY-ABOUT" (buffer-name)))))
-    (kill-buffer "MANIFEST")
-    (kill-buffer "HY-ABOUT")))
+    (hy-test-helpers:kill-buffer "MANIFEST")
+    (hy-test-helpers:kill-buffer "HY-ABOUT")))
 
 ;; rfc
 (ert-deftest hbut-rfc-test ()
@@ -527,7 +522,7 @@ file but with different lines specifications?"
         (goto-char 6)
         (action-key)
         (should (string= "*info*" (buffer-name))))
-    (kill-buffer "*info*")))
+    (hy-test-helpers:kill-buffer "*info*")))
 
 ;; exec-shell-cmd
 (ert-deftest hbut-find-exec-shell-cmd-test ()

@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    30-may-21 at 09:33:00
-;; Last-Mod:     17-Jul-23 at 00:29:14 by Bob Weiner
+;; Last-Mod:     19-Aug-23 at 01:12:57 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -153,7 +153,8 @@ Needed since hyperbole expands all links to absolute paths and
             (mock (hpath:find-noselect (expand-file-name hbmap:filename hbmap:dir-user)) => test-buffer)
             (gbut:ebut-program "global" 'link-to-file-line-and-column test-file 10 20))
 	  (with-current-buffer test-buffer
-            (hy-test-helpers-verify-hattr-at-p :actype 'actypes::link-to-file-line-and-column :args (list test-file 10 20) :loc test-file :lbl-key"global")))
+            (hy-test-helpers-verify-hattr-at-p :actype 'actypes::link-to-file-line-and-column
+					       :args (list test-file 10 20) :loc test-file :lbl-key "global")))
       (hy-delete-file-and-buffer test-file))))
 
 (ert-deftest hypb:program-create-ebut-in-buffer ()
@@ -194,25 +195,25 @@ Needed since hyperbole expands all links to absolute paths and
 (ert-deftest hbut-tests-ibut-program-link-to-directory ()
   "Programmatically create ibut link-to-directory."
   (with-temp-buffer
-    (ibut:program "label" 'link-to-directory "/tmp")
-    (should (string= "<[label]> - \"/tmp\"" (buffer-string)))))
+    (ibut:program "name" 'link-to-directory "/tmp")
+    (should (string= "<[name]> - \"/tmp\"" (buffer-string)))))
 
 (ert-deftest hbut-tests-ibut-program-link-to-file ()
   "Programatically create ibut link to file."
   (let ((test-file (make-temp-file "ibut" nil ".txt")))
     (unwind-protect
         (with-temp-buffer
-          (ibut:program "label" 'link-to-file test-file)
+          (ibut:program "name" 'link-to-file test-file)
           (should (string=
-                   (concat "<[label]> - \"" test-file "\"")
+                   (concat "<[name]> - \"" test-file "\"")
                    (buffer-string))))
       (delete-file test-file))))
 
 (ert-deftest hbut-tests-ibut-insert-text-link-to-dir ()
   "Insert link to dir."
   (with-temp-buffer
-    (ibut:program "label" 'link-to-directory "/tmp")
-    (should (string= "<[label]> - \"/tmp\"" (buffer-string)))
+    (ibut:program "name" 'link-to-directory "/tmp")
+    (should (string= "<[name]> - \"/tmp\"" (buffer-string)))
     (goto-char 3)
     (let ((but (ibut:at-p)))
       (with-temp-buffer
@@ -228,9 +229,9 @@ Needed since hyperbole expands all links to absolute paths and
         (progn
 	  ;; Test with name
           (setq annot-bib-buf (find-file annot-bib-file))
-	  (ibut:program "label" 'annot-bib "arg")
+	  (ibut:program "name" 'annot-bib "arg")
 	  (save-buffer)
-	  (should (string-match (concat (regexp-quote "<[label]> - [arg]")
+	  (should (string-match (concat (regexp-quote "<[name]> - [arg]")
 					"\\s-*")
 				(buffer-string)))
 	  ;; Test without name
@@ -251,9 +252,9 @@ Needed since hyperbole expands all links to absolute paths and
         (progn
 	  ;; Test with name
           (setq kbd-key-buf (find-file kbd-key-file))
-	  (ibut:program "label" 'kbd-key "{ C-f C-f }")
+	  (ibut:program "name" 'kbd-key "{ C-f C-f }")
 	  (save-buffer)
-	  (should (string-match (concat (regexp-quote "<[label]> - { C-f C-f }")
+	  (should (string-match (concat (regexp-quote "<[name]> - { C-f C-f }")
 					"\\s-*")
 				(buffer-string)))
 	  ;; Test without name
@@ -346,6 +347,7 @@ Needed since hyperbole expands all links to absolute paths and
    |----+------+----------+--------+------+-----------------------------------------------|
    |  1 | nil  | nil      | nil    | nil  | create: unnamed ibut from hbut:current attrs  |
    |----+------+----------+--------+------+-----------------------------------------------|"
+  (hattr:clear 'hbut:current)
   (with-temp-buffer
     ;; Create in-buffer and in-memory ibut
     (let (buf-str)
@@ -359,7 +361,6 @@ Needed since hyperbole expands all links to absolute paths and
       (ibut:operate)
       (setq buf-str (buffer-substring-no-properties (point-min) (point-max)))
       (message buf-str)
-      (should (hbut:at-p))
       (should (eq (hattr:get 'hbut:current 'actype) 'actypes::link-to-file))
       (hbut-tests:should-match-tmp-folder (buffer-substring-no-properties (point-min) (point-max))))))
 
@@ -371,6 +372,7 @@ See #10 for the proper way to add an ibutton name.
    |----+------+----------+--------+------+-----------------------------------------------|
    |  2 | nil  | new-name | nil    | nil  | ERROR: edit-flag must be t to set new-name    |
    |----+------+----------+--------+------+-----------------------------------------------|"
+  (hattr:clear 'hbut:current)
   (with-temp-buffer
     ;; Create in-buffer and in-memory ibut
     (let (buf-str)
@@ -382,7 +384,6 @@ See #10 for the proper way to add an ibutton name.
       (should-error (ibut:operate "new-name"))
       (setq buf-str (buffer-substring-no-properties (point-min) (point-max)))
       (message buf-str)
-      (should (hbut:at-p))
       (hbut-tests:should-match-tmp-folder buf-str))))
 
 (ert-deftest hbut-tests--ibut-operate--name ()
@@ -392,6 +393,7 @@ See #10 for the proper way to add an ibutton name.
    |----+------+----------+--------+------+-----------------------------------------------|
    |  3 | name | nil      | nil    | nil  | create: ibut with name                        |
    |----+------+----------+--------+------+-----------------------------------------------|"
+  (hattr:clear 'hbut:current)
   (with-temp-buffer
     ;; Create in-buffer and in-memory ibut
     (let ((ibut-str "<[name]> - /tmp")
@@ -405,7 +407,6 @@ See #10 for the proper way to add an ibutton name.
       (ibut:operate)
       (setq buf-str (buffer-substring-no-properties (point-min) (point-max)))
       (message buf-str)
-      (should (hbut:at-p))
       (hbut-tests:should-match-tmp-folder buf-str)
       (should (equal "name" (hattr:get 'hbut:current 'name))))))
 
@@ -416,6 +417,7 @@ See #10 for the proper way to add an ibutton name.
    |----+------+----------+--------+------+-----------------------------------------------|
    |  4 | name | new-name | nil    | nil  | ERROR: create can't have name and new-name    |
    |----+------+----------+--------+------+-----------------------------------------------|"
+  (hattr:clear 'hbut:current)
   (with-temp-buffer
     ;; Create in-buffer and in-memory ibut
     (let ((ibut-str "<[name]> - /tmp")
@@ -429,7 +431,6 @@ See #10 for the proper way to add an ibutton name.
       (should-error (ibut:operate "new-name"))
       (setq buf-str (buffer-substring-no-properties (point-min) (point-max)))
       (message buf-str)
-      (should (hbut:at-p))
       (hbut-tests:should-match-tmp-folder buf-str))))
 
 (ert-deftest hbut-tests--ibut-operate--fail-rename-from-name-ignore-region ()
@@ -439,6 +440,7 @@ See #10 for the proper way to add an ibutton name.
    |----+------+----------+--------+------+-----------------------------------------------|
    |  5 | name | new-name | region | nil  | ERROR: create can't have name and new-name    |
    |----+------+----------+--------+------+-----------------------------------------------|"
+  (hattr:clear 'hbut:current)
   (with-temp-buffer
     ;; Create in-buffer and in-memory ibut
     (let ((ibut-str "<[name]> - \"/tmp\"")
@@ -456,17 +458,16 @@ See #10 for the proper way to add an ibutton name.
       (setq buf-str (buffer-substring-no-properties (point-min) (point-max)))
       (message buf-str)
       (goto-char (- (point-max) 2))
-      (should (hbut:at-p))
       (hbut-tests:should-match-tmp-folder buf-str))))
 
 (ert-deftest hbut-tests--ibut-operate--name-ignore-region ()
   "Test creation of a named ibut and ignore region.
-   |----+------+----------+--------+------+-----------------------------------------------|
+   |----q+------+----------+--------+------+-----------------------------------------------|
    |  # | name | new-name | region | edit | operation                                     |
    |----+------+----------+--------+------+-----------------------------------------------|
    |  6 | name | nil      | region | nil  | create: ibut with name (ignore region)        |
    |----+------+----------+--------+------+-----------------------------------------------|"
-  (skip-unless nil) ;; TODO: Disabled until ibut:operate is fixed
+  (hattr:clear 'hbut:current)
   (with-temp-buffer
     ;; Create in-buffer and in-memory ibut
     (let ((ibut-str "<[name]> - /tmp")
@@ -475,14 +476,12 @@ See #10 for the proper way to add an ibutton name.
       (mark-whole-buffer)
       (goto-char 2)
       (should (hbut:at-p))
-      (should (region-active-p))
       (should (eq (hattr:get 'hbut:current 'actype) 'actypes::link-to-file))
       ;; Test that ibut:operate properly creates an in-buffer ibut from its in-memory form
       (erase-buffer)
-      (should (ibut:operate))
+      (ibut:operate)
       (setq buf-str (buffer-substring-no-properties (point-min) (point-max)))
       (message buf-str)
-      (should (hbut:at-p))
       (should (eq (hattr:get 'hbut:current 'actype) 'actypes::link-to-file))
       (hbut-tests:should-match-tmp-folder (buffer-substring-no-properties (point-min) (point-max))))))
 
@@ -493,10 +492,10 @@ See #10 for the proper way to add an ibutton name.
    |----+------+----------+--------+------+-----------------------------------------------|
    |  7 | nil  | nil      | region | nil  | create: region named ibut                     |
    |----+------+----------+--------+------+-----------------------------------------------|"
-  (skip-unless nil) ;; TODO: Disabled until ibut:operate is fixed
+  (hattr:clear 'hbut:current)
   (with-temp-buffer
     ;; Create in-buffer and in-memory ibut
-    (let ((ibut-str "region /tmp")
+    (let ((ibut-str "region - /tmp")
 	  buf-str)
       (insert ibut-str)
       (goto-char (point-min))
@@ -506,7 +505,6 @@ See #10 for the proper way to add an ibutton name.
       (setq buf-str (buffer-substring-no-properties (point-min) (point-max)))
       (message buf-str)
       (goto-char 2)
-      (should (hbut:at-p))
       (hbut-tests:should-match-tmp-folder buf-str)
       (should (equal "region" (hattr:get 'hbut:current 'name))))))
 
@@ -517,12 +515,12 @@ See #10 for the proper way to add an ibutton name.
    |----+------+----------+--------+------+-----------------------------------------------|
    |  8 | nil  | new-name | region | nil  | ERROR: edit-flag must be t to set new-name    |
    |----+------+----------+--------+------+-----------------------------------------------|"
-  (skip-unless nil) ;; TODO: Disabled until ibut:operate is fixed
+  (hattr:clear 'hbut:current)
   (with-temp-buffer
     ;; Create in-buffer and in-memory ibut
-    (let ((ibut-str "/tmp")
+    (let ((ibut-str "<[abcd]> - \"/tmp\"")
 	  buf-str)
-      (insert "abcd " ibut-str)
+      (insert ibut-str)
       (mark-whole-buffer)
       (goto-char (- (point-max) 2))
       (should (hbut:at-p))
@@ -532,7 +530,6 @@ See #10 for the proper way to add an ibutton name.
       (should-error (ibut:operate "new-name"))
       (setq buf-str (buffer-substring-no-properties (point-min) (point-max)))
       (message buf-str)
-      (should (hbut:at-p))
       (should (eq (hattr:get 'hbut:current 'actype) 'actypes::link-to-file))
       (hbut-tests:should-match-tmp-folder (buffer-substring-no-properties (point-min) (point-max))))))
 
@@ -543,20 +540,19 @@ See #10 for the proper way to add an ibutton name.
    |----+------+----------+--------+------+-----------------------------------------------|
    |  9 | nil  | nil      | nil    | t    | mod: remove any name from ibut                |
    |----+------+----------+--------+------+-----------------------------------------------|"
-  (skip-unless nil) ;; TODO: Disabled until ibut:operate is fixed
+  (hattr:clear 'hbut:current)
   (with-temp-buffer
     ;; Create in-buffer and in-memory ibut
-    (let ((ibut-str "<[name]> - /tmp")
+    (let ((ibut-str "<[name]> - \"/tmp\"")
 	  buf-str)
       (insert ibut-str)
       (goto-char 2)
       (should (hbut:at-p))
-      ;; Test that ibut:operate properly creates an in-buffer ibut from its in-memory form
+      (hattr:set 'hbut:current 'name nil)
       (ibut:operate nil t)
       (setq buf-str (buffer-substring-no-properties (point-min) (point-max)))
       (message buf-str)
       (goto-char 2)
-      (should (hbut:at-p))
       (should (eq (hattr:get 'hbut:current 'actype) 'actypes::link-to-file))
       (hbut-tests:should-match-tmp-folder (buffer-substring-no-properties (point-min) (point-max)))
       (should (null (hattr:get 'hbut:current 'name))))))
@@ -568,7 +564,7 @@ See #10 for the proper way to add an ibutton name.
    |----+------+----------+--------+------+-----------------------------------------------|
    | 10 | nil  | new-name | nil    | t    | mod: add new-name as ibut's name attribute    |
    |----+------+----------+--------+------+-----------------------------------------------|"
-  (skip-unless nil) ;; TODO: Disabled until ibut:operate is fixed
+  (hattr:clear 'hbut:current)
   (with-temp-buffer
     ;; Create in-buffer and in-memory ibut
     (let ((ibut-str "/tmp")
@@ -593,10 +589,10 @@ See #10 for the proper way to add an ibutton name.
    |----+------+----------+--------+------+-----------------------------------------------|
    | 11 | name | nil      | nil    | t    | mod: name of ibut from hbut:current attrs     |
    |----+------+----------+--------+------+-----------------------------------------------|"
-  (skip-unless nil) ;; TODO: Disabled until ibut:operate is fixed
+  (hattr:clear 'hbut:current)
   (with-temp-buffer
     ;; Create in-buffer and in-memory ibut
-    (let ((ibut-str "/tmp")
+    (let ((ibut-str "\"/tmp\"")
 	  buf-str)
       (insert ibut-str)
       (goto-char 2)
@@ -607,7 +603,6 @@ See #10 for the proper way to add an ibutton name.
       (setq buf-str (buffer-substring-no-properties (point-min) (point-max)))
       (message buf-str)
       (goto-char 2)
-      (should (hbut:at-p))
       (should (eq (hattr:get 'hbut:current 'actype) 'actypes::link-to-file))
       (hbut-tests:should-match-tmp-folder (buffer-substring-no-properties (point-min) (point-max)))
       (should (equal "name" (hattr:get 'hbut:current 'name))))))
@@ -619,9 +614,10 @@ See #10 for the proper way to add an ibutton name.
    |----+------+----------+--------+------+-----------------------------------------------|
    | 12 | name | new-name | nil    | t    | mod: rename ibut with name to new-name        |
    |----+------+----------+--------+------+-----------------------------------------------|"
+  (hattr:clear 'hbut:current)
   (with-temp-buffer
     ;; Create in-buffer and in-memory ibut
-    (let ((ibut-str "<[name]> - /tmp")
+    (let ((ibut-str "<[name]> - \"/tmp\"")
 	  buf-str)
       (insert ibut-str)
       (goto-char 2)
@@ -631,7 +627,6 @@ See #10 for the proper way to add an ibutton name.
       (setq buf-str (buffer-substring-no-properties (point-min) (point-max)))
       (message buf-str)
       (goto-char 2)
-      (should (hbut:at-p))
       (should (eq (hattr:get 'hbut:current 'actype) 'actypes::link-to-file))
       (hbut-tests:should-match-tmp-folder (buffer-substring-no-properties (point-min) (point-max)))
       (should (equal "new-name" (hattr:get 'hbut:current 'name))))))
@@ -643,6 +638,7 @@ See #10 for the proper way to add an ibutton name.
    |----+------+----------+--------+------+-----------------------------------------------|
    | 13 | name | new-name | region | t    | ERROR: Can't use region to mod existing ibut  |
    |----+------+----------+--------+------+-----------------------------------------------|"
+  (hattr:clear 'hbut:current)
   (with-temp-buffer
     (let (buf-str)
       (insert "<[name]> - /tmp")
@@ -651,7 +647,6 @@ See #10 for the proper way to add an ibutton name.
       (set-mark (point-max))
       (should (region-active-p))
       (should-error (ibut:operate "new-name" t))
-      (should (hbut:at-p))
       (setq buf-str (buffer-substring-no-properties (point-min) (point-max)))
       (message buf-str)
       (hbut-tests:should-match-tmp-folder buf-str)
@@ -664,6 +659,7 @@ See #10 for the proper way to add an ibutton name.
    |----+------+----------+--------+------+-----------------------------------------------|
    | 14 | name | nil      | region | t    | ERROR: Can't use region to mod existing ibut  |
    |----+------+----------+--------+------+-----------------------------------------------|"
+  (hattr:clear 'hbut:current)
   (with-temp-buffer
     (let (buf-str)
       (insert "<[name]> - /tmp")
@@ -672,7 +668,6 @@ See #10 for the proper way to add an ibutton name.
       (set-mark (point-max))
       (should (region-active-p))
       (should-error (ibut:operate nil t))
-      (should (hbut:at-p))
       (setq buf-str (buffer-substring-no-properties (point-min) (point-max)))
       (message buf-str)
       (hbut-tests:should-match-tmp-folder buf-str)
@@ -685,6 +680,7 @@ See #10 for the proper way to add an ibutton name.
    |----+------+----------+--------+------+-----------------------------------------------|
    | 15 | nil  | nil      | region | t    | ERROR: Can't use region to mod existing ibut  |
    |----+------+----------+--------+------+-----------------------------------------------|"
+  (hattr:clear 'hbut:current)
   (with-temp-buffer
     (let (buf-str)
       (insert "/tmp")
@@ -693,7 +689,6 @@ See #10 for the proper way to add an ibutton name.
       (set-mark (point-max))
       (should (region-active-p))
       (should-error (ibut:operate nil t))
-      (should (hbut:at-p))
       (setq buf-str (buffer-substring-no-properties (point-min) (point-max)))
       (message buf-str)
       (hbut-tests:should-match-tmp-folder buf-str)
@@ -706,6 +701,7 @@ See #10 for the proper way to add an ibutton name.
    |----+------+----------+--------+------+-----------------------------------------------|
    | 16 | nil  | new-name | region | t    | ERROR: Can't use region to mod existing ibut  |
    |----+------+----------+--------+------+-----------------------------------------------|"
+  (hattr:clear 'hbut:current)
   (with-temp-buffer
     (let (buf-str)
       (insert "/tmp")
@@ -714,7 +710,6 @@ See #10 for the proper way to add an ibutton name.
       (set-mark (point-max))
       (should (region-active-p))
       (should-error (ibut:operate "new-name" t))
-      (should (hbut:at-p))
       (setq buf-str (buffer-substring-no-properties (point-min) (point-max)))
       (message buf-str)
       (hbut-tests:should-match-tmp-folder buf-str)

@@ -199,8 +199,8 @@ link-end-position, (including delimiters)."
 		 (hpath:is-p (expand-file-name referent (hbut:get-key-src t t)))))
 	   ;; Eliminate matches to e-mail addresses like, <user@domain>
 	   (not (string-match "[^<> \t\n\r\f][!&@]" referent))
-	   ;; Eliminate matches to URLs
-	   (not (string-match "\\`[a-zA-Z]+:" referent))
+	   ;; Eliminate matches to URLs but allow for single char Windows path drive prefixes
+	   (not (string-match "\\`[a-zA-Z][a-zA-Z]+:" referent))
 	   ;; Don't match to <HTML> and </SGML> type tags
 	   (not (and (memq major-mode hui-select-markup-modes)
 		     ;; Assume , followed by a number is a klink.

@@ -113,7 +113,7 @@
     (unwind-protect
         (progn
           (find-file file)
-          (should (hact 'kbd-key "C-h h e c label RET RET link-to-directory RET RET"))
+          (should (hact 'kbd-key "C-h h e c label RET link-to-directory RET RET"))
           (hy-test-helpers:consume-input-events)
           (hy-test-helpers-verify-hattr-at-p :actype 'actypes::link-to-directory :args '("./") :loc file :lbl-key "label"))
       (hy-delete-file-and-buffer file))))
@@ -164,7 +164,7 @@ Ensure modifying the button but keeping the label does not create a double label
     (unwind-protect
         (progn
           (find-file file)
-          (should (hact 'kbd-key "C-h h e c label RET RET www-url RET www.example.com RET"))
+          (should (hact 'kbd-key "C-h h e c label RET www-url RET www.example.com RET"))
           (hy-test-helpers:consume-input-events)
           (hy-test-helpers-verify-hattr-at-p :actype 'actypes::www-url  :args '("www.example.com") :loc file :lbl-key "label"))
       (hy-delete-file-and-buffer file))))
@@ -176,7 +176,7 @@ Ensure modifying the button but keeping the label does not create a double label
     (unwind-protect
         (progn
           (find-file file)
-          (should (hact 'kbd-key "C-h h e c label RET RET exec-shell-cmd RET ls SPC /tmp RET y n C-x C-s"))
+          (should (hact 'kbd-key "C-h h e c label RET exec-shell-cmd RET ls SPC /tmp RET y n C-x C-s"))
           (hy-test-helpers:consume-input-events)
           (hy-test-helpers-verify-hattr-at-p :actype 'actypes::exec-shell-cmd :args '("ls /tmp" t nil) :loc file :lbl-key "label"))
       (hy-delete-file-and-buffer file))))
@@ -188,7 +188,7 @@ Ensure modifying the button but keeping the label does not create a double label
     (unwind-protect
         (progn
           (find-file file)
-          (should (hact 'kbd-key "C-h h e c emacs-package-button RET RET link-to-Info-index-item RET (emacs)packag TAB RET"))
+          (should (hact 'kbd-key "C-h h e c emacs-package-button RET link-to-Info-index-item RET (emacs)packag TAB RET"))
           (hy-test-helpers:consume-input-events)
           (hy-test-helpers-verify-hattr-at-p :actype 'actypes::link-to-Info-index-item :args '("(emacs)Package") :loc file :lbl-key "emacs-package-button"))
       (progn

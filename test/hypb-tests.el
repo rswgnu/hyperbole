@@ -42,27 +42,27 @@
 		     (string-match-p "\\`[a-f0-9]+\\'" commit)
 		     t)))))
   ;; elpa-devel package install -- hyperbole-8.0.0pre0.20220126.1138
-  (let ((hyperb:dir "/home/user/.emacs.d/elpa/hyperbole-8.0.0pre0.20220126.1138"))
+  (let ((hyperb:dir (expand-file-name "home/user/.emacs.d/elpa/hyperbole-8.0.0pre0.20220126.1138" "/")))
     (should (equal (hypb:installation-type) '("elpa-devel" "8.0.0pre0.20220126.1138"))))
   ;; melpa/quelpa package instball -- hyperbole-20220205.1429
-  (let ((hyperb:dir "/home/user/.emacs.d/elpa/hyperbole-20220126.1138"))
+  (let ((hyperb:dir (expand-file-name "home/user/.emacs.d/elpa/hyperbole-20220126.1138" "/")))
     (should (equal (hypb:installation-type) '("melpa" "20220126.1138"))))
   ;; git install -- hyperbole d43d05a097
-  (let ((hyperb:dir "/a_git_folder"))
+  (let ((hyperb:dir (expand-file-name "a_git_folder" "/")))
     (with-mock
-      (mock (file-exists-p "/a_git_folder/.git") => t)
+      (mock (file-exists-p (expand-file-name ".git" hyperb:dir)) => t)
       (mock (shell-command-to-string "git rev-parse HEAD") => "d43d05a0973e8adcbfdd8c85681dac5de669aaa9")
       (should (equal (hypb:installation-type) '("git" "d43d05a097")))))
   ;; elpa package install -- /elpa/hyperbole-8.0.0"
-  (let ((hyperb:dir "/home/user/.emacs.d/elpa/hyperbole-8.0.0"))
+  (let ((hyperb:dir (expand-file-name "home/user/.emacs.d/elpa/hyperbole-8.0.0" "/")))
     (should (equal (hypb:installation-type) '("elpa" "8.0.0"))))
   ;; tarball archive install -- hyperbole-8.0.0
-  (let ((hyperb:dir "/home/user/hyperbole-8.0.0"))
+  (let ((hyperb:dir (expand-file-name "home/user/hyperbole-8.0.0" "/")))
     (should (equal (hypb:installation-type) '("archive" "8.0.0"))))
   ;; unknown
-  (let ((hyperb:dir "/home/user/hyperbole"))
+  (let ((hyperb:dir (expand-file-name "home/user/hyperbole" "/")))
     (with-mock
-      (mock (file-exists-p "/home/user/hyperbole/.git") => nil)
+      (mock (file-exists-p (expand-file-name ".git" hyperb:dir)) => nil)
       (should (equal (car (hypb:installation-type)) "unknown")))))
 
 (ert-deftest hypb--oct-to-int ()

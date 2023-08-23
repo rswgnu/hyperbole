@@ -94,7 +94,9 @@
             (should (ebut:at-p))
             (action-key)
             (should (equal major-mode 'dired-mode))
-            (should (member default-directory '("/tmp/" "/private/tmp/")))))
+	    ;; Support c:/tmp on Windows too
+            (should (member default-directory (list (expand-file-name "tmp/" "/")
+						    "/private/tmp/")))))
       (hy-delete-file-and-buffer file1)
       (hy-delete-file-and-buffer file2))))
 

@@ -62,7 +62,9 @@
       (org-mode)
       (insert "/tmp")
       (goto-char 1)
-      (hy-test-helpers:hypb-function-should-call-hpath:find 'ibtypes::pathname "/tmp"))))
+      (hy-test-helpers:hypb-function-should-call-hpath:find
+       'ibtypes::pathname
+       (expand-file-name "tmp" "/")))))
 
 ;; Hyperbole Button
 (ert-deftest smart-org-mode-with-smart-keys-buttons-on-hypb-button-activates ()
@@ -72,7 +74,8 @@
       (org-mode)
       (insert "/tmp")
       (goto-char 2)
-      (hy-test-helpers:hypb-function-should-call-hpath:find 'action-key "/tmp"))))
+      (hy-test-helpers:hypb-function-should-call-hpath:find
+       'action-key (expand-file-name "tmp" "/")))))
 
 ;; Org Link
 (ert-deftest smart-org-mode-with-smart-keys-on-org-link-activates ()
