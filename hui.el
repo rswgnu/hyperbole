@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 21:42:03
-;; Last-Mod:     12-Aug-23 at 13:19:18 by Bob Weiner
+;; Last-Mod:     25-Aug-23 at 10:36:13 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -906,7 +906,7 @@ See `hbut:report'."
 (defalias 'hui:hbut-summarize #'hui:hbut-report)
 
 (defun hui:ibut-act (&optional ibut)
-  "Activate optional labeled implicit button symbol IBUT in current buffer.
+  "Activate optional named implicit button symbol IBUT in current buffer.
 Default is any implicit button at point."
   (interactive
    (let ((ibut (ibut:at-p)) (lst))
@@ -914,17 +914,17 @@ Default is any implicit button at point."
       (cond (ibut)
 	    ((setq lst (ibut:alist))
 	     (ibut:get (ibut:label-to-key
-			(hargs:read-match "Activate labeled implicit button: " lst nil t
+			(hargs:read-match "Activate named implicit button: " lst nil t
 					  (ibut:label-p 'as-label) 'ibut))))
 	    (t
-	     (hypb:error "(ibut-act): No labeled implicit buttons in buffer."))))))
-  (hui:hbut-operate #'ibut:act "Activate labeled implicit button: " ibut))
+	     (hypb:error "(ibut-act): No named implicit buttons in buffer."))))))
+  (hui:hbut-operate #'ibut:act "Activate named implicit button: " ibut))
 
 (defun hui:ibut-create (&optional start end)
   "Interactively create an implicit Hyperbole button at point.
-Use any label between optional START and END points (when interactive,
+Use any name between optional START and END points (when interactive,
 any active region).  Indicate button creation by delimiting
-and adding any necessary instance number to the button label.
+and adding any necessary instance number to the button name.
 
 For programmatic creation, use `ibut:program' instead."
   (interactive (list (when (use-region-p) (region-beginning))

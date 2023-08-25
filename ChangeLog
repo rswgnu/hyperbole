@@ -1,5 +1,8 @@
 2023-08-25  Bob Weiner  <rsw@gnu.org>
 
+* hbut.el (ibut:operate): Skip past any inserted comment chars prior to
+    ibut at point.
+
 * hbut.el (ibut:operate): Before call 'ibut:at-p', leave point after any opening
     ibut delimiters, since may have just deleted the button name, for example.
 

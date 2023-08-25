@@ -2364,6 +2364,9 @@ Summary of operations based on inputs (name arg comes from \\='hbut:current attr
 	  (ibut:insert-text 'hbut:current)))
 
       (goto-char (or start (max (- (point) 2) (point-min))))
+      ;; Skip past any inserted comment char
+      (skip-syntax-forward "-<")
+      ;; Skip past any name or label opening delim chars
       (skip-chars-forward "\"<{[| \t\n\r"))
 
     ;; Set all in-memory hbut attributes for any button at point
