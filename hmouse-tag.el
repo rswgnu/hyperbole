@@ -758,7 +758,7 @@ Return matching Elisp tag name that point is within, else nil."
 Return nil when point is on the first line of a non-alias Lisp definition.
 
 Resolve Hyperbole implicit button type and action type references."
-  (smart-lisp-htype-tag 
+  (smart-lisp-htype-tag
    (smart-lisp-at-non-htype-tag-p no-flash)))
 
 (defun smart-lisp-at-non-htype-tag-p (&optional no-flash)

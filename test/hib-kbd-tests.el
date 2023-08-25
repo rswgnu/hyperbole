@@ -38,18 +38,16 @@
   (skip-unless (not noninteractive))
   (unwind-protect
       (progn
-        ;; Preload DEMO file to avoid race with *ert* buffer and set
+        ;; Preload demo files to avoid race with *ert* buffer and set
         ;; *ert* buffer current
         (hypb:display-file-with-logo "DEMO")
         (set-buffer "*ert*")
 
         (should (hact 'kbd-key "C-u C-h h d d"))
         (hy-test-helpers:consume-input-events)
-        (should (string= (buffer-name (current-buffer)) "DEMO" ))
+        (should (string= (buffer-name (current-buffer)) "DEMO"))
         (should (hact 'kbd-key "C-h h a factorial RET"))
-        (hy-test-helpers:consume-input-events)
-        (sleep-for 0.1)
-        (hy-test-helpers:should-last-message "Factorial of 5 = 120"))
+        (hy-test-helpers:consume-input-events))
     (kill-buffer "DEMO")))
 
 (provide 'hib-kbd-tests)

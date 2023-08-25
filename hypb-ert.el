@@ -78,7 +78,7 @@
 ;; instrumented by edebug:
 ;; (memq 'edebug-enter (flatten-tree (ert-test-body (ert-get-test test-sym))))
 
-(defun hypb-ert-def-at-p ()
+(defun hypb-ert-def-at-p (&optional start-end-flag)
   "Return test name if on the name in the first line of an ert test def."
   (unless (or (eolp)
 	      (memq (char-after (point))
@@ -88,7 +88,9 @@
       (when (looking-at (concat "(ert-deftest[ \t]+\\("
 				lisp-mode-symbol-regexp
 				"\\)[ \t]+("))
-	(match-string-no-properties 1)))))
+	(if start-end-flag
+	    (list (match-string-no-properties 1) (match-beginning 1) (match-end 1))
+	  (match-string-no-properties 1))))))
 
 (defun hypb-ert-run-test-at-definition (test-name &optional debug-it)
   "Assume on the name in the first line of an ert test def, eval and run the test.
@@ -111,9 +113,10 @@ test when it is run."
 (defib hyperbole-run-test-definition ()
   "If on the name in the first line of an ert test def, eval and run the test.
 With an Assist Key press instead, edebug the test and step through it."
-  (let ((test-name (hypb-ert-def-at-p)))
-    (when test-name
-      (hact 'hypb-ert-run-test-at-definition test-name))))
+  (let ((test-name-and-positions (hypb-ert-def-at-p t)))
+    (when test-name-and-positions
+      (apply #'ibut:label-set test-name-and-positions)
+      (hact 'hypb-ert-run-test-at-definition (car test-name-and-positions)))))
 
 (defun hyperbole-run-test-definition:help (_hbut)
   "If on the name in the first line of an ert test def, edebug the test."

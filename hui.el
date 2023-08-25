@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 21:42:03
-;; Last-Mod:     17-Jul-23 at 00:21:28 by Bob Weiner
+;; Last-Mod:     25-Aug-23 at 10:36:13 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -638,7 +638,7 @@ details."
 	            (when (hattr:get 'hbut:current 'lbl-end)
                       (let* ((start (hattr:get 'hbut:current 'lbl-start))
                              (end (hattr:get 'hbut:current 'lbl-end))
-                             (old-text (buffer-substring start end))
+                             (old-text (buffer-substring-no-properties start end))
                              (new-text (read-string "Edit ibut text: " old-text)))
 			(save-excursion
 			  (goto-char start)
@@ -731,8 +731,8 @@ Use `hui:gbut-create' to create a global explicit button."
 
 (defun hui:hbut-act (&optional but)
   "Execute action for optional Hyperbole button symbol BUT in current buffer.
-	  The default is the current button."
-  (interactive (list (hbut:get (hargs:read-match "Activate labeled Hyperbole button: "
+The default is the current button."
+  (interactive (list (hbut:get (hargs:read-match "Activate named Hyperbole button: "
 						 (nconc (ebut:alist) (ibut:alist))
 						 nil t nil 'hbut))))
   (hui:hbut-operate #'hbut:act "Activate Hyperbole button: " but))
@@ -774,6 +774,8 @@ Use `hui:gbut-create' to create a global explicit button."
 
 (defun hui:hbut-delete (&optional but-key key-src)
   "Delete a Hyperbole button given by optional BUT-KEY in optional KEY-SRC.
+For an implicit button, the BUT-KEY is the text key, not the name key.
+
 Use current buffer if no KEY-SRC is given.  Return t if button
 is deleted, nil if user chooses not to delete, or signal an error
 otherwise.  If called interactively, prompt user for whether to
@@ -904,7 +906,7 @@ See `hbut:report'."
 (defalias 'hui:hbut-summarize #'hui:hbut-report)
 
 (defun hui:ibut-act (&optional ibut)
-  "Activate optional labeled implicit button symbol IBUT in current buffer.
+  "Activate optional named implicit button symbol IBUT in current buffer.
 Default is any implicit button at point."
   (interactive
    (let ((ibut (ibut:at-p)) (lst))
@@ -912,17 +914,17 @@ Default is any implicit button at point."
       (cond (ibut)
 	    ((setq lst (ibut:alist))
 	     (ibut:get (ibut:label-to-key
-			(hargs:read-match "Activate labeled implicit button: " lst nil t
+			(hargs:read-match "Activate named implicit button: " lst nil t
 					  (ibut:label-p 'as-label) 'ibut))))
 	    (t
-	     (hypb:error "(ibut-act): No labeled implicit buttons in buffer."))))))
-  (hui:hbut-operate #'ibut:act "Activate labeled implicit button: " ibut))
+	     (hypb:error "(ibut-act): No named implicit buttons in buffer."))))))
+  (hui:hbut-operate #'ibut:act "Activate named implicit button: " ibut))
 
 (defun hui:ibut-create (&optional start end)
   "Interactively create an implicit Hyperbole button at point.
-Use any label between optional START and END points (when interactive,
+Use any name between optional START and END points (when interactive,
 any active region).  Indicate button creation by delimiting
-and adding any necessary instance number to the button label.
+and adding any necessary instance number to the button name.
 
 For programmatic creation, use `ibut:program' instead."
   (interactive (list (when (use-region-p) (region-beginning))
@@ -1524,10 +1526,28 @@ for with completion of all labeled buttons within the current buffer."
 	 (hypb:error "(hbut-operate): No current button upon which to operate."))
 	((progn (unless but (setq but 'hbut:current))
 		(hbut:is-p but))
-	 (hui:but-flash)
-	 (apply hrule:action
-		operation
-		`(',but)))
+	 ;; Temporarily move point to start of the button text for flashing and activation.
+	 ;; Only if the button action does not move point, restore point to it previous value.
+	 (let ((opoint (point-marker))
+	       (text-start (hattr:get but 'lbl-start)))
+	   (if text-start
+	       (goto-char text-start)
+	     (ibut:to-text (hattr:get but 'lbl-key)))
+	   (setq text-start (point-marker))
+	   (hui:but-flash)
+	   (prog1 (apply hrule:action operation `(',but))
+	     ;; Restore point as it was prior to `text-start' move
+	     ;; if the action switched buffers or did not move point
+	     ;; within the current buffer.
+	     (when (or (equal text-start (point-marker))
+		       (not (eq (current-buffer) (marker-buffer opoint))))
+	       (with-current-buffer (marker-buffer opoint)
+		 (let ((owind (get-buffer-window nil t)))
+		   (if owind
+		       (set-window-point owind opoint)
+		     (goto-char opoint)))))
+	     (set-marker opoint nil)
+	     (set-marker text-start nil))))
 	((and but (symbolp but))
 	 (hypb:error "(hbut-operate): Symbol, %s, has invalid Hyperbole button attributes:\n  %S" but (hattr:list but)))
 	(t
@@ -1632,7 +1652,9 @@ Optional NO-SORT means display in decreasing priority order (natural order)."
     (hui:htype-help htype-sym no-sort)))
 
 (defun hui:ibut-delete-op (interactive but-key key-src)
-  "INTERACTIVEly or not, delete explicit button given by BUT-KEY in KEY-SRC.
+  "INTERACTIVEly or not, delete implicit button given by BUT-KEY in KEY-SRC.
+The BUT-KEY is the text key, not the name key.
+
 KEY-SRC may be a buffer or a pathname; when nil the current buffer is used.
 Return t if button is deleted, signal error otherwise.  If called
 with INTERACTIVE non-nil, derive BUT-KEY from the button that point is

@@ -241,7 +241,7 @@
   (let ((py-file "topwin.py")
         (old-python-path (getenv "PYTHONPATH")))
     (unwind-protect
-        (progn
+        (let ((default-directory hyperb:dir))
           (setenv "PYTHONPATH" hyperb:dir)
           (dolist (with-quotes '(nil t))
             (with-temp-buffer

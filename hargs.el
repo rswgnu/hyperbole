@@ -900,7 +900,7 @@ Hyperbole menu item help when appropriate."
    (?D . (directory .
 		    (progn
 		      (or default (setq default default-directory))
-		      (read-file-name prompt default default 'existing))))
+		      (read-directory-name prompt default default t))))
    ;; Get existing file name.
    (?f . (file .
 	       (read-file-name prompt default default
@@ -976,7 +976,8 @@ Hyperbole menu item help when appropriate."
    (?I . (Info-node . (progn (require 'info)
 			     ;; Prevent empty completions list from
 			     ;; triggering an error in Info-read-node-name.
-			     (unless Info-current-file-completions
+			     (unless (and Info-current-file-completions
+					  (not (equal Info-current-file-completions '(("None")))))
 			       (condition-case nil
 				   (Info-build-node-completions)
 				 (error (setq Info-current-file-completions '(("None"))))))

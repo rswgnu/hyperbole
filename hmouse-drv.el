@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    04-Feb-90
-;; Last-Mod:     30-Jul-23 at 10:06:29 by Bob Weiner
+;; Last-Mod:     12-Aug-23 at 13:19:18 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1122,11 +1122,8 @@ documentation is found."
 			    (attributes (nthcdr 2 (hattr:list 'hbut:current))))
 			(princ (format "%s %s BUTTON SPECIFICS:\n"
 				       (htype:def-symbol
-					(if (eq categ 'explicit)
-					    actype
-					  categ))
-				       (if (eq categ 'explicit)
-					   "EXPLICIT" "IMPLICIT")))
+					(if (eq categ 'explicit) actype categ))
+				       (if (eq categ 'explicit) "EXPLICIT" "IMPLICIT")))
 			(hattr:report attributes)
 			(unless (or (eq categ 'explicit)
 				    (null categ)

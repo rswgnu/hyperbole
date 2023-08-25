@@ -297,9 +297,9 @@ Use optional OUT-BUF if present, else the current buffer."
           (insert (format "\tInstall:     %s, %s" (car install-type) (cadr install-type)))))
       (insert "\n")
       ;; Insert recent Hyperbole debugging messages if any.
-      (when (get-buffer "*Messages*")
+      (when (messages-buffer)
 	(let ((opoint (point)))
-	  (insert-buffer-substring "*Messages*")
+	  (insert-buffer-substring (buffer-name (messages-buffer)))
 	  (keep-lines "^(HyDebug)" opoint (point))))
       (untabify start (point)))))
 

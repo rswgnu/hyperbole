@@ -1,3 +1,76 @@
+2023-08-25  Bob Weiner  <rsw@gnu.org>
+
+* hbut.el (ibut:operate): Skip past any inserted comment chars prior to
+    ibut at point.
+
+* hbut.el (ibut:operate): Before call 'ibut:at-p', leave point after any opening
+    ibut delimiters, since may have just deleted the button name, for example.
+
+* hbut.el (ibut:delete): Also clear in-memory version of the button.
+          (ibut:rename): Clear any in-memory current button attributes so
+    cannot reference any invalid buffer locations after rename.  Also, improve
+    doc string.
+
+* hbut.el (ibut:to): Replace 'ibut:at-p' calls with 'hbut:current since
+    button should have been recoginized and created in-memory before this
+    is called.
+
+2023-08-23  Bob Weiner  <rsw@gnu.org>
+
+* hbut.el (ibut:create): Comment out clear of 'hbut:current attributes to prevent
+    failure from 'ibut:at-p' calls when using 'ert-deftest'.
+
+2023-08-22  Bob Weiner  <rsw@gnu.org>
+
+* hypb-ert.el (hypb-ert-def-at-p): With optional 'start-end-flag', return list of
+    (test-name test-name-start-pos testname-end-pos).
+              (hyperbole-run-test-definition): Use above flag and set name as button
+    label to flash in this ibtype.
+
+* hui.el (hui:hbut-operate): Fix so point is temporarily moved to the start of the button
+    text before flashing an activating a button.
+
+* test/hmouse-drv-tests.el (hbut-pathname-path-variable-with-three-colons-is-a-path-test):
+  test/smart-org-tests.el (smart-org-mode-with-smart-keys-buttons-on-hypb-button-activates)
+	                   smart-org-mode-with-smart-keys-on-hypb-button-activates):
+  test/hui-register-tests.el (hui-register-test--register-val-insert-ebut):
+  test/hypb-tests.el (hypb:installation-type-test): Make work under Windows where path root
+    is "c:/".
+
+* kotl/klink.el (klink:at-p): Fix to not confuse Windows path drive prefixes with URL protocol
+    prefixes.
+
+* hargs.el (hargs:iform-vector): Fix 'D' to read a dir name, not a file name.
+
+* hbut.el (ibut:program): Capture existing ibut name at point in any error.
+
+2023-08-20  Bob Weiner  <rsw@gnu.org>
+
+* hbut.el (ibut:operate): Call ibut:insert-text only when hbut:current 'actype
+    attribute is non-nil.
+          (ibut:operate): Remove appending of 'instance-flag' to hbut:current 'name
+    and replace with 'ibut:at-p' call.
+
+2023-08-13  Bob Weiner  <rsw@gnu.org>
+
+* hbut.el (ibut:set-name-and-label-key-p): Save both name-start and name-end pos.
+          (ibut:delete-occurrence): Use above button attributes and remove 'name'
+    argument.
+          (ibut:delete): Fix to delete ibut name and text.
+
+2023-08-10  Bob Weiner  <rsw@gnu.org>
+
+* hbut.el (ibut:set-name-and-label-key-p): Fix to find preceding name when point is
+    within delimited text; previously was not accounting for text opening delimiter.
+          (ibut:label-p): Clarify doc string.
+
+* hui.el (hui:hbut-delete): Improve doc on which implicit button key is used.
+
+* hbut.el (ibut:delete): Fix to delete all occurrences of the same ibut in current buffer.
+	  (ibut:delete-occurrence): Add to delete a single named or unnamed ibut if
+    buffer is not read-only.
+          (ibut:to): Change 'hbut:label-regexp' to 'ibut:label-regexp'.
+
 2023-08-08  Bob Weiner  <rsw@gnu.org>
 
 * hui-mini.el (hui:menus): Remove delq from top-level menu where never
