@@ -1,3 +1,12 @@
+2023-08-27  Bob Weiner  <rsw@gnu.org>
+
+* hyperbole.el (hyperbole--enable-mode, hyperbole--disable-mode): Stop setting
+    'mark-even-if-inactive' to nil as this is no longer needed.  As a result, remove
+    'hyperbole--mark-even-if-inactive'.
+
+* hui.el (hui-kill-ring-save): Fix interactive args to match comment, passing
+    (mark) and then (point) rather than (region-beginning) and (region-end).
+
 2023-08-25  Bob Weiner  <rsw@gnu.org>
 
 * hbut.el (ibut:operate): Skip past any inserted comment chars prior to
