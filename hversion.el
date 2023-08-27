@@ -4,7 +4,7 @@
 ;; Maintainer:   Bob Weiner, Mats Lidell
 ;;
 ;; Orig-Date:     1-Jan-94
-;; Last-Mod:     25-Jun-23 at 11:59:46 by Bob Weiner
+;; Last-Mod:     27-Aug-23 at 15:26:39 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -150,7 +150,7 @@ support is available."
   (frame-parameter frame 'hyperb:window-system))
 
 ;; Each frame could be on a different window system when under a
-;; client-server window system, so set `hyperb:window-system'  for
+;; client-server window system, so set `hyperb:window-system' for
 ;; each frame.
 (mapc #'hyperb:window-sys-term (frame-list))
 ;; Ensure this next hook is appended so that if follows the hook that
@@ -161,7 +161,7 @@ support is available."
 ;;; Public functions used by pulldown and popup menus
 ;;; ************************************************************************
 
-(if (not (fboundp 'id-browse-file))
+(unless (fboundp 'id-browse-file)
 (defalias 'id-browse-file 'view-file))
 
 (unless (fboundp 'id-info)
@@ -208,10 +208,10 @@ support is available."
 	       (error "(id-info-item): Invalid Info index item: `%s'" index-item)))
     (error "(id-info-item): Info index item must be a string: `%s'" index-item))))
 
-(if (not (fboundp 'id-tool-quit))
+(unless (fboundp 'id-tool-quit)
 (defalias 'id-tool-quit #'eval))
 
-(if (not (fboundp 'id-tool-invoke))
+(unless (fboundp 'id-tool-invoke)
 (defun id-tool-invoke (sexp)
   (if (commandp sexp)
       (call-interactively sexp)

@@ -1,5 +1,8 @@
 2023-08-27  Bob Weiner  <rsw@gnu.org>
 
+* hbut.el (ibut:org-at-read-only-p, ibut:operate): Trigger errors when point is on
+    read-only text, read-only Org contexts, explicit buttons, or emacs push-buttons.
+
 * hyperbole.el (hyperbole--enable-mode, hyperbole--disable-mode): Stop setting
     'mark-even-if-inactive' to nil as this is no longer needed.  As a result, remove
     'hyperbole--mark-even-if-inactive'.

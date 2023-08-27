@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    18-Sep-91 at 02:57:09
-;; Last-Mod:     23-Aug-23 at 22:25:52 by Bob Weiner
+;; Last-Mod:     27-Aug-23 at 15:10:25 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1935,10 +1935,7 @@ Default is the symbol \\='hbut:current.  Return symbol for button deleted or nil
     (setq but-sym 'hbut:current))
   (when (ibut:is-p but-sym)
     (let ((name       (hattr:get but-sym 'name))
-	  (name-start (hattr:get but-sym 'name-start))
-	  (name-end   (hattr:get but-sym 'name-end))
 	  (loc        (hattr:get but-sym 'loc))
-	  (lbl-key    (hattr:get but-sym 'lbl-key))
 	  (lbl-start  (hattr:get but-sym 'lbl-start))
 	  (lbl-end    (hattr:get but-sym 'lbl-end)))
       (when (and lbl-start lbl-end)
@@ -1947,7 +1944,7 @@ Default is the symbol \\='hbut:current.  Return symbol for button deleted or nil
 	  (save-excursion
 	    (if name
 		(ibut:map
-		 (lambda (name start end)
+		 (lambda (_name start _end)
 		   (goto-char (+ start 2))
 		   (when (ibut:set-name-and-label-key-p)
 		     (ibut:delete-occurrence
@@ -2268,6 +2265,21 @@ Summary of operations based on inputs (name arg comes from \\='hbut:current attr
     (when (and region-flag edit-flag)
       (hypb:error "(ibut:operate): 'edit-flag' must be nil when region is highlighted to use region as new button name"))
 
+    ;; Error when on a read-only part of a buffer's text
+    (when (plist-member (text-properties-at (point)) 'read-only)
+      (hypb:error "(ibut:operate): Point must not be on a read-only Org element"))
+    ;; Error when on an explicit button
+    (when (eq (hattr:get 'hbut:current 'categ) 'explicit)
+      (hypb:error "(ibut:operate): Point must not be on an explicit button: %s"
+		  (ibut:label-to-key (hattr:get 'hbut:current 'lbl-key))))
+    ;; Error when on an Emacs push-button
+    (when (plist-member (text-properties-at (point)) 'button)
+      (hypb:error "(ibut:operate): Point must not be on an Emacs push-button: %s"
+		  (button-label (button-at (point)))))
+    ;; Error when in read-only contexts of an Org file
+    (when (ibut:org-at-read-only-p)
+      (hypb:error "(ibut:operate): Point must not be in a read-only Org context"))
+
     (unless new-name
       (setq new-name name
 	    name nil))
@@ -2286,7 +2298,7 @@ Summary of operations based on inputs (name arg comes from \\='hbut:current attr
 		    (if edit-flag "modify" "create")
 		    ibut:label-start name ibut:label-end
 		    (buffer-name))))
-    (let (start end mark prev-point)
+    (let (start end)
       (cond (edit-flag
 	     (cond (name
 		    ;; Rename all occurrences of button - those with same name
@@ -2399,6 +2411,25 @@ Summary of operations based on inputs (name arg comes from \\='hbut:current attr
 
     ;; instance-flag might be 't which we don't want to return.
     (when (stringp instance-flag) instance-flag)))
+
+(defun ibut:org-at-read-only-p ()
+  "Return non-nil if point is in an Org read-only context."
+  (and (derived-mode-p 'org-mode)
+       (featurep 'hsys-org)
+       (or (hsys-org-src-block-start-at-p)
+	   (hsys-org-block-start-at-p)
+	   (let ((contexts (org-context)))
+	     (and contexts
+		  (delq nil (mapcar (lambda (ctxt) (assq ctxt contexts))
+				    '(:checkbox
+				      :headline-stars
+				      :item-bullet
+				      :keyword
+				      :link
+				      :priority
+				      :table-special
+				      :tags
+				      :todo-keyword))))))))
 
 (defun    ibut:insert-text (ibut)
   "Space, delimit and insert the text part of IBUT."

@@ -226,11 +226,11 @@ You can also use short names in front of implicit links:
     <[frm]> "(hyperbole)C-h h s f"
 
 Then better than Org links that jump to targets, {M-RET} on a link
-to a named implicit button (ilink) to activate the original button.
+to a named implicit button (ilink) will activate the original button.
 
     <ilink:ib>
 
-Similarly, you can these buttons to your Hyperbole personal button file
+Similarly, you can add these buttons to your Hyperbole personal button file
 accessed with {C-h h b p} and they become global buttons that can be referenced
 from any buffer with a global link:
 
@@ -278,7 +278,8 @@ Variable name values can also be displayed.
 
 * Action Key on Org Constructs
 
-** <hsys-org-enable-smart-keys> Shares M-RET between Hyperbole and Org
+** <hsys-org-enable-smart-keys> shares M-RET between Hyperbole and Org
+
 This <<variable>> sets the Org mode contexts where Hyperbole's
 Action/Assist keys are active.  By default, these 'Smart Keys'
 work only on hyperbuttons (Hyperbole's and Org's) when the variable
@@ -427,7 +428,7 @@ Let's mark all the backup files in a directory for future deletion:
   {C-x 4 d RET ~}
 
 
-n* Acknowledgements
+* Acknowledgements
 
   The Org Team - for all the incredible things Org can do
 
