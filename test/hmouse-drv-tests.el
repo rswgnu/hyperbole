@@ -258,8 +258,8 @@
     (goto-char 2)
     (action-key)
     (should (equal major-mode 'dired-mode))
-    (should (= 0 (string-match (file-truename (getenv "HOME"))
-			       (file-truename default-directory))))))
+    (should (equal (expand-file-name default-directory)
+		   (file-name-as-directory (getenv "HOME"))))))
 
 (ert-deftest hbut-pathname-emacs-lisp-file-test ()
   (unwind-protect
@@ -403,7 +403,7 @@
         (insert "\"/tmp\"")
         (goto-char 2)
         (action-key)
-        (should (string= "tmp" (buffer-name)))
+        (should (string-equal default-directory "/tmp/"))
         (should (eq major-mode 'dired-mode)))
     (hy-test-helpers:kill-buffer "tmp")))
 

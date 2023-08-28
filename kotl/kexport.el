@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    26-Feb-98
-;; Last-Mod:     28-May-23 at 10:06:20 by Mats Lidell
+;; Last-Mod:     28-Aug-23 at 02:14:28 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -84,7 +84,7 @@ If nil, use no keywords."
     'kexport:html-url)
    ;;
    ;; make mail addresses into hyperbuttons
-   (cons hypb-mail-address-regexp "<a href=\"mailto:\\1\"><i>\\1</i></a>\\2")
+   (cons hypb:mail-address-regexp "<a href=\"mailto:\\1\"><i>\\1</i></a>\\2")
    ;;
    ;; make klinks into hyperlinks
    (cons (concat "&lt;\\s-*@\\s-*" kexport:kcell-reference-regexp

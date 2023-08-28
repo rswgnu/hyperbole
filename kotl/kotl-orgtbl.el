@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    10/18/2020
-;; Last-Mod:      9-Aug-23 at 00:07:51 by Bob Weiner
+;; Last-Mod:     28-Aug-23 at 00:56:07 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -75,21 +75,20 @@
 	(t (org-table-justify-field-maybe)
 	   (org-table-next-field))))
 
-;; !! TODO: Doesn't leave point in the same place of orig line
 (defun kotl-mode:transpose-lines-up ()
   "Exchange current line and previous line, maintaining point location.
 If no previous line, exchange current with next line."
   (interactive)
-  (let ((opoint (set-marker (make-marker) (point))))
+  (let ((opoint (point)))
     (kotl-mode:transpose-lines 1)
-    (goto-char opoint)
-    (set-marker opoint nil)))
-
+    (goto-char opoint)))
 
 (defun kotl-mode:transpose-lines-down ()
   (interactive)
-  ;; !! TODO: Write
-  )
+  (let ((opoint (point)))
+    (kotl-mode:next-line 1)
+    (kotl-mode:transpose-lines 1)
+    (goto-char opoint)))
 
 (defun kotl-mode:orgtbl-meta-return (arg)
   "Let Action Key handle tables in kotl-mode."

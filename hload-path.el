@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    29-Jun-16 at 14:39:33
-;; Last-Mod:     27-Aug-23 at 15:20:49 by Bob Weiner
+;; Last-Mod:     28-Aug-23 at 01:45:24 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -20,6 +20,8 @@
 ;;; Public declarations
 ;;; ************************************************************************
 (defvar generated-autoload-file)
+
+(declare-function make-directory-autoloads "ext:autoload")
 
 ;;; ************************************************************************
 ;;; Public variables

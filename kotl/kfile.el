@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    10/31/93
-;; Last-Mod:     14-May-23 at 02:03:43 by Bob Weiner
+;; Last-Mod:     28-Aug-23 at 00:23:33 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -397,7 +397,7 @@ hidden."
     (while
 	(progn
 	  (skip-chars-forward "\n")
-	  ;; !!! Won't work if label-type is 'no.
+	  ;; !! TODO: Won't work if label-type is 'no.
 	  ;; Here we search past the cell identifier
 	  ;; for the location at which to place cell properties.
 	  ;; Be sure not to skip past a period which may terminate the label.
@@ -423,7 +423,7 @@ hidden."
     (while
 	(progn
 	  (skip-chars-forward "\n")
-	  ;; !! Todo: Won't work if label-type is 'no.
+	  ;; !! TODO: Won't work if label-type is 'no.
 	  ;; Here we search past the cell identifier
 	  ;; for the location at which to place cell properties.
 	  ;; Be sure not to skip past a period which may terminate the label.
