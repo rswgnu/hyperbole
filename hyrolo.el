@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     7-Jun-89 at 22:08:29
-;; Last-Mod:     10-Jul-23 at 17:55:02 by Mats Lidell
+;; Last-Mod:     28-Aug-23 at 01:11:54 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -27,9 +27,10 @@
 ;;; Other required Elisp libraries
 ;;; ************************************************************************
 
-(require 'custom) ;; For defface.
+(require 'custom) ;; For 'defface'.
 (require 'hversion)
 (require 'hmail)
+(require 'hypb)  ;; For 'hypb:mail-address-regexp'.
 (require 'package)
 (require 'set)
 (require 'sort)
@@ -724,7 +725,7 @@ Return t if entry is killed, nil otherwise."
   (interactive)
   (let ((opoint (point)) ibut)
     (skip-chars-backward "^ \t\n\r<>")
-    (if (and (re-search-forward hypb-mail-address-regexp nil t)
+    (if (and (re-search-forward hypb:mail-address-regexp nil t)
 	     (goto-char (match-beginning 1))
 	     (setq ibut (ibut:at-p)))
 	(hui:hbut-act ibut)
@@ -1109,7 +1110,8 @@ Return number of matching entries found."
       (insert "No result.")
     (print contacts (get-buffer-create "*contacts-data*"))
     (dolist (contact contacts)
-      (let* ((name-value (nth 0 (xml-get-children contact 'gd:name)))
+      (let* ((child)
+	     (name-value (nth 0 (xml-get-children contact 'gd:name)))
              (fullname (xml-node-child-string (nth 0 (xml-get-children name-value 'gd:fullName))))
              (givenname (xml-node-child-string (nth 0 (xml-get-children name-value 'gd:givenName))))
              (familyname (xml-node-child-string (nth 0 (xml-get-children name-value 'gd:familyName))))

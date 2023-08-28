@@ -1,3 +1,71 @@
+2023-08-28  Bob Weiner  <rsw@gnu.org>
+
+* hargs.el (hargs:iform-read): Reset global 'hargs:defaults' to nil when not to
+    prevent errant values in any future calls.
+
+* test/hsys-org-tests.el (hsys-org:cycle-on-header-cycles-visibility): Fix to
+    handle any moving over invisible lines properly.
+
+* test/hmouse-drv-tests.el (hbut-pathname-env-variable-test): Fix to match
+    dir exactly, not just prefix.
+
+* hui-mouse.el (smart-eobp): Autoload so don't have to require for 'completion'
+    actype.
+
+* kotl/kotl-mode.el (kotl-mode:to-valid-position): Autoload so don't have to
+    require for 'hui-select-indent-def'.
+
+* hload-path.el (make-directory-autoloads): Declare function for when it doesn't
+    exist (Emacs 27).
+  kotl/kotl-mode.el (kotl-mode:copy-region-to-buffer): Use 'with-current-buffer'
+    to prevent warning.
+  test/hpath-tests.el (hpath:substitute-value-test): Locally bind hypb:*-var
+    to prevent free var reference warning.
+  hyrolo.el (hyrolo-google-contacts-insert-data): Locally bind 'child' to prevent
+    free var reference warning.
+
+* kotl/kotl-orgtbl.el (kotl-mode:transpose-lines-up): Fix to restore point.
+                      (kotl-mode:transpose-lines-down): Implement this command.
+
+* test/hyperbole-tests.el (hyperbole-key-bindings): Fix to handle all variants of M-RET.
+
+* test/kotl-mode-tests.el (kotl-mode-move-up-to-first-line): Add non-failing test.
+
+2023-08-27  Bob Weiner  <rsw@gnu.org>
+
+* test/hui-register-tests.el (hui-register-test--register-val-insert-ibut): Fix this test.
+
+* hbut.el (ebut:to): Simplify so if 'lbl-key' is nil, look only for ebutton at point.
+          (ibut:to): Simplify so if 'name-key' is nil, look only for ebutton at point.
+    Fix so finds any matching name-key without using attributes of hbut:current.
+
+* hsys-www.el (eww-browse-url): Remove unused '(let ((url-allow-non-local-files t))'.
+
+* hbdata.el (hyperb:user-email): Declare to avoid byte compiler warning.
+
+* hypb.el (hypb-mail-address-tld-regexp, hypb-mail-address-regexp): Moved from "hibtypes.el"
+    and renamed to 'hypb:mail-address-tld-regexp', 'hypb:mail-address-regexp'.
+          (mail-address-mode-list):  Moved from "hibtypes.el" and renamed to
+    'hypb:mail-address-mode-list'.
+  hibtypes.el (mail-address)
+  kotl/kexport.el (kexport:html-replacement-alist): Update use of above variables.
+  hib-social.el:
+  hibtypes.el (require 'hypb): Add for defs of above variables.
+  hyrolo.el (hyrolo-mail-to): Ref above new var name.
+
+* hib-kbd.el (hui-mini): Add (require 'hui-mini) and move private vars before first
+    usage to remove byte-compiler warnings.
+
+* hbut.el (ibut:org-at-read-only-p, ibut:operate): Trigger errors when point is on
+    read-only text, read-only Org contexts, explicit buttons, or emacs push-buttons.
+
+* hyperbole.el (hyperbole--enable-mode, hyperbole--disable-mode): Stop setting
+    'mark-even-if-inactive' to nil as this is no longer needed.  As a result, remove
+    'hyperbole--mark-even-if-inactive'.
+
+* hui.el (hui-kill-ring-save): Fix interactive args to match comment, passing
+    (mark) and then (point) rather than (region-beginning) and (region-end).
+
 2023-08-25  Bob Weiner  <rsw@gnu.org>
 
 * hbut.el (ibut:operate): Skip past any inserted comment chars prior to

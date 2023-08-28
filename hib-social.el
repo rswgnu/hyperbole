@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    20-Jul-16 at 22:41:34
-;; Last-Mod:     17-Jul-23 at 00:22:44 by Bob Weiner
+;; Last-Mod:     27-Aug-23 at 17:10:50 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -174,8 +174,9 @@
 ;;; ************************************************************************
 
 (eval-when-compile (require 'browse-url))
-(require 'hbut)
 (require 'hargs)
+(require 'hbut)
+(require 'hypb)
 
 ;;; ************************************************************************
 ;;; Public variables
@@ -306,9 +307,9 @@ listed in `hibtypes-social-inhibit-modes'."
 					      (mapcar #'car hibtypes-social-hashtag-alist))))))
 		    ;; Heuristic to ensure this is not an email address
 		    (save-match-data
-		      (not (and (looking-at hypb-mail-address-regexp)
+		      (not (and (looking-at hypb:mail-address-regexp)
 				(let ((case-fold-search t))
-				  (string-match hypb-mail-address-tld-regexp
+				  (string-match hypb:mail-address-tld-regexp
 						(match-string-no-properties 1)))))))))
 
     (save-match-data

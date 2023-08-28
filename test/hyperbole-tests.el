@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:     8-Jan-22 at 23:40:00
-;; Last-Mod:     13-May-23 at 10:10:52 by Bob Weiner
+;; Last-Mod:     28-Aug-23 at 00:15:21 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -43,11 +43,8 @@
         (verify-keybinding set "\C-c\\" #'hycontrol-enable-windows-mode)
         (verify-keybinding set "\C-c/" #'hui-search-web)
         (verify-keybinding set "\C-c." #'hui-select-goto-matching-delimiter)
-        (mapc (lambda (key) (verify-keybinding set key #'hkey-either))
-              '("\M-\C-m"
-                ;; Todo: How to verify these bindings.
-                ;;"ESC RET" "M-RET" "ESC <return>" "M-<return>"
-                ))
+        (mapc (lambda (key) (verify-keybinding set (kbd key) #'hkey-either))
+              '("\M-\C-m" "M-RET" "ESC RET" "ESC <return>" "M-<return>"))
         (verify-keybinding set "\C-hA" #'hkey-help)
         (verify-keybinding set "\M-o" #'hkey-operate)))))
 

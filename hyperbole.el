@@ -7,7 +7,7 @@
 ;; Author:       Bob Weiner
 ;; Maintainer:   Bob Weiner <rsw@gnu.org>, Mats Lidell <matsl@gnu.org>
 ;; Created:      06-Oct-92 at 11:52:51
-;; Last-Mod:      6-Aug-23 at 20:10:00 by Bob Weiner
+;; Last-Mod:     27-Aug-23 at 13:04:09 by Bob Weiner
 ;; Released:     03-Dec-22
 ;; Version:      8.0.1pre
 ;; Keywords:     comm, convenience, files, frames, hypermedia, languages, mail, matching, mouse, multimedia, outlines, tools, wp
@@ -506,12 +506,6 @@ frame, those functions by default still return the prior frame."
   (unless (and hkey-init (where-is-internal #'hkey-help))
     (hyperb:init)
     (remove-hook 'after-init-hook #'hyperb:init))
-
-  ;; Store the current value and set `mark-even-if-inactive' to nil so
-  ;; can select delimited things if the region is not active when
-  ;; hyperbole-mode is enabled.
-  (setq hyperbole--mark-even-if-inactive mark-even-if-inactive
-	mark-even-if-inactive nil)
   ;;
   ;; Abbreviate MSWindows /cygdrive mount point paths.
   (when (file-exists-p "/cygdrive")
@@ -542,11 +536,6 @@ frame, those functions by default still return the prior frame."
   (setq directory-abbrev-alist (remq hyperb:cygdrive
 				     directory-abbrev-alist)
 	hpath:posix-mount-point-to-mswindows-alist nil)
-  ;;
-  ;; Reset the value of `mark-even-if-inactive' if the user has not
-  ;; changed it while Hyperbole was active.
-  (unless mark-even-if-inactive
-    (setq mark-even-if-inactive hyperbole--mark-even-if-inactive))
   ;;
   (remove-hook (if (boundp 'write-file-functions)
 		   'write-file-functions

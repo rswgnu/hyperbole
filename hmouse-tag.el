@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    24-Aug-91
-;; Last-Mod:     30-Jul-23 at 13:50:59 by Bob Weiner
+;; Last-Mod:     28-Aug-23 at 00:23:22 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -911,7 +911,7 @@ See https://tkf.github.io/emacs-jedi/latest/."
 	   (eq 'run (process-status (process-buffer proc)))
 	   ;; The goto is performed asynchronously.
 	   ;; It reports in the minibuffer when a definition is not found.
-	   ;; !! Only works on tag at point, not the tagname passed in as jedi
+	   ;; !! TODO: Only works on tag at point, not the tagname passed in as jedi
 	   ;; does not accept a tag parameter.
 	   ;;
 	   ;; jedi:find-file-function is an RSW custom

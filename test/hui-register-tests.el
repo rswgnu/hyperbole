@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    10-Sep-22 at 20:43:17
-;; Last-Mod:      2-Oct-22 at 11:21:13 by Mats Lidell
+;; Last-Mod:     28-Aug-23 at 00:59:44 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -54,27 +54,28 @@
             (should (equal pos (point)))))
       (hy-delete-file-and-buffer file))))
 
-;; TODO - Problem with link to ebut
-;; (ert-deftest hui-register-test--register-val-insert-ibut ()
-;;   "Verify register val inserts link to ibut."
-;;   (let ((file1 (make-temp-file "hypb"))
-;;         (file2 (make-temp-file "hypb")))
-;;     (unwind-protect
-;;         (progn
-;;           (find-file file1)
-;;           (insert "<[label]> $HOME")
-;;           (goto-char 5)
-;;           (let ((content (hui-register-struct-at-point))
-;;                 (pos (point)))
-;;             (find-file file2)
-;;             (register-val-insert content)
-;;             (should (equal (buffer-file-name) file2))
-;;             (goto-char 5)
-;;             (should (ebut:at-p))
-;;             (action-key)
-;;             (should (equal (buffer-file-name) file1))))
-;;       (hy-delete-file-and-buffer file1)
-;;       (hy-delete-file-and-buffer file2))))
+(ert-deftest hui-register-test--register-val-insert-ibut ()
+  "Verify register val inserts ibut."
+  (let ((file1 (make-temp-file "hypb"))
+        (file2 (make-temp-file "hypb")))
+    (unwind-protect
+        (progn
+          (find-file file1)
+          (insert "<[label]> ${HOME}")
+          (goto-char 5)
+          (let ((content (hui-register-struct-at-point)))
+            (find-file file2)
+	    ;; Inserts ebut into file2 that contains an ilink in file1
+	    ;; that jumps to ${HOME}
+            (register-val-insert content)
+            (should (equal (buffer-file-name) file2))
+            (goto-char 5)
+            (should (ebut:at-p))
+            (action-key)
+            (should (equal (expand-file-name default-directory)
+			   (file-name-as-directory (getenv "HOME"))))))
+      (hy-delete-file-and-buffer file1)
+      (hy-delete-file-and-buffer file2))))
 
 (ert-deftest hui-register-test--register-val-insert-ebut ()
   "Verify register val inserts link to ebut."
@@ -85,8 +86,7 @@
           (find-file file1)
           (ebut:program "label" 'link-to-directory "/tmp")
           (goto-char 5)
-          (let ((content (hui-register-struct-at-point))
-                (pos (point)))
+          (let ((content (hui-register-struct-at-point)))
             (find-file file2)
             (register-val-insert content)
             (should (equal (buffer-file-name) file2))

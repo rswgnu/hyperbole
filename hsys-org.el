@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     2-Jul-16 at 14:54:14
-;; Last-Mod:     30-Jul-23 at 09:18:01 by Bob Weiner
+;; Last-Mod:     27-Aug-23 at 14:29:35 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -230,19 +230,6 @@ Return the (start . end) buffer positions of the region."
     (let ((case-fold-search t))
       (looking-at org-babel-src-block-regexp))))
 
-;; (defun hsys-org-link-at-p ()
-;;   "Return non-nil iff point is on an Org mode link.
-;; Assume caller has already checked that the current buffer is in `org-mode'
-;; or are looking for an Org link in another buffer type."
-;;   (unless (or (smart-eolp) (smart-eobp))
-;;     (with-suppressed-warnings nil
-;; 	;; org-element-context may call looking-at with a nil value,
-;; 	;; triggering an error, so catch it.  Also, suppress *Warnings*
-;; 	;; display of backtrace.
-;; 	(condition-case ()
-;; 	    (eq (org-element-type (org-element-context)) 'link)
-;; 	  (error nil)))))
-
 (defun hsys-org-link-at-p ()
   "Return non-nil iff point is on an Org mode link.
 Assume caller has already checked that the current buffer is in `org-mode'
@@ -259,10 +246,10 @@ or are looking for an Org link in another buffer type."
 
 ;; Assume caller has already checked that the current buffer is in org-mode.
 (defun hsys-org-target-at-p ()
-  "Return non-nil iff point is on an Org radio target or radio target link.
-The radio target is the definition and the radio target link is
-the referent.  Assume caller has already checked that the current
-buffer is in `org-mode'."
+  "Return non-nil iff point is on an Org target or target link.
+The target is the definition and the target link is the referent.
+Assume caller has already checked that the current buffer is in
+`org-mode'."
   (hsys-org-face-at-p 'org-target))
 
 ;; Assume caller has already checked that the current buffer is in org-mode.
@@ -328,7 +315,6 @@ The region is (start . end) and includes any delimiters, else nil."
 (defun hsys-org-face-at-p (org-face-type)
   "Return ORG-FACE-TYPE iff point is on a character with that face, else nil.
 ORG-FACE-TYPE must be a symbol, not a symbol name."
-  
   (let ((face-prop (get-text-property (point) 'face)))
     (when (or (eq face-prop org-face-type)
 	      (and (listp face-prop) (memq org-face-type face-prop)))

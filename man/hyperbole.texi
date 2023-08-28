@@ -7,7 +7,7 @@
 @c Author:       Bob Weiner
 @c
 @c Orig-Date:     6-Nov-91 at 11:18:03
-@c Last-Mod:      8-Jul-23 at 10:31:40 by Bob Weiner
+@c Last-Mod:     28-Aug-23 at 12:33:01 by Bob Weiner
 
 @c %**start of header (This is for running Texinfo on a region.)
 @setfilename hyperbole.info
@@ -156,7 +156,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</P>
 
 <PRE>
 Edition 8.0.1pre
-Printed July 8, 2023.
+Printed August 28, 2023.
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -198,7 +198,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 @example
 Edition 8.0.1pre
-July 8, 2023
+August 28, 2023
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -2735,11 +2735,11 @@ whose names begin with a ` ' or `*' character.
 @item mail-address
 If on an e-mail address in a specific buffer type, compose mail to that
 address in another window. Applies to any major mode descended from those
-in @code{mail-address-mode-list}, the rolo match buffer, any buffer
-attached to a file in @code{hyrolo-file-list}, or any buffer
-with @file{mail} or @file{rolo} (case-insensitive) within its name.  If
-@code{mail-address-mode-list} is set to nil, this button type is active
-in all buffers.
+in @code{hypb:mail-address-mode-list}, the rolo match buffer, any buffer
+attached to a file in @code{hyrolo-file-list}, or any buffer with
+@file{mail} or @file{rolo} (case-insensitive) within its name.  If
+@code{hypb:mail-address-mode-list} is set to nil, this button type is
+active in all buffers.
 
 @findex ibtypes www-url
 @cindex URL

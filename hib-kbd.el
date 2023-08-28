@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    22-Nov-91 at 01:37:57
-;; Last-Mod:     29-Jan-23 at 22:46:13 by Mats Lidell
+;; Last-Mod:     27-Aug-23 at 19:57:37 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -36,11 +36,13 @@
 ;;; ************************************************************************
 
 (require 'hactypes) ;; This invokes (require 'hargs)
+(require 'hui-mini) ;; For `hui:menu-doc' and `hui:menu-help'
 (require 'seq)
 
 ;;; ************************************************************************
 ;;; Public variables
 ;;; ************************************************************************
+
 (defvar kbd-key:named-key-list
   '("add" "backspace" "begin" "bs" "clear" "decimal" "delete" "del"
     "divide" "down" "end" "enter" "esc" "home" "left" "insert"
@@ -67,6 +69,20 @@ the unmodified key.")
 ;;; Public declarations
 ;;; ************************************************************************
 (declare-function helm-mode "ext:helm")
+
+;;; ************************************************************************
+;;; Private variables
+;;; ************************************************************************
+
+(defconst kbd-key:extended-command-prefix "\\_<M-x\\_>"
+  "Normalized prefix regular expression that invokes an extended command.
+Default is M-x.")
+
+(defconst kbd-key:extended-command-binding-list '(execute-extended-command helm-M-x counsel-M-x)
+  "List of commands that may be bound to M-x to invoke extended/named commands.")
+
+(defvar kbd-key:mini-menu-key nil
+  "The key sequence that invokes the Hyperbole minibuffer menu.")
 
 ;;; ************************************************************************
 ;;; Public implicit button types
@@ -531,23 +547,8 @@ a M-x extended command,
       (kbd-key:extended-command-p key-series)
       (kbd-key:key-and-arguments key-series)))
 
-;;; ************************************************************************
-;;; Private variables
-;;; ************************************************************************
-
-(defconst kbd-key:extended-command-prefix
-  (format "\\_<%s\\_>" (kbd-key:normalize "M-x"))
-  "Normalized prefix regular expression that invokes an extended command.
-Default is M-x.")
-
-(defconst kbd-key:extended-command-binding-list '(execute-extended-command helm-M-x counsel-M-x)
-  "List of commands that may be bound to M-x to invoke extended/named commands.")
-
-(defvar kbd-key:mini-menu-key nil
-  "The key sequence that invokes the Hyperbole minibuffer menu.")
-;; Set above variable
+;; Set `kbd-key:mini-menu-key'
 (kbd-key:hyperbole-mini-menu-key-p "")
-
 
 (provide 'hib-kbd)
 

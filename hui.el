@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 21:42:03
-;; Last-Mod:     25-Aug-23 at 10:36:13 by Bob Weiner
+;; Last-Mod:     28-Aug-23 at 12:49:04 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -135,8 +135,8 @@ This command is similar to `copy-region-as-kill', except that it gives
 visual feedback indicating the extent of the region being copied."
   ;; Pass mark first, then point, because the order matters when
   ;; calling `kill-append'.
-  (interactive (list (when mark-active (region-beginning))
-		     (when mark-active (region-end))
+  (interactive (list (when mark-active (mark))
+		     (when mark-active (point))
 		     (prefix-numeric-value current-prefix-arg)))
   (let (thing)
     (if (or (use-region-p)

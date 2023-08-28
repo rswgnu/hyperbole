@@ -144,7 +144,7 @@ Optional non-nil second argument INTERNAL-CMD inhibits display of the shell
 command line executed.  Optional non-nil third argument KILL-PREV means
 kill the last output to the shell buffer before executing SHELL-CMD."
   (interactive
-   (let ((default  (car hargs:defaults))
+   (let ((default  (nth 0 hargs:defaults))
 	 (default1 (nth 1 hargs:defaults))
 	 (default2 (nth 2 hargs:defaults)))
      (list (hargs:read "Shell cmd: "

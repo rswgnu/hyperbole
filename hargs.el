@@ -629,10 +629,11 @@ See also documentation for `interactive'."
     (unless (or (stringp iform) (listp iform))
       (error "(hargs:iform-read): `iform' must be either a non-empty interactive string or a list whose car = 'interactive, not:\n%S"
 	     iform))
-    (when (eq default-args t)
-      (setq default-args (hattr:get 'hbut:current 'args)
-	    ;; Set hargs:defaults global used by "hactypes.el"
-	    hargs:defaults default-args))
+    (if (eq default-args t)
+	(setq default-args (hattr:get 'hbut:current 'args)
+	      ;; Set hargs:defaults global used by "hactypes.el"
+	      hargs:defaults default-args)
+      (setq hargs:defaults nil))
     (setq hargs:reading-type t)
     (if (not (stringp iform))
 	(eval iform)

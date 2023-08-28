@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    6/30/93
-;; Last-Mod:      8-Aug-23 at 22:52:40 by Bob Weiner
+;; Last-Mod:     28-Aug-23 at 01:52:34 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -2777,8 +2777,8 @@ Invisible text is expanded and included only if INVISIBLE-FLAG is non-nil."
   (when (stringp source-buf)
     (setq source-buf (get-buffer source-buf)))
     (save-excursion
-      (set-buffer source-buf)
-      (hypb:insert-region target-buf start end invisible-flag)))
+      (with-current-buffer source-buf
+	(hypb:insert-region target-buf start end invisible-flag))))
 
 (defun kotl-mode:copy-tree-to-buffer (target-buf cell-ref invisible-flag)
   "Copy to point in TARGET-BUF the text of the outline tree rooted at CELL-REF.
@@ -3418,6 +3418,7 @@ With optional BACKWARD-P, move backward if possible to get to valid position."
 		     (kview:first-visible-point))))
     (kotl-mode:to-valid-position backward-p)))
 
+;;;###autoload
 (defun kotl-mode:to-valid-position (&optional backward-p)
   "Move point to the nearest editable position within the current koutline view.
 With optional BACKWARD-P, move backward if possible to get to valid position."
