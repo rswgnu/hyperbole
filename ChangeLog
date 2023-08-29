@@ -1,4 +1,31 @@
+2023-08-29  Bob Weiner  <rsw@gnu.org>
+
+* hbut.el (ibut:operate): Fix to ensure point is within button after
+    name deletion or new button insertion.
+
+* hui.el (hui:ibut-link-directly, hui:ebut-link-directly,
+         hui:gbut-link-directly): Start by clearing 'hbut:current
+    attributes.
+
 2023-08-28  Bob Weiner  <rsw@gnu.org>
+
+* hargs.el (hargs:delimited): Fix to add full length (rather than -1)
+    chars of opening delimiter to search forward limit so match to
+    opening delimiters when point is immediately before.
+
+* hbut.el (ibut:create): Fix to move point within ibut text only if
+    found a matching ibut at point.  If point is in front of the text
+    delimiter and no name, don't move point.
+
+* hpath.el (hpath:at-p): Fix to not send a string with "::" in it to
+    'file-readable-p' which will trigger a no read method found error
+    otherwise.  Also, return nil if path is an empty string.
+
+* hibtypes.el (org-id): Tighten match to just Org ID characters and restore
+    buffer mode to prior mode when necessary after 'org-id-find' switches
+    it to Org mode.
+
+* hui.el (hui:ibut-link-create): Fix to handle name attributes properly.
 
 * hargs.el (hargs:iform-read): Reset global 'hargs:defaults' to nil when not to
     prevent errant values in any future calls.

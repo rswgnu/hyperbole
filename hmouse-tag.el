@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    24-Aug-91
-;; Last-Mod:     28-Aug-23 at 00:23:22 by Bob Weiner
+;; Last-Mod:     28-Aug-23 at 16:19:42 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1375,7 +1375,7 @@ See the \"${hyperb:dir}/smart-clib-sym\" script for more information."
       found)))
 
 (defun smart-tags-display (tag next &optional list-of-tags-tables)
-  (when  next (setq tag nil))
+  (when next (setq tag nil))
   (let* ((tags-table-list (or list-of-tags-tables
 			      (and (boundp 'tags-table-list)
 				   (not (smart-tags-org-src-block-p))

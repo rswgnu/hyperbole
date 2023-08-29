@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    18-Sep-91 at 02:57:09
-;; Last-Mod:     28-Aug-23 at 12:47:30 by Bob Weiner
+;; Last-Mod:     29-Aug-23 at 01:38:44 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -22,7 +22,7 @@
 (eval-and-compile (mapc #'require '(cl-lib elisp-mode help-mode hversion
 				    hmoccur hbmap htz hbdata hact
 				    hui-select view)))
-(require 'hmouse-drv) ;For `hui--ignore-action-key-depress-prev-point'.
+(require 'hmouse-drv) ; For `hui--ignore-action-key-depress-prev-point'.
 
 ;;; ************************************************************************
 ;;; Public declarations
@@ -1769,7 +1769,6 @@ If a new button is created, store its attributes in the symbol,
     (unwind-protect
 	(progn
 	  (unless but-sym
-	    ;; (hattr:clear 'hbut:current) ;; Commented out since was causing ibut:at-p to fail.
 	    ;; Set attributes of button at point, if any
 	    (setq name-and-lbl-key-flag (ibut:set-name-and-label-key-p))
 
@@ -1784,14 +1783,14 @@ If a new button is created, store its attributes in the symbol,
 		  (progn (when (or but-sym-flag name-and-lbl-key-flag)
 			   (setq text-start (or (hattr:get 'hbut:current 'lbl-start)
 						(point))
-				 text-end (hattr:get 'hbut:current 'lbl-end)))
-			 (unless (and text-start
-				      (<= text-start (point))
-				      text-end
-				      (>= text-end (point)))
-			   ;; Move to text of ibut before trying to activate it
-			   ;; (may be on name)
-			   (goto-char (+ (or text-start (point)) 2)))
+				 text-end (hattr:get 'hbut:current 'lbl-end))
+			   (unless (and text-start
+					(<= text-start (point))
+					text-end
+					(>= text-end (point)))
+			     ;; Move to text of ibut before trying to activate it
+			     ;; (may be on name)
+			     (goto-char (+ (or text-start (point)) 2))))
 			 (setq ibtype-point (point))
 			 (while (and (not is-type) types)
 			   (setq itype (car types))
@@ -2048,10 +2047,11 @@ non-nil)."
 There may be multiple results if there are numbered instances
 with the same label.  Names are returned in the order they are
 first encountered."
-  (apply #'set:create
-	 (ibut:map
-	  (lambda (lbl _start _end) (ibut:label-to-key lbl))
-	  (ibut:label-instances-regexp name-key))))
+  (when (stringp name-key)
+    (apply #'set:create
+	   (ibut:map
+	    (lambda (lbl _start _end) (ibut:label-to-key lbl))
+	    (ibut:label-instances-regexp name-key)))))
 
 (defun    ibut:label-p (&optional as-label start-delim end-delim pos-flag two-lines-flag)
   "Return key for the implicit button name that point is within, else nil.
@@ -2338,7 +2338,10 @@ Summary of operations based on inputs (name arg comes from \\='hbut:current attr
 			(delete-region (goto-char (hattr:get 'hbut:current 'name-start))
 				       (hattr:get 'hbut:current 'name-end))
 			(when (looking-at ibut:label-separator-regexp)
-			  (delete-region (match-beginning 0) (match-end 0))))))))
+			  (delete-region (match-beginning 0) (match-end 0))))
+		      ;; Skip past any likely opening delim preceding button text.
+		      (skip-chars-forward "\"<{[|")
+		      (setq start (point))))))
 	    (t
 	     ;; Above flag is 't when we are creating the first instance
 	     ;; of the button name
@@ -2381,10 +2384,11 @@ Summary of operations based on inputs (name arg comes from \\='hbut:current attr
 	  (ibut:insert-text 'hbut:current)))
 
       (goto-char (or start (max (- (point) 2) (point-min))))
-      ;; Skip past any inserted comment char
-      (skip-syntax-forward "-<")
-      ;; Skip past any name or label opening delim chars
-      (skip-chars-forward "\"<{[| \t\n\r"))
+      (when start
+	;; Skip past any inserted comment char
+	(skip-syntax-forward "-<")
+	;; Skip past any name or label opening delim chars
+	(skip-chars-forward "\"<{[| \t\n\r")))
 
     ;; Set all in-memory hbut attributes for any button at point
     (ibut:at-p)
@@ -2438,10 +2442,11 @@ Summary of operations based on inputs (name arg comes from \\='hbut:current attr
 
 (defun    ibut:insert-text (ibut)
   "Space, delimit and insert the text part of IBUT."
-  (cond ((looking-at ibut:label-separator-regexp)
-	 (goto-char (match-end 0)))
-	((not (or (string-empty-p (or (hattr:get ibut 'name) ""))))
-	 (insert ibut:label-separator)))
+  (when (hattr:get ibut 'name)
+    (cond ((looking-at ibut:label-separator-regexp)
+	   (goto-char (match-end 0)))
+	  ((not (or (string-empty-p (or (hattr:get ibut 'name) ""))))
+	   (insert ibut:label-separator))))
   (let* ((orig-actype (or (hattr:get ibut 'actype)
 			  (hattr:get ibut 'categ)))
 	 (actype (or (actype:elisp-symbol orig-actype)
@@ -2515,7 +2520,9 @@ Summary of operations based on inputs (name arg comes from \\='hbut:current attr
       ('nil (error "(ibut:insert-text): actype must be a Hyperbole actype or Lisp function symbol, not '%s'" orig-actype))
       ;; Generic action button type						      
       (_ (insert (format "<%s%s%s>" (actype:def-symbol actype) (if args " " "")
-			 (if args (hypb:format-args args) "")))))))
+			 (if args (hypb:format-args args) "")))))
+    (unless (looking-at "\\s-\\|\\'")
+      (insert " "))))
 
 (defun    ibut:previous-occurrence (lbl-key &optional buffer)
   "Move point to previous occurrence of an implicit button with LBL-KEY.

@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    31-Oct-91 at 23:17:35
-;; Last-Mod:      9-Aug-23 at 00:16:24 by Bob Weiner
+;; Last-Mod:     28-Aug-23 at 17:59:39 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -105,10 +105,11 @@ of (string-matched start-pos end-pos).  Optional
 EXCLUDE-REGEXP is compared against the match string with its delimiters
 included; any string that matches this regexp is ignored."
   (let* ((opoint (point))
-	 ;; This initial limit if the forward search limit for start delimiters
+	 ;; This initial limit is the forward search limit for start delimiters
 	 (limit (if start-regexp-flag
 		    opoint
-		  (min (+ opoint (1- (length start-delim)))
+		  ;; (min (+ opoint (1- (length start-delim)))
+		  (min (+ opoint (length start-delim))
 		       (point-max))))
 	 (start-search-func (if start-regexp-flag 're-search-forward 'search-forward))
 	 (end-search-func   (if end-regexp-flag   're-search-forward 'search-forward))
