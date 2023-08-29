@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    30-Sep-92 at 19:39:59
-;; Last-Mod:     25-Sep-22 at 02:39:34 by Bob Weiner
+;; Last-Mod:     27-Aug-23 at 20:21:50 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -77,6 +77,15 @@
 ;;; ************************************************************************
 
 (eval-and-compile (mapc #'require '(hactypes hypb hyrolo)))
+
+;;; ************************************************************************
+;;; Public variables
+;;; ************************************************************************
+
+(defvar doc-id-indices '()
+  "List of pathnames in which to search for site-specific document index entries.
+Each file must utilize a hyrolo record format, with each record start
+delimited by `doc-id-index-entry-regexp'.")
 
 ;;; ************************************************************************
 ;;; Private variables
@@ -158,15 +167,6 @@ match the function stored in `doc-id-p'."
       (when (funcall doc-id-p id)
 	(ibut:label-set id-and-pos)
 	(hact 'link-to-doc id)))))
-
-;;; ************************************************************************
-;;; Public variables
-;;; ************************************************************************
-
-(defvar doc-id-indices '()
-  "List of pathnames in which to search for site-specific document index entries.
-Each file must utilize a hyrolo record format, with each record start
-delimited by `doc-id-index-entry-regexp'.")
 
 ;;; ************************************************************************
 ;;; Private functions

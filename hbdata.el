@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     2-Apr-91
-;; Last-Mod:     30-Jun-23 at 22:36:04 by Mats Lidell
+;; Last-Mod:     28-Aug-23 at 02:03:25 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -52,13 +52,15 @@
 ;;; Other required Elisp libraries
 ;;; ************************************************************************
 
-(require 'hversion) ;; For hyperb:microsoft-os-p
+(require 'hversion) ;; For `hyperb:microsoft-os-p'
 (require 'hbmap)
 (require 'hgnus)
 
 ;;; ************************************************************************
 ;;; Public declarations
 ;;; ************************************************************************
+
+(defvar hyperb:user-email) ;; Set by `hyperb:init'.
 
 ;; Functions from abstract mail and news interface. See "hmail.el"
 (declare-function lmail:to nil)

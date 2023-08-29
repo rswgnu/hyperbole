@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    20-Jul-16 at 22:41:34
-;; Last-Mod:     10-Jul-23 at 12:03:12 by Mats Lidell
+;; Last-Mod:     27-Aug-23 at 17:10:50 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -174,8 +174,9 @@
 ;;; ************************************************************************
 
 (eval-when-compile (require 'browse-url))
-(require 'hbut)
 (require 'hargs)
+(require 'hbut)
+(require 'hypb)
 
 ;;; ************************************************************************
 ;;; Public variables
@@ -197,31 +198,38 @@
 
 (defcustom hibtypes-social-display-function #'browse-url
   "Function of one arg, url, to display when activating a social media reference."
-  :type 'function)
+  :type 'function
+  :group 'hyperbole-buttons)
 
 (defcustom hibtypes-git-default-project nil
   "Default project name to associate with any local git commit link."
-  :type 'string)
+  :type 'string
+  :group 'hyperbole-buttons)
 
 (defcustom hibtypes-git-use-magit-flag nil
   "Non-nil means use `magit' rather than `dired' for a git directory button."
-  :type 'boolean)
+  :type 'boolean
+  :group 'hyperbole-buttons)
 
 (defcustom hibtypes-github-default-project nil
   "Default project name to associate with any Github commit link."
-  :type 'string)
+  :type 'string
+  :group 'hyperbole-buttons)
 
 (defcustom hibtypes-github-default-user nil
   "Default user name to associate with any Github commit link."
-  :type 'string)
+  :type 'string
+  :group 'hyperbole-buttons)
 
 (defcustom hibtypes-gitlab-default-project nil
   "Default project name to associate with any Github commit link."
-  :type 'string)
+  :type 'string
+  :group 'hyperbole-buttons)
 
 (defcustom hibtypes-gitlab-default-user nil
   "Default user name to associate with any Github commit link."
-  :type 'string)
+  :type 'string
+  :group 'hyperbole-buttons)
 
 ;;; ************************************************************************
 ;;; Public declarations
@@ -299,9 +307,9 @@ listed in `hibtypes-social-inhibit-modes'."
 					      (mapcar #'car hibtypes-social-hashtag-alist))))))
 		    ;; Heuristic to ensure this is not an email address
 		    (save-match-data
-		      (not (and (looking-at hypb-mail-address-regexp)
+		      (not (and (looking-at hypb:mail-address-regexp)
 				(let ((case-fold-search t))
-				  (string-match hypb-mail-address-tld-regexp
+				  (string-match hypb:mail-address-tld-regexp
 						(match-string-no-properties 1)))))))))
 
     (save-match-data

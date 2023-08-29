@@ -1,3 +1,288 @@
+2023-08-29  Bob Weiner  <rsw@gnu.org>
+
+* hbut.el (ibut:operate): Fix to ensure point is within button after
+    name deletion or new button insertion.
+
+* hui.el (hui:ibut-link-directly, hui:ebut-link-directly,
+         hui:gbut-link-directly): Start by clearing 'hbut:current
+    attributes.
+
+2023-08-28  Bob Weiner  <rsw@gnu.org>
+
+* hargs.el (hargs:delimited): Fix to add full length (rather than -1)
+    chars of opening delimiter to search forward limit so match to
+    opening delimiters when point is immediately before.
+
+* hbut.el (ibut:create): Fix to move point within ibut text only if
+    found a matching ibut at point.  If point is in front of the text
+    delimiter and no name, don't move point.
+
+* hpath.el (hpath:at-p): Fix to not send a string with "::" in it to
+    'file-readable-p' which will trigger a no read method found error
+    otherwise.  Also, return nil if path is an empty string.
+
+* hibtypes.el (org-id): Tighten match to just Org ID characters and restore
+    buffer mode to prior mode when necessary after 'org-id-find' switches
+    it to Org mode.
+
+* hui.el (hui:ibut-link-create): Fix to handle name attributes properly.
+
+* hargs.el (hargs:iform-read): Reset global 'hargs:defaults' to nil when not to
+    prevent errant values in any future calls.
+
+* test/hsys-org-tests.el (hsys-org:cycle-on-header-cycles-visibility): Fix to
+    handle any moving over invisible lines properly.
+
+* test/hmouse-drv-tests.el (hbut-pathname-env-variable-test): Fix to match
+    dir exactly, not just prefix.
+
+* hui-mouse.el (smart-eobp): Autoload so don't have to require for 'completion'
+    actype.
+
+* kotl/kotl-mode.el (kotl-mode:to-valid-position): Autoload so don't have to
+    require for 'hui-select-indent-def'.
+
+* hload-path.el (make-directory-autoloads): Declare function for when it doesn't
+    exist (Emacs 27).
+  kotl/kotl-mode.el (kotl-mode:copy-region-to-buffer): Use 'with-current-buffer'
+    to prevent warning.
+  test/hpath-tests.el (hpath:substitute-value-test): Locally bind hypb:*-var
+    to prevent free var reference warning.
+  hyrolo.el (hyrolo-google-contacts-insert-data): Locally bind 'child' to prevent
+    free var reference warning.
+
+* kotl/kotl-orgtbl.el (kotl-mode:transpose-lines-up): Fix to restore point.
+                      (kotl-mode:transpose-lines-down): Implement this command.
+
+* test/hyperbole-tests.el (hyperbole-key-bindings): Fix to handle all variants of M-RET.
+
+* test/kotl-mode-tests.el (kotl-mode-move-up-to-first-line): Add non-failing test.
+
+2023-08-27  Bob Weiner  <rsw@gnu.org>
+
+* test/hui-register-tests.el (hui-register-test--register-val-insert-ibut): Fix this test.
+
+* hbut.el (ebut:to): Simplify so if 'lbl-key' is nil, look only for ebutton at point.
+          (ibut:to): Simplify so if 'name-key' is nil, look only for ebutton at point.
+    Fix so finds any matching name-key without using attributes of hbut:current.
+
+* hsys-www.el (eww-browse-url): Remove unused '(let ((url-allow-non-local-files t))'.
+
+* hbdata.el (hyperb:user-email): Declare to avoid byte compiler warning.
+
+* hypb.el (hypb-mail-address-tld-regexp, hypb-mail-address-regexp): Moved from "hibtypes.el"
+    and renamed to 'hypb:mail-address-tld-regexp', 'hypb:mail-address-regexp'.
+          (mail-address-mode-list):  Moved from "hibtypes.el" and renamed to
+    'hypb:mail-address-mode-list'.
+  hibtypes.el (mail-address)
+  kotl/kexport.el (kexport:html-replacement-alist): Update use of above variables.
+  hib-social.el:
+  hibtypes.el (require 'hypb): Add for defs of above variables.
+  hyrolo.el (hyrolo-mail-to): Ref above new var name.
+
+* hib-kbd.el (hui-mini): Add (require 'hui-mini) and move private vars before first
+    usage to remove byte-compiler warnings.
+
+* hbut.el (ibut:org-at-read-only-p, ibut:operate): Trigger errors when point is on
+    read-only text, read-only Org contexts, explicit buttons, or emacs push-buttons.
+
+* hyperbole.el (hyperbole--enable-mode, hyperbole--disable-mode): Stop setting
+    'mark-even-if-inactive' to nil as this is no longer needed.  As a result, remove
+    'hyperbole--mark-even-if-inactive'.
+
+* hui.el (hui-kill-ring-save): Fix interactive args to match comment, passing
+    (mark) and then (point) rather than (region-beginning) and (region-end).
+
+2023-08-25  Bob Weiner  <rsw@gnu.org>
+
+* hbut.el (ibut:operate): Skip past any inserted comment chars prior to
+    ibut at point.
+
+* hbut.el (ibut:operate): Before call 'ibut:at-p', leave point after any opening
+    ibut delimiters, since may have just deleted the button name, for example.
+
+* hbut.el (ibut:delete): Also clear in-memory version of the button.
+          (ibut:rename): Clear any in-memory current button attributes so
+    cannot reference any invalid buffer locations after rename.  Also, improve
+    doc string.
+
+* hbut.el (ibut:to): Replace 'ibut:at-p' calls with 'hbut:current since
+    button should have been recoginized and created in-memory before this
+    is called.
+
+2023-08-23  Bob Weiner  <rsw@gnu.org>
+
+* hbut.el (ibut:create): Comment out clear of 'hbut:current attributes to prevent
+    failure from 'ibut:at-p' calls when using 'ert-deftest'.
+
+2023-08-22  Bob Weiner  <rsw@gnu.org>
+
+* hypb-ert.el (hypb-ert-def-at-p): With optional 'start-end-flag', return list of
+    (test-name test-name-start-pos testname-end-pos).
+              (hyperbole-run-test-definition): Use above flag and set name as button
+    label to flash in this ibtype.
+
+* hui.el (hui:hbut-operate): Fix so point is temporarily moved to the start of the button
+    text before flashing an activating a button.
+
+* test/hmouse-drv-tests.el (hbut-pathname-path-variable-with-three-colons-is-a-path-test):
+  test/smart-org-tests.el (smart-org-mode-with-smart-keys-buttons-on-hypb-button-activates)
+	                   smart-org-mode-with-smart-keys-on-hypb-button-activates):
+  test/hui-register-tests.el (hui-register-test--register-val-insert-ebut):
+  test/hypb-tests.el (hypb:installation-type-test): Make work under Windows where path root
+    is "c:/".
+
+* kotl/klink.el (klink:at-p): Fix to not confuse Windows path drive prefixes with URL protocol
+    prefixes.
+
+* hargs.el (hargs:iform-vector): Fix 'D' to read a dir name, not a file name.
+
+* hbut.el (ibut:program): Capture existing ibut name at point in any error.
+
+2023-08-20  Bob Weiner  <rsw@gnu.org>
+
+* hbut.el (ibut:operate): Call ibut:insert-text only when hbut:current 'actype
+    attribute is non-nil.
+          (ibut:operate): Remove appending of 'instance-flag' to hbut:current 'name
+    and replace with 'ibut:at-p' call.
+
+2023-08-13  Bob Weiner  <rsw@gnu.org>
+
+* hbut.el (ibut:set-name-and-label-key-p): Save both name-start and name-end pos.
+          (ibut:delete-occurrence): Use above button attributes and remove 'name'
+    argument.
+          (ibut:delete): Fix to delete ibut name and text.
+
+2023-08-10  Bob Weiner  <rsw@gnu.org>
+
+* hbut.el (ibut:set-name-and-label-key-p): Fix to find preceding name when point is
+    within delimited text; previously was not accounting for text opening delimiter.
+          (ibut:label-p): Clarify doc string.
+
+* hui.el (hui:hbut-delete): Improve doc on which implicit button key is used.
+
+* hbut.el (ibut:delete): Fix to delete all occurrences of the same ibut in current buffer.
+	  (ibut:delete-occurrence): Add to delete a single named or unnamed ibut if
+    buffer is not read-only.
+          (ibut:to): Change 'hbut:label-regexp' to 'ibut:label-regexp'.
+
+2023-08-08  Bob Weiner  <rsw@gnu.org>
+
+* hui-mini.el (hui:menus): Remove delq from top-level menu where never
+    dynamically delete entries.
+
+* hibtypes.el (parse-label-and-file): Rename to 'hlink:parse-label-and-file' to
+    prevent prefix byte-compiler warning.
+
+* kotl/klink.el (klink:create): Fix interactive spec.
+
+* test/hmouse-drv-tests.el (hbut-ib-create-label): Fix by allowing recursive minibuffers.
+
+* kotl/kotl-mode.el (kotl-mode:self-insert-command): Remove special kotl-mode auto-filling
+    is handled by regular 'self-insert-command'.  This fixes improper hanging indent auto-
+    filling in kcells due to narrowing kcell to text contens only, hiding the cell prefix.
+                    (kotl-mode:pre-self-insert-command):
+  kotl/kotl-orgtbl.el (kotl-mode:setup-overriding-orgtbl-keymap): Remove reference to
+    'kotl-mode:self-insert-command'.
+
+2023-08-06  Bob Weiner  <rsw@gnu.org>
+
+* hbut.el (ibut:create): Fix to move point inside the delimited text of an ibut rather than just
+    outside.
+          (ibut:set-name-and-label-key-p): Make interactive so can call and have 'hbut:current
+    attributes displayed.
+
+* hargs.el (hargs:iform-extensions-vector): Fix kcell read to not use a completion collection
+    but just a type.
+
+* hargs.el (hargs:reading-symbol): Remove, not needed, use 'hargs:reading-type'.
+
+* hyperbole.el: Remove '(hyperbole-mode 1)' call upon loading this file; was for compatibility
+    with prior Hyperbole versions but since V8, instructions have been to add that to personal
+    init.  Remove it as loading an Elisp file should not enable a minor mode.
+
+* hargs.el (hargs:make-iform-vector): Move saving of prev `hargs:reading-type' to here so does
+    not have to be done in multiple places elsewhere.
+           (hargs:iform-extensions-vector, hargs:iform-extensions-vector, hargs:iform-read):
+    Remove saving of prev `hargs:reading-type' here.
+
+* hargs.el (hargs:iform-extensions-vector): Remove setting of 'prev-reading-p' used to
+    restore 'hargs:reading-symbol' value after 'unwind-protect' code block runs for Info-node
+    and Info-index-item.  Should be 'hargs:reading-type' instead and this is handled
+    automatically by 'hargs:iform-read'.
+
+* hui-mouse.el (hkey-alist): Deprioritize `smart-org' to after hargs argument or minibuffer
+    menu reading.
+
+* hactypes.el (link-to-kcell, link-to-mail): Fix interactive call with Hyperbole extension
+    format to use `hargs:iform-read'.
+
+* hargs.el (hargs:at-p):
+  kotl/klink.el (klink:create): Fix storage of button source buffer default-directory since
+    dynamically bound let was not working due to shift to lexically-bound code.  Instead
+    store this value in the 'hbut:current 'dir property.
+
+* kotl/kfill.el (kfill:fallback-fill-paragraph): Add '(not (eq fill-paragraph-function t))'
+    to fix no function, basic fill case.
+
+2023-08-02  Mats Lidell  <matsl@gnu.org>
+
+* .github/workflows/main.yml (jobs): Add version 29.1 to CI workflow.
+
+2023-07-30  Bob Weiner  <rsw@gnu.org>
+
+* hyperbole.el (hyperb:init): Fix potential unbound use of vertico-mouse-mode.
+
+* kotl/kotl-mode.el (kotl-mode:next-line, kotl-mode:previous-line): Fix that moving from
+    2nd line to first triggers a begin-of-buffer error and the same at the end of the
+    buffer.
+
+* kotl/kfill.el (kfill:forward-line): Fix to report number of lines left to move relative
+    to N.
+
+* hmouse-tag.el (smart-tags-display): Replace obsolete 'find-tag' call with
+    'xref-find-definitions'.
+
+* hargs.el (hargs:at-p): FIX: Ensure 'vertico-mouse--index' is fboundp before calling it.
+    Also fix to return whole string rather than the empty string when point is at the
+    end of the minibuffer.
+           (hargs:select-p): Clarify potential use of 'value' argument in doc str.
+    Also fix so during completion, minibuffer contents are not used unless they match
+    a valid completion or are empty and default can be used.
+	   (hargs:match-p): Add for when vertico.el is not available and use in
+    `hargs:select-p'.
+
+* hmouse-drv.el (action-key, action-key-internal): FIX: Set 'action-key-depressed-flag'
+    to t when executing keyboard action-key actions.
+                (assist-key, assist-key-internal): FIX: Set 'assist-key-depressed-flag'
+    to t when executing keyboard assist-key actions.
+
+* hsys-org.el (hsys-org-global-cycle, hsys-org-cycle): FIX: Temp move point to beginning
+    of heading so TAB invocations cycle through all states properly.
+
+2023-07-24  Mats Lidell  <matsl@gnu.org>
+
+* Makefile (install-elpaca):
+  install-test/MANIFEST:
+  install-test/elpaca/.emacs: Add elpaca install test.
+
+2023-07-22  Bob Weiner  <rsw@gnu.org>
+
+* hargs.el (hargs:at-p): Make Action Keyboard Key behave the same as the Action Mouse
+    Key when in the minibuffer, deleting any characters to the right of point to
+
+2023-07-17  Bob Weiner  <rsw@gnu.org>
+
+* hypb-ert.el (require): Wrap 'eval-and-compile' call around this to force require
+    of "hbut" which defines 'defal' and prevents compilation error when "hibtypes"
+    tries to load this.
+
+2023-07-14  Mats Lidell  <matsl@gnu.org>
+
+* test/hmouse-drv-tests.el (hbut-pathname-line-test)
+    (hbut-pathname-line-test-duplicate):  Add tests for pathname with line
+    number specification.
+
 2023-07-13  Mats Lidell  <matsl@gnu.org>
 
 * test/hmouse-drv-tests.el (hbut-pathname-anchor-must-match-all)
@@ -7,7 +292,7 @@
 2023-07-11  Mats Lidell  <matsl@gnu.org>
 
 * Makefile (version, $(pkg_parent)/hyperbole-$(HYPB_VERSION).tar): Do not
-    include hyperbole-pgk.el. It is generated by elpa and not needed for a
+    include hyperbole-el.pkg. It is generated by elpa and not needed for a
     plain tar archive of the package.
 
 2023-07-10  Mats Lidell  <matsl@gnu.org>
@@ -21,7 +306,7 @@
 * hycontrol.el:
   hui-mouse.el:
   hmouse-drv.el:
-  hyrolo.el: Public declarations added for multiple packages.
+  hyrolo.el: Add public declarations for multiple libraries.
 
 * hargs.el: Add public declarations for vertico and ivy.
 
@@ -31,8 +316,21 @@
 
 2023-07-09  Bob Weiner  <rsw@gnu.org>
 
+* hbut.el (ibut:delimit): Add name separator after delimiting name if not already
+    there but ensure point stays at end of the delimited name.
+          (ibut:operate): Update doc string with caller responsibilities.
+	  (ibut:program): Fix to send 'edit-flag' to 'ibut:operate' call when point
+    is on an existing ibutton.  Remove 'cannot nest error' since 'ibut:operate' will
+    now modify the existing ibutton.
+          (ibut:insert-text): Don't insert name separator if looking at one in the buffer.
+	  (ibut:operate): Fix to not trigger an error when adding a name to an ibut
+    that does not have one.
+
 * hypb-ert.el (hypb-ert-*): Change all calls of 'ert' to disable ert's messages
     so that any test's message is displayed after an hypb-ert test case run.
+              (hypb-ert): Change 'ert' calls to use 'hypb-ert' and centralize
+    'message' function override when possible to deal with different 'ert'
+    calling conventions in different Emacs versions.
 
 * hbut.el (ibut:operate): Update doc of each state.
 

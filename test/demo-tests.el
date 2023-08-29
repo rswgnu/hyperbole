@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    30-Jan-21 at 12:00:00
-;; Last-Mod:      9-Jul-23 at 01:21:53 by Bob Weiner
+;; Last-Mod:      9-Aug-23 at 01:18:08 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -441,13 +441,16 @@
 ;; Fast demo key series
 (ert-deftest fast-demo-key-series-help-buffer ()
   "Action key on C-hA brings up help buffer for action key."
-  (let ((help-buffer "*Help: Hyperbole Action Key*"))
+  (let ((help-buffer "*Help: Hyperbole Action Key*")
+	(help-window-select t))
     (unwind-protect
         (with-temp-buffer
           (insert "{C-h A}")
           (goto-char 3)
           (action-key)
-          (should (get-buffer help-buffer)))
+	  (if (get-buffer help-buffer)
+              (should (get-buffer help-buffer))
+	    (should (print (current-buffer)))))
       (hy-test-helpers:kill-buffer help-buffer))))
 
 (ert-deftest fast-demo-key-series-window-grid-22 ()

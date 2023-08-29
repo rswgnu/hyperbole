@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 21:42:03
-;; Last-Mod:     10-Jul-23 at 18:31:05 by Mats Lidell
+;; Last-Mod:     29-Aug-23 at 01:11:29 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -135,8 +135,8 @@ This command is similar to `copy-region-as-kill', except that it gives
 visual feedback indicating the extent of the region being copied."
   ;; Pass mark first, then point, because the order matters when
   ;; calling `kill-append'.
-  (interactive (list (when mark-active (region-beginning))
-		     (when mark-active (region-end))
+  (interactive (list (when mark-active (mark))
+		     (when mark-active (point))
 		     (prefix-numeric-value current-prefix-arg)))
   (let (thing)
     (if (or (use-region-p)
@@ -638,7 +638,7 @@ details."
 	            (when (hattr:get 'hbut:current 'lbl-end)
                       (let* ((start (hattr:get 'hbut:current 'lbl-start))
                              (end (hattr:get 'hbut:current 'lbl-end))
-                             (old-text (buffer-substring start end))
+                             (old-text (buffer-substring-no-properties start end))
                              (new-text (read-string "Edit ibut text: " old-text)))
 			(save-excursion
 			  (goto-char start)
@@ -666,6 +666,8 @@ button.  With optional prefix ARG non-nil, insert a named
 implicit button.  See also documentation for
 `hui:link-possible-types'."
   (interactive "P")
+
+  (hattr:clear 'hbut:current)
   (save-window-excursion
     (when (or (= (count-windows) 1)
 	      (= (hypb:count-visible-windows) 1))
@@ -731,8 +733,8 @@ Use `hui:gbut-create' to create a global explicit button."
 
 (defun hui:hbut-act (&optional but)
   "Execute action for optional Hyperbole button symbol BUT in current buffer.
-	  The default is the current button."
-  (interactive (list (hbut:get (hargs:read-match "Activate labeled Hyperbole button: "
+The default is the current button."
+  (interactive (list (hbut:get (hargs:read-match "Activate named Hyperbole button: "
 						 (nconc (ebut:alist) (ibut:alist))
 						 nil t nil 'hbut))))
   (hui:hbut-operate #'hbut:act "Activate Hyperbole button: " but))
@@ -774,6 +776,8 @@ Use `hui:gbut-create' to create a global explicit button."
 
 (defun hui:hbut-delete (&optional but-key key-src)
   "Delete a Hyperbole button given by optional BUT-KEY in optional KEY-SRC.
+For an implicit button, the BUT-KEY is the text key, not the name key.
+
 Use current buffer if no KEY-SRC is given.  Return t if button
 is deleted, nil if user chooses not to delete, or signal an error
 otherwise.  If called interactively, prompt user for whether to
@@ -904,7 +908,7 @@ See `hbut:report'."
 (defalias 'hui:hbut-summarize #'hui:hbut-report)
 
 (defun hui:ibut-act (&optional ibut)
-  "Activate optional labeled implicit button symbol IBUT in current buffer.
+  "Activate optional named implicit button symbol IBUT in current buffer.
 Default is any implicit button at point."
   (interactive
    (let ((ibut (ibut:at-p)) (lst))
@@ -912,30 +916,32 @@ Default is any implicit button at point."
       (cond (ibut)
 	    ((setq lst (ibut:alist))
 	     (ibut:get (ibut:label-to-key
-			(hargs:read-match "Activate labeled implicit button: " lst nil t
+			(hargs:read-match "Activate named implicit button: " lst nil t
 					  (ibut:label-p 'as-label) 'ibut))))
 	    (t
-	     (hypb:error "(ibut-act): No labeled implicit buttons in buffer."))))))
-  (hui:hbut-operate #'ibut:act "Activate labeled implicit button: " ibut))
+	     (hypb:error "(ibut-act): No named implicit buttons in buffer."))))))
+  (hui:hbut-operate #'ibut:act "Activate named implicit button: " ibut))
 
 (defun hui:ibut-create (&optional start end)
   "Interactively create an implicit Hyperbole button at point.
-Use any label between optional START and END points (when interactive,
+Use any name between optional START and END points (when interactive,
 any active region).  Indicate button creation by delimiting
-and adding any necessary instance number to the button label.
+and adding any necessary instance number to the button name.
 
 For programmatic creation, use `ibut:program' instead."
   (interactive (list (when (use-region-p) (region-beginning))
 		     (when (use-region-p) (region-end))))
+  (hui:buf-writable-err (current-buffer) "ibut-create")
+  (when (ebut:at-p)
+    (error "(ibut:program): Move off explicit button at point to create an implicit button"))
   (hypb:assert-same-start-and-end-buffer
     (let (default-name name but-buf actype)
       (setq but-buf (current-buffer))
-      (hui:buf-writable-err but-buf "ibut-create")
       (hattr:clear 'hbut:current)
 
       ;; Throw an error if on a named or delimited Hyperbole button since
       ;; cannot create another button within such contexts.
-      (when (hbut:at-p)
+      (when (ibut:at-p)
 	(let ((name (hattr:get 'hbut:current 'name))
 	      (lbl (hbut:key-to-label (hattr:get 'hbut:current 'lbl-key)))
 	      (lbl-start (hattr:get 'hbut:current 'lbl-start))
@@ -1121,6 +1127,7 @@ from those instead.  See also documentation for
 		 (assist-key-clear-variables)
 		 (hmouse-choose-link-and-referent-windows)))
 
+  (hattr:clear 'hbut:current)
   (unless (called-interactively-p 'any)
     ;; Clear smart key variables so this does not improperly reference
     ;; values left over from a prior drag or click.
@@ -1131,6 +1138,11 @@ from those instead.  See also documentation for
 	(if (and depress-window release-window)
 	    (list depress-window release-window)
 	  (hmouse-choose-link-and-referent-windows))
+
+      (select-window referent-window)
+      ;; This sets hbut:current to link-to button attributes.
+      (setq link-types (hui:link-possible-types)
+	    num-types (length link-types))
 
       (select-window link-but-window)
       ;; It is rarely possible that a *Warnings* buffer popup might have
@@ -1158,9 +1170,6 @@ from those instead.  See also documentation for
 			 "ebut-link-directly"
 			 "Create button named: ")
 		lbl-key (hbut:label-to-key but-lbl))))
-      (select-window referent-window)
-      (setq link-types (hui:link-possible-types)
-	    num-types (length link-types))
 
       ;; num-types is the number of possible link types to choose among
       (cond ((= num-types 0)
@@ -1222,6 +1231,7 @@ drag from a window to another window's modeline."
 		 (append (hmouse-choose-link-and-referent-windows)
 			 current-prefix-arg)))
 
+  (hattr:clear 'hbut:current)
   (unless (called-interactively-p 'any)
     ;; Clear smart key variables so this does not improperly reference
     ;; values left over from a prior drag or click.
@@ -1233,6 +1243,11 @@ drag from a window to another window's modeline."
 	(if (and depress-window release-window)
 	    (list depress-window release-window)
 	  (hmouse-choose-link-and-referent-windows))
+
+      (select-window referent-window)
+      ;; This sets hbut:current to link-to button attributes.
+      (setq link-types (hui:link-possible-types)
+	    num-types (length link-types))
 
       (select-window link-but-window)
       ;; It is rarely possible that a *Warnings* buffer popup might have
@@ -1260,9 +1275,6 @@ drag from a window to another window's modeline."
 			"ibut-link-directly"
 			"Name for implicit button: ")
 	      name-key (hbut:label-to-key but-name)))
-      (select-window referent-window)
-      (setq link-types (hui:link-possible-types)
-	    num-types (length link-types))
 
       ;; num-types is the number of possible link types to choose among
       (cond ((= num-types 0)
@@ -1522,10 +1534,28 @@ for with completion of all labeled buttons within the current buffer."
 	 (hypb:error "(hbut-operate): No current button upon which to operate."))
 	((progn (unless but (setq but 'hbut:current))
 		(hbut:is-p but))
-	 (hui:but-flash)
-	 (apply hrule:action
-		operation
-		`(',but)))
+	 ;; Temporarily move point to start of the button text for flashing and activation.
+	 ;; Only if the button action does not move point, restore point to it previous value.
+	 (let ((opoint (point-marker))
+	       (text-start (hattr:get but 'lbl-start)))
+	   (if text-start
+	       (goto-char text-start)
+	     (ibut:to-text (hattr:get but 'lbl-key)))
+	   (setq text-start (point-marker))
+	   (hui:but-flash)
+	   (prog1 (apply hrule:action operation `(',but))
+	     ;; Restore point as it was prior to `text-start' move
+	     ;; if the action switched buffers or did not move point
+	     ;; within the current buffer.
+	     (when (or (equal text-start (point-marker))
+		       (not (eq (current-buffer) (marker-buffer opoint))))
+	       (with-current-buffer (marker-buffer opoint)
+		 (let ((owind (get-buffer-window nil t)))
+		   (if owind
+		       (set-window-point owind opoint)
+		     (goto-char opoint)))))
+	     (set-marker opoint nil)
+	     (set-marker text-start nil))))
 	((and but (symbolp but))
 	 (hypb:error "(hbut-operate): Symbol, %s, has invalid Hyperbole button attributes:\n  %S" but (hattr:list but)))
 	(t
@@ -1630,7 +1660,9 @@ Optional NO-SORT means display in decreasing priority order (natural order)."
     (hui:htype-help htype-sym no-sort)))
 
 (defun hui:ibut-delete-op (interactive but-key key-src)
-  "INTERACTIVEly or not, delete explicit button given by BUT-KEY in KEY-SRC.
+  "INTERACTIVEly or not, delete implicit button given by BUT-KEY in KEY-SRC.
+The BUT-KEY is the text key, not the name key.
+
 KEY-SRC may be a buffer or a pathname; when nil the current buffer is used.
 Return t if button is deleted, signal error otherwise.  If called
 with INTERACTIVE non-nil, derive BUT-KEY from the button that point is
@@ -1706,7 +1738,7 @@ arguments."
     (ebut:operate label (when edit-flag label))))
 
 (defun hui:ibut-link-create (edit-flag but-window name-key but-loc but-dir type-and-args)
-  "Create or edit a new Hyperbole implicit link button.
+  "Edit or create a new Hyperbole implicit link button.
 With EDIT-FLAG non-nil, edit an existing ibutton at point in
 BUT-WINDOW; otherwise, create a new one.
 
@@ -1716,9 +1748,7 @@ which to create button.  BUT-DIR is the directory of BUT-LOC.
 TYPE-AND-ARGS is the action type for the button followed by any
 arguments it requires.  Any text properties are removed from
 string arguments."
-  ;; Don't set 'name attribute here since this may be a rename where
-  ;; we need to use the existing name attribute before renaming to
-  ;; label version of `name-key'.
+  
   (hattr:set 'hbut:current 'categ 'implicit)
   (hattr:set 'hbut:current 'loc but-loc)
   (hattr:set 'hbut:current 'dir but-dir)
@@ -1730,7 +1760,19 @@ string arguments."
   (unless (and but-loc (or (equal (buffer-name) but-loc)
 			   (eq (current-buffer) but-loc)))
     (hbut:key-src-set-buffer but-loc))
-  (ibut:operate (ibut:key-to-label name-key) edit-flag))
+  (if edit-flag
+      (if name-key
+	  (ibut:operate (ibut:key-to-label name-key) t)
+	(ibut:operate nil t))
+    (if name-key
+	(if (hattr:get 'hbut:current 'name)
+	    ;; Don't set 'name attribute here since is a rename where
+	    ;; we need to use the existing name attribute before renaming to
+	    ;; label version of `name-key'.
+	    (ibut:operate (ibut:key-to-label name-key))
+	  (hattr:set 'hbut:current 'name (ibut:key-to-label name-key))
+	  (ibut:operate))
+      (ibut:operate))))
 
 (defun hui:link-possible-types ()
   "Return list of possible link action types during editing of a Hyperbole button.
@@ -1764,105 +1806,109 @@ Buffer without File      link-to-buffer-tmp"
   (let (val
 	hbut-sym
 	lbl-key)
-    (delq nil
-	  (list (cond ((and (featurep 'org-id)
-			    (cond ((save-excursion
-				     (beginning-of-line)
-				     (when (looking-at "[ \t]*:ID:[ \t]+\\([^ \t\r\n\f]+\\)")
-				       ;; Org ID definition
-				       (list 'link-to-org-id (match-string 1)))))
-				  (t (let* ((id (thing-at-point 'symbol t)) ;; Could be a uuid or some other form of id
-					    (bounds (when id (bounds-of-thing-at-point 'symbol)))
-					    (start (when bounds (car bounds)))
-					    (case-fold-search t))
-				       ;; Org ID link - must have id: prefix or is ignored.
-				       (when start
-					 (save-excursion
-					   (goto-char (max (- start 3) (point-min)))
-					   (when (looking-at "\\bid:")
-					     (list 'link-to-org-id id)))))))))
+    (prog1 (delq nil
+		 (list (cond ((and (featurep 'org-id)
+				   (cond ((save-excursion
+					    (beginning-of-line)
+					    (when (looking-at "[ \t]*:ID:[ \t]+\\([^ \t\r\n\f]+\\)")
+					      ;; Org ID definition
+					      (list 'link-to-org-id (match-string 1)))))
+					 (t (let* ((id (thing-at-point 'symbol t)) ;; Could be a uuid or some other form of id
+						   (bounds (when id (bounds-of-thing-at-point 'symbol)))
+						   (start (when bounds (car bounds)))
+						   (case-fold-search t))
+					      ;; Org ID link - must have id: prefix or is ignored.
+					      (when start
+						(save-excursion
+						  (goto-char (max (- start 3) (point-min)))
+						  (when (looking-at "\\bid:")
+						    (list 'link-to-org-id id)))))))))
 
-		      (t (cond ((and (prog1 (setq hbut-sym (hbut:at-p))
-				       ;; Next line forces use of any ibut name in the link.
-				       (save-excursion (ibut:at-to-name-p hbut-sym)))
-				     (setq lbl-key (hattr:get hbut-sym 'lbl-key))
-				     (eq (current-buffer) (get-file-buffer (gbut:file))))
-				(list 'link-to-gbut lbl-key))
-			       ((and hbut-sym (eq (hattr:get hbut-sym 'categ) 'explicit))
-				(list 'link-to-ebut lbl-key))
-			       (hbut-sym
-				(list 'link-to-ibut lbl-key (or buffer-file-name (buffer-name))))
-			       ((and (require 'bookmark)
-				     (derived-mode-p 'bookmark-bmenu-mode)
-				     (list 'link-to-bookmark (bookmark-bmenu-bookmark))))
-			       ((let (node)
-				  (cond ((derived-mode-p 'Info-mode)
-					 (if (and Info-current-node
-						  (member Info-current-node
-							  (Info-index-nodes Info-current-file))
-						  (Info-menu-item-at-p))
-					     (let ((hargs:reading-type 'Info-index-item))
-					       (list 'link-to-Info-index-item (hargs:at-p)))
-					   (let ((hargs:reading-type 'Info-node))
-					     (list 'link-to-Info-node (hargs:at-p)))))
-					((and (derived-mode-p #'texinfo-mode)
-					      (save-excursion
-						(beginning-of-line)
-						(or (looking-at "@node ")
-						    (re-search-backward "^@node " nil t))))
-					 (require 'texnfo-upd)
-					 (setq node (texinfo-copy-node-name))
-					 (list 'link-to-texinfo-node buffer-file-name node))
-					((hmail:reader-p)
-					 (list 'link-to-mail
-					       (list (rmail:msg-id-get) buffer-file-name))))))
-			       (t (cond
-				   ((let ((hargs:reading-type 'directory))
-				      (setq val (hargs:at-p t)))
-				    (list 'link-to-directory val))
-				   ((let ((hargs:reading-type 'file))
-				      (setq val (hargs:at-p t)))
-				    (list 'link-to-file val (point)))
-				   ((derived-mode-p #'kotl-mode)
-				    (list 'link-to-kcell buffer-file-name (kcell-view:idstamp)))
-				   ;; If link is within an outline-regexp prefix, use
-				   ;; a link-to-string-match.
-				   ((and (boundp 'outline-regexp)
-					 (stringp outline-regexp)
-					 (save-excursion
-					   (<= (point)
-					       (progn
-						 (beginning-of-line)
-						 (if (looking-at outline-regexp)
-						     (match-end 0)
-						   0)))))
-				    (save-excursion
-				      (let ((heading (string-trim
-						      (buffer-substring-no-properties
-						       (point)
-						       (line-end-position))))
-					    (occur 0))
-					(end-of-line)
-					(while (and (not (string-empty-p heading))
-						    (search-backward heading nil t))
-					  (setq occur (1+ occur)))
-					(list 'link-to-string-match
-					      heading occur buffer-file-name))))
-				   (buffer-file-name
-				    (list 'link-to-file buffer-file-name (point)))
-				   (t (list 'link-to-buffer-tmp (buffer-name)))))
-			       ;;
-			       ;; Deleted link to elisp possibility as it can embed
-			       ;; long elisp functions in the button data file and
-			       ;; possibly not parse them correctly.
-			       ;;
-			       ;; (and (fboundp 'smart-emacs-lisp-mode-p)
-			       ;;      (smart-emacs-lisp-mode-p)
-			       ;;      (or (eq (char-syntax (following-char)) ?\()
-			       ;; 	 (eq (char-syntax (preceding-char)) ?\)))
-			       ;;      (setq val (hargs:sexpression-p))
-			       ;;      (list 'eval-elisp val))
-			       )))))))
+			     ;; Next clause forces use of any ibut name in the link
+			     ;; and sets hbut:current button attributes.
+			     (t (cond ((and (prog1 (setq hbut-sym (hbut:at-p))
+					      (save-excursion (ibut:at-to-name-p hbut-sym)))
+					    (setq lbl-key (hattr:get hbut-sym 'lbl-key))
+					    (eq (current-buffer) (get-file-buffer (gbut:file))))
+				       (list 'link-to-gbut lbl-key))
+				      ((and hbut-sym (eq (hattr:get hbut-sym 'categ) 'explicit))
+				       (list 'link-to-ebut lbl-key))
+				      (hbut-sym
+				       (list 'link-to-ibut lbl-key (or buffer-file-name (buffer-name))))
+				      ((and (require 'bookmark)
+					    (derived-mode-p 'bookmark-bmenu-mode)
+					    (list 'link-to-bookmark (bookmark-bmenu-bookmark))))
+				      ((let (node)
+					 (cond ((derived-mode-p 'Info-mode)
+						(if (and Info-current-node
+							 (member Info-current-node
+								 (Info-index-nodes Info-current-file))
+							 (Info-menu-item-at-p))
+						    (let ((hargs:reading-type 'Info-index-item))
+						      (list 'link-to-Info-index-item (hargs:at-p)))
+						  (let ((hargs:reading-type 'Info-node))
+						    (list 'link-to-Info-node (hargs:at-p)))))
+					       ((and (derived-mode-p #'texinfo-mode)
+						     (save-excursion
+						       (beginning-of-line)
+						       (or (looking-at "@node ")
+							   (re-search-backward "^@node " nil t))))
+						(require 'texnfo-upd)
+						(setq node (texinfo-copy-node-name))
+						(list 'link-to-texinfo-node buffer-file-name node))
+					       ((hmail:reader-p)
+						(list 'link-to-mail
+						      (list (rmail:msg-id-get) buffer-file-name))))))
+				      (t (cond
+					  ((let ((hargs:reading-type 'directory))
+					     (setq val (hargs:at-p t)))
+					   (list 'link-to-directory val))
+					  ((let ((hargs:reading-type 'file))
+					     (setq val (hargs:at-p t)))
+					   (list 'link-to-file val (point)))
+					  ((derived-mode-p #'kotl-mode)
+					   (list 'link-to-kcell buffer-file-name (kcell-view:idstamp)))
+					  ;; If link is within an outline-regexp prefix, use
+					  ;; a link-to-string-match.
+					  ((and (boundp 'outline-regexp)
+						(stringp outline-regexp)
+						(save-excursion
+						  (<= (point)
+						      (progn
+							(beginning-of-line)
+							(if (looking-at outline-regexp)
+							    (match-end 0)
+							  0)))))
+					   (save-excursion
+					     (let ((heading (string-trim
+							     (buffer-substring-no-properties
+							      (point)
+							      (line-end-position))))
+						   (occur 0))
+					       (end-of-line)
+					       (while (and (not (string-empty-p heading))
+							   (search-backward heading nil t))
+						 (setq occur (1+ occur)))
+					       (list 'link-to-string-match
+						     heading occur buffer-file-name))))
+					  (buffer-file-name
+					   (list 'link-to-file buffer-file-name (point)))
+					  (t (list 'link-to-buffer-tmp (buffer-name)))))
+				      ;;
+				      ;; Deleted link to elisp possibility as it can embed
+				      ;; long elisp functions in the button data file and
+				      ;; possibly not parse them correctly.
+				      ;;
+				      ;; (and (fboundp 'smart-emacs-lisp-mode-p)
+				      ;;      (smart-emacs-lisp-mode-p)
+				      ;;      (or (eq (char-syntax (following-char)) ?\()
+				      ;; 	 (eq (char-syntax (preceding-char)) ?\)))
+				      ;;      (setq val (hargs:sexpression-p))
+				      ;;      (list 'eval-elisp val))
+				      )))))
+      ;; This is a referent button to link to, not the source button,
+      ;; so clear it.
+      (hattr:clear 'hbut:current))))
 
 (defun hui:list-remove-text-properties (lst)
   "Return LST, a list, with text properties removed from any string elements."

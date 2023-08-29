@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    04-Feb-89
-;; Last-Mod:     10-Jul-23 at 18:27:44 by Mats Lidell
+;; Last-Mod:     28-Aug-23 at 01:58:05 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -203,13 +203,6 @@ Its default value is `smart-scroll-down'.  To disable it, set it to
 	  (memq company-active-map (current-minor-mode-maps)))
      . ((smart-company-to-definition) . (smart-company-help)))
     ;;
-    ;; Handle any Org mode-specific contexts but give priority to Hyperbole
-    ;; buttons prior to cycling Org headlines
-    ((and (not (hyperb:stack-frame '(smart-org)))
-	  (let ((hrule:action #'actype:identity))
-	    (smart-org)))
-     . ((smart-org) . (smart-org)))
-    ;;
     ;; Treemacs hierarchical file manager
     ((eq major-mode 'treemacs-mode)
      . ((smart-treemacs) . (smart-treemacs)))
@@ -230,7 +223,7 @@ Its default value is `smart-scroll-down'.  To disable it, set it to
 	  (eq (selected-window) (minibuffer-window))
 	  (not (bound-and-true-p ivy-mode))
 	  (not (and (bound-and-true-p vertico-mode)
-		    ;; Ensure vertico is prompting for an argument
+		    ;; Is vertico is prompting for an argument?
 		    (vertico--command-p nil (current-buffer))))
 	  (not (eq hargs:reading-type 'hmenu))
 	  (not (smart-helm-alive-p)))
@@ -249,6 +242,13 @@ Its default value is `smart-scroll-down'.  To disable it, set it to
 	  (or (eq hargs:reading-type 'hmenu)
 	      (smart-helm-alive-p)))
      . ((funcall (key-binding (kbd "RET"))) . (funcall (key-binding (kbd "RET")))))
+    ;;
+    ;; Handle any Org mode-specific contexts but give priority to Hyperbole
+    ;; buttons prior to cycling Org headlines
+    ((and (not (hyperb:stack-frame '(smart-org)))
+	  (let ((hrule:action #'actype:identity))
+	    (smart-org)))
+     . ((smart-org) . (smart-org)))
     ;;
     ;; The ID-edit package supports rapid killing, copying, yanking and
     ;; display management. It is available only as a part of InfoDock.
@@ -1999,6 +1999,7 @@ If key is pressed:
   (cond ((smart-eobp) (todotxt-archive))
 	(t (todotxt-edit-item))))
 
+;;;###autoload
 (defun smart-eobp ()
   "Return t if point is past the last visible buffer line with text."
   (and (or (eobp)

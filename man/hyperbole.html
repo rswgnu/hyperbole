@@ -4,7 +4,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <!-- This manual is for GNU Hyperbole
-(Edition 8.0.1pre, Published June, 2023).
+(Edition 8.0.1pre, Published August, 2023).
 
 Copyright © 1989-2023  Free Software Foundation, Inc.
 
@@ -107,7 +107,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</P>
 
 <PRE>
 Edition 8.0.1pre
-Printed June 22, 2023.
+Printed August 28, 2023.
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -865,7 +865,8 @@ Hyperbole
   Reading argument
     1st press at an arg value   Copies value to minibuffer &lt;- same
     2nd press at an arg value   Uses value as argument     &lt;- same
-    In minibuffer               Accepts minibuffer arg     Completion help
+    In minibuffer at eol        Accepts minibuffer arg     List completions
+    In minibuffer before eol    Deletes rest of arg        Deletes rest of arg
   On an implicit button/path    Activates button           Button help
   Within a koutline cell        Collapses and expands      Shows tree props
   Left of a koutline cell       Creates a klink            Moves a tree
@@ -1052,24 +1053,45 @@ Hyperbole user interface has an extensive core of argument types that
 it recognizes.  Whenever Hyperbole is prompting you for an argument,
 it knows the type that it needs and provides some error checking to
 help you get it right.  More importantly, it allows you to press the
-Action Key within an entity that you want to use as an argument and it
-will grab the appropriate thing and show it to you at the input prompt
-within the minibuffer.  If you press (click with a mouse) the Action
-Key on the same thing again, it accepts the entity as the argument
-and moves on.  Thus, a double click registers a desired argument.
-Double-quoted strings, pathnames, mail messages, Info nodes, dired
-listings, buffers, numbers, completion items and so forth are all
-recognized at appropriate times.  All of the argument types mentioned
-in the documentation for the Emacs Lisp <code class="code">interactive</code> function
-are recognized.  Experiment a little and you will quickly get used to
-this direct selection technique.
+Action Key within an entity that you want to use as an argument.
+Hyperbole will copy the appropriate thing to the minibuffer as the
+argument.  If you press (click with a mouse) the Action Key on the
+same thing again, e.g. within a list of possible completions,
+Hyperbole exits the minibuffer and uses the current argument.  Thus, a
+double click registers a desired argument.  Double-quoted strings,
+pathnames, mail messages, Info nodes, dired listings, buffers,
+numbers, completion items and so forth are all recognized at
+appropriate times.  All of the argument types mentioned in the
+documentation for the Emacs Lisp <code class="code">interactive</code> function are
+recognized.  Experiment a little and you will quickly get used to this
+direct selection technique.
 </p>
 <a class="index-entry-id" id="index-completion"></a>
-<p>Wherever possible, standard Emacs completion is offered, as described in
-<a data-manual="emacs" href="https://www.gnu.org/software/emacs/manual/html_mono/emacs.html#Completion">Completion</a> in <cite class="cite">the GNU Emacs Manual</cite>.  Remember to use <kbd class="kbd">{?}</kbd>
-to see what your possibilities for an argument are.  Once you have a
-list of possible completions on screen, press the Action Key twice on
-any item to enter it as the argument.
+<a class="index-entry-id" id="index-Vertico-completion"></a>
+<p>Wherever possible, standard Emacs completion is offered, as described
+in <a data-manual="emacs" href="https://www.gnu.org/software/emacs/manual/html_mono/emacs.html#Completion">Completion</a> in <cite class="cite">the GNU Emacs Manual</cite>.  Remember to use
+<kbd class="kbd">{?}</kbd>  to see what your possibilities for an argument are if
+completions are not automatically shown to you.  Once you have a list
+of possible completions on screen, press the Action Key twice on any
+item to enter it as the argument.  If you are using the Vertico
+completion library with completions displayed in the minibuffer,
+selection of completions works the same as if they were displayed in a
+separate buffer as in standard Emacs.
+</p>
+<a class="index-entry-id" id="index-minibuffer-completion"></a>
+<a class="index-entry-id" id="index-minibuffer-arguments"></a>
+<a class="index-entry-id" id="index-Smart-Keys-in-minibuffer"></a>
+<a class="index-entry-id" id="index-Action-Key-in-minibuffer"></a>
+<a class="index-entry-id" id="index-Assist-Key-in-minibuffer"></a>
+<p>Within the minibuffer itself, the Smart Keys are also
+context-sensitive.  A press of the Action Key at the end of the
+argument line tries to accept the argument and when successful, exits
+the minibuffer.  A press of the Assist Key at the end of the argument
+line displays matching completions for times when they are not
+automatically displayed or need updating.  A press of the Action or
+Assist Key on part of the argument, deletes from point to the end of
+the line, expanding the set of available completions and redisplaying
+them.
 </p>
 <hr>
 </div>
@@ -1902,7 +1924,7 @@ Next: <a href="#Implicit-Buttons" accesskey="n" rel="next">Implicit Buttons</a>,
 <p>Sometimes it is useful to activate buttons without regard to the
 information with which you are working.  In such instances, you use
 <em class="dfn">global buttons</em>, which are buttons that may be activated or
-otherwise operated upon by typing their labels/names when they are
+otherwise operated upon by typing their names/labels when they are
 prompted for, rather than selecting the buttons within a buffer.  In
 contrast, activation of explicit buttons depends upon the information on
 your screen since they are accessible only from within their particular
@@ -1926,6 +1948,30 @@ the button&rsquo;s name, press <kbd class="kbd">{<kbd class="key">RET</kbd>}</kb
 you for its action type and associated arguments.  <kbd class="kbd">{C-h h g e}</kbd> to
 edit an existing global button.  To remove a button, use the Delete menu
 item, <kbd class="kbd">{C-h h g d}</kbd>; see <a class="pxref" href="#Deletion">Deletion</a>.
+</p>
+<a class="index-entry-id" id="index-global-link-creation"></a>
+<a class="index-entry-id" id="index-creating-global-links"></a>
+<a class="index-entry-id" id="index-menu-item_002c-Gbut_002fLink"></a>
+<a class="index-entry-id" id="index-C_002dh-h-g-l"></a>
+<p>To create a global button that links to point in one of your Emacs
+windows, use the Link menu item, <kbd class="kbd">{C-h h g l}</kbd>.
+</p>
+<p>By default this will create a global explicit link button.  Give it a
+prefix argument to create a global implicit link button.
+</p>
+<p>With a single window visible on-screen or a single window within your
+current frame, this will prompt you for a button name or label
+(temporarily showing you your global/personal button file) and then
+will insert a button that links to the current point within that window.
+</p>
+<p>If you have exactly two Emacs windows in your current frame or exactly
+two windows visible across two Emacs frames, then the link referent will
+be to the point in the other, non-selected window.
+</p>
+<p>With more than two windows on screen, Hyperbole will prompt you to choose
+the referent window and its associated point to which to link.  If the
+Ace Window package is installed and active, this will be used to choose
+the window; otherwise, you will be prompted to select it by mouse.
 </p>
 <p>Global buttons are actually explicit buttons stored at the end of your
 personal button file, see <a class="pxref" href="#Button-Files">Button Files</a>.  You can always go into that
@@ -2619,11 +2665,11 @@ whose names begin with a &lsquo; &rsquo; or &lsquo;*&rsquo; character.
 <dt><code class="code">mail-address</code></dt>
 <dd><p>If on an e-mail address in a specific buffer type, compose mail to that
 address in another window. Applies to any major mode descended from those
-in <code class="code">mail-address-mode-list</code>, the rolo match buffer, any buffer
-attached to a file in <code class="code">hyrolo-file-list</code>, or any buffer
-with <samp class="file">mail</samp> or <samp class="file">rolo</samp> (case-insensitive) within its name.  If
-<code class="code">mail-address-mode-list</code> is set to nil, this button type is active
-in all buffers.
+in <code class="code">hypb:mail-address-mode-list</code>, the rolo match buffer, any buffer
+attached to a file in <code class="code">hyrolo-file-list</code>, or any buffer with
+<samp class="file">mail</samp> or <samp class="file">rolo</samp> (case-insensitive) within its name.  If
+<code class="code">hypb:mail-address-mode-list</code> is set to nil, this button type is
+active in all buffers.
 </p>
 <a class="index-entry-id" id="index-ibtypes-www_002durl"></a>
 <a class="index-entry-id" id="index-URL"></a>
@@ -7958,9 +8004,10 @@ selection.  Global buttons are useful when one wants quick access to
 actions such as jumping to common file locations or for performing
 sequences of operations.  One need not locate them since they are
 always available by name, with full completion offered.  All global
-buttons are stored in the file given by the variable <code class="code">gbut:file</code>
-and may be activated with the Action Key when editing this file.  By
-default, this is the same as the user&rsquo;s personal button file.
+buttons are stored in the file returned by the function call,
+<code class="code">(gbut:file)</code>, and may be activated with the Action Key when
+editing this file.  By default, this is the same as the user&rsquo;s
+personal button file.
 </p>
 </dd>
 <dt><b class="b">Glink</b></dt>
@@ -12726,6 +12773,7 @@ Next: <a href="#Function" accesskey="n" rel="next">Function, Variable and File I
 <tr><td></td><td class="printindex-index-entry"><a href="#index-C_002dh-h-f-w"><code>C-h h f w</code></a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Web-Search-Engines">Web Search Engines</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-C_002dh-h-f-w-1"><code>C-h h f w</code></a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Default-Hyperbole-Bindings">Default Hyperbole Bindings</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-C_002dh-h-g"><code>C-h h g</code></a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Global-Buttons">Global Buttons</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-C_002dh-h-g-l"><code>C-h h g l</code></a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Global-Buttons">Global Buttons</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-C_002dh-h-h"><code>C-h h h</code></a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Default-Hyperbole-Bindings">Default Hyperbole Bindings</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-C_002dh-h-i"><code>C-h h i</code></a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-C_002dh-h-i-a"><code>C-h h i a</code></a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
@@ -13300,7 +13348,7 @@ Next: <a href="#Concept-Index" accesskey="n" rel="next">Concept Index</a>, Previ
 <tr><td colspan="4"> <hr></td></tr>
 <tr><th id="Function_fn_letter-G">G</th><td></td><td></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-gbut_003aebut_002dprogram"><code>gbut:ebut-program</code></a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Programmatic-Button-Creation">Programmatic Button Creation</a></td></tr>
-<tr><td></td><td class="printindex-index-entry"><a href="#index-gbut_003afile">gbut:file</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Glossary">Glossary</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-gbut_003afile"><code>gbut:file</code></a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Glossary">Glossary</a></td></tr>
 <tr><td colspan="4"> <hr></td></tr>
 <tr><th id="Function_fn_letter-H">H</th><td></td><td></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-hbmap_003adir_002duser">hbmap:dir-user</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Button-Files">Button Files</a></td></tr>
@@ -13820,6 +13868,7 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function, Variable and Fi
 <tr><td></td><td class="printindex-index-entry"><a href="#index-action-implicit-button">action implicit button</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-Action-Key">Action Key</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Smart-Keys">Smart Keys</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-Action-Key-drag">Action Key drag</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#By-Dragging">By Dragging</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-Action-Key-in-minibuffer">Action Key in minibuffer</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Smart-Key-Argument-Selection">Smart Key Argument Selection</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-Action-Key_002c-cell-argument">Action Key, cell argument</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Relocating-and-Copying">Relocating and Copying</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-Action-Key_002c-hide-or-show-cell">Action Key, hide or show cell</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Hiding-and-Showing">Hiding and Showing</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-Action-Key_002c-klink">Action Key, klink</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Klinks">Klinks</a></td></tr>
@@ -13855,6 +13904,7 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function, Variable and Fi
 <tr><td></td><td class="printindex-index-entry"><a href="#index-Assist-Key">Assist Key</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Smart-Keys">Smart Keys</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-Assist-Key-drag">Assist Key drag</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-Assist-Key-drag-1">Assist Key drag</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#By-Dragging">By Dragging</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-Assist-Key-in-minibuffer">Assist Key in minibuffer</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Smart-Key-Argument-Selection">Smart Key Argument Selection</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-Assist-Key_002c-listing-attributes">Assist Key, listing attributes</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Cell-Attributes">Cell Attributes</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-Assist-Mouse-Key">Assist Mouse Key</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Thing-Selection">Thing Selection</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-Assist-Mouse-Key-1">Assist Mouse Key</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Smart-Key-_002d-Delimited-Things">Smart Key - Delimited Things</a></td></tr>
@@ -14041,6 +14091,7 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function, Variable and Fi
 <tr><td></td><td class="printindex-index-entry"><a href="#index-create_002dtime-attribute">create-time attribute</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Cell-Attributes">Cell Attributes</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-creating-explicit-links">creating explicit links</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#By-Menu">By Menu</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-creating-explicit-links-1">creating explicit links</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#By-Dragging">By Dragging</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-creating-global-links">creating global links</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Global-Buttons">Global Buttons</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-creating-implicit-links">creating implicit links</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-creator-attribute">creator attribute</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Cell-Attributes">Cell Attributes</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-credits">credits</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Top">Top</a></td></tr>
@@ -14241,6 +14292,7 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function, Variable and Fi
 <tr><td></td><td class="printindex-index-entry"><a href="#index-global-button-2">global button</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Button-Files">Button Files</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-global-button-link">global button link</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-global-button_002c-modify">global button, modify</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Questions-and-Answers">Questions and Answers</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-global-link-creation">global link creation</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Global-Buttons">Global Buttons</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-glossary">glossary</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Glossary">Glossary</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-Gmail-Contacts">Gmail Contacts</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#HyRolo-Settings">HyRolo Settings</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-GNU-Emacs">GNU Emacs</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Hyperbole-Overview">Hyperbole Overview</a></td></tr>
@@ -14554,6 +14606,7 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function, Variable and Fi
 <tr><td></td><td class="printindex-index-entry"><a href="#index-menu-item_002c-Find_002dFile_002dURLs">menu item, Find-File-URLs</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Using-URLs-with-Find_002dFile">Using URLs with Find-File</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-menu-item_002c-Find_002fWeb">menu item, Find/Web</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Menus">Menus</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-menu-item_002c-FramesControl">menu item, FramesControl</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#HyControl">HyControl</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-menu-item_002c-Gbut_002fLink">menu item, Gbut/Link</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Global-Buttons">Global Buttons</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-menu-item_002c-GrepFile">menu item, GrepFile</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Menus">Menus</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-menu-item_002c-Hist">menu item, Hist</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Menus">Menus</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-menu-item_002c-Ibut_002fAct">menu item, Ibut/Act</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
@@ -14633,6 +14686,8 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function, Variable and Fi
 <tr><td></td><td class="printindex-index-entry"><a href="#index-Messages-buffer">Messages buffer</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Smart-Key-Debugging">Smart Key Debugging</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-MH_002de">MH-e</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Buttons-in-Mail">Buttons in Mail</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-middle-mouse-key">middle mouse key</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Smart-Keys">Smart Keys</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-minibuffer-arguments">minibuffer arguments</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Smart-Key-Argument-Selection">Smart Key Argument Selection</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-minibuffer-completion">minibuffer completion</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Smart-Key-Argument-Selection">Smart Key Argument Selection</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-minibuffer-menu">minibuffer menu</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Menus">Menus</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-minibuffer-menu-1">minibuffer menu</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Minibuffer-Menu-Activation">Minibuffer Menu Activation</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-minibuffer-menu-bindings">minibuffer menu bindings</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Binding-Minibuffer-Menu-Items">Binding Minibuffer Menu Items</a></td></tr>
@@ -14884,6 +14939,7 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function, Variable and Fi
 <tr><td></td><td class="printindex-index-entry"><a href="#index-Smart-Key_002c-default-context-1">Smart Key, default context</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Smart-Key-_002d-Default-Context">Smart Key - Default Context</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-Smart-Key_002c-reload">Smart Key, reload</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Menus">Menus</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-Smart-Keyboard-Keys">Smart Keyboard Keys</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Smart-Key-_002d-Argument-Completion">Smart Key - Argument Completion</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-Smart-Keys-in-minibuffer">Smart Keys in minibuffer</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Smart-Key-Argument-Selection">Smart Key Argument Selection</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-smart-keys_002c-unshifted">smart keys, unshifted</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Smart-Key-Bindings">Smart Key Bindings</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-smart-marking">smart marking</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Smart-Key-Thing-Selection">Smart Key Thing Selection</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-Smart-Menu">Smart Menu</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Smart-Key-_002d-Smart-Menus">Smart Key - Smart Menus</a></td></tr>
@@ -15002,6 +15058,7 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function, Variable and Fi
 <tr><td></td><td class="printindex-index-entry"><a href="#index-version-description">version description</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Suggestion-or-Bug-Reporting">Suggestion or Bug Reporting</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-vertical-drag">vertical drag</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Creating-and-Deleting-Windows">Creating and Deleting Windows</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-vertical-drag-1">vertical drag</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Smart-Mouse-Drags-within-a-Window">Smart Mouse Drags within a Window</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-Vertico-completion">Vertico completion</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Smart-Key-Argument-Selection">Smart Key Argument Selection</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-video">video</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Action-Types">Action Types</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-view">view</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Viewing-Outlines">Viewing Outlines</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-view-mode">view mode</a>:</td><td>&nbsp;</td><td class="printindex-index-section"><a href="#Smart-Key-_002d-View-Mode">Smart Key - View Mode</a></td></tr>

@@ -786,7 +786,7 @@ or without quotes.
 
 An Action Key press on an email address of any common domain name will
 start composing an email message to that name within Emacs.  This is
-limited to major modes listed in the variable, mail-address-mode-list.
+limited to major modes listed in the variable, hypb:mail-address-mode-list.
 If that variable is nil, then email addresses are active in every
 buffer.
 

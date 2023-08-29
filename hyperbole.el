@@ -7,7 +7,7 @@
 ;; Author:       Bob Weiner
 ;; Maintainer:   Bob Weiner <rsw@gnu.org>, Mats Lidell <matsl@gnu.org>
 ;; Created:      06-Oct-92 at 11:52:51
-;; Last-Mod:     10-Jul-23 at 12:08:06 by Mats Lidell
+;; Last-Mod:     27-Aug-23 at 13:04:09 by Bob Weiner
 ;; Released:     03-Dec-22
 ;; Version:      8.0.1pre
 ;; Keywords:     comm, convenience, files, frames, hypermedia, languages, mail, matching, mouse, multimedia, outlines, tools, wp
@@ -487,9 +487,10 @@ frame, those functions by default still return the prior frame."
 			      t)))
   ;;
   ;; When vertico-mode is used, vertico-mouse-mode is needed for the
-  ;; Action Key to properly select completions from the candidate list.
-  (if (bound-and-true-p vertico-mode)
-      (vertico-mouse-mode 1)
+  ;; Action Key to properly select completions from the candidate
+  ;; list, so force its usage when vertico-mode is invoked.
+  ;; vertico-mouse-mode should be an autoload.
+  (when (fboundp #'vertico-mouse-mode)
     (add-hook 'vertico-mode-hook (lambda () (vertico-mouse-mode 1))))
   ;;
   ;; Hyperbole initialization is complete.
@@ -505,12 +506,6 @@ frame, those functions by default still return the prior frame."
   (unless (and hkey-init (where-is-internal #'hkey-help))
     (hyperb:init)
     (remove-hook 'after-init-hook #'hyperb:init))
-
-  ;; Store the current value and set `mark-even-if-inactive' to nil so
-  ;; can select delimited things if the region is not active when
-  ;; hyperbole-mode is enabled.
-  (setq hyperbole--mark-even-if-inactive mark-even-if-inactive
-	mark-even-if-inactive nil)
   ;;
   ;; Abbreviate MSWindows /cygdrive mount point paths.
   (when (file-exists-p "/cygdrive")
@@ -542,11 +537,6 @@ frame, those functions by default still return the prior frame."
 				     directory-abbrev-alist)
 	hpath:posix-mount-point-to-mswindows-alist nil)
   ;;
-  ;; Reset the value of `mark-even-if-inactive' if the user has not
-  ;; changed it while Hyperbole was active.
-  (unless mark-even-if-inactive
-    (setq mark-even-if-inactive hyperbole--mark-even-if-inactive))
-  ;;
   (remove-hook (if (boundp 'write-file-functions)
 		   'write-file-functions
 		 'write-file-hooks)
@@ -561,13 +551,6 @@ frame, those functions by default still return the prior frame."
     (hyperb:init)
   ;; Initialize after other key bindings are loaded at startup.
   (add-hook 'after-init-hook #'hyperb:init t))
-
-;; !! FIXME: This next expression activates Hyperbole for compatibility
-;; with prior releases where (require 'hyperbole) was enough to
-;; activate its key bindings.  However, loading a file should not
-;; change Emacs's behavior, so after educating users to add this
-;; next line to their Emacs initializations, it should be removed.
-(hyperbole-mode 1)
 
 (makunbound 'hyperbole-loading)
 

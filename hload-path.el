@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    29-Jun-16 at 14:39:33
-;; Last-Mod:      2-Jul-23 at 12:25:01 by Bob Weiner
+;; Last-Mod:     28-Aug-23 at 01:45:24 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -20,6 +20,8 @@
 ;;; Public declarations
 ;;; ************************************************************************
 (defvar generated-autoload-file)
+
+(declare-function make-directory-autoloads "ext:autoload")
 
 ;;; ************************************************************************
 ;;; Public variables
@@ -114,7 +116,7 @@ the symbol list.  For `suspicious', only `set-buffer' can be used."
       `(with-suppressed-warnings ,warnings ,@body)
     `(with-no-warnings ,@body)))
 
-;; New autoload generation function defined only in Emacs 28
+;; New autoload generation function defined only as of Emacs 28
 (defalias 'hload-path--make-directory-autoloads
   (cond ((fboundp 'loaddefs-generate)
          #'loaddefs-generate)

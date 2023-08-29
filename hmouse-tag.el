@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    24-Aug-91
-;; Last-Mod:     19-Jun-23 at 12:54:03 by Bob Weiner
+;; Last-Mod:     28-Aug-23 at 16:19:42 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -758,7 +758,7 @@ Return matching Elisp tag name that point is within, else nil."
 Return nil when point is on the first line of a non-alias Lisp definition.
 
 Resolve Hyperbole implicit button type and action type references."
-  (smart-lisp-htype-tag 
+  (smart-lisp-htype-tag
    (smart-lisp-at-non-htype-tag-p no-flash)))
 
 (defun smart-lisp-at-non-htype-tag-p (&optional no-flash)
@@ -911,7 +911,7 @@ See https://tkf.github.io/emacs-jedi/latest/."
 	   (eq 'run (process-status (process-buffer proc)))
 	   ;; The goto is performed asynchronously.
 	   ;; It reports in the minibuffer when a definition is not found.
-	   ;; !! Only works on tag at point, not the tagname passed in as jedi
+	   ;; !! TODO: Only works on tag at point, not the tagname passed in as jedi
 	   ;; does not accept a tag parameter.
 	   ;;
 	   ;; jedi:find-file-function is an RSW custom
@@ -1375,7 +1375,7 @@ See the \"${hyperb:dir}/smart-clib-sym\" script for more information."
       found)))
 
 (defun smart-tags-display (tag next &optional list-of-tags-tables)
-  (when  next (setq tag nil))
+  (when next (setq tag nil))
   (let* ((tags-table-list (or list-of-tags-tables
 			      (and (boundp 'tags-table-list)
 				   (not (smart-tags-org-src-block-p))
@@ -1398,12 +1398,12 @@ See the \"${hyperb:dir}/smart-clib-sym\" script for more information."
 		  ;; Signals an error if tag is not found which is caught by
 		  ;; many callers of this function.
 		  ;; Find exact identifier matches only.
-		  (with-no-warnings (find-tag (concat "\\`" (regexp-quote tag) "\\'") nil t)))))
+		  (with-no-warnings (xref-find-definitions tag)))))
 	  ((or tags-table-list tags-file-name)
 	   ;; Signals an error if tag is not found which is caught by
 	   ;; many callers of this function.
 	   ;; Find exact identifier matches only.
-	   (with-no-warnings (find-tag (concat "\\`" (regexp-quote tag) "\\'") nil t)))
+	   (with-no-warnings (xref-find-definitions tag)))
 	  (t
 	   (error "No existing tag tables in which to find `%s'" tag)))))
 

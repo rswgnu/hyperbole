@@ -32,7 +32,7 @@
   (with-current-buffer (messages-buffer)
     (should (save-excursion
               (goto-char (point-max))
-              (search-backward msg (- (point-max) 350))))))
+              (search-backward msg (- (point-max) 350) t)))))
 
 (defun hy-test-helpers:action-key-should-call-hpath:find (str)
   "Call action-key and check that hpath:find was called with STR."
@@ -41,7 +41,10 @@
                (lambda (filename)
 		 (if (not (and (stringp str) (stringp filename)))
 		     (should (eq t (message "str = %s; filename = %s" str filename)))
-		   (setq was-called (should (or (string= str filename) (string= str (expand-file-name filename)))))))))
+		   (setq was-called (should (or (string= str filename)
+						;; Support Windows paths
+						(string= (expand-file-name str)
+							 (expand-file-name filename)))))))))
       (action-key)
       (should was-called))))
 

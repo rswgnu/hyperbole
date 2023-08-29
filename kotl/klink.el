@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    15-Nov-93 at 12:15:16
-;; Last-Mod:     17-Jun-23 at 16:50:34 by Bob Weiner
+;; Last-Mod:      8-Aug-23 at 23:57:36 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -107,13 +107,13 @@ return an absolute klink string.  Klink returned is of the form:
 REFERENCE should be a cell-ref or a string containing \"filename, cell-ref\".
 See documentation for `kcell:ref-to-id' for valid cell-ref formats."
   (interactive
-   ;; Don't change the name or delete default-dir used here.  It is referenced
-   ;; in "hargs.el" for argument getting.
-   (let ((default-dir default-directory))
+   (progn
      (barf-if-buffer-read-only)
+     ;; This `default-directory' setting is referenced in "hargs.el" for argument getting.
+     (hattr:set 'hbut:current 'dir default-directory)
      (save-excursion
        (hargs:iform-read
-	(list 'interactive "*+LInsert link to <[file,] cell-id [|vspecs]>: ")))))
+	'(interactive "*+LInsert link to <[file,] cell-id [|vspecs]>: ")))))
   (barf-if-buffer-read-only)
   ;; Reference generally is a string.  It may be a list as a string, e.g.
   ;; "(\"file\" \"cell\")", in which case, we remove the unneeded internal
@@ -121,8 +121,9 @@ See documentation for `kcell:ref-to-id' for valid cell-ref formats."
   (and (stringp reference) (> (length reference) 0)
        (eq (aref reference 0) ?\()
        (setq reference (replace-regexp-in-string "\\\"" "" reference nil t)))
-  (let ((default-dir default-directory)
-	file-ref cell-ref)
+  ;; This `default-directory' setting is referenced in "hargs.el" for getting arguments.
+  (hattr:set 'hbut:current 'dir default-directory)
+  (let (file-ref cell-ref)
     (setq reference (klink:parse reference)
 	  file-ref  (car reference)
 	  cell-ref  (nth 1 reference))
@@ -198,8 +199,8 @@ link-end-position, (including delimiters)."
 		 (hpath:is-p (expand-file-name referent (hbut:get-key-src t t)))))
 	   ;; Eliminate matches to e-mail addresses like, <user@domain>
 	   (not (string-match "[^<> \t\n\r\f][!&@]" referent))
-	   ;; Eliminate matches to URLs
-	   (not (string-match "\\`[a-zA-Z]+:" referent))
+	   ;; Eliminate matches to URLs but allow for single char Windows path drive prefixes
+	   (not (string-match "\\`[a-zA-Z][a-zA-Z]+:" referent))
 	   ;; Don't match to <HTML> and </SGML> type tags
 	   (not (and (memq major-mode hui-select-markup-modes)
 		     ;; Assume , followed by a number is a klink.

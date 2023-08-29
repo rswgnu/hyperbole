@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     1-Jun-16 at 15:35:36
-;; Last-Mod:     10-Jul-23 at 17:42:24 by Mats Lidell
+;; Last-Mod:     23-Aug-23 at 15:09:00 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1898,8 +1898,8 @@ See documentation of `hycontrol-windows-grid' for further details."
 	       ;; to 1 if there was no error.
 	       (setq hycontrol-arg 1))
       (error (set-window-configuration wconfig)
-	     (if (and hycontrol-help-flag (or hycontrol-frames-mode hycontrol-windows-mode))
-		 (pop-to-buffer "*Messages*"))
+	     (and hycontrol-help-flag (or hycontrol-frames-mode hycontrol-windows-mode)
+		 (pop-to-buffer (messages-buffer)))
 	     (error "(HyDebug): Grid Size: %d; %s" arg err)))
     ;; No error, save prior frame configuration for easy return
     (hhist:add hist-elt)
