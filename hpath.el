@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     1-Nov-91 at 00:44:23
-;; Last-Mod:     27-Aug-23 at 18:36:02 by Bob Weiner
+;; Last-Mod:     28-Aug-23 at 16:48:31 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -928,44 +928,48 @@ optional NON-EXIST, nonexistent local paths are allowed.
 Absolute pathnames must begin with a `/' or `~'."
   (let ((path (hpath:delimited-possible-path non-exist))
 	subpath)
+    (when path
+      (setq path (string-trim path)))
     (when (and path (not non-exist) (string-match hpath:prefix-regexp path)
 	       (not (string-equal (match-string 0 path) path)))
       (setq non-exist t))
-    (cond ((and path (file-readable-p path))
-	   path)
-	  ((and path
-		;; Don't allow more than one set of grouping chars
-		(not (string-match-p "\)\\s-*\(\\|\\]\\s-*\\[\\|\}\\s-*\{" path))
-		;; With point inside a path variable, return the path that point is on or to the right of.
-		(setq subpath (or (and (setq subpath (hargs:delimited "[:\"\']\\|^\\s-*" "[:\"\']\\|\\s-*$" t t nil "[\t\n\r\f]\\|[;:] \\| [;:]"))
-				       (not (string-match-p "[:;\t\n\r\f]" subpath))
-				       subpath)
-				  (and (setq subpath (hargs:delimited "[;\"\']\\|^\\s-*" "[;\"\']\\|\\s-*$"  t t nil "[\t\n\r\f]\\|[;:] \\| [;:]"))
-				       (not (string-match-p "[;\t\n\r\f]\\|:[^:]*:" subpath))
-				       subpath)))
-		;; Handle anchored or action prefix char paths in the
-		;; following clause; otherwise, might just be looking
-		;; at part of the path
-		(and subpath (not (or (string-match-p "#" subpath)
-				      (string-match-p hpath:prefix-regexp subpath))))
-		(setq subpath
-		      (if subpath
-			  (cond ((and (string-match "\\`\\s-*\\([^; \t]+\\)" subpath)
-				      (executable-find (match-string 1 subpath)))
-				 ;; Could be a shell command from a semicolon separated
-				 ;; list; ignore if so
-				 nil)
-				(t (expand-file-name subpath)))
-			;; Only default to current path if know are within a PATH value
-			(when (string-match-p hpath:path-variable-value-regexp path)
-			  ".")))
-		(hpath:is-p subpath type non-exist))
-	   subpath)
-	  ((hpath:is-p path type non-exist))
-	  ;; Local file URLs
-	  ;; ((hpath:is-p (hargs:delimited "file://" "[ \t\n\r\"\'\}]" nil t)))
-	  ((hpath:remote-at-p))
-	  ((hpath:www-at-p) nil))))
+    (unless (and path (or (string-empty-p path)
+			  (string-match "::" path)))
+      (cond ((and path (file-readable-p path))
+	     path)
+	    ((and path
+		  ;; Don't allow more than one set of grouping chars
+		  (not (string-match-p "\)\\s-*\(\\|\\]\\s-*\\[\\|\}\\s-*\{" path))
+		  ;; With point inside a path variable, return the path that point is on or to the right of.
+		  (setq subpath (or (and (setq subpath (hargs:delimited "[:\"\']\\|^\\s-*" "[:\"\']\\|\\s-*$" t t nil "[\t\n\r\f]\\|[;:] \\| [;:]"))
+					 (not (string-match-p "[:;\t\n\r\f]" subpath))
+					 subpath)
+				    (and (setq subpath (hargs:delimited "[;\"\']\\|^\\s-*" "[;\"\']\\|\\s-*$"  t t nil "[\t\n\r\f]\\|[;:] \\| [;:]"))
+					 (not (string-match-p "[;\t\n\r\f]\\|:[^:]*:" subpath))
+					 subpath)))
+		  ;; Handle anchored or action prefix char paths in the
+		  ;; following clause; otherwise, might just be looking
+		  ;; at part of the path
+		  (and subpath (not (or (string-match-p "#" subpath)
+					(string-match-p hpath:prefix-regexp subpath))))
+		  (setq subpath
+			(if subpath
+			    (cond ((and (string-match "\\`\\s-*\\([^; \t]+\\)" subpath)
+					(executable-find (match-string 1 subpath)))
+				   ;; Could be a shell command from a semicolon separated
+				   ;; list; ignore if so
+				   nil)
+				  (t (expand-file-name subpath)))
+			  ;; Only default to current path if know are within a PATH value
+			  (when (string-match-p hpath:path-variable-value-regexp path)
+			    ".")))
+		  (hpath:is-p subpath type non-exist))
+	     subpath)
+	    ((hpath:is-p path type non-exist))
+	    ;; Local file URLs
+	    ;; ((hpath:is-p (hargs:delimited "file://" "[ \t\n\r\"\'\}]" nil t)))
+	    ((hpath:remote-at-p))
+	    ((hpath:www-at-p) nil)))))
 
 (defun hpath:call (func path &optional non-exist)
   "Call FUNC with a PATH and optional NON-EXIST flag.

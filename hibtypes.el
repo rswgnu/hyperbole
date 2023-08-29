@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 20:45:31
-;; Last-Mod:     28-Aug-23 at 02:17:49 by Bob Weiner
+;; Last-Mod:     28-Aug-23 at 16:02:32 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -112,7 +112,7 @@ If the referenced location is found, return non-nil."
 	   (end   (when bounds (cdr bounds)))
 	   m)
       ;; Ignore ID definitions or when not on a possible ID
-      (when id
+      (when (and id (string-match "\\`[:alnum:][-[:alnum:]:.@]+\\'" id))
 	(when (and start end)
 	  (ibut:label-set id start end))
 	(if (and (not assist-flag)
@@ -120,9 +120,18 @@ If the referenced location is found, return non-nil."
 				 (re-search-forward ":\\(CUSTOM_\\)?ID:[ \t]+"
 						    (line-end-position) t)))
 	    (hact 'message "On ID definition; use {C-u M-RET} to copy a link to an ID.")
-	  (when (let ((inhibit-message t)) ;; Inhibit org-id-find status msgs
-		  (setq m (or (and (featurep 'org-roam) (org-roam-id-find id 'marker))
-			      (org-id-find id 'marker))))
+	  (when (let ((inhibit-message t) ;; Inhibit org-id-find status msgs
+		      (obuf (current-buffer))
+		      (omode major-mode))
+		  (prog1 (setq m (or (and (featurep 'org-roam)
+					  (org-roam-id-find id 'marker))
+				     (org-id-find id 'marker)))
+		    ;; org-find-id sets current buffer mode to Org
+		    ;; mode even if ID is not found; switch it back
+		    ;; when necessary.
+		    (when (and (eq obuf (current-buffer))
+			       (not (eq omode major-mode)))
+		      (funcall omode))))
 	    (hact 'link-to-org-id-marker m)))))))
 
 (defun org-id:help (_hbut)
