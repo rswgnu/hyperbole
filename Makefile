@@ -3,7 +3,7 @@
 # Author:       Bob Weiner
 #
 # Orig-Date:    15-Jun-94 at 03:42:38
-# Last-Mod:      7-May-23 at 20:33:02 by Bob Weiner
+# Last-Mod:     27-Aug-23 at 15:19:50 by Bob Weiner
 #
 # Copyright (C) 1994-2023  Free Software Foundation, Inc.
 # See the file HY-COPY for license information.
@@ -200,7 +200,8 @@ ELC_KOTL = $(EL_KOTL:.el=.elc)
 HY-TALK  = HY-TALK/.hypb HY-TALK/HYPB HY-TALK/HY-TALK.org
 
 HYPERBOLE_FILES = dir info html $(EL_COMPILE) $(EL_KOTL) \
-	$(ELC_COMPILE) $(HY-TALK) ChangeLog COPYING Makefile HY-ABOUT HY-ANNOUNCE HY-NEWS \
+	$(ELC_COMPILE) $(HY-TALK) ChangeLog COPYING Makefile HY-ABOUT HY-ANNOUNCE \
+        HY-CONCEPTS.kotl HY-NEWS \
 	HY-WHY.kotl INSTALL DEMO DEMO-ROLO.otl FAST-DEMO MANIFEST README README.md TAGS _hypb \
         .hypb smart-clib-sym topwin.py hyperbole-banner.png $(man_dir)/hkey-help.txt \
 	$(man_dir)/hyperbole.texi $(man_dir)/hyperbole.css $(man_dir)/version.texi
@@ -303,9 +304,9 @@ bin: src
 	$(RM) *.elc kotl/*.elc
 	$(EMACS_BATCH) -f batch-byte-compile $(EL_KOTL) $(EL_COMPILE)
 
-# Create -l "file.el" load-file command-line args for each Hyperbole .el file for use in
+# Create -l file.el load-file command-line args for each Hyperbole .el file for use in
 # eln native compile target below.
-LOAD_EL = $(shell echo "$(EL_KOTL) $(EL_COMPILE)" | sed - -e 's+ +" -l "./+g' -e 's+^+-l "+')"
+LOAD_EL = $(shell echo "$(EL_KOTL) $(EL_COMPILE)" | sed -e 's+^+./+' -e 's+ + -l ./+g' -e 's+^+-l +')
 
 load-hyperbole:
 	$(EMACS_BATCH) \
@@ -318,7 +319,6 @@ load-hyperbole:
 # 	    -f batch-native-compile $(EL_KOTL) $(EL_COMPILE)
 eln: src
 	$(EMACS_BATCH) \
-          $(LOAD_EL) \
 	  -f batch-native-compile $(EL_KOTL) $(EL_COMPILE)
 
 # Byte compile files but apply a filter for either including or
@@ -347,9 +347,9 @@ TAGS: $(EL_TAGS)
 clean:
 	$(RM) hyperbole-autoloads.el kotl/kotl-autoloads.el $(ELC_COMPILE) $(ELC_KOTL) TAGS
 
-version: doc
+version:
 	@ echo ""
-	@ fgrep -L $(HYPB_VERSION) hyperbole-pkg.el Makefile HY-ABOUT HY-NEWS README.md hversion.el hyperbole.el man/hyperbole.texi man/version.texi > WRONG-VERSIONS
+	@ fgrep -L $(HYPB_VERSION) Makefile HY-ABOUT HY-NEWS README.md hversion.el hyperbole.el man/hyperbole.texi man/version.texi > WRONG-VERSIONS
 	@ # If any file(s) have wrong version number, print them and exit with code 1
 	@ if [ -s WRONG-VERSIONS ]; then \
 	  echo "The following files do not have the proper Hyperbole version number, $(HYPB_VERSION):"; \
@@ -360,7 +360,7 @@ version: doc
 	@ echo ""
 
 # Build the README.md.html and Info, HTML and Postscript versions of the user manual
-doc: README.md.html manual
+doc: version README.md.html manual
 
 # Build the Info, HTML and Postscript versions of the user manual
 manual: info html pdf
@@ -451,9 +451,9 @@ $(pkg_parent)/hyperbole-$(HYPB_VERSION).tar.sig: $(pkg_parent)/hyperbole-$(HYPB_
 
 $(pkg_parent)/hyperbole-$(HYPB_VERSION).tar: version $(HYPERBOLE_FILES)
 	$(RM) -fr $(pkg_hyperbole) $(pkg_hyperbole).tar
-	# git archive --format=tar --prefix=hyperbole-$(HYPB_VERSION)/ HEAD | (cd $(pkg_parent) && tar xf -)
+        # git archive --format=tar --prefix=hyperbole-$(HYPB_VERSION)/ HEAD | (cd $(pkg_parent) && tar xf -)
 	(mkdir -p $(pkg_hyperbole) && git ls-files | tar Tzcf - - | (cd $(pkg_hyperbole) && tar zxf -)) && \
-	$(CP) hyperbole-pkg.el $(pkg_hyperbole) && cd $(pkg_hyperbole) && make autoloads && chmod 755 topwin.py && \
+	cd $(pkg_hyperbole) && make autoloads && chmod 755 topwin.py && \
 	COPYFILE_DISABLE=1 $(TAR) -C $(pkg_parent) -clf $(pkg_hyperbole).tar hyperbole-$(HYPB_VERSION)
 
 pkgclean: packageclean
@@ -506,12 +506,17 @@ test-all-output:
 
 # Hyperbole install tests - Verify that hyperbole can be installed
 # using different sources. See folder "install-test"
-.PHONY: install-elpa install-elpa-devel install-tarball install-straight install-all
-install-all: install-elpa install-elpa-devel install-tarball install-straight
+.PHONY: install-elpa install-elpa-devel install-tarball install-straight install-all install-local
+install-all: install-elpa install-elpa-devel install-tarball install-straight install-local
 
-install-elpa install-elpa-devel install-tarball install-straight:
+install-elpa install-elpa-devel install-tarball install-straight install-elpaca:
 	@echo "Install Hyperbole using $@"
 	(cd ./install-test/ && ./local-install-test.sh $(subst install-,,$@))
+
+install-local:
+	@echo "Install Hyperbole using $@"
+	(cd ./install-test/ && \
+	./local-install-test.sh $(subst install-,,$@) $(shell pwd) $(shell git rev-parse --abbrev-ref HEAD 2>/dev/null))
 
 package-lint:
 	$(EMACS_BATCH) \

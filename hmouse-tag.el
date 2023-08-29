@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    24-Aug-91
-;; Last-Mod:     22-Apr-23 at 18:52:52 by Bob Weiner
+;; Last-Mod:     28-Aug-23 at 16:19:42 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -377,23 +377,20 @@ If:
 ;;;###autoload
 (defun smart-cc-mode-initialize ()
   "Load and initialize cc-mode if possible and always return nil."
-  (condition-case ()
-      (progn (require 'cc-mode)
-	     (c-initialize-cc-mode))
-    (error nil))
+  (ignore-errors (require 'cc-mode) (c-initialize-cc-mode))
   nil)
 
 (defun smart-emacs-lisp-mode-p ()
-  "Return t if in a mode which uses Emacs Lisp symbols."
+  "Return non-nil if in a mode which uses Emacs Lisp symbols."
   ;; Beyond Lisp files, Emacs Lisp symbols appear frequently in Byte-Compiled
   ;; buffers, debugger buffers, program ChangeLog buffers, Help buffers,
   ;; *Warnings*, *Flymake log* and *Flymake diagnostics... buffers.
   (or (memq major-mode #'(emacs-lisp-mode lisp-interaction-mode debugger-mode))
-      (string-match (concat "\\`\\*\\(Warnings\\|Flymake log\\|Compile-Log\\(-Show\\)?\\)\\*"
-			    "\\|\\`\\*Flymake diagnostics")
-			    (buffer-name))
+      (string-match-p (concat "\\`\\*\\(Warnings\\|Flymake log\\|Compile-Log\\(-Show\\)?\\)\\*"
+			      "\\|\\`\\*Flymake diagnostics")
+		      (buffer-name))
       (and (or (memq major-mode #'(help-mode change-log-mode))
-	       (string-match "\\`\\*Help\\|Help\\*\\'" (buffer-name)))
+	       (string-match-p "\\`\\*Help\\|Help\\*\\'" (buffer-name)))
 	   (smart-lisp-at-known-identifier-p))))
 
 (defun smart-fortran (&optional identifier next)
@@ -665,7 +662,7 @@ Use `hpath:display-buffer' to show definition or documentation."
 				  "Show doc for" "Find")))
 	 current-prefix-arg))
   (unless (stringp tag)
-    (setq tag (smart-lisp-at-tag-p t)))
+    (setq tag (or hkey-value (smart-lisp-at-tag-p t))))
   (let* ((elisp-flag (smart-emacs-lisp-mode-p))
 	 (tag-sym (intern-soft tag)))
     (cond ((and show-doc elisp-flag)
@@ -678,8 +675,9 @@ Use `hpath:display-buffer' to show definition or documentation."
 		 (t nil)))
 	  ((and elisp-flag (fboundp 'find-function-noselect)
 		(let ((result (smart-lisp-bound-symbol-def tag-sym)))
-		  (when (cdr result)
-		    (hpath:display-buffer (car result))
+		  (when (and (cdr result)
+			     (hpath:display-buffer (car result)))
+		    (widen)
 		    (goto-char (cdr result))
 		    t))))
 	  ;; If elisp-flag is true, then make xref use tags tables to
@@ -695,17 +693,16 @@ Use `hpath:display-buffer' to show definition or documentation."
 			 (when (featurep 'etags)
 			   (smart-tags-display tag show-doc))
 		       (error (unless (and elisp-flag (stringp smart-emacs-tags-file)
-					   (condition-case ()
-					       (smart-tags-display
-						tag show-doc (list smart-emacs-tags-file))
-					     (error nil)))
+					   (ignore-errors
+					     (smart-tags-display
+					      tag show-doc (list smart-emacs-tags-file))))
 				(error "(smart-lisp): No definition found for `%s'" tag)))))
 		 (and (not etags-mode) elisp-flag (fboundp 'xref-etags-mode)
 		      (xref-etags-mode 0))))))))
 
 (defun smart-lisp-at-definition-p ()
   "Return non-nil if point is on the first line of a non-alias Lisp definition.
-  Apply only to non-help buffers and return nil in others."
+Apply only to non-help buffers and return nil in others."
     (unless (derived-mode-p 'help-mode)
       (save-excursion
 	(beginning-of-line)
@@ -730,7 +727,8 @@ Return matching Elisp tag name that point is within, else nil."
   (when (derived-mode-p 'change-log-mode)
     (let ((identifier (smart-lisp-at-tag-p)))
       (and identifier (intern-soft identifier)
-	   (string-match "[^-]-[^-]" identifier)))))
+	   (string-match "[^-]-[^-]" identifier)
+	   identifier))))
 
 (defun smart-lisp-htype-tag (tag)
   "Given TAG at point, if a Hyperbole type, return the full symbol name, else TAG."
@@ -760,7 +758,7 @@ Return matching Elisp tag name that point is within, else nil."
 Return nil when point is on the first line of a non-alias Lisp definition.
 
 Resolve Hyperbole implicit button type and action type references."
-  (smart-lisp-htype-tag 
+  (smart-lisp-htype-tag
    (smart-lisp-at-non-htype-tag-p no-flash)))
 
 (defun smart-lisp-at-non-htype-tag-p (&optional no-flash)
@@ -913,7 +911,7 @@ See https://tkf.github.io/emacs-jedi/latest/."
 	   (eq 'run (process-status (process-buffer proc)))
 	   ;; The goto is performed asynchronously.
 	   ;; It reports in the minibuffer when a definition is not found.
-	   ;; !! Only works on tag at point, not the tagname passed in as jedi
+	   ;; !! TODO: Only works on tag at point, not the tagname passed in as jedi
 	   ;; does not accept a tag parameter.
 	   ;;
 	   ;; jedi:find-file-function is an RSW custom
@@ -1137,7 +1135,7 @@ This indicates that TAG is serving as a hyperlink button."
   tag)
 
 (defun smart-lisp-at-known-identifier-p ()
-  "Return non-nil if point is within a known Lisp identifier.
+  "Return identifier if point is within a known Lisp identifier, else nil.
 The Lisp identifier is either listed in a tags table or is a
 known Emacs Lisp identifier."
   (interactive)
@@ -1151,26 +1149,28 @@ known Emacs Lisp identifier."
 					     "[ \t]+.*['\"]"
 					     "\\([^][() \t\n\r`'\"]+\\)"))))
 		 (goto-char opoint)
-		 (if lib
-		     (condition-case ()
-			 (and (find-library-name lib) t)
-		       (error nil)))))
-    (let* ((tag (smart-lisp-at-tag-p t))
+		 (when lib
+		   (ignore-errors (and (find-library-name lib) t)))))
+    ;; Cache tag value
+    (setq hkey-value (smart-lisp-at-tag-p t))
+    (let* ((tag hkey-value)
 	   (tag-sym (intern-soft tag)))
-      (cond ((if (fboundp 'find-function-noselect)
-		 (let ((result (smart-lisp-bound-symbol-def tag-sym)))
-		   (if (cdr result) t))))
+      (cond ((when (and (fboundp 'find-function-noselect) tag-sym)
+	       (let ((result (smart-lisp-bound-symbol-def tag-sym)))
+		 (when (cdr result)
+		   tag))))
 	    ;; This part only works properly for Emacs Lisp, so is conditionalized.
-	    (tag (smart-tags-find-p tag))))))
+	    ((and tag (smart-tags-find-p tag) tag))))))
 
 (defun smart-lisp-bound-symbol-def (tag-sym)
-  "Return the file where TAG-SYM is defined which may be a .elc file.
-TAG-SYM may be a function, variable or face."
+  "Return a pair (buffer . point) where TAG-SYM is defined, else nil.
+The buffer may be attached to a .elc file.  TAG-SYM may be a function,
+variable or face."
   (save-excursion
     ;; Bound Emacs Lisp function, variable and face definition display.
-    (or (condition-case () (find-function-noselect tag-sym) (error nil))
-	(condition-case () (find-variable-noselect tag-sym) (error nil))
-	(condition-case () (find-definition-noselect tag-sym 'defface) (error nil)))))
+    (ignore-errors (or (find-function-noselect tag-sym)
+		       (find-variable-noselect tag-sym)
+		       (find-definition-noselect tag-sym 'defface)))))
 
 (defun smart-tags-find-p (tag)
   "Return non-nil if TAG is found within a tags table, else nil."
@@ -1181,9 +1181,7 @@ TAG-SYM may be a function, variable or face."
 			     nil
 			   (and (boundp 'tags-file-name) tags-file-name)))
 	 (tags-add-tables nil))
-    (condition-case ()
-	(and func (funcall func tag) t)
-      (error nil))))
+    (ignore-errors (and func (funcall func tag) t))))
 
 (defun smart-java-cross-reference ()
   "If within a Java @see comment, edit the def and return non-nil, else nil.
@@ -1377,7 +1375,7 @@ See the \"${hyperb:dir}/smart-clib-sym\" script for more information."
       found)))
 
 (defun smart-tags-display (tag next &optional list-of-tags-tables)
-  (when  next (setq tag nil))
+  (when next (setq tag nil))
   (let* ((tags-table-list (or list-of-tags-tables
 			      (and (boundp 'tags-table-list)
 				   (not (smart-tags-org-src-block-p))
@@ -1400,12 +1398,12 @@ See the \"${hyperb:dir}/smart-clib-sym\" script for more information."
 		  ;; Signals an error if tag is not found which is caught by
 		  ;; many callers of this function.
 		  ;; Find exact identifier matches only.
-		  (with-no-warnings (find-tag (concat "\\`" (regexp-quote tag) "\\'") nil t)))))
+		  (with-no-warnings (xref-find-definitions tag)))))
 	  ((or tags-table-list tags-file-name)
 	   ;; Signals an error if tag is not found which is caught by
 	   ;; many callers of this function.
 	   ;; Find exact identifier matches only.
-	   (with-no-warnings (find-tag (concat "\\`" (regexp-quote tag) "\\'") nil t)))
+	   (with-no-warnings (xref-find-definitions tag)))
 	  (t
 	   (error "No existing tag tables in which to find `%s'" tag)))))
 

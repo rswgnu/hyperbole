@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     9-May-91 at 04:50:20
-;; Last-Mod:     16-Oct-22 at 00:30:39 by Mats Lidell
+;; Last-Mod:     27-Aug-23 at 12:39:11 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -208,8 +208,8 @@ Use (setq sc-nuke-mail-headers \\='all) to have them removed."
 		(goto-char start)
 		(let ((mail-indentation-spaces (if arg (prefix-numeric-value arg)
 						 mail-indentation-spaces))
-		      ;; Avoid error in Transient Mark mode
-		      ;; on account of mark's being inactive.
+		      ;; Avoid error in Transient Mark mode when the
+		      ;; mark is inactive.
 		      (mark-even-if-inactive t))
 		  (cond ((and (boundp 'mail-citation-hook) mail-citation-hook)
 			 ;; Bind mail-citation-header to the inserted message's header.

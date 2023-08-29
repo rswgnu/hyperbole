@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     6-Oct-91 at 03:42:38
-;; Last-Mod:     19-Apr-23 at 22:27:32 by Bob Weiner
+;; Last-Mod:     27-Aug-23 at 17:15:52 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -28,6 +28,46 @@
 (defconst hypb:help-buf-prefix "*Help: Hyperbole "
   "Prefix attached to all native Hyperbole help buffer names.
 This should end with a space.")
+
+;;; ************************************************************************
+;;; Public variables
+;;; ************************************************************************
+
+(defvar hypb:mail-address-mode-list
+  '(fundamental-mode prog-mode text-mode)
+  "List of major modes in which mail address implicit buttons are active.")
+
+(defconst hypb:mail-address-tld-regexp
+  (format "\\.%s\\'"
+          (regexp-opt
+           '("aero" "arpa" "asia" "biz" "cat" "com" "coop" "edu" "gov" "info"
+             "int" "jobs" "mil" "mobi" "museum" "name" "net" "org" "pro" "tel"
+             "travel" "uucp"
+             "ac" "ad" "ae" "af" "ag" "ai" "al" "am" "an" "ao" "aq"
+             "ar" "as" "at" "au" "aw" "ax" "az" "ba" "bb" "bd" "be" "bf" "bg" "bh"
+             "bi" "bj" "bl" "bm" "bn" "bo" "br" "bs" "bt" "bv" "bw" "by" "bz" "ca"
+             "cc" "cd" "cf" "cg" "ch" "ci" "ck" "cl" "cm" "cn" "co" "cr" "cu" "cv"
+             "cx" "cy" "cz" "de" "dj" "dk" "dm" "do" "dz" "ec" "ee" "eg" "eh" "er"
+             "es" "et" "eu" "fi" "fj" "fk" "fm" "fo" "fr" "ga" "gb" "gd" "ge" "gf"
+             "gg" "gh" "gi" "gl" "gm" "gn" "gp" "gq" "gr" "gs" "gt" "gu" "gw" "gy"
+             "hk" "hm" "hn" "hr" "ht" "hu" "id" "ie" "il" "im" "in" "io" "iq" "ir"
+             "is" "it" "je" "jm" "jo" "jp" "ke" "kg" "kh" "ki" "km" "kn" "kp" "kr"
+             "kw" "ky" "kz" "la" "lb" "lc" "li" "lk" "lr" "ls" "lt" "lu" "lv" "ly"
+             "ma" "mc" "md" "me" "mf" "mg" "mh" "mk" "ml" "mm" "mn" "mo" "mp" "mq"
+             "mr" "ms" "mt" "mu" "mv" "mw" "mx" "my" "mz" "na" "nc" "ne" "nf" "ng"
+             "ni" "nl" "no" "np" "nr" "nu" "nz" "om" "pa" "pe" "pf" "pg" "ph" "pk"
+             "pl" "pm" "pn" "pr" "ps" "pt" "pw" "py" "qa" "re" "ro" "rs" "ru" "rw"
+             "sa" "sb" "sc" "sd" "se" "sg" "sh" "si" "sj" "sk" "sl" "sm" "sn" "so"
+             "sr" "st" "su" "sv" "sy" "sz" "tc" "td" "tf" "tg" "th" "tj" "tk" "tl"
+             "tm" "tn" "to" "tp" "tr" "tt" "tv" "tw" "tz" "ua" "ug" "uk" "um" "us"
+             "uy" "uz" "va" "vc" "ve" "vg" "vi" "vn" "vu" "wf" "ws" "ye" "yt" "yu"
+             "za" "zm" "zw")
+           t))
+  "Regular expression of most common Internet top level domain names.")
+
+(defconst hypb:mail-address-regexp
+  "\\([_a-zA-Z0-9][-_a-zA-Z0-9.!@+%]*@[-_a-zA-Z0-9.!@+%]+\\.[a-zA-Z0-9][-_a-zA-Z0-9]+\\)\\($\\|[^a-zA-Z0-9@%]\\)"
+  "Regexp with group 1 matching an Internet email address.")
 
 (defcustom hypb:rgrep-command
   ;; Only the FreeBSD version of zgrep supports all of the grep
@@ -167,7 +207,7 @@ Raise and reuse any existing single window frame displaying ilog."
   (ilog-show-in-other-frame))
 
 (defmacro hypb:assert-same-start-and-end-buffer (&rest body)
-  "Assert that buffers name does not change during execution of BODY.
+  "Assert that current buffer does not change following execution of BODY.
 Trigger an error with traceback if the buffer is not live or its
 name differs at the start and end of BODY."
   (declare (indent 0) (debug t))
@@ -250,47 +290,11 @@ The returned value may be compared with `equal' to `this-single-command-keys'.
 Use `key-description' to make it human readable."
   (where-is-internal cmd-sym keymap t))
 
-(defun hypb:installation-type ()
-  "Return type of installation and version number.
-Is a list of (hyperbole-installation-type-string
-hyperbole-install-version-number-string).  If no matching
-installation type is found, return a list of (\"unknown\"
-`hyperb:dir')."
-  (let ((hypb-dir-name (file-name-nondirectory (directory-file-name hyperb:dir)))
-	(dir-sep-string (substring (file-name-as-directory ".") -1)))
-    (cond
-     ;; straight.el package install -- hyperbole gnu-elpa-mirror master 56cd3d8 2022-02-05
-     ((string-match (concat dir-sep-string "straight" dir-sep-string
-			    "build" dir-sep-string "hyperbole") hyperb:dir)
-      (let* ((plist (hypb:straight-package-plist "hyperbole"))
-	     (pkg-version (plist-get plist :version))
-	     (git-commit (when (string-match " \\([a-f0-9]+\\) " pkg-version)
-			   (match-string 1 pkg-version))))
-	(list "straight" git-commit)))
-     ;; elpa-devel package install -- hyperbole-7.0.0pre0.20220126.1138
-     ((string-match "hyperbole-\\([.[:digit:]]+pre[.[:digit:]]+\\)" hypb-dir-name)
-      (list "elpa-devel" (match-string 1 hypb-dir-name)))
-     ;; melpa/quelpa package install -- hyperbole-20220205.1429
-     ((string-match "hyperbole-\\([1-9][0-9][0-9][0-9][0-1][0-9][0-3][0-9]\\.[0-9]+\\)"
-		    hypb-dir-name)
-      (list "melpa" (match-string 1 hypb-dir-name)))
-     ;; git install -- hyperbole d27f4c5197
-     ((file-exists-p (expand-file-name ".git" hyperb:dir))
-      (ignore-errors
-        (let ((default-directory hyperb:dir))
-          (list
-           "git"
-           (substring (shell-command-to-string "git rev-parse HEAD") 0 10)))))
-     ;; elpa package install -- /elpa/hyperbole-8.0.0"
-     ((and (string-match-p (concat dir-sep-string "elpa" dir-sep-string) hyperb:dir)
-	   (string-match "hyperbole-\\([.[:digit:]]+\\)" hypb-dir-name))
-      (list "elpa" (match-string 1 hypb-dir-name)))
-     ;; tarball archive install -- hyperbole-8.0.0
-     ((string-match "hyperbole-\\([.[:digit:]]+\\)" hypb-dir-name)
-      (list "archive" (match-string 1 hypb-dir-name)))
-     ;; unknown -- hyperbole
-     (t (list "unknown" hyperb:dir)))))
-
+;;;###autoload
+(defun hypb:count-visible-windows ()
+  "Return the number of visible, non-minibuffer windows across all frames."
+  (apply '+ (mapcar (lambda (frm) (length (window-list frm)))
+		    (visible-frame-list))))
 ;;;###autoload
 (defun hypb:configuration (&optional out-buf)
   "Insert Emacs configuration information at the end of a buffer.
@@ -333,9 +337,9 @@ Use optional OUT-BUF if present, else the current buffer."
           (insert (format "\tInstall:     %s, %s" (car install-type) (cadr install-type)))))
       (insert "\n")
       ;; Insert recent Hyperbole debugging messages if any.
-      (when (get-buffer "*Messages*")
+      (when (messages-buffer)
 	(let ((opoint (point)))
-	  (insert-buffer-substring "*Messages*")
+	  (insert-buffer-substring (buffer-name (messages-buffer)))
 	  (keep-lines "^(HyDebug)" opoint (point))))
       (untabify start (point)))))
 
@@ -641,6 +645,47 @@ region is copied, otherwise, it is omitted."
     (while (< start end)
       (or (kview:char-invisible-p start) (append-to-buffer buffer start (1+ start)))
       (setq start (1+ start)))))
+
+(defun hypb:installation-type ()
+  "Return type of installation and version number.
+Is a list of (hyperbole-installation-type-string
+hyperbole-install-version-number-string).  If no matching
+installation type is found, return a list of (\"unknown\"
+`hyperb:dir')."
+  (let ((hypb-dir-name (file-name-nondirectory (directory-file-name hyperb:dir)))
+	(dir-sep-string (substring (file-name-as-directory ".") -1)))
+    (cond
+     ;; straight.el package install -- hyperbole gnu-elpa-mirror master 56cd3d8 2022-02-05
+     ((string-match (concat dir-sep-string "straight" dir-sep-string
+			    "build" dir-sep-string "hyperbole") hyperb:dir)
+      (let* ((plist (hypb:straight-package-plist "hyperbole"))
+	     (pkg-version (plist-get plist :version))
+	     (git-commit (when (string-match " \\([a-f0-9]+\\) " pkg-version)
+			   (match-string 1 pkg-version))))
+	(list "straight" git-commit)))
+     ;; elpa-devel package install -- hyperbole-7.0.0pre0.20220126.1138
+     ((string-match "hyperbole-\\([.[:digit:]]+pre[.[:digit:]]+\\)" hypb-dir-name)
+      (list "elpa-devel" (match-string 1 hypb-dir-name)))
+     ;; melpa/quelpa package install -- hyperbole-20220205.1429
+     ((string-match "hyperbole-\\([1-9][0-9][0-9][0-9][0-1][0-9][0-3][0-9]\\.[0-9]+\\)"
+		    hypb-dir-name)
+      (list "melpa" (match-string 1 hypb-dir-name)))
+     ;; git install -- hyperbole d27f4c5197
+     ((file-exists-p (expand-file-name ".git" hyperb:dir))
+      (ignore-errors
+        (let ((default-directory hyperb:dir))
+          (list
+           "git"
+           (substring (shell-command-to-string "git rev-parse HEAD") 0 10)))))
+     ;; elpa package install -- /elpa/hyperbole-8.0.0"
+     ((and (string-match-p (concat dir-sep-string "elpa" dir-sep-string) hyperb:dir)
+	   (string-match "hyperbole-\\([.[:digit:]]+\\)" hypb-dir-name))
+      (list "elpa" (match-string 1 hypb-dir-name)))
+     ;; tarball archive install -- hyperbole-8.0.0
+     ((string-match "hyperbole-\\([.[:digit:]]+\\)" hypb-dir-name)
+      (list "archive" (match-string 1 hypb-dir-name)))
+     ;; unknown -- hyperbole
+     (t (list "unknown" hyperb:dir)))))
 
 ;;;###autoload
 (defun hypb:locate (search-string &optional filter arg)
@@ -1045,11 +1090,11 @@ Without file, the banner is prepended to the current buffer."
 	(dec-num 0))
     (and (string-match "[^0-7]" oct-str)
 	 (error "(hypb:oct-to-int): Bad octal number: %s" oct-str))
-    (mapconcat (lambda (o)
-		 (setq dec-num (+ (* dec-num 8)
-				  (when (and (>= o ?0) (<= o ?7))
-				    (- o ?0)))))
-	       oct-str "")
+    (mapc (lambda (o)
+	    (setq dec-num (+ (* dec-num 8)
+			     (when (and (>= o ?0) (<= o ?7))
+			       (- o ?0)))))
+	  oct-str)
     dec-num))
 
 ;;; ************************************************************************

@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    29-Jun-16 at 14:39:33
-;; Last-Mod:     23-Oct-22 at 00:38:27 by Mats Lidell
+;; Last-Mod:     28-Aug-23 at 01:45:24 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -21,18 +21,18 @@
 ;;; ************************************************************************
 (defvar generated-autoload-file)
 
+(declare-function make-directory-autoloads "ext:autoload")
+
 ;;; ************************************************************************
 ;;; Public variables
 ;;; ************************************************************************
 
-;;;###autoload
 (defvar hyperb:microsoft-os-p
   (memq system-type '(ms-windows windows-nt ms-dos win32))
   "Non-nil iff Hyperbole is running under a Microsoft OS but not for WSL.
 WSL is Windows Subsystem for Linux.
 Use `hyperb:wsl-os-p' to test if running under WSL.")
 
-;;;###autoload
 (defvar hyperb:wsl-os-p
   (and (eq system-type 'gnu/linux) (executable-find "wsl.exe") t)
   "T iff Hyperbole is running under Microsoft Windows Subsystem for Linux (WSL).")
@@ -44,7 +44,6 @@ Use `hyperb:wsl-os-p' to test if running under WSL.")
 (defvar hyperb:dir (or (file-name-directory
 			(or (and (stringp load-file-name) load-file-name)
 			    (locate-file "hmouse-tag.el" load-path)
-			    (hyperb:path-being-loaded)
 			    ""))
 		       (error
 			"(Hyperbole): Failed to set hyperb:dir.  Try setting it manually"))
@@ -116,8 +115,8 @@ the symbol list.  For `suspicious', only `set-buffer' can be used."
   (if (fboundp 'with-suppressed-warnings)
       `(with-suppressed-warnings ,warnings ,@body)
     `(with-no-warnings ,@body)))
-;; New autoload generation function defined only in Emacs 28
 
+;; New autoload generation function defined only as of Emacs 28
 (defalias 'hload-path--make-directory-autoloads
   (cond ((fboundp 'loaddefs-generate)
          #'loaddefs-generate)
@@ -174,7 +173,7 @@ This is used only when running from git source and not a package release."
     (with-current-buffer (find-file-noselect al-file)
       (hload-path--make-directory-autoloads "." al-file)))
   (unless (hyperb:autoloads-exist-p)
-    (error (format "Hyperbole failed to generate autoload files; try running 'make src' in a shell in %s" hyperb:dir))))
+    (error "Hyperbole failed to generate autoload files; try running 'make src' in a shell in %s" hyperb:dir)))
 
 (defun hyperb:maybe-load-autoloads ()
   "Load Hyperbole autoload files that have not already been loaded."

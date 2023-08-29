@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    10-Oct-91 at 01:51:12
-;; Last-Mod:      8-May-22 at 23:59:33 by Bob Weiner
+;; Last-Mod:     14-May-23 at 01:50:19 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -361,9 +361,7 @@ Has side-effect of widening buffer."
 				   (select-window new-win)
 				   (goto-char (vm-headers-of
 					       (car vm-message-pointer)))
-				   (condition-case nil
-				       (forward-char pos-offset)
-				     (error nil))))
+				   (ignore-errors (forward-char pos-offset))))
 			   (if (not (eq osw (selected-window)))
 			       (select-window osw))))))))
 		(vm-update-summary-and-mode-line))))

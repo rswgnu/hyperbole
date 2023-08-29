@@ -1,9 +1,9 @@
-;;; kimport-tests.el --- one line summary                -*- lexical-binding: t; -*-
+;;; kimport-tests.el --- test importing file types to Koutlines    -*- lexical-binding: t; -*-
 ;;
 ;; Author:       Mats Lidell
 ;;
 ;; Orig-Date:     9-Apr-23 at 23:31:48
-;; Last-Mod:      7-May-23 at 17:11:53 by Bob Weiner
+;; Last-Mod:     13-May-23 at 10:08:37 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -37,8 +37,8 @@
 	    (unless (kotl-mode:last-cell-p)
               (kotl-mode:next-cell 1)))
 	  (should (kotl-mode:last-cell-p)))
-      (delete-file file)
-      (delete-file kotl-file))))
+      (hy-delete-file-and-buffer file)
+      (hy-delete-file-and-buffer kotl-file))))
 
 (ert-deftest kimport--text-file ()
   "Import .txt text file into a Koutline, as one cell per paragraph."
@@ -54,8 +54,8 @@
 	    (unless (kotl-mode:last-cell-p)
               (kotl-mode:forward-cell 1)))
 	  (should (kotl-mode:last-cell-p)))
-      (delete-file file)
-      (delete-file kotl-file))))
+      (hy-delete-file-and-buffer file)
+      (hy-delete-file-and-buffer kotl-file))))
 
 (ert-deftest kimport--text-file-two-lines-per-paragraph ()
   "Import .txt text file into a Koutline, as one cell per paragraph.
@@ -75,8 +75,8 @@ Each paragraph is two lines."
 	    (unless (kotl-mode:last-cell-p)
               (kotl-mode:forward-cell 1)))
 	  (should (kotl-mode:last-cell-p)))
-      (delete-file file)
-      (delete-file kotl-file))))
+      (hy-delete-file-and-buffer file)
+      (hy-delete-file-and-buffer kotl-file))))
 
 (ert-deftest kimport--star-outline ()
   "Import .otl star outline as one cell per entry beginning with one or more stars."
@@ -93,8 +93,8 @@ Each paragraph is two lines."
 	    (unless (kotl-mode:last-cell-p)
               (kotl-mode:next-cell 1)))
 	  (should (kotl-mode:last-cell-p)))
-      (delete-file file)
-      (delete-file kotl-file))))
+      (hy-delete-file-and-buffer file)
+      (hy-delete-file-and-buffer kotl-file))))
 
 (ert-deftest kimport--star-outline-two-lines-per-star-heading ()
   "Import .org star outline as one cell per paragraph, each two lines."
@@ -110,8 +110,8 @@ Each paragraph is two lines."
 	    (unless (kotl-mode:last-cell-p)
               (kotl-mode:forward-cell 1)))
 	  (should (kotl-mode:last-cell-p)))
-      (delete-file file)
-      (delete-file kotl-file))))
+      (hy-delete-file-and-buffer file)
+      (hy-delete-file-and-buffer kotl-file))))
 
 (ert-deftest kimport--star-outline-with-siblings ()
   "Import .org star outline as one cell per entry beginning with one or more stars."
@@ -130,8 +130,8 @@ Each paragraph is two lines."
 	  (should (kotl-mode:last-cell-p))
           (kotl-mode:end-of-buffer)
           (should (= (kcell-view:level) 3)))
-      (delete-file file)
-      (delete-file kotl-file))))
+      (hy-delete-file-and-buffer file)
+      (hy-delete-file-and-buffer kotl-file))))
 
 (provide 'kimport-tests)
 ;;; kimport-tests.el ends here

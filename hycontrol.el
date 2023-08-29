@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     1-Jun-16 at 15:35:36
-;; Last-Mod:     23-Apr-23 at 14:50:59 by Bob Weiner
+;; Last-Mod:     23-Aug-23 at 15:09:00 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -140,6 +140,8 @@
 ;;; ************************************************************************
 
 (declare-function fm-next-frame "ext:framemove")
+
+(defvar frame-zoom-font-difference)
 
 ;;; ************************************************************************
 ;;; Public variables
@@ -359,7 +361,7 @@ The final predicate should always be t, for default values, typically of zero.")
 ;;;###autoload
 (eval-after-load "dired"     '(define-key dired-mode-map       "@" 'hycontrol-windows-grid))
 
-;;;###autoload
+
 (defvar hycontrol-windows-mode-map
   (let ((map (make-sparse-keymap)))
     (suppress-keymap map t) ;; Disable self-inserting keys and prefix keys
@@ -428,11 +430,11 @@ The final predicate should always be t, for default values, typically of zero.")
 
     ;; Don't call these interactively because a prefix arg of 1 tries
     ;; to make one window 1 line tall.
-    (define-key map "\["    (lambda () (interactive) (split-window-vertically)))
-    (define-key map "\]"    (lambda () (interactive) (split-window-horizontally)))
+    (define-key map "["    (lambda () (interactive) (split-window-vertically)))
+    (define-key map "]"    (lambda () (interactive) (split-window-horizontally)))
 
-    (define-key map "\("    'hycontrol-save-frame-configuration)
-    (define-key map "\)"    'hycontrol-restore-frame-configuration)
+    (define-key map "("    'hycontrol-save-frame-configuration)
+    (define-key map ")"    'hycontrol-restore-frame-configuration)
 
     (define-key map "~"     (lambda () (interactive)
 			      (unless (hycontrol-window-swap-buffers)
@@ -1896,8 +1898,8 @@ See documentation of `hycontrol-windows-grid' for further details."
 	       ;; to 1 if there was no error.
 	       (setq hycontrol-arg 1))
       (error (set-window-configuration wconfig)
-	     (if (and hycontrol-help-flag (or hycontrol-frames-mode hycontrol-windows-mode))
-		 (pop-to-buffer "*Messages*"))
+	     (and hycontrol-help-flag (or hycontrol-frames-mode hycontrol-windows-mode)
+		 (pop-to-buffer (messages-buffer)))
 	     (error "(HyDebug): Grid Size: %d; %s" arg err)))
     ;; No error, save prior frame configuration for easy return
     (hhist:add hist-elt)

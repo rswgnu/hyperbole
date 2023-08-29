@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     7-Apr-94 at 17:17:39 by Bob Weiner
-;; Last-Mod:     30-Apr-23 at 16:07:52 by Bob Weiner
+;; Last-Mod:     27-Aug-23 at 20:34:24 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -155,7 +155,7 @@ Return http urls unchanged.  Normalize remote paths."
 
 ;;;###autoload
 (defun eww-browse-url (url &optional new-window)
-  "Ask the EWW browser to load URL.
+  "Ask the eww browser to load URL.
 
 Interactively, if the variable `browse-url-new-window-flag' is non-nil,
 loads the document in a new buffer tab on the window tab-line.  A non-nil
@@ -180,8 +180,7 @@ instead of `browse-url-new-window-flag'."
       (format "*eww-%s*" (url-host (url-generic-parse-url
                                     (eww--dwim-expand-url url)))))))
   (eww-mode)
-  (let ((url-allow-non-local-files t))
-    (eww url)))
+  (eww url))
 
 
 (provide 'hsys-www)

@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org> and Bob Weiner <rsw@gnu.org>
 ;;
 ;; Orig-Date:    31-Mar-21 at 21:11:00
-;; Last-Mod:      7-May-23 at 20:23:27 by Bob Weiner
+;; Last-Mod:     16-Jul-23 at 23:47:09 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -29,24 +29,32 @@
 
 ;;; Code:
 
-(require 'lisp-mode)
-(require 'hload-path)
-(require 'ert)
-(require 'hbut)
-(require 'hargs)
+(eval-and-compile (mapc #'require '(lisp-mode hload-path ert hact hbut hargs)))
+
+(defun hypb-ert-message-function (_msg-pat &rest _args)
+  "Ignore messages ert outputs so can display messages from tests run."
+  ;; (identity (apply #'format msg-pat args)))))))
+  nil)
+
+(defun hypb-ert (selector)
+  (if (memq 'message-fn (actype:params #'ert-run-tests-interactively))
+      ;; Suppress ert messages so last test case message stays in the minibuffer;
+      ;; 3rd arg message-fn available only in Emacs 27 and earlier
+      (ert selector nil #'hypb-ert-message-function)
+    (ert selector)))
 
 (defun hypb-ert-run-test (test-name)
   "Run the specified TEST-NAME ert test."
   (hypb-ert-require-libraries)
   (let ((test-sym (intern-soft test-name)))
     (if test-sym
-	(ert test-sym)
+	(hypb-ert test-sym)
       (user-error "Invalid test name: %s" test-name))))
 
 (defun hypb-ert-run-tests (test-selector)
   "Run the specified TEST-SELECTOR defined ert test."
   (hypb-ert-require-libraries)
-  (ert (regexp-quote test-selector)))
+  (hypb-ert (regexp-quote test-selector)))
 
 (defun hypb-ert-get-require-symbols ()
   "Return the list of test Lisp library symbols to require."
@@ -64,13 +72,13 @@
   "Run every ert test."
   (interactive)
   (hypb-ert-require-libraries)
-  (ert t))
+  (hypb-ert t))
 
 ;; The following expression is true only when an ert-deftest has been
 ;; instrumented by edebug:
 ;; (memq 'edebug-enter (flatten-tree (ert-test-body (ert-get-test test-sym))))
 
-(defun hypb-ert-def-at-p ()
+(defun hypb-ert-def-at-p (&optional start-end-flag)
   "Return test name if on the name in the first line of an ert test def."
   (unless (or (eolp)
 	      (memq (char-after (point))
@@ -80,7 +88,9 @@
       (when (looking-at (concat "(ert-deftest[ \t]+\\("
 				lisp-mode-symbol-regexp
 				"\\)[ \t]+("))
-	(match-string-no-properties 1)))))
+	(if start-end-flag
+	    (list (match-string-no-properties 1) (match-beginning 1) (match-end 1))
+	  (match-string-no-properties 1))))))
 
 (defun hypb-ert-run-test-at-definition (test-name &optional debug-it)
   "Assume on the name in the first line of an ert test def, eval and run the test.
@@ -98,14 +108,15 @@ test when it is run."
     (when (and test-sym (ert-test-boundp test-sym))
       (when (and buffer-file-name (string-prefix-p hyperb:dir buffer-file-name))
 	(hypb-ert-require-libraries))
-      (ert test-sym))))
+      (hypb-ert test-sym))))
 
 (defib hyperbole-run-test-definition ()
   "If on the name in the first line of an ert test def, eval and run the test.
 With an Assist Key press instead, edebug the test and step through it."
-  (let ((test-name (hypb-ert-def-at-p)))
-    (when test-name
-      (hact 'hypb-ert-run-test-at-definition test-name))))
+  (let ((test-name-and-positions (hypb-ert-def-at-p t)))
+    (when test-name-and-positions
+      (apply #'ibut:label-set test-name-and-positions)
+      (hact 'hypb-ert-run-test-at-definition (car test-name-and-positions)))))
 
 (defun hyperbole-run-test-definition:help (_hbut)
   "If on the name in the first line of an ert test def, edebug the test."

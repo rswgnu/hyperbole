@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    26-Feb-98
-;; Last-Mod:     12-Mar-23 at 17:14:19 by Mats Lidell
+;; Last-Mod:     28-Aug-23 at 02:14:28 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -84,7 +84,7 @@ If nil, use no keywords."
     'kexport:html-url)
    ;;
    ;; make mail addresses into hyperbuttons
-   (cons mail-address-regexp "<a href=\"mailto:\\1\"><i>\\1</i></a>\\2")
+   (cons hypb:mail-address-regexp "<a href=\"mailto:\\1\"><i>\\1</i></a>\\2")
    ;;
    ;; make klinks into hyperlinks
    (cons (concat "&lt;\\s-*@\\s-*" kexport:kcell-reference-regexp
@@ -154,12 +154,12 @@ ul {
 
 .btn:hover {
   background-color: #FAFAD2;
-  font-size: 12px;
+  font-size: 20px;
 }
 
 .content {
   display: block;
-  font-size: 12px;
+  font-size: 20px;
   margin-top: 0px;
   margin-bottom: 0px;
 }
@@ -169,9 +169,15 @@ ul {
   color: #C100C1;
 }
 
-h1, pre {
+h1 {
   margin-top: 0px;
   margin-bottom: 0px;
+}
+
+pre {
+  margin-top: 0px;
+  margin-bottom: 0px;
+  font-size: 20px;
 }
 
 body {
@@ -206,6 +212,7 @@ li {
 
 .collapsible:hover {
   background-color: #FAFAD2;
+  font-size: 20px;
 }
 
 .content {
@@ -277,7 +284,7 @@ nav > menu > menuitem > a + menu:after{
    position:absolute;
    border:10px solid transparent;
    border-top: 10px solid white;
-   left:12px;
+   left:20px;
    top: -40px;
 }
 nav menuitem > menu > menuitem > a + menu:after{

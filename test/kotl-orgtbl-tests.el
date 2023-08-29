@@ -47,7 +47,7 @@
                (should (equal (car err) 'error))
                (should (string-match "(kotl-mode:delete-char): End of cell" (cadr err)))))
             (:success (ert-fail "C-d shall fail when deleting at the end of a cell."))))
-      (delete-file kotl-file))))
+      (hy-delete-file-and-buffer kotl-file))))
 
 (ert-deftest kotl-orgtbl-action-key-on-vertical-bar-toggles-orgtbl-mode ()
   "Action key on vertical bar toggles orgtbl-mode."
@@ -66,7 +66,7 @@
           (should-not orgtbl-mode)
           (action-key)
           (should orgtbl-mode))
-      (delete-file kotl-file))))
+      (hy-delete-file-and-buffer kotl-file))))
 
 (ert-deftest kotl-orgtbl-shift-tab-demotes-tree-outside-table ()
   "Shift tab demotes tree outside of org table."
@@ -84,7 +84,7 @@
 
           (should (equal (kcell-view:level) 1))
           (should (string= (kcell-view:label (point)) "2")))
-      (delete-file kotl-file))))
+      (hy-delete-file-and-buffer kotl-file))))
 
 (provide 'kotl-orgtbl-tests)
 ;;; kotl-orgtbl-tests.el ends here
