@@ -276,20 +276,29 @@ $(html_dir)/hyperbole.html: $(man_dir)/hyperbole.html $(man_dir)/hyperbole.css
 $(data_dir)/hkey-help.txt: $(man_dir)/hkey-help.txt
 	$(INSTALL) hkey-help.txt $(data_dir)
 
-# Record any .el files that need to be compiled.
+# TODO: Seems to be unused - commented out to allow for .el.elc
+# # Record any .el files that need to be compiled.
+# .el.elc:
+# 	@ echo $< >> $(ELISP_TO_COMPILE)
+
+# # Compile all recorded .el files.
+# elc: elc-init $(ELC_KOTL) $(ELC_COMPILE)
+# 	@- \test ! -f $(ELISP_TO_COMPILE) \
+#             || (echo "These files will be compiled: " \
+#                  && echo "`cat $(ELISP_TO_COMPILE)`" \
+#                  && $(EMACS_BATCH) -f batch-byte-compile `cat $(ELISP_TO_COMPILE)`)
+# 	@ $(RM) $(ELISP_TO_COMPILE)
+
+# elc-init:
+# 	@ $(RM) $(ELISP_TO_COMPILE)
+
+curr_dir = $(shell pwd)
 .el.elc:
-	@ echo $< >> $(ELISP_TO_COMPILE)
+	$(EMACS) --batch --quick \
+	--eval "(progn (add-to-list 'load-path \"$(curr_dir)\") (add-to-list 'load-path \"$(curr_dir)/kotl\"))" \
+	-f batch-byte-compile $<
 
-# Compile all recorded .el files.
-elc: elc-init $(ELC_KOTL) $(ELC_COMPILE)
-	@- \test ! -f $(ELISP_TO_COMPILE) \
-            || (echo "These files will be compiled: " \
-                 && echo "`cat $(ELISP_TO_COMPILE)`" \
-                 && $(EMACS_BATCH) -f batch-byte-compile `cat $(ELISP_TO_COMPILE)`)
-	@ $(RM) $(ELISP_TO_COMPILE)
-
-elc-init:
-	@ $(RM) $(ELISP_TO_COMPILE)
+new-bin: autoloads $(ELC_KOTL) $(ELC_COMPILE)
 
 # Setup to run Hyperbole from .el source files
 src: autoloads tags
