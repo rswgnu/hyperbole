@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    6/30/93
-;; Last-Mod:     30-Jun-23 at 21:43:29 by Mats Lidell
+;; Last-Mod:     21-Sep-23 at 22:46:12 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -30,7 +30,8 @@
 ;;; Public variables
 ;;; ************************************************************************
 
-(set-default 'kview nil)
+(defvar-local kview nil "Buffer local kview object.")
+;;(set-default 'kview nil)
 
 (defcustom kview:default-blank-lines t
   "*Default setting of whether to show blank lines between koutline cells.
