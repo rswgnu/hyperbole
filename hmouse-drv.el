@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    04-Feb-90
-;; Last-Mod:      1-Oct-23 at 20:17:42 by Bob Weiner
+;; Last-Mod:      3-Oct-23 at 15:53:03 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -15,6 +15,33 @@
 ;;; Commentary:
 
 ;;; Code:
+
+;;; FIXME: Circular dependencies -- BEGIN
+
+(defvar hkey-value) ;; "hui-mouse.el"
+(defvar hmouse-alist) ;; "hui-mouse.el"
+(defvar hkey-alist) ;; "hui-mouse.el"
+(defvar hmouse-set-point-command) ;; "hui-mouse.el"
+
+(defvar hyperbole-mode-map) ;; "hyperbole.el"
+
+(defvar action-key-default-function) ;; defcustom hui-mouse
+(defvar assist-key-default-function) ;; defcustom hui-mouse
+
+(declare-function hkey-quit-window "hmouse-drv") ;; Alias defined in this file!?
+
+(declare-function hattr:report "hbut")
+(declare-function hattr:list "hbut")
+(declare-function br-in-browser "hpath")
+(declare-function hbut:label "hbut")
+(declare-function hattr:get "hbut")
+(declare-function hui:ebut-link-directly "hui")
+(declare-function hui:ibut-link-directly "hui")
+(declare-function hkey-set-key "hyperbole")
+(declare-function org-todo "org")
+
+;;; FIXME: Circular dependencies -- END
+
 ;;; ************************************************************************
 ;;; Other required Elisp libraries
 ;;; ************************************************************************

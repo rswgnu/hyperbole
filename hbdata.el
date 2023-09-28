@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     2-Apr-91
-;; Last-Mod:     28-Aug-23 at 02:03:25 by Bob Weiner
+;; Last-Mod:     28-Sep-23 at 00:05:15 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -48,6 +48,24 @@
 ;;  source files within it.
 
 ;;; Code:
+
+;;; FIXME: Circular dependencies -- BEGIN
+
+(defvar hbut:instance-sep) ;; defconst in hbut
+(defvar hattr:filename)
+
+(declare-function ibut:label-key-match "hbut")
+(declare-function ibut:label-sort-keys "hbut")
+(declare-function hpath:absolute-arguments "hpath")
+(declare-function hpath:substitute-var "hpath")
+(declare-function hattr:set "hbut")
+(declare-function htz:date-sortable-gmt "htz")
+(declare-function hattr:get "hbut")
+(declare-function hattr:copy "hbut")
+(declare-function ebut:label-to-key "hbut")
+
+;;; FIXME: Circular dependencies -- END
+
 ;;; ************************************************************************
 ;;; Other required Elisp libraries
 ;;; ************************************************************************

@@ -3,7 +3,7 @@
 ;; Author:       Markus Freericks <Mfx@cs.tu-berlin.de> / Bob Weiner
 ;;
 ;; Orig-Date:     1-Aug-91
-;; Last-Mod:     25-Jul-22 at 20:00:01 by Mats Lidell
+;; Last-Mod:     28-Sep-23 at 00:36:26 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -48,6 +48,13 @@
 ;; C-c C-c gets you to the occurence
 
 ;;; Code:
+
+;;; FIXME: Circular dependencies -- BEGIN
+
+(declare-function hpath:display-buffer "hpath")
+
+;;; FIXME: Circular dependencies -- END
+
 ;;; ************************************************************************
 ;;; Public variables
 ;;; ************************************************************************

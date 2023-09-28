@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    15-Nov-93 at 11:57:05
-;; Last-Mod:      7-May-23 at 16:11:58 by Bob Weiner
+;; Last-Mod:     27-Sep-23 at 21:12:26 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -21,6 +21,9 @@
 
 (require 'kfile)
 (require 'hyrolo)
+
+;;; FIXME: Circular dependencies
+(require 'klabel)
 
 ;;; ************************************************************************
 ;;; Public variables

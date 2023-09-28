@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    15-Nov-93 at 12:15:16
-;; Last-Mod:      8-Aug-23 at 23:57:36 by Bob Weiner
+;; Last-Mod:     27-Sep-23 at 21:25:18 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -66,6 +66,14 @@
 (require 'subr-x) ;; For string-trim
 (require 'hmouse-tag) ;; For smart-c-include-regexp
 (eval-when-compile (require 'hbut)) ;; For defib.
+
+;;; FIXME: Circular dependencies
+(defvar klink:cell-ref-regexp) ;; Forward declaration!?
+(declare-function kcell-view:label "kview")
+(declare-function hbut:get-key-src "hbut")
+(declare-function hbut:label-p "hbut")
+(declare-function hargs:iform-read "hargs")
+(declare-function hattr:set "hbut")
 
 ;;; ************************************************************************
 ;;; Public variables

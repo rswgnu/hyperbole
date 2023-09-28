@@ -7,7 +7,7 @@
 ;; Author:       Bob Weiner
 ;; Maintainer:   Bob Weiner <rsw@gnu.org>, Mats Lidell <matsl@gnu.org>
 ;; Created:      06-Oct-92 at 11:52:51
-;; Last-Mod:     18-Sep-23 at 06:39:11 by Bob Weiner
+;; Last-Mod:      3-Oct-23 at 15:52:35 by Mats Lidell
 ;; Released:     03-Dec-22
 ;; Version:      8.0.1pre
 ;; Keywords:     comm, convenience, files, frames, hypermedia, languages, mail, matching, mouse, multimedia, outlines, tools, wp
@@ -74,6 +74,21 @@
 ;; Other site-specific customizations belong in "hsettings.el".
 
 ;;; Code:
+
+;;; FIXME: Circular dependencies -- BEGIN
+
+(defvar Info-directory-list) ; "info.el"
+
+(declare-function info-initialize "info")
+(declare-function hmouse-install "hmouse-key")
+(declare-function hui-search-web "hui-mini")
+(declare-function hkey-operate "hmouse-drv")
+(declare-function facemenu-keymap "???")
+(declare-function hkey-help "hmouse-drv")
+(declare-function hkey-either "hmouse-drv")
+
+;;; FIXME: Circular dependencies -- END
+
 ;;; ************************************************************************
 ;;; Start Initializations
 ;;; ************************************************************************

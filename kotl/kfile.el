@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    10/31/93
-;; Last-Mod:     28-Aug-23 at 00:23:33 by Bob Weiner
+;; Last-Mod:     27-Sep-23 at 20:54:08 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -19,7 +19,7 @@
 ;;; Other required Elisp libraries
 ;;; ************************************************************************
 
-(eval-and-compile (mapc #'require '(kproperty kmenu kview)))
+(eval-and-compile (mapc #'require '(kproperty kmenu kview kvspec kcell)))
 
 ;;; ************************************************************************
 ;;; Public variables

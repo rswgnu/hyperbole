@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    6/30/93
-;; Last-Mod:     28-Aug-23 at 01:52:34 by Bob Weiner
+;; Last-Mod:     27-Sep-23 at 21:34:26 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -15,6 +15,11 @@
 ;;; Commentary:
 
 ;;; Code:
+
+;;; FIXME: Circular dependencies
+(declare-function outline-invisible-in-p "hyperbole")
+(require 'klabel)
+
 ;;; ************************************************************************
 ;;; Other required Lisp Libraries
 ;;; ************************************************************************

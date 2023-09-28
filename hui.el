@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 21:42:03
-;; Last-Mod:      1-Oct-23 at 21:20:31 by Bob Weiner
+;; Last-Mod:      3-Oct-23 at 15:52:09 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -15,6 +15,32 @@
 ;;; Commentary:
 
 ;;; Code:
+
+;;; FIXME: Circular dependencies -- BEGIN
+
+;; Move private vars to top before first use
+
+;;; ************************************************************************
+;;; Private variables
+;;; ************************************************************************
+
+(defvar hui:ebut-label-prev nil
+  "String value of previous button name during an explicit button rename.
+At other times, value must be nil.")
+
+(defvar hui:ignore-buffers-regexp "\\`\\( \\|BLANK\\'\\|\\*Pp \\|TAGS\\|*quelpa\\)"
+  "When prompting for a buffer name, ignore any buffers whose names match to this.")
+
+(defvar hyperbole-mode-map) ; "hyperbole.el"
+
+(declare-function kcell-view:idstamp "kotl/kview")
+(declare-function bookmark-bmenu-bookmark "bookmark")
+(declare-function hui:menu-choose "hui-mini")
+(declare-function kcell-view:absolute-reference "kotl/kview")
+(declare-function klink:absolute "kotl/klink")
+
+;;; FIXME: Circular dependencies -- END
+
 ;;; ************************************************************************
 ;;; Other required Elisp libraries
 ;;; ************************************************************************
@@ -1413,9 +1439,6 @@ Trigger an error if DEFAULT-ACTYPE is invalid."
       (pop-to-buffer but-buf)
       (hypb:error err))))
 
-(defvar hui:ignore-buffers-regexp "\\`\\( \\|BLANK\\'\\|\\*Pp \\|TAGS\\|*quelpa\\)"
-  "When prompting for a buffer name, ignore any buffers whose names match to this.")
-
 (defun hui:ebut-delete-op (interactive but-key key-src)
   "INTERACTIVEly or not, delete explicit button given by BUT-KEY in KEY-SRC.
 KEY-SRC may be a buffer or a pathname; when nil, the current
@@ -1921,15 +1944,6 @@ Buffer without File      link-to-buffer-tmp"
   "Return LST, a list, with text properties removed from any string elements."
   (mapcar (lambda (elt) (if (stringp elt) (substring-no-properties elt) elt))
 	  lst))
-
-;;; ************************************************************************
-;;; Private variables
-;;; ************************************************************************
-
-
-(defvar hui:ebut-label-prev nil
-  "String value of previous button name during an explicit button rename.
-At other times, value must be nil.")
 
 (provide 'hui)
 

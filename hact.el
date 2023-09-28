@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    18-Sep-91 at 02:57:09
-;; Last-Mod:     27-Aug-23 at 19:46:10 by Bob Weiner
+;; Last-Mod:     27-Sep-23 at 22:35:06 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -20,6 +20,14 @@
 ;;; ************************************************************************
 
 (eval-and-compile (mapc #'require '(hhist set)))
+
+;;; FIXME: Circular dependencies
+(declare-function hattr:get "hypb")
+(declare-function hattr:list "hypb")
+(declare-function hattr:set "hypb")
+(declare-function hbut:is-p "hypb")
+(declare-function hpath:absolute-arguments "hpath")
+(declare-function hypb:indirect-function "hypb")
 
 ;;; ************************************************************************
 ;;; Public variables

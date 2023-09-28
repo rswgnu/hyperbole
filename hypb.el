@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     6-Oct-91 at 03:42:38
-;; Last-Mod:      2-Oct-23 at 05:47:51 by Bob Weiner
+;; Last-Mod:      3-Oct-23 at 15:52:28 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -15,6 +15,16 @@
 ;;; Commentary:
 
 ;;; Code:
+
+;;; FIXME: Circular dependencies -- BEGIN
+
+(defvar hyperb:user-email) ; "hinit.el"
+
+(declare-function hkey-either "hmouse-drv")
+(declare-function hycontrol-frame-to-right-center "hycontrol")
+
+;;; FIXME: Circular dependencies -- END
+
 ;;; ************************************************************************
 ;;; Other required Elisp libraries
 ;;; ************************************************************************

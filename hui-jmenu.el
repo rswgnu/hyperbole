@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     9-Mar-94 at 23:37:28
-;; Last-Mod:      2-Aug-22 at 19:50:39 by Mats Lidell
+;; Last-Mod:     28-Sep-23 at 21:41:51 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -38,6 +38,25 @@
 ;;   `hui-menu-screen-commands'.
 
 ;;; Code:
+
+;;; FIXME: Circular dependencies -- BEGIN
+
+;; Move private vars to top before first use
+
+;;; ************************************************************************
+;;; Private variables
+;;; ************************************************************************
+
+(defvar hui-menu-buffer-and-mode-list-cache nil
+  "Last set of buffer and mode names used in hui-menu-of-buffers or nil.")
+
+(defvar hui-menu-of-buffers-cache nil
+  "Last menu of `mode-name' ordered buffers from hui-menu-of-buffers or nil.")
+
+(declare-function hui-menu-cutoff-list "hui-menu")
+
+;;; FIXME: Circular dependencies -- END
+
 ;;; ************************************************************************
 ;;; Public functions
 ;;; ************************************************************************
@@ -326,16 +345,6 @@ frame.  The current buffer is buried in the old frame's buffer list."
 	(if (buffer-live-p buf) (kill-buffer buf))
 	t)))
 
-
-;;; ************************************************************************
-;;; Private variables
-;;; ************************************************************************
-
-(defvar hui-menu-buffer-and-mode-list-cache nil
-  "Last set of buffer and mode names used in hui-menu-of-buffers or nil.")
-
-(defvar hui-menu-of-buffers-cache nil
-  "Last menu of `mode-name' ordered buffers from hui-menu-of-buffers or nil.")
 
 ;;; ************************************************************************
 ;;; Public variables

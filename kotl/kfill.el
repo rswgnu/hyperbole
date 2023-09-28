@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    23-Jan-94
-;; Last-Mod:      8-Aug-23 at 23:10:00 by Bob Weiner
+;; Last-Mod:     27-Sep-23 at 21:01:38 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -16,6 +16,9 @@
 ;;; Commentary:
 
 ;;; Code:
+
+;;; FIXME: Circular dependencies
+(declare-function kcell-view:indent "kcell")
 
 ;;; ************************************************************************
 ;;; Public variables

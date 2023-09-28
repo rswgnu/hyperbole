@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell
 ;;
 ;; Orig-Date:    25-Jul-20
-;; Last-Mod:     24-Jan-22 at 00:18:47 by Bob Weiner
+;; Last-Mod:     28-Sep-23 at 20:51:37 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -15,6 +15,20 @@
 ;;; Commentary:
 
 ;;; Code:
+
+;;; FIXME: Circular dependencies -- BEGIN
+
+(defvar assist-flag) "hmouse-drv.el"
+(defvar action-key-eol-function) "hmouse-drv.el"
+(defvar assist-key-eol-function) "hmouse-drv.el"
+
+(declare-function dired-get-file-for-visit "dired")
+(declare-function hact "hact")
+(declare-function first-line-p "hui-mouse")
+(declare-function last-line-p "hui-mouse")
+
+;;; FIXME: Circular dependencies -- END
+
 ;;; ************************************************************************
 ;;; Other required Elisp libraries
 ;;; ************************************************************************

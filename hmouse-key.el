@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    30-May-94 at 00:11:57
-;; Last-Mod:     18-Sep-23 at 08:03:36 by Bob Weiner
+;; Last-Mod:      3-Oct-23 at 15:51:06 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -25,6 +25,35 @@
 ;;   `hmouse-install' has been called.
 
 ;;; Code:
+
+;;; FIXME: Circular dependencies -- BEGIN
+
+(defvar hyperbole-mode-map) ;; "hyperbole.el"
+
+;; Move private vars to top before first use
+
+;;; ************************************************************************
+;;; Private variables
+;;; ************************************************************************
+
+(defvar hmouse-bindings nil
+  "List of (key . binding) pairs for Hyperbole mouse keys.")
+
+(defvar hmouse-bindings-flag nil
+  "True if Hyperbole mouse bindings are in use, else nil.")
+
+(defvar hmouse-previous-bindings nil
+  "List of prior (key . binding) pairs for mouse keys rebound by Hyperbole.")
+
+
+(declare-function hkey-initialize "hbut")
+(declare-function hmouse-get-bindings "hmouse-sh")
+(declare-function hmouse-unshifted-setup "hmouse-sh")
+(declare-function hmouse-shifted-setup "hmouse-sh")
+(declare-function hkey-set-key "hyperbole")
+
+;;; FIXME: Circular dependencies -- END
+
 ;;; ************************************************************************
 ;;; Other required Elisp libraries
 ;;; ************************************************************************

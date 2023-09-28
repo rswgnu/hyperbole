@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    24-Apr-91 at 03:36:23
-;; Last-Mod:      6-Nov-22 at 12:22:44 by Bob Weiner
+;; Last-Mod:     28-Sep-23 at 00:25:08 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -22,6 +22,20 @@
 ;;   Frames which have been deleted are not restored.
 
 ;;; Code:
+
+;;; FIXME: Circular dependencies -- BEGIN
+;; Move before use
+
+;;; ************************************************************************
+;;; Private variables
+;;; ************************************************************************
+
+(defconst *hhist* nil
+  "List of previously visited Hyperbole button source locations.
+Car of list is most recent.")
+
+;;; FIXME: Circular dependencies -- END
+
 ;;; ************************************************************************
 ;;; Public functions
 ;;; ************************************************************************
@@ -73,14 +87,6 @@ The command is ignored with ARG < 1."
   "Reset history list."
   (interactive)
   (setq *hhist* nil))
-
-;;; ************************************************************************
-;;; Private variables
-;;; ************************************************************************
-
-(defconst *hhist* nil
-  "List of previously visited Hyperbole button source locations.
-Car of list is most recent.")
 
 (provide 'hhist)
 
