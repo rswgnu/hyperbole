@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     9-Oct-91 at 18:38:05
-;; Last-Mod:     23-Apr-23 at 20:08:38 by Mats Lidell
+;; Last-Mod:     28-Sep-23 at 00:33:09 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -31,6 +31,21 @@
 ;;   with Hyperbole.
 
 ;;; Code:
+
+;;; FIXME: Circular dependencies -- BEGIN
+
+;; Move up before first use
+;;; ************************************************************************
+;;; Private variables
+;;; ************************************************************************
+
+(defvar hmail:hbdata-sep "\^Lbd"
+  "Text separating e-mail msg from any trailing Hyperbole button data.")
+
+(declare-function hypb:insert-region "hypb")
+
+;;; FIXME: Circular dependencies -- END
+
 ;;; ************************************************************************
 ;;; Public variables
 ;;; ************************************************************************
@@ -273,13 +288,6 @@ Signals error when current mail reader is not supported."
 ;;; See "hrmail.el" for examples.
 ;;;
 ;;; rmail:get-new, rmail:msg-forward, rmail:summ-msg-to, rmail:summ-new
-
-;;; ************************************************************************
-;;; Private variables
-;;; ************************************************************************
-
-(defvar hmail:hbdata-sep "\^Lbd"
-  "Text separating e-mail msg from any trailing Hyperbole button data.")
 
 (provide 'hmail)
 

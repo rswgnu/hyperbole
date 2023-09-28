@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    15-Apr-91 at 00:48:49
-;; Last-Mod:     23-Apr-23 at 10:21:31 by Bob Weiner
+;; Last-Mod:     28-Sep-23 at 21:01:09 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -22,6 +22,16 @@
 ;;   support features work as desired.
 
 ;;; Code:
+
+;;; FIXME: Circular dependencies -- BEGIN
+
+(defvar htz:local) ; "htz.el"
+
+(declare-function hyperbole-minibuffer-menu "hui-mini")
+(declare-function hyperbole-menubar-menu "hui-menu")
+
+;;; FIXME: Circular dependencies -- END
+
 ;;; ************************************************************************
 ;;; Other required Elisp libraries
 ;;; ************************************************************************

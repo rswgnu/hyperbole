@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    17-Apr-94
-;; Last-Mod:     21-Sep-23 at 22:51:56 by Mats Lidell
+;; Last-Mod:     27-Sep-23 at 21:14:53 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -15,6 +15,10 @@
 ;;; Commentary:
 
 ;;; Code:
+
+;;; FIXME: Circular dependencies
+(require 'kview)
+(declare-function kotl-mode:first-cell-p "kotl-mode")
 
 ;;; ************************************************************************
 ;;; Public variables

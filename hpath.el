@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     1-Nov-91 at 00:44:23
-;; Last-Mod:     28-Aug-23 at 16:48:31 by Bob Weiner
+;; Last-Mod:     28-Sep-23 at 20:56:02 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -15,6 +15,21 @@
 ;;; Commentary:
 
 ;;; Code:
+
+;;; FIXME: Circular dependencies -- BEGIN
+
+(declare-function mm-mailcap-command "mm-decode")
+(declare-function hypb:decode-url "hypb")
+(declare-function hattr:get "hbut")
+(declare-function kbd-key:key-series-to-events "hib-kbd")
+(declare-function hbut:label-to-key "hbut")
+(declare-function hbut:key-to-label "hbut")
+(declare-function hargs:delimited "hargs")
+(declare-function hypb:object-p "hypb")
+(declare-function Info-find-node "info")
+
+;;; FIXME: Circular dependencies -- END
+
 ;;; ************************************************************************
 ;;; Other required Elisp libraries
 ;;; ************************************************************************

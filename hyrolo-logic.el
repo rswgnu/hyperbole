@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    13-Jun-89 at 22:57:33
-;; Last-Mod:     24-Oct-22 at 22:49:42 by Bob Weiner
+;; Last-Mod:     28-Sep-23 at 23:48:53 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -58,6 +58,13 @@
 ;;   displayed quickly.
 
 ;;; Code:
+
+;;; FIXME: Circular dependencies -- BEGIN
+
+(declare-function kotl-mode:goto-cell "kotl/kotl-mode")
+
+;;; FIXME: Circular dependencies -- END
+
 ;;; ************************************************************************
 ;;; Other required Elisp libraries
 ;;; ************************************************************************

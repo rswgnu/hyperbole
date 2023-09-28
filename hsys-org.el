@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     2-Jul-16 at 14:54:14
-;; Last-Mod:     27-Aug-23 at 14:29:35 by Bob Weiner
+;; Last-Mod:     28-Sep-23 at 21:05:47 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -26,6 +26,21 @@
 ;;     https://orgmode.org/worg/org-tutorials/orgtutorial_dto.html
 
 ;;; Code:
+
+;;; FIXME: Circular dependencies -- BEGIN
+
+(defvar hyperbole-mode-map) ; "hyperbole.el"
+
+(declare-function smart-eobp "hui-mouse")
+(declare-function smart-eolp "hui-mouse")
+(declare-function hargs:read-match "hargs")
+(declare-function symset:add "hact")
+(declare-function symtable:add "hact")
+(declare-function action-key "hmouse-drv")
+(declare-function hkey-either "hmouse-drv")
+
+;;; FIXME: Circular dependencies -- END
+
 ;;; ************************************************************************
 ;;; Other required Elisp libraries
 ;;; ************************************************************************

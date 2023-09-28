@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    04-Feb-89
-;; Last-Mod:     28-Aug-23 at 01:58:05 by Bob Weiner
+;; Last-Mod:     28-Sep-23 at 22:00:28 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -36,6 +36,20 @@
 ;; Dired listings is exceptionally nice, just as it is when reading mail.
 
 ;;; Code:
+
+;;; FIXME: Circular dependencies -- BEGIN
+
+(declare-function tar-flag-deleted "tar")
+(declare-function tar-unflag "tar")
+(declare-function tar-extract-other-window "tar")
+(declare-function tar-expunge "tar")
+(declare-function outline-invisible-in-p "hyperbole") ; Conditionally defined!?
+(declare-function hyrolo-edit-entry "hyrolo")
+(declare-function Custom-newline "cus-edit")
+(declare-function Custom-buffer-done "cus-edit")
+
+;;; FIXME: Circular dependencies -- END
+
 ;;; ************************************************************************
 ;;; Other required Elisp libraries
 ;;; ************************************************************************

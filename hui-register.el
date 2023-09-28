@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell
 ;;
 ;; Orig-Date:     6-Oct-91 at 03:42:38
-;; Last-Mod:     18-Sep-22 at 00:40:52 by Mats Lidell
+;; Last-Mod:     28-Sep-23 at 00:51:29 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -21,6 +21,9 @@
 ;;
 
 (eval-when-compile (require 'cl-lib))
+
+;;; FIXME: Circular dependencies -- BEGIN
+(require 'hload-path) ;; For defining hyperb:microsoft-os-p that us defvar'ed in hbut!?
 
 (require 'hbut)
 

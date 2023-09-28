@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    6/30/93
-;; Last-Mod:     21-Sep-23 at 22:46:12 by Mats Lidell
+;; Last-Mod:     27-Sep-23 at 22:50:39 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -15,23 +15,58 @@
 ;;; Commentary:
 
 ;;; Code:
+
+;;; FIXME: Circular dependencies
+(require 'kproperty)
+(defvar kotl-mode:refill-flag)
+
 ;;; ************************************************************************
 ;;; Other required Lisp Libraries
 ;;; ************************************************************************
 
-(eval-and-compile (mapc #'require '(hact klabel kfill klink hypb)))
+(eval-and-compile (mapc #'require '(hact kfill klink)))
 ;; Quiet byte compiler warnings for this free variable.
 
 (define-obsolete-variable-alias 'label-sep-len 'kview-label-sep-len "8.0.1")
 (defvar kview-label-sep-len nil
   "Length of the separation between cell's label and start of its contents.")
 
+;;; FIXME: Circular dependencies
+(declare-function klabel:format "klabel.el")
+(declare-function klabel:idstamp-p "klabel.el")
+(declare-function kcell:create-top "kcell")
+(declare-function kcell:create "kcell")
+(declare-function kcell:get-attr "kcell")
+(declare-function kcell:plist "kcell")
+(declare-function kcell:remove-attr "kcell")
+(declare-function kcell:set-attr "kcell")
+(declare-function kfile:narrow-to-kcells "kfile")
+(declare-function klabel-type:child "klabel")
+(declare-function klabel-type:function "klabel")
+(declare-function klabel-type:increment "klabel")
+(declare-function klabel-type:parent "klabel")
+(declare-function klabel-type:set-labels "klabel")
+(declare-function kotl-mode:beginning-of-line "kotl-mode")
+(declare-function kotl-mode:fill-cell "kotl-mode")
+(declare-function kotl-mode:goto-cell "kotl-mode")
+(declare-function kotl-mode:hide-subtree "kotl-mode")
+(declare-function kotl-mode:to-end-of-line "kotl-mode")
+(declare-function kotl-mode:to-visible-position "kotl-mode")
+(declare-function kotl-mode:tree-end "kotl-mode")
+(declare-function kvspec:show-lines-this-cell "kvspec")
+(declare-function kvspec:update "kvspec")
+;;(declare-function outline-flag-region "")
+(require 'outline)
+
 ;;; ************************************************************************
 ;;; Public variables
 ;;; ************************************************************************
 
-(defvar-local kview nil "Buffer local kview object.")
-;;(set-default 'kview nil)
+;;; FIXME: Circular dependencies
+;;(defvar-local kview nil "Buffer local kview object.")
+(defvar kview)
+
+(set-default 'kview nil)
 
 (defcustom kview:default-blank-lines t
   "*Default setting of whether to show blank lines between koutline cells.

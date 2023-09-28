@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Oct-96 at 02:25:27
-;; Last-Mod:     21-Jun-23 at 00:25:45 by Bob Weiner
+;; Last-Mod:     28-Sep-23 at 22:10:44 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -103,6 +103,23 @@
 ;;
 
 ;;; Code:
+
+;;; FIXME: Circular dependencies -- BEGIN
+
+(defvar help-mode-syntax-table) ; "help-mode.el"
+(defvar hkey-init) ; "hyperbole.el"
+(defvar hkey-value) ; "hui-mouse.el"
+(defvar hyperbole-mode-map) ; "hyperbole.el"
+(defvar keymap-sym)  ; "???"
+(defvar org-mode-map) ; "org.el"
+(defvar syntax-table-sym) ; "???"
+
+(declare-function kview:valid-position-p "kotl/kview")
+(declare-function hkey-set-key "hyperbole")
+(declare-function hypb:cmd-key-vector "hypb")
+
+;;; FIXME: Circular dependencies -- END
+
 ;;; ************************************************************************
 ;;; Other required Elisp libraries
 ;;; ************************************************************************

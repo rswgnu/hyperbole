@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 20:45:31
-;; Last-Mod:     28-Aug-23 at 16:02:32 by Bob Weiner
+;; Last-Mod:     28-Sep-23 at 00:31:00 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -32,6 +32,22 @@
 ;;      (symset:get 'actypes 'symbols)
 
 ;;; Code:
+
+;;; FIXME: Circular dependencies -- BEGIN
+
+(declare-function actype:eval "hact")
+(declare-function actype:identity "hact")
+(declare-function hact "hact")
+(declare-function hpath:display-buffer "hpath")
+(declare-function htype:def-symbol "hact")
+(declare-function hui:help-ebut-highlight "hui")
+(declare-function hyperb:stack-frame "hversion")
+(declare-function set:member "set")
+(declare-function symset:add "hact")
+(declare-function symtable:add "hact")
+
+;;; FIXME: Circular dependencies -- END
+
 ;;; ************************************************************************
 ;;; Other required Elisp libraries
 ;;; ************************************************************************

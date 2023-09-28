@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    24-Aug-91
-;; Last-Mod:     28-Aug-23 at 16:19:42 by Bob Weiner
+;; Last-Mod:     28-Sep-23 at 20:41:22 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -15,6 +15,19 @@
 ;;; Commentary:
 
 ;;; Code:
+
+;;; FIXME: Circular dependencies -- BEGIN
+
+(defvar hkey-value) ; "hui-mouse.el"
+
+(declare-function hsys-org-get-value "hsys-org")
+(declare-function org-in-src-block-p "org")
+
+(declare-function xref-item-position "hmouse-tag") ; Forward declare needed? Because of optional defined!?
+(declare-function xref-item-buffer "hmouse-tag") ; Forward declare needed? Because of optional defined!?
+
+;;; FIXME: Circular dependencies -- END
+
 ;;; ************************************************************************
 ;;; Other required Elisp libraries
 ;;; ************************************************************************

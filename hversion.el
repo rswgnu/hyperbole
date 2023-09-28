@@ -4,7 +4,7 @@
 ;; Maintainer:   Bob Weiner, Mats Lidell
 ;;
 ;; Orig-Date:     1-Jan-94
-;; Last-Mod:     27-Aug-23 at 15:26:39 by Bob Weiner
+;; Last-Mod:     28-Sep-23 at 23:02:16 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -16,6 +16,15 @@
 ;;; Commentary:
 
 ;;; Code:
+
+;;; FIXME: Circular dependencies -- BEGIN
+
+(declare-function hpath:substitute-value "hpath")
+(declare-function id-info-item "hversion") ;; Forward declared - rearrange order will fix this
+(declare-function br-in-browser "hpath")
+
+;;; FIXME: Circular dependencies -- END
+
 ;;; ************************************************************************
 ;;; Other required Elisp libraries
 ;;; ************************************************************************
