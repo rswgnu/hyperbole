@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    6/30/93
-;; Last-Mod:     27-Sep-23 at 21:34:26 by Mats Lidell
+;; Last-Mod:     29-Sep-23 at 16:38:52 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -195,7 +195,7 @@ It provides the following keys:
     ;; Koutline file that has been loaded but not yet formatted for editing.
     (if (setq version (kfile:is-p))
         ;; Koutline file that has been loaded and formatted for editing.
-	(if (kview:is-p kview)
+	(if (kview:is-p hypb-kview)
 	    ;; The buffer might have been widened for inspection, so narrow to cells
 	    ;; only.
 	    (kfile:narrow-to-kcells)
@@ -461,7 +461,7 @@ Do not delete across cell boundaries."
   (unless arg
     (setq arg 1))
 
-  (if (not (and (boundp 'kview) (kview:is-p kview)))
+  (if (not (and (boundp 'hypb-kview) (kview:is-p hypb-kview)))
       ;; Support use within Org tables outside of the Koutliner
       (delete-char arg kill-flag)
     (let ((del-count 0)
@@ -583,7 +583,7 @@ it is not collapsed."
 	     ;; Expand cell if collapsed so that filling is done properly.
 	     (when (and (not ignore-collapsed-p)
 			(kcell-view:collapsed-p start))
-	       (setq collapsed-p (kview:get-cells-status kview start end))
+	       (setq collapsed-p (kview:get-cells-status hypb-kview start end))
 	       (outline-flag-region start end nil))
 	     (goto-char start)
 	     ;; Add a temporary fill-prefix for first labeled line, so is
@@ -611,7 +611,7 @@ it is not collapsed."
 	     ;;
 	     ;; If cell was collapsed before filling, restore its status.
 	     (when (remq 0 collapsed-p)
-	       (kview:set-cells-status kview start end collapsed-p))
+	       (kview:set-cells-status hypb-kview start end collapsed-p))
 	     ;;
 	     ;; Remove markers.
 	     (set-marker start nil)
@@ -658,7 +658,7 @@ Skip cells with a non-nil no-fill attribute.
 With optional prefix argument TOP-P non-nil, refill all cells in the outline."
   (interactive "P")
   ;; Temporarily expand, then refill cells lacking no-fill property.
-  (kview:map-expanded-tree (lambda (_kview) (kotl-mode:fill-cell)) kview top-p))
+  (kview:map-expanded-tree (lambda (_kview) (kotl-mode:fill-cell)) hypb-kview top-p))
 
 (defun kotl-mode:just-one-space ()
   "Delete all spaces and tabs around point and leave one space."
@@ -1124,7 +1124,7 @@ Leave point at the start of the root cell of the new tree."
   (kview:map-tree
    (lambda (view)
      (kcell-view:set-cell (kcell:create) (kview:id-increment view)))
-   kview))
+   hypb-kview))
 
 (defun kotl-mode:copy-before (from-cell-ref to-cell-ref parent-p)
   "Copy tree rooted at FROM-CELL-REF to precede tree rooted at TO-CELL-REF.
@@ -1149,7 +1149,7 @@ Leave point at the start of the root cell of the new tree."
   (kview:map-tree
    (lambda (view)
      (kcell-view:set-cell (kcell:create) (kview:id-increment view)))
-   kview))
+   hypb-kview))
 
 (defun kotl-mode:move-after (from-cell-ref to-cell-ref child-p
 			     &optional copy-p fill-p)
@@ -1171,7 +1171,7 @@ Leave point at original location but return the tree's new start point."
       (list current-prefix-arg))))
   (if (and (not copy-p) (equal from-cell-ref to-cell-ref))
       (error "(kotl-mode:move-after): Can't move tree after itself"))
-  (let* ((lbl-sep-len (kview:label-separator-length kview))
+  (let* ((lbl-sep-len (kview:label-separator-length hypb-kview))
 	 (move-to-point (set-marker
 			 (make-marker)
 			 (kotl-mode:goto-cell to-cell-ref t)))
@@ -1184,7 +1184,7 @@ Leave point at original location but return the tree's new start point."
 	 (end   (kotl-mode:tree-end))
 	 (sib-id (when (= 0 (kotl-mode:forward-cell 1))
 		   (kcell-view:idstamp)))
-	 (id-label-flag (eq (kview:label-type kview) 'id))
+	 (id-label-flag (eq (kview:label-type hypb-kview) 'id))
 	 new-tree-start)
     ;;
     ;; We can't move a tree to a point within itself, so if that is the case
@@ -1210,7 +1210,7 @@ Leave point at original location but return the tree's new start point."
 	;; Move to insert position for first child of to-cell-ref.
 	(progn (goto-char (kcell-view:end))
 	       (setq to-label (klabel:child to-label)
-		     to-indent (+ to-indent (kview:level-indent kview))))
+		     to-indent (+ to-indent (kview:level-indent hypb-kview))))
       ;; Move to after to-cell-ref's tree for insertion as following sibling.
       (goto-char (kotl-mode:tree-end))
       (unless id-label-flag
@@ -1268,7 +1268,7 @@ Leave point at original location but return the tree's new start point."
       (list current-prefix-arg))))
   (when (and (not copy-p) (equal from-cell-ref to-cell-ref))
     (error "(kotl-mode:move-before): Can't move tree before itself"))
-  (let* ((lbl-sep-len (kview:label-separator-length kview))
+  (let* ((lbl-sep-len (kview:label-separator-length hypb-kview))
 	 (move-to-point (set-marker
 			 (make-marker)
 			 (kotl-mode:goto-cell to-cell-ref t)))
@@ -1441,7 +1441,7 @@ Return number of cells left to move."
   (if (< arg 0)
       (kotl-mode:forward-cell (- arg))
     (let ((prior (= arg 0))
-	  (lbl-sep-len (kview:label-separator-length kview)))
+	  (lbl-sep-len (kview:label-separator-length hypb-kview)))
       (when (not (kview:valid-position-p))
         (progn
           (kotl-mode:to-valid-position t)
@@ -1496,7 +1496,7 @@ See `forward-paragraph' for more information."
   "Move point backward ARG (or 1) sentences and return point."
   (interactive "p")
   (kotl-mode:maintain-region-highlight)
-  (let* ((lbl-sep-len (kview:label-separator-length kview))
+  (let* ((lbl-sep-len (kview:label-separator-length hypb-kview))
 	 ;; Setting fill prefix makes sentence commands properly recognize
 	 ;; indented paragraphs.
 	 (fill-prefix (make-string (kcell-view:indent nil lbl-sep-len) ?\ )))
@@ -1587,7 +1587,7 @@ See `forward-paragraph' for more information."
 Leave point at the start of the cell."
   (interactive)
   (kotl-mode:maintain-region-highlight)
-  (let ((lbl-sep-len (kview:label-separator-length kview)))
+  (let ((lbl-sep-len (kview:label-separator-length hypb-kview)))
     (when (/= (kcell-view:level nil lbl-sep-len) 1)
       ;; Enable user to return to this previous position if desired.
       (push-mark nil 'no-msg))
@@ -1668,7 +1668,7 @@ With optional ARG < 0, move to the ARGth previous visible cell."
   (kotl-mode:maintain-region-highlight)
   ;; Enable user to return to this previous position if desired.
   (push-mark nil 'no-msg)
-  (let ((lbl-sep-len (kview:label-separator-length kview)))
+  (let ((lbl-sep-len (kview:label-separator-length hypb-kview)))
     (if (kcell-view:forward nil lbl-sep-len)
 	;; Move to cell preceding start of next tree.
 	(kcell-view:previous nil lbl-sep-len)
@@ -1680,7 +1680,7 @@ With optional ARG < 0, move to the ARGth previous visible cell."
 	;; processed.
 	(while (and (kcell-view:next nil lbl-sep-len)
 		    (>= (- (kcell-view:indent nil lbl-sep-len) cell-indent)
-			(kview:level-indent kview)))
+			(kview:level-indent hypb-kview)))
 	  (setq end-point (point)))
 	(goto-char end-point)))
     (kotl-mode:beginning-of-cell)))
@@ -1691,7 +1691,7 @@ Leave point at the start of the cell or at its present position if it is
 already within the first sibling cell."
   (interactive)
   (kotl-mode:maintain-region-highlight)
-  (let ((lbl-sep-len (kview:label-separator-length kview)))
+  (let ((lbl-sep-len (kview:label-separator-length hypb-kview)))
     (when (save-excursion (kcell-view:backward nil lbl-sep-len))
 	;; Enable user to return to this previous position if desired.
       (push-mark nil 'no-msg))
@@ -1705,7 +1705,7 @@ Return number of cells left to move."
   (if (< arg 0)
       (kotl-mode:backward-cell (- arg))
     (let ((next (= arg 0))
-	  (lbl-sep-len (kview:label-separator-length kview)))
+	  (lbl-sep-len (kview:label-separator-length hypb-kview)))
       (while (and (> arg 0) (setq next (kcell-view:forward t lbl-sep-len)))
 	(setq arg (1- arg)))
       (if (or next (not (called-interactively-p 'interactive)))
@@ -1759,7 +1759,7 @@ part of the paragraph, or the end of the buffer."
   "Move point forward ARG (or 1) sentences and return point."
   (interactive "P")
   (kotl-mode:maintain-region-highlight)
-  (let* ((lbl-sep-len (kview:label-separator-length kview))
+  (let* ((lbl-sep-len (kview:label-separator-length hypb-kview))
 	 ;; Setting fill prefix makes sentence commands properly recognize
 	 ;; indented paragraphs.
 	 (fill-prefix (make-string (kcell-view:indent nil lbl-sep-len) ?\ )))
@@ -1852,7 +1852,7 @@ If at head cell already, do nothing and return nil."
   (interactive "p")
   (kotl-mode:maintain-region-highlight)
   (let ((moved)
-	(lbl-sep-len (kview:label-separator-length kview)))
+	(lbl-sep-len (kview:label-separator-length hypb-kview)))
     (while (kcell-view:backward t lbl-sep-len)
       (setq moved t))
     moved))
@@ -1863,7 +1863,7 @@ Leave point at the start of the cell or at its present position if it is
 already within the last sibling cell."
   (interactive)
   (kotl-mode:maintain-region-highlight)
-  (let ((lbl-sep-len (kview:label-separator-length kview)))
+  (let ((lbl-sep-len (kview:label-separator-length hypb-kview)))
     (when (save-excursion (kcell-view:forward nil lbl-sep-len))
       ;; Enable user to return to this previous position if desired.
       (push-mark nil 'no-msg))
@@ -1894,7 +1894,7 @@ The paragraph marked is the one that contains point or follows point."
   (if (< arg 0)
       (kotl-mode:previous-cell (- arg))
     (let ((next (= arg 0))
-	  (lbl-sep-len (kview:label-separator-length kview)))
+	  (lbl-sep-len (kview:label-separator-length hypb-kview)))
       (while (and (> arg 0) (setq next (kcell-view:next t lbl-sep-len)))
 	(setq arg (1- arg)))
       (if next
@@ -1937,11 +1937,11 @@ The paragraph marked is the one that contains point or follows point."
 If no next tree go to the start of the last cell in tree.  Return
 non-nil iff there is a next tree within the koutline."
   (let ((start-indent (kcell-view:indent))
-	(lbl-sep-len (kview:label-separator-length kview))
+	(lbl-sep-len (kview:label-separator-length hypb-kview))
 	(same-tree t))
       (while (and (kcell-view:next nil lbl-sep-len)
 		  (setq same-tree (>= (- (kcell-view:indent nil lbl-sep-len) start-indent)
-				      (kview:level-indent kview)))))
+				      (kview:level-indent hypb-kview)))))
       (not same-tree)))
 
 (defun kotl-mode:previous-line (arg)
@@ -1974,7 +1974,7 @@ non-nil iff there is a next tree within the koutline."
   (if (< arg 0)
       (kotl-mode:next-cell (- arg))
     (let ((previous (= arg 0))
-	  (lbl-sep-len (kview:label-separator-length kview)))
+	  (lbl-sep-len (kview:label-separator-length hypb-kview)))
       (when (not (kview:valid-position-p))
         (progn
           (kotl-mode:to-valid-position t)
@@ -2013,7 +2013,7 @@ If at tail cell already, do nothing and return nil."
   (interactive "p")
   (kotl-mode:maintain-region-highlight)
   (let ((moved)
-	(lbl-sep-len (kview:label-separator-length kview)))
+	(lbl-sep-len (kview:label-separator-length hypb-kview)))
     (while (kcell-view:forward t lbl-sep-len)
       (setq moved t))
     moved))
@@ -2027,7 +2027,7 @@ If at tail cell already, do nothing and return nil."
     ;; Enable user to return to this previous position if desired.
     (push-mark nil 'no-msg)
     (let ((parent)
-	  (lbl-sep-len (kview:label-separator-length kview))
+	  (lbl-sep-len (kview:label-separator-length hypb-kview))
 	  result)
       (while (and (> arg 0) (setq result (kcell-view:parent t lbl-sep-len)))
 	(or parent (setq parent result))
@@ -2235,7 +2235,7 @@ Return last newly added cell."
   (interactive "*P")
   (or (stringp contents) (setq contents nil))
   (let ((klabel (kcell-view:label))
-	(lbl-sep-len (kview:label-separator-length kview))
+	(lbl-sep-len (kview:label-separator-length hypb-kview))
 	cell-level new-cell sibling-p child-p start parent
 	cells-to-add)
     (setq cell-level (kcell-view:level nil lbl-sep-len)
@@ -2270,7 +2270,7 @@ Return last newly added cell."
 	      (cond (sibling-p
 		     (klabel:increment klabel))
 		    (child-p
-		     (kview:id-increment kview)
+		     (kview:id-increment hypb-kview)
 		     (klabel:child klabel))
 		    ;; add as sibling of parent of current cell
 		    (t (klabel:increment (klabel:parent klabel))))
@@ -2290,7 +2290,7 @@ Return last newly added cell."
     (kotl-mode:to-valid-position t)
     (save-excursion
       (when (kcell-view:forward nil lbl-sep-len)
-	(let ((label-type (kview:label-type kview)))
+	(let ((label-type (kview:label-type hypb-kview)))
 	  (when (memq label-type '(alpha legal partial-alpha))
 	    ;; Update the labels of these siblings and their subtrees.
 	    (klabel-type:update-labels (klabel:increment klabel))))))
@@ -2307,7 +2307,7 @@ to one level and kotl-mode:refill-flag is treated as true."
   (interactive "*p")
   (if (< arg 0)
       (kotl-mode:promote-tree (- arg))
-    (let* ((lbl-sep-len (kview:label-separator-length kview))
+    (let* ((lbl-sep-len (kview:label-separator-length hypb-kview))
 	   (orig-id (kcell-view:idstamp))
 	   (fill-p (= arg 0))
 	   (orig-pos-in-cell
@@ -2427,7 +2427,7 @@ to one level and kotl-mode:refill-flag is treated as true."
 	;; Set kcell properties.
 	(kcell-view:set-cell kcell-1 idstamp-1)
 	;; If idstamp labels are on, then must exchange labels in view.
-	(when (eq (kview:label-type kview) 'id)
+	(when (eq (kview:label-type hypb-kview) 'id)
  	  (klabel:set (format "0%d" idstamp-1))))
 
       ;;
@@ -2436,7 +2436,7 @@ to one level and kotl-mode:refill-flag is treated as true."
       ;; Set kcell properties.
       (kcell-view:set-cell kcell-2 idstamp-2)
       ;; If idstamp labels are on, then must exchange labels in view.
-      (when (eq (kview:label-type kview) 'id)
+      (when (eq (kview:label-type hypb-kview) 'id)
  	(klabel:set (format "0%d" idstamp-2))))))
 
 (defun kotl-mode:kill-contents (arg)
@@ -2453,7 +2453,7 @@ If ARG is a non-positive number, nothing is done."
   (interactive "*p")
   (or (integerp arg) (setq arg 1))
   (let ((killed) (label (kcell-view:label))
-	(lbl-sep-len (kview:label-separator-length kview))
+	(lbl-sep-len (kview:label-separator-length hypb-kview))
 	start end sib)
     (while (> arg 0)
       (setq start (kotl-mode:tree-start)
@@ -2517,7 +2517,7 @@ to one level and kotl-mode:refill-flag is treated as true."
   (if (< arg 0)
       (kotl-mode:demote-tree (- arg))
     (let* ((parent) (result)
-	   (lbl-sep-len (kview:label-separator-length kview))
+	   (lbl-sep-len (kview:label-separator-length hypb-kview))
 	   (orig-id (kcell-view:idstamp))
 	   (fill-p (= arg 0))
 	   (orig-pos-in-cell
@@ -2587,7 +2587,7 @@ ATTRIBUTE and ignore any value of POS."
      (list attribute nil top-cell-flag)))
   (barf-if-buffer-read-only)
   (if top-cell-flag
-      (kcell:remove-attr (kview:top-cell kview) attribute)
+      (kcell:remove-attr (kview:top-cell hypb-kview) attribute)
     (kcell-view:remove-attr attribute pos))
   ;; Note that buffer needs to be saved to store modified property list.
   (set-buffer-modified-p t)
@@ -2634,7 +2634,7 @@ confirmation."
        (beep))
      (setq attribute (intern attribute)
 	   value (if top-cell-flag
-		     (kcell:get-attr (kview:top-cell kview) attribute)
+		     (kcell:get-attr (kview:top-cell hypb-kview) attribute)
 		   (kcell-view:get-attr attribute)))
      (if value
 	 (setq value (read-minibuffer
@@ -2645,7 +2645,7 @@ confirmation."
      (list attribute value nil current-prefix-arg)))
   (barf-if-buffer-read-only)
   (if top-cell-flag
-      (kcell:set-attr (kview:top-cell kview) attribute value)
+      (kcell:set-attr (kview:top-cell hypb-kview) attribute value)
     (kcell-view:set-attr attribute value pos))
   ;; Note that buffer needs to be saved to store new attribute value.
   (set-buffer-modified-p t)
@@ -2716,7 +2716,7 @@ that contains mark.
 With any other non-nil prefix ARG, take the current tree and move it past
 ARG visible cells."
   (interactive "*p")
-  (let ((lbl-sep-len (kview:label-separator-length kview)))
+  (let ((lbl-sep-len (kview:label-separator-length hypb-kview)))
     (cond
      ((save-excursion (not (or (kcell-view:next t lbl-sep-len)
 			       (kcell-view:previous t lbl-sep-len))))
@@ -2865,7 +2865,7 @@ within the current view."
     (kview:map-tree (lambda (_kview)
 		      ;; Use free variable kview-label-sep-len bound in kview:map-tree for speed.
 		      (kcell-view:collapse nil kview-label-sep-len))
-		    kview all-flag t)))
+		    hypb-kview all-flag t)))
 
 (defun kotl-mode:expand-tree (&optional all-flag)
   "Expand each visible cell of the tree rooted at point.
@@ -2879,7 +2879,7 @@ the current view."
        ;; Use free variable kview-label-sep-len bound in kview:map-tree for speed.
        (goto-char (kcell-view:start (point) kview-label-sep-len))
        (outline-flag-region (point) (kcell-view:end-contents) nil))
-     kview all-flag t)))
+     hypb-kview all-flag t)))
 
 (defun kotl-mode:toggle-tree-expansion (&optional all-flag)
   "Collapse or expand each cell of tree rooted at point.
@@ -2909,8 +2909,8 @@ With optional prefix ARG, toggle display of blank lines between cells."
 With optional prefix ARG, toggle display of blank lines between cells."
   (interactive "P")
   (when (kotl-mode:is-p)
-    (kview:set-attr kview 'levels-to-show 0)
-    (kview:set-attr kview 'lines-to-show 0)
+    (kview:set-attr hypb-kview 'levels-to-show 0)
+    (kview:set-attr hypb-kview 'lines-to-show 0)
     (outline-flag-region (point-min) (point-max) nil)
     (when arg
       (kvspec:toggle-blank-lines))
@@ -3001,10 +3001,10 @@ See also the documentation for `kotl-mode:cell-help'."
   (interactive "P")
   (save-excursion
     (if (not all-flag)
-	(kotl-mode:print-attributes kview)
-      (let ((lbl-sep-len (kview:label-separator-length kview)))
+	(kotl-mode:print-attributes hypb-kview)
+      (let ((lbl-sep-len (kview:label-separator-length hypb-kview)))
 	(kotl-mode:beginning-of-buffer)
-	(while (progn (kotl-mode:print-attributes kview)
+	(while (progn (kotl-mode:print-attributes hypb-kview)
 		      (kcell-view:next t lbl-sep-len)))))))
 
 (defun kotl-mode:cell-help (&optional cell-ref cells-flag)
@@ -3043,19 +3043,19 @@ See also the documentation for `kotl-mode:cell-attributes'."
 	      (<= cells-flag 0))
 	  (progn
 	    (hattr:report (append '(idstamp 0)
-				  (kcell:plist (kview:top-cell kview))))
+				  (kcell:plist (kview:top-cell hypb-kview))))
 	    (terpri)
 	    (cond ((= cells-flag 1) nil)
 		  ((> cells-flag 1)
-		   (kview:map-tree #'kotl-mode:print-attributes kview t t))
+		   (kview:map-tree #'kotl-mode:print-attributes hypb-kview t t))
 		  ;; (<= cells-flag 0)
 		  (t (kotl-mode:cell-attributes t))))
 	(cond ((= cells-flag 1)
 	       (kotl-mode:goto-cell cell-ref)
-	       (kotl-mode:print-attributes kview))
+	       (kotl-mode:print-attributes hypb-kview))
 	      ((> cells-flag 1)
 	       (kotl-mode:goto-cell cell-ref)
-	       (kview:map-tree #'kotl-mode:print-attributes kview nil t)))))
+	       (kview:map-tree #'kotl-mode:print-attributes hypb-kview nil t)))))
     (with-current-buffer standard-output
       (goto-char (point-min))
       (set-buffer-modified-p nil)
@@ -3074,7 +3074,7 @@ When called interactively, it displays the value in the minibuffer."
 		 0
 	       (kproperty:get (kcell-view:plist-point pos) attribute))
 	   (if top-cell-flag
-	     (kcell:get-attr (kview:top-cell kview) attribute)
+	     (kcell:get-attr (kview:top-cell hypb-kview) attribute)
 	   (kcell-view:get-attr attribute pos)))))
     (when (called-interactively-p 'interactive)
       (message "Attribute \"%s\" = `%s' in cell <%s>."
@@ -3218,7 +3218,7 @@ on when tabs are used for indenting."
 ;;;###autoload
 (defun kotl-mode:is-p ()
   "Signal an error if current buffer is not a Hyperbole outline, else return t."
-  (if (kview:is-p kview)
+  (if (kview:is-p hypb-kview)
       t
     (hypb:error
      "(kotl-mode:is-p): '%s' is not a valid Hyperbole koutline" (current-buffer))))
@@ -3281,13 +3281,13 @@ cases where `kotl-mode:shrink-region-flag' is nil."
   "Return end point of current cell's tree within this view.
 If optional OMIT-END-NEWLINES is non-nil, point returned precedes any
 newlines at end of tree."
-  (let* ((lbl-sep-len (kview:label-separator-length kview))
+  (let* ((lbl-sep-len (kview:label-separator-length hypb-kview))
 	 (start-indent (kcell-view:indent nil lbl-sep-len))
 	 (next))
     (save-excursion
       (while (and (setq next (kcell-view:next nil lbl-sep-len))
 		  (>= (- (kcell-view:indent nil lbl-sep-len) start-indent)
-		      (kview:level-indent kview))))
+		      (kview:level-indent hypb-kview))))
       (cond (next
 	     (goto-char (progn (kcell-view:previous nil lbl-sep-len)
 			       (kcell-view:end))))
@@ -3428,7 +3428,7 @@ With optional BACKWARD-P, move backward if possible to get to valid position."
   "Move point to the nearest editable position within the current koutline view.
 With optional BACKWARD-P, move backward if possible to get to valid position."
   (unless (kview:valid-position-p)
-    (let ((lbl-sep-len (kview:label-separator-length kview)))
+    (let ((lbl-sep-len (kview:label-separator-length hypb-kview)))
       (cond ((kotl-mode:bobp)
 	     (goto-char (kcell-view:start nil lbl-sep-len)))
 	    ((kotl-mode:eobp)
@@ -3466,7 +3466,7 @@ Leave point at end of line now residing at START."
 
 (defun kotl-mode:update-buffer ()
   "Update current view buffer in preparation for saving."
-  (when (kview:is-p kview)
+  (when (kview:is-p hypb-kview)
     (let ((mod-p (buffer-modified-p))
 	  (start (window-start)))
       (save-excursion

@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     1-May-93
-;; Last-Mod:     27-Sep-23 at 21:47:35 by Mats Lidell
+;; Last-Mod:     29-Sep-23 at 16:31:47 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -169,7 +169,7 @@ Augment capabilities not yet implemented and ignored for now:
 		       (save-excursion
 			 (goto-char (point-min))
 			 (when (re-search-forward (concat "^[ \t]*" (regexp-quote idstamp-string)
-							  (regexp-quote (kview:label-separator kview)))
+							  (regexp-quote (kview:label-separator hypb-kview)))
 						  nil t)
 
 			   (setq idstamp-string (kcell-view:idstamp))
@@ -225,7 +225,7 @@ assuming it is the cell at point and filling in the missing information."
 	 (vector idstamp plist)
        (kcell-data:create
 	(kcell:create plist)
-	(or idstamp (kview:id-increment kview))))))
+	(or idstamp (kview:id-increment hypb-kview))))))
 
 (defun kcell-data:idstamp (kcell-data)
   (aref kcell-data 0))

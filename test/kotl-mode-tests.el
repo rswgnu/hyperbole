@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    18-May-21 at 22:14:10
-;; Last-Mod:     28-Aug-23 at 00:07:23 by Bob Weiner
+;; Last-Mod:     29-Sep-23 at 16:48:42 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -103,7 +103,7 @@
           (should (string= (kcell-view:label (point)) "1"))
           (should (hact 'kbd-key "C-c C-v 0 RET"))
           (hy-test-helpers:consume-input-events)
-          (should (eq (kview:label-type kview) 'id))
+          (should (eq (kview:label-type hypb-kview) 'id))
           (should (string= (kcell-view:label (point)) "01")))
       (hy-delete-file-and-buffer kotl-file))))
 
@@ -119,7 +119,7 @@
 
           ;; Verify idstamp label
           (kvspec:activate "ben0")
-          (should (eq (kview:label-type kview) 'id))
+          (should (eq (kview:label-type hypb-kview) 'id))
           (should (string= (kcell-view:idstamp) "01"))
           (should (string= (kcell-view:label (point)) "01"))
 
@@ -128,7 +128,7 @@
           (save-buffer)
           (kill-buffer)
           (find-file kotl-file)
-          (should (eq (kview:label-type kview) 'id))
+          (should (eq (kview:label-type hypb-kview) 'id))
           (should (string= (kcell-view:idstamp) "01"))
           (should (string= (kcell-view:label (point)) "01")))
       (hy-delete-file-and-buffer kotl-file))))
