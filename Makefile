@@ -3,7 +3,7 @@
 # Author:       Bob Weiner
 #
 # Orig-Date:    15-Jun-94 at 03:42:38
-# Last-Mod:     28-Sep-23 at 23:57:18 by Mats Lidell
+# Last-Mod:     29-Sep-23 at 16:43:34 by Mats Lidell
 #
 # Copyright (C) 1994-2023  Free Software Foundation, Inc.
 # See the file HY-COPY for license information.
@@ -294,7 +294,7 @@ $(data_dir)/hkey-help.txt: $(man_dir)/hkey-help.txt
 
 curr_dir = $(shell pwd)
 .el.elc:
-	@ echo Compile $< 
+	@ echo [[[  Compile $@  ]]] 
 	@ $(EMACS) --batch --quick \
 	--eval "(progn (add-to-list 'load-path \"$(curr_dir)\") (add-to-list 'load-path \"$(curr_dir)/kotl\"))" \
 	-f batch-native-compile $<
