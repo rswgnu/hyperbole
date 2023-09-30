@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    28-Feb-21 at 22:52:00
-;; Last-Mod:     19-Feb-23 at 15:49:31 by Mats Lidell
+;; Last-Mod:     14-Jul-23 at 23:40:55 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -76,7 +76,7 @@
     (ibtype:delete 'ibtypes::defal-key)))
 
 (defun hbut-verify-defal (x)
-  "Verify function i called with X set to the string `test'."
+  "Verify function is called with X set to the string `test'."
   (should (string= x "test")))
 
 (ert-deftest hbut-defal-function ()
@@ -86,9 +86,8 @@
       (with-temp-buffer
         (insert "<defal-func test>")
         (goto-char 4)
-        (action-key)))
-    (progn
-      (ibtype:delete 'ibtypes::defal-func)))
+        (action-key))
+    (ibtype:delete 'ibtypes::defal-func)))
   
 (ert-deftest hbut-defal-fails-on-file-missing ()
   (defal defal-path-missing "${hyperb:dir}/\\1")
@@ -113,7 +112,7 @@
           (goto-char 4)
           (action-key)
           (should (string= (expand-file-name "DEMO" hyperb:dir) buffer-file-name)))
-      (kill-buffer "DEMO")
+      (hy-test-helpers:kill-buffer "DEMO")
       (ibtype:delete 'ibtypes::defil-path-it))))
 
 (ert-deftest hbut-defil ()
@@ -173,13 +172,14 @@
       (action-key))))
 
 (ert-deftest hbut-ib-create-label ()
-  "Create a label for an implicit button"
+  "Create a label for an implicit button."
   (with-temp-buffer
     (insert "\"/tmp\"\n")
     (goto-char 3)
     (with-simulated-input "TMP RET"
-      (hui:ibut-label-create)
-      (should (string= "<[TMP]> - \"/tmp\"\n" (buffer-string))))))
+      (let ((enable-recursive-minibuffers t))
+	(hui:ibut-label-create)
+	(should (string= "<[TMP]> - \"/tmp\"\n" (buffer-string)))))))
 
 (ert-deftest hbut-ib-create-label-fails-if-label-exists ()
   "Creation of a label for an implicit button fails if a label exists."
@@ -213,7 +213,7 @@
   (with-temp-buffer
     (insert "\"/var/lib:/bar:/tmp:/foo\"")
     (goto-char 16)
-    (hy-test-helpers:action-key-should-call-hpath:find "/tmp")))
+    (hy-test-helpers:action-key-should-call-hpath:find (expand-file-name "tmp" "/"))))
 
 (ert-deftest hbut-pathname-path-variable-with-short-first-element-is-not-tramp-url-test ()
   "Path variable with three colons is not seen as a tramp url."
@@ -231,7 +231,7 @@
         (goto-char 2)
         (action-key)
         (should (string= "*mail*" (buffer-name))))
-    (kill-buffer "*mail*")))
+    (hy-test-helpers:kill-buffer "*mail*")))
 
 ;; Path name
 (ert-deftest hbut-pathname-test ()
@@ -241,7 +241,7 @@
         (goto-char 2)
         (action-key)
         (should (string= "DEMO" (buffer-name))))
-    (kill-buffer "DEMO")))
+    (hy-test-helpers:kill-buffer "DEMO")))
 
 (ert-deftest hbut-pathname-lisp-variable-test ()
   (unwind-protect
@@ -250,18 +250,16 @@
         (goto-char 2)
         (action-key)
         (should (string= "DEMO" (buffer-name))))
-    (kill-buffer "DEMO")))
+    (hy-test-helpers:kill-buffer "DEMO")))
 
 (ert-deftest hbut-pathname-env-variable-test ()
-  (unwind-protect
-      (with-temp-buffer
-        (insert "\"${HOME}\"")
-        (goto-char 2)
-        (action-key)
-        (should (equal major-mode 'dired-mode))
-	(should (= 0 (string-match (file-truename (getenv "HOME"))
-				   (file-truename default-directory)))))
-    nil))
+  (with-temp-buffer
+    (insert "\"${HOME}\"")
+    (goto-char 2)
+    (action-key)
+    (should (equal major-mode 'dired-mode))
+    (should (equal (expand-file-name default-directory)
+		   (file-name-as-directory (getenv "HOME"))))))
 
 (ert-deftest hbut-pathname-emacs-lisp-file-test ()
   (unwind-protect
@@ -271,43 +269,111 @@
         (action-key)
         (should (equal major-mode 'emacs-lisp-mode))
         (should (buffer-file-name))
-        (should (string= "hyperbole.el" (buffer-name)))))
-  (kill-buffer "hyperbole.el"))
+        (should (string= "hyperbole.el" (buffer-name))))
+    (hy-test-helpers:kill-buffer "hyperbole.el")))
+
+(ert-deftest hbut-pathname-line-test ()
+  "Pathname with line number specification."
+  (let ((file (make-temp-file "hypb" nil nil
+                              "Line1\nLine2\n")))
+    (unwind-protect
+        (with-temp-buffer
+          (insert (concat "\"" file ":1\""))
+          (goto-char 2)
+          (action-key)
+          (should (string= file (buffer-file-name)))
+          (should (looking-at "Line1")))
+      (hy-delete-file-and-buffer file))))
+
+(ert-deftest hbut-pathname-line-test-duplicate ()
+  "Pathname with line number specification, duplicate ibut to same file."
+  (let* ((file
+          (make-temp-file "hypb" nil nil
+                          "Line1\nLine2\n"))
+         (ibutfile
+           (make-temp-file "hypb" nil nil
+                           (concat "\"" file ":1\"" "\n" "\"" file ":2\"\n"))))
+    (unwind-protect
+        (progn
+          (find-file ibutfile)
+          (forward-line)
+          (should (looking-at-p (concat "\"" file ":2\"")))
+          (forward-char 2)
+          (action-key)
+          (should (string= file (buffer-file-name)))
+          (should (looking-at "Line2")))
+      (hy-delete-file-and-buffer file)
+      (hy-delete-file-and-buffer ibutfile))))
 
 (ert-deftest hbut-pathname-anchor-test ()
   "Pathname with anchor."
+  (let ((file (make-temp-file "hypb" nil nil
+                              "Text\n* Anchor\n")))
+    (unwind-protect
+        (with-temp-buffer
+          (insert (concat "\"" file "#Anchor\""))
+          (goto-char 2)
+          (action-key)
+          (should (string= file (buffer-file-name)))
+          (should (looking-at "\* Anchor")))
+      (hy-delete-file-and-buffer file))))
+
+(ert-deftest hbut-pathname-anchor-trailing-text ()
+  "Pathname with anchor and trailing parenthesised text."
+  (let ((file (make-temp-file "hypb" nil nil
+                              "Text\n* Anchor Plus (Parenthesised text follows)\n")))
   (unwind-protect
       (with-temp-buffer
-        (insert "\"${hyperb:dir}/DEMO#Smart Keys\"")
+        (insert (concat "\"" file "#Anchor Plus\""))
         (goto-char 2)
         (action-key)
-        (should (string= "DEMO" (buffer-name)))
-        (should (looking-at "\* Smart Keys")))
-    (kill-buffer "DEMO")))
+        (should (string= file (buffer-file-name)))
+        (should (looking-at "\* Anchor Plus \(Parenthesised text follows\)")))
+    (hy-delete-file-and-buffer file))))
+
+(ert-deftest hbut-pathname-anchor-must-match-all ()
+  "Verify that the whole anchor must match."
+  (let ((file (make-temp-file "hypb" nil nil
+                              "Text\n* Anchor Plus non parenthesised text\n")))
+  (unwind-protect
+      (with-temp-buffer
+        (insert (concat "\"" file "#Anchor Plus\""))
+        (goto-char 2)
+        (let ((err (should-error (action-key) :type 'error)))
+          (should (string-match-p
+                   (concat "\(hpath:to-markup-anchor\): "
+                           (buffer-name)
+                           " - Section .Anchor Plus. not found in the visible buffer portion")
+                   (cadr err)))))
+    (hy-delete-file-and-buffer file))))
 
 (ert-deftest hbut-pathname-anchor-line-test ()
   "Pathname with anchor and line specification."
+  (let ((file (make-temp-file "hypb" nil nil
+                              "Text\n* Anchor\nNext Line\n")))
   (unwind-protect
       (with-temp-buffer
-        (insert "\"${hyperb:dir}/DEMO#Smart Keys:2\"")
+        (insert (concat "\"" file "#Anchor:1\""))
         (goto-char 2)
         (action-key)
-        (should (string= "DEMO" (buffer-name)))
-        (forward-line -2)
-        (should (looking-at "\* Smart Keys")))
-    (kill-buffer "DEMO")))
+        (should (string= file (buffer-file-name)))
+        (should (looking-at "Next Line")))
+    (hy-delete-file-and-buffer file))))
 
 (ert-deftest hbut-pathname-line-column-test ()
   "Pathname with line and position specification."
-  (unwind-protect
-      (with-temp-buffer
-        (insert "\"${hyperb:dir}/DEMO:3:45\"")
-        (goto-char 2)
-        (action-key)
-        (should (string= "DEMO" (buffer-name)))
-        (should (= (line-number-at-pos) 3))
-        (should (= (current-column) 45)))
-    (kill-buffer "DEMO")))
+  (let ((file (make-temp-file "hypb" nil nil
+                              "Text\n* Anchor\nNext Line\n")))
+    (unwind-protect
+        (with-temp-buffer
+          (insert (concat "\"" file "#Anchor:1:5\""))
+          (goto-char 2)
+          (action-key)
+          (should (string= file (buffer-file-name)))
+          (should (= (line-number-at-pos) 3))
+          (should (= (current-column) 5))
+          (should (looking-at "Line")))
+      (hy-delete-file-and-buffer file))))
 
 (ert-deftest hbut-pathname-load-path-line-column-test ()
   "Pathname with `load-path', line and position specification."
@@ -319,7 +385,7 @@
         (should (string= "hypb.el" (buffer-name)))
         (should (= (line-number-at-pos) 11))
         (should (= (current-column) 5)))
-    (kill-buffer "hypb.el")))
+    (hy-test-helpers:kill-buffer "hypb.el")))
 
 (ert-deftest hbut-pathname-with-dash-loads-file-test ()
   "Pathname with dash loads file."
@@ -337,9 +403,9 @@
         (insert "\"/tmp\"")
         (goto-char 2)
         (action-key)
-        (should (string= "tmp" (buffer-name)))
+        (should (string-equal default-directory "/tmp/"))
         (should (eq major-mode 'dired-mode)))
-    (kill-buffer "tmp")))
+    (hy-test-helpers:kill-buffer "tmp")))
 
 (ert-deftest hbut-pathname-dot-slash-in-other-folder-should-fail-test ()
   "Pathname that starts with ./ only works if in same folder."
@@ -368,7 +434,7 @@
         (should (looking-at "\\[FSF 19\\] Free Software Foundation"))
         (forward-line -2)
         (should (looking-at "\\* References")))
-    (kill-buffer "DEMO")))
+    (hy-test-helpers:kill-buffer "DEMO")))
 
 ;; ctags
 ; Seems ctags -v does not give the proper answer
@@ -381,9 +447,8 @@
         (forward-char 4)
         (let ((default-directory (expand-file-name "test" hyperb:dir)))
           (action-key)
-          (set-buffer "hy-test-helpers.el")
           (should (looking-at "(defun hy-test-helpers:consume-input-events"))))
-    (kill-buffer "hy-test-helpers.el")))
+    (hy-test-helpers:kill-buffer "hy-test-helpers.el")))
 
 ;; etags
 ;; FIXME: Rewrite to not depend on hy-test-helpers.el
@@ -401,7 +466,7 @@
           (action-key)
           (set-buffer "hy-test-helpers.el")
           (should (looking-at "(defun hy-test-helpers:consume-input-events"))))
-    (kill-buffer "hy-test-helpers.el")))
+    (hy-test-helpers:kill-buffer "hy-test-helpers.el")))
 
 ;; text-toc
 (ert-deftest hbut-text-toc-test ()
@@ -413,7 +478,7 @@
         (action-key)
         (should (bolp))
         (should (looking-at "^* Koutliner")))
-    (kill-buffer "DEMO")))
+    (hy-test-helpers:kill-buffer "DEMO")))
 
 ;; dir-summary
 (ert-deftest hbut-dir-summary-test ()
@@ -426,9 +491,8 @@
         (let ((hpath:display-where 'this-window))
           (action-key)
           (should (string= "HY-ABOUT" (buffer-name)))))
-    (progn
-      (kill-buffer "MANIFEST")
-      (kill-buffer "HY-ABOUT"))))
+    (hy-test-helpers:kill-buffer "MANIFEST")
+    (hy-test-helpers:kill-buffer "HY-ABOUT")))
 
 ;; rfc
 (ert-deftest hbut-rfc-test ()
@@ -458,7 +522,7 @@
         (goto-char 6)
         (action-key)
         (should (string= "*info*" (buffer-name))))
-    (kill-buffer "*info*")))
+    (hy-test-helpers:kill-buffer "*info*")))
 
 ;; exec-shell-cmd
 (ert-deftest hbut-find-exec-shell-cmd-test ()

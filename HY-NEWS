@@ -837,7 +837,7 @@
       pressed individually, i.e. the same as the key series, {string}.
 
   *** Mail Address Activation Everywhere: Email addresses are recognized as
-      implicit buttons in major modes descended from `mail-address-mode-list'.
+      implicit buttons in major modes descended from `hypb:mail-address-mode-list'.
       If you set that to nil, however, they will be recognized in all major
       modes.
 
@@ -2101,7 +2101,7 @@ are new in 2016 and you should look through them all.
   MAIL
 
     - Implicit mail address buttons are recognized in many more programming
-      modes.  See the value of `mail-address-mode-list'.
+      modes.  See the value of `hypb:mail-address-mode-list'.
 
   VARIABLES
 
@@ -3090,7 +3090,7 @@ are new in 2016 and you should look through them all.
     - Image files may be displayed within the editor if the editor supports
       this and image-mode is available.
 
-    - The new variable, mail-address-mode-list, determines the major modes
+    - The new variable, hypb:mail-address-mode-list, determines the major modes
       in which Action Key presses on <delimited> mail addresses start
       composing mail to that address.
 

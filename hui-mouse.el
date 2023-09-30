@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    04-Feb-89
-;; Last-Mod:     25-Jun-23 at 16:36:39 by Mats Lidell
+;; Last-Mod:     28-Aug-23 at 01:58:05 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -66,6 +66,8 @@
 
 (declare-function helm-get-actions-from-current-source "ext:helm-core")
 (declare-function helm-get-default-action "ext:helm-core")
+
+(defvar helm-selection-point)
 
 ;;; ************************************************************************
 ;;; Public variables
@@ -201,17 +203,6 @@ Its default value is `smart-scroll-down'.  To disable it, set it to
 	  (memq company-active-map (current-minor-mode-maps)))
      . ((smart-company-to-definition) . (smart-company-help)))
     ;;
-    ;; Handle any Org mode-specific contexts but give priority to Hyperbole
-    ;; buttons prior to cycling Org headlines
-    ((and (not (hyperb:stack-frame '(smart-org)))
-	  (let ((hrule:action #'actype:identity))
-	    (smart-org)))
-     . ((smart-org) . (smart-org)))
-    ;;
-    ;; Ivy minibuffer completion mode
-    ((and (boundp 'ivy-mode) ivy-mode (minibuffer-window-active-p (selected-window)))
-     . ((ivy-done) . (ivy-dispatching-done)))
-    ;;
     ;; Treemacs hierarchical file manager
     ((eq major-mode 'treemacs-mode)
      . ((smart-treemacs) . (smart-treemacs)))
@@ -225,10 +216,15 @@ Its default value is `smart-scroll-down'.  To disable it, set it to
      . ((smart-push-button nil (mouse-event-p last-command-event))
 	. (smart-push-button-help nil (mouse-event-p last-command-event))))
     ;;
-    ;; If click in the minibuffer and reading an argument,
-    ;; accept argument or give completion help.
-    ((and (> (minibuffer-depth) 0)
+    ;; If click in the minibuffer and reading an argument (aside from
+    ;; with vertico or ivy), accept argument or give completion help.
+    ((and hargs:reading-type
+	  (> (minibuffer-depth) 0)
 	  (eq (selected-window) (minibuffer-window))
+	  (not (bound-and-true-p ivy-mode))
+	  (not (and (bound-and-true-p vertico-mode)
+		    ;; Is vertico is prompting for an argument?
+		    (vertico--command-p nil (current-buffer))))
 	  (not (eq hargs:reading-type 'hmenu))
 	  (not (smart-helm-alive-p)))
      . ((funcall (key-binding (kbd "RET"))) . (smart-completion-help)))
@@ -236,8 +232,7 @@ Its default value is `smart-scroll-down'.  To disable it, set it to
     ;; If reading a Hyperbole menu item or a Hyperbole completion-based
     ;; argument, allow selection of an item at point.
     ((and (> (minibuffer-depth) 0) (setq hkey-value (hargs:at-p)))
-     . ((hargs:select-p hkey-value)
-	. (hargs:select-p hkey-value 'assist)))
+     . ((hargs:select-p hkey-value) . (hargs:select-p hkey-value 'assist)))
     ;;
     ;; If reading a Hyperbole menu item and nothing is selected, just return.
     ;; Or if in a helm session with point in the minibuffer, quit the
@@ -247,6 +242,13 @@ Its default value is `smart-scroll-down'.  To disable it, set it to
 	  (or (eq hargs:reading-type 'hmenu)
 	      (smart-helm-alive-p)))
      . ((funcall (key-binding (kbd "RET"))) . (funcall (key-binding (kbd "RET")))))
+    ;;
+    ;; Handle any Org mode-specific contexts but give priority to Hyperbole
+    ;; buttons prior to cycling Org headlines
+    ((and (not (hyperb:stack-frame '(smart-org)))
+	  (let ((hrule:action #'actype:identity))
+	    (smart-org)))
+     . ((smart-org) . (smart-org)))
     ;;
     ;; The ID-edit package supports rapid killing, copying, yanking and
     ;; display management. It is available only as a part of InfoDock.
@@ -574,8 +576,8 @@ smart keyboard keys.")
 
 (defun smart-completion-help ()
   "Offer completion help for current minibuffer argument, if any."
-  (if (where-is-internal 'minibuffer-completion-help (current-local-map))
-      (minibuffer-completion-help)))
+  (when (where-is-internal 'minibuffer-completion-help (current-local-map))
+    (minibuffer-completion-help)))
 
 ;;; ************************************************************************
 ;;; smart-buffer-menu functions
@@ -1525,7 +1527,7 @@ If assist-key is pressed:
 ;; next function.
 ;; Usage: (define-key magit-section-mode-map "TAB" 'smart-magit-tab)
 (defun smart-magit-tab (section)
-  "Toggle visibility of the body of the current section."
+  "Toggle visibility of the body of the current SECTION."
   (interactive (list (magit-current-section)))
   (require 'magit)
   (let* ((magit-display-buffer-function #'hpath:display-buffer)
@@ -1997,6 +1999,7 @@ If key is pressed:
   (cond ((smart-eobp) (todotxt-archive))
 	(t (todotxt-edit-item))))
 
+;;;###autoload
 (defun smart-eobp ()
   "Return t if point is past the last visible buffer line with text."
   (and (or (eobp)
@@ -2020,7 +2023,7 @@ If key is pressed:
 ;;; ************************************************************************
 
 ;; Emacs push button support
-(defun smart-push-button (&optional pos use-mouse-action)
+(defun smart-push-button (&optional _pos _use-mouse-action)
   "Activate an Emacs push-button, including text-property follow-link buttons.
 Button is at optional POS or at point.  USE-MOUSE-ACTION prefers
 mouse-action to action property."

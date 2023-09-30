@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    04-Feb-90
-;; Last-Mod:     19-Jun-23 at 15:56:40 by Bob Weiner
+;; Last-Mod:     12-Aug-23 at 13:19:18 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -25,7 +25,9 @@
 ;;; ************************************************************************
 ;;; Public declarations
 ;;; ************************************************************************
+
 (defvar start-window)
+(defvar aw-scope)
 (declare-function mouse-drag-frame nil) ;; Obsolete from Emacs 28
 
 ;;; ************************************************************************
@@ -46,14 +48,14 @@ See function `hmouse-window-at-absolute-pixel-position' for more details.")
 (defvar action-key-depressed-flag nil "t while Action Key is depressed.")
 (defvar assist-key-depressed-flag nil "t while Assist Key is depressed.")
 (defvar action-key-depress-args nil
-  "List of mouse event args from most recent depress of the Action Key.")
+  "List of event args from most recent depress of the Action Mouse Key.")
 (defvar assist-key-depress-args nil
-  "List of mouse event args from most recent depress of the Assist Key.")
+  "List of event args from most recent depress of the Assist Mouse Key.")
 
 (defvar action-key-release-args nil
-  "List of mouse event args from most recent release of the Action Key.")
+  "List of event args from most recent release of the Action Mouse Key.")
 (defvar assist-key-release-args nil
-  "List of mouse event args from most recent release of the Assist Key.")
+  "List of event args from most recent release of the Assist Mouse Key.")
 
 (defvar action-key-depress-buffer nil
   "The last buffer in which the Action Key was depressed or nil.
@@ -332,11 +334,13 @@ unless the `action-key-default-function' variable is not bound to
 a valid function."
   (interactive)
   (action-key-clear-variables)
-  (prog1 (action-key-internal)
-    (run-hooks 'action-key-depress-hook 'action-key-release-hook)))
+  (unwind-protect
+      (prog1 (action-key-internal)
+	(run-hooks 'action-key-depress-hook 'action-key-release-hook))
+    (setq action-key-depressed-flag nil)))
 
 (defun action-key-internal ()
-  (setq action-key-depressed-flag nil)
+  (setq action-key-depressed-flag t)
   (when action-key-cancelled
     (setq action-key-cancelled nil
 	  assist-key-depressed-flag nil))
@@ -353,11 +357,13 @@ non-nil unless `assist-key-default-function' variable is not
 bound to a valid function."
   (interactive)
   (assist-key-clear-variables)
-  (prog1 (assist-key-internal)
-    (run-hooks 'assist-key-depress-hook 'assist-key-release-hook)))
+  (unwind-protect
+      (prog1 (assist-key-internal)
+	(run-hooks 'assist-key-depress-hook 'assist-key-release-hook))
+    (setq assist-key-depressed-flag nil)))
 
 (defun assist-key-internal ()
-  (setq assist-key-depressed-flag nil)
+  (setq assist-key-depressed-flag t)
   (when assist-key-cancelled
     (setq assist-key-cancelled nil
 	  action-key-depressed-flag nil))
@@ -635,11 +641,6 @@ With a prefix argument, create an unnamed implicit button instead."
   (let ((start-window (selected-window)))
     (unwind-protect
 	(progn
-	  ;; Clear Smart Key variables so `hui:*but-link-directly' does not
-	  ;; improperly reference values left over from a prior drag or
-	  ;; click.  This command does not utilize the Smart Keys.
-	  (action-key-clear-variables)
-	  (assist-key-clear-variables)
 	  (funcall (if current-prefix-arg
 		       #'hui:ibut-link-directly
 		     #'hui:ebut-link-directly)
@@ -787,18 +788,20 @@ buffer to the end window.  The selected window does not change."
 	     ;; Fall through to error below
 	     )
 	    (t
-	     ;; Either this frame has more than two windows or other frames exist
-	     ;; that together have more than one window; choose which to use.
+	     ;; Either this frame has more than two windows or other
+	     ;; frames exist that together have more than one window;
+	     ;; choose which to use as the referent window.
 	     (setq referent-window
 		   (if (fboundp #'aw-select) ;; ace-window selection
 		       (let ((aw-scope 'global))
 			 (aw-select "Select link referent window"))
-		     (message "Now click on the %s end window..." func)
-		     (prog1 (cl-loop do (setq end-event (read-event))
-				     until (and (mouse-event-p end-event)
-						(not (string-match "\\`down-" (symbol-name (car end-event)))))
-				     finally return (posn-window (event-start end-event)))
-		       (message "Done")))))))
+		     (message "Now click on the end window...")
+		     (let (end-event)
+		       (prog1 (cl-loop do (setq end-event (read-event))
+				       until (and (mouse-event-p end-event)
+						  (not (string-match "\\`down-" (symbol-name (car end-event)))))
+				       finally return (posn-window (event-start end-event)))
+			 (message "Done"))))))))
     (when (eq link-but-window referent-window)
       (error "(hmouse-choose-link-and-referent-windows): No other visible window with a link referent"))
     (unless (window-live-p link-but-window)
@@ -1072,12 +1075,10 @@ documentation is found."
 				  (select-window (previous-window))
 				  (display-buffer buf 'other-win))
 			      (display-buffer buf 'other-win))
-			    (if (or (and (boundp 'help-window-select)
-					 help-window-select)
-				    (and (boundp 'help-selects-help-window)
-					 help-selects-help-window))
-				(select-window (get-buffer-window buf))
-			      (select-window owind)))))
+			    (select-window
+			     (if (bound-and-true-p help-window-select)
+				 (get-buffer-window buf)
+			       owind)))))
 		       (temp-buffer-show-function temp-buffer-show-hook))
 		  (with-output-to-temp-buffer
 		      (hypb:help-buf-name
@@ -1121,11 +1122,8 @@ documentation is found."
 			    (attributes (nthcdr 2 (hattr:list 'hbut:current))))
 			(princ (format "%s %s BUTTON SPECIFICS:\n"
 				       (htype:def-symbol
-					(if (eq categ 'explicit)
-					    actype
-					  categ))
-				       (if (eq categ 'explicit)
-					   "EXPLICIT" "IMPLICIT")))
+					(if (eq categ 'explicit) actype categ))
+				       (if (eq categ 'explicit) "EXPLICIT" "IMPLICIT")))
 			(hattr:report attributes)
 			(unless (or (eq categ 'explicit)
 				    (null categ)
@@ -1376,9 +1374,9 @@ and it was inactive, return its window, else nil."
   (let ((window (posn-window (event-start event))))
     (when (framep window)
       (setq window (frame-selected-window window)))
-    (and (window-minibuffer-p window)
-	 (not (minibuffer-window-active-p window))
-	 window)))
+    (and window
+	 (window-minibuffer-p window)
+	 (not (minibuffer-window-active-p window)))))
 
 ;; Based on code from subr.el.
 (defun hmouse-vertical-line-spacing (frame)

@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    30-Jan-21 at 12:00:00
-;; Last-Mod:     28-May-23 at 22:52:40 by Mats Lidell
+;; Last-Mod:      7-Jul-23 at 17:09:59 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -32,7 +32,7 @@
   (with-current-buffer (messages-buffer)
     (should (save-excursion
               (goto-char (point-max))
-              (search-backward msg (- (point-max) 350))))))
+              (search-backward msg (- (point-max) 350) t)))))
 
 (defun hy-test-helpers:action-key-should-call-hpath:find (str)
   "Call action-key and check that hpath:find was called with STR."
@@ -41,7 +41,10 @@
                (lambda (filename)
 		 (if (not (and (stringp str) (stringp filename)))
 		     (should (eq t (message "str = %s; filename = %s" str filename)))
-		   (setq was-called (should (or (string= str filename) (string= str (expand-file-name filename)))))))))
+		   (setq was-called (should (or (string= str filename)
+						;; Support Windows paths
+						(string= (expand-file-name str)
+							 (expand-file-name filename)))))))))
       (action-key)
       (should was-called))))
 
@@ -70,7 +73,7 @@ Checks ACTYPE, ARGS, LOC and LBL-KEY."
     (should (equal (hattr:get hbut-at-p 'name) name))))
 
 (defun hy-delete-file-and-buffer (file)
-  "Delete file and buffer vistinng file."
+  "Delete FILE and buffer visiting file."
   (let ((buf (find-buffer-visiting file)))
     (when buf
       (with-current-buffer buf

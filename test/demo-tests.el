@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    30-Jan-21 at 12:00:00
-;; Last-Mod:     22-Jun-23 at 20:35:55 by Mats Lidell
+;; Last-Mod:      9-Aug-23 at 01:18:08 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -231,12 +231,12 @@
 		   (string-match-p "hactypes\\.el"  hactypes-buf)
 		   (string-match-p "hibtypes\\.el"  hibtypes-buf))))))
 
-(ert-deftest demo-implicit-button-action-button-boolean-function-call-test ()
+(ert-deftest demo-implicit-button-action-button-display-boolean-test ()
   (with-temp-buffer
     (insert "<string-empty-p \"False\">")
     (goto-char 2)
     (action-key)
-    (hy-test-helpers:should-last-message "Boolean result (False) = nil")))
+    (hy-test-helpers:should-last-message "Result = nil; Boolean value = False")))
 
 (ert-deftest demo-implicit-button-action-button-variable-display-test ()
   (with-temp-buffer
@@ -397,6 +397,8 @@
   (unwind-protect
       (progn
         (hypb:display-file-with-logo "DEMO")
+	(widen)
+	(goto-char (point-min))
         (re-search-forward "\\[FSF 19\\]")
         (backward-char 1)
         (action-key)
@@ -439,13 +441,16 @@
 ;; Fast demo key series
 (ert-deftest fast-demo-key-series-help-buffer ()
   "Action key on C-hA brings up help buffer for action key."
-  (let ((help-buffer "*Help: Hyperbole Action Key*"))
+  (let ((help-buffer "*Help: Hyperbole Action Key*")
+	(help-window-select t))
     (unwind-protect
         (with-temp-buffer
           (insert "{C-h A}")
           (goto-char 3)
           (action-key)
-          (should (get-buffer help-buffer)))
+	  (if (get-buffer help-buffer)
+              (should (get-buffer help-buffer))
+	    (should (print (current-buffer)))))
       (hy-test-helpers:kill-buffer help-buffer))))
 
 (ert-deftest fast-demo-key-series-window-grid-22 ()

@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    15-Oct-91 at 20:13:17
-;; Last-Mod:     19-Jun-23 at 13:26:26 by Bob Weiner
+;; Last-Mod:      9-Aug-23 at 00:21:49 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -435,7 +435,6 @@ documentation, not the full text."
 		(string-match "^Hy[.0-9]*[a-zA-Z0-9]*>$" (caar menu-alist)))
 	   ;; RET pressed on Hyperbole top-level menu prefix, reload
 	   ;; Smart Key handlers and minibuffer menus to reflect any updates.
-	   (load "hui-mini")
 	   (hmouse-update-smart-keys)
 	   (hyperbole-minibuffer-menu)
 	   (sit-for 2)
@@ -654,25 +653,24 @@ The menu is a menu of commands from MENU-ALIST."
 			    (substring hyperb:version 1)
 			  hyperb:version)))
 	   (list (list (concat "Hy" version ">"))))
-	 (delq nil
-	       '(
-		 ("Act"         hui:hbut-act      "Activate button at point or prompt for a labeled button in buffer.")
-		 ("Butfile/"    (menu . butfile)  "Quick access button files menus.")
-		 ("Cust/"       (menu . cust)     "Customize Hyperbole by setting major options.")
-		 ("Doc/"        (menu . doc)      "Quick access to Hyperbole documentation.")
-		 ("Ebut/"       (menu . ebut)     "Explicit button commands.")
-		 ("Find/"       (menu . find)     "Find matching line commands.")
-		 ("Gbut/"       (menu . gbut)     "Global button commands.")
-		 ("Hist"        hhist:pop
-		  "Jumps back to location prior to last Hyperbole button follow.")
-		 ("Ibut/"       (menu . ibut)     "Implicit button and button type commands.")
-		 ("Kotl/"       (menu . kotl)     "Autonumbered outlining and hyperlink capabilities.")
-		 ("Msg/"        (menu . msg)      "Mail and News messaging capabilities.")
-		 ("Rolo/"       (menu . hyrolo)   "Hierarchical, multi-file rolo lookup and edit commands.")
-		 ("Screen/"     (menu . screen)   "Screen display management commands.")
-		 ;; ("To/"         (menu . to)       "A-Z menu to search and add Emacs artifacts")
-		 ("Win/"        (menu . win)      "Window configuration management commands.")
-		 ))))
+	 '(
+	   ("Act"         hui:hbut-act      "Activate button at point or prompt for a labeled button in buffer.")
+	   ("Butfile/"    (menu . butfile)  "Quick access button files menus.")
+	   ("Cust/"       (menu . cust)     "Customize Hyperbole by setting major options.")
+	   ("Doc/"        (menu . doc)      "Quick access to Hyperbole documentation.")
+	   ("Ebut/"       (menu . ebut)     "Explicit button commands.")
+	   ("Find/"       (menu . find)     "Find matching line commands.")
+	   ("Gbut/"       (menu . gbut)     "Global button commands.")
+	   ("Hist"        hhist:pop
+	    "Jumps back to location prior to last Hyperbole button follow.")
+	   ("Ibut/"       (menu . ibut)     "Implicit button and button type commands.")
+	   ("Kotl/"       (menu . kotl)     "Autonumbered outlining and hyperlink capabilities.")
+	   ("Msg/"        (menu . msg)      "Mail and News messaging capabilities.")
+	   ("Rolo/"       (menu . hyrolo)   "Hierarchical, multi-file rolo lookup and edit commands.")
+	   ("Screen/"     (menu . screen)   "Screen display management commands.")
+	   ;; ("To/"         (menu . to)       "A-Z menu to search and add Emacs artifacts")
+	   ("Win/"        (menu . win)      "Window configuration management commands.")
+	   )))
        '(butfile .
 	 (("Butfile>")
 	  ("DirFile"      (find-file hbmap:filename)
@@ -812,6 +810,7 @@ The menu is a menu of commands from MENU-ALIST."
 	  ("Help"   gbut:help       "Report on a global button by name.")
 	  ("Info"   (id-info        "(hyperbole)Global Buttons")
 	   "Display manual section on global buttons.")
+	  ("Link"   hui:gbut-link-directly "Add a named global button link to point in other/another window.")
 	  ("Rename" hui:gbut-rename "Rename a global button.")))
        '(ibut .
 	 (("IButton>")

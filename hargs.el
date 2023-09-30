@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    31-Oct-91 at 23:17:35
-;; Last-Mod:     17-Jun-23 at 13:05:33 by Bob Weiner
+;; Last-Mod:     28-Aug-23 at 17:59:39 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -33,6 +33,7 @@
 (require 'hypb)
 (require 'set)
 (require 'info)
+(require 'hmouse-drv)
 
 ;;; ************************************************************************
 ;;; Public variables
@@ -46,6 +47,21 @@
 
 (add-hook 'completion-setup-hook #'hargs:set-string-to-complete)
 (add-hook 'minibuffer-exit-hook  #'hargs:unset-string-to-complete)
+
+;;; ************************************************************************
+;;; Public declarations
+;;; ************************************************************************
+
+(declare-function ivy-dispatching-done "ext:ivy")
+(declare-function ivy-done "ext:ivy")
+(declare-function vertico--candidate "ext:vertico")
+(declare-function vertico--command-p "ext:vertico")
+(declare-function vertico--goto "ext:vertico")
+(declare-function vertico--update "ext:vertico")
+(declare-function vertico-exit "ext:vertico")
+(declare-function vertico-insert "ext:vertico")
+(declare-function vertico-mouse--index "ext:vertico")
+(declare-function vertico--match-p "ext:vertico")
 
 ;;; ************************************************************************
 ;;; Private functions
@@ -89,10 +105,11 @@ of (string-matched start-pos end-pos).  Optional
 EXCLUDE-REGEXP is compared against the match string with its delimiters
 included; any string that matches this regexp is ignored."
   (let* ((opoint (point))
-	 ;; This initial limit if the forward search limit for start delimiters
+	 ;; This initial limit is the forward search limit for start delimiters
 	 (limit (if start-regexp-flag
 		    opoint
-		  (min (+ opoint (1- (length start-delim)))
+		  ;; (min (+ opoint (1- (length start-delim)))
+		  (min (+ opoint (length start-delim))
 		       (point-max))))
 	 (start-search-func (if start-regexp-flag 're-search-forward 'search-forward))
 	 (end-search-func   (if end-regexp-flag   're-search-forward 'search-forward))
@@ -248,12 +265,30 @@ two variables `prompt' and `default'."
        ,@(mapcar (lambda (elt)
 		   `(aset ,vecsym ',(car elt)
 		          (lambda (prompt default)
-		            (ignore prompt default) ;Don't warn if not used.
-		            ;; FIXME: Why `setq' instead of let-binding?
-		            (setq hargs:reading-symbol ',(cadr elt))
-		            ,(cddr elt))))
+		            (ignore prompt default) ;; Don't warn if not used.
+			    (let ((prev-reading-p hargs:reading-type))
+			      (unwind-protect
+				  (progn
+				    ;; Use setq here to ensure change is
+				    ;; visible in lexical subcontexts that are
+				    ;; part of 'elt' body.
+				    (setq hargs:reading-type ',(cadr elt))
+				    ,(cddr elt))
+				(setq hargs:reading-type prev-reading-p))))))
 		 iform-alist)
        ,vecsym)))
+
+;; Replicated from `vertico--match-p' in "vertico.el"
+(defun hargs:match-p (str)
+  "Return t if STR is a valid completion match."
+  (let ((rm minibuffer--require-match))
+    (or (memq rm '(nil confirm-after-completion))
+        (equal "" str) ;; Null completion, returns default value
+        (and (functionp rm) (funcall rm str)) ;; Emacs 29 supports functions
+        (test-completion str minibuffer-completion-table minibuffer-completion-predicate)
+        (if (eq rm 'confirm)
+	    (eq (ignore-errors (read-char "Confirm")) 13)
+          (minibuffer-message "Match required") nil))))
 
 (defun hargs:prompt (prompt default &optional default-prompt)
   "Return string of PROMPT including DEFAULT.
@@ -328,15 +363,78 @@ default values.
 Caller should have checked whether an argument is presently being read
 and has set `hargs:reading-type' to an appropriate argument type.
 Handles all of the interactive argument types that `hargs:iform-read' does."
-  (cond ((and (eq hargs:reading-type 'kcell)
-	      (eq major-mode 'kotl-mode)
+  (cond ;; vertico-mode
+	((and (null hargs:reading-type)
+	      (bound-and-true-p vertico-mode)
+	      ;; Ensure vertico is prompting for an argument
+	      (vertico--command-p nil (current-buffer))
+	      (active-minibuffer-window))
+	 (cond
+	  ((or
+	    ;; Action Key press
+	    (and action-key-depressed-flag
+		 (eq (selected-window) (active-minibuffer-window)))
+	    ;; Action Mouse Key press
+	    (and action-key-release-args
+		 (fboundp #'vertico-mouse--index)
+		 (eq (posn-window (event-end action-key-release-args))
+		     (active-minibuffer-window))))
+	   (with-selected-window (active-minibuffer-window)
+	     (let ((index (when (and action-key-release-args
+				     (fboundp #'vertico-mouse--index))
+			    (vertico-mouse--index action-key-release-args)))
+		   mini
+		   mini-to-point)
+	       (if index
+		   (save-excursion
+		     (vertico--goto index)
+		     (vertico--update t)
+		     (vertico--candidate))
+		 ;; Assume event occurred within the minibufer-contents
+		 ;; and return just the contents before point so
+		 ;; that those after are deleted and more
+		 ;; completions are shown.
+		 (setq mini (minibuffer-contents-no-properties))
+		 ;; The minibuffer may have some read-only contents
+		 ;; at the beginning, e.g. M-x, not included in the 'mini'
+		 ;; string, so we have to offset the max index into
+		 ;; the string in such cases and protect against
+		 ;; when point is set into this read-only area with
+		 ;; the 'max' call below.
+		 (setq mini-to-point (substring mini 0 (max (- (point) (point-max)) (- (length mini)))))
+		 (list (if (and (= (point) (point-max)) (string-empty-p mini-to-point))
+			   mini
+			 mini-to-point)
+		       nil)))))
+	  (t (list (vertico--candidate) t))))
+	((and (null hargs:reading-type)
+	      (or
+	       ;; Action Key press
+	       (and action-key-depressed-flag
+		    (eq (selected-window) (active-minibuffer-window)))
+	       ;; Action Mouse Key press
+	       (and action-key-release-args
+		    (eq (posn-window (event-end action-key-release-args))
+			(active-minibuffer-window)))))
+	 ;; Event occurred within the minibufer-contents.  Return
+	 ;; just the contents before point so that those after are
+	 ;; deleted and more completions are shown.
+	 (let* ((mini (minibuffer-contents-no-properties))
+		(mini-to-point (substring mini 0 (max (- (point) (point-max)) (- (length mini))))))
+	   (list (if (and (= (point) (point-max)) (string-empty-p mini-to-point))
+		     mini
+		   mini-to-point)
+		 nil)))
+	((and (eq hargs:reading-type 'kcell)
+	      (derived-mode-p 'kotl-mode)
 	      (not (looking-at "^$")))
 	 (kcell-view:label))
 	((and (eq hargs:reading-type 'klink)
 	      (not (looking-at "^$")))
-	 (if (eq major-mode 'kotl-mode)
-	     (kcell-view:reference
-	      nil (and (boundp 'default-dir) default-dir))
+	 (if (derived-mode-p 'kotl-mode)
+	     ;; Here we get the button src default-directory, not the
+	     ;; default-directory of the linked to kcell.
+	     (list (kcell-view:reference nil (hattr:get 'hbut:current 'dir)))
 	   (let ((hargs:reading-type 'file))
 	     (list (hargs:at-p)))))
 	((eq hargs:reading-type 'kvspec)
@@ -360,7 +458,9 @@ Handles all of the interactive argument types that `hargs:iform-read' does."
 			 (following-char))))
 		    ;; At the end of the menu
 		    (t 0)))))
-	((hargs:completion t))
+	((let ((completion (hargs:completion t)))
+	   (when completion
+	     (list completion t))))
 	((eq hargs:reading-type 'ebut) (ebut:label-p 'as-label))
 	((eq hargs:reading-type 'ibut) (ibut:label-p 'as-label))
 	((eq hargs:reading-type 'gbut)
@@ -495,7 +595,9 @@ Insert in minibuffer if active or in other window if minibuffer is inactive."
 			      entry))))
 		(or no-insert
 		    (when entry
-		      (erase-buffer)
+		      (if (eq insert-window (minibuffer-window))
+			  (delete-minibuffer-contents)
+			(erase-buffer))
 		      (insert entry))))
 	       ;; In buffer, non-minibuffer completion.
 	       ;; Only insert entry if last buffer line does
@@ -522,70 +624,70 @@ See also documentation for `interactive'."
   ;;
   ;; Save the prefix arg now, since use of minibuffer will clobber it
   (setq prefix-arg current-prefix-arg)
-  (if (not (and (listp iform) (eq (car iform) 'interactive)))
-      (error "(hargs:iform-read): arg must be a list whose car = 'interactive")
-    (setq iform (car (cdr iform)))
-    (unless (or (null iform) (and (stringp iform) (equal iform "")))
-      (let ((prev-reading-p hargs:reading-type))
-	(unwind-protect
-	    (progn
-	      (when (eq default-args t)
-		(setq default-args (hattr:get 'hbut:current 'args)
-		      ;; Set hargs:defaults global used by "hactypes.el"
-		      hargs:defaults default-args))
-	      (setq hargs:reading-type t)
-	      (if (not (stringp iform))
-		  (eval iform)
-		(let ((i 0) (start 0) (end (length iform))
-		      (ientry) (results) (val) (default))
-		  ;;
-		  ;; Handle special initial interactive string chars.
-		  ;;
-		  ;;   `*' means error if buffer is read-only.
-		  ;;   Notion of when action cannot be performed due to
-		  ;;   read-only buffer is view-specific, so here, we just
-		  ;;   ignore a read-only specification since it is checked for
-		  ;;   earlier by any ebut edit code.
-		  ;;
-		  ;;   `@' means select window of last mouse event.
-		  ;;
-		  ;;   `^' means activate/deactivate mark depending on invocation thru shift translation
-		  ;;   See `this-command-keys-shift-translated' for an explanation.
-		  ;;
-		  ;;   `_' means keep region in same state (active or inactive)
-		  ;;   after this command.
-		  ;;
-		  (while (cond
-			  ((eq (aref iform i) ?*))
-			  ((eq (aref iform i) ?@)
-			   (hargs:select-event-window)
-			   t)
-			  ((eq (aref iform i) ?^)
-			   (handle-shift-selection))
-			  ((eq (aref iform i) ?_)
-			   (push 'only transient-mark-mode)))
-		    (setq i (1+ i) start i))
-		  ;;
-		  (while (and (< start end)
-			      (string-match "\n\\|\\'" iform start))
-		    (setq start (match-end 0)
-			  ientry (substring iform i (match-beginning 0))
-			  i start
-			  default (car default-args)
-			  default (if (or (null default) (stringp default))
-				      default
-				    (prin1-to-string default))
-			  val (hargs:get ientry default (car results))
-			  default-args (cdr default-args)
-			  results (cond ((or (null val) (not (listp val)))
-					 (cons val results))
-					;; Is a list of args?
-					((eq (car val) 'args)
-					 (append (nreverse (cdr val)) results))
-					(t ;; regular list value
-					 (cons val results)))))
-		  (nreverse results))))
-	  (setq hargs:reading-type prev-reading-p))))))
+  (when (and (listp iform) (eq (car iform) 'interactive))
+    (setq iform (cadr iform)))
+  (unless (or (null iform) (and (stringp iform) (equal iform "")))
+    (unless (or (stringp iform) (listp iform))
+      (error "(hargs:iform-read): `iform' must be either a non-empty interactive string or a list whose car = 'interactive, not:\n%S"
+	     iform))
+    (if (eq default-args t)
+	(setq default-args (hattr:get 'hbut:current 'args)
+	      ;; Set hargs:defaults global used by "hactypes.el"
+	      hargs:defaults default-args)
+      (setq hargs:defaults nil))
+    (setq hargs:reading-type t)
+    (if (not (stringp iform))
+	(eval iform)
+      (let ((i 0) (start 0) (end (length iform))
+	    (ientry) (results) (val) (default))
+	;;
+	;; Handle special initial interactive string chars.
+	;;
+	;;   `*' means error if buffer is read-only.
+	;;   Notion of when action cannot be performed due to
+	;;   read-only buffer is view-specific, so here, we just
+	;;   ignore a read-only specification since it is checked for
+	;;   earlier by any ebut edit code.
+	;;
+	;;   `@' means select window of last mouse event.
+	;;
+	;;   `^' means activate/deactivate mark depending on invocation thru shift translation
+	;;   See `this-command-keys-shift-translated' for an explanation.
+	;;
+	;;   `_' means keep region in same state (active or inactive)
+	;;   after this command.
+	;;
+	(while (cond
+		((eq (aref iform i) ?*))
+		((eq (aref iform i) ?@)
+		 (hargs:select-event-window)
+		 t)
+		((eq (aref iform i) ?^)
+		 (handle-shift-selection))
+		((eq (aref iform i) ?_)
+		 (push 'only transient-mark-mode)))
+	  (setq i (1+ i) start i))
+	;;
+	(while (and (< start end)
+		    (string-match "\n\\|\\'" iform start))
+	  (setq start (match-end 0)
+		ientry (substring iform i (match-beginning 0))
+		i start
+		default (car default-args)
+		default (if (or (null default) (stringp default))
+			    default
+			  (prin1-to-string default))
+		val (hargs:get ientry default (car results))
+		default-args (cdr default-args)
+		results (cond ((or (null val) (not (listp val)))
+			       (cons val results))
+			      ;; Is a list of args?
+			      ((eq (car val) 'args)
+			       (append (nreverse (cdr val)) results))
+			      (t ;; regular list value
+			       (cons val results)))))
+	(nreverse results)))))
+
 
 (defun hargs:read (prompt &optional predicate default err val-type)
   "PROMPT without completion for a value matching PREDICATE and return it.
@@ -596,7 +698,8 @@ Optional VAL-TYPE is a symbol indicating the type of value to be read.  If
 VAL-TYPE equals `sexpression', then return that type; otherwise return the
 string read or nil."
   (let ((bad-val) (val) (stringify)
-	(prev-reading-p hargs:reading-type) (read-func)
+	(prev-reading-p hargs:reading-type)
+	(read-func)
 	(owind (selected-window))
 	(obuf (current-buffer)))
     (unwind-protect
@@ -663,43 +766,98 @@ of value to be read."
 		  (beep))))
 	    result)
 	(setq hargs:reading-type prev-reading-p)
-	(select-window owind)
-	(switch-to-buffer obuf)))))
+	(when (window-live-p owind)
+	  (select-window owind)
+	  (switch-to-buffer obuf))))))
 
 (defun hargs:select-p (&optional value assist-bool)
-  "Return optional VALUE or value selected at point if any, else nil.
-If value is the same as the contents of the minibuffer, it is used as
-the current minibuffer argument, otherwise, the minibuffer is erased
-and value is inserted there.
-Optional ASSIST-BOOL non-nil triggers display of Hyperbole menu item
-help when appropriate."
-    (when (and (> (minibuffer-depth) 0) (or value (setq value (hargs:at-p))))
-      (let ((owind (selected-window)) (back-to)
-	    (str-value (and value (format "%s" value)))
-	    ;; This command requires recursive minibuffers.
-	    (enable-recursive-minibuffers t))
-	(unwind-protect
-	    (progn
-	      (select-window (minibuffer-window))
-	      (set-buffer (window-buffer (minibuffer-window)))
+  "Return optional VALUE or value in the minibuffer if any, else nil.
+If VALUE is a list, it must be of the form:
+\(<str-to-compare-against-minibuffer-contents> <is-exact-completion-flag>).
+The first argument is then set to VALUE.  If
+<is-exact-completion-flag> is non-null, then Hyperbole will not try to
+show completions for VALUE when standard completion is used.
+
+If VALUE is the same as the contents of the minibuffer, it is
+used as the desired minibuffer argument and the minibuffer is
+exited; otherwise, the minibuffer is erased and VALUE is inserted
+there.  Optional ASSIST-BOOL non-nil triggers display of
+Hyperbole menu item help when appropriate."
+  (when (and (> (minibuffer-depth) 0) (or value (setq value (hargs:at-p))))
+    (let ((owind (selected-window)) (back-to)
+	  ;; This command requires recursive minibuffers.
+	  (enable-recursive-minibuffers t)
+	  mini)
+      (when (stringp value)
+	(setq value (list value nil)))
+      (unwind-protect
+	  (cl-destructuring-bind (str-value exact-completion-flag) value
+	    (setq str-value (and str-value (format "%s" str-value)))
+	    (select-window (minibuffer-window))
+	    (set-buffer (window-buffer (minibuffer-window)))
+	    (setq mini (minibuffer-contents-no-properties))
+	    (cond
+	     ;;
+	     ;; Selecting a Hyperbole minibuffer menu item
+	     ((eq hargs:reading-type 'hmenu)
+	      (when assist-bool
+		(setq hargs:reading-type 'hmenu-help))
+	      (hui:menu-enter str-value))
+	     ;;
+	     ;; Exit minibuffer and use its existing value as the desired parameter
+	     ;; if value matches a completion and the minibuffer contents.
+	     ;;
+	     ;; with vertico-mode
+	     ((and (bound-and-true-p vertico-mode)
+		   ;; Ensure vertico is prompting for an argument
+		   (vertico--command-p nil (current-buffer))
+		   (string-equal str-value mini)
+		   (vertico--match-p str-value))
+	      (goto-char (point-max))
+	      (vertico-exit))
+	     ;; with ivy-mode
+	     ((and (bound-and-true-p ivy-mode)
+		   (string-equal str-value mini)
+		   (hargs:match-p str-value))
+	      (goto-char (point-max))
+	      (if assist-bool
+		  (ivy-dispatching-done)
+		(ivy-done)))
+	     ;; with standard minibuffer completion
+	     ((and (string-equal str-value mini)
+		   (hargs:match-p str-value))
+	      (goto-char (point-max))
+	      (exit-minibuffer))
+	     ;;
+	     ;; Value is different than minibuffer contents; clear
+	     ;; minibuffer and insert value.
+	     (t
+	      (delete-minibuffer-contents)
+	      (goto-char (point-max))
 	      (cond
-	       ;;
-	       ;; Selecting a Hyperbole minibuffer menu item
-	       ((eq hargs:reading-type 'hmenu)
-		(when assist-bool
-		  (setq hargs:reading-type 'hmenu-help))
-		(hui:menu-enter str-value))
-	       ;;
-	       ;; Enter existing value into the minibuffer as the desired parameter.
-	       ((string-equal str-value (minibuffer-contents))
-		(exit-minibuffer))
-	       ;;
-	       ;; Clear minibuffer and insert value.
-	       (t (delete-minibuffer-contents)
-		  (insert str-value)
-		  (setq back-to t)))
-	      value)
-	  (when back-to (select-window owind))))))
+	       ;; with vertico-mode
+	       ((and (bound-and-true-p vertico-mode)
+		     ;; Ensure vertico is prompting for an argument
+		     (vertico--command-p nil (current-buffer)))
+                (if str-value
+		    (insert str-value)
+		  (vertico-insert))
+		(vertico--update t))
+	       ;; with ivy-mode
+	       ((bound-and-true-p ivy-mode)
+		(insert str-value)
+		(if assist-bool
+		    (ivy-dispatching-done)
+		  (ivy-done)))
+	       ;; with standard minibuffer completion
+	       (t
+		(insert str-value)
+		(unless exact-completion-flag
+		  (minibuffer-completion-help))
+		(setq back-to t)))
+	      value)))
+	(when (and back-to (window-live-p owind))
+	  (select-window owind))))))
 
 ;;; ************************************************************************
 ;;; Private variables
@@ -744,7 +902,7 @@ help when appropriate."
    (?D . (directory .
 		    (progn
 		      (or default (setq default default-directory))
-		      (read-file-name prompt default default 'existing))))
+		      (read-directory-name prompt default default t))))
    ;; Get existing file name.
    (?f . (file .
 	       (read-file-name prompt default default
@@ -817,26 +975,18 @@ help when appropriate."
 (defconst hargs:iform-extensions-vector
   (hargs:make-iform-vector
    ;; Get existing Info node name, possibly prefixed with its (filename).
-   (?I . (Info-node .
-	            (let ((prev-reading-p hargs:reading-symbol))
-		      (unwind-protect
-		          (progn (require 'info)
-			         (setq hargs:reading-symbol 'Info-node)
-			         ;; Prevent empty completions list from
-			         ;; triggering an error in Info-read-node-name.
-			         (unless Info-current-file-completions
-				   (condition-case nil
-				       (Info-build-node-completions)
-				     (error (setq Info-current-file-completions '(("None"))))))
-			         (Info-read-node-name prompt))
-		        (setq hargs:reading-symbol prev-reading-p)))))
-   ;; Get kcell from koutline.
-   (?K . (kcell . (hargs:read-match
-		   prompt
-		   ;; Match to "0" and visible cell labels only
-		   (cons "0"
-			 (kview:map-tree (lambda (_kview) (kcell-view:label)) kview t t))
-		   nil t (kcell-view:visible-label) 'kcell)))
+   (?I . (Info-node . (progn (require 'info)
+			     ;; Prevent empty completions list from
+			     ;; triggering an error in Info-read-node-name.
+			     (unless (and Info-current-file-completions
+					  (not (equal Info-current-file-completions '(("None")))))
+			       (condition-case nil
+				   (Info-build-node-completions)
+				 (error (setq Info-current-file-completions '(("None"))))))
+			     (Info-read-node-name prompt))))
+
+   ;; Get kcell from some koutline.
+   (?K . (kcell . (hargs:read prompt nil default nil 'kcell)))
    ;; Get kcell or path reference for use in a link.
    (?L . (klink . (hargs:read prompt nil default nil 'klink)))
    ;; Get existing mail msg date and file.
@@ -858,19 +1008,14 @@ help when appropriate."
    ;; Get a Koutline viewspec.
    (?V . (kvspec . (hargs:read prompt nil nil nil 'kvspec)))
    ;; Get existing Info index item name, possibly prefixed with its (filename).
-   (?X . (Info-index-item .
-	                  (let ((prev-reading-p hargs:reading-symbol))
-		            (unwind-protect
-		                (let (file item)
-			          (require 'info)
-			          (setq hargs:reading-symbol 'Info-index-item
-			                item (Info-read-index-item-name prompt))
-			          (if (string-match "^(\\([^\)]+\\))\\(.*\\)" item)
-			              item
-			            (if (setq file (Info-current-filename-sans-extension))
-			                (format "(%s)%s" file item)
-			              item)))
-		              (setq hargs:reading-symbol prev-reading-p))))))
+   (?X . (Info-index-item . (let (file item)
+			      (require 'info)
+			      (setq item (Info-read-index-item-name prompt))
+			      (if (string-match "^(\\([^\)]+\\))\\(.*\\)" item)
+			          item
+			        (if (setq file (Info-current-filename-sans-extension))
+			            (format "(%s)%s" file item)
+			          item))))))
   "Vector of forms for each interactive command character code.")
 
 (defvar hargs:string-to-complete nil

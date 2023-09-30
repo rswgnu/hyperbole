@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    23-Sep-91 at 20:34:36
-;; Last-Mod:     25-Jun-23 at 13:48:01 by Bob Weiner
+;; Last-Mod:      6-Aug-23 at 16:22:54 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -18,7 +18,7 @@
 ;;; Other required Elisp libraries
 ;;; ************************************************************************
 
-(eval-and-compile (mapc #'require '(bookmark hvar hsettings comint hbut hpath hargs hmail man)))
+(eval-and-compile (mapc #'require '(bookmark hvar hsettings comint hbut hpath hargs hmail man hsys-org)))
 
 ;;; ************************************************************************
 ;;; Public declarations
@@ -27,6 +27,7 @@
 (declare-function kotl-mode:goto-cell "kotl-mode")
 (declare-function kotl-mode:beginning-of-buffer "kotl-mode")
 (declare-function rmail:msg-to-p "hrmail")
+(declare-function org-roam-id-find "‎ext:org-roam-id")
 
 ;;; ************************************************************************
 ;;; Standard Hyperbole action types
@@ -66,8 +67,8 @@ inserted, delete the completions window."
 Return any non-nil value or t."
   (interactive "xDisplay bool expr value: ")
   (let ((result (eval bool-expr t)))
-    (message "Boolean result (%s) = %S; Expr: %S"
-	     (if result "True" "False") result bool-expr)
+    (message "Result = %S; Boolean value = %s; Expr = %S"
+	     result (if result "True" "False") bool-expr)
     (or result t)))
 
 (defact display-value (value)
@@ -143,7 +144,7 @@ Optional non-nil second argument INTERNAL-CMD inhibits display of the shell
 command line executed.  Optional non-nil third argument KILL-PREV means
 kill the last output to the shell buffer before executing SHELL-CMD."
   (interactive
-   (let ((default  (car hargs:defaults))
+   (let ((default  (nth 0 hargs:defaults))
 	 (default1 (nth 1 hargs:defaults))
 	 (default2 (nth 2 hargs:defaults)))
      (list (hargs:read "Shell cmd: "
@@ -503,7 +504,7 @@ available.  Filename may be given without the .info suffix."
     (hypb:error "(link-to-Info-node): Invalid Info node: `%s'" string)))
 
 (defact link-to-ibut (name-key &optional but-src point)
-  "Perform implicit button action specified by NAME-KEY, optional BUT-SRC and POINT.
+  "Activate implicit button given by NAME-KEY, optional BUT-SRC and POINT.
 NAME-KEY must be a normalized key for an ibut <[name]>.
 BUT-SRC defaults to the current buffer's file or if there is no
 attached file, then to its buffer name.  POINT defaults to the
@@ -557,7 +558,7 @@ See documentation for `kcell:ref-to-id' for valid cell-ref formats.
 
 If FILE is nil, use the current buffer.
 If CELL-REF is nil, show the first cell in the view."
-  (interactive "fKotl file to link to: \n+KKcell to link to: ")
+  (interactive (hargs:iform-read '(interactive "fKotl file to link to: \n+KKcell to link to: ")))
   (require 'kfile)
   (cond	((if file
 	     (hpath:find file)
@@ -575,7 +576,7 @@ If CELL-REF is nil, show the first cell in the view."
   "Display mail msg with MAIL-MSG-ID from optional MAIL-FILE.
 See documentation for the variable `hmail:init-function' for
 information on how to specify a mail reader to use."
-  (interactive "+MMail Msg: ")
+  (interactive (hargs:iform-read '(interactive "+MMail Msg: ")))
   (if (not (fboundp 'rmail:msg-to-p))
       (hypb:error "(link-to-mail): Invoke mail reader before trying to follow a mail link")
     (if (and (listp mail-msg-id) (null mail-file))
@@ -598,11 +599,11 @@ information on how to specify a mail reader to use."
 (defact link-to-org-id (id)
   "Display the Org entry, if any, for ID."
   (when (stringp id)
-    (let (m
-	  (inhibit-message t)) ;; Inhibit org-id-find status msgs
-      (when (setq m (or (and (featurep 'org-roam) (org-roam-id-find id 'marker))
-			(org-id-find id 'marker)))
-	(hact #'link-to-org-id-marker m)))))
+    (let* ((inhibit-message t) ;; Inhibit org-id-find status msgs
+	   (m (or (and (featurep 'org-roam) (org-roam-id-find id 'marker))
+		  (org-id-find id 'marker))))
+      (when m
+	(hact 'link-to-org-id-marker m)))))
 
 (defact link-to-org-id-marker (marker)
   "Display the Org entry, if any, at MARKER.
@@ -610,9 +611,9 @@ See doc of `ibtypes::org-id' for usage."
     (unless (markerp marker)
       (error "(link-to-org-id-marker): Argument must be a marker, not %s" marker))
     (org-mark-ring-push)
-    (hact #'link-to-buffer-tmp (marker-buffer marker) marker)
+    (hact 'link-to-buffer-tmp (marker-buffer marker) marker)
     (move-marker marker nil)
-    (org-show-context))
+    (org-fold-show-context))
 
 (defact link-to-regexp-match (regexp n source &optional buffer-p)
   "Find REGEXP's Nth occurrence in SOURCE and display location at window top.
@@ -739,4 +740,3 @@ Optional SECTIONS-START limits toc entries to those after that point."
 (provide 'hactypes)
 
 ;;; hactypes.el ends here
-

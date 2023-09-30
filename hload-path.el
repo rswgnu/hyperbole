@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    29-Jun-16 at 14:39:33
-;; Last-Mod:     25-Jun-23 at 09:58:19 by Bob Weiner
+;; Last-Mod:     28-Aug-23 at 01:45:24 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -21,17 +21,17 @@
 ;;; ************************************************************************
 (defvar generated-autoload-file)
 
+(declare-function make-directory-autoloads "ext:autoload")
+
 ;;; ************************************************************************
 ;;; Public variables
 ;;; ************************************************************************
-
 
 (defvar hyperb:microsoft-os-p
   (memq system-type '(ms-windows windows-nt ms-dos win32))
   "Non-nil iff Hyperbole is running under a Microsoft OS but not for WSL.
 WSL is Windows Subsystem for Linux.
 Use `hyperb:wsl-os-p' to test if running under WSL.")
-
 
 (defvar hyperb:wsl-os-p
   (and (eq system-type 'gnu/linux) (executable-find "wsl.exe") t)
@@ -116,7 +116,7 @@ the symbol list.  For `suspicious', only `set-buffer' can be used."
       `(with-suppressed-warnings ,warnings ,@body)
     `(with-no-warnings ,@body)))
 
-;; New autoload generation function defined only in Emacs 28
+;; New autoload generation function defined only as of Emacs 28
 (defalias 'hload-path--make-directory-autoloads
   (cond ((fboundp 'loaddefs-generate)
          #'loaddefs-generate)
@@ -173,7 +173,7 @@ This is used only when running from git source and not a package release."
     (with-current-buffer (find-file-noselect al-file)
       (hload-path--make-directory-autoloads "." al-file)))
   (unless (hyperb:autoloads-exist-p)
-    (error (format "Hyperbole failed to generate autoload files; try running 'make src' in a shell in %s" hyperb:dir))))
+    (error "Hyperbole failed to generate autoload files; try running 'make src' in a shell in %s" hyperb:dir)))
 
 (defun hyperb:maybe-load-autoloads ()
   "Load Hyperbole autoload files that have not already been loaded."

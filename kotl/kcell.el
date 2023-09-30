@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     1-May-93
-;; Last-Mod:      1-Oct-22 at 15:11:43 by Bob Weiner
+;; Last-Mod:     28-Aug-23 at 00:23:39 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -82,7 +82,7 @@ idstamp-counter."
 If any item in the list is missing, it is nil."
   (let (cell-id
 	kvspec)
-    ;; !! Todo: Remove any relative specs and view specs from
+    ;; !! TODO: Remove any relative specs and view specs from
     ;; cell-ref to form cell-id.  Really should account for Augment-style
     ;; relative specs here, but we don't yet support them.
     (if (and (stringp cell-ref)

@@ -3,11 +3,11 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 20:45:31
-;; Last-Mod:     25-Jun-23 at 23:04:09 by Bob Weiner
+;; Last-Mod:     28-Aug-23 at 16:02:32 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
-;; Copyright (C) 1991-2022 Free Software Foundation, Inc.
+;; Copyright (C) 1991-2023 Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
 ;;
 ;; This file is part of GNU Hyperbole.
@@ -36,47 +36,12 @@
 ;;; Other required Elisp libraries
 ;;; ************************************************************************
 
-(eval-when-compile (require 'hversion))
 (require 'cl-lib) ;; for cl-count
-(require 'subr-x) ;; For string-trim
+(eval-when-compile (require 'hversion))
 (require 'hactypes)
+(require 'hypb)
+(require 'subr-x) ;; For string-trim
 (require 'thingatpt)
-
-;;; ************************************************************************
-;;; Public variables
-;;; ************************************************************************
-
-(defconst hypb-mail-address-tld-regexp
-  (format "\\.%s\\'"
-          (regexp-opt
-           '("aero" "arpa" "asia" "biz" "cat" "com" "coop" "edu" "gov" "info"
-             "int" "jobs" "mil" "mobi" "museum" "name" "net" "org" "pro" "tel"
-             "travel" "uucp"
-             "ac" "ad" "ae" "af" "ag" "ai" "al" "am" "an" "ao" "aq"
-             "ar" "as" "at" "au" "aw" "ax" "az" "ba" "bb" "bd" "be" "bf" "bg" "bh"
-             "bi" "bj" "bl" "bm" "bn" "bo" "br" "bs" "bt" "bv" "bw" "by" "bz" "ca"
-             "cc" "cd" "cf" "cg" "ch" "ci" "ck" "cl" "cm" "cn" "co" "cr" "cu" "cv"
-             "cx" "cy" "cz" "de" "dj" "dk" "dm" "do" "dz" "ec" "ee" "eg" "eh" "er"
-             "es" "et" "eu" "fi" "fj" "fk" "fm" "fo" "fr" "ga" "gb" "gd" "ge" "gf"
-             "gg" "gh" "gi" "gl" "gm" "gn" "gp" "gq" "gr" "gs" "gt" "gu" "gw" "gy"
-             "hk" "hm" "hn" "hr" "ht" "hu" "id" "ie" "il" "im" "in" "io" "iq" "ir"
-             "is" "it" "je" "jm" "jo" "jp" "ke" "kg" "kh" "ki" "km" "kn" "kp" "kr"
-             "kw" "ky" "kz" "la" "lb" "lc" "li" "lk" "lr" "ls" "lt" "lu" "lv" "ly"
-             "ma" "mc" "md" "me" "mf" "mg" "mh" "mk" "ml" "mm" "mn" "mo" "mp" "mq"
-             "mr" "ms" "mt" "mu" "mv" "mw" "mx" "my" "mz" "na" "nc" "ne" "nf" "ng"
-             "ni" "nl" "no" "np" "nr" "nu" "nz" "om" "pa" "pe" "pf" "pg" "ph" "pk"
-             "pl" "pm" "pn" "pr" "ps" "pt" "pw" "py" "qa" "re" "ro" "rs" "ru" "rw"
-             "sa" "sb" "sc" "sd" "se" "sg" "sh" "si" "sj" "sk" "sl" "sm" "sn" "so"
-             "sr" "st" "su" "sv" "sy" "sz" "tc" "td" "tf" "tg" "th" "tj" "tk" "tl"
-             "tm" "tn" "to" "tp" "tr" "tt" "tv" "tw" "tz" "ua" "ug" "uk" "um" "us"
-             "uy" "uz" "va" "vc" "ve" "vg" "vi" "vn" "vu" "wf" "ws" "ye" "yt" "yu"
-             "za" "zm" "zw")
-           t))
-  "Regular expression of most common Internet top level domain names.")
-
-(defconst hypb-mail-address-regexp
-  "\\([_a-zA-Z0-9][-_a-zA-Z0-9.!@+%]*@[-_a-zA-Z0-9.!@+%]+\\.[a-zA-Z0-9][-_a-zA-Z0-9]+\\)\\($\\|[^a-zA-Z0-9@%]\\)"
-  "Regexp with group 1 matching an Internet email address.")
 
 ;;; ************************************************************************
 ;;; Public declarations
@@ -147,7 +112,7 @@ If the referenced location is found, return non-nil."
 	   (end   (when bounds (cdr bounds)))
 	   m)
       ;; Ignore ID definitions or when not on a possible ID
-      (when id
+      (when (and id (string-match "\\`[:alnum:][-[:alnum:]:.@]+\\'" id))
 	(when (and start end)
 	  (ibut:label-set id start end))
 	(if (and (not assist-flag)
@@ -155,9 +120,18 @@ If the referenced location is found, return non-nil."
 				 (re-search-forward ":\\(CUSTOM_\\)?ID:[ \t]+"
 						    (line-end-position) t)))
 	    (hact 'message "On ID definition; use {C-u M-RET} to copy a link to an ID.")
-	  (when (let ((inhibit-message t)) ;; Inhibit org-id-find status msgs
-		  (setq m (or (and (featurep 'org-roam) (org-roam-id-find id 'marker))
-			      (org-id-find id 'marker))))
+	  (when (let ((inhibit-message t) ;; Inhibit org-id-find status msgs
+		      (obuf (current-buffer))
+		      (omode major-mode))
+		  (prog1 (setq m (or (and (featurep 'org-roam)
+					  (org-roam-id-find id 'marker))
+				     (org-id-find id 'marker)))
+		    ;; org-find-id sets current buffer mode to Org
+		    ;; mode even if ID is not found; switch it back
+		    ;; when necessary.
+		    (when (and (eq obuf (current-buffer))
+			       (not (eq omode major-mode)))
+		      (funcall omode))))
 	    (hact 'link-to-org-id-marker m)))))))
 
 (defun org-id:help (_hbut)
@@ -305,34 +279,30 @@ display options."
 ;;; Composes mail, in another window, to the e-mail address at point.
 ;;; ========================================================================
 
-(defvar mail-address-mode-list
-  '(fundamental-mode prog-mode text-mode)
-  "List of major modes in which mail address implicit buttons are active.")
-
 (defun mail-address-at-p ()
   "Return e-mail address, a string, that point is within or nil."
   (let ((case-fold-search t))
     (save-excursion
       (skip-chars-backward "^ \t\n\r\f\"\'(){}[];:<>|")
-      (and (or (looking-at hypb-mail-address-regexp)
-               (looking-at (concat "mailto:" hypb-mail-address-regexp)))
+      (and (or (looking-at hypb:mail-address-regexp)
+               (looking-at (concat "mailto:" hypb:mail-address-regexp)))
            (save-match-data
-             (string-match hypb-mail-address-tld-regexp (match-string-no-properties 1)))
+             (string-match hypb:mail-address-tld-regexp (match-string-no-properties 1)))
            (match-string-no-properties 1)))))
 
 (defib mail-address ()
   "If on an e-mail address compose mail to that address in another window.
 
-Applies to any major mode in `mail-address-mode-list', the HyRolo match buffer,
-any buffer attached to a file in `hyrolo-file-list', or any buffer with
+Applies to any major mode in `hypb:mail-address-mode-list', the HyRolo match
+buffer, any buffer attached to a file in `hyrolo-file-list', or any buffer with
 \"mail\" or \"rolo\" (case-insensitive) within its name.
 
-If `mail-address-mode-list' is set to nil, this button type is active
+If `hypb:mail-address-mode-list' is set to nil, this button type is active
 in all buffers."
   (when (let ((case-fold-search t))
           (or
-           (and (or (null mail-address-mode-list)
-		    (apply #'derived-mode-p mail-address-mode-list))
+           (and (or (null hypb:mail-address-mode-list)
+		    (apply #'derived-mode-p hypb:mail-address-mode-list))
                 (not (string-match "-Elements\\'" (buffer-name)))
                 ;; Don't want this to trigger within an OOBR-FTR buffer.
                 (not (string-match "\\`\\(OOBR.*-FTR\\|oobr.*-ftr\\)"
@@ -790,7 +760,7 @@ END-DELIM."
          (end-pos (nth 2 label-start-end))
          but-key lbl-key key-file partial-lbl)
     (when label-and-file
-      (setq label-and-file (parse-label-and-file label-and-file)
+      (setq label-and-file (hlink:parse-label-and-file label-and-file)
             partial-lbl (nth 0 label-and-file)
             but-key (hbut:label-to-key partial-lbl)
             key-file (nth 1 label-and-file)
@@ -798,7 +768,7 @@ END-DELIM."
       (ibut:label-set (hbut:key-to-label lbl-key) start-pos end-pos)
       (hact link-actype but-key key-file))))
 
-(defun parse-label-and-file (label-and-file)
+(defun hlink:parse-label-and-file (label-and-file)
   "Parse colon-separated string LABEL-AND-FILE into a list of label and file path."
   ;; Can't use split-string here because file path may contain colons;
   ;; we want to split only on the first colon.
@@ -809,7 +779,7 @@ END-DELIM."
     (while (< i len)
       (when (= ?: (aref label-and-file i))
         (when (zerop i)
-          (error "(parse-label-and-file): Missing label: '%s'" label-and-file))
+          (error "(hlink:parse-label-and-file): Missing label: '%s'" label-and-file))
         (setq label (hpath:trim (substring label-and-file 0 i))
               file (hpath:trim (substring label-and-file (1+ i))))
         (when (string-empty-p label) (setq label nil))
@@ -1537,24 +1507,21 @@ arg1 ... argN '>'.  For example, <mail nil \"user@somewhere.org\">."
           (cond ((and (symbolp actype) (fboundp actype)
 		      (string-match "-p\\'" (symbol-name actype)))
 		 ;; Is a function with a boolean result
-		 (setq args `(',args)
-		       action `(display-boolean ',action)
-		       actype #'display-boolean))
+		 (setq actype #'display-boolean
+		       args `(',action)))
 		((and (null args) (symbolp actype) (boundp actype)
 		      (or var-flag (not (fboundp actype))))
 		 ;; Is a variable, display its value as the action
-		 (setq args `(',args)
-		       action `(display-variable ',actype)
+		 (setq args `(',actype)
 		       actype #'display-variable))
 		(t
 		 ;; All other expressions, display the action result in the minibuffer
-		 (setq args `(',args)
-		       action `(display-value ',action)
-		       actype #'display-value))))
+		 (setq actype #'display-value
+		       args `(',action)))))
 
 	;; Create implicit button object and store in symbol hbut:current.
 	(ibut:create :lbl-key lbl-key :lbl-start start-pos :lbl-end end-pos
-		     :categ 'ibtypes::action :actype actype :args args :action action)
+		     :categ 'ibtypes::action :actype actype :args args)
 
         ;; Necessary so can return a null value, which actype:act cannot.
         (let ((hrule:action
