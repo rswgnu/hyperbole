@@ -1,3 +1,89 @@
+2023-10-02  Bob Weiner  <rsw@gnu.org>
+
+* hycontrol.el (hycontrol--blank-buffer): Add a space in front of buffer
+    name so it is hidden from buffer listings.
+
+* test/demo-tests.el (demo-annotated-reference-test):
+  test/hmouse-drv-tests.el (hbut-annot-bib-test):
+  test/hibtypes-tests.el (ibtypes::annot-bib-test):
+  DEMO (Annotated Bibliography Buttons): Remove since won't work when DEMO
+    is displayed in 'org-mode'.
+
+* hibtypes.el (annot-bib): Fix doc to mention modes excluded.
+
+* hypb.el (hypb:display-file-with-logo): Temporarily disable use of
+    'org-mode' until can fix broken tests by setting 'hsys-org-enable-smart-keys'
+    to t.
+
+2023-10-01  Bob Weiner  <rsw@gnu.org>
+
+* man/hyperbole.texi (Keyboard Drags):
+  DEMO (Creation via Ace Window): Doc prefix args to {M-o w} ace-window
+    link button creation.
+
+* hargs.el (hargs:at-p): Fix when on a two part menu item to use the
+    more specific part to link to the correct location, e.g. on Index
+    entries.
+
+* HY-ABOUT:
+  MANIFEST: Format for org-mode display.
+  hypb.el (hypb:display-file-with-logo): Add use of 'org-mode' to supplement
+    view minor mode.
+
+* hui.el (hui:link-possible-types): When reading a dir or file and not
+    on such a string, use the 'default-directory' or 'buffer-file-name'.
+    Previously just returned nil in such circumstances.
+
+* hmail.el (hmail:hbdata-to-p): Add 'widen' call when hbdata is in
+    the button source buffer and no file is attached, so that it is
+    temporarily made visible/searchable.
+
+2023-09-19  Bob Weiner  <rsw@gnu.org>
+
+* test/hibtypes-tests.el (ibtypes::pathname-load-path-line-column-test):
+    Fix to handle when a prior hypb.el buffer exists.
+
+* hpath.el (hpath:normalize): Fix arg name to match name in doc.
+    Fix to trigger an error if arg is anything but a readable filename.
+           (hpath:shorten): Add and use in 'ibut:insert-text'.
+
+* hibtypes.el (pathname-line-and-column): Fix label selection to always
+    include whole delimited path.  Previously, only a part of the path
+    might flash as a button.
+
+2023-09-18  Bob Weiner  <rsw@gnu.org>
+
+* man/hyperbole.texi (Menus):
+  hui-mini.el (hui:menu-choose): When on the initial Hy9> prompt of the
+    top-level menu and press RET:
+      Remove extra call to 'hyperbole-minibuffer-menu'.
+      Change so quits the minibuffer menu and leaves Smart Key update
+      message in the minibuffer.
+
+* hversion.el (hyperb:path-being-loaded): Remove; no longer used.
+
+* hbut.el (ebut:operate): Add error checks similar to 'ibut:operate'.
+
+* hmouse-drv.el (hkey-window-link):
+  man/hyperbole.texi (Keyboard Drags): Add prefix arg doc for {M-o w}
+  where ibuts are created.
+
+* hui.el (hui:ibut-link-directly): This may be invoked via 'hkey-either'
+    which runs the Assist Key when given a single C-u prefix argument.
+    In such a case, don't use the prefix argument as a flag to prompt
+    for the ibutton name as we want to just insert the appropriate ibut
+    without any prompting.
+         (hui:ebut-link-directly): Change "Create button" to "Create ebutton".
+
+* hpath.el (hpath:to-markup-anchor, hpath:to-line): Update to find matches
+    outside narrowed area.
+
+2023-09-17  Bob Weiner  <rsw@gnu.org>
+
+* hbut.el (ebut:operate): Fix that ebut metadata was not hidden after an
+    'hui:ebut-create' call by adding a conditionalized call to
+    'hmail:msg-narrow'.
+
 2023-08-29  Bob Weiner  <rsw@gnu.org>
 
 * hbut.el (ibut:operate): Fix to ensure point is within button after
@@ -27,8 +113,8 @@
 
 * hui.el (hui:ibut-link-create): Fix to handle name attributes properly.
 
-* hargs.el (hargs:iform-read): Reset global 'hargs:defaults' to nil when not to
-    prevent errant values in any future calls.
+* hargs.el (hargs:iform-read): Reset global 'hargs:defaults' to nil when not used
+    to prevent errant values in any future calls.
 
 * test/hsys-org-tests.el (hsys-org:cycle-on-header-cycles-visibility): Fix to
     handle any moving over invisible lines properly.
@@ -83,7 +169,8 @@
 * hib-kbd.el (hui-mini): Add (require 'hui-mini) and move private vars before first
     usage to remove byte-compiler warnings.
 
-* hbut.el (ibut:org-at-read-only-p, ibut:operate): Trigger errors when point is on
+* hsys-org.el (hsys-org-at-read-only-p):
+  hbut.el (ibut:org-at-read-only-p, ibut:operate): Trigger errors when point is on
     read-only text, read-only Org contexts, explicit buttons, or emacs push-buttons.
 
 * hyperbole.el (hyperbole--enable-mode, hyperbole--disable-mode): Stop setting
@@ -269,7 +356,7 @@
 2023-07-22  Bob Weiner  <rsw@gnu.org>
 
 * hargs.el (hargs:at-p): Make Action Keyboard Key behave the same as the Action Mouse
-    Key when in the minibuffer, deleting any characters to the right of point to
+    Key when in the minibuffer, deleting any characters to the right of point.
 
 2023-07-17  Bob Weiner  <rsw@gnu.org>
 

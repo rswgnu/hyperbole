@@ -408,6 +408,11 @@ Return value of evaluation when a matching entry is found or nil."
 							    (hmail:hbdata-start))))))))
 	      (setq found (hbdata:to-entry-buf key-src directory create-flag)))
 	  (when found
+	    (unless buffer-file-name
+	      ;; Point must be left after hbdata separator or the logic
+	      ;; below could fail.  Buffer should be widened already.
+	      (goto-char (point-min))
+	      (search-forward hmail:hbdata-sep nil t))
 	    (let ((case-fold-search t)
 		  (qkey (regexp-quote lbl-key))
 		  (end (save-excursion (if (search-forward "\n\^L" nil t)

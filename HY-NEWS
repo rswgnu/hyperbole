@@ -1,9 +1,26 @@
-			  What's New in GNU Hyperbole
+*			  What's New in GNU Hyperbole
 				 by Bob Weiner
 
 ===========================================================================
 *                                   V8.0.1pre
 ===========================================================================
+
+** ACE WINDOW PACKAGE INTEGRATION - fast window and buffer switching
+
+  *** After installing the ace-window package and loading Hyperbole, execute
+      (hkey-ace-window-setup "\M-o") to enable the following capabilities:
+
+  *** Fast Window Links: The hkey-window-link command quickly creates links
+      to other windows:
+
+         {M-o w <window>} - creates an explicit button linked to point in <window>
+         {C-u M-o w <window>} - creates an unnamed implicit button linked to point
+           in <window>
+         {M-1 M-o w <window>} - creates a named implicit button linked to point
+           in <window>
+
+      See "(hyperbole)Create Link Button".
+
 
 ** ACTION TYPES  (See "(hyperbole)Action Types").
 
@@ -13,6 +30,9 @@
 
 
 ** DOCUMENTATION
+
+  *** Action Types: Added newer types and updated existing doc summaries
+      in the Hyperbole manual.  See "(hyperbole)Action Types".
 
   *** Emacs 2022 Talk Videos:
 
@@ -30,8 +50,10 @@
       want a quick read about how Hyperbole concepts all interrelate.
       View it with {C-h h d c}.
 
-  *** Action Types: Added newer types and updated existing doc summaries
-      in the Hyperbole manual.  See "(hyperbole)Action Types".
+  *** Doc Viewing: Updated to display many files from the Doc> menu in Org
+      mode and view minor mode, so can expand and collapse entries to view
+      just the sections of interest.  This includes DEMO, FAST-DEMO, HY-ABOUT,
+      HY-NEWS and MANIFEST.
 
   *** New Menu Key Doc: Documented these Hyperbole minibuffer menu keys:
 
@@ -45,7 +67,7 @@
       for easy cross-referencing, Info viewer version and PDF for printing.
       Some of the updates include:
 
-  **** Ebut/Link Menu Item:  With two windows on screen, link from source
+  **** Link Menu Items:  With two windows on screen, link from source
        window point to referent window point.  Do a similar thing when
        more windows are on screen via an Action Mouse Key drag between
        windows.  See "(hyperbole)Smart Mouse Drags between Windows".
@@ -59,6 +81,18 @@
 
   **** Smart Key - Org Mode: Expanded with doc for more extensive behavior.
        See "(hyperbole)Smart Key - Org Mode".
+
+
+** EXPLICIT BUTTONS  (See "(hyperbole)Explicit Buttons").
+
+  *** Ebut/Link Menu Item - Inserts a named ebutton that links to point in
+      another window.  See "(hyperbole)menu item, Ebut/Link".
+
+
+** GLOBAL BUTTONS  (See "(hyperbole)Global Buttons").
+
+  *** Gbut/Link Menu Item - A single name creates a new global link button
+      to point.  See "(hyperbole)menu item, Gbut/Link".
 
 
 ** HYCONTROL  (See "(hyperbole)HyControl").
@@ -106,11 +140,13 @@
   *** Natively Compiled Functions as Action Types: Now may be used as
       Hyperbole button action types.  See "(hyperbole)Action Types".
 
-  *** Reduced Warnings: Large number of byte-compiler warnings eliminated when
-      building the Hyperbole package.  None of these warnings should affect
-      use of Hyperbole.  Most open Hyperbole issues have also been resolved.
+  *** Reduced Warnings: Almost all byte-compiler and native compiler warnings
+      have been eliminated when building the Hyperbole package.  None of the
+      remaining warnings should affect use of Hyperbole.  Most open Hyperbole
+      issues have also been resolved.
 
-  *** XEmacs: Removed old XEmacs-compatibility code.
+  *** XEmacs: Removed old XEmacs-compatibility code; everyone should use GNU
+      Emacs nowadays.
 
 
 ** HYROLO  (See "(hyperbole)HyRolo").
@@ -202,15 +238,25 @@
       buffers (assume files are tab-delimited).
 
   *** Ibut/Create Menu Item: Creates a named/labeled implicit button of any
-      type.  Separates the name and the implicit button with " - ".
+      type.  Separates the name and the implicit button with " - ".  See
+      "(hyperbole)menu item, Ibut/Create".
 
-  *** Relative Info Paths: Info files with relative pathnames outside of the
-      `Info-directory-list' now resolve properly, e.g. "man/hyperbole.info".
+  *** Ibut/Link Menu Item - Inserts an ibutton that links to point in another
+      window.  With a C-u prefix argument, prompts for a name as well.  See
+      "(hyperbole)menu item, Ibut/Link".
 
   *** Path Implicit Buttons: Much improved relative path handling, including
       expanding into executable paths when pathname is prefixed by ! or &,
       and handling info paths outside `Info-directory-list', like
       "man/hyperbole.info".
+
+  *** Read-only Context Errors: Trigger errors when trying to create an implicit
+      button with point on read-only text, read-only Org contexts, explicit buttons,
+      or emacs push-buttons.
+
+  *** Relative Info Paths: Info files with relative pathnames outside of the
+      `Info-directory-list' now resolve properly, e.g. "man/hyperbole.info".
+
 
   *** Table of Contents Sections: Hyperbole now recognizes TOCs in any text
       derived major mode with the text-toc implicit button type.  An Action
@@ -234,10 +280,24 @@
       star-based headings whose stars do not start at the beginning of a line,
       i.e. are indented.  See "(hyperbole)Inserting and Importing".
 
+  *** Transpose Lines Down: Add 'kotl-mode:transpose-lines-down' command.
+
 
 ** MENUS  (See "(hyperbole)Menus").
 
   *** Minibuffer Menu Changes:
+
+        - Instant Link Creation:
+
+            Ebut/Link - Inserts a named ebutton that links to point in another window.
+              See "(hyperbole)menu item, Ebut/Link".
+
+            Gbut/Link - A single name creates a new global link button to point.
+              See "(hyperbole)menu item, Gbut/Link".
+
+            Ibut/Link - Inserts an ibutton that links to point in another window.  With
+            a C-u prefix argument, prompts for a name as well.
+              See "(hyperbole)menu item, Ibut/Link".
 
         - Reload Menus and Smart Keys: Action Key press on top-level menu prefix
           reloads Hyperbole minibuffer menus and Smart Key handlers to reflect
@@ -253,6 +313,15 @@
 
 
 ** PROGRAMMING INTERFACE CHANGES  (See "(hyperbole)Embedding Hyperbole").
+
+  *** hui:ebut-link-directly:
+      hui:gbut-link-directly:
+      hui:ibut-link-directly: Instant direct Hyperbole links.
+
+  *** hypb:mail-address-tld-regexp: Renamed from 'hypb-mail-address-tld-regexp'.
+      hypb:mail-address-regexp: Renamed from 'hypb-mail-address-regexp'.
+      hypb:mail-address-mode-list: Renamed from 'mail-address-mode-list'.
+        Make all of these variables have a common prefix.
 
   *** (hypb:devdocs-lookup): Install and load devdocs package and then
       call its `devdocs-lookup' function.
@@ -381,6 +450,17 @@
   *** (smart-push-button): Added and referenced in `hkey-help' to trigger
       push-button-specific help output.
 
+  *** (hpath:to-markup-anchor, hpath:to-line): Updated to find matches
+      outside narrowed area.
+
+  *** (hyperb:path-being-loaded): Removed; no longer used.
+
+  *** (hpath:shorten): Added and used in 'ibut:insert-text'.
+
+  *** (hui:link-possible-types): When reading a dir or file and not
+      on such a string, use the 'default-directory' or 'buffer-file-name'.
+      Previously just returned nil in such circumstances.
+
 
 ** ORG MODE INTEGRATION (See "(hyperbole)Smart Key - Org Mode").
 
@@ -459,7 +539,7 @@
 
 ** TEST CASES  (See "${hyperb:dir}/test").
 
-  *** Hyperbole Automated Testing: Over 300 automated test cases.  Simply run
+  *** Hyperbole Automated Testing: Over 340 automated test cases.  Simply run
       'make test-all' or 'make test' from the command-line when in the
       Hyperbole source directory and you should see all tests pass.  If any
       fail, you can press the Action Key to see the source of the failure.
@@ -932,7 +1012,7 @@
   *** Fast Window Links: The hkey-window-link command bound to {M-o w}
       rapidly creates a link button at point in the selected window,
       linking to point in the window chosen when prompted.
-      See "DEMO#Displaying Items via Drags and Moving Buffers".
+      See "DEMO2#Displaying File and Buffer Items and Moving Buffers".
 
   *** Throw A Region Elsewhere Within the Same Buffer: {M-o t <window-id>}
       when used with a selected region can now throw to the source buffer

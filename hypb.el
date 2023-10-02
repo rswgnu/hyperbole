@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     6-Oct-91 at 03:42:38
-;; Last-Mod:     27-Aug-23 at 17:15:52 by Bob Weiner
+;; Last-Mod:      2-Oct-23 at 05:47:51 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1029,6 +1029,7 @@ If FILE is not an absolute path, expand it relative to `hyperb:dir'."
       (skip-syntax-forward "-")
       (set-window-start (selected-window) 1)
       (set-buffer-modified-p nil)
+      ;; (org-mode)
       (view-mode)
       ;; On some versions of Emacs like Emacs28, need a slight delay
       ;; for file loading before searches will work properly.

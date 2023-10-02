@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    04-Feb-90
-;; Last-Mod:     12-Aug-23 at 13:19:18 by Bob Weiner
+;; Last-Mod:      1-Oct-23 at 20:17:42 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -628,11 +628,13 @@ The selected window does not change."
 
 ;;;###autoload
 (defun hkey-window-link (release-window)
-  "Create an ebut in the selected window, linked to point in RELEASE-WINDOW.
+  "Create a but in the selected window, linked to point in RELEASE-WINDOW.
 RELEASE-WINDOW is interactively selected via the `ace-window' command.
 The selected window does not change.
 
-With a prefix argument, create an unnamed implicit button instead."
+With no prefix argument, create an explicit button.
+With a C-u '(4) prefix argument, create an unnamed implicit button.
+With a M-1 prefix argument, create an named implicit button."
   (interactive
    (list (let ((mode-line-text (concat " Ace - Hyperbole: " (nth 2 (assq ?w aw-dispatch-alist)))))
 	   (aw-select mode-line-text))))
@@ -795,7 +797,7 @@ buffer to the end window.  The selected window does not change."
 		   (if (fboundp #'aw-select) ;; ace-window selection
 		       (let ((aw-scope 'global))
 			 (aw-select "Select link referent window"))
-		     (message "Now click on the end window...")
+		     (message "Select link referent window with the mouse...")
 		     (let (end-event)
 		       (prog1 (cl-loop do (setq end-event (read-event))
 				       until (and (mouse-event-p end-event)

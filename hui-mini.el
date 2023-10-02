@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    15-Oct-91 at 20:13:17
-;; Last-Mod:      9-Aug-23 at 00:21:49 by Bob Weiner
+;; Last-Mod:     18-Sep-23 at 08:03:51 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -436,10 +436,9 @@ documentation, not the full text."
 	   ;; RET pressed on Hyperbole top-level menu prefix, reload
 	   ;; Smart Key handlers and minibuffer menus to reflect any updates.
 	   (hmouse-update-smart-keys)
-	   (hyperbole-minibuffer-menu)
-	   (sit-for 2)
-	   (message "Minibuffer menus and Smart Key actions reloaded.")
-	   '(menu . hyperbole))
+	   (set--this-command-keys (concat hui:menu-keys hui:menu-quit))
+	   (setq this-command #'hmouse-update-smart-keys)
+	   nil)
 	  ((memq key (list 1 top-char))
 	   (setq hui:menu-keys (concat hui:menu-keys (char-to-string top-char)))
 	   '(menu . hyperbole))

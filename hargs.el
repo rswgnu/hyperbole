@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    31-Oct-91 at 23:17:35
-;; Last-Mod:     28-Aug-23 at 17:59:39 by Bob Weiner
+;; Last-Mod:      1-Oct-23 at 21:17:28 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -507,11 +507,7 @@ Handles all of the interactive argument types that `hargs:iform-read' does."
 	 (when (eq major-mode 'Info-mode)
 	   (let ((file (Info-current-filename-sans-extension))
 		 (node (cond ((Info-note-at-p))
-			     ((Info-menu-item-at-p)
-			      (save-excursion
-				(beginning-of-line)
-				(forward-char 2)
-				(Info-extract-menu-node-name nil (Info-index-node))))
+			     ((Info-menu-item-at-p))
 			     (t Info-current-node))))
 	     (cond ((and (stringp node) (string-match "\\`\(" node))
 		    node)

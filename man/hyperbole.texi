@@ -7,7 +7,7 @@
 @c Author:       Bob Weiner
 @c
 @c Orig-Date:     6-Nov-91 at 11:18:03
-@c Last-Mod:     28-Aug-23 at 12:33:01 by Bob Weiner
+@c Last-Mod:      1-Oct-23 at 20:19:05 by Bob Weiner
 
 @c %**start of header (This is for running Texinfo on a region.)
 @setfilename hyperbole.info
@@ -156,7 +156,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</P>
 
 <PRE>
 Edition 8.0.1pre
-Printed August 28, 2023.
+Printed October 1, 2023.
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -198,7 +198,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 @example
 Edition 8.0.1pre
-August 28, 2023
+October 1, 2023
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -1649,7 +1649,7 @@ the Assist Mouse Key (not the Action Key) from the open area of one
 window's modeline to the text area of another.  This works across frames
 as well.
 
-If you have just two windows in an Emacs frame, you can swap their buffers
+If you have precisely two windows in an Emacs frame, you can swap their buffers
 from the keyboard.  Use this Hyperbole minibuffer menu key sequence
 involving the tilde key to swap the buffers and quit from the Hyperbole
 minibuffer menu: @bkbd{C-h h s w ~ Q}.  Similarly, if you have two single
@@ -1762,21 +1762,15 @@ for @code{ace-window}, then just ensure it is initialized by calling
 @kindex M-o i <window-id>
 @kindex M-o m <window-id>
 @kindex M-o r <window-id>
-@kindex M-o t <window-id>
-@kindex M-o w <window-id>
 @cindex insert item
 @cindex drag item
 @cindex replace window buffer
 @cindex swap window buffers
-@cindex throw item
 @cindex buffer replace
 @cindex buffers swap
-@cindex create link button
 @cindex window link button
-@cindex link button
 @cindex item drag
 @cindex item insert
-@cindex item throw
 After setup, the leftmost character or two of each window's modeline
 will show the ID to type to use that window as the drag destination.
 Then whenever point is on an item you want displayed in another
@@ -1788,10 +1782,31 @@ item to the window.  To @emph{replace} the selected window's buffer
 with that of another window, use @bkbd{M-o r
 <id-of-window-displaying-desired-buffer>}.  To instead @emph{swap} the
 selected window's buffer with that of another window, use @bkbd{M-o m
-<id-of-window-to-swap-with>}.  And finally, to quickly create a link
-between the selected window and another window, use @bkbd{M-o w
-<id-of-referent-window>}.
+<id-of-window-to-swap-with>}.
 
+@kindex M-o w <window-id>
+@cindex create link button
+@cindex link button
+@findex hui:ebut-link-directly
+And finally, to create an explicit link between the selected window
+and another window, use @bkbd{M-o w <id-of-referent-window>}.
+@code{hui:ebut-link-directly} determines the link type by using
+the referent context.  
+
+
+@kindex C-u M-o w <window-id>
+@kindex M-1 M-o w <window-id>
+@findex hui:ibut-link-directly
+@bkbd{C-u M-o w <window>} creates a new, @emph{unnamed} implicit
+button in the selected (current) window that links to point in the
+referent <window>.  @code{hui:ibut-link-directly} determines the link
+type by using the referent context.  @bkbd{M-1 M-o w <window>} creates
+a new, @emph{named} implicit button in the selected (current) window
+that links to point in the referent <window>.
+
+@kindex M-o t <window-id>
+@cindex item throw
+@cindex throw item
 @cindex throw region
 @cindex region throw
 You can also throw the active (highlighted) region of text to another
@@ -1819,12 +1834,17 @@ replace the selected (current) window's buffer with that of <window>
 @item M-o t <window>
 throw region, listing item at point, or current buffer to <window>
 
-@findex hui:ebut-link-directly
 @item M-o w <window>
-window link, create a new explicit button in the selected (current)
-window, linking to point in the referent <window>.
-@code{hui:ebut-link-directly} determines the link type by using the
-referent context.
+window link, create a new @emph{explicit button} in the selected
+(current) window, linking to point in the referent <window>.
+
+@item C-u M-o w <window>
+window link, create a new, @emph{unnamed implicit button} in the
+selected (current) window, linking to point in the referent <window>.
+
+@item M-1 M-o w <window>
+window link, create a new, @emph{named implicit button} in the
+selected (current) window, linking to point in the referent <window>.
 @end table
 
 @c -------
@@ -2142,7 +2162,7 @@ the button type based on the referent context or will prompt you to
 select from one of a few possible link types.
 
 @cindex implicit link creation
-@cindex menu, Ibut/Link
+@cindex menu item, Ibut/Link
 @kindex C-h h i l
 If you have exactly two Emacs windows in your current frame or exactly
 two windows visible across two Emacs frames, this is even easier.
@@ -3956,8 +3976,8 @@ submenus and then return to the top menu.
 
 You can reload the Hyperbole minibuffer menus and Smart Key handlers
 to reflect any recent edits when on the top-level Hyperbole menu by
-pressing the Action Key on the menu name (first item that ends with
-'>').
+pressing @bkbd{@key{RET}} or the Action Key on the menu name (first
+item that ends with '>').  This will also quit from the menu.
 
 You can quit from the minibuffer menus without selecting an item by
 using @bkbd{Q}, or by pressing @bkbd{@key{RET}} or @bkbd{M-@key{RET}}

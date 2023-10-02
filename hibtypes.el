@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 20:45:31
-;; Last-Mod:     28-Aug-23 at 16:02:32 by Bob Weiner
+;; Last-Mod:      2-Oct-23 at 04:57:50 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -355,14 +355,14 @@ handle any links they recognize first."
   "Display annotated bibliography entries referenced internally.
 References must be delimited by square brackets, must begin with a word
 constituent character, not contain @ or # characters, must not be
-in buffers whose names begin with a space or asterisk character, and
-must have an attached file."
+in buffers whose names begin with a space or asterisk character, must
+not be in a programming mode, Markdown or Org buffers and must have an
+attached file."
   (and (not (bolp))
        buffer-file-name
        (let ((chr (aref (buffer-name) 0)))
          (not (or (eq chr ?\ ) (eq chr ?*))))
-       (not (or (derived-mode-p 'prog-mode)
-                (apply #'derived-mode-p '(c-mode objc-mode c++-mode java-mode markdown-mode org-mode))))
+       (not (apply #'derived-mode-p '(prog-mode c-mode objc-mode c++-mode java-mode markdown-mode org-mode)))
        (let ((ref (hattr:get 'hbut:current 'lbl-key))
 	     (lbl-start (hattr:get 'hbut:current 'lbl-start)))
          (and ref
@@ -849,15 +849,19 @@ See `hpath:at-p' function documentation for possible delimiters.
 See `hpath:suffixes' variable documentation for suffixes that are added to or
 removed from pathname when searching for a valid match.
 See `hpath:find' function documentation for special file display options."
-  (let ((path-line-and-col (hpath:delimited-possible-path)))
+  (let* ((path-start-and-end (hpath:delimited-possible-path nil t))
+	 (path-line-and-col (nth 0 path-start-and-end))
+	 (start (nth 1 path-start-and-end)))
     (when (and (stringp path-line-and-col)
                (string-match hpath:section-line-and-column-regexp path-line-and-col))
-      (let ((file (save-match-data (hpath:expand (match-string-no-properties 1 path-line-and-col))))
-            (line-num (string-to-number (match-string-no-properties 3 path-line-and-col)))
-            (col-num (when (match-end 4)
-                       (string-to-number (match-string-no-properties 5 path-line-and-col)))))
-        (when (save-match-data (setq file (hpath:is-p file)))
-          (ibut:label-set file (match-beginning 1) (match-end 1))
+      (let* ((line-num (string-to-number (match-string-no-properties 3 path-line-and-col)))
+             (col-num (when (match-end 4)
+			(string-to-number (match-string-no-properties 5 path-line-and-col))))
+	     (label (match-string-no-properties 1 path-line-and-col))
+	     ;; Next variable must come last as it can overwrite the match-data
+	     (file (hpath:expand label)))
+        (when (setq file (hpath:is-p file))
+          (ibut:label-set label start (+ start (length label)))
           (if col-num
               (hact 'link-to-file-line-and-column file line-num col-num)
             (hact 'link-to-file-line file line-num)))))))

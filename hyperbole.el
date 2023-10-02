@@ -7,7 +7,7 @@
 ;; Author:       Bob Weiner
 ;; Maintainer:   Bob Weiner <rsw@gnu.org>, Mats Lidell <matsl@gnu.org>
 ;; Created:      06-Oct-92 at 11:52:51
-;; Last-Mod:     27-Aug-23 at 13:04:09 by Bob Weiner
+;; Last-Mod:     18-Sep-23 at 06:39:11 by Bob Weiner
 ;; Released:     03-Dec-22
 ;; Version:      8.0.1pre
 ;; Keywords:     comm, convenience, files, frames, hypermedia, languages, mail, matching, mouse, multimedia, outlines, tools, wp
@@ -111,9 +111,8 @@
     (setq features (delq 'hload-path features)
 	  features (delq 'hversion features)))
 
-  ;; Defines hyperb:path-being-loaded, hyperb:stack-frame,
-  ;; (hyperb:window-system) and hyperb:dir, which are used later in
-  ;; this file.  Also adds Hyperbole to the load-path if need be.
+  ;; Defines hyperb:stack-frame, hyperb:window-system and hyperb:dir, which are used
+  ;; later in this file.  Also adds Hyperbole to the load-path if need be.
   ;;
   ;; This handles the case when the Hyperbole package directory is not yet in load-path.
   (unless (or (require 'hversion nil t)

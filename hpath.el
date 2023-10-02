@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     1-Nov-91 at 00:44:23
-;; Last-Mod:     28-Aug-23 at 16:48:31 by Bob Weiner
+;; Last-Mod:      1-Oct-23 at 21:19:59 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1511,67 +1511,73 @@ but locational suffixes within the file are utilized."
 (defun hpath:to-markup-anchor (hash anchor)
   "Ignore HASH when ANCHOR is non-null and move point to ANCHOR string if found.
 Move point to beginning of buffer if HASH is non-nil and ANCHOR is null."
-  (cond ((and (stringp anchor) (not (equal anchor "")))
-	 (cond ((memq major-mode hui-select-markup-modes)
-		;; In HTML-like mode where link ids are case-sensitive.
-		(let ((opoint (point))
-		      (case-fold-search))
-		  (goto-char (point-min))
-		  (if (re-search-forward (format hpath:html-anchor-id-pattern (regexp-quote anchor)) nil t)
-		      (progn (forward-line 0)
-			     (when (eq (current-buffer) (window-buffer))
-			       (recenter 0)))
-		    (goto-char opoint)
-		    (error "(hpath:to-markup-anchor): %s - Anchor `%s' not found in the visible buffer portion"
-			   (buffer-name)
-			   anchor))))
-	       (t
-		(let* ((opoint (point))
-		       (prog-mode (derived-mode-p 'prog-mode))
-		       ;; Markdown or outline link ids are case
-		       ;; insensitive and - characters are converted to
-		       ;; spaces at the point of definition unless
-		       ;; anchor contains both - and space characters,
-		       ;; then no conversion occurs.
-		       (case-fold-search (not prog-mode))
-		       (anchor-name (if (or prog-mode
-					    (string-match-p "-.* \\| .*-" anchor))
-					anchor
-				      (subst-char-in-string ?- ?\  anchor)))
-		       (referent-regexp (format
-					 (cond ((or (derived-mode-p 'outline-mode) ;; Includes Org mode
-						    ;; Treat all caps filenames without suffix like outlines, e.g. README, INSTALL.
-						    (and buffer-file-name
-							 (string-match-p "\\`[A-Z][A-Z0-9]+\\'" buffer-file-name)))
-						hpath:outline-section-pattern)
-					       (prog-mode
-						"%s")
-					       ((or (and buffer-file-name
-							 (string-match-p hpath:markdown-suffix-regexp buffer-file-name))
-						    (memq major-mode hpath:shell-modes))
-						hpath:markdown-section-pattern)
-					       ((derived-mode-p 'texinfo-mode)
-						hpath:texinfo-section-pattern)
-					       ((derived-mode-p 'text-mode)
-						"%s")
-					       (t hpath:outline-section-pattern))
-					 (regexp-quote anchor-name)))
-		       (referent-leading-spaces-regexp
-			(when (and (not (string-empty-p referent-regexp))
-				   (= (aref referent-regexp 0) ?^))
-			  (concat "^[ \t]+" (substring referent-regexp 1)))))
-		  (goto-char (point-min))
-		  (if (or (re-search-forward referent-regexp nil t)
-			  (and referent-leading-spaces-regexp
-			       (re-search-forward referent-leading-spaces-regexp nil t)))
-		      (progn (forward-line 0)
-			     (when (eq (current-buffer) (window-buffer))
-			       (recenter 0)))
-		    (goto-char opoint)
-		    (error "(hpath:to-markup-anchor): %s - Section `%s' not found in the visible buffer portion"
-			   (buffer-name)
-			   anchor-name))))))
-	(hash (goto-char (point-min)))))
+  (let ((omin (point-min))
+	(omax (point-max)))
+    (unwind-protect
+	(progn (widen)
+	       (cond ((and (stringp anchor) (not (equal anchor "")))
+		      (cond ((memq major-mode hui-select-markup-modes)
+			     ;; In HTML-like mode where link ids are case-sensitive.
+			     (let ((opoint (point))
+				   (case-fold-search))
+			       (goto-char (point-min))
+			       (if (re-search-forward (format hpath:html-anchor-id-pattern (regexp-quote anchor)) nil t)
+				   (progn (forward-line 0)
+					  (when (eq (current-buffer) (window-buffer))
+					    (recenter 0)))
+				 (goto-char opoint)
+				 (error "(hpath:to-markup-anchor): %s - Anchor `%s' not found in the visible buffer portion"
+					(buffer-name)
+					anchor))))
+			    (t
+			     (let* ((opoint (point))
+				    (prog-mode (derived-mode-p 'prog-mode))
+				    ;; Markdown or outline link ids are case
+				    ;; insensitive and - characters are converted to
+				    ;; spaces at the point of definition unless
+				    ;; anchor contains both - and space characters,
+				    ;; then no conversion occurs.
+				    (case-fold-search (not prog-mode))
+				    (anchor-name (if (or prog-mode
+							 (string-match-p "-.* \\| .*-" anchor))
+						     anchor
+						   (subst-char-in-string ?- ?\  anchor)))
+				    (referent-regexp (format
+						      (cond ((or (derived-mode-p 'outline-mode) ;; Includes Org mode
+								 ;; Treat all caps filenames without suffix like outlines, e.g. README, INSTALL.
+								 (and buffer-file-name
+								      (string-match-p "\\`[A-Z][A-Z0-9]+\\'" buffer-file-name)))
+							     hpath:outline-section-pattern)
+							    (prog-mode
+							     "%s")
+							    ((or (and buffer-file-name
+								      (string-match-p hpath:markdown-suffix-regexp buffer-file-name))
+								 (memq major-mode hpath:shell-modes))
+							     hpath:markdown-section-pattern)
+							    ((derived-mode-p 'texinfo-mode)
+							     hpath:texinfo-section-pattern)
+							    ((derived-mode-p 'text-mode)
+							     "%s")
+							    (t hpath:outline-section-pattern))
+						      (regexp-quote anchor-name)))
+				    (referent-leading-spaces-regexp
+				     (when (and (not (string-empty-p referent-regexp))
+						(= (aref referent-regexp 0) ?^))
+				       (concat "^[ \t]+" (substring referent-regexp 1)))))
+			       (goto-char (point-min))
+			       (if (or (re-search-forward referent-regexp nil t)
+				       (and referent-leading-spaces-regexp
+					    (re-search-forward referent-leading-spaces-regexp nil t)))
+				   (progn (forward-line 0)
+					  (when (eq (current-buffer) (window-buffer))
+					    (recenter 0)))
+				 (goto-char opoint)
+				 (error "(hpath:to-markup-anchor): %s - Section `%s' not found in the visible buffer portion"
+					(buffer-name)
+					anchor-name))))))
+		     (hash (goto-char omin))))
+      (when (and (<= omin (point)) (>= omax (point)))
+	(narrow-to-region omin omax)))))
 
 (defun hpath:find-executable (executable-list)
   "Return first executable string from EXECUTABLE-LIST found in `exec-path'.
@@ -1599,8 +1605,8 @@ frame.  Always return t."
   (interactive "FFind file: ")
   ;; Just delete any special Hyperbole command characters preceding
   ;; the filename, ignoring them.
-  (if (string-match hpath:prefix-regexp filename)
-      (setq filename (substring filename (match-end 0))))
+  (when (string-match hpath:prefix-regexp filename)
+    (setq filename (substring filename (match-end 0))))
   (hpath:find
    (if (integerp line-num)
        (concat filename ":" (int-to-string line-num))
@@ -1882,6 +1888,14 @@ prior to calling this function."
 	  (error ""))
       var-group)))
 
+(defun hpath:shorten (path)
+  "Shorten and return a PATH.
+Replace Emacs Lisp variables and environment variables (format of
+${var}) with their values in PATH.  The first matching value for
+variables like `${PATH}' is used.  Then abbreviate any remaining
+path."
+  (hpath:abbreviate-file-name (hpath:substitute-var path)))
+
 (defun hpath:substitute-value (path)
   "Substitute values for Emacs Lisp variables and environment variables in PATH.
 Return the resulting PATH.
@@ -2016,12 +2030,16 @@ Return LINKNAME unchanged if it is not a symbolic link but is a pathname."
 
 (defun hpath:to-line (line-num)
   "Move point to the start of an absolute LINE-NUM or the last line."
-  (save-restriction
-    (widen)
-    (goto-char (point-min))
-    (if (eq selective-display t)
-	(re-search-forward "[\n\r]" nil 'end (1- line-num))
-      (forward-line (1- line-num)))))
+  (let ((omin (point-min))
+	(omax (point-max)))
+    (unwind-protect
+	(progn (widen)
+	       (goto-char (point-min))
+	       (if (eq selective-display t)
+		   (re-search-forward "[\n\r]" nil 'end (1- line-num))
+		 (forward-line (1- line-num))))
+      (when (and (<= omin (point)) (>= omax (point)))
+	(narrow-to-region omin omax)))))
 
 (defun hpath:trim (path)
   "Return PATH with any [\" \t\n\r] characters trimmed from its start and end."
@@ -2033,12 +2051,14 @@ Return LINKNAME unchanged if it is not a symbolic link but is a pathname."
   path)
 
 (defun hpath:normalize (filename)
-  "Normalize and return PATH if PATH is a valid, readable path, else signal error.
+  "Normalize and return an existing, readable FILENAME, else signal an error.
 Replace Emacs Lisp variables and environment variables (format of
-${var}) with their values in PATH.  The first matching value for
-  variables like `${PATH}' is used."
-  (hpath:validate (hpath:substitute-value
-		   (buffer-file-name (hpath:find-noselect filename)))))
+${var}) with their values in FILENAME's path.  The first matching
+value for variables like `${PATH}' is used."
+  (let ((buf (hpath:find-noselect filename)))
+    (if buf
+	(hpath:validate (hpath:substitute-value (buffer-file-name buf)))
+      (error "(hpath:normalize): '\"%s\" is not a readable filename" filename))))
 
 (defun hpath:validate (path)
   "Validate PATH is readable and return it in Posix format.

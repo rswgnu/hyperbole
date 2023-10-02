@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    28-Feb-21 at 22:52:00
-;; Last-Mod:     14-Jul-23 at 23:40:55 by Mats Lidell
+;; Last-Mod:      2-Oct-23 at 05:03:07 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -422,19 +422,6 @@
            (should (string-match
                     "(Hyperbole Action Key): No action defined for this context; try another location"
                     (cadr err)))))))))
-
-;; hbut-annot-bib
-(ert-deftest hbut-annot-bib-test ()
-  (unwind-protect
-      (progn
-        (hypb:display-file-with-logo "DEMO")
-        (re-search-forward "\\[FSF 19\\]")
-        (backward-char 1)
-        (action-key)
-        (should (looking-at "\\[FSF 19\\] Free Software Foundation"))
-        (forward-line -2)
-        (should (looking-at "\\* References")))
-    (hy-test-helpers:kill-buffer "DEMO")))
 
 ;; ctags
 ; Seems ctags -v does not give the proper answer

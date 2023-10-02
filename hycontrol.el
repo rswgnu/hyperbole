@@ -884,7 +884,7 @@ multiple of the default frame font width."
 	      hycontrol-display-buffer-predicate-list)
     (error "(HyDebug): Invalid expression in `hycontrol-display-buffer-predicate-list' - %s" err)))
 
-(defvar hycontrol--blank-buffer (get-buffer-create "BLANK")
+(defvar hycontrol--blank-buffer (get-buffer-create " BLANK")
   "Blank buffer to display in extra window grid windows.
 Used after selected buffer list is exhausted.")
 

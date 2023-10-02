@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 21:42:03
-;; Last-Mod:     29-Aug-23 at 01:11:29 by Bob Weiner
+;; Last-Mod:      1-Oct-23 at 21:20:31 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1168,7 +1168,7 @@ from those instead.  See also documentation for
 				(hui:hbut-label-default
 				 (region-beginning) (region-end))))
 			 "ebut-link-directly"
-			 "Create button named: ")
+			 "Create ebutton named: ")
 		lbl-key (hbut:label-to-key but-lbl))))
 
       ;; num-types is the number of possible link types to choose among
@@ -1216,8 +1216,9 @@ With optional DEPRESS-WINDOW and RELEASE-WINDOW, use the points
 from those instead.  See also documentation for
 `hui:link-possible-types'.
 
-With optional NAME-ARG-FLAG (interactively, the prefix argument),
-prompt for a name to precede the implicit button.
+With optional NAME-ARG-FLAG (interactively, the prefix argument set to
+anything other than a single C-u (list 4)), prompt for a name to precede
+the implicit button.
 
 An Assist Mouse Key drag between windows runs this command.
 Alternatively, to swap buffers between two windows, Assist Mouse Key
@@ -1265,7 +1266,13 @@ drag from a window to another window's modeline."
 		name-key (ibut:label-to-key (hattr:get 'hbut:current 'name)))
 	(setq but-loc (hui:key-src (current-buffer))
 	      but-dir (hui:key-dir (current-buffer))))
-      (when (and name-arg-flag (not name-key))
+
+      ;; Ignore single C-u prefix arg here since this may be invoked
+      ;; via 'hkey-either' which runs the Assist Key when given a
+      ;; single C-u prefix argument.  In such a case, don't use the
+      ;; prefix argument as a flag to prompt for the ibutton name as
+      ;; we want to just insert the appropriate ibut without any prompting.
+      (when (and name-arg-flag (not (eq name-arg-flag '(4))) (not name-key))
 	(setq but-name (hui:hbut-label
 			(cond ((hmouse-prior-active-region)
 			       hkey-region)
@@ -1861,10 +1868,10 @@ Buffer without File      link-to-buffer-tmp"
 						      (list (rmail:msg-id-get) buffer-file-name))))))
 				      (t (cond
 					  ((let ((hargs:reading-type 'directory))
-					     (setq val (hargs:at-p t)))
+					     (setq val (hargs:at-p)))
 					   (list 'link-to-directory val))
 					  ((let ((hargs:reading-type 'file))
-					     (setq val (hargs:at-p t)))
+					     (setq val (hargs:at-p)))
 					   (list 'link-to-file val (point)))
 					  ((derived-mode-p #'kotl-mode)
 					   (list 'link-to-kcell buffer-file-name (kcell-view:idstamp)))

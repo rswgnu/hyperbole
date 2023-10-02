@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     2-Jul-16 at 14:54:14
-;; Last-Mod:     27-Aug-23 at 14:29:35 by Bob Weiner
+;; Last-Mod:     18-Sep-23 at 06:17:33 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -149,6 +149,26 @@ an error."
       (derived-mode-p 'org-agenda-mode)
       (and (boundp 'outshine-mode) outshine-mode)
       (and (boundp 'poporg-mode) poporg-mode)))
+
+;;;###autoload
+(defun hsys-org-at-read-only-p ()
+  "Return non-nil if point is in an Org read-only context."
+  (and (derived-mode-p 'org-mode)
+       (featurep 'hsys-org)
+       (or (hsys-org-src-block-start-at-p)
+	   (hsys-org-block-start-at-p)
+	   (let ((contexts (org-context)))
+	     (and contexts
+		  (delq nil (mapcar (lambda (ctxt) (assq ctxt contexts))
+				    '(:checkbox
+				      :headline-stars
+				      :item-bullet
+				      :keyword
+				      :link
+				      :priority
+				      :table-special
+				      :tags
+				      :todo-keyword))))))))
 
 (defun hsys-org-cycle ()
   "Call `org-cycle' and set as `this-command' to cycle through all states."
