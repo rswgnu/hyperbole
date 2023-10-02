@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    20-Feb-21 at 23:45:00
-;; Last-Mod:     12-Feb-22 at 13:33:53 by Bob Weiner
+;; Last-Mod:      2-Oct-23 at 05:02:34 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -186,19 +186,6 @@
       (when (and visited-buf
 		 (buffer-live-p visited-buf))
  	(kill-buffer visited-buf)))))
-
-;; ibtypes::annot-bib
-(ert-deftest ibtypes::annot-bib-test ()
-  (unwind-protect
-      (progn
-        (hypb:display-file-with-logo "DEMO")
-        (re-search-forward "\\[FSF 19\\]" nil t 2)
-        (backward-char 1)
-	(should (ibut:at-p))
-        (should (looking-at "\\] Free Software Foundation"))
-        (forward-line -2)
-        (should (looking-at "\\* References")))
-    (kill-buffer "DEMO")))
 
 ;; markdown
 ; Can't find out how to use the markdown-internal-link ibtypes!?

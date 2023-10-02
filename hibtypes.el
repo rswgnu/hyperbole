@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 20:45:31
-;; Last-Mod:      1-Oct-23 at 21:19:32 by Bob Weiner
+;; Last-Mod:      2-Oct-23 at 04:57:50 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -355,14 +355,14 @@ handle any links they recognize first."
   "Display annotated bibliography entries referenced internally.
 References must be delimited by square brackets, must begin with a word
 constituent character, not contain @ or # characters, must not be
-in buffers whose names begin with a space or asterisk character, and
-must have an attached file."
+in buffers whose names begin with a space or asterisk character, must
+not be in a programming mode, Markdown or Org buffers and must have an
+attached file."
   (and (not (bolp))
        buffer-file-name
        (let ((chr (aref (buffer-name) 0)))
          (not (or (eq chr ?\ ) (eq chr ?*))))
-       (not (or (derived-mode-p 'prog-mode)
-                (apply #'derived-mode-p '(c-mode objc-mode c++-mode java-mode markdown-mode org-mode))))
+       (not (apply #'derived-mode-p '(prog-mode c-mode objc-mode c++-mode java-mode markdown-mode org-mode)))
        (let ((ref (hattr:get 'hbut:current 'lbl-key))
 	     (lbl-start (hattr:get 'hbut:current 'lbl-start)))
          (and ref
