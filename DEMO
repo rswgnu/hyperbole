@@ -1,3 +1,6 @@
+
+ 
+
 * GNU Hyperbole Full Demo/Tutorial by Bob Weiner
 
   Send an email or a testimonial if you like Hyperbole to <rsw@gnu.org>.
@@ -1226,8 +1229,9 @@ For the fastest link button creation, use the Emacs package
 'ace-window' (see "(hyperbole)Keyboard Drags" for setup).  Once this
 is configured, then {M-o w <window id>} may be used to quickly create
 an explicit link button in the selected window that links to any other
-window chosen via the Ace Window.  Use a prefix argument to create an
-implicit link button instead.
+window chosen via the Ace Window.  Use a C-u prefix argument to create
+an unnamed implicit link button instead and a M-1 prefix argument to
+create a named implicit link button.
 
 *** Creation via Menu
 

@@ -129,15 +129,16 @@
 
 (ert-deftest ibtypes::pathname-load-path-line-column-test ()
   "Pathname with line and position specification."
-  (unwind-protect
-      (with-temp-buffer
-        (insert "\"${load-path}/hypb.el:11:5\"")
-        (goto-char 2)
-        (ibtypes::pathname-line-and-column)
-        (should (string= "hypb.el" (buffer-name)))
-        (should (= (line-number-at-pos) 11))
-        (should (= (current-column) 5)))
-    (kill-buffer "hypb.el")))
+  (with-temp-buffer
+    (unwind-protect
+        (progn
+	  (insert "\"${load-path}/hypb.el:11:5\"")
+          (goto-char 2)
+          (ibtypes::pathname-line-and-column)
+          (should (string-prefix-p "hypb.el" (buffer-name)))
+          (should (= (line-number-at-pos) 11))
+          (should (= (current-column) 5)))
+      (kill-buffer (buffer-name)))))
 
 (ert-deftest ibtypes::pathname-with-dash-loads-file-test ()
   "Pathname with dash loads file."

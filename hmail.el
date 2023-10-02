@@ -94,11 +94,11 @@ Return t if button data is found, else nil."
 	       (hmail:msg-narrow)
 	       t)
 	      ((or (hmail:lister-p) (hnews:lister-p)) t)
-	      ((memq major-mode (list hmail:composer hnews:reader
-				      hnews:composer))
+	      ((or (not buffer-file-name)
+		   (memq major-mode (list hmail:composer hnews:reader
+					  hnews:composer)))
 	       (widen)
-	       t)
-	      ((not buffer-file-name)))
+	       t))
     (goto-char (point-max))
     (when (search-backward hmail:hbdata-sep nil t)
       (forward-line 1)

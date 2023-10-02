@@ -663,26 +663,26 @@ With point on label suggest that ibut for rename."
   "Rename an ebut shall change the name of only button with that label."
   (with-temp-buffer
     (ebut:program "label" 'link-to-directory "/tmp")
+    (should (equal (hattr:get (hbut:at-p) 'lbl-key) "label"))
     (goto-char (point-max))
     (ebut:program "label2" 'link-to-directory "/tmp")
-    (goto-char (point-min))
-    (should (equal (hattr:get (hbut:at-p) 'lbl-key) "label"))
+    (goto-char 3)
     (hui:ebut-rename "label" "new")
     (should (equal (hattr:get (hbut:at-p) 'lbl-key) "new"))
-    (goto-char (- (point-max) 1))
+    (goto-char (- (point-max) 2))
     (should (equal (hattr:get (hbut:at-p) 'lbl-key) "label2"))))
 
 (ert-deftest hui--ebut-rename-nonumbered-label ()
   "Rename an ebut shall rename the label with no number."
   (with-temp-buffer
     (ebut:program "label" 'link-to-directory "/tmp")
+    (should (equal (hattr:get (hbut:at-p) 'lbl-key) "label"))
     (goto-char (point-max))
     (ebut:program "label" 'link-to-directory "/tmp")
-    (goto-char (point-min))
-    (should (equal (hattr:get (hbut:at-p) 'lbl-key) "label"))
+    (goto-char 3)
     (hui:ebut-rename "label" "new")
     (should (equal (hattr:get (hbut:at-p) 'lbl-key) "new"))
-    (goto-char (- (point-max) 1))
+    (goto-char (- (point-max) 2))
     (should (equal (hattr:get (hbut:at-p) 'lbl-key) "label:2"))))
 
 (ert-deftest hui--ebut-rename-numbered-label ()

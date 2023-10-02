@@ -170,7 +170,9 @@ Needed since hyperbole expands all links to absolute paths and
   (with-temp-buffer
     (ebut:program "label" 'link-to-directory "/tmp")
     (should (equal (hattr:get (hbut:at-p) 'lbl-key) "label"))
+    (goto-char (point-max))
     (ebut:program "label" 'link-to-directory "/tmp")
+    (goto-char (- (point-max) 2))
     (should (equal (hattr:get (hbut:at-p) 'lbl-key) "label:2"))))
 
 (ert-deftest hypb:program-create-link-to-file-line-and-column-but-in-file ()
