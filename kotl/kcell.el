@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     1-May-93
-;; Last-Mod:     27-Sep-23 at 21:47:35 by Mats Lidell
+;; Last-Mod:      3-Oct-23 at 22:39:29 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -27,15 +27,11 @@
 ;;   separately.  This also allows fast retrieval.
 
 ;;; Code:
-
-;;; FIXME: Circular dependencies
-(require 'kproperty)
-
 ;;; ************************************************************************
 ;;; Other required Elisp libraries
 ;;; ************************************************************************
 
-(eval-and-compile (mapc #'require '(hinit htz kview)))
+(eval-and-compile (mapc #'require '(hinit htz kview kproperty)))
 
 ;;; ************************************************************************
 ;;; Public variables

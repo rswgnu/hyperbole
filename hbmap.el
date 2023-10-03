@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     6-Oct-91 at 06:34:05
-;; Last-Mod:     28-Sep-23 at 00:09:00 by Mats Lidell
+;; Last-Mod:      3-Oct-23 at 17:49:44 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -15,14 +15,18 @@
 ;;; Commentary:
 
 ;;; Code:
+;;; ************************************************************************
+;;; Public variables
+;;; ************************************************************************
 
-;;; FIXME: Circular dependencies -- BEGIN
+(defvar hbmap:filename "HYPB"
+  "*Filename used for quick access button files.")
 
 ;;; ************************************************************************
 ;;; Private variables
 ;;; ************************************************************************
 
-(defvar hyperb:microsoft-os-p) ;; Defined in hload-path.
+(defvar hyperb:microsoft-os-p)          ; Defined in hload-path.
 
 (defvar hbmap:dir-user
   (if (and hyperb:microsoft-os-p
@@ -38,15 +42,6 @@ Hyperbole will try to create it whenever `hyperb:init' is called.")
 See also `hbmap:dir-user'.
 If you change its value, you will be unable to search for buttons created by
 others who use a different value!")
-
-;;; FIXME: Circular dependencies -- END
-
-;;; ************************************************************************
-;;; Public variables
-;;; ************************************************************************
-
-(defvar hbmap:filename "HYPB"
-  "*Filename used for quick access button files.")
 
 ;;; ************************************************************************
 ;;; Public functions

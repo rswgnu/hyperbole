@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     9-May-91 at 04:22:02
-;; Last-Mod:     28-Sep-23 at 20:59:31 by Mats Lidell
+;; Last-Mod:      3-Oct-23 at 23:29:21 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -23,13 +23,6 @@
 ;;
 
 ;;; Code:
-
-;;; FIXME: Circular dependencies -- BEGIN
-
-(defvar message-setup-hook) ; "message.el"
-
-;;; FIXME: Circular dependencies -- END
-
 ;;; ************************************************************************
 ;;; Other required Elisp libraries
 ;;; ************************************************************************
@@ -38,13 +31,11 @@
 (load "hsmail")
 
 ;;; ************************************************************************
-;;; Public variables
-;;; ************************************************************************
-
-;;; ************************************************************************
 ;;; Public declarations
 ;;; ************************************************************************
+
 (defvar rmail-old-text)
+(defvar message-setup-hook)             ; "message.el"
 
 ;;; ************************************************************************
 ;;; Public functions

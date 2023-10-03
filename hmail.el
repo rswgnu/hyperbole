@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     9-Oct-91 at 18:38:05
-;; Last-Mod:     28-Sep-23 at 00:33:09 by Mats Lidell
+;; Last-Mod:      3-Oct-23 at 23:30:56 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -31,20 +31,12 @@
 ;;   with Hyperbole.
 
 ;;; Code:
-
-;;; FIXME: Circular dependencies -- BEGIN
-
-;; Move up before first use
 ;;; ************************************************************************
-;;; Private variables
+;;; Public declarations
 ;;; ************************************************************************
 
-(defvar hmail:hbdata-sep "\^Lbd"
-  "Text separating e-mail msg from any trailing Hyperbole button data.")
-
+(declare-function rmail:msg-widen nil)
 (declare-function hypb:insert-region "hypb")
-
-;;; FIXME: Circular dependencies -- END
 
 ;;; ************************************************************************
 ;;; Public variables
@@ -76,10 +68,11 @@ Valid values are: nil, Mh-init, Rmail-init or Vm-init."
  "Major mode for reading mail with Hyperbole buttons.")
 
 ;;; ************************************************************************
-;;; Public declarations
+;;; Private variables
 ;;; ************************************************************************
 
-(declare-function rmail:msg-widen nil)
+(defvar hmail:hbdata-sep "\^Lbd"
+  "Text separating e-mail msg from any trailing Hyperbole button data.")
 
 ;;; ************************************************************************
 ;;; Public functions

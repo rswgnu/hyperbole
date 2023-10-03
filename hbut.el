@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    18-Sep-91 at 02:57:09
-;; Last-Mod:      3-Oct-23 at 15:52:54 by Mats Lidell
+;; Last-Mod:      3-Oct-23 at 17:26:52 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -15,8 +15,57 @@
 ;;; Commentary:
 
 ;;; Code:
+;;; ************************************************************************
+;;; Other required Elisp libraries
+;;; ************************************************************************
 
-;;; FIXME: Circular dependencies -- BEGIN
+(eval-and-compile (mapc #'require '(cl-lib elisp-mode help-mode hversion
+				    hmoccur hbmap htz hbdata hact
+				    hui-select view)))
+(require 'hmouse-drv) ; For `hui--ignore-action-key-depress-prev-point'.
+
+
+;;; ************************************************************************
+;;; Public declarations
+;;; ************************************************************************
+
+(declare-function www-url "hsys-www" (url))
+
+(defconst hbut:max-len 200
+  "Maximum length of a Hyperbole button label.
+If 0, there is no limit and searches for button end delimiters can go
+as far as the end of the buffer.
+
+Use the function, (hbut:max-len), to read the proper value.")
+
+(defsubst hbut:max-len ()
+  "Return the value of `hbut:max-len' if non-zero else (point-max)."
+  (if (zerop hbut:max-len) (point-max) hbut:max-len))
+
+(defvar hproperty:but-face)
+(defvar hproperty:ibut-face)
+
+(declare-function hargs:delimited "hargs")
+(declare-function hargs:read-match "hargs")
+(declare-function hpath:find-noselect "hpath")
+(declare-function hpath:find "hpath")
+(declare-function hpath:substitute-var "hpath")
+(declare-function hpath:symlink-referent "hpath")
+(declare-function hpath:www-p "hpath")
+(declare-function hsys-org-block-start-at-p "hsys-org")
+(declare-function hsys-org-src-block-start-at-p "hsys-org")
+(declare-function hui:buf-writable-err "hui")
+(declare-function hui:ebut-rename "hui")
+(declare-function hui:ibut-rename "hui")
+(declare-function hui:key-dir "hui")
+(declare-function hui:key-src "hui")
+(declare-function kbd-key:act "hib-kbd")
+(declare-function kbd-key:is-p "hib-kbd")
+(declare-function org-context "org")
+
+;;; ************************************************************************
+;;; Private variables
+;;; ************************************************************************
 
 (defvar hyperb:microsoft-os-p)
 
@@ -48,64 +97,10 @@ This separates it from the implicit button text.  See also
 manually inserted to separate an implicit button label from its
 text.")
 
-(declare-function hargs:delimited "hargs")
-(declare-function hargs:read-match "hargs")
-(declare-function hpath:find-noselect "hpath")
-(declare-function hpath:find "hpath")
-(declare-function hpath:substitute-var "hpath")
-(declare-function hpath:symlink-referent "hpath")
-(declare-function hpath:www-p "hpath")
-(declare-function hsys-org-block-start-at-p "hsys-org")
-(declare-function hsys-org-src-block-start-at-p "hsys-org")
-(declare-function hui:buf-writable-err "hui")
-(declare-function hui:ebut-rename "hui")
-(declare-function hui:ibut-rename "hui")
-(declare-function hui:key-dir "hui")
-(declare-function hui:key-src "hui")
-(declare-function kbd-key:act "hib-kbd")
-(declare-function kbd-key:is-p "hib-kbd")
-(declare-function org-context "org")
-
-;;; FIXME: Circular dependencies -- END
-
-;;; ************************************************************************
-;;; Other required Elisp libraries
-;;; ************************************************************************
-
-(eval-and-compile (mapc #'require '(cl-lib elisp-mode help-mode hversion
-				    hmoccur hbmap htz hbdata hact
-				    hui-select view)))
-(require 'hmouse-drv) ; For `hui--ignore-action-key-depress-prev-point'.
-
-;;; FIXME: Circular dependencies -- BEGIN
-;; After require hmoccur
 (defconst hbut:source-prefix moccur-source-prefix
   "String found at start of a buffer containing only a hyper-button menu.
 This expression should be followed immediately by a file-name indicating the
 source file for the buttons in the menu, if any.")
-
-;;; FIXME: Circular dependencies -- END
-
-
-;;; ************************************************************************
-;;; Public declarations
-;;; ************************************************************************
-
-(declare-function www-url "hsys-www" (url))
-
-(defconst hbut:max-len 200
-  "Maximum length of a Hyperbole button label.
-If 0, there is no limit and searches for button end delimiters can go
-as far as the end of the buffer.
-
-Use the function, (hbut:max-len), to read the proper value.")
-
-(defsubst hbut:max-len ()
-  "Return the value of `hbut:max-len' if non-zero else (point-max)."
-  (if (zerop hbut:max-len) (point-max) hbut:max-len))
-
-(defvar hproperty:but-face)
-(defvar hproperty:ibut-face)
 
 ;;; ************************************************************************
 ;;; Public definitions

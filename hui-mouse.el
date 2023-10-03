@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    04-Feb-89
-;; Last-Mod:      3-Oct-23 at 15:51:47 by Mats Lidell
+;; Last-Mod:      3-Oct-23 at 22:56:59 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -36,20 +36,6 @@
 ;; Dired listings is exceptionally nice, just as it is when reading mail.
 
 ;;; Code:
-
-;;; FIXME: Circular dependencies -- BEGIN
-
-(declare-function tar-flag-deleted "tar")
-(declare-function tar-unflag "tar")
-(declare-function tar-extract-other-window "tar")
-(declare-function tar-expunge "tar")
-(declare-function outline-invisible-in-p "hyperbole") ; Conditionally defined!?
-(declare-function hyrolo-edit-entry "hyrolo")
-(declare-function Custom-newline "cus-edit")
-(declare-function Custom-buffer-done "cus-edit")
-
-;;; FIXME: Circular dependencies -- END
-
 ;;; ************************************************************************
 ;;; Other required Elisp libraries
 ;;; ************************************************************************
@@ -82,6 +68,15 @@
 (declare-function helm-get-default-action "ext:helm-core")
 
 (defvar helm-selection-point)
+
+(declare-function tar-flag-deleted "tar")
+(declare-function tar-unflag "tar")
+(declare-function tar-extract-other-window "tar")
+(declare-function tar-expunge "tar")
+(declare-function outline-invisible-in-p "hyperbole")
+(declare-function hyrolo-edit-entry "hyrolo")
+(declare-function Custom-newline "cus-edit")
+(declare-function Custom-buffer-done "cus-edit")
 
 ;;; ************************************************************************
 ;;; Public variables

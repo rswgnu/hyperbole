@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    18-Sep-91 at 02:57:09
-;; Last-Mod:     27-Sep-23 at 22:35:06 by Mats Lidell
+;; Last-Mod:      3-Oct-23 at 23:19:51 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -21,7 +21,10 @@
 
 (eval-and-compile (mapc #'require '(hhist set)))
 
-;;; FIXME: Circular dependencies
+;;; ************************************************************************
+;;; Public declarations
+;;; ************************************************************************
+
 (declare-function hattr:get "hypb")
 (declare-function hattr:list "hypb")
 (declare-function hattr:set "hypb")

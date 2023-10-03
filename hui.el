@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 21:42:03
-;; Last-Mod:      3-Oct-23 at 15:52:09 by Mats Lidell
+;; Last-Mod:      3-Oct-23 at 23:02:02 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -15,32 +15,6 @@
 ;;; Commentary:
 
 ;;; Code:
-
-;;; FIXME: Circular dependencies -- BEGIN
-
-;; Move private vars to top before first use
-
-;;; ************************************************************************
-;;; Private variables
-;;; ************************************************************************
-
-(defvar hui:ebut-label-prev nil
-  "String value of previous button name during an explicit button rename.
-At other times, value must be nil.")
-
-(defvar hui:ignore-buffers-regexp "\\`\\( \\|BLANK\\'\\|\\*Pp \\|TAGS\\|*quelpa\\)"
-  "When prompting for a buffer name, ignore any buffers whose names match to this.")
-
-(defvar hyperbole-mode-map) ; "hyperbole.el"
-
-(declare-function kcell-view:idstamp "kotl/kview")
-(declare-function bookmark-bmenu-bookmark "bookmark")
-(declare-function hui:menu-choose "hui-mini")
-(declare-function kcell-view:absolute-reference "kotl/kview")
-(declare-function klink:absolute "kotl/klink")
-
-;;; FIXME: Circular dependencies -- END
-
 ;;; ************************************************************************
 ;;; Other required Elisp libraries
 ;;; ************************************************************************
@@ -55,8 +29,16 @@ At other times, value must be nil.")
 ;;; Public declarations
 ;;; ************************************************************************
 
+(defvar hyperbole-mode-map)             ; "hyperbole.el"
+
 (declare-function texinfo-copy-node-name "texnfo-upd")
 (declare-function kotl-mode:copy-region-as-kill "kotl-mode")
+
+(declare-function kcell-view:idstamp "kotl/kview")
+(declare-function bookmark-bmenu-bookmark "bookmark")
+(declare-function hui:menu-choose "hui-mini")
+(declare-function kcell-view:absolute-reference "kotl/kview")
+(declare-function klink:absolute "kotl/klink")
 
 ;;; ************************************************************************
 ;;; Public variables
@@ -71,6 +53,17 @@ At other times, value must be nil.")
   "*Non-nil prompts for a button-specific action on explicit button creation."
   :type 'boolean
   :group 'hyperbole-buttons)
+
+;;; ************************************************************************
+;;; Private variables
+;;; ************************************************************************
+
+(defvar hui:ebut-label-prev nil
+  "String value of previous button name during an explicit button rename.
+At other times, value must be nil.")
+
+(defvar hui:ignore-buffers-regexp "\\`\\( \\|BLANK\\'\\|\\*Pp \\|TAGS\\|*quelpa\\)"
+  "When prompting for a buffer name, ignore any buffers whose names match to this.")
 
 ;;; ************************************************************************
 ;;; Public Commands Bound to Keys

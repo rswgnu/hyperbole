@@ -4,7 +4,7 @@
 ;; Maintainer:   Bob Weiner, Mats Lidell
 ;;
 ;; Orig-Date:     1-Jan-94
-;; Last-Mod:      3-Oct-23 at 15:52:20 by Mats Lidell
+;; Last-Mod:      3-Oct-23 at 23:31:30 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -16,15 +16,6 @@
 ;;; Commentary:
 
 ;;; Code:
-
-;;; FIXME: Circular dependencies -- BEGIN
-
-(declare-function hpath:substitute-value "hpath")
-(declare-function id-info-item "hversion") ;; Forward declared - rearrange order will fix this
-(declare-function br-in-browser "hpath")
-
-;;; FIXME: Circular dependencies -- END
-
 ;;; ************************************************************************
 ;;; Other required Elisp libraries
 ;;; ************************************************************************
@@ -32,11 +23,19 @@
 (require 'hload-path)
 
 ;;; ************************************************************************
+;;; Public declarations
+;;; ************************************************************************
+
+(declare-function br-to-view-window "ext:br")
+(declare-function hpath:substitute-value "hpath")
+(declare-function id-info-item "hversion")
+(declare-function br-in-browser "hpath")
+
+;;; ************************************************************************
 ;;; Public variables
 ;;; ************************************************************************
 
 (defconst hyperb:version "8.0.1pre" "GNU Hyperbole revision number.")
-
 
 (defvar hyperb:mouse-buttons
   (if (or (and hyperb:microsoft-os-p (not (memq window-system '(w32 w64 x))))
@@ -51,11 +50,6 @@ your specific mouse.")
       automount-dir-prefix
     "^/tmp_mnt/"
     "Regexp to match any automounter prefix in a pathname."))
-
-;;; ************************************************************************
-;;; Public declarations
-;;; ************************************************************************
-(declare-function br-to-view-window "ext:br")
 
 ;;; ************************************************************************
 ;;; Support functions

@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    15-Nov-93 at 11:57:05
-;; Last-Mod:     27-Sep-23 at 21:12:26 by Mats Lidell
+;; Last-Mod:      3-Oct-23 at 22:42:02 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -21,8 +21,6 @@
 
 (require 'kfile)
 (require 'hyrolo)
-
-;;; FIXME: Circular dependencies
 (require 'klabel)
 
 ;;; ************************************************************************

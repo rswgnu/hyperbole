@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     9-Mar-94 at 23:37:28
-;; Last-Mod:     28-Sep-23 at 21:41:51 by Mats Lidell
+;; Last-Mod:      3-Oct-23 at 23:25:31 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -38,10 +38,11 @@
 ;;   `hui-menu-screen-commands'.
 
 ;;; Code:
+;;; ************************************************************************
+;;; Public declarations
+;;; ************************************************************************
 
-;;; FIXME: Circular dependencies -- BEGIN
-
-;; Move private vars to top before first use
+(declare-function hui-menu-cutoff-list "hui-menu")
 
 ;;; ************************************************************************
 ;;; Private variables
@@ -52,10 +53,6 @@
 
 (defvar hui-menu-of-buffers-cache nil
   "Last menu of `mode-name' ordered buffers from hui-menu-of-buffers or nil.")
-
-(declare-function hui-menu-cutoff-list "hui-menu")
-
-;;; FIXME: Circular dependencies -- END
 
 ;;; ************************************************************************
 ;;; Public functions
@@ -344,11 +341,6 @@ frame.  The current buffer is buried in the old frame's buffer list."
 	(server-save-buffers-kill-terminal nil)
 	(if (buffer-live-p buf) (kill-buffer buf))
 	t)))
-
-
-;;; ************************************************************************
-;;; Public variables
-;;; ************************************************************************
 
 (provide 'hui-jmenu)
 

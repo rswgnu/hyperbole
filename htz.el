@@ -3,7 +3,7 @@
 ;; Author:       Masanobu Umeda             / Bob Weiner
 ;;
 ;; Orig-Date:    14-Oct-91 at 07:22:08
-;; Last-Mod:     28-Sep-23 at 21:34:59 by Mats Lidell
+;; Last-Mod:      3-Oct-23 at 23:26:02 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -27,10 +27,18 @@
 ;; created by users in different timezones will sort by time properly.
 
 ;;; Code:
+;;; ************************************************************************
+;;; Other required Elisp libraries
+;;; ************************************************************************
 
-;;; FIXME: Circular dependencies -- BEGIN
+(require 'calendar)
+(require 'cal-julian)
 
-;; Move private vars to top before first use
+;;; ************************************************************************
+;;; Public declarations
+;;; ************************************************************************
+
+(declare-function hypb:call-process-p "hypb")
 
 ;;; ************************************************************************
 ;;; Private variables
@@ -88,17 +96,6 @@ Use `current-time-zone' instead where possible.")
     ("JUL" .  7)("AUG" .  8)("SEP" .  9)
     ("OCT" . 10)("NOV" . 11)("DEC" . 12))
   "Alist of first three letters of a month and its numerical representation.")
-
-(declare-function hypb:call-process-p "hypb")
-
-;;; FIXME: Circular dependencies -- END
-
-;;; ************************************************************************
-;;; Other required Elisp libraries
-;;; ************************************************************************
-
-(require 'calendar)
-(require 'cal-julian)
 
 ;;; ************************************************************************
 ;;; Public functions

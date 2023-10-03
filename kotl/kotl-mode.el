@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    6/30/93
-;; Last-Mod:     27-Sep-23 at 21:34:26 by Mats Lidell
+;; Last-Mod:      3-Oct-23 at 22:41:32 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -15,16 +15,11 @@
 ;;; Commentary:
 
 ;;; Code:
-
-;;; FIXME: Circular dependencies
-(declare-function outline-invisible-in-p "hyperbole")
-(require 'klabel)
-
 ;;; ************************************************************************
 ;;; Other required Lisp Libraries
 ;;; ************************************************************************
 
-(eval-and-compile (mapc #'require '(cl-lib delsel hsettings hmail hypb kfile
+(eval-and-compile (mapc #'require '(cl-lib delsel hsettings hmail hypb kfile klabel
 				    kvspec kcell outline org org-table kotl-orgtbl)))
 
 ;;; ************************************************************************
@@ -34,6 +29,8 @@
 (defvar cmpl-last-insert-location)
 (defvar cmpl-original-string)
 (defvar completion-to-accept)
+
+(declare-function outline-invisible-in-p "hyperbole")
 
 ;;; ************************************************************************
 ;;; Public variables

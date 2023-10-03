@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Nov-17
-;; Last-Mod:     28-Sep-23 at 22:17:42 by Mats Lidell
+;; Last-Mod:      3-Oct-23 at 23:01:16 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -26,20 +26,6 @@
 	       (package-installed-p 'treemacs)
 	       (package-activate 'treemacs)))
 
-;;; FIXME: Circular dependencies -- BEGIN
-
-(defvar assist-flag) "hmouse-drv.el"
-(defvar action-key-eol-function) "hmouse-drv.el"
-(defvar assist-key-eol-function) "hmouse-drv.el"
-(defvar action-key-depress-window) "hmouse-drv.el"
-
-(declare-function first-line-p "hui-mouse")
-(declare-function last-line-p "hui-mouse")
-(declare-function hact "hact")
-(declare-function package-activate "package")
-
-;;; FIXME: Circular dependencies -- END
-
 (require 'treemacs)
 
 (defvar treemacs-version)
@@ -59,6 +45,16 @@
 (declare-function treemacs-quit "ext:treemacs-core-utils")
 (declare-function treemacs-toggle-node "ext:treemacs-interface")
 (defvar aw-ignored-buffers)
+
+(defvar assist-flag)                    ; "hmouse-drv.el"
+(defvar action-key-eol-function)        ; "hmouse-drv.el"
+(defvar assist-key-eol-function)        ; "hmouse-drv.el"
+(defvar action-key-depress-window)      ; "hmouse-drv.el"
+
+(declare-function first-line-p "hui-mouse")
+(declare-function last-line-p "hui-mouse")
+(declare-function hact "hact")
+(declare-function package-activate "package")
 
 ;;; ************************************************************************
 ;;; smart-treemacs functions

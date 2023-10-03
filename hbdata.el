@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     2-Apr-91
-;; Last-Mod:     28-Sep-23 at 00:05:15 by Mats Lidell
+;; Last-Mod:      3-Oct-23 at 22:48:03 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -48,10 +48,21 @@
 ;;  source files within it.
 
 ;;; Code:
+;;; ************************************************************************
+;;; Other required Elisp libraries
+;;; ************************************************************************
 
-;;; FIXME: Circular dependencies -- BEGIN
+(require 'hversion)                     ; For `hyperb:microsoft-os-p'
+(require 'hbmap)
+(require 'hgnus)
 
-(defvar hbut:instance-sep) ;; defconst in hbut
+;;; ************************************************************************
+;;; Public declarations
+;;; ************************************************************************
+
+(defvar hyperb:user-email)              ; Set by `hyperb:init'.
+
+(defvar hbut:instance-sep)              ; defconst in hbut
 (defvar hattr:filename)
 
 (declare-function ibut:label-key-match "hbut")
@@ -63,22 +74,6 @@
 (declare-function hattr:get "hbut")
 (declare-function hattr:copy "hbut")
 (declare-function ebut:label-to-key "hbut")
-
-;;; FIXME: Circular dependencies -- END
-
-;;; ************************************************************************
-;;; Other required Elisp libraries
-;;; ************************************************************************
-
-(require 'hversion) ;; For `hyperb:microsoft-os-p'
-(require 'hbmap)
-(require 'hgnus)
-
-;;; ************************************************************************
-;;; Public declarations
-;;; ************************************************************************
-
-(defvar hyperb:user-email) ;; Set by `hyperb:init'.
 
 ;; Functions from abstract mail and news interface. See "hmail.el"
 (declare-function lmail:to nil)

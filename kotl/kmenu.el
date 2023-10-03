@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    28-Mar-94 at 11:22:09
-;; Last-Mod:     27-Sep-23 at 21:38:49 by Mats Lidell
+;; Last-Mod:      3-Oct-23 at 16:43:12 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -15,16 +15,17 @@
 ;;; Commentary:
 
 ;;; Code:
-
-;;; FIXME: Circular dependencies
-(defvar kotl-mode-map)
-;; (require 'kotl-mode)
-
 ;;; ************************************************************************
 ;;; Other required Elisp libraries
 ;;; ************************************************************************
 
 (require 'easymenu)
+
+;;; ************************************************************************
+;;; Public declarations
+;;; ************************************************************************
+
+(defvar kotl-mode-map)
 
 ;;; ************************************************************************
 ;;; Public variables

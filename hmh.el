@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-May-91 at 17:06:36
-;; Last-Mod:     28-Sep-23 at 00:34:11 by Mats Lidell
+;; Last-Mod:      3-Oct-23 at 22:18:35 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -29,19 +29,18 @@
 ;;
 
 ;;; Code:
-
-;;; FIXME: Circular dependencies -- BEGIN
-
-(declare-function hypb:window-list "hypb")
-
-;;; FIXME: Circular dependencies -- END
-
 ;;; ************************************************************************
 ;;; Other required Elisp libraries
 ;;; ************************************************************************
 
 (eval-and-compile (mapc #'require '(hload-path hmail mh-e)))
 (load "hsmail")
+
+;;; ************************************************************************
+;;; Public declarations
+;;; ************************************************************************
+
+(declare-function hypb:window-list "hypb")
 
 ;;; ************************************************************************
 ;;; Public functions

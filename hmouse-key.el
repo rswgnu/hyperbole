@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    30-May-94 at 00:11:57
-;; Last-Mod:      3-Oct-23 at 15:51:06 by Mats Lidell
+;; Last-Mod:      3-Oct-23 at 17:10:05 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -25,12 +25,23 @@
 ;;   `hmouse-install' has been called.
 
 ;;; Code:
+;;; ************************************************************************
+;;; Other required Elisp libraries
+;;; ************************************************************************
 
-;;; FIXME: Circular dependencies -- BEGIN
+(eval-when-compile (mapc #'require '(hsettings hmouse-drv hmouse-sh)))
 
-(defvar hyperbole-mode-map) ;; "hyperbole.el"
+;;; ************************************************************************
+;;; Private declarations
+;;; ************************************************************************
 
-;; Move private vars to top before first use
+(defvar hyperbole-mode-map)             ; "hyperbole.el"
+
+(declare-function hkey-initialize "hbut")
+(declare-function hmouse-get-bindings "hmouse-sh")
+(declare-function hmouse-unshifted-setup "hmouse-sh")
+(declare-function hmouse-shifted-setup "hmouse-sh")
+(declare-function hkey-set-key "hyperbole")
 
 ;;; ************************************************************************
 ;;; Private variables
@@ -44,21 +55,6 @@
 
 (defvar hmouse-previous-bindings nil
   "List of prior (key . binding) pairs for mouse keys rebound by Hyperbole.")
-
-
-(declare-function hkey-initialize "hbut")
-(declare-function hmouse-get-bindings "hmouse-sh")
-(declare-function hmouse-unshifted-setup "hmouse-sh")
-(declare-function hmouse-shifted-setup "hmouse-sh")
-(declare-function hkey-set-key "hyperbole")
-
-;;; FIXME: Circular dependencies -- END
-
-;;; ************************************************************************
-;;; Other required Elisp libraries
-;;; ************************************************************************
-
-(eval-when-compile (mapc #'require '(hsettings hmouse-drv hmouse-sh)))
 
 ;;; ************************************************************************
 ;;; Public functions

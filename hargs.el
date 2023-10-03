@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    31-Oct-91 at 23:17:35
-;; Last-Mod:      3-Oct-23 at 15:48:01 by Mats Lidell
+;; Last-Mod:      3-Oct-23 at 23:28:59 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -24,37 +24,6 @@
 ;;   types are also provided, see `hargs:iforms-extensions' for details.
 
 ;;; Code:
-
-;;; FIXME: Circular dependencies -- BEGIN
-
-;; Move local variables up before first use
-
-;;; ************************************************************************
-;;; Private variables
-;;; ************************************************************************
-
-(defvar hargs:reading-symbol nil
-  "Remember what symbol is being read.")
-
-(defvar hargs:string-to-complete nil
-  "Minibuffer content the last time a completions buffer was generated, or nil.")
-
-;; Declare package internal functions
-(declare-function ebut:label-p "hbut")
-(declare-function gbut:file "hbut")
-(declare-function hattr:get "hbut")
-(declare-function hbut:label-p "hbut")
-(declare-function hbut:label-to-key "hbut")
-(declare-function hmail:reader-p "hmail")
-(declare-function hui:menu-enter "hui")
-(declare-function ibut:label-p "hbut")
-(declare-function kbd-key:normalize "hib-kbd")
-(declare-function kcell-view:label "kview")
-(declare-function kcell-view:reference "kview")
-(declare-function rmail:msg-id-get "hmail")
-
-;;; FIXME: Circular dependencies -- END
-
 ;;; ************************************************************************
 ;;; Other required Elisp libraries
 ;;; ************************************************************************
@@ -65,19 +34,6 @@
 (require 'set)
 (require 'info)
 (require 'hmouse-drv)
-
-;;; ************************************************************************
-;;; Public variables
-;;; ************************************************************************
-
-(defvar hargs:defaults nil
-  "Default arguments read from an existing Hyperbole button when editing it.")
-
-(defvar hargs:reading-type nil
-  "Symbol representing the type of object Hyperbole is prompting the user to input.")
-
-(add-hook 'completion-setup-hook #'hargs:set-string-to-complete)
-(add-hook 'minibuffer-exit-hook  #'hargs:unset-string-to-complete)
 
 ;;; ************************************************************************
 ;;; Public declarations
@@ -93,6 +49,42 @@
 (declare-function vertico-insert "ext:vertico")
 (declare-function vertico-mouse--index "ext:vertico")
 (declare-function vertico--match-p "ext:vertico")
+
+(declare-function ebut:label-p "hbut")
+(declare-function gbut:file "hbut")
+(declare-function hattr:get "hbut")
+(declare-function hbut:label-p "hbut")
+(declare-function hbut:label-to-key "hbut")
+(declare-function hmail:reader-p "hmail")
+(declare-function hui:menu-enter "hui")
+(declare-function ibut:label-p "hbut")
+(declare-function kbd-key:normalize "hib-kbd")
+(declare-function kcell-view:label "kview")
+(declare-function kcell-view:reference "kview")
+(declare-function rmail:msg-id-get "hmail")
+
+;;; ************************************************************************
+;;; Public variables
+;;; ************************************************************************
+
+(defvar hargs:defaults nil
+  "Default arguments read from an existing Hyperbole button when editing it.")
+
+(defvar hargs:reading-type nil
+  "Symbol representing the type of object Hyperbole is prompting the user to input.")
+
+(add-hook 'completion-setup-hook #'hargs:set-string-to-complete)
+(add-hook 'minibuffer-exit-hook  #'hargs:unset-string-to-complete)
+
+;;; ************************************************************************
+;;; Private variables
+;;; ************************************************************************
+
+(defvar hargs:reading-symbol nil
+  "Remember what symbol is being read.")
+
+(defvar hargs:string-to-complete nil
+  "Minibuffer content the last time a completions buffer was generated, or nil.")
 
 ;;; ************************************************************************
 ;;; Private functions
@@ -272,8 +264,6 @@ two variables `prompt' and `default'."
 		 iform-alist)
        ,vecsym)))
 
-;;; FIXME: Circular dependencies
-;; Define this after hargs:make-iform-vector macro but before first use.
 (defconst hargs:iform-extensions-vector
   (hargs:make-iform-vector
    ;; Get existing Info node name, possibly prefixed with its (filename).
@@ -425,7 +415,6 @@ two variables `prompt' and `default'."
    ;; Get Lisp expression and evaluate.
    (?X . (sexpression . (eval-minibuffer prompt default))))
   "Vector of forms for each interactive command character code.")
-;;; FIXME: Circular dependencies -- END
 
 (defun hargs:get (interactive-entry &optional default prior-arg)
   "Prompt for an argument, if need be, from INTERACTIVE-ENTRY, a string.

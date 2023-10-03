@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    24-Apr-91 at 03:36:23
-;; Last-Mod:     28-Sep-23 at 00:25:08 by Mats Lidell
+;; Last-Mod:      3-Oct-23 at 17:05:19 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -22,10 +22,6 @@
 ;;   Frames which have been deleted are not restored.
 
 ;;; Code:
-
-;;; FIXME: Circular dependencies -- BEGIN
-;; Move before use
-
 ;;; ************************************************************************
 ;;; Private variables
 ;;; ************************************************************************
@@ -33,8 +29,6 @@
 (defconst *hhist* nil
   "List of previously visited Hyperbole button source locations.
 Car of list is most recent.")
-
-;;; FIXME: Circular dependencies -- END
 
 ;;; ************************************************************************
 ;;; Public functions

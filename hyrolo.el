@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     7-Jun-89 at 22:08:29
-;; Last-Mod:     28-Sep-23 at 23:53:51 by Mats Lidell
+;; Last-Mod:      3-Oct-23 at 17:20:51 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -23,10 +23,85 @@
 ;;  See the Info manual entry "(hyperbole)HyRolo" for usage information.
 
 ;;; Code:
+;;; ************************************************************************
+;;; Other required Elisp libraries
+;;; ************************************************************************
 
-;;; FIXME: Circular dependencies -- BEGIN
+(require 'custom) ;; For 'defface'.
+(require 'hversion)
+(require 'hmail)
+(require 'hypb)  ;; For 'hypb:mail-address-regexp'.
+(require 'package)
+(require 'set)
+(require 'sort)
+(require 'xml)
+(declare-function kotl-mode:to-valid-position "kotl/kotl-mode")
 
-;; Forward declare for now before moving to top
+;; Quiet byte compiler warnings for these free variables.
+(eval-when-compile
+  (unless (require 'bbdb nil t)
+    (defvar bbdb-file nil))
+  (unless (require 'google-contacts nil t)
+    (defvar google-contacts-buffer-name nil))
+  (require 'kview nil t))
+
+;;; ************************************************************************
+;;; Public declarations
+;;; ************************************************************************
+
+(defvar consult-grep-args)
+(defvar consult-ripgrep-args)
+(defvar google-contacts-expire-time)
+(defvar google-contacts-history)
+(defvar google-contacts-query-string)
+(defvar helm-org-rifle-show-full-contents)
+(defvar helm-org-rifle-show-level-stars)
+(defvar hproperty:but-emphasize-flag)
+(defvar markdown-regex-header)
+(defvar org-roam-db-autosync-mode)
+(defvar org-roam-directory)
+(defvar plstore-cache-passphrase-for-symmetric-encryption)
+
+(declare-function consult-grep "ext:consult")
+(declare-function consult-ripgrep "ext:consult")
+(declare-function google-contacts  "ext:google-contacts")
+(declare-function google-contacts-add-margin-to-text "ext:google-contacts")
+(declare-function google-contacts-build-node-list "ext:google-contacts")
+(declare-function google-contacts-data  "ext:google-contacts")
+(declare-function google-contacts-make-buffer "ext:google-contacts")
+(declare-function google-contacts-margin-element "ext:google-contacts")
+(declare-function google-contacts-oauth-token "ext:google-contacts")
+(declare-function helm-org-rifle-files "ext:helm-org-rifle")
+(declare-function helm-org-rifle-org-directory "ext:helm-org-rifle")
+(declare-function helm-org-rifle-show-full-contents "ext:helm-org-rifle")
+(declare-function org-roam-db-autosync-mode "ext:org-roam")
+(declare-function xml-node-child-string "ext:google-contacts")
+(declare-function xml-node-get-attribute-type "ext:google-contacts")
+
+(declare-function find-library-name "find-func")
+(declare-function hbut:to-key-src "hbut")
+(declare-function hui:hbut-act "hui")
+(declare-function ibut:at-p "hbut")
+(declare-function kcell-view:indent "kotl/kview")
+(declare-function outline-back-to-heading "outline")
+(declare-function outline-backward-same-level "outline")
+(declare-function outline-end-of-subtree "outline")
+(declare-function outline-forward-same-level "outline")
+(declare-function outline-hide-sublevels "outline")
+(declare-function outline-hide-subtree "outline")
+(declare-function outline-level "outline")
+(declare-function outline-next-heading "outline")
+(declare-function outline-next-visible-heading "outline")
+(declare-function outline-previous-heading "outline")
+(declare-function outline-previous-visible-heading "outline")
+(declare-function outline-show-all "outline")
+(declare-function outline-up-heading "outline")
+
+(defvar org-directory)                  ; "org.el"
+(defvar markdown-regex-header)          ; "markdown-mode.el"
+(defvar google-contacts-buffer-name)    ; "ext:google-contacts.el"
+
+;; Forward declarations
 (defvar hyrolo--wconfig)
 (defvar hyrolo-entry-group-number)
 (defvar hyrolo-entry-trailing-space-group-number)
@@ -36,11 +111,10 @@
 (defvar hyrolo-mode-map)
 (defvar hyrolo-mode-syntax-table)
 
-(defvar org-directory) ; "org.el"
-(defvar markdown-regex-header) ; "markdown-mode.el"
-(defvar google-contacts-buffer-name) ; "ext:google-contacts.el"
+;;; ************************************************************************
+;;; Public variables
+;;; ************************************************************************
 
-; Aliases should be declared before its referent BEGIN
 (define-obsolete-variable-alias 'rolo-display-buffer 'hyrolo-display-buffer "06.00")
 (defvar hyrolo-display-buffer "*HyRolo*"
   "Buffer used to display set of last matching rolo entries.")
@@ -105,87 +179,6 @@ the whitespace following the entry hierarchy level.")
 		  ;; `hyrolo-add' handles removing # prefix from
 		  ;; trailing-space grouping below
 		  hyrolo-entry-trailing-space-group-number 4)))
-;; Aliases should be declared before its referent END
-
-(declare-function find-library-name "find-func")
-(declare-function hbut:to-key-src "hbut")
-(declare-function hui:hbut-act "hui")
-(declare-function ibut:at-p "hbut")
-(declare-function kcell-view:indent "kotl/kview")
-(declare-function outline-back-to-heading "outline")
-(declare-function outline-backward-same-level "outline")
-(declare-function outline-end-of-subtree "outline")
-(declare-function outline-forward-same-level "outline")
-(declare-function outline-hide-sublevels "outline")
-(declare-function outline-hide-subtree "outline")
-(declare-function outline-level "outline")
-(declare-function outline-next-heading "outline")
-(declare-function outline-next-visible-heading "outline")
-(declare-function outline-previous-heading "outline")
-(declare-function outline-previous-visible-heading "outline")
-(declare-function outline-show-all "outline")
-(declare-function outline-up-heading "outline")
-
-;;; FIXME: Circular dependencies -- END
-
-;;; ************************************************************************
-;;; Other required Elisp libraries
-;;; ************************************************************************
-
-(require 'custom) ;; For 'defface'.
-(require 'hversion)
-(require 'hmail)
-(require 'hypb)  ;; For 'hypb:mail-address-regexp'.
-(require 'package)
-(require 'set)
-(require 'sort)
-(require 'xml)
-(declare-function kotl-mode:to-valid-position "kotl/kotl-mode")
-
-;; Quiet byte compiler warnings for these free variables.
-(eval-when-compile
-  (unless (require 'bbdb nil t)
-    (defvar bbdb-file nil))
-  (unless (require 'google-contacts nil t)
-    (defvar google-contacts-buffer-name nil))
-  (require 'kview nil t))
-
-;;; ************************************************************************
-;;; Public declarations
-;;; ************************************************************************
-
-(defvar consult-grep-args)
-(defvar consult-ripgrep-args)
-(defvar google-contacts-expire-time)
-(defvar google-contacts-history)
-(defvar google-contacts-query-string)
-(defvar helm-org-rifle-show-full-contents)
-(defvar helm-org-rifle-show-level-stars)
-(defvar hproperty:but-emphasize-flag)
-(defvar markdown-regex-header)
-(defvar org-roam-db-autosync-mode)
-(defvar org-roam-directory)
-(defvar plstore-cache-passphrase-for-symmetric-encryption)
-
-(declare-function consult-grep "ext:consult")
-(declare-function consult-ripgrep "ext:consult")
-(declare-function google-contacts  "ext:google-contacts")
-(declare-function google-contacts-add-margin-to-text "ext:google-contacts")
-(declare-function google-contacts-build-node-list "ext:google-contacts")
-(declare-function google-contacts-data  "ext:google-contacts")
-(declare-function google-contacts-make-buffer "ext:google-contacts")
-(declare-function google-contacts-margin-element "ext:google-contacts")
-(declare-function google-contacts-oauth-token "ext:google-contacts")
-(declare-function helm-org-rifle-files "ext:helm-org-rifle")
-(declare-function helm-org-rifle-org-directory "ext:helm-org-rifle")
-(declare-function helm-org-rifle-show-full-contents "ext:helm-org-rifle")
-(declare-function org-roam-db-autosync-mode "ext:org-roam")
-(declare-function xml-node-child-string "ext:google-contacts")
-(declare-function xml-node-get-attribute-type "ext:google-contacts")
-
-;;; ************************************************************************
-;;; Public variables
-;;; ************************************************************************
 
 (defcustom hyrolo-date-format "%m/%d/%Y"
   "Format of date string used in Rolo automatic date stamps.

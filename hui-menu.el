@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    28-Oct-94 at 10:59:44
-;; Last-Mod:     28-Sep-23 at 21:44:27 by Mats Lidell
+;; Last-Mod:      3-Oct-23 at 23:29:46 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -15,10 +15,18 @@
 ;;; Commentary:
 
 ;;; Code:
+;;; ************************************************************************
+;;; Other required Elisp libraries
+;;; ************************************************************************
 
-;;; FIXME: Circular dependencies -- BEGIN
+(eval-and-compile (mapc #'require '(hpath hui-jmenu hyrolo-menu browse-url easymenu)))
 
-;; Move private vars to top before first use
+;;; ************************************************************************
+;;; Public declarations
+;;; ************************************************************************
+
+(declare-function gbut:label-list "hbut")
+(declare-function ebut:list "hbut")
 
 ;;; ************************************************************************
 ;;; Private variables
@@ -31,18 +39,6 @@
   "When non-nil (default), explicit button menu list is lexicographically ordered.
 Otherwise, explicit buttons are listed in their order of appearance within
 the current buffer.")
-
-(declare-function gbut:label-list "hbut")
-(declare-function ebut:list "hbut")
-
-;;; FIXME: Circular dependencies -- END
-
-;;; ************************************************************************
-;;; Other required Elisp libraries
-;;; ************************************************************************
-
-(eval-and-compile (mapc #'require '(hpath hui-jmenu hyrolo-menu browse-url easymenu)))
-
 
 ;;; ************************************************************************
 ;;; Private functions

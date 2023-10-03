@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     1-Jun-16 at 15:35:36
-;; Last-Mod:     28-Sep-23 at 21:37:52 by Mats Lidell
+;; Last-Mod:      3-Oct-23 at 17:46:53 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -120,16 +120,6 @@
 ;;   text face.
 
 ;;; Code:
-
-;;; FIXME: Circular dependencies -- BEGIN
-
-(defvar hyperbole-mode-map) ; "hyperbole.el"
-(defvar org-mode-map) ; "org.el"
-(defvar outline-mode-map) ; "outline.el"
-(defvar outline-minor-mode-map) ; "outline.el"
-
-;;; FIXME: Circular dependencies -- END
-
 ;;; ************************************************************************
 ;;; Other required Elisp libraries
 ;;; ************************************************************************
@@ -152,6 +142,11 @@
 (declare-function fm-next-frame "ext:framemove")
 
 (defvar frame-zoom-font-difference)
+
+(defvar hyperbole-mode-map)             ; "hyperbole.el"
+(defvar org-mode-map)                   ; "org.el"
+(defvar outline-mode-map)               ; "outline.el"
+(defvar outline-minor-mode-map)         ; "outline.el"
 
 ;;; ************************************************************************
 ;;; Public variables

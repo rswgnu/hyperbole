@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    10/18/2020
-;; Last-Mod:     27-Sep-23 at 21:52:17 by Mats Lidell
+;; Last-Mod:      3-Oct-23 at 22:24:23 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -46,19 +46,20 @@
 ;;  performs its normal table-based alignment and movement.
 
 ;;; Code:
-
-;;; FIXME: Circular dependencies
-(require 'hmouse-drv)
-;;(require 'kotl-mode)
-(declare-function kotl-mode:next-line "kotl-mode")
-(declare-function kotl-mode:transpose-lines "kotl-mode")
-(declare-function kotl-mode:tab-command "kotl-mode")
-
 ;;; ************************************************************************
 ;;; Other required Elisp libraries
 ;;; ************************************************************************
 
 (require 'org-table)
+(require 'hmouse-drv)
+
+;;; ************************************************************************
+;;; Public declarations
+;;; ************************************************************************
+
+(declare-function kotl-mode:next-line "kotl-mode")
+(declare-function kotl-mode:transpose-lines "kotl-mode")
+(declare-function kotl-mode:tab-command "kotl-mode")
 
 ;;; ************************************************************************
 ;;; Public variables

@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    6/30/93
-;; Last-Mod:     27-Sep-23 at 22:50:39 by Mats Lidell
+;; Last-Mod:      3-Oct-23 at 22:38:35 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -15,23 +15,18 @@
 ;;; Commentary:
 
 ;;; Code:
-
-;;; FIXME: Circular dependencies
-(require 'kproperty)
-(defvar kotl-mode:refill-flag)
-
 ;;; ************************************************************************
 ;;; Other required Lisp Libraries
 ;;; ************************************************************************
 
-(eval-and-compile (mapc #'require '(hact kfill klink)))
-;; Quiet byte compiler warnings for this free variable.
+(eval-and-compile (mapc #'require '(hact kfill klink kproperty outline)))
 
-(define-obsolete-variable-alias 'label-sep-len 'kview-label-sep-len "8.0.1")
-(defvar kview-label-sep-len nil
-  "Length of the separation between cell's label and start of its contents.")
+;;; ************************************************************************
+;;; Public declarations
+;;; ************************************************************************
 
-;;; FIXME: Circular dependencies
+(defvar kotl-mode:refill-flag)
+
 (declare-function klabel:format "klabel.el")
 (declare-function klabel:idstamp-p "klabel.el")
 (declare-function kcell:create-top "kcell")
@@ -55,18 +50,16 @@
 (declare-function kotl-mode:tree-end "kotl-mode")
 (declare-function kvspec:show-lines-this-cell "kvspec")
 (declare-function kvspec:update "kvspec")
-;;(declare-function outline-flag-region "")
-(require 'outline)
 
 ;;; ************************************************************************
 ;;; Public variables
 ;;; ************************************************************************
 
-;;; FIXME: Circular dependencies
-;;(defvar-local kview nil "Buffer local kview object.")
-(defvar kview)
+(define-obsolete-variable-alias 'label-sep-len 'kview-label-sep-len "8.0.1")
+(defvar kview-label-sep-len nil
+  "Length of the separation between cell's label and start of its contents.")
 
-(set-default 'kview nil)
+(defvar-local kview nil "Buffer local kview object.")
 
 (defcustom kview:default-blank-lines t
   "*Default setting of whether to show blank lines between koutline cells.
