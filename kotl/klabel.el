@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    17-Apr-94
-;; Last-Mod:      3-Oct-23 at 22:32:09 by Mats Lidell
+;; Last-Mod:      4-Oct-23 at 19:13:00 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -41,7 +41,7 @@
 
 (defun klabel:child (label)
   "Return LABEL's child cell label."
-  (funcall (kview:get-attr kview 'label-child) label))
+  (funcall (kview:get-attr kotl-kview 'label-child) label))
 
 (defun klabel:idstamp-p (label)
   "Return t if LABEL is an idstamp label, else nil."
@@ -52,12 +52,12 @@
 
 (defun klabel:increment (label)
   "Return LABEL's sibling label."
-  (funcall (kview:get-attr kview 'label-increment) label))
+  (funcall (kview:get-attr kotl-kview 'label-increment) label))
 
 (defun klabel:format (label)
   "Format a generic cell LABEL (a string) and return the display type.
 Return the proper display type for the current kview."
-  (let ((label-type (or (kview:get-attr kview 'label-type) kview:default-label-type)))
+  (let ((label-type (or (kview:get-attr kotl-kview 'label-type) kview:default-label-type)))
     (cond ((memq label-type '(alpha id legal partial-alpha))
 	   label)
 	  ((eq label-type 'no) "")
@@ -67,7 +67,7 @@ Return the proper display type for the current kview."
 
 (defun klabel:level (label)
   "Return outline level of LABEL using current kview label type."
-  (let ((label-type (kview:label-type kview)))
+  (let ((label-type (kview:label-type kotl-kview)))
     (cond ((memq label-type '(alpha legal))
 	   (funcall (intern-soft (concat "klabel:level-"
 					 (symbol-name label-type)))
@@ -81,7 +81,7 @@ Return the proper display type for the current kview."
 
 (defun klabel:parent (label)
   "Return LABEL's parent label."
-  (funcall (kview:get-attr kview 'label-parent) label))
+  (funcall (kview:get-attr kotl-kview 'label-parent) label))
 
 ;;;
 ;;; klabel-type - kview-specific label type functions
@@ -96,7 +96,7 @@ Return the proper display type for the current kview."
 	((eq label-type 'star)
 	 (lambda (label) (concat label "*")))
 	((eq label-type 'id)
-	 (lambda (_label) (format "0%s" (or (kview:id-counter kview) ""))))
+	 (lambda (_label) (format "0%s" (or (kview:id-counter kotl-kview) ""))))
 	(t (error
 	    "(klabel-type:child): Invalid label type setting: `%s'"
 	    label-type))))
@@ -113,7 +113,7 @@ is computed."
 	((eq label-type 'star)
 	 (lambda (label) (if (string-equal label "0") "*" label)))
 	((eq label-type 'id)
-	 (lambda (_label) (format "0%s" (or (kview:id-increment kview) ""))))
+	 (lambda (_label) (format "0%s" (or (kview:id-increment kotl-kview) ""))))
 	(t (error
 	    "(klabel:increment): Invalid label type setting: `%s'" label-type))))
 
@@ -276,7 +276,7 @@ Function signature is: (func prev-label &optional child-p), where
 prev-label is the display label of the cell preceding the current
 one and child-p is non-nil if cell is to be the child of the
 preceding cell."
-  (or label-type (setq label-type (kview:label-type kview)))
+  (or label-type (setq label-type (kview:label-type kotl-kview)))
   (cond ((eq label-type 'no)
 	 (lambda (_prev-label &optional _child-p)
 	   ""))
@@ -377,7 +377,7 @@ and the start of its contents."
       (if (and (not current-tree-only)
 	       (kcell-view:next nil lbl-sep-len)
 	       (< (abs (- (kcell-view:indent nil lbl-sep-len) current-indent))
-		  (kview:level-indent kview)))
+		  (kview:level-indent kotl-kview)))
 	  (setq suffix-val (1+ suffix-val)
 		label-suffix (funcall suffix-function suffix-val)
 		current-cell-label (concat label-prefix label-suffix))
@@ -422,7 +422,7 @@ and the start of its contents."
       (if (and (not current-tree-only)
 	       (kcell-view:next nil lbl-sep-len)
 	       (< (abs (- (kcell-view:indent nil lbl-sep-len) current-indent))
-		  (kview:level-indent kview)))
+		  (kview:level-indent kotl-kview)))
 	  (setq suffix-val (1+ suffix-val)
 		label-suffix (int-to-string suffix-val)
 		current-cell-label (concat label-prefix label-suffix))
@@ -472,7 +472,7 @@ and the start of its contents."
       (if (and (not current-tree-only)
 	       (kcell-view:next nil lbl-sep-len)
 	       (< (abs (- (kcell-view:indent nil lbl-sep-len) current-indent))
-		  (kview:level-indent kview)))
+		  (kview:level-indent kotl-kview)))
 	  (setq suffix-val (1+ suffix-val)
 		label-suffix (funcall suffix-function suffix-val)
 		current-cell-label label-suffix)
@@ -497,7 +497,7 @@ and the start of its contents."
   "Update the labels of current cell, its following siblings and their subtrees.
 CURRENT-CELL-LABEL is the label to display for the current cell.
 If, however, it is \"0\", then all cell labels are updated."
-  (let ((label-type (kview:label-type kview)))
+  (let ((label-type (kview:label-type kotl-kview)))
     (when (memq label-type '(alpha legal partial-alpha))
       (if (string-equal current-cell-label "0")
 	  ;; Update all cells in view.
@@ -510,14 +510,14 @@ If, however, it is \"0\", then all cell labels are updated."
   "Update the labels of current cell and its subtree.
 CURRENT-CELL-LABEL is the label to display for the current cell.
 Use `(klabel-type:update-labels \"0\")' to update all cells in an outline."
-  (let ((label-type (kview:label-type kview))
-	(lbl-sep-len (kview:label-separator-length kview)))
+  (let ((label-type (kview:label-type kotl-kview))
+	(lbl-sep-len (kview:label-separator-length kotl-kview)))
     (save-excursion
       (funcall (intern-soft (concat "klabel-type:set-"
 				    (symbol-name label-type)))
 	       first-label lbl-sep-len
 	       (kcell-view:indent nil lbl-sep-len)
-	       (kview:level-indent kview)
+	       (kview:level-indent kotl-kview)
 	       ;; Update current tree only.
 	       t))))
 
@@ -638,7 +638,7 @@ Return NEW-LABEL string."
 	(buffer-read-only)
 	(thru-label (- (kcell-view:indent nil lbl-sep-len)
 		       (or lbl-sep-len
-			   (kview:label-separator-length kview)))))
+			   (kview:label-separator-length kotl-kview)))))
     (save-excursion
       (kcell-view:to-label-end)
       ;; delete backwards thru label
@@ -656,13 +656,13 @@ For example, the full label \"1a2\" has kotl-label \"2\", as does \"1.1.2\"."
     (error "(klabel:to-kotl-label): Invalid label, `%s'" label)))
 
 (defun klabel-type:update-labels-from-point (label-type first-label)
-  (let ((lbl-sep-len (kview:label-separator-length kview)))
+  (let ((lbl-sep-len (kview:label-separator-length kotl-kview)))
     (save-excursion
       (funcall (intern-soft (concat "klabel-type:set-"
 				    (symbol-name label-type)))
 	       first-label lbl-sep-len
 	       (kcell-view:indent nil lbl-sep-len)
-	       (kview:level-indent kview)))))
+	       (kview:level-indent kotl-kview)))))
 
 (provide 'klabel)
 

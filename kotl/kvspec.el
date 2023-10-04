@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Oct-95 at 15:17:07
-;; Last-Mod:      3-Oct-23 at 22:28:21 by Mats Lidell
+;; Last-Mod:      4-Oct-23 at 19:10:12 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -141,18 +141,18 @@ display all levels of cells."
        (if (kcell-view:next t)
 	   (kcell-view:previous)
 	 (goto-char (point-max)))))
-   kview t)
-  (kview:set-attr kview 'levels-to-show levels-to-keep))
+   kotl-kview t)
+  (kview:set-attr kotl-kview 'levels-to-show levels-to-keep))
 
 (defun kvspec:show-lines-per-cell (num)
   "Show NUM lines per visible cell; 0 means show all lines in each visible cell."
   (if (or (not (integerp num)) (< num 0))
       (error "(kvspec:show-lines-per-cell): Invalid lines per cell, `%d'" num))
-  (kview:set-attr kview 'lines-to-show num)
+  (kview:set-attr kotl-kview 'lines-to-show num)
   ;; Now show NUM lines in cells.
   (kview:map-tree (lambda (_kview)
 		    (kcell-view:expand (point))
-		    (kvspec:show-lines-this-cell num)) kview t t))
+		    (kvspec:show-lines-this-cell num)) kotl-kview t t))
 
 (defun kvspec:toggle-blank-lines ()
   "Toggle blank lines between cells on or off."
@@ -198,10 +198,10 @@ view specs."
 	(buffer-read-only))
       (if (string-match "b" kvspec:current)
 	  ;; On
-	  (progn (kview:set-attr kview 'blank-lines t)
+	  (progn (kview:set-attr kotl-kview 'blank-lines t)
 		 (kproperty:remove (point-min) (point-max) '(invisible t)))
 	;; Off
-	(kview:set-attr kview 'blank-lines nil)
+	(kview:set-attr kotl-kview 'blank-lines nil)
 	(save-excursion
 	  (goto-char (point-max))
 	  (while (re-search-backward "[\n\r][\n\r]" nil t)
@@ -220,10 +220,10 @@ view specs."
    ;; it off when he resets the view specs.
 
    ;; b - blank separator lines
-   (if (kview:get-attr kview 'blank-lines) "b")
+   (if (kview:get-attr kotl-kview 'blank-lines) "b")
 
    ;; c - cutoff lines per cell
-   (let ((lines (kview:get-attr kview 'lines-to-show)))
+   (let ((lines (kview:get-attr kotl-kview 'lines-to-show)))
      (if (zerop lines)
 	 nil
        (concat "c" (int-to-string lines))))
@@ -232,17 +232,17 @@ view specs."
    (if selective-display-ellipses "e")
 
    ;; l - hide some levels
-   (let ((levels (kview:get-attr kview 'levels-to-show)))
+   (let ((levels (kview:get-attr kotl-kview 'levels-to-show)))
      (if (zerop levels)
 	 nil
        (concat "l" (int-to-string levels))))
 
    ;; n - numbering type
-   (let ((type (kview:label-type kview)))
+   (let ((type (kview:label-type kotl-kview)))
      (cond ((eq type 'no) nil)
 	   ((eq type kview:default-label-type) "n")
 	   (t (concat "n" (char-to-string
-			   (car (rassq (kview:label-type kview)
+			   (car (rassq (kview:label-type kotl-kview)
 				       kvspec:label-type-alist)))))))))
 
 (defun kvspec:elide ()
@@ -285,7 +285,7 @@ view specs."
 	  (setq spec (string-to-char (match-string 1 kvspec:current))
 		type (cdr (assq spec kvspec:label-type-alist)))
 	(setq type kview:default-label-type))
-      (kview:set-label-type kview type))))
+      (kview:set-label-type kotl-kview type))))
 
 (defun kvspec:show-lines-this-cell (num)
   "Assume current cell is fully expanded and collapse to show NUM lines within it.

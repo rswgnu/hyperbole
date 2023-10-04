@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    6/30/93
-;; Last-Mod:      3-Oct-23 at 22:38:35 by Mats Lidell
+;; Last-Mod:      4-Oct-23 at 19:14:00 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -59,7 +59,7 @@
 (defvar kview-label-sep-len nil
   "Length of the separation between cell's label and start of its contents.")
 
-(defvar-local kview nil "Buffer local kview object.")
+(defvar-local kotl-kview nil "Buffer local kview object.")
 
 (defcustom kview:default-blank-lines t
   "*Default setting of whether to show blank lines between koutline cells.
@@ -126,7 +126,7 @@ Default value is 3."
 With optional VISIBLE-P, consider only visible cells.
 Return t unless no such cell."
   (or lbl-sep-len (setq lbl-sep-len
-			  (kview:label-separator-length kview)))
+			  (kview:label-separator-length kotl-kview)))
   (let ((opoint (point))
 	(found) (done)
 	(curr-indent 0)
@@ -138,7 +138,7 @@ Return t unless no such cell."
 		 (goto-char opoint))
 	(setq curr-indent (kcell-view:indent nil lbl-sep-len))
 	(cond ((< (abs (- curr-indent start-indent))
-		  (kview:level-indent kview))
+		  (kview:level-indent kotl-kview))
 	       (goto-char (kcell-view:start nil lbl-sep-len))
 	       (setq found t))
 	      ((< curr-indent start-indent)
@@ -162,7 +162,7 @@ Trigger an error if CELL-REF is not a string or is not found."
       (let ((idstamp (kcell:ref-to-id cell-ref))
 	    pos)
 	(cond ((and (integerp idstamp) (zerop idstamp))
-	       (kview:top-cell kview))
+	       (kview:top-cell kotl-kview))
 	      ((and (integerp idstamp) (setq pos (kproperty:position 'idstamp idstamp)))
 	       (kcell-view:cell pos))
 	      (t (error "(kcell:get-from-ref): No such Koutline cell: '%s'" cell-ref))))
@@ -178,11 +178,11 @@ a cell's label and the start of its contents."
 	 (prev-indent (kcell-view:indent nil lbl-sep-len))
 	 (next (kcell-view:next visible-p lbl-sep-len)))
     (unless lbl-sep-len
-      (setq lbl-sep-len (kview:label-separator-length kview)))
+      (setq lbl-sep-len (kview:label-separator-length kotl-kview)))
     ;; Since kcell-view:next leaves point at the start of a cell, the cell's
     ;; indent is just the current-column of point.
     (if (and next (>= (- (current-column) prev-indent)
-		      (kview:level-indent kview)))
+		      (kview:level-indent kotl-kview)))
 	t
       ;; Move back to previous point and return nil.
       (goto-char opoint)
@@ -349,7 +349,7 @@ Excludes blank lines following cell contents."
 With optional VISIBLE-P, consider only visible cells.
 Return t unless no such cell."
   (unless lbl-sep-len
-    (setq lbl-sep-len (kview:label-separator-length kview)))
+    (setq lbl-sep-len (kview:label-separator-length kotl-kview)))
   (let ((opoint (point))
 	(found) (done)
 	(curr-indent 0)
@@ -358,7 +358,7 @@ Return t unless no such cell."
 		(kcell-view:next visible-p lbl-sep-len))
       (setq curr-indent (kcell-view:indent nil lbl-sep-len))
       (cond ((< (abs (- curr-indent start-indent))
-		(kview:level-indent kview))
+		(kview:level-indent kotl-kview))
 	     (goto-char (kcell-view:start nil lbl-sep-len))
 	     (setq found t))
 	    ((< curr-indent start-indent)
@@ -378,7 +378,7 @@ Use 0 for POS to retrieve top cell's attributes."
   (if (eq pos 0)
       (if (eq attribute 'idstamp)
 	  0
-	(kcell:get-attr (kview:top-cell kview) attribute))
+	(kcell:get-attr (kview:top-cell kotl-kview) attribute))
     (save-excursion
       (goto-char (or pos (kcell-view:plist-point)))
       (if (eq attribute 'idstamp)
@@ -404,7 +404,7 @@ cell's label and the start of its contents."
   (+ (save-excursion
        (kcell-view:to-label-end pos)
        (current-column))
-     (or lbl-sep-len (kview:label-separator-length kview)
+     (or lbl-sep-len (kview:label-separator-length kotl-kview)
 	 (length kview:default-label-separator))))
 
 (defun kcell-view:label (&optional pos)
@@ -413,7 +413,7 @@ If labels are off, return cell's idstamp as a string."
   (save-excursion
     (when pos
       (goto-char pos))
-    (let ((label-type (kview:label-type kview)))
+    (let ((label-type (kview:label-type kotl-kview)))
       (if (eq label-type 'no)
 	  (kcell-view:idstamp)
 	(kcell-view:to-label-end)
@@ -427,9 +427,9 @@ LBL-SEP-LEN is the number of spaces between a cell label and
 the start of its body.  Optional INDENT is the indentation in
 characters of the cell whose level is desired."
   (unless lbl-sep-len
-    (setq lbl-sep-len (kview:label-separator-length kview)))
+    (setq lbl-sep-len (kview:label-separator-length kotl-kview)))
   (floor (/ (- (or indent (kcell-view:indent pos lbl-sep-len)) lbl-sep-len)
-	    (kview:level-indent kview))))
+	    (kview:level-indent kotl-kview))))
 
 (defun kcell-view:line (&optional pos)
   "Return contents of cell line at point or optional POS as a string."
@@ -445,7 +445,7 @@ characters of the cell whose level is desired."
   ;; Use free variable kview-label-sep-len bound in kview:map-* for speed.
   (if (kcell-view:invisible-p)
       0
-    (let* ((start (kcell-view:start nil (kview:label-separator-length kview)))
+    (let* ((start (kcell-view:start nil (kview:label-separator-length kotl-kview)))
 	   (end (kview:first-invisible-point start)))
       ;; Prevent bounds error with empty cells that have hidden subtrees.
       (max 1 (count-lines start end)))))
@@ -477,7 +477,7 @@ If parent is top cell, move to first cell within view and return 0.
 Otherwise, return t unless optional VISIBLE-P is non-nil and the parent cell
 is not part of the current view, else nil."
   (unless lbl-sep-len
-    (setq lbl-sep-len (kview:label-separator-length kview)))
+    (setq lbl-sep-len (kview:label-separator-length kotl-kview)))
   (let ((opoint (point))
 	(parent-level (1- (kcell-view:level nil lbl-sep-len))))
     (if (= parent-level 0) ;; top cell
@@ -587,7 +587,7 @@ Use 0 for POS to set top cell's attributes."
 	  (progn (kproperty:set attribute value)
 		 (kcell-view:cell))
 	;; Returns kcell
-	(let ((mod-cell (kcell:set-attr (if (eq pos 0) (kview:top-cell kview) (kcell-view:cell))
+	(let ((mod-cell (kcell:set-attr (if (eq pos 0) (kview:top-cell kotl-kview) (kcell-view:cell))
 					attribute value)))
 	  (kproperty:add-properties (list 'kcell mod-cell))
 	  mod-cell)))))
@@ -611,7 +611,7 @@ With optional VISIBLE-P, consider only visible siblings."
   "Return start position of visible cell contents from optional POS or point."
   (save-excursion
     (+ (kcell-view:to-label-end pos)
-       (or lbl-sep-len (kview:label-separator-length kview)))))
+       (or lbl-sep-len (kview:label-separator-length kotl-kview)))))
 
 (defun kcell-view:to-visible-label-end (&optional pos)
   "Move point to end of the visible cell's label.
@@ -649,9 +649,9 @@ This function does not renumber any other cells.  1 = first
 level."
   (let* ((idstamp (if (klabel:idstamp-p klabel)
 		      (if (stringp klabel) (string-to-number klabel) klabel)
-		    (kview:id-increment kview)))
+		    (kview:id-increment kotl-kview)))
 	 (new-cell (kcell:create prop-list)))
-    (kcell-view:create kview new-cell contents level idstamp klabel no-fill sibling-p)
+    (kcell-view:create kotl-kview new-cell contents level idstamp klabel no-fill sibling-p)
     new-cell))
 
 (defun kview:beginning-of-actual-line ()
@@ -699,11 +699,11 @@ are used.
 	   (error "(kview:create): 2nd arg, `%s', must be an integer" id-counter)))
     (set-buffer buf)
     ;; Don't recreate view if it exists.
-    (unless (and (boundp 'kview) (kview:is-p kview) (eq (kview:buffer kview) buf))
-      (make-local-variable 'kview)
+    (unless (and (boundp 'kotl-kview) (kview:is-p kotl-kview) (eq (kview:buffer kotl-kview) buf))
+      (make-local-variable 'kotl-kview)
       ;; Update cell count id-counter.
       (setq top-cell-attributes (plist-put top-cell-attributes 'id-counter id-counter))
-      (setq kview
+      (setq kotl-kview
 	    (list 'kview 'plist
 		  (list 'view-buffer (current-buffer)
 			'top-cell
@@ -725,7 +725,7 @@ are used.
 			'lines-to-show
 			(or lines-to-show kview:default-lines-to-show))))
       (kview:set-functions (or label-type kview:default-label-type)))
-    kview))
+    kotl-kview))
 
 (defun kview:delete-region (start end)
   "Delete cells between START and END points from current view."
@@ -743,7 +743,7 @@ With optional JUSTIFY, justify region as well.
 Fill-prefix must be a string of spaces the length of this cell's indent, when
 this function is called."
   (let ((opoint (set-marker (make-marker) (point)))
-	(lbl-sep-len (kview:label-separator-length kview))
+	(lbl-sep-len (kview:label-separator-length kotl-kview))
 	(continue t)
 	prev-point)
     (goto-char start)
@@ -820,7 +820,7 @@ On success, return t, else nil."
 	 (pos (kproperty:position 'idstamp idstamp)))
     (when pos
       (goto-char pos)
-      (forward-char (kview:label-separator-length kview))
+      (forward-char (kview:label-separator-length kotl-kview))
       t)))
 
 (defun kview:id-counter (kview)
@@ -1155,7 +1155,7 @@ Copy tree if optional COPY-P is non-nil.  Refill cells if optional
 FILL-P is non-nil.  Leave point at TO-START."
   (let ((region (buffer-substring from-start from-end))
 	(new-start (set-marker (make-marker) to-start))
-	(collapsed-cells (kview:get-cells-status kview from-start from-end))
+	(collapsed-cells (kview:get-cells-status kotl-kview from-start from-end))
 	expr new-end space)
 
     ;;
@@ -1189,12 +1189,12 @@ FILL-P is non-nil.  Leave point at TO-START."
 	    ;; Reduce indent in first cell lines which may have an
 	    ;; autonumber or other cell delimiter.
 	    (setq space (- from-indent to-indent
-			   (kview:label-separator-length kview)
+			   (kview:label-separator-length kotl-kview)
 			   1))
 	    (unless (zerop space)
 	      (setq expr (concat "^" (make-string
 				      (- from-indent to-indent
-					 (kview:label-separator-length kview)
+					 (kview:label-separator-length kotl-kview)
 					 1)
 				      ?\ )))
 	      (kview:map-tree
@@ -1203,18 +1203,18 @@ FILL-P is non-nil.  Leave point at TO-START."
 		   (beginning-of-line)
 		   (when (looking-at expr)
 		     (replace-match "" t t))))
-	       kview t)))
+	       kotl-kview t)))
 	  ;;
 	  (when fill-p
 	    ;; Refill cells lacking no-fill attribute.
 	    (kview:map-tree (lambda (_view) (kotl-mode:fill-cell nil t))
-			    kview t))))
+			    kotl-kview t))))
     ;;
     (goto-char new-start)
     ;;
     ;; Restore status of temporarily expanded cells.
     (when (remq 0 collapsed-cells)
-      (kview:set-cells-status kview new-start new-end collapsed-cells))
+      (kview:set-cells-status kotl-kview new-start new-end collapsed-cells))
     ;;
     ;; Delete temporary markers.
     (set-marker new-start nil)))
@@ -1276,9 +1276,9 @@ displayed, since it has hidden branches."
   "Change KVIEW's label display type to NEW-TYPE, updating all displayed labels.
 See documentation for variable, kview:default-label-type, for
 valid values of NEW-TYPE."
-  (interactive (list kview
+  (interactive (list kotl-kview
 		     (let ((completion-ignore-case)
-			   (label-type (kview:label-type kview))
+			   (label-type (kview:label-type kotl-kview))
 			   new-type-str)
 		       (if (string-equal
 			    ""
@@ -1383,10 +1383,10 @@ unless no previous cell."
 
 (defun kview:set-functions (label-type)
   "Setup functions which handle labels of LABEL-TYPE for current view."
-  (kview:set-attr kview 'label-function (klabel-type:function label-type))
-  (kview:set-attr kview 'label-child (klabel-type:child label-type))
-  (kview:set-attr kview 'label-increment (klabel-type:increment label-type))
-  (kview:set-attr kview 'label-parent (klabel-type:parent label-type)))
+  (kview:set-attr kotl-kview 'label-function (klabel-type:function label-type))
+  (kview:set-attr kotl-kview 'label-child (klabel-type:child label-type))
+  (kview:set-attr kotl-kview 'label-increment (klabel-type:increment label-type))
+  (kview:set-attr kotl-kview 'label-parent (klabel-type:parent label-type)))
 
 (defun kview:set-label-separator (label-separator &optional set-default-p)
   "Set the LABEL-SEPARATOR between labels and cell contents for the current kview.
@@ -1395,16 +1395,16 @@ With optional prefix arg SET-DEFAULT-P, the default separator value used for
 new outlines is also set to this new value."
   (interactive
    (progn (barf-if-buffer-read-only)
-	  (list (if (kview:is-p kview)
+	  (list (if (kview:is-p kotl-kview)
 		    (read-string
 		     (format
 		      "Change current%s label separator from \"%s\" to: "
 		      (if current-prefix-arg " and default" "")
-		      (kview:label-separator kview))))
+		      (kview:label-separator kotl-kview))))
 		current-prefix-arg)))
 
   (barf-if-buffer-read-only)
-  (cond ((not (kview:is-p kview))
+  (cond ((not (kview:is-p kotl-kview))
 	 (error "(kview:set-label-separator): This is not a koutline"))
 	((not (stringp label-separator))
 	 (error "(kview:set-label-separator): Invalid separator, \"%s\""
@@ -1413,7 +1413,7 @@ new outlines is also set to this new value."
 	 (error "(kview:set-label-separator): Separator must be two or more characters, \"%s\""
 		label-separator)))
 
-  (let* ((old-sep-len (kview:label-separator-length kview))
+  (let* ((old-sep-len (kview:label-separator-length kotl-kview))
 	 (sep-len (length label-separator))
 	 (sep-len-increase (- sep-len old-sep-len))
 	 (indent)
@@ -1445,8 +1445,8 @@ new outlines is also set to this new value."
       ;; Reindent all lines in cells except the first line which has already
       ;; been done.
       (funcall reindent-function))
-    (kview:set-attr kview 'label-separator label-separator)
-    (kview:set-attr kview 'label-separator-length sep-len)
+    (kview:set-attr kotl-kview 'label-separator label-separator)
+    (kview:set-attr kotl-kview 'label-separator-length sep-len)
     (when set-default-p
       (setq kview:default-label-separator label-separator))))
 
