@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     3-Sep-91 at 21:40:58
-;; Last-Mod:      4-Jul-23 at 12:26:37 by Bob Weiner
+;; Last-Mod:      3-Oct-23 at 22:50:40 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -33,6 +33,21 @@
 (defvar java-class-def-name-grpn)
 (defvar java-class-def-regexp)
 (defvar jedi-mode)
+
+(defvar hmouse-bindings-flag)           ; "hmouse-key.el"
+(defvar hmouse-previous-bindings)       ; "hmouse-key.el"
+(defvar hmouse-set-point-command)       ; "hui-mouse.el"
+(defvar hmouse-bindings)                ; "hmouse-key.el"
+(defvar hmouse-bindings-flag)           ; "hmouse-key.el"
+
+(defvar Info-mode-map)
+
+(declare-function action-key-depress-emacs "hmouse-drv")
+(declare-function action-mouse-key-emacs "hmouse-drv")
+(declare-function assist-key-depress-emacs "hmouse-drv")
+(declare-function assist-mouse-key-emacs "hmouse-drv")
+(declare-function action-key-depress "hmouse-drv")
+(declare-function hkey-set-key "hyperbole")
 
 ;;; ************************************************************************
 ;;; Public functions

@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     1-May-93
-;; Last-Mod:     28-Aug-23 at 00:23:39 by Bob Weiner
+;; Last-Mod:      3-Oct-23 at 22:39:29 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -31,7 +31,7 @@
 ;;; Other required Elisp libraries
 ;;; ************************************************************************
 
-(eval-and-compile (mapc #'require '(hinit htz klabel kview)))
+(eval-and-compile (mapc #'require '(hinit htz kview kproperty)))
 
 ;;; ************************************************************************
 ;;; Public variables

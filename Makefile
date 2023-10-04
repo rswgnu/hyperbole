@@ -3,7 +3,7 @@
 # Author:       Bob Weiner
 #
 # Orig-Date:    15-Jun-94 at 03:42:38
-# Last-Mod:     27-Aug-23 at 15:19:50 by Bob Weiner
+# Last-Mod:      3-Oct-23 at 15:47:37 by Mats Lidell
 #
 # Copyright (C) 1994-2023  Free Software Foundation, Inc.
 # See the file HY-COPY for license information.
@@ -276,23 +276,46 @@ $(html_dir)/hyperbole.html: $(man_dir)/hyperbole.html $(man_dir)/hyperbole.css
 $(data_dir)/hkey-help.txt: $(man_dir)/hkey-help.txt
 	$(INSTALL) hkey-help.txt $(data_dir)
 
-# Record any .el files that need to be compiled.
-.el.elc:
-	@ echo $< >> $(ELISP_TO_COMPILE)
-
-# Compile all recorded .el files.
-elc: elc-init $(ELC_KOTL) $(ELC_COMPILE)
-	@- \test ! -f $(ELISP_TO_COMPILE) \
-            || (echo "These files will be compiled: " \
-                 && echo "`cat $(ELISP_TO_COMPILE)`" \
-                 && $(EMACS_BATCH) -f batch-byte-compile `cat $(ELISP_TO_COMPILE)`)
-	@ $(RM) $(ELISP_TO_COMPILE)
-
-elc-init:
-	@ $(RM) $(ELISP_TO_COMPILE)
-
+.PHONY: src new-bin remove-elc bin eln
 # Setup to run Hyperbole from .el source files
 src: autoloads tags
+
+# Byte compile files but apply a filter for either including or
+# removing warnings.  See variable {C-hv byte-compile-warnings RET} for
+# list of warnings that can be controlled.  Default is set to suppress
+# warnings for long docstrings.
+#
+# Example for getting warnings for obsolete functions and variables
+#   HYPB_WARNINGS="free-vars" make bin
+# Example for surpressing the free-vars warnings
+#   HYPB_WARNINGS="not free-vars" make bin
+ifeq ($(origin HYPB_WARNINGS), undefined)
+HYPB_BIN_WARN =
+else ifeq ($(origin HYPB_WARNINGS), environment)
+HYPB_BIN_WARN = --eval "(setq-default byte-compile-warnings '(${HYPB_WARNINGS}))"
+endif
+
+curr_dir = $(shell pwd)
+ifeq ($(HYPB_NATIVE_COMP),yes)
+%.elc: %.el
+	@printf "Compiling $<\n"
+	@$(EMACS) --batch --quick \
+	--eval "(progn (add-to-list 'load-path \"$(curr_dir)\") (add-to-list 'load-path \"$(curr_dir)/kotl\"))" \
+	${HYPB_BIN_WARN} \
+	-f batch-native-compile $<
+else
+%.elc: %.el
+	@printf "Compiling $<\n"
+	@$(EMACS) --batch --quick \
+	--eval "(progn (add-to-list 'load-path \"$(curr_dir)\") (add-to-list 'load-path \"$(curr_dir)/kotl\"))" \
+	${HYPB_BIN_WARN} \
+	-f batch-byte-compile $<
+endif
+
+new-bin: autoloads $(ELC_KOTL) $(ELC_COMPILE)
+
+remove-elc:
+	$(RM) *.elc kotl/*.elc
 
 # Remove and then rebuild all byte-compiled .elc files, even those .elc files
 # which do not yet exist, plus build TAGS file.
@@ -300,9 +323,11 @@ src: autoloads tags
 # Use this to suppress docstring warnings.
 #	$(EMACS_BATCH) --eval="(setq-default byte-compile-warnings '(not docstrings))" \
 #		-f batch-byte-compile $(EL_KOTL) $(EL_COMPILE)
-bin: src
-	$(RM) *.elc kotl/*.elc
-	$(EMACS_BATCH) -f batch-byte-compile $(EL_KOTL) $(EL_COMPILE)
+bin: src remove-elc new-bin
+
+# Native compilation (Requires Emacs built with native compilation support.)
+eln: src
+	HYPB_NATIVE_COMP=yes make new-bin
 
 # Create -l file.el load-file command-line args for each Hyperbole .el file for use in
 # eln native compile target below.
@@ -311,34 +336,6 @@ LOAD_EL = $(shell echo "$(EL_KOTL) $(EL_COMPILE)" | sed -e 's+^+./+' -e 's+ + -l
 load-hyperbole:
 	$(EMACS_BATCH) \
           $(LOAD_EL)
-
-# Use this to suppress docstring warnings.
-# 	$(EMACS_BATCH) \
-#           $(LOAD_EL) \
-#           --eval="(setq-default byte-compile-warnings '(not docstrings))" \
-# 	    -f batch-native-compile $(EL_KOTL) $(EL_COMPILE)
-eln: src
-	$(EMACS_BATCH) \
-	  -f batch-native-compile $(EL_KOTL) $(EL_COMPILE)
-
-# Byte compile files but apply a filter for either including or
-# removing warnings.  See variable {C-hv byte-compile-warnings RET} for
-# list of warnings that can be controlled.  Default is set to suppress
-# warnings for long docstrings.
-#
-# Example for getting warnings for obsolete functions and variables
-#   HYPB_WARNINGS="free-vars" make bin-warn
-# Example for surpressing the free-vars warnings
-#   HYPB_WARNINGS="not free-vars" make bin-warn
-ifeq ($(origin HYPB_WARNINGS), undefined)
-HYPB_BIN_WARN = not docstrings
-else ifeq ($(origin HYPB_WARNINGS), environment)
-HYPB_BIN_WARN = ${HYPB_WARNINGS}
-endif
-bin-warn: src
-	$(RM) *.elc kotl/*.elc
-	$(EMACS_BATCH) --eval="(setq-default byte-compile-warnings '(${HYPB_BIN_WARN}))" \
-		-f batch-byte-compile $(EL_KOTL) $(EL_COMPILE)
 
 tags: TAGS
 TAGS: $(EL_TAGS)

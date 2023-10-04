@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Jun-16 at 14:24:53
-;; Last-Mod:     14-May-23 at 01:54:35 by Bob Weiner
+;; Last-Mod:      3-Oct-23 at 23:23:16 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -74,14 +74,6 @@
 (eval-when-compile (require 'debbugs-gnu nil t))
 
 ;;; ************************************************************************
-;;; Public variables
-;;; ************************************************************************
-
-(eval-after-load "debbugs-gnu"
-  #'(progn (push "hyperbole"  debbugs-gnu-all-packages)
-	   (push "oo-browser" debbugs-gnu-all-packages)))
-
-;;; ************************************************************************
 ;;; Public declarations
 ;;; ************************************************************************
 
@@ -92,6 +84,14 @@
 (declare-function debbugs-gnu-show-reports "ext:debbugs")
 (defvar debbugs-gnu-current-query)
 (defvar debbugs-port)
+
+;;; ************************************************************************
+;;; Public variables
+;;; ************************************************************************
+
+(eval-after-load "debbugs-gnu"
+  #'(progn (push "hyperbole"  debbugs-gnu-all-packages)
+	   (push "oo-browser" debbugs-gnu-all-packages)))
 
 ;;; ************************************************************************
 ;;; Public implicit button types

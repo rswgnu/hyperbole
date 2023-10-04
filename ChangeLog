@@ -1,3 +1,9 @@
+2023-10-03  Mats Lidell  <matsl@gnu.org>
+
+* Makefile: Compile each el file in a separate Emacs process so that the
+    compilation environment is clean and produces relevant warning
+    messages.
+
 2023-10-02  Bob Weiner  <rsw@gnu.org>
 
 * hycontrol.el (hycontrol--blank-buffer): Add a space in front of buffer

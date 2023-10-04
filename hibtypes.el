@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 20:45:31
-;; Last-Mod:      2-Oct-23 at 04:57:50 by Bob Weiner
+;; Last-Mod:      3-Oct-23 at 17:21:27 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -62,6 +62,17 @@
 (defvar id-cflow-repeated-indicator)
 
 (defvar cscope-output-line-regexp)
+
+(declare-function actype:eval "hact")
+(declare-function actype:identity "hact")
+(declare-function hact "hact")
+(declare-function hpath:display-buffer "hpath")
+(declare-function htype:def-symbol "hact")
+(declare-function hui:help-ebut-highlight "hui")
+(declare-function hyperb:stack-frame "hversion")
+(declare-function set:member "set")
+(declare-function symset:add "hact")
+(declare-function symtable:add "hact")
 
 ;;; ************************************************************************
 ;;; Public implicit button types

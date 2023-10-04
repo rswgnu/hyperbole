@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    6/30/93
-;; Last-Mod:     30-Jun-23 at 21:43:29 by Mats Lidell
+;; Last-Mod:      3-Oct-23 at 22:38:35 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -19,18 +19,47 @@
 ;;; Other required Lisp Libraries
 ;;; ************************************************************************
 
-(eval-and-compile (mapc #'require '(hact klabel kfill klink hypb)))
-;; Quiet byte compiler warnings for this free variable.
+(eval-and-compile (mapc #'require '(hact kfill klink kproperty outline)))
 
-(define-obsolete-variable-alias 'label-sep-len 'kview-label-sep-len "8.0.1")
-(defvar kview-label-sep-len nil
-  "Length of the separation between cell's label and start of its contents.")
+;;; ************************************************************************
+;;; Public declarations
+;;; ************************************************************************
+
+(defvar kotl-mode:refill-flag)
+
+(declare-function klabel:format "klabel.el")
+(declare-function klabel:idstamp-p "klabel.el")
+(declare-function kcell:create-top "kcell")
+(declare-function kcell:create "kcell")
+(declare-function kcell:get-attr "kcell")
+(declare-function kcell:plist "kcell")
+(declare-function kcell:remove-attr "kcell")
+(declare-function kcell:set-attr "kcell")
+(declare-function kfile:narrow-to-kcells "kfile")
+(declare-function klabel-type:child "klabel")
+(declare-function klabel-type:function "klabel")
+(declare-function klabel-type:increment "klabel")
+(declare-function klabel-type:parent "klabel")
+(declare-function klabel-type:set-labels "klabel")
+(declare-function kotl-mode:beginning-of-line "kotl-mode")
+(declare-function kotl-mode:fill-cell "kotl-mode")
+(declare-function kotl-mode:goto-cell "kotl-mode")
+(declare-function kotl-mode:hide-subtree "kotl-mode")
+(declare-function kotl-mode:to-end-of-line "kotl-mode")
+(declare-function kotl-mode:to-visible-position "kotl-mode")
+(declare-function kotl-mode:tree-end "kotl-mode")
+(declare-function kvspec:show-lines-this-cell "kvspec")
+(declare-function kvspec:update "kvspec")
 
 ;;; ************************************************************************
 ;;; Public variables
 ;;; ************************************************************************
 
-(set-default 'kview nil)
+(define-obsolete-variable-alias 'label-sep-len 'kview-label-sep-len "8.0.1")
+(defvar kview-label-sep-len nil
+  "Length of the separation between cell's label and start of its contents.")
+
+(defvar-local kview nil "Buffer local kview object.")
 
 (defcustom kview:default-blank-lines t
   "*Default setting of whether to show blank lines between koutline cells.

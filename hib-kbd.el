@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    22-Nov-91 at 01:37:57
-;; Last-Mod:     27-Aug-23 at 19:57:37 by Bob Weiner
+;; Last-Mod:      3-Oct-23 at 23:32:20 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -40,6 +40,12 @@
 (require 'seq)
 
 ;;; ************************************************************************
+;;; Public declarations
+;;; ************************************************************************
+
+(declare-function helm-mode "ext:helm")
+
+;;; ************************************************************************
 ;;; Public variables
 ;;; ************************************************************************
 
@@ -64,11 +70,6 @@ Function keys are handled elsewhere.")
   "Regexp matching a single modified keyboard key within a human-readable string.
 Group 1 matches to the set of modifier keys.  Group 3 matches to
 the unmodified key.")
-
-;;; ************************************************************************
-;;; Public declarations
-;;; ************************************************************************
-(declare-function helm-mode "ext:helm")
 
 ;;; ************************************************************************
 ;;; Private variables

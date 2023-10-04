@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    18-Sep-91 at 02:57:09
-;; Last-Mod:      1-Oct-23 at 21:19:07 by Bob Weiner
+;; Last-Mod:      3-Oct-23 at 17:26:52 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -24,6 +24,7 @@
 				    hui-select view)))
 (require 'hmouse-drv) ; For `hui--ignore-action-key-depress-prev-point'.
 
+
 ;;; ************************************************************************
 ;;; Public declarations
 ;;; ************************************************************************
@@ -43,6 +44,63 @@ Use the function, (hbut:max-len), to read the proper value.")
 
 (defvar hproperty:but-face)
 (defvar hproperty:ibut-face)
+
+(declare-function hargs:delimited "hargs")
+(declare-function hargs:read-match "hargs")
+(declare-function hpath:find-noselect "hpath")
+(declare-function hpath:find "hpath")
+(declare-function hpath:substitute-var "hpath")
+(declare-function hpath:symlink-referent "hpath")
+(declare-function hpath:www-p "hpath")
+(declare-function hsys-org-block-start-at-p "hsys-org")
+(declare-function hsys-org-src-block-start-at-p "hsys-org")
+(declare-function hui:buf-writable-err "hui")
+(declare-function hui:ebut-rename "hui")
+(declare-function hui:ibut-rename "hui")
+(declare-function hui:key-dir "hui")
+(declare-function hui:key-src "hui")
+(declare-function kbd-key:act "hib-kbd")
+(declare-function kbd-key:is-p "hib-kbd")
+(declare-function org-context "org")
+
+;;; ************************************************************************
+;;; Private variables
+;;; ************************************************************************
+
+(defvar hyperb:microsoft-os-p)
+
+;; Move up internal defconst to appear before their use
+(defconst ebut:label-start "<("
+  "String matching the start of a Hyperbole explicit hyper-button.")
+
+(defconst ebut:label-end   ")>"
+  "String matching the end of a Hyperbole explicit hyper-button.")
+
+(defconst hbut:instance-sep ":"
+  "String of one character, separates an ebut label from its instance num.")
+
+;; Move up internal defvar
+(defvar   hattr:filename
+  (if hyperb:microsoft-os-p "_hypb" ".hypb")
+  "Per directory file name in which explicit button attributes are stored.
+If you change its value, you will be unable to use buttons created by
+others who use a different value!")
+
+(defvar   ibut:label-separator-regexp "\\s-*[-:=|]*\\s-+"
+  "Regular expression that separates an implicit button name from its button text.")
+
+(defvar   ibut:label-separator " - "
+  "Default separator string inserted between implicit button name and its text.
+
+This separates it from the implicit button text.  See also
+`ibut:label-separator-regexp' for all valid characters that may be
+manually inserted to separate an implicit button label from its
+text.")
+
+(defconst hbut:source-prefix moccur-source-prefix
+  "String found at start of a buffer containing only a hyper-button menu.
+This expression should be followed immediately by a file-name indicating the
+source file for the buttons in the menu, if any.")
 
 ;;; ************************************************************************
 ;;; Public definitions
@@ -658,13 +716,6 @@ Insert INSTANCE-FLAG after END, before ending delimiter."
 		    match-keys "\\|")
    "\\)" match-part (regexp-quote ebut:label-end)))
 
-(defconst ebut:label-start "<("
-  "String matching the start of a Hyperbole explicit hyper-button.")
-(defconst ebut:label-end   ")>"
-  "String matching the end of a Hyperbole explicit hyper-button.")
-(defconst hbut:instance-sep ":"
-  "String of one character, separates an ebut label from its instance num.")
-
 ;;; ========================================================================
 ;;; gbut class - Global Hyperbole buttons - activated by typing label name
 ;;; ========================================================================
@@ -931,12 +982,6 @@ Suitable for use as part of `write-file-functions'."
   (put obj-symbol attr-symbol attr-value))
 
 (defalias 'hattr:summarize #'hattr:report)
-
-(defvar   hattr:filename
-  (if hyperb:microsoft-os-p "_hypb" ".hypb")
-  "Per directory file name in which explicit button attributes are stored.
-If you change its value, you will be unable to use buttons created by
-others who use a different value!")
 
 ;;; ========================================================================
 ;;; hbut class - abstract
@@ -1572,11 +1617,6 @@ button label.  Return the symbol for the button, else nil."
 
 (defvar   hbut:current nil
   "The currently selected Hyperbole button.  Available to action routines.")
-
-(defconst hbut:source-prefix moccur-source-prefix
-  "String found at start of a buffer containing only a hyper-button menu.
-This expression should be followed immediately by a file-name indicating the
-source file for the buttons in the menu, if any.")
 
 ;;; ------------------------------------------------------------------------
 
@@ -2775,17 +2815,6 @@ Return the symbol for the button if found, else nil."
   "String matching the start of a Hyperbole implicit button label.")
 (defconst ibut:label-end   "]>"
   "String matching the end of a Hyperbole implicit button label.")
-
-(defvar   ibut:label-separator " - "
-  "Default separator string inserted between implicit button name and its text.
-
-This separates it from the implicit button text.  See also
-`ibut:label-separator-regexp' for all valid characters that may be
-manually inserted to separate an implicit button label from its
-text.")
-
-(defvar   ibut:label-separator-regexp "\\s-*[-:=|]*\\s-+"
-  "Regular expression that separates an implicit button name from its button text.")
 
 ;;; ========================================================================
 ;;; ibtype class - Implicit button types

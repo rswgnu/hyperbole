@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    6/30/93
-;; Last-Mod:     28-Aug-23 at 01:52:34 by Bob Weiner
+;; Last-Mod:      3-Oct-23 at 22:41:32 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -19,7 +19,7 @@
 ;;; Other required Lisp Libraries
 ;;; ************************************************************************
 
-(eval-and-compile (mapc #'require '(cl-lib delsel hsettings hmail hypb kfile
+(eval-and-compile (mapc #'require '(cl-lib delsel hsettings hmail hypb kfile klabel
 				    kvspec kcell outline org org-table kotl-orgtbl)))
 
 ;;; ************************************************************************
@@ -29,6 +29,8 @@
 (defvar cmpl-last-insert-location)
 (defvar cmpl-original-string)
 (defvar completion-to-accept)
+
+(declare-function outline-invisible-in-p "hyperbole")
 
 ;;; ************************************************************************
 ;;; Public variables

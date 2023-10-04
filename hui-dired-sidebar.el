@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell
 ;;
 ;; Orig-Date:    25-Jul-20
-;; Last-Mod:     24-Jan-22 at 00:18:47 by Bob Weiner
+;; Last-Mod:      3-Oct-23 at 17:42:21 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -24,8 +24,19 @@
 ;;; ************************************************************************
 ;;; Public declarations
 ;;; ************************************************************************
-(declare-function dired-sidebar-toggle-sidebar "ext:dired-sidebar")
+
 (defvar dired-sidebar-cycle-subtree-on-click)
+
+(defvar assist-flag)                    ; "hmouse-drv.el"
+(defvar action-key-eol-function)        ; "hmouse-drv.el"
+(defvar assist-key-eol-function)        ; "hmouse-drv.el"
+
+(declare-function dired-sidebar-toggle-sidebar "ext:dired-sidebar")
+
+(declare-function dired-get-file-for-visit "dired")
+(declare-function hact "hact")
+(declare-function first-line-p "hui-mouse")
+(declare-function last-line-p "hui-mouse")
 
 ;;; ************************************************************************
 ;;; smart-dired-sidebar functions

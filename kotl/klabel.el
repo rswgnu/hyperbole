@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    17-Apr-94
-;; Last-Mod:     18-Jul-22 at 21:58:23 by Mats Lidell
+;; Last-Mod:      3-Oct-23 at 22:32:09 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -15,6 +15,15 @@
 ;;; Commentary:
 
 ;;; Code:
+
+(require 'kview)
+
+;;; ************************************************************************
+;;; Public declarations
+;;; ************************************************************************
+
+(declare-function kotl-mode:first-cell-p "kotl-mode")
+
 ;;; ************************************************************************
 ;;; Public variables
 ;;; ************************************************************************

@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    04-Feb-89
-;; Last-Mod:     19-Sep-23 at 05:47:43 by Bob Weiner
+;; Last-Mod:      3-Oct-23 at 22:56:59 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -68,6 +68,15 @@
 (declare-function helm-get-default-action "ext:helm-core")
 
 (defvar helm-selection-point)
+
+(declare-function tar-flag-deleted "tar")
+(declare-function tar-unflag "tar")
+(declare-function tar-extract-other-window "tar")
+(declare-function tar-expunge "tar")
+(declare-function outline-invisible-in-p "hyperbole")
+(declare-function hyrolo-edit-entry "hyrolo")
+(declare-function Custom-newline "cus-edit")
+(declare-function Custom-buffer-done "cus-edit")
 
 ;;; ************************************************************************
 ;;; Public variables

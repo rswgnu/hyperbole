@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     7-Jun-89 at 22:08:29
-;; Last-Mod:     28-Aug-23 at 01:11:54 by Bob Weiner
+;; Last-Mod:      3-Oct-23 at 17:20:51 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -78,13 +78,107 @@
 (declare-function xml-node-child-string "ext:google-contacts")
 (declare-function xml-node-get-attribute-type "ext:google-contacts")
 
+(declare-function find-library-name "find-func")
+(declare-function hbut:to-key-src "hbut")
+(declare-function hui:hbut-act "hui")
+(declare-function ibut:at-p "hbut")
+(declare-function kcell-view:indent "kotl/kview")
+(declare-function outline-back-to-heading "outline")
+(declare-function outline-backward-same-level "outline")
+(declare-function outline-end-of-subtree "outline")
+(declare-function outline-forward-same-level "outline")
+(declare-function outline-hide-sublevels "outline")
+(declare-function outline-hide-subtree "outline")
+(declare-function outline-level "outline")
+(declare-function outline-next-heading "outline")
+(declare-function outline-next-visible-heading "outline")
+(declare-function outline-previous-heading "outline")
+(declare-function outline-previous-visible-heading "outline")
+(declare-function outline-show-all "outline")
+(declare-function outline-up-heading "outline")
+
+(defvar org-directory)                  ; "org.el"
+(defvar markdown-regex-header)          ; "markdown-mode.el"
+(defvar google-contacts-buffer-name)    ; "ext:google-contacts.el"
+
+;; Forward declarations
+(defvar hyrolo--wconfig)
+(defvar hyrolo-entry-group-number)
+(defvar hyrolo-entry-trailing-space-group-number)
+(defvar hyrolo-hdr-format)
+(defvar hyrolo-hdr-regexp)
+(defvar hyrolo-match-regexp)
+(defvar hyrolo-mode-map)
+(defvar hyrolo-mode-syntax-table)
+
 ;;; ************************************************************************
 ;;; Public variables
 ;;; ************************************************************************
 
+(define-obsolete-variable-alias 'rolo-display-buffer 'hyrolo-display-buffer "06.00")
+(defvar hyrolo-display-buffer "*HyRolo*"
+  "Buffer used to display set of last matching rolo entries.")
+
+;; Need to define the group before the defcustom variable so moved it here.
 (defgroup hyperbole-rolo nil
   "Hyperbole Rolo hierarchical contact manager customizations."
   :group 'hyperbole)
+
+(defcustom hyrolo-google-contacts-flag t
+  "Non-nil means search Google Contacts on each hyrolo query.
+The google-contact package must be loaded and a gpg encryption
+executable must be found as well (for Oauth security)."
+  :type 'boolean)
+
+(defun hyrolo-google-contacts-p ()
+  "Non-nil means google contacts package is available and feature is enabled.
+Requires `hyrolo-google-contacts-flag' set as non-nil and
+google-contacts package and gpg executables to be available for
+use."
+  (and hyrolo-google-contacts-flag
+       (featurep 'google-contacts)
+       (boundp 'google-contacts-buffer-name)
+       ;; If no gpg encryption executable, Oauth login to Google will fail.
+       (or (executable-find "gpg2") (executable-find "gpg"))))
+
+(defun hyrolo--initialize-file-list ()
+  (delq nil
+        (list "~/.rolo.otl"
+              (if (and (boundp 'bbdb-file) (stringp bbdb-file)) bbdb-file)
+              (when (hyrolo-google-contacts-p) google-contacts-buffer-name))))
+
+(define-obsolete-variable-alias 'rolo-file-list 'hyrolo-file-list "06.00")
+(defcustom hyrolo-file-list (hyrolo--initialize-file-list)
+  "List of files containing rolo entries.
+The first file should be a user-specific rolo file, typically in the home
+directory.
+
+A hyrolo-file consists of:
+   (1) an optional header beginning with and ending with a line which matches
+       hyrolo-hdr-regexp;
+   (2) one or more rolo entries which each begin with
+       hyrolo-entry-regexp and may be nested."
+  :type '(repeat file))
+
+(define-obsolete-variable-alias 'rolo-entry-regexp 'hyrolo-entry-regexp "06.00")
+(defvar hyrolo-entry-regexp "^\\(\\*+\\)\\([ \t]+\\)"
+  "Regular expression to match the beginning of a rolo entry.
+This pattern must match the beginning of a line.
+`hyrolo-entry-group-number' must capture the entry's level in the
+hierarchy.  `hyrolo-entry-trailing-space-group-number' must capture
+the whitespace following the entry hierarchy level.")
+
+;; Support hyrolo searches in markdown files
+(add-hook 'markdown-mode-hook
+	  (lambda ()
+	    (make-local-variable 'hyrolo-entry-regexp)
+	    (make-local-variable 'hyrolo-entry-group-number)
+	    (make-local-variable 'hyrolo-entry-trailing-space-group-number)
+	    (setq hyrolo-entry-regexp markdown-regex-header
+		  hyrolo-entry-group-number 4
+		  ;; `hyrolo-add' handles removing # prefix from
+		  ;; trailing-space grouping below
+		  hyrolo-entry-trailing-space-group-number 4)))
 
 (defcustom hyrolo-date-format "%m/%d/%Y"
   "Format of date string used in Rolo automatic date stamps.
@@ -120,12 +214,6 @@ Use the `hyrolo-edit' function instead to edit a new or existing entry."
   "Function used by HyRolo to read `hyrolo-file-list' files into Emacs."
   :type 'function)
 
-(defcustom hyrolo-google-contacts-flag t
-  "Non-nil means search Google Contacts on each hyrolo query.
-The google-contact package must be loaded and a gpg encryption
-executable must be found as well (for Oauth security)."
-  :type 'boolean)
-
 (defvar hyrolo-next-match-function #'hyrolo-next-regexp-match
   "Value is the function to find next match within a HyRolo file.
 Must take two arguments, `match-pattern' and `headline-only-flag'.
@@ -142,24 +230,7 @@ match is found.")
 
 (defvar hproperty:highlight-face)
 
-(defun hyrolo-google-contacts-p ()
-  "Non-nil means google contacts package is available and feature is enabled.
-Requires `hyrolo-google-contacts-flag' set as non-nil and
-google-contacts package and gpg executables to be available for
-use."
-  (and hyrolo-google-contacts-flag
-       (featurep 'google-contacts)
-       (boundp 'google-contacts-buffer-name)
-       ;; If no gpg encryption executable, Oauth login to Google will fail.
-       (or (executable-find "gpg2") (executable-find "gpg"))))
-
 ;; '("~/.rolo.otl" "~/.rolo.org")
-
-(defun hyrolo--initialize-file-list ()
-  (delq nil
-        (list "~/.rolo.otl"
-              (if (and (boundp 'bbdb-file) (stringp bbdb-file)) bbdb-file)
-              (when (hyrolo-google-contacts-p) google-contacts-buffer-name))))
 
 ;;;###autoload
 (defun hyrolo-initialize-file-list (&optional force-init-flag)
@@ -171,19 +242,6 @@ use."
     (when (called-interactively-p 'interactive)
       (message "HyRolo Search List: %S" hyrolo-file-list))
     hyrolo-file-list))
-
-(define-obsolete-variable-alias 'rolo-file-list 'hyrolo-file-list "06.00")
-(defcustom hyrolo-file-list (hyrolo--initialize-file-list)
-  "List of files containing rolo entries.
-The first file should be a user-specific rolo file, typically in the home
-directory.
-
-A hyrolo-file consists of:
-   (1) an optional header beginning with and ending with a line which matches
-       hyrolo-hdr-regexp;
-   (2) one or more rolo entries which each begin with
-       hyrolo-entry-regexp and may be nested."
-  :type '(repeat file))
 
 (defcustom hyrolo-highlight-face 'match
   "Face used to highlight rolo search matches."
@@ -1110,7 +1168,7 @@ Return number of matching entries found."
       (insert "No result.")
     (print contacts (get-buffer-create "*contacts-data*"))
     (dolist (contact contacts)
-      (let* ((child)
+      (let* ((child nil)
 	     (name-value (nth 0 (xml-get-children contact 'gd:name)))
              (fullname (xml-node-child-string (nth 0 (xml-get-children name-value 'gd:fullName))))
              (givenname (xml-node-child-string (nth 0 (xml-get-children name-value 'gd:givenName))))
@@ -1995,36 +2053,12 @@ Return final point."
 ;;; Private variables
 ;;; ************************************************************************
 
-(define-obsolete-variable-alias 'rolo-display-buffer 'hyrolo-display-buffer "06.00")
-(defvar hyrolo-display-buffer "*HyRolo*"
-  "Buffer used to display set of last matching rolo entries.")
-
 (defvar hyrolo-entry-group-number 1
   "Group number whose length represents the level of any entry matched.
 See `hyrolo-entry-regexp'")
 
 (defvar hyrolo-entry-trailing-space-group-number 2
   "Group number within `hyrolo-entry-regexp; containing trailing space.")
-
-(define-obsolete-variable-alias 'rolo-entry-regexp 'hyrolo-entry-regexp "06.00")
-(defvar hyrolo-entry-regexp "^\\(\\*+\\)\\([ \t]+\\)"
-  "Regular expression to match the beginning of a rolo entry.
-This pattern must match the beginning of a line.
-`hyrolo-entry-group-number' must capture the entry's level in the
-hierarchy.  `hyrolo-entry-trailing-space-group-number' must capture
-the whitespace following the entry hierarchy level.")
-
-;; Support hyrolo searches in markdown files
-(add-hook 'markdown-mode-hook
-	  (lambda ()
-	    (make-local-variable 'hyrolo-entry-regexp)
-	    (make-local-variable 'hyrolo-entry-group-number)
-	    (make-local-variable 'hyrolo-entry-trailing-space-group-number)
-	    (setq hyrolo-entry-regexp markdown-regex-header
-		  hyrolo-entry-group-number 4
-		  ;; `hyrolo-add' handles removing # prefix from
-		  ;; trailing-space grouping below
-		  hyrolo-entry-trailing-space-group-number 4)))
 
 (defconst hyrolo-hdr-format
   (concat

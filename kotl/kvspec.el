@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Oct-95 at 15:17:07
-;; Last-Mod:     18-Jul-22 at 21:57:01 by Mats Lidell
+;; Last-Mod:      3-Oct-23 at 22:28:21 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -65,6 +65,37 @@
 (defvar kvspec:current nil
   "String that represents the current view spec.
 It is local to each koutline.  Nil value means it has not been set yet.")
+
+;;; ************************************************************************
+;;; Public declarations
+;;; ************************************************************************
+
+(declare-function kotl-mode:hide-subtree "kotl-mode")
+(declare-function kfile:narrow-to-kcells "kfile")
+
+;;; ************************************************************************
+;;; Private variables
+;;; ************************************************************************
+
+ (defconst kvspec:label-type-alist
+  '((?0 . id)
+    (?1 . alpha)
+    (?. . legal)
+    ;; (?2 . partial-alpha)
+    ;; (?* . star)
+    ;; (?~ . no)
+    )
+  "Alist of (view-spec-character . label-type) pairs.")
+
+(defvar kvspec:string ""
+  "String displayed in koutline modelines to reflect the current view spec.
+It is local to each koutline.  Set this to nil to disable modeline display of
+the view spec settings.")
+
+(defvar kvspec:string-format " <|%s>"
+  "Format of the kview spec modeline display.
+It must contain a `%s' which is replaced with the current set of view spec
+characters at run-time.")
 
 ;;; ************************************************************************
 ;;; Public functions
@@ -322,30 +353,6 @@ available, the cell remains fully expanded."
       ;; selected.
       (kvspec:numbering)) ;; n
     (set-buffer-modified-p modified-p)))
-
-;;; ************************************************************************
-;;; Private variables
-;;; ************************************************************************
-
-(defconst kvspec:label-type-alist
-  '((?0 . id)
-    (?1 . alpha)
-    (?. . legal)
-    ;; (?2 . partial-alpha)
-    ;; (?* . star)
-    ;; (?~ . no)
-    )
-  "Alist of (view-spec-character . label-type) pairs.")
-
-(defvar kvspec:string ""
-  "String displayed in koutline modelines to reflect the current view spec.
-It is local to each koutline.  Set this to nil to disable modeline display of
-the view spec settings.")
-
-(defvar kvspec:string-format " <|%s>"
-  "Format of the kview spec modeline display.
-It must contain a `%s' which is replaced with the current set of view spec
-characters at run-time.")
 
 (provide 'kvspec)
 

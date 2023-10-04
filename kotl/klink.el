@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    15-Nov-93 at 12:15:16
-;; Last-Mod:      8-Aug-23 at 23:57:36 by Bob Weiner
+;; Last-Mod:      4-Oct-23 at 00:01:43 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -82,6 +82,27 @@
   "C-related major modes with where klinks appear only within comments."
   :type '(list function)
   :group 'hyperbole-koutliner)
+
+;;; ************************************************************************
+;;; Public declarations
+;;; ************************************************************************
+
+(declare-function kcell-view:label "kview")
+(declare-function hbut:get-key-src "hbut")
+(declare-function hbut:label-p "hbut")
+(declare-function hargs:iform-read "hargs")
+(declare-function hattr:set "hbut")
+
+;;; ************************************************************************
+;;; Private variables
+;;; ************************************************************************
+
+(defvar klink:cell-ref-regexp
+  (concat "[0-9a-zA-Z][.*~=0-9a-zA-Z \t\n\r]*\\s-*,\\s-*"
+	  "[|:.*~=0-9a-zA-Z \t\n\r]+"
+	  "\\|[|: 0-9a-zA-Z][|:.*~=0-9a-zA-Z \t\n\r]*")
+  "Regexp matching a cell reference including relative and view specs.
+Contains no groupings.")
 
 ;;; ************************************************************************
 ;;; Public functions
@@ -353,17 +374,6 @@ Assume point is in klink referent buffer, where the klink points."
 	      (t (insert klink))))
     (insert klink)))
 				 
-;;; ************************************************************************
-;;; Private variables
-;;; ************************************************************************
-
-(defvar klink:cell-ref-regexp
-  (concat "[0-9a-zA-Z][.*~=0-9a-zA-Z \t\n\r]*\\s-*,\\s-*"
-	  "[|:.*~=0-9a-zA-Z \t\n\r]+"
-	  "\\|[|: 0-9a-zA-Z][|:.*~=0-9a-zA-Z \t\n\r]*")
-  "Regexp matching a cell reference including relative and view specs.
-Contains no groupings.")
-
 (provide 'klink)
 
 ;;; klink.el ends here
