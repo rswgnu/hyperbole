@@ -1,3 +1,10 @@
+2023-10-05  Mats Lidell  <matsl@gnu.org>
+
+* test/kotl-mode-tests.el (kotl-mode-kview-buffer-local)
+    (kotl-mode-kvspec-saved-with-file)
+    (kotl-mode-kvspec-independent-between-files): Add test for buffer
+    local kotl-kview.
+
 2023-10-04  Mats Lidell  <matsl@gnu.org>
 
 * kotl/kview.el (kotl-kview): Add kotl prefix to kview and use
