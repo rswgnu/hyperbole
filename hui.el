@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 21:42:03
-;; Last-Mod:      3-Oct-23 at 23:02:02 by Mats Lidell
+;; Last-Mod:      4-Oct-23 at 20:07:50 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1291,7 +1291,7 @@ drag from a window to another window's modeline."
       ;; single C-u prefix argument.  In such a case, don't use the
       ;; prefix argument as a flag to prompt for the ibutton name as
       ;; we want to just insert the appropriate ibut without any prompting.
-      (when (and name-arg-flag (not (eq name-arg-flag '(4))) (not name-key))
+      (when (and name-arg-flag (not (equal name-arg-flag '(4))) (not name-key))
 	(setq but-name (hui:hbut-label
 			(cond ((hmouse-prior-active-region)
 			       hkey-region)
