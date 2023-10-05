@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    26-Feb-98
-;; Last-Mod:     28-Aug-23 at 02:14:28 by Bob Weiner
+;; Last-Mod:      4-Oct-23 at 19:23:08 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -485,7 +485,7 @@ used.  Also converts Urls and Klinks into Html hyperlinks.
 		(replace-regexp-in-string
 		 ">" "&gt;"
 		 (replace-regexp-in-string
-		  "<" "&lt;" (kview:label-separator kview))))
+		  "<" "&lt;" (kview:label-separator kotl-kview))))
                no-sibling-stack)
 
           (princ "<ul>\n")
@@ -513,7 +513,7 @@ used.  Also converts Urls and Klinks into Html hyperlinks.
                    (while (pop no-sibling-stack)
                      (princ "</ul>\n")
                      (princ "</li>\n"))))))
-	   kview t)
+	   kotl-kview t)
 
           (princ "</ul>\n")
 

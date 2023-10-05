@@ -1,3 +1,18 @@
+2023-10-05  Mats Lidell  <matsl@gnu.org>
+
+* test/kotl-mode-tests.el (kotl-mode-kview-buffer-local)
+    (kotl-mode-kvspec-saved-with-file)
+    (kotl-mode-kvspec-independent-between-files): Add test for buffer
+    local kotl-kview.
+
+2023-10-04  Mats Lidell  <matsl@gnu.org>
+
+* kotl/kview.el (kotl-kview): Add kotl prefix to kview and use
+    defvar-local.
+
+* General removal of warnings by using defvar and declare-function for
+    variables and functions not covered by requires.
+
 2023-10-03  Mats Lidell  <matsl@gnu.org>
 
 * Makefile: Compile each el file in a separate Emacs process so that the
