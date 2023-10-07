@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    04-Feb-90
-;; Last-Mod:      3-Oct-23 at 23:22:38 by Mats Lidell
+;; Last-Mod:      4-Oct-23 at 20:04:08 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -652,7 +652,7 @@ RELEASE-WINDOW is interactively selected via the `ace-window' command.
 The selected window does not change.
 
 With no prefix argument, create an explicit button.
-With a C-u '(4) prefix argument, create an unnamed implicit button.
+With a C-u \\='(4) prefix argument, create an unnamed implicit button.
 With a M-1 prefix argument, create an named implicit button."
   (interactive
    (list (let ((mode-line-text (concat " Ace - Hyperbole: " (nth 2 (assq ?w aw-dispatch-alist)))))

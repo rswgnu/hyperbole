@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    6/30/93
-;; Last-Mod:      4-Oct-23 at 19:10:12 by Mats Lidell
+;; Last-Mod:      6-Oct-23 at 23:15:03 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -29,6 +29,7 @@
 (defvar cmpl-last-insert-location)
 (defvar cmpl-original-string)
 (defvar completion-to-accept)
+(defvar mwheel-scroll-down-function)    ; "mwheel"
 
 (declare-function outline-invisible-in-p "hyperbole")
 

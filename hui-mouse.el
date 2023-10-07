@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    04-Feb-89
-;; Last-Mod:      3-Oct-23 at 22:56:59 by Mats Lidell
+;; Last-Mod:      6-Oct-23 at 16:13:42 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -48,6 +48,8 @@
 (unless (fboundp 'smart-c-at-tag-p)
   (require 'hmouse-tag))
 (require 'imenu)
+(eval-when-compile
+  (require 'eieio))
 
 (eval-when-compile (require 'tar-mode))
 
@@ -1531,6 +1533,11 @@ If assist-key is pressed:
 	   (if non-text-area-p
 	       (magit-section-cycle-global)
 	     (smart-magit-display-file (key-binding (kbd "RET"))))))))
+
+;; Silence compiler about unknown slot. From eieio-tests.el
+(eval-when-compile
+  (dolist (slot '(content washer hidden start))
+    (cl-pushnew slot eieio--known-slot-names)))
 
 ;; Thanks to Jonas Bernoulli <tarsius>, magit author, for most of this
 ;; next function.

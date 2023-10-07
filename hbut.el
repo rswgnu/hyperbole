@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    18-Sep-91 at 02:57:09
-;; Last-Mod:      3-Oct-23 at 17:26:52 by Mats Lidell
+;; Last-Mod:      4-Oct-23 at 20:00:02 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -52,6 +52,7 @@ Use the function, (hbut:max-len), to read the proper value.")
 (declare-function hpath:substitute-var "hpath")
 (declare-function hpath:symlink-referent "hpath")
 (declare-function hpath:www-p "hpath")
+(declare-function hpath:shorten "hpath")
 (declare-function hsys-org-block-start-at-p "hsys-org")
 (declare-function hsys-org-src-block-start-at-p "hsys-org")
 (declare-function hui:buf-writable-err "hui")
