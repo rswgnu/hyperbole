@@ -1,5 +1,10 @@
 2023-10-07  Mats Lidell  <matsl@gnu.org>
 
+* hsys-org-roam.el: Byte compile. Warning is handled by declaration.
+
+* Makefile (EL_SRC): Add macro for all el-files, both compiled and not
+    compiled.
+
 * hui-mini.el: Update defcustom type for hui-mini menus.
 
 2023-10-05  Mats Lidell  <matsl@gnu.org>
