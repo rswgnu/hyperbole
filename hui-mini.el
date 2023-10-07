@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    15-Oct-91 at 20:13:17
-;; Last-Mod:      3-Oct-23 at 23:19:25 by Mats Lidell
+;; Last-Mod:      7-Oct-23 at 00:56:25 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -965,7 +965,7 @@ The menu is a menu of commands from MENU-ALIST."
 	      (progn (set-default var value)
 		     (hyperbole-minibuffer-menu))
 	    (set-default var value)))
-  :type '(list string sexp (set string nil))
+  :type '(cons (list string) (repeat (list string sexp string)))
   :group 'hyperbole-buttons)
 
 (defcustom hui:menu-to
@@ -1004,7 +1004,7 @@ The menu is a menu of commands from MENU-ALIST."
 	      (progn (set-default var value)
 		     (hyperbole-minibuffer-menu))
 	    (set-default var value)))
-  :type '(list string sexp (set string nil))
+  :type '(cons (list string) (repeat (list string sexp string)))
   :group 'hyperbole-buttons)
 
 (defcustom hui:doc-a-z
@@ -1043,7 +1043,7 @@ The menu is a menu of commands from MENU-ALIST."
 	      (progn (set-default var value)
 		     (hyperbole-minibuffer-menu))
 	    (set-default var value)))
-  :type '(list string sexp (set string nil))
+  :type '(cons (list string) (repeat (list string sexp)))
   :group 'hyperbole-buttons)
 
 ;;; ************************************************************************
