@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    7/27/93
-;; Last-Mod:     16-Oct-22 at 10:01:41 by Bob Weiner
+;; Last-Mod:     22-Sep-23 at 00:12:40 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -22,7 +22,7 @@
 ;;; ************************************************************************
 
 ;; Ensure kotl/ is in load-path.
-(require 'hyperbole)
+;; (require 'hyperbole)
 
 ;;; ************************************************************************
 ;;; Public functions

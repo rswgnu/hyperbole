@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     6-Oct-91 at 03:42:38
-;; Last-Mod:      2-Oct-23 at 05:47:51 by Bob Weiner
+;; Last-Mod:      3-Oct-23 at 23:30:29 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -22,16 +22,49 @@
 (eval-and-compile (mapc #'require '(compile hversion hact locate cl-lib)))
 
 ;;; ************************************************************************
+;;; Public declarations
+;;; ************************************************************************
+
+(defvar mh-e-RCS-id)
+(defvar pm-version)
+(defvar vm-version)
+
+(declare-function helm-info "ext:helm")
+(declare-function helm-apropos "ext:helm")
+(declare-function devdocs-lookup "ext:devdocs")
+
+;; interaction-log
+(defvar ilog-buffer-name)
+(defvar ilog-display-state)
+(defvar ilog-idle-time)
+(defvar ilog-insertion-timer)
+(defvar ilog-print-lambdas)
+(defvar ilog-self-insert-command-regexps)
+(defvar ilog-truncation-timer)
+(defvar interaction-log-mode)
+(defvar interaction-log-mode-hook)
+
+(declare-function ilog-note-buffer-change "ext:interaction-log")
+(declare-function ilog-post-command "ext:interaction-log")
+(declare-function ilog-record-this-command "ext:interaction-log")
+(declare-function ilog-show-in-other-frame "ext:interaction-log")
+(declare-function ilog-timer-function "ext:interaction-log")
+(declare-function ilog-toggle-view "ext:interaction-log")
+(declare-function ilog-truncate-log-buffer "ext:interaction-log")
+(declare-function interaction-log-mode "ext:interaction-log")
+
+(defvar hyperb:user-email)              ; "hinit.el"
+
+(declare-function hkey-either "hmouse-drv")
+(declare-function hycontrol-frame-to-right-center "hycontrol")
+
+;;; ************************************************************************
 ;;; Public variables
 ;;; ************************************************************************
 
 (defconst hypb:help-buf-prefix "*Help: Hyperbole "
   "Prefix attached to all native Hyperbole help buffer names.
 This should end with a space.")
-
-;;; ************************************************************************
-;;; Public variables
-;;; ************************************************************************
 
 (defvar hypb:mail-address-mode-list
   '(fundamental-mode prog-mode text-mode)
@@ -79,39 +112,6 @@ This should end with a space.")
 It must end with a space."
   :type 'string
   :group 'hyperbole-commands)
-
-
-;;; ************************************************************************
-;;; Public declarations
-;;; ************************************************************************
-
-(defvar mh-e-RCS-id)
-(defvar pm-version)
-(defvar vm-version)
-
-(declare-function helm-info "ext:helm")
-(declare-function helm-apropos "ext:helm")
-(declare-function devdocs-lookup "ext:devdocs")
-
-;; interaction-log
-(defvar ilog-buffer-name)
-(defvar ilog-display-state)
-(defvar ilog-idle-time)
-(defvar ilog-insertion-timer)
-(defvar ilog-print-lambdas)
-(defvar ilog-self-insert-command-regexps)
-(defvar ilog-truncation-timer)
-(defvar interaction-log-mode)
-(defvar interaction-log-mode-hook)
-
-(declare-function ilog-note-buffer-change "ext:interaction-log")
-(declare-function ilog-post-command "ext:interaction-log")
-(declare-function ilog-record-this-command "ext:interaction-log")
-(declare-function ilog-show-in-other-frame "ext:interaction-log")
-(declare-function ilog-timer-function "ext:interaction-log")
-(declare-function ilog-toggle-view "ext:interaction-log")
-(declare-function ilog-truncate-log-buffer "ext:interaction-log")
-(declare-function interaction-log-mode "ext:interaction-log")
 
 ;;; ************************************************************************
 ;;; Public functions

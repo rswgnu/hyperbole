@@ -3,7 +3,7 @@
 ;; Author:       Masanobu Umeda             / Bob Weiner
 ;;
 ;; Orig-Date:    14-Oct-91 at 07:22:08
-;; Last-Mod:      2-Aug-22 at 15:02:15 by Mats Lidell
+;; Last-Mod:      3-Oct-23 at 23:26:02 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -33,6 +33,69 @@
 
 (require 'calendar)
 (require 'cal-julian)
+
+;;; ************************************************************************
+;;; Public declarations
+;;; ************************************************************************
+
+(declare-function hypb:call-process-p "hypb")
+
+;;; ************************************************************************
+;;; Private variables
+;;; ************************************************************************
+
+(defvar htz:local
+  (let ((local-tz (or (getenv "TZ") (getenv "TIMEZONE")
+		      (if (fboundp 'current-time-zone)
+			  (car (cdr (current-time-zone))))
+		      (progn
+			(require 'hypb)
+			(hypb:call-process-p
+			 "date" nil '(if (re-search-backward
+					  " \\([-+a-zA-Z0-9]+\\) [0-9]+$" nil t)
+					 (buffer-substring (match-beginning 1)
+							   (match-end 1))))))))
+    (if (and (stringp local-tz) (string-match " " local-tz))
+	;; Windows returns things like "Eastern Daylight Time", so
+	;; abbreviate to the first letter of each word.
+	(concat (mapcar (lambda (s) (aref s 0)) (split-string local-tz)))
+      local-tz))
+  "Holds string giving the timezone for the local machine.")
+
+(defvar htz:world-timezones
+  '(("PST" .  -800)
+    ("PDT" .  -700)
+    ("MST" .  -700)
+    ("MDT" .  -600)
+    ("CST" .  -600)
+    ("CDT" .  -500)
+    ("EST" .  -500)
+    ("EDT" .  -400)
+    ("AST" .  -400)
+    ("NST" .  -330)
+    ("UT"  .  +000)
+    ("GMT" .  +000)
+    ("BST" .  +100)
+    ("MET" .  +100)
+    ("EET" .  +200)
+    ("JST" .  +900)
+    ("GMT+1"  .  +100) ("GMT+2"  .  +200) ("GMT+3"  .  +300)
+    ("GMT+4"  .  +400) ("GMT+5"  .  +500) ("GMT+6"  .  +600)
+    ("GMT+7"  .  +700) ("GMT+8"  .  +800) ("GMT+9"  .  +900)
+    ("GMT+10" . +1000) ("GMT+11" . +1100) ("GMT+12" . +1200) ("GMT+13" . +1300)
+    ("GMT-1"  .  -100) ("GMT-2"  .  -200) ("GMT-3"  .  -300)
+    ("GMT-4"  .  -400) ("GMT-5"  .  -500) ("GMT-6"  .  -600)
+    ("GMT-7"  .  -700) ("GMT-8"  .  -800) ("GMT-9"  .  -900)
+    ("GMT-10" . -1000) ("GMT-11" . -1100) ("GMT-12" . -1200))
+  "Time differentials of timezone from GMT in +-HHMM form.
+Use `current-time-zone' instead where possible.")
+
+(defvar htz:months-assoc
+  '(("JAN" .  1)("FEB" .  2)("MAR" .  3)
+    ("APR" .  4)("MAY" .  5)("JUN" .  6)
+    ("JUL" .  7)("AUG" .  8)("SEP" .  9)
+    ("OCT" . 10)("NOV" . 11)("DEC" . 12))
+  "Alist of first three letters of a month and its numerical representation.")
 
 ;;; ************************************************************************
 ;;; Public functions
@@ -347,65 +410,6 @@ Optional argument TIMEZONE specifies a time zone."
 	    (setq timezone (string-to-number timezone)))
 	(/ timezone 100))
     (error "(htz:zone-to-hour): Nil timezone sent as argument")))
-
-
-;;; ************************************************************************
-;;; Private variables
-;;; ************************************************************************
-
-(defvar htz:local
-  (let ((local-tz (or (getenv "TZ") (getenv "TIMEZONE")
-		      (if (fboundp 'current-time-zone)
-			  (car (cdr (current-time-zone))))
-		      (progn
-			(require 'hypb)
-			(hypb:call-process-p
-			 "date" nil '(if (re-search-backward
-					  " \\([-+a-zA-Z0-9]+\\) [0-9]+$" nil t)
-					 (buffer-substring (match-beginning 1)
-							   (match-end 1))))))))
-    (if (and (stringp local-tz) (string-match " " local-tz))
-	;; Windows returns things like "Eastern Daylight Time", so
-	;; abbreviate to the first letter of each word.
-	(concat (mapcar (lambda (s) (aref s 0)) (split-string local-tz)))
-      local-tz))
-  "Holds string giving the timezone for the local machine.")
-
-(defvar htz:world-timezones
-  '(("PST" .  -800)
-    ("PDT" .  -700)
-    ("MST" .  -700)
-    ("MDT" .  -600)
-    ("CST" .  -600)
-    ("CDT" .  -500)
-    ("EST" .  -500)
-    ("EDT" .  -400)
-    ("AST" .  -400)
-    ("NST" .  -330)
-    ("UT"  .  +000)
-    ("GMT" .  +000)
-    ("BST" .  +100)
-    ("MET" .  +100)
-    ("EET" .  +200)
-    ("JST" .  +900)
-    ("GMT+1"  .  +100) ("GMT+2"  .  +200) ("GMT+3"  .  +300)
-    ("GMT+4"  .  +400) ("GMT+5"  .  +500) ("GMT+6"  .  +600)
-    ("GMT+7"  .  +700) ("GMT+8"  .  +800) ("GMT+9"  .  +900)
-    ("GMT+10" . +1000) ("GMT+11" . +1100) ("GMT+12" . +1200) ("GMT+13" . +1300)
-    ("GMT-1"  .  -100) ("GMT-2"  .  -200) ("GMT-3"  .  -300)
-    ("GMT-4"  .  -400) ("GMT-5"  .  -500) ("GMT-6"  .  -600)
-    ("GMT-7"  .  -700) ("GMT-8"  .  -800) ("GMT-9"  .  -900)
-    ("GMT-10" . -1000) ("GMT-11" . -1100) ("GMT-12" . -1200))
-  "Time differentials of timezone from GMT in +-HHMM form.
-Use `current-time-zone' instead where possible.")
-
-(defvar htz:months-assoc
-  '(("JAN" .  1)("FEB" .  2)("MAR" .  3)
-    ("APR" .  4)("MAY" .  5)("JUN" .  6)
-    ("JUL" .  7)("AUG" .  8)("SEP" .  9)
-    ("OCT" . 10)("NOV" . 11)("DEC" . 12))
-  "Alist of first three letters of a month and its numerical representation.")
-
 
 (provide 'htz)
 

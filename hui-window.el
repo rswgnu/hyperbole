@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Sep-92
-;; Last-Mod:     18-Sep-23 at 20:43:57 by Bob Weiner
+;; Last-Mod:      3-Oct-23 at 17:04:04 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -31,6 +31,39 @@
 ;; If installed, use pulse library for momentary highlighting of buffer/file item lines.
 (require 'pulse nil t)
 (require 'hui-select)
+
+;;; ************************************************************************
+;;; Public declarations
+;;; ************************************************************************
+
+(defvar action-key-depress-args)                ; "hmouse-drv.el"
+(defvar assist-key-depress-args)                ; "hmouse-drv.el"
+(defvar action-key-depress-prev-point)          ; "hmouse-drv.el"
+(defvar assist-key-depress-prev-point)          ; "hmouse-drv.el"
+(defvar action-key-release-prev-point)          ; "hmouse-drv.el"
+(defvar assist-key-release-prev-point)          ; "hmouse-drv.el"
+(defvar assist-key-depress-window)              ; "hmouse-drv.el"
+(defvar action-key-depress-window)              ; "hmouse-drv.el"
+(defvar assist-key-release-window)              ; "hmouse-drv.el"
+(defvar action-key-release-window)              ; "hmouse-drv.el"
+(defvar assist-key-release-args)                ; "hmouse-drv.el"
+(defvar action-key-release-args)                ; "hmouse-drv.el"
+(defvar hkey-value)                             ; "hui-mouse.el"
+(defvar hkey-region)                            ; "hmouse-drv.el"
+(defvar hpath:display-where-alist)              ; "hpath.el"
+(defvar hpath:display-where)                    ; "hpath.el"
+(defvar action-key-modeline-buffer-id-function) ; "hui-mouse.el"
+
+(declare-function hbut:act "hbut")
+(declare-function hbut:action "hbut")
+(declare-function hbut:at-p "hbut")
+(declare-function hkey-summarize "hmouse-drv")
+(declare-function hmouse-save-region "hmouse-drv")
+(declare-function hmouse-use-region-p "hmouse-drv")
+(declare-function hmouse-window-coordinates "hmouse-drv")
+(declare-function smart-helm-alive-p "hui-mouse")
+(declare-function smart-helm-line-has-action "hui-mouse")
+(declare-function smart-helm-to-minibuffer "hui-mouse")
 
 ;;; ************************************************************************
 ;;; Public variables

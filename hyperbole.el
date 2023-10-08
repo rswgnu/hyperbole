@@ -7,7 +7,7 @@
 ;; Author:       Bob Weiner
 ;; Maintainer:   Bob Weiner <rsw@gnu.org>, Mats Lidell <matsl@gnu.org>
 ;; Created:      06-Oct-92 at 11:52:51
-;; Last-Mod:     18-Sep-23 at 06:39:11 by Bob Weiner
+;; Last-Mod:      3-Oct-23 at 16:57:55 by Mats Lidell
 ;; Released:     03-Dec-22
 ;; Version:      8.0.1pre
 ;; Keywords:     comm, convenience, files, frames, hypermedia, languages, mail, matching, mouse, multimedia, outlines, tools, wp
@@ -163,7 +163,17 @@ Info documentation at \"(hyperbole)Top\".
 ;;; Public declarations
 ;;; ************************************************************************
 
+(defvar Info-directory-list)            ; "info.el"
+
 (declare-function vertico-mouse-mode "ext:vertico")
+
+(declare-function info-initialize "info")
+(declare-function hmouse-install "hmouse-key")
+(declare-function hui-search-web "hui-mini")
+(declare-function hkey-operate "hmouse-drv")
+(declare-function facemenu-keymap nil)  ; Where is this defined?
+(declare-function hkey-help "hmouse-drv")
+(declare-function hkey-either "hmouse-drv")
 
 ;;; ************************************************************************
 ;;; Other required Elisp libraries

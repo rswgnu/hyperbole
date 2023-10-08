@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    15-Oct-91 at 20:13:17
-;; Last-Mod:     18-Sep-23 at 08:03:51 by Bob Weiner
+;; Last-Mod:      7-Oct-23 at 00:56:25 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -22,6 +22,26 @@
 (require 'hypb)
 (require 'hsettings)                    ; For hyperbole-web-search-alist
 (require 'browse-url)
+
+;;; ************************************************************************
+;;; Public declarations
+;;; ************************************************************************
+
+(defvar hargs:reading-type)             ; "hargs.el"
+(defvar hui:menu-mode-map)              ; "hui.el"
+(defvar hbmap:dir-user)                 ; "hbmap.el"
+(defvar hbmap:filename)                 ; "hbmap.el"
+(defvar hui:menu-rolo)                  ; "hui.el"
+(defvar hyperbole-mode-map)             ; "hyperbole.el"
+(defvar hyrolo-add-hook)                ; "hyrolo.el"
+(defvar hyrolo-edit-hook)               ; "hyrolo.el"
+(defvar hyrolo-file-list)               ; "hyrolo.el"
+(defvar org-mode-map)                   ; "org.el"
+
+(declare-function hpath:find "hpath")
+(declare-function hmouse-update-smart-keys "hmouse-key")
+(declare-function hargs:at-p "hargs")
+(declare-function kbd-key:hyperbole-mini-menu-key-p "hib-kbd")
 
 ;;; ************************************************************************
 ;;; Public variables
@@ -945,7 +965,7 @@ The menu is a menu of commands from MENU-ALIST."
 	      (progn (set-default var value)
 		     (hyperbole-minibuffer-menu))
 	    (set-default var value)))
-  :type '(list string sexp (set string nil))
+  :type '(cons (list string) (repeat (list string sexp string)))
   :group 'hyperbole-buttons)
 
 (defcustom hui:menu-to
@@ -984,7 +1004,7 @@ The menu is a menu of commands from MENU-ALIST."
 	      (progn (set-default var value)
 		     (hyperbole-minibuffer-menu))
 	    (set-default var value)))
-  :type '(list string sexp (set string nil))
+  :type '(cons (list string) (repeat (list string sexp string)))
   :group 'hyperbole-buttons)
 
 (defcustom hui:doc-a-z
@@ -1023,7 +1043,7 @@ The menu is a menu of commands from MENU-ALIST."
 	      (progn (set-default var value)
 		     (hyperbole-minibuffer-menu))
 	    (set-default var value)))
-  :type '(list string sexp (set string nil))
+  :type '(cons (list string) (repeat (list string sexp)))
   :group 'hyperbole-buttons)
 
 ;;; ************************************************************************

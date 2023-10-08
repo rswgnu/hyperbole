@@ -4,7 +4,7 @@
 ;; Maintainer:   Bob Weiner, Mats Lidell
 ;;
 ;; Orig-Date:     1-Jan-94
-;; Last-Mod:     18-Sep-23 at 06:39:39 by Bob Weiner
+;; Last-Mod:      3-Oct-23 at 23:31:30 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -23,11 +23,19 @@
 (require 'hload-path)
 
 ;;; ************************************************************************
+;;; Public declarations
+;;; ************************************************************************
+
+(declare-function br-to-view-window "ext:br")
+(declare-function hpath:substitute-value "hpath")
+(declare-function id-info-item "hversion")
+(declare-function br-in-browser "hpath")
+
+;;; ************************************************************************
 ;;; Public variables
 ;;; ************************************************************************
 
 (defconst hyperb:version "8.0.1pre" "GNU Hyperbole revision number.")
-
 
 (defvar hyperb:mouse-buttons
   (if (or (and hyperb:microsoft-os-p (not (memq window-system '(w32 w64 x))))
@@ -42,11 +50,6 @@ your specific mouse.")
       automount-dir-prefix
     "^/tmp_mnt/"
     "Regexp to match any automounter prefix in a pathname."))
-
-;;; ************************************************************************
-;;; Public declarations
-;;; ************************************************************************
-(declare-function br-to-view-window "ext:br")
 
 ;;; ************************************************************************
 ;;; Support functions

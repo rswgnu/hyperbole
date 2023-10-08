@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 21:42:03
-;; Last-Mod:      1-Oct-23 at 21:20:31 by Bob Weiner
+;; Last-Mod:      4-Oct-23 at 20:07:50 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -29,8 +29,16 @@
 ;;; Public declarations
 ;;; ************************************************************************
 
+(defvar hyperbole-mode-map)             ; "hyperbole.el"
+
 (declare-function texinfo-copy-node-name "texnfo-upd")
 (declare-function kotl-mode:copy-region-as-kill "kotl-mode")
+
+(declare-function kcell-view:idstamp "kotl/kview")
+(declare-function bookmark-bmenu-bookmark "bookmark")
+(declare-function hui:menu-choose "hui-mini")
+(declare-function kcell-view:absolute-reference "kotl/kview")
+(declare-function klink:absolute "kotl/klink")
 
 ;;; ************************************************************************
 ;;; Public variables
@@ -45,6 +53,17 @@
   "*Non-nil prompts for a button-specific action on explicit button creation."
   :type 'boolean
   :group 'hyperbole-buttons)
+
+;;; ************************************************************************
+;;; Private variables
+;;; ************************************************************************
+
+(defvar hui:ebut-label-prev nil
+  "String value of previous button name during an explicit button rename.
+At other times, value must be nil.")
+
+(defvar hui:ignore-buffers-regexp "\\`\\( \\|BLANK\\'\\|\\*Pp \\|TAGS\\|*quelpa\\)"
+  "When prompting for a buffer name, ignore any buffers whose names match to this.")
 
 ;;; ************************************************************************
 ;;; Public Commands Bound to Keys
@@ -1272,7 +1291,7 @@ drag from a window to another window's modeline."
       ;; single C-u prefix argument.  In such a case, don't use the
       ;; prefix argument as a flag to prompt for the ibutton name as
       ;; we want to just insert the appropriate ibut without any prompting.
-      (when (and name-arg-flag (not (eq name-arg-flag '(4))) (not name-key))
+      (when (and name-arg-flag (not (equal name-arg-flag '(4))) (not name-key))
 	(setq but-name (hui:hbut-label
 			(cond ((hmouse-prior-active-region)
 			       hkey-region)
@@ -1412,9 +1431,6 @@ Trigger an error if DEFAULT-ACTYPE is invalid."
     (when err
       (pop-to-buffer but-buf)
       (hypb:error err))))
-
-(defvar hui:ignore-buffers-regexp "\\`\\( \\|BLANK\\'\\|\\*Pp \\|TAGS\\|*quelpa\\)"
-  "When prompting for a buffer name, ignore any buffers whose names match to this.")
 
 (defun hui:ebut-delete-op (interactive but-key key-src)
   "INTERACTIVEly or not, delete explicit button given by BUT-KEY in KEY-SRC.
@@ -1921,15 +1937,6 @@ Buffer without File      link-to-buffer-tmp"
   "Return LST, a list, with text properties removed from any string elements."
   (mapcar (lambda (elt) (if (stringp elt) (substring-no-properties elt) elt))
 	  lst))
-
-;;; ************************************************************************
-;;; Private variables
-;;; ************************************************************************
-
-
-(defvar hui:ebut-label-prev nil
-  "String value of previous button name during an explicit button rename.
-At other times, value must be nil.")
 
 (provide 'hui)
 

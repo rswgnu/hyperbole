@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    31-Oct-91 at 23:17:35
-;; Last-Mod:      1-Oct-23 at 21:17:28 by Bob Weiner
+;; Last-Mod:      3-Oct-23 at 23:28:59 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -36,19 +36,6 @@
 (require 'hmouse-drv)
 
 ;;; ************************************************************************
-;;; Public variables
-;;; ************************************************************************
-
-(defvar hargs:defaults nil
-  "Default arguments read from an existing Hyperbole button when editing it.")
-
-(defvar hargs:reading-type nil
-  "Symbol representing the type of object Hyperbole is prompting the user to input.")
-
-(add-hook 'completion-setup-hook #'hargs:set-string-to-complete)
-(add-hook 'minibuffer-exit-hook  #'hargs:unset-string-to-complete)
-
-;;; ************************************************************************
 ;;; Public declarations
 ;;; ************************************************************************
 
@@ -62,6 +49,42 @@
 (declare-function vertico-insert "ext:vertico")
 (declare-function vertico-mouse--index "ext:vertico")
 (declare-function vertico--match-p "ext:vertico")
+
+(declare-function ebut:label-p "hbut")
+(declare-function gbut:file "hbut")
+(declare-function hattr:get "hbut")
+(declare-function hbut:label-p "hbut")
+(declare-function hbut:label-to-key "hbut")
+(declare-function hmail:reader-p "hmail")
+(declare-function hui:menu-enter "hui")
+(declare-function ibut:label-p "hbut")
+(declare-function kbd-key:normalize "hib-kbd")
+(declare-function kcell-view:label "kview")
+(declare-function kcell-view:reference "kview")
+(declare-function rmail:msg-id-get "hmail")
+
+;;; ************************************************************************
+;;; Public variables
+;;; ************************************************************************
+
+(defvar hargs:defaults nil
+  "Default arguments read from an existing Hyperbole button when editing it.")
+
+(defvar hargs:reading-type nil
+  "Symbol representing the type of object Hyperbole is prompting the user to input.")
+
+(add-hook 'completion-setup-hook #'hargs:set-string-to-complete)
+(add-hook 'minibuffer-exit-hook  #'hargs:unset-string-to-complete)
+
+;;; ************************************************************************
+;;; Private variables
+;;; ************************************************************************
+
+(defvar hargs:reading-symbol nil
+  "Remember what symbol is being read.")
+
+(defvar hargs:string-to-complete nil
+  "Minibuffer content the last time a completions buffer was generated, or nil.")
 
 ;;; ************************************************************************
 ;;; Private functions
@@ -214,6 +237,185 @@ included; any string that matches this regexp is ignored."
 		     (list string start end)
 		   string))))))))
 
+(defmacro hargs:make-iform-vector (&rest iform-alist)
+  "Return a vector of interactive command code characters.
+IFORM-ALIST is a list of elements of the form
+    (INTERACTIVE-CMD-CHR  (ARGUMENT-TYPE . GET-ARGUMENT-FORM))
+GET-ARGUMENT-FORM is executed in a context where it has access to
+two variables `prompt' and `default'."
+  ;; Vector needs to have 1 more elts than the highest char code for
+  ;; interactive commands.
+  (let ((size (1+ (car (sort (mapcar #'car iform-alist) #'>))))
+        (vecsym (make-symbol "vec")))
+    `(let ((,vecsym (make-vector ',size nil)))
+       ,@(mapcar (lambda (elt)
+		   `(aset ,vecsym ',(car elt)
+		          (lambda (prompt default)
+		            (ignore prompt default) ;; Don't warn if not used.
+			    (let ((prev-reading-p hargs:reading-type))
+			      (unwind-protect
+				  (progn
+				    ;; Use setq here to ensure change is
+				    ;; visible in lexical subcontexts that are
+				    ;; part of 'elt' body.
+				    (setq hargs:reading-type ',(cadr elt))
+				    ,(cddr elt))
+				(setq hargs:reading-type prev-reading-p))))))
+		 iform-alist)
+       ,vecsym)))
+
+(defconst hargs:iform-extensions-vector
+  (hargs:make-iform-vector
+   ;; Get existing Info node name, possibly prefixed with its (filename).
+   (?I . (Info-node . (progn (require 'info)
+			     ;; Prevent empty completions list from
+			     ;; triggering an error in Info-read-node-name.
+			     (unless (and Info-current-file-completions
+					  (not (equal Info-current-file-completions '(("None")))))
+			       (condition-case nil
+				   (Info-build-node-completions)
+				 (error (setq Info-current-file-completions '(("None"))))))
+			     (Info-read-node-name prompt))))
+
+   ;; Get kcell from some koutline.
+   (?K . (kcell . (hargs:read prompt nil default nil 'kcell)))
+   ;; Get kcell or path reference for use in a link.
+   (?L . (klink . (hargs:read prompt nil default nil 'klink)))
+   ;; Get existing mail msg date and file.
+   (?M . (mail . (progn
+		   (while
+		       (or (not (listp
+				 (setq default
+				       (read-minibuffer
+					(hargs:prompt
+					 prompt ""
+					 "list of (date mail-file)")
+					default))))
+			   (/= (length default) 2)
+			   (not (and (stringp (car (cdr default)))
+				     (file-exists-p
+				      (car (cdr default))))))
+		     (beep))
+		   default)))
+   ;; Get a Koutline viewspec.
+   (?V . (kvspec . (hargs:read prompt nil nil nil 'kvspec)))
+   ;; Get existing Info index item name, possibly prefixed with its (filename).
+   (?X . (Info-index-item . (let (file item)
+			      (require 'info)
+			      (setq item (Info-read-index-item-name prompt))
+			      (if (string-match "^(\\([^\)]+\\))\\(.*\\)" item)
+			          item
+			        (if (setq file (Info-current-filename-sans-extension))
+			            (format "(%s)%s" file item)
+			          item))))))
+  "Vector of forms for each interactive command character code.")
+
+(defconst hargs:iform-vector
+  (hargs:make-iform-vector
+   ;; Get function symbol.
+   (?a . (symbol .
+		 (intern (completing-read prompt obarray #'fboundp t default))))
+   ;; Get name of existing buffer.
+   (?b . (buffer .
+		 (progn
+		   (or default (setq default (other-buffer (current-buffer))))
+		   (read-buffer prompt default t))))
+   ;; Get name of possibly nonexistent buffer.
+   (?B . (buffer .
+		 (progn
+		   (or default (setq default (other-buffer (current-buffer))))
+		   (read-buffer prompt default nil))))
+   ;; Get character.
+   (?c . (character .
+		    (progn (message
+			    (if default
+			        (hargs:prompt prompt
+					      (if (integerp default)
+					          (char-to-string default)
+					        default)
+					      "Curr:")
+			      prompt))
+			   (char-to-string (read-char)))))
+   ;; Get symbol for interactive function, a command.
+   (?C . (symbol .
+		 (intern
+		  (completing-read prompt obarray #'commandp t default))))
+   ;; Get value of point; does not do I/O.
+   (?d . (integer . (point)))
+   ;; Get directory name.
+   (?D . (directory .
+		    (progn
+		      (or default (setq default default-directory))
+		      (read-directory-name prompt default default t))))
+   ;; Get existing file name.
+   (?f . (file .
+	       (read-file-name prompt default default
+			       (if (eq system-type 'vax-vms)
+				   nil 'existing))))
+   ;; Get possibly nonexistent file name.
+   (?F . (file . (read-file-name prompt default default nil)))
+   ;; Ignore this argument
+   (?i . nil)
+   ;; Get key sequence.
+   (?k . (key .
+	      (key-description (read-key-sequence
+				(if default
+				    (hargs:prompt prompt default "Curr:")
+				  prompt)))))
+   ;; Get key sequence without converting uppercase or shifted
+   ;; function keys to their unshifted equivalents.
+   (?K . (key .
+	      (key-description (read-key-sequence
+				(if default
+				    (hargs:prompt prompt default "Curr:")
+				  prompt)
+				nil t))))
+   ;; Get value of mark.  Does not do I/O.
+   (?m . (integer . (marker-position (mark-marker))))
+   ;; Get numeric prefix argument or a number from the minibuffer.
+   (?N . (integer .
+		  (if prefix-arg
+		      (prefix-numeric-value prefix-arg)
+		    (let ((arg))
+		      (while (not (integerp
+				   (setq arg (read-minibuffer prompt default))))
+		        (beep))
+		      arg))))
+   ;; Get number from minibuffer.
+   (?n . (integer .
+		  (let ((arg))
+		    (while (not (integerp
+				 (setq arg (read-minibuffer prompt default))))
+		      (beep))
+		    arg)))
+   ;; Get numeric prefix argument.  No I/O.
+   (?p . (prefix-arg .
+		     (prefix-numeric-value prefix-arg)))
+   ;; Get prefix argument in raw form.  No I/O.
+   (?P . (prefix-arg . prefix-arg))
+   ;; Get region, point and mark as 2 args.  No I/O
+   (?r . (region .
+		 (if (marker-position (mark-marker))
+		     (list 'args (min (point) (mark t))
+			   (max (point) (mark t)))
+		   (list 'args nil nil))))
+   ;; Get string.
+   (?s . (string . (read-string prompt default)))
+   ;; Get symbol.
+   (?S . (symbol .
+		 (read-from-minibuffer
+		  prompt default minibuffer-local-ns-map 'sym)))
+   ;; Get variable name: symbol that is user-variable-p.
+   (?v . (symbol . (read-variable
+		    (if default
+			(hargs:prompt prompt default "Curr:")
+		      prompt))))
+   ;; Get Lisp expression but don't evaluate.
+   (?x . (sexpression . (read-minibuffer prompt default)))
+   ;; Get Lisp expression and evaluate.
+   (?X . (sexpression . (eval-minibuffer prompt default))))
+  "Vector of forms for each interactive command character code.")
+
 (defun hargs:get (interactive-entry &optional default prior-arg)
   "Prompt for an argument, if need be, from INTERACTIVE-ENTRY, a string.
 Optional DEFAULT is inserted after prompt.
@@ -250,33 +452,6 @@ element of the list is always the symbol \\='args."
 	       (error
 		"(hargs:get): Bad interactive-entry command character: `%c'"
 		cmd))))))
-
-(defmacro hargs:make-iform-vector (&rest iform-alist)
-  "Return a vector of interactive command code characters.
-IFORM-ALIST is a list of elements of the form
-    (INTERACTIVE-CMD-CHR  (ARGUMENT-TYPE . GET-ARGUMENT-FORM))
-GET-ARGUMENT-FORM is executed in a context where it has access to
-two variables `prompt' and `default'."
-  ;; Vector needs to have 1 more elts than the highest char code for
-  ;; interactive commands.
-  (let ((size (1+ (car (sort (mapcar #'car iform-alist) #'>))))
-        (vecsym (make-symbol "vec")))
-    `(let ((,vecsym (make-vector ',size nil)))
-       ,@(mapcar (lambda (elt)
-		   `(aset ,vecsym ',(car elt)
-		          (lambda (prompt default)
-		            (ignore prompt default) ;; Don't warn if not used.
-			    (let ((prev-reading-p hargs:reading-type))
-			      (unwind-protect
-				  (progn
-				    ;; Use setq here to ensure change is
-				    ;; visible in lexical subcontexts that are
-				    ;; part of 'elt' body.
-				    (setq hargs:reading-type ',(cadr elt))
-				    ,(cddr elt))
-				(setq hargs:reading-type prev-reading-p))))))
-		 iform-alist)
-       ,vecsym)))
 
 ;; Replicated from `vertico--match-p' in "vertico.el"
 (defun hargs:match-p (str)
@@ -854,168 +1029,6 @@ Hyperbole menu item help when appropriate."
 	      value)))
 	(when (and back-to (window-live-p owind))
 	  (select-window owind))))))
-
-;;; ************************************************************************
-;;; Private variables
-;;; ************************************************************************
-
-(defvar hargs:reading-symbol nil
-  "Remember what symbol is being read.")
-
-(defconst hargs:iform-vector
-  (hargs:make-iform-vector
-   ;; Get function symbol.
-   (?a . (symbol .
-		 (intern (completing-read prompt obarray #'fboundp t default))))
-   ;; Get name of existing buffer.
-   (?b . (buffer .
-		 (progn
-		   (or default (setq default (other-buffer (current-buffer))))
-		   (read-buffer prompt default t))))
-   ;; Get name of possibly nonexistent buffer.
-   (?B . (buffer .
-		 (progn
-		   (or default (setq default (other-buffer (current-buffer))))
-		   (read-buffer prompt default nil))))
-   ;; Get character.
-   (?c . (character .
-		    (progn (message
-			    (if default
-			        (hargs:prompt prompt
-					      (if (integerp default)
-					          (char-to-string default)
-					        default)
-					      "Curr:")
-			      prompt))
-			   (char-to-string (read-char)))))
-   ;; Get symbol for interactive function, a command.
-   (?C . (symbol .
-		 (intern
-		  (completing-read prompt obarray #'commandp t default))))
-   ;; Get value of point; does not do I/O.
-   (?d . (integer . (point)))
-   ;; Get directory name.
-   (?D . (directory .
-		    (progn
-		      (or default (setq default default-directory))
-		      (read-directory-name prompt default default t))))
-   ;; Get existing file name.
-   (?f . (file .
-	       (read-file-name prompt default default
-			       (if (eq system-type 'vax-vms)
-				   nil 'existing))))
-   ;; Get possibly nonexistent file name.
-   (?F . (file . (read-file-name prompt default default nil)))
-   ;; Ignore this argument
-   (?i . nil)
-   ;; Get key sequence.
-   (?k . (key .
-	      (key-description (read-key-sequence
-				(if default
-				    (hargs:prompt prompt default "Curr:")
-				  prompt)))))
-   ;; Get key sequence without converting uppercase or shifted
-   ;; function keys to their unshifted equivalents.
-   (?K . (key .
-	      (key-description (read-key-sequence
-				(if default
-				    (hargs:prompt prompt default "Curr:")
-				  prompt)
-				nil t))))
-   ;; Get value of mark.  Does not do I/O.
-   (?m . (integer . (marker-position (mark-marker))))
-   ;; Get numeric prefix argument or a number from the minibuffer.
-   (?N . (integer .
-		  (if prefix-arg
-		      (prefix-numeric-value prefix-arg)
-		    (let ((arg))
-		      (while (not (integerp
-				   (setq arg (read-minibuffer prompt default))))
-		        (beep))
-		      arg))))
-   ;; Get number from minibuffer.
-   (?n . (integer .
-		  (let ((arg))
-		    (while (not (integerp
-				 (setq arg (read-minibuffer prompt default))))
-		      (beep))
-		    arg)))
-   ;; Get numeric prefix argument.  No I/O.
-   (?p . (prefix-arg .
-		     (prefix-numeric-value prefix-arg)))
-   ;; Get prefix argument in raw form.  No I/O.
-   (?P . (prefix-arg . prefix-arg))
-   ;; Get region, point and mark as 2 args.  No I/O
-   (?r . (region .
-		 (if (marker-position (mark-marker))
-		     (list 'args (min (point) (mark t))
-			   (max (point) (mark t)))
-		   (list 'args nil nil))))
-   ;; Get string.
-   (?s . (string . (read-string prompt default)))
-   ;; Get symbol.
-   (?S . (symbol .
-		 (read-from-minibuffer
-		  prompt default minibuffer-local-ns-map 'sym)))
-   ;; Get variable name: symbol that is user-variable-p.
-   (?v . (symbol . (read-variable
-		    (if default
-			(hargs:prompt prompt default "Curr:")
-		      prompt))))
-   ;; Get Lisp expression but don't evaluate.
-   (?x . (sexpression . (read-minibuffer prompt default)))
-   ;; Get Lisp expression and evaluate.
-   (?X . (sexpression . (eval-minibuffer prompt default))))
-  "Vector of forms for each interactive command character code.")
-
-(defconst hargs:iform-extensions-vector
-  (hargs:make-iform-vector
-   ;; Get existing Info node name, possibly prefixed with its (filename).
-   (?I . (Info-node . (progn (require 'info)
-			     ;; Prevent empty completions list from
-			     ;; triggering an error in Info-read-node-name.
-			     (unless (and Info-current-file-completions
-					  (not (equal Info-current-file-completions '(("None")))))
-			       (condition-case nil
-				   (Info-build-node-completions)
-				 (error (setq Info-current-file-completions '(("None"))))))
-			     (Info-read-node-name prompt))))
-
-   ;; Get kcell from some koutline.
-   (?K . (kcell . (hargs:read prompt nil default nil 'kcell)))
-   ;; Get kcell or path reference for use in a link.
-   (?L . (klink . (hargs:read prompt nil default nil 'klink)))
-   ;; Get existing mail msg date and file.
-   (?M . (mail . (progn
-		   (while
-		       (or (not (listp
-				 (setq default
-				       (read-minibuffer
-					(hargs:prompt
-					 prompt ""
-					 "list of (date mail-file)")
-					default))))
-			   (/= (length default) 2)
-			   (not (and (stringp (car (cdr default)))
-				     (file-exists-p
-				      (car (cdr default))))))
-		     (beep))
-		   default)))
-   ;; Get a Koutline viewspec.
-   (?V . (kvspec . (hargs:read prompt nil nil nil 'kvspec)))
-   ;; Get existing Info index item name, possibly prefixed with its (filename).
-   (?X . (Info-index-item . (let (file item)
-			      (require 'info)
-			      (setq item (Info-read-index-item-name prompt))
-			      (if (string-match "^(\\([^\)]+\\))\\(.*\\)" item)
-			          item
-			        (if (setq file (Info-current-filename-sans-extension))
-			            (format "(%s)%s" file item)
-			          item))))))
-  "Vector of forms for each interactive command character code.")
-
-(defvar hargs:string-to-complete nil
-  "Minibuffer content the last time a completions buffer was generated, or nil.")
 
 (provide 'hargs)
 

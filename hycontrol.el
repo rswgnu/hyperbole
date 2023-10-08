@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     1-Jun-16 at 15:35:36
-;; Last-Mod:     23-Aug-23 at 15:09:00 by Bob Weiner
+;; Last-Mod:      3-Oct-23 at 17:46:53 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -142,6 +142,11 @@
 (declare-function fm-next-frame "ext:framemove")
 
 (defvar frame-zoom-font-difference)
+
+(defvar hyperbole-mode-map)             ; "hyperbole.el"
+(defvar org-mode-map)                   ; "org.el"
+(defvar outline-mode-map)               ; "outline.el"
+(defvar outline-minor-mode-map)         ; "outline.el"
 
 ;;; ************************************************************************
 ;;; Public variables

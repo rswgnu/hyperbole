@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     1-Nov-91 at 00:44:23
-;; Last-Mod:      1-Oct-23 at 21:19:59 by Bob Weiner
+;; Last-Mod:      3-Oct-23 at 17:39:29 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -117,6 +117,16 @@ The format is ${variable}.  Match grouping 1 is the name of the variable.")
 (declare-function br-quit "ext:br")
 (declare-function br-in-browser "ext:br")
 (declare-function br-to-view-window "ext:br")
+
+(declare-function mm-mailcap-command "mm-decode")
+(declare-function hypb:decode-url "hypb")
+(declare-function hattr:get "hbut")
+(declare-function kbd-key:key-series-to-events "hib-kbd")
+(declare-function hbut:label-to-key "hbut")
+(declare-function hbut:key-to-label "hbut")
+(declare-function hargs:delimited "hargs")
+(declare-function hypb:object-p "hypb")
+(declare-function Info-find-node "info")
 
 ;;; ************************************************************************
 ;;; MS WINDOWS PATH CONVERSIONS
