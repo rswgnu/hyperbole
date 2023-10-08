@@ -1,9 +1,8 @@
-2023-07-08  Mats Lidell  <matsl@gnu.org>
+2023-10-09  Mats Lidell  <matsl@gnu.org>
 
 * test/kotl-mode-tests.el (kotl-mode-kill-contents)
-    (kotl-mode-kill-contents-all, kotl-mode-move-up-to-first-line): Add
-    new test cases.
-    (kotl-mode-move-up-from-first-line-shall-message-and-beep): Renamed.
+    (kotl-mode-kill-contents-all): Add kotl-tests for cell contents
+    removal.
 
 2023-10-07  Mats Lidell  <matsl@gnu.org>
 
