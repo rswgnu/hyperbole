@@ -1,3 +1,9 @@
+2023-10-09  Mats Lidell  <matsl@gnu.org>
+
+* test/kotl-mode-tests.el (kotl-mode-kill-contents)
+    (kotl-mode-kill-contents-all): Add kotl-tests for cell contents
+    removal.
+
 2023-10-07  Mats Lidell  <matsl@gnu.org>
 
 * hsys-org-roam.el: Byte compile. Warning is handled by declaration.

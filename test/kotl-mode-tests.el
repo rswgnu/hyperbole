@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    18-May-21 at 22:14:10
-;; Last-Mod:      5-Oct-23 at 21:15:10 by Mats Lidell
+;; Last-Mod:      9-Oct-23 at 00:51:28 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -346,6 +346,31 @@
           (kotl-mode:down-level 1)
           (should (string= (kcell-view:label (point)) "1a")))
       (hy-delete-file-and-buffer kotl-file))))
+
+(ert-deftest kotl-mode-kill-contents ()
+  "Kotl-mode kill contents shall remove rest of a cell."
+  (with-temp-buffer
+    (kotl-mode)
+    (insert "first line")
+    (kotl-mode:backward-word)
+    (should (looking-at-p "line"))
+    (kotl-mode:kill-contents nil)
+    (kotl-mode:beginning-of-cell)
+    (should (looking-at-p "first $"))))
+
+(ert-deftest kotl-mode-kill-contents-all ()
+  "Kotl-mode kill contents with prefix argument shall remove the cell."
+  (with-temp-buffer
+    (kotl-mode)
+    (insert "first line")
+    (kotl-mode:backward-word)
+    (should (looking-at-p "line"))
+    (let ((transient-mark-mode nil))
+      ;; kotl-mode:kill-contents uses kotl-mode:kill-region which
+      ;; depends on transient-mark-mode
+      (kotl-mode:kill-contents t))
+    (kotl-mode:beginning-of-cell)
+    (should (looking-at-p "$"))))
 
 (ert-deftest kotl-mode-kill-cell ()
   "Kotl-mode kill a cell test."
@@ -762,7 +787,7 @@
 
 (ert-deftest kotl-mode-move-up-from-first-line-shall-message-and-beep ()
   "Trying to move up from first line shall beep and output a message.
-In non-interactive mode there shall be no beep nor message."
+In non interactive mode there shall be no beep (nor message)"
   (skip-unless (not noninteractive))
   (let ((kotl-file (make-temp-file "hypb" nil ".kotl")))
     (unwind-protect
@@ -773,27 +798,36 @@ In non-interactive mode there shall be no beep nor message."
             (mock (message "(kotl-mode:previous-line): Beginning of buffer") => t)
             (mock (beep) => t)
             (funcall-interactively 'kotl-mode:previous-line 1))
-          ;; Non-interactive neither calls message nor beeps, so the mock fails.
-          (should-error
+          (should-error ;; Verifies no beep
            (with-mock
              (mock (beep) => t)
+             (kotl-mode:previous-line 1)))
+          (should-error ;; Verifies no message
+           (with-mock
+             (mock (message "(kotl-mode:previous-line): Beginning of buffer") => t)
              (kotl-mode:previous-line 1))))
       (hy-delete-file-and-buffer kotl-file))))
 
 (ert-deftest kotl-mode-move-up-to-first-line ()
-  "Trying to move up from first line shall beep and output a message.
-In non-interactive mode there shall be no beep nor message."
+  "Move up to first line shall succeed with no beep nor message."
   (skip-unless (not noninteractive))
   (let ((kotl-file (make-temp-file "hypb" nil ".kotl")))
     (unwind-protect
         (progn
           (find-file kotl-file)
-          (insert "1\n2")
-          (funcall-interactively 'kotl-mode:previous-line 1)
+          (insert "1")
+          (kotl-mode:newline 1)
+          (insert "2")
+          (should-error ;; Verifies no beep
+           (with-mock
+             (mock (beep) => t)
+             (funcall-interactively 'kotl-mode:previous-line 1)))
 	  (should (= (line-number-at-pos) 1))
-          ;; Non-interactive test
-	  (kotl-mode:next-line 1)
-	  (kotl-mode:previous-line 1)
+          (kotl-mode:next-line 1)
+          (should-error ;; Verifies no message
+           (with-mock
+             (mock (message "(kotl-mode:previous-line): Beginning of buffer") => t)
+             (funcall-interactively 'kotl-mode:previous-line 1)))
 	  (should (= (line-number-at-pos) 1)))
       (hy-delete-file-and-buffer kotl-file))))
 
@@ -810,10 +844,13 @@ In non-interactive mode there shall be no beep nor message."
             (mock (message "(kotl-mode:next-line): End of buffer") => t)
             (mock (beep) => t)
             (funcall-interactively 'kotl-mode:next-line 1))
-          ;; Non-interactive neither calls message nor beeps, so the mock fails.
-          (should-error
+          (should-error ;; Verifies no beep
            (with-mock
              (mock (beep) => t)
+             (kotl-mode:next-line 1)))
+          (should-error ;; Verifies no message
+           (with-mock
+             (mock (message "(kotl-mode:next-line): End of buffer") => t)
              (kotl-mode:next-line 1))))
       (hy-delete-file-and-buffer kotl-file))))
 
@@ -828,11 +865,15 @@ In non-interactive mode there shall be no beep nor message."
           (kotl-mode:newline 1)
           (insert "2")
           (kotl-mode:beginning-of-buffer)
-          ;; Non interactive does not call neither message nor beep so
-          ;; the mock will fails.
-          (should-error
+          (should-error ;; Verifies no beep
            (with-mock
              (mock (beep) => t)
+             (funcall-interactively 'kotl-mode:next-line 1)))
+          (should (kotl-mode:last-line-p))
+          (kotl-mode:beginning-of-buffer)
+          (should-error ;; Verifies no message
+           (with-mock
+             (mock (message "(kotl-mode:next-line): End of buffer") => t)
              (funcall-interactively 'kotl-mode:next-line 1)))
           (should (kotl-mode:last-line-p)))
       (hy-delete-file-and-buffer kotl-file))))
