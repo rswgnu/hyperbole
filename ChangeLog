@@ -1,3 +1,11 @@
+2023-10-22  Mats Lidell  <matsl@gnu.org>
+
+* test/hui-tests.el (hui-gbut-number-of-gbuts-with-no-buttons)
+    (hui-gbut-number-of-gibuts-one, hui-gbut-number-of-gebuts-one)
+    (hui-gbut-number-of-gibuts-from-mail-mode)
+    (hui-gbut-number-of-gebuts-from-mail-mode): Verify number of global
+    ibuts and ebuts.
+
 2023-10-22  Bob Weiner  <rsw@gnu.org>
 
 * hbut.el (gbut:save-buffer): Add function to use after global button file is
