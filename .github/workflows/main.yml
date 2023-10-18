@@ -12,13 +12,18 @@ jobs:
   build:
     runs-on: ubuntu-latest
     strategy:
-      fail-fast: false
+      fail-fast: true
       matrix:
         version: [27.2, 28.1, 28.2, 29.1, master]
     container: silex/emacs:${{ matrix.version }}-ci
 
     steps:
       - uses: actions/checkout@v3
+
+      - name: Prepare docker for test-all run
+        run: |
+          apt update
+          apt install -y man-db xvfb
 
       - name: Clean
         run: make clean
@@ -32,4 +37,6 @@ jobs:
           echo '```' >> $GITHUB_STEP_SUMMARY
 
       - name: Test
-        run: make test
+        run: |
+          xvfb-run make test-all-output
+          cat ERT-OUTPUT
