@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    30-Jan-21 at 12:00:00
-;; Last-Mod:     11-Oct-23 at 14:40:16 by Mats Lidell
+;; Last-Mod:     18-Oct-23 at 22:49:17 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -131,7 +131,6 @@
 
 (ert-deftest hui-gbut-number-of-gebuts-from-mail-mode ()
   "Verify number of global ebuts are one even from within Hyperbole mail mode."
-  :expected-result :failed
   (defvar global-but-file)
   (let ((global-but-file (make-temp-file "gbut" nil ".txt"))
         (message-mode-file (make-temp-file "gbut" nil ".txt")))
