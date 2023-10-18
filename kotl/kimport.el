@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    15-Nov-93 at 11:57:05
-;; Last-Mod:      7-May-23 at 16:11:58 by Bob Weiner
+;; Last-Mod:      4-Oct-23 at 19:10:12 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -21,6 +21,7 @@
 
 (require 'kfile)
 (require 'hyrolo)
+(require 'klabel)
 
 ;;; ************************************************************************
 ;;; Public variables
@@ -609,7 +610,7 @@ will be added as children of the cell where this function leaves point
 	(widen)
 	(delete-region (point-min) (point-max)))
       (unless (kfile:is-p)
-	(setq kview nil)
+	(setq kotl-kview nil)
 	(kotl-mode))))
   output-to)
 

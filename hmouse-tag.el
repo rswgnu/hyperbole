@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    24-Aug-91
-;; Last-Mod:     28-Aug-23 at 16:19:42 by Bob Weiner
+;; Last-Mod:      3-Oct-23 at 23:21:15 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -51,6 +51,44 @@
     (defun xref-item-position (item)
       "Return the buffer position where xref ITEM is defined."
       (marker-position (save-excursion (xref-location-marker (xref-item-location item)))))))
+
+;;; ************************************************************************
+;;; Public declarations
+;;; ************************************************************************
+
+(declare-function br-edit "ext:br")
+(declare-function br-edit-feature "ext:br-ftr")
+(declare-function python-import-file "ext:br-python-ft")
+(declare-function python-to-definition "ext:br-python-ft")
+
+(declare-function epc:manager-server-process "ext:epc")
+
+(declare-function java-to-definition "ext:br-java-ft")
+
+(declare-function jedi:-get-servers-in-use "ext:jedi-core")
+(declare-function jedi:goto--line-column "ext:jedi-core")
+(declare-function jedi:goto-definition "ext:jedi-core")
+
+(declare-function objc-to-definition "ext:br-objc-ft")
+
+(defvar br-env-spec)
+(defvar br-lang-prefix)
+(defvar buffer-tag-table)
+(defvar jedi-mode)
+(defvar jedi:find-file-function) ;; FIXME: RSW customization?
+(defvar java-class-def-name-grpn)
+(defvar java-class-def-regexp)
+
+(defvar hkey-value)                     ; "hui-mouse.el"
+
+(declare-function hsys-org-get-value "hsys-org")
+(declare-function org-in-src-block-p "org")
+
+;; Forward declare needed? Because of optional defined above? Can we
+;; skip checking if xref is available since it has been at least since
+;; 26.1 or even earlier? Then we should not need these declares.
+(declare-function xref-item-position "hmouse-tag")
+(declare-function xref-item-buffer "hmouse-tag")
 
 ;;; ************************************************************************
 ;;; Public variables
@@ -137,33 +175,6 @@ Keyword matched is grouping 1.  Referent is grouping 2.")
   "*Full path name of etags file for GNU Emacs source."
   :type '(file :must-match t)
   :group 'hyperbole-commands)
-
-;;; ************************************************************************
-;;; Public declarations
-;;; ************************************************************************
-
-(declare-function br-edit "ext:br")
-(declare-function br-edit-feature "ext:br-ftr")
-(declare-function python-import-file "ext:br-python-ft")
-(declare-function python-to-definition "ext:br-python-ft")
-
-(declare-function epc:manager-server-process "ext:epc")
-
-(declare-function java-to-definition "ext:br-java-ft")
-
-(declare-function jedi:-get-servers-in-use "ext:jedi-core")
-(declare-function jedi:goto--line-column "ext:jedi-core")
-(declare-function jedi:goto-definition "ext:jedi-core")
-
-(declare-function objc-to-definition "ext:br-objc-ft")
-
-(defvar br-env-spec)
-(defvar br-lang-prefix)
-(defvar buffer-tag-table)
-(defvar jedi-mode)
-(defvar jedi:find-file-function) ;; FIXME: RSW customization?
-(defvar java-class-def-name-grpn)
-(defvar java-class-def-regexp)
 
 ;;; ************************************************************************
 ;;; Public functions

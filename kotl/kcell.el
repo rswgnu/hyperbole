@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     1-May-93
-;; Last-Mod:     28-Aug-23 at 00:23:39 by Bob Weiner
+;; Last-Mod:      4-Oct-23 at 19:10:12 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -31,7 +31,7 @@
 ;;; Other required Elisp libraries
 ;;; ************************************************************************
 
-(eval-and-compile (mapc #'require '(hinit htz klabel kview)))
+(eval-and-compile (mapc #'require '(hinit htz kview kproperty)))
 
 ;;; ************************************************************************
 ;;; Public variables
@@ -165,7 +165,7 @@ Augment capabilities not yet implemented and ignored for now:
 		       (save-excursion
 			 (goto-char (point-min))
 			 (when (re-search-forward (concat "^[ \t]*" (regexp-quote idstamp-string)
-							  (regexp-quote (kview:label-separator kview)))
+							  (regexp-quote (kview:label-separator kotl-kview)))
 						  nil t)
 
 			   (setq idstamp-string (kcell-view:idstamp))
@@ -221,7 +221,7 @@ assuming it is the cell at point and filling in the missing information."
 	 (vector idstamp plist)
        (kcell-data:create
 	(kcell:create plist)
-	(or idstamp (kview:id-increment kview))))))
+	(or idstamp (kview:id-increment kotl-kview))))))
 
 (defun kcell-data:idstamp (kcell-data)
   (aref kcell-data 0))

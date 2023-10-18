@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    30-May-94 at 00:11:57
-;; Last-Mod:      6-Aug-23 at 12:31:42 by Bob Weiner
+;; Last-Mod:      3-Oct-23 at 17:10:05 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -30,6 +30,31 @@
 ;;; ************************************************************************
 
 (eval-when-compile (mapc #'require '(hsettings hmouse-drv hmouse-sh)))
+
+;;; ************************************************************************
+;;; Private declarations
+;;; ************************************************************************
+
+(defvar hyperbole-mode-map)             ; "hyperbole.el"
+
+(declare-function hkey-initialize "hbut")
+(declare-function hmouse-get-bindings "hmouse-sh")
+(declare-function hmouse-unshifted-setup "hmouse-sh")
+(declare-function hmouse-shifted-setup "hmouse-sh")
+(declare-function hkey-set-key "hyperbole")
+
+;;; ************************************************************************
+;;; Private variables
+;;; ************************************************************************
+
+(defvar hmouse-bindings nil
+  "List of (key . binding) pairs for Hyperbole mouse keys.")
+
+(defvar hmouse-bindings-flag nil
+  "True if Hyperbole mouse bindings are in use, else nil.")
+
+(defvar hmouse-previous-bindings nil
+  "List of prior (key . binding) pairs for mouse keys rebound by Hyperbole.")
 
 ;;; ************************************************************************
 ;;; Public functions
@@ -127,14 +152,17 @@ mouse key the Paste Key instead of the Action Key."
   "Reload the contexts and actions associated with the Smart Keys.
 Use after any programmatic change is made."
   (interactive)
-  (load "hui-mini")
-  (hkey-initialize)
-  (makunbound 'hkey-alist)
-  (makunbound 'hmouse-alist)
-  (let ((load-prefer-newer t))
-    (mapc #'load '("hui-mouse" "hui-window" "hibtypes" "hactypes")))
-  (message "Hyperbole Smart Key and Smart Mouse Key actions have been updated."))
-
+  (let ((load-prefer-newer t)
+	(ftrs '(hui-mouse hui-window hibtypes hactypes)))
+    (load "hui-mini")
+    (hkey-initialize)
+    (makunbound 'hkey-alist)
+    (makunbound 'hmouse-alist)
+    (mapc (lambda (feature)
+	    (setq features (delq feature features)))
+	  ftrs)
+    (mapc #'require ftrs)
+    (message "Hyperbole Smart Keys and menus have been updated")))
 
 ;;; ************************************************************************
 ;;; Private variables

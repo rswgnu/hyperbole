@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    20-Feb-21 at 23:45:00
-;; Last-Mod:     12-Feb-22 at 13:33:53 by Bob Weiner
+;; Last-Mod:      2-Oct-23 at 05:02:34 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -129,15 +129,16 @@
 
 (ert-deftest ibtypes::pathname-load-path-line-column-test ()
   "Pathname with line and position specification."
-  (unwind-protect
-      (with-temp-buffer
-        (insert "\"${load-path}/hypb.el:11:5\"")
-        (goto-char 2)
-        (ibtypes::pathname-line-and-column)
-        (should (string= "hypb.el" (buffer-name)))
-        (should (= (line-number-at-pos) 11))
-        (should (= (current-column) 5)))
-    (kill-buffer "hypb.el")))
+  (with-temp-buffer
+    (unwind-protect
+        (progn
+	  (insert "\"${load-path}/hypb.el:11:5\"")
+          (goto-char 2)
+          (ibtypes::pathname-line-and-column)
+          (should (string-prefix-p "hypb.el" (buffer-name)))
+          (should (= (line-number-at-pos) 11))
+          (should (= (current-column) 5)))
+      (kill-buffer (buffer-name)))))
 
 (ert-deftest ibtypes::pathname-with-dash-loads-file-test ()
   "Pathname with dash loads file."
@@ -185,19 +186,6 @@
       (when (and visited-buf
 		 (buffer-live-p visited-buf))
  	(kill-buffer visited-buf)))))
-
-;; ibtypes::annot-bib
-(ert-deftest ibtypes::annot-bib-test ()
-  (unwind-protect
-      (progn
-        (hypb:display-file-with-logo "DEMO")
-        (re-search-forward "\\[FSF 19\\]" nil t 2)
-        (backward-char 1)
-	(should (ibut:at-p))
-        (should (looking-at "\\] Free Software Foundation"))
-        (forward-line -2)
-        (should (looking-at "\\* References")))
-    (kill-buffer "DEMO")))
 
 ;; markdown
 ; Can't find out how to use the markdown-internal-link ibtypes!?

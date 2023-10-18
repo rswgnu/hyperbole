@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    10/18/2020
-;; Last-Mod:     28-Aug-23 at 00:56:07 by Bob Weiner
+;; Last-Mod:      3-Oct-23 at 22:24:23 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -46,12 +46,20 @@
 ;;  performs its normal table-based alignment and movement.
 
 ;;; Code:
-
 ;;; ************************************************************************
 ;;; Other required Elisp libraries
 ;;; ************************************************************************
 
 (require 'org-table)
+(require 'hmouse-drv)
+
+;;; ************************************************************************
+;;; Public declarations
+;;; ************************************************************************
+
+(declare-function kotl-mode:next-line "kotl-mode")
+(declare-function kotl-mode:transpose-lines "kotl-mode")
+(declare-function kotl-mode:tab-command "kotl-mode")
 
 ;;; ************************************************************************
 ;;; Public variables

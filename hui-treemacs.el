@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Nov-17
-;; Last-Mod:     19-Jun-22 at 13:58:47 by Bob Weiner
+;; Last-Mod:      3-Oct-23 at 23:01:16 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -45,6 +45,16 @@
 (declare-function treemacs-quit "ext:treemacs-core-utils")
 (declare-function treemacs-toggle-node "ext:treemacs-interface")
 (defvar aw-ignored-buffers)
+
+(defvar assist-flag)                    ; "hmouse-drv.el"
+(defvar action-key-eol-function)        ; "hmouse-drv.el"
+(defvar assist-key-eol-function)        ; "hmouse-drv.el"
+(defvar action-key-depress-window)      ; "hmouse-drv.el"
+
+(declare-function first-line-p "hui-mouse")
+(declare-function last-line-p "hui-mouse")
+(declare-function hact "hact")
+(declare-function package-activate "package")
 
 ;;; ************************************************************************
 ;;; smart-treemacs functions
