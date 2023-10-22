@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     9-Mar-94 at 23:37:28
-;; Last-Mod:      2-Aug-22 at 19:50:39 by Mats Lidell
+;; Last-Mod:      3-Oct-23 at 23:25:31 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -38,6 +38,22 @@
 ;;   `hui-menu-screen-commands'.
 
 ;;; Code:
+;;; ************************************************************************
+;;; Public declarations
+;;; ************************************************************************
+
+(declare-function hui-menu-cutoff-list "hui-menu")
+
+;;; ************************************************************************
+;;; Private variables
+;;; ************************************************************************
+
+(defvar hui-menu-buffer-and-mode-list-cache nil
+  "Last set of buffer and mode names used in hui-menu-of-buffers or nil.")
+
+(defvar hui-menu-of-buffers-cache nil
+  "Last menu of `mode-name' ordered buffers from hui-menu-of-buffers or nil.")
+
 ;;; ************************************************************************
 ;;; Public functions
 ;;; ************************************************************************
@@ -325,21 +341,6 @@ frame.  The current buffer is buried in the old frame's buffer list."
 	(server-save-buffers-kill-terminal nil)
 	(if (buffer-live-p buf) (kill-buffer buf))
 	t)))
-
-
-;;; ************************************************************************
-;;; Private variables
-;;; ************************************************************************
-
-(defvar hui-menu-buffer-and-mode-list-cache nil
-  "Last set of buffer and mode names used in hui-menu-of-buffers or nil.")
-
-(defvar hui-menu-of-buffers-cache nil
-  "Last menu of `mode-name' ordered buffers from hui-menu-of-buffers or nil.")
-
-;;; ************************************************************************
-;;; Public variables
-;;; ************************************************************************
 
 (provide 'hui-jmenu)
 

@@ -3,7 +3,7 @@
 ;; Author:       Markus Freericks <Mfx@cs.tu-berlin.de> / Bob Weiner
 ;;
 ;; Orig-Date:     1-Aug-91
-;; Last-Mod:     25-Jul-22 at 20:00:01 by Mats Lidell
+;; Last-Mod:      3-Oct-23 at 23:28:17 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -48,6 +48,12 @@
 ;; C-c C-c gets you to the occurence
 
 ;;; Code:
+;;; ************************************************************************
+;;; Public declarations
+;;; ************************************************************************
+
+(declare-function hpath:display-buffer "hpath")
+
 ;;; ************************************************************************
 ;;; Public variables
 ;;; ************************************************************************

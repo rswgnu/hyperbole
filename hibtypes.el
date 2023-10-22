@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 20:45:31
-;; Last-Mod:     28-Aug-23 at 16:02:32 by Bob Weiner
+;; Last-Mod:     21-Oct-23 at 19:50:25 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -51,6 +51,7 @@
 (declare-function markdown-footnote-marker-positions "ext:markdown")
 (declare-function markdown-footnote-return "ext:markdown")
 (declare-function markdown-link-p "ext:markdown")
+(declare-function markdown-link-url "ext:markdown")
 (declare-function markdown-reference-goto-definition "ext:markdown")
 (declare-function markdown-reference-goto-link "ext:markdown")
 (declare-function markdown-wiki-link-p "ext:markdown")
@@ -62,6 +63,17 @@
 (defvar id-cflow-repeated-indicator)
 
 (defvar cscope-output-line-regexp)
+
+(declare-function actype:eval "hact")
+(declare-function actype:identity "hact")
+(declare-function hact "hact")
+(declare-function hpath:display-buffer "hpath")
+(declare-function htype:def-symbol "hact")
+(declare-function hui:help-ebut-highlight "hui")
+(declare-function hyperb:stack-frame "hversion")
+(declare-function set:member "set")
+(declare-function symset:add "hact")
+(declare-function symtable:add "hact")
 
 ;;; ************************************************************************
 ;;; Public implicit button types
@@ -355,14 +367,14 @@ handle any links they recognize first."
   "Display annotated bibliography entries referenced internally.
 References must be delimited by square brackets, must begin with a word
 constituent character, not contain @ or # characters, must not be
-in buffers whose names begin with a space or asterisk character, and
-must have an attached file."
+in buffers whose names begin with a space or asterisk character, must
+not be in a programming mode, Markdown or Org buffers and must have an
+attached file."
   (and (not (bolp))
        buffer-file-name
        (let ((chr (aref (buffer-name) 0)))
          (not (or (eq chr ?\ ) (eq chr ?*))))
-       (not (or (derived-mode-p 'prog-mode)
-                (apply #'derived-mode-p '(c-mode objc-mode c++-mode java-mode markdown-mode org-mode))))
+       (not (apply #'derived-mode-p '(prog-mode c-mode objc-mode c++-mode java-mode markdown-mode org-mode)))
        (let ((ref (hattr:get 'hbut:current 'lbl-key))
 	     (lbl-start (hattr:get 'hbut:current 'lbl-start)))
          (and ref
@@ -403,32 +415,19 @@ Return t if jump and nil otherwise."
   "If on an inline link, jump to its referent if it is absolute and return non-nil.
 Absolute means not relative within the file.  Otherwise, if an
 internal link, move back to OPOINT and return nil."
-  (let (handle-link-flag
-        result)
-    (skip-chars-forward "^\]\[()")
-    (when (looking-at "\][\[()]")
-      (if (looking-at "\(")
-          (skip-chars-backward "^\]\[()")
-        (skip-chars-forward "\]\[\("))
-      ;; Leave point on the link even if not activated
-      ;; here, so that other ibtypes activate it.  If point is after
-      ;; the # character of an in-file link, then the following predicate
-      ;; fails and the `pathname' ibtype will handle it.  If point is before
-      ;; the # character, the link is handled here.
-      (setq handle-link-flag (not (or (hpath:www-at-p) (hpath:at-p))))
-      (when (setq result (and (markdown-link-p) handle-link-flag))
-        ;; In-file referents are handled by the `pathname' implicit
-        ;; button type, not here.
-        (ibut:label-set (match-string-no-properties 0) (match-beginning 0) (match-end 0))
+  ;; Caller already checked not on a URL (handled elsewhere).
+  (let ((path (markdown-link-url)))
+    (goto-char opoint)
+    (when (markdown-link-p)
+      (ibut:label-set (match-string-no-properties 0) (match-beginning 0) (match-end 0))
+      (if path
+	  (hact 'link-to-file path)
         (hpath:display-buffer (current-buffer))
-        (hact 'markdown-follow-link-at-point)))
-    (when handle-link-flag
-      (goto-char opoint))
-    result))
+        (hact 'markdown-follow-link-at-point)))))
 
 (defib markdown-internal-link ()
   "Display any in-file Markdown link referent at point.
-Pathnames and urls are handled elsewhere."
+Url links are handled elsewhere."
   (when (and (derived-mode-p 'markdown-mode)
              (not (hpath:www-at-p)))
     (let ((opoint (point))
@@ -445,7 +444,7 @@ Pathnames and urls are handled elsewhere."
                    ;; Follows an absolute file link.
                    (markdown-follow-inline-link-p opoint))
                ;; May be on the name of an infile link, so move to the
-               ;; link itself and then let the `pathname' ibtype handle it.
+               ;; link itself and then display it as a pathname.
                (error (markdown-follow-inline-link-p opoint))))
             ((markdown-wiki-link-p)
              (ibut:label-set (match-string-no-properties 0) (match-beginning 0) (match-end 0))
@@ -849,15 +848,19 @@ See `hpath:at-p' function documentation for possible delimiters.
 See `hpath:suffixes' variable documentation for suffixes that are added to or
 removed from pathname when searching for a valid match.
 See `hpath:find' function documentation for special file display options."
-  (let ((path-line-and-col (hpath:delimited-possible-path)))
+  (let* ((path-start-and-end (hpath:delimited-possible-path nil t))
+	 (path-line-and-col (nth 0 path-start-and-end))
+	 (start (nth 1 path-start-and-end)))
     (when (and (stringp path-line-and-col)
                (string-match hpath:section-line-and-column-regexp path-line-and-col))
-      (let ((file (save-match-data (hpath:expand (match-string-no-properties 1 path-line-and-col))))
-            (line-num (string-to-number (match-string-no-properties 3 path-line-and-col)))
-            (col-num (when (match-end 4)
-                       (string-to-number (match-string-no-properties 5 path-line-and-col)))))
-        (when (save-match-data (setq file (hpath:is-p file)))
-          (ibut:label-set file (match-beginning 1) (match-end 1))
+      (let* ((line-num (string-to-number (match-string-no-properties 3 path-line-and-col)))
+             (col-num (when (match-end 4)
+			(string-to-number (match-string-no-properties 5 path-line-and-col))))
+	     (label (match-string-no-properties 1 path-line-and-col))
+	     ;; Next variable must come last as it can overwrite the match-data
+	     (file (hpath:expand label)))
+        (when (setq file (hpath:is-p file))
+          (ibut:label-set label start (+ start (length label)))
           (if col-num
               (hact 'link-to-file-line-and-column file line-num col-num)
             (hact 'link-to-file-line file line-num)))))))

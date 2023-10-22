@@ -1,4 +1,4 @@
-                          ABOUT GNU HYPERBOLE
+*                          ABOUT GNU HYPERBOLE
 
                    Designed and Written by Bob Weiner
                 Maintained by Mats Lidell and Bob Weiner
@@ -28,7 +28,7 @@ World-Wide Web URLs, Info manuals, ftp archives, etc.
 The Hyperbole wiki page, "https://www.emacswiki.org/emacs/Hyperbole",
 explains the many ways it differs from and is complementary to Org mode.
 
-Hyperbole consists of five parts:
+* Hyperbole consists of five parts:
 
    1.  Buttons and Smart Keys: Hyperbole hyperlink and other kinds of
        buttons may be added to documents (explicit buttons) with a
@@ -79,9 +79,11 @@ Hyperbole consists of five parts:
        Hyperbole has been engineered for real-world usage and is well
        structured).
 
-A Hyperbole hypertext user works with buttons; he may create, modify, move
-or delete buttons.  Each button performs a specific action, such as linking
-to a file or executing a shell command.
+* A Hyperbole hypertext user works with buttons.
+
+He may create, modify, move or delete buttons.  Each button performs a
+specific action, such as linking to a file or executing a shell
+command.
 
 There are three categories of Hyperbole buttons:
 
@@ -111,7 +113,7 @@ large or small chunks as you see fit, organizing each bit as time allows.
 The Hyperbole Koutliner and HyRolo tools organize textual hierarchies and
 may also contain links to external information sources.
 
-Some of Hyperbole's most important features include:
+* Some of Hyperbole's most important features include:
 
     Buttons may link to information or may execute commands, such as
     computing a complex value or communicating with external programs;
@@ -134,9 +136,9 @@ Some of Hyperbole's most important features include:
     Other hypertext and information retrieval systems may be
     encapsulated under a Hyperbole user interface very easily.
 
-Typical Hyperbole applications include:
+* Typical Hyperbole applications include:
 
-    Personal Information Management
+**  Personal Information Management
        Overlapping link paths provide a variety of views into an
        information space.  A single key press activates buttons
        regardless of their types, making navigation easy.
@@ -144,7 +146,7 @@ Typical Hyperbole applications include:
        A search facility locates buttons in context and permits quick
        selection.
 
-    Documentation Browsing
+**  Documentation Browsing
        Embedding cross-references in a favorite documentation format.
 
        Addition of a point-and-click interface to existing documentation.
@@ -153,18 +155,18 @@ Typical Hyperbole applications include:
        of an identifier from its use within code or its reference within
        documentation.
 
-    Brainstorming
+**  Brainstorming
        Capture of ideas and then quick reorganization with the Hyperbole
        Koutliner.  Link to related ideas, eliminating the need to copy
        and paste information into a single place.
 
-    Help/Training Systems
+**  Help/Training Systems
        Creation of tutorials with embedded buttons that show students how
        things work while explaining the concepts, e.g. an introduction
        to UNIX commands.  This technique can be much more effective than
        descriptions alone.
 
-    Archive Managers
+**  Archive Managers
        Supplementation of programs that manage archives from incoming
        information stream, having them add topic-based buttons that
        link to the archive holdings.  Users can then search and create

@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     2-Apr-91
-;; Last-Mod:     28-Aug-23 at 02:03:25 by Bob Weiner
+;; Last-Mod:      3-Oct-23 at 22:48:03 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -52,7 +52,7 @@
 ;;; Other required Elisp libraries
 ;;; ************************************************************************
 
-(require 'hversion) ;; For `hyperb:microsoft-os-p'
+(require 'hversion)                     ; For `hyperb:microsoft-os-p'
 (require 'hbmap)
 (require 'hgnus)
 
@@ -60,7 +60,20 @@
 ;;; Public declarations
 ;;; ************************************************************************
 
-(defvar hyperb:user-email) ;; Set by `hyperb:init'.
+(defvar hyperb:user-email)              ; Set by `hyperb:init'.
+
+(defvar hbut:instance-sep)              ; defconst in hbut
+(defvar hattr:filename)
+
+(declare-function ibut:label-key-match "hbut")
+(declare-function ibut:label-sort-keys "hbut")
+(declare-function hpath:absolute-arguments "hpath")
+(declare-function hpath:substitute-var "hpath")
+(declare-function hattr:set "hbut")
+(declare-function htz:date-sortable-gmt "htz")
+(declare-function hattr:get "hbut")
+(declare-function hattr:copy "hbut")
+(declare-function ebut:label-to-key "hbut")
 
 ;; Functions from abstract mail and news interface. See "hmail.el"
 (declare-function lmail:to nil)
@@ -408,6 +421,11 @@ Return value of evaluation when a matching entry is found or nil."
 							    (hmail:hbdata-start))))))))
 	      (setq found (hbdata:to-entry-buf key-src directory create-flag)))
 	  (when found
+	    (unless buffer-file-name
+	      ;; Point must be left after hbdata separator or the logic
+	      ;; below could fail.  Buffer should be widened already.
+	      (goto-char (point-min))
+	      (search-forward hmail:hbdata-sep nil t))
 	    (let ((case-fold-search t)
 		  (qkey (regexp-quote lbl-key))
 		  (end (save-excursion (if (search-forward "\n\^L" nil t)

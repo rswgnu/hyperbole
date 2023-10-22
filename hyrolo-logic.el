@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    13-Jun-89 at 22:57:33
-;; Last-Mod:     24-Oct-22 at 22:49:42 by Bob Weiner
+;; Last-Mod:      3-Oct-23 at 17:29:18 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -63,6 +63,12 @@
 ;;; ************************************************************************
 
 (require 'hyrolo)
+
+;;; ************************************************************************
+;;; Public declarations
+;;; ************************************************************************
+
+(declare-function kotl-mode:goto-cell "kotl/kotl-mode")
 
 ;;; ************************************************************************
 ;;; Public functions

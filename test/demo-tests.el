@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    30-Jan-21 at 12:00:00
-;; Last-Mod:      9-Aug-23 at 01:18:08 by Bob Weiner
+;; Last-Mod:      2-Oct-23 at 05:04:10 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -392,21 +392,6 @@
       (hy-test-helpers:kill-buffer "DEMO")
       (hy-test-helpers:kill-buffer "*Occur*"))))
 
-;; Annotated references
-(ert-deftest demo-annotated-reference-test ()
-  (unwind-protect
-      (progn
-        (hypb:display-file-with-logo "DEMO")
-	(widen)
-	(goto-char (point-min))
-        (re-search-forward "\\[FSF 19\\]")
-        (backward-char 1)
-        (action-key)
-        (should (looking-at "\\[FSF 19\\] Free Software Foundation"))
-        (forward-line -2)
-        (should (looking-at "\\* References")))
-    (hy-test-helpers:kill-buffer "DEMO")))
-
 ;; Man appropos
 (ert-deftest demo-man-appropos-test ()
   (with-temp-buffer
@@ -580,8 +565,9 @@ enough files with matching mode loaded."
                 (accept-process-output (get-buffer-process shell-buffer-name))))
             (should (looking-at-p (directory-file-name hyperb:dir)))))
       (unless existing-shell-flag
-	(set-process-query-on-exit-flag (get-buffer-process shell-buffer-name) nil)
-	(hy-test-helpers:kill-buffer shell-buffer-name)))))
+	(when (get-buffer-process shell-buffer-name)
+	  (set-process-query-on-exit-flag (get-buffer-process shell-buffer-name) nil)
+	  (hy-test-helpers:kill-buffer shell-buffer-name))))))
 
 (ert-deftest fast-demo-key-series-shell-grep ()
   "Action key executes grep shell command."
@@ -601,8 +587,9 @@ enough files with matching mode loaded."
                 (accept-process-output (get-buffer-process shell-buffer-name))))
             (should (string-match-p "\n.*\\.el:[0-9]+:.*defun.*gbut:label-list ()" (buffer-substring-no-properties (point-min) (point-max))))))
       (unless existing-shell-flag
-	(set-process-query-on-exit-flag (get-buffer-process shell-buffer-name) nil)
-	(hy-test-helpers:kill-buffer shell-buffer-name)))))
+	(when (get-buffer-process shell-buffer-name)
+	  (set-process-query-on-exit-flag (get-buffer-process shell-buffer-name) nil)
+	  (hy-test-helpers:kill-buffer shell-buffer-name))))))
 
 (ert-deftest fast-demo-key-series-shell-apropos ()
   "Action key executes apropos shell command."
@@ -622,8 +609,9 @@ enough files with matching mode loaded."
                 (accept-process-output (get-buffer-process shell-buffer-name))))
             (should (string-match-p "grep ?(1).*-" (buffer-substring-no-properties (point-min) (point-max))))))
       (unless existing-shell-flag
-	(set-process-query-on-exit-flag (get-buffer-process shell-buffer-name) nil)
-	(hy-test-helpers:kill-buffer shell-buffer-name)))))
+	(when (get-buffer-process shell-buffer-name)
+	  (set-process-query-on-exit-flag (get-buffer-process shell-buffer-name) nil)
+	  (hy-test-helpers:kill-buffer shell-buffer-name))))))
 
 (ert-deftest fast-demo-key-series-shell-cd-hyperb-dir-view-mode ()
   "Action key executes cd shell command from buffer in `view-mode`."
@@ -646,8 +634,9 @@ enough files with matching mode loaded."
                 (accept-process-output (get-buffer-process shell-buffer-name))))
             (should (looking-at-p (directory-file-name hyperb:dir)))))
       (unless existing-shell-flag
-	(set-process-query-on-exit-flag (get-buffer-process shell-buffer-name) nil)
-	(hy-test-helpers:kill-buffer shell-buffer-name)))))
+	(when (get-buffer-process shell-buffer-name)
+	  (set-process-query-on-exit-flag (get-buffer-process shell-buffer-name) nil)
+	  (hy-test-helpers:kill-buffer shell-buffer-name))))))
 
 (ert-deftest fast-demo-key-series-shell-grep-view-mode ()
   "Action key executes grep shell command from buffer in `view-mode`."
@@ -668,8 +657,9 @@ enough files with matching mode loaded."
                 (accept-process-output (get-buffer-process shell-buffer-name))))
             (should (string-match-p "\n.*\\.el:[0-9]+:.*defun.*gbut:label-list ()" (buffer-substring-no-properties (point-min) (point-max))))))
       (unless existing-shell-flag
-	(set-process-query-on-exit-flag (get-buffer-process shell-buffer-name) nil)
-	(hy-test-helpers:kill-buffer shell-buffer-name)))))
+	(when (get-buffer-process shell-buffer-name)
+	  (set-process-query-on-exit-flag (get-buffer-process shell-buffer-name) nil)
+	  (hy-test-helpers:kill-buffer shell-buffer-name))))))
 
 ;; This file can't be byte-compiled without the `el-mock' package (because of
 ;; the use of the `with-mock' macro), which is not a dependency of Hyperbole.

@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    04-Apr-89
-;; Last-Mod:     20-Jan-23 at 22:19:33 by Mats Lidell
+;; Last-Mod:      3-Oct-23 at 17:48:46 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -28,7 +28,16 @@
 ;;; ************************************************************************
 ;;; Public declarations
 ;;; ************************************************************************
+
 (defvar Info-complete-menu-buffer)
+
+(defvar action-key-release-args)        ; "hmouse-drv.el"
+(defvar assist-key-release-args)        ; "hmouse-drv.el"
+
+(declare-function first-line-p "hui-mouse")
+(declare-function last-line-p "hui-mouse")
+(declare-function smart-scroll-down "hmouse-drv")
+(declare-function smart-scroll-up "hmouse-drv")
 
 ;;; ************************************************************************
 ;;; Public functions

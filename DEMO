@@ -1052,12 +1052,6 @@ Many of these find-a-line features exist in the Hyperbole Find/ menu,
 {C-h h f}.  Give it a try for fast access to complex file line filters,
 e.g. filter a file to just lines that don't match a pattern (RemoveLines).
 
-** Annotated Bibliography Buttons
-
-Annotated Bibliography references such as [FSF 19] may be embedded in any file
-and activated with the Action Key to find the reference at the end of the file.
-Try that one by pressing between the square brackets.
-
 ** Completion Selection
 
 Often when Emacs or Hyperbole prompts for an argument in the
@@ -1226,8 +1220,9 @@ For the fastest link button creation, use the Emacs package
 'ace-window' (see "(hyperbole)Keyboard Drags" for setup).  Once this
 is configured, then {M-o w <window id>} may be used to quickly create
 an explicit link button in the selected window that links to any other
-window chosen via the Ace Window.  Use a prefix argument to create an
-implicit link button instead.
+window chosen via the Ace Window.  Use a C-u prefix argument to create
+an unnamed implicit link button instead and a M-1 prefix argument to
+create a named implicit link button.
 
 *** Creation via Menu
 
@@ -1718,10 +1713,5 @@ ever-ready sidekick in your daily knowledge work.  Explore the Hyperbole
 menus to learn more interactively.  For reference, the Hyperbole Manual, has
 extensive detail about the many things that Hyperbole does when you are ready
 to dive deeper.  Read it online with the GNU Info reader at "(hyperbole)Top".
-
-* References
-
-[FSF 19] Free Software Foundation, Inc.  GNU Emacs Manual.  Free Software
-Foundation, Cambridge: MA, 2019.  "(emacs)Top"
 
 * THE END

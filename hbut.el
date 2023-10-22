@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    18-Sep-91 at 02:57:09
-;; Last-Mod:     29-Aug-23 at 01:38:44 by Bob Weiner
+;; Last-Mod:     22-Oct-23 at 08:42:11 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -24,6 +24,7 @@
 				    hui-select view)))
 (require 'hmouse-drv) ; For `hui--ignore-action-key-depress-prev-point'.
 
+
 ;;; ************************************************************************
 ;;; Public declarations
 ;;; ************************************************************************
@@ -43,6 +44,64 @@ Use the function, (hbut:max-len), to read the proper value.")
 
 (defvar hproperty:but-face)
 (defvar hproperty:ibut-face)
+
+(declare-function hargs:delimited "hargs")
+(declare-function hargs:read-match "hargs")
+(declare-function hpath:find-noselect "hpath")
+(declare-function hpath:find "hpath")
+(declare-function hpath:substitute-var "hpath")
+(declare-function hpath:symlink-referent "hpath")
+(declare-function hpath:www-p "hpath")
+(declare-function hpath:shorten "hpath")
+(declare-function hsys-org-block-start-at-p "hsys-org")
+(declare-function hsys-org-src-block-start-at-p "hsys-org")
+(declare-function hui:buf-writable-err "hui")
+(declare-function hui:ebut-rename "hui")
+(declare-function hui:ibut-rename "hui")
+(declare-function hui:key-dir "hui")
+(declare-function hui:key-src "hui")
+(declare-function kbd-key:act "hib-kbd")
+(declare-function kbd-key:is-p "hib-kbd")
+(declare-function org-context "org")
+
+;;; ************************************************************************
+;;; Private variables
+;;; ************************************************************************
+
+(defvar hyperb:microsoft-os-p)
+
+;; Move up internal defconst to appear before their use
+(defconst ebut:label-start "<("
+  "String matching the start of a Hyperbole explicit hyper-button.")
+
+(defconst ebut:label-end   ")>"
+  "String matching the end of a Hyperbole explicit hyper-button.")
+
+(defconst hbut:instance-sep ":"
+  "String of one character, separates an ebut label from its instance num.")
+
+;; Move up internal defvar
+(defvar   hattr:filename
+  (if hyperb:microsoft-os-p "_hypb" ".hypb")
+  "Per directory file name in which explicit button attributes are stored.
+If you change its value, you will be unable to use buttons created by
+others who use a different value!")
+
+(defvar   ibut:label-separator-regexp "\\s-*[-:=|]*\\s-+"
+  "Regular expression that separates an implicit button name from its button text.")
+
+(defvar   ibut:label-separator " - "
+  "Default separator string inserted between implicit button name and its text.
+
+This separates it from the implicit button text.  See also
+`ibut:label-separator-regexp' for all valid characters that may be
+manually inserted to separate an implicit button label from its
+text.")
+
+(defconst hbut:source-prefix moccur-source-prefix
+  "String found at start of a buffer containing only a hyper-button menu.
+This expression should be followed immediately by a file-name indicating the
+source file for the buttons in the menu, if any.")
 
 ;;; ************************************************************************
 ;;; Public definitions
@@ -352,6 +411,29 @@ button is found in the current buffer."
 	 (new-lbl-key (ebut:label-to-key new-label))
 	 (modify new-label)
 	 (new-instance-flag))
+
+    (when (and new-label (or (not (stringp new-label)) (string-empty-p new-label)))
+      (hypb:error "(ebut:operate): 'new-label' value must be a non-empty string, not: '%s'"
+		  new-label))
+    (when (and (null curr-label) (not (use-region-p)))
+      (hypb:error "(ebut:operate): region must be active when 'curr-label' is nil"))
+
+    ;; Error when on a read-only part of a buffer's text
+    (when (plist-member (text-properties-at (point)) 'read-only)
+      (hypb:error "(ebut:operate): Point must not be on a read-only Org element"))
+    ;; Error when on an implicit button
+    (when (or (eq (hattr:get 'hbut:current 'categ) 'implicit)
+	      (string-prefix-p "ibtypes::" (symbol-name (hattr:get 'hbut:current 'categ))))
+      (hypb:error "(ebut:operate): Point must not be on an implicit button: %s"
+		  (ibut:label-to-key (hattr:get 'hbut:current 'lbl-key))))
+    ;; Error when on an Emacs push-button
+    (when (plist-member (text-properties-at (point)) 'button)
+      (hypb:error "(ebut:operate): Point must not be on an Emacs push-button: %s"
+		  (button-label (button-at (point)))))
+    ;; Error when in read-only contexts of an Org file
+    (when (hsys-org-at-read-only-p)
+      (hypb:error "(ebut:operate): Point must not be in a read-only Org context"))
+
     (unless new-label
       (setq new-label curr-label))
     (hattr:set 'hbut:current 'lbl-key (ebut:label-to-key new-label))
@@ -391,7 +473,7 @@ button is found in the current buffer."
 			 (if (hyperb:stack-frame
 			      '(hui:ebut-create hui:ebut-edit hui:ebut-edit-region
 						hui:ebut-link-create hui:gbut-create
-                       				hui:gbut-edit hui:link-create ebut:program
+                       				hui:gbut-edit ebut:program
 						hui:ibut-create hui:ibut-edit
 						hui:ibut-link-create ibut:program))
 			     ;; Ignore action-key-depress-prev-point
@@ -443,6 +525,10 @@ button is found in the current buffer."
 	       (or (re-search-forward  regexp nil t)
 		   (re-search-backward regexp nil t)))
 	     (goto-char (+ (match-beginning 0) (length ebut:label-start))))))
+
+    (when (or (not buffer-file-name) (hmail:editor-p) (hmail:reader-p))
+      (widen)
+      (hmail:msg-narrow))
 
     ;; new-instance-flag might be 't which we don't want to return.
     (when (stringp new-instance-flag) new-instance-flag)))
@@ -631,13 +717,6 @@ Insert INSTANCE-FLAG after END, before ending delimiter."
 		    match-keys "\\|")
    "\\)" match-part (regexp-quote ebut:label-end)))
 
-(defconst ebut:label-start "<("
-  "String matching the start of a Hyperbole explicit hyper-button.")
-(defconst ebut:label-end   ")>"
-  "String matching the end of a Hyperbole explicit hyper-button.")
-(defconst hbut:instance-sep ":"
-  "String of one character, separates an ebut label from its instance num.")
-
 ;;; ========================================================================
 ;;; gbut class - Global Hyperbole buttons - activated by typing label name
 ;;; ========================================================================
@@ -727,6 +806,11 @@ delimiters.  With TWO-LINES-FLAG non-nil, constrain label search
 to two lines."
   (when (equal buffer-file-name (gbut:file))
     (hbut:label-p as-label start-delim end-delim pos-flag two-lines-flag)))
+
+(defun    gbut:save-buffer ()
+  "Save global button file after an edit."
+  (with-current-buffer (find-file-noselect (gbut:file))
+    (save-buffer)))
 
 (defun    gbut:to (lbl-key)
   "Find the global button with LBL-KEY (a label or label key).
@@ -904,12 +988,6 @@ Suitable for use as part of `write-file-functions'."
   (put obj-symbol attr-symbol attr-value))
 
 (defalias 'hattr:summarize #'hattr:report)
-
-(defvar   hattr:filename
-  (if hyperb:microsoft-os-p "_hypb" ".hypb")
-  "Per directory file name in which explicit button attributes are stored.
-If you change its value, you will be unable to use buttons created by
-others who use a different value!")
 
 ;;; ========================================================================
 ;;; hbut class - abstract
@@ -1545,11 +1623,6 @@ button label.  Return the symbol for the button, else nil."
 
 (defvar   hbut:current nil
   "The currently selected Hyperbole button.  Available to action routines.")
-
-(defconst hbut:source-prefix moccur-source-prefix
-  "String found at start of a buffer containing only a hyper-button menu.
-This expression should be followed immediately by a file-name indicating the
-source file for the buttons in the menu, if any.")
 
 ;;; ------------------------------------------------------------------------
 
@@ -2282,7 +2355,7 @@ Summary of operations based on inputs (name arg comes from \\='hbut:current attr
       (hypb:error "(ibut:operate): Point must not be on an Emacs push-button: %s"
 		  (button-label (button-at (point)))))
     ;; Error when in read-only contexts of an Org file
-    (when (ibut:org-at-read-only-p)
+    (when (hsys-org-at-read-only-p)
       (hypb:error "(ibut:operate): Point must not be in a read-only Org context"))
 
     (unless new-name
@@ -2421,25 +2494,6 @@ Summary of operations based on inputs (name arg comes from \\='hbut:current attr
     ;; instance-flag might be 't which we don't want to return.
     (when (stringp instance-flag) instance-flag)))
 
-(defun ibut:org-at-read-only-p ()
-  "Return non-nil if point is in an Org read-only context."
-  (and (derived-mode-p 'org-mode)
-       (featurep 'hsys-org)
-       (or (hsys-org-src-block-start-at-p)
-	   (hsys-org-block-start-at-p)
-	   (let ((contexts (org-context)))
-	     (and contexts
-		  (delq nil (mapcar (lambda (ctxt) (assq ctxt contexts))
-				    '(:checkbox
-				      :headline-stars
-				      :item-bullet
-				      :keyword
-				      :link
-				      :priority
-				      :table-special
-				      :tags
-				      :todo-keyword))))))))
-
 (defun    ibut:insert-text (ibut)
   "Space, delimit and insert the text part of IBUT."
   (when (hattr:get ibut 'name)
@@ -2493,30 +2547,30 @@ Summary of operations based on inputs (name arg comes from \\='hbut:current attr
       ('man (insert arg1))
       ('actypes::man-show (insert arg1))
       ('actypes::link-to-file-line (insert (format "\"%s:%d\""
-						   (hpath:substitute-var arg1) arg2)))
+						   (hpath:shorten arg1) arg2)))
       ('actypes::link-to-file-line-and-column
        (if (eq arg3 0)
-	   (insert (format "\"%s:%d\"" (hpath:substitute-var arg1) arg2))
-	 (insert (format "\"%s:%d:%d\"" (hpath:substitute-var arg1) arg2 arg3))))
+	   (insert (format "\"%s:%d\"" (hpath:shorten arg1) arg2))
+	 (insert (format "\"%s:%d:%d\"" (hpath:shorten arg1) arg2 arg3))))
       ('actypes::link-to-file (insert
 			       (if (/= (length args) 2)
 				   ;; filename only
-				   (format "\"%s\"" (hpath:substitute-var arg1))
+				   (format "\"%s\"" (hpath:shorten arg1))
 				 ;; includes buffer pos that we translate to line:col
 				 (with-current-buffer (find-file-noselect arg1)
 				   (save-excursion
 				     (goto-char arg2)
 				     (if (zerop (current-column))
 					 (format "\"%s:%d\""
-						 (hpath:substitute-var arg1)
+						 (hpath:shorten arg1)
 						 (line-number-at-pos (point) t))
 				       (format "\"%s:%d:%d\""
-					       (hpath:substitute-var arg1)
+					       (hpath:shorten arg1)
 					       (line-number-at-pos (point) t)
 					       (current-column))))))))
       ('actypes::link-to-string-match
        (insert (format "<%s \"%s\" %d \"%s\">" (actype:def-symbol actype) arg1 arg2
-		       (hpath:substitute-var arg3))))
+		       (hpath:shorten arg3))))
       ('nil (error "(ibut:insert-text): actype must be a Hyperbole actype or Lisp function symbol, not '%s'" orig-actype))
       ;; Generic action button type						      
       (_ (insert (format "<%s%s%s>" (actype:def-symbol actype) (if args " " "")
@@ -2767,17 +2821,6 @@ Return the symbol for the button if found, else nil."
   "String matching the start of a Hyperbole implicit button label.")
 (defconst ibut:label-end   "]>"
   "String matching the end of a Hyperbole implicit button label.")
-
-(defvar   ibut:label-separator " - "
-  "Default separator string inserted between implicit button name and its text.
-
-This separates it from the implicit button text.  See also
-`ibut:label-separator-regexp' for all valid characters that may be
-manually inserted to separate an implicit button label from its
-text.")
-
-(defvar   ibut:label-separator-regexp "\\s-*[-:=|]*\\s-+"
-  "Regular expression that separates an implicit button name from its button text.")
 
 ;;; ========================================================================
 ;;; ibtype class - Implicit button types

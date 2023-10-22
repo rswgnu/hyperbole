@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    04-Feb-90
-;; Last-Mod:     12-Aug-23 at 13:19:18 by Bob Weiner
+;; Last-Mod:      4-Oct-23 at 20:04:08 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -26,9 +26,52 @@
 ;;; Public declarations
 ;;; ************************************************************************
 
+(declare-function br-in-view-window-p "ext:br")
+(declare-function br-next-listing-window "ext:br")
+(declare-function br-to-view-window "ext:br")
+
+(declare-function ace-window "ext:ace-window")
+(declare-function ace-window-display-mode "ext:ace-window")
+(declare-function aw-select "ext:ace-window")
+
+(defvar aw-dispatch-alist)
+(defvar aw-dispatch-always)
+(defvar aw-frame-size)
+(defvar aw-keys)
+
+;; window-jump
+(declare-function window-jump "ext:window-jump")
+(defvar	wj-vec-left)
+(defvar	wj-vec-right)
+(defvar	wj-vec-down)
+(defvar	wj-vec-up)
+
 (defvar start-window)
 (defvar aw-scope)
+
+(defvar hkey-value)                     ; "hui-mouse.el"
+(defvar hmouse-alist)                   ; "hui-mouse.el"
+(defvar hkey-alist)                     ; "hui-mouse.el"
+(defvar hmouse-set-point-command)       ; "hui-mouse.el"
+
+(defvar hyperbole-mode-map)             ; "hyperbole.el"
+
+(defvar action-key-default-function)    ; defcustom hui-mouse
+(defvar assist-key-default-function)    ; defcustom hui-mouse
+
 (declare-function mouse-drag-frame nil) ;; Obsolete from Emacs 28
+
+(declare-function hkey-quit-window "hmouse-drv") ; Alias defined in this file.
+
+(declare-function hattr:report "hbut")
+(declare-function hattr:list "hbut")
+(declare-function br-in-browser "hpath")
+(declare-function hbut:label "hbut")
+(declare-function hattr:get "hbut")
+(declare-function hui:ebut-link-directly "hui")
+(declare-function hui:ibut-link-directly "hui")
+(declare-function hkey-set-key "hyperbole")
+(declare-function org-todo "org")
 
 ;;; ************************************************************************
 ;;; Public variables
@@ -126,30 +169,6 @@ Default is nil."
 (defvar hkey-region nil
   "Used to pass the value of a region between a Smart Key depress and release.
 This permits the Smart Keys to behave as paste keys.")
-
-;;; ************************************************************************
-;;; Public declarations
-;;; ************************************************************************
-
-(declare-function br-in-view-window-p "ext:br")
-(declare-function br-next-listing-window "ext:br")
-(declare-function br-to-view-window "ext:br")
-
-(declare-function ace-window "ext:ace-window")
-(declare-function ace-window-display-mode "ext:ace-window")
-(declare-function aw-select "ext:ace-window")
-
-(defvar aw-dispatch-alist)
-(defvar aw-dispatch-always)
-(defvar aw-frame-size)
-(defvar aw-keys)
-
-;; window-jump
-(declare-function window-jump "ext:window-jump")
-(defvar	wj-vec-left)
-(defvar	wj-vec-right)
-(defvar	wj-vec-down)
-(defvar	wj-vec-up)
 
 ;;; ************************************************************************
 ;;; Private variables
@@ -628,11 +647,13 @@ The selected window does not change."
 
 ;;;###autoload
 (defun hkey-window-link (release-window)
-  "Create an ebut in the selected window, linked to point in RELEASE-WINDOW.
+  "Create a but in the selected window, linked to point in RELEASE-WINDOW.
 RELEASE-WINDOW is interactively selected via the `ace-window' command.
 The selected window does not change.
 
-With a prefix argument, create an unnamed implicit button instead."
+With no prefix argument, create an explicit button.
+With a C-u \\='(4) prefix argument, create an unnamed implicit button.
+With a M-1 prefix argument, create an named implicit button."
   (interactive
    (list (let ((mode-line-text (concat " Ace - Hyperbole: " (nth 2 (assq ?w aw-dispatch-alist)))))
 	   (aw-select mode-line-text))))
@@ -795,7 +816,7 @@ buffer to the end window.  The selected window does not change."
 		   (if (fboundp #'aw-select) ;; ace-window selection
 		       (let ((aw-scope 'global))
 			 (aw-select "Select link referent window"))
-		     (message "Now click on the end window...")
+		     (message "Select link referent window with the mouse...")
 		     (let (end-event)
 		       (prog1 (cl-loop do (setq end-event (read-event))
 				       until (and (mouse-event-p end-event)
