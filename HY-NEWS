@@ -85,15 +85,16 @@
 
 ** EXPLICIT BUTTONS  (See "(hyperbole)Explicit Buttons").
 
-  *** Ebut/Link Menu Item - Inserts a named ebutton that links to point in
+  *** Ebut/Link Menu Item: Inserts a named ebutton that links to point in
       another window.  See "(hyperbole)menu item, Ebut/Link".
 
 
 ** GLOBAL BUTTONS  (See "(hyperbole)Global Buttons").
 
-  *** Gbut/Link Menu Item - A single name creates a new global link button
+  *** Gbut/Link Menu Item: A single name creates a new global link button
       to point.  See "(hyperbole)menu item, Gbut/Link".
 
+  *** Auto Save: Automatically save the global button file after any edit.
 
 ** HYCONTROL  (See "(hyperbole)HyControl").
 
@@ -460,6 +461,8 @@
   *** (hui:link-possible-types): When reading a dir or file and not
       on such a string, use the 'default-directory' or 'buffer-file-name'.
       Previously just returned nil in such circumstances.
+
+  *** (gbut:save-buffer): Added to save global button file after edits.
 
 
 ** ORG MODE INTEGRATION (See "(hyperbole)Smart Key - Org Mode").

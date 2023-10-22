@@ -1,3 +1,12 @@
+2023-10-22  Bob Weiner  <rsw@gnu.org>
+
+* hbut.el (gbut:save-buffer): Add function to use after global button file is
+    edited.
+* hui.el (hui:gbut-delete, hui:gbut-rename, hui:gbut-link-directly): Save
+    global button file after create/edit.
+         (hui:link-possible-types): Fix missing `no-default' arg when testing
+    if on a directory or file name.
+
 2023-10-21  Bob Weiner  <rsw@gnu.org>
 
 * hibtypes.el (markdown-follow-inline-link-p): Fix to process anchored
