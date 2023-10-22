@@ -14,7 +14,8 @@
 2023-10-11  Mats Lidell  <matsl@gnu.org>
 
 * test/hui-tests.el (hui-gbut-number-of-gbuts-with-no-buttons)
-    (hui-gbut-number-of-gibuts-one, hui-gbut-number-of-gebuts-one)
+    (hui-gbut-number-of-gibuts-when-one-button)
+    (hui-gbut-number-of-gebuts-when-one-button)
     (hui-gbut-number-of-gibuts-from-mail-mode)
     (hui-gbut-number-of-gebuts-from-mail-mode): Verify number of global
     ibuts and ebuts.

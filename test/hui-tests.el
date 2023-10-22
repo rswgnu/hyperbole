@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    30-Jan-21 at 12:00:00
-;; Last-Mod:     18-Oct-23 at 22:49:17 by Mats Lidell
+;; Last-Mod:     22-Oct-23 at 15:19:40 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -85,7 +85,7 @@
 	(delete-directory hbmap:dir-user t)))))
 
 (ert-deftest hui-gbut-number-of-gbuts-with-no-buttons ()
-  "Verify number of buttons are zero when no buttons have been created."
+  "Verify number of gbuts with no buttons created."
   (defvar global-but-file)
   (let ((global-but-file (make-temp-file "gbut" nil ".txt")))
     (unwind-protect
@@ -93,8 +93,8 @@
           (should (= 0 (length (gbut:key-list)))))
       (hy-delete-file-and-buffer global-but-file))))
 
-(ert-deftest hui-gbut-number-of-gibuts-one ()
-  "Verify number of ibuts are one after one button has been created."
+(ert-deftest hui-gbut-number-of-gibuts-when-one-button ()
+  "Verify number of ibuts when one button is created."
   (defvar file)
   (let ((file (make-temp-file "gbut" nil ".txt")))
     (unwind-protect
@@ -104,8 +104,8 @@
           (should (= 1 (length (gbut:ibut-key-list)))))
       (hy-delete-file-and-buffer file))))
 
-(ert-deftest hui-gbut-number-of-gebuts-one ()
-  "Verify number of ebuts are one after one button has been created."
+(ert-deftest hui-gbut-number-of-gebuts-when-one-button ()
+  "Verify number of ebuts when one button is created."
   (defvar global-but-file)
   (let ((global-but-file (make-temp-file "gbut" nil ".txt")))
     (unwind-protect
@@ -116,7 +116,7 @@
       (hy-delete-file-and-buffer global-but-file))))
 
 (ert-deftest hui-gbut-number-of-gibuts-from-mail-mode ()
-  "Verify number of global ibuts are one even from within Hyperbole mail mode."
+  "Verify number of global ibuts from within Hyperbole mail mode."
   (defvar global-but-file)
   (let ((global-but-file (make-temp-file "gbut" nil ".txt"))
         (message-mode-file (make-temp-file "gbut" nil ".txt")))
@@ -130,7 +130,7 @@
       (hy-delete-file-and-buffer message-mode-file))))
 
 (ert-deftest hui-gbut-number-of-gebuts-from-mail-mode ()
-  "Verify number of global ebuts are one even from within Hyperbole mail mode."
+  "Verify number of global ebuts from within Hyperbole mail mode."
   (defvar global-but-file)
   (let ((global-but-file (make-temp-file "gbut" nil ".txt"))
         (message-mode-file (make-temp-file "gbut" nil ".txt")))
