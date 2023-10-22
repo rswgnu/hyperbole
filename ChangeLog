@@ -1,5 +1,9 @@
 2023-10-22  Mats Lidell  <matsl@gnu.org>
 
+* hui-select.el (hui-java-defun-prompt-regexp): Add prompt regexp as
+    separate defconst. Update provided by Alan Mackenzie. Thanks.
+    (hui-select-initialize): Use new java regexp.
+
 * test/hui-tests.el (hui-gbut-number-of-gebuts-from-mail-mode): Remove
     expected to fail.
 
