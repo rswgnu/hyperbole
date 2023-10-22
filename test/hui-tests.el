@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    30-Jan-21 at 12:00:00
-;; Last-Mod:     22-Oct-23 at 15:19:40 by Mats Lidell
+;; Last-Mod:     22-Oct-23 at 15:25:05 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -140,10 +140,6 @@
           (gbut:ebut-program "label" 'link-to-directory "/tmp")
           (find-file message-mode-file)
           (message-mode)
-          ;; Remove next line after bug is fixed. We should not care
-          ;; about the message mode file when listing the keys for the
-          ;; global buttons but we do now. See `hbdata:to-entry-buf'
-          (insert "Add text so file is not empty.")
           (should (= 1 (length (gbut:ebut-key-list)))))
       (hy-delete-file-and-buffer global-but-file)
       (hy-delete-file-and-buffer message-mode-file))))
