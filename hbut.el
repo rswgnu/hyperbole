@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    18-Sep-91 at 02:57:09
-;; Last-Mod:     22-Oct-23 at 08:42:11 by Bob Weiner
+;; Last-Mod:     22-Oct-23 at 15:34:09 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -838,7 +838,7 @@ Return the symbol for the button when found, else nil."
   "Return a list of explicit button label keys from the global button file."
   (save-excursion
     (save-restriction
-      (when (hbdata:to-entry-buf (gbut:file))
+      (when (hbdata:to-entry-in-file (gbut:file))
 	(let (gbuts)
 	  (save-restriction
 	    (narrow-to-region (point) (if (search-forward "\f" nil t)

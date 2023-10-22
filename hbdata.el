@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     2-Apr-91
-;; Last-Mod:      3-Oct-23 at 22:48:03 by Mats Lidell
+;; Last-Mod:     22-Oct-23 at 14:42:47 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -443,7 +443,31 @@ Return value of evaluation when a matching entry is found or nil."
 	  (when end-func (funcall end-func)))))
     rtn))
 
-(defun hbdata:to-entry-buf (key-src &optional directory create)
+(defun hbdata:is-but-data-stored-in-buffer (key-src)
+  "True if we store but-data in the buffer rather than in a file."
+  ;; Drafts of mail messages now have a buffer-file-name since they
+  ;; are temporarily saved to a file until sent.  But but-data still
+  ;; should be stored in the mail buffer itself, so check explicitly
+  ;; whether is a mail composition buffer in such cases.
+  (or (hmail:mode-is-p)
+      (and (get-buffer key-src)
+           (set-buffer key-src)
+	   (not buffer-file-name))))
+
+(defun hbdata:to-entry-in-buffer (create)
+  "Move point to end of line in but data in current buffer.
+Note: Button buffer has no file attached.  With optional CREATE,
+if no such line exists, insert a new entry at the beginning of
+the hbdata (which is created if necessary).  Return t."
+  (if (hmail:hbdata-to-p) ;; Might change the buffer
+      (setq buffer-read-only nil)
+    (when create
+      (setq buffer-read-only nil)
+      (insert "\n" hmail:hbdata-sep "\n")))
+  (backward-char 1)
+  t)
+
+(defun hbdata:to-entry-in-file (key-src &optional directory create)
   "Move point to end of line in but data buffer matching KEY-SRC.
 Use hbdata file in KEY-SRC's directory, or optional DIRECTORY or if nil, use
 `default-directory'.
@@ -452,43 +476,38 @@ beginning of the hbdata file (which is created if necessary).
 Return non-nil if KEY-SRC is found or created, else nil."
   (let (rtn
 	ln-dir)
-    ;; Drafts of mail messages now have a buffer-file-name since they
-    ;; are temporarily saved to a file until sent.  But but-data still
-    ;; should be stored in the mail buffer itself, so check explicitly
-    ;; whether is a mail composition buffer in such cases.
-    (if (or (hmail:mode-is-p)
-	    (and (get-buffer key-src)
-		 (set-buffer key-src)
-		 (not buffer-file-name)))
-	;; Button buffer has no file attached
-	(progn (if (hmail:hbdata-to-p) ;; Might change the buffer
-		   (setq buffer-read-only nil)
-		 (when create
-		   (setq buffer-read-only nil)
-		   (insert "\n" hmail:hbdata-sep "\n")))
-	       (backward-char 1)
-	       (setq rtn t))
-      (setq directory (or (file-name-directory key-src) directory))
-      (let ((ln-file) (link-p key-src))
-	(while (setq link-p (file-symlink-p link-p))
-	  (setq ln-file link-p))
-	(if ln-file
-	    (setq ln-dir (file-name-directory ln-file)
-		  key-src (file-name-nondirectory ln-file))
-	  (setq key-src (file-name-nondirectory key-src))))
-      (when (or (hbdata:to-hbdata-buffer directory create)
-		(and ln-dir (hbdata:to-hbdata-buffer ln-dir nil)
-		     (setq create nil
-			   directory ln-dir)))
-	(goto-char 1)
-	(cond ((search-forward (concat "\^L\n\"" key-src "\"")
-			       nil t)
-	       (setq rtn t))
-	      (create
-	       (setq rtn t)
-	       (insert "\^L\n\"" key-src "\"\n")
-	       (backward-char 1)))))
+    (setq directory (or (file-name-directory key-src) directory))
+    (let ((ln-file) (link-p key-src))
+      (while (setq link-p (file-symlink-p link-p))
+	(setq ln-file link-p))
+      (if ln-file
+	  (setq ln-dir (file-name-directory ln-file)
+		key-src (file-name-nondirectory ln-file))
+	(setq key-src (file-name-nondirectory key-src))))
+    (when (or (hbdata:to-hbdata-buffer directory create)
+	      (and ln-dir (hbdata:to-hbdata-buffer ln-dir nil)
+		   (setq create nil
+			 directory ln-dir)))
+      (goto-char 1)
+      (cond ((search-forward (concat "\^L\n\"" key-src "\"")
+			     nil t)
+	     (setq rtn t))
+	    (create
+	     (setq rtn t)
+	     (insert "\^L\n\"" key-src "\"\n")
+	     (backward-char 1))))
     rtn))
+
+(defun hbdata:to-entry-buf (key-src &optional directory create)
+  "Move point to end of line in but data buffer matching KEY-SRC.
+Use hbdata file in KEY-SRC's directory, or optional DIRECTORY or if nil, use
+`default-directory'.
+With optional CREATE, if no such line exists, insert a new file entry at the
+beginning of the hbdata file (which is created if necessary).
+Return non-nil if KEY-SRC is found or created, else nil."
+    (if (hbdata:is-but-data-stored-in-buffer key-src)
+        (hbdata:to-entry-in-buffer create)
+      (hbdata:to-entry-in-file key-src directory create)))
 
 (defun hbdata:to-hbdata-buffer (dir &optional create)
   "Read in the file containing DIR's button data, if any, and return buffer.
