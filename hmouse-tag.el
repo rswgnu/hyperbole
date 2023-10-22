@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    24-Aug-91
-;; Last-Mod:     28-Aug-23 at 16:19:42 by Bob Weiner
+;; Last-Mod:     21-Oct-23 at 10:45:26 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -21,14 +21,11 @@
 
 (eval-and-compile
   (mapc #'require '(find-func hpath hui-select))
-  (cond ((or (featurep 'etags) (featurep 'tags))
-	 nil)
-	(t
-	 ;; Force use of .elc file here since otherwise the bin/etags
-	 ;; executable might be found in a user's load-path by the load
-	 ;; command.
-	 (or (load "etags.elc" t nil t)
-	     (load "tags-fix" t)))))
+  (unless (or (featurep 'etags) (featurep 'tags))
+    ;; Force use of .elc file here since otherwise the bin/etags
+    ;; executable might be found in a user's load-path by the load
+    ;; command.
+    (load "etags.elc" t nil t)))
 
 ;; If etags utilizes the new xref.el library, define some helper
 ;; functions to simplify programming and fix one existing function.
@@ -51,6 +48,44 @@
     (defun xref-item-position (item)
       "Return the buffer position where xref ITEM is defined."
       (marker-position (save-excursion (xref-location-marker (xref-item-location item)))))))
+
+;;; ************************************************************************
+;;; Public declarations
+;;; ************************************************************************
+
+(declare-function br-edit "ext:br")
+(declare-function br-edit-feature "ext:br-ftr")
+(declare-function python-import-file "ext:br-python-ft")
+(declare-function python-to-definition "ext:br-python-ft")
+
+(declare-function epc:manager-server-process "ext:epc")
+
+(declare-function java-to-definition "ext:br-java-ft")
+
+(declare-function jedi:-get-servers-in-use "ext:jedi-core")
+(declare-function jedi:goto--line-column "ext:jedi-core")
+(declare-function jedi:goto-definition "ext:jedi-core")
+
+(declare-function objc-to-definition "ext:br-objc-ft")
+
+(defvar br-env-spec)
+(defvar br-lang-prefix)
+(defvar buffer-tag-table)
+(defvar jedi-mode)
+(defvar jedi:find-file-function) ;; FIXME: RSW customization?
+(defvar java-class-def-name-grpn)
+(defvar java-class-def-regexp)
+
+(defvar hkey-value)                     ; "hui-mouse.el"
+
+(declare-function hsys-org-get-value "hsys-org")
+(declare-function org-in-src-block-p "org")
+
+;; Forward declare needed? Because of optional defined above? Can we
+;; skip checking if xref is available since it has been at least since
+;; 26.1 or even earlier? Then we should not need these declares.
+(declare-function xref-item-position "hmouse-tag")
+(declare-function xref-item-buffer "hmouse-tag")
 
 ;;; ************************************************************************
 ;;; Public variables
@@ -137,33 +172,6 @@ Keyword matched is grouping 1.  Referent is grouping 2.")
   "*Full path name of etags file for GNU Emacs source."
   :type '(file :must-match t)
   :group 'hyperbole-commands)
-
-;;; ************************************************************************
-;;; Public declarations
-;;; ************************************************************************
-
-(declare-function br-edit "ext:br")
-(declare-function br-edit-feature "ext:br-ftr")
-(declare-function python-import-file "ext:br-python-ft")
-(declare-function python-to-definition "ext:br-python-ft")
-
-(declare-function epc:manager-server-process "ext:epc")
-
-(declare-function java-to-definition "ext:br-java-ft")
-
-(declare-function jedi:-get-servers-in-use "ext:jedi-core")
-(declare-function jedi:goto--line-column "ext:jedi-core")
-(declare-function jedi:goto-definition "ext:jedi-core")
-
-(declare-function objc-to-definition "ext:br-objc-ft")
-
-(defvar br-env-spec)
-(defvar br-lang-prefix)
-(defvar buffer-tag-table)
-(defvar jedi-mode)
-(defvar jedi:find-file-function) ;; FIXME: RSW customization?
-(defvar java-class-def-name-grpn)
-(defvar java-class-def-regexp)
 
 ;;; ************************************************************************
 ;;; Public functions
@@ -680,25 +688,17 @@ Use `hpath:display-buffer' to show definition or documentation."
 		    (widen)
 		    (goto-char (cdr result))
 		    t))))
-	  ;; If elisp-flag is true, then make xref use tags tables to
-	  ;; find symbols not yet loaded into Emacs; otherwise, use
-	  ;; standard xref backends for the current language.
-	  (t (let ((etags-mode (and elisp-flag (boundp 'xref-etags-mode) xref-etags-mode)))
-	       (unwind-protect
-		   (progn
-		     (and (not etags-mode) elisp-flag (fboundp 'xref-etags-mode)
-			  (xref-etags-mode 1))
-		     (condition-case ()
-			 ;; Tag of any language
-			 (when (featurep 'etags)
-			   (smart-tags-display tag show-doc))
-		       (error (unless (and elisp-flag (stringp smart-emacs-tags-file)
-					   (ignore-errors
-					     (smart-tags-display
-					      tag show-doc (list smart-emacs-tags-file))))
-				(error "(smart-lisp): No definition found for `%s'" tag)))))
-		 (and (not etags-mode) elisp-flag (fboundp 'xref-etags-mode)
-		      (xref-etags-mode 0))))))))
+	  ;; If elisp-flag is true, then make xref use `smart-emacs-tags-file'.
+	  ;; Otherwise, just use standard xref backends for the current language.
+	  (t (condition-case ()
+		 ;; Tag of any language
+		 (when (featurep 'etags)
+		   (smart-tags-display tag show-doc))
+	       (error (unless (and elisp-flag (stringp smart-emacs-tags-file)
+				   (ignore-errors
+				     (smart-tags-display
+				      tag show-doc (list smart-emacs-tags-file))))
+			(error "(smart-lisp): No definition found for `%s'" tag))))))))
 
 (defun smart-lisp-at-definition-p ()
   "Return non-nil if point is on the first line of a non-alias Lisp definition.

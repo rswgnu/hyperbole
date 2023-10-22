@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    28-Oct-94 at 10:59:44
-;; Last-Mod:      2-Jul-23 at 04:01:16 by Bob Weiner
+;; Last-Mod:      3-Oct-23 at 23:29:46 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -21,6 +21,24 @@
 
 (eval-and-compile (mapc #'require '(hpath hui-jmenu hyrolo-menu browse-url easymenu)))
 
+;;; ************************************************************************
+;;; Public declarations
+;;; ************************************************************************
+
+(declare-function gbut:label-list "hbut")
+(declare-function ebut:list "hbut")
+
+;;; ************************************************************************
+;;; Private variables
+;;; ************************************************************************
+
+(defvar hui-menu-max-list-length 24
+  "Positive integer that caps the length of a Hyperbole dynamic menu lists.")
+
+(defvar hui-menu-order-explicit-buttons t
+  "When non-nil (default), explicit button menu list is lexicographically ordered.
+Otherwise, explicit buttons are listed in their order of appearance within
+the current buffer.")
 
 ;;; ************************************************************************
 ;;; Private functions
@@ -476,18 +494,6 @@ REBUILD-FLAG is non-nil, in which case the menu is rebuilt."
 		 infodock-hyrolo-menu
 		 '("Screen (HyControl)" :filter hui-menu-screen)
 		 hui-menu-hywconfig)))))
-
-;;; ************************************************************************
-;;; Private variables
-;;; ************************************************************************
-
-(defvar hui-menu-max-list-length 24
-  "Positive integer that caps the length of a Hyperbole dynamic menu lists.")
-
-(defvar hui-menu-order-explicit-buttons t
-  "When non-nil (default), explicit button menu list is lexicographically ordered.
-Otherwise, explicit buttons are listed in their order of appearance within
-the current buffer.")
 
 (provide 'hui-menu)
 

@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     7-Apr-94 at 17:17:39 by Bob Weiner
-;; Last-Mod:     27-Aug-23 at 20:34:24 by Bob Weiner
+;; Last-Mod:      3-Oct-23 at 17:46:21 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -35,6 +35,23 @@
 (require 'browse-url)
 (require 'eww) ;; Must load to override it's function `eww-browse-url' below.
 (require 'hbut)
+
+;;; ************************************************************************
+;;; Public declarations
+;;; ************************************************************************
+
+(defvar hpath:display-where-alist)      ; "hpath.el"
+
+(declare-function hpath:remote-available-p "hpath")
+(declare-function hpath:remote-p "hpath")
+(declare-function hpath:remote-at-p "hpath")
+(declare-function hpath:www-at-p "hpath")
+
+;; Forward declare conditionally defined functions
+(declare-function eww-history-property "hsys-www")
+(declare-function eww-bookmark-property "hsys-www")
+(declare-function eww-link-at-point "hsys-www")
+(declare-function shr-link-at-point "hsys-www")
 
 ;;; ************************************************************************
 ;;; Public functions and types

@@ -100,16 +100,16 @@ In short, Hyperbole lets you:
       reference from any other node;
 
    4. Manage all your contacts or record-based, unstructured nodes quickly
-	  with hierarchical categories; each entry can have embedded
-	  hyperbuttons of any type.  Or create an archive of documents with
-	  hierarchical entries and use the same search mechanism to quickly find
-	  any matching entry;
+      with hierarchical categories; each entry can have embedded
+      hyperbuttons of any type.  Or create an archive of documents with
+      hierarchical entries and use the same search mechanism to quickly find
+      any matching entry;
 
    5. Use single keys to easily manage your Emacs windows or frames and
       quickly retrieve saved window and frame configurations;
 
    6. Search for things in your current buffers, in a directory tree or
-	  across major web search engines with the touch of a few keys.
+      across major web search engines with the touch of a few keys.
 
 The common thread in all these features is making retrieval,
 management and display of information fast and easy.  That is
@@ -137,6 +137,10 @@ term in here is new or unfamiliar to you, you can look it up in the
 
 Hyperbole is available for [download and installation](#installation)
 through the GNU Emacs package manager.
+
+Unlock the power of GNU Hyperbole to make your information work for you.
+One system.  One language.  One manual.  One solution.  Learn Hyperbole and
+start moving further, faster.
 
 ## Mailing Lists
 

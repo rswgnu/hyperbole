@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     6-Oct-91 at 06:34:05
-;; Last-Mod:      7-Oct-22 at 23:18:45 by Mats Lidell
+;; Last-Mod:      3-Oct-23 at 17:49:44 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -21,6 +21,27 @@
 
 (defvar hbmap:filename "HYPB"
   "*Filename used for quick access button files.")
+
+;;; ************************************************************************
+;;; Private variables
+;;; ************************************************************************
+
+(defvar hyperb:microsoft-os-p)          ; Defined in hload-path.
+
+(defvar hbmap:dir-user
+  (if (and hyperb:microsoft-os-p
+	   (not (getenv "HOME")))
+      "c:/_hyperb/" "~/.hyperb/")
+  "Per user directory in which to store top level Hyperbole map data.
+Must end with a directory separator.
+Hyperbole will try to create it whenever `hyperb:init' is called.")
+
+(defvar hbmap:dir-filename
+  (expand-file-name  "HBMAP" hbmap:dir-user)
+  "Name of a file that lists all dirs to which a user has written buttons.
+See also `hbmap:dir-user'.
+If you change its value, you will be unable to search for buttons created by
+others who use a different value!")
 
 ;;; ************************************************************************
 ;;; Public functions
@@ -104,25 +125,6 @@ the error.  Optional NO-SAVE disables saving of the map after operation."
 			  t)
 			 (t 'hbmap-not-writable))))
 	'hbmap-not-readable))))
-
-;;; ************************************************************************
-;;; Private variables
-;;; ************************************************************************
-
-(defvar hbmap:dir-user
-  (if (and hyperb:microsoft-os-p
-	   (not (getenv "HOME")))
-      "c:/_hyperb/" "~/.hyperb/")
-  "Per user directory in which to store top level Hyperbole map data.
-Must end with a directory separator.
-Hyperbole will try to create it whenever `hyperb:init' is called.")
-
-(defvar hbmap:dir-filename
-  (expand-file-name  "HBMAP" hbmap:dir-user)
-  "Name of a file that lists all dirs to which a user has written buttons.
-See also `hbmap:dir-user'.
-If you change its value, you will be unable to search for buttons created by
-others who use a different value!")
 
 (provide 'hbmap)
 

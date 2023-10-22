@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     2-Jul-16 at 14:54:14
-;; Last-Mod:     27-Aug-23 at 14:29:35 by Bob Weiner
+;; Last-Mod:      3-Oct-23 at 17:07:24 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -37,6 +37,26 @@
 (require 'org-fold nil t)
 ;; Avoid any potential library name conflict by giving the load directory.
 (require 'set (expand-file-name "set" hyperb:dir))
+
+;;; ************************************************************************
+;;; Public declarations
+;;; ************************************************************************
+
+;; `org-show-context' is obsolete as of Org 9.6, use `org-fold-show-context'
+;; instead.
+(unless (fboundp #'org-fold-show-context)
+  (with-suppressed-warnings ((obsolete org-show-context))
+    (defalias 'org-fold-show-context #'org-show-context)))
+
+(defvar hyperbole-mode-map)             ; "hyperbole.el"
+
+(declare-function smart-eobp "hui-mouse")
+(declare-function smart-eolp "hui-mouse")
+(declare-function hargs:read-match "hargs")
+(declare-function symset:add "hact")
+(declare-function symtable:add "hact")
+(declare-function action-key "hmouse-drv")
+(declare-function hkey-either "hmouse-drv")
 
 ;;;###autoload
 (defun hsys-org-meta-return-shared-p ()
@@ -78,16 +98,6 @@ with different settings of this option.  For example, a nil value makes
 		 (const :tag "t       - In Org, enable all Smart Key contexts" t))
   :initialize #'custom-initialize-default
   :group 'hyperbole-buttons)
-
-;;; ************************************************************************
-;;; Public declarations
-;;; ************************************************************************
-
-;; `org-show-context' is obsolete as of Org 9.6, use `org-fold-show-context'
-;; instead.
-(unless (fboundp #'org-fold-show-context)
-  (with-suppressed-warnings ((obsolete org-show-context))
-    (defalias 'org-fold-show-context #'org-show-context)))
 
 ;;; ************************************************************************
 ;;; Public variables
@@ -149,6 +159,26 @@ an error."
       (derived-mode-p 'org-agenda-mode)
       (and (boundp 'outshine-mode) outshine-mode)
       (and (boundp 'poporg-mode) poporg-mode)))
+
+;;;###autoload
+(defun hsys-org-at-read-only-p ()
+  "Return non-nil if point is in an Org read-only context."
+  (and (derived-mode-p 'org-mode)
+       (featurep 'hsys-org)
+       (or (hsys-org-src-block-start-at-p)
+	   (hsys-org-block-start-at-p)
+	   (let ((contexts (org-context)))
+	     (and contexts
+		  (delq nil (mapcar (lambda (ctxt) (assq ctxt contexts))
+				    '(:checkbox
+				      :headline-stars
+				      :item-bullet
+				      :keyword
+				      :link
+				      :priority
+				      :table-special
+				      :tags
+				      :todo-keyword))))))))
 
 (defun hsys-org-cycle ()
   "Call `org-cycle' and set as `this-command' to cycle through all states."

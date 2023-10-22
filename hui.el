@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 21:42:03
-;; Last-Mod:     29-Aug-23 at 01:11:29 by Bob Weiner
+;; Last-Mod:     22-Oct-23 at 08:46:02 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -29,8 +29,16 @@
 ;;; Public declarations
 ;;; ************************************************************************
 
+(defvar hyperbole-mode-map)             ; "hyperbole.el"
+
 (declare-function texinfo-copy-node-name "texnfo-upd")
 (declare-function kotl-mode:copy-region-as-kill "kotl-mode")
+
+(declare-function kcell-view:idstamp "kotl/kview")
+(declare-function bookmark-bmenu-bookmark "bookmark")
+(declare-function hui:menu-choose "hui-mini")
+(declare-function kcell-view:absolute-reference "kotl/kview")
+(declare-function klink:absolute "kotl/klink")
 
 ;;; ************************************************************************
 ;;; Public variables
@@ -45,6 +53,17 @@
   "*Non-nil prompts for a button-specific action on explicit button creation."
   :type 'boolean
   :group 'hyperbole-buttons)
+
+;;; ************************************************************************
+;;; Private variables
+;;; ************************************************************************
+
+(defvar hui:ebut-label-prev nil
+  "String value of previous button name during an explicit button rename.
+At other times, value must be nil.")
+
+(defvar hui:ignore-buffers-regexp "\\`\\( \\|BLANK\\'\\|\\*Pp \\|TAGS\\|*quelpa\\)"
+  "When prompting for a buffer name, ignore any buffers whose names match to this.")
 
 ;;; ************************************************************************
 ;;; Public Commands Bound to Keys
@@ -555,10 +574,10 @@ details."
 
 (defun hui:gbut-delete (but-key)
   "Delete global Hyperbole button given by BUT-KEY.
-	  Return t if button is deleted, nil if user chooses not to delete or signal
-	  an error otherwise.  If called interactively, prompt user whether to delete
-	  and derive BUT-KEY from the button that point is within.
-	  Signal an error if point is not within a button."
+Return t if button is deleted, nil if user chooses not to delete or signal
+an error otherwise.  If called interactively, prompt user whether to delete
+and derive BUT-KEY from the button that point is within.
+Signal an error if point is not within a button."
   (interactive (list (save-excursion
 		       (hui:buf-writable-err
 			(find-file-noselect (gbut:file)) "gbut-delete")
@@ -566,13 +585,14 @@ details."
 			(hargs:read-match "Global button to delete: "
 					  (mapcar #'list (gbut:label-list))
 					  nil t nil 'gbut)))))
-  (hui:hbut-delete but-key (gbut:file)))
+  (prog1 (hui:hbut-delete but-key (gbut:file))
+    (gbut:save-buffer)))
 
 (defun hui:gbut-edit (lbl-key)
   "Edit a global Hyperbole button given by LBL-KEY.
-	  The button may be explicit or a labeled implicit button.
-	  When called interactively, save the global button buffer after the
-	  modification   Signal an error when no such button is found."
+The button may be explicit or a labeled implicit button.
+When called interactively, save the global button buffer after the
+modification.  Signal an error when no such button is found."
   (interactive (list (save-excursion
 		       (hui:buf-writable-err
 			(find-file-noselect (gbut:file)) "gbut-edit")
@@ -584,7 +604,6 @@ details."
     (if (called-interactively-p 'interactive)
 	(error "(hui:gbut-edit): No global button to edit")
       (error "(hui:gbut-edit): 'lbl-key' argument must be a string, not '%s'" lbl-key)))
-
 
   (hypb:assert-same-start-and-end-buffer
     (let ((lbl (hbut:key-to-label lbl-key))
@@ -688,12 +707,13 @@ implicit button.  See also documentation for
 		   (when (called-interactively-p 'interactive)
 		     (hui:ibut-message edit-flag)))
 	  (setq edit-flag (hui:ebut-link-directly link-but-window referent-window))
+	  (gbut:save-buffer)
 	  (when (called-interactively-p 'interactive)
 	    (hui:ebut-message edit-flag)))))))
 
 (defun hui:gbut-rename (label)
   "Interactively rename a Hyperbole global button with LABEL.
-	  When in the global button buffer, the default is the button at point."
+When in the global button buffer, the default is the button at point."
   (interactive (list (save-excursion
 		       (hui:buf-writable-err
 			(find-file-noselect (gbut:file)) "gbut-rename")
@@ -701,7 +721,8 @@ implicit button.  See also documentation for
 			(hargs:read-match "Global button to rename: "
 					  (mapcar #'list (gbut:label-list))
 					  nil t nil 'gbut)))))
-  (hbut:rename (gbut:to label)))
+  (prog1 (hbut:rename (gbut:to label))
+    (gbut:save-buffer)))
 
 (defun hui:gibut-create (name text)
   "Create a Hyperbole global implicit button with NAME and button TEXT at point.
@@ -1168,7 +1189,7 @@ from those instead.  See also documentation for
 				(hui:hbut-label-default
 				 (region-beginning) (region-end))))
 			 "ebut-link-directly"
-			 "Create button named: ")
+			 "Create ebutton named: ")
 		lbl-key (hbut:label-to-key but-lbl))))
 
       ;; num-types is the number of possible link types to choose among
@@ -1216,8 +1237,9 @@ With optional DEPRESS-WINDOW and RELEASE-WINDOW, use the points
 from those instead.  See also documentation for
 `hui:link-possible-types'.
 
-With optional NAME-ARG-FLAG (interactively, the prefix argument),
-prompt for a name to precede the implicit button.
+With optional NAME-ARG-FLAG (interactively, the prefix argument set to
+anything other than a single C-u (list 4)), prompt for a name to precede
+the implicit button.
 
 An Assist Mouse Key drag between windows runs this command.
 Alternatively, to swap buffers between two windows, Assist Mouse Key
@@ -1265,7 +1287,13 @@ drag from a window to another window's modeline."
 		name-key (ibut:label-to-key (hattr:get 'hbut:current 'name)))
 	(setq but-loc (hui:key-src (current-buffer))
 	      but-dir (hui:key-dir (current-buffer))))
-      (when (and name-arg-flag (not name-key))
+
+      ;; Ignore single C-u prefix arg here since this may be invoked
+      ;; via 'hkey-either' which runs the Assist Key when given a
+      ;; single C-u prefix argument.  In such a case, don't use the
+      ;; prefix argument as a flag to prompt for the ibutton name as
+      ;; we want to just insert the appropriate ibut without any prompting.
+      (when (and name-arg-flag (not (equal name-arg-flag '(4))) (not name-key))
 	(setq but-name (hui:hbut-label
 			(cond ((hmouse-prior-active-region)
 			       hkey-region)
@@ -1405,9 +1433,6 @@ Trigger an error if DEFAULT-ACTYPE is invalid."
     (when err
       (pop-to-buffer but-buf)
       (hypb:error err))))
-
-(defvar hui:ignore-buffers-regexp "\\`\\( \\|BLANK\\'\\|\\*Pp \\|TAGS\\|*quelpa\\)"
-  "When prompting for a buffer name, ignore any buffers whose names match to this.")
 
 (defun hui:ebut-delete-op (interactive but-key key-src)
   "INTERACTIVEly or not, delete explicit button given by BUT-KEY in KEY-SRC.
@@ -1914,15 +1939,6 @@ Buffer without File      link-to-buffer-tmp"
   "Return LST, a list, with text properties removed from any string elements."
   (mapcar (lambda (elt) (if (stringp elt) (substring-no-properties elt) elt))
 	  lst))
-
-;;; ************************************************************************
-;;; Private variables
-;;; ************************************************************************
-
-
-(defvar hui:ebut-label-prev nil
-  "String value of previous button name during an explicit button rename.
-At other times, value must be nil.")
 
 (provide 'hui)
 

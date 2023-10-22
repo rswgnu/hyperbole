@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     9-Oct-91 at 18:38:05
-;; Last-Mod:     23-Apr-23 at 20:08:38 by Mats Lidell
+;; Last-Mod:      3-Oct-23 at 23:30:56 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -31,6 +31,13 @@
 ;;   with Hyperbole.
 
 ;;; Code:
+;;; ************************************************************************
+;;; Public declarations
+;;; ************************************************************************
+
+(declare-function rmail:msg-widen nil)
+(declare-function hypb:insert-region "hypb")
+
 ;;; ************************************************************************
 ;;; Public variables
 ;;; ************************************************************************
@@ -61,10 +68,11 @@ Valid values are: nil, Mh-init, Rmail-init or Vm-init."
  "Major mode for reading mail with Hyperbole buttons.")
 
 ;;; ************************************************************************
-;;; Public declarations
+;;; Private variables
 ;;; ************************************************************************
 
-(declare-function rmail:msg-widen nil)
+(defvar hmail:hbdata-sep "\^Lbd"
+  "Text separating e-mail msg from any trailing Hyperbole button data.")
 
 ;;; ************************************************************************
 ;;; Public functions
@@ -94,11 +102,11 @@ Return t if button data is found, else nil."
 	       (hmail:msg-narrow)
 	       t)
 	      ((or (hmail:lister-p) (hnews:lister-p)) t)
-	      ((memq major-mode (list hmail:composer hnews:reader
-				      hnews:composer))
+	      ((or (not buffer-file-name)
+		   (memq major-mode (list hmail:composer hnews:reader
+					  hnews:composer)))
 	       (widen)
-	       t)
-	      ((not buffer-file-name)))
+	       t))
     (goto-char (point-max))
     (when (search-backward hmail:hbdata-sep nil t)
       (forward-line 1)
@@ -273,13 +281,6 @@ Signals error when current mail reader is not supported."
 ;;; See "hrmail.el" for examples.
 ;;;
 ;;; rmail:get-new, rmail:msg-forward, rmail:summ-msg-to, rmail:summ-new
-
-;;; ************************************************************************
-;;; Private variables
-;;; ************************************************************************
-
-(defvar hmail:hbdata-sep "\^Lbd"
-  "Text separating e-mail msg from any trailing Hyperbole button data.")
 
 (provide 'hmail)
 
