@@ -1,3 +1,16 @@
+2023-10-21  Bob Weiner  <rsw@gnu.org>
+
+* hibtypes.el (markdown-follow-inline-link-p): Fix to process anchored
+    path links rather than dropping through to another ibtype since that
+    would trigger an error since point would have been moved in order to
+    leave it on the path and not the name part of a markdown link.  Remove
+    need to move point by calling 'markdown-link-url'.
+
+* hmouse-tag.el (smart-lisp-find-tag): Fix that some tags were not found by
+    xref because this function turned on xref-etags-mode in Elisp files
+    rather than using its elisp backend.  Remove that code.
+                (tags-fix): Remove optional load of this very old file.
+
 2023-10-09  Mats Lidell  <matsl@gnu.org>
 
 * test/kotl-mode-tests.el (kotl-mode-kill-contents)

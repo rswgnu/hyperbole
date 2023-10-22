@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 20:45:31
-;; Last-Mod:      3-Oct-23 at 17:21:27 by Mats Lidell
+;; Last-Mod:     21-Oct-23 at 19:50:25 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -51,6 +51,7 @@
 (declare-function markdown-footnote-marker-positions "ext:markdown")
 (declare-function markdown-footnote-return "ext:markdown")
 (declare-function markdown-link-p "ext:markdown")
+(declare-function markdown-link-url "ext:markdown")
 (declare-function markdown-reference-goto-definition "ext:markdown")
 (declare-function markdown-reference-goto-link "ext:markdown")
 (declare-function markdown-wiki-link-p "ext:markdown")
@@ -414,32 +415,19 @@ Return t if jump and nil otherwise."
   "If on an inline link, jump to its referent if it is absolute and return non-nil.
 Absolute means not relative within the file.  Otherwise, if an
 internal link, move back to OPOINT and return nil."
-  (let (handle-link-flag
-        result)
-    (skip-chars-forward "^\]\[()")
-    (when (looking-at "\][\[()]")
-      (if (looking-at "\(")
-          (skip-chars-backward "^\]\[()")
-        (skip-chars-forward "\]\[\("))
-      ;; Leave point on the link even if not activated
-      ;; here, so that other ibtypes activate it.  If point is after
-      ;; the # character of an in-file link, then the following predicate
-      ;; fails and the `pathname' ibtype will handle it.  If point is before
-      ;; the # character, the link is handled here.
-      (setq handle-link-flag (not (or (hpath:www-at-p) (hpath:at-p))))
-      (when (setq result (and (markdown-link-p) handle-link-flag))
-        ;; In-file referents are handled by the `pathname' implicit
-        ;; button type, not here.
-        (ibut:label-set (match-string-no-properties 0) (match-beginning 0) (match-end 0))
+  ;; Caller already checked not on a URL (handled elsewhere).
+  (let ((path (markdown-link-url)))
+    (goto-char opoint)
+    (when (markdown-link-p)
+      (ibut:label-set (match-string-no-properties 0) (match-beginning 0) (match-end 0))
+      (if path
+	  (hact 'link-to-file path)
         (hpath:display-buffer (current-buffer))
-        (hact 'markdown-follow-link-at-point)))
-    (when handle-link-flag
-      (goto-char opoint))
-    result))
+        (hact 'markdown-follow-link-at-point)))))
 
 (defib markdown-internal-link ()
   "Display any in-file Markdown link referent at point.
-Pathnames and urls are handled elsewhere."
+Url links are handled elsewhere."
   (when (and (derived-mode-p 'markdown-mode)
              (not (hpath:www-at-p)))
     (let ((opoint (point))
@@ -456,7 +444,7 @@ Pathnames and urls are handled elsewhere."
                    ;; Follows an absolute file link.
                    (markdown-follow-inline-link-p opoint))
                ;; May be on the name of an infile link, so move to the
-               ;; link itself and then let the `pathname' ibtype handle it.
+               ;; link itself and then display it as a pathname.
                (error (markdown-follow-inline-link-p opoint))))
             ((markdown-wiki-link-p)
              (ibut:label-set (match-string-no-properties 0) (match-beginning 0) (match-end 0))

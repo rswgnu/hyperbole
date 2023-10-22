@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    24-Aug-91
-;; Last-Mod:      3-Oct-23 at 23:21:15 by Mats Lidell
+;; Last-Mod:     21-Oct-23 at 10:45:26 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -21,14 +21,11 @@
 
 (eval-and-compile
   (mapc #'require '(find-func hpath hui-select))
-  (cond ((or (featurep 'etags) (featurep 'tags))
-	 nil)
-	(t
-	 ;; Force use of .elc file here since otherwise the bin/etags
-	 ;; executable might be found in a user's load-path by the load
-	 ;; command.
-	 (or (load "etags.elc" t nil t)
-	     (load "tags-fix" t)))))
+  (unless (or (featurep 'etags) (featurep 'tags))
+    ;; Force use of .elc file here since otherwise the bin/etags
+    ;; executable might be found in a user's load-path by the load
+    ;; command.
+    (load "etags.elc" t nil t)))
 
 ;; If etags utilizes the new xref.el library, define some helper
 ;; functions to simplify programming and fix one existing function.
@@ -691,25 +688,17 @@ Use `hpath:display-buffer' to show definition or documentation."
 		    (widen)
 		    (goto-char (cdr result))
 		    t))))
-	  ;; If elisp-flag is true, then make xref use tags tables to
-	  ;; find symbols not yet loaded into Emacs; otherwise, use
-	  ;; standard xref backends for the current language.
-	  (t (let ((etags-mode (and elisp-flag (boundp 'xref-etags-mode) xref-etags-mode)))
-	       (unwind-protect
-		   (progn
-		     (and (not etags-mode) elisp-flag (fboundp 'xref-etags-mode)
-			  (xref-etags-mode 1))
-		     (condition-case ()
-			 ;; Tag of any language
-			 (when (featurep 'etags)
-			   (smart-tags-display tag show-doc))
-		       (error (unless (and elisp-flag (stringp smart-emacs-tags-file)
-					   (ignore-errors
-					     (smart-tags-display
-					      tag show-doc (list smart-emacs-tags-file))))
-				(error "(smart-lisp): No definition found for `%s'" tag)))))
-		 (and (not etags-mode) elisp-flag (fboundp 'xref-etags-mode)
-		      (xref-etags-mode 0))))))))
+	  ;; If elisp-flag is true, then make xref use `smart-emacs-tags-file'.
+	  ;; Otherwise, just use standard xref backends for the current language.
+	  (t (condition-case ()
+		 ;; Tag of any language
+		 (when (featurep 'etags)
+		   (smart-tags-display tag show-doc))
+	       (error (unless (and elisp-flag (stringp smart-emacs-tags-file)
+				   (ignore-errors
+				     (smart-tags-display
+				      tag show-doc (list smart-emacs-tags-file))))
+			(error "(smart-lisp): No definition found for `%s'" tag))))))))
 
 (defun smart-lisp-at-definition-p ()
   "Return non-nil if point is on the first line of a non-alias Lisp definition.
