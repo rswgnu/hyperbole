@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     2-Apr-91
-;; Last-Mod:     22-Oct-23 at 14:39:18 by Mats Lidell
+;; Last-Mod:     22-Oct-23 at 14:42:47 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -459,14 +459,13 @@ Return value of evaluation when a matching entry is found or nil."
 Note: Button buffer has no file attached.  With optional CREATE,
 if no such line exists, insert a new entry at the beginning of
 the hbdata (which is created if necessary).  Return t."
-  (progn
-    (if (hmail:hbdata-to-p) ;; Might change the buffer
-	(setq buffer-read-only nil)
-      (when create
-	(setq buffer-read-only nil)
-	(insert "\n" hmail:hbdata-sep "\n")))
-    (backward-char 1)
-    t))
+  (if (hmail:hbdata-to-p) ;; Might change the buffer
+      (setq buffer-read-only nil)
+    (when create
+      (setq buffer-read-only nil)
+      (insert "\n" hmail:hbdata-sep "\n")))
+  (backward-char 1)
+  t)
 
 (defun hbdata:to-entry-in-file (key-src &optional directory create)
   "Move point to end of line in but data buffer matching KEY-SRC.
