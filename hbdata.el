@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     2-Apr-91
-;; Last-Mod:     18-Oct-23 at 22:48:05 by Mats Lidell
+;; Last-Mod:     22-Oct-23 at 14:39:18 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -443,7 +443,7 @@ Return value of evaluation when a matching entry is found or nil."
 	  (when end-func (funcall end-func)))))
     rtn))
 
-(defun hbdata--is-but-data-stored-in-buffer (key-src)
+(defun hbdata:is-but-data-stored-in-buffer (key-src)
   "True if we store but-data in the buffer rather than in a file."
   ;; Drafts of mail messages now have a buffer-file-name since they
   ;; are temporarily saved to a file until sent.  But but-data still
@@ -454,7 +454,7 @@ Return value of evaluation when a matching entry is found or nil."
            (set-buffer key-src)
 	   (not buffer-file-name))))
 
-(defun hbdata--to-entry-in-buffer (create)
+(defun hbdata:to-entry-in-buffer (create)
   "Move point to end of line in but data in current buffer.
 Note: Button buffer has no file attached.  With optional CREATE,
 if no such line exists, insert a new entry at the beginning of
@@ -468,7 +468,7 @@ the hbdata (which is created if necessary).  Return t."
     (backward-char 1)
     t))
 
-(defun hbdata--to-entry-in-file (key-src &optional directory create)
+(defun hbdata:to-entry-in-file (key-src &optional directory create)
   "Move point to end of line in but data buffer matching KEY-SRC.
 Use hbdata file in KEY-SRC's directory, or optional DIRECTORY or if nil, use
 `default-directory'.
@@ -506,9 +506,9 @@ Use hbdata file in KEY-SRC's directory, or optional DIRECTORY or if nil, use
 With optional CREATE, if no such line exists, insert a new file entry at the
 beginning of the hbdata file (which is created if necessary).
 Return non-nil if KEY-SRC is found or created, else nil."
-    (if (hbdata--is-but-data-stored-in-buffer key-src)
-        (hbdata--to-entry-in-buffer create)
-      (hbdata--to-entry-in-file key-src directory create)))
+    (if (hbdata:is-but-data-stored-in-buffer key-src)
+        (hbdata:to-entry-in-buffer create)
+      (hbdata:to-entry-in-file key-src directory create)))
 
 (defun hbdata:to-hbdata-buffer (dir &optional create)
   "Read in the file containing DIR's button data, if any, and return buffer.

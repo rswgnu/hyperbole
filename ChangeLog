@@ -3,11 +3,11 @@
 * test/hui-tests.el (hui-gbut-number-of-gebuts-from-mail-mode): Remove
     expected to fail.
 
-* hbut.el (gbut:ebut-key-list): Use hbdata--to-entry-in-file for global
+* hbut.el (gbut:ebut-key-list): Use hbdata:to-entry-in-file for global
     button file data.
 
-* hbdata.el (hbdata--is-but-data-stored-in-buffer)
-    (hbdata--to-entry-in-buffer, hbdata--to-entry-in-file): Refactor into
+* hbdata.el (hbdata:is-but-data-stored-in-buffer)
+    (hbdata:to-entry-in-buffer, hbdata:to-entry-in-file): Refactor into
     three methods to separate out button data stored in a file.
     (hbdata:to-entry-buf): Use new methods.
 
