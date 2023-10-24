@@ -1,3 +1,10 @@
+2023-10-25  Mats Lidell  <matsl@gnu.org>
+
+* test/hui-tests.el (hui--ibut-link-directly-to-file)
+    (hui--ibut-link-directly-to-dired)
+    (hui--ibut-link-directly-with-label): Test cases for
+    ibut-link-directly
+
 2023-10-22  Mats Lidell  <matsl@gnu.org>
 
 * test/hui-tests.el (hui-gbut-number-of-gebuts-from-mail-mode): Remove
