@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Oct-96 at 02:25:27
-;; Last-Mod:      3-Oct-23 at 22:59:57 by Mats Lidell
+;; Last-Mod:     22-Oct-23 at 17:26:49 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -203,6 +203,36 @@ Used to include a final line when marking indented code.")
   :type 'boolean
   :group 'hyperbole-commands)
 
+(defconst hui-java-defun-prompt-regexp
+  (let* ((space* "[ \t\n\r\f]*")
+         (space+ "[ \t\n\r\f]+")
+         (modifier*
+          (concat "\\(?:"
+                  (regexp-opt '("abstract" "const" "default" "final" "native"
+                                "private" "protected" "public" "static"
+                                "strictfp" "synchronized" "threadsafe"
+                                "transient" "volatile")
+                              'words)   ; Compatible with XEmacs
+                  space+ "\\)*"))
+         (ids-with-dots "[_$a-zA-Z][_$.a-zA-Z0-9]*")
+         (ids-with-dot-\[\] "[[_$a-zA-Z][][_$.a-zA-Z0-9]*")
+         (paren-exp "([^);{}]*)")
+         (generic-exp "<[^(){};]*>"))
+    (concat "^[ \t]*"
+            modifier*
+            "\\(?:" generic-exp space* "\\)?"
+            ids-with-dot-\[\] space+                ; first part of type
+            "\\(?:" ids-with-dot-\[\] space+ "\\)?" ; optional second part of type.
+            "\\(?:[_a-zA-Z][^][ \t:;.,{}()=<>]*"    ; defun name
+                "\\|" ids-with-dots
+            "\\)" space*
+            paren-exp
+            "\\(?:" space* "]\\)*"      ; What's this for?
+            "\\(?:" space* "\\<throws\\>" space* ids-with-dot-\[\]
+                  "\\(?:," space* ids-with-dot-\[\] "\\)*"
+            "\\)?"
+            space*)))
+
 (defvar hui-select-previous nil)
 (defvar hui-select-prior-point nil)
 (defvar hui-select-prior-buffer nil)
@@ -362,8 +392,7 @@ Also, add language-specific syntax setups to aid in thing selection."
   ;; opening or closing brace.  This is all necessary since some
   ;; programmers don't put their function braces in the first column.
   (var:add-and-run-hook 'java-mode-hook (lambda ()
-					  (setq defun-prompt-regexp
-						"^[ \t]*\\(\\(\\(public\\|protected\\|private\\|const\\|abstract\\|synchronized\\|final\\|static\\|threadsafe\\|transient\\|native\\|volatile\\)\\s-+\\)*\\(\\(\\([[a-zA-Z][][_$.a-zA-Z0-9]*[][_$.a-zA-Z0-9]+\\|[[a-zA-Z]\\)\\s-*\\)\\s-+\\)\\)?\\(\\([[a-zA-Z][][_$.a-zA-Z0-9]*\\s-+\\)\\s-*\\)?\\([_a-zA-Z][^][ \t:;.,{}()=]*\\|\\([_$a-zA-Z][_$.a-zA-Z0-9]*\\)\\)\\s-*\\(([^);{}]*)\\)?\\([] \t]*\\)\\(\\s-*\\<throws\\>\\s-*\\(\\([_$a-zA-Z][_$.a-zA-Z0-9]*\\)[, \t\n\r\f]*\\)+\\)?\\s-*")))
+					  (setq defun-prompt-regexp hui-java-defun-prompt-regexp)))
   (var:add-and-run-hook 'c++-mode-hook (lambda ()
 					 (setq defun-prompt-regexp
 					       "^[ \t]*\\(template\\s-*<[^>;.{}]+>\\s-*\\)?\\(\\(\\(auto\\|const\\|explicit\\|extern\\s-+\"[^\"]+\"\\|extern\\|friend\\|inline\\|mutable\\|overload\\|register\\|static\\|typedef\\|virtual\\)\\s-+\\)*\\(\\([[<a-zA-Z][]_a-zA-Z0-9]*\\(::[]_a-zA-Z0-9]+\\)?\\s-*<[_<>a-zA-Z0-9 ,]+>\\s-*[*&]*\\|[[<a-zA-Z][]_<>a-zA-Z0-9]*\\(::[[<a-zA-Z][]_<>a-zA-Z0-9]+\\)?\\s-*[*&]*\\)[*& \t\n\r]+\\)\\)?\\(\\(::\\|[[<a-zA-Z][]_a-zA-Z0-9]*\\s-*<[^>;{}]+>\\s-*[*&]*::\\|[[<a-zA-Z][]_~<>a-zA-Z0-9]*\\s-*[*&]*::\\)\\s-*\\)?\\(operator\\s-*[^ \t\n\r:;.,?~{}]+\\(\\s-*\\[\\]\\)?\\|[_~<a-zA-Z][^][ \t:;.,~{}()]*\\|[*&]?\\([_~<a-zA-Z][_a-zA-Z0-9]*\\s-*<[^>;{}]+[ \t\n\r>]*>\\|[_~<a-zA-Z][_~<>a-zA-Z0-9]*\\)\\)\\s-*\\(([^{;]*)\\(\\(\\s-+const\\|\\s-+mutable\\)?\\(\\s-*[=:][^;{]+\\)?\\)?\\)\\s-*")))
