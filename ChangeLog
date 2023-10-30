@@ -1,3 +1,9 @@
+2023-10-30  Mats Lidell  <matsl@gnu.org>
+
+* hversion.el (hyperb:mouse-buttons):
+  hpath.el (hpath:get-external-display-alist): Add mac as possible
+    window-system on Mac OS.
+
 2023-10-22  Mats Lidell  <matsl@gnu.org>
 
 * hui-select.el (hui-java-defun-prompt-regexp): Add prompt regexp as

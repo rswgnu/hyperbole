@@ -4,7 +4,7 @@
 ;; Maintainer:   Bob Weiner, Mats Lidell
 ;;
 ;; Orig-Date:     1-Jan-94
-;; Last-Mod:      3-Oct-23 at 23:31:30 by Mats Lidell
+;; Last-Mod:     30-Oct-23 at 23:49:10 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -39,7 +39,7 @@
 
 (defvar hyperb:mouse-buttons
   (if (or (and hyperb:microsoft-os-p (not (memq window-system '(w32 w64 x))))
-	  (memq window-system '(ns dps)))
+	  (memq window-system '(mac ns dps)))
       2 3)
   "Number of live buttons available on the mouse.
 Override this if the system-computed default is incorrect for
