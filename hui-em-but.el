@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Aug-92
-;; Last-Mod:     21-Jun-23 at 00:22:22 by Bob Weiner
+;; Last-Mod:     29-Oct-23 at 10:13:42 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -31,7 +31,11 @@
 (require 'hload-path)
 (require 'custom) ;; For defface.
 (require 'hbut)
-(eval-when-compile (require 'hyrolo))
+
+;; Comment out next line out because this triggers loads of kview
+;; which loads klink which contains a defib whose priority should be set
+;; by loading klink from hibtypes.el instead.
+;; (eval-when-compile (require 'hyrolo))
 
 ;;; ************************************************************************
 ;;; Public variables

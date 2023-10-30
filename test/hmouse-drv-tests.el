@@ -353,7 +353,7 @@
                               "Text\n* Anchor\nNext Line\n")))
   (unwind-protect
       (with-temp-buffer
-        (insert (concat "\"" file "#Anchor:1\""))
+        (insert (concat "\"" file "#Anchor:2\""))
         (goto-char 2)
         (action-key)
         (should (string= file (buffer-file-name)))
@@ -366,7 +366,7 @@
                               "Text\n* Anchor\nNext Line\n")))
     (unwind-protect
         (with-temp-buffer
-          (insert (concat "\"" file "#Anchor:1:5\""))
+          (insert (concat "\"" file "#Anchor:2:5\""))
           (goto-char 2)
           (action-key)
           (should (string= file (buffer-file-name)))

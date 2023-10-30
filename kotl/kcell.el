@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     1-May-93
-;; Last-Mod:      4-Oct-23 at 19:10:12 by Mats Lidell
+;; Last-Mod:     29-Oct-23 at 09:16:43 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -85,14 +85,23 @@ If any item in the list is missing, it is nil."
     ;; !! TODO: Remove any relative specs and view specs from
     ;; cell-ref to form cell-id.  Really should account for Augment-style
     ;; relative specs here, but we don't yet support them.
-    (if (and (stringp cell-ref)
-	     (string-match "\\(\\.[a-zA-Z]+\\)?\\([|:][^|: \t\n\r\f] *\\)\\|\\.[a-zA-Z]+"
-			   cell-ref))
-	(setq cell-id (substring cell-ref 0 (match-beginning 0))
-	      kvspec  (when (match-beginning 2)
-			(match-string 2 cell-ref)))
-      (setq cell-id cell-ref
-	    kvspec nil))
+    (cond ((and (stringp cell-ref)
+		(string-match "\\(\\.[a-zA-Z]+\\)?\\([|:][^|: \t\n\r\f]+\\)\\|\\.[a-zA-Z]+"
+			      cell-ref))
+	   ;; relative cell id and optional kvspec
+	   (setq cell-id (substring cell-ref 0 (match-beginning 0))
+		 kvspec  (when (match-beginning 2)
+			   (match-string 2 cell-ref))))
+	  ((and (stringp cell-ref)
+		(string-match "[^|\n\r\f]+?\\([|:][^|: \t\n\r\f]+\\)"
+			      cell-ref))
+	   ;; string heading and optional kvspec
+	   (setq cell-id (string-trim (substring cell-ref 0 (match-beginning 0)))
+		 kvspec  (when (match-beginning 1)
+			   (match-string 1 cell-ref))))
+	  ;; idstring with no kvspec
+	  (t (setq cell-id cell-ref
+		   kvspec nil)))
     (list cell-id kvspec)))
 
 (defun kcell:plist (kcell)
@@ -103,17 +112,17 @@ If any item in the list is missing, it is nil."
 (defun kcell:ref-to-id (cell-ref &optional kviewspec-flag)
   "Return a CELL-REF string converted to a cell idstamp (integer).
 If CELL-REF contains both a relative and a permanent id, the permanent id is
-returned.  If CELL-REF is invalid, nil is returned.
+returned.  If CELL-REF is invalid or does not exist, nil is returned.
 
 If optional KVIEWSPEC-FLAG is non-nil and CELL-REF includes a
-viewspec, return the concatenation of the idstamp, an optional space
-and the viewspec.
+viewspec, return the the idstamp concatenated with the viewspec
+(begins with a | character) as a string.
 
 CELL-REF may be a whole number:
 
   12       - permanent idstamp
 
-or any of the following string forms:
+or may be composed from these string forms:
   1 or 1b   - relative id, augment style
   1.2       - relative id, legal style
   012       - permanent idstamp
@@ -136,11 +145,12 @@ Augment capabilities not yet implemented and ignored for now:
 	       cell-ref)))
 	  ((stringp cell-ref)
 	   (let (kviewspec
+		 relative-id-string
 		 idstamp-string)
 	     ;; Remove whitespace and any comma
 	     (setq cell-ref (replace-regexp-in-string "\\s-*,?\\s-*" "" cell-ref nil t))
 	     (if (string-equal cell-ref "0")
-		 "0"
+		 (setq idstamp-string "0")
 	       ;; Ignore Augment :viewspec.
 	       (when (string-match ":" cell-ref)
 		 (setq cell-ref (substring cell-ref 0 (match-beginning 0))))
@@ -151,27 +161,32 @@ Augment capabilities not yet implemented and ignored for now:
 	       (setq idstamp-string
 		     (cond
 		      ((string-match-p "[^.= \t\n\r\f0-9a-zA-Z]" cell-ref) nil)
-		      ((or (string-match "^\\([.0-9a-zA-Z]+\\)=\\(0[0-9]*\\)$"
-					 cell-ref)
-			   ;; idstamp only
-			   (string-match "^\\(\\)\\(0[0-9]*\\)$" cell-ref))
+		      ((or
+			;; relative cell ref and idstamp
+			(string-match "\\`\\([1-9][.0-9a-zA-Z]*\\)=\\(0[0-9]*\\)\\'" cell-ref)
+			;; idstamp only
+			(string-match "\\`\\(\\)\\(0[0-9]*\\)\\'" cell-ref))
 		       (setq idstamp-string (match-string 2 cell-ref))
 		       ;; Validate that idstamp value exists, else return nil
 		       (when (kproperty:position 'idstamp (string-to-number idstamp-string))
 			 idstamp-string))
-		      ((string-match "^\\([.0-9a-zA-Z]+\\)$" cell-ref)
-		       ;; relative label
-		       (setq idstamp-string (match-string 1 cell-ref))
+		      ((string-match "\\`\\([1-9][.0-9a-zA-Z]*\\)\\'" cell-ref)
+		       ;; relative cell ref
+		       (setq  relative-id-string (match-string 1 cell-ref))
 		       (save-excursion
 			 (goto-char (point-min))
-			 (when (re-search-forward (concat "^[ \t]*" (regexp-quote idstamp-string)
+			 (when (re-search-forward (concat "^[ \t]*" (regexp-quote relative-id-string)
 							  (regexp-quote (kview:label-separator kotl-kview)))
 						  nil t)
-
 			   (setq idstamp-string (kcell-view:idstamp))
 			   ;; Validate that idstamp value exists, else return nil
 			   (when (kproperty:position 'idstamp (string-to-number idstamp-string))
-			     idstamp-string)))))))
+			     idstamp-string))))
+		      ((save-excursion
+			 (when (kotl-mode:goto-heading cell-ref)
+			   ;; textual label at the beginning of a cell
+			   (setq idstamp-string (kcell-view:idstamp))))))))
+
 	     (if idstamp-string
 		 (if (and kviewspec-flag kviewspec)
 		     (concat idstamp-string kviewspec)

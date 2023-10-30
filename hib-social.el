@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    20-Jul-16 at 22:41:34
-;; Last-Mod:      3-Oct-23 at 23:24:37 by Mats Lidell
+;; Last-Mod:     28-Oct-23 at 12:27:26 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -632,8 +632,7 @@ A git commit reference has the form \"commit a55e21\".
 Hyperbole also includes two commands, `hypb:fgrep-git-log' and
 `hypb:grep-git-log' to list git commit references whose changesets
 contain either the string (fgrep) or regular expression (grep) given.
-Then an Action Key displays the associated changeset.
-"
+Then an Action Key displays the associated changeset."
   (when (save-excursion
 	  (beginning-of-line)
 	  (looking-at "\\(^\\|\\s-+\\)\\(commit #?\\([0-9a-f][0-9a-f][0-9a-f][0-9a-f]+\\)\\)\\(\\s-\\|$\\)"))

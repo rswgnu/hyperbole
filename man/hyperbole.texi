@@ -7,7 +7,7 @@
 @c Author:       Bob Weiner
 @c
 @c Orig-Date:     6-Nov-91 at 11:18:03
-@c Last-Mod:      1-Oct-23 at 20:19:05 by Bob Weiner
+@c Last-Mod:     29-Oct-23 at 17:52:38 by Bob Weiner
 
 @c %**start of header (This is for running Texinfo on a region.)
 @setfilename hyperbole.info
@@ -156,7 +156,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</P>
 
 <PRE>
 Edition 8.0.1pre
-Printed October 1, 2023.
+Printed October 29, 2023.
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -198,7 +198,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 @example
 Edition 8.0.1pre
-October 1, 2023
+October 29, 2023
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -520,32 +520,33 @@ describes Hyperbole, lists some of its potential applications, and
 explains how to subscribe to its mail lists.
 
 Throughout this manual, sequences of keystrokes are delimited by curly
-braces @bkbd{@{ @}}, function and variable names use this @code{typeface}.
+braces @kbd{@{ @}}; function and variable names use this @code{typeface}.
 
 @noindent
 In brief, Hyperbole lets you:
 
 @itemize @bullet
 @item
-Quickly create hyperlink buttons either from the keyboard or by dragging
-between a source and destination window with a mouse button depressed.
-Later, activate buttons by pressing/clicking on them or by giving the name
-of the button.
+Quickly create typed hyperlink buttons either from the keyboard or by
+dragging between a source and destination window with a mouse button
+depressed.  Activate Hyperbole buttons by pressing/clicking on them or
+by name;
 
 @item
-Activate many kinds of @emph{implicit buttons} recognized by context within
-text buffers, e.g. URLs, grep output lines, and git commits.  A single key
-or mouse button automatically does the right thing in dozens of contexts;
-just press and go.
+Activate many kinds of @emph{implicit buttons} recognized by context
+within text buffers, e.g. URLs, pathnames with section anchors, grep
+output lines, and git commits.  A single key, @bkbd{M-@key{RET}}, or
+mouse button automatically does the right thing in dozens of contexts;
+just press and go;
 
 @item
-Build outlines with multi-level numbered outline nodes, e.g. 1.4.8.6, that
-all renumber automatically as any node or tree is moved in the outline.
-Each node also has a permanent hyperlink anchor that you can reference
-from any other node;
+Build outlines with multi-level, numbered outline nodes, e.g. 1.4.8.6,
+that all renumber automatically when any cell (node) or tree is moved
+in the outline.  Each cell also has a permanent hyperlink anchor that
+you can reference from any other cell;
 
 @item
-Manage all your contacts or record-based, unstructured nodes quickly with
+Manage all your contacts or record-based, unstructured texts quickly with
 hierarchical categories; each entry can have embedded hyperbuttons of any
 type.  Or create an archive of documents with hierarchical entries and use
 the same search mechanism to quickly find any matching entry;
@@ -569,26 +570,26 @@ major web search engines with the touch of a few keys.
 @node Manual Overview, Motivation, Introduction, Introduction
 @section   Manual Overview
 
-Hyperbole is an efficient, programmable hypertextual information
-management system.  It is intended for everyday work on any GNU Emacs
-platform.  Hyperbole allows hypertext buttons to be embedded within
-unstructured and structured files, mail messages and news articles.
-It offers intuitive mouse-based control of information display within
-multiple windows.  It also provides point-and-click access to Info
-manuals, ftp archives, and the World-Wide Web (WWW).
+Hyperbole is an efficient, programmable hypertextual information management
+system.  It is intended for everyday work on any GNU Emacs platform.
+Hyperbole allows hypertext buttons to be embedded within unstructured and
+structured files, mail messages and news articles.  It offers intuitive
+keyboard and mouse-based control of information display within multiple
+windows.  It also provides point-and-click access to Info manuals, ftp
+archives, and the World-Wide Web.
 
 @cindex file, FAST-DEMO
 @cindex Hyperbole demo
 @cindex demo file
 @cindex tutorial
 This is a reference manual with extensive details about Hyperbole use.  If
-you prefer a simpler, more interactive introduction to Hyperbole,
-the @file{FAST-DEMO} file included in the Hyperbole distribution demonstrates
-many of Hyperbole's standard facilities without the need to read through
-this reference manual.  The FAST-DEMO is a good way to rapidly understand some
-of what Hyperbole can do for you.  Once Hyperbole is installed,
-(@pxref{Setup}), you can access the FAST-DEMO with the key sequence @bkbd{C-h h
-d d}.
+you prefer a simpler, more interactive introduction to Hyperbole, the
+@file{FAST-DEMO} file included in the Hyperbole distribution demonstrates
+many of Hyperbole's standard facilities without the need to read through this
+reference manual.  The @file{FAST-DEMO} is a good way to rapidly understand
+some of what Hyperbole can do for you.  Once Hyperbole is installed,
+(@pxref{Setup}), you can access the @file{FAST-DEMO} with the key sequence
+@bkbd{C-h h d d}.
 
 @xref{Glossary}, for definitions of Hyperbole terms.  In some cases,
 terms are not precisely defined within the body of this manual since they
@@ -597,50 +598,47 @@ term is unclear to you.  Although you need not have a keen understanding of
 all of these terms, a quick scan of the glossary helps throughout Hyperbole
 use.
 
-@xref{Setup}, for explanations of how to obtain, install, configure
-and load Hyperbole for use.  This appendix includes information on
-user-level settings that you may want to modify after you understand
-Hyperbole's basic operation.
+@xref{Setup}, for explanations of how to obtain, install, configure and load
+Hyperbole for use.  This appendix includes information on user-level settings
+that you may want to modify after you understand Hyperbole's basic operation.
 
 @xref{Suggestion or Bug Reporting}, for instructions on how to ask a
-question, suggest a feature or report a bug in Hyperbole.  A few
-commonly asked questions are answered in this manual, @pxref{Questions
-and Answers}.  If you are interested in classic
-articles on hypertext, @pxref{References}.
+question, suggest a feature or report a bug in Hyperbole.  A few commonly
+asked questions are answered in this manual, @pxref{Questions and Answers}.
+If you are interested in classic articles on hypertext, @pxref{References}.
 
 @xref{Smart Keys}, for an explanation of the innovative, context-sensitive
-mouse and keyboard Action and Assist Keys offered by Hyperbole.
-@xref{Smart Key Reference}, for a complete reference on what the Action
-and Assist Keys do in each particular context that they recognize.
-@xref{Smart Key Argument Selection}, for how Hyperbole speeds selection of
-prompted for arguments.
+mouse and keyboard Action and Assist Keys offered by Hyperbole.  @xref{Smart
+Key Reference}, for a complete reference on what the Action and Assist Keys
+do in each particular context they recognize.  @xref{Smart Key Argument
+Selection}, for how Hyperbole speeds selection of values when prompting for
+arguments.
 
 Keep in mind as you read about using Hyperbole that in many cases, it
 provides a number of overlapping interaction methods that support differing
-work styles and hardware limitations.  In such instances, you need learn
-only one technique that suits you.
+work styles.  In such instances, you need learn only one technique that suits
+you.
 
 @xref{Buttons}, for an overview of Hyperbole buttons and how to use them.
 
 @xref{Menus}, for summaries of Hyperbole menu commands and how to use
-the minibuffer-based menus that work on dumb terminals, PCs or workstations.
+the minibuffer-based menus that work on any display that Emacs supports.
 
-@xref{HyControl}, for how to quickly and interactively control your Emacs
-windows and frames and what they display.
+@xref{HyControl}, for how to quickly and interactively control what your
+Emacs windows and frames display and where they appear.
 
 @xref{Koutliner}, for concept and usage information on the
 autonumbered, hypertextual outliner.  @xref{Koutliner Keys}, for a full
 summary of the outliner commands that are bound to keys.
 
-@xref{HyRolo}, for concept and usage information on the
-rapid lookup, hierarchical, free text record management system included
-with Hyperbole.
+@xref{HyRolo}, for concept and usage information on the rapid lookup,
+hierarchical, full-text record management system included with Hyperbole.
 
 @xref{Window Configurations}, for instructions on how to save and restore
 the set of buffers and windows that appear within a frame.  This feature
 lets you switch among working contexts easily, even on a dumb terminal.
-Such configurations last only throughout a single session of editor
-usage.
+Such configurations last throughout a single session of editor
+usage only.
 
 @xref{Developing with Hyperbole}, if you are a developer who is
 comfortable with Lisp.
@@ -659,7 +657,7 @@ e-mail messages, faxes, voice mail and web pages.
 The rise of the web has demonstrated how hypertext technologies can be used
 to build massive organized repositories of scattered information.  But
 assembling information for the web still remains a great challenge and the
-data formats of the web are too structured to deal with the great variety
+data formats of the web are too structured to deal with the wide variety
 of information that people process.  Modern web development requires the
 use of many languages: HTML, JavaScript, and CSS.  This in itself prevents
 its use as the prime means of organizing and interlinking the constant
@@ -667,17 +665,19 @@ flows of daily information.
 
 GNU Hyperbole takes a distinctly different approach.  It has its own
 hypertext technology that can interface perfectly with web links but which
-are much easier to create (simply drag from the source to the destination
-of a link to create a new hyperlink).  Hyperbole hyperbuttons can link not
-only to static information but can perform arbitrary actions (through the
-use of button types written in a single, highly interactive language, Emacs
-Lisp).  Hyperbole adds all of this power to your written documents, e-mail,
-news articles, contact management, outlines, directory listings, and much
-more.  Hyperbole works well with the very latest versions of GNU Emacs
-across every editing and viewing mode in Emacs.
+are much easier to create (simply drag from the source to the destination of
+a link to create a new hyperlink).  Hyperbole hyperbuttons can link not only
+to static information but can perform arbitrary actions (through the use of
+button types written in a single, highly interactive language, Emacs Lisp).
+Hyperbole adds all of this power to your written documents, e-mail, news
+articles, contact management, outlines, directory listings, and much more.
+Hyperbole works well with the very latest versions of GNU Emacs across every
+editing and viewing mode in Emacs.  It's core hypertext capabilities operate
+as a global minor mode available across most file types, unlike Org mode
+which is its own structured file format.
 
 Unlock the power of GNU Hyperbole to make your information work for you.
-One system. One language.  One manual.  One solution.  Learn Hyperbole and
+One system.  One language.  One manual.  One solution.  Learn Hyperbole and
 start moving further, faster.
 
 @node Hyperbole Overview, Mail Lists, Motivation, Introduction
@@ -713,82 +713,106 @@ button to activate it, so you can rely on your muscle memory and let the
 computer do the hard work of figuring out what to do.  @bkbd{C-u
 M-@key{RET}} shows you what any button will do in any context before you
 activate it, so you can always be sure of what you are doing when needed
-or if some emails you a button (you can do that too).
+or if someone emails you a button (Hyperbole allows embedding buttons
+in email messages too).
 
 Hyperbole is something to be experienced and interacted with, not understood
 from reading alone.  It installs normally as a single Emacs package with no
-dependencies outside of standard Emacs libraries, @pxref{Installation}.  Most
+dependencies outside of built-in Emacs libraries, @pxref{Installation}.  Most
 of Hyperbole is a single global minor mode that you can activate and
 deactivate at will.  And it can be uninstalled quickly as well if need be, so
-there is no risk to giving it a spin.
+there is no risk in giving it a spin.
 
 Once you have it installed, try the interactive demo with @bkbd{C-h h d d}.
-In fact, if you have Hyperbole loaded, you can press @bkbd{M-@key{RET}}
-inside any of the brace delimited series of keys you see in this document
-and Hyperbole will execute them on-the-fly (easy keyboard-macro style
-buttons in any text).
+In fact, if you have Hyperbole loaded and you use the Emacs Info reader to
+read this manual, you can press @bkbd{M-@key{RET}} inside any of the brace
+delimited series of keys you see in this document and Hyperbole will execute
+them on-the-fly (easy keyboard-macro style buttons in any text).
 
 Hyperbole can dramatically increase your productivity and greatly reduce
 the number of keyboard/mouse keys you'll need to work efficiently.
 
 @page
 @noindent
-Hyperbole consists of five parts:
+Hyperbole consists of five parts.
 
 @table @emph
 @item Buttons and Smart Keys
-Hyperbole hyperlink and other kinds of buttons @dfn{explicit buttons} may
-be added to documents with a simple drag between windows, no markup
-language needed.  @dfn{Implicit buttons} are patterns automatically
-recognized within existing text that perform actions, e.g. bug#24568
-displays the bug status information for that Emacs bug number, without the
-need for any additional markup.  @dfn{Global buttons} are buttons that are
-activated by name from anywhere within Emacs.  @xref{Buttons}.
+There are three categories of buttons:
 
-Buttons are accessed by clicking on them or referenced by name (global
-buttons), so they can be activated regardless of what is on screen.
-Users create and activate Hyperbole buttons; Emacs Lisp programmers
-easily can develop new button types and actions.
+@table @dfn
+@item explicit buttons
+may be added to documents with a simple drag between windows, no markup
+language needed.  With two windows on screen, an explicit link button can be
+created at point in the current buffer linking to the position in the other
+window's buffer by pressing @bkbd{C-h h e l}.
 
-Hyperbole includes two special @dfn{Smart Keys}, the Action Key and
-the Assist Key, that perform an extensive array of context-sensitive
-operations across emacs usage, including activating and showing help
-for Hyperbole buttons.  In many popular Emacs modes, they allow you to
-perform common, sometimes complex operations without having to use a
-different key for each operation.  Just press a Smart Key and the
-right thing happens.  @xref{Smart Keys}.
+@item Implicit buttons
+are patterns automatically recognized within existing text that perform
+actions, e.g. bug#24568 displays the bug status information for that Emacs
+bug number, without the need for any additional markup.
 
-@item Contact and Text Finder
-an interactive, textual information management interface, including
-fast, flexible file and text finding commands.  A powerful, hierarchical
-contact manager, @pxref{HyRolo}, which anyone can use, is also included.
-It is easy to learn since it introduces only a few new mechanisms
-and has a menu interface, which may be operated from the keyboard or the
-mouse; it may also be used to look up any record-based information and
-Hyperbole buttons may be embedded in any records;
+With two windows on screen, an implicit link button can be created at point
+in the current buffer linking to the position in the other window's buffer by
+pressing @bkbd{C-h h i l}.  Use @bkbd{C-u C-h h i l} instead to be prompted
+for a name for the implicit button.
 
-@item Screen Control
+@item Global buttons
+are buttons that are activated by name from anywhere within Emacs.  They may
+be either explicit or named implicit buttons.  They are the named buttons
+stored in the a user's personal button file, directly editable from the
+minibuffer menu with @bkbd{C-h h b p}.
+
+With two windows on screen, a global explicit link button can be created at
+point in the current buffer linking to the position in the other window's
+buffer by pressing @bkbd{C-h h g l}.  Use @bkbd{C-u C-h h g l} instead to
+create a named global implicit button.
+@end table
+
+Buttons are activated by pressing @bkbd{M-@key{RET}} on them, clicking them
+with a dedicated mouse button, or by referencing them by name (global
+buttons that can be activated regardless of what is on screen).  Users
+create and activate Hyperbole buttons; @pxref{Buttons}.  Emacs Lisp
+programmers can develop new button types and actions.  @xref{Creating
+Types}.
+
+Hyperbole includes two special @dfn{Smart Keys}, the Action Key and the
+Assist Key, that perform an extensive array of context-sensitive operations
+across emacs usage, including activating and showing help for Hyperbole
+buttons.  In many popular Emacs modes, they allow you to perform common,
+sometimes complex operations without having to use a different key for each
+operation.  Just press a Smart Key and the right thing happens.  @xref{Smart
+Keys}.
+
+@item HyRolo
+a powerful, hierarchical contact manager which anyone can
+use, is also included.  It is easy to learn since it introduces only a few
+new mechanisms and has a menu interface, which may be operated from the
+keyboard or the mouse.  It may also be used to look up any record-based
+information in any number of Org or Markdown files.  Hyperbole buttons may
+be embedded in any records.  @xref{HyRolo}. 
+
+@item HyControl
 the fastest, easiest-to-use window and frame control available for GNU
-Emacs, @pxref{HyControl}.  With just a few keystrokes, you can shift from
+Emacs.  With just a few keystrokes, you can shift from
 increasing a window's height by 5 lines to moving a frame by 220 pixels
 or immediately moving it to a screen corner.  Text in each window or
 frame may be enlarged or shrunk (zoomed) for easy viewing, plus many
 other features; this allows Hyperbole to quickly control the way
-information is presented on-screen;
+information is presented on-screen.  @xref{HyControl}.
 
-@item Hypertextual Outliner
-an advanced outliner, @pxref{Koutliner}, with multi-level
-autonumbering and permanent identifiers attached to each outline node
-for use as hypertext link anchors, per node properties and flexible
-view specifications that can be included in links or used
-interactively;
+@item Koutliner
+an advanced outliner with multi-level autonumbering and permanent
+identifiers attached to each outline node for use as hypertext link anchors,
+per node properties and flexible view specifications that can be included in
+links or used interactively.  @xref{Koutliner}.
 
-@item Programming Library
-a set of programming libraries, @pxref{Developing with Hyperbole}, for
-system developers who want to integrate Hyperbole with another user
-interface or as a back-end to a distinct system.  (All of Hyperbole is
-written in Emacs Lisp for ease of modification.  It has been engineered
-for real-world usage and is well structured).
+@item Hyperbole API
+a set of programming libraries for system developers who want to integrate
+Hyperbole with another user interface or as a back-end to a distinct system.
+(All of Hyperbole is written in Emacs Lisp for ease of modification.  It has
+been engineered for real-world usage and is well structured). @xref{Developing
+with Hyperbole}.
 @end table
 
 @kindex C-h h d d
@@ -6013,9 +6037,7 @@ so.
 @cindex menubar menu, HyRolo
 @cindex menubar menu, Rolo
 The Rolo/ menu entry on the Hyperbole minibuffer menu provides the same
-set of commands as the menubar and popup menus, with more concise labels.
-@bkbd{C-mouse-3} pops up the mode-specific menu in Emacs.  Experiment with
-the menu or read the following sections explaining commands.
+set of commands as the menubar Rolo menu but with more concise labels.
 
 @cindex Rolo commands
 @cindex HyRolo commands
@@ -6035,7 +6057,9 @@ the menu or read the following sections explaining commands.
 @findex hyrolo-word
 @findex hyrolo-yank
 The minibuffer Rolo/ menu offers the following commands (ConsultFind
-and HelmFind appear only when associated packages are loaded):
+and HelmFind appear only when associated packages are loaded but are
+especially noteworthy as they allow for line-level searching with
+interactive search pattern narrowing):
 
 @example
 @group
@@ -7423,12 +7447,22 @@ abstraction.
 @cindex consult package
 @cindex consult-org-roam package
 @findex hsys-org-roam-consult-grep
+@vindex org-roam-directory
+@findex hsys-org-consult-grep
+@vindex org-directory
 @item Consult
 An Emacs extension package that provides asynchronous search and narrow
 wrappers around common search commands like grep, ripgrep, find and
-locate.  Hyperbole optionally utilizes this to search the HyRolo.  Use
-@code{M-x hsys-org-roam-consult-grep RET} to search Org Roam notes
-similarly.
+locate.
+
+Hyperbole uses this package to provide convenience commands for line-oriented searches.
+@table @kbd
+@item @{M-x hsys-org-roam-consult-grep @key{RET}@}
+Searches Org Roam notes in @code{org-roam-directory} with consult.
+
+@item @{M-x hsys-org-consult-grep @key{RET}@}
+Searches Org notes in @code{org-directory} with consult.
+@end table
 
 @item Context
 A programmatic or positional state recognized by Hyperbole.
@@ -11364,8 +11398,8 @@ be slow.  Here are some new features we have in mind, however.
 
 @item Button Copying, Killing, and Yanking
 There is as yet no means of transferring explicit buttons among
-buffers. We realize this is an important need.  Users should be able to
-manipulate text with embedded buttons in ordinary ways.  With this
+buffers.  We realize this is an important need.  Users should be able
+to manipulate text with embedded buttons in ordinary ways.  With this
 feature, Hyperbole would store the button attributes as text
 properties within the buffers so that if a button is copied, its
 attributes follow.  When a buffer is saved, the attributes also will

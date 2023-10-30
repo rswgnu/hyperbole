@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    6/30/93
-;; Last-Mod:      6-Oct-23 at 23:15:03 by Mats Lidell
+;; Last-Mod:     29-Oct-23 at 18:59:47 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -19,8 +19,9 @@
 ;;; Other required Lisp Libraries
 ;;; ************************************************************************
 
+(eval-when-compile '(require 'klink)) ;; hibtypes.el loads this at run-time
 (eval-and-compile (mapc #'require '(cl-lib delsel hsettings hmail hypb kfile klabel
-				    kvspec kcell outline org org-table kotl-orgtbl)))
+				    outline org org-table kotl-orgtbl)))
 
 ;;; ************************************************************************
 ;;; Public declarations
@@ -95,6 +96,8 @@ Normally set from the UNDO element of a yank-handler; see
 ;;;###autoload
 (defun kotl-mode ()
   "The major mode used to edit and view koutlines.
+Automatically invoked on files with a .kotl or .kot suffix.
+
 It provides the following keys:
 \\{kotl-mode-map}"
   (interactive)
@@ -1825,24 +1828,69 @@ for CELL-REF."
 	(or (kcell:ref-to-id cell-ref t)
 	    (error "(kotl-mode:goto-cell): Invalid cell reference, `%s'" cell-ref)))
   (let* ((opoint (point))
-	 (found))
-    (if (and (stringp cell-ref) (eq ?| (aref cell-ref 0)))
-	;; This is a standalone view spec, not a cell reference.
+	 found
+	 id-flag)
+    (if (and (stringp cell-ref)
+	     (> (length cell-ref) 0)
+	     (eq ?| (aref cell-ref 0)))
+	;; Is a standalone view spec, not a cell reference
 	(progn (kvspec:activate cell-ref) (setq found (point)))
-      (cl-destructuring-bind (cell-id kvspec) (kcell:parse-cell-ref cell-ref)
+      (cl-destructuring-bind (cell-only-ref kvspec) (kcell:parse-cell-ref cell-ref)
 	(goto-char (point-min))
-	(when (or (integerp cell-id)
-		  (eq ?0 (aref cell-id 0)))
+	(when (setq id-flag (or (integerp cell-only-ref)
+				(string-match "\\`0[0-9]*\\'" cell-only-ref)))
 	  ;; Is an idstamp
-	  (when (kview:goto-cell-id cell-id)
+	  (when (kview:goto-cell-id cell-only-ref)
 	    (setq found (point))))
+	(when (and (not (or id-flag found))
+		   (stringp cell-only-ref))
+	  ;; Is a heading; this should never run as a heading should
+	  ;; have been converted to an idstamp by the
+	  ;; 'kcell:ref-to-id' call above already.
+	  (setq found (kotl-mode:goto-heading cell-only-ref)))
 	(if found
-	    ;; Activate any viewspec associated with cell-ref.
+	    ;; Activate any viewspec from cell-ref
 	    (when kvspec (kvspec:activate kvspec))
 	  (goto-char opoint)
 	  (when (or error-flag (called-interactively-p 'interactive))
 	    (error "(kotl-mode:goto-cell): No `%s' cell in this view" cell-ref)))))
     found))
+
+(defun kotl-mode:goto-cell-ref (cell-ref)
+  "With a current Koutline file buffer, display CELL-REF at window top.
+See documentation for `kcell:ref-to-id' for valid cell-ref formats.
+
+If CELL-REF is nil, show the first cell in the view."
+  (cond ((and (stringp cell-ref)
+	      (> (length cell-ref) 0)
+	      (eq ?| (aref cell-ref 0)))
+	 ;; Activate view spec in current window.
+	 (kotl-mode:goto-cell cell-ref))
+	(cell-ref
+	 (kotl-mode:goto-cell cell-ref)
+	 (recenter 0))
+	(t
+	 (kotl-mode:beginning-of-buffer)
+	 (recenter 0))))
+
+(defun kotl-mode:goto-heading (heading)
+  "Move to a Koutline cell HEADING (a string) at the start of a cell.
+The matched heading must be followed by a colon or newline.
+Return t if found, else nil (in which case, point does not move)."
+  (let ((opoint (point))
+	npoint
+	match-flag)
+    (kotl-mode:beginning-of-buffer)
+    (while (and (not (and (setq match-flag (re-search-forward (format "\\b%s[ \t]*[:\n\r]" heading) nil t))
+			  (setq npoint (point))
+			  (progn (goto-char (match-beginning 0))
+				 (kotl-mode:bocp))))
+		match-flag)
+      (goto-char npoint))
+    (if match-flag
+	t
+      (goto-char opoint)
+      nil)))
 
 (defun kotl-mode:head-cell ()
   "Move point to the start of first visible cell at same level as current cell.

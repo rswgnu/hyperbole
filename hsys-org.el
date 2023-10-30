@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     2-Jul-16 at 14:54:14
-;; Last-Mod:      3-Oct-23 at 17:07:24 by Mats Lidell
+;; Last-Mod:     29-Oct-23 at 16:14:28 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -42,6 +42,11 @@
 ;;; Public declarations
 ;;; ************************************************************************
 
+(defcustom hsys-org-consult-grep-func #'consult-grep
+  "Function for consult grep searching over files."
+   :type 'function
+   :group 'org)
+
 ;; `org-show-context' is obsolete as of Org 9.6, use `org-fold-show-context'
 ;; instead.
 (unless (fboundp #'org-fold-show-context)
@@ -57,24 +62,6 @@
 (declare-function symtable:add "hact")
 (declare-function action-key "hmouse-drv")
 (declare-function hkey-either "hmouse-drv")
-
-;;;###autoload
-(defun hsys-org-meta-return-shared-p ()
-  "Return non-nil if hyperbole-mode is active and shares the org-meta-return key."
-  (let ((org-meta-return-keys (where-is-internal #'org-meta-return org-mode-map)))
-    (when (or (set:intersection org-meta-return-keys
-				(where-is-internal #'hkey-either hyperbole-mode-map))
-	      (set:intersection org-meta-return-keys
-				(where-is-internal #'action-key hyperbole-mode-map)))
-      t)))
-
-;;;###autoload
-(defun hsys-org-meta-return ()
-  "Call `org-meta-return' with the numeric value of any prefix arg when given."
-  (interactive "P")
-  (if current-prefix-arg
-      (org-meta-return (prefix-numeric-value current-prefix-arg))
-    (org-meta-return)))
 
 ;;;###autoload
 (defcustom hsys-org-enable-smart-keys 'unset
@@ -151,6 +138,39 @@ an error."
 ;;; ************************************************************************
 ;;; Public functions
 ;;; ************************************************************************
+
+;;;###autoload
+(defun hsys-org-meta-return-shared-p ()
+  "Return non-nil if hyperbole-mode is active and shares the org-meta-return key."
+  (let ((org-meta-return-keys (where-is-internal #'org-meta-return org-mode-map)))
+    (when (or (set:intersection org-meta-return-keys
+				(where-is-internal #'hkey-either hyperbole-mode-map))
+	      (set:intersection org-meta-return-keys
+				(where-is-internal #'action-key hyperbole-mode-map)))
+      t)))
+
+;;;###autoload
+(defun hsys-org-meta-return ()
+  "Call `org-meta-return' with the numeric value of any prefix arg when given."
+  (interactive "P")
+  (if current-prefix-arg
+      (org-meta-return (prefix-numeric-value current-prefix-arg))
+    (org-meta-return)))
+
+;;;###autoload
+(defun hsys-org-consult-grep ()
+  "Prompt for search terms and run consult grep over `org-directory'
+Actual grep function used is given by the variable,
+`hsys-org-consult-grep-func'."
+  (interactive)
+  (require 'org)
+  (let ((grep-func (when (and (boundp 'hsys-org-consult-grep-func)
+			      (fboundp hsys-org-consult-grep-func))
+		     hsys-org-consult-grep-func)))
+    (if grep-func
+	(funcall grep-func org-directory)
+      (error "(hsys-org-consult-grep): `%s' is an invalid function"
+	     hsys-org-consult-grep-func))))
 
 ;;;###autoload
 (defun hsys-org-mode-p ()

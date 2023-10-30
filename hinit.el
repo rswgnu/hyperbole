@@ -3,11 +3,11 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     1-Oct-91 at 02:32:51
-;; Last-Mod:     25-Jul-22 at 17:44:31 by Mats Lidell
+;; Last-Mod:     29-Oct-23 at 10:07:47 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
-;; Copyright (C) 1991-2022  Free Software Foundation, Inc.
+;; Copyright (C) 1991-2023  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
 ;;
 ;; This file is part of GNU Hyperbole.
@@ -26,7 +26,9 @@
 ;;; Other required Elisp libraries
 ;;; ************************************************************************
 
-(eval-and-compile (mapc #'require '(hvar hui-menu hui-mouse hypb hui hui-mini hbmap hibtypes)))
+;; Note: hibtypes must be loaded before hui-menu or klink defib priority
+;; could be set improperly.
+(eval-and-compile (mapc #'require '(hvar hibtypes hui-menu hui-mouse hypb hui hui-mini hbmap)))
 
 ;;; ************************************************************************
 ;;; Public functions

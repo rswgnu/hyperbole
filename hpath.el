@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     1-Nov-91 at 00:44:23
-;; Last-Mod:      3-Oct-23 at 17:39:29 by Mats Lidell
+;; Last-Mod:     29-Oct-23 at 23:45:02 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1373,15 +1373,17 @@ If PATHNAME does not start with a prefix character:
   of the form, <file>#<anchor-name>, e.g. \"~/.bashrc#Alias
   Section\";
 
-  it may end with a line number and optional column number to which to go,
-  of the form, :<line-number>[:<column-number>], e.g. \"~/.bashrc:20:5\";
-  normally, this is an absolute line number (disabling buffer restriction),
-  but if preceded by a hash-style link reference, it is relative to the
-  location of the link anchor;
+  it may end with a line number (starts from 1) and optional column number
+  (starts from 0) to which to go, of the form,
+  :<line-number>[:<column-number>], e.g. \"~/.bashrc:20:5\"; normally, this
+  is an absolute line number (disabling buffer restriction), but if
+  preceded by a hash-style link reference, it is relative to the location
+  of the link anchor and in the case of Koutlines, relative to the indent
+  of the cell;
 
   if it matches a regular expression in the alist returned by
   (hpath:get-external-display-alist), invoke the associated external
-  display program
+  display program;
 
   if not, consult `hpath:internal-display-alist' for a specialized internal
   display function to use;
@@ -1404,7 +1406,8 @@ but locational suffixes within the file are utilized."
   ;; stripped off, so it is just a findable path.
   (let ((case-fold-search t)
 	(default-directory default-directory)
-	modifier loc anchor hash path line-num col-num)
+	modifier loc anchor anchor-start-pos hash
+	kotl-flag path path-with-anchor line-num col-num)
     (setq loc (hattr:get 'hbut:current 'loc)
 	  default-directory (or (hattr:get 'hbut:current 'dir)
 				;; Loc may be a buffer without a file
@@ -1424,6 +1427,8 @@ but locational suffixes within the file are utilized."
       (when (string-match hpath:markup-link-anchor-regexp path)
 	(setq hash t
 	      anchor (match-string 3 path)
+	      anchor-start-pos (match-beginning 3)
+	      path-with-anchor path
 	      path (if (match-end 1)
 		       (substring path 0 (match-end 1))
 		     (or buffer-file-name "")))
@@ -1486,7 +1491,8 @@ but locational suffixes within the file are utilized."
 				(hpath:command-string executable pathname))
 			(error "(hpath:find): No available executable from: %s"
 			       display-executables)))
-		     (t (setq path (hpath:validate path)) ;; signals error when invalid
+		     (t (setq path (hpath:validate path) ;; signals error when invalid
+			      kotl-flag (string-match "\\.kotl?\\'" path))
 			(let ((buf (cond
 				    ;; If no path, e.g. just an anchor link in a non-file buffer,
 				    ;; then must display within Emacs, ignoring any external programs.
@@ -1506,16 +1512,24 @@ but locational suffixes within the file are utilized."
 			    (when (and buffer-file-name
 				       (equal (file-name-nondirectory path)
 					      (file-name-nondirectory buffer-file-name)))
-			      (when (or hash anchor)
-				(hpath:to-markup-anchor hash anchor))
+			      (cond ((and anchor kotl-flag)
+				     (klink:act path-with-anchor anchor-start-pos))
+				    ((or hash anchor)
+				     (hpath:to-markup-anchor hash anchor)))
 			      (when line-num
 				;; With an anchor, goto line relative to anchor
 				;; location, otherwise use absolute line number
 				;; within the visible buffer portion.
 				(if (or hash anchor)
-				    (forward-line line-num)
+				    (forward-line (1- line-num))
 				  (hpath:to-line line-num)))
-			      (when col-num (move-to-column col-num))
+			      (when col-num
+				(move-to-column
+				 (if kotl-flag
+				     (+ (kcell-view:indent) col-num)
+				   col-num)))
+			      (when kotl-flag
+				(kotl-mode:to-valid-position))
 			      (current-buffer)))))))))))
 
 (defun hpath:to-markup-anchor (hash anchor)
@@ -1604,8 +1618,8 @@ Return nil if none are found."
      executable-list)
     nil))
 
-(defun hpath:find-line (filename line-num &optional display-where)
-  "Edit file FILENAME with point placed at LINE-NUM.
+(defun hpath:find-line (filename line-num &optional col-num display-where)
+  "Edit file FILENAME with point placed at LINE-NUM and optional COL-NUM.
 
 `hpath:display-where-alist' is consulted using the optional
 argument, DISPLAY-WHERE (a symbol) or if that is nil, the value
@@ -1618,9 +1632,12 @@ frame.  Always return t."
   (when (string-match hpath:prefix-regexp filename)
     (setq filename (substring filename (match-end 0))))
   (hpath:find
-   (if (integerp line-num)
-       (concat filename ":" (int-to-string line-num))
-     filename)
+   (concat
+    filename
+    (when (integerp line-num)
+      (concat ":" (int-to-string line-num)))
+    (when (integerp col-num)
+      (concat ":" (int-to-string col-num))))
    display-where)
   t)
 
@@ -2039,11 +2056,15 @@ Return LINKNAME unchanged if it is not a symbolic link but is a pathname."
   referent)
 
 (defun hpath:to-line (line-num)
-  "Move point to the start of an absolute LINE-NUM or the last line."
+  "Move point to the start of an absolute LINE-NUM or the last line.
+This ignores any buffer narrowing (aside from Koutlines) when
+computing the line number, but does restore the narrowing if
+point ends within the narrowed region."
   (let ((omin (point-min))
 	(omax (point-max)))
     (unwind-protect
-	(progn (widen)
+	(progn (unless (derived-mode-p 'kotl-mode)
+		 (widen))
 	       (goto-char (point-min))
 	       (if (eq selective-display t)
 		   (re-search-forward "[\n\r]" nil 'end (1- line-num))

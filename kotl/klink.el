@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    15-Nov-93 at 12:15:16
-;; Last-Mod:      4-Oct-23 at 00:01:43 by Mats Lidell
+;; Last-Mod:     30-Oct-23 at 01:00:01 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -120,12 +120,12 @@ return an absolute klink string.  Klink returned is of the form:
 	   (file (or (car file-and-cell-ref) buffer-file-name))
 	   (cell-ref (nth 1 file-and-cell-ref)))
       (klink:set-yank-handler
-       (format "<%s, %s>" (expand-file-name file) cell-ref)))))
+       (format "<%s#%s>" (expand-file-name file) cell-ref)))))
 
 ;;;###autoload
 (defun klink:create (reference)
   "Insert at point an implicit link to REFERENCE.
-REFERENCE should be a cell-ref or a string containing \"filename, cell-ref\".
+REFERENCE should be a cell-ref or a string containing \"filename#cell-ref\".
 See documentation for `kcell:ref-to-id' for valid cell-ref formats."
   (interactive
    (progn
@@ -134,7 +134,7 @@ See documentation for `kcell:ref-to-id' for valid cell-ref formats."
      (hattr:set 'hbut:current 'dir default-directory)
      (save-excursion
        (hargs:iform-read
-	'(interactive "*+LInsert link to <[file,] cell-id [|vspecs]>: ")))))
+	'(interactive "*+LInsert link to <[file]#cell-id[|vspecs]>: ")))))
   (barf-if-buffer-read-only)
   ;; Reference generally is a string.  It may be a list as a string, e.g.
   ;; "(\"file\" \"cell\")", in which case, we remove the unneeded internal
@@ -142,7 +142,8 @@ See documentation for `kcell:ref-to-id' for valid cell-ref formats."
   (and (stringp reference) (> (length reference) 0)
        (eq (aref reference 0) ?\()
        (setq reference (replace-regexp-in-string "\\\"" "" reference nil t)))
-  ;; This `default-directory' setting is referenced in "hargs.el" for getting arguments.
+  ;; This `default-directory' setting is referenced in "hargs.el" for
+  ;; getting arguments.
   (hattr:set 'hbut:current 'dir default-directory)
   (let (file-ref cell-ref)
     (setq reference (klink:parse reference)
@@ -154,13 +155,14 @@ See documentation for `kcell:ref-to-id' for valid cell-ref formats."
       (setq file-ref nil))
     (cond (file-ref
 	   (setq file-ref (hpath:relative-to file-ref))
-		 ;; "./" prefix, if any.
-	   (if (string-match "^\\./" file-ref)
-	       (setq file-ref (substring file-ref (match-end 0))))
+	   ;; Remove "./" prefix, if any.
+	   (when (string-match "^\\./" file-ref)
+	     (setq file-ref (substring file-ref (match-end 0))))
 	   (insert "<" file-ref)
-	   (if cell-ref (insert ", " cell-ref))
+	   (when cell-ref
+	     (insert "#" cell-ref))
 	   (insert ">"))
-	  (cell-ref (insert "<@ " cell-ref ">"))
+	  (cell-ref (insert "<#" cell-ref ">"))
 	  (t  (error "(klink:create) Invalid reference, `%s'" reference)))))
 
 ;;;###autoload
@@ -208,16 +210,18 @@ link-end-position, (including delimiters)."
 		  (not (eq (preceding-char) ?#))
 		  ;; Don't match to \<(explicit)> or <[implicit]> Hyperbole
                   ;; buttons or message attachments such as <#part ...>
-		  (not (memq (char-after (1+ (point))) '(?\( ?\[ ?#)))))
+		  (not (memq (char-after (1+ (point))) '(?\( ?\[)))
+		  (not (looking-at "<#part\\s-"))))
 	   (setq label-and-pos (hbut:label-p t "<" ">" t))
 	   (stringp (setq referent (car label-and-pos)))
 	   (setq referent (string-trim referent))
 	   ;; Ensure it conforms to some klink specification.
-	   (or (string-match "^ *[-@|!&]" referent)
-	       (if (string-match "\\s-*," referent)
-		   (progn (setq path (substring referent 0 (match-beginning 0)))
+	   (or (string-match "\\`[ \t]*[-#@|!&]" referent)
+	       (and (or (when (string-match "\\s-*,\\|#[0-9a-z.=]+\\'" referent)
+			  (setq path (substring referent 0 (match-beginning 0)))
 			  (hpath:is-p (expand-file-name path (hbut:get-key-src t t))))
-		 (hpath:is-p (expand-file-name referent (hbut:get-key-src t t)))))
+			(hpath:is-p (expand-file-name referent (hbut:get-key-src t t))))
+		    (string-match "\\.kot" referent)))
 	   ;; Eliminate matches to e-mail addresses like, <user@domain>
 	   (not (string-match "[^<> \t\n\r\f][!&@]" referent))
 	   ;; Eliminate matches to URLs but allow for single char Windows path drive prefixes
@@ -255,9 +259,11 @@ See documentation for the `link-to-kotl' function for valid klink formats."
 (defact link-to-kotl (link)
   "Display at the top of another window the referent pointed to by LINK.
 LINK may be of any of the following forms; the <> are optional:
-  < pathname [, cell-ref] >
   < [-!&] pathname >
-  < @ cell-ref >
+  < pathname [#cell-ref] > or < pathname [, cell-ref] >
+  < #cell-ref > or < @ cell-ref >
+  < |viewspec >
+  < :augment-viewspec >
 
 See documentation for `kcell:ref-to-id' for valid cell-ref formats."
 
@@ -265,18 +271,21 @@ See documentation for `kcell:ref-to-id' for valid cell-ref formats."
   (unless (stringp link)
     (error "(link-to-kotl): Non-string link argument, %s" link))
   (cond
-   ((or (string-match (format "\\`<?\\s-*@\\s-*\\(%s\\)\\s-*>?\\'"
+   ((or (string-match (format "\\`<?\\s-*[#@]\\s-*\\(%s\\)\\s-*>?\\'"
 			      klink:cell-ref-regexp) link)
 	(string-match (format "\\`<?\\s-*\\([|:]%s\\)\\s-*>?\\'"
 			      klink:cell-ref-regexp) link))
     ;; < @ cell-ref > or < |viewspec > or < :augment-viewspec >
     (hact 'link-to-kcell nil (match-string 1 link)))
    ((and (string-match
-	  (format "\\`<?\\s-*\\([^ \t\n\r\f,<>]+\\)\\s-*\\(,\\s-*\\(%s\\)\\)?\\s-*>?\\'"
+	  ;; The path part of this next regexp must be non-greedy (+?)
+	  ;; so that an anchored # expression if any is not considered
+	  ;; part of the path.
+	  (format "\\`<?\\s-*\\([^ \t\n\r\f,<>]*?\\)\\s-*\\([#,]\\s-*\\(%s\\)\\)?\\s-*>?\\'"
 		  klink:cell-ref-regexp)
 	  link)
 	 (match-end 3))
-    ;; < pathname, cell-ref >
+    ;; < pathname, cell-ref > or < pathname#cell-ref > or < pathname >
     (hact 'link-to-kcell (match-string 1 link) (match-string 3 link)))
    ((string-match
      "\\`<?\\s-*\\(\\([-!&]\\)?\\s-*[^ \t\n\r\f,<>]+\\)\\s-*>?\\'" link)
@@ -288,27 +297,26 @@ See documentation for `kcell:ref-to-id' for valid cell-ref formats."
 ;;; Private functions
 ;;; ************************************************************************
 
-(defun klink:act (link start-pos)
-  "Jump to klink LINK's referent at START-POS.
-Update relative part of klink if its referent has moved.
+(defun klink:act (klink start-pos)
+  "Update relative part of KLINK at START-POS if it has moved and jump to KLINK.
 
-See `actypes::link-to-kotl' for valid LINK formats."
+See `actypes::link-to-kotl' for valid KLINK formats."
   (let ((obuf (current-buffer)))
-    ;; Perform klink's action which is to jump to link referent.
-    (prog1 (hact 'link-to-kotl link)
+    ;; Perform klink's action which is to jump to klink referent.
+    (prog1 (hact 'link-to-kotl klink)
       (when (derived-mode-p #'kotl-mode)
 	(save-excursion
 	  ;; Update klink label if need be, which might be in a different buffer
 	  ;; than the current one.
-	  (klink:update-label link start-pos obuf))))))
+	  (klink:update-label klink start-pos obuf))))))
 
 (defun klink:parse (reference)
   "Return (file-ref cell-ref) list parsed from REFERENCE string.
 Either element of the list may be nil if REFERENCE does not contain that
 element.  REFERENCE must be one of the following forms (and may include an
 optional pair of <> delimiters) or an error is triggered:
-  (pathname, cell-ref)
-  pathname, cell-ref
+  (pathname#cell-ref) or pathname#cell-ref
+  (pathname, cell-ref) or pathname, cell-ref
   cell-ref
   |viewspec
   :augment-viewspec (ignored for now)
@@ -321,15 +329,15 @@ See documentation for `kcell:ref-to-id' for valid cell-ref formats."
   (cond
    ((string-match
      (format
-      "\\`\\s-*[<\(]?\\s-*\\([^|: \t\n\r,<>][^ \t\n\r,<>]*\\)\\s-*,\\s-*\\(%s\\)\\s-*[\)>]?\\s-*\\'"
+      "\\`\\s-*[<\(]?\\s-*\\([^|: \t\n\r,<>][^ \t\n\r,<>]*\\)\\s-*[#,]\\s-*\\(%s\\)\\s-*[\)>]?\\s-*\\'"
       klink:cell-ref-regexp)
      reference)
-    ;; pathname cell-ref
+    ;; <pathname#cell-ref> or <pathname, cell-ref>
     (list (match-string 1 reference) (match-string 2 reference)))
-   ((string-match (format "\\`\\s-*<?@?\\s-*\\(%s\\)\\s-*>?\\s-*\\'"
+   ((string-match (format "\\`\\s-*<?[#@]?\\s-*\\(%s\\)\\s-*>?\\s-*\\'"
 			  klink:cell-ref-regexp)
 		  reference)
-    ;; cell-ref
+    ;; <#cell-ref> or <@ cell-ref> or cell-ref
     (list nil (match-string 1 reference)))
    (t (error "(klink:parse): Invalid reference specifier, %s" reference))))
 
@@ -340,8 +348,8 @@ See documentation for `kcell:ref-to-id' for valid cell-ref formats."
 	(message "Relative label should be `%s' in klink <%s>."
 		 new-label klink)
       (goto-char start)
-      (cond ((or (looking-at "<\\s-*@\\s-*")
-		 (looking-at "[^,]+,\\s-*"))
+      (cond ((or (looking-at "<\\s-*[#@]\\s-*")
+		 (looking-at "[^,]+?[#,]\\s-*"))
 	     (goto-char (match-end 0))
 	     (zap-to-char 1 ?=)
 	     (insert new-label ?=))
@@ -351,7 +359,7 @@ See documentation for `kcell:ref-to-id' for valid cell-ref formats."
   "Update label of KLINK if its relative cell id has changed.
 Assume point is in klink referent buffer, where the klink points."
   (and (stringp klink)
-       (string-match "[@,]\\s-*\\([*0-9][*.0-9a-zA-Z]*\\)\\s-*=\\s-*0[0-9]*"
+       (string-match "[#@,]\\s-*\\([*0-9][*.0-9a-zA-Z]*\\)\\s-*=\\s-*0[0-9]*"
 		     klink)
        ;; Then klink has both relative and permanent ids.
        (let* ((label (match-string 1 klink))
@@ -360,17 +368,17 @@ Assume point is in klink referent buffer, where the klink points."
 	      (klink:replace-label klink link-buf start new-label)))))
 
 (defun klink:yank-handler (klink)
-  (if (string-match "<\\([^,]+\\), \\(.+\\)" klink)
+  (if (string-match "<\\([^,]+?\\)[#,][ \t]*\\(.+\\)" klink)
       (let* ((file (match-string 1 klink))
 	     (rest (match-string 2 klink))
 	     (dir (file-name-directory file)))
 	(cond ((equal file buffer-file-name)
 	       ;; Remove the klink filename since yanking into the
 	       ;; same file
-	       (insert (format "<@ %s" rest)))
+	       (insert (format "<#%s" rest)))
 	      ((and buffer-file-name (equal dir (file-name-directory buffer-file-name)))
 	       ;; Use filename without dir since yanking into same directory
-	       (insert (format "<%s, %s" (file-name-nondirectory file) rest)))
+	       (insert (format "<%s#%s" (file-name-nondirectory file) rest)))
 	      (t (insert klink))))
     (insert klink)))
 				 

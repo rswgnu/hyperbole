@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    30-Jan-21 at 12:00:00
-;; Last-Mod:     17-Jun-23 at 23:02:12 by Bob Weiner
+;; Last-Mod:     30-Oct-23 at 02:02:00 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -333,7 +333,7 @@ Ensure modifying the button but keeping the label does not create a double label
 
           ;; Within link
           (forward-char 1)
-          (should (looking-at-p "@ 1"))
+          (should (looking-at-p "#1"))
           (setq klink (klink:parse (hui:delimited-selectable-thing)))
           (should (string= (cadr klink) "1"))
           (should (string-match kotl-file (car klink))))
@@ -355,7 +355,7 @@ Ensure modifying the button but keeping the label does not create a double label
           (kotl-mode:add-cell)
           (yank)
           (kotl-mode:beginning-of-cell)
-          (should (looking-at-p "<@ 1>"))
+          (should (looking-at-p "<#1>"))
           (forward-char 1)
           (should (equal (hattr:get (hbut:at-p) 'actype) 'klink:act)))
       (hy-delete-file-and-buffer kotl-file))))
@@ -377,7 +377,7 @@ Ensure modifying the button but keeping the label does not create a double label
           (find-file other-file)
           (yank)
           (kotl-mode:beginning-of-cell)
-          (should (looking-at-p (concat "<" (file-name-nondirectory kotl-file) ", 1>")))
+          (should (looking-at-p (concat "<" (file-name-nondirectory kotl-file) "#1>")))
           (forward-char 1)
           (should (equal (hattr:get (hbut:at-p) 'actype) 'klink:act)))
       (hy-delete-file-and-buffer kotl-file)
@@ -400,7 +400,7 @@ Ensure modifying the button but keeping the label does not create a double label
           (find-file other-file)
           (yank)
           (beginning-of-buffer)
-          (should (looking-at-p (concat "<" (file-name-nondirectory kotl-file) ", 1>")))
+          (should (looking-at-p (concat "<" (file-name-nondirectory kotl-file) "#1>")))
           (forward-char 1)
           (should (equal (hattr:get (hbut:at-p) 'actype) 'klink:act)))
       (hy-delete-file-and-buffer kotl-file)
@@ -425,7 +425,7 @@ Ensure modifying the button but keeping the label does not create a double label
           (yank)
           (save-buffer 0)
           (beginning-of-buffer)
-          (should (looking-at-p (concat "<" kotl-file ", 1>")))
+          (should (looking-at-p (concat "<" kotl-file "#1>")))
           (forward-char 1)
           (should (equal (hattr:get (hbut:at-p) 'actype) 'klink:act)))
       (hy-delete-file-and-buffer kotl-file)
@@ -450,7 +450,7 @@ Ensure modifying the button but keeping the label does not create a double label
           (kotl-mode:add-cell)
           (insert-register ?a)
           (kotl-mode:beginning-of-cell)
-          (should (looking-at-p "<@ 1>"))
+          (should (looking-at-p "<#1>"))
           (forward-char 1)
           (should (equal (hattr:get (hbut:at-p) 'actype) 'klink:act)))
       (hy-delete-file-and-buffer kotl-file))))
@@ -475,7 +475,7 @@ Ensure modifying the button but keeping the label does not create a double label
           (find-file other-file)
           (insert-register ?a)
           (kotl-mode:beginning-of-cell)
-          (should (looking-at-p (concat "<" (file-name-nondirectory kotl-file) ", 1>")))
+          (should (looking-at-p (concat "<" (file-name-nondirectory kotl-file) "#1>")))
           (forward-char 1)
           (should (equal (hattr:get (hbut:at-p) 'actype) 'klink:act)))
       (hy-delete-file-and-buffer kotl-file)
@@ -500,7 +500,7 @@ Ensure modifying the button but keeping the label does not create a double label
           (find-file other-file)
           (insert-register ?a)
           (beginning-of-buffer)
-          (should (looking-at-p (concat "<" (file-name-nondirectory kotl-file) ", 1>")))
+          (should (looking-at-p (concat "<" (file-name-nondirectory kotl-file) "#1>")))
           (forward-char 1)
           (should (equal (hattr:get (hbut:at-p) 'actype) 'klink:act)))
       (hy-delete-file-and-buffer kotl-file)
@@ -527,7 +527,7 @@ Ensure modifying the button but keeping the label does not create a double label
           (insert-register ?a)
           (save-buffer 0)
           (beginning-of-buffer)
-          (should (looking-at-p (concat "<" kotl-file ", 1>")))
+          (should (looking-at-p (concat "<" kotl-file "#1>")))
           (forward-char 1)
           (should (equal (hattr:get (hbut:at-p) 'actype) 'klink:act)))
       (hy-delete-file-and-buffer kotl-file)
