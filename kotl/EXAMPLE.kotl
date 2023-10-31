@@ -318,24 +318,24 @@
               hide all cells below level one.  Use {C-u C-c C-a} to restore a
               view of all cells.
 
-    3c. Hyperlinks may be embedded in cells and may refer to other cells.
-        Explicit Hyperbole buttons may be created as usual via mouse drags,
-        see "(hyperbole)By Dragging".  A klink is a special implicit link
-        button that jumps to a specific outline cell.
+    3c. Klinks: Hyperlinks may be embedded in cells and may refer to other
+        cells.  Explicit Hyperbole buttons may be created as usual via
+        mouse drags, see "(hyperbole)By Dragging".  A klink is a special
+        implicit link button that jumps to a specific outline cell.
 
       3c1. Here are three klink examples:
 
-        3c1a. <@ 3b=06> jumps to the cell within this outline which has
-              permanent id `06' and relative id `3b'.  <@ 06> does the same
-              thing, as does <@ 3b>, though this latter form will not
-              maintain the link properly if the cell is moved elsewhere
+        3c1a. <#3b=06> or <@ 3b=06> jumps to the cell within this outline
+              which has permanent id `06' and relative id `3b'.  <@ 06> does
+              the same thing, as does <@ 3b>, though this latter form will
+              not maintain the link properly if the cell is moved elsewhere
               within the outline.
 
-        3c1b. <EXAMPLE.kotl, 4=012 |c1e> displays the named file, starting at
-              the unimplemented features section whose permanent identifer is
-              012, with the view specification of: blank lines turned off,
-              cutoff after one line per cell, and show ellipses for cells or
-              trees which are clipped.
+        3c1b. <EXAMPLE.kotl#4=012|c1e> or <EXAMPLE.kotl, 4=012 |c1e> displays
+              the named file, starting at the unimplemented features section
+              whose permanent identifer is 012, with the view specification
+              of: blank lines turned off, cutoff after one line per cell, and
+              show ellipses for cells or trees which are clipped.
 
         3c1c. <|ben> is a klink consisting of just a view specification.
               When activated, it sets the view in the current outline to
@@ -416,7 +416,7 @@
 
 
 "ben" ;; kvspec:current
-85 ;; id-counter
+150 ;; id-counter
 alpha ;; label-type
 3 ;; label-min-width
 ". " ;; label-separator
@@ -424,141 +424,141 @@ alpha ;; label-type
 
 ;; depth-first kcell attributes
 [[0
-  (idstamp 0 creator "rsw@gnu.org" create-time "20220117:22:23:52" id-counter 85 file "/Users/bk/Dropbox/emacs/hyperbole/kotl/EXAMPLE.kotl")]
+  (idstamp 0 creator "rsw@gnu.org" create-time "20220117:22:23:52" id-counter 150 file "/Users/bk/Dropbox/emacs/hyperbole/kotl/EXAMPLE.kotl")]
  [20
   (creator "rsw@gnu.org" create-time "19940104:17:38:28" no-fill t)]
  [2
   (creator "rsw@gnu.org" create-time "19940104:17:38:28" no-fill t)]
  [34
   (creator "rsw@gnu.org" create-time "19940610:16:43:55")]
- [35
-  (creator "rsw@gnu.org" create-time "19940610:16:44:03")]
- [4
-  (creator "rsw@gnu.org" create-time "19940104:17:38:29")]
- [5
-  (creator "rsw@gnu.org" create-time "19940104:17:38:29")]
- [6
-  (creator "rsw@gnu.org" create-time "19940104:17:38:29")]
- [14
-  (creator "rsw@gnu.org" create-time "19940104:17:38:29")]
- [67
-  (creator "rsw@gnu.org" create-time "19951028:04:29:13" no-fill t)]
- [15
-  (creator "rsw@gnu.org" create-time "19940104:17:38:29")]
- [31
-  (creator "rsw@gnu.org" create-time "19940306:18:11:43")]
- [7
-  (creator "rsw@gnu.org" create-time "19940104:17:38:29")]
- [46
-  (creator "rsw@gnu.org" create-time "19950614:21:35:17")]
- [43
-  (creator "rsw@gnu.org" create-time "19940610:22:00:46")]
- [22
-  (creator "rsw@gnu.org" create-time "19940127:22:41:42")]
- [82
-  (creator "rsw@gnu.org" create-time "20220126:04:52:26" no-fill t fontified t)]
- [32
-  (creator "rsw@gnu.org" create-time "19940610:16:31:28")]
- [41
-  (creator "rsw@gnu.org" create-time "19940610:18:55:09")]
- [42
-  (creator "rsw@gnu.org" create-time "19940610:18:55:57")]
- [33
-  (creator "rsw@gnu.org" create-time "19940610:16:31:29")]
- [47
-  (creator "rsw@gnu.org" create-time "19951022:22:59:26")]
- [8
-  (creator "rsw@gnu.org" create-time "19940104:17:38:29")]
- [28
-  (creator "rsw@gnu.org" create-time "19940128:22:50:44")]
- [29
-  (creator "rsw@gnu.org" create-time "19940128:22:50:54")]
- [10
-  (creator "rsw@gnu.org" create-time "19940104:17:38:29")]
- [30
-  (creator "rsw@gnu.org" create-time "19940129:00:27:59")]
- [62
-  (creator "rsw@gnu.org" create-time "19951026:08:32:57" no-fill t)]
- [70
-  (creator "rsw@gnu.org" create-time "19951030:19:18:49" no-fill t)]
- [71
-  (creator "rsw@gnu.org" create-time "19951030:19:19:40" no-fill t)]
- [73
-  (creator "rsw@gnu.org" create-time "19951030:19:23:09" no-fill t)]
- [63
-  (creator "rsw@gnu.org" create-time "19951026:19:31:34" no-fill t)]
- [64
-  (creator "rsw@gnu.org" create-time "19951026:19:33:01" no-fill t)]
- [69
-  (creator "rsw@gnu.org" create-time "19951029:06:24:35" no-fill t)]
- [68
-  (creator "rsw@gnu.org" create-time "19951029:06:24:27" no-fill t)]
- [65
-  (creator "rsw@gnu.org" create-time "19951026:19:33:08" no-fill t)]
- [66
-  (creator "rsw@gnu.org" create-time "19951026:19:33:15" no-fill t)]
- [77
-  (creator "rsw@gnu.org" create-time "19980226:19:54:44" no-fill t)]
- [48
-  (creator "rsw@gnu.org" create-time "19951023:05:55:19" no-fill t)]
- [57
-  (creator "rsw@gnu.org" create-time "19951023:10:07:06" no-fill t)]
- [58
-  (creator "rsw@gnu.org" create-time "19951023:10:07:26" no-fill t)]
- [49
-  (creator "rsw@gnu.org" create-time "19951023:05:55:55" no-fill t)]
- [55
-  (creator "rsw@gnu.org" create-time "19951023:08:56:41" no-fill t)]
- [50
-  (creator "rsw@gnu.org" create-time "19951023:05:57:26" no-fill t)]
- [51
-  (creator "rsw@gnu.org" create-time "19951023:05:58:31" no-fill t)]
- [56
-  (creator "rsw@gnu.org" create-time "19951023:08:57:09" no-fill t)]
- [52
-  (creator "rsw@gnu.org" create-time "19951023:05:59:59" no-fill t)]
- [53
-  (creator "rsw@gnu.org" create-time "19951023:06:00:48" no-fill t)]
- [54
-  (creator "rsw@gnu.org" create-time "19951023:06:05:50" no-fill t)]
- [26
-  (creator "rsw@gnu.org" create-time "19940128:03:56:23")]
- [27
-  (creator "rsw@gnu.org" create-time "19940128:22:36:54")]
- [59
-  (creator "rsw@gnu.org" create-time "19951024:03:40:05" no-fill t)]
- [60
-  (creator "rsw@gnu.org" create-time "19951024:03:40:13" no-fill t)]
- [61
-  (creator "rsw@gnu.org" create-time "19951024:03:40:42")]
- [1
-  (creator "rsw@gnu.org" create-time "19940104:17:38:29")]
- [83
-  (creator "rsw@gnu.org" create-time "20220416:21:55:12")]
- [84
-  (creator "rsw@gnu.org" create-time "20220416:22:01:13")]
- [85
-  (creator "rsw@gnu.org" create-time "20220416:22:04:05")]
- [11
-  (creator "rsw@gnu.org" create-time "19940104:17:38:29")]
- [80
-  (no-fill t create-time "20220117:22:26:40" creator "rsw@gnu.org")]
- [81
-  (no-fill t create-time "20220117:22:26:47" creator "rsw@gnu.org")]
- [78
-  (no-fill t create-time "20220117:22:26:33" creator "rsw@gnu.org")]
- [12
-  (creator "rsw@gnu.org" create-time "19940104:17:38:29")]
- [44
-  (creator "rsw@gnu.org" create-time "19940728:21:56:49")]
- [36
-  (creator "rsw@gnu.org" create-time "19940610:16:49:34")]
- [37
-  (creator "rsw@gnu.org" create-time "19940610:16:50:02")]
- [38
-  (creator "rsw@gnu.org" create-time "19940610:16:50:13")]
- [13
-  (creator "rsw@gnu.org" create-time "19940104:17:38:29")]
- [16
-  (creator "rsw@gnu.org" create-time "19940104:17:38:29")]
- nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil]
+ [86
+  (creator "rsw@gnu.org" create-time "20231030:06:08:35")]
+ [87
+  (creator "rsw@gnu.org" create-time "20231030:06:08:35")]
+ [88
+  (creator "rsw@gnu.org" create-time "20231030:06:08:35")]
+ [89
+  (creator "rsw@gnu.org" create-time "20231030:06:08:35")]
+ [90
+  (creator "rsw@gnu.org" create-time "20231030:06:08:35")]
+ [91
+  (creator "rsw@gnu.org" create-time "20231030:06:08:35")]
+ [92
+  (creator "rsw@gnu.org" create-time "20231030:06:08:35")]
+ [93
+  (creator "rsw@gnu.org" create-time "20231030:06:08:35")]
+ [94
+  (creator "rsw@gnu.org" create-time "20231030:06:08:35")]
+ [95
+  (creator "rsw@gnu.org" create-time "20231030:06:08:35")]
+ [96
+  (creator "rsw@gnu.org" create-time "20231030:06:08:35")]
+ [97
+  (creator "rsw@gnu.org" create-time "20231030:06:08:35")]
+ [98
+  (creator "rsw@gnu.org" create-time "20231030:06:08:35")]
+ [99
+  (creator "rsw@gnu.org" create-time "20231030:06:08:35")]
+ [100
+  (creator "rsw@gnu.org" create-time "20231030:06:08:35")]
+ [101
+  (creator "rsw@gnu.org" create-time "20231030:06:08:35")]
+ [102
+  (creator "rsw@gnu.org" create-time "20231030:06:08:35")]
+ [103
+  (creator "rsw@gnu.org" create-time "20231030:06:08:35")]
+ [104
+  (creator "rsw@gnu.org" create-time "20231030:06:08:35")]
+ [105
+  (creator "rsw@gnu.org" create-time "20231030:06:08:35")]
+ [106
+  (creator "rsw@gnu.org" create-time "20231030:06:08:35")]
+ [107
+  (creator "rsw@gnu.org" create-time "20231030:06:08:35")]
+ [108
+  (creator "rsw@gnu.org" create-time "20231030:06:08:35")]
+ [109
+  (creator "rsw@gnu.org" create-time "20231030:06:08:35")]
+ [110
+  (creator "rsw@gnu.org" create-time "20231030:06:08:35")]
+ [111
+  (creator "rsw@gnu.org" create-time "20231030:06:08:35")]
+ [112
+  (creator "rsw@gnu.org" create-time "20231030:06:08:35")]
+ [113
+  (creator "rsw@gnu.org" create-time "20231030:06:08:35")]
+ [114
+  (creator "rsw@gnu.org" create-time "20231030:06:08:35")]
+ [115
+  (creator "rsw@gnu.org" create-time "20231030:06:08:35")]
+ [116
+  (creator "rsw@gnu.org" create-time "20231030:06:08:35")]
+ [117
+  (creator "rsw@gnu.org" create-time "20231030:06:08:35")]
+ [118
+  (creator "rsw@gnu.org" create-time "20231030:06:08:35")]
+ [119
+  (creator "rsw@gnu.org" create-time "20231030:06:08:35")]
+ [120
+  (creator "rsw@gnu.org" create-time "20231030:06:08:35")]
+ [121
+  (creator "rsw@gnu.org" create-time "20231030:06:08:35")]
+ [122
+  (creator "rsw@gnu.org" create-time "20231030:06:08:35")]
+ [123
+  (creator "rsw@gnu.org" create-time "20231030:06:08:35")]
+ [124
+  (creator "rsw@gnu.org" create-time "20231030:06:08:35")]
+ [125
+  (creator "rsw@gnu.org" create-time "20231030:06:08:35")]
+ [126
+  (creator "rsw@gnu.org" create-time "20231030:06:08:35")]
+ [127
+  (creator "rsw@gnu.org" create-time "20231030:06:08:35")]
+ [128
+  (creator "rsw@gnu.org" create-time "20231030:06:08:35")]
+ [129
+  (creator "rsw@gnu.org" create-time "20231030:06:08:35")]
+ [130
+  (creator "rsw@gnu.org" create-time "20231030:06:08:35")]
+ [131
+  (creator "rsw@gnu.org" create-time "20231030:06:08:35")]
+ [132
+  (creator "rsw@gnu.org" create-time "20231030:06:08:35")]
+ [133
+  (creator "rsw@gnu.org" create-time "20231030:06:08:35")]
+ [134
+  (creator "rsw@gnu.org" create-time "20231030:06:08:35")]
+ [135
+  (creator "rsw@gnu.org" create-time "20231030:06:08:35")]
+ [136
+  (creator "rsw@gnu.org" create-time "20231030:06:08:35")]
+ [137
+  (creator "rsw@gnu.org" create-time "20231030:06:08:35")]
+ [138
+  (creator "rsw@gnu.org" create-time "20231030:06:08:35")]
+ [139
+  (creator "rsw@gnu.org" create-time "20231030:06:08:35")]
+ [140
+  (creator "rsw@gnu.org" create-time "20231030:06:08:35")]
+ [141
+  (creator "rsw@gnu.org" create-time "20231030:06:08:35")]
+ [142
+  (creator "rsw@gnu.org" create-time "20231030:06:08:35")]
+ [143
+  (creator "rsw@gnu.org" create-time "20231030:06:08:35")]
+ [144
+  (creator "rsw@gnu.org" create-time "20231030:06:08:35")]
+ [145
+  (creator "rsw@gnu.org" create-time "20231030:06:08:35")]
+ [146
+  (creator "rsw@gnu.org" create-time "20231030:06:08:35")]
+ [147
+  (creator "rsw@gnu.org" create-time "20231030:06:08:35")]
+ [148
+  (creator "rsw@gnu.org" create-time "20231030:06:08:35")]
+ [149
+  (creator "rsw@gnu.org" create-time "20231030:06:08:35")]
+ [150
+  (creator "rsw@gnu.org" create-time "20231030:06:08:35")]
+ nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil]

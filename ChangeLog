@@ -4,6 +4,65 @@
   hpath.el (hpath:get-external-display-alist): Add mac as possible
     window-system on Mac OS.
 
+2023-10-29  Bob Weiner  <rsw@gnu.org>
+
+* hpath.el (hpath:find):
+  hactypes.el (link-to-file-line-and-column): Change so when in a Koutline, col
+    num is relative to the cell indent (in addition to).
+              (hpath:find-line): Add 3rd optional argument of 'col-num'.
+
+* kotl/klink.el (klink:parse, klink:create, klink:replace-label,
+                 klink:update-label, klink:yank-handler, klink:absolute):
+    Update to new file#cell-ref|viewspec syntax.
+
+* hsys-org.el (hsys-org-consult-grep-func): Add customization.
+              (hsys-org-consult-grep): Add function.
+  man/hyperbole.texi (Glossary:Consult): Document the above.
+  HY-NEWS: Add recent updates such as 'hsys-org-consult-grep' and refill
+    paragraphs to a common width.
+
+* hui-em-but.el (eval-when-compile (require 'hyrolo)): Comment this out because
+    it causes klink ibtype to load with the wrong priority (before hibtypes.el
+    loads it).  See comment in the file.
+  hinit.el: Fix so hibtypes is loaded before hui-menu to prevent klink defib
+  priority from being set improperly.
+
+* kotl/kcell.el (kcell:ref-to-id): Handle string labels at the beginning of cells.
+  kotl/kview.el (kcell-view:cell-from-ref): Fix to handle strings returned from
+    'kcell:ref-to-id' with idstamp and viewspec and to handle string labels
+    at the beginning of cells.
+
+2023-10-28  Bob Weiner  <rsw@gnu.org>
+
+* hpath.el (hpath:find): Fix off-by-one (too high) error with relative line
+    numbers.  A relative line number of 1 means the first line, not the line
+    after the first line, i.e. don't move at all, which of course can be left
+    off but that way, a line number of 2 goes to the second line, which is more
+    natural than moving down 2 lines, as a call to forward-line would.  This
+    matches up with absolute line numbering, as well.
+  test/hibtypes-tests.el (ibtypes::pathname-anchor-line-test):
+  test/hmouse-drv-tests.el (hbut-pathname-anchor-line-test,
+                            hbut-pathname-line-column-test): Fix relative line
+    numbers to match fix for off-by-one error.
+
+* kotl/kotl-mode.el (requires): Remove 'kvspec' and 'kcell' which are already
+    required by 'kfile'.  Add 'klink' which is missing.
+                    (kotl-mode:goto-heading): Add to go to a string heading at
+    the beginning of a cell.  Must end with a colon or a newline.
+                    (kotl-mode:goto-cell): Handle cell headings and tighten
+    idstamp and relative label checks.
+  kotl/kcell.el (kcell:parse-cell-ref): Handle cell headings.
+
+* kotl/klink.el (klink:act): Fix doc to reflect that 'start-pos' arg refers
+    to the start of the cell-ref in the link, not to the link's referent.
+                (klink:at-p): Limit matches to .kotl? files.
+
+* hpath.el (hpath:find):
+* kotl/klink.el (link-to-kotl, klink:parse, klink:at-p, klink:replace-label,
+    klink:update-label): Support # anchor refs that use cell-refs to kotl files.
+  kotl/kotl-mode.el (kotl-mode:goto-cell-ref): Add for use in kotl anchored
+    pathname refs and in 'link-to-kcell' actype.
+
 2023-10-25  Mats Lidell  <matsl@gnu.org>
 
 * test/hui-tests.el (hui--ibut-link-directly-to-file)
@@ -28,15 +87,6 @@
     three methods to separate out button data stored in a file.
     (hbdata:to-entry-buf): Use new methods.
 
-2023-10-11  Mats Lidell  <matsl@gnu.org>
-
-* test/hui-tests.el (hui-gbut-number-of-gbuts-with-no-buttons)
-    (hui-gbut-number-of-gibuts-when-one-button)
-    (hui-gbut-number-of-gebuts-when-one-button)
-    (hui-gbut-number-of-gibuts-from-mail-mode)
-    (hui-gbut-number-of-gebuts-from-mail-mode): Verify number of global
-    ibuts and ebuts.
-
 2023-10-22  Bob Weiner  <rsw@gnu.org>
 
 * hbut.el (gbut:save-buffer): Add function to use after global button file is
@@ -58,6 +108,15 @@
     xref because this function turned on xref-etags-mode in Elisp files
     rather than using its elisp backend.  Remove that code.
                 (tags-fix): Remove optional load of this very old file.
+
+2023-10-11  Mats Lidell  <matsl@gnu.org>
+
+* test/hui-tests.el (hui-gbut-number-of-gbuts-with-no-buttons)
+    (hui-gbut-number-of-gibuts-when-one-button)
+    (hui-gbut-number-of-gebuts-when-one-button)
+    (hui-gbut-number-of-gibuts-from-mail-mode)
+    (hui-gbut-number-of-gebuts-from-mail-mode): Verify number of global
+    ibuts and ebuts.
 
 2023-10-09  Mats Lidell  <matsl@gnu.org>
 

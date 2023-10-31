@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    26-Feb-23 at 11:20:15 by Bob Weiner
-;; Last-Mod:      6-Oct-23 at 00:11:40 by Mats Lidell
+;; Last-Mod:     29-Oct-23 at 16:08:40 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -37,9 +37,9 @@
 
 ;;;###autoload
 (defun hsys-org-roam-consult-grep ()
-  "Search with the consult org-roam grep command.
-Interactively show all matches from `hyrolo-file-list'.
-Prompt for the search pattern."
+  "Prompt for search terms and run consult grep over `org-roam-directory'
+Actual grep function used is given by the variable,
+`consult-org-roam-grep-func'."
   (interactive)
   (unless (package-installed-p 'consult-org-roam)
     (package-install 'consult-org-roam))
@@ -49,7 +49,7 @@ Prompt for the search pattern."
 		     consult-org-roam-grep-func)))
     (if grep-func
 	(funcall grep-func org-roam-directory)
-      (error "(hyrolo-consult-org-roam-grep): `%s' is an invalid function"
+      (error "(hsys-org-roam-consult-grep): `%s' is an invalid function"
 	     consult-org-roam-grep-func))))
 
 (provide 'hsys-org-roam)

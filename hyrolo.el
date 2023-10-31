@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     7-Jun-89 at 22:08:29
-;; Last-Mod:      3-Oct-23 at 17:20:51 by Mats Lidell
+;; Last-Mod:     29-Oct-23 at 16:27:08 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1364,7 +1364,7 @@ returned to the number given."
 
 ;;;###autoload
 (defun hyrolo-org-roam (string &optional max-matches)
-  "Search Org Roam directory files for STRING or logical sexpression.
+  "Search `org-roam-directory' files for STRING or logical sexpression.
 OPTIONAL prefix arg, MAX-MATCHES, limits the number of matches
 returned to the number given."
   (interactive "sFind Org Roam directory string (or logical sexpression): \nP")
@@ -1383,8 +1383,6 @@ returned to the number given."
 ;;; ************************************************************************
 ;;; Public functions
 ;;; ************************************************************************
-
-
 
 (defun hyrolo-back-to-visible-point ()
   (interactive)

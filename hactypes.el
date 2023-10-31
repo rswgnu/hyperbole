@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    23-Sep-91 at 20:34:36
-;; Last-Mod:      6-Aug-23 at 16:22:54 by Bob Weiner
+;; Last-Mod:     29-Oct-23 at 23:46:32 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -438,8 +438,8 @@ the window or as close as possible."
 	  (compile-goto-error)
 	(hpath:find-line path line-num))))
 
-(defact link-to-file-line-and-column (path line-num column-num)
-  "Display a file given by PATH scrolled to LINE-NUM with point at COLUMN-NUM."
+(defact link-to-file-line-and-column (path line-num col-num)
+  "Display a file given by PATH scrolled to LINE-NUM with point at COL-NUM."
   (interactive "fPath to link to: \nnDisplay at line number: \nnand column number: ")
   ;; Remove any double quotes and whitespace at the start and end of
   ;; the path that interactive use may have introduced.
@@ -449,9 +449,12 @@ the window or as close as possible."
 	  (error t))
     (if (and (stringp path) (not (file-name-absolute-p path))
 	     (compilation-buffer-p (current-buffer)))
-	(compile-goto-error)
-      (hpath:find-line path line-num))
-    (move-to-column column-num)))
+	(progn (compile-goto-error)
+	       (move-to-column
+		(if (string-match "\\.kotl?\\(\\'\\|#\\)" path)
+		    (+ (kcell-view:indent) col-num)
+		  col-num)))
+      (hpath:find-line path line-num col-num))))
 
 (defact link-to-gbut (key &optional _key-file)
   "Perform an action given by an existing global button, specified by KEY.
@@ -560,17 +563,25 @@ If FILE is nil, use the current buffer.
 If CELL-REF is nil, show the first cell in the view."
   (interactive (hargs:iform-read '(interactive "fKotl file to link to: \n+KKcell to link to: ")))
   (require 'kfile)
-  (cond	((if file
-	     (hpath:find file)
-	   (hpath:display-buffer (current-buffer)))
-	 (if cell-ref
-	     (kotl-mode:goto-cell cell-ref)
-	   (kotl-mode:beginning-of-buffer))
-	 (recenter 0))
- 	((and (stringp cell-ref) (> (length cell-ref) 0)
-	      (eq ?| (aref cell-ref 0)))
-	 ;; Activate view spec in current window.
-	 (kotl-mode:goto-cell cell-ref))))
+  ;; May already be in an 'hpath:find' call where the referent buffer
+  ;; has already been made current.  In that case, skip a second
+  ;; display of the buffer.
+  (unless (and (hyperb:stack-frame '(hpath:find))
+	       ;; Perform a loose test that the current buffer
+	       ;; file name matches the path file name since exact
+	       ;; matching of path is likely to be wrong in
+	       ;; certain cases, e.g. with mount point or os path
+	       ;; alterations.
+	       buffer-file-name
+	       file
+	       (or (null file)
+		   (string-empty-p file)
+		   (equal (file-name-nondirectory file)
+			  (file-name-nondirectory buffer-file-name))))
+    (if (stringp file)
+	(hpath:find file)
+      (hpath:display-buffer (current-buffer))))
+  (kotl-mode:goto-cell-ref cell-ref))
 
 (defact link-to-mail (mail-msg-id &optional mail-file)
   "Display mail msg with MAIL-MSG-ID from optional MAIL-FILE.

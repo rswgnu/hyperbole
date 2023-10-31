@@ -107,7 +107,7 @@
   "Pathname with anchor and line specification."
   (unwind-protect
       (with-temp-buffer
-        (insert "\"${hyperb:dir}/DEMO#Smart Keys:2\"")
+        (insert "\"${hyperb:dir}/DEMO#Smart Keys:3\"")
         (goto-char 2)
         (ibtypes::pathname)
         (should (string= "DEMO" (buffer-name)))

@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    24-Aug-91
-;; Last-Mod:     21-Oct-23 at 10:45:26 by Bob Weiner
+;; Last-Mod:     30-Oct-23 at 02:02:21 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1388,7 +1388,8 @@ See the \"${hyperb:dir}/smart-clib-sym\" script for more information."
 			   (when (boundp 'tags-file-name) tags-file-name)))
 	 find-tag-result
 	 (tags-add-tables nil))
-    (cond ((and func (or tags-table-list tags-file-name) (setq find-tag-result (funcall func tag)))
+    (cond ((and func (or tags-table-list tags-file-name)
+		(setq find-tag-result (funcall func tag)))
 	   (cond ((or (eq (type-of find-tag-result) 'xref-item)
 		      (vectorp find-tag-result))
 		  (hpath:display-buffer (xref-item-buffer find-tag-result))

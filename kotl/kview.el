@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    6/30/93
-;; Last-Mod:      4-Oct-23 at 19:14:00 by Mats Lidell
+;; Last-Mod:     29-Oct-23 at 08:55:55 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -155,18 +155,26 @@ Return t unless no such cell."
 
 (defun kcell-view:cell-from-ref (cell-ref)
   "Return a kcell referenced by CELL-REF, a cell label, id string or idstamp.
-  If an idstamp, it must be an integer.
-Trigger an error if CELL-REF is not a string or is not found."
+If an idstamp, it must be an integer.  Trigger an error if CELL-REF is
+not a string or an integer or is not found."
   (if (or (stringp cell-ref)
 	  (integerp cell-ref))
       (let ((idstamp (kcell:ref-to-id cell-ref))
 	    pos)
+	(when (and (stringp idstamp) (> (length idstamp) 0) (eq (aref idstamp 0) ?0))
+	  ;; remove any concatenated viewspec and convert to an integer
+	  (setq idstamp (string-to-number (substring idstamp 0 (string-match "[^0-9]" idstamp)))))
 	(cond ((and (integerp idstamp) (zerop idstamp))
 	       (kview:top-cell kotl-kview))
 	      ((and (integerp idstamp) (setq pos (kproperty:position 'idstamp idstamp)))
 	       (kcell-view:cell pos))
+	      ((save-excursion
+		 (and (stringp idstamp)
+		      ;; Not an idstamp but a textual label at the beginning of a cell
+		      (kotl-mode:goto-heading idstamp)
+		      (kcell-view:cell (point)))))
 	      (t (error "(kcell:get-from-ref): No such Koutline cell: '%s'" cell-ref))))
-    (error "(kcell:get-from-ref): cell-ref arg must be a string, not: %s" cell-ref)))
+    (error "(kcell:get-from-ref): cell-ref arg must be a string, not: '%s'" cell-ref)))
 
 (defun kcell-view:child (&optional visible-p lbl-sep-len)
   "Move to start of current cell's child.
