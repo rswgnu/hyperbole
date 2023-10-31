@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    15-Apr-91 at 00:48:49
-;; Last-Mod:     12-Oct-22 at 22:46:00 by Mats Lidell
+;; Last-Mod:      3-Oct-23 at 17:22:51 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -33,10 +33,14 @@
 ;;; ************************************************************************
 ;;; Public declarations
 ;;; ************************************************************************
-(declare-function hproperty:but-create "hui-em-but")
-(declare-function hproperty:but-flash "hui-em-but")
 
 (defvar helm-allow-mouse)
+(defvar htz:local)                      ; "htz.el"
+
+(declare-function hproperty:but-create "hui-em-but")
+(declare-function hproperty:but-flash "hui-em-but")
+(declare-function hyperbole-minibuffer-menu "hui-mini")
+(declare-function hyperbole-menubar-menu "hui-menu")
 
 ;;; Read the comments and modify as desired.
 
@@ -134,6 +138,9 @@ ignores current line and always scrolls up or down a windowful."
 
 (defun hyperbole-update-menus ()
   "Rebuild all Hyperbole menus with any updated settings."
+  (interactive)
+  (load "hui-menu")
+  (load "hui-mini")
   (hyperbole-menubar-menu)
   (hyperbole-minibuffer-menu))
 

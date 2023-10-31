@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     2-Apr-91
-;; Last-Mod:     29-Jan-23 at 02:34:21 by Bob Weiner
+;; Last-Mod:     22-Oct-23 at 14:42:47 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -36,9 +36,9 @@
 ;;    (Key            Placeholders  LinkType      <arg-list>             creator and modifier with times)
 ;;    ("alt.mouse.el" nil nil       link-to-file  ("./ell/alt-mouse.el") "zzz@gnu.org" "19991027:09:19:26" "zzz@gnu.org" "19991027:09:31:36")
 ;;
-;;  which means:  button \<(alt.mouse.el)> found in file "TO-DO" in the current
-;;  directory provides a link to the local file "./ell/alt-mouse.el".  It was
-;;  created and last modified by zzz@gnu.org.
+;;  which means: button \<(alt.mouse.el)> found in file "TO-DO" in the
+;;  current directory provides a link to the local file "./ell/alt-mouse.el".
+;;  It was created and last modified by zzz@gnu.org.
 ;;
 ;;  All link entries that originate from the same source file are stored
 ;;  contiguously, one per line, in reverse order of creation.
@@ -52,9 +52,33 @@
 ;;; Other required Elisp libraries
 ;;; ************************************************************************
 
-(require 'hversion) ;; For hyperb:microsoft-os-p
+(require 'hversion)                     ; For `hyperb:microsoft-os-p'
 (require 'hbmap)
 (require 'hgnus)
+
+;;; ************************************************************************
+;;; Public declarations
+;;; ************************************************************************
+
+(defvar hyperb:user-email)              ; Set by `hyperb:init'.
+
+(defvar hbut:instance-sep)              ; defconst in hbut
+(defvar hattr:filename)
+
+(declare-function ibut:label-key-match "hbut")
+(declare-function ibut:label-sort-keys "hbut")
+(declare-function hpath:absolute-arguments "hpath")
+(declare-function hpath:substitute-var "hpath")
+(declare-function hattr:set "hbut")
+(declare-function htz:date-sortable-gmt "htz")
+(declare-function hattr:get "hbut")
+(declare-function hattr:copy "hbut")
+(declare-function ebut:label-to-key "hbut")
+
+;; Functions from abstract mail and news interface. See "hmail.el"
+(declare-function lmail:to nil)
+(declare-function rmail:to nil)
+(declare-function rmail:summ-msg-to nil)
 
 ;;; ************************************************************************
 ;;; Public functions
@@ -147,112 +171,6 @@ Search is case-insensitive.  Return list with elements:
 ;;; Button data operators
 ;;; ------------------------------------------------------------------------
 
-(defun hbdata:build (&optional mod-lbl-key but-sym)
-  "Construct button data from optional MOD-LBL-KEY and BUT-SYM.
-Modify BUT-SYM attributes.  MOD-LBL-KEY nil means create a new
-entry, otherwise modify existing one.  Nil BUT-SYM means use
-`hbut:current'  If successful, return a cons of
- (button-data . button-instance-str), else nil."
-  (let* ((b (hattr:copy (or but-sym 'hbut:current) 'but))
-	 (l (hattr:get b 'loc))
-	 (key (or mod-lbl-key (hattr:get b 'lbl-key)))
-	 (new-key (if mod-lbl-key (hattr:get b 'lbl-key) key))
-	 (lbl-instance) (creator) (create-time) (modifier) (mod-time)
-	 (entry) loc dir)
-    (when l
-      (setq loc (if (bufferp l) l (file-name-nondirectory l))
-	    dir (if (bufferp l) nil (file-name-directory l)))
-      (when (setq entry (hbdata:to-entry key loc dir (not mod-lbl-key)))
-	(if mod-lbl-key
-	    (progn
-	      (setq creator     (hbdata:creator entry)
-		    create-time (hbdata:create-time entry)
-		    modifier    (let* ((user (hypb:user-name))
-				       (addr hyperb:user-email))
-				  (if (equal creator addr)
-				      user addr))
-		    mod-time    (htz:date-sortable-gmt)
-		    entry       (cons new-key (cdr entry)))
-	      (hbdata:delete-entry-at-point)
-	      (when (setq lbl-instance (hbdata:instance-last new-key loc dir))
-		(setq lbl-instance (concat ebut:instance-sep
-					   (int-to-string (1+ lbl-instance))))
-		;; This expression is needed to ensure that the highest
-		;; numbered instance of a label appears before
-		;; other instances, so 'hbdata:instance-last' will work.
-		(when (hbdata:to-entry-buf loc dir)
-		  (forward-line 1))))
-	  (let ((inst-num (hbdata:instance-last new-key loc dir)))
-	    (setq lbl-instance (if inst-num
-				   (hbdata:instance-next
-				    (concat new-key ebut:instance-sep
-					    (int-to-string inst-num))))))))
-      (when (or entry (not mod-lbl-key))
-	(hattr:set b 'lbl-key (concat new-key lbl-instance))
-	(hattr:set b 'loc loc)
-	(hattr:set b 'dir dir)
-	(let* ((actype)
-	       (hbdata (list (hattr:get b 'lbl-key)
-			     (hattr:get b 'action)
-			     ;; Hyperbole V1 referent compatibility, always nil in V2
-			     (hattr:get b 'referent)
-			     ;; Save actype without class prefix.
-			     (and (setq actype (hattr:get b 'actype))
-				  (symbolp actype)
-				  (setq actype (symbol-name actype))
-				  (intern
-				   (substring actype (if (string-match "::" actype)
-							 (match-end 0) 0))))
-			     (let ((mail-dir (and (fboundp 'hmail:composing-dir)
-						  (hmail:composing-dir l)))
-				   (args (hattr:get b 'args)))
-			       ;; Replace matches for variable values with their variable names in any pathname args.
-			       (hattr:set b 'args
-					  (mapcar #'hpath:substitute-var
-						  (if mail-dir
-						      ;; Make pathname args absolute for outgoing mail and news messages.
-						      (hpath:absolute-arguments actype args mail-dir)
-						    args))))
-			     (hattr:set b 'creator (or creator hyperb:user-email))
-			     (hattr:set b 'create-time (or create-time (htz:date-sortable-gmt)))
-			     (hattr:set b 'modifier modifier)
-			     (hattr:set b 'mod-time mod-time))))
-	  ;; Ensure modified attributes are saved to `but-sym' or hbut:current.
-	  (hattr:copy b (or but-sym 'hbut:current))
-	  (cons hbdata lbl-instance))))))
-
-(defun hbdata:get-entry (lbl-key key-src &optional directory)
-  "Return button data entry given by LBL-KEY, KEY-SRC and optional DIRECTORY.
-Return nil if no matching entry is found.
-A button data entry is a list of attribute values.  Use methods from
-class `hbdata' to operate on the entry."
-  (hbdata:apply-entry
-   (lambda () (read (current-buffer)))
-   lbl-key key-src directory))
-
-(defun hbdata:instance-next (lbl-key)
-  "Return string for button instance number following LBL-KEY's.
-Nil if LBL-KEY is nil."
-  (and lbl-key
-       (if (string-match
-	    (concat (regexp-quote ebut:instance-sep) "[0-9]+$") lbl-key)
-	   (concat ebut:instance-sep
-		   (int-to-string
-		    (1+ (string-to-number
-			 (substring lbl-key (1+ (match-beginning 0)))))))
-	 ":2")))
-
-(defun hbdata:instance-last (lbl-key key-src &optional directory)
-  "Return highest instance number for repeated button label.
-1 if not repeated, nil if no instance.
-Utilize arguments LBL-KEY, KEY-SRC and optional DIRECTORY."
-  (hbdata:apply-entry
-   (lambda ()
-     (if (looking-at "[0-9]+")
-	 (string-to-number (match-string 0))
-       1))
-   lbl-key key-src directory nil 'instance))
-
 (defun hbdata:delete-entry (lbl-key key-src &optional directory)
   "Delete button data entry given by LBL-KEY, KEY-SRC and optional DIRECTORY.
 Return entry deleted (a list of attribute values) or nil.
@@ -287,6 +205,149 @@ If the hbdata buffer is blank/empty, kill it and remove the associated file."
 (defun hbdata:delete-entry-at-point ()
   (delete-region (point) (progn (forward-line 1) (point))))
 
+(defun hbdata:ebut-build (&optional mod-lbl-key but-sym new-lbl-key)
+  "Construct button data from optional MOD-LBL-KEY and BUT-SYM.
+Modify BUT-SYM attributes.  MOD-LBL-KEY nil means create a new
+entry, otherwise modify existing one.  Nil BUT-SYM means use
+`hbut:current'.  If successful, return a cons of
+ (button-data . button-instance-str), else nil."
+  (let* ((b (hattr:copy (or but-sym 'hbut:current) 'but))
+	 (l (hattr:get b 'loc))
+	 (key (or mod-lbl-key (hattr:get b 'lbl-key)))
+	 (new-key (or new-lbl-key (if mod-lbl-key (hattr:get b 'lbl-key) key)))
+	 (lbl-instance) (creator) (create-time) (modifier) (mod-time)
+	 (entry) loc dir)
+    (when l
+      (setq loc (if (bufferp l) l (file-name-nondirectory l))
+	    dir (if (bufferp l) nil (file-name-directory l)))
+      (when (setq entry (hbdata:to-entry key loc dir (not mod-lbl-key)))
+	(if mod-lbl-key
+	    (progn
+	      (setq creator     (hbdata:creator entry)
+		    create-time (hbdata:create-time entry)
+		    modifier    (let* ((user (hypb:user-name))
+				       (addr hyperb:user-email))
+				  (if (equal creator addr)
+				      user addr))
+		    mod-time    (htz:date-sortable-gmt)
+		    entry       (cons new-key (cdr entry)))
+	      (hbdata:delete-entry-at-point)
+	      (when (setq lbl-instance (hbdata:ebut-instance-last new-key loc dir))
+		(setq lbl-instance (concat hbut:instance-sep
+					   (int-to-string (1+ lbl-instance))))
+		;; This expression is needed to ensure that the highest
+		;; numbered instance of a label appears before
+		;; other instances, so 'hbdata:ebut-instance-last' will work.
+		(when (hbdata:to-entry-buf loc dir)
+		  (forward-line 1))))
+	  (let ((inst-num (hbdata:ebut-instance-last new-key loc dir)))
+	    (setq lbl-instance (when inst-num
+				 (hbdata:instance-next
+				  (concat new-key hbut:instance-sep
+					  (int-to-string inst-num))))))))
+      (when (or entry (not mod-lbl-key))
+	(hattr:set b 'lbl-key (concat new-key lbl-instance))
+	(hattr:set b 'loc loc)
+	(hattr:set b 'dir dir)
+	(let* ((actype)
+	       (hbdata (list (hattr:get b 'lbl-key)
+			     (hattr:get b 'action)
+			     ;; Hyperbole V1 referent compatibility, always nil in V2
+			     (hattr:get b 'referent)
+			     ;; Save actype without class prefix.
+			     (and (setq actype (hattr:get b 'actype))
+				  (symbolp actype)
+				  (setq actype (symbol-name actype))
+				  (intern
+				   (substring actype (if (string-match "::" actype)
+							 (match-end 0) 0))))
+			     (let ((mail-dir (and (fboundp 'hmail:composing-dir)
+						  (hmail:composing-dir l)))
+				   (args (hattr:get b 'args)))
+			       ;; Replace matches for variable values with their variable names in any pathname args.
+			       (hattr:set b 'args
+					  (mapcar #'hpath:substitute-var
+						  (if mail-dir
+						      ;; Make pathname args absolute for outgoing mail and news messages.
+						      (hpath:absolute-arguments actype args mail-dir)
+						    args))))
+			     (hattr:set b 'creator (or creator hyperb:user-email))
+			     (hattr:set b 'create-time (or create-time (htz:date-sortable-gmt)))
+			     (hattr:set b 'modifier modifier)
+			     (hattr:set b 'mod-time mod-time))))
+	  ;; Ensure modified attributes are saved to `but-sym' or hbut:current.
+	  (hattr:copy b (or but-sym 'hbut:current))
+	  (cons hbdata lbl-instance))))))
+
+(defun hbdata:ebut-instance-last (lbl-key key-src &optional directory)
+  "Return highest instance number for explicit button label.
+1 if not repeated, nil if no instance.
+Utilize arguments LBL-KEY, KEY-SRC and optional DIRECTORY."
+  (hbdata:apply-entry
+   (lambda ()
+     (if (looking-at "[0-9]+")
+	 (string-to-number (match-string 0))
+       1))
+   lbl-key key-src directory nil 'instance))
+
+(defun hbdata:get-entry (lbl-key key-src &optional directory)
+  "Return button data entry given by LBL-KEY, KEY-SRC and optional DIRECTORY.
+Return nil if no matching entry is found.
+A button data entry is a list of attribute values.  Use methods from
+class `hbdata' to operate on the entry."
+  (hbdata:apply-entry
+   (lambda () (read (current-buffer)))
+   lbl-key key-src directory))
+
+(defun hbdata:ibut-instance-next (name-key)
+  "Given NAME-KEY, return next ibutton instance number string for current buffer.
+If there is no existing ibutton with NAME-KEY, return t.
+
+With NAME-KEY nil or NAME-KEY `name' and no existing in-buffer ibutton
+with that name, return t.
+With NAME-KEY `name' and highest in-buffer ibutton `name:3',
+return ':4'."
+  (if (null name-key)
+      t
+    (let ((lbl-instance (hbdata:ibut-instance-last name-key)))
+      (if lbl-instance
+	  (concat hbut:instance-sep (int-to-string (1+ lbl-instance)))
+	t))))
+
+(defun hbdata:ibut-instance-last (name-key)
+  "Return highest instance number for implicit button NAME-KEY in current buffer.
+Instance number is returned as an integer.  Return 1 if NAME-KEY exists
+in the buffer but no other instances do; nil if no instance.
+
+With no match, return nil.
+With only `name' found, return 1.
+With `name' and `name:2' found, return 2."
+  (let ((key (car (ibut:label-sort-keys (ibut:label-key-match name-key)))))
+    (cond ((null key) nil)
+	  ((string-match (concat (regexp-quote hbut:instance-sep)
+				 "\\([0-9]+\\)\\'")
+			 key)
+	   (string-to-number (match-string 1 key)))
+	  (t 1))))
+
+(defun hbdata:instance-next (name-key)
+  "Return string for the next higher button instance number after NAME-KEY's.
+Return nil if NAME-KEY is nil.
+
+Given `name', return ':2'.  Given `name:2', return ':3'.
+
+This does not search any buffer for other instances; it uses the
+NAME-KEY string literally, so it must include any instance number
+to increment."
+  (and name-key
+       (if (string-match
+	    (concat (regexp-quote hbut:instance-sep) "[0-9]+$") name-key)
+	   (concat hbut:instance-sep
+		   (int-to-string
+		    (1+ (string-to-number
+			 (substring name-key (1+ (match-beginning 0)))))))
+	 ":2")))
+
 (defun hbdata:to-entry (but-key key-src &optional directory instance)
   "Return button data entry indexed by BUT-KEY, KEY-SRC, optional DIRECTORY.
 Return nil if entry is not found.  Leave point at start of entry when
@@ -317,7 +378,7 @@ Hbdata is given by LBL-KEY, KEY-SRC and optional DIRECTORY.
 With optional CREATE-FLAG, if no such line exists, insert a new file entry at
 the beginning of the hbdata file (which is created if necessary).
 INSTANCE-FLAG non-nil means search for any button instance matching LBL-KEY and
-call FUNC with point right after any `ebut:instance-sep' in match.
+call FUNC with point right after any `hbut:instance-sep' in match.
 Return value of evaluation when a matching entry is found or nil."
   (let (found
 	rtn
@@ -360,6 +421,11 @@ Return value of evaluation when a matching entry is found or nil."
 							    (hmail:hbdata-start))))))))
 	      (setq found (hbdata:to-entry-buf key-src directory create-flag)))
 	  (when found
+	    (unless buffer-file-name
+	      ;; Point must be left after hbdata separator or the logic
+	      ;; below could fail.  Buffer should be widened already.
+	      (goto-char (point-min))
+	      (search-forward hmail:hbdata-sep nil t))
 	    (let ((case-fold-search t)
 		  (qkey (regexp-quote lbl-key))
 		  (end (save-excursion (if (search-forward "\n\^L" nil t)
@@ -367,7 +433,7 @@ Return value of evaluation when a matching entry is found or nil."
 	      (if (if instance-flag
 		      (re-search-forward
 		       (concat "\n(\"" qkey "["
-			       ebut:instance-sep "\"]") end t)
+			       hbut:instance-sep "\"]") end t)
 		    (search-forward (concat "\n(\"" lbl-key "\"") end t))
 		  (progn
 		    (unless instance-flag
@@ -376,6 +442,72 @@ Return value of evaluation when a matching entry is found or nil."
 		      (setq rtn (funcall func)))))))
 	  (when end-func (funcall end-func)))))
     rtn))
+
+(defun hbdata:is-but-data-stored-in-buffer (key-src)
+  "True if we store but-data in the buffer rather than in a file."
+  ;; Drafts of mail messages now have a buffer-file-name since they
+  ;; are temporarily saved to a file until sent.  But but-data still
+  ;; should be stored in the mail buffer itself, so check explicitly
+  ;; whether is a mail composition buffer in such cases.
+  (or (hmail:mode-is-p)
+      (and (get-buffer key-src)
+           (set-buffer key-src)
+	   (not buffer-file-name))))
+
+(defun hbdata:to-entry-in-buffer (create)
+  "Move point to end of line in but data in current buffer.
+Note: Button buffer has no file attached.  With optional CREATE,
+if no such line exists, insert a new entry at the beginning of
+the hbdata (which is created if necessary).  Return t."
+  (if (hmail:hbdata-to-p) ;; Might change the buffer
+      (setq buffer-read-only nil)
+    (when create
+      (setq buffer-read-only nil)
+      (insert "\n" hmail:hbdata-sep "\n")))
+  (backward-char 1)
+  t)
+
+(defun hbdata:to-entry-in-file (key-src &optional directory create)
+  "Move point to end of line in but data buffer matching KEY-SRC.
+Use hbdata file in KEY-SRC's directory, or optional DIRECTORY or if nil, use
+`default-directory'.
+With optional CREATE, if no such line exists, insert a new file entry at the
+beginning of the hbdata file (which is created if necessary).
+Return non-nil if KEY-SRC is found or created, else nil."
+  (let (rtn
+	ln-dir)
+    (setq directory (or (file-name-directory key-src) directory))
+    (let ((ln-file) (link-p key-src))
+      (while (setq link-p (file-symlink-p link-p))
+	(setq ln-file link-p))
+      (if ln-file
+	  (setq ln-dir (file-name-directory ln-file)
+		key-src (file-name-nondirectory ln-file))
+	(setq key-src (file-name-nondirectory key-src))))
+    (when (or (hbdata:to-hbdata-buffer directory create)
+	      (and ln-dir (hbdata:to-hbdata-buffer ln-dir nil)
+		   (setq create nil
+			 directory ln-dir)))
+      (goto-char 1)
+      (cond ((search-forward (concat "\^L\n\"" key-src "\"")
+			     nil t)
+	     (setq rtn t))
+	    (create
+	     (setq rtn t)
+	     (insert "\^L\n\"" key-src "\"\n")
+	     (backward-char 1))))
+    rtn))
+
+(defun hbdata:to-entry-buf (key-src &optional directory create)
+  "Move point to end of line in but data buffer matching KEY-SRC.
+Use hbdata file in KEY-SRC's directory, or optional DIRECTORY or if nil, use
+`default-directory'.
+With optional CREATE, if no such line exists, insert a new file entry at the
+beginning of the hbdata file (which is created if necessary).
+Return non-nil if KEY-SRC is found or created, else nil."
+    (if (hbdata:is-but-data-stored-in-buffer key-src)
+        (hbdata:to-entry-in-buffer create)
+      (hbdata:to-entry-in-file key-src directory create)))
 
 (defun hbdata:to-hbdata-buffer (dir &optional create)
   "Read in the file containing DIR's button data, if any, and return buffer.
@@ -401,60 +533,13 @@ one and return buffer, otherwise return nil."
 	(hbmap:dir-add (file-name-directory file)))
       buf)))
 
-
-(defun hbdata:to-entry-buf (key-src &optional directory create)
-  "Move point to end of line in but data buffer matching KEY-SRC.
-Use hbdata file in KEY-SRC's directory, or optional DIRECTORY or if nil, use
-`default-directory'.
-With optional CREATE, if no such line exists, insert a new file entry at the
-beginning of the hbdata file (which is created if necessary).
-Return non-nil if KEY-SRC is found or created, else nil."
-  (let (rtn
-	ln-dir)
-    ;; Drafts of mail messages now have a buffer-file-name since they
-    ;; are temporarily saved to a file until sent.  But but-data still
-    ;; should be stored in the mail buffer itself, so check explicitly
-    ;; whether is a mail composition buffer in such cases.
-    (if (or (hmail:mode-is-p)
-	    (and (get-buffer key-src)
-		 (set-buffer key-src)
-		 (not buffer-file-name)))
-	;; Button buffer has no file attached
-	(progn (if (hmail:hbdata-to-p) ;; Might change the buffer
-		   (setq buffer-read-only nil)
-		 (setq buffer-read-only nil)
-		 (insert "\n" hmail:hbdata-sep "\n"))
-	       (backward-char 1)
-	       (setq rtn t))
-      (setq directory (or (file-name-directory key-src) directory))
-      (let ((ln-file) (link-p key-src))
-	(while (setq link-p (file-symlink-p link-p))
-	  (setq ln-file link-p))
-	(if ln-file
-	    (setq ln-dir (file-name-directory ln-file)
-		  key-src (file-name-nondirectory ln-file))
-	  (setq key-src (file-name-nondirectory key-src))))
-      (when (or (hbdata:to-hbdata-buffer directory create)
-		(and ln-dir (hbdata:to-hbdata-buffer ln-dir nil)
-		     (setq create nil
-			   directory ln-dir)))
-	(goto-char 1)
-	(cond ((search-forward (concat "\^L\n\"" key-src "\"")
-			       nil t)
-	       (setq rtn t))
-	      (create
-	       (setq rtn t)
-	       (insert "\^L\n\"" key-src "\"\n")
-	       (backward-char 1)))))
-    rtn))
-
-(defun hbdata:write (&optional orig-lbl-key but-sym)
+(defun hbdata:write (&optional orig-lbl-key but-sym new-lbl-key)
   "Try to write Hyperbole button data from optional ORIG-LBL-KEY and BUT-SYM.
 ORIG-LBL-KEY nil means create a new entry, otherwise modify existing one.
 BUT-SYM nil means use `hbut:current'.  If successful, return
 a button instance string to append to button label or t when first instance.
 On failure, return nil."
-  (let ((cons (hbdata:build orig-lbl-key but-sym))
+  (let ((cons (hbdata:ebut-build orig-lbl-key but-sym new-lbl-key))
 	entry lbl-instance)
     (unless (or (and buffer-file-name (not (file-writable-p buffer-file-name)))
 		(null cons))

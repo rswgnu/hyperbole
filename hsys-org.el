@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     2-Jul-16 at 14:54:14
-;; Last-Mod:      6-Feb-23 at 09:53:31 by Mats Lidell
+;; Last-Mod:      3-Oct-23 at 17:07:24 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -34,8 +34,29 @@
 (require 'hbut)
 (require 'org)
 (require 'org-element)
+(require 'org-fold nil t)
 ;; Avoid any potential library name conflict by giving the load directory.
 (require 'set (expand-file-name "set" hyperb:dir))
+
+;;; ************************************************************************
+;;; Public declarations
+;;; ************************************************************************
+
+;; `org-show-context' is obsolete as of Org 9.6, use `org-fold-show-context'
+;; instead.
+(unless (fboundp #'org-fold-show-context)
+  (with-suppressed-warnings ((obsolete org-show-context))
+    (defalias 'org-fold-show-context #'org-show-context)))
+
+(defvar hyperbole-mode-map)             ; "hyperbole.el"
+
+(declare-function smart-eobp "hui-mouse")
+(declare-function smart-eolp "hui-mouse")
+(declare-function hargs:read-match "hargs")
+(declare-function symset:add "hact")
+(declare-function symtable:add "hact")
+(declare-function action-key "hmouse-drv")
+(declare-function hkey-either "hmouse-drv")
 
 ;;;###autoload
 (defun hsys-org-meta-return-shared-p ()
@@ -139,10 +160,32 @@ an error."
       (and (boundp 'outshine-mode) outshine-mode)
       (and (boundp 'poporg-mode) poporg-mode)))
 
+;;;###autoload
+(defun hsys-org-at-read-only-p ()
+  "Return non-nil if point is in an Org read-only context."
+  (and (derived-mode-p 'org-mode)
+       (featurep 'hsys-org)
+       (or (hsys-org-src-block-start-at-p)
+	   (hsys-org-block-start-at-p)
+	   (let ((contexts (org-context)))
+	     (and contexts
+		  (delq nil (mapcar (lambda (ctxt) (assq ctxt contexts))
+				    '(:checkbox
+				      :headline-stars
+				      :item-bullet
+				      :keyword
+				      :link
+				      :priority
+				      :table-special
+				      :tags
+				      :todo-keyword))))))))
+
 (defun hsys-org-cycle ()
   "Call `org-cycle' and set as `this-command' to cycle through all states."
   (setq this-command 'org-cycle)
-  (org-cycle))
+  (save-excursion
+    (org-back-to-heading)
+    (org-cycle)))
 
 (defun hsys-org-get-value (attribute)
   "Within the current Org context, return the ATTRIBUTE value."
@@ -156,7 +199,9 @@ an error."
 (defun hsys-org-global-cycle ()
   "Call `org-global-cycle' and set as `this-command' to cycle through all states."
   (setq this-command 'org-cycle)
-  (org-global-cycle nil))
+  (save-excursion
+    (org-back-to-heading)
+    (org-global-cycle nil)))
 
 (defun hsys-org-todo-cycle ()
   "Call `org-todo' and set as `this-command' to cycle through all states."
@@ -219,29 +264,9 @@ Return the (start . end) buffer positions of the region."
   "Return non-nil iff point is on an Org mode link.
 Assume caller has already checked that the current buffer is in `org-mode'
 or are looking for an Org link in another buffer type."
-  ;; If any Org test fails, just return nil
   (unless (or (smart-eolp) (smart-eobp))
-    (condition-case ()
-	(let* ((context
-		;; Only consider supported types, even if they are not
-		;; the closest one.
-		(org-element-lineage
-		 ;; Next line can trigger an error when `looking-at' is called
-		 ;; with a `nil' value of `org-complex-heading-regexp'.
-		 (org-element-context)
-		 '(clock footnote-definition footnote-reference headline
-			 inlinetask link timestamp)
-		 t))
-	       (type (org-element-type context)))
-	  (or (eq type 'link)
-	      (and (boundp 'org-link-bracket-re)
-		   (org-in-regexp org-link-bracket-re))
-	      (and (boundp 'org-bracket-link-regexp)
-		   (org-in-regexp org-bracket-link-regexp))
-	      (and (boundp 'org-target-link-regexp)
-		   (not (null org-target-link-regexp))
-		   (org-in-regexp org-target-link-regexp))))
-      (error nil))))
+    (with-suppressed-warnings nil
+      (org-in-regexp org-link-any-re nil t))))
 
 ;; Assume caller has already checked that the current buffer is in org-mode.
 (defun hsys-org-heading-at-p (&optional _)
@@ -251,10 +276,10 @@ or are looking for an Org link in another buffer type."
 
 ;; Assume caller has already checked that the current buffer is in org-mode.
 (defun hsys-org-target-at-p ()
-  "Return non-nil iff point is on an Org radio target or radio target link.
-The radio target is the definition and the radio target link is
-the referent.  Assume caller has already checked that the current
-buffer is in `org-mode'."
+  "Return non-nil iff point is on an Org target or target link.
+The target is the definition and the target link is the referent.
+Assume caller has already checked that the current buffer is in
+`org-mode'."
   (hsys-org-face-at-p 'org-target))
 
 ;; Assume caller has already checked that the current buffer is in org-mode.
@@ -269,7 +294,6 @@ Assume caller has already checked that the current buffer is in `org-mode'."
 Link region is (start . end) and includes delimiters, else nil."
   (and (hsys-org-face-at-p 'org-link)
        (equal (get-text-property (point) 'help-echo) "Radio target link")
-       (hsys-org-link-at-p)
        (hsys-org-region-with-text-property-value (point) 'face)))
 
 (defun hsys-org-radio-target-def-at-p ()
@@ -320,15 +344,15 @@ The region is (start . end) and includes any delimiters, else nil."
 
 (defun hsys-org-face-at-p (org-face-type)
   "Return ORG-FACE-TYPE iff point is on a character with that face, else nil.
-  ORG-FACE-TYPE must be a symbol, not a symbol name."
-  
+ORG-FACE-TYPE must be a symbol, not a symbol name."
   (let ((face-prop (get-text-property (point) 'face)))
     (when (or (eq face-prop org-face-type)
 	      (and (listp face-prop) (memq org-face-type face-prop)))
       org-face-type)))
 
+;; Adapted from Org code
 (defun hsys-org-search-internal-link-p (target)
-  "Search buffer start for the first Org internal link to matching <<TARGET>>.
+  "Search buffer start for the first Org internal link matching <<TARGET>>.
 White spaces are insignificant.  Return t if a link is found, else nil."
   (when (string-match "<<.+>>" target)
     (setq target (substring target 2 -2)))
@@ -342,14 +366,13 @@ White spaces are insignificant.  Return t if a link is found, else nil."
 	(backward-char)
 	(let ((object (org-element-context)))
 	  (when (eq (org-element-type object) 'link)
-	    (if (fboundp 'org-fold-show-context) ;; From Org 9.6
-                (org-fold-show-context 'link-search)
-              (org-show-context 'link-search))
+            (org-fold-show-context 'link-search)
 	    (goto-char (or (previous-single-property-change (point) 'face) (point-min)))
 	    (throw :link-match t))))
       (goto-char origin)
       nil)))
 
+;; Adapted from Org code
 (defun hsys-org-search-radio-target-link-p (target)
   "Search from point for a radio target link matching TARGET.
 White spaces are insignificant.  Return t if a target link is found, else nil."
@@ -364,9 +387,7 @@ White spaces are insignificant.  Return t if a target link is found, else nil."
 	(backward-char)
 	(let ((object (org-element-context)))
 	  (when (eq (org-element-type object) 'link)
-	    (if (fboundp 'org-fold-show-context) ;; From Org 9.6
-                (org-fold-show-context 'link-search)
-              (org-show-context 'link-search))
+            (org-fold-show-context 'link-search)
 	    (throw :radio-match t))))
       (goto-char origin)
       nil)))
@@ -378,7 +399,6 @@ White spaces are insignificant.  Return t if a target link is found, else nil."
 		     (ibut:label-to-key
 		      (buffer-substring-no-properties (car start-end) (cdr start-end))))
 		    (car start-end) (cdr start-end))))
-
 
 (defun hsys-org-to-next-radio-target-link (target)
   "Move to the start of the next radio TARGET link if found.

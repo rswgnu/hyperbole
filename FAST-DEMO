@@ -3,31 +3,69 @@
   Send an email or a testimonial if you like Hyperbole to <rsw@gnu.org>.
 
   This demo is the fast way to get started with Hyperbole after installation.
-  The prior, lengthier Hyperbole demo/tutorial can be found in this file:
-  "DEMO".
+  The prior, lengthier Hyperbole demo/tutorial can be found in this file: "DEMO".
 
 * Introductory Videos
 
-  If you prefer video introductions, visit the videos linked to below;
-  otherwise, skip to the next section.
+  If you prefer video introductions, visit the videos linked to in the tables below;
+  otherwise, skip to the next section.  The first table is an overview talk of
+  Hyperbole broken into few minute sections that you can watch individually.  The
+  second table has links to separate videos covering aspects of Hyperbole.
+
+  Hyperbole video demos start with 'section 06 - Hyperbole Buttons' in this first
+  table.  Press {M-RET} either in the first column <[button name]> or in the second
+  column video link to watch each section.
+  
+  |--------------------------------------+-----------------------------------------|
+  | Hyperbole Video Overview Sections    | Video Snippets                          |
+  |--------------------------------------+-----------------------------------------|
+  |--------------------------------------+-----------------------------------------|
+  | 01. <[Introduction]>                 | <yt-play "WKwZHSbHmPg" "0:01" "1:38">   |
+  | 02. <[Hyperbole Mission]>            | <yt-play "WKwZHSbHmPg" "1:39" "2:43">   |
+  | 03. <[Why Use Hyperbole]>            | <yt-play "WKwZHSbHmPg" "2:44" "4:34">   |
+  | 04. <[Components]>                   | <yt-play "WKwZHSbHmPg" "4:35" "7:30">   |
+  | 05. <[Installation & Use]>           | <yt-play "WKwZHSbHmPg" "7:31" "8:35">   |
+  | 06. <[Hyperbole Buttons]>            | <yt-play "WKwZHSbHmPg" "8:36" "10:03">  |
+  | 07. <[Button Categories & Files]>    | <yt-play "WKwZHSbHmPg" "10:04" "12:25"> |
+  | 08. <[Implicit Buttons]>             | <yt-play "WKwZHSbHmPg" "12:26" "20:03"> |
+  | 09. <[Implicit Button Types]>        | <yt-play "WKwZHSbHmPg" "20:04" "21:47"> |
+  | 10. <[Explicit Buttons]>             | <yt-play "WKwZHSbHmPg" "21:48" "33:28"> |
+  | 11. <[Global Buttons]>               | <yt-play "WKwZHSbHmPg" "33:29" "36:08"> |
+  | 12. <[Mouse Keys/Buttons]>           | <yt-play "WKwZHSbHmPg" "36:09" "36:55"> |
+  | 13. <[Mouse Drags & Treemacs]>       | <yt-play "WKwZHSbHmPg" "36:56" "38:00"> |
+  | 14. <[Window Grids & Throws]>        | <yt-play "WKwZHSbHmPg" "38:01" "39:45"> |
+  | 15. <[The Find Menu]>                | <yt-play "WKwZHSbHmPg" "39:46" "41:14"> |
+  | 16. <[The Koutliner]>                | <yt-play "WKwZHSbHmPg" "41:15" "47:09"> |
+  | 17. <[HyRolo]>                       | <yt-play "WKwZHSbHmPg" "47:10" "49:04"> |
+  | 18. <[HyControl & Org Mode]>         | <yt-play "WKwZHSbHmPg" "49:05" "50:33"> |
+  | 19. <[Integrations]>                 | <yt-play "WKwZHSbHmPg" "50:34" "50:58"> |
+  | 20. <[Hyperbole History]>            | <yt-play "WKwZHSbHmPg" "50:59" "53:28"> |
+  | 21. <[Acknowledgements & Resources]> | <yt-play "WKwZHSbHmPg" "53:29" "54:24"> |
+  | 22. <[The Big Picture]>              | <yt-play "WKwZHSbHmPg" "54:25" "56:44"> |
+  |--------------------------------------+-----------------------------------------|
 
   |-----------------------------------------------------+------------------------------|
   | GNU Hyperbole Videos                                | Web Link                     |
   |-----------------------------------------------------+------------------------------|
   |-----------------------------------------------------+------------------------------|
-  | Overview and Demo                                   | https://youtu.be/WKwZHSbHmPg |
-  |   Covers all of Hyperbole                           |                              |
-  |   Hyperlink timestamps to watch each short section  |                              |
+  | <[Overview and Demo]>                               | https://youtu.be/WKwZHSbHmPg |
+  |     Sections broken out in the prior table          |                              |
   |-----------------------------------------------------+------------------------------|
-  | Quick Introduction                                  | https://youtu.be/K1MNUctggwI |
+  | <[Quick Introduction]>                              | https://youtu.be/K1MNUctggwI |
   |-----------------------------------------------------+------------------------------|
-  | Introduction to Buttons                             | https://youtu.be/zoEht66N2PI |
+  | <[Introduction to Buttons]>                         | https://youtu.be/zoEht66N2PI |
   |-----------------------------------------------------+------------------------------|
-  | HyRolo, the fast contact/hierarchical record viewer | https://youtu.be/xdJGFdgKPFY |
+  | <[Linking Personal Info with Implicit Buttons]>     | https://youtu.be/TQ_fG7b1iHI |
   |-----------------------------------------------------+------------------------------|
-  | HyControl, the fast Emacs frame and window manager  | https://youtu.be/M3-aMh1ccJk |
+  | <[Powerful Productivity with Hyperbole and Org]>    | https://youtu.be/BrTpTNEXMyY |
   |-----------------------------------------------------+------------------------------|
-  | Find/Web Search                                     | https://youtu.be/8lMlJed0-OM |
+  | <[HyRolo, fast contact/hierarchical record viewer]> | https://youtu.be/xdJGFdgKPFY |
+  |-----------------------------------------------------+------------------------------|
+  | <[Build a Zettelkasten with HyRolo]>                | https://youtu.be/HdlCK9w-LyQ |
+  |-----------------------------------------------------+------------------------------|
+  | <[HyControl, fast Emacs frame and window manager]>  | https://youtu.be/M3-aMh1ccJk |
+  |-----------------------------------------------------+------------------------------|
+  | <[Find/Web Search]>                                 | https://youtu.be/8lMlJed0-OM |
   |-----------------------------------------------------+------------------------------|
 
 
@@ -72,6 +110,13 @@
   {C-h A} (the A must be capitalized) on any Hyperbole button to see exactly
   what it does prior to activating it.
 
+  You can simply type implicit buttons into a buffer or you can use {C-h h i
+  c} to create them and give them names.  To create an implicit link button
+  from a buffer in one window to another, simply depress the Assist Mouse
+  Key where you want the new button (but not within a draggable item), drag
+  to a point in another Emacs window and release.  An implicit link button
+  of an appropriate type for the release context will be inserted at the
+  original depress point.
 
 * Pathname Implicit Buttons
 
@@ -238,7 +283,9 @@ pspell-config(1)         - prints information about a libpspell installation
        the associated man documentation page.
 
 
-* Action Buttons (generalized form of implicit buttons)
+* Action Buttons
+
+  These are a generalized form of implicit buttons.
 
   If you know your way around Emacs Lisp and want to quickly turn snippets of
   Lisp code or Lisp variables into Hyperbole buttons, just remove any outer
@@ -314,9 +361,9 @@ learn how to create new kinds of implicit button and action types, see:
     or show different views of bodies of information.  Unlike HTML
     hyperbuttons, there is no markup language to learn nor specific document
     format required.  You can create explicit buttons with simple keyboard
-    presses or mouse drags from one window to another; See the {C-h h e} menu
-    for explicit button commands.  See "DEMO#Explicit Buttons" or
-    "(hyperbole)Explicit Buttons" for more detail.
+    presses or mouse drags from one window to another (when not on a draggable
+    item).  See the {C-h h e} menu for explicit button commands.  See
+    "DEMO#Explicit Buttons" or "(hyperbole)Explicit Buttons" for more detail.
 
     `Global buttons' are labeled Hyperbole buttons in your personal button
     file, {C-h h b p}.  All global buttons are activated by name with

@@ -14,18 +14,26 @@ If you prefer video introductions, visit the videos linked to below;
 otherwise, skip to the next section.
 
    - [Overview and Demo](https://youtu.be/WKwZHSbHmPg)
-      Covers all of Hyperbole
+      Long video that covers most of Hyperbole;
       Hyperlink timestamps to watch each section
 
    - [Quick Introduction](https://youtu.be/K1MNUctggwI)
 
    - [Introduction to Buttons](https://youtu.be/zoEht66N2PI)
 
+   - [Linking Personal Info with Implicit Buttons](https://emacsconf.org/2022/talks/buttons/)
+
+   - [Powerful Productivity with Hyperbole and Org Mode](https://emacsconf.org/2022/talks/hyperorg/)
+
    - [HyRolo, fast contact/hierarchical record viewer](https://youtu.be/xdJGFdgKPFY)
+
+   - [Build a Zettelkasten with HyRolo](https://emacsconf.org/2022/talks/rolodex/)
 
    - [HyControl, fast Emacs frame and window manager](https://youtu.be/M3-aMh1ccJk)
 
    - [Find/Web Search](https://youtu.be/8lMlJed0-OM)
+
+   - [Linking personal info with implicit buttons](https://youtu.be/TQ_fG7b1iHI)
 
 ## Summary
 
@@ -84,22 +92,24 @@ In short, Hyperbole lets you:
       A single key or mouse button automatically does the right thing in
       dozens of contexts; just press and go.
 
+<img src="man/im/action-key-animation.gif" alt="Hyperbole Animation of Action Key Contexts">
+
    3. Build outlines with multi-level numbered outline nodes, e.g. 1.4.8.6,
       that all renumber automatically as any node or tree is moved in the
       outline.  Each node also has a permanent hyperlink anchor that you can
       reference from any other node;
 
    4. Manage all your contacts or record-based, unstructured nodes quickly
-	  with hierarchical categories; each entry can have embedded
-	  hyperbuttons of any type.  Or create an archive of documents with
-	  hierarchical entries and use the same search mechanism to quickly find
-	  any matching entry;
+      with hierarchical categories; each entry can have embedded
+      hyperbuttons of any type.  Or create an archive of documents with
+      hierarchical entries and use the same search mechanism to quickly find
+      any matching entry;
 
    5. Use single keys to easily manage your Emacs windows or frames and
       quickly retrieve saved window and frame configurations;
 
    6. Search for things in your current buffers, in a directory tree or
-	  across major web search engines with the touch of a few keys.
+      across major web search engines with the touch of a few keys.
 
 The common thread in all these features is making retrieval,
 management and display of information fast and easy.  That is
@@ -127,6 +137,10 @@ term in here is new or unfamiliar to you, you can look it up in the
 
 Hyperbole is available for [download and installation](#installation)
 through the GNU Emacs package manager.
+
+Unlock the power of GNU Hyperbole to make your information work for you.
+One system.  One language.  One manual.  One solution.  Learn Hyperbole and
+start moving further, faster.
 
 ## Mailing Lists
 

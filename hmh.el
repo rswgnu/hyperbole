@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-May-91 at 17:06:36
-;; Last-Mod:      9-May-22 at 22:36:31 by Bob Weiner
+;; Last-Mod:      3-Oct-23 at 22:18:35 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -35,6 +35,12 @@
 
 (eval-and-compile (mapc #'require '(hload-path hmail mh-e)))
 (load "hsmail")
+
+;;; ************************************************************************
+;;; Public declarations
+;;; ************************************************************************
+
+(declare-function hypb:window-list "hypb")
 
 ;;; ************************************************************************
 ;;; Public functions

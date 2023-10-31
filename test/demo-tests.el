@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    30-Jan-21 at 12:00:00
-;; Last-Mod:     19-Feb-23 at 23:16:00 by Mats Lidell
+;; Last-Mod:      2-Oct-23 at 05:04:10 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -231,12 +231,12 @@
 		   (string-match-p "hactypes\\.el"  hactypes-buf)
 		   (string-match-p "hibtypes\\.el"  hibtypes-buf))))))
 
-(ert-deftest demo-implicit-button-action-button-boolean-function-call-test ()
+(ert-deftest demo-implicit-button-action-button-display-boolean-test ()
   (with-temp-buffer
     (insert "<string-empty-p \"False\">")
     (goto-char 2)
     (action-key)
-    (hy-test-helpers:should-last-message "Boolean result (False) = nil")))
+    (hy-test-helpers:should-last-message "Result = nil; Boolean value = False")))
 
 (ert-deftest demo-implicit-button-action-button-variable-display-test ()
   (with-temp-buffer
@@ -307,9 +307,12 @@
         (should (string= "*mail*" (buffer-name))))
     (hy-test-helpers:kill-buffer "*mail*")))
 
+(defvar hypb-should-browse-demo-was-called nil
+  "If non nil if the should-browse function was called.")
 
 (defun demo-should-browse-twitter-url (url &optional new-window)
   "Verify call with proper URL and optional NEW-WINDOW."
+  (setq hypb-should-browse-demo-was-called t)
   (should (equal url "https://twitter.com/search?q=@fsf"))
   (should (equal new-window nil)))
 
@@ -318,12 +321,14 @@
   (with-temp-buffer
     (insert "tw@fsf")
     (goto-char 2)
-    (let ((browse-url-browser-function 'demo-should-browse-twitter-url))
-      (action-key))))
-
+    (let ((browse-url-browser-function 'demo-should-browse-twitter-url)
+          (hypb-should-browse-demo-was-called nil))
+      (action-key)
+      (should hypb-should-browse-demo-was-called))))
 
 (defun demo-should-browse-github-url (url &optional new-window)
   "Verify call with proper URL and optional NEW-WINDOW."
+  (setq hypb-should-browse-demo-was-called t)
   (should (equal url "https://github.com/rswgnu/hyperbole"))
   (should (equal new-window nil)))
 
@@ -333,8 +338,24 @@
     (insert "https://github.com/rswgnu/hyperbole")
     (goto-char 4)
     (let ((browse-url-browser-function 'demo-should-browse-github-url)
-          (hibtypes-github-default-user "rswgnu"))
-      (action-key))))
+          (hibtypes-github-default-user "rswgnu")
+          (hypb-should-browse-demo-was-called nil))
+      (action-key)
+      (should hypb-should-browse-demo-was-called))))
+
+(ert-deftest demo-www-test-with-quotes ()
+  (let ((file (make-temp-file "hypb_" nil)))
+    (unwind-protect
+        (progn
+          (find-file file)
+          (insert "\"https://github.com/rswgnu/hyperbole\"")
+          (goto-char 4)
+          (let ((browse-url-browser-function 'demo-should-browse-github-url)
+                (hibtypes-github-default-user "rswgnu")
+                (hypb-should-browse-demo-was-called nil))
+            (action-key)
+            (should hypb-should-browse-demo-was-called)))
+      (hy-delete-file-and-buffer file))))
 
 ;; Github
 (ert-deftest demo-github-user-default-test ()
@@ -342,16 +363,20 @@
     (insert "gh#/hyperbole")
     (goto-char 4)
     (let ((browse-url-browser-function 'demo-should-browse-github-url)
-          (hibtypes-github-default-user "rswgnu"))
-      (action-key))))
+          (hibtypes-github-default-user "rswgnu")
+          (hypb-should-browse-demo-was-called nil))
+      (action-key)
+      (should hypb-should-browse-demo-was-called))))
 
 (ert-deftest demo-github-ignore-default-test ()
   (with-temp-buffer
     (insert "gh#/rswgnu/hyperbole")
     (goto-char 4)
     (let ((browse-url-browser-function 'demo-should-browse-github-url)
-          (hibtypes-github-default-user "whatever"))
-      (action-key))))
+          (hibtypes-github-default-user "whatever")
+          (hypb-should-browse-demo-was-called nil))
+      (action-key)
+      (should hypb-should-browse-demo-was-called))))
 
 ;; Occur
 (ert-deftest demo-occur-test ()
@@ -366,19 +391,6 @@
     (progn
       (hy-test-helpers:kill-buffer "DEMO")
       (hy-test-helpers:kill-buffer "*Occur*"))))
-
-;; Annotated references
-(ert-deftest demo-annotated-reference-test ()
-  (unwind-protect
-      (progn
-        (hypb:display-file-with-logo "DEMO")
-        (re-search-forward "\\[FSF 19\\]")
-        (backward-char 1)
-        (action-key)
-        (should (looking-at "\\[FSF 19\\] Free Software Foundation"))
-        (forward-line -2)
-        (should (looking-at "\\* References")))
-    (hy-test-helpers:kill-buffer "DEMO")))
 
 ;; Man appropos
 (ert-deftest demo-man-appropos-test ()
@@ -414,13 +426,16 @@
 ;; Fast demo key series
 (ert-deftest fast-demo-key-series-help-buffer ()
   "Action key on C-hA brings up help buffer for action key."
-  (let ((help-buffer "*Help: Hyperbole Action Key*"))
+  (let ((help-buffer "*Help: Hyperbole Action Key*")
+	(help-window-select t))
     (unwind-protect
         (with-temp-buffer
           (insert "{C-h A}")
           (goto-char 3)
           (action-key)
-          (should (get-buffer help-buffer)))
+	  (if (get-buffer help-buffer)
+              (should (get-buffer help-buffer))
+	    (should (print (current-buffer)))))
       (hy-test-helpers:kill-buffer help-buffer))))
 
 (ert-deftest fast-demo-key-series-window-grid-22 ()
@@ -490,7 +505,7 @@ enough files with matching mode loaded."
       (hy-test-helpers:kill-buffer buff)
       (global-set-key (kbd "C-x C-b") old)
       (hy-test-helpers:kill-buffer (get-file-buffer tmp))
-      (delete-file tmp))))
+      (hy-delete-file-and-buffer tmp))))
 
 (ert-deftest fast-demo-key-series-keep-lines-slash ()
   "Action key opens Ibuffer and keep lines that contains a slash."
@@ -550,8 +565,9 @@ enough files with matching mode loaded."
                 (accept-process-output (get-buffer-process shell-buffer-name))))
             (should (looking-at-p (directory-file-name hyperb:dir)))))
       (unless existing-shell-flag
-	(set-process-query-on-exit-flag (get-buffer-process shell-buffer-name) nil)
-	(hy-test-helpers:kill-buffer shell-buffer-name)))))
+	(when (get-buffer-process shell-buffer-name)
+	  (set-process-query-on-exit-flag (get-buffer-process shell-buffer-name) nil)
+	  (hy-test-helpers:kill-buffer shell-buffer-name))))))
 
 (ert-deftest fast-demo-key-series-shell-grep ()
   "Action key executes grep shell command."
@@ -571,8 +587,9 @@ enough files with matching mode loaded."
                 (accept-process-output (get-buffer-process shell-buffer-name))))
             (should (string-match-p "\n.*\\.el:[0-9]+:.*defun.*gbut:label-list ()" (buffer-substring-no-properties (point-min) (point-max))))))
       (unless existing-shell-flag
-	(set-process-query-on-exit-flag (get-buffer-process shell-buffer-name) nil)
-	(hy-test-helpers:kill-buffer shell-buffer-name)))))
+	(when (get-buffer-process shell-buffer-name)
+	  (set-process-query-on-exit-flag (get-buffer-process shell-buffer-name) nil)
+	  (hy-test-helpers:kill-buffer shell-buffer-name))))))
 
 (ert-deftest fast-demo-key-series-shell-apropos ()
   "Action key executes apropos shell command."
@@ -592,8 +609,9 @@ enough files with matching mode loaded."
                 (accept-process-output (get-buffer-process shell-buffer-name))))
             (should (string-match-p "grep ?(1).*-" (buffer-substring-no-properties (point-min) (point-max))))))
       (unless existing-shell-flag
-	(set-process-query-on-exit-flag (get-buffer-process shell-buffer-name) nil)
-	(hy-test-helpers:kill-buffer shell-buffer-name)))))
+	(when (get-buffer-process shell-buffer-name)
+	  (set-process-query-on-exit-flag (get-buffer-process shell-buffer-name) nil)
+	  (hy-test-helpers:kill-buffer shell-buffer-name))))))
 
 (ert-deftest fast-demo-key-series-shell-cd-hyperb-dir-view-mode ()
   "Action key executes cd shell command from buffer in `view-mode`."
@@ -616,8 +634,9 @@ enough files with matching mode loaded."
                 (accept-process-output (get-buffer-process shell-buffer-name))))
             (should (looking-at-p (directory-file-name hyperb:dir)))))
       (unless existing-shell-flag
-	(set-process-query-on-exit-flag (get-buffer-process shell-buffer-name) nil)
-	(hy-test-helpers:kill-buffer shell-buffer-name)))))
+	(when (get-buffer-process shell-buffer-name)
+	  (set-process-query-on-exit-flag (get-buffer-process shell-buffer-name) nil)
+	  (hy-test-helpers:kill-buffer shell-buffer-name))))))
 
 (ert-deftest fast-demo-key-series-shell-grep-view-mode ()
   "Action key executes grep shell command from buffer in `view-mode`."
@@ -638,8 +657,9 @@ enough files with matching mode loaded."
                 (accept-process-output (get-buffer-process shell-buffer-name))))
             (should (string-match-p "\n.*\\.el:[0-9]+:.*defun.*gbut:label-list ()" (buffer-substring-no-properties (point-min) (point-max))))))
       (unless existing-shell-flag
-	(set-process-query-on-exit-flag (get-buffer-process shell-buffer-name) nil)
-	(hy-test-helpers:kill-buffer shell-buffer-name)))))
+	(when (get-buffer-process shell-buffer-name)
+	  (set-process-query-on-exit-flag (get-buffer-process shell-buffer-name) nil)
+	  (hy-test-helpers:kill-buffer shell-buffer-name))))))
 
 ;; This file can't be byte-compiled without the `el-mock' package (because of
 ;; the use of the `with-mock' macro), which is not a dependency of Hyperbole.

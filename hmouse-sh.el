@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     3-Sep-91 at 21:40:58
-;; Last-Mod:     16-Oct-22 at 19:32:50 by Mats Lidell
+;; Last-Mod:      3-Oct-23 at 22:50:40 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -33,6 +33,21 @@
 (defvar java-class-def-name-grpn)
 (defvar java-class-def-regexp)
 (defvar jedi-mode)
+
+(defvar hmouse-bindings-flag)           ; "hmouse-key.el"
+(defvar hmouse-previous-bindings)       ; "hmouse-key.el"
+(defvar hmouse-set-point-command)       ; "hui-mouse.el"
+(defvar hmouse-bindings)                ; "hmouse-key.el"
+(defvar hmouse-bindings-flag)           ; "hmouse-key.el"
+
+(defvar Info-mode-map)
+
+(declare-function action-key-depress-emacs "hmouse-drv")
+(declare-function action-mouse-key-emacs "hmouse-drv")
+(declare-function assist-key-depress-emacs "hmouse-drv")
+(declare-function assist-mouse-key-emacs "hmouse-drv")
+(declare-function action-key-depress "hmouse-drv")
+(declare-function hkey-set-key "hyperbole")
 
 ;;; ************************************************************************
 ;;; Public functions
@@ -401,13 +416,19 @@ Select the corresponding window as well."
     (unless (windowp (posn-window position))
       (error "Position not in text area of window"))
     (select-window (posn-window position)))
-  (when (numberp (posn-point position))
-    (goto-char (posn-point position))))
+  (let ((pos-point (posn-point position)))
+    ;; Need all these checks for vertico-mode
+    (when (and (numberp pos-point)
+	       (>= pos-point (point-min))
+	       (<= pos-point (point-max)))
+      (goto-char pos-point))))
 
 ;; Based on mouse-drag-region from Emacs mouse.el.
 (defun hmouse-drag-region (start-event)
   "Set the region to the text that the mouse is dragged over.
-If not the start of a region drag-and-drop, then depress the Action Key.
+If not the start of a region drag-and-drop, and hyperbole-mode is
+enabled, then depress the Action Key.
+
 Highlight the drag area as you move the mouse.
 This must be bound to a button-down mouse event.
 In Transient Mark mode, the highlighting remains as long as the mark
@@ -423,7 +444,8 @@ is dragged over to."
       (mouse-drag-and-drop-region start-event)
     ;; Give temporary modes such as isearch a chance to turn off.
     (run-hooks 'mouse-leave-buffer-hook)
-    (action-key-depress start-event)
+    (when hyperbole-mode
+      (action-key-depress start-event))
     (mouse-drag-track start-event)))
 
 ;; Based on a function from Emacs mouse.el.

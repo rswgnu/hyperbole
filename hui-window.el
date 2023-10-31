@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Sep-92
-;; Last-Mod:      7-Oct-22 at 23:39:57 by Mats Lidell
+;; Last-Mod:      3-Oct-23 at 17:04:04 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -18,59 +18,8 @@
 ;;
 ;;   Handles drags in same window or across windows and modeline presses.
 ;;
-;; What drags and modeline presses do.  (Note that a `thing' is a
-;; delimited expression, such as a string, list or markup language tag pair).
-;; ======================================================================================================
-;;                                              Smart Keys
-;; Context                         Action Key                  Assist Key
-;; ======================================================================================================
-;; Drag from thing start or end    Yank thing at release       Kill thing and yank at release
-;;
-;; Drag from bottom Modeline       Reposition frame as         <- same
-;; in frame with non-nil           drag happens
-;; drag-with-mode-line param
-
-;; Drag from shared window side
-;;   or from left of scroll bar    Resize window width         <- same
-;; Modeline vertical drag          Resize window height        <- same
-;;
-;; Other Modeline drag to          Replace dest. buffer with   Swap window buffers
-;;   another window                  source buffer
-;;
-;; Drag to a Modeline from:
-;;   buffer/file menu item         Display buffer/file in      Swap window buffers
-;;                                   new window by release
-;;   buffer/file menu 1st line     Move buffer/file menu to    Swap window buffers
-;;                                   new window by release
-;;   anywhere else                 Display buffer in           Swap window buffers
-;;                                   new window by release
-;;
-;; Drag between windows from:
-;;   buffer/file menu item         Display buffer/file in      Swap window buffers
-;;                                   window of button release
-;;   buffer/file menu 1st line     Move buffer/file menu       Swap window buffers
-;;   anywhere else                 Create/edit a link button   Swap window buffers
-;;
-;; Drag outside of Emacs from:
-;;   buffer/file menu item         Display buffer/file in      Move window to a new frame
-;;                                   a new frame
-;;   Modeline or other window      Clone window to a new frame Move window to a new frame
-;;
-;; Click in modeline
-;;     Left modeline edge          Bury buffer                 Unbury bottom buffer
-;;     Right modeline edge         Info                        Smart Key Summary
-;;     Buffer ID                   Dired on buffer's dir       Next buffer
-;;                                   or on parent when a dir
-;;     Other blank area            Action Key modeline hook    Assist Key modeline hook
-;;                                   Show/Hide Buffer Menu      Popup Jump & Manage Menu
-;;
-;; Drag in a window, region active Error, not allowed          Error, not allowed
-;; Drag horizontally in a window   Split window below          Delete window
-;; Drag vertically in a window     Split window side-by-side   Delete window
-;; Drag diagonally in a window     Save window-config          Restore window-config from ring
-;;
-;; Active region exists, click     Yank region at release      Kill region and yank at release
-;;   outside of the region
+;;   The Action and Assist Key specifics per context are summarized in
+;;   "man/hkey-help.txt".
 
 ;;; Code:
 ;;; ************************************************************************
@@ -82,6 +31,39 @@
 ;; If installed, use pulse library for momentary highlighting of buffer/file item lines.
 (require 'pulse nil t)
 (require 'hui-select)
+
+;;; ************************************************************************
+;;; Public declarations
+;;; ************************************************************************
+
+(defvar action-key-depress-args)                ; "hmouse-drv.el"
+(defvar assist-key-depress-args)                ; "hmouse-drv.el"
+(defvar action-key-depress-prev-point)          ; "hmouse-drv.el"
+(defvar assist-key-depress-prev-point)          ; "hmouse-drv.el"
+(defvar action-key-release-prev-point)          ; "hmouse-drv.el"
+(defvar assist-key-release-prev-point)          ; "hmouse-drv.el"
+(defvar assist-key-depress-window)              ; "hmouse-drv.el"
+(defvar action-key-depress-window)              ; "hmouse-drv.el"
+(defvar assist-key-release-window)              ; "hmouse-drv.el"
+(defvar action-key-release-window)              ; "hmouse-drv.el"
+(defvar assist-key-release-args)                ; "hmouse-drv.el"
+(defvar action-key-release-args)                ; "hmouse-drv.el"
+(defvar hkey-value)                             ; "hui-mouse.el"
+(defvar hkey-region)                            ; "hmouse-drv.el"
+(defvar hpath:display-where-alist)              ; "hpath.el"
+(defvar hpath:display-where)                    ; "hpath.el"
+(defvar action-key-modeline-buffer-id-function) ; "hui-mouse.el"
+
+(declare-function hbut:act "hbut")
+(declare-function hbut:action "hbut")
+(declare-function hbut:at-p "hbut")
+(declare-function hkey-summarize "hmouse-drv")
+(declare-function hmouse-save-region "hmouse-drv")
+(declare-function hmouse-use-region-p "hmouse-drv")
+(declare-function hmouse-window-coordinates "hmouse-drv")
+(declare-function smart-helm-alive-p "hui-mouse")
+(declare-function smart-helm-line-has-action "hui-mouse")
+(declare-function smart-helm-to-minibuffer "hui-mouse")
 
 ;;; ************************************************************************
 ;;; Public variables
@@ -138,9 +120,9 @@ Return items with a single `major-mode' in the car, (major-mode form-to-eval)."
 						  (hmouse-pulse-buffer)
 						  (bury-buffer))))
      (treemacs-mode (if (fboundp 'treemacs-node-buffer-and-position)
-			(treemacs-node-buffer-and-position))
-		    (error "(hmouse-item-to-window): %s the treemacs package for item dragging support"
-			   (if (fboundp 'treemacs) "Update" "Install")))))
+			(treemacs-node-buffer-and-position)
+		      (error "(hmouse-item-to-window): %s the treemacs package for item dragging support"
+			     (if (fboundp 'treemacs) "Update" "Install"))))))
   "List of (major-mode lisp-form) lists.
 The car of an item must be a `major-mode' symbol.  The cadr of an item
 is a Lisp form to evaluate to get the item name at point (typically a
@@ -151,12 +133,16 @@ drag release window.")
 (defcustom hmouse-pulse-flag t
   "Non-nil means pulse visually if supported.
 When display supports visual pulsing, then pulse lines and
-buffers when an Action Key drag is used to place a buffer or file
-in a window."
+buffers when an Action Key drag is used to place a buffer, file
+or button referent in a window."
   :type 'boolean
   :group 'hyperbole-keys)
 
- ;; Mats Lidell says this should be 10 characters for GNU Emacs.
+(defvar hmouse-pulse-iterations 40
+  "Number of iterations in an hmouse-pulse operation when `pulse-flag' is active.
+Temporarily override `pulse-iterations' with this for hmouse operations.")
+
+
 (defvar hmouse-edge-sensitivity 10
   "*Number of chars from window edges in which a click is considered at an edge.")
 
@@ -195,14 +181,15 @@ and release to register a diagonal drag.")
 
 (defvar hmouse-alist)
 (defun hmouse-alist-add-window-handlers ()
+  "Add Smart Mouse Key drag actions to `hmouse-alist'."
   (unless (assoc #'(hmouse-inactive-minibuffer-p) hmouse-alist)
     (setq hmouse-alist
 	  (append
 	   '(
-	     ((hmouse-drag-thing) .
-	      ((hmouse-yank-region) . (hmouse-kill-and-yank-region)))
-	     ((hmouse-drag-window-side) .
-	      ((hmouse-resize-window-side) . (hmouse-resize-window-side)))
+	     ((hmouse-drag-thing)
+	      . ((hmouse-yank-region) . (hmouse-kill-and-yank-region)))
+	     ((hmouse-drag-window-side)
+	      . ((hmouse-resize-window-side) . (hmouse-resize-window-side)))
 	     ;;
 	     ;; Although Hyperbole can distinguish whether inter-window
 	     ;; drags are between frames or not, having different behavior
@@ -213,49 +200,63 @@ and release to register a diagonal drag.")
 	     ;;   ((and (hmouse-modeline-depress) (hmouse-drag-between-frames)) .
 	     ;;    ((hmouse-clone-window-to-frame) . (hmouse-move-window-to-frame)))
 	     ;;
-	     ;; Drag from within a window (not a Modeline) with release on a Modeline
-	     ((and (not (hmouse-modeline-depress)) (hmouse-modeline-release)
-		   (not (hmouse-modeline-click))) .
-	      ((or (hmouse-drag-item-to-display t) (hmouse-buffer-to-window t)) .
-	       (hmouse-swap-buffers)))
+	     ;; Drag from an item to display (not a Modeline) with release on a Modeline
+	     ((and (setq hkey-value (and (not (hmouse-modeline-depress))
+					 (hmouse-modeline-release)
+					 (not (hmouse-modeline-click))))
+		   (hmouse-at-item-p action-key-depress-window))
+	      . ((hmouse-item-to-window t) . (hmouse-swap-buffers)))
+	     ;; Drag from within a window (not a Modeline and not an item) with release on a Modeline
+	     (hkey-value
+	      . ((hmouse-buffer-to-window t) . (hmouse-swap-buffers)))
 	     ;; Non-vertical Modeline drag between windows
 	     ((and (hmouse-modeline-depress) (hmouse-drag-between-windows)
-		   (not (hmouse-drag-vertically-within-emacs))) .
-		   ((hmouse-buffer-to-window) . (hmouse-swap-buffers)))
+		   (not (hmouse-drag-vertically-within-emacs)))
+	      . ((hmouse-buffer-to-window) . (hmouse-swap-buffers)))
 	     ;; Modeline drag that ends outside of Emacs
-	     ((and (hmouse-modeline-depress) (hmouse-drag-outside-all-windows)) .
-	      ((hycontrol-clone-window-to-new-frame) . (hycontrol-window-to-new-frame)))
+	     ((and (hmouse-modeline-depress) (hmouse-drag-outside-all-windows))
+	      . ((hycontrol-clone-window-to-new-frame)
+		 . (hycontrol-window-to-new-frame)))
 	     ;; Other Modeline click or drag
-	     ((hmouse-modeline-depress) .
-	      ((action-key-modeline) . (assist-key-modeline)))
-	     ((hmouse-drag-between-windows) .
-	      ;; Note that `hui:link-directly' uses any active
+	     ((hmouse-modeline-depress)
+	      . ((action-key-modeline) . (assist-key-modeline)))
+	     ;; Drag between windows and on an item (buffer-name, file-name or Hyperbole button)
+	     ((and (hmouse-drag-between-windows)
+		   (hmouse-at-item-p (if assist-flag assist-key-depress-window
+				       action-key-depress-window)))
+	      . ((hmouse-drag-item-to-display) . (hmouse-drag-item-to-display)))
+	     ;; Drag between windows not on an item
+	     ((hmouse-drag-between-windows)
+	      ;; Note that `hui:ebut-link-directly' uses any active
 	      ;; region as the label of the button to create.
-	      ((or (hmouse-drag-item-to-display) (hui:link-directly)) . (hmouse-swap-buffers)))
-	     ((hmouse-drag-region-active) .
-	      ((hmouse-drag-not-allowed) . (hmouse-drag-not-allowed)))
-	     ((setq hkey-value (hmouse-drag-horizontally)) .
-	      ((hmouse-horizontal-action-drag) . (hmouse-horizontal-assist-drag)))
-	     ((hmouse-drag-vertically) .
-	      ((hmouse-vertical-action-drag) . (hmouse-vertical-assist-drag)))
-	     ((setq hkey-value (hmouse-drag-diagonally)) .
-	      ((call-interactively #'hywconfig-ring-save) .
-	       (call-interactively #'hywconfig-yank-pop)))
+	      . ((hui:ebut-link-directly) . (hui:ibut-link-directly)))
+	     ((hmouse-drag-region-active)
+	      . ((hmouse-drag-not-allowed) . (hmouse-drag-not-allowed)))
+	     ((setq hkey-value (hmouse-drag-horizontally))
+	      . ((hmouse-horizontal-action-drag) . (hmouse-horizontal-assist-drag)))
+	     ((hmouse-drag-vertically)
+	      . ((hmouse-vertical-action-drag) . (hmouse-vertical-assist-drag)))
+	     ((setq hkey-value (hmouse-drag-diagonally))
+	      . ((call-interactively #'hywconfig-ring-save)
+		 . (call-interactively #'hywconfig-yank-pop)))
 	     ;; Window drag that ends outside of Emacs
-	     ((hmouse-drag-outside-all-windows) .
-	      ((or (hmouse-drag-item-to-display)
-		   (hycontrol-clone-window-to-new-frame)) .
-		   (hycontrol-window-to-new-frame)))
+	     ((hmouse-drag-outside-all-windows)
+	      . ((or (hmouse-drag-item-to-display)
+		     (hycontrol-clone-window-to-new-frame))
+		 . (hycontrol-window-to-new-frame)))
 	     ;; If click in the minibuffer when it is not active (blank),
-	     ;; display the Hyperbole minibuffer menu or popup the jump menu.
-	     ((hmouse-inactive-minibuffer-p) .
-	      ((funcall action-key-minibuffer-function) .
-	       (funcall assist-key-minibuffer-function)))
-	     ((and (boundp 'ivy-mode) ivy-mode (minibuffer-window-active-p (selected-window))) .
-	      ((ivy-mouse-done action-key-release-args) . (ivy-mouse-dispatching-done assist-key-release-args)))
+	     ;; Action Key displays the Hyperbole minibuffer menu and
+	     ;; the Assist Key popups the jump menu.
+	     ((hmouse-inactive-minibuffer-p)
+	      . ((funcall action-key-minibuffer-function)
+		 . (funcall assist-key-minibuffer-function)))
+	     ((and (boundp 'ivy-mode) ivy-mode
+		   (minibuffer-window-active-p (selected-window)))
+	      . ((ivy-mouse-done action-key-release-args)
+		 . (ivy-mouse-dispatching-done assist-key-release-args)))
 	     ;; Handle widgets in Custom-mode
-	     ((eq major-mode 'Custom-mode) .
-	      ((smart-custom) . (smart-custom-assist)))
+	     ((eq major-mode 'Custom-mode)
+	      . ((smart-custom) . (smart-custom-assist)))
 	     ;;
 	     ;; Now since this is not a drag and if there was an active
 	     ;; region prior to when the Action or Assist Key was
@@ -263,10 +264,8 @@ and release to register a diagonal drag.")
 	     ;; `hkey-value' and the string value of the region
 	     ;; into `hkey-region' which is either yanked, or
 	     ;; killed and yanked at the current point.
-	     ((hmouse-prior-active-region) .
-	      ((hmouse-yank-region) . (hmouse-kill-and-yank-region)))
-	     ;;
-	     )
+	     ((hmouse-prior-active-region)
+	      . ((hmouse-yank-region) . (hmouse-kill-and-yank-region))))
 	   hmouse-alist))))
 (with-eval-after-load 'hui-mouse (hmouse-alist-add-window-handlers))
 
@@ -275,15 +274,19 @@ and release to register a diagonal drag.")
 ;;; ************************************************************************
 
 (defun hmouse-at-item-p (start-window)
-  "Return t if point is on an item draggable by Hyperbole, otherwise nil."
+  "Return t if point is on an item draggable by Hyperbole, otherwise nil.
+Draggable items include Hyperbole buttons, dired items, buffer/ibuffer
+menu items."
   (let* ((buf (when (window-live-p start-window)
 		(window-buffer start-window)))
 	 (mode (when buf
 		 (buffer-local-value 'major-mode buf))))
-    (and buf (with-current-buffer buf
+    (and buf (save-window-excursion
+	       (select-window start-window)
 	       ;; Point must be on an item, not after one
-	       (not (looking-at "\\s-*$")))
-	 (memq mode (mapcar #'car hmouse-drag-item-mode-forms))
+	       (and (not (looking-at "\\s-*$"))
+		    (or (memq mode (mapcar #'car hmouse-drag-item-mode-forms))
+			(hbut:at-p))))
 	 t)))
 
 (defun hmouse-context-menu ()
@@ -474,9 +477,7 @@ Signals an error if either depress or release buffer is read-only."
 	  (select-window release-window)
 	  (goto-char release-point)
 	  ;; Protect from indentation errors
-	  (condition-case ()
-	      (hmouse-insert-region)
-	    (error nil)))))))
+	  (ignore-errors (hmouse-insert-region)))))))
 
 (defun hmouse-yank-region ()
   "Yank the region of text saved in `hkey-region' into the current buffer.
@@ -498,9 +499,7 @@ Signals an error if the buffer is read-only."
 	(select-frame-set-input-focus (window-frame release-window))
 	(select-window release-window))
       ;; Protect from indentation errors
-      (condition-case ()
-	  (hmouse-insert-region)
-	(error nil)))))
+      (ignore-errors (hmouse-insert-region)))))
 
 (defun hmouse-drag-between-frames ()
   "Return non-nil if last Action Key depress and release were in different frames.
@@ -521,8 +520,7 @@ If free variable `assist-flag' is non-nil, uses Assist Key."
   (if assist-flag
       (and (window-live-p assist-key-depress-window)
 	   (window-live-p assist-key-release-window)
-	   (not (eq assist-key-depress-window
-		    assist-key-release-window)))
+	   (not (eq assist-key-depress-window assist-key-release-window)))
     (and (window-live-p action-key-depress-window)
 	 (window-live-p action-key-release-window)
 	 (not (eq action-key-depress-window action-key-release-window)))))
@@ -545,15 +543,16 @@ If free variable `assist-flag' is non-nil, uses Assist Key."
       (and (window-live-p assist-key-depress-window) (not assist-key-release-window))
     (and (window-live-p action-key-depress-window) (not action-key-release-window))))
 
-(defun hmouse-drag-item-to-display (&optional new-window)
+(defun hmouse-drag-item-to-display (&optional new-window-flag)
   "Drag an item and release where it is to be displayed.
-Depress on a buffer name in Buffer-menu/ibuffer mode or on a
-file/directory in dired mode and release where the item is to be
-displayed.
+Draggable items include Hyperbole buttons, dired items, buffer/ibuffer
+menu items.
+
+Depress on the item and release where the item is to be displayed.
 
 If depress is on an item and release is outside of Emacs, the
 item is displayed in a new frame with a single window.  If the
-release is inside Emacs and the optional NEW-WINDOW is non-nil,
+release is inside Emacs and the optional NEW-WINDOW-FLAG is non-nil,
 the release window is sensibly split before the buffer is
 displayed.  Otherwise, the buffer is simply displayed in the
 release window.
@@ -564,7 +563,7 @@ not on an item, then nil.
 See `hmouse-drag-item-mode-forms' for how to allow for draggable
 items in other modes."
   (when (hmouse-at-item-p action-key-depress-window)
-    (hmouse-item-to-window new-window)
+    (hmouse-item-to-window new-window-flag)
     t))
 
 (defun hmouse-drag-same-window ()
@@ -847,37 +846,47 @@ Return t if such a point is saved, else nil."
   "Save a mark, then insert at point the text from `hkey-region' and indent it."
   (indent-for-tab-command)
   (push-mark nil t)
-  (if (smart-eobp) (insert "\n"))
+  (when (smart-eobp) (insert "\n"))
   (insert hkey-region)
   (indent-region (point) (mark))
   (message "") ;; Clear any indenting message.
   ;; From par-align.el library; need to think about all the
   ;; possibilities before enabling filling of this region.
-  ;; (if (fboundp 'fill-region-and-align) (fill-region-and-align (mark) (point)))
+  ;; (when (fboundp 'fill-region-and-align) (fill-region-and-align (mark) (point)))
   )
 
 (defun hmouse-pulse-buffer ()
-  (when (and hmouse-pulse-flag (featurep 'pulse) (pulse-available-p))
-    (recenter)
-    (pulse-momentary-highlight-region (window-start) (window-end) 'next-error)))
+  "When `hmouse-pulse-flag' is non-nil, display can pulse, pulse the buffer."
+  (when (and hmouse-pulse-flag (featurep 'pulse) pulse-flag (pulse-available-p))
+    (let ((pulse-iterations hmouse-pulse-iterations))
+      (recenter)
+      (pulse-momentary-highlight-region (window-start) (window-end) 'next-error))))
 
 (defun hmouse-pulse-line ()
-  (when (and hmouse-pulse-flag (featurep 'pulse) (pulse-available-p))
-    (recenter)
-    (pulse-momentary-highlight-one-line (point) 'next-error)))
+  "When `hmouse-pulse-flag' is non-nil, display can pulse, pulse the line."
+  (when (and hmouse-pulse-flag (featurep 'pulse) pulse-flag (pulse-available-p))
+    (let ((pulse-iterations hmouse-pulse-iterations))
+      (recenter)
+      (pulse-momentary-highlight-one-line (point) 'next-error))))
 
 (defun hmouse-pulse-region (start end)
-  (when (and hmouse-pulse-flag (featurep 'pulse) (pulse-available-p))
-    (pulse-momentary-highlight-region start end 'next-error)))
+  "When `hmouse-pulse-flag' is non-nil, display can pulse, pulse the region."
+  (when (and hmouse-pulse-flag (featurep 'pulse) pulse-flag (pulse-available-p))
+    (let ((pulse-iterations hmouse-pulse-iterations))
+      (pulse-momentary-highlight-region start end 'next-error))))
 
-(defun hmouse-item-to-window (&optional new-window)
-  "Display item of Action Key depress at the location of Action Key release.
-Item is a buffer or file menu item.
+(defun hmouse-item-to-window (&optional new-window-flag)
+  "Display item/action of Action Key depress at the release location.
+Return non-nil if item is displayed or action is executed; nil
+otherwise.
+
+Item is a buffer, file menu item or a Hyperbole button (execute its
+action).
 
 Release location may be an Emacs window or outside of Emacs, in
 which case a new frame with a single window is created to display
 the item.  If the release is inside Emacs and the optional
-NEW-WINDOW is non-nil, the release window is sensibly split
+NEW-WINDOW-FLAG is non-nil, the release window is sensibly split
 before the buffer is displayed.  Otherwise, the buffer is simply
 displayed in the release window.
 
@@ -888,7 +897,8 @@ item, this moves the menu buffer itself to the release location."
 	 ;; create a new frame and window.
 	 (w2 (or action-key-release-window (frame-selected-window (hycontrol-make-frame))))
 	 (w1-ref)
-	 (pos))
+	 (pos)
+	 (at-button-flag))
     (when (and (window-live-p w1) (window-live-p w2))
       (unwind-protect
 	  (progn (select-window w1)
@@ -900,14 +910,18 @@ item, this moves the menu buffer itself to the release location."
 			    (sit-for 0.05)
 			    (bury-buffer))
 		   ;; Otherwise, move the current menu item to the release window.
-		   (setq w1-ref (eval (cadr (assq major-mode hmouse-drag-item-mode-forms))))
+		   (setq w1-ref (or (eval (cadr (assq major-mode hmouse-drag-item-mode-forms)))
+				    (when (setq at-button-flag (hbut:at-p))
+				      (hbut:action 'hbut:current))))
 		   (when w1-ref (hmouse-pulse-line) (sit-for 0.05))))
 	(hypb:select-window-frame w2)
-	(when (and new-window action-key-release-window)
+	(when (and new-window-flag action-key-release-window)
 	  (hmouse-split-window))))
     (unwind-protect
 	(progn
-	  (when (and w1-ref (not (stringp w1-ref)) (sequencep w1-ref))
+	  (when (and w1-ref (not (stringp w1-ref)) (sequencep w1-ref)
+		     (buffer-live-p (seq-elt w1-ref 0))
+		     (integerp (seq-elt w1-ref 1)))
 	    ;; w1-ref is a list or vector of `buffer' and `position' elements.
 	    (setq pos (seq-elt w1-ref 1)
 		  w1-ref (seq-elt w1-ref 0)))
@@ -915,6 +929,9 @@ item, this moves the menu buffer itself to the release location."
 		 (if (not (window-live-p w1))
 		     (error "(hmouse-item-to-window): Action Mouse Key item drag must start in a live window")
 		   (error "(hmouse-item-to-window): No item to display at start of Action Mouse Key drag")))
+		(at-button-flag
+		 (let ((hpath:display-where 'this-window))
+		   (hbut:act)))
 		((buffer-live-p w1-ref) ;; Must be a buffer, not a buffer name
 		 (set-window-buffer w2 w1-ref)
 		 (set-buffer w1-ref))
@@ -930,7 +947,7 @@ item, this moves the menu buffer itself to the release location."
 	  (smart-helm-to-minibuffer)))))
 
 (defun action-key-modeline ()
-  "Handles Action Key depresses on a window mode line.
+  "Handle Action Key depresses on a window mode line.
 If the Action Key is:
  (1) clicked on the first blank character of a window's modeline,
      the window's buffer is buried (placed at bottom of buffer list);
@@ -965,7 +982,7 @@ If the Action Key is:
 	    (t (funcall action-key-modeline-function))))))
 
 (defun assist-key-modeline ()
-  "Handles Assist Key depresses on a window mode line.
+  "Handle Assist Key depresses on a window mode line.
 If the Assist Key is:
  (1) clicked on the first blank character of a window's modeline,
      bottom buffer in buffer list is unburied and placed in window;
@@ -1158,7 +1175,7 @@ release must be."
 	 (>= (- window-right last-release-x) 0))))
 
 (defun hmouse-resize-window-side ()
-  "Resizes window whose side was depressed on by the last Smart Key.
+  "Resize window whose side was depressed on by the last Smart Key.
 Resize amount depends upon the horizontal difference between press and release
 of the Smart Key."
   (cond ((hyperb:window-system)
@@ -1194,7 +1211,7 @@ of the Smart Key."
 		 (select-window owind))))))))
 
 (defun hmouse-swap-buffers ()
-  "Swaps buffers in windows selected with the last Smart Key depress and release."
+  "Swap buffers in windows selected with the last Smart Key depress and release."
   (let* ((w1 (if assist-flag assist-key-depress-window
 	       action-key-depress-window))
 	 (w2 (if assist-flag assist-key-release-window
@@ -1245,17 +1262,17 @@ of the Smart Key."
 	     (funcall (cdr (assoc (hyperb:window-system)
 				  '(("emacs" . (lambda (args)
 						 (when (eventp args) (setq args (event-start args)))
-						   (cond
-						    ((posnp args)
-						     (let ((w-or-f (posn-window args)))
-						       (when (framep w-or-f)
-							 (setq w-or-f (frame-selected-window w-or-f)))
-						       (+ (condition-case ()
-							      (car (posn-col-row args))
-							    (error 0))
-							  (nth 0 (window-edges w-or-f)))))
-						    (t (car args)))))
-				 ("next"   .  (lambda (args) (nth 1 args))))))
+						 (cond
+						  ((posnp args)
+						   (let ((w-or-f (posn-window args)))
+						     (when (framep w-or-f)
+						       (setq w-or-f (frame-selected-window w-or-f)))
+						     (+ (condition-case ()
+							    (car (posn-col-row args))
+							  (error 0))
+							(nth 0 (window-edges w-or-f)))))
+						  (t (car args)))))
+				    ("next"   .  (lambda (args) (nth 1 args))))))
 		      args))))
     (when (integerp x)
       x)))
@@ -1265,15 +1282,15 @@ of the Smart Key."
   (let ((y (funcall (cdr (assoc (hyperb:window-system)
 				'(("emacs" . (lambda (args)
 					       (when (eventp args) (setq args (event-start args)))
-						    (cond ((posnp args)
-							   (let ((w-or-f (posn-window args)))
-							     (when (framep w-or-f)
-							       (setq w-or-f (frame-selected-window w-or-f)))
-							     (+ (condition-case ()
-								    (cdr (posn-col-row args))
-								  (error 0))
-								(nth 1 (window-edges w-or-f)))))
-							  (t (cdr args)))))
+					       (cond ((posnp args)
+						      (let ((w-or-f (posn-window args)))
+							(when (framep w-or-f)
+							  (setq w-or-f (frame-selected-window w-or-f)))
+							(+ (condition-case ()
+							       (cdr (posn-col-row args))
+							     (error 0))
+							   (nth 1 (window-edges w-or-f)))))
+						     (t (cdr args)))))
 				  ("next"   .  (lambda (args) (nth 2 args))))))
 		    args)))
     (when (integerp y)

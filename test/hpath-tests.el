@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    28-Feb-21 at 23:26:00
-;; Last-Mod:     12-Sep-22 at 22:11:14 by Mats Lidell
+;; Last-Mod:     28-Aug-23 at 12:29:54 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -160,29 +160,30 @@
 
 (ert-deftest hpath:substitute-value-test ()
   "Environment and Lisp variables shall be substituted in a path."
-  (progn
-    (setq hypb:lc-var "lower")
-    (setq hypb:uc-var "UPPER")
-    (setenv "HYPB_TEST_ENV" "env")
+  (defvar hypb:lc-var)
+  (defvar hypb:uc-var)
+  (setq hypb:lc-var "lower"
+	hypb:uc-var "UPPER")
+  (setenv "HYPB_TEST_ENV" "env")
 
-    (should (string= (hpath:substitute-value "/nothing/to/substitute") "/nothing/to/substitute"))
+  (should (string= (hpath:substitute-value "/nothing/to/substitute") "/nothing/to/substitute"))
 
-    (should (string= (hpath:substitute-value "${hypb:lc-var}") hypb:lc-var))
-    (should (string= (hpath:substitute-value "${hypb:uc-var}") hypb:uc-var))
-    (should (string= (hpath:substitute-value "${HYPB_TEST_ENV}") (getenv "HYPB_TEST_ENV")))
+  (should (string= (hpath:substitute-value "${hypb:lc-var}") hypb:lc-var))
+  (should (string= (hpath:substitute-value "${hypb:uc-var}") hypb:uc-var))
+  (should (string= (hpath:substitute-value "${HYPB_TEST_ENV}") (getenv "HYPB_TEST_ENV")))
 
-    (should (string= (hpath:substitute-value "prefix${hypb:lc-var}suffix") (concat "prefix" hypb:lc-var "suffix")))
-    (should (string= (hpath:substitute-value "prefix/${HYPB_TEST_ENV}/suffix") (concat "prefix/" (getenv "HYPB_TEST_ENV") "/suffix")))
-    (should (string= (hpath:substitute-value "prefix${HYPB_TEST_ENV}suffix") (concat "prefix" (getenv "HYPB_TEST_ENV") "suffix")))
+  (should (string= (hpath:substitute-value "prefix${hypb:lc-var}suffix") (concat "prefix" hypb:lc-var "suffix")))
+  (should (string= (hpath:substitute-value "prefix/${HYPB_TEST_ENV}/suffix") (concat "prefix/" (getenv "HYPB_TEST_ENV") "/suffix")))
+  (should (string= (hpath:substitute-value "prefix${HYPB_TEST_ENV}suffix") (concat "prefix" (getenv "HYPB_TEST_ENV") "suffix")))
 
-    (should (string= (hpath:substitute-value "${hypb:lc-var}${hypb:uc-var}") (concat hypb:lc-var hypb:uc-var)))
-    (should (string= (hpath:substitute-value "${HYPB_TEST_ENV}/${HYPB_TEST_ENV}") (concat (getenv "HYPB_TEST_ENV") "/" (getenv "HYPB_TEST_ENV"))))
-    (should (string= (hpath:substitute-value "${HYPB_TEST_ENV}${HYPB_TEST_ENV}") (concat (getenv "HYPB_TEST_ENV") (getenv "HYPB_TEST_ENV"))))
+  (should (string= (hpath:substitute-value "${hypb:lc-var}${hypb:uc-var}") (concat hypb:lc-var hypb:uc-var)))
+  (should (string= (hpath:substitute-value "${HYPB_TEST_ENV}/${HYPB_TEST_ENV}") (concat (getenv "HYPB_TEST_ENV") "/" (getenv "HYPB_TEST_ENV"))))
+  (should (string= (hpath:substitute-value "${HYPB_TEST_ENV}${HYPB_TEST_ENV}") (concat (getenv "HYPB_TEST_ENV") (getenv "HYPB_TEST_ENV"))))
 
-    (should (string= (hpath:substitute-value "prefix${hypb:lc-var}/${HYPB_TEST_ENV}/suffix") (concat "prefix" hypb:lc-var "/" (getenv "HYPB_TEST_ENV") "/suffix")))
+  (should (string= (hpath:substitute-value "prefix${hypb:lc-var}/${HYPB_TEST_ENV}/suffix") (concat "prefix" hypb:lc-var "/" (getenv "HYPB_TEST_ENV") "/suffix")))
 
-    (should (string= (hpath:substitute-value "$UNDEFINED_IS_NOT_SUBSTITUTED") "$UNDEFINED_IS_NOT_SUBSTITUTED"))
-    (should (string= (hpath:substitute-value "${UNDEFINED_IS_NOT_SUBSTITUTED}") "${UNDEFINED_IS_NOT_SUBSTITUTED}"))))
+  (should (string= (hpath:substitute-value "$UNDEFINED_IS_NOT_SUBSTITUTED") "$UNDEFINED_IS_NOT_SUBSTITUTED"))
+  (should (string= (hpath:substitute-value "${UNDEFINED_IS_NOT_SUBSTITUTED}") "${UNDEFINED_IS_NOT_SUBSTITUTED}")))
 
 (defun hypb-run-shell-test-command (command buffer)
   "Run a shell COMMAND with output to BUFFER and select it."
@@ -241,7 +242,7 @@
   (let ((py-file "topwin.py")
         (old-python-path (getenv "PYTHONPATH")))
     (unwind-protect
-        (progn
+        (let ((default-directory hyperb:dir))
           (setenv "PYTHONPATH" hyperb:dir)
           (dolist (with-quotes '(nil t))
             (with-temp-buffer
@@ -257,6 +258,32 @@
       (insert (concat "\"" tramp-file "\""))
       (goto-char 5)
       (should (string= (hpath:remote-at-p) tramp-file)))))
+
+(ert-deftest hpath--at-p-checks-files-with-hash-in-name-exists ()
+  "Verify that file existence is checked for filenames containing a hash character."
+  (let ((dir (make-temp-file "hypb" t)))
+    (unwind-protect
+        (dolist (fn '("#file#" "#.file#" "#file path#" "path#section" "#path#section"))
+          (let ((filename (expand-file-name fn dir)))
+            (unwind-protect
+                (progn
+                  (find-file filename)
+                  (insert "\"" fn "\"")
+                  (save-buffer)
+                  (goto-char 3)
+                  (should (string= (hpath:at-p) fn))
+                  (should (string= (hpath:is-p fn) fn)))
+              (hy-delete-file-and-buffer filename))))
+      (delete-directory dir))))
+
+(ert-deftest hpath--at-p-checks-file-that-with-hash-that-does-not-exist-returns-nil ()
+  "Verify that file existence is checked for filenames containing a hash character."
+  (dolist (fn '("#file#" "#.file#" "#file path#" "path#section" "#path#section"))
+    (with-temp-buffer
+      (insert "\"" fn "\"")
+      (goto-char 3)
+      (should-not (hpath:at-p))
+      (should-not (hpath:is-p fn)))))
 
 (provide 'hpath-tests)
 ;;; hpath-tests.el ends here

@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     7-Apr-94 at 17:17:39 by Bob Weiner
-;; Last-Mod:     11-May-22 at 00:01:48 by Bob Weiner
+;; Last-Mod:      3-Oct-23 at 17:46:21 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -33,7 +33,25 @@
 (require 'hload-path)
 ;;; This does not require any particular web browser.
 (require 'browse-url)
+(require 'eww) ;; Must load to override it's function `eww-browse-url' below.
 (require 'hbut)
+
+;;; ************************************************************************
+;;; Public declarations
+;;; ************************************************************************
+
+(defvar hpath:display-where-alist)      ; "hpath.el"
+
+(declare-function hpath:remote-available-p "hpath")
+(declare-function hpath:remote-p "hpath")
+(declare-function hpath:remote-at-p "hpath")
+(declare-function hpath:www-at-p "hpath")
+
+;; Forward declare conditionally defined functions
+(declare-function eww-history-property "hsys-www")
+(declare-function eww-bookmark-property "hsys-www")
+(declare-function eww-link-at-point "hsys-www")
+(declare-function shr-link-at-point "hsys-www")
 
 ;;; ************************************************************************
 ;;; Public functions and types
@@ -117,7 +135,7 @@ is used.  Valid values of this variable include `browse-url-default-browser' and
 
 ;;;###autoload
 (defun www-url-expand-file-name (path &optional dir)
-  "Expand and return  non-url and non-remote PATH in DIR.
+  "Expand and return non-url and non-remote PATH in DIR.
 Return http urls unchanged.  Normalize remote paths."
   (when (listp path)
     (setq path (car path)
@@ -151,6 +169,36 @@ Return http urls unchanged.  Normalize remote paths."
 	       ;; return same buffer
 	       (current-buffer))
       (apply #'find-file-noselect path args))))
+
+;;;###autoload
+(defun eww-browse-url (url &optional new-window)
+  "Ask the eww browser to load URL.
+
+Interactively, if the variable `browse-url-new-window-flag' is non-nil,
+loads the document in a new buffer tab on the window tab-line.  A non-nil
+prefix argument reverses the effect of `browse-url-new-window-flag'.
+
+If `tab-bar-mode' is enabled, then whenever a document would
+otherwise be loaded in a new buffer, it is loaded in a new tab
+in the tab-bar on an existing frame.  See more options in
+`eww-browse-url-new-window-is-tab'.
+
+Non-interactively, this uses the optional second argument NEW-WINDOW
+instead of `browse-url-new-window-flag'."
+  (when (or (eq eww-browse-url-new-window-is-tab t)
+            (and (eq eww-browse-url-new-window-is-tab 'tab-bar)
+                 tab-bar-mode))
+    (let ((tab-bar-new-tab-choice t))
+      (tab-new)))
+  (let ((hpath:display-where-alist
+	 (if new-window 'other-window hpath:display-where-alist)))
+    (hpath:display-buffer
+     (generate-new-buffer
+      (format "*eww-%s*" (url-host (url-generic-parse-url
+                                    (eww--dwim-expand-url url)))))))
+  (eww-mode)
+  (eww url))
+
 
 (provide 'hsys-www)
 

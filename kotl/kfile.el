@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    10/31/93
-;; Last-Mod:     22-Jul-22 at 15:17:31 by Mats Lidell
+;; Last-Mod:      4-Oct-23 at 19:10:12 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -19,7 +19,7 @@
 ;;; Other required Elisp libraries
 ;;; ************************************************************************
 
-(eval-and-compile (mapc #'require '(kproperty kmenu kview)))
+(eval-and-compile (mapc #'require '(kproperty kmenu kview kvspec kcell)))
 
 ;;; ************************************************************************
 ;;; Public variables
@@ -60,11 +60,11 @@ Return the new kview."
     ;; Finding the file may have already done a kfile:read as invoked through
     ;; kotl-mode via a file local variable setting.  If so, don't read it
     ;; again.
-    (unless (kview:is-p kview)
+    (unless (kview:is-p kotl-kview)
       (kfile:read buffer existing-file))
     (unless (derived-mode-p 'kotl-mode)
       (kotl-mode))
-    kview))
+    kotl-kview))
 
 ;;;###autoload
 (defun kfile:is-p ()
@@ -76,12 +76,10 @@ and formatted koutlines."
       (save-restriction
 	(widen)
 	(goto-char (point-min))
-	(condition-case ()
-	    (progn
-	      (setq ver-string (read (current-buffer)))
-	      (and (stringp ver-string) (string-match "^Kotl-" ver-string)
-		   ver-string))
-	  (error nil))))))
+	(ignore-errors
+	  (setq ver-string (read (current-buffer)))
+	  (and (stringp ver-string) (string-match "^Kotl-" ver-string)
+	       ver-string))))))
 
 ;;;###autoload
 (defun kfile:view (file-name)
@@ -110,8 +108,7 @@ File is created with a single empty level 1 kotl cell."
   (unless (bufferp buffer)
     (error "(kfile:create): Invalid buffer argument, %s" buffer))
   (set-buffer buffer)
-  (when buffer-read-only
-    (error "(kfile:create): %s is read-only" buffer))
+  (barf-if-buffer-read-only)
   (widen)
 
   (let ((empty-flag (zerop (buffer-size)))
@@ -161,7 +158,7 @@ File is created with a single empty level 1 kotl cell."
 
 (defun kfile:read (buffer existing-file-flag &optional ver-string)
   "Create a new kotl view by reading BUFFER.
-Create an empty view when EXISTING-FILE-P is nil.  Optional
+Create an empty view when EXISTING-FILE-FLAG is nil.  Optional
 VER-STRING is the outline format version number for the BUFFER
 that was previously read by calling `kfile:is-p'.
 
@@ -262,12 +259,12 @@ If V3-FLAG is true, read as a version-3 buffer."
   "Update kfile internal structure so that view is ready for saving to a file.
 Leave outline file expanded with structure data showing unless optional
 VISIBLE-ONLY-P is non-nil.  Signal an error if kotl is not attached to a file."
-  (let* ((top (kview:top-cell kview))
+  (let* ((top (kview:top-cell kotl-kview))
 	 (file buffer-file-name)
-	 (label-type (kview:label-type kview))
-	 (label-min-width (kview:label-min-width kview))
-	 (label-separator (kview:label-separator kview))
-	 (level-indent (kview:level-indent kview))
+	 (label-type (kview:label-type kotl-kview))
+	 (label-min-width (kview:label-min-width kotl-kview))
+	 (label-separator (kview:label-separator kotl-kview))
+	 (level-indent (kview:level-indent kotl-kview))
 	 ;; If this happens to be non-nil, it is virtually impossible to save
 	 ;; a file, so ensure it is nil.
 	 (debug-on-error))
@@ -292,7 +289,7 @@ VISIBLE-ONLY-P is non-nil.  Signal an error if kotl is not attached to a file."
 		kcell-num
 		(kcell-data:create cell (kcell-view:idstamp-integer)))
 	  (setq kcell-num (1+ kcell-num)))
-	kview t)
+	kotl-kview t)
       ;; Save top cell, 0, last since above loop may increment the total
       ;; number of cells counter stored in it, if any invalid cells are
       ;; encountered.
@@ -354,7 +351,7 @@ VISIBLE-ONLY-P is non-nil.  Signal an error if kotl is not attached to a file."
   (set-buffer-modified-p t)
   ;; This next line must come before the save-buffer so write-file-functions
   ;; can make use of it.
-  (kview:set-buffer kview (current-buffer))
+  (kview:set-buffer kotl-kview (current-buffer))
   (save-buffer))
 
 ;;; ************************************************************************
@@ -400,7 +397,7 @@ hidden."
     (while
 	(progn
 	  (skip-chars-forward "\n")
-	  ;; !!! Won't work if label-type is 'no.
+	  ;; !! TODO: Won't work if label-type is 'no.
 	  ;; Here we search past the cell identifier
 	  ;; for the location at which to place cell properties.
 	  ;; Be sure not to skip past a period which may terminate the label.
@@ -408,8 +405,8 @@ hidden."
 	    (setq kcell-data (car kcell-list)
 		  ;; Repair invalid idstamps on the fly.
 		  idstamp (if (vectorp kcell-data)
-			      (or (kcell-data:idstamp kcell-data) (kview:id-increment kview))
-			    (kview:id-increment kview)))
+			      (or (kcell-data:idstamp kcell-data) (kview:id-increment kotl-kview))
+			    (kview:id-increment kotl-kview)))
 	    (kproperty:set 'idstamp idstamp)
 	    (kproperty:set 'kcell (car kcell-list))
 	    (setq kcell-list (cdr kcell-list)))
@@ -426,7 +423,7 @@ hidden."
     (while
 	(progn
 	  (skip-chars-forward "\n")
-	  ;; !! Todo: Won't work if label-type is 'no.
+	  ;; !! TODO: Won't work if label-type is 'no.
 	  ;; Here we search past the cell identifier
 	  ;; for the location at which to place cell properties.
 	  ;; Be sure not to skip past a period which may terminate the label.
@@ -434,8 +431,8 @@ hidden."
 	    (setq kcell-data (aref kcell-vector kcell-num)
 		  ;; Repair invalid idstamps on the fly.
 		  idstamp (if (vectorp kcell-data)
-			      (or (kcell-data:idstamp kcell-data) (kview:id-increment kview))
-			    (kview:id-increment kview)))
+			      (or (kcell-data:idstamp kcell-data) (kview:id-increment kotl-kview))
+			    (kview:id-increment kotl-kview)))
 	    (kproperty:set 'idstamp idstamp)
 	    (kproperty:set 'kcell (kcell-data:to-kcell-v3 kcell-data))
 	    (setq kcell-num (1+ kcell-num)))
@@ -444,7 +441,7 @@ hidden."
 (defun kfile:narrow-to-kcells ()
   "Narrow kotl file to kcell section only."
   (interactive)
-  (when (kview:is-p kview)
+  (when (kview:is-p kotl-kview)
     (let ((start-text) (end-text))
       (save-excursion
 	(widen)
@@ -499,9 +496,7 @@ handle, whenever this is possible."
 		    (delete-region (match-beginning 0) (match-end 0))
 		  (error "Malformed quote"))
 		(backward-sexp 1))
-	       ((condition-case ()
-		    (prog1 t (down-list 1))
-		  (error nil))
+	       ((ignore-errors (prog1 t (down-list 1)))
 		(backward-char 1)
 		(skip-chars-backward " \t")
 		(delete-region
@@ -509,9 +504,7 @@ handle, whenever this is possible."
 		 (progn (skip-chars-forward " \t") (point)))
 		(when (not (eq ?' (char-after (1- (point)))))
 		  (insert ?\n)))
-	       ((condition-case ()
-		    (prog1 t (up-list 1))
-		  (error nil))
+	       ((ignore-errors (prog1 t (up-list 1)))
 		(while (looking-at "\\s)")
 		  (forward-char 1))
 		(skip-chars-backward " \t")

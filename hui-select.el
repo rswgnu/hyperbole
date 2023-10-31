@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Oct-96 at 02:25:27
-;; Last-Mod:     27-Feb-23 at 00:22:58 by Bob Weiner
+;; Last-Mod:     22-Oct-23 at 17:26:49 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -169,7 +169,7 @@ Use for language major modes."
     (Info-mode "[^ \t\n]")
     (outline-mode "[^*]")
     (text-mode  "[^ \t\n*]"))
-  "List of (major-mode . non-terminator-line-regexp) elements.
+  "List of (MAJOR-MODE . NON-TERMINATOR-LINE-REGEXP) elements.
 Used to avoid early dropoff when marking indented code.")
 
 (defvar hui-select-indent-end-regexp-alist
@@ -185,7 +185,7 @@ Used to avoid early dropoff when marking indented code.")
     (indented-text-mode "[ \t]*$")
     (Info-mode "[ \t]*$")
     (text-mode  "[ \t]*$"))
-  "List of (major-mode . terminator-line-regexp) elements.
+  "List of (MAJOR-MODE . TERMINATOR-LINE-REGEXP) elements.
 Used to include a final line when marking indented code.")
 
 (defcustom hui-select-char-p nil
@@ -203,9 +203,55 @@ Used to include a final line when marking indented code.")
   :type 'boolean
   :group 'hyperbole-commands)
 
+(defconst hui-java-defun-prompt-regexp
+  (let* ((space* "[ \t\n\r\f]*")
+         (space+ "[ \t\n\r\f]+")
+         (modifier*
+          (concat "\\(?:"
+                  (regexp-opt '("abstract" "const" "default" "final" "native"
+                                "private" "protected" "public" "static"
+                                "strictfp" "synchronized" "threadsafe"
+                                "transient" "volatile")
+                              'words)   ; Compatible with XEmacs
+                  space+ "\\)*"))
+         (ids-with-dots "[_$a-zA-Z][_$.a-zA-Z0-9]*")
+         (ids-with-dot-\[\] "[[_$a-zA-Z][][_$.a-zA-Z0-9]*")
+         (paren-exp "([^);{}]*)")
+         (generic-exp "<[^(){};]*>"))
+    (concat "^[ \t]*"
+            modifier*
+            "\\(?:" generic-exp space* "\\)?"
+            ids-with-dot-\[\] space+                ; first part of type
+            "\\(?:" ids-with-dot-\[\] space+ "\\)?" ; optional second part of type.
+            "\\(?:[_a-zA-Z][^][ \t:;.,{}()=<>]*"    ; defun name
+                "\\|" ids-with-dots
+            "\\)" space*
+            paren-exp
+            "\\(?:" space* "]\\)*"      ; What's this for?
+            "\\(?:" space* "\\<throws\\>" space* ids-with-dot-\[\]
+                  "\\(?:," space* ids-with-dot-\[\] "\\)*"
+            "\\)?"
+            space*)))
+
 (defvar hui-select-previous nil)
 (defvar hui-select-prior-point nil)
 (defvar hui-select-prior-buffer nil)
+
+;;; ************************************************************************
+;;; Public declarations
+;;; ************************************************************************
+
+(defvar help-mode-syntax-table)         ; "help-mode.el"
+(defvar hkey-init)                      ; "hyperbole.el"
+(defvar hkey-value)                     ; "hui-mouse.el"
+(defvar hyperbole-mode-map)             ; "hyperbole.el"
+(defvar keymap-sym)                     ; "???"
+(defvar org-mode-map)                   ; "org.el"
+(defvar syntax-table-sym)               ; "???"
+
+(declare-function kview:valid-position-p "kotl/kview")
+(declare-function hkey-set-key "hyperbole")
+(declare-function hypb:cmd-key-vector "hypb")
 
 ;;; ************************************************************************
 ;;; Private variables
@@ -346,8 +392,7 @@ Also, add language-specific syntax setups to aid in thing selection."
   ;; opening or closing brace.  This is all necessary since some
   ;; programmers don't put their function braces in the first column.
   (var:add-and-run-hook 'java-mode-hook (lambda ()
-					  (setq defun-prompt-regexp
-						"^[ \t]*\\(\\(\\(public\\|protected\\|private\\|const\\|abstract\\|synchronized\\|final\\|static\\|threadsafe\\|transient\\|native\\|volatile\\)\\s-+\\)*\\(\\(\\([[a-zA-Z][][_$.a-zA-Z0-9]*[][_$.a-zA-Z0-9]+\\|[[a-zA-Z]\\)\\s-*\\)\\s-+\\)\\)?\\(\\([[a-zA-Z][][_$.a-zA-Z0-9]*\\s-+\\)\\s-*\\)?\\([_a-zA-Z][^][ \t:;.,{}()=]*\\|\\([_$a-zA-Z][_$.a-zA-Z0-9]*\\)\\)\\s-*\\(([^);{}]*)\\)?\\([] \t]*\\)\\(\\s-*\\<throws\\>\\s-*\\(\\([_$a-zA-Z][_$.a-zA-Z0-9]*\\)[, \t\n\r\f]*\\)+\\)?\\s-*")))
+					  (setq defun-prompt-regexp hui-java-defun-prompt-regexp)))
   (var:add-and-run-hook 'c++-mode-hook (lambda ()
 					 (setq defun-prompt-regexp
 					       "^[ \t]*\\(template\\s-*<[^>;.{}]+>\\s-*\\)?\\(\\(\\(auto\\|const\\|explicit\\|extern\\s-+\"[^\"]+\"\\|extern\\|friend\\|inline\\|mutable\\|overload\\|register\\|static\\|typedef\\|virtual\\)\\s-+\\)*\\(\\([[<a-zA-Z][]_a-zA-Z0-9]*\\(::[]_a-zA-Z0-9]+\\)?\\s-*<[_<>a-zA-Z0-9 ,]+>\\s-*[*&]*\\|[[<a-zA-Z][]_<>a-zA-Z0-9]*\\(::[[<a-zA-Z][]_<>a-zA-Z0-9]+\\)?\\s-*[*&]*\\)[*& \t\n\r]+\\)\\)?\\(\\(::\\|[[<a-zA-Z][]_a-zA-Z0-9]*\\s-*<[^>;{}]+>\\s-*[*&]*::\\|[[<a-zA-Z][]_~<>a-zA-Z0-9]*\\s-*[*&]*::\\)\\s-*\\)?\\(operator\\s-*[^ \t\n\r:;.,?~{}]+\\(\\s-*\\[\\]\\)?\\|[_~<a-zA-Z][^][ \t:;.,~{}()]*\\|[*&]?\\([_~<a-zA-Z][_a-zA-Z0-9]*\\s-*<[^>;{}]+[ \t\n\r>]*>\\|[_~<a-zA-Z][_~<>a-zA-Z0-9]*\\)\\)\\s-*\\(([^{;]*)\\(\\(\\s-+const\\|\\s-+mutable\\)?\\(\\s-*[=:][^;{]+\\)?\\)?\\)\\s-*")))
@@ -472,7 +517,7 @@ displayed in the minibuffer."
 ;;;###autoload
 (defun hui-select-goto-matching-tag ()
   "Move point to start of the tag paired with closest tag point is at or precedes.
-Enabled in major modes in `hui-select-markup-modes.  Returns t if
+Enabled in major modes in `hui-select-markup-modes'.  Returns t if
 point is moved, else nil.  Signals an error if no tag is found
 following point or if the closing tag does not have a `>'
 terminator character."
@@ -752,21 +797,20 @@ end sexp delimiters, ignore it, and return nil."
   (let ((mark-sexp-func (lambda ()
 			  (when (region-active-p) (deactivate-mark))
 			  (mark-sexp) t)))
-    (condition-case nil
-	(let ((syn-after (char-syntax (char-after)))
-	      syn-before)
-	  (cond ((eq syn-after ?\()
-		 (funcall mark-sexp-func))
-		((eq syn-after ?\))
-		 (forward-char 1)
-		 (backward-sexp)
-		 (funcall mark-sexp-func))
-		((and (not (eolp))
-		      (setq syn-before (char-syntax (char-before)))
-		      (eq syn-before ?\)))
-		 (backward-sexp)
-		 (funcall mark-sexp-func))))
-      (error nil))))
+    (ignore-errors
+      (let ((syn-after (char-syntax (char-after)))
+	    syn-before)
+	(cond ((eq syn-after ?\()
+	       (funcall mark-sexp-func))
+	      ((eq syn-after ?\))
+	       (forward-char 1)
+	       (backward-sexp)
+	       (funcall mark-sexp-func))
+	      ((and (not (eolp))
+		    (setq syn-before (char-syntax (char-before)))
+		    (eq syn-before ?\)))
+	       (backward-sexp)
+	       (funcall mark-sexp-func)))))))
 
 ;;; ************************************************************************
 ;;; Private functions
@@ -799,7 +843,7 @@ Assume point is before any non-whitespace character on the line."
 This respects the current syntax table definition of whitespace, whereas
 `back-to-indentation' does not.  This is relevant in literate programming and
 mail and news reply modes."
-  (goto-char (min (progn (end-of-line) (point))
+  (goto-char (min (line-end-position)
 		  (progn (beginning-of-line)
 			 (skip-syntax-forward " ")
 			 (point)))))
@@ -942,16 +986,14 @@ language must be included in the list, hui-select-brace-modes."
 			(looking-at defun-prompt-regexp)))
 		 (and (= (following-char) ?\})
 		      (stringp defun-prompt-regexp)
-		      (condition-case ()
-			  (progn
-			    ;; Leave point at opening brace.
-			    (goto-char
-			     (scan-sexps (1+ (point)) -1))
-			    ;; Test if these are defun braces.
-			    (save-excursion
-			      (beginning-of-line)
-			      (looking-at defun-prompt-regexp)))
-			(error nil)))))
+		      (ignore-errors
+			;; Leave point at opening brace.
+			(goto-char
+			 (scan-sexps (1+ (point)) -1))
+			;; Test if these are defun braces.
+			(save-excursion
+			  (beginning-of-line)
+			  (looking-at defun-prompt-regexp))))))
 	    eod)
 	(when (or at-def-brace
 		  ;; At the start of a definition:
@@ -1100,28 +1142,23 @@ list, hui-select-indent-modes."
       (hui-select-brace-def-or-declaration pos)
       (save-excursion
 	(setq hui-select-previous 'sexp-start)
-	(condition-case ()
-	    (hui-select-set-region pos (scan-sexps pos 1))
-	  (error nil)))))
+	(ignore-errors (hui-select-set-region pos (scan-sexps pos 1))))))
 
 (defun hui-select-sexp-end (pos)
   "Return (start . end) of sexp ending at POS."
   (or (hui-select-brace-def-or-declaration pos)
       (save-excursion
 	(setq hui-select-previous 'sexp-end)
-	(condition-case ()
-	    (hui-select-set-region (scan-sexps (1+ pos) -1) (1+ pos))
-	  (error nil)))))
+	(ignore-errors (hui-select-set-region (scan-sexps (1+ pos) -1) (1+ pos))))))
 
 (defun hui-select-sexp (pos)
   "Return (start . end) of the sexp that POS is within."
   (setq hui-select-previous 'sexp)
   (save-excursion
     (goto-char pos)
-    (condition-case ()
-	(hui-select-set-region (progn (backward-up-list 1) (point))
-			       (progn (forward-list 1) (point)))
-      (error nil))))
+    (ignore-errors
+      (hui-select-set-region (progn (backward-up-list 1) (point))
+			     (progn (forward-list 1) (point))))))
 
 (defun hui-select-sexp-up (pos)
   "Return (start . end) of the sexp enclosing the selected area or nil."
@@ -1131,10 +1168,9 @@ list, hui-select-indent-modes."
   (setq pos (or (car hui-select-region) pos))
   (save-excursion
     (goto-char pos)
-    (condition-case ()
-	(hui-select-set-region (progn (backward-up-list 1) (point))
-			       (progn (forward-list 1) (point)))
-      (error nil))))
+    (ignore-errors
+      (hui-select-set-region (progn (backward-up-list 1) (point))
+			     (progn (forward-list 1) (point))))))
 
 (defun hui-select-preprocessor-def (pos)
   "Return (start . end) of a preprocessor #definition starting at POS, if any.
@@ -1175,11 +1211,9 @@ The region includes sexpressions before and after POS"
 	      ((and (char-before pos) (= ?\  (char-syntax (char-before pos))))
 	       (hui-select-set-region (1- pos) pos))
 	      (t (goto-char pos)
-		 (condition-case ()
-		     (hui-select-set-region
-		      (save-excursion (backward-sexp) (point))
-		      (progn (forward-sexp) (point)))
-		   (error nil)))))))
+		 (ignore-errors (hui-select-set-region
+				 (save-excursion (backward-sexp) (point))
+				 (progn (forward-sexp) (point)))))))))
 
 (defun hui-select-comment (pos)
   "Return rest of line from POS to newline."
@@ -1294,10 +1328,9 @@ Delimiters may be single, double or open and close quotes."
   (setq hui-select-previous 'sentence)
   (save-excursion
     (goto-char pos)
-    (condition-case ()
-	(hui-select-set-region (progn (backward-sentence) (point))
-			       (progn (forward-sentence) (point)))
-      (error nil))))
+    (ignore-errors
+      (hui-select-set-region (progn (backward-sentence) (point))
+			     (progn (forward-sentence) (point))))))
 
 (defun hui-select-whitespace (pos)
   "Return (start . end) of all whitespace at POS,

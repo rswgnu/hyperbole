@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    23-Apr-21 at 20:55:00
-;; Last-Mod:      3-Dec-22 at 00:12:39 by Bob Weiner
+;; Last-Mod:     27-Aug-23 at 20:40:20 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -31,10 +31,8 @@
     (should (not (org-check-for-hidden 'headlines)))
     (hsys-org-cycle)
     (should (org-check-for-hidden 'headlines))
-    (if (fboundp 'with-suppressed-warnings)
-	(with-suppressed-warnings ((interactive-only next-line)) (next-line))
-      (next-line))
-    (should (equal (line-number-at-pos) 4))))
+    (forward-visible-line 1)
+    (should (= (line-number-at-pos) 4))))
 
 (ert-deftest hsys-org:region-with-text-property-value ()
   "Should get the region with the specific text property."

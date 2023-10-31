@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     1-Jun-16 at 15:35:36
-;; Last-Mod:     21-Feb-23 at 21:27:15 by Bob Weiner
+;; Last-Mod:      3-Oct-23 at 17:46:53 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -128,12 +128,25 @@
 (require 'hhist)     ; To store frame-config when hycontrol-windows-grid is used
 (require 'hypb)
 (require 'set)
-(eval-when-compile
+(eval-and-compile
   (require 'framemove nil t) ;; Elpa package
   (require 'windmove))
 ;; Frame face enlarging/shrinking (zooming) requires this separately available library.
 ;; Everything else works fine without it, so don't make it a required dependency.
 (require 'zoom-frm nil t)
+
+;;; ************************************************************************
+;;; Public declarations
+;;; ************************************************************************
+
+(declare-function fm-next-frame "ext:framemove")
+
+(defvar frame-zoom-font-difference)
+
+(defvar hyperbole-mode-map)             ; "hyperbole.el"
+(defvar org-mode-map)                   ; "org.el"
+(defvar outline-mode-map)               ; "outline.el"
+(defvar outline-minor-mode-map)         ; "outline.el"
 
 ;;; ************************************************************************
 ;;; Public variables
@@ -353,7 +366,7 @@ The final predicate should always be t, for default values, typically of zero.")
 ;;;###autoload
 (eval-after-load "dired"     '(define-key dired-mode-map       "@" 'hycontrol-windows-grid))
 
-;;;###autoload
+
 (defvar hycontrol-windows-mode-map
   (let ((map (make-sparse-keymap)))
     (suppress-keymap map t) ;; Disable self-inserting keys and prefix keys
@@ -422,11 +435,11 @@ The final predicate should always be t, for default values, typically of zero.")
 
     ;; Don't call these interactively because a prefix arg of 1 tries
     ;; to make one window 1 line tall.
-    (define-key map "\["    (lambda () (interactive) (split-window-vertically)))
-    (define-key map "\]"    (lambda () (interactive) (split-window-horizontally)))
+    (define-key map "["    (lambda () (interactive) (split-window-vertically)))
+    (define-key map "]"    (lambda () (interactive) (split-window-horizontally)))
 
-    (define-key map "\("    'hycontrol-save-frame-configuration)
-    (define-key map "\)"    'hycontrol-restore-frame-configuration)
+    (define-key map "("    'hycontrol-save-frame-configuration)
+    (define-key map ")"    'hycontrol-restore-frame-configuration)
 
     (define-key map "~"     (lambda () (interactive)
 			      (unless (hycontrol-window-swap-buffers)
@@ -876,7 +889,7 @@ multiple of the default frame font width."
 	      hycontrol-display-buffer-predicate-list)
     (error "(HyDebug): Invalid expression in `hycontrol-display-buffer-predicate-list' - %s" err)))
 
-(defvar hycontrol--blank-buffer (get-buffer-create "BLANK")
+(defvar hycontrol--blank-buffer (get-buffer-create " BLANK")
   "Blank buffer to display in extra window grid windows.
 Used after selected buffer list is exhausted.")
 
@@ -1732,13 +1745,13 @@ columns (rightmost) of the grid."
 ;;;###autoload
 (defun hycontrol-windows-grid-by-file-pattern (arg pattern &optional full-flag)
   "Display up to an abs(prefix ARG)-sized window grid of files matching PATTERN.
-Use absolute file paths if called interactively or optional FULL-FLAG is non-nil.
-PATTERN is a shell glob pattern.
+Use absolute file paths if called interactively or optional
+FULL-FLAG is non-nil.  PATTERN is a shell glob pattern.
 
 Left digit of ARG is the number of grid rows and the right digit
 is the number of grid columns.  If ARG is nil, 0, 1, less than
 11, greater than 99, then autosize the grid to fit the number of
-files matched by PATTERN. Otherwise, if ARG ends in a 0, adjust the
+files matched by PATTERN.  Otherwise, if ARG ends in a 0, adjust the
 grid size to the closest valid size."
   (interactive
    (list current-prefix-arg
@@ -1890,8 +1903,8 @@ See documentation of `hycontrol-windows-grid' for further details."
 	       ;; to 1 if there was no error.
 	       (setq hycontrol-arg 1))
       (error (set-window-configuration wconfig)
-	     (if (and hycontrol-help-flag (or hycontrol-frames-mode hycontrol-windows-mode))
-		 (pop-to-buffer "*Messages*"))
+	     (and hycontrol-help-flag (or hycontrol-frames-mode hycontrol-windows-mode)
+		 (pop-to-buffer (messages-buffer)))
 	     (error "(HyDebug): Grid Size: %d; %s" arg err)))
     ;; No error, save prior frame configuration for easy return
     (hhist:add hist-elt)

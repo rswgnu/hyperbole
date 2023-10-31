@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    15-Nov-93 at 12:15:16
-;; Last-Mod:     12-Oct-22 at 21:21:34 by Mats Lidell
+;; Last-Mod:      4-Oct-23 at 00:01:43 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -84,6 +84,27 @@
   :group 'hyperbole-koutliner)
 
 ;;; ************************************************************************
+;;; Public declarations
+;;; ************************************************************************
+
+(declare-function kcell-view:label "kview")
+(declare-function hbut:get-key-src "hbut")
+(declare-function hbut:label-p "hbut")
+(declare-function hargs:iform-read "hargs")
+(declare-function hattr:set "hbut")
+
+;;; ************************************************************************
+;;; Private variables
+;;; ************************************************************************
+
+(defvar klink:cell-ref-regexp
+  (concat "[0-9a-zA-Z][.*~=0-9a-zA-Z \t\n\r]*\\s-*,\\s-*"
+	  "[|:.*~=0-9a-zA-Z \t\n\r]+"
+	  "\\|[|: 0-9a-zA-Z][|:.*~=0-9a-zA-Z \t\n\r]*")
+  "Regexp matching a cell reference including relative and view specs.
+Contains no groupings.")
+
+;;; ************************************************************************
 ;;; Public functions
 ;;; ************************************************************************
 
@@ -107,13 +128,13 @@ return an absolute klink string.  Klink returned is of the form:
 REFERENCE should be a cell-ref or a string containing \"filename, cell-ref\".
 See documentation for `kcell:ref-to-id' for valid cell-ref formats."
   (interactive
-   ;; Don't change the name or delete default-dir used here.  It is referenced
-   ;; in "hargs.el" for argument getting.
-   (let ((default-dir default-directory))
+   (progn
      (barf-if-buffer-read-only)
+     ;; This `default-directory' setting is referenced in "hargs.el" for argument getting.
+     (hattr:set 'hbut:current 'dir default-directory)
      (save-excursion
        (hargs:iform-read
-	(list 'interactive "*+LInsert link to <[file,] cell-id [|vspecs]>: ")))))
+	'(interactive "*+LInsert link to <[file,] cell-id [|vspecs]>: ")))))
   (barf-if-buffer-read-only)
   ;; Reference generally is a string.  It may be a list as a string, e.g.
   ;; "(\"file\" \"cell\")", in which case, we remove the unneeded internal
@@ -121,8 +142,9 @@ See documentation for `kcell:ref-to-id' for valid cell-ref formats."
   (and (stringp reference) (> (length reference) 0)
        (eq (aref reference 0) ?\()
        (setq reference (replace-regexp-in-string "\\\"" "" reference nil t)))
-  (let ((default-dir default-directory)
-	file-ref cell-ref)
+  ;; This `default-directory' setting is referenced in "hargs.el" for getting arguments.
+  (hattr:set 'hbut:current 'dir default-directory)
+  (let (file-ref cell-ref)
     (setq reference (klink:parse reference)
 	  file-ref  (car reference)
 	  cell-ref  (nth 1 reference))
@@ -158,7 +180,8 @@ link-end-position, (including delimiters)."
 	     t)
 	   ;; If in a programming mode, Klinks can occur only within comments.
 	   (if (and (derived-mode-p #'prog-mode)
-		    (not (derived-mode-p #'lisp-interaction-mode)))
+		    (not (derived-mode-p 'lisp-interaction-mode))
+		    (not (memq major-mode hui-select-markup-modes)))
 	       ;; Next line means point is within a comment
 	       (nth 4 (syntax-ppss))
 	     t)
@@ -183,8 +206,9 @@ link-end-position, (including delimiters)."
 	     ;; even if inside a comment
 	     (and (search-backward "<" bol t)
 		  (not (eq (preceding-char) ?#))
-		  ;; Don't match to \<(explicit)> Hyperbole buttons
-		  (not (eq (char-after (1+ (point))) ?\())))
+		  ;; Don't match to \<(explicit)> or <[implicit]> Hyperbole
+                  ;; buttons or message attachments such as <#part ...>
+		  (not (memq (char-after (1+ (point))) '(?\( ?\[ ?#)))))
 	   (setq label-and-pos (hbut:label-p t "<" ">" t))
 	   (stringp (setq referent (car label-and-pos)))
 	   (setq referent (string-trim referent))
@@ -196,8 +220,8 @@ link-end-position, (including delimiters)."
 		 (hpath:is-p (expand-file-name referent (hbut:get-key-src t t)))))
 	   ;; Eliminate matches to e-mail addresses like, <user@domain>
 	   (not (string-match "[^<> \t\n\r\f][!&@]" referent))
-	   ;; Eliminate matches to URLs
-	   (not (string-match "\\`[a-zA-Z]+:" referent))
+	   ;; Eliminate matches to URLs but allow for single char Windows path drive prefixes
+	   (not (string-match "\\`[a-zA-Z][a-zA-Z]+:" referent))
 	   ;; Don't match to <HTML> and </SGML> type tags
 	   (not (and (memq major-mode hui-select-markup-modes)
 		     ;; Assume , followed by a number is a klink.
@@ -219,7 +243,6 @@ same directory."
 ;;; Hyperbole type definitions
 ;;; ************************************************************************
 
-
 (defib klink ()
   "Follow a link delimited by <> to a koutline cell.
 See documentation for the `link-to-kotl' function for valid klink formats."
@@ -227,7 +250,6 @@ See documentation for the `link-to-kotl' function for valid klink formats."
 	 (link (car link-and-pos))
 	 (start-pos (nth 1 link-and-pos)))
     (when link
-      (ibut:label-set link-and-pos)
       (hact 'klink:act link start-pos))))
 
 (defact link-to-kotl (link)
@@ -267,13 +289,18 @@ See documentation for `kcell:ref-to-id' for valid cell-ref formats."
 ;;; ************************************************************************
 
 (defun klink:act (link start-pos)
+  "Jump to klink LINK's referent at START-POS.
+Update relative part of klink if its referent has moved.
+
+See `actypes::link-to-kotl' for valid LINK formats."
   (let ((obuf (current-buffer)))
     ;; Perform klink's action which is to jump to link referent.
     (prog1 (hact 'link-to-kotl link)
-      (save-excursion
-	;; Update klink label if need be, which might be in a different buffer
-	;; than the current one.
-	(klink:update-label link start-pos obuf)))))
+      (when (derived-mode-p #'kotl-mode)
+	(save-excursion
+	  ;; Update klink label if need be, which might be in a different buffer
+	  ;; than the current one.
+	  (klink:update-label link start-pos obuf))))))
 
 (defun klink:parse (reference)
   "Return (file-ref cell-ref) list parsed from REFERENCE string.
@@ -323,14 +350,13 @@ See documentation for `kcell:ref-to-id' for valid cell-ref formats."
 (defun klink:update-label (klink start link-buf)
   "Update label of KLINK if its relative cell id has changed.
 Assume point is in klink referent buffer, where the klink points."
-  (if (and (stringp klink)
-	   (string-match
-	    "[@,]\\s-*\\([*0-9][*.0-9a-zA-Z]*\\)\\s-*=\\s-*0[0-9]*"
-	    klink))
-      ;; Then klink has both relative and permanent ids.
-      (let* ((label (match-string 1 klink))
-	     (new-label (kcell-view:label)))
-	  (if (and new-label (not (equal label new-label)))
+  (and (stringp klink)
+       (string-match "[@,]\\s-*\\([*0-9][*.0-9a-zA-Z]*\\)\\s-*=\\s-*0[0-9]*"
+		     klink)
+       ;; Then klink has both relative and permanent ids.
+       (let* ((label (match-string 1 klink))
+	      (new-label (kcell-view:label)))
+	 (and new-label (not (equal label new-label))
 	      (klink:replace-label klink link-buf start new-label)))))
 
 (defun klink:yank-handler (klink)
@@ -348,17 +374,6 @@ Assume point is in klink referent buffer, where the klink points."
 	      (t (insert klink))))
     (insert klink)))
 				 
-;;; ************************************************************************
-;;; Private variables
-;;; ************************************************************************
-
-(defvar klink:cell-ref-regexp
-  (concat "[0-9a-zA-Z][.*~=0-9a-zA-Z \t\n\r]*\\s-*,\\s-*"
-	  "[|:.*~=0-9a-zA-Z \t\n\r]+"
-	  "\\|[|: 0-9a-zA-Z][|:.*~=0-9a-zA-Z \t\n\r]*")
-  "Regexp matching a cell reference including relative and view specs.
-Contains no groupings.")
-
 (provide 'klink)
 
 ;;; klink.el ends here

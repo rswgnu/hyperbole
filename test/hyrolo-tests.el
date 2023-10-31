@@ -41,7 +41,7 @@
           (hyrolo-add "a/b/c")
           (beginning-of-line)
           (should (looking-at-p "\*\*\*   c")))
-      (delete-file hyrolo-file))))
+      (hy-delete-file-and-buffer hyrolo-file))))
 
 (ert-deftest hyrolo-demo-search-work ()
   "Use demo example and search for work should match work."
@@ -229,7 +229,7 @@ and {b} the previous same level cell."
           (dolist (sorted-order '("a" "b" "d" "c"))
             (goto-char (1+ (should (search-forward sorted-order))))
             (should (looking-at-p "^\t[0-9/]+$"))))
-      (delete-file hyrolo-file))))
+      (hy-delete-file-and-buffer hyrolo-file))))
 
 (ert-deftest hyrolo-sort-records-at-different-levels ()
   "HyRolo can sort records at different levels."
@@ -267,7 +267,7 @@ and {b} the previous same level cell."
           (find-file hyrolo-file)
           (hyrolo-sort)
           (should (string= (buffer-string) sorted-hyrolo-file)))
-      (delete-file hyrolo-file))))
+      (hy-delete-file-and-buffer hyrolo-file))))
 
 (provide 'hyrolo-tests)
 ;;; hyrolo-tests.el ends here

@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    20-Jul-16 at 22:41:34
-;; Last-Mod:     24-Jul-22 at 10:08:17 by Mats Lidell
+;; Last-Mod:      3-Oct-23 at 23:24:37 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -174,12 +174,23 @@
 ;;; ************************************************************************
 
 (eval-when-compile (require 'browse-url))
-(require 'hbut)
 (require 'hargs)
+(require 'hbut)
+(require 'hypb)
+
+;;; ************************************************************************
+;;; Public declarations
+;;; ************************************************************************
+
+(declare-function magit-status-setup-buffer "ext:magit")
 
 ;;; ************************************************************************
 ;;; Public variables
 ;;; ************************************************************************
+
+(defgroup hyperbole-buttons nil
+  "Hyperbole explicit, global and implicit button customizations."
+  :group 'hyperbole)
 
 (defcustom hibtypes-social-default-service "twitter"
   "Lowercase string matching the social media service to use as a default."
@@ -189,47 +200,43 @@
 		(const "gitlab")
 		(const "instagram")
 		(const "twitter"))
-  :group 'hyperbole-button)
+  :group 'hyperbole-buttons)
 
 (defcustom hibtypes-social-display-function #'browse-url
   "Function of one arg, url, to display when activating a social media reference."
   :type 'function
-  :group 'hyperbole-button)
+  :group 'hyperbole-buttons)
 
 (defcustom hibtypes-git-default-project nil
   "Default project name to associate with any local git commit link."
   :type 'string
-  :group 'hyperbole-button)
+  :group 'hyperbole-buttons)
 
 (defcustom hibtypes-git-use-magit-flag nil
   "Non-nil means use `magit' rather than `dired' for a git directory button."
   :type 'boolean
-  :group 'hyperbole-button)
+  :group 'hyperbole-buttons)
 
 (defcustom hibtypes-github-default-project nil
   "Default project name to associate with any Github commit link."
   :type 'string
-  :group 'hyperbole-button)
+  :group 'hyperbole-buttons)
 
 (defcustom hibtypes-github-default-user nil
   "Default user name to associate with any Github commit link."
   :type 'string
-  :group 'hyperbole-button)
+  :group 'hyperbole-buttons)
 
 (defcustom hibtypes-gitlab-default-project nil
   "Default project name to associate with any Github commit link."
   :type 'string
-  :group 'hyperbole-button)
+  :group 'hyperbole-buttons)
 
 (defcustom hibtypes-gitlab-default-user nil
   "Default user name to associate with any Github commit link."
   :type 'string
-  :group 'hyperbole-button)
+  :group 'hyperbole-buttons)
 
-;;; ************************************************************************
-;;; Public declarations
-;;; ************************************************************************
-(declare-function magit-status-setup-buffer "ext:magit")
 ;;; ************************************************************************
 ;;; Private variables
 ;;; ************************************************************************
@@ -302,9 +309,9 @@ listed in `hibtypes-social-inhibit-modes'."
 					      (mapcar #'car hibtypes-social-hashtag-alist))))))
 		    ;; Heuristic to ensure this is not an email address
 		    (save-match-data
-		      (not (and (looking-at mail-address-regexp)
+		      (not (and (looking-at hypb:mail-address-regexp)
 				(let ((case-fold-search t))
-				  (string-match mail-address-tld-regexp
+				  (string-match hypb:mail-address-tld-regexp
 						(match-string-no-properties 1)))))))))
 
     (save-match-data

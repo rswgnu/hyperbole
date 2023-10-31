@@ -16,6 +16,12 @@ export HOME=$app/$install_method
 
 cd $app/$install_method
 
+if [ -n "$2" ]
+then
+  export LOCAL_HYPB_REPO=$2
+  export LOCAL_HYPB_BRANCH=$3
+fi
+
 ## Initial install with ert tests
 emacs --batch -l $app/$install_method/.emacs \
       --eval '(load (expand-file-name "test/hy-test-dependencies.el" hyperb:dir))' \

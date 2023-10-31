@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    04-Feb-90
-;; Last-Mod:     26-Feb-23 at 22:19:19 by Bob Weiner
+;; Last-Mod:      4-Oct-23 at 20:04:08 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -25,7 +25,53 @@
 ;;; ************************************************************************
 ;;; Public declarations
 ;;; ************************************************************************
+
+(declare-function br-in-view-window-p "ext:br")
+(declare-function br-next-listing-window "ext:br")
+(declare-function br-to-view-window "ext:br")
+
+(declare-function ace-window "ext:ace-window")
+(declare-function ace-window-display-mode "ext:ace-window")
+(declare-function aw-select "ext:ace-window")
+
+(defvar aw-dispatch-alist)
+(defvar aw-dispatch-always)
+(defvar aw-frame-size)
+(defvar aw-keys)
+
+;; window-jump
+(declare-function window-jump "ext:window-jump")
+(defvar	wj-vec-left)
+(defvar	wj-vec-right)
+(defvar	wj-vec-down)
+(defvar	wj-vec-up)
+
 (defvar start-window)
+(defvar aw-scope)
+
+(defvar hkey-value)                     ; "hui-mouse.el"
+(defvar hmouse-alist)                   ; "hui-mouse.el"
+(defvar hkey-alist)                     ; "hui-mouse.el"
+(defvar hmouse-set-point-command)       ; "hui-mouse.el"
+
+(defvar hyperbole-mode-map)             ; "hyperbole.el"
+
+(defvar action-key-default-function)    ; defcustom hui-mouse
+(defvar assist-key-default-function)    ; defcustom hui-mouse
+
+(declare-function mouse-drag-frame nil) ;; Obsolete from Emacs 28
+
+(declare-function hkey-quit-window "hmouse-drv") ; Alias defined in this file.
+
+(declare-function hattr:report "hbut")
+(declare-function hattr:list "hbut")
+(declare-function br-in-browser "hpath")
+(declare-function hbut:label "hbut")
+(declare-function hattr:get "hbut")
+(declare-function hui:ebut-link-directly "hui")
+(declare-function hui:ibut-link-directly "hui")
+(declare-function hkey-set-key "hyperbole")
+(declare-function org-todo "org")
 
 ;;; ************************************************************************
 ;;; Public variables
@@ -45,14 +91,25 @@ See function `hmouse-window-at-absolute-pixel-position' for more details.")
 (defvar action-key-depressed-flag nil "t while Action Key is depressed.")
 (defvar assist-key-depressed-flag nil "t while Assist Key is depressed.")
 (defvar action-key-depress-args nil
-  "List of mouse event args from most recent depress of the Action Key.")
+  "List of event args from most recent depress of the Action Mouse Key.")
 (defvar assist-key-depress-args nil
-  "List of mouse event args from most recent depress of the Assist Key.")
+  "List of event args from most recent depress of the Assist Mouse Key.")
 
 (defvar action-key-release-args nil
-  "List of mouse event args from most recent release of the Action Key.")
+  "List of event args from most recent release of the Action Mouse Key.")
 (defvar assist-key-release-args nil
-  "List of mouse event args from most recent release of the Assist Key.")
+  "List of event args from most recent release of the Assist Mouse Key.")
+
+(defvar action-key-depress-buffer nil
+  "The last buffer in which the Action Key was depressed or nil.
+This is set to nil when the depress is on an inactive minibuffer.")
+(defvar assist-key-depress-buffer nil
+  "The last buffer in which the Assist Key was depressed or nil.
+This is set to nil when the depress is on an inactive minibuffer.")
+(defvar action-key-release-buffer nil
+  "The last buffer in which the Action Key was released or nil.")
+(defvar assist-key-release-buffer nil
+  "The last buffer in which the Assist Key was released or nil.")
 
 (defvar action-key-depress-window nil
   "The last window in which the Action Key was depressed or nil.
@@ -65,7 +122,7 @@ This is set to nil when the depress is on an inactive minibuffer.")
 (defvar assist-key-release-window nil
   "The last window in which the Assist Key was released or nil.")
 
-;; These store mouse positions and are used only when a mouse is available.
+;; These store mouse positions when a Smart Mouse key is pressed.
 (defvar action-key-depress-position nil
   "The last mouse screen position at which the Action Key was depressed or nil.")
 (defvar assist-key-depress-position nil
@@ -114,30 +171,6 @@ Default is nil."
 This permits the Smart Keys to behave as paste keys.")
 
 ;;; ************************************************************************
-;;; Public declarations
-;;; ************************************************************************
-
-(declare-function br-in-view-window-p "ext:br")
-(declare-function br-next-listing-window "ext:br")
-(declare-function br-to-view-window "ext:br")
-
-(declare-function ace-window "ext:ace-window")
-(declare-function ace-window-display-mode "ext:ace-window")
-(declare-function aw-select "ext:ace-window")
-
-(defvar aw-dispatch-alist)
-(defvar aw-dispatch-always)
-(defvar aw-frame-size)
-(defvar aw-keys)
-
-;; window-jump
-(declare-function window-jump "ext:window-jump")
-(defvar	wj-vec-left)
-(defvar	wj-vec-right)
-(defvar	wj-vec-down)
-(defvar	wj-vec-up)
-
-;;; ************************************************************************
 ;;; Private variables
 ;;; ************************************************************************
 
@@ -172,10 +205,12 @@ This permits the Smart Keys to behave as paste keys.")
   (setq action-key-depress-prev-point (point-marker)
 	action-key-depressed-flag t
 	action-key-depress-args (hmouse-set-point args)
+	action-key-depress-buffer (window-buffer (hmouse-depress-inactive-minibuffer-p args))
 	action-key-depress-window (or (hmouse-depress-inactive-minibuffer-p args)
 				      (selected-window))
 	action-key-depress-position (hkey-absolute-pixel-position)
 	action-key-release-args nil
+	action-key-release-buffer nil
 	action-key-release-window nil
 	action-key-release-prev-point nil)
   (when (and (not assist-key-depressed-flag)
@@ -195,10 +230,12 @@ This permits the Smart Keys to behave as paste keys.")
   (setq assist-key-depress-prev-point (point-marker)
 	assist-key-depressed-flag t
 	assist-key-depress-args (hmouse-set-point args)
+	assist-key-depress-buffer (window-buffer (hmouse-depress-inactive-minibuffer-p args))
 	assist-key-depress-window (or (hmouse-depress-inactive-minibuffer-p args)
 				      (selected-window))
 	assist-key-depress-position (hkey-absolute-pixel-position)
 	assist-key-release-args nil
+	assist-key-release-buffer nil
 	assist-key-release-window nil
 	assist-key-release-prev-point nil)
   (when (and (not action-key-depressed-flag)
@@ -221,26 +258,25 @@ This permits the Smart Keys to behave as paste keys.")
 ;;; Smart Key Release Functions
 (defun action-mouse-key-emacs (event)
   "Set point to the current mouse cursor position and execute `action-key'.
-EVENT will be passed to `hmouse-function'."
+EVENT will be passed to `hmouse-release'."
   (interactive "e")
   (apply #'action-mouse-key (hmouse-key-release-args-emacs event)))
 
 (defun assist-mouse-key-emacs (event)
   "Set point to the current mouse cursor position and execute `assist-key'.
-EVENT will be passed to `hmouse-function'."
+EVENT will be passed to `hmouse-release'."
   (interactive "e")
   (apply #'assist-mouse-key (hmouse-key-release-args-emacs event)))
 
 (defun action-mouse-key (&rest args)
   "Set point to the mouse or keyboard cursor position and execute `action-key'.
-Any ARGS will be passed to `hmouse-function'."
+Any ARGS will be passed to `hmouse-release'."
   (interactive)
   ;; Make this a no-op if some local mouse key binding overrode the global
   ;; action-key-depress command invocation.
   (when action-key-depressed-flag
-    (setq action-key-release-position (hkey-absolute-pixel-position))
+    (hmouse-release nil)
     (let ((hkey-alist hmouse-alist))
-      (setq action-key-depressed-flag nil)
       (cond (action-key-cancelled
 	     (setq action-key-cancelled nil
 		   assist-key-depressed-flag nil))
@@ -257,14 +293,13 @@ Any ARGS will be passed to `hmouse-function'."
 
 (defun assist-mouse-key (&rest args)
   "Set point to the mouse or keyboard cursor position and execute `assist-key'.
-Any ARGS will be passed to `hmouse-function'."
+Any ARGS will be passed to `hmouse-release'."
   (interactive)
   ;; Make this a no-op if some local mouse key binding overrode the global
   ;; assist-key-depress command invocation.
   (when assist-key-depressed-flag
-    (setq assist-key-release-position (hkey-absolute-pixel-position))
+    (hmouse-release t)
     (let ((hkey-alist hmouse-alist))
-      (setq assist-key-depressed-flag nil)
       (cond (assist-key-cancelled
 	     (setq assist-key-cancelled nil
 		   action-key-depressed-flag nil))
@@ -287,9 +322,11 @@ Any ARGS will be passed to `hmouse-function'."
   (setq action-key-depress-prev-point nil
 	action-key-depress-position nil
 	action-key-depress-args nil
+	action-key-depress-buffer nil
 	action-key-depress-window nil
 	action-key-release-position nil
 	action-key-release-args nil
+	action-key-release-buffer nil
 	action-key-release-window nil
 	action-key-release-prev-point nil))
 
@@ -300,9 +337,11 @@ Any ARGS will be passed to `hmouse-function'."
   (setq assist-key-depress-prev-point nil
 	assist-key-depress-position nil
 	assist-key-depress-args nil
+	assist-key-depress-buffer nil
 	assist-key-depress-window nil
 	assist-key-release-position nil
 	assist-key-release-args nil
+	assist-key-release-buffer nil
 	assist-key-release-window nil
 	assist-key-release-prev-point nil))
 
@@ -314,11 +353,13 @@ unless the `action-key-default-function' variable is not bound to
 a valid function."
   (interactive)
   (action-key-clear-variables)
-  (prog1 (action-key-internal)
-    (run-hooks 'action-key-depress-hook 'action-key-release-hook)))
+  (unwind-protect
+      (prog1 (action-key-internal)
+	(run-hooks 'action-key-depress-hook 'action-key-release-hook))
+    (setq action-key-depressed-flag nil)))
 
 (defun action-key-internal ()
-  (setq action-key-depressed-flag nil)
+  (setq action-key-depressed-flag t)
   (when action-key-cancelled
     (setq action-key-cancelled nil
 	  assist-key-depressed-flag nil))
@@ -335,11 +376,13 @@ non-nil unless `assist-key-default-function' variable is not
 bound to a valid function."
   (interactive)
   (assist-key-clear-variables)
-  (prog1 (assist-key-internal)
-    (run-hooks 'assist-key-depress-hook 'assist-key-release-hook)))
+  (unwind-protect
+      (prog1 (assist-key-internal)
+	(run-hooks 'assist-key-depress-hook 'assist-key-release-hook))
+    (setq assist-key-depressed-flag nil)))
 
 (defun assist-key-internal ()
-  (setq assist-key-depressed-flag nil)
+  (setq assist-key-depressed-flag t)
   (when assist-key-cancelled
     (setq assist-key-cancelled nil
 	  action-key-depressed-flag nil))
@@ -488,7 +531,7 @@ Works only when running under a window system, not from a dumb terminal."
 	   ;; Leave release-window selected
 	   (when (window-live-p release-window)
 	     (hypb:select-window-frame release-window)))
-	  (at-item-flag
+	  ((not at-item-flag)
 	   (error "(hkey-drag-item): No listing item at point"))
 	  (t ;; No item at point or selected release is invalid
 	   (error "(hkey-drag-item): No item at point or invalid final window, %s" release-window)))))
@@ -523,16 +566,12 @@ Works only when running under a window system, not from a dumb terminal."
 	       (when (window-live-p release-window)
 		 (hypb:select-window-frame release-window)))
       ;; Leave hkey-drag to choose final selected window
-      (hkey-drag release-window)
-      ;; (if (eq start-window release-window)
-      ;; 	  ;; Leave hkey-drag to choose final selected window
-      ;; 	  (hkey-drag release-window)
-      ;; 	;; Replace release window's buffer with selected
-      ;; 	;; window's buffer.
-      ;; 	(hkey-buffer-to start-window release-window)
-      ;; 	(when (window-live-p release-window)
-      ;; 	  (hypb:select-window-frame release-window)))
-      )))
+      (hkey-drag release-window))))
+
+;;;###autoload
+(defun hkey-link (release-window)
+  "Return a list of the selected window (where depressed) and the RELEASE-WINDOW."
+  (list (selected-window) release-window))
 
 ;;;###autoload
 (defun hkey-replace (release-window)
@@ -575,7 +614,7 @@ TO-WINDOW as the selected window."
 
 ;;;###autoload
 (defun hkey-throw (release-window &optional throw-region-flag)
-  "Throw for display in RELEASE-WINDOW.
+  "Throw a thing to display in RELEASE-WINDOW.
 Throw one of:
  - the active (highlighted) region,
  - a displayable item at point or
@@ -608,15 +647,26 @@ The selected window does not change."
 
 ;;;###autoload
 (defun hkey-window-link (release-window)
-  "Create an ebut in the selected window, linked to point in RELEASE-WINDOW.
-RELEASE-WINDOW is interactively chosen via ace-window.
-The selected window does not change."
+  "Create a but in the selected window, linked to point in RELEASE-WINDOW.
+RELEASE-WINDOW is interactively selected via the `ace-window' command.
+The selected window does not change.
+
+With no prefix argument, create an explicit button.
+With a C-u \\='(4) prefix argument, create an unnamed implicit button.
+With a M-1 prefix argument, create an named implicit button."
   (interactive
    (list (let ((mode-line-text (concat " Ace - Hyperbole: " (nth 2 (assq ?w aw-dispatch-alist)))))
 	   (aw-select mode-line-text))))
+  (unless (window-live-p release-window)
+    (error "(hkey-window-link): Invalid release window: %s" release-window))
   (let ((start-window (selected-window)))
     (unwind-protect
-	(hui:link-directly start-window release-window)
+	(progn
+	  (funcall (if current-prefix-arg
+		       #'hui:ibut-link-directly
+		     #'hui:ebut-link-directly)
+		   start-window release-window)
+	  release-window)
       ;; Leave start-window selected
       (when (window-live-p start-window)
 	(hypb:select-window-frame start-window)))))
@@ -743,13 +793,51 @@ buffer to the end window.  The selected window does not change."
   (interactive)
   (hmouse-choose-windows #'hkey-throw))
 
-(defun hmouse-choose-windows (func)
-  "Mouse click on start and end windows for FUNC.
-Then with the start window temporarily selected, run FUNC with the
-end window as an argument.
+(defun hmouse-choose-link-and-referent-windows ()
+  "Select and return a list of (link-button-window referent-window)."
+  (let ((link-but-window (or (and (window-live-p assist-key-depress-window)
+				  assist-key-depress-window)
+			     (selected-window)))
+	(referent-window (and (window-live-p assist-key-release-window)
+			      assist-key-release-window)))
+    (unless (and link-but-window referent-window)
+      (cond ((or (= (count-windows) 2)
+		 (= (hypb:count-visible-windows) 2))
+	     (setq link-but-window (selected-window)
+		   referent-window (next-window nil nil 'visible)))
+	    ((= (hypb:count-visible-windows) 1)
+	     ;; Fall through to error below
+	     )
+	    (t
+	     ;; Either this frame has more than two windows or other
+	     ;; frames exist that together have more than one window;
+	     ;; choose which to use as the referent window.
+	     (setq referent-window
+		   (if (fboundp #'aw-select) ;; ace-window selection
+		       (let ((aw-scope 'global))
+			 (aw-select "Select link referent window"))
+		     (message "Select link referent window with the mouse...")
+		     (let (end-event)
+		       (prog1 (cl-loop do (setq end-event (read-event))
+				       until (and (mouse-event-p end-event)
+						  (not (string-match "\\`down-" (symbol-name (car end-event)))))
+				       finally return (posn-window (event-start end-event)))
+			 (message "Done"))))))))
+    (when (eq link-but-window referent-window)
+      (error "(hmouse-choose-link-and-referent-windows): No other visible window with a link referent"))
+    (unless (window-live-p link-but-window)
+      (error "(hmouse-choose-link-and-referent-windows): Invalid link button window '%s'" link-but-window))
+    (unless (window-live-p referent-window)
+      (error "(hmouse-choose-link-and-referent-windows): Invalid link button window '%s'" referent-window))
+    (list link-but-window referent-window)))
 
-Appropriate FUNCs include: hkey-drag, hkey-drag-to, hkey-replace,
-hkey-swap and hkey-throw."
+(defun hmouse-choose-windows (func)
+  "Mouse click on start and end windows which are then applied to FUNC.
+With the start window temporarily selected, run FUNC with the end
+window as an argument.
+
+Appropriate FUNCs include: hkey-drag, hkey-drag-to, hkey-link,
+hkey-replace, hkey-swap and hkey-throw."
   (let* (start-event
 	 end-event
 	 start-window
@@ -765,6 +853,31 @@ hkey-swap and hkey-throw."
 	  (cl-loop do (setq end-event (read-event))
 		   until (and (mouse-event-p end-event)
 			      (not (string-match "\\`down-" (symbol-name (car end-event)))))
+		   finally return (posn-window (event-start end-event))))
+    (message "Done")
+    (with-selected-window start-window
+      (funcall func end-window))))
+
+(defun hmouse-keyboard-choose-windows (func)
+  "Press Return in start and end windows which are then applied to FUNC.
+With the start window temporarily selected, run FUNC with the end
+window as an argument. 
+
+Appropriate FUNCs include: hkey-drag, hkey-drag-to, hkey-link,
+hkey-replace, hkey-swap and hkey-throw."
+  (let* (start-event
+	 end-event
+	 start-window
+	 end-window)
+    (message "Move to the %s start window and press RETURN..." func)
+    (setq start-window
+	  (cl-loop do (setq start-event (read-event))
+		   until (eq (event-basic-type start-event) 'return)
+		   finally return (posn-window (event-start start-event))))
+    (message "Now move to the %s end window and press RETURN..." func)
+    (setq end-window
+	  (cl-loop do (setq end-event (read-event))
+		   until (eq (event-basic-type end-event) 'return)
 		   finally return (posn-window (event-start end-event))))
     (message "Done")
     (with-selected-window start-window
@@ -871,7 +984,9 @@ frame instead."
         (mouse-drag-frame start-event 'move))))))
 
 (defun hkey-debug (pred pred-value hkey-action)
-  (message "(HyDebug) %sContext: %s; %s: %s; Buf: %s; Mode: %s; MinibufDepth: %s"
+  (message (concat "(HyDebug) %sContext: %s; %s: %s; Buf: %s; Mode: %s; MinibufDepth: %s\n"
+		   "  action-depress: %s; action-release: %s\n"
+		   "  assist-depress: %s; assist-release: %s")
 	   (cond ((eq pred-value 'hbut:current)
 		  (format "ButProps: %S\nButType: %s; ButLabel: %s; "
 			  (symbol-plist 'hbut:current)
@@ -889,7 +1004,12 @@ frame instead."
 	     (hypb:format-quote (format "%s" hkey-action)))
 	   (current-buffer)
 	   major-mode
-	   (minibuffer-depth)))
+	   (minibuffer-depth)
+
+	   action-key-depress-window
+	   action-key-release-window
+	   assist-key-depress-window
+	   assist-key-release-window))
 
 (defun hkey-execute (assisting)
   "Evaluate Action Key form for first non-nil predicate from `hkey-alist'.
@@ -933,7 +1053,7 @@ documentation is found."
 		       (or action-key-depress-position assist-key-depress-position)))
 	 (mouse-drag-flag (hmouse-drag-p))
 	 (hkey-forms (if mouse-flag hmouse-alist hkey-alist))
-	 (hrule:action 'actype:identity)
+	 (hrule:action #'actype:identity)
 	 (assist-flag assisting)
 	 hkey-form pred-value call calls cmd-sym doc)
     (while (and (null pred-value) (setq hkey-form (car hkey-forms)))
@@ -976,12 +1096,10 @@ documentation is found."
 				  (select-window (previous-window))
 				  (display-buffer buf 'other-win))
 			      (display-buffer buf 'other-win))
-			    (if (or (and (boundp 'help-window-select)
-					 help-window-select)
-				    (and (boundp 'help-selects-help-window)
-					 help-selects-help-window))
-				(select-window (get-buffer-window buf))
-			      (select-window owind)))))
+			    (select-window
+			     (if (bound-and-true-p help-window-select)
+				 (get-buffer-window buf)
+			       owind)))))
 		       (temp-buffer-show-function temp-buffer-show-hook))
 		  (with-output-to-temp-buffer
 		      (hypb:help-buf-name
@@ -1017,17 +1135,48 @@ documentation is found."
 			      (terpri) (terpri)))
 			  calls)
 
+		    ;; Print Hyperbole button attributes
 		    (when (memq cmd-sym '(hui:hbut-act hui:hbut-help))
-		      (princ (format "%s BUTTON SPECIFICS:\n"
-				     (htype:def-symbol
-				      (if (eq (hattr:get 'hbut:current 'categ)
-					      'explicit)
-					  (hattr:get 'hbut:current 'actype)
-					(hattr:get 'hbut:current 'categ)))))
-		      (hattr:report
-		       (nthcdr 2 (hattr:list 'hbut:current)))
-		      (princ (format "\n%s\n"
-				     (actype:doc 'hbut:current t))))
+		      (let ((actype (or (actype:elisp-symbol (hattr:get 'hbut:current 'actype))
+					(hattr:get 'hbut:current 'actype)))
+			    (categ (hattr:get 'hbut:current 'categ))
+			    (attributes (nthcdr 2 (hattr:list 'hbut:current))))
+			(princ (format "%s %s BUTTON SPECIFICS:\n"
+				       (htype:def-symbol
+					(if (eq categ 'explicit) actype categ))
+				       (if (eq categ 'explicit) "EXPLICIT" "IMPLICIT")))
+			(hattr:report attributes)
+			(unless (or (eq categ 'explicit)
+				    (null categ)
+				    (not (fboundp categ))
+				    (null (documentation categ)))
+			  ;; Include implicit button's ibtype doc
+			  (princ (format "\n%s\n"
+					 (replace-regexp-in-string "^" "  " (documentation categ)
+								   nil t))))
+			(when (and (symbolp actype)
+				   (fboundp actype)
+				   (documentation actype))
+			  (princ (format "\n%s ACTION SPECIFICS:\n%s\n"
+					 (or (actype:def-symbol actype) actype)
+					 (replace-regexp-in-string "^" "  " (documentation actype)
+								   nil t))))))
+
+		    ;; Print Emacs push-button attributes
+		    (when (memq cmd-sym '(smart-push-button smart-push-button-help))
+		      (let* ((button (button-at (point)))
+			     (attributes (when button (hattr:list button))))
+			(when attributes
+			  (princ (format "%s BUTTON SPECIFICS:\n"
+					 (button-label button)))
+			  (hattr:report attributes)
+			  ;; text-property buttons are represented as markers
+			  (unless (markerp button)
+			    (princ (format "\n%s ACTION SPECIFICS:\n%s\n"
+					   (plist-get attributes 'action)
+					   (replace-regexp-in-string "^" "  " (actype:doc button t)
+								     nil t)))))))
+
 		    (terpri)))
 		"")
 	    (message "No %s Key command for current context."
@@ -1126,7 +1275,7 @@ the current window.  By default, it is displayed according to the setting of
   "If a Smart Key help flag is set and the other Smart Key is not down, show help.
 Takes two args: ASSISTING should be non-nil iff command applies
 to the Assist Key.  ARGS is a list of arguments passed to
-`hmouse-function'.  Return t if help is displayed, nil otherwise."
+`hmouse-release'.  Return t if help is displayed, nil otherwise."
   (let ((help-shown)
 	(other-key-released (not (if assisting
 				     action-key-depressed-flag
@@ -1135,10 +1284,24 @@ to the Assist Key.  ARGS is a list of arguments passed to
 	(setq help-shown
 	      (cond ((and  action-key-help-flag other-key-released)
 		     (setq action-key-help-flag nil)
+		     (hmouse-release assisting)
+		     ;; Ensure next call to hkey-help clears both Action
+		     ;; and Assist Key variables.
+		     (setq action-key-depressed-flag nil
+			   action-key-help-flag nil
+			   assist-key-depressed-flag nil
+			   assist-key-help-flag nil)
 		     (hmouse-function #'hkey-help assisting args)
 		     t)
 		    ((and  assist-key-help-flag other-key-released)
 		     (setq assist-key-help-flag nil)
+		     (hmouse-release assisting)
+		     ;; Ensure next call to hkey-help clears both Action
+		     ;; and Assist Key variables.
+		     (setq action-key-depressed-flag nil
+			   action-key-help-flag nil
+			   assist-key-depressed-flag nil
+			   assist-key-help-flag nil)
 		     (hmouse-function #'hkey-assist-help assisting args)
 		     t)))
       (when help-shown
@@ -1226,15 +1389,15 @@ With optional ARG, enable iff ARG is positive."
     (message "Smart Key debugging is on; press a Smart Key to see its context.")))
 
 (defun hmouse-depress-inactive-minibuffer-p (event)
-  "Return buffer if last Smart Mouse Key depress was in an inactive minibuffer.
+  "Return inactive minibuffer window if last Smart Mouse Key depress was in it.
 If the last Smart Mouse Key depress EVENT was in the minibuffer
-and it was inactive, return it, else nil."
+and it was inactive, return its window, else nil."
   (let ((window (posn-window (event-start event))))
-    (when(framep window)
+    (when (framep window)
       (setq window (frame-selected-window window)))
-    (and (window-minibuffer-p window)
-	 (not (minibuffer-window-active-p window))
-	 window)))
+    (and window
+	 (window-minibuffer-p window)
+	 (not (minibuffer-window-active-p window)))))
 
 ;; Based on code from subr.el.
 (defun hmouse-vertical-line-spacing (frame)
@@ -1403,6 +1566,13 @@ window, return nil.  Considers all windows on the selected frame's display."
 	       pos-x pos-y))
     (when edges (list window (cons pos-x pos-y)))))
 
+(defun hmouse-key-release-buffer (release-position)
+  "Return the buffer of last Action/Assist Mouse Key RELEASE-POSITION, if any.
+If none return nil."
+  (let ((window (ignore-errors (hmouse-window-at-absolute-pixel-position release-position t))))
+    (when window
+      (window-buffer window))))
+
 (defun hmouse-key-release-window (release-position)
   "Return the window of last Action/Assist Mouse Key RELEASE-POSITION, if any.
 If none return nil."
@@ -1491,18 +1661,19 @@ Repeated presses then scroll up or down a windowful.  Nil value
 instead ignores current line and always scrolls up or down a
 windowful."))
 
-(defun hmouse-function (func assisting set-point-arg-list)
-  "Execute FUNC for Action Key and set point from SET-POINT-ARG-LIST.
-Use Assist Key with ASSISTING non-nil.  FUNC may be nil in which
-case no function is called.  SET-POINT-ARG-LIST is passed to the
-call of the command bound to `hmouse-set-point-command'.  Return
-nil if `hmouse-set-point-command' variable is not bound to a
-valid function."
+(defun hmouse-release (assisting)
+  "Set most Smart Key release values.  Use Assist Key with ASSISTING non-nil."
   (when (fboundp hmouse-set-point-command)
     (if assisting
-	(setq assist-key-release-window (hmouse-key-release-window assist-key-release-position)
+	(setq assist-key-release-position (hkey-absolute-pixel-position)
+	      assist-key-depressed-flag nil
+	      assist-key-release-buffer (hmouse-key-release-buffer assist-key-release-position)
+	      assist-key-release-window (hmouse-key-release-window assist-key-release-position)
 	      assist-key-release-prev-point (point-marker))
-      (setq action-key-release-window (hmouse-key-release-window action-key-release-position)
+      (setq action-key-release-position (hkey-absolute-pixel-position)
+	    action-key-depressed-flag nil
+	    action-key-release-buffer (hmouse-key-release-buffer action-key-release-position)
+	    action-key-release-window (hmouse-key-release-window action-key-release-position)
 	    action-key-release-prev-point (point-marker)))
     (and (eq major-mode 'br-mode)
 	 (setq action-mouse-key-prev-window
@@ -1510,7 +1681,17 @@ valid function."
 		   (save-window-excursion
 		     (br-next-listing-window)
 		     (selected-window))
-		 (selected-window))))
+		 (selected-window))))))
+
+(defun hmouse-function (func assisting set-point-arg-list)
+  "Execute FUNC for Action Key, or for Assist Key when ASSISTING is non-nil.
+Set point from SET-POINT-ARG-LIST.  Use Assist Key with ASSISTING
+non-nil.  FUNC may be nil in which case no function is called.
+SET-POINT-ARG-LIST is passed to the call of the command bound to
+`hmouse-set-point-command'.  Return nil if
+`hmouse-set-point-command' variable is not bound to a valid
+function."
+  (when (fboundp hmouse-set-point-command)
     (setq action-mouse-key-prefix-arg current-prefix-arg)
     (let ((release-args (hmouse-set-point set-point-arg-list)))
       (if assisting

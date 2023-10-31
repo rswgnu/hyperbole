@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     1-Nov-91 at 00:44:23
-;; Last-Mod:      7-Mar-23 at 21:55:28 by Bob Weiner
+;; Last-Mod:      3-Oct-23 at 17:39:29 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -117,6 +117,16 @@ The format is ${variable}.  Match grouping 1 is the name of the variable.")
 (declare-function br-quit "ext:br")
 (declare-function br-in-browser "ext:br")
 (declare-function br-to-view-window "ext:br")
+
+(declare-function mm-mailcap-command "mm-decode")
+(declare-function hypb:decode-url "hypb")
+(declare-function hattr:get "hbut")
+(declare-function kbd-key:key-series-to-events "hib-kbd")
+(declare-function hbut:label-to-key "hbut")
+(declare-function hbut:key-to-label "hbut")
+(declare-function hargs:delimited "hargs")
+(declare-function hypb:object-p "hypb")
+(declare-function Info-find-node "info")
 
 ;;; ************************************************************************
 ;;; MS WINDOWS PATH CONVERSIONS
@@ -297,7 +307,11 @@ Call this function manually if mount points change after Hyperbole is loaded."
                                       mount-point)
                                 mount-points-to-add)))
 		      ;; Return a plist of MSWindows path-mounted mount-point pairs.
-		      (split-string (shell-command-to-string (format "df -a -t drvfs 2> /dev/null | sort | uniq | grep -v '%s' | sed -e 's+ .*[-%%] /+ /+g'" hpath:posix-mount-points-regexp))))
+		      ;; Next call will raise an error if default-directory is set to
+		      ;; a URL, e.g. in RFC buffers; just ignore it and return nil in
+		      ;; such a case.
+		      (ignore-errors
+			(split-string (shell-command-to-string (format "df -a -t drvfs 2> /dev/null | sort | uniq | grep -v '%s' | sed -e 's+ .*[-%%] /+ /+g'" hpath:posix-mount-points-regexp)))))
       ;; Sort alist of (path-mounted . mount-point) elements from shortest
       ;; to longest path so that the longest path is selected first within
       ;; 'directory-abbrev-alist' (elements are added in reverse order).
@@ -455,8 +469,8 @@ display program settings."
 			  (switch-to-buffer b)))
    (list 'other-frame   #'hpath:display-buffer-other-frame)
    (list 'other-frame-one-window   (lambda (b)
-				     (hpath:display-buffer-other-frame b)
-				     (delete-other-windows))))
+				     (prog1 (hpath:display-buffer-other-frame b)
+				       (delete-other-windows)))))
   "*Alist of (DISPLAY-WHERE-SYMBOL  DISPLAY-BUFFER-FUNCTION) elements.
 This permits fine-grained control of where Hyperbole displays linked to buffers.
 
@@ -494,8 +508,8 @@ See Info node `(elisp)Choosing Window Options' for where Emacs displays buffers.
 			   (hpath:find-other-frame f))))
    (list 'other-frame  #'hpath:find-other-frame)
    (list 'other-frame-one-window (lambda (f)
-				   (hpath:find-other-frame f)
-				   (delete-other-windows))))
+				   (prog1 (hpath:find-other-frame f)
+				     (delete-other-windows)))))
   "*Alist of (DISPLAY-WHERE-SYMBOL DISPLAY-FILE-FUNCTION) elements.
 This permits fine-grained control of where Hyperbole displays
 linked to files.  The default value of DISPLAY-WHERE-SYMBOL is
@@ -656,14 +670,14 @@ Contains a %s for replacement of a specific anchor id.")
   "Regexp matching a Markdown anchor id definition.
 Contains a %s for replacement of a specific anchor id.")
 
-(defconst hpath:markdown-section-pattern "^[ \t]*\\(#+\\|\\*+\\)[ \t]+%s\\([ \t[:punct:]]*\\)$"
+(defconst hpath:markdown-section-pattern "^[ \t]*\\(#+\\|\\*+\\)[ \t]+%s\\([\[<\({ \t[:punct:]]*\\)$"
   "Regexp matching a Markdown section header.
 Contains a %s for replacement of a specific section name.")
 
 (defconst hpath:markdown-suffix-regexp "\\.[mM][dD]"
   "Regexp that matches to a Markdown file suffix.")
 
-(defconst hpath:outline-section-pattern "^\\*+[ \t]+%s[ \t]*\\([:punct:]+\\|$\\)"
+(defconst hpath:outline-section-pattern "^\\*+[ \t]+%s[ \t]*\\([\[<\({[:punct:]]+\\|$\\)"
   "Bol-anchored, no leading spaces regexp matching an Emacs outline section header.
 Contains a %s for replacement of a specific section name.")
 
@@ -712,7 +726,7 @@ Uses optional DEFAULT-DIRS (a list of dirs or a single dir) or
 		 (make-list (max 0 (- (length arg-list) (length param-list)))
 			    (last param-list))))
     (cl-mapcar (lambda (param arg)
-		 (if (and arg
+		 (if (and (stringp param)
 			  (or (string-match-p "file" param)
 			      (string-match-p "dir" param)
 			      (string-match-p "path" param)))
@@ -924,43 +938,48 @@ optional NON-EXIST, nonexistent local paths are allowed.
 Absolute pathnames must begin with a `/' or `~'."
   (let ((path (hpath:delimited-possible-path non-exist))
 	subpath)
-    (when (and path (not non-exist) (string-match-p hpath:prefix-regexp path))
+    (when path
+      (setq path (string-trim path)))
+    (when (and path (not non-exist) (string-match hpath:prefix-regexp path)
+	       (not (string-equal (match-string 0 path) path)))
       (setq non-exist t))
-    (cond ((and path (file-readable-p path))
-	   path)
-	  ((and path
-		;; Don't allow more than one set of grouping chars
-		(not (string-match-p "\)\\s-*\(\\|\\]\\s-*\\[\\|\}\\s-*\{" path))
-		;; With point inside a path variable, return the path that point is on or to the right of.
-		(setq subpath (or (and (setq subpath (hargs:delimited "[:\"\']\\|^\\s-*" "[:\"\']\\|\\s-*$" t t nil "[\t\n\r\f]\\|[;:] \\| [;:]"))
-				       (not (string-match-p "[:;\t\n\r\f]" subpath))
-				       subpath)
-				  (and (setq subpath (hargs:delimited "[;\"\']\\|^\\s-*" "[;\"\']\\|\\s-*$"  t t nil "[\t\n\r\f]\\|[;:] \\| [;:]"))
-				       (not (string-match-p "[;\t\n\r\f]\\|:[^:]*:" subpath))
-				       subpath)))
-		;; Handle anchored or action prefix char paths in the
-		;; following clause; otherwise, might just be looking
-		;; at part of the path
-		(and subpath (not (or (string-match-p "#" subpath)
-				      (string-match-p hpath:prefix-regexp subpath))))
-		(setq subpath
-		      (if subpath
-			  (cond ((and (string-match "\\`\\s-*\\([^; \t]+\\)" subpath)
-				      (executable-find (match-string 1 subpath)))
-				 ;; Could be a shell command from a semicolon separated
-				 ;; list; ignore if so
-				 nil)
-				(t (expand-file-name subpath)))
-			;; Only default to current path if know are within a PATH value
-			(when (string-match-p hpath:path-variable-value-regexp path)
-			  ".")))
-		(hpath:is-p subpath type non-exist))
-	   subpath)
-	  ((hpath:is-p path type non-exist))
-	  ;; Local file URLs
-	  ;; ((hpath:is-p (hargs:delimited "file://" "[ \t\n\r\"\'\}]" nil t)))
-	  ((hpath:remote-at-p))
-	  ((hpath:www-at-p) nil))))
+    (unless (and path (or (string-empty-p path)
+			  (string-match "::" path)))
+      (cond ((and path (file-readable-p path))
+	     path)
+	    ((and path
+		  ;; Don't allow more than one set of grouping chars
+		  (not (string-match-p "\)\\s-*\(\\|\\]\\s-*\\[\\|\}\\s-*\{" path))
+		  ;; With point inside a path variable, return the path that point is on or to the right of.
+		  (setq subpath (or (and (setq subpath (hargs:delimited "[:\"\']\\|^\\s-*" "[:\"\']\\|\\s-*$" t t nil "[\t\n\r\f]\\|[;:] \\| [;:]"))
+					 (not (string-match-p "[:;\t\n\r\f]" subpath))
+					 subpath)
+				    (and (setq subpath (hargs:delimited "[;\"\']\\|^\\s-*" "[;\"\']\\|\\s-*$"  t t nil "[\t\n\r\f]\\|[;:] \\| [;:]"))
+					 (not (string-match-p "[;\t\n\r\f]\\|:[^:]*:" subpath))
+					 subpath)))
+		  ;; Handle anchored or action prefix char paths in the
+		  ;; following clause; otherwise, might just be looking
+		  ;; at part of the path
+		  (and subpath (not (or (string-match-p "#" subpath)
+					(string-match-p hpath:prefix-regexp subpath))))
+		  (setq subpath
+			(if subpath
+			    (cond ((and (string-match "\\`\\s-*\\([^; \t]+\\)" subpath)
+					(executable-find (match-string 1 subpath)))
+				   ;; Could be a shell command from a semicolon separated
+				   ;; list; ignore if so
+				   nil)
+				  (t (expand-file-name subpath)))
+			  ;; Only default to current path if know are within a PATH value
+			  (when (string-match-p hpath:path-variable-value-regexp path)
+			    ".")))
+		  (hpath:is-p subpath type non-exist))
+	     subpath)
+	    ((hpath:is-p path type non-exist))
+	    ;; Local file URLs
+	    ;; ((hpath:is-p (hargs:delimited "file://" "[ \t\n\r\"\'\}]" nil t)))
+	    ((hpath:remote-at-p))
+	    ((hpath:www-at-p) nil)))))
 
 (defun hpath:call (func path &optional non-exist)
   "Call FUNC with a PATH and optional NON-EXIST flag.
@@ -1074,7 +1093,7 @@ ACTION-STR is used at the start of a prompt to choose the path."
 		paths (and path-value
 			   (split-string path-value (if (string-match ";" path-value) ";" ":") nil "\\s-")))
       (setq paths (sort (mapcar (lambda (path) (if (string-empty-p path) "." path)) paths) #'string-lessp))
-      (unless (memq t (mapcar (lambda (mode) (and (fboundp mode) (symbol-value mode))) hpath:auto-completing-read-modes))
+      (unless (memq t (mapcar (lambda (mode) (when (fboundp mode) (symbol-value mode))) hpath:auto-completing-read-modes))
 	(kbd-key:key-series-to-events "?"))
       (completing-read (format "%s path from ${%s}: "
 			       (if (stringp action-str) action-str "Choose")
@@ -1092,41 +1111,46 @@ Absolute pathnames must begin with a `/' or `~'.
 
 With optional INCLUDE-POSITIONS, return a triplet list of (path start-pos
 end-pos) or nil."
-  ;; Prevents MSWindows to Posix path substitution
-  (let ((hyperb:microsoft-os-p t))
-    (or (hargs:delimited "file://" "\\s-" nil t include-positions)
-	(hargs:delimited "\"" "\"" nil nil include-positions "[`'’]")
-	;; Filenames in Info docs or Python files
-	(hargs:delimited "[`'‘]" "[`'’]" t t include-positions "\"")
-	;; Filenames in TexInfo docs
-	(hargs:delimited "@file{" "}" nil nil include-positions)
-	;; if `non-exist' is nil, look for any existing whitespace
-	;; delimited filename at point.  If match consists of only
-	;; punctuation, like . or .., don't treat it as a pathname.
-	;; It shell modes, it must be tab delimited.
-	(unless non-exist
-	  (let* ((space-delimiter (if (derived-mode-p #'shell-mode)
-				      "\t"
-				    "[ \t]"))
-		 (triplet (hargs:delimited (format "^\\|\\(%s\\|[\]\[()<>\;&,@]\\)+"
-						   space-delimiter)
-					   (format "\\([\]\[()<>\;&,@]\\|:*\\s-\\)+\\|$"
-						   space-delimiter)
-					   t t t))
-		 (p (car triplet))
-		 (punc (char-syntax ?.)))
-	    ;; May have matched to a string with an embedded double
-	    ;; quote or surrounded by braces; if so, don't consider it a path.
-            ;; Also ignore whitespace delimited root dirs, e.g. " / ".
-	    (when (and (stringp p) (not (string-match-p "\\`{.*}\\'\\|\"\\|\\`[/\\]+\\'" p))
-		       (delq nil (mapcar (lambda (c) (/= punc (char-syntax c))) p)))
-	      ;; Prepend proper directory from cd, ls *, recursive ls or dir file
-	      ;; listings when needed.
-	      (setq p (or (hpath:prepend-shell-directory p) p))
-	      (setcar triplet p)
-	      (if include-positions
-		  triplet
-		p)))))))
+  (unless (eolp)
+    ;; Prevents MSWindows to Posix path substitution
+    (let ((hyperb:microsoft-os-p t))
+      (or (hargs:delimited "file://" "\\s-" nil t include-positions)
+	  ;; Filenames in HTML
+	  (hargs:delimited "&quot;" "&quot;" nil nil include-positions "[`'’]")
+	  ;; Embedded double quoted filenames
+	  (hargs:delimited "\\\"" "\\\"" nil nil include-positions "[`'’]")
+	  ;; Double quoted filenames
+	  (hargs:delimited "\"" "\"" nil nil include-positions "[`'’]")
+	  ;; Filenames in Info docs or Python files
+	  (hargs:delimited "[`'‘]" "[`'’]" t t include-positions "\"")
+	  ;; Filenames in TexInfo docs
+	  (hargs:delimited "@file{" "}" nil nil include-positions)
+	  ;; if `non-exist' is nil, look for any existing whitespace
+	  ;; delimited filename at point.  If match consists of punctuation
+	  ;; only, like . or .., don't treat it as a pathname.
+	  ;; In shell modes, it must be tab delimited.
+	  (unless non-exist
+	    (let* ((space-delimiter (if (derived-mode-p #'shell-mode)
+					"\t"
+				      "[ \t]"))
+		   (triplet (hargs:delimited (format "^\\|\\(%s\\|[\]\[()<>\;&,@]\\)+"
+						     space-delimiter)
+					     "\\([\]\[()<>\;&,@]\\|:*\\s-\\)+\\|$"
+					     t t t))
+		   (p (car triplet))
+		   (punc (char-syntax ?.)))
+	      ;; May have matched to a string with an embedded double
+	      ;; quote or surrounded by braces; if so, don't consider it a path.
+              ;; Also ignore whitespace delimited root dirs, e.g. " / ".
+	      (when (and (stringp p) (not (string-match-p "\\`{.*}\\'\\|\"\\|\\`[/\\]+\\'" p))
+			 (delq nil (mapcar (lambda (c) (/= punc (char-syntax c))) p)))
+		;; Prepend proper directory from cd, ls *, recursive ls or dir file
+		;; listings when needed.
+		(setq p (or (hpath:prepend-shell-directory p) p))
+		(setcar triplet p)
+		(if include-positions
+		    triplet
+		  p))))))))
 
 ;;;###autoload
 (defun hpath:display-buffer (buffer &optional display-where)
@@ -1369,10 +1393,15 @@ If PATHNAME does not start with a prefix character:
   matching display function.
 
 Optional third argument, NOSELECT, means simply find the file and return its
-buffer but don't display it."
+buffer but don't display it.  Any modifier prefix is ignored in such cases
+but locational suffixes within the file are utilized."
   (interactive "FFind file: ")
   (unless (stringp pathname)
     (error "(hpath:find): pathname arg must be a string, not, %S" pathname))
+  ;; `pathname' ends as the whole argument sent in except for any
+  ;; initial modifier character.
+  ;; `path' has extra location info (section, line num, col num)
+  ;; stripped off, so it is just a findable path.
   (let ((case-fold-search t)
 	(default-directory default-directory)
 	modifier loc anchor hash path line-num col-num)
@@ -1398,7 +1427,7 @@ buffer but don't display it."
 	      path (if (match-end 1)
 		       (substring path 0 (match-end 1))
 		     (or buffer-file-name "")))
-	;; 'anchor' may improproperly include trailing punctuation;
+	;; 'anchor' may improperly include trailing punctuation;
 	;; remove it if so.
 	(when (string-match "\\s.+\\'" anchor)
 	  (setq anchor (substring anchor 0 (match-beginning 0))))))
@@ -1419,11 +1448,7 @@ buffer but don't display it."
 	  (file-readable-p pathname)
 	  (error "(hpath:find): \"%s\" is not readable"
 		 (concat modifier pathname (when hash "#") anchor)))
-      (if noselect
-	  (let ((buf (find-file-noselect pathname)))
-	    (with-current-buffer buf
-	      (when (or hash anchor) (hpath:to-markup-anchor hash anchor))
-	      buf))
+      (unless noselect
 	;; If pathname is a remote file (not a directory), we have to copy it to
 	;; a temporary local file and then display that.
 	(when (and remote-pathname (not (file-directory-p remote-pathname)))
@@ -1434,32 +1459,18 @@ buffer but don't display it."
 	  (setq pathname (cond (anchor (concat remote-pathname "#" anchor))
 			       (hash   (concat remote-pathname "#"))
 			       (t path))))))
-    (cond (modifier (cond ((= modifier ?!)
-			   (hact 'exec-shell-cmd pathname))
-			  ((= modifier ?&)
-			   (hact 'exec-window-cmd pathname))
-			  ((= modifier ?-)
-			   (hact 'load pathname)))
-		    nil)
-
-	  ;; If no path, e.g. just an anchor link in a non-file buffer,
-	  ;; then must display within Emacs, ignoring any external programs.
-	  ((string-empty-p path)
-	   (hpath:display-buffer (current-buffer) display-where)
-	   (when (or hash anchor)
-	     (hpath:to-markup-anchor hash anchor))
-	   (when line-num
-	     ;; With an anchor, goto line relative to anchor
-	     ;; location, otherwise use absolute line number
-	     ;; within the visible buffer portion.
-	     (if (or hash anchor)
-		 (forward-line line-num)
-	       (hpath:to-line line-num)))
-	   (when col-num (move-to-column col-num))
-	   (current-buffer))
+    (cond ((and modifier (not noselect))
+	   (cond ((= modifier ?!)
+		  (hact 'exec-shell-cmd pathname))
+		 ((= modifier ?&)
+		  (hact 'exec-window-cmd pathname))
+		 ((= modifier ?-)
+		  (hact 'load pathname)))
+	   nil)
 
 	  ;; Display paths either internally or externally.
-	  (t (let ((display-executables (hpath:find-program path))
+	  (t (let ((display-executables (unless (or noselect (string-empty-p path))
+					  (hpath:find-program path)))
 		   executable)
 	       (cond ((stringp display-executables)
 		      (hact 'exec-window-cmd
@@ -1475,91 +1486,108 @@ buffer but don't display it."
 				(hpath:command-string executable pathname))
 			(error "(hpath:find): No available executable from: %s"
 			       display-executables)))
-		     (t (setq path (hpath:validate path))
-			(funcall (hpath:display-path-function display-where) path)
-			;; Perform a loose test that the current buffer
-			;; file name matches the path file name since exact
-			;; matching of path is likely to be wrong in
-			;; certain cases, e.g. with mount point or os path
-			;; alterations.
-			(when (and buffer-file-name
-				   (equal (file-name-nondirectory path)
-					  (file-name-nondirectory buffer-file-name)))
-			  (when (or hash anchor)
-			    (hpath:to-markup-anchor hash anchor))
-			  (when line-num
-			    ;; With an anchor, goto line relative to anchor
-			    ;; location, otherwise use absolute line number
-			    ;; within the visible buffer portion.
-			    (if (or hash anchor)
-				(forward-line line-num)
-			      (hpath:to-line line-num)))
-			  (when col-num (move-to-column col-num))
-			  (current-buffer)))))))))
+		     (t (setq path (hpath:validate path)) ;; signals error when invalid
+			(let ((buf (cond
+				    ;; If no path, e.g. just an anchor link in a non-file buffer,
+				    ;; then must display within Emacs, ignoring any external programs.
+				    ((string-empty-p path)
+				     (if noselect
+					 (current-buffer)
+				       (hpath:display-buffer (current-buffer) display-where)))
+				    (noselect
+				     (find-file-noselect path))
+				    (t (funcall (hpath:display-path-function display-where) path)))))
+			  (with-current-buffer buf
+			    ;; Perform a loose test that the current buffer
+			    ;; file name matches the path file name since exact
+			    ;; matching of path is likely to be wrong in
+			    ;; certain cases, e.g. with mount point or os path
+			    ;; alterations.
+			    (when (and buffer-file-name
+				       (equal (file-name-nondirectory path)
+					      (file-name-nondirectory buffer-file-name)))
+			      (when (or hash anchor)
+				(hpath:to-markup-anchor hash anchor))
+			      (when line-num
+				;; With an anchor, goto line relative to anchor
+				;; location, otherwise use absolute line number
+				;; within the visible buffer portion.
+				(if (or hash anchor)
+				    (forward-line line-num)
+				  (hpath:to-line line-num)))
+			      (when col-num (move-to-column col-num))
+			      (current-buffer)))))))))))
 
 (defun hpath:to-markup-anchor (hash anchor)
-  "Move point to ANCHOR if found or, if null, to the beginning of the buffer."
-  (cond ((and (stringp anchor) (not (equal anchor "")))
-	 (cond ((memq major-mode hui-select-markup-modes)
-		;; In HTML-like mode where link ids are case-sensitive.
-		(let ((opoint (point))
-		      (case-fold-search))
-		  (goto-char (point-min))
-		  (if (re-search-forward (format hpath:html-anchor-id-pattern (regexp-quote anchor)) nil t)
-		      (progn (forward-line 0)
-			     (when (eq (current-buffer) (window-buffer))
-			       (recenter 0)))
-		    (goto-char opoint)
-		    (error "(hpath:to-markup-anchor): %s - Anchor `%s' not found in the visible buffer portion"
-			   (buffer-name)
-			   anchor))))
-	       (t
-		(let* ((opoint (point))
-		       (prog-mode (derived-mode-p 'prog-mode))
-		       ;; Markdown or outline link ids are case
-		       ;; insensitive and - characters are converted to
-		       ;; spaces at the point of definition unless
-		       ;; anchor contains both - and space characters,
-		       ;; then no conversion occurs.
-		       (case-fold-search (not prog-mode))
-		       (anchor-name (if (or prog-mode
-					    (string-match-p "-.* \\| .*-" anchor))
-					anchor
-				      (subst-char-in-string ?- ?\  anchor)))
-		       (referent-regexp (format
-					 (cond ((or (derived-mode-p 'outline-mode) ;; Includes Org mode
-						    ;; Treat all caps filenames without suffix like outlines, e.g. README, INSTALL.
-						    (and buffer-file-name
-							 (string-match-p "\\`[A-Z][A-Z0-9]+\\'" buffer-file-name)))
-						hpath:outline-section-pattern)
-					       (prog-mode
-						"%s")
-					       ((or (and buffer-file-name
-							 (string-match-p hpath:markdown-suffix-regexp buffer-file-name))
-						    (memq major-mode hpath:shell-modes))
-						hpath:markdown-section-pattern)
-					       ((derived-mode-p 'texinfo-mode)
-						hpath:texinfo-section-pattern)
-					       ((derived-mode-p 'text-mode)
-						"%s")
-					       (t hpath:outline-section-pattern))
-					 (regexp-quote anchor-name)))
-		       (referent-leading-spaces-regexp
-			(when (and (not (string-empty-p referent-regexp))
-				   (= (aref referent-regexp 0) ?^))
-			  (concat "^[ \t]+" (substring referent-regexp 1)))))
-		  (goto-char (point-min))
-		  (if (or (re-search-forward referent-regexp nil t)
-			  (and referent-leading-spaces-regexp
-			       (re-search-forward referent-leading-spaces-regexp nil t)))
-		      (progn (forward-line 0)
-			     (when (eq (current-buffer) (window-buffer))
-			       (recenter 0)))
-		    (goto-char opoint)
-		    (error "(hpath:to-markup-anchor): %s - Section `%s' not found in the visible buffer portion"
-			   (buffer-name)
-			   anchor-name))))))
-	(hash (goto-char (point-min)))))
+  "Ignore HASH when ANCHOR is non-null and move point to ANCHOR string if found.
+Move point to beginning of buffer if HASH is non-nil and ANCHOR is null."
+  (let ((omin (point-min))
+	(omax (point-max)))
+    (unwind-protect
+	(progn (widen)
+	       (cond ((and (stringp anchor) (not (equal anchor "")))
+		      (cond ((memq major-mode hui-select-markup-modes)
+			     ;; In HTML-like mode where link ids are case-sensitive.
+			     (let ((opoint (point))
+				   (case-fold-search))
+			       (goto-char (point-min))
+			       (if (re-search-forward (format hpath:html-anchor-id-pattern (regexp-quote anchor)) nil t)
+				   (progn (forward-line 0)
+					  (when (eq (current-buffer) (window-buffer))
+					    (recenter 0)))
+				 (goto-char opoint)
+				 (error "(hpath:to-markup-anchor): %s - Anchor `%s' not found in the visible buffer portion"
+					(buffer-name)
+					anchor))))
+			    (t
+			     (let* ((opoint (point))
+				    (prog-mode (derived-mode-p 'prog-mode))
+				    ;; Markdown or outline link ids are case
+				    ;; insensitive and - characters are converted to
+				    ;; spaces at the point of definition unless
+				    ;; anchor contains both - and space characters,
+				    ;; then no conversion occurs.
+				    (case-fold-search (not prog-mode))
+				    (anchor-name (if (or prog-mode
+							 (string-match-p "-.* \\| .*-" anchor))
+						     anchor
+						   (subst-char-in-string ?- ?\  anchor)))
+				    (referent-regexp (format
+						      (cond ((or (derived-mode-p 'outline-mode) ;; Includes Org mode
+								 ;; Treat all caps filenames without suffix like outlines, e.g. README, INSTALL.
+								 (and buffer-file-name
+								      (string-match-p "\\`[A-Z][A-Z0-9]+\\'" buffer-file-name)))
+							     hpath:outline-section-pattern)
+							    (prog-mode
+							     "%s")
+							    ((or (and buffer-file-name
+								      (string-match-p hpath:markdown-suffix-regexp buffer-file-name))
+								 (memq major-mode hpath:shell-modes))
+							     hpath:markdown-section-pattern)
+							    ((derived-mode-p 'texinfo-mode)
+							     hpath:texinfo-section-pattern)
+							    ((derived-mode-p 'text-mode)
+							     "%s")
+							    (t hpath:outline-section-pattern))
+						      (regexp-quote anchor-name)))
+				    (referent-leading-spaces-regexp
+				     (when (and (not (string-empty-p referent-regexp))
+						(= (aref referent-regexp 0) ?^))
+				       (concat "^[ \t]+" (substring referent-regexp 1)))))
+			       (goto-char (point-min))
+			       (if (or (re-search-forward referent-regexp nil t)
+				       (and referent-leading-spaces-regexp
+					    (re-search-forward referent-leading-spaces-regexp nil t)))
+				   (progn (forward-line 0)
+					  (when (eq (current-buffer) (window-buffer))
+					    (recenter 0)))
+				 (goto-char opoint)
+				 (error "(hpath:to-markup-anchor): %s - Section `%s' not found in the visible buffer portion"
+					(buffer-name)
+					anchor-name))))))
+		     (hash (goto-char omin))))
+      (when (and (<= omin (point)) (>= omax (point)))
+	(narrow-to-region omin omax)))))
 
 (defun hpath:find-executable (executable-list)
   "Return first executable string from EXECUTABLE-LIST found in `exec-path'.
@@ -1587,8 +1615,8 @@ frame.  Always return t."
   (interactive "FFind file: ")
   ;; Just delete any special Hyperbole command characters preceding
   ;; the filename, ignoring them.
-  (if (string-match hpath:prefix-regexp filename)
-      (setq filename (substring filename (match-end 0))))
+  (when (string-match hpath:prefix-regexp filename)
+    (setq filename (substring filename (match-end 0))))
   (hpath:find
    (if (integerp line-num)
        (concat filename ":" (int-to-string line-num))
@@ -1732,6 +1760,7 @@ form is what is returned for PATH."
 		  path non-exist)))
      (unless (or (null path)
 		 (string-empty-p path)
+		 (string-equal "-" path)
 		 (string-match-p "#['`\"]" path)
 		 ;; If a single character in length, must be a word or
 		 ;; symbol character other than [.~ /].
@@ -1869,6 +1898,14 @@ prior to calling this function."
 	  (error ""))
       var-group)))
 
+(defun hpath:shorten (path)
+  "Shorten and return a PATH.
+Replace Emacs Lisp variables and environment variables (format of
+${var}) with their values in PATH.  The first matching value for
+variables like `${PATH}' is used.  Then abbreviate any remaining
+path."
+  (hpath:abbreviate-file-name (hpath:substitute-var path)))
+
 (defun hpath:substitute-value (path)
   "Substitute values for Emacs Lisp variables and environment variables in PATH.
 Return the resulting PATH.
@@ -2003,12 +2040,16 @@ Return LINKNAME unchanged if it is not a symbolic link but is a pathname."
 
 (defun hpath:to-line (line-num)
   "Move point to the start of an absolute LINE-NUM or the last line."
-  (save-restriction
-    (widen)
-    (goto-char (point-min))
-    (if (eq selective-display t)
-	(re-search-forward "[\n\r]" nil 'end (1- line-num))
-      (forward-line (1- line-num)))))
+  (let ((omin (point-min))
+	(omax (point-max)))
+    (unwind-protect
+	(progn (widen)
+	       (goto-char (point-min))
+	       (if (eq selective-display t)
+		   (re-search-forward "[\n\r]" nil 'end (1- line-num))
+		 (forward-line (1- line-num))))
+      (when (and (<= omin (point)) (>= omax (point)))
+	(narrow-to-region omin omax)))))
 
 (defun hpath:trim (path)
   "Return PATH with any [\" \t\n\r] characters trimmed from its start and end."
@@ -2020,9 +2061,14 @@ Return LINKNAME unchanged if it is not a symbolic link but is a pathname."
   path)
 
 (defun hpath:normalize (filename)
-  "Normalize and return PATH if PATH is a valid, readable path, else signal error."
-  (hpath:validate (hpath:substitute-value
-		   (buffer-file-name (hpath:find-noselect filename)))))
+  "Normalize and return an existing, readable FILENAME, else signal an error.
+Replace Emacs Lisp variables and environment variables (format of
+${var}) with their values in FILENAME's path.  The first matching
+value for variables like `${PATH}' is used."
+  (let ((buf (hpath:find-noselect filename)))
+    (if buf
+	(hpath:validate (hpath:substitute-value (buffer-file-name buf)))
+      (error "(hpath:normalize): '\"%s\" is not a readable filename" filename))))
 
 (defun hpath:validate (path)
   "Validate PATH is readable and return it in Posix format.
@@ -2507,13 +2553,25 @@ that returns a replacement string."
 (defun hpath:substitute-var-name (var-symbol var-dir-val path)
   "Replace with VAR-SYMBOL any occurrences of VAR-DIR-VAL in PATH.
 Replacement is done iff VAR-DIR-VAL is an absolute path.
+
+If VAR-SYMBOL is \\='hyperb:dir or \\='load-path, remove the matching PATH
+part rather than replacing it with the variable since it can be
+resolved without attaching the variable name.
+
 If PATH is modified, return PATH, otherwise return nil."
   (when (and (stringp var-dir-val) (file-name-absolute-p var-dir-val))
     (let ((new-path (replace-regexp-in-string
 		     (regexp-quote (file-name-as-directory
 				    (or var-dir-val default-directory)))
-		     (concat "$\{" (symbol-name var-symbol) "\}/") path
-		     t t)))
+		     ;; Remove matching path rather than adding the
+		     ;; variable to the path when the variable is one
+		     ;; for Elisp files.  These can be resolved
+		     ;; without the variable being included in the
+		     ;; path.
+		     (if (memq var-symbol '(hyperb:dir load-path))
+			 ""
+		       (concat "$\{" (symbol-name var-symbol) "\}/"))
+		     path t t)))
       (if (equal new-path path) nil new-path))))
 
 

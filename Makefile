@@ -3,7 +3,7 @@
 # Author:       Bob Weiner
 #
 # Orig-Date:    15-Jun-94 at 03:42:38
-# Last-Mod:     27-Feb-23 at 16:59:49 by Bob Weiner
+# Last-Mod:      6-Oct-23 at 00:22:25 by Mats Lidell
 #
 # Copyright (C) 1994-2023  Free Software Foundation, Inc.
 # See the file HY-COPY for license information.
@@ -166,8 +166,8 @@ PRELOADS = $(SITE_PRELOADS) -l ./hload-path.el -l ./hversion.el -l ./hyperbole.e
 
 # Compile in batch mode.  Load site-lisp/site-start.el, which may set load-path.
 # Show complete expression; do not abbreviate any exprs in batch logs with ...
-BATCHFLAGS = -batch -Q --eval "(progn (setq debug-on-error t) (setq backtrace-line-length 0) \
-                                 (message \"  emacs-version = %s\n  system-configuration = %s\n  emacs = %s%s\" emacs-version system-configuration invocation-directory invocation-name))"
+BATCHFLAGS = --batch --quick --eval "(progn (setq debug-on-error t) (setq backtrace-line-length 0) \
+                                 (message \"  emacs-version = %s\n  system-configuration = %s\n  emacs = %s%s\n  load-path = %s\" emacs-version system-configuration invocation-directory invocation-name load-path))"
 
 EMACS_BATCH=$(EMACS) $(BATCHFLAGS) $(PRELOADS)
 EMACS_PLAIN_BATCH=$(EMACS) $(BATCHFLAGS)
@@ -185,9 +185,11 @@ EL_COMPILE = hact.el hactypes.el hargs.el hbdata.el hbmap.el hbut.el \
 	     hpath.el hrmail.el hsettings.el hsmail.el hsys-org.el hsys-org-roam.el \
              hsys-www.el hsys-youtube.el htz.el \
 	     hycontrol.el hui-jmenu.el hui-menu.el hui-mini.el hui-mouse.el hui-select.el \
-	     hui-treemacs.el hui-window.el hui.el hvar.el hversion.el hvm.el hypb.el hyperbole.el \
+	     hui-treemacs.el hui-window.el hui.el hvar.el hversion.el hypb.el hyperbole.el \
 	     hyrolo-demo.el hyrolo-logic.el hyrolo-menu.el hyrolo.el hywconfig.el set.el hypb-ert.el \
 	     hui-dired-sidebar.el hypb-maintenance.el hui-em-but.el hui-register.el
+
+EL_SRC = $(EL_COMPILE) hvm.el
 
 EL_KOTL = kotl/kexport.el kotl/kfile.el kotl/kfill.el kotl/kimport.el kotl/klabel.el \
 	  kotl/klink.el kotl/kmenu.el kotl/kotl-mode.el kotl/kotl-orgtbl.el \
@@ -199,15 +201,16 @@ ELC_KOTL = $(EL_KOTL:.el=.elc)
 
 HY-TALK  = HY-TALK/.hypb HY-TALK/HYPB HY-TALK/HY-TALK.org
 
-HYPERBOLE_FILES = dir info html $(EL_COMPILE) $(EL_KOTL) \
-	$(ELC_COMPILE) $(HY-TALK) ChangeLog COPYING Makefile HY-ABOUT HY-ANNOUNCE HY-NEWS \
+HYPERBOLE_FILES = dir info html $(EL_SRC) $(EL_KOTL) \
+	$(ELC_COMPILE) $(HY-TALK) ChangeLog COPYING Makefile HY-ABOUT HY-ANNOUNCE \
+        HY-CONCEPTS.kotl HY-NEWS \
 	HY-WHY.kotl INSTALL DEMO DEMO-ROLO.otl FAST-DEMO MANIFEST README README.md TAGS _hypb \
         .hypb smart-clib-sym topwin.py hyperbole-banner.png $(man_dir)/hkey-help.txt \
 	$(man_dir)/hyperbole.texi $(man_dir)/hyperbole.css $(man_dir)/version.texi
 
 TEST_ERT_FILES = $(wildcard test/*tests.el) $(wildcard test/hy-test-*.el)
 
-EL_TAGS = $(EL_COMPILE) $(EL_KOTL) $(TEST_ERT_FILES)
+EL_TAGS = $(EL_SRC) $(EL_KOTL) $(TEST_ERT_FILES)
 
 .SUFFIXES:            # Delete the default suffixes
 .SUFFIXES: .el .elc   # Define the list of file suffixes to match to rules
@@ -275,51 +278,9 @@ $(html_dir)/hyperbole.html: $(man_dir)/hyperbole.html $(man_dir)/hyperbole.css
 $(data_dir)/hkey-help.txt: $(man_dir)/hkey-help.txt
 	$(INSTALL) hkey-help.txt $(data_dir)
 
-# Record any .el files that need to be compiled.
-.el.elc:
-	@ echo $< >> $(ELISP_TO_COMPILE)
-
-# Compile all recorded .el files.
-elc: elc-init $(ELC_KOTL) $(ELC_COMPILE)
-	@- \test ! -f $(ELISP_TO_COMPILE) \
-            || (echo "These files will be compiled: " \
-                 && echo "`cat $(ELISP_TO_COMPILE)`" \
-                 && $(EMACS_BATCH) -f batch-byte-compile `cat $(ELISP_TO_COMPILE)`)
-	@ $(RM) $(ELISP_TO_COMPILE)
-
-elc-init:
-	@ $(RM) $(ELISP_TO_COMPILE)
-
+.PHONY: src new-bin remove-elc bin eln
 # Setup to run Hyperbole from .el source files
 src: autoloads tags
-
-# Remove and then rebuild all byte-compiled .elc files, even those .elc files
-# which do not yet exist, plus build TAGS file.
-#
-# Use this to suppress docstring warnings.
-#	$(EMACS_BATCH) --eval="(setq-default byte-compile-warnings '(not docstrings))" \
-#		-f batch-byte-compile $(EL_KOTL) $(EL_COMPILE)
-bin: src
-	$(RM) *.elc kotl/*.elc
-	$(EMACS_BATCH) -f batch-byte-compile $(EL_KOTL) $(EL_COMPILE)
-
-# Create -l "file.el" load-file command-line args for each Hyperbole .el file for use in
-# eln native compile target below.
-LOAD_EL = $(shell echo "$(EL_KOTL) $(EL_COMPILE)" | sed - -e 's+ +" -l "./+g' -e 's+^+-l "+')"
-
-load-hyperbole:
-	$(EMACS_BATCH) \
-          $(LOAD_EL)
-
-# Use this to suppress docstring warnings.
-# 	$(EMACS_BATCH) \
-#           $(LOAD_EL) \
-#           --eval="(setq-default byte-compile-warnings '(not docstrings))" \
-# 	    -f batch-native-compile $(EL_KOTL) $(EL_COMPILE)
-eln: src
-	$(EMACS_BATCH) \
-          $(LOAD_EL) \
-	  -f batch-native-compile $(EL_KOTL) $(EL_COMPILE)
 
 # Byte compile files but apply a filter for either including or
 # removing warnings.  See variable {C-hv byte-compile-warnings RET} for
@@ -327,18 +288,44 @@ eln: src
 # warnings for long docstrings.
 #
 # Example for getting warnings for obsolete functions and variables
-#   HYPB_WARNINGS="free-vars" make bin-warn
+#   HYPB_WARNINGS="free-vars" make bin
 # Example for surpressing the free-vars warnings
-#   HYPB_WARNINGS="not free-vars" make bin-warn
+#   HYPB_WARNINGS="not free-vars" make bin
 ifeq ($(origin HYPB_WARNINGS), undefined)
-HYPB_BIN_WARN = not docstrings
+HYPB_BIN_WARN =
 else ifeq ($(origin HYPB_WARNINGS), environment)
-HYPB_BIN_WARN = ${HYPB_WARNINGS}
+HYPB_BIN_WARN = --eval "(setq-default byte-compile-warnings '(${HYPB_WARNINGS}))"
 endif
-bin-warn: src
+
+curr_dir = $(shell pwd)
+ifeq ($(HYPB_NATIVE_COMP),yes)
+%.elc: %.el
+	@printf "Compiling $<\n"
+	@$(EMACS) --batch --quick \
+	--eval "(progn (add-to-list 'load-path \"$(curr_dir)\") (add-to-list 'load-path \"$(curr_dir)/kotl\"))" \
+	${HYPB_BIN_WARN} \
+	-f batch-native-compile $<
+else
+%.elc: %.el
+	@printf "Compiling $<\n"
+	@$(EMACS) --batch --quick \
+	--eval "(progn (add-to-list 'load-path \"$(curr_dir)\") (add-to-list 'load-path \"$(curr_dir)/kotl\"))" \
+	${HYPB_BIN_WARN} \
+	-f batch-byte-compile $<
+endif
+
+new-bin: autoloads $(ELC_KOTL) $(ELC_COMPILE)
+
+remove-elc:
 	$(RM) *.elc kotl/*.elc
-	$(EMACS_BATCH) --eval="(setq-default byte-compile-warnings '(${HYPB_BIN_WARN}))" \
-		-f batch-byte-compile $(EL_KOTL) $(EL_COMPILE)
+
+# Remove and then rebuild all byte-compiled .elc files, even those .elc files
+# which do not yet exist, plus build TAGS file.
+bin: src remove-elc new-bin
+
+# Native compilation (Requires Emacs built with native compilation support.)
+eln: src
+	HYPB_NATIVE_COMP=yes make new-bin
 
 tags: TAGS
 TAGS: $(EL_TAGS)
@@ -347,14 +334,23 @@ TAGS: $(EL_TAGS)
 clean:
 	$(RM) hyperbole-autoloads.el kotl/kotl-autoloads.el $(ELC_COMPILE) $(ELC_KOTL) TAGS
 
-version: doc
+version:
 	@ echo ""
-	@ echo "Any fgrep output means the version number has not been updated in that file."
-	test 0 -eq $$(fgrep -L $(HYPB_VERSION) hyperbole-pkg.el Makefile HY-ABOUT HY-NEWS README.md hversion.el hyperbole.el man/hyperbole.texi man/version.texi | wc -c) || exit 1
+	@ fgrep -L $(HYPB_VERSION) Makefile HY-ABOUT HY-NEWS README.md hversion.el hyperbole.el man/hyperbole.texi man/version.texi > WRONG-VERSIONS
+	@ # If any file(s) have wrong version number, print them and exit with code 1
+	@ if [ -s WRONG-VERSIONS ]; then \
+	  echo "The following files do not have the proper Hyperbole version number, $(HYPB_VERSION):"; \
+	  cat WRONG-VERSIONS; rm -f WRONG-VERSIONS; exit 1; \
+	else \
+	  rm -f WRONG-VERSIONS; \
+	fi
 	@ echo ""
 
-# Build the Info, HTML and Postscript versions of the user manual and README.md.html.
-doc: README.md.html info html pdf
+# Build the README.md.html and Info, HTML and Postscript versions of the user manual
+doc: version README.md.html manual
+
+# Build the Info, HTML and Postscript versions of the user manual
+manual: info html pdf
 
 TEXINFO_SRC = $(man_dir)/hyperbole.texi $(man_dir)/version.texi $(man_dir)/hkey-help.txt $(man_dir)/im/*.png
 
@@ -442,9 +438,9 @@ $(pkg_parent)/hyperbole-$(HYPB_VERSION).tar.sig: $(pkg_parent)/hyperbole-$(HYPB_
 
 $(pkg_parent)/hyperbole-$(HYPB_VERSION).tar: version $(HYPERBOLE_FILES)
 	$(RM) -fr $(pkg_hyperbole) $(pkg_hyperbole).tar
-	# git archive --format=tar --prefix=hyperbole-$(HYPB_VERSION)/ HEAD | (cd $(pkg_parent) && tar xf -)
+        # git archive --format=tar --prefix=hyperbole-$(HYPB_VERSION)/ HEAD | (cd $(pkg_parent) && tar xf -)
 	(mkdir -p $(pkg_hyperbole) && git ls-files | tar Tzcf - - | (cd $(pkg_hyperbole) && tar zxf -)) && \
-	$(CP) hyperbole-pkg.el $(pkg_hyperbole) && cd $(pkg_hyperbole) && make autoloads && chmod 755 topwin.py && \
+	cd $(pkg_hyperbole) && make autoloads && chmod 755 topwin.py && \
 	COPYFILE_DISABLE=1 $(TAR) -C $(pkg_parent) -clf $(pkg_hyperbole).tar hyperbole-$(HYPB_VERSION)
 
 pkgclean: packageclean
@@ -497,16 +493,21 @@ test-all-output:
 
 # Hyperbole install tests - Verify that hyperbole can be installed
 # using different sources. See folder "install-test"
-.PHONY: install-elpa install-elpa-devel install-tarball install-straight install-all
-install-all: install-elpa install-elpa-devel install-tarball install-straight
+.PHONY: install-elpa install-elpa-devel install-tarball install-straight install-all install-local
+install-all: install-elpa install-elpa-devel install-tarball install-straight install-local
 
-install-elpa install-elpa-devel install-tarball install-straight:
+install-elpa install-elpa-devel install-tarball install-straight install-elpaca:
 	@echo "Install Hyperbole using $@"
 	(cd ./install-test/ && ./local-install-test.sh $(subst install-,,$@))
+
+install-local:
+	@echo "Install Hyperbole using $@"
+	(cd ./install-test/ && \
+	./local-install-test.sh $(subst install-,,$@) $(shell pwd) $(shell git rev-parse --abbrev-ref HEAD 2>/dev/null))
 
 package-lint:
 	$(EMACS_BATCH) \
 	--eval "(setq package-lint-main-file \"hyperbole.el\")" \
 	--eval "(load-file \"test/hy-test-dependencies.el\")" \
 	-l package-lint.el -f package-lint-batch-and-exit \
-	$(EL_KOTL) $(EL_COMPILE)
+	$(EL_KOTL) $(EL_SRC)

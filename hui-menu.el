@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    28-Oct-94 at 10:59:44
-;; Last-Mod:      6-Nov-22 at 12:23:29 by Bob Weiner
+;; Last-Mod:      3-Oct-23 at 23:29:46 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -21,6 +21,24 @@
 
 (eval-and-compile (mapc #'require '(hpath hui-jmenu hyrolo-menu browse-url easymenu)))
 
+;;; ************************************************************************
+;;; Public declarations
+;;; ************************************************************************
+
+(declare-function gbut:label-list "hbut")
+(declare-function ebut:list "hbut")
+
+;;; ************************************************************************
+;;; Private variables
+;;; ************************************************************************
+
+(defvar hui-menu-max-list-length 24
+  "Positive integer that caps the length of a Hyperbole dynamic menu lists.")
+
+(defvar hui-menu-order-explicit-buttons t
+  "When non-nil (default), explicit button menu list is lexicographically ordered.
+Otherwise, explicit buttons are listed in their order of appearance within
+the current buffer.")
 
 ;;; ************************************************************************
 ;;; Private functions
@@ -355,9 +373,13 @@ REBUILD-FLAG is non-nil, in which case the menu is rebuilt."
 		 '("Documentation"
 		   ["Manual"      (id-info "(hyperbole)Top") t]
 		   "----"
+		   ["About"       (hypb:display-file-with-logo "HY-ABOUT") t]
+		   ["Concepts"    (find-file (expand-file-name
+					      "HY-CONCEPTS.kotl" hyperb:dir)) t]
 		   ["Demonstration"  hyperbole-demo t]
+		   ["Files"       (hypb:display-file-with-logo "MANIFEST") t]
 		   ["Glossary"    (id-info "(hyperbole)Glossary") t]
-		   ["Manifest"    (hypb:display-file-with-logo "MANIFEST") t]
+		   ["New-Features" (hypb:display-file-with-logo "HY-NEWS") t]
 		   ["Smart-Key-Summary" (id-browse-file (hypb:hkey-help-file)) t]
 		   ("Types"
 		    ["Action-Types-Manual"
@@ -368,7 +390,8 @@ REBUILD-FLAG is non-nil, in which case the menu is rebuilt."
 		    ["Show-Action-Types"
 		     (hui:htype-help-current-window 'actypes) t]
 		    ["Show-Implicit-Button-Types"
-		     (hui:htype-help-current-window 'ibtypes 'no-sort) t]))
+		     (hui:htype-help-current-window 'ibtypes 'no-sort) t])
+		   ["WhyUse"     (find-file (expand-file-name "HY-WHY.kotl" hyperb:dir)) t])
 		 '("Explicit-Button"
 		   :filter hui-menu-explicit-buttons
 		   ["Activate" hui:ebut-act t]
@@ -381,6 +404,7 @@ REBUILD-FLAG is non-nil, in which case the menu is rebuilt."
 		    ["Buffer-Buttons"   (hui:hbut-report -1) t]
 		    ["Current-Button"   (hui:hbut-report)    t]
 		    ["Ordered-Buttons"  (hui:hbut-report 1)  t])
+		   ["Link"   hui:ebut-link-directly t]
 		   ["Rename" hui:ebut-rename t]
 		   ["Search" hui:ebut-search t]
 		   ["Types"
@@ -410,15 +434,18 @@ REBUILD-FLAG is non-nil, in which case the menu is rebuilt."
 		   ["Delete" hui:gbut-delete t]
 		   ["Edit"   hui:gbut-edit t]
 		   ["Help"   gbut:help t]
+		   ["Link"   hui:gbut-link-directly t]
                    ["Rename" hui:gbut-rename t])
 		 '("Implicit-Button"
 		   ["Manual"   (id-info "(hyperbole)Implicit Buttons") t]
 		   "----"
 		   ["Activate" hui:ibut-act t]
+		   ["Create"   hui:ibut-create t]
 		   ["Delete-Type" (hui:htype-delete 'ibtypes) t]
 		   ["Edit"   hui:ibut-edit t]
 		   ["Help"   hui:hbut-help t]
-		   ["Label"  hui:ibut-label-create t]
+		   ["Link"   hui:ibut-link-directly t]
+		   ["Name"   hui:ibut-label-create t]
 		   ["Rename" hui:ibut-rename t]
 		   ["Types"  (hui:htype-help 'ibtypes 'no-sort) t])
 		 '("Koutliner"
@@ -467,18 +494,6 @@ REBUILD-FLAG is non-nil, in which case the menu is rebuilt."
 		 infodock-hyrolo-menu
 		 '("Screen (HyControl)" :filter hui-menu-screen)
 		 hui-menu-hywconfig)))))
-
-;;; ************************************************************************
-;;; Private variables
-;;; ************************************************************************
-
-(defvar hui-menu-max-list-length 24
-  "Positive integer that caps the length of a Hyperbole dynamic menu lists.")
-
-(defvar hui-menu-order-explicit-buttons t
-  "When non-nil (default), explicit button menu list is lexicographically ordered.
-Otherwise, explicit buttons are listed in their order of appearance within
-the current buffer.")
 
 (provide 'hui-menu)
 
