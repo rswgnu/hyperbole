@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    30-Jan-21 at 12:00:00
-;; Last-Mod:     22-Oct-23 at 15:25:05 by Mats Lidell
+;; Last-Mod:     24-Oct-23 at 23:57:30 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -770,6 +770,59 @@ With point on label suggest that ibut for rename."
     (hui:ebut-rename "label" "new")
     (goto-char (point-min))
     (should (looking-at-p "<(new)><(new)>"))))
+
+(ert-deftest hui--ibut-link-directly-to-file ()
+  "Create a direct link to a file."
+  (let ((filea (make-temp-file "hypb" nil ".txt"))
+        (fileb (make-temp-file "hypb" nil ".txt" "1234567890")))
+    (unwind-protect
+        (progn
+          (delete-other-windows)
+          (find-file fileb)
+          (goto-char (point-max))
+          (split-window)
+          (find-file filea)
+          (hui:ibut-link-directly (get-buffer-window)
+           (get-buffer-window (get-file-buffer fileb)))
+          (should (string= (buffer-string) (concat "\"" fileb ":1:10\""))))
+      (hy-delete-file-and-buffer filea)
+      (hy-delete-file-and-buffer fileb))))
+
+(ert-deftest hui--ibut-link-directly-to-dired ()
+  "Create a direct link to a directory in dired."
+  :expected-result :failed
+  (let* ((file (make-temp-file "hypb" nil ".txt"))
+         (dir (file-name-parent-directory file))
+         dir-buf)
+    (unwind-protect
+        (progn
+          (delete-other-windows)
+          (setq dir-buf (dired dir))
+          (split-window)
+          (find-file file)
+          (hui:ibut-link-directly (get-buffer-window) (get-buffer-window dir-buf))
+          ;; Was expecting here an ibut "/tmp" but <link-to-directory
+          ;; /tmp> could be possible too. Seems a link to the file the
+          ;; point in the dired buffer is on!? Is that expected?
+          (should (string= (buffer-string) (concat "\"" dir "\""))))
+      (hy-delete-file-and-buffer file))))
+
+(ert-deftest hui--ibut-link-directly-with-label ()
+  "Create a direct link with a label."
+  (let ((filea (make-temp-file "hypb" nil ".txt"))
+        (fileb (make-temp-file "hypb" nil ".txt" "1234567890")))
+    (unwind-protect
+        (progn
+          (delete-other-windows)
+          (find-file fileb)
+          (goto-char (point-max))
+          (split-window)
+          (find-file filea)
+          (with-simulated-input "label RET"
+            (hui:ibut-link-directly (get-buffer-window) (get-buffer-window (get-file-buffer fileb)) 4))
+          (should (string= (buffer-string) (concat "<[label]> - " "\"" fileb ":1:10\""))))
+      (hy-delete-file-and-buffer filea)
+      (hy-delete-file-and-buffer fileb))))
 
 ;; This file can't be byte-compiled without `with-simulated-input' which
 ;; is not part of the actual dependencies, so:
