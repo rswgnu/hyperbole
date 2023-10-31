@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    30-Jan-21 at 12:00:00
-;; Last-Mod:     17-Jun-23 at 23:02:12 by Bob Weiner
+;; Last-Mod:     22-Oct-23 at 15:25:05 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -83,6 +83,66 @@
       (hy-delete-file-and-buffer linked-file)
       (when (file-writable-p hbmap:dir-user)
 	(delete-directory hbmap:dir-user t)))))
+
+(ert-deftest hui-gbut-number-of-gbuts-with-no-buttons ()
+  "Verify number of gbuts with no buttons created."
+  (defvar global-but-file)
+  (let ((global-but-file (make-temp-file "gbut" nil ".txt")))
+    (unwind-protect
+        (mocklet ((gbut:file => global-but-file))
+          (should (= 0 (length (gbut:key-list)))))
+      (hy-delete-file-and-buffer global-but-file))))
+
+(ert-deftest hui-gbut-number-of-gibuts-when-one-button ()
+  "Verify number of ibuts when one button is created."
+  (defvar file)
+  (let ((file (make-temp-file "gbut" nil ".txt")))
+    (unwind-protect
+        (with-mock
+          (stub gbut:file => file)
+          (hui:gibut-create "global" "/tmp")
+          (should (= 1 (length (gbut:ibut-key-list)))))
+      (hy-delete-file-and-buffer file))))
+
+(ert-deftest hui-gbut-number-of-gebuts-when-one-button ()
+  "Verify number of ebuts when one button is created."
+  (defvar global-but-file)
+  (let ((global-but-file (make-temp-file "gbut" nil ".txt")))
+    (unwind-protect
+        (mocklet ((gbut:file => global-but-file)
+                  (hpath:find-noselect => (find-file-noselect global-but-file)))
+          (gbut:ebut-program "label" 'link-to-directory "/tmp")
+          (should (= 1 (length (gbut:ebut-key-list)))))
+      (hy-delete-file-and-buffer global-but-file))))
+
+(ert-deftest hui-gbut-number-of-gibuts-from-mail-mode ()
+  "Verify number of global ibuts from within Hyperbole mail mode."
+  (defvar global-but-file)
+  (let ((global-but-file (make-temp-file "gbut" nil ".txt"))
+        (message-mode-file (make-temp-file "gbut" nil ".txt")))
+    (unwind-protect
+        (mocklet ((gbut:file => global-but-file))
+          (hui:gibut-create "global" "/tmp")
+          (find-file message-mode-file)
+          (message-mode)
+          (should (= 1 (length (gbut:ibut-key-list)))))
+      (hy-delete-file-and-buffer global-but-file)
+      (hy-delete-file-and-buffer message-mode-file))))
+
+(ert-deftest hui-gbut-number-of-gebuts-from-mail-mode ()
+  "Verify number of global ebuts from within Hyperbole mail mode."
+  (defvar global-but-file)
+  (let ((global-but-file (make-temp-file "gbut" nil ".txt"))
+        (message-mode-file (make-temp-file "gbut" nil ".txt")))
+    (unwind-protect
+        (mocklet ((gbut:file => global-but-file)
+                  (hpath:find-noselect => (find-file-noselect global-but-file)))
+          (gbut:ebut-program "label" 'link-to-directory "/tmp")
+          (find-file message-mode-file)
+          (message-mode)
+          (should (= 1 (length (gbut:ebut-key-list)))))
+      (hy-delete-file-and-buffer global-but-file)
+      (hy-delete-file-and-buffer message-mode-file))))
 
 (ert-deftest hui-ibut-label-create ()
   "Create a label for an implicit button."
